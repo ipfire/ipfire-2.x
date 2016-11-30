@@ -1,0 +1,66 @@
+------------------------------------------------------------
+revno: 14104
+revision-id: squid3@treenet.co.nz-20161030093816-7vwnk5zrrql2p5ks
+parent: squid3@treenet.co.nz-20161029232628-1y2u918re62uqs3v
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sun 2016-10-30 22:38:16 +1300
+message:
+  Copyright: add some missing blurbs and contributor details
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161030093816-7vwnk5zrrql2p5ks
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 8d44709a8f9c34926ce569e58aef82603a3d514b
+# timestamp: 2016-10-30 09:40:44 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161029232628-\
+#   1y2u918re62uqs3v
+# 
+# Begin patch
+=== modified file 'CONTRIBUTORS'
+--- CONTRIBUTORS	2016-01-06 14:27:36 +0000
++++ CONTRIBUTORS	2016-10-30 09:38:16 +0000
+@@ -211,6 +211,8 @@
+     Joe Ramey <ramey@jello.csc.ti.com>
+     Joerg Lehrke <jlehrke@noc.de>
+     Johnathan Conley <johnathan.conley@gmail.com>
++    John@MCC.ac.uk
++    John@Pharmweb.NET
+     John Dilley <jad@hpl.hp.com>
+     John M Cooper <john.cooper@yourcommunications.co.uk>
+     John Saunders <johns@rd.scitec.com.au>
+
+=== modified file 'contrib/url-normalizer.pl'
+--- contrib/url-normalizer.pl	1996-12-07 00:54:31 +0000
++++ contrib/url-normalizer.pl	2016-10-30 09:38:16 +0000
+@@ -1,4 +1,11 @@
+ #!/usr/local/bin/perl -Tw
++#
++# * Copyright (C) 1996-2016 The Squid Software Foundation and contributors
++# *
++# * Squid software is distributed under GPLv2+ license and includes
++# * contributions from numerous individuals and organizations.
++# * Please see the COPYING and CONTRIBUTORS files for details.
++#
+ 
+ # From:    Markus Gyger <mgyger@itr.ch>
+ #
+
+=== modified file 'contrib/user-agents.pl'
+--- contrib/user-agents.pl	1996-12-07 00:28:56 +0000
++++ contrib/user-agents.pl	2016-10-30 09:38:16 +0000
+@@ -1,5 +1,13 @@
+ #!/usr/bin/perl
+ #
++# * Copyright (C) 1996-2016 The Squid Software Foundation and contributors
++# *
++# * Squid software is distributed under GPLv2+ license and includes
++# * contributions from numerous individuals and organizations.
++# * Please see the COPYING and CONTRIBUTORS files for details.
++#
++
++#
+ # John@MCC.ac.uk
+ # John@Pharmweb.NET
+ 

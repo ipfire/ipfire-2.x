@@ -1,0 +1,34 @@
+------------------------------------------------------------
+revno: 14106
+revision-id: squid3@treenet.co.nz-20161030094025-l4b8fdahoru8h16d
+parent: squid3@treenet.co.nz-20161030093920-5f7f2px9ea08rxlq
+author: Garri Djavadyan <garryd@comnet.uz>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sun 2016-10-30 22:40:25 +1300
+message:
+  Fix debug message in ACLChecklist::bannedAction()
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161030094025-l4b8fdahoru8h16d
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 4fd7942b294096f5c27e3d460b6d4c79580443e1
+# timestamp: 2016-10-30 09:40:49 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161030093920-\
+#   5f7f2px9ea08rxlq
+# 
+# Begin patch
+=== modified file 'src/acl/Checklist.cc'
+--- src/acl/Checklist.cc	2016-01-01 00:14:27 +0000
++++ src/acl/Checklist.cc	2016-10-30 09:40:25 +0000
+@@ -397,7 +397,7 @@
+ ACLChecklist::bannedAction(const allow_t &action) const
+ {
+     const bool found = std::find(bannedActions_.begin(), bannedActions_.end(), action) != bannedActions_.end();
+-    debugs(28, 5, "Action '" << action << "/" << action.kind << (found ? " is " : "is not") << " banned");
++    debugs(28, 5, "Action '" << action << "/" << action.kind << (found ? "' is " : "' is not") << " banned");
+     return found;
+ }
+ 
+

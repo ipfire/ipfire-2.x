@@ -1,0 +1,33 @@
+------------------------------------------------------------
+revno: 14108
+revision-id: squid3@treenet.co.nz-20161101112231-k77st4up2sekl5zx
+parent: squid3@treenet.co.nz-20161030094503-rwdft21ffff44rns
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Wed 2016-11-02 00:22:31 +1300
+message:
+  Fix build issue after rev.14105
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161101112231-k77st4up2sekl5zx
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: fea1ede525ccb3ad7bf50e8de8f125a86a8dc016
+# timestamp: 2016-11-01 11:51:06 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161030094503-\
+#   rwdft21ffff44rns
+# 
+# Begin patch
+=== modified file 'src/AccessLogEntry.cc'
+--- src/AccessLogEntry.cc	2016-10-30 09:39:20 +0000
++++ src/AccessLogEntry.cc	2016-11-01 11:22:31 +0000
+@@ -30,7 +30,7 @@
+         log_ip = request->indirect_client_addr;
+     else
+ #endif
+-        if (tcpClient)
++        if (tcpClient != NULL)
+             log_ip = tcpClient->remote;
+         else
+             log_ip = cache.caddr;
+

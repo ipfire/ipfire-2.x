@@ -1,0 +1,60 @@
+------------------------------------------------------------
+revno: 14112
+revision-id: squid3@treenet.co.nz-20161114124051-s0vzoj5exv5g8w56
+parent: squid3@treenet.co.nz-20161114105434-f1uvw2lu8l4lpgay
+author: Alex Rousskov <rousskov@measurement-factory.com>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Tue 2016-11-15 01:40:51 +1300
+message:
+  Honor SBufReservationRequirements::minSize regardless of idealSize.
+    
+    In a fully specified SBufReservationRequirements, idealSize would
+    naturally match or exceed minSize. However, the idealSize default value
+    (zero) may not. We should honor minSize regardless of idealSize, just as
+    the API documentation promises to do.
+    
+    No runtime changes expected right now because the only existing user of
+    SBufReservationRequirements sets .idealSize to CLIENT_REQ_BUF_SZ (4096)
+    and .minSize to 1024.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161114124051-s0vzoj5exv5g8w56
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: fb0969aa035352582364b529a70286cbfd89564a
+# timestamp: 2016-11-14 12:43:10 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161114105434-\
+#   f1uvw2lu8l4lpgay
+# 
+# Begin patch
+=== modified file 'src/SBuf.cc'
+--- src/SBuf.cc	2016-06-18 13:36:07 +0000
++++ src/SBuf.cc	2016-11-14 12:40:51 +0000
+@@ -178,7 +178,8 @@
+     if (!mustRealloc && len_ >= req.maxCapacity)
+         return spaceSize(); // but we cannot reallocate
+ 
+-    const size_type newSpace = std::min(req.idealSpace, maxSize - len_);
++    const size_type desiredSpace = std::max(req.minSpace, req.idealSpace);
++    const size_type newSpace = std::min(desiredSpace, maxSize - len_);
+     reserveCapacity(std::min(len_ + newSpace, req.maxCapacity));
+     debugs(24, 7, id << " now: " << off_ << '+' << len_ << '+' << spaceSize() <<
+            '=' << store_->capacity);
+
+=== modified file 'src/SBuf.h'
+--- src/SBuf.h	2016-06-18 13:36:07 +0000
++++ src/SBuf.h	2016-11-14 12:40:51 +0000
+@@ -635,9 +635,10 @@
+     /*
+      * Parameters are listed in the reverse order of importance: Satisfaction of
+      * the lower-listed requirements may violate the higher-listed requirements.
++     * For example, idealSpace has no effect unless it exceeds minSpace.
+      */
+     size_type idealSpace; ///< if allocating anyway, provide this much space
+-    size_type minSpace; ///< allocate if spaceSize() is smaller
++    size_type minSpace; ///< allocate [at least this much] if spaceSize() is smaller
+     size_type maxCapacity; ///< do not allocate more than this
+     bool allowShared; ///< whether sharing our storage with others is OK
+ };
+

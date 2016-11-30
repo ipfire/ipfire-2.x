@@ -1,0 +1,167 @@
+------------------------------------------------------------
+revno: 14109
+revision-id: squid3@treenet.co.nz-20161111060325-yh8chavvnzuvfh3h
+parent: squid3@treenet.co.nz-20161101112231-k77st4up2sekl5zx
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=3379
+author: Garri Djavadyan <garryd@comnet.uz>, Amos Jeffries <squid3@treenet.co.nz>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Fri 2016-11-11 19:03:25 +1300
+message:
+  Bug 3379: Combination of If-Match and a Cache Hit result in TCP Connection Failure
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161111060325-yh8chavvnzuvfh3h
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 50d66878a765925d9a64569b3c226bebdee1f736
+# timestamp: 2016-11-11 06:10:37 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161101112231-\
+#   k77st4up2sekl5zx
+# 
+# Begin patch
+=== modified file 'src/client_side_reply.cc'
+--- src/client_side_reply.cc	2016-10-09 19:47:26 +0000
++++ src/client_side_reply.cc	2016-11-11 06:03:25 +0000
+@@ -589,6 +589,7 @@
+         debugs(88, 5, "negative-HIT");
+         http->logType = LOG_TCP_NEGATIVE_HIT;
+         sendMoreData(result);
++        return;
+     } else if (blockedHit()) {
+         debugs(88, 5, "send_hit forces a MISS");
+         http->logType = LOG_TCP_MISS;
+@@ -641,27 +642,29 @@
+             http->logType = LOG_TCP_MISS;
+             processMiss();
+         }
++        return;
+     } else if (r->conditional()) {
+         debugs(88, 5, "conditional HIT");
+-        processConditional(result);
+-    } else {
+-        /*
+-         * plain ol' cache hit
+-         */
+-        debugs(88, 5, "plain old HIT");
++        if (processConditional(result))
++            return;
++    }
++
++    /*
++     * plain ol' cache hit
++     */
++    debugs(88, 5, "plain old HIT");
+ 
+ #if USE_DELAY_POOLS
+-        if (e->store_status != STORE_OK)
+-            http->logType = LOG_TCP_MISS;
+-        else
++    if (e->store_status != STORE_OK)
++        http->logType = LOG_TCP_MISS;
++    else
+ #endif
+-            if (e->mem_status == IN_MEMORY)
+-                http->logType = LOG_TCP_MEM_HIT;
+-            else if (Config.onoff.offline)
+-                http->logType = LOG_TCP_OFFLINE_HIT;
++        if (e->mem_status == IN_MEMORY)
++            http->logType = LOG_TCP_MEM_HIT;
++        else if (Config.onoff.offline)
++            http->logType = LOG_TCP_OFFLINE_HIT;
+ 
+-        sendMoreData(result);
+-    }
++    sendMoreData(result);
+ }
+ 
+ /**
+@@ -755,17 +758,16 @@
+ }
+ 
+ /// process conditional request from client
+-void
++bool
+ clientReplyContext::processConditional(StoreIOBuffer &result)
+ {
+     StoreEntry *const e = http->storeEntry();
+ 
+     if (e->getReply()->sline.status() != Http::scOkay) {
+-        debugs(88, 4, "clientReplyContext::processConditional: Reply code " <<
+-               e->getReply()->sline.status() << " != 200");
++        debugs(88, 4, "Reply code " << e->getReply()->sline.status() << " != 200");
+         http->logType = LOG_TCP_MISS;
+         processMiss();
+-        return;
++        return true;
+     }
+ 
+     HttpRequest &r = *http->request;
+@@ -773,7 +775,7 @@
+     if (r.header.has(HDR_IF_MATCH) && !e->hasIfMatchEtag(r)) {
+         // RFC 2616: reply with 412 Precondition Failed if If-Match did not match
+         sendPreconditionFailedError();
+-        return;
++        return true;
+     }
+ 
+     bool matchedIfNoneMatch = false;
+@@ -786,14 +788,14 @@
+             r.header.delById(HDR_IF_MODIFIED_SINCE);
+             http->logType = LOG_TCP_MISS;
+             sendMoreData(result);
+-            return;
++            return true;
+         }
+ 
+         if (!r.flags.ims) {
+             // RFC 2616: if If-None-Match matched and there is no IMS,
+             // reply with 304 Not Modified or 412 Precondition Failed
+             sendNotModifiedOrPreconditionFailedError();
+-            return;
++            return true;
+         }
+ 
+         // otherwise check IMS below to decide if we reply with 304 or 412
+@@ -805,19 +807,20 @@
+         if (e->modifiedSince(r.ims, r.imslen)) {
+             http->logType = LOG_TCP_IMS_HIT;
+             sendMoreData(result);
+-            return;
+-        }
+ 
+-        if (matchedIfNoneMatch) {
++        } else if (matchedIfNoneMatch) {
+             // If-None-Match matched, reply with 304 Not Modified or
+             // 412 Precondition Failed
+             sendNotModifiedOrPreconditionFailedError();
+-            return;
++
++        } else {
++            // otherwise reply with 304 Not Modified
++            sendNotModified();
+         }
+-
+-        // otherwise reply with 304 Not Modified
+-        sendNotModified();
++        return true;
+     }
++
++    return false;
+ }
+ 
+ /// whether squid.conf send_hit prevents us from serving this hit
+
+=== modified file 'src/client_side_reply.h'
+--- src/client_side_reply.h	2016-09-23 15:28:42 +0000
++++ src/client_side_reply.h	2016-11-11 06:03:25 +0000
+@@ -114,7 +114,7 @@
+     bool alwaysAllowResponse(Http::StatusCode sline) const;
+     int checkTransferDone();
+     void processOnlyIfCachedMiss();
+-    void processConditional(StoreIOBuffer &result);
++    bool processConditional(StoreIOBuffer &result);
+     void cacheHit(StoreIOBuffer result);
+     void handleIMSReply(StoreIOBuffer result);
+     void sendMoreData(StoreIOBuffer result);
+

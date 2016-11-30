@@ -1,0 +1,56 @@
+------------------------------------------------------------
+revno: 14107
+revision-id: squid3@treenet.co.nz-20161030094503-rwdft21ffff44rns
+parent: squid3@treenet.co.nz-20161030094025-l4b8fdahoru8h16d
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sun 2016-10-30 22:45:03 +1300
+message:
+  HTTP/1.1: make Vary:* objects cacheable
+  
+  Under new clauses from RFC 7231 section 7.1.4 and HTTP response
+  containing header Vary:* (wifcard variant) can be cached, but
+  requires revalidation with server before each use.
+  
+  Use the new mandatory revalidation flags to allow storing of any
+  wildcard Vary:* response.
+  
+  Note that responses with headers like Vary:A,B,C,* are equivalent
+  to Vary:*. The cache key string for these objects is normalized.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161030094503-rwdft21ffff44rns
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 2652a5a689745e31fc450e0dfd1c5c472f6d68d6
+# timestamp: 2016-10-30 09:45:47 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161030094025-\
+#   l4b8fdahoru8h16d
+# 
+# Begin patch
+=== modified file 'src/http.cc'
+--- src/http.cc	2016-10-09 19:47:26 +0000
++++ src/http.cc	2016-10-30 09:45:03 +0000
+@@ -594,7 +594,7 @@
+     while (strListGetItem(&vary, ',', &item, &ilen, &pos)) {
+         SBuf name(item, ilen);
+         if (name == asterisk) {
+-            vstr.clear();
++            vstr = asterisk;
+             break;
+         }
+         name.toLower();
+@@ -917,6 +917,12 @@
+             varyFailure = true;
+         } else {
+             entry->mem_obj->vary_headers = vary;
++
++            // RFC 7231 section 7.1.4
++            // Vary:* can be cached, but has mandatory revalidation
++            static const SBuf asterisk("*");
++            if (vary == asterisk)
++                EBIT_SET(entry->flags, ENTRY_REVALIDATE_ALWAYS);
+         }
+     }
+ 
+

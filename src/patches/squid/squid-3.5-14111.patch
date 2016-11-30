@@ -1,0 +1,43 @@
+------------------------------------------------------------
+revno: 14111
+revision-id: squid3@treenet.co.nz-20161114105434-f1uvw2lu8l4lpgay
+parent: squid3@treenet.co.nz-20161114105124-46hmtnsg8uj4owxz
+author: Garri Djavadyan <garryd@comnet.uz>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Mon 2016-11-14 23:54:34 +1300
+message:
+  Fix spelling for digest nonce cache maintenance event
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161114105434-f1uvw2lu8l4lpgay
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 8c91678868beb689db5e0e6eaa6911c44f503ac8
+# timestamp: 2016-11-14 10:56:03 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161114105124-\
+#   46hmtnsg8uj4owxz
+# 
+# Begin patch
+=== modified file 'src/auth/digest/Config.cc'
+--- src/auth/digest/Config.cc	2016-01-01 00:14:27 +0000
++++ src/auth/digest/Config.cc	2016-11-14 10:54:34 +0000
+@@ -204,7 +204,7 @@
+     if (!digest_nonce_cache) {
+         digest_nonce_cache = hash_create((HASHCMP *) strcmp, 7921, hash_string);
+         assert(digest_nonce_cache);
+-        eventAdd("Digest none cache maintenance", authenticateDigestNonceCacheCleanup, NULL, static_cast<Auth::Digest::Config*>(Auth::Config::Find("digest"))->nonceGCInterval, 1);
++        eventAdd("Digest nonce cache maintenance", authenticateDigestNonceCacheCleanup, NULL, static_cast<Auth::Digest::Config*>(Auth::Config::Find("digest"))->nonceGCInterval, 1);
+     }
+ }
+ 
+@@ -268,7 +268,7 @@
+     debugs(29, 3, "Finished cleaning the nonce cache.");
+ 
+     if (static_cast<Auth::Digest::Config*>(Auth::Config::Find("digest"))->active())
+-        eventAdd("Digest none cache maintenance", authenticateDigestNonceCacheCleanup, NULL, static_cast<Auth::Digest::Config*>(Auth::Config::Find("digest"))->nonceGCInterval, 1);
++        eventAdd("Digest nonce cache maintenance", authenticateDigestNonceCacheCleanup, NULL, static_cast<Auth::Digest::Config*>(Auth::Config::Find("digest"))->nonceGCInterval, 1);
+ }
+ 
+ static void
+

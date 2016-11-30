@@ -1,0 +1,48 @@
+------------------------------------------------------------
+revno: 14105
+revision-id: squid3@treenet.co.nz-20161030093920-5f7f2px9ea08rxlq
+parent: squid3@treenet.co.nz-20161030093816-7vwnk5zrrql2p5ks
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=4567
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sun 2016-10-30 22:39:20 +1300
+message:
+  Bug 4567: Strange IPv6 shown in access.log
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161030093920-5f7f2px9ea08rxlq
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 8dbae4e7fc5fb80afc6eee6800743abd1b1eaa47
+# timestamp: 2016-10-30 09:40:47 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161030093816-\
+#   7vwnk5zrrql2p5ks
+# 
+# Begin patch
+=== modified file 'src/AccessLogEntry.cc'
+--- src/AccessLogEntry.cc	2016-01-01 00:14:27 +0000
++++ src/AccessLogEntry.cc	2016-10-30 09:39:20 +0000
+@@ -30,14 +30,17 @@
+         log_ip = request->indirect_client_addr;
+     else
+ #endif
+-        if (tcpClient != NULL)
++        if (tcpClient)
+             log_ip = tcpClient->remote;
+-        else if (cache.caddr.isNoAddr()) { // e.g., ICAP OPTIONS lack client
+-            strncpy(buf, "-", bufsz);
+-            return;
+-        } else
++        else
+             log_ip = cache.caddr;
+ 
++    // internally generated requests (and some ICAP) lack client IP
++    if (log_ip.isNoAddr()) {
++        strncpy(buf, "-", bufsz);
++        return;
++    }
++
+     // Apply so-called 'privacy masking' to IPv4 clients
+     // - localhost IP is always shown in full
+     // - IPv4 clients masked with client_netmask
+

@@ -1,0 +1,47 @@
+------------------------------------------------------------
+revno: 14113
+revision-id: squid3@treenet.co.nz-20161115075728-2xj2621oh5bwn8wn
+parent: squid3@treenet.co.nz-20161114124051-s0vzoj5exv5g8w56
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Tue 2016-11-15 20:57:28 +1300
+message:
+  TLS: Make key= before cert= an error instead of quietly hiding the issue
+  
+  This squid.conf setup is fatal in Squid-4. So best to fix these installations.
+  Even though Squdi-3 can cope with it.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161115075728-2xj2621oh5bwn8wn
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: a18738f4cbf0c1bd368e61d4b19c5d6f5005b919
+# timestamp: 2016-11-15 07:58:39 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161114124051-\
+#   s0vzoj5exv5g8w56
+# 
+# Begin patch
+=== modified file 'src/cache_cf.cc'
+--- src/cache_cf.cc	2016-09-23 11:11:48 +0000
++++ src/cache_cf.cc	2016-11-15 07:57:28 +0000
+@@ -2257,6 +2257,9 @@
+             safe_free(p->sslcert);
+             p->sslcert = xstrdup(token + 8);
+         } else if (strncmp(token, "sslkey=", 7) == 0) {
++            if (!p->sslcert) {
++                debugs(3, DBG_CRITICAL, "ERROR: " << cfg_directive << ": sslcert= option must be set before sslkey= is used.");
++            }
+             safe_free(p->sslkey);
+             p->sslkey = xstrdup(token + 7);
+         } else if (strncmp(token, "sslversion=", 11) == 0) {
+@@ -3729,6 +3732,9 @@
+         safe_free(s->cert);
+         s->cert = xstrdup(token + 5);
+     } else if (strncmp(token, "key=", 4) == 0) {
++        if (!s->cert) {
++            debugs(3, DBG_CRITICAL, "ERROR: " << cfg_directive << ": cert= option must be set before key= is used.");
++        }
+         safe_free(s->key);
+         s->key = xstrdup(token + 4);
+     } else if (strncmp(token, "version=", 8) == 0) {
+

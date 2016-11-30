@@ -1,0 +1,61 @@
+------------------------------------------------------------
+revno: 14103
+revision-id: squid3@treenet.co.nz-20161029232628-1y2u918re62uqs3v
+parent: squid3@treenet.co.nz-20161025082530-do632qnr9bwyk5et
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=4627
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sun 2016-10-30 12:26:28 +1300
+message:
+  Bug 4627: fix generate-host-certificates and dynamic_cert_mem_cache_size docs
+  
+  For Squid-3 the fix is just to update the documentation.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161029232628-1y2u918re62uqs3v
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: ea728cefc977ea5489da01b7a742821121c29476
+# timestamp: 2016-10-29 23:51:13 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161025082530-\
+#   do632qnr9bwyk5et
+# 
+# Begin patch
+=== modified file 'src/cf.data.pre'
+--- src/cf.data.pre	2016-10-25 08:23:49 +0000
++++ src/cf.data.pre	2016-10-29 23:26:28 +0000
+@@ -1787,13 +1787,12 @@
+ 			certificate equals lifetime of the CA certificate. If
+ 			generated certificate is selfsigned lifetime is three 
+ 			years.
+-			This option is enabled by default when ssl-bump is used.
+-			See the ssl-bump option above for more information.
++			This option is disabled by default. See the ssl-bump
++			option above for more information.
+ 			
+ 	   dynamic_cert_mem_cache_size=SIZE
+ 			Approximate total RAM size spent on cached generated
+-			certificates. If set to zero, caching is disabled. The
+-			default value is 4MB.
++			certificates. If set to zero, caching is disabled.
+ 
+ 	TLS / SSL Options:
+ 
+@@ -2063,13 +2062,12 @@
+ 			certificate equals lifetime of CA certificate. If
+ 			generated certificate is selfsigned lifetime is three
+ 			years.
+-			This option is enabled by default when SslBump is used.
+-			See the sslBump option above for more information.
++			This option is disabled by default. See the ssl-bump
++			option above for more information.
+ 
+ 	   dynamic_cert_mem_cache_size=SIZE
+ 			Approximate total RAM size spent on cached generated
+-			certificates. If set to zero, caching is disabled. The
+-			default value is 4MB.
++			certificates. If set to zero, caching is disabled.
+ 
+ 	See http_port for a list of available options.
+ DOC_END
+

@@ -1,0 +1,102 @@
+------------------------------------------------------------
+revno: 14110
+revision-id: squid3@treenet.co.nz-20161114105124-46hmtnsg8uj4owxz
+parent: squid3@treenet.co.nz-20161111060325-yh8chavvnzuvfh3h
+author: Christos Tsantilas <chtsanti@users.sourceforge.net>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Mon 2016-11-14 23:51:24 +1300
+message:
+  Fix ssl::server_name ACL badly broken since inception.
+  
+  The original server_name code mishandled all SNI checks and some rare
+  host checks:
+  
+  * The SNI-derived value was pointing to an already freed memory storage.
+  * Missing host-derived values were not detected (host() is never nil).
+  * Mismatches were re-checked with an undocumented "none" value
+    instead of being treated as mismatches.
+  
+  Same for ssl::server_name_regex.
+  
+  Also set SNI for more server-first and client-first transactions.
+  
+  This is a Measurement Factory project.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161114105124-46hmtnsg8uj4owxz
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 46aadc410b46d91d597218961dbf1c634fb834fb
+# timestamp: 2016-11-14 10:56:00 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161111060325-\
+#   yh8chavvnzuvfh3h
+# 
+# Begin patch
+=== modified file 'src/acl/ServerName.cc'
+--- src/acl/ServerName.cc	2016-09-08 12:27:06 +0000
++++ src/acl/ServerName.cc	2016-11-14 10:51:24 +0000
+@@ -90,27 +90,28 @@
+ {
+     assert(checklist != NULL && checklist->request != NULL);
+ 
+-    if (checklist->conn() && checklist->conn()->serverBump()) {
+-        if (X509 *peer_cert = checklist->conn()->serverBump()->serverCert.get()) {
+-            if (Ssl::matchX509CommonNames(peer_cert, (void *)data, check_cert_domain<MatchType>))
+-                return 1;
+-        }
+-    }
+-
+     const char *serverName = NULL;
+-    if (checklist->conn() && !checklist->conn()->sslCommonName().isEmpty()) {
+-        SBuf scn = checklist->conn()->sslCommonName();
+-        serverName = scn.c_str();
+-    }
+-
+-    if (serverName == NULL)
+-        serverName = checklist->request->GetHost();
+-
+-    if (serverName && data->match(serverName)) {
+-        return 1;
+-    }
+-
+-    return data->match("none");
++    SBuf serverNameKeeper; // because c_str() is not constant
++    if (ConnStateData *conn = checklist->conn()) {
++        if (conn->serverBump()) {
++            if (X509 *peer_cert = conn->serverBump()->serverCert.get())
++                return Ssl::matchX509CommonNames(peer_cert, (void *)data, check_cert_domain<MatchType>);
++        }
++
++        if (conn->sslCommonName().isEmpty()) {
++            const char *host = checklist->request->GetHost();
++            if (host && *host) // paranoid first condition: host() is never nil
++                serverName = host;
++        } else {
++            serverNameKeeper = conn->sslCommonName();
++            serverName = serverNameKeeper.c_str();
++        }
++    }
++
++    if (!serverName)
++        serverName = "none";
++
++    return data->match(serverName);
+ }
+ 
+ ACLServerNameStrategy *
+
+=== modified file 'src/cf.data.pre'
+--- src/cf.data.pre	2016-10-29 23:26:28 +0000
++++ src/cf.data.pre	2016-11-14 10:51:24 +0000
+@@ -1167,6 +1167,9 @@
+ 	  # During each Ssl-Bump step, Squid may improve its understanding of a
+ 	  # "true server name". Unlike dstdomain, this ACL does not perform
+ 	  # DNS lookups.
++	  # The "none" name can be used to match transactions where Squid
++	  # could not compute the server name using any information source
++	  # already available at the ACL evaluation time.
+ 
+ 	acl aclname ssl::server_name_regex [-i] \.foo\.com ...
+ 	  # regex matches server name obtained from various sources [fast]
+
