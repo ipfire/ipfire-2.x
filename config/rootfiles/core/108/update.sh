@@ -43,6 +43,9 @@ ldconfig
 # Update Language cache
 #/usr/local/bin/update-lang-cache
 
+# Reload unbound upstream name servers
+/etc/init.d/unbound update-forwarders
+
 # Start services
 /etc/init.d/sysklogd restart
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then

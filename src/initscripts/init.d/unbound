@@ -259,9 +259,6 @@ test_name_server() {
 	# Exit when the server is not reachable
 	ns_is_online ${ns} || return 1
 
-	# Return 0 if validating
-	ns_is_validating ${ns} && return 0
-
 	local errors
 	for rr in DNSKEY DS RRSIG; do
 		if ! ns_forwards_${rr} ${ns}; then
@@ -274,8 +271,13 @@ test_name_server() {
 		return 3
 	fi
 
-	# Is DNSSEC-aware
-	return 2
+	if ns_is_validating ${ns}; then
+		# Return 0 if validating
+		return 0
+	else
+		# Is DNSSEC-aware
+		return 2
+	fi
 }
 
 # Sends an A query to the nameserver w/o DNSSEC
