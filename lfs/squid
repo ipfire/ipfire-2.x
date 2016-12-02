@@ -85,6 +85,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid/squid-3.5-14111.patch
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid/squid-3.5-14112.patch
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid/squid-3.5-14113.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid/squid-3.5-14114.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid/squid-3.5-14115.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid/squid-3.5-14116.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid/squid-3.5-14117.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid/squid-3.5-14118.patch
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/squid-3.5.22-fix-max-file-descriptors.patch
 
 	cd $(DIR_APP) && autoreconf -vfi

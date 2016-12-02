@@ -1,0 +1,38 @@
+------------------------------------------------------------
+revno: 14116
+revision-id: squid3@treenet.co.nz-20161130223332-zcaxll4prj3kag1b
+parent: squid3@treenet.co.nz-20161130215630-c42qucqar9bi9a1k
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=3533
+author: Garri Djavadyan <garryd@comnet.uz>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Thu 2016-12-01 11:33:32 +1300
+message:
+  Bug 3533: Cache still valid after HTTP/1.1 303 See Other
+  
+  RFC7231 does not mention 303 response as non-cacheable.
+  So, assuming that means it *is* cacheable.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161130223332-zcaxll4prj3kag1b
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: c90320c95a4b64c8d18794fbe5df526fe0f9f702
+# timestamp: 2016-11-30 22:42:05 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161130215630-\
+#   c42qucqar9bi9a1k
+# 
+# Begin patch
+=== modified file 'src/http.cc'
+--- src/http.cc	2016-10-30 09:45:03 +0000
++++ src/http.cc	2016-11-30 22:33:32 +0000
+@@ -203,6 +203,8 @@
+ 
+     case Http::scFound:
+ 
++    case Http::scSeeOther:
++
+     case Http::scGone:
+ 
+     case Http::scNotFound:
+

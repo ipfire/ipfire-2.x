@@ -1,0 +1,46 @@
+------------------------------------------------------------
+revno: 14114
+revision-id: squid3@treenet.co.nz-20161130154205-c9z1bhqzuh3rafl3
+parent: squid3@treenet.co.nz-20161115075728-2xj2621oh5bwn8wn
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Thu 2016-12-01 04:42:05 +1300
+message:
+  Improve debugs warnings when loading signing certs fails
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161130154205-c9z1bhqzuh3rafl3
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: e760bf590489a354e314f19dd158b063d23ef7a7
+# timestamp: 2016-11-30 15:51:47 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161115075728-\
+#   2xj2621oh5bwn8wn
+# 
+# Begin patch
+=== modified file 'src/ssl/support.cc'
+--- src/ssl/support.cc	2016-10-09 14:30:11 +0000
++++ src/ssl/support.cc	2016-11-30 15:42:05 +0000
+@@ -2011,10 +2011,17 @@
+     pem_password_cb *cb = ::Config.Program.ssl_password ? &ssl_ask_password_cb : NULL;
+     pkey.reset(readSslPrivateKey(keyFilename, cb));
+     cert.reset(readSslX509CertificatesChain(certFilename, chain.get()));
+-    if (!pkey || !cert || !X509_check_private_key(cert.get(), pkey.get())) {
+-        pkey.reset(NULL);
+-        cert.reset(NULL);
+-    }
++    if (!cert) {
++        debugs(83, DBG_IMPORTANT, "WARNING: missing cert in '" << certFilename << "'");
++    } else if (!pkey) {
++        debugs(83, DBG_IMPORTANT, "WARNING: missing private key in '" << keyFilename << "'");
++    } else if (!X509_check_private_key(cert.get(), pkey.get())) {
++        debugs(83, DBG_IMPORTANT, "WARNING: X509_check_private_key() failed to verify signing cert");
++    } else
++        return; // everything is okay
++
++    pkey.reset(NULL);
++    cert.reset(NULL);
+ }
+ 
+ bool Ssl::generateUntrustedCert(X509_Pointer &untrustedCert, EVP_PKEY_Pointer &untrustedPkey, X509_Pointer const  &cert, EVP_PKEY_Pointer const & pkey)
+

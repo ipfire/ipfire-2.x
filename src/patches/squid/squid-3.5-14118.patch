@@ -1,0 +1,55 @@
+------------------------------------------------------------
+revno: 14118
+revision-id: squid3@treenet.co.nz-20161130233304-lk3q0bx8gn5l3l85
+parent: squid3@treenet.co.nz-20161130232039-z18ikhhcf3j185my
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=3290
+author: Garri Djavadyan <garryd@comnet.uz>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Thu 2016-12-01 12:33:04 +1300
+message:
+  Bug 3290: authenticate_ttl not working for digest authentication
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161130233304-lk3q0bx8gn5l3l85
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 50ff391db1484222ead5fb50b1bca0694c37ed4c
+# timestamp: 2016-11-30 23:34:59 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161130232039-\
+#   z18ikhhcf3j185my
+# 
+# Begin patch
+=== modified file 'src/auth/digest/Config.cc'
+--- src/auth/digest/Config.cc	2016-11-14 10:54:34 +0000
++++ src/auth/digest/Config.cc	2016-11-30 23:33:04 +0000
+@@ -1058,6 +1058,10 @@
+          * the user agent won't change user name without warning.
+          */
+         authDigestUserLinkNonce(digest_user, nonce);
++
++        /* auth_user is now linked, we reset these values
++         * after external auth occurs anyway */
++        auth_user->expiretime = current_time.tv_sec;
+     } else {
+         debugs(29, 9, "Found user '" << username << "' in the user cache as '" << auth_user << "'");
+         digest_user = static_cast<Auth::Digest::User *>(auth_user.getRaw());
+
+=== modified file 'src/auth/digest/UserRequest.cc'
+--- src/auth/digest/UserRequest.cc	2016-01-01 00:14:27 +0000
++++ src/auth/digest/UserRequest.cc	2016-11-30 23:33:04 +0000
+@@ -187,12 +187,7 @@
+     auth_user->credentials(Auth::Ok);
+ 
+     /* password was checked and did match */
+-    debugs(29, 4, HERE << "user '" << auth_user->username() << "' validated OK");
+-
+-    /* auth_user is now linked, we reset these values
+-     * after external auth occurs anyway */
+-    auth_user->expiretime = current_time.tv_sec;
+-    return;
++    debugs(29, 4, "user '" << auth_user->username() << "' validated OK");
+ }
+ 
+ Auth::Direction
+

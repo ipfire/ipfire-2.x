@@ -1,0 +1,152 @@
+------------------------------------------------------------
+revno: 14117
+revision-id: squid3@treenet.co.nz-20161130232039-z18ikhhcf3j185my
+parent: squid3@treenet.co.nz-20161130223332-zcaxll4prj3kag1b
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=4007
+author: Stephen Baynes <sbaynes@mail.com>, Amos Jeffries <squid3@treenet.co.nz>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Thu 2016-12-01 12:20:39 +1300
+message:
+  Bug 4007: Hang on DNS query with dead-end CNAME
+  
+  DNS lookup recursion no longer occurs. ipcacheParse() return values are no
+  longer useful.
+  
+  Also, cleanup the debugging output.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161130232039-z18ikhhcf3j185my
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 9059c7a07e5366bd2eac606c72f875077766ed34
+# timestamp: 2016-11-30 23:27:11 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161130223332-\
+#   zcaxll4prj3kag1b
+# 
+# Begin patch
+=== modified file 'src/ipcache.cc'
+--- src/ipcache.cc	2016-01-01 00:14:27 +0000
++++ src/ipcache.cc	2016-11-30 23:20:39 +0000
+@@ -123,7 +123,6 @@
+ static FREE ipcacheFreeEntry;
+ static IDNSCB ipcacheHandleReply;
+ static int ipcacheExpiredEntry(ipcache_entry *);
+-static int ipcacheParse(ipcache_entry *, const rfc1035_rr *, int, const char *error);
+ static ipcache_entry *ipcache_get(const char *);
+ static void ipcacheLockEntry(ipcache_entry *);
+ static void ipcacheStatPrint(ipcache_entry *, StoreEntry *);
+@@ -328,8 +327,7 @@
+     ipcacheUnlockEntry(i);
+ }
+ 
+-/// \ingroup IPCacheAPI
+-static int
++static void
+ ipcacheParse(ipcache_entry *i, const rfc1035_rr * answers, int nr, const char *error_message)
+ {
+     int k;
+@@ -350,25 +348,25 @@
+     i->addrs.count = 0;
+ 
+     if (nr < 0) {
+-        debugs(14, 3, "ipcacheParse: Lookup failed '" << error_message << "' for '" << (const char *)i->hash.key << "'");
++        debugs(14, 3, "Lookup failed '" << error_message << "' for '" << (const char *)i->hash.key << "'");
+         i->error_message = xstrdup(error_message);
+-        return -1;
++        return;
+     }
+ 
+     if (nr == 0) {
+-        debugs(14, 3, "ipcacheParse: No DNS records in response to '" << name << "'");
++        debugs(14, 3, "No DNS records in response to '" << name << "'");
+         i->error_message = xstrdup("No DNS records");
+-        return -1;
++        return;
+     }
+ 
+-    debugs(14, 3, "ipcacheParse: " << nr << " answers for '" << name << "'");
++    debugs(14, 3, nr << " answers for '" << name << "'");
+     assert(answers);
+ 
+     for (k = 0; k < nr; ++k) {
+ 
+         if (Ip::EnableIpv6 && answers[k].type == RFC1035_TYPE_AAAA) {
+             if (answers[k].rdlength != sizeof(struct in6_addr)) {
+-                debugs(14, DBG_IMPORTANT, "ipcacheParse: Invalid IPv6 address in response to '" << name << "'");
++                debugs(14, DBG_IMPORTANT, MYNAME << "Invalid IPv6 address in response to '" << name << "'");
+                 continue;
+             }
+             ++na;
+@@ -378,7 +376,7 @@
+ 
+         if (answers[k].type == RFC1035_TYPE_A) {
+             if (answers[k].rdlength != sizeof(struct in_addr)) {
+-                debugs(14, DBG_IMPORTANT, "ipcacheParse: Invalid IPv4 address in response to '" << name << "'");
++                debugs(14, DBG_IMPORTANT, MYNAME << "Invalid IPv4 address in response to '" << name << "'");
+                 continue;
+             }
+             ++na;
+@@ -394,14 +392,14 @@
+         }
+ 
+         // otherwise its an unknown RR. debug at level 9 since we usually want to ignore these and they are common.
+-        debugs(14, 9, HERE << "Unknown RR type received: type=" << answers[k].type << " starting at " << &(answers[k]) );
++        debugs(14, 9, "Unknown RR type received: type=" << answers[k].type << " starting at " << &(answers[k]) );
+     }
+     if (na == 0) {
+-        debugs(14, DBG_IMPORTANT, "ipcacheParse: No Address records in response to '" << name << "'");
++        debugs(14, DBG_IMPORTANT, MYNAME << "No Address records in response to '" << name << "'");
+         i->error_message = xstrdup("No Address records");
+         if (cname_found)
+             ++IpcacheStats.cname_only;
+-        return 0;
++        return;
+     }
+ 
+     i->addrs.in_addrs = static_cast<Ip::Address *>(xcalloc(na, sizeof(Ip::Address)));
+@@ -419,7 +417,7 @@
+             memcpy(&temp, answers[k].rdata, sizeof(struct in_addr));
+             i->addrs.in_addrs[j] = temp;
+ 
+-            debugs(14, 3, "ipcacheParse: " << name << " #" << j << " " << i->addrs.in_addrs[j]);
++            debugs(14, 3, name << " #" << j << " " << i->addrs.in_addrs[j]);
+             ++j;
+ 
+         } else if (Ip::EnableIpv6 && answers[k].type == RFC1035_TYPE_AAAA) {
+@@ -430,7 +428,7 @@
+             memcpy(&temp, answers[k].rdata, sizeof(struct in6_addr));
+             i->addrs.in_addrs[j] = temp;
+ 
+-            debugs(14, 3, "ipcacheParse: " << name << " #" << j << " " << i->addrs.in_addrs[j] );
++            debugs(14, 3, name << " #" << j << " " << i->addrs.in_addrs[j] );
+             ++j;
+         }
+         if (ttl == 0 || (int) answers[k].ttl < ttl)
+@@ -453,8 +451,6 @@
+     i->expires = squid_curtime + ttl;
+ 
+     i->flags.negcached = false;
+-
+-    return i->addrs.count;
+ }
+ 
+ /// \ingroup IPCacheInternal
+@@ -467,13 +463,9 @@
+     const int age = i->age();
+     statCounter.dns.svcTime.count(age);
+ 
+-    int done = ipcacheParse(i, answers, na, error_message);
+-
+-    /* If we have not produced either IPs or Error immediately, wait for recursion to finish. */
+-    if (done != 0 || error_message != NULL) {
+-        ipcacheAddEntry(i);
+-        ipcacheCallback(i, age);
+-    }
++    ipcacheParse(i, answers, na, error_message);
++    ipcacheAddEntry(i);
++    ipcacheCallback(i, age);
+ }
+ 
+ /**
+
