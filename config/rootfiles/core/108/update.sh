@@ -33,6 +33,7 @@ done
 
 # Stop services
 /etc/init.d/ipsec stop
+/etc/init.d/squid stop
 
 # Extract files
 extract_files
@@ -52,6 +53,7 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec start
 fi
 /etc/init.d/ntp restart
+/etc/init.d/squid start
 
 # This update need a reboot...
 #touch /var/run/need_reboot
