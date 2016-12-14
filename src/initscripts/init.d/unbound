@@ -18,6 +18,9 @@ USE_FORWARDERS=1
 # Cache any local zones for 60 seconds
 LOCAL_TTL=60
 
+# EDNS buffer size
+EDNS_DEFAULT_BUFFER_SIZE=4096
+
 # Load optional configuration
 [ -e "/etc/sysconfig/unbound" ] && . /etc/sysconfig/unbound
 
@@ -87,19 +90,20 @@ update_forwarders() {
 		done
 
 		# Determine EDNS buffer size
-		local current_edns_buffer_size=$(unbound-control get_option edns-buffer-size)
+		local new_edns_buffer_size=${EDNS_DEFAULT_BUFFER_SIZE}
 
-		if [ -n "${current_edns_buffer_size}" ]; then
-			local new_edns_buffer_size=${current_edns_buffer_size}
-
-			for ns in ${forwarders}; do
-				local edns_buffer_size=$(ns_determine_edns_buffer_size ${ns})
-				if [ -n "${edns_buffer_size}" ]; then
-					if [ ${edns_buffer_size} -lt ${current_edns_buffer_size} ]; then
-						new_edns_buffer_size=${edns_buffer_size}
-					fi
+		for ns in ${forwarders}; do
+			local edns_buffer_size=$(ns_determine_edns_buffer_size ${ns})
+			if [ -n "${edns_buffer_size}" ]; then
+				if [ ${edns_buffer_size} -lt ${new_edns_buffer_size} ]; then
+					new_edns_buffer_size=${edns_buffer_size}
 				fi
-			done
+			fi
+		done
+
+		if [ ${new_edns_buffer_size} -lt ${EDNS_DEFAULT_BUFFER_SIZE} ]; then
+			boot_mesg "EDNS buffer size reduced to ${new_edns_buffer_size}" ${WARNING}
+			echo_warning
 
 			unbound-control -q set_option edns-buffer-size: ${new_edns_buffer_size}
 		fi
