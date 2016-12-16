@@ -1,0 +1,47 @@
+------------------------------------------------------------
+revno: 14124
+revision-id: squid3@treenet.co.nz-20161215092210-8gupdsihb4d8fufk
+parent: squid3@treenet.co.nz-20161215090342-ml7nmzlfmiiov7j5
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Thu 2016-12-15 22:22:10 +1300
+message:
+  HTTP/1.1: Add registered codes entry for new 103 (Early Hints) status code
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161215092210-8gupdsihb4d8fufk
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: b9e9ff6a7fe0972dfd8a3b1a45ba25a66ef03552
+# timestamp: 2016-12-15 09:22:58 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20161215090342-\
+#   ml7nmzlfmiiov7j5
+# 
+# Begin patch
+=== modified file 'src/http/StatusCode.cc'
+--- src/http/StatusCode.cc	2016-03-23 14:00:51 +0000
++++ src/http/StatusCode.cc	2016-12-15 09:22:10 +0000
+@@ -33,6 +33,10 @@
+         return "Processing";
+         break;
+ 
++    case Http::scEarlyHints: // 103
++        return "Early Hints";
++        break;
++
+     // 200-299
+     case Http::scOkay:
+         return "OK";
+
+=== modified file 'src/http/StatusCode.h'
+--- src/http/StatusCode.h	2016-03-23 14:00:51 +0000
++++ src/http/StatusCode.h	2016-12-15 09:22:10 +0000
+@@ -22,6 +22,7 @@
+     scContinue = 100,
+     scSwitchingProtocols = 101,
+     scProcessing = 102,      /**< RFC2518 section 10.1 */
++    scEarlyHints = 103,      /**< draft-kazuho-early-hints-status-code */
+     scOkay = 200,
+     scCreated = 201,
+     scAccepted = 202,
+

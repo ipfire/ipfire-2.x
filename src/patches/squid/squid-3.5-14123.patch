@@ -1,0 +1,59 @@
+------------------------------------------------------------
+revno: 14123
+revision-id: squid3@treenet.co.nz-20161215090342-ml7nmzlfmiiov7j5
+parent: squidadm@squid-cache.org-20161209061551-361ava4lrrmbwiy9
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=2258
+author: Garri Djavadyan <garryd@comnet.uz>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Thu 2016-12-15 22:03:42 +1300
+message:
+  Bug 2258: bypassing cache but not destroying cache entry
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20161215090342-ml7nmzlfmiiov7j5
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: e4ce2fda10feb3e4e6b64d6dfa566ba6f0ac07f1
+# timestamp: 2016-12-15 09:08:35 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squidadm@squid-cache.org-20161209061551-\
+#   361ava4lrrmbwiy9
+# 
+# Begin patch
+=== modified file 'src/HttpRequest.cc'
+--- src/HttpRequest.cc	2016-04-01 06:15:31 +0000
++++ src/HttpRequest.cc	2016-12-15 09:03:42 +0000
+@@ -576,8 +576,13 @@
+         if (!method.respMaybeCacheable())
+             return false;
+ 
+-        // XXX: this would seem the correct place to detect request cache-controls
+-        //      no-store, private and related which block cacheability
++        // RFC 7234 section 5.2.1.5:
++        // "cache MUST NOT store any part of either this request or any response to it"
++        //
++        // NP: refresh_pattern ignore-no-store only applies to response messages
++        //     this test is handling request message CC header.
++        if (!flags.ignoreCc && cache_control && cache_control->noStore())
++            return false;
+         break;
+ 
+     case AnyP::PROTO_GOPHER:
+
+=== modified file 'src/http.cc'
+--- src/http.cc	2016-11-30 22:33:32 +0000
++++ src/http.cc	2016-12-15 09:03:42 +0000
+@@ -191,6 +191,12 @@
+     if (!EBIT_TEST(e->flags, KEY_PRIVATE))
+         return;
+ 
++    // If the new/incoming response cannot be stored, then it does not
++    // compete with the old stored response for the public key, and the
++    // old stored response should be left as is.
++    if (e->mem_obj->request && !e->mem_obj->request->flags.cachable)
++        return;
++
+     switch (status) {
+ 
+     case Http::scOkay:
+
