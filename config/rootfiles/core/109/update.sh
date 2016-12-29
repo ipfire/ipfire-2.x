@@ -50,6 +50,8 @@ ldconfig
 /etc/init.d/squid start
 /etc/init.d/snort start
 
+# Remove old MACVTAP script
+rm -vf /lib/udev/network-hotplug-macvtap
 
 # This update need a reboot...
 #touch /var/run/need_reboot
