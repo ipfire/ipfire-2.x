@@ -68,6 +68,10 @@ for zone in ${ZONES}; do
 	# If a matching interface has been found we will
 	# print the name to which udev will rename it.
 	case "${!mode}" in
+		bridge)
+			echo "${!device}phys"
+			;;
+
 		macvtap)
 			# MACVTAP mode doesn't work for WiFi devices
 			if [ -d "/sys/class/net/${INTERFACE}/phy80211" ]; then

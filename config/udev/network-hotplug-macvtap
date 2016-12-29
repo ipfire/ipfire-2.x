@@ -23,24 +23,92 @@
 
 [ -n "${INTERFACE}" ] || exit 2
 
-PHYSICAL_INTERFACE="${INTERFACE}"
-VIRTUAL_INTERFACE="${INTERFACE%phys}"
-#VIRTUAL_INTERFACE="${VIRTUAL_INTERFACE}0"
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
-# Do nothing if the physical interface does not end with "phys"
-case "${PHYSICAL_INTERFACE}" in
-	*phys)
+detect_zone() {
+	local intf="${INTERFACE%0*}"
+	intf="${intf^^}"
+
+	local zone
+	for zone in GREEN BLUE ORANGE RED; do
+		# Try to find if INTERFACE is the *phys version of a zone
+		if [ "${intf}" = "${zone}" ]; then
+			echo "${zone}"
+			return 0
+		fi
+
+		# Try to find out if this INTERFACE is a slave of a zone
+		local slave
+		for slave in $(get_value "${zone}_SLAVES"); do
+			if [ "${INTERFACE}" = "${slave}" ]; then
+				echo "${zone}"
+				return 0
+			fi
+		done
+	done
+
+	return 1
+}
+
+get_value() {
+	echo "${!1}"
+}
+
+random_mac_address() {
+	local address="02"
+
+	for i in $(seq 5); do
+		printf -v address "${address}:%02x" "$(( RANDOM % 256 ))"
+	done
+
+	echo "${address}"
+}
+
+# Try to detect which zone we are operating on
+ZONE=$(detect_zone)
+
+# Cannot proceed if we could not find a zone
+if [ -z "${ZONE}" ]; then
+	exit 0
+fi
+
+# Determine the mode of this zone
+MODE="$(get_value "${ZONE}_MODE")"
+
+# The name of the virtual bridge
+BRIDGE="$(get_value "${ZONE}_DEV")"
+
+case "${MODE}" in
+	bridge)
+		ADDRESS="$(get_value "${ZONE}_MACADDR")"
+		[ -n "${ADDRESS}" ] || ADDRESS="$(random_mac_address)"
+
+		# We need to create the bridge if it doesn't exist, yet
+		if [ ! -d "/sys/class/net/${BRIDGE}" ]; then
+			ip link add "${BRIDGE}" address "${ADDRESS}" type bridge
+			#ip link set "${BRIDGE}" up
+		fi
+
+		# Attach the physical device
+		ip link set dev "${INTERFACE}" master "${BRIDGE}"
+		ip link set dev "${INTERFACE}" up
 		;;
-	*)
+
+	macvtap)
+		ADDRESS="$(</sys/class/net/${INTERFACE}/address)"
+		GENERATED_ADDRESS=$(random_mac_address)
+
+		ip link add link "${INTERFACE}" "${BRIDGE}" address "${ADDRESS}" type macvlan mode bridge
+		ip link set "${INTERFACE}" address "${GENERATED_ADDRESS}"
+		ip link set "${INTERFACE}" up
+		;;
+
+	"")
 		exit 0
 		;;
+
+	*)
+		logger -t "network" "Unhandled mode '${MODE}' for '${ZONE}' (${INTERFACE})"
+		exit 1
+		;;
 esac
-
-ADDRESS="$(</sys/class/net/${PHYSICAL_INTERFACE}/address)"
-rand="$(</proc/sys/kernel/random/uuid)"
-rand="${rand//-/}"
-GENERATED_ADDRESS=$(echo "02:${rand:0:2}:${rand:2:2}:${rand:4:2}:${rand:6:2}:${rand:8:2}")
-
-ip link add link "${PHYSICAL_INTERFACE}" "${VIRTUAL_INTERFACE}" address "${ADDRESS}" type macvlan mode bridge
-ip link set "${PHYSICAL_INTERFACE}" address "${GENERATED_ADDRESS}"
-ip link set "${PHYSICAL_INTERFACE}" up
