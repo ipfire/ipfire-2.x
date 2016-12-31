@@ -40,7 +40,9 @@ detect_zone() {
 		# Try to find out if this INTERFACE is a slave of a zone
 		local slave
 		for slave in $(get_value "${zone}_SLAVES"); do
-			if [ "${INTERFACE}" = "${slave}" ]; then
+
+			#Compare if the mac address matches or if the name matches
+			if ([ "$(</sys/class/net/${INTERFACE}/address)" = "${slave}" ] || [ "${INTERFACE}" = "${slave}" ]); then
 				echo "${zone}"
 				return 0
 			fi
