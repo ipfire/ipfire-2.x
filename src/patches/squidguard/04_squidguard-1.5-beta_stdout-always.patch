@@ -1,0 +1,76 @@
+Original input to stdout, to be useable with multiple redirectors
+when option -f is given on squidGuard start
+We have to remember the raw original URL as the URL is modified for testing 
+purpose. So the exisiting HTML entities like %3F (?), %26 (&), %3D (=) etc. are changed
+which breaks the URL for further processing if it is send to stdout like we do it for the 
+redirector chain (THIS patch).
+diff -Nur a/src/main.c.in b/src/main.c.in
+--- a/src/main.c.in	2009-09-27 21:41:50.000000000 +0200
++++ b/src/main.c.in	2013-06-01 21:18:55.000000000 +0200
+@@ -59,6 +59,7 @@
+ char **globalEnvp ;
+ int globalDebugTimeDelta = 0;
+ int globalDebug = 0;
++int globalFullStdout = 0;
+ int globalPid = 0;
+ int globalUpdate = 0;
+ int passthrough = 0;
+@@ -89,6 +90,7 @@
+   struct Acl *acl;
+   struct timeval start_time,ready_time,stop_time;
+   char buf[MAX_BUF];
++  char origraw[MAX_BUF];
+   char *redirect,tmp[MAX_BUF];
+   char *configFile = NULL;
+   time_t t;
+@@ -101,11 +102,14 @@
+ #ifdef USE_SYSLOG
+ openlog("squidGuard", LOG_PID | LOG_NDELAY | LOG_CONS, LOG_ at LOGFAC@);
+ #endif
+-  while ((ch = getopt(argc, argv, "hbduPC:t:c:v")) != EOF)
++  while ((ch = getopt(argc, argv, "hbdfuPC:t:c:v")) != EOF)
+     switch (ch) {
+     case 'd':
+        globalDebug = 1;
+       break;
++    case 'f':
++       globalFullStdout = 1;
++      break;
+     case 'c':
+       configFile = optarg;
+       break;
+@@ -192,6 +193,8 @@
+ 	}
+ 	continue;
+       }
++      strcpy(origraw,buf);
++      if (strlen(origraw) && (origraw[strlen(origraw)-1] == '\n')) origraw[strlen(origraw)-1] = 0;
+       if(parseLine(buf,&squidInfo) != 1){
+ 	sgLogError("ERROR: Error parsing squid line: %s",buf);
+ 	puts("BH message=\"squidGuard error parsing squid line\"");
+@@ -206,7 +210,12 @@
+ 	  acl = sgAclCheckSource(src);
+ 	  if((redirect = sgAclAccess(src,acl,&squidInfo)) == NULL){
+ 	    if(src == NULL || src->cont_search == 0){
++	      if (globalFullStdout) {
++	        puts(origraw);
++	      }
++	      else {
+ 	      puts("ERR");
++	      }
+ 	      break;
+ 	    } else
+ 	      if(src->next != NULL){
+@@ -213,7 +214,12 @@
+ 		src = src->next;
+ 		continue;
+ 	      } else {
++	      if (globalFullStdout) {
++	        puts(origraw);
++	      }
++	      else {
+ 		puts("ERR");
++	      }
+ 		break;
+ 	      }
+ 	  } else {

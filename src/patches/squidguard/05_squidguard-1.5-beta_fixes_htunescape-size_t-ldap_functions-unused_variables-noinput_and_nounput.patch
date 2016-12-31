@@ -1,0 +1,56 @@
+--- a/src/sg.l	Sat Jan 30 13:51:12 2016
++++ b/src/sg.l	Sat Jan 30 14:01:28 2016
+@@ -23,6 +23,8 @@
+ 
+ %}
+ 
++%option noinput
++%option nounput
+ ignore   [,\t\r ]+
+ s        [\t ]
+ d        [0-9]
+--- a/src/sg.y.in	Sat Jan 30 13:52:26 2016
++++ b/src/sg.y.in	Sat Jan 30 14:00:50 2016
+@@ -26,6 +26,7 @@
+ 
+ #ifdef HAVE_LIBLDAP
+ #include "lber.h"
++#define LDAP_DEPRECATED 1
+ #include "ldap.h"
+ #endif
+ 
+@@ -1097,7 +1098,6 @@
+          foundip = 1;
+          unblockedip = 1;
+          if(s->ipquota.seconds != 0){
+-            struct IpInfo uq;
+            time_t t = time(NULL) + globalDebugTimeDelta;
+            sgLogError("status %d time %d lasttime %d consumed %d", ipquota->status, ipquota->time, ipquota->last, ipquota->consumed);
+            sgLogError("renew %d seconds %d", s->ipquota.renew, s->ipquota.seconds);
+@@ -1157,7 +1157,6 @@
+ 	  founduser = 1;
+ 	  unblockeduser = 1;
+ 	  if(s->userquota.seconds != 0){
+-            struct UserInfo uq;
+ 	    time_t t = time(NULL) + globalDebugTimeDelta;
+ 	    //sgLogError("status %d time %d lasttime %d consumed %d", userquota->status, userquota->time, userquota->last, userquota->consumed);
+ 	    //sgLogError("renew %d seconds %d", s->userquota.renew, s->userquota.seconds);
+--- a/src/sgDiv.c.in	Sat Jan 30 13:52:10 2016
++++ b/src/sgDiv.c.in	Sat Jan 30 13:59:16 2016
+@@ -18,6 +18,7 @@
+ 
+ #include "sg.h"
+ #include "sgEx.h"
++#include "HTEscape.h"
+ 
+ /* #define METEST 8; */
+ 
+@@ -692,7 +693,7 @@
+        struct UserInfo *userquota;
+ 	if(defined(s->userDb, req->ident, (char **) &userquota) == 1){
+ 	  char qbuf[150];
+-	  sprintf(qbuf, "%d-%d-%d-%d-%d-%d", s->userquota.renew, s->userquota.seconds, userquota->status, userquota->time, userquota->last, userquota->consumed);
++	  sprintf(qbuf, "%d-%d-%d-%d-%d-%d", s->userquota.renew, (int)s->userquota.seconds, userquota->status, (int)userquota->time, (int)userquota->last, userquota->consumed);
+ 	  strcat(buf, qbuf);
+ 	} else {
+ 	  strcat(buf, "noquota");

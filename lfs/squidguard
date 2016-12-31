@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.4.1
+VER        = 1.5-beta
 
 THISAPP    = squidGuard-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9ae7b62a63631bb2dd1f474cf2bbe4dc
+$(DL_FILE)_MD5 = 85216992d14acb29d6f345608f21f268
 
 install : $(TARGET)
 
@@ -70,13 +70,27 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidguard-1.4-squid-helper-protocol.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidGuard-1.4-db5.patch
-	cd $(DIR_APP) && ./configure --prefix=/usr --datadir=/usr/share \
-		--sysconfdir=/etc --localstatedir=/var --infodir=/usr/info --mandir=/usr/man  \
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidguard/01_squidguard-1.5-beta_db_v4_up.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidguard/02_squidguard-1.5-beta_helper-protocol.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidguard/03_squidguard-1.5-beta_remove-debug-logging.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidguard/04_squidguard-1.5-beta_stdout-always.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidguard/05_squidguard-1.5-beta_fixes_htunescape-size_t-ldap_functions-unused_variables-noinput_and_nounput.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidguard/06_squidguard_version.patch
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--datadir=/usr/share \
+		--sysconfdir=/etc \
+		--localstatedir=/var \
+		--infodir=/usr/info \
+		--mandir=/usr/man  \
 		--with-sg-config=/var/ipfire/urlfilter/squidGuard.conf \
-		--with-sg-logdir=/var/log/squidGuard --with-sg-dbhome=/var/lib/squidguard \
-		--with-db=/usr --with-db-inc=/usr/include --with-db-lib=/usr/lib
+		--with-sg-logdir=/var/log/squidGuard \
+		--with-syslog=yes \
+		--with-sg-dbhome=/var/lib/squidguard \
+		--with-db=/usr \
+		--with-db-inc=/usr/include \
+		--with-db-lib=/usr/lib
+
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 
@@ -92,7 +106,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 755 /var/ipfire/urlfilter/bin/prebuild.pl
 	cp -f  $(DIR_CONF)/urlfilter/autoupdate.pl /var/ipfire/urlfilter/bin/autoupdate.pl
 	chmod 755 /var/ipfire/urlfilter/bin/autoupdate.pl
-	echo "1.7.1" > /var/ipfire/urlfilter/version
+	echo "1.5-beta" > /var/ipfire/urlfilter/version
 	
 	# Wrapper
 	cp -f  $(DIR_CONF)/urlfilter/redirect_wrapper /usr/sbin

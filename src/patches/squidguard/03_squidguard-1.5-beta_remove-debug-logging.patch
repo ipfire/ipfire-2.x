@@ -1,0 +1,66 @@
+--- a/src/sg.y.in	2014-04-14 16:23:39.183396677 +0200
++++ b/src/sg.y.in	2014-04-14 16:24:19.000000000 +0200
+@@ -795,9 +795,9 @@
+ {
+   struct Source *sp;
+   sp = lastSource;
+-
++/* DEBUG
+    @NOLOG1@ sgLogError("DEBUG: sgSourceLdapIpSearch called with: %s", url); @NOLOG2@
+-
++*/
+   if(!ldap_is_ldap_url(url)) {
+     sgLogError("%s: can't parse LDAP url %s",progname, url);
+     return;
+@@ -1311,10 +1311,12 @@
+   }
+   sp->domainlistDb = (struct sgDb *) sgCalloc(1,sizeof(struct sgDb));
+   sp->domainlistDb->type=SGDBTYPE_DOMAINLIST;
++/* DEBUG
+   sgLogError("init domainlist %s",sp->domainlist);
++*/
+   sgDbInit(sp->domainlistDb,sp->domainlist);
+   if(sp->domainlistDb->entries == 0) { /* empty database */
+-    sgLogError("domainlist empty, removed from memory");
++    sgLogError("domainlist %s empty, removed from memory",sp->domainlist);
+     sgFree(sp->domainlistDb);
+     sp->domainlistDb = NULL;
+   }
+@@ -1356,10 +1356,12 @@
+   }
+   sp->urllistDb = (struct sgDb *) sgCalloc(1,sizeof(struct sgDb));
+   sp->urllistDb->type=SGDBTYPE_URLLIST;
++/* DEBUG
+   sgLogError("init urllist %s",sp->urllist);
++*/
+   sgDbInit(sp->urllistDb,sp->urllist);
+   if(sp->urllistDb->entries == 0) { /* empty database */
+-    sgLogError("urllist empty, removed from memory");
++    sgLogError("urllist empty %s, removed from memory",sp->urllist);
+     sgFree(sp->urllistDb);
+     sp->urllistDb = NULL;
+   }
+@@ -2773,9 +2773,9 @@
+        char *interval;
+        struct UserInfo *userinfo;
+        static struct UserInfo info;
+-
++/* DEBUG
+ @NOLOG1@  sgLogError("DEBUG: sgFindUser called with: %s", ident);  @NOLOG2@
+-
++*/
+        /* defined in the userDB? */
+        if(defined(src->userDb, ident, (char **) &userinfo) == 1) {
+ #ifdef HAVE_LIBLDAP
+--- a/src/sgDb.c	2014-04-17 08:53:29.961367395 +0200
++++ b/src/sgDb.c	2014-04-17 08:53:58.000000000 +0200
+@@ -48,7 +48,9 @@
+     strcat(dbfile,".db");
+     if(stat(dbfile,&st) == 0){
+       if(!createdb){
++/* DEBUG
+ 	sgLogNotice("INFO: loading dbfile %s",dbfile);
++*/
+       }
+     } else {
+       if(!createdb){
