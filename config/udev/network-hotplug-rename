@@ -69,7 +69,7 @@ for zone in ${ZONES}; do
 	# print the name to which udev will rename it.
 	case "${!mode}" in
 		bridge)
-			echo "${!device}phys"
+			echo "${!device%0}phys0"
 			;;
 
 		macvtap)
@@ -78,7 +78,7 @@ for zone in ${ZONES}; do
 				logger -t network "MACVTAP mode is not supported for wireless devices"
 				echo "${!device}"
 			else
-				echo "${!device}phys"
+				echo "${!device%0}phys0"
 			fi
 			;;
 
