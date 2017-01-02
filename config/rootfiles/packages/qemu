@@ -1,4 +1,6 @@
 lib/udev/rules.d/65-kvm.rules
+usr/bin/ivshmem-client
+usr/bin/ivshmem-server
 usr/bin/qemu
 usr/bin/qemu-arm
 usr/bin/qemu-ga
@@ -13,10 +15,10 @@ usr/bin/qemu-x86_64
 usr/libexec/qemu-bridge-helper
 #usr/share/doc/qemu
 #usr/share/doc/qemu/qemu-doc.html
-#usr/share/doc/qemu/qemu-tech.html
 #usr/share/doc/qemu/qmp-commands.txt
 #usr/share/man/man1/qemu-img.1
 #usr/share/man/man1/qemu.1
+#usr/share/man/man8/qemu-ga.8
 #usr/share/man/man8/qemu-nbd.8
 #usr/share/qemu
 usr/share/qemu/QEMU,cgthree.bin
@@ -26,11 +28,13 @@ usr/share/qemu/bamboo.dtb
 usr/share/qemu/bios-256k.bin
 usr/share/qemu/bios.bin
 usr/share/qemu/efi-e1000.rom
+usr/share/qemu/efi-e1000e.rom
 usr/share/qemu/efi-eepro100.rom
 usr/share/qemu/efi-ne2k_pci.rom
 usr/share/qemu/efi-pcnet.rom
 usr/share/qemu/efi-rtl8139.rom
 usr/share/qemu/efi-virtio.rom
+usr/share/qemu/efi-vmxnet3.rom
 usr/share/qemu/keymaps
 usr/share/qemu/keymaps/ar
 usr/share/qemu/keymaps/bepo
@@ -71,6 +75,7 @@ usr/share/qemu/keymaps/th
 usr/share/qemu/keymaps/tr
 usr/share/qemu/kvmvapic.bin
 usr/share/qemu/linuxboot.bin
+usr/share/qemu/linuxboot_dma.bin
 usr/share/qemu/multiboot.bin
 usr/share/qemu/openbios-ppc
 usr/share/qemu/openbios-sparc32
@@ -89,9 +94,10 @@ usr/share/qemu/qemu-icon.bmp
 usr/share/qemu/qemu_logo_no_text.svg
 usr/share/qemu/s390-ccw.img
 usr/share/qemu/sgabios.bin
+usr/share/qemu/skiboot.lid
 usr/share/qemu/slof.bin
 usr/share/qemu/spapr-rtas.bin
-usr/share/qemu/trace-events
+usr/share/qemu/trace-events-all
 usr/share/qemu/u-boot.e500
 usr/share/qemu/vgabios-cirrus.bin
 usr/share/qemu/vgabios-qxl.bin
@@ -100,7 +106,3 @@ usr/share/qemu/vgabios-virtio.bin
 usr/share/qemu/vgabios-vmware.bin
 usr/share/qemu/vgabios.bin
 #usr/var/run
-usr/bin/ivshmem-client
-usr/bin/ivshmem-server
-#usr/share/man/man8/qemu-ga.8
-
