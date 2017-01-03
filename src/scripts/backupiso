@@ -2,11 +2,11 @@
 arch=$(uname -m)
 
 case $arch in
-	"i?86")
+	i?86)
 		arch="i586"
 		echo "Your arch is $arch"
 		;;
-	"x86_64")
+	x86_64)
 		arch="x86_64"
 		echo "Your arch is $arch"
 		;;
