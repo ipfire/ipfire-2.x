@@ -1246,6 +1246,7 @@
 'green interface' => 'Green Interface',
 'grouptype' => 'Grouptype:',
 'guaranteed bandwith' => 'Guaranteed bandwith',
+'guardian' => 'Guardian',
 'guest ok' => 'allow guests to access',
 'gui settings' => 'GUI Settings',
 'gz with key' => 'Only an encrypted archive can be restored on this machine.',
