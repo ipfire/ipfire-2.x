@@ -102,6 +102,19 @@ sub bin2ip($) {
 	return $address;
 }
 
+#Takes two network addresses and compares them against each other
+#returns true if equal or false if not
+sub network_equal{
+	my $network1 = shift;
+	my $network2 = shift;
+	my $bin1 = &network2bin($network1);
+	my $bin2 = &network2bin($network2);
+	if ($bin1 eq $bin2){
+		return 1;
+	}
+	return 0;
+}
+
 # Takes a network in either a.b.c.d/a.b.c.d or a.b.c.d/e notation
 # and will return an 32 bit integer representing the start
 # address and an other one representing the network mask.
