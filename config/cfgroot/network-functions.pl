@@ -102,16 +102,19 @@ sub bin2ip($) {
 	return $address;
 }
 
-#Takes two network addresses and compares them against each other
-#returns true if equal or false if not
-sub network_equal{
+# Takes two network addresses, compares them against each other
+# and returns true if equal or false if not
+sub network_equal {
 	my $network1 = shift;
 	my $network2 = shift;
+
 	my $bin1 = &network2bin($network1);
 	my $bin2 = &network2bin($network2);
-	if ($bin1 eq $bin2){
+
+	if ($bin1 eq $bin2) {
 		return 1;
 	}
+
 	return 0;
 }
 
