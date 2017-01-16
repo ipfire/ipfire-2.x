@@ -37,7 +37,6 @@ postfix:x:107:
 postdrop:x:108:
 clamav:x:109:
 amavis:x:110:
-mldonkey:x:111:
 audio:x:112:
 video:x:113:
 asterisk:x:114:

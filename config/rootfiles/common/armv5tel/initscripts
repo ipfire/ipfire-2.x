@@ -53,7 +53,6 @@ etc/rc.d/init.d/mISDN
 #etc/rc.d/init.d/miau
 #etc/rc.d/init.d/minidlna
 #etc/rc.d/init.d/miniupnpd
-#etc/rc.d/init.d/mldonkey
 etc/rc.d/init.d/modules
 #etc/rc.d/init.d/monit
 #etc/rc.d/init.d/motion
