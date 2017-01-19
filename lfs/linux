@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2016  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2017  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -172,6 +172,9 @@ endif
 
 	# update the queued trim blacklist from kernel 4.2rc1
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.43_new_qtrim_blacklist.patch
+
+	# remove eMMC EXT_CSD revision check to use newer eMMC modules
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.79_mmc_remove_EXT_CSD_revision_check.patch
 
 	# Hyper-V patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0001-Drivers-net-hyperv-Get-rid-of-the-rndis_filter_packe.patch
