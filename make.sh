@@ -500,6 +500,7 @@ buildipfire() {
   ipfiremake sqlite
   ipfiremake libffi
   ipfiremake python
+  ipfiremake python3
   ipfiremake ca-certificates
   ipfiremake fireinfo
   ipfiremake libnet
