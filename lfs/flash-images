@@ -166,6 +166,9 @@ endif
 	mount --bind /dev  $(MNThdd)/dev
 	mount --bind /sys  $(MNThdd)/sys
 
+ifeq "$(MACHINE_TYPE)" "arm"
+	cp /usr/bin/qemu-arm-static $(MNThdd)/usr/bin
+endif	
 	chroot $(MNThdd) /usr/bin/perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCacheLang"
 
 	# Create /etc/fstab
