@@ -1147,7 +1147,7 @@ toolchain)
 	;;
 gettoolchain)
 	# arbitrary name to be updated in case of new toolchain package upload
-	PACKAGE=$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE
+	PACKAGE=$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$TARGET_ARCH
 	if [ ! -f $BASEDIR/cache/toolchains/$PACKAGE.tar.gz ]; then
 		URL_TOOLCHAIN=`grep URL_TOOLCHAIN lfs/Config | awk '{ print $3 }'`
 		test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
