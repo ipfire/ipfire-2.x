@@ -5,6 +5,9 @@
 #usr/include/pcap.h
 #usr/include/pcap/bluetooth.h
 #usr/include/pcap/bpf.h
+#usr/include/pcap/can_socketcan.h
+#usr/include/pcap/dlt.h
+#usr/include/pcap/export-defs.h
 #usr/include/pcap/ipnet.h
 #usr/include/pcap/namedb.h
 #usr/include/pcap/nflog.h
@@ -15,7 +18,7 @@
 #usr/lib/libpcap.a
 usr/lib/libpcap.so
 usr/lib/libpcap.so.1
-usr/lib/libpcap.so.1.7.4
+usr/lib/libpcap.so.1.8.1
 #usr/share/man/man1/pcap-config.1
 #usr/share/man/man3/pcap.3pcap
 #usr/share/man/man3/pcap_activate.3pcap
