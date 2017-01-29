@@ -45,6 +45,9 @@ ldconfig
 # Update Language cache
 #/usr/local/bin/update-lang-cache
 
+# Restart sysklogd
+/etc/init.d/sysklogd restart
+
 # Start services
 /etc/init.d/unbound start
 /etc/init.d/squid start

@@ -24,5 +24,7 @@ var/ipfire/time
 var/ipfire/ovpn
 var/lib/alternatives
 var/log/cache
+var/log/dhcpcd.log
+var/log/messages
 var/state/dhcp/dhcpd.leases
 var/updatecache
