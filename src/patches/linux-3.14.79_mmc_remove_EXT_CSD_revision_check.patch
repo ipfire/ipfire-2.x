@@ -1,0 +1,16 @@
+diff -Naur linux-3.14.79.org/drivers/mmc/core/mmc.c linux-3.14.79/drivers/mmc/core/mmc.c
+--- linux-3.14.79.org/drivers/mmc/core/mmc.c	2016-09-11 10:00:18.000000000 +0200
++++ linux-3.14.79/drivers/mmc/core/mmc.c	2017-01-19 18:15:07.940781595 +0100
+@@ -297,12 +297,6 @@
+ 	}
+ 
+ 	card->ext_csd.rev = ext_csd[EXT_CSD_REV];
+-	if (card->ext_csd.rev > 7) {
+-		pr_err("%s: unrecognised EXT_CSD revision %d\n",
+-			mmc_hostname(card->host), card->ext_csd.rev);
+-		err = -EINVAL;
+-		goto out;
+-	}
+ 
+ 	card->ext_csd.raw_sectors[0] = ext_csd[EXT_CSD_SEC_CNT + 0];
+ 	card->ext_csd.raw_sectors[1] = ext_csd[EXT_CSD_SEC_CNT + 1];

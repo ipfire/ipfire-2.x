@@ -707,7 +707,6 @@ WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
 WARNING: untranslated string: fwhost cust geoipgrp
 WARNING: untranslated string: fwhost err hostip
-WARNING: untranslated string: guardian
 WARNING: untranslated string: guardian block a host
 WARNING: untranslated string: guardian block httpd brute-force
 WARNING: untranslated string: guardian block owncloud brute-force

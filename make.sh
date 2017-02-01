@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2016 IPFire Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2017 IPFire Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.19"							# Version number
-CORE="108"							# Core Level (Filename)
-PAKFIRE_CORE="108"						# Core Level (PAKFIRE)
+CORE="109"							# Core Level (Filename)
+PAKFIRE_CORE="109"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -500,6 +500,7 @@ buildipfire() {
   ipfiremake sqlite
   ipfiremake libffi
   ipfiremake python
+  ipfiremake python3
   ipfiremake ca-certificates
   ipfiremake fireinfo
   ipfiremake libnet

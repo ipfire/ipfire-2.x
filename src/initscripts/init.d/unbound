@@ -18,6 +18,9 @@ USE_FORWARDERS=1
 # Cache any local zones for 60 seconds
 LOCAL_TTL=60
 
+# EDNS buffer size
+EDNS_DEFAULT_BUFFER_SIZE=4096
+
 # Load optional configuration
 [ -e "/etc/sysconfig/unbound" ] && . /etc/sysconfig/unbound
 
@@ -85,6 +88,25 @@ update_forwarders() {
 					;;
 			esac
 		done
+
+		# Determine EDNS buffer size
+		local new_edns_buffer_size=${EDNS_DEFAULT_BUFFER_SIZE}
+
+		for ns in ${forwarders}; do
+			local edns_buffer_size=$(ns_determine_edns_buffer_size ${ns})
+			if [ -n "${edns_buffer_size}" ]; then
+				if [ ${edns_buffer_size} -lt ${new_edns_buffer_size} ]; then
+					new_edns_buffer_size=${edns_buffer_size}
+				fi
+			fi
+		done
+
+		if [ ${new_edns_buffer_size} -lt ${EDNS_DEFAULT_BUFFER_SIZE} ]; then
+			boot_mesg "EDNS buffer size reduced to ${new_edns_buffer_size}" ${WARNING}
+			echo_warning
+
+			unbound-control -q set_option edns-buffer-size: ${new_edns_buffer_size}
+		fi
 
 		# Show warning for any broken upstream name servers
 		if [ -n "${broken_forwarders}" ]; then
@@ -249,6 +271,7 @@ get_memory_amount() {
 
 test_name_server() {
 	local ns=${1}
+	local args
 
 	# Return codes:
 	# 0	DNSSEC validating
@@ -259,9 +282,15 @@ test_name_server() {
 	# Exit when the server is not reachable
 	ns_is_online ${ns} || return 1
 
+	# Determine the maximum edns buffer size that works
+	local edns_buffer_size=$(ns_determine_edns_buffer_size ${ns})
+	if [ -n "${edns_buffer_size}" ]; then
+		args="${args} +bufsize=${edns_buffer_size}"
+	fi
+
 	local errors
 	for rr in DNSKEY DS RRSIG; do
-		if ! ns_forwards_${rr} ${ns}; then
+		if ! ns_forwards_${rr} ${ns} ${args}; then
 			errors="${errors} ${rr}"
 		fi
 	done
@@ -271,7 +300,7 @@ test_name_server() {
 		return 3
 	fi
 
-	if ns_is_validating ${ns}; then
+	if ns_is_validating ${ns} ${args}; then
 		# Return 0 if validating
 		return 0
 	else
@@ -283,41 +312,62 @@ test_name_server() {
 # Sends an A query to the nameserver w/o DNSSEC
 ns_is_online() {
 	local ns=${1}
+	shift
 
-	dig @${ns} +nodnssec A ${TEST_DOMAIN} >/dev/null
+	dig @${ns} +nodnssec A ${TEST_DOMAIN} $@ >/dev/null
 }
 
 # Resolving ${TEST_DOMAIN_FAIL} will fail if the nameserver is validating
 ns_is_validating() {
 	local ns=${1}
+	shift
 
-	dig @${ns} A ${TEST_DOMAIN_FAIL} | grep -q SERVFAIL
+	dig @${ns} A ${TEST_DOMAIN_FAIL} $@ | grep -q SERVFAIL
 }
 
 # Checks if we can retrieve the DNSKEY for this domain.
 # dig will print the SOA if nothing was found
 ns_forwards_DNSKEY() {
 	local ns=${1}
+	shift
 
-	dig @${ns} DNSKEY ${TEST_DOMAIN} | grep -qv SOA
+	dig @${ns} DNSKEY ${TEST_DOMAIN} $@ | grep -qv SOA
 }
 
 ns_forwards_DS() {
 	local ns=${1}
+	shift
 
-	dig @${ns} DS ${TEST_DOMAIN} | grep -qv SOA
+	dig @${ns} DS ${TEST_DOMAIN} $@ | grep -qv SOA
 }
 
 ns_forwards_RRSIG() {
 	local ns=${1}
+	shift
 
-	dig @${ns} +dnssec A ${TEST_DOMAIN} | grep -q RRSIG
+	dig @${ns} +dnssec A ${TEST_DOMAIN} $@ | grep -q RRSIG
 }
 
 ns_supports_tcp() {
 	local ns=${1}
+	shift
 
-	dig @${ns} +tcp A ${TEST_DOMAIN} >/dev/null || return 1
+	dig @${ns} +tcp A ${TEST_DOMAIN} $@ >/dev/null || return 1
+}
+
+ns_determine_edns_buffer_size() {
+	local ns=${1}
+	shift
+
+	local b
+	for b in 4096 2048 1500 1480 1464 1400 1280 512; do
+		if dig @${ns} +dnssec +bufsize=${b} A ${TEST_DOMAIN} $@ >/dev/null; then
+			echo "${b}"
+			return 0
+		fi
+	done
+
+	return 1
 }
 
 case "$1" in
@@ -394,6 +444,7 @@ case "$1" in
 				;;
 			*)
 				echo "Test failed for an unknown reason"
+				exit ${ret}
 				;;
 		esac
 
@@ -401,6 +452,11 @@ case "$1" in
 			echo "${ns} supports TCP fallback"
 		else
 			echo "${ns} does not support TCP fallback"
+		fi
+
+		edns_buffer_size=$(ns_determine_edns_buffer_size ${ns})
+		if [ -n "${edns_buffer_size}" ]; then
+			echo "EDNS buffer size for ${ns}: ${edns_buffer_size}"
 		fi
 
 		exit ${ret}

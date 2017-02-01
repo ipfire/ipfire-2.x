@@ -1,9 +1,25 @@
 #!/bin/sh
+arch=$(uname -m)
+
+case $arch in
+	i?86)
+		arch="i586"
+		echo "Your arch is $arch"
+		;;
+	x86_64)
+		arch="x86_64"
+		echo "Your arch is $arch"
+		;;
+	*)
+		echo "Arch is not supported"
+		exit 1
+		;;
+esac
 
 COREVER=$(cat /opt/pakfire/db/core/mine)
 # FIXME: edit this lines before release
 URL="http://download.ipfire.org/releases/ipfire-2.x/2.19-core$COREVER/"
-ISO="ipfire-2.19.i586-full-core$COREVER.iso"
+ISO="ipfire-2.19.$arch-full-core$COREVER.iso"
 
 if [ -z $1 ]; then
 	echo usage: $0 backup-file
@@ -15,7 +31,7 @@ TS=$1
 mkdir -p /var/tmp/backupiso
 cd /var/tmp/backupiso
 
-if [ ! -e ${ISO} ]
+if [ ! -f ${ISO} ]
 then
 	echo "Fetching ${URL}${ISO}"
 	wget --quiet -c ${URL}${ISO}
@@ -26,7 +42,7 @@ wget --quiet -O ${ISO}.md5 ${URL}${ISO}.md5
 
 echo "Checking md5 of ${ISO}"
 md5sum --status -c ${ISO}.md5
-if [ $? -eq 0 -o $? -eq 24 ]
+if [ $? -eq 0 ] || [ $? -eq 24 ]
 then
 	echo "md5 is OK"
 else
@@ -35,7 +51,7 @@ else
 	wget --quiet -O ${ISO} ${URL}${ISO}
 	echo "Checking again md5 of ${ISO}"
 	md5sum --status -c ${ISO}.md5
-	if [ $? -eq 0 -o $? -eq 24 ]
+	if [ $? -eq 0 ] || [ $? -eq 24 ]
 	then
 		echo "md5 is OK"
 	else

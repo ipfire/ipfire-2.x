@@ -1,0 +1,9 @@
+etc/system-release
+etc/issue
+lib/udev/rules.d/60-net.rules
+lib/udev/network-hotplug-bridges
+lib/udev/network-hotplug-rename
+usr/local/bin/backupiso
+usr/local/bin/syslogdctrl
+var/ipfire/general-functions.pl
+var/ipfire/network-functions.pl

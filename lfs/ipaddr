@@ -70,7 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && install -m 0644 ipaddr.py /usr/lib/python*
+	cd $(DIR_APP) && install -m 0644 ipaddr.py /usr/lib/python2*
 	/usr/bin/python -c "import ipaddr"
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
