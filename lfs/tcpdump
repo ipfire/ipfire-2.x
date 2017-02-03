@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.8.1
+VER        = 4.9.0
 
 THISAPP    = tcpdump-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tcpdump
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 32f57943649f276e09236ba66622bb0c
+$(DL_FILE)_MD5 = 2b83364eef53b63ca3181b4eb56dab0c
 
 install : $(TARGET)
 
@@ -80,7 +80,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && \
 		./configure \
 			--prefix=/usr \
-			--disable-nls \
 			--with-crypto \
 			--without-smi
 
