@@ -1913,7 +1913,7 @@
 'red1' => 'ROT',
 'references' => 'Referenzen',
 'refresh' => 'Aktualisieren',
-'refresh index page while connected' => 'Aktualisere index.cgi Seite während der Verbindung',
+'refresh index page while connected' => 'Aktualisiere index.cgi Seite während der Verbindung',
 'refresh update list' => 'Aktualisiere Update-Liste',
 'registered user rules' => 'Sourcefire VRT Regeln für registrierte Benutzer',
 'released' => 'Freigegeben',
