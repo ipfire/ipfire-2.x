@@ -2377,7 +2377,7 @@
 'urlfilter category log' => 'Dividere log per categorie',
 'urlfilter category name error' => 'Blacklist category name required',
 'urlfilter client' => 'Client',
-'urlfilter configuration' => 'Configurazione filttri per URL',
+'urlfilter configuration' => 'Configurazione filtri per URL',
 'urlfilter constraint definition' => 'Impostazione',
 'urlfilter constraint outside' => 'outside',
 'urlfilter constraint within' => 'within',
