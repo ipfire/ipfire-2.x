@@ -1,0 +1,72 @@
+------------------------------------------------------------
+revno: 14142
+revision-id: squid3@treenet.co.nz-20170208054033-pxqn8rs4yu713ijq
+parent: squid3@treenet.co.nz-20170128035415-bpwt79jsobv1rqx3
+author: Christos Tsantilas <chtsanti@users.sourceforge.net>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Wed 2017-02-08 18:40:33 +1300
+message:
+  Bump SSL client on [more] errors encountered before ssl_bump evaluation
+  
+  ... such as ERR_ACCESS_DENIED with HTTP/403 Forbidden triggered by an
+  http_access deny rule match.
+  
+  The old code allowed ssl_bump step1 rules to be evaluated in the
+  presence of an error. An ssl_bump splicing decision would then trigger
+  the useless "send the error to the client now" processing logic instead
+  of going down the "to serve an error, bump the client first" path.
+  
+  Furthermore, the ssl_bump evaluation result itself could be surprising
+  to the admin because ssl_bump (and most other) rules are not meant to be
+  evaluated for a transaction in an error state. This complicated triage.
+  
+  Also polished an important comment to clarify that we want to bump on
+  error if (and only if) the SslBump feature is applicable to the failed
+  transaction (i.e., if the ssl_bump rules would have been evaluated if
+  there were no prior errors). The old comment could have been
+  misinterpreted that ssl_bump rules must be evaluated to allow an
+  "ssl_bump splice" match to hide the error.
+  
+  This is a Measurement Factory project.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20170208054033-pxqn8rs4yu713ijq
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 8c3f2a03f86aa1b1484195a63742bc4002ba2359
+# timestamp: 2017-02-08 05:51:15 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170128035415-\
+#   bpwt79jsobv1rqx3
+# 
+# Begin patch
+=== modified file 'src/client_side_request.cc'
+--- src/client_side_request.cc	2017-01-23 02:05:46 +0000
++++ src/client_side_request.cc	2017-02-08 05:40:33 +0000
+@@ -1442,6 +1442,13 @@
+         return false;
+     }
+ 
++    if (error) {
++        debugs(85, 5, "SslBump applies. Force bump action on error " << err_type_str[(error->type >= ERR_NONE && error->type < ERR_MAX) ? error->type : ERR_NONE]);
++        http->sslBumpNeed(Ssl::bumpBump);
++        http->al->ssl.bumpMode = Ssl::bumpBump;
++        return false;
++    }
++
+     // Do not bump during authentication: clients would not proxy-authenticate
+     // if we delay a 407 response and respond with 200 OK to CONNECT.
+     if (error && error->httpStatus == Http::scProxyAuthenticationRequired) {
+@@ -1781,8 +1788,9 @@
+     }
+ 
+ #if USE_OPENSSL
+-    // We need to check for SslBump even if the calloutContext->error is set
+-    // because bumping may require delaying the error until after CONNECT.
++    // Even with calloutContext->error, we call sslBumpAccessCheck() to decide
++    // whether SslBump applies to this transaction. If it applies, we will
++    // attempt to bump the client to serve the error.
+     if (!calloutContext->sslBumpCheckDone) {
+         calloutContext->sslBumpCheckDone = true;
+         if (calloutContext->sslBumpAccessCheck())
+
