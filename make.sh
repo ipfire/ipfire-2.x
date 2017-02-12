@@ -428,10 +428,10 @@ buildipfire() {
   case "${TARGET_ARCH}" in
 	x86_64)
 		ipfiremake linux			KCFG=""
-		ipfiremake backports			KCFG=""
-		ipfiremake e1000e			KCFG=""
-		ipfiremake igb				KCFG=""
-		ipfiremake ixgbe			KCFG=""
+#		ipfiremake backports			KCFG=""
+#		ipfiremake e1000e			KCFG=""
+#		ipfiremake igb				KCFG=""
+#		ipfiremake ixgbe			KCFG=""
 		ipfiremake xtables-addons		KCFG=""
 		ipfiremake linux-initrd			KCFG=""
 		;;

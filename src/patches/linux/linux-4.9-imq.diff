@@ -1,8 +1,8 @@
 diff --git a/drivers/net/Kconfig b/drivers/net/Kconfig
-index 494b888..851e01f 100644
+index 95c32f2..93fada5 100644
 --- a/drivers/net/Kconfig
 +++ b/drivers/net/Kconfig
-@@ -203,6 +203,125 @@ config RIONET_RX_SIZE
+@@ -260,6 +260,125 @@ config RIONET_RX_SIZE
  	depends on RIONET
  	default "128"
  
@@ -17,7 +17,7 @@ index 494b888..851e01f 100644
 +	  and distribute bandwidth among them. Iptables is used to specify
 +	  through which IMQ device, if any, packets travel.
 +
-+	  More information at: http://www.linuximq.net/
++	  More information at: https://github.com/imq/linuximq
 +
 +	  To compile this driver as a module, choose M here: the module
 +	  will be called imq.  If unsure, say N.
@@ -45,7 +45,7 @@ index 494b888..851e01f 100644
 +	  This settings are specially usefull when trying to use IMQ
 +	  to shape NATed clients.
 +
-+	  More information can be found at: www.linuximq.net
++	  More information can be found at: https://github.com/imq/linuximq
 +
 +	  If not sure leave the default settings alone.
 +
@@ -60,7 +60,7 @@ index 494b888..851e01f 100644
 +	  PREROUTING:   After NAT
 +	  POSTROUTING:  After NAT
 +
-+	  More information can be found at: www.linuximq.net
++	  More information can be found at: https://github.com/imq/linuximq
 +
 +	  If not sure leave the default settings alone.
 +
@@ -75,7 +75,7 @@ index 494b888..851e01f 100644
 +	  PREROUTING:   After NAT
 +	  POSTROUTING:  Before NAT
 +
-+	  More information can be found at: www.linuximq.net
++	  More information can be found at: https://github.com/imq/linuximq
 +
 +	  If not sure leave the default settings alone.
 +
@@ -90,7 +90,7 @@ index 494b888..851e01f 100644
 +	  PREROUTING:   Before NAT
 +	  POSTROUTING:  After NAT
 +
-+	  More information can be found at: www.linuximq.net
++	  More information can be found at: https://github.com/imq/linuximq
 +
 +	  If not sure leave the default settings alone.
 +
@@ -105,7 +105,7 @@ index 494b888..851e01f 100644
 +	  PREROUTING:   Before NAT
 +	  POSTROUTING:  Before NAT
 +
-+	  More information can be found at: www.linuximq.net
++	  More information can be found at: https://github.com/imq/linuximq
 +
 +	  If not sure leave the default settings alone.
 +
@@ -121,31 +121,31 @@ index 494b888..851e01f 100644
 +
 +	  The default value is 16.
 +
-+	  More information can be found at: www.linuximq.net
++	  More information can be found at: https://github.com/imq/linuximq
 +
 +	  If not sure leave the default settings alone.
 +
  config TUN
  	tristate "Universal TUN/TAP device driver support"
- 	select CRC32
+ 	depends on INET
 diff --git a/drivers/net/Makefile b/drivers/net/Makefile
-index 3fef8a8..12dafc0 100644
+index 7336cbd..d6d7ad4 100644
 --- a/drivers/net/Makefile
 +++ b/drivers/net/Makefile
-@@ -9,6 +9,7 @@ obj-$(CONFIG_BONDING) += bonding/
- obj-$(CONFIG_DUMMY) += dummy.o
+@@ -11,6 +11,7 @@ obj-$(CONFIG_DUMMY) += dummy.o
  obj-$(CONFIG_EQUALIZER) += eql.o
  obj-$(CONFIG_IFB) += ifb.o
+ obj-$(CONFIG_MACSEC) += macsec.o
 +obj-$(CONFIG_IMQ) += imq.o
  obj-$(CONFIG_MACVLAN) += macvlan.o
  obj-$(CONFIG_MACVTAP) += macvtap.o
  obj-$(CONFIG_MII) += mii.o
 diff --git a/drivers/net/imq.c b/drivers/net/imq.c
 new file mode 100644
-index 0000000..2140535
+index 0000000..bc3b997
 --- /dev/null
 +++ b/drivers/net/imq.c
-@@ -0,0 +1,1011 @@
+@@ -0,0 +1,907 @@
 +/*
 + *             Pseudo-driver for the intermediate queue device.
 + *
@@ -158,144 +158,7 @@ index 0000000..2140535
 + *
 + *            The first version was written by Martin Devera, <devik@cdi.cz>
 + *
-+ * Credits:    Jan Rafaj <imq2t@cedric.vabo.cz>
-+ *              - Update patch to 2.4.21
-+ *             Sebastian Strollo <sstrollo@nortelnetworks.com>
-+ *              - Fix "Dead-loop on netdevice imq"-issue
-+ *             Marcel Sebek <sebek64@post.cz>
-+ *              - Update to 2.6.2-rc1
-+ *
-+ *	       After some time of inactivity there is a group taking care
-+ *	       of IMQ again: http://www.linuximq.net
-+ *
-+ *
-+ *	       2004/06/30 - New version of IMQ patch to kernels <=2.6.7
-+ *             including the following changes:
-+ *
-+ *	       - Correction of ipv6 support "+"s issue (Hasso Tepper)
-+ *	       - Correction of imq_init_devs() issue that resulted in
-+ *	       kernel OOPS unloading IMQ as module (Norbert Buchmuller)
-+ *	       - Addition of functionality to choose number of IMQ devices
-+ *	       during kernel config (Andre Correa)
-+ *	       - Addition of functionality to choose how IMQ hooks on
-+ *	       PRE and POSTROUTING (after or before NAT) (Andre Correa)
-+ *	       - Cosmetic corrections (Norbert Buchmuller) (Andre Correa)
-+ *
-+ *
-+ *             2005/12/16 - IMQ versions between 2.6.7 and 2.6.13 were
-+ *             released with almost no problems. 2.6.14-x was released
-+ *             with some important changes: nfcache was removed; After
-+ *             some weeks of trouble we figured out that some IMQ fields
-+ *             in skb were missing in skbuff.c - skb_clone and copy_skb_header.
-+ *             These functions are correctly patched by this new patch version.
-+ *
-+ *             Thanks for all who helped to figure out all the problems with
-+ *             2.6.14.x: Patrick McHardy, Rune Kock, VeNoMouS, Max CtRiX,
-+ *             Kevin Shanahan, Richard Lucassen, Valery Dachev (hopefully
-+ *             I didn't forget anybody). I apologize again for my lack of time.
-+ *
-+ *
-+ *             2008/06/17 - 2.6.25 - Changed imq.c to use qdisc_run() instead
-+ *             of qdisc_restart() and moved qdisc_run() to tasklet to avoid
-+ *             recursive locking. New initialization routines to fix 'rmmod' not
-+ *             working anymore. Used code from ifb.c. (Jussi Kivilinna)
-+ *
-+ *             2008/08/06 - 2.6.26 - (JK)
-+ *              - Replaced tasklet with 'netif_schedule()'.
-+ *              - Cleaned up and added comments for imq_nf_queue().
-+ *
-+ *             2009/04/12
-+ *              - Add skb_save_cb/skb_restore_cb helper functions for backuping
-+ *                control buffer. This is needed because qdisc-layer on kernels
-+ *                2.6.27 and newer overwrite control buffer. (Jussi Kivilinna)
-+ *              - Add better locking for IMQ device. Hopefully this will solve
-+ *                SMP issues. (Jussi Kivilinna)
-+ *              - Port to 2.6.27
-+ *              - Port to 2.6.28
-+ *              - Port to 2.6.29 + fix rmmod not working
-+ *
-+ *             2009/04/20 - (Jussi Kivilinna)
-+ *              - Use netdevice feature flags to avoid extra packet handling
-+ *                by core networking layer and possibly increase performance.
-+ *
-+ *             2009/09/26 - (Jussi Kivilinna)
-+ *              - Add imq_nf_reinject_lockless to fix deadlock with
-+ *                imq_nf_queue/imq_nf_reinject.
-+ *
-+ *             2009/12/08 - (Jussi Kivilinna)
-+ *              - Port to 2.6.32
-+ *              - Add check for skb->nf_queue_entry==NULL in imq_dev_xmit()
-+ *              - Also add better error checking for skb->nf_queue_entry usage
-+ *
-+ *             2010/02/25 - (Jussi Kivilinna)
-+ *              - Port to 2.6.33
-+ *
-+ *             2010/08/15 - (Jussi Kivilinna)
-+ *              - Port to 2.6.35
-+ *              - Simplify hook registration by using nf_register_hooks.
-+ *              - nf_reinject doesn't need spinlock around it, therefore remove
-+ *                imq_nf_reinject function. Other nf_reinject users protect
-+ *                their own data with spinlock. With IMQ however all data is
-+ *                needed is stored per skbuff, so no locking is needed.
-+ *              - Changed IMQ to use 'separate' NF_IMQ_QUEUE instead of
-+ *                NF_QUEUE, this allows working coexistance of IMQ and other
-+ *                NF_QUEUE users.
-+ *              - Make IMQ multi-queue. Number of IMQ device queues can be
-+ *                increased with 'numqueues' module parameters. Default number
-+ *                of queues is 1, in other words by default IMQ works as
-+ *                single-queue device. Multi-queue selection is based on
-+ *                IFB multi-queue patch by Changli Gao <xiaosuo@gmail.com>.
-+ *
-+ *             2011/03/18 - (Jussi Kivilinna)
-+ *              - Port to 2.6.38
-+ *
-+ *             2011/07/12 - (syoder89@gmail.com)
-+ *              - Crash fix that happens when the receiving interface has more
-+ *                than one queue (add missing skb_set_queue_mapping in
-+ *                imq_select_queue).
-+ *
-+ *             2011/07/26 - (Jussi Kivilinna)
-+ *              - Add queue mapping checks for packets exiting IMQ.
-+ *              - Port to 3.0
-+ *
-+ *             2011/08/16 - (Jussi Kivilinna)
-+ *              - Clear IFF_TX_SKB_SHARING flag that was added for linux 3.0.2
-+ *
-+ *             2011/11/03 - Germano Michel <germanomichel@gmail.com>
-+ *              - Fix IMQ for net namespaces
-+ *
-+ *             2011/11/04 - Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-+ *              - Port to 3.1
-+ *              - Clean-up, move 'get imq device pointer by imqX name' to
-+ *                separate function from imq_nf_queue().
-+ *
-+ *             2012/01/05 - Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-+ *              - Port to 3.2
-+ *
-+ *             2012/03/19 - Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-+ *              - Port to 3.3
-+ *
-+ *             2012/12/12 - Jussi Kivilinna <jussi.kivilinna@mbnet.fi>
-+ *              - Port to 3.7
-+ *              - Fix checkpatch.pl warnings
-+ *
-+ *             2013/09/10 - Jussi Kivilinna <jussi.kivilinna@iki.fi>
-+ *              - Fixed GSO handling for 3.10, see imq_nf_queue() for comments.
-+ *              - Don't copy skb->cb_next when copying or cloning skbuffs.
-+ *
-+ *             2013/09/16 - Jussi Kivilinna <jussi.kivilinna@iki.fi>
-+ *              - Port to 3.11
-+ *
-+ *             2013/11/12 - Jussi Kivilinna <jussi.kivilinna@iki.fi>
-+ *              - Port to 3.12
-+ *
-+ *             2014/02/07 - Jussi Kivilinna <jussi.kivilinna@iki.fi>
-+ *              - Port to 3.13
-+ *
-+ *	       Also, many thanks to pablo Sebastian Greco for making the initial
-+ *	       patch and to those who helped the testing.
-+ *
-+ *             More info at: http://www.linuximq.net/ (Andre Correa)
++ *			   See Creditis.txt
 + */
 +
 +#include <linux/module.h>
@@ -331,7 +194,6 @@ index 0000000..2140535
 +	{
 +	/* imq_ingress_ipv4 */
 +		.hook		= imq_nf_hook,
-+		.owner		= THIS_MODULE,
 +		.pf		= PF_INET,
 +		.hooknum	= NF_INET_PRE_ROUTING,
 +#if defined(CONFIG_IMQ_BEHAVIOR_BA) || defined(CONFIG_IMQ_BEHAVIOR_BB)
@@ -343,7 +205,6 @@ index 0000000..2140535
 +	{
 +	/* imq_egress_ipv4 */
 +		.hook		= imq_nf_hook,
-+		.owner		= THIS_MODULE,
 +		.pf		= PF_INET,
 +		.hooknum	= NF_INET_POST_ROUTING,
 +#if defined(CONFIG_IMQ_BEHAVIOR_AA) || defined(CONFIG_IMQ_BEHAVIOR_BA)
@@ -356,7 +217,6 @@ index 0000000..2140535
 +	{
 +	/* imq_ingress_ipv6 */
 +		.hook		= imq_nf_hook,
-+		.owner		= THIS_MODULE,
 +		.pf		= PF_INET6,
 +		.hooknum	= NF_INET_PRE_ROUTING,
 +#if defined(CONFIG_IMQ_BEHAVIOR_BA) || defined(CONFIG_IMQ_BEHAVIOR_BB)
@@ -368,7 +228,6 @@ index 0000000..2140535
 +	{
 +	/* imq_egress_ipv6 */
 +		.hook		= imq_nf_hook,
-+		.owner		= THIS_MODULE,
 +		.pf		= PF_INET6,
 +		.hooknum	= NF_INET_POST_ROUTING,
 +#if defined(CONFIG_IMQ_BEHAVIOR_AA) || defined(CONFIG_IMQ_BEHAVIOR_BA)
@@ -391,6 +250,7 @@ index 0000000..2140535
 +#define IMQ_MAX_QUEUES 32
 +static int numqueues = 1;
 +static u32 imq_hashrnd;
++static int imq_dev_accurate_stats = 1;
 +
 +static inline __be16 pppoe_proto(const struct sk_buff *skb)
 +{
@@ -605,7 +465,7 @@ index 0000000..2140535
 +	struct nf_queue_entry *entry = skb->nf_queue_entry;
 +
 +	skb->nf_queue_entry = NULL;
-+	dev->trans_start = jiffies;
++	netif_trans_update(dev);
 +
 +	dev->stats.tx_bytes += skb->len;
 +	dev->stats.tx_packets++;
@@ -677,9 +537,8 @@ index 0000000..2140535
 +{
 +	struct nf_queue_entry *entry = kmemdup(e, e->size, GFP_ATOMIC);
 +	if (entry) {
-+		if (nf_queue_entry_get_refs(entry))
++		nf_queue_entry_get_refs(entry);
 +			return entry;
-+		kfree(entry);
 +	}
 +	return NULL;
 +}
@@ -774,9 +633,6 @@ index 0000000..2140535
 +		goto out_no_dev;
 +	}
 +
-+	if (!skb_is_gso(entry->skb))
-+		return __imq_nf_queue(entry, dev);
-+
 +	/* Since 3.10.x, GSO handling moved here as result of upstream commit
 +	 * a5fedd43d5f6c94c71053a66e4c3d2e35f1731a2 (netfilter: move
 +	 * skb_gso_segment into nfnetlink_queue module).
@@ -787,7 +643,7 @@ index 0000000..2140535
 +
 +	skb = entry->skb;
 +
-+	switch (entry->pf) {
++	switch (entry->state.pf) {
 +	case NFPROTO_IPV4:
 +		skb->protocol = htons(ETH_P_IP);
 +		break;
@@ -795,6 +651,9 @@ index 0000000..2140535
 +		skb->protocol = htons(ETH_P_IPV6);
 +		break;
 +	}
++
++	if (!skb_is_gso(entry->skb))
++		return __imq_nf_queue(entry, dev);
 +
 +	nf_bridge_adjust_skb_data(skb);
 +	segs = skb_gso_segment(skb, 0);
@@ -836,8 +695,9 @@ index 0000000..2140535
 +
 +static int __imq_nf_queue(struct nf_queue_entry *entry, struct net_device *dev)
 +{
-+	struct sk_buff *skb_orig, *skb, *skb_shared;
++	struct sk_buff *skb_orig, *skb, *skb_shared, *skb_popd;
 +	struct Qdisc *q;
++	struct sk_buff *to_free = NULL;
 +	struct netdev_queue *txq;
 +	spinlock_t *root_lock;
 +	int users;
@@ -860,8 +720,6 @@ index 0000000..2140535
 +		skb->cb_next = NULL;
 +		entry->skb = skb;
 +	}
-+
-+	skb->nf_queue_entry = entry;
 +
 +	dev->stats.rx_bytes += skb->len;
 +	dev->stats.rx_packets++;
@@ -888,6 +746,7 @@ index 0000000..2140535
 +	if (unlikely(!q->enqueue))
 +		goto packet_not_eaten_by_imq_dev;
 +
++	skb->nf_queue_entry = entry;
 +	root_lock = qdisc_lock(q);
 +	spin_lock(root_lock);
 +
@@ -897,23 +756,58 @@ index 0000000..2140535
 +
 +	/* backup skb->cb, as qdisc layer will overwrite it */
 +	skb_save_cb(skb_shared);
-+	qdisc_enqueue_root(skb_shared, q); /* might kfree_skb */
-+
++	qdisc_enqueue_root(skb_shared, q, &to_free); /* might kfree_skb */
 +	if (likely(atomic_read(&skb_shared->users) == users + 1)) {
++		bool validate;
++
 +		kfree_skb(skb_shared); /* decrease reference count by one */
 +
 +		skb->destructor = &imq_skb_destructor;
++
++		skb_popd = qdisc_dequeue_skb(q, &validate);
 +
 +		/* cloned? */
 +		if (unlikely(skb_orig))
 +			kfree_skb(skb_orig); /* free original */
 +
 +		spin_unlock(root_lock);
-+		rcu_read_unlock_bh();
 +
++#if 0
 +		/* schedule qdisc dequeue */
 +		__netif_schedule(q);
++#else
++		if (likely(skb_popd)) {
++			/* Note that we validate skb (GSO, checksum, ...) outside of locks */
++			if (validate)
++        		skb_popd = validate_xmit_skb_list(skb_popd, dev);
 +
++			if (skb_popd) {
++				int dummy_ret;
++				int cpu = smp_processor_id(); /* ok because BHs are off */
++
++				txq = skb_get_tx_queue(dev, skb_popd);
++				/*
++				IMQ device will not be frozen or stoped, and it always be successful.
++				So we need not check its status and return value to accelerate.
++				*/
++				if (imq_dev_accurate_stats && txq->xmit_lock_owner != cpu) {
++					HARD_TX_LOCK(dev, txq, cpu);
++					if (!netif_xmit_frozen_or_stopped(txq)) {
++						dev_hard_start_xmit(skb_popd, dev, txq, &dummy_ret);
++					}
++					HARD_TX_UNLOCK(dev, txq);
++				} else {
++					if (!netif_xmit_frozen_or_stopped(txq)) {
++						dev_hard_start_xmit(skb_popd, dev, txq, &dummy_ret);
++					}
++				}
++			}
++		} else {
++			/* No ready skb, then schedule it */
++			__netif_schedule(q);
++		}
++#endif
++		rcu_read_unlock_bh();
 +		retval = 0;
 +		goto out;
 +	} else {
@@ -939,16 +833,16 @@ index 0000000..2140535
 +	}
 +	retval = -1;
 +out:
++	if (unlikely(to_free)) {
++		kfree_skb_list(to_free);
++	}
 +	return retval;
 +}
-+
-+static unsigned int imq_nf_hook(const struct nf_hook_ops *hook_ops,
-+				struct sk_buff *pskb,
-+				const struct net_device *indev,
-+				const struct net_device *outdev,
-+				int (*okfn)(struct sk_buff *))
++static unsigned int imq_nf_hook(void *priv,
++				struct sk_buff *skb,
++				const struct nf_hook_state *state)
 +{
-+	return (pskb->imq_flags & IMQ_F_ENQUEUE) ? NF_IMQ_QUEUE : NF_ACCEPT;
++	return (skb->imq_flags & IMQ_F_ENQUEUE) ? NF_IMQ_QUEUE : NF_ACCEPT;
 +}
 +
 +static int imq_close(struct net_device *dev)
@@ -1033,7 +927,7 @@ index 0000000..2140535
 +	struct net_device *dev;
 +	int ret;
 +
-+	dev = alloc_netdev_mq(0, "imq%d", imq_setup, numqueues);
++	dev = alloc_netdev_mq(0, "imq%d", NET_NAME_UNKNOWN, imq_setup, numqueues);
 +	if (!dev)
 +		return -ENOMEM;
 +
@@ -1109,8 +1003,8 @@ index 0000000..2140535
 +		return err;
 +	}
 +
-+	pr_info("IMQ driver loaded successfully. (numdevs = %d, numqueues = %d)\n",
-+		numdevs, numqueues);
++	pr_info("IMQ driver loaded successfully. (numdevs = %d, numqueues = %d, imq_dev_accurate_stats = %d)\n",
++		numdevs, numqueues, imq_dev_accurate_stats);
 +
 +#if defined(CONFIG_IMQ_BEHAVIOR_BA) || defined(CONFIG_IMQ_BEHAVIOR_BB)
 +	pr_info("\tHooking IMQ before NAT on PREROUTING.\n");
@@ -1150,13 +1044,15 @@ index 0000000..2140535
 +
 +module_param(numdevs, int, 0);
 +module_param(numqueues, int, 0);
++module_param(imq_dev_accurate_stats, int, 0);
 +MODULE_PARM_DESC(numdevs, "number of IMQ devices (how many imq* devices will be created)");
 +MODULE_PARM_DESC(numqueues, "number of queues per IMQ device");
-+MODULE_AUTHOR("http://www.linuximq.net");
-+MODULE_DESCRIPTION("Pseudo-driver for the intermediate queue device. See http://www.linuximq.net/ for more information.");
++MODULE_PARM_DESC(imq_dev_accurate_stats, "Notify if need the accurate imq device stats");
++
++MODULE_AUTHOR("https://github.com/imq/linuximq");
++MODULE_DESCRIPTION("Pseudo-driver for the intermediate queue device. See https://github.com/imq/linuximq/wiki for more information.");
 +MODULE_LICENSE("GPL");
 +MODULE_ALIAS_RTNL_LINK("imq");
-+
 diff --git a/include/linux/imq.h b/include/linux/imq.h
 new file mode 100644
 index 0000000..1babb09
@@ -1176,6 +1072,30 @@ index 0000000..1babb09
 +
 +#endif /* _IMQ_H */
 +
+diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
+index e16a2a9..4a1090a 100644
+--- a/include/linux/netdevice.h
++++ b/include/linux/netdevice.h
+@@ -3669,6 +3669,19 @@ static inline void netif_tx_unlock_bh(struct net_device *dev)
+ 	}						\
+ }
+ 
++#define HARD_TX_LOCK_BH(dev, txq) {           \
++    if ((dev->features & NETIF_F_LLTX) == 0) {  \
++        __netif_tx_lock_bh(txq);      \
++    }                       \
++}
++
++#define HARD_TX_UNLOCK_BH(dev, txq) {          \
++    if ((dev->features & NETIF_F_LLTX) == 0) {  \
++        __netif_tx_unlock_bh(txq);         \
++    }                       \
++}
++
++
+ static inline void netif_tx_disable(struct net_device *dev)
+ {
+ 	unsigned int i;
 diff --git a/include/linux/netfilter/xt_IMQ.h b/include/linux/netfilter/xt_IMQ.h
 new file mode 100644
 index 0000000..9b07230
@@ -1224,20 +1144,21 @@ index 0000000..198ac01
 +#endif /* _IP6T_IMQ_H */
 +
 diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index ad8f859..8473090 100644
+index c8f9fa6..6c425c2 100644
 --- a/include/linux/skbuff.h
 +++ b/include/linux/skbuff.h
-@@ -33,6 +33,9 @@
- #include <linux/dma-mapping.h>
- #include <linux/netdev_features.h>
- #include <net/flow_keys.h>
+@@ -39,6 +39,10 @@
+ #include <linux/in6.h>
+ #include <linux/if_packet.h>
+ #include <net/flow.h>
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
 +#include <linux/imq.h>
 +#endif
++
  
- /* A. Checksumming of received packets by device.
-  *
-@@ -441,6 +444,9 @@ struct sk_buff {
+ /* The interface for checksum offload between the stack and networking drivers
+  * is as follows...
+@@ -654,6 +658,9 @@ struct sk_buff {
  	 * first. This is owned by whoever has the skb queued ATM.
  	 */
  	char			cb[48] __aligned(8);
@@ -1246,28 +1167,28 @@ index ad8f859..8473090 100644
 +#endif
  
  	unsigned long		_skb_refdst;
- #ifdef CONFIG_XFRM
-@@ -476,6 +482,9 @@ struct sk_buff {
+ 	void			(*destructor)(struct sk_buff *skb);
+@@ -663,6 +670,9 @@ struct sk_buff {
  #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
  	struct nf_conntrack	*nfct;
  #endif
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
-+	struct nf_queue_entry	*nf_queue_entry;
++       struct nf_queue_entry   *nf_queue_entry;
 +#endif
- #ifdef CONFIG_BRIDGE_NETFILTER
+ #if IS_ENABLED(CONFIG_BRIDGE_NETFILTER)
  	struct nf_bridge_info	*nf_bridge;
  #endif
-@@ -513,6 +522,9 @@ struct sk_buff {
- 	 */
- 	__u8			encapsulation:1;
- 	/* 6/8 bit hole (depending on ndisc_nodetype presence) */
+@@ -743,6 +753,9 @@ struct sk_buff {
+ 	__u8			offload_fwd_mark:1;
+ #endif
+ 	/* 2, 4 or 5 bit hole */
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
 +	__u8			imq_flags:IMQ_F_BITS;
 +#endif
- 	kmemcheck_bitfield_end(flags2);
  
- #if defined CONFIG_NET_DMA || defined CONFIG_NET_RX_BUSY_POLL
-@@ -653,6 +665,12 @@ void kfree_skb_list(struct sk_buff *segs);
+ #ifdef CONFIG_NET_SCHED
+ 	__u16			tc_index;	/* traffic control index */
+@@ -903,6 +916,12 @@ void kfree_skb_list(struct sk_buff *segs);
  void skb_tx_error(struct sk_buff *skb);
  void consume_skb(struct sk_buff *skb);
  void  __kfree_skb(struct sk_buff *skb);
@@ -1280,24 +1201,24 @@ index ad8f859..8473090 100644
  extern struct kmem_cache *skbuff_head_cache;
  
  void kfree_skb_partial(struct sk_buff *skb, bool head_stolen);
-@@ -2739,6 +2757,10 @@ static inline void __nf_copy(struct sk_buff *dst, const struct sk_buff *src)
- 	nf_conntrack_get(src->nfct);
- 	dst->nfctinfo = src->nfctinfo;
+@@ -3594,6 +3613,10 @@ static inline void __nf_copy(struct sk_buff *dst, const struct sk_buff *src,
+ 	if (copy)
+ 		dst->nfctinfo = src->nfctinfo;
  #endif
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
-+	dst->imq_flags = src->imq_flags;
-+	dst->nf_queue_entry = src->nf_queue_entry;
++       dst->imq_flags = src->imq_flags;
++       dst->nf_queue_entry = src->nf_queue_entry;
 +#endif
- #ifdef CONFIG_BRIDGE_NETFILTER
+ #if IS_ENABLED(CONFIG_BRIDGE_NETFILTER)
  	dst->nf_bridge  = src->nf_bridge;
  	nf_bridge_get(src->nf_bridge);
 diff --git a/include/net/netfilter/nf_queue.h b/include/net/netfilter/nf_queue.h
-index 84a53d7..6ffb593 100644
+index 2280cfe..ec8fa51 100644
 --- a/include/net/netfilter/nf_queue.h
 +++ b/include/net/netfilter/nf_queue.h
-@@ -33,6 +33,12 @@ struct nf_queue_handler {
- void nf_register_queue_handler(const struct nf_queue_handler *qh);
- void nf_unregister_queue_handler(void);
+@@ -30,6 +30,12 @@ struct nf_queue_handler {
+ void nf_register_queue_handler(struct net *net, const struct nf_queue_handler *qh);
+ void nf_unregister_queue_handler(struct net *net);
  void nf_reinject(struct nf_queue_entry *entry, unsigned int verdict);
 +void nf_queue_entry_release_refs(struct nf_queue_entry *entry);
 +
@@ -1306,13 +1227,44 @@ index 84a53d7..6ffb593 100644
 +void nf_unregister_queue_imq_handler(void);
 +#endif
  
- bool nf_queue_entry_get_refs(struct nf_queue_entry *entry);
+ void nf_queue_entry_get_refs(struct nf_queue_entry *entry);
  void nf_queue_entry_release_refs(struct nf_queue_entry *entry);
+diff --git a/include/net/pkt_sched.h b/include/net/pkt_sched.h
+index cd334c9..6757228 100644
+--- a/include/net/pkt_sched.h
++++ b/include/net/pkt_sched.h
+@@ -105,6 +105,8 @@ int sch_direct_xmit(struct sk_buff *skb, struct Qdisc *q,
+ 
+ void __qdisc_run(struct Qdisc *q);
+ 
++struct sk_buff *qdisc_dequeue_skb(struct Qdisc *q, bool *validate);
++
+ static inline void qdisc_run(struct Qdisc *q)
+ {
+ 	if (qdisc_run_begin(q))
+diff --git a/include/net/sch_generic.h b/include/net/sch_generic.h
+index e6aa0a2..08b37dc 100644
+--- a/include/net/sch_generic.h
++++ b/include/net/sch_generic.h
+@@ -518,6 +518,13 @@ static inline int qdisc_enqueue(struct sk_buff *skb, struct Qdisc *sch,
+ 	return sch->enqueue(skb, sch, to_free);
+ }
+ 
++static inline int qdisc_enqueue_root(struct sk_buff *skb, struct Qdisc *sch,
++				      struct sk_buff **to_free)
++{
++    qdisc_skb_cb(skb)->pkt_len = skb->len;
++    return qdisc_enqueue(skb, sch, to_free) & NET_XMIT_MASK;
++}
++
+ static inline bool qdisc_is_percpu_stats(const struct Qdisc *q)
+ {
+ 	return q->flags & TCQ_F_CPUSTATS;
 diff --git a/include/uapi/linux/netfilter.h b/include/uapi/linux/netfilter.h
-index ef1b1f8..079e5ff 100644
+index d93f949..23fb6d1 100644
 --- a/include/uapi/linux/netfilter.h
 +++ b/include/uapi/linux/netfilter.h
-@@ -13,7 +13,8 @@
+@@ -14,7 +14,8 @@
  #define NF_QUEUE 3
  #define NF_REPEAT 4
  #define NF_STOP 5
@@ -1323,61 +1275,52 @@ index ef1b1f8..079e5ff 100644
  /* we overload the higher bits for encoding auxiliary data such as the queue
   * number or errno values. Not nice, but better than additional function
 diff --git a/net/core/dev.c b/net/core/dev.c
-index 3ed11a5..fd62030 100644
+index 6666b28..3e12add 100644
 --- a/net/core/dev.c
 +++ b/net/core/dev.c
-@@ -132,6 +132,9 @@
- #include <linux/hashtable.h>
- #include <linux/vmalloc.h>
- #include <linux/if_macvlan.h>
+@@ -141,6 +141,9 @@
+ #include <linux/netfilter_ingress.h>
+ #include <linux/sctp.h>
+ #include <linux/crash_dump.h>
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
 +#include <linux/imq.h>
 +#endif
  
  #include "net-sysfs.h"
  
-@@ -2611,7 +2614,12 @@ int dev_hard_start_xmit(struct sk_buff *skb, struct net_device *dev,
- 			}
- 		}
+@@ -2906,7 +2909,12 @@ static int xmit_one(struct sk_buff *skb, struct net_device *dev,
+ 	unsigned int len;
+ 	int rc;
  
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
-+		if (!list_empty(&ptype_all) &&
-+					!(skb->imq_flags & IMQ_F_ENQUEUE))
++	if ((!list_empty(&ptype_all) || !list_empty(&dev->ptype_all)) &&
++		!(skb->imq_flags & IMQ_F_ENQUEUE))
 +#else
- 		if (!list_empty(&ptype_all))
+ 	if (!list_empty(&ptype_all) || !list_empty(&dev->ptype_all))
 +#endif
- 			dev_queue_xmit_nit(skb, dev);
+ 		dev_queue_xmit_nit(skb, dev);
  
- 		skb_len = skb->len;
+ 	len = skb->len;
+@@ -2945,6 +2953,8 @@ struct sk_buff *dev_hard_start_xmit(struct sk_buff *first, struct net_device *de
+ 	return skb;
+ }
+ 
++EXPORT_SYMBOL_GPL(dev_hard_start_xmit);
++
+ static struct sk_buff *validate_xmit_vlan(struct sk_buff *skb,
+ 					  netdev_features_t features)
+ {
 diff --git a/net/core/skbuff.c b/net/core/skbuff.c
-index baf6fc4..7d30d78 100644
+index 9bf1289..e3fcf17 100644
 --- a/net/core/skbuff.c
 +++ b/net/core/skbuff.c
-@@ -77,6 +77,115 @@
- 
- struct kmem_cache *skbuff_head_cache __read_mostly;
+@@ -82,6 +82,87 @@ struct kmem_cache *skbuff_head_cache __read_mostly;
  static struct kmem_cache *skbuff_fclone_cache __read_mostly;
+ int sysctl_max_skb_frags __read_mostly = MAX_SKB_FRAGS;
+ EXPORT_SYMBOL(sysctl_max_skb_frags);
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
 +static struct kmem_cache *skbuff_cb_store_cache __read_mostly;
 +#endif
-+
-+static void sock_pipe_buf_release(struct pipe_inode_info *pipe,
-+				  struct pipe_buffer *buf)
-+{
-+	put_page(buf->page);
-+}
-+
-+static void sock_pipe_buf_get(struct pipe_inode_info *pipe,
-+				struct pipe_buffer *buf)
-+{
-+	get_page(buf->page);
-+}
-+
-+static int sock_pipe_buf_steal(struct pipe_inode_info *pipe,
-+			       struct pipe_buffer *buf)
-+{
-+	return 1;
-+}
 +
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
 +/* Control buffer save/restore for IMQ devices */
@@ -1434,6 +1377,7 @@ index baf6fc4..7d30d78 100644
 +}
 +EXPORT_SYMBOL(skb_restore_cb);
 +
++static void skb_copy_stored_cb(struct sk_buff *   , const struct sk_buff *     ) __attribute__ ((unused));
 +static void skb_copy_stored_cb(struct sk_buff *new, const struct sk_buff *__old)
 +{
 +	struct skb_cb_table *next;
@@ -1455,21 +1399,10 @@ index baf6fc4..7d30d78 100644
 +	spin_unlock(&skb_cb_store_lock);
 +}
 +#endif
-+
-+/* Pipe buffer operations for a socket. */
-+static const struct pipe_buf_operations sock_pipe_buf_ops = {
-+	.can_merge = 0,
-+	.map = generic_pipe_buf_map,
-+	.unmap = generic_pipe_buf_unmap,
-+	.confirm = generic_pipe_buf_confirm,
-+	.release = sock_pipe_buf_release,
-+	.steal = sock_pipe_buf_steal,
-+	.get = sock_pipe_buf_get,
-+};
  
  /**
   *	skb_panic - private function for out-of-line support
-@@ -563,6 +672,28 @@ static void skb_release_head_state(struct sk_buff *skb)
+@@ -654,6 +735,28 @@ static void skb_release_head_state(struct sk_buff *skb)
  		WARN_ON(in_irq());
  		skb->destructor(skb);
  	}
@@ -1481,7 +1414,7 @@ index baf6fc4..7d30d78 100644
 +	while (skb->cb_next != NULL) {
 +		if (net_ratelimit())
 +			pr_warn("IMQ: kfree_skb: skb->cb_next: %08x\n",
-+				(unsigned int)skb->cb_next);
++				(unsigned int)(uintptr_t)skb->cb_next);
 +
 +		skb_restore_cb(skb);
 +	}
@@ -1498,18 +1431,18 @@ index baf6fc4..7d30d78 100644
  #if IS_ENABLED(CONFIG_NF_CONNTRACK)
  	nf_conntrack_put(skb->nfct);
  #endif
-@@ -694,6 +825,10 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
+@@ -843,6 +946,10 @@ static void __copy_skb_header(struct sk_buff *new, const struct sk_buff *old)
  	new->sp			= secpath_get(old->sp);
  #endif
- 	memcpy(new->cb, old->cb, sizeof(old->cb));
+ 	__nf_copy(new, old, false);
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
 +	new->cb_next = NULL;
 +	/*skb_copy_stored_cb(new, old);*/
 +#endif
- 	new->csum		= old->csum;
- 	new->local_df		= old->local_df;
- 	new->pkt_type		= old->pkt_type;
-@@ -3233,6 +3368,13 @@ void __init skb_init(void)
+ 
+ 	/* Note : this field could be in headers_start/headers_end section
+ 	 * It is not yet because we do not want to have a 16 bit hole
+@@ -3464,6 +3571,13 @@ void __init skb_init(void)
  						0,
  						SLAB_HWCACHE_ALIGN|SLAB_PANIC,
  						NULL);
@@ -1524,10 +1457,10 @@ index baf6fc4..7d30d78 100644
  
  /**
 diff --git a/net/ipv6/ip6_output.c b/net/ipv6/ip6_output.c
-index 12f7ef0..deb1c9d 100644
+index 59eb4ed..8020b07 100644
 --- a/net/ipv6/ip6_output.c
 +++ b/net/ipv6/ip6_output.c
-@@ -64,9 +64,6 @@ static int ip6_finish_output2(struct sk_buff *skb)
+@@ -66,9 +66,6 @@ static int ip6_finish_output2(struct net *net, struct sock *sk, struct sk_buff *
  	struct in6_addr *nexthop;
  	int ret;
  
@@ -1537,25 +1470,25 @@ index 12f7ef0..deb1c9d 100644
  	if (ipv6_addr_is_multicast(&ipv6_hdr(skb)->daddr)) {
  		struct inet6_dev *idev = ip6_dst_idev(skb_dst(skb));
  
-@@ -143,6 +140,13 @@ int ip6_output(struct sk_buff *skb)
+@@ -150,6 +147,13 @@ int ip6_output(struct net *net, struct sock *sk, struct sk_buff *skb)
  		return 0;
  	}
  
 +	/*
-+	 * IMQ-patch: moved setting skb->dev and skb->protocol from
-+	 * ip6_finish_output2 to fix crashing at netif_skb_features().
-+	 */
++	* IMQ-patch: moved setting skb->dev and skb->protocol from
++	* ip6_finish_output2 to fix crashing at netif_skb_features().
++	*/
 +	skb->protocol = htons(ETH_P_IPV6);
 +	skb->dev = dev;
 +
- 	return NF_HOOK_COND(NFPROTO_IPV6, NF_INET_POST_ROUTING, skb, NULL, dev,
+ 	return NF_HOOK_COND(NFPROTO_IPV6, NF_INET_POST_ROUTING,
+ 			    net, sk, skb, NULL, dev,
  			    ip6_finish_output,
- 			    !(IP6CB(skb)->flags & IP6SKB_REROUTED));
 diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index e9410d1..ba801d5 100644
+index 4a2e5a3..fc5cc9a 100644
 --- a/net/netfilter/Kconfig
 +++ b/net/netfilter/Kconfig
-@@ -751,6 +751,18 @@ config NETFILTER_XT_TARGET_LOG
+@@ -833,6 +833,18 @@ config NETFILTER_XT_TARGET_LOG
  
  	  To compile it as a module, choose M here.  If unsure, say N.
  
@@ -1575,10 +1508,10 @@ index e9410d1..ba801d5 100644
  	tristate '"MARK" target support'
  	depends on NETFILTER_ADVANCED
 diff --git a/net/netfilter/Makefile b/net/netfilter/Makefile
-index bffdad7..050e613 100644
+index e5c5e1e..3128bc5 100644
 --- a/net/netfilter/Makefile
 +++ b/net/netfilter/Makefile
-@@ -103,6 +103,7 @@ obj-$(CONFIG_NETFILTER_XT_TARGET_CT) += xt_CT.o
+@@ -119,6 +119,7 @@ obj-$(CONFIG_NETFILTER_XT_TARGET_CT) += xt_CT.o
  obj-$(CONFIG_NETFILTER_XT_TARGET_DSCP) += xt_DSCP.o
  obj-$(CONFIG_NETFILTER_XT_TARGET_HL) += xt_HL.o
  obj-$(CONFIG_NETFILTER_XT_TARGET_HMARK) += xt_HMARK.o
@@ -1587,43 +1520,29 @@ index bffdad7..050e613 100644
  obj-$(CONFIG_NETFILTER_XT_TARGET_LOG) += xt_LOG.o
  obj-$(CONFIG_NETFILTER_XT_TARGET_NETMAP) += xt_NETMAP.o
 diff --git a/net/netfilter/core.c b/net/netfilter/core.c
-index 1fbab0c..4493417 100644
+index 004af03..768a08b 100644
 --- a/net/netfilter/core.c
 +++ b/net/netfilter/core.c
-@@ -191,9 +191,11 @@ next_hook:
+@@ -360,8 +360,11 @@ int nf_hook_slow(struct sk_buff *skb, struct nf_hook_state *state)
  		ret = NF_DROP_GETERR(verdict);
  		if (ret == 0)
  			ret = -EPERM;
 -	} else if ((verdict & NF_VERDICT_MASK) == NF_QUEUE) {
 +	} else if ((verdict & NF_VERDICT_MASK) == NF_QUEUE ||
 +		   (verdict & NF_VERDICT_MASK) == NF_IMQ_QUEUE) {
- 		int err = nf_queue(skb, elem, pf, hook, indev, outdev, okfn,
--						verdict >> NF_VERDICT_QBITS);
-+						verdict >> NF_VERDICT_QBITS,
-+						verdict & NF_VERDICT_MASK);
- 		if (err < 0) {
- 			if (err == -ECANCELED)
- 				goto next_hook;
-diff --git a/net/netfilter/nf_internals.h b/net/netfilter/nf_internals.h
-index 61a3c92..5388a0e 100644
---- a/net/netfilter/nf_internals.h
-+++ b/net/netfilter/nf_internals.h
-@@ -23,7 +23,7 @@ unsigned int nf_iterate(struct list_head *head, struct sk_buff *skb,
- int nf_queue(struct sk_buff *skb, struct nf_hook_ops *elem, u_int8_t pf,
- 	     unsigned int hook, struct net_device *indev,
- 	     struct net_device *outdev, int (*okfn)(struct sk_buff *),
--	     unsigned int queuenum);
-+	     unsigned int queuenum, unsigned int queuetype);
- int __init netfilter_queue_init(void);
- 
- /* nf_log.c */
+ 		ret = nf_queue(skb, state, &entry, verdict);
++		if (ret == -ECANCELED)
++			goto next_hook;
+ 		if (ret == 1 && entry)
+ 			goto next_hook;
+ 	}
 diff --git a/net/netfilter/nf_queue.c b/net/netfilter/nf_queue.c
-index 5d24b1f..28317dc 100644
+index 8f08d75..c12c9eb 100644
 --- a/net/netfilter/nf_queue.c
 +++ b/net/netfilter/nf_queue.c
 @@ -27,6 +27,23 @@
+  * receives, no matter what.
   */
- static const struct nf_queue_handler __rcu *queue_handler __read_mostly;
  
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
 +static const struct nf_queue_handler __rcu *queue_imq_handler __read_mostly;
@@ -1644,22 +1563,24 @@ index 5d24b1f..28317dc 100644
 +
  /* return EBUSY when somebody else is registered, return EEXIST if the
   * same handler is registered, return 0 in case of success. */
- void nf_register_queue_handler(const struct nf_queue_handler *qh)
-@@ -105,7 +122,8 @@ int nf_queue(struct sk_buff *skb,
- 		      struct net_device *indev,
- 		      struct net_device *outdev,
- 		      int (*okfn)(struct sk_buff *),
+ void nf_register_queue_handler(struct net *net, const struct nf_queue_handler *qh)
+@@ -108,16 +125,28 @@ void nf_queue_nf_hook_drop(struct net *net, const struct nf_hook_entry *entry)
+ }
+ 
+ static int __nf_queue(struct sk_buff *skb, const struct nf_hook_state *state,
 -		      unsigned int queuenum)
-+		      unsigned int queuenum,
-+		      unsigned int queuetype)
++		      unsigned int verdict)
  {
  	int status = -ENOENT;
  	struct nf_queue_entry *entry = NULL;
-@@ -115,7 +133,17 @@ int nf_queue(struct sk_buff *skb,
- 	/* QUEUE == DROP if no one is waiting, to be safe. */
- 	rcu_read_lock();
+ 	const struct nf_afinfo *afinfo;
+ 	const struct nf_queue_handler *qh;
+ 	struct net *net = state->net;
++	unsigned int queuetype = verdict & NF_VERDICT_MASK;
++	unsigned int queuenum  = verdict >> NF_VERDICT_QBITS;
  
--	qh = rcu_dereference(queue_handler);
+ 	/* QUEUE == DROP if no one is waiting, to be safe. */
+-	qh = rcu_dereference(net->nf.queue_handler);
 +	if (queuetype == NF_IMQ_QUEUE) {
 +#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
 +		qh = rcu_dereference(queue_imq_handler);
@@ -1668,28 +1589,39 @@ index 5d24b1f..28317dc 100644
 +		goto err_unlock;
 +#endif
 +	} else {
-+		qh = rcu_dereference(queue_handler);
++		qh = rcu_dereference(net->nf.queue_handler);
 +	}
 +
  	if (!qh) {
  		status = -ESRCH;
- 		goto err_unlock;
-@@ -205,9 +233,11 @@ void nf_reinject(struct nf_queue_entry *entry, unsigned int verdict)
+ 		goto err;
+@@ -164,8 +193,14 @@ int nf_queue(struct sk_buff *skb, struct nf_hook_state *state,
+ 	int ret;
+ 
+ 	RCU_INIT_POINTER(state->hook_entries, entry);
+-	ret = __nf_queue(skb, state, verdict >> NF_VERDICT_QBITS);
++	ret = __nf_queue(skb, state, verdict);
+ 	if (ret < 0) {
++#if defined(CONFIG_IMQ) || defined(CONFIG_IMQ_MODULE)
++		if (ret == -ECANCELED && skb->imq_flags == 0) { // down interface
++			*entryp = rcu_dereference(entry->next);
++			return 1;
++		}
++#endif
+ 		if (ret == -ESRCH &&
+ 		    (verdict & NF_VERDICT_FLAG_QUEUE_BYPASS)) {
+ 			*entryp = rcu_dereference(entry->next);
+@@ -218,6 +253,7 @@ void nf_reinject(struct nf_queue_entry *entry, unsigned int verdict)
  		local_bh_enable();
  		break;
  	case NF_QUEUE:
 +	case NF_IMQ_QUEUE:
- 		err = nf_queue(skb, elem, entry->pf, entry->hook,
- 				entry->indev, entry->outdev, entry->okfn,
--				verdict >> NF_VERDICT_QBITS);
-+				verdict >> NF_VERDICT_QBITS,
-+				verdict & NF_VERDICT_MASK);
- 		if (err < 0) {
- 			if (err == -ECANCELED)
- 				goto next_hook;
+ 		err = nf_queue(skb, &entry->state, &hook_entry, verdict);
+ 		if (err == 1) {
+ 			if (hook_entry)
 diff --git a/net/netfilter/xt_IMQ.c b/net/netfilter/xt_IMQ.c
 new file mode 100644
-index 0000000..1c3cd66
+index 0000000..f9c5817
 --- /dev/null
 +++ b/net/netfilter/xt_IMQ.c
 @@ -0,0 +1,72 @@
@@ -1759,9 +1691,28 @@ index 0000000..1c3cd66
 +module_init(imq_init);
 +module_exit(imq_fini);
 +
-+MODULE_AUTHOR("http://www.linuximq.net");
-+MODULE_DESCRIPTION("Pseudo-driver for the intermediate queue device. See http://www.linuximq.net/ for more information.");
++MODULE_AUTHOR("https://github.com/imq/linuximq");
++MODULE_DESCRIPTION("Pseudo-driver for the intermediate queue device. See https://github.com/imq/linuximq/wiki for more information.");
 +MODULE_LICENSE("GPL");
 +MODULE_ALIAS("ipt_IMQ");
 +MODULE_ALIAS("ip6t_IMQ");
 +
+diff --git a/net/sched/sch_generic.c b/net/sched/sch_generic.c
+index 6cfb6e9..4c675e9 100644
+--- a/net/sched/sch_generic.c
++++ b/net/sched/sch_generic.c
+@@ -154,6 +154,14 @@ static struct sk_buff *dequeue_skb(struct Qdisc *q, bool *validate,
+ 	return skb;
+ }
+ 
++struct sk_buff *qdisc_dequeue_skb(struct Qdisc *q, bool *validate)
++{
++	int packets;
++
++	return dequeue_skb(q, validate, &packets);
++}
++EXPORT_SYMBOL(qdisc_dequeue_skb);
++
+ /*
+  * Transmit possibly several skbs, and handle the return status as
+  * required. Owning running seqcount bit guarantees that

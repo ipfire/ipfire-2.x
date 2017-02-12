@@ -1,0 +1,31 @@
+diff -Naur linux-4.9.8.org/sound/pci/cs5535audio/cs5535audio.c linux-4.9.8/sound/pci/cs5535audio/cs5535audio.c
+--- linux-4.9.8.org/sound/pci/cs5535audio/cs5535audio.c	2017-02-04 09:47:29.000000000 +0100
++++ linux-4.9.8/sound/pci/cs5535audio/cs5535audio.c	2017-02-09 19:24:55.658297050 +0100
+@@ -83,9 +83,9 @@
+ 			break;
+ 		udelay(1);
+ 	} while (--timeout);
+-	if (!timeout)
+-		dev_err(cs5535au->card->dev,
+-			"Failure writing to cs5535 codec\n");
++//	if (!timeout)
++//		dev_err(cs5535au->card->dev,
++//			"Failure writing to cs5535 codec\n");
+ }
+ 
+ static unsigned short snd_cs5535audio_codec_read(struct cs5535audio *cs5535au,
+@@ -109,10 +109,10 @@
+ 			break;
+ 		udelay(1);
+ 	} while (--timeout);
+-	if (!timeout)
+-		dev_err(cs5535au->card->dev,
+-			"Failure reading codec reg 0x%x, Last value=0x%x\n",
+-			reg, val);
++//	if (!timeout)
++//		dev_err(cs5535au->card->dev,
++//			"Failure reading codec reg 0x%x, Last value=0x%x\n",
++//			reg, val);
+ 
+ 	return (unsigned short) val;
+ }

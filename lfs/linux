@@ -24,10 +24,11 @@
 
 include Config
 
-VER         = 3.14.79
+VER         = 4.9.8
 RPI_PATCHES = 3.14.79-grsec-ipfire1
 A7M_PATCHES = 3.14.79-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.1ipfire-3.14.79-v1.patch.xz
+GRS_PATCHES = grsecurity-3.1-4.9.8-201702060653.patch.xz
+
 
 
 THISAPP    = linux-$(VER)
@@ -83,10 +84,11 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= ec5b09d8ad2ebf92e6f51a727a338559
+$(DL_FILE)_MD5					= 7b56bb1196642f0f6625906c6720a6b1
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= a02a7fd54c642c1e3578a00ed22f54f8
 arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 6c3b11e51caa278dbeacd1e23c2b171b
-$(GRS_PATCHES)_MD5				= 7fe448b53558082395f68c5db94af1a7
+$(GRS_PATCHES)_MD5				= 6c4e14c9a189676a3ff92f47b5ec77c4
+
 
 install : $(TARGET)
 
@@ -122,98 +124,43 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
 	# Linux Intermediate Queueing Device
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-imq.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9-imq.diff
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14-layer7-filter.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-layer7-filter.patch
+
 
 ifneq "$(KCFG)" "-headers"
 	# Grsecurity-patches
 	cd $(DIR_APP) && xz -c -d $(DIR_DL)/$(GRS_PATCHES) | patch -Np1
 	cd $(DIR_APP) && rm localversion-grsec
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.7-disable-compat_vdso.patch
 endif
 
 	# DVB Patches
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-dvbsky.patch
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
 
 	# Wlan Patches
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/compat-drivers-3.8.3-ath_ignore_eeprom_regdomain.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-iwlwifi-noibss_only_on_radar_chan.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.37-rt2800usb_add_dlink_dwa137_usbid.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.55-rt2800usb-change_queue_warn_to_debug.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.25_rt2x00_fix_bss_bcn_num.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.25-rt5592_no_special_txop_init.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.39-add_libertas_uap.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/backports-4.2.6-1_ath10k_remove_logspam.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-ath_ignore_eeprom_regd.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-iwlwifi-noibss_only_on_radar_chan.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-rt2x00usb_suppress_queue_warnings.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.39-add_libertas_uap.patch
 
 	# mISDN Patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN_hfc-s_add_id.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-hfcusb-reportl1down.patch
 
 	# Add LED trigger
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-ledtrig_netdev.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-ledtrig_netdev.patch
 
 	# cs5535audio spams syslog if no ac97 was present (geos router)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.30_cs5535audio_fix_logspam_on_geos.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8_cs5535audio_fix_logspam_on_geos.patch
 
 	# Add PC Engines APU led support
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14-apu_leds.patch
-
-	# Add APU2 SoC ID to k10temp
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.65-k10temp_add_16H_M30H_id.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-apu_leds.patch
 
 	# Fix uevent PHYSDEVDRIVER
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.2.33_ipg-fix-driver-name.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-2.6.32.27_mcs7830-fix-driver-name.patch
-
-	# r8169 L23 patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.32-r8169_disable_L23.patch
-
-	# update the queued trim blacklist from kernel 4.2rc1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.43_new_qtrim_blacklist.patch
-
-	# remove eMMC EXT_CSD revision check to use newer eMMC modules
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.79_mmc_remove_EXT_CSD_revision_check.patch
-
-	# Hyper-V patches
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0001-Drivers-net-hyperv-Get-rid-of-the-rndis_filter_packe.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0002-Drivers-net-hyperv-Cleanup-the-receive-path.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0003-Drivers-net-hyperv-Cleanup-the-netvsc-receive-callba.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0004-hyperv-Add-latest-NetVSP-versions-to-auto-negotiatio.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0005-Drivers-net-hyperv-Enable-scatter-gather-I-O.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0006-Drivers-net-hyperv-Cleanup-the-send-path.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0007-Drivers-net-hyperv-Enable-offloads-on-the-host.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0008-Drivers-net-hyperv-Enable-receive-side-IP-checksum-o.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0009-Drivers-net-hyperv-Enable-send-side-checksum-offload.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0010-Drivers-net-hyperv-Enable-large-send-offload.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0011-hyperv-Change-the-receive-buffer-size-for-legacy-hos.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0012-Drivers-net-hyperv-Allocate-memory-for-all-possible-.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0013-Drivers-net-hyperv-Negotiate-suitable-ndis-version-f.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0014-Drivers-net-hyperv-Address-UDP-checksum-issues.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0015-hyperv-Properly-handle-checksum-offload.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0016-hyperv-Add-support-for-virtual-Receive-Side-Scaling-.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0017-hyperv-Remove-recv_pkt_list-and-lock.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0018-hyperv-Simplify-the-send_completion-variables.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0019-hyperv-Enable-sendbuf-mechanism-on-the-send-path.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0020-Add-support-for-netvsc-build-without-CONFIG_SYSFS-fl.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0021-hyperv-Add-hash-value-into-RNDIS-Per-packet-info.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0022-hyperv-fix-apparent-cut-n-paste-error-in-send-path-t.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0023-hyperv-Fix-error-return-code-in-netvsc_init_buf.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0024-hyperv-Fix-a-bug-in-netvsc_send.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0025-Drivers-hv-vmbus-Support-per-channel-driver-state.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-hyperv_Mark_the_Hyoer-V_TSC_as_unstable.patch
-
-ifneq "$(KCFG)" "-headers"
-	# fix AES-NI 192 and 256 bits / grsec is needed for this patch version
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0100-crypto-aesni-Add-support-for-192-256-bit-keys-to-AES.patch
-endif
-
-	# fix CVE-2016-5195 (Dirty COW)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0110-mm-remove-gup_flags-FOLL_WRITE-games-from-__get_user.patch
-
-	# fix empty symbol crc's
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-genksyms_fix_typeof_handling.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-2.6.32.27_mcs7830-fix-driver-name.patch
 
 ifeq "$(KCFG)" "-kirkwood"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-mv_cesa_disable_failing_hmac_sha1.patch

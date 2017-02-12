@@ -1,7 +1,7 @@
-diff -Naur linux-3.14.65.org/arch/x86/Kconfig linux-3.14.65/arch/x86/Kconfig
---- linux-3.14.65.org/arch/x86/Kconfig	2016-03-16 16:42:30.000000000 +0100
-+++ linux-3.14.65/arch/x86/Kconfig	2016-03-25 14:36:22.953256019 +0100
-@@ -2287,6 +2287,7 @@
+diff -Naur linux-4.9.8.org/arch/x86/Kconfig linux-4.9.8/arch/x86/Kconfig
+--- linux-4.9.8.org/arch/x86/Kconfig	2017-02-04 09:47:29.000000000 +0100
++++ linux-4.9.8/arch/x86/Kconfig	2017-02-09 19:29:59.244945360 +0100
+@@ -2604,6 +2604,7 @@
  	   - AC adapter status updates
  	   - Battery status updates
  
@@ -9,7 +9,7 @@ diff -Naur linux-3.14.65.org/arch/x86/Kconfig linux-3.14.65/arch/x86/Kconfig
  config ALIX
  	bool "PCEngines ALIX System Support (LED setup)"
  	select GPIOLIB
-@@ -2325,6 +2326,18 @@
+@@ -2642,6 +2643,18 @@
  
  endif # X86_32
  
@@ -28,9 +28,9 @@ diff -Naur linux-3.14.65.org/arch/x86/Kconfig linux-3.14.65/arch/x86/Kconfig
  config AMD_NB
  	def_bool y
  	depends on CPU_SUP_AMD && PCI
-diff -Naur linux-3.14.65.org/arch/x86/platform/apu/apu2-led.c linux-3.14.65/arch/x86/platform/apu/apu2-led.c
---- linux-3.14.65.org/arch/x86/platform/apu/apu2-led.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-3.14.65/arch/x86/platform/apu/apu2-led.c	2016-03-25 15:04:34.476689422 +0100
+diff -Naur linux-4.9.8.org/arch/x86/platform/apu/apu2-led.c linux-4.9.8/arch/x86/platform/apu/apu2-led.c
+--- linux-4.9.8.org/arch/x86/platform/apu/apu2-led.c	1970-01-01 01:00:00.000000000 +0100
++++ linux-4.9.8/arch/x86/platform/apu/apu2-led.c	2017-02-09 19:29:59.244945360 +0100
 @@ -0,0 +1,180 @@
 +/*
 + * LEDs driver for PCEngines apu2
@@ -212,9 +212,9 @@ diff -Naur linux-3.14.65.org/arch/x86/platform/apu/apu2-led.c linux-3.14.65/arch
 +MODULE_AUTHOR("Arne Fitzenreiter");
 +MODULE_DESCRIPTION("PCEngines apu2 LED driver");
 +MODULE_LICENSE("GPL");
-diff -Naur linux-3.14.65.org/arch/x86/platform/apu/apu-led.c linux-3.14.65/arch/x86/platform/apu/apu-led.c
---- linux-3.14.65.org/arch/x86/platform/apu/apu-led.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-3.14.65/arch/x86/platform/apu/apu-led.c	2016-03-25 15:05:35.776693425 +0100
+diff -Naur linux-4.9.8.org/arch/x86/platform/apu/apu-led.c linux-4.9.8/arch/x86/platform/apu/apu-led.c
+--- linux-4.9.8.org/arch/x86/platform/apu/apu-led.c	1970-01-01 01:00:00.000000000 +0100
++++ linux-4.9.8/arch/x86/platform/apu/apu-led.c	2017-02-09 19:29:59.244945360 +0100
 @@ -0,0 +1,181 @@
 +/*
 + * LEDs driver for PCEngines apu
@@ -397,18 +397,18 @@ diff -Naur linux-3.14.65.org/arch/x86/platform/apu/apu-led.c linux-3.14.65/arch/
 +MODULE_AUTHOR("Christian Herzog");
 +MODULE_DESCRIPTION("PCEngines apu LED driver");
 +MODULE_LICENSE("GPL");
-diff -Naur linux-3.14.65.org/arch/x86/platform/apu/Makefile linux-3.14.65/arch/x86/platform/apu/Makefile
---- linux-3.14.65.org/arch/x86/platform/apu/Makefile	1970-01-01 01:00:00.000000000 +0100
-+++ linux-3.14.65/arch/x86/platform/apu/Makefile	2016-03-25 14:35:30.506585952 +0100
+diff -Naur linux-4.9.8.org/arch/x86/platform/apu/Makefile linux-4.9.8/arch/x86/platform/apu/Makefile
+--- linux-4.9.8.org/arch/x86/platform/apu/Makefile	1970-01-01 01:00:00.000000000 +0100
++++ linux-4.9.8/arch/x86/platform/apu/Makefile	2017-02-09 19:29:59.244945360 +0100
 @@ -0,0 +1,2 @@
 +obj-$(CONFIG_APULED)		+= apu-led.o
 +obj-$(CONFIG_APU2LED)		+= apu2-led.o
-diff -Naur linux-3.14.65.org/arch/x86/platform/Makefile linux-3.14.65/arch/x86/platform/Makefile
---- linux-3.14.65.org/arch/x86/platform/Makefile	2016-03-16 16:42:30.000000000 +0100
-+++ linux-3.14.65/arch/x86/platform/Makefile	2016-03-25 14:31:04.079903947 +0100
+diff -Naur linux-4.9.8.org/arch/x86/platform/Makefile linux-4.9.8/arch/x86/platform/Makefile
+--- linux-4.9.8.org/arch/x86/platform/Makefile	2017-02-04 09:47:29.000000000 +0100
++++ linux-4.9.8/arch/x86/platform/Makefile	2017-02-09 19:32:31.768269470 +0100
 @@ -1,4 +1,5 @@
  # Platform specific code goes here
 +obj-y	+= apu/
+ obj-y	+= atom/
  obj-y	+= ce4100/
  obj-y	+= efi/
- obj-y	+= geode/
