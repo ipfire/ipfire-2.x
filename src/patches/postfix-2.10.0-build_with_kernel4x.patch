@@ -1,0 +1,12 @@
+diff -Naur postfix-2.10.0.org/makedefs postfix-2.10.0/makedefs
+--- postfix-2.10.0.org/makedefs	2013-02-04 02:33:13.000000000 +0100
++++ postfix-2.10.0/makedefs	2017-02-08 10:10:56.713314716 +0100
+@@ -347,7 +347,7 @@
+ 		       fi;;
+ 		esac
+ 		;;
+-    Linux.3*)	SYSTYPE=LINUX3
++    Linux.[34]*)	SYSTYPE=LINUX3
+ 		case "$CCARGS" in
+ 		 *-DNO_DB*) ;;
+ 		 *) if [ -f /usr/include/db.h ]
