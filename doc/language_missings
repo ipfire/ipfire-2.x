@@ -561,6 +561,9 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn start action
+< vpn start action route
+< vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
 < wlanap access point
@@ -1175,6 +1178,9 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn start action
+< vpn start action route
+< vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
 < wlanap country
@@ -1754,6 +1760,9 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn start action
+< vpn start action route
+< vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
 < wlanap country
@@ -2338,6 +2347,9 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn start action
+< vpn start action route
+< vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
 < week-graph
