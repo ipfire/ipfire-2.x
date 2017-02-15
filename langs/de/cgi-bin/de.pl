@@ -2615,6 +2615,7 @@
 'vpn on blue' => 'VPN auf BLAU',
 'vpn on green' => 'VPN auf GRÜN',
 'vpn on orange' => 'VPN auf ORANGE',
+'vpn on-demand' => 'ON DEMAND',
 'vpn payload compression' => 'Datennutzlast-Kompression aushandeln',
 'vpn red name' => 'Öffentliche IP oder FQDN für das rote Interface oder <%defaultroute>',
 'vpn remote id' => 'Remote ID',

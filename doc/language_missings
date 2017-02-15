@@ -561,6 +561,7 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn on-demand
 < vpn start action
 < vpn start action route
 < vpn start action start
@@ -1178,6 +1179,7 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn on-demand
 < vpn start action
 < vpn start action route
 < vpn start action start
@@ -1760,6 +1762,7 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn on-demand
 < vpn start action
 < vpn start action route
 < vpn start action start
@@ -2347,6 +2350,7 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn on-demand
 < vpn start action
 < vpn start action route
 < vpn start action start

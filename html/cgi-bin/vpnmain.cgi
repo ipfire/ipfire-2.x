@@ -2805,6 +2805,9 @@ END
 		($line =~ /$confighash{$key}[1]\{.*INSTALLED/)) {
 			$col1="bgcolor='${Header::colourgreen}'";
 			$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
+		} elsif ($line =~ /$confighash{$key}[1]\{.*ROUTED/) {
+			$col1="bgcolor='${Header::colourorange}'";
+			$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn on-demand'}</font></b>";
 		}
 	}
 	# move to blue if really down
