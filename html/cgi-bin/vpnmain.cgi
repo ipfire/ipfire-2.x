@@ -413,6 +413,12 @@ sub writeipsecfiles {
 			print CONF "\trightsourceip=$lvpnsettings{'RW_NET'}\n";
 		} else {
 			print CONF "\tauto=$start_action\n";
+
+			# If in on-demand mode, we terminate the tunnel
+			# after 15 min of no traffic
+			if ($start_action eq 'route') {
+				print CONF "\tinactivity=900\n";
+			}
 		}
 
 		# Fragmentation
