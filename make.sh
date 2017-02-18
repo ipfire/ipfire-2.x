@@ -438,19 +438,19 @@ buildipfire() {
 	i586)
 		# x86-pae (Native and new XEN) kernel build
 		ipfiremake linux			KCFG="-pae"
-		ipfiremake backports			KCFG="-pae"
-		ipfiremake e1000e			KCFG="-pae"
-		ipfiremake igb				KCFG="-pae"
-		ipfiremake ixgbe			KCFG="-pae"
+#		ipfiremake backports			KCFG="-pae"
+#		ipfiremake e1000e			KCFG="-pae"
+#		ipfiremake igb				KCFG="-pae"
+#		ipfiremake ixgbe			KCFG="-pae"
 		ipfiremake xtables-addons		KCFG="-pae"
 		ipfiremake linux-initrd			KCFG="-pae"
 
 		# x86 kernel build
 		ipfiremake linux			KCFG=""
-		ipfiremake backports			KCFG=""
-		ipfiremake e1000e			KCFG=""
-		ipfiremake igb				KCFG=""
-		ipfiremake ixgbe			KCFG=""
+#		ipfiremake backports			KCFG=""
+#		ipfiremake e1000e			KCFG=""
+#		ipfiremake igb				KCFG=""
+#		ipfiremake ixgbe			KCFG=""
 		ipfiremake xtables-addons		KCFG=""
 		ipfiremake linux-initrd			KCFG=""
 		;;
