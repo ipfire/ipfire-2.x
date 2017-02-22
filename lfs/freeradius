@@ -133,5 +133,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/freeradius \
 		/var/ipfire/backup/addons/includes/freeradius
 
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,freeradius)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
