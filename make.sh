@@ -652,6 +652,7 @@ buildipfire() {
   ipfiremake ghostscript
   ipfiremake lcms2
   ipfiremake qpdf
+  ipfiremake poppler
   ipfiremake epson-inkjet-printer-escpr
   ipfiremake foomatic
   ipfiremake hplip
