@@ -64,7 +64,7 @@ $(TARGET) :
 	# Create default ramdisk configuration
 	echo "RAMDISK_MODE=0" > /etc/sysconfig/ramdisk
 
-	for i in $(DIR_SRC)/src/initscripts/init.d/*; do \
+	for i in $(DIR_SRC)/src/initscripts/init.d/common/*; do \
 		install -v -m 754 $$i /etc/rc.d/init.d/; \
 	done
 	chmod 644 /etc/rc.d/init.d/functions
