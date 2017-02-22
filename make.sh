@@ -645,6 +645,9 @@ buildipfire() {
   ipfiremake pammysql
   ipfiremake mpage
   ipfiremake dbus
+  ipfiremake intltool
+  ipfiremake libdaemon
+  ipfiremake avahi
   ipfiremake cups
   ipfiremake ghostscript
   ipfiremake foomatic
@@ -811,7 +814,6 @@ buildipfire() {
   ipfiremake python-lzma
   ipfiremake python-progressbar
   ipfiremake python-xattr
-  ipfiremake intltool
   ipfiremake ddns
   ipfiremake transmission
   ipfiremake dpfhack
@@ -830,8 +832,6 @@ buildipfire() {
   ipfiremake libstatgrab
   ipfiremake sarg
   ipfiremake check_mk_agent
-  ipfiremake libdaemon
-  ipfiremake avahi
   ipfiremake nginx
   ipfiremake sendEmail
   ipfiremake sysbench
