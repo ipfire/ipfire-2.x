@@ -89,8 +89,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--without-storage-scsi --without-storage-mpath --without-storage-disk --without-storage-rbd --without-storage-sheepdog --without-storage-gluster  --without-storage-zfs
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
-	install -v -m 754 $(DIR_SRC)/src/initscripts/init.d/packages/libvirtd /etc/rc.d/init.d/libvirtd
-	install -v -m 754 $(DIR_SRC)/src/initscripts/init.d/packages/virtlogd /etc/rc.d/init.d/virtlogd
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,libvirtd)
+	$(call INSTALL_INITSCRIPT,virtlogd)
 	mv /usr/libexec/libvirt-guests.sh /etc/rc.d/init.d/libvirt-guests
 	# Backup
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/libvirt /var/ipfire/backup/addons/includes/libvirt
