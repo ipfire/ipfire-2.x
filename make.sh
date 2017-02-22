@@ -650,6 +650,7 @@ buildipfire() {
   ipfiremake avahi
   ipfiremake cups
   ipfiremake ghostscript
+  ipfiremake lcms2
   ipfiremake epson-inkjet-printer-escpr
   ipfiremake foomatic
   ipfiremake hplip
