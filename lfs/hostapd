@@ -84,7 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/hostapd && make install
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/hostapd /var/ipfire/backup/addons/includes/hostapd
 	# install initscript
-	install -v -m 754 $(DIR_SRC)/src/initscripts/init.d/packages/hostapd /etc/rc.d/init.d/hostapd
+	$(call INSTALL_INITSCRIPT,hostapd)
 	mkdir -p /var/ipfire/wlanap
 	touch /var/ipfire/wlanap/settings
 	cp -vrf $(DIR_SRC)/config/hostapd/hostapd.conf /var/ipfire/wlanap/hostapd.conf
