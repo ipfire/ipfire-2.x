@@ -59,7 +59,6 @@ usr/lib/cups/filter/texttobrf
 usr/lib/cups/filter/texttopdf
 usr/lib/cups/filter/texttops
 usr/lib/cups/filter/texttotext
-usr/lib/cups/filter/urftopdf
 #usr/lib/libcupsfilters.a
 #usr/lib/libcupsfilters.la
 #usr/lib/libcupsfilters.so
@@ -73,7 +72,13 @@ usr/lib/libfontembed.so.1.0.0
 #usr/lib/pkgconfig/libcupsfilters.pc
 #usr/lib/pkgconfig/libfontembed.pc
 #usr/sbin/cups-browsed
+usr/share/cups/banners/classified
+usr/share/cups/banners/confidential
 usr/share/cups/banners/form
+usr/share/cups/banners/secret
+usr/share/cups/banners/standard
+usr/share/cups/banners/topsecret
+usr/share/cups/banners/unclassified
 usr/share/cups/braille
 usr/share/cups/braille/cups-braille.sh
 usr/share/cups/braille/index.sh
@@ -93,6 +98,7 @@ usr/share/cups/data/form_russian.pdf
 usr/share/cups/data/form_russian_in.odt
 usr/share/cups/data/secret.pdf
 usr/share/cups/data/standard.pdf
+usr/share/cups/data/testprint
 usr/share/cups/data/topsecret.pdf
 usr/share/cups/data/unclassified.pdf
 usr/share/cups/drv/cupsfilters.drv
