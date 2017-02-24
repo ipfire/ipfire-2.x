@@ -136,5 +136,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 750 /var/lib/samba/winbindd_privileged
 	chgrp wbpriv /var/lib/samba/winbindd_privileged
 
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,samba)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
