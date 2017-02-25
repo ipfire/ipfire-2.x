@@ -490,6 +490,7 @@ buildipfire() {
   ipfiremake nettle
   ipfiremake libevent
   ipfiremake libevent2
+  ipfiremake expat
   ipfiremake unbound
   ipfiremake gnutls
   ipfiremake bind
@@ -497,7 +498,6 @@ buildipfire() {
   ipfiremake dhcpcd
   ipfiremake boost
   ipfiremake linux-atm
-  ipfiremake expat
   ipfiremake gdbm
   ipfiremake pam
   ipfiremake curl
