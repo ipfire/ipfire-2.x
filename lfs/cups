@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
 PAK_VER    = 15
 
-DEPS       = "cups-filters ghostscript"
+DEPS       = "avahi cups-filters dbus ghostscript krb5 libtiff"
 
 ###############################################################################
 # Top-level Rules
@@ -82,9 +82,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--prefix=/usr \
 			--sysconfdir=/var/ipfire \
 			--localstatedir=/var \
-			--enable-libusb \
-			--disable-dbus \
-			--disable-avahi
+			--enable-debug \
+			--enable-avahi \
+			--enable-dbus \
+			--enable-gnutls \
+			--enable-libusb
 
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
