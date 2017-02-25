@@ -24,11 +24,10 @@
 
 include Config
 
-VER         = 4.9.11
+VER         = 4.9.12
 RPI_PATCHES = 3.14.79-grsec-ipfire1
 A7M_PATCHES = 3.14.79-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.1-4.9.11-201702181444.patch.xz
-
+GRS_PATCHES = grsecurity-3.1-4.9.12-201702231830.patch.xz
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -83,11 +82,10 @@ rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 $(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= 98761ce71c603199fe6fcce600c60772
+$(DL_FILE)_MD5					= 073dfb3a13bf5836ef2d66e24ccf2ceb
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= a02a7fd54c642c1e3578a00ed22f54f8
 arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 6c3b11e51caa278dbeacd1e23c2b171b
-$(GRS_PATCHES)_MD5				= 7403735960b9620276499251e7552511
-
+$(GRS_PATCHES)_MD5				= 6fb9c4bd02dd08d7c72b64149b1500c4
 
 install : $(TARGET)
 
@@ -130,12 +128,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 
 ifneq "$(KCFG)" "-headers"
-ifneq "$(MACHINE)" "i586"
-
 	# Grsecurity-patches
 	cd $(DIR_APP) && xz -c -d $(DIR_DL)/$(GRS_PATCHES) | patch -Np1
 	cd $(DIR_APP) && rm localversion-grsec
-endif
 endif
 
 	# DVB Patches
