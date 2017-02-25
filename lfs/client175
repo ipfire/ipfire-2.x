@@ -89,5 +89,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	                 /var/ipfire/backup/addons/includes/client175
 
 	chown -R nobody:nobody /srv/client175
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,client175)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
