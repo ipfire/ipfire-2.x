@@ -487,6 +487,11 @@ buildipfire() {
   ipfiremake libgpg-error
   ipfiremake libgcrypt
   ipfiremake libassuan
+  ipfiremake nettle
+  ipfiremake libevent
+  ipfiremake libevent2
+  ipfiremake unbound
+  ipfiremake gnutls
   ipfiremake bind
   ipfiremake dhcp
   ipfiremake dhcpcd
@@ -539,10 +544,6 @@ buildipfire() {
   ipfiremake arping
   ipfiremake beep
   ipfiremake dvdrtools
-  ipfiremake nettle
-  ipfiremake libevent
-  ipfiremake libevent2
-  ipfiremake unbound
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
   ipfiremake xfsprogs
