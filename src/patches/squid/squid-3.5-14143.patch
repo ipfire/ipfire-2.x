@@ -1,0 +1,55 @@
+------------------------------------------------------------
+revno: 14143
+revision-id: squid3@treenet.co.nz-20170225055014-j7v5xax13u4jddr9
+parent: squid3@treenet.co.nz-20170208054033-pxqn8rs4yu713ijq
+author: Christos Tsantilas <chtsanti@users.sourceforge.net>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sat 2017-02-25 18:50:14 +1300
+message:
+  Fix regression in CONNECT authentication after rev.14142
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20170225055014-j7v5xax13u4jddr9
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: bedc99ffdffd1e999c98c33faa830d4e9d1fc01d
+# timestamp: 2017-02-25 05:51:22 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170208054033-\
+#   pxqn8rs4yu713ijq
+# 
+# Begin patch
+=== modified file 'src/client_side_request.cc'
+--- src/client_side_request.cc	2017-02-08 05:40:33 +0000
++++ src/client_side_request.cc	2017-02-25 05:50:14 +0000
+@@ -1442,6 +1442,14 @@
+         return false;
+     }
+ 
++    // Do not bump during authentication: clients would not proxy-authenticate
++    // if we delay a 407 response and respond with 200 OK to CONNECT.
++    if (error && error->httpStatus == Http::scProxyAuthenticationRequired) {
++        http->al->ssl.bumpMode = Ssl::bumpEnd; // SslBump does not apply; log -
++        debugs(85, 5, HERE << "no SslBump during proxy authentication");
++        return false;
++    }
++
+     if (error) {
+         debugs(85, 5, "SslBump applies. Force bump action on error " << err_type_str[(error->type >= ERR_NONE && error->type < ERR_MAX) ? error->type : ERR_NONE]);
+         http->sslBumpNeed(Ssl::bumpBump);
+@@ -1449,14 +1457,6 @@
+         return false;
+     }
+ 
+-    // Do not bump during authentication: clients would not proxy-authenticate
+-    // if we delay a 407 response and respond with 200 OK to CONNECT.
+-    if (error && error->httpStatus == Http::scProxyAuthenticationRequired) {
+-        http->al->ssl.bumpMode = Ssl::bumpEnd; // SslBump does not apply; log -
+-        debugs(85, 5, HERE << "no SslBump during proxy authentication");
+-        return false;
+-    }
+-
+     debugs(85, 5, HERE << "SslBump possible, checking ACL");
+ 
+     ACLFilledChecklist *aclChecklist = clientAclChecklistCreate(Config.accessList.ssl_bump, http);
+
