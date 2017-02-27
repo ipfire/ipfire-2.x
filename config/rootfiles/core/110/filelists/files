@@ -1,0 +1,8 @@
+etc/system-release
+etc/issue
+srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
+usr/lib/libssp.so.0
+usr/lib/libssp.so.0.0.0
+usr/local/bin/xt_geoip_update
+var/ipfire/langs
