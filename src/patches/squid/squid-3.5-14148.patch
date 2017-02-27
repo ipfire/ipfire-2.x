@@ -1,0 +1,62 @@
+------------------------------------------------------------
+revno: 14148
+revision-id: squid3@treenet.co.nz-20170226110942-90rcwhx3fwa2l7is
+parent: squid3@treenet.co.nz-20170226085617-89jfjndt62i83qtn
+author: Alexander Gozman <a.gozman@securitycode.ru>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Mon 2017-02-27 00:09:42 +1300
+message:
+  Native FTP relay: NAT and TPROXY interception fixes
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20170226110942-90rcwhx3fwa2l7is
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 63f57f0ddddf0f231c3ef88a12728a707828c6ad
+# timestamp: 2017-02-26 11:51:04 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170226085617-\
+#   89jfjndt62i83qtn
+# 
+# Begin patch
+=== modified file 'src/servers/FtpServer.cc'
+--- src/servers/FtpServer.cc	2017-01-01 00:16:45 +0000
++++ src/servers/FtpServer.cc	2017-02-26 11:09:42 +0000
+@@ -1454,9 +1454,33 @@
+     Comm::ConnectionPointer conn = new Comm::Connection();
+     conn->flags |= COMM_DOBIND;
+ 
+-    // Use local IP address of the control connection as the source address
+-    // of the active data connection, or some clients will refuse to accept.
+-    conn->setAddrs(clientConnection->local, cltAddr);
++    if (clientConnection->flags & COMM_INTERCEPTION) {
++        // In the case of NAT interception conn->local value is not set
++        // because the TCP stack will automatically pick correct source
++        // address for the data connection. We must only ensure that IP
++        // version matches client's address.
++        conn->local.setAnyAddr();
++
++        if (cltAddr.isIPv4())
++            conn->local.setIPv4();
++
++        conn->remote = cltAddr;
++    } else {
++        // In the case of explicit-proxy the local IP of the control connection
++        // is the Squid IP the client is knowingly talking to.
++        //
++        // In the case of TPROXY the IP address of the control connection is
++        // server IP the client is connecting to, it can be spoofed by Squid.
++        //
++        // In both cases some clients may refuse to accept data connections if
++        // these control connectin local-IP's are not used.
++        conn->setAddrs(clientConnection->local, cltAddr);
++
++        // Using non-local addresses in TPROXY mode requires appropriate socket option.
++        if (clientConnection->flags & COMM_TRANSPARENT)
++            conn->flags |= COMM_TRANSPARENT;
++    }
++
+     // RFC 959 requires active FTP connections to originate from port 20
+     // but that would preclude us from supporting concurrent transfers! (XXX?)
+     conn->local.port(0);
+

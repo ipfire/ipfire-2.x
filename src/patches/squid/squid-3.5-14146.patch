@@ -1,0 +1,41 @@
+------------------------------------------------------------
+revno: 14146
+revision-id: squid3@treenet.co.nz-20170226085245-vcvc7nemupizbe4t
+parent: squid3@treenet.co.nz-20170226085009-tj3o81s5ybk8ly9s
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sun 2017-02-26 21:52:45 +1300
+message:
+  Check that -k argument is provided before trying to use it.
+  
+   Detected by Coverity Scan. Issue 1364726.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20170226085245-vcvc7nemupizbe4t
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 31bba06ced5b67f892e4be897b05ec3744b2a942
+# timestamp: 2017-02-26 09:51:00 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170226085009-\
+#   tj3o81s5ybk8ly9s
+# 
+# Begin patch
+=== modified file 'src/main.cc'
+--- src/main.cc	2017-01-01 00:16:45 +0000
++++ src/main.cc	2017-02-26 08:52:45 +0000
+@@ -425,11 +425,11 @@
+             /** \par k
+              * Run the administrative action given following the option */
+ 
+-            /** \li When its an unknown option display the usage help. */
+-            if ((int) strlen(optarg) < 1)
++            /** \li When it is missing or an unknown option display the usage help. */
++            if (!optarg || strlen(optarg) < 1)
+                 usage();
+ 
+-            if (!strncmp(optarg, "reconfigure", strlen(optarg)))
++            else if (!strncmp(optarg, "reconfigure", strlen(optarg)))
+                 /** \li On reconfigure send SIGHUP. */
+                 opt_send_signal = SIGHUP;
+             else if (!strncmp(optarg, "rotate", strlen(optarg)))
+
