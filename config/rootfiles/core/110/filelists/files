@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/httpd/conf/server-tuning.conf
 etc/rc.d/init.d/unbound
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
