@@ -80,5 +80,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && yes 'n' | perl Makefile.PL
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,spamassassin)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
