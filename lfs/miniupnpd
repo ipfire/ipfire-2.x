@@ -81,5 +81,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /etc/miniupnpd
 	cp -vf $(DIR_SRC)/config/miniupnpd/miniupnpd.conf /etc/miniupnpd/miniupnpd.conf
 
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,miniupnpd)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
