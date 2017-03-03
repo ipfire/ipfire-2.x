@@ -82,5 +82,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				     --localstatedir=/var
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,messagebus)
+
 	@rm -rf $(DIR_SRC)/dbus*
 	@$(POSTBUILD)
