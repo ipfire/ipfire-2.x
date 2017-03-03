@@ -90,7 +90,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m644 $(DIR_SRC)/config/netsnmpd/snmpd.conf /etc/snmpd.conf
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/netsnmpd \
 		/var/ipfire/backup/addons/includes/netsnmpd
-	install -v -m755 $(DIR_SRC)/src/initscripts/init.d/netsnmpd /etc/init.d/netsnmpd
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,netsnmpd)
+
 	ln -sf ../init.d/netsnmpd /etc/rc.d/rc3.d/S65netsnmpd
 	ln -sf ../init.d/netsnmpd /etc/rc.d/rc0.d/K02netsnmpd
 	ln -sf ../init.d/netsnmpd /etc/rc.d/rc6.d/K02netsnmpd
