@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.19"							# Version number
-CORE="109"							# Core Level (Filename)
+CORE="110"							# Core Level (Filename)
 PAKFIRE_CORE="109"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -487,12 +487,17 @@ buildipfire() {
   ipfiremake libgpg-error
   ipfiremake libgcrypt
   ipfiremake libassuan
+  ipfiremake nettle
+  ipfiremake libevent
+  ipfiremake libevent2
+  ipfiremake expat
+  ipfiremake unbound
+  ipfiremake gnutls
   ipfiremake bind
   ipfiremake dhcp
   ipfiremake dhcpcd
   ipfiremake boost
   ipfiremake linux-atm
-  ipfiremake expat
   ipfiremake gdbm
   ipfiremake pam
   ipfiremake curl
@@ -539,10 +544,6 @@ buildipfire() {
   ipfiremake arping
   ipfiremake beep
   ipfiremake dvdrtools
-  ipfiremake nettle
-  ipfiremake libevent
-  ipfiremake libevent2
-  ipfiremake unbound
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
   ipfiremake xfsprogs

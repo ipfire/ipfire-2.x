@@ -1,3 +1,4 @@
+etc/dbus-1/system.d/cups.conf
 etc/pam.d/cups
 etc/rc.d/init.d/cups
 #etc/rc0.d
@@ -15,6 +16,7 @@ usr/bin/cancel
 #usr/bin/cups-config
 usr/bin/cupstestdsc
 usr/bin/cupstestppd
+usr/bin/ippfind
 usr/bin/ipptool
 usr/bin/lp
 usr/bin/lpoptions
@@ -45,8 +47,11 @@ usr/bin/ppdpo
 #usr/include/cups/versioning.h
 usr/lib/cups
 usr/lib/cups/backend
+usr/lib/cups/backend/dnssd
 usr/lib/cups/backend/http
+usr/lib/cups/backend/https
 usr/lib/cups/backend/ipp
+usr/lib/cups/backend/ipps
 usr/lib/cups/backend/lpd
 usr/lib/cups/backend/smb
 usr/lib/cups/backend/snmp
@@ -77,6 +82,7 @@ usr/lib/cups/monitor
 usr/lib/cups/monitor/bcp
 usr/lib/cups/monitor/tbcp
 usr/lib/cups/notifier
+usr/lib/cups/notifier/dbus
 usr/lib/cups/notifier/mailto
 usr/lib/cups/notifier/rss
 #usr/lib/libcups.so
@@ -103,7 +109,6 @@ usr/sbin/lpc
 usr/sbin/lpinfo
 usr/sbin/lpmove
 usr/sbin/reject
-#usr/share/applications/cups.desktop
 usr/share/cups
 usr/share/cups/banners
 usr/share/cups/data
@@ -717,6 +722,7 @@ usr/share/locale/ru/cups_ru.po
 #usr/share/man/man1/cups.1.gz
 #usr/share/man/man1/cupstestdsc.1.gz
 #usr/share/man/man1/cupstestppd.1.gz
+#usr/share/man/man1/ippfind.1.gz
 #usr/share/man/man1/ipptool.1.gz
 #usr/share/man/man1/lp.1.gz
 #usr/share/man/man1/lpoptions.1.gz

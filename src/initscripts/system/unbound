@@ -114,17 +114,38 @@ update_forwarders() {
 			echo_warning
 		fi
 
-		if [ -n "${broken_forwarders}" -a -z "${forwarders}" ]; then
-			boot_mesg "Falling back to recursor mode" ${WARNING}
-			echo_warning
-
-		elif [ -n "${forwarders}" ]; then
+		if [ -n "${forwarders}" ]; then
 			boot_mesg "Configuring upstream name server(s): ${forwarders:1}" ${INFO}
 			echo_ok
+
+			# Make sure DNSSEC is activated
+			enable_dnssec
 
 			echo "${forwarders}" > /var/ipfire/red/dns
 			unbound-control -q forward ${forwarders}
 			return 0
+
+		# In case we have found no working forwarders
+		else
+			# Test if the recursor mode is available
+			if can_resolve_root +bufsize=${new_edns_buffer_size}; then
+				# Make sure DNSSEC is activated
+				enable_dnssec
+
+				boot_mesg "Falling back to recursor mode" ${WARNING}
+				echo_warning
+
+			# If not, we set DNSSEC in permissive mode and allow using all recursors
+			elif [ -n "${broken_forwarders}" ]; then
+				disable_dnssec
+
+				boot_mesg "DNSSEC has been set to permissive mode" ${FAILURE}
+				echo_failure
+
+				echo "${broken_forwarders}" > /var/ipfire/red/dns
+				unbound-control -q forward ${broken_forwarders}
+				return 0
+			fi
 		fi
 	fi
 
@@ -368,6 +389,42 @@ ns_determine_edns_buffer_size() {
 	done
 
 	return 1
+}
+
+get_root_nameservers() {
+	while read -r hostname ttl record address; do
+		# Searching for A records
+		[ "${record}" = "A" ] || continue
+
+		echo "${address}"
+	done < /etc/unbound/root.hints
+}
+
+can_resolve_root() {
+	local ns
+	for ns in $(get_root_nameservers); do
+		if dig @${ns} +dnssec SOA . $@ >/dev/null; then
+			return 0
+		fi
+	done
+
+	# none of the servers was reachable
+	return 1
+}
+
+enable_dnssec() {
+	local status=$(unbound-control get_option val-permissive-mode)
+
+	# Don't do anything if DNSSEC is already activated
+	[ "${status}" = "no" ] && return 0
+
+	# Activate DNSSEC and flush cache with any stale and unvalidated data
+	unbound-control -q set_option val-permissive-mode: no
+	unbound-control -q flush_zone .
+}
+
+disable_dnssec() {
+	unbound-control -q set_option val-permissive-mode: yes
 }
 
 case "$1" in

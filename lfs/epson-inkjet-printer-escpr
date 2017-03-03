@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.6.11
+VER        = 1.6.12
 LSB        = 1lsb3.2
 
 THISAPP    = epson-inkjet-printer-escpr-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = epson-inkjet-printer-escpr
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = "cups"
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ab143fb1c044e6190ca147027c530cfa
+$(DL_FILE)_MD5 = fddedddd1424402d8ec8297536c751a0
 
 install : $(TARGET)
 

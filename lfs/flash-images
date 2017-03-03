@@ -193,7 +193,7 @@ endif
 		-e "s/root=[A-Za-z0-9\/=-]*/root=UUID=$$(blkid -o value -s UUID $(PART_ROOT))/g"
 
 	# Install GRUB
-	grub-install --force --recheck --no-floppy \
+	grub-install --force --recheck --no-floppy --target=i386-pc \
 		--root-directory=$(MNThdd) $(DEVICE)
 endif
 

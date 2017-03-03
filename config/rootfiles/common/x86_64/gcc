@@ -1138,8 +1138,8 @@ usr/lib/libquadmath.so.0.0.0
 #usr/lib/libssp.a
 #usr/lib/libssp.la
 #usr/lib/libssp.so
-#usr/lib/libssp.so.0
-#usr/lib/libssp.so.0.0.0
+usr/lib/libssp.so.0
+usr/lib/libssp.so.0.0.0
 #usr/lib/libssp_nonshared.a
 #usr/lib/libssp_nonshared.la
 #usr/lib/libstdc++.a

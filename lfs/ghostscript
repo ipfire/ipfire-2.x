@@ -24,17 +24,17 @@
 
 include Config
 
-VER        = 8.15.1
+VER        = 9.20
 
-THISAPP    = espgs-$(VER)
-DL_FILE    = $(THISAPP)-source.tar.bz2
+THISAPP    = ghostscript-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/espgs-$(VER)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ghostscript
-PAK_VER    = 1
+PAK_VER    = 2
 
-DEPS       = ""
+DEPS       = "dbus libtiff"
 
 ###############################################################################
 # Top-level Rules
@@ -48,7 +48,7 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 ghostscript-fonts-std-8.11.tar.gz = $(URL_IPFIRE)/ghostscript-fonts-std-8.11.tar.gz
 gnu-gs-fonts-other-6.0.tar.gz = $(URL_IPFIRE)/gnu-gs-fonts-other-6.0.tar.gz
 
-$(DL_FILE)_MD5 = 2a21136953c3559e6088522753b06b1f
+$(DL_FILE)_MD5 = 93c5987cd3ab341108be1ebbaadc24fe
 ghostscript-fonts-std-8.11.tar.gz_MD5 = 6865682b095f8c4500c54b285ff05ef6
 gnu-gs-fonts-other-6.0.tar.gz_MD5 = 33457d3f37de7ef03d2eea05a9e6aa4f
 
@@ -82,14 +82,19 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-#	cd $(DIR_APP) && sed -i "s/bbox.dev$/x11.dev/" Makefile.in
-	cd $(DIR_APP) && ./configure --prefix=/usr --enable-threads --without-omni
-	cd $(DIR_APP) && make
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && \
+		./configure \
+			--prefix=/usr \
+			--with-system-libtiff \
+			--with-install-cups
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	rmdir -v /usr/lib/ghostscript/8.15 /usr/lib/ghostscript
+
+	# Install fonts
 	tar xfz $(DIR_SRC)/cache/ghostscript-fonts-std-8.11.tar.gz -C /usr/share/ghostscript
 	tar xfz $(DIR_SRC)/cache/gnu-gs-fonts-other-6.0.tar.gz -C /usr/share/ghostscript
 	chown -v root:root /usr/share/ghostscript/fonts/*
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
