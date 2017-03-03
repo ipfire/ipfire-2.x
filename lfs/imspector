@@ -91,5 +91,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 755 /srv/web/ipfire/cgi-bin/imspector.cgi
 	chown nobody:nobody -R /var/log/imspector
 
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,imspector)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
