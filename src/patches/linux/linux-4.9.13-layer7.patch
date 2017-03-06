@@ -1,6 +1,8 @@
-diff -Naur linux-4.9.8.org/include/linux/netfilter/xt_layer7.h linux-4.9.8/include/linux/netfilter/xt_layer7.h
---- linux-4.9.8.org/include/linux/netfilter/xt_layer7.h	1970-01-01 01:00:00.000000000 +0100
-+++ linux-4.9.8/include/linux/netfilter/xt_layer7.h	2017-02-10 20:55:36.894611414 +0100
+diff --git a/include/linux/netfilter/xt_layer7.h b/include/linux/netfilter/xt_layer7.h
+new file mode 100644
+index 0000000..147cd64
+--- /dev/null
++++ b/include/linux/netfilter/xt_layer7.h
 @@ -0,0 +1,13 @@
 +#ifndef _XT_LAYER7_H
 +#define _XT_LAYER7_H
@@ -15,10 +17,11 @@ diff -Naur linux-4.9.8.org/include/linux/netfilter/xt_layer7.h linux-4.9.8/inclu
 +};
 +
 +#endif /* _XT_LAYER7_H */
-diff -Naur linux-4.9.8.org/include/net/netfilter/nf_conntrack.h linux-4.9.8/include/net/netfilter/nf_conntrack.h
---- linux-4.9.8.org/include/net/netfilter/nf_conntrack.h	2017-02-04 09:47:29.000000000 +0100
-+++ linux-4.9.8/include/net/netfilter/nf_conntrack.h	2017-02-10 16:10:27.000000000 +0100
-@@ -120,6 +120,22 @@
+diff --git a/include/net/netfilter/nf_conntrack.h b/include/net/netfilter/nf_conntrack.h
+index d9d52c0..09389b6 100644
+--- a/include/net/netfilter/nf_conntrack.h
++++ b/include/net/netfilter/nf_conntrack.h
+@@ -120,6 +120,22 @@ struct nf_conn {
  	/* Extensions */
  	struct nf_ct_ext *ext;
  
@@ -41,10 +44,11 @@ diff -Naur linux-4.9.8.org/include/net/netfilter/nf_conntrack.h linux-4.9.8/incl
  	/* Storage reserved for other modules, must be the last member */
  	union nf_conntrack_proto proto;
  };
-diff -Naur linux-4.9.8.org/net/netfilter/Kconfig linux-4.9.8/net/netfilter/Kconfig
---- linux-4.9.8.org/net/netfilter/Kconfig	2017-02-04 09:47:29.000000000 +0100
-+++ linux-4.9.8/net/netfilter/Kconfig	2017-02-10 16:10:30.000000000 +0100
-@@ -1238,6 +1238,26 @@
+diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
+index e8d56d9..ab4ae1d 100644
+--- a/net/netfilter/Kconfig
++++ b/net/netfilter/Kconfig
+@@ -1238,6 +1238,26 @@ config NETFILTER_XT_MATCH_L2TP
  
  	To compile it as a module, choose M here. If unsure, say N.
  
@@ -71,10 +75,11 @@ diff -Naur linux-4.9.8.org/net/netfilter/Kconfig linux-4.9.8/net/netfilter/Kconf
  config NETFILTER_XT_MATCH_LENGTH
  	tristate '"length" match support'
  	depends on NETFILTER_ADVANCED
-diff -Naur linux-4.9.8.org/net/netfilter/Makefile linux-4.9.8/net/netfilter/Makefile
---- linux-4.9.8.org/net/netfilter/Makefile	2017-02-04 09:47:29.000000000 +0100
-+++ linux-4.9.8/net/netfilter/Makefile	2017-02-10 16:10:30.000000000 +0100
-@@ -174,6 +174,7 @@
+diff --git a/net/netfilter/Makefile b/net/netfilter/Makefile
+index c23c3c8..916b9d5 100644
+--- a/net/netfilter/Makefile
++++ b/net/netfilter/Makefile
+@@ -174,6 +174,7 @@ obj-$(CONFIG_NETFILTER_XT_MATCH_RECENT) += xt_recent.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_SCTP) += xt_sctp.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_SOCKET) += xt_socket.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_STATE) += xt_state.o
@@ -82,27 +87,27 @@ diff -Naur linux-4.9.8.org/net/netfilter/Makefile linux-4.9.8/net/netfilter/Make
  obj-$(CONFIG_NETFILTER_XT_MATCH_STATISTIC) += xt_statistic.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_STRING) += xt_string.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_TCPMSS) += xt_tcpmss.o
-diff -Naur linux-4.9.8.org/net/netfilter/nf_conntrack_core.c linux-4.9.8/net/netfilter/nf_conntrack_core.c
---- linux-4.9.8.org/net/netfilter/nf_conntrack_core.c	2017-02-04 09:47:29.000000000 +0100
-+++ linux-4.9.8/net/netfilter/nf_conntrack_core.c	2017-02-10 16:10:30.000000000 +0100
-@@ -341,6 +341,13 @@
- {
- 	struct ct_pcpu *pcpu;
+diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
+index 0f87e5d..1f355a0 100644
+--- a/net/netfilter/nf_conntrack_core.c
++++ b/net/netfilter/nf_conntrack_core.c
+@@ -406,6 +406,11 @@ destroy_conntrack(struct nf_conntrack *nfct)
+ 	 */
+ 	nf_ct_remove_expectations(ct);
  
 +#if defined(CONFIG_NETFILTER_XT_MATCH_LAYER7) || defined(CONFIG_NETFILTER_XT_MATCH_LAYER7_MODULE)
-+	if(ct->layer7.app_proto)
-+		kfree(ct->layer7.app_proto);
 +	if(ct->layer7.app_data)
 +		kfree(ct->layer7.app_data);
 +#endif
 +
- 	/* We overload first tuple to link into unconfirmed or dying list.*/
- 	pcpu = per_cpu_ptr(nf_ct_net(ct)->ct.pcpu_lists, ct->cpu);
+ 	nf_ct_del_from_dying_or_unconfirmed_list(ct);
  
-diff -Naur linux-4.9.8.org/net/netfilter/nf_conntrack_standalone.c linux-4.9.8/net/netfilter/nf_conntrack_standalone.c
---- linux-4.9.8.org/net/netfilter/nf_conntrack_standalone.c	2017-02-04 09:47:29.000000000 +0100
-+++ linux-4.9.8/net/netfilter/nf_conntrack_standalone.c	2017-02-10 16:10:30.000000000 +0100
-@@ -274,6 +274,11 @@
+ 	local_bh_enable();
+diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
+index 5f446cd..92f29f9 100644
+--- a/net/netfilter/nf_conntrack_standalone.c
++++ b/net/netfilter/nf_conntrack_standalone.c
+@@ -274,6 +274,11 @@ static int ct_seq_show(struct seq_file *s, void *v)
  	ct_show_zone(s, ct, NF_CT_DEFAULT_ZONE_DIR);
  	ct_show_delta_time(s, ct);
  
@@ -114,9 +119,11 @@ diff -Naur linux-4.9.8.org/net/netfilter/nf_conntrack_standalone.c linux-4.9.8/n
  	seq_printf(s, "use=%u\n", atomic_read(&ct->ct_general.use));
  
  	if (seq_has_overflowed(s))
-diff -Naur linux-4.9.8.org/net/netfilter/regexp/regexp.c linux-4.9.8/net/netfilter/regexp/regexp.c
---- linux-4.9.8.org/net/netfilter/regexp/regexp.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-4.9.8/net/netfilter/regexp/regexp.c	2017-02-10 20:55:36.898611415 +0100
+diff --git a/net/netfilter/regexp/regexp.c b/net/netfilter/regexp/regexp.c
+new file mode 100644
+index 0000000..9006988
+--- /dev/null
++++ b/net/netfilter/regexp/regexp.c
 @@ -0,0 +1,1197 @@
 +/*
 + * regcomp and regexec -- regsub and regerror are elsewhere
@@ -1315,9 +1322,11 @@ diff -Naur linux-4.9.8.org/net/netfilter/regexp/regexp.c linux-4.9.8/net/netfilt
 +#endif
 +
 +
-diff -Naur linux-4.9.8.org/net/netfilter/regexp/regexp.h linux-4.9.8/net/netfilter/regexp/regexp.h
---- linux-4.9.8.org/net/netfilter/regexp/regexp.h	1970-01-01 01:00:00.000000000 +0100
-+++ linux-4.9.8/net/netfilter/regexp/regexp.h	2017-02-10 20:55:36.898611415 +0100
+diff --git a/net/netfilter/regexp/regexp.h b/net/netfilter/regexp/regexp.h
+new file mode 100644
+index 0000000..a72eba7
+--- /dev/null
++++ b/net/netfilter/regexp/regexp.h
 @@ -0,0 +1,41 @@
 +/*
 + * Definitions etc. for regexp(3) routines.
@@ -1360,18 +1369,22 @@ diff -Naur linux-4.9.8.org/net/netfilter/regexp/regexp.h linux-4.9.8/net/netfilt
 +void regerror(char *s);
 +
 +#endif
-diff -Naur linux-4.9.8.org/net/netfilter/regexp/regmagic.h linux-4.9.8/net/netfilter/regexp/regmagic.h
---- linux-4.9.8.org/net/netfilter/regexp/regmagic.h	1970-01-01 01:00:00.000000000 +0100
-+++ linux-4.9.8/net/netfilter/regexp/regmagic.h	2017-02-10 20:55:36.898611415 +0100
+diff --git a/net/netfilter/regexp/regmagic.h b/net/netfilter/regexp/regmagic.h
+new file mode 100644
+index 0000000..5acf447
+--- /dev/null
++++ b/net/netfilter/regexp/regmagic.h
 @@ -0,0 +1,5 @@
 +/*
 + * The first byte of the regexp internal "program" is actually this magic
 + * number; the start node begins in the second byte.
 + */
 +#define	MAGIC	0234
-diff -Naur linux-4.9.8.org/net/netfilter/regexp/regsub.c linux-4.9.8/net/netfilter/regexp/regsub.c
---- linux-4.9.8.org/net/netfilter/regexp/regsub.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-4.9.8/net/netfilter/regexp/regsub.c	2017-02-10 20:55:36.898611415 +0100
+diff --git a/net/netfilter/regexp/regsub.c b/net/netfilter/regexp/regsub.c
+new file mode 100644
+index 0000000..339631f
+--- /dev/null
++++ b/net/netfilter/regexp/regsub.c
 @@ -0,0 +1,95 @@
 +/*
 + * regsub
@@ -1468,10 +1481,12 @@ diff -Naur linux-4.9.8.org/net/netfilter/regexp/regsub.c linux-4.9.8/net/netfilt
 +	}
 +	*dst++ = '\0';
 +}
-diff -Naur linux-4.9.8.org/net/netfilter/xt_layer7.c linux-4.9.8/net/netfilter/xt_layer7.c
---- linux-4.9.8.org/net/netfilter/xt_layer7.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-4.9.8/net/netfilter/xt_layer7.c	2017-02-10 22:42:57.750923134 +0100
-@@ -0,0 +1,658 @@
+diff --git a/net/netfilter/xt_layer7.c b/net/netfilter/xt_layer7.c
+new file mode 100644
+index 0000000..ddf7fec
+--- /dev/null
++++ b/net/netfilter/xt_layer7.c
+@@ -0,0 +1,683 @@
 +/*
 +  Kernel module to match application layer (OSI layer 7) data in connections.
 +
@@ -1511,10 +1526,10 @@ diff -Naur linux-4.9.8.org/net/netfilter/xt_layer7.c linux-4.9.8/net/netfilter/x
 +#include "regexp/regexp.c"
 +
 +MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Matthew Strait <quadong@users.sf.net>, Ethan Sommer <sommere@users.sf.net>");
++MODULE_AUTHOR("Matthew Strait <quadong@users.sf.net>, Ethan Sommer <sommere@users.sf.net>, Arne Fitzenreiter <arne_f@ipfire.org>");
 +MODULE_DESCRIPTION("iptables application layer match module");
 +MODULE_ALIAS("ipt_layer7");
-+MODULE_VERSION("2.23");
++MODULE_VERSION("2.30");
 +
 +static int maxdatalen = 2048; // this is the default
 +module_param(maxdatalen, int, 0444);
@@ -1534,6 +1549,11 @@ diff -Naur linux-4.9.8.org/net/netfilter/xt_layer7.c linux-4.9.8/net/netfilter/x
 +	regexp * pattern;
 +	struct pattern_cache * next;
 +} * first_pattern_cache = NULL;
++
++static struct proto_cache {
++	char * proto_string;
++	struct proto_cache * next;
++} * first_proto_cache = NULL;
 +
 +DEFINE_SPINLOCK(l7_lock);
 +
@@ -1684,6 +1704,55 @@ diff -Naur linux-4.9.8.org/net/netfilter/xt_layer7.c linux-4.9.8/net/netfilter/x
 +	return node->pattern;
 +}
 +
++static char * get_protostr_ptr(const char * protocol)
++{
++	struct proto_cache * node             = first_proto_cache;
++	struct proto_cache * last_proto_cache = first_proto_cache;
++	struct proto_cache * tmp;
++
++	while (node != NULL) {
++		if (!strcmp(node->proto_string, protocol))
++		return node->proto_string;
++
++		last_proto_cache = node;/* points at the last non-NULL node */
++		node = node->next;
++	}
++
++	/* If we reach the end of the list, then we have not yet cached protocol
++	   Be paranoid about running out of memory to avoid list corruption. */
++	tmp = kmalloc(sizeof(struct proto_cache), GFP_ATOMIC);
++
++	if(!tmp) {
++		if (net_ratelimit())
++			printk(KERN_ERR "layer7: out of memory in "
++					"proto_cache add, bailing.\n");
++		return NULL;
++	}
++
++	tmp->proto_string = kmalloc(strlen(protocol) + 1   , GFP_ATOMIC);
++	tmp->next = NULL;
++
++	if(!tmp->proto_string) {
++		if (net_ratelimit())
++			printk(KERN_ERR "layer7: out of memory in "
++					"proto_cache add, bailing.\n");
++		kfree(tmp->proto_string);
++		kfree(tmp);
++		return NULL;
++	}
++
++	/* Ok.  The new node is all ready now. */
++	node = tmp;
++
++	if(first_proto_cache == NULL) /* list is empty */
++		first_proto_cache = node; /* make node the beginning */
++	else
++		last_proto_cache->next = node; /* attach node to the end */
++
++	strcpy(node->proto_string, protocol);
++	return node->proto_string;
++}
++
 +static int can_handle(const struct sk_buff *skb)
 +{
 +	if(!ip_hdr(skb)) /* not IP */
@@ -1754,18 +1823,7 @@ diff -Naur linux-4.9.8.org/net/netfilter/xt_layer7.c linux-4.9.8/net/netfilter/x
 +	if(master_conntrack->layer7.app_proto){
 +		/* Here child connections set their .app_proto (for /proc) */
 +		if(!conntrack->layer7.app_proto) {
-+			conntrack->layer7.app_proto = 
-+			  kmalloc(strlen(master_conntrack->layer7.app_proto)+1, 
-+			    GFP_ATOMIC);
-+			if(!conntrack->layer7.app_proto){
-+				if (net_ratelimit())
-+					printk(KERN_ERR "layer7: out of memory "
-+							"in match_no_append, "
-+							"bailing.\n");
-+				return 1;
-+			}
-+			strcpy(conntrack->layer7.app_proto, 
-+				master_conntrack->layer7.app_proto);
++			conntrack->layer7.app_proto = master_conntrack->layer7.app_proto;
 +		}
 +
 +		return (!strcmp(master_conntrack->layer7.app_proto, 
@@ -1774,15 +1832,7 @@ diff -Naur linux-4.9.8.org/net/netfilter/xt_layer7.c linux-4.9.8/net/netfilter/x
 +	else {
 +		/* If not classified, set to "unknown" to distinguish from
 +		connections that are still being tested. */
-+		master_conntrack->layer7.app_proto = 
-+			kmalloc(strlen("unknown")+1, GFP_ATOMIC);
-+		if(!master_conntrack->layer7.app_proto){
-+			if (net_ratelimit())
-+				printk(KERN_ERR "layer7: out of memory in "
-+						"match_no_append, bailing.\n");
-+			return 1;
-+		}
-+		strcpy(master_conntrack->layer7.app_proto, "unknown");
++		master_conntrack->layer7.app_proto = get_protostr_ptr("unknown");
 +		return 0;
 +	}
 +}
@@ -1982,7 +2032,6 @@ diff -Naur linux-4.9.8.org/net/netfilter/xt_layer7.c linux-4.9.8/net/netfilter/x
 +	if(!skb->cb[0]){
 +		int newbytes;
 +		newbytes = add_data(master_conntrack, app_data, appdatalen);
-+
 +		if(newbytes == 0) { /* didn't add any data */
 +			skb->cb[0] = 1;
 +			/* Didn't match before, not going to match now */
@@ -2010,16 +2059,7 @@ diff -Naur linux-4.9.8.org/net/netfilter/xt_layer7.c linux-4.9.8/net/netfilter/x
 +	} else pattern_result = 0;
 +
 +	if(pattern_result == 1) {
-+		master_conntrack->layer7.app_proto = 
-+			kmalloc(strlen(info->protocol)+1, GFP_ATOMIC);
-+		if(!master_conntrack->layer7.app_proto){
-+			if (net_ratelimit())
-+				printk(KERN_ERR "layer7: out of memory in "
-+						"match, bailing.\n");
-+			spin_unlock_bh(&l7_lock);
-+			return (pattern_result ^ info->invert);
-+		}
-+		strcpy(master_conntrack->layer7.app_proto, info->protocol);
++		master_conntrack->layer7.app_proto=get_protostr_ptr(info->protocol);
 +	} else if(pattern_result > 1) { /* cleanup from "unset" */
 +		pattern_result = 1;
 +	}

@@ -3016,6 +3016,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/net/netfilter/xt_iprange.ko
 #lib/modules/KVER-ipfire/kernel/net/netfilter/xt_ipvs.ko
 #lib/modules/KVER-ipfire/kernel/net/netfilter/xt_l2tp.ko
+#lib/modules/KVER-ipfire/kernel/net/netfilter/xt_layer7.ko
 #lib/modules/KVER-ipfire/kernel/net/netfilter/xt_length.ko
 #lib/modules/KVER-ipfire/kernel/net/netfilter/xt_limit.ko
 #lib/modules/KVER-ipfire/kernel/net/netfilter/xt_mac.ko

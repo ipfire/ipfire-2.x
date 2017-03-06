@@ -124,7 +124,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9-imq.diff
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-layer7-filter.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.13-layer7.patch
 
 
 ifneq "$(KCFG)" "-headers"
