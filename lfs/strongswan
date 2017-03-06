@@ -108,8 +108,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Remove all library files we don't want or need.
 	rm -vf /usr/lib/ipsec/plugins/*.{,l}a
 
-	-rm -rfv /etc/rc*.d/*ipsec
-	cd $(DIR_SRC) && cp src/initscripts/init.d/ipsec /etc/rc.d/init.d/ipsec
 	rm -f /etc/ipsec.conf /etc/ipsec.secrets
 	ln -sf $(CONFIG_ROOT)/vpn/ipsec.conf /etc/ipsec.conf
 	ln -sf $(CONFIG_ROOT)/vpn/ipsec.secrets /etc/ipsec.secrets
