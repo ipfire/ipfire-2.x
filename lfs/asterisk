@@ -152,6 +152,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# generate softlink (or asterisk will not work properly)
 	ln -sf /var/ipfire/asterisk /etc/asterisk
 
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,asterisk)
+
 	# make asterisk start with reboot
 	ln -sf /etc/rc.d/init.d/asterisk /etc/rc.d/rc0.d/K30asterisk
 	ln -sf /etc/rc.d/init.d/asterisk /etc/rc.d/rc6.d/K30asterisk

@@ -86,4 +86,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP)
 	touch /var/log/mpd.error.log
 	touch /var/log/mpd.log
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,mpd)
+
 	@$(POSTBUILD)

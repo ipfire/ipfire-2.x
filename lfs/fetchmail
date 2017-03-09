@@ -96,5 +96,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/fetchmail \
 		/var/ipfire/backup/addons/includes/fetchmail
 
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,fetchmail)
+
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

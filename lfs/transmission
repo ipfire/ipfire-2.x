@@ -88,6 +88,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -vf $(DIR_SRC)/config/transmission/* /etc/transmission/
 	chown -Rv nobody.nobody /etc/transmission
 
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,transmission)
+
 	# Install backup include
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/transmission \
 			 /var/ipfire/backup/addons/includes/transmission

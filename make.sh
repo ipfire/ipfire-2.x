@@ -393,6 +393,7 @@ buildipfire() {
   LOGFILE="$BASEDIR/log/_build.ipfire.log"
   export LOGFILE
   ipfiremake configroot
+  ipfiremake initscripts
   ipfiremake backup
   ipfiremake pkg-config
   ipfiremake libusb
@@ -563,7 +564,6 @@ buildipfire() {
   ipfiremake hdparm
   ipfiremake sdparm
   ipfiremake mtools
-  ipfiremake initscripts
   ipfiremake whatmask
   ipfiremake conntrack-tools
   ipfiremake libupnp

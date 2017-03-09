@@ -83,5 +83,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install configuration.
 	install -m 644 $(DIR_SRC)/config/minidlna/minidlna.conf /etc
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,minidlna)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -85,5 +85,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/mediatomb \
 	                 /var/ipfire/backup/addons/includes/mediatomb
 	echo Folder for music files > /var/mp3/info
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,mediatomb)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
