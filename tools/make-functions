@@ -80,6 +80,12 @@ configure_target() {
 			CFLAGS_ARCH="-march=i586 -mtune=generic -fomit-frame-pointer"
 			;;
 
+		aarch64)
+			BUILDTARGET="${target_arch}-unknown-linux-gnu"
+			CROSSTARGET="${target_arch}-cross-linux-gnu"
+			CFLAGS_ARCH=""
+			;;
+
 		armv5tel)
 			BUILDTARGET="${target_arch}-unknown-linux-gnueabi"
 			CROSSTARGET="${target_arch}-cross-linux-gnueabi"
