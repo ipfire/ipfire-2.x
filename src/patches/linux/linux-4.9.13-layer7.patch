@@ -17,11 +17,25 @@ index 0000000..147cd64
 +};
 +
 +#endif /* _XT_LAYER7_H */
+diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
+index 32810f2..b1e6b5c 100644
+--- a/include/linux/skbuff.h
++++ b/include/linux/skbuff.h
+@@ -663,6 +663,9 @@ struct sk_buff {
+ #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
+ 	struct nf_conntrack	*nfct;
+ #endif
++#if defined(CONFIG_NETFILTER_XT_MATCH_LAYER7) || defined(CONFIG_NETFILTER_XT_MATCH_LAYER7_MODULE)
++	char			layer7_flags[1];
++#endif
+ #if IS_ENABLED(CONFIG_BRIDGE_NETFILTER)
+ 	struct nf_bridge_info	*nf_bridge;
+ #endif
 diff --git a/include/net/netfilter/nf_conntrack.h b/include/net/netfilter/nf_conntrack.h
-index d9d52c0..09389b6 100644
+index d9d52c0..99b7a82 100644
 --- a/include/net/netfilter/nf_conntrack.h
 +++ b/include/net/netfilter/nf_conntrack.h
-@@ -120,6 +120,22 @@ struct nf_conn {
+@@ -120,6 +120,23 @@ struct nf_conn {
  	/* Extensions */
  	struct nf_ct_ext *ext;
  
@@ -38,6 +52,7 @@ index d9d52c0..09389b6 100644
 +		 */
 +		char *app_data;
 +		unsigned int app_data_len;
++		unsigned int packets;
 +	} layer7;
 +#endif
 +
@@ -1483,10 +1498,10 @@ index 0000000..339631f
 +}
 diff --git a/net/netfilter/xt_layer7.c b/net/netfilter/xt_layer7.c
 new file mode 100644
-index 0000000..ddf7fec
+index 0000000..ffdf76f
 --- /dev/null
 +++ b/net/netfilter/xt_layer7.c
-@@ -0,0 +1,683 @@
+@@ -0,0 +1,671 @@
 +/*
 +  Kernel module to match application layer (OSI layer 7) data in connections.
 +
@@ -1556,22 +1571,6 @@ index 0000000..ddf7fec
 +} * first_proto_cache = NULL;
 +
 +DEFINE_SPINLOCK(l7_lock);
-+
-+static int total_acct_packets(struct nf_conn *ct)
-+{
-+#if LINUX_VERSION_CODE <= KERNEL_VERSION(2, 6, 26)
-+	BUG_ON(ct == NULL);
-+	return (ct->counters[IP_CT_DIR_ORIGINAL].packets + ct->counters[IP_CT_DIR_REPLY].packets);
-+#else
-+	struct nf_conn_counter *acct;
-+
-+	BUG_ON(ct == NULL);
-+	acct = nf_conn_acct_find(ct);
-+	if (!acct)
-+		return 0;
-+        return (atomic64_read(&acct[IP_CT_DIR_ORIGINAL].packets) + atomic64_read(&acct[IP_CT_DIR_REPLY].packets));
-+#endif
-+}
 +
 +#ifdef CONFIG_IP_NF_MATCH_LAYER7_DEBUG
 +/* Converts an unfriendly string into a friendly one by
@@ -1809,7 +1808,7 @@ index 0000000..ddf7fec
 +			  hex_print(master_conntrack->layer7.app_data);
 +			DPRINTK("\nl7-filter gave up after %d bytes "
 +				"(%d packets):\n%s\n",
-+				strlen(f), total_acct_packets(master_conntrack), f);
++				strlen(f), master_conntrack->layer7.packets, f);
 +			kfree(f);
 +			DPRINTK("In hex: %s\n", g);
 +			kfree(g);
@@ -1971,19 +1970,23 @@ index 0000000..ddf7fec
 +	while (master_ct(master_conntrack) != NULL)
 +		master_conntrack = master_ct(master_conntrack);
 +
++	/* free unused conntrack data if different master conntrack exists */
++	if (master_conntrack != conntrack) {
++		if (conntrack->layer7.app_data) {
++			DPRINTK("layer7: free unused conntrack memory.\n");
++			kfree(conntrack->layer7.app_data);
++			conntrack->layer7.app_data = NULL; /* don't free again */
++		}
++	}
++
 +	/* if we've classified it or seen too many packets */
-+	if(total_acct_packets(master_conntrack) > num_packets ||
++	if( master_conntrack->layer7.packets >= num_packets ||
 +	   master_conntrack->layer7.app_proto) {
 +
 +		pattern_result = match_no_append(conntrack, master_conntrack, 
 +						 ctinfo, master_ctinfo, info);
 +
-+		/* skb->cb[0] == seen. Don't do things twice if there are 
-+		multiple l7 rules. I'm not sure that using cb for this purpose 
-+		is correct, even though it says "put your private variables 
-+		there". But it doesn't look like it is being used for anything
-+		else in the skbs that make it here. */
-+		skb->cb[0] = 1; /* marking it seen here's probably irrelevant */
++		skb->layer7_flags[0] = 1; /* marking it seen here's probably irrelevant */
 +
 +		spin_unlock_bh(&l7_lock);
 +		return (pattern_result ^ info->invert);
@@ -2006,9 +2009,9 @@ index 0000000..ddf7fec
 +	/* the return value gets checked later, when we're ready to use it */
 +	comppattern = compile_and_cache(info->pattern, info->protocol);
 +
-+	/* On the first packet of a connection, allocate space for app data */
-+	if(total_acct_packets(master_conntrack) == 1 && !skb->cb[0] && 
-+	   !master_conntrack->layer7.app_data){
++	/* On fist packet of a connection, allocate space for app data */
++	if(master_conntrack->layer7.packets==0 && !skb->layer7_flags[0] &&
++		!master_conntrack->layer7.app_data){
 +		master_conntrack->layer7.app_data = 
 +			kmalloc(maxdatalen, GFP_ATOMIC);
 +		if(!master_conntrack->layer7.app_data){
@@ -2022,22 +2025,22 @@ index 0000000..ddf7fec
 +		master_conntrack->layer7.app_data[0] = '\0';
 +	}
 +
-+	/* Can be here, but unallocated, if numpackets is increased near
-+	the beginning of a connection */
-+	if(master_conntrack->layer7.app_data == NULL){
++	/* this should not happen */
++	if(master_conntrack->layer7.app_data == NULL) {
 +		spin_unlock_bh(&l7_lock);
 +		return info->invert; /* unmatched */
 +	}
 +
-+	if(!skb->cb[0]){
++	if(!skb->layer7_flags[0]){
 +		int newbytes;
 +		newbytes = add_data(master_conntrack, app_data, appdatalen);
 +		if(newbytes == 0) { /* didn't add any data */
-+			skb->cb[0] = 1;
++			skb->layer7_flags[0] = 1;
 +			/* Didn't match before, not going to match now */
 +			spin_unlock_bh(&l7_lock);
 +			return info->invert;
 +		}
++		master_conntrack->layer7.packets++;
 +	}
 +
 +	/* If looking for "unknown", then never match.  "Unknown" means that
@@ -2050,7 +2053,7 @@ index 0000000..ddf7fec
 +		pattern_result = 2;
 +		DPRINTK("layer7: matched unset: not yet classified "
 +			"(%d/%d packets)\n",
-+                        total_acct_packets(master_conntrack), num_packets);
++                        master_conntrack->layer7.packets, num_packets);
 +	/* If the regexp failed to compile, don't bother running it */
 +	} else if(comppattern && 
 +		  regexec(comppattern, master_conntrack->layer7.app_data)){
@@ -2065,7 +2068,7 @@ index 0000000..ddf7fec
 +	}
 +
 +	/* mark the packet seen */
-+	skb->cb[0] = 1;
++	skb->layer7_flags[0] = 1;
 +
 +	spin_unlock_bh(&l7_lock);
 +	return (pattern_result ^ info->invert);
