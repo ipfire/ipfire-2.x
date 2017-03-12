@@ -275,7 +275,7 @@ ifeq    "$(PASS)" "L"
 		$(EXTRA_ENV) \
 		$(DIR_APP)/libstdc++-v3/configure \
 			$(EXTRA_CONFIG)
-	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/gcc-build && make $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
 else
 	# The actual build.
@@ -283,7 +283,7 @@ else
 		$(EXTRA_ENV) \
 		$(DIR_APP)/configure \
 			$(EXTRA_CONFIG)
-	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/gcc-build && make $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
 endif
 
