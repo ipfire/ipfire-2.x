@@ -327,3 +327,8 @@ table {
 table.fw-nat tbody tr td {
 	height: 2.25em;
 }
+
+iframe.graph {
+	width: 100%;
+	min-height: 300px;
+}
