@@ -8,6 +8,7 @@ var/log/mpd.log
 #usr/share/doc/mpd/NEWS
 #usr/share/doc/mpd/COMMANDS
 #usr/share/doc/mpd/README
+#usr/share/doc/mpd/README.md
 #usr/share/doc/mpd/TODO
 #usr/share/doc/mpd/UPGRADING
 #usr/share/doc/mpd/mpdconf.example
