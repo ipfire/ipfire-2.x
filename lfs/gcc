@@ -24,14 +24,14 @@
 
 include Config
 
-VER        = 4.9.3
+VER        = 4.9.4
 
 GMP_VER    = 5.0.5
 MPFR_VER   = 2.4.2
 MPC_VER    = 1.0.3
 
 THISAPP    = gcc-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
@@ -177,7 +177,7 @@ gmp-$(GMP_VER).tar.bz2 = $(DL_FROM)/gmp-$(GMP_VER).tar.bz2
 mpfr-$(MPFR_VER).tar.bz2 = $(DL_FROM)/mpfr-$(MPFR_VER).tar.bz2
 mpc-$(MPC_VER).tar.gz = $(DL_FROM)/mpc-$(MPC_VER).tar.gz
 
-$(DL_FILE)_MD5			= 648bfba342bb41a4b5350fb685f85bc5
+$(DL_FILE)_MD5			= 87c24a4090c1577ba817ec6882602491
 gmp-$(GMP_VER).tar.bz2_MD5	= 041487d25e9c230b0c42b106361055fe
 mpfr-$(MPFR_VER).tar.bz2_MD5	= 89e59fe665e2b3ad44a6789f40b059a0
 mpc-$(MPC_VER).tar.gz_MD5	= d6a1d5f8ddea3abd2cc3e98f58352d26
