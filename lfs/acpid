@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.26
+VER        = 2.0.28
 
 THISAPP    = acpid-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f6d772e35ed907f1cc14ad1a546fd473
+$(DL_FILE)_MD5 = 0432407b5ff75ae8e08afb43052fde2b
 
 install : $(TARGET)
 
