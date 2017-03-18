@@ -1,6 +1,6 @@
-diff -Naur linux-4.9.8.org/drivers/leds/trigger/Kconfig linux-4.9.8/drivers/leds/trigger/Kconfig
---- linux-4.9.8.org/drivers/leds/trigger/Kconfig	2017-02-04 09:47:29.000000000 +0100
-+++ linux-4.9.8/drivers/leds/trigger/Kconfig	2017-02-09 16:58:20.280030084 +0100
+diff -Naur linux-4.9.16.org/drivers/leds/trigger/Kconfig linux-4.9.16/drivers/leds/trigger/Kconfig
+--- linux-4.9.16.org/drivers/leds/trigger/Kconfig	2017-03-18 12:15:30.000000000 +0100
++++ linux-4.9.16/drivers/leds/trigger/Kconfig	2017-03-18 16:53:42.290859631 +0100
 @@ -126,4 +126,11 @@
  	  a different trigger.
  	  If unsure, say Y.
@@ -13,10 +13,10 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/Kconfig linux-4.9.8/drivers/leds
 +	  If unsure, say Y.
 +
  endif # LEDS_TRIGGERS
-diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/drivers/leds/trigger/ledtrig-netdev.c
---- linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c	1970-01-01 01:00:00.000000000 +0100
-+++ linux-4.9.8/drivers/leds/trigger/ledtrig-netdev.c	2017-02-09 16:58:20.280030084 +0100
-@@ -0,0 +1,438 @@
+diff -Naur linux-4.9.16.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.16/drivers/leds/trigger/ledtrig-netdev.c
+--- linux-4.9.16.org/drivers/leds/trigger/ledtrig-netdev.c	1970-01-01 01:00:00.000000000 +0100
++++ linux-4.9.16/drivers/leds/trigger/ledtrig-netdev.c	2017-03-18 16:53:44.280859607 +0100
+@@ -0,0 +1,444 @@
 +/*
 + * LED Kernel Netdev Trigger
 + *
@@ -87,7 +87,7 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +#define MODE_RX   4
 +
 +struct led_netdev_data {
-+	rwlock_t lock;
++	spinlock_t lock;
 +
 +	struct timer_list timer;
 +	struct notifier_block notifier;
@@ -111,8 +111,6 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +
 +	if ((trigger_data->mode & (MODE_TX | MODE_RX)) != 0 && trigger_data->link_up)
 +		mod_timer(&trigger_data->timer, jiffies + trigger_data->interval);
-+	else
-+		del_timer(&trigger_data->timer);
 +}
 +
 +static ssize_t led_device_name_show(struct device *dev,
@@ -121,9 +119,9 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
 +	struct led_netdev_data *trigger_data = led_cdev->trigger_data;
 +
-+	read_lock(&trigger_data->lock);
++	spin_lock_bh(&trigger_data->lock);
 +	sprintf(buf, "%s\n", trigger_data->device_name);
-+	read_unlock(&trigger_data->lock);
++	spin_unlock_bh(&trigger_data->lock);
 +
 +	return strlen(buf) + 1;
 +}
@@ -137,21 +135,25 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +	if (size < 0 || size >= IFNAMSIZ)
 +		return -EINVAL;
 +
-+	write_lock(&trigger_data->lock);
++	spin_lock_bh(&trigger_data->lock);
++	del_timer_sync(&trigger_data->timer);
 +
 +	strcpy(trigger_data->device_name, buf);
 +	if (size > 0 && trigger_data->device_name[size-1] == '\n')
 +		trigger_data->device_name[size-1] = 0;
++	trigger_data->link_up = 0;
++	trigger_data->last_activity = 0;
 +
 +	if (trigger_data->device_name[0] != 0) {
 +		/* check for existing device to update from */
 +		trigger_data->net_dev = dev_get_by_name(&init_net, trigger_data->device_name);
 +		if (trigger_data->net_dev != NULL)
 +			trigger_data->link_up = (dev_get_flags(trigger_data->net_dev) & IFF_LOWER_UP) != 0;
-+		set_baseline_state(trigger_data); /* updates LEDs, may start timers */
 +	}
 +
-+	write_unlock(&trigger_data->lock);
++	set_baseline_state(trigger_data);
++	spin_unlock_bh(&trigger_data->lock);
++
 +	return size;
 +}
 +
@@ -163,7 +165,7 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
 +	struct led_netdev_data *trigger_data = led_cdev->trigger_data;
 +
-+	read_lock(&trigger_data->lock);
++	spin_lock_bh(&trigger_data->lock);
 +
 +	if (trigger_data->mode == 0) {
 +		strcpy(buf, "none\n");
@@ -177,7 +179,7 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +		strcat(buf, "\n");
 +	}
 +
-+	read_unlock(&trigger_data->lock);
++	spin_unlock_bh(&trigger_data->lock);
 +
 +	return strlen(buf)+1;
 +}
@@ -218,10 +220,13 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +	if (new_mode == -1)
 +		return -EINVAL;
 +
-+	write_lock(&trigger_data->lock);
++	spin_lock_bh(&trigger_data->lock);
++	del_timer_sync(&trigger_data->timer);
++
 +	trigger_data->mode = new_mode;
++
 +	set_baseline_state(trigger_data);
-+	write_unlock(&trigger_data->lock);
++	spin_unlock_bh(&trigger_data->lock);
 +
 +	return size;
 +}
@@ -234,9 +239,9 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +	struct led_classdev *led_cdev = dev_get_drvdata(dev);
 +	struct led_netdev_data *trigger_data = led_cdev->trigger_data;
 +
-+	read_lock(&trigger_data->lock);
++	spin_lock_bh(&trigger_data->lock);
 +	sprintf(buf, "%u\n", jiffies_to_msecs(trigger_data->interval));
-+	read_unlock(&trigger_data->lock);
++	spin_unlock_bh(&trigger_data->lock);
 +
 +	return strlen(buf) + 1;
 +}
@@ -256,10 +261,14 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +
 +	/* impose some basic bounds on the timer interval */
 +	if (count == size && value >= 5 && value <= 10000) {
-+		write_lock(&trigger_data->lock);
++		spin_lock_bh(&trigger_data->lock);
++		del_timer_sync(&trigger_data->timer);
++
 +		trigger_data->interval = msecs_to_jiffies(value);
++
 +		set_baseline_state(trigger_data); /* resets timer */
-+		write_unlock(&trigger_data->lock);
++		spin_unlock_bh(&trigger_data->lock);
++
 +		ret = count;
 +	}
 +
@@ -275,17 +284,20 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +	struct net_device *dev = netdev_notifier_info_to_dev((struct netdev_notifier_info *) dv);
 +	struct led_netdev_data *trigger_data = container_of(nb, struct led_netdev_data, notifier);
 +
-+	if (evt != NETDEV_UP && evt != NETDEV_DOWN && evt != NETDEV_CHANGE && evt != NETDEV_REGISTER && evt != NETDEV_UNREGISTER)
++	if (evt != NETDEV_UP && evt != NETDEV_DOWN && evt != NETDEV_CHANGE && evt != NETDEV_REGISTER && evt != NETDEV_UNREGISTER && evt != NETDEV_CHANGENAME)
 +		return NOTIFY_DONE;
 +
-+	write_lock(&trigger_data->lock);
++	spin_lock_bh(&trigger_data->lock);
 +
 +	if (strcmp(dev->name, trigger_data->device_name))
 +		goto done;
 +
-+	if (evt == NETDEV_REGISTER) {
++	del_timer_sync(&trigger_data->timer);
++
++	if (evt == NETDEV_REGISTER || evt == NETDEV_CHANGENAME) {
 +		if (trigger_data->net_dev != NULL)
 +			dev_put(trigger_data->net_dev);
++
 +		dev_hold(dev);
 +		trigger_data->net_dev = dev;
 +		trigger_data->link_up = 0;
@@ -304,7 +316,7 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +	set_baseline_state(trigger_data);
 +
 +done:
-+	write_unlock(&trigger_data->lock);
++	spin_unlock_bh(&trigger_data->lock);
 +	return NOTIFY_DONE;
 +}
 +
@@ -316,12 +328,10 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +	unsigned new_activity;
 +	struct rtnl_link_stats64 temp;
 +
-+	write_lock(&trigger_data->lock);
-+
 +	if (!trigger_data->link_up || !trigger_data->net_dev || (trigger_data->mode & (MODE_TX | MODE_RX)) == 0) {
 +		/* we don't need to do timer work, just reflect link state. */
 +		led_set_brightness(trigger_data->led_cdev, ((trigger_data->mode & MODE_LINK) != 0 && trigger_data->link_up) ? LED_FULL : LED_OFF);
-+		goto no_restart;
++		return;
 +	}
 +
 +	dev_stats = dev_get_stats(trigger_data->net_dev, &temp);
@@ -353,9 +363,6 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +
 +	trigger_data->last_activity = new_activity;
 +	mod_timer(&trigger_data->timer, jiffies + trigger_data->interval);
-+
-+no_restart:
-+	write_unlock(&trigger_data->lock);
 +}
 +
 +static void netdev_trig_activate(struct led_classdev *led_cdev)
@@ -367,7 +374,7 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +	if (!trigger_data)
 +		return;
 +
-+	rwlock_init(&trigger_data->lock);
++	spin_lock_init(&trigger_data->lock);
 +
 +	trigger_data->notifier.notifier_call = netdev_trig_notify;
 +	trigger_data->notifier.priority = 10;
@@ -418,16 +425,15 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +		device_remove_file(led_cdev->dev, &dev_attr_mode);
 +		device_remove_file(led_cdev->dev, &dev_attr_interval);
 +
-+		write_lock(&trigger_data->lock);
++		spin_lock_bh(&trigger_data->lock);
++		del_timer_sync(&trigger_data->timer);
 +
 +		if (trigger_data->net_dev) {
 +			dev_put(trigger_data->net_dev);
 +			trigger_data->net_dev = NULL;
 +		}
 +
-+		write_unlock(&trigger_data->lock);
-+
-+		del_timer_sync(&trigger_data->timer);
++		spin_unlock_bh(&trigger_data->lock);
 +
 +		kfree(trigger_data);
 +	}
@@ -455,9 +461,9 @@ diff -Naur linux-4.9.8.org/drivers/leds/trigger/ledtrig-netdev.c linux-4.9.8/dri
 +MODULE_AUTHOR("Oliver Jowett <oliver@opencloud.com>");
 +MODULE_DESCRIPTION("Netdev LED trigger");
 +MODULE_LICENSE("GPL");
-diff -Naur linux-4.9.8.org/drivers/leds/trigger/Makefile linux-4.9.8/drivers/leds/trigger/Makefile
---- linux-4.9.8.org/drivers/leds/trigger/Makefile	2017-02-04 09:47:29.000000000 +0100
-+++ linux-4.9.8/drivers/leds/trigger/Makefile	2017-02-09 17:00:13.303367332 +0100
+diff -Naur linux-4.9.16.org/drivers/leds/trigger/Makefile linux-4.9.16/drivers/leds/trigger/Makefile
+--- linux-4.9.16.org/drivers/leds/trigger/Makefile	2017-03-18 12:15:30.000000000 +0100
++++ linux-4.9.16/drivers/leds/trigger/Makefile	2017-03-18 16:53:44.280859607 +0100
 @@ -10,3 +10,4 @@
  obj-$(CONFIG_LEDS_TRIGGER_TRANSIENT)	+= ledtrig-transient.o
  obj-$(CONFIG_LEDS_TRIGGER_CAMERA)	+= ledtrig-camera.o
