@@ -17,4 +17,5 @@ usr/lib/libssp.so.0
 usr/lib/libssp.so.0.0.0
 usr/local/bin/xt_geoip_update
 var/ipfire/langs
+var/ipfire/general-functions.pl
 var/ipfire/graphs.pl
