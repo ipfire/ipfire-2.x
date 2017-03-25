@@ -1,0 +1,33 @@
+diff -Naur linux-4.9.17.org/drivers/net/ethernet/intel/igb/igb_main.c linux-4.9.17/drivers/net/ethernet/intel/igb/igb_main.c
+--- linux-4.9.17.org/drivers/net/ethernet/intel/igb/igb_main.c	2017-03-22 12:44:07.000000000 +0100
++++ linux-4.9.17/drivers/net/ethernet/intel/igb/igb_main.c	2017-03-24 10:00:52.854812142 +0100
+@@ -4609,9 +4609,10 @@
+ 		}
+ 	}
+ 
+-	spin_lock(&adapter->stats64_lock);
+-	igb_update_stats(adapter, &adapter->stats64);
+-	spin_unlock(&adapter->stats64_lock);
++	if (spin_trylock(&adapter->stats64_lock)) {
++		igb_update_stats(adapter, &adapter->stats64);
++		spin_unlock(&adapter->stats64_lock);
++	}
+ 
+ 	for (i = 0; i < adapter->num_tx_queues; i++) {
+ 		struct igb_ring *tx_ring = adapter->tx_ring[i];
+@@ -5391,11 +5392,11 @@
+ {
+ 	struct igb_adapter *adapter = netdev_priv(netdev);
+ 
+-	spin_lock(&adapter->stats64_lock);
+-	igb_update_stats(adapter, &adapter->stats64);
++	if (spin_trylock(&adapter->stats64_lock)) {
++		igb_update_stats(adapter, &adapter->stats64);
++		spin_unlock(&adapter->stats64_lock);
++	}
+ 	memcpy(stats, &adapter->stats64, sizeof(*stats));
+-	spin_unlock(&adapter->stats64_lock);
+-
+ 	return stats;
+ }
+ 
