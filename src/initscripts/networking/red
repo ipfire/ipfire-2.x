@@ -124,6 +124,9 @@ case "${1}" in
 			echo -n "${DNS2}" > /var/ipfire/red/dns2
 			touch /var/ipfire/red/active
 			
+			# Create route to default gateway
+			ip route add ${GATEWAY} dev ${DEVICE}
+
 			boot_mesg "Setting up default gateway ${GATEWAY}..."
 			ip route add default via ${GATEWAY} dev ${DEVICE}
 			evaluate_retval
