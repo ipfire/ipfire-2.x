@@ -244,9 +244,21 @@ write_tuning_conf() {
 	# In the worst case scenario, unbound can use double the
 	# amount of memory allocated to a cache due to malloc overhead
 
+	# Even larger systems with more than 8GB of RAM
+	if [ ${mem} -ge 8192 ]; then
+		mem=1024
+
+	# Extra large systems with more than 4GB of RAM
+	elif [ ${mem} -ge 4096 ]; then
+		mem=512
+
 	# Large systems with more than 2GB of RAM
-	if [ ${mem} -ge 2048 ]; then
+	elif [ ${mem} -ge 2048 ]; then
 		mem=256
+
+	# Medium systems with more than 1GB of RAM
+	elif [ ${mem} -ge 1024 ]; then
+		mem=128
 
 	# Small systems with less than 256MB of RAM
 	elif [ ${mem} -le 256 ]; then
