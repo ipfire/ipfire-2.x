@@ -262,6 +262,7 @@ write_tuning_conf() {
 
 		# We run one thread per processor
 		echo "num-threads: ${processors}"
+		echo "so-reuseport: yes"
 
 		# Adjust number of slabs
 		echo "infra-cache-slabs: ${slabs}"
