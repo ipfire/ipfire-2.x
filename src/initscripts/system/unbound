@@ -273,6 +273,10 @@ write_tuning_conf() {
 		echo "rrset-cache-size: $(( ${mem} / 2 ))m"
 		echo "msg-cache-size: $(( ${mem} / 4 ))m"
 		echo "key-cache-size: $(( ${mem} / 4 ))m"
+
+		# Increase parallel queries
+		echo "outgoing-range: 8192"
+		echo "num-queries-per-thread: 4096"
 	) > /etc/unbound/tuning.conf
 }
 
