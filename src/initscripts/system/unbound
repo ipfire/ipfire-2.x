@@ -278,6 +278,10 @@ write_tuning_conf() {
 		# Increase parallel queries
 		echo "outgoing-range: 8192"
 		echo "num-queries-per-thread: 4096"
+
+		# Use larger send/receive buffers
+		echo "so-sndbuf: 4m"
+		echo "so-rcvbuf: 4m"
 	) > /etc/unbound/tuning.conf
 }
 
