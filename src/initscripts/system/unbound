@@ -246,15 +246,15 @@ write_tuning_conf() {
 
 	# Large systems with more than 2GB of RAM
 	if [ ${mem} -ge 2048 ]; then
-		mem=128
+		mem=256
 
 	# Small systems with less than 256MB of RAM
 	elif [ ${mem} -le 256 ]; then
-		mem=8
+		mem=16
 
 	# Everything else
 	else
-		mem=32
+		mem=64
 	fi
 
 	(
