@@ -767,6 +767,7 @@
 'dnsforward forward_server' => 'DNS-Server',
 'dnsforward zone' => 'Zone',
 'dnssec aware' => 'DNSSEC-aware',
+'dnssec disabled warning' => 'WARNING: DNSSEC wurde deaktiviert',
 'dnssec information' => 'DNSSEC-Informationen',
 'dnssec not supported' => 'DNSSEC wird nicht unterstützt',
 'dnssec validating' => 'DNSSEC-validierend',

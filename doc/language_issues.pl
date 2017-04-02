@@ -716,6 +716,7 @@ WARNING: untranslated string: dnsforward entries
 WARNING: untranslated string: dnsforward forward_server
 WARNING: untranslated string: dnsforward zone
 WARNING: untranslated string: dnssec aware
+WARNING: untranslated string: dnssec disabled warning
 WARNING: untranslated string: dnssec information
 WARNING: untranslated string: dnssec not supported
 WARNING: untranslated string: dnssec validating

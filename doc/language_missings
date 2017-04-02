@@ -106,6 +106,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dnssec aware
+< dnssec disabled warning
 < dnssec information
 < dnssec not supported
 < dnssec validating
@@ -721,6 +722,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dnssec aware
+< dnssec disabled warning
 < dnssec information
 < dnssec not supported
 < dnssec validating
@@ -1318,6 +1320,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dnssec aware
+< dnssec disabled warning
 < dnssec information
 < dnssec not supported
 < dnssec validating
@@ -1904,6 +1907,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dnssec aware
+< dnssec disabled warning
 < dnssec information
 < dnssec not supported
 < dnssec validating

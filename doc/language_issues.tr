@@ -706,6 +706,7 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: application layer gateways
 WARNING: untranslated string: bytes
+WARNING: untranslated string: dnssec disabled warning
 WARNING: untranslated string: fwhost cust geoipgrp
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: guardian

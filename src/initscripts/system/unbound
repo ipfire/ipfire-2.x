@@ -439,12 +439,18 @@ enable_dnssec() {
 	# Don't do anything if DNSSEC is already activated
 	[ "${status}" = "no" ] && return 0
 
+	# Log DNSSEC status
+	echo "on" > /var/ipfire/red/dnssec-status
+
 	# Activate DNSSEC and flush cache with any stale and unvalidated data
 	unbound-control -q set_option val-permissive-mode: no
 	unbound-control -q flush_zone .
 }
 
 disable_dnssec() {
+	# Log DNSSEC status
+	echo "off" > /var/ipfire/red/dnssec-status
+
 	unbound-control -q set_option val-permissive-mode: yes
 }
 

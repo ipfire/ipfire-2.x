@@ -1128,4 +1128,16 @@ sub get_red_interface() {
 	return $interface;
 }
 
+sub dnssec_status() {
+	my $path = "${General::swroot}/red/dnssec-status";
+
+	open(STATUS, $path) or return 0;
+	my $status = <STATUS>;
+	close(STATUS);
+
+	chomp($status);
+
+	return $status;
+}
+
 1;
