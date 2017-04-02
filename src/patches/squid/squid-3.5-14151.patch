@@ -1,0 +1,36 @@
+------------------------------------------------------------
+revno: 14151
+revision-id: squid3@treenet.co.nz-20170331233831-m3hfrigo82uhz4id
+parent: squid3@treenet.co.nz-20170331005152-8exm3hsly1v1jk8y
+author: Garri Djavadyan <garryd@comnet.uz>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sat 2017-04-01 12:38:31 +1300
+message:
+  Docs: update refresh_pattern description regarding 'max' option
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20170331233831-m3hfrigo82uhz4id
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: be64101730dcb2deb664d6594d20a7295a666b98
+# timestamp: 2017-03-31 23:40:50 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170331005152-\
+#   8exm3hsly1v1jk8y
+# 
+# Begin patch
+=== modified file 'src/cf.data.pre'
+--- src/cf.data.pre	2017-01-01 00:16:45 +0000
++++ src/cf.data.pre	2017-03-31 23:38:31 +0000
+@@ -5401,7 +5401,9 @@
+ 	will be considered fresh.
+ 
+ 	'Max' is an upper limit on how long objects without an explicit
+-	expiry time will be considered fresh.
++	expiry time will be considered fresh. The value is also used
++	to form Cache-Control: max-age header for a request sent from
++	Squid to origin/parent.
+ 
+ 	options: override-expire
+ 		 override-lastmod
+
