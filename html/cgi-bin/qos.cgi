@@ -770,10 +770,10 @@ if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq ''
 }
 
 	&Header::openbox('100%', 'center', "$qossettings{'RED_DEV'} $Lang::tr{'graph'}, $Lang::tr{'uplink'}");
-	&Graphs::makegraphbox("qos.cgi",$qossettings{'RED_DEV'},"hour","325");
+	&Graphs::makegraphbox("qos.cgi",$qossettings{'RED_DEV'},"hour");
 	&Header::closebox();
 	&Header::openbox('100%', 'center', "$qossettings{'IMQ_DEV'} $Lang::tr{'graph'}, $Lang::tr{'downlink'}");
-	&Graphs::makegraphbox("qos.cgi",$qossettings{'IMQ_DEV'},"hour","325");
+	&Graphs::makegraphbox("qos.cgi",$qossettings{'IMQ_DEV'},"hour");
 	&Header::closebox();
 
 &showclasses($qossettings{'RED_DEV'});

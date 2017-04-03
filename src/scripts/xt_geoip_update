@@ -25,7 +25,7 @@ TMP_FILE=$(mktemp -p $TMP_PATH)
 SCRIPT_PATH=/usr/local/bin
 DEST_PATH=/usr/share/xt_geoip
 
-DL_URL=http://geolite.maxmind.com/download/geoip/database
+DL_URL=https://geolite.maxmind.com/download/geoip/database
 DL_FILE=GeoIPCountryCSV.zip
 
 CSV_FILE=GeoIPCountryWhois.csv

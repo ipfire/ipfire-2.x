@@ -84,6 +84,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 #	sed -i -e "s|ATTR{|SYSFS{|g" /etc/udev/rules.d/52-nut-usbups.rules
 	-mkdir -p /var/state/ups
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,nut)
+
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/nut \
 			 /var/ipfire/backup/addons/includes/nut
 	@rm -rf $(DIR_APP)

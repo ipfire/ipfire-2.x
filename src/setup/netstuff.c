@@ -75,7 +75,8 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	int startstatictype = 0;
 	int startdhcptype = 0;
 	int startpppoetype = 0;
-		
+	unsigned char buffer[sizeof(struct in_addr)];
+
 	/* Build some key strings. */
 	sprintf(addressfield, "%s_ADDRESS", colour);
 	sprintf(netmaskfield, "%s_NETMASK", colour);
@@ -184,7 +185,7 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 					strcat(message, "\n");
 					error = 1;
 				}
-				if (inet_addr(netmaskresult) == INADDR_NONE)
+				if (inet_pton(AF_INET, netmaskresult, &buffer) == 0)
 				{
 					strcat(message, _("Network mask"));
 					strcat(message, "\n");

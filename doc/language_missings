@@ -106,6 +106,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dnssec aware
+< dnssec disabled warning
 < dnssec information
 < dnssec not supported
 < dnssec validating
@@ -561,6 +562,10 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn on-demand
+< vpn start action
+< vpn start action route
+< vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
 < wlanap access point
@@ -717,6 +722,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dnssec aware
+< dnssec disabled warning
 < dnssec information
 < dnssec not supported
 < dnssec validating
@@ -1175,6 +1181,10 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn on-demand
+< vpn start action
+< vpn start action route
+< vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
 < wlanap country
@@ -1310,6 +1320,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dnssec aware
+< dnssec disabled warning
 < dnssec information
 < dnssec not supported
 < dnssec validating
@@ -1754,6 +1765,10 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn on-demand
+< vpn start action
+< vpn start action route
+< vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
 < wlanap country
@@ -1892,6 +1907,7 @@
 < dnsforward forward_server
 < dnsforward zone
 < dnssec aware
+< dnssec disabled warning
 < dnssec information
 < dnssec not supported
 < dnssec validating
@@ -2338,6 +2354,10 @@
 < vendor
 < visit us at
 < vpn keyexchange
+< vpn on-demand
+< vpn start action
+< vpn start action route
+< vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
 < week-graph

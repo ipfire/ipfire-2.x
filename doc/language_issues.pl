@@ -716,6 +716,7 @@ WARNING: untranslated string: dnsforward entries
 WARNING: untranslated string: dnsforward forward_server
 WARNING: untranslated string: dnsforward zone
 WARNING: untranslated string: dnssec aware
+WARNING: untranslated string: dnssec disabled warning
 WARNING: untranslated string: dnssec information
 WARNING: untranslated string: dnssec not supported
 WARNING: untranslated string: dnssec validating
@@ -1144,6 +1145,10 @@ WARNING: untranslated string: vendor
 WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn force mobike
 WARNING: untranslated string: vpn keyexchange
+WARNING: untranslated string: vpn on-demand
+WARNING: untranslated string: vpn start action
+WARNING: untranslated string: vpn start action route
+WARNING: untranslated string: vpn start action start
 WARNING: untranslated string: vpn statistic n2n
 WARNING: untranslated string: vpn statistic rw
 WARNING: untranslated string: vpn statistics n2n

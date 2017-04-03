@@ -78,6 +78,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-disable-ipv6.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-ipfire.patch
 
 	cd $(DIR_APP) && ./configure \
@@ -108,8 +109,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Remove all library files we don't want or need.
 	rm -vf /usr/lib/ipsec/plugins/*.{,l}a
 
-	-rm -rfv /etc/rc*.d/*ipsec
-	cd $(DIR_SRC) && cp src/initscripts/init.d/ipsec /etc/rc.d/init.d/ipsec
 	rm -f /etc/ipsec.conf /etc/ipsec.secrets
 	ln -sf $(CONFIG_ROOT)/vpn/ipsec.conf /etc/ipsec.conf
 	ln -sf $(CONFIG_ROOT)/vpn/ipsec.secrets /etc/ipsec.secrets

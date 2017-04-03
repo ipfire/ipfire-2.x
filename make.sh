@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.19"							# Version number
-CORE="109"							# Core Level (Filename)
-PAKFIRE_CORE="109"						# Core Level (PAKFIRE)
+CORE="110"							# Core Level (Filename)
+PAKFIRE_CORE="110"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -393,6 +393,7 @@ buildipfire() {
   LOGFILE="$BASEDIR/log/_build.ipfire.log"
   export LOGFILE
   ipfiremake configroot
+  ipfiremake initscripts
   ipfiremake backup
   ipfiremake pkg-config
   ipfiremake libusb
@@ -487,12 +488,17 @@ buildipfire() {
   ipfiremake libgpg-error
   ipfiremake libgcrypt
   ipfiremake libassuan
+  ipfiremake nettle
+  ipfiremake libevent
+  ipfiremake libevent2
+  ipfiremake expat
+  ipfiremake unbound
+  ipfiremake gnutls
   ipfiremake bind
   ipfiremake dhcp
   ipfiremake dhcpcd
   ipfiremake boost
   ipfiremake linux-atm
-  ipfiremake expat
   ipfiremake gdbm
   ipfiremake pam
   ipfiremake curl
@@ -539,10 +545,6 @@ buildipfire() {
   ipfiremake arping
   ipfiremake beep
   ipfiremake dvdrtools
-  ipfiremake nettle
-  ipfiremake libevent
-  ipfiremake libevent2
-  ipfiremake unbound
   ipfiremake dosfstools
   ipfiremake reiserfsprogs
   ipfiremake xfsprogs
@@ -562,7 +564,6 @@ buildipfire() {
   ipfiremake hdparm
   ipfiremake sdparm
   ipfiremake mtools
-  ipfiremake initscripts
   ipfiremake whatmask
   ipfiremake conntrack-tools
   ipfiremake libupnp
@@ -645,8 +646,16 @@ buildipfire() {
   ipfiremake pammysql
   ipfiremake mpage
   ipfiremake dbus
+  ipfiremake intltool
+  ipfiremake libdaemon
+  ipfiremake avahi
   ipfiremake cups
   ipfiremake ghostscript
+  ipfiremake lcms2
+  ipfiremake qpdf
+  ipfiremake poppler
+  ipfiremake cups-filters
+  ipfiremake epson-inkjet-printer-escpr
   ipfiremake foomatic
   ipfiremake hplip
   ipfiremake cifs-utils
@@ -811,7 +820,6 @@ buildipfire() {
   ipfiremake python-lzma
   ipfiremake python-progressbar
   ipfiremake python-xattr
-  ipfiremake intltool
   ipfiremake ddns
   ipfiremake transmission
   ipfiremake dpfhack
@@ -830,8 +838,6 @@ buildipfire() {
   ipfiremake libstatgrab
   ipfiremake sarg
   ipfiremake check_mk_agent
-  ipfiremake libdaemon
-  ipfiremake avahi
   ipfiremake nginx
   ipfiremake sendEmail
   ipfiremake sysbench

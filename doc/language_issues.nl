@@ -721,6 +721,7 @@ WARNING: untranslated string: dhcp dns update secret
 WARNING: untranslated string: dl client arch insecure
 WARNING: untranslated string: dns servers
 WARNING: untranslated string: dnssec aware
+WARNING: untranslated string: dnssec disabled warning
 WARNING: untranslated string: dnssec information
 WARNING: untranslated string: dnssec not supported
 WARNING: untranslated string: dnssec validating
@@ -867,6 +868,10 @@ WARNING: untranslated string: uncheck all
 WARNING: untranslated string: upload dh key
 WARNING: untranslated string: vendor
 WARNING: untranslated string: vpn force mobike
+WARNING: untranslated string: vpn on-demand
+WARNING: untranslated string: vpn start action
+WARNING: untranslated string: vpn start action route
+WARNING: untranslated string: vpn start action start
 WARNING: untranslated string: vpn statistic n2n
 WARNING: untranslated string: vpn statistic rw
 WARNING: untranslated string: vpn statistics n2n

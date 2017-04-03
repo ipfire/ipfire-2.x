@@ -108,6 +108,7 @@ $cgiparams{'RW_NET'} = '';
 $cgiparams{'DPD_DELAY'} = '30';
 $cgiparams{'DPD_TIMEOUT'} = '120';
 $cgiparams{'FORCE_MOBIKE'} = 'off';
+$cgiparams{'START_ACTION'} = 'start';
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 ###
@@ -401,12 +402,23 @@ sub writeipsecfiles {
 			print CONF "\trightrsasigkey=%cert\n";
 		}
 
+		my $start_action = $lconfighash{$key}[33];
+		if (!$start_action) {
+			$start_action = "start";
+		}
+
 		# Automatically start only if a net-to-net connection
 		if ($lconfighash{$key}[3] eq 'host') {
 			print CONF "\tauto=add\n";
 			print CONF "\trightsourceip=$lvpnsettings{'RW_NET'}\n";
 		} else {
-			print CONF "\tauto=start\n";
+			print CONF "\tauto=$start_action\n";
+
+			# If in on-demand mode, we terminate the tunnel
+			# after 15 min of no traffic
+			if ($start_action eq 'route') {
+				print CONF "\tinactivity=900\n";
+			}
 		}
 
 		# Fragmentation
@@ -1778,7 +1790,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 		$key = &General::findhasharraykey (\%confighash);
-		foreach my $i (0 .. 32) { $confighash{$key}[$i] = "";}
+		foreach my $i (0 .. 33) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -2256,6 +2268,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$confighash{$cgiparams{'KEY'}}[30] = $cgiparams{'DPD_TIMEOUT'};
 		$confighash{$cgiparams{'KEY'}}[31] = $cgiparams{'DPD_DELAY'};
 		$confighash{$cgiparams{'KEY'}}[32] = $cgiparams{'FORCE_MOBIKE'};
+		$confighash{$cgiparams{'KEY'}}[33] = $cgiparams{'START_ACTION'};
 		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 		&writeipsecfiles();
 		if (&vpnenabled) {
@@ -2283,6 +2296,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$cgiparams{'DPD_TIMEOUT'}		= $confighash{$cgiparams{'KEY'}}[30];
 		$cgiparams{'DPD_DELAY'}			= $confighash{$cgiparams{'KEY'}}[31];
 		$cgiparams{'FORCE_MOBIKE'}		= $confighash{$cgiparams{'KEY'}}[32];
+		$cgiparams{'START_ACTION'}		= $confighash{$cgiparams{'KEY'}}[33];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -2290,6 +2304,10 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 
 		if (!$cgiparams{'DPD_TIMEOUT'}) {
 			$cgiparams{'DPD_TIMEOUT'} = 120;
+		}
+
+		if (!$cgiparams{'START_ACTION'}) {
+			$cgiparams{'START_ACTION'} = "start";
 		}
 	}
 
@@ -2387,6 +2405,10 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$selected{'DPD_ACTION'}{'none'} = '';
 	$selected{'DPD_ACTION'}{$cgiparams{'DPD_ACTION'}} = "selected='selected'";
 
+	$selected{'START_ACTION'}{'route'} = '';
+	$selected{'START_ACTION'}{'start'} = '';
+	$selected{'START_ACTION'}{$cgiparams{'START_ACTION'}} = "selected='selected'";
+
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', $errormessage);
@@ -2406,7 +2428,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	}
 
 	&Header::openbox('100%', 'left', "$Lang::tr{'advanced'}:");
-	print <<EOF
+	print <<EOF;
 	<form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'>
 	<input type='hidden' name='ADVANCED' value='yes' />
 	<input type='hidden' name='KEY' value='$cgiparams{'KEY'}' />
@@ -2599,9 +2621,16 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 				IKE+ESP: $Lang::tr{'use only proposed settings'}
 			</label>
 		</td>
+		<td>
+			<label>$Lang::tr{'vpn start action'}</label>
+			<select name="START_ACTION">
+				<option value="route" $selected{'START_ACTION'}{'route'}>$Lang::tr{'vpn start action route'}</option>
+				<option value="start" $selected{'START_ACTION'}{'start'}>$Lang::tr{'vpn start action start'}</option>
+			</select>
+		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			<label>
 				<input type='checkbox' name='PFS' $checked{'PFS'} />
 				$Lang::tr{'pfs yes no'}
@@ -2609,7 +2638,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			<label>
 				<input type='checkbox' name='COMPRESSION' $checked{'COMPRESSION'} />
 				$Lang::tr{'vpn payload compression'}
@@ -2617,20 +2646,16 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			<label>
 				<input type='checkbox' name='FORCE_MOBIKE' $checked{'FORCE_MOBIKE'} />
 				$Lang::tr{'vpn force mobike'}
 			</label>
 		</td>
 	</tr>
-EOF
-;
-
-	print <<EOF;
 	<tr>
-		<td align='left' colspan='1'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
-		<td align='right' colspan='2'>
+		<td align='left'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
+		<td align='right'>
 			<input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
 			<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}' />
 		</td>
@@ -2780,6 +2805,9 @@ END
 		($line =~ /$confighash{$key}[1]\{.*INSTALLED/)) {
 			$col1="bgcolor='${Header::colourgreen}'";
 			$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
+		} elsif ($line =~ /$confighash{$key}[1]\{.*ROUTED/) {
+			$col1="bgcolor='${Header::colourorange}'";
+			$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn on-demand'}</font></b>";
 		}
 	}
 	# move to blue if really down

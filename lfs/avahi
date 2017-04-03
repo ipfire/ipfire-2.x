@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.6.31
+VER        = 0.6.32
 
 THISAPP    = avahi-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2f22745b8f7368ad5a0a3fddac343f2d
+$(DL_FILE)_MD5 = 22b5e705d3eabb31d26f2e1e7b074013
 
 install : $(TARGET)
 

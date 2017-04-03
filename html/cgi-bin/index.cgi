@@ -425,6 +425,9 @@ END
 						if (($line =~ /\"$vpnconfig{$key}[1]\".*IPsec SA established/) || ($line =~/$vpnconfig{$key}[1]\{.*INSTALLED/ )){
 							$activecolor = $Header::colourgreen;
 							$activestatus = $Lang::tr{'capsopen'};
+						} elsif ($line =~ /$vpnconfig{$key}[1]\{.*ROUTED/) {
+							$activecolor = $Header::colourorange;
+							$activestatus = $Lang::tr{'vpn on-demand'};
 						}
 					}
 				}
@@ -495,6 +498,11 @@ END
 		print"</table>";
 	}
 &Header::closebox();
+}
+
+my $dnssec_status = &General::dnssec_status();
+if ($dnssec_status eq "off") {
+	$warnmessage .= "<li>$Lang::tr{'dnssec disabled warning'}</li>";
 }
 
 # Fireinfo

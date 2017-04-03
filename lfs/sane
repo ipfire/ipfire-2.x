@@ -85,6 +85,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	chmod 4755 /usr/bin/scanimage
 	cp -vf $(DIR_SRC)/config/sane/saned.conf /etc/sane.d/
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,sane)
+
 	ln -sf ../init.d/sane /etc/rc.d/rc3.d/S95sane
 	ln -sf ../init.d/sane /etc/rc.d/rc0.d/K10sane
 	ln -sf ../init.d/sane /etc/rc.d/rc6.d/K10sane

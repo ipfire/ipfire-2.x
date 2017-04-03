@@ -472,3 +472,8 @@ table.fw-nat tbody tr td {
 #rx_kbs { color: green; }
 
 #tx_kbs { color: red; }
+
+iframe.graph {
+	width: 100%;
+	min-height: 300px;
+}

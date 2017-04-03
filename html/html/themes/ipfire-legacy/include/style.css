@@ -443,3 +443,8 @@ table.fw-nat tbody tr td {
 #rx_kbs { color: green; }
 
 #tx_kbs { color: red; }
+
+iframe.graph {
+	min-height: 285px;
+	width: 750px;
+}
