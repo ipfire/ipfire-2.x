@@ -213,7 +213,7 @@ usr/share/logwatch/scripts/logfiles/xferlog/removeheaders
 #usr/share/logwatch/scripts/logfiles/yum
 #usr/share/logwatch/scripts/logfiles/yum/applydate
 usr/share/logwatch/scripts/logwatch.pl
-usr/share/logwatch/scripts/services
+#usr/share/logwatch/scripts/services
 #usr/share/logwatch/scripts/services/afpd
 usr/share/logwatch/scripts/services/amavis
 #usr/share/logwatch/scripts/services/arpwatch
