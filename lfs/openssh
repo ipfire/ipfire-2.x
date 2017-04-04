@@ -80,7 +80,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -i -e 's/^#\?Port .*$$/Port 222/' \
 	    -e 's/^#\?Protocol .*$$/Protocol 2/' \
 	    -e 's/^#\?LoginGraceTime .*$$/LoginGraceTime 30s/' \
-	    -e 's/^#\?RSAAuthentication .*$$/RSAAuthentication yes/' \
 	    -e 's/^#\?PubkeyAuthentication .*$$/PubkeyAuthentication yes/' \
 	    -e 's/^#\?PasswordAuthentication .*$$/PasswordAuthentication yes/' \
 	    -e 's/^#\?MaxStartups .*$$/MaxStartups 5/' \
