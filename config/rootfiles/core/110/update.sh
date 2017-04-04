@@ -44,6 +44,9 @@ ldconfig
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# Remove deprecated options
+sed -e "/^RSAAuthentication/d" -i /etc/ssh/sshd_config
+
 # Start services
 /etc/init.d/unbound start
 /etc/init.d/sshd restart
