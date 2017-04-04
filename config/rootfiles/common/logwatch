@@ -72,7 +72,7 @@ usr/share/logwatch/default.conf/logfiles/xferlog.conf
 #usr/share/logwatch/default.conf/logfiles/yum.conf
 #usr/share/logwatch/default.conf/logfiles/zypp.conf
 usr/share/logwatch/default.conf/logwatch.conf
-usr/share/logwatch/default.conf/services
+#usr/share/logwatch/default.conf/services
 #usr/share/logwatch/default.conf/services/afpd.conf
 usr/share/logwatch/default.conf/services/amavis.conf
 #usr/share/logwatch/default.conf/services/arpwatch.conf
