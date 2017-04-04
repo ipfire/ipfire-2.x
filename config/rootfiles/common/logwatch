@@ -1,11 +1,6 @@
 #etc/logwatch
 etc/logwatch/conf
 #etc/logwatch/logwatch.cron
-#etc/logwatch/conf/ignore.conf
-#etc/logwatch/conf/logfiles
-#etc/logwatch/conf/logwatch.conf
-#etc/logwatch/conf/override.conf
-#etc/logwatch/conf/services
 etc/logwatch/scripts
 etc/logwatch/scripts/services
 usr/sbin/logwatch
@@ -166,10 +161,12 @@ usr/share/logwatch/default.conf/services/scsi.conf
 #usr/share/logwatch/default.conf/services/spamassassin.conf
 usr/share/logwatch/default.conf/services/sshd.conf
 usr/share/logwatch/default.conf/services/sshd2.conf
+#usr/share/logwatch/default.conf/services/sssd.conf
 #usr/share/logwatch/default.conf/services/stunnel.conf
 usr/share/logwatch/default.conf/services/sudo.conf
 #usr/share/logwatch/default.conf/services/syslog-ng.conf
 usr/share/logwatch/default.conf/services/syslogd.conf
+#usr/share/logwatch/default.conf/services/systemd.conf
 #usr/share/logwatch/default.conf/services/tac_acc.conf
 #usr/share/logwatch/default.conf/services/tivoli-smc.conf
 #usr/share/logwatch/default.conf/services/up2date.conf
@@ -308,10 +305,12 @@ usr/share/logwatch/scripts/services/scsi
 #usr/share/logwatch/scripts/services/spamassassin
 usr/share/logwatch/scripts/services/sshd
 usr/share/logwatch/scripts/services/sshd2
+#usr/share/logwatch/scripts/services/sssd
 #usr/share/logwatch/scripts/services/stunnel
 usr/share/logwatch/scripts/services/sudo
 #usr/share/logwatch/scripts/services/syslog-ng
 usr/share/logwatch/scripts/services/syslogd
+#usr/share/logwatch/scripts/services/systemd
 #usr/share/logwatch/scripts/services/tac_acc
 #usr/share/logwatch/scripts/services/tivoli-smc
 #usr/share/logwatch/scripts/services/up2date
