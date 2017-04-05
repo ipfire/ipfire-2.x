@@ -179,7 +179,7 @@ usr/share/logwatch/default.conf/services/windows.conf
 #usr/share/logwatch/default.conf/services/zypp.conf
 usr/share/logwatch/default.conf/services/zz-disk_space.conf
 #usr/share/logwatch/default.conf/services/zz-fortune.conf
-#usr/share/logwatch/default.conf/services/zz-lm_sensors.conf
+usr/share/logwatch/default.conf/services/zz-lm_sensors.conf
 usr/share/logwatch/default.conf/services/zz-network.conf
 usr/share/logwatch/default.conf/services/zz-runtime.conf
 usr/share/logwatch/default.conf/services/zz-sys.conf
@@ -323,7 +323,7 @@ usr/share/logwatch/scripts/services/windows
 #usr/share/logwatch/scripts/services/zypp
 usr/share/logwatch/scripts/services/zz-disk_space
 #usr/share/logwatch/scripts/services/zz-fortune
-#usr/share/logwatch/scripts/services/zz-lm_sensors
+usr/share/logwatch/scripts/services/zz-lm_sensors
 usr/share/logwatch/scripts/services/zz-network
 usr/share/logwatch/scripts/services/zz-runtime
 usr/share/logwatch/scripts/services/zz-sys
