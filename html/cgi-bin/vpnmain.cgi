@@ -2178,7 +2178,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 		foreach my $val (@temp) {
-			if ($val !~ /^(e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192)$/) {
+			if ($val !~ /^(curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192)$/) {
 				$errormessage = $Lang::tr{'invalid input'};
 				goto ADVANCED_ERROR;
 			}
@@ -2219,7 +2219,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 		foreach my $val (@temp) {
-			if ($val !~ /^(e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192|none)$/) {
+			if ($val !~ /^(curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192|none)$/) {
 				$errormessage = $Lang::tr{'invalid input'};
 				goto ADVANCED_ERROR;
 			}
@@ -2338,6 +2338,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$checked{'IKE_INTEGRITY'}{'aesxcbc'} = '';
 	@temp = split('\|', $cgiparams{'IKE_INTEGRITY'});
 	foreach my $key (@temp) {$checked{'IKE_INTEGRITY'}{$key} = "selected='selected'"; }
+	$checked{'IKE_GROUPTYPE'}{'curve25519'} = '';
 	$checked{'IKE_GROUPTYPE'}{'768'} = '';
 	$checked{'IKE_GROUPTYPE'}{'1024'} = '';
 	$checked{'IKE_GROUPTYPE'}{'1536'} = '';
@@ -2378,6 +2379,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$checked{'ESP_INTEGRITY'}{'aesxcbc'} = '';
 	@temp = split('\|', $cgiparams{'ESP_INTEGRITY'});
 	foreach my $key (@temp) {$checked{'ESP_INTEGRITY'}{$key} = "selected='selected'"; }
+	$checked{'ESP_GROUPTYPE'}{'curve25519'} = '';
 	$checked{'ESP_GROUPTYPE'}{'768'} = '';
 	$checked{'ESP_GROUPTYPE'}{'1024'} = '';
 	$checked{'ESP_GROUPTYPE'}{'1536'} = '';
@@ -2532,6 +2534,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			<td class='boldbase' width="15%">$Lang::tr{'grouptype'}</td>
 			<td class='boldbase'>
 				<select name='IKE_GROUPTYPE' multiple='multiple' size='6' style='width: 100%'>
+					<option value='curve25519' $checked{'IKE_GROUPTYPE'}{'curve25519'}>Curve 25519 (256 bit)</option>
 					<option value='e521' $checked{'IKE_GROUPTYPE'}{'e521'}>ECP-521 (NIST)</option>
 					<option value='e512bp' $checked{'IKE_GROUPTYPE'}{'e512bp'}>ECP-512 (Brainpool)</option>
 					<option value='e384' $checked{'IKE_GROUPTYPE'}{'e384'}>ECP-384 (NIST)</option>
@@ -2555,6 +2558,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			</td>
 			<td class='boldbase'>
 				<select name='ESP_GROUPTYPE' multiple='multiple' size='6' style='width: 100%'>
+					<option value='curve25519' $checked{'ESP_GROUPTYPE'}{'curve25519'}>Curve 25519 (256 bit)</option>
 					<option value='e521' $checked{'ESP_GROUPTYPE'}{'e521'}>ECP-521 (NIST)</option>
 					<option value='e512bp' $checked{'ESP_GROUPTYPE'}{'e512bp'}>ECP-512 (Brainpool)</option>
 					<option value='e384' $checked{'ESP_GROUPTYPE'}{'e384'}>ECP-384 (NIST)</option>
