@@ -94,7 +94,7 @@ usr/share/logwatch/default.conf/services/dhcpd.conf
 #usr/share/logwatch/default.conf/services/evtsecurity.conf
 #usr/share/logwatch/default.conf/services/evtsystem.conf
 #usr/share/logwatch/default.conf/services/exim.conf
-#usr/share/logwatch/default.conf/services/eximstats.conf
+usr/share/logwatch/default.conf/services/eximstats.conf
 #usr/share/logwatch/default.conf/services/extreme-networks.conf
 #usr/share/logwatch/default.conf/services/fail2ban.conf
 #usr/share/logwatch/default.conf/services/fetchmail.conf
@@ -182,7 +182,7 @@ usr/share/logwatch/default.conf/services/zz-disk_space.conf
 #usr/share/logwatch/default.conf/services/zz-lm_sensors.conf
 usr/share/logwatch/default.conf/services/zz-network.conf
 usr/share/logwatch/default.conf/services/zz-runtime.conf
-#usr/share/logwatch/default.conf/services/zz-sys.conf
+usr/share/logwatch/default.conf/services/zz-sys.conf
 #usr/share/logwatch/default.conf/services/zz-zfs.conf
 #usr/share/logwatch/dist.conf
 usr/share/logwatch/dist.conf/logfiles
@@ -238,7 +238,7 @@ usr/share/logwatch/scripts/services/dialup
 #usr/share/logwatch/scripts/services/evtsecurity
 #usr/share/logwatch/scripts/services/evtsystem
 #usr/share/logwatch/scripts/services/exim
-#usr/share/logwatch/scripts/services/eximstats
+usr/share/logwatch/scripts/services/eximstats
 #usr/share/logwatch/scripts/services/extreme-networks
 #usr/share/logwatch/scripts/services/fail2ban
 #usr/share/logwatch/scripts/services/fetchmail
@@ -289,7 +289,7 @@ usr/share/logwatch/scripts/services/postfix
 #usr/share/logwatch/scripts/services/qmail-send
 #usr/share/logwatch/scripts/services/qmail-smtpd
 #usr/share/logwatch/scripts/services/raid
-#usr/share/logwatch/scripts/services/resolver
+usr/share/logwatch/scripts/services/resolver
 #usr/share/logwatch/scripts/services/rsyslogd
 #usr/share/logwatch/scripts/services/rt314
 usr/share/logwatch/scripts/services/samba
@@ -326,7 +326,7 @@ usr/share/logwatch/scripts/services/zz-disk_space
 #usr/share/logwatch/scripts/services/zz-lm_sensors
 usr/share/logwatch/scripts/services/zz-network
 usr/share/logwatch/scripts/services/zz-runtime
-#usr/share/logwatch/scripts/services/zz-sys
+usr/share/logwatch/scripts/services/zz-sys
 #usr/share/logwatch/scripts/services/zz-zfs
 #usr/share/logwatch/scripts/shared
 usr/share/logwatch/scripts/shared/applybinddate
