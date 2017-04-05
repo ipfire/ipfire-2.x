@@ -542,6 +542,8 @@ usr/share/snmp/mibs/IPV6-MIB.txt
 usr/share/snmp/mibs/IPV6-TC.txt
 usr/share/snmp/mibs/IPV6-TCP-MIB.txt
 usr/share/snmp/mibs/IPV6-UDP-MIB.txt
+usr/share/snmp/mibs/LM-SENSORS-MIB.txt
+usr/share/snmp/mibs/MTA-MIB.txt
 usr/share/snmp/mibs/NET-SNMP-AGENT-MIB.txt
 usr/share/snmp/mibs/NET-SNMP-EXAMPLES-MIB.txt
 usr/share/snmp/mibs/NET-SNMP-EXTEND-MIB.txt
@@ -549,6 +551,7 @@ usr/share/snmp/mibs/NET-SNMP-MIB.txt
 usr/share/snmp/mibs/NET-SNMP-PASS-MIB.txt
 usr/share/snmp/mibs/NET-SNMP-TC.txt
 usr/share/snmp/mibs/NET-SNMP-VACM-MIB.txt
+usr/share/snmp/mibs/NETWORK-SERVICES-MIB.txt
 usr/share/snmp/mibs/NOTIFICATION-LOG-MIB.txt
 usr/share/snmp/mibs/RFC-1215.txt
 usr/share/snmp/mibs/RFC1155-SMI.txt
