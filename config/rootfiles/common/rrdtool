@@ -12,13 +12,6 @@ usr/bin/rrdupdate
 #usr/lib/librrd.so
 usr/lib/librrd.so.8
 usr/lib/librrd.so.8.0.0
-#usr/lib/lua
-#usr/lib/lua/5.3
-#usr/lib/lua/5.3/rrd.a
-#usr/lib/lua/5.3/rrd.la
-usr/lib/lua/5.3/rrd.so
-usr/lib/lua/5.3/rrd.so.0
-usr/lib/lua/5.3/rrd.so.0.0.0
 usr/lib/perl5/site_perl/5.12.3/RRDp.pm
 usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/RRDs.pm
 #usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/RRDp
