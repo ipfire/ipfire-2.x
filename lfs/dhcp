@@ -99,10 +99,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-gpxe-cid.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-stateless-DUID-LLT.patch
 
-	# Remove bundled BIND stuff.
-	# (requires newer autoconf)
-	#rm -rfv $(DIR_APP)/bind/bind.tar.gz
-	#cd $(DIR_APP) && autoreconf --verbose --force --install
+	# Help unpacking bundled BIND
+	cd $(DIR_APP) && sed -e "s/gunzip -c/&d/" -i bind/Makefile
 
 	cd $(DIR_APP) && \
 		./configure \
