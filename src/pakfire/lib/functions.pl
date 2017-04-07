@@ -541,7 +541,7 @@ sub dblist {
 	}
 }
 
-sub resolvedeps {
+sub resolvedeps_one {
 	my $pak = shift;
 	
 	getmetafile("$pak");
@@ -553,7 +553,7 @@ sub resolvedeps {
 	close(FILE);
 	
 	my $line;
-	my (@templine, @deps, @tempdeps, @all);
+	my (@templine, @deps, @all);
 	foreach $line (@file) {
 		@templine = split(/\: /,$line);
 		if ("$templine[0]" eq "Dependencies") {
@@ -568,30 +568,41 @@ sub resolvedeps {
 		  	message("PAKFIRE RESV: $pak: Dependency is already installed: $_");
 		  } else {
 		  	message("PAKFIRE RESV: $pak: Need to install dependency: $_");
-				push(@tempdeps,$_);
 				push(@all,$_);
 			} 
 		}
 	}
 
-	foreach (@tempdeps) {
-		if ($_) {
-			my @newdeps = resolvedeps("$_");
-			foreach(@newdeps) {
-				unless (($_ eq " ") || ($_ eq "")) {
-					my $return = &isinstalled($_);
-					if ($return eq 0) {
-						message("PAKFIRE RESV: $pak: Dependency is already installed: $_");
-					} else {
-						message("PAKFIRE RESV: $pak: Need to install dependency: $_");
-						push(@all,$_);
-					}
-				}
+	return @all;
+}
+
+sub resolvedeps {
+	my $pak = shift;
+	my @all;
+
+	# Resolve all not yet installed dependencies of $pak
+	my @deps = &resolvedeps_one($pak);
+	push(@all, @deps);
+
+	# For each dependency, we check if more dependencies exist
+	while (@deps) {
+		my $dep = pop(@deps);
+
+		my @subdeps = &resolvedeps_one($dep);
+		foreach my $subdep (@subdeps) {
+			# Skip the package we are currently resolving for
+			next if ($pak eq $subdep);
+
+			# If the package is not already to be installed,
+			# we add it to the list (@all) and check if it has
+			# more dependencies on its own.
+			unless (grep {$_ eq $subdep} @all) {
+				push(@deps, $subdep);
+				push(@all, $subdep);
 			}
 		}
 	}
-	message("");
-	chomp (@all);
+
 	return @all;
 }
 

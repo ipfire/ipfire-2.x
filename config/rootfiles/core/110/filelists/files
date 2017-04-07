@@ -3,6 +3,7 @@ etc/issue
 etc/httpd/conf/server-tuning.conf
 etc/rc.d/init.d/unbound
 etc/sysctl.conf
+opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/entropy.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/index.cgi
