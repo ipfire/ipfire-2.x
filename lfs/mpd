@@ -82,6 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--disable-ipv6 \
 			--sysconfdir=/etc \
 			--disable-sqlite \
+			--disable-smbclient \
 			--enable-id3 \
 			--enable-vorbis \
 			--enable-expat \
