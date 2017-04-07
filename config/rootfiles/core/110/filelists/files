@@ -13,7 +13,7 @@ srv/web/ipfire/cgi-bin/system.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/themes/darkdos/include/style.css
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
-srv/web/ipfire/html/themes/ipfire-legacy/include/css/style.css
+srv/web/ipfire/html/themes/ipfire-legacy/include/style.css
 srv/web/ipfire/html/themes/maniac/include/style.css
 usr/lib/firewall/ipsec-block
 usr/lib/libssp.so.0
