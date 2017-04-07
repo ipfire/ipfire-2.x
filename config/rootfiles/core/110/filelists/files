@@ -3,6 +3,7 @@ etc/issue
 etc/httpd/conf/server-tuning.conf
 etc/rc.d/init.d/unbound
 etc/sysctl.conf
+opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/entropy.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/index.cgi
@@ -12,6 +13,7 @@ srv/web/ipfire/cgi-bin/system.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/themes/darkdos/include/style.css
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
+srv/web/ipfire/html/themes/ipfire-legacy/include/css/style.css
 srv/web/ipfire/html/themes/maniac/include/style.css
 usr/lib/firewall/ipsec-block
 usr/lib/libssp.so.0
