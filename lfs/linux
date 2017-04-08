@@ -40,10 +40,10 @@ CXXFLAGS   =
 PAK_VER    = 73
 DEPS	   = ""
 
-KERNEL_ARCH = $(MACHINE)
-
 ifeq "$(MACHINE)" "i586"
 	KERNEL_ARCH = i386
+else
+	KERNEL_ARCH = $(MACHINE)
 endif
 
 VERSUFIX=ipfire$(KCFG)
@@ -56,9 +56,19 @@ else
 	HEADERS_PREFIX = /usr
 endif
 
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(MACHINE)" "armv5tel"
 	HEADERS_ARCH=arm
-else
+endif
+
+ifeq "$(MACHINE)" "aarch64"
+	HEADERS_ARCH=arm64
+endif
+
+ifeq "$(MACHINE)" "x86_64"
+	HEADERS_ARCH=x86
+endif
+
+ifeq "$(MACHINE)" "i586"
 	HEADERS_ARCH=x86
 endif
 
