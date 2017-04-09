@@ -18,6 +18,7 @@ usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/RRDs.pm
 #usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/RRDp/.packlist
 #usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/RRDs
 #usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/RRDs/.packlist
+#usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/RRDs/RRDs.bs
 usr/lib/perl5/site_perl/5.12.3/MACHINE-linux-thread-multi/auto/RRDs/RRDs.so
 #usr/lib/pkgconfig/librrd.pc
 #usr/share/doc/rrdtool-1.6.0
