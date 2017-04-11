@@ -843,6 +843,7 @@ buildipfire() {
   ipfiremake sysbench
   ipfiremake strace
   ipfiremake elfutils
+  ipfiremake ltrace
   ipfiremake ipfire-netboot
   ipfiremake lcdproc
   ipfiremake bitstream
