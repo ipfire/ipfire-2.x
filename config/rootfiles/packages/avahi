@@ -7,6 +7,7 @@ etc/avahi/services
 etc/avahi/services/sftp-ssh.service
 etc/avahi/services/smb.service
 etc/avahi/services/ssh.service
+#etc/dbus-1/system.d
 etc/dbus-1/system.d/avahi-dbus.conf
 etc/rc.d/init.d/avahi
 usr/bin/avahi-browse
