@@ -842,6 +842,7 @@ buildipfire() {
   ipfiremake sendEmail
   ipfiremake sysbench
   ipfiremake strace
+  ipfiremake elfutils
   ipfiremake ipfire-netboot
   ipfiremake lcdproc
   ipfiremake bitstream
