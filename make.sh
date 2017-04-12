@@ -648,7 +648,6 @@ buildipfire() {
   ipfiremake dbus
   ipfiremake intltool
   ipfiremake libdaemon
-  ipfiremake avahi
   ipfiremake cups
   ipfiremake ghostscript
   ipfiremake lcms2
