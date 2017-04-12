@@ -42,6 +42,8 @@ else
   PREFIX = /tools
 endif
 
+CFLAGS += Wno-error=format-nonliteral
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -80,6 +82,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP)/glib && patch -Np1 < $(DIR_SRC)/src/patches/pkg-config-0.29-glib-compile-fix.patch
 ifeq "$(ROOT)" ""
 else
 	mkdir -pv /tools/lib/pkgconfig
