@@ -260,6 +260,10 @@ buildtoolchain() {
             ;;
 
         # ARM
+        arvm7hl:armv7hl|armv7hl:armv7l)
+            # These are working.
+            ;;
+
         armv5tel:armv5tel|armv5tel:armv5tejl|armv5tel:armv6l|armv5tel:armv7l|armv5tel:aarch64)
             # These are working.
             ;;

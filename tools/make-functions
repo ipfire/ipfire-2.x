@@ -86,6 +86,12 @@ configure_target() {
 			CFLAGS_ARCH=""
 			;;
 
+		armv7hl)
+			BUILDTARGET="${target_arch}-unknown-linux-gnueabi"
+			CROSSTARGET="${target_arch}-cross-linux-gnueabi"
+			CFLAGS_ARCH="-march=armv7-a -mfpu=vfpv3-d16  -mfloat-abi=hard -mthumb"
+			;;
+
 		armv5tel)
 			BUILDTARGET="${target_arch}-unknown-linux-gnueabi"
 			CROSSTARGET="${target_arch}-cross-linux-gnueabi"
@@ -131,9 +137,14 @@ configure_target_guess() {
 			echo "aarch64"
 			;;
 
-		armv7*|armv6*|armv5*)
+		armv7*)
+			echo "armv7hl"
+			;;
+
+		armv6*|armv5*)
 			echo "armv5tel"
 			;;
+
 		*)
 			exiterror "Cannot guess target architecture"
 			;;
