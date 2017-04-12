@@ -24,14 +24,14 @@
 
 include Config
 
-VER        = 4.9.4
+VER        = 6.3.0
 
 GMP_VER    = 5.0.5
 MPFR_VER   = 2.4.2
 MPC_VER    = 1.0.3
 
 THISAPP    = gcc-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
@@ -68,6 +68,8 @@ ifeq "$(PASS)" "1"
 	--target=$(CROSSTARGET) \
 	--prefix=/tools \
 	--with-sysroot=$(ROOT) \
+	--with-local-prefix=/tools \
+	--with-native-system-header-dir=/tools/include \
 	--disable-nls \
 	--disable-shared \
 	--disable-decimal-float \
@@ -177,7 +179,7 @@ gmp-$(GMP_VER).tar.bz2 = $(DL_FROM)/gmp-$(GMP_VER).tar.bz2
 mpfr-$(MPFR_VER).tar.bz2 = $(DL_FROM)/mpfr-$(MPFR_VER).tar.bz2
 mpc-$(MPC_VER).tar.gz = $(DL_FROM)/mpc-$(MPC_VER).tar.gz
 
-$(DL_FILE)_MD5			= 87c24a4090c1577ba817ec6882602491
+$(DL_FILE)_MD5			= 6e5ea04789678f1250c1b30c4d9ec417
 gmp-$(GMP_VER).tar.bz2_MD5	= 041487d25e9c230b0c42b106361055fe
 mpfr-$(MPFR_VER).tar.bz2_MD5	= 89e59fe665e2b3ad44a6789f40b059a0
 mpc-$(MPC_VER).tar.gz_MD5	= d6a1d5f8ddea3abd2cc3e98f58352d26
@@ -212,14 +214,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/gcc-build
 
-	# Apply patches.
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-i386-libgomp.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-libtool-no-rpath.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-no-add-needed.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-pr38757.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-pr64336.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc/gcc-fix-inlining-issues.patch
-
 ifneq "$(ROOT)" ""
 	# Build gmp and mpfr internally in toolchain.
 	cd $(DIR_APP) && tar xfa $(DIR_DL)/gmp-$(GMP_VER).tar.bz2
@@ -230,12 +224,8 @@ ifneq "$(ROOT)" ""
 	cd $(DIR_APP) && mv -v mpc-$(MPC_VER) mpc
 
 ifeq    "$(PASS)" "1"
-	# GCC does not detect stack protection correctly, which causes problems
-	# for the build of libresolv_pic.a.
-	cd $(DIR_APP) && sed -i '/k prot/agcc_cv_libc_provides_ssp=yes' gcc/configure
-
 	for file in $$(find $(DIR_APP)/gcc/config -name linux64.h -o -name linux.h \
-			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h); do \
+			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h -o -name aarch64-linux.h); do \
 		echo "Processing $${file}..."; \
 		sed -i $${file} \
 			-e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g' \
@@ -251,7 +241,7 @@ ifeq    "$(PASS)" "2"
 	cd $(DIR_APP) && cat gcc/limitx.h gcc/glimits.h gcc/limity.h > \
 			`dirname $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name)`/include-fixed/limits.h
 	for file in $$(find $(DIR_APP)/gcc/config -name linux64.h -o -name linux.h \
-			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h); do \
+			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h -o -name aarch64-linux.h); do \
 		echo "Processing $${file}..."; \
 		sed -i $${file} \
 			-e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g' \
@@ -277,6 +267,9 @@ ifeq    "$(PASS)" "L"
 			$(EXTRA_CONFIG)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
+
+	# Workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70936
+	sed -e "s/^#include_next/#include/" -i /tools/$(CROSSTARGET)/include/c++/$(VER)/cstdlib
 else
 	# The actual build.
 	cd $(DIR_SRC)/gcc-build && \
