@@ -567,7 +567,7 @@ lfsmake1() {
 
 	cd $BASEDIR/lfs && \
 		PATH="/tools/ccache/bin:/tools/bin:$PATH" \
-		make -f $* 	BUILDTARGET=$BUILDTARGET \
+		make -f $* TOOLCHAIN=1 BUILDTARGET=$BUILDTARGET \
 						CROSSTARGET="${CROSSTARGET}" \
 						MACHINE=$MACHINE \
 						MACHINE_TYPE=$MACHINE_TYPE \
