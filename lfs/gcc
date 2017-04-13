@@ -207,7 +207,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/gcc-build
 
-ifneq "$(ROOT)" ""
+	cd $(DIR_APP) && sed -i 's/install_to_$$(INSTALL_DEST) //' libiberty/Makefile.in
+	cd $(DIR_APP) && sed -i gcc/Makefile.in \
+		-e 's@\./fixinc\.sh@-c true@' \
+		-e 's/^T_CFLAGS =$$/& -fomit-frame-pointer/'
+
+ifeq "$(TOOLCHAIN)" "1"
 	# Build gmp and mpfr internally in toolchain.
 	cd $(DIR_APP) && tar xfa $(DIR_DL)/gmp-$(GMP_VER).tar.bz2
 	cd $(DIR_APP) && mv -v gmp-$(GMP_VER) gmp
@@ -216,23 +221,11 @@ ifneq "$(ROOT)" ""
 	cd $(DIR_APP) && tar xfa $(DIR_DL)/mpc-$(MPC_VER).tar.gz
 	cd $(DIR_APP) && mv -v mpc-$(MPC_VER) mpc
 
-ifeq    "$(PASS)" "1"
-	for file in $$(find $(DIR_APP)/gcc/config -name linux64.h -o -name linux.h \
-			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h -o -name aarch64-linux.h); do \
-		echo "Processing $${file}..."; \
-		sed -i $${file} \
-			-e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g' \
-			-e 's@/usr@/tools@g'; \
-		echo '#undef STANDARD_STARTFILE_PREFIX_1' >> $${file}; \
-		echo '#undef STANDARD_STARTFILE_PREFIX_2' >> $${file}; \
-		echo '#define STANDARD_STARTFILE_PREFIX_1 "/tools/lib/"' >> $${file}; \
-		echo '#define STANDARD_STARTFILE_PREFIX_2 ""' >> $${file}; \
-	done
-endif
-
-ifeq    "$(PASS)" "2"
+ifeq "$(PASS)" "2"
 	cd $(DIR_APP) && cat gcc/limitx.h gcc/glimits.h gcc/limity.h > \
 			`dirname $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name)`/include-fixed/limits.h
+endif
+
 	for file in $$(find $(DIR_APP)/gcc/config -name linux64.h -o -name linux.h \
 			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h -o -name aarch64-linux.h); do \
 		echo "Processing $${file}..."; \
@@ -245,14 +238,8 @@ ifeq    "$(PASS)" "2"
 		echo '#define STANDARD_STARTFILE_PREFIX_2 ""' >> $${file}; \
 	done
 endif
-endif
 
-	cd $(DIR_APP) && sed -i 's/install_to_$$(INSTALL_DEST) //' libiberty/Makefile.in
-	cd $(DIR_APP) && sed -i gcc/Makefile.in \
-		-e 's@\./fixinc\.sh@-c true@' \
-		-e 's/^T_CFLAGS =$$/& -fomit-frame-pointer/'
-
-ifeq    "$(PASS)" "L"
+ifeq "$(PASS)" "L"
 	# libstdc++ pass
 	cd $(DIR_SRC)/gcc-build && \
 		$(EXTRA_ENV) \
@@ -261,8 +248,6 @@ ifeq    "$(PASS)" "L"
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
 
-	# Workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70936
-	sed -e "s/^#include_next/#include/" -i /tools/$(CROSSTARGET)/include/c++/$(VER)/cstdlib
 else
 	# The actual build.
 	cd $(DIR_SRC)/gcc-build && \
@@ -273,19 +258,28 @@ else
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
 endif
 
-ifeq "$(ROOT)" ""
+ifeq "$(TOOLCHAIN)" "1"
+ ifeq "$(PASS)" "1"
+	ln -svf libgcc.a $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name | sed 's/libgcc/&_eh/')
+ endif
+
+ ifeq "$(PASS)" "2"
+	ln -svf gcc /tools/bin/cc
+	# remove gdb python files from libdir
+	rm -rf /tools/lib/*-gdb.py
+ endif
+
+ ifeq "$(PASS)" "L"
+	# Workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70936
+	sed -e "s/^#include_next/#include/" -i /tools/$(CROSSTARGET)/include/c++/$(VER)/cstdlib
+ endif
+
+else # NON-TOOLCHAIN
 	ln -svf ../usr/bin/cpp /lib
 	ln -svf gcc /usr/bin/cc
 	# remove gdb python files from libdir
 	rm -rf /usr/lib/*-gdb.py
-else
-ifeq    "$(PASS)" "1"
-	ln -svf libgcc.a $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name | sed 's/libgcc/&_eh/')
-else
-	ln -svf gcc /tools/bin/cc
-	# remove gdb python files from libdir
-	rm -rf /tools/lib/*-gdb.py
 endif
-endif
+
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build
 	@$(POSTBUILD)

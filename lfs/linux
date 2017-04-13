@@ -48,7 +48,7 @@ endif
 
 VERSUFIX=ipfire$(KCFG)
 
-ifeq "$(TOOLS)" "1"
+ifeq "$(TOOLCHAIN)" "1"
 	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)-tools
 	HEADERS_PREFIX = /tools
 else
