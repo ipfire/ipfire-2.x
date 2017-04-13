@@ -59,7 +59,7 @@ ifeq "$(PASS)" "1"
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
   EXTRA_ENV = \
-	CC="$(CROSSTARGET)-gcc -B/tools/lib/" \
+	CC="$(CROSSTARGET)-gcc" \
 	AR="$(CROSSTARGET)-ar" \
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
