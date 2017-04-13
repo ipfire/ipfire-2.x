@@ -126,7 +126,12 @@ configure_target_guess() {
 		x86_64|i686|i586)
 			echo "i586"
 			;;
-		aarch64|armv7*|armv6*|armv5*)
+
+		aarch64)
+			echo "aarch64"
+			;;
+
+		armv7*|armv6*|armv5*)
 			echo "armv5tel"
 			;;
 		*)
