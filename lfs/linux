@@ -56,6 +56,10 @@ else
 	HEADERS_PREFIX = /usr
 endif
 
+ifeq "$(MACHINE)" "armv7hl"
+	HEADERS_ARCH=arm
+endif
+
 ifeq "$(MACHINE)" "armv5tel"
 	HEADERS_ARCH=arm
 endif
