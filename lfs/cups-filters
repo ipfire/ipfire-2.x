@@ -84,7 +84,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--localstatedir=/var \
 			--with-pdftops=hybrid \
 			--disable-ijs \
-			--disable-mutool
+			--disable-mutool \
+			--disable-avahi
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
