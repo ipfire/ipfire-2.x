@@ -108,8 +108,10 @@ configure_target() {
 	# Old variable names
 	MACHINE="${TARGET_ARCH}"
 
-	CFLAGS="-O2 -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fPIC"
-	CFLAGS="${CFLAGS} -fstack-protector-strong --param=ssp-buffer-size=4 ${CFLAGS_ARCH}"
+	# Enables hardening
+	HARDENING_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong --param=ssp-buffer-size=4"
+
+	CFLAGS="-O2 -pipe -Wall -fexceptions -fPIC ${CFLAGS_ARCH}"
 	CXXFLAGS="${CFLAGS}"
 }
 
@@ -478,7 +480,8 @@ entershell() {
 		PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
 		VERSION=$VERSION CONFIG_ROOT=$CONFIG_ROOT \
 		NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-		CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
+		CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
+		CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
 		CCACHE_DIR=/usr/src/ccache \
 		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
@@ -604,7 +607,8 @@ lfsmake2() {
 						SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
 						CONFIG_ROOT=$CONFIG_ROOT \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
+						CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
+						CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
 						CCACHE_DIR=/usr/src/ccache \
 						CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
 						CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
@@ -646,7 +650,8 @@ ipfiremake() {
 						CONFIG_ROOT=$CONFIG_ROOT \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
 						SYSTEM_RELEASE="$SYSTEM_RELEASE" \
-						CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
+						CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
+						CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
 						CCACHE_DIR=/usr/src/ccache \
 						CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
 						CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
@@ -686,7 +691,8 @@ ipfiredist() {
 					VERSION=$VERSION \
 					CONFIG_ROOT=$CONFIG_ROOT \
 					NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-					CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
+					CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
+					CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
 					CCACHE_DIR=/usr/src/ccache \
 					CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
 					CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
@@ -727,7 +733,8 @@ installmake() {
 						SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
 						CONFIG_ROOT=$CONFIG_ROOT \
 						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
+						CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
+						CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
 						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
 						KVER=$KVER \
 						BUILDTARGET="$BUILDTARGET" \

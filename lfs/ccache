@@ -35,7 +35,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)-pass$(PASS)
 ifeq "$(PASS)" "1"
 	CFLAGS := $(patsubst -march=%,,$(CFLAGS))
 	CFLAGS := $(patsubst -mfloat-abi=%,,$(CFLAGS))
-	CFLAGS := $(patsubst -fstack-protector-strong,-fstack-protector-all,$(CFLAGS))
 endif
 
 # Set max cache size to 5GB

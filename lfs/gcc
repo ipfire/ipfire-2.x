@@ -59,10 +59,6 @@ ifeq "$(ROOT)" ""
   EXTRA_INSTALL =
 else
 ifeq "$(PASS)" "1"
-  CFLAGS    := $(patsubst -fstack-protector-strong,-fstack-protector-all,$(CFLAGS))
-  CXXFLAGS  := $(patsubst -fstack-protector-strong,-fstack-protector-all,$(CXXFLAGS))
-  CXXFLAGS  += -std=gnu++98
-
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = \
 	--target=$(CROSSTARGET) \
@@ -135,9 +131,6 @@ else
   EXTRA_INSTALL = 
 endif
 endif
-
-  # Disable stack protection in toolchain.
-  CFLAGS += -fno-stack-protector
 endif
 
 ifeq "$(MACHINE)" "armv5tel"
