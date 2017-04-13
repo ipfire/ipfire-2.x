@@ -108,7 +108,7 @@ ifeq "$(PASS)" "2"
 	--enable-__cxa_atexit \
 	--enable-languages=c,c++ \
 	--disable-libstdcxx-pch \
-	--enable-bootstrap
+	--disable-bootstrap
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 else
