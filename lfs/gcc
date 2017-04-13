@@ -91,7 +91,7 @@ else
 ifeq "$(PASS)" "2"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
   EXTRA_ENV = \
-	CC="$(CROSSTARGET)-gcc -B/tools/lib/" \
+	CC="$(CROSSTARGET)-gcc" \
 	CXX="$(CROSSTARGET)-g++" \
 	AR="$(CROSSTARGET)-ar" \
 	RANLIB="$(CROSSTARGET)-ranlib"
@@ -115,7 +115,7 @@ else
   # PASS=L # libstdc++-v3
   TARGET = $(DIR_INFO)/$(THISAPP)-libstdc++
   EXTRA_ENV = \
-	CC="$(CROSSTARGET)-gcc -B/tools/lib/" \
+	CC="$(CROSSTARGET)-gcc" \
 	AR="$(CROSSTARGET)-ar" \
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
