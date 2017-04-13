@@ -279,8 +279,6 @@ buildtoolchain() {
     LOGFILE="$BASEDIR/log/_build.toolchain.log"
     export LOGFILE
 
-    local ORG_PATH=$PATH
-    export PATH="/tools/ccache/bin:/tools/bin:$PATH"
     lfsmake1 ccache			PASS=1
     lfsmake1 binutils			PASS=1
     lfsmake1 gcc			PASS=1
@@ -316,7 +314,6 @@ buildtoolchain() {
     lfsmake1 xz
     lfsmake1 fake-environ
     lfsmake1 cleanup-toolchain		PASS=2
-    export PATH=$ORG_PATH
 }
 
 buildbase() {
