@@ -83,7 +83,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 
-ifeq "$(PASS)" "1"
+ifeq "$(TOOLCHAIN)" "1"
+ ifeq "$(PASS)" "1"
 	mkdir -pv /tools/ccache/bin
 	ln -svf ../../bin/ccache /tools/ccache/bin/gcc
 	ln -svf ../../bin/ccache /tools/ccache/bin/g++
@@ -93,13 +94,14 @@ ifeq "$(PASS)" "1"
 	ln -svf ../../bin/ccache /tools/ccache/bin/$(CROSSTARGET)-g++
 	ln -svf ../../bin/ccache /tools/ccache/bin/$(CROSSTARGET)-cc
 	ln -svf ../../bin/ccache /tools/ccache/bin/$(CROSSTARGET)-c++
-endif
+ endif
 
-ifeq "$(PASS)" "2"
+ ifeq "$(PASS)" "2"
 	ln -svf ../../bin/ccache /tools/ccache/bin/$(BUILDTARGET)-gcc
 	ln -svf ../../bin/ccache /tools/ccache/bin/$(BUILDTARGET)-g++
 	ln -svf ../../bin/ccache /tools/ccache/bin/$(BUILDTARGET)-cc
 	ln -svf ../../bin/ccache /tools/ccache/bin/$(BUILDTARGET)-c++
+ endif
 endif
 
 	@rm -rf $(DIR_APP)
