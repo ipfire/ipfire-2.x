@@ -2765,9 +2765,9 @@ usr/lib/python3.6/lib-dynload/xxlimited.cpython-36m-arm-linux-gnueabi.so
 usr/lib/python3.6/lib-dynload/zlib.cpython-36m-arm-linux-gnueabi.so
 #usr/lib/python3.6/lib2to3
 usr/lib/python3.6/lib2to3/Grammar.txt
-usr/lib/python3.6/lib2to3/Grammar3.6.0.final.0.pickle
+usr/lib/python3.6/lib2to3/Grammar3.6.1.final.0.pickle
 usr/lib/python3.6/lib2to3/PatternGrammar.txt
-usr/lib/python3.6/lib2to3/PatternGrammar3.6.0.final.0.pickle
+usr/lib/python3.6/lib2to3/PatternGrammar3.6.1.final.0.pickle
 usr/lib/python3.6/lib2to3/__init__.py
 usr/lib/python3.6/lib2to3/__main__.py
 #usr/lib/python3.6/lib2to3/__pycache__
@@ -3297,8 +3297,7 @@ usr/lib/python3.6/shelve.py
 usr/lib/python3.6/shlex.py
 usr/lib/python3.6/shutil.py
 usr/lib/python3.6/signal.py
-usr/lib/python3.6/site-packages
-usr/lib/python3.6/site-packages/README
+#usr/lib/python3.6/site-packages
 usr/lib/python3.6/site-packages/README.txt
 #usr/lib/python3.6/site-packages/__pycache__
 usr/lib/python3.6/site-packages/__pycache__/easy_install.cpython-36.pyc
@@ -7447,7 +7446,6 @@ usr/lib/python3.6/venv/__pycache__/__main__.cpython-36.opt-2.pyc
 usr/lib/python3.6/venv/__pycache__/__main__.cpython-36.pyc
 usr/lib/python3.6/venv/scripts
 usr/lib/python3.6/venv/scripts/posix
-usr/lib/python3.6/venv/scripts/posix/activate
 usr/lib/python3.6/venv/scripts/posix/activate.csh
 usr/lib/python3.6/venv/scripts/posix/activate.fish
 usr/lib/python3.6/warnings.py
@@ -7597,3 +7595,13 @@ usr/lib/python3.6/zipapp.py
 usr/lib/python3.6/zipfile.py
 #usr/share/man/man1/python3.1
 #usr/share/man/man1/python3.6.1
+usr/lib/python3.6/test/mod_generics_cache.py
+usr/lib/python3.6/test/mp_preload.py
+usr/lib/python3.6/venv/scripts/common
+usr/lib/python3.6/venv/scripts/common/activate
+#usr/lib/python3.6/test/__pycache__/mod_generics_cache.cpython-36.opt-1.pyc
+#usr/lib/python3.6/test/__pycache__/mod_generics_cache.cpython-36.opt-2.pyc
+#usr/lib/python3.6/test/__pycache__/mod_generics_cache.cpython-36.pyc
+#usr/lib/python3.6/test/__pycache__/mp_preload.cpython-36.opt-1.pyc
+#usr/lib/python3.6/test/__pycache__/mp_preload.cpython-36.opt-2.pyc
+#usr/lib/python3.6/test/__pycache__/mp_preload.cpython-36.pyc
