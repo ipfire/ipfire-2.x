@@ -883,6 +883,7 @@ buildipfire() {
   ipfiremake libpciaccess
   ipfiremake libyajl
   ipfiremake libvirt
+  ipfiremake python3-libvirt
   ipfiremake freeradius
   ipfiremake perl-common-sense
   ipfiremake perl-inotify2
