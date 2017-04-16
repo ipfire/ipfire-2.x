@@ -3,7 +3,7 @@
  * Get the list from IPTABLES -L
  * 
  */
-         
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -17,11 +17,11 @@ int main(void)
 {
 	if (!(initsetuid()))
 		exit(1);
-	
-	safe_system("/sbin/iptables -L -v -n > /srv/web/ipfire/html/iptables.txt");
-	safe_system("/sbin/iptables -L -v -n -t nat > /srv/web/ipfire/html/iptablesnat.txt");
-	safe_system("/sbin/iptables -t mangle -L -v -n > /srv/web/ipfire/html/iptablesmangle.txt");
-	safe_system("chown nobody.nobody /srv/web/ipfire/html/iptables.txt /srv/web/ipfire/html/iptablesnat.txt /srv/web/ipfire/html/iptablesmangle.txt");
+
+	safe_system("/sbin/iptables -L -v -n > /var/tmp/iptables.txt");
+	safe_system("/sbin/iptables -L -v -n -t nat > /var/tmp/iptablesnat.txt");
+	safe_system("/sbin/iptables -t mangle -L -v -n > /var/tmp/iptablesmangle.txt");
+	safe_system("chown nobody.nobody /var/tmp/iptables.txt /var/tmp/iptablesnat.txt /var/tmp/iptablesmangle.txt");
 	
 	return 0;
 }
