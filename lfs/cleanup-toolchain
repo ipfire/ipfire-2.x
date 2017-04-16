@@ -52,12 +52,6 @@ md5 :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 ifeq "$(PASS)" "1"
-	SPECS=$$(dirname $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name))/specs; \
-	/tools/bin/$(CROSSTARGET)-gcc -dumpspecs | sed \
-		-e "/^\*cpp:$$/{n;s,$$, -isystem /tools/include,}" > $$SPECS
-endif
-
-ifeq "$(PASS)" "2"
 	# Remove the first cross compiler which is not needed anymore.
 	find /tools/ -name "$(CROSSTARGET)*" | xargs rm -rfv
 
@@ -74,7 +68,7 @@ ifeq "$(PASS)" "2"
 	/tools/sbin/ldconfig
 endif
 
-ifeq "$(PASS)" "3"
+ifeq "$(PASS)" "2"
 	mv -v /tools/bin/{ld,ld-old}
 	mv -v /tools/$(BUILDTARGET)/bin/{ld,ld-old}
 	mv -v /tools/bin/{ld-new,ld}
