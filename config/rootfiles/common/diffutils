@@ -4,5 +4,6 @@ usr/bin/diff
 #usr/bin/sdiff
 #usr/share/info/diffutils.info
 #usr/share/man/man1/cmp.1
+#usr/share/man/man1/diff.1
 #usr/share/man/man1/diff3.1
 #usr/share/man/man1/sdiff.1
