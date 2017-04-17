@@ -51,7 +51,8 @@ md5 :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-ifeq "$(PASS)" "1"
+
+ifeq "$(TOOLCHAIN)" "1"
 	# Remove the first cross compiler which is not needed anymore.
 	find /tools/ -name "$(CROSSTARGET)*" | xargs rm -rfv
 
@@ -66,9 +67,7 @@ ifeq "$(PASS)" "1"
 
 	# Update/create linker cache.
 	/tools/sbin/ldconfig
-endif
-
-ifeq "$(PASS)" "2"
+else
 	mv -v /tools/bin/{ld,ld-old}
 	mv -v /tools/$(BUILDTARGET)/bin/{ld,ld-old}
 	mv -v /tools/bin/{ld-new,ld}
@@ -80,4 +79,5 @@ ifeq "$(PASS)" "2"
 		-e '/\*cpp:/{n;s@$$@ -isystem /usr/include@}' > \
 		$$(dirname $$(gcc -print-libgcc-file-name))/specs
 endif
+
 	@$(POSTBUILD)

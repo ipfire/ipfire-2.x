@@ -316,7 +316,7 @@ buildtoolchain() {
     lfsmake1 texinfo
     lfsmake1 xz
     lfsmake1 fake-environ
-    lfsmake1 cleanup-toolchain		PASS=1
+    lfsmake1 cleanup-toolchain
 }
 
 buildbase() {
@@ -327,7 +327,7 @@ buildbase() {
     lfsmake2 man-pages
     lfsmake2 glibc
     lfsmake2 tzdata
-    lfsmake2 cleanup-toolchain		PASS=2
+    lfsmake2 cleanup-toolchain
     lfsmake2 zlib
     lfsmake2 binutils
     lfsmake2 gmp
