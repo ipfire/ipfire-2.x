@@ -491,6 +491,7 @@ buildipfire() {
   ipfiremake nettle
   ipfiremake libevent
   ipfiremake libevent2
+  ipfiremake libevent2-compat
   ipfiremake expat
   ipfiremake unbound
   ipfiremake gnutls
