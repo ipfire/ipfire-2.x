@@ -79,47 +79,49 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/idn-* $(DIR_SRC)/Log-* $(DIR_SRC)/package.xml && \
 		cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+
 	cd $(DIR_APP) && ./configure --prefix=/usr \
-										            --sysconfdir=/etc \
-										            --with-apxs2 \
-										            --enable-force-cgi-redirect \
-										            --enable-discard-path \
-										            --enable-fastcgi \
-										            --with-config-file-path=/etc \
-										            --with-openssl \
-										            --with-kerberos \
-										            --with-zlib \
-										            --enable-bcmath \
-										            --with-bz2 \
-										            --enable-calendar \
-										            --with-curl \
-										            --with-curlwrappers \
-										            --enable-dba=shared \
-										            --with-gdbm \
-										            --with-db4 \
-										            --with-inifile \
-										            --with-flatfile \
-										            --enable-exif \
-										            --enable-ftp \
-										            --with-openssl-dir=/usr \
-										            --with-gd=/usr \
-										            --with-jpeg-dir=/usr \
-										            --with-png-dir=/usr \
-										            --with-zlib-dir=/usr \
-										            --with-freetype-dir=/usr \
-										            --with-gettext \
-										            --with-gmp \
-										            --enable-mbstring \
-										            --with-mysql \
-										            --with-mysql-sock=/var/run/mysql \
-										            --with-ncurses \
-										            --with-pdo-mysql \
-										            --with-pdo-sqlite \
-										            --with-readline \
-										            --enable-sockets \
-										            --with-xsl \
-										            --with-iconv \
-										            --enable-zip
+            --sysconfdir=/etc \
+            --with-apxs2 \
+            --enable-force-cgi-redirect \
+            --enable-discard-path \
+            --enable-fastcgi \
+            --with-config-file-path=/etc \
+            --with-openssl \
+            --with-kerberos \
+            --with-zlib \
+            --enable-bcmath \
+            --with-bz2 \
+            --enable-calendar \
+            --with-curl \
+            --with-curlwrappers \
+            --enable-dba=shared \
+            --with-gdbm \
+            --with-db4 \
+            --with-inifile \
+            --with-flatfile \
+            --enable-exif \
+            --enable-ftp \
+            --with-openssl-dir=/usr \
+            --with-gd=/usr \
+            --with-jpeg-dir=/usr \
+            --with-png-dir=/usr \
+            --with-zlib-dir=/usr \
+            --with-freetype-dir=/usr \
+            --with-gettext \
+            --with-gmp \
+            --enable-mbstring \
+            --with-mysql \
+            --with-mysql-sock=/var/run/mysql \
+            --with-ncurses \
+            --with-pdo-mysql \
+            --with-pdo-sqlite \
+            --with-readline \
+            --enable-sockets \
+            --with-xsl \
+            --with-iconv \
+            --enable-zip
+
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && install -v -m644 $(DIR_SRC)/config/php/php.ini /etc/php.ini
