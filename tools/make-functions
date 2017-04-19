@@ -89,7 +89,7 @@ configure_target() {
 		armv7hl)
 			BUILDTARGET="${target_arch}-unknown-linux-gnueabi"
 			CROSSTARGET="${target_arch}-cross-linux-gnueabi"
-			CFLAGS_ARCH="-march=armv7-a -mfpu=vfpv3-d16  -mfloat-abi=hard -mthumb"
+			CFLAGS_ARCH="-march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard"
 			;;
 
 		armv5tel)
