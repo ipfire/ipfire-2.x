@@ -53,6 +53,10 @@ endif
 # Enable some extra optimization for the glibc code
 CFLAGS = -O3 -DNDEBUG -fasynchronous-unwind-tables -fPIC -DPIC
 
+ifeq "$(MACHINE)" "armv7hl"
+	CFLAGS += -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard
+endif
+
 ifeq "$(MACHINE)" "i586"
 	CFLAGS += -march=i586 -mtune=generic -mno-tls-direct-seg-refs
 endif
