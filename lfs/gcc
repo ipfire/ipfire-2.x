@@ -133,6 +133,11 @@ endif
 endif
 endif
 
+ifeq "$(MACHINE)" "armv7hl"
+	EXTRA_CONFIG += \
+		--with-float=hard
+endif
+
 ifeq "$(MACHINE)" "armv5tel"
 	EXTRA_CONFIG += \
 		--with-float=soft \
