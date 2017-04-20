@@ -2178,7 +2178,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 		foreach my $val (@temp) {
-			if ($val !~ /^(curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192)$/) {
+			if ($val !~ /^(curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|768|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192)$/) {
 				$errormessage = $Lang::tr{'invalid input'};
 				goto ADVANCED_ERROR;
 			}
@@ -2219,7 +2219,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 		foreach my $val (@temp) {
-			if ($val !~ /^(curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192|none)$/) {
+			if ($val !~ /^(curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|768|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192|none)$/) {
 				$errormessage = $Lang::tr{'invalid input'};
 				goto ADVANCED_ERROR;
 			}
@@ -2349,9 +2349,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$checked{'IKE_GROUPTYPE'}{'8192'} = '';
 	@temp = split('\|', $cgiparams{'IKE_GROUPTYPE'});
 	foreach my $key (@temp) {$checked{'IKE_GROUPTYPE'}{$key} = "selected='selected'"; }
-
-	# 768 is not supported by strongswan
-	$checked{'IKE_GROUPTYPE'}{'768'} = '';
 
 	$checked{'ESP_ENCRYPTION'}{'aes256'} = '';
 	$checked{'ESP_ENCRYPTION'}{'aes192'} = '';
@@ -2554,6 +2551,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='2048' $checked{'IKE_GROUPTYPE'}{'2048'}>MODP-2048</option>
 					<option value='1536' $checked{'IKE_GROUPTYPE'}{'1536'}>MODP-1536</option>
 					<option value='1024' $checked{'IKE_GROUPTYPE'}{'1024'}>MODP-1024</option>
+					<option value='768' $checked{'IKE_GROUPTYPE'}{'768'}>MODP-768</option>
 				</select>
 			</td>
 			<td class='boldbase'>
@@ -2578,6 +2576,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='2048' $checked{'ESP_GROUPTYPE'}{'2048'}>MODP-2048</option>
 					<option value='1536' $checked{'ESP_GROUPTYPE'}{'1536'}>MODP-1536</option>
 					<option value='1024' $checked{'ESP_GROUPTYPE'}{'1024'}>MODP-1024</option>
+					<option value='768' $checked{'ESP_GROUPTYPE'}{'768'}>MODP-768</option>
 					<option value='none' $checked{'ESP_GROUPTYPE'}{'none'}>- $Lang::tr{'none'} -</option>
 				</select>
 			</td>
