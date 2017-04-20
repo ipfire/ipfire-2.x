@@ -72,7 +72,7 @@ else
 endif
 endif
 
-ifeq "$(MACHINE)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv5tel"
 	EXTRA_CONFIG += \
 		--with-abi=aapcs-linux \
 		--with-float=soft
@@ -124,15 +124,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Prevent installing libiberty to lib64.
 	cd $(DIR_APP) && sed -i 's%\(^MULTIOSDIR = \).*%\1 ../lib%' libiberty/Makefile.in
 
-	cd $(DIR_SRC)/binutils-build && $(EXTRA_ENV) MACHINE= $(DIR_APP)/configure $(EXTRA_CONFIG)
-	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) $(MAKETUNING) MACHINE=
-	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install MACHINE=
+	cd $(DIR_SRC)/binutils-build && $(EXTRA_ENV) $(DIR_APP)/configure $(EXTRA_CONFIG)
+	cd $(DIR_SRC)/binutils-build && make $(EXTRA_MAKE) $(MAKETUNING)
+	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install
 ifeq "$(ROOT)" ""
 	cp -v $(DIR_APP)/include/libiberty.h /usr/include
 else
 ifeq "$(PASS)" "2"
-	cd $(DIR_SRC)/binutils-build && make -C ld clean MACHINE=
-	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/usr/lib:/lib MACHINE=
+	cd $(DIR_SRC)/binutils-build && make -C ld clean
+	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/usr/lib:/lib
 	cd $(DIR_SRC)/binutils-build && cp -v ld/ld-new /tools/bin
 endif
 endif

@@ -53,16 +53,16 @@ endif
 # Enable some extra optimization for the glibc code
 CFLAGS = -O3 -DNDEBUG -fasynchronous-unwind-tables -fPIC -DPIC
 
-ifeq "$(MACHINE)" "armv7hl"
+ifeq "$(BUILD_ARCH)" "armv7hl"
 	CFLAGS += -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard
 endif
 
-ifeq "$(MACHINE)" "i586"
+ifeq "$(BUILD_ARCH)" "i586"
 	CFLAGS += -march=i586 -mtune=generic -mno-tls-direct-seg-refs
 endif
 
 # Disable hardware FP for armv5tel
-ifeq "$(MACHINE)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv5tel"
 	EXTRA_CONFIG += \
 		--without-fp
 endif
@@ -117,19 +117,21 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/glibc-build
 
-ifeq "$(ROOT)" ""
-ifeq "$(MACHINE_TYPE)" "arm"
-	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.3 -o|' \
-		scripts/test-installation.pl
-else
-ifeq "$(MACHINE)" "x86_64"
+ifneq "$(TOOLCHAIN)" "1"
+ ifeq "$(BUILD_ARCH)" "x86_64"
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib64 -Wl,-dynamic-linker=/lib64/ld-linux-x86-64.so.2 -o|' \
 		scripts/test-installation.pl
-else
+ endif
+
+ ifeq "$(BUILD_ARCH)" "i586"
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.2 -o|' \
 		scripts/test-installation.pl
-endif
-endif
+ endif
+
+ ifeq "$(BUILD_ARCH)" "armv5tel"
+	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.3 -o|' \
+		scripts/test-installation.pl
+ endif
 endif
 
 	cd $(DIR_SRC)/glibc-build && \
@@ -141,15 +143,16 @@ endif
 
 	cd $(DIR_SRC)/glibc-build && make install
 
-ifeq "$(ROOT)" ""
+ifeq "$(TOOLCHAIN)" "1"
+	ln -svf lib /tools/lib64
+else
 	# Creating the locales
 	mkdir -p /usr/lib/locale
 	cd $(DIR_SRC)/glibc-build && make localedata/install-locales
 
 	# Timezone data will be shipped by tzdata.
 	rm -rfv /usr/share/zoneinfo
-else
-	ln -svf lib /tools/lib64
 endif
+
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build
 	@$(POSTBUILD)

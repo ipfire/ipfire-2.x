@@ -40,10 +40,16 @@ CXXFLAGS   =
 PAK_VER    = 73
 DEPS	   = ""
 
-ifeq "$(MACHINE)" "i586"
+ifeq "$(BUILD_ARCH)" "i586"
 	KERNEL_ARCH = i386
 else
-	KERNEL_ARCH = $(MACHINE)
+	KERNEL_ARCH = $(BUILD_ARCH)
+endif
+
+ifeq "$(BUILD_ARCH)" "aarch64"
+	HEADERS_ARCH = arm64
+else
+	HEADERS_ARCH = $(BUILD_PLATFORM)
 endif
 
 VERSUFIX=ipfire$(KCFG)
@@ -54,26 +60,6 @@ ifeq "$(TOOLCHAIN)" "1"
 else
 	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
 	HEADERS_PREFIX = /usr
-endif
-
-ifeq "$(MACHINE)" "armv7hl"
-	HEADERS_ARCH=arm
-endif
-
-ifeq "$(MACHINE)" "armv5tel"
-	HEADERS_ARCH=arm
-endif
-
-ifeq "$(MACHINE)" "aarch64"
-	HEADERS_ARCH=arm64
-endif
-
-ifeq "$(MACHINE)" "x86_64"
-	HEADERS_ARCH=x86
-endif
-
-ifeq "$(MACHINE)" "i586"
-	HEADERS_ARCH=x86
 endif
 
 ifeq "$(KCFG)" ""
@@ -264,7 +250,7 @@ else
 		drivers/video/logo/logo_linux_clut224.ppm
 
 	# Cleanup kernel source
-	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE)-$(VERSUFIX) $(DIR_APP)/.config
+	cp $(DIR_SRC)/config/kernel/kernel.config.$(BUILD_ARCH)-$(VERSUFIX) $(DIR_APP)/.config
 	cd $(DIR_APP) && make oldconfig
 	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ -$(VERSUFIX)/' Makefile
@@ -295,7 +281,7 @@ endif
 	cd $(DIR_APP) && make $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make $(MAKETUNING) firmware_install
 
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(BUILD_PLATFORM)" "arm"
 	cd $(DIR_APP) && make $(MAKETUNING) dtbs
 	cd $(DIR_APP) && for f in $$(find arch/arm/boot/dts/ -name *.dtb); do \
 				mkdir -p /boot/dtb-$(VER)-$(VERSUFIX) ; \

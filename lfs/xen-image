@@ -47,7 +47,7 @@ md5 :
 ###############################################################################
 # Installation Details
 ###############################################################################
-IMGinst  := /install/images/$(SNAME)-$(VERSION).xen.$(MACHINE)-downloader-core$(CORE).tar.bz2
+IMGinst  := /install/images/$(SNAME)-$(VERSION).xen.$(BUILD_ARCH)-downloader-core$(CORE).tar.bz2
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rf /install/images/$(SNAME) $(IMGinst) && mkdir -p /install/images/$(SNAME)

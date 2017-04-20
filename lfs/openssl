@@ -63,11 +63,11 @@ CONFIGURE_OPTIONS = \
 	no-srp \
 	-DSSL_FORBID_ENULL
 
-ifeq "$(MACHINE)" "x86_64"
+ifeq "$(BUILD_ARCH)" "x86_64"
 	CONFIGURE_OPTIONS += linux-x86_64
 endif
 
-ifeq "$(MACHINE)" "i586"
+ifeq "$(BUILD_ARCH)" "i586"
 	CONFIGURE_OPTIONS += linux-elf
 
 ifneq "$(KCFG)" "-sse2"
@@ -75,7 +75,7 @@ ifneq "$(KCFG)" "-sse2"
 endif
 endif
 
-ifeq "$(MACHINE)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv5tel"
 	CONFIGURE_OPTIONS += linux-generic32
 endif
 
@@ -123,7 +123,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2g-disable-sslv2v3.patch
 
 	# i586 specific patches
-ifeq "$(MACHINE)" "i586"
+ifeq "$(BUILD_ARCH)" "i586"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a_auto_enable_padlock.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a_disable_ssse3_for_amd.patch
 endif

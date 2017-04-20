@@ -102,7 +102,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP)* && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
-ifeq "$(MACHINE)" "i586"
+ifeq "$(BUILD_ARCH)" "i586"
 	# Build an SSE enabled version.
 	$(call BUILD,-sse)
 endif

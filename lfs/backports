@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
 
-#ifeq "$(MACHINE_TYPE)" "arm"
+#ifeq "$(BUILD_PLATFORM)" "arm"
 CFLAGS   += -fno-PIC
 #endif
 
@@ -87,7 +87,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1-ipfire-build.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-4.2.6-1-grsecurity.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-4.2.6-1-add_usbnet_modules.patch
-ifeq "$(MACHINE)" "x86_64"
+ifeq "$(BUILD_ARCH)" "x86_64"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/backports-3.18.1-1_no_dma_sgtable_on_x86_64.patch
 endif
 
@@ -126,7 +126,7 @@ endif
 	cd $(DIR_APP) && sed -i -e "s/CPTCFG_CFG80211_DEFAULT_PS=y/# CPTCFG_CFG80211_DEFAULT_PS is not set/g" .config
 	cd $(DIR_APP) && sed -i -e "s/CPTCFG_NFC=m/# CPTCFG_NFC is not set/g" .config
 
-ifeq "$(MACHINE)" "x86_64"
+ifeq "$(BUILD_ARCH)" "x86_64"
 	cd $(DIR_APP) && sed -i -e "s/CPTCFG_LIBERTAS_UAP=m/# CPTCFG_LIBERTAS_UAP is not set/g" .config
 endif
 

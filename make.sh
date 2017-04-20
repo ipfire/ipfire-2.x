@@ -39,8 +39,7 @@ GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 TOOLCHAINVER=12
 
 # New architecture variables
-BUILD_ARCH="$(uname -m)"
-BUILDMACHINE="${BUILD_ARCH}"
+HOST_ARCH="$(uname -m)"
 
 # Debian specific settings
 if [ ! -e /etc/debian_version ]; then
@@ -69,10 +68,13 @@ if [ -f .config ]; then
 	. .config
 fi
 
-if [ -n "${TARGET_ARCH}" ]; then
-	configure_target "${TARGET_ARCH}"
+if [ -n "${BUILD_ARCH}" ]; then
+	configure_build "${BUILD_ARCH}"
+elif [ -n "${TARGET_ARCH}" ]; then
+	configure_build "${TARGET_ARCH}"
+	unset TARGET_ARCH
 else
-	configure_target "default"
+	configure_build "default"
 fi
 
 if [ -z $EDITOR ]; then
@@ -221,13 +223,13 @@ prepareenv() {
     # Run LFS static binary creation scripts one by one
     export CCACHE_DIR=$BASEDIR/ccache
     export CCACHE_COMPRESS=1
-    export CCACHE_COMPILERCHECK="string:toolchain-${TOOLCHAINVER} ${TARGET_ARCH}"
+    export CCACHE_COMPILERCHECK="string:toolchain-${TOOLCHAINVER} ${BUILD_ARCH}"
 
     # Remove pre-install list of installed files in case user erase some files before rebuild
     rm -f $BASEDIR/build/usr/src/lsalr 2>/dev/null
 
     # Prepare string for /etc/system-release.
-    SYSTEM_RELEASE="${NAME} ${VERSION} (${MACHINE})"
+    SYSTEM_RELEASE="${NAME} ${VERSION} (${BUILD_ARCH})"
     if [ "$(git status -s | wc -l)" == "0" ]; then
 	GIT_STATUS=""
     else
@@ -245,7 +247,7 @@ prepareenv() {
 
 buildtoolchain() {
     local error=false
-    case "${TARGET_ARCH}:${BUILD_ARCH}" in
+    case "${BUILD_ARCH}:${HOST_ARCH}" in
         # x86_64
         x86_64:x86_64)
              # This is working.
@@ -273,7 +275,7 @@ buildtoolchain() {
     esac
 
     ${error} && \
-        exiterror "Cannot build ${MACHINE} toolchain on $(uname -m). Please use the download if any."
+        exiterror "Cannot build ${BUILD_ARCH} toolchain on $(uname -m). Please use the download if any."
 
     local gcc=$(type -p gcc)
     if [ -z "${gcc}" ]; then
@@ -426,7 +428,7 @@ buildipfire() {
   ipfiremake libnetfilter_cttimeout
   ipfiremake iptables
 
-  case "${TARGET_ARCH}" in
+  case "${BUILD_ARCH}" in
 	x86_64)
 		ipfiremake linux			KCFG=""
 		ipfiremake backports			KCFG=""
@@ -484,7 +486,7 @@ buildipfire() {
   esac
   ipfiremake xtables-addons			USPACE="1"
   ipfiremake openssl
-  [ "${TARGET_ARCH}" = "i586" ] && ipfiremake openssl KCFG='-sse2'
+  [ "${BUILD_ARCH}" = "i586" ] && ipfiremake openssl KCFG='-sse2'
   ipfiremake libgpg-error
   ipfiremake libgcrypt
   ipfiremake libassuan
@@ -947,7 +949,7 @@ buildpackages() {
   cd $BASEDIR
 
   # remove not useable iso on armv5tel (needed to build flash images)
-  [ "${TARGET_ARCH}" = "armv5tel" ] && rm -rf *.iso
+  [ "${BUILD_ARCH}" = "armv5tel" ] && rm -rf *.iso
 
   for i in `ls *.bz2 *.img.gz *.iso`; do
 	md5sum $i > $i.md5
@@ -978,7 +980,7 @@ ipfirepackages() {
 	ipfiremake core-updates
 
 	local i
-	for i in $(find $BASEDIR/config/rootfiles/packages{/${MACHINE},} -maxdepth 1 -type f); do
+	for i in $(find $BASEDIR/config/rootfiles/packages{/${BUILD_ARCH},} -maxdepth 1 -type f); do
 		i=$(basename ${i})
 		if [ -e $BASEDIR/lfs/$i ]; then
 			ipfiredist $i
@@ -1012,7 +1014,7 @@ done
 case "$1" in 
 build)
 	clear
-	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz 2> /dev/null | head -n 1`
+	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
 	if [ ! -f log/cleanup-toolchain-2-tools ]; then
 		if [ ! -n "$PACKAGE" ]; then
@@ -1106,7 +1108,7 @@ downloadsrc)
 			if [ -f "$i" -a "$i" != "Config" ]; then
 				lfsmakecommoncheck ${i} || continue
 
-				make -s -f $i LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
+				make -s -f $i LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
 					MESSAGE="$i\t ($c/$MAX_RETRIES)" download >> $LOGFILE 2>&1
 				if [ $? -ne 0 ]; then
 					beautify message FAIL
@@ -1124,7 +1126,7 @@ downloadsrc)
 	for i in *; do
 		if [ -f "$i" -a "$i" != "Config" ]; then
 			lfsmakecommoncheck ${i} > /dev/null || continue
-			make -s -f $i LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
+			make -s -f $i LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
 				MESSAGE="$i\t " md5 >> $LOGFILE 2>&1
 			if [ $? -ne 0 ]; then
 				echo -ne "MD5 difference in lfs/$i"
@@ -1147,25 +1149,25 @@ toolchain)
 	prepareenv
 	beautify build_stage "Toolchain compilation - Native GCC: `gcc --version | grep GCC | awk {'print $3'}`"
 	buildtoolchain
-	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for $MACHINE" | tee -a $LOGFILE
+	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for ${BUILD_ARCH}" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
-	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
+	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.gz \
 		build/tools build/bin/sh log >> $LOGFILE
-	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.tar.gz \
-		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE.md5
+	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.gz \
+		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.md5
 	stdumount
 	;;
 gettoolchain)
 	# arbitrary name to be updated in case of new toolchain package upload
-	PACKAGE=$SNAME-$VERSION-toolchain-$TOOLCHAINVER-$MACHINE
+	PACKAGE=$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}
 	if [ ! -f $BASEDIR/cache/toolchains/$PACKAGE.tar.gz ]; then
 		URL_TOOLCHAIN=`grep URL_TOOLCHAIN lfs/Config | awk '{ print $3 }'`
 		test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
-		echo "`date -u '+%b %e %T'`: Load toolchain tar.gz for $MACHINE" | tee -a $LOGFILE
+		echo "`date -u '+%b %e %T'`: Load toolchain tar.gz for ${BUILD_ARCH}" | tee -a $LOGFILE
 		cd $BASEDIR/cache/toolchains
 		wget -U "IPFireSourceGrabber/2.x" $URL_TOOLCHAIN/$PACKAGE.tar.gz $URL_TOOLCHAIN/$PACKAGE.md5 >& /dev/null
 		if [ $? -ne 0 ]; then
-			echo "`date -u '+%b %e %T'`: error downloading $PACKAGE toolchain for $MACHINE machine" | tee -a $LOGFILE
+			echo "`date -u '+%b %e %T'`: error downloading $PACKAGE toolchain for ${BUILD_ARCH} machine" | tee -a $LOGFILE
 		else
 			if [ "`md5sum $PACKAGE.tar.gz | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
 				echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
@@ -1179,11 +1181,11 @@ gettoolchain)
 	;;
 othersrc)
 	prepareenv
-	echo -ne "`date -u '+%b %e %T'`: Build sources iso for $MACHINE" | tee -a $LOGFILE
+	echo -ne "`date -u '+%b %e %T'`: Build sources iso for ${BUILD_ARCH}" | tee -a $LOGFILE
 	chroot $LFS /tools/bin/env -i   HOME=/root \
 	TERM=$TERM PS1='\u:\w\$ ' \
 	PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
-	VERSION=$VERSION NAME="$NAME" SNAME="$SNAME" MACHINE=$MACHINE \
+	VERSION=$VERSION NAME="$NAME" SNAME="$SNAME" BUILD_ARCH="${BUILD_ARCH}" \
 	/bin/bash -x -c "cd /usr/src/lfs && make -f sources-iso LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
 	mv $LFS/install/images/ipfire-* $BASEDIR >> $LOGFILE 2>&1
 	if [ $? -eq "0" ]; then

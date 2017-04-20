@@ -64,7 +64,7 @@ $(TARGET) :
 	# Symlink /var/run -> /run.
 	ln -svf ../run /var/run
 
-ifeq "$(MACHINE)" "x86_64"
+ifeq "$(BUILD_ARCH)" "x86_64"
 	ln -svf lib /lib64
 	ln -svf lib /usr/lib64
 endif

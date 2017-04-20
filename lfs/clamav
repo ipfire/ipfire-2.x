@@ -36,7 +36,7 @@ PAK_VER    = 34
 
 DEPS       = ""
 
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(BUILD_PLATFORM)" "arm"
 CONFIGURE_FLAGS = --disable-fanotify
 endif
 

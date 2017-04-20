@@ -59,7 +59,7 @@ core/%:
 	$(DIR_SRC)/src/scripts/archive.files \
 		$(DIR_SRC)/config/rootfiles/$@/filelists \
 		$(DIR_SRC)/config/rootfiles/$@/files \
-		$(DIR_SRC)/config/rootfiles/$@/files.$(MACHINE) \
+		$(DIR_SRC)/config/rootfiles/$@/files.$(BUILD_ARCH) \
 		> /tmp/ROOTFILES.tmp
 
 	#remove excluded files from ROOTFILES

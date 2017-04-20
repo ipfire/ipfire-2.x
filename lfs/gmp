@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-ifeq "$(MACHINE)" "i586"
+ifeq "$(BUILD_ARCH)" "i586"
 	CONFIGURE_ARGS = ABI=32
-	BUILDTARGET_PENTIUM4 = $(patsubst $(MACHINE)-%,pentium4-%,$(BUILDTARGET))
+	BUILDTARGET_PENTIUM4 = $(patsubst $(BUILD_ARCH)-%,pentium4-%,$(BUILDTARGET))
 endif
 
 CONFIGURE_OPTIONS = \
@@ -89,7 +89,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
-ifeq "$(MACHINE)" "i586"
+ifeq "$(BUILD_ARCH)" "i586"
 	# Build SSE/SSE2 optimised version for x86
 	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && \

@@ -133,24 +133,24 @@ endif
 endif
 endif
 
-ifeq "$(MACHINE)" "armv7hl"
+ifeq "$(BUILD_ARCH)" "armv7hl"
 	EXTRA_CONFIG += \
 		--with-float=hard
 endif
 
-ifeq "$(MACHINE)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv5tel"
 	EXTRA_CONFIG += \
 		--with-float=soft \
 		--disable-sjlj-exceptions
 endif
 
-ifeq "$(MACHINE)" "i586"
+ifeq "$(BUILD_ARCH)" "i586"
 	EXTRA_CONFIG += \
 		--with-arch=i586 \
 		--with-tune=generic
 endif
 
-ifeq "$(MACHINE)" "x86_64"
+ifeq "$(BUILD_ARCH)" "x86_64"
 	EXTRA_CONFIG += \
 		--disable-multilib
 endif
