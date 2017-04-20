@@ -490,36 +490,49 @@ file_is_static() {
 	file ${file} 2>/dev/null | grep -q "statically linked"
 }
 
+enterchroot() {
+	# Install QEMU helper, if needed
+	qemu_install_helper
+
+	local PATH="/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin"
+
+	PATH="${PATH}" chroot ${LFS} env -i \
+		HOME="/root" \
+		TERM="${TERM}" \
+		PS1="${PS1}" \
+		PATH="${PATH}" \
+		NAME="${NAME}" \
+		SNAME="${SNAME}" \
+		VERSION="${VERSION}" \
+		SLOGAN="${SLOGAN}" \
+		CONFIG_ROOT="${CONFIG_ROOT}" \
+		CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
+		CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
+		BUILDTARGET="${BUILDTARGET}" \
+		CROSSTARGET="${CROSSTARGET}" \
+		BUILD_ARCH="${BUILD_ARCH}" \
+		CCACHE_DIR=/usr/src/ccache \
+		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
+		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
+		KVER="${KVER}" \
+		$(fake_environ) \
+		$(qemu_environ) \
+		$@
+}
+
 entershell() {
 	if [ ! -e $BASEDIR/build/usr/src/lfs/ ]; then
 		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/"
 	fi
 
-	# Install QEMU helper, if needed
-	qemu_install_helper
-
 	echo "Entering to a shell inside LFS chroot, go out with exit"
-	chroot $LFS /tools/bin/env -i HOME=/root TERM=$TERM PS1='ipfire build chroot ($(uname -m)) \u:\w\$ ' \
-		PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
-		VERSION=$VERSION CONFIG_ROOT=$CONFIG_ROOT \
-		NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-		CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
-		CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
-		CCACHE_DIR=/usr/src/ccache \
-		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
-		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
-		KVER=$KVER \
-		BUILDTARGET="$BUILDTARGET" \
-		CROSSTARGET="${CROSSTARGET}" \
-		BUILD_ARCH="${BUILD_ARCH}" \
-		$(fake_environ) \
-		$(qemu_environ) \
-		/tools/bin/bash -i
-	if [ $? -ne 0 ]; then
-			beautify message FAIL
-			exiterror "chroot error"
-	else
+	local PS1="ipfire build chroot ($(uname -m)) \u:\w\$ "
+
+	if enterchroot bash -i; then
 		stdumount
+	else
+		beautify message FAIL
+		exiterror "chroot error"
 	fi
 }
 
