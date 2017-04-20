@@ -562,6 +562,7 @@
 < vendor
 < visit us at
 < vpn broken
+< vpn connecting
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
@@ -1183,6 +1184,7 @@
 < vendor
 < visit us at
 < vpn broken
+< vpn connecting
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
@@ -1769,6 +1771,7 @@
 < vendor
 < visit us at
 < vpn broken
+< vpn connecting
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
@@ -2360,6 +2363,7 @@
 < vendor
 < visit us at
 < vpn broken
+< vpn connecting
 < vpn keyexchange
 < vpn on-demand
 < vpn start action

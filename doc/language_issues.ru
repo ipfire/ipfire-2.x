@@ -1139,6 +1139,7 @@ WARNING: untranslated string: urlfilter redirect template
 WARNING: untranslated string: vendor
 WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn broken
+WARNING: untranslated string: vpn connecting
 WARNING: untranslated string: vpn force mobike
 WARNING: untranslated string: vpn keyexchange
 WARNING: untranslated string: vpn on-demand

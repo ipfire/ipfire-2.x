@@ -2606,6 +2606,7 @@
 'vpn altname syntax' => 'Der Subjekt Alternativ Name ist eine durch Komma getrennte Liste von Email, DNS, URI, RID und IP Objekten. <br />Email: eine Email Adresse. Syntax Email: \'copy\' benutzt die Email Adresse aus dem Zertifikatfeld. <br />DNS: ein gültiger Domain Name.<br />URI: eine gültige URI.<br />RID: Registriertes Objekt Identifikation.<br />IP: eine IP Adresse.<br />Bitte beachten: der Zeichensatz ist eingeschränkt und die Groß-/Kleinschreibung ist entscheidend.<br />Beispiel:<br /><b>email:</b>info@ipfire.org<b>,email:</b>copy<b>,DNS:</b>www.ipfire.org<b>,IP:</b>127.0.0.1<b>,URI:</b>http://url/nach/irgendwo',
 'vpn auth-dn' => 'Peer wird identifiziert durch entweder ein IPV4_ADDR, FQDN, USER_FQDN oder DER_ASN1_DN string in Remote ID Feld',
 'vpn broken' => 'Gebrochen',
+'vpn connecting' => 'VERBINDUNGSAUFBAU',
 'vpn delayed start' => 'Verzögerung bevor VPN gestartet wird (Sekunden)',
 'vpn delayed start help' => 'Falls notwendig, kann diese Verzögerung dazu verwendet werden, um Dynamic-DNS-Updates ordnungsgemäß anzuwenden. 60 ist ein gängiger Wert, wenn ROT (RED) eine dynamische IP Adresse ist.',
 'vpn incompatible use of defaultroute' => 'Hostname=%defaultroute nicht zulässig',

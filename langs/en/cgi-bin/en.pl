@@ -2650,6 +2650,7 @@
 'vpn auth-dn' => 'Peer is identified by either IPV4_ADDR, FQDN, USER_FQDN or DER_ASN1_DN string in remote ID field',
 'vpn broken' => 'Broken',
 'vpn configuration main' => 'VPN Configuration',
+'vpn connecting' => 'CONNECTING',
 'vpn delayed start' => 'Delay before launching VPN (seconds)',
 'vpn delayed start help' => 'If required, this delay can be used to allow dynamic DNS updates to propagate properly. 60 is a common value when RED is a dynamic IP.',
 'vpn force mobike' => 'Force using MOBIKE (only IKEv2)',
