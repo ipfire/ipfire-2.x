@@ -501,9 +501,12 @@ enterchroot() {
 		TERM="${TERM}" \
 		PS1="${PS1}" \
 		PATH="${PATH}" \
+		SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
+		PAKFIRE_CORE="${PAKFIRE_CORE}" \
 		NAME="${NAME}" \
 		SNAME="${SNAME}" \
 		VERSION="${VERSION}" \
+		CORE="${CORE}" \
 		SLOGAN="${SLOGAN}" \
 		CONFIG_ROOT="${CONFIG_ROOT}" \
 		CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
@@ -517,7 +520,7 @@ enterchroot() {
 		KVER="${KVER}" \
 		$(fake_environ) \
 		$(qemu_environ) \
-		$@
+		"$@"
 }
 
 entershell() {
@@ -637,30 +640,13 @@ lfsmake2() {
 	lfsmakecommoncheck $*
 	[ $? == 1 ] && return 0
 
-	# Install QEMU helper, if needed
-	qemu_install_helper
-
 	local PKG_TIME_START=`date +%s`
-	chroot $LFS /tools/bin/env -i 	HOME=/root \
-						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
-						VERSION=$VERSION PAKFIRE_CORE="${PAKFIRE_CORE}" \
-						SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
-						CONFIG_ROOT=$CONFIG_ROOT \
-						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
-						CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
-						CCACHE_DIR=/usr/src/ccache \
-						CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
-						CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
-						KVER=$KVER MAKETUNING=$MAKETUNING \
-						BUILDTARGET="$BUILDTARGET" \
-						CROSSTARGET="${CROSSTARGET}" \
-						BUILD_ARCH="${BUILD_ARCH}" \
-						$(qemu_environ) \
-						$(fake_environ) \
-						/tools/bin/bash -x -c "cd /usr/src/lfs && \
-						make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
+	local PS1='\u:\w$ '
+
+	enterchroot \
+		bash -x -c "cd /usr/src/lfs && make -f $* LFS_BASEDIR=/usr/src install" \
+		>> ${LOGFILE} 2>&1
+
 	local COMPILE_SUCCESS=$?
 	local PKG_TIME_END=`date +%s`
 
