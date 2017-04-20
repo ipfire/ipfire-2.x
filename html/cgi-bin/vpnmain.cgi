@@ -2503,8 +2503,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='sha2_384' $checked{'IKE_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
 					<option value='sha2_256' $checked{'IKE_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
 					<option value='aesxcbc' $checked{'IKE_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
-					<option value='sha' $checked{'IKE_INTEGRITY'}{'sha'}>SHA1</option>
-					<option value='md5' $checked{'IKE_INTEGRITY'}{'md5'}>MD5</option>
+					<option value='sha' $checked{'IKE_INTEGRITY'}{'sha'}>SHA1 ($Lang::tr{'vpn weak'})</option>
+					<option value='md5' $checked{'IKE_INTEGRITY'}{'md5'}>MD5i ($Lang::tr{'vpn broken'})</option>
 				</select>
 			</td>
 			<td class='boldbase'>
@@ -2513,8 +2513,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='sha2_384' $checked{'ESP_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
 					<option value='sha2_256' $checked{'ESP_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
 					<option value='aesxcbc' $checked{'ESP_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
-					<option value='sha1' $checked{'ESP_INTEGRITY'}{'sha1'}>SHA1</option>
-					<option value='md5' $checked{'ESP_INTEGRITY'}{'md5'}>MD5</option>
+					<option value='sha1' $checked{'ESP_INTEGRITY'}{'sha1'}>SHA1 ($Lang::tr{'vpn weak'})</option>
+					<option value='md5' $checked{'ESP_INTEGRITY'}{'md5'}>MD5 ($Lang::tr{'vpn broken'})</option>
 				</select>
 			</td>
 		</tr>
@@ -2550,8 +2550,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='2048s160' $checked{'IKE_GROUPTYPE'}{'2048s160'}>MODP-2048/160</option>
 					<option value='2048' $checked{'IKE_GROUPTYPE'}{'2048'}>MODP-2048</option>
 					<option value='1536' $checked{'IKE_GROUPTYPE'}{'1536'}>MODP-1536</option>
-					<option value='1024' $checked{'IKE_GROUPTYPE'}{'1024'}>MODP-1024</option>
-					<option value='768' $checked{'IKE_GROUPTYPE'}{'768'}>MODP-768</option>
+					<option value='1024' $checked{'IKE_GROUPTYPE'}{'1024'}>MODP-1024 ($Lang::tr{'vpn broken'})</option>
+					<option value='768' $checked{'IKE_GROUPTYPE'}{'768'}>MODP-768 ($Lang::tr{'vpn broken'})</option>
 				</select>
 			</td>
 			<td class='boldbase'>
@@ -2575,8 +2575,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='2048s160' $checked{'ESP_GROUPTYPE'}{'2048s160'}>MODP-2048/160</option>
 					<option value='2048' $checked{'ESP_GROUPTYPE'}{'2048'}>MODP-2048</option>
 					<option value='1536' $checked{'ESP_GROUPTYPE'}{'1536'}>MODP-1536</option>
-					<option value='1024' $checked{'ESP_GROUPTYPE'}{'1024'}>MODP-1024</option>
-					<option value='768' $checked{'ESP_GROUPTYPE'}{'768'}>MODP-768</option>
+					<option value='1024' $checked{'ESP_GROUPTYPE'}{'1024'}>MODP-1024 ($Lang::tr{'vpn broken'})</option>
+					<option value='768' $checked{'ESP_GROUPTYPE'}{'768'}>MODP-768 ($Lang::tr{'vpn broken'})</option>
 					<option value='none' $checked{'ESP_GROUPTYPE'}{'none'}>- $Lang::tr{'none'} -</option>
 				</select>
 			</td>

@@ -1138,6 +1138,7 @@ WARNING: untranslated string: uptime load average
 WARNING: untranslated string: urlfilter redirect template
 WARNING: untranslated string: vendor
 WARNING: untranslated string: visit us at
+WARNING: untranslated string: vpn broken
 WARNING: untranslated string: vpn force mobike
 WARNING: untranslated string: vpn keyexchange
 WARNING: untranslated string: vpn on-demand
@@ -1147,6 +1148,7 @@ WARNING: untranslated string: vpn start action start
 WARNING: untranslated string: vpn statistic n2n
 WARNING: untranslated string: vpn statistic rw
 WARNING: untranslated string: vpn statistics n2n
+WARNING: untranslated string: vpn weak
 WARNING: untranslated string: wlan client
 WARNING: untranslated string: wlan client advanced settings
 WARNING: untranslated string: wlan client and

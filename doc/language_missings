@@ -561,6 +561,7 @@
 < urlfilter redirect template
 < vendor
 < visit us at
+< vpn broken
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
@@ -568,6 +569,7 @@
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn weak
 < wlanap access point
 < wlanap channel
 < wlanap country
@@ -1180,6 +1182,7 @@
 < urlfilter redirect template
 < vendor
 < visit us at
+< vpn broken
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
@@ -1187,6 +1190,7 @@
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn weak
 < wlanap country
 < wlan client
 < wlan client advanced settings
@@ -1764,6 +1768,7 @@
 < urlfilter redirect template
 < vendor
 < visit us at
+< vpn broken
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
@@ -1771,6 +1776,7 @@
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn weak
 < wlanap country
 < wlan client
 < wlan client advanced settings
@@ -2353,6 +2359,7 @@
 < urlfilter redirect template
 < vendor
 < visit us at
+< vpn broken
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
@@ -2360,6 +2367,7 @@
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn weak
 < week-graph
 < wlanap country
 < wlan client
