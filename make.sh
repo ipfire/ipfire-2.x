@@ -394,511 +394,509 @@ buildbase() {
 buildipfire() {
   LOGFILE="$BASEDIR/log/_build.ipfire.log"
   export LOGFILE
-  ipfiremake configroot
-  ipfiremake initscripts
-  ipfiremake backup
-  ipfiremake pkg-config
-  ipfiremake libusb
-  ipfiremake libusb-compat
-  ipfiremake libpcap
-  ipfiremake ppp
-  ipfiremake pptp
-  ipfiremake unzip
-  ipfiremake which
-  ipfiremake linux-firmware
-  ipfiremake ath10k-firmware
-  ipfiremake dvb-firmwares
-  ipfiremake mt7601u-firmware
-  ipfiremake zd1211-firmware
-  ipfiremake rpi-firmware
-  ipfiremake bc
-  ipfiremake u-boot
-  ipfiremake cpio
-  ipfiremake mdadm
-  ipfiremake dracut
-  ipfiremake lvm2
-  ipfiremake multipath-tools
-  ipfiremake freetype
-  ipfiremake grub
-  ipfiremake libmnl
-  ipfiremake libnfnetlink
-  ipfiremake libnetfilter_queue
-  ipfiremake libnetfilter_conntrack
-  ipfiremake libnetfilter_cthelper
-  ipfiremake libnetfilter_cttimeout
-  ipfiremake iptables
+  lfsmake2 configroot
+  lfsmake2 initscripts
+  lfsmake2 backup
+  lfsmake2 pkg-config
+  lfsmake2 libusb
+  lfsmake2 libusb-compat
+  lfsmake2 libpcap
+  lfsmake2 ppp
+  lfsmake2 pptp
+  lfsmake2 unzip
+  lfsmake2 which
+  lfsmake2 linux-firmware
+  lfsmake2 ath10k-firmware
+  lfsmake2 dvb-firmwares
+  lfsmake2 mt7601u-firmware
+  lfsmake2 zd1211-firmware
+  lfsmake2 rpi-firmware
+  lfsmake2 bc
+  lfsmake2 u-boot
+  lfsmake2 cpio
+  lfsmake2 mdadm
+  lfsmake2 dracut
+  lfsmake2 lvm2
+  lfsmake2 multipath-tools
+  lfsmake2 freetype
+  lfsmake2 grub
+  lfsmake2 libmnl
+  lfsmake2 libnfnetlink
+  lfsmake2 libnetfilter_queue
+  lfsmake2 libnetfilter_conntrack
+  lfsmake2 libnetfilter_cthelper
+  lfsmake2 libnetfilter_cttimeout
+  lfsmake2 iptables
 
   case "${BUILD_ARCH}" in
 	x86_64)
-		ipfiremake linux			KCFG=""
-		ipfiremake backports			KCFG=""
-		ipfiremake e1000e			KCFG=""
-		ipfiremake igb				KCFG=""
-		ipfiremake ixgbe			KCFG=""
-		ipfiremake xtables-addons		KCFG=""
-		ipfiremake linux-initrd			KCFG=""
+		lfsmake2 linux			KCFG=""
+		lfsmake2 backports			KCFG=""
+		lfsmake2 e1000e			KCFG=""
+		lfsmake2 igb				KCFG=""
+		lfsmake2 ixgbe			KCFG=""
+		lfsmake2 xtables-addons		KCFG=""
+		lfsmake2 linux-initrd			KCFG=""
 		;;
 	i586)
 		# x86-pae (Native and new XEN) kernel build
-		ipfiremake linux			KCFG="-pae"
-		ipfiremake backports			KCFG="-pae"
-		ipfiremake e1000e			KCFG="-pae"
-		ipfiremake igb				KCFG="-pae"
-		ipfiremake ixgbe			KCFG="-pae"
-		ipfiremake xtables-addons		KCFG="-pae"
-		ipfiremake linux-initrd			KCFG="-pae"
+		lfsmake2 linux			KCFG="-pae"
+		lfsmake2 backports			KCFG="-pae"
+		lfsmake2 e1000e			KCFG="-pae"
+		lfsmake2 igb				KCFG="-pae"
+		lfsmake2 ixgbe			KCFG="-pae"
+		lfsmake2 xtables-addons		KCFG="-pae"
+		lfsmake2 linux-initrd			KCFG="-pae"
 
 		# x86 kernel build
-		ipfiremake linux			KCFG=""
-		ipfiremake backports			KCFG=""
-		ipfiremake e1000e			KCFG=""
-		ipfiremake igb				KCFG=""
-		ipfiremake ixgbe			KCFG=""
-		ipfiremake xtables-addons		KCFG=""
-		ipfiremake linux-initrd			KCFG=""
+		lfsmake2 linux			KCFG=""
+		lfsmake2 backports			KCFG=""
+		lfsmake2 e1000e			KCFG=""
+		lfsmake2 igb				KCFG=""
+		lfsmake2 ixgbe			KCFG=""
+		lfsmake2 xtables-addons		KCFG=""
+		lfsmake2 linux-initrd			KCFG=""
 		;;
 
 	armv5tel)
 		# arm-rpi (Raspberry Pi) kernel build
-		ipfiremake linux			KCFG="-rpi"
-		ipfiremake backports			KCFG="-rpi"
-		ipfiremake xtables-addons		KCFG="-rpi"
-		ipfiremake linux-initrd			KCFG="-rpi"
+		lfsmake2 linux			KCFG="-rpi"
+		lfsmake2 backports			KCFG="-rpi"
+		lfsmake2 xtables-addons		KCFG="-rpi"
+		lfsmake2 linux-initrd			KCFG="-rpi"
 
 		# arm multi platform (Panda, Wandboard ...) kernel build
-		ipfiremake linux			KCFG="-multi"
-		ipfiremake backports			KCFG="-multi"
-		ipfiremake e1000e			KCFG="-multi"
-		ipfiremake igb				KCFG="-multi"
-		ipfiremake ixgbe			KCFG="-multi"
-		ipfiremake xtables-addons		KCFG="-multi"
-		ipfiremake linux-initrd			KCFG="-multi"
+		lfsmake2 linux			KCFG="-multi"
+		lfsmake2 backports			KCFG="-multi"
+		lfsmake2 e1000e			KCFG="-multi"
+		lfsmake2 igb				KCFG="-multi"
+		lfsmake2 ixgbe			KCFG="-multi"
+		lfsmake2 xtables-addons		KCFG="-multi"
+		lfsmake2 linux-initrd			KCFG="-multi"
 
 		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
-		ipfiremake linux			KCFG="-kirkwood"
-		ipfiremake backports			KCFG="-kirkwood"
-		ipfiremake e1000e			KCFG="-kirkwood"
-		ipfiremake igb				KCFG="-kirkwood"
-		ipfiremake ixgbe			KCFG="-kirkwood"
-		ipfiremake xtables-addons		KCFG="-kirkwood"
-		ipfiremake linux-initrd			KCFG="-kirkwood"
+		lfsmake2 linux			KCFG="-kirkwood"
+		lfsmake2 backports			KCFG="-kirkwood"
+		lfsmake2 e1000e			KCFG="-kirkwood"
+		lfsmake2 igb				KCFG="-kirkwood"
+		lfsmake2 ixgbe			KCFG="-kirkwood"
+		lfsmake2 xtables-addons		KCFG="-kirkwood"
+		lfsmake2 linux-initrd			KCFG="-kirkwood"
 		;;
   esac
-  ipfiremake xtables-addons			USPACE="1"
-  ipfiremake openssl
-  [ "${BUILD_ARCH}" = "i586" ] && ipfiremake openssl KCFG='-sse2'
-  ipfiremake libgpg-error
-  ipfiremake libgcrypt
-  ipfiremake libassuan
-  ipfiremake nettle
-  ipfiremake libevent
-  ipfiremake libevent2
-  ipfiremake libevent2-compat
-  ipfiremake expat
-  ipfiremake unbound
-  ipfiremake gnutls
-  ipfiremake bind
-  ipfiremake dhcp
-  ipfiremake dhcpcd
-  ipfiremake boost
-  ipfiremake linux-atm
-  ipfiremake gdbm
-  ipfiremake pam
-  ipfiremake curl
-  ipfiremake tcl
-  ipfiremake sqlite
-  ipfiremake libffi
-  ipfiremake python
-  ipfiremake python3
-  ipfiremake ca-certificates
-  ipfiremake fireinfo
-  ipfiremake libnet
-  ipfiremake libnl
-  ipfiremake libnl-3
-  ipfiremake libidn
-  ipfiremake nasm
-  ipfiremake libjpeg
-  ipfiremake libjpeg-compat
-  ipfiremake libexif
-  ipfiremake libpng
-  ipfiremake libtiff
-  ipfiremake libart
-  ipfiremake gd
-  ipfiremake popt
-  ipfiremake pcre
-  ipfiremake slang
-  ipfiremake newt
-  ipfiremake libsmooth
-  ipfiremake attr
-  ipfiremake acl
-  ipfiremake libcap
-  ipfiremake pciutils
-  ipfiremake usbutils
-  ipfiremake libxml2
-  ipfiremake libxslt
-  ipfiremake BerkeleyDB
-  ipfiremake mysql
-  ipfiremake cyrus-sasl
-  ipfiremake openldap
-  ipfiremake apache2
-  ipfiremake php
-  ipfiremake web-user-interface
-  ipfiremake flag-icons
-  ipfiremake jquery
-  ipfiremake arping
-  ipfiremake beep
-  ipfiremake dvdrtools
-  ipfiremake dosfstools
-  ipfiremake reiserfsprogs
-  ipfiremake xfsprogs
-  ipfiremake sysfsutils
-  ipfiremake fuse
-  ipfiremake ntfs-3g
-  ipfiremake ethtool
-  ipfiremake ez-ipupdate
-  ipfiremake fcron
-  ipfiremake perl-GD
-  ipfiremake GD-Graph
-  ipfiremake GD-TextUtil
-  ipfiremake perl-Device-SerialPort
-  ipfiremake perl-Device-Modem
-  ipfiremake perl-Apache-Htpasswd
-  ipfiremake gnupg
-  ipfiremake hdparm
-  ipfiremake sdparm
-  ipfiremake mtools
-  ipfiremake whatmask
-  ipfiremake conntrack-tools
-  ipfiremake libupnp
-  ipfiremake ipaddr
-  ipfiremake iputils
-  ipfiremake l7-protocols
-  ipfiremake mISDNuser
-  ipfiremake capi4k-utils
-  ipfiremake hwdata
-  ipfiremake logrotate
-  ipfiremake logwatch
-  ipfiremake misc-progs
-  ipfiremake nano
-  ipfiremake URI
-  ipfiremake HTML-Tagset
-  ipfiremake HTML-Parser
-  ipfiremake HTML-Template
-  ipfiremake Compress-Zlib
-  ipfiremake Digest
-  ipfiremake Digest-SHA1
-  ipfiremake Digest-HMAC
-  ipfiremake libwww-perl
-  ipfiremake Net-DNS
-  ipfiremake Net-IPv4Addr
-  ipfiremake Net_SSLeay
-  ipfiremake IO-Stringy
-  ipfiremake IO-Socket-SSL
-  ipfiremake Unix-Syslog
-  ipfiremake Mail-Tools
-  ipfiremake MIME-Tools
-  ipfiremake Net-Server
-  ipfiremake Convert-TNEF
-  ipfiremake Convert-UUlib
-  ipfiremake Archive-Tar
-  ipfiremake Archive-Zip
-  ipfiremake Text-Tabs+Wrap
-  ipfiremake Locale-Country
-  ipfiremake XML-Parser
-  ipfiremake Crypt-PasswdMD5
-  ipfiremake Net-Telnet
-  ipfiremake python-setuptools
-  ipfiremake python-clientform
-  ipfiremake python-mechanize
-  ipfiremake python-feedparser
-  ipfiremake python-rssdler
-  ipfiremake python-inotify
-  ipfiremake python-docutils
-  ipfiremake python-daemon
-  ipfiremake python-ipaddress
-  ipfiremake glib
-  ipfiremake GeoIP
-  ipfiremake fwhits
-  ipfiremake noip_updater
-  ipfiremake ntp
-  ipfiremake openssh
-  ipfiremake fontconfig
-  ipfiremake dejavu-fonts-ttf
-  ipfiremake freefont
-  ipfiremake pixman
-  ipfiremake cairo
-  ipfiremake pango
-  ipfiremake rrdtool
-  ipfiremake setserial
-  ipfiremake setup
-  ipfiremake libdnet
-  ipfiremake daq
-  ipfiremake snort
-  ipfiremake oinkmaster
-  ipfiremake squid
-  ipfiremake squidguard
-  ipfiremake calamaris
-  ipfiremake tcpdump
-  ipfiremake traceroute
-  ipfiremake vlan
-  ipfiremake wireless
-  ipfiremake pakfire
-  ipfiremake spandsp
-  ipfiremake lzo
-  ipfiremake openvpn
-  ipfiremake pammysql
-  ipfiremake mpage
-  ipfiremake dbus
-  ipfiremake intltool
-  ipfiremake libdaemon
-  ipfiremake cups
-  ipfiremake ghostscript
-  ipfiremake lcms2
-  ipfiremake qpdf
-  ipfiremake poppler
-  ipfiremake cups-filters
-  ipfiremake epson-inkjet-printer-escpr
-  ipfiremake foomatic
-  ipfiremake hplip
-  ipfiremake cifs-utils
-  ipfiremake krb5
-  ipfiremake samba
-  ipfiremake sudo
-  ipfiremake mc
-  ipfiremake wget
-  ipfiremake bridge-utils
-  ipfiremake screen
-  ipfiremake smartmontools
-  ipfiremake htop
-  ipfiremake chkconfig
-  ipfiremake postfix
-  ipfiremake fetchmail
-  ipfiremake cyrus-imapd
-  ipfiremake openmailadmin
-  ipfiremake clamav
-  ipfiremake spamassassin
-  ipfiremake amavisd
-  ipfiremake dma
-  ipfiremake alsa
-  ipfiremake mpfire
-  ipfiremake guardian
-  ipfiremake libid3tag
-  ipfiremake libmad
-  ipfiremake libogg
-  ipfiremake libvorbis
-  ipfiremake libdvbpsi
-  ipfiremake flac
-  ipfiremake lame
-  ipfiremake sox
-  ipfiremake libshout
-  ipfiremake xvid
-  ipfiremake libmpeg2
-  ipfiremake libarchive
-  ipfiremake cmake
-  ipfiremake gnump3d
-  ipfiremake rsync
-  ipfiremake tcpwrapper
-  ipfiremake libtirpc
-  ipfiremake rpcbind
-  ipfiremake nfs
-  ipfiremake gnu-netcat
-  ipfiremake ncat
-  ipfiremake nmap
-  ipfiremake ncftp
-  ipfiremake etherwake
-  ipfiremake bwm-ng
-  ipfiremake sysstat
-  ipfiremake vsftpd
-  ipfiremake strongswan
-  ipfiremake rng-tools
-  ipfiremake lsof
-  ipfiremake br2684ctl
-  ipfiremake pcmciautils
-  ipfiremake lm_sensors
-  ipfiremake liboping
-  ipfiremake collectd
-  ipfiremake elinks
-  ipfiremake igmpproxy
-  ipfiremake fbset
-  ipfiremake opus
-  ipfiremake python-six
-  ipfiremake python-pyparsing
-  ipfiremake spice-protocol
-  ipfiremake spice
-  ipfiremake sdl
-  ipfiremake libusbredir
-  ipfiremake qemu
-  ipfiremake sane
-  ipfiremake netpbm
-  ipfiremake phpSANE
-  ipfiremake tunctl
-  ipfiremake netsnmpd
-  ipfiremake nagios
-  ipfiremake nagios_nrpe
-  ipfiremake icinga
-  ipfiremake ebtables
-  ipfiremake directfb
-  ipfiremake dfb++
-  ipfiremake faad2
-  ipfiremake ffmpeg
-  ipfiremake vdr
-  ipfiremake vdr_streamdev
-  ipfiremake vdr_vnsiserver5
-  ipfiremake vdr_epgsearch
-  ipfiremake vdr_dvbapi
-  ipfiremake vdr_eepg
-  ipfiremake w_scan
-  ipfiremake icecast
-  ipfiremake icegenerator
-  ipfiremake mpd
-  ipfiremake libmpdclient
-  ipfiremake mpc
-  ipfiremake perl-Net-SMTP-SSL
-  ipfiremake perl-MIME-Base64
-  ipfiremake perl-Authen-SASL
-  ipfiremake perl-MIME-Lite
-  ipfiremake perl-Email-Date-Format
-  ipfiremake git
-  ipfiremake squidclamav
-  ipfiremake vnstat
-  ipfiremake iw
-  ipfiremake wpa_supplicant
-  ipfiremake hostapd
-  ipfiremake pycurl
-  ipfiremake urlgrabber
-  ipfiremake syslinux
-  ipfiremake tftpd
-  ipfiremake cpufrequtils
-  ipfiremake bluetooth
-  ipfiremake gutenprint
-  ipfiremake apcupsd
-  ipfiremake iperf
-  ipfiremake iperf3
-  ipfiremake 7zip
-  ipfiremake lynis
-  ipfiremake streamripper
-  ipfiremake sshfs
-  ipfiremake taglib
-  #ipfiremake mediatomb
-  ipfiremake sslh
-  ipfiremake perl-gettext
-  ipfiremake perl-Sort-Naturally
-  ipfiremake vdradmin
-  ipfiremake miau
-  ipfiremake perl-DBI
-  ipfiremake perl-DBD-mysql
-  ipfiremake perl-DBD-SQLite
-  ipfiremake perl-File-ReadBackwards
-  ipfiremake cacti
-  ipfiremake openvmtools
-  ipfiremake nagiosql
-  ipfiremake iftop
-  ipfiremake motion
-  ipfiremake joe
-  ipfiremake monit
-  ipfiremake nut
-  ipfiremake watchdog
-  ipfiremake libpri
-  ipfiremake libsrtp
-  ipfiremake asterisk
-  ipfiremake lcr
-  ipfiremake usb_modeswitch
-  ipfiremake usb_modeswitch_data
-  ipfiremake zerofree
-  ipfiremake pound
-  ipfiremake minicom
-  ipfiremake ddrescue
-  ipfiremake imspector
-  ipfiremake miniupnpd
-  ipfiremake client175
-  ipfiremake powertop
-  ipfiremake parted
-  ipfiremake swig
-  ipfiremake python-m2crypto
-  ipfiremake wireless-regdb
-  ipfiremake crda
-  ipfiremake libsolv
-  ipfiremake python-distutils-extra
-  ipfiremake python-lzma
-  ipfiremake python-progressbar
-  ipfiremake python-xattr
-  ipfiremake ddns
-  ipfiremake transmission
-  ipfiremake dpfhack
-  ipfiremake lcd4linux
-  ipfiremake mtr
-  ipfiremake tcpick
-  ipfiremake minidlna
-  ipfiremake acpid
-  ipfiremake fping
-  ipfiremake telnet
-  ipfiremake xinetd
-  ipfiremake gpgme
-  ipfiremake pygpgme
-  ipfiremake pakfire3
-  ipfiremake stress
-  ipfiremake libstatgrab
-  ipfiremake sarg
-  ipfiremake check_mk_agent
-  ipfiremake nginx
-  ipfiremake sendEmail
-  ipfiremake sysbench
-  ipfiremake strace
-  ipfiremake elfutils
-  ipfiremake ltrace
-  ipfiremake ipfire-netboot
-  ipfiremake lcdproc
-  ipfiremake bitstream
-  ipfiremake multicat
-  ipfiremake keepalived
-  ipfiremake ipvsadm
-  ipfiremake perl-Carp-Clan
-  ipfiremake perl-Date-Calc
-  ipfiremake perl-Date-Manip
-  ipfiremake perl-File-Tail
-  ipfiremake perl-TimeDate
-  ipfiremake swatch
-  ipfiremake tor
-  ipfiremake arm
-  ipfiremake wavemon
-  ipfiremake iptraf-ng
-  ipfiremake iotop
-  ipfiremake stunnel
-  ipfiremake sslscan
-  ipfiremake owncloud
-  ipfiremake bacula
-  ipfiremake batctl
-  ipfiremake perl-PDF-API2
-  ipfiremake squid-accounting
-  ipfiremake pigz
-  ipfiremake tmux
-  ipfiremake perl-Text-CSV_XS
-  ipfiremake swconfig
-  ipfiremake haproxy
-  ipfiremake ipset
-  ipfiremake lua
-  ipfiremake dnsdist
-  ipfiremake bird
-  ipfiremake dmidecode
-  ipfiremake mcelog
-  ipfiremake rtpproxy
-  ipfiremake util-macros
-  ipfiremake libpciaccess
-  ipfiremake libyajl
-  ipfiremake libvirt
-  ipfiremake python3-libvirt
-  ipfiremake freeradius
-  ipfiremake perl-common-sense
-  ipfiremake perl-inotify2
-  ipfiremake perl-Net-IP
+  lfsmake2 xtables-addons			USPACE="1"
+  lfsmake2 openssl
+  [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
+  lfsmake2 libgpg-error
+  lfsmake2 libgcrypt
+  lfsmake2 libassuan
+  lfsmake2 nettle
+  lfsmake2 libevent
+  lfsmake2 libevent2
+  lfsmake2 expat
+  lfsmake2 unbound
+  lfsmake2 gnutls
+  lfsmake2 bind
+  lfsmake2 dhcp
+  lfsmake2 dhcpcd
+  lfsmake2 boost
+  lfsmake2 linux-atm
+  lfsmake2 gdbm
+  lfsmake2 pam
+  lfsmake2 curl
+  lfsmake2 tcl
+  lfsmake2 sqlite
+  lfsmake2 libffi
+  lfsmake2 python
+  lfsmake2 python3
+  lfsmake2 ca-certificates
+  lfsmake2 fireinfo
+  lfsmake2 libnet
+  lfsmake2 libnl
+  lfsmake2 libnl-3
+  lfsmake2 libidn
+  lfsmake2 nasm
+  lfsmake2 libjpeg
+  lfsmake2 libjpeg-compat
+  lfsmake2 libexif
+  lfsmake2 libpng
+  lfsmake2 libtiff
+  lfsmake2 libart
+  lfsmake2 gd
+  lfsmake2 popt
+  lfsmake2 pcre
+  lfsmake2 slang
+  lfsmake2 newt
+  lfsmake2 libsmooth
+  lfsmake2 attr
+  lfsmake2 acl
+  lfsmake2 libcap
+  lfsmake2 pciutils
+  lfsmake2 usbutils
+  lfsmake2 libxml2
+  lfsmake2 libxslt
+  lfsmake2 BerkeleyDB
+  lfsmake2 mysql
+  lfsmake2 cyrus-sasl
+  lfsmake2 openldap
+  lfsmake2 apache2
+  lfsmake2 php
+  lfsmake2 web-user-interface
+  lfsmake2 flag-icons
+  lfsmake2 jquery
+  lfsmake2 arping
+  lfsmake2 beep
+  lfsmake2 dvdrtools
+  lfsmake2 dosfstools
+  lfsmake2 reiserfsprogs
+  lfsmake2 xfsprogs
+  lfsmake2 sysfsutils
+  lfsmake2 fuse
+  lfsmake2 ntfs-3g
+  lfsmake2 ethtool
+  lfsmake2 ez-ipupdate
+  lfsmake2 fcron
+  lfsmake2 perl-GD
+  lfsmake2 GD-Graph
+  lfsmake2 GD-TextUtil
+  lfsmake2 perl-Device-SerialPort
+  lfsmake2 perl-Device-Modem
+  lfsmake2 perl-Apache-Htpasswd
+  lfsmake2 gnupg
+  lfsmake2 hdparm
+  lfsmake2 sdparm
+  lfsmake2 mtools
+  lfsmake2 whatmask
+  lfsmake2 conntrack-tools
+  lfsmake2 libupnp
+  lfsmake2 ipaddr
+  lfsmake2 iputils
+  lfsmake2 l7-protocols
+  lfsmake2 mISDNuser
+  lfsmake2 capi4k-utils
+  lfsmake2 hwdata
+  lfsmake2 logrotate
+  lfsmake2 logwatch
+  lfsmake2 misc-progs
+  lfsmake2 nano
+  lfsmake2 URI
+  lfsmake2 HTML-Tagset
+  lfsmake2 HTML-Parser
+  lfsmake2 HTML-Template
+  lfsmake2 Compress-Zlib
+  lfsmake2 Digest
+  lfsmake2 Digest-SHA1
+  lfsmake2 Digest-HMAC
+  lfsmake2 libwww-perl
+  lfsmake2 Net-DNS
+  lfsmake2 Net-IPv4Addr
+  lfsmake2 Net_SSLeay
+  lfsmake2 IO-Stringy
+  lfsmake2 IO-Socket-SSL
+  lfsmake2 Unix-Syslog
+  lfsmake2 Mail-Tools
+  lfsmake2 MIME-Tools
+  lfsmake2 Net-Server
+  lfsmake2 Convert-TNEF
+  lfsmake2 Convert-UUlib
+  lfsmake2 Archive-Tar
+  lfsmake2 Archive-Zip
+  lfsmake2 Text-Tabs+Wrap
+  lfsmake2 Locale-Country
+  lfsmake2 XML-Parser
+  lfsmake2 Crypt-PasswdMD5
+  lfsmake2 Net-Telnet
+  lfsmake2 python-setuptools
+  lfsmake2 python-clientform
+  lfsmake2 python-mechanize
+  lfsmake2 python-feedparser
+  lfsmake2 python-rssdler
+  lfsmake2 python-inotify
+  lfsmake2 python-docutils
+  lfsmake2 python-daemon
+  lfsmake2 python-ipaddress
+  lfsmake2 glib
+  lfsmake2 GeoIP
+  lfsmake2 fwhits
+  lfsmake2 noip_updater
+  lfsmake2 ntp
+  lfsmake2 openssh
+  lfsmake2 fontconfig
+  lfsmake2 dejavu-fonts-ttf
+  lfsmake2 freefont
+  lfsmake2 pixman
+  lfsmake2 cairo
+  lfsmake2 pango
+  lfsmake2 rrdtool
+  lfsmake2 setserial
+  lfsmake2 setup
+  lfsmake2 libdnet
+  lfsmake2 daq
+  lfsmake2 snort
+  lfsmake2 oinkmaster
+  lfsmake2 squid
+  lfsmake2 squidguard
+  lfsmake2 calamaris
+  lfsmake2 tcpdump
+  lfsmake2 traceroute
+  lfsmake2 vlan
+  lfsmake2 wireless
+  lfsmake2 pakfire
+  lfsmake2 spandsp
+  lfsmake2 lzo
+  lfsmake2 openvpn
+  lfsmake2 pammysql
+  lfsmake2 mpage
+  lfsmake2 dbus
+  lfsmake2 intltool
+  lfsmake2 libdaemon
+  lfsmake2 cups
+  lfsmake2 ghostscript
+  lfsmake2 lcms2
+  lfsmake2 qpdf
+  lfsmake2 poppler
+  lfsmake2 cups-filters
+  lfsmake2 epson-inkjet-printer-escpr
+  lfsmake2 foomatic
+  lfsmake2 hplip
+  lfsmake2 cifs-utils
+  lfsmake2 krb5
+  lfsmake2 samba
+  lfsmake2 sudo
+  lfsmake2 mc
+  lfsmake2 wget
+  lfsmake2 bridge-utils
+  lfsmake2 screen
+  lfsmake2 smartmontools
+  lfsmake2 htop
+  lfsmake2 chkconfig
+  lfsmake2 postfix
+  lfsmake2 fetchmail
+  lfsmake2 cyrus-imapd
+  lfsmake2 openmailadmin
+  lfsmake2 clamav
+  lfsmake2 spamassassin
+  lfsmake2 amavisd
+  lfsmake2 dma
+  lfsmake2 alsa
+  lfsmake2 mpfire
+  lfsmake2 guardian
+  lfsmake2 libid3tag
+  lfsmake2 libmad
+  lfsmake2 libogg
+  lfsmake2 libvorbis
+  lfsmake2 libdvbpsi
+  lfsmake2 flac
+  lfsmake2 lame
+  lfsmake2 sox
+  lfsmake2 libshout
+  lfsmake2 xvid
+  lfsmake2 libmpeg2
+  lfsmake2 libarchive
+  lfsmake2 cmake
+  lfsmake2 gnump3d
+  lfsmake2 rsync
+  lfsmake2 tcpwrapper
+  lfsmake2 libtirpc
+  lfsmake2 rpcbind
+  lfsmake2 nfs
+  lfsmake2 gnu-netcat
+  lfsmake2 ncat
+  lfsmake2 nmap
+  lfsmake2 ncftp
+  lfsmake2 etherwake
+  lfsmake2 bwm-ng
+  lfsmake2 sysstat
+  lfsmake2 vsftpd
+  lfsmake2 strongswan
+  lfsmake2 rng-tools
+  lfsmake2 lsof
+  lfsmake2 br2684ctl
+  lfsmake2 pcmciautils
+  lfsmake2 lm_sensors
+  lfsmake2 liboping
+  lfsmake2 collectd
+  lfsmake2 elinks
+  lfsmake2 igmpproxy
+  lfsmake2 fbset
+  lfsmake2 opus
+  lfsmake2 python-six
+  lfsmake2 python-pyparsing
+  lfsmake2 spice-protocol
+  lfsmake2 spice
+  lfsmake2 sdl
+  lfsmake2 libusbredir
+  lfsmake2 qemu
+  lfsmake2 sane
+  lfsmake2 netpbm
+  lfsmake2 phpSANE
+  lfsmake2 tunctl
+  lfsmake2 netsnmpd
+  lfsmake2 nagios
+  lfsmake2 nagios_nrpe
+  lfsmake2 icinga
+  lfsmake2 ebtables
+  lfsmake2 directfb
+  lfsmake2 dfb++
+  lfsmake2 faad2
+  lfsmake2 ffmpeg
+  lfsmake2 vdr
+  lfsmake2 vdr_streamdev
+  lfsmake2 vdr_vnsiserver5
+  lfsmake2 vdr_epgsearch
+  lfsmake2 vdr_dvbapi
+  lfsmake2 vdr_eepg
+  lfsmake2 w_scan
+  lfsmake2 icecast
+  lfsmake2 icegenerator
+  lfsmake2 mpd
+  lfsmake2 libmpdclient
+  lfsmake2 mpc
+  lfsmake2 perl-Net-SMTP-SSL
+  lfsmake2 perl-MIME-Base64
+  lfsmake2 perl-Authen-SASL
+  lfsmake2 perl-MIME-Lite
+  lfsmake2 perl-Email-Date-Format
+  lfsmake2 git
+  lfsmake2 squidclamav
+  lfsmake2 vnstat
+  lfsmake2 iw
+  lfsmake2 wpa_supplicant
+  lfsmake2 hostapd
+  lfsmake2 pycurl
+  lfsmake2 urlgrabber
+  lfsmake2 syslinux
+  lfsmake2 tftpd
+  lfsmake2 cpufrequtils
+  lfsmake2 bluetooth
+  lfsmake2 gutenprint
+  lfsmake2 apcupsd
+  lfsmake2 iperf
+  lfsmake2 iperf3
+  lfsmake2 7zip
+  lfsmake2 lynis
+  lfsmake2 streamripper
+  lfsmake2 sshfs
+  lfsmake2 taglib
+  #lfsmake2 mediatomb
+  lfsmake2 sslh
+  lfsmake2 perl-gettext
+  lfsmake2 perl-Sort-Naturally
+  lfsmake2 vdradmin
+  lfsmake2 miau
+  lfsmake2 perl-DBI
+  lfsmake2 perl-DBD-mysql
+  lfsmake2 perl-DBD-SQLite
+  lfsmake2 perl-File-ReadBackwards
+  lfsmake2 cacti
+  lfsmake2 openvmtools
+  lfsmake2 nagiosql
+  lfsmake2 iftop
+  lfsmake2 motion
+  lfsmake2 joe
+  lfsmake2 monit
+  lfsmake2 nut
+  lfsmake2 watchdog
+  lfsmake2 libpri
+  lfsmake2 libsrtp
+  lfsmake2 asterisk
+  lfsmake2 lcr
+  lfsmake2 usb_modeswitch
+  lfsmake2 usb_modeswitch_data
+  lfsmake2 zerofree
+  lfsmake2 pound
+  lfsmake2 minicom
+  lfsmake2 ddrescue
+  lfsmake2 imspector
+  lfsmake2 miniupnpd
+  lfsmake2 client175
+  lfsmake2 powertop
+  lfsmake2 parted
+  lfsmake2 swig
+  lfsmake2 python-m2crypto
+  lfsmake2 wireless-regdb
+  lfsmake2 crda
+  lfsmake2 libsolv
+  lfsmake2 python-distutils-extra
+  lfsmake2 python-lzma
+  lfsmake2 python-progressbar
+  lfsmake2 python-xattr
+  lfsmake2 ddns
+  lfsmake2 transmission
+  lfsmake2 dpfhack
+  lfsmake2 lcd4linux
+  lfsmake2 mtr
+  lfsmake2 tcpick
+  lfsmake2 minidlna
+  lfsmake2 acpid
+  lfsmake2 fping
+  lfsmake2 telnet
+  lfsmake2 xinetd
+  lfsmake2 gpgme
+  lfsmake2 pygpgme
+  lfsmake2 pakfire3
+  lfsmake2 stress
+  lfsmake2 libstatgrab
+  lfsmake2 sarg
+  lfsmake2 check_mk_agent
+  lfsmake2 nginx
+  lfsmake2 sendEmail
+  lfsmake2 sysbench
+  lfsmake2 strace
+  lfsmake2 elfutils
+  lfsmake2 ltrace
+  lfsmake2 ipfire-netboot
+  lfsmake2 lcdproc
+  lfsmake2 bitstream
+  lfsmake2 multicat
+  lfsmake2 keepalived
+  lfsmake2 ipvsadm
+  lfsmake2 perl-Carp-Clan
+  lfsmake2 perl-Date-Calc
+  lfsmake2 perl-Date-Manip
+  lfsmake2 perl-File-Tail
+  lfsmake2 perl-TimeDate
+  lfsmake2 swatch
+  lfsmake2 tor
+  lfsmake2 arm
+  lfsmake2 wavemon
+  lfsmake2 iptraf-ng
+  lfsmake2 iotop
+  lfsmake2 stunnel
+  lfsmake2 sslscan
+  lfsmake2 owncloud
+  lfsmake2 bacula
+  lfsmake2 batctl
+  lfsmake2 perl-PDF-API2
+  lfsmake2 squid-accounting
+  lfsmake2 pigz
+  lfsmake2 tmux
+  lfsmake2 perl-Text-CSV_XS
+  lfsmake2 swconfig
+  lfsmake2 haproxy
+  lfsmake2 ipset
+  lfsmake2 lua
+  lfsmake2 dnsdist
+  lfsmake2 bird
+  lfsmake2 dmidecode
+  lfsmake2 mcelog
+  lfsmake2 rtpproxy
+  lfsmake2 util-macros
+  lfsmake2 libpciaccess
+  lfsmake2 libyajl
+  lfsmake2 libvirt
+  lfsmake2 freeradius
+  lfsmake2 perl-common-sense
+  lfsmake2 perl-inotify2
+  lfsmake2 perl-Net-IP
 }
 
 buildinstaller() {
   # Run installer scripts one by one
   LOGFILE="$BASEDIR/log/_build.installer.log"
   export LOGFILE
-  ipfiremake memtest
-  ipfiremake installer
+  lfsmake2 memtest
+  lfsmake2 installer
   installmake strip
 }
 
@@ -930,20 +928,20 @@ buildpackages() {
   git log -n 500 --no-merges --pretty=medium --shortstat $EXT > $BASEDIR/doc/ChangeLog
 
   # Create images for install
-  ipfiremake cdrom
+  lfsmake2 cdrom
 
   # Check if there is a loop device for building in virtual environments
   modprobe loop 2>/dev/null
   if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ] || [ -e "/dev/loop-control" ]); then
-	ipfiremake flash-images
-	ipfiremake flash-images SCON=1
+	lfsmake2 flash-images
+	lfsmake2 flash-images SCON=1
   fi
 
   mv $LFS/install/images/{*.iso,*.tgz,*.img.gz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
 
   ipfirepackages
 
-  ipfiremake xen-image
+  lfsmake2 xen-image
   mv $LFS/install/images/*.bz2 $BASEDIR >> $LOGFILE 2>&1
 
   cd $BASEDIR
@@ -977,7 +975,7 @@ buildpackages() {
 }
 
 ipfirepackages() {
-	ipfiremake core-updates
+	lfsmake2 core-updates
 
 	local i
 	for i in $(find $BASEDIR/config/rootfiles/packages{/${BUILD_ARCH},} -maxdepth 1 -type f); do
