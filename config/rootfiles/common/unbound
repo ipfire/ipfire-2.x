@@ -6,6 +6,7 @@ etc/unbound/icannbundle.pem
 etc/unbound/local.d
 etc/unbound/root.hints
 etc/unbound/unbound.conf
+#usr/include/unbound-event.h
 #usr/include/unbound.h
 #usr/lib/libunbound.la
 #usr/lib/libunbound.so

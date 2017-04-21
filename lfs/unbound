@@ -78,7 +78,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--with-pidfile=/var/run/unbound.pid \
 			--with-rootkey-file=/var/lib/unbound/root.key \
 			--disable-static \
-			--with-libevent
+			--with-libevent \
+			--enable-event-api
+
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
