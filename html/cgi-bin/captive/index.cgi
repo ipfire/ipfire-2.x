@@ -23,6 +23,7 @@ use strict;
 use CGI ':standard';
 use URI::Escape;
 use HTML::Entities();
+use HTML::Template;
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -134,107 +135,25 @@ if($redir == 1){
 }
 
 #Open HTML Page, load header and css
-&head();
-&error();
-&start();
+my $tmpl = HTML::Template->new(
+	filename => "/srv/web/ipfire/html/captive/template.html",
+	die_on_bad_params => 0
+);
 
-#Functions
-sub start(){
-	if ($settings{'AUTH'} eq 'VOUCHER'){
-		&voucher();
-	}else{
-		&agb();
-	}
-}
+$tmpl->param(REDIRECT_URL => $url);
 
-sub error(){
-	if ($errormessage){
-		print "<center><div class='title'><br><font color='red'>$errormessage</font><br></div><br>";
-	}
-}
+$tmpl->param(AUTH  => $settings{'AUTH'});
+$tmpl->param(TITLE => $settings{'TITLE'});
+$tmpl->param(ERROR => $errormessage);
 
-sub head(){
-print<<END
-Content-type: text/html\n\n
-<html> 
-	<head>
-		<meta charset="utf-8">
-		<title>$settings{'TITLE'}</title>
-		<link href="../assets/captive.css" type="text/css" rel="stylesheet">
-	</head>
-	<body>
-END
-;
-}
+# Print header
+print "Pragma: no-cache\n";
+print "Cache-control: no-cache\n";
+print "Connection: close\n";
+print "Content-type: text/html\n\n";
 
-sub agb(){
-print<<END
-	<center>
-		<div class="title">
-			<h1>$settings{'TITLE'}</h1>
-		</div>
-		<br>
-		<div class="agb">
-		<textarea style="width:100%;" rows='40'>
-END
-;
-&getagb();
-print<<END
-		</textarea>
-			<center>
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<br><input type='hidden' name='redirect' value ='$url'><input type='submit' name='ACTION' value="$Lang::tr{'gpl i accept these terms and conditions'}"/>
-				</form>
-			</center>
-		</div>
-	</center>
-	</body>
-	</html>
-END
-;
-}
-
-sub voucher(){
-	print<<END
-	<center>
-		<div class="title">
-			<h1>$settings{'TITLE'}</h1>
-		</div>
-		<br>
-		<div class="login">
-END
-;
-
-print<<END
-		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-			<center>
-				<table>
-					<tr>
-						<td>
-							<b>$Lang::tr{'Captive voucher'}</b>&nbsp<input type='text' maxlength="8" size='10' style="font-size: 24px;font-weight: bold;" name='VOUCHER'>
-						</td>
-						<td>
-							<input type='hidden' name='redirect' value ='$url'><input type='submit' name='ACTION' value="$Lang::tr{'Captive activate'}"/>
-						</td>
-					</tr>
-				</table>
-		</form>
-		</div>
-		<br>
-		<div class="agb">
-			<textarea style="width:100%;" rows='40'>
-END
-;
-&getagb();
-print<<END
-			</textarea>
-			<br><br>
-		</div>
-	</body>
-	</html>
-END
-;
-}
+# Print rendered template
+print $tmpl->output;
 
 sub getcgihash {
 	my ($hash, $params) = @_;
