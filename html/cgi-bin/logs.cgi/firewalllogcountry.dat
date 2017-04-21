@@ -213,7 +213,7 @@ if ($multifile) {
 my $MODNAME="fwlogs";
 
 &Header::showhttpheaders();
-&Header::openpage($Lang::tr{'firewall log'}, 1, '');
+&Header::openpage($Lang::tr{'firewall log country'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 
@@ -281,7 +281,7 @@ END
 
 &Header::closebox();
 
-&Header::openbox('100%', 'left', 'Firewall Logs');
+&Header::openbox('100%', 'left', $Lang::tr{'firewall graph country'});
 print "<p><b>$Lang::tr{'firewall hits'} $longmonthstr $daystr: $lines</b></p>";
 
 my $red_interface = &General::get_red_interface();
@@ -471,7 +471,7 @@ for($s=0;$s<$lines;$s++)
 		print"<input type='hidden' name='MONTH' value='$cgiparams{'MONTH'}'>";
 		print"<input type='hidden' name='DAY' value='$cgiparams{'DAY'}'>";
 		print"<input type='hidden' name='country' value='$key[$s]'>";
-		print"<input type='submit' value='details'></form>";
+		print"<input type='submit' value='$Lang::tr{'details'}'></form>";
 	}
 	elsif ($key[$s] eq 'unknown') {
 		print "unknown";
