@@ -684,44 +684,6 @@ ipfiredist() {
 	return 0
 }
 
-installmake() {
-	lfsmakecommoncheck $*
-	[ $? == 1 ] && return 0
-
-	# Install QEMU helper, if needed
-	qemu_install_helper
-
-	local PKG_TIME_START=`date +%s`
-	chroot $LFS /tools/bin/env -i 	HOME=/root \
-						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin \
-						VERSION=$VERSION \
-						SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
-						CONFIG_ROOT=$CONFIG_ROOT \
-						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
-						CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
-						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
-						KVER=$KVER \
-						BUILDTARGET="$BUILDTARGET" \
-						CROSSTARGET="${CROSSTARGET}" \
-						BUILD_ARCH="${BUILD_ARCH}" \
-						LD_LIBRARY_PATH=/tools/lib \
-		    /tools/bin/bash -x -c "cd /usr/src/lfs && \
-		    /tools/bin/make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
-
-	local COMPILE_SUCCESS=$?
-	local PKG_TIME_END=`date +%s`
-
-	if [ $COMPILE_SUCCESS -ne 0 ]; then
-		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
-		exiterror "Building $*";
-	else
-		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
-	fi
-	return 0
-}
-
 update_langs() {
 		echo -ne "Checking the translations for missing or obsolete strings..."
 		chmod 755 $BASEDIR/tools/{check_strings.pl,sort_strings.pl,check_langs.sh}
