@@ -27,37 +27,29 @@ require '/var/ipfire/general-functions.pl';
 
 my $url = "http://$ENV{'SERVER_NAME'}$ENV{'REQUEST_URI'}";
 my $safe_url = uri_escape($url);
-my $settings="${General::swroot}/captive/settings";
-my $ethernet="${General::swroot}/ethernet/settings";
-my %settingshash=();
-my %ethernethash=();
-my $green_ip;
-my $green_mask;
-my $blue_ip;
-my $blue_mask;
+
+my %settingshash = ();
+my %ethernethash = ();
 my $target;
-#Read settings
-&General::readhash("$settings", \%settingshash) if(-f $settings);
-&General::readhash("$ethernet", \%ethernethash) if(-f $ethernet);
 
-#Get Clients IP-Address
-my $ip_address = $ENV{X_FORWARDED_FOR} || $ENV{REMOTE_ADDR} ||"";
+# Read settings
+&General::readhash("${General::swroot}/captive/settings", \%settingshash);
+&General::readhash("${General::swroot}/ethernet/settings", \%ethernethash);
 
-if($settingshash{'ENABLE_GREEN'} eq "on" && $ethernethash{'GREEN_ADDRESS'} ne ''){
-		$green_ip=$ethernethash{'GREEN_ADDRESS'};
-		$green_mask=$ethernethash{'GREEN_NETMASK'};
-		
-		if (&General::IpInSubnet($ip_address,$ethernethash{'GREEN_ADDRESS'},$ethernethash{'GREEN_NETMASK'})){
-			$target = $green_ip;
-		}
-}elsif($settingshash{'ENABLE_BLUE'} eq "on" &&$ethernethash{'BLUE_ADDRESS'} ne '' ){
-		$blue_ip=$ethernethash{'BLUE_ADDRESS'};
-		$blue_mask=$ethernethash{'BLUE_NETMASK'};
-		
-		if (&General::IpInSubnet($ip_address,$ethernethash{'BLUE_ADDRESS'},$ethernethash{'BLUE_NETMASK'})){
-			$target = $blue_ip;
-		}
-}else{
+# Get the client's IP address
+my $client_address = $ENV{X_FORWARDED_FOR} || $ENV{REMOTE_ADDR} || "";
+
+if ($settingshash{'ENABLE_GREEN'} eq "on" && $ethernethash{'GREEN_ADDRESS'} ne '') {
+	if (&General::IpInSubnet($client_address, $ethernethash{'GREEN_ADDRESS'}, $ethernethash{'GREEN_NETMASK'})) {
+		$target = $ethernethash{'GREEN_ADDRESS'};
+	}
+
+} elsif($settingshash{'ENABLE_BLUE'} eq "on" && $ethernethash{'BLUE_ADDRESS'} ne '') {
+	if (&General::IpInSubnet($client_address, $ethernethash{'BLUE_ADDRESS'}, $ethernethash{'BLUE_NETMASK'})) {
+		$target = $ethernethash{'BLUE_ADDRESS'};
+	}
+
+} else {
 	exit 0;
 }
 
