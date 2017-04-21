@@ -150,12 +150,8 @@ ifeq "$(BUILD_ARCH)" "i586"
 		--with-tune=generic
 endif
 
-ifeq "$(BUILD_ARCH)" "x86_64"
-	EXTRA_CONFIG += \
-		--disable-multilib
-endif
-
 EXTRA_CONFIG += \
+	--disable-multilib \
 	--with-bugurl=http://bugtracker.ipfire.org \
 	--disable-libunwind-exceptions \
 	--enable-gnu-unique-object
