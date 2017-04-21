@@ -285,6 +285,7 @@ buildtoolchain() {
     LOGFILE="$BASEDIR/log/_build.toolchain.log"
     export LOGFILE
 
+    lfsmake1 stage1
     lfsmake1 ccache			PASS=1
     lfsmake1 binutils			PASS=1
     lfsmake1 gcc			PASS=1
