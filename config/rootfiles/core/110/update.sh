@@ -53,6 +53,7 @@ for i in $(cat /opt/pakfire/db/rootfiles/avahi); do
 done
 rm -fv /opt/pakfire/db/rootfiles/avahi
 rm -fv /opt/pakfire/db/*/meta-avahi
+rm -fv /etc/rc.d/rc*.d/???avahi
 
 # Start services
 /etc/init.d/unbound start
