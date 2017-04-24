@@ -27,7 +27,12 @@ include Config
 VER        = ipfire
 
 THISAPP    = cleanup-toolchain
-TARGET     = $(DIR_INFO)/$(THISAPP)-$(PASS)-tools
+
+ifeq "$(TOOLCHAIN)" "1"
+	TARGET = $(DIR_INFO)/$(THISAPP)-tools
+else
+	TARGET = $(DIR_INFO)/$(THISAPP)
+endif
 
 GCC_VER    = 4.1.2
 
