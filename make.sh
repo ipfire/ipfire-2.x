@@ -340,9 +340,9 @@ buildbase() {
     lfsmake2 file
     lfsmake2 gcc
     lfsmake2 sed
-    lfsmake2 berkeley
     lfsmake2 autoconf
     lfsmake2 automake
+    lfsmake2 berkeley
     lfsmake2 coreutils
     lfsmake2 iana-etc
     lfsmake2 m4
