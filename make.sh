@@ -1017,7 +1017,7 @@ build)
 	clear
 	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
-	if [ ! -f log/cleanup-toolchain-2-tools ]; then
+	if [ ! -e "${BASEDIR}/build/tools/.toolchain-successful" ]; then
 		if [ ! -n "$PACKAGE" ]; then
 			beautify build_stage "Full toolchain compilation - Native GCC: `gcc --version | grep GCC | awk {'print $3'}`"
 			prepareenv

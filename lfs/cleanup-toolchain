@@ -67,6 +67,9 @@ ifeq "$(TOOLCHAIN)" "1"
 
 	# Update/create linker cache.
 	/tools/sbin/ldconfig
+
+	# Set a marker when the toolchain was successfully built
+	touch /tools/.toolchain-successful
 else
 	mv -v /tools/bin/{ld,ld-old}
 	mv -v /tools/$(BUILDTARGET)/bin/{ld,ld-old}
