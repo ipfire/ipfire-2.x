@@ -73,6 +73,7 @@ ifeq "$(PASS)" "1"
 	--disable-libatomic \
 	--disable-libmudflap \
 	--disable-libssp \
+	--disable-libmpx \
 	--disable-libgomp \
 	--disable-libquadmath \
 	--disable-libstdc++-v3 \
