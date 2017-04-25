@@ -105,16 +105,10 @@ ifeq "$(PASS)" "2"
 	AR="$(CROSSTARGET)-ar" \
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
-	--host=$(BUILDTARGET) \
 	--build=$(BUILDTARGET) \
-	--target=$(BUILDTARGET) \
 	--prefix=/tools \
 	--with-local-prefix=/tools \
 	--with-native-system-header-dir=/tools/include \
-	--enable-clocale=gnu \
-	--enable-shared \
-	--enable-threads=posix \
-	--enable-__cxa_atexit \
 	--enable-languages=c,c++ \
 	--disable-libstdcxx-pch \
 	--disable-libgomp
