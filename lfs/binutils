@@ -38,8 +38,10 @@ ifeq "$(ROOT)" ""
   EXTRA_CONFIG = \
 	--prefix=/usr \
 	--enable-shared \
-	--disable-nls \
-	--disable-werror
+	--with-system-zlib \
+	--enable-plugins \
+	--enable-ld=default \
+	--disable-gold
   EXTRA_MAKE = tooldir=/usr
   EXTRA_INSTALL = tooldir=/usr
 else
@@ -49,9 +51,7 @@ ifeq "$(PASS)" "1"
 	--target=$(CROSSTARGET) \
 	--prefix=/tools \
 	--with-sysroot=$(ROOT) \
-	--with-lib-path=/tools/lib \
-	--disable-nls \
-	--disable-werror
+	--with-lib-path=/tools/lib
   EXTRA_MAKE =
   EXTRA_INSTALL = 
 else
@@ -64,9 +64,7 @@ else
 	--host=$(BUILDTARGET) \
 	--build=$(BUILDTARGET) \
 	--prefix=/tools \
-	--with-lib-path=/tools/lib \
-	--disable-nls \
-	--disable-werror
+	--with-lib-path=/tools/lib
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
@@ -79,6 +77,7 @@ ifeq "$(BUILD_ARCH)" "armv5tel"
 endif
 
 EXTRA_CONFIG += \
+	--disable-werror \
 	--enable-64-bit-bfd
 
 ###############################################################################
@@ -129,12 +128,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/binutils-build && make $(EXTRA_INSTALL) install
 ifeq "$(ROOT)" ""
 	cp -v $(DIR_APP)/include/libiberty.h /usr/include
-else
-ifeq "$(PASS)" "2"
+endif
+
+ifeq "$(TOOLCHAIN)" "1"
+ ifeq "$(PASS)" "2"
 	cd $(DIR_SRC)/binutils-build && make -C ld clean
 	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/usr/lib:/lib
 	cd $(DIR_SRC)/binutils-build && cp -v ld/ld-new /tools/bin
+ endif
 endif
-endif
+
 	@rm -rf $(DIR_APP) $(DIR_SRC)/binutils-build
 	@$(POSTBUILD)
