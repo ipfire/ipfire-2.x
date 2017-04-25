@@ -58,9 +58,8 @@ if ($cgiparams{'ACTION'} eq "SUBMIT") {
 	#Get Clients IP-Address
 	my $ip_address = $ENV{X_FORWARDED_FOR} || $ENV{REMOTE_ADDR} ||"";
 
-	#Ask arp to give the corresponding MAC-Address
-	my $mac_address = qx(arp -a|grep $ip_address|cut -d ' ' -f 4);
-	$mac_address =~ s/\n+\z//;
+	# Retrieve the MAC address from the ARP table
+	my $mac_address = &Network::get_hardware_address($ip_address);
 
 	&General::readhasharray("$clients", \%clientshash);
 	my $key = &General::findhasharraykey(\%clientshash);
@@ -84,15 +83,13 @@ if ($cgiparams{'ACTION'} eq "SUBMIT") {
 
 if ($cgiparams{'ACTION'} eq "SUBMIT") {
 	my $ip_address;
-	my $mac_address;
 	my $granted=0;
 	#Convert voucherinput to uppercase
 	$cgiparams{'VOUCHER'} = uc $cgiparams{'VOUCHER'};
 	#Get Clients IP-Address
 	$ip_address = $ENV{X_FORWARDED_FOR} || $ENV{REMOTE_ADDR} ||"";
 	#Ask arp to give the corresponding MAC-Address
-	$mac_address = qx(arp -a|grep $ip_address|cut -d ' ' -f 4);
-	$mac_address =~ s/\n+\z//;
+	my $mac_address = &Network::get_hardware_address($ip_address);
 	#Check if voucher is valid and write client to clients file, delete voucher from voucherout
 	&General::readhasharray("$voucherout", \%voucherhash);
 	&General::readhasharray("$clients", \%clientshash);
