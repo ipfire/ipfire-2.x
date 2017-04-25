@@ -61,22 +61,29 @@ CONFIGURE_OPTIONS = \
 	no-mdc2 \
 	no-rc5 \
 	no-srp \
-	-DSSL_FORBID_ENULL
+	-DSSL_FORBID_ENULL \
+	$(OPENSSL_ARCH)
+
+ifeq "$(IS_64BIT)" "1"
+	OPENSSL_ARCH = linux-generic64
+else
+	OPENSSL_ARCH = linux-generic32
+endif
+
+ifeq "$(BUILD_ARCH)" "aarch64"
+	OPENSSL_ARCH = linux-aarch64
+endif
 
 ifeq "$(BUILD_ARCH)" "x86_64"
-	CONFIGURE_OPTIONS += linux-x86_64
+	OPENSSL_ARCH = linux-x86_64
 endif
 
 ifeq "$(BUILD_ARCH)" "i586"
-	CONFIGURE_OPTIONS += linux-elf
+	OPENSSL_ARCH = linux-elf
 
-ifneq "$(KCFG)" "-sse2"
-	CONFIGURE_OPTIONS += no-sse2
-endif
-endif
-
-ifeq "$(BUILD_ARCH)" "armv5tel"
-	CONFIGURE_OPTIONS += linux-generic32
+  ifneq "$(KCFG)" "-sse2"
+	OPENSSL_ARCH += no-sse2
+  endif
 endif
 
 ###############################################################################
