@@ -69,6 +69,7 @@ endif
 
 # Add some general configuration flags
 EXTRA_CONFIG += \
+	--enable-obsolete-rpc \
 	--disable-profile \
 	--enable-kernel=3.2 \
 	--enable-add-ons \
