@@ -70,6 +70,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
+
 	cd $(DIR_APP) && mv man/de{_DE.88591,}
 	cd $(DIR_APP) && mv man/es{_ES.88591,}
 	cd $(DIR_APP) && mv man/it{_IT.88591,}
