@@ -1,1 +1,72 @@
-TEMPLATE GOES HERE
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title><TMPL_VAR NAME="TITLE"></title>
+
+		<link rel="stylesheet" href="../assets/bootstrap-reboot.min.css">
+		<link rel="stylesheet" href="../assets/bootstrap-grid.min.css">
+		<link rel="stylesheet" href="../assets/captive.css">
+
+		<link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,500" rel="stylesheet">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	</head>
+
+	<body>
+		<div class="container content">
+			<div class="row">
+				<div class="col-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
+					<div class="box">
+						<div class="box-header">
+							<h1><TMPL_VAR NAME="TITLE"></h1>
+						</div>
+
+						<div class="box-block">
+							<TMPL_IF NAME="VOUCHER">
+								<h4><TMPL_VAR NAME="L_HEADING_VOUCHER"></h4>
+							<TMPL_ELSE>
+								<h4><TMPL_VAR NAME="L_HEADING_TAC"></h4>
+							</TMPL_IF>
+
+							<form action="" method="POST">
+								<input type="hidden" name="url" value="<TMPL_VAR NAME="URL">">
+
+								<TMPL_IF NAME="VOUCHER">
+										<input class="form-text" type="text" name="VOUCHER">
+										<input class="form-submit" type="submit"
+											value="<TMPL_VAR NAME="L_ACTIVATE">">
+								<TMPL_ELSE>
+										<input class="form-submit" type="submit"
+											value="<TMPL_VAR NAME="L_GAIN_ACCESS">">
+								</TMPL_IF>
+
+								<TMPL_IF NAME="TAC">
+									<div class="checkbox">
+										<label>
+											<input class="form-checkbox" type="checkbox">
+											<TMPL_VAR NAME="L_AGREE_TAC">
+										</label>
+									</div>
+								</TMPL_IF>
+							</form>
+						</div>
+
+						<TMPL_IF NAME="TAC">
+							<TMPL_VAR NAME="TAC">
+						</TMPL_IF>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<footer>
+			<div class="container">
+				<div class="footer">
+					<img class="logo" src="../assets/ipfire.png" alt="IPFire Logo">
+					Powered by IPFire
+				</div>
+			</div>
+		</footer>
+	</body>
+</html>

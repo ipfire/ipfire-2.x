@@ -70,4 +70,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Reset permissions of redirect templates and theme directories
 	find /srv/web/ipfire/html/{redirect-templates,themes} -type d | xargs chmod -v 755
+
+	# Captive Portal CSS
+	ln -svf --relative /usr/share/bootstrap/css/bootstrap-grid.min.css \
+		/srv/web/ipfire/html/captive/assets/bootstrap-grid.min.css
+	ln -svf --relative /usr/share/bootstrap/css/bootstrap-reboot.min.css \
+		/srv/web/ipfire/html/captive/assets/bootstrap-reboot.min.css
+
 	@$(POSTBUILD)

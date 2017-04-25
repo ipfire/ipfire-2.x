@@ -142,9 +142,22 @@ my $tmpl = HTML::Template->new(
 
 $tmpl->param(REDIRECT_URL => $url);
 
-$tmpl->param(AUTH  => $settings{'AUTH'});
+# Voucher
+if ($settings{'AUTH'} eq "VOUCHER") {
+	$tmpl->param(VOUCHER  => 1);
+}
+
 $tmpl->param(TITLE => $settings{'TITLE'});
 $tmpl->param(ERROR => $errormessage);
+
+$tmpl->param(TAC => &gettac());
+
+# Some translated strings
+$tmpl->param(L_ACTIVATE        => $Lang::tr{'Captive ACTIVATE'});
+$tmpl->param(L_GAIN_ACCESS     => $Lang::tr{'Captive GAIN ACCESS'});
+$tmpl->param(L_HEADING_TAC     => $Lang::tr{'Captive heading tac'});
+$tmpl->param(L_HEADING_VOUCHER => $Lang::tr{'Captive heading voucher'});
+$tmpl->param(L_AGREE_TAC       => $Lang::tr{'Captive agree tac'});
 
 # Print header
 print "Pragma: no-cache\n";
@@ -153,7 +166,7 @@ print "Connection: close\n";
 print "Content-type: text/html\n\n";
 
 # Print rendered template
-print $tmpl->output;
+print $tmpl->output();
 
 sub getcgihash {
 	my ($hash, $params) = @_;
@@ -187,11 +200,20 @@ sub getcgihash {
 	return;
 }
 
-sub getagb(){
-	open( my $handle, "<:utf8", "/var/ipfire/captive/agb.txt" ) or die("$!");
-		while(<$handle>){
-			$_ = HTML::Entities::decode_entities($_);
-			print $_;
-		}
-	close( $handle );
+sub gettac() {
+	my @tac = ();
+
+	open(my $handle, "<:utf8", "/var/ipfire/captive/agb.txt" ) or die("$!");
+	while(<$handle>) {
+		$_ = HTML::Entities::decode_entities($_);
+		push(@tac, $_);
+	}
+	close($handle);
+
+	my $tac = join("\n", @tac);
+
+	# Format paragraphs
+	$tac =~ s/\n\n/<\/p>\n<p>/g;
+
+	return $tac;
 }

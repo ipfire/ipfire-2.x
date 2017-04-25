@@ -36,6 +36,7 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
+< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive authentication
@@ -44,11 +45,13 @@
 < Captive config
 < Captive err doublevoucher
 < Captive expire
+< Captive genvoucher
 < Captive invalid logosize
 < Captive invalid_voucher
 < Captive ip
 < Captive logo_set
 < Captive logo_upload
+< Captive logo_upload1
 < Captive mac
 < Captive menu
 < Captive noexpiretime
@@ -58,7 +61,6 @@
 < Captive title
 < Captive voactive
 < Captive voucher
-< Captive voucherout
 < Captive vouchervalid
 < Captive vout
 < Captive wrong ext
@@ -708,6 +710,7 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
+< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive authentication
@@ -716,11 +719,13 @@
 < Captive config
 < Captive err doublevoucher
 < Captive expire
+< Captive genvoucher
 < Captive invalid logosize
 < Captive invalid_voucher
 < Captive ip
 < Captive logo_set
 < Captive logo_upload
+< Captive logo_upload1
 < Captive mac
 < Captive menu
 < Captive noexpiretime
@@ -730,7 +735,6 @@
 < Captive title
 < Captive voactive
 < Captive voucher
-< Captive voucherout
 < Captive vouchervalid
 < Captive vout
 < Captive wrong ext
@@ -1361,6 +1365,7 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
+< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive authentication
@@ -1369,11 +1374,13 @@
 < Captive config
 < Captive err doublevoucher
 < Captive expire
+< Captive genvoucher
 < Captive invalid logosize
 < Captive invalid_voucher
 < Captive ip
 < Captive logo_set
 < Captive logo_upload
+< Captive logo_upload1
 < Captive mac
 < Captive menu
 < Captive noexpiretime
@@ -1383,7 +1390,6 @@
 < Captive title
 < Captive voactive
 < Captive voucher
-< Captive voucherout
 < Captive vouchervalid
 < Captive vout
 < Captive wrong ext
@@ -2001,6 +2007,7 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
+< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive authentication
@@ -2009,11 +2016,13 @@
 < Captive config
 < Captive err doublevoucher
 < Captive expire
+< Captive genvoucher
 < Captive invalid logosize
 < Captive invalid_voucher
 < Captive ip
 < Captive logo_set
 < Captive logo_upload
+< Captive logo_upload1
 < Captive mac
 < Captive menu
 < Captive noexpiretime
@@ -2023,7 +2032,6 @@
 < Captive title
 < Captive voactive
 < Captive voucher
-< Captive voucherout
 < Captive vouchervalid
 < Captive vout
 < Captive wrong ext

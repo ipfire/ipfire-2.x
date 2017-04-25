@@ -93,9 +93,11 @@ srv/web/ipfire/cgi-bin/wirelessclient.cgi
 srv/web/ipfire/cgi-bin/wlanap.cgi
 srv/web/ipfire/html/blob.gif
 #srv/web/ipfire/html/captive/assets
+srv/web/ipfire/html/captive/assets/bootstrap-grid.min.css
+srv/web/ipfire/html/captive/assets/bootstrap-reboot.min.css
 srv/web/ipfire/html/captive/assets/captive.css
 srv/web/ipfire/html/captive/assets/favicon.ico
-srv/web/ipfire/html/captive/assets/internet.png
+srv/web/ipfire/html/captive/assets/ipfire.png
 srv/web/ipfire/html/captive/template.html
 srv/web/ipfire/html/clwarn.cgi
 srv/web/ipfire/html/dial.cgi

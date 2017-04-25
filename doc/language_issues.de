@@ -671,6 +671,10 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: Captive GAIN ACCESS
+WARNING: untranslated string: Captive agree tac
+WARNING: untranslated string: Captive heading tac
+WARNING: untranslated string: Captive heading voucher
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
 WARNING: untranslated string: bytes
