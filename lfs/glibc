@@ -152,5 +152,15 @@ ifneq "$(TOOLCHAIN)" "1"
 	rm -rfv /usr/share/zoneinfo
 endif
 
+ifeq "$(TOOLCHAIN)" "1"
+	# Test the linker in toolchain
+	cd $(DIR_APP) && echo "int main() { return 0; }" > dummy.c
+	cd $(DIR_APP) && $(CROSSTARGET)-gcc dummy.c -o dummy
+
+	# Must be using a runtime linker from /tools
+	cd $(DIR_APP) && readelf -l dummy | grep "Requesting program interpreter: /tools"
+	cd $(DIR_APP) && rm -vf dummy dummy.c
+endif
+
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build
 	@$(POSTBUILD)
