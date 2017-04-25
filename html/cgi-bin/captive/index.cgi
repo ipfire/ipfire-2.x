@@ -53,8 +53,8 @@ unless (-f $clients){ system("touch $clients"); }
 #Read settings
 &General::readhash("$settingsfile", \%settings) if(-f $settingsfile);
 
-#Actions
-if ($cgiparams{'ACTION'} eq "$Lang::tr{'gpl i accept these terms and conditions'}"){
+# Actions
+if ($cgiparams{'ACTION'} eq "SUBMIT") {
 	#Get Clients IP-Address
 	my $ip_address = $ENV{X_FORWARDED_FOR} || $ENV{REMOTE_ADDR} ||"";
 
@@ -82,7 +82,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'gpl i accept these terms and conditions'
 	}	
 }
 
-if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive activate'}"){
+if ($cgiparams{'ACTION'} eq "SUBMIT") {
 	my $ip_address;
 	my $mac_address;
 	my $granted=0;
