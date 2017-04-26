@@ -19,6 +19,7 @@
 'Captive auth_lic' => 'License',
 'Captive auth_vou' => 'Voucher',
 'Captive authentication' => 'Type of Access',
+'Captive brand color' => 'Brand Color',
 'Captive config' => 'Settings',
 'Captive err doublevoucher' => 'A voucher with this code already exists',
 'Captive expire' => 'Expire',

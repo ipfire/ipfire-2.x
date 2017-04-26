@@ -17,6 +17,7 @@
 'Captive auth_lic' => 'Lizenz',
 'Captive auth_vou' => 'Gutschein',
 'Captive authentication' => 'Art der Anmeldung',
+'Captive brand color' => 'Highlight-Farbe',
 'Captive config' => 'Konfiguration',
 'Captive err doublevoucher' => 'Ein Gutschein mit diesem Code ist bereits im Umlauf',
 'Captive expire' => 'Ablauf',

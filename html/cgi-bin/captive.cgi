@@ -73,6 +73,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
 	$settings{'AUTH'}				= $cgiparams{'AUTH'};
 	$settings{'TITLE'}				= $cgiparams{'TITLE'};
 	$settings{'UNLIMITED'}			= $cgiparams{'UNLIMITED'};
+	$settings{'COLOR'}			= $cgiparams{'COLOR'};
 
 	if (!$errormessage){
 		#Check if we need to upload a new logo
@@ -311,6 +312,13 @@ END
 		print"<td><br>$Lang::tr{'no'}</td></tr>";
 	}
 print<<END
+		<tr>
+			<td>$Lang::tr{'Captive brand color'}</td>
+			<td>
+				<input type="color" name="COLOR" value="$settings{'COLOR'}">
+			</td>
+		</tr>
+
 		<tr>
 			<td>
 			</td>

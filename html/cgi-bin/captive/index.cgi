@@ -148,6 +148,7 @@ if ($settings{'AUTH'} eq "VOUCHER") {
 }
 
 $tmpl->param(TITLE => $settings{'TITLE'});
+$tmpl->param(COLOR => $settings{'COLOR'});
 $tmpl->param(ERROR => $errormessage);
 
 $tmpl->param(TAC => &gettac());

@@ -8,6 +8,14 @@
 		<link rel="stylesheet" href="../assets/bootstrap-grid.min.css">
 		<link rel="stylesheet" href="../assets/captive.css">
 
+		<TMPL_IF NAME="COLOR">
+			<style>
+				.box-block {
+					background-color: <TMPL_VAR NAME="COLOR">;
+				}
+			</style>
+		</TMPL_IF>
+
 		<link href="https://fonts.googleapis.com/css?family=Ubuntu:300,400,500" rel="stylesheet">
 
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">

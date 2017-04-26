@@ -42,6 +42,7 @@
 < Captive authentication
 < Captive auth_lic
 < Captive auth_vou
+< Captive brand color
 < Captive config
 < Captive err doublevoucher
 < Captive expire
@@ -716,6 +717,7 @@
 < Captive authentication
 < Captive auth_lic
 < Captive auth_vou
+< Captive brand color
 < Captive config
 < Captive err doublevoucher
 < Captive expire
@@ -1371,6 +1373,7 @@
 < Captive authentication
 < Captive auth_lic
 < Captive auth_vou
+< Captive brand color
 < Captive config
 < Captive err doublevoucher
 < Captive expire
@@ -2013,6 +2016,7 @@
 < Captive authentication
 < Captive auth_lic
 < Captive auth_vou
+< Captive brand color
 < Captive config
 < Captive err doublevoucher
 < Captive expire
