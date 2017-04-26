@@ -266,20 +266,8 @@ END
 		print "<td width='30%'>$Lang::tr{'Captive active on'} <font color='$Header::colourblue'>Blue</font></td><td><input type='checkbox' name='ENABLE_BLUE' $checked{'ENABLE_BLUE'}{'on'} /></td></tr>";
 	}
 
-	print<<END
-		</tr>
-		<tr>
-			<td>
-				$Lang::tr{'Captive title'}
-			</td>
-			<td>
-				<input type='text' name='TITLE' value="$settings{'TITLE'}" size='40'>
-			</td>
-		</tr>
-END
-;
-
 print<<END
+		</tr>
 		<tr>
 			<td>
 				$Lang::tr{'Captive authentication'}
@@ -314,6 +302,29 @@ END
 END
 	}
 
+	print<<END;
+		<tr>
+			<td colspan="2">
+				<br>
+				<strong>$Lang::tr{'Captive branding'}</strong>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				$Lang::tr{'Captive title'}
+			</td>
+			<td>
+				<input type='text' name='TITLE' value="$settings{'TITLE'}" size='40'>
+			</td>
+		</tr>
+		<tr>
+			<td>$Lang::tr{'Captive brand color'}</td>
+			<td>
+				<input type="color" name="COLOR" value="$settings{'COLOR'}">
+			</td>
+		</tr>
+END
+
 	#Logo Upload
 	print <<END;
 		<tr>
@@ -337,24 +348,16 @@ END
 		print"<td><br>$Lang::tr{'no'}</td></tr>";
 	}
 
-print<<END
-		<tr>
-			<td>$Lang::tr{'Captive brand color'}</td>
-			<td>
-				<input type="color" name="COLOR" value="$settings{'COLOR'}">
-			</td>
-		</tr>
-
+	print <<END;
 		<tr>
 			<td></td>
 			<td align='right'>
 				<input type='submit' name='ACTION' value="$Lang::tr{'save'}"/>
 			</td>
 		</tr>
-	</table>
-</form>
+	</table></form>
 END
-;
+
 	&Header::closebox();
 
 	#if settings is set to use coupons, the coupon part has to be displayed

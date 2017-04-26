@@ -23,6 +23,7 @@
 'Captive config' => 'Settings',
 'Captive coupon' => 'Coupon',
 'Captive err doublevoucher' => 'A voucher with this code already exists',
+'Captive branding' => 'Branding',
 'Captive expire' => 'Expire',
 'Captive generate coupon' => 'Generate Coupon',
 'Captive heading terms' => 'Terms &amp; Conditions',
