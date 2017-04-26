@@ -38,7 +38,8 @@ ifeq "$(ROOT)" ""
   EXTRA_CONFIG = \
 	--build=$(BUILDTARGET) \
 	--prefix=/usr \
-	--libexecdir=/usr/lib/glibc
+	--libexecdir=/usr/lib/glibc \
+	--enable-stack-protector=strong
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
   EXTRA_CONFIG = \
@@ -75,8 +76,7 @@ EXTRA_CONFIG += \
 	--enable-add-ons \
 	--without-selinux \
 	--enable-experimental-malloc \
-	--enable-bind-now \
-	--enable-stack-protector=strong
+	--enable-bind-now
 
 ###############################################################################
 # Top-level Rules
