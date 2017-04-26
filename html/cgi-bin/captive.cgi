@@ -269,22 +269,22 @@ END
 	print<<END
 		</tr>
 		<tr>
-		<td><br>
-			$Lang::tr{'Captive title'}
-		</td>
-		<td><br>
-			<input type='text' name='TITLE' value="$settings{'TITLE'}" size='40'>
-		</td>
+			<td>
+				$Lang::tr{'Captive title'}
+			</td>
+			<td>
+				<input type='text' name='TITLE' value="$settings{'TITLE'}" size='40'>
+			</td>
 		</tr>
 END
 ;
 
 print<<END
 		<tr>
-			<td><br>
+			<td>
 				$Lang::tr{'Captive authentication'}
 			</td>
-			<td><br>
+			<td>
 				<select name='AUTH'>
 END
 ;
@@ -315,15 +315,28 @@ END
 	}
 
 	#Logo Upload
-	print "<tr><td><br>$Lang::tr{'Captive logo_upload'}<br>$Lang::tr{'Captive logo_upload1'}</td><td><br><INPUT TYPE='file' NAME='uploaded_file' SIZE=30 MAXLENGTH=80></td></tr><tr>";
+	print <<END;
+		<tr>
+			<td>
+				$Lang::tr{'Captive logo_upload'}
+				<br>
+				$Lang::tr{'Captive logo_upload1'}
+			</td>
+			<td>
+				<INPUT TYPE='file' NAME='uploaded_file' SIZE=30 MAXLENGTH=80>
+			</td>
+		</tr>
+END
+
 	#Show Logo in webinterface with 1/2 size if set
 	if (-f "$logopath/logo.png"){
-		print"<td>$Lang::tr{'Captive logo_set'}</td>";
+		print"<tr><td>$Lang::tr{'Captive logo_set'}</td>";
 		print"<td><img src='/captive/logo/logo.png' alt='$logopath/logo.png' width='25%' height='25%' /></td></tr>";
 	}else{
-		print"<td>$Lang::tr{'Captive logo_set'}</td>";
+		print"<tr><td>$Lang::tr{'Captive logo_set'}</td>";
 		print"<td><br>$Lang::tr{'no'}</td></tr>";
 	}
+
 print<<END
 		<tr>
 			<td>$Lang::tr{'Captive brand color'}</td>
@@ -333,18 +346,15 @@ print<<END
 		</tr>
 
 		<tr>
-			<td>
-			</td>
+			<td></td>
 			<td align='right'>
-			<input type='submit' name='ACTION' value="$Lang::tr{'save'}"/>
+				<input type='submit' name='ACTION' value="$Lang::tr{'save'}"/>
 			</td>
 		</tr>
-		</table>
-		<br><br>
+	</table>
+</form>
 END
 ;
-	print "</form>";
-
 	&Header::closebox();
 
 	#if settings is set to use coupons, the coupon part has to be displayed
