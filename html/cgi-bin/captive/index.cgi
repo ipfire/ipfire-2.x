@@ -32,12 +32,12 @@ use HTML::Template;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 
-#Set Variables
-my %voucherhash=();
+my $coupons = "${General::swroot}/captive/coupons";
+my %couponhash = ();
+
 my %clientshash=();
 my %cgiparams=();
 my %settings=();
-my $voucherout="${General::swroot}/captive/voucher_out";
 my $clients="${General::swroot}/captive/clients";
 my $settingsfile="${General::swroot}/captive/settings";
 my $errormessage;
@@ -75,39 +75,39 @@ if ($cgiparams{'ACTION'} eq "SUBMIT") {
 	# Current time
 	$clientshash{$key}[2] = time();
 
-	if ($settings{"AUTH"} eq "VOUCHER") {
-		&General::readhasharray("$voucherout", \%voucherhash);
+	if ($settings{"AUTH"} eq "COUPON") {
+		&General::readhasharray($coupons, \%couponhash);
 
-		# Convert voucher input to uppercase
-		$cgiparams{'VOUCHER'} = uc $cgiparams{'VOUCHER'};
+		# Convert coupon input to uppercase
+		$cgiparams{'COUPON'} = uc $cgiparams{'COUPON'};
 
-		# Walk through all valid vouchers and find the right one
+		# Walk through all valid coupons and find the right one
 		my $found = 0;
-		foreach my $voucher (keys %voucherhash) {
-			if ($voucherhash{$voucher}[1] eq $cgiparams{'VOUCHER'}) {
+		foreach my $coupon (keys %couponhash) {
+			if ($couponhash{$coupon}[1] eq $cgiparams{'COUPON'}) {
 				$found = 1;
 
 				# Copy expiry time
-				$clientshash{$key}[3] = $voucherhash{$voucher}[2];
+				$clientshash{$key}[3] = $couponhash{$coupon}[2];
 
-				# Save voucher code
-				$clientshash{$key}[4] = $cgiparams{'VOUCHER'};
+				# Save coupon code
+				$clientshash{$key}[4] = $cgiparams{'COUPON'};
 
-				# Copy voucher remark
-				$clientshash{$key}[5] = $voucherhash{$voucher}[3];
+				# Copy coupon remark
+				$clientshash{$key}[5] = $couponhash{$coupon}[3];
 
-				# Delete used voucher
-				delete $voucherhash{$voucher};
-				&General::writehasharray("$voucherout", \%voucherhash);
+				# Delete used coupon
+				delete $couponhash{$coupon};
+				&General::writehasharray($coupons, \%couponhash);
 
 				last;
 			}
 		}
 
 		if ($found == 1) {
-			&General::log("Captive", "Internet access granted via voucher ($clientshash{$key}[4]) for $ip_address until $clientshash{$key}[3]");
+			&General::log("Captive", "Internet access granted via coupon ($clientshash{$key}[4]) for $ip_address until $clientshash{$key}[3]");
 		} else {
-			$errormessage = $Lang::tr{"Captive invalid_voucher"};
+			$errormessage = $Lang::tr{"Captive invalid coupon"};
 		}
 
 	# License
@@ -115,7 +115,7 @@ if ($cgiparams{'ACTION'} eq "SUBMIT") {
 		# Copy expiry time
 		$clientshash{$key}[3] = $settings{'EXPIRE'};
 
-		# No voucher code
+		# No coupon code
 		$clientshash{$key}[4] = "LICENSE";
 
 		&General::log("Captive", "Internet access granted via license agreement for $ip_address until $clientshash{$key}[3]");
@@ -143,8 +143,8 @@ my $tmpl = HTML::Template->new(
 $tmpl->param(REDIRECT_URL => $url);
 
 # Voucher
-if ($settings{'AUTH'} eq "VOUCHER") {
-	$tmpl->param(VOUCHER  => 1);
+if ($settings{'AUTH'} eq "COUPON") {
+	$tmpl->param(COUPON => 1);
 }
 
 $tmpl->param(TITLE => $settings{'TITLE'});
@@ -156,8 +156,8 @@ $tmpl->param(TERMS => &getterms());
 # Some translated strings
 $tmpl->param(L_ACTIVATE        => $Lang::tr{'Captive ACTIVATE'});
 $tmpl->param(L_GAIN_ACCESS     => $Lang::tr{'Captive GAIN ACCESS'});
-$tmpl->param(L_HEADING_TERMS   => $Lang::tr{'Captive heading terms'});
-$tmpl->param(L_HEADING_VOUCHER => $Lang::tr{'Captive heading voucher'});
+$tmpl->param(L_HEADING_COUPON  => $Lang::tr{'Captive coupon'});
+$tmpl->param(L_HEADING_TERMS   => $Lang::tr{'Captive terms'});
 $tmpl->param(L_AGREE_TAC       => $Lang::tr{'Captive agree tac'});
 
 # Print header

@@ -31,6 +31,9 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+my $coupons = "${General::swroot}/captive/coupons";
+my %couponhash = ();
+
 my %settings=();
 my %mainsettings;
 my %color;
@@ -38,14 +41,11 @@ my %cgiparams=();
 my %netsettings=();
 my %checked=();
 my $errormessage='';
-my $voucherout="${General::swroot}/captive/voucher_out";
 my $clients="${General::swroot}/captive/clients";
-my %voucherhash=();
 my %clientshash=();
 my $settingsfile="${General::swroot}/captive/settings";
 my $logopath = "/srv/web/ipfire/html/captive/logo";
 unless (-e $settingsfile)	{ system("touch $settingsfile"); }
-unless (-e $voucherout)	{ system("touch $voucherout"); }
 
 &Header::getcgihash(\%cgiparams);
 
@@ -119,8 +119,8 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
 	}
 }
 
-if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive genvoucher'}"){
-	#generates a voucher and writes it to /var/ipfire/voucher_out	
+if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupon'}"){
+	# Generates a new coupon
 
 	#calculate expiredate
 	my $expire;
@@ -135,10 +135,10 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive genvoucher'}"){
 	if($cgiparams{'EXP_HOUR'}+$cgiparams{'EXP_DAY'}+$cgiparams{'EXP_WEEK'}+$cgiparams{'EXP_MONTH'} == 0 && $cgiparams{'UNLIMITED'} == ''){
 		$errormessage=$Lang::tr{'Captive noexpiretime'};
 	}
-	#check if we already have a voucher with same code
-	&General::readhasharray("$voucherout", \%voucherhash);
-	foreach my $key (keys %voucherhash) {
-		if($voucherhash{$key}[1] eq $cgiparams{'CODE'}){
+	#check if we already have a coupon with same code
+	&General::readhasharray($coupons, \%couponhash) if (-e $coupons);
+	foreach my $key (keys %couponhash) {
+		if($couponhash{$key}[1] eq $cgiparams{'CODE'}){
 			$errormessage=$Lang::tr{'Captive err doublevoucher'};
 			last;
 		}
@@ -154,56 +154,56 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive genvoucher'}"){
 		my $date=time(); #seconds in utc
 
 		#first get new key from hash
-		my $key=&General::findhasharraykey (\%voucherhash);
+		my $key=&General::findhasharraykey (\%couponhash);
 		#initialize all fields with ''
-		foreach my $i (0 .. 3) { $voucherhash{$key}[$i] = "";}
+		foreach my $i (0 .. 3) { $couponhash{$key}[$i] = "";}
 		#define fields
-		$voucherhash{$key}[0] = $date;
-		$voucherhash{$key}[1] = $cgiparams{'CODE'};
-		$voucherhash{$key}[2] = $settings{'EXPIRE'};
-		$voucherhash{$key}[3] = $cgiparams{'REMARK'};
+		$couponhash{$key}[0] = $date;
+		$couponhash{$key}[1] = $cgiparams{'CODE'};
+		$couponhash{$key}[2] = $settings{'EXPIRE'};
+		$couponhash{$key}[3] = $cgiparams{'REMARK'};
 		#write values to disk
-		&General::writehasharray("$voucherout", \%voucherhash);
+		&General::writehasharray($coupons, \%couponhash);
 
 		#now prepare log entry, get expiring date for voucher and decode remark for logfile
-		my $expdate=localtime(time()+$voucherhash{$key}[3]);
-		my $rem=HTML::Entities::decode_entities($voucherhash{$key}[4]);
+		my $expdate=localtime(time()+$couponhash{$key}[3]);
+		my $rem=HTML::Entities::decode_entities($couponhash{$key}[4]);
 
 		#write logfile entry
-		&General::log("Captive", "Generated new voucher $voucherhash{$key}[1] $voucherhash{$key}[2] hours valid expires on $expdate remark $rem");
+		&General::log("Captive", "Generated new coupon $couponhash{$key}[1] $couponhash{$key}[2] hours valid expires on $expdate remark $rem");
 	}
 }
 
-if ($cgiparams{'ACTION'} eq 'delvoucherout'){
+if ($cgiparams{'ACTION'} eq 'delete-coupon') {
 	#deletes an already generated but unused voucher
 
 	#read all generated vouchers
-	&General::readhasharray("$voucherout", \%voucherhash);
-	foreach my $key (keys %voucherhash) {
-		if($cgiparams{'key'} eq $voucherhash{$key}[0]){
+	&General::readhasharray($coupons, \%couponhash) if (-e $coupons);
+	foreach my $key (keys %couponhash) {
+		if($cgiparams{'key'} eq $couponhash{$key}[0]){
 			#write logenty with decoded remark
-			my $rem=HTML::Entities::decode_entities($voucherhash{$key}[4]);
-			&General::log("Captive", "Delete unused voucher $voucherhash{$key}[1] $voucherhash{$key}[2] hours valid expires on $voucherhash{$key}[3] remark $rem");
+			my $rem=HTML::Entities::decode_entities($couponhash{$key}[4]);
+			&General::log("Captive", "Delete unused coupon $couponhash{$key}[1] $couponhash{$key}[2] hours valid expires on $couponhash{$key}[3] remark $rem");
 			#delete line from hash
-			delete $voucherhash{$key};
+			delete $couponhash{$key};
 			last;
 		}
 	}
 	#write back hash
-	&General::writehasharray("$voucherout", \%voucherhash);
+	&General::writehasharray($coupons, \%couponhash);
 }
 
-if ($cgiparams{'ACTION'} eq 'delvoucherinuse'){
+if ($cgiparams{'ACTION'} eq 'delete-client') {
 	#delete voucher and connection in use
 
 	#read all active clients
-	&General::readhasharray("$clients", \%clientshash);
+	&General::readhasharray($clients, \%clientshash) if (-e $clients);
 	foreach my $key (keys %clientshash) {
 		if($cgiparams{'key'} eq $clientshash{$key}[0]){
 			#prepare log entry with decoded remark
 			my $rem=HTML::Entities::decode_entities($clientshash{$key}[7]);
 			#write logentry
-			&General::log("Captive", "Delete voucher in use $clientshash{$key}[1] $clientshash{$key}[2] hours valid expires on $clientshash{$key}[3] remark $rem - Connection will be terminated");
+			&General::log("Captive", "Deleted client in use $clientshash{$key}[1] $clientshash{$key}[2] hours valid expires on $clientshash{$key}[3] remark $rem - Connection will be terminated");
 			#delete line from hash
 			delete $clientshash{$key};
 			last;
@@ -292,9 +292,9 @@ END
 	print " selected='selected'" if ($settings{'AUTH'} eq 'TERMS');
 	print ">$Lang::tr{'Captive terms'}</option>";
 
-	print "<option value='VOUCHER' ";
-	print " selected='selected'" if ($settings{'AUTH'} eq 'VOUCHER');
-	print ">$Lang::tr{'Captive auth_vou'}</option>";
+	print "<option value='COUPON' ";
+	print " selected='selected'" if ($settings{'AUTH'} eq 'COUPON');
+	print ">$Lang::tr{'Captive coupon'}</option>";
 
 	print<<END
 				</select>	
@@ -347,9 +347,9 @@ END
 
 	&Header::closebox();
 
-	#if settings is set to use vouchers, the voucher part has to be displayed
-	if ($settings{'AUTH'} eq 'VOUCHER'){
-		&voucher();
+	#if settings is set to use coupons, the coupon part has to be displayed
+	if ($settings{'AUTH'} eq 'COUPON'){
+		&coupons();
 	}else{
 		#otherwise we show the licensepart
 		&show_license_connections();
@@ -364,9 +364,8 @@ sub gencode(){
 	return $randomstring;
 }
 
-sub voucher(){
-	#show voucher part
-	&Header::openbox('100%', 'left', $Lang::tr{'Captive genvoucher'});
+sub coupons() {
+	&Header::openbox('100%', 'left', $Lang::tr{'Captive generate coupon'});
 	print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
 	print "<table border='0' width='100%'>";
 	print "<tr><td width='30%'><br>$Lang::tr{'Captive vouchervalid'}</td><td width='70%'><br>";
@@ -435,11 +434,18 @@ sub voucher(){
 	print "<tr><td><br>$Lang::tr{'remark'}</td><td><br><input type='text' style='width: 98%;' name='REMARK'  align='left'></td></tr>";
 	print "<tr><td>&nbsp</td><td></td></tr></table><br><br>";
 	$cgiparams{'CODE'} = &gencode();
-	print "<div align='right'><input type='submit' name='ACTION' value='$Lang::tr{'Captive genvoucher'}'><input type='hidden' name='CODE' value='$cgiparams{'CODE'}'></form></div>";
+	print "<div align='right'><input type='submit' name='ACTION' value='$Lang::tr{'Captive generate coupon'}'><input type='hidden' name='CODE' value='$cgiparams{'CODE'}'></form></div>";
 
 	&Header::closebox();
-	if (! -z $voucherout) { &show_voucher_out();}
-	if (! -z $clients) { &show_voucher_in_use();}
+
+	# Show all coupons if exist
+	if (! -z $coupons) {
+		&show_coupons();
+	}
+
+	if (! -z $clients) {
+		&show_clients();
+	}
 }
 
 sub show_license_connections(){
@@ -451,11 +457,11 @@ sub show_license_connections(){
 print<<END
 		<center><table class='tbl'>
 		<tr>
-			<th align='center' width='15%'>$Lang::tr{'Captive voucher'}</th><th th align='center' width='15%'>$Lang::tr{'Captive activated'}</th><th th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='50%'><font size='1'>$Lang::tr{'Captive mac'}</th><th th align='center' width='5%'>$Lang::tr{'delete'}</th></tr>
+			<th align='center' width='15%'>$Lang::tr{'Captive coupon'}</th><th th align='center' width='15%'>$Lang::tr{'Captive activated'}</th><th th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='50%'><font size='1'>$Lang::tr{'Captive mac'}</th><th th align='center' width='5%'>$Lang::tr{'delete'}</th></tr>
 END
 ;
 	#read all clients from hash and show table
-	&General::readhasharray("$clients", \%clientshash);
+	&General::readhasharray($clients, \%clientshash) if (-e $clients);
 	foreach my $key (keys %clientshash){
 		my $starttime = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($clientshash{$key}[2]));
 		my $endtime;
@@ -474,7 +480,7 @@ END
 		}
 		print "<td $col><center>$clientshash{$key}[4]</td><td $col><center>$starttime ";
 		print "</center></td><td $col><center>$endtime ";
-		print "</td><td $col><center>$clientshash{$key}[0]</td><td $col><form method='post'><center><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><form method='post'><input type='hidden' name='ACTION' value='delvoucherinuse' /><input type='hidden' name='key' value='$clientshash{$key}[0]' /></form></tr>";
+		print "</td><td $col><center>$clientshash{$key}[0]</td><td $col><form method='post'><center><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><form method='post'><input type='hidden' name='ACTION' value='delete-client' /><input type='hidden' name='key' value='$clientshash{$key}[0]' /></form></tr>";
 		$count++;
 	}
 	
@@ -482,27 +488,26 @@ END
 	&Header::closebox();
 }
 
-sub show_voucher_out(){
-	#if there are already generated but unsused vouchers, print a table
-	return if ( -z $voucherout);
+sub show_coupons() {
+	#if there are already generated but unsused coupons, print a table
 	my $count=0;
 	my $col;
 	&Header::openbox('100%', 'left', $Lang::tr{'Captive vout'});
 	print<<END
 		<center><table class='tbl' border='0'>
 		<tr>
-			<th align='center' width='15%'>$Lang::tr{'Captive voucher'}</th><th align='center' width='15%'>$Lang::tr{'date'}</th><th th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='60%'>$Lang::tr{'remark'}</th><th align='center' width='5%'>$Lang::tr{'delete'}</th></tr>
+			<th align='center' width='15%'>$Lang::tr{'Captive coupon'}</th><th align='center' width='15%'>$Lang::tr{'date'}</th><th th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='60%'>$Lang::tr{'remark'}</th><th align='center' width='5%'>$Lang::tr{'delete'}</th></tr>
 END
 ;
-	&General::readhasharray("$voucherout", \%voucherhash);
-	foreach my $key (keys %voucherhash)
+	&General::readhasharray($coupons, \%couponhash) if (-e $coupons);
+	foreach my $key (keys %couponhash)
 	{
-		my $starttime = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($voucherhash{$key}[0]));
+		my $starttime = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($couponhash{$key}[0]));
 		my $endtime;
-		if ($voucherhash{$key}[2] eq '0'){
+		if ($couponhash{$key}[2] eq '0'){
 			$endtime=$Lang::tr{'Captive nolimit'};
 		}else{
-			$endtime=sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime(time()+$voucherhash{$key}[2]));
+			$endtime=sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime(time()+$couponhash{$key}[2]));
 		}
 
 		if ($count % 2){
@@ -513,11 +518,11 @@ END
 			print" <tr>";
 		}
 
-		print "<td $col><center><b>$voucherhash{$key}[1]</b></td>";
+		print "<td $col><center><b>$couponhash{$key}[1]</b></td>";
 		print "<td $col><center>$starttime</td>";
 		print "<td $col><center>$endtime</td>";
-		print "<td $col align='center'>$voucherhash{$key}[3]</td>";
-		print "<td $col><form method='post'><center><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><form method='post'><input type='hidden' name='ACTION' value='delvoucherout' /><input type='hidden' name='key' value='$voucherhash{$key}[0]' /></form></tr>";
+		print "<td $col align='center'>$couponhash{$key}[3]</td>";
+		print "<td $col><form method='post'><center><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><form method='post'><input type='hidden' name='ACTION' value='delete-coupon' /><input type='hidden' name='key' value='$couponhash{$key}[0]' /></form></tr>";
 		$count++;
 	}
 
@@ -525,8 +530,8 @@ END
 	&Header::closebox();
 }
 
-sub show_voucher_in_use(){
-	#if there are active clients which use vouchers show table
+sub show_clients() {
+	#if there are active clients which use coupons show table
 	return if ( -z $clients || ! -f $clients );
 	my $count=0;
 	my $col;
@@ -534,10 +539,10 @@ sub show_voucher_in_use(){
 print<<END
 	<center><table class='tbl' width='100%'>
 		<tr>
-			<th align='center' width='15%'>$Lang::tr{'Captive voucher'}</th><th th align='center' width='15%'>$Lang::tr{'Captive activated'}</th><th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='10%'>$Lang::tr{'Captive mac'}</th><th align='center' width='43%'>$Lang::tr{'remark'}</th><th th align='center' width='5%'>$Lang::tr{'delete'}</th></tr>
+			<th align='center' width='15%'>$Lang::tr{'Captive coupon'}</th><th th align='center' width='15%'>$Lang::tr{'Captive activated'}</th><th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='10%'>$Lang::tr{'Captive mac'}</th><th align='center' width='43%'>$Lang::tr{'remark'}</th><th th align='center' width='5%'>$Lang::tr{'delete'}</th></tr>
 END
 ;
-	&General::readhasharray("$clients", \%clientshash);
+	&General::readhasharray($clients, \%clientshash) if (-e $clients);
 	foreach my $key (keys %clientshash)
 	{
 		#calculate time from clientshash (starttime)
@@ -560,7 +565,7 @@ END
 
 			print "<td $col><center><b>$clientshash{$key}[4]</b></td><td $col><center>$starttime ";
 			print "</center></td><td $col><center>$endtime</center></td><td $col><center>$clientshash{$key}[0]</td><td $col><center>$clientshash{$key}[5]</center>";
-			print "</td><td $col><form method='post'><center><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><form method='post'><input type='hidden' name='ACTION' value='delvoucherinuse' /><input type='hidden' name='key' value='$clientshash{$key}[0]' /></form></tr>";
+			print "</td><td $col><form method='post'><center><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><form method='post'><input type='hidden' name='ACTION' value='delete-client' /><input type='hidden' name='key' value='$clientshash{$key}[0]' /></form></tr>";
 			$count++;
 	}
 

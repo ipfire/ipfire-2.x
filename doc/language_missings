@@ -2,6 +2,7 @@
 # Checking cgi-bin translations for language: en                           #
 ############################################################################
 < addon
+< Captive genvoucher
 < ccd maxclients
 < ovpn_fragment
 ############################################################################
@@ -44,8 +45,10 @@
 < Captive auth_vou
 < Captive brand color
 < Captive config
+< Captive coupon
 < Captive err doublevoucher
 < Captive expire
+< Captive generate coupon
 < Captive genvoucher
 < Captive invalid logosize
 < Captive invalid_voucher
@@ -719,8 +722,10 @@
 < Captive auth_vou
 < Captive brand color
 < Captive config
+< Captive coupon
 < Captive err doublevoucher
 < Captive expire
+< Captive generate coupon
 < Captive genvoucher
 < Captive invalid logosize
 < Captive invalid_voucher
@@ -1375,8 +1380,10 @@
 < Captive auth_vou
 < Captive brand color
 < Captive config
+< Captive coupon
 < Captive err doublevoucher
 < Captive expire
+< Captive generate coupon
 < Captive genvoucher
 < Captive invalid logosize
 < Captive invalid_voucher
@@ -2018,8 +2025,10 @@
 < Captive auth_vou
 < Captive brand color
 < Captive config
+< Captive coupon
 < Captive err doublevoucher
 < Captive expire
+< Captive generate coupon
 < Captive genvoucher
 < Captive invalid logosize
 < Captive invalid_voucher
