@@ -31,6 +31,8 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+my %selected = ();
+
 my $coupons = "${General::swroot}/captive/coupons";
 my %couponhash = ();
 
@@ -74,6 +76,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
 	$settings{'TITLE'}				= $cgiparams{'TITLE'};
 	$settings{'UNLIMITED'}			= $cgiparams{'UNLIMITED'};
 	$settings{'COLOR'}			= $cgiparams{'COLOR'};
+	$settings{'SESSION_TIME'}		= $cgiparams{'SESSION_TIME'};
 
 	if (!$errormessage){
 		#Check if we need to upload a new logo
@@ -291,12 +294,33 @@ END
 END
 ;
 	if ($settings{'AUTH'} eq 'TERMS') {
+		$selected{'SESSION_TIME'} = ();
+		$selected{'SESSION_TIME'}{'0'} = "";
+		$selected{'SESSION_TIME'}{'3600'} = "";
+		$selected{'SESSION_TIME'}{'86400'} = "";
+		$selected{'SESSION_TIME'}{'604800'} = "";
+		$selected{'SESSION_TIME'}{'18144000'} = "";
+		$selected{'SESSION_TIME'}{$settings{'SESSION_TIME'}} = "selected";
+
 		my $terms = &getterms();
 		print <<END;
 			<tr>
 				<td></td>
 				<td>
 					<textarea cols="50" rows="10" name="TERMS">$terms</textarea>
+				</td>
+			</tr>
+
+			<tr>
+				<td>$Lang::tr{'Captive client session expiry time'}</td>
+				<td>
+					<select name="SESSION_TIME">
+						<option value="0"        $selected{'SESSION_TIME'}{'0'}>- $Lang::tr{'unlimited'} -</option>
+						<option value="3600"     $selected{'SESSION_TIME'}{'3600'}>$Lang::tr{'one hour'}</option>
+						<option value="86400"    $selected{'SESSION_TIME'}{'86400'}>$Lang::tr{'24 hours'}</option>
+						<option value="604800"   $selected{'SESSION_TIME'}{'604800'}>$Lang::tr{'one week'}</option>
+						<option value="18144000" $selected{'SESSION_TIME'}{'18144000'}>$Lang::tr{'one month'}</option>
+					</select>
 				</td>
 			</tr>
 END

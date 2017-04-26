@@ -691,6 +691,7 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: 24 hours
 WARNING: untranslated string: Captive ACTIVATE
 WARNING: untranslated string: Captive GAIN ACCESS
 WARNING: untranslated string: Captive activated
@@ -698,6 +699,8 @@ WARNING: untranslated string: Captive active on
 WARNING: untranslated string: Captive agree tac
 WARNING: untranslated string: Captive authentication
 WARNING: untranslated string: Captive brand color
+WARNING: untranslated string: Captive branding
+WARNING: untranslated string: Captive client session expiry time
 WARNING: untranslated string: Captive config
 WARNING: untranslated string: Captive coupon
 WARNING: untranslated string: Captive err doublevoucher
@@ -867,6 +870,9 @@ WARNING: untranslated string: nameserver
 WARNING: untranslated string: no data
 WARNING: untranslated string: none
 WARNING: untranslated string: not a valid dh key
+WARNING: untranslated string: one hour
+WARNING: untranslated string: one month
+WARNING: untranslated string: one week
 WARNING: untranslated string: outgoing compression in bytes per second
 WARNING: untranslated string: outgoing overhead in bytes per second
 WARNING: untranslated string: ovpn add conf
@@ -898,6 +904,7 @@ WARNING: untranslated string: ta key
 WARNING: untranslated string: unblock
 WARNING: untranslated string: unblock all
 WARNING: untranslated string: uncheck all
+WARNING: untranslated string: unlimited
 WARNING: untranslated string: uplink bit rate
 WARNING: untranslated string: upload dh key
 WARNING: untranslated string: vendor

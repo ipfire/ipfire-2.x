@@ -112,8 +112,8 @@ if ($cgiparams{'ACTION'} eq "SUBMIT") {
 
 	# License
 	} else {
-		# Copy expiry time
-		$clientshash{$key}[3] = $settings{'EXPIRE'};
+		# Copy session expiry time
+		$clientshash{$key}[3] = $settings{'SESSION_TIME'} || "0";
 
 		# No coupon code
 		$clientshash{$key}[4] = "LICENSE";

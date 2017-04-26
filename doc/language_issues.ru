@@ -619,6 +619,7 @@ WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: 24 hours
 WARNING: untranslated string: Add a route
 WARNING: untranslated string: Captive ACTIVATE
 WARNING: untranslated string: Captive GAIN ACCESS
@@ -627,6 +628,8 @@ WARNING: untranslated string: Captive active on
 WARNING: untranslated string: Captive agree tac
 WARNING: untranslated string: Captive authentication
 WARNING: untranslated string: Captive brand color
+WARNING: untranslated string: Captive branding
+WARNING: untranslated string: Captive client session expiry time
 WARNING: untranslated string: Captive config
 WARNING: untranslated string: Captive coupon
 WARNING: untranslated string: Captive err doublevoucher
@@ -1048,6 +1051,9 @@ WARNING: untranslated string: no hardware random number generator
 WARNING: untranslated string: none
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: notice
+WARNING: untranslated string: one hour
+WARNING: untranslated string: one month
+WARNING: untranslated string: one week
 WARNING: untranslated string: openvpn default
 WARNING: untranslated string: openvpn destination port used
 WARNING: untranslated string: openvpn fragment allowed with udp
@@ -1165,6 +1171,7 @@ WARNING: untranslated string: tor use exit nodes
 WARNING: untranslated string: unblock
 WARNING: untranslated string: unblock all
 WARNING: untranslated string: uncheck all
+WARNING: untranslated string: unlimited
 WARNING: untranslated string: uplink
 WARNING: untranslated string: uplink bit rate
 WARNING: untranslated string: upload dh key
