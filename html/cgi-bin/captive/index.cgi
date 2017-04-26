@@ -40,7 +40,6 @@ my %settings=();
 my $voucherout="${General::swroot}/captive/voucher_out";
 my $clients="${General::swroot}/captive/clients";
 my $settingsfile="${General::swroot}/captive/settings";
-my $redir=0;
 my $errormessage;
 my $url=param('redirect');
 
@@ -55,8 +54,8 @@ unless (-f $clients){ system("touch $clients"); }
 
 # Actions
 if ($cgiparams{'ACTION'} eq "SUBMIT") {
-	#Get Clients IP-Address
-	my $ip_address = $ENV{X_FORWARDED_FOR} || $ENV{REMOTE_ADDR} ||"";
+	# Get client IP address
+	my $ip_address = $ENV{X_FORWARDED_FOR} || $ENV{REMOTE_ADDR};
 
 	# Retrieve the MAC address from the ARP table
 	my $mac_address = &Network::get_hardware_address($ip_address);
@@ -64,74 +63,78 @@ if ($cgiparams{'ACTION'} eq "SUBMIT") {
 	&General::readhasharray("$clients", \%clientshash);
 	my $key = &General::findhasharraykey(\%clientshash);
 
-	if (!$errormessage){
-		foreach my $i (0 .. 5) { $clientshash{$key}[$i] = "";}
+	# Create a new client line
+	foreach my $i (0 .. 5) { $clientshash{$key}[$i] = ""; }
 
-		$clientshash{$key}[0] = $mac_address;			#mac address of actual client
-		$clientshash{$key}[1] = $ip_address;			#ip address of actual client
-		$clientshash{$key}[2] = time();					#actual time in unix seconds (timestamp of first conenction)
-		$clientshash{$key}[3] = $settings{'EXPIRE'};	#Expire time in seconds (1day, 1 week ....)
-		$clientshash{$key}[4] = $Lang::tr{'Captive auth_lic'};	#Type of license (license or voucher)
-		$clientshash{$key}[5] = '';
+	# MAC address of the client
+	$clientshash{$key}[0] = $mac_address;
 
-		&General::writehasharray("$clients", \%clientshash);
-		system("/usr/local/bin/captivectrl");
-		&General::log("Captive", "Internet Access granted via license-agreement for $ip_address until $clientshash{$key}[3]");
-		$redir=1;
-	}	
-}
+	# IP address of the client
+	$clientshash{$key}[1] = $ip_address;
 
-if ($cgiparams{'ACTION'} eq "SUBMIT") {
-	my $ip_address;
-	my $granted=0;
-	#Convert voucherinput to uppercase
-	$cgiparams{'VOUCHER'} = uc $cgiparams{'VOUCHER'};
-	#Get Clients IP-Address
-	$ip_address = $ENV{X_FORWARDED_FOR} || $ENV{REMOTE_ADDR} ||"";
-	#Ask arp to give the corresponding MAC-Address
-	my $mac_address = &Network::get_hardware_address($ip_address);
-	#Check if voucher is valid and write client to clients file, delete voucher from voucherout
-	&General::readhasharray("$voucherout", \%voucherhash);
-	&General::readhasharray("$clients", \%clientshash);
-	foreach my $key (keys %voucherhash) {
-		if($voucherhash{$key}[1] eq $cgiparams{'VOUCHER'}){
-			#Voucher valid, write to clients, then delete from voucherout
-			my $key1 = &General::findhasharraykey(\%clientshash);
-			foreach my $i (0 .. 5) { $clientshash{$key1}[$i] = "";}
+	# Current time
+	$clientshash{$key}[2] = time();
 
-			$clientshash{$key1}[0] = $mac_address;
-			$clientshash{$key1}[1] = $ip_address;
-			$clientshash{$key1}[2] = time();
-			$clientshash{$key1}[3] = $voucherhash{$key}[2];
-			$clientshash{$key1}[4] = $cgiparams{'VOUCHER'};
-			$clientshash{$key1}[5] = HTML::Entities::decode_entities($voucherhash{$key}[3]);
+	if ($settings{"AUTH"} eq "VOUCHER") {
+		&General::readhasharray("$voucherout", \%voucherhash);
 
-			&General::writehasharray("$clients", \%clientshash);
-			&General::log("Captive", "Internet Access granted via voucher no. $clientshash{$key1}[4] for $ip_address until $clientshash{$key}[3] Remark: $clientshash{$key1}[7]");
+		# Convert voucher input to uppercase
+		$cgiparams{'VOUCHER'} = uc $cgiparams{'VOUCHER'};
 
-			delete $voucherhash{$key};
-			&General::writehasharray("$voucherout", \%voucherhash);
-			$granted=1;
-			last;
+		# Walk through all valid vouchers and find the right one
+		my $found = 0;
+		foreach my $voucher (keys %voucherhash) {
+			if ($voucherhash{$voucher}[1] eq $cgiparams{'VOUCHER'}) {
+				$found = 1;
+
+				# Copy expiry time
+				$clientshash{$key}[3] = $voucherhash{$voucher}[2];
+
+				# Save voucher code
+				$clientshash{$key}[4] = $cgiparams{'VOUCHER'};
+
+				# Copy voucher remark
+				$clientshash{$key}[5] = $voucherhash{$voucher}[3];
+
+				# Delete used voucher
+				delete $voucherhash{$voucher};
+				&General::writehasharray("$voucherout", \%voucherhash);
+
+				last;
+			}
 		}
+
+		if ($found == 1) {
+			&General::log("Captive", "Internet access granted via voucher ($clientshash{$key}[4]) for $ip_address until $clientshash{$key}[3]");
+		} else {
+			$errormessage = $Lang::tr{"Captive invalid_voucher"};
+		}
+
+	# License
+	} else {
+		# Copy expiry time
+		$clientshash{$key}[3] = $settings{'EXPIRE'};
+
+		# No voucher code
+		$clientshash{$key}[4] = "LICENSE";
+
+		&General::log("Captive", "Internet access granted via license agreement for $ip_address until $clientshash{$key}[3]");
 	}
-	if($granted==1){
+
+	# If no errors were found, save configruation and reload
+	if (!$errormessage) {
+		&General::writehasharray("$clients", \%clientshash);
+
 		system("/usr/local/bin/captivectrl");
-		$redir=1;
-	}else{
-		$errormessage="$Lang::tr{'Captive invalid_voucher'}";
+
+		# Redirect client to the original URL
+		print "Status: 302 Moved Temporarily\n";
+		print "Location: $url\n";
+		print "Connection: close\n\n";
+		exit 0;
 	}
 }
 
-if($redir == 1){
-	print "Status: 302 Moved Temporarily\n";
-	print "Location: $url\n";
-	print "Connection: close\n";
-	print "\n";
-	exit 0;
-}
-
-#Open HTML Page, load header and css
 my $tmpl = HTML::Template->new(
 	filename => "/srv/web/ipfire/html/captive/template.html",
 	die_on_bad_params => 0
