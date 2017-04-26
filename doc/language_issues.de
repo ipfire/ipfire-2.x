@@ -3,6 +3,7 @@ WARNING: translation string unused: Captive 1day
 WARNING: translation string unused: Captive 1month
 WARNING: translation string unused: Captive 1week
 WARNING: translation string unused: Captive activate
+WARNING: translation string unused: Captive auth_lic
 WARNING: translation string unused: Captive invalid_voucher
 WARNING: translation string unused: Captive ip
 WARNING: translation string unused: Captive nr
@@ -675,8 +676,9 @@ WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Captive GAIN ACCESS
 WARNING: untranslated string: Captive agree tac
-WARNING: untranslated string: Captive heading tac
+WARNING: untranslated string: Captive heading terms
 WARNING: untranslated string: Captive heading voucher
+WARNING: untranslated string: Captive terms
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
 WARNING: untranslated string: bytes

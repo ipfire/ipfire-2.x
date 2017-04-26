@@ -151,12 +151,12 @@ $tmpl->param(TITLE => $settings{'TITLE'});
 $tmpl->param(COLOR => $settings{'COLOR'});
 $tmpl->param(ERROR => $errormessage);
 
-$tmpl->param(TAC => &gettac());
+$tmpl->param(TERMS => &getterms());
 
 # Some translated strings
 $tmpl->param(L_ACTIVATE        => $Lang::tr{'Captive ACTIVATE'});
 $tmpl->param(L_GAIN_ACCESS     => $Lang::tr{'Captive GAIN ACCESS'});
-$tmpl->param(L_HEADING_TAC     => $Lang::tr{'Captive heading tac'});
+$tmpl->param(L_HEADING_TERMS   => $Lang::tr{'Captive heading terms'});
 $tmpl->param(L_HEADING_VOUCHER => $Lang::tr{'Captive heading voucher'});
 $tmpl->param(L_AGREE_TAC       => $Lang::tr{'Captive agree tac'});
 
@@ -201,20 +201,20 @@ sub getcgihash {
 	return;
 }
 
-sub gettac() {
-	my @tac = ();
+sub getterms() {
+	my @terms = ();
 
-	open(my $handle, "<:utf8", "/var/ipfire/captive/agb.txt" ) or die("$!");
+	open(my $handle, "<:utf8", "/var/ipfire/captive/terms.txt");
 	while(<$handle>) {
 		$_ = HTML::Entities::decode_entities($_);
-		push(@tac, $_);
+		push(@terms, $_);
 	}
 	close($handle);
 
-	my $tac = join("\n", @tac);
+	my $terms = join("\n", @terms);
 
 	# Format paragraphs
-	$tac =~ s/\n\n/<\/p>\n<p>/g;
+	$terms =~ s/\n\n/<\/p>\n<p>/g;
 
-	return $tac;
+	return $terms;
 }

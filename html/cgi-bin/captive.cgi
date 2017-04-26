@@ -101,14 +101,15 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
 
 		&General::writehash("$settingsfile", \%settings);
 
-		#write Licensetext if defined
-		if ($cgiparams{'AGB'}){
-			$cgiparams{'AGB'} = &Header::escape($cgiparams{'AGB'});
-			open( FH, ">:utf8", "/var/ipfire/captive/agb.txt" ) or die("$!");
-			print FH $cgiparams{'AGB'};
-			close( FH );
-			$cgiparams{'AGB'}="";
+		# Save terms
+		if ($cgiparams{'TERMS'}){
+			$cgiparams{'TERMS'} = &Header::escape($cgiparams{'TERMS'});
+			open(FH, ">:utf8", "/var/ipfire/captive/terms.txt") or die("$!");
+			print FH $cgiparams{'TERMS'};
+			close(FH);
+			$cgiparams{'TERMS'} = "";
 		}
+
 		#execute binary to reload firewall rules
 		system("/usr/local/bin/captivectrl");
 
@@ -224,14 +225,16 @@ if ($cgiparams{'ACTION'} eq 'delvoucherinuse'){
 #call config() to display the configuration box
 &config();
 
-sub getagb(){
-	#open textfile from /var/ipfire/captive/agb.txt
-	open( my $handle, "<:utf8", "/var/ipfire/captive/agb.txt" ) or die("$!");
-		while(<$handle>){
-			#read line by line and print on screen
-			$cgiparams{'AGB'}.= HTML::Entities::decode_entities($_);
-		}
-	close( $handle );
+sub getterms(){
+	my @ret;
+
+	open(FILE, "<:utf8", "/var/ipfire/captive/terms.txt");
+	while(<FILE>) {
+		push(@ret, HTML::Entities::decode_entities($_));
+	}
+	close(FILE);
+
+	return join(/\n/, @ret);
 }
 
 sub config(){
@@ -282,12 +285,12 @@ print<<END
 				$Lang::tr{'Captive authentication'}
 			</td>
 			<td><br>
-				<select name='AUTH' style='width:8em;'>
+				<select name='AUTH'>
 END
 ;
-	print "<option value='LICENSE' ";
-	print " selected='selected'" if ($settings{'AUTH'} eq 'LICENSE');
-	print ">$Lang::tr{'Captive auth_lic'}</option>";
+	print "<option value='TERMS' ";
+	print " selected='selected'" if ($settings{'AUTH'} eq 'TERMS');
+	print ">$Lang::tr{'Captive terms'}</option>";
 
 	print "<option value='VOUCHER' ";
 	print " selected='selected'" if ($settings{'AUTH'} eq 'VOUCHER');
@@ -299,7 +302,17 @@ END
 		</tr>
 END
 ;
-	if ($settings{'AUTH'} eq 'LICENSE'){	&agbbox(); };
+	if ($settings{'AUTH'} eq 'TERMS') {
+		my $terms = &getterms();
+		print <<END;
+			<tr>
+				<td></td>
+				<td>
+					<textarea cols="50" rows="10" name="TERMS">$terms</textarea>
+				</td>
+			</tr>
+END
+	}
 
 	#Logo Upload
 	print "<tr><td><br>$Lang::tr{'Captive logo_upload'}<br>$Lang::tr{'Captive logo_upload1'}</td><td><br><INPUT TYPE='file' NAME='uploaded_file' SIZE=30 MAXLENGTH=80></td></tr><tr>";
@@ -341,22 +354,6 @@ END
 		#otherwise we show the licensepart
 		&show_license_connections();
 	}
-}
-
-sub agbbox(){
-	&getagb();
-print<<END
-	<tr>
-		<td>
-			License agreement
-		</td>
-		<td>
-			<br>
-			<textarea cols="50" rows="10" name="AGB">$cgiparams{'AGB'}</textarea>
-		</td>
-	</tr>
-END
-;
 }
 
 sub gencode(){

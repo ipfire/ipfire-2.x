@@ -623,7 +623,6 @@ WARNING: untranslated string: Captive GAIN ACCESS
 WARNING: untranslated string: Captive activated
 WARNING: untranslated string: Captive active on
 WARNING: untranslated string: Captive agree tac
-WARNING: untranslated string: Captive auth_lic
 WARNING: untranslated string: Captive auth_vou
 WARNING: untranslated string: Captive authentication
 WARNING: untranslated string: Captive brand color
@@ -631,7 +630,7 @@ WARNING: untranslated string: Captive config
 WARNING: untranslated string: Captive err doublevoucher
 WARNING: untranslated string: Captive expire
 WARNING: untranslated string: Captive genvoucher
-WARNING: untranslated string: Captive heading tac
+WARNING: untranslated string: Captive heading terms
 WARNING: untranslated string: Captive heading voucher
 WARNING: untranslated string: Captive invalid logosize
 WARNING: untranslated string: Captive logo_set
@@ -641,6 +640,7 @@ WARNING: untranslated string: Captive mac
 WARNING: untranslated string: Captive menu
 WARNING: untranslated string: Captive noexpiretime
 WARNING: untranslated string: Captive nolimit
+WARNING: untranslated string: Captive terms
 WARNING: untranslated string: Captive title
 WARNING: untranslated string: Captive voactive
 WARNING: untranslated string: Captive voucher

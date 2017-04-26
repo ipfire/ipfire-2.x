@@ -34,7 +34,7 @@
 							<TMPL_IF NAME="VOUCHER">
 								<h4><TMPL_VAR NAME="L_HEADING_VOUCHER"></h4>
 							<TMPL_ELSE>
-								<h4><TMPL_VAR NAME="L_HEADING_TAC"></h4>
+								<h4><TMPL_VAR NAME="L_HEADING_TERMS"></h4>
 							</TMPL_IF>
 
 							<form action="" method="POST">
@@ -50,19 +50,19 @@
 											value="<TMPL_VAR NAME="L_GAIN_ACCESS">">
 								</TMPL_IF>
 
-								<TMPL_IF NAME="TAC">
+								<TMPL_IF NAME="TERMS">
 									<div class="checkbox">
 										<label>
 											<input class="form-checkbox" type="checkbox">
-											<TMPL_VAR NAME="L_AGREE_TAC">
+											<TMPL_VAR NAME="L_AGREE_TERMS">
 										</label>
 									</div>
 								</TMPL_IF>
 							</form>
 						</div>
 
-						<TMPL_IF NAME="TAC">
-							<TMPL_VAR NAME="TAC">
+						<TMPL_IF NAME="TERMS">
+							<TMPL_VAR NAME="TERMS">
 						</TMPL_IF>
 					</div>
 				</div>
