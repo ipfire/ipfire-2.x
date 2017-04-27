@@ -82,6 +82,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && sed -i '/sasl_global/s/^static //' lib/client.c
 	cd $(DIR_APP) && sed -i 's/cat8/man8/' saslauthd/Makefile.am
 	cd $(DIR_APP) && autoconf
