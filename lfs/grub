@@ -100,10 +100,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /etc/default
 	install -m 644 $(DIR_SRC)/config/grub2/default /etc/default/grub
 
-	# Disable hardening.
-	paxctl -mpes /usr/sbin/grub-bios-setup /usr/sbin/grub-probe
-	paxctl -mpexs /usr/bin/grub-script-check
-
 	# We don't need to install unifont just to generate a grub2 compatible
 	# font archive for the graphical boot menu. The following command only
 	# converts Latin-1, Latin Extended A+B, Arrows, Box and Block characters.

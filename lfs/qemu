@@ -88,13 +88,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# install wrapper for old kvm parameter handling
 	install -m 755 $(DIR_SRC)/config/qemu/qemu /usr/bin/qemu
 
-	# disable PaX MPROTECT and RANDMMAP
-	paxctl -m -r /usr/bin/qemu-system-arm
-	paxctl -m -r /usr/bin/qemu-system-i386
-	paxctl -m -r /usr/bin/qemu-system-x86_64
-	paxctl -m -r /usr/bin/qemu-arm
-	paxctl -m -r /usr/bin/qemu-i386
-	paxctl -m -r /usr/bin/qemu-x86_64
 	# install an udev script to set the permissions of /dev/kvm
 	cp -avf $(DIR_SRC)/config/qemu/65-kvm.rules /lib/udev/rules.d/65-kvm.rules
 
