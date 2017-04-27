@@ -79,6 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-2.00_disable_vga_fallback.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/0001-Fix-CVE-2015-8370-Grub2-user-pass-vulnerability.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub2-remove-gets.patch
 	cd $(DIR_APP) && \
 		./configure \
 			--prefix=/usr \
