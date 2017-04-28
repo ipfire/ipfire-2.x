@@ -215,13 +215,168 @@ if ($cgiparams{'ACTION'} eq 'delete-client') {
 &Header::openpage($Lang::tr{'Captive menu'}, 1, '');
 &Header::openbigbox();
 
-#call error() to see if we have to print an errormessage on website
-&error();
+# If an error message exists, show a box with the error message
+if ($errormessage) {
+	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
+	print $errormessage;
+	&Header::closebox();
+}
 
-#call config() to display the configuration box
-&config();
+# Prints the config box on the website
+&Header::openbox('100%', 'left', $Lang::tr{'Captive config'});
+print <<END
+	<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype="multipart/form-data">\n
+		<table width='100%' border="0">
+		<tr>
+END
+;
 
-sub getterms(){
+#check which parameters have to be enabled (from settings file)
+$checked{'ENABLE_GREEN'}{'off'} = '';
+$checked{'ENABLE_GREEN'}{'on'} = '';
+$checked{'ENABLE_GREEN'}{$settings{'ENABLE_GREEN'}} = "checked='checked'";
+
+$checked{'ENABLE_BLUE'}{'off'} = '';
+$checked{'ENABLE_BLUE'}{'on'} = '';
+$checked{'ENABLE_BLUE'}{$settings{'ENABLE_BLUE'}} = "checked='checked'";
+
+$checked{'UNLIMITED'}{'off'} = '';
+$checked{'UNLIMITED'}{'on'} = '';
+$checked{'UNLIMITED'}{$settings{'UNLIMITED'}} = "checked='checked'";
+
+if ($netsettings{'GREEN_DEV'}){
+	print "<td width='30%'>$Lang::tr{'Captive active on'} <font color='$Header::colourgreen'>Green</font></td><td><input type='checkbox' name='ENABLE_GREEN' $checked{'ENABLE_GREEN'}{'on'} /></td></tr>";
+}
+if ($netsettings{'BLUE_DEV'}){
+	print "<td width='30%'>$Lang::tr{'Captive active on'} <font color='$Header::colourblue'>Blue</font></td><td><input type='checkbox' name='ENABLE_BLUE' $checked{'ENABLE_BLUE'}{'on'} /></td></tr>";
+}
+
+print<<END
+	</tr>
+	<tr>
+		<td>
+			$Lang::tr{'Captive authentication'}
+		</td>
+		<td>
+			<select name='AUTH'>
+END
+;
+
+print "<option value='TERMS' ";
+print " selected='selected'" if ($settings{'AUTH'} eq 'TERMS');
+print ">$Lang::tr{'Captive terms'}</option>";
+
+print "<option value='COUPON' ";
+print " selected='selected'" if ($settings{'AUTH'} eq 'COUPON');
+print ">$Lang::tr{'Captive coupon'}</option>";
+
+print<<END
+			</select>
+		</td>
+	</tr>
+END
+;
+
+if ($settings{'AUTH'} eq 'TERMS') {
+	$selected{'SESSION_TIME'} = ();
+	$selected{'SESSION_TIME'}{'0'} = "";
+	$selected{'SESSION_TIME'}{'3600'} = "";
+	$selected{'SESSION_TIME'}{'86400'} = "";
+	$selected{'SESSION_TIME'}{'604800'} = "";
+	$selected{'SESSION_TIME'}{'18144000'} = "";
+	$selected{'SESSION_TIME'}{$settings{'SESSION_TIME'}} = "selected";
+
+	my $terms = &getterms();
+	print <<END;
+		<tr>
+			<td></td>
+			<td>
+				<textarea cols="50" rows="10" name="TERMS">$terms</textarea>
+			</td>
+		</tr>
+
+		<tr>
+			<td>$Lang::tr{'Captive client session expiry time'}</td>
+			<td>
+				<select name="SESSION_TIME">
+					<option value="0"        $selected{'SESSION_TIME'}{'0'}>- $Lang::tr{'unlimited'} -</option>
+					<option value="3600"     $selected{'SESSION_TIME'}{'3600'}>$Lang::tr{'one hour'}</option>
+					<option value="86400"    $selected{'SESSION_TIME'}{'86400'}>$Lang::tr{'24 hours'}</option>
+					<option value="604800"   $selected{'SESSION_TIME'}{'604800'}>$Lang::tr{'one week'}</option>
+					<option value="18144000" $selected{'SESSION_TIME'}{'18144000'}>$Lang::tr{'one month'}</option>
+				</select>
+			</td>
+		</tr>
+END
+}
+
+print<<END;
+	<tr>
+		<td colspan="2">
+			<br>
+			<strong>$Lang::tr{'Captive branding'}</strong>
+		</td>
+	</tr>
+	<tr>
+		<td>
+			$Lang::tr{'Captive title'}
+		</td>
+		<td>
+			<input type='text' name='TITLE' value="$settings{'TITLE'}" size='40'>
+		</td>
+	</tr>
+	<tr>
+		<td>$Lang::tr{'Captive brand color'}</td>
+		<td>
+			<input type="color" name="COLOR" value="$settings{'COLOR'}">
+		</td>
+	</tr>
+END
+
+# Logo Upload
+print <<END;
+	<tr>
+		<td>
+			$Lang::tr{'Captive logo_upload'}
+			<br>
+			$Lang::tr{'Captive logo_upload1'}
+		</td>
+		<td>
+			<input type="file" name="logo">
+		</td>
+	</tr>
+END
+
+if (-e $logo) {
+	print <<END;
+		<tr>
+			<td>$Lang::tr{'Captive logo uploaded'}</td>
+			<td>$Lang::tr{'yes'}</td>
+		</tr>
+END
+}
+
+print <<END;
+	<tr>
+		<td></td>
+		<td align='right'>
+			<input type='submit' name='ACTION' value="$Lang::tr{'save'}"/>
+		</td>
+	</tr>
+	</table></form>
+END
+
+&Header::closebox();
+
+#if settings is set to use coupons, the coupon part has to be displayed
+if ($settings{'AUTH'} eq 'COUPON') {
+	&coupons();
+} else {
+	#otherwise we show the licensepart
+	&show_license_connections();
+}
+
+sub getterms() {
 	my @ret;
 
 	open(FILE, "<:utf8", "/var/ipfire/captive/terms.txt");
@@ -231,159 +386,6 @@ sub getterms(){
 	close(FILE);
 
 	return join(/\n/, @ret);
-}
-
-sub config(){
-	#prints the config box on the website
-	&Header::openbox('100%', 'left', $Lang::tr{'Captive config'});
-	print <<END
-		<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype="multipart/form-data">\n
-		<table width='100%' border="0">
-		<tr>
-END
-;
-	#check which parameters have to be enabled (from settings file)
-	$checked{'ENABLE_GREEN'}{'off'} = '';
-	$checked{'ENABLE_GREEN'}{'on'} = '';
-	$checked{'ENABLE_GREEN'}{$settings{'ENABLE_GREEN'}} = "checked='checked'";
-
-	$checked{'ENABLE_BLUE'}{'off'} = '';
-	$checked{'ENABLE_BLUE'}{'on'} = '';
-	$checked{'ENABLE_BLUE'}{$settings{'ENABLE_BLUE'}} = "checked='checked'";
-
-	$checked{'UNLIMITED'}{'off'} = '';
-	$checked{'UNLIMITED'}{'on'} = '';
-	$checked{'UNLIMITED'}{$settings{'UNLIMITED'}} = "checked='checked'";
-
-	if ($netsettings{'GREEN_DEV'}){
-		print "<td width='30%'>$Lang::tr{'Captive active on'} <font color='$Header::colourgreen'>Green</font></td><td><input type='checkbox' name='ENABLE_GREEN' $checked{'ENABLE_GREEN'}{'on'} /></td></tr>";
-	}
-	if ($netsettings{'BLUE_DEV'}){
-		print "<td width='30%'>$Lang::tr{'Captive active on'} <font color='$Header::colourblue'>Blue</font></td><td><input type='checkbox' name='ENABLE_BLUE' $checked{'ENABLE_BLUE'}{'on'} /></td></tr>";
-	}
-
-print<<END
-		</tr>
-		<tr>
-			<td>
-				$Lang::tr{'Captive authentication'}
-			</td>
-			<td>
-				<select name='AUTH'>
-END
-;
-	print "<option value='TERMS' ";
-	print " selected='selected'" if ($settings{'AUTH'} eq 'TERMS');
-	print ">$Lang::tr{'Captive terms'}</option>";
-
-	print "<option value='COUPON' ";
-	print " selected='selected'" if ($settings{'AUTH'} eq 'COUPON');
-	print ">$Lang::tr{'Captive coupon'}</option>";
-
-	print<<END
-				</select>	
-			</td>
-		</tr>
-END
-;
-	if ($settings{'AUTH'} eq 'TERMS') {
-		$selected{'SESSION_TIME'} = ();
-		$selected{'SESSION_TIME'}{'0'} = "";
-		$selected{'SESSION_TIME'}{'3600'} = "";
-		$selected{'SESSION_TIME'}{'86400'} = "";
-		$selected{'SESSION_TIME'}{'604800'} = "";
-		$selected{'SESSION_TIME'}{'18144000'} = "";
-		$selected{'SESSION_TIME'}{$settings{'SESSION_TIME'}} = "selected";
-
-		my $terms = &getterms();
-		print <<END;
-			<tr>
-				<td></td>
-				<td>
-					<textarea cols="50" rows="10" name="TERMS">$terms</textarea>
-				</td>
-			</tr>
-
-			<tr>
-				<td>$Lang::tr{'Captive client session expiry time'}</td>
-				<td>
-					<select name="SESSION_TIME">
-						<option value="0"        $selected{'SESSION_TIME'}{'0'}>- $Lang::tr{'unlimited'} -</option>
-						<option value="3600"     $selected{'SESSION_TIME'}{'3600'}>$Lang::tr{'one hour'}</option>
-						<option value="86400"    $selected{'SESSION_TIME'}{'86400'}>$Lang::tr{'24 hours'}</option>
-						<option value="604800"   $selected{'SESSION_TIME'}{'604800'}>$Lang::tr{'one week'}</option>
-						<option value="18144000" $selected{'SESSION_TIME'}{'18144000'}>$Lang::tr{'one month'}</option>
-					</select>
-				</td>
-			</tr>
-END
-	}
-
-	print<<END;
-		<tr>
-			<td colspan="2">
-				<br>
-				<strong>$Lang::tr{'Captive branding'}</strong>
-			</td>
-		</tr>
-		<tr>
-			<td>
-				$Lang::tr{'Captive title'}
-			</td>
-			<td>
-				<input type='text' name='TITLE' value="$settings{'TITLE'}" size='40'>
-			</td>
-		</tr>
-		<tr>
-			<td>$Lang::tr{'Captive brand color'}</td>
-			<td>
-				<input type="color" name="COLOR" value="$settings{'COLOR'}">
-			</td>
-		</tr>
-END
-
-	# Logo Upload
-	print <<END;
-		<tr>
-			<td>
-				$Lang::tr{'Captive logo_upload'}
-				<br>
-				$Lang::tr{'Captive logo_upload1'}
-			</td>
-			<td>
-				<input type="file" name="logo">
-			</td>
-		</tr>
-END
-
-	if (-e $logo) {
-		print <<END;
-			<tr>
-				<td>$Lang::tr{'Captive logo uploaded'}</td>
-				<td>$Lang::tr{'yes'}</td>
-			</tr>
-END
-	}
-
-	print <<END;
-		<tr>
-			<td></td>
-			<td align='right'>
-				<input type='submit' name='ACTION' value="$Lang::tr{'save'}"/>
-			</td>
-		</tr>
-	</table></form>
-END
-
-	&Header::closebox();
-
-	#if settings is set to use coupons, the coupon part has to be displayed
-	if ($settings{'AUTH'} eq 'COUPON'){
-		&coupons();
-	}else{
-		#otherwise we show the licensepart
-		&show_license_connections();
-	}
 }
 
 sub gencode(){
@@ -621,16 +623,6 @@ sub validremark
 	if (substr ($remark, -1, 1) !~ /^[a-zöäüA-ZÖÄÜ0-9.:;_)]*$/) {
 		return 0;}
 	return 1;
-}
-
-sub error{
-	#if an errormessage exits, show a box with errormessage
-	if ($errormessage) {
-		&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
-		print "<class name='base'>$errormessage\n";
-		print "&nbsp;</class>\n";
-		&Header::closebox();
-	}
 }
 
 &Header::closebigbox();
