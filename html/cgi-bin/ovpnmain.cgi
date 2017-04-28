@@ -2631,7 +2631,7 @@ ADV_ERROR:
 		$cgiparams{'PMTU_DISCOVERY'} = 'off';
     }
     if ($cgiparams{'DAUTH'} eq '') {
-		$cgiparams{'DAUTH'} = 'SHA1';
+		$cgiparams{'DAUTH'} = 'SHA512';
     }
     if ($cgiparams{'TLSAUTH'} eq '') {
 		$cgiparams{'TLSAUTH'} = 'off';
@@ -4454,7 +4454,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
         $cgiparams{'MSSFIX'} = 'on';
         $cgiparams{'FRAGMENT'} = '1300';
 	$cgiparams{'PMTU_DISCOVERY'} = 'off';
-	$cgiparams{'DAUTH'} = 'SHA1';
+	$cgiparams{'DAUTH'} = 'SHA512';
 ###
 # m.a.d n2n end
 ###	
@@ -5037,7 +5037,7 @@ END
 		$cgiparams{'MSSFIX'} = 'off';
     }
 	if ($cgiparams{'DAUTH'} eq '') {
-		$cgiparams{'DAUTH'} = 'SHA1';
+		$cgiparams{'DAUTH'} = 'SHA512';
     }
     if ($cgiparams{'DOVPN_SUBNET'} eq '') {
 		$cgiparams{'DOVPN_SUBNET'} = '10.' . int(rand(256)) . '.' . int(rand(256)) . '.0/255.255.255.0';
