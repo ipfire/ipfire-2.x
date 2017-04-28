@@ -59,15 +59,15 @@ unless (-e $settingsfile)	{ system("touch $settingsfile"); }
 
 &Header::showhttpheaders();
 
-#actions
-if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
+if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	my $file = $cgiparams{'logo'};
-	if ($file){
-		#Check if extension is png
+	if ($file) {
+		# Check if the file extension is PNG/JPEG
 		chomp $file;
+
 		my ($name, $path, $ext) = fileparse($file, qr/\.[^.]*$/);
-		if ($ext ne ".png"){
-			$errormessage=$Lang::tr{'Captive wrong ext'};
+		if ($ext ne ".png" && $ext ne ".jpg" && $ext ne ".jpeg") {
+			$errormessage = $Lang::tr{'Captive wrong ext'};
 		}
 	}
 
@@ -621,20 +621,6 @@ sub validremark
 	if (substr ($remark, -1, 1) !~ /^[a-zöäüA-ZÖÄÜ0-9.:;_)]*$/) {
 		return 0;}
 	return 1;
-}
-
-sub pngsize {
-	my $Buffer = shift;
-	my ($width,$height) = ( undef, undef );
-
-	if ($Buffer =~ /IHDR(.{8})/) {
-		my $PNG = $1;
-		($width,$height) = unpack( "NN", $PNG );
-	} else {
-		$width="invalid";
-		$height= "invalid";
-	};
-	return ($width,$height);
 }
 
 sub error{
