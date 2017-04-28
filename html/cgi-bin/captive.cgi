@@ -244,6 +244,11 @@ $checked{'UNLIMITED'}{'off'} = '';
 $checked{'UNLIMITED'}{'on'} = '';
 $checked{'UNLIMITED'}{$settings{'UNLIMITED'}} = "checked='checked'";
 
+$selected{'AUTH'} = ();
+$selected{'AUTH'}{'COUPON'} = "";
+$selected{'AUTH'}{'TERMS'} = "";
+$selected{'AUTH'}{$settings{'AUTH'}} = "selected";
+
 if ($netsettings{'GREEN_DEV'}){
 	print "<td width='30%'>$Lang::tr{'Captive active on'} <font color='$Header::colourgreen'>Green</font></td><td><input type='checkbox' name='ENABLE_GREEN' $checked{'ENABLE_GREEN'}{'on'} /></td></tr>";
 }
@@ -259,18 +264,8 @@ print<<END
 		</td>
 		<td>
 			<select name='AUTH'>
-END
-;
-
-print "<option value='TERMS' ";
-print " selected='selected'" if ($settings{'AUTH'} eq 'TERMS');
-print ">$Lang::tr{'Captive terms'}</option>";
-
-print "<option value='COUPON' ";
-print " selected='selected'" if ($settings{'AUTH'} eq 'COUPON');
-print ">$Lang::tr{'Captive coupon'}</option>";
-
-print<<END
+				<option value="TERMS"  $selected{'AUTH'}{'TERMS'} >$Lang::tr{'Captive terms'}</option>
+				<option value="COUPON" $selected{'AUTH'}{'COUPON'}>$Lang::tr{'Captive coupon'}</option>
 			</select>
 		</td>
 	</tr>
