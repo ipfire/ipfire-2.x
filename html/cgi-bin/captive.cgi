@@ -115,18 +115,9 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 }
 
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupon'}") {
-	#calculate expiredate
-	my $expire;
-	if ($settings{'UNLIMITED'} eq 'on'){
-		$expire = $Lang::tr{'Captive nolimit'};
-	}else{
-		$settings{'EXPIRE'} = $cgiparams{'EXP_HOUR'}+$cgiparams{'EXP_DAY'}+$cgiparams{'EXP_WEEK'}+$cgiparams{'EXP_MONTH'};
-		$expire = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime(time()+$settings{'EXPIRE'}));
-    }
-
-	#Check Expiretime
-	if($cgiparams{'EXP_HOUR'}+$cgiparams{'EXP_DAY'}+$cgiparams{'EXP_WEEK'}+$cgiparams{'EXP_MONTH'} == 0 && $cgiparams{'UNLIMITED'} == ''){
-		$errormessage=$Lang::tr{'Captive noexpiretime'};
+	# Check expiry time
+	if ($cgiparams{'EXP_HOUR'} + $cgiparams{'EXP_DAY'} + $cgiparams{'EXP_WEEK'} + $cgiparams{'EXP_MONTH'} == 0 && $cgiparams{'UNLIMITED'} == '') {
+		$errormessage = $Lang::tr{'Captive noexpiretime'};
 	}
 
 	#check valid remark
@@ -143,6 +134,16 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupon'}") {
 
 		&General::readhasharray($coupons, \%couponhash) if (-e $coupons);
 		my $now = time();
+
+		# Calculate expiry time in seconds
+		my $expires = 0;
+
+		if ($settings{'UNLIMITED'} ne 'on') {
+			$expires += $settings{'EXP_HOUR'};
+			$expires += $settings{'EXP_DAY'};
+			$expires += $settings{'EXP_WEEK'};
+			$expires += $settings{'EXP_MONTH'};
+		}
 
 		my $count = $cgiparams{'COUNT'} || 1;
 		while($count-- > 0) {
