@@ -69,6 +69,9 @@ ifeq "$(KCFG)" "-kirkwood"
 LASTKERNEL=1
 endif
 
+# The buildsystem does not correctly detect if our compiler supports plugins
+export DISABLE_PAX_PLUGINS=y
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
