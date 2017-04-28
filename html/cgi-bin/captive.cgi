@@ -114,10 +114,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	}
 }
 
-if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupon'}"){
-	# Generates a new coupon
-	$cgiparams{'CODE'} = &gencode();
-
+if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupon'}") {
 	#calculate expiredate
 	my $expire;
 	if ($settings{'UNLIMITED'} eq 'on'){
@@ -131,42 +128,47 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupon'}"){
 	if($cgiparams{'EXP_HOUR'}+$cgiparams{'EXP_DAY'}+$cgiparams{'EXP_WEEK'}+$cgiparams{'EXP_MONTH'} == 0 && $cgiparams{'UNLIMITED'} == ''){
 		$errormessage=$Lang::tr{'Captive noexpiretime'};
 	}
-	#check if we already have a coupon with same code
-	&General::readhasharray($coupons, \%couponhash) if (-e $coupons);
-	foreach my $key (keys %couponhash) {
-		if($couponhash{$key}[1] eq $cgiparams{'CODE'}){
-			$errormessage=$Lang::tr{'Captive err doublevoucher'};
-			last;
-		}
-	}
 
 	#check valid remark
 	if ($cgiparams{'REMARK'} ne '' && !&validremark($cgiparams{'REMARK'})){
 		$errormessage=$Lang::tr{'fwhost err remark'};
 	}
 
-	#if no error detected, write to disk
-	if (!$errormessage){
-		my $date=time(); #seconds in utc
+	if (!$errormessage) {
+		&General::readhasharray($coupons, \%couponhash) if (-e $coupons);
+		my $now = time();
 
-		#first get new key from hash
-		my $key=&General::findhasharraykey (\%couponhash);
-		#initialize all fields with ''
-		foreach my $i (0 .. 3) { $couponhash{$key}[$i] = "";}
-		#define fields
-		$couponhash{$key}[0] = $date;
-		$couponhash{$key}[1] = $cgiparams{'CODE'};
-		$couponhash{$key}[2] = $settings{'EXPIRE'};
-		$couponhash{$key}[3] = $cgiparams{'REMARK'};
-		#write values to disk
+		my $count = $cgiparams{'COUNT'} || 1;
+		while($count-- > 0) {
+			# Generate a new code
+			my $code = &gencode();
+
+			# Check if the coupon code already exists
+			foreach my $key (keys %couponhash) {
+				if($couponhash{$key}[1] eq $code) {
+					# Code already exists, so try again
+					$code = "";
+					$count++;
+					last;
+				}
+			}
+
+			next if ($code eq "");
+
+			# Get a new key from hash
+			my $key = &General::findhasharraykey(\%couponhash);
+
+			# Initialize all fields
+			foreach my $i (0 .. 3) { $couponhash{$key}[$i] = ""; }
+
+			$couponhash{$key}[0] = $now;
+			$couponhash{$key}[1] = $code;
+			$couponhash{$key}[2] = $expires;
+			$couponhash{$key}[3] = $cgiparams{'REMARK'};
+		}
+
+		# Save everything to disk
 		&General::writehasharray($coupons, \%couponhash);
-
-		#now prepare log entry, get expiring date for voucher and decode remark for logfile
-		my $expdate=localtime(time()+$couponhash{$key}[3]);
-		my $rem=HTML::Entities::decode_entities($couponhash{$key}[4]);
-
-		#write logfile entry
-		&General::log("Captive", "Generated new coupon $couponhash{$key}[1] $couponhash{$key}[2] hours valid expires on $expdate remark $rem");
 	}
 }
 
@@ -481,6 +483,22 @@ END
 			</table>
 
 			<div align="right">
+				<select name="COUNT">
+					<option value="1">1</option>
+					<option value="2">2</option>
+					<option value="3">3</option>
+					<option value="4">4</option>
+					<option value="5">5</option>
+					<option value="6">6</option>
+					<option value="7">7</option>
+					<option value="8">8</option>
+					<option value="9">9</option>
+					<option value="10">10</option>
+					<option value="20">20</option>
+					<option value="50">50</option>
+					<option value="100">100</option>
+				</select>
+
 				<input type="submit" name="ACTION" value="$Lang::tr{'Captive generate coupon'}">
 			</div>
 		</form>
