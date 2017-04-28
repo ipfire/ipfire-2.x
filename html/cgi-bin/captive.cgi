@@ -75,7 +75,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$settings{'ENABLE_BLUE'}		= $cgiparams{'ENABLE_BLUE'};
 	$settings{'AUTH'}				= $cgiparams{'AUTH'};
 	$settings{'TITLE'}				= $cgiparams{'TITLE'};
-	$settings{'UNLIMITED'}			= $cgiparams{'UNLIMITED'};
 	$settings{'COLOR'}			= $cgiparams{'COLOR'};
 	$settings{'SESSION_TIME'}		= $cgiparams{'SESSION_TIME'};
 
@@ -117,6 +116,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupon'}"){
 	# Generates a new coupon
+	$cgiparams{'CODE'} = &gencode();
 
 	#calculate expiredate
 	my $expire;
@@ -388,12 +388,23 @@ sub gencode(){
 
 sub coupons() {
 	&Header::openbox('100%', 'left', $Lang::tr{'Captive generate coupon'});
-	print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>";
-	print "<table border='0' width='100%'>";
-	print "<tr><td width='30%'><br>$Lang::tr{'Captive vouchervalid'}</td><td width='70%'><br>";
-
-		print "<table class='tbl' border='0' width='100%'>";
-		print "<th>$Lang::tr{'hours'}</th><th>$Lang::tr{'days'}</th><th>$Lang::tr{'weeks'}</th><th>$Lang::tr{'months'}</th><th></th><th></th>";
+	print <<END;
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<table border='0' width='100%'>
+				<tr>
+					<td width='30%'>
+						$Lang::tr{'Captive vouchervalid'}
+					</td>
+					<td width='70%'>
+						<table class='tbl' border='0' width='100%'>
+							<tr>
+								<th>$Lang::tr{'hours'}</th>
+								<th>$Lang::tr{'days'}</th>
+								<th>$Lang::tr{'weeks'}</th>
+								<th>$Lang::tr{'months'}</th>
+								<th></th>
+							</tr>
+END
 
 		#print hour-dropdownbox
 		my $hrs=3600;
@@ -449,14 +460,31 @@ sub coupons() {
 			print " selected='selected'" if ($settings{'EXP_MONTH'} eq $exp_sec);
 			print ">$i</option>";
 		}
-		print "</td>";
-		print "<td>&nbsp;&nbsp;&nbsp;<input type='checkbox' name='UNLIMITED' $checked{'UNLIMITED'}{'on'} /></td><td>&nbsp;<b>$Lang::tr{'Captive nolimit'}</b></td>";
-		print "</tr></table>";
-	print "</td></tr>";
-	print "<tr><td><br>$Lang::tr{'remark'}</td><td><br><input type='text' style='width: 98%;' name='REMARK'  align='left'></td></tr>";
-	print "<tr><td>&nbsp</td><td></td></tr></table><br><br>";
-	$cgiparams{'CODE'} = &gencode();
-	print "<div align='right'><input type='submit' name='ACTION' value='$Lang::tr{'Captive generate coupon'}'><input type='hidden' name='CODE' value='$cgiparams{'CODE'}'></form></div>";
+		print <<END;
+								</td>
+								<td>
+									<label>
+										<input type='checkbox' name='UNLIMITED' $checked{'UNLIMITED'}{'on'} />
+										$Lang::tr{'Captive nolimit'}
+									</label>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
+				<tr>
+					<td>$Lang::tr{'remark'}</td>
+					<td>
+						<input type='text' style='width: 98%;' name='REMARK' align='left'>
+					</td>
+				</tr>
+			</table>
+
+			<div align="right">
+				<input type="submit" name="ACTION" value="$Lang::tr{'Captive generate coupon'}">
+			</div>
+		</form>
+END
 
 	&Header::closebox();
 
