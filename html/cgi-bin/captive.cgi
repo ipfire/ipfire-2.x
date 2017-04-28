@@ -135,6 +135,12 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupon'}") {
 	}
 
 	if (!$errormessage) {
+		# Remember selected values
+		foreach my $val (("UNLIMITED", "EXP_HOUR", "EXP_DAY", "EXP_WEEK", "EXP_MONTH")) {
+			$settings{$val} = $cgiparams{$val};
+		}
+		&General::writehash($settingsfile, \%settings);
+
 		&General::readhasharray($coupons, \%couponhash) if (-e $coupons);
 		my $now = time();
 
