@@ -3,6 +3,8 @@
 ############################################################################
 < addon
 < Captive genvoucher
+< Captive logo_upload
+< Captive logo_upload1
 < ccd maxclients
 < ovpn_fragment
 ############################################################################

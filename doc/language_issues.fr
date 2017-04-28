@@ -644,14 +644,14 @@ WARNING: untranslated string: Captive err doublevoucher
 WARNING: untranslated string: Captive expire
 WARNING: untranslated string: Captive generate coupon
 WARNING: untranslated string: Captive logo uploaded
-WARNING: untranslated string: Captive logo_upload
-WARNING: untranslated string: Captive logo_upload1
 WARNING: untranslated string: Captive mac
 WARNING: untranslated string: Captive menu
 WARNING: untranslated string: Captive noexpiretime
 WARNING: untranslated string: Captive nolimit
 WARNING: untranslated string: Captive terms
 WARNING: untranslated string: Captive title
+WARNING: untranslated string: Captive upload logo
+WARNING: untranslated string: Captive upload logo recommendations
 WARNING: untranslated string: Captive voactive
 WARNING: untranslated string: Captive vouchervalid
 WARNING: untranslated string: Captive vout

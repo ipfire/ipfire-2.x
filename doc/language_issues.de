@@ -10,6 +10,8 @@ WARNING: translation string unused: Captive invalid logosize
 WARNING: translation string unused: Captive invalid_voucher
 WARNING: translation string unused: Captive ip
 WARNING: translation string unused: Captive logo_set
+WARNING: translation string unused: Captive logo_upload
+WARNING: translation string unused: Captive logo_upload1
 WARNING: translation string unused: Captive nr
 WARNING: translation string unused: Captive time
 WARNING: translation string unused: Captive voucher
@@ -686,6 +688,8 @@ WARNING: untranslated string: Captive branding
 WARNING: untranslated string: Captive client session expiry time
 WARNING: untranslated string: Captive logo uploaded
 WARNING: untranslated string: Captive terms
+WARNING: untranslated string: Captive upload logo
+WARNING: untranslated string: Captive upload logo recommendations
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
 WARNING: untranslated string: bytes

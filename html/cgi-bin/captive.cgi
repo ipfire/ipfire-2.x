@@ -326,18 +326,13 @@ print<<END;
 			<input type="color" name="COLOR" value="$settings{'COLOR'}">
 		</td>
 	</tr>
-END
-
-# Logo Upload
-print <<END;
 	<tr>
 		<td>
-			$Lang::tr{'Captive logo_upload'}
-			<br>
-			$Lang::tr{'Captive logo_upload1'}
+			$Lang::tr{'Captive upload logo'}
 		</td>
 		<td>
 			<input type="file" name="logo">
+			<br>$Lang::tr{'Captive upload logo recommendations'}
 		</td>
 	</tr>
 END
