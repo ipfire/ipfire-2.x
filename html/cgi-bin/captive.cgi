@@ -36,6 +36,8 @@ my %selected = ();
 my $coupons = "${General::swroot}/captive/coupons";
 my %couponhash = ();
 
+my $logo = "${General::swroot}/captive/logo.dat";
+
 my %settings=();
 my %mainsettings;
 my %color;
@@ -46,7 +48,6 @@ my $errormessage='';
 my $clients="${General::swroot}/captive/clients";
 my %clientshash=();
 my $settingsfile="${General::swroot}/captive/settings";
-my $logopath = "/srv/web/ipfire/html/captive/logo";
 unless (-e $settingsfile)	{ system("touch $settingsfile"); }
 
 &Header::getcgihash(\%cgiparams);
@@ -60,7 +61,7 @@ unless (-e $settingsfile)	{ system("touch $settingsfile"); }
 
 #actions
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
-	my $file = $cgiparams{'uploaded_file'};
+	my $file = $cgiparams{'logo'};
 	if ($file){
 		#Check if extension is png
 		chomp $file;
@@ -80,26 +81,18 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){
 
 	if (!$errormessage){
 		#Check if we need to upload a new logo
-		if($file){
-			#Save File
-			my ($filehandle) = CGI::upload('uploaded_file');
-			open (UPLOADFILE, ">$logopath/logo.png");
-			binmode $filehandle;
-			while ( <$filehandle> ) {
-				print UPLOADFILE;
-			}
-			close (UPLOADFILE);
+		if ($file) {
+			# Save logo
+			my ($filehandle) = CGI::upload("logo");
 
-			#Open file to check if dimensions are within rang
-			open (PNG , "<$logopath/logo.png");
-			local $/;
-			my $PNG1=<PNG>;
-			close(PNG);
-			my ($width,$height)=&pngsize($PNG1);
-			if($width > 1920 || $height > 800 || $width < 1280 || $height < 400){
-				$errormessage.="$Lang::tr{'Captive invalid logosize'} <br>Filedimensions width: $width  height: $height ";
-				unlink("$logopath/logo.png");
+			# XXX check filesize
+
+			open(FILE, ">$logo");
+			binmode $filehandle;
+			while (<$filehandle>) {
+				print FILE;
 			}
+			close(FILE);
 		}
 
 		&General::writehash("$settingsfile", \%settings);
@@ -349,7 +342,7 @@ END
 		</tr>
 END
 
-	#Logo Upload
+	# Logo Upload
 	print <<END;
 		<tr>
 			<td>
@@ -358,18 +351,18 @@ END
 				$Lang::tr{'Captive logo_upload1'}
 			</td>
 			<td>
-				<INPUT TYPE='file' NAME='uploaded_file' SIZE=30 MAXLENGTH=80>
+				<input type="file" name="logo">
 			</td>
 		</tr>
 END
 
-	#Show Logo in webinterface with 1/2 size if set
-	if (-f "$logopath/logo.png"){
-		print"<tr><td>$Lang::tr{'Captive logo_set'}</td>";
-		print"<td><img src='/captive/logo/logo.png' alt='$logopath/logo.png' width='25%' height='25%' /></td></tr>";
-	}else{
-		print"<tr><td>$Lang::tr{'Captive logo_set'}</td>";
-		print"<td><br>$Lang::tr{'no'}</td></tr>";
+	if (-e $logo) {
+		print <<END;
+			<tr>
+				<td>$Lang::tr{'Captive logo uploaded'}</td>
+				<td>$Lang::tr{'yes'}</td>
+			</tr>
+END
 	}
 
 	print <<END;

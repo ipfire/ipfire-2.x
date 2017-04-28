@@ -33,6 +33,7 @@
 'Captive invalid logosize' => 'The uploaded image file does not meet the required resolution of at least 1280x400 but not larger than 1920x800 pixels',
 'Captive invalid_voucher' => 'Invalid code. Please try again',
 'Captive ip' => 'IP Address',
+'Captive logo uploaded' => 'Logo uploaded',
 'Captive logo_set' => 'Current Logo',
 'Captive logo_upload' => 'Upload Logo',
 'Captive logo_upload1' => '(PNG, min. 1280x400, max. 1920x800)',

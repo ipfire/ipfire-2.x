@@ -633,8 +633,7 @@ WARNING: untranslated string: Captive coupon
 WARNING: untranslated string: Captive err doublevoucher
 WARNING: untranslated string: Captive expire
 WARNING: untranslated string: Captive generate coupon
-WARNING: untranslated string: Captive invalid logosize
-WARNING: untranslated string: Captive logo_set
+WARNING: untranslated string: Captive logo uploaded
 WARNING: untranslated string: Captive logo_upload
 WARNING: untranslated string: Captive logo_upload1
 WARNING: untranslated string: Captive mac
