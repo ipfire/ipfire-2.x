@@ -223,7 +223,7 @@ beautify()
 				LAST_STAGE_TIME=$[ `date +%s` - $STAGE_TIME_START ]
 			fi
 			STAGE_TIME_START=`date +%s`
-			echo -ne "${BOLD}*** ${MESSAGE}${NORMAL}"
+			echo -ne "${BOLD}*** (${BUILD_ARCH}) ${MESSAGE}${NORMAL}"
 			if [ "$LAST_STAGE_TIME" ]; then
 				echo -ne "${DONE} (Last stage took $LAST_STAGE_TIME secs)${NORMAL}"
 			fi
