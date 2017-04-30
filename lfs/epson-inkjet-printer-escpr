@@ -79,6 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP)
 	cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
 	cd $(DIR_APP) && make # doesn't support parallel build
 	cd $(DIR_APP) && make install CUPS_PPD_DIR=/usr/share/ppd/Epson
