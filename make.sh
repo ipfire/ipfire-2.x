@@ -652,8 +652,8 @@ buildipfire() {
   lfsmake2 intltool
   lfsmake2 libdaemon
   lfsmake2 cups
-  lfsmake2 ghostscript
   lfsmake2 lcms2
+  lfsmake2 ghostscript
   lfsmake2 qpdf
   lfsmake2 poppler
   lfsmake2 cups-filters
