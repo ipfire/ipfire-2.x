@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ghostscript
-PAK_VER    = 2
+PAK_VER    = 3
 
-DEPS       = "dbus libtiff"
+DEPS       = "cups dbus libtiff"
 
 ###############################################################################
 # Top-level Rules
@@ -83,6 +83,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && rm -rf expat freetype icclib jasper jpeg jpegxr \
+		lcms lcms2 libpng openjpeg zlib cups/libs
 	cd $(DIR_APP) && \
 		./configure \
 			--prefix=/usr \
