@@ -436,11 +436,11 @@ can_resolve_root() {
 enable_dnssec() {
 	local status=$(unbound-control get_option val-permissive-mode)
 
-	# Don't do anything if DNSSEC is already activated
-	[ "${status}" = "no" ] && return 0
-
 	# Log DNSSEC status
 	echo "on" > /var/ipfire/red/dnssec-status
+
+	# Don't do anything if DNSSEC is already activated
+	[ "${status}" = "no" ] && return 0
 
 	# Activate DNSSEC and flush cache with any stale and unvalidated data
 	unbound-control -q set_option val-permissive-mode: no
