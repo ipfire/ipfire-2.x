@@ -78,36 +78,42 @@ if ($cgiparams{'ACTION'} eq "SUBMIT") {
 	if ($settings{"AUTH"} eq "COUPON") {
 		&General::readhasharray($coupons, \%couponhash);
 
-		# Convert coupon input to uppercase
-		$cgiparams{'COUPON'} = uc $cgiparams{'COUPON'};
+		if ($cgiparams{'COUPON'}) {
+			# Convert coupon input to uppercase
+			$cgiparams{'COUPON'} = uc $cgiparams{'COUPON'};
 
-		# Walk through all valid coupons and find the right one
-		my $found = 0;
-		foreach my $coupon (keys %couponhash) {
-			if ($couponhash{$coupon}[1] eq $cgiparams{'COUPON'}) {
-				$found = 1;
+			# Walk through all valid coupons and find the right one
+			my $found = 0;
+			foreach my $coupon (keys %couponhash) {
+				if ($couponhash{$coupon}[1] eq $cgiparams{'COUPON'}) {
+					$found = 1;
 
-				# Copy expiry time
-				$clientshash{$key}[3] = $couponhash{$coupon}[2];
+					# Copy expiry time
+					$clientshash{$key}[3] = $couponhash{$coupon}[2];
 
-				# Save coupon code
-				$clientshash{$key}[4] = $cgiparams{'COUPON'};
+					# Save coupon code
+					$clientshash{$key}[4] = $cgiparams{'COUPON'};
 
-				# Copy coupon remark
-				$clientshash{$key}[5] = $couponhash{$coupon}[3];
+					# Copy coupon remark
+					$clientshash{$key}[5] = $couponhash{$coupon}[3];
 
-				# Delete used coupon
-				delete $couponhash{$coupon};
-				&General::writehasharray($coupons, \%couponhash);
+					# Delete used coupon
+					delete $couponhash{$coupon};
+					&General::writehasharray($coupons, \%couponhash);
 
-				last;
+					last;
+				}
 			}
-		}
 
-		if ($found == 1) {
-			&General::log("Captive", "Internet access granted via coupon ($clientshash{$key}[4]) for $ip_address until $clientshash{$key}[3]");
+			if ($found == 1) {
+				&General::log("Captive", "Internet access granted via coupon ($clientshash{$key}[4]) for $ip_address until $clientshash{$key}[3]");
+			} else {
+				$errormessage = $Lang::tr{"Captive invalid coupon"};
+			}
+
+		# No coupon given
 		} else {
-			$errormessage = $Lang::tr{"Captive invalid coupon"};
+			$errormessage = $Lang::tr{"Captive please enter a coupon code"};
 		}
 
 	# License

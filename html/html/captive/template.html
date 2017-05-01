@@ -38,7 +38,7 @@
 								<input type="hidden" name="url" value="<TMPL_VAR NAME="URL">">
 
 								<TMPL_IF NAME="COUPON">
-										<input class="form-text" type="text" name="COUPON">
+										<input class="form-text <TMPL_IF NAME="ERROR">error</TMPL_IF>" type="text" name="COUPON">
 										<input class="form-submit" type="submit"
 											value="<TMPL_VAR NAME="L_ACTIVATE">">
 								<TMPL_ELSE>
@@ -46,10 +46,16 @@
 											value="<TMPL_VAR NAME="L_GAIN_ACCESS">">
 								</TMPL_IF>
 
+								<TMPL_IF NAME="ERROR">
+									<p class="error">
+										<TMPL_VAR NAME="ERROR">
+									</p>
+								</TMPL_IF>
+
 								<TMPL_IF NAME="TERMS">
 									<div class="checkbox">
 										<label>
-											<input class="form-checkbox" type="checkbox">
+											<input class="form-checkbox <TMPL_IF NAME="ERROR">error</TMPL_IF>" type="checkbox">
 											<TMPL_VAR NAME="L_AGREE_TERMS">
 										</label>
 									</div>
