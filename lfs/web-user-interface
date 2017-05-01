@@ -74,7 +74,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Captive Portal CSS
 	ln -svf --relative /usr/share/bootstrap/css/bootstrap-grid.min.css \
 		/srv/web/ipfire/html/captive/assets/bootstrap-grid.min.css
+	ln -svf --relative /usr/share/bootstrap/css/bootstrap-grid.min.css.map \
+		/srv/web/ipfire/html/captive/assets/bootstrap-grid.min.css.map
 	ln -svf --relative /usr/share/bootstrap/css/bootstrap-reboot.min.css \
 		/srv/web/ipfire/html/captive/assets/bootstrap-reboot.min.css
+	ln -svf --relative /usr/share/bootstrap/css/bootstrap-reboot.min.css.map \
+		/srv/web/ipfire/html/captive/assets/bootstrap-reboot.min.css.map
 
 	@$(POSTBUILD)
