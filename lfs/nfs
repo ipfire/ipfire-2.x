@@ -82,8 +82,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-
 	cd $(DIR_APP) && tar zxf $(DIR_DL)/libnfsidmap-$(LIBNFSIDMAP).tar.gz
+
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP)/libnfsidmap* && ./configure --prefix=/usr
 	cd $(DIR_APP)/libnfsidmap* && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/libnfsidmap* && make install
