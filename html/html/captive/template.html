@@ -31,18 +31,14 @@
 						</div>
 
 						<div class="box-block">
-							<TMPL_IF NAME="VOUCHER">
-								<h4><TMPL_VAR NAME="L_HEADING_VOUCHER"></h4>
-							<TMPL_ELSE>
-								<h4><TMPL_VAR NAME="L_HEADING_TERMS"></h4>
-							</TMPL_IF>
+							<h4><TMPL_VAR NAME="L_HEADING"></h4>
 
 							<form action="" method="POST">
 								<input type="hidden" name="ACTION" value="SUBMIT">
 								<input type="hidden" name="url" value="<TMPL_VAR NAME="URL">">
 
-								<TMPL_IF NAME="VOUCHER">
-										<input class="form-text" type="text" name="VOUCHER">
+								<TMPL_IF NAME="COUPON">
+										<input class="form-text" type="text" name="COUPON">
 										<input class="form-submit" type="submit"
 											value="<TMPL_VAR NAME="L_ACTIVATE">">
 								<TMPL_ELSE>

@@ -142,9 +142,12 @@ my $tmpl = HTML::Template->new(
 
 $tmpl->param(REDIRECT_URL => $url);
 
-# Voucher
+# Coupon
 if ($settings{'AUTH'} eq "COUPON") {
 	$tmpl->param(COUPON => 1);
+	$tmpl->param(L_HEADING => $Lang::tr{'Captive coupon'});
+} else {
+	$tmpl->param(L_HEADING => $Lang::tr{'Captive terms'});
 }
 
 $tmpl->param(TITLE => $settings{'TITLE'});
@@ -156,9 +159,7 @@ $tmpl->param(TERMS => &getterms());
 # Some translated strings
 $tmpl->param(L_ACTIVATE        => $Lang::tr{'Captive ACTIVATE'});
 $tmpl->param(L_GAIN_ACCESS     => $Lang::tr{'Captive GAIN ACCESS'});
-$tmpl->param(L_HEADING_COUPON  => $Lang::tr{'Captive coupon'});
-$tmpl->param(L_HEADING_TERMS   => $Lang::tr{'Captive terms'});
-$tmpl->param(L_AGREE_TAC       => $Lang::tr{'Captive agree tac'});
+$tmpl->param(L_AGREE_TERMS     => $Lang::tr{'Captive agree tac'});
 
 # Print header
 print "Pragma: no-cache\n";
