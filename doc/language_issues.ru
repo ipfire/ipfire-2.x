@@ -630,6 +630,7 @@ WARNING: untranslated string: Captive authentication
 WARNING: untranslated string: Captive brand color
 WARNING: untranslated string: Captive branding
 WARNING: untranslated string: Captive client session expiry time
+WARNING: untranslated string: Captive clients
 WARNING: untranslated string: Captive config
 WARNING: untranslated string: Captive coupon
 WARNING: untranslated string: Captive expire
@@ -642,6 +643,7 @@ WARNING: untranslated string: Captive menu
 WARNING: untranslated string: Captive noexpiretime
 WARNING: untranslated string: Captive nolimit
 WARNING: untranslated string: Captive terms
+WARNING: untranslated string: Captive terms short
 WARNING: untranslated string: Captive title
 WARNING: untranslated string: Captive upload logo
 WARNING: untranslated string: Captive upload logo recommendations

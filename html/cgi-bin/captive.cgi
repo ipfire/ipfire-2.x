@@ -621,45 +621,67 @@ END
 }
 
 sub show_clients() {
-	#if there are active clients which use coupons show table
+	# if there are active clients which use coupons show table
 	return if ( -z $clients || ! -f $clients );
+
 	my $count=0;
 	my $col;
-	&Header::openbox('100%', 'left', $Lang::tr{'Captive voactive'});
-print<<END
-	<center><table class='tbl' width='100%'>
-		<tr>
-			<th align='center' width='15%'>$Lang::tr{'Captive coupon'}</th><th th align='center' width='15%'>$Lang::tr{'Captive activated'}</th><th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='10%'>$Lang::tr{'Captive mac'}</th><th align='center' width='43%'>$Lang::tr{'remark'}</th><th th align='center' width='5%'>$Lang::tr{'delete'}</th></tr>
+
+	&Header::openbox('100%', 'left', $Lang::tr{'Captive clients'});
+
+	print <<END;
+		<table class='tbl' width='100%'>
+			<tr>
+				<th align='center' width='15%'>$Lang::tr{'Captive coupon'}</th>
+				<th align='center' width='15%'>$Lang::tr{'Captive activated'}</th>
+				<th align='center' width='15%'>$Lang::tr{'Captive expiry time'}</th>
+				<th align='center' width='10%'>$Lang::tr{'Captive mac'}</th>
+				<th align='center' width='43%'>$Lang::tr{'remark'}</th>
+				<th align='center' width='5%'>$Lang::tr{'delete'}</th>
+			</tr>
 END
-;
+
 	&General::readhasharray($clients, \%clientshash) if (-e $clients);
-	foreach my $key (keys %clientshash)
-	{
+	foreach my $key (keys %clientshash) {
 		#calculate time from clientshash (starttime)
 		my $starttime = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($clientshash{$key}[2]));
+
 		#calculate endtime from clientshash
 		my $endtime;
 		if ($clientshash{$key}[3] eq '0'){
 			$endtime=$Lang::tr{'Captive nolimit'};
-		}else{
+		} else {
 			$endtime = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($clientshash{$key}[2]+$clientshash{$key}[3]));
 		}
 
-			if ($count % 2){
-				print" <tr>";
-				$col="bgcolor='$color{'color20'}'";
-			}else{
-				$col="bgcolor='$color{'color22'}'";
-				print" <tr>";
-			}
+		if ($count++ % 2) {
+			$col="bgcolor='$color{'color20'}'";
+		} else {
+			$col="bgcolor='$color{'color22'}'";
+		}
 
-			print "<td $col><center><b>$clientshash{$key}[4]</b></td><td $col><center>$starttime ";
-			print "</center></td><td $col><center>$endtime</center></td><td $col><center>$clientshash{$key}[0]</td><td $col><center>$clientshash{$key}[5]</center>";
-			print "</td><td $col><form method='post'><center><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><form method='post'><input type='hidden' name='ACTION' value='delete-client' /><input type='hidden' name='key' value='$clientshash{$key}[0]' /></form></tr>";
-			$count++;
+		my $coupon = ($clientshash{$key}[4] eq "LICENSE") ? $Lang::tr{'Captive terms short'} : $clientshash{$key}[4];
+
+		print <<END;
+			<tr>
+				<td $col align="center"><b>$coupon</b></td>
+				<td $col align="center">$starttime</td>
+				<td $col align="center">$endtime</td>
+				<td $col align="center">$clientshash{$key}[0]</td>
+				<td $col align="center">$clientshash{$key}[5]</td>
+				<td $col align="center">
+					<form method='post'>
+						<input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' />
+						<input type='hidden' name='ACTION' value='delete-client' />
+						<input type='hidden' name='key' value='$clientshash{$key}[0]' />
+					</form>
+				</td>
+			</tr>
+END
 	}
 
 	print "</table>";
+
 	&Header::closebox();
 }
 

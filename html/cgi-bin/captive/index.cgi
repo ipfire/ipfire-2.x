@@ -116,7 +116,7 @@ if ($cgiparams{'ACTION'} eq "SUBMIT") {
 		$clientshash{$key}[3] = $settings{'SESSION_TIME'} || "0";
 
 		# No coupon code
-		$clientshash{$key}[4] = "LICENSE";
+		$clientshash{$key}[4] = "TERMS";
 
 		&General::log("Captive", "Internet access granted via license agreement for $ip_address until $clientshash{$key}[3]");
 	}

@@ -43,6 +43,7 @@
 'Captive nolimit' => 'unlimited',
 'Captive nr' => 'Number',
 'Captive terms' => 'Terms &amp; Conditions',
+'Captive terms short' => 'T&Cs',
 'Captive time' => 'Access time post activation (hours)',
 'Captive title' => 'Title of Login Page',
 'Captive upload logo' => 'Upload Logo',
