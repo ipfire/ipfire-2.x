@@ -631,7 +631,6 @@ WARNING: untranslated string: Captive client session expiry time
 WARNING: untranslated string: Captive clients
 WARNING: untranslated string: Captive config
 WARNING: untranslated string: Captive coupon
-WARNING: untranslated string: Captive expire
 WARNING: untranslated string: Captive expiry time
 WARNING: untranslated string: Captive generate coupon
 WARNING: untranslated string: Captive issued coupons
@@ -645,7 +644,6 @@ WARNING: untranslated string: Captive terms short
 WARNING: untranslated string: Captive title
 WARNING: untranslated string: Captive upload logo
 WARNING: untranslated string: Captive upload logo recommendations
-WARNING: untranslated string: Captive voactive
 WARNING: untranslated string: Captive vouchervalid
 WARNING: untranslated string: Captive wrong ext
 WARNING: untranslated string: ConnSched dial

@@ -370,10 +370,10 @@ END
 #if settings is set to use coupons, the coupon part has to be displayed
 if ($settings{'AUTH'} eq 'COUPON') {
 	&coupons();
-} else {
-	#otherwise we show the licensepart
-	&show_license_connections();
 }
+
+# Show active clients
+&show_clients();
 
 sub getterms() {
 	my @ret;
@@ -517,50 +517,6 @@ END
 	if (! -z $coupons) {
 		&show_coupons();
 	}
-
-	if (! -z $clients) {
-		&show_clients();
-	}
-}
-
-sub show_license_connections(){
-	#if there are active clients, show the box with active connections
-	return if ( -z $clients || ! -f $clients );
-	my $count=0;
-	my $col;
-	&Header::openbox('100%', 'left', $Lang::tr{'Captive voactive'});
-print<<END
-		<center><table class='tbl'>
-		<tr>
-			<th align='center' width='15%'>$Lang::tr{'Captive coupon'}</th><th th align='center' width='15%'>$Lang::tr{'Captive activated'}</th><th th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='50%'><font size='1'>$Lang::tr{'Captive mac'}</th><th th align='center' width='5%'>$Lang::tr{'delete'}</th></tr>
-END
-;
-	#read all clients from hash and show table
-	&General::readhasharray($clients, \%clientshash) if (-e $clients);
-	foreach my $key (keys %clientshash){
-		my $starttime = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($clientshash{$key}[2]));
-		my $endtime;
-		if ($clientshash{$key}[3] eq '0'){
-			$endtime=$Lang::tr{'Captive nolimit'};
-		}else{
-			$endtime=sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($clientshash{$key}[2]+$clientshash{$key}[3]));
-		}
-
-		if ($count % 2){
-			print" <tr>";
-			$col="bgcolor='$color{'color20'}'";
-		}else{
-			$col="bgcolor='$color{'color22'}'";
-			print" <tr>";
-		}
-		print "<td $col><center>$clientshash{$key}[4]</td><td $col><center>$starttime ";
-		print "</center></td><td $col><center>$endtime ";
-		print "</td><td $col><center>$clientshash{$key}[0]</td><td $col><form method='post'><center><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><form method='post'><input type='hidden' name='ACTION' value='delete-client' /><input type='hidden' name='key' value='$clientshash{$key}[0]' /></form></tr>";
-		$count++;
-	}
-	
-	print "</table>";
-	&Header::closebox();
 }
 
 sub show_coupons() {

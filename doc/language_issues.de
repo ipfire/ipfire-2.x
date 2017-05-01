@@ -6,6 +6,7 @@ WARNING: translation string unused: Captive activate
 WARNING: translation string unused: Captive auth_lic
 WARNING: translation string unused: Captive auth_vou
 WARNING: translation string unused: Captive err doublevoucher
+WARNING: translation string unused: Captive expire
 WARNING: translation string unused: Captive genvoucher
 WARNING: translation string unused: Captive invalid logosize
 WARNING: translation string unused: Captive invalid_voucher
@@ -15,6 +16,7 @@ WARNING: translation string unused: Captive logo_upload
 WARNING: translation string unused: Captive logo_upload1
 WARNING: translation string unused: Captive nr
 WARNING: translation string unused: Captive time
+WARNING: translation string unused: Captive voactive
 WARNING: translation string unused: Captive voucher
 WARNING: translation string unused: Captive vout
 WARNING: translation string unused: ConnSched scheduler
