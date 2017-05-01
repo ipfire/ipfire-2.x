@@ -31,6 +31,7 @@
 'Captive generate coupon' => 'Generate Coupon',
 'Captive heading terms' => 'Terms &amp; Conditions',
 'Captive heading voucher' => 'Voucher or Access Code',
+'Captive invalid coupon' => 'You entered an invalid coupon code. Please try again.',
 'Captive invalid logosize' => 'The uploaded image file does not meet the required resolution of at least 1280x400 but not larger than 1920x800 pixels',
 'Captive invalid_voucher' => 'Invalid code. Please try again',
 'Captive ip' => 'IP Address',
