@@ -38,7 +38,7 @@
 								<input type="hidden" name="url" value="<TMPL_VAR NAME="URL">">
 
 								<TMPL_IF NAME="COUPON">
-										<input class="form-text <TMPL_IF NAME="ERROR">error</TMPL_IF>" type="text" name="COUPON">
+										<input class="form-text <TMPL_IF NAME="ERROR">form-error</TMPL_IF>" type="text" name="COUPON">
 										<input class="form-submit" type="submit"
 											value="<TMPL_VAR NAME="L_ACTIVATE">">
 								<TMPL_ELSE>
@@ -47,9 +47,9 @@
 								</TMPL_IF>
 
 								<TMPL_IF NAME="ERROR">
-									<p class="error">
+									<div class="text-error">
 										<TMPL_VAR NAME="ERROR">
-									</p>
+									</div>
 								</TMPL_IF>
 
 								<TMPL_IF NAME="TERMS">
