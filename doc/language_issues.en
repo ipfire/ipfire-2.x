@@ -5,6 +5,7 @@ WARNING: translation string unused: Captive 1week
 WARNING: translation string unused: Captive activate
 WARNING: translation string unused: Captive auth_lic
 WARNING: translation string unused: Captive auth_vou
+WARNING: translation string unused: Captive err doublevoucher
 WARNING: translation string unused: Captive heading terms
 WARNING: translation string unused: Captive heading voucher
 WARNING: translation string unused: Captive invalid logosize
@@ -14,6 +15,7 @@ WARNING: translation string unused: Captive logo_set
 WARNING: translation string unused: Captive nr
 WARNING: translation string unused: Captive time
 WARNING: translation string unused: Captive voucher
+WARNING: translation string unused: Captive vout
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
 WARNING: translation string unused: HDD temperature

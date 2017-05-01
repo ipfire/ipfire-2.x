@@ -564,44 +564,59 @@ END
 }
 
 sub show_coupons() {
-	#if there are already generated but unsused coupons, print a table
-	my $count=0;
-	my $col;
-	&Header::openbox('100%', 'left', $Lang::tr{'Captive vout'});
-	print<<END
-		<center><table class='tbl' border='0'>
-		<tr>
-			<th align='center' width='15%'>$Lang::tr{'Captive coupon'}</th><th align='center' width='15%'>$Lang::tr{'date'}</th><th th align='center' width='15%'>$Lang::tr{'Captive expire'}</th><th align='center' width='60%'>$Lang::tr{'remark'}</th><th align='center' width='5%'>$Lang::tr{'delete'}</th></tr>
-END
-;
 	&General::readhasharray($coupons, \%couponhash) if (-e $coupons);
-	foreach my $key (keys %couponhash)
-	{
-		my $starttime = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($couponhash{$key}[0]));
-		my $endtime;
-		if ($couponhash{$key}[2] eq '0'){
-			$endtime=$Lang::tr{'Captive nolimit'};
-		}else{
-			$endtime=sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime(time()+$couponhash{$key}[2]));
+
+	#if there are already generated but unsused coupons, print a table
+	&Header::openbox('100%', 'left', $Lang::tr{'Captive issued coupons'});
+
+	print <<END;
+		<table class='tbl' border='0'>
+			<tr>
+				<th align='center' width='15%'>
+					$Lang::tr{'Captive coupon'}
+				</th>
+				<th align='center' width='15%'>$Lang::tr{'Captive expiry time'}</th>
+				<th align='center' width='65%'>$Lang::tr{'remark'}</th>
+				<th align='center' width='5%'>$Lang::tr{'delete'}</th>
+			</tr>
+END
+
+	foreach my $key (keys %couponhash) {
+		my $expirytime = $Lang::tr{'Captive nolimit'};
+		if ($couponhash{$key}[2] > 0) {
+			$expirytime = &General::format_time($couponhash{$key}[2]);
 		}
 
-		if ($count % 2){
-			print" <tr>";
+		if ($count++ % 2) {
 			$col="bgcolor='$color{'color20'}'";
-		}else{
+		} else {
 			$col="bgcolor='$color{'color22'}'";
-			print" <tr>";
 		}
 
-		print "<td $col><center><b>$couponhash{$key}[1]</b></td>";
-		print "<td $col><center>$starttime</td>";
-		print "<td $col><center>$endtime</td>";
-		print "<td $col align='center'>$couponhash{$key}[3]</td>";
-		print "<td $col><form method='post'><center><input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' /><form method='post'><input type='hidden' name='ACTION' value='delete-coupon' /><input type='hidden' name='key' value='$couponhash{$key}[0]' /></form></tr>";
-		$count++;
+		print <<END;
+			<tr>
+				<td $col align="center">
+					<b>$couponhash{$key}[1]</b>
+				</td>
+				<td $col align="center">
+					$expirytime
+				</td>
+				<td $col align="center">
+					$couponhash{$key}[3]
+				</td>
+				<td $col align="center">
+					<form method='post'>
+						<input type='image' src='/images/delete.gif' align='middle' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' />
+						<input type='hidden' name='ACTION' value='delete-coupon' />
+						<input type='hidden' name='key' value='$couponhash{$key}[0]' />
+					</form>
+				</td>
+			</tr>
+END
 	}
 
 	print "</table>";
+
 	&Header::closebox();
 }
 
