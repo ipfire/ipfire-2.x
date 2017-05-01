@@ -42,6 +42,7 @@
 'Captive noexpiretime' => 'No valid connection time range given',
 'Captive nolimit' => 'unlimited',
 'Captive nr' => 'Number',
+'Captive please accept the terms and conditions' => 'Please accept the terms &amp; conditions',
 'Captive please enter a coupon code' => 'Please enter a coupon code',
 'Captive terms' => 'Terms &amp; Conditions',
 'Captive terms short' => 'T&Cs',

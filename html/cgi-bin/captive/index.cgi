@@ -116,15 +116,22 @@ if ($cgiparams{'ACTION'} eq "SUBMIT") {
 			$errormessage = $Lang::tr{"Captive please enter a coupon code"};
 		}
 
-	# License
+	# Terms
 	} else {
-		# Copy session expiry time
-		$clientshash{$key}[3] = $settings{'SESSION_TIME'} || "0";
+		# Make sure that they have been accepted
+		if ($cgiparams{'TERMS'} eq "on") {
+			# Copy session expiry time
+			$clientshash{$key}[3] = $settings{'SESSION_TIME'} || "0";
 
-		# No coupon code
-		$clientshash{$key}[4] = "TERMS";
+			# No coupon code
+			$clientshash{$key}[4] = "TERMS";
 
-		&General::log("Captive", "Internet access granted via license agreement for $ip_address until $clientshash{$key}[3]");
+			&General::log("Captive", "Internet access granted via license agreement for $ip_address until $clientshash{$key}[3]");
+
+		# The terms have not been accepted
+		} else {
+			$errormessage = $Lang::tr{'Captive please accept the terms and conditions'};
+		}
 	}
 
 	# If no errors were found, save configruation and reload
