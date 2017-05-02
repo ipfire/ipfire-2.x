@@ -72,8 +72,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && unzip $(DIR_DL)/$(DL_FILE)
 
 	-mkdir -pv /usr/share/bootstrap/{css,js}
-	$(DIR_APP) && cp -vf css/* /usr/share/bootstrap/css
-	$(DIR_APP) && cp -vf js/*  /usr/share/bootstrap/js
+	cd $(DIR_APP) && cp -vf css/* /usr/share/bootstrap/css
+	cd $(DIR_APP) && cp -vf js/*  /usr/share/bootstrap/js
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -548,6 +548,7 @@ buildipfire() {
   lfsmake2 web-user-interface
   lfsmake2 flag-icons
   lfsmake2 jquery
+  lfsmake2 bootstrap
   lfsmake2 arping
   lfsmake2 beep
   lfsmake2 dvdrtools
