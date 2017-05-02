@@ -28,8 +28,8 @@ srv/web/ipfire/cgi-bin/fireinfo.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
 srv/web/ipfire/cgi-bin/geoip-block.cgi
-#srv/web/ipfire/cgi-bin/guardian.cgi
 srv/web/ipfire/cgi-bin/gpl.cgi
+#srv/web/ipfire/cgi-bin/guardian.cgi
 srv/web/ipfire/cgi-bin/gui.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/hosts.cgi
@@ -95,7 +95,9 @@ srv/web/ipfire/cgi-bin/wlanap.cgi
 srv/web/ipfire/html/blob.gif
 #srv/web/ipfire/html/captive/assets
 srv/web/ipfire/html/captive/assets/bootstrap-grid.min.css
+srv/web/ipfire/html/captive/assets/bootstrap-grid.min.css.map
 srv/web/ipfire/html/captive/assets/bootstrap-reboot.min.css
+srv/web/ipfire/html/captive/assets/bootstrap-reboot.min.css.map
 srv/web/ipfire/html/captive/assets/captive.css
 srv/web/ipfire/html/captive/assets/favicon.ico
 srv/web/ipfire/html/captive/assets/ipfire.png
