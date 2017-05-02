@@ -262,7 +262,7 @@ static int add_interface_rule(const char* intf, int allow_webif_access) {
 
 	// Allow access to captive portal site
 	snprintf(command, sizeof(command), IPTABLES " -A CAPTIVE_PORTAL_CLIENTS"
-		" -d %s -p tcp --dport %d -j RETURN", intf, REDIRECT_PORT);
+		" -i %s -p tcp --dport %d -j RETURN", intf, REDIRECT_PORT);
 	r = safe_system(command);
 	if (r)
 		return r;
