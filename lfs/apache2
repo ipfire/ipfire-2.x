@@ -120,10 +120,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -rf $(DIR_CONF)/httpd/* /etc/httpd/conf
 	ln -sf $(CONFIG_ROOT)/main/hostname.conf /etc/httpd/conf/
 
-	# Create logodir for captive portal
-	mkdir -pv /srv/web/ipfire/html/captive/logo
-	chown nobody.nobody  /srv/web/ipfire/html/captive/logo
-	chmod 775 /srv/web/ipfire/html/captive/logo
+	# Create captive logging directory
+	-mkdir -pv /var/log/httpd/captive
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
