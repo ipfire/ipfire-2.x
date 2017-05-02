@@ -44,7 +44,7 @@
 'Captive nolimit' => 'Unbegrenzt',
 'Captive nr' => 'Nummer',
 'Captive please accept the terms and conditions' => 'Bitte akzeptieren Sie die Bedingungen',
-'Captive terms' => 'Bedingingen',
+'Captive terms' => 'Bedingungen',
 'Captive terms short' => 'Bedingungen',
 'Captive time' => 'Erlaubter Nutzungszeitraum nach Aktivierung (Stunden)',
 'Captive title' => 'Titel der Anmeldeseite',
