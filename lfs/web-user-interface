@@ -65,7 +65,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod -R 755 /srv/web/ipfire/cgi-bin
 	chmod -R 644 /srv/web/ipfire/html
 	chmod 755 /srv/web/ipfire/html /srv/web/ipfire/html/{index.cgi,redirect.cgi,dial.cgi,images,include,themes,themes/*,themes/*/*}
-	chmod -R 777 /srv/web/ipfire/html/captive/logo
 	ln -svf ipfire /srv/web/ipfire/html/themes/ipfire-rounded
 
 	# Reset permissions of redirect templates and theme directories
