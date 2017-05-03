@@ -741,7 +741,6 @@ buildipfire() {
   lfsmake2 ffmpeg
   lfsmake2 vdr
   lfsmake2 vdr_streamdev
-  lfsmake2 vdr_vnsiserver5
   lfsmake2 vdr_epgsearch
   lfsmake2 vdr_dvbapi
   lfsmake2 vdr_eepg
