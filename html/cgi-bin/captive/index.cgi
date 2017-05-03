@@ -153,7 +153,7 @@ my $tmpl = HTML::Template->new(
 	die_on_bad_params => 0
 );
 
-$tmpl->param(REDIRECT_URL => $url);
+$tmpl->param(REDIRECT => $url);
 
 # Coupon
 if ($settings{'AUTH'} eq "COUPON") {
