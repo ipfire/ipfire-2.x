@@ -32,6 +32,10 @@ use HTML::Template;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 
+# Load the most appropriate language from the browser configuration
+my @langs = &Lang::DetectBrowserLanguages();
+&Lang::reload(@langs);
+
 my $coupons = "${General::swroot}/captive/coupons";
 my %couponhash = ();
 
