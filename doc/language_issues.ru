@@ -760,6 +760,12 @@ WARNING: untranslated string: extrahd maybe the device is in use
 WARNING: untranslated string: extrahd to
 WARNING: untranslated string: extrahd to root
 WARNING: untranslated string: extrahd you cant mount
+WARNING: untranslated string: firewall graph country
+WARNING: untranslated string: firewall graph ip
+WARNING: untranslated string: firewall graph port
+WARNING: untranslated string: firewall log country
+WARNING: untranslated string: firewall log ip
+WARNING: untranslated string: firewall log port
 WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: firewall rules
 WARNING: untranslated string: first

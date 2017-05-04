@@ -766,6 +766,12 @@ WARNING: untranslated string: fireinfo why descr2
 WARNING: untranslated string: fireinfo why enable
 WARNING: untranslated string: fireinfo why read more
 WARNING: untranslated string: fireinfo your profile id
+WARNING: untranslated string: firewall graph country
+WARNING: untranslated string: firewall graph ip
+WARNING: untranslated string: firewall graph port
+WARNING: untranslated string: firewall log country
+WARNING: untranslated string: firewall log ip
+WARNING: untranslated string: firewall log port
 WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: firewall rules
 WARNING: untranslated string: first

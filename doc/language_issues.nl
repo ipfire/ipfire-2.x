@@ -743,6 +743,12 @@ WARNING: untranslated string: email settings
 WARNING: untranslated string: email testmail
 WARNING: untranslated string: email tls
 WARNING: untranslated string: email usemail
+WARNING: untranslated string: firewall graph country
+WARNING: untranslated string: firewall graph ip
+WARNING: untranslated string: firewall graph port
+WARNING: untranslated string: firewall log country
+WARNING: untranslated string: firewall log ip
+WARNING: untranslated string: firewall log port
 WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: fwdfw err concon
 WARNING: untranslated string: fwdfw err ratecon

@@ -707,6 +707,12 @@ WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: application layer gateways
 WARNING: untranslated string: bytes
 WARNING: untranslated string: dnssec disabled warning
+WARNING: untranslated string: firewall graph country
+WARNING: untranslated string: firewall graph ip
+WARNING: untranslated string: firewall graph port
+WARNING: untranslated string: firewall log country
+WARNING: untranslated string: firewall log ip
+WARNING: untranslated string: firewall log port
 WARNING: untranslated string: fwhost cust geoipgrp
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: guardian

@@ -161,6 +161,12 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< firewall graph country
+< firewall graph ip
+< firewall graph port
+< firewall log country
+< firewall log ip
+< firewall log port
 < firewall logs country
 < firewall rules
 < first
@@ -780,6 +786,12 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< firewall graph country
+< firewall graph ip
+< firewall graph port
+< firewall log country
+< firewall log ip
+< firewall log port
 < firewall logs country
 < firewall rules
 < first
@@ -1373,6 +1385,12 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< firewall graph country
+< firewall graph ip
+< firewall graph port
+< firewall log country
+< firewall log ip
+< firewall log port
 < firewall logs country
 < firewall rules
 < first
@@ -1964,6 +1982,12 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< firewall graph country
+< firewall graph ip
+< firewall graph port
+< firewall log country
+< firewall log ip
+< firewall log port
 < firewall logs country
 < firewall rules
 < first
