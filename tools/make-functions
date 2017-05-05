@@ -310,6 +310,16 @@ exiterror() {
 		losetup -d /dev/loop${i} 2>/dev/null
 	    fi;
 	done
+
+	if [ -n "${LOGFILE}" ]; then
+		echo # empty line
+
+		local line
+		while read -r line; do
+			echo "    ${line}"
+		done <<< "$(tail -n30 ${LOGFILE})"
+	fi
+
 	echo -e "\nERROR: $*"
 	echo "       Check $LOGFILE for errors if applicable"
 	exit 1
