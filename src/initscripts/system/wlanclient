@@ -62,7 +62,11 @@ function wpa_supplicant_make_config() {
 			--wpa-mode="${line[4]}" \
 			--ssid="${line[5]}" \
 			--psk="${line[6]}" \
-			--priority="${line[7]}"
+			--priority="${line[7]}" \
+			--auth-mode="${line[8]}" \
+			--anonymous-identity="${line[9]}" \
+			--identity="${line[10]}" \
+			--password="${line[11]}"
 
 		items=$(( ${items} + 1 ))
 
@@ -82,12 +86,16 @@ function wpa_supplicant_config_line() {
 	local config=${2}
 	shift 2
 
+	local anonymous_identity
 	local auth_alg
+	local auth_mode
+	local identity
 	local proto
 	local key_mgmt
 	local pairwise
 	local group
 	local mode
+	local password
 	local priority
 	local psk
 	local ssid
@@ -98,8 +106,20 @@ function wpa_supplicant_config_line() {
 
 	while [ $# -gt 0 ]; do
 		case "${1}" in
+			--anonymous-identity=*)
+				anonymous_identity=${1#--anonymous-identity=}
+				;;
+			--auth-mode=*)
+				auth_mode=${1#--auth-mode=}
+				;;
+			--identity=*)
+				identity=${1#--identity=}
+				;;
 			--mode=*)
 				mode=${1#--mode=}
+				;;
+			--password=*)
+				password=${1#--password=}
 				;;
 			--priority=*)
 				priority=${1#--priority=}
@@ -121,6 +141,9 @@ function wpa_supplicant_config_line() {
 	done
 
 	case "${mode}" in
+		EAP)
+			key_mgmt="WPA-EAP"
+			;;
 		WPA2)
 			auth_alg="OPEN"
 			proto="RSN"
@@ -149,7 +172,7 @@ function wpa_supplicant_config_line() {
 			;;
 	esac
 
-	if [ "${mode}" = "WPA" -o "${mode}" = "WPA2" ]; then
+	if [ "${mode}" = "EAP" -o "${mode}" = "WPA" -o "${mode}" = "WPA2" ]; then
 		case "${wpa_mode}" in
 			CCMP-CCMP)
 				pairwise="CCMP"
@@ -203,6 +226,24 @@ function wpa_supplicant_config_line() {
 		fi
 		if [ -n "${priority}" ]; then
 			echo "	priority=${priority}"
+		fi
+
+		# EAP
+		if [ "${mode}" = "EAP" ]; then
+			if [ -n "${auth_mode}" ]; then
+				echo "	eap=${auth_mode}"
+			else
+				echo "	eap=PEAP TTLS"
+			fi
+
+			if [ "${auth_mode}" = "TTLS" -a -n "${anonymous_identity}" ]; then
+				echo "	anonymous_identity=\"${anonymous_identity}\""
+			fi
+
+			if [ -n "${identity}" -a -n "${password}" ]; then
+				echo "	identity=\"${identity}\""
+				echo "	password=\"${password}\""
+			fi
 		fi
 
 		echo "}"
