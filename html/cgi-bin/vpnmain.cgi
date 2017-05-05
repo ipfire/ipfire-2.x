@@ -2504,7 +2504,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='sha2_256' $checked{'IKE_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
 					<option value='aesxcbc' $checked{'IKE_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
 					<option value='sha' $checked{'IKE_INTEGRITY'}{'sha'}>SHA1 ($Lang::tr{'vpn weak'})</option>
-					<option value='md5' $checked{'IKE_INTEGRITY'}{'md5'}>MD5i ($Lang::tr{'vpn broken'})</option>
+					<option value='md5' $checked{'IKE_INTEGRITY'}{'md5'}>MD5 ($Lang::tr{'vpn broken'})</option>
 				</select>
 			</td>
 			<td class='boldbase'>
