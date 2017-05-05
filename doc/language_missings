@@ -161,6 +161,12 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< firewall graph country
+< firewall graph ip
+< firewall graph port
+< firewall log country
+< firewall log ip
+< firewall log port
 < firewall logs country
 < firewall rules
 < first
@@ -595,25 +601,34 @@
 < wlan client
 < wlan client advanced settings
 < wlan client and
+< wlan client anonymous identity
+< wlan client auth auto
+< wlan client authentication settings
+< wlan client auth peap
+< wlan client auth ttls
 < wlan client bssid
 < wlan client ccmp
 < wlan client configuration
 < wlan client disconnected
 < wlan client duplicate ssid
+< wlan client eap authentication method
 < wlan client edit entry
 < wlan client encryption
+< wlan client encryption eap
 < wlan client encryption none
 < wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
 < wlan client group cipher
 < wlan client group key algorithm
+< wlan client identity
 < wlan client invalid key length
 < wlan client new entry
 < wlan client new network
 < wlan client pairwise cipher
 < wlan client pairwise key algorithm
 < wlan client pairwise key group key
+< wlan client password
 < wlan client psk
 < wlan clients
 < wlan client ssid
@@ -780,6 +795,12 @@
 < fireinfo why enable
 < fireinfo why read more
 < fireinfo your profile id
+< firewall graph country
+< firewall graph ip
+< firewall graph port
+< firewall log country
+< firewall log ip
+< firewall log port
 < firewall logs country
 < firewall rules
 < first
@@ -1197,25 +1218,34 @@
 < wlan client
 < wlan client advanced settings
 < wlan client and
+< wlan client anonymous identity
+< wlan client auth auto
+< wlan client authentication settings
+< wlan client auth peap
+< wlan client auth ttls
 < wlan client bssid
 < wlan client ccmp
 < wlan client configuration
 < wlan client disconnected
 < wlan client duplicate ssid
+< wlan client eap authentication method
 < wlan client edit entry
 < wlan client encryption
+< wlan client encryption eap
 < wlan client encryption none
 < wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
 < wlan client group cipher
 < wlan client group key algorithm
+< wlan client identity
 < wlan client invalid key length
 < wlan client new entry
 < wlan client new network
 < wlan client pairwise cipher
 < wlan client pairwise key algorithm
 < wlan client pairwise key group key
+< wlan client password
 < wlan client psk
 < wlan clients
 < wlan client ssid
@@ -1373,6 +1403,12 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< firewall graph country
+< firewall graph ip
+< firewall graph port
+< firewall log country
+< firewall log ip
+< firewall log port
 < firewall logs country
 < firewall rules
 < first
@@ -1784,25 +1820,34 @@
 < wlan client
 < wlan client advanced settings
 < wlan client and
+< wlan client anonymous identity
+< wlan client auth auto
+< wlan client authentication settings
+< wlan client auth peap
+< wlan client auth ttls
 < wlan client bssid
 < wlan client ccmp
 < wlan client configuration
 < wlan client disconnected
 < wlan client duplicate ssid
+< wlan client eap authentication method
 < wlan client edit entry
 < wlan client encryption
+< wlan client encryption eap
 < wlan client encryption none
 < wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
 < wlan client group cipher
 < wlan client group key algorithm
+< wlan client identity
 < wlan client invalid key length
 < wlan client new entry
 < wlan client new network
 < wlan client pairwise cipher
 < wlan client pairwise key algorithm
 < wlan client pairwise key group key
+< wlan client password
 < wlan client psk
 < wlan clients
 < wlan client ssid
@@ -1964,6 +2009,12 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< firewall graph country
+< firewall graph ip
+< firewall graph port
+< firewall log country
+< firewall log ip
+< firewall log port
 < firewall logs country
 < firewall rules
 < first
@@ -2377,25 +2428,34 @@
 < wlan client
 < wlan client advanced settings
 < wlan client and
+< wlan client anonymous identity
+< wlan client auth auto
+< wlan client authentication settings
+< wlan client auth peap
+< wlan client auth ttls
 < wlan client bssid
 < wlan client ccmp
 < wlan client configuration
 < wlan client disconnected
 < wlan client duplicate ssid
+< wlan client eap authentication method
 < wlan client edit entry
 < wlan client encryption
+< wlan client encryption eap
 < wlan client encryption none
 < wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
 < wlan client group cipher
 < wlan client group key algorithm
+< wlan client identity
 < wlan client invalid key length
 < wlan client new entry
 < wlan client new network
 < wlan client pairwise cipher
 < wlan client pairwise key algorithm
 < wlan client pairwise key group key
+< wlan client password
 < wlan client psk
 < wlan clients
 < wlan client ssid

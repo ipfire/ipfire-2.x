@@ -731,6 +731,12 @@ WARNING: untranslated string: email settings
 WARNING: untranslated string: email testmail
 WARNING: untranslated string: email tls
 WARNING: untranslated string: email usemail
+WARNING: untranslated string: firewall graph country
+WARNING: untranslated string: firewall graph ip
+WARNING: untranslated string: firewall graph port
+WARNING: untranslated string: firewall log country
+WARNING: untranslated string: firewall log ip
+WARNING: untranslated string: firewall log port
 WARNING: untranslated string: fwdfw err concon
 WARNING: untranslated string: fwdfw err ratecon
 WARNING: untranslated string: fwdfw limitconcon
@@ -830,3 +836,12 @@ WARNING: untranslated string: vpn statistic n2n
 WARNING: untranslated string: vpn statistic rw
 WARNING: untranslated string: vpn statistics n2n
 WARNING: untranslated string: vpn weak
+WARNING: untranslated string: wlan client anonymous identity
+WARNING: untranslated string: wlan client auth auto
+WARNING: untranslated string: wlan client auth peap
+WARNING: untranslated string: wlan client auth ttls
+WARNING: untranslated string: wlan client authentication settings
+WARNING: untranslated string: wlan client eap authentication method
+WARNING: untranslated string: wlan client encryption eap
+WARNING: untranslated string: wlan client identity
+WARNING: untranslated string: wlan client password
