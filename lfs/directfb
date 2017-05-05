@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.1.1
+VER        = 1.7.7
 
 THISAPP    = DirectFB-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = directfb
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c75255049ca8d5c69afe4db58f603028
+$(DL_FILE)_MD5 = 152cf1863b1a3a28aa1370e9053440bf
 
 install : $(TARGET)
 
@@ -79,14 +79,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/directfb-1.1.1-fix-mknod.patch
-	cd $(DIR_APP) && sed -i "s/checkfor_matrox=yes/checkfor_matrox=no/g" configure
-	cd $(DIR_APP) && sed -i "s/checkfor_cle266=no/checkfor_cle266=yes/g" configure
-	cd $(DIR_APP) && sed -i "s/checkfor_omap=.*/checkfor_omap=no/g" configure
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-x11 --enable-sdl \
-				     --enable-video4linux2 
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--disable-x11 \
+		--enable-sdl \
+		--enable-video4linux2
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	ln -s $(THISAPP) /usr/src/directfb
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
