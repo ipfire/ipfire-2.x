@@ -84,30 +84,31 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_SRC)/bluez*
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && tar xzf $(DIR_DL)/bluez-utils-$(VER).tar.gz
+	cd $(DIR_APP) && tar xzf $(DIR_DL)/bluez-firmware-1.2.tar.gz
+	cd $(DIR_APP) && tar xzf $(DIR_DL)/bluez-hcidump-1.42.tar.gz
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure --prefix=/usr \
 	    --sysconfdir=/etc --localstatedir=/var --libexecdir=/lib
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	cd $(DIR_SRC) && tar xzf $(DIR_DL)/bluez-utils-$(VER).tar.gz
-	cd $(DIR_SRC)/bluez-utils-$(VER) && ./configure --prefix=/usr \
+	cd $(DIR_APP)/bluez-utils-$(VER) && ./configure --prefix=/usr \
 	    --sysconfdir=/etc --localstatedir=/var --libexecdir=/lib \
 	    --enable-alsa --enable-usb --enable-netlink --enable-tools \
 	    --enable-bccmd --enable-hid2hci --enable-dfutool --enable-hidd \
 	    --enable-pand --enable-dund --enable-cups --enable-test \
 	    --enable-configfiles --enable-pcmciarules
-	cd $(DIR_SRC)/bluez-utils-$(VER) && make $(MAKETUNING)
-	cd $(DIR_SRC)/bluez-utils-$(VER) && make install
-	cd $(DIR_SRC)/bluez-utils-$(VER) && install -m 755 \
+	cd $(DIR_APP)/bluez-utils-$(VER) && make $(MAKETUNING)
+	cd $(DIR_APP)/bluez-utils-$(VER) && make install
+	cd $(DIR_APP)/bluez-utils-$(VER) && install -m 755 \
 		test/passkey-agent /usr/bin/passkey-agent
-	cd $(DIR_SRC) && tar xzf $(DIR_DL)/bluez-firmware-1.2.tar.gz
-	cd $(DIR_SRC)/bluez-firmware-1.2 && ./configure --libdir=/lib
-	cd $(DIR_SRC)/bluez-firmware-1.2 && make $(MAKETUNING)
-	cd $(DIR_SRC)/bluez-firmware-1.2 && make install
-	cd $(DIR_SRC) && tar xzf $(DIR_DL)/bluez-hcidump-1.42.tar.gz
-	cd $(DIR_SRC)/bluez-hcidump-1.42 && ./configure --prefix=/usr \
+	cd $(DIR_APP)/bluez-firmware-1.2 && ./configure --libdir=/lib
+	cd $(DIR_APP)/bluez-firmware-1.2 && make $(MAKETUNING)
+	cd $(DIR_APP)/bluez-firmware-1.2 && make install
+	cd $(DIR_APP)/bluez-hcidump-1.42 && ./configure --prefix=/usr \
 	    --sysconfdir=/etc --localstatedir=/var --libexecdir=/lib
-	cd $(DIR_SRC)/bluez-hcidump-1.42 && make $(MAKETUNING)
-	cd $(DIR_SRC)/bluez-hcidump-1.42 && make install
+	cd $(DIR_APP)/bluez-hcidump-1.42 && make $(MAKETUNING)
+	cd $(DIR_APP)/bluez-hcidump-1.42 && make install
 	mv -f /etc/udev/bluetooth.rules /lib/udev/rules.d/24-bluetooth.rules
 	# Patch udev rules for new udev version
 	sed -i -e "s/SYSFS{/ATTRS{/g" /lib/udev/rules.d/24-bluetooth.rules
