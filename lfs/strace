@@ -25,6 +25,7 @@
 include Config
 
 VER        = 4.7
+SUP_ARCHES = x86_64 i586 armv5tel
 
 THISAPP    = strace-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
