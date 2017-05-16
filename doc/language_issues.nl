@@ -871,6 +871,7 @@ WARNING: untranslated string: ta key
 WARNING: untranslated string: unblock
 WARNING: untranslated string: unblock all
 WARNING: untranslated string: uncheck all
+WARNING: untranslated string: uplink bit rate
 WARNING: untranslated string: upload dh key
 WARNING: untranslated string: vendor
 WARNING: untranslated string: vpn broken
@@ -884,6 +885,7 @@ WARNING: untranslated string: vpn statistic n2n
 WARNING: untranslated string: vpn statistic rw
 WARNING: untranslated string: vpn statistics n2n
 WARNING: untranslated string: vpn weak
+WARNING: untranslated string: wireless network
 WARNING: untranslated string: wlan client anonymous identity
 WARNING: untranslated string: wlan client auth auto
 WARNING: untranslated string: wlan client auth peap

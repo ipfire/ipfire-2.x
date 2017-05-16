@@ -1144,6 +1144,7 @@ WARNING: untranslated string: unblock
 WARNING: untranslated string: unblock all
 WARNING: untranslated string: uncheck all
 WARNING: untranslated string: uplink
+WARNING: untranslated string: uplink bit rate
 WARNING: untranslated string: upload dh key
 WARNING: untranslated string: uptime load average
 WARNING: untranslated string: urlfilter redirect template
@@ -1161,6 +1162,7 @@ WARNING: untranslated string: vpn statistic n2n
 WARNING: untranslated string: vpn statistic rw
 WARNING: untranslated string: vpn statistics n2n
 WARNING: untranslated string: vpn weak
+WARNING: untranslated string: wireless network
 WARNING: untranslated string: wlan client
 WARNING: untranslated string: wlan client advanced settings
 WARNING: untranslated string: wlan client and
