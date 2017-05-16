@@ -1170,6 +1170,8 @@ WARNING: untranslated string: wlan client configuration
 WARNING: untranslated string: wlan client disconnected
 WARNING: untranslated string: wlan client duplicate ssid
 WARNING: untranslated string: wlan client eap authentication method
+WARNING: untranslated string: wlan client eap phase2 method
+WARNING: untranslated string: wlan client eap state
 WARNING: untranslated string: wlan client edit entry
 WARNING: untranslated string: wlan client encryption
 WARNING: untranslated string: wlan client encryption eap
@@ -1181,6 +1183,7 @@ WARNING: untranslated string: wlan client group cipher
 WARNING: untranslated string: wlan client group key algorithm
 WARNING: untranslated string: wlan client identity
 WARNING: untranslated string: wlan client invalid key length
+WARNING: untranslated string: wlan client method
 WARNING: untranslated string: wlan client new entry
 WARNING: untranslated string: wlan client new network
 WARNING: untranslated string: wlan client pairwise cipher
@@ -1190,6 +1193,8 @@ WARNING: untranslated string: wlan client password
 WARNING: untranslated string: wlan client psk
 WARNING: untranslated string: wlan client ssid
 WARNING: untranslated string: wlan client tkip
+WARNING: untranslated string: wlan client tls cipher
+WARNING: untranslated string: wlan client tls version
 WARNING: untranslated string: wlan client wpa mode
 WARNING: untranslated string: wlan client wpa mode all
 WARNING: untranslated string: wlan client wpa mode ccmp ccmp

@@ -680,6 +680,59 @@ sub ShowStatus() {
 				</tr>
 END
 
+		if ($status{'EAP state'}) {
+			my $selected_method = $status{'selectedMethod'};
+			$selected_method =~ s/\d+ \((.*)\)/$1/e;
+
+			print <<END;
+				<tr>
+					<td colspan='2'>
+						<strong>$Lang::tr{'wlan client encryption eap'}</strong>
+					</td>
+				</tr>
+				<tr>
+					<td width='20%'>
+						$Lang::tr{'wlan client eap state'}
+					</td>
+					<td width='80%'>
+						$status{'EAP state'}
+					</td>
+				</tr>
+				<tr>
+					<td width='20%'>
+						$Lang::tr{'wlan client method'}
+					</td>
+					<td width='80%'>
+						$selected_method
+					</td>
+				</tr>
+				<tr>
+					<td width='20%'>
+						$Lang::tr{'wlan client tls version'}
+					</td>
+					<td width='80%'>
+						$status{'eap_tls_version'}
+					</td>
+				</tr>
+				<tr>
+					<td width='20%'>
+						$Lang::tr{'wlan client tls cipher'}
+					</td>
+					<td width='80%'>
+						$status{'EAP TLS cipher'}
+					</td>
+				</tr>
+				<tr>
+					<td width='20%'>
+						$Lang::tr{'wlan client eap phase2 method'}
+					</td>
+					<td width='80%'>
+						$status{"${selected_method}v0 Phase2 method"}
+					</td>
+				</tr>
+END
+		}
+
 		if (($status{'pairwise_cipher'} ne "NONE") || ($status{'group_cipher'} ne "NONE")) {
 			print <<END;
 				<tr>
