@@ -826,7 +826,6 @@ buildipfire() {
   lfsmake2 dpfhack
   lfsmake2 lcd4linux
   lfsmake2 mtr
-  lfsmake2 tcpick
   lfsmake2 minidlna
   lfsmake2 acpid
   lfsmake2 fping
