@@ -791,7 +791,6 @@ buildipfire() {
   lfsmake2 cacti
   lfsmake2 openvmtools
   lfsmake2 nagiosql
-  lfsmake2 iftop
   lfsmake2 motion
   lfsmake2 joe
   lfsmake2 monit
