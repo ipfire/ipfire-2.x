@@ -28,8 +28,12 @@ usr/lib/libattr.so.1.1.0
 #usr/share/man/man1/attr.1
 #usr/share/man/man1/getfattr.1
 #usr/share/man/man1/setfattr.1
-#usr/share/man/man2/fgetxattr.2
-#usr/share/man/man2/fsetxattr.2
+#usr/share/man/man2/flistxattr.2
+#usr/share/man/man2/fremovexattr.2
+#usr/share/man/man2/getxattr.2
+#usr/share/man/man2/setxattr.2
+#usr/share/man/man2/llistxattr.2
+#usr/share/man/man2/lremovexattr.2
 #usr/share/man/man3/attr_get.3
 #usr/share/man/man3/attr_getf.3
 #usr/share/man/man3/attr_list.3
