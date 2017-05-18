@@ -558,6 +558,7 @@
 < updxlrtr sources
 < updxlrtr standard view
 < uplink
+< uplink bit rate
 < upload dh key
 < upload new ruleset
 < uptime
@@ -577,6 +578,7 @@
 < vpn statistic n2n
 < vpn statistic rw
 < vpn weak
+< wireless network
 < wlanap access point
 < wlanap channel
 < wlanap country
@@ -601,29 +603,43 @@
 < wlan client
 < wlan client advanced settings
 < wlan client and
+< wlan client anonymous identity
+< wlan client auth auto
+< wlan client authentication settings
+< wlan client auth peap
+< wlan client auth ttls
 < wlan client bssid
 < wlan client ccmp
 < wlan client configuration
 < wlan client disconnected
 < wlan client duplicate ssid
+< wlan client eap authentication method
+< wlan client eap phase2 method
+< wlan client eap state
 < wlan client edit entry
 < wlan client encryption
+< wlan client encryption eap
 < wlan client encryption none
 < wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
 < wlan client group cipher
 < wlan client group key algorithm
+< wlan client identity
 < wlan client invalid key length
+< wlan client method
 < wlan client new entry
 < wlan client new network
 < wlan client pairwise cipher
 < wlan client pairwise key algorithm
 < wlan client pairwise key group key
+< wlan client password
 < wlan client psk
 < wlan clients
 < wlan client ssid
 < wlan client tkip
+< wlan client tls cipher
+< wlan client tls version
 < wlan client wpa mode
 < wlan client wpa mode all
 < wlan client wpa mode ccmp ccmp
@@ -1189,6 +1205,7 @@
 < updxlrtr sources
 < updxlrtr standard view
 < uplink
+< uplink bit rate
 < upload dh key
 < uptime
 < uptime load average
@@ -1205,33 +1222,48 @@
 < vpn statistic n2n
 < vpn statistic rw
 < vpn weak
+< wireless network
 < wlanap country
 < wlan client
 < wlan client advanced settings
 < wlan client and
+< wlan client anonymous identity
+< wlan client auth auto
+< wlan client authentication settings
+< wlan client auth peap
+< wlan client auth ttls
 < wlan client bssid
 < wlan client ccmp
 < wlan client configuration
 < wlan client disconnected
 < wlan client duplicate ssid
+< wlan client eap authentication method
+< wlan client eap phase2 method
+< wlan client eap state
 < wlan client edit entry
 < wlan client encryption
+< wlan client encryption eap
 < wlan client encryption none
 < wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
 < wlan client group cipher
 < wlan client group key algorithm
+< wlan client identity
 < wlan client invalid key length
+< wlan client method
 < wlan client new entry
 < wlan client new network
 < wlan client pairwise cipher
 < wlan client pairwise key algorithm
 < wlan client pairwise key group key
+< wlan client password
 < wlan client psk
 < wlan clients
 < wlan client ssid
 < wlan client tkip
+< wlan client tls cipher
+< wlan client tls version
 < wlan client wpa mode
 < wlan client wpa mode all
 < wlan client wpa mode ccmp ccmp
@@ -1782,6 +1814,7 @@
 < updxlrtr sources
 < updxlrtr standard view
 < uplink
+< uplink bit rate
 < upload dh key
 < uptime
 < uptime load average
@@ -1798,33 +1831,48 @@
 < vpn statistic n2n
 < vpn statistic rw
 < vpn weak
+< wireless network
 < wlanap country
 < wlan client
 < wlan client advanced settings
 < wlan client and
+< wlan client anonymous identity
+< wlan client auth auto
+< wlan client authentication settings
+< wlan client auth peap
+< wlan client auth ttls
 < wlan client bssid
 < wlan client ccmp
 < wlan client configuration
 < wlan client disconnected
 < wlan client duplicate ssid
+< wlan client eap authentication method
+< wlan client eap phase2 method
+< wlan client eap state
 < wlan client edit entry
 < wlan client encryption
+< wlan client encryption eap
 < wlan client encryption none
 < wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
 < wlan client group cipher
 < wlan client group key algorithm
+< wlan client identity
 < wlan client invalid key length
+< wlan client method
 < wlan client new entry
 < wlan client new network
 < wlan client pairwise cipher
 < wlan client pairwise key algorithm
 < wlan client pairwise key group key
+< wlan client password
 < wlan client psk
 < wlan clients
 < wlan client ssid
 < wlan client tkip
+< wlan client tls cipher
+< wlan client tls version
 < wlan client wpa mode
 < wlan client wpa mode all
 < wlan client wpa mode ccmp ccmp
@@ -2380,6 +2428,7 @@
 < updxlrtr sources
 < updxlrtr standard view
 < uplink
+< uplink bit rate
 < upload dh key
 < uptime
 < uptime load average
@@ -2397,33 +2446,48 @@
 < vpn statistic rw
 < vpn weak
 < week-graph
+< wireless network
 < wlanap country
 < wlan client
 < wlan client advanced settings
 < wlan client and
+< wlan client anonymous identity
+< wlan client auth auto
+< wlan client authentication settings
+< wlan client auth peap
+< wlan client auth ttls
 < wlan client bssid
 < wlan client ccmp
 < wlan client configuration
 < wlan client disconnected
 < wlan client duplicate ssid
+< wlan client eap authentication method
+< wlan client eap phase2 method
+< wlan client eap state
 < wlan client edit entry
 < wlan client encryption
+< wlan client encryption eap
 < wlan client encryption none
 < wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
 < wlan client group cipher
 < wlan client group key algorithm
+< wlan client identity
 < wlan client invalid key length
+< wlan client method
 < wlan client new entry
 < wlan client new network
 < wlan client pairwise cipher
 < wlan client pairwise key algorithm
 < wlan client pairwise key group key
+< wlan client password
 < wlan client psk
 < wlan clients
 < wlan client ssid
 < wlan client tkip
+< wlan client tls cipher
+< wlan client tls version
 < wlan client wpa mode
 < wlan client wpa mode all
 < wlan client wpa mode ccmp ccmp

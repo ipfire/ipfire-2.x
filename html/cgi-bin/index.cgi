@@ -217,7 +217,48 @@ END
 			</td>
 			<td></td>
 		</tr>
-	</table>
+END
+
+	if (&General::RedIsWireless()) {
+		my $iface = $netsettings{"RED_DEV"} || "red0";
+
+		my $essid        = &Network::wifi_get_essid($iface);
+		my $frequency    = &Network::wifi_get_frequency($iface);
+		my $access_point = &Network::wifi_get_access_point($iface);
+		my $bit_rate     = &Network::wifi_get_bit_rate($iface);
+		my $link_quality = &Network::wifi_get_link_quality($iface);
+		my $signal_level = &Network::wifi_get_signal_level($iface);
+
+		print <<END;
+			<tr>
+				<td>
+					<strong>$Lang::tr{'wireless network'}:</strong>
+				</td>
+				<td style="text-align: center">
+					$essid
+				</td>
+				<td style="text-align: center">
+					$access_point @ $frequency
+				</td>
+			</tr>
+			<tr>
+				<td>
+					<strong>
+						$Lang::tr{'uplink bit rate'}:
+					</strong>
+				</td>
+				<td style="text-align: center">
+					$bit_rate
+				</td>
+				<td style="text-align: center">
+					$link_quality% @ $signal_level
+				</td>
+			</tr>
+END
+	}
+
+	print <<END;
+		</table>
 END
 
 #Dial profiles
