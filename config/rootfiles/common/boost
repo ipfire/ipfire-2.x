@@ -13629,12 +13629,6 @@ usr/lib/libboost_program_options-mt.so.1.64.0
 #usr/lib/libboost_program_options.a
 #usr/lib/libboost_program_options.so
 usr/lib/libboost_program_options.so.1.64.0
-#usr/lib/libboost_python-mt.a
-#usr/lib/libboost_python-mt.so
-usr/lib/libboost_python-mt.so.1.64.0
-#usr/lib/libboost_python.a
-#usr/lib/libboost_python.so
-usr/lib/libboost_python.so.1.64.0
 #usr/lib/libboost_random-mt.a
 #usr/lib/libboost_random-mt.so
 usr/lib/libboost_random-mt.so.1.64.0
