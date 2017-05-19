@@ -992,7 +992,7 @@ ipfirepackages() {
 while [ $# -gt 0 ]; do
 	case "${1}" in
 		--target=*)
-			configure_target "${1#--target=}"
+			configure_build "${1#--target=}"
 			;;
 		-*)
 			exiterror "Unknown configuration option: ${1}"
