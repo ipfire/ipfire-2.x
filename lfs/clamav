@@ -82,6 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/clamav/llvm-glibc.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/clamav-0.99.2-gcc-6.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--disable-zlib-vcheck \
