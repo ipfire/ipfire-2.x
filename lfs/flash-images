@@ -114,7 +114,7 @@ endif
 	mount $(PART_BOOT) $(MNThdd)/boot
 
 	# Install Pandaboard MLO and uboot first
-ifeq "$(BUILD_PLATFORM)" "arm"
+ifeq "$(BUILD_ARCH)" "armv5tel"
 	cp -v /boot/MLO $(MNThdd)/boot/
 	cp -v /boot/u-boot.img $(MNThdd)/boot/
 	sync
@@ -208,7 +208,7 @@ endif
 	# not copied to a block device)
 	dd if=/dev/zero bs=1M count=$(PADDING) >> $(IMG)
 
-ifeq "$(BUILD_PLATFORM)" "arm"
+ifeq "$(BUILD_ARCH)" "armv5tel"
 	# Install u-boot for Orangepi Zero/Nanopi DUO into image 8KB
 	dd if=/usr/share/u-boot/orangepi_zero/u-boot-sunxi-with-spl.bin of=$(IMG) bs=1K seek=8 conv=notrunc
 endif
