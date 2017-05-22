@@ -29,7 +29,6 @@ srv/web/ipfire/cgi-bin/gui.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/hosts.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
-#srv/web/ipfire/cgi-bin/imspector.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ipinfo.cgi
 srv/web/ipfire/cgi-bin/iptables.cgi

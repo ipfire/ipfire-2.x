@@ -1,5 +1,0 @@
-    $subipfire->{'30.imspector'} = {'caption' => 'Imspector',
-				  'uri' => '/cgi-bin/imspector.cgi',
-				  'title' => 'Imspector',
-				  'enabled' => 1,
-				  };

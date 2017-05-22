@@ -805,7 +805,6 @@ buildipfire() {
   lfsmake2 pound
   lfsmake2 minicom
   lfsmake2 ddrescue
-  lfsmake2 imspector
   lfsmake2 miniupnpd
   lfsmake2 client175
   lfsmake2 powertop
