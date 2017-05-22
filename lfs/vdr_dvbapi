@@ -25,6 +25,8 @@
 include Config
 
 VER        = 1.0.6
+SUP_ARCHES =
+
 THISAPP    = vdr-plugin-dvbapi-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 

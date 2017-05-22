@@ -26,6 +26,8 @@ include Config
 
 VER        = 0.6.1
 GIT_VER    = 10db11ac
+SUP_ARCHES =
+
 THISAPP    = vdr-streamdev-$(GIT_VER)
 DL_FILE    = $(THISAPP).tar.xz
 

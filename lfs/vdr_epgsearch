@@ -25,6 +25,8 @@
 include Config
 
 VER        = 1.0.1.beta5
+SUP_ARCHES =
+
 THISAPP    = vdr-epgsearch-$(VER)
 DL_FILE    = $(THISAPP).tgz
 
