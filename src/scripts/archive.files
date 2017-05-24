@@ -19,6 +19,13 @@
 #                                                                             #
 ###############################################################################
 
+for i in BUILD_ARCH BUILDTARGET KVER; do
+	if [ -z "${!i}" ]; then
+		echo "${i} not set" >&2
+		exit 1
+	fi
+done
+
 FILELIST=
 
 for dir in $@; do
