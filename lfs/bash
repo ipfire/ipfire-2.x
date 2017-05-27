@@ -99,13 +99,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
-	ln -sf bash /bin/sh
-
-ifneq "$(ROOT)" ""
-	-mkdir -p $(ROOT)/bin
-	-mkdir -p $(ROOT)/usr/bin
-	ln -sf bash /tools/bin/sh
-	-ln -sf /tools/bin/bash $(ROOT)/bin/sh
+ifeq "$(TOOLCHAIN)" "1"
+	ln -svf bash /tools/bin/sh
+else
+	ln -svf bash /bin/sh
 endif
 
 	@rm -rf $(DIR_APP)
