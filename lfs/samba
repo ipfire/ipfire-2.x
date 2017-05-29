@@ -54,7 +54,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -170,10 +170,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--with-libsmbclient \
 		--with-libsmbsharemodes \
 		--with-sendfile-support \
-		--without-smbwrapper \
-		--with-mmap \
 		--with-fhs \
-		--with-vfs \
 		--with-winbind \
 		--disable-swat \
 		--enable-cups \
@@ -187,8 +184,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	#cd $(DIR_APP)/source3 && install -v -m755 nsswitch/libnss_winbind.so /lib
 	#cd $(DIR_APP)/source3 && ln -v -sf libnss_winbind.so /lib/libnss_winbind.so.2
 	#cd $(DIR_APP)/source3 && ln -v -sf libnss_wins.so /lib/libnss_wins.so.2
+	-mkdir -p /var/ipfire/samba
 	cd $(DIR_APP)/source3 && install -v -m644 ../examples/smb.conf.default /var/ipfire/samba
-	-mkdir -p /var/ipfire/samba	
 	cp -vrf $(DIR_SRC)/config/samba/* /var/ipfire/samba/
 	chown nobody:nobody -R /var/ipfire/samba/
 	cp -vfp /var/ipfire/samba/default.global /var/ipfire/samba/global
