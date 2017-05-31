@@ -47,6 +47,14 @@ ldconfig
 # Remove deprecated options
 sed -e "/^RSAAuthentication/d" -i /etc/ssh/sshd_config
 
+# Remove avahi from system and pakfire db
+for i in $(cat /opt/pakfire/db/rootfiles/avahi); do
+    rm -rfv /${i}
+done
+rm -fv /opt/pakfire/db/rootfiles/avahi
+rm -fv /opt/pakfire/db/*/meta-avahi
+rm -fv /etc/rc.d/rc*.d/???avahi
+
 # Start services
 /etc/init.d/unbound start
 /etc/init.d/sshd restart

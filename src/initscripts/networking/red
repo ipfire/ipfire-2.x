@@ -457,6 +457,8 @@ case "${1}" in
 		;;
 
 	stop)
+		rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
+
 		if [ "$TYPE" == "STATIC" ]; then
 			boot_mesg "Stopping default gateway ${GATEWAY}..."
 			ip route del default via ${GATEWAY} >/dev/null 2>&1
@@ -521,7 +523,6 @@ case "${1}" in
 		## Disable vnstat collection
 		/usr/bin/vnstat -u -i ${DEVICE} -r --disable > /dev/null 2>&1
 
-		rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
 		exit 0;
 		;;
 esac

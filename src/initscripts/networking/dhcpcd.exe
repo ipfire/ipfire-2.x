@@ -79,7 +79,6 @@ dhcpcd_down()
 	# Only if RED_TYPE=DHCP update /var/ipfire/red
 	if [ "$RED_TYPE" == "DHCP" ]; then
 		logger -p local0.info -t dhcpcd.exe[$$] "${interface} has been brought down"
-		rm -f /var/ipfire/red/active
 		run_subdir ${rc_base}/init.d/networking/red.down/
 	fi
 }
