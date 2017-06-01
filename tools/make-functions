@@ -645,7 +645,9 @@ lfsmake2() {
 	local PS1='\u:\w$ '
 
 	enterchroot \
-		bash -x -c "cd /usr/src/lfs && make -f $* LFS_BASEDIR=/usr/src install" \
+		bash -x -c "cd /usr/src/lfs && make -f $* \
+			MAKETUNING=${MAKETUNING} \
+			LFS_BASEDIR=/usr/src install" \
 		>> ${LOGFILE} 2>&1
 
 	local COMPILE_SUCCESS=$?
