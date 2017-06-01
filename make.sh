@@ -1014,7 +1014,7 @@ build)
 	#only restore on a clean disk
 	if [ ! -e "${BASEDIR}/build/tools/.toolchain-successful" ]; then
 		if [ ! -n "$PACKAGE" ]; then
-			beautify build_stage "Full toolchain compilation - Native GCC: `gcc --version | grep GCC | awk {'print $3'}`"
+			beautify build_stage "Full toolchain compilation"
 			prepareenv
 			buildtoolchain
 		else
