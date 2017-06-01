@@ -1,0 +1,46 @@
+------------------------------------------------------------
+revno: 14158
+revision-id: squid3@treenet.co.nz-20170529043611-1hyb93ivtu5wrdwg
+parent: squid3@treenet.co.nz-20170529042116-kp9naxxmdsqicpjv
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=3102
+author: Martin von Gagern <martin.vgagern@gmx.net>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Mon 2017-05-29 16:36:11 +1200
+message:
+  Bug 3102: FTP directory listing drops fist character of file names
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20170529043611-1hyb93ivtu5wrdwg
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 60a5f01fc9c9967c55c651c31546cb1067325705
+# timestamp: 2017-05-29 04:39:59 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170529042116-\
+#   kp9naxxmdsqicpjv
+# 
+# Begin patch
+=== modified file 'src/clients/FtpGateway.cc'
+--- src/clients/FtpGateway.cc	2017-02-26 08:50:09 +0000
++++ src/clients/FtpGateway.cc	2017-05-29 04:36:11 +0000
+@@ -626,10 +626,17 @@
+                 while (strchr(w_space, *copyFrom))
+                     ++copyFrom;
+             } else {
+-                /* XXX assumes a single space between date and filename
++                /* Handle the following four formats:
++                 * "MMM DD  YYYY Name"
++                 * "MMM DD  YYYYName"
++                 * "MMM DD YYYY  Name"
++                 * "MMM DD YYYY Name"
++                 * Assuming a single space between date and filename
+                  * suggested by:  Nathan.Bailey@cc.monash.edu.au and
+                  * Mike Battersby <mike@starbug.bofh.asn.au> */
+-                copyFrom += strlen(tbuf) + 1;
++                copyFrom += strlen(tbuf);
++                if (strchr(w_space, *copyFrom))
++                    ++copyFrom;
+             }
+ 
+             p->name = xstrdup(copyFrom);
+

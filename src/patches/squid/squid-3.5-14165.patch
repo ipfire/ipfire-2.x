@@ -1,0 +1,51 @@
+------------------------------------------------------------
+revno: 14165
+revision-id: squid3@treenet.co.nz-20170529071037-o91o8xvaqata5y2b
+parent: squid3@treenet.co.nz-20170529063645-qmu68scq9go0wbqr
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=4682
+author: Christos Tsantilas <chtsanti@users.sourceforge.net>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Mon 2017-05-29 19:10:37 +1200
+message:
+  Bug 4682: ignoring http_access deny when client-first bumping mode is used
+  
+  Squid fails to identify HTTP requests which are tunneled inside an already
+  established client-first bumped tunnel, and this is results in ignoring
+  http_access denied for these requests.
+  
+  This is a Measurement Factory project
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20170529071037-o91o8xvaqata5y2b
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: f77b81826612d7248fb774ef1ea00747cd04d479
+# timestamp: 2017-05-29 07:51:03 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170529063645-\
+#   qmu68scq9go0wbqr
+# 
+# Begin patch
+=== modified file 'src/client_side_request.cc'
+--- src/client_side_request.cc	2017-03-30 13:31:22 +0000
++++ src/client_side_request.cc	2017-05-29 07:10:37 +0000
+@@ -1424,7 +1424,17 @@
+     if (bumpMode != Ssl::bumpEnd) {
+         debugs(85, 5, HERE << "SslBump already decided (" << bumpMode <<
+                "), " << "ignoring ssl_bump for " << http->getConn());
+-        if (!http->getConn()->serverBump())
++
++        // We need the following "if" for transparently bumped TLS connection,
++        // because in this case we are running ssl_bump access list before
++        // the doCallouts runs. It can be removed after the bug #4340 fixed.
++        // We do not want to proceed to bumping steps:
++        //  - if the TLS connection with the client is already established
++        //    because we are accepting normal HTTP requests on TLS port,
++        //    or because of the client-first bumping mode
++        //  - When the bumping is already started
++        if (!http->getConn()->switchedToHttps() &&
++                !http->getConn()->serverBump())
+             http->sslBumpNeed(bumpMode); // for processRequest() to bump if needed and not already bumped
+         http->al->ssl.bumpMode = bumpMode; // inherited from bumped connection
+         return false;
+

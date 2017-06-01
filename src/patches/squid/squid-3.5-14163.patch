@@ -1,0 +1,103 @@
+------------------------------------------------------------
+revno: 14163
+revision-id: squid3@treenet.co.nz-20170529062945-gf7u7dukaumjof74
+parent: squid3@treenet.co.nz-20170529055234-790hfbazjwy0fmk4
+author: Ingo Schwarze, Francesco Chemolli <kinkie@squid-cache.org>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Mon 2017-05-29 18:29:45 +1200
+message:
+  Docs: Improve formatting of several manual pages
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20170529062945-gf7u7dukaumjof74
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: b417bbc7ffb2351fb670e7baa721b9d9b8315024
+# timestamp: 2017-05-29 06:33:51 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170529055234-\
+#   790hfbazjwy0fmk4
+# 
+# Begin patch
+=== modified file 'helpers/basic_auth/LDAP/basic_ldap_auth.8'
+--- helpers/basic_auth/LDAP/basic_ldap_auth.8	2017-03-31 23:47:47 +0000
++++ helpers/basic_auth/LDAP/basic_ldap_auth.8	2017-05-29 06:29:45 +0000
+@@ -5,9 +5,9 @@
+ .
+ .SH SYNOPSIS
+ .if !'po4a'hide' .B basic_ldap_auth
+-.if !'po4a'hide' .B \-b\ \"
++.if !'po4a'hide' .B \-b\ \(dq
+ base DN
+-.if !'po4a'hide' .B \"\ [\-u
++.if !'po4a'hide' .B \(dq\ [\-u
+ attribute
+ .if !'po4a'hide' .B ]\ [
+ options
+@@ -20,11 +20,11 @@
+ .if !'po4a'hide' .B ]...
+ .br
+ .if !'po4a'hide' .B basic_ldap_auth
+-.if !'po4a'hide' .B \-b\ \"
++.if !'po4a'hide' .B \-b\ \(dq
+ base DN
+-.if !'po4a'hide' .B \"\ \-f\ \"
++.if !'po4a'hide' .B \(dq\ \-f\ \(dq
+ LDAP search filter
+-.if !'po4a'hide' .B \"\ [
++.if !'po4a'hide' .B \(dq\ [
+ options
+ .if !'po4a'hide' .B ]\ [
+ LDAP server name
+@@ -74,7 +74,7 @@
+ The search filter can contain up to 15 occurrences of
+ .B %s
+ which will be replaced by the username, as in
+-.B "\"uid\=%s\""
++.B "\(dquid\=%s\(dq"
+ for RFC2037 directories. For a detailed description of LDAP search
+ filter syntax see RFC2254.
+ .br
+
+=== modified file 'helpers/basic_auth/RADIUS/basic_radius_auth.8'
+--- helpers/basic_auth/RADIUS/basic_radius_auth.8	2017-01-01 00:16:45 +0000
++++ helpers/basic_auth/RADIUS/basic_radius_auth.8	2017-05-29 06:29:45 +0000
+@@ -9,9 +9,9 @@
+ config file
+ .br
+ .if !'po4a'hide' .B basic_radius_auth
+-.if !'po4a'hide' .B "\-h \""
++.if !'po4a'hide' .B "\-h \(dq"
+ server name
+-.if !'po4a'hide' .B "\" [\-p "
++.if !'po4a'hide' .B "\(dq [\-p "
+ port
+ .if !'po4a'hide' .B "] [\-i "
+ identifier
+
+=== modified file 'helpers/external_acl/file_userip/ext_file_userip_acl.8'
+--- helpers/external_acl/file_userip/ext_file_userip_acl.8	2017-01-01 00:16:45 +0000
++++ helpers/external_acl/file_userip/ext_file_userip_acl.8	2017-05-29 06:29:45 +0000
+@@ -68,7 +68,7 @@
+ .B ALL 
+ and 
+ .B NONE 
+-, which mean \"any user on this IP address may authenticate\" or \"no user on this IP address may authenticate\".
++, which mean \(dqany user on this IP address may authenticate\(dq or \(dqno user on this IP address may authenticate\(dq.
+ .
+ .SH AUTHOR
+ This program was written by
+
+=== modified file 'tools/squidclient/squidclient.1'
+--- tools/squidclient/squidclient.1	2017-01-01 00:16:45 +0000
++++ tools/squidclient/squidclient.1	2017-05-29 06:29:45 +0000
+@@ -86,7 +86,7 @@
+ .if !'po4a'hide' .TP
+ .if !'po4a'hide' .B "\-H 'string'"
+ Extra headers to send. Use
+-.B '\\n'
++.B '\en'
+ for new lines.
+ .
+ .if !'po4a'hide' .TP
+
