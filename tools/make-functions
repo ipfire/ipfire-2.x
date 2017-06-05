@@ -225,7 +225,7 @@ beautify()
 			STAGE_TIME_START=`date +%s`
 			echo -ne "${BOLD}*** (${BUILD_ARCH}) ${MESSAGE}${NORMAL}"
 			if [ "$LAST_STAGE_TIME" ]; then
-				echo -ne "${DONE} (Last stage took $LAST_STAGE_TIME secs)${NORMAL}"
+				echo -ne "${DONE} (Last stage took $LAST_STAGE_TIME secs)${NORMAL}\n"
 			fi
 			echo -ne "${BOLD}${SET_VER_COL}      version${SET_OPT_COL} options${SET_TIME_COL} time (sec)${SET_RESULT_COL} status${NORMAL}\n"
 			;;
