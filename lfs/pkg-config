@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.29.1
+VER        = 0.29.2
 
 THISAPP    = pkg-config-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f739a28cae4e0ca291f82d1d41ef107d
+$(DL_FILE)_MD5 = f6e931e319531b736fadc017f470e68a
 
 install : $(TARGET)
 
@@ -80,7 +80,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP)/glib && patch -Np1 < $(DIR_SRC)/src/patches/pkg-config-0.29-glib-compile-fix.patch
 ifeq "$(ROOT)" ""
 else
 	mkdir -pv /tools/lib/pkgconfig
