@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2017 IPFire Team <info@ipfire.org>                       #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.06
+VER        = 1.07.1
 
 THISAPP    = bc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d44b5dddebd8a7a7309aea6c36fda117
+$(DL_FILE)_MD5 = cda93857418655ea43590736fc3ca9fc
 
 install : $(TARGET)
 
@@ -69,12 +69,8 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && sed -i '/PROTO.*readline/d' bc/scan.l
-	cd $(DIR_APP) && sed -i '/flex -I8/s/8//' configure
-	cd $(DIR_APP) && sed -i '/stdlib/a #include <string.h>' lib/number.c
-	cd $(DIR_APP) && sed -i 's/program.*save/static &/' bc/load.c
-	cd $(DIR_APP) && ./configure --prefix=/usr --with-readline
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure --prefix=/usr --with-readline --mandir=/usr/share/man --infodir=/usr/share/info
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
