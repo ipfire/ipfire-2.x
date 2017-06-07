@@ -45,13 +45,13 @@ for dir in ${dirs}; do
 	find ${dir} -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) \
 		| file -N -f - | sed -n -e 's/^\(.*\):[   ]*.*ELF.*, not stripped/\1/p' |
 		while read file; do
-			_strip ${file}
-		done
+			_strip ${file} || exit $?
+		done || exit $?
 
 	# Strip static archives.
 	find ${dir} -name \*.a -a -exec file {} \; \
 		| grep 'current ar archive' | sed -n -e 's/^\(.*\):[ 	]*current ar archive/\1/p' |
 		while read file; do
-			_strip ${file}
-		done
+			_strip ${file} || exit $?
+		done || exit $?
 done
