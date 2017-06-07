@@ -32,6 +32,7 @@ exit 0 unless ($DEPTH eq "0");
 # Strip the CN from the X509 identifier.
 $CN =~ /(\/|,\ )CN=(.*)$/i;
 $CN = $2;
+$CN =~ s/, /\//g;
 
 my %confighash = ();
 if (-f "${General::swroot}/ovpn/ovpnconfig"){
