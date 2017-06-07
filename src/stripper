@@ -43,7 +43,7 @@ function _strip() {
 for dir in ${dirs}; do
 	# Strip shared objects.
 	find ${dir} -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) \
-		| file -N -f - | sed -n -e 's/^\(.*\):[   ]*.*ELF.*, not stripped/\1/p' |
+		| file -N -f - | sed -n -e 's/^\(.*\):[   ]*.*ELF.*, not stripped.*/\1/p' |
 		while read file; do
 			_strip ${file} || exit $?
 		done || exit $?
