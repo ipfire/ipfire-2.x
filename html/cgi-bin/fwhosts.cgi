@@ -301,7 +301,7 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 		}
 		if($fwhostsettings{'error'} ne 'on'){
 				my $fullip="$fwhostsettings{'IP'}/".&General::iporsubtocidr($fwhostsettings{'SUBNET'});
-				$errormessage=$errormessage.&General::checksubnets($fwhostsettings{'HOSTNAME'},$fullip,"");
+				$errormessage=$errormessage.&General::checksubnets($fwhostsettings{'HOSTNAME'},$fullip,"","exact");
 		}
 		#only check plausi when no error till now
 		if (!$errormessage){
