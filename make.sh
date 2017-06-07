@@ -895,7 +895,7 @@ buildinstaller() {
   export LOGFILE
   lfsmake2 memtest
   lfsmake2 installer
-  lfsmake2 strip
+  lfsmake1 strip
 }
 
 buildpackages() {
