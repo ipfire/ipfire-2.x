@@ -101,6 +101,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 ifeq "$(TOOLCHAIN)" "1"
 	ln -svf bash /tools/bin/sh
+
+	mkdir -pv $(ROOT)/bin
 	ln -svf ../tools/bin/bash $(ROOT)/bin/sh
 else
 	ln -svf bash /bin/sh
