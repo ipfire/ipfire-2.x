@@ -135,34 +135,34 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'save'}) {
 	    # "Start" is defined, need "End" and vice versa
 	    if ($dhcpsettings{"START_ADDR_${itf}"}) {
 		if (!(&General::validip($dhcpsettings{"START_ADDR_${itf}"}))) {
-		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid start address'};
+		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid start address (invalid IP)'};
 		    goto ERROR;
 		}
 		if (!$dhcpsettings{"END_ADDR_${itf}"}) {
-		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid end address'};
+		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid end address (unconfigured)'};
 		    goto ERROR;
 		}
 		if (! &General::IpInSubnet ( $dhcpsettings{"START_ADDR_${itf}"}, 
 				    $netsettings{"${itf}_NETADDRESS"},
 				    $netsettings{"${itf}_NETMASK"})) {
-		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid start address'};
+		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid start address (outside netmask)'};
 		    goto ERROR;
 		}
 	    }
 	    
 	    if ($dhcpsettings{"END_ADDR_${itf}"}) {
 		if (!(&General::validip($dhcpsettings{"END_ADDR_${itf}"}))) {
-		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid end address'};
+		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid end address (invalid IP)'};
 		    goto ERROR;
 		}
 		if (!$dhcpsettings{"START_ADDR_${itf}"}) {
-		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid start address'};
+		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid start address (unconfigured)'};
 		    goto ERROR;
 		}
 		if (! &General::IpInSubnet ( $dhcpsettings{"END_ADDR_${itf}"}, 
 				    $netsettings{"${itf}_NETADDRESS"},
 				    $netsettings{"${itf}_NETMASK"})) { 
-		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid end address'};
+		    $errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid end address (outside netmask)''};
 		    goto ERROR;
 		}
 		#swap if necessary! (support 255.255.0.0 range, I doubt we need more) GE
