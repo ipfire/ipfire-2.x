@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.3
+VER        = 2.5
 
 THISAPP    = tmux-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tmux
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = fcfd1611d705d8b31df3c26ebc93bd3e
+$(DL_FILE)_MD5 = 4a5d73d96d8f11b0bdf9b6f15ab76d15
 
 install : $(TARGET)
 
