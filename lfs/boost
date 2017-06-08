@@ -32,8 +32,8 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-CFLAGS    += -fno-strict-aliasing
-CXXFLAGS  += -fno-strict-aliasing
+CFLAGS    += -O3 -fno-strict-aliasing
+CXXFLAGS  += -O3 -fno-strict-aliasing
 
 CONFIGURE_OPTIONS = \
 	--prefix=/usr \
@@ -41,12 +41,12 @@ CONFIGURE_OPTIONS = \
 	--without-mpi \
 	--without-graph_parallel \
 	--build-dir=serial \
-	cflags="$(CFLAGS)" \
-	cxxflags="$(CXXFLAGS)" \
 	variant=release \
 	threading=single,multi \
 	debug-symbols=off \
-	pch=off
+	pch=off \
+	cflags="$(CFLAGS)" \
+	cxxflags="$(CXXFLAGS)"
 
 MAKETUNING = -j2
 
