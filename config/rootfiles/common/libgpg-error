@@ -1,10 +1,11 @@
 usr/bin/gpg-error
 #usr/bin/gpg-error-config
 #usr/include/gpg-error.h
+#usr/include/gpgrt.h
 #usr/lib/libgpg-error.la
 #usr/lib/libgpg-error.so
 usr/lib/libgpg-error.so.0
-usr/lib/libgpg-error.so.0.19.1
+usr/lib/libgpg-error.so.0.22.0
 #usr/share/aclocal/gpg-error.m4
 #usr/share/common-lisp
 #usr/share/common-lisp/source
@@ -14,6 +15,8 @@ usr/lib/libgpg-error.so.0.19.1
 #usr/share/common-lisp/source/gpg-error/gpg-error.asd
 #usr/share/common-lisp/source/gpg-error/gpg-error.lisp
 #usr/share/info/gpgrt.info
+#usr/share/libgpg-error
+#usr/share/libgpg-error/errorref.txt
 #usr/share/locale/cs/LC_MESSAGES/libgpg-error.mo
 #usr/share/locale/da/LC_MESSAGES/libgpg-error.mo
 #usr/share/locale/de/LC_MESSAGES/libgpg-error.mo

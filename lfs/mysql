@@ -34,7 +34,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mysql
 PAK_VER    = 3
 
-CFLAGS += -fno-strict-aliasing
+CFLAGS    += -fno-strict-aliasing
+CXXFLAGS  += -std=gnu++98
 
 ###############################################################################
 # Top-level Rules
@@ -77,6 +78,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure --prefix=/usr \
 		            --sysconfdir=/etc \
 		            --libexecdir=/usr/sbin \
@@ -96,11 +98,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd /usr/lib && ln -v -sf mysql/libmysqlclient{,_r}.so* .
 	install -v -m644 $(DIR_SRC)/config/mysql/my.cnf /etc/my.cnf
 	mkdir -p /srv/mysql
-	mysql_install_db --user=mysql --force
-	chgrp -v mysql /srv/mysql{,/test,/mysql}
 	chown mysql.mysql /srv/mysql/
 	install -v -m755 -o mysql -g mysql -d /var/run/mysql
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/mysql \
 		/var/ipfire/backup/addons/includes/mysql
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,mysql)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

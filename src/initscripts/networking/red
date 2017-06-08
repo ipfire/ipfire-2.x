@@ -1,0 +1,530 @@
+#!/bin/sh
+########################################################################
+# Begin
+#
+# Description : RED Device Script
+#
+# Authors     : Michael Tremer - mitch@ipfire.org
+#               Maniacikarus - maniacikarus@ipfire.org
+# Inspired by : Nathan Coulson - nathan@linuxfromscratch.org
+#               Kevin P. Fleming - kpfleming@linuxfromscratch.org
+#
+# Version     : 01.00
+#
+# Notes       : 
+#
+########################################################################
+
+. /etc/sysconfig/rc 
+. ${rc_functions}
+. /etc/init.d/networking/functions.network
+
+#Define some defaults
+INET_VLAN=7
+IPTV_VLAN=8
+ATM_DEV=0
+
+eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
+if [ "$RRDLOG" == "" ]; then
+	RRDLOG=/var/log/rrd
+fi
+
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/mac/settings)
+
+MAC=$(tr - : <<<$MAC)
+MAC1=$(tr - : <<<$MAC1)
+MAC2=$(tr - : <<<$MAC2)
+
+TYPE="${RED_TYPE}"
+DEVICE="${RED_DEV}"
+
+if [ "$TYPE" == "STATIC" ] || [ "$TYPE" == "DHCP" ]; then
+	if [ "$DEVICE" == "" ]; then
+		boot_mesg "No device for red network. Please run setup." ${FAILURE}
+		echo_failure
+		[ "${1}" == "start" ] && exit 0
+	fi
+fi
+	
+if [ "${TYPE}" == "STATIC" ]; then
+	if [ "${DEVICE}" != "${GREEN_DEV}" ]; then
+		ADDRESS="${RED_ADDRESS}"
+		BROADCAST="${RED_BROADCAST}"
+		NETADDRESS="${RED_NETADDRESS}"
+		NETMASK="${RED_NETMASK}"
+	else
+		ADDRESS="${GREEN_ADDRESS}"
+		BROADCAST="${GREEN_BROADCAST}"
+		NETADDRESS="${GREEN_NETADDRESS}"
+		NETMASK="${GREEN_NETMASK}"
+	fi
+	GATEWAY="${DEFAULT_GATEWAY}"
+	# DNS1
+	# DNS2
+
+	if [ -z "${BROADCAST}" ]; then
+		boot_mesg "BROADCAST variable missing, cannot continue." ${FAILURE}
+		echo_failure
+		exit 1
+	fi
+	if [ -n "${ADDRESS}" -a -n "${NETMASK}" ]; then
+		PREFIX=`whatmask ${NETMASK} | grep -e ^CIDR | awk -F': ' '{ print $2 }' | cut -c 2-`
+		args="${args} ${ADDRESS}/${PREFIX} broadcast ${BROADCAST}"
+	else
+		boot_mesg "ADDRESS and/or NETMASK variable missing from input, cannot continue." ${FAILURE}
+		echo_failure
+		exit 1
+	fi
+fi
+
+case "${1}" in
+	start)
+		if [ "${DEVICE}" != "${GREEN_DEV}" ] && [ "${DEVICE}" != "" ]; then
+			boot_mesg "Bringing up the ${DEVICE} interface..."
+			boot_mesg_flush
+			# Check if an interface is there...
+			if ip link show ${DEVICE} > /dev/null 2>&1; then
+				link_status=`ip link show ${DEVICE} 2> /dev/null`
+				if [ -n "${link_status}" ]; then
+					if ! echo "${link_status}" | grep -q UP; then
+						if [ -n "$MAC" ]; then
+							boot_mesg "Setting mac address on ${DEVICE} to ${MAC}"	
+							ip link set dev ${DEVICE} address ${MAC}
+							evaluate_retval
+						fi
+						ip link set ${DEVICE} up
+					fi
+				fi
+			else
+				boot_mesg "Interface ${DEVICE} doesn't exist." ${FAILURE}
+				echo_failure
+				exit 1
+			fi
+		fi
+
+		## Create & Enable vnstat
+		/usr/bin/vnstat -u -i ${DEVICE} -r --enable --force > /dev/null 2>&1
+		
+		if [ "${TYPE}" == "STATIC" ]; then
+		
+			if [ "$DEVICE" != "${GREEN_DEV}" ]; then
+				boot_mesg "Adding IPv4 address ${ADDRESS} to the ${DEVICE} interface..."
+				ip addr add ${args} dev ${DEVICE}
+				evaluate_retval
+			fi
+			echo -n "${DEVICE}" > /var/ipfire/red/iface
+			echo -n "${ADDRESS}"  > /var/ipfire/red/local-ipaddress
+			echo -n "${GATEWAY}" > /var/ipfire/red/remote-ipaddress
+			grep -v -E "\<gateway\>" /etc/hosts > /tmp/hosts
+			echo "$GATEWAY	gateway"  >> /tmp/hosts
+			mv /tmp/hosts /etc/hosts
+			echo -n "${DNS1}" > /var/ipfire/red/dns1
+			echo -n "${DNS2}" > /var/ipfire/red/dns2
+			touch /var/ipfire/red/active
+			
+			# Create route to default gateway
+			ip route add ${GATEWAY} dev ${DEVICE}
+
+			boot_mesg "Setting up default gateway ${GATEWAY}..."
+			ip route add default via ${GATEWAY} dev ${DEVICE}
+			evaluate_retval
+			
+			run_subdir ${rc_base}/init.d/networking/red.up/
+
+			# Configure aliases only if red static
+			/usr/local/bin/setaliases
+
+		elif [ "${TYPE}" == "DHCP" ]; then
+			# Add firewall rules to allow comunication with the dhcp server on red.
+			iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
+			iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i ${DEVICE} -j ACCEPT
+
+			echo -n "${DEVICE}" > /var/ipfire/red/iface
+
+			# Check if the wlan-client is used on red.
+			# To determine this we check if a wpa_supplicant is running.
+			pid="$(pidof wpa_supplicant)"
+
+			if [ -z "${pid}" ]; then
+				# No wpa_supplicant is running. So it's save to start dhcpcd.
+				dhcpcd_start "${DEVICE}"
+			fi
+
+			## Create & Enable vnstat
+			/usr/bin/vnstat -u -i ${DEVICE} -r --enable --force > /dev/null 2>&1
+
+		elif [ "$TYPE" == "PPPOE" ]; then
+
+			if ( ps ax | grep -q [p]ppd ); then 
+			    boot_mesg "pppd is still running." ${FAILURE}
+			    echo_failure
+			    exit 1
+			fi
+			
+			eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+			
+			[ -c "/dev/ppp" ] || mknod /dev/ppp c 108 0
+
+			# We force the plugin method, anyway.
+			METHOD="PPPOE_PLUGIN"
+
+			PPP_NIC=${DEVICE}
+
+
+			if [ "$TYPE" == "pppoeatm" ] || [ "$TYPE" == "pptpatm" ]; then
+				PPP_NIC=nas${ATM_DEV}
+				DEVICE=nas${ATM_DEV}
+				boot_mesg "Creating ATM-Bridge as $PPP_NIC ..."
+				br2684ctl -c${ATM_DEV} -e${ENCAP} -a${ATM_DEV}.${VPI}.${VCI} >/dev/null 2>&1 &
+				sleep 1
+
+				# use user-defined or green mac address for nas0
+				if [ -n "$MAC" ]; then
+					ip link set dev nas${ATM_DEV} address ${MAC}
+				else
+					ip link set dev nas${ATM_DEV} address $(cat /sys/class/net/green0/address)
+				fi
+
+				if [ "$TYPE" == "pppoeatm" ]; then
+					TYPE="pppoe"
+				fi
+				if [ "$TYPE" == "pptpatm" ]; then
+					TYPE="pptp"
+				fi
+			fi
+
+			if [ "$TYPE" == "vdsl" ]; then
+				boot_mesg "Creating VLAN Interface ${DEVICE}.${INET_VLAN} ..."
+				modprobe 8021q
+				vconfig add ${DEVICE} ${INET_VLAN}
+				if [ -n "$MAC1" ]; then
+					boot_mesg "Setting mac address on ${DEVICE}.${INET_VLAN} to ${MAC1}"	
+					ip link set dev ${DEVICE}.${INET_VLAN} address ${MAC1}
+					evaluate_retval
+				fi
+				PPP_NIC=${DEVICE}.${INET_VLAN}
+				sleep 0.2
+				ip link set ${PPP_NIC} up
+				TYPE="pppoe"
+			fi
+			if [ "${IPTV}" == "enable" ]; then
+				PIDFILE="/var/run/dhcpcd-${DEVICE}.${IPTV_VLAN}.pid"
+				LEASEINFO="/var/ipfire/dhcpc/dhcpcd-${DEVICE}.${IPTV_VLAN}.info"
+				# Test to see if there is a stale pid file
+				if [ -f "$PIDFILE" ]; then
+					ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
+					if [ $? != 0 ]; then
+						rm -f /var/run/dhcpcd-${DEVICE}.${IPTV_VLAN}.pid > /dev/null
+					fi
+				fi
+
+				if [ ! -f "$PIDFILE" ]; then
+					boot_mesg "Creating VLAN Interface ${DEVICE}.${IPTV_VLAN} ..."
+					modprobe 8021q
+					vconfig add ${DEVICE} ${IPTV_VLAN}
+					if [ -n "$MAC2" ]; then
+						boot_mesg "Setting mac address on ${DEVICE}.${IPTV_VLAN} to ${MAC2}"	
+						ip link set dev ${DEVICE}.${IPTV_VLAN} address ${MAC2}
+						evaluate_retval
+					fi
+					boot_mesg -n "Starting dhcpcd on the ${DEVICE}.${IPTV_VLAN} interface..."
+					/sbin/dhcpcd ${DEVICE}.${IPTV_VLAN} ${DHCP_START} >/dev/null 2>&1
+					RET="$?"
+
+					if [ "$RET" = "0" ]; then
+						. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.${IPTV_VLAN}.info
+						echo ""
+						echo_ok
+						boot_mesg "           DHCP Assigned Settings for ${DEVICE}.${IPTV_VLAN}:"
+						boot_mesg_flush
+						boot_mesg "           IP Address:      $ip_address"
+						boot_mesg_flush
+						boot_mesg "           Hostname:        $RED_DHCP_HOSTNAME"
+						boot_mesg_flush
+						boot_mesg "           Subnet Mask:     $subnet_mask"
+						boot_mesg_flush
+						boot_mesg "           Default Gateway: $routers"
+						boot_mesg_flush
+						boot_mesg "           DNS Server:      $domain_name_servers"
+						boot_mesg_flush
+
+					else
+						echo ""
+						$(exit "$RET")
+						evaluate_retval
+					fi
+				fi
+			fi
+			if [ "$TYPE" == "pppoe" ] || [ "$TYPE" == "pptp" ]; then
+				if [ "$PPP_NIC" == "" ]; then
+					boot_mesg "No device for red interface given. Check netsetup or dialprofile!" ${FAILURE}
+					echo_failure
+					exit 0
+				fi
+				boot_mesg "Bringing up the $TYPE interface on $PPP_NIC ..."
+				ip addr flush dev $PPP_NIC >/dev/null 2>&1
+				if [ "$TYPE" == "pptp" ]; then
+					if [ "$PPTP_NICCFG" == "dhcp" ]; then
+						# Test to see if there is a stale pid file
+						if [ -f "$PIDFILE" ]; then
+							ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
+							if [ $? != 0 ]; then
+								rm -f /var/run/dhcpcd-${DEVICE}.pid > /dev/null
+							fi
+						fi
+
+						if [ ! -f "$PIDFILE" ]; then
+							boot_mesg -n "Starting dhcpcd on the ${DEVICE} interface..."
+							/sbin/dhcpcd ${DEVICE} ${DHCP_START} >/dev/null 2>&1
+							RET="$?"
+
+							if [ "$RET" = "0" ]; then
+								. /var/ipfire/dhcpc/dhcpcd-${DEVICE}.info
+								echo ""
+								echo_ok
+								boot_mesg "           DHCP Assigned Settings for ${DEVICE}:"
+								boot_mesg_flush
+								boot_mesg "           IP Address:      $ip_address"
+								boot_mesg_flush
+								boot_mesg "           Hostname:        $RED_DHCP_HOSTNAME"
+								boot_mesg_flush
+								boot_mesg "           Subnet Mask:     $subnet_mask"
+								boot_mesg_flush
+								boot_mesg "           Default Gateway: $routers"
+								boot_mesg_flush
+								boot_mesg "           DNS Server:      $domain_name_servers"
+								boot_mesg_flush
+								/sbin/route add $PPTP_PEER gw $routers $PPP_NIC
+							else
+								echo ""
+								$(exit "$RET")
+								evaluate_retval
+							fi
+						fi
+					else
+						ip addr add $PPTP_NICCFG dev $PPP_NIC
+					fi
+				fi
+				ip link set ${PPP_NIC} up
+				if [ -n "${PPTP_ROUTE}" ]; then
+					boot_mesg "Set route ${PPTP_ROUTE} to pptp server..."
+					route add ${PPTP_ROUTE}
+				fi
+			else
+				boot_mesg "Bringing up the PPP via ${TYPE} on ${COMPORT}..."
+			fi
+			
+			###                      ###
+			### Configuring the pppd ###
+			###                      ###
+			
+			### Plugin Options
+			#			
+			if [ "$TYPE" == "pppoe" ]; then
+				[ "${METHOD}" == "PPPOE_PLUGIN" ] && \
+					PLUGOPTS="plugin rp-pppoe.so"
+			fi
+
+			### Synchronous Mode
+			#
+			#PPPOE_SYNC=-s
+			#PPPD_SYNC=sync
+	
+			### Access Concentrator Name
+			#
+			if [ -n "${CONCENTRATORNAME}" ]; then
+				ACNAME="-C ${CONCENTRATORNAME}"
+			fi
+
+			### Service Name
+			#
+			if [ -n "${SERVICENAME}" ]; then
+				if [ "${METHOD}" == "PPPOE_PLUGIN" ]; then
+					PLUGOPTS+=" rp_pppoe_service ${SERVICENAME}"
+				else
+					SERVICENAME="-S ${SERVICENAME}"
+				fi
+			fi
+
+			### Authentication Types
+			#
+			if [ "${AUTH}" == "pap" ]; then
+				AUTH="-chap"
+			elif [ "${AUTH}" == "chap" ]; then
+				AUTH="-pap"
+			else
+				AUTH=""
+			fi
+
+			### DNS Config
+			#
+			if [ "${DNS}" == "Automatic" ]; then
+				DNS="usepeerdns"
+			else
+				DNS=""
+				echo nameserver=$DNS1 > /etc/ppp/resolv.conf
+				echo nameserver=$DNS2 >> /etc/ppp/resolv.conf
+			fi
+
+			### Dial On Demand		
+			#
+			if [ "${RECONNECTION}" != "persistent" ]; then
+				if [ "${TIMEOUT}" != "0" ] && [ "${TIMEOUT}" != "" ]; then
+					SECONDS=$[${TIMEOUT} * 60]
+				else
+					SECONDS=300
+				fi
+				if [ "${RECONNECTION}" == "dialondemand" ]; then
+					touch /var/ipfire/red/dial-on-demand
+					DEMAND="demand persist idle ${SECONDS} 10.112.112.112:10.112.112.113"
+					DEMAND+=" ipcp-accept-remote ipcp-accept-local noipdefault ktune"
+				fi
+			fi
+			
+			if [ "$TYPE" == "pppoe" ]; then
+				### When using pppoe-plugin the device has to be the last option
+				#
+				[ "${METHOD}" == "PPPOE_PLUGIN" ] && PLUGOPTS+=" $PPP_NIC"
+			fi
+			
+			if [ "$TYPE" == "modem" ]; then
+				PLUGOPTS=" /dev/${COMPORT} ${DTERATE} connect /etc/ppp/dialer lock modem crtscts"
+				METHOD="PPPOE_PLUGIN"
+			elif [ "$TYPE" == "serial" ]; then
+				PLUGOPTS=" /dev/${COMPORT} ${DTERATE} connect /bin/true lock modem crtscts"
+				METHOD="PPPOE_PLUGIN"
+			fi
+		
+			### Standard PPP options we always use
+			#
+			PPP_STD_OPTIONS="$PLUGOPTS $DNS defaultroute noipdefault noauth"
+			PPP_STD_OPTIONS+=" default-asyncmap hide-password nodetach"
+			PPP_STD_OPTIONS+=" noaccomp nodeflate nopcomp novj novjccomp"
+			PPP_STD_OPTIONS+=" nobsdcomp user ${USERNAME} lcp-echo-interval 20"
+			PPP_STD_OPTIONS+=" lcp-echo-failure 5 ${AUTH}"
+
+			if [ -n "${MTU}" ]; then
+				PPP_STD_OPTIONS="${PPP_STD_OPTIONS} mtu ${MTU}"
+			fi
+
+			if [ -n "${MRU}" ]; then
+				PPP_STD_OPTIONS="${PPP_STD_OPTIONS} mru ${MRU}"
+			fi
+				
+			### Debugging
+			#
+			if [ "${DEBUG}" == "on" ]; then
+				DEBUG="debug"
+			else
+				DEBUG=""
+			fi
+			
+			### PPPoE invocation
+			#
+			if [ "$TYPE" == "pppoe" ]; then
+				PPPOE_CMD="/usr/sbin/pppoe -p /var/run/ppp-ipfire.pid.pppoe -I $PPP_NIC"
+				PPPOE_CMD+=" -T 80 -U $PPPOE_SYNC $ACNAME $SERVICENAMEOPT"
+			fi
+
+			### PPTP ###
+			#
+			if [ "$TYPE" == "pptp" ]; then
+				PPPOE_CMD="pptp $PPTP_PEER --nolaunchpppd"
+				METHOD=""
+			fi
+			
+			### Run everything
+			#
+			if [ "$METHOD" == "PPPOE_PLUGIN" ]; then
+				/usr/sbin/pppd $PPP_STD_OPTIONS $DEBUG $DEMAND >/dev/null 2>&1 &
+				evaluate_retval
+				# echo PLUGIN: /usr/sbin/pppd $PPP_STD_OPTIONS $DEBUG $DEMAND
+			else
+				/usr/sbin/pppd pty "$PPPOE_CMD" $PPP_STD_OPTIONS $DEBUG $DEMAND $PPPD_SYNC >/dev/null 2>&1 &
+				evaluate_retval
+				# echo PPP: /usr/sbin/pppd pty "$PPPOE_CMD" $PPP_STD_OPTIONS $DEBUG $DEMAND $PPPD_SYNC
+			fi
+			## Create & Enable vnstat
+			/usr/bin/vnstat -u -i ppp0 -r --enable --force > /dev/null 2>&1
+			/etc/rc.d/init.d/connectd start
+			# Add a NaN value to ppp0 rrd to supress spikes at reconnect
+			rrdtool update $RRDLOG/collectd/localhost/interface/if_octets-ppp0.rrd \
+				$(date +%s):: > /dev/null 2>&1
+			exit 0
+		fi
+		;;
+
+	stop)
+		rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
+
+		if [ "$TYPE" == "STATIC" ]; then
+			boot_mesg "Stopping default gateway ${GATEWAY}..."
+			ip route del default via ${GATEWAY} >/dev/null 2>&1
+			echo_ok
+			if [ "$DEVICE" != "${GREEN_DEV}" ]; then
+				boot_mesg "Removing IPv4 addresses from the ${DEVICE} interface..."
+				ip addr flush dev ${DEVICE}
+				evaluate_retval
+			fi
+			run_subdir ${rc_base}/init.d/networking/red.down/
+
+		elif [ "$TYPE" == "PPPOE" ]; then
+			boot_mesg "Bringing down the PPP interface ..."
+			## Disable vnstat collection
+			/usr/bin/vnstat -u -i ppp0 -r --disable > /dev/null 2>&1
+			rm -f /var/ipfire/red/keepconnected
+			killall -w -s TERM /usr/sbin/pppd 2>/dev/null
+			evaluate_retval
+			# Add a NaN value to ppp0 rrd to supress spikes at reconnect
+			rrdtool update $RRDLOG/collectd/localhost/interface/if_octets-ppp0.rrd \
+				$(date +%s):: > /dev/null 2>&1
+
+		elif [ "$TYPE" == "DHCP" ]; then
+			# Check if the wlan-client is used on red.
+                        # To determine this we check if a wpa_supplicant is running.
+                        pid="$(pidof wpa_supplicant)"
+
+                        if [ -z "${pid}" ]; then
+				# Stop dhcpcd.
+				dhcpcd_stop "${DEVICE}"
+			fi
+		fi
+
+		if [ -n "${PPTP_ROUTE}" ]; then
+			route del ${PPTP_ROUTE}
+		fi
+
+		if [ "$DEVICE" != "${GREEN_DEV}" ] && [ "$DEVICE" != "" ]; then
+			link_status=`ip link show $DEVICE.${INET_VLAN} 2> /dev/null`
+			if [ -n "${link_status}" ]; then
+				if echo "${link_status}" | grep -q UP; then
+					boot_mesg "Bringing down the ${DEVICE}.${INET_VLAN} interface..."
+					ip link set ${DEVICE}.${INET_VLAN} down
+					vconfig rem ${DEVICE}.${INET_VLAN}
+					evaluate_retval
+				fi
+			else
+				link_status=`ip link show $DEVICE 2> /dev/null`
+				if [ -n "${link_status}" ]; then
+					if echo "${link_status}" | grep -q UP; then
+						boot_mesg "Bringing down the ${DEVICE} interface..."
+						ip link set ${DEVICE} down
+						evaluate_retval
+					fi
+				fi
+			fi
+		fi
+		killall -w -s KILL /usr/sbin/pppd >/dev/null 2>&1
+		killall -w -s KILL pptp >/dev/null 2>&1
+		killall -w -s KILL br2684ctl >/dev/null 2>&1
+
+		## Disable vnstat collection
+		/usr/bin/vnstat -u -i ${DEVICE} -r --disable > /dev/null 2>&1
+
+		exit 0;
+		;;
+esac
+
+# End

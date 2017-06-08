@@ -49,6 +49,6 @@ $(TARGET) :
 	# Don't strip VDR binaries, because they use a weird plugin system
 	# which does not work when unneeded symbols get stripped from
 	# /usr/sbin/vdr.
-	STRIP="/tools/bin/strip" $(DIR_SRC)/src/stripper / \
+	$(DIR_SRC)/src/stripper $(ROOT) \
 		--exclude=/usr/src --exclude=/tools \
 		--exclude=/usr/sbin/vdr --exclude=/usr/lib/vdr

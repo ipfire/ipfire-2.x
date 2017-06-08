@@ -1,3 +1,4 @@
+etc/localtime
 usr/share/zoneinfo
 #usr/share/zoneinfo/Africa
 #usr/share/zoneinfo/Africa/Abidjan

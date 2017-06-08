@@ -411,7 +411,7 @@ print <<END
 		insmod ipt_IMQ
 		sleep 2
 	fi
-	modprobe imq numdevs=1
+	modprobe imq numdevs=1 numqueues=\$(grep -c "^processor" /proc/cpuinfo || echo 1)
 	ip link set $qossettings{'IMQ_DEV'} up
 
 	### ADD HTB QDISC FOR $qossettings{'IMQ_DEV'}

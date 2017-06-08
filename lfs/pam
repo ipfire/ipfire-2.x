@@ -70,6 +70,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/pam-0.99.10.0-rlimit-build-fix.patch
 	cd $(DIR_APP) && ./configure --libdir=/usr/lib \
 		            --sbindir=/lib/security \
 		            --enable-securedir=/lib/security \

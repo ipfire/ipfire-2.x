@@ -39,6 +39,7 @@
 #usr/include/nettle/md4.h
 #usr/include/nettle/md5-compat.h
 #usr/include/nettle/md5.h
+#usr/include/nettle/memops.h
 #usr/include/nettle/memxor.h
 #usr/include/nettle/nettle-meta.h
 #usr/include/nettle/nettle-stdint.h
@@ -63,11 +64,9 @@
 #usr/include/nettle/yarrow.h
 usr/lib/libhogweed.so
 usr/lib/libhogweed.so.4
-usr/lib/libhogweed.so.4.2
+usr/lib/libhogweed.so.4.3
 #usr/lib/libnettle.so
 usr/lib/libnettle.so.6
-usr/lib/libnettle.so.6.2
+usr/lib/libnettle.so.6.3
 #usr/lib/pkgconfig/hogweed.pc
 #usr/lib/pkgconfig/nettle.pc
-usr/share/doc/nettle-3.2
-#usr/share/info/nettle.info

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2017  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.25
+VER        = 8.27
 
 THISAPP    = coreutils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -57,9 +57,9 @@ CFLAGS += -fno-strict-aliasing
 
 objects =$(DL_FILE)
 
-$(DL_FILE)                      = $(DL_FROM)/$(DL_FILE)
+$(DL_FILE)= $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5                  = 070e43ba7f618d747414ef56ab248a48
+$(DL_FILE)_MD5 = 502795792c212932365e077946d353ae
 
 install : $(TARGET)
 
@@ -89,7 +89,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils-8.25-i18n-2.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils-8.27-uname-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils-8.27-i18n-1.patch
 	cd $(DIR_APP) && FORCE_UNSAFE_CONFIGURE=1 && ./configure $(CONFIGURE_OPTIONS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

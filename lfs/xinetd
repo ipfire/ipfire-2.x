@@ -81,5 +81,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	-mkdir -pv /etc/xinetd.d
 	cp -f $(DIR_SRC)/config/xinetd/xinetd.conf /etc/xinetd.conf
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,xinetd)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

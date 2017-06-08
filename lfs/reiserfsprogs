@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 3.6.21
+VER        = 3.6.25
 
 THISAPP    = reiserfsprogs-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0639cefac8f8150536cfa7531c2aa2d2
+$(DL_FILE)_MD5 = 027a598b055dccb8da3aea1378a19f3c
 
 install : $(TARGET)
 
@@ -69,7 +69,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --sbindir=/sbin
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

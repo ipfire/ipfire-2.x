@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2017  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,8 +24,8 @@
 
 include Config
 
-VER        = 1.17
-DATVER     = 15022015
+VER        = 1.25
+DATVER     = 07012017
 
 THISAPP    = Geo-IP-PurePerl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,8 +42,8 @@ objects = $(DL_FILE) GeoIP.dat-$(DATVER).gz
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 GeoIP.dat-$(DATVER).gz = $(DL_FROM)/GeoIP.dat-$(DATVER).gz
 
-$(DL_FILE)_MD5 = 42a6b9d4dd2563a20c8998556216e1de
-GeoIP.dat-$(DATVER).gz_MD5 = 508e3c10da15f2722774cf4014863976
+$(DL_FILE)_MD5 = a47a1b71f7cd7c46cca9efcc448e0726
+GeoIP.dat-$(DATVER).gz_MD5 = fac676d18785585568312f30b7851657
 
 install : $(TARGET)
 
@@ -73,11 +73,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/geoip_1_25_change_database_path.patch
 	cd $(DIR_APP) && perl Makefile.PL
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && mkdir -p /usr/local/share/GeoIP && \
-		zcat $(DIR_DL)/GeoIP.dat-$(DATVER).gz > /usr/local/share/GeoIP/GeoIP.dat
+	cd $(DIR_APP) && mkdir -p /usr/share/GeoIP && \
+		zcat $(DIR_DL)/GeoIP.dat-$(DATVER).gz > /usr/share/GeoIP/GeoIP.dat
 	cd $(DIR_APP) && chmod 777 /srv/web/ipfire/html/images/flags
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

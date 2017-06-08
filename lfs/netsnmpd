@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = netsnmpd
-PAK_VER    = 4
+PAK_VER    = 5
 DEPS       = ""
 
 ###############################################################################
@@ -83,14 +83,24 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--with-sys-location="localhost" \
 		--with-logfile="/var/log/snmpd.log" \
 		--with-persistent-directory="/var/net-snmp" \
+		--with-mib-modules="host agentx smux \
+		ucd-snmp/diskio tcp-mib udp-mib mibII/mta_sendmail \
+		ip-mib/ipv4InterfaceTable ip-mib/ipv6InterfaceTable \
+		ip-mib/ipAddressPrefixTable/ipAddressPrefixTable \
+		ip-mib/ipDefaultRouterTable/ipDefaultRouterTable \
+		ip-mib/ipv6ScopeZoneIndexTable ip-mib/ipIfStatsTable \
+		sctp-mib rmon-mib etherlike-mib ucd-snmp/lmsensorsMib"
 		--libdir=/usr/lib \
 		--sysconfdir="/etc"
 	cd $(DIR_APP) && make 
 	cd $(DIR_APP) && make install
-	install -v -m644 $(DIR_SRC)/config/netsnmpd/snmpd.conf /etc/snmpd.conf
+	install -v -m 644 $(DIR_SRC)/config/netsnmpd/snmpd.conf /etc/snmpd.conf
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/netsnmpd \
 		/var/ipfire/backup/addons/includes/netsnmpd
-	install -v -m755 $(DIR_SRC)/src/initscripts/init.d/netsnmpd /etc/init.d/netsnmpd
+
+	# install initscripts
+	$(call INSTALL_INITSCRIPT,netsnmpd)
+
 	ln -sf ../init.d/netsnmpd /etc/rc.d/rc3.d/S65netsnmpd
 	ln -sf ../init.d/netsnmpd /etc/rc.d/rc0.d/K02netsnmpd
 	ln -sf ../init.d/netsnmpd /etc/rc.d/rc6.d/K02netsnmpd

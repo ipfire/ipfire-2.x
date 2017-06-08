@@ -29,7 +29,7 @@ VER = ipfire
 THISAPP    = cdrom
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(BUILD_PLATFORM)" "arm"
 	TAR_OPTIONS =
 else
 	TAR_OPTIONS = --lzma
@@ -64,7 +64,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo > /etc/mtab
 
 	# Create filelist for packaging.
-	BUILDTARGET="$(BUILDTARGET)" MACHINE="$(MACHINE)" KVER="$(KVER)" \
+	BUILDTARGET="$(BUILDTARGET)" BUILD_ARCH="$(BUILD_ARCH)" KVER="$(KVER)" \
 		$(DIR_SRC)/src/scripts/archive.files \
 		$(DIR_SRC)/config/rootfiles/common \
 		> /tmp/ROOTFILES
@@ -89,7 +89,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Make the ISO
 	mkdir -p /install/cdrom/boot/isolinux
 	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog
-ifneq "$(MACHINE_TYPE)" "arm"
+ifneq "$(BUILD_PLATFORM)" "arm"
 	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz
 	dracut --force -a "installer" --strip --xz /install/cdrom/boot/isolinux/instroot $(KVER)-ipfire
 	cp $(DIR_SRC)/config/syslinux/boot.png      /install/cdrom/boot/isolinux/boot.png
@@ -106,12 +106,12 @@ endif
 						xargs md5sum > md5sum.txt
 
 	mkdir -p /install/images
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(BUILD_PLATFORM)" "arm"
 	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
-		. > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso
+		. > /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
 else
 	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
     	    -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
-    	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso
-	isohybrid /install/images/$(SNAME)-$(VERSION).$(MACHINE)-full-core$(CORE).iso
+    	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
+	isohybrid /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
 endif

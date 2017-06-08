@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2016  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2017  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -40,26 +40,26 @@ CXXFLAGS   =
 PAK_VER    = 73
 DEPS	   = ""
 
-KERNEL_ARCH = $(MACHINE)
-
-ifeq "$(MACHINE)" "i586"
+ifeq "$(BUILD_ARCH)" "i586"
 	KERNEL_ARCH = i386
+else
+	KERNEL_ARCH = $(BUILD_ARCH)
+endif
+
+ifeq "$(BUILD_ARCH)" "aarch64"
+	HEADERS_ARCH = arm64
+else
+	HEADERS_ARCH = $(BUILD_PLATFORM)
 endif
 
 VERSUFIX=ipfire$(KCFG)
 
-ifeq "$(TOOLS)" "1"
+ifeq "$(TOOLCHAIN)" "1"
 	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)-tools
 	HEADERS_PREFIX = /tools
 else
 	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
 	HEADERS_PREFIX = /usr
-endif
-
-ifeq "$(MACHINE_TYPE)" "arm"
-	HEADERS_ARCH=arm
-else
-	HEADERS_ARCH=x86
 endif
 
 ifeq "$(KCFG)" ""
@@ -68,6 +68,9 @@ endif
 ifeq "$(KCFG)" "-kirkwood"
 LASTKERNEL=1
 endif
+
+# The buildsystem does not correctly detect if our compiler supports plugins
+export DISABLE_PAX_PLUGINS=y
 
 ###############################################################################
 # Top-level Rules
@@ -173,6 +176,9 @@ endif
 	# update the queued trim blacklist from kernel 4.2rc1
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.43_new_qtrim_blacklist.patch
 
+	# remove eMMC EXT_CSD revision check to use newer eMMC modules
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.79_mmc_remove_EXT_CSD_revision_check.patch
+
 	# Hyper-V patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0001-Drivers-net-hyperv-Get-rid-of-the-rndis_filter_packe.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/0002-Drivers-net-hyperv-Cleanup-the-receive-path.patch
@@ -247,7 +253,7 @@ else
 		drivers/video/logo/logo_linux_clut224.ppm
 
 	# Cleanup kernel source
-	cp $(DIR_SRC)/config/kernel/kernel.config.$(MACHINE)-$(VERSUFIX) $(DIR_APP)/.config
+	cp $(DIR_SRC)/config/kernel/kernel.config.$(BUILD_ARCH)-$(VERSUFIX) $(DIR_APP)/.config
 	cd $(DIR_APP) && make oldconfig
 	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ -$(VERSUFIX)/' Makefile
@@ -278,7 +284,7 @@ endif
 	cd $(DIR_APP) && make $(MAKETUNING) modules_install
 	cd $(DIR_APP) && make $(MAKETUNING) firmware_install
 
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(BUILD_PLATFORM)" "arm"
 	cd $(DIR_APP) && make $(MAKETUNING) dtbs
 	cd $(DIR_APP) && for f in $$(find arch/arm/boot/dts/ -name *.dtb); do \
 				mkdir -p /boot/dtb-$(VER)-$(VERSUFIX) ; \

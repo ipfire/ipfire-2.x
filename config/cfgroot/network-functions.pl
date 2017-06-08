@@ -102,6 +102,22 @@ sub bin2ip($) {
 	return $address;
 }
 
+# Takes two network addresses, compares them against each other
+# and returns true if equal or false if not
+sub network_equal {
+	my $network1 = shift;
+	my $network2 = shift;
+
+	my $bin1 = &network2bin($network1);
+	my $bin2 = &network2bin($network2);
+
+	if ($bin1 eq $bin2) {
+		return 1;
+	}
+
+	return 0;
+}
+
 # Takes a network in either a.b.c.d/a.b.c.d or a.b.c.d/e notation
 # and will return an 32 bit integer representing the start
 # address and an other one representing the network mask.
@@ -299,6 +315,65 @@ sub setup_upstream_proxy() {
 	}
 }
 
+my %wireless_status = ();
+
+sub _get_wireless_status($) {
+	my $intf = shift;
+
+	if (!$wireless_status{$intf}) {
+		$wireless_status{$intf} = `iwconfig $intf`;
+	}
+
+	return $wireless_status{$intf};
+}
+
+sub wifi_get_essid($) {
+	my $status = &_get_wireless_status(shift);
+
+	my ($essid) = $status =~ /ESSID:\"(.*)\"/;
+
+	return $essid;
+}
+
+sub wifi_get_frequency($) {
+	my $status = &_get_wireless_status(shift);
+
+	my ($frequency) = $status =~ /Frequency:(\d+\.\d+ GHz)/;
+
+	return $frequency;
+}
+
+sub wifi_get_access_point($) {
+	my $status = &_get_wireless_status(shift);
+
+	my ($access_point) = $status =~ /Access Point: ([0-9A-F:]+)/;
+
+	return $access_point;
+}
+
+sub wifi_get_bit_rate($) {
+	my $status = &_get_wireless_status(shift);
+
+	my ($bit_rate) = $status =~ /Bit Rate=(\d+ [GM]b\/s)/;
+
+	return $bit_rate;
+}
+
+sub wifi_get_link_quality($) {
+	my $status = &_get_wireless_status(shift);
+
+	my ($cur, $max) = $status =~ /Link Quality=(\d+)\/(\d+)/;
+
+	return $cur * 100 / $max;
+}
+
+sub wifi_get_signal_level($) {
+	my $status = &_get_wireless_status(shift);
+
+	my ($signal_level) = $status =~ /Signal level=(\-\d+ dBm)/;
+
+	return $signal_level;
+}
 1;
 
 # Remove the next line to enable the testsuite
@@ -352,11 +427,25 @@ sub testsuite() {
 	$result = &find_next_ip_address("1.2.3.4", 2);
 	assert($result eq "1.2.3.6");
 
+	$result = &network_equal("192.168.0.0/24", "192.168.0.0/255.255.255.0");
+	assert($result);
+
+	$result = &network_equal("192.168.0.0/24", "192.168.0.0/25");
+	assert(!$result);
+
+	$result = &network_equal("192.168.0.0/24", "192.168.0.128/25");
+	assert(!$result);
+
+	$result = &network_equal("192.168.0.1/24", "192.168.0.XXX/24");
+	assert($result);
+
 	$result = &ip_address_in_network("10.0.1.4", "10.0.0.0/8");
 	assert($result);
 
 	$result = &ip_address_in_network("192.168.30.11", "192.168.30.0/255.255.255.0");
 	assert($result);
+
+	print "Testsuite completed successfully!\n";
 
 	return 0;
 }

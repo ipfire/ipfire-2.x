@@ -21,6 +21,7 @@ etc/strongswan.d/charon/cmac.conf
 etc/strongswan.d/charon/constraints.conf
 etc/strongswan.d/charon/ctr.conf
 etc/strongswan.d/charon/curl.conf
+etc/strongswan.d/charon/curve25519.conf
 etc/strongswan.d/charon/des.conf
 etc/strongswan.d/charon/dhcp.conf
 etc/strongswan.d/charon/dnskey.conf
@@ -40,6 +41,7 @@ etc/strongswan.d/charon/kernel-netlink.conf
 etc/strongswan.d/charon/md5.conf
 etc/strongswan.d/charon/nonce.conf
 etc/strongswan.d/charon/openssl.conf
+#etc/strongswan.d/charon/padlock.conf
 etc/strongswan.d/charon/pem.conf
 etc/strongswan.d/charon/pgp.conf
 etc/strongswan.d/charon/pkcs1.conf
@@ -72,6 +74,7 @@ etc/swanctl/bliss
 etc/swanctl/ecdsa
 etc/swanctl/pkcs12
 etc/swanctl/pkcs8
+etc/swanctl/private
 etc/swanctl/pubkey
 etc/swanctl/rsa
 etc/swanctl/swanctl.conf
@@ -103,6 +106,11 @@ usr/lib/ipsec/libstrongswan.so.0.0.0
 usr/lib/ipsec/libtls.so
 usr/lib/ipsec/libtls.so.0
 usr/lib/ipsec/libtls.so.0.0.0
+#usr/lib/ipsec/libtpmtss.a
+#usr/lib/ipsec/libtpmtss.la
+usr/lib/ipsec/libtpmtss.so
+usr/lib/ipsec/libtpmtss.so.0
+usr/lib/ipsec/libtpmtss.so.0.0.0
 #usr/lib/ipsec/libvici.a
 #usr/lib/ipsec/libvici.la
 usr/lib/ipsec/libvici.so
@@ -116,6 +124,7 @@ usr/lib/ipsec/plugins/libstrongswan-cmac.so
 usr/lib/ipsec/plugins/libstrongswan-constraints.so
 usr/lib/ipsec/plugins/libstrongswan-ctr.so
 usr/lib/ipsec/plugins/libstrongswan-curl.so
+usr/lib/ipsec/plugins/libstrongswan-curve25519.so
 usr/lib/ipsec/plugins/libstrongswan-des.so
 usr/lib/ipsec/plugins/libstrongswan-dhcp.so
 usr/lib/ipsec/plugins/libstrongswan-dnskey.so
@@ -135,6 +144,7 @@ usr/lib/ipsec/plugins/libstrongswan-kernel-netlink.so
 usr/lib/ipsec/plugins/libstrongswan-md5.so
 usr/lib/ipsec/plugins/libstrongswan-nonce.so
 usr/lib/ipsec/plugins/libstrongswan-openssl.so
+#usr/lib/ipsec/plugins/libstrongswan-padlock.so
 usr/lib/ipsec/plugins/libstrongswan-pem.so
 usr/lib/ipsec/plugins/libstrongswan-pgp.so
 usr/lib/ipsec/plugins/libstrongswan-pkcs1.so
@@ -198,6 +208,7 @@ usr/sbin/swanctl
 #usr/share/strongswan/templates/config/plugins/constraints.conf
 #usr/share/strongswan/templates/config/plugins/ctr.conf
 #usr/share/strongswan/templates/config/plugins/curl.conf
+#usr/share/strongswan/templates/config/plugins/curve25519.conf
 #usr/share/strongswan/templates/config/plugins/des.conf
 #usr/share/strongswan/templates/config/plugins/dhcp.conf
 #usr/share/strongswan/templates/config/plugins/dnskey.conf
@@ -217,6 +228,7 @@ usr/sbin/swanctl
 #usr/share/strongswan/templates/config/plugins/md5.conf
 #usr/share/strongswan/templates/config/plugins/nonce.conf
 #usr/share/strongswan/templates/config/plugins/openssl.conf
+#usr/share/strongswan/templates/config/plugins/padlock.conf
 #usr/share/strongswan/templates/config/plugins/pem.conf
 #usr/share/strongswan/templates/config/plugins/pgp.conf
 #usr/share/strongswan/templates/config/plugins/pkcs1.conf

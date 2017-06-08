@@ -46,6 +46,7 @@ etc/raddb
 #etc/raddb/mods-available/logintime
 #etc/raddb/mods-available/mac2ip
 #etc/raddb/mods-available/mac2vlan
+#etc/raddb/mods-available/moonshot-targeted-ids
 #etc/raddb/mods-available/mschap
 #etc/raddb/mods-available/ntlm_auth
 #etc/raddb/mods-available/opendirectory
@@ -163,12 +164,23 @@ etc/raddb
 #etc/raddb/mods-config/sql/main/sqlite
 #etc/raddb/mods-config/sql/main/sqlite/queries.conf
 #etc/raddb/mods-config/sql/main/sqlite/schema.sql
+#etc/raddb/mods-config/sql/moonshot-targeted-ids
+#etc/raddb/mods-config/sql/moonshot-targeted-ids/mysql
+#etc/raddb/mods-config/sql/moonshot-targeted-ids/mysql/queries.conf
+#etc/raddb/mods-config/sql/moonshot-targeted-ids/mysql/schema.sql
+#etc/raddb/mods-config/sql/moonshot-targeted-ids/postgresql
+#etc/raddb/mods-config/sql/moonshot-targeted-ids/postgresql/queries.conf
+#etc/raddb/mods-config/sql/moonshot-targeted-ids/postgresql/schema.sql
+#etc/raddb/mods-config/sql/moonshot-targeted-ids/sqlite
+#etc/raddb/mods-config/sql/moonshot-targeted-ids/sqlite/queries.conf
+#etc/raddb/mods-config/sql/moonshot-targeted-ids/sqlite/schema.sql
 #etc/raddb/mods-config/unbound
 #etc/raddb/mods-enabled
 #etc/raddb/mods-enabled/always
 #etc/raddb/mods-enabled/attr_filter
 #etc/raddb/mods-enabled/cache_eap
 #etc/raddb/mods-enabled/chap
+#etc/raddb/mods-enabled/date
 #etc/raddb/mods-enabled/detail
 #etc/raddb/mods-enabled/detail.log
 #etc/raddb/mods-enabled/dhcp
@@ -205,6 +217,7 @@ etc/raddb
 #etc/raddb/policy.d/dhcp
 #etc/raddb/policy.d/eap
 #etc/raddb/policy.d/filter
+#etc/raddb/policy.d/moonshot-targeted-ids
 #etc/raddb/policy.d/operator-name
 #etc/raddb/proxy.conf
 #etc/raddb/radiusd.conf
@@ -311,6 +324,7 @@ usr/bin/smbencrypt
 #usr/include/freeradius/rfc7155.h
 #usr/include/freeradius/rfc7268.h
 #usr/include/freeradius/rfc7499.h
+#usr/include/freeradius/rfc7930.h
 #usr/include/freeradius/sha1.h
 #usr/include/freeradius/stats.h
 #usr/include/freeradius/sysutmp.h
@@ -376,6 +390,9 @@ usr/lib/freeradius/rlm_dynamic_clients.so
 #usr/lib/freeradius/rlm_eap.a
 #usr/lib/freeradius/rlm_eap.la
 usr/lib/freeradius/rlm_eap.so
+#usr/lib/freeradius/rlm_eap_fast.a
+#usr/lib/freeradius/rlm_eap_fast.la
+usr/lib/freeradius/rlm_eap_fast.so
 #usr/lib/freeradius/rlm_eap_gtc.a
 #usr/lib/freeradius/rlm_eap_gtc.la
 usr/lib/freeradius/rlm_eap_gtc.so
@@ -641,7 +658,6 @@ usr/sbin/radmin
 #usr/share/doc/freeradius/schemas/ldap/openldap/freeradius.schema
 #usr/share/doc/freeradius/schemas/logstash
 #usr/share/doc/freeradius/schemas/logstash/README
-#usr/share/doc/freeradius/schemas/logstash/kibana3-dashboard.json
 #usr/share/doc/freeradius/schemas/logstash/kibana4-dashboard.json
 #usr/share/doc/freeradius/schemas/logstash/log-courier.conf
 #usr/share/doc/freeradius/schemas/logstash/logstash-radius.conf
@@ -660,6 +676,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.acc
 #usr/share/freeradius/dictionary.acme
 #usr/share/freeradius/dictionary.actelis
+#usr/share/freeradius/dictionary.adtran
 #usr/share/freeradius/dictionary.aerohive
 #usr/share/freeradius/dictionary.airespace
 #usr/share/freeradius/dictionary.alcatel
@@ -694,6 +711,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.cablelabs
 #usr/share/freeradius/dictionary.cabletron
 #usr/share/freeradius/dictionary.camiant
+#usr/share/freeradius/dictionary.checkpoint
 #usr/share/freeradius/dictionary.chillispot
 #usr/share/freeradius/dictionary.cisco
 #usr/share/freeradius/dictionary.cisco.asa
@@ -702,12 +720,14 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.cisco.vpn5000
 #usr/share/freeradius/dictionary.citrix
 #usr/share/freeradius/dictionary.clavister
+#usr/share/freeradius/dictionary.cnergee
 #usr/share/freeradius/dictionary.colubris
 #usr/share/freeradius/dictionary.columbia_university
 #usr/share/freeradius/dictionary.compat
 #usr/share/freeradius/dictionary.compatible
 #usr/share/freeradius/dictionary.cosine
 #usr/share/freeradius/dictionary.dante
+#usr/share/freeradius/dictionary.dellemc
 #usr/share/freeradius/dictionary.dhcp
 #usr/share/freeradius/dictionary.digium
 #usr/share/freeradius/dictionary.dlink
@@ -756,6 +776,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.meraki
 #usr/share/freeradius/dictionary.merit
 #usr/share/freeradius/dictionary.meru
+#usr/share/freeradius/dictionary.microsemi
 #usr/share/freeradius/dictionary.microsoft
 #usr/share/freeradius/dictionary.mikrotik
 #usr/share/freeradius/dictionary.motorola
@@ -813,11 +834,13 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.rfc7155
 #usr/share/freeradius/dictionary.rfc7268
 #usr/share/freeradius/dictionary.rfc7499
+#usr/share/freeradius/dictionary.rfc7930
 #usr/share/freeradius/dictionary.riverbed
 #usr/share/freeradius/dictionary.riverstone
 #usr/share/freeradius/dictionary.roaringpenguin
 #usr/share/freeradius/dictionary.ruckus
 #usr/share/freeradius/dictionary.ruggedcom
+#usr/share/freeradius/dictionary.sangoma
 #usr/share/freeradius/dictionary.sg
 #usr/share/freeradius/dictionary.shasta
 #usr/share/freeradius/dictionary.shiva
@@ -859,6 +882,8 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.zeus
 #usr/share/freeradius/dictionary.zte
 #usr/share/freeradius/dictionary.zyxel
+#usr/share/man/man1/dhcpclient.1
+#usr/share/man/man1/rad_counter.1
 #usr/share/man/man1/radclient.1
 #usr/share/man/man1/radeapclient.1
 #usr/share/man/man1/radlast.1

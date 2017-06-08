@@ -36,6 +36,8 @@ PAK_VER    = 6
 
 DEPS       = ""
 
+CXXFLAGS  += -std=gnu++98
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -91,5 +93,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	                        /var/ipfire/lcr/routing.conf
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/lcr \
 	                 /var/ipfire/backup/addons/includes/lcr
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,lcr)
+
 	@rm -rf $(DIR_SRC)/lcr
 	@$(POSTBUILD)

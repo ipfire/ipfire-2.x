@@ -32,9 +32,7 @@ $logsettings{'LOGWATCH_LEVEL'} = 'Low';
 $logsettings{'LOGWATCH_KEEP'} = '56';
 my @VS = ('15','50','100','150','250','500');
 $logsettings{'ENABLE_REMOTELOG'} = 'off';
-$logsettings{'ENABLE_ASYNCLOG'} = 'off';
 $logsettings{'REMOTELOG_ADDR'} = '';
-$logsettings{'VARMESSAGES'} = 'cron.none;daemon.*;local0.*;local2.*;*.info;mail.none;authpriv.*';
 $logsettings{'ACTION'} = '';
 &Header::getcgihash(\%logsettings);
 
@@ -66,10 +64,6 @@ if ($logsettings{'ACTION'} eq $Lang::tr{'save'})
 }
 
 &General::readhash("${General::swroot}/logging/settings", \%logsettings);
-
-$checked{'ENABLE_ASYNCLOG'}{'off'} = '';
-$checked{'ENABLE_ASYNCLOG'}{'on'} = '';
-$checked{'ENABLE_ASYNCLOG'}{$logsettings{'ENABLE_ASYNCLOG'}} = "checked='checked'";
 
 $checked{'ENABLE_REMOTELOG'}{'off'} = '';
 $checked{'ENABLE_REMOTELOG'}{'on'} = '';
@@ -145,20 +139,6 @@ print <<END
 <tr>
   <td class='base'>$Lang::tr{'enabled'}</td><td><input type='checkbox' name='ENABLE_REMOTELOG' $checked{'ENABLE_REMOTELOG'}{'on'} /></td>
   <td>$Lang::tr{'log server address'}</td><td><input type='text' name='REMOTELOG_ADDR' value='$logsettings{'REMOTELOG_ADDR'}' /></td>
-</tr>
-</table>
-END
-;
-&Header::closebox();
-
-&Header::openbox('100%', 'left', $Lang::tr{'messages logging'});
-print <<END
-<table width='100%'>
-<tr>
-  <td class='base' colspan='2'><input type='checkbox' name='ENABLE_ASYNCLOG' $checked{'ENABLE_ASYNCLOG'}{'on'} />$Lang::tr{'Async logging enabled'}</td>
-<tr>
-</tr>
-  <td>$Lang::tr{'log var messages'}</td><td><input type='text' name='VARMESSAGES' size='50' value='$logsettings{'VARMESSAGES'}' /></td>
 </tr>
 </table>
 END

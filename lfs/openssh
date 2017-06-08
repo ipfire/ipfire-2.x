@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.3p1
+VER        = 7.4p1
 
 THISAPP    = openssh-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = dfadd9f035d38ce5d58a3bf130b86d08
+$(DL_FILE)_MD5 = b2db2a83caf66a208bb78d6d287cdaa3
 
 install : $(TARGET)
 
@@ -80,7 +80,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -i -e 's/^#\?Port .*$$/Port 222/' \
 	    -e 's/^#\?Protocol .*$$/Protocol 2/' \
 	    -e 's/^#\?LoginGraceTime .*$$/LoginGraceTime 30s/' \
-	    -e 's/^#\?RSAAuthentication .*$$/RSAAuthentication yes/' \
 	    -e 's/^#\?PubkeyAuthentication .*$$/PubkeyAuthentication yes/' \
 	    -e 's/^#\?PasswordAuthentication .*$$/PasswordAuthentication yes/' \
 	    -e 's/^#\?MaxStartups .*$$/MaxStartups 5/' \

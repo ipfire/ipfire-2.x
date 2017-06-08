@@ -81,5 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	mv -fv /usr/sbin/in.tftpd /usr/sbin/tftpd
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,tftpd)
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

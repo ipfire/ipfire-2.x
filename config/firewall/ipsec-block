@@ -23,23 +23,43 @@ VPN_CONFIG="/var/ipfire/vpn/config"
 
 block_subnet() {
 	local subnet="${1}"
+	local action="${2}"
 
 	# Don't block a wildcard subnet
 	if [ "${subnet}" = "0.0.0.0/0" ] || [ "${subnet}" = "0.0.0.0/0.0.0.0" ]; then
 		return 0
 	fi
 
-	iptables -A IPSECBLOCK -d "${subnet}" -j REJECT --reject-with icmp-net-unreachable
+	case "${action}" in
+		reject)
+			iptables -A IPSECBLOCK -d "${subnet}" -j REJECT --reject-with icmp-net-unreachable
+			;;
+		drop)
+			iptables -A IPSECBLOCK -d "${subnet}" -j DROP
+			;;
+		*)
+			return 1
+			;;
+	esac
+
+	return 0
 }
 
 block_ipsec() {
 	# Flush all exists rules
 	iptables -F IPSECBLOCK
 
-	local id status name lefthost type ctype unknown1 unknown2 unknown3
-	local leftsubnets unknown4 righthost rightsubnets rest
-	while IFS="," read -r id status name lefthost type ctype unkown1 unknown2 unknown3 \
-			leftsubnets unknown4 righthost rightsubnets rest; do
+	local action
+
+	local vars="id status name lefthost type ctype x1 x2 x3 leftsubnets"
+	vars="${vars} x4 righthost rightsubnets x5 x6 x7 x8 x9 x10 x11 x12"
+	vars="${vars} x13 x14 x15 x16 x17 x18 x19 x20 x21 proto x22 x23 x24"
+	vars="${vars} route rest"
+
+	# Register local variables
+	local ${vars}
+
+	while IFS="," read -r ${vars}; do
 		# Check if the connection is enabled
 		[ "${status}" = "on" ] || continue
 
@@ -49,9 +69,18 @@ block_ipsec() {
 		# Split multiple subnets
 		rightsubnets="${rightsubnets//\|/ }"
 
+		case "${route}" in
+			route)
+				action="drop"
+				;;
+			*)
+				action="reject"
+				;;
+		esac
+
 		local rightsubnet
 		for rightsubnet in ${rightsubnets}; do
-			block_subnet "${rightsubnet}"
+			block_subnet "${rightsubnet}" "${action}"
 		done
 	done < "${VPN_CONFIG}"
 }

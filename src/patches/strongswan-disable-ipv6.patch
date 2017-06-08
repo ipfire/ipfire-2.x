@@ -1,0 +1,24 @@
+diff --git a/conf/plugins/socket-default.opt b/conf/plugins/socket-default.opt
+index 483a0f03d584..6fc7c2db47a7 100644
+--- a/conf/plugins/socket-default.opt
++++ b/conf/plugins/socket-default.opt
+@@ -7,5 +7,5 @@ charon.plugins.socket-default.set_source = yes
+ charon.plugins.socket-default.use_ipv4 = yes
+ 	Listen on IPv4, if possible.
+ 
+-charon.plugins.socket-default.use_ipv6 = yes
++charon.plugins.socket-default.use_ipv6 = no
+ 	Listen on IPv6, if possible.
+diff --git a/src/libcharon/plugins/socket_default/socket_default_socket.c b/src/libcharon/plugins/socket_default/socket_default_socket.c
+index ba22b0c2bdb6..da6989d81d7a 100644
+--- a/src/libcharon/plugins/socket_default/socket_default_socket.c
++++ b/src/libcharon/plugins/socket_default/socket_default_socket.c
+@@ -748,7 +748,7 @@ static bool use_family(int family)
+ 						"%s.plugins.socket-default.use_ipv4", TRUE, lib->ns);
+ 		case AF_INET6:
+ 			return lib->settings->get_bool(lib->settings,
+-						"%s.plugins.socket-default.use_ipv6", TRUE, lib->ns);
++						"%s.plugins.socket-default.use_ipv6", FALSE, lib->ns);
+ 		default:
+ 			return FALSE;
+ 	}

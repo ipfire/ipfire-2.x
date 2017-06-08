@@ -1,3 +1,4 @@
+WARNING: translation string unused: Async logging enabled
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
 WARNING: translation string unused: HDD temperature
@@ -361,6 +362,7 @@ WARNING: translation string unused: local hard disk
 WARNING: translation string unused: localkey
 WARNING: translation string unused: localkeyfile
 WARNING: translation string unused: log enabled
+WARNING: translation string unused: log var messages
 WARNING: translation string unused: log viewer
 WARNING: translation string unused: logging
 WARNING: translation string unused: loosedirectorychecking
@@ -387,6 +389,7 @@ WARNING: translation string unused: mbmon fan in
 WARNING: translation string unused: mbmon graphs
 WARNING: translation string unused: mbmon temp in
 WARNING: translation string unused: mbmon value
+WARNING: translation string unused: messages logging
 WARNING: translation string unused: min size
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
@@ -703,6 +706,13 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: application layer gateways
 WARNING: untranslated string: bytes
+WARNING: untranslated string: dnssec disabled warning
+WARNING: untranslated string: firewall graph country
+WARNING: untranslated string: firewall graph ip
+WARNING: untranslated string: firewall graph port
+WARNING: untranslated string: firewall log country
+WARNING: untranslated string: firewall log ip
+WARNING: untranslated string: firewall log port
 WARNING: untranslated string: fwhost cust geoipgrp
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: guardian
@@ -749,4 +759,27 @@ WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
+WARNING: untranslated string: uplink bit rate
+WARNING: untranslated string: vpn broken
+WARNING: untranslated string: vpn connecting
+WARNING: untranslated string: vpn on-demand
+WARNING: untranslated string: vpn start action
+WARNING: untranslated string: vpn start action route
+WARNING: untranslated string: vpn start action start
 WARNING: untranslated string: vpn statistics n2n
+WARNING: untranslated string: vpn weak
+WARNING: untranslated string: wireless network
+WARNING: untranslated string: wlan client anonymous identity
+WARNING: untranslated string: wlan client auth auto
+WARNING: untranslated string: wlan client auth peap
+WARNING: untranslated string: wlan client auth ttls
+WARNING: untranslated string: wlan client authentication settings
+WARNING: untranslated string: wlan client eap authentication method
+WARNING: untranslated string: wlan client eap phase2 method
+WARNING: untranslated string: wlan client eap state
+WARNING: untranslated string: wlan client encryption eap
+WARNING: untranslated string: wlan client identity
+WARNING: untranslated string: wlan client method
+WARNING: untranslated string: wlan client password
+WARNING: untranslated string: wlan client tls cipher
+WARNING: untranslated string: wlan client tls version

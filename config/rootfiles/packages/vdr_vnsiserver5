@@ -1,4 +1,0 @@
-etc/sysconfig/vdr-plugins.d/vnsiserver5.conf
-etc/vdr/plugins/vnsiserver5
-etc/vdr/plugins/vnsiserver5/allowed_hosts.conf
-usr/lib/vdr/libvdr-vnsiserver5.so.2.0.0

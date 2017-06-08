@@ -26,6 +26,8 @@ include Config
 
 GIT_VER    = 69b47ba4bf0195fd6820beb2cf4f7c7ea31f4011
 VER        = master
+SUP_ARCHES =
+
 THISAPP    = vdr-plugin-eepg-$(VER)
 DL_FILE    = vdr-plugin-eepg-$(GIT_VER).tar.bz2
 

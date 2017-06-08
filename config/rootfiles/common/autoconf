@@ -54,6 +54,7 @@
 #usr/share/autoconf/m4sugar/m4sugar.m4f
 #usr/share/autoconf/m4sugar/version.m4
 #usr/share/info/autoconf.info
+#usr/share/info/standards.info
 #usr/share/man/man1/autoconf.1
 #usr/share/man/man1/autoheader.1
 #usr/share/man/man1/autom4te.1

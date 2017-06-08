@@ -173,6 +173,9 @@ void turn_connection_off (char *name) {
 
 	// Reload, so the connection is dropped.
 	ipsec_reload();
+
+	// Reload the IPsec block chain
+	safe_system("/usr/lib/firewall/ipsec-block >/dev/null");
 }
 
 int main(int argc, char *argv[]) {

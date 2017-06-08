@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.2.7.6
+VER        = 0.3.0.7
 
 THISAPP    = tor-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tor
-PAK_VER    = 17
+PAK_VER    = 20
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = cc19107b57136a68e8c563bf2d35b072
+$(DL_FILE)_MD5 = fee12ede9172905ba3258db871b6c499
 
 install : $(TARGET)
 
@@ -106,6 +106,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -pv /usr/share/tor
 	install -v -m 644 $(DIR_SRC)/config/tor/defaults-torrc \
 		/usr/share/tor/defaults-torrc
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,tor)
 
 	# Install start links and backup include file.
 	ln -sf ../init.d/tor /etc/rc.d/rc3.d/S60tor

@@ -120,7 +120,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 			$errormessage = "$Lang::tr{'guardian invalid blocktime'}";
 	}
 
-	# Check if the bloccount is valid.
+	# Check if the blockcount is valid.
 	unless(($settings{'GUARDIAN_BLOCKCOUNT'} =~ /^\d+$/) && ($settings{'GUARDIAN_BLOCKCOUNT'} ne "0")) {
 			$errormessage = "$Lang::tr{'guardian invalid blockcount'}";
 	}
@@ -183,7 +183,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 
 			# Generate the ID for the new entry.
 			#
-			# Sort the keys by it's ID and store them in an array.
+			# Sort the keys by their ID and store them in an array.
 			my @keys = sort { $a <=> $b } keys %ignored;
 
 			# Reverse the key array.
@@ -664,11 +664,11 @@ sub showIgnoreBox() {
 				<td class='base' colspan='3' bgcolor='$color{'color20'}'></td>
 			</tr>
 END
-			# Check if some hosts have been add to be ignored.
+			# Check if some hosts have been added to be ignored.
 			if (keys (%ignored)) {
 				my $col = "";
 
-				# Loop through all entries of the hash..
+				# Loop through all entries of the hash.
 				while( (my $key) = each %ignored)  {
 					# Assign data array positions to some nice variable names.
 					my $address = $ignored{$key}[0];
@@ -784,7 +784,7 @@ END
 	&Header::closebox();
 }
 
-# Function to list currently bocked addresses from guardian and unblock them or add custom entries to block.
+# Function to list currently blocked addresses from guardian and unblock them or add custom entries to block.
 sub showBlockedBox() {
 	&Header::openbox('100%', 'center', $Lang::tr{'guardian blocked hosts'});
 
@@ -795,7 +795,7 @@ sub showBlockedBox() {
 		</tr>
 END
 
-		# Lauch function to get the currently blocked hosts.
+		# Launch function to get the currently blocked hosts.
 		my @blocked_hosts = &GetBlockedHosts();
 
 		my $id = 0;
@@ -828,7 +828,7 @@ END
 END
 		}
 
-	# If the loop only has been runs once the id still is "0", which means there are no
+	# If the loop only has been run once the id still is "0", which means there are no
 	# additional entries (blocked hosts) in the iptables chain.
 	if ($id == 0) {
 
@@ -890,11 +890,11 @@ sub GetBlockedHosts() {
 	# Create new, empty array.
 	my @hosts;
 
-	# Lauch helper to get chains from iptables.
+	# Launch helper to get chains from iptables.
 	system('/usr/local/bin/getipstat');
 
 	# Open temporary file which contains the chains and rules.
-	open (FILE, '/srv/web/ipfire/html/iptables.txt');
+	open (FILE, '/var/tmp/iptables.txt');
 
 	# Loop through the entire file.
 	while (<FILE>) {
@@ -909,7 +909,7 @@ sub GetBlockedHosts() {
 			next if ($line =~ /^Chain/);
 			next if ($line =~ /^ pkts/);
 
-			# Generate array, based on the line content (seperator is a single or multiple space's)
+			# Generate array, based on the line content (separator is a single or multiple space)
 			my @comps = split(/\s{1,}/, $line);
 			my ($lead, $pkts, $bytes, $target, $prot, $opt, $in, $out, $source, $destination) = @comps;
 
@@ -927,9 +927,9 @@ sub GetBlockedHosts() {
 	close(FILE);
 
 	# Remove recently created temporary files of the "getipstat" binary.
-	system(rm -f "/srv/web/ipfire/html/iptables.txt");
-	system(rm -f "/srv/web/ipfire/html/iptablesmangle.txt");
-	system(rm -f "/srv/web/ipfire/html/iptablesnat.txt");
+	system("rm -f /var/tmp/iptables.txt");
+	system("rm -f /var/tmp/iptablesmangle.txt");
+	system("rm -f /var/tmp/iptablesnat.txt");
 
 	# Convert entries, sort them, write back and store the sorted entries into new array.
 	my @sorted = map  { $_->[0] }
@@ -947,7 +947,7 @@ sub BuildConfiguration() {
 
 	my $configfile = "${General::swroot}/guardian/guardian.conf";
 
-	# Create the configfile if not exist yet.
+	# Create the configfile if none exists yet.
 	unless (-e "$configfile") { system("touch $configfile"); }
 
 	# Open configfile for writing.

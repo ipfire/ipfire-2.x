@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.2.11
+VER        = 1.2.15
 
 THISAPP    = SDL-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = sdl
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = "alsa"
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 418b42956b7cd103bfab1b9077ccc149
+$(DL_FILE)_MD5 = 9d96df8417572a2afb781a7c4c811a85
 
 install : $(TARGET)
 
@@ -77,8 +77,6 @@ dist:
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/SDL-1.2.11-asm-page.h.patch
-	cd $(DIR_APP) && sed "/asm\/page.h/d" -i src/video/fbcon/SDL_fbvideo.c
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

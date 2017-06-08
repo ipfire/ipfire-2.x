@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.29
+VER        = 0.29.2
 
 THISAPP    = pkg-config-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 77f27dce7ef88d0634d0d6f90e03a77f
+$(DL_FILE)_MD5 = f6e931e319531b736fadc017f470e68a
 
 install : $(TARGET)
 

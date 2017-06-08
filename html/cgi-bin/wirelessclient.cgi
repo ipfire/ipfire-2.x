@@ -19,8 +19,8 @@
 #                                                                             #
 ###############################################################################
 
-# DEVICE,ENABLED,MODE,WPA_MODE,SSID,PSK,PRIO
-# wlan0,on,WPA2,,Use This One Mum,ThisIsTheKey,2
+# DEVICE,ENABLED,MODE,WPA_MODE,SSID,PSK,PRIO,AUTH,ANONYMOUS,IDENTITY,PASSWORD
+# wlan0,on,WPA2,,Use This One Mum,ThisIsTheKey,2,TTLS,anonymous,username,password
 
 use strict;
 
@@ -132,6 +132,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 		push(@config, $settings{'SSID'});
 		push(@config, $settings{'PSK'});
 		push(@config, $settings{'PRIO'});
+		push(@config, $settings{'AUTH'});
+		push(@config, $settings{'ANONYMOUS'});
+		push(@config, $settings{'IDENTITY'});
+		push(@config, $settings{'PASSWORD'});
 
 		# Add the new configuration and write all the stuff to the configuration file.
 		my $line = join(',', @config) . "\n";
@@ -164,6 +168,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
 			$settings{'SSID'}       = $config[5];
 			$settings{'PSK'}        = $config[6];
 			$settings{'PRIO'}       = $config[7];
+			$settings{'AUTH'}	= $config[8];
+			$settings{'ANONYMOUS'}	= $config[9];
+			$settings{'IDENTITY'}	= $config[10];
+			$settings{'PASSWORD'}	= $config[11];
 		}
 	}
 }
@@ -181,12 +189,16 @@ if ($settings{'ACTION'} eq $Lang::tr{'update'}) {
 			if ($config[0] eq $settings{'ID'}) {
 				# Update all configuration settings.
 				# ID and INTERFACE cannot be changed.
-				$config[2] = $settings{'ENABLED'};
-				$config[3] = $settings{'ENCRYPTION'};
-				$config[4] = $settings{'WPA_MODE'};
-				$config[5] = $settings{'SSID'};
-				$config[6] = $settings{'PSK'};
-				$config[7] = $settings{'PRIO'};
+				$config[2]  = $settings{'ENABLED'};
+				$config[3]  = $settings{'ENCRYPTION'};
+				$config[4]  = $settings{'WPA_MODE'};
+				$config[5]  = $settings{'SSID'};
+				$config[6]  = $settings{'PSK'};
+				$config[7]  = $settings{'PRIO'};
+				$config[8]  = $settings{'AUTH'};
+				$config[9]  = $settings{'ANONYMOUS'};
+				$config[10] = $settings{'IDENTITY'};
+				$config[11] = $settings{'PASSWORD'};
 
 				$line = join(',', @config);
 			}
@@ -312,9 +324,34 @@ END
 			$encryption_mode = $Lang::tr{'wlan client encryption wpa'};
 		} elsif ($config[3] eq "WPA2") {
 			$encryption_mode = $Lang::tr{'wlan client encryption wpa2'};
+		} elsif ($config[3] eq "EAP") {
+			$encryption_mode = $Lang::tr{'wlan client encryption eap'};
 		}
 
-		if (($config[3] eq "WPA") || ($config[3] eq "WPA2")) {
+		if ($config[3] eq "EAP") {
+			if ($config[8] eq "PEAP") {
+				$encryption_mode .= " ($Lang::tr{'wlan client auth peap'})";
+			} elsif ($config[8] eq "TTLS") {
+				$encryption_mode .= " ($Lang::tr{'wlan client auth ttls'})";
+			} else {
+				$encryption_mode .= " ($Lang::tr{'wlan client auth auto'})";
+			}
+
+			$encryption_mode .= "<hr>";
+
+			if ($config[10]) {
+				$encryption_mode .= "<strong>$Lang::tr{'wlan client identity'}</strong>: ";
+				$encryption_mode .= $config[10];
+			}
+
+			# Anonymous identity
+			if ($config[9]) {
+				$encryption_mode .= "<br>";
+				$encryption_mode .= "<strong>$Lang::tr{'wlan client anonymous identity'}</strong>: ";
+				$encryption_mode .= $config[9];
+			}
+
+		} elsif (($config[3] eq "WPA") || ($config[3] eq "WPA2")) {
 			my $wpa_pairwise = "$Lang::tr{'wlan client ccmp'} $Lang::tr{'wlan client and'} $Lang::tr{'wlan client tkip'}";
 			my $wpa_group = "$Lang::tr{'wlan client ccmp'} $Lang::tr{'wlan client and'} $Lang::tr{'wlan client tkip'}";
 
@@ -437,6 +474,12 @@ sub showEditBox() {
 	$selected{'WPA_MODE'}{'TKIP-TKIP'} = '';
 	$selected{'WPA_MODE'}{$settings{'WPA_MODE'}} = "selected='selected'";
 
+	$selected{'AUTH'} = ();
+	$selected{'AUTH'}{''} = '';
+	$selected{'AUTH'}{'PEAP'} = '';
+	$selected{'AUTH'}{'TTLS'} = '';
+	$selected{'AUTH'}{$settings{'AUTH'}} = "selected='selected'";
+
 	$selected{'PRIO'} = ();
 	$selected{'PRIO'}{'0'} = '';
 	$selected{'PRIO'}{'1'} = '';
@@ -461,6 +504,7 @@ sub showEditBox() {
 					<td width='40%'>
 						<select name='ENCRYPTION'>
 							<option value="NONE" $selected{'ENCRYPTION'}{'NONE'}>$Lang::tr{'wlan client encryption none'}</option>
+							<option value="EAP"  $selected{'ENCRYPTION'}{'EAP'}>$Lang::tr{'wlan client encryption eap'}</option>
 							<option value="WPA2" $selected{'ENCRYPTION'}{'WPA2'}>$Lang::tr{'wlan client encryption wpa2'}</option>
 							<option value="WPA"  $selected{'ENCRYPTION'}{'WPA'}>$Lang::tr{'wlan client encryption wpa'}</option>
 							<option value="WEP"  $selected{'ENCRYPTION'}{'WEP'}>$Lang::tr{'wlan client encryption wep'}</option>							
@@ -477,6 +521,57 @@ sub showEditBox() {
 
 			<br>
 			<hr>
+
+			<strong>
+				$Lang::tr{'wlan client authentication settings'}:
+			</strong>
+
+			<table width='100%'>
+				<tr>
+					<td class='base' width='20%'>
+						$Lang::tr{'wlan client eap authentication method'}:
+					</td>
+					<td width='40%'>
+						<select name='AUTH'>
+							<option value="" $selected{'AUTH'}{''}>$Lang::tr{'wlan client auth auto'}</option>
+							<option value="PEAP" $selected{'AUTH'}{'PEAP'}>$Lang::tr{'wlan client auth peap'}</option>
+							<option value="TTLS" $selected{'AUTH'}{'TTLS'}>$Lang::tr{'wlan client auth ttls'}</option>
+						</select>
+					</td>
+					<td colspan="2" width='40%'></td>
+				</tr>
+				<tr>
+					<td class='base' width='20%'>
+						$Lang::tr{'wlan client anonymous identity'}:
+					</td>
+					<td width='40%'>
+						<input type="text" name="ANONYMOUS" value="$settings{"ANONYMOUS"}" size="25" />
+					</td>
+					<td colspan="2" width='40%'></td>
+				</tr>
+				<tr>
+					<td class='base' width='20%'>
+						$Lang::tr{'wlan client identity'}:
+					</td>
+					<td width='40%'>
+						<input type="text" name="IDENTITY" value="$settings{"IDENTITY"}" size="25" />
+					</td>
+					<td colspan="2" width='40%'></td>
+				</tr>
+				<tr>
+					<td class='base' width='20%'>
+						$Lang::tr{'wlan client password'}:
+					</td>
+					<td width='40%'>
+						<input type="password" name="PASSWORD" value="$settings{"PASSWORD"}" size="25" />
+					</td>
+					<td colspan="2" width='40%'></td>
+				</tr>
+			</table>
+
+			<br>
+			<hr>
+
 			
 			<strong>
 				$Lang::tr{'wlan client advanced settings'}:
@@ -584,6 +679,59 @@ sub ShowStatus() {
 					</td>
 				</tr>
 END
+
+		if ($status{'EAP state'}) {
+			my $selected_method = $status{'selectedMethod'};
+			$selected_method =~ s/\d+ \((.*)\)/$1/e;
+
+			print <<END;
+				<tr>
+					<td colspan='2'>
+						<strong>$Lang::tr{'wlan client encryption eap'}</strong>
+					</td>
+				</tr>
+				<tr>
+					<td width='20%'>
+						$Lang::tr{'wlan client eap state'}
+					</td>
+					<td width='80%'>
+						$status{'EAP state'}
+					</td>
+				</tr>
+				<tr>
+					<td width='20%'>
+						$Lang::tr{'wlan client method'}
+					</td>
+					<td width='80%'>
+						$selected_method
+					</td>
+				</tr>
+				<tr>
+					<td width='20%'>
+						$Lang::tr{'wlan client tls version'}
+					</td>
+					<td width='80%'>
+						$status{'eap_tls_version'}
+					</td>
+				</tr>
+				<tr>
+					<td width='20%'>
+						$Lang::tr{'wlan client tls cipher'}
+					</td>
+					<td width='80%'>
+						$status{'EAP TLS cipher'}
+					</td>
+				</tr>
+				<tr>
+					<td width='20%'>
+						$Lang::tr{'wlan client eap phase2 method'}
+					</td>
+					<td width='80%'>
+						$status{"${selected_method}v0 Phase2 method"}
+					</td>
+				</tr>
+END
+		}
 
 		if (($status{'pairwise_cipher'} ne "NONE") || ($status{'group_cipher'} ne "NONE")) {
 			print <<END;

@@ -53,7 +53,6 @@ srv/mysql
 #srv/mysql/mysql/user.MYD
 #srv/mysql/mysql/user.MYI
 #srv/mysql/mysql/user.frm
-srv/mysql/test
 usr/bin/comp_err
 usr/bin/innochecksum
 usr/bin/msql2mysql
