@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.5.9
+VER        = 3.5.11
 
 THISAPP    = gnutls-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0ab25eb6a1509345dd085bc21a387951
+$(DL_FILE)_MD5 = a3ff8cf5ca7522e3ba14f487e6326e11
 
 install : $(TARGET)
 
@@ -78,7 +78,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--without-p11-kit \
 			--disable-openssl-compatibility \
 			--disable-guile
-
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
