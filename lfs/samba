@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 66
+PAK_VER    = 67
 
 DEPS       = "cups krb5"
 
@@ -153,7 +153,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_dirsort_ea-support.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2017-7494-v3-6.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/doc-update.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.x-winbind_tevent_poll.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.x-winbind_tevent_poll.patch
 
 
 	cd $(DIR_APP)/source3 && ./autogen.sh
