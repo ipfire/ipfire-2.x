@@ -1,0 +1,57 @@
+diff -up coova-chilli-1.3.0/conf/chilli.in.orig coova-chilli-1.3.0/conf/chilli.in
+--- coova-chilli-1.3.0/conf/chilli.in.orig	2012-10-21 20:21:03.000000000 +0200
++++ coova-chilli-1.3.0/conf/chilli.in	2014-07-14 17:55:21.000000000 +0200
+@@ -15,6 +15,9 @@
+ # Description:    CoovaChilli access controller
+ ### END INIT INFO
+ 
++. /etc/sysconfig/rc
++. $rc_functions
++
+ [ -f @SBINDIR@/chilli ] || exit 0
+ 
+ . @ETCCHILLI@/functions
+@@ -68,18 +71,13 @@ case $1 in
+         radiusconfig
+ 
+ 	test ${HS_ADMINTERVAL:-0} -gt 0 && {	
+-            (crontab -l 2>&- | grep -v $0
++            (fcrontab -l 2>&- | grep -v $0
+ 		echo "*/$HS_ADMINTERVAL * * * * $0 radconfig"
+ 		) | crontab - 2>&-
+ 	}
+ 	
+ 	ifconfig $HS_LANIF 0.0.0.0
+-	if [ "$(which start-stop-daemon)" = "" ]; then
+-	    @SBINDIR@/chilli -c $CONFIG --pidfile=$pidfile &
+-	else
+-            start-stop-daemon -S --pidfile=$pidfile --user=chilli \
+-		--exec @SBINDIR@/chilli -- -c $CONFIG &
+-	fi
++	loadproc -p $pidfile @SBINDIR@/chilli -c $CONFIG
+         echo
+ 	;;
+     
+@@ -102,7 +100,7 @@ case $1 in
+     stop)
+         echo -n $"Shutting down $prog: "
+ 
+-	crontab -l 2>&- | grep -v $0 | crontab -
++	fcrontab -l 2>&- | grep -v $0 | fcrontab -
+ 
+ 	if [ "$(which start-stop-daemon)" != "" ]; then
+             start-stop-daemon -K --pidfile=$pidfile --user=chilli \
+@@ -120,8 +118,12 @@ case $1 in
+         echo
+ 	;;
+     
++    status)
++        statusproc /usr/sbin/chilli
++        ;;
++
+     *)
+-        echo "Usage: $0 {start|stop|restart|reload|radconfig}"
++        echo "Usage: $0 {start|stop|status|restart|reload|radconfig}"
+         exit 1
+ esac
+ 

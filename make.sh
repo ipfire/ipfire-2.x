@@ -861,6 +861,8 @@ buildipfire() {
   ipfiremake stunnel
   ipfiremake sslscan
   ipfiremake owncloud
+  ipfiremake haserl
+  ipfiremake coova-chilli
   ipfiremake bacula
   ipfiremake batctl
   ipfiremake perl-PDF-API2

@@ -1,0 +1,24 @@
+diff -up coova-chilli-1.3.0/src/Makefile.am.orig coova-chilli-1.3.0/src/Makefile.am
+--- coova-chilli-1.3.0/src/Makefile.am.orig	2014-07-13 12:32:08.619057532 +0200
++++ coova-chilli-1.3.0/src/Makefile.am	2014-07-13 12:30:15.000617212 +0200
+@@ -25,7 +25,7 @@ chilli.c tun.c ippool.c radius.c md5.c r
+ iphash.c lookup.c system.h util.c options.c statusfile.c conn.c sig.c \
+ garden.c dns.c session.c pkt.c chksum.c net.c safe.c
+ 
+-AM_CFLAGS = -D_GNU_SOURCE -Wall -Werror -fno-builtin -fno-strict-aliasing \
++AM_CFLAGS = -D_GNU_SOURCE -Wall -fno-builtin -fno-strict-aliasing \
+   -O2 -fomit-frame-pointer -funroll-loops -pipe -I$(top_builddir)/bstring \
+  -DDEFCHILLICONF='"$(sysconfdir)/chilli.conf"'\
+  -DDEFPIDFILE='"$(localstatedir)/run/chilli.pid"'\
+diff -up coova-chilli-1.3.0/src/Makefile.in.orig coova-chilli-1.3.0/src/Makefile.in
+--- coova-chilli-1.3.0/src/Makefile.in.orig	2014-07-13 12:30:28.000000000 +0200
++++ coova-chilli-1.3.0/src/Makefile.in	2014-07-13 12:32:35.700499444 +0200
+@@ -484,7 +484,7 @@ libchilli_la_SOURCES = chilli.c tun.c ip
+ 	$(am__append_16) $(am__append_19) $(am__append_20) \
+ 	$(am__append_21) $(am__append_23) $(am__append_26) \
+ 	$(am__append_28) $(am__append_38) $(am__append_39)
+-AM_CFLAGS = -D_GNU_SOURCE -Wall -Werror -fno-builtin \
++AM_CFLAGS = -D_GNU_SOURCE -Wall -fno-builtin \
+ 	-fno-strict-aliasing -O2 -fomit-frame-pointer -funroll-loops \
+ 	-pipe -I$(top_builddir)/bstring \
+ 	-DDEFCHILLICONF='"$(sysconfdir)/chilli.conf"' \
