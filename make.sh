@@ -527,7 +527,6 @@ buildipfire() {
   lfsmake2 libart
   lfsmake2 gd
   lfsmake2 popt
-  lfsmake2 pcre
   lfsmake2 slang
   lfsmake2 newt
   lfsmake2 libsmooth
