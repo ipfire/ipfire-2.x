@@ -390,6 +390,7 @@ buildbase() {
     lfsmake2 udev
     lfsmake2 vim
     lfsmake2 xz
+    lfsmake2 paxctl
 }
 
 buildipfire() {

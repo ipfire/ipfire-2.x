@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.9.3
+VER        = 2.9.4
 
 THISAPP    = libxml2-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = daece17e045f1c107610e137ab50c179
+$(DL_FILE)_MD5 = ae249165c173b1ff386ee8ad676815f5
 
 install : $(TARGET)
 

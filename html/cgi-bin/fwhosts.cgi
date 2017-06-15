@@ -2555,18 +2555,6 @@ sub checkip
 	}
 	return 1;
 }
-sub checksubnet
-{
-	my %hash=%{(shift)};
-	&General::readhasharray("$confignet", \%hash);
-	foreach my $key (keys %hash) {
-		if(&General::IpInSubnet($fwhostsettings{'IP'},$hash{$key}[1],$hash{$key}[2]))
-		{
-			return 1;
-		}
-	}
-	return 0;
-}
 sub checkservicegroup
 {
 	&General::readhasharray("$configsrvgrp", \%customservicegrp);

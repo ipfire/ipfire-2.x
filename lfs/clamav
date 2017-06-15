@@ -98,6 +98,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown clamav:clamav /var/run/clamav
 	#install initscripts
 	$(call INSTALL_INITSCRIPT,clamav)
+	# Disable PaX mprotect for clamd, clamscan and freshclam
+	paxctl -Cm /usr/sbin/clamd
+	paxctl -Cm /usr/bin/clamscan
+	paxctl -Cm /usr/bin/freshclam
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
