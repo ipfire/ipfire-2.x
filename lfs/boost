@@ -38,8 +38,15 @@ CXXFLAGS  += -O3 -fno-strict-aliasing
 CONFIGURE_OPTIONS = \
 	--prefix=/usr \
 	--layout=tagged \
-	--without-mpi \
+	--without-chrono \
+	--without-context \
+	--without-coroutine \
+	--without-coroutine2 \
+	--without-date_time \
+	--without-fiber \
 	--without-graph_parallel \
+	--without-mpi \
+	--without-program_options \
 	--build-dir=serial \
 	variant=release \
 	threading=single,multi \
