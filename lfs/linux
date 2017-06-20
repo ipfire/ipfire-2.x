@@ -241,6 +241,8 @@ ifeq "$(KCFG)" "-rpi"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-3.14.79-rpi-suspend-not-inline.patch
 endif
 
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-3.14.79-amba-fix.patch
+
 ifeq "$(KCFG)" "-headers"
 	# Install the header files
 	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) INSTALL_HDR_PATH=dest headers_install
