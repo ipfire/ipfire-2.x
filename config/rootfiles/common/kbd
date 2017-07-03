@@ -567,6 +567,7 @@ usr/bin/loadunimap
 #usr/bin/psfgettable
 #usr/bin/psfstriptable
 #usr/bin/psfxtable
+#usr/bin/resizecons
 usr/bin/setkeycodes
 usr/bin/setleds
 usr/bin/setlogcons
