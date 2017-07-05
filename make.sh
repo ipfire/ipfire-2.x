@@ -1142,7 +1142,7 @@ downloadsrc)
 toolchain)
 	clear
 	prepareenv
-	beautify build_stage "Toolchain compilation - Native GCC: `gcc --version | grep GCC | awk {'print $3'}`"
+	beautify build_stage "Toolchain compilation"
 	buildtoolchain
 	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for ${BUILD_ARCH}" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
