@@ -94,6 +94,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Write Partition table
 	echo -e "$(S_OFFSET),$(S_BOOT),$(PART_TYPE),*\n,0,0\n$$(( $(S_BOOT) + $(S_OFFSET) )),$(S_ROOT),L\n" \
 		| sfdisk -uS $(DEVICE)
+	-echo -e "d\n2\nw\n\q\n" | fdisk $(DEVICE)
 
 	kpartx -v -a $(DEVICE)
 
