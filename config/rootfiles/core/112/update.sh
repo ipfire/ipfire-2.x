@@ -40,6 +40,9 @@ extract_files
 # update linker config
 ldconfig
 
+# reload init
+telinit u
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
