@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2017  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -47,6 +47,7 @@ ifeq "$(ROOT)" ""
 else
 ifeq "$(PASS)" "1"
   CFLAGS := $(patsubst -march=%,,$(CFLAGS))
+  CFLAGS := $(patsubst -mfpu=%,,$(CFLAGS))
   CFLAGS := $(patsubst -mfloat-abi=%,,$(CFLAGS))
 
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
