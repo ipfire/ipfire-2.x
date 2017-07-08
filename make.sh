@@ -704,7 +704,6 @@ buildipfire() {
   lfsmake2 gnu-netcat
   lfsmake2 ncat
   lfsmake2 nmap
-  lfsmake2 ncftp
   lfsmake2 etherwake
   lfsmake2 bwm-ng
   lfsmake2 sysstat
