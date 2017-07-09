@@ -233,7 +233,7 @@ if ($multifile) {
 }
 
 &Header::showhttpheaders();
-&Header::openpage($Lang::tr{'firewall log'}, 1, '');
+&Header::openpage($Lang::tr{'firewall log country'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 if ($errormessage) {
@@ -292,7 +292,7 @@ END
 
 &Header::closebox();
 
-&Header::openbox('100%', 'left', $Lang::tr{'firewall log'});
+&Header::openbox('100%', 'left', $Lang::tr{'firewall log country'});
 print "<p><b>$Lang::tr{'firewall hits'} $longmonthstr $daystr: $lines</b></p>";
 
 if ($start == -1) {
@@ -414,6 +414,8 @@ END
 ;
 
 &oldernewer();
+
+	print"<table width='100%'><tr><td align='center'><a href='/cgi-bin/logs.cgi/firewalllogcountry.dat'><img src='/images/back.png' alt='$Lang::tr{'back'}' title='$Lang::tr{'back'}' /></a></td></tr></table>";
 
 &Header::closebox();
 

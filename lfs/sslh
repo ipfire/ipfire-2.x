@@ -79,5 +79,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make CFLAGS="$(CFLAGS)" $(MAKETUNING)
 	cd $(DIR_APP) && install -v -m 755 sslh /usr/sbin
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,sslh)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

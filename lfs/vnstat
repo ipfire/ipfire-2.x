@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2017  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.11
+VER        = 1.17
 
 THISAPP    = vnstat-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a5a113f9176cd61fb954f2ba297f5fdb
+$(DL_FILE)_MD5 = 8de1c7e40806509943804bb4b26f5409
 
 install : $(TARGET)
 
@@ -73,9 +73,16 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make all $(MAKETUNING)										LOCAL_CONFIGURE_OPTIONS="--enable-readline=yes"
+
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--sysconfdir=/etc
+
+	cd $(DIR_APP) && make all $(MAKETUNING)		LOCAL_CONFIGURE_OPTIONS="--enable-readline=yes"
 	cd $(DIR_APP) && make install
 	sed -i 's|eth0|green0|g' /etc/vnstat.conf
 	sed -i 's|/var/lib/vnstat|/var/log/vnstat|g' /etc/vnstat.conf
+	sed -i 's|/var/log/vnstat/vnstat.log|/var/log/vnstat.log|g' /etc/vnstat.conf
+	sed -i 's|/var/run/vnstat/vnstat.pid|/var/run/vnstat.pid|g' /etc/vnstat.conf
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

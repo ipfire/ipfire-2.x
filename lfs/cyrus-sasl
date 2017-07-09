@@ -96,6 +96,10 @@ ifeq "$(PASS)" ""
 	install -v -m700 -d /var/lib/sasl
 	-mkdir /var/run/saslauthd
 	cp -vf $(DIR_SRC)/config/cyrus-sasl/smtpd.conf /usr/lib/sasl2/
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,cyrus-sasl)
+
 else
 	# WITH LDAP SUPPORT AT THIS TIME
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \

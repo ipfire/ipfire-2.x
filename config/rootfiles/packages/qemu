@@ -105,4 +105,3 @@ usr/share/qemu/vgabios-stdvga.bin
 usr/share/qemu/vgabios-virtio.bin
 usr/share/qemu/vgabios-vmware.bin
 usr/share/qemu/vgabios.bin
-#usr/var/run

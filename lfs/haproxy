@@ -91,9 +91,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/haproxy \
 		/var/ipfire/backup/addons/includes/haproxy
 
-	# Restore initscript
-	install -v -m 754 $(DIR_SRC)/src/initscripts/init.d/haproxy \
-		/etc/rc.d/init.d/haproxy
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,haproxy)
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

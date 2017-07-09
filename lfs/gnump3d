@@ -91,5 +91,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown nobody.nobody /var/mp3
 	install -m 644 $(DIR_SRC)/config/gnump3d/gnump3d.conf /etc/gnump3d/
 	ln -sf /usr/bin/gnump3d-index /etc/fcron.daily/gnump3d-index
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,gnump3d)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

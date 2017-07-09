@@ -48,5 +48,5 @@ install : $(DIR_INFO)/_build.othersrc-list.log
 	
 	# make the sources CDROM iso
 	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
-		. > /install/images/$(SNAME)-sources-cd-$(VERSION).$(MACHINE).iso
+		. > /install/images/$(SNAME)-sources-cd-$(VERSION).$(BUILD_ARCH).iso
 	rm -rf /install/cdrom/*

@@ -60,69 +60,94 @@ WARN="\\033[1;35m"
 FAIL="\\033[1;31m"
 NORMAL="\\033[0;39m"
 
-configure_target() {
-	local target_arch="${1}"
+configure_build() {
+	local build_arch="${1}"
 
-	if [ "${target_arch}" = "default" ]; then
-		target_arch="$(configure_target_guess)"
+	if [ "${build_arch}" = "default" ]; then
+		build_arch="$(configure_build_guess)"
 	fi
 
-	case "${target_arch}" in
+	case "${build_arch}" in
 		x86_64)
-			BUILDTARGET="${target_arch}-unknown-linux-gnu"
-			CROSSTARGET="${target_arch}-cross-linux-gnu"
+			BUILDTARGET="${build_arch}-unknown-linux-gnu"
+			CROSSTARGET="${build_arch}-cross-linux-gnu"
+			BUILD_PLATFORM="x86"
 			CFLAGS_ARCH="-m64 -mtune=generic"
 			;;
 
 		i586)
-			BUILDTARGET="${target_arch}-pc-linux-gnu"
-			CROSSTARGET="${target_arch}-cross-linux-gnu"
+			BUILDTARGET="${build_arch}-pc-linux-gnu"
+			CROSSTARGET="${build_arch}-cross-linux-gnu"
+			BUILD_PLATFORM="x86"
 			CFLAGS_ARCH="-march=i586 -mtune=generic -fomit-frame-pointer"
 			;;
 
+		aarch64)
+			BUILDTARGET="${build_arch}-unknown-linux-gnu"
+			CROSSTARGET="${build_arch}-cross-linux-gnu"
+			BUILD_PLATFORM="arm"
+			CFLAGS_ARCH=""
+			;;
+
+		armv7hl)
+			BUILDTARGET="${build_arch}-unknown-linux-gnueabi"
+			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
+			BUILD_PLATFORM="arm"
+			CFLAGS_ARCH="-march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard"
+			;;
+
 		armv5tel)
-			BUILDTARGET="${target_arch}-unknown-linux-gnueabi"
-			CROSSTARGET="${target_arch}-cross-linux-gnueabi"
+			BUILDTARGET="${build_arch}-unknown-linux-gnueabi"
+			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
+			BUILD_PLATFORM="arm"
 			CFLAGS_ARCH="-march=armv5te -mfloat-abi=soft -fomit-frame-pointer"
-			MACHINE_TYPE="arm"
 			;;
 
 		*)
-			exiterror "Cannot build for architure ${target_arch}"
+			exiterror "Cannot build for architure ${build_arch}"
 			;;
 	esac
 
 	# Check if the QEMU helper is available if needed.
-	if qemu_is_required "${target_arch}"; then
-		local qemu_target_helper="$(qemu_find_target_helper_name "${target_arch}")"
+	if qemu_is_required "${build_arch}"; then
+		local qemu_build_helper="$(qemu_find_build_helper_name "${build_arch}")"
 
-		if [ -n "${qemu_target_helper}" ]; then
-			QEMU_TARGET_HELPER="${qemu_target_helper}"
+		if [ -n "${qemu_build_helper}" ]; then
+			QEMU_TARGET_HELPER="${qemu_build_helper}"
 		else
-			exiterror "Could not find a binfmt_misc helper entry for ${target_arch}"
+			exiterror "Could not find a binfmt_misc helper entry for ${build_arch}"
 		fi
 	fi
 
-	TARGET_ARCH="${target_arch}"
+	BUILD_ARCH="${build_arch}"
 
-	# Old variable names
-	MACHINE="${TARGET_ARCH}"
+	# Enables hardening
+	HARDENING_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong --param=ssp-buffer-size=4"
 
-	CFLAGS="-O2 -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fPIC"
-	CFLAGS="${CFLAGS} -fstack-protector-strong --param=ssp-buffer-size=4 ${CFLAGS_ARCH}"
+	CFLAGS="-O2 -pipe -Wall -fexceptions -fPIC ${CFLAGS_ARCH}"
 	CXXFLAGS="${CFLAGS}"
 }
 
-configure_target_guess() {
-	case "${BUILD_ARCH}" in
+configure_build_guess() {
+	case "${HOST_ARCH}" in
 		x86_64|i686|i586)
 			echo "i586"
 			;;
-		aarch64|armv7*|armv6*|armv5*)
+
+		aarch64)
+			echo "aarch64"
+			;;
+
+		armv7*)
+			echo "armv7hl"
+			;;
+
+		armv6*|armv5*)
 			echo "armv5tel"
 			;;
+
 		*)
-			exiterror "Cannot guess target architecture"
+			exiterror "Cannot guess build architecture"
 			;;
 	esac
 }
@@ -198,9 +223,9 @@ beautify()
 				LAST_STAGE_TIME=$[ `date +%s` - $STAGE_TIME_START ]
 			fi
 			STAGE_TIME_START=`date +%s`
-			echo -ne "${BOLD}*** ${MESSAGE}${NORMAL}"
+			echo -ne "${BOLD}*** (${BUILD_ARCH}) ${MESSAGE}${NORMAL}"
 			if [ "$LAST_STAGE_TIME" ]; then
-				echo -ne "${DONE} (Last stage took $LAST_STAGE_TIME secs)${NORMAL}"
+				echo -ne "${DONE} (Last stage took $LAST_STAGE_TIME secs)${NORMAL}\n"
 			fi
 			echo -ne "${BOLD}${SET_VER_COL}      version${SET_OPT_COL} options${SET_TIME_COL} time (sec)${SET_RESULT_COL} status${NORMAL}\n"
 			;;
@@ -310,6 +335,16 @@ exiterror() {
 		losetup -d /dev/loop${i} 2>/dev/null
 	    fi;
 	done
+
+	if [ -n "${LOGFILE}" ]; then
+		echo # empty line
+
+		local line
+		while read -r line; do
+			echo "    ${line}"
+		done <<< "$(tail -n30 ${LOGFILE})"
+	fi
+
 	echo -e "\nERROR: $*"
 	echo "       Check $LOGFILE for errors if applicable"
 	exit 1
@@ -325,7 +360,7 @@ fake_environ() {
 	env="${env} UTS_RELEASE=${KVER}"
 
 	# Fake machine version.
-	env="${env} UTS_MACHINE=${TARGET_ARCH}"
+	env="${env} UTS_MACHINE=${BUILD_ARCH}"
 
 	echo "${env}"
 }
@@ -339,7 +374,7 @@ qemu_environ() {
 	fi
 
 	# Set default qemu options
-	case "${TARGET_ARCH}" in
+	case "${BUILD_ARCH}" in
 		arm*)
 			QEMU_CPU="${QEMU_CPU:-cortex-a9}"
 
@@ -354,13 +389,13 @@ qemu_environ() {
 }
 
 qemu_is_required() {
-	local target_arch="${1}"
+	local build_arch="${1}"
 
-	if [ -z "${target_arch}" ]; then
-		target_arch="${TARGET_ARCH}"
+	if [ -z "${build_arch}" ]; then
+		build_arch="${BUILD_ARCH}"
 	fi
 
-	case "${BUILD_ARCH},${target_arch}" in
+	case "${HOST_ARCH},${build_arch}" in
 		x86_64,arm*|i?86,arm*|i?86,x86_64)
 			return 0
 			;;
@@ -414,11 +449,11 @@ qemu_install_helper() {
 	exiterror "Could not find a statically-linked QEMU emulator: ${QEMU_TARGET_HELPER}"
 }
 
-qemu_find_target_helper_name() {
-	local target_arch="${1}"
+qemu_find_build_helper_name() {
+	local build_arch="${1}"
 
 	local magic
-	case "${target_arch}" in
+	case "${build_arch}" in
 		arm*)
 			magic="7f454c4601010100000000000000000002002800"
 			;;
@@ -455,36 +490,53 @@ file_is_static() {
 	file ${file} 2>/dev/null | grep -q "statically linked"
 }
 
+enterchroot() {
+	# Install QEMU helper, if needed
+	qemu_install_helper
+
+	local PATH="/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin"
+
+	PATH="${PATH}" chroot ${LFS} env -i \
+		HOME="/root" \
+		TERM="${TERM}" \
+		PS1="${PS1}" \
+		PATH="${PATH}" \
+		SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
+		PAKFIRE_CORE="${PAKFIRE_CORE}" \
+		NAME="${NAME}" \
+		SNAME="${SNAME}" \
+		VERSION="${VERSION}" \
+		CORE="${CORE}" \
+		SLOGAN="${SLOGAN}" \
+		CONFIG_ROOT="${CONFIG_ROOT}" \
+		CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
+		CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
+		BUILDTARGET="${BUILDTARGET}" \
+		CROSSTARGET="${CROSSTARGET}" \
+		BUILD_ARCH="${BUILD_ARCH}" \
+		BUILD_PLATFORM="${BUILD_PLATFORM}" \
+		CCACHE_DIR=/usr/src/ccache \
+		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
+		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
+		KVER="${KVER}" \
+		$(fake_environ) \
+		$(qemu_environ) \
+		"$@"
+}
+
 entershell() {
 	if [ ! -e $BASEDIR/build/usr/src/lfs/ ]; then
 		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/"
 	fi
 
-	# Install QEMU helper, if needed
-	qemu_install_helper
-
 	echo "Entering to a shell inside LFS chroot, go out with exit"
-	chroot $LFS /tools/bin/env -i HOME=/root TERM=$TERM PS1='ipfire build chroot ($(uname -m)) \u:\w\$ ' \
-		PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
-		VERSION=$VERSION CONFIG_ROOT=$CONFIG_ROOT \
-		NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-		CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
-		CCACHE_DIR=/usr/src/ccache \
-		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
-		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
-		KVER=$KVER \
-		BUILDTARGET="$BUILDTARGET" \
-		CROSSTARGET="${CROSSTARGET}" \
-		MACHINE="$MACHINE" \
-		MACHINE_TYPE="$MACHINE_TYPE" \
-		$(fake_environ) \
-		$(qemu_environ) \
-		/tools/bin/bash -i
-	if [ $? -ne 0 ]; then
-			beautify message FAIL
-			exiterror "chroot error"
-	else
+	local PS1="ipfire build chroot ($(uname -m)) \u:\w\$ "
+
+	if enterchroot bash -i; then
 		stdumount
+	else
+		beautify message FAIL
+		exiterror "chroot error"
 	fi
 }
 
@@ -513,8 +565,8 @@ lfsmakecommoncheck()
 	# Check if this package is supported by our architecture.
 	# If no SUP_ARCH is found, we assume the package can be built for all.
 	if grep "^SUP_ARCH" ${BASEDIR}/lfs/${1} >/dev/null; then
-		# Check if package supports ${MACHINE} or all architectures.
-		if ! grep -E "^SUP_ARCH.*${MACHINE}|^SUP_ARCH.*all" ${BASEDIR}/lfs/${1} >/dev/null; then
+		# Check if package supports ${BUILD_ARCH} or all architectures.
+		if ! grep -E "^SUP_ARCH.*${BUILD_ARCH}|^SUP_ARCH.*all" ${BASEDIR}/lfs/${1} >/dev/null; then
 			beautify result SKIP
 			return 1
 		fi
@@ -532,15 +584,13 @@ lfsmakecommoncheck()
 
 	echo -ne "`date -u '+%b %e %T'`: Building $* " >> $LOGFILE
 
-	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
-		MACHINE_TYPE="$MACHINE_TYPE" \
+	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
 		MESSAGE="$1\t " download  >> $LOGFILE 2>&1
 	if [ $? -ne 0 ]; then
 		exiterror "Download error in $1"
 	fi
 
-	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR MACHINE=$MACHINE \
-		MACHINE_TYPE="$MACHINE_TYPE" \
+	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
 		MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
 	if [ $? -ne 0 ]; then
 		exiterror "md5sum error in $1, check file in cache or signature"
@@ -555,15 +605,25 @@ lfsmake1() {
 
 	local PKG_TIME_START=`date +%s`
 
-	cd $BASEDIR/lfs && make -f $* 	BUILDTARGET=$BUILDTARGET \
-						CROSSTARGET="${CROSSTARGET}" \
-						MACHINE=$MACHINE \
-						MACHINE_TYPE=$MACHINE_TYPE \
-						LFS_BASEDIR=$BASEDIR \
-						ROOT=$LFS \
-						KVER=$KVER \
-						MAKETUNING=$MAKETUNING \
-						install >> $LOGFILE 2>&1
+	cd $BASEDIR/lfs && env -i \
+		PATH="/tools/ccache/bin:/tools/bin:$PATH" \
+		CCACHE_DIR="${CCACHE_DIR}" \
+		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
+		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
+		CFLAGS="${CFLAGS}" \
+		CXXFLAGS="${CXXFLAGS}" \
+		MAKETUNING="${MAKETUNING}" \
+		make -f $* \
+			TOOLCHAIN=1 \
+			CROSSTARGET="${CROSSTARGET}" \
+			BUILDTARGET="${BUILDTARGET}" \
+			BUILD_ARCH="${BUILD_ARCH}" \
+			BUILD_PLATFORM="${BUILD_PLATFORM}" \
+			LFS_BASEDIR="${BASEDIR}" \
+			ROOT="${LFS}" \
+			KVER="${KVER}" \
+			install >> $LOGFILE 2>&1
+
 	local COMPILE_SUCCESS=$?
 	local PKG_TIME_END=`date +%s`
 
@@ -581,30 +641,16 @@ lfsmake2() {
 	lfsmakecommoncheck $*
 	[ $? == 1 ] && return 0
 
-	# Install QEMU helper, if needed
-	qemu_install_helper
-
 	local PKG_TIME_START=`date +%s`
-	chroot $LFS /tools/bin/env -i 	HOME=/root \
-						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin \
-						VERSION=$VERSION PAKFIRE_CORE="${PAKFIRE_CORE}" \
-						SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
-						CONFIG_ROOT=$CONFIG_ROOT \
-						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
-						CCACHE_DIR=/usr/src/ccache \
-						CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
-						CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
-						KVER=$KVER MAKETUNING=$MAKETUNING \
-						BUILDTARGET="$BUILDTARGET" \
-						CROSSTARGET="${CROSSTARGET}" \
-						MACHINE="$MACHINE" \
-						MACHINE_TYPE="$MACHINE_TYPE" \
-						$(qemu_environ) \
-						$(fake_environ) \
-						/tools/bin/bash -x -c "cd /usr/src/lfs && \
-						make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
+	local PS1='\u:\w$ '
+
+	enterchroot \
+		bash -x -c "cd /usr/src/lfs && \
+			MAKETUNING=${MAKETUNING} \
+			make -f $* \
+			LFS_BASEDIR=/usr/src install" \
+		>> ${LOGFILE} 2>&1
+
 	local COMPILE_SUCCESS=$?
 	local PKG_TIME_END=`date +%s`
 
@@ -615,78 +661,19 @@ lfsmake2() {
 		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
 	fi
 
-	return 0
-}
-
-ipfiremake() {
-	lfsmakecommoncheck $*
-	[ $? == 1 ] && return 0
-
-	# Install QEMU helper, if needed
-	qemu_install_helper
-
-	local PKG_TIME_START=`date +%s`
-	chroot $LFS /tools/bin/env -i 	HOME=/root \
-						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin \
-						VERSION=$VERSION \
-						CORE=$CORE \
-						CONFIG_ROOT=$CONFIG_ROOT \
-						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						SYSTEM_RELEASE="$SYSTEM_RELEASE" \
-						CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
-						CCACHE_DIR=/usr/src/ccache \
-						CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
-						CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
-						KVER=$KVER MAKETUNING=$MAKETUNING \
-						BUILDTARGET="$BUILDTARGET" \
-						CROSSTARGET="${CROSSTARGET}" \
-						MACHINE="$MACHINE" \
-						MACHINE_TYPE="$MACHINE_TYPE" \
-						$(qemu_environ) \
-						$(fake_environ) \
-						/bin/bash -x -c "cd /usr/src/lfs && \
-						make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
-
-	local COMPILE_SUCCESS=$?
-	local PKG_TIME_END=`date +%s`
-
-	if [ $COMPILE_SUCCESS -ne 0 ]; then
-		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
-		exiterror "Building $*";
-	else
-		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
-	fi
 	return 0
 }
 
 ipfiredist() {
 	lfsmakecommoncheck $*
 	[ $? == 1 ] && return 0
-	
-	# Install QEMU helper, if needed
-	qemu_install_helper
 
 	local PKG_TIME_START=`date +%s`
-	chroot $LFS /tools/bin/env -i 	HOME=/root \
-					TERM=$TERM PS1='\u:\w\$ ' \
-					PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin \
-					VERSION=$VERSION \
-					CONFIG_ROOT=$CONFIG_ROOT \
-					NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-					CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
-					CCACHE_DIR=/usr/src/ccache \
-					CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
-					CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
-					KVER=$KVER \
-					BUILDTARGET="$BUILDTARGET" \
-					CROSSTARGET="${CROSSTARGET}" \
-					MACHINE="$MACHINE" \
-					MACHINE_TYPE="$MACHINE_TYPE" \
-					$(qemu_environ) \
-					$(fake_environ) \
-					/bin/bash -x -c "cd /usr/src/lfs && \
-					make -f $1 LFS_BASEDIR=/usr/src dist" >>$LOGFILE 2>&1
+	local PS1='\u:\w$ '
+
+	enterchroot \
+		bash -x -c "cd /usr/src/lfs && make -f $* LFS_BASEDIR=/usr/src dist" \
+		>> ${LOGFILE} 2>&1
 
 	local COMPILE_SUCCESS=$?
 	local PKG_TIME_END=`date +%s`
@@ -694,44 +681,6 @@ ipfiredist() {
 	if [ $COMPILE_SUCCESS -ne 0 ]; then
 		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
 		exiterror "Packaging $*";
-	else
-		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
-	fi
-	return 0
-}
-
-installmake() {
-	lfsmakecommoncheck $*
-	[ $? == 1 ] && return 0
-
-	# Install QEMU helper, if needed
-	qemu_install_helper
-
-	local PKG_TIME_START=`date +%s`
-	chroot $LFS /tools/bin/env -i 	HOME=/root \
-						TERM=$TERM PS1='\u:\w\$ ' \
-						PATH=/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin \
-						VERSION=$VERSION \
-						SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
-						CONFIG_ROOT=$CONFIG_ROOT \
-						NAME="$NAME" SNAME="$SNAME" SLOGAN="$SLOGAN" \
-						CFLAGS="${CFLAGS}" CXXFLAGS="${CXXFLAGS}" \
-						CCACHE_DIR=/usr/src/ccache CCACHE_COMPRESS=1 CCACHE_HASHDIR=1 \
-						KVER=$KVER \
-						BUILDTARGET="$BUILDTARGET" \
-						CROSSTARGET="${CROSSTARGET}" \
-						MACHINE="$MACHINE" \
-						MACHINE_TYPE="$MACHINE_TYPE" \
-						LD_LIBRARY_PATH=/tools/lib \
-		    /tools/bin/bash -x -c "cd /usr/src/lfs && \
-		    /tools/bin/make -f $* LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
-
-	local COMPILE_SUCCESS=$?
-	local PKG_TIME_END=`date +%s`
-
-	if [ $COMPILE_SUCCESS -ne 0 ]; then
-		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
-		exiterror "Building $*";
 	else
 		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
 	fi

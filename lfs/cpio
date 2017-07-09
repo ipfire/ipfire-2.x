@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.11
+VER        = 2.12
 
 THISAPP    = cpio-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 1112bb6c45863468b5496ba128792f6c
+$(DL_FILE)_MD5 = fc207561a86b63862eea4b8300313e86
 
 install : $(TARGET)
 

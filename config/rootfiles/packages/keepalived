@@ -27,6 +27,7 @@ etc/keepalived/samples
 #etc/keepalived/samples/root.pem
 #etc/keepalived/samples/sample.misccheck.smbcheck.sh
 #etc/sysconfig/keepalived
+etc/rc.d/init.d/keepalived
 usr/bin/genhash
 usr/sbin/keepalived
 #usr/share/man/man1/genhash.1

@@ -721,6 +721,7 @@ WARNING: untranslated string: dhcp dns update secret
 WARNING: untranslated string: dl client arch insecure
 WARNING: untranslated string: dns servers
 WARNING: untranslated string: dnssec aware
+WARNING: untranslated string: dnssec disabled warning
 WARNING: untranslated string: dnssec information
 WARNING: untranslated string: dnssec not supported
 WARNING: untranslated string: dnssec validating
@@ -742,6 +743,12 @@ WARNING: untranslated string: email settings
 WARNING: untranslated string: email testmail
 WARNING: untranslated string: email tls
 WARNING: untranslated string: email usemail
+WARNING: untranslated string: firewall graph country
+WARNING: untranslated string: firewall graph ip
+WARNING: untranslated string: firewall graph port
+WARNING: untranslated string: firewall log country
+WARNING: untranslated string: firewall log ip
+WARNING: untranslated string: firewall log port
 WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: fwdfw err concon
 WARNING: untranslated string: fwdfw err ratecon
@@ -864,9 +871,32 @@ WARNING: untranslated string: ta key
 WARNING: untranslated string: unblock
 WARNING: untranslated string: unblock all
 WARNING: untranslated string: uncheck all
+WARNING: untranslated string: uplink bit rate
 WARNING: untranslated string: upload dh key
 WARNING: untranslated string: vendor
+WARNING: untranslated string: vpn broken
+WARNING: untranslated string: vpn connecting
 WARNING: untranslated string: vpn force mobike
+WARNING: untranslated string: vpn on-demand
+WARNING: untranslated string: vpn start action
+WARNING: untranslated string: vpn start action route
+WARNING: untranslated string: vpn start action start
 WARNING: untranslated string: vpn statistic n2n
 WARNING: untranslated string: vpn statistic rw
 WARNING: untranslated string: vpn statistics n2n
+WARNING: untranslated string: vpn weak
+WARNING: untranslated string: wireless network
+WARNING: untranslated string: wlan client anonymous identity
+WARNING: untranslated string: wlan client auth auto
+WARNING: untranslated string: wlan client auth peap
+WARNING: untranslated string: wlan client auth ttls
+WARNING: untranslated string: wlan client authentication settings
+WARNING: untranslated string: wlan client eap authentication method
+WARNING: untranslated string: wlan client eap phase2 method
+WARNING: untranslated string: wlan client eap state
+WARNING: untranslated string: wlan client encryption eap
+WARNING: untranslated string: wlan client identity
+WARNING: untranslated string: wlan client method
+WARNING: untranslated string: wlan client password
+WARNING: untranslated string: wlan client tls cipher
+WARNING: untranslated string: wlan client tls version

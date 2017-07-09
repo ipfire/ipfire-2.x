@@ -21,6 +21,7 @@ etc/strongswan.d/charon/cmac.conf
 etc/strongswan.d/charon/constraints.conf
 etc/strongswan.d/charon/ctr.conf
 etc/strongswan.d/charon/curl.conf
+etc/strongswan.d/charon/curve25519.conf
 etc/strongswan.d/charon/des.conf
 etc/strongswan.d/charon/dhcp.conf
 etc/strongswan.d/charon/dnskey.conf
@@ -105,6 +106,11 @@ usr/lib/ipsec/libstrongswan.so.0.0.0
 usr/lib/ipsec/libtls.so
 usr/lib/ipsec/libtls.so.0
 usr/lib/ipsec/libtls.so.0.0.0
+#usr/lib/ipsec/libtpmtss.a
+#usr/lib/ipsec/libtpmtss.la
+usr/lib/ipsec/libtpmtss.so
+usr/lib/ipsec/libtpmtss.so.0
+usr/lib/ipsec/libtpmtss.so.0.0.0
 #usr/lib/ipsec/libvici.a
 #usr/lib/ipsec/libvici.la
 usr/lib/ipsec/libvici.so
@@ -118,6 +124,7 @@ usr/lib/ipsec/plugins/libstrongswan-cmac.so
 usr/lib/ipsec/plugins/libstrongswan-constraints.so
 usr/lib/ipsec/plugins/libstrongswan-ctr.so
 usr/lib/ipsec/plugins/libstrongswan-curl.so
+usr/lib/ipsec/plugins/libstrongswan-curve25519.so
 usr/lib/ipsec/plugins/libstrongswan-des.so
 usr/lib/ipsec/plugins/libstrongswan-dhcp.so
 usr/lib/ipsec/plugins/libstrongswan-dnskey.so
@@ -201,6 +208,7 @@ usr/sbin/swanctl
 #usr/share/strongswan/templates/config/plugins/constraints.conf
 #usr/share/strongswan/templates/config/plugins/ctr.conf
 #usr/share/strongswan/templates/config/plugins/curl.conf
+#usr/share/strongswan/templates/config/plugins/curve25519.conf
 #usr/share/strongswan/templates/config/plugins/des.conf
 #usr/share/strongswan/templates/config/plugins/dhcp.conf
 #usr/share/strongswan/templates/config/plugins/dnskey.conf

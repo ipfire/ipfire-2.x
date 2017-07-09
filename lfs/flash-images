@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2017  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,9 +34,9 @@ PART_BOOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p1
 PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
 
 ifeq "$(SCON)" "1"
-	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).1gb-ext4-scon.$(MACHINE)-full-core$(CORE).img.gz
+	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).1gb-ext4-scon.$(BUILD_ARCH)-full-core$(CORE).img.gz
 else
-	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).1gb-ext4.$(MACHINE)-full-core$(CORE).img.gz
+	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).1gb-ext4.$(BUILD_ARCH)-full-core$(CORE).img.gz
 endif
 
 FSTAB_FMT = UUID=%s %-8s %-4s %-10s %d %d\n
@@ -60,7 +60,7 @@ MNThdd   := /install/harddisk
 IMG      := /install/images/image.img
 
 # All sizes in blocks
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(BUILD_PLATFORM)" "arm"
  BOOTLOADER =
  S_OFFSET = 8192
 
@@ -75,9 +75,9 @@ else
 endif
 
 # /boot:  64MB - OFFSET
-# /    : 750MB
+# /    : 850MB
 S_BOOT := $(shell echo $$(( 131072 - $(S_OFFSET) )))
-S_ROOT := 1536000
+S_ROOT := 1740800
 
 PADDING = 100 # MB
 
@@ -93,7 +93,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Write Partition table
 	echo -e "$(S_OFFSET),$(S_BOOT),$(PART_TYPE),*\n,0,0\n$$(( $(S_BOOT) + $(S_OFFSET) )),$(S_ROOT),L\n" \
-		| sfdisk -D -uS -H 64 -S 32 $(DEVICE)
+		| sfdisk -uS $(DEVICE)
+	-echo -e "d\n2\nw\n\q\n" | fdisk $(DEVICE)
 
 	kpartx -v -a $(DEVICE)
 
@@ -117,7 +118,7 @@ endif
 	mount $(PART_BOOT) $(MNThdd)/boot
 
 	# Install Pandaboard MLO and uboot first
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(BUILD_PLATFORM)" "arm"
 	cp -v /boot/MLO $(MNThdd)/boot/
 	cp -v /boot/u-boot.img $(MNThdd)/boot/
 	cp -v /boot/zImage-ipfire-multi $(MNThdd)/boot/
@@ -135,7 +136,7 @@ ifeq "$(MACHINE_TYPE)" "arm"
 endif
 
 	# Install IPFire
-ifneq "$(MACHINE_TYPE)" "arm"
+ifneq "$(BUILD_PLATFORM)" "arm"
 	tar -x --lzma -C $(MNThdd)/ -f /install/cdrom/distro.img
 else
 	tar -x -C $(MNThdd)/ -f /install/cdrom/distro.img
@@ -154,7 +155,7 @@ ifeq "$(SCON)" "1"
 	sed -i -e "s|6:2345:respawn:|#6:2345:respawn:|g" $(MNThdd)/etc/inittab
 	sed -i -e "s|#7:2345:respawn:|7:2345:respawn:|g" $(MNThdd)/etc/inittab
 
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(BUILD_PLATFORM)" "arm"
 	sed -i -e "s| console=tty1 | console=ttyAMA0,115200n8 |g" $(MNThdd)/boot/cmdline.txt
 	sed -i -e "s| console=tty1 | console=ttyO2,115200n8 |g" $(MNThdd)/boot/uEnv.txt
 endif
@@ -193,7 +194,7 @@ endif
 		-e "s/root=[A-Za-z0-9\/=-]*/root=UUID=$$(blkid -o value -s UUID $(PART_ROOT))/g"
 
 	# Install GRUB
-	grub-install --force --recheck --no-floppy \
+	grub-install --force --recheck --no-floppy --target=i386-pc \
 		--root-directory=$(MNThdd) $(DEVICE)
 endif
 
@@ -228,7 +229,7 @@ endif
 	# not copied to a block device)
 	dd if=/dev/zero bs=1M count=$(PADDING) >> $(IMG)
 
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(BUILD_PLATFORM)" "arm"
 	# Install u-boot for LeMaker Banana Pi into image 8KB
 	dd if=/usr/share/u-boot/banana_pi/u-boot-sunxi-with-spl.bin of=$(IMG) bs=1K seek=8 conv=notrunc
 endif

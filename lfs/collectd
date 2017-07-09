@@ -79,6 +79,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
+	cd $(DIR_APP) && find . -name "Makefile.*" | xargs sed -e "s/-Werror//g" -i
 	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0001-src-utils_mount.h-Add-stdio.h.patch
 	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0002-Don-t-notify-continuously-when-MySQL-slave-SQL-threa.patch
 	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/0003-curl_xml.c-avoid-using-uninitalized-variable-in-erro.patch

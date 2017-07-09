@@ -99,5 +99,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_SRC)/alsa-firmware-$(FVER) && ./configure
 	cd $(DIR_SRC)/alsa-firmware-$(FVER) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_SRC)/alsa-firmware-$(FVER) && make install
+	# install initscript
+	$(call INSTALL_INITSCRIPT,alsa)
 	@rm -rf $(DIR_SRC)/alsa*
 	@$(POSTBUILD)

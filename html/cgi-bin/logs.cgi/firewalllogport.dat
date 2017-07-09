@@ -213,7 +213,7 @@ if ($multifile) {
 my $MODNAME="fwlogs";
 
 &Header::showhttpheaders();
-&Header::openpage($Lang::tr{'firewall log'}, 1, '');
+&Header::openpage($Lang::tr{'firewall log port'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 if ($errormessage) {
@@ -281,7 +281,7 @@ END
 
 &Header::closebox();
 
-&Header::openbox('100%', 'left', 'Firewall Logs');
+&Header::openbox('100%', 'left', $Lang::tr{'firewall graph port'});
 print "<p><b>$Lang::tr{'firewall hits'} $longmonthstr $daystr: $lines</b></p>";
 
 my $linesjc = 0;

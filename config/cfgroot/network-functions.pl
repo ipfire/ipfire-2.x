@@ -315,6 +315,65 @@ sub setup_upstream_proxy() {
 	}
 }
 
+my %wireless_status = ();
+
+sub _get_wireless_status($) {
+	my $intf = shift;
+
+	if (!$wireless_status{$intf}) {
+		$wireless_status{$intf} = `iwconfig $intf`;
+	}
+
+	return $wireless_status{$intf};
+}
+
+sub wifi_get_essid($) {
+	my $status = &_get_wireless_status(shift);
+
+	my ($essid) = $status =~ /ESSID:\"(.*)\"/;
+
+	return $essid;
+}
+
+sub wifi_get_frequency($) {
+	my $status = &_get_wireless_status(shift);
+
+	my ($frequency) = $status =~ /Frequency:(\d+\.\d+ GHz)/;
+
+	return $frequency;
+}
+
+sub wifi_get_access_point($) {
+	my $status = &_get_wireless_status(shift);
+
+	my ($access_point) = $status =~ /Access Point: ([0-9A-F:]+)/;
+
+	return $access_point;
+}
+
+sub wifi_get_bit_rate($) {
+	my $status = &_get_wireless_status(shift);
+
+	my ($bit_rate) = $status =~ /Bit Rate=(\d+ [GM]b\/s)/;
+
+	return $bit_rate;
+}
+
+sub wifi_get_link_quality($) {
+	my $status = &_get_wireless_status(shift);
+
+	my ($cur, $max) = $status =~ /Link Quality=(\d+)\/(\d+)/;
+
+	return $cur * 100 / $max;
+}
+
+sub wifi_get_signal_level($) {
+	my $status = &_get_wireless_status(shift);
+
+	my ($signal_level) = $status =~ /Signal level=(\-\d+ dBm)/;
+
+	return $signal_level;
+}
 1;
 
 # Remove the next line to enable the testsuite

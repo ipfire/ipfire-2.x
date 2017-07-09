@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2017  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.9.3
+VER        = 6.3.0
 
 GMP_VER    = 5.0.5
 MPFR_VER   = 2.4.2
@@ -36,10 +36,19 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 CFLAGS    := $(patsubst -march=%,,$(CFLAGS))
+CFLAGS    := $(patsubst -mfpu=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mtune=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mfloat-abi=%,,$(CFLAGS))
 CFLAGS    := $(filter-out -fexceptions,$(CFLAGS))
 CXXFLAGS  := $(CFLAGS)
+
+ifeq "$(BUILD_ARCH)" "armv7hl"
+	FULL_BOOTSTRAP = 1
+endif
+
+ifeq "$(BUILD_ARCH)" "armv5tel"
+	FULL_BOOTSTRAP = 1
+endif
 
 # Normal build or /tools build.
 #
@@ -59,15 +68,13 @@ ifeq "$(ROOT)" ""
   EXTRA_INSTALL =
 else
 ifeq "$(PASS)" "1"
-  CFLAGS    := $(patsubst -fstack-protector-strong,-fstack-protector-all,$(CFLAGS))
-  CXXFLAGS  := $(patsubst -fstack-protector-strong,-fstack-protector-all,$(CXXFLAGS))
-  CXXFLAGS  += -std=gnu++98
-
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = \
 	--target=$(CROSSTARGET) \
 	--prefix=/tools \
 	--with-sysroot=$(ROOT) \
+	--with-local-prefix=/tools \
+	--with-native-system-header-dir=/tools/include \
 	--disable-nls \
 	--disable-shared \
 	--disable-decimal-float \
@@ -75,6 +82,7 @@ ifeq "$(PASS)" "1"
 	--disable-libatomic \
 	--disable-libmudflap \
 	--disable-libssp \
+	--disable-libmpx \
 	--disable-libgomp \
 	--disable-libquadmath \
 	--disable-libstdc++-v3 \
@@ -93,31 +101,31 @@ else
 ifeq "$(PASS)" "2"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
   EXTRA_ENV = \
-	CC="$(CROSSTARGET)-gcc -B/tools/lib/" \
+	CC="$(CROSSTARGET)-gcc" \
 	CXX="$(CROSSTARGET)-g++" \
 	AR="$(CROSSTARGET)-ar" \
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
-	--host=$(BUILDTARGET) \
 	--build=$(BUILDTARGET) \
-	--target=$(BUILDTARGET) \
 	--prefix=/tools \
 	--with-local-prefix=/tools \
 	--with-native-system-header-dir=/tools/include \
-	--enable-clocale=gnu \
-	--enable-shared \
-	--enable-threads=posix \
-	--enable-__cxa_atexit \
 	--enable-languages=c,c++ \
 	--disable-libstdcxx-pch \
-	--enable-bootstrap
+	--disable-libgomp
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
+
+  ifeq "$(FULL_BOOTSTRAP)" "1"
+	EXTRA_CONFIG += --enable-bootstrap
+  else
+	EXTRA_CONFIG += --disable-bootstrap
+  endif
 else
   # PASS=L # libstdc++-v3
   TARGET = $(DIR_INFO)/$(THISAPP)-libstdc++
   EXTRA_ENV = \
-	CC="$(CROSSTARGET)-gcc -B/tools/lib/" \
+	CC="$(CROSSTARGET)-gcc" \
 	AR="$(CROSSTARGET)-ar" \
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
@@ -133,29 +141,27 @@ else
   EXTRA_INSTALL = 
 endif
 endif
-
-  # Disable stack protection in toolchain.
-  CFLAGS += -fno-stack-protector
 endif
 
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(BUILD_ARCH)" "armv7hl"
+	EXTRA_CONFIG += \
+		--with-float=hard
+endif
+
+ifeq "$(BUILD_ARCH)" "armv5tel"
 	EXTRA_CONFIG += \
 		--with-float=soft \
 		--disable-sjlj-exceptions
 endif
 
-ifeq "$(MACHINE)" "i586"
+ifeq "$(BUILD_ARCH)" "i586"
 	EXTRA_CONFIG += \
 		--with-arch=i586 \
 		--with-tune=generic
 endif
 
-ifeq "$(MACHINE)" "x86_64"
-	EXTRA_CONFIG += \
-		--disable-multilib
-endif
-
 EXTRA_CONFIG += \
+	--disable-multilib \
 	--with-bugurl=http://bugtracker.ipfire.org \
 	--disable-libunwind-exceptions \
 	--enable-gnu-unique-object
@@ -177,7 +183,7 @@ gmp-$(GMP_VER).tar.bz2 = $(DL_FROM)/gmp-$(GMP_VER).tar.bz2
 mpfr-$(MPFR_VER).tar.bz2 = $(DL_FROM)/mpfr-$(MPFR_VER).tar.bz2
 mpc-$(MPC_VER).tar.gz = $(DL_FROM)/mpc-$(MPC_VER).tar.gz
 
-$(DL_FILE)_MD5			= 648bfba342bb41a4b5350fb685f85bc5
+$(DL_FILE)_MD5			= 6e5ea04789678f1250c1b30c4d9ec417
 gmp-$(GMP_VER).tar.bz2_MD5	= 041487d25e9c230b0c42b106361055fe
 mpfr-$(MPFR_VER).tar.bz2_MD5	= 89e59fe665e2b3ad44a6789f40b059a0
 mpc-$(MPC_VER).tar.gz_MD5	= d6a1d5f8ddea3abd2cc3e98f58352d26
@@ -212,15 +218,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/gcc-build
 
-	# Apply patches.
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-i386-libgomp.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-libtool-no-rpath.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-no-add-needed.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-pr38757.patch
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc/gcc49-pr64336.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc/gcc-fix-inlining-issues.patch
+	cd $(DIR_APP) && sed -i 's/install_to_$$(INSTALL_DEST) //' libiberty/Makefile.in
+	cd $(DIR_APP) && sed -i gcc/Makefile.in \
+		-e 's@\./fixinc\.sh@-c true@' \
+		-e 's/^T_CFLAGS =$$/& -fomit-frame-pointer/'
 
-ifneq "$(ROOT)" ""
+ifeq "$(TOOLCHAIN)" "1"
 	# Build gmp and mpfr internally in toolchain.
 	cd $(DIR_APP) && tar xfa $(DIR_DL)/gmp-$(GMP_VER).tar.bz2
 	cd $(DIR_APP) && mv -v gmp-$(GMP_VER) gmp
@@ -229,29 +232,13 @@ ifneq "$(ROOT)" ""
 	cd $(DIR_APP) && tar xfa $(DIR_DL)/mpc-$(MPC_VER).tar.gz
 	cd $(DIR_APP) && mv -v mpc-$(MPC_VER) mpc
 
-ifeq    "$(PASS)" "1"
-	# GCC does not detect stack protection correctly, which causes problems
-	# for the build of libresolv_pic.a.
-	cd $(DIR_APP) && sed -i '/k prot/agcc_cv_libc_provides_ssp=yes' gcc/configure
-
-	for file in $$(find $(DIR_APP)/gcc/config -name linux64.h -o -name linux.h \
-			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h); do \
-		echo "Processing $${file}..."; \
-		sed -i $${file} \
-			-e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g' \
-			-e 's@/usr@/tools@g'; \
-		echo '#undef STANDARD_STARTFILE_PREFIX_1' >> $${file}; \
-		echo '#undef STANDARD_STARTFILE_PREFIX_2' >> $${file}; \
-		echo '#define STANDARD_STARTFILE_PREFIX_1 "/tools/lib/"' >> $${file}; \
-		echo '#define STANDARD_STARTFILE_PREFIX_2 ""' >> $${file}; \
-	done
-endif
-
-ifeq    "$(PASS)" "2"
+ifeq "$(PASS)" "2"
 	cd $(DIR_APP) && cat gcc/limitx.h gcc/glimits.h gcc/limity.h > \
 			`dirname $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name)`/include-fixed/limits.h
+endif
+
 	for file in $$(find $(DIR_APP)/gcc/config -name linux64.h -o -name linux.h \
-			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h); do \
+			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h -o -name aarch64-linux.h); do \
 		echo "Processing $${file}..."; \
 		sed -i $${file} \
 			-e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g' \
@@ -262,44 +249,48 @@ ifeq    "$(PASS)" "2"
 		echo '#define STANDARD_STARTFILE_PREFIX_2 ""' >> $${file}; \
 	done
 endif
-endif
 
-	cd $(DIR_APP) && sed -i 's/install_to_$$(INSTALL_DEST) //' libiberty/Makefile.in
-	cd $(DIR_APP) && sed -i gcc/Makefile.in \
-		-e 's@\./fixinc\.sh@-c true@' \
-		-e 's/^T_CFLAGS =$$/& -fomit-frame-pointer/'
-
-ifeq    "$(PASS)" "L"
+ifeq "$(PASS)" "L"
 	# libstdc++ pass
 	cd $(DIR_SRC)/gcc-build && \
 		$(EXTRA_ENV) \
 		$(DIR_APP)/libstdc++-v3/configure \
 			$(EXTRA_CONFIG)
-	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/gcc-build && make $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
+
 else
 	# The actual build.
 	cd $(DIR_SRC)/gcc-build && \
 		$(EXTRA_ENV) \
 		$(DIR_APP)/configure \
 			$(EXTRA_CONFIG)
-	cd $(DIR_SRC)/gcc-build && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_SRC)/gcc-build && make $(EXTRA_MAKE)
 	cd $(DIR_SRC)/gcc-build && make $(EXTRA_INSTALL) install
 endif
 
-ifeq "$(ROOT)" ""
+ifeq "$(TOOLCHAIN)" "1"
+ ifeq "$(PASS)" "1"
+	ln -svf libgcc.a $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name | sed 's/libgcc/&_eh/')
+ endif
+
+ ifeq "$(PASS)" "2"
+	ln -svf gcc /tools/bin/cc
+	# remove gdb python files from libdir
+	rm -rf /tools/lib/*-gdb.py
+ endif
+
+ ifeq "$(PASS)" "L"
+	# Workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70936
+	sed -e "s/^#include_next/#include/" -i /tools/$(CROSSTARGET)/include/c++/$(VER)/cstdlib
+ endif
+
+else # NON-TOOLCHAIN
 	ln -svf ../usr/bin/cpp /lib
 	ln -svf gcc /usr/bin/cc
 	# remove gdb python files from libdir
 	rm -rf /usr/lib/*-gdb.py
-else
-ifeq    "$(PASS)" "1"
-	ln -svf libgcc.a $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name | sed 's/libgcc/&_eh/')
-else
-	ln -svf gcc /tools/bin/cc
-	# remove gdb python files from libdir
-	rm -rf /tools/lib/*-gdb.py
 endif
-endif
+
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build
 	@$(POSTBUILD)

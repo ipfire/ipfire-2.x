@@ -108,6 +108,7 @@ $cgiparams{'RW_NET'} = '';
 $cgiparams{'DPD_DELAY'} = '30';
 $cgiparams{'DPD_TIMEOUT'} = '120';
 $cgiparams{'FORCE_MOBIKE'} = 'off';
+$cgiparams{'START_ACTION'} = 'start';
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 ###
@@ -401,12 +402,23 @@ sub writeipsecfiles {
 			print CONF "\trightrsasigkey=%cert\n";
 		}
 
+		my $start_action = $lconfighash{$key}[33];
+		if (!$start_action) {
+			$start_action = "start";
+		}
+
 		# Automatically start only if a net-to-net connection
 		if ($lconfighash{$key}[3] eq 'host') {
 			print CONF "\tauto=add\n";
 			print CONF "\trightsourceip=$lvpnsettings{'RW_NET'}\n";
 		} else {
-			print CONF "\tauto=start\n";
+			print CONF "\tauto=$start_action\n";
+
+			# If in on-demand mode, we terminate the tunnel
+			# after 15 min of no traffic
+			if ($start_action eq 'route') {
+				print CONF "\tinactivity=900\n";
+			}
 		}
 
 		# Fragmentation
@@ -1778,7 +1790,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 		$key = &General::findhasharraykey (\%confighash);
-		foreach my $i (0 .. 32) { $confighash{$key}[$i] = "";}
+		foreach my $i (0 .. 33) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -1885,15 +1897,15 @@ END
 
 	#use default advanced value
 	$cgiparams{'IKE_ENCRYPTION'}	= 'aes256gcm128|aes256gcm96|aes256gcm64|aes256|aes192gcm128|aes192gcm96|aes192gcm64|aes192|aes128gcm128|aes128gcm96|aes128gcm64|aes128'; #[18];
-	$cgiparams{'IKE_INTEGRITY'}		= 'sha2_512|sha2_256|sha'; #[19];
-	$cgiparams{'IKE_GROUPTYPE'}		= '4096|3072|2048|1536|1024'; #[20];
+	$cgiparams{'IKE_INTEGRITY'}		= 'sha2_512|sha2_256'; #[19];
+	$cgiparams{'IKE_GROUPTYPE'}		= 'curve25519|4096|3072|2048'; #[20];
 	$cgiparams{'IKE_LIFETIME'}		= '3'; #[16];
 	$cgiparams{'ESP_ENCRYPTION'}	= 'aes256gcm128|aes256gcm96|aes256gcm64|aes256|aes192gcm128|aes192gcm96|aes192gcm64|aes192|aes128gcm128|aes128gcm96|aes128gcm64|aes128'; #[21];
-	$cgiparams{'ESP_INTEGRITY'}		= 'sha2_512|sha2_256|sha1'; #[22];
-	$cgiparams{'ESP_GROUPTYPE'}		= '4096|3072|2048|1536|1024'; #[23];
+	$cgiparams{'ESP_INTEGRITY'}		= 'sha2_512|sha2_256'; #[22];
+	$cgiparams{'ESP_GROUPTYPE'}		= 'curve25519|4096|3072|2048'; #[23];
 	$cgiparams{'ESP_KEYLIFE'}		= '1'; #[17];
 	$cgiparams{'COMPRESSION'}		= 'on'; #[13];
-	$cgiparams{'ONLY_PROPOSED'}		= 'off'; #[24];
+	$cgiparams{'ONLY_PROPOSED'}		= 'on'; #[24];
 	$cgiparams{'PFS'}				= 'on'; #[28];
 }
 
@@ -2166,7 +2178,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 		foreach my $val (@temp) {
-			if ($val !~ /^(e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192)$/) {
+			if ($val !~ /^(curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|768|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192)$/) {
 				$errormessage = $Lang::tr{'invalid input'};
 				goto ADVANCED_ERROR;
 			}
@@ -2207,7 +2219,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 		foreach my $val (@temp) {
-			if ($val !~ /^(e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192|none)$/) {
+			if ($val !~ /^(curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|768|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192|none)$/) {
 				$errormessage = $Lang::tr{'invalid input'};
 				goto ADVANCED_ERROR;
 			}
@@ -2256,6 +2268,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$confighash{$cgiparams{'KEY'}}[30] = $cgiparams{'DPD_TIMEOUT'};
 		$confighash{$cgiparams{'KEY'}}[31] = $cgiparams{'DPD_DELAY'};
 		$confighash{$cgiparams{'KEY'}}[32] = $cgiparams{'FORCE_MOBIKE'};
+		$confighash{$cgiparams{'KEY'}}[33] = $cgiparams{'START_ACTION'};
 		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 		&writeipsecfiles();
 		if (&vpnenabled) {
@@ -2283,6 +2296,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$cgiparams{'DPD_TIMEOUT'}		= $confighash{$cgiparams{'KEY'}}[30];
 		$cgiparams{'DPD_DELAY'}			= $confighash{$cgiparams{'KEY'}}[31];
 		$cgiparams{'FORCE_MOBIKE'}		= $confighash{$cgiparams{'KEY'}}[32];
+		$cgiparams{'START_ACTION'}		= $confighash{$cgiparams{'KEY'}}[33];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -2290,6 +2304,10 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 
 		if (!$cgiparams{'DPD_TIMEOUT'}) {
 			$cgiparams{'DPD_TIMEOUT'} = 120;
+		}
+
+		if (!$cgiparams{'START_ACTION'}) {
+			$cgiparams{'START_ACTION'} = "start";
 		}
 	}
 
@@ -2320,6 +2338,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$checked{'IKE_INTEGRITY'}{'aesxcbc'} = '';
 	@temp = split('\|', $cgiparams{'IKE_INTEGRITY'});
 	foreach my $key (@temp) {$checked{'IKE_INTEGRITY'}{$key} = "selected='selected'"; }
+	$checked{'IKE_GROUPTYPE'}{'curve25519'} = '';
 	$checked{'IKE_GROUPTYPE'}{'768'} = '';
 	$checked{'IKE_GROUPTYPE'}{'1024'} = '';
 	$checked{'IKE_GROUPTYPE'}{'1536'} = '';
@@ -2330,9 +2349,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$checked{'IKE_GROUPTYPE'}{'8192'} = '';
 	@temp = split('\|', $cgiparams{'IKE_GROUPTYPE'});
 	foreach my $key (@temp) {$checked{'IKE_GROUPTYPE'}{$key} = "selected='selected'"; }
-
-	# 768 is not supported by strongswan
-	$checked{'IKE_GROUPTYPE'}{'768'} = '';
 
 	$checked{'ESP_ENCRYPTION'}{'aes256'} = '';
 	$checked{'ESP_ENCRYPTION'}{'aes192'} = '';
@@ -2360,6 +2376,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$checked{'ESP_INTEGRITY'}{'aesxcbc'} = '';
 	@temp = split('\|', $cgiparams{'ESP_INTEGRITY'});
 	foreach my $key (@temp) {$checked{'ESP_INTEGRITY'}{$key} = "selected='selected'"; }
+	$checked{'ESP_GROUPTYPE'}{'curve25519'} = '';
 	$checked{'ESP_GROUPTYPE'}{'768'} = '';
 	$checked{'ESP_GROUPTYPE'}{'1024'} = '';
 	$checked{'ESP_GROUPTYPE'}{'1536'} = '';
@@ -2387,6 +2404,10 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$selected{'DPD_ACTION'}{'none'} = '';
 	$selected{'DPD_ACTION'}{$cgiparams{'DPD_ACTION'}} = "selected='selected'";
 
+	$selected{'START_ACTION'}{'route'} = '';
+	$selected{'START_ACTION'}{'start'} = '';
+	$selected{'START_ACTION'}{$cgiparams{'START_ACTION'}} = "selected='selected'";
+
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', $errormessage);
@@ -2406,7 +2427,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	}
 
 	&Header::openbox('100%', 'left', "$Lang::tr{'advanced'}:");
-	print <<EOF
+	print <<EOF;
 	<form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'>
 	<input type='hidden' name='ADVANCED' value='yes' />
 	<input type='hidden' name='KEY' value='$cgiparams{'KEY'}' />
@@ -2482,8 +2503,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='sha2_384' $checked{'IKE_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
 					<option value='sha2_256' $checked{'IKE_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
 					<option value='aesxcbc' $checked{'IKE_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
-					<option value='sha' $checked{'IKE_INTEGRITY'}{'sha'}>SHA1</option>
-					<option value='md5' $checked{'IKE_INTEGRITY'}{'md5'}>MD5</option>
+					<option value='sha' $checked{'IKE_INTEGRITY'}{'sha'}>SHA1 ($Lang::tr{'vpn weak'})</option>
+					<option value='md5' $checked{'IKE_INTEGRITY'}{'md5'}>MD5 ($Lang::tr{'vpn broken'})</option>
 				</select>
 			</td>
 			<td class='boldbase'>
@@ -2492,8 +2513,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='sha2_384' $checked{'ESP_INTEGRITY'}{'sha2_384'}>SHA2 384 bit</option>
 					<option value='sha2_256' $checked{'ESP_INTEGRITY'}{'sha2_256'}>SHA2 256 bit</option>
 					<option value='aesxcbc' $checked{'ESP_INTEGRITY'}{'aesxcbc'}>AES XCBC</option>
-					<option value='sha1' $checked{'ESP_INTEGRITY'}{'sha1'}>SHA1</option>
-					<option value='md5' $checked{'ESP_INTEGRITY'}{'md5'}>MD5</option>
+					<option value='sha1' $checked{'ESP_INTEGRITY'}{'sha1'}>SHA1 ($Lang::tr{'vpn weak'})</option>
+					<option value='md5' $checked{'ESP_INTEGRITY'}{'md5'}>MD5 ($Lang::tr{'vpn broken'})</option>
 				</select>
 			</td>
 		</tr>
@@ -2510,6 +2531,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			<td class='boldbase' width="15%">$Lang::tr{'grouptype'}</td>
 			<td class='boldbase'>
 				<select name='IKE_GROUPTYPE' multiple='multiple' size='6' style='width: 100%'>
+					<option value='curve25519' $checked{'IKE_GROUPTYPE'}{'curve25519'}>Curve 25519 (256 bit)</option>
 					<option value='e521' $checked{'IKE_GROUPTYPE'}{'e521'}>ECP-521 (NIST)</option>
 					<option value='e512bp' $checked{'IKE_GROUPTYPE'}{'e512bp'}>ECP-512 (Brainpool)</option>
 					<option value='e384' $checked{'IKE_GROUPTYPE'}{'e384'}>ECP-384 (NIST)</option>
@@ -2528,11 +2550,13 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='2048s160' $checked{'IKE_GROUPTYPE'}{'2048s160'}>MODP-2048/160</option>
 					<option value='2048' $checked{'IKE_GROUPTYPE'}{'2048'}>MODP-2048</option>
 					<option value='1536' $checked{'IKE_GROUPTYPE'}{'1536'}>MODP-1536</option>
-					<option value='1024' $checked{'IKE_GROUPTYPE'}{'1024'}>MODP-1024</option>
+					<option value='1024' $checked{'IKE_GROUPTYPE'}{'1024'}>MODP-1024 ($Lang::tr{'vpn broken'})</option>
+					<option value='768' $checked{'IKE_GROUPTYPE'}{'768'}>MODP-768 ($Lang::tr{'vpn broken'})</option>
 				</select>
 			</td>
 			<td class='boldbase'>
 				<select name='ESP_GROUPTYPE' multiple='multiple' size='6' style='width: 100%'>
+					<option value='curve25519' $checked{'ESP_GROUPTYPE'}{'curve25519'}>Curve 25519 (256 bit)</option>
 					<option value='e521' $checked{'ESP_GROUPTYPE'}{'e521'}>ECP-521 (NIST)</option>
 					<option value='e512bp' $checked{'ESP_GROUPTYPE'}{'e512bp'}>ECP-512 (Brainpool)</option>
 					<option value='e384' $checked{'ESP_GROUPTYPE'}{'e384'}>ECP-384 (NIST)</option>
@@ -2551,7 +2575,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='2048s160' $checked{'ESP_GROUPTYPE'}{'2048s160'}>MODP-2048/160</option>
 					<option value='2048' $checked{'ESP_GROUPTYPE'}{'2048'}>MODP-2048</option>
 					<option value='1536' $checked{'ESP_GROUPTYPE'}{'1536'}>MODP-1536</option>
-					<option value='1024' $checked{'ESP_GROUPTYPE'}{'1024'}>MODP-1024</option>
+					<option value='1024' $checked{'ESP_GROUPTYPE'}{'1024'}>MODP-1024 ($Lang::tr{'vpn broken'})</option>
+					<option value='768' $checked{'ESP_GROUPTYPE'}{'768'}>MODP-768 ($Lang::tr{'vpn broken'})</option>
 					<option value='none' $checked{'ESP_GROUPTYPE'}{'none'}>- $Lang::tr{'none'} -</option>
 				</select>
 			</td>
@@ -2599,9 +2624,16 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 				IKE+ESP: $Lang::tr{'use only proposed settings'}
 			</label>
 		</td>
+		<td>
+			<label>$Lang::tr{'vpn start action'}</label>
+			<select name="START_ACTION">
+				<option value="route" $selected{'START_ACTION'}{'route'}>$Lang::tr{'vpn start action route'}</option>
+				<option value="start" $selected{'START_ACTION'}{'start'}>$Lang::tr{'vpn start action start'}</option>
+			</select>
+		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			<label>
 				<input type='checkbox' name='PFS' $checked{'PFS'} />
 				$Lang::tr{'pfs yes no'}
@@ -2609,7 +2641,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			<label>
 				<input type='checkbox' name='COMPRESSION' $checked{'COMPRESSION'} />
 				$Lang::tr{'vpn payload compression'}
@@ -2617,20 +2649,16 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		</td>
 	</tr>
 	<tr>
-		<td>
+		<td colspan="2">
 			<label>
 				<input type='checkbox' name='FORCE_MOBIKE' $checked{'FORCE_MOBIKE'} />
 				$Lang::tr{'vpn force mobike'}
 			</label>
 		</td>
 	</tr>
-EOF
-;
-
-	print <<EOF;
 	<tr>
-		<td align='left' colspan='1'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
-		<td align='right' colspan='2'>
+		<td align='left'><img src='/blob.gif' align='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td>
+		<td align='right'>
 			<input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
 			<input type='submit' name='ACTION' value='$Lang::tr{'cancel'}' />
 		</td>
@@ -2780,6 +2808,12 @@ END
 		($line =~ /$confighash{$key}[1]\{.*INSTALLED/)) {
 			$col1="bgcolor='${Header::colourgreen}'";
 			$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
+		} elsif ($line =~ /$confighash{$key}[1]\[.*CONNECTING/) {
+			$col1="bgcolor='${Header::colourorange}'";
+			$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn connecting'}</font></b>";
+		} elsif ($line =~ /$confighash{$key}[1]\{.*ROUTED/) {
+			$col1="bgcolor='${Header::colourorange}'";
+			$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn on-demand'}</font></b>";
 		}
 	}
 	# move to blue if really down

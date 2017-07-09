@@ -27,7 +27,12 @@ include Config
 VER        = ipfire
 
 THISAPP    = cleanup-toolchain
-TARGET     = $(DIR_INFO)/$(THISAPP)-$(PASS)-tools
+
+ifeq "$(TOOLCHAIN)" "1"
+	TARGET = $(DIR_INFO)/$(THISAPP)-tools
+else
+	TARGET = $(DIR_INFO)/$(THISAPP)
+endif
 
 GCC_VER    = 4.1.2
 
@@ -51,13 +56,8 @@ md5 :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-ifeq "$(PASS)" "1"
-	SPECS=$$(dirname $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name))/specs; \
-	/tools/bin/$(CROSSTARGET)-gcc -dumpspecs | sed \
-		-e "/^\*cpp:$$/{n;s,$$, -isystem /tools/include,}" > $$SPECS
-endif
 
-ifeq "$(PASS)" "2"
+ifeq "$(TOOLCHAIN)" "1"
 	# Remove the first cross compiler which is not needed anymore.
 	find /tools/ -name "$(CROSSTARGET)*" | xargs rm -rfv
 
@@ -72,9 +72,10 @@ ifeq "$(PASS)" "2"
 
 	# Update/create linker cache.
 	/tools/sbin/ldconfig
-endif
 
-ifeq "$(PASS)" "3"
+	# Set a marker when the toolchain was successfully built
+	touch /tools/.toolchain-successful
+else
 	mv -v /tools/bin/{ld,ld-old}
 	mv -v /tools/$(BUILDTARGET)/bin/{ld,ld-old}
 	mv -v /tools/bin/{ld-new,ld}
@@ -86,4 +87,5 @@ ifeq "$(PASS)" "3"
 		-e '/\*cpp:/{n;s@$$@ -isystem /usr/include@}' > \
 		$$(dirname $$(gcc -print-libgcc-file-name))/specs
 endif
+
 	@$(POSTBUILD)

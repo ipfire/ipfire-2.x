@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1_55_0
+VER        = 1_64_0
 
 THISAPP    = boost_$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,21 +32,28 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-CFLAGS    += -fno-strict-aliasing
-CXXFLAGS  += -fno-strict-aliasing
+CFLAGS    += -O3 -fno-strict-aliasing
+CXXFLAGS  += -O3 -fno-strict-aliasing
 
 CONFIGURE_OPTIONS = \
 	--prefix=/usr \
 	--layout=tagged \
-	--without-mpi \
+	--without-chrono \
+	--without-context \
+	--without-coroutine \
+	--without-coroutine2 \
+	--without-date_time \
+	--without-fiber \
 	--without-graph_parallel \
+	--without-mpi \
+	--without-program_options \
 	--build-dir=serial \
-	cflags="$(CFLAGS)" \
-	cxxflags="$(CXXFLAGS)" \
 	variant=release \
 	threading=single,multi \
 	debug-symbols=off \
-	pch=off
+	pch=off \
+	cflags="$(CFLAGS)" \
+	cxxflags="$(CXXFLAGS)"
 
 MAKETUNING = -j2
 
@@ -58,7 +65,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 93780777cfbf999a600f62883bd54b17
+$(DL_FILE)_MD5 = 319c6ffbbeccc366f14bb68767a6db79
 
 install : $(TARGET)
 

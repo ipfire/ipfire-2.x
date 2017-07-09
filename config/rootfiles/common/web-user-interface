@@ -29,7 +29,6 @@ srv/web/ipfire/cgi-bin/gui.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/hosts.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
-#srv/web/ipfire/cgi-bin/imspector.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ipinfo.cgi
 srv/web/ipfire/cgi-bin/iptables.cgi
@@ -117,6 +116,7 @@ srv/web/ipfire/html/images/audio-volume-low-red.png
 srv/web/ipfire/html/images/audio-volume-low.png
 srv/web/ipfire/html/images/audio-x-generic-red.png
 srv/web/ipfire/html/images/audio-x-generic.png
+srv/web/ipfire/html/images/back.png
 srv/web/ipfire/html/images/background.gif
 srv/web/ipfire/html/images/bookmark-new.png
 srv/web/ipfire/html/images/clock.gif

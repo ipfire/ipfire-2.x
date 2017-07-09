@@ -117,5 +117,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/postfix \
 			 /var/ipfire/backup/addons/includes/postfix
 	mv /usr/sbin/sendmail /usr/sbin/sendmail.postfix
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,postfix)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

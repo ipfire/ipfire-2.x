@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2017  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.6.0
+VER        = 1.6.3
 
 THISAPP    = unbound-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 78409eccf7260d260b6463f85e59c66b
+$(DL_FILE)_MD5 = d964d04c8d2b25f3271ac60fc630b654
 
 install : $(TARGET)
 
@@ -70,6 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/unbound-allow-setting-validator-permissive-mode-at-runtime.patch
 	cd $(DIR_APP) && \
 		./configure \
 			--prefix=/usr \
@@ -77,7 +78,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--with-pidfile=/var/run/unbound.pid \
 			--with-rootkey-file=/var/lib/unbound/root.key \
 			--disable-static \
-			--with-libevent
+			--with-libevent \
+			--enable-event-api \
+			ac_cv_func_getentropy=no
+
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

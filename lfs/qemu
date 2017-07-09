@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
-		--enable-kvm --disable-bluez --disable-attr \
+		--localstatedir=/var --enable-kvm --disable-bluez --disable-attr \
 		--target-list="i386-linux-user x86_64-linux-user arm-linux-user i386-softmmu x86_64-softmmu arm-softmmu" \
 		--extra-cflags="$(CFLAGS)" --enable-spice --enable-usb-redir
 	cd $(DIR_APP) && make $(MAKETUNING)
@@ -89,12 +89,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -m 755 $(DIR_SRC)/config/qemu/qemu /usr/bin/qemu
 
 	# disable PaX MPROTECT and RANDMMAP
-	paxctl -m -r /usr/bin/qemu-system-arm
-	paxctl -m -r /usr/bin/qemu-system-i386
-	paxctl -m -r /usr/bin/qemu-system-x86_64
-	paxctl -m -r /usr/bin/qemu-arm
-	paxctl -m -r /usr/bin/qemu-i386
-	paxctl -m -r /usr/bin/qemu-x86_64
+	paxctl -cmr /usr/bin/qemu-system-arm
+	paxctl -cmr /usr/bin/qemu-system-i386
+	paxctl -cmr /usr/bin/qemu-system-x86_64
+	paxctl -cmr /usr/bin/qemu-arm
+	paxctl -cmr /usr/bin/qemu-i386
+	paxctl -cmr /usr/bin/qemu-x86_64
+
 	# install an udev script to set the permissions of /dev/kvm
 	cp -avf $(DIR_SRC)/config/qemu/65-kvm.rules /lib/udev/rules.d/65-kvm.rules
 

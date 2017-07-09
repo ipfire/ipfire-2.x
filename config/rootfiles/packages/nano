@@ -1,11 +1,12 @@
 #etc/nano
-etc/nano/nanorc.sample
+etc/nano/sample.nanorc
 usr/bin/nano
 usr/bin/pico
 usr/bin/rnano
 #usr/share/doc/nano
 #usr/share/doc/nano/faq.html
 #usr/share/doc/nano/nano.1.html
+#usr/share/doc/nano/nano.html
 #usr/share/doc/nano/nanorc.5.html
 #usr/share/doc/nano/rnano.1.html
 #usr/share/info/nano.info

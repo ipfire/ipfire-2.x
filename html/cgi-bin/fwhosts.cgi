@@ -301,7 +301,7 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 		}
 		if($fwhostsettings{'error'} ne 'on'){
 				my $fullip="$fwhostsettings{'IP'}/".&General::iporsubtocidr($fwhostsettings{'SUBNET'});
-				$errormessage=$errormessage.&General::checksubnets($fwhostsettings{'HOSTNAME'},$fullip,"");
+				$errormessage=$errormessage.&General::checksubnets($fwhostsettings{'HOSTNAME'},$fullip,"","exact");
 		}
 		#only check plausi when no error till now
 		if (!$errormessage){
@@ -2554,18 +2554,6 @@ sub checkip
 		}
 	}
 	return 1;
-}
-sub checksubnet
-{
-	my %hash=%{(shift)};
-	&General::readhasharray("$confignet", \%hash);
-	foreach my $key (keys %hash) {
-		if(&General::IpInSubnet($fwhostsettings{'IP'},$hash{$key}[1],$hash{$key}[2]))
-		{
-			return 1;
-		}
-	}
-	return 0;
 }
 sub checkservicegroup
 {

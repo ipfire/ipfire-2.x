@@ -36,7 +36,7 @@ PAK_VER    = 34
 
 DEPS       = ""
 
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(BUILD_PLATFORM)" "arm"
 CONFIGURE_FLAGS = --disable-fanotify
 endif
 
@@ -82,6 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/clamav/llvm-glibc.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/clamav-0.99.2-gcc-6.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--disable-zlib-vcheck \
@@ -95,11 +96,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -rfv /usr/share/clamav/*.cvd
 	mkdir -p /var/run/clamav
 	chown clamav:clamav /var/run/clamav
-
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,clamav)
 	# Disable PaX mprotect for clamd, clamscan and freshclam
-	paxctl -cm /usr/sbin/clamd
-	paxctl -cm /usr/bin/clamscan
-	paxctl -cm /usr/bin/freshclam
+	paxctl -Cm /usr/sbin/clamd
+	paxctl -Cm /usr/bin/clamscan
+	paxctl -Cm /usr/bin/freshclam
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

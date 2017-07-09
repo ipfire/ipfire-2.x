@@ -121,7 +121,13 @@ usr/share/mc/skins/modarin256root-defbg.ini
 usr/share/mc/skins/modarin256root.ini
 usr/share/mc/skins/nicedark.ini
 usr/share/mc/skins/sand256.ini
+usr/share/mc/skins/seasons-autumn16M.ini
+usr/share/mc/skins/seasons-spring16M.ini
+usr/share/mc/skins/seasons-summer16M.ini
+usr/share/mc/skins/seasons-winter16M.ini
 usr/share/mc/skins/xoria256.ini
+usr/share/mc/skins/yadt256-defbg.ini
+usr/share/mc/skins/yadt256.ini
 #usr/share/mc/syntax
 usr/share/mc/syntax/PKGBUILD.syntax
 usr/share/mc/syntax/Syntax
@@ -176,6 +182,8 @@ usr/share/mc/syntax/named.syntax
 usr/share/mc/syntax/nemerle.syntax
 usr/share/mc/syntax/nroff.syntax
 usr/share/mc/syntax/octave.syntax
+usr/share/mc/syntax/opencl.syntax
+usr/share/mc/syntax/osl.syntax
 usr/share/mc/syntax/pascal.syntax
 usr/share/mc/syntax/perl.syntax
 usr/share/mc/syntax/php.syntax
@@ -185,6 +193,7 @@ usr/share/mc/syntax/procmail.syntax
 usr/share/mc/syntax/properties.syntax
 usr/share/mc/syntax/puppet.syntax
 usr/share/mc/syntax/python.syntax
+usr/share/mc/syntax/r.syntax
 usr/share/mc/syntax/ruby.syntax
 usr/share/mc/syntax/sh.syntax
 usr/share/mc/syntax/slang.syntax
@@ -201,5 +210,6 @@ usr/share/mc/syntax/unknown.syntax
 usr/share/mc/syntax/verilog.syntax
 usr/share/mc/syntax/vhdl.syntax
 usr/share/mc/syntax/xml.syntax
+usr/share/mc/syntax/yaml.syntax
 usr/share/mc/syntax/yum-repo.syntax
 usr/share/mc/syntax/yxx.syntax

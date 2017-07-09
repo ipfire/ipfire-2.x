@@ -64,22 +64,22 @@ $(TARGET) :
 	# Create default ramdisk configuration
 	echo "RAMDISK_MODE=0" > /etc/sysconfig/ramdisk
 
-	for i in $(DIR_SRC)/src/initscripts/init.d/*; do \
+	for i in $(DIR_SRC)/src/initscripts/system/*; do \
 		install -v -m 754 $$i /etc/rc.d/init.d/; \
 	done
 	chmod 644 /etc/rc.d/init.d/functions
 
-	for i in $(DIR_SRC)/src/initscripts/init.d/networking/*; do \
+	for i in $(DIR_SRC)/src/initscripts/networking/*; do \
 		if [ -f $$i ]; then \
 			install -v -m 754 $$i /etc/rc.d/init.d/networking/; \
 		fi; \
 	done
 
-	for i in $(DIR_SRC)/src/initscripts/init.d/networking/red.up/*; do \
+	for i in $(DIR_SRC)/src/initscripts/networking/red.up/*; do \
 		install -v -m 754 $$i /etc/rc.d/init.d/networking/red.up/; \
 	done
 
-	for i in $(DIR_SRC)/src/initscripts/init.d/networking/red.down/*; do \
+	for i in $(DIR_SRC)/src/initscripts/networking/red.down/*; do \
 		install -v -m 754 $$i /etc/rc.d/init.d/networking/red.down/; \
 	done
 
@@ -199,7 +199,7 @@ $(TARGET) :
 	done
 
 	# ARM does not need acpid, intel no swconfig
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(BUILD_PLATFORM)" "arm"
 	rm -vf /etc/rc.d/init.d/acpid
 	ln -sf ../init.d/swconfig    /etc/rc.d/rcsysinit.d/S73swconfig
 else

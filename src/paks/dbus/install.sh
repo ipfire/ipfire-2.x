@@ -24,4 +24,10 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 useradd messagebus
-start_service ${NAME}
+
+# Create start links
+ln -svf  ../init.d/messagebus /etc/rc.d/rc3.d/S15messagebus
+ln -svf  ../init.d/messagebus /etc/rc.d/rc0.d/K85messagebus
+ln -svf  ../init.d/messagebus /etc/rc.d/rc6.d/K85messagebus
+
+start_service messagebus

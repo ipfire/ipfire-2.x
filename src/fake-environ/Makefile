@@ -1,10 +1,10 @@
 
 ifeq "$(CFLAGS)" ""
-  $(error CLFAGS not defined.)
+  $(error CFLAGS not defined)
 endif
 
 ifeq "$(TOOLS_DIR)" ""
-  $(error TOOLS_DIR not defined.)
+  $(error TOOLS_DIR not defined)
 endif
 
 LIB = libpakfire_preload.so

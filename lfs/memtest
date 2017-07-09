@@ -76,7 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 # gcc-4.9.3 produce a corrupted version of memtest
 # we use the precomp version at the moment
 
-#ifeq "$(MACHINE)" "i586"
+#ifeq "$(BUILD_ARCH)" "i586"
 #	# Enable SMP as default
 #	cd $(DIR_APP) && sed -i -e "s|CONSERVATIVE_SMP 1|CONSERVATIVE_SMP 0|g" config.h
 #	cd $(DIR_APP) && sed -i -e "s|scp |echo |g" Makefile
