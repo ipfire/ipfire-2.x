@@ -1,0 +1,65 @@
+###############################################################################
+# IPFire.org    - An Open Source Firewall Solution                            #
+# Copyright (C) - IPFire Development Team <info@ipfire.org>                   #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 1.3.1
+
+THISAPP    = wio-$(VER)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = wio
+PAK_VER    = 1
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check : 
+
+download :
+
+md5 : 
+
+dist: 
+	@$(PAK)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/wio/ $(DIR_APP)
+	cd $(DIR_APP)
+	mkdir -p /usr/lib/wio
+	mkdir -p /var/log/wio
+	mkdir -p /var/log/rrd/wio
+	mkdir -p /srv/web/ipfire/html/images/wio
+	mkdir -p /var/ipfire/wio
+
+	install -v -m 755 $(DIR_APP)/wio/wio.cgi /srv/web/ipfire/cgi-bin/
+	install -v -m 755 $(DIR_APP)/wio/wiographs.cgi /srv/web/ipfire/cgi-bin/
+	install -v -m 755 $(DIR_APP)/wio/wio /etc/fcron.minutely/
+	install -v -m 644 $(DIR_APP)/wio/main/wio.conf /var/ipfire/wio/
+	install -v -m 754 $(DIR_APP)/wio/main/wio.pl /var/ipfire/wio/
+	install -v -m 754 $(DIR_APP)/wio/main/wiovpn.pl /var/ipfire/wio/
+	install -v -m 644 $(DIR_APP)/wio/wio-lib.pl /usr/lib/wio/
+	install -v -m 644 $(DIR_APP)/wio/wio-graphs.pl /usr/lib/wio/
+	install -v -m 644 $(DIR_APP)/wio/wioips /var/log/wio/
+	install -v -m 644 $(DIR_APP)/wio/images/* /srv/web/ipfire/html/images/wio/
+	install -v -m 655 $(DIR_APP)/wio/lang/wio.de.pl /var/ipfire/addon-lang/
+	install -v -m 655 $(DIR_APP)/wio/lang/wio.en.pl /var/ipfire/addon-lang/
+	install -v -m 655 $(DIR_APP)/wio/EX-wio.menu /var/ipfire/menu.d/
+	install -v -m 644 $(DIR_APP)/wio/config/backup/includes/wio /var/ipfire/backup/addons/includes/wio
+
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

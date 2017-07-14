@@ -1,0 +1,24 @@
+#!/bin/bash
+#
+# Script to run wio helpers
+#
+. /var/ipfire/wio/wio.conf
+
+MINUTE=`date +%M`
+
+if [ $ENABLE == on ]; then
+
+	if [ $(($MINUTE%$CRON)) == 0 ]; then
+		/var/ipfire/wio/wio.pl > /dev/null
+	fi
+
+	if [ $OVPNRWMAIL == on ]; then
+		if [ $(($MINUTE%$OVPNCRON)) == 0 ]; then
+			/var/ipfire/wio/wiovpn.pl > /dev/null
+		fi
+	else
+		rm -f /var/log/wio/.vpncache
+		rm -f /var/log/wio/.ovpncache
+	fi
+
+fi
