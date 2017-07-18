@@ -64,7 +64,7 @@ else {
 	&Header::openbigbox('100%', 'left');
 	&Header::openbox('100%', 'left', "$Lang::tr{'wio_graphs_stat'} $hostname");
 	&WIOGraphs::wiographbox("wiographs.cgi","$hostid","day","$hostname");
-	print"<table width='100%'><tr><td><a href='/cgi-bin/wio.cgi'><img src='/images/wio/back.png' alt='$Lang::tr{'wio_back'}' title='$Lang::tr{'wio_back'}' /></a></td></tr></table>";
+	print"<table width='100%'><tr><td align='center'><a href='/cgi-bin/wio.cgi'><img src='/images/wio/back.png' alt='$Lang::tr{'wio_back'}' title='$Lang::tr{'wio_back'}' /></a></td></tr></table>";
 	&Header::closebox();
 	&Header::closebigbox();
 	&Header::closepage();
