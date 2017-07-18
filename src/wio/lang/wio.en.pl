@@ -123,7 +123,7 @@
 'wio_mail_smail' => 'collected mail',
 'wio_mail_email' => 'single mails',
 'wio_mail_ovpnrw' => 'enable OpenVPN RW and IPSec Statusmails ?',
-'wio_edit_set' => 'configuration',
+'wio_edit_set' => 'Configuration',
 'wio_service' => 'Service:',
 'wio_dyndns_success' => 'DynDNS IP identified and registered!',
 'wio_remove_all' => 'remove all clients',

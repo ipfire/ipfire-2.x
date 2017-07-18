@@ -1955,9 +1955,9 @@ if ( $wiosettings{'ENABLE'} eq 'on' && !$errormessage && $wiosettings{'ACTION'} 
 print"
 <table border='0' width='100%' bordercolor='$Header::bordercolour' cellspacing='0' cellpadding='0' style='border-collapse: collapse'>
 <tr bgcolor='$color{'color22'}'>
-	<td colspan='3' align='right'></td>
-	<td width='20%' align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'><input type='hidden' name='ACTION' value='$Lang::tr{'edit'}1' /><input type='submit' name='SUBMIT' value='$Lang::tr{'wio_edit_set'}' /></form></td>
-	<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'>\n
+	<td colspan='2' align='right'></td>
+	<td width='10%' align='right'><form method='post' action='/cgi-bin/logs.cgi/log.dat' enctype='multipart/form-data'><input type='hidden' name='SECTION' value='wio' /><input type='submit' name='SUBMIT' value='$Lang::tr{'system logs'}' /></form></td>
+	<td width='10%' align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'><input type='hidden' name='ACTION' value='$Lang::tr{'edit'}1' /><input type='submit' name='SUBMIT' value='$Lang::tr{'wio_edit_set'}' /></form></td>
 </tr>
 </table>
 ";
