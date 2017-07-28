@@ -1621,6 +1621,9 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/ethernet/mellanox/mlx4
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/ethernet/mellanox/mlx4/mlx4_core.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/ethernet/mellanox/mlx4/mlx4_en.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/net/ethernet/mellanox/mlx5
+#lib/modules/KVER-ipfire-pae/kernel/drivers/net/ethernet/mellanox/mlx5/core
+#lib/modules/KVER-ipfire-pae/kernel/drivers/net/ethernet/mellanox/mlx5/core/mlx5_core.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/ethernet/mellanox/mlxsw
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/ethernet/mellanox/mlxsw/mlxsw_core.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/ethernet/mellanox/mlxsw/mlxsw_pci.ko
