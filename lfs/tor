@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.3.0.8
+VER        = 0.3.0.10
 
 THISAPP    = tor-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tor
-PAK_VER    = 21
+PAK_VER    = 22
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c5c88b7e17f652c9fb4fc2c2ee92943c
+$(DL_FILE)_MD5 = c9920169798c28b60b03fa3f0e592509
 
 install : $(TARGET)
 
