@@ -1,0 +1,34 @@
+------------------------------------------------------------
+revno: 14175
+revision-id: squid3@treenet.co.nz-20170629125627-socq6szqysvm9ifa
+parent: squid3@treenet.co.nz-20170622153146-nxo8vl6a9r8z03v4
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=4112
+author: Sven Eisenberg <sven.eisenberg@lairdtech.com>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Fri 2017-06-30 00:56:27 +1200
+message:
+  Bug 4112: ssl_engine does not accept cryptodev
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20170629125627-socq6szqysvm9ifa
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: c74e6941e5b6df8e36d26dd5c02389ae2955bc21
+# timestamp: 2017-06-29 13:51:04 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170622153146-\
+#   nxo8vl6a9r8z03v4
+# 
+# Begin patch
+=== modified file 'src/ssl/support.cc'
+--- src/ssl/support.cc	2017-01-27 16:14:19 +0000
++++ src/ssl/support.cc	2017-06-29 12:56:27 +0000
+@@ -737,6 +737,7 @@
+ 
+ #if HAVE_OPENSSL_ENGINE_H
+     if (Config.SSL.ssl_engine) {
++        ENGINE_load_builtin_engines();
+         ENGINE *e;
+         if (!(e = ENGINE_by_id(Config.SSL.ssl_engine)))
+             fatalf("Unable to find SSL engine '%s'\n", Config.SSL.ssl_engine);
+

@@ -1,0 +1,45 @@
+------------------------------------------------------------
+revno: 14171
+revision-id: squidadm@squid-cache.org-20170615001633-wgrl5w8isv15o7gg
+parent: squid3@treenet.co.nz-20170614215906-ly36sobvlr2pt0u6
+committer: Source Maintenance <squidadm@squid-cache.org>
+branch nick: 3.5
+timestamp: Thu 2017-06-15 00:16:33 +0000
+message:
+  SourceFormat Enforcement
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squidadm@squid-cache.org-20170615001633-\
+#   wgrl5w8isv15o7gg
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 237182ac5eed6aca7e9aca295a90057f3a8cf10b
+# timestamp: 2017-06-15 00:51:05 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170614215906-\
+#   ly36sobvlr2pt0u6
+# 
+# Begin patch
+=== modified file 'src/http.cc'
+--- src/http.cc	2017-06-14 21:37:20 +0000
++++ src/http.cc	2017-06-15 00:16:33 +0000
+@@ -523,7 +523,7 @@
+     case Http::scMisdirectedRequest:
+         statusAnswer = ReuseDecision::doNotCacheButShare;
+         statusReason = shareableError;
+-        // fall through to the actual decision making below
++    // fall through to the actual decision making below
+ 
+     case Http::scBadRequest: // no sharing; perhaps the server did not like something specific to this request
+ 
+@@ -2438,8 +2438,8 @@
+     };
+ 
+     assert(d.answer >= HttpStateData::ReuseDecision::reuseNot &&
+-            d.answer <= HttpStateData::ReuseDecision::doNotCacheButShare);
++           d.answer <= HttpStateData::ReuseDecision::doNotCacheButShare);
+     return os << ReuseMessages[d.answer] << " because " << d.reason <<
+-        "; HTTP status " << d.statusCode << " " << *(d.entry);
++           "; HTTP status " << d.statusCode << " " << *(d.entry);
+ }
+ 
+

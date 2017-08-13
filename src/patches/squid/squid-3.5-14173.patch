@@ -1,0 +1,254 @@
+------------------------------------------------------------
+revno: 14173
+revision-id: squid3@treenet.co.nz-20170621201248-ezpvykg0b307ix61
+parent: squid3@treenet.co.nz-20170621195439-l63xfsad58ghhhfu
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=4671
+author: Alex Rousskov <rousskov@measurement-factory.com>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Thu 2017-06-22 08:12:48 +1200
+message:
+  Replace new/delete operators using modern C++ rules.
+  
+  This change was motivated by "Mismatched free()/delete/delete[]" errors
+  reported by valgrind and mused about in Squid source code.
+  
+  I speculate that the old new/delete replacement code was the result of
+  slow accumulation of working hacks to accomodate various environments,
+  as compiler support for the feature evolved. The cumulative result does
+  not actually work well (see the above paragraph), and the replacement
+  functions had the following visible coding problems according to [1,2]:
+  
+  a) Declared with non-standard profiles that included throw specifiers.
+  b) Declared inline. C++ says that the results of inline declarations
+     have unspecified effects. In Squid, they probably necessitated
+     complex compiler-specific "extern inline" workarounds.
+  c) Defined in the header file. C++ says that defining replacements "in
+     any source file" is enough and that multiple replacements per
+     program (which is what a header file definition produces) result in
+     "undefined behavior".
+  d) Declared inconsistently (only 2 out of 4 flavors). Declaring one base
+     flavor should be sufficient, but if we declare more, we should
+     declare all of them.
+  
+  [1] http://en.cppreference.com/w/cpp/memory/new/operator_new
+  [2] http://en.cppreference.com/w/cpp/memory/new/operator_delete
+  
+  The replacements were not provided to clang (trunk r13219), but there
+  was no explanation why. This patch does not change that exclusion.
+  
+  I have no idea whether any of the old hacks are still necessary in some
+  cases. However, I suspect that either we do not care much if the
+  replacements are not enabled on some poorly supported platforms OR we
+  can disable them (or make them work) using much simpler hacks for the
+  platforms we do care about.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20170621201248-ezpvykg0b307ix61
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 4f15c23326e4e4fe2ca2a6c7a13333e01677a0b0
+# timestamp: 2017-06-21 20:51:02 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170621195439-\
+#   l63xfsad58ghhhfu
+# 
+# Begin patch
+=== modified file 'compat/os/macosx.h'
+--- compat/os/macosx.h	2017-01-01 00:16:45 +0000
++++ compat/os/macosx.h	2017-06-21 20:12:48 +0000
+@@ -28,11 +28,6 @@
+ 
+ #include "compat/cmsg.h"
+ 
+-// MacOS GCC 4.0.1 and 4.2.1 supply __GNUC_GNU_INLINE__ but do not actually define  __attribute__((gnu_inline))
+-#if defined(__cplusplus) && !defined(_SQUID_EXTERNNEW_)
+-#define _SQUID_EXTERNNEW_ extern inline
+-#endif
+-
+ #endif /* _SQUID_APPLE_ */
+ #endif /* SQUID_OS_MACOSX_H */
+ 
+
+=== modified file 'compat/os/sgi.h'
+--- compat/os/sgi.h	2017-01-01 00:16:45 +0000
++++ compat/os/sgi.h	2017-06-21 20:12:48 +0000
+@@ -25,15 +25,6 @@
+ #define _ABI_SOURCE
+ #endif /* USE_ASYNC_IO */
+ 
+-#if defined(__cplusplus) && !defined(_SQUID_EXTERNNEW_) && !defined(_GNUC_)
+-/*
+- * The gcc compiler treats extern inline functions as being extern,
+- * while the SGI MIPSpro compilers treat them as inline. To get equivalent
+- * behavior, remove the inline keyword.
+- */
+-#define _SQUID_EXTERNNEW_ extern
+-#endif
+-
+ #endif /* _SQUID_SGI_ */
+ #endif /* SQUID_OS_SGI_H */
+ 
+
+=== modified file 'compat/os/solaris.h'
+--- compat/os/solaris.h	2017-01-01 00:16:45 +0000
++++ compat/os/solaris.h	2017-06-21 20:12:48 +0000
+@@ -59,13 +59,6 @@
+ #endif
+ 
+ /*
+- * SunPro CC handles extern inline as inline, PLUS extern symbols.
+- */
+-#if !defined(_SQUID_EXTERNNEW_) && defined(__SUNPRO_CC)
+-#define _SQUID_EXTERNNEW_ extern
+-#endif
+-
+-/*
+  * SunStudio CC does not define C++ portability API __FUNCTION__
+  */
+ #if defined(__SUNPRO_CC) && !defined(__FUNCTION__)
+
+=== removed file 'include/SquidNew.h'
+--- include/SquidNew.h	2017-01-01 00:16:45 +0000
++++ include/SquidNew.h	1970-01-01 00:00:00 +0000
+@@ -1,41 +0,0 @@
+-/*
+- * Copyright (C) 1996-2017 The Squid Software Foundation and contributors
+- *
+- * Squid software is distributed under GPLv2+ license and includes
+- * contributions from numerous individuals and organizations.
+- * Please see the COPYING and CONTRIBUTORS files for details.
+- */
+-
+-#ifndef SQUID_NEW_H
+-#define SQUID_NEW_H
+-
+-#if !defined(__SUNPRO_CC) && !defined(__clang__)
+-/* Any code using libstdc++ must have externally resolvable overloads
+- * for void * operator new - which means in the .o for the binary,
+- * or in a shared library. static libs don't propogate the symbol
+- * so, look in the translation unit containing main() in squid
+- * for the extern version in squid
+- */
+-#include <new>
+-
+-_SQUID_EXTERNNEW_ void *operator new(size_t size) throw (std::bad_alloc)
+-{
+-    return xmalloc(size);
+-}
+-_SQUID_EXTERNNEW_ void operator delete (void *address) throw()
+-{
+-    xfree(address);
+-}
+-_SQUID_EXTERNNEW_ void *operator new[] (size_t size) throw (std::bad_alloc)
+-{
+-    return xmalloc(size);
+-}
+-_SQUID_EXTERNNEW_ void operator delete[] (void *address) throw()
+-{
+-    xfree(address);
+-}
+-
+-#endif /* !__SUNPRO_CC && !__clang__*/
+-
+-#endif /* SQUID_NEW_H */
+-
+
+=== modified file 'include/util.h'
+--- include/util.h	2017-01-01 00:16:45 +0000
++++ include/util.h	2017-06-21 20:12:48 +0000
+@@ -19,23 +19,6 @@
+ SQUIDCEXTERN int tvSubUsec(struct timeval, struct timeval);
+ SQUIDCEXTERN double tvSubDsec(struct timeval, struct timeval);
+ SQUIDCEXTERN void Tolower(char *);
+-#if defined(__cplusplus)
+-/*
+- * Any code using libstdc++ must have externally resolvable overloads
+- * for void * operator new - which means in the .o for the binary,
+- * or in a shared library. static libs don't propogate the symbol
+- * so, look in the translation unit containing main() in squid
+- * for the extern version in squid
+- */
+-#if !defined(_SQUID_EXTERNNEW_)
+-#if defined(__GNUC_STDC_INLINE__) || defined(__GNUC_GNU_INLINE__)
+-#define _SQUID_EXTERNNEW_ extern inline __attribute__((gnu_inline))
+-#else
+-#define _SQUID_EXTERNNEW_ extern inline
+-#endif
+-#endif
+-#include "SquidNew.h"
+-#endif
+ 
+ SQUIDCEXTERN time_t parse_iso3307_time(const char *buf);
+ 
+
+=== modified file 'src/SquidNew.cc'
+--- src/SquidNew.cc	2017-01-01 00:16:45 +0000
++++ src/SquidNew.cc	2017-06-21 20:12:48 +0000
+@@ -8,29 +8,45 @@
+ 
+ /* DEBUG: none          Memory Allocation */
+ 
+-#define _SQUID_EXTERNNEW_
+-
+ #include "squid.h"
+ 
+-#ifdef __SUNPRO_CC
++#if !defined(__clang__)
+ 
+ #include <new>
+-void *operator new(size_t size) throw (std::bad_alloc)
+-{
+-    return xmalloc(size);
+-}
+-void operator delete (void *address) throw()
+-{
+-    xfree (address);
+-}
+-void *operator new[] (size_t size) throw (std::bad_alloc)
+-{
+-    return xmalloc(size);
+-}
+-void operator delete[] (void *address) throw()
+-{
+-    xfree (address);
+-}
+-
+-#endif /* __SUNPRO_CC */
++
++void *operator new(size_t size)
++{
++    return xmalloc(size);
++}
++void operator delete(void *address)
++{
++    xfree(address);
++}
++void *operator new[](size_t size)
++{
++    return xmalloc(size);
++}
++void operator delete[](void *address)
++{
++    xfree(address);
++}
++
++void *operator new(size_t size, const std::nothrow_t &tag)
++{
++    return xmalloc(size);
++}
++void operator delete(void *address, const std::nothrow_t &tag)
++{
++    xfree(address);
++}
++void *operator new[](size_t size, const std::nothrow_t &tag)
++{
++    return xmalloc(size);
++}
++void operator delete[](void *address, const std::nothrow_t &tag)
++{
++    xfree(address);
++}
++
++#endif /* !defined(__clang__) */
+ 
+

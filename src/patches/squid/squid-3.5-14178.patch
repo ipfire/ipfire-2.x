@@ -1,0 +1,36 @@
+------------------------------------------------------------
+revno: 14178
+revision-id: squid3@treenet.co.nz-20170701081116-xekwolj1wdkeaxqv
+parent: squid3@treenet.co.nz-20170701073754-4x1i6p5s1gzk73co
+author: Alex Rousskov <rousskov@measurement-factory.com>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sat 2017-07-01 20:11:16 +1200
+message:
+  Fix message packing error handling in mgr and snmp SMP Forwarders.
+  
+  A missing "return" resulted in Forwarders sending garbage (or worse) to
+  Coordinator.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20170701081116-xekwolj1wdkeaxqv
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: a593abc992a79d4539dede76b4f63e013f96d33a
+# timestamp: 2017-07-01 08:51:30 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170701073754-\
+#   4x1i6p5s1gzk73co
+# 
+# Begin patch
+=== modified file 'src/ipc/Forwarder.cc'
+--- src/ipc/Forwarder.cc	2017-01-01 00:16:45 +0000
++++ src/ipc/Forwarder.cc	2017-07-01 08:11:16 +0000
+@@ -62,6 +62,7 @@
+         // assume the pack() call failed because the message did not fit
+         // TODO: add a more specific exception?
+         handleError();
++        return;
+     }
+ 
+     SendMessage(Ipc::Port::CoordinatorAddr(), message);
+

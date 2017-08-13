@@ -1,0 +1,448 @@
+------------------------------------------------------------
+revno: 14180
+revision-id: squid3@treenet.co.nz-20170701120848-q2xznzfvxb4kwvb6
+parent: squid3@treenet.co.nz-20170701095916-wknqmneq2w0mxt6a
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=4464
+author: Christos Tsantilas <chtsanti@users.sourceforge.net>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Sun 2017-07-02 00:08:48 +1200
+message:
+  Bug 4464: Reduce "!Comm::MonitorsRead(serverConnection->fd)" assertions.
+  
+  * Protect Squid Client classes from new requests that compete with
+    ongoing pinned connection use and
+  * resume dealing with new requests when those Client classes are done
+    using the pinned connection.
+  
+  Replaced primary ConnStateData::pinConnection() calls with a pair of
+  pinBusyConnection() and notePinnedConnectionBecameIdle() calls,
+  depending on the pinned connection state ("busy" or "idle").
+  
+  Removed pinConnection() parameters that were not longer used or could be computed from the remaining parameters.
+  
+  Removed ConnStateData::httpsPeeked() code "hiding" the originating
+  request and connection peer details while entering the first "idle"
+  state. The old (trunk r11880.1.6) bump-server-first code used a pair of
+  NULLs because "Intercepted connections do not have requests at the
+  connection pinning stage", but that limitation no longer applicable
+  because Squid always fakes (when intercepting) or parses (a CONNECT)
+  request now, even during SslBump step1.
+  
+  The added XXX and TODOs are not directly related to this fix. They
+  were added to document problems discovered while working on this fix.
+  
+  In v3.5 code, the same problems manifest as Read.cc
+  "fd_table[conn->fd].halfClosedReader != NULL" assertions.
+  
+  This is a Measurement Factory project
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20170701120848-q2xznzfvxb4kwvb6
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: e4f432eed8a845431d4bbbf023de04d682adeaff
+# timestamp: 2017-07-01 12:32:26 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170701095916-\
+#   wknqmneq2w0mxt6a
+# 
+# Begin patch
+=== modified file 'src/FwdState.cc'
+--- src/FwdState.cc	2017-01-01 00:16:45 +0000
++++ src/FwdState.cc	2017-07-01 12:08:48 +0000
+@@ -246,7 +246,7 @@
+ #if USE_OPENSSL
+             if (request->flags.sslPeek && request->clientConnectionManager.valid()) {
+                 CallJobHere1(17, 4, request->clientConnectionManager, ConnStateData,
+-                             ConnStateData::httpsPeeked, Comm::ConnectionPointer(NULL));
++                             ConnStateData::httpsPeeked, ConnStateData::PinnedIdleContext(Comm::ConnectionPointer(nullptr), request));
+             }
+ #endif
+         } else {
+@@ -952,7 +952,7 @@
+ #if USE_OPENSSL
+     if (request->flags.sslPeek) {
+         CallJobHere1(17, 4, request->clientConnectionManager, ConnStateData,
+-                     ConnStateData::httpsPeeked, serverConnection());
++                     ConnStateData::httpsPeeked, ConnStateData::PinnedIdleContext(serverConnection(), request));
+         unregister(serverConn); // async call owns it now
+         complete(); // destroys us
+         return;
+
+=== modified file 'src/base/RefCount.h'
+--- src/base/RefCount.h	2017-01-01 00:16:45 +0000
++++ src/base/RefCount.h	2017-07-01 12:08:48 +0000
+@@ -54,9 +54,7 @@
+ 
+     C & operator * () const {return *const_cast<C *>(p_); }
+ 
+-    C const * getRaw() const {return p_; }
+-
+-    C * getRaw() {return const_cast<C *>(p_); }
++    C * getRaw() const { return const_cast<C *>(p_); }
+ 
+     bool operator == (const RefCount& p) const {
+         return p.p_ == p_;
+
+=== modified file 'src/client_side.cc'
+--- src/client_side.cc	2017-05-29 13:15:55 +0000
++++ src/client_side.cc	2017-07-01 12:08:48 +0000
+@@ -836,6 +836,7 @@
+     assert(areAllContextsForThisConnection());
+     freeAllContexts();
+ 
++    // XXX: Closing pinned conn is too harsh: The Client may want to continue!
+     unpinConnection(true);
+ 
+     if (Comm::IsConnOpen(clientConnection))
+@@ -1559,6 +1560,13 @@
+ 
+     debugs(33, 3, HERE << "ConnnStateData(" << conn->clientConnection << "), Context(" << clientConnection << ")");
+     connIsFinished();
++    conn->kick();
++}
++
++void
++ConnStateData::kick()
++{
++    ConnStateData * conn = this; // XXX: Remove this diff minimization hack
+ 
+     if (conn->pinning.pinned && !Comm::IsConnOpen(conn->pinning.serverConnection)) {
+         debugs(33, 2, HERE << conn->clientConnection << " Connection was pinned but server side gone. Terminating client connection");
+@@ -3240,6 +3248,13 @@
+         if (in.buf.isEmpty())
+             break;
+ 
++        // Prohibit concurrent requests when using a pinned to-server connection
++        // because our Client classes do not support request pipelining.
++        if (pinning.pinned && !pinning.readHandler) {
++            debugs(33, 3, clientConnection << " waits for busy " << pinning.serverConnection);
++            break;
++        }
++
+         /* Limit the number of concurrent requests */
+         if (concurrentRequestQueueFilled())
+             break;
+@@ -4434,22 +4449,19 @@
+ }
+ 
+ void
+-ConnStateData::httpsPeeked(Comm::ConnectionPointer serverConnection)
++ConnStateData::httpsPeeked(PinnedIdleContext pic)
+ {
+     Must(sslServerBump != NULL);
++    Must(sslServerBump->request == pic.request);
++    Must(currentobject == NULL || currentobject->http == NULL || currentobject->http->request == pic.request.getRaw());
+ 
+-    if (Comm::IsConnOpen(serverConnection)) {
+-        pinConnection(serverConnection, NULL, NULL, false);
++    if (Comm::IsConnOpen(pic.connection)) {
++        notePinnedConnectionBecameIdle(pic);
+ 
+         debugs(33, 5, HERE << "bumped HTTPS server: " << sslConnectHostOrIp);
+-    } else {
++    } else
+         debugs(33, 5, HERE << "Error while bumping: " << sslConnectHostOrIp);
+ 
+-        //  copy error detail from bump-server-first request to CONNECT request
+-        if (currentobject != NULL && currentobject->http != NULL && currentobject->http->request)
+-            currentobject->http->request->detailError(sslServerBump->request->errType, sslServerBump->request->errDetail);
+-    }
+-
+     getSslContextStart();
+ }
+ 
+@@ -4952,19 +4964,35 @@
+ }
+ 
+ void
+-ConnStateData::pinConnection(const Comm::ConnectionPointer &pinServer, HttpRequest *request, CachePeer *aPeer, bool auth, bool monitor)
+-{
+-    if (!Comm::IsConnOpen(pinning.serverConnection) ||
+-            pinning.serverConnection->fd != pinServer->fd)
+-        pinNewConnection(pinServer, request, aPeer, auth);
+-
+-    if (monitor)
+-        startPinnedConnectionMonitoring();
+-}
+-
+-void
+-ConnStateData::pinNewConnection(const Comm::ConnectionPointer &pinServer, HttpRequest *request, CachePeer *aPeer, bool auth)
+-{
++ConnStateData::pinBusyConnection(const Comm::ConnectionPointer &pinServer, const HttpRequest::Pointer &request)
++{
++    pinConnection(pinServer, request);
++}
++
++void
++ConnStateData::notePinnedConnectionBecameIdle(PinnedIdleContext pic)
++{
++    Must(pic.connection != NULL);
++    Must(pic.request != NULL);
++    pinConnection(pic.connection, pic.request);
++
++    // monitor pinned server connection for remote-end closures.
++    startPinnedConnectionMonitoring();
++
++    if (!currentobject)
++        kick(); // in case clientParseRequests() was blocked by a busy pic.connection
++}
++
++/// Forward future client requests using the given server connection.
++void
++ConnStateData::pinConnection(const Comm::ConnectionPointer &pinServer, const HttpRequest::Pointer &request)
++{
++    if (Comm::IsConnOpen(pinning.serverConnection) &&
++            pinning.serverConnection->fd == pinServer->fd) {
++        debugs(33, 3, "already pinned" << pinServer);
++        return;
++    }
++
+     unpinConnection(true); // closes pinned connection, if any, and resets fields
+ 
+     pinning.serverConnection = pinServer;
+@@ -4973,23 +5001,21 @@
+ 
+     Must(pinning.serverConnection != NULL);
+ 
+-    // when pinning an SSL bumped connection, the request may be NULL
+     const char *pinnedHost = "[unknown]";
+-    if (request) {
++    if (request != NULL) {
+         pinning.host = xstrdup(request->GetHost());
+         pinning.port = request->port;
+         pinnedHost = pinning.host;
++        pinning.auth = request->flags.connectionAuth;
+     } else {
+         pinning.port = pinServer->remote.port();
+     }
+     pinning.pinned = true;
+-    if (aPeer)
+-        pinning.peer = cbdataReference(aPeer);
+-    pinning.auth = auth;
++    pinning.peer = cbdataReference(pinServer->getPeer());
+     char stmp[MAX_IPSTRLEN];
+     char desc[FD_DESC_SZ];
+     snprintf(desc, FD_DESC_SZ, "%s pinned connection for %s (%d)",
+-             (auth || !aPeer) ? pinnedHost : aPeer->name,
++             (pinning.auth || !pinning.peer) ? pinnedHost : pinning.peer->name,
+              clientConnection->remote.toUrl(stmp,MAX_IPSTRLEN),
+              clientConnection->fd);
+     fd_note(pinning.serverConnection->fd, desc);
+@@ -5164,3 +5190,8 @@
+      * connection has gone away */
+ }
+ 
++std::ostream &
++operator <<(std::ostream &os, const ConnStateData::PinnedIdleContext &pic)
++{
++    return os << pic.connection << ", request=" << pic.request;
++}
+
+=== modified file 'src/client_side.h'
+--- src/client_side.h	2017-01-01 00:16:45 +0000
++++ src/client_side.h	2017-07-01 12:08:48 +0000
+@@ -26,6 +26,8 @@
+ #include "ssl/support.h"
+ #endif
+ 
++#include <iosfwd>
++
+ class ConnStateData;
+ class ClientHttpRequest;
+ class clientStreamNode;
+@@ -188,6 +190,11 @@
+     /// Traffic parsing
+     bool clientParseRequests();
+     void readNextRequest();
++
++    // In v3.5, usually called via ClientSocketContext::keepaliveNextRequest().
++    /// try to make progress on a transaction or read more I/O
++    void kick();
++
+     ClientSocketContext::Pointer getCurrentContext() const;
+     void addContextToQueue(ClientSocketContext * context);
+     int getConcurrentRequestCount() const;
+@@ -287,9 +294,21 @@
+     bool handleReadData();
+     bool handleRequestBodyData();
+ 
+-    /// Forward future client requests using the given server connection.
+-    /// Optionally, monitor pinned server connection for remote-end closures.
+-    void pinConnection(const Comm::ConnectionPointer &pinServerConn, HttpRequest *request, CachePeer *peer, bool auth, bool monitor = true);
++    /// parameters for the async notePinnedConnectionBecameIdle() call
++    class PinnedIdleContext
++    {
++    public:
++        PinnedIdleContext(const Comm::ConnectionPointer &conn, const HttpRequest::Pointer &req): connection(conn), request(req) {}
++
++        Comm::ConnectionPointer connection; ///< to-server connection to be pinned
++        HttpRequest::Pointer request; ///< to-server request that initiated serverConnection
++    };
++
++    /// Called when a pinned connection becomes available for forwarding the next request.
++    void notePinnedConnectionBecameIdle(PinnedIdleContext pic);
++    /// Forward future client requests using the given to-server connection.
++    /// The connection is still being used by the current client request.
++    void pinBusyConnection(const Comm::ConnectionPointer &pinServerConn, const HttpRequest::Pointer &request);
+     /// Undo pinConnection() and, optionally, close the pinned connection.
+     void unpinConnection(const bool andClose);
+     /// Returns validated pinnned server connection (and stops its monitoring).
+@@ -345,7 +364,7 @@
+     /// generated
+     void doPeekAndSpliceStep();
+     /// called by FwdState when it is done bumping the server
+-    void httpsPeeked(Comm::ConnectionPointer serverConnection);
++    void httpsPeeked(PinnedIdleContext pic);
+ 
+     /// Start to create dynamic SSL_CTX for host or uses static port SSL context.
+     void getSslContextStart();
+@@ -449,7 +468,7 @@
+     void clientAfterReadingRequests();
+     bool concurrentRequestQueueFilled() const;
+ 
+-    void pinNewConnection(const Comm::ConnectionPointer &pinServer, HttpRequest *request, CachePeer *aPeer, bool auth);
++    void pinConnection(const Comm::ConnectionPointer &pinServerConn, const HttpRequest::Pointer &request);
+ 
+     /* PROXY protocol functionality */
+     bool proxyProtocolValidateClient();
+@@ -516,5 +535,7 @@
+ void clientProcessRequest(ConnStateData *conn, HttpParser *hp, ClientSocketContext *context, const HttpRequestMethod& method, Http::ProtocolVersion http_ver);
+ void clientPostHttpsAccept(ConnStateData *connState);
+ 
++std::ostream &operator <<(std::ostream &os, const ConnStateData::PinnedIdleContext &pic);
++
+ #endif /* SQUID_CLIENTSIDE_H */
+ 
+
+=== modified file 'src/clients/FtpRelay.cc'
+--- src/clients/FtpRelay.cc	2017-01-01 00:16:45 +0000
++++ src/clients/FtpRelay.cc	2017-07-01 12:08:48 +0000
+@@ -210,9 +210,10 @@
+                 mgr->unpinConnection(false);
+                 ctrl.close();
+             } else {
+-                mgr->pinConnection(ctrl.conn, fwd->request,
+-                                   ctrl.conn->getPeer(),
+-                                   fwd->request->flags.connectionAuth);
++                CallJobHere1(9, 4, mgr,
++                             ConnStateData,
++                             notePinnedConnectionBecameIdle,
++                             ConnStateData::PinnedIdleContext(ctrl.conn, fwd->request));
+                 ctrl.forget();
+             }
+         }
+
+=== modified file 'src/http.cc'
+--- src/http.cc	2017-06-15 00:16:33 +0000
++++ src/http.cc	2017-07-01 12:08:48 +0000
+@@ -1383,9 +1383,6 @@
+ void
+ HttpStateData::processReplyBody()
+ {
+-    Ip::Address client_addr;
+-    bool ispinned = false;
+-
+     if (!flags.headers_parsed) {
+         flags.do_next_read = true;
+         maybeReadVirginBody();
+@@ -1435,35 +1432,49 @@
+         }
+         break;
+ 
+-        case COMPLETE_PERSISTENT_MSG:
++        case COMPLETE_PERSISTENT_MSG: {
+             debugs(11, 5, "processReplyBody: COMPLETE_PERSISTENT_MSG from " << serverConnection);
+-            /* yes we have to clear all these! */
++
++            // TODO: Remove serverConnectionSaved but preserve exception safety.
++
+             commUnsetConnTimeout(serverConnection);
+             flags.do_next_read = false;
+ 
+             comm_remove_close_handler(serverConnection->fd, closeHandler);
+             closeHandler = NULL;
+-            fwd->unregister(serverConnection);
+ 
++            Ip::Address client_addr; // XXX: Remove as unused. Why was it added?
+             if (request->flags.spoofClientIp)
+                 client_addr = request->client_addr;
+ 
++            Comm::ConnectionPointer serverConnectionSaved = serverConnection;
++            fwd->unregister(serverConnection);
++            serverConnection = nullptr;
++
++            bool ispinned = false; // TODO: Rename to isOrShouldBePinned
+             if (request->flags.pinned) {
+                 ispinned = true;
+             } else if (request->flags.connectionAuth && request->flags.authSent) {
+                 ispinned = true;
+             }
+ 
+-            if (ispinned && request->clientConnectionManager.valid()) {
+-                request->clientConnectionManager->pinConnection(serverConnection, request, _peer,
+-                        (request->flags.connectionAuth));
++            if (ispinned) {
++                if (request->clientConnectionManager.valid()) {
++                    CallJobHere1(11, 4, request->clientConnectionManager,
++                                 ConnStateData,
++                                 notePinnedConnectionBecameIdle,
++                                 ConnStateData::PinnedIdleContext(serverConnectionSaved, request));
++                } else {
++                    // must not pool/share ispinned connections, even orphaned ones
++                    serverConnectionSaved->close();
++                }
+             } else {
+-                fwd->pconnPush(serverConnection, request->GetHost());
++                fwd->pconnPush(serverConnectionSaved, request->GetHost());
+             }
+ 
+-            serverConnection = NULL;
+             serverComplete();
+             return;
++        }
+ 
+         case COMPLETE_NONPERSISTENT_MSG:
+             debugs(11, 5, "processReplyBody: COMPLETE_NONPERSISTENT_MSG from " << serverConnection);
+
+=== modified file 'src/servers/FtpServer.cc'
+--- src/servers/FtpServer.cc	2017-02-26 11:09:42 +0000
++++ src/servers/FtpServer.cc	2017-07-01 12:08:48 +0000
+@@ -301,12 +301,8 @@
+     Must(http != NULL);
+     HttpRequest *const request = http->request;
+     Must(request != NULL);
+-
+-    // this is not an idle connection, so we do not want I/O monitoring
+-    const bool monitor = false;
+-
+     // make FTP peer connection exclusive to our request
+-    pinConnection(conn, request, conn->getPeer(), false, monitor);
++    pinBusyConnection(conn, request);
+ }
+ 
+ void
+
+=== modified file 'src/tests/stub_client_side.cc'
+--- src/tests/stub_client_side.cc	2017-01-01 00:16:45 +0000
++++ src/tests/stub_client_side.cc	2017-07-01 12:08:48 +0000
+@@ -60,7 +60,8 @@
+ void ConnStateData::noteBodyConsumerAborted(BodyPipe::Pointer) STUB
+ bool ConnStateData::handleReadData() STUB_RETVAL(false)
+ bool ConnStateData::handleRequestBodyData() STUB_RETVAL(false)
+-void ConnStateData::pinConnection(const Comm::ConnectionPointer &pinServerConn, HttpRequest *request, CachePeer *peer, bool auth, bool monitor) STUB
++void ConnStateData::pinBusyConnection(const Comm::ConnectionPointer &, const HttpRequest::Pointer &) STUB
++void ConnStateData::notePinnedConnectionBecameIdle(PinnedIdleContext) STUB
+ void ConnStateData::unpinConnection(const bool andClose) STUB
+ const Comm::ConnectionPointer ConnStateData::validatePinnedConnection(HttpRequest *request, const CachePeer *peer) STUB_RETVAL(NULL)
+ void ConnStateData::clientPinnedConnectionClosed(const CommCloseCbParams &io) STUB
+@@ -70,7 +71,7 @@
+ void ConnStateData::swanSong() STUB
+ void ConnStateData::quitAfterError(HttpRequest *request) STUB
+ #if USE_OPENSSL
+-void ConnStateData::httpsPeeked(Comm::ConnectionPointer serverConnection) STUB
++void ConnStateData::httpsPeeked(PinnedIdleContext) STUB
+ void ConnStateData::getSslContextStart() STUB
+ void ConnStateData::getSslContextDone(SSL_CTX * sslContext, bool isNew) STUB
+ void ConnStateData::sslCrtdHandleReplyWrapper(void *data, const Helper::Reply &reply) STUB
+

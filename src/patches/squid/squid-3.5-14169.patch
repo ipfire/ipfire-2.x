@@ -1,0 +1,881 @@
+------------------------------------------------------------
+revno: 14169
+revision-id: squid3@treenet.co.nz-20170614213720-3qmiohlx4zr2jnqq
+parent: squid3@treenet.co.nz-20170601134753-6u64sl2rzmbfs67l
+fixes bug: http://bugs.squid-cache.org/show_bug.cgi?id=2833
+author: Eduard Bagdasaryan <eduard.bagdasaryan@measurement-factory.com>
+committer: Amos Jeffries <squid3@treenet.co.nz>
+branch nick: 3.5
+timestamp: Thu 2017-06-15 09:37:20 +1200
+message:
+  Bug 2833 pt2: Collapse internal revalidation requests (SMP-unaware caches), again.
+  
+  The security fix in v5 r14979 had a negative effect on collapsed
+  forwarding. All "private" entries were considered automatically
+  non-shareable among collapsed clients. However this is not true: there
+  are many situations when collapsed forwarding should work despite of
+  "private" entry status: 304/5xx responses are good examples of that.
+  This patch fixes that by means of a new StoreEntry::shareableWhenPrivate
+  flag.
+  
+  The suggested fix is not complete: To cover all possible situations, we
+  need to decide whether StoreEntry::shareableWhenPrivate is true or not
+  for all contexts where StoreEntry::setPrivateKey() is used. This patch
+  fixes only few important cases inside http.cc, making CF (as well
+  collapsed revalidation) work for some [non-cacheable] response status
+  codes, including 3xx, 5xx and some others.
+  
+  The original support for internal revalidation requests collapsing
+  was in trink r14755 and referred to Squid bugs 2833, 4311, and 4471.
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squid3@treenet.co.nz-20170614213720-3qmiohlx4zr2jnqq
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: 9e248e2e9d2f1defe1070eb808177df978fb4146
+# timestamp: 2017-06-14 21:51:05 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170601134753-\
+#   6u64sl2rzmbfs67l
+# 
+# Begin patch
+=== modified file 'src/HttpHdrCc.cc'
+--- src/HttpHdrCc.cc	2017-01-01 00:16:45 +0000
++++ src/HttpHdrCc.cc	2017-06-14 21:37:20 +0000
+@@ -262,8 +262,8 @@
+             case CC_PUBLIC:
+                 break;
+             case CC_PRIVATE:
+-                if (Private().size())
+-                    packerPrintf(p, "=\"" SQUIDSTRINGPH "\"", SQUIDSTRINGPRINT(Private()));
++                if (private_.size())
++                    packerPrintf(p, "=\"" SQUIDSTRINGPH "\"", SQUIDSTRINGPRINT(private_));
+                 break;
+ 
+             case CC_NO_CACHE:
+
+=== modified file 'src/MemStore.cc'
+--- src/MemStore.cc	2017-01-01 00:16:45 +0000
++++ src/MemStore.cc	2017-06-14 21:37:20 +0000
+@@ -299,7 +299,7 @@
+     e.ping_status = PING_NONE;
+ 
+     EBIT_CLR(e.flags, RELEASE_REQUEST);
+-    EBIT_CLR(e.flags, KEY_PRIVATE);
++    e.clearPrivate();
+     EBIT_SET(e.flags, ENTRY_VALIDATED);
+ 
+     MemObject::MemCache &mc = e.mem_obj->memCache;
+
+=== modified file 'src/Store.h'
+--- src/Store.h	2017-01-01 00:16:45 +0000
++++ src/Store.h	2017-06-14 21:37:20 +0000
+@@ -95,15 +95,19 @@
+     void abort();
+     void unlink();
+     void makePublic(const KeyScope keyScope = ksDefault);
+-    void makePrivate();
++    void makePrivate(const bool shareable);
++    /// A low-level method just resetting "private key" flags.
++    /// To avoid key inconsistency please use forcePublicKey()
++    /// or similar instead.
++    void clearPrivate();
+     void setPublicKey(const KeyScope keyScope = ksDefault);
+     /// Resets existing public key to a public key with default scope,
+     /// releasing the old default-scope entry (if any).
+     /// Does nothing if the existing public key already has default scope.
+     void clearPublicKeyScope();
+-    void setPrivateKey();
++    void setPrivateKey(const bool shareable);
+     void expireNow();
+-    void releaseRequest();
++    void releaseRequest(const bool shareable = false);
+     void negativeCache();
+     void cacheNegatively();     /** \todo argh, why both? */
+     void invokeHandlers();
+@@ -230,7 +234,13 @@
+     /// update last reference timestamp and related Store metadata
+     void touch();
+ 
+-    virtual void release();
++    virtual void release(const bool shareable = false);
++
++    /// May the caller commit to treating this [previously locked]
++    /// entry as a cache hit?
++    bool mayStartHitting() const {
++        return !EBIT_TEST(flags, KEY_PRIVATE) || shareableWhenPrivate;
++    }
+ 
+ #if USE_ADAPTATION
+     /// call back producer when more buffer space is available
+@@ -252,6 +262,13 @@
+ 
+     unsigned short lock_count;      /* Assume < 65536! */
+ 
++    /// Nobody can find/lock KEY_PRIVATE entries, but some transactions
++    /// (e.g., collapsed requests) find/lock a public entry before it becomes
++    /// private. May such transactions start using the now-private entry
++    /// they previously locked? This member should not affect transactions
++    /// that already started reading from the entry.
++    bool shareableWhenPrivate;
++
+ #if USE_ADAPTATION
+     /// producer callback registered with deferProducer
+     AsyncCall::Pointer deferredProducer;
+@@ -259,6 +276,8 @@
+ 
+     bool validLength() const;
+     bool hasOneOfEtags(const String &reqETags, const bool allowWeakMatch) const;
++
++    friend std::ostream &operator <<(std::ostream &os, const StoreEntry &e);
+ };
+ 
+ std::ostream &operator <<(std::ostream &os, const StoreEntry &e);
+
+=== modified file 'src/client_side_reply.cc'
+--- src/client_side_reply.cc	2017-05-29 13:15:55 +0000
++++ src/client_side_reply.cc	2017-06-14 21:37:20 +0000
+@@ -396,8 +396,8 @@
+     if (result.flags.error && !EBIT_TEST(http->storeEntry()->flags, ENTRY_ABORTED))
+         return;
+ 
+-    if (collapsedRevalidation == crSlave && EBIT_TEST(http->storeEntry()->flags, KEY_PRIVATE)) {
+-        debugs(88, 3, "CF slave hit private " << *http->storeEntry() << ". MISS");
++    if (collapsedRevalidation == crSlave && !http->storeEntry()->mayStartHitting()) {
++        debugs(88, 3, "CF slave hit private non-shareable " << *http->storeEntry() << ". MISS");
+         // restore context to meet processMiss() expectations
+         restoreState();
+         http->logType = LOG_TCP_MISS;
+@@ -530,7 +530,7 @@
+     // The previously identified hit suddenly became unsharable!
+     // This is common for collapsed forwarding slaves but might also
+     // happen to regular hits because we are called asynchronously.
+-    if (EBIT_TEST(e->flags, KEY_PRIVATE)) {
++    if (!e->mayStartHitting()) {
+         debugs(88, 3, "unsharable " << *e << ". MISS");
+         http->logType = LOG_TCP_MISS;
+         processMiss();
+
+=== modified file 'src/fs/rock/RockSwapDir.cc'
+--- src/fs/rock/RockSwapDir.cc	2017-01-01 00:16:45 +0000
++++ src/fs/rock/RockSwapDir.cc	2017-06-14 21:37:20 +0000
+@@ -149,7 +149,7 @@
+     e.ping_status = PING_NONE;
+ 
+     EBIT_CLR(e.flags, RELEASE_REQUEST);
+-    EBIT_CLR(e.flags, KEY_PRIVATE);
++    e.clearPrivate();
+     EBIT_SET(e.flags, ENTRY_VALIDATED);
+ 
+     e.swap_dirn = index;
+
+=== modified file 'src/fs/ufs/UFSSwapDir.cc'
+--- src/fs/ufs/UFSSwapDir.cc	2017-01-01 00:16:45 +0000
++++ src/fs/ufs/UFSSwapDir.cc	2017-06-14 21:37:20 +0000
+@@ -809,7 +809,7 @@
+     e->refcount = refcount;
+     e->flags = newFlags;
+     EBIT_CLR(e->flags, RELEASE_REQUEST);
+-    EBIT_CLR(e->flags, KEY_PRIVATE);
++    e->clearPrivate();
+     e->ping_status = PING_NONE;
+     EBIT_CLR(e->flags, ENTRY_VALIDATED);
+     mapBitSet(e->swap_filen);
+
+=== modified file 'src/http.cc'
+--- src/http.cc	2017-01-01 00:16:45 +0000
++++ src/http.cc	2017-06-14 21:37:20 +0000
+@@ -290,7 +290,9 @@
+                     (Config.onoff.surrogate_is_remote
+                      && sctusable->noStoreRemote())) {
+                 surrogateNoStore = true;
+-                entry->makePrivate();
++                // Be conservative for now and make it non-shareable because
++                // there is no enough information here to make the decision.
++                entry->makePrivate(false);
+             }
+ 
+             /* The HttpHeader logic cannot tell if the header it's parsing is a reply to an
+@@ -315,12 +317,13 @@
+     }
+ }
+ 
+-int
+-HttpStateData::cacheableReply()
++HttpStateData::ReuseDecision::Answers
++HttpStateData::reusableReply(HttpStateData::ReuseDecision &decision)
+ {
+     HttpReply const *rep = finalReply();
+     HttpHeader const *hdr = &rep->header;
+     const char *v;
++
+ #if USE_HTTP_VIOLATIONS
+ 
+     const RefreshPattern *R = NULL;
+@@ -337,24 +340,19 @@
+ #define REFRESH_OVERRIDE(flag) 0
+ #endif
+ 
+-    if (EBIT_TEST(entry->flags, RELEASE_REQUEST)) {
+-        debugs(22, 3, "NO because " << *entry << " has been released.");
+-        return 0;
+-    }
++    if (EBIT_TEST(entry->flags, RELEASE_REQUEST))
++        return decision.make(ReuseDecision::reuseNot, "the entry has been released");
+ 
+     // RFC 7234 section 4: a cache MUST use the most recent response
+     // (as determined by the Date header field)
+-    if (sawDateGoBack) {
+-        debugs(22, 3, "NO because " << *entry << " has an older date header.");
+-        return 0;
+-    }
++    // TODO: whether such responses could be shareable?
++    if (sawDateGoBack)
++        return decision.make(ReuseDecision::reuseNot, "the response has an older date header");
+ 
+     // Check for Surrogate/1.0 protocol conditions
+     // NP: reverse-proxy traffic our parent server has instructed us never to cache
+-    if (surrogateNoStore) {
+-        debugs(22, 3, HERE << "NO because Surrogate-Control:no-store");
+-        return 0;
+-    }
++    if (surrogateNoStore)
++        return decision.make(ReuseDecision::reuseNot, "Surrogate-Control:no-store");
+ 
+     // RFC 2616: HTTP/1.1 Cache-Control conditions
+     if (!ignoreCacheControl) {
+@@ -363,11 +361,10 @@
+         // for now we are not reliably doing that so we waste CPU re-checking request CC
+ 
+         // RFC 2616 section 14.9.2 - MUST NOT cache any response with request CC:no-store
+-        if (request && request->cache_control && request->cache_control->noStore() &&
+-                !REFRESH_OVERRIDE(ignore_no_store)) {
+-            debugs(22, 3, HERE << "NO because client request Cache-Control:no-store");
+-            return 0;
+-        }
++        if (request && request->cache_control && request->cache_control->hasNoStore() &&
++                !REFRESH_OVERRIDE(ignore_no_store))
++            return decision.make(ReuseDecision::reuseNot,
++                                 "client request Cache-Control:no-store");
+ 
+         // NP: request CC:no-cache only means cache READ is forbidden. STORE is permitted.
+         if (rep->cache_control && rep->cache_control->hasNoCache() && rep->cache_control->noCache().size() > 0) {
+@@ -376,19 +373,18 @@
+              * successfully (ie, must revalidate AND these headers are prohibited on stale replies).
+              * That is a bit tricky for squid right now so we avoid caching entirely.
+              */
+-            debugs(22, 3, HERE << "NO because server reply Cache-Control:no-cache has parameters");
+-            return 0;
++            return decision.make(ReuseDecision::reuseNot,
++                                 "server reply Cache-Control:no-cache has parameters");
+         }
+ 
+         // NP: request CC:private is undefined. We ignore.
+         // NP: other request CC flags are limiters on HIT/MISS. We don't care about here.
+ 
+         // RFC 2616 section 14.9.2 - MUST NOT cache any response with CC:no-store
+-        if (rep->cache_control && rep->cache_control->noStore() &&
+-                !REFRESH_OVERRIDE(ignore_no_store)) {
+-            debugs(22, 3, HERE << "NO because server reply Cache-Control:no-store");
+-            return 0;
+-        }
++        if (rep->cache_control && rep->cache_control->hasNoStore() &&
++                !REFRESH_OVERRIDE(ignore_no_store))
++            return decision.make(ReuseDecision::reuseNot,
++                                 "server reply Cache-Control:no-store");
+ 
+         // RFC 2616 section 14.9.1 - MUST NOT cache any response with CC:private in a shared cache like Squid.
+         // CC:private overrides CC:public when both are present in a response.
+@@ -401,27 +397,25 @@
+              * successfully (ie, must revalidate AND these headers are prohibited on stale replies).
+              * That is a bit tricky for squid right now so we avoid caching entirely.
+              */
+-            debugs(22, 3, HERE << "NO because server reply Cache-Control:private");
+-            return 0;
++            return decision.make(ReuseDecision::reuseNot,
++                                 "server reply Cache-Control:private");
+         }
+     }
+ 
+     // RFC 2068, sec 14.9.4 - MUST NOT cache any response with Authentication UNLESS certain CC controls are present
+     // allow HTTP violations to IGNORE those controls (ie re-block caching Auth)
+     if (request && (request->flags.auth || request->flags.authSent) && !REFRESH_OVERRIDE(ignore_auth)) {
+-        if (!rep->cache_control) {
+-            debugs(22, 3, HERE << "NO because Authenticated and server reply missing Cache-Control");
+-            return 0;
+-        }
++        if (!rep->cache_control)
++            return decision.make(ReuseDecision::reuseNot,
++                                 "authenticated and server reply missing Cache-Control");
+ 
+-        if (ignoreCacheControl) {
+-            debugs(22, 3, HERE << "NO because Authenticated and ignoring Cache-Control");
+-            return 0;
+-        }
++        if (ignoreCacheControl)
++            return decision.make(ReuseDecision::reuseNot,
++                                 "authenticated and ignoring Cache-Control");
+ 
+         bool mayStore = false;
+         // HTTPbis pt6 section 3.2: a response CC:public is present
+-        if (rep->cache_control->Public()) {
++        if (rep->cache_control->hasPublic()) {
+             debugs(22, 3, HERE << "Authenticated but server reply Cache-Control:public");
+             mayStore = true;
+ 
+@@ -441,15 +435,13 @@
+ #endif
+ 
+             // HTTPbis pt6 section 3.2: a response CC:s-maxage is present
+-        } else if (rep->cache_control->sMaxAge()) {
++        } else if (rep->cache_control->hasSMaxAge()) {
+             debugs(22, 3, HERE << "Authenticated but server reply Cache-Control:s-maxage");
+             mayStore = true;
+         }
+ 
+-        if (!mayStore) {
+-            debugs(22, 3, HERE << "NO because Authenticated transaction");
+-            return 0;
+-        }
++        if (!mayStore)
++            return decision.make(ReuseDecision::reuseNot, "authenticated transaction");
+ 
+         // NP: response CC:no-cache is equivalent to CC:must-revalidate,max-age=0. We MAY cache, and do so.
+         // NP: other request CC flags are limiters on HIT/MISS/REFRESH. We don't care about here.
+@@ -460,12 +452,26 @@
+      * probably should not be cachable
+      */
+     if ((v = hdr->getStr(HDR_CONTENT_TYPE)))
+-        if (!strncasecmp(v, "multipart/x-mixed-replace", 25)) {
+-            debugs(22, 3, HERE << "NO because Content-Type:multipart/x-mixed-replace");
+-            return 0;
+-        }
++        if (!strncasecmp(v, "multipart/x-mixed-replace", 25))
++            return decision.make(ReuseDecision::reuseNot, "Content-Type:multipart/x-mixed-replace");
++
++    // TODO: if possible, provide more specific message for each status code
++    static const char *shareableError = "shareable error status code";
++    static const char *nonShareableError = "non-shareable error status code";
++    ReuseDecision::Answers statusAnswer = ReuseDecision::reuseNot;
++    const char *statusReason = nonShareableError;
+ 
+     switch (rep->sline.status()) {
++
++    /* There are several situations when a non-cacheable response may be
++     * still shareable (e.g., among collapsed clients). We assume that these
++     * are 3xx and 5xx responses, indicating server problems and some of
++     * 4xx responses, common for all clients with a given cache key (e.g.,
++     * 404 Not Found or 414 URI Too Long). On the other hand, we should not
++     * share non-cacheable client-specific errors, such as 400 Bad Request
++     * or 406 Not Acceptable.
++     */
++
+     /* Responses that are cacheable */
+ 
+     case Http::scOkay:
+@@ -482,112 +488,90 @@
+          * Don't cache objects that need to be refreshed on next request,
+          * unless we know how to refresh it.
+          */
++        if (refreshIsCachable(entry) || REFRESH_OVERRIDE(store_stale))
++            decision.make(ReuseDecision::cachePositively, "refresh check returned cacheable");
++        else
++            decision.make(ReuseDecision::doNotCacheButShare, "refresh check returned non-cacheable");
+ 
+-        if (!refreshIsCachable(entry) && !REFRESH_OVERRIDE(store_stale)) {
+-            debugs(22, 3, "NO because refreshIsCachable() returned non-cacheable..");
+-            return 0;
+-        } else {
+-            debugs(22, 3, HERE << "YES because HTTP status " << rep->sline.status());
+-            return 1;
+-        }
+-        /* NOTREACHED */
+         break;
+ 
+     /* Responses that only are cacheable if the server says so */
+ 
+     case Http::scFound:
+     case Http::scTemporaryRedirect:
+-        if (rep->date <= 0) {
+-            debugs(22, 3, HERE << "NO because HTTP status " << rep->sline.status() << " and Date missing/invalid");
+-            return 0;
+-        }
+-        if (rep->expires > rep->date) {
+-            debugs(22, 3, HERE << "YES because HTTP status " << rep->sline.status() << " and Expires > Date");
+-            return 1;
+-        } else {
+-            debugs(22, 3, HERE << "NO because HTTP status " << rep->sline.status() << " and Expires <= Date");
+-            return 0;
+-        }
+-        /* NOTREACHED */
++
++        if (rep->date <= 0)
++            decision.make(ReuseDecision::doNotCacheButShare, "Date is missing/invalid");
++        else if (rep->expires > rep->date)
++            decision.make(ReuseDecision::cachePositively, "Expires > Date");
++        else
++            decision.make(ReuseDecision::doNotCacheButShare, "Expires <= Date");
+         break;
+ 
+-    /* Errors can be negatively cached */
+-
++    /* These responses can be negatively cached. Most can also be shared. */
+     case Http::scNoContent:
+-
+     case Http::scUseProxy:
+-
+-    case Http::scBadRequest:
+-
+     case Http::scForbidden:
+-
+     case Http::scNotFound:
+-
+     case Http::scMethodNotAllowed:
+-
+     case Http::scUriTooLong:
+-
+     case Http::scInternalServerError:
+-
+     case Http::scNotImplemented:
+-
+     case Http::scBadGateway:
+-
+     case Http::scServiceUnavailable:
+-
+     case Http::scGatewayTimeout:
+     case Http::scMisdirectedRequest:
+-
+-        debugs(22, 3, "MAYBE because HTTP status " << rep->sline.status());
+-        return -1;
+-
+-        /* NOTREACHED */
++        statusAnswer = ReuseDecision::doNotCacheButShare;
++        statusReason = shareableError;
++        // fall through to the actual decision making below
++
++    case Http::scBadRequest: // no sharing; perhaps the server did not like something specific to this request
++
++#if USE_HTTP_VIOLATIONS
++        if (Config.negativeTtl > 0)
++            decision.make(ReuseDecision::cacheNegatively, "Config.negativeTtl > 0");
++        else
++#endif
++            decision.make(statusAnswer, statusReason);
+         break;
+ 
+-    /* Some responses can never be cached */
+-
+-    case Http::scPartialContent:    /* Not yet supported */
+-
++    /* these responses can never be cached, some
++       of them can be shared though */
+     case Http::scSeeOther:
+-
+     case Http::scNotModified:
+-
+     case Http::scUnauthorized:
+-
+     case Http::scProxyAuthenticationRequired:
+-
+-    case Http::scInvalidHeader: /* Squid header parsing error */
+-
+-    case Http::scHeaderTooLarge:
+-
+     case Http::scPaymentRequired:
++    case Http::scInsufficientStorage:
++        // TODO: use more specific reason for non-error status codes
++        decision.make(ReuseDecision::doNotCacheButShare, shareableError);
++        break;
++
++    case Http::scPartialContent: /* Not yet supported. TODO: make shareable for suitable ranges */
+     case Http::scNotAcceptable:
+-    case Http::scRequestTimeout:
+-    case Http::scConflict:
++    case Http::scRequestTimeout: // TODO: is this shareable?
++    case Http::scConflict: // TODO: is this shareable?
+     case Http::scLengthRequired:
+     case Http::scPreconditionFailed:
+     case Http::scPayloadTooLarge:
+     case Http::scUnsupportedMediaType:
+     case Http::scUnprocessableEntity:
+-    case Http::scLocked:
++    case Http::scLocked: // TODO: is this shareable?
+     case Http::scFailedDependency:
+-    case Http::scInsufficientStorage:
+     case Http::scRequestedRangeNotSatisfied:
+     case Http::scExpectationFailed:
+-
+-        debugs(22, 3, HERE << "NO because HTTP status " << rep->sline.status());
+-        return 0;
+-
++    case Http::scInvalidHeader: /* Squid header parsing error */
++    case Http::scHeaderTooLarge:
++        decision.make(ReuseDecision::reuseNot, nonShareableError);
++        break;
+     default:
+         /* RFC 2616 section 6.1.1: an unrecognized response MUST NOT be cached. */
+-        debugs (11, 3, HERE << "NO because unknown HTTP status code " << rep->sline.status());
+-        return 0;
+ 
+-        /* NOTREACHED */
++        decision.make(ReuseDecision::reuseNot, "unknown status code");
+         break;
+     }
+ 
+-    /* NOTREACHED */
++    return decision.answer;
+ }
+ 
+ /// assemble a variant key (vary-mark) from the given Vary header and HTTP request
+@@ -898,11 +882,12 @@
+ 
+     Ctx ctx = ctx_enter(entry->mem_obj->urlXXX());
+     HttpReply *rep = finalReply();
++    const Http::StatusCode statusCode = rep->sline.status();
+ 
+     entry->timestampsSet();
+ 
+     /* Check if object is cacheable or not based on reply code */
+-    debugs(11, 3, "HTTP CODE: " << rep->sline.status());
++    debugs(11, 3, "HTTP CODE: " << statusCode);
+ 
+     if (const StoreEntry *oldEntry = findPreviouslyCachedEntry(entry))
+         sawDateGoBack = rep->olderThan(oldEntry->getReply());
+@@ -919,7 +904,9 @@
+         const SBuf vary(httpMakeVaryMark(request, rep));
+ 
+         if (vary.isEmpty()) {
+-            entry->makePrivate();
++            // TODO: check whether such responses are shareable.
++            // Do not share for now.
++            entry->makePrivate(false);
+             if (!fwd->reforwardableStatus(rep->sline.status()))
+                 EBIT_CLR(entry->flags, ENTRY_FWD_HDR_WAIT);
+             varyFailure = true;
+@@ -942,30 +929,31 @@
+         if (!fwd->reforwardableStatus(rep->sline.status()))
+             EBIT_CLR(entry->flags, ENTRY_FWD_HDR_WAIT);
+ 
+-        switch (cacheableReply()) {
+-
+-        case 1:
++        ReuseDecision decision(entry, statusCode);
++
++        switch (reusableReply(decision)) {
++
++        case ReuseDecision::reuseNot:
++            entry->makePrivate(false);
++            break;
++
++        case ReuseDecision::cachePositively:
+             entry->makePublic();
+             break;
+ 
+-        case 0:
+-            entry->makePrivate();
++        case ReuseDecision::cacheNegatively:
++            entry->cacheNegatively();
+             break;
+ 
+-        case -1:
+-
+-#if USE_HTTP_VIOLATIONS
+-            if (Config.negativeTtl > 0)
+-                entry->cacheNegatively();
+-            else
+-#endif
+-                entry->makePrivate();
++        case ReuseDecision::doNotCacheButShare:
++            entry->makePrivate(true);
+             break;
+ 
+         default:
+             assert(0);
+             break;
+         }
++        debugs(11, 3, "decided: " << decision);
+     }
+ 
+     if (!ignoreCacheControl) {
+@@ -2429,3 +2417,29 @@
+     mustStop(reason);
+ }
+ 
++HttpStateData::ReuseDecision::ReuseDecision(const StoreEntry *e, const Http::StatusCode code)
++    : answer(HttpStateData::ReuseDecision::reuseNot), reason(nullptr), entry(e), statusCode(code) {}
++
++HttpStateData::ReuseDecision::Answers
++HttpStateData::ReuseDecision::make(const HttpStateData::ReuseDecision::Answers ans, const char *why)
++{
++    answer = ans;
++    reason = why;
++    return answer;
++}
++
++std::ostream &operator <<(std::ostream &os, const HttpStateData::ReuseDecision &d)
++{
++    static const char *ReuseMessages[] = {
++        "do not cache and do not share", // reuseNot
++        "cache positively and share", // cachePositively
++        "cache negatively and share", // cacheNegatively
++        "do not cache but share" // doNotCacheButShare
++    };
++
++    assert(d.answer >= HttpStateData::ReuseDecision::reuseNot &&
++            d.answer <= HttpStateData::ReuseDecision::doNotCacheButShare);
++    return os << ReuseMessages[d.answer] << " because " << d.reason <<
++        "; HTTP status " << d.statusCode << " " << *(d.entry);
++}
++
+
+=== modified file 'src/http.h'
+--- src/http.h	2017-01-01 00:16:45 +0000
++++ src/http.h	2017-06-14 21:37:20 +0000
+@@ -22,6 +22,23 @@
+ {
+ 
+ public:
++
++    /// assists in making and relaying entry caching/sharing decision
++    class ReuseDecision
++    {
++    public:
++        enum Answers { reuseNot = 0, cachePositively, cacheNegatively, doNotCacheButShare };
++
++        ReuseDecision(const StoreEntry *e, const Http::StatusCode code);
++        /// stores the corresponding decision
++        Answers make(const Answers ans, const char *why);
++
++        Answers answer; ///< the decision id
++        const char *reason; ///< the decision reason
++        const StoreEntry *entry; ///< entry for debugging
++        const Http::StatusCode statusCode; ///< HTTP status for debugging
++    };
++
+     HttpStateData(FwdState *);
+     ~HttpStateData();
+ 
+@@ -39,8 +56,8 @@
+     void readReply(const CommIoCbParams &io);
+     virtual void maybeReadVirginBody(); // read response data from the network
+ 
+-    // Determine whether the response is a cacheable representation
+-    int cacheableReply();
++    // Checks whether the response is cacheable/shareable.
++    ReuseDecision::Answers reusableReply(ReuseDecision &decision);
+ 
+     CachePeer *_peer;       /* CachePeer request made to */
+     int eof;            /* reached end-of-object? */
+@@ -119,6 +136,8 @@
+     CBDATA_CLASS2(HttpStateData);
+ };
+ 
++std::ostream &operator <<(std::ostream &os, const HttpStateData::ReuseDecision &d);
++
+ int httpCachable(const HttpRequestMethod&);
+ void httpStart(FwdState *);
+ SBuf httpMakeVaryMark(HttpRequest * request, HttpReply const * reply);
+
+=== modified file 'src/store.cc'
+--- src/store.cc	2017-01-01 00:16:45 +0000
++++ src/store.cc	2017-06-14 21:37:20 +0000
+@@ -171,11 +171,18 @@
+ }
+ 
+ void
+-StoreEntry::makePrivate()
++StoreEntry::makePrivate(const bool shareable)
+ {
+     /* This object should never be cached at all */
+     expireNow();
+-    releaseRequest(); /* delete object when not used */
++    releaseRequest(shareable); /* delete object when not used */
++}
++
++void
++StoreEntry::clearPrivate()
++{
++    EBIT_CLR(flags, KEY_PRIVATE);
++    shareableWhenPrivate = false;
+ }
+ 
+ void
+@@ -365,7 +372,8 @@
+     ping_status(PING_NONE),
+     store_status(STORE_PENDING),
+     swap_status(SWAPOUT_NONE),
+-    lock_count(0)
++    lock_count(0),
++    shareableWhenPrivate(false)
+ {
+     debugs(20, 5, "StoreEntry constructed, this=" << this);
+ }
+@@ -504,14 +512,14 @@
+ }
+ 
+ void
+-StoreEntry::releaseRequest()
++StoreEntry::releaseRequest(const bool shareable)
+ {
+     if (EBIT_TEST(flags, RELEASE_REQUEST))
+         return;
+ 
+     setReleaseFlag(); // makes validToSend() false, preventing future hits
+ 
+-    setPrivateKey();
++    setPrivateKey(shareable);
+ }
+ 
+ int
+@@ -623,12 +631,16 @@
+  * concept'.
+  */
+ void
+-StoreEntry::setPrivateKey()
++StoreEntry::setPrivateKey(const bool shareable)
+ {
+     const cache_key *newkey;
+ 
+-    if (key && EBIT_TEST(flags, KEY_PRIVATE))
+-        return;                 /* is already private */
++    if (key && EBIT_TEST(flags, KEY_PRIVATE)) {
++        // The entry is already private, but it may be still shareable.
++        if (!shareable)
++            shareableWhenPrivate = false;
++        return;
++    }
+ 
+     if (key) {
+         setReleaseFlag(); // will markForUnlink(); all caches/workers will know
+@@ -649,6 +661,7 @@
+ 
+     assert(hash_lookup(store_table, newkey) == NULL);
+     EBIT_SET(flags, KEY_PRIVATE);
++    shareableWhenPrivate = shareable;
+     hashInsert(newkey);
+ }
+ 
+@@ -705,14 +718,17 @@
+     if (StoreEntry *e2 = (StoreEntry *)hash_lookup(store_table, newkey)) {
+         assert(e2 != this);
+         debugs(20, 3, "Making old " << *e2 << " private.");
+-        e2->setPrivateKey();
+-        e2->release();
++
++        // TODO: check whether there is any sense in keeping old entry
++        // shareable here. Leaving it non-shareable for now.
++        e2->setPrivateKey(false);
++        e2->release(false);
+     }
+ 
+     if (key)
+         hashDelete();
+ 
+-    EBIT_CLR(flags, KEY_PRIVATE);
++    clearPrivate();
+ 
+     hashInsert(newkey);
+ 
+@@ -830,7 +846,7 @@
+     e->lock("storeCreateEntry");
+ 
+     if (neighbors_do_private_keys || !flags.hierarchical)
+-        e->setPrivateKey();
++        e->setPrivateKey(false);
+     else
+         e->setPublicKey();
+ 
+@@ -1264,7 +1280,7 @@
+ 
+ /* release an object from a cache */
+ void
+-StoreEntry::release()
++StoreEntry::release(const bool shareable)
+ {
+     PROF_start(storeRelease);
+     debugs(20, 3, "releasing " << *this << ' ' << getMD5Text());
+@@ -1274,7 +1290,7 @@
+     if (locked()) {
+         expireNow();
+         debugs(20, 3, "storeRelease: Only setting RELEASE_REQUEST bit");
+-        releaseRequest();
++        releaseRequest(shareable);
+         PROF_stop(storeRelease);
+         return;
+     }
+@@ -1282,7 +1298,7 @@
+     Store::Root().memoryUnlink(*this);
+ 
+     if (StoreController::store_dirs_rebuilding && swap_filen > -1) {
+-        setPrivateKey();
++        setPrivateKey(shareable);
+ 
+         if (swap_filen > -1) {
+             // lock the entry until rebuilding is done
+@@ -2181,7 +2197,11 @@
+         if (EBIT_TEST(e.flags, REFRESH_REQUEST)) os << 'F';
+         if (EBIT_TEST(e.flags, ENTRY_REVALIDATE_STALE)) os << 'E';
+         if (EBIT_TEST(e.flags, ENTRY_DISPATCHED)) os << 'D';
+-        if (EBIT_TEST(e.flags, KEY_PRIVATE)) os << 'I';
++        if (EBIT_TEST(e.flags, KEY_PRIVATE)) {
++            os << 'I';
++            if (e.shareableWhenPrivate)
++                os << 'H';
++        }
+         if (EBIT_TEST(e.flags, ENTRY_FWD_HDR_WAIT)) os << 'W';
+         if (EBIT_TEST(e.flags, ENTRY_NEGCACHED)) os << 'N';
+         if (EBIT_TEST(e.flags, ENTRY_VALIDATED)) os << 'V';
+
+=== modified file 'src/tests/stub_store.cc'
+--- src/tests/stub_store.cc	2017-01-01 00:16:45 +0000
++++ src/tests/stub_store.cc	2017-06-14 21:37:20 +0000
+@@ -43,11 +43,11 @@
+ void StoreEntry::abort() STUB
+ void StoreEntry::unlink() STUB
+ void StoreEntry::makePublic(const KeyScope keyScope) STUB
+-void StoreEntry::makePrivate() STUB
++void StoreEntry::makePrivate(const bool shareable) STUB
+ void StoreEntry::setPublicKey(const KeyScope keyScope) STUB
+-void StoreEntry::setPrivateKey() STUB
++void StoreEntry::setPrivateKey(const bool shareable) STUB
+ void StoreEntry::expireNow() STUB
+-void StoreEntry::releaseRequest() STUB
++void StoreEntry::releaseRequest(const bool shareable) STUB
+ void StoreEntry::negativeCache() STUB
+ void StoreEntry::cacheNegatively() STUB
+ void StoreEntry::purgeMem() STUB
+@@ -99,7 +99,7 @@
+ int64_t StoreEntry::contentLen() const STUB_RETVAL(0)
+ void StoreEntry::lock(const char *) STUB
+ void StoreEntry::touch() STUB
+-void StoreEntry::release() STUB
++void StoreEntry::release(const bool shareable) STUB
+ 
+ NullStoreEntry *NullStoreEntry::getInstance() STUB_RETVAL(NULL)
+ const char *NullStoreEntry::getMD5Text() const STUB_RETVAL(NULL)
+
+=== modified file 'src/tests/testStoreController.cc'
+--- src/tests/testStoreController.cc	2017-01-01 00:16:45 +0000
++++ src/tests/testStoreController.cc	2017-06-14 21:37:20 +0000
+@@ -116,7 +116,7 @@
+     e->lastModified(squid_curtime);
+     e->refcount = 1;
+     EBIT_CLR(e->flags, RELEASE_REQUEST);
+-    EBIT_CLR(e->flags, KEY_PRIVATE);
++    e->clearPrivate();
+     e->ping_status = PING_NONE;
+     EBIT_CLR(e->flags, ENTRY_VALIDATED);
+     e->hashInsert((const cache_key *)name.termedBuf()); /* do it after we clear KEY_PRIVATE */
+
+=== modified file 'src/tests/testStoreHashIndex.cc'
+--- src/tests/testStoreHashIndex.cc	2017-01-01 00:16:45 +0000
++++ src/tests/testStoreHashIndex.cc	2017-06-14 21:37:20 +0000
+@@ -97,7 +97,7 @@
+     e->lastModified(squid_curtime);
+     e->refcount = 1;
+     EBIT_CLR(e->flags, RELEASE_REQUEST);
+-    EBIT_CLR(e->flags, KEY_PRIVATE);
++    e->clearPrivate();
+     e->ping_status = PING_NONE;
+     EBIT_CLR(e->flags, ENTRY_VALIDATED);
+     e->hashInsert((const cache_key *)name.termedBuf()); /* do it after we clear KEY_PRIVATE */
+

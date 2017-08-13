@@ -1,0 +1,30 @@
+------------------------------------------------------------
+revno: 14181
+revision-id: squidadm@squid-cache.org-20170701121615-ktx76udds2mzmc6c
+parent: squid3@treenet.co.nz-20170701120848-q2xznzfvxb4kwvb6
+committer: Source Maintenance <squidadm@squid-cache.org>
+branch nick: 3.5
+timestamp: Sat 2017-07-01 12:16:15 +0000
+message:
+  SourceFormat Enforcement
+------------------------------------------------------------
+# Bazaar merge directive format 2 (Bazaar 0.90)
+# revision_id: squidadm@squid-cache.org-20170701121615-\
+#   ktx76udds2mzmc6c
+# target_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# testament_sha1: d7942d1260def31f62ccc820a44bb769381beae2
+# timestamp: 2017-07-01 12:32:29 +0000
+# source_branch: http://bzr.squid-cache.org/bzr/squid3/3.5
+# base_revision_id: squid3@treenet.co.nz-20170701120848-\
+#   q2xznzfvxb4kwvb6
+# 
+# Begin patch
+=== modified file 'src/client_side.cc'
+--- src/client_side.cc	2017-07-01 12:08:48 +0000
++++ src/client_side.cc	2017-07-01 12:16:15 +0000
+@@ -5195,3 +5195,4 @@
+ {
+     return os << pic.connection << ", request=" << pic.request;
+ }
++
+
