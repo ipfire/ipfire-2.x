@@ -484,6 +484,16 @@ case "$1" in
 
 		# Update hosts
 		update_hosts
+
+		# If DNS still not work try to init ntp with
+		# hardcoded ntp.ipfire.org (81.3.27.46)
+		if [ -e /var/ipfire/red/active ]; then
+			host 0.ipfire.pool.ntp.org > /dev/null 2>&1
+			if [ "${?}" != "0" ]; then
+				boot_mesg "DNS still not work ... init time with ntp.ipfire.org at 81.3.27.46 ..."
+				loadproc /usr/local/bin/settime 81.3.27.46
+			fi
+		fi
 		;;
 
 	stop)
