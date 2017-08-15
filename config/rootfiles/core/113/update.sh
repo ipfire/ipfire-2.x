@@ -41,6 +41,9 @@ extract_files
 # update linker config
 ldconfig
 
+# Remove baudrate from inittab
+sed -i -e "s| 115200[Nn]8||g" /etc/inittab
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 

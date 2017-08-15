@@ -12,7 +12,7 @@ ser_console() {
 		case $1 in
 			console=*)
 				scon=${1##console=};
-				sed -i -e "s|^7:2345:respawn:/sbin/agetty.*|7:2345:respawn:/sbin/agetty ${scon%%,*} ${scon##*,}|g" /etc/inittab
+				sed -i -e "s|^7:2345:respawn:/sbin/agetty.*|7:2345:respawn:/sbin/agetty ${scon%%,*}|g" /etc/inittab
 				shift
 			;;
 			*)
