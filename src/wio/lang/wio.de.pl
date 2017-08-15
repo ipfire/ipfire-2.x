@@ -97,6 +97,7 @@
 'wio_iface' => 'Schnittstelle',
 'wio_client_enable' => 'Client aktivieren?',
 'wio_ping_send' => 'überprüfen per',
+'wio_link_open' => 'Link öffnen per',
 'enable disable client' => 'Client aktivieren oder deaktivieren',
 'wio_client_on' => 'Überwachung aktiviert (klicken, um zu deaktivieren)',
 'wio_client_off' => 'Überwachung deaktiviert (klicken, um zu aktivieren)',

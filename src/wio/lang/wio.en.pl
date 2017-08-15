@@ -97,6 +97,7 @@
 'wio_iface' => 'Interface',
 'wio_client_enable' => 'enable Host ?',
 'wio_ping_send' => 'send ping to',
+'wio_link_open' => 'open link via',
 'enable disable client' => 'enable or disable client',
 'wio_client_on' => 'Client enabled (click to disable)',
 'wio_client_off' => 'Client disabled (click to enable)',

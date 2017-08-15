@@ -47,6 +47,7 @@ use Fatal qw/ open /;
 use Net::Telnet;
 
 require '/var/ipfire/general-functions.pl';
+require '/var/ipfire/network-functions.pl';
 require '/var/ipfire/lang.pl';
 require '/var/ipfire/header.pl';
 require '/usr/lib/wio/wio-lib.pl';
@@ -166,18 +167,8 @@ if ( -e $wiofile ) { goto WIOSCAN; }
 ## get network ips
 foreach (@devs_color) {
 	if ( $netsettings{"${_}_DEV"} ne '' ) {
-
-		$wiosettings{"${_}_IPLOW"} = inet_ntoa pack q/N/, (unpack (q/N/, inet_aton ($netsettings{"${_}_NETADDRESS"}))+1);
-		my @addrarr = split(/\./,$netsettings{"${_}_ADDRESS"});
-		my $ipaddress = unpack( "N", pack( "C4",@addrarr ) );
-
-		my @maskarr = split(/\./,$netsettings{"${_}_NETMASK"});
-		my $netmask = unpack( "N", pack( "C4",@maskarr ) );
-
-		my $bcast = ( $ipaddress & $netmask ) + ( ~ $netmask );
-		my @bcastarr = inet_ntoa pack q/N/, (unpack (q/N/, inet_aton ($bcast))-1);
-
-		$wiosettings{"${_}_IPHIGH"} = join(".",@bcastarr);
+		$wiosettings{"${_}_IPLOW"} = &Network::find_next_ip_address($netsettings{"${_}_NETADDRESS"}, 1);
+		$wiosettings{"${_}_IPHIGH"} = &Network::find_next_ip_address($netsettings{"${_}_BROADCAST"}, -1);
 	}
 }
 
@@ -712,7 +703,7 @@ else {
 print"
 </tr>
 <tr>
-	<td height='30'>$Lang::tr{'wio_ping_send'}:</td>
+	<td height='30'>$Lang::tr{'wio_link_open'}:</td>
 	<td align='left' colspan='5'>
 		<select size='1' name='WEBINTERFACE$count' width='80' style='width: 80px'>
 		<option value='----' $selected{'WEBINTERFACE$count'}{'----'}>----</option>
@@ -1713,7 +1704,7 @@ else {
 print"
 </tr>
 <tr>
-	<td height='30'>$Lang::tr{'wio_ping_send'}:</td>
+	<td height='30'>$Lang::tr{'wio_link_open'}:</td>
 	<td align='left' colspan='5'>
 		<select size='1' name='WEBINTERFACE' width='80' style='width: 80px'>
 		<option value='----' $selected{'WEBINTERFACE'}{'----'}>----</option>
