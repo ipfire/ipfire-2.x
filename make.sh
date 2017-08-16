@@ -886,6 +886,7 @@ buildipfire() {
   lfsmake2 perl-inotify2
   lfsmake2 perl-Net-IP
   lfsmake2 wio
+  lfsmake2 iftop
 }
 
 buildinstaller() {
