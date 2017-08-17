@@ -7,6 +7,7 @@ usr/local/bin/ddnsctrl
 usr/local/bin/dhcpctrl
 usr/local/bin/extrahdctrl
 usr/local/bin/fireinfoctrl
+usr/local/bin/firewallctrl
 usr/local/bin/getconntracktable
 usr/local/bin/getipstat
 #usr/local/bin/iowrap
@@ -16,8 +17,6 @@ usr/local/bin/launch-ether-wake
 usr/local/bin/logwatch
 #usr/local/bin/mpfirectrl
 usr/local/bin/openvpnctrl
-#usr/local/bin/outgoingfwctrl
-usr/local/bin/firewallctrl
 usr/local/bin/pakfire
 usr/local/bin/qosctrl
 usr/local/bin/rebuildhosts
@@ -36,6 +35,8 @@ usr/local/bin/unboundctrl
 usr/local/bin/updxlratorctrl
 usr/local/bin/upnpctrl
 usr/local/bin/urlfilterctrl
+#usr/local/bin/wiohelper
+#usr/local/bin/wioscan
 usr/local/bin/wirelessclient
 usr/local/bin/wirelessctrl
 #usr/local/bin/wlanapctrl
