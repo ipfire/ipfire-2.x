@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+ipsec stop
 /etc/init.d/squid stop
 /etc/init.d/unbound stop
 
@@ -49,6 +50,10 @@ ldconfig
 # Start services
 /etc/init.d/unbound start
 /etc/init.d/squid start
+
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	ipsec start
+fi
 
 # This update need a reboot...
 touch /var/run/need_reboot
