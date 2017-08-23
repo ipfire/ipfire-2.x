@@ -25,27 +25,30 @@
 
 include Config
 
-VER        = 2.2.29
+VER        = 2.4.27
 
 THISAPP    = httpd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = $(URL_IPFIRE)
+DL_FROM    = https://archive.apache.org/dist/httpd
+
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 TARGET     = $(DIR_INFO)/$(THISAPP)
+
+DEPS       = "aprutil pcre"
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
 objects = $(DL_FILE) \
-	httpd-2.2.2-config-1.patch
+	PR61382-Fix.patch
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-httpd-2.2.2-config-1.patch = $(DL_FROM)/httpd-2.2.2-config-1.patch
+PR61382-Fix.patch = ${DL_FROM}/patches/apply_to_2.4.27/PR61382-Fix.patch
 
-$(DL_FILE)_MD5 = 579342fdeaa7b8b68d17fee91f8fab6e
-httpd-2.2.2-config-1.patch_MD5 = e02a3ec5925eb9e111400b9aa229f822
+$(DL_FILE)_MD5 = 97b6bbfa83c866dbe20ef317e3afd108
+PR61382-Fix.patch_MD5 = 5c1107bb1f399419574d983ce103c99a
 
 install : $(TARGET)
 
@@ -75,7 +78,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_DL)/httpd-2.2.2-config-1.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_DL)/PR61382-Fix.patch
 
 	### Add IPFire's layout, too
 	echo "# IPFire layout" >> $(DIR_APP)/config.layout
@@ -103,14 +106,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo "</Layout>" >> $(DIR_APP)/config.layout
 
 	cd $(DIR_APP) && ./configure --enable-layout=IPFire \
-				--enable-ssl --enable-mods-shared=all --enable-proxy --with-apr=/usr --with-apr-util=/usr
+				--enable-ssl --enable-mods-shared=all --enable-proxy --with-mpm=event
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	chown -v root:root /usr/lib/apache/httpd.exp \
-	    /usr/sbin/{apxs,apachectl,dbmmanage,envvars{,-std}} \
-	    /usr/share/man/man1/{dbmmanage,ht{dbm,digest,passwd,txt2dbm}}.1 \
-	    /usr/share/man/man8/{ab,apachectl,apxs,htcacheclean,httpd}.8 \
-	    /usr/share/man/man8/{logresolve,rotatelogs,suexec}.8
+	    /usr/bin/{apxs,dbmmanage} \
+	    /usr/sbin/apachectl \
+	    /usr/share/man/man1/{ab,apxs,dbmmanage,ht{dbm,digest,passwd,txt2dbm},logresolve}.1 \
+	    /usr/share/man/man8/{apachectl,htcacheclean,httpd}.8 \
+	    /usr/share/man/man8/{rotatelogs,suexec}.8
 
 	# Install apache config
 	cp -rf $(DIR_CONF)/httpd/* /etc/httpd/conf
