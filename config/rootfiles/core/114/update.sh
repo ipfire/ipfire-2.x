@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/squid stop
 /etc/init.d/unbound stop
 
 # Extract files
@@ -47,6 +48,7 @@ ldconfig
 
 # Start services
 /etc/init.d/unbound start
+/etc/init.d/squid start
 
 # This update need a reboot...
 touch /var/run/need_reboot
