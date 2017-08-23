@@ -497,6 +497,8 @@ buildipfire() {
   lfsmake2 libevent2
   lfsmake2 libevent2-compat
   lfsmake2 expat
+  lfsmake2 apr
+  lfsmake2 aprutil
   lfsmake2 unbound
   lfsmake2 gnutls
   lfsmake2 bind
