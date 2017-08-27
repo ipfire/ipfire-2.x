@@ -30,6 +30,7 @@ chown -R nobody.nobody /var/log/rrd/wio
 chown -R nobody.nobody /var/log/wio
 chown root.nobody /usr/local/bin/wioscan
 chown root.nobody /usr/local/bin/wiohelper
+chown nobody.nobody /var/ipfire/menu.d/EX-wio.menu
 
 chmod 4750 /usr/local/bin/wioscan
 chmod 4750 /usr/local/bin/wiohelper
