@@ -523,6 +523,9 @@ case "$1" in
 
 		update_forwarders
 
+		unbound-control flush_negative > /dev/null
+		unbound-control flush_bogus > /dev/null
+
 		fix_time_if_dns_fail
 		;;
 
