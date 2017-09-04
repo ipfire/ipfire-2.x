@@ -37,6 +37,17 @@ ipsec stop
 /etc/init.d/unbound stop
 /etc/init.d/apache stop
 
+# Remove old apache configuration files of add-ons
+# These will be reinstalled by the updated packages
+# as soon as the core update is finished.
+rm -f \
+	/etc/httpd/conf/vhosts.d/cacti.conf \
+	/etc/httpd/conf/vhosts.d/icinga.conf \
+	/etc/httpd/conf/vhosts.d/nagios.conf \
+	/etc/httpd/conf/vhosts.d/openmailadmin.conf \
+	/etc/httpd/conf/vhosts.d/owncloud.conf \
+	/etc/httpd/conf/vhosts.d/phpSANE.conf
+
 # Extract files
 extract_files
 
