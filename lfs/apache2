@@ -29,7 +29,7 @@ VER        = 2.4.27
 
 THISAPP    = httpd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = https://archive.apache.org/dist/httpd
+DL_FROM    = $(URL_IPFIRE)
 
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
