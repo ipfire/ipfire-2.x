@@ -35,6 +35,7 @@ done
 ipsec stop
 /etc/init.d/squid stop
 /etc/init.d/unbound stop
+/etc/init.d/apache stop
 
 # Extract files
 extract_files
@@ -42,13 +43,15 @@ extract_files
 # update linker config
 ldconfig
 
-# Remove baudrate from inittab
+# Remove some files
+rm -f /usr/sbin/htpasswd
 
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
 # Start services
 /etc/init.d/unbound start
+/etc/init.d/apache start
 /etc/init.d/squid start
 
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
