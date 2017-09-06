@@ -1524,7 +1524,7 @@ usr/bin/htpasswd
 #usr/include/apache/util_time.h
 #usr/include/apache/util_varbuf.h
 #usr/include/apache/util_xml.h
-usr/lib/apache
+#usr/lib/apache
 #usr/lib/apache/build
 #usr/lib/apache/build/config.nice
 #usr/lib/apache/build/config_vars.mk

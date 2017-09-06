@@ -35,7 +35,7 @@ usr/bin/apu-1-config
 #usr/include/apr-1/apu_version.h
 #usr/include/apr-1/apu_want.h
 #usr/include/apr-1/expat.h
-usr/lib/apr-util-1
+#usr/lib/apr-util-1
 usr/lib/apr-util-1/apr_crypto_openssl-1.so
 #usr/lib/apr-util-1/apr_crypto_openssl.la
 usr/lib/apr-util-1/apr_crypto_openssl.so
