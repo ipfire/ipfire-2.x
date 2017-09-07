@@ -41,14 +41,11 @@ DEPS       = "aprutil pcre"
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	PR61382-Fix.patch
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-PR61382-Fix.patch = ${DL_FROM}/patches/apply_to_2.4.27/PR61382-Fix.patch
 
 $(DL_FILE)_MD5 = 97b6bbfa83c866dbe20ef317e3afd108
-PR61382-Fix.patch_MD5 = 5c1107bb1f399419574d983ce103c99a
 
 install : $(TARGET)
 
@@ -78,7 +75,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np0 -i $(DIR_DL)/PR61382-Fix.patch
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/apache-2.4.27-PR61382-fix.patch
 
 	### Add IPFire's layout, too
 	echo "# IPFire layout" >> $(DIR_APP)/config.layout
