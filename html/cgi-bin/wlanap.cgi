@@ -154,7 +154,7 @@ if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'save'}" ){
 	$memory=0;
 }
 
-&Header::openpage('', 1, '', '');
+&Header::openpage($Lang::tr{'wlanap configuration'}, 1, '', '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 if ( $errormessage ){
@@ -323,7 +323,7 @@ if ( $wlan_card_status ne '' ){
 	print "<tr><td class='base'>$Lang::tr{'wlanap wlan card'} ($wlanapsettings{'DRIVER'})</td>";
 	print $wlan_card_status eq 'up' ? $status_started : $status_stopped;
 	print"<td colspan='4'></td></tr>";
-	print "<tr><td class='base' bgcolor='$color{'color22'}'>$Lang::tr{'wlanap access point'}</td>";
+	print "<tr><td class='base' bgcolor='$color{'color22'}'>$Lang::tr{'wlanap'}</td>";
 	print $wlan_ap_status eq 'up' ? $status_started : $status_stopped;
 	if ( ($memory != 0) && (@pid[0] ne "///") ){
 		print "<td bgcolor='$color{'color22'}' align='center'>@pid[0]</td>";
