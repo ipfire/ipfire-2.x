@@ -2750,7 +2750,7 @@
 'wlan clients' => 'Wireless clients',
 'wlanap' => 'Access Point',
 'wlanap channel' => 'Channel',
-'wlanap configuration' => 'Access Point Konfiguration',
+'wlanap configuration' => 'Access Point Configuration',
 'wlanap country' => 'Country Code',
 'wlanap debugging' => 'Debugging',
 'wlanap del interface' => 'Remove selected interface?',
