@@ -1054,11 +1054,11 @@ if ( -e "/usr/bin/squidclamav" ) {
 } else {
 	print "<td></td>";
 }
-print "<td class='base'><b>".$Lang::tr{'advproxy url filter'}."</b><br />";
+print "<td class='base'><a href='/cgi-bin/urlfilter.cgi'><b>".$Lang::tr{'advproxy url filter'}."</a></b><br />";
 print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_FILTER' ".$checked{'ENABLE_FILTER'}{'on'}." /><br />";
 print "+ ".int(($count**(1/3)) * 6);
 print "</td>";
-print "<td class='base'><b>".$Lang::tr{'advproxy update accelerator'}."</b><br />";
+print "<td class='base'><a href='/cgi-bin/updatexlrator.cgi'><b>".$Lang::tr{'advproxy update accelerator'}."</a></b><br />";
 print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_UPDXLRATOR' ".$checked{'ENABLE_UPDXLRATOR'}{'on'}." /><br />";
 print "+ ".int(($count**(1/3)) * 5);
 print "</td></tr>";
