@@ -76,7 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/apache-2.4.27-PR61382-fix.patch
-
+	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/apache-2.4.27-CVE-2017-9798-fix.patch
 	### Add IPFire's layout, too
 	echo "# IPFire layout" >> $(DIR_APP)/config.layout
 	echo "<Layout IPFire>" >> $(DIR_APP)/config.layout
