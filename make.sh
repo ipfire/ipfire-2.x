@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.19"							# Version number
-CORE="113"							# Core Level (Filename)
-PAKFIRE_CORE="113"						# Core Level (PAKFIRE)
+CORE="114"							# Core Level (Filename)
+PAKFIRE_CORE="114"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -497,6 +497,8 @@ buildipfire() {
   lfsmake2 libevent2
   lfsmake2 libevent2-compat
   lfsmake2 expat
+  lfsmake2 apr
+  lfsmake2 aprutil
   lfsmake2 unbound
   lfsmake2 gnutls
   lfsmake2 bind
