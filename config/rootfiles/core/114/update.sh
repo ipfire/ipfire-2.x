@@ -69,6 +69,27 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	ipsec start
 fi
 
+#
+# After pakfire has ended run it again and update all addons
+# this is needed for apache update.
+#
+echo '#!/bin/bash'                                        >  /tmp/pak_update
+echo 'while [ "$(ps -A | grep " update.sh")" != "" ]; do' >> /tmp/pak_update
+echo '    sleep 1'                                        >> /tmp/pak_update
+echo 'done'                                               >> /tmp/pak_update
+echo 'while [ "$(ps -A | grep " pakfire")" != "" ]; do'   >> /tmp/pak_update
+echo '    sleep 1'                                        >> /tmp/pak_update
+echo 'done'                                               >> /tmp/pak_update
+echo '/opt/pakfire/pakfire update -y --force'             >> /tmp/pak_update
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
+echo 'touch /var/run/need_reboot ' >> /tmp/pak_update
+#
+killall -KILL pak_update
+chmod +x /tmp/pak_update
+/tmp/pak_update &
+
 # This update need a reboot...
 touch /var/run/need_reboot
 
