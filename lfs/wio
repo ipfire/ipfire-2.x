@@ -15,7 +15,7 @@ THISAPP    = wio-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = wio
-PAK_VER    = 2
+PAK_VER    = 3
 
 ###############################################################################
 # Top-level Rules
@@ -58,7 +58,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_APP)/wio/images/* /srv/web/ipfire/html/images/wio/
 	install -v -m 655 $(DIR_APP)/wio/lang/wio.de.pl /var/ipfire/addon-lang/
 	install -v -m 655 $(DIR_APP)/wio/lang/wio.en.pl /var/ipfire/addon-lang/
-	install -v -m 655 $(DIR_APP)/wio/EX-wio.menu /var/ipfire/menu.d/
+	install -v -m 644 $(DIR_APP)/wio/EX-wio.menu /var/ipfire/menu.d/
 	install -v -m 644 $(DIR_APP)/wio/config/backup/includes/wio /var/ipfire/backup/addons/includes/wio
 
 	@rm -rf $(DIR_APP)

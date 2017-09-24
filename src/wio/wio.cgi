@@ -21,7 +21,7 @@
 #                                                                             #
 ###############################################################################
 #
-# id: wio.cgi, v1.3.1 2017/07/11 21:31:16 sfeddersen
+# id: wio.cgi, v1.3.2 2017/08/27 14:11:16 sfeddersen
 #
 # This wio.cgi is based on the Code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
@@ -917,7 +917,10 @@ print"
 	<td align='left'><select size='1' name='CRON' size='5'>
 ";
 
-for ($i=5; $i<=60; $i+=5) { printf("<option %s>%02s</option>\n",$selected{'CRON'}{$i},$i); }
+for ($i=5; $i<=60; $i+=5) {
+	$_ = sprintf("%02s",$i);
+	print "<option $selected{'CRON'}{$_}>$_</option>\n";
+}
 
 print"
 	</select>&nbsp;$Lang::tr{'wio min'}</td>
@@ -929,7 +932,10 @@ print"
 	<td align='left'><select size='1' name='TIMEOUT' size='5'>
 ";
 
-for ($i=1; $i<=15; $i++) { printf("<option %s>%02s</option>\n",$selected{'TIMEOUT'}{$i},$i); }
+for ($i=1; $i<=15; $i++) {
+	$_ = sprintf("%02s",$i);
+	print "<option $selected{'TIMEOUT'}{$_}>$_</option>\n";
+}
 
 print"	
 	</select>&nbsp;$Lang::tr{'wio sec'}</td>
@@ -980,7 +986,10 @@ print"
 	<td align='left'><select size='1' name='OVPNCRON' size='5'>
 ";
 
-for ($i=1; $i<=15; $i++) { printf("<option %s>%02s</option>\n",$selected{'OVPNCRON'}{$i},$i); }
+for ($i=1; $i<=15; $i++) {
+	$_ = sprintf("%02s",$i);
+	print "<option $selected{'OVPNCRON'}{$_}>$_</option>\n";
+}
 
 print"
 	</select>&nbsp;$Lang::tr{'wio min'}</td>
@@ -1947,7 +1956,13 @@ print"
 <table border='0' width='100%' bordercolor='$Header::bordercolour' cellspacing='0' cellpadding='0' style='border-collapse: collapse'>
 <tr bgcolor='$color{'color22'}'>
 	<td colspan='2' align='right'></td>
-	<td width='10%' align='right'><form method='post' action='/cgi-bin/logs.cgi/log.dat' enctype='multipart/form-data'><input type='hidden' name='SECTION' value='wio' /><input type='submit' name='SUBMIT' value='$Lang::tr{'system logs'}' /></form></td>
+";
+
+if ( $wiosettings{'LOGGING'} eq 'on' ) {
+	print"<td width='10%' align='right'><form method='post' action='/cgi-bin/logs.cgi/log.dat' enctype='multipart/form-data'><input type='hidden' name='SECTION' value='wio' /><input type='submit' name='SUBMIT' value='$Lang::tr{'system logs'}' /></form></td>";
+}
+
+print"
 	<td width='10%' align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'><input type='hidden' name='ACTION' value='$Lang::tr{'edit'}1' /><input type='submit' name='SUBMIT' value='$Lang::tr{'wio_edit_set'}' /></form></td>
 </tr>
 </table>

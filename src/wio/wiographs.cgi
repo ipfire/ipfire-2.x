@@ -21,7 +21,7 @@
 #                                                                             #
 ###############################################################################
 #
-# id: wiographs.cgi, v1.3.1 2017/07/11 21:31:16 sfeddersen
+# id: wiographs.cgi, v1.3.2 2017/08/27 14:11:16 sfeddersen
 #
 # This wiographs.cgi is based on the Code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
