@@ -32,6 +32,8 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+openvpnctrl -k
+openvpnctrl -kn2n
 
 # Extract files
 extract_files
@@ -43,6 +45,8 @@ ldconfig
 #/usr/local/bin/update-lang-cache
 
 # Start services
+openvpnctrl -s
+openvpnctrl -sn2n
 
 
 # This update need a reboot...
