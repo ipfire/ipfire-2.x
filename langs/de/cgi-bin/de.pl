@@ -889,6 +889,7 @@
 'edit share' => 'Freigabe bearbeiten',
 'editor' => 'Editor',
 'eg' => 'z.B.:',
+'eight hours' => '8 Stunden',
 'email config' => 'Konfiguration',
 'email empty field' => 'Leeres Feld',
 'email error' => 'FEHLER: Test-E-Mail konnte nicht versendet werden',

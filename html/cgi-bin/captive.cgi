@@ -305,6 +305,7 @@ if ($settings{'AUTH'} eq 'TERMS') {
 				<select name="SESSION_TIME">
 					<option value="0"        $selected{'SESSION_TIME'}{'0'}>- $Lang::tr{'unlimited'} -</option>
 					<option value="3600"     $selected{'SESSION_TIME'}{'3600'}>$Lang::tr{'one hour'}</option>
+					<option value="28800"    $selected{'SESSION_TIME'}{'28800'}>$Lang::tr{'eight hours'}</option>
 					<option value="86400"    $selected{'SESSION_TIME'}{'86400'}>$Lang::tr{'24 hours'}</option>
 					<option value="604800"   $selected{'SESSION_TIME'}{'604800'}>$Lang::tr{'one week'}</option>
 					<option value="18144000" $selected{'SESSION_TIME'}{'18144000'}>$Lang::tr{'one month'}</option>

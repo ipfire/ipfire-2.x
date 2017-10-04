@@ -916,6 +916,7 @@
 'edit share' => 'Edit share',
 'editor' => 'Editor',
 'eg' => 'e.g.:',
+'eight hours' => '8 Hours',
 'email config' => 'Configuration',
 'email empty field' => 'Empty field',
 'email error' => 'ERROR: Test mail could not be sent',
