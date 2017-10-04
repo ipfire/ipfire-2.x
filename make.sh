@@ -627,6 +627,7 @@ buildipfire() {
   lfsmake2 openssh
   lfsmake2 fontconfig
   lfsmake2 dejavu-fonts-ttf
+  lfsmake2 ubuntu-font-family
   lfsmake2 freefont
   lfsmake2 pixman
   lfsmake2 cairo
