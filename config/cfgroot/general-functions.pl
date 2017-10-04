@@ -235,7 +235,13 @@ sub writehashpart
 sub age {
 	my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
 		$atime, $mtime, $ctime, $blksize, $blocks) = stat $_[0];
-	my $totalsecs = time() - $mtime;
+	my $t = time() - $mtime;
+
+	return &format_time($t);
+}
+
+sub format_time($) {
+	my $totalsecs = shift;
 	my @s = ();
 
 	my $secs = $totalsecs % 60;

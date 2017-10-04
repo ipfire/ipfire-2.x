@@ -70,6 +70,7 @@ run
 #sbin
 #srv
 #usr/bin
+usr/bin/captive-cleanup
 #usr/bin/perl
 #usr/include
 #usr/lib

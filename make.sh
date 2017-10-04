@@ -548,6 +548,7 @@ buildipfire() {
   lfsmake2 web-user-interface
   lfsmake2 flag-icons
   lfsmake2 jquery
+  lfsmake2 bootstrap
   lfsmake2 arping
   lfsmake2 beep
   lfsmake2 dvdrtools
@@ -626,6 +627,7 @@ buildipfire() {
   lfsmake2 openssh
   lfsmake2 fontconfig
   lfsmake2 dejavu-fonts-ttf
+  lfsmake2 ubuntu-font-family
   lfsmake2 freefont
   lfsmake2 pixman
   lfsmake2 cairo

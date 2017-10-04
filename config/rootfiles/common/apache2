@@ -43,6 +43,7 @@ etc/httpd/conf/server-tuning.conf
 etc/httpd/conf/ssl-global.conf
 etc/httpd/conf/uid.conf
 #etc/httpd/conf/vhosts.d
+etc/httpd/conf/vhosts.d/captive.conf
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/httpd/conf/vhosts.d/ipfire-interface.conf
 #etc/httpd/conf/vhosts.d/nagios.conf
@@ -91,6 +92,8 @@ etc/httpd/conf/vhosts.d/ipfire-interface.conf
 #srv/web/ipfire/error/include/top.html
 #srv/web/ipfire/htdocs
 #srv/web/ipfire/htdocs/index.html
+#srv/web/ipfire/html
+srv/web/ipfire/html/captive
 #srv/web/ipfire/icons
 #srv/web/ipfire/icons/README
 #srv/web/ipfire/icons/README.html
@@ -1662,3 +1665,4 @@ usr/sbin/httpd
 #usr/share/man/man8/rotatelogs.8
 #usr/share/man/man8/suexec.8
 var/log/httpd
+var/log/httpd/captive

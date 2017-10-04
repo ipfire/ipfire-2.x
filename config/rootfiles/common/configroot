@@ -11,6 +11,11 @@ var/ipfire/auth
 var/ipfire/backup/exclude.user
 var/ipfire/backup/include.user
 var/ipfire/ca
+var/ipfire/captive
+var/ipfire/captive/agb.txt
+var/ipfire/captive/clients
+var/ipfire/captive/settings
+var/ipfire/captive/voucher_out
 var/ipfire/certs
 #var/ipfire/certs/index.txt
 #var/ipfire/certs/serial
@@ -51,16 +56,14 @@ var/ipfire/extrahd
 #var/ipfire/extrahd/settings
 var/ipfire/firewall
 #var/ipfire/firewall/config
-#var/ipfire/firewall/dmz
 #var/ipfire/firewall/geoipblock
 #var/ipfire/firewall/input
-#var/ipfire/firewall/nat
 #var/ipfire/firewall/outgoing
 #var/ipfire/firewall/p2protocols
 #var/ipfire/firewall/settings
 var/ipfire/fwhosts
-#var/ipfire/fwhosts/customgroups
 #var/ipfire/fwhosts/customgeoipgrp
+#var/ipfire/fwhosts/customgroups
 #var/ipfire/fwhosts/customhosts
 #var/ipfire/fwhosts/customnetworks
 #var/ipfire/fwhosts/customservicegrp
@@ -116,6 +119,7 @@ var/ipfire/menu.d/70-log.menu
 #var/ipfire/menu.d/EX-tor.menu
 #var/ipfire/menu.d/EX-wlanap.menu
 var/ipfire/modem
+var/ipfire/modem-lib.pl
 #var/ipfire/modem/defaults
 #var/ipfire/modem/settings
 var/ipfire/modem-lib.pl

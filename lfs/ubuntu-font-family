@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015   IPFire Team  <info@ipfire.org>                    #
+# Copyright (C) 2007-2017 IPFire Team  <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -18,16 +18,17 @@
 #                                                                             #
 ###############################################################################
 
-
 ###############################################################################
 # Definitions
 ###############################################################################
 
 include Config
 
-VER        = ipfire
+VER        = 0.83
 
-THISAPP    = web-user-interface-$(VER)
+THISAPP    = ubuntu-font-family-$(VER)
+DL_FILE    = $(THISAPP).zip
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -35,13 +36,32 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-install: $(TARGET)
+objects = $(DL_FILE)
 
-check: 
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-download:
+$(DL_FILE)_MD5 = a24b8136b8f3bb93f166baf97d9328de
 
-md5: 
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
 
 ###############################################################################
 # Installation Details
@@ -49,43 +69,10 @@ md5:
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && unzip $(DIR_DL)/$(DL_FILE)
 
-	# Copy all html/cgi-bin files
-	mkdir -p /srv/web/ipfire/{cgi-bin,html}
-	mkdir -p /var/updatecache/{download,metadata}
-	cp -aR $(DIR_SRC)/html/* /srv/web/ipfire
+	-mkdir -pv /usr/share/fonts
+	cd $(DIR_APP) && cp -vf *.ttf /usr/share/fonts/
 
-	# Change CONFIG_ROOT in cgi-scripts
-	for i in /srv/web/ipfire/cgi-bin/{*,logs.cgi/*,vpn.cgi/*}; do \
-	    if [ -f $$i ]; then \
-	        sed -i "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" $$i; \
-	    fi; \
-	done
-	chown -R root:root /srv/web/ipfire
-	chmod -R 755 /srv/web/ipfire/cgi-bin
-	chmod -R 644 /srv/web/ipfire/html
-	chmod 755 /srv/web/ipfire/html /srv/web/ipfire/html/{index.cgi,redirect.cgi,dial.cgi,images,include,themes,themes/*,themes/*/*}
-	ln -svf ipfire /srv/web/ipfire/html/themes/ipfire-rounded
-
-	# Reset permissions of redirect templates and theme directories
-	find /srv/web/ipfire/html/{captive,redirect-templates,themes} -type d | xargs chmod -v 755
-
-	# Captive Portal CSS
-	ln -svf --relative /usr/share/bootstrap/css/bootstrap-grid.min.css \
-		/srv/web/ipfire/html/captive/assets/bootstrap-grid.min.css
-	ln -svf --relative /usr/share/bootstrap/css/bootstrap-grid.min.css.map \
-		/srv/web/ipfire/html/captive/assets/bootstrap-grid.min.css.map
-	ln -svf --relative /usr/share/bootstrap/css/bootstrap-reboot.min.css \
-		/srv/web/ipfire/html/captive/assets/bootstrap-reboot.min.css
-	ln -svf --relative /usr/share/bootstrap/css/bootstrap-reboot.min.css.map \
-		/srv/web/ipfire/html/captive/assets/bootstrap-reboot.min.css.map
-
-	# Captive Portal Fonts
-	ln -svf --relative /usr/share/fonts/Ubuntu-L.ttf \
-		/srv/web/ipfire/html/captive/assets/Ubuntu-L.ttf
-	ln -svf --relative /usr/share/fonts/Ubuntu-M.ttf \
-		/srv/web/ipfire/html/captive/assets/Ubuntu-M.ttf
-	ln -svf --relative /usr/share/fonts/Ubuntu-R.ttf \
-		/srv/web/ipfire/html/captive/assets/Ubuntu-R.ttf
-
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

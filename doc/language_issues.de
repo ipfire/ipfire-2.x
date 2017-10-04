@@ -1,4 +1,24 @@
 WARNING: translation string unused: Async logging enabled
+WARNING: translation string unused: Captive 1day
+WARNING: translation string unused: Captive 1month
+WARNING: translation string unused: Captive 1week
+WARNING: translation string unused: Captive activate
+WARNING: translation string unused: Captive auth_lic
+WARNING: translation string unused: Captive auth_vou
+WARNING: translation string unused: Captive err doublevoucher
+WARNING: translation string unused: Captive expire
+WARNING: translation string unused: Captive genvoucher
+WARNING: translation string unused: Captive invalid logosize
+WARNING: translation string unused: Captive invalid_voucher
+WARNING: translation string unused: Captive ip
+WARNING: translation string unused: Captive logo_set
+WARNING: translation string unused: Captive logo_upload
+WARNING: translation string unused: Captive logo_upload1
+WARNING: translation string unused: Captive nr
+WARNING: translation string unused: Captive time
+WARNING: translation string unused: Captive voactive
+WARNING: translation string unused: Captive voucher
+WARNING: translation string unused: Captive vout
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
 WARNING: translation string unused: HDD temperature
@@ -665,9 +685,11 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: 24 hours
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: addons
 WARNING: untranslated string: bytes
+WARNING: untranslated string: captive
 WARNING: untranslated string: community rules
 WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: emerging rules
@@ -714,11 +736,15 @@ WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
 WARNING: untranslated string: info messages
 WARNING: untranslated string: no data
 WARNING: untranslated string: none
+WARNING: untranslated string: one hour
+WARNING: untranslated string: one month
+WARNING: untranslated string: one week
 WARNING: untranslated string: qos add subclass
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: show tls-auth key
+WARNING: untranslated string: unlimited
 WARNING: untranslated string: vpn force mobike
 WARNING: untranslated string: vpn statistics n2n

@@ -224,6 +224,13 @@ iptables_init() {
 		iptables -A ${i} -j LOOPBACK
 	done
 
+	# Captive portal
+	iptables -N CAPTIVE_PORTAL
+	iptables -N CAPTIVE_PORTAL_CLIENTS
+	for i in INPUT FORWARD; do
+		iptables -A ${i} -j CAPTIVE_PORTAL
+	done
+
 	# Accept everything connected
 	for i in INPUT FORWARD OUTPUT; do
 		iptables -A ${i} -j CONNTRACK
@@ -336,6 +343,10 @@ iptables_init() {
 	iptables -t nat -A PREROUTING -j UPNPFW
 	iptables -N UPNPFW
 	iptables -A FORWARD -m conntrack --ctstate NEW -j UPNPFW
+
+	# Captive Portal
+	iptables -t nat -N CAPTIVE_PORTAL
+	iptables -t nat -A PREROUTING -j CAPTIVE_PORTAL
 
 	# RED chain, used for the red interface
 	iptables -N REDINPUT

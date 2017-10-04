@@ -1,9 +1,10 @@
+#!/usr/bin/perl
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2016  Alexander Marx alexander.marx@ipfire.org                #
 #                                                                             #
-# This program is free software: you can redistribute it and/or modify        #
+# This program is free software you can redistribute it and/or modify         #
 # it under the terms of the GNU General Public License as published by        #
 # the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
@@ -18,41 +19,26 @@
 #                                                                             #
 ###############################################################################
 
-CC      = gcc
-CFLAGS ?= -O2 -Wall
-LIBS    = -lsmooth -lnewt
+use strict;
+use CGI;
+use File::Copy;
 
-PROGS = iowrap
-SUID_PROGS = squidctrl sshctrl ipfirereboot \
-	ipsecctrl timectrl dhcpctrl snortctrl \
-	applejuicectrl rebuildhosts backupctrl collectdctrl \
-	logwatch wioscan wiohelper openvpnctrl firewallctrl \
-	wirelessctrl getipstat qosctrl launch-ether-wake \
-	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl \
-	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
-	setaliases urlfilterctrl updxlratorctrl fireinfoctrl rebuildroutes \
-	getconntracktable wirelessclient torctrl ddnsctrl unboundctrl \
-	captivectrl
-SUID_UPDX = updxsetperms
+# enable only the following on debugging purpose
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
 
-OBJS = $(patsubst %,%.o,$(PROGS) $(SUID_PROGS))
+require '/var/ipfire/general-functions.pl';
 
-install: all
-	install -m 755  $(PROGS) /usr/local/bin
-	install -m 4750 -g nobody $(SUID_PROGS) /usr/local/bin
+my $logo = "${General::swroot}/captive/logo.dat";
 
-all: $(PROGS) $(SUID_PROGS)
+# Send 404 if logo was not uploaded and exit
+if (!-e $logo) {
+	print CGI::header(status => 404);
+	exit(0);
+}
 
-clean:
-	-rm -f $(PROGS) $(SUID_PROGS) *.o core
+print "Content-Type: application/octet-stream\n\n";
 
-######
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-setuid.o: setuid.c setuid.h
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(PROGS) $(SUID_PROGS): setuid.o | $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $@.o $< $(LIBS)
+# Send image data
+File::Copy::copy $logo, \*STDOUT;
+exit(0);

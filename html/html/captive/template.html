@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title><TMPL_VAR NAME="TITLE"></title>
+
+		<link rel="stylesheet" href="../assets/bootstrap-reboot.min.css">
+		<link rel="stylesheet" href="../assets/bootstrap-grid.min.css">
+		<link rel="stylesheet" href="../assets/captive.css">
+
+		<TMPL_IF NAME="COLOR">
+			<style>
+				.box-block {
+					background-color: <TMPL_VAR NAME="COLOR">;
+				}
+			</style>
+		</TMPL_IF>
+
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	</head>
+
+	<body>
+		<div class="container content">
+			<div class="row">
+				<div class="col-12 col-lg-10 offset-lg-1 col-xl-8 offset-xl-2">
+					<div class="box">
+						<div class="box-header">
+							<h1><TMPL_VAR NAME="TITLE"></h1>
+						</div>
+
+						<div class="box-block">
+							<h4><TMPL_VAR NAME="L_HEADING"></h4>
+
+							<form action="" method="POST">
+								<input type="hidden" name="ACTION" value="SUBMIT">
+								<input type="hidden" name="redirect" value="<TMPL_VAR NAME="REDIRECT">">
+
+								<TMPL_IF NAME="COUPON">
+									<input class="form-text <TMPL_IF NAME="ERROR">form-error</TMPL_IF>" type="text" name="COUPON">
+									<input class="form-submit" type="submit"
+										value="<TMPL_VAR NAME="L_ACTIVATE">">
+								<TMPL_ELSE>
+									<div class="checkbox">
+										<label>
+											<input class="form-checkbox <TMPL_IF NAME="ERROR">error</TMPL_IF>" type="checkbox" name="TERMS">
+											<TMPL_VAR NAME="L_AGREE_TERMS">
+										</label>
+									</div>
+
+									<input class="form-submit" type="submit"
+										value="<TMPL_VAR NAME="L_GAIN_ACCESS">">
+								</TMPL_IF>
+
+								<TMPL_IF NAME="ERROR">
+									<div class="text-error">
+										<TMPL_VAR NAME="ERROR">
+									</div>
+								</TMPL_IF>
+							</form>
+						</div>
+
+						<TMPL_IF NAME="TERMS">
+							<TMPL_VAR NAME="TERMS">
+						</TMPL_IF>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<footer>
+			<div class="container">
+				<div class="footer">
+					<img class="logo" src="../assets/ipfire.png" alt="IPFire Logo">
+					Powered by IPFire
+				</div>
+			</div>
+		</footer>
+	</body>
+</html>

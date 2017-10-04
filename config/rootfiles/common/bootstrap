@@ -1,0 +1,17 @@
+#usr/share/bootstrap
+#usr/share/bootstrap/css
+usr/share/bootstrap/css/bootstrap.css
+usr/share/bootstrap/css/bootstrap.css.map
+usr/share/bootstrap/css/bootstrap-grid.css
+usr/share/bootstrap/css/bootstrap-grid.css.map
+usr/share/bootstrap/css/bootstrap-grid.min.css
+usr/share/bootstrap/css/bootstrap-grid.min.css.map
+usr/share/bootstrap/css/bootstrap.min.css
+usr/share/bootstrap/css/bootstrap.min.css.map
+usr/share/bootstrap/css/bootstrap-reboot.css
+usr/share/bootstrap/css/bootstrap-reboot.css.map
+usr/share/bootstrap/css/bootstrap-reboot.min.css
+usr/share/bootstrap/css/bootstrap-reboot.min.css.map
+#usr/share/bootstrap/js
+usr/share/bootstrap/js/bootstrap.js
+usr/share/bootstrap/js/bootstrap.min.js

@@ -42,6 +42,7 @@ int main(void) {
 	char buffer[STRING_SIZE];
 	char *index, *ipaddress, *macaddress, *enabled;
 	struct keyvalue *kv = NULL;
+	struct keyvalue* captive_settings = NULL;
 
 	if (!(initsetuid()))
 		exit(1);
@@ -67,6 +68,13 @@ int main(void) {
 		exit(1);
 	}
 
+	// Read captive portal settings
+	captive_settings = initkeyvalues();
+	if (!readkeyvalues(captive_settings, CONFIG_ROOT "/captive/settings")) {
+		fprintf(stderr, "Could not read captive portal settings\n");
+		exit(1);
+	}
+
 	/* Get the BLUE interface details */
 	if (findkey(kv, "BLUE_DEV", blue_dev) > 0) {
 		if ((strlen(blue_dev) > 0) && !VALID_DEVICE(blue_dev)) {
@@ -77,6 +85,15 @@ int main(void) {
 
 	if (strlen(blue_dev) == 0) {
 		exit(0);
+	}
+
+	// Check if the captive portal is enabled on blue. If so, we will
+	// just keep the chains flushed and do not add any rules.
+	char captive_enabled[STRING_SIZE];
+	if (findkey(captive_settings, "ENABLE_BLUE", captive_enabled) > 0) {
+		if (strcmp(captive_enabled, "on") == 0) {
+			return 0;
+		}
 	}
 
 	if ((fd = fopen(CONFIG_ROOT "/wireless/nodrop", "r")))

@@ -117,5 +117,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -rf $(DIR_CONF)/httpd/* /etc/httpd/conf
 	ln -sf $(CONFIG_ROOT)/main/hostname.conf /etc/httpd/conf/
 
+	# Create captive logging directory
+	-mkdir -pv /var/log/httpd/captive
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

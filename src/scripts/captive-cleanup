@@ -1,7 +1,8 @@
+#!/usr/bin/perl
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2016  IPFire Team  <alexander.marx@ipfire.org>                #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -18,41 +19,28 @@
 #                                                                             #
 ###############################################################################
 
-CC      = gcc
-CFLAGS ?= -O2 -Wall
-LIBS    = -lsmooth -lnewt
+use strict;
 
-PROGS = iowrap
-SUID_PROGS = squidctrl sshctrl ipfirereboot \
-	ipsecctrl timectrl dhcpctrl snortctrl \
-	applejuicectrl rebuildhosts backupctrl collectdctrl \
-	logwatch wioscan wiohelper openvpnctrl firewallctrl \
-	wirelessctrl getipstat qosctrl launch-ether-wake \
-	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl \
-	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
-	setaliases urlfilterctrl updxlratorctrl fireinfoctrl rebuildroutes \
-	getconntracktable wirelessclient torctrl ddnsctrl unboundctrl \
-	captivectrl
-SUID_UPDX = updxsetperms
+require '/var/ipfire/general-functions.pl';
 
-OBJS = $(patsubst %,%.o,$(PROGS) $(SUID_PROGS))
+my %settings=();
+my %clientshash=();
+my $settingsfile="${General::swroot}/captive/settings";
+my $clients="${General::swroot}/captive/clients";
+my $time;
+my $expiretime;
 
-install: all
-	install -m 755  $(PROGS) /usr/local/bin
-	install -m 4750 -g nobody $(SUID_PROGS) /usr/local/bin
-
-all: $(PROGS) $(SUID_PROGS)
-
-clean:
-	-rm -f $(PROGS) $(SUID_PROGS) *.o core
-
-######
-
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
-setuid.o: setuid.c setuid.h
-	$(CC) $(CFLAGS) -c $< -o $@
-
-$(PROGS) $(SUID_PROGS): setuid.o | $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $@.o $< $(LIBS)
+if (-f $settingsfile && -f $clients && ! -z $clients){
+	&General::readhash("$settingsfile", \%settings) if(-f $settingsfile);
+	&General::readhasharray("$clients", \%clientshash);
+	$time = time();
+	foreach my $key (keys %clientshash) {
+		$expiretime=($clientshash{$key}[2])+$clientshash{$key}[3];
+		if ($expiretime < $time){
+			delete $clientshash{$key};
+			my $exp = gmtime($expiretime);
+			&General::log("Captive", "Delete expired voucher $clientshash{$key}[4] expired on $exp. Remark: $clientshash{$key}[5]");
+		}
+	}
+	&General::writehasharray("$clients", \%clientshash);
+}
