@@ -80,4 +80,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf --relative /usr/share/bootstrap/css/bootstrap-reboot.min.css.map \
 		/srv/web/ipfire/html/captive/assets/bootstrap-reboot.min.css.map
 
+	# Captive Portal Fonts
+	ln -svf --relative /usr/share/fonts/Ubuntu-L.ttf \
+		/srv/web/ipfire/html/captive/assets/Ubuntu-L.ttf
+	ln -svf --relative /usr/share/fonts/Ubuntu-M.ttf \
+		/srv/web/ipfire/html/captive/assets/Ubuntu-M.ttf
+	ln -svf --relative /usr/share/fonts/Ubuntu-R.ttf \
+		/srv/web/ipfire/html/captive/assets/Ubuntu-R.ttf
+
 	@$(POSTBUILD)

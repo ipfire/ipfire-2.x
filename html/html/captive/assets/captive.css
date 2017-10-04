@@ -1,3 +1,21 @@
+@font-face {
+	font-family: "Ubuntu";
+	font-weight: 300;
+	src: local("Ubuntu Light"), local("Ubuntu-Light"), url("Ubuntu-L.ttf") format("truetype");
+}
+
+@font-face {
+	font-family: "Ubuntu";
+	font-weight: 400;
+	src: local("Ubuntu Regular"), local("Ubuntu-Regular"), url("Ubuntu-R.ttf") format("truetype");
+}
+
+@font-face {
+	font-family: "Ubuntu";
+	font-weight: 500;
+	src: local("Ubuntu Medium"), local("Ubuntu-Medium"), url("Ubuntu-M.ttf") format("truetype");
+}
+
 body {
 	background-image: url("../cgi-bin/logo.cgi");
 	background-size: 100%;
