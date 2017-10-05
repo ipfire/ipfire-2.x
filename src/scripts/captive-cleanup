@@ -46,4 +46,7 @@ if (-f $settingsfile && -f $clients && ! -z $clients){
 		}
 	}
 	&General::writehasharray("$clients", \%clientshash);
+
+	# Reload firewall rules
+	system("/usr/local/bin/captivectrl");
 }
