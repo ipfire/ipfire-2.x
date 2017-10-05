@@ -35,6 +35,9 @@ if (-f $settingsfile && -f $clients && ! -z $clients){
 	&General::readhasharray("$clients", \%clientshash);
 	$time = time();
 	foreach my $key (keys %clientshash) {
+		# Skip unlimited access lines
+		next if ($clientshash{$key}[3] == 0);
+
 		$expiretime=($clientshash{$key}[2])+$clientshash{$key}[3];
 		if ($expiretime < $time){
 			delete $clientshash{$key};
