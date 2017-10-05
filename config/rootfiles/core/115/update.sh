@@ -48,6 +48,14 @@ ldconfig
 openvpnctrl -s
 openvpnctrl -sn2n
 
+grep -q "captivectrl" /var/spool/cron/root.orig || cat <<EOF >> /var/spool/cron/root.orig
+# Cleanup captive clients
+%hourly * /usr/bin/captive-cleanup
+
+# Reload captive firewall rules
+%nightly * 23-1   /usr/local/bin/captivectrl >/dev/null
+EOF
+fcrontab -z
 
 # This update need a reboot...
 #touch /var/run/need_reboot
