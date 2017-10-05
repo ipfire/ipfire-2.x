@@ -285,6 +285,7 @@ if ($settings{'AUTH'} eq 'TERMS') {
 	$selected{'SESSION_TIME'} = ();
 	$selected{'SESSION_TIME'}{'0'} = "";
 	$selected{'SESSION_TIME'}{'3600'} = "";
+	$selected{'SESSION_TIME'}{'28800'} = "";
 	$selected{'SESSION_TIME'}{'86400'} = "";
 	$selected{'SESSION_TIME'}{'604800'} = "";
 	$selected{'SESSION_TIME'}{'18144000'} = "";
