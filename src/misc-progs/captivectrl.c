@@ -237,14 +237,6 @@ static int add_interface_rule(const char* intf, int allow_webif_access) {
 	if (r)
 		return r;
 
-#if 0
-	snprintf(command, sizeof(command), IPTABLES " -A CAPTIVE_PORTAL -o %s"
-		" -j CAPTIVE_PORTAL_CLIENTS", intf);
-	r = safe_system(command);
-	if (r)
-		return r;
-#endif
-
 	if (allow_webif_access) {
 		snprintf(command, sizeof(command), IPTABLES " -A CAPTIVE_PORTAL_CLIENTS"
 			" -i %s -p tcp --dport 444 -j RETURN", intf);
