@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Gábor Sávolyi, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2014-08-21 15:13+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
-"Language-Team: Hungarian (http://www.transifex.com/projects/p/ipfire/language/hu/)\n"
+"PO-Revision-Date: 2017-09-20 09:45+0000\n"
+"Last-Translator: Gábor Sávolyi\n"
+"Language-Team: Hungarian (http://www.transifex.com/mstremer/ipfire/language/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,31 +20,31 @@ msgstr ""
 
 #: dhcp.c:50
 msgid "Start address:"
-msgstr ""
+msgstr "Kezdő cím:"
 
 #: dhcp.c:51
 msgid "End address:"
-msgstr ""
+msgstr "Végső cím:"
 
 #: dhcp.c:52 networking.c:717
 msgid "Primary DNS:"
-msgstr ""
+msgstr "Elsődleges DNS:"
 
 #: dhcp.c:53 networking.c:723
 msgid "Secondary DNS:"
-msgstr ""
+msgstr "Másodlagos DNS:"
 
 #: dhcp.c:54
 msgid "Default lease (mins):"
-msgstr ""
+msgstr "Alapértelmezett bérleti idő (perc):"
 
 #: dhcp.c:55
 msgid "Max lease (mins):"
-msgstr ""
+msgstr "Maximális bérleti idő (perc):"
 
 #: dhcp.c:56
 msgid "Domain name suffix:"
-msgstr ""
+msgstr "Domain név utótag:"
 
 #: dhcp.c:86 dhcp.c:93 dhcp.c:101 domainname.c:34 hostname.c:37 keymap.c:70
 #: misc.c:40 misc.c:52 netstuff.c:377 netstuff.c:566 netstuff.c:704
@@ -51,19 +52,19 @@ msgstr ""
 #: networking.c:442 networking.c:552 networking.c:603 networking.c:610
 #: networking.c:713 timezone.c:63
 msgid "Unable to open settings file"
-msgstr ""
+msgstr "Nem sikerült megnyitni a konfigurációs fájlt"
 
 #: dhcp.c:111
 msgid "DHCP server configuration"
-msgstr ""
+msgstr "DHCP kiszolgáló beállítása"
 
 #: dhcp.c:116
 msgid "Configure the DHCP server by entering the settings information."
-msgstr ""
+msgstr "DHCP kiszolgáló beállításainak megadása."
 
 #: dhcp.c:125
 msgid "Enabled"
-msgstr ""
+msgstr "Engedélyezve"
 
 #: dhcp.c:142 domainname.c:43 hostname.c:47 keymap.c:86 main.c:99 main.c:172
 #: main.c:174 netstuff.c:157 netstuff.c:733 netstuff.c:756 networking.c:163
@@ -71,367 +72,367 @@ msgstr ""
 #: networking.c:642 networking.c:653 networking.c:746 passwords.c:89
 #: timezone.c:78
 msgid "OK"
-msgstr ""
+msgstr "Rendben"
 
 #: dhcp.c:143 domainname.c:43 hostname.c:47 keymap.c:86 netstuff.c:158
 #: netstuff.c:673 netstuff.c:733 netstuff.c:756 networking.c:305
 #: networking.c:410 networking.c:560 networking.c:653 networking.c:746
 #: passwords.c:89 timezone.c:78
 msgid "Cancel"
-msgstr ""
+msgstr "Mégsem"
 
 #: dhcp.c:156
 msgid ""
 "The following fields are invalid:\n"
 "\n"
-msgstr ""
+msgstr "A következő mezők érvénytelenek:\n\n"
 
 #: dhcp.c:159
 msgid "Start address"
-msgstr ""
+msgstr "Kezdő cím"
 
 #: dhcp.c:165
 msgid "End address"
-msgstr ""
+msgstr "Végső cím"
 
 #: dhcp.c:173 networking.c:755
 msgid "Primary DNS"
-msgstr ""
+msgstr "Elsődleges DNS"
 
 #: dhcp.c:182 networking.c:764
 msgid "Secondary DNS"
-msgstr ""
+msgstr "Másodlagos DNS"
 
 #: dhcp.c:189
 msgid "Default lease time"
-msgstr ""
+msgstr "Alapértelmezett bérleti idő"
 
 #: dhcp.c:195
 msgid "Max. lease time"
-msgstr ""
+msgstr "Max. bérleti idő"
 
 #: domainname.c:42 main.c:70
 msgid "Domain name"
-msgstr ""
+msgstr "Domain név"
 
 #: domainname.c:42
 msgid "Enter Domain name"
-msgstr ""
+msgstr "Domain név megadása"
 
 #: domainname.c:48
 msgid "Domain name cannot be empty."
-msgstr ""
+msgstr "A domain név nem lehet üres."
 
 #: domainname.c:50
 msgid "Domain name cannot contain spaces."
-msgstr ""
+msgstr "A domain név nem tartalmazhat szóközt."
 
 #: domainname.c:53
 msgid "Domain name may only contain letters, numbers, hyphens and periods."
-msgstr ""
+msgstr "A domain név csak betűket, számokat, kötőjelet és pontot tartalmazhat."
 
 #: hostname.c:46 main.c:69
 msgid "Hostname"
-msgstr ""
+msgstr "Kiszolgálónév"
 
 #: hostname.c:46
 msgid "Enter the machine's hostname."
-msgstr ""
+msgstr "Add meg a gép kiszolgálónevét."
 
 #: hostname.c:53
 msgid "Hostname cannot be empty."
-msgstr ""
+msgstr "A kiszolgálónév nem lehet üres."
 
 #: hostname.c:55
 msgid "Hostname cannot contain spaces."
-msgstr ""
+msgstr "A kiszolgálónév nem tartalmazhat szóközt."
 
 #: hostname.c:58
 msgid "Hostname may only contain letters, numbers and hyphens."
-msgstr ""
+msgstr "A kiszolgálónév csak betűket, számokat és kötőjelet tartalmazhat."
 
 #: keymap.c:84 main.c:67
 msgid "Keyboard mapping"
-msgstr ""
+msgstr "Billentyűzet kiosztás"
 
 #: keymap.c:85
 msgid "Choose the type of keyboard you are using from the list below."
-msgstr ""
+msgstr "Válaszd ki a billentyűzet típusát a listából."
 
 #: main.c:68 timezone.c:77
 msgid "Timezone"
-msgstr ""
+msgstr "Időzóna"
 
 #: main.c:71 networking.c:110 networking.c:115 networking.c:447
 msgid "Networking"
-msgstr ""
+msgstr "Hálózati beállítások"
 
 #: main.c:72 misc.c:147
 msgid "ISDN"
-msgstr ""
+msgstr "ISDN"
 
 #: main.c:73
 msgid "'root' password"
-msgstr ""
+msgstr "'root' jelszó"
 
 #: main.c:74
 msgid "'admin' password"
-msgstr ""
+msgstr "'admin' jelszó"
 
 #: main.c:90
 msgid "              <Tab>/<Alt-Tab> between elements   |  <Space> selects"
-msgstr ""
+msgstr "<Tab>/<Alt-Tab> elemek közötti váltás | <Space> kiválasztás"
 
 #: main.c:97
 msgid "Section menu"
-msgstr ""
+msgstr "Részlegek Menü"
 
 #: main.c:98
 msgid "Select the item you wish to configure."
-msgstr ""
+msgstr "Válaszd ki a beállítandó elemet."
 
 #: main.c:99
 msgid "Quit"
-msgstr ""
+msgstr "Kilépés"
 
 #: main.c:172
 msgid "Setup is complete."
-msgstr ""
+msgstr "Beállítások befejezve."
 
 #: main.c:174 netstuff.c:733 networking.c:560 networking.c:653
 msgid "Warning"
-msgstr ""
+msgstr "Figyelmeztetés"
 
 #: main.c:175
 msgid ""
 "Initial setup was not entirely complete. You must ensure that Setup is "
 "properly finished by running setup again at the shell."
-msgstr ""
+msgstr "A kezdő beállítások nem teljesek. Indítsd el újra a 'setup'-ot a befejezéshez."
 
 #: misc.c:62
 #, c-format
 msgid "Unable to write %s/main/hostname.conf"
-msgstr ""
+msgstr "Nem sikerült írni: %s/main/hostname.conf"
 
 #: misc.c:71
 msgid "Unable to open main hosts file."
-msgstr ""
+msgstr "Nem siekrült megnyitni a fő 'hosts' fájlt."
 
 #: misc.c:76
 msgid "Unable to write /etc/hosts."
-msgstr ""
+msgstr "Nem sikerült írni: /etc/hosts."
 
 #: misc.c:117
 msgid "Unable to write /etc/hosts.deny."
-msgstr ""
+msgstr "Nem sikerült írni: /etc/hosts.deny."
 
 #: misc.c:125
 msgid "Unable to write /etc/hosts.allow."
-msgstr ""
+msgstr "Nem sikerült írni: /etc/hosts.allow."
 
 #: misc.c:136
 msgid "Unable to set hostname."
-msgstr ""
+msgstr "A kiszolgálónév beállítása sikertelen."
 
 #: misc.c:147
 msgid "Scanning and configuring ISDN devices."
-msgstr ""
+msgstr "ISDN eszközök keresése és beállítása."
 
 #: misc.c:148
 msgid "Unable to scan for ISDN devices."
-msgstr ""
+msgstr "Az ISDN eszközök felkutatása sikertelen."
 
 #: netstuff.c:86
 #, c-format
 msgid "Interface - %s"
-msgstr ""
+msgstr "Adapter - %s"
 
 #: netstuff.c:91
 #, c-format
 msgid "Enter the IP address information for the %s interface."
-msgstr ""
+msgstr "Add meg az IP cím beállításait a következő eszközhöz: %s"
 
 #: netstuff.c:103
 msgid "Static"
-msgstr ""
+msgstr "Statikus"
 
 #: netstuff.c:104
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 #: netstuff.c:105
 msgid "PPP DIALUP (PPPoE, modem, ATM ...)"
-msgstr ""
+msgstr "PPP betárcsázás (PPPoE, modem, ATM ...)"
 
 #: netstuff.c:113
 msgid "DHCP Hostname:"
-msgstr ""
+msgstr "DHCP kiszolgálónév:"
 
 #: netstuff.c:115
 msgid "Force DHCP MTU:"
-msgstr ""
+msgstr "Kényszerített DHCP MTU:"
 
 #: netstuff.c:134
 msgid "IP address:"
-msgstr ""
+msgstr "IP cím:"
 
 #: netstuff.c:146
 msgid "Network mask:"
-msgstr ""
+msgstr "Hálózati maszk:"
 
 #: netstuff.c:173 networking.c:749
 msgid "The following fields are invalid:"
-msgstr ""
+msgstr "A következő mezők érvénytelenek:"
 
 #: netstuff.c:183
 msgid "IP address"
-msgstr ""
+msgstr "IP cím"
 
 #: netstuff.c:189
 msgid "Network mask"
-msgstr ""
+msgstr "Hálózati maszk"
 
 #: netstuff.c:198
 msgid "DHCP hostname"
-msgstr ""
+msgstr "DHCP kiszolgálónév"
 
 #: netstuff.c:396 netstuff.c:709
 msgid "Unset"
-msgstr ""
+msgstr "Kijelölés törlése"
 
 #: netstuff.c:669
 #, c-format
 msgid "Please choose a networkcard for the following interface - %s."
-msgstr ""
+msgstr "Válassz egy eszközt ehhez: %s."
 
 #: netstuff.c:672
 msgid "Extended Network Menu"
-msgstr ""
+msgstr "Kibővített Hálózati Menü"
 
 #: netstuff.c:673 networking.c:520
 msgid "Select"
-msgstr ""
+msgstr "Kiválaszt"
 
 #: netstuff.c:673
 msgid "Identify"
-msgstr ""
+msgstr "Azonosít"
 
 #: netstuff.c:678
 msgid "Device Identification"
-msgstr ""
+msgstr "Eszköz azonosító"
 
 #: netstuff.c:678
 msgid "The lights on the selected port should flash now for 10 seconds..."
-msgstr ""
+msgstr "A kiválasztott porton a visszajelző fény 10 másodpercig villog..."
 
 #: netstuff.c:679
 msgid "Identification is not supported by this interface."
-msgstr ""
+msgstr "Az azonosítást nem támogatja ez az eszköz."
 
 #: netstuff.c:691
 msgid "There are no unassigned interfaces on your system."
-msgstr ""
+msgstr "Nincsenek ki nem választott eszközeid."
 
 #: netstuff.c:732
 #, c-format
 msgid "Do you really want to remove the assigned %s interface?"
-msgstr ""
+msgstr "Biztos, hogy eltávolítod a %s eszköz hozzárendelését?"
 
 #: netstuff.c:755
 msgid "Select network driver"
-msgstr ""
+msgstr "Hálózati vezérlő kiválasztása"
 
 #: netstuff.c:755
 msgid "Set additional module parameters"
-msgstr ""
+msgstr "További paraméterek megadása a modulhoz"
 
 #: netstuff.c:762
 msgid "Loading module..."
-msgstr ""
+msgstr "Modul betöltése..."
 
 #: netstuff.c:777
 msgid "Unable to load driver module."
-msgstr ""
+msgstr "A vezérlő betöltése sikertelen."
 
 #: netstuff.c:780
 msgid "Module name cannot be blank."
-msgstr ""
+msgstr "A modulnév nem lehet üres."
 
 #: networking.c:110
 msgid "Stopping network..."
-msgstr ""
+msgstr "Hálózat leállítása..."
 
 #: networking.c:115
 msgid "Restarting network..."
-msgstr ""
+msgstr "Hálózat újraindítása..."
 
 #: networking.c:146
 msgid "No GREEN interface assigned."
-msgstr ""
+msgstr "Nincs ZÖLD eszköz kiválasztva."
 
 #: networking.c:152
 msgid "Missing an IP address on GREEN."
-msgstr ""
+msgstr "IP cím nincs hozzárendelve a ZÖLD eszközhöz."
 
 #: networking.c:163
 msgid "Error"
-msgstr ""
+msgstr "Hiba"
 
 #: networking.c:163
 msgid "Ignore"
-msgstr ""
+msgstr "Kihagyás"
 
 #: networking.c:164
 msgid "No RED interface assigned."
-msgstr ""
+msgstr "Nincs VÖRÖS eszköz hozzárendelve."
 
 #: networking.c:173
 msgid "Missing an IP address on RED."
-msgstr ""
+msgstr "IP cím nincs hozzárendelve a VÖRÖS eszközhöz."
 
 #: networking.c:183
 msgid "No ORANGE interface assigned."
-msgstr ""
+msgstr "Nincs NARACS eszköz kiválasztva."
 
 #: networking.c:189
 msgid "Missing an IP address on ORANGE."
-msgstr ""
+msgstr "IP cím nincs hozzárendelve a NARANCS eszközhöz."
 
 #: networking.c:199
 msgid "No BLUE interface assigned."
-msgstr ""
+msgstr "Nincs KÉK eszköz kiválasztva."
 
 #: networking.c:205
 msgid "Missing an IP address on BLUE."
-msgstr ""
+msgstr "IP cím nincs hozzárendelve a KÉK eszközhöz."
 
 #: networking.c:217
 msgid "Misssing DNS."
-msgstr ""
+msgstr "Nincs beállított DNS."
 
 #: networking.c:224
 msgid "Missing Default Gateway."
-msgstr ""
+msgstr "Nincs megadva alapértelmezett átjáró."
 
 #: networking.c:237 networking.c:304
 msgid "Network configuration type"
-msgstr ""
+msgstr "Hálózati csatlakozás típusa"
 
 #: networking.c:238 networking.c:409
 msgid "Drivers and card assignments"
-msgstr ""
+msgstr "Vezérlők és eszközök hozzárendelése"
 
 #: networking.c:239 networking.c:640
 msgid "Address settings"
-msgstr ""
+msgstr "Címbeállítások"
 
 #: networking.c:240 networking.c:743
 msgid "DNS and Gateway settings"
-msgstr ""
+msgstr "DNS és átjáró beállítások"
 
 #: networking.c:260
 msgid "When configuration is complete, a network restart will be required."
-msgstr ""
+msgstr "A beállítások végeztével a hálózat újraindítása szükséges."
 
 #: networking.c:267
 #, c-format
@@ -439,15 +440,15 @@ msgid ""
 "Current config: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Aktuális beállítás: %s\n\n%s"
 
 #: networking.c:268
 msgid "Network configuration menu"
-msgstr ""
+msgstr "Hálózatbeállítás menü"
 
 #: networking.c:269 networking.c:520 networking.c:642
 msgid "Done"
-msgstr ""
+msgstr "Kész"
 
 #: networking.c:300
 #, c-format
@@ -456,7 +457,7 @@ msgid ""
 "list those interfaces which have ethernet attached. If you change this "
 "setting, a network restart will be required, and you will have to "
 "reconfigure the network driver assignments."
-msgstr ""
+msgstr "Válaszd ki a hálózati beállításokat a következőhöz: %s. A következő konfigurációs beállításoknál megadhatod a hálózattípusokat. Amennyiben megváltoztatod ezeket a beállításokat, a hálózatot újra kell indítani és esetleg megváltoztatni a hozzárendeléseket."
 
 #: networking.c:307
 #, c-format
@@ -464,35 +465,35 @@ msgid ""
 "Not enough netcards for your choice.\n"
 "\n"
 "Needed: %d - Available: %d\n"
-msgstr ""
+msgstr "Nincs elegendő eszköz a kért beállításhoz.\n\nSzükséges: %d - Elérhető: %d\n"
 
 #: networking.c:359
 msgid ""
 "Configure network drivers, and which interface each card is assigned to. The current configuration is as follows:\n"
 "\n"
-msgstr ""
+msgstr "Hálózati vezérlők beállítása, hogy mi mihez legyen rendelve. Az aktuális beállítás a következő:\n\n"
 
 #: networking.c:408
 msgid "Do you wish to change these settings?"
-msgstr ""
+msgstr "Biztosan megváltoztatod ezeket a beállításokat?"
 
 #: networking.c:447
 msgid "Restarting non-local network..."
-msgstr ""
+msgstr "A nem helyi hálózat újraindítása..."
 
 #: networking.c:464
 msgid ""
 "Please choose the interface you wish to change.\n"
 "\n"
-msgstr ""
+msgstr "Válaszd ki a módosítandó eszközt.\n\n"
 
 #: networking.c:519
 msgid "Assigned Cards"
-msgstr ""
+msgstr "Hozzárendelt eszközök"
 
 #: networking.c:520
 msgid "Remove"
-msgstr ""
+msgstr "Eltávolít"
 
 #: networking.c:556 networking.c:649
 #, c-format
@@ -501,84 +502,84 @@ msgid ""
 "connection to the %s machine will be broken, and you will have to reconnect "
 "on the new IP. This is a risky operation, and should only be attempted if "
 "you have physical access to the machine, should something go wrong."
-msgstr ""
+msgstr "Amennyiben megváltoztatod ezt az IP-t és távolról vagy bejelentkezve, a kapcsolatod a %s géphez meg fog szakadni és újra kell kapcsolódnod az új IP-vel. Ez egy kockázatos beállítás, ezért ajánlott, hogy fizikálisan hozzáférj a géphez, ha valami probléma merülne fel."
 
 #: networking.c:641
 msgid "Select the interface you wish to reconfigure."
-msgstr ""
+msgstr "Válaszd ki a beállítandó eszközt az újrakonfiguráláshoz."
 
 #: networking.c:729
 msgid "Default gateway:"
-msgstr ""
+msgstr "Alapértelmezett átjáró:"
 
 #: networking.c:744
 msgid ""
 "Enter the DNS and gateway information. These settings are used only with "
 "Static IP (and DHCP if DNS set) on the RED interface."
-msgstr ""
+msgstr "DNS és átjáró beállítások megadása. Ezek a beállítások a VÖRÖS csatlakozó statikus IP (és DHCP, ha DNS van megadva) beállításainál érvényesek."
 
 #: networking.c:773
 msgid "Default gateway"
-msgstr ""
+msgstr "Alapértelmezett átjáró"
 
 #: networking.c:780
 msgid "Secondary DNS specified without a Primary DNS"
-msgstr ""
+msgstr "Másodlagos DNS beállítva elsődleges DNS nélkül"
 
 #: passwords.c:33
 msgid ""
 "Enter the 'root' user password. Login as this user for commandline access."
-msgstr ""
+msgstr "Add meg a 'root' jelszót. A konzolon keresztül tudsz bejelentkezni vele."
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"
-msgstr ""
+msgstr "Jelszó beállítása"
 
 #: passwords.c:38
 msgid "Setting 'root' password...."
-msgstr ""
+msgstr "A 'root' jelszó beállítása..."
 
 #: passwords.c:39
 msgid "Problem setting 'root' password."
-msgstr ""
+msgstr "A 'root' jelszó beállítása sikertelen."
 
 #: passwords.c:53
 #, c-format
 msgid ""
 "Enter %s 'admin' user password. This is the user to use for logging into the"
 " %s web administration pages."
-msgstr ""
+msgstr "Add meg az %s 'admin' jelszót. A %s webes felületen keresztül tudsz bejelentkezni vele."
 
 #: passwords.c:60
 #, c-format
 msgid "Setting %s 'admin' user password..."
-msgstr ""
+msgstr "A %s 'root' jelszó beállítása..."
 
 #: passwords.c:62
 #, c-format
 msgid "Problem setting %s 'admin' user password."
-msgstr ""
+msgstr "Probléma a %s 'root' jelszó beállításánál..."
 
 #: passwords.c:76
 msgid "Password:"
-msgstr ""
+msgstr "Jelszó:"
 
 #: passwords.c:77
 msgid "Again:"
-msgstr ""
+msgstr "Ismét:"
 
 #: passwords.c:95
 msgid "Password cannot be blank."
-msgstr ""
+msgstr "A jelszó nem lehet üres."
 
 #: passwords.c:102
 msgid "Passwords do not match."
-msgstr ""
+msgstr "A jelszavak nem egyeznek meg."
 
 #: passwords.c:109
 msgid "Password cannot contain spaces."
-msgstr ""
+msgstr "A jelszó nem tartalmazhat szóközt."
 
 #: timezone.c:77
 msgid "Choose the timezone you are in from the list below."
-msgstr ""
+msgstr "Válaszd ki az időzónád a listából."

@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# André Pinto <andrerafaelpinto@hotmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2014-08-21 15:13+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
-"Language-Team: Portuguese (Portugal) (http://www.transifex.com/projects/p/ipfire/language/pt_PT/)\n"
+"PO-Revision-Date: 2017-09-20 09:45+0000\n"
+"Last-Translator: André Pinto <andrerafaelpinto@hotmail.com>\n"
+"Language-Team: Portuguese (Portugal) (http://www.transifex.com/mstremer/ipfire/language/pt_PT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,19 +20,19 @@ msgstr ""
 
 #: dhcp.c:50
 msgid "Start address:"
-msgstr ""
+msgstr "Endereço Inicial:"
 
 #: dhcp.c:51
 msgid "End address:"
-msgstr ""
+msgstr "Endereço Final:"
 
 #: dhcp.c:52 networking.c:717
 msgid "Primary DNS:"
-msgstr ""
+msgstr "DNS Primário:"
 
 #: dhcp.c:53 networking.c:723
 msgid "Secondary DNS:"
-msgstr ""
+msgstr "DNS Secundário:"
 
 #: dhcp.c:54
 msgid "Default lease (mins):"
@@ -78,7 +79,7 @@ msgstr ""
 #: networking.c:410 networking.c:560 networking.c:653 networking.c:746
 #: passwords.c:89 timezone.c:78
 msgid "Cancel"
-msgstr ""
+msgstr "Cancelar"
 
 #: dhcp.c:156
 msgid ""

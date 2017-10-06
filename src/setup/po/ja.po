@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Ronny Heinrich <heinrich@matsumoto-wadokueikyoushitsu.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2014-08-21 15:13+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
-"Language-Team: Japanese (http://www.transifex.com/projects/p/ipfire/language/ja/)\n"
+"PO-Revision-Date: 2017-09-20 09:45+0000\n"
+"Last-Translator: Ronny Heinrich <heinrich@matsumoto-wadokueikyoushitsu.com>\n"
+"Language-Team: Japanese (http://www.transifex.com/mstremer/ipfire/language/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,31 +20,31 @@ msgstr ""
 
 #: dhcp.c:50
 msgid "Start address:"
-msgstr ""
+msgstr "スタート・アドレス："
 
 #: dhcp.c:51
 msgid "End address:"
-msgstr ""
+msgstr "最後のアドレス："
 
 #: dhcp.c:52 networking.c:717
 msgid "Primary DNS:"
-msgstr ""
+msgstr "一次のDNS:"
 
 #: dhcp.c:53 networking.c:723
 msgid "Secondary DNS:"
-msgstr ""
+msgstr "二次のDNS："
 
 #: dhcp.c:54
 msgid "Default lease (mins):"
-msgstr ""
+msgstr "デフォルト・リース（mins)："
 
 #: dhcp.c:55
 msgid "Max lease (mins):"
-msgstr ""
+msgstr "最高のリース(mins)："
 
 #: dhcp.c:56
 msgid "Domain name suffix:"
-msgstr ""
+msgstr "ドメイン名サフィックス："
 
 #: dhcp.c:86 dhcp.c:93 dhcp.c:101 domainname.c:34 hostname.c:37 keymap.c:70
 #: misc.c:40 misc.c:52 netstuff.c:377 netstuff.c:566 netstuff.c:704
@@ -51,19 +52,19 @@ msgstr ""
 #: networking.c:442 networking.c:552 networking.c:603 networking.c:610
 #: networking.c:713 timezone.c:63
 msgid "Unable to open settings file"
-msgstr ""
+msgstr "設定ファイルが開けませんでした。"
 
 #: dhcp.c:111
 msgid "DHCP server configuration"
-msgstr ""
+msgstr "DHCPサーバー設定"
 
 #: dhcp.c:116
 msgid "Configure the DHCP server by entering the settings information."
-msgstr ""
+msgstr "設定情報の記入する方法で、DHCPサーバーを設定して下さい。"
 
 #: dhcp.c:125
 msgid "Enabled"
-msgstr ""
+msgstr "有効"
 
 #: dhcp.c:142 domainname.c:43 hostname.c:47 keymap.c:86 main.c:99 main.c:172
 #: main.c:174 netstuff.c:157 netstuff.c:733 netstuff.c:756 networking.c:163
@@ -71,367 +72,367 @@ msgstr ""
 #: networking.c:642 networking.c:653 networking.c:746 passwords.c:89
 #: timezone.c:78
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: dhcp.c:143 domainname.c:43 hostname.c:47 keymap.c:86 netstuff.c:158
 #: netstuff.c:673 netstuff.c:733 netstuff.c:756 networking.c:305
 #: networking.c:410 networking.c:560 networking.c:653 networking.c:746
 #: passwords.c:89 timezone.c:78
 msgid "Cancel"
-msgstr ""
+msgstr "キャンセル"
 
 #: dhcp.c:156
 msgid ""
 "The following fields are invalid:\n"
 "\n"
-msgstr ""
+msgstr "下記のフィールドが無効です：\n\n"
 
 #: dhcp.c:159
 msgid "Start address"
-msgstr ""
+msgstr "スタート・アドレス"
 
 #: dhcp.c:165
 msgid "End address"
-msgstr ""
+msgstr "最後のアドレス"
 
 #: dhcp.c:173 networking.c:755
 msgid "Primary DNS"
-msgstr ""
+msgstr "一次のDNS"
 
 #: dhcp.c:182 networking.c:764
 msgid "Secondary DNS"
-msgstr ""
+msgstr "二次のDNS"
 
 #: dhcp.c:189
 msgid "Default lease time"
-msgstr ""
+msgstr "デフォルト・リース・タイム"
 
 #: dhcp.c:195
 msgid "Max. lease time"
-msgstr ""
+msgstr "最高のリース・タイム"
 
 #: domainname.c:42 main.c:70
 msgid "Domain name"
-msgstr ""
+msgstr "ドメイン名"
 
 #: domainname.c:42
 msgid "Enter Domain name"
-msgstr ""
+msgstr "ドメイン名を記入して下さい"
 
 #: domainname.c:48
 msgid "Domain name cannot be empty."
-msgstr ""
+msgstr "空ドメイン名が禁止です。"
 
 #: domainname.c:50
 msgid "Domain name cannot contain spaces."
-msgstr ""
+msgstr "スペースが含んでいるドメイン名が禁止です。"
 
 #: domainname.c:53
 msgid "Domain name may only contain letters, numbers, hyphens and periods."
-msgstr ""
+msgstr "ドメイン名は文字、数字、ハイフォン及びペリオドが許可されています。"
 
 #: hostname.c:46 main.c:69
 msgid "Hostname"
-msgstr ""
+msgstr "ホスト名"
 
 #: hostname.c:46
 msgid "Enter the machine's hostname."
-msgstr ""
+msgstr "機器のホスト名を記入して下さい。"
 
 #: hostname.c:53
 msgid "Hostname cannot be empty."
-msgstr ""
+msgstr "空ホスト名が禁止です。"
 
 #: hostname.c:55
 msgid "Hostname cannot contain spaces."
-msgstr ""
+msgstr "スペースが含んでいるホスト名が禁止です。"
 
 #: hostname.c:58
 msgid "Hostname may only contain letters, numbers and hyphens."
-msgstr ""
+msgstr "ホスト名は文字、数字、ハイフォン及びペリオドが許可されています。"
 
 #: keymap.c:84 main.c:67
 msgid "Keyboard mapping"
-msgstr ""
+msgstr "キーボード・マッピング"
 
 #: keymap.c:85
 msgid "Choose the type of keyboard you are using from the list below."
-msgstr ""
+msgstr "下記のリスてから使用したいキーボードを選んで下さい。"
 
 #: main.c:68 timezone.c:77
 msgid "Timezone"
-msgstr ""
+msgstr "時間帯"
 
 #: main.c:71 networking.c:110 networking.c:115 networking.c:447
 msgid "Networking"
-msgstr ""
+msgstr "ネットワーキング"
 
 #: main.c:72 misc.c:147
 msgid "ISDN"
-msgstr ""
+msgstr "ISDN"
 
 #: main.c:73
 msgid "'root' password"
-msgstr ""
+msgstr "'root'のパスワード"
 
 #: main.c:74
 msgid "'admin' password"
-msgstr ""
+msgstr "'管理者'のパスワード"
 
 #: main.c:90
 msgid "              <Tab>/<Alt-Tab> between elements   |  <Space> selects"
-msgstr ""
+msgstr "              <Tab>/<Alt-Tab> エレメントの間   |  <Space> 選択"
 
 #: main.c:97
 msgid "Section menu"
-msgstr ""
+msgstr "メニューのセクション"
 
 #: main.c:98
 msgid "Select the item you wish to configure."
-msgstr ""
+msgstr "設定したいアイテムを選んで下さい。"
 
 #: main.c:99
 msgid "Quit"
-msgstr ""
+msgstr "終了"
 
 #: main.c:172
 msgid "Setup is complete."
-msgstr ""
+msgstr "設定が終了しました。"
 
 #: main.c:174 netstuff.c:733 networking.c:560 networking.c:653
 msgid "Warning"
-msgstr ""
+msgstr "警報"
 
 #: main.c:175
 msgid ""
 "Initial setup was not entirely complete. You must ensure that Setup is "
 "properly finished by running setup again at the shell."
-msgstr ""
+msgstr "初期設定は正規に終了しませんでした。もう一度コンソールで初期設定を実行して、正規に終了になるか確認することが必要です。"
 
 #: misc.c:62
 #, c-format
 msgid "Unable to write %s/main/hostname.conf"
-msgstr ""
+msgstr "%s/main/hostname.confを書き込むことが出来ませんでした。"
 
 #: misc.c:71
 msgid "Unable to open main hosts file."
-msgstr ""
+msgstr "ホストのファイルが開けませんでした。"
 
 #: misc.c:76
 msgid "Unable to write /etc/hosts."
-msgstr ""
+msgstr "/etc/hostsを書き込むことが出来ませんでした。"
 
 #: misc.c:117
 msgid "Unable to write /etc/hosts.deny."
-msgstr ""
+msgstr "/etc/hosts.denyを書き込むことが出来ませんでした。"
 
 #: misc.c:125
 msgid "Unable to write /etc/hosts.allow."
-msgstr ""
+msgstr "/etc/hosts.allowを書き込むことが出来ませんでした。"
 
 #: misc.c:136
 msgid "Unable to set hostname."
-msgstr ""
+msgstr "ホスト名が設定出来ませんでした。"
 
 #: misc.c:147
 msgid "Scanning and configuring ISDN devices."
-msgstr ""
+msgstr "ISDN機器をスキャン及び設定しています。"
 
 #: misc.c:148
 msgid "Unable to scan for ISDN devices."
-msgstr ""
+msgstr "ISDN機器がスキャン出来ません。"
 
 #: netstuff.c:86
 #, c-format
 msgid "Interface - %s"
-msgstr ""
+msgstr "インタフェース　ー　%s"
 
 #: netstuff.c:91
 #, c-format
 msgid "Enter the IP address information for the %s interface."
-msgstr ""
+msgstr "%sはインタフェースのIPアドレス情報を記入して下さい。"
 
 #: netstuff.c:103
 msgid "Static"
-msgstr ""
+msgstr "固定"
 
 #: netstuff.c:104
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 #: netstuff.c:105
 msgid "PPP DIALUP (PPPoE, modem, ATM ...)"
-msgstr ""
+msgstr "PPP ダイヤル・アップ（PPPoE, モーデム, ATMなど）"
 
 #: netstuff.c:113
 msgid "DHCP Hostname:"
-msgstr ""
+msgstr "DHCPホスト名："
 
 #: netstuff.c:115
 msgid "Force DHCP MTU:"
-msgstr ""
+msgstr "DHCP MTUの制御："
 
 #: netstuff.c:134
 msgid "IP address:"
-msgstr ""
+msgstr "IPアドレス："
 
 #: netstuff.c:146
 msgid "Network mask:"
-msgstr ""
+msgstr "ネットワーク・マスク："
 
 #: netstuff.c:173 networking.c:749
 msgid "The following fields are invalid:"
-msgstr ""
+msgstr "下記のフィールドが無効です："
 
 #: netstuff.c:183
 msgid "IP address"
-msgstr ""
+msgstr "IPアドレス"
 
 #: netstuff.c:189
 msgid "Network mask"
-msgstr ""
+msgstr "ネットワーク・マスク"
 
 #: netstuff.c:198
 msgid "DHCP hostname"
-msgstr ""
+msgstr "DHCPホスト名"
 
 #: netstuff.c:396 netstuff.c:709
 msgid "Unset"
-msgstr ""
+msgstr "はめ込んでない"
 
 #: netstuff.c:669
 #, c-format
 msgid "Please choose a networkcard for the following interface - %s."
-msgstr ""
+msgstr "下記のインタフェースにネットワーク・カードを選んで下さい　ー　%s。"
 
 #: netstuff.c:672
 msgid "Extended Network Menu"
-msgstr ""
+msgstr "拡張ネットワーク・メニュー"
 
 #: netstuff.c:673 networking.c:520
 msgid "Select"
-msgstr ""
+msgstr "選択"
 
 #: netstuff.c:673
 msgid "Identify"
-msgstr ""
+msgstr "アイデンティティ"
 
 #: netstuff.c:678
 msgid "Device Identification"
-msgstr ""
+msgstr "機器確認"
 
 #: netstuff.c:678
 msgid "The lights on the selected port should flash now for 10 seconds..."
-msgstr ""
+msgstr "選択したポートでのLEDは10秒間に点滅しているはずです・・・"
 
 #: netstuff.c:679
 msgid "Identification is not supported by this interface."
-msgstr ""
+msgstr "このインタフェースは確認がサポートしません。"
 
 #: netstuff.c:691
 msgid "There are no unassigned interfaces on your system."
-msgstr ""
+msgstr "システム内、アサインしていないインタフェースがありません。"
 
 #: netstuff.c:732
 #, c-format
 msgid "Do you really want to remove the assigned %s interface?"
-msgstr ""
+msgstr "本当にアサイン済の %s インタフェースを解除してほしいですか。"
 
 #: netstuff.c:755
 msgid "Select network driver"
-msgstr ""
+msgstr "ネットワーク・ドライバーを選んで下さい。"
 
 #: netstuff.c:755
 msgid "Set additional module parameters"
-msgstr ""
+msgstr "モジュールの追加パラメーターを設定してください。"
 
 #: netstuff.c:762
 msgid "Loading module..."
-msgstr ""
+msgstr "モジュールをロードしています・・・"
 
 #: netstuff.c:777
 msgid "Unable to load driver module."
-msgstr ""
+msgstr "ドライバー・モジュールがロード出来ませんでした。"
 
 #: netstuff.c:780
 msgid "Module name cannot be blank."
-msgstr ""
+msgstr "空モジュール名が禁止です。"
 
 #: networking.c:110
 msgid "Stopping network..."
-msgstr ""
+msgstr "ネットワークを停止しています。。。"
 
 #: networking.c:115
 msgid "Restarting network..."
-msgstr ""
+msgstr "ネットワークを再起動しています・・・"
 
 #: networking.c:146
 msgid "No GREEN interface assigned."
-msgstr ""
+msgstr "GREENインタフェースがアサインしていません。"
 
 #: networking.c:152
 msgid "Missing an IP address on GREEN."
-msgstr ""
+msgstr "GREENのIPが登録していません。"
 
 #: networking.c:163
 msgid "Error"
-msgstr ""
+msgstr "エラー"
 
 #: networking.c:163
 msgid "Ignore"
-msgstr ""
+msgstr "顧みない"
 
 #: networking.c:164
 msgid "No RED interface assigned."
-msgstr ""
+msgstr "REDインタフェースがアサインしていません。"
 
 #: networking.c:173
 msgid "Missing an IP address on RED."
-msgstr ""
+msgstr "REDのIPが登録していません。"
 
 #: networking.c:183
 msgid "No ORANGE interface assigned."
-msgstr ""
+msgstr "ORANGEインタフェースがアサインしていません。"
 
 #: networking.c:189
 msgid "Missing an IP address on ORANGE."
-msgstr ""
+msgstr "ORANGEのIPが登録していません。"
 
 #: networking.c:199
 msgid "No BLUE interface assigned."
-msgstr ""
+msgstr "BLUEインタフェースがアサインしていません。"
 
 #: networking.c:205
 msgid "Missing an IP address on BLUE."
-msgstr ""
+msgstr "BLUEのIPが登録していません。"
 
 #: networking.c:217
 msgid "Misssing DNS."
-msgstr ""
+msgstr "DNSが登録していません。"
 
 #: networking.c:224
 msgid "Missing Default Gateway."
-msgstr ""
+msgstr "デフォルト・ゲートウェイが登録していません。"
 
 #: networking.c:237 networking.c:304
 msgid "Network configuration type"
-msgstr ""
+msgstr "ネットワーク設定タイプ"
 
 #: networking.c:238 networking.c:409
 msgid "Drivers and card assignments"
-msgstr ""
+msgstr "ドライバー及びカードのアサイン"
 
 #: networking.c:239 networking.c:640
 msgid "Address settings"
-msgstr ""
+msgstr "アドレス設定"
 
 #: networking.c:240 networking.c:743
 msgid "DNS and Gateway settings"
-msgstr ""
+msgstr "DNS及びゲートウェイ設定"
 
 #: networking.c:260
 msgid "When configuration is complete, a network restart will be required."
-msgstr ""
+msgstr "設定が終了しましたら、ネットワークの再起動が必要となります。"
 
 #: networking.c:267
 #, c-format
@@ -439,15 +440,15 @@ msgid ""
 "Current config: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "現在の設定： %s\n\n%s"
 
 #: networking.c:268
 msgid "Network configuration menu"
-msgstr ""
+msgstr "ネットワーク設定のメニュー"
 
 #: networking.c:269 networking.c:520 networking.c:642
 msgid "Done"
-msgstr ""
+msgstr "終了"
 
 #: networking.c:300
 #, c-format
@@ -456,7 +457,7 @@ msgid ""
 "list those interfaces which have ethernet attached. If you change this "
 "setting, a network restart will be required, and you will have to "
 "reconfigure the network driver assignments."
-msgstr ""
+msgstr "%sのネットワーク設定を選んで下さい。下記の設定タイプはイーサネットが付けたインタフェースを表示しています。この設定を変更すると、ネットワークの再起動が必要となり、既にアサインしたネットワーク・ドライバーの再設定も必要となります。"
 
 #: networking.c:307
 #, c-format
@@ -464,35 +465,35 @@ msgid ""
 "Not enough netcards for your choice.\n"
 "\n"
 "Needed: %d - Available: %d\n"
-msgstr ""
+msgstr "ネットワーク・カードが不足です。\n\n必要：%d ー 設置した：%d\n"
 
 #: networking.c:359
 msgid ""
 "Configure network drivers, and which interface each card is assigned to. The current configuration is as follows:\n"
 "\n"
-msgstr ""
+msgstr "ネットワーク・カードにアサインしたインタフェース及びネットワーク・ドライバーを設定します。現在の設定は：\n\n"
 
 #: networking.c:408
 msgid "Do you wish to change these settings?"
-msgstr ""
+msgstr "この設定を変更したいですか。"
 
 #: networking.c:447
 msgid "Restarting non-local network..."
-msgstr ""
+msgstr "非ローカル・ネットワークを再起動しています・・・"
 
 #: networking.c:464
 msgid ""
 "Please choose the interface you wish to change.\n"
 "\n"
-msgstr ""
+msgstr "変更したいインタフェースを選んで下さい。\n\n"
 
 #: networking.c:519
 msgid "Assigned Cards"
-msgstr ""
+msgstr "アサインしたネットワーク・カード"
 
 #: networking.c:520
 msgid "Remove"
-msgstr ""
+msgstr "解除"
 
 #: networking.c:556 networking.c:649
 #, c-format
@@ -501,84 +502,84 @@ msgid ""
 "connection to the %s machine will be broken, and you will have to reconnect "
 "on the new IP. This is a risky operation, and should only be attempted if "
 "you have physical access to the machine, should something go wrong."
-msgstr ""
+msgstr "このIPアドレスを変更すると、リモートでログインしている場合、%sの機器との接続が外れますので、新IPアドレスでの再接続が必要となります。それが危険ですので、変なことになったら機器と物理的なアクセスができる場合のみ行ったほうがよいです。"
 
 #: networking.c:641
 msgid "Select the interface you wish to reconfigure."
-msgstr ""
+msgstr "再設定したいインタフェースを選んで下さい。"
 
 #: networking.c:729
 msgid "Default gateway:"
-msgstr ""
+msgstr "デフォルト・ゲートウェイ："
 
 #: networking.c:744
 msgid ""
 "Enter the DNS and gateway information. These settings are used only with "
 "Static IP (and DHCP if DNS set) on the RED interface."
-msgstr ""
+msgstr "DNS及びゲートウェイの情報を記入して下さい。この設定はREDインタフェースの固定IP（DNSが設定した場合DHCPも）のみ使用となります。"
 
 #: networking.c:773
 msgid "Default gateway"
-msgstr ""
+msgstr "デフォルト・ゲートウェイ"
 
 #: networking.c:780
 msgid "Secondary DNS specified without a Primary DNS"
-msgstr ""
+msgstr "二次のDNSが登録したが、一次のDNSが登録していません。"
 
 #: passwords.c:33
 msgid ""
 "Enter the 'root' user password. Login as this user for commandline access."
-msgstr ""
+msgstr "'root'のユーザー・パスワードを記入して下さい。コマンド行・アクセスの為、このユーザーとしてログインして下さい。"
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"
-msgstr ""
+msgstr "パスワードの設定"
 
 #: passwords.c:38
 msgid "Setting 'root' password...."
-msgstr ""
+msgstr "'root'のパスワードを設定しています・・・"
 
 #: passwords.c:39
 msgid "Problem setting 'root' password."
-msgstr ""
+msgstr "'root'のパスワードが設定出来ませんでした。"
 
 #: passwords.c:53
 #, c-format
 msgid ""
 "Enter %s 'admin' user password. This is the user to use for logging into the"
 " %s web administration pages."
-msgstr ""
+msgstr "%sの'管理者'のユーザー・パスワードを記入して下さい。%sのウェッブ管理ページにログインする為のユーザーです。"
 
 #: passwords.c:60
 #, c-format
 msgid "Setting %s 'admin' user password..."
-msgstr ""
+msgstr "%sの'管理者' ユーザー・パスワードを設定しています・・・"
 
 #: passwords.c:62
 #, c-format
 msgid "Problem setting %s 'admin' user password."
-msgstr ""
+msgstr "%sの'管理者' ユーザー・パスワードが設定出来ませんでした。"
 
 #: passwords.c:76
 msgid "Password:"
-msgstr ""
+msgstr "パスワード："
 
 #: passwords.c:77
 msgid "Again:"
-msgstr ""
+msgstr "もう一度："
 
 #: passwords.c:95
 msgid "Password cannot be blank."
-msgstr ""
+msgstr "空パスワードが禁止です。"
 
 #: passwords.c:102
 msgid "Passwords do not match."
-msgstr ""
+msgstr "パスワードが違いました。"
 
 #: passwords.c:109
 msgid "Password cannot contain spaces."
-msgstr ""
+msgstr "スペースが含んでいるパスワードが禁止です。"
 
 #: timezone.c:77
 msgid "Choose the timezone you are in from the list below."
-msgstr ""
+msgstr "下記のリストから、住んでいる時間帯を選んで下さい。"
