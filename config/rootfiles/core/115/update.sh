@@ -57,6 +57,10 @@ grep -q "captivectrl" /var/spool/cron/root.orig || cat <<EOF >> /var/spool/cron/
 EOF
 fcrontab -z
 
+# Load captive portal configuration
+/etc/rc.d/init.d/apache2 reload
+/etc/rc.d/init.d/firewall restart
+
 # This update need a reboot...
 #touch /var/run/need_reboot
 
