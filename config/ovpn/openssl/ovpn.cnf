@@ -77,6 +77,8 @@ basicConstraints		= CA:FALSE
 nsComment			= "OpenSSL Generated Certificate"
 subjectKeyIdentifier		= hash
 authorityKeyIdentifier		= keyid,issuer:always
+extendedKeyUsage               = clientAuth
+keyUsage                       = digitalSignature
 
 [ server ]
 
@@ -86,6 +88,8 @@ nsCertType			= server
 nsComment			= "OpenSSL Generated Server Certificate"
 subjectKeyIdentifier		= hash
 authorityKeyIdentifier		= keyid,issuer:always 
+extendedKeyUsage               = serverAuth
+keyUsage                       = digitalSignature, keyEncipherment
 
 [ v3_req ]
 basicConstraints 		= CA:FALSE
