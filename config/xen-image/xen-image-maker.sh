@@ -38,7 +38,7 @@ FSTYPE=ext3
 ##############################################################################
 
 SOURCEISO=$SNAME-$VERSION.i586-full-core$CORE.iso
-HTTPDIR=http://download.ipfire.org/releases/ipfire-2.x/$VERSION-core$CORE
+HTTPDIR=https://downloads.ipfire.org/releases/ipfire-2.x/$VERSION-core$CORE
 
 TMPDIR=./ipfire-tmp
 ISODIR=$TMPDIR/iso
