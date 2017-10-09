@@ -97,7 +97,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 		&General::writehash("$settingsfile", \%settings);
 
 		# Save terms
-		if ($cgiparams{'TERMS'}){
+		if ($settings{'AUTH'} eq 'TERMS') {
 			$cgiparams{'TERMS'} = &Header::escape($cgiparams{'TERMS'});
 			open(FH, ">:utf8", "/var/ipfire/captive/terms.txt") or die("$!");
 			print FH $cgiparams{'TERMS'};
