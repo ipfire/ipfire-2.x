@@ -62,6 +62,12 @@ fcrontab -z
 /etc/rc.d/init.d/apache2 reload
 /etc/rc.d/init.d/firewall restart
 
+# Regenerate IPsec configuration
+sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/init.d/ipsec restart
+fi
+
 # This update need a reboot...
 #touch /var/run/need_reboot
 
