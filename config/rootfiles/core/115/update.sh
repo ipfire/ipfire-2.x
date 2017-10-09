@@ -59,7 +59,6 @@ EOF
 fcrontab -z
 
 # Load captive portal configuration
-/etc/rc.d/init.d/apache2 reload
 /etc/rc.d/init.d/firewall restart
 
 # Regenerate IPsec configuration
