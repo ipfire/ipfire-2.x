@@ -38,6 +38,10 @@ openvpnctrl -kn2n
 # Extract files
 extract_files
 
+# Remove files
+rm -vf \
+	/srv/web/ipfire/html/dial.cgi
+
 # update linker config
 ldconfig
 
