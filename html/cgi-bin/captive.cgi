@@ -97,13 +97,11 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 		&General::writehash("$settingsfile", \%settings);
 
 		# Save terms
-		if ($settings{'AUTH'} eq 'TERMS') {
-			$cgiparams{'TERMS'} = &Header::escape($cgiparams{'TERMS'});
-			open(FH, ">:utf8", "/var/ipfire/captive/terms.txt") or die("$!");
-			print FH $cgiparams{'TERMS'};
-			close(FH);
-			$cgiparams{'TERMS'} = "";
-		}
+		$cgiparams{'TERMS'} = &Header::escape($cgiparams{'TERMS'});
+		open(FH, ">:utf8", "/var/ipfire/captive/terms.txt") or die("$!");
+		print FH $cgiparams{'TERMS'};
+		close(FH);
+		$cgiparams{'TERMS'} = "";
 
 		#execute binary to reload firewall rules
 		system("/usr/local/bin/captivectrl");
@@ -291,15 +289,7 @@ if ($settings{'AUTH'} eq 'TERMS') {
 	$selected{'SESSION_TIME'}{'18144000'} = "";
 	$selected{'SESSION_TIME'}{$settings{'SESSION_TIME'}} = "selected";
 
-	my $terms = &getterms();
 	print <<END;
-		<tr>
-			<td></td>
-			<td>
-				<textarea cols="50" rows="10" name="TERMS">$terms</textarea>
-			</td>
-		</tr>
-
 		<tr>
 			<td>$Lang::tr{'Captive client session expiry time'}</td>
 			<td>
@@ -357,7 +347,14 @@ if (-e $logo) {
 END
 }
 
+my $terms = &getterms();
 print <<END;
+	<tr>
+		<td></td>
+		<td>
+			<textarea cols="50" rows="10" name="TERMS">$terms</textarea>
+		</td>
+	</tr>
 	<tr>
 		<td></td>
 		<td align='right'>
