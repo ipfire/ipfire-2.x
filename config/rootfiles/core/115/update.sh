@@ -35,6 +35,7 @@ done
 openvpnctrl -k
 openvpnctrl -kn2n
 
+
 # Extract files
 extract_files
 
@@ -47,6 +48,9 @@ ldconfig
 
 # Update Language cache
 /usr/local/bin/update-lang-cache
+
+# generate ECDSA key on existing installations to prevent Apache from crashing
+/usr/local/bin/httpscert
 
 # Start services
 /etc/rc.d/init.d/apache2 restart
