@@ -16,6 +16,7 @@ usr/local/bin/captivectrl
 usr/local/bin/wirelessctrl
 var/ipfire/backup/include
 var/ipfire/captive
+var/ipfire/extrahd/bin/extrahd.pl
 var/ipfire/general-functions.pl
 var/ipfire/lang.pl
 var/ipfire/langs
