@@ -1,6 +1,8 @@
 etc/system-release
 etc/issue
 etc/httpd/conf/vhosts.d/captive.conf
+etc/httpd/conf/vhosts.d/ipfire-interface.conf
+etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/rc.d/init.d/firewall
 srv/web/ipfire/cgi-bin/captive/index.cgi
 srv/web/ipfire/cgi-bin/captive/logo.cgi
@@ -13,6 +15,7 @@ srv/web/ipfire/html/captive
 usr/bin/captive-cleanup
 usr/local/bin/backupiso
 usr/local/bin/captivectrl
+usr/local/bin/httpscert
 usr/local/bin/wirelessctrl
 var/ipfire/backup/include
 var/ipfire/captive
