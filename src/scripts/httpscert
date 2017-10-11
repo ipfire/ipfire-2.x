@@ -7,17 +7,36 @@
 case "$1" in
   new)
 	if [ ! -f /etc/httpd/server.key ]; then
-		echo "Generating https server key."
+		echo "Generating HTTPS RSA server key."
 		/usr/bin/openssl genrsa -out /etc/httpd/server.key 4096
 	fi
-	echo "Generating CSR"
-	/bin/cat /etc/certparams | sed "s/HOSTNAME/`hostname -f`/" | /usr/bin/openssl \
-		req -new -key /etc/httpd/server.key -out /etc/httpd/server.csr
-	echo "Signing certificate"
-	/usr/bin/openssl x509 -req -days 999999 -sha256 -in \
-		/etc/httpd/server.csr -signkey /etc/httpd/server.key -out \
-		/etc/httpd/server.crt
- 	;;
+	if [ ! -f /etc/httpd/server-ecdsa.key ]; then
+		echo "Generating HTTPS ECDSA server key."
+		/usr/bin/openssl ecparam -genkey -name secp384r1 | openssl ec -out /etc/httpd/server-ecdsa.key
+	fi
+
+	echo "Generating CSRs"
+	if [ ! -f /etc/httpd/server.csr ]; then
+		/bin/cat /etc/certparams | sed "s/HOSTNAME/`hostname -f`/" | /usr/bin/openssl \
+			req -new -key /etc/httpd/server.key -out /etc/httpd/server.csr
+	fi
+	if [ ! -f /etc/httpd/server-ecdsa.csr ]; then
+		/bin/cat /etc/certparams | sed "s/HOSTNAME/`hostname -f`/" | /usr/bin/openssl \
+			req -new -key /etc/httpd/server-ecdsa.key -out /etc/httpd/server-ecdsa.csr
+	fi
+
+	echo "Signing certificates"
+	if [ ! -f /etc/httpd/server.crt ]; then
+		/usr/bin/openssl x509 -req -days 999999 -sha256 -in \
+			/etc/httpd/server.csr -signkey /etc/httpd/server.key -out \
+			/etc/httpd/server.crt
+	fi
+	if [ ! -f /etc/httpd/server-ecdsa.crt ]; then
+		/usr/bin/openssl x509 -req -days 999999 -sha256 -in \
+			/etc/httpd/server-ecdsa.csr -signkey /etc/httpd/server-ecdsa.key -out \
+			/etc/httpd/server-ecdsa.crt
+	fi
+	;;
   read)
 	if [ -f /etc/httpd/server.key -a -f /etc/httpd/server.crt -a -f /etc/httpd/server.csr ]; then
 		ISSUER=`openssl x509 -in /etc/httpd/server.crt -text -noout | grep Issuer | /usr/bin/cut -f2 -d '='`
