@@ -28,7 +28,7 @@ VER        = 2.1.11
 
 THISAPP    = fireinfo-v$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://source.ipfire.org/releases/fireinfo/
+DL_FROM    = https://source.ipfire.org/releases/fireinfo/
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

@@ -44,8 +44,8 @@ endif
 # URLs that are common sources of downloads.  If you're having trouble with
 # a site you should change its URL to that of a suitable mirror site.
 #
-URL_IPFIRE  = http://source.ipfire.org/source-2.x
-URL_TOOLCHAIN = http://source.ipfire.org/toolchains
+URL_IPFIRE  = https://source.ipfire.org/source-2.x
+URL_TOOLCHAIN = https://source.ipfire.org/toolchains
 URL_SOURCE = git.ipfire.org:/pub/sources/source-2.x
 
 # Don't change this; it will be overridden by other makefiles where necessary.
