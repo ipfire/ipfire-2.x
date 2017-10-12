@@ -76,17 +76,22 @@ PKG_CHECK_MODULES(UDEV, [libudev])
 
 AC_ARG_WITH([distro-name],
 	AS_HELP_STRING([--with-distro-name] [The name of the distribution]),
-	AC_DEFINE_UNQUOTED([NAME], "$withval", [The name of the distribution]),
+	AC_DEFINE_UNQUOTED([DISTRO_NAME], "$withval", [The name of the distribution]),
 	AC_MSG_ERROR([*** you need to set the name with --with-distro-name=]))
 
 AC_ARG_WITH([distro-sname],
 	AS_HELP_STRING([--with-distro-sname] [The short name of the distribution]),
-	AC_DEFINE_UNQUOTED([SNAME], "$withval", [The sname of the distribution]),
+	AC_DEFINE_UNQUOTED([DISTRO_SNAME], "$withval", [The sname of the distribution]),
 	AC_MSG_ERROR([*** you need to set the sname with --with-distro-sname=]))
+
+AC_ARG_WITH([distro-version],
+	AS_HELP_STRING([--with-distro-sname] [The version of the distribution]),
+	AC_DEFINE_UNQUOTED([DISTRO_VERSION], "$withval", [The version of the distribution]),
+	AC_MSG_ERROR([*** you need to set the version with --with-distro-version=]))
 
 AC_ARG_WITH([distro-slogan],
 	AS_HELP_STRING([--with-distro-slogan] [The slogan of the distribution]),
-	AC_DEFINE_UNQUOTED([SLOGAN], "$withval", [The slogan of the distribution]),
+	AC_DEFINE_UNQUOTED([DISTRO_SLOGAN], "$withval", [The slogan of the distribution]),
 	AC_MSG_ERROR([*** you need to set the slogan with --with-distro-slogan=]))
 
 AC_ARG_WITH([config-root],
@@ -111,4 +116,9 @@ AC_MSG_RESULT([
 	CFLAGS:			${OUR_CFLAGS} ${CFLAGS}
 	CPPFLAGS:		${OUR_CPPFLAGS} ${CPPFLAGS}
 	LDFLAGS:		${OUR_LDFLAGS} ${LDFLAGS}
+
+	Distribution:		${DISTRO_NAME} (${DISTRO_SNAME})
+	Version:		${DISTRO_VERSION}
+	Slogan:			${DISTRO_SLOGAN}
+	Config Root:		${CONFIG_ROOT}
 ])

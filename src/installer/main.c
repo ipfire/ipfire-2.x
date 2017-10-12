@@ -195,7 +195,7 @@ int write_lang_configs(char* lang) {
 
 	/* default stuff for main/settings. */
 	replacekeyvalue(kv, "LANGUAGE", lang);
-	replacekeyvalue(kv, "HOSTNAME", SNAME);
+	replacekeyvalue(kv, "HOSTNAME", DISTRO_SNAME);
 	replacekeyvalue(kv, "THEME", "ipfire");
 	writekeyvalues(kv, "/harddisk" CONFIG_ROOT "/main/settings");
 	freekeyvalues(kv);
@@ -369,7 +369,7 @@ int main(int argc, char *argv[]) {
 	FILE *copying;
 
 	setlocale(LC_ALL, "");
-	sethostname(SNAME, 10);
+	sethostname(DISTRO_SNAME, 10);
 
 	/* Log file/terminal stuff. */
 	FILE* flog = NULL;
@@ -398,7 +398,7 @@ int main(int argc, char *argv[]) {
 	if (roottext)
 		newtDrawRootText(0, 0, roottext);
 
-	snprintf(title, sizeof(title), "%s - %s", NAME, SLOGAN);
+	snprintf(title, sizeof(title), "%s - %s", DISTRO_NAME, DISTRO_SLOGAN);
 
 	// Parse parameters from the kernel command line
 	parse_command_line(&config);
@@ -448,7 +448,7 @@ int main(int argc, char *argv[]) {
 	if (!config.unattended) {
 		snprintf(message, sizeof(message),
 			_("Welcome to the %s installation program.\n\n"
-			"Selecting Cancel on any of the following screens will reboot the computer."), NAME);
+			"Selecting Cancel on any of the following screens will reboot the computer."), DISTRO_NAME);
 		newtWinMessage(title, _("Start installation"), message);
 	}
 
@@ -933,7 +933,7 @@ int main(int argc, char *argv[]) {
 			"Please remove any installation mediums from this system and hit the reboot button. "
 			"Once the system has restarted you will be asked to setup networking and system passwords. "
 			"After that, you should point your web browser at https://%s:444 (or what ever you name "
-			"your %s) for the web configuration console."), NAME, SNAME, NAME);
+			"your %s) for the web configuration console."), DISTRO_NAME, DISTRO_SNAME, DISTRO_NAME);
 		newtWinMessage(_("Congratulations!"), _("Reboot"), message);
 	}
 
