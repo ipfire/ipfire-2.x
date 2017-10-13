@@ -259,9 +259,9 @@ if ($snortsettings{'OINKCODE'} ne "") {
 
 if (!$errormessage) {
 	if ($snortsettings{'RULES'} eq 'subscripted') {
-		$url=" https://www.snort.org/rules/snortrules-snapshot-2990.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
+		$url=" https://www.snort.org/rules/snortrules-snapshot-29110.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
 	} elsif ($snortsettings{'RULES'} eq 'registered') {
-		$url=" https://www.snort.org/rules/snortrules-snapshot-2990.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
+		$url=" https://www.snort.org/rules/snortrules-snapshot-29110.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
 	} elsif ($snortsettings{'RULES'} eq 'community') {
 		$url=" https://www.snort.org/rules/community";
 	} else {

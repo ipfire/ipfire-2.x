@@ -27,10 +27,10 @@ usr/bin/u2spewfoo
 #usr/include/snort/dynamic_output/snort_debug.h
 #usr/include/snort/dynamic_output/stream_api.h
 #usr/include/snort/dynamic_preproc
+#usr/include/snort/dynamic_preproc/appdata_adjuster.h
 #usr/include/snort/dynamic_preproc/bitop.h
 #usr/include/snort/dynamic_preproc/cpuclock.h
 #usr/include/snort/dynamic_preproc/file_api.h
-#usr/include/snort/dynamic_preproc/file_mail_common.h
 #usr/include/snort/dynamic_preproc/idle_processing.h
 #usr/include/snort/dynamic_preproc/ipv6_port.h
 #usr/include/snort/dynamic_preproc/mempool.h
@@ -40,6 +40,8 @@ usr/bin/u2spewfoo
 #usr/include/snort/dynamic_preproc/perf_indicators.h
 #usr/include/snort/dynamic_preproc/preprocids.h
 #usr/include/snort/dynamic_preproc/profiler.h
+#usr/include/snort/dynamic_preproc/reg_test.h
+#usr/include/snort/dynamic_preproc/reload_api.h
 #usr/include/snort/dynamic_preproc/segment_mem.h
 #usr/include/snort/dynamic_preproc/session_api.h
 #usr/include/snort/dynamic_preproc/sfPolicy.h
@@ -60,14 +62,12 @@ usr/bin/u2spewfoo
 #usr/include/snort/dynamic_preproc/sf_snort_plugin_api.h
 #usr/include/snort/dynamic_preproc/sfcommon.h
 #usr/include/snort/dynamic_preproc/sfcontrol.h
-#usr/include/snort/dynamic_preproc/sfdebug.h
 #usr/include/snort/dynamic_preproc/sfrt.h
 #usr/include/snort/dynamic_preproc/sfrt_dir.h
 #usr/include/snort/dynamic_preproc/sfrt_flat.h
 #usr/include/snort/dynamic_preproc/sfrt_flat_dir.h
 #usr/include/snort/dynamic_preproc/sfrt_trie.h
 #usr/include/snort/dynamic_preproc/sidechannel_define.h
-#usr/include/snort/dynamic_preproc/sip_common.h
 #usr/include/snort/dynamic_preproc/snort_bounds.h
 #usr/include/snort/dynamic_preproc/snort_debug.h
 #usr/include/snort/dynamic_preproc/ssl.h
@@ -88,6 +88,8 @@ usr/lib/snort/dynamic_output
 usr/lib/snort/dynamic_preproc
 #usr/lib/snort/dynamic_preproc/libsf_dynamic_preproc.a
 #usr/lib/snort/dynamic_preproc/libsf_dynamic_preproc.la
+#usr/lib/snort/dynamic_preproc/libsf_dynamic_utils.a
+#usr/lib/snort/dynamic_preproc/libsf_dynamic_utils.la
 usr/lib/snort_dynamicengine
 #usr/lib/snort_dynamicengine/libsf_engine.a
 #usr/lib/snort_dynamicengine/libsf_engine.la
@@ -215,7 +217,6 @@ usr/sbin/snort
 #usr/share/doc/snort/README.reload
 #usr/share/doc/snort/README.reputation
 #usr/share/doc/snort/README.sensitive_data
-#usr/share/doc/snort/README.session
 #usr/share/doc/snort/README.sfportscan
 #usr/share/doc/snort/README.sip
 #usr/share/doc/snort/README.ssh
