@@ -30,9 +30,8 @@ THISAPP    = PDF-API2-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
+
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = perl-PDF-API2
-PAK_VER    = 2
 
 ###############################################################################
 # Top-level Rules
@@ -51,9 +50,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist: 
-	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum

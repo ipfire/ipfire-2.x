@@ -75,6 +75,10 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec restart
 fi
 
+# Let pakfire forget the perl-PDF-API2 package
+rm -fv /opt/pakfire/db/rootfiles/perl-PDF-API2
+rm -fv /opt/pakfire/db/*/meta-perl-PDF-API2
+
 # This update need a reboot...
 #touch /var/run/need_reboot
 
