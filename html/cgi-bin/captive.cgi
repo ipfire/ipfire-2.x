@@ -20,8 +20,11 @@
 ###############################################################################
 
 #use strict;
+use Encode;
 use HTML::Entities();
 use File::Basename;
+use PDF::API2;
+use constant mm => 25.4 / 72;
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -56,6 +59,20 @@ unless (-e $settingsfile)	{ system("touch $settingsfile"); }
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 &General::readhash("$settingsfile", \%settings) if(-f $settingsfile);
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+
+if ($cgiparams{'ACTION'} eq "export-coupons") {
+	my $pdf = &generate_pdf();
+
+	print "Content-Type: application/pdf\n";
+	print "Content-Disposition: attachment; filename=captive-portal-coupons.pdf\n";
+	print "\n"; # end headers
+
+	# Send PDF
+	print $pdf;
+
+	exit(0);
+}
+
 
 &Header::showhttpheaders();
 
@@ -572,6 +589,16 @@ END
 
 	print "</table>";
 
+	# Download PDF
+	print <<END;
+		<div align="right">
+			<form method="POST">
+				<input type="hidden" name="ACTION" value="export-coupons">
+				<input type="submit" value="$Lang::tr{'Captive export coupons'}">
+			</form>
+		</div>
+END
+
 	&Header::closebox();
 }
 
@@ -658,6 +685,137 @@ sub validremark
 	if (substr ($remark, -1, 1) !~ /^[a-zöäüA-ZÖÄÜ0-9.:;_)]*$/) {
 		return 0;}
 	return 1;
+}
+
+sub generate_pdf() {
+	my $pdf = PDF::API2->new();
+
+	my ($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst) = gmtime(time);
+	my $timestamp = sprintf("D:%04d%02d%02d%02d%02d%02d+00;00", $year+1900, $mon+1, $mday, $hour, $min, $sec);
+
+	$pdf->info(
+		"Creator"      => $Lang::tr{'Captive portal'},
+		"Title"        => $Lang::tr{'Captive portal coupons'},
+		"CreationDate" => $timestamp,
+		"ModDate"      => $timestamp,
+	);
+
+	# Set page size
+	$pdf->mediabox("A4");
+	$pdf->trimbox(28/mm, 27/mm, 182/mm, 270/mm);
+
+	# Set font
+	my $font = $pdf->ttfont("/usr/share/fonts/Ubuntu-R.ttf");
+
+	my $page_h_margin = 27/mm;
+	my $page_v_margin = 28/mm;
+
+	my $height = 68/mm;
+	my $width  = 91/mm;
+	my $margin =  2/mm;
+
+	# Tux Image
+	my $tux_image = $pdf->image_png("/srv/web/ipfire/html/captive/assets/ipfire.png");
+	my $logo_height = 12/mm;
+	my $logo_width  = 12/mm;
+
+	my @coupons = ();
+	my %coupon_expiry_times = ();
+
+	# Read coupons
+	&General::readhasharray($coupons, \%couponhash) if (-e $coupons);
+	foreach my $key (keys %couponhash) {
+		$coupon_expiry_times{$couponhash{$key}[1]} = $couponhash{$key}[2];
+		push @coupons, $couponhash{$key}[1];
+	}
+
+	while (@coupons) {
+		# Make a new page
+		my $page = $pdf->page();
+
+		# Graphics
+		$gfx = $page->gfx();
+
+		# Headline font
+		my $f_headline = $page->text();
+		$f_headline->font($font, 20);
+
+		# Subheadline font
+		my $f_subheadline = $page->text();
+		$f_subheadline->font($font, 14);
+
+		# Coupon font
+		my $f_coupon = $page->text();
+		$f_coupon->font($font, 36);
+
+		# Lifetime
+		my $f_lifetime = $page->text();
+		$f_lifetime->font($font, 14);
+
+		# Watermark font
+		my $f_watermark = $page->text();
+		$f_watermark->fillcolor("#666666");
+		$f_watermark->font($font, 10);
+
+		my $i = 0;
+		while (@coupons && $i < 8) {
+			my $coupon = shift @coupons;
+
+			# Box corners
+			my $x = ($page_v_margin / 2) + (($i % 2) ? $width : 0);
+			my $y = ($page_h_margin / 2) + (int($i / 2) * $height);
+
+			# Weidth and height of the box
+			my $w = $width - $margin;
+			my $h = $height - $margin;
+
+			# Center
+			my $cx = $x + ($w / 2);
+			my $cy = $y + ($h / 2);
+
+			# Draw border box
+			$gfx->strokecolor("#333333");
+			$gfx->linedash(1/mm, 1/mm);
+			$gfx->rect($x, $y, $w, $h);
+			$gfx->stroke();
+			$gfx->endpath();
+
+			# Headline
+			$f_headline->translate($cx, ($y + $h - $cy) / 1.7 + $cy);
+			$f_subheadline->translate($cx, ($y + $h - $cy) / 2.4 + $cy);
+
+			if ($settings{'TITLE'}) {
+				$f_headline->text_center($settings{'TITLE'});
+				$f_subheadline->text_center(decode("utf8", $Lang::tr{'Captive WiFi coupon'}));
+			} else {
+				$f_headline->text_center(decode("utf8", $Lang::tr{'Captive WiFi coupon'}));
+			}
+
+			# Coupon
+			$f_coupon->translate($cx, $cy);
+			$f_coupon->text_center(decode("utf8", $coupon));
+
+			# Show lifetime
+			my $expiry_time = $coupon_expiry_times{$coupon};
+			$f_lifetime->translate($cx, $cy - ($y + $h - $cy) / 4);
+			if ($expiry_time > 0) {
+				my $lifetime = &General::format_time($expiry_time);
+				$f_lifetime->text_center(decode("utf8", $Lang::tr{'Captive valid for'} . " " . $lifetime));
+			} else {
+				$f_lifetime->text_center(decode("utf8", $Lang::tr{'Captive nolimit'}));
+			}
+
+			# Add watermark
+			$gfx->image($tux_image, $x + $w - $logo_width - $margin, $y + $margin, $logo_width, $logo_height);
+			$f_watermark->translate($x + $w - ($margin * 2) - $logo_width, $y + ($logo_height / 2));
+			$f_watermark->text_right("Powered by IPFire");
+
+			$i++;
+		}
+	}
+
+	# Write out the PDF document
+	return $pdf->stringify();
 }
 
 &Header::closebigbox();

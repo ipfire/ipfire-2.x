@@ -56,6 +56,7 @@
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
+< Captive export coupons
 < Captive GAIN ACCESS
 < Captive generate coupon
 < Captive genvoucher
@@ -73,16 +74,20 @@
 < Captive nolimit
 < Captive nr
 < Captive please accept the terms and conditions
+< Captive portal
+< Captive portal coupons
 < Captive terms
 < Captive terms short
 < Captive time
 < Captive title
 < Captive upload logo
 < Captive upload logo recommendations
+< Captive valid for
 < Captive voactive
 < Captive voucher
 < Captive vouchervalid
 < Captive vout
+< Captive WiFi coupon
 < Captive wrong ext
 < ccd add
 < ccd choose net
@@ -632,8 +637,9 @@
 < vpn statistic rw
 < vpn weak
 < wireless network
-< wlanap access point
+< wlanap
 < wlanap channel
+< wlanap configuration
 < wlanap country
 < wlanap debugging
 < wlanap del interface
@@ -747,6 +753,7 @@
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
+< Captive export coupons
 < Captive GAIN ACCESS
 < Captive generate coupon
 < Captive genvoucher
@@ -764,16 +771,20 @@
 < Captive nolimit
 < Captive nr
 < Captive please accept the terms and conditions
+< Captive portal
+< Captive portal coupons
 < Captive terms
 < Captive terms short
 < Captive time
 < Captive title
 < Captive upload logo
 < Captive upload logo recommendations
+< Captive valid for
 < Captive voactive
 < Captive voucher
 < Captive vouchervalid
 < Captive vout
+< Captive WiFi coupon
 < Captive wrong ext
 < ccd add
 < ccd choose net
@@ -1325,6 +1336,8 @@
 < vpn statistic rw
 < vpn weak
 < wireless network
+< wlanap
+< wlanap configuration
 < wlanap country
 < wlan client
 < wlan client advanced settings
@@ -1419,6 +1432,7 @@
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
+< Captive export coupons
 < Captive GAIN ACCESS
 < Captive generate coupon
 < Captive genvoucher
@@ -1436,16 +1450,20 @@
 < Captive nolimit
 < Captive nr
 < Captive please accept the terms and conditions
+< Captive portal
+< Captive portal coupons
 < Captive terms
 < Captive terms short
 < Captive time
 < Captive title
 < Captive upload logo
 < Captive upload logo recommendations
+< Captive valid for
 < Captive voactive
 < Captive voucher
 < Captive vouchervalid
 < Captive vout
+< Captive WiFi coupon
 < Captive wrong ext
 < ccd add
 < ccd choose net
@@ -1983,6 +2001,8 @@
 < vpn statistic rw
 < vpn weak
 < wireless network
+< wlanap
+< wlanap configuration
 < wlanap country
 < wlan client
 < wlan client advanced settings
@@ -2078,6 +2098,7 @@
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
+< Captive export coupons
 < Captive GAIN ACCESS
 < Captive generate coupon
 < Captive genvoucher
@@ -2095,16 +2116,20 @@
 < Captive nolimit
 < Captive nr
 < Captive please accept the terms and conditions
+< Captive portal
+< Captive portal coupons
 < Captive terms
 < Captive terms short
 < Captive time
 < Captive title
 < Captive upload logo
 < Captive upload logo recommendations
+< Captive valid for
 < Captive voactive
 < Captive voucher
 < Captive vouchervalid
 < Captive vout
+< Captive WiFi coupon
 < Captive wrong ext
 < ccd add
 < ccd choose net
@@ -2647,6 +2672,8 @@
 < vpn weak
 < week-graph
 < wireless network
+< wlanap
+< wlanap configuration
 < wlanap country
 < wlan client
 < wlan client advanced settings

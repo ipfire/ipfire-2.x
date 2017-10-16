@@ -613,6 +613,7 @@ WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: week-graph
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: wildcards
+WARNING: translation string unused: wlanap access point
 WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
@@ -621,6 +622,7 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: 24 hours
 WARNING: untranslated string: Captive ACTIVATE
 WARNING: untranslated string: Captive GAIN ACCESS
+WARNING: untranslated string: Captive WiFi coupon
 WARNING: untranslated string: Captive activated
 WARNING: untranslated string: Captive active on
 WARNING: untranslated string: Captive agree tac
@@ -632,6 +634,7 @@ WARNING: untranslated string: Captive clients
 WARNING: untranslated string: Captive config
 WARNING: untranslated string: Captive coupon
 WARNING: untranslated string: Captive expiry time
+WARNING: untranslated string: Captive export coupons
 WARNING: untranslated string: Captive generate coupon
 WARNING: untranslated string: Captive issued coupons
 WARNING: untranslated string: Captive logo uploaded
@@ -640,11 +643,14 @@ WARNING: untranslated string: Captive menu
 WARNING: untranslated string: Captive noexpiretime
 WARNING: untranslated string: Captive nolimit
 WARNING: untranslated string: Captive please accept the terms and conditions
+WARNING: untranslated string: Captive portal
+WARNING: untranslated string: Captive portal coupons
 WARNING: untranslated string: Captive terms
 WARNING: untranslated string: Captive terms short
 WARNING: untranslated string: Captive title
 WARNING: untranslated string: Captive upload logo
 WARNING: untranslated string: Captive upload logo recommendations
+WARNING: untranslated string: Captive valid for
 WARNING: untranslated string: Captive vouchervalid
 WARNING: untranslated string: Captive wrong ext
 WARNING: untranslated string: ConnSched dial
@@ -1243,4 +1249,6 @@ WARNING: untranslated string: wlan client wpa mode ccmp ccmp
 WARNING: untranslated string: wlan client wpa mode ccmp tkip
 WARNING: untranslated string: wlan client wpa mode tkip tkip
 WARNING: untranslated string: wlan clients
+WARNING: untranslated string: wlanap
+WARNING: untranslated string: wlanap configuration
 WARNING: untranslated string: wlanap country
