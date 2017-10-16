@@ -124,7 +124,9 @@ usr/lib/perl5/site_perl/5.12.3/PDF/API2/Resource/XObject/Image/GIF.pm
 usr/lib/perl5/site_perl/5.12.3/PDF/API2/Resource/XObject/Image/JPEG.pm
 usr/lib/perl5/site_perl/5.12.3/PDF/API2/Resource/XObject/Image/PNG.pm
 usr/lib/perl5/site_perl/5.12.3/PDF/API2/Resource/XObject/Image/PNM.pm
+usr/lib/perl5/site_perl/5.12.3/PDF/API2/Resource/XObject/Image/TIFF
 usr/lib/perl5/site_perl/5.12.3/PDF/API2/Resource/XObject/Image/TIFF.pm
+usr/lib/perl5/site_perl/5.12.3/PDF/API2/Resource/XObject/Image/TIFF/File.pm
 usr/lib/perl5/site_perl/5.12.3/PDF/API2/Resource/uniglyph.txt
 usr/lib/perl5/site_perl/5.12.3/PDF/API2/UniWrap.pm
 usr/lib/perl5/site_perl/5.12.3/PDF/API2/Util.pm
