@@ -350,7 +350,7 @@ END
 my $terms = &getterms();
 print <<END;
 	<tr>
-		<td></td>
+		<td>$Lang::tr{'Captive terms'}</td>
 		<td>
 			<textarea cols="50" rows="10" name="TERMS">$terms</textarea>
 		</td>
