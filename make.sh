@@ -866,6 +866,8 @@ buildipfire() {
   lfsmake2 owncloud
   lfsmake2 bacula
   lfsmake2 batctl
+  lfsmake2 perl-Font-TTF
+  lfsmake2 perl-IO-String
   lfsmake2 perl-PDF-API2
   lfsmake2 squid-accounting
   lfsmake2 pigz
