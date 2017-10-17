@@ -34,6 +34,19 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+my %session_times = (
+	3600		=> $Lang::tr{'one hour'},
+	14400		=> $Lang::tr{'four hours'},
+	28800		=> $Lang::tr{'eight hours'},
+	43200		=> $Lang::tr{'twelve hours'},
+	86400		=> $Lang::tr{'24 hours'},
+	604800		=> $Lang::tr{'one week'},
+	1209600		=> $Lang::tr{'two weeks'},
+	18144000 	=> $Lang::tr{'one month'},
+	31536000	=> $Lang::tr{'one year'},
+	0		=> "- $Lang::tr{'unlimited'} -",
+);
+
 my %selected = ();
 
 my $coupons = "${General::swroot}/captive/coupons";
@@ -129,12 +142,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	}
 }
 
-if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupon'}") {
-	# Check expiry time
-	if ($cgiparams{'EXP_HOUR'} + $cgiparams{'EXP_DAY'} + $cgiparams{'EXP_WEEK'} + $cgiparams{'EXP_MONTH'} == 0 && $cgiparams{'UNLIMITED'} == '') {
-		$errormessage = $Lang::tr{'Captive noexpiretime'};
-	}
-
+if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupons'}") {
 	#check valid remark
 	if ($cgiparams{'REMARK'} ne '' && !&validremark($cgiparams{'REMARK'})){
 		$errormessage=$Lang::tr{'fwhost err remark'};
@@ -142,7 +150,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupon'}") {
 
 	if (!$errormessage) {
 		# Remember selected values
-		foreach my $val (("UNLIMITED", "EXP_HOUR", "EXP_DAY", "EXP_WEEK", "EXP_MONTH")) {
+		foreach my $val (("SESSION_TIME", "COUNT", "REMARK")) {
 			$settings{$val} = $cgiparams{$val};
 		}
 		&General::writehash($settingsfile, \%settings);
@@ -150,17 +158,10 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupon'}") {
 		&General::readhasharray($coupons, \%couponhash) if (-e $coupons);
 		my $now = time();
 
-		# Calculate expiry time in seconds
-		my $expires = 0;
+		# Expiry time in seconds
+		my $expires = $settings{'SESSION_TIME'};
 
-		if ($settings{'UNLIMITED'} ne 'on') {
-			$expires += $settings{'EXP_HOUR'};
-			$expires += $settings{'EXP_DAY'};
-			$expires += $settings{'EXP_WEEK'};
-			$expires += $settings{'EXP_MONTH'};
-		}
-
-		my $count = $cgiparams{'COUNT'} || 1;
+		my $count = $settings{'COUNT'} || 1;
 		while($count-- > 0) {
 			# Generate a new code
 			my $code = &gencode();
@@ -186,7 +187,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupon'}") {
 			$couponhash{$key}[0] = $now;
 			$couponhash{$key}[1] = $code;
 			$couponhash{$key}[2] = $expires;
-			$couponhash{$key}[3] = $cgiparams{'REMARK'};
+			$couponhash{$key}[3] = $settings{'REMARK'};
 		}
 
 		# Save everything to disk
@@ -317,12 +318,9 @@ END
 
 if ($settings{'AUTH'} eq 'TERMS') {
 	$selected{'SESSION_TIME'} = ();
-	$selected{'SESSION_TIME'}{'0'} = "";
-	$selected{'SESSION_TIME'}{'3600'} = "";
-	$selected{'SESSION_TIME'}{'28800'} = "";
-	$selected{'SESSION_TIME'}{'86400'} = "";
-	$selected{'SESSION_TIME'}{'604800'} = "";
-	$selected{'SESSION_TIME'}{'18144000'} = "";
+	foreach my $session_time (keys %session_times) {
+		$selected{'SESSION_TIME'}{$session_time} = "";
+	}
 	$selected{'SESSION_TIME'}{$settings{'SESSION_TIME'}} = "selected";
 
 	print <<END;
@@ -330,12 +328,17 @@ if ($settings{'AUTH'} eq 'TERMS') {
 			<td>$Lang::tr{'Captive client session expiry time'}</td>
 			<td>
 				<select name="SESSION_TIME">
-					<option value="0"        $selected{'SESSION_TIME'}{'0'}>- $Lang::tr{'unlimited'} -</option>
-					<option value="3600"     $selected{'SESSION_TIME'}{'3600'}>$Lang::tr{'one hour'}</option>
-					<option value="28800"    $selected{'SESSION_TIME'}{'28800'}>$Lang::tr{'eight hours'}</option>
-					<option value="86400"    $selected{'SESSION_TIME'}{'86400'}>$Lang::tr{'24 hours'}</option>
-					<option value="604800"   $selected{'SESSION_TIME'}{'604800'}>$Lang::tr{'one week'}</option>
-					<option value="18144000" $selected{'SESSION_TIME'}{'18144000'}>$Lang::tr{'one month'}</option>
+END
+
+	foreach my $session_time (sort { $a <=> $b } keys %session_times) {
+		print <<END;
+					<option value="$session_time" $selected{'SESSION_TIME'}{$session_time}>
+						$session_times{$session_time}
+					</option>
+END
+	}
+
+	print <<END;
 				</select>
 			</td>
 		</tr>
@@ -431,7 +434,14 @@ sub gencode(){
 }
 
 sub coupons() {
-	&Header::openbox('100%', 'left', $Lang::tr{'Captive generate coupon'});
+	&Header::openbox('100%', 'left', $Lang::tr{'Captive generate coupons'});
+
+	$selected{'SESSION_TIME'} = ();
+	foreach my $session_time (keys %session_times) {
+		$selected{'SESSION_TIME'}{$session_time} = "";
+	}
+	$selected{'SESSION_TIME'}{$settings{'SESSION_TIME'}} = "selected";
+
 	print <<END;
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<table border='0' width='100%'>
@@ -440,108 +450,51 @@ sub coupons() {
 						$Lang::tr{'Captive vouchervalid'}
 					</td>
 					<td width='70%'>
-						<table class='tbl' border='0' width='100%'>
-							<tr>
-								<th>$Lang::tr{'hours'}</th>
-								<th>$Lang::tr{'days'}</th>
-								<th>$Lang::tr{'weeks'}</th>
-								<th>$Lang::tr{'months'}</th>
-								<th></th>
-							</tr>
+						<select name="SESSION_TIME">
 END
 
-		#print hour-dropdownbox
-		my $hrs=3600;
-		print "<tr height='40px'><td><select name='EXP_HOUR' style='width:8em;'>";
-		print "<option value='0' ";
-		print " selected='selected'" if ($settings{'EXP_HOUR'} eq '0');
-		print ">--</option>";
-		for (my $i = 1; $i<25; $i++){
-			my $exp_sec = $i * $hrs;
-			print "<option value='$exp_sec' ";
-			print " selected='selected'" if ($settings{'EXP_HOUR'} eq $exp_sec);
-			print ">$i</option>";
-		}
-		print "</td><td>";
-
-		#print day-dropdownbox
-		my $days=3600*24;
-		print "<select name='EXP_DAY' style='width:8em;'>";
-		print "<option value='0' ";
-		print " selected='selected'" if ($settings{'EXP_DAY'} eq '0');
-		print ">--</option>";
-		for (my $i = 1; $i<8; $i++){
-			my $exp_sec = $i * $days;
-			print "<option value='$exp_sec' ";
-			print " selected='selected'" if ($settings{'EXP_DAY'} eq $exp_sec);
-			print ">$i</option>";
-		}
-		print "</td><td>";
-
-		#print week-dropdownbox
-		my $week=3600*24*7;
-		print "<select name='EXP_WEEK' style='width:8em;'>";
-		print "<option value='0' ";
-		print " selected='selected'" if ($settings{'EXP_WEEK'} eq '0');
-		print ">--</option>";
-		for (my $i = 1; $i<5; $i++){
-			my $exp_sec = $i * $week;
-			print "<option value='$exp_sec' ";
-			print " selected='selected'" if ($settings{'EXP_WEEK'} eq $exp_sec);
-			print ">$i</option>";
-		}
-		print "</td><td>";
-
-		#print month-dropdownbox
-		my $month=3600*24*30;
-		print "<select name='EXP_MONTH' style='width:8em;'>";
-		print "<option value='0' ";
-		print " selected='selected'" if ($settings{'EXP_MONTH'} eq '0');
-		print ">--</option>";
-		for (my $i = 1; $i<13; $i++){
-			my $exp_sec = $i * $month;
-			print "<option value='$exp_sec' ";
-			print " selected='selected'" if ($settings{'EXP_MONTH'} eq $exp_sec);
-			print ">$i</option>";
-		}
+	foreach my $session_time (sort { $a <=> $b } keys %session_times) {
 		print <<END;
-								</td>
-								<td>
-									<label>
-										<input type='checkbox' name='UNLIMITED' $checked{'UNLIMITED'}{'on'} />
-										$Lang::tr{'Captive nolimit'}
-									</label>
-								</td>
-							</tr>
-						</table>
+							<option value="$session_time" $selected{'SESSION_TIME'}{$session_time}>
+								$session_times{$session_time}
+							</option>
+END
+	}
+
+	print <<END;
+						</select>
 					</td>
 				</tr>
 				<tr>
 					<td>$Lang::tr{'remark'}</td>
 					<td>
-						<input type='text' style='width: 98%;' name='REMARK' align='left'>
+						<input type='text' name='REMARK' size=40>
+					</td>
+				</tr>
+				<tr>
+					<td>$Lang::tr{'Captive generated coupon no'}</td>
+					<td>
+						<select name="COUNT">
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">6</option>
+							<option value="7">7</option>
+							<option value="8">8</option>
+							<option value="9">9</option>
+							<option value="10">10</option>
+							<option value="20">20</option>
+							<option value="50">50</option>
+							<option value="100">100</option>
+						</select>
 					</td>
 				</tr>
 			</table>
 
 			<div align="right">
-				<select name="COUNT">
-					<option value="1">1</option>
-					<option value="2">2</option>
-					<option value="3">3</option>
-					<option value="4">4</option>
-					<option value="5">5</option>
-					<option value="6">6</option>
-					<option value="7">7</option>
-					<option value="8">8</option>
-					<option value="9">9</option>
-					<option value="10">10</option>
-					<option value="20">20</option>
-					<option value="50">50</option>
-					<option value="100">100</option>
-				</select>
-
-				<input type="submit" name="ACTION" value="$Lang::tr{'Captive generate coupon'}">
+				<input type="submit" name="ACTION" value="$Lang::tr{'Captive generate coupons'}">
 			</div>
 		</form>
 END

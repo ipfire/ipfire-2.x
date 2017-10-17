@@ -58,7 +58,8 @@
 < Captive expiry time
 < Captive export coupons
 < Captive GAIN ACCESS
-< Captive generate coupon
+< Captive generate coupons
+< Captive generated coupon no
 < Captive genvoucher
 < Captive invalid logosize
 < Captive invalid_voucher
@@ -230,6 +231,7 @@
 < first
 < flag
 < forward firewall
+< four hours
 < fw default drop
 < fwdfw ACCEPT
 < fwdfw action
@@ -490,6 +492,7 @@
 < ntp common settings
 < ntp sync
 < Number of Countries for the pie chart
+< one year
 < openvpn default
 < openvpn destination port used
 < openvpn disabled
@@ -610,6 +613,8 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< twelve hours
+< two weeks
 < unblock
 < unblock all
 < uncheck all
@@ -755,7 +760,8 @@
 < Captive expiry time
 < Captive export coupons
 < Captive GAIN ACCESS
-< Captive generate coupon
+< Captive generate coupons
+< Captive generated coupon no
 < Captive genvoucher
 < Captive invalid logosize
 < Captive invalid_voucher
@@ -926,6 +932,7 @@
 < first
 < flag
 < forward firewall
+< four hours
 < fw default drop
 < fwdfw ACCEPT
 < fwdfw action
@@ -1174,6 +1181,7 @@
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
+< one year
 < openvpn default
 < openvpn destination port used
 < openvpn disabled
@@ -1312,6 +1320,8 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< twelve hours
+< two weeks
 < unblock
 < unblock all
 < uncheck all
@@ -1434,7 +1444,8 @@
 < Captive expiry time
 < Captive export coupons
 < Captive GAIN ACCESS
-< Captive generate coupon
+< Captive generate coupons
+< Captive generated coupon no
 < Captive genvoucher
 < Captive invalid logosize
 < Captive invalid_voucher
@@ -1597,6 +1608,7 @@
 < first
 < flag
 < forward firewall
+< four hours
 < fw default drop
 < fwdfw ACCEPT
 < fwdfw action
@@ -1855,6 +1867,7 @@
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
+< one year
 < openvpn default
 < openvpn destination port used
 < openvpn disabled
@@ -1977,6 +1990,8 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< twelve hours
+< two weeks
 < unblock
 < unblock all
 < uncheck all
@@ -2100,7 +2115,8 @@
 < Captive expiry time
 < Captive export coupons
 < Captive GAIN ACCESS
-< Captive generate coupon
+< Captive generate coupons
+< Captive generated coupon no
 < Captive genvoucher
 < Captive invalid logosize
 < Captive invalid_voucher
@@ -2266,6 +2282,7 @@
 < first
 < flag
 < forward firewall
+< four hours
 < frequency
 < fw default drop
 < fwdfw ACCEPT
@@ -2528,6 +2545,7 @@
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
+< one year
 < openvpn default
 < openvpn destination port used
 < openvpn disabled
@@ -2647,6 +2665,8 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< twelve hours
+< two weeks
 < unblock
 < unblock all
 < uncheck all

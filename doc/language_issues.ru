@@ -637,12 +637,12 @@ WARNING: untranslated string: Captive config
 WARNING: untranslated string: Captive coupon
 WARNING: untranslated string: Captive expiry time
 WARNING: untranslated string: Captive export coupons
-WARNING: untranslated string: Captive generate coupon
+WARNING: untranslated string: Captive generate coupons
+WARNING: untranslated string: Captive generated coupon no
 WARNING: untranslated string: Captive issued coupons
 WARNING: untranslated string: Captive logo uploaded
 WARNING: untranslated string: Captive mac
 WARNING: untranslated string: Captive menu
-WARNING: untranslated string: Captive noexpiretime
 WARNING: untranslated string: Captive nolimit
 WARNING: untranslated string: Captive please accept the terms and conditions
 WARNING: untranslated string: Captive portal
@@ -807,6 +807,7 @@ WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: firewall rules
 WARNING: untranslated string: first
 WARNING: untranslated string: flag
+WARNING: untranslated string: four hours
 WARNING: untranslated string: fw default drop
 WARNING: untranslated string: fw settings
 WARNING: untranslated string: fw settings color
@@ -1061,6 +1062,7 @@ WARNING: untranslated string: notice
 WARNING: untranslated string: one hour
 WARNING: untranslated string: one month
 WARNING: untranslated string: one week
+WARNING: untranslated string: one year
 WARNING: untranslated string: openvpn default
 WARNING: untranslated string: openvpn destination port used
 WARNING: untranslated string: openvpn fragment allowed with udp
@@ -1175,6 +1177,8 @@ WARNING: untranslated string: tor traffic limit hard
 WARNING: untranslated string: tor traffic limit soft
 WARNING: untranslated string: tor traffic read written
 WARNING: untranslated string: tor use exit nodes
+WARNING: untranslated string: twelve hours
+WARNING: untranslated string: two weeks
 WARNING: untranslated string: unblock
 WARNING: untranslated string: unblock all
 WARNING: untranslated string: uncheck all
