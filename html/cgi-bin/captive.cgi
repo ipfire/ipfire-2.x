@@ -274,10 +274,10 @@ $selected{'AUTH'}{'TERMS'} = "";
 $selected{'AUTH'}{$settings{'AUTH'}} = "selected";
 
 if ($netsettings{'GREEN_DEV'}){
-	print "<td width='30%'>$Lang::tr{'Captive active on'} <font color='$Header::colourgreen'>Green</font></td><td><input type='checkbox' name='ENABLE_GREEN' $checked{'ENABLE_GREEN'}{'on'} /></td></tr>";
+	print "<td width='30%'>$Lang::tr{'Captive active on'} <font color='$Header::colourgreen'>$Lang::tr{'green'}</font></td><td><input type='checkbox' name='ENABLE_GREEN' $checked{'ENABLE_GREEN'}{'on'} /></td></tr>";
 }
 if ($netsettings{'BLUE_DEV'}){
-	print "<td width='30%'>$Lang::tr{'Captive active on'} <font color='$Header::colourblue'>Blue</font></td><td><input type='checkbox' name='ENABLE_BLUE' $checked{'ENABLE_BLUE'}{'on'} /></td></tr>";
+	print "<td width='30%'>$Lang::tr{'Captive active on'} <font color='$Header::colourblue'>$Lang::tr{'blue'}</font></td><td><input type='checkbox' name='ENABLE_BLUE' $checked{'ENABLE_BLUE'}{'on'} /></td></tr>";
 }
 
 print<<END
