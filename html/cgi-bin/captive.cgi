@@ -251,7 +251,6 @@ if ($errormessage) {
 print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}' enctype="multipart/form-data">\n
 		<table width='100%' border="0">
-		<tr>
 END
 ;
 
@@ -274,14 +273,34 @@ $selected{'AUTH'}{'TERMS'} = "";
 $selected{'AUTH'}{$settings{'AUTH'}} = "selected";
 
 if ($netsettings{'GREEN_DEV'}){
-	print "<td width='30%'>$Lang::tr{'Captive active on'} <font color='$Header::colourgreen'>$Lang::tr{'green'}</font></td><td><input type='checkbox' name='ENABLE_GREEN' $checked{'ENABLE_GREEN'}{'on'} /></td></tr>";
+	print <<END;
+		<tr>
+			<td width='30%'>
+				$Lang::tr{'Captive active on'}
+				<font color='$Header::colourgreen'>$Lang::tr{'green'}</font>
+			</td>
+			<td>
+				<input type='checkbox' name='ENABLE_GREEN' $checked{'ENABLE_GREEN'}{'on'} />
+			</td>
+		</tr>
+END
 }
+
 if ($netsettings{'BLUE_DEV'}){
-	print "<td width='30%'>$Lang::tr{'Captive active on'} <font color='$Header::colourblue'>$Lang::tr{'blue'}</font></td><td><input type='checkbox' name='ENABLE_BLUE' $checked{'ENABLE_BLUE'}{'on'} /></td></tr>";
+	print <<END;
+		<tr>
+			<td width='30%'>
+				$Lang::tr{'Captive active on'}
+				<font color='$Header::colourblue'>$Lang::tr{'blue'}</font>
+			</td>
+			<td>
+				<input type='checkbox' name='ENABLE_BLUE' $checked{'ENABLE_BLUE'}{'on'} />
+			</td>
+		</tr>
+END
 }
 
 print<<END
-	</tr>
 	<tr>
 		<td>
 			$Lang::tr{'Captive authentication'}
