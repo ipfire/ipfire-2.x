@@ -32,8 +32,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 ifeq "$(BUILD_PLATFORM)" "arm"
 	TAR_OPTIONS =
 else
-	TAR_OPTIONS = --lzma
+	TAR_OPTIONS = --xz
 endif
+
+# Enable multi-threaded compression for LZMA
+export XZ_OPT = --threads=0
 
 ###############################################################################
 # Top-level Rules

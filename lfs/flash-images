@@ -137,7 +137,7 @@ endif
 
 	# Install IPFire
 ifneq "$(BUILD_PLATFORM)" "arm"
-	tar -x --lzma -C $(MNThdd)/ -f /install/cdrom/distro.img
+	tar -x --xz -C $(MNThdd)/ -f /install/cdrom/distro.img
 else
 	tar -x -C $(MNThdd)/ -f /install/cdrom/distro.img
 endif
