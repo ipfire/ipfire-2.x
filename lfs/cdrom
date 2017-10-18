@@ -36,7 +36,7 @@ else
 endif
 
 # Enable multi-threaded compression for LZMA
-export XZ_OPT = --threads=0 --best
+export XZ_OPT = --threads=0
 
 ###############################################################################
 # Top-level Rules
