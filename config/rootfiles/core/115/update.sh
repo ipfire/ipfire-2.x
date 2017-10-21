@@ -50,7 +50,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # generate ECDSA key on existing installations to prevent Apache from crashing
-/usr/local/bin/httpscert
+/usr/local/bin/httpscert new
 
 # Start services
 /etc/rc.d/init.d/apache2 restart
