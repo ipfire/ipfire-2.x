@@ -34,13 +34,14 @@ done
 # Stop services
 openvpnctrl -k
 openvpnctrl -kn2n
-
+/etc/rc.d/init.d/apache stop
 
 # Extract files
 extract_files
 
 # Remove files
 rm -vf \
+	/usr/local/bin/httpscert \
 	/srv/web/ipfire/html/dial.cgi
 
 # update linker config
@@ -49,11 +50,8 @@ ldconfig
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
-# generate ECDSA key on existing installations to prevent Apache from crashing
-/usr/local/bin/httpscert new
-
 # Start services
-/etc/rc.d/init.d/apache2 restart
+/etc/rc.d/init.d/apache2 start
 openvpnctrl -s
 openvpnctrl -sn2n
 
