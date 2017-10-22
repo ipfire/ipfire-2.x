@@ -165,7 +165,7 @@ static int hw_test_source_medium(const char* path) {
 	// Umount the test device.
 	hw_umount(SOURCE_MOUNT_PATH);
 
-	return (ret == 0);
+	return ret;
 }
 
 char* hw_find_source_medium(struct hw* hw) {

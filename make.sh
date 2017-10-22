@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.19"							# Version number
-CORE="112"							# Core Level (Filename)
-PAKFIRE_CORE="112"						# Core Level (PAKFIRE)
+CORE="115"							# Core Level (Filename)
+PAKFIRE_CORE="115"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -497,6 +497,8 @@ buildipfire() {
   lfsmake2 libevent2
   lfsmake2 libevent2-compat
   lfsmake2 expat
+  lfsmake2 apr
+  lfsmake2 aprutil
   lfsmake2 unbound
   lfsmake2 gnutls
   lfsmake2 bind
@@ -546,6 +548,7 @@ buildipfire() {
   lfsmake2 web-user-interface
   lfsmake2 flag-icons
   lfsmake2 jquery
+  lfsmake2 bootstrap
   lfsmake2 arping
   lfsmake2 beep
   lfsmake2 dvdrtools
@@ -624,6 +627,7 @@ buildipfire() {
   lfsmake2 openssh
   lfsmake2 fontconfig
   lfsmake2 dejavu-fonts-ttf
+  lfsmake2 ubuntu-font-family
   lfsmake2 freefont
   lfsmake2 pixman
   lfsmake2 cairo
@@ -862,6 +866,8 @@ buildipfire() {
   lfsmake2 owncloud
   lfsmake2 bacula
   lfsmake2 batctl
+  lfsmake2 perl-Font-TTF
+  lfsmake2 perl-IO-String
   lfsmake2 perl-PDF-API2
   lfsmake2 squid-accounting
   lfsmake2 pigz
@@ -885,6 +891,8 @@ buildipfire() {
   lfsmake2 perl-common-sense
   lfsmake2 perl-inotify2
   lfsmake2 perl-Net-IP
+  lfsmake2 wio
+  lfsmake2 iftop
 }
 
 buildinstaller() {

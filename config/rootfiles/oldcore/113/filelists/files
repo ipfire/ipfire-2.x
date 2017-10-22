@@ -1,0 +1,5 @@
+etc/system-release
+etc/issue
+etc/rc.d/init.d/ntp
+etc/rc.d/init.d/unbound
+var/ipfire/langs

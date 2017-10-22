@@ -3,7 +3,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# douglasdiasn <douglasdiasn@gmail.com>, 2015
+# Douglas Noronha <douglasdiasn@gmail.com>, 2015
 # Evertton de Lima <e.everttonlima@gmail.com>, 2015
 # Moisés Bites Borges de Castro <moisesbites@gmail.com>, 2015
 # Rafael Tavares <rafael@ibinetwork.com.br>, 2015
@@ -12,9 +12,9 @@ msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2015-03-24 21:31+0000\n"
+"PO-Revision-Date: 2017-09-20 09:45+0000\n"
 "Last-Translator: Moisés Bites Borges de Castro <moisesbites@gmail.com>\n"
-"Language-Team: Portuguese (Brazil) (http://www.transifex.com/projects/p/ipfire/language/pt_BR/)\n"
+"Language-Team: Portuguese (Brazil) (http://www.transifex.com/mstremer/ipfire/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"

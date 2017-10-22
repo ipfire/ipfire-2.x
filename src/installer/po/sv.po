@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Urban Berggren <pudberggren@icloud.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2014-11-05 01:33+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
-"Language-Team: Swedish (http://www.transifex.com/projects/p/ipfire/language/sv/)\n"
+"PO-Revision-Date: 2017-09-20 08:56+0000\n"
+"Last-Translator: Urban Berggren <pudberggren@icloud.com>\n"
+"Language-Team: Swedish (http://www.transifex.com/mstremer/ipfire/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,36 +20,36 @@ msgstr ""
 
 #: main.c:78 main.c:179 main.c:404 main.c:670 main.c:702 main.c:893
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: main.c:79 main.c:460 main.c:487 main.c:516 main.c:620 main.c:630 main.c:670
 #: main.c:702
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 #: main.c:176
 msgid "I accept this license"
-msgstr ""
+msgstr "Jag accepterar licensavtalet"
 
 #: main.c:384
 msgid "Warning: Unattended installation will start in 10 seconds..."
-msgstr ""
+msgstr "OBS! Installationen kommer att starta om 10 sekunder..."
 
 #: main.c:403
 msgid "Language selection"
-msgstr ""
+msgstr "Val av språk"
 
 #: main.c:403
 msgid "Select the language you wish to use for the installation."
-msgstr ""
+msgstr "Välj önskat språk du vill använda under installationen."
 
 #: main.c:418
 msgid "Unattended mode"
-msgstr ""
+msgstr "Oövervakat läge"
 
 #: main.c:420
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
-msgstr ""
+msgstr "<Tab>/<Alt-Tab> mellan menyval | <Mellanslag> väljer | <F12> nästa ruta"
 
 #: main.c:426
 #, c-format
@@ -56,16 +57,16 @@ msgid ""
 "Welcome to the %s installation program.\n"
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
-msgstr ""
+msgstr "Välkommen till %s installationsprogram.\n\nVäljer du Avbryt på någon av de följade rutorna så kommer datorn att starta om."
 
 #: main.c:428
 msgid "Start installation"
-msgstr ""
+msgstr "Starta installationen"
 
 #: main.c:449
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr ""
+msgstr "Installationsprogrammet kommer nu att försöka ladda ned installationsavbilden."
 
 #: main.c:452
 #, c-format
@@ -73,41 +74,41 @@ msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr ""
+msgstr "Ingen källenhet hittades.\n\nDu kan prova att ladda ner installationsavbilden."
 
 #: main.c:456
 msgid ""
 "Please make sure to connect your machine to a network and the installer will"
 " try connect to acquire an IP address."
-msgstr ""
+msgstr "Se till att din dator är uppkopplat mot internet så att installationsprogrammet kan ladda ned installationsavbilden."
 
 #: main.c:460
 msgid "Download installation image"
-msgstr ""
+msgstr "Laddar ned installationsavbild"
 
 #: main.c:473
 msgid "Trying to start networking (DHCP)..."
-msgstr ""
+msgstr "Försöker att starta nätverkstjänst (DHCP)..."
 
 #: main.c:484
 msgid ""
 "Networking could not be started but is required to go on with the installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr ""
+msgstr "Nätverket kunde inte startas, men krävs för att installationen ska kunna fortsätta.\n\nVar god koppla din dator till ett nätverk med en DHCP server och försök igen."
 
 #: main.c:487 main.c:516
 msgid "Retry"
-msgstr ""
+msgstr "Försök igen"
 
 #: main.c:501
 msgid "Downloading installation image..."
-msgstr ""
+msgstr "Laddar ned installationsavbild..."
 
 #: main.c:510
 #, c-format
 msgid "MD5 checksum mismatch"
-msgstr ""
+msgstr "MD5 kontrollsumma stämmer ej"
 
 #: main.c:513
 #, c-format
@@ -116,44 +117,44 @@ msgid ""
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Installationsavbilden kunde inte laddas ned.\n\nOrsak: %s\n\n%s"
 
 #: main.c:528
 #, c-format
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr ""
+msgstr "Kunde inte montera %s till %s:\n%s\n"
 
 #: main.c:543
 msgid "License Agreement"
-msgstr ""
+msgstr "Licensavtal"
 
 #: main.c:544
 msgid "License not accepted!"
-msgstr ""
+msgstr "Licensavtalet ej accepterat!"
 
 #: main.c:566
 msgid "No hard disk found."
-msgstr ""
+msgstr "Ingen hårddisk hittades."
 
 #: main.c:587
 msgid "Disk Selection"
-msgstr ""
+msgstr "Val av hårddisk"
 
 #: main.c:588
 msgid ""
 "Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
 "\n"
 "ALL DATA ON THE DISK WILL BE DESTROYED."
-msgstr ""
+msgstr "Välj den hårddisk som du vill installera IPFire på. Hårddisken kommer att partioneras och formateras.\n\nALL DATA PÅ HÅRDDISKEN KOMMER ATT RENSAS."
 
 #: main.c:599
 msgid ""
 "No disk has been selected.\n"
 "\n"
 "Please select one or more disks you want to install IPFire on."
-msgstr ""
+msgstr "Ingen hårddisk har blivit vald.\n\nVad god välj en eller fler hårddiskar som du vill installera IPFire på."
 
 #: main.c:617
 #, c-format
@@ -163,15 +164,15 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr ""
+msgstr "Installationsprogrammet kommer du att förbereda den valda hårddisken:\n\n%s\n\nVill du fortsätta?"
 
 #: main.c:619
 msgid "Disk Setup"
-msgstr ""
+msgstr "Hårddiskinställning"
 
 #: main.c:620 main.c:630
 msgid "Delete all data"
-msgstr ""
+msgstr "Radera alla data"
 
 #: main.c:627
 #, c-format
@@ -182,131 +183,131 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr ""
+msgstr "Installationsprogrammet kommer nu att ställa in RAID på de valda hårddiskarna\n\n%s\n%s\n\nVill du fortsätta?"
 
 #: main.c:629
 msgid "RAID Setup"
-msgstr ""
+msgstr "RAID-inställning"
 
 #: main.c:640
 msgid "Your disk configuration is currently not supported."
-msgstr ""
+msgstr "Din hårddiskkonfiguration stöds för nuvarande inte."
 
 #: main.c:655
 msgid "Your harddisk is too small."
-msgstr ""
+msgstr "Det är för lite utrymme på din hårddisk."
 
 #: main.c:671
 msgid ""
 "Your harddisk is very small, but you can continue without a swap partition."
-msgstr ""
+msgstr "Din hårddisk har väldigt lite utrymme, men du kan välja att fortsätta utan en växlingspartition."
 
 #: main.c:684
 msgid "ext4 Filesystem"
-msgstr ""
+msgstr "ext4 Filsystem"
 
 #: main.c:685
 msgid "ext4 Filesystem without journal"
-msgstr ""
+msgstr "ext4 Filesystem utan journal"
 
 #: main.c:686
 msgid "XFS Filesystem"
-msgstr ""
+msgstr "XFS Filsystem"
 
 #: main.c:687
 msgid "ReiserFS Filesystem"
-msgstr ""
+msgstr "ReiserFS Filsystem"
 
 #: main.c:701
 msgid "Filesystem Selection"
-msgstr ""
+msgstr "Val av Filsystem"
 
 #: main.c:701
 msgid "Please choose your filesystem:"
-msgstr ""
+msgstr "Var god välj vilket filsystem du vill använda:"
 
 #: main.c:712
 msgid "Building RAID..."
-msgstr ""
+msgstr "Bygger RAID"
 
 #: main.c:716
 msgid "Unable to build the RAID."
-msgstr ""
+msgstr "Kan inte bygga RAID"
 
 #: main.c:728
 msgid "Partitioning disk..."
-msgstr ""
+msgstr "Partionerar hårddisken..."
 
 #: main.c:732
 msgid "Unable to partition the disk."
-msgstr ""
+msgstr "Kan inte partionera hårddisken."
 
 #: main.c:739
 msgid "Creating filesystems..."
-msgstr ""
+msgstr "Skapar filsystem..."
 
 #: main.c:743
 msgid "Unable to create filesystems."
-msgstr ""
+msgstr "Kan inte skapa filsystem."
 
 #: main.c:749
 msgid "Unable to mount filesystems."
-msgstr ""
+msgstr "Kan inte montera filsystem."
 
 #: main.c:760
 msgid "Installing the system..."
-msgstr ""
+msgstr "Installerar systemet..."
 
 #: main.c:761
 msgid "Unable to install the system."
-msgstr ""
+msgstr "Kan inte installera systemet."
 
 #: main.c:777
 msgid "Installing the language cache..."
-msgstr ""
+msgstr "Installerar språkcachen..."
 
 #: main.c:778
 msgid "Unable to install the language cache."
-msgstr ""
+msgstr "Kan inte installera språkcachen."
 
 #: main.c:783
 msgid "Installing the bootloader..."
-msgstr ""
+msgstr "Installerar starthanteraren..."
 
 #: main.c:790
 msgid "Unable to open /etc/default/grub for writing."
-msgstr ""
+msgstr "Kan inte skriva till /etc/default/grub "
 
 #: main.c:812
 msgid "Unable to install the bootloader."
-msgstr ""
+msgstr "Kan inte installera starthanteraren."
 
 #: main.c:826
 msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr ""
+msgstr "En säkerhetskopia har hittats på installationsavbilden.\n\nVill du återställa säkerhetskopian?"
 
 #: main.c:827
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
 #: main.c:827
 msgid "No"
-msgstr ""
+msgstr "Nej"
 
 #: main.c:834
 msgid "An error occured when the backup file was restored."
-msgstr ""
+msgstr "Ett fel upptäcktes när säkerhetskopian skulle återställas."
 
 #: main.c:869
 msgid "Running post-install script..."
-msgstr ""
+msgstr "Kör efterinstallations-skript"
 
 #: main.c:870
 msgid "Post-install script failed."
-msgstr ""
+msgstr "Efterinstallations-skript misslyckades."
 
 #: main.c:877
 #, c-format
@@ -314,16 +315,16 @@ msgid ""
 "%s was successfully installed!\n"
 "\n"
 "Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
-msgstr ""
+msgstr "%s har installerats!\n\nVar god ta ur installationsmediet från datorn och tryck på starta om. När systemet väl har startat om så kommer du att bli tillfrågad att ställa in nätverk och lösenord. Efter det, bör du i din webbläsares adressfält skriva in adressen https://%s:444 (eller vad du nu har gett ditt %s för namn) för att komma åt webbgränssnittet."
 
 #: main.c:882
 msgid "Congratulations!"
-msgstr ""
+msgstr "Grattis!"
 
 #: main.c:882
 msgid "Reboot"
-msgstr ""
+msgstr "Starta om"
 
 #: main.c:893
 msgid "Setup has failed. Press Ok to reboot."
-msgstr ""
+msgstr "Installationen har misslyckats. Tryck Ok för att starta om."

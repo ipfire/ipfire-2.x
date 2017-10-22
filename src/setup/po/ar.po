@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Omar Sherif El Watidy <omar.elwatidy@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2014-08-21 15:13+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
-"Language-Team: Arabic (http://www.transifex.com/projects/p/ipfire/language/ar/)\n"
+"PO-Revision-Date: 2017-09-20 09:45+0000\n"
+"Last-Translator: Omar Sherif El Watidy <omar.elwatidy@gmail.com>\n"
+"Language-Team: Arabic (http://www.transifex.com/mstremer/ipfire/language/ar/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -71,14 +72,14 @@ msgstr ""
 #: networking.c:642 networking.c:653 networking.c:746 passwords.c:89
 #: timezone.c:78
 msgid "OK"
-msgstr ""
+msgstr "تم"
 
 #: dhcp.c:143 domainname.c:43 hostname.c:47 keymap.c:86 netstuff.c:158
 #: netstuff.c:673 netstuff.c:733 netstuff.c:756 networking.c:305
 #: networking.c:410 networking.c:560 networking.c:653 networking.c:746
 #: passwords.c:89 timezone.c:78
 msgid "Cancel"
-msgstr ""
+msgstr "إلغاء"
 
 #: dhcp.c:156
 msgid ""
@@ -192,15 +193,15 @@ msgstr ""
 
 #: main.c:99
 msgid "Quit"
-msgstr ""
+msgstr "خروج"
 
 #: main.c:172
 msgid "Setup is complete."
-msgstr ""
+msgstr "تم التثبيت بنجاح "
 
 #: main.c:174 netstuff.c:733 networking.c:560 networking.c:653
 msgid "Warning"
-msgstr ""
+msgstr "تحذير "
 
 #: main.c:175
 msgid ""
@@ -211,7 +212,7 @@ msgstr ""
 #: misc.c:62
 #, c-format
 msgid "Unable to write %s/main/hostname.conf"
-msgstr ""
+msgstr "   %s/main/hostname.conf   لم يمكن تنزيل الملفات الى "
 
 #: misc.c:71
 msgid "Unable to open main hosts file."

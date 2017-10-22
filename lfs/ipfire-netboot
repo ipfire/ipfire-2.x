@@ -24,12 +24,12 @@
 
 include Config
 
-VER        = v1.1
-PXE_VER    = 300a371
+VER        = v2.0
+PXE_VER    = 1b67a05
 
 THISAPP    = ipfire-netboot-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://source.ipfire.org/releases/ipfire-netboot/
+DL_FROM    = https://source.ipfire.org/releases/ipfire-netboot/
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = x86_64 i586
@@ -43,8 +43,8 @@ objects = $(DL_FILE) ipxe-$(PXE_VER).tar.gz
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 ipxe-$(PXE_VER).tar.gz = $(URL_IPFIRE)/ipxe-$(PXE_VER).tar.gz
 
-$(DL_FILE)_MD5 = 0dccbcfbc1eafb9d510bd15935b87ef6
-ipxe-$(PXE_VER).tar.gz_MD5 = 8a17fb4d6866214feb28cca55630b85f
+$(DL_FILE)_MD5 = a1f78e4b92457ecefb97d557b1b7a48e
+ipxe-$(PXE_VER).tar.gz_MD5 = 300fe0e096e58bfb4318bc39b63f9a88
 
 install : $(TARGET)
 

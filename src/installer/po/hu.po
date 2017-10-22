@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Gábor Sávolyi, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2014-11-05 01:33+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
-"Language-Team: Hungarian (http://www.transifex.com/projects/p/ipfire/language/hu/)\n"
+"PO-Revision-Date: 2017-09-20 08:56+0000\n"
+"Last-Translator: Gábor Sávolyi\n"
+"Language-Team: Hungarian (http://www.transifex.com/mstremer/ipfire/language/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,36 +20,36 @@ msgstr ""
 
 #: main.c:78 main.c:179 main.c:404 main.c:670 main.c:702 main.c:893
 msgid "OK"
-msgstr ""
+msgstr "Rendben"
 
 #: main.c:79 main.c:460 main.c:487 main.c:516 main.c:620 main.c:630 main.c:670
 #: main.c:702
 msgid "Cancel"
-msgstr ""
+msgstr "Mégsem"
 
 #: main.c:176
 msgid "I accept this license"
-msgstr ""
+msgstr "Fentieket megértettem"
 
 #: main.c:384
 msgid "Warning: Unattended installation will start in 10 seconds..."
-msgstr ""
+msgstr "Figyelem: A felügyelet nélküli telepítés 10 másodperc múlva indul..."
 
 #: main.c:403
 msgid "Language selection"
-msgstr ""
+msgstr "Nyelv kiválasztása"
 
 #: main.c:403
 msgid "Select the language you wish to use for the installation."
-msgstr ""
+msgstr "Válaszd ki a telepítés nyelvét."
 
 #: main.c:418
 msgid "Unattended mode"
-msgstr ""
+msgstr "Felügyelet nélküli mód"
 
 #: main.c:420
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
-msgstr ""
+msgstr "<Tab>/<Alt-Tab> elemek közötti váltás | <Space> kiválasztás | <F12> következő képernyő"
 
 #: main.c:426
 #, c-format
@@ -56,16 +57,16 @@ msgid ""
 "Welcome to the %s installation program.\n"
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
-msgstr ""
+msgstr "Üdvözöl az %s telepítőprogram.\n\nBármely későbbi képernyőn a Mégsem újraindítja a számítógépet."
 
 #: main.c:428
 msgid "Start installation"
-msgstr ""
+msgstr "Telepítés indítása"
 
 #: main.c:449
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr ""
+msgstr "A telepítő most megpróbálja letölteni a telepítési képet."
 
 #: main.c:452
 #, c-format
@@ -73,41 +74,41 @@ msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr ""
+msgstr "Nem található forrásmeghajtó.\n\nMegpróbálhatod letölteni a szükséges telepítési képet."
 
 #: main.c:456
 msgid ""
 "Please make sure to connect your machine to a network and the installer will"
 " try connect to acquire an IP address."
-msgstr ""
+msgstr "Ellenőrizd, hogy a gép csatlakozik a hálózathoz és a telepítő megpróbál csatlakozni."
 
 #: main.c:460
 msgid "Download installation image"
-msgstr ""
+msgstr "Telepítési kép letöltése"
 
 #: main.c:473
 msgid "Trying to start networking (DHCP)..."
-msgstr ""
+msgstr "Kísérlet a hálózat elindítására (DHCP)..."
 
 #: main.c:484
 msgid ""
 "Networking could not be started but is required to go on with the installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr ""
+msgstr "A hálózat nem indult el, de szükséges a telepítéshez.\n\nCsatlakoztasd a gépet egy DHCP-vel rendelkező hálózathoz és próbáld újra."
 
 #: main.c:487 main.c:516
 msgid "Retry"
-msgstr ""
+msgstr "Újból"
 
 #: main.c:501
 msgid "Downloading installation image..."
-msgstr ""
+msgstr "Telepítési kép letöltése..."
 
 #: main.c:510
 #, c-format
 msgid "MD5 checksum mismatch"
-msgstr ""
+msgstr "MD5 ellenőrzés sikertelen"
 
 #: main.c:513
 #, c-format
@@ -116,44 +117,44 @@ msgid ""
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "A telepítési kép nem letölthető.\nOk: %s\n\n%s"
 
 #: main.c:528
 #, c-format
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr ""
+msgstr "Nem sikerült csatolni %s ide %s:\n  %s\n"
 
 #: main.c:543
 msgid "License Agreement"
-msgstr ""
+msgstr "Liszensz elfogadás"
 
 #: main.c:544
 msgid "License not accepted!"
-msgstr ""
+msgstr "A liszenszt nem fogadtad el!"
 
 #: main.c:566
 msgid "No hard disk found."
-msgstr ""
+msgstr "Nem található lemez."
 
 #: main.c:587
 msgid "Disk Selection"
-msgstr ""
+msgstr "Lemez kiválasztása"
 
 #: main.c:588
 msgid ""
 "Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
 "\n"
 "ALL DATA ON THE DISK WILL BE DESTROYED."
-msgstr ""
+msgstr "Válaszd ki a meghajtó(ka)t, ahova az IPFire települjön. Újra lesznek partícionálva és formázásra kerülnek.\n\nMINDEN KORÁBBI ADAT A MEGHAJTÓN MEG FOG SEMMISÜLNI!"
 
 #: main.c:599
 msgid ""
 "No disk has been selected.\n"
 "\n"
 "Please select one or more disks you want to install IPFire on."
-msgstr ""
+msgstr "Nincs meghajtó kiválasztva.\n\nVálassz ki legalább egy meghajtót, ahova az IPFire-t telepítenéd."
 
 #: main.c:617
 #, c-format
@@ -163,15 +164,15 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr ""
+msgstr "A telepítő most be fogja állítani a következő meghajtót:\n\n%s\n\nBiztos, hogy folytatod?"
 
 #: main.c:619
 msgid "Disk Setup"
-msgstr ""
+msgstr "Lemez beállítása"
 
 #: main.c:620 main.c:630
 msgid "Delete all data"
-msgstr ""
+msgstr "Minden adat törtlése"
 
 #: main.c:627
 #, c-format
@@ -182,131 +183,131 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr ""
+msgstr "A telepítő most beállítja a RAID tömböket a következő meghajtókon:\n\n%s\n%s\n\nBiztos, hogy folytatod?"
 
 #: main.c:629
 msgid "RAID Setup"
-msgstr ""
+msgstr "RAID Beállítás"
 
 #: main.c:640
 msgid "Your disk configuration is currently not supported."
-msgstr ""
+msgstr "A meghajtóbeállításod nem támogatott."
 
 #: main.c:655
 msgid "Your harddisk is too small."
-msgstr ""
+msgstr "A meghajtód túl kicsi."
 
 #: main.c:671
 msgid ""
 "Your harddisk is very small, but you can continue without a swap partition."
-msgstr ""
+msgstr "A meghajtód túl kicsi, de folytathatod swap partíció nélkül."
 
 #: main.c:684
 msgid "ext4 Filesystem"
-msgstr ""
+msgstr "ext4 fájlrendszer"
 
 #: main.c:685
 msgid "ext4 Filesystem without journal"
-msgstr ""
+msgstr "ext4 fájlrendszer naplók nélkül"
 
 #: main.c:686
 msgid "XFS Filesystem"
-msgstr ""
+msgstr "XFS fájlrendszer"
 
 #: main.c:687
 msgid "ReiserFS Filesystem"
-msgstr ""
+msgstr "ReiserFS fájlrendszer"
 
 #: main.c:701
 msgid "Filesystem Selection"
-msgstr ""
+msgstr "Fájlrendszer Kiválasztása"
 
 #: main.c:701
 msgid "Please choose your filesystem:"
-msgstr ""
+msgstr "Válaszd ki a fájlrendszert:"
 
 #: main.c:712
 msgid "Building RAID..."
-msgstr ""
+msgstr "RAID felépítése..."
 
 #: main.c:716
 msgid "Unable to build the RAID."
-msgstr ""
+msgstr "A RAID felépítése sikertelen."
 
 #: main.c:728
 msgid "Partitioning disk..."
-msgstr ""
+msgstr "Lemez partícionálása..."
 
 #: main.c:732
 msgid "Unable to partition the disk."
-msgstr ""
+msgstr "A lemez partícionálása sikertelen."
 
 #: main.c:739
 msgid "Creating filesystems..."
-msgstr ""
+msgstr "Fájlrendszerek lértehozása..."
 
 #: main.c:743
 msgid "Unable to create filesystems."
-msgstr ""
+msgstr "A fájlrendszerek létrehozása sikertelen."
 
 #: main.c:749
 msgid "Unable to mount filesystems."
-msgstr ""
+msgstr "A fájlrendszerek csatolása sikertelen."
 
 #: main.c:760
 msgid "Installing the system..."
-msgstr ""
+msgstr "A rendszer telepítése..."
 
 #: main.c:761
 msgid "Unable to install the system."
-msgstr ""
+msgstr "A rendszer telepítése sikertelen."
 
 #: main.c:777
 msgid "Installing the language cache..."
-msgstr ""
+msgstr "A nyelv telepítése..."
 
 #: main.c:778
 msgid "Unable to install the language cache."
-msgstr ""
+msgstr "A nyelv telepítése sikertelen."
 
 #: main.c:783
 msgid "Installing the bootloader..."
-msgstr ""
+msgstr "A rendszertöltő telepítése..."
 
 #: main.c:790
 msgid "Unable to open /etc/default/grub for writing."
-msgstr ""
+msgstr "Nem sikerült megnyitni írásra: /etc/default/grub"
 
 #: main.c:812
 msgid "Unable to install the bootloader."
-msgstr ""
+msgstr "A rendszertöltő telepítése sikertelen."
 
 #: main.c:826
 msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr ""
+msgstr "A telepítő tartalmaz biztonsági mentést.\n\nVisszaállítod?"
 
 #: main.c:827
 msgid "Yes"
-msgstr ""
+msgstr "Igen"
 
 #: main.c:827
 msgid "No"
-msgstr ""
+msgstr "Nem"
 
 #: main.c:834
 msgid "An error occured when the backup file was restored."
-msgstr ""
+msgstr "Hiba a biztosnági mentés visszaállítása során."
 
 #: main.c:869
 msgid "Running post-install script..."
-msgstr ""
+msgstr "Telepítés utáni szkript futtatása..."
 
 #: main.c:870
 msgid "Post-install script failed."
-msgstr ""
+msgstr "A telepítés utáni szkript futtatása sikertelen."
 
 #: main.c:877
 #, c-format
@@ -314,16 +315,16 @@ msgid ""
 "%s was successfully installed!\n"
 "\n"
 "Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
-msgstr ""
+msgstr "%s sikeresen feltelepült!\n\nTávolítsd el a telepítő médiát a gépből és nyomj Újraindítás-t. Első indításkor meg kell adnod a hálózati beállításokat és a rendszerjelszavakat. Ezek után már böngészőből is be tudsz jelentkezni a https://%s:444 címen (vagy ahogy elnevezted a gépet: %s) és konfigurálni a rendszert."
 
 #: main.c:882
 msgid "Congratulations!"
-msgstr ""
+msgstr "Gratulálok!"
 
 #: main.c:882
 msgid "Reboot"
-msgstr ""
+msgstr "Újraindítás"
 
 #: main.c:893
 msgid "Setup has failed. Press Ok to reboot."
-msgstr ""
+msgstr "A beállítás sikertelen. Nyomj Rendben-t az újraindításhoz."

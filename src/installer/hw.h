@@ -24,8 +24,8 @@
 #include <libudev.h>
 
 #define DESTINATION_MOUNT_PATH        "/harddisk"
-#define SOURCE_MOUNT_PATH "/cdrom"
-#define SOURCE_TEST_FILE  SOURCE_MOUNT_PATH "/" VERSION ".media"
+#define SOURCE_MOUNT_PATH             "/cdrom"
+#define SOURCE_TEST_FILE              SOURCE_MOUNT_PATH "/" DISTRO_SNAME "-" DISTRO_VERSION ".media"
 
 #define HW_MAX_DISKS                 32
 #define STRING_SIZE                1024

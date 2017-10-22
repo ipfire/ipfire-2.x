@@ -48,8 +48,13 @@ my $partitionentry = "";
 my $devicefile = "/var/ipfire/extrahd/devices";
 my $scanfile = "/var/ipfire/extrahd/scan";
 my $partitionsfile = "/var/ipfire/extrahd/partitions";
-system("/usr/local/bin/extrahdctrl scanhd ide");
-system("/usr/local/bin/extrahdctrl scanhd partitions");
+
+#workaround to suppress a warning when a variable is used only once
+my @dummy = ( ${Header::colourgreen}, ${Header::colourred} );
+undef (@dummy);
+
+system("/usr/local/bin/extrahdctrl scanhd ide >/dev/null");
+system("/usr/local/bin/extrahdctrl scanhd partitions >/dev/null");
 
 &Header::showhttpheaders();
 

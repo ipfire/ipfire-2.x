@@ -374,6 +374,26 @@ sub wifi_get_signal_level($) {
 
 	return $signal_level;
 }
+
+sub get_hardware_address($) {
+	my $ip_address = shift;
+	my $ret;
+
+	open(FILE, "/proc/net/arp") or die("Could not read ARP table");
+
+	while (<FILE>) {
+		my ($ip_addr, $hwtype, $flags, $hwaddr, $mask, $device) = split(/\s+/, $_);
+		if ($ip_addr eq $ip_address) {
+			$ret = $hwaddr;
+			last;
+		}
+	}
+
+	close(FILE);
+
+	return $ret;
+}
+
 1;
 
 # Remove the next line to enable the testsuite

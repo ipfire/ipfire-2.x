@@ -3,8 +3,9 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Alexander Savchenko, 2016
 # Andrei Skipin <skian2007@yandex.ru>, 2014
-# ellviss <kpe1501@gmail.com>, 2015
+# ellviss <kpe1501@gmail.com>, 2015-2016
 # bubnov_pi <ipfire@bubnov.su>, 2014
 # Tim <evargrin@gmail.com>, 2015
 msgid ""
@@ -12,8 +13,8 @@ msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2015-04-25 04:53+0000\n"
-"Last-Translator: Tim <evargrin@gmail.com>\n"
+"PO-Revision-Date: 2017-09-20 09:45+0000\n"
+"Last-Translator: ellviss <kpe1501@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/mstremer/ipfire/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,11 +24,11 @@ msgstr ""
 
 #: dhcp.c:50
 msgid "Start address:"
-msgstr "Первый адрес:"
+msgstr "Начальный адрес:"
 
 #: dhcp.c:51
 msgid "End address:"
-msgstr "Последний адрес:"
+msgstr "Конечный адрес:"
 
 #: dhcp.c:52 networking.c:717
 msgid "Primary DNS:"
@@ -188,7 +189,7 @@ msgstr "<Tab>/<Alt-Tab> переход между элементами   |  <П�
 
 #: main.c:97
 msgid "Section menu"
-msgstr ""
+msgstr "Меню выбора"
 
 #: main.c:98
 msgid "Select the item you wish to configure."
@@ -210,7 +211,7 @@ msgstr "Предупреждение"
 msgid ""
 "Initial setup was not entirely complete. You must ensure that Setup is "
 "properly finished by running setup again at the shell."
-msgstr ""
+msgstr "Начальная устрановка не завершена. Вы дожны убедиться что установка закончилась прежде чем запускать её снова из консоли."
 
 #: misc.c:62
 #, c-format
@@ -306,7 +307,7 @@ msgstr "Не установлено"
 #: netstuff.c:669
 #, c-format
 msgid "Please choose a networkcard for the following interface - %s."
-msgstr ""
+msgstr "Пожалуйста, выберете сетевую карту для следующего интерфейса - %s."
 
 #: netstuff.c:672
 msgid "Extended Network Menu"
@@ -326,15 +327,15 @@ msgstr "Определение устройства"
 
 #: netstuff.c:678
 msgid "The lights on the selected port should flash now for 10 seconds..."
-msgstr ""
+msgstr "Лампочка на выбранном порту будет светить на протяжении 10 секкунд..."
 
 #: netstuff.c:679
 msgid "Identification is not supported by this interface."
-msgstr ""
+msgstr "Идентификация не доступна на данном интерфейсе"
 
 #: netstuff.c:691
 msgid "There are no unassigned interfaces on your system."
-msgstr ""
+msgstr "Не осталось ненастроенных интерфейсов в вашей системе."
 
 #: netstuff.c:732
 #, c-format
@@ -375,7 +376,7 @@ msgstr "Не назначен ЗЕЛЁНЫЙ интерфейс."
 
 #: networking.c:152
 msgid "Missing an IP address on GREEN."
-msgstr ""
+msgstr "Не назначен адрес на GREEN интерфейсе"
 
 #: networking.c:163
 msgid "Error"
@@ -391,7 +392,7 @@ msgstr "Не указан КРАСНЫЙ интерфейс."
 
 #: networking.c:173
 msgid "Missing an IP address on RED."
-msgstr ""
+msgstr "Не назначен адрес на RED интерфейсе"
 
 #: networking.c:183
 msgid "No ORANGE interface assigned."
@@ -399,7 +400,7 @@ msgstr "Не указан ОРАНЖЕВЫЙ интерфейс."
 
 #: networking.c:189
 msgid "Missing an IP address on ORANGE."
-msgstr ""
+msgstr "Не назначен адрес на ORANGE интерфейсе"
 
 #: networking.c:199
 msgid "No BLUE interface assigned."
@@ -407,7 +408,7 @@ msgstr "Не указан СИНИЙ интерфейс."
 
 #: networking.c:205
 msgid "Missing an IP address on BLUE."
-msgstr ""
+msgstr "Не назначен адрес на BLUE интерфейсе"
 
 #: networking.c:217
 msgid "Misssing DNS."
@@ -443,7 +444,7 @@ msgid ""
 "Current config: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Текущая Конфигурация: %s\n\n%s"
 
 #: networking.c:268
 msgid "Network configuration menu"
@@ -460,7 +461,7 @@ msgid ""
 "list those interfaces which have ethernet attached. If you change this "
 "setting, a network restart will be required, and you will have to "
 "reconfigure the network driver assignments."
-msgstr ""
+msgstr "Выберете сеть для конфиругации для %s. Данный список типов подключения предназначен для ethernet. Если вы измените настройки , то сеть будет требовать перезагрузки, и вам надо будет переконфигурировать в соответсвии с сетевыми настройками."
 
 #: networking.c:307
 #, c-format
@@ -468,13 +469,13 @@ msgid ""
 "Not enough netcards for your choice.\n"
 "\n"
 "Needed: %d - Available: %d\n"
-msgstr ""
+msgstr "Нет более доступных сетевых карт.\n\nНеобходимо: %d - Доступно: %d\n"
 
 #: networking.c:359
 msgid ""
 "Configure network drivers, and which interface each card is assigned to. The current configuration is as follows:\n"
 "\n"
-msgstr ""
+msgstr "Сконфигурируйте сетевые платы, и какой интерфес сопоставлен к конкрутному адаптеру. Текущая конфигурация следующая:\n\n"
 
 #: networking.c:408
 msgid "Do you wish to change these settings?"
@@ -482,13 +483,13 @@ msgstr "Вы уверены что хотите изменить эти наст
 
 #: networking.c:447
 msgid "Restarting non-local network..."
-msgstr ""
+msgstr "Перезапуск внешней сети"
 
 #: networking.c:464
 msgid ""
 "Please choose the interface you wish to change.\n"
 "\n"
-msgstr ""
+msgstr "Выберете интерфейс для реконфигурации.\n"
 
 #: networking.c:519
 msgid "Assigned Cards"
@@ -505,7 +506,7 @@ msgid ""
 "connection to the %s machine will be broken, and you will have to reconnect "
 "on the new IP. This is a risky operation, and should only be attempted if "
 "you have physical access to the machine, should something go wrong."
-msgstr ""
+msgstr "Если вы измените данный IP адресс, и вы подключены удалённо, ваше соединение с  %s компьютером будет разорвано , и вы должны подключитсья по новому адресу IP. Это не безопасная операция и выдолжны иметь возмонжость подключитсья к машине визически если что-то пойдет не так."
 
 #: networking.c:641
 msgid "Select the interface you wish to reconfigure."
@@ -519,7 +520,7 @@ msgstr "Шлюз по умолчанию:"
 msgid ""
 "Enter the DNS and gateway information. These settings are used only with "
 "Static IP (and DHCP if DNS set) on the RED interface."
-msgstr ""
+msgstr "Введите адреса DNS и шлюза. Эти настройки будут применены только для Static IP(или DHCP если DNS настроен) на интерфейсе RED."
 
 #: networking.c:773
 msgid "Default gateway"
@@ -527,12 +528,12 @@ msgstr "Шлюз по умолчанию"
 
 #: networking.c:780
 msgid "Secondary DNS specified without a Primary DNS"
-msgstr ""
+msgstr "Вторичный DNS назначен без назначения первичного DNS"
 
 #: passwords.c:33
 msgid ""
 "Enter the 'root' user password. Login as this user for commandline access."
-msgstr ""
+msgstr "Введите пароль для пользователя 'root'. Этот пользователь используется для доступа к консоли."
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"
@@ -544,14 +545,14 @@ msgstr "Установка 'root' пароля..."
 
 #: passwords.c:39
 msgid "Problem setting 'root' password."
-msgstr ""
+msgstr "Проблема с указанием пароля  для пользователя 'root'."
 
 #: passwords.c:53
 #, c-format
 msgid ""
 "Enter %s 'admin' user password. This is the user to use for logging into the"
 " %s web administration pages."
-msgstr ""
+msgstr "Введите пароль для пользователя %s 'admin'. Этот пользователь используется для администрирования через %s web."
 
 #: passwords.c:60
 #, c-format

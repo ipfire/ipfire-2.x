@@ -3125,6 +3125,8 @@ sub make_algos($$$$$) {
 
 					if ($grp =~ m/^e(.*)$/) {
 						push(@algo, "ecp$1");
+					} elsif ($grp =~ m/curve25519/) {
+						push(@algo, "$grp");
 					} else {
 						push(@algo, "modp$grp");
 					}
@@ -3140,6 +3142,8 @@ sub make_algos($$$$$) {
 						# noop
 					} elsif ($grp =~ m/^e(.*)$/) {
 						push(@algo, "ecp$1");
+					} elsif ($grp =~ m/curve25519/) {
+						push(@algo, "$grp");
 					} else {
 						push(@algo, "modp$grp");
 					}

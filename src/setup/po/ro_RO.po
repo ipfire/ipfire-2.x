@@ -3,15 +3,17 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# Andrei Burdea <ragulka@gmail.com>, 2015
+# Andrei Bogdan Burdea <ragulka@gmail.com>, 2015
+# Constantin Razvan <tech@inteq.ro>, 2016
+# Liviu Vasies <vasies.liviu@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2015-01-20 09:08+0000\n"
-"Last-Translator: Andrei Burdea <ragulka@gmail.com>\n"
-"Language-Team: Romanian (Romania) (http://www.transifex.com/projects/p/ipfire/language/ro_RO/)\n"
+"PO-Revision-Date: 2017-09-20 09:45+0000\n"
+"Last-Translator: Liviu Vasies <vasies.liviu@gmail.com>\n"
+"Language-Team: Romanian (Romania) (http://www.transifex.com/mstremer/ipfire/language/ro_RO/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,31 +22,31 @@ msgstr ""
 
 #: dhcp.c:50
 msgid "Start address:"
-msgstr "Adresa de Inceput"
+msgstr "Adresă de început:"
 
 #: dhcp.c:51
 msgid "End address:"
-msgstr "Adresa de Final"
+msgstr "Adresă de final:"
 
 #: dhcp.c:52 networking.c:717
 msgid "Primary DNS:"
-msgstr "Primul Server de Nume - NS1"
+msgstr "DNS primar:"
 
 #: dhcp.c:53 networking.c:723
 msgid "Secondary DNS:"
-msgstr "Al Doilea Server de Nume - NS2"
+msgstr "DNS secundar:"
 
 #: dhcp.c:54
 msgid "Default lease (mins):"
-msgstr "Alocarea de baza (minute)"
+msgstr "Alocarea implicită (minute):"
 
 #: dhcp.c:55
 msgid "Max lease (mins):"
-msgstr "Alocare Maxima (minute)"
+msgstr "Alocare Maximă (minute):"
 
 #: dhcp.c:56
 msgid "Domain name suffix:"
-msgstr "Sufix Nume Domeniu"
+msgstr "Sufix Nume Domeniu:"
 
 #: dhcp.c:86 dhcp.c:93 dhcp.c:101 domainname.c:34 hostname.c:37 keymap.c:70
 #: misc.c:40 misc.c:52 netstuff.c:377 netstuff.c:566 netstuff.c:704
@@ -52,15 +54,15 @@ msgstr "Sufix Nume Domeniu"
 #: networking.c:442 networking.c:552 networking.c:603 networking.c:610
 #: networking.c:713 timezone.c:63
 msgid "Unable to open settings file"
-msgstr "Fisier de setari imposibil de deschis"
+msgstr "Nu se poate deschide fișierul de setări"
 
 #: dhcp.c:111
 msgid "DHCP server configuration"
-msgstr "Conficurearea serverului DHCP"
+msgstr "Configurare server DHCP"
 
 #: dhcp.c:116
 msgid "Configure the DHCP server by entering the settings information."
-msgstr "Configureaza serverul DHCP introducand informatiile de setare"
+msgstr "Configurează serverul DHCP introducând informațiile setări"
 
 #: dhcp.c:125
 msgid "Enabled"
@@ -79,33 +81,33 @@ msgstr "OK"
 #: networking.c:410 networking.c:560 networking.c:653 networking.c:746
 #: passwords.c:89 timezone.c:78
 msgid "Cancel"
-msgstr "Renunta"
+msgstr "Renunță"
 
 #: dhcp.c:156
 msgid ""
 "The following fields are invalid:\n"
 "\n"
-msgstr "Urmatoarele campuri sunt incorecte\n\n"
+msgstr "Următoarele câmpuri sunt incorecte\n\n"
 
 #: dhcp.c:159
 msgid "Start address"
-msgstr "Adresa de Inceput"
+msgstr "Adresă început"
 
 #: dhcp.c:165
 msgid "End address"
-msgstr "Adresa de Final"
+msgstr "Adresă final"
 
 #: dhcp.c:173 networking.c:755
 msgid "Primary DNS"
-msgstr "Primul Server de Nume - NS1"
+msgstr "DNS primar"
 
 #: dhcp.c:182 networking.c:764
 msgid "Secondary DNS"
-msgstr "Al Doilea Server de Nume - NS2"
+msgstr "DNS secundar"
 
 #: dhcp.c:189
 msgid "Default lease time"
-msgstr "Timpul pentru alocarea de baza"
+msgstr "Timpul pentru alocarea implicită"
 
 #: dhcp.c:195
 msgid "Max. lease time"
@@ -117,47 +119,47 @@ msgstr "Nume Domeniu"
 
 #: domainname.c:42
 msgid "Enter Domain name"
-msgstr "Introduceti Nume Domeniu"
+msgstr "Introduceți Nume Domeniu"
 
 #: domainname.c:48
 msgid "Domain name cannot be empty."
-msgstr "Nume Domeniu nu poate fi gol"
+msgstr "Nume Domeniu nu poate fi gol."
 
 #: domainname.c:50
 msgid "Domain name cannot contain spaces."
-msgstr "Nume Domeniu nu poate contine spatii"
+msgstr "Nume Domeniu nu poate conține spații."
 
 #: domainname.c:53
 msgid "Domain name may only contain letters, numbers, hyphens and periods."
-msgstr "Nume Domeniu poate contine doar litere, numere, cratime sau paranteze"
+msgstr "Nume Domeniu poate conține doar litere, numere, cratime sau paranteze."
 
 #: hostname.c:46 main.c:69
 msgid "Hostname"
-msgstr "Nume Gazda - HOST"
+msgstr "Nume Gazdă - HOST"
 
 #: hostname.c:46
 msgid "Enter the machine's hostname."
-msgstr "Introduceti Nume Gazda - HOST"
+msgstr "Introduceți Nume Gazdă - HOST."
 
 #: hostname.c:53
 msgid "Hostname cannot be empty."
-msgstr "Nume Gazda - HOST - nu poate fi gol"
+msgstr "Nume Gazdă - HOST - nu poate fi gol."
 
 #: hostname.c:55
 msgid "Hostname cannot contain spaces."
-msgstr "Nume Gazda - HOST - nu poate contine spatii"
+msgstr "Nume Gazdă - HOST - nu poate conține spații."
 
 #: hostname.c:58
 msgid "Hostname may only contain letters, numbers and hyphens."
-msgstr "Nume Gazda - HOST - poate contine doar litere, numere si cratime"
+msgstr "Nume Gazdă - HOST - poate conține doar litere, numere și cratime"
 
 #: keymap.c:84 main.c:67
 msgid "Keyboard mapping"
-msgstr "Cartografiere Tastatura - tipul de tastatura"
+msgstr "Cartografiere Tastatură - tipul de tastatură"
 
 #: keymap.c:85
 msgid "Choose the type of keyboard you are using from the list below."
-msgstr "Alegeti tipul de tastatura pe care o folositi din lista urmatoare"
+msgstr "Alegeți tipul de tastatură pe care o folosiți din lista următoare"
 
 #: main.c:68 timezone.c:77
 msgid "Timezone"
@@ -165,7 +167,7 @@ msgstr "Fus Orar"
 
 #: main.c:71 networking.c:110 networking.c:115 networking.c:447
 msgid "Networking"
-msgstr "Retea"
+msgstr "Rețea"
 
 #: main.c:72 misc.c:147
 msgid "ISDN"
@@ -181,33 +183,33 @@ msgstr "Parola pentru utilizator 'admin'"
 
 #: main.c:90
 msgid "              <Tab>/<Alt-Tab> between elements   |  <Space> selects"
-msgstr "<Tab>/<Alt-Tab> pentru comutare intre elemente | <Space> selecteaza"
+msgstr "<Tab>/<Alt-Tab> pentru comutare între elemente | <Space> selectează"
 
 #: main.c:97
 msgid "Section menu"
-msgstr "Meniu Sectiuni"
+msgstr "Meniu Secțiuni"
 
 #: main.c:98
 msgid "Select the item you wish to configure."
-msgstr "Selectati articolul pe care doriti sa-l configurati"
+msgstr "Selectați articolul pe care doriți să-l configurați"
 
 #: main.c:99
 msgid "Quit"
-msgstr "Iesire"
+msgstr "Ieșire"
 
 #: main.c:172
 msgid "Setup is complete."
-msgstr "Setup-ul s-a incheiat"
+msgstr "Instalarea s-a încheiat."
 
 #: main.c:174 netstuff.c:733 networking.c:560 networking.c:653
 msgid "Warning"
-msgstr "Atentie"
+msgstr "Atenție"
 
 #: main.c:175
 msgid ""
 "Initial setup was not entirely complete. You must ensure that Setup is "
 "properly finished by running setup again at the shell."
-msgstr "Setup-ul initial nu s-a finalizat. Trebuie sa va asigurati ca Setup-ul s-a incheiat corect ruland din nou operatiunea din shell."
+msgstr "Instalarea inițială nu este complet finalizată. Trebuie să te asiguri că s-a incheiat corect rulând din nou operațiunea din linia de comandă."
 
 #: misc.c:62
 #, c-format
@@ -216,223 +218,223 @@ msgstr "%s/main/hostname.conf nu a putut fi scris"
 
 #: misc.c:71
 msgid "Unable to open main hosts file."
-msgstr "fisierul principal de hosts nu a putut fi deschis"
+msgstr "Nu se poate deschide fișierul gazde (hosts)."
 
 #: misc.c:76
 msgid "Unable to write /etc/hosts."
-msgstr ""
+msgstr "Nu s-a putut scrie fisierul /etc/hosts."
 
 #: misc.c:117
 msgid "Unable to write /etc/hosts.deny."
-msgstr ""
+msgstr "Nu s-a putut scrie fisierul /etc/hosts.deny."
 
 #: misc.c:125
 msgid "Unable to write /etc/hosts.allow."
-msgstr ""
+msgstr "Nu s-a putut scrie fisierul /etc/host.allow."
 
 #: misc.c:136
 msgid "Unable to set hostname."
-msgstr ""
+msgstr "Nu s-a putut seta numele de host."
 
 #: misc.c:147
 msgid "Scanning and configuring ISDN devices."
-msgstr ""
+msgstr "Se scanează și se configurează echipamentele ISDN."
 
 #: misc.c:148
 msgid "Unable to scan for ISDN devices."
-msgstr ""
+msgstr "Nu s-au putut scana echipametele ISDN."
 
 #: netstuff.c:86
 #, c-format
 msgid "Interface - %s"
-msgstr ""
+msgstr "Interfață - %s"
 
 #: netstuff.c:91
 #, c-format
 msgid "Enter the IP address information for the %s interface."
-msgstr ""
+msgstr "Introdu adresa IP pentru interfața %s"
 
 #: netstuff.c:103
 msgid "Static"
-msgstr ""
+msgstr "Static"
 
 #: netstuff.c:104
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 #: netstuff.c:105
 msgid "PPP DIALUP (PPPoE, modem, ATM ...)"
-msgstr ""
+msgstr "PPP DIALUP (PPPoE, modem, ATM ...)"
 
 #: netstuff.c:113
 msgid "DHCP Hostname:"
-msgstr ""
+msgstr "Nume gazdă DHCP"
 
 #: netstuff.c:115
 msgid "Force DHCP MTU:"
-msgstr ""
+msgstr "Forteaza DHCP MTU"
 
 #: netstuff.c:134
 msgid "IP address:"
-msgstr ""
+msgstr "Adresă IP:"
 
 #: netstuff.c:146
 msgid "Network mask:"
-msgstr ""
+msgstr "Mască de rețea:"
 
 #: netstuff.c:173 networking.c:749
 msgid "The following fields are invalid:"
-msgstr ""
+msgstr "Câmpurile următoare sunt incorecte:"
 
 #: netstuff.c:183
 msgid "IP address"
-msgstr ""
+msgstr "Adresă IP:"
 
 #: netstuff.c:189
 msgid "Network mask"
-msgstr ""
+msgstr "Mască de rețea"
 
 #: netstuff.c:198
 msgid "DHCP hostname"
-msgstr ""
+msgstr "Nume gazdă DHCP"
 
 #: netstuff.c:396 netstuff.c:709
 msgid "Unset"
-msgstr ""
+msgstr "Eliminare"
 
 #: netstuff.c:669
 #, c-format
 msgid "Please choose a networkcard for the following interface - %s."
-msgstr ""
+msgstr "Alege o placa de retea pentru interfata - %s."
 
 #: netstuff.c:672
 msgid "Extended Network Menu"
-msgstr ""
+msgstr "Meniu Retea Avansat"
 
 #: netstuff.c:673 networking.c:520
 msgid "Select"
-msgstr ""
+msgstr "Selectare"
 
 #: netstuff.c:673
 msgid "Identify"
-msgstr ""
+msgstr "Indentificare"
 
 #: netstuff.c:678
 msgid "Device Identification"
-msgstr ""
+msgstr "Identificare echipament"
 
 #: netstuff.c:678
 msgid "The lights on the selected port should flash now for 10 seconds..."
-msgstr ""
+msgstr "Luminile portului selectat ar trebui sa se aprinda intermitent pentru 10 secunde..."
 
 #: netstuff.c:679
 msgid "Identification is not supported by this interface."
-msgstr ""
+msgstr "Identificarea nu este suportata de catre aceasta interfata."
 
 #: netstuff.c:691
 msgid "There are no unassigned interfaces on your system."
-msgstr ""
+msgstr "Nu exista interfete disponibile in acest sistem."
 
 #: netstuff.c:732
 #, c-format
 msgid "Do you really want to remove the assigned %s interface?"
-msgstr ""
+msgstr "Esti sigur ca vrei sa elimini interfata %s alocata?"
 
 #: netstuff.c:755
 msgid "Select network driver"
-msgstr ""
+msgstr "Selectare driver retea"
 
 #: netstuff.c:755
 msgid "Set additional module parameters"
-msgstr ""
+msgstr "Setare parametrii aditionali modul"
 
 #: netstuff.c:762
 msgid "Loading module..."
-msgstr ""
+msgstr "Incarcare modul..."
 
 #: netstuff.c:777
 msgid "Unable to load driver module."
-msgstr ""
+msgstr "Nu se poate incarca modulul."
 
 #: netstuff.c:780
 msgid "Module name cannot be blank."
-msgstr ""
+msgstr "Numele modulului nu poate fi gol."
 
 #: networking.c:110
 msgid "Stopping network..."
-msgstr ""
+msgstr "Oprire retea..."
 
 #: networking.c:115
 msgid "Restarting network..."
-msgstr ""
+msgstr "Repornire retea...."
 
 #: networking.c:146
 msgid "No GREEN interface assigned."
-msgstr ""
+msgstr "Nu s-a alocat o interfata GREEN."
 
 #: networking.c:152
 msgid "Missing an IP address on GREEN."
-msgstr ""
+msgstr "Lipseste o adresa IP pentru GREEN."
 
 #: networking.c:163
 msgid "Error"
-msgstr ""
+msgstr "Eroare"
 
 #: networking.c:163
 msgid "Ignore"
-msgstr ""
+msgstr "Ignora"
 
 #: networking.c:164
 msgid "No RED interface assigned."
-msgstr ""
+msgstr "Nu s-a alocat o interfata RED."
 
 #: networking.c:173
 msgid "Missing an IP address on RED."
-msgstr ""
+msgstr "Lipseste o adresa IP pentru RED."
 
 #: networking.c:183
 msgid "No ORANGE interface assigned."
-msgstr ""
+msgstr "Nu s-a alocat o interfata ORANGE."
 
 #: networking.c:189
 msgid "Missing an IP address on ORANGE."
-msgstr ""
+msgstr "Lipseste o adresa IP pentru ORANGE."
 
 #: networking.c:199
 msgid "No BLUE interface assigned."
-msgstr ""
+msgstr "Nu s-a alocat o interfata BLUE."
 
 #: networking.c:205
 msgid "Missing an IP address on BLUE."
-msgstr ""
+msgstr "Lipseste o adresa IP pentru BLUE."
 
 #: networking.c:217
 msgid "Misssing DNS."
-msgstr ""
+msgstr "Lipseste DNS"
 
 #: networking.c:224
 msgid "Missing Default Gateway."
-msgstr ""
+msgstr "Lipseste gateway implicit."
 
 #: networking.c:237 networking.c:304
 msgid "Network configuration type"
-msgstr ""
+msgstr "Tip retea"
 
 #: networking.c:238 networking.c:409
 msgid "Drivers and card assignments"
-msgstr ""
+msgstr "Alocare drivere si placi de retea"
 
 #: networking.c:239 networking.c:640
 msgid "Address settings"
-msgstr ""
+msgstr "Setari adresa"
 
 #: networking.c:240 networking.c:743
 msgid "DNS and Gateway settings"
-msgstr ""
+msgstr "Setari DNS si gateway"
 
 #: networking.c:260
 msgid "When configuration is complete, a network restart will be required."
-msgstr ""
+msgstr "Cand configurarea va fi finalizata, o restartare a retelei va fi necesara."
 
 #: networking.c:267
 #, c-format
@@ -440,15 +442,15 @@ msgid ""
 "Current config: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Configurare curenta: %s\n\n%s"
 
 #: networking.c:268
 msgid "Network configuration menu"
-msgstr ""
+msgstr "Meniu configurare retea"
 
 #: networking.c:269 networking.c:520 networking.c:642
 msgid "Done"
-msgstr ""
+msgstr "Terminat"
 
 #: networking.c:300
 #, c-format
@@ -457,7 +459,7 @@ msgid ""
 "list those interfaces which have ethernet attached. If you change this "
 "setting, a network restart will be required, and you will have to "
 "reconfigure the network driver assignments."
-msgstr ""
+msgstr "Selectati configuratia de retea pentru %s. Urmatoarele tipuri de configuratie enumera interfetele care au atasate Ethernet. Daca modificati aceasta setare, o repornire de retea va fi necesara si va trebui sa reconfigurati alocarile driverului de retea ."
 
 #: networking.c:307
 #, c-format
@@ -465,35 +467,35 @@ msgid ""
 "Not enough netcards for your choice.\n"
 "\n"
 "Needed: %d - Available: %d\n"
-msgstr ""
+msgstr "Nu exista destule placi de retea pentru optiunea aleasa.\n\nNecesare: %d - Disponibile: %d\n"
 
 #: networking.c:359
 msgid ""
 "Configure network drivers, and which interface each card is assigned to. The current configuration is as follows:\n"
 "\n"
-msgstr ""
+msgstr "Configureaza driverele de retea si care interfata este alocata fiecarei placi de retea. Configuratia actuala este:\n\n"
 
 #: networking.c:408
 msgid "Do you wish to change these settings?"
-msgstr ""
+msgstr "Vrei sa schimbi aceste setari?"
 
 #: networking.c:447
 msgid "Restarting non-local network..."
-msgstr ""
+msgstr "Restare retea la distanta..."
 
 #: networking.c:464
 msgid ""
 "Please choose the interface you wish to change.\n"
 "\n"
-msgstr ""
+msgstr "Selecteaza ce interfata doresti sa modifici.\n\n"
 
 #: networking.c:519
 msgid "Assigned Cards"
-msgstr ""
+msgstr "Placi de retea alocate"
 
 #: networking.c:520
 msgid "Remove"
-msgstr ""
+msgstr "Elimina"
 
 #: networking.c:556 networking.c:649
 #, c-format
@@ -502,84 +504,84 @@ msgid ""
 "connection to the %s machine will be broken, and you will have to reconnect "
 "on the new IP. This is a risky operation, and should only be attempted if "
 "you have physical access to the machine, should something go wrong."
-msgstr ""
+msgstr "Daca modifici aceasta adresa IP si esti conectat la distanta, conexiunea la %s va fi intrerupta si va trebui sa te reconectezi la noul IP. Aceasta este o operatie riscanta si ar trebui sa fie efectuata doar daca ai acces fizic la echipament, pentru situatia in care ceva merge prost ."
 
 #: networking.c:641
 msgid "Select the interface you wish to reconfigure."
-msgstr ""
+msgstr "Selecteaza interfata pe care doresti sa o reconfigurezi."
 
 #: networking.c:729
 msgid "Default gateway:"
-msgstr ""
+msgstr "Gateway implicit:"
 
 #: networking.c:744
 msgid ""
 "Enter the DNS and gateway information. These settings are used only with "
 "Static IP (and DHCP if DNS set) on the RED interface."
-msgstr ""
+msgstr "Introdu informatiile necesare pentru DNS si gateway. Aceste setari sunt folosite doar pentru IP Static (si DHCP daca DNS este setat) pe interfata RED."
 
 #: networking.c:773
 msgid "Default gateway"
-msgstr ""
+msgstr "Gateway implicit"
 
 #: networking.c:780
 msgid "Secondary DNS specified without a Primary DNS"
-msgstr ""
+msgstr "DNS secundar specificat fara un DNS primar"
 
 #: passwords.c:33
 msgid ""
 "Enter the 'root' user password. Login as this user for commandline access."
-msgstr ""
+msgstr "Introdu parola pentru utilizatorul 'root'. Autentifica-te cu acest utilizator pentru access la linia de comanda."
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"
-msgstr ""
+msgstr "Se seteaza parola"
 
 #: passwords.c:38
 msgid "Setting 'root' password...."
-msgstr ""
+msgstr "Se seteaza parola pentru 'root'."
 
 #: passwords.c:39
 msgid "Problem setting 'root' password."
-msgstr ""
+msgstr "Nu s-a putut seta parola pentru 'root'."
 
 #: passwords.c:53
 #, c-format
 msgid ""
 "Enter %s 'admin' user password. This is the user to use for logging into the"
 " %s web administration pages."
-msgstr ""
+msgstr "Introdu parola pentru utilizatorul %s 'admin'. Foloseste acest utllizator pentru autentificarea la %s prin web."
 
 #: passwords.c:60
 #, c-format
 msgid "Setting %s 'admin' user password..."
-msgstr ""
+msgstr "Se seteaza parola pentru %s 'admin'..."
 
 #: passwords.c:62
 #, c-format
 msgid "Problem setting %s 'admin' user password."
-msgstr ""
+msgstr "Nu s-a putut seta parola pentru %s 'admin'."
 
 #: passwords.c:76
 msgid "Password:"
-msgstr ""
+msgstr "Parola:"
 
 #: passwords.c:77
 msgid "Again:"
-msgstr ""
+msgstr "Verificare parola:"
 
 #: passwords.c:95
 msgid "Password cannot be blank."
-msgstr ""
+msgstr "Parola nu poate fi goala."
 
 #: passwords.c:102
 msgid "Passwords do not match."
-msgstr ""
+msgstr "Parolele nu corespund"
 
 #: passwords.c:109
 msgid "Password cannot contain spaces."
-msgstr ""
+msgstr "Parola nu poate contine spatii."
 
 #: timezone.c:77
 msgid "Choose the timezone you are in from the list below."
-msgstr ""
+msgstr "Alege fusul orar din lista de mai jos."

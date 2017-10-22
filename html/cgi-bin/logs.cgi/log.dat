@@ -50,6 +50,8 @@ $cgiparams{'SECTION'} = 'ipfire';
 
 my %sections = (
         'auth' => '(\w+\(pam_unix\)\[.*\]: )',
+		'wio' => '(wio|wio\[.*\])',
+        'captive' => '(Captive:)',
         'clamav' => '(clamd\[.*\]: |freshclam\[.*\]: )',
         'collectd' => '(collectd\[.*\]: )',
         'cron' => '(fcron\[.*\]: )',
@@ -75,6 +77,8 @@ my %sections = (
 # Translations for the %sections array.
 my %trsections = (
         'auth' => "$Lang::tr{'loginlogout'}",
+		'wio' => 'Who Is Online?',
+        'captive' => $Lang::tr{'captive'},
         'clamav' => 'ClamAV',
         'collectd' => 'Collectd',
         'cron' => 'Cron',
