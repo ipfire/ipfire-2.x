@@ -15,7 +15,7 @@ srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/captive
 usr/bin/captive-cleanup
-usr/bin/setup
+usr/sbin/setup
 usr/local/bin/backupiso
 usr/local/bin/captivectrl
 usr/local/bin/wirelessctrl
