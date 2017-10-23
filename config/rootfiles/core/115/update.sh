@@ -51,7 +51,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
-/etc/rc.d/init.d/apache2 start
+/etc/rc.d/init.d/apache start
 openvpnctrl -s
 openvpnctrl -sn2n
 
