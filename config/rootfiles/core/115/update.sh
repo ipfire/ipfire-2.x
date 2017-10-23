@@ -32,8 +32,8 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
-openvpnctrl -k
-openvpnctrl -kn2n
+/usr/local/bin/openvpnctrl -k
+/usr/local/bin/openvpnctrl -kn2n
 /etc/rc.d/init.d/apache stop
 
 # Extract files
@@ -52,8 +52,8 @@ ldconfig
 
 # Start services
 /etc/rc.d/init.d/apache start
-openvpnctrl -s
-openvpnctrl -sn2n
+/usr/local/bin/openvpnctrl -s
+/usr/local/bin/openvpnctrl -sn2n
 
 grep -q "captivectrl" /var/spool/cron/root.orig || cat <<EOF >> /var/spool/cron/root.orig
 # Cleanup captive clients
