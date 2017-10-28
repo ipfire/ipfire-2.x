@@ -44,6 +44,7 @@ ldconfig
 #/usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/apache restart
 /etc/init.d/snort start
 
 # This update need a reboot...
