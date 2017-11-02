@@ -1115,6 +1115,8 @@ srv/web/ipfire/html/captive
 #srv/web/ipfire/manual/mod/mpmt_os2.html
 #srv/web/ipfire/manual/mod/mpmt_os2.html.en
 #srv/web/ipfire/manual/mod/mpmt_os2.html.fr
+#srv/web/ipfire/manual/mod/overrides.html
+#srv/web/ipfire/manual/mod/overrides.html.en
 #srv/web/ipfire/manual/mod/prefork.html
 #srv/web/ipfire/manual/mod/prefork.html.de
 #srv/web/ipfire/manual/mod/prefork.html.en
