@@ -48,7 +48,7 @@ ldconfig
 /etc/init.d/snort start
 
 # This update need a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
