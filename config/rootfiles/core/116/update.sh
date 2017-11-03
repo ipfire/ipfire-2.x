@@ -33,6 +33,7 @@ done
 
 # Stop services
 /etc/init.d/snort stop
+/etc/init.d/apache stop
 
 # Extract files
 extract_files
@@ -44,7 +45,6 @@ ldconfig
 #/usr/local/bin/update-lang-cache
 
 # Start services
-/etc/init.d/apache stop
 /etc/init.d/apache start
 /etc/init.d/snort start
 
