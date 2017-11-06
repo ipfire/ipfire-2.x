@@ -42,7 +42,7 @@ my %session_times = (
 	86400		=> $Lang::tr{'24 hours'},
 	604800		=> $Lang::tr{'one week'},
 	1209600		=> $Lang::tr{'two weeks'},
-	18144000 	=> $Lang::tr{'one month'},
+	2592000 	=> $Lang::tr{'one month'},
 	31536000	=> $Lang::tr{'one year'},
 	0		=> "- $Lang::tr{'unlimited'} -",
 );
