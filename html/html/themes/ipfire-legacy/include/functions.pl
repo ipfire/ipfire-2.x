@@ -227,7 +227,7 @@ END
     if ($settings{'WINDOWWITHHOSTNAME'} eq 'on') {
         print "<h1><span>$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}</span></h1><br />"; 
     } else {
-                                print "<h1><span><a href='http://www.ipfire.org' style='text-decoration: none;'>IPFire</a></span></h1><br />";
+                                print "<h1><span><a href='https://www.ipfire.org' style='text-decoration: none;'>IPFire</a></span></h1><br />";
                 }
                 print <<END
                         <h2>$h2</h2>
