@@ -39,6 +39,11 @@ extract_files
 # update linker config
 ldconfig
 
+# Make apache keys not readable for everyone
+chmod 600 \
+	/etc/httpd/server.key \
+	/etc/httpd/server-ecdsa.key
+
 # Update Language cache
 #/usr/local/bin/update-lang-cache
 

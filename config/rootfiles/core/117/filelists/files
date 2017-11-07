@@ -1,6 +1,7 @@
 etc/system-release
 etc/issue
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
+etc/rc.d/init.d/apache
 etc/ssl/certs/ca-bundle.crt
 etc/ssl/certs/ca-bundle.trust.crt
 opt/pakfire/lib/functions.pl
