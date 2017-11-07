@@ -81,18 +81,6 @@ else
 	configure_build "default"
 fi
 
-if [ -z $EDITOR ]; then
-	for i in nano emacs vi; do
-		EDITOR=$(which $i 2>/dev/null)
-		if ! [ -z $EDITOR ]; then
-			export EDITOR=$EDITOR
-			break
-		fi
-	done
-	[ -z $EDITOR ] && exiterror "You should have installed an editor."
-fi
-
-
 prepareenv() {
     ############################################################################
     #                                                                          #
