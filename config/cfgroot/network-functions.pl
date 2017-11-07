@@ -111,6 +111,10 @@ sub network_equal {
 	my @bin1 = &network2bin($network1);
 	my @bin2 = &network2bin($network2);
 
+	if (!defined $bin1 || !defined $bin2) {
+		return undef;
+	}
+
 	if ($bin1[0] eq $bin2[0] && $bin1[1] eq $bin2[1]) {
 		return 1;
 	}
@@ -132,6 +136,10 @@ sub network2bin($) {
 
 	my $address_bin = &ip2bin($address);
 	my $netmask_bin = &ip2bin($netmask);
+
+	if (!defined $address_bin || !defined $netmask_bin) {
+		return undef;
+	}
 
 	my $network_start = $address_bin & $netmask_bin;
 
