@@ -62,15 +62,16 @@ export BASEDIR LOGFILE
 DIR_CHK=$BASEDIR/cache/check
 mkdir $BASEDIR/log/ 2>/dev/null
 
+# Load configuration file
+if [ -f .config ]; then
+	. .config
+fi
+
 # Include funtions
 . tools/make-functions
 
 # Get the amount of memory in this build system
 HOST_MEM=$(system_memory)
-
-if [ -f .config ]; then
-	. .config
-fi
 
 if [ -n "${BUILD_ARCH}" ]; then
 	configure_build "${BUILD_ARCH}"
@@ -176,11 +177,6 @@ prepareenv() {
     # Setup environment
     set +h
     LC_ALL=POSIX
-    if [ -z $MAKETUNING ]; then
-	CPU_COUNT="$(system_processors)"
-
-	MAKETUNING="-j$(( ${CPU_COUNT} * 2 + 1 ))"
-    fi
     export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 

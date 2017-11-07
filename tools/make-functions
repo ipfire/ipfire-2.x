@@ -150,6 +150,26 @@ configure_build() {
 	fi
 
 	CXXFLAGS="${CFLAGS}"
+
+	# Determine parallelism
+	if [ -z "${MAKETUNING}" ]; then
+		# We assume that each process consumes about
+		# 192MB of memory. Therefore we find out how
+		# many processes fit into memory.
+		local mem_max=$(( ${HOST_MEM} / 192 ))
+
+		local processors="$(system_processors)"
+		local cpu_max=$(( ${processors} * 2 ))
+
+		local parallelism
+		if [ ${mem_max} -lt ${cpu_max} ]; then
+			parallelism=${mem_max}
+		else
+			parallelism=${cpu_max}
+		fi
+
+		MAKETUNING="-j${parallelism}"
+	fi
 }
 
 configure_build_guess() {
