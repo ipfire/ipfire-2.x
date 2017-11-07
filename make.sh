@@ -65,6 +65,9 @@ mkdir $BASEDIR/log/ 2>/dev/null
 # Include funtions
 . tools/make-functions
 
+# Get the amount of memory in this build system
+HOST_MEM=$(system_memory)
+
 if [ -f .config ]; then
 	. .config
 fi

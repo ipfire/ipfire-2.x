@@ -60,6 +60,20 @@ WARN="\\033[1;35m"
 FAIL="\\033[1;31m"
 NORMAL="\\033[0;39m"
 
+system_memory() {
+	local key val unit
+
+	while read -r key val unit; do
+		case "${key}" in
+			MemTotal:*)
+				# Convert to MB
+				echo "$(( ${val} / 1024 ))"
+				break
+				;;
+		esac
+	done < /proc/meminfo
+}
+
 configure_build() {
 	local build_arch="${1}"
 
