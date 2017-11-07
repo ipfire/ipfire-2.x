@@ -60,6 +60,10 @@ WARN="\\033[1;35m"
 FAIL="\\033[1;31m"
 NORMAL="\\033[0;39m"
 
+system_processors() {
+	getconf _NPROCESSORS_ONLN 2>/dev/null || echo "1"
+}
+
 system_memory() {
 	local key val unit
 

@@ -189,10 +189,7 @@ prepareenv() {
     set +h
     LC_ALL=POSIX
     if [ -z $MAKETUNING ]; then
-	CPU_COUNT="$(getconf _NPROCESSORS_ONLN 2>/dev/null)"
-	if [ -z "${CPU_COUNT}" ]; then
-		CPU_COUNT=1
-	fi
+	CPU_COUNT="$(system_processors)"
 
 	MAKETUNING="-j$(( ${CPU_COUNT} * 2 + 1 ))"
     fi
