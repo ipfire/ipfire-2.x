@@ -63,10 +63,10 @@ sub get_flag_icon($) {
 		# the icon for "unknown".
 		my $ccode = "unknown";
 
-		# Redoing all the stuff from abouve for the "unknown" icon.
-		my $file = join('.', $ccode,$ext);
-		my $flag_icon = join('/', $flagdir,$file);
-		my $absolute_path = join('', $webroot,$flag_icon);
+		# Redoing all the stuff from above for the "unknown" icon.
+		my $file = join('.', $ccode, $ext);
+		my $flag_icon = join('/', $flagdir, $file);
+		my $absolute_path = join('', $webroot, $flag_icon);
 
 		# Check if the icon is present.
 		if (-e "$absolute_path") {
