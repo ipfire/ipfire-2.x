@@ -23,7 +23,22 @@
 
 package GeoIP;
 
+use Geo::IP::PurePerl;
 use Locale::Codes::Country;
+
+my $database;
+
+sub lookup($) {
+	my $address = shift;
+
+	# Load the database into memory if not already done
+	if (!$database) {
+		$database = Geo::IP::PurePerl->new(GEOIP_MEMORY_CACHE);
+	}
+
+	# Return the name of the country
+	return $database->country_code_by_name($address);
+}
 
 # Function to get the flag icon for a specified country code.
 sub get_flag_icon($) {

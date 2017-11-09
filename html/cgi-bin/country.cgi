@@ -60,7 +60,7 @@ foreach my $country (@countries) {
 	$lines++;
 
 	# Convert country code into upper case.
-	my $country_uc = uc($country);
+	$country = uc($country);
 
 	# Get flag icon for of the country.
 	my $flag_icon = &GeoIP::get_flag_icon($country);
@@ -69,8 +69,8 @@ foreach my $country (@countries) {
 	my $name = &GeoIP::get_full_country_name($country);
 
 	if ($lines % 2) {
-		print "<td $col><a id='$country'><img src='$flag_icon' alt='$country_uc' title='$country_uc'/></a></td>";
-		print "<td $col>$country_uc</td>";
+		print "<td $col><a id='$country'><img src='$flag_icon' alt='$country' title='$country'/></a></td>";
+		print "<td $col>$country</td>";
 		print "<td $col>$name</td></tr>\n";
 	} else {
 		$lines2++;
@@ -80,8 +80,8 @@ foreach my $country (@countries) {
 			$col="style='background-color:${Header::table1colour};'";
 		}
 		print "<tr>";
-		print "<td $col><a id='$country'><img src='$flag_icon' alt='$country_uc' title='$country_uc'/></a></td>";
-		print "<td $col>$country_uc</td>";
+		print "<td $col><a id='$country'><img src='$flag_icon' alt='$country' title='$country'/></a></td>";
+		print "<td $col>$country</td>";
 		print "<td $col>$name</td>";
 		print "<td $col>&nbsp;</td>";
 

@@ -11,7 +11,6 @@
 #			    and Michael Tremer (www.ipfire.org)
 
 use strict;
-use Geo::IP::PurePerl;
 use Getopt::Std;
 
 # enable only the following on debugging purpose
@@ -287,7 +286,6 @@ print "<p><b>$Lang::tr{'firewall hits'} $longmonthstr $daystr: $lines</b></p>";
 my $red_interface = &General::get_red_interface();
 my $linesjc = 0;
 my %tabjc;
-my $gi = Geo::IP::PurePerl->new();
 
 if ($pienumber == -1 || $pienumber > $lines || $sortcolumn == 2) { $pienumber = $lines; };
 $lines = 0;
@@ -310,7 +308,7 @@ foreach $_ (@log)
 		# Traffic from red
 		if($srcaddr ne '') {
 			# srcaddr is set
-			my $ccode = $gi->country_code_by_name($srcaddr);
+			my $ccode = &GeoIP::lookup($srcaddr);
 			if ($ccode eq '') {
 				$ccode = 'unknown';
 			}

@@ -13,7 +13,6 @@
 #
 use strict;
 
-use Geo::IP::PurePerl;
 use Getopt::Std;
 
 # enable only the following on debugging purpose
@@ -352,9 +351,7 @@ foreach $_ (@log)
 	$srcport=$1 if $packet =~ /SPT=(\d+)/;
 	$dstport=$1 if $packet =~ /DPT=(\d+)/;
 
-	my $gi = Geo::IP::PurePerl->new();
-	my $ccode = $gi->country_code_by_name($srcaddr);
-	my $fcode = lc($ccode);
+	my $ccode = &GeoIP::lookup($srcaddr);
 
 	my $servi = uc(getservbyport($srcport, lc($proto)));
 	if ($servi ne '' && $srcport < 1024) {
@@ -386,10 +383,10 @@ foreach $_ (@log)
 END
 	;
 	# Get flag icon for of the country.
-	my $flag_icon = &GeoIP::get_flag_icon($fcode);
+	my $flag_icon = &GeoIP::get_flag_icon($ccode);
 
 	if ( $flag_icon) {
-		print "<td align='center' $col><a href='../country.cgi#$fcode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode'></a></td>";
+		print "<td align='center' $col><a href='../country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode'></a></td>";
 	} else {
 		print "<td align='center' $col></td>";
 	}
