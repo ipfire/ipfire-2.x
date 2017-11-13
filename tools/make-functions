@@ -176,11 +176,7 @@ configure_build_guess() {
 			echo "aarch64"
 			;;
 
-		armv7*)
-			echo "armv7hl"
-			;;
-
-		armv6*|armv5*)
+		armv7*|armv6*|armv5*)
 			echo "armv5tel"
 			;;
 
