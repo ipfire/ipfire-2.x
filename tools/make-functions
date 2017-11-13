@@ -142,13 +142,7 @@ configure_build() {
 	# Enables hardening
 	HARDENING_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong --param=ssp-buffer-size=4"
 
-	CFLAGS="-O2 -Wall -fexceptions -fPIC ${CFLAGS_ARCH}"
-
-	# Run compiler and assembler simultaneously on systems that have enough memory
-	if [ ${HOST_MEM} -ge 1024 ]; then
-		CFLAGS="${CFLAGS} -pipe"
-	fi
-
+	CFLAGS="-O2 -pipe -Wall -fexceptions -fPIC ${CFLAGS_ARCH}"
 	CXXFLAGS="${CFLAGS}"
 
 	# Determine parallelism
