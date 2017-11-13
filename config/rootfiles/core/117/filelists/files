@@ -1,5 +1,7 @@
 etc/system-release
 etc/issue
+etc/ssl/certs/ca-bundle.crt
+etc/ssl/certs/ca-bundle.trust.crt
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/country.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
