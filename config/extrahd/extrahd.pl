@@ -48,8 +48,6 @@ close FILE;
 ############################################################################################################################
 ############################################################################################################################
 
-print "$ARGV[0] $ARGV[1]";
-
 if ( "$ARGV[0]" eq "mount" ) {
 	system("/bin/cp -f /etc/fstab $fstab");
 
@@ -77,7 +75,7 @@ if ( "$ARGV[0]" eq "mount" ) {
 	if ( ! `/bin/mount | /bin/fgrep $ARGV[1]` ) {
 		system("/bin/cp -f /etc/fstab $fstab");
 		system("/bin/fgrep -v $ARGV[1] <$fstab >/etc/fstab");
-		print "Succesfully umounted $ARGV[1].\n";
+		print "Successfully umounted $ARGV[1].\n";
 		exit(0);
 	} else {
 		print "Can't umount $ARGV[1].\n";

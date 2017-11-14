@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Urban Berggren <pudberggren@icloud.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2014-08-21 15:13+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
-"Language-Team: Swedish (http://www.transifex.com/projects/p/ipfire/language/sv/)\n"
+"PO-Revision-Date: 2017-09-20 09:45+0000\n"
+"Last-Translator: Urban Berggren <pudberggren@icloud.com>\n"
+"Language-Team: Swedish (http://www.transifex.com/mstremer/ipfire/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,31 +20,31 @@ msgstr ""
 
 #: dhcp.c:50
 msgid "Start address:"
-msgstr ""
+msgstr "Startadress"
 
 #: dhcp.c:51
 msgid "End address:"
-msgstr ""
+msgstr "Slutadress"
 
 #: dhcp.c:52 networking.c:717
 msgid "Primary DNS:"
-msgstr ""
+msgstr "Primär DNS"
 
 #: dhcp.c:53 networking.c:723
 msgid "Secondary DNS:"
-msgstr ""
+msgstr "Sekundär DNS"
 
 #: dhcp.c:54
 msgid "Default lease (mins):"
-msgstr ""
+msgstr "Standard lease-tid (min):"
 
 #: dhcp.c:55
 msgid "Max lease (mins):"
-msgstr ""
+msgstr "Max lease-tid (min):"
 
 #: dhcp.c:56
 msgid "Domain name suffix:"
-msgstr ""
+msgstr "Domännamn:"
 
 #: dhcp.c:86 dhcp.c:93 dhcp.c:101 domainname.c:34 hostname.c:37 keymap.c:70
 #: misc.c:40 misc.c:52 netstuff.c:377 netstuff.c:566 netstuff.c:704
@@ -51,19 +52,19 @@ msgstr ""
 #: networking.c:442 networking.c:552 networking.c:603 networking.c:610
 #: networking.c:713 timezone.c:63
 msgid "Unable to open settings file"
-msgstr ""
+msgstr "Kan inte öppna konfigurationsfilen"
 
 #: dhcp.c:111
 msgid "DHCP server configuration"
-msgstr ""
+msgstr "DHCP server konfiguration"
 
 #: dhcp.c:116
 msgid "Configure the DHCP server by entering the settings information."
-msgstr ""
+msgstr "Konfigurera DHCP-servern genom att skriva in alla nödvändiga inställningar."
 
 #: dhcp.c:125
 msgid "Enabled"
-msgstr ""
+msgstr "Aktiverad"
 
 #: dhcp.c:142 domainname.c:43 hostname.c:47 keymap.c:86 main.c:99 main.c:172
 #: main.c:174 netstuff.c:157 netstuff.c:733 netstuff.c:756 networking.c:163
@@ -71,367 +72,367 @@ msgstr ""
 #: networking.c:642 networking.c:653 networking.c:746 passwords.c:89
 #: timezone.c:78
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: dhcp.c:143 domainname.c:43 hostname.c:47 keymap.c:86 netstuff.c:158
 #: netstuff.c:673 netstuff.c:733 netstuff.c:756 networking.c:305
 #: networking.c:410 networking.c:560 networking.c:653 networking.c:746
 #: passwords.c:89 timezone.c:78
 msgid "Cancel"
-msgstr ""
+msgstr "Avbryt"
 
 #: dhcp.c:156
 msgid ""
 "The following fields are invalid:\n"
 "\n"
-msgstr ""
+msgstr "Följande fält är ogiltiga:\n\n"
 
 #: dhcp.c:159
 msgid "Start address"
-msgstr ""
+msgstr "Startadress"
 
 #: dhcp.c:165
 msgid "End address"
-msgstr ""
+msgstr "Slutadress"
 
 #: dhcp.c:173 networking.c:755
 msgid "Primary DNS"
-msgstr ""
+msgstr "Primär DNS"
 
 #: dhcp.c:182 networking.c:764
 msgid "Secondary DNS"
-msgstr ""
+msgstr "Sekundär DNS"
 
 #: dhcp.c:189
 msgid "Default lease time"
-msgstr ""
+msgstr "Standard lease-tid"
 
 #: dhcp.c:195
 msgid "Max. lease time"
-msgstr ""
+msgstr "Max lease-tid"
 
 #: domainname.c:42 main.c:70
 msgid "Domain name"
-msgstr ""
+msgstr "Domännamn"
 
 #: domainname.c:42
 msgid "Enter Domain name"
-msgstr ""
+msgstr "Ange Domännamn"
 
 #: domainname.c:48
 msgid "Domain name cannot be empty."
-msgstr ""
+msgstr "Domännamnet kan inte vara tomt."
 
 #: domainname.c:50
 msgid "Domain name cannot contain spaces."
-msgstr ""
+msgstr "Domännamnet kan inte innehålla mellanslag."
 
 #: domainname.c:53
 msgid "Domain name may only contain letters, numbers, hyphens and periods."
-msgstr ""
+msgstr "Domännamnet kan bara innehålla bokstäver, siffror, bindestreck och punkter."
 
 #: hostname.c:46 main.c:69
 msgid "Hostname"
-msgstr ""
+msgstr "Värdnamn"
 
 #: hostname.c:46
 msgid "Enter the machine's hostname."
-msgstr ""
+msgstr "Ange datorns värdnamn."
 
 #: hostname.c:53
 msgid "Hostname cannot be empty."
-msgstr ""
+msgstr "Värdnamnet kan inte vara tomt."
 
 #: hostname.c:55
 msgid "Hostname cannot contain spaces."
-msgstr ""
+msgstr "Värdnamnet kan inte innehålla mellanslag."
 
 #: hostname.c:58
 msgid "Hostname may only contain letters, numbers and hyphens."
-msgstr ""
+msgstr "Värdnamnet kan bara innehålla bokstäver, siffror och bindestreck."
 
 #: keymap.c:84 main.c:67
 msgid "Keyboard mapping"
-msgstr ""
+msgstr "Tangentbordslayout"
 
 #: keymap.c:85
 msgid "Choose the type of keyboard you are using from the list below."
-msgstr ""
+msgstr "Välj vilket typ av tangenbord du använder från listan nedan."
 
 #: main.c:68 timezone.c:77
 msgid "Timezone"
-msgstr ""
+msgstr "Tidszon"
 
 #: main.c:71 networking.c:110 networking.c:115 networking.c:447
 msgid "Networking"
-msgstr ""
+msgstr "Nätverk"
 
 #: main.c:72 misc.c:147
 msgid "ISDN"
-msgstr ""
+msgstr "ISDN"
 
 #: main.c:73
 msgid "'root' password"
-msgstr ""
+msgstr "'root* lösenord"
 
 #: main.c:74
 msgid "'admin' password"
-msgstr ""
+msgstr "'admin' lösenord"
 
 #: main.c:90
 msgid "              <Tab>/<Alt-Tab> between elements   |  <Space> selects"
-msgstr ""
+msgstr "<Tab>/<Alt-Tab> mellan menyer | <Mellanslag> väljer"
 
 #: main.c:97
 msgid "Section menu"
-msgstr ""
+msgstr "Menyval"
 
 #: main.c:98
 msgid "Select the item you wish to configure."
-msgstr ""
+msgstr "Välj objektet du vill konfigurera."
 
 #: main.c:99
 msgid "Quit"
-msgstr ""
+msgstr "Avsluta"
 
 #: main.c:172
 msgid "Setup is complete."
-msgstr ""
+msgstr "Konfigurationen är slutförd."
 
 #: main.c:174 netstuff.c:733 networking.c:560 networking.c:653
 msgid "Warning"
-msgstr ""
+msgstr "Varning"
 
 #: main.c:175
 msgid ""
 "Initial setup was not entirely complete. You must ensure that Setup is "
 "properly finished by running setup again at the shell."
-msgstr ""
+msgstr "Första installationen var inte helt klar. Du måste se till att installationen är korrekt avslutad genom att köra installationen igen."
 
 #: misc.c:62
 #, c-format
 msgid "Unable to write %s/main/hostname.conf"
-msgstr ""
+msgstr "Kan inte skriva %s/main/hostname.conf"
 
 #: misc.c:71
 msgid "Unable to open main hosts file."
-msgstr ""
+msgstr "Kan inte öppna värdfilen."
 
 #: misc.c:76
 msgid "Unable to write /etc/hosts."
-msgstr ""
+msgstr "Kan inte skriva /etc/hosts"
 
 #: misc.c:117
 msgid "Unable to write /etc/hosts.deny."
-msgstr ""
+msgstr "Kan inte skriva /etc/hosts.deny"
 
 #: misc.c:125
 msgid "Unable to write /etc/hosts.allow."
-msgstr ""
+msgstr "Kan inte skriva /etc/hosts.allow"
 
 #: misc.c:136
 msgid "Unable to set hostname."
-msgstr ""
+msgstr "Det går inte att ställa in värdnamn."
 
 #: misc.c:147
 msgid "Scanning and configuring ISDN devices."
-msgstr ""
+msgstr "Skannar och konfigurerar ISDN enheter."
 
 #: misc.c:148
 msgid "Unable to scan for ISDN devices."
-msgstr ""
+msgstr "Kan inte skanna efter ISDN enheter."
 
 #: netstuff.c:86
 #, c-format
 msgid "Interface - %s"
-msgstr ""
+msgstr "Gränssnitt - %s"
 
 #: netstuff.c:91
 #, c-format
 msgid "Enter the IP address information for the %s interface."
-msgstr ""
+msgstr "Skriv in IP-nummer för %s gränssnittet."
 
 #: netstuff.c:103
 msgid "Static"
-msgstr ""
+msgstr "Statisk"
 
 #: netstuff.c:104
 msgid "DHCP"
-msgstr ""
+msgstr "DHCP"
 
 #: netstuff.c:105
 msgid "PPP DIALUP (PPPoE, modem, ATM ...)"
-msgstr ""
+msgstr "PPP DIALUP (PPPoE, modem, ATM...)"
 
 #: netstuff.c:113
 msgid "DHCP Hostname:"
-msgstr ""
+msgstr "DHCP Värdnamn"
 
 #: netstuff.c:115
 msgid "Force DHCP MTU:"
-msgstr ""
+msgstr "Tvinga DHCP MTU"
 
 #: netstuff.c:134
 msgid "IP address:"
-msgstr ""
+msgstr "IP-adress:"
 
 #: netstuff.c:146
 msgid "Network mask:"
-msgstr ""
+msgstr "Nätverksmask:"
 
 #: netstuff.c:173 networking.c:749
 msgid "The following fields are invalid:"
-msgstr ""
+msgstr "Följande fält är ogiltiga:"
 
 #: netstuff.c:183
 msgid "IP address"
-msgstr ""
+msgstr "IP-adress"
 
 #: netstuff.c:189
 msgid "Network mask"
-msgstr ""
+msgstr "Nätverksmask"
 
 #: netstuff.c:198
 msgid "DHCP hostname"
-msgstr ""
+msgstr "DHCP värdnamn"
 
 #: netstuff.c:396 netstuff.c:709
 msgid "Unset"
-msgstr ""
+msgstr "Urkopplat"
 
 #: netstuff.c:669
 #, c-format
 msgid "Please choose a networkcard for the following interface - %s."
-msgstr ""
+msgstr "Var god välj ett nätverkskort för följande gränssnitt - %s"
 
 #: netstuff.c:672
 msgid "Extended Network Menu"
-msgstr ""
+msgstr "Utökad Nätverksmeny"
 
 #: netstuff.c:673 networking.c:520
 msgid "Select"
-msgstr ""
+msgstr "Välj"
 
 #: netstuff.c:673
 msgid "Identify"
-msgstr ""
+msgstr "Identifiera"
 
 #: netstuff.c:678
 msgid "Device Identification"
-msgstr ""
+msgstr "Enhetsidentifikation"
 
 #: netstuff.c:678
 msgid "The lights on the selected port should flash now for 10 seconds..."
-msgstr ""
+msgstr "Lamporna på den valda porten bör nu blinka i 10 sekunder..."
 
 #: netstuff.c:679
 msgid "Identification is not supported by this interface."
-msgstr ""
+msgstr "Identifikation stöds inte av detta gränssnitt."
 
 #: netstuff.c:691
 msgid "There are no unassigned interfaces on your system."
-msgstr ""
+msgstr "Det finns inga otilldelade gränsnitt på ditt system."
 
 #: netstuff.c:732
 #, c-format
 msgid "Do you really want to remove the assigned %s interface?"
-msgstr ""
+msgstr "Vill du verkligen ta bort det tilldelade gränsnittet %s"
 
 #: netstuff.c:755
 msgid "Select network driver"
-msgstr ""
+msgstr "Välj nätverksdrivrutin"
 
 #: netstuff.c:755
 msgid "Set additional module parameters"
-msgstr ""
+msgstr "Ställ in yttligare modulparametrar"
 
 #: netstuff.c:762
 msgid "Loading module..."
-msgstr ""
+msgstr "Laddar moduler..."
 
 #: netstuff.c:777
 msgid "Unable to load driver module."
-msgstr ""
+msgstr "Kan inte ladda drivrutin/modul."
 
 #: netstuff.c:780
 msgid "Module name cannot be blank."
-msgstr ""
+msgstr "Modulens namn kan inte vara tomt."
 
 #: networking.c:110
 msgid "Stopping network..."
-msgstr ""
+msgstr "Stoppar nätverk..."
 
 #: networking.c:115
 msgid "Restarting network..."
-msgstr ""
+msgstr "Startar om nätverk..."
 
 #: networking.c:146
 msgid "No GREEN interface assigned."
-msgstr ""
+msgstr "Inget GRÖNT gränsnitt tilldelat."
 
 #: networking.c:152
 msgid "Missing an IP address on GREEN."
-msgstr ""
+msgstr "Saknar en IP-adress på GRÖN."
 
 #: networking.c:163
 msgid "Error"
-msgstr ""
+msgstr "Fel"
 
 #: networking.c:163
 msgid "Ignore"
-msgstr ""
+msgstr "Ignorera"
 
 #: networking.c:164
 msgid "No RED interface assigned."
-msgstr ""
+msgstr "Inget RÖTT gränssnitt tilldelat."
 
 #: networking.c:173
 msgid "Missing an IP address on RED."
-msgstr ""
+msgstr "Saknar IP-adress på RÖD."
 
 #: networking.c:183
 msgid "No ORANGE interface assigned."
-msgstr ""
+msgstr "Inget ORANGE gränssnitt tilldelat."
 
 #: networking.c:189
 msgid "Missing an IP address on ORANGE."
-msgstr ""
+msgstr "Saknar IP-adress på gränsnitt ORANGE."
 
 #: networking.c:199
 msgid "No BLUE interface assigned."
-msgstr ""
+msgstr "Inget BLÅTT gränssnitt tilldelat."
 
 #: networking.c:205
 msgid "Missing an IP address on BLUE."
-msgstr ""
+msgstr "Saknar IP-adress på BLÅ."
 
 #: networking.c:217
 msgid "Misssing DNS."
-msgstr ""
+msgstr "Saknar DNS."
 
 #: networking.c:224
 msgid "Missing Default Gateway."
-msgstr ""
+msgstr "Saknar Standardgränssnitt."
 
 #: networking.c:237 networking.c:304
 msgid "Network configuration type"
-msgstr ""
+msgstr "Typ av nätverkskonfiguration"
 
 #: networking.c:238 networking.c:409
 msgid "Drivers and card assignments"
-msgstr ""
+msgstr "Tilldelning av drivrutiner och nätverkskort"
 
 #: networking.c:239 networking.c:640
 msgid "Address settings"
-msgstr ""
+msgstr "Adressinställningar"
 
 #: networking.c:240 networking.c:743
 msgid "DNS and Gateway settings"
-msgstr ""
+msgstr "DNS och Gateway inställningar"
 
 #: networking.c:260
 msgid "When configuration is complete, a network restart will be required."
-msgstr ""
+msgstr "När konfigurationen är färdig, så måste nätverket startas om."
 
 #: networking.c:267
 #, c-format
@@ -439,15 +440,15 @@ msgid ""
 "Current config: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Nuvarande konfiguration: %s\n\n%s"
 
 #: networking.c:268
 msgid "Network configuration menu"
-msgstr ""
+msgstr "Nätverkskonfigurationsmeny"
 
 #: networking.c:269 networking.c:520 networking.c:642
 msgid "Done"
-msgstr ""
+msgstr "Färdig"
 
 #: networking.c:300
 #, c-format
@@ -456,7 +457,7 @@ msgid ""
 "list those interfaces which have ethernet attached. If you change this "
 "setting, a network restart will be required, and you will have to "
 "reconfigure the network driver assignments."
-msgstr ""
+msgstr "Välj nätverkskonfigurationen för %s. Följande konfigurationstyper visar de gränssnitt som har nätverksåtkomst. Om du ändrar denna inställning, måste nätverket startas om, och du måste omkonfigurera nätverksdrivrutinen."
 
 #: networking.c:307
 #, c-format
@@ -464,35 +465,35 @@ msgid ""
 "Not enough netcards for your choice.\n"
 "\n"
 "Needed: %d - Available: %d\n"
-msgstr ""
+msgstr "Du har. inte valt nog många nätverkskort.\n\nBehövs: %d - Tillgängligt: %d\n"
 
 #: networking.c:359
 msgid ""
 "Configure network drivers, and which interface each card is assigned to. The current configuration is as follows:\n"
 "\n"
-msgstr ""
+msgstr "Konfigurera drivrutiner, och till vilket gränsnitt varje kort är tilldelat. Den nuvarande konfigurationen är som följer:\n\n"
 
 #: networking.c:408
 msgid "Do you wish to change these settings?"
-msgstr ""
+msgstr "Vill du ändra på dessa inställningar?"
 
 #: networking.c:447
 msgid "Restarting non-local network..."
-msgstr ""
+msgstr "Startar om icke-lokalt nätverk..."
 
 #: networking.c:464
 msgid ""
 "Please choose the interface you wish to change.\n"
 "\n"
-msgstr ""
+msgstr "Vad god välj vilket gränssnitt du önskar att ändra på.\n\n"
 
 #: networking.c:519
 msgid "Assigned Cards"
-msgstr ""
+msgstr "Tilldelade nätverkskort"
 
 #: networking.c:520
 msgid "Remove"
-msgstr ""
+msgstr "Ta bort"
 
 #: networking.c:556 networking.c:649
 #, c-format
@@ -501,84 +502,84 @@ msgid ""
 "connection to the %s machine will be broken, and you will have to reconnect "
 "on the new IP. This is a risky operation, and should only be attempted if "
 "you have physical access to the machine, should something go wrong."
-msgstr ""
+msgstr "Om du ändrar denna IP-adress, och är fjärrinloggad, så kommer din uppkoppling till %s brytas, och du måste återansluta till det nya IP-numret. Detta är riskabelt, och borde bara försökas med om du har fysisk tillgång till datorn om något skulle gå fel."
 
 #: networking.c:641
 msgid "Select the interface you wish to reconfigure."
-msgstr ""
+msgstr "Välj det gränssnitt du vill konfigurera om."
 
 #: networking.c:729
 msgid "Default gateway:"
-msgstr ""
+msgstr "Standard gateway:"
 
 #: networking.c:744
 msgid ""
 "Enter the DNS and gateway information. These settings are used only with "
 "Static IP (and DHCP if DNS set) on the RED interface."
-msgstr ""
+msgstr "Ange DNS och gateway information. Dessa inställningar används bara vid statiskt IP (och DHCP om DNS är inställt) på RÖTT gränssnitt."
 
 #: networking.c:773
 msgid "Default gateway"
-msgstr ""
+msgstr "Standard gateway"
 
 #: networking.c:780
 msgid "Secondary DNS specified without a Primary DNS"
-msgstr ""
+msgstr "Sekundär DNS specificerad utan en primär DNS"
 
 #: passwords.c:33
 msgid ""
 "Enter the 'root' user password. Login as this user for commandline access."
-msgstr ""
+msgstr "Ange 'root' lösenordet. Logga in på denna användare för tillgång till kommandorad."
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"
-msgstr ""
+msgstr "Ställer in lösenord"
 
 #: passwords.c:38
 msgid "Setting 'root' password...."
-msgstr ""
+msgstr "Ställer in 'root' lösenord..."
 
 #: passwords.c:39
 msgid "Problem setting 'root' password."
-msgstr ""
+msgstr "Problem med att ställa in 'root' lösenord."
 
 #: passwords.c:53
 #, c-format
 msgid ""
 "Enter %s 'admin' user password. This is the user to use for logging into the"
 " %s web administration pages."
-msgstr ""
+msgstr "Ange %s 'admin' lösenord. Använd denna användare för att logga in i %s webbgränssnitt för administration."
 
 #: passwords.c:60
 #, c-format
 msgid "Setting %s 'admin' user password..."
-msgstr ""
+msgstr "Ställer in %s 'admin' lösenord..."
 
 #: passwords.c:62
 #, c-format
 msgid "Problem setting %s 'admin' user password."
-msgstr ""
+msgstr "Problem med att ställa in %s 'admin' lösenord."
 
 #: passwords.c:76
 msgid "Password:"
-msgstr ""
+msgstr "Lösenord:"
 
 #: passwords.c:77
 msgid "Again:"
-msgstr ""
+msgstr "Igen:"
 
 #: passwords.c:95
 msgid "Password cannot be blank."
-msgstr ""
+msgstr "Lösenordet kan inte vara tomt."
 
 #: passwords.c:102
 msgid "Passwords do not match."
-msgstr ""
+msgstr "Lösenorden matchar inte."
 
 #: passwords.c:109
 msgid "Password cannot contain spaces."
-msgstr ""
+msgstr "Lösenordet kan inte innehålla mellanslag."
 
 #: timezone.c:77
 msgid "Choose the timezone you are in from the list below."
-msgstr ""
+msgstr "Välj tidszonen du befinner dig i från listan nedan."

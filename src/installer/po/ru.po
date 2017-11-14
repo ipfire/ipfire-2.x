@@ -3,20 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# ellviss <kpe1501@gmail.com>, 2015
+# ellviss <kpe1501@gmail.com>, 2015-2016
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2015-02-24 12:56+0000\n"
+"PO-Revision-Date: 2017-09-20 08:56+0000\n"
 "Last-Translator: ellviss <kpe1501@gmail.com>\n"
-"Language-Team: Russian (http://www.transifex.com/projects/p/ipfire/language/ru/)\n"
+"Language-Team: Russian (http://www.transifex.com/mstremer/ipfire/language/ru/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ru\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: main.c:78 main.c:179 main.c:404 main.c:670 main.c:702 main.c:893
 msgid "OK"
@@ -95,7 +95,7 @@ msgid ""
 "Networking could not be started but is required to go on with the installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr ""
+msgstr "Сеть не была включена, но она необходима для установки\n\nПожалуйста, подключите компьютер к сети с DHCP сервером и повторите попытку."
 
 #: main.c:487 main.c:516
 msgid "Retry"
@@ -117,7 +117,7 @@ msgid ""
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "Не удаётся скачать установочный образ.\nПричина : %s\n\n%s"
 
 #: main.c:528
 #, c-format
@@ -147,14 +147,14 @@ msgid ""
 "Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
 "\n"
 "ALL DATA ON THE DISK WILL BE DESTROYED."
-msgstr ""
+msgstr "Выберете диск(и) , на который(е) вы хотите установить IPFIRE. Сначала будет проведена разметка разделов, а потом будет установлена файловая система.\n\nВсе данные на диске будут уничтожены."
 
 #: main.c:599
 msgid ""
 "No disk has been selected.\n"
 "\n"
 "Please select one or more disks you want to install IPFire on."
-msgstr ""
+msgstr "Не выбран диск.\n\nПожалуйста, выберете диск на который вы хотите поставить IPFIRE"
 
 #: main.c:617
 #, c-format
@@ -183,7 +183,7 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr ""
+msgstr "Программа установки сейчас настроит RAID на выбранных дисках:\n\n%s\n%s\n\nВы согласны продолжить ?"
 
 #: main.c:629
 msgid "RAID Setup"

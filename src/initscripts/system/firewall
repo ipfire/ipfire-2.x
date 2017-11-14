@@ -224,6 +224,13 @@ iptables_init() {
 		iptables -A ${i} -j LOOPBACK
 	done
 
+	# Captive portal
+	iptables -N CAPTIVE_PORTAL
+	iptables -N CAPTIVE_PORTAL_CLIENTS
+	for i in INPUT FORWARD; do
+		iptables -A ${i} -j CAPTIVE_PORTAL
+	done
+
 	# Accept everything connected
 	for i in INPUT FORWARD OUTPUT; do
 		iptables -A ${i} -j CONNTRACK
@@ -302,6 +309,10 @@ iptables_init() {
 	# SNAT rules
 	iptables -t nat -N NAT_SOURCE
 	iptables -t nat -A POSTROUTING -j NAT_SOURCE
+
+	# Captive Portal
+	iptables -t nat -N CAPTIVE_PORTAL
+	iptables -t nat -A PREROUTING -j CAPTIVE_PORTAL
 
 	# Custom prerouting chains (for transparent proxy)
 	iptables -t nat -N SQUID

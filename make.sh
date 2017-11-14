@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.19"							# Version number
-CORE="111"							# Core Level (Filename)
-PAKFIRE_CORE="111"						# Core Level (PAKFIRE)
+CORE="117"							# Core Level (Filename)
+PAKFIRE_CORE="116"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -37,7 +37,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 
-TOOLCHAINVER=20170518
+TOOLCHAINVER=20170705
 
 # New architecture variables
 HOST_ARCH="$(uname -m)"
@@ -62,12 +62,16 @@ export BASEDIR LOGFILE
 DIR_CHK=$BASEDIR/cache/check
 mkdir $BASEDIR/log/ 2>/dev/null
 
-# Include funtions
-. tools/make-functions
-
+# Load configuration file
 if [ -f .config ]; then
 	. .config
 fi
+
+# Include funtions
+. tools/make-functions
+
+# Get the amount of memory in this build system
+HOST_MEM=$(system_memory)
 
 if [ -n "${BUILD_ARCH}" ]; then
 	configure_build "${BUILD_ARCH}"
@@ -77,18 +81,6 @@ elif [ -n "${TARGET_ARCH}" ]; then
 else
 	configure_build "default"
 fi
-
-if [ -z $EDITOR ]; then
-	for i in nano emacs vi; do
-		EDITOR=$(which $i 2>/dev/null)
-		if ! [ -z $EDITOR ]; then
-			export EDITOR=$EDITOR
-			break
-		fi
-	done
-	[ -z $EDITOR ] && exiterror "You should have installed an editor."
-fi
-
 
 prepareenv() {
     ############################################################################
@@ -185,14 +177,6 @@ prepareenv() {
     # Setup environment
     set +h
     LC_ALL=POSIX
-    if [ -z $MAKETUNING ]; then
-	CPU_COUNT="$(getconf _NPROCESSORS_ONLN 2>/dev/null)"
-	if [ -z "${CPU_COUNT}" ]; then
-		CPU_COUNT=1
-	fi
-
-	MAKETUNING="-j$(( ${CPU_COUNT} * 2 + 1 ))"
-    fi
     export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
@@ -390,6 +374,7 @@ buildbase() {
     lfsmake2 udev
     lfsmake2 vim
     lfsmake2 xz
+    lfsmake2 paxctl
 }
 
 buildipfire() {
@@ -496,6 +481,8 @@ buildipfire() {
   lfsmake2 libevent2
   lfsmake2 libevent2-compat
   lfsmake2 expat
+  lfsmake2 apr
+  lfsmake2 aprutil
   lfsmake2 unbound
   lfsmake2 gnutls
   lfsmake2 bind
@@ -526,7 +513,6 @@ buildipfire() {
   lfsmake2 libart
   lfsmake2 gd
   lfsmake2 popt
-  lfsmake2 pcre
   lfsmake2 slang
   lfsmake2 newt
   lfsmake2 libsmooth
@@ -546,6 +532,7 @@ buildipfire() {
   lfsmake2 web-user-interface
   lfsmake2 flag-icons
   lfsmake2 jquery
+  lfsmake2 bootstrap
   lfsmake2 arping
   lfsmake2 beep
   lfsmake2 dvdrtools
@@ -619,12 +606,12 @@ buildipfire() {
   lfsmake2 python-ipaddress
   lfsmake2 glib
   lfsmake2 GeoIP
-  lfsmake2 fwhits
   lfsmake2 noip_updater
   lfsmake2 ntp
   lfsmake2 openssh
   lfsmake2 fontconfig
   lfsmake2 dejavu-fonts-ttf
+  lfsmake2 ubuntu-font-family
   lfsmake2 freefont
   lfsmake2 pixman
   lfsmake2 cairo
@@ -705,7 +692,6 @@ buildipfire() {
   lfsmake2 gnu-netcat
   lfsmake2 ncat
   lfsmake2 nmap
-  lfsmake2 ncftp
   lfsmake2 etherwake
   lfsmake2 bwm-ng
   lfsmake2 sysstat
@@ -864,6 +850,8 @@ buildipfire() {
   lfsmake2 owncloud
   lfsmake2 bacula
   lfsmake2 batctl
+  lfsmake2 perl-Font-TTF
+  lfsmake2 perl-IO-String
   lfsmake2 perl-PDF-API2
   lfsmake2 squid-accounting
   lfsmake2 pigz
@@ -887,6 +875,8 @@ buildipfire() {
   lfsmake2 perl-common-sense
   lfsmake2 perl-inotify2
   lfsmake2 perl-Net-IP
+  lfsmake2 wio
+  lfsmake2 iftop
 }
 
 buildinstaller() {
@@ -1143,7 +1133,7 @@ downloadsrc)
 toolchain)
 	clear
 	prepareenv
-	beautify build_stage "Toolchain compilation - Native GCC: `gcc --version | grep GCC | awk {'print $3'}`"
+	beautify build_stage "Toolchain compilation"
 	buildtoolchain
 	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for ${BUILD_ARCH}" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains

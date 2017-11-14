@@ -4,14 +4,15 @@
 # 
 # Translators:
 # nonux <nonux@free.fr>, 2015
+# Philippe B <philippe@123-newbeetle.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2015-02-17 23:23+0000\n"
-"Last-Translator: nonux <nonux@free.fr>\n"
-"Language-Team: French (http://www.transifex.com/projects/p/ipfire/language/fr/)\n"
+"PO-Revision-Date: 2017-09-20 08:56+0000\n"
+"Last-Translator: Philippe B <philippe@123-newbeetle.com>\n"
+"Language-Team: French (http://www.transifex.com/mstremer/ipfire/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -20,7 +21,7 @@ msgstr ""
 
 #: main.c:78 main.c:179 main.c:404 main.c:670 main.c:702 main.c:893
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: main.c:79 main.c:460 main.c:487 main.c:516 main.c:620 main.c:630 main.c:670
 #: main.c:702
@@ -33,7 +34,7 @@ msgstr "J'accepte la licence"
 
 #: main.c:384
 msgid "Warning: Unattended installation will start in 10 seconds..."
-msgstr ""
+msgstr "Attention: Une installation sans surveillance va débuter dans 10 secondes..."
 
 #: main.c:403
 msgid "Language selection"
@@ -45,11 +46,11 @@ msgstr "Sélectionnez la langue que vous souhaitez utiliser pour l'installation.
 
 #: main.c:418
 msgid "Unattended mode"
-msgstr ""
+msgstr "Mode non surveillé"
 
 #: main.c:420
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
-msgstr ""
+msgstr "<Tab>/<Alt-Tab> entre les éléments | <Espace> sélectionne | <F12> écran suivant"
 
 #: main.c:426
 #, c-format
@@ -57,7 +58,7 @@ msgid ""
 "Welcome to the %s installation program.\n"
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
-msgstr ""
+msgstr "Bienvenue dans le programme d'installation de %s.\n\nSélectionner Echap sur une écran redémarrera l'ordinateur."
 
 #: main.c:428
 msgid "Start installation"
@@ -74,13 +75,13 @@ msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr ""
+msgstr "Aucune disque source trouvé.\n\nVous pouvez essayer de télécharger l'image d'installation nécessaire."
 
 #: main.c:456
 msgid ""
 "Please make sure to connect your machine to a network and the installer will"
 " try connect to acquire an IP address."
-msgstr ""
+msgstr "Soyez certain que votre machine est connectée à un réseau et l'installateur va tenter de récupérer une adresse IP."
 
 #: main.c:460
 msgid "Download installation image"
@@ -95,7 +96,7 @@ msgid ""
 "Networking could not be started but is required to go on with the installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr ""
+msgstr "Une connexion réseau ne peut être initiée et est nécessaire pour pour poursuivre l'installation.\n\nMerci de connecter votre machine à une serveur DHCP et réessayer."
 
 #: main.c:487 main.c:516
 msgid "Retry"
@@ -108,7 +109,7 @@ msgstr "Téléchargement de l'image d'installation ..."
 #: main.c:510
 #, c-format
 msgid "MD5 checksum mismatch"
-msgstr ""
+msgstr "Erreur de vérification contrôle MD5"
 
 #: main.c:513
 #, c-format
@@ -117,14 +118,14 @@ msgid ""
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "L'image d'installation ne peut être téléchargée.\nRaison:%s\n\n%s"
 
 #: main.c:528
 #, c-format
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr ""
+msgstr "Impossible de monter %s vers %s:\n%s\n"
 
 #: main.c:543
 msgid "License Agreement"
@@ -147,14 +148,14 @@ msgid ""
 "Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
 "\n"
 "ALL DATA ON THE DISK WILL BE DESTROYED."
-msgstr ""
+msgstr "Selectionner le disque sur lequel vous voulez installer IPFire. Il sera d'abord partitioné et un système de fichier y sera créé.\n\nTOUTES LES DONNÉES DUS DISQUE SERONT PERDUES."
 
 #: main.c:599
 msgid ""
 "No disk has been selected.\n"
 "\n"
 "Please select one or more disks you want to install IPFire on."
-msgstr ""
+msgstr "Aucun disque selectionné.\n\nSelectionnez un dsique au moins sur le(s)quel(s) sera installé IPFire."
 
 #: main.c:617
 #, c-format
@@ -164,7 +165,7 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr ""
+msgstr "Le programme d'installation va maintenant préparer le disque choisi.\n\n%s\n\nEtes vous d'accord pour continuer?"
 
 #: main.c:619
 msgid "Disk Setup"
@@ -183,11 +184,11 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr ""
+msgstr "Le programme d'installation va maintenant paramétrer la configuration RAID sur les disques sélectionnés.\n\n%s\n%s\n\nEtes vous d'accord pour continuer?"
 
 #: main.c:629
 msgid "RAID Setup"
-msgstr ""
+msgstr "Paramétrage RAID"
 
 #: main.c:640
 msgid "Your disk configuration is currently not supported."
@@ -264,30 +265,30 @@ msgstr "Impossible d'installer le système."
 
 #: main.c:777
 msgid "Installing the language cache..."
-msgstr ""
+msgstr "Installation du cache de langage..."
 
 #: main.c:778
 msgid "Unable to install the language cache."
-msgstr ""
+msgstr "Impossible d'installer le cache de langage."
 
 #: main.c:783
 msgid "Installing the bootloader..."
-msgstr ""
+msgstr "Installation du bootloader..."
 
 #: main.c:790
 msgid "Unable to open /etc/default/grub for writing."
-msgstr ""
+msgstr "Impossible d'ouvrir /etc/default/grub en écriture."
 
 #: main.c:812
 msgid "Unable to install the bootloader."
-msgstr ""
+msgstr "Impossible d'installer le bootloader."
 
 #: main.c:826
 msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr ""
+msgstr "Un fichier de sauvegarde a été trouvé sur l'image d'installation.\n\nVoulez vous restaurer cette sauvegarde?"
 
 #: main.c:827
 msgid "Yes"
@@ -299,15 +300,15 @@ msgstr "Non"
 
 #: main.c:834
 msgid "An error occured when the backup file was restored."
-msgstr ""
+msgstr "Une erreur est survenue lors de la restauration du fichier de sauvegarde."
 
 #: main.c:869
 msgid "Running post-install script..."
-msgstr ""
+msgstr "Execution du script de post installation..."
 
 #: main.c:870
 msgid "Post-install script failed."
-msgstr ""
+msgstr "Echec du script de post installation."
 
 #: main.c:877
 #, c-format
@@ -315,11 +316,11 @@ msgid ""
 "%s was successfully installed!\n"
 "\n"
 "Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
-msgstr ""
+msgstr "%s a été installé correctement.\n\nRetirer tous les médias d'installation du système et appuyer sur redémarrer. Une fois que le système redémarré, vous devrez paramètrer les réseaux et les mots de passe système. Ensuite, vous devrez faire pointer votre navigateur vers https://%s:444 (ou le nom que vous avez donné à votre %s) pour la console de configuration web."
 
 #: main.c:882
 msgid "Congratulations!"
-msgstr ""
+msgstr "Félécitations!"
 
 #: main.c:882
 msgid "Reboot"

@@ -108,10 +108,14 @@ sub network_equal {
 	my $network1 = shift;
 	my $network2 = shift;
 
-	my $bin1 = &network2bin($network1);
-	my $bin2 = &network2bin($network2);
+	my @bin1 = &network2bin($network1);
+	my @bin2 = &network2bin($network2);
 
-	if ($bin1 eq $bin2) {
+	if (!defined $bin1 || !defined $bin2) {
+		return undef;
+	}
+
+	if ($bin1[0] eq $bin2[0] && $bin1[1] eq $bin2[1]) {
 		return 1;
 	}
 
@@ -132,6 +136,10 @@ sub network2bin($) {
 
 	my $address_bin = &ip2bin($address);
 	my $netmask_bin = &ip2bin($netmask);
+
+	if (!defined $address_bin || !defined $netmask_bin) {
+		return undef;
+	}
 
 	my $network_start = $address_bin & $netmask_bin;
 
@@ -374,6 +382,26 @@ sub wifi_get_signal_level($) {
 
 	return $signal_level;
 }
+
+sub get_hardware_address($) {
+	my $ip_address = shift;
+	my $ret;
+
+	open(FILE, "/proc/net/arp") or die("Could not read ARP table");
+
+	while (<FILE>) {
+		my ($ip_addr, $hwtype, $flags, $hwaddr, $mask, $device) = split(/\s+/, $_);
+		if ($ip_addr eq $ip_address) {
+			$ret = $hwaddr;
+			last;
+		}
+	}
+
+	close(FILE);
+
+	return $ret;
+}
+
 1;
 
 # Remove the next line to enable the testsuite
@@ -437,7 +465,7 @@ sub testsuite() {
 	assert(!$result);
 
 	$result = &network_equal("192.168.0.1/24", "192.168.0.XXX/24");
-	assert($result);
+	assert(!$result);
 
 	$result = &ip_address_in_network("10.0.1.4", "10.0.0.0/8");
 	assert($result);

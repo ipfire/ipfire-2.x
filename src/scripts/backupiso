@@ -18,7 +18,7 @@ esac
 
 COREVER=$(cat /opt/pakfire/db/core/mine)
 # FIXME: edit this lines before release
-URL="http://download.ipfire.org/releases/ipfire-2.x/2.19-core$COREVER/"
+URL="https://downloads.ipfire.org/releases/ipfire-2.x/2.19-core$COREVER/"
 ISO="ipfire-2.19.$arch-full-core$COREVER.iso"
 
 if [ -z $1 ]; then

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.6.2
+VER        = 1.6.7
 
 THISAPP    = unbound-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 5a5d0cdf7164957ff2e7498db1758f01
+$(DL_FILE)_MD5 = 67ed382add11134d689f5e88f8efc43e
 
 install : $(TARGET)
 
@@ -70,7 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/unbound-allow-setting-validator-permissive-mode-at-runtime.patch
 	cd $(DIR_APP) && \
 		./configure \
 			--prefix=/usr \
@@ -79,7 +78,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--with-rootkey-file=/var/lib/unbound/root.key \
 			--disable-static \
 			--with-libevent \
-			--enable-event-api
+			--enable-event-api \
+			ac_cv_func_getentropy=no
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

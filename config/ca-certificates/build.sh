@@ -4,7 +4,7 @@ set -e
 
 # Create file layout.
 mkdir -pv certs certs/legacy-default certs/legacy-disable
-cp certdata.txt ipfire-ca.crt certs
+cp certdata.txt certs
 cd certs
 
 python ../certdata2pem.py

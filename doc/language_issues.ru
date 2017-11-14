@@ -615,11 +615,46 @@ WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: wildcards
+WARNING: translation string unused: wlanap access point
 WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: 24 hours
 WARNING: untranslated string: Add a route
+WARNING: untranslated string: Captive ACTIVATE
+WARNING: untranslated string: Captive GAIN ACCESS
+WARNING: untranslated string: Captive WiFi coupon
+WARNING: untranslated string: Captive activated
+WARNING: untranslated string: Captive active on
+WARNING: untranslated string: Captive agree tac
+WARNING: untranslated string: Captive authentication
+WARNING: untranslated string: Captive brand color
+WARNING: untranslated string: Captive branding
+WARNING: untranslated string: Captive client session expiry time
+WARNING: untranslated string: Captive clients
+WARNING: untranslated string: Captive config
+WARNING: untranslated string: Captive coupon
+WARNING: untranslated string: Captive expiry time
+WARNING: untranslated string: Captive export coupons
+WARNING: untranslated string: Captive generate coupons
+WARNING: untranslated string: Captive generated coupon no
+WARNING: untranslated string: Captive issued coupons
+WARNING: untranslated string: Captive logo uploaded
+WARNING: untranslated string: Captive mac
+WARNING: untranslated string: Captive menu
+WARNING: untranslated string: Captive nolimit
+WARNING: untranslated string: Captive please accept the terms and conditions
+WARNING: untranslated string: Captive portal
+WARNING: untranslated string: Captive portal coupons
+WARNING: untranslated string: Captive terms
+WARNING: untranslated string: Captive terms short
+WARNING: untranslated string: Captive title
+WARNING: untranslated string: Captive upload logo
+WARNING: untranslated string: Captive upload logo recommendations
+WARNING: untranslated string: Captive valid for
+WARNING: untranslated string: Captive vouchervalid
+WARNING: untranslated string: Captive wrong ext
 WARNING: untranslated string: ConnSched dial
 WARNING: untranslated string: ConnSched hangup
 WARNING: untranslated string: ConnSched reboot
@@ -651,6 +686,7 @@ WARNING: untranslated string: bit
 WARNING: untranslated string: block
 WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities
+WARNING: untranslated string: captive
 WARNING: untranslated string: ccd add
 WARNING: untranslated string: ccd choose net
 WARNING: untranslated string: ccd client options
@@ -733,6 +769,7 @@ WARNING: untranslated string: drop action1
 WARNING: untranslated string: drop action2
 WARNING: untranslated string: drop forward
 WARNING: untranslated string: drop outgoing
+WARNING: untranslated string: eight hours
 WARNING: untranslated string: email config
 WARNING: untranslated string: email empty field
 WARNING: untranslated string: email invalid
@@ -770,6 +807,7 @@ WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: firewall rules
 WARNING: untranslated string: first
 WARNING: untranslated string: flag
+WARNING: untranslated string: four hours
 WARNING: untranslated string: fw default drop
 WARNING: untranslated string: fw settings
 WARNING: untranslated string: fw settings color
@@ -1021,6 +1059,10 @@ WARNING: untranslated string: no hardware random number generator
 WARNING: untranslated string: none
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: notice
+WARNING: untranslated string: one hour
+WARNING: untranslated string: one month
+WARNING: untranslated string: one week
+WARNING: untranslated string: one year
 WARNING: untranslated string: openvpn default
 WARNING: untranslated string: openvpn destination port used
 WARNING: untranslated string: openvpn fragment allowed with udp
@@ -1135,9 +1177,12 @@ WARNING: untranslated string: tor traffic limit hard
 WARNING: untranslated string: tor traffic limit soft
 WARNING: untranslated string: tor traffic read written
 WARNING: untranslated string: tor use exit nodes
+WARNING: untranslated string: twelve hours
+WARNING: untranslated string: two weeks
 WARNING: untranslated string: unblock
 WARNING: untranslated string: unblock all
 WARNING: untranslated string: uncheck all
+WARNING: untranslated string: unlimited
 WARNING: untranslated string: uplink
 WARNING: untranslated string: uplink bit rate
 WARNING: untranslated string: upload dh key
@@ -1203,4 +1248,6 @@ WARNING: untranslated string: wlan client wpa mode ccmp ccmp
 WARNING: untranslated string: wlan client wpa mode ccmp tkip
 WARNING: untranslated string: wlan client wpa mode tkip tkip
 WARNING: untranslated string: wlan clients
+WARNING: untranslated string: wlanap
+WARNING: untranslated string: wlanap configuration
 WARNING: untranslated string: wlanap country

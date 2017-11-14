@@ -4,15 +4,15 @@
 # 
 # Translators:
 # Ersan YILDIRIM <ersan73@gmail.com>, 2015
-# Kudret Emre <kudretemre@hotmail.com.tr>, 2014
+# Kudret <kudretemre@hotmail.com.tr>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-08-21 15:12+0000\n"
-"PO-Revision-Date: 2015-03-20 15:05+0000\n"
+"PO-Revision-Date: 2017-09-20 09:45+0000\n"
 "Last-Translator: Ersan YILDIRIM <ersan73@gmail.com>\n"
-"Language-Team: Turkish (http://www.transifex.com/projects/p/ipfire/language/tr/)\n"
+"Language-Team: Turkish (http://www.transifex.com/mstremer/ipfire/language/tr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -530,7 +530,7 @@ msgstr "Birincil DNS olmadan İkincil DNS belirtildi."
 #: passwords.c:33
 msgid ""
 "Enter the 'root' user password. Login as this user for commandline access."
-msgstr "%s 'root' kullanıcı parolasını girin. Komut satırı erişimi için bu kullanıcıyla oturum açın."
+msgstr "'Root' kullanıcı parolasını girin. Komut satırı erişimi için bu kullanıcıyla oturum açın."
 
 #: passwords.c:38 passwords.c:61
 msgid "Setting password"

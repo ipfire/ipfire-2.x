@@ -38,7 +38,7 @@ FSTYPE=ext3
 ##############################################################################
 
 SOURCEISO=$SNAME-$VERSION.i586-full-core$CORE.iso
-HTTPDIR=http://download.ipfire.org/releases/ipfire-2.x/$VERSION-core$CORE
+HTTPDIR=https://downloads.ipfire.org/releases/ipfire-2.x/$VERSION-core$CORE
 
 TMPDIR=./ipfire-tmp
 ISODIR=$TMPDIR/iso
@@ -54,7 +54,7 @@ KERNEL=linux-$KERN_TYPE-$KVER-$KERN_PACK.ipfire
 if [ "$XEN_IMG_TYPE" == "xva" ]; then
 	# download xva.py if it not exist.
 	if [ ! -e xva.py ]; then
-		wget http://source.ipfire.org/source-2.x/xva.py
+		wget https://source.ipfire.org/source-2.x/xva.py
 	fi
 	# XenCenter use other devicenames and
 	# xvdd seems to be reserved (converter bug?).

@@ -686,11 +686,46 @@ WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: week-graph
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: wildcards
+WARNING: translation string unused: wlanap access point
 WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
+WARNING: untranslated string: 24 hours
+WARNING: untranslated string: Captive ACTIVATE
+WARNING: untranslated string: Captive GAIN ACCESS
+WARNING: untranslated string: Captive WiFi coupon
+WARNING: untranslated string: Captive activated
+WARNING: untranslated string: Captive active on
+WARNING: untranslated string: Captive agree tac
+WARNING: untranslated string: Captive authentication
+WARNING: untranslated string: Captive brand color
+WARNING: untranslated string: Captive branding
+WARNING: untranslated string: Captive client session expiry time
+WARNING: untranslated string: Captive clients
+WARNING: untranslated string: Captive config
+WARNING: untranslated string: Captive coupon
+WARNING: untranslated string: Captive expiry time
+WARNING: untranslated string: Captive export coupons
+WARNING: untranslated string: Captive generate coupons
+WARNING: untranslated string: Captive generated coupon no
+WARNING: untranslated string: Captive issued coupons
+WARNING: untranslated string: Captive logo uploaded
+WARNING: untranslated string: Captive mac
+WARNING: untranslated string: Captive menu
+WARNING: untranslated string: Captive nolimit
+WARNING: untranslated string: Captive please accept the terms and conditions
+WARNING: untranslated string: Captive portal
+WARNING: untranslated string: Captive portal coupons
+WARNING: untranslated string: Captive terms
+WARNING: untranslated string: Captive terms short
+WARNING: untranslated string: Captive title
+WARNING: untranslated string: Captive upload logo
+WARNING: untranslated string: Captive upload logo recommendations
+WARNING: untranslated string: Captive valid for
+WARNING: untranslated string: Captive vouchervalid
+WARNING: untranslated string: Captive wrong ext
 WARNING: untranslated string: MTU settings
 WARNING: untranslated string: Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs
@@ -706,6 +741,7 @@ WARNING: untranslated string: atm device
 WARNING: untranslated string: block
 WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities
+WARNING: untranslated string: captive
 WARNING: untranslated string: check all
 WARNING: untranslated string: default
 WARNING: untranslated string: dh
@@ -727,6 +763,7 @@ WARNING: untranslated string: dnssec not supported
 WARNING: untranslated string: dnssec validating
 WARNING: untranslated string: download tls-auth key
 WARNING: untranslated string: drop outgoing
+WARNING: untranslated string: eight hours
 WARNING: untranslated string: email config
 WARNING: untranslated string: email empty field
 WARNING: untranslated string: email invalid
@@ -750,6 +787,7 @@ WARNING: untranslated string: firewall log country
 WARNING: untranslated string: firewall log ip
 WARNING: untranslated string: firewall log port
 WARNING: untranslated string: firewall logs country
+WARNING: untranslated string: four hours
 WARNING: untranslated string: fwdfw err concon
 WARNING: untranslated string: fwdfw err ratecon
 WARNING: untranslated string: fwdfw limitconcon
@@ -840,6 +878,10 @@ WARNING: untranslated string: nameserver
 WARNING: untranslated string: no data
 WARNING: untranslated string: none
 WARNING: untranslated string: not a valid dh key
+WARNING: untranslated string: one hour
+WARNING: untranslated string: one month
+WARNING: untranslated string: one week
+WARNING: untranslated string: one year
 WARNING: untranslated string: outgoing compression in bytes per second
 WARNING: untranslated string: outgoing overhead in bytes per second
 WARNING: untranslated string: ovpn add conf
@@ -868,9 +910,12 @@ WARNING: untranslated string: show tls-auth key
 WARNING: untranslated string: software version
 WARNING: untranslated string: source ip country
 WARNING: untranslated string: ta key
+WARNING: untranslated string: twelve hours
+WARNING: untranslated string: two weeks
 WARNING: untranslated string: unblock
 WARNING: untranslated string: unblock all
 WARNING: untranslated string: uncheck all
+WARNING: untranslated string: unlimited
 WARNING: untranslated string: uplink bit rate
 WARNING: untranslated string: upload dh key
 WARNING: untranslated string: vendor
@@ -900,3 +945,5 @@ WARNING: untranslated string: wlan client method
 WARNING: untranslated string: wlan client password
 WARNING: untranslated string: wlan client tls cipher
 WARNING: untranslated string: wlan client tls version
+WARNING: untranslated string: wlanap
+WARNING: untranslated string: wlanap configuration

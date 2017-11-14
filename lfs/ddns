@@ -28,7 +28,7 @@ VER        = 010
 
 THISAPP    = ddns-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
-DL_FROM    = http://source.ipfire.org/releases/ddns/
+DL_FROM    = https://source.ipfire.org/releases/ddns/
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

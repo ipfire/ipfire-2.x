@@ -23,7 +23,22 @@
 
 package GeoIP;
 
+use Geo::IP::PurePerl;
 use Locale::Codes::Country;
+
+my $database;
+
+sub lookup($) {
+	my $address = shift;
+
+	# Load the database into memory if not already done
+	if (!$database) {
+		$database = Geo::IP::PurePerl->new(GEOIP_MEMORY_CACHE);
+	}
+
+	# Return the name of the country
+	return $database->country_code_by_name($address);
+}
 
 # Function to get the flag icon for a specified country code.
 sub get_flag_icon($) {
@@ -63,10 +78,10 @@ sub get_flag_icon($) {
 		# the icon for "unknown".
 		my $ccode = "unknown";
 
-		# Redoing all the stuff from abouve for the "unknown" icon.
-		my $file = join('.', $ccode,$ext);
-		my $flag_icon = join('/', $flagdir,$file);
-		my $absolute_path = join('', $webroot,$flag_icon);
+		# Redoing all the stuff from above for the "unknown" icon.
+		my $file = join('.', $ccode, $ext);
+		my $flag_icon = join('/', $flagdir, $file);
+		my $absolute_path = join('', $webroot, $flag_icon);
 
 		# Check if the icon is present.
 		if (-e "$absolute_path") {

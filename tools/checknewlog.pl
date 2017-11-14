@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2008  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2017  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -28,7 +28,7 @@ foreach(@FILES) {
 #	print $_."\n";
 	my $Found = 0;
 
-	if ( $_ =~ /$\.log/ || $_ =~ /^\.+/  || $_=~ /-install/ || $_=~ /-tools/ || $_=~ /-config/ || $_=~ /-kmod-/|| $_=~ /coreutils/ || $_=~ /linux-xen/ || $_=~ /libsigc/ || $_ eq 'FILES' ){
+	if ( $_ =~ /$\.log/ || $_ =~ /^\.+/  || $_=~ /-install/ || $_=~ /-tools/ || $_=~ /-config/ || $_=~ /-kmod-/|| $_=~ /coreutils/ || $_=~ /cmake/ || $_=~ /libsigc/ || $_ eq 'FILES' ){
 		next;
 	} elsif ( $_=~ /missing_rootfile/ ){
 		print "Rootfile for $_ missing!\n";

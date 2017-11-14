@@ -179,4 +179,18 @@ sub FindWebLanguage() {
 	return undef;
 }
 
+sub DetectBrowserLanguages() {
+	my $langs = $ENV{"HTTP_ACCEPT_LANGUAGE"};
+	my @results = ();
+
+	foreach my $lang (split /[,;]/, $langs) {
+		# Drop all q= arguments
+		next if ($lang =~ m/^q=/);
+
+		push(@results, $lang);
+	}
+
+	return @results;
+}
+
 1;

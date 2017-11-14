@@ -359,7 +359,7 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		$errormessage = $Lang::tr{'advproxy errmsg cache'}." ".$proxysettings{'CACHE_MEM'}." > ".$proxysettings{'CACHE_SIZE'};
 		goto ERROR;
 	}
-	
+
 	if (!(&General::validport($proxysettings{'PROXY_PORT'})))
 	{
 		$errormessage = $Lang::tr{'advproxy errmsg invalid proxy port'};
@@ -695,7 +695,7 @@ ERROR:
 			system ('/usr/bin/touch', "${General::swroot}/proxy/transparent_blue"); }
 
 		if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}) { system('/usr/local/bin/squidctrl restart >/dev/null 2>&1'); }
-		if ($proxysettings{'ACTION'} eq $Lang::tr{'proxy reconfigure'}) { system('/usr/local/bin/squidctrl reconfigure >/dev/null 2>&1'); }	
+		if ($proxysettings{'ACTION'} eq $Lang::tr{'proxy reconfigure'}) { system('/usr/local/bin/squidctrl reconfigure >/dev/null 2>&1'); }
   }
 }
 
@@ -1054,11 +1054,11 @@ if ( -e "/usr/bin/squidclamav" ) {
 } else {
 	print "<td></td>";
 }
-print "<td class='base'><b>".$Lang::tr{'advproxy url filter'}."</b><br />";
+print "<td class='base'><a href='/cgi-bin/urlfilter.cgi'><b>".$Lang::tr{'advproxy url filter'}."</a></b><br />";
 print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_FILTER' ".$checked{'ENABLE_FILTER'}{'on'}." /><br />";
 print "+ ".int(($count**(1/3)) * 6);
 print "</td>";
-print "<td class='base'><b>".$Lang::tr{'advproxy update accelerator'}."</b><br />";
+print "<td class='base'><a href='/cgi-bin/updatexlrator.cgi'><b>".$Lang::tr{'advproxy update accelerator'}."</a></b><br />";
 print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_UPDXLRATOR' ".$checked{'ENABLE_UPDXLRATOR'}{'on'}." /><br />";
 print "+ ".int(($count**(1/3)) * 5);
 print "</td></tr>";
@@ -1118,7 +1118,7 @@ print <<END
 	<td colspan='4'><b>$Lang::tr{'advproxy cache management'}</b></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'proxy cachemgr'}:</td>
+	<td class='base'><a href='/cgi-bin/cachemgr.cgi' target='_blank'>$Lang::tr{'proxy cachemgr'}:</td>
 	<td><input type='checkbox' name='CACHEMGR' $checked{'CACHEMGR'}{'on'} /></td>
 	<td class='base'>$Lang::tr{'advproxy admin mail'}:</td>
 	<td><input type='text' name='ADMIN_MAIL_ADDRESS' value='$proxysettings{'ADMIN_MAIL_ADDRESS'}' /></td>
@@ -3206,7 +3206,7 @@ END
 
 	if ($proxysettings{'OFFLINE_MODE'} eq 'on') {  print FILE "offline_mode on\n\n"; }
 	if ($proxysettings{'CACHE_DIGESTS'} eq 'on') {  print FILE "digest_generation on\n\n"; } else {  print FILE "digest_generation off\n\n"; }
-	
+
 	if ((!($proxysettings{'MEM_POLICY'} eq 'LRU')) || (!($proxysettings{'CACHE_POLICY'} eq 'LRU')))
 	{
 		if (!($proxysettings{'MEM_POLICY'} eq 'LRU'))

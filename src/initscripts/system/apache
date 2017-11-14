@@ -7,18 +7,58 @@
 . /etc/sysconfig/rc
 . $rc_functions
 
+generate_certificates() {
+	if [ ! -f "/etc/httpd/server.key" ]; then
+		boot_mesg "Generating HTTPS RSA server key (this will take a moment)..."
+		openssl genrsa -out /etc/httpd/server.key 4096 &>/dev/null
+		evaluate_retval
+	fi
+
+	if [ ! -f "/etc/httpd/server-ecdsa.key" ]; then
+		boot_mesg "Generating HTTPS ECDSA server key..."
+		openssl ecparam -genkey -name secp384r1 -noout \
+			-out /etc/httpd/server-ecdsa.key &>/dev/null
+		evaluate_retval
+	fi
+
+	# Generate RSA CSR
+	if [ ! -f "/etc/httpd/server.csr" ]; then
+		sed "s/HOSTNAME/`hostname -f`/" < /etc/certparams | \
+			openssl req -new -key /etc/httpd/server.key \
+				-out /etc/httpd/server.csr &>/dev/null
+	fi
+
+	# Generate ECDSA CSR
+	if [ ! -f "/etc/httpd/server-ecdsa.csr" ]; then
+		sed "s/HOSTNAME/`hostname -f`/" < /etc/certparams | \
+			openssl req -new -key /etc/httpd/server-ecdsa.key \
+			-out /etc/httpd/server-ecdsa.csr &>/dev/null
+	fi
+
+	if [ ! -f "/etc/httpd/server.crt" ]; then
+		boot_mesg "Signing RSA certificate..."
+		openssl x509 -req -days 999999 -sha256 \
+			-in /etc/httpd/server.csr \
+			-signkey /etc/httpd/server.key \
+			-out /etc/httpd/server.crt &>/dev/null
+		evaluate_retval
+	fi
+
+	if [ ! -f "/etc/httpd/server-ecdsa.crt" ]; then
+		boot_mesg "Signing ECDSA certificate..."
+		openssl x509 -req -days 999999 -sha256 \
+			-in /etc/httpd/server-ecdsa.csr \
+			-signkey /etc/httpd/server-ecdsa.key \
+			-out /etc/httpd/server-ecdsa.crt &>/dev/null
+		evaluate_retval
+	fi
+}
+
 case "$1" in
 	start)
-		if [ -f /etc/httpd/server.key -a -f /etc/httpd/server.crt -a -f /etc/httpd/server.csr ]; then
-			/usr/local/bin/httpscert read >/dev/null 2>&1
-		else
-			boot_mesg "Generating HTTPS host certificate (may take a couple of minutes)..."
-			/usr/local/bin/httpscert new  >/dev/null 2>&1
-			evaluate_retval
+		# Generate all required certificates
+		generate_certificates
 
-			# Make sure that the key is written to disk.
-			sync
-		fi
 		boot_mesg "Starting Apache daemon..."
 		/usr/sbin/apachectl -k start
 		evaluate_retval

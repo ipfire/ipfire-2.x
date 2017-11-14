@@ -253,99 +253,94 @@ if (-e "/etc/snort/snort.conf") {
 
 #######################  End added for snort rules control  #################################
 
-if ($snortsettings{'RULES'} eq 'subscripted') {
-	$url=" https://www.snort.org/rules/snortrules-snapshot-2990.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
-} elsif ($snortsettings{'RULES'} eq 'registered') {
-	$url=" https://www.snort.org/rules/snortrules-snapshot-2990.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
-} elsif ($snortsettings{'RULES'} eq 'community') {
-	$url=" https://www.snort.org/rules/community";
-} else {
-	$url="http://rules.emergingthreats.net/open/snort-2.9.0/emerging.rules.tar.gz";
+if ($snortsettings{'OINKCODE'} ne "") {
+	$errormessage = $Lang::tr{'invalid input for oink code'} unless ($snortsettings{'OINKCODE'} =~ /^[a-z0-9]+$/);
 }
 
-if ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} eq "snort" )
-{
-	$errormessage = $Lang::tr{'invalid input for oink code'} unless (
-	    ($snortsettings{'OINKCODE'} =~ /^[a-z0-9]+$/)  ||
-	    ($snortsettings{'RULES'} eq 'nothing' ) ||
-	    ($snortsettings{'RULES'} eq 'emerging' ) ||
-	    ($snortsettings{'RULES'} eq 'community' ));
-
-	&General::writehash("${General::swroot}/snort/settings", \%snortsettings);
-	if ($snortsettings{'ENABLE_SNORT'} eq 'on')
-	{
-		system ('/usr/bin/touch', "${General::swroot}/snort/enable");
+if (!$errormessage) {
+	if ($snortsettings{'RULES'} eq 'subscripted') {
+		$url=" https://www.snort.org/rules/snortrules-snapshot-29110.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
+	} elsif ($snortsettings{'RULES'} eq 'registered') {
+		$url=" https://www.snort.org/rules/snortrules-snapshot-29110.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
+	} elsif ($snortsettings{'RULES'} eq 'community') {
+		$url=" https://www.snort.org/rules/community";
 	} else {
-		unlink "${General::swroot}/snort/enable";
-	}
-	if ($snortsettings{'ENABLE_SNORT_GREEN'} eq 'on')
-	{
-		system ('/usr/bin/touch', "${General::swroot}/snort/enable_green");
-	} else {
-		unlink "${General::swroot}/snort/enable_green";
-	}
-	if ($snortsettings{'ENABLE_SNORT_BLUE'} eq 'on')
-	{
-		system ('/usr/bin/touch', "${General::swroot}/snort/enable_blue");
-	} else {
-		unlink "${General::swroot}/snort/enable_blue";
-	}
-	if ($snortsettings{'ENABLE_SNORT_ORANGE'} eq 'on')
-	{
-		system ('/usr/bin/touch', "${General::swroot}/snort/enable_orange");
-	} else {
-		unlink "${General::swroot}/snort/enable_orange";
-	}
-	if ($snortsettings{'ENABLE_PREPROCESSOR_HTTP_INSPECT'} eq 'on')
-	{
-		system ('/usr/bin/touch', "${General::swroot}/snort/enable_preprocessor_http_inspect");
-	} else {
-		unlink "${General::swroot}/snort/enable_preprocessor_http_inspect";
+		$url="http://rules.emergingthreats.net/open/snort-2.9.0/emerging.rules.tar.gz";
 	}
 
-	system('/usr/local/bin/snortctrl restart >/dev/null');
+	if ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} eq "snort" ) {
+		&General::writehash("${General::swroot}/snort/settings", \%snortsettings);
+		if ($snortsettings{'ENABLE_SNORT'} eq 'on')
+		{
+			system ('/usr/bin/touch', "${General::swroot}/snort/enable");
+		} else {
+			unlink "${General::swroot}/snort/enable";
+		}
+		if ($snortsettings{'ENABLE_SNORT_GREEN'} eq 'on')
+		{
+			system ('/usr/bin/touch', "${General::swroot}/snort/enable_green");
+		} else {
+			unlink "${General::swroot}/snort/enable_green";
+		}
+		if ($snortsettings{'ENABLE_SNORT_BLUE'} eq 'on')
+		{
+			system ('/usr/bin/touch', "${General::swroot}/snort/enable_blue");
+		} else {
+			unlink "${General::swroot}/snort/enable_blue";
+		}
+		if ($snortsettings{'ENABLE_SNORT_ORANGE'} eq 'on')
+		{
+			system ('/usr/bin/touch', "${General::swroot}/snort/enable_orange");
+		} else {
+			unlink "${General::swroot}/snort/enable_orange";
+		}
+		if ($snortsettings{'ENABLE_PREPROCESSOR_HTTP_INSPECT'} eq 'on')
+		{
+			system ('/usr/bin/touch', "${General::swroot}/snort/enable_preprocessor_http_inspect");
+		} else {
+			unlink "${General::swroot}/snort/enable_preprocessor_http_inspect";
+		}
 
-}
+		system('/usr/local/bin/snortctrl restart >/dev/null');
+	}
 
-	 # INSTALLMD5 is not in the form, so not retrieved by getcgihash
+	# INSTALLMD5 is not in the form, so not retrieved by getcgihash
 	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
 
-if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'} || $snortsettings{'ACTION'} eq $Lang::tr{'upload new ruleset'}) {
+	if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'} || $snortsettings{'ACTION'} eq $Lang::tr{'upload new ruleset'}) {
+		my @df = `/bin/df -B M /var`;
+		foreach my $line (@df) {
+			next if $line =~ m/^Filesystem/;
+			my $return;
 
-	my @df = `/bin/df -B M /var`;
-	foreach my $line (@df) {
-		next if $line =~ m/^Filesystem/;
-		my $return;
+			if ($line =~ m/dev/ ) {
+				$line =~ m/^.* (\d+)M.*$/;
+				my @temp = split(/ +/,$line);
+				if ($1<300) {
+					$errormessage = "$Lang::tr{'not enough disk space'} < 300MB, /var $1MB";
+				} else {
+					if ( $snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
+						&downloadrulesfile();
+						sleep(3);
+						$return = `cat /var/tmp/log 2>/dev/null`;
 
-		if ($line =~ m/dev/ ) {
-		$line =~ m/^.* (\d+)M.*$/;
-		my @temp = split(/ +/,$line);
-			if ($1<300) {
-				$errormessage = "$Lang::tr{'not enough disk space'} < 300MB, /var $1MB";
-			} else {
-
-				if ( $snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'} ){
-
-					&downloadrulesfile();
-					sleep(3);
-					$return = `cat /var/tmp/log 2>/dev/null`;
-
-				} elsif ( $snortsettings{'ACTION'} eq $Lang::tr{'upload new ruleset'} ) {
-					my $upload = $a->param("UPLOAD");
-					open UPLOADFILE, ">/var/tmp/snortrules.tar.gz";
-					binmode $upload;
-					while ( <$upload> ) {
-					print UPLOADFILE;
+					} elsif ( $snortsettings{'ACTION'} eq $Lang::tr{'upload new ruleset'}) {
+						my $upload = $a->param("UPLOAD");
+						open UPLOADFILE, ">/var/tmp/snortrules.tar.gz";
+						binmode $upload;
+						while ( <$upload> ) {
+							print UPLOADFILE;
+						}
+						close UPLOADFILE;
 					}
-					close UPLOADFILE;
-				}
 
-					if ($return =~ "ERROR"){
+					if ($return =~ "ERROR") {
 						$errormessage = "<br /><pre>".$return."</pre>";
 					} else {
 						system("/usr/local/bin/oinkmaster.pl -v -s -u file:///var/tmp/snortrules.tar.gz -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules >>/var/tmp/log 2>&1 &");
 						sleep(2);
 					}
+				}
 			}
 		}
 	}

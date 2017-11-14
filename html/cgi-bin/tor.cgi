@@ -106,7 +106,7 @@ if (&Header::blue_used()) {
 }
 
 $settings{'TOR_RELAY_ENABLED'} = 'off';
-$settings{'TOR_RELAY_MODE'} = 'exit';
+$settings{'TOR_RELAY_MODE'} = 'relay';
 $settings{'TOR_RELAY_ADDRESS'} = '';
 $settings{'TOR_RELAY_PORT'} = 9001;
 $settings{'TOR_RELAY_DIRPORT'} = 0;

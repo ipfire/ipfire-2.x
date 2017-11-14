@@ -1,0 +1,11 @@
+diff -Naur linux-3.14.79.ORG/include/linux/mod_devicetable.h linux-3.14.79/include/linux/mod_devicetable.h
+--- linux-3.14.79.ORG/include/linux/mod_devicetable.h	2017-06-16 19:58:41.000000000 +0200
++++ linux-3.14.79/include/linux/mod_devicetable.h	2017-06-19 19:40:59.374205140 +0200
+@@ -538,6 +538,7 @@
+  *	== id.
+  * @data: Private data used by the driver.
+  */
++#define amba_device_id amba_id
+ struct amba_id {
+ 	unsigned int		id;
+ 	unsigned int		mask;

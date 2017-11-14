@@ -65,6 +65,12 @@ HOME=/
 # Retry sending spooled mails regularly
 %hourly * /usr/sbin/dma -q
 
+# Cleanup captive clients
+%hourly * /usr/bin/captive-cleanup
+
+# Reload captive firewall rules
+%nightly * 23-1   /usr/local/bin/captivectrl >/dev/null
+
 # Cleanup the mail spool directory
 %weekly * * /usr/sbin/dma-cleanup-spool
 

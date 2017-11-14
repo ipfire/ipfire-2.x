@@ -34,8 +34,8 @@ use Net::Ping;
 package Pakfire;
 
 # GPG Keys
-my $myid = "64D96617";			# Our own gpg-key paks@ipfire.org
-my $trustid = "65D0FD58";		# gpg-key of CaCert
+my $myid = "179740DC4D8C47DC63C099C74BDE364C64D96617";		# Our own gpg-key paks@ipfire.org
+my $trustid = "A31D4F81EF4EBD07B456FA04D2BB0D0165D0FD58";	# gpg-key of CaCert
 
 # A small color-hash :D
 my %color;

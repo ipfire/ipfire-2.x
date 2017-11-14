@@ -1,0 +1,52 @@
+#!/usr/bin/perl
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2016  IPFire Team  <alexander.marx@ipfire.org>                #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+use strict;
+
+require '/var/ipfire/general-functions.pl';
+
+my %settings=();
+my %clientshash=();
+my $settingsfile="${General::swroot}/captive/settings";
+my $clients="${General::swroot}/captive/clients";
+my $time;
+my $expiretime;
+
+if (-f $settingsfile && -f $clients && ! -z $clients){
+	&General::readhash("$settingsfile", \%settings) if(-f $settingsfile);
+	&General::readhasharray("$clients", \%clientshash);
+	$time = time();
+	foreach my $key (keys %clientshash) {
+		# Skip unlimited access lines
+		next if ($clientshash{$key}[3] == 0);
+
+		$expiretime=($clientshash{$key}[2])+$clientshash{$key}[3];
+		if ($expiretime < $time){
+			delete $clientshash{$key};
+			my $exp = gmtime($expiretime);
+			&General::log("Captive", "Delete expired voucher $clientshash{$key}[4] expired on $exp. Remark: $clientshash{$key}[5]");
+		}
+	}
+	&General::writehasharray("$clients", \%clientshash);
+
+	# Reload firewall rules
+	system("/usr/local/bin/captivectrl");
+}

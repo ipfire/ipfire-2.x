@@ -1,0 +1,6 @@
+	$substatus->{'55.wio'} = {
+				'caption' => "$Lang::tr{'wio'}",
+				'uri' => '/cgi-bin/wio.cgi',
+				'title' => "$Lang::tr{'wio'}",
+				'enabled' => 1,
+			  };

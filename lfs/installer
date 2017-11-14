@@ -59,6 +59,7 @@ $(TARGET) :
 		--with-distro-name="$(NAME)" \
 		--with-distro-sname="$(SNAME)" \
 		--with-distro-slogan="$(SLOGAN)" \
+		--with-distro-version="$(VERSION)-core$(CORE)" \
 		--with-config-root="$(CONFIG_ROOT)" \
 		--with-download-url="$(DOWNLOAD_URL)"
 

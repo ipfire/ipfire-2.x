@@ -4,14 +4,14 @@
 # 
 # Translators:
 # Ersan YILDIRIM <ersan73@gmail.com>, 2015
-# Kudret Emre <kudretemre@hotmail.com.tr>, 2014
-# Kudret Emre <kudretemre@hotmail.com.tr>, 2014
+# Kudret <kudretemre@hotmail.com.tr>, 2014
+# Kudret <kudretemre@hotmail.com.tr>, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2015-04-23 16:07+0000\n"
+"PO-Revision-Date: 2017-09-20 08:56+0000\n"
 "Last-Translator: Ersan YILDIRIM <ersan73@gmail.com>\n"
 "Language-Team: Turkish (http://www.transifex.com/mstremer/ipfire/language/tr/)\n"
 "MIME-Version: 1.0\n"

@@ -44,8 +44,8 @@ endif
 # URLs that are common sources of downloads.  If you're having trouble with
 # a site you should change its URL to that of a suitable mirror site.
 #
-URL_IPFIRE  = http://source.ipfire.org/source-2.x
-URL_TOOLCHAIN = http://source.ipfire.org/toolchains
+URL_IPFIRE  = https://source.ipfire.org/source-2.x
+URL_TOOLCHAIN = https://source.ipfire.org/toolchains
 URL_SOURCE = git.ipfire.org:/pub/sources/source-2.x
 
 # Don't change this; it will be overridden by other makefiles where necessary.
@@ -204,7 +204,7 @@ define PAK
 	tar xf /install/packages/package/files.tmp -C /install/packages/package/tmp/ \
 		-p --numeric-owner
 	rm -f /install/packages/package/files.tmp
-	cd /install/packages/package/tmp/ && tar -c -p --numeric-owner -J -f /install/packages/package/files.tar.xz * 		
+	cd /install/packages/package/tmp/ && XZ_OPT=-T0 tar -c -p --numeric-owner -J -f /install/packages/package/files.tar.xz *
 	rm -r /install/packages/package/tmp
 	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES.tmp
 	mv /install/packages/package/ROOTFILES.tmp /install/packages/package/ROOTFILES

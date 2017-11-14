@@ -154,7 +154,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 			last;
 		}
 		#Is the network part of an internal network?
-		$errormessage .= &General::check_net_internal($settings{'IP'});
+		$errormessage .= &General::check_net_internal_exact($settings{'IP'});
 		last;
 	}
 

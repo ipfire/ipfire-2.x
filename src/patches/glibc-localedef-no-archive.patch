@@ -1,0 +1,11 @@
+diff -Nrup a/localedata/Makefile b/localedata/Makefile
+--- a/localedata/Makefile	2012-06-05 07:42:49.000000000 -0600
++++ b/localedata/Makefile	2012-06-07 12:15:21.776318827 -0600
+@@ -211,6 +211,7 @@ $(INSTALL-SUPPORTED-LOCALES): install-lo
+ 	echo -n '...'; \
+ 	input=`echo $$locale | sed 's/\([^.]*\)[^@]*\(.*\)/\1\2/'`; \
+ 	$(LOCALEDEF) --alias-file=../intl/locale.alias \
++		     --no-archive \
+ 		     -i locales/$$input -c -f charmaps/$$charset \
+ 		     $(addprefix --prefix=,$(install_root)) $$locale \
+ 	&& echo ' done'; \

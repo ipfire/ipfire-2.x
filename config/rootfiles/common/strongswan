@@ -71,6 +71,7 @@ etc/strongswan.d/starter.conf
 etc/strongswan.d/swanctl.conf
 #etc/swanctl
 etc/swanctl/bliss
+etc/swanctl/conf.d
 etc/swanctl/ecdsa
 etc/swanctl/pkcs12
 etc/swanctl/pkcs8

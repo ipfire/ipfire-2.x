@@ -38,6 +38,7 @@ usr/share/nano/makefile.nanorc
 usr/share/nano/man.nanorc
 usr/share/nano/mgp.nanorc
 usr/share/nano/mutt.nanorc
+usr/share/nano/nanohelp.nanorc
 usr/share/nano/nanorc.nanorc
 usr/share/nano/nftables.nanorc
 usr/share/nano/objc.nanorc

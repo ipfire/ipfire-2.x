@@ -3,14 +3,15 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
+# Ronny Heinrich <heinrich@matsumoto-wadokueikyoushitsu.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: IPFire Project\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 01:29+0000\n"
-"PO-Revision-Date: 2014-11-05 01:33+0000\n"
-"Last-Translator: Michael Tremer <michael.tremer@ipfire.org>\n"
-"Language-Team: Japanese (http://www.transifex.com/projects/p/ipfire/language/ja/)\n"
+"PO-Revision-Date: 2017-09-20 08:56+0000\n"
+"Last-Translator: Ronny Heinrich <heinrich@matsumoto-wadokueikyoushitsu.com>\n"
+"Language-Team: Japanese (http://www.transifex.com/mstremer/ipfire/language/ja/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -19,36 +20,36 @@ msgstr ""
 
 #: main.c:78 main.c:179 main.c:404 main.c:670 main.c:702 main.c:893
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: main.c:79 main.c:460 main.c:487 main.c:516 main.c:620 main.c:630 main.c:670
 #: main.c:702
 msgid "Cancel"
-msgstr ""
+msgstr "キャンセル"
 
 #: main.c:176
 msgid "I accept this license"
-msgstr ""
+msgstr "このライセンスを応諾する。"
 
 #: main.c:384
 msgid "Warning: Unattended installation will start in 10 seconds..."
-msgstr ""
+msgstr "注意：１０秒後、自動でのインストールが開始する・・・"
 
 #: main.c:403
 msgid "Language selection"
-msgstr ""
+msgstr "言語選択"
 
 #: main.c:403
 msgid "Select the language you wish to use for the installation."
-msgstr ""
+msgstr "インストール言語を選んで下さい。"
 
 #: main.c:418
 msgid "Unattended mode"
-msgstr ""
+msgstr "自動でのインストール・モード"
 
 #: main.c:420
 msgid "<Tab>/<Alt-Tab> between elements | <Space> selects | <F12> next screen"
-msgstr ""
+msgstr "<Tab>/<Alt-Tab> エレメントの間 | <Space> 選択 | <F12> 次の画面"
 
 #: main.c:426
 #, c-format
@@ -56,16 +57,16 @@ msgid ""
 "Welcome to the %s installation program.\n"
 "\n"
 "Selecting Cancel on any of the following screens will reboot the computer."
-msgstr ""
+msgstr "%s のインストール・プログラムへようこそ。\n\n次の画面の１つで、キャンセルを選ぶと、パソコンの再起動になります。"
 
 #: main.c:428
 msgid "Start installation"
-msgstr ""
+msgstr "インストールを実行する"
 
 #: main.c:449
 #, c-format
 msgid "The installer will now try downloading the installation image."
-msgstr ""
+msgstr "インストーラーはインストール・イメージをダウンロードしてみます。"
 
 #: main.c:452
 #, c-format
@@ -73,41 +74,41 @@ msgid ""
 "No source drive could be found.\n"
 "\n"
 "You can try downloading the required installation image."
-msgstr ""
+msgstr "ソース・ドライブが見つかりませんでした。\n\n必要なインストール・イメージをダウンロードしてみてください。"
 
 #: main.c:456
 msgid ""
 "Please make sure to connect your machine to a network and the installer will"
 " try connect to acquire an IP address."
-msgstr ""
+msgstr "パソコンはネットワークと接続したかを確認してください。インストーラーは接続して、IPアドレスを得ってみます。"
 
 #: main.c:460
 msgid "Download installation image"
-msgstr ""
+msgstr "インストール・イメージをダウンロードしています。"
 
 #: main.c:473
 msgid "Trying to start networking (DHCP)..."
-msgstr ""
+msgstr "ネットワークと接続しています（DHCP）・・・"
 
 #: main.c:484
 msgid ""
 "Networking could not be started but is required to go on with the installation.\n"
 "\n"
 "Please connect your machine to a network with a DHCP server and retry."
-msgstr ""
+msgstr "ネットワークと接続が出来ませんでしたが、インストールを綴れるために必要です。\n\nパソコンをDHCPサーバーがあるネットワークと接続して、実行直して下さい。"
 
 #: main.c:487 main.c:516
 msgid "Retry"
-msgstr ""
+msgstr "実行直し"
 
 #: main.c:501
 msgid "Downloading installation image..."
-msgstr ""
+msgstr "インストール・イメージをダウンロードしています・・・"
 
 #: main.c:510
 #, c-format
 msgid "MD5 checksum mismatch"
-msgstr ""
+msgstr "MD5検査合計が不正です。"
 
 #: main.c:513
 #, c-format
@@ -116,44 +117,44 @@ msgid ""
 "  Reason: %s\n"
 "\n"
 "%s"
-msgstr ""
+msgstr "インストール・イメージが正規にダウンロードが出来ませんでした。\n原因：%s\n\n%s"
 
 #: main.c:528
 #, c-format
 msgid ""
 "Could not mount %s to %s:\n"
 "  %s\n"
-msgstr ""
+msgstr "%s は %s にマウントが出来ませんでした:\n%s\n"
 
 #: main.c:543
 msgid "License Agreement"
-msgstr ""
+msgstr "ライセンス・アグリーメント"
 
 #: main.c:544
 msgid "License not accepted!"
-msgstr ""
+msgstr "ライセンスを否定しました！"
 
 #: main.c:566
 msgid "No hard disk found."
-msgstr ""
+msgstr "ハード・ディスクを見つかりませんでした。"
 
 #: main.c:587
 msgid "Disk Selection"
-msgstr ""
+msgstr "ハード・ディスクの選択"
 
 #: main.c:588
 msgid ""
 "Select the disk(s) you want to install IPFire on. First those will be partitioned, and then the partitions will have a filesystem put on them.\n"
 "\n"
 "ALL DATA ON THE DISK WILL BE DESTROYED."
-msgstr ""
+msgstr "IPFireをインストールハードデスクを選んで下さい。その選んだハードデスクではパーティションをしてから、ファイルシステムを作成します。\n\n注意：このパスワードの全てののデータは解除しています！！"
 
 #: main.c:599
 msgid ""
 "No disk has been selected.\n"
 "\n"
 "Please select one or more disks you want to install IPFire on."
-msgstr ""
+msgstr "ハードデスクが選択しませんでした。\n\nIPFireをインストールハードデスクを選んでください。"
 
 #: main.c:617
 #, c-format
@@ -163,15 +164,15 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr ""
+msgstr "インストーラーは下記の選んだハードデスクを準備しています：\n\n  %s\n\n続けを応諾していますか。"
 
 #: main.c:619
 msgid "Disk Setup"
-msgstr ""
+msgstr "ディスク設定"
 
 #: main.c:620 main.c:630
 msgid "Delete all data"
-msgstr ""
+msgstr "全てのデータを解除しています。"
 
 #: main.c:627
 #, c-format
@@ -182,131 +183,131 @@ msgid ""
 "  %s\n"
 "\n"
 "Do you agree to continue?"
-msgstr ""
+msgstr "インストーラーは下記の選んだハードデスクでRAIDコンフィグレーションを実行しています：\n\n  %s\n  %s\n\n続けを応諾していますか。"
 
 #: main.c:629
 msgid "RAID Setup"
-msgstr ""
+msgstr "RAID設定"
 
 #: main.c:640
 msgid "Your disk configuration is currently not supported."
-msgstr ""
+msgstr "現在、貴方のディスクコンフィグレーションが使用出来ません。"
 
 #: main.c:655
 msgid "Your harddisk is too small."
-msgstr ""
+msgstr "ハードデスクの空スペースが不足です。"
 
 #: main.c:671
 msgid ""
 "Your harddisk is very small, but you can continue without a swap partition."
-msgstr ""
+msgstr "ハードデスクのスペースが少ないですが、スワップ無い状態で続けることが出来ます。"
 
 #: main.c:684
 msgid "ext4 Filesystem"
-msgstr ""
+msgstr "ext4ファイルシステム"
 
 #: main.c:685
 msgid "ext4 Filesystem without journal"
-msgstr ""
+msgstr "ext4ファイルシステム　ジャーナル無い"
 
 #: main.c:686
 msgid "XFS Filesystem"
-msgstr ""
+msgstr "XFSファイルシステム"
 
 #: main.c:687
 msgid "ReiserFS Filesystem"
-msgstr ""
+msgstr "ReiserFSファイルシステム"
 
 #: main.c:701
 msgid "Filesystem Selection"
-msgstr ""
+msgstr "ファイルシステム選択"
 
 #: main.c:701
 msgid "Please choose your filesystem:"
-msgstr ""
+msgstr "使用したいファイルシステムを選んで下さい："
 
 #: main.c:712
 msgid "Building RAID..."
-msgstr ""
+msgstr "RAIDを作成しています・・・"
 
 #: main.c:716
 msgid "Unable to build the RAID."
-msgstr ""
+msgstr "RAIDが作成出来ませんでした。"
 
 #: main.c:728
 msgid "Partitioning disk..."
-msgstr ""
+msgstr "ディスクをパーティションしています・・・"
 
 #: main.c:732
 msgid "Unable to partition the disk."
-msgstr ""
+msgstr "ディスクがパーティション出来ませんでした。"
 
 #: main.c:739
 msgid "Creating filesystems..."
-msgstr ""
+msgstr "ファイルシステムを作成しています・・・"
 
 #: main.c:743
 msgid "Unable to create filesystems."
-msgstr ""
+msgstr "ファイルシステムが作成出来ませんでした。"
 
 #: main.c:749
 msgid "Unable to mount filesystems."
-msgstr ""
+msgstr "ファイルシステムがマウント出来ませんでした。"
 
 #: main.c:760
 msgid "Installing the system..."
-msgstr ""
+msgstr "システムをインストールしています・・・"
 
 #: main.c:761
 msgid "Unable to install the system."
-msgstr ""
+msgstr "システムがインストール出来ませんでした。"
 
 #: main.c:777
 msgid "Installing the language cache..."
-msgstr ""
+msgstr "言語キャッシュをインストールしています・・・"
 
 #: main.c:778
 msgid "Unable to install the language cache."
-msgstr ""
+msgstr "言語キャッシュがインストール出来ませんでした。"
 
 #: main.c:783
 msgid "Installing the bootloader..."
-msgstr ""
+msgstr "ブートローダをインストールしています・・・"
 
 #: main.c:790
 msgid "Unable to open /etc/default/grub for writing."
-msgstr ""
+msgstr "書き込む為、/etc/default/grubが開けませんでした。"
 
 #: main.c:812
 msgid "Unable to install the bootloader."
-msgstr ""
+msgstr "ブートローダがインストール出来ませんでした。"
 
 #: main.c:826
 msgid ""
 "A backup file has been found on the installation image.\n"
 "\n"
 "Do you want to restore the backup?"
-msgstr ""
+msgstr "インストール・イメージでバック・アップファイルが発見しました。\n\nバック・アップをリストアしてほしいですか。"
 
 #: main.c:827
 msgid "Yes"
-msgstr ""
+msgstr "はい"
 
 #: main.c:827
 msgid "No"
-msgstr ""
+msgstr "いいえ"
 
 #: main.c:834
 msgid "An error occured when the backup file was restored."
-msgstr ""
+msgstr "バック・アップをリストア中、エラーが発生しました。"
 
 #: main.c:869
 msgid "Running post-install script..."
-msgstr ""
+msgstr "インストール後のスクリプトを実行しています・・・"
 
 #: main.c:870
 msgid "Post-install script failed."
-msgstr ""
+msgstr "インストール後のスクリプトが実行出来ませんでした。"
 
 #: main.c:877
 #, c-format
@@ -314,16 +315,16 @@ msgid ""
 "%s was successfully installed!\n"
 "\n"
 "Please remove any installation mediums from this system and hit the reboot button. Once the system has restarted you will be asked to setup networking and system passwords. After that, you should point your web browser at https://%s:444 (or what ever you name your %s) for the web configuration console."
-msgstr ""
+msgstr "%s は正規にインストールしました！\n\nこのシステムから全てのインストール・メディアを外して、再起動ボタンを押してください。再起動したら、ネットワーク及びシステム・パスワードの設定で続けです。終了したら、ウェッブ・コンフィグレーション・コンソールの為、ウェッブ・ブラウザーにhttps://%s:444 (とか自分で %sに上げた名前) を記入して下さい。"
 
 #: main.c:882
 msgid "Congratulations!"
-msgstr ""
+msgstr "お疲れ様でした！"
 
 #: main.c:882
 msgid "Reboot"
-msgstr ""
+msgstr "再起動"
 
 #: main.c:893
 msgid "Setup has failed. Press Ok to reboot."
-msgstr ""
+msgstr "設定のエラーが発生しました。再起動の為、OKボタンを押して下さい。"

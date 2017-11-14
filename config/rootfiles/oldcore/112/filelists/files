@@ -1,0 +1,7 @@
+etc/system-release
+etc/issue
+srv/web/ipfire/cgi-bin/fwhosts.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
+var/ipfire/langs
+var/ipfire/general-functions.pl
