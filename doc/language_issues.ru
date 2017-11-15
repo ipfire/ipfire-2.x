@@ -1111,6 +1111,7 @@ WARNING: untranslated string: proxy reports today
 WARNING: untranslated string: proxy reports weekly
 WARNING: untranslated string: qos enter bandwidths
 WARNING: untranslated string: random number generator daemon
+WARNING: untranslated string: rdns
 WARNING: untranslated string: red1
 WARNING: untranslated string: required field
 WARNING: untranslated string: route config changed

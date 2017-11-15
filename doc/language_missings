@@ -544,6 +544,7 @@
 < proxy reports weekly
 < qos enter bandwidths
 < random number generator daemon
+< rdns
 < red1
 < required field
 < samba join a domain
@@ -1255,6 +1256,7 @@
 < proxy reports weekly
 < qos enter bandwidths
 < random number generator daemon
+< rdns
 < red1
 < required field
 < samba join a domain
@@ -1931,6 +1933,7 @@
 < proxy reports weekly
 < qos enter bandwidths
 < random number generator daemon
+< rdns
 < red1
 < required field
 < samba join a domain
@@ -2610,6 +2613,7 @@
 < proxy reports weekly
 < qos enter bandwidths
 < random number generator daemon
+< rdns
 < red1
 < required field
 < samba join a domain

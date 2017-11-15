@@ -1961,6 +1961,7 @@
 'quick playlist' => 'Quick Playlist',
 'ram' => 'RAM-Speicher',
 'random number generator daemon' => 'Random Number Generator Daemon',
+'rdns' => 'rDNS',
 'read bytes' => 'Gelesene Bytes',
 'read list' => 'Liste der Leseberechtigten',
 'real address' => 'Reale Addresse',

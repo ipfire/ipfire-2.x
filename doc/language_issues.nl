@@ -900,6 +900,7 @@ WARNING: untranslated string: pptp netconfig
 WARNING: untranslated string: pptp peer
 WARNING: untranslated string: pptp route
 WARNING: untranslated string: random number generator daemon
+WARNING: untranslated string: rdns
 WARNING: untranslated string: required field
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
