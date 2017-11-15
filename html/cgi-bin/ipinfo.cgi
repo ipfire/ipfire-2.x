@@ -30,6 +30,7 @@ use strict;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/geoip-functions.pl";
 
 my %cgiparams=();
 
@@ -49,6 +50,10 @@ if (&General::validip($addr)) {
 	my $iaddr = inet_aton($addr);
 	my $hostname = gethostbyaddr($iaddr, AF_INET);
 	if (!$hostname) { $hostname = $Lang::tr{'lookup failed'}; }
+
+	# enumerate GeoIP information for IP address...
+	my $ccode = &GeoIP::lookup($addr);
+	my $flag_icon = &GeoIP::get_flag_icon($ccode);
 
 	my $sock = new IO::Socket::INET ( PeerAddr => $whoisname, PeerPort => 43, Proto => 'tcp');
 	if ($sock)
@@ -81,7 +86,7 @@ if (&General::validip($addr)) {
 		@lines = ( "$Lang::tr{'unable to contact'} $whoisname" );
 	}
 
-	&Header::openbox('100%', 'left', $addr . ' (' . $hostname . ') : '.$whoisname);
+	&Header::openbox('100%', 'left', $addr . " <a href='country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode' title='$ccode' /></a> (" . $hostname . ') : '.$whoisname);
 	print "<pre>\n";
 	foreach my $line (@lines) {
 		print &Header::cleanhtml($line,"y");
