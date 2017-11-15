@@ -31,6 +31,7 @@ use Switch;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/geoip-functions.pl";
 
 my $colour_multicast = "#A0A0A0";
 
@@ -379,6 +380,7 @@ print <<END;
 				<a href="?sort_field=3&amp;sort_order=d"><img style="width:10px" src="/images/up.gif" alt=""></a>
 				<a href="?sort_field=3&amp;sort_order=a"><img style="width:10px" src="/images/down.gif" alt=""></a>
 			</th>
+			<th>&nbsp;</th>
 			<th style='text-align:center' colspan='2'>
 				<a href="?sort_field=2&amp;sort_order=d"><img style="width:10px" src="/images/up.gif" alt=""></a>
 				<a href="?sort_field=2&amp;sort_order=a"><img style="width:10px" src="/images/down.gif" alt=""></a>
@@ -386,6 +388,7 @@ print <<END;
 				<a href="?sort_field=4&amp;sort_order=d"><img style="width:10px" src="/images/up.gif" alt=""></a>
 				<a href="?sort_field=4&amp;sort_order=a"><img style="width:10px" src="/images/down.gif" alt=""></a>
 			</th>
+			<th>&nbsp;</th>
 			<th style='text-align:center'>
 				<a href="?sort_field=8&amp;sort_order=d"><img style="width:10px" src="/images/up.gif" alt=""></a>
 				<a href="?sort_field=8&amp;sort_order=a"><img style="width:10px" src="/images/down.gif" alt=""></a>
@@ -409,8 +412,14 @@ print <<END;
 			<th style='text-align:center' colspan='2'>
 				$Lang::tr{'source ip and port'}
 			</th>
+			<th style='text-align:center'>
+				$Lang::tr{'country'}
+			</th>
 			<th style='text-align:center' colspan='2'>
 				$Lang::tr{'dest ip and port'}
+			</th>
+			<th style='text-align:center'>
+				$Lang::tr{'country'}
 			</th>
 			<th style='text-align:center'>
 				$Lang::tr{'download'} /
@@ -540,6 +549,12 @@ foreach my $line (@conntrack) {
 	my $bytes_in = format_bytes($bytes[0]);
 	my $bytes_out = format_bytes($bytes[1]);
 
+	# enumerate GeoIP information
+	my $srcccode = &GeoIP::lookup($sip_ret);
+	my $src_flag_icon = &GeoIP::get_flag_icon($srcccode);
+	my $dstccode = &GeoIP::lookup($dip_ret);
+	my $dst_flag_icon = &GeoIP::get_flag_icon($dstccode);
+
 	# Format TTL
 	$ttl = format_time($ttl);
 
@@ -601,6 +616,9 @@ foreach my $line (@conntrack) {
 			</a>
 			$sport_extra
 		</td>
+		<td style='text-align:center; background-color:$sip_colour;'>
+			<a href='country.cgi#$srcccode'><img src='$src_flag_icon' border='0' align='absmiddle' alt='$srcccode' title='$srcccode' /></a>
+		</td>
 		<td style='text-align:center; background-color:$dip_colour;'>
 			<a href='/cgi-bin/ipinfo.cgi?ip=$dip'>
 				<span style='color:#FFFFFF;'>$dip</span>
@@ -612,6 +630,9 @@ foreach my $line (@conntrack) {
 				<span style='color:#FFFFFF;'>$dport</span>
 			</a>
 			$dport_extra
+		</td>
+		<td style='text-align:center; background-color:$sip_colour;'>
+			<a href='country.cgi#$dstccode'><img src='$dst_flag_icon' border='0' align='absmiddle' alt='$dstccode' title='$dstccode' /></a>
 		</td>
 		<td style='text-align:center'>
 			$bytes_in / $bytes_out
