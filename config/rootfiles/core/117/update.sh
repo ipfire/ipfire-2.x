@@ -43,6 +43,7 @@ ldconfig
 #/usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/apache reload
 
 # This update need a reboot...
 #touch /var/run/need_reboot
