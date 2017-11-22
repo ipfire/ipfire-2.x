@@ -24,10 +24,9 @@
 
 include Config
 
-VER         = 4.9.61
+VER         = 4.14.1
 RPI_PATCHES = 3.14.79-grsec-ipfire1
 A7M_PATCHES = 3.14.79-grsec-ipfire1
-GRS_PATCHES = grsecurity-3.1-4.9.61-ipfire1.patch.xz
 
 
 THISAPP    = linux-$(VER)
@@ -69,28 +68,20 @@ ifeq "$(KCFG)" "-kirkwood"
 LASTKERNEL=1
 endif
 
-# The buildsystem does not correctly detect if our compiler supports plugins
-export DISABLE_PAX_PLUGINS=y
-
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 objects =$(DL_FILE) \
 	rpi-patches-$(RPI_PATCHES).patch.xz \
-	arm7-multi-patches-$(A7M_PATCHES).patch.xz \
-	$(GRS_PATCHES)
-
+	arm7-multi-patches-$(A7M_PATCHES).patch.xz
 
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
-$(GRS_PATCHES)					= $(URL_IPFIRE)/$(GRS_PATCHES)
 
-$(DL_FILE)_MD5					= a5c6a81026a1d6591207981bff7ac027
+$(DL_FILE)_MD5					= 5de15914005314d964f37cff85a59048
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= a02a7fd54c642c1e3578a00ed22f54f8
 arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 6c3b11e51caa278dbeacd1e23c2b171b
-$(GRS_PATCHES)_MD5				= 5a1faaaea5ac5dcfbd14bd3145ad04d0
-
 
 install : $(TARGET)
 
@@ -126,26 +117,19 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
 	# Linux Intermediate Queueing Device
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9-imq.diff
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14-imq.diff
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.13-layer7.patch
-
-
-ifneq "$(KCFG)" "-headers"
-	# Grsecurity-patches
-	cd $(DIR_APP) && xz -c -d $(DIR_DL)/$(GRS_PATCHES) | patch -Np1
-	cd $(DIR_APP) && rm localversion-grsec
-endif
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14-layer7.patch
 
 	# DVB Patches
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
 
 	# Wlan Patches
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/backports-4.2.6-1_ath10k_remove_logspam.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/backports-4.2.6-1_ath10k_remove_logspam.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-ath_ignore_eeprom_regd.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-iwlwifi-noibss_only_on_radar_chan.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-rt2x00usb_suppress_queue_warnings.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-rt2x00usb_suppress_queue_warnings.patch
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.39-add_libertas_uap.patch
 
 	# mISDN Patches
@@ -156,7 +140,7 @@ endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.16-ledtrig_netdev.patch
 
 	# Fix igb and e1000e crash
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.17-igb-e1000e_fix_lock_at_update_stats.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.1-igb-e1000e_fix_lock_at_update_stats.patch
 
 	# cs5535audio spams syslog if no ac97 was present (geos router)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8_cs5535audio_fix_logspam_on_geos.patch
@@ -234,7 +218,6 @@ endif
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && make $(MAKETUNING) modules_install
-	cd $(DIR_APP) && make $(MAKETUNING) firmware_install
 
 ifeq "$(BUILD_PLATFORM)" "arm"
 	cd $(DIR_APP) && make $(MAKETUNING) dtbs

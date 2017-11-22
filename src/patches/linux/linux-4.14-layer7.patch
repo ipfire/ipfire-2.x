@@ -18,12 +18,12 @@ index 0000000..147cd64
 +
 +#endif /* _XT_LAYER7_H */
 diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 32810f2..b1e6b5c 100644
+index d448a48..868a876 100644
 --- a/include/linux/skbuff.h
 +++ b/include/linux/skbuff.h
-@@ -663,6 +663,9 @@ struct sk_buff {
+@@ -693,6 +693,9 @@ struct sk_buff {
  #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
- 	struct nf_conntrack	*nfct;
+ 	unsigned long		 _nfct;
  #endif
 +#if defined(CONFIG_NETFILTER_XT_MATCH_LAYER7) || defined(CONFIG_NETFILTER_XT_MATCH_LAYER7_MODULE)
 +	char			layer7_flags[1];
@@ -32,10 +32,10 @@ index 32810f2..b1e6b5c 100644
  	struct nf_bridge_info	*nf_bridge;
  #endif
 diff --git a/include/net/netfilter/nf_conntrack.h b/include/net/netfilter/nf_conntrack.h
-index d9d52c0..99b7a82 100644
+index 792c3f6..f24a6ac 100644
 --- a/include/net/netfilter/nf_conntrack.h
 +++ b/include/net/netfilter/nf_conntrack.h
-@@ -120,6 +120,23 @@ struct nf_conn {
+@@ -96,6 +96,23 @@ struct nf_conn {
  	/* Extensions */
  	struct nf_ct_ext *ext;
  
@@ -60,10 +60,10 @@ index d9d52c0..99b7a82 100644
  	union nf_conntrack_proto proto;
  };
 diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index e8d56d9..ab4ae1d 100644
+index e4a13cc..0b0f501 100644
 --- a/net/netfilter/Kconfig
 +++ b/net/netfilter/Kconfig
-@@ -1238,6 +1238,26 @@ config NETFILTER_XT_MATCH_L2TP
+@@ -1282,6 +1282,26 @@ config NETFILTER_XT_MATCH_L2TP
  
  	To compile it as a module, choose M here. If unsure, say N.
  
@@ -91,10 +91,10 @@ index e8d56d9..ab4ae1d 100644
  	tristate '"length" match support'
  	depends on NETFILTER_ADVANCED
 diff --git a/net/netfilter/Makefile b/net/netfilter/Makefile
-index c23c3c8..916b9d5 100644
+index f78ed24..268b7e7 100644
 --- a/net/netfilter/Makefile
 +++ b/net/netfilter/Makefile
-@@ -174,6 +174,7 @@ obj-$(CONFIG_NETFILTER_XT_MATCH_RECENT) += xt_recent.o
+@@ -180,6 +180,7 @@ obj-$(CONFIG_NETFILTER_XT_MATCH_RECENT) += xt_recent.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_SCTP) += xt_sctp.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_SOCKET) += xt_socket.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_STATE) += xt_state.o
@@ -103,10 +103,10 @@ index c23c3c8..916b9d5 100644
  obj-$(CONFIG_NETFILTER_XT_MATCH_STRING) += xt_string.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_TCPMSS) += xt_tcpmss.o
 diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 0f87e5d..1f355a0 100644
+index 0113039..871eaa2 100644
 --- a/net/netfilter/nf_conntrack_core.c
 +++ b/net/netfilter/nf_conntrack_core.c
-@@ -406,6 +406,11 @@ destroy_conntrack(struct nf_conntrack *nfct)
+@@ -427,6 +427,11 @@ destroy_conntrack(struct nf_conntrack *nfct)
  	 */
  	nf_ct_remove_expectations(ct);
  
@@ -119,10 +119,10 @@ index 0f87e5d..1f355a0 100644
  
  	local_bh_enable();
 diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
-index 5f446cd..92f29f9 100644
+index 5a101ca..88830c7 100644
 --- a/net/netfilter/nf_conntrack_standalone.c
 +++ b/net/netfilter/nf_conntrack_standalone.c
-@@ -274,6 +274,11 @@ static int ct_seq_show(struct seq_file *s, void *v)
+@@ -353,6 +353,11 @@ static int ct_seq_show(struct seq_file *s, void *v)
  	ct_show_zone(s, ct, NF_CT_DEFAULT_ZONE_DIR);
  	ct_show_delta_time(s, ct);
  
@@ -1498,10 +1498,10 @@ index 0000000..339631f
 +}
 diff --git a/net/netfilter/xt_layer7.c b/net/netfilter/xt_layer7.c
 new file mode 100644
-index 0000000..4a4f3f9
+index 0000000..db7d061
 --- /dev/null
 +++ b/net/netfilter/xt_layer7.c
-@@ -0,0 +1,682 @@
+@@ -0,0 +1,665 @@
 +/*
 +  Kernel module to match application layer (OSI layer 7) data in connections.
 +
@@ -2160,25 +2160,8 @@ index 0000000..4a4f3f9
 +
 +static void __exit xt_layer7_fini(void)
 +{
-+	struct pattern_cache * node               = first_pattern_cache;
-+	struct pattern_cache * next               = first_pattern_cache;
-+
 +	remove_proc_entry("layer7_numpackets", init_net.proc_net);
 +	xt_unregister_matches(xt_layer7_match, ARRAY_SIZE(xt_layer7_match));
-+
-+	/* Free pattern cache at module unload.
-+	Important: don't free string cache because conntrack pointers are
-+	still points to this strings */
-+	spin_lock_bh(&l7_lock);
-+	while (node != NULL) {
-+		next=node->next;
-+		if (node->regex_string!=NULL) kfree(node->regex_string);
-+		if (node->pattern!=NULL) kfree(node->pattern);
-+		kfree(node);
-+		node=next;
-+	}
-+	spin_unlock_bh(&l7_lock);
-+
 +}
 +
 +module_init(xt_layer7_init);
