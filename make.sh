@@ -767,14 +767,17 @@ if [ -f .config ]; then
 	. .config
 fi
 
+# TARGET_ARCH is BUILD_ARCH now
+if [ -n "${TARGET_ARCH}" ]; then
+	BUILD_ARCH="${TARGET_ARCH}"
+	unset TARGET_ARCH
+fi
+
 # Get the amount of memory in this build system
 HOST_MEM=$(system_memory)
 
 if [ -n "${BUILD_ARCH}" ]; then
 	configure_build "${BUILD_ARCH}"
-elif [ -n "${TARGET_ARCH}" ]; then
-	configure_build "${TARGET_ARCH}"
-	unset TARGET_ARCH
 else
 	configure_build "default"
 fi
