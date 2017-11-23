@@ -440,18 +440,15 @@ prepareenv() {
 	trap "exiterror 'Build process interrupted'" SIGINT SIGTERM SIGKILL SIGSTOP SIGQUIT
 
 	# Resetting our nice level
-	echo -ne "Resetting our nice level to $NICE" | tee -a $LOGFILE
-	renice $NICE $$ > /dev/null
-	if [ `nice` != "$NICE" ]; then
+	if ! renice ${NICE} $$ >/dev/null; then
 			beautify message FAIL
-			exiterror "Failed to set correct nice level"
+			exiterror "Failed to set nice level to ${NICE}"
 	else
 			beautify message DONE
 	fi
 
 	# Checking if running as root user
-	echo -ne "Checking if we're running as root user" | tee -a $LOGFILE
-	if [ `id -u` != 0 ]; then
+	if [ $(id -u) -ne 0 ]; then
 			beautify message FAIL
 			exiterror "Not building as root"
 	else
