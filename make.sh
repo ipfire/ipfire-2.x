@@ -1165,22 +1165,6 @@ gettoolchain)
 		echo "Toolchain is already downloaded. Exiting..."
 	fi
 	;;
-othersrc)
-	prepareenv
-	echo -ne "`date -u '+%b %e %T'`: Build sources iso for ${BUILD_ARCH}" | tee -a $LOGFILE
-	chroot $LFS /tools/bin/env -i   HOME=/root \
-	TERM=$TERM PS1='\u:\w\$ ' \
-	PATH=/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin \
-	VERSION=$VERSION NAME="$NAME" SNAME="$SNAME" BUILD_ARCH="${BUILD_ARCH}" \
-	/bin/bash -x -c "cd /usr/src/lfs && make -f sources-iso LFS_BASEDIR=/usr/src install" >>$LOGFILE 2>&1
-	mv $LFS/install/images/ipfire-* $BASEDIR >> $LOGFILE 2>&1
-	if [ $? -eq "0" ]; then
-		beautify message DONE
-	else
-		beautify message FAIL
-	fi
-	stdumount
-	;;
 uploadsrc)
 	PWD=`pwd`
 	if [ -z $IPFIRE_USER ]; then
