@@ -39,8 +39,53 @@ GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 
 TOOLCHAINVER=20171121
 
+###############################################################################
+#
+# Beautifying variables & presentation & input output interface
+#
+###############################################################################
+
+## Screen Dimentions
+# Find current screen size
+if [ -z "${COLUMNS}" ]; then
+	COLUMNS=$(stty size)
+	COLUMNS=${COLUMNS##* }
+fi
+
+# When using remote connections, such as a serial port, stty size returns 0
+if [ "${COLUMNS}" = "0" ]; then
+	COLUMNS=80
+fi
+
+## Measurements for positioning result messages
+RESULT_WIDTH=4
+TIME_WIDTH=8
+OPT_WIDTH=6
+VER_WIDTH=10
+RESULT_COL=$((${COLUMNS} - $RESULT_WIDTH - 4))
+TIME_COL=$((${RESULT_COL} - $TIME_WIDTH - 5))
+OPT_COL=$((${TIME_COL} - $OPT_WIDTH - 5))
+VER_COL=$((${OPT_COL} - $VER_WIDTH - 5))
+
+## Set Cursur Position Commands, used via echo -e
+SET_RESULT_COL="\\033[${RESULT_COL}G"
+SET_TIME_COL="\\033[${TIME_COL}G"
+SET_OPT_COL="\\033[${OPT_COL}G"
+SET_VER_COL="\\033[${VER_COL}G"
+
+# Define color for messages
+BOLD="\\033[1;39m"
+DONE="\\033[1;32m"
+SKIP="\\033[1;34m"
+WARN="\\033[1;35m"
+FAIL="\\033[1;31m"
+NORMAL="\\033[0;39m"
+
 # New architecture variables
 HOST_ARCH="$(uname -m)"
+
+PWD=$(pwd)
+BASENAME=$(basename $0)
 
 # Debian specific settings
 if [ ! -e /etc/debian_version ]; then
@@ -54,21 +99,673 @@ else
 	fi
 fi
 
-PWD=`pwd`
-BASENAME=`basename $0`
-BASEDIR=`echo $FULLPATH | sed "s/\/$BASENAME//g"`
+# This is the directory where make.sh is in
+BASEDIR=$(echo $FULLPATH | sed "s/\/$BASENAME//g")
+
 LOGFILE=$BASEDIR/log/_build.preparation.log
 export BASEDIR LOGFILE
 DIR_CHK=$BASEDIR/cache/check
 mkdir $BASEDIR/log/ 2>/dev/null
 
+system_processors() {
+	getconf _NPROCESSORS_ONLN 2>/dev/null || echo "1"
+}
+
+system_memory() {
+	local key val unit
+
+	while read -r key val unit; do
+		case "${key}" in
+			MemTotal:*)
+				# Convert to MB
+				echo "$(( ${val} / 1024 ))"
+				break
+				;;
+		esac
+	done < /proc/meminfo
+}
+
+configure_build() {
+	local build_arch="${1}"
+
+	if [ "${build_arch}" = "default" ]; then
+		build_arch="$(configure_build_guess)"
+	fi
+
+	case "${build_arch}" in
+		x86_64)
+			BUILDTARGET="${build_arch}-unknown-linux-gnu"
+			CROSSTARGET="${build_arch}-cross-linux-gnu"
+			BUILD_PLATFORM="x86"
+			CFLAGS_ARCH="-m64 -mtune=generic"
+			;;
+
+		i586)
+			BUILDTARGET="${build_arch}-pc-linux-gnu"
+			CROSSTARGET="${build_arch}-cross-linux-gnu"
+			BUILD_PLATFORM="x86"
+			CFLAGS_ARCH="-march=i586 -mtune=generic -fomit-frame-pointer"
+			;;
+
+		aarch64)
+			BUILDTARGET="${build_arch}-unknown-linux-gnu"
+			CROSSTARGET="${build_arch}-cross-linux-gnu"
+			BUILD_PLATFORM="arm"
+			CFLAGS_ARCH=""
+			;;
+
+		armv7hl)
+			BUILDTARGET="${build_arch}-unknown-linux-gnueabi"
+			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
+			BUILD_PLATFORM="arm"
+			CFLAGS_ARCH="-march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard"
+			;;
+
+		armv5tel)
+			BUILDTARGET="${build_arch}-unknown-linux-gnueabi"
+			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
+			BUILD_PLATFORM="arm"
+			CFLAGS_ARCH="-march=armv5te -mfloat-abi=soft -fomit-frame-pointer"
+			;;
+
+		*)
+			exiterror "Cannot build for architure ${build_arch}"
+			;;
+	esac
+
+	# Check if the QEMU helper is available if needed.
+	if qemu_is_required "${build_arch}"; then
+		local qemu_build_helper="$(qemu_find_build_helper_name "${build_arch}")"
+
+		if [ -n "${qemu_build_helper}" ]; then
+			QEMU_TARGET_HELPER="${qemu_build_helper}"
+		else
+			exiterror "Could not find a binfmt_misc helper entry for ${build_arch}"
+		fi
+	fi
+
+	BUILD_ARCH="${build_arch}"
+	TOOLS_DIR="/tools_${BUILD_ARCH}"
+
+	# Enables hardening
+	HARDENING_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong --param=ssp-buffer-size=4"
+
+	CFLAGS="-O2 -pipe -Wall -fexceptions -fPIC ${CFLAGS_ARCH}"
+	CXXFLAGS="${CFLAGS}"
+
+	# Determine parallelism
+	if [ -z "${MAKETUNING}" ]; then
+		# We assume that each process consumes about
+		# 192MB of memory. Therefore we find out how
+		# many processes fit into memory.
+		local mem_max=$(( ${HOST_MEM} / 192 ))
+
+		local processors="$(system_processors)"
+		local cpu_max=$(( ${processors} * 2 ))
+
+		local parallelism
+		if [ ${mem_max} -lt ${cpu_max} ]; then
+			parallelism=${mem_max}
+		else
+			parallelism=${cpu_max}
+		fi
+
+		MAKETUNING="-j${parallelism}"
+	fi
+}
+
+configure_build_guess() {
+	case "${HOST_ARCH}" in
+		x86_64|i686|i586)
+			echo "i586"
+			;;
+
+		aarch64)
+			echo "aarch64"
+			;;
+
+		armv7*|armv6*|armv5*)
+			echo "armv5tel"
+			;;
+
+		*)
+			exiterror "Cannot guess build architecture"
+			;;
+	esac
+}
+
+evaluate() {
+	if [ "$?" -eq "0" ]; then
+		beautify message DONE
+	else
+		EXITCODE=$1
+		shift 1
+		beautify message FAIL
+		$*
+		if [ $EXITCODE -ne "0" ]; then
+			exit $EXITCODE
+		fi
+	fi
+}
+
+position_cursor() {
+	# ARG1=starting position on screen
+	# ARG2=string to be printed
+	# ARG3=offset, negative for left movement, positive for right movement, relative to ARG1
+	# For example if your starting position is column 50 and you want to print Hello three columns to the right
+	# of your starting position, your call will look like this:
+	# position_cursor 50 "Hello" 3 (you'll get the string Hello at position 53 (= 50 + 3)
+	# If on the other hand you want your string "Hello" to end three columns to the left of position 50,
+	# your call will look like this:
+	# position_cursor 50 "Hello" -3 (you'll get the string Hello at position 42 (= 50 - 5 -3)
+	# If you want to start printing at the exact starting location, use offset 0
+
+	START=$1
+	STRING=$2
+	OFFSET=$3
+
+	STRING_LENGTH=${#STRING}
+
+	if [ ${OFFSET} -lt 0 ]; then
+		COL=$((${START} + ${OFFSET} - ${STRING_LENGTH}))
+	else
+		COL=$((${START} + ${OFFSET}))
+	fi
+
+	SET_COL="\\033[${COL}G"
+
+	echo $SET_COL
+}
+
+beautify() {
+	# Commands: build_stage, make_pkg, message, result
+	case "$1" in
+		message)
+			case "$2" in
+				DONE)
+					echo -ne "${SET_RESULT_COL}[${DONE} DONE ${NORMAL}]\n"
+					;;
+				WARN)
+					echo -ne "${WARN}${3}${NORMAL}${SET_RESULT_COL}[${WARN} WARN ${NORMAL}]\n"
+					;;
+				FAIL)
+					echo -ne "${SET_RESULT_COL}[${FAIL} FAIL ${NORMAL}]\n"
+					;;
+				SKIP)
+					echo -ne "${SET_RESULT_COL}[${SKIP} SKIP ${NORMAL}]\n"
+					;;
+			esac
+			;;
+		build_stage)
+			MESSAGE=$2
+			if [ "$STAGE_TIME_START" ]; then
+				LAST_STAGE_TIME=$[ `date +%s` - $STAGE_TIME_START ]
+			fi
+			STAGE_TIME_START=`date +%s`
+			echo -ne "${BOLD}*** (${BUILD_ARCH}) ${MESSAGE}${NORMAL}"
+			if [ "$LAST_STAGE_TIME" ]; then
+				echo -ne "${DONE} (Last stage took $LAST_STAGE_TIME secs)${NORMAL}\n"
+			fi
+			echo -ne "${BOLD}${SET_VER_COL}      version${SET_OPT_COL} options${SET_TIME_COL} time (sec)${SET_RESULT_COL} status${NORMAL}\n"
+			;;
+		build_start)
+			BUILD_TIME_START=`date +%s`
+			;;
+		build_end)
+			BUILD_TIME_END=`date +%s`
+			seconds=$[ $BUILD_TIME_END - $BUILD_TIME_START ]
+			hours=$((seconds / 3600))
+			seconds=$((seconds % 3600))
+			minutes=$((seconds / 60))
+			seconds=$((seconds % 60))
+
+			echo -ne "${DONE}***Build is finished now and took $hours hour(s) $minutes minute(s) $seconds second(s)!${NORMAL}\n"
+			;;
+		make_pkg)
+			echo "$2" | while read PKG_VER PROGRAM OPTIONS
+			do
+				SET_VER_COL_REAL=`position_cursor $OPT_COL $PKG_VER -3`
+
+				if [ "$OPTIONS" == "" ]; then
+					echo -ne "${PROGRAM}${SET_VER_COL}[ ${BOLD}${SET_VER_COL_REAL}${PKG_VER}"
+					echo -ne "${NORMAL} ]${SET_RESULT_COL}"
+				else
+					echo -ne "${PROGRAM}${SET_VER_COL}[ ${BOLD}${SET_VER_COL_REAL}${PKG_VER}"
+					echo -ne "${NORMAL} ]${SET_OPT_COL}[ ${BOLD}${OPTIONS}"
+					echo -ne "${NORMAL} ]${SET_RESULT_COL}"
+				fi
+			done
+			;;
+		result)
+			RESULT=$2
+
+			if [ ! $3 ]; then
+				PKG_TIME=0
+			else
+				PKG_TIME=$3
+			fi
+
+			SET_TIME_COL_REAL=`position_cursor $RESULT_COL $PKG_TIME -3`
+			case "$RESULT" in
+				DONE)
+					echo -ne "${SET_TIME_COL}[ ${BOLD}${SET_TIME_COL_REAL}$PKG_TIME${NORMAL} ]"
+					echo -ne "${SET_RESULT_COL}[${DONE} DONE ${NORMAL}]\n"
+					;;
+				FAIL)
+					echo -ne "${SET_TIME_COL}[ ${BOLD}${SET_TIME_COL_REAL}$PKG_TIME${NORMAL} ]"
+					echo -ne "${SET_RESULT_COL}[${FAIL} FAIL ${NORMAL}]\n"
+					;;
+				SKIP)
+					echo -ne "${SET_RESULT_COL}[${SKIP} SKIP ${NORMAL}]\n"
+					;;
+			esac
+			;;
+	esac
+}
+
+get_pkg_ver() {
+	PKG_VER=`grep -E "^VER |^VER=|^VER	" $1 | awk '{print $3}'`
+
+	if [ -z $PKG_VER ]; then
+		PKG_VER=`grep "Exp " $1 | awk '{print $4}'`
+	fi
+	if [ -z $PKG_VER ]; then
+		PKG_VER="?"
+	fi
+	if [ ${#PKG_VER} -gt $VER_WIDTH ]; then
+		# If a package version number is greater than $VER_WIDTH, we keep the first 4 characters
+		# and replace enough characters to fit the resulting string on the screen.  We'll replace
+		# the extra character with .. (two dots).  That's why the "+ 2" in the formula below.
+		# Example: if we have a 21-long version number that we want to fit into a 10-long space,
+		# we have to remove 11 characters.  But if we replace 11 characters with 2 characters, we'll
+		# end up with a 12-character long string.  That's why we replace 12 characters with ..
+		REMOVE=`expr substr "$PKG_VER" 4 $[ ${#PKG_VER} - $VER_WIDTH + 2 ]`
+		PKG_VER=`echo ${PKG_VER/$REMOVE/..}`
+	fi
+
+	echo "$PKG_VER"
+}
+
+stdumount() {
+	umount $BASEDIR/build/sys			2>/dev/null;
+	umount $BASEDIR/build/dev/shm		2>/dev/null;
+	umount $BASEDIR/build/dev/pts		2>/dev/null;
+	umount $BASEDIR/build/dev			2>/dev/null;
+	umount $BASEDIR/build/proc			2>/dev/null;
+	umount $BASEDIR/build/install/mnt		2>/dev/null;
+	umount $BASEDIR/build/usr/src/cache	2>/dev/null;
+	umount $BASEDIR/build/usr/src/ccache	2>/dev/null;
+	umount $BASEDIR/build/usr/src/config	2>/dev/null;
+	umount $BASEDIR/build/usr/src/doc		2>/dev/null;
+	umount $BASEDIR/build/usr/src/html		2>/dev/null;
+	umount $BASEDIR/build/usr/src/langs	2>/dev/null;
+	umount $BASEDIR/build/usr/src/lfs		2>/dev/null;
+	umount $BASEDIR/build/usr/src/log		2>/dev/null;
+	umount $BASEDIR/build/usr/src/src		2>/dev/null;
+}
+
+exiterror() {
+	stdumount
+	for i in `seq 0 7`; do
+		if ( losetup /dev/loop${i} 2>/dev/null | grep -q "/install/images" ); then
+		losetup -d /dev/loop${i} 2>/dev/null
+		fi;
+	done
+
+	if [ -n "${LOGFILE}" ]; then
+		echo # empty line
+
+		local line
+		while read -r line; do
+			echo "    ${line}"
+		done <<< "$(tail -n30 ${LOGFILE})"
+	fi
+
+	echo -e "\nERROR: $*"
+	echo "       Check $LOGFILE for errors if applicable"
+	exit 1
+}
+
+enterchroot() {
+	# Install QEMU helper, if needed
+	qemu_install_helper
+
+	local PATH="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/bin"
+
+	PATH="${PATH}" chroot ${LFS} env -i \
+		HOME="/root" \
+		TERM="${TERM}" \
+		PS1="${PS1}" \
+		PATH="${PATH}" \
+		SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
+		PAKFIRE_CORE="${PAKFIRE_CORE}" \
+		NAME="${NAME}" \
+		SNAME="${SNAME}" \
+		VERSION="${VERSION}" \
+		CORE="${CORE}" \
+		SLOGAN="${SLOGAN}" \
+		TOOLS_DIR="${TOOLS_DIR}" \
+		CONFIG_ROOT="${CONFIG_ROOT}" \
+		CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
+		CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
+		BUILDTARGET="${BUILDTARGET}" \
+		CROSSTARGET="${CROSSTARGET}" \
+		BUILD_ARCH="${BUILD_ARCH}" \
+		BUILD_PLATFORM="${BUILD_PLATFORM}" \
+		CCACHE_DIR=/usr/src/ccache \
+		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
+		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
+		KVER="${KVER}" \
+		$(fake_environ) \
+		$(qemu_environ) \
+		"$@"
+}
+
+entershell() {
+	if [ ! -e $BASEDIR/build/usr/src/lfs/ ]; then
+		exiterror "No such file or directory: $BASEDIR/build/usr/src/lfs/"
+	fi
+
+	echo "Entering to a shell inside LFS chroot, go out with exit"
+	local PS1="ipfire build chroot ($(uname -m)) \u:\w\$ "
+
+	if enterchroot bash -i; then
+		stdumount
+	else
+		beautify message FAIL
+		exiterror "chroot error"
+	fi
+}
+
+lfsmakecommoncheck() {
+	# Script present?
+	if [ ! -f $BASEDIR/lfs/$1 ]; then
+		exiterror "No such file or directory: $BASEDIR/$1"
+	fi
+
+	local PKG_VER=`get_pkg_ver $BASEDIR/lfs/$1`
+	beautify make_pkg "$PKG_VER $*"
+
+	# Check if this package is supported by our architecture.
+	# If no SUP_ARCH is found, we assume the package can be built for all.
+	if grep "^SUP_ARCH" ${BASEDIR}/lfs/${1} >/dev/null; then
+		# Check if package supports ${BUILD_ARCH} or all architectures.
+		if ! grep -E "^SUP_ARCH.*${BUILD_ARCH}|^SUP_ARCH.*all" ${BASEDIR}/lfs/${1} >/dev/null; then
+			beautify result SKIP
+			return 1
+		fi
+	fi
+
+	# Script slipped?
+	local i
+	for i in $SKIP_PACKAGE_LIST
+	do
+		if [ "$i" == "$1" ]; then
+			beautify result SKIP
+			return 1;
+		fi
+	done
+
+	echo -ne "`date -u '+%b %e %T'`: Building $* " >> $LOGFILE
+
+	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
+		MESSAGE="$1\t " download  >> $LOGFILE 2>&1
+	if [ $? -ne 0 ]; then
+		exiterror "Download error in $1"
+	fi
+
+	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
+		MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
+	if [ $? -ne 0 ]; then
+		exiterror "md5sum error in $1, check file in cache or signature"
+	fi
+
+	return 0	# pass all!
+}
+
+lfsmake1() {
+	lfsmakecommoncheck $*
+	[ $? == 1 ] && return 0
+
+	local PKG_TIME_START=`date +%s`
+
+	cd $BASEDIR/lfs && env -i \
+		PATH="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/bin:$PATH" \
+		CCACHE_DIR="${CCACHE_DIR}" \
+		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
+		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
+		CFLAGS="${CFLAGS}" \
+		CXXFLAGS="${CXXFLAGS}" \
+		MAKETUNING="${MAKETUNING}" \
+		make -f $* \
+			TOOLCHAIN=1 \
+			TOOLS_DIR="${TOOLS_DIR}" \
+			CROSSTARGET="${CROSSTARGET}" \
+			BUILDTARGET="${BUILDTARGET}" \
+			BUILD_ARCH="${BUILD_ARCH}" \
+			BUILD_PLATFORM="${BUILD_PLATFORM}" \
+			LFS_BASEDIR="${BASEDIR}" \
+			ROOT="${LFS}" \
+			KVER="${KVER}" \
+			install >> $LOGFILE 2>&1
+
+	local COMPILE_SUCCESS=$?
+	local PKG_TIME_END=`date +%s`
+
+	if [ $COMPILE_SUCCESS -ne 0 ]; then
+		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
+		exiterror "Building $*";
+	else
+		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
+	fi
+
+	return 0
+}
+
+lfsmake2() {
+	lfsmakecommoncheck $*
+	[ $? == 1 ] && return 0
+
+	local PKG_TIME_START=`date +%s`
+	local PS1='\u:\w$ '
+
+	enterchroot \
+		bash -x -c "cd /usr/src/lfs && \
+			MAKETUNING=${MAKETUNING} \
+			make -f $* \
+			LFS_BASEDIR=/usr/src install" \
+		>> ${LOGFILE} 2>&1
+
+	local COMPILE_SUCCESS=$?
+	local PKG_TIME_END=`date +%s`
+
+	if [ $COMPILE_SUCCESS -ne 0 ]; then
+		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
+		exiterror "Building $*";
+	else
+		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
+	fi
+
+	return 0
+}
+
+ipfiredist() {
+	lfsmakecommoncheck $*
+	[ $? == 1 ] && return 0
+
+	local PKG_TIME_START=`date +%s`
+	local PS1='\u:\w$ '
+
+	enterchroot \
+		bash -x -c "cd /usr/src/lfs && make -f $* LFS_BASEDIR=/usr/src dist" \
+		>> ${LOGFILE} 2>&1
+
+	local COMPILE_SUCCESS=$?
+	local PKG_TIME_END=`date +%s`
+
+	if [ $COMPILE_SUCCESS -ne 0 ]; then
+		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
+		exiterror "Packaging $*";
+	else
+		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
+	fi
+	return 0
+}
+
+fake_environ() {
+	[ -e "${BASEDIR}/build${TOOLS_DIR}/lib/libpakfire_preload.so" ] || return
+
+	local env="LD_PRELOAD=${TOOLS_DIR}/lib/libpakfire_preload.so"
+
+	# Fake kernel version, because some of the packages do not compile
+	# with kernel 3.0 and later.
+	env="${env} UTS_RELEASE=${KVER}"
+
+	# Fake machine version.
+	env="${env} UTS_MACHINE=${BUILD_ARCH}"
+
+	echo "${env}"
+}
+
+qemu_environ() {
+	local env
+
+	# Don't add anything if qemu is not used.
+	if ! qemu_is_required; then
+		return
+	fi
+
+	# Set default qemu options
+	case "${BUILD_ARCH}" in
+		arm*)
+			QEMU_CPU="${QEMU_CPU:-cortex-a9}"
+
+			env="${env} QEMU_CPU=${QEMU_CPU}"
+			;;
+	esac
+
+	# Enable QEMU strace
+	#env="${env} QEMU_STRACE=1"
+
+	echo "${env}"
+}
+
+qemu_is_required() {
+	local build_arch="${1}"
+
+	if [ -z "${build_arch}" ]; then
+		build_arch="${BUILD_ARCH}"
+	fi
+
+	case "${HOST_ARCH},${build_arch}" in
+		x86_64,arm*|i?86,arm*|i?86,x86_64)
+			return 0
+			;;
+		*)
+			return 1
+			;;
+	esac
+}
+
+qemu_install_helper() {
+	# Do nothing, if qemu is not required
+	if ! qemu_is_required; then
+		return 0
+	fi
+
+	if [ ! -e /proc/sys/fs/binfmt_misc/status ]; then
+		exiterror "binfmt_misc not mounted. QEMU_TARGET_HELPER not useable."
+	fi
+
+	if [ ! $(cat /proc/sys/fs/binfmt_misc/status) = 'enabled' ]; then
+		exiterror "binfmt_misc not enabled. QEMU_TARGET_HELPER not useable."
+	fi
+
+
+	if [ -z "${QEMU_TARGET_HELPER}" ]; then
+		exiterror "QEMU_TARGET_HELPER not set"
+	fi
+
+	# Check if the helper is already installed.
+	if [ -x "${LFS}${QEMU_TARGET_HELPER}" ]; then
+		return 0
+	fi
+
+	# Try to find a suitable binary that we can install
+	# to the build environment.
+	local file
+	for file in "${QEMU_TARGET_HELPER}" "${QEMU_TARGET_HELPER}-static"; do
+		# file must exist and be executable.
+		[ -x "${file}" ] || continue
+
+		# Must be static.
+		file_is_static "${file}" || continue
+
+		local dirname="${LFS}$(dirname "${file}")"
+		mkdir -p "${dirname}"
+
+		install -m 755 "${file}" "${LFS}${QEMU_TARGET_HELPER}"
+		return 0
+	done
+
+	exiterror "Could not find a statically-linked QEMU emulator: ${QEMU_TARGET_HELPER}"
+}
+
+qemu_find_build_helper_name() {
+	local build_arch="${1}"
+
+	local magic
+	case "${build_arch}" in
+		arm*)
+			magic="7f454c4601010100000000000000000002002800"
+			;;
+		x86_64)
+			magic="7f454c4602010100000000000000000002003e00"
+			;;
+	esac
+
+	[ -z "${magic}" ] && return 1
+
+	local file
+	for file in /proc/sys/fs/binfmt_misc/*; do
+		# skip write only register entry
+		[ $(basename "${file}") = "register" ] && continue
+		# Search for the file with the correct magic value.
+		grep -qE "^magic ${magic}$" "${file}" || continue
+
+		local interpreter="$(grep "^interpreter" "${file}" | awk '{ print $2 }')"
+
+		[ -n "${interpreter}" ] || continue
+		[ "${interpreter:0:1}" = "/" ] || continue
+		[ -x "${interpreter}" ] || continue
+
+		echo "${interpreter}"
+		return 0
+	done
+
+	return 1
+}
+
+file_is_static() {
+	local file="${1}"
+
+	file ${file} 2>/dev/null | grep -q "statically linked"
+}
+
+update_language_list() {
+	local path="${1}"
+
+	local lang
+	for lang in ${path}/*.po; do
+		lang="$(basename "${lang}")"
+		echo "${lang%*.po}"
+	done | sort -u > "${path}/LINGUAS"
+}
+
 # Load configuration file
 if [ -f .config ]; then
 	. .config
 fi
-
-# Include funtions
-. tools/make-functions
 
 # Get the amount of memory in this build system
 HOST_MEM=$(system_memory)
@@ -83,301 +780,301 @@ else
 fi
 
 prepareenv() {
-    ############################################################################
-    #                                                                          #
-    # Are we running the right shell?                                          #
-    #                                                                          #
-    ############################################################################
-    if [ ! "$BASH" ]; then
+	############################################################################
+	#                                                                          #
+	# Are we running the right shell?                                          #
+	#                                                                          #
+	############################################################################
+	if [ ! "$BASH" ]; then
 			exiterror "BASH environment variable is not set.  You're probably running the wrong shell."
-    fi
+	fi
 
-    if [ -z "${BASH_VERSION}" ]; then
+	if [ -z "${BASH_VERSION}" ]; then
 			exiterror "Not running BASH shell."
-    fi
+	fi
 
 
-    ############################################################################
-    #                                                                          #
-    # Trap on emergency exit                                                   #
-    #                                                                          #
-    ############################################################################
-    trap "exiterror 'Build process interrupted'" SIGINT SIGTERM SIGKILL SIGSTOP SIGQUIT
+	############################################################################
+	#                                                                          #
+	# Trap on emergency exit                                                   #
+	#                                                                          #
+	############################################################################
+	trap "exiterror 'Build process interrupted'" SIGINT SIGTERM SIGKILL SIGSTOP SIGQUIT
 
 
-    ############################################################################
-    #                                                                          #
-    # Resetting our nice level                                                 #
-    #                                                                          #
-    ############################################################################
-    echo -ne "Resetting our nice level to $NICE" | tee -a $LOGFILE
-    renice $NICE $$ > /dev/null
-    if [ `nice` != "$NICE" ]; then
+	############################################################################
+	#                                                                          #
+	# Resetting our nice level                                                 #
+	#                                                                          #
+	############################################################################
+	echo -ne "Resetting our nice level to $NICE" | tee -a $LOGFILE
+	renice $NICE $$ > /dev/null
+	if [ `nice` != "$NICE" ]; then
 			beautify message FAIL
 			exiterror "Failed to set correct nice level"
-    else
+	else
 			beautify message DONE
-    fi
+	fi
 
 
-    ############################################################################
-    #                                                                          #
-    # Checking if running as root user                                         #
-    #                                                                          #
-    ############################################################################
-    echo -ne "Checking if we're running as root user" | tee -a $LOGFILE
-    if [ `id -u` != 0 ]; then
+	############################################################################
+	#                                                                          #
+	# Checking if running as root user                                         #
+	#                                                                          #
+	############################################################################
+	echo -ne "Checking if we're running as root user" | tee -a $LOGFILE
+	if [ `id -u` != 0 ]; then
 			beautify message FAIL
 			exiterror "Not building as root"
-    else
+	else
 			beautify message DONE
-    fi
+	fi
 
 
-    ############################################################################
-    #                                                                          #
-    # Checking for necessary temporary space                                   #
-    #                                                                          #
-    ############################################################################
-    echo -ne "Checking for necessary space on disk $BASE_DEV" | tee -a $LOGFILE
-    BASE_DEV=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $1 }'`
-    BASE_ASPACE=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $4 }'`
-    if (( 2048000 > $BASE_ASPACE )); then
+	############################################################################
+	#                                                                          #
+	# Checking for necessary temporary space                                   #
+	#                                                                          #
+	############################################################################
+	echo -ne "Checking for necessary space on disk $BASE_DEV" | tee -a $LOGFILE
+	BASE_DEV=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $1 }'`
+	BASE_ASPACE=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $4 }'`
+	if (( 2048000 > $BASE_ASPACE )); then
 			BASE_USPACE=`du -skx $BASEDIR | awk '{print $1}'`
 			if (( 2048000 - $BASE_USPACE > $BASE_ASPACE )); then
 				beautify message FAIL
 				exiterror "Not enough temporary space available, need at least 2GB on $BASE_DEV"
 			fi
-    else
+	else
 			beautify message DONE
-    fi
+	fi
 
-    ############################################################################
-    #                                                                          #
-    # Building Linux From Scratch system                                       #
-    #                                                                          #
-    ############################################################################
-    # Set umask
-    umask 022
+	############################################################################
+	#                                                                          #
+	# Building Linux From Scratch system                                       #
+	#                                                                          #
+	############################################################################
+	# Set umask
+	umask 022
 
-    # Set LFS Directory
-    LFS=$BASEDIR/build
+	# Set LFS Directory
+	LFS=$BASEDIR/build
 
-    # Check ${TOOLS_DIR} symlink
-    if [ -h "${TOOLS_DIR}" ]; then
-      rm -f "${TOOLS_DIR}"
-    fi
+	# Check ${TOOLS_DIR} symlink
+	if [ -h "${TOOLS_DIR}" ]; then
+	  rm -f "${TOOLS_DIR}"
+	fi
 
-    if [ ! -e "${TOOLS_DIR}" ]; then
-       ln -s "${BASEDIR}/build${TOOLS_DIR}" "${TOOLS_DIR}"
-    fi
+	if [ ! -e "${TOOLS_DIR}" ]; then
+	   ln -s "${BASEDIR}/build${TOOLS_DIR}" "${TOOLS_DIR}"
+	fi
 
-    if [ ! -h "${TOOLS_DIR}" ]; then
-      exiterror "Could not create ${TOOLS_DIR} symbolic link"
-    fi
+	if [ ! -h "${TOOLS_DIR}" ]; then
+	  exiterror "Could not create ${TOOLS_DIR} symbolic link"
+	fi
 
-    # Setup environment
-    set +h
-    LC_ALL=POSIX
-    export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
-    unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
+	# Setup environment
+	set +h
+	LC_ALL=POSIX
+	export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
+	unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
-    # Make some extra directories
-    mkdir -p "${BASEDIR}/build${TOOLS_DIR}" 2>/dev/null
-    mkdir -p $BASEDIR/build/{etc,usr/src} 2>/dev/null
-    mkdir -p $BASEDIR/build/{dev/{shm,pts},proc,sys}
-    mkdir -p $BASEDIR/{cache,ccache} 2>/dev/null
-    mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
+	# Make some extra directories
+	mkdir -p "${BASEDIR}/build${TOOLS_DIR}" 2>/dev/null
+	mkdir -p $BASEDIR/build/{etc,usr/src} 2>/dev/null
+	mkdir -p $BASEDIR/build/{dev/{shm,pts},proc,sys}
+	mkdir -p $BASEDIR/{cache,ccache} 2>/dev/null
+	mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
 
-    mknod -m 600 $BASEDIR/build/dev/console c 5 1 2>/dev/null
-    mknod -m 666 $BASEDIR/build/dev/null c 1 3 2>/dev/null
+	mknod -m 600 $BASEDIR/build/dev/console c 5 1 2>/dev/null
+	mknod -m 666 $BASEDIR/build/dev/null c 1 3 2>/dev/null
 
-    # Make all sources and proc available under lfs build
-    mount --bind /dev            $BASEDIR/build/dev
-    mount --bind /dev/pts        $BASEDIR/build/dev/pts
-    mount --bind /dev/shm        $BASEDIR/build/dev/shm
-    mount --bind /proc           $BASEDIR/build/proc
-    mount --bind /sys            $BASEDIR/build/sys
-    mount --bind $BASEDIR/cache  $BASEDIR/build/usr/src/cache
-    mount --bind $BASEDIR/ccache $BASEDIR/build/usr/src/ccache
-    mount --bind $BASEDIR/config $BASEDIR/build/usr/src/config
-    mount --bind $BASEDIR/doc    $BASEDIR/build/usr/src/doc
-    mount --bind $BASEDIR/html   $BASEDIR/build/usr/src/html
-    mount --bind $BASEDIR/langs  $BASEDIR/build/usr/src/langs
-    mount --bind $BASEDIR/lfs    $BASEDIR/build/usr/src/lfs
-    mount --bind $BASEDIR/log    $BASEDIR/build/usr/src/log
-    mount --bind $BASEDIR/src    $BASEDIR/build/usr/src/src
+	# Make all sources and proc available under lfs build
+	mount --bind /dev            $BASEDIR/build/dev
+	mount --bind /dev/pts        $BASEDIR/build/dev/pts
+	mount --bind /dev/shm        $BASEDIR/build/dev/shm
+	mount --bind /proc           $BASEDIR/build/proc
+	mount --bind /sys            $BASEDIR/build/sys
+	mount --bind $BASEDIR/cache  $BASEDIR/build/usr/src/cache
+	mount --bind $BASEDIR/ccache $BASEDIR/build/usr/src/ccache
+	mount --bind $BASEDIR/config $BASEDIR/build/usr/src/config
+	mount --bind $BASEDIR/doc    $BASEDIR/build/usr/src/doc
+	mount --bind $BASEDIR/html   $BASEDIR/build/usr/src/html
+	mount --bind $BASEDIR/langs  $BASEDIR/build/usr/src/langs
+	mount --bind $BASEDIR/lfs    $BASEDIR/build/usr/src/lfs
+	mount --bind $BASEDIR/log    $BASEDIR/build/usr/src/log
+	mount --bind $BASEDIR/src    $BASEDIR/build/usr/src/src
 
-    # Run LFS static binary creation scripts one by one
-    export CCACHE_DIR=$BASEDIR/ccache
-    export CCACHE_COMPRESS=1
-    export CCACHE_COMPILERCHECK="string:toolchain-${TOOLCHAINVER} ${BUILD_ARCH}"
+	# Run LFS static binary creation scripts one by one
+	export CCACHE_DIR=$BASEDIR/ccache
+	export CCACHE_COMPRESS=1
+	export CCACHE_COMPILERCHECK="string:toolchain-${TOOLCHAINVER} ${BUILD_ARCH}"
 
-    # Remove pre-install list of installed files in case user erase some files before rebuild
-    rm -f $BASEDIR/build/usr/src/lsalr 2>/dev/null
+	# Remove pre-install list of installed files in case user erase some files before rebuild
+	rm -f $BASEDIR/build/usr/src/lsalr 2>/dev/null
 
-    # Prepare string for /etc/system-release.
-    SYSTEM_RELEASE="${NAME} ${VERSION} (${BUILD_ARCH})"
-    if [ "$(git status -s | wc -l)" == "0" ]; then
+	# Prepare string for /etc/system-release.
+	SYSTEM_RELEASE="${NAME} ${VERSION} (${BUILD_ARCH})"
+	if [ "$(git status -s | wc -l)" == "0" ]; then
 	GIT_STATUS=""
-    else
+	else
 	GIT_STATUS="-dirty"
-    fi
-    case "$GIT_BRANCH" in
+	fi
+	case "$GIT_BRANCH" in
 	core*|beta?|rc?)
 		SYSTEM_RELEASE="${SYSTEM_RELEASE} - $GIT_BRANCH$GIT_STATUS"
 		;;
 	*)
 		SYSTEM_RELEASE="${SYSTEM_RELEASE} - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT$GIT_STATUS"
 		;;
-    esac
+	esac
 }
 
 buildtoolchain() {
-    local error=false
-    case "${BUILD_ARCH}:${HOST_ARCH}" in
-        # x86_64
-        x86_64:x86_64)
-             # This is working.
-             ;;
+	local error=false
+	case "${BUILD_ARCH}:${HOST_ARCH}" in
+		# x86_64
+		x86_64:x86_64)
+			 # This is working.
+			 ;;
 
-        # x86
-        i586:i586|i586:i686|i586:x86_64)
-            # These are working.
-            ;;
-        i586:*)
-            error=true
-            ;;
+		# x86
+		i586:i586|i586:i686|i586:x86_64)
+			# These are working.
+			;;
+		i586:*)
+			error=true
+			;;
 
-        # ARM
-        arvm7hl:armv7hl|armv7hl:armv7l)
-            # These are working.
-            ;;
+		# ARM
+		arvm7hl:armv7hl|armv7hl:armv7l)
+			# These are working.
+			;;
 
-        armv5tel:armv5tel|armv5tel:armv5tejl|armv5tel:armv6l|armv5tel:armv7l|armv5tel:aarch64)
-            # These are working.
-            ;;
-        armv5tel:*)
-            error=true
-            ;;
-    esac
+		armv5tel:armv5tel|armv5tel:armv5tejl|armv5tel:armv6l|armv5tel:armv7l|armv5tel:aarch64)
+			# These are working.
+			;;
+		armv5tel:*)
+			error=true
+			;;
+	esac
 
-    ${error} && \
-        exiterror "Cannot build ${BUILD_ARCH} toolchain on $(uname -m). Please use the download if any."
+	${error} && \
+		exiterror "Cannot build ${BUILD_ARCH} toolchain on $(uname -m). Please use the download if any."
 
-    local gcc=$(type -p gcc)
-    if [ -z "${gcc}" ]; then
-        exiterror "Could not find GCC. You will need a working build enviroment in order to build the toolchain."
-    fi
+	local gcc=$(type -p gcc)
+	if [ -z "${gcc}" ]; then
+		exiterror "Could not find GCC. You will need a working build enviroment in order to build the toolchain."
+	fi
 
-    LOGFILE="$BASEDIR/log/_build.toolchain.log"
-    export LOGFILE
+	LOGFILE="$BASEDIR/log/_build.toolchain.log"
+	export LOGFILE
 
-    lfsmake1 stage1
-    lfsmake1 ccache			PASS=1
-    lfsmake1 binutils			PASS=1
-    lfsmake1 gcc			PASS=1
-    lfsmake1 linux			KCFG="-headers"
-    lfsmake1 glibc
-    lfsmake1 gcc			PASS=L
-    lfsmake1 binutils			PASS=2
-    lfsmake1 gcc			PASS=2
-    lfsmake1 ccache			PASS=2
-    lfsmake1 tcl
-    lfsmake1 expect
-    lfsmake1 dejagnu
-    lfsmake1 pkg-config
-    lfsmake1 ncurses
-    lfsmake1 bash
-    lfsmake1 bzip2
-    lfsmake1 automake
-    lfsmake1 coreutils
-    lfsmake1 diffutils
-    lfsmake1 findutils
-    lfsmake1 gawk
-    lfsmake1 gettext
-    lfsmake1 grep
-    lfsmake1 gzip
-    lfsmake1 m4
-    lfsmake1 make
-    lfsmake1 patch
-    lfsmake1 perl
-    lfsmake1 sed
-    lfsmake1 tar
-    lfsmake1 texinfo
-    lfsmake1 xz
-    lfsmake1 fake-environ
-    lfsmake1 cleanup-toolchain
+	lfsmake1 stage1
+	lfsmake1 ccache			PASS=1
+	lfsmake1 binutils			PASS=1
+	lfsmake1 gcc			PASS=1
+	lfsmake1 linux			KCFG="-headers"
+	lfsmake1 glibc
+	lfsmake1 gcc			PASS=L
+	lfsmake1 binutils			PASS=2
+	lfsmake1 gcc			PASS=2
+	lfsmake1 ccache			PASS=2
+	lfsmake1 tcl
+	lfsmake1 expect
+	lfsmake1 dejagnu
+	lfsmake1 pkg-config
+	lfsmake1 ncurses
+	lfsmake1 bash
+	lfsmake1 bzip2
+	lfsmake1 automake
+	lfsmake1 coreutils
+	lfsmake1 diffutils
+	lfsmake1 findutils
+	lfsmake1 gawk
+	lfsmake1 gettext
+	lfsmake1 grep
+	lfsmake1 gzip
+	lfsmake1 m4
+	lfsmake1 make
+	lfsmake1 patch
+	lfsmake1 perl
+	lfsmake1 sed
+	lfsmake1 tar
+	lfsmake1 texinfo
+	lfsmake1 xz
+	lfsmake1 fake-environ
+	lfsmake1 cleanup-toolchain
 }
 
 buildbase() {
-    LOGFILE="$BASEDIR/log/_build.base.log"
-    export LOGFILE
-    lfsmake2 stage2
-    lfsmake2 linux			KCFG="-headers"
-    lfsmake2 man-pages
-    lfsmake2 glibc
-    lfsmake2 tzdata
-    lfsmake2 cleanup-toolchain
-    lfsmake2 zlib
-    lfsmake2 binutils
-    lfsmake2 gmp
-    lfsmake2 gmp-compat
-    lfsmake2 mpfr
-    lfsmake2 libmpc
-    lfsmake2 file
-    lfsmake2 gcc
-    lfsmake2 sed
-    lfsmake2 autoconf
-    lfsmake2 automake
-    lfsmake2 berkeley
-    lfsmake2 coreutils
-    lfsmake2 iana-etc
-    lfsmake2 m4
-    lfsmake2 bison
-    lfsmake2 ncurses-compat
-    lfsmake2 ncurses
-    lfsmake2 procps
-    lfsmake2 libtool
-    lfsmake2 perl
-    lfsmake2 readline
-    lfsmake2 readline-compat
-    lfsmake2 bzip2
-    lfsmake2 pcre
-    lfsmake2 pcre-compat
-    lfsmake2 bash
-    lfsmake2 diffutils
-    lfsmake2 e2fsprogs
-    lfsmake2 ed
-    lfsmake2 findutils
-    lfsmake2 flex
-    lfsmake2 gawk
-    lfsmake2 gettext
-    lfsmake2 grep
-    lfsmake2 groff
-    lfsmake2 gperf
-    lfsmake2 gzip
-    lfsmake2 hostname
-    lfsmake2 iproute2
-    lfsmake2 jwhois
-    lfsmake2 kbd
-    lfsmake2 less
-    lfsmake2 make
-    lfsmake2 man
-    lfsmake2 kmod
-    lfsmake2 net-tools
-    lfsmake2 patch
-    lfsmake2 psmisc
-    lfsmake2 shadow
-    lfsmake2 sysklogd
-    lfsmake2 sysvinit
-    lfsmake2 tar
-    lfsmake2 texinfo
-    lfsmake2 util-linux
-    lfsmake2 udev
-    lfsmake2 vim
-    lfsmake2 xz
-    lfsmake2 paxctl
+	LOGFILE="$BASEDIR/log/_build.base.log"
+	export LOGFILE
+	lfsmake2 stage2
+	lfsmake2 linux			KCFG="-headers"
+	lfsmake2 man-pages
+	lfsmake2 glibc
+	lfsmake2 tzdata
+	lfsmake2 cleanup-toolchain
+	lfsmake2 zlib
+	lfsmake2 binutils
+	lfsmake2 gmp
+	lfsmake2 gmp-compat
+	lfsmake2 mpfr
+	lfsmake2 libmpc
+	lfsmake2 file
+	lfsmake2 gcc
+	lfsmake2 sed
+	lfsmake2 autoconf
+	lfsmake2 automake
+	lfsmake2 berkeley
+	lfsmake2 coreutils
+	lfsmake2 iana-etc
+	lfsmake2 m4
+	lfsmake2 bison
+	lfsmake2 ncurses-compat
+	lfsmake2 ncurses
+	lfsmake2 procps
+	lfsmake2 libtool
+	lfsmake2 perl
+	lfsmake2 readline
+	lfsmake2 readline-compat
+	lfsmake2 bzip2
+	lfsmake2 pcre
+	lfsmake2 pcre-compat
+	lfsmake2 bash
+	lfsmake2 diffutils
+	lfsmake2 e2fsprogs
+	lfsmake2 ed
+	lfsmake2 findutils
+	lfsmake2 flex
+	lfsmake2 gawk
+	lfsmake2 gettext
+	lfsmake2 grep
+	lfsmake2 groff
+	lfsmake2 gperf
+	lfsmake2 gzip
+	lfsmake2 hostname
+	lfsmake2 iproute2
+	lfsmake2 jwhois
+	lfsmake2 kbd
+	lfsmake2 less
+	lfsmake2 make
+	lfsmake2 man
+	lfsmake2 kmod
+	lfsmake2 net-tools
+	lfsmake2 patch
+	lfsmake2 psmisc
+	lfsmake2 shadow
+	lfsmake2 sysklogd
+	lfsmake2 sysvinit
+	lfsmake2 tar
+	lfsmake2 texinfo
+	lfsmake2 util-linux
+	lfsmake2 udev
+	lfsmake2 vim
+	lfsmake2 xz
+	lfsmake2 paxctl
 }
 
 buildipfire() {
@@ -1064,10 +1761,10 @@ clean)
 	done
 	stdumount
 	for i in `seq 0 7`; do
-	    if ( losetup /dev/loop${i} 2>/dev/null | grep -q "/install/images" ); then
+		if ( losetup /dev/loop${i} 2>/dev/null | grep -q "/install/images" ); then
 		umount /dev/loop${i}     2>/dev/null;
 		losetup -d /dev/loop${i} 2>/dev/null;
-	    fi;
+		fi;
 	done
 	rm -rf $BASEDIR/build
 	rm -rf $BASEDIR/cdrom
@@ -1190,7 +1887,33 @@ uploadsrc)
 	exit 0
 	;;
 lang)
-	update_langs
+	echo -ne "Checking the translations for missing or obsolete strings..."
+	chmod 755 $BASEDIR/tools/{check_strings.pl,sort_strings.pl,check_langs.sh}
+	$BASEDIR/tools/sort_strings.pl en
+	$BASEDIR/tools/sort_strings.pl de
+	$BASEDIR/tools/sort_strings.pl fr
+	$BASEDIR/tools/sort_strings.pl es
+	$BASEDIR/tools/sort_strings.pl pl
+	$BASEDIR/tools/sort_strings.pl ru
+	$BASEDIR/tools/sort_strings.pl nl
+	$BASEDIR/tools/sort_strings.pl tr
+	$BASEDIR/tools/sort_strings.pl it
+	$BASEDIR/tools/check_strings.pl en > $BASEDIR/doc/language_issues.en
+	$BASEDIR/tools/check_strings.pl de > $BASEDIR/doc/language_issues.de
+	$BASEDIR/tools/check_strings.pl fr > $BASEDIR/doc/language_issues.fr
+	$BASEDIR/tools/check_strings.pl es > $BASEDIR/doc/language_issues.es
+	$BASEDIR/tools/check_strings.pl es > $BASEDIR/doc/language_issues.pl
+	$BASEDIR/tools/check_strings.pl ru > $BASEDIR/doc/language_issues.ru
+	$BASEDIR/tools/check_strings.pl nl > $BASEDIR/doc/language_issues.nl
+	$BASEDIR/tools/check_strings.pl tr > $BASEDIR/doc/language_issues.tr
+	$BASEDIR/tools/check_strings.pl it > $BASEDIR/doc/language_issues.it
+	$BASEDIR/tools/check_langs.sh > $BASEDIR/doc/language_missings
+	beautify message DONE
+
+	echo -ne "Updating language lists..."
+	update_language_list ${BASEDIR}/src/installer/po
+	update_language_list ${BASEDIR}/src/setup/po
+	beautify message DONE
 	;;
 *)
 	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain}"
