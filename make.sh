@@ -391,7 +391,7 @@ exiterror() {
 
 prepareenv() {
 	# Are we running the right shell?
-	if [ ! -z "${BASH}" ]; then
+	if [ -z "${BASH}" ]; then
 		exiterror "BASH environment variable is not set.  You're probably running the wrong shell."
 	fi
 
