@@ -1778,7 +1778,7 @@ toolchain)
 	${INTERACTIVE} && clear
 
 	prepareenv
-	print_build_stage "Toolchain compilation"
+	print_build_stage "Toolchain compilation (${BUILD_ARCH})"
 	buildtoolchain
 	echo "`date -u '+%b %e %T'`: Create toolchain image for ${BUILD_ARCH}" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
