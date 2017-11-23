@@ -50,5 +50,5 @@ $(TARGET) :
 	# which does not work when unneeded symbols get stripped from
 	# /usr/sbin/vdr.
 	$(DIR_SRC)/src/stripper $(ROOT) \
-		--exclude=/usr/src --exclude=/tools \
+		--exclude=/usr/src --exclude=$(TOOLS_DIR) \
 		--exclude=/usr/sbin/vdr --exclude=/usr/lib/vdr

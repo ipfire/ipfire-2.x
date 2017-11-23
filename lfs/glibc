@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-# Normal build or /tools build.
+# Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
@@ -45,8 +45,8 @@ else
   EXTRA_CONFIG = \
 	--host=$(CROSSTARGET) \
 	--build=$(BUILDTARGET) \
-	--prefix=/tools \
-	--with-headers=/tools/include \
+	--prefix=$(TOOLS_DIR) \
+	--with-headers=$(TOOLS_DIR)/include \
 	libc_cv_forced_unwind=yes \
 	libc_cv_c_cleanup=yes
 endif
@@ -160,8 +160,8 @@ ifeq "$(TOOLCHAIN)" "1"
 	cd $(DIR_APP) && echo "int main() { return 0; }" > dummy.c
 	cd $(DIR_APP) && $(CROSSTARGET)-gcc dummy.c -o dummy
 
-	# Must be using a runtime linker from /tools
-	cd $(DIR_APP) && readelf -l dummy | grep "Requesting program interpreter: /tools"
+	# Must be using a runtime linker from $(TOOLS_DIR)
+	cd $(DIR_APP) && readelf -l dummy | grep "Requesting program interpreter: $(TOOLS_DIR)"
 	cd $(DIR_APP) && rm -vf dummy dummy.c
 endif
 

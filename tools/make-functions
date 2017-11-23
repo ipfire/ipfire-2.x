@@ -138,6 +138,7 @@ configure_build() {
 	fi
 
 	BUILD_ARCH="${build_arch}"
+	TOOLS_DIR="/tools_${BUILD_ARCH}"
 
 	# Enables hardening
 	HARDENING_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong --param=ssp-buffer-size=4"
@@ -385,9 +386,9 @@ exiterror() {
 }
 
 fake_environ() {
-	[ -e "${BASEDIR}/build/tools/lib/libpakfire_preload.so" ] || return
+	[ -e "${BASEDIR}/build${TOOLS_DIR}/lib/libpakfire_preload.so" ] || return
 
-	local env="LD_PRELOAD=/tools/lib/libpakfire_preload.so"
+	local env="LD_PRELOAD=${TOOLS_DIR}/lib/libpakfire_preload.so"
 
 	# Fake kernel version, because some of the packages do not compile
 	# with kernel 3.0 and later.
@@ -528,7 +529,7 @@ enterchroot() {
 	# Install QEMU helper, if needed
 	qemu_install_helper
 
-	local PATH="/tools/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:/tools/bin"
+	local PATH="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/bin"
 
 	PATH="${PATH}" chroot ${LFS} env -i \
 		HOME="/root" \
@@ -542,6 +543,7 @@ enterchroot() {
 		VERSION="${VERSION}" \
 		CORE="${CORE}" \
 		SLOGAN="${SLOGAN}" \
+		TOOLS_DIR="${TOOLS_DIR}" \
 		CONFIG_ROOT="${CONFIG_ROOT}" \
 		CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
 		CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
@@ -640,7 +642,7 @@ lfsmake1() {
 	local PKG_TIME_START=`date +%s`
 
 	cd $BASEDIR/lfs && env -i \
-		PATH="/tools/ccache/bin:/tools/bin:$PATH" \
+		PATH="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/bin:$PATH" \
 		CCACHE_DIR="${CCACHE_DIR}" \
 		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
@@ -649,6 +651,7 @@ lfsmake1() {
 		MAKETUNING="${MAKETUNING}" \
 		make -f $* \
 			TOOLCHAIN=1 \
+			TOOLS_DIR="${TOOLS_DIR}" \
 			CROSSTARGET="${CROSSTARGET}" \
 			BUILDTARGET="${BUILDTARGET}" \
 			BUILD_ARCH="${BUILD_ARCH}" \

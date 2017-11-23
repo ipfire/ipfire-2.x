@@ -31,7 +31,7 @@
 ###############################################################################
 
 # Cleanup environment from any variables
-unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN
+unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN TOOLS_DIR
 
 ifeq "$(BUILD_ARCH)" "aarch64"
 	IS_64BIT = 1
@@ -80,7 +80,7 @@ CCACHE_COMPILERCHECK += $(shell gcc -dumpspecs 2>/dev/null | md5sum | cut -d ' '
 #
 define FIND_FILES
 	cd $(ROOT)/ && find -mount \
-		\( -path './tools' -or -path './tmp' -or -path './usr/src' \
+		\( -path '.$(TOOLS_DIR)' -or -path './tmp' -or -path './usr/src' \
 		-or -path './run' -or -path './dev' -or -path './proc' \
 		-or -path './install' \) -prune -or -print | sort
 endef

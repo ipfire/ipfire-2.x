@@ -35,7 +35,7 @@ ifeq "$(ROOT)" ""
 	PREFIX = /usr
 	TARGET = $(DIR_INFO)/$(THISAPP)
 else
-	PREFIX = /tools
+	PREFIX = $(TOOLS_DIR)
 	TARGET = $(DIR_INFO)/$(THISAPP)-tools
 endif
 

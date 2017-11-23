@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-# Normal build or /tools build.
+# Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
@@ -39,7 +39,7 @@ ifeq "$(ROOT)" ""
     --with-installed-readline
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  CONFIGURE_OPTIONS = --prefix=/tools
+  CONFIGURE_OPTIONS = --prefix=$(TOOLS_DIR)
 endif
 
 CONFIGURE_OPTIONS += \
@@ -100,10 +100,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 ifeq "$(TOOLCHAIN)" "1"
-	ln -svf bash /tools/bin/sh
+	ln -svf bash $(TOOLS_DIR)/bin/sh
 
 	mkdir -pv $(ROOT)/bin
-	ln -svf ../tools/bin/bash $(ROOT)/bin/sh
+	ln -svf ..$(TOOLS_DIR)/bin/bash $(ROOT)/bin/sh
 else
 	ln -svf bash /bin/sh
 endif

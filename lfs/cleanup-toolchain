@@ -59,30 +59,30 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 ifeq "$(TOOLCHAIN)" "1"
 	# Remove the first cross compiler which is not needed anymore.
-	find /tools/ -name "$(CROSSTARGET)*" | xargs rm -rfv
+	find $(TOOLS_DIR)/ -name "$(CROSSTARGET)*" | xargs rm -rfv
 
 	# Remove man and info pages.
-	rm -rfv /tools/{,share}/{info,man}
+	rm -rfv $(TOOLS_DIR)/{,share}/{info,man}
 
 	# Strip all binaries.
-	STRIP="/usr/bin/strip" $(DIR_SRC)/src/stripper /tools/
+	STRIP="/usr/bin/strip" $(DIR_SRC)/src/stripper $(TOOLS_DIR)/
 
 	# Fix ownership of the toolchain.
-	chown -R root:root /tools/
+	chown -R root:root $(TOOLS_DIR)/
 
 	# Update/create linker cache.
-	/tools/sbin/ldconfig
+	$(TOOLS_DIR)/sbin/ldconfig
 
 	# Set a marker when the toolchain was successfully built
-	touch /tools/.toolchain-successful
+	touch $(TOOLS_DIR)/.toolchain-successful
 else
-	mv -v /tools/bin/{ld,ld-old}
-	mv -v /tools/$(BUILDTARGET)/bin/{ld,ld-old}
-	mv -v /tools/bin/{ld-new,ld}
-	ln -sv /tools/bin/ld /tools/$(BUILDTARGET)/bin/ld
+	mv -v $(TOOLS_DIR)/bin/{ld,ld-old}
+	mv -v $(TOOLS_DIR)/$(BUILDTARGET)/bin/{ld,ld-old}
+	mv -v $(TOOLS_DIR)/bin/{ld-new,ld}
+	ln -sv $(TOOLS_DIR)/bin/ld $(TOOLS_DIR)/$(BUILDTARGET)/bin/ld
 
 	gcc -dumpspecs | sed \
-		-e 's@/tools@@g' \
+		-e 's@$(TOOLS_DIR)@@g' \
 		-e '/\*startfile_prefix_spec:/{n;s@.*@/usr/lib/ @}' \
 		-e '/\*cpp:/{n;s@$$@ -isystem /usr/include@}' > \
 		$$(dirname $$(gcc -print-libgcc-file-name))/specs

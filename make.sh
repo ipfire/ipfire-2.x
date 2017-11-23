@@ -37,7 +37,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 
-TOOLCHAINVER=20170705
+TOOLCHAINVER=20171121
 
 # New architecture variables
 HOST_ARCH="$(uname -m)"
@@ -163,15 +163,17 @@ prepareenv() {
     # Set LFS Directory
     LFS=$BASEDIR/build
 
-    # Check /tools symlink
-    if [ -h /tools ]; then
-        rm -f /tools
+    # Check ${TOOLS_DIR} symlink
+    if [ -h "${TOOLS_DIR}" ]; then
+      rm -f "${TOOLS_DIR}"
     fi
-    if [ ! -a /tools ]; then
-			ln -s $BASEDIR/build/tools /
+
+    if [ ! -e "${TOOLS_DIR}" ]; then
+       ln -s "${BASEDIR}/build${TOOLS_DIR}" "${TOOLS_DIR}"
     fi
-    if [ ! -h /tools ]; then
-			exiterror "Could not create /tools symbolic link."
+
+    if [ ! -h "${TOOLS_DIR}" ]; then
+      exiterror "Could not create ${TOOLS_DIR} symbolic link"
     fi
 
     # Setup environment
@@ -181,7 +183,8 @@ prepareenv() {
     unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
     # Make some extra directories
-    mkdir -p $BASEDIR/build/{tools,etc,usr/src} 2>/dev/null
+    mkdir -p "${BASEDIR}/build${TOOLS_DIR}" 2>/dev/null
+    mkdir -p $BASEDIR/build/{etc,usr/src} 2>/dev/null
     mkdir -p $BASEDIR/build/{dev/{shm,pts},proc,sys}
     mkdir -p $BASEDIR/{cache,ccache} 2>/dev/null
     mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
@@ -1002,7 +1005,7 @@ build)
 	clear
 	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.gz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
-	if [ ! -e "${BASEDIR}/build/tools/.toolchain-successful" ]; then
+	if [ ! -e "${BASEDIR}/build${TOOLS_DIR}/.toolchain-successful" ]; then
 		if [ ! -n "$PACKAGE" ]; then
 			beautify build_stage "Full toolchain compilation"
 			prepareenv
@@ -1070,8 +1073,8 @@ clean)
 	rm -rf $BASEDIR/cdrom
 	rm -rf $BASEDIR/packages
 	rm -rf $BASEDIR/log
-	if [ -h /tools ]; then
-		rm -f /tools
+	if [ -h "${TOOLS_DIR}" ]; then
+		rm -f "${TOOLS_DIR}"
 	fi
 	rm -f $BASEDIR/ipfire-*
 	beautify message DONE
@@ -1138,7 +1141,7 @@ toolchain)
 	echo "`date -u '+%b %e %T'`: Create toolchain tar.gz for ${BUILD_ARCH}" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
 	cd $BASEDIR && tar -zc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.gz \
-		build/tools build/bin/sh log >> $LOGFILE
+		build/${TOOLS_DIR} build/bin/sh log >> $LOGFILE
 	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.gz \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.md5
 	stdumount
