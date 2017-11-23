@@ -369,7 +369,7 @@ exiterror() {
 	done
 
 	# Dump logfile
-	if [ -n "${LOGFILE}" ]; then
+	if [ -n "${LOGFILE}" ] && [ -e "${LOGFILE}" ]; then
 		echo # empty line
 
 		local line
