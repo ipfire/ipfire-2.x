@@ -45,6 +45,13 @@ TOOLCHAINVER=20171121
 #
 ###############################################################################
 
+# Remember if the shell is interactive or not
+if [ -t 0 ] && [ -t 1 ]; then
+	INTERACTIVE=true
+else
+	INTERACTIVE=false
+fi
+
 ## Screen Dimentions
 # Find current screen size
 if [ -z "${COLUMNS}" ]; then
@@ -53,25 +60,19 @@ if [ -z "${COLUMNS}" ]; then
 fi
 
 # When using remote connections, such as a serial port, stty size returns 0
-if [ "${COLUMNS}" = "0" ]; then
+if ! ${INTERACTIVE} || [ "${COLUMNS}" = "0" ]; then
 	COLUMNS=80
 fi
 
 ## Measurements for positioning result messages
-RESULT_WIDTH=4
-TIME_WIDTH=8
-OPT_WIDTH=6
-VER_WIDTH=10
-RESULT_COL=$((${COLUMNS} - $RESULT_WIDTH - 4))
-TIME_COL=$((${RESULT_COL} - $TIME_WIDTH - 5))
-OPT_COL=$((${TIME_COL} - $OPT_WIDTH - 5))
-VER_COL=$((${OPT_COL} - $VER_WIDTH - 5))
+OPTIONS_WIDTH=20
+TIME_WIDTH=12
+STATUS_WIDTH=8
+NAME_WIDTH=$(( COLUMNS - OPTIONS_WIDTH - TIME_WIDTH - STATUS_WIDTH ))
+LINE_WIDTH=$(( COLUMNS - STATUS_WIDTH ))
 
-## Set Cursur Position Commands, used via echo -e
-SET_RESULT_COL="\\033[${RESULT_COL}G"
-SET_TIME_COL="\\033[${TIME_COL}G"
-SET_OPT_COL="\\033[${OPT_COL}G"
-SET_VER_COL="\\033[${VER_COL}G"
+TIME_COL=$(( COLUMNS - TIME_WIDTH - STATUS_WIDTH ))
+STATUS_COL=$(( COLUMNS - STATUS_WIDTH ))
 
 # Define color for messages
 BOLD="\\033[1;39m"
@@ -234,158 +235,6 @@ configure_build_guess() {
 	esac
 }
 
-evaluate() {
-	if [ "$?" -eq "0" ]; then
-		beautify message DONE
-	else
-		EXITCODE=$1
-		shift 1
-		beautify message FAIL
-		$*
-		if [ $EXITCODE -ne "0" ]; then
-			exit $EXITCODE
-		fi
-	fi
-}
-
-position_cursor() {
-	# ARG1=starting position on screen
-	# ARG2=string to be printed
-	# ARG3=offset, negative for left movement, positive for right movement, relative to ARG1
-	# For example if your starting position is column 50 and you want to print Hello three columns to the right
-	# of your starting position, your call will look like this:
-	# position_cursor 50 "Hello" 3 (you'll get the string Hello at position 53 (= 50 + 3)
-	# If on the other hand you want your string "Hello" to end three columns to the left of position 50,
-	# your call will look like this:
-	# position_cursor 50 "Hello" -3 (you'll get the string Hello at position 42 (= 50 - 5 -3)
-	# If you want to start printing at the exact starting location, use offset 0
-
-	START=$1
-	STRING=$2
-	OFFSET=$3
-
-	STRING_LENGTH=${#STRING}
-
-	if [ ${OFFSET} -lt 0 ]; then
-		COL=$((${START} + ${OFFSET} - ${STRING_LENGTH}))
-	else
-		COL=$((${START} + ${OFFSET}))
-	fi
-
-	SET_COL="\\033[${COL}G"
-
-	echo $SET_COL
-}
-
-beautify() {
-	# Commands: build_stage, make_pkg, message, result
-	case "$1" in
-		message)
-			case "$2" in
-				DONE)
-					echo -ne "${SET_RESULT_COL}[${DONE} DONE ${NORMAL}]\n"
-					;;
-				WARN)
-					echo -ne "${WARN}${3}${NORMAL}${SET_RESULT_COL}[${WARN} WARN ${NORMAL}]\n"
-					;;
-				FAIL)
-					echo -ne "${SET_RESULT_COL}[${FAIL} FAIL ${NORMAL}]\n"
-					;;
-				SKIP)
-					echo -ne "${SET_RESULT_COL}[${SKIP} SKIP ${NORMAL}]\n"
-					;;
-			esac
-			;;
-		build_stage)
-			MESSAGE=$2
-			if [ "$STAGE_TIME_START" ]; then
-				LAST_STAGE_TIME=$[ `date +%s` - $STAGE_TIME_START ]
-			fi
-			STAGE_TIME_START=`date +%s`
-			echo -ne "${BOLD}*** (${BUILD_ARCH}) ${MESSAGE}${NORMAL}"
-			if [ "$LAST_STAGE_TIME" ]; then
-				echo -ne "${DONE} (Last stage took $LAST_STAGE_TIME secs)${NORMAL}\n"
-			fi
-			echo -ne "${BOLD}${SET_VER_COL}      version${SET_OPT_COL} options${SET_TIME_COL} time (sec)${SET_RESULT_COL} status${NORMAL}\n"
-			;;
-		build_start)
-			BUILD_TIME_START=`date +%s`
-			;;
-		build_end)
-			BUILD_TIME_END=`date +%s`
-			seconds=$[ $BUILD_TIME_END - $BUILD_TIME_START ]
-			hours=$((seconds / 3600))
-			seconds=$((seconds % 3600))
-			minutes=$((seconds / 60))
-			seconds=$((seconds % 60))
-
-			echo -ne "${DONE}***Build is finished now and took $hours hour(s) $minutes minute(s) $seconds second(s)!${NORMAL}\n"
-			;;
-		make_pkg)
-			echo "$2" | while read PKG_VER PROGRAM OPTIONS
-			do
-				SET_VER_COL_REAL=`position_cursor $OPT_COL $PKG_VER -3`
-
-				if [ "$OPTIONS" == "" ]; then
-					echo -ne "${PROGRAM}${SET_VER_COL}[ ${BOLD}${SET_VER_COL_REAL}${PKG_VER}"
-					echo -ne "${NORMAL} ]${SET_RESULT_COL}"
-				else
-					echo -ne "${PROGRAM}${SET_VER_COL}[ ${BOLD}${SET_VER_COL_REAL}${PKG_VER}"
-					echo -ne "${NORMAL} ]${SET_OPT_COL}[ ${BOLD}${OPTIONS}"
-					echo -ne "${NORMAL} ]${SET_RESULT_COL}"
-				fi
-			done
-			;;
-		result)
-			RESULT=$2
-
-			if [ ! $3 ]; then
-				PKG_TIME=0
-			else
-				PKG_TIME=$3
-			fi
-
-			SET_TIME_COL_REAL=`position_cursor $RESULT_COL $PKG_TIME -3`
-			case "$RESULT" in
-				DONE)
-					echo -ne "${SET_TIME_COL}[ ${BOLD}${SET_TIME_COL_REAL}$PKG_TIME${NORMAL} ]"
-					echo -ne "${SET_RESULT_COL}[${DONE} DONE ${NORMAL}]\n"
-					;;
-				FAIL)
-					echo -ne "${SET_TIME_COL}[ ${BOLD}${SET_TIME_COL_REAL}$PKG_TIME${NORMAL} ]"
-					echo -ne "${SET_RESULT_COL}[${FAIL} FAIL ${NORMAL}]\n"
-					;;
-				SKIP)
-					echo -ne "${SET_RESULT_COL}[${SKIP} SKIP ${NORMAL}]\n"
-					;;
-			esac
-			;;
-	esac
-}
-
-get_pkg_ver() {
-	PKG_VER=`grep -E "^VER |^VER=|^VER	" $1 | awk '{print $3}'`
-
-	if [ -z $PKG_VER ]; then
-		PKG_VER=`grep "Exp " $1 | awk '{print $4}'`
-	fi
-	if [ -z $PKG_VER ]; then
-		PKG_VER="?"
-	fi
-	if [ ${#PKG_VER} -gt $VER_WIDTH ]; then
-		# If a package version number is greater than $VER_WIDTH, we keep the first 4 characters
-		# and replace enough characters to fit the resulting string on the screen.  We'll replace
-		# the extra character with .. (two dots).  That's why the "+ 2" in the formula below.
-		# Example: if we have a 21-long version number that we want to fit into a 10-long space,
-		# we have to remove 11 characters.  But if we replace 11 characters with 2 characters, we'll
-		# end up with a 12-character long string.  That's why we replace 12 characters with ..
-		REMOVE=`expr substr "$PKG_VER" 4 $[ ${#PKG_VER} - $VER_WIDTH + 2 ]`
-		PKG_VER=`echo ${PKG_VER/$REMOVE/..}`
-	fi
-
-	echo "$PKG_VER"
-}
-
 stdumount() {
 	umount $BASEDIR/build/sys			2>/dev/null;
 	umount $BASEDIR/build/dev/shm		2>/dev/null;
@@ -404,6 +253,113 @@ stdumount() {
 	umount $BASEDIR/build/usr/src/src		2>/dev/null;
 }
 
+now() {
+	date -u "+%s"
+}
+
+format_runtime() {
+	local seconds=${1}
+
+	if [ ${seconds} -ge 3600 ]; then
+		printf "%d:%02d:%02d\n" \
+			"$(( seconds / 3600 ))" \
+			"$(( seconds % 3600 / 60 ))" \
+			"$(( seconds % 3600 % 60 ))"
+	elif [ ${seconds} -ge 60 ]; then
+		printf "%d:%02d\n" \
+			"$(( seconds / 60 ))" \
+			"$(( seconds % 60 ))"
+	else
+		printf "%d\n" "${seconds}"
+	fi
+}
+
+print_line() {
+	local line="$@"
+
+	printf "%-${LINE_WIDTH}s" "${line}"
+}
+
+_print_line() {
+	local status="${1}"
+	shift
+
+	if ${INTERACTIVE}; then
+		printf "${!status}"
+	fi
+
+	print_line "$@"
+
+	if ${INTERACTIVE}; then
+		printf "${NORMAL}"
+	fi
+}
+
+print_headline() {
+	_print_line BOLD "$@"
+}
+
+print_error() {
+	_print_line FAIL "$@"
+}
+
+print_package() {
+	local name="${1}"
+	shift
+
+	local version="$(grep -E "^VER |^VER=|^VER	" $BASEDIR/lfs/${name} | awk '{ print $3 }')"
+	local options="$@"
+
+	local string="${name}"
+	if [ -n "${version}" ] && [ "${version}" != "ipfire" ]; then
+		string="${string} (${version})"
+	fi
+
+	printf "%-$(( ${NAME_WIDTH} - 1 ))s " "${string}"
+
+	if [ -n "${options}" ]; then
+		printf "[ %-$(( ${OPTIONS_WIDTH} - 4 ))s ]" "${options}"
+	else
+		printf "%${OPTIONS_WIDTH}s" ""
+	fi
+}
+
+print_runtime() {
+	local runtime=$(format_runtime $@)
+
+	if ${INTERACTIVE}; then
+		printf "\\033[${TIME_COL}G[ ${BOLD}%$(( ${TIME_WIDTH} - 4 ))s${NORMAL} ]" "${runtime}"
+	else
+		printf "[ %$(( ${TIME_WIDTH} - 4 ))s ]" "${runtime}"
+	fi
+}
+
+print_status() {
+	local status="${1}"
+
+	local color="${!status}"
+
+	if ${INTERACTIVE}; then
+		printf "\\033[${STATUS_COL}G[${color-${BOLD}} %-$(( ${STATUS_WIDTH} - 4 ))s ${NORMAL}]\n" "${status}"
+	else
+		printf "[ %-$(( ${STATUS_WIDTH} - 4 ))s ]\n" "${status}"
+	fi
+}
+
+print_build_stage() {
+	print_headline "$@"
+
+	# end line
+	printf "\n"
+}
+
+print_build_summary() {
+	local runtime=$(format_runtime $@)
+
+	print_line "*** Build finished in ${runtime}"
+	print_status DONE
+}
+
 exiterror() {
 	stdumount
 	for i in `seq 0 7`; do
@@ -412,6 +368,7 @@ exiterror() {
 		fi;
 	done
 
+	# Dump logfile
 	if [ -n "${LOGFILE}" ]; then
 		echo # empty line
 
@@ -421,8 +378,14 @@ exiterror() {
 		done <<< "$(tail -n30 ${LOGFILE})"
 	fi
 
-	echo -e "\nERROR: $*"
-	echo "       Check $LOGFILE for errors if applicable"
+	echo # empty line
+
+	local line
+	for line in "ERROR: $@" "    Check ${LOGFILE} for errors if applicable"; do
+		print_error "${line}"
+		print_status FAIL
+	done
+
 	exit 1
 }
 
@@ -441,32 +404,26 @@ prepareenv() {
 
 	# Resetting our nice level
 	if ! renice ${NICE} $$ >/dev/null; then
-			beautify message FAIL
 			exiterror "Failed to set nice level to ${NICE}"
-	else
-			beautify message DONE
 	fi
 
 	# Checking if running as root user
 	if [ $(id -u) -ne 0 ]; then
-			beautify message FAIL
 			exiterror "Not building as root"
-	else
-			beautify message DONE
 	fi
 
 	# Checking for necessary temporary space
-	echo -ne "Checking for necessary space on disk $BASE_DEV" | tee -a $LOGFILE
+	print_line "Checking for necessary space on disk $BASE_DEV"
 	BASE_DEV=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $1 }'`
 	BASE_ASPACE=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $4 }'`
 	if (( 2048000 > $BASE_ASPACE )); then
 			BASE_USPACE=`du -skx $BASEDIR | awk '{print $1}'`
 			if (( 2048000 - $BASE_USPACE > $BASE_ASPACE )); then
-				beautify message FAIL
+				print_status FAIL
 				exiterror "Not enough temporary space available, need at least 2GB on $BASE_DEV"
 			fi
 	else
-			beautify message DONE
+			print_status DONE
 	fi
 
 	# Set umask
@@ -591,7 +548,7 @@ entershell() {
 	if enterchroot bash -i; then
 		stdumount
 	else
-		beautify message FAIL
+		print_status FAIL
 		exiterror "chroot error"
 	fi
 }
@@ -602,15 +559,15 @@ lfsmakecommoncheck() {
 		exiterror "No such file or directory: $BASEDIR/$1"
 	fi
 
-	local PKG_VER=`get_pkg_ver $BASEDIR/lfs/$1`
-	beautify make_pkg "$PKG_VER $*"
+	# Print package name and version
+	print_package $@
 
 	# Check if this package is supported by our architecture.
 	# If no SUP_ARCH is found, we assume the package can be built for all.
 	if grep "^SUP_ARCH" ${BASEDIR}/lfs/${1} >/dev/null; then
 		# Check if package supports ${BUILD_ARCH} or all architectures.
 		if ! grep -E "^SUP_ARCH.*${BUILD_ARCH}|^SUP_ARCH.*all" ${BASEDIR}/lfs/${1} >/dev/null; then
-			beautify result SKIP
+			print_status SKIP
 			return 1
 		fi
 	fi
@@ -620,7 +577,7 @@ lfsmakecommoncheck() {
 	for i in $SKIP_PACKAGE_LIST
 	do
 		if [ "$i" == "$1" ]; then
-			beautify result SKIP
+			print_status SKIP
 			return 1;
 		fi
 	done
@@ -646,8 +603,6 @@ lfsmake1() {
 	lfsmakecommoncheck $*
 	[ $? == 1 ] && return 0
 
-	local PKG_TIME_START=`date +%s`
-
 	cd $BASEDIR/lfs && env -i \
 		PATH="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/bin:$PATH" \
 		CCACHE_DIR="${CCACHE_DIR}" \
@@ -666,26 +621,20 @@ lfsmake1() {
 			LFS_BASEDIR="${BASEDIR}" \
 			ROOT="${LFS}" \
 			KVER="${KVER}" \
-			install >> $LOGFILE 2>&1
+			install >> $LOGFILE 2>&1 &
 
-	local COMPILE_SUCCESS=$?
-	local PKG_TIME_END=`date +%s`
-
-	if [ $COMPILE_SUCCESS -ne 0 ]; then
-		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
-		exiterror "Building $*";
-	else
-		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
+	if ! wait_until_finished $!; then
+		print_status FAIL
+		exiterror "Building $*"
 	fi
 
-	return 0
+	print_status DONE
 }
 
 lfsmake2() {
 	lfsmakecommoncheck $*
 	[ $? == 1 ] && return 0
 
-	local PKG_TIME_START=`date +%s`
 	local PS1='\u:\w$ '
 
 	enterchroot \
@@ -693,42 +642,63 @@ lfsmake2() {
 			MAKETUNING=${MAKETUNING} \
 			make -f $* \
 			LFS_BASEDIR=/usr/src install" \
-		>> ${LOGFILE} 2>&1
+		>> ${LOGFILE} 2>&1 &
 
-	local COMPILE_SUCCESS=$?
-	local PKG_TIME_END=`date +%s`
-
-	if [ $COMPILE_SUCCESS -ne 0 ]; then
-		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
-		exiterror "Building $*";
-	else
-		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
+	if ! wait_until_finished $!; then
+		print_status FAIL
+		exiterror "Building $*"
 	fi
 
-	return 0
+	print_status DONE
 }
 
 ipfiredist() {
 	lfsmakecommoncheck $*
 	[ $? == 1 ] && return 0
 
-	local PKG_TIME_START=`date +%s`
 	local PS1='\u:\w$ '
 
 	enterchroot \
 		bash -x -c "cd /usr/src/lfs && make -f $* LFS_BASEDIR=/usr/src dist" \
-		>> ${LOGFILE} 2>&1
+		>> ${LOGFILE} 2>&1 &
 
-	local COMPILE_SUCCESS=$?
-	local PKG_TIME_END=`date +%s`
-
-	if [ $COMPILE_SUCCESS -ne 0 ]; then
-		beautify result FAIL $[ $PKG_TIME_END - $PKG_TIME_START ]
-		exiterror "Packaging $*";
-	else
-		beautify result DONE $[ $PKG_TIME_END - $PKG_TIME_START ]
+	if ! wait_until_finished $!; then
+		print_status FAIL
+		exiterror "Packaging $*"
 	fi
-	return 0
+
+	print_status DONE
+}
+
+wait_until_finished() {
+	local pid=${1}
+
+	local start_time=$(now)
+
+	# Show progress
+	if ${INTERACTIVE}; then
+		# Wait a little just in case the process
+		# has finished very quickly.
+		sleep 0.1
+
+		local runtime
+		while kill -0 ${pid} 2>/dev/null; do
+			print_runtime $(( $(now) - ${start_time} ))
+
+			# Wait a little
+			sleep 1
+		done
+	fi
+
+	# Returns the exit code of the child process
+	wait ${pid}
+	local ret=$?
+
+	if ! ${INTERACTIVE}; then
+		print_runtime $(( $(now) - ${start_time} ))
+	fi
+
+	return ${ret}
 }
 
 fake_environ() {
@@ -1578,7 +1548,7 @@ buildpackages() {
 	$BASEDIR/doc/packages-list | sort >> $BASEDIR/doc/packages-list.txt
   rm -f $BASEDIR/doc/packages-list
   # packages-list.txt is ready to be displayed for wiki page
-  beautify message DONE
+  print_status DONE
   
   # Update changelog
   cd $BASEDIR
@@ -1628,7 +1598,7 @@ buildpackages() {
 		cat $i | sed "s%^\./%#%" | sort >> $BASEDIR/log/FILES
 	fi
   done
-  beautify message DONE
+  print_status DONE
 
   cd $PWD
 }
@@ -1643,7 +1613,7 @@ ipfirepackages() {
 			ipfiredist $i
 		else
 			echo -n $i
-			beautify message SKIP
+			print_status SKIP
 		fi
 	done
   test -d $BASEDIR/packages || mkdir $BASEDIR/packages
@@ -1670,17 +1640,21 @@ done
 # See what we're supposed to do
 case "$1" in 
 build)
-	clear
+	START_TIME=$(now)
+
+	# Clear screen
+	${INTERACTIVE} && clear
+
 	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.xz 2> /dev/null | head -n 1`
 	#only restore on a clean disk
 	if [ ! -e "${BASEDIR}/build${TOOLS_DIR}/.toolchain-successful" ]; then
 		if [ ! -n "$PACKAGE" ]; then
-			beautify build_stage "Full toolchain compilation"
+			print_build_stage "Full toolchain compilation"
 			prepareenv
 			buildtoolchain
 		else
 			PACKAGENAME=${PACKAGE%.tar.xz}
-			beautify build_stage "Packaged toolchain compilation"
+			print_build_stage "Packaged toolchain compilation"
 			if [ `md5sum $PACKAGE | awk '{print $1}'` == `cat $PACKAGENAME.md5 | awk '{print $1}'` ]; then
 				tar axf $PACKAGE
 				prepareenv
@@ -1689,32 +1663,29 @@ build)
 			fi
 		fi
 	else
-		echo -n "Using installed toolchain" | tee -a $LOGFILE
-		beautify message SKIP
 		prepareenv
 	fi
 
-	beautify build_start
-	beautify build_stage "Building LFS"
+	print_build_stage "Building LFS"
 	buildbase
 
-	beautify build_stage "Building IPFire"
+	print_build_stage "Building IPFire"
 	buildipfire
 
-	beautify build_stage "Building installer"
+	print_build_stage "Building installer"
 	buildinstaller
 
-	beautify build_stage "Building packages"
+	print_build_stage "Building packages"
 	buildpackages
 	
-	beautify build_stage "Checking Logfiles for new Files"
+	print_build_stage "Checking Logfiles for new Files"
 
 	cd $BASEDIR
 	tools/checknewlog.pl
 	tools/checkrootfiles
 	cd $PWD
 
-	beautify build_end
+	print_build_summary $(( $(now) - ${START_TIME} ))
 	;;
 shell)
 	# enter a shell inside LFS chroot
@@ -1723,7 +1694,8 @@ shell)
 	entershell
 	;;
 clean)
-	echo -en "${BOLD}Cleaning build directory...${NORMAL}"
+	print_line "Cleaning build directory..."
+
 	for i in `mount | grep $BASEDIR | sed 's/^.*loop=\(.*\))/\1/'`; do
 		$LOSETUP -d $i 2>/dev/null
 	done
@@ -1745,7 +1717,7 @@ clean)
 		rm -f "${TOOLS_DIR}"
 	fi
 	rm -f $BASEDIR/ipfire-*
-	beautify message DONE
+	print_status DONE
 	;;
 downloadsrc)
 	if [ ! -d $BASEDIR/cache ]; then
@@ -1768,11 +1740,11 @@ downloadsrc)
 				make -s -f $i LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
 					MESSAGE="$i\t ($c/$MAX_RETRIES)" download >> $LOGFILE 2>&1
 				if [ $? -ne 0 ]; then
-					beautify message FAIL
+					print_status FAIL
 					FINISHED=0
 				else
 					if [ $c -eq 1 ]; then
-					beautify message DONE
+					print_status DONE
 					fi
 				fi
 			fi
@@ -1787,24 +1759,26 @@ downloadsrc)
 				MESSAGE="$i\t " md5 >> $LOGFILE 2>&1
 			if [ $? -ne 0 ]; then
 				echo -ne "MD5 difference in lfs/$i"
-				beautify message FAIL
+				print_status FAIL
 				ERROR=1
 			fi
 		fi
 	done
 	if [ $ERROR -eq 0 ]; then
 		echo -ne "${BOLD}all files md5sum match${NORMAL}"
-		beautify message DONE
+		print_status DONE
 	else
 		echo -ne "${BOLD}not all files were correctly download${NORMAL}"
-		beautify message FAIL
+		print_status FAIL
 	fi
 	cd - >/dev/null 2>&1
 	;;
 toolchain)
-	clear
+	# Clear screen
+	${INTERACTIVE} && clear
+
 	prepareenv
-	beautify build_stage "Toolchain compilation"
+	print_build_stage "Toolchain compilation"
 	buildtoolchain
 	echo "`date -u '+%b %e %T'`: Create toolchain image for ${BUILD_ARCH}" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
@@ -1840,7 +1814,7 @@ uploadsrc)
 	PWD=`pwd`
 	if [ -z $IPFIRE_USER ]; then
 		echo -n "You have to setup IPFIRE_USER first. See .config for details."
-		beautify message FAIL
+		print_status FAIL
 		exit 1
 	fi
 
@@ -1879,12 +1853,12 @@ lang)
 	$BASEDIR/tools/check_strings.pl tr > $BASEDIR/doc/language_issues.tr
 	$BASEDIR/tools/check_strings.pl it > $BASEDIR/doc/language_issues.it
 	$BASEDIR/tools/check_langs.sh > $BASEDIR/doc/language_missings
-	beautify message DONE
+	print_status DONE
 
 	echo -ne "Updating language lists..."
 	update_language_list ${BASEDIR}/src/installer/po
 	update_language_list ${BASEDIR}/src/setup/po
-	beautify message DONE
+	print_status DONE
 	;;
 *)
 	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain}"
