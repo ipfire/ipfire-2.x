@@ -100,10 +100,10 @@ else
 fi
 
 # This is the directory where make.sh is in
-BASEDIR=$(echo $FULLPATH | sed "s/\/$BASENAME//g")
+export BASEDIR=$(echo $FULLPATH | sed "s/\/$BASENAME//g")
 
 LOGFILE=$BASEDIR/log/_build.preparation.log
-export BASEDIR LOGFILE
+export LOGFILE
 DIR_CHK=$BASEDIR/cache/check
 mkdir $BASEDIR/log/ 2>/dev/null
 
@@ -424,6 +424,128 @@ exiterror() {
 	echo -e "\nERROR: $*"
 	echo "       Check $LOGFILE for errors if applicable"
 	exit 1
+}
+
+prepareenv() {
+	# Are we running the right shell?
+	if [ ! -z "${BASH}" ]; then
+		exiterror "BASH environment variable is not set.  You're probably running the wrong shell."
+	fi
+
+	if [ -z "${BASH_VERSION}" ]; then
+		exiterror "Not running BASH shell."
+	fi
+
+	# Trap on emergency exit
+	trap "exiterror 'Build process interrupted'" SIGINT SIGTERM SIGKILL SIGSTOP SIGQUIT
+
+	# Resetting our nice level
+	echo -ne "Resetting our nice level to $NICE" | tee -a $LOGFILE
+	renice $NICE $$ > /dev/null
+	if [ `nice` != "$NICE" ]; then
+			beautify message FAIL
+			exiterror "Failed to set correct nice level"
+	else
+			beautify message DONE
+	fi
+
+	# Checking if running as root user
+	echo -ne "Checking if we're running as root user" | tee -a $LOGFILE
+	if [ `id -u` != 0 ]; then
+			beautify message FAIL
+			exiterror "Not building as root"
+	else
+			beautify message DONE
+	fi
+
+	# Checking for necessary temporary space
+	echo -ne "Checking for necessary space on disk $BASE_DEV" | tee -a $LOGFILE
+	BASE_DEV=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $1 }'`
+	BASE_ASPACE=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $4 }'`
+	if (( 2048000 > $BASE_ASPACE )); then
+			BASE_USPACE=`du -skx $BASEDIR | awk '{print $1}'`
+			if (( 2048000 - $BASE_USPACE > $BASE_ASPACE )); then
+				beautify message FAIL
+				exiterror "Not enough temporary space available, need at least 2GB on $BASE_DEV"
+			fi
+	else
+			beautify message DONE
+	fi
+
+	# Set umask
+	umask 022
+
+	# Set LFS Directory
+	LFS=$BASEDIR/build
+
+	# Check ${TOOLS_DIR} symlink
+	if [ -h "${TOOLS_DIR}" ]; then
+	  rm -f "${TOOLS_DIR}"
+	fi
+
+	if [ ! -e "${TOOLS_DIR}" ]; then
+	   ln -s "${BASEDIR}/build${TOOLS_DIR}" "${TOOLS_DIR}"
+	fi
+
+	if [ ! -h "${TOOLS_DIR}" ]; then
+	  exiterror "Could not create ${TOOLS_DIR} symbolic link"
+	fi
+
+	# Setup environment
+	set +h
+	LC_ALL=POSIX
+	export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
+	unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
+
+	# Make some extra directories
+	mkdir -p "${BASEDIR}/build${TOOLS_DIR}" 2>/dev/null
+	mkdir -p $BASEDIR/build/{etc,usr/src} 2>/dev/null
+	mkdir -p $BASEDIR/build/{dev/{shm,pts},proc,sys}
+	mkdir -p $BASEDIR/{cache,ccache} 2>/dev/null
+	mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
+
+	mknod -m 600 $BASEDIR/build/dev/console c 5 1 2>/dev/null
+	mknod -m 666 $BASEDIR/build/dev/null c 1 3 2>/dev/null
+
+	# Make all sources and proc available under lfs build
+	mount --bind /dev            $BASEDIR/build/dev
+	mount --bind /dev/pts        $BASEDIR/build/dev/pts
+	mount --bind /dev/shm        $BASEDIR/build/dev/shm
+	mount --bind /proc           $BASEDIR/build/proc
+	mount --bind /sys            $BASEDIR/build/sys
+	mount --bind $BASEDIR/cache  $BASEDIR/build/usr/src/cache
+	mount --bind $BASEDIR/ccache $BASEDIR/build/usr/src/ccache
+	mount --bind $BASEDIR/config $BASEDIR/build/usr/src/config
+	mount --bind $BASEDIR/doc    $BASEDIR/build/usr/src/doc
+	mount --bind $BASEDIR/html   $BASEDIR/build/usr/src/html
+	mount --bind $BASEDIR/langs  $BASEDIR/build/usr/src/langs
+	mount --bind $BASEDIR/lfs    $BASEDIR/build/usr/src/lfs
+	mount --bind $BASEDIR/log    $BASEDIR/build/usr/src/log
+	mount --bind $BASEDIR/src    $BASEDIR/build/usr/src/src
+
+	# Run LFS static binary creation scripts one by one
+	export CCACHE_DIR=$BASEDIR/ccache
+	export CCACHE_COMPRESS=1
+	export CCACHE_COMPILERCHECK="string:toolchain-${TOOLCHAINVER} ${BUILD_ARCH}"
+
+	# Remove pre-install list of installed files in case user erase some files before rebuild
+	rm -f $BASEDIR/build/usr/src/lsalr 2>/dev/null
+
+	# Prepare string for /etc/system-release.
+	SYSTEM_RELEASE="${NAME} ${VERSION} (${BUILD_ARCH})"
+	if [ "$(git status -s | wc -l)" == "0" ]; then
+	GIT_STATUS=""
+	else
+	GIT_STATUS="-dirty"
+	fi
+	case "$GIT_BRANCH" in
+	core*|beta?|rc?)
+		SYSTEM_RELEASE="${SYSTEM_RELEASE} - $GIT_BRANCH$GIT_STATUS"
+		;;
+	*)
+		SYSTEM_RELEASE="${SYSTEM_RELEASE} - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT$GIT_STATUS"
+		;;
+	esac
 }
 
 enterchroot() {
@@ -781,157 +903,6 @@ if [ -n "${BUILD_ARCH}" ]; then
 else
 	configure_build "default"
 fi
-
-prepareenv() {
-	############################################################################
-	#                                                                          #
-	# Are we running the right shell?                                          #
-	#                                                                          #
-	############################################################################
-	if [ ! "$BASH" ]; then
-			exiterror "BASH environment variable is not set.  You're probably running the wrong shell."
-	fi
-
-	if [ -z "${BASH_VERSION}" ]; then
-			exiterror "Not running BASH shell."
-	fi
-
-
-	############################################################################
-	#                                                                          #
-	# Trap on emergency exit                                                   #
-	#                                                                          #
-	############################################################################
-	trap "exiterror 'Build process interrupted'" SIGINT SIGTERM SIGKILL SIGSTOP SIGQUIT
-
-
-	############################################################################
-	#                                                                          #
-	# Resetting our nice level                                                 #
-	#                                                                          #
-	############################################################################
-	echo -ne "Resetting our nice level to $NICE" | tee -a $LOGFILE
-	renice $NICE $$ > /dev/null
-	if [ `nice` != "$NICE" ]; then
-			beautify message FAIL
-			exiterror "Failed to set correct nice level"
-	else
-			beautify message DONE
-	fi
-
-
-	############################################################################
-	#                                                                          #
-	# Checking if running as root user                                         #
-	#                                                                          #
-	############################################################################
-	echo -ne "Checking if we're running as root user" | tee -a $LOGFILE
-	if [ `id -u` != 0 ]; then
-			beautify message FAIL
-			exiterror "Not building as root"
-	else
-			beautify message DONE
-	fi
-
-
-	############################################################################
-	#                                                                          #
-	# Checking for necessary temporary space                                   #
-	#                                                                          #
-	############################################################################
-	echo -ne "Checking for necessary space on disk $BASE_DEV" | tee -a $LOGFILE
-	BASE_DEV=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $1 }'`
-	BASE_ASPACE=`df -P -k $BASEDIR | tail -n 1 | awk '{ print $4 }'`
-	if (( 2048000 > $BASE_ASPACE )); then
-			BASE_USPACE=`du -skx $BASEDIR | awk '{print $1}'`
-			if (( 2048000 - $BASE_USPACE > $BASE_ASPACE )); then
-				beautify message FAIL
-				exiterror "Not enough temporary space available, need at least 2GB on $BASE_DEV"
-			fi
-	else
-			beautify message DONE
-	fi
-
-	############################################################################
-	#                                                                          #
-	# Building Linux From Scratch system                                       #
-	#                                                                          #
-	############################################################################
-	# Set umask
-	umask 022
-
-	# Set LFS Directory
-	LFS=$BASEDIR/build
-
-	# Check ${TOOLS_DIR} symlink
-	if [ -h "${TOOLS_DIR}" ]; then
-	  rm -f "${TOOLS_DIR}"
-	fi
-
-	if [ ! -e "${TOOLS_DIR}" ]; then
-	   ln -s "${BASEDIR}/build${TOOLS_DIR}" "${TOOLS_DIR}"
-	fi
-
-	if [ ! -h "${TOOLS_DIR}" ]; then
-	  exiterror "Could not create ${TOOLS_DIR} symbolic link"
-	fi
-
-	# Setup environment
-	set +h
-	LC_ALL=POSIX
-	export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
-	unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
-
-	# Make some extra directories
-	mkdir -p "${BASEDIR}/build${TOOLS_DIR}" 2>/dev/null
-	mkdir -p $BASEDIR/build/{etc,usr/src} 2>/dev/null
-	mkdir -p $BASEDIR/build/{dev/{shm,pts},proc,sys}
-	mkdir -p $BASEDIR/{cache,ccache} 2>/dev/null
-	mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
-
-	mknod -m 600 $BASEDIR/build/dev/console c 5 1 2>/dev/null
-	mknod -m 666 $BASEDIR/build/dev/null c 1 3 2>/dev/null
-
-	# Make all sources and proc available under lfs build
-	mount --bind /dev            $BASEDIR/build/dev
-	mount --bind /dev/pts        $BASEDIR/build/dev/pts
-	mount --bind /dev/shm        $BASEDIR/build/dev/shm
-	mount --bind /proc           $BASEDIR/build/proc
-	mount --bind /sys            $BASEDIR/build/sys
-	mount --bind $BASEDIR/cache  $BASEDIR/build/usr/src/cache
-	mount --bind $BASEDIR/ccache $BASEDIR/build/usr/src/ccache
-	mount --bind $BASEDIR/config $BASEDIR/build/usr/src/config
-	mount --bind $BASEDIR/doc    $BASEDIR/build/usr/src/doc
-	mount --bind $BASEDIR/html   $BASEDIR/build/usr/src/html
-	mount --bind $BASEDIR/langs  $BASEDIR/build/usr/src/langs
-	mount --bind $BASEDIR/lfs    $BASEDIR/build/usr/src/lfs
-	mount --bind $BASEDIR/log    $BASEDIR/build/usr/src/log
-	mount --bind $BASEDIR/src    $BASEDIR/build/usr/src/src
-
-	# Run LFS static binary creation scripts one by one
-	export CCACHE_DIR=$BASEDIR/ccache
-	export CCACHE_COMPRESS=1
-	export CCACHE_COMPILERCHECK="string:toolchain-${TOOLCHAINVER} ${BUILD_ARCH}"
-
-	# Remove pre-install list of installed files in case user erase some files before rebuild
-	rm -f $BASEDIR/build/usr/src/lsalr 2>/dev/null
-
-	# Prepare string for /etc/system-release.
-	SYSTEM_RELEASE="${NAME} ${VERSION} (${BUILD_ARCH})"
-	if [ "$(git status -s | wc -l)" == "0" ]; then
-	GIT_STATUS=""
-	else
-	GIT_STATUS="-dirty"
-	fi
-	case "$GIT_BRANCH" in
-	core*|beta?|rc?)
-		SYSTEM_RELEASE="${SYSTEM_RELEASE} - $GIT_BRANCH$GIT_STATUS"
-		;;
-	*)
-		SYSTEM_RELEASE="${SYSTEM_RELEASE} - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT$GIT_STATUS"
-		;;
-	esac
-}
 
 buildtoolchain() {
 	local error=false
