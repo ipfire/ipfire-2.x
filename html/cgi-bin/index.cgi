@@ -210,7 +210,7 @@ END
 	print <<END;
 		<tr>
 			<td>
-				<b>$Lang::tr{'dns servers'}:</b>
+				<b><a href="netexternal.cgi">$Lang::tr{'dns servers'}</a>:</b>
 			</td>
 			<td style='text-align:center;'>
 				$dns_servers
