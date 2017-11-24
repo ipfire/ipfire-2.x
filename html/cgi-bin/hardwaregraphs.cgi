@@ -73,7 +73,7 @@ if ( $querry[0] =~ "hwtemp"){
 	&Graphs::updatehddgraph($querry[0],$querry[1]);
 }else{
 	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'harddisk temperature graphs'}, 1, '');
+	&Header::openpage($Lang::tr{'hardware graphs'}, 1, '');
 	&Header::openbigbox('100%', 'left');
 
 	&Header::getcgihash(\%sensorsettings);
