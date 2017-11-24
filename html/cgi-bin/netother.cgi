@@ -67,7 +67,7 @@ if ( $querry[0] =~ "fwhits"){
 		&Header::closebox();
 	}
 
-	&Header::openbox('100%', 'center', "Firewall Hits $Lang::tr{'graph'}");
+	&Header::openbox('100%', 'center', "$Lang::tr{'firewallhits'} $Lang::tr{'graph'}");
 	&Graphs::makegraphbox("netother.cgi","fwhits","day");
 	&Header::closebox();
 
