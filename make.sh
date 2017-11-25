@@ -1129,7 +1129,6 @@ buildipfire() {
   lfsmake2 nettle
   lfsmake2 libevent
   lfsmake2 libevent2
-  lfsmake2 libevent2-compat
   lfsmake2 expat
   lfsmake2 apr
   lfsmake2 aprutil
