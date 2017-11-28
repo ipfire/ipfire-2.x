@@ -1593,19 +1593,6 @@ buildpackages() {
   stdumount
   rm -rf $BASEDIR/build/tmp/*
 
-  # Generating total list of files
-  echo -n "Generating files list from logs" | tee -a $LOGFILE
-  rm -f $BASEDIR/log/FILES
-  for i in `ls -1tr $BASEDIR/log/[^_]*`; do
-	if [ "$i" != "$BASEDIR/log/FILES" -a -n $i ]; then
-		echo "##" >>$BASEDIR/log/FILES
-		echo "## `basename $i`" >>$BASEDIR/log/FILES
-		echo "##" >>$BASEDIR/log/FILES
-		cat $i | sed "s%^\./%#%" | sort >> $BASEDIR/log/FILES
-	fi
-  done
-  print_status DONE
-
   cd $PWD
 }
 
