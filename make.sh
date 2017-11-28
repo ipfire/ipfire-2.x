@@ -1439,6 +1439,7 @@ buildipfire() {
   lfsmake2 powertop
   lfsmake2 parted
   lfsmake2 swig
+  lfsmake2 python-typing
   lfsmake2 python-m2crypto
   lfsmake2 wireless-regdb
   lfsmake2 crda
