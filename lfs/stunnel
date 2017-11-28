@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.01
+VER        = 5.44
 
 THISAPP    = stunnel-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = stunnel
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7b63266b6fa05da696729e245100da65
+$(DL_FILE)_MD5 = 47697dee496c80c8e352b2b705c4a571
 
 install : $(TARGET)
 
