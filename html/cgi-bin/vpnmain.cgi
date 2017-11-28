@@ -1904,7 +1904,7 @@ END
 	$cgiparams{'ESP_INTEGRITY'}		= 'sha2_512|sha2_256'; #[22];
 	$cgiparams{'ESP_GROUPTYPE'}		= 'curve25519|4096|3072|2048'; #[23];
 	$cgiparams{'ESP_KEYLIFE'}		= '1'; #[17];
-	$cgiparams{'COMPRESSION'}		= 'on'; #[13];
+	$cgiparams{'COMPRESSION'}		= 'off'; #[13];
 	$cgiparams{'ONLY_PROPOSED'}		= 'on'; #[24];
 	$cgiparams{'PFS'}				= 'on'; #[28];
 }
