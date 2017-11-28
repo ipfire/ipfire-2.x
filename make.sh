@@ -1542,7 +1542,7 @@ buildpackages() {
 
   
   # Generating list of packages used
-  echo -n "Generating packages list from logs" | tee -a $LOGFILE
+  print_line "Generating packages list from logs"
   rm -f $BASEDIR/doc/packages-list
   for i in `ls -1tr $BASEDIR/log/[^_]*`; do
 	if [ "$i" != "$BASEDIR/log/FILES" -a -n $i ]; then
