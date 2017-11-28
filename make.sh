@@ -1436,7 +1436,6 @@ buildipfire() {
   lfsmake2 usb_modeswitch
   lfsmake2 usb_modeswitch_data
   lfsmake2 zerofree
-  lfsmake2 pound
   lfsmake2 minicom
   lfsmake2 ddrescue
   lfsmake2 miniupnpd
