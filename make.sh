@@ -52,27 +52,33 @@ else
 	INTERACTIVE=false
 fi
 
-## Screen Dimentions
-# Find current screen size
-if [ -z "${COLUMNS}" ]; then
-	COLUMNS=$(stty size)
-	COLUMNS=${COLUMNS##* }
-fi
+# Sets or adjusts pretty formatting variables
+resize_terminal() {
+	## Screen Dimentions
+	# Find current screen size
+	COLUMNS=$(tput cols)
 
-# When using remote connections, such as a serial port, stty size returns 0
-if ! ${INTERACTIVE} || [ "${COLUMNS}" = "0" ]; then
-	COLUMNS=80
-fi
+	# When using remote connections, such as a serial port, stty size returns 0
+	if ! ${INTERACTIVE} || [ "${COLUMNS}" = "0" ]; then
+		COLUMNS=80
+	fi
 
-## Measurements for positioning result messages
-OPTIONS_WIDTH=20
-TIME_WIDTH=12
-STATUS_WIDTH=8
-NAME_WIDTH=$(( COLUMNS - OPTIONS_WIDTH - TIME_WIDTH - STATUS_WIDTH ))
-LINE_WIDTH=$(( COLUMNS - STATUS_WIDTH ))
+	# Measurements for positioning result messages
+	OPTIONS_WIDTH=20
+	TIME_WIDTH=12
+	STATUS_WIDTH=8
+	NAME_WIDTH=$(( COLUMNS - OPTIONS_WIDTH - TIME_WIDTH - STATUS_WIDTH ))
+	LINE_WIDTH=$(( COLUMNS - STATUS_WIDTH ))
 
-TIME_COL=$(( COLUMNS - TIME_WIDTH - STATUS_WIDTH ))
-STATUS_COL=$(( COLUMNS - STATUS_WIDTH ))
+	TIME_COL=$(( COLUMNS - TIME_WIDTH - STATUS_WIDTH ))
+	STATUS_COL=$(( COLUMNS - STATUS_WIDTH ))
+}
+
+# Initially setup terminal
+resize_terminal
+
+# Call resize_terminal when terminal is being resized
+trap "resize_terminal" WINCH
 
 # Define color for messages
 BOLD="\\033[1;39m"
