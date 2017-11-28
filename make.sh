@@ -322,12 +322,7 @@ print_package() {
 	fi
 
 	printf "%-$(( ${NAME_WIDTH} - 1 ))s " "${string}"
-
-	if [ -n "${options}" ]; then
-		printf "[ %-$(( ${OPTIONS_WIDTH} - 4 ))s ]" "${options}"
-	else
-		printf "%${OPTIONS_WIDTH}s" ""
-	fi
+	printf "%$(( ${OPTIONS_WIDTH} - 1 ))s " "${options}"
 }
 
 print_runtime() {
