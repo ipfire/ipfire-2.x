@@ -1342,7 +1342,6 @@ buildipfire() {
   lfsmake2 etherwake
   lfsmake2 bwm-ng
   lfsmake2 sysstat
-  lfsmake2 vsftpd
   lfsmake2 strongswan
   lfsmake2 rng-tools
   lfsmake2 lsof
