@@ -68,7 +68,7 @@ case "$1" in
 
 	stop)
 		boot_mesg "Stopping Apache daemon..."
-		/usr/sbin/apachectl -k stop
+		killproc /usr/sbin/httpd
 		evaluate_retval
 		;;
 
