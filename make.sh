@@ -573,6 +573,7 @@ lfsmakecommoncheck() {
 	if grep "^SUP_ARCH" ${BASEDIR}/lfs/${1} >/dev/null; then
 		# Check if package supports ${BUILD_ARCH} or all architectures.
 		if ! grep -E "^SUP_ARCH.*${BUILD_ARCH}|^SUP_ARCH.*all" ${BASEDIR}/lfs/${1} >/dev/null; then
+			print_runtime 0
 			print_status SKIP
 			return 1
 		fi
