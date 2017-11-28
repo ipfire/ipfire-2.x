@@ -6,6 +6,7 @@ etc/ssl/certs/ca-bundle.crt
 etc/ssl/certs/ca-bundle.trust.crt
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/country.cgi
+srv/web/ipfire/cgi-bin/logs.cgi/config.dat
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllogcountry.dat
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllogip.dat
@@ -17,5 +18,6 @@ srv/web/ipfire/html/themes/ipfire-legacy/include/functions.pl
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 srv/web/ipfire/html/themes/maniac/include/functions.pl
 usr/local/bin/captivectrl
+usr/local/bin/syslogdctrl
 var/ipfire/geoip-functions.pl
 var/ipfire/network-functions.pl
