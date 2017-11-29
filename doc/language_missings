@@ -11,6 +11,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< 24 hours
 < addon
 < administrator password
 < administrator username
@@ -494,6 +495,9 @@
 < ntp common settings
 < ntp sync
 < Number of Countries for the pie chart
+< one hour
+< one month
+< one week
 < one year
 < openvpn default
 < openvpn destination port used
@@ -623,6 +627,7 @@
 < unblock
 < unblock all
 < uncheck all
+< unlimited
 < updxlrtr sources
 < updxlrtr standard view
 < uplink
@@ -717,6 +722,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
+< 24 hours
 < addon
 < administrator password
 < administrator username
@@ -1188,6 +1194,9 @@
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
+< one hour
+< one month
+< one week
 < one year
 < openvpn default
 < openvpn destination port used
@@ -1335,6 +1344,7 @@
 < unblock
 < unblock all
 < uncheck all
+< unlimited
 < updxlrtr sources
 < updxlrtr standard view
 < uplink
@@ -1407,6 +1417,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
+< 24 hours
 < addon
 < administrator password
 < administrator username
@@ -1879,6 +1890,9 @@
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
+< one hour
+< one month
+< one week
 < one year
 < openvpn default
 < openvpn destination port used
@@ -2010,6 +2024,7 @@
 < unblock
 < unblock all
 < uncheck all
+< unlimited
 < updxlrtr sources
 < updxlrtr standard view
 < uplink
@@ -2082,6 +2097,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
+< 24 hours
 < Add a route
 < addon
 < administrator password
@@ -2562,6 +2578,9 @@
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
+< one hour
+< one month
+< one week
 < one year
 < openvpn default
 < openvpn destination port used
@@ -2690,6 +2709,7 @@
 < unblock
 < unblock all
 < uncheck all
+< unlimited
 < updxlrtr sources
 < updxlrtr standard view
 < uplink

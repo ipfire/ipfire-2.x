@@ -1,6 +1,7 @@
 %tr = ( 
 %tr,
 
+'24 hours' => '24 Stunden',
 'Act as' => 'Konfiguriert als:',
 'Add Level7 rule' => 'Level7-Regel hinzufügen',
 'Add Port Rule' => 'Port-Regel hinzufügen',
@@ -1726,6 +1727,9 @@
 'ok' => 'OK',
 'older' => 'Älter',
 'on' => 'on',
+'one hour' => 'Eine Stunde',
+'one month' => 'Ein Monat',
+'one week' => 'Eine Woche',
 'one year' => 'Ein Jahr',
 'online help en' => 'Online-Hilfe (auf Deutsch)',
 'only digits allowed in holdoff field' => 'Im Holdoff-Feld sind nur Ziffern erlaubt',
@@ -2337,6 +2341,7 @@
 'unix password sync' => 'Unix Password Sync',
 'unix shell' => 'UNIX-Shell',
 'unknown' => 'Unbekannt',
+'unlimited' => 'Unlimitiert',
 'unnamed' => 'Unbenannt',
 'update' => 'Aktualisieren',
 'update accelerator' => 'Update-Accelerator',
