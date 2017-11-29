@@ -13,6 +13,7 @@ srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllogcountry.dat
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllogip.dat
 srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromcountry.dat
+srv/web/ipfire/cgi-bin/netother.cgi
 srv/web/ipfire/cgi-bin/routing.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/themes/darkdos/include/functions.pl
