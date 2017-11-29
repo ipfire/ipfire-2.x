@@ -46,7 +46,7 @@ chmod 600 \
 	/etc/httpd/server-ecdsa.key
 
 # Update Language cache
-#/usr/local/bin/update-lang-cache
+/usr/local/bin/update-lang-cache
 
 # Start services
 /etc/init.d/apache reload
