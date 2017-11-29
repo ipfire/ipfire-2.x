@@ -853,6 +853,8 @@ WARNING: untranslated string: incoming compression in bytes per second
 WARNING: untranslated string: incoming overhead in bytes per second
 WARNING: untranslated string: info messages
 WARNING: untranslated string: invalid input for valid till days
+WARNING: untranslated string: invalid logserver protocol
+WARNING: untranslated string: log server protocol
 WARNING: untranslated string: masquerade blue
 WARNING: untranslated string: masquerade green
 WARNING: untranslated string: masquerade orange
@@ -910,8 +912,10 @@ WARNING: untranslated string: show tls-auth key
 WARNING: untranslated string: software version
 WARNING: untranslated string: source ip country
 WARNING: untranslated string: ta key
+WARNING: untranslated string: tcp more reliable
 WARNING: untranslated string: twelve hours
 WARNING: untranslated string: two weeks
+WARNING: untranslated string: udp less overhead
 WARNING: untranslated string: unblock
 WARNING: untranslated string: unblock all
 WARNING: untranslated string: uncheck all

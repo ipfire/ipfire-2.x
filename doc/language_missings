@@ -449,12 +449,14 @@
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for valid till days
+< invalid logserver protocol
 < ipsec
 < ipsec network
 < ipsec no connections
 < last
 < least preferred
 < lifetime
+< log server protocol
 < mac filter
 < masquerade blue
 < masquerade green
@@ -560,6 +562,7 @@
 < system has rdrand
 < system information
 < ta key
+< tcp more reliable
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -615,6 +618,7 @@
 < tor use exit nodes
 < twelve hours
 < two weeks
+< udp less overhead
 < unblock
 < unblock all
 < uncheck all
@@ -1140,12 +1144,14 @@
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for valid till days
+< invalid logserver protocol
 < ipsec
 < ipsec network
 < ipsec no connections
 < last
 < least preferred
 < lifetime
+< log server protocol
 < mac filter
 < masquerade blue
 < masquerade green
@@ -1267,6 +1273,7 @@
 < system has rdrand
 < system information
 < ta key
+< tcp more reliable
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -1322,6 +1329,7 @@
 < tor use exit nodes
 < twelve hours
 < two weeks
+< udp less overhead
 < unblock
 < unblock all
 < uncheck all
@@ -1826,12 +1834,14 @@
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for valid till days
+< invalid logserver protocol
 < ipsec
 < ipsec network
 < ipsec no connections
 < last
 < least preferred
 < lifetime
+< log server protocol
 < mac filter
 < masquerade blue
 < masquerade green
@@ -1937,6 +1947,7 @@
 < system has hwrng
 < system has rdrand
 < ta key
+< tcp more reliable
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -1992,6 +2003,7 @@
 < tor use exit nodes
 < twelve hours
 < two weeks
+< udp less overhead
 < unblock
 < unblock all
 < uncheck all
@@ -2503,12 +2515,14 @@
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for valid till days
+< invalid logserver protocol
 < ipsec
 < ipsec network
 < ipsec no connections
 < last
 < least preferred
 < lifetime
+< log server protocol
 < mac filter
 < masquerade blue
 < masquerade green
@@ -2612,6 +2626,7 @@
 < system has hwrng
 < system has rdrand
 < ta key
+< tcp more reliable
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -2667,6 +2682,7 @@
 < tor use exit nodes
 < twelve hours
 < two weeks
+< udp less overhead
 < unblock
 < unblock all
 < uncheck all
