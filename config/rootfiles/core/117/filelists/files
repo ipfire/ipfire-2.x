@@ -8,6 +8,7 @@ opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/captive.cgi
 srv/web/ipfire/cgi-bin/country.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/config.dat
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllogcountry.dat
