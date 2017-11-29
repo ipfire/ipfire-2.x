@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+ipsec stop
 
 # Extract files
 extract_files
@@ -49,6 +50,10 @@ chmod 600 \
 
 # Start services
 /etc/init.d/apache reload
+
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	ipsec start
+fi
 
 # This update need a reboot...
 #touch /var/run/need_reboot
