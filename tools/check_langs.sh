@@ -25,19 +25,21 @@ if [ ! -d ./langs/ ]; then
 	exit 1
 fi
 
-cat ./langs/de/cgi-bin/de.pl | grep \'.*\' | awk -F\' '{print $2}'| sort > /tmp/de_cgi-bin.$$
+cat ./langs/en/cgi-bin/en.pl | grep \'.*\' | awk -F\' '{print $2}'| sort > /tmp/en_cgi-bin.$$
 
-for i in ./langs/en ./langs/fr ./langs/es ./langs/pl ./langs/ru ; do
+for i in ./langs/*; do
+    [ -d "${i}" ] || continue
     language=`echo "$i" | awk -F/  '{ print $3 }'`
+    [ "${language}" = "en" ] && continue
 
     echo "############################################################################"
     echo "# Checking cgi-bin translations for language: ${language}                           #"
     echo "############################################################################"
     cat ./langs/${language}/cgi-bin/${language}.pl | grep \'.*\' | awk -F\' '{print $2}' | sort | \
-        diff /tmp/de_cgi-bin.$$ - | grep \<
+        diff /tmp/en_cgi-bin.$$ - | grep \<
 done
 
-rm -f /tmp/de_cgi-bin.$$
+rm -f /tmp/en_cgi-bin.$$
 
 exit 0
 
