@@ -757,7 +757,7 @@ sub generate_pdf() {
 			$f_subheadline->translate($cx, ($y + $h - $cy) / 2.4 + $cy);
 
 			if ($settings{'TITLE'}) {
-				$f_headline->text_center($settings{'TITLE'});
+				$f_headline->text_center(decode("utf8", $settings{'TITLE'}));
 				$f_subheadline->text_center(decode("utf8", $Lang::tr{'Captive WiFi coupon'}));
 			} else {
 				$f_headline->text_center(decode("utf8", $Lang::tr{'Captive WiFi coupon'}));
