@@ -245,6 +245,7 @@ WARNING: translation string unused: geoipblock country name
 WARNING: translation string unused: geoipblock flag
 WARNING: translation string unused: green interface
 WARNING: translation string unused: gz with key
+WARNING: translation string unused: harddisk temperature graphs
 WARNING: translation string unused: hint
 WARNING: translation string unused: host
 WARNING: translation string unused: host configuration
@@ -1020,11 +1021,13 @@ WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
 WARNING: untranslated string: invalid input for valid till days
+WARNING: untranslated string: invalid logserver protocol
 WARNING: untranslated string: ipsec
 WARNING: untranslated string: ipsec network
 WARNING: untranslated string: last
 WARNING: untranslated string: least preferred
 WARNING: untranslated string: lifetime
+WARNING: untranslated string: log server protocol
 WARNING: untranslated string: mac filter
 WARNING: untranslated string: masquerade blue
 WARNING: untranslated string: masquerade green
@@ -1112,6 +1115,7 @@ WARNING: untranslated string: proxy reports today
 WARNING: untranslated string: proxy reports weekly
 WARNING: untranslated string: qos enter bandwidths
 WARNING: untranslated string: random number generator daemon
+WARNING: untranslated string: rdns
 WARNING: untranslated string: red1
 WARNING: untranslated string: required field
 WARNING: untranslated string: route config changed
@@ -1134,6 +1138,7 @@ WARNING: untranslated string: system has hwrng
 WARNING: untranslated string: system has rdrand
 WARNING: untranslated string: system information
 WARNING: untranslated string: ta key
+WARNING: untranslated string: tcp more reliable
 WARNING: untranslated string: tor
 WARNING: untranslated string: tor accounting
 WARNING: untranslated string: tor accounting bytes
@@ -1184,6 +1189,7 @@ WARNING: untranslated string: tor traffic read written
 WARNING: untranslated string: tor use exit nodes
 WARNING: untranslated string: twelve hours
 WARNING: untranslated string: two weeks
+WARNING: untranslated string: udp less overhead
 WARNING: untranslated string: unblock
 WARNING: untranslated string: unblock all
 WARNING: untranslated string: uncheck all

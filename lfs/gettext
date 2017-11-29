@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-# Normal build or /tools build.
+# Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ ifeq "$(ROOT)" ""
   EXTRA_INSTALL =
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  EXTRA_CONFIG = --prefix=/tools --disable-shared --disable-nls --build=$(BUILDTARGET)
+  EXTRA_CONFIG = --prefix=$(TOOLS_DIR) --disable-shared --disable-nls --build=$(BUILDTARGET)
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
@@ -92,7 +92,7 @@ else
 	cd $(DIR_APP)/gettext-tools && make -C gnulib-lib
 	cd $(DIR_APP)/gettext-tools && make -C intl pluralx.c
 	cd $(DIR_APP)/gettext-tools && make -C src msgfmt
-	cd $(DIR_APP)/gettext-tools && cp -v src/msgfmt /tools/bin
+	cd $(DIR_APP)/gettext-tools && cp -v src/msgfmt $(TOOLS_DIR)/bin
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

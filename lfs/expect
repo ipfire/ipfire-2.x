@@ -71,10 +71,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/tcl* && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
-			--prefix=/tools \
+			--prefix=$(TOOLS_DIR) \
 			--build=$(BUILDTARGET) \
-			--with-tcl=/tools/lib \
-			--with-tclinclude=/tools/include \
+			--with-tcl=$(TOOLS_DIR)/lib \
+			--with-tclinclude=$(TOOLS_DIR)/include \
 			--with-x=no \
 			--disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)

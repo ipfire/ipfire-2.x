@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20150710
+VER        = 20171112
 
 THISAPP    = ca-certificates
 DIR_APP    = $(DIR_SRC)/$(THISAPP)

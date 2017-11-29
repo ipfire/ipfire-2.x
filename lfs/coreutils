@@ -31,14 +31,14 @@ DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-# Normal build or /tools build.
+# Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
   CONFIGURE_OPTIONS = --prefix=/usr
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  CONFIGURE_OPTIONS = --prefix=/tools
+  CONFIGURE_OPTIONS = --prefix=$(TOOLS_DIR)
 endif
 
 CONFIGURE_OPTIONS += \

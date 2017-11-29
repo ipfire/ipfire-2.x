@@ -310,6 +310,10 @@ iptables_init() {
 	iptables -t nat -N NAT_SOURCE
 	iptables -t nat -A POSTROUTING -j NAT_SOURCE
 
+	# Captive Portal
+	iptables -t nat -N CAPTIVE_PORTAL
+	iptables -t nat -A PREROUTING -j CAPTIVE_PORTAL
+
 	# Custom prerouting chains (for transparent proxy)
 	iptables -t nat -N SQUID
 	iptables -t nat -A PREROUTING -j SQUID
@@ -343,10 +347,6 @@ iptables_init() {
 	iptables -t nat -A PREROUTING -j UPNPFW
 	iptables -N UPNPFW
 	iptables -A FORWARD -m conntrack --ctstate NEW -j UPNPFW
-
-	# Captive Portal
-	iptables -t nat -N CAPTIVE_PORTAL
-	iptables -t nat -A PREROUTING -j CAPTIVE_PORTAL
 
 	# RED chain, used for the red interface
 	iptables -N REDINPUT

@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
-core=116
+core=117
 
 # Remove old core updates from pakfire cache to save space...
 for (( i=1; i<=$core; i++ )); do
@@ -32,7 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
-/etc/init.d/snort stop
+ipsec stop
 
 # Extract files
 extract_files
@@ -40,15 +40,23 @@ extract_files
 # update linker config
 ldconfig
 
+# Make apache keys not readable for everyone
+chmod 600 \
+	/etc/httpd/server.key \
+	/etc/httpd/server-ecdsa.key
+
 # Update Language cache
-#/usr/local/bin/update-lang-cache
+/usr/local/bin/update-lang-cache
 
 # Start services
-/etc/init.d/apache restart
-/etc/init.d/snort start
+/etc/init.d/apache reload
+
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	ipsec start
+fi
 
 # This update need a reboot...
-touch /var/run/need_reboot
+#touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start

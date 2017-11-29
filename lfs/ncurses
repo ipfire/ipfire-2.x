@@ -31,14 +31,14 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-# Normal build or /tools build.
+# Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
   PREFIX = /usr
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  PREFIX = /tools
+  PREFIX = $(TOOLS_DIR)
   EXTRA_CONFIG = --build=$(BUILDTARGET)
 endif
 
@@ -94,7 +94,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i '/LIBTOOL_INSTALL/d' c++/Makefile.in
 	# Create pkgconfig dir in toolchain
 ifneq "$(ROOT)" ""
-	mkdir -pv /tools/lib/pkgconfig/
+	mkdir -pv $(TOOLS_DIR)/lib/pkgconfig/
 endif
 	cd $(DIR_APP) && CPPFLAGS=-P ./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP) && make $(MAKETUNING)

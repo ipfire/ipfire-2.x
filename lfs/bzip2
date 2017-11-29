@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-# Normal build or /tools build.
+# Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
@@ -90,7 +90,7 @@ ifeq "$(ROOT)" ""
 	ln -sfv bzip2 /bin/bzcat
 else
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make PREFIX=/tools install
+	cd $(DIR_APP) && make PREFIX=$(TOOLS_DIR) install
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

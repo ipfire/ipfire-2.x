@@ -61,7 +61,7 @@ read_name_servers() {
 	local i
 	for i in 1 2; do
 		echo "$(</var/ipfire/red/dns${i})"
-	done | xargs echo
+	done 2>/dev/null | xargs echo
 }
 
 config_header() {

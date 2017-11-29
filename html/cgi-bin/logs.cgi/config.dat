@@ -33,6 +33,7 @@ $logsettings{'LOGWATCH_KEEP'} = '56';
 my @VS = ('15','50','100','150','250','500');
 $logsettings{'ENABLE_REMOTELOG'} = 'off';
 $logsettings{'REMOTELOG_ADDR'} = '';
+$logsettings{'REMOTELOG_PROTOCOL'} = 'udp';
 $logsettings{'ACTION'} = '';
 &Header::getcgihash(\%logsettings);
 
@@ -44,6 +45,10 @@ if ($logsettings{'ACTION'} eq $Lang::tr{'save'})
              &General::validip  ($logsettings{'REMOTELOG_ADDR'}))
     {
       $errormessage = $Lang::tr{'invalid logserver address'};
+    }
+    unless ($logsettings{'REMOTELOG_PROTOCOL'} =~ /^udp|tcp$/)
+    {
+      $errormessage = $Lang::tr{'invalid logserver protocol'};
     }
   }
   unless ($logsettings{'LOGWATCH_KEEP'} =~ /^\d+$/)
@@ -68,6 +73,10 @@ if ($logsettings{'ACTION'} eq $Lang::tr{'save'})
 $checked{'ENABLE_REMOTELOG'}{'off'} = '';
 $checked{'ENABLE_REMOTELOG'}{'on'} = '';
 $checked{'ENABLE_REMOTELOG'}{$logsettings{'ENABLE_REMOTELOG'}} = "checked='checked'";
+
+$selected{'REMOTELOG_PROTOCOL'}{'udp'} = '';
+$selected{'REMOTELOG_PROTOCOL'}{'tcp'} == '';
+$selected{'REMOTELOG_PROTOCOL'}{$logsettings{'REMOTELOG_PROTOCOL'}} = "selected='selected'";
 
 $checked{'LOGVIEW_REVERSE'}{'off'} = '';
 $checked{'LOGVIEW_REVERSE'}{'on'} = '';
@@ -139,6 +148,11 @@ print <<END
 <tr>
   <td class='base'>$Lang::tr{'enabled'}</td><td><input type='checkbox' name='ENABLE_REMOTELOG' $checked{'ENABLE_REMOTELOG'}{'on'} /></td>
   <td>$Lang::tr{'log server address'}</td><td><input type='text' name='REMOTELOG_ADDR' value='$logsettings{'REMOTELOG_ADDR'}' /></td>
+  <td>$Lang::tr{'log server protocol'}</td><td>
+  <select name='REMOTELOG_PROTOCOL'>
+  <option value='udp' $selected{'REMOTELOG_PROTOCOL'}{'udp'}>$Lang::tr{'udp less overhead'}</option>
+  <option value='tcp' $selected{'REMOTELOG_PROTOCOL'}{'tcp'}>$Lang::tr{'tcp more reliable'}</option>
+  </select></td>
 </tr>
 </table>
 END

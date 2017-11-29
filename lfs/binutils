@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-# Normal build or /tools build.
+# Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
@@ -53,9 +53,9 @@ ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = \
 	--target=$(CROSSTARGET) \
-	--prefix=/tools \
+	--prefix=$(TOOLS_DIR) \
 	--with-sysroot=$(ROOT) \
-	--with-lib-path=/tools/lib
+	--with-lib-path=$(TOOLS_DIR)/lib
   EXTRA_MAKE =
   EXTRA_INSTALL = 
 else
@@ -67,8 +67,8 @@ else
   EXTRA_CONFIG = \
 	--host=$(BUILDTARGET) \
 	--build=$(BUILDTARGET) \
-	--prefix=/tools \
-	--with-lib-path=/tools/lib
+	--prefix=$(TOOLS_DIR) \
+	--with-lib-path=$(TOOLS_DIR)/lib
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
@@ -138,7 +138,7 @@ ifeq "$(TOOLCHAIN)" "1"
  ifeq "$(PASS)" "2"
 	cd $(DIR_SRC)/binutils-build && make -C ld clean
 	cd $(DIR_SRC)/binutils-build && make -C ld LIB_PATH=/usr/lib:/lib
-	cd $(DIR_SRC)/binutils-build && cp -v ld/ld-new /tools/bin
+	cd $(DIR_SRC)/binutils-build && cp -v ld/ld-new $(TOOLS_DIR)/bin
  endif
 endif
 

@@ -1,4 +1,4 @@
-#!/tools/bin/bash
+#!/usr/bin/env bash
 
 dirs=""
 excludes="/dev /proc /sys /run"

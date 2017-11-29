@@ -13,9 +13,9 @@
 #use CGI::Carp 'fatalsToBrowser';
 
 #use strict;
-use Geo::IP::PurePerl;
 
 require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/geoip-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
@@ -152,7 +152,6 @@ if (!(open (FILE,($filestr =~ /.gz$/ ? "gzip -dc $filestr |" : $filestr)))) {
 my $lines = 0;
 my @log=();
 my $country = $cgiparams{country};
-my $gi = Geo::IP::PurePerl->new();
 
 if (!$skip)
 {
@@ -179,7 +178,7 @@ if (!$skip)
 			}
 			elsif($srcaddr ne '') {
 				# or srcaddr matches country code
-				my $ccode = $gi->country_code_by_name($srcaddr);
+				my $ccode = &GeoIP::lookup($srcaddr);
 				if($ccode eq uc($country)){
 					$log[$lines] = $_;
 					$lines++;
