@@ -433,19 +433,6 @@ prepareenv() {
 	# Set LFS Directory
 	LFS=$BASEDIR/build
 
-	# Check ${TOOLS_DIR} symlink
-	if [ -h "${TOOLS_DIR}" ]; then
-	  rm -f "${TOOLS_DIR}"
-	fi
-
-	if [ ! -e "${TOOLS_DIR}" ]; then
-	   ln -s "${BASEDIR}/build${TOOLS_DIR}" "${TOOLS_DIR}"
-	fi
-
-	if [ ! -h "${TOOLS_DIR}" ]; then
-	  exiterror "Could not create ${TOOLS_DIR} symbolic link"
-	fi
-
 	# Setup environment
 	set +h
 	LC_ALL=POSIX
@@ -908,6 +895,19 @@ buildtoolchain() {
 	local gcc=$(type -p gcc)
 	if [ -z "${gcc}" ]; then
 		exiterror "Could not find GCC. You will need a working build enviroment in order to build the toolchain."
+	fi
+
+	# Check ${TOOLS_DIR} symlink
+	if [ -h "${TOOLS_DIR}" ]; then
+		rm -f "${TOOLS_DIR}"
+	fi
+
+	if [ ! -e "${TOOLS_DIR}" ]; then
+		ln -s "${BASEDIR}/build${TOOLS_DIR}" "${TOOLS_DIR}"
+	fi
+
+	if [ ! -h "${TOOLS_DIR}" ]; then
+		exiterror "Could not create ${TOOLS_DIR} symbolic link"
 	fi
 
 	LOGFILE="$BASEDIR/log/_build.toolchain.log"
