@@ -947,6 +947,7 @@ buildtoolchain() {
 	lfsmake1 texinfo
 	lfsmake1 xz
 	lfsmake1 fake-environ
+	lfsmake1 strip
 	lfsmake1 cleanup-toolchain
 }
 

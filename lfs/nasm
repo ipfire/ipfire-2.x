@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.11.06
+VER        = 2.13.02
 
 THISAPP    = nasm-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2b958e9f5d200641e6fc9564977aecc5
+$(DL_FILE)_MD5 = abb79a82fa30908217e30f76eca8a557
 
 install : $(TARGET)
 
