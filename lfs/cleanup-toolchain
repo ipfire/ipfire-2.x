@@ -64,9 +64,6 @@ ifeq "$(TOOLCHAIN)" "1"
 	# Remove man and info pages.
 	rm -rfv $(TOOLS_DIR)/{,share}/{info,man}
 
-	# Strip all binaries.
-	STRIP="/usr/bin/strip" $(DIR_SRC)/src/stripper $(TOOLS_DIR)/
-
 	# Fix ownership of the toolchain.
 	chown -R root:root $(TOOLS_DIR)/
 
