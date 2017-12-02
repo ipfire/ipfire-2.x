@@ -30,8 +30,6 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
-sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
-
 my %color = ();
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -684,6 +682,12 @@ END
 #######################  End added for snort rules control  #################################
 &Header::closebigbox();
 &Header::closepage();
+
+sub refreshpage {
+	&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );
+		print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";
+	&Header::closebox();
+}
 
 sub downloadrulesfile {
 	my $peer;
