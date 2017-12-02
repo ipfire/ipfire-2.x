@@ -32,8 +32,6 @@ require "${General::swroot}/header.pl";
 
 sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
 
-$a = new CGI;
-
 my %color = ();
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -60,7 +58,6 @@ $snortsettings{'RULES'} = '';
 $snortsettings{'OINKCODE'} = '';
 $snortsettings{'INSTALLDATE'} = '';
 $snortsettings{'FILE'} = '';
-$snortsettings{'UPLOAD'} = '';
 
 &Header::getcgihash(\%snortsettings, {'wantfile' => 1, 'filevar' => 'FH'});
 
@@ -307,7 +304,7 @@ if (!$errormessage) {
 	# INSTALLMD5 is not in the form, so not retrieved by getcgihash
 	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
 
-	if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'} || $snortsettings{'ACTION'} eq $Lang::tr{'upload new ruleset'}) {
+	if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
 		my @df = `/bin/df -B M /var`;
 		foreach my $line (@df) {
 			next if $line =~ m/^Filesystem/;
@@ -324,14 +321,6 @@ if (!$errormessage) {
 						sleep(3);
 						$return = `cat /var/tmp/log 2>/dev/null`;
 
-					} elsif ( $snortsettings{'ACTION'} eq $Lang::tr{'upload new ruleset'}) {
-						my $upload = $a->param("UPLOAD");
-						open UPLOADFILE, ">/var/tmp/snortrules.tar.gz";
-						binmode $upload;
-						while ( <$upload> ) {
-							print UPLOADFILE;
-						}
-						close UPLOADFILE;
 					}
 
 					if ($return =~ "ERROR") {
