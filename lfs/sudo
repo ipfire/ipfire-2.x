@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--with-env-editor \
 			--with-ignore-dot \
 			--with-tty-tickets \
-			--with-passpromt="[sudo] password for %p: " \
+			--with-passprompt="[sudo] password for %p: " \
 			--without-pam
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
