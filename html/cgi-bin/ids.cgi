@@ -62,7 +62,8 @@ $snortsettings{'FILE'} = '';
 &Header::getcgihash(\%snortsettings, {'wantfile' => 1, 'filevar' => 'FH'});
 
 ####################### Added for snort rules control #################################
-my $snortrulepath; # change to "/etc/snort/rules" - maniac
+
+my $snortrulepath = "/etc/snort/rules";
 my @snortconfig;
 my $restartsnortrequired = 0;
 my %snortrules;
@@ -76,6 +77,29 @@ my $linkedrulefile = '';
 my $border = '';
 my $checkboxname = '';
 
+# Grab all available snort rules.
+my @rules;
+
+# Open snort rules directory and do a directory listing.
+opendir(DIR, $snortrulepath) or die $!;
+	# Loop through the direcory.
+	while (my $file = readdir(DIR)) {
+
+		# We only want files.
+		next unless (-f "$snortrulepath/$file");
+
+		# Ignore empty files.
+		next if (-z "$snortrulepath/$file");
+
+		# Use a regular expression to find files ending in .conf
+		next unless ($file =~ m/\.rules$/);
+
+		# Add the file to rulecategories array.
+		push(@rules, $file);
+	}
+
+closedir(DIR);
+
 if (-e "/etc/snort/snort.conf") {
 
 
@@ -85,13 +109,12 @@ if (-e "/etc/snort/snort.conf") {
 	close(FILE);
 	open(FILE, ">/etc/snort/snort.conf") or die 'Unable to write snort config file.';
 
-    my @rules = `cd /etc/snort/rules/ && ls *.rules 2>/dev/null`;    # With this loop the rule might be display with correct rulepath set
-  	foreach (@rules) {
-  	chomp $_;
-  	my $temp = join(";",@snortconfig);
+	foreach (@rules) {
+	chomp $_;
+	my $temp = join(";",@snortconfig);
     if ( $temp =~ /$_/ ){next;}
     else { push(@snortconfig,"#include \$RULE_PATH/".$_);}
-  	}
+	}
 
 	# Loop over each line
 	foreach my $line (@snortconfig) {
