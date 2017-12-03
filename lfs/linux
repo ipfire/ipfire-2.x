@@ -231,6 +231,9 @@ ifeq "$(LASTKERNEL)" "1"
 	# Only do this once
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
 
+	# disable drm by install drm to /bin/false because i915 ignore blacklisting
+	echo install drm /bin/false > /etc/modprobe.d/framebuffer.conf
+
 	# Blacklist old framebuffer modules
 	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/video/fbdev/ -name *.ko); do \
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
