@@ -781,6 +781,7 @@ WARNING: untranslated string: email settings
 WARNING: untranslated string: email testmail
 WARNING: untranslated string: email tls
 WARNING: untranslated string: email usemail
+WARNING: untranslated string: fifteen minutes
 WARNING: untranslated string: firewall graph country
 WARNING: untranslated string: firewall graph ip
 WARNING: untranslated string: firewall graph port
@@ -788,6 +789,7 @@ WARNING: untranslated string: firewall log country
 WARNING: untranslated string: firewall log ip
 WARNING: untranslated string: firewall log port
 WARNING: untranslated string: firewall logs country
+WARNING: untranslated string: five minutes
 WARNING: untranslated string: four hours
 WARNING: untranslated string: fwdfw err concon
 WARNING: untranslated string: fwdfw err ratecon
@@ -853,6 +855,7 @@ WARNING: untranslated string: imsi
 WARNING: untranslated string: incoming compression in bytes per second
 WARNING: untranslated string: incoming overhead in bytes per second
 WARNING: untranslated string: info messages
+WARNING: untranslated string: invalid input for inactivity timeout
 WARNING: untranslated string: invalid input for valid till days
 WARNING: untranslated string: invalid logserver protocol
 WARNING: untranslated string: log server protocol
@@ -915,6 +918,8 @@ WARNING: untranslated string: software version
 WARNING: untranslated string: source ip country
 WARNING: untranslated string: ta key
 WARNING: untranslated string: tcp more reliable
+WARNING: untranslated string: ten minutes
+WARNING: untranslated string: thirty minutes
 WARNING: untranslated string: twelve hours
 WARNING: untranslated string: two weeks
 WARNING: untranslated string: udp less overhead
@@ -928,6 +933,7 @@ WARNING: untranslated string: vendor
 WARNING: untranslated string: vpn broken
 WARNING: untranslated string: vpn connecting
 WARNING: untranslated string: vpn force mobike
+WARNING: untranslated string: vpn inactivity timeout
 WARNING: untranslated string: vpn on-demand
 WARNING: untranslated string: vpn start action
 WARNING: untranslated string: vpn start action route

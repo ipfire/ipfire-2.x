@@ -251,6 +251,7 @@
 < encryption
 < entropy
 < entropy graphs
+< fifteen minutes
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -277,6 +278,7 @@
 < firewall logs country
 < firewall rules
 < first
+< five minutes
 < flag
 < forward firewall
 < four hours
@@ -487,6 +489,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for inactivity timeout
 < invalid input for valid till days
 < invalid logserver protocol
 < ipsec
@@ -624,7 +627,9 @@
 < system information
 < ta key
 < tcp more reliable
+< ten minutes
 < teovpn_fragment
+< thirty minutes
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -701,6 +706,7 @@
 < vpn broken
 < vpn connecting
 < vpn force mobike
+< vpn inactivity timeout
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
@@ -956,6 +962,7 @@
 < encryption
 < entropy
 < entropy graphs
+< fifteen minutes
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -982,6 +989,7 @@
 < firewall logs country
 < firewall rules
 < first
+< five minutes
 < flag
 < forward firewall
 < four hours
@@ -1202,6 +1210,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for inactivity timeout
 < invalid input for valid till days
 < invalid logserver protocol
 < ipsec
@@ -1323,7 +1332,9 @@
 < system information
 < ta key
 < tcp more reliable
+< ten minutes
 < teovpn_fragment
+< thirty minutes
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -1403,6 +1414,7 @@
 < vpn broken
 < vpn connecting
 < vpn force mobike
+< vpn inactivity timeout
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
@@ -1575,12 +1587,14 @@
 < email text
 < email tls
 < email usemail
+< fifteen minutes
 < firewall graph country
 < firewall graph ip
 < firewall graph port
 < firewall log country
 < firewall log ip
 < firewall log port
+< five minutes
 < four hours
 < fwdfw err concon
 < fwdfw err ratecon
@@ -1607,6 +1621,7 @@
 < guardian
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
+< invalid input for inactivity timeout
 < invalid input for valid till days
 < invalid logserver protocol
 < log server protocol
@@ -1636,6 +1651,8 @@
 < samba join domain
 < search
 < tcp more reliable
+< ten minutes
+< thirty minutes
 < twelve hours
 < two weeks
 < udp less overhead
@@ -1647,6 +1664,7 @@
 < vpn broken
 < vpn connecting
 < vpn force mobike
+< vpn inactivity timeout
 < vpn on-demand
 < vpn start action
 < vpn start action route
@@ -1785,6 +1803,7 @@
 < email text
 < email tls
 < email usemail
+< fifteen minutes
 < firewall graph country
 < firewall graph ip
 < firewall graph port
@@ -1792,6 +1811,7 @@
 < firewall log ip
 < firewall log port
 < firewall logs country
+< five minutes
 < four hours
 < fwdfw err concon
 < fwdfw err ratecon
@@ -1821,6 +1841,7 @@
 < imsi
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
+< invalid input for inactivity timeout
 < invalid input for valid till days
 < invalid logserver protocol
 < log server protocol
@@ -1883,7 +1904,9 @@
 < source ip country
 < ta key
 < tcp more reliable
+< ten minutes
 < teovpn_fragment
+< thirty minutes
 < twelve hours
 < two weeks
 < udp less overhead
@@ -1897,6 +1920,7 @@
 < vpn broken
 < vpn connecting
 < vpn force mobike
+< vpn inactivity timeout
 < vpn on-demand
 < vpn start action
 < vpn start action route
@@ -2128,6 +2152,7 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< fifteen minutes
 < firewall graph country
 < firewall graph ip
 < firewall graph port
@@ -2137,6 +2162,7 @@
 < firewall logs country
 < firewall rules
 < first
+< five minutes
 < flag
 < forward firewall
 < four hours
@@ -2357,6 +2383,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for inactivity timeout
 < invalid input for valid till days
 < invalid logserver protocol
 < ipsec
@@ -2478,7 +2505,9 @@
 < system has rdrand
 < ta key
 < tcp more reliable
+< ten minutes
 < teovpn_fragment
+< thirty minutes
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -2555,6 +2584,7 @@
 < vpn broken
 < vpn connecting
 < vpn force mobike
+< vpn inactivity timeout
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
@@ -2823,6 +2853,7 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< fifteen minutes
 < firewall graph country
 < firewall graph ip
 < firewall graph port
@@ -2832,6 +2863,7 @@
 < firewall logs country
 < firewall rules
 < first
+< five minutes
 < flag
 < forward firewall
 < four hours
@@ -3055,6 +3087,7 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for inactivity timeout
 < invalid input for valid till days
 < invalid logserver protocol
 < ipsec
@@ -3174,7 +3207,9 @@
 < system has rdrand
 < ta key
 < tcp more reliable
+< ten minutes
 < teovpn_fragment
+< thirty minutes
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -3251,6 +3286,7 @@
 < vpn broken
 < vpn connecting
 < vpn force mobike
+< vpn inactivity timeout
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
@@ -3371,14 +3407,17 @@
 < Captive wrong ext
 < dnssec disabled warning
 < eight hours
+< fifteen minutes
 < firewall graph country
 < firewall graph ip
 < firewall graph port
 < firewall log country
 < firewall log ip
 < firewall log port
+< five minutes
 < four hours
 < guardian
+< invalid input for inactivity timeout
 < invalid logserver protocol
 < log server protocol
 < one hour
@@ -3387,6 +3426,8 @@
 < one year
 < rdns
 < tcp more reliable
+< ten minutes
+< thirty minutes
 < twelve hours
 < two weeks
 < udp less overhead
@@ -3394,6 +3435,7 @@
 < uplink bit rate
 < vpn broken
 < vpn connecting
+< vpn inactivity timeout
 < vpn on-demand
 < vpn start action
 < vpn start action route

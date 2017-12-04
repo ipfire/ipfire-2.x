@@ -68,6 +68,17 @@ if (&Header::orange_used() && $netsettings{'ORANGE_DEV'}) {
 	$orange_cidr = &General::ipcidr("$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}");
 }
 
+my %INACTIVITY_TIMEOUTS = (
+	300		=> $Lang::tr{'five minutes'},
+	600		=> $Lang::tr{'ten minutes'},
+	900		=> $Lang::tr{'fifteen minutes'},
+	1800		=> $Lang::tr{'thirty minutes'},
+	3600		=> $Lang::tr{'one hour'},
+	43200		=> $Lang::tr{'twelve hours'},
+	86400		=> $Lang::tr{'24 hours'},
+	0		=> "- $Lang::tr{'unlimited'} -",
+);
+
 my $col="";
 
 $cgiparams{'ENABLED'} = 'off';
@@ -109,6 +120,7 @@ $cgiparams{'DPD_DELAY'} = '30';
 $cgiparams{'DPD_TIMEOUT'} = '120';
 $cgiparams{'FORCE_MOBIKE'} = 'off';
 $cgiparams{'START_ACTION'} = 'start';
+$cgiparams{'INACTIVITY_TIMEOUT'} = 900;
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 ###
@@ -407,6 +419,11 @@ sub writeipsecfiles {
 			$start_action = "start";
 		}
 
+		my $inactivity_timeout = $lconfighash{$key}[34];
+		if ($inactivity_timeout eq "") {
+			$inactivity_timeout = 900;
+		}
+
 		# Automatically start only if a net-to-net connection
 		if ($lconfighash{$key}[3] eq 'host') {
 			print CONF "\tauto=add\n";
@@ -416,8 +433,8 @@ sub writeipsecfiles {
 
 			# If in on-demand mode, we terminate the tunnel
 			# after 15 min of no traffic
-			if ($start_action eq 'route') {
-				print CONF "\tinactivity=900\n";
+			if ($start_action eq 'route' && $inactivity_timeout > 0) {
+				print CONF "\tinactivity=$inactivity_timeout\n";
 			}
 		}
 
@@ -1299,6 +1316,7 @@ END
 		$cgiparams{'DPD_TIMEOUT'}		= $confighash{$cgiparams{'KEY'}}[30];
 		$cgiparams{'DPD_DELAY'}			= $confighash{$cgiparams{'KEY'}}[31];
 		$cgiparams{'FORCE_MOBIKE'}		= $confighash{$cgiparams{'KEY'}}[32];
+		$cgiparams{'INACTIVITY_TIMEOUT'}	= $confighash{$cgiparams{'KEY'}}[34];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -1306,6 +1324,10 @@ END
 
 		if (!$cgiparams{'DPD_TIMEOUT'}) {
 			$cgiparams{'DPD_TIMEOUT'} = 120;
+		}
+
+		if ($cgiparams{'INACTIVITY_TIMEOUT'} eq "") {
+			$cgiparams{'INACTIVITY_TIMEOUT'} = 900;
 		}
 
 	} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
@@ -1790,7 +1812,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 		$key = &General::findhasharraykey (\%confighash);
-		foreach my $i (0 .. 33) { $confighash{$key}[$i] = "";}
+		foreach my $i (0 .. 34) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -1834,6 +1856,7 @@ END
 	$confighash{$key}[30] = $cgiparams{'DPD_TIMEOUT'};
 	$confighash{$key}[31] = $cgiparams{'DPD_DELAY'};
 	$confighash{$key}[32] = $cgiparams{'FORCE_MOBIKE'};
+	$confighash{$key}[34] = $cgiparams{'INACTIVITY_TIMEOUT'};
 
 	# free unused fields!
 	$confighash{$key}[6] = 'off';
@@ -1907,6 +1930,7 @@ END
 	$cgiparams{'COMPRESSION'}		= 'off'; #[13];
 	$cgiparams{'ONLY_PROPOSED'}		= 'on'; #[24];
 	$cgiparams{'PFS'}				= 'on'; #[28];
+	$cgiparams{'INACTIVITY_TIMEOUT'}        = 900;
 }
 
 VPNCONF_ERROR:
@@ -2251,6 +2275,11 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 
+		if ($cgiparams{'INACTIVITY_TIMEOUT'} !~ /^\d+$/) {
+			$errormessage = $Lang::tr{'invalid input for inactivity timeout'};
+			goto ADVANCED_ERROR;
+		}
+
 		$confighash{$cgiparams{'KEY'}}[29] = $cgiparams{'IKE_VERSION'};
 		$confighash{$cgiparams{'KEY'}}[18] = $cgiparams{'IKE_ENCRYPTION'};
 		$confighash{$cgiparams{'KEY'}}[19] = $cgiparams{'IKE_INTEGRITY'};
@@ -2269,6 +2298,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$confighash{$cgiparams{'KEY'}}[31] = $cgiparams{'DPD_DELAY'};
 		$confighash{$cgiparams{'KEY'}}[32] = $cgiparams{'FORCE_MOBIKE'};
 		$confighash{$cgiparams{'KEY'}}[33] = $cgiparams{'START_ACTION'};
+		$confighash{$cgiparams{'KEY'}}[34] = $cgiparams{'INACTIVITY_TIMEOUT'};
 		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 		&writeipsecfiles();
 		if (&vpnenabled) {
@@ -2297,6 +2327,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$cgiparams{'DPD_DELAY'}			= $confighash{$cgiparams{'KEY'}}[31];
 		$cgiparams{'FORCE_MOBIKE'}		= $confighash{$cgiparams{'KEY'}}[32];
 		$cgiparams{'START_ACTION'}		= $confighash{$cgiparams{'KEY'}}[33];
+		$cgiparams{'INACTIVITY_TIMEOUT'}	= $confighash{$cgiparams{'KEY'}}[34];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -2308,6 +2339,10 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 
 		if (!$cgiparams{'START_ACTION'}) {
 			$cgiparams{'START_ACTION'} = "start";
+		}
+
+		if ($cgiparams{'INACTIVITY_TIMEOUT'} eq "") {
+			$cgiparams{'INACTIVITY_TIMEOUT'} = 900; # 15 min
 		}
 	}
 
@@ -2407,6 +2442,12 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$selected{'START_ACTION'}{'route'} = '';
 	$selected{'START_ACTION'}{'start'} = '';
 	$selected{'START_ACTION'}{$cgiparams{'START_ACTION'}} = "selected='selected'";
+
+	$selected{'INACTIVITY_TIMEOUT'} = ();
+	foreach my $timeout (keys %INACTIVITY_TIMEOUTS) {
+		$selected{'INACTIVITY_TIMEOUT'}{$timeout} = "";
+	}
+	$selected{'INACTIVITY_TIMEOUT'}{$cgiparams{'INACTIVITY_TIMEOUT'}} = "selected";
 
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
@@ -2627,11 +2668,23 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		</td>
 	</tr>
 	<tr>
-		<td colspan="2">
+		<td>
 			<label>
 				<input type='checkbox' name='PFS' $checked{'PFS'} />
 				$Lang::tr{'pfs yes no'}
 			</label>
+		</td>
+		<td>
+			<label>$Lang::tr{'vpn inactivity timeout'}</label>
+			<select name="INACTIVITY_TIMEOUT">
+EOF
+	foreach my $t (sort { $a <=> $b } keys %INACTIVITY_TIMEOUTS) {
+		print "<option value=\"$t\" $selected{'INACTIVITY_TIMEOUT'}{$t}>$INACTIVITY_TIMEOUTS{$t}</option>\n";
+	}
+
+	print <<EOF;
+
+			</select>
 		</td>
 	</tr>
 	<tr>
