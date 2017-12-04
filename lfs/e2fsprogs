@@ -76,8 +76,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--prefix=/usr \
 			--with-root-prefix="" \
 			--enable-elf-shlibs \
-			--disable-evms \
 			--disable-nls
+
 	cd $(DIR_APP)/build && make $(MAKETUNING)
 	cd $(DIR_APP)/build && make install
 	cd $(DIR_APP)/build && make install-libs

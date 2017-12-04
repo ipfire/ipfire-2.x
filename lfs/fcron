@@ -70,22 +70,22 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure	\
-	    --prefix=/usr			\
-	    --disable-nls			\
-	    --without-sendmail		\
-	    --with-spooldir=/var/spool/cron 	\
-	    --with-fifodir=/var/run	 	\
-	    --with-piddir=/var/run	 	\
-	    --sysconfdir=/etc		 	\
-	    --with-username=cron		\
-	    --with-groupname=cron		\
-	    --with-run-non-privileged=no	\
-	    --with-fcrondyn=no		\
-	    --with-sysfcrontab=no		\
-	    --with-boot-install=no		\
-	    --with-pam=no			\
-	    --with-selinux=no
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--without-sendmail \
+		--with-spooldir=/var/spool/cron \
+		--with-fifodir=/var/run \
+		--with-piddir=/var/run \
+		--sysconfdir=/etc \
+		--with-username=cron \
+		--with-groupname=cron \
+		--with-run-non-privileged=no \
+		--with-fcrondyn=no \
+		--with-sysfcrontab=no \
+		--with-boot-install=no \
+		--with-pam=no \
+		--with-selinux=no
+
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	echo "root" > /etc/fcron.allow

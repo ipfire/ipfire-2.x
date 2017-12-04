@@ -79,7 +79,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && sed -i "/servname/s:rpcbind:sunrpc:" src/rpcbind.c
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/rpcbind/rpcbind-0.2.3-tirpc_fix-1.patch
-	cd $(DIR_APP) && ./configure --prefix=/usr --bindir=/sbin --with-rpcuser=root --without-systemdsystemunitdir --disable-ipv6
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--bindir=/sbin \
+		--with-rpcuser=root \
+		--without-systemdsystemunitdir
+
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	#install initscripts

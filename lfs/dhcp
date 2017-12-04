@@ -107,7 +107,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--prefix=/usr \
 			--sysconfdir=/etc/dhcp \
 			--with-srv-lease-file=/var/state/dhcp/dhcpd.leases \
-			--disable-static \
 			--enable-paranoia \
 			--enable-early-chroot \
 			--disable-dhcpv6

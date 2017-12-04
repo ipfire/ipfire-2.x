@@ -71,29 +71,33 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && sed -i "s/lkrb5 -ldes/lkrb5/" configure
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc/ssh \
-		    --libexecdir=/usr/lib/openssh --with-md5-passwords \
-		    --with-privsep-path=/var/empty --disable-nls \
-		    --with-superuser-path=/sbin:/usr/sbin:/bin:/usr/bin
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--sysconfdir=/etc/ssh \
+		--libexecdir=/usr/lib/openssh \
+		--with-md5-passwords \
+		--with-privsep-path=/var/empty \
+		--with-superuser-path=/sbin:/usr/sbin:/bin:/usr/bin
+
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	sed -i -e 's/^#\?Port .*$$/Port 222/' \
-	    -e 's/^#\?Protocol .*$$/Protocol 2/' \
-	    -e 's/^#\?LoginGraceTime .*$$/LoginGraceTime 30s/' \
-	    -e 's/^#\?PubkeyAuthentication .*$$/PubkeyAuthentication yes/' \
-	    -e 's/^#\?PasswordAuthentication .*$$/PasswordAuthentication yes/' \
-	    -e 's/^#\?MaxStartups .*$$/MaxStartups 5/' \
-	    -e 's/^#\?IgnoreUserKnownHosts .*$$/IgnoreUserKnownHosts yes/' \
-	    -e 's/^#\?UsePAM .*$$//' \
-	    -e 's/^#\?X11Forwarding .*$$/X11Forwarding no/' \
-	    -e 's/^#\?SyslogFacility AUTH .*$$/SyslogFacility AUTH/' \
-	    -e 's/^#\?LogLevel INFO .*$$/LogLevel INFO/' \
-	    -e 's/^#\?AllowTcpForwarding .*$$/AllowTcpForwarding no/' \
-	    -e 's/^#\?PermitRootLogin .*$$/PermitRootLogin yes/' \
-	    -e 's|^#\?HostKey /etc/ssh/ssh_host_dsa_key$$||' \
-	    -e 's|^#\?HostKey /etc/ssh/ssh_host_ecdsa_key$$||' \
-	    -e 's|^#\?HostKey /etc/ssh/ssh_host_ed25519_key$$||' \
-	    -e 's|^#\?HostKey /etc/ssh/ssh_host_rsa_key$$|HostKey /etc/ssh/ssh_host_ecdsa_key\nHostKey /etc/ssh/ssh_host_ed25519_key\nHostKey /etc/ssh/ssh_host_rsa_key|' \
-	    /etc/ssh/sshd_config
+		-e 's/^#\?Protocol .*$$/Protocol 2/' \
+		-e 's/^#\?LoginGraceTime .*$$/LoginGraceTime 30s/' \
+		-e 's/^#\?PubkeyAuthentication .*$$/PubkeyAuthentication yes/' \
+		-e 's/^#\?PasswordAuthentication .*$$/PasswordAuthentication yes/' \
+		-e 's/^#\?MaxStartups .*$$/MaxStartups 5/' \
+		-e 's/^#\?IgnoreUserKnownHosts .*$$/IgnoreUserKnownHosts yes/' \
+		-e 's/^#\?UsePAM .*$$//' \
+		-e 's/^#\?X11Forwarding .*$$/X11Forwarding no/' \
+		-e 's/^#\?SyslogFacility AUTH .*$$/SyslogFacility AUTH/' \
+		-e 's/^#\?LogLevel INFO .*$$/LogLevel INFO/' \
+		-e 's/^#\?AllowTcpForwarding .*$$/AllowTcpForwarding no/' \
+		-e 's/^#\?PermitRootLogin .*$$/PermitRootLogin yes/' \
+		-e 's|^#\?HostKey /etc/ssh/ssh_host_dsa_key$$||' \
+		-e 's|^#\?HostKey /etc/ssh/ssh_host_ecdsa_key$$||' \
+		-e 's|^#\?HostKey /etc/ssh/ssh_host_ed25519_key$$||' \
+		-e 's|^#\?HostKey /etc/ssh/ssh_host_rsa_key$$|HostKey /etc/ssh/ssh_host_ecdsa_key\nHostKey /etc/ssh/ssh_host_ed25519_key\nHostKey /etc/ssh/ssh_host_rsa_key|' \
+		/etc/ssh/sshd_config
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

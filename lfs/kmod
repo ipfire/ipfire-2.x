@@ -74,7 +74,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--prefix=/usr \
 		--bindir=/bin \
 		--sysconfdir=/etc \
-		--enable-zlib \
 		--disable-manpages
 
 #		--libdir=/lib \
