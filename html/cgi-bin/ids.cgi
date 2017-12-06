@@ -59,8 +59,6 @@ $snortsettings{'FILE'} = '';
 
 &Header::getcgihash(\%snortsettings, {'wantfile' => 1, 'filevar' => 'FH'});
 
-####################### Added for snort rules control #################################
-
 my $snortrulepath = "/etc/snort/rules";
 my $restartsnortrequired = 0;
 my %snortrules;
@@ -99,8 +97,6 @@ opendir(DIR, $snortrulepath) or die $!;
 	}
 
 closedir(DIR);
-
-#######################  End added for snort rules control  #################################
 
 if ($snortsettings{'OINKCODE'} ne "") {
 	$errormessage = $Lang::tr{'invalid input for oink code'} unless ($snortsettings{'OINKCODE'} =~ /^[a-z0-9]+$/);
@@ -208,7 +204,6 @@ $selected{'RULES'}{$snortsettings{'RULES'}} = "selected='selected'";
 
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
 
-####################### Added for snort rules control #################################
 print "<script type='text/javascript' src='/include/snortupdateutility.js'></script>";
 print <<END
 <style type="text/css">
@@ -232,7 +227,6 @@ print <<END
 </style>
 END
 ;
-#######################  End added for snort rules control  #################################
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
@@ -357,7 +351,6 @@ if ($results ne '') {
 
 &Header::closebox();
 
-####################### Added for snort rules control #################################
 if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable_green" || -e "${General::swroot}/snort/enable_blue" || -e "${General::swroot}/snort/enable_orange" ) {
 	&Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
 		# Output display table for rule files
@@ -510,7 +503,6 @@ END
 	&Header::closebox();
 }
 
-#######################  End added for snort rules control  #################################
 &Header::closebigbox();
 &Header::closepage();
 
