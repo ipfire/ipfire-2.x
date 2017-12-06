@@ -62,7 +62,6 @@ $snortsettings{'FILE'} = '';
 ####################### Added for snort rules control #################################
 
 my $snortrulepath = "/etc/snort/rules";
-my @snortconfig;
 my $restartsnortrequired = 0;
 my %snortrules;
 my $rule = '';
@@ -75,9 +74,8 @@ my $linkedrulefile = '';
 my $border = '';
 my $checkboxname = '';
 
-# Grab all available snort rules.
-my @rules;
-
+## Grab all available snort rules and store them in the snortrules hash.
+#
 # Open snort rules directory and do a directory listing.
 opendir(DIR, $snortrulepath) or die $!;
 	# Loop through the direcory.
@@ -89,185 +87,18 @@ opendir(DIR, $snortrulepath) or die $!;
 		# Ignore empty files.
 		next if (-z "$snortrulepath/$file");
 
-		# Use a regular expression to find files ending in .conf
+		# Use a regular expression to find files ending in .rules
 		next unless ($file =~ m/\.rules$/);
 
-		# Add the file to rulecategories array.
-		push(@rules, $file);
+		# Ignore files which are not read-able.
+		next unless (-R "$snortrulepath/$file");
+
+		# Call subfunction to read-in rulefile and add rules to
+		# the snortrules hash.
+		&readrulesfile("$file");
 	}
 
 closedir(DIR);
-
-if (-e "/etc/snort/snort.conf") {
-
-
-	# Open snort.conf file, read it in, close it, and re-open for writing
-	open(FILE, "/etc/snort/snort.conf") or die 'Unable to read snort config file.';
-	@snortconfig = <FILE>;
-	close(FILE);
-	open(FILE, ">/etc/snort/snort.conf") or die 'Unable to write snort config file.';
-
-	foreach (@rules) {
-	chomp $_;
-	my $temp = join(";",@snortconfig);
-    if ( $temp =~ /$_/ ){next;}
-    else { push(@snortconfig,"#include \$RULE_PATH/".$_);}
-	}
-
-	# Loop over each line
-	foreach my $line (@snortconfig) {
-		# Trim the line
-		chomp $line;
-
-		# Check for a line with .rules
-		if ($line =~ /\.rules$/) {
-			# Parse out rule file name
-			$rule = $line;
-			$rule =~ s/\$RULE_PATH\///i;
-			$rule =~ s/ ?include ?//i;
-			$rule =~ s/\#//i;
-			my $snortrulepathrule = "$snortrulepath/$rule";
-
-			# Open rule file and read in contents
-			open(RULEFILE, "$snortrulepath/$rule") or die "Unable to read snort rule file for reading => $snortrulepath/$rule.";
-			my @snortrulefile = <RULEFILE>;
-			close(RULEFILE);
-			open(RULEFILE, ">$snortrulepath/$rule") or die "Unable to write snort rule file for writing $snortrulepath/$rule";
-
-			# Local vars
-			my $dashlinecnt = 0;
-			my $desclook = 1;
-			my $snortruledesc = '';
-			my %snortruledef = ();
-			my $rulecnt = 1;
-
-			# Loop over rule file contents
-			foreach my $ruleline (@snortrulefile) {
-				chomp $ruleline;
-
-				# If still looking for a description
-				if ($desclook) {
-					# If line does not start with a # anymore, then done looking for a description
-					if ($ruleline !~ /^\#/) {
-						$desclook = 0;
-					}
-
-					# If see more than one dashed line, (start to) create rule file description
-					if ($dashlinecnt > 1) {
-						# Check for a line starting with a #
-						if ($ruleline =~ /^\#/ and $ruleline !~ /^\#alert/) {
-							# Create tempruleline
-							my $tempruleline = $ruleline;
-
-							# Strip off # and clean up line
-							$tempruleline =~ s/\# ?//i;
-
-							# Check for part of a description
-							if ($snortruledesc eq '') {
-								$snortruledesc = $tempruleline;
-							} else {
-								$snortruledesc .= " $tempruleline";
-							}
-						} else {
-							# Must be done
-							$desclook = 0;
-						}
-					}
-
-					# If have a dashed line, increment count
-					if ($ruleline =~ /\# ?\-+/) {
-						$dashlinecnt++;
-					}
-				} else {
-					# Parse out rule file rule's message for display
-					if ($ruleline =~ /(msg\:\"[^\"]+\";)/) {
-						my $msg = '';
-						$msg = $1;
-						$msg =~ s/msg\:\"//i;
-						$msg =~ s/\";//i;
-						$snortruledef{$rulecnt}{'Description'} = $msg;
-
-						# Check for 'Save' and rule file displayed in query string
-						if (($snortsettings{'ACTION'} eq $Lang::tr{'update'}) && ($ENV{'QUERY_STRING'} =~ /$rule/i)) {
-							# Check for a disable rule which is now enabled, or an enabled rule which is now disabled
-							if ((($ruleline =~ /^\#/) && (exists $snortsettings{"SNORT_RULE_$rule\_$rulecnt"})) || (($ruleline !~ /^\#/) && (!exists $snortsettings{"SNORT_RULE_$rule\_$rulecnt"}))) {
-								$restartsnortrequired = 1;
-							}
-
-							# Strip out leading # from rule line
-							$ruleline =~ s/\# ?//i;
-
-							# Check if it does not exists (which means it is disabled), append a #
-							if (!exists $snortsettings{"SNORT_RULE_$rule\_$rulecnt"}) {
-								$ruleline = "#"." $ruleline";
-							}
-						}
-
-						# Check if ruleline does not begin with a #, so it is enabled
-						if ($ruleline !~ /^\#/) {
-							$snortruledef{$rulecnt++}{'State'} = 'Enabled';
-						} else {
-							# Otherwise it is disabled
-							$snortruledef{$rulecnt++}{'State'} = 'Disabled';
-						}
-					}
-				}
-
-				# Print ruleline to RULEFILE
-				print RULEFILE "$ruleline\n";
-			}
-
-			# Close RULEFILE
-			close(RULEFILE);
-
-			# Check for 'Save'
-			if ($snortsettings{'ACTION'} eq $Lang::tr{'update'}) {
-				# Check for a disable rule which is now enabled, or an enabled rule which is now disabled
-				if ((($line =~ /^\#/) && (exists $snortsettings{"SNORT_RULE_$rule"})) || (($line !~ /^\#/) && (!exists $snortsettings{"SNORT_RULE_$rule"}))) {
-					$restartsnortrequired = 1;
-				}
-
-				# Strip out leading # from rule line
-				$line =~ s/\# ?//i;
-
-				# Check if it does not exists (which means it is disabled), append a #
-				if (!exists $snortsettings{"SNORT_RULE_$rule"}) {
-					$line = "# $line";
-				}
-
-			}
-
-			# Check for rule state
-			if ($line =~ /^\#/) {
-				$snortrules{$rule}{"State"} = "Disabled";
-			} else {
-				$snortrules{$rule}{"State"} = "Enabled";
-			}
-
-			# Set rule description
-			$snortrules{$rule}{"Description"} = $snortruledesc;
-
-			# Loop over sorted rules
-			foreach my $ruledef (sort {$a <=> $b} keys(%snortruledef)) {
-				$snortrules{$rule}{"Definition"}{$ruledef}{'Description'} = $snortruledef{$ruledef}{'Description'};
-				$snortrules{$rule}{"Definition"}{$ruledef}{'State'} = $snortruledef{$ruledef}{'State'};
-			}
-
-			$snortruledesc = '';
-			print FILE "$line\n";
-		} elsif ($line =~ /var RULE_PATH/) {
-			($tmp, $tmp, $snortrulepath) = split(' ', $line);
-			print FILE "$line\n";
-		} else {
-			print FILE "$line\n";
-		}
-	}
-	close(FILE);
-
-	if ($restartsnortrequired) {
-		system('/usr/local/bin/snortctrl restart >/dev/null');
-	}
-}
 
 #######################  End added for snort rules control  #################################
 
@@ -712,4 +543,51 @@ sub downloadrulesfile {
 	} else {
 		system("wget -r -o /var/tmp/log --output-document=/var/tmp/snortrules.tar.gz $url");
 	}
+}
+
+sub readrulesfile ($) {
+	my $rulefile = shift;
+
+	# Open rule file and read in contents
+	open(RULEFILE, "$snortrulepath/$rulefile") or die "Unable to read $rulefile!";
+
+	# Store file content in an array.
+	my @lines = <RULEFILE>;
+
+	# Close file.
+	close(RULEFILE);
+
+	# Loop over rule file contents
+	foreach my $line (@lines) {
+		# Remove whitespaces.
+		chomp $line;
+
+		# Skip blank  lines.
+		next if ($line =~ /^\s*$/);
+
+		# Local vars.
+		my $sid;
+		my $msg;
+
+		# Gather rule sid and message from the ruleline.
+		if ($line =~ m/.*msg:\"(.*?)\"\; .* sid:(.*?); /) {
+			$msg = $1;
+			$sid = $2;
+
+			# Check if a rule has been found.
+			if ($sid && $msg) {
+				# Add rule to the snortrules hash.
+				$snortrules{$rulefile}{$sid}{'Description'} = $msg;
+
+				# Grab status of the rule. Check if ruleline starts with a "dash".
+				if ($line =~ /^\#/) {
+					# If yes, the rule is disabled.
+					$snortrules{$rulefile}{$sid}{'State'} = "Disabled";
+				} else {
+					# Otherwise the rule is enabled.
+					$snortrules{$rulefile}{$sid}{'State'} = "Enabled";
+				}
+			}
+		}
+        }
 }
