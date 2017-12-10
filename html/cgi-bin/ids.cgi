@@ -204,7 +204,18 @@ $selected{'RULES'}{$snortsettings{'RULES'}} = "selected='selected'";
 
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
 
-print "<script type='text/javascript' src='/include/snortupdateutility.js'></script>";
+### Java Script ###
+print <<END
+<script>
+	// Tiny java script function to show/hide the rules
+	// of a given category.
+	function showhide(tblname) {
+		\$("#" + tblname).toggle();
+	}
+</script>
+END
+;
+
 print <<END
 <style type="text/css">
 <!--
@@ -353,150 +364,102 @@ if ($results ne '') {
 
 &Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
 	# Output display table for rule files
-	print "<table width='100%'><tr><td valign='top'><table>";
+	print "<table width='100%'>\n";
 
-	print "<form method='post'>";
-
-	# Local vars
-	my $ruledisplaycnt = 1;
-	my $rulecnt = keys %snortrules;
-	$rulecnt++;
-	$rulecnt = $rulecnt / 2;
+	# Local variable required for java script to show/hide
+	# rules of a rulefile.
+	my $rulesetcount = 1;
 
 	# Loop over each rule file
 	foreach my $rulefile (sort keys(%snortrules)) {
 		my $rulechecked = '';
-
-		# Hide inkompatible Block rules
-		if ($rulefile =~'-BLOCK.rules') {
-			next;
-		}
-
-		# Check if reached half-way through rule file rules to start new column
-		if ($ruledisplaycnt > $rulecnt) {
-			print "</table></td><td valign='top'><table>";
-			$ruledisplaycnt = 0;
-		}
 
 		# Check if rule file is enabled
 		if ($snortrules{$rulefile}{"State"} eq 'Enabled') {
 			$rulechecked = 'CHECKED';
 		}
 
-		# Create rule file link, vars array, and display flag
-		my $rulefilelink = "?RULEFILE=$rulefile";
-		my $rulefiletoclose = '';
-		my @queryvars = ();
-		my $displayrulefilerules = 0;
+		# Table and rows for the rule files.
+		print"<tr>\n";
+		print"<td class='base' width='5%'>\n";
+		print"<input type='checkbox' name='SNORT_RULE_$rulefile' $rulechecked>\n";
+		print"</td>\n";
+		print"<td class='base' width='90%'><b>$rulefile</b></td>\n";
+		print"<td class='base' width='5%' align='right'>\n";
+		print"<a href=\"javascript:showhide('ruleset$rulesetcount')\">SHOW</a>\n";
+		print"</td>\n";
+		print"</tr>\n";
 
-		# Check for passed in query string
-		if ($ENV{'QUERY_STRING'}) {
-			# Split out vars
-			@queryvars = split(/\&/, $ENV{'QUERY_STRING'});
+		# Rows which will be hidden per default and will contain the single rules.
+		print"<tr  style='display:none' id='ruleset$rulesetcount'>\n";
+		print"<td colspan='3'>\n";
 
-			# Loop over values
-			foreach $value (@queryvars) {
-				# Split out var pairs
-				($var, $linkedrulefile) = split(/=/, $value);
+		# Local vars
+		my $lines;
+		my $rows;
+		my $col;
 
-				# Check if var is 'RULEFILE'
-				if ($var eq 'RULEFILE') {
-					# Check if rulefile equals linkedrulefile
-					if ($rulefile eq $linkedrulefile) {
-						# Set display flag
-						$displayrulefilerules = 1;
+		# New table for the single rules.
+		print "<table width='100%'>\n";
 
-						# Strip out rulefile from rulefilelink
-						$rulefilelink =~ s/RULEFILE=$linkedrulefile//g;
-					} else {
-						# Add linked rule file to rulefilelink
-						$rulefilelink .= "&RULEFILE=$linkedrulefile";
-					}
-				}
-			}
-		}
-
-		# Strip out extra & & ? from rulefilelink
-		$rulefilelink =~ s/^\?\&/\?/i;
-
-		# Check for a single '?' and replace with page for proper link display
-		if ($rulefilelink eq '?') {
-			$rulefilelink = "ids.cgi";
-		}
-
-		# Output rule file name and checkbox
-		print "<tr><td class='base' valign='top'><input type='checkbox' NAME='SNORT_RULE_$rulefile' $rulechecked> <a href='$rulefilelink'>$rulefile</a></td></tr>";
-		print "<tr><td class='base' valign='top'>";
-
-		# Check for empty 'Description'
-		if ($snortrules{$rulefile}{'Description'} eq '') {
-			print "<table width='100%'><tr><td class='base'>No description available</td></tr>";
-		} else {
-			# Output rule file 'Description'
-			print "<table width='100%'><tr><td class='base'>$snortrules{$rulefile}{'Description'}</td></tr>";
-		}
-
-		# Check for display flag
-		if ($displayrulefilerules) {
-			# Rule file definition rule display
-			print "<tr><td class='base' valign='top'><table border='0'><tr>";
-
+		# Loop over rule file rules
+		foreach my $sid (sort {$a <=> $b} keys(%{$snortrules{$rulefile}})) {
 			# Local vars
-		 	my $ruledefdisplaycnt = 0;
-			my $ruledefcnt = keys %{$snortrules{$rulefile}{"Definition"}};
-			$ruledefcnt++;
-			$ruledefcnt = $ruledefcnt / 2;
+			my $ruledefchecked = '';
 
-			# Loop over rule file rules
-			foreach my $ruledef (sort {$a <=> $b} keys(%{$snortrules{$rulefile}{"Definition"}})) {
-				# Local vars
-				my $ruledefchecked = '';
+			# If 2 rules have been displayed, start a new row
+			if (($lines % 2) == 0) {
+				print "</tr><tr>\n";
 
-				# If have display 2 rules, start new row
-				if (($ruledefdisplaycnt % 2) == 0) {
-					print "</tr><tr>";
-					$ruledefdisplaycnt = 0;
-				}
-
-				# Check for rules state
-				if ($snortrules{$rulefile}{'Definition'}{$ruledef}{'State'} eq 'Enabled') {
-					$ruledefchecked = 'CHECKED';
-				}
-
-				# Create rule file rule's checkbox
-				$checkboxname = "SNORT_RULE_$rulefile";
-				$checkboxname .= "_$ruledef";
-				print "<td class='base'><input type='checkbox' NAME='$checkboxname' $ruledefchecked> $snortrules{$rulefile}{'Definition'}{$ruledef}{'Description'}</td>";
-
-				# Increment count
-				$ruledefdisplaycnt++;
+				# Increase rows by once.
+				$rows++;
 			}
 
-			# If do not have second rule for row, create empty cell
-			if (($ruledefdisplaycnt % 2) != 0) {
-				print "<td class='base'></td>";
+			# Colour lines.
+			if ($rows % 2) {
+				$col="bgcolor='$color{'color20'}'";
+			} else {
+				$col="bgcolor='$color{'color22'}'";
 			}
 
-			# Close display table
-			print "</tr></table></td></tr>";
+			# Set rule state
+			if ($snortrules{$rulefile}{$sid}{'State'} eq 'Enabled') {
+				$ruledefchecked = 'CHECKED';
+			}
+
+			# Create rule checkbox and display rule description
+			print "<td class='base' width='5%' align='right' $col>\n";
+			print "<input type='checkbox' NAME='$sid' $ruledefchecked>\n";
+			print "</td>\n";
+			print "<td class='base' width='45%' $col>$snortrules{$rulefile}{$sid}{'Description'}</td>";
+
+			# Increment rule count
+			$lines++;
+		}
+
+		# If do not have a second rule for row, create empty cell
+		if (($lines % 2) != 0) {
+			print "<td class='base'></td>";
 		}
 
 		# Close display table
-		print "</table>";
+		print "</tr></table></td></tr>";
 
-		# Increment ruledisplaycnt
-		$ruledisplaycnt++;
+		# Finished whith the rule file, increase count.
+		$rulesetcount++;
 	}
-print "</td></tr></table></td></tr></table>";
+
+	# Close display table
+	print "</table>";
+
 print <<END
 <table width='100%'>
 <tr>
-	<td width='100%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
+	<td width='100%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'update'}'>
 		&nbsp; <!-- space for future online help link -->
 	</td>
 </tr>
 </table>
-</form>
 END
 ;
 &Header::closebox();
