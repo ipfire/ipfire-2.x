@@ -216,29 +216,6 @@ print <<END
 END
 ;
 
-print <<END
-<style type="text/css">
-<!--
-.section {
-	border: groove;
-}
-.row1color {
-	border: ridge;
-	background-color: $color{'color22'};
-}
-.row2color {
-	border: ridge;
-	background-color: $color{'color20'};
-}
-.rowselected {
-	border: double #FF0000;
-	background-color: #DCDCDC;
-}
--->
-</style>
-END
-;
-
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 ###############
