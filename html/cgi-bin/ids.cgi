@@ -32,22 +32,22 @@ require "${General::swroot}/header.pl";
 
 my %color = ();
 my %mainsettings = ();
-&General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
-
+my %netsettings = ();
 my %snortsettings=();
 my %cgiparams=();
 my %checked=();
 my %selected=();
-my %netsettings=();
-our $errormessage = '';
-our $results = '';
-our $tempdir = '';
-our $url='';
+
+# Read-in main settings, for language, theme and colors.
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
+# Get netsettings.
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
 &Header::showhttpheaders();
 
+# Default settings for snort.
 $snortsettings{'ENABLE_SNORT'} = 'off';
 $snortsettings{'ENABLE_SNORT_GREEN'} = 'off';
 $snortsettings{'ENABLE_SNORT_BLUE'} = 'off';
@@ -56,7 +56,6 @@ $snortsettings{'ACTION'} = '';
 $snortsettings{'RULES'} = '';
 $snortsettings{'OINKCODE'} = '';
 $snortsettings{'INSTALLDATE'} = '';
-$snortsettings{'FILE'} = '';
 
 #Get GUI values
 &Header::getcgihash(\%cgiparams);
@@ -64,15 +63,8 @@ $snortsettings{'FILE'} = '';
 my $snortrulepath = "/etc/snort/rules";
 my $restartsnortrequired = 0;
 my %snortrules;
-my $rule = '';
-my $table1colour = '';
-my $table2colour = '';
-my $var = '';
-my $value = '';
-my $tmp = '';
-my $linkedrulefile = '';
-my $border = '';
-my $checkboxname = '';
+my $errormessage;
+my $url;
 
 ## Grab all available snort rules and store them in the snortrules hash.
 #
@@ -411,10 +403,6 @@ print <<END
 </form>
 END
 ;
-
-if ($results ne '') {
-	print "$results";
-}
 
 &Header::closebox();
 
