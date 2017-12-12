@@ -160,7 +160,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 						push(@enabled_sids, $sid);
 
 						# Drop item from cgiparams hash.
-						delete $cgiparams{$sid};
+						delete $cgiparams{$rulefile}{$sid};
 					}
 				}
 			} else {
@@ -173,7 +173,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 					push(@disabled_sids, $sid);
 
 					# Drop item from cgiparams hash.
-					delete $cgiparams{$sid};
+					delete $cgiparams{$rulefile}{$sid};
 				}
 			}
 		}
