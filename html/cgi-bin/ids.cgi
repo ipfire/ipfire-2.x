@@ -147,7 +147,10 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 			# Drop item from cgiparams hash.
 			delete $cgiparams{$rulefile};
 		}
+	}
 
+	# Loop through the hash of snortrules.
+	foreach my $rulefile (keys %snortrules) {
 		# Loop through the single rules of the rulefile.
 		foreach my $sid (keys %{$snortrules{$rulefile}}) {
 			# Check if there exists a key in the cgiparams hash for this sid.
