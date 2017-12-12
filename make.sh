@@ -1042,9 +1042,7 @@ buildipfire() {
   lfsmake2 unzip
   lfsmake2 which
   lfsmake2 linux-firmware
-  lfsmake2 ath10k-firmware
   lfsmake2 dvb-firmwares
-  lfsmake2 mt7601u-firmware
   lfsmake2 zd1211-firmware
   lfsmake2 rpi-firmware
   lfsmake2 bc

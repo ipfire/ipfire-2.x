@@ -34,9 +34,9 @@ PART_BOOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p1
 PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
 
 ifeq "$(SCON)" "1"
-	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).1gb-ext4-scon.$(BUILD_ARCH)-full-core$(CORE).img.gz
+	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).2gb-ext4-scon.$(BUILD_ARCH)-full-core$(CORE).img.gz
 else
-	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).1gb-ext4.$(BUILD_ARCH)-full-core$(CORE).img.gz
+	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).2gb-ext4.$(BUILD_ARCH)-full-core$(CORE).img.gz
 endif
 
 FSTAB_FMT = UUID=%s %-8s %-4s %-10s %d %d\n
@@ -75,9 +75,9 @@ else
 endif
 
 # /boot:  64MB - OFFSET
-# /    : 850MB
+# /    : 1200 MB
 S_BOOT := $(shell echo $$(( 131072 - $(S_OFFSET) )))
-S_ROOT := 1740800
+S_ROOT := 2477600
 
 PADDING = 100 # MB
 
