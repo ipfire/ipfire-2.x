@@ -5,7 +5,7 @@
 #                                                                          #
 # IPFire is free software; you can redistribute it and/or modify           #
 # it under the terms of the GNU General Public License as published by     #
-# the Free Software Foundation; either version 2 of the License, or        #
+# the Free Software Foundation; either version 3 of the License, or        #
 # (at your option) any later version.                                      #
 #                                                                          #
 # IPFire is distributed in the hope that it will be useful,                #
@@ -17,25 +17,57 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2017 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-stop_service ${NAME}
+/usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
-#Create a backupinclude if it not exist
-if [ ! -e "/var/ipfire/backup/addons/includes/vsftpd" ]; then
-    echo /etc/vsftpd.conf > /var/ipfire/backup/addons/includes/vsftpd
-    echo /etc/vsftpd.user_list >> /var/ipfire/backup/addons/includes/vsftpd
+core=117
+
+# Remove old core updates from pakfire cache to save space...
+for (( i=1; i<=$core; i++ )); do
+	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
+done
+
+# Stop services
+ipsec stop
+
+# Extract files
+extract_files
+
+# update linker config
+ldconfig
+
+# Make apache keys not readable for everyone
+chmod 600 \
+	/etc/httpd/server.key \
+	/etc/httpd/server-ecdsa.key
+
+# Update Language cache
+/usr/local/bin/update-lang-cache
+
+# Start services
+/etc/init.d/apache reload
+
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	ipsec start
 fi
-#Fix wrong backupinclude
-sed -i 's|^etc|/etc|g' /var/ipfire/backup/addons/includes/vsftpd
-make_backup ${NAME}
-#Remove userdate from rootfile
-cat /opt/pakfire/db/rootfiles/vsftpd | \
-    grep -v "home/ftp" | \
-    grep -v "var/ftp" > /opt/pakfire/db/rootfiles/vsftpd.tmp
-mv /opt/pakfire/db/rootfiles/vsftpd.tmp /opt/pakfire/db/rootfiles/vsftpd 
 
-remove_files
+# This update need a reboot...
+#touch /var/run/need_reboot
+
+# Finish
+/etc/init.d/fireinfo start
+sendprofile
+
+# Update grub config to display new core version
+if [ -e /boot/grub/grub.cfg ]; then
+	grub-mkconfig -o /boot/grub/grub.cfg
+fi
+
+sync
+
+# Don't report the exitcode last command
+exit 0

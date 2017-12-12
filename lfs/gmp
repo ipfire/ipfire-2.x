@@ -39,9 +39,7 @@ endif
 
 CONFIGURE_OPTIONS = \
 	--prefix=/usr \
-	--enable-cxx \
-	--enable-mpbsd \
-	--disable-nls
+	--enable-cxx
 
 ###############################################################################
 # Top-level Rules

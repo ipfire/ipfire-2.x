@@ -27,12 +27,13 @@
 #define ERR_ANY 1
 #define ERR_SETTINGS 2    /* error in settings file */
 #define ERR_ETC 3         /* error with /etc permissions */
-#define ERR_CONFIG 4      /* error updated sshd_config */
+#define ERR_CONFIG 4      /* error updating syslogd config */
 #define ERR_SYSLOG 5      /* error restarting syslogd */
 
 int main(void)
 {
    char buffer[STRING_SIZE], command[STRING_SIZE], hostname[STRING_SIZE];
+   const char* protocol;
    char varmessages[STRING_SIZE], asynclog[STRING_SIZE];
    int config_fd,rc,fd,pid;
    struct stat st;
@@ -65,6 +66,12 @@ int main(void)
    {
       fprintf(stderr, "Cannot read REMOTELOG_ADDR\n");
       exit(ERR_SETTINGS);
+   }
+
+   if (!findkey(kv, "REMOTELOG_PROTOCOL", protocol))
+   {
+      /* fall back to UDP if no protocol was given */
+      protocol = "udp";
    }
 
    if (strspn(hostname, VALID_FQDN) != strlen(hostname))
@@ -106,9 +113,24 @@ int main(void)
    }
 
    if (!strcmp(buffer,"on"))
-      snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@\\).\\+$/\\1%s/' /etc/syslog.conf >&%d", hostname, config_fd );
+   {
+      /* check which transmission protocol was given */
+      if (strcmp(protocol, "tcp") == 0)
+      {
+         /* write line for TCP */
+         snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@@\\).\\+$/\\1%s/' /etc/syslog.conf >&%d", hostname, config_fd );
+      }
+      else
+      {
+         /* write line for UDP */
+         snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@\\).\\+$/\\1%s/' /etc/syslog.conf >&%d", hostname, config_fd );
+      }
+   }
    else
+   {
+      /* if remote syslog has been disabled */
       snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@.\\+\\)$/#\\1/' /etc/syslog.conf >&%d", config_fd );
+   }
 
      /* if the return code isn't 0 failsafe */
    if ((rc = unpriv_system(buffer,99,99)) != 0)

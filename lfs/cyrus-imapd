@@ -77,11 +77,18 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --with-service-path=/usr/lib/cyrus \
-				--with-cyrus-prefix=/usr/lib/cyrus --sysconfdir=/var/ipfire/cyrusimap \
-				--with-auth=unix --with-perl --with-sasl --with-idle=idled \
-				--with-syslogfacility=MAIL --enable-listext --without-snmp \
-				--enable-autocreate --enable-idled
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--with-service-path=/usr/lib/cyrus \
+		--with-cyrus-prefix=/usr/lib/cyrus \
+		--sysconfdir=/var/ipfire/cyrusimap \
+		--with-perl \
+		--with-sasl \
+		--with-syslogfacility=MAIL \
+		--without-snmp \
+		--enable-autocreate \
+		--enable-idled
+
 	cd $(DIR_APP) && make $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	-mkdir /var/imap

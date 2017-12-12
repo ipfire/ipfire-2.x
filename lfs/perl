@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-# Normal build or /tools build.
+# Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
@@ -90,13 +90,13 @@ ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 else
-	cd $(DIR_APP) && ./configure.gnu --prefix=/tools -Dstatic_ext='Data/Dumper Fcntl IO'
+	cd $(DIR_APP) && ./configure.gnu --prefix=$(TOOLS_DIR) -Dstatic_ext='Data/Dumper Fcntl IO'
 	cd $(DIR_APP) && sed -i 's/^0$$//' makefile
 	cd $(DIR_APP) && sed -i 's/^0$$//' x2p/makefile
 	cd $(DIR_APP) && make perl utilities
-	cd $(DIR_APP) && cp -v perl pod/pod2man /tools/bin
-	cd $(DIR_APP) && mkdir -pv /tools/lib/perl5/$(VER)
-	cd $(DIR_APP) && cp -Rv lib/* /tools/lib/perl5/$(VER)
+	cd $(DIR_APP) && cp -v perl pod/pod2man $(TOOLS_DIR)/bin
+	cd $(DIR_APP) && mkdir -pv $(TOOLS_DIR)/lib/perl5/$(VER)
+	cd $(DIR_APP) && cp -Rv lib/* $(TOOLS_DIR)/lib/perl5/$(VER)
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

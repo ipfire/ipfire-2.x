@@ -34,8 +34,7 @@ use Net::Ping;
 package Pakfire;
 
 # GPG Keys
-my $myid = "64D96617";			# Our own gpg-key paks@ipfire.org
-my $trustid = "65D0FD58";		# gpg-key of CaCert
+my $myid = "179740DC4D8C47DC63C099C74BDE364C64D96617";		# Our own gpg-key paks@ipfire.org
 
 # A small color-hash :D
 my %color;
@@ -902,17 +901,15 @@ sub senduuid {
 
 sub checkcryptodb {
 	logger("CRYPTO INFO: Checking GnuPG Database");
-	my $ret = system("gpg --list-keys | grep -q $myid");
-	unless ( "$ret" eq "0" ) {
-		message("CRYPTO WARN: The GnuPG isn't configured corectly. Trying now to fix this.");
-		message("CRYPTO WARN: It's normal to see this on first execution.");
-		message("CRYPTO WARN: If this message is being shown repeatedly, check if time and date are set correctly, and if IPFire can connect via port 11371 TCP.");
-		my $command = "gpg --keyserver pgp.ipfire.org --always-trust --status-fd 2";
-		system("$command --recv-key $myid >> $Conf::logdir/gnupg-database.log 2>&1");
-		system("$command --recv-key $trustid >> $Conf::logdir/gnupg-database.log 2>&1");
-	} else {
-		logger("CRYPTO INFO: Database is okay");
-	}
+	system("gpg --fingerprint $myid >/dev/null");
+	return if ($? == 0);
+
+	message("CRYPTO WARN: The GnuPG isn't configured correctly. Trying now to fix this.");
+	message("CRYPTO WARN: It's normal to see this on first execution.");
+	message("CRYPTO WARN: If this message is being shown repeatedly, check if time and date are set correctly, and if IPFire can connect via port 11371 TCP.");
+
+	my $command = "gpg --keyserver pgp.ipfire.org --always-trust --status-fd 2";
+	system("$command --recv-key $myid >> $Conf::logdir/gnupg-database.log 2>&1");
 }
 
 sub callback {

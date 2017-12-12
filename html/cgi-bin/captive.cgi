@@ -42,7 +42,7 @@ my %session_times = (
 	86400		=> $Lang::tr{'24 hours'},
 	604800		=> $Lang::tr{'one week'},
 	1209600		=> $Lang::tr{'two weeks'},
-	18144000 	=> $Lang::tr{'one month'},
+	2592000 	=> $Lang::tr{'one month'},
 	31536000	=> $Lang::tr{'one year'},
 	0		=> "- $Lang::tr{'unlimited'} -",
 );
@@ -757,7 +757,7 @@ sub generate_pdf() {
 			$f_subheadline->translate($cx, ($y + $h - $cy) / 2.4 + $cy);
 
 			if ($settings{'TITLE'}) {
-				$f_headline->text_center($settings{'TITLE'});
+				$f_headline->text_center(decode("utf8", $settings{'TITLE'}));
 				$f_subheadline->text_center(decode("utf8", $Lang::tr{'Captive WiFi coupon'}));
 			} else {
 				$f_headline->text_center(decode("utf8", $Lang::tr{'Captive WiFi coupon'}));
