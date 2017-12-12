@@ -143,6 +143,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 		if ($cgiparams{$rulefile} eq "on") {
 			# Add rulefile to the array of enabled rulefiles.
 			push(@enabled_rulefiles, $rulefile);
+
+			# Drop item from cgiparams hash.
+			delete $cgiparams{$rulefile};
 		}
 
 		# Loop through the single rules of the rulefile.
