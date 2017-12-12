@@ -35,10 +35,10 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  EXTRA_CONFIG = --prefix=/usr --disable-nls --bindir=/bin
+  EXTRA_CONFIG = --prefix=/usr --bindir=/bin
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  EXTRA_CONFIG = --prefix=$(TOOLS_DIR) --disable-nls
+  EXTRA_CONFIG = --prefix=$(TOOLS_DIR)
 endif
 
 ###############################################################################

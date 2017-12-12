@@ -745,12 +745,14 @@ WARNING: untranslated string: bytes
 WARNING: untranslated string: captive
 WARNING: untranslated string: dnssec disabled warning
 WARNING: untranslated string: eight hours
+WARNING: untranslated string: fifteen minutes
 WARNING: untranslated string: firewall graph country
 WARNING: untranslated string: firewall graph ip
 WARNING: untranslated string: firewall graph port
 WARNING: untranslated string: firewall log country
 WARNING: untranslated string: firewall log ip
 WARNING: untranslated string: firewall log port
+WARNING: untranslated string: five minutes
 WARNING: untranslated string: four hours
 WARNING: untranslated string: fwhost cust geoipgrp
 WARNING: untranslated string: fwhost err hostip
@@ -793,6 +795,7 @@ WARNING: untranslated string: guardian service
 WARNING: untranslated string: guardian watch snort alertfile
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
 WARNING: untranslated string: info messages
+WARNING: untranslated string: invalid input for inactivity timeout
 WARNING: untranslated string: invalid logserver protocol
 WARNING: untranslated string: log server protocol
 WARNING: untranslated string: no data
@@ -806,6 +809,8 @@ WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
 WARNING: untranslated string: tcp more reliable
+WARNING: untranslated string: ten minutes
+WARNING: untranslated string: thirty minutes
 WARNING: untranslated string: twelve hours
 WARNING: untranslated string: two weeks
 WARNING: untranslated string: udp less overhead
@@ -813,6 +818,7 @@ WARNING: untranslated string: unlimited
 WARNING: untranslated string: uplink bit rate
 WARNING: untranslated string: vpn broken
 WARNING: untranslated string: vpn connecting
+WARNING: untranslated string: vpn inactivity timeout
 WARNING: untranslated string: vpn on-demand
 WARNING: untranslated string: vpn start action
 WARNING: untranslated string: vpn start action route

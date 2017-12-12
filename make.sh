@@ -217,6 +217,12 @@ configure_build() {
 			parallelism=${cpu_max}
 		fi
 
+		# limit to -j23 because perl will not build
+		# more
+		if [ ${parallelism} -gt 23 ]; then
+			parallelism=23
+		fi
+
 		MAKETUNING="-j${parallelism}"
 	fi
 }
@@ -627,7 +633,7 @@ lfsmake2() {
 	local PS1='\u:\w$ '
 
 	enterchroot \
-		bash -x -c "cd /usr/src/lfs && \
+		${EXTRA_PATH}bash -x -c "cd /usr/src/lfs && \
 			MAKETUNING=${MAKETUNING} \
 			make -f $* \
 			LFS_BASEDIR=/usr/src install" \
@@ -1526,7 +1532,8 @@ buildinstaller() {
   export LOGFILE
   lfsmake2 memtest
   lfsmake2 installer
-  lfsmake1 strip
+  # use toolchain bash for chroot to strip
+  EXTRA_PATH=${TOOLS_DIR}/bin/ lfsmake2 strip
 }
 
 buildpackages() {

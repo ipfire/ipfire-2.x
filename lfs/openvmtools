@@ -81,13 +81,21 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && sed -e "s/-Werror//g" -i configure.ac
 	cd $(DIR_APP) && autoreconf -vfi
-	cd $(DIR_APP) && ./configure --prefix=/usr \
-	   --with-kernel-release=$(KVER)-ipfire --without-pam \
-	   --disable-unity --without-gtk2 --without-gtkmm \
-	   --without-procps --without-icu \
-	   --without-x --with-linuxdir=/usr/src/linux \
-	   --without-kernel-modules --disable-deploypkg \
-	   --without-xerces-c --without-xerces
+
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--with-kernel-release=$(KVER)-ipfire \
+		--without-pam \
+		--without-gtk2 \
+		--without-gtkmm \
+		--without-procps \
+		--without-icu \
+		--without-x \
+		--with-linuxdir=/usr/src/linux \
+		--without-kernel-modules \
+		--disable-deploypkg \
+		--without-xerces
+
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	#install initscripts

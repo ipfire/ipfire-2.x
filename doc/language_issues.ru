@@ -798,6 +798,7 @@ WARNING: untranslated string: extrahd maybe the device is in use
 WARNING: untranslated string: extrahd to
 WARNING: untranslated string: extrahd to root
 WARNING: untranslated string: extrahd you cant mount
+WARNING: untranslated string: fifteen minutes
 WARNING: untranslated string: firewall graph country
 WARNING: untranslated string: firewall graph ip
 WARNING: untranslated string: firewall graph port
@@ -807,6 +808,7 @@ WARNING: untranslated string: firewall log port
 WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: firewall rules
 WARNING: untranslated string: first
+WARNING: untranslated string: five minutes
 WARNING: untranslated string: flag
 WARNING: untranslated string: four hours
 WARNING: untranslated string: fw default drop
@@ -1022,6 +1024,7 @@ WARNING: untranslated string: info messages
 WARNING: untranslated string: integrity
 WARNING: untranslated string: invalid input for dpd delay
 WARNING: untranslated string: invalid input for dpd timeout
+WARNING: untranslated string: invalid input for inactivity timeout
 WARNING: untranslated string: invalid input for valid till days
 WARNING: untranslated string: invalid logserver protocol
 WARNING: untranslated string: ipsec
@@ -1134,6 +1137,8 @@ WARNING: untranslated string: system has hwrng
 WARNING: untranslated string: system has rdrand
 WARNING: untranslated string: ta key
 WARNING: untranslated string: tcp more reliable
+WARNING: untranslated string: ten minutes
+WARNING: untranslated string: thirty minutes
 WARNING: untranslated string: tor
 WARNING: untranslated string: tor accounting
 WARNING: untranslated string: tor accounting bytes
@@ -1199,6 +1204,7 @@ WARNING: untranslated string: visit us at
 WARNING: untranslated string: vpn broken
 WARNING: untranslated string: vpn connecting
 WARNING: untranslated string: vpn force mobike
+WARNING: untranslated string: vpn inactivity timeout
 WARNING: untranslated string: vpn keyexchange
 WARNING: untranslated string: vpn on-demand
 WARNING: untranslated string: vpn start action

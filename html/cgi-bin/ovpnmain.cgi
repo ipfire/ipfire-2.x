@@ -4975,6 +4975,35 @@ END
 		}
 		if ($set == '1' && $#temp != -1){ print"<option selected>$temp[1]</option>";$set=0;}elsif($set == '0' && $#temp != -1){print"<option>$temp[1]</option>";}
 	}	
+
+	my %vpnconfig = ();
+	&General::readhasharray("${General::swroot}/vpn/config", \%vpnconfig);
+	foreach my $vpn (keys %vpnconfig) {
+		# Skip all disabled VPN connections
+		my $enabled = $vpnconfig{$vpn}[0];
+		next unless ($enabled eq "on");
+
+		my $name = $vpnconfig{$vpn}[1];
+
+		# Remote subnets
+		my @networks = split(/\|/, $vpnconfig{$vpn}[11]);
+		foreach my $network (@networks) {
+			my $selected = "";
+
+			foreach my $key (keys %ccdroute2hash) {
+				if ($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}) {
+					foreach my $i (1 .. $#{$ccdroute2hash{$key}}) {
+						if ($ccdroute2hash{$key}[$i] eq $network) {
+							$selected = "selected";
+						}
+					}
+				}
+			}
+
+			print "<option value=\"$network\" $selected>$name ($network)</option>\n";
+		}
+	}
+
 	#check if green,blue,orange are defined for client
 	foreach my $key (keys %ccdroute2hash) {
 		if($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}){
