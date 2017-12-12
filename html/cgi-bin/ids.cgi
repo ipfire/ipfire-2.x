@@ -232,7 +232,59 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 
 	# Close file after writing.
 	close(FILE);
+
+	# Call oinkmaster to alter the ruleset.
+	&oinkmaster();
+
+# Download new ruleset.
+} elsif ($cgiparams{'RULESET'} eq $Lang::tr{'download new ruleset'}) {
+	# Local var.
+	my $return;
+
+	# Call diskfree to gather the free disk space of /var.
+	my @df = `/bin/df -B M /var`;
+
+	# Loop through the output.
+	foreach my $line (@df) {
+		# Ignore header line.
+		next if $line =~ m/^Filesystem/;
+
+		# Search for a line with the device information.
+		if ($line =~ m/dev/ ) {
+			# Split the line into single pieces.
+			my @values = split(' ', $line);
+			my ($filesystem, $blocks, $used, $available, $used_perenctage, $mounted_on) = @values;
+
+			# Check if the available disk space is more than 300MB.
+			if ($available < 300) {
+				# If there is not enough space, print out an error message.
+				$errormessage = "$Lang::tr{'not enough disk space'} < 300MB, /var $1MB";
+			} else {
+				# Call subfunction to download the ruleset.
+				&downloadrulesfile();
+
+				# Sleep for 3 seconds.
+				sleep(3);
+
+				# Gather return of the external wget.
+				$return = `cat /var/tmp/log 2>/dev/null`;
+			}
+
+			# Check if there was an error.
+			if ($return =~ "ERROR") {
+				# Store error message for display.
+				$errormessage = "<br /><pre>".$return."</pre>";
+			} else {
+				# Call subfunction to launch oinkmaster.
+				&oinkmaster();
+
+				# Sleep for 2 seconds.
+				sleep(2);
+			}
+		}
+	}
 }
+
 
 if ($snortsettings{'OINKCODE'} ne "") {
 	$errormessage = $Lang::tr{'invalid input for oink code'} unless ($snortsettings{'OINKCODE'} =~ /^[a-z0-9]+$/);
@@ -284,40 +336,10 @@ if (!$errormessage) {
 
 		system('/usr/local/bin/snortctrl restart >/dev/null');
 	}
-
-	# INSTALLMD5 is not in the form, so not retrieved by getcgihash
-	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
-
-	if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
-		my @df = `/bin/df -B M /var`;
-		foreach my $line (@df) {
-			next if $line =~ m/^Filesystem/;
-			my $return;
-
-			if ($line =~ m/dev/ ) {
-				$line =~ m/^.* (\d+)M.*$/;
-				my @temp = split(/ +/,$line);
-				if ($1<300) {
-					$errormessage = "$Lang::tr{'not enough disk space'} < 300MB, /var $1MB";
-				} else {
-					if ( $snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
-						&downloadrulesfile();
-						sleep(3);
-						$return = `cat /var/tmp/log 2>/dev/null`;
-
-					}
-
-					if ($return =~ "ERROR") {
-						$errormessage = "<br /><pre>".$return."</pre>";
-					} else {
-						system("/usr/local/bin/oinkmaster.pl -v -s -u file:///var/tmp/snortrules.tar.gz -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules >>/var/tmp/log 2>&1 &");
-						sleep(2);
-					}
-				}
-			}
-		}
-	}
 }
+
+# Read-in snortsettings
+&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
 
 $checked{'ENABLE_SNORT'}{'off'} = '';
 $checked{'ENABLE_SNORT'}{'on'} = '';
