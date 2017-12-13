@@ -99,5 +99,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown -R nobody:nobody /etc/snort
 	-mkdir -p /var/log/snort
 	chown -R snort:snort /var/log/snort
+	install -m 0644 $(DIR_SRC)/config/snort/ruleset-sources.list /var/ipfire/snort
 	@rm -rf $(DIR_APP) $(DIR_SRC)/snort*
 	@$(POSTBUILD)
