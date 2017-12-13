@@ -67,6 +67,14 @@ my %snortrules;
 my $errormessage;
 my $url;
 
+# Try to determine if oinkmaster is running.
+my $oinkmaster_pid = `pidof oinkmaster.pl -x`;
+
+# If oinkmaster is running display output.
+if ($oinkmaster_pid) {
+	&working("$Lang::tr{'snort working'}");
+}
+
 ## Grab all available snort rules and store them in the snortrules hash.
 #
 # Open snort rules directory and do a directory listing.
@@ -386,37 +394,6 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
-my $return = `pidof oinkmaster.pl -x`;
-chomp($return);
-if ($return) {
-	&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='10;'>" );
-	print <<END;
-	<table>
-		<tr><td>
-				<img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' />&nbsp;
-			<td>
-				$Lang::tr{'snort working'}
-		<tr><td colspan='2' align='center'>
-			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<input type='image' alt='$Lang::tr{'reload'}' title='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
-			</form>
-		<tr><td colspan='2' align='left'><pre>
-END
-	my @output = `tail -20 /var/tmp/log`;
-	foreach (@output) {
-		print "$_";
-	}
-	print <<END;
-			</pre>
-		</table>
-END
-	&Header::closebox();
-	&Header::closebigbox();
-	&Header::closepage();
-	exit;
-	refreshpage();
-}
-
 &Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system'});
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'><table width='100%'>
@@ -590,14 +567,33 @@ print <<END
 END
 ;
 &Header::closebox();
-
 &Header::closebigbox();
 &Header::closepage();
 
-sub refreshpage {
-	&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );
-		print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";
-	&Header::closebox();
+sub working ($) {
+	my $message = $_[0];
+
+        &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
+        &Header::openbigbox('100%', 'left', '', $errormessage);
+        &Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1'>" );
+        print <<END;
+        <table>
+                <tr>
+                        <td><img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' /></td>
+                        <td>$message</td>
+                </tr>
+                <tr>
+                        <td colspan='2' align='center'>
+                        <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+                                <input type='image' alt='$Lang::tr{'reload'}' title='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
+                        </form>
+                </tr>
+        </table>
+END
+        &Header::closebox();
+        &Header::closebigbox();
+        &Header::closepage();
+        exit;
 }
 
 sub downloadrulesfile {
