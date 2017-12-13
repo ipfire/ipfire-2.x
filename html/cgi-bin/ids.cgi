@@ -606,6 +606,26 @@ sub downloadrulesfile {
 		return undef;
 	}
 
+	# Gather snort settings.
+	my %snortsettings = ();
+	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
+
+	# Get all available ruleset locations.
+	my %urls=();
+	&General::readhash("${General::swroot}/snort/ruleset-sources.list", \%urls);
+
+	# Grab the right url based on the configured vendor.
+	my $url = $urls{$snortsettings{'RULES'}};
+
+	# Check and pass oinkcode if the vendor requires one.
+	$url =~ s/\<oinkcode\>/$snortsettings{'OINKCODE'}/g;
+
+	# Abort if no url could be determined for the vendor.
+	unless($url) {
+		$errormessage = $Lang::tr{'could not download latest updates'};
+		return undef;
+	}
+
 	my %proxysettings=();
 	&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
 
