@@ -642,7 +642,7 @@ sub downloadrulesfile {
 
 sub oinkmaster () {
 	# Call oinkmaster to generate ruleset.
-	system("/usr/local/bin/oinkmaster.pl -v -s -u file:///var/tmp/snortrules.tar.gz -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules >>/var/tmp/log 2>&1 &");
+	system("/usr/local/bin/oinkmaster.pl -v -s -u file:///var/tmp/snortrules.tar.gz -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules 2>&1 &");
 }
 
 sub readrulesfile ($) {
