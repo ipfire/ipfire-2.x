@@ -286,6 +286,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 				# Store error message for display.
 				$errormessage = "<br /><pre>".$return."</pre>";
 			} else {
+				# Remove logfile.
+				unlink("/var/tmp/log");
+
 				# Call subfunction to launch oinkmaster.
 				&oinkmaster();
 
