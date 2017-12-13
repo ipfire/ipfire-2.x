@@ -153,6 +153,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	foreach my $rulefile (keys %snortrules) {
 		# Loop through the single rules of the rulefile.
 		foreach my $sid (keys %{$snortrules{$rulefile}}) {
+			# Skip the current sid if it is not numeric.
+			next unless ($sid =~ /\d+/ );
+
 			# Check if there exists a key in the cgiparams hash for this sid.
 			if (exists($cgiparams{$sid})) {
 				# Look if the rule is disabled.
