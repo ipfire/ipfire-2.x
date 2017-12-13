@@ -379,19 +379,6 @@ END
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
-###############
-# DEBUG DEBUG
-# &Header::openbox('100%', 'left', 'DEBUG');
-# my $debugCount = 0;
-# foreach my $line (sort keys %snortsettings) {
-# print "$line = $snortsettings{$line}<br />\n";
-# $debugCount++;
-# }
-# print "&nbsp;Count: $debugCount\n";
-# &Header::closebox();
-# DEBUG DEBUG
-###############
-
 if ($errormessage) {
 	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
 	print "<class name='base'>$errormessage\n";
