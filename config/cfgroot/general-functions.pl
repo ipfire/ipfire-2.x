@@ -149,6 +149,10 @@ sub readhash
 	while (<FILE>)
 	{
 		chop;
+
+		# Skip comments.
+		next if ($_ =~ /\#/);
+
 		($var, $val) = split /=/, $_, 2;
 		if ($var)
 		{
