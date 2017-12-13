@@ -33,6 +33,7 @@ require "${General::swroot}/header.pl";
 my %color = ();
 my %mainsettings = ();
 my %netsettings = ();
+my %snortrules = ();
 my %snortsettings=();
 my %cgiparams=();
 my %checked=();
@@ -52,7 +53,6 @@ $snortsettings{'ENABLE_SNORT'} = 'off';
 $snortsettings{'ENABLE_SNORT_GREEN'} = 'off';
 $snortsettings{'ENABLE_SNORT_BLUE'} = 'off';
 $snortsettings{'ENABLE_SNORT_ORANGE'} = 'off';
-$snortsettings{'ACTION'} = '';
 $snortsettings{'RULES'} = '';
 $snortsettings{'OINKCODE'} = '';
 $snortsettings{'INSTALLDATE'} = '';
@@ -62,10 +62,7 @@ $snortsettings{'INSTALLDATE'} = '';
 
 my $snortrulepath = "/etc/snort/rules";
 my $snortusedrulefilesfile = "${General::swroot}/snort/snort-used-rulefiles.conf";
-my $restartsnortrequired = 0;
-my %snortrules;
 my $errormessage;
-my $url;
 
 # Try to determine if oinkmaster is running.
 my $oinkmaster_pid = `pidof oinkmaster.pl -x`;
@@ -297,57 +294,56 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 			}
 		}
 	}
-}
+# Save snort settings.
+} elsif ($cgiparams{'SNORT'} eq $Lang::tr{'save'}) {
+	# Prevent form name from been stored in conf file.
+	delete $cgiparams{'SNORT'};
 
-
-if ($snortsettings{'OINKCODE'} ne "") {
-	$errormessage = $Lang::tr{'invalid input for oink code'} unless ($snortsettings{'OINKCODE'} =~ /^[a-z0-9]+$/);
-}
-
-if (!$errormessage) {
-	if ($snortsettings{'RULES'} eq 'subscripted') {
-		$url=" https://www.snort.org/rules/snortrules-snapshot-29111.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
-	} elsif ($snortsettings{'RULES'} eq 'registered') {
-		$url=" https://www.snort.org/rules/snortrules-snapshot-29111.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
-	} elsif ($snortsettings{'RULES'} eq 'community') {
-		$url=" https://www.snort.org/rules/community";
-	} else {
-		$url="http://rules.emergingthreats.net/open/snort-2.9.0/emerging.rules.tar.gz";
+	# Check if an oinkcode has been provided.
+	if ($cgiparams{'OINKCODE'}) {
+		# Check if the oinkcode contains unallowed chars.
+		unless ($cgiparams{'OINKCODE'} =~ /^[a-z0-9]+$/) {
+			$errormessage = $Lang::tr{'invalid input for oink code'};
+		}
 	}
 
-	if ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} eq "snort" ) {
-		&General::writehash("${General::swroot}/snort/settings", \%snortsettings);
-		if ($snortsettings{'ENABLE_SNORT'} eq 'on')
-		{
+	# Go on if there are no error messages.
+	if (!$errormessage) {
+		# Store settings into settings file.
+		&General::writehash("${General::swroot}/snort/settings", \%cgiparams);
+
+		# Create/Remove control files for snort.
+		if ($snortsettings{'ENABLE_SNORT'} eq 'on') {
 			system ('/usr/bin/touch', "${General::swroot}/snort/enable");
 		} else {
 			unlink "${General::swroot}/snort/enable";
 		}
-		if ($snortsettings{'ENABLE_SNORT_GREEN'} eq 'on')
-		{
+
+		if ($snortsettings{'ENABLE_SNORT_GREEN'} eq 'on') {
 			system ('/usr/bin/touch', "${General::swroot}/snort/enable_green");
 		} else {
 			unlink "${General::swroot}/snort/enable_green";
 		}
-		if ($snortsettings{'ENABLE_SNORT_BLUE'} eq 'on')
-		{
+
+		if ($snortsettings{'ENABLE_SNORT_BLUE'} eq 'on') {
 			system ('/usr/bin/touch', "${General::swroot}/snort/enable_blue");
 		} else {
 			unlink "${General::swroot}/snort/enable_blue";
 		}
-		if ($snortsettings{'ENABLE_SNORT_ORANGE'} eq 'on')
-		{
+
+		if ($snortsettings{'ENABLE_SNORT_ORANGE'} eq 'on') {
 			system ('/usr/bin/touch', "${General::swroot}/snort/enable_orange");
 		} else {
 			unlink "${General::swroot}/snort/enable_orange";
 		}
-		if ($snortsettings{'ENABLE_PREPROCESSOR_HTTP_INSPECT'} eq 'on')
-		{
+
+		if ($snortsettings{'ENABLE_PREPROCESSOR_HTTP_INSPECT'} eq 'on') {
 			system ('/usr/bin/touch', "${General::swroot}/snort/enable_preprocessor_http_inspect");
 		} else {
 			unlink "${General::swroot}/snort/enable_preprocessor_http_inspect";
 		}
 
+		# Call snortctrl to restart snort
 		system('/usr/local/bin/snortctrl restart >/dev/null');
 	}
 }
@@ -439,7 +435,7 @@ print <<END
 	<td nowrap='nowrap'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$snortsettings{'OINKCODE'}' /></td>
 </tr>
 <tr>
-	<td width='30%' align='left'><br><input type='submit' name='ACTION' value='$Lang::tr{'download new ruleset'}' />
+	<td width='30%' align='left'><br><input type='submit' name='RULESET' value='$Lang::tr{'download new ruleset'}' />
 END
 ;
 if ( -e "/var/tmp/snortrules.tar.gz"){
@@ -454,7 +450,7 @@ print <<END
 <br><br>
 <table width='100%'>
 <tr>
-	<td align='right'><input type='hidden' name='ACTION2' value='snort' /><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+	<td align='right'><input type='submit' name='SNORT' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
 </form>
