@@ -312,37 +312,6 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 		# Store settings into settings file.
 		&General::writehash("${General::swroot}/snort/settings", \%cgiparams);
 
-		# Create/Remove control files for snort.
-		if ($snortsettings{'ENABLE_SNORT'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/snort/enable");
-		} else {
-			unlink "${General::swroot}/snort/enable";
-		}
-
-		if ($snortsettings{'ENABLE_SNORT_GREEN'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/snort/enable_green");
-		} else {
-			unlink "${General::swroot}/snort/enable_green";
-		}
-
-		if ($snortsettings{'ENABLE_SNORT_BLUE'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/snort/enable_blue");
-		} else {
-			unlink "${General::swroot}/snort/enable_blue";
-		}
-
-		if ($snortsettings{'ENABLE_SNORT_ORANGE'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/snort/enable_orange");
-		} else {
-			unlink "${General::swroot}/snort/enable_orange";
-		}
-
-		if ($snortsettings{'ENABLE_PREPROCESSOR_HTTP_INSPECT'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/snort/enable_preprocessor_http_inspect");
-		} else {
-			unlink "${General::swroot}/snort/enable_preprocessor_http_inspect";
-		}
-
 		# Call snortctrl to restart snort
 		system('/usr/local/bin/snortctrl restart >/dev/null');
 	}
