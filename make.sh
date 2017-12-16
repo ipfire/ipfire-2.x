@@ -1365,7 +1365,6 @@ buildipfire() {
   lfsmake2 qemu
   lfsmake2 sane
   lfsmake2 netpbm
-  lfsmake2 tunctl
   lfsmake2 netsnmpd
   lfsmake2 nagios_nrpe
   lfsmake2 nagios-plugins
