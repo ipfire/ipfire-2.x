@@ -1312,7 +1312,6 @@ buildipfire() {
   lfsmake2 postfix
   lfsmake2 fetchmail
   lfsmake2 cyrus-imapd
-  lfsmake2 openmailadmin
   lfsmake2 clamav
   lfsmake2 spamassassin
   lfsmake2 amavisd

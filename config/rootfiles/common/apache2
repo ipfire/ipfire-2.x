@@ -46,7 +46,6 @@ etc/httpd/conf/uid.conf
 etc/httpd/conf/vhosts.d/captive.conf
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/httpd/conf/vhosts.d/ipfire-interface.conf
-#etc/httpd/conf/vhosts.d/openmailadmin.conf
 #srv/web
 #srv/web/ipfire
 #srv/web/ipfire/manual/howto/access.html.es
