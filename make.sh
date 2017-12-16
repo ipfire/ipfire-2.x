@@ -1422,7 +1422,6 @@ buildipfire() {
   lfsmake2 perl-DBD-mysql
   lfsmake2 perl-DBD-SQLite
   lfsmake2 perl-File-ReadBackwards
-  lfsmake2 cacti
   lfsmake2 openvmtools
   lfsmake2 motion
   lfsmake2 joe
