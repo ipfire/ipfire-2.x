@@ -35,6 +35,7 @@ my %mainsettings = ();
 my %netsettings = ();
 my %snortrules = ();
 my %snortsettings=();
+my %rulesetsources = ();
 my %cgiparams=();
 my %checked=();
 my %selected=();
@@ -46,6 +47,38 @@ my %selected=();
 # Get netsettings.
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
+# Get all available ruleset locations.
+&General::readhash("${General::swroot}/snort/ruleset-sources.list", \%rulesetsources);
+
+my $rulestarball = "/var/tmp/snortrules.tar.gz";
+my $snortrulepath = "/etc/snort/rules";
+my $snortusedrulefilesfile = "${General::swroot}/snort/snort-used-rulefiles.conf";
+my $errormessage;
+
+# Hook used to download and update the ruleset,
+# if the cgi got called from command line.
+if ($ENV{"REMOTE_ADDR"} eq "") {
+	# Read snortsettings.
+	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
+
+	# Download rules tarball.
+	$errormessage = &downloadruleset();
+
+	# Sleep for one second.
+	sleep(1);
+
+	# Check if there was an error message.
+	unless ($errormessage) {
+		# Call oinkmaster.
+		&oinkmaster();
+	} else {
+		# Call logger and log the errormessage.
+		system("logger -t oinkmaster $errormessage");
+	}
+
+exit(0);
+}
+
 &Header::showhttpheaders();
 
 # Default settings for snort.
@@ -55,14 +88,9 @@ $snortsettings{'ENABLE_SNORT_BLUE'} = 'off';
 $snortsettings{'ENABLE_SNORT_ORANGE'} = 'off';
 $snortsettings{'RULES'} = '';
 $snortsettings{'OINKCODE'} = '';
-$snortsettings{'INSTALLDATE'} = '';
 
 #Get GUI values
 &Header::getcgihash(\%cgiparams);
-
-my $snortrulepath = "/etc/snort/rules";
-my $snortusedrulefilesfile = "${General::swroot}/snort/snort-used-rulefiles.conf";
-my $errormessage;
 
 # Try to determine if oinkmaster is running.
 my $oinkmaster_pid = `pidof oinkmaster.pl -x`;
@@ -246,8 +274,10 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 
 # Download new ruleset.
 } elsif ($cgiparams{'RULESET'} eq $Lang::tr{'download new ruleset'}) {
-	# Local var.
-	my $return;
+	# Check if the red device is active.
+	unless (-e "${General::swroot}/red/active") {
+		$errormessage = $Lang::tr{'could not download latest updates'};
+	}
 
 	# Call diskfree to gather the free disk space of /var.
 	my @df = `/bin/df -B M /var`;
@@ -267,32 +297,29 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 			if ($available < 300) {
 				# If there is not enough space, print out an error message.
 				$errormessage = "$Lang::tr{'not enough disk space'} < 300MB, /var $1MB";
-			} else {
-				# Call subfunction to download the ruleset.
-				&downloadrulesfile();
 
-				# Sleep for 3 seconds.
-				sleep(3);
-
-				# Gather return of the external wget.
-				$return = `cat /var/tmp/log 2>/dev/null`;
-			}
-
-			# Check if there was an error.
-			if ($return =~ "ERROR") {
-				# Store error message for display.
-				$errormessage = "<br /><pre>".$return."</pre>";
-			} else {
-				# Remove logfile.
-				unlink("/var/tmp/log");
-
-				# Call subfunction to launch oinkmaster.
-				&oinkmaster();
-
-				# Sleep for 2 seconds.
-				sleep(2);
+				# Break loop.
+				last;
 			}
 		}
+	}
+
+	# Check if any errors happend.
+	unless ($errormessage) {
+		# Call subfunction to download the ruleset.
+		$errormessage = &downloadruleset();
+	}
+
+	# Sleep for 1 second
+	sleep(1);
+
+	# Check if the downloader returend any error message.
+	unless ($errormessage) {
+		# Call subfunction to launch oinkmaster.
+		&oinkmaster();
+
+		# Sleep for 1 seconds.
+		sleep(1);
 	}
 # Save snort settings.
 } elsif ($cgiparams{'SNORT'} eq $Lang::tr{'save'}) {
@@ -564,49 +591,70 @@ END
         exit;
 }
 
-sub downloadrulesfile {
-	my $peer;
-	my $peerport;
-
-	unlink("/var/tmp/log");
-
-	unless (-e "${General::swroot}/red/active") {
-		$errormessage = $Lang::tr{'could not download latest updates'};
-		return undef;
-	}
-
-	# Gather snort settings.
-	my %snortsettings = ();
-	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
-
-	# Get all available ruleset locations.
-	my %urls=();
-	&General::readhash("${General::swroot}/snort/ruleset-sources.list", \%urls);
-
-	# Grab the right url based on the configured vendor.
-	my $url = $urls{$snortsettings{'RULES'}};
-
-	# Check and pass oinkcode if the vendor requires one.
-	$url =~ s/\<oinkcode\>/$snortsettings{'OINKCODE'}/g;
-
-	# Abort if no url could be determined for the vendor.
-	unless($url) {
-		$errormessage = $Lang::tr{'could not download latest updates'};
-		return undef;
-	}
-
+sub downloadruleset {
+	# Read proxysettings.
 	my %proxysettings=();
 	&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
 
-	if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
-		($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
+	# Load required perl module to handle the download.
+	use LWP::UserAgent;
+
+	# Init the download module.
+	my $downloader = LWP::UserAgent->new;
+
+	# Set timeout to 10 seconds.
+	$downloader->timeout(10);
+
+	# Check if an upstream proxy is configured.
+	if ($proxysettings{'UPSTREAM_PROXY'}) {
+		my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
+		my $proxy_url;
+
+		# Check if we got a peer.
+		if ($peer) {
+			$proxy_url = "http://";
+
+			# Check if the proxy requires authentication.
+			if (($proxysettings{'UPSTREAM_USER'}) && ($proxysettings{'UPSTREAM_PASSWORD'})) {
+				$proxy_url .= "$proxysettings{'UPSTREAM_USER'}\:$proxysettings{'UPSTREAM_PASSWORD'}\@";
+			}
+
+			# Add proxy server address and port.
+			$proxy_url .= "$peer\:$peerport";
+		} else {
+			# Break and return error message.
+			return "$Lang::tr{'could not download latest updates'}";
+		}
+
+		# Setup proxy settings.
+		$downloader->proxy('http', $proxy_url);
 	}
 
-	if ($peer) {
-		system("wget -r --proxy=on --proxy-user=$proxysettings{'UPSTREAM_USER'} --proxy-passwd=$proxysettings{'UPSTREAM_PASSWORD'} -e http_proxy=http://$peer:$peerport/ -o /var/tmp/log --output-document=/var/tmp/snortrules.tar.gz $url");
-	} else {
-		system("wget -r -o /var/tmp/log --output-document=/var/tmp/snortrules.tar.gz $url");
+	# Grab the right url based on the configured vendor.
+	my $url = $rulesetsources{$snortsettings{'RULES'}};
+
+        # Check if the vendor requires an oinkcode and add it if needed.
+        $url =~ s/\<oinkcode\>/$snortsettings{'OINKCODE'}/g;
+
+	# Abort if no url could be determined for the vendor.
+	unless ($url) {
+		# Abort and return errormessage.
+		return "$Lang::tr{'could not download latest updates'}";
 	}
+
+	# Pass the requested url to the downloader.
+	my $request = HTTP::Request->new(GET => $url);
+
+	# Perform the request and save the output into the "$rulestarball" file.
+	my $response = $downloader->request($request, $rulestarball);
+
+	# Check if there was any error.
+	unless ($response->is_success) {
+		return "$response->status_line";
+	}
+
+	# If we got here, everything worked fine. Return nothing.
+	return;
 }
 
 sub oinkmaster () {
