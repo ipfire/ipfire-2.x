@@ -208,7 +208,7 @@ configure_build() {
 		local mem_max=$(( ${HOST_MEM} / 192 ))
 
 		local processors="$(system_processors)"
-		local cpu_max=$(( ${processors} * 2 ))
+		local cpu_max=$(( ${processors} + 1 ))
 
 		local parallelism
 		if [ ${mem_max} -lt ${cpu_max} ]; then
