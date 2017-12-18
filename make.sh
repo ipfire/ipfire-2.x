@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.19"							# Version number
-CORE="117"							# Core Level (Filename)
+CORE="118"							# Core Level (Filename)
 PAKFIRE_CORE="117"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
@@ -208,7 +208,7 @@ configure_build() {
 		local mem_max=$(( ${HOST_MEM} / 192 ))
 
 		local processors="$(system_processors)"
-		local cpu_max=$(( ${processors} * 2 ))
+		local cpu_max=$(( ${processors} + 1 ))
 
 		local parallelism
 		if [ ${mem_max} -lt ${cpu_max} ]; then
@@ -1310,7 +1310,6 @@ buildipfire() {
   lfsmake2 postfix
   lfsmake2 fetchmail
   lfsmake2 cyrus-imapd
-  lfsmake2 openmailadmin
   lfsmake2 clamav
   lfsmake2 spamassassin
   lfsmake2 amavisd
@@ -1364,11 +1363,9 @@ buildipfire() {
   lfsmake2 qemu
   lfsmake2 sane
   lfsmake2 netpbm
-  lfsmake2 phpSANE
-  lfsmake2 tunctl
   lfsmake2 netsnmpd
-  lfsmake2 nagios
   lfsmake2 nagios_nrpe
+  lfsmake2 nagios-plugins
   lfsmake2 icinga
   lfsmake2 ebtables
   lfsmake2 directfb
@@ -1421,9 +1418,7 @@ buildipfire() {
   lfsmake2 perl-DBD-mysql
   lfsmake2 perl-DBD-SQLite
   lfsmake2 perl-File-ReadBackwards
-  lfsmake2 cacti
   lfsmake2 openvmtools
-  lfsmake2 nagiosql
   lfsmake2 motion
   lfsmake2 joe
   lfsmake2 monit
