@@ -390,65 +390,97 @@ if ($errormessage) {
 }
 
 &Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system'});
-print <<END
-<form method='post' action='$ENV{'SCRIPT_NAME'}'><table width='100%'>
-<tr><td class='base'><input type='checkbox' name='ENABLE_SNORT_GREEN' $checked{'ENABLE_SNORT_GREEN'}{'on'} />GREEN Snort
-END
-;
-if ($netsettings{'BLUE_DEV'} ne '') {
-  print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='ENABLE_SNORT_BLUE' $checked{'ENABLE_SNORT_BLUE'}{'on'} />   BLUE Snort";
+
+my $rulesdate;
+
+# Check if a ruleset allready has been downloaded.
+if ( -f "$rulestarball"){
+	# Call stat on the filename to obtain detailed information.
+        my @Info = stat("$rulestarball");
+
+	# Grab details about the creation time.
+        $rulesdate = localtime($Info[9]);
 }
-if ($netsettings{'ORANGE_DEV'} ne '') {
-  print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='ENABLE_SNORT_ORANGE' $checked{'ENABLE_SNORT_ORANGE'}{'on'} />   ORANGE Snort";
-}
-  print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='ENABLE_SNORT' $checked{'ENABLE_SNORT'}{'on'} />   RED Snort";
 
 print <<END
-</td></tr>
-<tr>
-	<td><br><br></td>
-</tr>
-<tr>
-	<td><b>$Lang::tr{'ids rules update'}</b></td>
-</tr>
-<tr>
-	<td><select name='RULES'>
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<table width='100%' border='0'>
+		<tr>
+			<td class='base' width='25%'>
+				<input type='checkbox' name='ENABLE_SNORT' $checked{'ENABLE_SNORT'}{'on'}>RED Snort
+			</td>
+
+			<td class='base' width='25%'>
+				<input type='checkbox' name='ENABLE_SNORT_GREEN' $checked{'ENABLE_SNORT_GREEN'}{'on'}>GREEN Snort
+			</td>
+
+			<td class='base' width='25%'>
+END
+;
+
+# Check if a blue device is configured.
+if ($netsettings{'BLUE_DEV'}) {
+  print "<input type='checkbox' name='ENABLE_SNORT_BLUE' $checked{'ENABLE_SNORT_BLUE'}{'on'} />BLUE Snort\n";
+}
+
+print "</td>\n";
+
+print "<td width='25%'>\n";
+
+# Check if an orange device is configured.
+if ($netsettings{'ORANGE_DEV'}) {
+  print "<input type='checkbox' name='ENABLE_SNORT_ORANGE' $checked{'ENABLE_SNORT_ORANGE'}{'on'} />ORANGE Snort\n";
+}
+
+print <<END
+			</td>
+		</tr>
+
+		<tr>
+			<td colspan='4'><br><br></td>
+		</tr>
+
+		<tr>
+			<td colspan='4'><b>$Lang::tr{'ids rules update'}</b></td>
+		</tr>
+
+		<tr>
+			<td colspan='4'><select name='RULES'>
 				<option value='nothing' $selected{'RULES'}{'nothing'} >$Lang::tr{'no'}</option>
 				<option value='emerging' $selected{'RULES'}{'emerging'} >$Lang::tr{'emerging rules'}</option>
 				<option value='community' $selected{'RULES'}{'community'} >$Lang::tr{'community rules'}</option>
 				<option value='registered' $selected{'RULES'}{'registered'} >$Lang::tr{'registered user rules'}</option>
 				<option value='subscripted' $selected{'RULES'}{'subscripted'} >$Lang::tr{'subscripted user rules'}</option>
 			</select>
-	</td>
-</tr>
-<tr>
-	<td><br />
-		$Lang::tr{'ids rules license'} <a href='https://www.snort.org/subscribe' target='_blank'>www.snort.org</a>$Lang::tr{'ids rules license1'}<br /><br />
-		$Lang::tr{'ids rules license2'} <a href='https://www.snort.org/account/oinkcode' target='_blank'>Get an Oinkcode</a>, $Lang::tr{'ids rules license3'}
-	</td>
-</tr>
-<tr>
-	<td nowrap='nowrap'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$snortsettings{'OINKCODE'}' /></td>
-</tr>
-<tr>
-	<td width='30%' align='left'><br><input type='submit' name='RULESET' value='$Lang::tr{'download new ruleset'}' />
-END
-;
-if ( -e "/var/tmp/snortrules.tar.gz"){
-	my @Info = stat("/var/tmp/snortrules.tar.gz");
-	$snortsettings{'INSTALLDATE'} = localtime($Info[9]);
-}
-print "&nbsp;$Lang::tr{'updates installed'}: $snortsettings{'INSTALLDATE'}</td>";
+			</td>
+		</tr>
 
-print <<END
-</tr>
-</table>
-<br><br>
-<table width='100%'>
-<tr>
-	<td align='right'><input type='submit' name='SNORT' value='$Lang::tr{'save'}' /></td>
-</tr>
-</table>
+		<tr>
+			<td colspan='4'>
+				<br>$Lang::tr{'ids rules license'} <a href='https://www.snort.org/subscribe' target='_blank'>www.snort.org</a>$Lang::tr{'ids rules license1'}</br>
+				<br>$Lang::tr{'ids rules license2'} <a href='https://www.snort.org/account/oinkcode' target='_blank'>Get an Oinkcode</a>, $Lang::tr{'ids rules license3'}</br>
+			</td>
+		</tr>
+
+		<tr>
+			<td colspan='4' nowrap='nowrap'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$snortsettings{'OINKCODE'}'></td>
+		</tr>
+
+		<tr>
+			<td colspan='4' align='left'><br>
+				<input type='submit' name='RULESET' value='$Lang::tr{'download new ruleset'}'>&nbsp;$Lang::tr{'updates installed'}: $rulesdate
+			</td>
+
+		</tr>
+	</table>
+
+	<br><br>
+
+	<table width='100%'>
+		<tr>
+			<td align='right'><input type='submit' name='SNORT' value='$Lang::tr{'save'}' /></td>
+		</tr>
+	</table>
 </form>
 END
 ;
