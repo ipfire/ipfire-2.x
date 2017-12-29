@@ -345,7 +345,9 @@ sub check_cache
 	my $sourceurl=$_[0];
 	my $cfmirror=$_[4];
 
+	$sourceurl =~ s@\%2b@+@ig;
 	$sourceurl =~ s@\%2f@/@ig;
+	$sourceurl =~ s@\%7e@~@ig;
 	$updfile = substr($sourceurl,rindex($sourceurl,"/")+1);
 	$updfile =~ s@\%20@ @ig;
 
