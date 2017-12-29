@@ -1061,6 +1061,7 @@ buildipfire() {
   lfsmake2 libnetfilter_cthelper
   lfsmake2 libnetfilter_cttimeout
   lfsmake2 iptables
+  lfsmake2 elfutils
 
   case "${BUILD_ARCH}" in
 	x86_64)
@@ -1467,7 +1468,6 @@ buildipfire() {
   lfsmake2 sendEmail
   lfsmake2 sysbench
   lfsmake2 strace
-  lfsmake2 elfutils
   lfsmake2 ltrace
   lfsmake2 ipfire-netboot
   lfsmake2 lcdproc
