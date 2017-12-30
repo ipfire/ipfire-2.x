@@ -86,6 +86,8 @@ while (<>) {
 	&&   ($source_url !~ m@\&@)
 	   )
 	{
+		# NOTE: check_cache will change to $mirror instead of $unique if the filename contains an SHA1 hash
+		# and the URL is not found in cache!
 		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"Microsoft",$unique);
 	}
 
@@ -400,6 +402,17 @@ sub check_cache
 		&debuglog("Retrieving file from cache ($updsource)");
 		&setcachestatus("$updcachedir/$vendorid/$uuid/access.log",time);
 		$cacheurl="http://$netsettings{'GREEN_ADDRESS'}:$http_port/updatecache/$vendorid/$uuid/$updfile";
+	}
+	elsif (
+		($cfmirror == $unique) &&
+		($vendorid == "microsoft") &&
+		($source_url =~ m@.*[0-9a-f]{40}\.[^\.]+@i)
+	      )
+	{
+			# Most Microsoft updates now have an SHA1 hash in the name. These should be treated as unique files.
+			# Since it wasn't found in the URL cache, switch to mirror mode and try again using just the filename.
+			&debuglog("SHA1: $vendorid $uuid not cached. Reprocessing as mirror $sourceurl");
+			$cacheurl = &check_cache($source_url,$hostaddr,$username,$vendorid,$mirror);
 	}
 		else
 	{
