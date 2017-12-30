@@ -399,7 +399,7 @@ sub check_cache
 	   )
 	{
 		&debuglog("File exists in cache and is up to date");
-		&debuglog("Retrieving file from cache ($updsource)");
+		&debuglog("Retrieving file from cache ($updsource) for $hostaddr");
 		&setcachestatus("$updcachedir/$vendorid/$uuid/access.log",time);
 		$cacheurl="http://$netsettings{'GREEN_ADDRESS'}:$http_port/updatecache/$vendorid/$uuid/$updfile";
 	}
@@ -427,7 +427,7 @@ sub check_cache
 		&debuglog("Free disk space: " . &diskfree($updcachedir));
 		&debuglog("Disk usage: " . &diskusage($updcachedir) . "% (max. $maxusage%)");
 		if (-e "$updcachedir/download/$vendorid/$updfile") { &debuglog("File download/$vendorid/$updfile exists"); }
-		&debuglog("Retrieving file from source ($updsource)");
+		&debuglog("Retrieving file from source ($updsource) for $hostaddr");
 		if ((!$passive_mode) && (&diskusage($updcachedir) <= $maxusage) && ($remote_size <= &diskfree($updcachedir)) && (!-e "$updcachedir/download/$vendorid/$updfile"))
 		{
 			&debuglog("Running command $nice$apphome/bin/download $vendorid $sourceurl $cfmirror &");
