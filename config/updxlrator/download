@@ -30,7 +30,6 @@ my $unique=0;
 my $mirror=1;
 
 my %dlinfo=();
-my $wgetContinueFlag="";
 
 my $vendorid  = $ARGV[0]; if (!defined($vendorid)  || $vendorid  eq '') { exit; }
 my $sourceurl = $ARGV[1]; if (!defined($sourceurl) || $sourceurl eq '') { exit; }
@@ -57,16 +56,15 @@ if($restartdl == 0)
 	# this is a new download
 	exit if (-e "$repository/download/$vendorid/$updatefile");
 
-	# dotzball: Why is this necessary?
+	# hinder multiple downloads from starting simultaneously. Create empty "lock" file.
+	# TODO: Another thread may sneak in between these two commands - so not fool-proof, but good enough?
 	system("touch $repository/download/$vendorid/$updatefile");
-	$wgetContinueFlag = "-nc";
 
 }
 else
 {
 	# this is a restart of a previous (unfinished) download
 	# -> continue download
-	$wgetContinueFlag = "-c";
 	&writelog("Continue download: $updatefile");
 }
 
@@ -133,7 +131,9 @@ unless($restartdl)
 {
 	# this is a new download
 	# -> download from scratch
-	unlink "$repository/download/$vendorid/$updatefile";
+
+	#already exited earlier if the file existed, and afterwards created this empty "lock", so if not empty now, another thread is already downloading it.
+	exit if ( -s "$repository/download/$vendorid/$updatefile" );
 	unlink "$repository/download/$vendorid/$updatefile.info";
 }
 
@@ -147,7 +147,7 @@ $dlinfo{'REMOTESIZE'} = $remote_size;
 $dlinfo{'STATUS'} = "1";
 &UPDXLT::writehash("$repository/download/$vendorid/$updatefile.info", \%dlinfo);
 
-my $cmd = "$UPDXLT::wget $login $dlrate --user-agent=\"$UPDXLT::useragent\" -q -P $repository/download/$vendorid $wgetContinueFlag $sourceurl";
+my $cmd = "$UPDXLT::wget $login $dlrate --user-agent=\"$UPDXLT::useragent\" -q -P $repository/download/$vendorid --continue $sourceurl";
 
 $_ = system("$cmd");
 $ENV{'http_proxy'} = '';
