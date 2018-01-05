@@ -31,6 +31,9 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Delete files
+rm -vf /etc/httpd/conf.d/php5.conf
+
 # Stop services
 
 # Extract files
@@ -43,7 +46,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
-/etc/init.d/apache reload
+/etc/init.d/apache restart
 
 # This update need a reboot...
 #touch /var/run/need_reboot

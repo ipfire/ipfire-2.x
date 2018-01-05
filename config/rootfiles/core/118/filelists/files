@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/httpd/conf/loadmodule.conf
 etc/httpd/conf/vhosts.d/captive.conf
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/httpd/conf/vhosts.d/ipfire-interface.conf
