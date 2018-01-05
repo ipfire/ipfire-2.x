@@ -1488,7 +1488,6 @@ buildipfire() {
   lfsmake2 iptraf-ng
   lfsmake2 iotop
   lfsmake2 stunnel
-  lfsmake2 owncloud
   lfsmake2 bacula
   lfsmake2 batctl
   lfsmake2 perl-Font-TTF
