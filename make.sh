@@ -1178,7 +1178,6 @@ buildipfire() {
   lfsmake2 cyrus-sasl
   lfsmake2 openldap
   lfsmake2 apache2
-  lfsmake2 php
   lfsmake2 web-user-interface
   lfsmake2 flag-icons
   lfsmake2 jquery
