@@ -32,7 +32,15 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Delete files
-rm -vf /etc/httpd/conf.d/php5.conf
+rm -rvf \
+	/etc/httpd/conf.d/php5.conf \
+	/etc/pear.conf \
+	/etc/php.ini \
+	/usr/bin/phar \
+	/usr/bin/phar.phar \
+	/usr/bin/php \
+	/usr/lib/apache/libphp5.so \
+	/usr/lib/php
 
 # Stop services
 
