@@ -1410,7 +1410,6 @@ buildipfire() {
   lfsmake2 streamripper
   lfsmake2 sshfs
   lfsmake2 taglib
-  #lfsmake2 mediatomb
   lfsmake2 sslh
   lfsmake2 perl-gettext
   lfsmake2 perl-Sort-Naturally
