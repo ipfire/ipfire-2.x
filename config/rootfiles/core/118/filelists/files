@@ -4,4 +4,5 @@ etc/httpd/conf/loadmodule.conf
 etc/httpd/conf/vhosts.d/captive.conf
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/httpd/conf/vhosts.d/ipfire-interface.conf
+srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromcountry.dat
 var/ipfire/langs
