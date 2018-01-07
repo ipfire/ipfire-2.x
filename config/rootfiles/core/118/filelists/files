@@ -5,5 +5,6 @@ etc/httpd/conf/vhosts.d/captive.conf
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/httpd/conf/vhosts.d/ipfire-interface.conf
 srv/web/ipfire/cgi-bin/fireinfo.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromcountry.dat
 var/ipfire/langs
