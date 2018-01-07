@@ -31,6 +31,9 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Stop services
+/etc/init.d/snort stop
+
 # Delete files
 rm -rvf \
 	/etc/httpd/conf.d/php5.conf \
@@ -41,8 +44,6 @@ rm -rvf \
 	/usr/bin/php \
 	/usr/lib/apache/libphp5.so \
 	/usr/lib/php
-
-# Stop services
 
 # Extract files
 extract_files
@@ -55,6 +56,7 @@ ldconfig
 
 # Start services
 /etc/init.d/apache restart
+/etc/init.d/snort start
 
 # This update need a reboot...
 #touch /var/run/need_reboot
