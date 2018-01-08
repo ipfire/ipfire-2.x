@@ -537,7 +537,7 @@ entershell() {
 	fi
 
 	echo "Entering to a shell inside LFS chroot, go out with exit"
-	local PS1="ipfire build chroot ($(uname -m)) \u:\w\$ "
+	local PS1="ipfire build chroot (${BUILD_ARCH}) \u:\w\$ "
 
 	if enterchroot bash -i; then
 		stdumount
