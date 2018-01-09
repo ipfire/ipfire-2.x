@@ -1516,6 +1516,7 @@ buildipfire() {
   lfsmake2 perl-Net-IP
   lfsmake2 wio
   lfsmake2 iftop
+  lfsmake2 mdns-repeater
 }
 
 buildinstaller() {
