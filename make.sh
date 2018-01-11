@@ -1428,7 +1428,6 @@ buildipfire() {
   lfsmake2 libsrtp
   lfsmake2 jansson
   lfsmake2 asterisk
-  lfsmake2 lcr
   lfsmake2 usb_modeswitch
   lfsmake2 usb_modeswitch_data
   lfsmake2 zerofree
