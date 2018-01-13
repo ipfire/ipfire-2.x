@@ -38,7 +38,7 @@
 #usr/include/glib-2.0/gio/gasyncresult.h
 #usr/include/glib-2.0/gio/gbufferedinputstream.h
 #usr/include/glib-2.0/gio/gbufferedoutputstream.h
-+usr/include/glib-2.0/gio/gbytesicon.h
+#usr/include/glib-2.0/gio/gbytesicon.h
 #usr/include/glib-2.0/gio/gcancellable.h
 #usr/include/glib-2.0/gio/gcharsetconverter.h
 #usr/include/glib-2.0/gio/gcontenttype.h
@@ -46,7 +46,7 @@
 #usr/include/glib-2.0/gio/gconverterinputstream.h
 #usr/include/glib-2.0/gio/gconverteroutputstream.h
 #usr/include/glib-2.0/gio/gcredentials.h
-+usr/include/glib-2.0/gio/gdatagrambased.h
+#usr/include/glib-2.0/gio/gdatagrambased.h
 #usr/include/glib-2.0/gio/gdatainputstream.h
 #usr/include/glib-2.0/gio/gdataoutputstream.h
 #usr/include/glib-2.0/gio/gdbusactiongroup.h
