@@ -82,6 +82,8 @@ usr/bin/openssl
 #usr/include/openssl/x509.h
 #usr/include/openssl/x509_vfy.h
 #usr/include/openssl/x509v3.h
+usr/lib/engines-1.1/capi.so
+usr/lib/engines-1.1/padlock.so
 #usr/lib/libcrypto.a
 usr/lib/libcrypto.so
 usr/lib/libcrypto.so.1.1
