@@ -9,6 +9,7 @@ srv/web/ipfire/cgi-bin/fireinfo.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromcountry.dat
 srv/web/ipfire/cgi-bin/logs.cgi/urlfilter.dat
+usr/local/bin/rebuild-initrd
 usr/sbin/updxlrator
 var/ipfire/langs
 var/ipfire/updatexlrator/bin/download
