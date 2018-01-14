@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,28 +24,47 @@
 
 include Config
 
-VER        = $(KVER)
+VER        = 20180108
 
-THISAPP    = linux-initrd-$(VER)
-
-VERSUFIX=ipfire$(KCFG)
-
-TARGET = $(DIR_INFO)/$(THISAPP)-$(VERSUFIX)
+THISAPP    = microcode-$(VER)
+DL_FILE    = $(THISAPP).tgz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+SUP_ARCH   = i586 x86_64
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-install : $(TARGET)
+objects = $(DL_FILE)
 
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = 871df55f0ab010ee384dabfc424f2c12
+
+install : $(TARGET)
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist:
-	@$(PAK)
+dist:.
+	$(PAK)
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
 
 ###############################################################################
 # Installation Details
@@ -53,25 +72,9 @@ dist:
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-
-	# rebuild module deps
-	depmod -a $(KVER)-$(VERSUFIX)
-
-	#skip initrd build on pae and rpi kernel.
-ifneq "$(KCFG)" "-rpi"
-ifneq "$(KCFG)" "-pae"
-
-	# Create initramfs images
-	dracut --force --early-microcode --verbose --strip --xz /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
-
-ifeq "$(KCFG)" "-kirkwood"
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)
-endif
-
-ifeq "$(KCFG)" "-multi"
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)
-endif
-
-endif
-endif
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && mkdir -p $(DIR_APP) && tar zxf $(DIR_DL)/$(DL_FILE) -C $(DIR_APP)
+	ls /usr/src
+	# Copy the firmware files into the right position
+	cd $(DIR_APP) && cp -R intel-ucode /lib/firmware/
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
