@@ -1045,6 +1045,7 @@ buildipfire() {
   lfsmake2 dvb-firmwares
   lfsmake2 zd1211-firmware
   lfsmake2 rpi-firmware
+  lfsmake2 intel-microcode
   lfsmake2 bc
   lfsmake2 u-boot
   lfsmake2 cpio
