@@ -1,6 +1,15 @@
 etc/system-release
 etc/issue
+etc/httpd/conf/loadmodule.conf
 etc/httpd/conf/vhosts.d/captive.conf
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/httpd/conf/vhosts.d/ipfire-interface.conf
+srv/web/ipfire/cgi-bin/captive.cgi
+srv/web/ipfire/cgi-bin/fireinfo.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromcountry.dat
+srv/web/ipfire/cgi-bin/logs.cgi/urlfilter.dat
+usr/local/bin/rebuild-initrd
+usr/sbin/updxlrator
 var/ipfire/langs
+var/ipfire/updatexlrator/bin/download

@@ -237,7 +237,7 @@ if ($cgiparams{'ACTION'} eq 'delete-client') {
 }
 
 #open webpage, print header and open box
-&Header::openpage($Lang::tr{'Captive menu'}, 1, '');
+&Header::openpage($Lang::tr{'Captive'}, 1, '');
 &Header::openbigbox();
 
 # If an error message exists, show a box with the error message

@@ -537,7 +537,7 @@ entershell() {
 	fi
 
 	echo "Entering to a shell inside LFS chroot, go out with exit"
-	local PS1="ipfire build chroot ($(uname -m)) \u:\w\$ "
+	local PS1="ipfire build chroot (${BUILD_ARCH}) \u:\w\$ "
 
 	if enterchroot bash -i; then
 		stdumount
@@ -1120,6 +1120,7 @@ buildipfire() {
 		lfsmake2 linux-initrd			KCFG="-kirkwood"
 		;;
   esac
+  lfsmake2 intel-microcode
   lfsmake2 xtables-addons			USPACE="1"
   lfsmake2 openssl
   [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
@@ -1178,7 +1179,6 @@ buildipfire() {
   lfsmake2 cyrus-sasl
   lfsmake2 openldap
   lfsmake2 apache2
-  lfsmake2 php
   lfsmake2 web-user-interface
   lfsmake2 flag-icons
   lfsmake2 jquery
@@ -1410,7 +1410,6 @@ buildipfire() {
   lfsmake2 streamripper
   lfsmake2 sshfs
   lfsmake2 taglib
-  #lfsmake2 mediatomb
   lfsmake2 sslh
   lfsmake2 perl-gettext
   lfsmake2 perl-Sort-Naturally
@@ -1488,7 +1487,6 @@ buildipfire() {
   lfsmake2 iptraf-ng
   lfsmake2 iotop
   lfsmake2 stunnel
-  lfsmake2 owncloud
   lfsmake2 bacula
   lfsmake2 batctl
   lfsmake2 perl-Font-TTF
@@ -1518,6 +1516,7 @@ buildipfire() {
   lfsmake2 perl-Net-IP
   lfsmake2 wio
   lfsmake2 iftop
+  lfsmake2 mdns-repeater
 }
 
 buildinstaller() {

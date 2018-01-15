@@ -67,7 +67,7 @@ if ($fireinfosettings{'ENABLE_FIREINFO'} ne "on") {
 <font color="$Header::colourred">
 	<p>
 		$Lang::tr{'fireinfo why descr1'}
-		$Lang::tr{'fireinfo why descr2'}<a href="http://fireinfo.ipfire.org" target="_blank">$Lang::tr{'fireinfo why read more'}</a>
+		$Lang::tr{'fireinfo why descr2'}<a href="https://fireinfo.ipfire.org" target="_blank">$Lang::tr{'fireinfo why read more'}</a>
 	</p>
 </font>
 END
@@ -122,7 +122,7 @@ print <<END;
 	<tr>
 		<td>$Lang::tr{'fireinfo your profile id'}:</td>
 		<td>
-			<a href="http://fireinfo.ipfire.org/profile/$profile_id" target="_blank">$profile_id</a>
+			<a href="https://fireinfo.ipfire.org/profile/$profile_id" target="_blank">$profile_id</a>
 		</td>
 	</tr>
 	<tr>

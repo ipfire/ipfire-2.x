@@ -62,7 +62,7 @@ ifneq "$(KCFG)" "-rpi"
 ifneq "$(KCFG)" "-pae"
 
 	# Create initramfs images
-	dracut --force --verbose --strip --xz /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
+	dracut --force --early-microcode --verbose --strip --xz /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
 
 ifeq "$(KCFG)" "-kirkwood"
 	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)

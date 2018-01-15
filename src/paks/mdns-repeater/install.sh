@@ -22,5 +22,16 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+
 extract_files
 restore_backup ${NAME}
+
+# create startlinks
+ln -sf ../init.d/mdns-repeater /etc/rc.d/rc0.d/K20mdns-repeater
+ln -sf ../init.d/mdns-repeater /etc/rc.d/rc3.d/S99mdns-repeater
+ln -sf ../init.d/mdns-repeater /etc/rc.d/rc6.d/K20mdns-repeater
+
+# Start the service.
+start_service --background ${NAME}
+
+exit 0

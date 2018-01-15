@@ -32,6 +32,18 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/snort stop
+
+# Delete files
+rm -rvf \
+	/etc/httpd/conf.d/php5.conf \
+	/etc/pear.conf \
+	/etc/php.ini \
+	/usr/bin/phar \
+	/usr/bin/phar.phar \
+	/usr/bin/php \
+	/usr/lib/apache/libphp5.so \
+	/usr/lib/php
 
 # Extract files
 extract_files
@@ -43,10 +55,20 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
-/etc/init.d/apache reload
+/etc/init.d/apache restart
+/etc/init.d/snort start
 
 # This update need a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
+
+# Rebuild the initrd to include the microcode updates
+rebuild-initrd
+
+# Reload microcode
+modprobe microcode
+if [ -w "/sys/devices/system/cpu/microcode/reload" ];
+	echo 1 > /sys/devices/system/cpu/microcode/reload
+fi
 
 # Finish
 /etc/init.d/fireinfo start

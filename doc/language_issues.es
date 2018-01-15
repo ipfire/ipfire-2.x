@@ -621,6 +621,7 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: 24 hours
+WARNING: untranslated string: Captive
 WARNING: untranslated string: Captive ACTIVATE
 WARNING: untranslated string: Captive GAIN ACCESS
 WARNING: untranslated string: Captive WiFi coupon

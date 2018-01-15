@@ -22,5 +22,11 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-./uninstall.sh
-./install.sh
+stop_service ${NAME}
+make_backup ${NAME}
+remove_files
+
+# Remove all start links.
+rm -rf /etc/rc.d/rc*.d/*mdns-repeater
+
+exit 0
