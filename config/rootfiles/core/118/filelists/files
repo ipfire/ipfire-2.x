@@ -1,5 +1,7 @@
 etc/system-release
 etc/issue
+etc/ssl/certs/ca-bundle.crt
+etc/ssl/certs/ca-bundle.trust.crt
 etc/httpd/conf/loadmodule.conf
 etc/httpd/conf/vhosts.d/captive.conf
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
