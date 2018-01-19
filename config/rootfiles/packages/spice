@@ -6,12 +6,12 @@
 #usr/include/spice-server/spice-input.h
 #usr/include/spice-server/spice-migration.h
 #usr/include/spice-server/spice-qxl.h
+#usr/include/spice-server/spice-replay.h
 #usr/include/spice-server/spice-server.h
 #usr/include/spice-server/spice-version.h
 #usr/include/spice-server/spice.h
-#usr/lib/libspice-server.a
 #usr/lib/libspice-server.la
 #usr/lib/libspice-server.so
 usr/lib/libspice-server.so.1
-usr/lib/libspice-server.so.1.10.1
+usr/lib/libspice-server.so.1.12.4
 #usr/lib/pkgconfig/spice-server.pc
