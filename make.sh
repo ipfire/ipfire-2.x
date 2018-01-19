@@ -1510,7 +1510,6 @@ buildipfire() {
   lfsmake2 libpciaccess
   lfsmake2 libyajl
   lfsmake2 libvirt
-  lfsmake2 python3-libvirt
   lfsmake2 freeradius
   lfsmake2 perl-common-sense
   lfsmake2 perl-inotify2
