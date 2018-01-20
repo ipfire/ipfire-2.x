@@ -33,6 +33,7 @@ done
 
 # Stop services
 /etc/init.d/snort stop
+/etc/init.d/unbound stop
 
 # Delete files
 rm -rvf \
@@ -55,6 +56,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/unbound start
 /etc/init.d/apache restart
 /etc/init.d/snort start
 
