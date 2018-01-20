@@ -71,7 +71,7 @@ int main(void)
    if (!findkey(kv, "REMOTELOG_PROTOCOL", protocol))
    {
       /* fall back to UDP if no protocol was given */
-      protocol = "udp";
+      strcpy(protocol, "udp");
    }
 
    if (strspn(hostname, VALID_FQDN) != strlen(hostname))
