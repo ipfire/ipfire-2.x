@@ -608,7 +608,7 @@ sub geoipblock {
 	# create iptables rules, if blocking this country
 	# is enabled.
 	foreach my $location (@locations) {
-		if($geoipsettings{$location} eq "on") {
+		if(exists $geoipsettings{$location} && $geoipsettings{$location} eq "on") {
 			run("$IPTABLES -A GEOIPBLOCK -m geoip --src-cc $location -j DROP");
 		}
 	}
