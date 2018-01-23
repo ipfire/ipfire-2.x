@@ -33,6 +33,7 @@ done
 
 # Stop services
 /etc/init.d/snort stop
+/etc/init.d/squid stop
 /etc/init.d/unbound stop
 
 # Delete files
@@ -58,6 +59,7 @@ ldconfig
 # Start services
 /etc/init.d/unbound start
 /etc/init.d/apache restart
+/etc/init.d/squid start
 /etc/init.d/snort start
 
 # This update need a reboot...
