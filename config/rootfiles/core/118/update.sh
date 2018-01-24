@@ -63,16 +63,7 @@ ldconfig
 /etc/init.d/snort start
 
 # This update need a reboot...
-touch /var/run/need_reboot
-
-# Rebuild the initrd to include the microcode updates
-rebuild-initrd
-
-# Reload microcode
-modprobe microcode
-if [ -w "/sys/devices/system/cpu/microcode/reload" ];
-	echo 1 > /sys/devices/system/cpu/microcode/reload
-fi
+#touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
