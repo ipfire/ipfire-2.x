@@ -60,7 +60,7 @@ depmod -a $KVER-ipfire-pae
 #
 # Made initramdisk
 #
-/usr/bin/dracut --early-microcode --force --xz /boot/initramfs-$KVER-ipfire-pae.img $KVER-ipfire-pae
+/usr/bin/dracut --force --xz /boot/initramfs-$KVER-ipfire-pae.img $KVER-ipfire-pae  
 
 if [ -e /boot/grub/grub.cfg ]; then
 	#

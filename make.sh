@@ -1120,7 +1120,6 @@ buildipfire() {
 		lfsmake2 linux-initrd			KCFG="-kirkwood"
 		;;
   esac
-  lfsmake2 intel-microcode
   lfsmake2 xtables-addons			USPACE="1"
   lfsmake2 openssl
   [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
