@@ -2,7 +2,7 @@ Index: clamav-0.97.3/libclamav/c++/llvm/lib/ExecutionEngine/JIT/Intercept.cpp
 ===================================================================
 --- clamav-0.97.3.orig/libclamav/c++/llvm/lib/ExecutionEngine/JIT/Intercept.cpp
 +++ clamav-0.97.3/libclamav/c++/llvm/lib/ExecutionEngine/JIT/Intercept.cpp
-@@ -52,6 +52,7 @@ static void runAtExitHandlers() {
+@@ -55,6 +55,7 @@ static void runAtExitHandlers() {
  #include <sys/stat.h>
  #endif
  #include <fcntl.h>
