@@ -37,7 +37,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 
-TOOLCHAINVER=20171121
+TOOLCHAINVER=20180126
 
 ###############################################################################
 #
@@ -144,14 +144,14 @@ configure_build() {
 			BUILDTARGET="${build_arch}-unknown-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-m64 -mtune=generic"
+			CFLAGS_ARCH="-m64 -mindirect-branch=thunk -mfunction-return=thunk -mtune=generic"
 			;;
 
 		i586)
 			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-march=i586 -mtune=generic -fomit-frame-pointer"
+			CFLAGS_ARCH="-march=i586 -mindirect-branch=thunk -mfunction-return=thunk -mtune=generic -fomit-frame-pointer"
 			;;
 
 		aarch64)
@@ -952,6 +952,7 @@ buildtoolchain() {
 	lfsmake1 tar
 	lfsmake1 texinfo
 	lfsmake1 xz
+	lfsmake1 flex
 	lfsmake1 fake-environ
 	lfsmake1 strip
 	lfsmake1 cleanup-toolchain
@@ -982,7 +983,6 @@ buildbase() {
 	lfsmake2 iana-etc
 	lfsmake2 m4
 	lfsmake2 bison
-	lfsmake2 ncurses-compat
 	lfsmake2 ncurses
 	lfsmake2 procps
 	lfsmake2 libtool

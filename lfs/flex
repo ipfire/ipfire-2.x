@@ -30,7 +30,22 @@ THISAPP    = flex-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
+
+# Normal build or $(TOOLS_DIR) build.
+#
+ifeq "$(ROOT)" ""
+  TARGET = $(DIR_INFO)/$(THISAPP)
+  EXTRA_CONFIG = --prefix=/usr --disable-nls
+  EXTRA_MAKE = 
+  EXTRA_INSTALL = 
+
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+  EXTRA_CONFIG = --prefix=$(TOOLS_DIR) --disable-nls
+  EXTRA_MAKE = 
+  EXTRA_INSTALL = 
+endif
+
 
 ###############################################################################
 # Top-level Rules
@@ -71,7 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && HELP2MAN=$(TOOLS_DIR)/bin/true \
-		./configure --prefix=/usr --disable-nls
+		./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 ifeq "$(ROOT)" ""
