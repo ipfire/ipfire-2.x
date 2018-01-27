@@ -185,7 +185,7 @@ objects = $(DL_FILE) \
 	mpc-$(MPC_VER).tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-gmp-$(GMP_VER).tar.bz2 = $(DL_FROM)/gmp-$(GMP_VER).tar.bz2
+gmp-$(GMP_VER).tar.xz = $(DL_FROM)/gmp-$(GMP_VER).tar.xz
 mpfr-$(MPFR_VER).tar.xz = $(DL_FROM)/mpfr-$(MPFR_VER).tar.xz
 mpc-$(MPC_VER).tar.gz = $(DL_FROM)/mpc-$(MPC_VER).tar.gz
 
