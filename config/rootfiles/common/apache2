@@ -1,7 +1,5 @@
 #etc/httpd
 #etc/httpd/conf
-#etc/httpd/conf/conf.d
-etc/httpd/conf/conf.d/php5.conf
 etc/httpd/conf/default-server.conf
 #etc/httpd/conf/extra
 #etc/httpd/conf/extra/httpd-autoindex.conf
@@ -46,8 +44,6 @@ etc/httpd/conf/uid.conf
 etc/httpd/conf/vhosts.d/captive.conf
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/httpd/conf/vhosts.d/ipfire-interface.conf
-#etc/httpd/conf/vhosts.d/nagios.conf
-#etc/httpd/conf/vhosts.d/openmailadmin.conf
 #srv/web
 #srv/web/ipfire
 #srv/web/ipfire/manual/howto/access.html.es

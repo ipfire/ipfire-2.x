@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2017 IPFire Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2018 IPFire Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.19"							# Version number
-CORE="117"							# Core Level (Filename)
-PAKFIRE_CORE="117"						# Core Level (PAKFIRE)
+CORE="118"							# Core Level (Filename)
+PAKFIRE_CORE="118"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -208,7 +208,7 @@ configure_build() {
 		local mem_max=$(( ${HOST_MEM} / 192 ))
 
 		local processors="$(system_processors)"
-		local cpu_max=$(( ${processors} * 2 ))
+		local cpu_max=$(( ${processors} + 1 ))
 
 		local parallelism
 		if [ ${mem_max} -lt ${cpu_max} ]; then
@@ -537,7 +537,7 @@ entershell() {
 	fi
 
 	echo "Entering to a shell inside LFS chroot, go out with exit"
-	local PS1="ipfire build chroot ($(uname -m)) \u:\w\$ "
+	local PS1="ipfire build chroot (${BUILD_ARCH}) \u:\w\$ "
 
 	if enterchroot bash -i; then
 		stdumount
@@ -1178,7 +1178,6 @@ buildipfire() {
   lfsmake2 cyrus-sasl
   lfsmake2 openldap
   lfsmake2 apache2
-  lfsmake2 php
   lfsmake2 web-user-interface
   lfsmake2 flag-icons
   lfsmake2 jquery
@@ -1282,6 +1281,7 @@ buildipfire() {
   lfsmake2 wireless
   lfsmake2 pakfire
   lfsmake2 spandsp
+  lfsmake2 lz4
   lfsmake2 lzo
   lfsmake2 openvpn
   lfsmake2 pammysql
@@ -1312,7 +1312,6 @@ buildipfire() {
   lfsmake2 postfix
   lfsmake2 fetchmail
   lfsmake2 cyrus-imapd
-  lfsmake2 openmailadmin
   lfsmake2 clamav
   lfsmake2 spamassassin
   lfsmake2 amavisd
@@ -1366,11 +1365,9 @@ buildipfire() {
   lfsmake2 qemu
   lfsmake2 sane
   lfsmake2 netpbm
-  lfsmake2 phpSANE
-  lfsmake2 tunctl
   lfsmake2 netsnmpd
-  lfsmake2 nagios
   lfsmake2 nagios_nrpe
+  lfsmake2 nagios-plugins
   lfsmake2 icinga
   lfsmake2 ebtables
   lfsmake2 directfb
@@ -1413,7 +1410,6 @@ buildipfire() {
   lfsmake2 streamripper
   lfsmake2 sshfs
   lfsmake2 taglib
-  #lfsmake2 mediatomb
   lfsmake2 sslh
   lfsmake2 perl-gettext
   lfsmake2 perl-Sort-Naturally
@@ -1423,9 +1419,7 @@ buildipfire() {
   lfsmake2 perl-DBD-mysql
   lfsmake2 perl-DBD-SQLite
   lfsmake2 perl-File-ReadBackwards
-  lfsmake2 cacti
   lfsmake2 openvmtools
-  lfsmake2 nagiosql
   lfsmake2 motion
   lfsmake2 joe
   lfsmake2 monit
@@ -1494,7 +1488,6 @@ buildipfire() {
   lfsmake2 iptraf-ng
   lfsmake2 iotop
   lfsmake2 stunnel
-  lfsmake2 owncloud
   lfsmake2 bacula
   lfsmake2 batctl
   lfsmake2 perl-Font-TTF
@@ -1517,13 +1510,13 @@ buildipfire() {
   lfsmake2 libpciaccess
   lfsmake2 libyajl
   lfsmake2 libvirt
-  lfsmake2 python3-libvirt
   lfsmake2 freeradius
   lfsmake2 perl-common-sense
   lfsmake2 perl-inotify2
   lfsmake2 perl-Net-IP
   lfsmake2 wio
   lfsmake2 iftop
+  lfsmake2 mdns-repeater
 }
 
 buildinstaller() {

@@ -23,9 +23,9 @@
 				 'title' => "$Lang::tr{'dhcp server'}",
 				 'enabled' => 1,
 				 };
-	$subnetwork->{'32.captive'} = {'caption' => $Lang::tr{'Captive menu'},
+	$subnetwork->{'32.captive'} = {'caption' => $Lang::tr{'Captive'},
 			        'uri' => '/cgi-bin/captive.cgi',
-			        'title' => $Lang::tr{'Captive menu'},
+			        'title' => $Lang::tr{'Captive'},
 			        'enabled' => 1,
 			        };
     $subnetwork->{'40.scheduler'} = {

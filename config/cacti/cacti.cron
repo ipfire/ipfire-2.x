@@ -1,1 +1,0 @@
-php /usr/share/cacti/poller.php > /dev/null 2>&1

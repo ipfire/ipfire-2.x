@@ -2511,7 +2511,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='aes128gcm64' $checked{'IKE_ENCRYPTION'}{'aes128gcm64'}>128 bit AES-GCM/64 bit ICV</option>
 					<option value='aes128' $checked{'IKE_ENCRYPTION'}{'aes128'}>128 bit AES-CBC</option>
 					<option value='camellia128' $checked{'IKE_ENCRYPTION'}{'camellia128'}>128 bit Camellia-CBC</option>
-					<option value='3des' $checked{'IKE_ENCRYPTION'}{'3des'}>168 bit 3DES-EDE-CBC</option>
+					<option value='3des' $checked{'IKE_ENCRYPTION'}{'3des'}>168 bit 3DES-EDE-CBC ($Lang::tr{'vpn weak'})</option>
 				</select>
 			</td>
 			<td class='boldbase'>
@@ -2531,7 +2531,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='aes128gcm64' $checked{'ESP_ENCRYPTION'}{'aes128gcm64'}>128 bit AES-GCM/64 bit ICV</option>
 					<option value='aes128' $checked{'ESP_ENCRYPTION'}{'aes128'}>128 bit AES-CBC</option>
 					<option value='camellia128' $checked{'ESP_ENCRYPTION'}{'camellia128'}>128 bit Camellia-CBC</option>
-					<option value='3des' $checked{'ESP_ENCRYPTION'}{'3des'}>168 bit 3DES-EDE-CBC</option>
+					<option value='3des' $checked{'ESP_ENCRYPTION'}{'3des'}>168 bit 3DES-EDE-CBC ($Lang::tr{'vpn weak'})</option>
 				</select>
 			</td>
 		</tr>

@@ -1,0 +1,48 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/mdns-repeater
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+INTERFACES=
+
+if [ -n "${GREEN_DEV}" ]; then
+	INTERFACES="${INTERFACES} ${GREEN_DEV}"
+fi
+
+if [ -n "${BLUE_DEV}" ]; then
+	INTERFACES="${INTERFACES} ${BLUE_DEV}"
+fi
+
+case "${1}" in
+	start)
+		boot_mesg "Starting Multicast DNS Repeater..."
+		loadproc /usr/bin/mdns-repeater ${INTERFACES}
+		;;
+
+	stop)
+		boot_mesg "Stopping Multicast DNS Repeater..."
+		killproc /usr/bin/mdns-repeater
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/bin/mdns-repeater
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/mdns-repeater
