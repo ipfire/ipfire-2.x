@@ -33,6 +33,8 @@ done
 
 # Stop services
 /etc/init.d/snort stop
+/etc/init.d/squid stop
+/etc/init.d/unbound stop
 
 # Delete files
 rm -rvf \
@@ -55,20 +57,13 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/unbound start
 /etc/init.d/apache restart
+/etc/init.d/squid start
 /etc/init.d/snort start
 
 # This update need a reboot...
-touch /var/run/need_reboot
-
-# Rebuild the initrd to include the microcode updates
-rebuild-initrd
-
-# Reload microcode
-modprobe microcode
-if [ -w "/sys/devices/system/cpu/microcode/reload" ];
-	echo 1 > /sys/devices/system/cpu/microcode/reload
-fi
+#touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start

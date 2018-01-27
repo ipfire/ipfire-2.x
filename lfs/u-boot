@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -78,6 +78,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/U-Boot-v2-fs-fat-read-fix-fat16-ls-read-issue.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot-support-gcc-6.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot-c99-inline-fix.patch
+
+	cd $(DIR_APP)/include/linux && ln -s compiler-gcc6.h compiler-gcc7.h
 
 	# Pandaboard
 	-mkdir -pv /usr/share/u-boot/pandaboard

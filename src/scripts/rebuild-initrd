@@ -24,4 +24,4 @@
 #
 KVER=`uname -r | cut -d"-" -f1`
 
-dracut --early-microcode --force --verbose /boot/ipfirerd-$KVER.img $KVER-ipfire
+dracut --force --verbose /boot/ipfirerd-$KVER.img $KVER-ipfire

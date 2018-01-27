@@ -32,14 +32,14 @@
 
 int main(void)
 {
-   char buffer[STRING_SIZE], command[STRING_SIZE], hostname[STRING_SIZE];
-   const char* protocol;
+   char buffer[STRING_SIZE], command[STRING_SIZE], hostname[STRING_SIZE], protocol[STRING_SIZE];
    char varmessages[STRING_SIZE], asynclog[STRING_SIZE];
    int config_fd,rc,fd,pid;
    struct stat st;
    struct keyvalue *kv = NULL;
    memset(buffer, 0, STRING_SIZE);
    memset(hostname, 0, STRING_SIZE);
+   memset(protocol, 0, STRING_SIZE);
    memset(varmessages, 0, STRING_SIZE);
    memset(asynclog, 0, STRING_SIZE);
 
@@ -71,7 +71,7 @@ int main(void)
    if (!findkey(kv, "REMOTELOG_PROTOCOL", protocol))
    {
       /* fall back to UDP if no protocol was given */
-      protocol = "udp";
+      strcpy(protocol, "udp");
    }
 
    if (strspn(hostname, VALID_FQDN) != strlen(hostname))
