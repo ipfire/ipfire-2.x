@@ -15,4 +15,5 @@ usr/lib/firewall/rules.pl
 usr/local/bin/syslogdctrl
 usr/sbin/updxlrator
 var/ipfire/langs
+var/ipfire/menu.d/30-network.menu
 var/ipfire/updatexlrator/bin/download
