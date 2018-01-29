@@ -56,6 +56,18 @@ ldconfig
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# remove dropped packages
+for package in python-libvirt owncloud mediatomb openmailadmin \
+		tunctl phpSANE cacti nagios nagiosql ffmpeg-libs \
+		sslscan pound vsftpd imspector tripwire; do
+	if [ -e /opt/pakfire/db/installed/meta-$package ]; then
+		pakfire remove -y $package
+	fi
+	rm -f /opt/pakfire/db/installed/meta-$package
+	rm -f /opt/pakfire/db/meta/meta-$package
+	rm -f /opt/pakfire/db/rootfiles/$package
+done
+
 # Start services
 /etc/init.d/unbound start
 /etc/init.d/apache restart
