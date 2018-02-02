@@ -1,0 +1,11 @@
+diff -Naur openssl-1.0.2a.org/crypto/x86cpuid.pl openssl-1.0.2a/crypto/x86cpuid.pl
+--- openssl-1.0.2a.org/crypto/x86cpuid.pl	2015-03-19 14:30:36.000000000 +0100
++++ openssl-1.0.2a/crypto/x86cpuid.pl	2015-04-28 13:47:57.853521020 +0200
+@@ -71,6 +71,7 @@
+ 	&mov	("eax",1);
+ 	&xor	("ecx","ecx");
+ 	&cpuid	();
++	&and	("ecx",0xfffffdff);	# clear SSSE3 because it is incredible slow on AMD's
+ 	&bt	("edx",28);
+ 	&jnc	(&label("generic"));
+ 	&shr	("ebx",16);

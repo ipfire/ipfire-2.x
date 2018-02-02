@@ -1124,6 +1124,7 @@ buildipfire() {
   lfsmake2 xtables-addons			USPACE="1"
   lfsmake2 openssl
   [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
+  lfsmake2 openssl-compat
   lfsmake2 libgpg-error
   lfsmake2 libgcrypt
   lfsmake2 libassuan
