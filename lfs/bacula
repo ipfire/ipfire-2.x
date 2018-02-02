@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.2.13
+VER        = 9.0.6
 
 THISAPP    = bacula-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = bacula
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 43417bae0c221afb1f30a581c9e0f2fe
+$(DL_FILE)_MD5 = 9168e398808c42bf290515f60892f643
 
 install : $(TARGET)
 
