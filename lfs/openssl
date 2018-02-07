@@ -128,7 +128,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && find crypto/ -name Makefile -exec \
 		sed 's/^ASFLAGS=/&-Wa,--noexecstack /' -i {} \;
 
-	cd $(DIR_APP) && ./Configure $(CONFIGURE_OPTIONS)
+	cd $(DIR_APP) && ./Configure $(CONFIGURE_OPTIONS) \
+		$(CFLAGS) $(LDFLAGS)
 
 	cd $(DIR_APP) && make depend
 	cd $(DIR_APP) && make
