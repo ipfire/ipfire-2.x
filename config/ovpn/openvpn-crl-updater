@@ -1,0 +1,90 @@
+#!/bin/bash
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2018  IPFire Team  <erik.kapfer@ipfire.org>                   #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+#                                                                             #
+# Script Location/Name: /etc/fcron.daily/openvpn-crl-updater                  #
+#                                                                             #
+# Description: This script checks the "Next Update:" field of the CRL         #
+#   and renews it if needed, which prevents the expiration of OpenVPNs CRL.   #
+#   With OpenVPN 2.4.x the CRL handling has been refactored,                  #
+#   whereby the verification logic has been removed                           #
+#   from ssl_verify_<backend>.c .                                             #
+#                                                                             #
+# Run Information: If OpenVPNs CRL is present,                                #
+#   this script provides a cronjob which checks daily if an update            #
+#   of the CRL is needed. If the expiring date reaches the value              #
+#   (defined in the 'UPDATE' variable in days) before the CRL expiration,     #
+#   an openssl command will be executed to renew the CRL.                     #
+#   Script execution will be logged into /var/log/messages.                   #
+#                                                                             #
+###############################################################################
+
+## Paths
+OVPN="/var/ipfire/ovpn"
+CRL="${OVPN}/crls/cacrl.pem"
+CAKEY="${OVPN}/ca/cakey.pem"
+CACERT="${OVPN}/ca/cacert.pem"
+OPENSSLCONF="${OVPN}/openssl/ovpn.cnf"
+
+# Check if CRL is presant or if OpenVPN is active
+if [ ! -e "${CAKEY}" ]; then
+	exit 0;
+fi
+
+## Values
+# Actual time in epoch format
+NOW="$(date +%s)"
+
+# Investigate CRLs 'Next Update' date
+EXPIRES_CRL="$(openssl crl -in "${CRL}" -text | grep -oP 'Next Update: *\K.*')"
+
+# Convert 'Next Update:' date from epoch to seconds
+EXPIRES_AT="$(date -d "${EXPIRES_CRL}" "+%s")"
+
+# Seconds left until CRL expires
+EXPIRINGDATEINSEC="$(( EXPIRES_AT - NOW ))"
+
+# Day in seconds to calculate
+DAYINSEC="86400"
+
+# Convert seconds to days
+NEXTUPDATE="$(( EXPIRINGDATEINSEC / DAYINSEC ))"
+
+# Update of the CRL in days before CRL expiring date
+UPDATE="14"
+
+
+## Mainpart
+# Check if OpenVPNs CRL needs to be renewed
+if [ ${NEXTUPDATE} -le ${UPDATE} ]; then
+    if openssl ca -gencrl -keyfile "${CAKEY}" -cert "${CACERT}" -out "${CRL}" -config "${OPENSSLCONF}"; then
+		logger -t openvpn "CRL has been updated"
+    else
+		logger -t openvpn "error: Could not update CRL"
+    fi
+fi
+
+exit 0
+
+
+# EOF
+
