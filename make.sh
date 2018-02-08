@@ -952,6 +952,7 @@ buildtoolchain() {
 	lfsmake1 tar
 	lfsmake1 texinfo
 	lfsmake1 xz
+	lfsmake1 bison
 	lfsmake1 flex
 	lfsmake1 fake-environ
 	lfsmake1 strip
