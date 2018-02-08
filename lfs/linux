@@ -24,7 +24,7 @@
 
 include Config
 
-VER         = 4.14.16
+VER         = 4.14.17
 RPI_PATCHES = 3.14.79-grsec-ipfire1
 A7M_PATCHES = 3.14.79-grsec-ipfire1
 
@@ -79,7 +79,7 @@ $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 rpi-patches-$(RPI_PATCHES).patch.xz		= $(URL_IPFIRE)/rpi-patches-$(RPI_PATCHES).patch.xz
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= 8be24f187effe1817008a148823fa1e3
+$(DL_FILE)_MD5					= 8527599994c53c657a6cec2562c40c0d
 rpi-patches-$(RPI_PATCHES).patch.xz_MD5		= a02a7fd54c642c1e3578a00ed22f54f8
 arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 6c3b11e51caa278dbeacd1e23c2b171b
 
