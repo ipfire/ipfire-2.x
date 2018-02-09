@@ -1010,6 +1010,7 @@ buildbase() {
 	lfsmake2 jwhois
 	lfsmake2 kbd
 	lfsmake2 less
+	lfsmake2 pkg-config
 	lfsmake2 make
 	lfsmake2 man
 	lfsmake2 kmod
@@ -1034,7 +1035,6 @@ buildipfire() {
   lfsmake2 configroot
   lfsmake2 initscripts
   lfsmake2 backup
-  lfsmake2 pkg-config
   lfsmake2 libusb
   lfsmake2 libusb-compat
   lfsmake2 libpcap
