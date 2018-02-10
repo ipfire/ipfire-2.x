@@ -144,21 +144,21 @@ configure_build() {
 			BUILDTARGET="${build_arch}-unknown-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-m64 -mindirect-branch=thunk -mfunction-return=thunk -mtune=generic"
+			CFLAGS_ARCH="-m64 -mindirect-branch=thunk -mfunction-return=thunk -mtune=generic -fstack-clash-protection"
 			;;
 
 		i586)
 			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-march=i586 -mindirect-branch=thunk -mfunction-return=thunk -mtune=generic -fomit-frame-pointer"
+			CFLAGS_ARCH="-march=i586 -mindirect-branch=thunk -mfunction-return=thunk -mtune=generic -fomit-frame-pointer -fstack-clash-protection"
 			;;
 
 		aarch64)
 			BUILDTARGET="${build_arch}-unknown-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="arm"
-			CFLAGS_ARCH=""
+			CFLAGS_ARCH="-fstack-clash-protection"
 			;;
 
 		armv7hl)
