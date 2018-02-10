@@ -38,7 +38,8 @@ DEPS       = "amavisd mysql"
 
 CCARGS     = `getconf LFS_CFLAGS` \
 	-DDEF_DAEMON_DIR="'\"/usr/lib/postfix\"'" \
-	-DDEF_MANPAGE_DIR="'\"/usr/share/man\"'"
+	-DDEF_MANPAGE_DIR="'\"/usr/share/man\"'" \
+	-DNO_NIS
 AUXLIBS    =
 
 # LDAP
