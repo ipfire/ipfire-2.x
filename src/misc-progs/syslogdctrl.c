@@ -118,18 +118,18 @@ int main(void)
       if (strcmp(protocol, "tcp") == 0)
       {
          /* write line for TCP */
-         snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@@\\).\\+$/\\1%s/' /etc/syslog.conf >&%d", hostname, config_fd );
+         snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+\\)@@\\?.\\+$/\\1@@%s/' /etc/syslog.conf >&%d", hostname, config_fd);
       }
       else
       {
          /* write line for UDP */
-         snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@\\).\\+$/\\1%s/' /etc/syslog.conf >&%d", hostname, config_fd );
+         snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+\\)@@\\?.\\+$/\\1@%s/' /etc/syslog.conf >&%d", hostname, config_fd);
       }
    }
    else
    {
       /* if remote syslog has been disabled */
-      snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@.\\+\\)$/#\\1/' /etc/syslog.conf >&%d", config_fd );
+      snprintf(buffer, STRING_SIZE - 1, "/bin/sed -e 's/^#\\?\\(\\*\\.\\*[[:blank:]]\\+@@\\?.\\+\\)$/#\\1/' /etc/syslog.conf >&%d", config_fd );
    }
 
      /* if the return code isn't 0 failsafe */
