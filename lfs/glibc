@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.25
+VER        = 2.27
 
 THISAPP    = glibc-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
@@ -80,7 +80,9 @@ EXTRA_CONFIG += \
 	--enable-add-ons \
 	--without-selinux \
 	--enable-experimental-malloc \
-	--enable-bind-now
+	--enable-bind-now \
+	--enable-obsolete-rpc \
+	--disable-nss-crypt
 
 ###############################################################################
 # Top-level Rules
@@ -90,7 +92,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0c9f827298841dbf3bff3060f3d7f19c
+$(DL_FILE)_MD5 = 898cd5656519ffbc3a03fe811dd89e82
 
 install : $(TARGET)
 
@@ -122,7 +124,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/glibc-build
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc/glibc-2.25-gcc-7.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-localedef-no-archive.patch
 
 ifneq "$(TOOLCHAIN)" "1"
@@ -148,6 +149,8 @@ endif
 
 	cd $(DIR_SRC)/glibc-build && make PARALLELMFLAGS=$(MAKETUNING) \
 		CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)"
+
+	cd $(DIR_APP) && sed '/test-installation/s@\$$(PERL)@echo not running@' -i Makefile
 
 	cd $(DIR_SRC)/glibc-build && make install
 
