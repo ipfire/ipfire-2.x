@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.28
+VER        = 2.30
 
 THISAPP    = binutils-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
@@ -94,7 +94,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d5d270fd0b698ed59ca5ade8e1b5059c
+$(DL_FILE)_MD5 = ffc476dd46c96f932875d1b2e27e929f
 
 install : $(TARGET)
 
