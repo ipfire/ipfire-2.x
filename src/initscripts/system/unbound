@@ -210,10 +210,24 @@ write_forward_conf() {
 					;;
 			esac
 
-			echo "forward-zone:"
-			echo "	name: ${zone}"
-			echo "	forward-addr: ${server}"
-			echo
+			# Reverse-lookup zones must be stubs
+			case "${zone}" in
+				*.in-addr.arpa)
+					echo "stub-zone:"
+					echo "	name: ${zone}."
+					echo "	stub-addr: ${server}"
+					echo
+					echo "server:"
+					echo "	local-zone: \"${zone}.\" transparent"
+					echo
+					;;
+				*)
+					echo "forward-zone:"
+					echo "	name: ${zone}."
+					echo "	forward-addr: ${server}"
+					echo
+					;;
+			esac
 		done < /var/ipfire/dnsforward/config
 
 		if [ -n "${insecure_zones}" ]; then
