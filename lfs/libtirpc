@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.1
+VER        = 1.0.2
 
 THISAPP    = libtirpc-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libtirpc
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 36ce1c0ff80863bb0839d54aa0b94014
+$(DL_FILE)_MD5 = d5a37f1dccec484f9cabe2b97e54e9a6
 
 install : $(TARGET)
 
@@ -77,6 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libtirpc-1.0.2-glibc-2.26.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc --disable-gssapi --disable-ipv6
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
