@@ -82,6 +82,7 @@ EXTRA_CONFIG += \
 	--enable-experimental-malloc \
 	--enable-bind-now \
 	--enable-obsolete-rpc \
+	--enable-obsolete-nsl \
 	--disable-nss-crypt
 
 ###############################################################################
