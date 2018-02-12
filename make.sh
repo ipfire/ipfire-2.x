@@ -1332,7 +1332,6 @@ buildipfire() {
   lfsmake2 cmake
   lfsmake2 gnump3d
   lfsmake2 rsync
-  lfsmake2 tcpwrapper
   lfsmake2 libtirpc
   lfsmake2 rpcbind
   lfsmake2 nfs

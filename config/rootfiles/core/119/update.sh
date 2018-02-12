@@ -43,7 +43,8 @@ rm -vf \
 	/usr/bin/msidn_* \
 	/usr/lib/libmisdn* \
 	/usr/sbin/misdn_* \
-	/etc/rc.d/init.d/mISDN
+	/etc/rc.d/init.d/mISDN \
+	/usr/lib/libwrap*
 
 # Extract files
 extract_files
