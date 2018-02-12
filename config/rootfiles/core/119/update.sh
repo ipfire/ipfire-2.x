@@ -57,7 +57,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # remove dropped packages
-for package in lcr; do
+for package in lcr mysql; do
 	if [ -e /opt/pakfire/db/installed/meta-$package ]; then
 		pakfire remove -y $package
 	fi
@@ -65,6 +65,11 @@ for package in lcr; do
 	rm -f /opt/pakfire/db/meta/meta-$package
 	rm -f /opt/pakfire/db/rootfiles/$package
 done
+
+# Remove more old files
+rm -vf \
+	/usr/lib/libmysqlclient* \
+	/usr/lib/mysql
 
 # Start services
 

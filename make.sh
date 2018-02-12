@@ -1174,7 +1174,6 @@ buildipfire() {
   lfsmake2 libxml2
   lfsmake2 libxslt
   lfsmake2 BerkeleyDB
-  lfsmake2 mysql
   lfsmake2 cyrus-sasl
   lfsmake2 openldap
   lfsmake2 apache2
