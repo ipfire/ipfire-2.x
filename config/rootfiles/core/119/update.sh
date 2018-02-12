@@ -37,7 +37,13 @@ done
 rm -vf \
 	/sbin/capiinit \
 	/usr/bin/capiinfo \
-	/usr/lib/libcapi20*
+	/usr/lib/libcapi20* \
+	/usr/bin/isdn_text2wireshark \
+	/usr/bin/l1oipctrl \
+	/usr/bin/msidn_* \
+	/usr/lib/libmisdn* \
+	/usr/sbin/misdn_* \
+	/etc/rc.d/init.d/mISDN
 
 # Extract files
 extract_files
