@@ -254,7 +254,6 @@ usr/lib/asterisk/modules/app_minivm.so
 usr/lib/asterisk/modules/app_mixmonitor.so
 usr/lib/asterisk/modules/app_morsecode.so
 usr/lib/asterisk/modules/app_mp3.so
-usr/lib/asterisk/modules/app_mysql.so
 usr/lib/asterisk/modules/app_nbscat.so
 usr/lib/asterisk/modules/app_originate.so
 usr/lib/asterisk/modules/app_page.so
@@ -295,7 +294,6 @@ usr/lib/asterisk/modules/bridge_softmix.so
 usr/lib/asterisk/modules/cdr_csv.so
 usr/lib/asterisk/modules/cdr_custom.so
 usr/lib/asterisk/modules/cdr_manager.so
-usr/lib/asterisk/modules/cdr_mysql.so
 usr/lib/asterisk/modules/cdr_sqlite3_custom.so
 usr/lib/asterisk/modules/cdr_syslog.so
 usr/lib/asterisk/modules/cel_custom.so
@@ -410,7 +408,6 @@ usr/lib/asterisk/modules/res_clialiases.so
 usr/lib/asterisk/modules/res_clioriginate.so
 usr/lib/asterisk/modules/res_config_curl.so
 usr/lib/asterisk/modules/res_config_ldap.so
-usr/lib/asterisk/modules/res_config_mysql.so
 usr/lib/asterisk/modules/res_config_sqlite3.so
 usr/lib/asterisk/modules/res_convert.so
 usr/lib/asterisk/modules/res_crypto.so
@@ -484,7 +481,6 @@ var/ipfire/asterisk/agents.conf
 var/ipfire/asterisk/alarmreceiver.conf
 var/ipfire/asterisk/alsa.conf
 var/ipfire/asterisk/amd.conf
-var/ipfire/asterisk/app_mysql.conf
 var/ipfire/asterisk/app_skel.conf
 var/ipfire/asterisk/ari.conf
 var/ipfire/asterisk/ast_debug_tools.conf
@@ -497,7 +493,6 @@ var/ipfire/asterisk/cdr.conf
 var/ipfire/asterisk/cdr_adaptive_odbc.conf
 var/ipfire/asterisk/cdr_custom.conf
 var/ipfire/asterisk/cdr_manager.conf
-var/ipfire/asterisk/cdr_mysql.conf
 var/ipfire/asterisk/cdr_odbc.conf
 var/ipfire/asterisk/cdr_pgsql.conf
 var/ipfire/asterisk/cdr_sqlite3_custom.conf
@@ -558,7 +553,6 @@ var/ipfire/asterisk/pjsip_notify.conf
 var/ipfire/asterisk/pjsip_wizard.conf
 var/ipfire/asterisk/queuerules.conf
 var/ipfire/asterisk/queues.conf
-var/ipfire/asterisk/res_config_mysql.conf
 var/ipfire/asterisk/res_config_sqlite.conf
 var/ipfire/asterisk/res_config_sqlite3.conf
 var/ipfire/asterisk/res_corosync.conf
