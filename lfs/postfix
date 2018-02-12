@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = postfix
-PAK_VER    = 10
+PAK_VER    = 11
 
 DEPS       = "amavisd mysql"
 
@@ -109,8 +109,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sh postfix-install -non-interactive
 	## Install configuration
 	rm -vf /etc/postfix/main.cf.default
-	cp -vf $(DIR_CONF)/postfix/* /etc/postfix
-	mv -vf /etc/postfix/aliases /etc/aliases
 	mkdir -p /var/lib/postfix
 	chown postfix.root /var/lib/postfix
 

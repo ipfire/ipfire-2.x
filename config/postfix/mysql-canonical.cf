@@ -1,8 +1,0 @@
-hosts = localhost
-user = root
-password = mysqlfire
-table = user
-dbname = mail
-select_field = canonical
-where_field = mbox
-additional_conditions = and active = '1' limit 1

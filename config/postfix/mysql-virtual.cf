@@ -1,8 +1,0 @@
-hosts = localhost
-user = root
-password = mysqlfire
-dbname = mail
-table = virtual
-select_field = dest
-where_field = address
-additional_conditions = and active = '1'
