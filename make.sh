@@ -1411,7 +1411,6 @@ buildipfire() {
   lfsmake2 vdradmin
   lfsmake2 miau
   lfsmake2 perl-DBI
-  lfsmake2 perl-DBD-mysql
   lfsmake2 perl-DBD-SQLite
   lfsmake2 perl-File-ReadBackwards
   lfsmake2 openvmtools

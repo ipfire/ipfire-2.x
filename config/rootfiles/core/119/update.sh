@@ -57,7 +57,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # remove dropped packages
-for package in lcr mysql; do
+for package in lcr perl-DBD-mysql mysql; do
 	if [ -e /opt/pakfire/db/installed/meta-$package ]; then
 		pakfire remove -y $package
 	fi
