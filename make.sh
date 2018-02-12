@@ -1282,7 +1282,6 @@ buildipfire() {
   lfsmake2 lz4
   lfsmake2 lzo
   lfsmake2 openvpn
-  lfsmake2 pammysql
   lfsmake2 mpage
   lfsmake2 dbus
   lfsmake2 intltool

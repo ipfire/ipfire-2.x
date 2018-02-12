@@ -44,7 +44,8 @@ rm -vf \
 	/usr/lib/libmisdn* \
 	/usr/sbin/misdn_* \
 	/etc/rc.d/init.d/mISDN \
-	/usr/lib/libwrap*
+	/usr/lib/libwrap* \
+	/lib/security/pam_mysql.so
 
 # Extract files
 extract_files
