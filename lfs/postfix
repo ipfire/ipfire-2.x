@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = postfix
-PAK_VER    = 11
+PAK_VER    = 12
 
-DEPS       = "amavisd mysql"
+DEPS       = "amavisd"
 
 CCARGS     = `getconf LFS_CFLAGS` \
 	-DDEF_DAEMON_DIR="'\"/usr/lib/postfix\"'" \
@@ -49,10 +49,6 @@ AUXLIBS   += -lldap -llber
 # PCRE
 CCARGS    += -DHAS_PCRE -I/usr/include/pcre
 AUXLIBS   += -lpcre
-
-# MySQL
-CCARGS    += -DHAS_MYSQL -I/usr/include/mysql
-AUXLIBS   += -L/usr/lib/mysql -lmysqlclient -lm
 
 # SASL
 CCARGS    += -DUSE_SASL_AUTH -DUSE_CYRUS_SASL -I/usr/include/sasl
