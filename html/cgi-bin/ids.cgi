@@ -24,7 +24,6 @@ use strict;
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
-use File::Copy;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
