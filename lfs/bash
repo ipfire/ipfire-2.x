@@ -35,11 +35,11 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  CONFIGURE_OPTIONS = --prefix=/usr --bindir=/bin \
-    --with-installed-readline
+  CONFIGURE_OPTIONS = \
+	--bindir=/bin \
+	--with-installed-readline
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  CONFIGURE_OPTIONS = --prefix=$(TOOLS_DIR)
 endif
 
 CONFIGURE_OPTIONS += \
@@ -95,7 +95,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-4.0-profile-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-3.2-ssh_source_bash.patch
 
-	cd $(DIR_APP) && ./configure $(CONFIGURE_OPTIONS)
+	cd $(DIR_APP) && ./configure --prefix=$(PREFIX) $(CONFIGURE_OPTIONS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
