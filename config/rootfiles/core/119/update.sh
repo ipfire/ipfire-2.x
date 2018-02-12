@@ -42,6 +42,16 @@ ldconfig
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# remove dropped packages
+for package in lcr; do
+	if [ -e /opt/pakfire/db/installed/meta-$package ]; then
+		pakfire remove -y $package
+	fi
+	rm -f /opt/pakfire/db/installed/meta-$package
+	rm -f /opt/pakfire/db/meta/meta-$package
+	rm -f /opt/pakfire/db/rootfiles/$package
+done
+
 # Start services
 
 # This update need a reboot...
