@@ -81,7 +81,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install configuration
 	-mkdir -p /etc/pam.d
-	cp $(DIR_SRC)/config/pam/* /etc/pam.d
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

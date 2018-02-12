@@ -1,11 +1,5 @@
 #etc/environment
 etc/pam.d
-#etc/pam.d/ftp
-#etc/pam.d/imap
-#etc/pam.d/other
-#etc/pam.d/pop
-#etc/pam.d/sieve
-#etc/pam.d/smtp
 etc/security
 #etc/security/access.conf
 #etc/security/group.conf
