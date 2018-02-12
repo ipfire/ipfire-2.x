@@ -928,6 +928,7 @@ buildtoolchain() {
 	lfsmake1 gcc			PASS=L
 	lfsmake1 binutils			PASS=2
 	lfsmake1 gcc			PASS=2
+	lfsmake1 zlib
 	lfsmake1 ccache			PASS=2
 	lfsmake1 tcl
 	lfsmake1 expect
