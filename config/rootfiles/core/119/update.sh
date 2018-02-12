@@ -33,6 +33,12 @@ done
 
 # Stop services
 
+# Remove old files
+rm -vf \
+	/sbin/capiinit \
+	/usr/bin/capiinfo \
+	/usr/lib/libcapi20*
+
 # Extract files
 extract_files
 

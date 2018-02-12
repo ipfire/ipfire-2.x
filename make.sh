@@ -1211,7 +1211,6 @@ buildipfire() {
   lfsmake2 iputils
   lfsmake2 l7-protocols
   lfsmake2 mISDNuser
-  lfsmake2 capi4k-utils
   lfsmake2 hwdata
   lfsmake2 logrotate
   lfsmake2 logwatch
