@@ -1,9 +1,7 @@
-etc/aliases
 #etc/postfix
 #etc/postfix/LICENSE
 #etc/postfix/TLS_LICENSE
 etc/postfix/access
-etc/postfix/body_checks
 #etc/postfix/bounce.cf.default
 etc/postfix/canonical
 etc/postfix/generic
