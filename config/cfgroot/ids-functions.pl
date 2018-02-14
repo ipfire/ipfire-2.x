@@ -189,8 +189,34 @@ sub log_error ($) {
 	# Remove any newline.
 	chomp($error);
 
+	# Call private function to log the error message to syslog.
+	&_log_to_syslog($error);
+
 	# Call private function to write/store the error message in the storederrorfile.
 	&_store_error_message($error);
+}
+
+#
+## Function to log a given error message to the kernel syslog.
+#
+sub _log_to_syslog ($) {
+	my ($message) = @_;
+
+	# Load perl module to talk to the kernel syslog.
+	use Sys::Syslog qw(:DEFAULT setlogsock);
+
+	# The syslog function works best with an array based input,
+	# so generate one before passing the message details to syslog.
+	my @syslog = ("ERR", "<ERROR> $message");
+
+	# Establish the connection to the syslog service.
+	openlog('oinkmaster', 'cons,pid', 'user');
+
+	# Send the log message.
+	syslog(@syslog);
+
+	# Close the log handle.
+	closelog();
 }
 
 #
