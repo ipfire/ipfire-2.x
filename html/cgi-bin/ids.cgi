@@ -72,6 +72,22 @@ if ($oinkmaster_pid) {
 	&working("$Lang::tr{'snort working'}");
 }
 
+# Check if any error has been stored.
+if (-e $IDS::storederrorfile) {
+        # Open file to read in the stored error message.
+        open(FILE, "<$IDS::storederrorfile") or die "Could not open $IDS::storederrorfile. $!\n";
+
+        # Read the stored error message.
+        $errormessage = <FILE>;
+
+        # Close file.
+        close (FILE);
+
+        # Delete the file, which is now not longer required.
+        unlink($IDS::storederrorfile);
+}
+
+
 ## Grab all available snort rules and store them in the snortrules hash.
 #
 # Open snort rules directory and do a directory listing.
@@ -251,25 +267,43 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 		$errormessage = $Lang::tr{'could not download latest updates'};
 	}
 
-	# Check if there is enought free disk space available.
+	# Check if enought free disk space is availabe.
 	$errormessage = &IDS::checkdiskspace();
 
 	# Check if any errors happend.
 	unless ($errormessage) {
+		&Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
+		&Header::openbigbox('100%', 'left', '', $errormessage);
+		&Header::openbox( 'Waiting', 1,);
+			print <<END;
+				<table>
+					<tr>
+						<td><img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' /></td>
+						<td>$Lang::tr{'snort working'}</td>
+					</tr>
+				</table>
+END
+		&Header::closebox();
+		&Header::closebigbox();
+		&Header::closepage();
+
 		# Call subfunction to download the ruleset.
 		$errormessage = &IDS::downloadruleset();
-	}
 
-	# Sleep for 1 second
-	sleep(1);
+		# Check if the downloader returned an error.
+		if ($errormessage) {
+			# Call function to store the errormessage.
+			&IDS::log_error($errormessage);
 
-	# Check if the downloader returend any error message.
-	unless ($errormessage) {
-		# Call subfunction to launch oinkmaster.
-		&oinkmaster();
+			# Preform a reload of the page.
+			&reload();
+		} else {
+			# Call subfunction to launch oinkmaster.
+			&IDS::oinkmaster();
 
-		# Sleep for 1 seconds.
-		sleep(1);
+			# Perform a reload of the page.
+			&reload();
+		}
 	}
 # Save snort settings.
 } elsif ($cgiparams{'SNORT'} eq $Lang::tr{'save'}) {
@@ -547,30 +581,14 @@ END
 &Header::closebigbox();
 &Header::closepage();
 
-sub working ($) {
-	my $message = $_[0];
+#
+## A tiny function to perform a reload of the webpage after one second.
+#
+sub reload () {
+	print "<meta http-equiv='refresh' content='1'>\n";
 
-        &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
-        &Header::openbigbox('100%', 'left', '', $errormessage);
-        &Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1'>" );
-        print <<END;
-        <table>
-                <tr>
-                        <td><img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' /></td>
-                        <td>$message</td>
-                </tr>
-                <tr>
-                        <td colspan='2' align='center'>
-                        <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-                                <input type='image' alt='$Lang::tr{'reload'}' title='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
-                        </form>
-                </tr>
-        </table>
-END
-        &Header::closebox();
-        &Header::closebigbox();
-        &Header::closepage();
-        exit;
+	# Stop the script.
+	exit;
 }
 
 #

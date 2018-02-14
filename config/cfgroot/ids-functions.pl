@@ -29,6 +29,9 @@ require "${General::swroot}/lang.pl";
 # Location and name of the tarball which contains the ruleset.
 my $rulestarball = "/var/tmp/snortrules.tar.gz";
 
+# File to store any errors, which also will be read and displayed by the wui.
+my $storederrorfile = "/tmp/ids_storederror";
+
 #
 ## Function for checking if at least 300MB of free disk space are available
 ## on the "/var" partition.
@@ -153,6 +156,38 @@ sub downloadruleset {
 sub oinkmaster () {
 	# Call oinkmaster to generate ruleset.
 	system("/usr/local/bin/oinkmaster.pl -v -s -u file://$rulestarball -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules 2>&1 |logger -t oinkmaster");
+}
+
+#
+## Function to do all the logging stuff if the downloading or updating of the ruleset fails.
+#
+sub log_error ($) {
+	my ($error) = @_;
+
+	# Remove any newline.
+	chomp($error);
+
+	# Call private function to write/store the error message in the storederrorfile.
+	&_store_error_message($error);
+}
+
+#
+## Private function to write a given error message to the storederror file.
+#
+sub _store_error_message ($) {
+        my ($message) = @_;
+
+	# Remove any newline.
+	chomp($message);
+
+        # Open file for writing.
+        open (ERRORFILE, ">$storederrorfile") or die "Could not write to $storederrorfile. $!\n";
+
+        # Write error to file.
+        print ERRORFILE "$message\n";
+
+        # Close file.
+        close (ERRORFILE);
 }
 
 1;
