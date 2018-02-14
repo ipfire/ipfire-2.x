@@ -47,7 +47,6 @@ my %selected=();
 # Get netsettings.
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
-my $rulestarball = "/var/tmp/snortrules.tar.gz";
 my $snortrulepath = "/etc/snort/rules";
 my $snortusedrulefilesfile = "${General::swroot}/snort/snort-used-rulefiles.conf";
 my $errormessage;
@@ -345,9 +344,9 @@ if ($errormessage) {
 my $rulesdate;
 
 # Check if a ruleset allready has been downloaded.
-if ( -f "$rulestarball"){
+if ( -f "$IDS::rulestarball"){
 	# Call stat on the filename to obtain detailed information.
-        my @Info = stat("$rulestarball");
+        my @Info = stat("$IDS::rulestarball");
 
 	# Grab details about the creation time.
         $rulesdate = localtime($Info[9]);
