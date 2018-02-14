@@ -147,4 +147,12 @@ sub downloadruleset {
 	return;
 }
 
+#
+## A tiny wrapper function to call the oinkmaster script.
+#
+sub oinkmaster () {
+	# Call oinkmaster to generate ruleset.
+	system("/usr/local/bin/oinkmaster.pl -v -s -u file://$rulestarball -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules 2>&1 |logger -t oinkmaster");
+}
+
 1;

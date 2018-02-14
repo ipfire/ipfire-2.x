@@ -598,11 +598,12 @@ END
         exit;
 }
 
-sub oinkmaster () {
-	# Call oinkmaster to generate ruleset.
-	system("/usr/local/bin/oinkmaster.pl -v -s -u file://$rulestarball -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules 2>&1 |logger -t oinkmaster");
-}
-
+#
+## Private function to read-in and parse rules of a given rulefile.
+#
+## The given file will be read, parsed and all valid rules will be stored by ID,
+## message/description and it's state in the snortrules hash.
+#
 sub readrulesfile ($) {
 	my $rulefile = shift;
 
