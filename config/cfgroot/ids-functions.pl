@@ -154,8 +154,30 @@ sub downloadruleset {
 ## A tiny wrapper function to call the oinkmaster script.
 #
 sub oinkmaster () {
+	# Load perl module to talk to the kernel syslog.
+	use Sys::Syslog qw(:DEFAULT setlogsock);
+
+	# Establish the connection to the syslog service.
+	openlog('oinkmaster', 'cons,pid', 'user');
+
 	# Call oinkmaster to generate ruleset.
-	system("/usr/local/bin/oinkmaster.pl -v -s -u file://$rulestarball -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules 2>&1 |logger -t oinkmaster");
+	open(OINKMASTER, "/usr/local/bin/oinkmaster.pl -v -s -u file://$rulestarball -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules|");
+
+	# Log output of oinkmaster to syslog.
+	while(<OINKMASTER>) {
+		# The syslog function works best with an array based input,
+		# so generate one before passing the message details to syslog.
+		my @syslog = ("INFO", "$_");
+
+		# Send the log message.
+		syslog(@syslog);
+	}
+
+	# Close the pipe to oinkmaster process.
+	close(OINKMASTER);
+
+	# Close the log handle.
+	closelog();
 }
 
 #
