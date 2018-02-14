@@ -27,10 +27,10 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 
 # Location and name of the tarball which contains the ruleset.
-my $rulestarball = "/var/tmp/snortrules.tar.gz";
+our $rulestarball = "/var/tmp/snortrules.tar.gz";
 
 # File to store any errors, which also will be read and displayed by the wui.
-my $storederrorfile = "/tmp/ids_storederror";
+our $storederrorfile = "/tmp/ids_storederror";
 
 #
 ## Function for checking if at least 300MB of free disk space are available
