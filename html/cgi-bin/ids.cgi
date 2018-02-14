@@ -47,9 +47,6 @@ my %selected=();
 # Get netsettings.
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
-# Get all available ruleset locations.
-&General::readhash("${General::swroot}/snort/ruleset-sources.list", \%rulesetsources);
-
 my $rulestarball = "/var/tmp/snortrules.tar.gz";
 my $snortrulepath = "/etc/snort/rules";
 my $snortusedrulefilesfile = "${General::swroot}/snort/snort-used-rulefiles.conf";
@@ -285,7 +282,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	# Check if any errors happend.
 	unless ($errormessage) {
 		# Call subfunction to download the ruleset.
-		$errormessage = &downloadruleset();
+		$errormessage = &IDS::downloadruleset();
 	}
 
 	# Sleep for 1 second
@@ -599,72 +596,6 @@ END
         &Header::closebigbox();
         &Header::closepage();
         exit;
-}
-
-sub downloadruleset {
-	# Read proxysettings.
-	my %proxysettings=();
-	&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
-
-	# Load required perl module to handle the download.
-	use LWP::UserAgent;
-
-	# Init the download module.
-	my $downloader = LWP::UserAgent->new;
-
-	# Set timeout to 10 seconds.
-	$downloader->timeout(10);
-
-	# Check if an upstream proxy is configured.
-	if ($proxysettings{'UPSTREAM_PROXY'}) {
-		my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
-		my $proxy_url;
-
-		# Check if we got a peer.
-		if ($peer) {
-			$proxy_url = "http://";
-
-			# Check if the proxy requires authentication.
-			if (($proxysettings{'UPSTREAM_USER'}) && ($proxysettings{'UPSTREAM_PASSWORD'})) {
-				$proxy_url .= "$proxysettings{'UPSTREAM_USER'}\:$proxysettings{'UPSTREAM_PASSWORD'}\@";
-			}
-
-			# Add proxy server address and port.
-			$proxy_url .= "$peer\:$peerport";
-		} else {
-			# Break and return error message.
-			return "$Lang::tr{'could not download latest updates'}";
-		}
-
-		# Setup proxy settings.
-		$downloader->proxy('http', $proxy_url);
-	}
-
-	# Grab the right url based on the configured vendor.
-	my $url = $rulesetsources{$snortsettings{'RULES'}};
-
-        # Check if the vendor requires an oinkcode and add it if needed.
-        $url =~ s/\<oinkcode\>/$snortsettings{'OINKCODE'}/g;
-
-	# Abort if no url could be determined for the vendor.
-	unless ($url) {
-		# Abort and return errormessage.
-		return "$Lang::tr{'could not download latest updates'}";
-	}
-
-	# Pass the requested url to the downloader.
-	my $request = HTTP::Request->new(GET => $url);
-
-	# Perform the request and save the output into the "$rulestarball" file.
-	my $response = $downloader->request($request, $rulestarball);
-
-	# Check if there was any error.
-	unless ($response->is_success) {
-		return "$response->status_line";
-	}
-
-	# If we got here, everything worked fine. Return nothing.
-	return;
 }
 
 sub oinkmaster () {
