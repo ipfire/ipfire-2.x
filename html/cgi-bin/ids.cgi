@@ -64,14 +64,6 @@ $snortsettings{'OINKCODE'} = '';
 #Get GUI values
 &Header::getcgihash(\%cgiparams);
 
-# Try to determine if oinkmaster is running.
-my $oinkmaster_pid = `pidof oinkmaster.pl -x`;
-
-# If oinkmaster is running display output.
-if ($oinkmaster_pid) {
-	&working("$Lang::tr{'snort working'}");
-}
-
 # Check if any error has been stored.
 if (-e $IDS::storederrorfile) {
         # Open file to read in the stored error message.
