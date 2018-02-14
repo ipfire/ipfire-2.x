@@ -279,30 +279,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 		$errormessage = $Lang::tr{'could not download latest updates'};
 	}
 
-	# Call diskfree to gather the free disk space of /var.
-	my @df = `/bin/df -B M /var`;
-
-	# Loop through the output.
-	foreach my $line (@df) {
-		# Ignore header line.
-		next if $line =~ m/^Filesystem/;
-
-		# Search for a line with the device information.
-		if ($line =~ m/dev/ ) {
-			# Split the line into single pieces.
-			my @values = split(' ', $line);
-			my ($filesystem, $blocks, $used, $available, $used_perenctage, $mounted_on) = @values;
-
-			# Check if the available disk space is more than 300MB.
-			if ($available < 300) {
-				# If there is not enough space, print out an error message.
-				$errormessage = "$Lang::tr{'not enough disk space'} < 300MB, /var $1MB";
-
-				# Break loop.
-				last;
-			}
-		}
-	}
+	# Check if there is enought free disk space available.
+	$errormessage = &IDS::checkdiskspace();
 
 	# Check if any errors happend.
 	unless ($errormessage) {
