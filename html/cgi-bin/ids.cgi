@@ -257,8 +257,14 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	# Close file after writing.
 	close(FILE);
 
+	# Lock the webpage and print message.
+	&working_notice("$Lang::tr{'snort working'}");
+
 	# Call oinkmaster to alter the ruleset.
-	&oinkmaster();
+	&IDS::oinkmaster();
+
+	# Reload page.
+	&reload();
 
 # Download new ruleset.
 } elsif ($cgiparams{'RULESET'} eq $Lang::tr{'download new ruleset'}) {
@@ -272,20 +278,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 
 	# Check if any errors happend.
 	unless ($errormessage) {
-		&Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
-		&Header::openbigbox('100%', 'left', '', $errormessage);
-		&Header::openbox( 'Waiting', 1,);
-			print <<END;
-				<table>
-					<tr>
-						<td><img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' /></td>
-						<td>$Lang::tr{'snort working'}</td>
-					</tr>
-				</table>
-END
-		&Header::closebox();
-		&Header::closebigbox();
-		&Header::closepage();
+		# Lock the webpage and print notice about downloading
+		# a new ruleset.
+		&working_notice("$Lang::tr{'snort working'}");
 
 		# Call subfunction to download the ruleset.
 		$errormessage = &IDS::downloadruleset();
@@ -580,6 +575,29 @@ END
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
+
+#
+## A function to display a notice, to lock the webpage and
+## tell the user which action currently will be performed.
+#
+sub working_notice ($) {
+	my ($message) = @_;
+
+	&Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
+	&Header::openbigbox('100%', 'left', '', $errormessage);
+	&Header::openbox( 'Waiting', 1,);
+		print <<END;
+			<table>
+				<tr>
+					<td><img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' /></td>
+					<td>$message</td>
+				</tr>
+			</table>
+END
+	&Header::closebox();
+	&Header::closebigbox();
+	&Header::closepage();
+}
 
 #
 ## A tiny function to perform a reload of the webpage after one second.
