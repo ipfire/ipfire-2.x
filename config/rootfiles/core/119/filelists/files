@@ -4,4 +4,5 @@ etc/rc.d/init.d/cleanfs
 etc/rc.d/init.d/unbound
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
 var/ipfire/langs
