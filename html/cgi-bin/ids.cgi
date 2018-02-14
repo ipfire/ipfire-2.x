@@ -28,6 +28,7 @@ use strict;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/ids-functions.pl";
 
 my %color = ();
 my %mainsettings = ();
