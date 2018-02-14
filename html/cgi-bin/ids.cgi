@@ -52,30 +52,6 @@ my $snortrulepath = "/etc/snort/rules";
 my $snortusedrulefilesfile = "${General::swroot}/snort/snort-used-rulefiles.conf";
 my $errormessage;
 
-# Hook used to download and update the ruleset,
-# if the cgi got called from command line.
-if ($ENV{"REMOTE_ADDR"} eq "") {
-	# Read snortsettings.
-	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
-
-	# Download rules tarball.
-	$errormessage = &downloadruleset();
-
-	# Sleep for one second.
-	sleep(1);
-
-	# Check if there was an error message.
-	unless ($errormessage) {
-		# Call oinkmaster.
-		&oinkmaster();
-	} else {
-		# Call logger and log the errormessage.
-		system("logger -t oinkmaster $errormessage");
-	}
-
-exit(0);
-}
-
 &Header::showhttpheaders();
 
 # Default settings for snort.
