@@ -2,6 +2,7 @@
 #etc/postfix/LICENSE
 #etc/postfix/TLS_LICENSE
 etc/postfix/access
+etc/postfix/aliases
 #etc/postfix/bounce.cf.default
 etc/postfix/canonical
 etc/postfix/generic
@@ -94,6 +95,7 @@ usr/sbin/sendmail.postfix
 #usr/share/man/man5/lmdb_table.5
 #usr/share/man/man5/master.5
 #usr/share/man/man5/memcache_table.5
+#usr/share/man/man5/mysql_table.5
 #usr/share/man/man5/nisplus_table.5
 #usr/share/man/man5/pcre_table.5
 #usr/share/man/man5/pgsql_table.5
