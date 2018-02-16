@@ -1512,6 +1512,7 @@ buildipfire() {
   lfsmake2 wio
   lfsmake2 iftop
   lfsmake2 mdns-repeater
+  lfsmake2 i2c-tools
 }
 
 buildinstaller() {
