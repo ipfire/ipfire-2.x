@@ -436,6 +436,12 @@ sub writeipsecfiles {
 			if ($start_action eq 'route' && $inactivity_timeout > 0) {
 				print CONF "\tinactivity=$inactivity_timeout\n";
 			}
+
+			# Restart the connection immediately when it has gone down
+			# unexpectedly
+			if ($start_action eq 'start') {
+				print CONF "\tcloseaction=restart\n";
+			}
 		}
 
 		# Fragmentation

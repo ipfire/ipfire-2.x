@@ -73,8 +73,14 @@ rm -vf \
 
 # Start services
 
-# This update need a reboot...
-#touch /var/run/need_reboot
+# Regenerate IPsec configuration
+sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/init.d/ipsec restart
+fi
+
+# This update needs a reboot...
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
