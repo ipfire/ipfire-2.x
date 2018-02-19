@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+ipsec stop
 
 # Remove old files
 rm -vf \
