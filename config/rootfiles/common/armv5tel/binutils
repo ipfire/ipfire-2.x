@@ -213,5 +213,3 @@ usr/lib/libopcodes-2.30.so
 #usr/share/man/man1/strip.1
 #usr/share/man/man1/windmc.1
 #usr/share/man/man1/windres.1
--usr/lib/libbfd-2.28.so
--usr/lib/libopcodes-2.28.so
