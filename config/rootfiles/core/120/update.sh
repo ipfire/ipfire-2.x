@@ -65,6 +65,9 @@ fi
 # Start services
 /etc/init.d/apache restart
 
+# Remove deprecated SSH configuration option
+sed -e "/UsePrivilegeSeparation/d" -i /etc/ssh/sshd_config
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
