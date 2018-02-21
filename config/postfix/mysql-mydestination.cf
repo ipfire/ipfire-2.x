@@ -1,7 +1,0 @@
-hosts = localhost
-user = root
-password = mysqlfire
-dbname = mail
-table = domains
-select_field = domain
-where_field = domain

@@ -29,8 +29,6 @@ usr/lib/nagios/plugins/check_log
 usr/lib/nagios/plugins/check_mailq
 usr/lib/nagios/plugins/check_mrtg
 usr/lib/nagios/plugins/check_mrtgtraf
-usr/lib/nagios/plugins/check_mysql
-usr/lib/nagios/plugins/check_mysql_query
 usr/lib/nagios/plugins/check_nagios
 usr/lib/nagios/plugins/check_nntp
 usr/lib/nagios/plugins/check_nntps

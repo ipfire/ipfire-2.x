@@ -1,1 +1,0 @@
-/^((Content-(Disposition: attachment;|Type:).*|\ +)| *)(file)?name\ *=\ *"?.*\.(lnk|asd|hlp|ocx|reg|bat|c[ho]m|cmd|exe|dll|vxd|pif|scr|hta|jse?|sh[mbs]|vb[esx]|ws[fh]|wmf)"?\ *$/      REJECT  attachment type not allowed

@@ -1,2 +1,0 @@
-auth    sufficient pam_mysql.so user=root passwd=mysqlfire host=localhost db=mail table=user usercolumn=mbox passwdcolumn=password crypt=0 sqlLog=0
-account required   pam_mysql.so user=root passwd=mysqlfire host=localhost db=mail table=user usercolumn=mbox passwdcolumn=password crypt=0 sqlLog=0

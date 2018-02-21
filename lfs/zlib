@@ -30,7 +30,12 @@ THISAPP    = zlib-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
+
+ifeq "$(TOOLCHAIN)" "1"
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)
+endif
 
 CFLAGS    += -fPIC -DPIC
 
@@ -71,15 +76,17 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --shared
+	cd $(DIR_APP) && ./configure --prefix=$(PREFIX) --shared
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
+ifneq "$(TOOLCHAIN)" "1"
 	mv -v /usr/lib/libz.so.$(VER) /lib/libz.so.$(VER)
 	ln -svf libz.so.$(VER) /lib/libz.so.1
 	ln -svf libz.so.$(VER) /lib/libz.so
 	rm -vf /usr/lib/libz.so.1
 	rm -vf /usr/lib/libz.so
+endif
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

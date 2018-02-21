@@ -444,9 +444,16 @@ END
 		foreach my $key (sort { uc($vpnconfig{$a}[1]) cmp uc($vpnconfig{$b}[1]) } keys %vpnconfig) {
 			if ($vpnconfig{$key}[0] eq 'on' && $vpnconfig{$key}[3] ne 'host') {
 				$count++;
-				my ($vpnip,$vpnsub) = split("/",$vpnconfig{$key}[11]);
-				$vpnsub=&General::iporsubtocidr($vpnsub);
-				$vpnip="$vpnip/$vpnsub";
+
+				my @n = ();
+
+				my @networks = split(/\|/, $vpnconfig{$key}[11]);
+				foreach my $network (@networks) {
+					my ($vpnip, $vpnsub) = split("/", $network);
+					$vpnsub = &Network::convert_netmask2prefix($vpnsub) || $vpnsub;
+					push(@n, "$vpnip/$vpnsub");
+				}
+
 				if ($count % 2){
 					$col = $color{'color22'};
 				}else{
@@ -454,7 +461,7 @@ END
 				}
 				print "<tr>";
 				print "<td style='text-align:left; color:white; background-color:$Header::colourvpn;'>$vpnconfig{$key}[1]</td>";
-				print "<td style='text-align:center; background-color:$col'>$vpnip</td>";
+				print "<td style='text-align:center; background-color:$col'>" . join("<br>", @n) . "</td>";
 
 				my $activecolor = $Header::colourred;
 				my $activestatus = $Lang::tr{'capsclosed'};

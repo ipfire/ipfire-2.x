@@ -30,7 +30,12 @@ THISAPP    = bison-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
+
+ifeq "$(TOOLCHAIN)" "1"
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -70,8 +75,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls --docdir=/usr/share/doc/$(THISAPP)
+	cd $(DIR_APP) && ./configure --prefix=$(PREFIX)
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

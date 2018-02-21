@@ -1,0 +1,11 @@
+etc/system-release
+etc/issue
+etc/httpd/conf/global.conf
+etc/rc.d/init.d/cleanfs
+etc/rc.d/init.d/unbound
+srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
+var/ipfire/backup/include
+var/ipfire/langs

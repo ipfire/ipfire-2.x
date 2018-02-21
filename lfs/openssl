@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2016  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -37,6 +37,7 @@ ifneq "$(KCFG)" "-sse2"
 CFLAGS += -DPURIFY
 else
 CFLAGS =-O2 -pipe -Wall -Wp,-D_FORTIFY_SOURCE=2 -fexceptions -fPIC
+CFLAGS+= -mindirect-branch=thunk -mfunction-return=thunk
 CFLAGS+= -fstack-protector-all --param=ssp-buffer-size=4
 CFLAGS+= -march=i686 -mmmx -msse -msse2 -mfpmath=sse
 CFLAGS+= -fomit-frame-pointer -DPURIFY

@@ -20,7 +20,7 @@
 
 include Config
 
-VER        = 11.23.1
+VER        = 13.18.5
 
 THISAPP    = asterisk-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -28,9 +28,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
-PAK_VER    = 20
+PAK_VER    = 22
 
-DEPS       = "libsrtp"
+DEPS       = "jansson libsrtp opus"
 
 ###############################################################################
 # Top-level Rules
@@ -38,16 +38,16 @@ DEPS       = "libsrtp"
 
 objects = $(DL_FILE) \
 	asterisk-1.4-de-prompts.tar.gz \
-	asterisk-extra-sounds-en-gsm-1.5.tar.gz \
+	asterisk-extra-sounds-en-gsm-1.5.1.tar.gz \
 	asterisk-moh-opsound-gsm-2.03.tar.gz 
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-asterisk-extra-sounds-en-gsm-1.5.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds-en-gsm-1.5.tar.gz
+asterisk-extra-sounds-en-gsm-1.5.1.tar.gz = $(URL_IPFIRE)/asterisk-extra-sounds-en-gsm-1.5.1.tar.gz
 asterisk-moh-opsound-gsm-2.03.tar.gz = $(URL_IPFIRE)/asterisk-moh-opsound-gsm-2.03.tar.gz
 asterisk-1.4-de-prompts.tar.gz = $(URL_IPFIRE)/asterisk-1.4-de-prompts.tar.gz
 
-$(DL_FILE)_MD5 = 8dadfcda24eac2f6df431c71f5f01947
-asterisk-extra-sounds-en-gsm-1.5.tar.gz_MD5 = 49f2baefc7aad424f30ff18d883501d2
+$(DL_FILE)_MD5 = 4ad2a5ab1dd12cba5f37fca52961aa2a
+asterisk-extra-sounds-en-gsm-1.5.1.tar.gz_MD5 = aa1003ed984239f18e123decc39c2178
 asterisk-moh-opsound-gsm-2.03.tar.gz_MD5 = 09066f55f1358f298bc1a6e4678a3ddf
 asterisk-1.4-de-prompts.tar.gz_MD5 = 626a2b95071a5505851e43874dfbfd5c
 
@@ -81,12 +81,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-
-	# remove old directories and extract asterisk
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-
-	# patch asterisk
-	cd $(DIR_APP) && patch -p4 < $(DIR_SRC)/src/patches/asterisk-no-ffmpeg.patch
 
 	# configure asterisk
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/var/ipfire \
@@ -97,21 +92,17 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--without-avcodec \
 		--without-vorbis \
 		--without-ogg \
-		--without-spandsp \
 		--disable-xmldoc
 
 	# enable additional features (include following sound-tars)
 	cd $(DIR_APP) && make menuselect.makeopts && menuselect/menuselect \
 		--enable res_srtp \
-		--enable app_mysql \
-		--enable cdr_mysql \
-		--enable res_config_mysql \
 		--enable EXTRA-SOUNDS-EN-GSM \
 		--enable MOH-OPSOUND-GSM  \
 		menuselect.makeopts
 
 	# add additional sounds
-	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-extra-sounds-en-gsm-1.5.tar.gz $(DIR_APP)/sounds/
+	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-extra-sounds-en-gsm-1.5.1.tar.gz $(DIR_APP)/sounds/
 	cd $(DIR_APP) && cp -fv $(DIR_DL)/asterisk-moh-opsound-gsm-2.03.tar.gz $(DIR_APP)/sounds/
 
 	# Fix wrong cpu optimization (march=armv5tel)
@@ -139,14 +130,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown nobody:nobody -R /var/ipfire/asterisk
 	chown nobody:nobody -R /var/lib/asterisk
 
-# be sure all source is removed
-	@rm -rf $(DIR_APP) $(DIR_SRC)/asterisk-* $(DIR_SRC)/libsrtp*
-
 	# remember backup-location
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/asterisk /var/ipfire/backup/addons/includes/asterisk
 
-	# Logrotate                                                                                                                                                                           
-	mkdir -pv /etc/logrotate.d                                                                                                                                                            
+	# Logrotate
+	mkdir -pv /etc/logrotate.d
 	install -v -m 644 $(DIR_SRC)/config/asterisk/asterisk.logrotate /etc/logrotate.d/asterisk   
 
 	# generate softlink (or asterisk will not work properly)
@@ -160,5 +148,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -sf /etc/rc.d/init.d/asterisk /etc/rc.d/rc6.d/K30asterisk
 	ln -sf /etc/rc.d/init.d/asterisk /etc/rc.d/rc3.d/S30asterisk
 
-	# all done
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

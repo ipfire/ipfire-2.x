@@ -37,13 +37,9 @@ ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr --libexecdir=/usr/lib/findutils \
     --localstatedir=/var/lib/locate --disable-nls
-  EXTRA_MAKE =
-  EXTRA_INSTALL =
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
   EXTRA_CONFIG = --prefix=$(TOOLS_DIR) --disable-nls --build=$(BUILDTARGET)
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
 endif
 
 ###############################################################################
@@ -85,8 +81,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
 ifeq "$(ROOT)" ""
 	mv -v /usr/bin/find /bin
 	sed -i -e 's|BINDIR=/usr/bin|BINDIR=/bin|' /usr/bin/updatedb
