@@ -216,7 +216,7 @@ sub writeserverconf {
     print CONF "dev tun\n";
     print CONF "proto $sovpnsettings{'DPROTOCOL'}\n";
     print CONF "port $sovpnsettings{'DDEST_PORT'}\n";
-    print CONF "script-security 3 system\n";
+    print CONF "script-security 3\n";
     print CONF "ifconfig-pool-persist /var/ipfire/ovpn/ovpn-leases.db 3600\n";
     print CONF "client-config-dir /var/ipfire/ovpn/ccd\n";
     print CONF "tls-server\n";
@@ -289,6 +289,7 @@ sub writeserverconf {
     }	
     print CONF "status-version 1\n";
     print CONF "status /var/run/ovpnserver.log 30\n";
+    print CONF "ncp-disable\n";
     print CONF "cipher $sovpnsettings{DCIPHER}\n";
     if ($sovpnsettings{'DAUTH'} eq '') {
         print CONF "";

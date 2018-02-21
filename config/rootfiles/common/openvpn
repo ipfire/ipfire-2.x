@@ -1,3 +1,5 @@
+etc/fcron.daily/openvpn-crl-updater
+#usr/include/openvpn-msg.h
 #usr/include/openvpn-plugin.h
 #usr/lib/openvpn
 #usr/lib/openvpn/plugins
@@ -10,11 +12,12 @@ usr/sbin/openvpn
 #usr/share/doc/openvpn
 #usr/share/doc/openvpn/COPYING
 #usr/share/doc/openvpn/COPYRIGHT.GPL
+#usr/share/doc/openvpn/Changes.rst
 #usr/share/doc/openvpn/README
 #usr/share/doc/openvpn/README.IPv6
 #usr/share/doc/openvpn/README.auth-pam
 #usr/share/doc/openvpn/README.down-root
-#usr/share/doc/openvpn/README.polarssl
+#usr/share/doc/openvpn/README.mbedtls
 #usr/share/doc/openvpn/management-notes.txt
 #usr/share/man/man8/openvpn.8
 var/ipfire/ovpn/ca

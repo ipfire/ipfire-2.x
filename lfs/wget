@@ -74,7 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
-		--with-ssl=openssl \
+		--with-ssl=gnutls \
 		--disable-nls \
 		--disable-ipv6
 

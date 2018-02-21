@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.55
+VER        = 1.82
 
 THISAPP    = Net-SSLeay-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 473b8d66ca69d5784bb0e428721f58e0
+$(DL_FILE)_MD5 = 2170469d929d5173bacffd0cb2d7fafa
 
 install : $(TARGET)
 

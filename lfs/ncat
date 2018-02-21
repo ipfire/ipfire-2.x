@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.12
+VER        = 7.60
 
 THISAPP    = ncat-$(VER)
 DL_FILE    = nmap-$(VER).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/nmap-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ncat
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0764f4dabe7cccda3c49fc3990b62a8a
+$(DL_FILE)_MD5 = 4e454266559ddf2c4e2109866c62560c
 
 install : $(TARGET)
 
