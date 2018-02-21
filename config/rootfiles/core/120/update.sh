@@ -31,6 +31,9 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Remove forgotten PHP file
+rm -f /etc/httpd/conf/conf.d/php5.conf
+
 # Stop services
 
 # Extract files
