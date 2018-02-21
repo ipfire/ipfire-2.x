@@ -73,6 +73,7 @@ rm -vf \
 	/usr/lib/mysql
 
 # Start services
+/etc/init.d/apache reload
 
 # Regenerate IPsec configuration
 sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi

@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/httpd/conf/global.conf
 etc/rc.d/init.d/cleanfs
 etc/rc.d/init.d/unbound
 srv/web/ipfire/cgi-bin/index.cgi
