@@ -42,7 +42,25 @@ ldconfig
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# Changed and new OpenVPN-2.4 directives will wrote to server.conf and renew CRL while update an core update
+if [ -e /var/ipfire/ovpn/server.conf ]; then
+	openvpnctrl -k
+
+	# Update configuration directives
+	sed -i -e 's/script-security 3 system/script-security 3/' \
+		-e '/status .*/ a ncp-disable' /var/ipfire/ovpn/server.conf
+
+	# Update the OpenVPN CRL
+	openssl ca -gencrl -keyfile /var/ipfire/ovpn/ca/cakey.pem \
+		-cert /var/ipfire/ovpn/ca/cacert.pem \
+		-out /var/ipfire/ovpn/crls/cacrl.pem \
+		-config /var/ipfire/ovpn/openssl/ovpn.cnf
+
+	openvpnctrl -s
+fi
+
 # Start services
+/etc/init.d/apache restart
 
 # This update needs a reboot...
 touch /var/run/need_reboot
