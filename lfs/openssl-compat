@@ -143,7 +143,7 @@ endif
 
 	# Install libraries only
 	cd $(DIR_APP) && install -m 755 \
-		libcrypto.so.10 libssl.so.10
+		libcrypto.so.10 libssl.so.10 /usr/lib
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
