@@ -121,7 +121,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# i586 specific patches
 ifeq "$(BUILD_ARCH)" "i586"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a_auto_enable_padlock.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a_disable_ssse3_for_amd.patch
 endif
 
