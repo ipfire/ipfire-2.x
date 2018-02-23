@@ -7,5 +7,6 @@ srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+usr/lib/libgcc_s.so.1
 var/ipfire/backup/include
 var/ipfire/langs
