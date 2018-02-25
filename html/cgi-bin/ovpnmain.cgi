@@ -970,12 +970,18 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print SERVERCONF "dh ${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}\n";
   print SERVERCONF "# Cipher\n"; 
   print SERVERCONF "cipher $cgiparams{'DCIPHER'}\n";
-  if ($cgiparams{'DAUTH'} eq '') {
-	print SERVERCONF "auth SHA1\n";
+
+  # If GCM cipher is used, do not use --auth
+  if (($cgiparams{'DCIPHER'} eq 'AES-256-GCM') ||
+      ($cgiparams{'DCIPHER'} eq 'AES-192-GCM') ||
+      ($cgiparams{'DCIPHER'} eq 'AES-128-GCM')) {
+    print SERVERCONF unless "# HMAC algorithm\n";
+    print SERVERCONF unless "auth $cgiparams{'DAUTH'}\n";
   } else {
-	print SERVERCONF "# HMAC algorithm\n";
-	print SERVERCONF "auth $cgiparams{'DAUTH'}\n";
+    print SERVERCONF "# HMAC algorithm\n";
+    print SERVERCONF "auth $cgiparams{'DAUTH'}\n";
   }
+
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print SERVERCONF "# Enable Compression\n";
    print SERVERCONF "comp-lzo\n";
@@ -1076,12 +1082,18 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print CLIENTCONF "# Cipher\n"; 
   print CLIENTCONF "cipher $cgiparams{'DCIPHER'}\n";
   print CLIENTCONF "pkcs12 ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}.p12\r\n";
-  if ($cgiparams{'DAUTH'} eq '') {
-	print CLIENTCONF "auth SHA1\n";
+
+  # If GCM cipher is used, do not use --auth
+  if (($cgiparams{'DCIPHER'} eq 'AES-256-GCM') ||
+      ($cgiparams{'DCIPHER'} eq 'AES-192-GCM') ||
+      ($cgiparams{'DCIPHER'} eq 'AES-128-GCM')) {
+    print CLIENTCONF unless "# HMAC algorithm\n";
+    print CLIENTCONF unless "auth $cgiparams{'DAUTH'}\n";
   } else {
-	print CLIENTCONF "# HMAC algorithm\n";
-	print CLIENTCONF "auth $cgiparams{'DAUTH'}\n";
+    print CLIENTCONF "# HMAC algorithm\n";
+    print CLIENTCONF "auth $cgiparams{'DAUTH'}\n";
   }
+
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print CLIENTCONF "# Enable Compression\n";
    print CLIENTCONF "comp-lzo\n";
@@ -2198,13 +2210,18 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
 	 print CLIENTCONF "pkcs12 ${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12\r\n";
      $zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12", "$confighash{$cgiparams{'KEY'}}[1].p12") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1].p12\n";
    }
-   if ($confighash{$cgiparams{'KEY'}}[39] eq '') {
-	print CLIENTCONF "# HMAC algorithm\n";
-	print CLIENTCONF "auth SHA1\n";
+
+   # If GCM cipher is used, do not use --auth
+   if (($confighash{$cgiparams{'KEY'}}[40] eq 'AES-256-GCM') ||
+       ($confighash{$cgiparams{'KEY'}}[40] eq 'AES-192-GCM') ||
+       ($confighash{$cgiparams{'KEY'}}[40] eq 'AES-128-GCM')) {
+        print CLIENTCONF unless "# HMAC algorithm\n";
+        print CLIENTCONF unless "auth $confighash{$cgiparams{'KEY'}}[39]\n";
    } else {
-   print CLIENTCONF "# HMAC algorithm\n";
-   print CLIENTCONF "auth $confighash{$cgiparams{'KEY'}}[39]\n";
+        print CLIENTCONF "# HMAC algorithm\n";
+        print CLIENTCONF "auth $confighash{$cgiparams{'KEY'}}[39]\n";
    }
+
    if ($confighash{$cgiparams{'KEY'}}[30] eq 'on') {
    print CLIENTCONF "# Enable Compression\n";
    print CLIENTCONF "comp-lzo\n";
@@ -4544,6 +4561,9 @@ if ($cgiparams{'TYPE'} eq 'net') {
     }
     $checked{'PMTU_DISCOVERY'}{$cgiparams{'PMTU_DISCOVERY'}} = 'checked=\'checked\'';
 
+    $selected{'DCIPHER'}{'AES-256-GCM'} = '';
+    $selected{'DCIPHER'}{'AES-192-GCM'} = '';
+    $selected{'DCIPHER'}{'AES-128-GCM'} = '';
     $selected{'DCIPHER'}{'CAMELLIA-256-CBC'} = '';
     $selected{'DCIPHER'}{'CAMELLIA-192-CBC'} = '';
     $selected{'DCIPHER'}{'CAMELLIA-128-CBC'} = '';
@@ -4629,6 +4649,15 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    } else {
 		print "<td width='25%'><input type='text' name='NAME' value='$cgiparams{'NAME'}' maxlength='20' /></td>";
 	    }
+
+		# If GCM ciphers are in usage, HMAC menu is disabled
+		my $hmacdisabled;
+		if (($confighash{$cgiparams{'KEY'}}[40] eq 'AES-256-GCM') ||
+			($confighash{$cgiparams{'KEY'}}[40] eq 'AES-192-GCM') ||
+			($confighash{$cgiparams{'KEY'}}[40] eq 'AES-128-GCM')) {
+				$hmacdisabled = "disabled='disabled'";
+		};
+
 	    print <<END;
 		    <td width='25%'>&nbsp;</td>
 		    <td width='25%'>&nbsp;</td></tr>	
@@ -4707,7 +4736,10 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	</tr>
 
 	<tr><td class='boldbase'>$Lang::tr{'cipher'}</td>
-		<td><select name='DCIPHER'>
+		<td><select name='DCIPHER'  id="n2ncipher" required>
+				<option value='AES-256-GCM'		$selected{'DCIPHER'}{'AES-256-GCM'}>AES-GCM (256 $Lang::tr{'bit'})</option>
+				<option value='AES-192-GCM'		$selected{'DCIPHER'}{'AES-192-GCM'}>AES-GCM (192 $Lang::tr{'bit'})</option>
+				<option value='AES-128-GCM'		$selected{'DCIPHER'}{'AES-128-GCM'}>AES-GCM (128 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-256-CBC'	$selected{'DCIPHER'}{'CAMELLIA-256-CBC'}>CAMELLIA-CBC (256 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-192-CBC'	$selected{'DCIPHER'}{'CAMELLIA-192-CBC'}>CAMELLIA-CBC (192 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-128-CBC'	$selected{'DCIPHER'}{'CAMELLIA-128-CBC'}>CAMELLIA-CBC (128 $Lang::tr{'bit'})</option>
@@ -4724,7 +4756,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		</td>
 
 		<td class='boldbase'>$Lang::tr{'ovpn ha'}:</td>
-		<td><select name='DAUTH'>
+		<td><select name='DAUTH' id="n2nhmac" $hmacdisabled>
 				<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'})</option>
 				<option value='SHA512'			$selected{'DAUTH'}{'SHA512'}>SHA2 (512 $Lang::tr{'bit'})</option>
 				<option value='SHA384'			$selected{'DAUTH'}{'SHA384'}>SHA2 (384 $Lang::tr{'bit'})</option>
@@ -4738,6 +4770,22 @@ if ($cgiparams{'TYPE'} eq 'net') {
 END
 ;
 	}
+
+#### JAVA SCRIPT ####
+# Validate N2N cipher. If GCM will be used, HMAC menu will be disabled onchange
+print<<END;
+	<script>
+		var disable_options = false;
+		document.getElementById('n2ncipher').onchange = function () {
+			if((this.value == "AES-256-GCM"||this.value == "AES-192-GCM"||this.value == "AES-128-GCM")) {
+				document.getElementById('n2nhmac').setAttribute('disabled', true);
+			} else {
+				document.getElementById('n2nhmac').removeAttribute('disabled');
+			}
+		}
+	</script>
+END
+
 #jumper
 	print "<tr><td class='boldbase'>$Lang::tr{'remark title'}</td>";
 	print "<td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='55' maxlength='50' /></td></tr></table>";
@@ -5109,6 +5157,9 @@ END
     $selected{'DPROTOCOL'}{'tcp'} = '';
     $selected{'DPROTOCOL'}{$cgiparams{'DPROTOCOL'}} = 'SELECTED';
 
+    $selected{'DCIPHER'}{'AES-256-GCM'} = '';
+    $selected{'DCIPHER'}{'AES-192-GCM'} = '';
+    $selected{'DCIPHER'}{'AES-128-GCM'} = '';
     $selected{'DCIPHER'}{'CAMELLIA-256-CBC'} = '';
     $selected{'DCIPHER'}{'CAMELLIA-192-CBC'} = '';
     $selected{'DCIPHER'}{'CAMELLIA-128-CBC'} = '';
@@ -5205,6 +5256,9 @@ END
 
 		<td class='boldbase' nowrap='nowrap'>$Lang::tr{'cipher'}</td>
 		<td><select name='DCIPHER'>
+				<option value='AES-256-GCM' $selected{'DCIPHER'}{'AES-256-GCM'}>AES-GCM (256 $Lang::tr{'bit'})</option>
+				<option value='AES-192-GCM' $selected{'DCIPHER'}{'AES-192-GCM'}>AES-GCM (192 $Lang::tr{'bit'})</option>
+				<option value='AES-128-GCM' $selected{'DCIPHER'}{'AES-128-GCM'}>AES-GCM (128 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-256-CBC' $selected{'DCIPHER'}{'CAMELLIA-256-CBC'}>CAMELLIA-CBC (256 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-192-CBC' $selected{'DCIPHER'}{'CAMELLIA-192-CBC'}>CAMELLIA-CBC (192 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-128-CBC' $selected{'DCIPHER'}{'CAMELLIA-128-CBC'}>CAMELLIA-CBC (128 $Lang::tr{'bit'})</option>
