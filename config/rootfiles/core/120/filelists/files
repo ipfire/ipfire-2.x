@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/sysctl.conf
 etc/fcron.daily/openvpn-crl-updater
 etc/rc.d/init.d/dhcp
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
