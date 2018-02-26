@@ -35,10 +35,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
-	PREFIX = /usr
 	TARGET = $(DIR_INFO)/$(THISAPP)
 else
-	PREFIX = $(TOOLS_DIR)
 	TARGET = $(DIR_INFO)/$(THISAPP)-tools
 endif
 
@@ -81,10 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/automake-1.15_perl_warning.patch
-	cd $(DIR_APP) && ./configure \
-		--prefix=$(PREFIX) \
-		--docdir=/usr/share/doc/automake-1.15
-
+	cd $(DIR_APP) && ./configure --prefix=$(PREFIX)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

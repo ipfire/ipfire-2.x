@@ -5,7 +5,7 @@ etc/nut/upsd.conf.sample
 etc/nut/upsd.users.sample
 etc/nut/upsmon.conf.sample
 etc/nut/upssched.conf.sample
-etc/udev/rules.d/52-nut-usbups.rules
+etc/udev/rules.d/62-nut-usbups.rules
 usr/bin/al175
 usr/bin/apcsmart
 usr/bin/apcsmart-old

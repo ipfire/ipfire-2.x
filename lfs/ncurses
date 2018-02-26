@@ -35,10 +35,8 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  PREFIX = /usr
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  PREFIX = $(TOOLS_DIR)
   EXTRA_CONFIG = --build=$(BUILDTARGET)
 endif
 

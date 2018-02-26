@@ -2059,7 +2059,7 @@
 'restore settings' => 'Reset Settings',
 'reverse sort' => 'Sort in reverse chronological order',
 'root' => 'Root',
-'root certificate' => 'Root certificate',
+'root certificate' => 'Root Certificate',
 'root path' => 'Root path',
 'root user password' => 'Root password',
 'route subnet is invalid' => 'Additional push route subnet is invalid',

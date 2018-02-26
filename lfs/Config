@@ -41,6 +41,12 @@ ifeq "$(BUILD_ARCH)" "x86_64"
 	IS_64BIT = 1
 endif
 
+ifeq "$(TOOLCHAIN)" "1"
+	PREFIX = $(TOOLS_DIR)
+else
+	PREFIX = /usr
+endif
+
 # URLs that are common sources of downloads.  If you're having trouble with
 # a site you should change its URL to that of a suitable mirror site.
 #

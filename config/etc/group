@@ -17,7 +17,6 @@ utmp:x:22:
 squid:x:23:nobody
 ntp:x:38:
 dip:x:40:
-mysql:x:41:
 ftp:x:45:
 rsyncd:x:48:
 stunnel:x:51:

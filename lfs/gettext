@@ -36,13 +36,9 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
   EXTRA_CONFIG = --prefix=/usr --disable-nls
-  EXTRA_MAKE = 
-  EXTRA_INSTALL =
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
   EXTRA_CONFIG = --prefix=$(TOOLS_DIR) --disable-shared --disable-nls --build=$(BUILDTARGET)
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
 endif
 
 ###############################################################################
@@ -85,8 +81,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make $(EXTRA_MAKE)
-	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make install
 else
 	cd $(DIR_APP)/gettext-tools && ./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP)/gettext-tools && make -C gnulib-lib

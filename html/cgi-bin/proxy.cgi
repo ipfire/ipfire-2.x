@@ -3077,8 +3077,6 @@ END
 			print FILE "\n";
 
 			print FILE <<END
-
-
    )
      return "PROXY $netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}";
 END

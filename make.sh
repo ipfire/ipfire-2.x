@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.19"							# Version number
-CORE="118"							# Core Level (Filename)
-PAKFIRE_CORE="118"						# Core Level (PAKFIRE)
+CORE="119"							# Core Level (Filename)
+PAKFIRE_CORE="119"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -37,7 +37,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 
-TOOLCHAINVER=20180126
+TOOLCHAINVER=20180213
 
 ###############################################################################
 #
@@ -195,7 +195,7 @@ configure_build() {
 	TOOLS_DIR="/tools_${BUILD_ARCH}"
 
 	# Enables hardening
-	HARDENING_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -fstack-protector-strong --param=ssp-buffer-size=4"
+	HARDENING_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong"
 
 	CFLAGS="-O2 -pipe -Wall -fexceptions -fPIC ${CFLAGS_ARCH}"
 	CXXFLAGS="${CFLAGS}"
@@ -928,6 +928,7 @@ buildtoolchain() {
 	lfsmake1 gcc			PASS=L
 	lfsmake1 binutils			PASS=2
 	lfsmake1 gcc			PASS=2
+	lfsmake1 zlib
 	lfsmake1 ccache			PASS=2
 	lfsmake1 tcl
 	lfsmake1 expect
@@ -952,6 +953,7 @@ buildtoolchain() {
 	lfsmake1 tar
 	lfsmake1 texinfo
 	lfsmake1 xz
+	lfsmake1 bison
 	lfsmake1 flex
 	lfsmake1 fake-environ
 	lfsmake1 strip
@@ -1009,6 +1011,7 @@ buildbase() {
 	lfsmake2 jwhois
 	lfsmake2 kbd
 	lfsmake2 less
+	lfsmake2 pkg-config
 	lfsmake2 make
 	lfsmake2 man
 	lfsmake2 kmod
@@ -1033,7 +1036,6 @@ buildipfire() {
   lfsmake2 configroot
   lfsmake2 initscripts
   lfsmake2 backup
-  lfsmake2 pkg-config
   lfsmake2 libusb
   lfsmake2 libusb-compat
   lfsmake2 libpcap
@@ -1128,7 +1130,6 @@ buildipfire() {
   lfsmake2 nettle
   lfsmake2 libevent
   lfsmake2 libevent2
-  lfsmake2 libevent2-compat
   lfsmake2 expat
   lfsmake2 apr
   lfsmake2 aprutil
@@ -1173,7 +1174,6 @@ buildipfire() {
   lfsmake2 libxml2
   lfsmake2 libxslt
   lfsmake2 BerkeleyDB
-  lfsmake2 mysql
   lfsmake2 cyrus-sasl
   lfsmake2 openldap
   lfsmake2 apache2
@@ -1209,8 +1209,6 @@ buildipfire() {
   lfsmake2 ipaddr
   lfsmake2 iputils
   lfsmake2 l7-protocols
-  lfsmake2 mISDNuser
-  lfsmake2 capi4k-utils
   lfsmake2 hwdata
   lfsmake2 logrotate
   lfsmake2 logwatch
@@ -1283,7 +1281,6 @@ buildipfire() {
   lfsmake2 lz4
   lfsmake2 lzo
   lfsmake2 openvpn
-  lfsmake2 pammysql
   lfsmake2 mpage
   lfsmake2 dbus
   lfsmake2 intltool
@@ -1333,7 +1330,6 @@ buildipfire() {
   lfsmake2 cmake
   lfsmake2 gnump3d
   lfsmake2 rsync
-  lfsmake2 tcpwrapper
   lfsmake2 libtirpc
   lfsmake2 rpcbind
   lfsmake2 nfs
@@ -1415,7 +1411,6 @@ buildipfire() {
   lfsmake2 vdradmin
   lfsmake2 miau
   lfsmake2 perl-DBI
-  lfsmake2 perl-DBD-mysql
   lfsmake2 perl-DBD-SQLite
   lfsmake2 perl-File-ReadBackwards
   lfsmake2 openvmtools
@@ -1426,8 +1421,8 @@ buildipfire() {
   lfsmake2 watchdog
   lfsmake2 libpri
   lfsmake2 libsrtp
+  lfsmake2 jansson
   lfsmake2 asterisk
-  lfsmake2 lcr
   lfsmake2 usb_modeswitch
   lfsmake2 usb_modeswitch_data
   lfsmake2 zerofree
@@ -1515,6 +1510,7 @@ buildipfire() {
   lfsmake2 wio
   lfsmake2 iftop
   lfsmake2 mdns-repeater
+  lfsmake2 i2c-tools
 }
 
 buildinstaller() {

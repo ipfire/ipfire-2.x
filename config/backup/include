@@ -13,7 +13,12 @@
 /etc/ipsec.user-post.conf
 /etc/sysconfig/*
 /etc/hosts*
-/etc/httpd/*
+/etc/httpd/server.crt
+/etc/httpd/server.csr
+/etc/httpd/server.key
+/etc/httpd/server-ecdsa.crt
+/etc/httpd/server-ecdsa.csr
+/etc/httpd/server-ecdsa.key
 /etc/ssh/ssh_host*
 /etc/ssh/sshd_config
 /etc/logrotate.d
