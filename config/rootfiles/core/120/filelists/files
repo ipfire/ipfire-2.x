@@ -3,3 +3,4 @@ etc/issue
 etc/fcron.daily/openvpn-crl-updater
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 var/ipfire/langs
+var/ipfire/ovpn/openssl/ovpn.cnf
