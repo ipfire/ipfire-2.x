@@ -8,6 +8,8 @@
 . /etc/sysconfig/rc
 . $rc_functions
 
+[ -e "/etc/sysconfig/dhcpd" ] && . /etc/sysconfig/dhcpd
+
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/dhcp/settings)
 
@@ -23,20 +25,20 @@ case "$1" in
 		flush_chains
 
 		if [ -n "${GREEN_DEV}" -a -e "/var/ipfire/dhcp/enable_green" ]; then
-			devices="${GREEN_DEV}"
+			LISTEN_INTERFACES+=" ${GREEN_DEV}"
 
 			iptables -A DHCPGREENINPUT  -i "${GREEN_DEV}" -j DHCPINPUT
 			iptables -A DHCPGREENOUTPUT -o "${GREEN_DEV}" -j DHCPOUTPUT
 		fi
 		if [ -n "${BLUE_DEV}" -a -e "/var/ipfire/dhcp/enable_blue" ]; then
-			devices+=" ${BLUE_DEV}"
+			LISTEN_INTERFACES+=" ${BLUE_DEV}"
 
 			iptables -A DHCPBLUEINPUT  -i "${BLUE_DEV}" -j DHCPINPUT
 			iptables -A DHCPBLUEOUTPUT -o "${BLUE_DEV}" -j DHCPOUTPUT
 		fi
 
 		boot_mesg "Starting DHCP Server..."
-		loadproc /usr/sbin/dhcpd -q ${devices}
+		loadproc /usr/sbin/dhcpd -q ${LISTEN_INTERFACES}
 
 		# Start Unbound DHCP Lease Bridge unless RFC2136 is used
 		if [ "${DNS_UPDATE_ENABLED}" != on ]; then

@@ -1,6 +1,7 @@
 etc/system-release
 etc/issue
 etc/fcron.daily/openvpn-crl-updater
+etc/rc.d/init.d/dhcpd
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 var/ipfire/langs
 var/ipfire/ovpn/openssl/ovpn.cnf
