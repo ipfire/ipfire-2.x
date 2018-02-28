@@ -47,7 +47,7 @@ ldconfig
 
 # Changed and new OpenVPN-2.4 directives will wrote to server.conf and renew CRL while update an core update
 if [ -e /var/ipfire/ovpn/server.conf ]; then
-	openvpnctrl -k
+	/usr/local/bin/openvpnctrl -k
 
 	# Update configuration directives
 	sed -i -e 's/script-security 3 system/script-security 3/' \
@@ -59,7 +59,7 @@ if [ -e /var/ipfire/ovpn/server.conf ]; then
 		-out /var/ipfire/ovpn/crls/cacrl.pem \
 		-config /var/ipfire/ovpn/openssl/ovpn.cnf
 
-	openvpnctrl -s
+	/usr/local/bin/openvpnctrl -s
 fi
 
 # Start services
