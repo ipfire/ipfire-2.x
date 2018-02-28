@@ -120,6 +120,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.1.0-disable-ssl3.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.1.0g-weak-ciphers.patch
 
 	# Apply our CFLAGS
 	cd $(DIR_APP) && sed -i Configure \
@@ -130,9 +131,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && ./Configure $(CONFIGURE_OPTIONS) \
 		$(CFLAGS) $(LDFLAGS)
-
-	# Apply patch for changing DEFAULT cipher list (needed after configure)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.1.0g-weak-ciphers.patch
 
 	cd $(DIR_APP) && make depend
 	cd $(DIR_APP) && make
