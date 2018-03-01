@@ -4,6 +4,7 @@ etc/sysctl.conf
 etc/fcron.daily/openvpn-crl-updater
 etc/rc.d/init.d/dhcp
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/lib/python2.7/lib-dynload/_hashlib.so
 usr/lib/python2.7/lib-dynload/_ssl.so
 var/ipfire/langs

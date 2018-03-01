@@ -199,10 +199,10 @@ sub callssl ($) {
 sub getCNfromcert ($) {
 	#&General::log("ipsec", "Extracting name from $_[0]...");
 	my $temp = `/usr/bin/openssl x509 -text -in $_[0]`;
-	$temp =~ /Subject:.*CN=(.*)[\n]/;
+	$temp =~ /Subject:.*CN = (.*)[\n]/;
 	$temp = $1;
 	$temp =~ s+/Email+, E+;
-	$temp =~ s/ ST=/ S=/;
+	$temp =~ s/ ST = / S = /;
 	$temp =~ s/,//g;
 	$temp =~ s/\'//g;
 	return $temp;
@@ -216,7 +216,7 @@ sub getsubjectfromcert ($) {
 	$temp =~ /Subject: (.*)[\n]/;
 	$temp = $1;
 	$temp =~ s+/Email+, E+;
-	$temp =~ s/ ST=/ S=/;
+	$temp =~ s/ ST = / S = /;
 	return $temp;
 }
 ###
