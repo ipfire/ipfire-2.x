@@ -53,7 +53,7 @@ if ( $querry[0] =~ "cpufreq"){
 	&Graphs::updateloadgraph($querry[1]);
 }else{
 	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'status information'}, 1, '');
+	&Header::openpage($Lang::tr{'system information'}, 1, '');
 	&Header::openbigbox('100%', 'left');
 
 	&Header::openbox('100%', 'center', "CPU $Lang::tr{'graph'}");
