@@ -378,7 +378,12 @@ ns_is_validating() {
 	local ns=${1}
 	shift
 
-	dig @${ns} A ${TEST_DOMAIN_FAIL} $@ | grep -q SERVFAIL
+	if ! dig @${ns} A ${TEST_DOMAIN_FAIL} $@ | grep -q SERVFAIL; then
+		return 1
+	else
+		# Determine if NS replies with "ad" data flag if DNSSEC enabled
+		dig @${ns} +dnssec SOA ${TEST_DOMAIN} $@ | awk -F: '/\;\;\ flags\:/ { s=1; if (/\ ad/) s=0; exit s }'
+	fi
 }
 
 # Checks if we can retrieve the DNSKEY for this domain.
