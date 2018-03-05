@@ -3,6 +3,7 @@ etc/issue
 etc/sysctl.conf
 etc/fcron.daily/openvpn-crl-updater
 etc/rc.d/init.d/dhcp
+etc/rc.d/init.d/unbound
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/lib/python2.7/lib-dynload/_hashlib.so
