@@ -1096,12 +1096,6 @@ buildipfire() {
 		;;
 
 	armv5tel)
-		# arm-rpi (Raspberry Pi) kernel build
-		lfsmake2 linux			KCFG="-rpi"
-		lfsmake2 backports			KCFG="-rpi"
-		lfsmake2 xtables-addons		KCFG="-rpi"
-		lfsmake2 linux-initrd			KCFG="-rpi"
-
 		# arm multi platform (Panda, Wandboard ...) kernel build
 		lfsmake2 linux			KCFG="-multi"
 		lfsmake2 backports			KCFG="-multi"
