@@ -24,7 +24,7 @@
 
 include Config
 
-VER         = 4.14.26
+VER         = 4.14.27
 A7M_PATCHES = 3.14.79-grsec-ipfire1
 
 
@@ -76,7 +76,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= cae6af140de3e5c44fe6829257b34064
+$(DL_FILE)_MD5					= 1320ac282002c3ef9967852efeab04f9
 arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 6c3b11e51caa278dbeacd1e23c2b171b
 
 install : $(TARGET)
