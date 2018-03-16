@@ -33,9 +33,6 @@ use Net::Ping;
 
 package Pakfire;
 
-# GPG Keys
-my $myid = "179740DC4D8C47DC63C099C74BDE364C64D96617";		# Our own gpg-key paks@ipfire.org
-
 # A small color-hash :D
 my %color;
 	$color{'normal'}      = "\033[0m"; 
@@ -897,19 +894,6 @@ sub senduuid {
 		fetchfile("counter.py?ver=$Conf::version&uuid=$Conf::uuid", "$Conf::mainserver");
 		system("rm -f $Conf::tmpdir/counter* 2>/dev/null");
 	}
-}
-
-sub checkcryptodb {
-	logger("CRYPTO INFO: Checking GnuPG Database");
-	system("gpg --fingerprint $myid >/dev/null");
-	return if ($? == 0);
-
-	message("CRYPTO WARN: The GnuPG isn't configured correctly. Trying now to fix this.");
-	message("CRYPTO WARN: It's normal to see this on first execution.");
-	message("CRYPTO WARN: If this message is being shown repeatedly, check if time and date are set correctly, and if IPFire can connect via port 11371 TCP.");
-
-	my $command = "gpg --keyserver pgp.ipfire.org --always-trust --status-fd 2";
-	system("$command --recv-key $myid >> $Conf::logdir/gnupg-database.log 2>&1");
 }
 
 sub callback {
