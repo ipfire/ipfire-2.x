@@ -879,6 +879,13 @@ int main(int argc, char *argv[]) {
 		free(backup_file);
 	}
 
+	/* Import Pakfire key */
+	snprintf(commandstring, STRING_SIZE, "/usr/sbin/chroot /harddisk /usr/bin/gpg --import /opt/pakfire/pakfire.key");
+	if (runcommandwithstatus(commandstring, title, _("Setting up package management system..."), logfile)) {
+		errorbox(_("Could not import the Pakfire key."));
+		goto EXIT;
+	}
+
 	// Download and execute the postinstall script
 	if (*config.postinstall) {
 		snprintf(commandstring, sizeof(commandstring),
