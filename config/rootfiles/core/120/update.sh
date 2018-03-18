@@ -34,6 +34,11 @@ done
 # Remove forgotten PHP file
 rm -f /etc/httpd/conf/conf.d/php5.conf
 
+# Delete old PAM libs and symlinks if presant
+if ls /lib | grep -q 'libpam.*'; then
+    rm -f /lib/libpam*
+fi
+
 # Stop services
 
 # Extract files
