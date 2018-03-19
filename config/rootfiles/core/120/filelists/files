@@ -3,7 +3,9 @@ etc/issue
 etc/sysctl.conf
 etc/fcron.daily/openvpn-crl-updater
 etc/rc.d/init.d/dhcp
+etc/rc.d/init.d/pakfire
 etc/rc.d/init.d/unbound
+etc/rc.d/rcsysinit.d/S81pakfire
 opt/pakfire/lib/functions.pl
 opt/pakfire/pakfire.key
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
