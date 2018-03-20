@@ -1,0 +1,25 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/pakfire
+#
+# Description : Imports the keyring to make Pakfire operational
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Setting up Pakfire Package Manager..."
+		gpg --import /opt/pakfire/pakfire.key &>/dev/null
+		evaluate_retval
+		;;
+
+	*)
+		echo "Usage: ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/pakfire
