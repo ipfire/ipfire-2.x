@@ -1048,7 +1048,7 @@ buildipfire() {
   lfsmake2 zd1211-firmware
   lfsmake2 rpi-firmware
   lfsmake2 bc
-  lfsmake2 u-boot
+  lfsmake2 u-boot MKIMAGE=1
   lfsmake2 cpio
   lfsmake2 mdadm
   lfsmake2 dracut
@@ -1427,6 +1427,7 @@ buildipfire() {
   lfsmake2 powertop
   lfsmake2 parted
   lfsmake2 swig
+  lfsmake2 u-boot
   lfsmake2 python-m2crypto
   lfsmake2 wireless-regdb
   lfsmake2 crda
