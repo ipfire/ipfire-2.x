@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2017  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -146,14 +146,12 @@ endif
 	echo "THEME=ipfire" >> $(MNThdd)/var/ipfire/main/settings
 
 ifeq "$(SCON)" "1"
-	# Enable serial console
-	sed -i -e "s|1:2345:respawn:|#1:2345:respawn:|g" $(MNThdd)/etc/inittab
+	# Disable console on tty2-6
 	sed -i -e "s|2:2345:respawn:|#2:2345:respawn:|g" $(MNThdd)/etc/inittab
 	sed -i -e "s|3:2345:respawn:|#3:2345:respawn:|g" $(MNThdd)/etc/inittab
 	sed -i -e "s|4:2345:respawn:|#4:2345:respawn:|g" $(MNThdd)/etc/inittab
 	sed -i -e "s|5:2345:respawn:|#5:2345:respawn:|g" $(MNThdd)/etc/inittab
 	sed -i -e "s|6:2345:respawn:|#6:2345:respawn:|g" $(MNThdd)/etc/inittab
-	sed -i -e "s|#7:2345:respawn:|7:2345:respawn:|g" $(MNThdd)/etc/inittab
 
 ifeq "$(BUILD_PLATFORM)" "arm"
 	sed -i -e "s| console=tty1 | console=ttyAMA0,115200n8 |g" $(MNThdd)/boot/cmdline.txt
