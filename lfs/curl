@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 7.49.1
+VER        = 7.59.0
 
 THISAPP    = curl-$(VER)
-DL_FILE    = $(THISAPP).tar.lzma
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ae5e5e395da413d1fa0864e1d0a3fa57
+$(DL_FILE)_MD5 = a44f98c25c7506e7103039b542aa5ad8
 
 install : $(TARGET)
 
@@ -69,7 +69,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--disable-ipv6 \
