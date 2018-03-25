@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2018  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -65,11 +65,14 @@ ifneq "$(KCFG)" "-pae"
 	dracut --force --verbose --strip --xz /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
 
 ifeq "$(KCFG)" "-kirkwood"
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)
+#	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)
+	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(KVER)-$(VERSUFIX)
+	cd /boot && rm initramfs-$(KVER)-$(VERSUFIX).img
 endif
 
 ifeq "$(KCFG)" "-multi"
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)
+	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(KVER)-$(VERSUFIX)
+	cd /boot && rm initramfs-$(KVER)-$(VERSUFIX).img
 endif
 
 endif

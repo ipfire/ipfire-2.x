@@ -74,9 +74,9 @@ else
  PART_TYPE = L
 endif
 
-# /boot:  64MB - OFFSET
+# /boot:  100MB - OFFSET
 # /    : 1200 MB
-S_BOOT := $(shell echo $$(( 131072 - $(S_OFFSET) )))
+S_BOOT := $(shell echo $$(( 204800 - $(S_OFFSET) )))
 S_ROOT := 2477600
 
 PADDING = 100 # MB
@@ -121,15 +121,6 @@ endif
 ifeq "$(BUILD_PLATFORM)" "arm"
 	cp -v /boot/MLO $(MNThdd)/boot/
 	cp -v /boot/u-boot.img $(MNThdd)/boot/
-	cp -v /boot/zImage-ipfire-multi $(MNThdd)/boot/
-	cp -v /boot/uInit-ipfire-multi $(MNThdd)/boot/
-	cp -v /boot/uImage-ipfire-kirkwood $(MNThdd)/boot/
-	cp -v /boot/uInit-ipfire-kirkwood $(MNThdd)/boot/
-	cp -v /boot/uEnv.txt $(MNThdd)/boot/
-	# work around a u-boot bug not find the folders sometimes
-	mkdir -pv $(MNThdd)/boot/dtb-$(KVER)-ipfire-multi
-	mkdir -pv $(MNThdd)/boot/dtb-$(KVER)-ipfire-kirkwood
-	
 	sync
 	umount $(MNThdd)/boot
 	mount $(PART_BOOT) $(MNThdd)/boot
@@ -154,8 +145,12 @@ ifeq "$(SCON)" "1"
 	sed -i -e "s|6:2345:respawn:|#6:2345:respawn:|g" $(MNThdd)/etc/inittab
 
 ifeq "$(BUILD_PLATFORM)" "arm"
-	sed -i -e "s| console=tty1 | console=ttyAMA0,115200n8 |g" $(MNThdd)/boot/cmdline.txt
-	sed -i -e "s| console=tty1 | console=ttyO2,115200n8 |g" $(MNThdd)/boot/uEnv.txt
+	sed -i -e "s|SERIAL-CONSOLE=OFF|SERIAL-CONSOLE=ON|g" $(MNThdd)/boot/uEnv.txt
+	sed -i -e "s|xxxDTBSUNXIxxx|sun8i-h2-plus-ipfire-nano.dtb|" $(MNThdd)/boot/uEnv.txt
+endif
+else
+ifeq "$(BUILD_PLATFORM)" "arm"
+	sed -i -e "s|xxxDTBSUNXIxxx|sun7i-a20-bananapi.dtb|" $(MNThdd)/boot/uEnv.txt
 endif
 endif
 
@@ -228,8 +223,13 @@ endif
 	dd if=/dev/zero bs=1M count=$(PADDING) >> $(IMG)
 
 ifeq "$(BUILD_PLATFORM)" "arm"
+ifeq "$(SCON)" "1"
+	# Install u-boot for Orangepi Zero/Nanopi DUO into image 8KB
+	dd if=/usr/share/u-boot/orangepi_zero/u-boot-sunxi-with-spl.bin of=$(IMG) bs=1K seek=8 conv=notrunc
+else
 	# Install u-boot for LeMaker Banana Pi into image 8KB
 	dd if=/usr/share/u-boot/banana_pi/u-boot-sunxi-with-spl.bin of=$(IMG) bs=1K seek=8 conv=notrunc
+endif
 endif
 
 	# Compress Image

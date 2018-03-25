@@ -25,8 +25,7 @@
 include Config
 
 VER         = 4.14.29
-A7M_PATCHES = 3.14.79-grsec-ipfire1
-
+ARM_PATCHES = 4.14.29-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -63,7 +62,7 @@ endif
 ifeq "$(KCFG)" ""
 LASTKERNEL=1
 endif
-ifeq "$(KCFG)" "-kirkwood"
+ifeq "$(KCFG)" "-multi"
 LASTKERNEL=1
 endif
 
@@ -71,13 +70,13 @@ endif
 # Top-level Rules
 ###############################################################################
 objects =$(DL_FILE) \
-	arm7-multi-patches-$(A7M_PATCHES).patch.xz
+	arm-multi-patches-$(ARM_PATCHES).tar.xz
 
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
-arm7-multi-patches-$(A7M_PATCHES).patch.xz	= $(URL_IPFIRE)/arm7-multi-patches-$(A7M_PATCHES).patch.xz
+arm-multi-patches-$(ARM_PATCHES).tar.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).tar.xz
 
 $(DL_FILE)_MD5					= deebe13d8670129302257cbfbbaf45f8
-arm7-multi-patches-$(A7M_PATCHES).patch.xz_MD5	= 6c3b11e51caa278dbeacd1e23c2b171b
+arm-multi-patches-$(ARM_PATCHES).tar.xz_MD5	= fe3cd067472d76ae21817d72aeaeea61
 
 install : $(TARGET)
 
@@ -148,20 +147,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-2.6.32.27_mcs7830-fix-driver-name.patch
 
 ifeq "$(KCFG)" "-kirkwood"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-mv_cesa_disable_failing_hmac_sha1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.14.22-kirkwood_legacy_boot.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-mv_cesa_disable_failing_hmac_sha1.patch
 endif
 
 ifeq "$(KCFG)" "-multi"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10-smsc95xx-add_mac_addr_param.patch
-
-	# Apply Arm7-multiarch kernel patches.
-	cd $(DIR_APP) && xzcat $(DIR_DL)/arm7-multi-patches-$(A7M_PATCHES).patch.xz | patch -Np1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/arm-multi-grsec-compile-fixes.patch
-
-	# Install switch api userspace header
-	cd $(DIR_APP) && install -v -m644 include/uapi/linux/switch.h /usr/include/linux/
-
+	# Apply Arm-multiarch kernel patches.
+	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).tar.xz | patch -Np1
 endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-3.14.79-amba-fix.patch
 
@@ -184,14 +175,13 @@ else
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ -$(VERSUFIX)/' Makefile
 
 ifeq "$(KCFG)" "-kirkwood"
-	cd $(DIR_APP) && make $(MAKETUNING) uImage modules
-	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage-$(VERSUFIX)
+	cd $(DIR_APP) && make $(MAKETUNING) zImage modules
+	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+#	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage-$(VERSUFIX)
 else
 ifeq "$(KCFG)" "-multi"
 	cd $(DIR_APP) && make $(MAKETUNING) zImage modules
 	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/zImage-$(VERSUFIX)
 else
 	cd $(DIR_APP) && make $(MAKETUNING) bzImage modules
 	cd $(DIR_APP) && cp -v arch/$(KERNEL_ARCH)/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)

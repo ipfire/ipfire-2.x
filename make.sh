@@ -1096,23 +1096,23 @@ buildipfire() {
 		;;
 
 	armv5tel)
-		# arm multi platform (Panda, Wandboard ...) kernel build
-		lfsmake2 linux			KCFG="-multi"
-		lfsmake2 backports			KCFG="-multi"
-		lfsmake2 e1000e			KCFG="-multi"
-		lfsmake2 igb				KCFG="-multi"
-		lfsmake2 ixgbe			KCFG="-multi"
-		lfsmake2 xtables-addons		KCFG="-multi"
-		lfsmake2 linux-initrd			KCFG="-multi"
-
 		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
 		lfsmake2 linux			KCFG="-kirkwood"
-		lfsmake2 backports			KCFG="-kirkwood"
-		lfsmake2 e1000e			KCFG="-kirkwood"
-		lfsmake2 igb				KCFG="-kirkwood"
-		lfsmake2 ixgbe			KCFG="-kirkwood"
+#		lfsmake2 backports			KCFG="-kirkwood"
+#		lfsmake2 e1000e			KCFG="-kirkwood"
+#		lfsmake2 igb				KCFG="-kirkwood"
+#		lfsmake2 ixgbe			KCFG="-kirkwood"
 		lfsmake2 xtables-addons		KCFG="-kirkwood"
 		lfsmake2 linux-initrd			KCFG="-kirkwood"
+
+		# arm multi platform (Panda, Wandboard ...) kernel build
+		lfsmake2 linux			KCFG="-multi"
+#		lfsmake2 backports			KCFG="-multi"
+#		lfsmake2 e1000e			KCFG="-multi"
+#		lfsmake2 igb				KCFG="-multi"
+#		lfsmake2 ixgbe			KCFG="-multi"
+		lfsmake2 xtables-addons		KCFG="-multi"
+		lfsmake2 linux-initrd			KCFG="-multi"
 		;;
   esac
   lfsmake2 xtables-addons			USPACE="1"
