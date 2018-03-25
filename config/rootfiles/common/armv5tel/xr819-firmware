@@ -1,0 +1,4 @@
+#lib/firmware/xr819
+lib/firmware/xr819/boot_xr819.bin
+lib/firmware/xr819/fw_xr819.bin
+lib/firmware/xr819/sdd_xr819.bin

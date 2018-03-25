@@ -1045,6 +1045,7 @@ buildipfire() {
   lfsmake2 which
   lfsmake2 linux-firmware
   lfsmake2 dvb-firmwares
+  lfsmake2 xr819-firmware
   lfsmake2 zd1211-firmware
   lfsmake2 rpi-firmware
   lfsmake2 bc
