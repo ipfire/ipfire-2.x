@@ -726,7 +726,7 @@ print <<END
 	echo "Quality of Service was successfully cleared!"
   ;;
   gen|generate)
-	echo -n "Generateing the QoS-Scripts..."
+	echo -n "Generating the QoS-Scripts..."
 	/usr/bin/perl /var/ipfire/qos/bin/makeqosscripts.pl > /var/ipfire/qos/bin/qos.sh
 	echo ".Done!"
 	exit 0
