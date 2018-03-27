@@ -591,10 +591,10 @@ var/ipfire/backup/addons/includes/asterisk
 #var/lib/asterisk
 var/lib/asterisk/agi-bin
 #var/lib/asterisk/documentation
-#var/lib/asterisk/documentation/appdocsxml.dtd
-#var/lib/asterisk/documentation/appdocsxml.xslt
-#var/lib/asterisk/documentation/core-en_US.xml
-#var/lib/asterisk/documentation/thirdparty
+var/lib/asterisk/documentation/appdocsxml.dtd
+var/lib/asterisk/documentation/appdocsxml.xslt
+var/lib/asterisk/documentation/core-en_US.xml
+var/lib/asterisk/documentation/thirdparty
 #var/lib/asterisk/firmware
 var/lib/asterisk/firmware/iax
 #var/lib/asterisk/images
