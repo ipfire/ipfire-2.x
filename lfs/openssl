@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.1.0g
+VER        = 1.1.0h
 
 THISAPP    = openssl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -51,8 +51,6 @@ CONFIGURE_OPTIONS = \
 	enable-md2 \
 	enable-seed \
 	enable-rfc3779 \
-	enable-ssl3 \
-	enable-ssl3-method \
 	no-idea \
 	no-mdc2 \
 	no-rc5 \
@@ -89,7 +87,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ba5f1b8b835b88cadbce9b35ed9531a6
+$(DL_FILE)_MD5 = 5271477e4d93f4ea032b665ef095ff24
 
 install : $(TARGET)
 
@@ -119,7 +117,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.1.0-disable-ssl3.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.1.0g-weak-ciphers.patch
 
 	# Apply our CFLAGS
