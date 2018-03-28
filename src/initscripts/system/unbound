@@ -214,16 +214,16 @@ write_forward_conf() {
 			case "${zone}" in
 				*.in-addr.arpa)
 					echo "stub-zone:"
-					echo "	name: ${zone}."
+					echo "	name: ${zone}"
 					echo "	stub-addr: ${server}"
 					echo
 					echo "server:"
-					echo "	local-zone: \"${zone}.\" transparent"
+					echo "	local-zone: \"${zone}\" transparent"
 					echo
 					;;
 				*)
 					echo "forward-zone:"
-					echo "	name: ${zone}."
+					echo "	name: ${zone}"
 					echo "	forward-addr: ${server}"
 					echo
 					;;
