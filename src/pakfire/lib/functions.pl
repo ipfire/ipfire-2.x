@@ -166,10 +166,10 @@ sub fetchfile {
 		if ($proxysettings{'UPSTREAM_PROXY'}) {
 			logger("DOWNLOAD INFO: Upstream proxy: \"$proxysettings{'UPSTREAM_PROXY'}\"") unless ($bfile =~ /^counter.py\?.*/); 
 			if ($proxysettings{'UPSTREAM_USER'}) {
-				$ua->proxy("http","http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$proxysettings{'UPSTREAM_PROXY'}/");
+				$ua->proxy([["http", "https"] => "http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$proxysettings{'UPSTREAM_PROXY'}/"]);
 				logger("DOWNLOAD INFO: Logging in with: \"$proxysettings{'UPSTREAM_USER'}\" - \"$proxysettings{'UPSTREAM_PASSWORD'}\"") unless ($bfile =~ /^counter.py\?.*/);
 			} else {
-				$ua->proxy("http","http://$proxysettings{'UPSTREAM_PROXY'}/");
+				$ua->proxy([["http", "https"] => "http://$proxysettings{'UPSTREAM_PROXY'}/"]);
 			}
 		}
 
