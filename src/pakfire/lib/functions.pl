@@ -31,6 +31,8 @@ use HTTP::Message;
 use HTTP::Request;
 use Net::Ping;
 
+use Switch;
+
 package Pakfire;
 
 # A small color-hash :D
@@ -172,7 +174,18 @@ sub fetchfile {
 		}
 
 		$final_data = undef;
-	 	my $url = "http://$host/$file";
+
+		my $url;
+		switch ($proto) {
+			case "HTTP" { $url = "http://$host/$file"; }
+			case "HTTPS" { $url = "https://$host/$file"; }
+			else {
+				# skip all lines with unknown protocols
+				logger("DOWNLOAD WARNING: Skipping Host: $host due to unknown protocol ($proto) in mirror database");
+				next;
+			}
+		}
+
 		my $response;
 		
 		unless ($bfile =~ /^counter.py\?.*/) {
