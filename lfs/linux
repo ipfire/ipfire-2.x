@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 4.14.30
-ARM_PATCHES = 4.14.30-ipfire0
+VER         = 4.14.31
+ARM_PATCHES = 4.14.31-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -75,8 +75,8 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).tar.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).tar.xz
 
-$(DL_FILE)_MD5					= 1f25f5abe06404f9c3d41fbf25d8a22e
-arm-multi-patches-$(ARM_PATCHES).tar.xz_MD5	= d4556914f4969f93a5e801ce74fc52f8
+$(DL_FILE)_MD5					= a1ada8986b8501434e7011e6b2467a28
+arm-multi-patches-$(ARM_PATCHES).tar.xz_MD5	= eb4fd5da8748249d83c2ab77baaa5676
 
 install : $(TARGET)
 
