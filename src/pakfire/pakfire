@@ -30,7 +30,6 @@
 	my $force = "noforce";
 	
 	&Pakfire::logger("PAKFIRE INFO: IPFire Pakfire $Conf::version started!");
-	&Pakfire::checkcryptodb;
 
 	### Check if we are running as root
 	#

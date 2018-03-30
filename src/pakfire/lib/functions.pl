@@ -31,10 +31,9 @@ use HTTP::Message;
 use HTTP::Request;
 use Net::Ping;
 
-package Pakfire;
+use Switch;
 
-# GPG Keys
-my $myid = "179740DC4D8C47DC63C099C74BDE364C64D96617";		# Our own gpg-key paks@ipfire.org
+package Pakfire;
 
 # A small color-hash :D
 my %color;
@@ -167,15 +166,26 @@ sub fetchfile {
 		if ($proxysettings{'UPSTREAM_PROXY'}) {
 			logger("DOWNLOAD INFO: Upstream proxy: \"$proxysettings{'UPSTREAM_PROXY'}\"") unless ($bfile =~ /^counter.py\?.*/); 
 			if ($proxysettings{'UPSTREAM_USER'}) {
-				$ua->proxy("http","http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$proxysettings{'UPSTREAM_PROXY'}/");
+				$ua->proxy([["http", "https"] => "http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$proxysettings{'UPSTREAM_PROXY'}/"]);
 				logger("DOWNLOAD INFO: Logging in with: \"$proxysettings{'UPSTREAM_USER'}\" - \"$proxysettings{'UPSTREAM_PASSWORD'}\"") unless ($bfile =~ /^counter.py\?.*/);
 			} else {
-				$ua->proxy("http","http://$proxysettings{'UPSTREAM_PROXY'}/");
+				$ua->proxy([["http", "https"] => "http://$proxysettings{'UPSTREAM_PROXY'}/"]);
 			}
 		}
 
 		$final_data = undef;
-	 	my $url = "http://$host/$file";
+
+		my $url;
+		switch ($proto) {
+			case "HTTP" { $url = "http://$host/$file"; }
+			case "HTTPS" { $url = "https://$host/$file"; }
+			else {
+				# skip all lines with unknown protocols
+				logger("DOWNLOAD WARNING: Skipping Host: $host due to unknown protocol ($proto) in mirror database");
+				next;
+			}
+		}
+
 		my $response;
 		
 		unless ($bfile =~ /^counter.py\?.*/) {
@@ -897,19 +907,6 @@ sub senduuid {
 		fetchfile("counter.py?ver=$Conf::version&uuid=$Conf::uuid", "$Conf::mainserver");
 		system("rm -f $Conf::tmpdir/counter* 2>/dev/null");
 	}
-}
-
-sub checkcryptodb {
-	logger("CRYPTO INFO: Checking GnuPG Database");
-	system("gpg --fingerprint $myid >/dev/null");
-	return if ($? == 0);
-
-	message("CRYPTO WARN: The GnuPG isn't configured correctly. Trying now to fix this.");
-	message("CRYPTO WARN: It's normal to see this on first execution.");
-	message("CRYPTO WARN: If this message is being shown repeatedly, check if time and date are set correctly, and if IPFire can connect via port 11371 TCP.");
-
-	my $command = "gpg --keyserver pgp.ipfire.org --always-trust --status-fd 2";
-	system("$command --recv-key $myid >> $Conf::logdir/gnupg-database.log 2>&1");
 }
 
 sub callback {

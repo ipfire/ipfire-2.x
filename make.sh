@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.19"							# Version number
-CORE="119"							# Core Level (Filename)
-PAKFIRE_CORE="119"						# Core Level (PAKFIRE)
+CORE="120"							# Core Level (Filename)
+PAKFIRE_CORE="120"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -1119,6 +1119,7 @@ buildipfire() {
   lfsmake2 xtables-addons			USPACE="1"
   lfsmake2 openssl
   [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
+  lfsmake2 openssl-compat
   lfsmake2 libgpg-error
   lfsmake2 libgcrypt
   lfsmake2 libassuan
@@ -1429,6 +1430,7 @@ buildipfire() {
   lfsmake2 parted
   lfsmake2 swig
   lfsmake2 u-boot
+  lfsmake2 python-typing
   lfsmake2 python-m2crypto
   lfsmake2 wireless-regdb
   lfsmake2 crda

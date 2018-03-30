@@ -1,3 +1,4 @@
+etc/rc.d/init.d/cyrus-sasl
 #usr/include/sasl
 #usr/include/sasl/hmac-md5.h
 #usr/include/sasl/md5.h
@@ -24,10 +25,6 @@ usr/lib/sasl2/libcrammd5.so.3.0.0
 usr/lib/sasl2/libdigestmd5.so
 usr/lib/sasl2/libdigestmd5.so.3
 usr/lib/sasl2/libdigestmd5.so.3.0.0
-#usr/lib/sasl2/libotp.la
-usr/lib/sasl2/libotp.so
-usr/lib/sasl2/libotp.so.3
-usr/lib/sasl2/libotp.so.3.0.0
 #usr/lib/sasl2/libplain.la
 usr/lib/sasl2/libplain.so
 usr/lib/sasl2/libplain.so.3
@@ -94,4 +91,3 @@ usr/sbin/testsaslauthd
 #usr/share/man/man8/sasldblistusers2.8
 #usr/share/man/man8/saslpasswd2.8
 var/lib/sasl
-etc/rc.d/init.d/cyrus-sasl

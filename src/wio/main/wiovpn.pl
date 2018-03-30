@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2017 Stephan Feddersen <addons@h-loit.de>                     #
+# Copyright (C) 2017-2018 Stephan Feddersen <sfeddersen@ipfire.org>           #
 # All Rights Reserved.                                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
@@ -21,7 +21,7 @@
 #                                                                             #
 ###############################################################################
 #
-# id: wioovpn.pl, v1.3.1 2017/07/11 21:31:16 sfeddersen
+# Version: 2018/01/05 12:32:23
 #
 # This wioovpn.pl is based on the Code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
@@ -93,8 +93,7 @@ else {
 	close (FILE);
 }
 
-foreach (@ovpncfg)
-{
+foreach (@ovpncfg) {
 	chomp;
 
 	if ( $_ =~ "server" ) { next; }
@@ -106,8 +105,7 @@ foreach (@ovpncfg)
 	unless ( grep (/$name/, @ovpncache) ) { push (@ovpncache, "$name,$remark,$status\n"); }
 }
 
-foreach (@ovpncache)
-{
+foreach (@ovpncache) {
 	chomp;
 
 	( $name, $remark, $status ) = split (/\,/, $_);
@@ -115,18 +113,16 @@ foreach (@ovpncache)
 	if ( grep (/,$name,/, @ovpncfg) ) { push (@ovpnarray, "$name,$remark,$status\n"); }
 }
 
-foreach (@ovpnarray)
-{
+foreach (@ovpnarray) {
 	chomp;
+
 	( $name, $remark, $status ) = split (/\,/, $_);
 
 	if ( $name =~ m/_/ ) { $nameul = $name; }
 	else { ($nameul = $name) =~ s/ /_/g; }
 
-	if ( grep (/$name/, @ovpnstatus) || grep (/$nameul/, @ovpnstatus) )
-	{
-		foreach (@ovpnstatus)
-		{
+	if ( grep (/$name/, @ovpnstatus) || grep (/$nameul/, @ovpnstatus) ) {
+		foreach (@ovpnstatus) {
 			chomp;
 
 			if ( $_ =~ "ROUTING TABLE" ) { last; }
@@ -151,8 +147,7 @@ foreach (@ovpnarray)
 
 			if ( $nameul eq $ovpnclt || $name eq $ovpnclt ) { push (@ovpnwrite, "$name,$remark,$status\n"); }
 
-			if ( $togglestat == 1 && ($name eq $ovpnclt || $nameul eq $ovpnclt) )
-			{
+			if ( $togglestat == 1 && ($name eq $ovpnclt || $nameul eq $ovpnclt) ) {
 				$ovpnmailsub = "WIO OVPN - $name - $ovpnrwstatus - $now";
 				$logmsg = "Client: WIO OVPN $name - IP: $ovpncltip - Status: $ovpnrwstatus";
 				$ovpnmailmsg = "Client : $name\nLogin  : $ovpnrwlogin\nIP     : $ovpncltip\nStatus : $ovpnrwstatus\n";
@@ -177,11 +172,10 @@ foreach (@ovpnarray)
 			$logmsg = "Client: WIO OVPN $name - Status: $ovpnrwstatus";
 			$ovpnmailmsg = "Client : $name\nLogout : $now\nStatus : $ovpnrwstatus\n";
 
-			if ( $mailremark eq 'on' ) {
-				$ovpnmailmsg .= "Remark : $remark\n\n";
-			}
+			if ( $mailremark eq 'on' ) { $ovpnmailmsg .= "Remark : $remark\n\n"; }
 
 			&WIO::mailsender($ovpnmailsub, $ovpnmailmsg);
+
 			if ( $logging eq 'on' ) { &General::log("wio","$logmsg"); }
 			undef ($ovpnmailsub);
 			undef ($ovpnmailmsg);
@@ -220,11 +214,10 @@ else {
 	close (FILE);
 }
 
-foreach (@vpncfg)
-{
+foreach (@vpncfg) {
 	chomp;
 
-	( $activ, $name, $remark ) = (split (/\,/, $_))[1, 2, 25];
+	( $activ, $name, $remark ) = (split (/\,/, $_))[1, 2, 26];
 
 	if ( $remark eq 'off' ) { $remark = '-'; }
 
@@ -235,8 +228,7 @@ foreach (@vpncfg)
 	unless ( grep (/$name/, @vpncache) ) { push (@vpncache, "$name,$remark,$status\n"); }
 }
 
-foreach (@vpncache)
-{
+foreach (@vpncache) {
 	chomp;
 
 	( $name, $remark, $status ) = split (/\,/, $_);
@@ -244,14 +236,12 @@ foreach (@vpncache)
 	if ( grep (/,$name,/, @vpncfg) ) { push (@vpnarray, "$name,$remark,$status\n"); }
 }
 
-foreach (@vpnarray)
-{
+foreach (@vpnarray) {
 	chomp;
 	
 	( $name, $remark, $status ) = split (/\,/, $_);
 
-	if ( grep (/$name\{.*INSTALLED/ , @vpnstatus) )
-	{
+	if ( grep (/$name\{.*INSTALLED/ , @vpnstatus) ) {
 		$vpnrwstatus = "$Lang::tr{'wio up'}";
 		$togglestat   = ( $status ne 'on' ) ? 1 : 0;
 		$status       = 'on';
@@ -264,21 +254,24 @@ foreach (@vpnarray)
 
 	push (@vpnwrite, "$name,$remark,$status\n");
 
-	if ( $togglestat == 1 )
-	{
+	if ( $togglestat == 1 ) {
 		$vpnmailsub  = "WIO VPN - $name - $vpnrwstatus - $now";
 		$logmsg = "Client: WIO VPN $name - Status: $vpnrwstatus $now";
+		$vpnmailmsg = "Client : $name\n";
 
-		if ( $mailremark eq 'on' ) {
-			if ( $status eq 'on' ) { $vpnmailmsg = "Client : $name\nLogin  : $now\nStatus : $vpnrwstatus\nRemark : $remark\n"; }
-			else { $vpnmailmsg = "Client : $name\nLogout : $now\nStatus : $vpnrwstatus\nRemark : $remark\n"; }
+		if ( $status eq 'on' ) {
+			$vpnmailmsg .= "Login  : $now\n";
 		}
 		else {
-			if ( $status eq 'on' ) { $vpnmailmsg = "Client : $name\nLogin  : $now\nStatus : $vpnrwstatus\n"; }
-			else { $vpnmailmsg = "Client : $name\nLogout : $now\nStatus : $vpnrwstatus\n"; }
+			$vpnmailmsg .= "Logout : $now\n";
 		}
 
+		$vpnmailmsg .= "Status : $vpnrwstatus\n";
+
+		if ( $mailremark eq 'on' ) { $vpnmailmsg .= "Remark : $remark\n\n"; }
+
 		&WIO::mailsender($vpnmailsub, $vpnmailmsg);
+
 		if ( $logging eq 'on' ) { &General::log("wio","$logmsg"); }
 		undef ($vpnmailsub);
 		undef ($vpnmailmsg);

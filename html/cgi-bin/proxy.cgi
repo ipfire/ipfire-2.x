@@ -401,8 +401,7 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		$errormessage = $Lang::tr{'proxy errmsg filedescriptors'};
 		goto ERROR;
 	}
-	if (!($proxysettings{'CACHE_MEM'} =~ /^\d+/) ||
-		($proxysettings{'CACHE_MEM'} < 1))
+	if (!($proxysettings{'CACHE_MEM'} =~ /^\d+/))
 	{
 		$errormessage = $Lang::tr{'advproxy errmsg mem cache size'};
 		goto ERROR;
@@ -3172,7 +3171,7 @@ END
 		}
 	}
 
-	if ($proxysettings{'CACHE_SIZE'} > 0)
+	if (($proxysettings{'CACHE_SIZE'} > 0) || ($proxysettings{'CACHE_MEM'} > 0))
 	{
 		print FILE "\n";
 
@@ -3269,7 +3268,12 @@ cache_dir aufs /var/log/cache $proxysettings{'CACHE_SIZE'} $proxysettings{'L1_DI
 END
 		;
 	} else {
-		print FILE "cache deny all\n\n";
+		if ($proxysettings{'CACHE_MEM'} > 0) {
+			# always 2% of CACHE_MEM defined as max object size
+			print FILE "maximum_object_size_in_memory " . int($proxysettings{'CACHE_MEM'} * 1024 * 0.02) . " KB\n\n";
+		} else {
+			print FILE "cache deny all\n\n";
+	    }
 	}
 
 	print FILE <<END

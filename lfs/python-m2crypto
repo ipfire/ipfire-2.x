@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.21.1
+VER        = 0.27.0
 
 THISAPP    = M2Crypto-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f93d8462ff7646397a9f77a2fe602d17
+$(DL_FILE)_MD5 = 4477bd6b2835560c73982476dba5e515
 
 install : $(TARGET)
 
@@ -77,6 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && python setup.py install
+	cd $(DIR_APP) && python setup.py build
+	cd $(DIR_APP) && python setup.py install --root=/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -8,7 +8,7 @@
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  * 
  * IPFire.org - A linux based firewall
- * Copyright (C) 2017 Stephan Feddersen <addons@h-loit.de>
+ * Copyright (C) 2017-2018 Stephan Feddersen <sfeddersen@ipfire.org>
  *
  * All Rights Reserved.
  *
