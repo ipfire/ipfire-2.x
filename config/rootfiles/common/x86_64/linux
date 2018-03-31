@@ -308,7 +308,11 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/dca
 #lib/modules/KVER-ipfire/kernel/drivers/dca/dca.ko
 #lib/modules/KVER-ipfire/kernel/drivers/devfreq
+#lib/modules/KVER-ipfire/kernel/drivers/devfreq/governor_passive.ko
+#lib/modules/KVER-ipfire/kernel/drivers/devfreq/governor_performance.ko
+#lib/modules/KVER-ipfire/kernel/drivers/devfreq/governor_powersave.ko
 #lib/modules/KVER-ipfire/kernel/drivers/devfreq/governor_simpleondemand.ko
+#lib/modules/KVER-ipfire/kernel/drivers/devfreq/governor_userspace.ko
 #lib/modules/KVER-ipfire/kernel/drivers/dma
 #lib/modules/KVER-ipfire/kernel/drivers/dma/altera-msgdma.ko
 #lib/modules/KVER-ipfire/kernel/drivers/dma/dw
@@ -3477,4 +3481,3 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/modules.symbols.bin
 #lib/modules/KVER-ipfire/source
 sbin/gen_init_cpio
-boot/initramfs-KVER-ipfire.img
