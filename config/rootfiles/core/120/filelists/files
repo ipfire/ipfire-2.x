@@ -7,7 +7,7 @@ etc/rc.d/init.d/pakfire
 etc/rc.d/init.d/unbound
 etc/rc.d/rcsysinit.d/S81pakfire
 opt/pakfire/lib/functions.pl
-opt/pakfire/pakfire.key
+opt/pakfire/pakfire-2018.key
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/qos.cgi

@@ -12,7 +12,7 @@
 case "${1}" in
 	start)
 		boot_mesg "Setting up Pakfire Package Manager..."
-		gpg --import /opt/pakfire/pakfire.key &>/dev/null
+		gpg --import /opt/pakfire/pakfire-2018.key &>/dev/null
 		evaluate_retval
 		;;
 
