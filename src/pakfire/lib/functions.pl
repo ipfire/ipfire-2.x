@@ -35,6 +35,13 @@ use Switch;
 
 package Pakfire;
 
+my @VALID_KEY_FINGERPRINTS = (
+	# 2018
+	"3ECA8AA4478208B924BB96206FEF7A8ED713594B",
+	# 2007
+	"179740DC4D8C47DC63C099C74BDE364C64D96617",
+);
+
 # A small color-hash :D
 my %color;
 	$color{'normal'}      = "\033[0m"; 
@@ -215,7 +222,7 @@ sub fetchfile {
 					print FILE $final_data;
 					close(FILE);
 					logger("DOWNLOAD INFO: File received. Start checking signature...");
-					if (system("gpg --verify \"$Conf::tmpdir/$bfile\" &>/dev/null") eq 0) {
+					if (&valid_signature("$Conf::tmpdir/$bfile")) {
 						logger("DOWNLOAD INFO: Signature of $bfile is fine.");
 						move("$Conf::tmpdir/$bfile","$Conf::cachedir/$bfile");
 					} else {
@@ -288,6 +295,25 @@ sub getcoredb {
 	}
 }
 
+sub valid_signature($) {
+	my $filename = shift;
+
+	open(my $cmd, "gpg --verify --status-fd 1 \"$filename\" 2>/dev/null |");
+	while (<$cmd>) {
+		# Process valid signature lines
+		if (/VALIDSIG ([A-Z0-9]+)/) {
+			# Check if we know the key
+			foreach my $key (@VALID_KEY_FINGERPRINTS) {
+				# Signature is valid
+				return 1 if ($key eq $1);
+			}
+		}
+	}
+	close($cmd);
+
+	# Signature is invalid
+	return 0;
+}
 
 sub selectmirror {
 	### Check if there is a current server list and read it.
