@@ -75,7 +75,7 @@ fi
 sed -e "/UsePrivilegeSeparation/d" -i /etc/ssh/sshd_config
 
 # Import new Pakfire key
-gpg --import /opt/pakfire/pakfire.key
+/etc/init.d/pakfire start
 
 # This update needs a reboot...
 touch /var/run/need_reboot
