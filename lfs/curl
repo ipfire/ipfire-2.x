@@ -78,7 +78,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--with-ca-bundle=/etc/ssl/certs/ca-bundle.crt
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	# Create symlink to new curl lib for old binaries
-	ln -sf libcurl.so.4 /usr/lib/libcurl.so.3
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
