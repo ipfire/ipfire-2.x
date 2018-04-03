@@ -9,6 +9,8 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+export GNUPGHOME="/opt/pakfire/etc/.gnupg"
+
 case "${1}" in
 	start)
 		boot_mesg "Setting up Pakfire Package Manager..."
