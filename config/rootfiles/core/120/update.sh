@@ -74,6 +74,12 @@ fi
 # Remove deprecated SSH configuration option
 sed -e "/UsePrivilegeSeparation/d" -i /etc/ssh/sshd_config
 
+# Remove any pakfire keys stored in /
+rm -rfv /.gnupg
+
+# Move old pakfire keystore into new place
+mv -v /root/.gnupg /opt/pakfire/etc/.gnupg
+
 # Import new Pakfire key
 /etc/init.d/pakfire start
 
