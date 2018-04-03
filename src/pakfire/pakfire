@@ -24,6 +24,9 @@
 	delete @ENV{qw(IFS CDPATH ENV BASH_ENV PATH)};
 	$< = $>;
 
+	# Store keys here
+	$ENV{"GNUPGHOME"} = "/opt/pakfire/etc/.gnupg";
+
 	require "/opt/pakfire/lib/functions.pl";
 	
 	my $interactive = 1;
