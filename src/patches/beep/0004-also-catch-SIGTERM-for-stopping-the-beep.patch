@@ -1,0 +1,32 @@
+From e1320c1da52ca92aa68b4224f9532982184fbe00 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?J=C3=A9r=C3=B4me?= <jerome@jolimont.fr>
+Date: Thu, 7 Feb 2013 12:54:53 +0100
+Subject: [PATCH] also catch SIGTERM for stopping the beep
+
+Signed-off-by: Gerfried Fuchs <rhonda@deb.at>
+---
+ beep.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/beep.c b/beep.c
+index 452fc08..9cb63bf 100644
+--- a/beep.c
++++ b/beep.c
+@@ -130,6 +130,7 @@ void handle_signal(int signum) {
+ 
+   switch(signum) {
+   case SIGINT:
++  case SIGTERM:
+     if(console_fd >= 0) {
+       /* Kill the sound, quit gracefully */
+       do_beep(0);
+@@ -324,6 +325,7 @@ int main(int argc, char **argv) {
+   parms->next       = NULL;
+ 
+   signal(SIGINT, handle_signal);
++  signal(SIGTERM, handle_signal);
+   parse_command_line(argc, argv, parms);
+ 
+   /* this outermost while loop handles the possibility that -n/--new has been
+-- 
+2.7.5

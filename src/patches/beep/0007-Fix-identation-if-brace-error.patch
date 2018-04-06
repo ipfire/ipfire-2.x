@@ -1,0 +1,41 @@
+From 35ba84dccb8fc8dc43cb3f575904a33ffa27e7b7 Mon Sep 17 00:00:00 2001
+From: Hans Ulrich Niedermann <hun@n-dimensional.de>
+Date: Tue, 3 Apr 2018 19:11:07 +0200
+Subject: [PATCH] Fix indentation/if brace error
+
+As beep.c is not Python, the code blocks must be defined by
+using braces instead of just indenting them differently.
+
+Once we do that, the outcome of multiple -f parameters will
+actually match what the warning message documents beep does:
+Only the last -f value will be used.
+
+Many projects proscribe using braces everywhere, but this
+change keeps the beep.c coding style of using braces only
+when absolutely necessary.
+
+This issue was discovered by compiling with gcc 6.
+---
+ beep.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/beep.c b/beep.c
+index 7da2e70..d46adc8 100644
+--- a/beep.c
++++ b/beep.c
+@@ -194,11 +194,12 @@ void parse_command_line(int argc, char **argv, beep_parms_t *result) {
+       if(!sscanf(optarg, "%f", &argfreq) || (argfreq >= 20000 /* ack! */) || 
+ 	 (argfreq <= 0))
+ 	usage_bail(argv[0]);
+-      else
++      else {
+ 	if (result->freq != 0)
+ 	  fprintf(stderr, "WARNING: multiple -f values given, only last "
+ 	    "one is used.\n");
+ 	result->freq = argfreq;    
++      }
+       break;
+     case 'l' : /* length */
+       if(!sscanf(optarg, "%d", &argval) || (argval < 0))
+-- 
+2.7.5

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -70,6 +70,15 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/beep/0001-Fixed-Makefile.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/beep/0002-Add-more-error-detection.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/beep/0004-also-catch-SIGTERM-for-stopping-the-beep.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/beep/0005-Make-build-install-more-user-and-packaging-friendly.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/beep/0006-Preserve-file-modification-time-on-install.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/beep/0007-Fix-identation-if-brace-error.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/beep/0008-Apply-CVE-2018-0492-from-Debian-package.patch
+
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && install -m 0755 beep /usr/bin
 	@rm -rf $(DIR_APP)

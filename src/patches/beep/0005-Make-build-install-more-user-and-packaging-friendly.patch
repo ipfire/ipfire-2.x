@@ -1,0 +1,85 @@
+From 947a7e332908dcba1c7e523fbdc927d39ee6adb1 Mon Sep 17 00:00:00 2001
+From: Hans Ulrich Niedermann <hun@n-dimensional.de>
+Date: Tue, 19 Nov 2013 23:40:50 +0100
+Subject: [PATCH] Make build/install more user and packaging friendly
+
+Make the build and install more user and packaging friendly
+by introducing the following features in the Makefile:
+
+  * Honor the $(CFLAGS) set when calling make.
+
+  * Prefix all install locations with $(DESTDIR) for
+    easy package building.
+
+  * Use GNU Makefile conventions for defining installation
+    directories. This means $(bindir) and $(man1dir)
+    instead of the former $(INSTALL_DIR) and $(MAN_DIR).
+
+  * Use install(1) for installing files and directories
+    so that permissions can be set properly.
+
+  * Stop "make clean" failing when it has nothing to do.
+
+  * Add 'uninstall' make target.
+
+  * Make 'install' target build executable if necessary.
+---
+ Makefile | 40 +++++++++++++++++++++++++++++-----------
+ 1 file changed, 29 insertions(+), 11 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index 0f4f810..942a7a5 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,19 +1,37 @@
+ CC=gcc
+ FLAGS=-Wall -O2
++
++INSTALL=install
++
+ EXEC_NAME=beep
+-INSTALL_DIR=/usr/bin
+ MAN_FILE=beep.1.gz
+-MAN_DIR=/usr/share/man/man1
+ 
+-default : beep
++# Use GNU makefile conventions for directory names with one notable
++# exception: prefix is not /usr/local in order to keep the default
++# installation location for beep.
++prefix=/usr
++exec_prefix=$(prefix)
++bindir=$(exec_prefix)/bin
++datarootdir=$(prefix)/share
++mandir=$(datarootdir)/man
++man1dir=$(mandir)/man1
++
++.PHONY: all
++all: $(EXEC_NAME)
++
++.PHONY: clean
++clean:
++	rm -f $(EXEC_NAME)
+ 
+-clean :
+-	rm ${EXEC_NAME}
++$(EXEC_NAME): beep.c
++	$(CC) $(FLAGS) $(CFLAGS) -o $(EXEC_NAME) beep.c
+ 
+-beep : beep.c
+-	${CC} ${FLAGS} -o ${EXEC_NAME} beep.c
++install: all
++	$(INSTALL) -m 0755 -d           $(DESTDIR)$(bindir)
++	$(INSTALL) -m 0755 $(EXEC_NAME) $(DESTDIR)$(bindir)/
++	$(INSTALL) -m 0755 -d           $(DESTDIR)$(man1dir)
++	$(INSTALL) -m 0644 $(MAN_FILE)  $(DESTDIR)$(man1dir)/
+ 
+-install :
+-	cp ${EXEC_NAME} ${INSTALL_DIR}
+-	# rm -f /usr/man/man1/beep.1.bz2
+-	cp ${MAN_FILE} ${MAN_DIR}
++uninstall:
++	rm -f $(DESTDIR)$(bindir)/$(EXEC_NAME)
++	rm -f $(DESTDIR)$(man1dir)/$(MAN_FILE)
+-- 
+2.7.5
+
