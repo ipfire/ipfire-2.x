@@ -25,11 +25,11 @@
 
 include Config
 
-VER        = 1.6.0
+VER        = 1.6.1
 
 THISAPP    = apr-util-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = http://archive.apache.org/dist/apr
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 069a9a980776acab05212c5f37ef8368
+$(DL_FILE)_MD5 = 8ff5dc36fa39a2a3db1df196d3ed6086
 
 install : $(TARGET)
 
