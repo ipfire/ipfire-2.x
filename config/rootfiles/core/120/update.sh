@@ -58,6 +58,9 @@ if [ -e /var/ipfire/ovpn/server.conf ]; then
 	sed -i -e 's/script-security 3 system/script-security 3/' \
 		-e '/status .*/ a ncp-disable' /var/ipfire/ovpn/server.conf
 
+	# Disable Path MTU discovery settings
+	sed -e "/^mtu-disc/d" -i /var/ipfire/ovpn/server.conf
+
 	# Update the OpenVPN CRL
 	openssl ca -gencrl -keyfile /var/ipfire/ovpn/ca/cakey.pem \
 		-cert /var/ipfire/ovpn/ca/cacert.pem \
@@ -66,6 +69,15 @@ if [ -e /var/ipfire/ovpn/server.conf ]; then
 
 	/usr/local/bin/openvpnctrl -s
 fi
+
+# Update OpenVPN N2N configurations
+/usr/local/bin/openvpnctrl -kn2n
+
+for file in /var/ipfire/ovpn/n2nconf/*/*.conf; do
+	sed -e "/^mtu-disc/d" -i ${file}
+done
+
+/usr/local/bin/openvpnctrl -sn2n
 
 # Start services
 /etc/init.d/apache restart
