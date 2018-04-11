@@ -127,10 +127,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-rt2x00usb_suppress_queue_warnings.patch
 #	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.39-add_libertas_uap.patch
 
-	# mISDN Patches
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN_hfc-s_add_id.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mISDN-hfcusb-reportl1down.patch
-
 	# Add LED trigger
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.16-ledtrig_netdev.patch
 
@@ -216,12 +212,6 @@ ifeq "$(LASTKERNEL)" "1"
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
 	done	
 	sed -i -e "s|.ko||g" /etc/modprobe.d/framebuffer.conf
-
-	# Blacklist isdn modules
-	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/isdn -name *.ko); do \
-		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/isdn.conf ; \
-	done
-	sed -i -e "s|.ko||g" /etc/modprobe.d/isdn.conf
 
 	# Disable ipv6 at runtime
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6.conf
