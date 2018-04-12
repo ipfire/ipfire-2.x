@@ -33,11 +33,7 @@ DEVICE     = $(shell losetup -f)
 PART_BOOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p1
 PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
 
-ifeq "$(SCON)" "1"
-	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).2gb-ext4-scon.$(BUILD_ARCH)-full-core$(CORE).img.gz
-else
-	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).2gb-ext4.$(BUILD_ARCH)-full-core$(CORE).img.gz
-endif
+IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).2gb-ext4.$(BUILD_ARCH)-full-core$(CORE).img.gz
 
 FSTAB_FMT = UUID=%s %-8s %-4s %-10s %d %d\n
 
@@ -136,24 +132,6 @@ endif
 	echo "HOSTNAME=$(SNAME)" >> $(MNThdd)/var/ipfire/main/settings
 	echo "THEME=ipfire" >> $(MNThdd)/var/ipfire/main/settings
 
-ifeq "$(SCON)" "1"
-	# Disable console on tty2-6
-	sed -i -e "s|2:2345:respawn:|#2:2345:respawn:|g" $(MNThdd)/etc/inittab
-	sed -i -e "s|3:2345:respawn:|#3:2345:respawn:|g" $(MNThdd)/etc/inittab
-	sed -i -e "s|4:2345:respawn:|#4:2345:respawn:|g" $(MNThdd)/etc/inittab
-	sed -i -e "s|5:2345:respawn:|#5:2345:respawn:|g" $(MNThdd)/etc/inittab
-	sed -i -e "s|6:2345:respawn:|#6:2345:respawn:|g" $(MNThdd)/etc/inittab
-
-ifeq "$(BUILD_PLATFORM)" "arm"
-	sed -i -e "s|SERIAL-CONSOLE=OFF|SERIAL-CONSOLE=ON|g" $(MNThdd)/boot/uEnv.txt
-	sed -i -e "s|xxxDTBSUNXIxxx|sun8i-h2-plus-ipfire-nano.dtb|" $(MNThdd)/boot/uEnv.txt
-endif
-else
-ifeq "$(BUILD_PLATFORM)" "arm"
-	sed -i -e "s|xxxDTBSUNXIxxx|sun7i-a20-bananapi.dtb|" $(MNThdd)/boot/uEnv.txt
-endif
-endif
-
 	-touch $(MNThdd)/lib/modules/$(KVER)-ipfire/modules.dep
 	mkdir $(MNThdd)/proc
 	mount --bind /proc $(MNThdd)/proc
@@ -169,13 +147,17 @@ endif
 		"auto" "defaults" 1 1 >> $(MNThdd)/etc/fstab
 
 ifeq "$(BOOTLOADER)" "grub"
-ifeq "$(SCON)" "1"
-	# Enable serial console on GRUB
-	echo "GRUB_TERMINAL=\"serial\"" >> $(MNThdd)/etc/default/grub
-	echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> $(MNThdd)/etc/default/grub
+	# backup defaults file
+	cp $(MNThdd)/etc/default/grub $(MNThdd)/etc/default/grub.backup
 
-	sed -i -e "s|panic=10|& console=ttyS0,115200n8|g" $(MNThdd)/etc/default/grub
-endif
+	# Enable also serial console on GRUB
+	echo "GRUB_TERMINAL=\"serial console\"" >> $(MNThdd)/etc/default/grub
+	echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> $(MNThdd)/etc/default/grub
+	echo "GRUB_TIMEOUT=-1" >> $(MNThdd)/etc/default/grub
+
+	# Add additional entry for Serial console
+	cp $(DIR_SRC)/config/flash-images/grub/11_linux_scon \
+			$(MNThdd)/etc/grub.d/
 
 	# Create configuration
 	mkdir -pv $(MNThdd)/boot/grub
@@ -189,6 +171,10 @@ endif
 	# Install GRUB
 	grub-install --force --recheck --no-floppy --target=i386-pc \
 		--root-directory=$(MNThdd) $(DEVICE)
+
+	# restore orginal defaults
+	mv -f $(MNThdd)/etc/default/grub.backup $(MNThdd)/etc/default/grub
+	rm -f $(MNThdd)/etc/grub.d/11_linux_scon
 endif
 
 	# Set ramdisk mode to automatic
@@ -223,13 +209,8 @@ endif
 	dd if=/dev/zero bs=1M count=$(PADDING) >> $(IMG)
 
 ifeq "$(BUILD_PLATFORM)" "arm"
-ifeq "$(SCON)" "1"
 	# Install u-boot for Orangepi Zero/Nanopi DUO into image 8KB
 	dd if=/usr/share/u-boot/orangepi_zero/u-boot-sunxi-with-spl.bin of=$(IMG) bs=1K seek=8 conv=notrunc
-else
-	# Install u-boot for LeMaker Banana Pi into image 8KB
-	dd if=/usr/share/u-boot/banana_pi/u-boot-sunxi-with-spl.bin of=$(IMG) bs=1K seek=8 conv=notrunc
-endif
 endif
 
 	# Compress Image
