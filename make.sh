@@ -1064,6 +1064,7 @@ buildipfire() {
   lfsmake2 libnetfilter_cthelper
   lfsmake2 libnetfilter_cttimeout
   lfsmake2 iptables
+  lfsmake2 screen
   lfsmake2 elfutils
 
   case "${BUILD_ARCH}" in
@@ -1297,7 +1298,7 @@ buildipfire() {
   lfsmake2 mc
   lfsmake2 wget
   lfsmake2 bridge-utils
-  lfsmake2 screen
+#  lfsmake2 screen
   lfsmake2 smartmontools
   lfsmake2 htop
   lfsmake2 chkconfig
