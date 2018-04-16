@@ -4,7 +4,7 @@ if test ${boot_dev} = ""; then
 fi;
 
 if test ${boot_part} = ""; then
-	setenv boot_dev 0:1;
+	setenv boot_part 0:1;
 fi;
 
 if test ${soc} = "kirkwood"; then
