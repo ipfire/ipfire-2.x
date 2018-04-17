@@ -5,8 +5,9 @@ if [ -e /var/ipfire/main/firstsetup_ok ]; then
 	exit 0;
 fi
 
-# disable consoles if tty2 are not present
-if [ ! -e /dev/tty2 ]; then
+# disable consoles if tty are not present
+openvt -f -w -- /bin/sh -c echo > /dev/null 2>&1
+if [ ! "${?}" == "0" ]; then
 	# Disable console on tty2-6
 	sed -i -e "s|2:2345:respawn:|#2:2345:respawn:|g" /etc/inittab
 	sed -i -e "s|3:2345:respawn:|#3:2345:respawn:|g" /etc/inittab
