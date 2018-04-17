@@ -642,7 +642,6 @@ WARNING: untranslated string: Captive generated coupon no
 WARNING: untranslated string: Captive issued coupons
 WARNING: untranslated string: Captive logo uploaded
 WARNING: untranslated string: Captive mac
-WARNING: untranslated string: Captive menu
 WARNING: untranslated string: Captive nolimit
 WARNING: untranslated string: Captive please accept the terms and conditions
 WARNING: untranslated string: Captive portal
@@ -1096,12 +1095,6 @@ WARNING: untranslated string: ovpn ha
 WARNING: untranslated string: ovpn hmac
 WARNING: untranslated string: ovpn mgmt in root range
 WARNING: untranslated string: ovpn mtu-disc
-WARNING: untranslated string: ovpn mtu-disc and mtu not 1500
-WARNING: untranslated string: ovpn mtu-disc maybe
-WARNING: untranslated string: ovpn mtu-disc no
-WARNING: untranslated string: ovpn mtu-disc off
-WARNING: untranslated string: ovpn mtu-disc with mssfix or fragment
-WARNING: untranslated string: ovpn mtu-disc yes
 WARNING: untranslated string: ovpn no connections
 WARNING: untranslated string: ovpn port in root range
 WARNING: untranslated string: ovpn routes push

@@ -465,6 +465,12 @@ WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn log
+WARNING: translation string unused: ovpn mtu-disc and mtu not 1500
+WARNING: translation string unused: ovpn mtu-disc maybe
+WARNING: translation string unused: ovpn mtu-disc no
+WARNING: translation string unused: ovpn mtu-disc off
+WARNING: translation string unused: ovpn mtu-disc with mssfix or fragment
+WARNING: translation string unused: ovpn mtu-disc yes
 WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_fragment
 WARNING: translation string unused: ovpn_mssfix
@@ -715,7 +721,6 @@ WARNING: untranslated string: Captive generated coupon no
 WARNING: untranslated string: Captive issued coupons
 WARNING: untranslated string: Captive logo uploaded
 WARNING: untranslated string: Captive mac
-WARNING: untranslated string: Captive menu
 WARNING: untranslated string: Captive nolimit
 WARNING: untranslated string: Captive please accept the terms and conditions
 WARNING: untranslated string: Captive portal

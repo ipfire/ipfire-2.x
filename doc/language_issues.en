@@ -496,6 +496,12 @@ WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
 WARNING: translation string unused: ovpn log
+WARNING: translation string unused: ovpn mtu-disc and mtu not 1500
+WARNING: translation string unused: ovpn mtu-disc maybe
+WARNING: translation string unused: ovpn mtu-disc no
+WARNING: translation string unused: ovpn mtu-disc off
+WARNING: translation string unused: ovpn mtu-disc with mssfix or fragment
+WARNING: translation string unused: ovpn mtu-disc yes
 WARNING: translation string unused: ovpn reneg sec
 WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_mssfix
@@ -725,7 +731,6 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Captive clients
-WARNING: untranslated string: Captive menu
 WARNING: untranslated string: Scan for Songs
 WARNING: untranslated string: bytes
 WARNING: untranslated string: captive
