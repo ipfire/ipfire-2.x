@@ -333,6 +333,7 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/firmware/iscsi_ibft.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/gpio
 #lib/modules/KVER-ipfire-pae/kernel/drivers/gpio/gpio-bd9571mwv.ko
+#lib/modules/KVER-ipfire-pae/kernel/drivers/gpio/gpio-cs5535.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/gpio/gpio-ich.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/gpio/gpio-sch.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/gpio/gpio-viperboard.ko
