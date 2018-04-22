@@ -78,8 +78,8 @@ case "${1}" in
 		setup_netdev_trigger geos:3 ${RED_DEV} tx
 
 		# Dreamplug
-		setup_netdev_trigger dreamplug:green:wlan ${GREEN_DEV} tx rx
-		setup_netdev_trigger dreamplug:blue:wlanap ${BLUE_DEV} tx rx
+		setup_netdev_trigger dreamplug:green:wifi ${GREEN_DEV} tx rx
+		setup_netdev_trigger dreamplug:blue:wifi_ap ${BLUE_DEV} tx rx
 		setup_netdev_trigger dreamplug:blue:bluetooth ${RED_DEV} tx rx
 
 		# Iomega iConnect start
@@ -122,8 +122,8 @@ case "${1}" in
 		disable_led_trigger geos:3
 
 		# Dreamplug
-		disable_led_trigger dreamplug:green:wlan
-		disable_led_trigger dreamplug:blue:wlanap
+		disable_led_trigger dreamplug:green:wifi
+		disable_led_trigger dreamplug:blue:wifi_ap
 		disable_led_trigger dreamplug:blue:bluetooth
 
 		# Iomega iConnect stop (heartbeat will leave on)
