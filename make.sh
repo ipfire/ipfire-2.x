@@ -416,7 +416,7 @@ prepareenv() {
 
 	# Checking if running as root user
 	if [ $(id -u) -ne 0 ]; then
-			exiterror "Not building as root"
+			exiterror "root privileges required for building"
 	fi
 
 	# Checking for necessary temporary space
