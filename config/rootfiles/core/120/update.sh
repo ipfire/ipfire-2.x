@@ -83,6 +83,12 @@ done
 /etc/init.d/apache restart
 /etc/init.d/unbound restart
 
+# Regenerate IPsec configuration
+sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/init.d/ipsec restart
+fi
+
 # Remove deprecated SSH configuration option
 sed -e "/UsePrivilegeSeparation/d" -i /etc/ssh/sshd_config
 
