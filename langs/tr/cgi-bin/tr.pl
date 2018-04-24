@@ -1762,7 +1762,7 @@
 'off' => 'kapalı',
 'ok' => 'TAMAM',
 'older' => 'Eski',
-'on' => 'üstünde',
+'on' => 'açık',
 'one hour' => 'Bir Saat',
 'one month' => 'Bir Ay',
 'one week' => 'Bir Hafta',
