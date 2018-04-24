@@ -62,7 +62,7 @@ $(TARGET) :
 
 	# Touch empty files
 	for i in auth/users backup/include.user backup/exclude.user \
-	    captive/settings captive/agb.txt captive/clients captive/voucher_out certs/index.txt ddns/config ddns/noipsettings ddns/settings ddns/ipcache dhcp/settings \
+	    captive/settings captive/agb.txt captive/clients captive/voucher_out certs/index.txt ddns/config ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dns/settings dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
 	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings firewall/settings firewall/config firewall/geoipblock firewall/input firewall/outgoing \
 	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwhosts/customgeoipgrp fwlogs/ipsettings fwlogs/portsettings \
