@@ -63,6 +63,10 @@ void open_physical (char *interface, int nat_traversal_port) {
         safe_system(str);
         sprintf(str, "/sbin/iptables --wait -A IPSECINPUT -p udp -i %s --dport 500 -j ACCEPT", interface);
         safe_system(str);
+        sprintf(str, "/sbin/iptables --wait -D IPSECOUTPUT -p udp -o %s --dport 500 -j ACCEPT >/dev/null 2>&1", interface);
+        safe_system(str);
+        sprintf(str, "/sbin/iptables --wait -A IPSECOUTPUT -p udp -o %s --dport 500 -j ACCEPT", interface);
+        safe_system(str);
 
         if (! nat_traversal_port) 
             return;
@@ -70,6 +74,10 @@ void open_physical (char *interface, int nat_traversal_port) {
         sprintf(str, "/sbin/iptables --wait -D IPSECINPUT -p udp -i %s --dport %i -j ACCEPT >/dev/null 2>&1", interface, nat_traversal_port);
         safe_system(str);
         sprintf(str, "/sbin/iptables --wait -A IPSECINPUT -p udp -i %s --dport %i -j ACCEPT", interface, nat_traversal_port);
+        safe_system(str);
+        sprintf(str, "/sbin/iptables --wait -D IPSECOUTPUT -p udp -o %s --dport %i -j ACCEPT >/dev/null 2>&1", interface, nat_traversal_port);
+        safe_system(str);
+        sprintf(str, "/sbin/iptables --wait -A IPSECOUTPUT -p udp -o %s --dport %i -j ACCEPT", interface, nat_traversal_port);
         safe_system(str);
 }
 
