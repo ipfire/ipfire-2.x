@@ -17,14 +17,14 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2017 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2018 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
-core=120
+core=121
 
 # Remove old core updates from pakfire cache to save space...
 for (( i=1; i<=$core; i++ )); do
@@ -42,7 +42,22 @@ ldconfig
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# Remove Nagios files, if any...
+rm -rvf \
+	/etc/rc.d/init.d/nagios \
+	/usr/bin/nagios \
+	/etc/rc.d/rc6.d/K33nagios \
+	/etc/rc.d/rc3.d/off/S67nagios \
+	/etc/rc.d/rc0.d/K33nagios \
+	/etc/httpd/conf/conf.d/nagios.conf \
+	/etc/nagios/nagios.cfg \
+	/usr/bin/p1.pl \
+	/usr/bin/nagiostats \
+	/usr/share/nagios/ \
+	/var/nagios/
+
 # Start services
+/etc/init.d/apache restart
 
 # This update needs a reboot...
 touch /var/run/need_reboot
