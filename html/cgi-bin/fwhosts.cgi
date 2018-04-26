@@ -1278,7 +1278,7 @@ if ($fwhostsettings{'ACTION'} eq 'changegeoipgrpname')
 			}
 			&General::writehasharray("$configgeoipgrp", \%customgeoipgrp );
 			#change name in FW Rules
-			&changenameinfw($fwhostsettings{'oldgrpname'},$fwhostsettings{'grp'},6);
+			&changenameinfw($fwhostsettings{'oldgrpname'},$fwhostsettings{'grp'},4,"geoip");
 		}
 	}
 	&addgeoipgrp;
@@ -3052,6 +3052,12 @@ sub changenameinfw
 	my $old=shift;
 	my $new=shift;
 	my $fld=shift;
+	my $type=shift;
+
+	if ($type eq 'geoip'){
+		$old="group:$old";
+		$new="group:$new";
+	}
 	&General::readhasharray("$fwconfigfwd", \%fwfwd);
 	&General::readhasharray("$fwconfiginp", \%fwinp);
 	&General::readhasharray("$fwconfigout", \%fwout);
