@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.19"							# Version number
-CORE="120"							# Core Level (Filename)
-PAKFIRE_CORE="120"						# Core Level (PAKFIRE)
+CORE="121"							# Core Level (Filename)
+PAKFIRE_CORE="121"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
