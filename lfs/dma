@@ -75,6 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	touch /var/ipfire/dma/mail.conf
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dma-0.10-better-authentication.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dma-0.10-better-tls.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dma-0.11-compile-fixes.patch
 	cd $(DIR_APP) && sed -i '/PREFIX/s/usr\/local/usr/g' Makefile
 	cd $(DIR_APP) && sed -i '/CONFDIR/s/etc\/dma/var\/ipfire\/dma/g' Makefile
 	cd $(DIR_APP) && make
