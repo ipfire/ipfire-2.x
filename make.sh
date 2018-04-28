@@ -1431,6 +1431,7 @@ buildipfire() {
   lfsmake2 parted
   lfsmake2 swig
   lfsmake2 u-boot
+  lfsmake2 u-boot-kirkwood
   lfsmake2 python-typing
   lfsmake2 python-m2crypto
   lfsmake2 wireless-regdb
