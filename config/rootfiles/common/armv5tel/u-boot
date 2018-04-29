@@ -24,3 +24,5 @@ usr/share/u-boot/rpi/kernel.img
 usr/share/u-boot/rpi2/kernel7.img
 #usr/share/u-boot/rpi3
 usr/share/u-boot/rpi3/kernel8-32.img
+#usr/share/u-boot/wandboard
+usr/share/u-boot/wandboard/u-boot.imx
