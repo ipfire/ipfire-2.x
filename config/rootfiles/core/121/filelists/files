@@ -1,2 +1,3 @@
 etc/system-release
 etc/issue
+etc/ssl/certs/ca-bundle.crt
