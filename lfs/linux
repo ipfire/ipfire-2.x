@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 4.14.37
-ARM_PATCHES = 4.14.37-ipfire0
+VER         = 4.14.38
+ARM_PATCHES = 4.14.38-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -70,13 +70,13 @@ endif
 # Top-level Rules
 ###############################################################################
 objects =$(DL_FILE) \
-	arm-multi-patches-$(ARM_PATCHES).tar.xz
+	arm-multi-patches-$(ARM_PATCHES).patch.xz
 
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
-arm-multi-patches-$(ARM_PATCHES).tar.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).tar.xz
+arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= 82b7a828b228dd7a581dc3fc1174ea15
-arm-multi-patches-$(ARM_PATCHES).tar.xz_MD5	= 1f8dbd49651b6789909ef15bc8556d92
+$(DL_FILE)_MD5					= 5aed51d9c7ef9e12c1db41e05f69ad2c
+arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= ed8921e4cee037c8e56563cdd9fd39c8
 
 install : $(TARGET)
 
@@ -148,7 +148,7 @@ endif
 
 ifeq "$(KCFG)" "-multi"
 	# Apply Arm-multiarch kernel patches.
-	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).tar.xz | patch -Np1
+	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).patch.xz | patch -Np1
 endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-3.14.79-amba-fix.patch
 
