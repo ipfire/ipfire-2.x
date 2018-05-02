@@ -1161,11 +1161,31 @@ END
 	#IPsec netze
 	foreach my $key (sort { ncmp($ipsecconf{$a}[1],$ipsecconf{$b}[1]) } keys %ipsecconf) {
 		if ($ipsecconf{$key}[3] eq 'net' || ($optionsfw{'SHOWDROPDOWN'} eq 'on' && $ipsecconf{$key}[3] ne 'host')){
-			print"<tr><td valign='top'><input type='radio' name='$grp' value='ipsec_net_$srctgt' $checked{$grp}{'ipsec_net_'.$srctgt}></td><td >$Lang::tr{'fwhost ipsec net'}</td><td align='right'><select name='ipsec_net_$srctgt' style='width:200px;'>" if ($show eq '');
+			print"<tr><td valign='top'><input type='radio' name='$grp' id='ipsec_net_$srctgt' value='ipsec_net_$srctgt' $checked{$grp}{'ipsec_net_'.$srctgt}></td><td >$Lang::tr{'fwhost ipsec net'}</td><td align='right'><select name='ipsec_net_$srctgt' style='width:200px;'>" if ($show eq '');
 			$show='1';
+
+			#Check if we have more than one REMOTE subnet in config
+			my @arr1 = split /\|/, $ipsecconf{$key}[11];
+			my $cnt1 += @arr1;
+
 			print "<option ";
-			print "selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $ipsecconf{$key}[1]);
-			print ">$ipsecconf{$key}[1]</option>";
+			print "value=$ipsecconf{$key}[1]";
+			print " selected " if ($fwdfwsettings{$fwdfwsettings{$grp}} eq "$ipsecconf{$key}[1]");
+			print ">$ipsecconf{$key}[1] ";
+			print "($Lang::tr{'fwdfw all subnets'})" if $cnt1 > 1; #If this Conenction has more than one subnet, print one option for all subnets
+			print "</option>";
+
+			if ($cnt1 > 1){
+				foreach my $val (@arr1){
+					#normalize subnet to cidr notation
+					my ($val1,$val2) = split /\//, $val;
+					my $val3 = &General::iporsubtocidr($val2);
+					print "<option ";
+					print "value='$ipsecconf{$key}[1]|$val1/$val3'";
+					print "selected " if ($fwdfwsettings{$fwdfwsettings{$grp}} eq "$ipsecconf{$key}[1]|$val1/$val3");
+					print ">$ipsecconf{$key}[1] ($val1/$val3)</option>";
+				}
+			}
 		}
 	}
 	if($optionsfw{'SHOWDROPDOWN'} eq 'on' && $show eq ''){
@@ -2575,6 +2595,11 @@ END
 			#SOURCE
 			my $ipfireiface;
 			&getcolor($$hash{$key}[3],$$hash{$key}[4],\%customhost);
+			# Check SRC Host and replace "|" with space
+			if ($$hash{$key}[4] =~ /\|/){
+				$$hash{$key}[4] =~ s/\|/ (/g;
+				$$hash{$key}[4] = $$hash{$key}[4].")";
+			}
 			print"<td align='center' width='30%' $tdcolor>";
 			if ($$hash{$key}[3] eq 'ipfire_src'){
 				$ipfireiface=$Lang::tr{'fwdfw iface'};
@@ -2640,6 +2665,11 @@ END
 			print<<END;
 					<td align='center' $tdcolor>
 END
+			# Check TGT Host and replace "|" with space
+			if ($$hash{$key}[6] =~ /\|/){
+				$$hash{$key}[6] =~ s/\|/ (/g;
+				$$hash{$key}[6] = $$hash{$key}[6].")";
+			}
 			#Is this a DNAT rule?
 			my $natstring;
 			if ($$hash{$key}[31] eq 'dnat' && $$hash{$key}[28] eq 'ON'){
