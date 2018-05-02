@@ -44,10 +44,10 @@ if test "${SERIAL-CONSOLE}" = "ON"; then
 		fi;
 	fi
 	echo Set console to ${console};
-	setenv bootargs console=${console} rootwait root=${root_dev} rootwait;
+	setenv bootargs console=${console} root=${root_dev} rootwait;
 else
 	echo Set console to tty1 ;
-	setenv bootargs console=tty1 rootwait root=${root_dev} rootwait;
+	setenv bootargs console=tty1 root=${root_dev} rootwait;
 fi;
 
 setenv fdt_high ffffffff;
