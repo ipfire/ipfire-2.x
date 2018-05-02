@@ -103,8 +103,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make CROSS_COMPILE="" iconnect_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Iomega iConnect - IPFire.org"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^# CONFIG_CMD_BOOTZ is not set!CONFIG_CMD_BOOTZ=y!' .config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Iomega iConnect - IPFire.org"!' .config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_MTDPARTS_DEFAULT=.*!CONFIG_MTDPARTS_DEFAULT="mtdparts=orion_nand:0xA0000@0x0(uboot),0x40000@0xC0000(uboot_end),-@0x100000(rootfs)"!' .config
+	cd $(DIR_APP) && sed -i -e 's!^# CONFIG_HUSH_PARSER is not set!CONFIG_HUSH_PARSER=y!' .config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_MTDPARTS_DEFAULT=.*!CONFIG_MTDPARTS_DEFAULT="mtdparts=orion_nand:0xC0000@0x0(uboot),0x40000@0xC0000(uboot_env),-@0x100000(rootfs)"!' .config
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)" u-boot.kwb
 	cd $(DIR_APP) && install -v -m 644 u-boot.kwb \
