@@ -1065,6 +1065,7 @@
 'fwdfw additional' => 'Weitere Einstellungen',
 'fwdfw addrule' => 'Regel hinzufügen/ändern:',
 'fwdfw all icmp' => 'Alle ICMP-Typen',
+'fwdfw all subnets' => 'Alle Subnetze',
 'fwdfw change' => 'Aktualisieren',
 'fwdfw copy' => 'Kopieren',
 'fwdfw delete' => 'Löschen',

@@ -1092,6 +1092,7 @@
 'fwdfw additional' => 'Additional settings',
 'fwdfw addrule' => 'Add/Edit rule:',
 'fwdfw all icmp' => 'All ICMP types',
+'fwdfw all subnets' => 'All subnets',
 'fwdfw change' => 'Update',
 'fwdfw copy' => 'Copy',
 'fwdfw delete' => 'Delete',
