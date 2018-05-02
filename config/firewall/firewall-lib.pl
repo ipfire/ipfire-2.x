@@ -150,6 +150,9 @@ sub get_ipsec_net_ip
 	my $val=shift;
 	my $field=shift;
 	foreach my $key (sort {$a <=> $b} keys %ipsecconf){
+		#adapt $val to reflect real name without subnet (if rule with only one ipsec subnet is created)
+		my @tmpval = split (/\|/, $val);
+		$val = $tmpval[0];
 		if($ipsecconf{$key}[1] eq $val){
 			return $ipsecconf{$key}[$field];
 		}
@@ -390,10 +393,16 @@ sub get_address
 
 	# IPsec networks.
 	} elsif ($key ~~ ["ipsec_net_src", "ipsec_net_tgt", "IpSec Network"]) {
-		my $network_address = &get_ipsec_net_ip($value, 11);
-		my @nets = split(/\|/, $network_address);
-		foreach my $net (@nets) {
-			push(@ret, [$net, ""]);
+		#Check if we have multiple subnets and only want one of them
+		if ( $value =~ /\|/ ){
+			my @parts = split(/\|/, $value);
+			push(@ret, [$parts[1], ""]);
+		}else{
+			my $network_address = &get_ipsec_net_ip($value, 11);
+			my @nets = split(/\|/, $network_address);
+			foreach my $net (@nets) {
+				push(@ret, [$net, ""]);
+			}
 		}
 
 	# The firewall's own IP addresses.
