@@ -1,0 +1,46 @@
+diff -Naur linux-4.14.1.org/drivers/net/ethernet/intel/e1000e/netdev.c linux-4.14.1/drivers/net/ethernet/intel/e1000e/netdev.c
+--- linux-4.14.1.org/drivers/net/ethernet/intel/e1000e/netdev.c	2017-11-21 09:49:25.000000000 +0100
++++ linux-4.14.1/drivers/net/ethernet/intel/e1000e/netdev.c	2017-11-21 18:28:05.730711267 +0100
+@@ -5952,9 +5952,13 @@
+ 			struct rtnl_link_stats64 *stats)
+ {
+ 	struct e1000_adapter *adapter = netdev_priv(netdev);
++	int has_lock = 0;
++ 
++	if (spin_trylock(&adapter->stats64_lock)) {
++		e1000e_update_stats(adapter);
++		has_lock = 1;
++	}
+ 
+-	spin_lock(&adapter->stats64_lock);
+-	e1000e_update_stats(adapter);
+ 	/* Fill out the OS statistics structure */
+ 	stats->rx_bytes = adapter->stats.gorc;
+ 	stats->rx_packets = adapter->stats.gprc;
+@@ -5984,7 +5988,7 @@
+ 
+ 	/* Tx Dropped needs to be maintained elsewhere */
+ 
+-	spin_unlock(&adapter->stats64_lock);
++	if (has_lock) spin_unlock(&adapter->stats64_lock);
+ }
+ 
+ /**
+diff -Naur linux-4.14.1.org/drivers/net/ethernet/intel/igb/igb_main.c linux-4.14.1/drivers/net/ethernet/intel/igb/igb_main.c
+--- linux-4.14.1.org/drivers/net/ethernet/intel/igb/igb_main.c	2017-11-21 09:49:25.000000000 +0100
++++ linux-4.14.1/drivers/net/ethernet/intel/igb/igb_main.c	2017-11-21 18:28:02.358749514 +0100
+@@ -5499,10 +5499,11 @@
+ {
+ 	struct igb_adapter *adapter = netdev_priv(netdev);
+ 
+-	spin_lock(&adapter->stats64_lock);
+-	igb_update_stats(adapter);
++	if (spin_trylock(&adapter->stats64_lock)) {
++		igb_update_stats(adapter);
++		spin_unlock(&adapter->stats64_lock);
++	}
+ 	memcpy(stats, &adapter->stats64, sizeof(*stats));
+-	spin_unlock(&adapter->stats64_lock);
+ }
+ 
+ /**

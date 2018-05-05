@@ -144,14 +144,14 @@ configure_build() {
 			BUILDTARGET="${build_arch}-unknown-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-m64 -mtune=generic"
+			CFLAGS_ARCH="-m64 -mindirect-branch=thunk -mfunction-return=thunk -mtune=generic"
 			;;
 
 		i586)
 			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-march=i586 -mtune=generic -fomit-frame-pointer"
+			CFLAGS_ARCH="-march=i586 -mindirect-branch=thunk -mfunction-return=thunk -mtune=generic -fomit-frame-pointer"
 			;;
 
 		aarch64)
@@ -1044,13 +1044,12 @@ buildipfire() {
   lfsmake2 unzip
   lfsmake2 which
   lfsmake2 linux-firmware
-  lfsmake2 ath10k-firmware
   lfsmake2 dvb-firmwares
-  lfsmake2 mt7601u-firmware
+  lfsmake2 xr819-firmware
   lfsmake2 zd1211-firmware
   lfsmake2 rpi-firmware
   lfsmake2 bc
-  lfsmake2 u-boot
+  lfsmake2 u-boot MKIMAGE=1
   lfsmake2 cpio
   lfsmake2 mdadm
   lfsmake2 dracut
@@ -1065,61 +1064,57 @@ buildipfire() {
   lfsmake2 libnetfilter_cthelper
   lfsmake2 libnetfilter_cttimeout
   lfsmake2 iptables
+  lfsmake2 screen
+  lfsmake2 elfutils
 
   case "${BUILD_ARCH}" in
 	x86_64)
 		lfsmake2 linux			KCFG=""
-		lfsmake2 backports			KCFG=""
-		lfsmake2 e1000e			KCFG=""
-		lfsmake2 igb				KCFG=""
-		lfsmake2 ixgbe			KCFG=""
+#		lfsmake2 backports			KCFG=""
+#		lfsmake2 e1000e			KCFG=""
+#		lfsmake2 igb				KCFG=""
+#		lfsmake2 ixgbe			KCFG=""
 		lfsmake2 xtables-addons		KCFG=""
 		lfsmake2 linux-initrd			KCFG=""
 		;;
 	i586)
 		# x86-pae (Native and new XEN) kernel build
 		lfsmake2 linux			KCFG="-pae"
-		lfsmake2 backports			KCFG="-pae"
-		lfsmake2 e1000e			KCFG="-pae"
-		lfsmake2 igb				KCFG="-pae"
-		lfsmake2 ixgbe			KCFG="-pae"
+#		lfsmake2 backports			KCFG="-pae"
+#		lfsmake2 e1000e			KCFG="-pae"
+#		lfsmake2 igb				KCFG="-pae"
+#		lfsmake2 ixgbe			KCFG="-pae"
 		lfsmake2 xtables-addons		KCFG="-pae"
 		lfsmake2 linux-initrd			KCFG="-pae"
 
 		# x86 kernel build
 		lfsmake2 linux			KCFG=""
-		lfsmake2 backports			KCFG=""
-		lfsmake2 e1000e			KCFG=""
-		lfsmake2 igb				KCFG=""
-		lfsmake2 ixgbe			KCFG=""
+#		lfsmake2 backports			KCFG=""
+#		lfsmake2 e1000e			KCFG=""
+#		lfsmake2 igb				KCFG=""
+#		lfsmake2 ixgbe			KCFG=""
 		lfsmake2 xtables-addons		KCFG=""
 		lfsmake2 linux-initrd			KCFG=""
 		;;
 
 	armv5tel)
-		# arm-rpi (Raspberry Pi) kernel build
-		lfsmake2 linux			KCFG="-rpi"
-		lfsmake2 backports			KCFG="-rpi"
-		lfsmake2 xtables-addons		KCFG="-rpi"
-		lfsmake2 linux-initrd			KCFG="-rpi"
+		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
+		lfsmake2 linux			KCFG="-kirkwood"
+#		lfsmake2 backports			KCFG="-kirkwood"
+#		lfsmake2 e1000e			KCFG="-kirkwood"
+#		lfsmake2 igb				KCFG="-kirkwood"
+#		lfsmake2 ixgbe			KCFG="-kirkwood"
+		lfsmake2 xtables-addons		KCFG="-kirkwood"
+		lfsmake2 linux-initrd			KCFG="-kirkwood"
 
 		# arm multi platform (Panda, Wandboard ...) kernel build
 		lfsmake2 linux			KCFG="-multi"
-		lfsmake2 backports			KCFG="-multi"
-		lfsmake2 e1000e			KCFG="-multi"
-		lfsmake2 igb				KCFG="-multi"
-		lfsmake2 ixgbe			KCFG="-multi"
+#		lfsmake2 backports			KCFG="-multi"
+#		lfsmake2 e1000e			KCFG="-multi"
+#		lfsmake2 igb				KCFG="-multi"
+#		lfsmake2 ixgbe			KCFG="-multi"
 		lfsmake2 xtables-addons		KCFG="-multi"
 		lfsmake2 linux-initrd			KCFG="-multi"
-
-		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
-		lfsmake2 linux			KCFG="-kirkwood"
-		lfsmake2 backports			KCFG="-kirkwood"
-		lfsmake2 e1000e			KCFG="-kirkwood"
-		lfsmake2 igb				KCFG="-kirkwood"
-		lfsmake2 ixgbe			KCFG="-kirkwood"
-		lfsmake2 xtables-addons		KCFG="-kirkwood"
-		lfsmake2 linux-initrd			KCFG="-kirkwood"
 		;;
   esac
   lfsmake2 xtables-addons			USPACE="1"
@@ -1302,7 +1297,7 @@ buildipfire() {
   lfsmake2 mc
   lfsmake2 wget
   lfsmake2 bridge-utils
-  lfsmake2 screen
+#  lfsmake2 screen
   lfsmake2 smartmontools
   lfsmake2 htop
   lfsmake2 chkconfig
@@ -1434,6 +1429,8 @@ buildipfire() {
   lfsmake2 powertop
   lfsmake2 parted
   lfsmake2 swig
+  lfsmake2 u-boot
+  lfsmake2 u-boot-kirkwood
   lfsmake2 python-typing
   lfsmake2 python-m2crypto
   lfsmake2 wireless-regdb
@@ -1464,7 +1461,6 @@ buildipfire() {
   lfsmake2 sendEmail
   lfsmake2 sysbench
   lfsmake2 strace
-  lfsmake2 elfutils
   lfsmake2 ltrace
   lfsmake2 ipfire-netboot
   lfsmake2 lcdproc
@@ -1493,7 +1489,6 @@ buildipfire() {
   lfsmake2 pigz
   lfsmake2 tmux
   lfsmake2 perl-Text-CSV_XS
-  lfsmake2 swconfig
   lfsmake2 haproxy
   lfsmake2 ipset
   lfsmake2 lua
@@ -1560,7 +1555,6 @@ buildpackages() {
   modprobe loop 2>/dev/null
   if [ $BUILD_IMAGES == 1 ] && ([ -e /dev/loop/0 ] || [ -e /dev/loop0 ] || [ -e "/dev/loop-control" ]); then
 	lfsmake2 flash-images
-	lfsmake2 flash-images SCON=1
   fi
 
   mv $LFS/install/images/{*.iso,*.tgz,*.img.gz,*.bz2} $BASEDIR >> $LOGFILE 2>&1

@@ -1,2 +1,1 @@
-#boot/initramfs-KVER-ipfire-kirkwood.img
-#boot/uInit-ipfire-kirkwood
+boot/uInit-KVER-ipfire-kirkwood

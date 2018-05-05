@@ -1,0 +1,11 @@
+diff -Naur systemd-208.org/src/udev/mtd_probe/mtd_probe.h systemd-208/src/udev/mtd_probe/mtd_probe.h
+--- systemd-208.org/src/udev/mtd_probe/mtd_probe.h	2013-08-13 22:02:47.000000000 +0200
++++ systemd-208/src/udev/mtd_probe/mtd_probe.h	2017-02-07 18:08:33.492985563 +0100
+@@ -18,6 +18,7 @@
+  */
+ 
+ #include <mtd/mtd-user.h>
++#include <stdint.h>
+ 
+ /* Full oob structure as written on the flash */
+ struct sm_oob {

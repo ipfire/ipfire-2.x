@@ -83,14 +83,14 @@ done
 /etc/init.d/apache restart
 /etc/init.d/unbound restart
 
+# Regenerate IPsec configuration
+sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/init.d/ipsec restart
+fi
+
 # Remove deprecated SSH configuration option
 sed -e "/UsePrivilegeSeparation/d" -i /etc/ssh/sshd_config
-
-# Remove any pakfire keys stored in /
-rm -rfv /.gnupg
-
-# Move old pakfire keystore into new place
-mv -v /root/.gnupg /opt/pakfire/etc/.gnupg
 
 # Import new Pakfire key
 /etc/init.d/pakfire start

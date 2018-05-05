@@ -820,15 +820,6 @@ int main(int argc, char *argv[]) {
 		fclose(f);
 
 		replace(DESTINATION_MOUNT_PATH "/etc/default/grub", "panic=10", "panic=10 console=ttyS0,115200n8");
-
-		/* inittab */
-		replace("/harddisk/etc/inittab", "1:2345:respawn:", "#1:2345:respawn:");
-		replace("/harddisk/etc/inittab", "2:2345:respawn:", "#2:2345:respawn:");
-		replace("/harddisk/etc/inittab", "3:2345:respawn:", "#3:2345:respawn:");
-		replace("/harddisk/etc/inittab", "4:2345:respawn:", "#4:2345:respawn:");
-		replace("/harddisk/etc/inittab", "5:2345:respawn:", "#5:2345:respawn:");
-		replace("/harddisk/etc/inittab", "6:2345:respawn:", "#6:2345:respawn:");
-		replace("/harddisk/etc/inittab", "#7:2345:respawn:", "7:2345:respawn:");
 	}
 
 	/* novga */
