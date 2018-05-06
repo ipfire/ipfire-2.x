@@ -3,4 +3,5 @@ etc/nagios/nrpe.cfg
 #root/.rnd
 #usr/bin/nrpe-uninstall
 usr/bin/nrpe
+#usr/lib/nagios
 usr/lib/nagios/check_nrpe
