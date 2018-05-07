@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
 etc/ssl/certs/ca-bundle.crt
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/remote.cgi
 var/ipfire/langs

@@ -35,6 +35,7 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/countries.pl";
+require "${General::swroot}/geoip-functions.pl";
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -2991,6 +2992,7 @@ END
     <tr>
 	<th><b>$Lang::tr{'common name'}</b></th>
 	<th><b>$Lang::tr{'real address'}</b></th>
+	<th><b>$Lang::tr{'country'}</b></th>
 	<th><b>$Lang::tr{'virtual address'}</b></th>
 	<th><b>$Lang::tr{'loged in at'}</b></th>
 	<th><b>$Lang::tr{'bytes sent'}</b></th>
@@ -3030,6 +3032,11 @@ END
 		    $users[$uid]{'BytesSent'} = &sizeformat($match[4]);
 		    $users[$uid]{'Since'} = $match[5];
 		    $users[$uid]{'Proto'} = $proto;
+
+		    # get country code for "RealAddress"...
+		    my $ccode = &GeoIP::lookup((split ':', $users[$uid]{'RealAddress'})[0]);
+		    my $flag_icon = &GeoIP::get_flag_icon($ccode);
+		    $users[$uid]{'Country'} = "<a href='country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode' title='$ccode' /></a>";
 		    $uid++;
 		}    
 	    }
@@ -3056,7 +3063,8 @@ END
 						}
 						print "<td align='left' $col>$users[$idx-1]{'CommonName'}</td>";
 						print "<td align='left' $col>$users[$idx-1]{'RealAddress'}</td>";
-						print "<td align='left' $col>$users[$idx-1]{'VirtualAddress'}</td>";
+						print "<td align='center' $col>$users[$idx-1]{'Country'}</td>";
+						print "<td align='center' $col>$users[$idx-1]{'VirtualAddress'}</td>";
 						print "<td align='left' $col>$users[$idx-1]{'Since'}</td>";
 						print "<td align='left' $col>$users[$idx-1]{'BytesSent'}</td>";
 						print "<td align='left' $col>$users[$idx-1]{'BytesReceived'}</td>";
