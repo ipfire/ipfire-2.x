@@ -2187,7 +2187,7 @@
 'ssh' => 'SSH',
 'ssh access' => 'SSH Access',
 'ssh access tip' => 'IPFire SSH is not using default port 222!',
-'ssh active sesstions' => 'Active logins',
+'ssh active sessions' => 'Active logins',
 'ssh fingerprint' => 'Fingerprint',
 'ssh host keys' => 'SSH Host Keys',
 'ssh is disabled' => 'SSH is disabled.  Stopping.',

@@ -2149,7 +2149,7 @@
 'ssh' => 'SSH',
 'ssh access' => 'SSH-Zugriff',
 'ssh access tip' => 'IPFire SSH läuft auf dem nicht-standard Port 222!',
-'ssh active sesstions' => 'Aktive Benutzeranmeldungen',
+'ssh active sessions' => 'Aktive Benutzeranmeldungen',
 'ssh fingerprint' => 'Fingerabdruck',
 'ssh host keys' => 'SSH Host Schlüssel',
 'ssh is disabled' => 'Secure Shell ist deaktiviert.  Halte an.',
