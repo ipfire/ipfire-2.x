@@ -90,5 +90,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make all $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && make install-config
+
+	# install initscript
+	$(call INSTALL_INITSCRIPT,nrpe)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
