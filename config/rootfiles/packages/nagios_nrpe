@@ -1,5 +1,6 @@
 etc/nagios
 etc/nagios/nrpe.cfg
+etc/rc.d/init.d/nrpe
 #root/.rnd
 #usr/bin/nrpe-uninstall
 usr/bin/nrpe
