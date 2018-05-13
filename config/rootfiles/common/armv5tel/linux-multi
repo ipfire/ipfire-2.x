@@ -898,6 +898,7 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/i2c/muxes/i2c-mux-reg.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/iio
 #lib/modules/KVER-ipfire-multi/kernel/drivers/iio/adc
+#lib/modules/KVER-ipfire-multi/kernel/drivers/iio/adc/axp20x_adc.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/iio/adc/meson_saradc.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/iio/adc/sun4i-gpadc-iio.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/iio/adc/twl4030-madc.ko
@@ -921,6 +922,7 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/input/matrix-keymap.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/input/misc
 #lib/modules/KVER-ipfire-multi/kernel/drivers/input/misc/ati_remote2.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/input/misc/axp20x-pek.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/input/misc/cm109.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/input/misc/gpio-beeper.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/input/misc/keyspan_remote.ko
@@ -2159,6 +2161,9 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/power/supply
 #lib/modules/KVER-ipfire-multi/kernel/drivers/power/supply/88pm860x_battery.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/power/supply/88pm860x_charger.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/power/supply/axp20x_ac_power.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/power/supply/axp20x_battery.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/power/supply/axp20x_usb_power.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/power/supply/generic-adc-battery.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/power/supply/twl4030_charger.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/power/supply/twl4030_madc_battery.ko
@@ -2171,6 +2176,8 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/pwm/pwm-sun4i.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/pwm/pwm-twl-led.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/pwm/pwm-twl.ko
+#lib/modules/KVER-ipfire-multi/kernel/drivers/regulator
+#lib/modules/KVER-ipfire-multi/kernel/drivers/regulator/axp20x-regulator.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-88pm80x.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/rtc/rtc-88pm860x.ko
