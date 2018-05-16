@@ -34,10 +34,14 @@ fi;
 if test "${SERIAL-CONSOLE}" = "ON"; then
 	if test ${console} = ""; then
 		if test "${board}" = "rpi"; then
-			if test "${fdtfile}" = "bcm2837-rpi-3-b.dtb"; then
+			if test "${fdtfile}" = "bcm2837-rpi-3-b-plus.dtb"; then
 				setenv console ttyS1,115200n8;
 			else
-				setenv console ttyAMA0,115200n8;
+				if test "${fdtfile}" = "bcm2837-rpi-3-b.dtb"; then
+					setenv console ttyS1,115200n8;
+				else
+					setenv console ttyAMA0,115200n8;
+				fi;
 			fi;
 		else
 			setenv console ttyS0,115200n8;

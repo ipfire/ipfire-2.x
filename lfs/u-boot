@@ -123,6 +123,7 @@ ifneq "$(MKIMAGE)" "1"
 
 	# Raspberry Pi 3
 	-mkdir -pv /usr/share/u-boot/rpi3
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/rpi/u-boot-2018.03_add_rpi3-b-plus.patch
 	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_3_32b_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" RPi3 - IPFire.org"!' .config
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
