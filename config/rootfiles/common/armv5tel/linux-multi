@@ -86,6 +86,7 @@ boot/dtb-KVER-ipfire-multi
 #boot/dtb-KVER-ipfire-multi/bcm2835-rpi-zero-w.dtb
 #boot/dtb-KVER-ipfire-multi/bcm2835-rpi-zero.dtb
 #boot/dtb-KVER-ipfire-multi/bcm2836-rpi-2-b.dtb
+#boot/dtb-KVER-ipfire-multi/bcm2837-rpi-3-b-plus.dtb
 #boot/dtb-KVER-ipfire-multi/bcm2837-rpi-3-b.dtb
 #boot/dtb-KVER-ipfire-multi/berlin2-sony-nsz-gs7.dtb
 #boot/dtb-KVER-ipfire-multi/berlin2cd-google-chromecast.dtb
