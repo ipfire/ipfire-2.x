@@ -35,9 +35,6 @@ else
 	TAR_OPTIONS = --xz
 endif
 
-# Enable multi-threaded compression for LZMA
-export XZ_OPT = --threads=0
-
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -74,7 +71,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Compress root filesystem
 	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
-	tar -c -C / --files-from=/tmp/ROOTFILES \
+	XZ_OPT="$(XZ_OPT)" tar -c -C / --files-from=/tmp/ROOTFILES \
 		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
 		--exclude='proc/*' --exclude='tmp/ROOTFILES'
 	rm -f /tmp/ROOTFILES

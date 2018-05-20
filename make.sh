@@ -526,6 +526,7 @@ enterchroot() {
 		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
 		KVER="${KVER}" \
+		XZ_OPT="${XZ_OPT}" \
 		$(fake_environ) \
 		$(qemu_environ) \
 		"$@"
@@ -859,6 +860,21 @@ fi
 
 # Get the amount of memory in this build system
 HOST_MEM=$(system_memory)
+
+# Checking host memory, tuning XZ_OPT
+
+if [ $HOST_MEM -lt 1024 ]; then
+	print_build_stage "Host-Memory: $HOST_MEM MiB"
+	print_build_stage "Not enough host memory (less than 1024 MiB, please consider upgrading)"
+
+	exit 1
+
+else
+
+	XZ_MEM="$(( HOST_MEM * 7 / 10 ))MiB"
+	XZ_OPT="-T4 -8 --memory=$XZ_MEM"
+
+fi
 
 if [ -n "${BUILD_ARCH}" ]; then
 	configure_build "${BUILD_ARCH}"
@@ -1760,7 +1776,7 @@ toolchain)
 	buildtoolchain
 	echo "`date -u '+%b %e %T'`: Create toolchain image for ${BUILD_ARCH}" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
-	cd $BASEDIR && XZ_OPT="-T0 -8" tar -Jc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.xz \
+	cd $BASEDIR && XZ_OPT="$(XZ_OPT)" tar -Jc --exclude='log/_build.*.log' -f cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.xz \
 		build/${TOOLS_DIR} build/bin/sh log >> $LOGFILE
 	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.xz \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.md5
