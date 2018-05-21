@@ -866,8 +866,9 @@ if [ ${HOST_MEM} -lt 1024 ]; then
 	exiterror "You will need more than 1GB or host memory to run the build"
 fi
 
+# We compress archives with "xz -8", using all cores and up to 70% of memory
 XZ_MEM="$(( HOST_MEM * 7 / 10 ))MiB"
-XZ_OPT="-T4 -8 --memory=$XZ_MEM"
+XZ_OPT="-T$(system_processors) -8 --memory=${XZ_MEM}"
 
 if [ -n "${BUILD_ARCH}" ]; then
 	configure_build "${BUILD_ARCH}"
