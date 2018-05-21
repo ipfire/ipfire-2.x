@@ -29,12 +29,6 @@ VER = ipfire
 THISAPP    = cdrom
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-ifeq "$(BUILD_PLATFORM)" "arm"
-	TAR_OPTIONS =
-else
-	TAR_OPTIONS = --xz
-endif
-
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -78,7 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
 	@mkdir /tmp/sys
-	cd /tmp && XZ_OPT="$(XZ_OPT)" tar cf /install/cdrom/distro.img $(TAR_OPTIONS) * && rm -rf *
+	cd /tmp && tar cf - * | xz $(XZ_OPT) > /install/cdrom/distro.img && rm -rf *
 
 	# Other files
 	touch /install/cdrom/$(SNAME)-$(VERSION)-core$(CORE).media
