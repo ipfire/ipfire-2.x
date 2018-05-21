@@ -33,7 +33,7 @@ DEVICE     = $(shell losetup -f)
 PART_BOOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p1
 PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
 
-IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).2gb-ext4.$(BUILD_ARCH)-full-core$(CORE).img.gz
+IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).2gb-ext4.$(BUILD_ARCH)-full-core$(CORE).img.xz
 
 FSTAB_FMT = UUID=%s %-8s %-4s %-10s %d %d\n
 
@@ -214,5 +214,5 @@ ifeq "$(BUILD_PLATFORM)" "arm"
 endif
 
 	# Compress Image
-	pigz -f9 < $(IMG) > $(IMAGE_FILE)
+	xz $(XZ_OPT) < $(IMG) > $(IMAGE_FILE)
 	rm -rf $(IMG) $(MNThdd)

@@ -1573,7 +1573,7 @@ buildpackages() {
 	lfsmake2 flash-images
   fi
 
-  mv $LFS/install/images/{*.iso,*.tgz,*.img.gz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
+  mv $LFS/install/images/{*.iso,*.tgz,*.img.xz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
 
   ipfirepackages
 
