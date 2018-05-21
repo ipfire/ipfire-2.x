@@ -862,18 +862,14 @@ fi
 HOST_MEM=$(system_memory)
 
 # Checking host memory, tuning XZ_OPT
-
 if [ $HOST_MEM -lt 1024 ]; then
 	print_build_stage "Host-Memory: $HOST_MEM MiB"
 	print_build_stage "Not enough host memory (less than 1024 MiB, please consider upgrading)"
 
 	exit 1
-
 else
-
 	XZ_MEM="$(( HOST_MEM * 7 / 10 ))MiB"
 	XZ_OPT="-T4 -8 --memory=$XZ_MEM"
-
 fi
 
 if [ -n "${BUILD_ARCH}" ]; then
