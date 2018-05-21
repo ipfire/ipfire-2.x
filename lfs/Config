@@ -47,6 +47,8 @@ else
 	PREFIX = /usr
 endif
 
+TAR_OPTIONS = --xz
+
 # URLs that are common sources of downloads.  If you're having trouble with
 # a site you should change its URL to that of a suitable mirror site.
 #
@@ -209,11 +211,11 @@ define PAK
 	tar xf /install/packages/package/files.tmp -C /install/packages/package/tmp/ \
 		-p --numeric-owner
 	rm -f /install/packages/package/files.tmp
-	cd /install/packages/package/tmp/ && XZ_OPT="$(XZ_OPT)" tar -c -p --numeric-owner -J -f /install/packages/package/files.tar.xz *
+	cd /install/packages/package/tmp/ && XZ_OPT="$(XZ_OPT)" tar -c -p --numeric-owner -J -f /install/packages/package/files.tar.xz $(TAR_OPTIONS) *
 	rm -r /install/packages/package/tmp
 	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES.tmp
 	mv /install/packages/package/ROOTFILES.tmp /install/packages/package/ROOTFILES
-	cd /install/packages/package && tar cf ../$(PROG)-$(VER)-$(PAK_VER).ipfire --files-from=/usr/src/src/paks/files
+	cd /install/packages/package && XZ_OPT="$(XZ_OPT)" tar cf ../$(PROG)-$(VER)-$(PAK_VER).ipfire $(TAR_OPTIONS) --files-from=/usr/src/src/paks/files
 	rm -rf /install/packages/package
 	sed -e s/NAME/$(PROG)/g \
 			-e s/VER/$(VER)/g \
