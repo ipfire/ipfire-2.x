@@ -17,18 +17,21 @@ case "${1}" in
 		boot_mesg "Starting hostapd... "
 
 		# Check Interface configuration
-		if ! ip link show $INTERFACE > /dev/null 2>&1; then
+		if [ ! -d "/sys/class/net/${INTERFACE}" ]; then
 			boot_mesg "Interface $INTERFACE doesn't exist." ${FAILURE}
 			echo_failure
 			exit 0
 		fi
+
 		if [ "$(ip link show $INTERFACE | /bin/grep "ether")" == "" ]; then
 			boot_mesg "Interface $INTERFACE is assigned to wlan master device." ${FAILURE}
 			boot_mesg "Please reboot to fix this." ${FAILURE}
 			echo_failure
 			exit 0
 		fi
-		if [ "$(iwconfig $INTERFACE | /bin/grep "IEEE")" == "" ]; then
+
+		# Check if INTERFACE is an actual wireless device
+		if [ ! -d "/sys/class/net/${INTERFACE}/wireless" ]; then
 			boot_mesg "Interface $INTERFACE is no wireless device." ${FAILURE}
 			echo_failure
 			exit 0
