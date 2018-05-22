@@ -861,11 +861,6 @@ fi
 # Get the amount of memory in this build system
 HOST_MEM=$(system_memory)
 
-# Checking host memory, tuning XZ_OPT
-if [ ${HOST_MEM} -lt 1024 ]; then
-	exiterror "You will need more than 1GB or host memory to run the build"
-fi
-
 # We compress archives with "xz -8", using all cores and up to 70% of memory
 XZ_MEM=$(( HOST_MEM * 7 / 10 ))
 
