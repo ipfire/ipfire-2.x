@@ -84,7 +84,6 @@ struct hw_destination {
 	char part_boot[DEV_SIZE];
 	char part_swap[DEV_SIZE];
 	char part_root[DEV_SIZE];
-	char part_data[DEV_SIZE];
 	int part_boot_idx;
 
 	int filesystem;
@@ -94,7 +93,6 @@ struct hw_destination {
 	unsigned long long size_boot;
 	unsigned long long size_swap;
 	unsigned long long size_root;
-	unsigned long long size_data;
 };
 
 struct hw* hw_init();
