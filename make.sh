@@ -878,7 +878,7 @@ case "${HOST_ARCH}" in
 		;;
 esac
 
-XZ_OPT="-T$(system_processors) -8 --memory=${XZ_MEM}MiB"
+XZ_OPT="-T0 -8 --memory=${XZ_MEM}MiB"
 
 if [ -n "${BUILD_ARCH}" ]; then
 	configure_build "${BUILD_ARCH}"
