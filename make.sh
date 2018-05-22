@@ -867,8 +867,18 @@ if [ ${HOST_MEM} -lt 1024 ]; then
 fi
 
 # We compress archives with "xz -8", using all cores and up to 70% of memory
-XZ_MEM="$(( HOST_MEM * 7 / 10 ))MiB"
-XZ_OPT="-T$(system_processors) -8 --memory=${XZ_MEM}"
+XZ_MEM=$(( HOST_MEM * 7 / 10 ))
+
+# XZ memory cannot be larger than 2GB on 32 bit systems
+case "${HOST_ARCH}" in
+	i*86|armv*)
+		if [ ${XZ_MEM} -gt 2048 ]; then
+			XZ_MEM=2048
+		fi
+		;;
+esac
+
+XZ_OPT="-T$(system_processors) -8 --memory=${XZ_MEM}MiB"
 
 if [ -n "${BUILD_ARCH}" ]; then
 	configure_build "${BUILD_ARCH}"
