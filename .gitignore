@@ -9,6 +9,7 @@
 /tmp
 /*.diff
 *.img.gz
+*.img.xz
 *.iso
 *.tar.bz2
 /*.md5
