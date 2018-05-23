@@ -225,6 +225,30 @@ configure_build() {
 
 		MAKETUNING="-j${parallelism}"
 	fi
+
+	# Compression parameters
+	# We use mode 8 for reasonable memory usage when decompressing
+	# but with overall good compression
+	XZ_OPT="-8"
+
+	# We try to use as many cores as possible
+	XZ_OPT="${XZ_OPT} -T0"
+
+	# We need to limit memory because XZ uses too much when running
+	# in parallel and it isn't very smart in limiting itself.
+	# We allow XZ to use up to 70% of all system memory.
+	local xz_memory=$(( HOST_MEM * 7 / 10 ))
+
+	# XZ memory cannot be larger than 2GB on 32 bit systems
+	case "${build_arch}" in
+		i*86|armv*)
+			if [ ${xz_memory} -gt 2048 ]; then
+				xz_memory=2048
+			fi
+			;;
+	esac
+
+	XZ_OPT="${XZ_OPT} --memory=${xz_memory}MiB"
 }
 
 configure_build_guess() {
@@ -860,20 +884,6 @@ fi
 
 # Get the amount of memory in this build system
 HOST_MEM=$(system_memory)
-
-# We compress archives with "xz -8", using all cores and up to 70% of memory
-XZ_MEM=$(( HOST_MEM * 7 / 10 ))
-
-# XZ memory cannot be larger than 2GB on 32 bit systems
-case "${HOST_ARCH}" in
-	i*86|armv*)
-		if [ ${XZ_MEM} -gt 2048 ]; then
-			XZ_MEM=2048
-		fi
-		;;
-esac
-
-XZ_OPT="-T0 -8 --memory=${XZ_MEM}MiB"
 
 if [ -n "${BUILD_ARCH}" ]; then
 	configure_build "${BUILD_ARCH}"
