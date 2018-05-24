@@ -28,6 +28,7 @@
 'Captive clients' => 'Clients',
 'Captive config' => 'Konfiguration',
 'Captive coupon' => 'Gutschein',
+'Captive delete logo' => 'Logo löschen',
 'Captive err doublevoucher' => 'Ein Gutschein mit diesem Code ist bereits im Umlauf',
 'Captive expire' => 'Ablauf',
 'Captive expiry time' => 'Ablaufzeit',

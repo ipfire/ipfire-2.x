@@ -142,6 +142,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	}
 }
 
+if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive delete logo'}") {
+	unlink $logo;
+}
+
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupons'}") {
 	#check valid remark
 	if ($cgiparams{'REMARK'} ne '' && !&validremark($cgiparams{'REMARK'})){
@@ -381,7 +385,10 @@ if (-e $logo) {
 	print <<END;
 		<tr>
 			<td>$Lang::tr{'Captive logo uploaded'}</td>
-			<td>$Lang::tr{'yes'}</td>
+			<td>
+				$Lang::tr{'yes'}&nbsp;
+				<input type='submit' name='ACTION' value="$Lang::tr{'Captive delete logo'}"/>
+			</td>
 		</tr>
 END
 }

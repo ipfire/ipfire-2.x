@@ -27,6 +27,7 @@
 'Captive client session expiry time' => 'Session Expiry Time',
 'Captive config' => 'Settings',
 'Captive coupon' => 'Coupon',
+'Captive delete logo' => 'Delete Logo',
 'Captive err doublevoucher' => 'A coupon with this code already exists',
 'Captive expire' => 'Expire',
 'Captive expiry time' => 'Expiry Time',
