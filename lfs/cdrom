@@ -44,10 +44,19 @@ ISO_ARGS = -J -r -v \
 	-b boot/isolinux/isolinux.bin \
 	-c boot/isolinux/boot.catalog
 
+# Only build a stub ISO for ARM
+ifeq "$(BUILD_PLATFORM)" "arm"
+	ISO_ARGS = -J -r -V "$(NAME)_$(VERSION)"
+end
+
+ISOHYBRID_ARGS =
+
 ifeq "$(EFI)" "1"
 	ISO_ARGS += \
 		-eltorito-alt-boot \
 		-e boot/isolinux/efiboot.img
+
+	ISOHYBRID_ARGS += --uefi
 endif
 
 ###############################################################################
@@ -126,16 +135,7 @@ endif
 						xargs md5sum > md5sum.txt
 
 	mkdir -p /install/images
-ifeq "$(BUILD_PLATFORM)" "arm"
-	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
-		. > /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
-else
 	cd /install/cdrom && mkisofs $(ISO_ARGS) \
 		-o /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso .
 
-ifeq "$(EFI)" "1"
-	isohybrid --uefi /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
-else
-	isohybrid /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
-endif
-endif
+	isohybrid $(ISOHYBRID_ARGS) /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
