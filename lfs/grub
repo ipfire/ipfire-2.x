@@ -30,28 +30,24 @@ THISAPP    = grub-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-DIR_APP_EFI= $(DIR_APP)-efi
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = x86_64 i586
 
-EFI = 1
+# Build for which platforms?
+BUILD_PC    = 1
+BUILD_EFI   = $(EFI)
 
-EFI_ARCH = $(MACHINE)-efi
+DIR_APP_PC  = $(DIR_APP)-pc
+DIR_APP_EFI = $(DIR_APP)-efi
 
-ifeq "$(MACHINE)" "i586"
-	EFI_ARCH = i386-efi
-endif
-
-CFLAGS     =
-CXXFLAGS   =
+# Don't use our CFLAGS for boot code
+export HOST_CFLAGS  = $(CFLAGS)
+export HOST_LDFLAGS = $(LDFLAGS)
 
 CONFIGURE_ARGS = \
 	--prefix=/usr \
 	--sysconfdir=/etc \
-	--with-grubdir=grub \
-	--disable-grub-mount \
-	--disable-werror \
-	--program-transform-name=s,grub,grub,
+	--disable-werror
 
 ###############################################################################
 # Top-level Rules
@@ -94,40 +90,38 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_APP_EFI) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-2.00_disable_vga_fallback.patch
 
-ifeq "$(EFI)" "1"
-	cp -av $(DIR_APP) $(DIR_APP_EFI)
-	cd $(DIR_APP_EFI) && ./configure $(CONFIGURE_ARGS) --with-platform=efi
+	# Install unifont
+	cp -v $(DIR_DL)/unifont-7.0.03.pcf.gz $(DIR_APP)/unifont.pcf.gz
+
+ifeq "$(BUILD_EFI)" "1"
+	cp -r $(DIR_APP) $(DIR_APP_EFI)
+	cd $(DIR_APP_EFI) && ./configure $(CONFIGURE_ARGS) \
+		--with-platform=efi CFLAGS= LDFLAGS=
 	cd $(DIR_APP_EFI) && make $(MAKETUNING)
-
-	cd $(DIR_APP_EFI) && ./grub-mkimage \
-		-O $(EFI_ARCH) \
-		-p /EFI/ipfire/grub-efi \
-		-o grub.efi \
-		-d  grub-core part_msdos part_gpt fat ext2 xfs normal chain \
-			boot configfile linux jpeg minicmd loadbios png gzio loadenv \
-			reboot halt serial search font gfxmenu gfxterm echo video all_video \
-			usb minicmd
-endif
-
-	cd $(DIR_APP) && ./configure $(CONFIGURE_ARGS) --with-platform=pc
-	cd $(DIR_APP) && make $(MAKETUNING)
-
-ifeq "$(EFI)" "1"
 	cd $(DIR_APP_EFI) && make install
 
+	# Install empty configuration file
 	-mkdir -pv /boot/efi/EFI/ipfire/grub-efi
 	touch /boot/efi/EFI/ipfire/grub-efi/grub.cfg
-	install -m 755 $(DIR_APP_EFI)/grub.efi /boot/efi/EFI/ipfire/grub-efi/grub.efi
 endif
 
-	cd $(DIR_APP) && make install
+ifeq "$(BUILD_PC)" "1"
+	cp -r $(DIR_APP) $(DIR_APP_PC)
+	cd $(DIR_APP_PC) && ./configure $(CONFIGURE_ARGS) \
+		--with-platform=pc CFLAGS= LDFLAGS=
+	cd $(DIR_APP_PC) && make $(MAKETUNING)
+	cd $(DIR_APP_PC) && make install
 
+	# Install empty configuration file
 	-mkdir -pv /boot/grub
 	touch /boot/grub/grub.cfg
+endif
+
+	# Install background image
 	install -m 644 $(DIR_SRC)/config/grub2/splash.png /boot/grub/splash.png
 
+	# Install default configuration
 	-mkdir -pv /etc/default
 	install -m 644 $(DIR_SRC)/config/grub2/default /etc/default/grub
 
@@ -135,12 +129,5 @@ endif
 	paxctl -Cmpes /usr/sbin/grub-bios-setup /usr/sbin/grub-probe
 	paxctl -Cmpexs /usr/bin/grub-script-check
 
-	# We don't need to install unifont just to generate a grub2 compatible
-	# font archive for the graphical boot menu. The following command only
-	# converts Latin-1, Latin Extended A+B, Arrows, Box and Block characters.
-	/usr/bin/grub-mkfont --output /boot/grub/unifont.pf2 \
-		--range=0x0000-0x0241,0x2190-0x21FF,0x2500-0x259f \
-		$(DIR_DL)/unifont-7.0.03.pcf.gz
-
-	@rm -rf $(DIR_APP) $(DIR_APP_EFI)
+	@rm -rf $(DIR_APP) $(DIR_APP_PC) $(DIR_APP_EFI)
 	@$(POSTBUILD)
