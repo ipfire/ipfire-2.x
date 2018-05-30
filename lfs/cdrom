@@ -29,7 +29,7 @@ VER = ipfire
 THISAPP    = cdrom
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-ifeq "$(MACHINE_TYPE)" "arm"
+ifeq "$(BUILD_PLATFORM)" "arm"
 	TAR_OPTIONS =
 else
 	TAR_OPTIONS = --lzma

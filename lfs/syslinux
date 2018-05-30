@@ -77,13 +77,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Build
 	cd $(DIR_APP) && make bios $(MAKETUNING)
-ifeq "$(MACHINE)" "x86_64"
+ifeq "$(BUILD_ARCH)" "x86_64"
 	cd $(DIR_APP) && make efi64 $(MAKETUNING)
 endif
 
 	# Install
 	cd $(DIR_APP) && make bios install
-ifeq "$(MACHINE)" "x86_64"
+ifeq "$(BUILD_ARCH)" "x86_64"
 	cd $(DIR_APP) && make efi64 install
 endif
 

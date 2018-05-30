@@ -29,14 +29,6 @@ VER = ipfire
 THISAPP    = flash-image
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-ifeq "$(MACHINE)" "x86_64"
-	EFI = 1
-endif
-
-ifeq "$(MACHINE)" "i586"
-	EFI = 1
-endif
-
 DEVICE     = $(shell losetup -f)
 PART_BOOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p1
 ifeq "$(EFI)" "1"
@@ -95,11 +87,11 @@ endif
 S_BOOT := $(shell echo $$(( 262144 - $(S_OFFSET) )))
 S_ROOT := 2477600
 
-ifeq "$(MACHINE)" "x86_64"
+ifeq "$(BUILD_ARCH)" "x86_64"
 	EFI_ARCH = x64
 endif
 
-ifeq "$(MACHINE)" "i586"
+ifeq "$(BUILD_ARCH)" "i586"
 	EFI_ARCH = ia32
 endif
 

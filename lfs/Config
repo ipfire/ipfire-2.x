@@ -80,7 +80,7 @@ DIR_TMP     = /tmp
 CCACHE_COMPILERCHECK += $(shell gcc -dumpspecs 2>/dev/null | md5sum | cut -d ' ' -f1)
 
 # We support EFI on x86_64
-ifeq "$(MACHINE)" "x86_64"
+ifeq "$(BUILD_ARCH)" "x86_64"
 	EFI = 1
 endif
 
