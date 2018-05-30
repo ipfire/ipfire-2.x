@@ -41,8 +41,6 @@ case "${1}" in
 		case "$driver" in
 		    intel_pstate)
 			# pstate use internal gov so skip this setting
-			# activate cpufreq collectd module
-			sed -i -e "s|^#LoadPlugin cpufreq|LoadPlugin cpufreq|g" /etc/collectd.conf
 			echo_ok;
 			;;
 		    *)
@@ -51,9 +49,6 @@ case "${1}" in
 			# Set the governor to ondemand to test if it works 
 			cpufreq-set -g ondemand
 			if [ ${?} = 0 ]; then
-				# activate cpufreq collectd module
-				sed -i -e "s|^#LoadPlugin cpufreq|LoadPlugin cpufreq|g" /etc/collectd.conf
-
 				# Set the governor to ondemand for all cpus 
 				for i in `seq 0 $CPUCOUNT`;
 				do
