@@ -119,12 +119,34 @@ ifneq "$(BUILD_PLATFORM)" "arm"
 	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest
 	cp /usr/share/ipfire-netboot/ipxe.lkrn      /install/cdrom/boot/isolinux/netboot
 	cp /usr/share/syslinux/isolinux.bin         /install/cdrom/boot/isolinux/isolinux.bin
+
 ifeq "$(EFI)" "1"
+	# Create the EFI Eltorito image
 	dd if=/dev/zero of=/install/cdrom/boot/isolinux/efiboot.img bs=1k count=1440
 	mkdosfs -F 12 -n "IPFIRE_EFI" /install/cdrom/boot/isolinux/efiboot.img
 
-	# XXX Some bootloader needs to be put in this image
+	# Build a GRUB EFI image
+	grub-mkimage \
+		--format=$(BUILD_ARCH)-efi \
+		--output=/tmp/boot$(EFI_ARCH).efi \
+		--config=$(DIR_SRC)/config/cdrom/grub-efi.cfg \
+		--compression=xz \
+		--prefix=/EFI/BOOT \
+		$(GRUB_EFI_MODULES)
+
+	# Mount the EFI image
+	mkdir -pv /install/efiboot.img
+	mount -o loop /install/cdrom/boot/isolinux/efiboot.img /install/efiboot.img
+
+	# Copy the bootloader into the image
+	mkdir -pv /install/efiboot.img/EFI/BOOT
+	cp -a /tmp/boot$(EFI_ARCH).efi /install/efiboot.img/EFI/BOOT/boot$(EFI_ARCH).efi
+
+	# Cleanup
+	umount /install/efiboot.img
+	rm -rf /install/efiboot.img /tmp/boot$(EFI_ARCH).efi
 endif
+
 	cp /usr/share/hwdata/pci.ids                /install/cdrom/boot/isolinux/pci.ids
 	cp -vf /usr/share/syslinux/*.c32            /install/cdrom/boot/isolinux/
 	sed -e "s/VERSION/$(VERSION) - Core $(CORE)/g" \

@@ -82,7 +82,62 @@ CCACHE_COMPILERCHECK += $(shell gcc -dumpspecs 2>/dev/null | md5sum | cut -d ' '
 # We support EFI on x86_64
 ifeq "$(BUILD_ARCH)" "x86_64"
 	EFI = 1
+	EFI_ARCH = x64
 endif
+
+# Basic modules
+GRUB_EFI_MODULES = \
+	configfile \
+	efi_gop \
+	efi_uga \
+	gzio \
+	linux \
+	loadbios \
+	loadenv \
+	normal \
+	regexp
+
+# Stuff for accessing file systems
+GRUB_EFI_MODULES += \
+	ahci \
+	ext2 \
+	fat \
+	iso9660 \
+	part_gpt \
+	part_msdos \
+	udf
+
+# Graphics & IO
+GRUB_EFI_MODULES += \
+	all_video \
+	at_keyboard \
+	bitmap_scale \
+	font \
+	gfxmenu \
+	gfxterm \
+	jpeg \
+	png \
+	tga \
+	usb_keyboard
+
+# Commands
+GRUB_EFI_MODULES += \
+	boot \
+	cat \
+	chain \
+	echo \
+	halt \
+	help \
+	ls \
+	minicmd \
+	probe \
+	reboot \
+	search \
+	search_fs_file \
+	search_fs_uuid \
+	search_label \
+	test \
+	true
 
 ###############################################################################
 # Common Macro Definitions
