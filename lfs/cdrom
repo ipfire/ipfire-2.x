@@ -121,22 +121,28 @@ ifneq "$(BUILD_PLATFORM)" "arm"
 	cp /usr/share/syslinux/isolinux.bin         /install/cdrom/boot/isolinux/isolinux.bin
 
 ifeq "$(EFI)" "1"
-	# Create the EFI Eltorito image
-	dd if=/dev/zero of=/install/cdrom/boot/isolinux/efiboot.img bs=1k count=1440
-	mkdosfs -F 12 -n "IPFIRE_EFI" /install/cdrom/boot/isolinux/efiboot.img
-
 	# Generate embedded GRUB configuration
 	sed -e "s/NAME/$(NAME)/g" -e "s/VERSION/$(VERSION)/g" -e "s/ARCH/$(BUILD_ARCH)/g" \
 		$(DIR_SRC)/config/cdrom/grub-efi.cfg > /tmp/grub-efi.cfg
 
 	# Build a GRUB EFI image
+	mkdir -pv /install/cdrom/EFI/BOOT
 	grub-mkimage \
 		--format=$(BUILD_ARCH)-efi \
-		--output=/tmp/boot$(EFI_ARCH).efi \
+		--output=/install/cdrom/EFI/BOOT/boot$(EFI_ARCH).efi \
 		--config=/tmp/grub-efi.cfg \
 		--compression=xz \
 		--prefix=/EFI/BOOT \
 		$(GRUB_EFI_MODULES)
+
+	# Install GRUB configuration
+	mkdir -pv /install/cdrom/EFI/BOOT
+	sed -e "s/NAME/$(NAME)/g" -e "s/VERSION/$(VERSION)/g" -e "s/ARCH/$(BUILD_ARCH)/g" \
+		< $(DIR_SRC)/config/cdrom/grub.cfg > /install/cdrom/EFI/BOOT/grub.cfg
+
+	# Create the EFI Eltorito image
+	dd if=/dev/zero of=/install/cdrom/boot/isolinux/efiboot.img bs=1k count=1440
+	mkdosfs -F 12 -n "IPFIRE_EFI" /install/cdrom/boot/isolinux/efiboot.img
 
 	# Mount the EFI image
 	mkdir -pv /install/efiboot.img
@@ -144,16 +150,12 @@ ifeq "$(EFI)" "1"
 
 	# Copy the bootloader into the image
 	mkdir -pv /install/efiboot.img/EFI/BOOT
-	cp -a /tmp/boot$(EFI_ARCH).efi /install/efiboot.img/EFI/BOOT/boot$(EFI_ARCH).efi
+	cp -a /install/cdrom/EFI/BOOT/boot$(EFI_ARCH).efi \
+		/install/efiboot.img/EFI/BOOT/boot$(EFI_ARCH).efi
 
 	# Cleanup
 	umount /install/efiboot.img
-	rm -rf /install/efiboot.img /tmp/boot$(EFI_ARCH).efi /tmp/grub-efi.cfg
-
-	# Install GRUB configuration
-	mkdir -pv /install/cdrom/EFI/BOOT
-	sed -e "s/NAME/$(NAME)/g" -e "s/VERSION/$(VERSION)/g" -e "s/ARCH/$(BUILD_ARCH)/g" \
-		< $(DIR_SRC)/config/cdrom/grub.cfg > /install/cdrom/EFI/BOOT/grub.cfg
+	rm -rf /install/efiboot.img /tmp/grub-efi.cfg
 endif
 
 	cp /usr/share/hwdata/pci.ids                /install/cdrom/boot/isolinux/pci.ids
