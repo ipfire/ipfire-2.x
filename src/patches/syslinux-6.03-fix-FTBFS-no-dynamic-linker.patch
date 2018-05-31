@@ -1,0 +1,14 @@
+Fix for https://bugs.debian.org/846679 : syslinux: FTBFS: ld:
+ldlinux.elf: Not enough room for program headers, try linking with -N
+
+--- a/core/Makefile	2017-01-28 18:33:22.750959519 +0000
++++ b/core/Makefile	2017-01-28 18:27:47.387981830 +0000
+@@ -165,7 +165,7 @@
+ 
+ %.elf: %.o $(LIBDEP) $(LDSCRIPT) $(AUXLIBS)
+ 	$(LD) $(LDFLAGS) -Bsymbolic $(LD_PIE) -E --hash-style=gnu -T $(LDSCRIPT) -M -o $@ $< \
+-		--start-group $(LIBS) $(subst $(*F).elf,lib$(*F).a,$@) --end-group \
++		--start-group $(LIBS) $(subst $(*F).elf,lib$(*F).a,$@) --end-group --no-dynamic-linker \
+ 		> $(@:.elf=.map)
+ 	$(OBJDUMP) -h $@ > $(@:.elf=.sec)
+ 	$(PERL) $(SRC)/lstadjust.pl $(@:.elf=.lsr) $(@:.elf=.sec) $(@:.elf=.lst)
