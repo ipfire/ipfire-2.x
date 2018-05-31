@@ -47,7 +47,7 @@ ISO_ARGS = -J -r -v \
 # Only build a stub ISO for ARM
 ifeq "$(BUILD_PLATFORM)" "arm"
 	ISO_ARGS = -J -r -V "$(NAME)_$(VERSION)"
-end
+endif
 
 ISOHYBRID_ARGS =
 
