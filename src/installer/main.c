@@ -383,7 +383,9 @@ int main(int argc, char *argv[]) {
 	}
 
 	fprintf(flog, "Install program started.\n");
-		
+	if (hw->efi)
+		fprintf(flog, "EFI mode enabled\n");
+
 	newtInit();
 	newtCls();
 

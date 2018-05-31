@@ -57,6 +57,7 @@
 
 struct hw {
 	struct udev *udev;
+	int efi;
 };
 
 struct hw_disk {

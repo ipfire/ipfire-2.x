@@ -61,7 +61,7 @@ static int system_chroot(const char* output, const char* path, const char* cmd) 
 }
 
 struct hw* hw_init() {
-	struct hw* hw = malloc(sizeof(*hw));
+	struct hw* hw = calloc(1, sizeof(*hw));
 	assert(hw);
 
 	// Initialize libudev
@@ -70,6 +70,11 @@ struct hw* hw_init() {
 		fprintf(stderr, "Could not create udev instance\n");
 		exit(1);
 	}
+
+	// Detect if we are running in EFI mode
+	int ret = access("/sys/firmware/efi", R_OK);
+	if (ret == 0)
+		hw->efi = 1;
 
 	return hw;
 }
