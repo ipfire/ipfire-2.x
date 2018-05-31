@@ -1206,6 +1206,8 @@ buildipfire() {
   lfsmake2 bootstrap
   lfsmake2 arping
   lfsmake2 beep
+  lfsmake2 libarchive
+  lfsmake2 cmake
   lfsmake2 cdrkit
   lfsmake2 dosfstools
   lfsmake2 reiserfsprogs
@@ -1347,8 +1349,6 @@ buildipfire() {
   lfsmake2 libshout
   lfsmake2 xvid
   lfsmake2 libmpeg2
-  lfsmake2 libarchive
-  lfsmake2 cmake
   lfsmake2 gnump3d
   lfsmake2 rsync
   lfsmake2 libtirpc
