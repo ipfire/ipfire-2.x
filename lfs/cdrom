@@ -65,9 +65,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Compress root filesystem
 	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
-	tar -c -C / --files-from=/tmp/ROOTFILES \
-		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
-		--exclude='proc/*' --exclude='tmp/ROOTFILES'
+	tar -c --exclude='#*' --exclude='proc/*' --exclude='dev/pts/*' --exclude='tmp/ROOTFILES' \
+		-C / --files-from=/tmp/ROOTFILES -f /$(SNAME).tar
 	rm -f /tmp/ROOTFILES
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar

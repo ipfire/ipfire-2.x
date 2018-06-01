@@ -205,11 +205,9 @@ define PAK
 	sed -e 's/BUILDTARGET/$(BUILDTARGET)/g' -e 's/KVER/$(KVER)/g' -e 's/MACHINE/$(BUILD_ARCH)/g' -i /install/packages/package/ROOTFILES
 	sed -e 's/xxxKVERxxx/$(KVER)/g' -i /install/packages/package/install.sh
 	chmod 755 /install/packages/package/{{,un}install,update}.sh
-	cd / && tar cf /install/packages/package/files.tmp --files-from=/install/packages/package/ROOTFILES --exclude='#*' \
-		-p --numeric-owner
+	cd / && tar cfp /install/packages/package/files.tmp --numeric-owner --exclude='#*' --files-from=/install/packages/package/ROOTFILES
 	# Double tar to remove double files
-	tar xf /install/packages/package/files.tmp -C /install/packages/package/tmp/ \
-		-p --numeric-owner
+	tar xfp /install/packages/package/files.tmp --numeric-owner -C /install/packages/package/tmp/
 	rm -f /install/packages/package/files.tmp
 	cd /install/packages/package/tmp/ && tar cf - -p --numeric-owner * | xz $(XZ_OPT) > /install/packages/package/files.tar.xz
 	rm -r /install/packages/package/tmp

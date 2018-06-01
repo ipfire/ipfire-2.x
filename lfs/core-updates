@@ -72,10 +72,9 @@ core/%:
 	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
 
 	#Remove doubled files with tar/untar/tar to save space
-	tar -c -C / --files-from=/tmp/ROOTFILES \
-		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
-		--exclude='proc/*' --exclude='tmp/ROOTFILES' \
-		--exclude-from=$(DIR_SRC)/config/rootfiles/$@/exclude
+	tar -c --exclude='proc/*' --exclude='tmp/ROOTFILES' --exclude='#*' --exclude='dev/pts/*' \
+		--exclude-from=$(DIR_SRC)/config/rootfiles/$@/exclude \
+		-C / --files-from=/tmp/ROOTFILES -f /$(SNAME).tar
 	mv -f /tmp/ROOTFILES /install/packages/package/ROOTFILES
 	tar -p --numeric-owner -x  -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
