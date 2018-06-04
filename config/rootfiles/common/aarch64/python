@@ -1967,7 +1967,7 @@ usr/lib/python2.7/lib-dynload/cStringIO.so
 usr/lib/python2.7/lib-dynload/cmath.so
 usr/lib/python2.7/lib-dynload/crypt.so
 usr/lib/python2.7/lib-dynload/datetime.so
-usr/lib/python2.7/lib-dynload/dbm.so
+usr/lib/python2.7/lib-dynload/dbm_failed.so
 usr/lib/python2.7/lib-dynload/fcntl.so
 usr/lib/python2.7/lib-dynload/future_builtins.so
 usr/lib/python2.7/lib-dynload/gdbm.so
