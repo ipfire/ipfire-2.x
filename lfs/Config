@@ -136,7 +136,7 @@ define POSTBUILD
 	if [ -s "$(TARGET)_diff" ]; then \
 		LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))$(KCFG); \
 		echo $(LFS_SCRIPT); \
-		ROOTFILE=$$(find $(DIR_SRC)/config/rootfiles/{common,packages}/{$(BUILD_ARCH),} -maxdepth 1 -type f -name $$LFS_SCRIPT 2>/dev/null | head -1); \
+		ROOTFILE=$$(find -L $(DIR_SRC)/config/rootfiles/{common,packages}/{$(BUILD_ARCH),} -maxdepth 1 -type f -name $$LFS_SCRIPT 2>/dev/null | head -1); \
 		if [ "$$ROOTFILE" = "" ]; then \
 			touch $(TARGET)_missing_rootfile; \
 			ROOTFILE=$(TARGET)_missing_rootfile ; \
