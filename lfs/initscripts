@@ -173,6 +173,7 @@ $(TARGET) :
 	ln -sf ../init.d/setclock    /etc/rc.d/rc0.d/K47setclock
 	ln -sf ../init.d/setclock    /etc/rc.d/rc6.d/K47setclock
 	ln -sf ../init.d/console     /etc/rc.d/rcsysinit.d/S70console
+	ln -sf ../init.d/aws         /etc/rc.d/rcsysinit.d/S74aws
 	ln -sf ../init.d/firstsetup  /etc/rc.d/rcsysinit.d/S75firstsetup
 	ln -sf ../init.d/localnet    /etc/rc.d/rcsysinit.d/S80localnet
 	ln -sf ../init.d/pakfire     /etc/rc.d/rcsysinit.d/S81pakfire

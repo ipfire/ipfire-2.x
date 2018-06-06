@@ -1,0 +1,103 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/aws
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+MD_URL="http://169.254.169.254/latest/meta-data"
+
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/identify_ec2_instances.html
+running_on_ec2() {
+	local uuid
+
+	# Check if the hypervisor UUID starts with ec2
+	if [ -r "/sys/hypervisor/uuid" ]; then
+		uuid=$(</sys/hypervisor/uuid)
+
+		[ "${uuid:0:3}" = "ec2" ] && return 0
+	fi
+
+	# Check if the DMI product UUID starts with EC2
+	if [ -r "/sys/devices/virtual/dmi/id/product_uuid" ]; then
+		uuid=$(</sys/devices/virtual/dmi/id/product_uuid)
+
+		[ "${uuid:0:3}" = "EC2" ] && return 0
+	fi
+
+	# We are not running on AWS EC2
+	return 1
+}
+
+case "${1}" in
+	start)
+		# Do nothing if we are not running on AWS EC2
+		running_on_ec2 || exit 0
+
+		boot_mesg "Setting up system to run on AWS EC2..."
+
+		# Find the first interface to use
+		for i in /sys/class/net/*; do
+			[ -d "${i}" ] || continue
+			i=$(basename ${i})
+
+			# Skip loopback
+			[ "${i}" = "lo" ] && continue
+
+			# Use whatever we have found
+			intf="${i}"
+			break
+		done
+
+		# Check if we found a network interface
+		if [ ! -n "${intf}" ]; then
+			echo_failure
+
+			boot_mesg -n "Could not find a network interface" ${FAILURE}
+			boot_mesg "" ${NORMAL}
+		fi
+
+		# Assign ourselves an IP address to communicate with the meta-data service
+		ip addr add 169.254.169.1/24 dev "${intf}"
+		ip link set "${intf}" up
+
+		# Initialise system settings
+		if [ ! -s "/var/ipfire/main/settings" ]; then
+			hostname=$(curl ${MD_URL}/local-hostname)
+
+			(
+				echo "HOSTNAME=${hostname%%.*}"
+				echo "DOMAINNAME=${hostname#*.}"
+				echo "THEME=ipfire"
+				echo "LANGUAGE=en"
+				echo "KEYMAP=/lib/kbd/keymaps/i386/qwerty/us.map.gz"
+				echo "TIMEZONE=/usr/share/zoneinfo/posix/UTC"
+			) > /var/ipfire/main/settings
+		fi
+
+		# Remove any IP addresses
+		ip addr flush dev "${intf}"
+		echo_ok
+
+		# This script has now completed the first steps of setup
+		touch /var/ipfire/main/firstsetup_ok
+		;;
+
+	status)
+		if running_on_ec2; then
+			echo "This system is running on AWS EC2"
+			exit 0
+		else
+			echo "This system is NOT running on AWS EC2"
+			exit 1
+		fi
+		;;
+
+	*)
+		echo "Usage: ${0} {start|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/aws
