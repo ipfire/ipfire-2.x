@@ -26,10 +26,55 @@
 
 core=121
 
+exit_with_error() {
+	# Set last succesfull installed core.
+	echo $(($core-1)) > /opt/pakfire/db/core/mine
+	/usr/bin/logger -p syslog.emerg -t ipfire \
+		"core-update-${core}: $1"
+	exit $2
+}
+
 # Remove old core updates from pakfire cache to save space...
 for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
+
+# This update cannot be applied on ARM
+case "$(uname -a)" in
+	arm*)
+		exit_with_error "ERROR: Cannot update on ARM. Please re-install." 1
+		;;
+esac
+
+# Do some sanity checks.
+case $(uname -r) in
+	*-ipfire*)
+		# Ok.
+		;;
+	*)
+		exit_with_error "ERROR cannot update. No IPFire Kernel." 1
+		;;
+esac
+
+# Check diskspace on root
+ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
+
+if [ $ROOTSPACE -lt 100000 ]; then
+	exit_with_error "ERROR cannot update because not enough free space on root." 2
+	exit 2
+fi
+
+# Remove the old kernel
+rm -rf /boot/System.map-*
+rm -rf /boot/config-*
+rm -rf /boot/ipfirerd-*
+rm -rf /boot/initramfs-*
+rm -rf /boot/vmlinuz-*
+rm -rf /boot/uImage-ipfire-*
+rm -rf /boot/zImage-ipfire-*
+rm -rf /boot/uInit-ipfire-*
+rm -rf /boot/dtb-*-ipfire-*
+rm -rf /lib/modules
 
 # Stop services
 
