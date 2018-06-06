@@ -70,9 +70,9 @@ else
  PART_TYPE = L
 endif
 
-# /boot:  100MB - OFFSET
+# /boot:  128MB - OFFSET
 # /    : 1200 MB
-S_BOOT := $(shell echo $$(( 204800 - $(S_OFFSET) )))
+S_BOOT := $(shell echo $$(( 262144 - $(S_OFFSET) )))
 S_ROOT := 2477600
 
 PADDING = 100 # MB
