@@ -24,7 +24,7 @@
 
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
-VERSION="2.19"							# Version number
+VERSION="2.21"							# Version number
 CORE="121"							# Core Level (Filename)
 PAKFIRE_CORE="120"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
