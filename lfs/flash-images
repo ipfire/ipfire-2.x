@@ -84,14 +84,6 @@ endif
 S_BOOT := $(shell echo $$(( 262144 - $(S_OFFSET) )))
 S_ROOT := 2477600
 
-ifeq "$(BUILD_ARCH)" "x86_64"
-	EFI_ARCH = x64
-endif
-
-ifeq "$(BUILD_ARCH)" "i586"
-	EFI_ARCH = ia32
-endif
-
 PADDING = 100 # MB
 
 ifeq "$(EFI)" "1"
@@ -213,15 +205,15 @@ ifeq "$(BOOTLOADER)" "grub"
 	grub-install --force --recheck --no-floppy --target=i386-pc \
 		--root-directory=$(MNThdd) $(DEVICE)
 
+ifeq "$(EFI)" "1"
+	# Install GRUB for EFI
+	grub-install --target=$(BUILD_ARCH)-efi --removable --no-nvram \
+		--boot-directory=$(MNThdd)/boot --efi-directory=$(MNThdd)/boot/efi
+endif
+
 	# restore orginal defaults
 	mv -f $(MNThdd)/etc/default/grub.backup $(MNThdd)/etc/default/grub
 	rm -f $(MNThdd)/etc/grub.d/11_linux_scon
-
-ifeq "$(EFI)" "1"
-	mkdir -pv $(MNThdd)/boot/efi/EFI/boot
-	cp -vf $(MNThdd)/boot/efi/EFI/ipfire/grub-efi/grub.efi \
-		$(MNThdd)/boot/efi/EFI/boot/boot$(EFI_ARCH).efi
-endif
 endif
 
 	# Set ramdisk mode to automatic
