@@ -4026,11 +4026,9 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		&deletebackupcert();
 	    }
 
-	    my $temp = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
-	    $temp =~ /Subject:.*CN=(.*)[\n]/;
+	    my $temp = `/usr/bin/openssl x509 -subject -nameopt sep_multiline,sname,esc_ctrl,esc_msb -noout -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
+	    $temp =~ /^[\ ]{4}CN=(.+)$/m;
 	    $temp = $1;
-	    $temp =~ s+/Email+, E+;
-	    $temp =~ s/ ST=/ S=/;
 	    $cgiparams{'CERT_NAME'} = $temp;
 	    $cgiparams{'CERT_NAME'} =~ s/,//g;
 	    $cgiparams{'CERT_NAME'} =~ s/\'//g;
@@ -4080,14 +4078,13 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		}
 	    }
 
-	    my $temp = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
-	    $temp =~ /Subject:.*CN=(.*)[\n]/;
+	    my $temp = `/usr/bin/openssl x509 -subject -nameopt sep_multiline,sname,esc_ctrl,esc_msb -noout -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
+	    $temp =~ /^[\ ]{4}CN=(.+)$/m;
 	    $temp = $1;
-	    $temp =~ s+/Email+, E+;
-	    $temp =~ s/ ST=/ S=/;
 	    $cgiparams{'CERT_NAME'} = $temp;
 	    $cgiparams{'CERT_NAME'} =~ s/,//g;
 	    $cgiparams{'CERT_NAME'} =~ s/\'//g;
+
 	    if ($cgiparams{'CERT_NAME'} eq '') {
 		unlink ("${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem");
 		$errormessage = $Lang::tr{'could not retrieve common name from certificate'};
@@ -5311,7 +5308,9 @@ END
         }else {
 
 				my $cn;
+				my $config_cn;
 				my @match = ();
+
 		foreach my $line (@status) {
 			chomp($line);
 			if ( $line =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/) {
@@ -5319,8 +5318,16 @@ END
 				if ($match[1] ne "Common Name") {
 					$cn = $match[1];
 				}
+				#Handle OpenVPN's substitutions of space characters
+				# See http://lists.ipfire.org/pipermail/development/2013-January/000225.html
 				$cn =~ s/[_]/ /g;
-				if ($cn eq "$confighash{$key}[2]") {
+
+				# Work around incorrectly saved CNs 
+				# See https://bugzilla.ipfire.org/show_bug.cgi?id=10552 .
+				$config_cn = $confighash{$key}[2];
+				$config_cn =~ s/^([^\/]+)(\/.*)?/$1/g;
+
+				if ($config_cn eq $cn) {
 					$col1="bgcolor='${Header::colourgreen}'";
 					$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
 				}

@@ -30,7 +30,7 @@ my $CN    = $ARGV[1];
 exit 0 unless ($DEPTH eq "0");
 
 # Strip the CN from the X509 identifier.
-$CN =~ /(\/|,\ )CN=(.*)$/i;
+$CN =~ /(\/|,\ )?CN=([^,\/ ]+)?/i;
 $CN = $2;
 
 my %confighash = ();
@@ -48,9 +48,17 @@ if (-f "${General::swroot}/ovpn/ovpnconfig"){
 		# Search for a matching CN.
 		exit 0 if ($cn eq $CN);
 
-		# Compatibility code for incorrectly saved CNs.
+		# Compatibility code for incorrectly saved CNs:
+
+		# 1) try to match an incorrectly saved CN
+		# See https://bugzilla.ipfire.org/show_bug.cgi?id=10552
+		$cn =~ s/^([^\/]+)(\/.*)?$/$1/g;
+
+		# 2) Handle OpenVPN's substitutions of space characters 
+		# See http://lists.ipfire.org/pipermail/development/2013-January/000225.html
 		$cn =~ s/\ /_/g;
-		exit 0 if ($cn eq $CN);
+
+                exit 0 if ($cn eq $CN);
 	}
 }
 
