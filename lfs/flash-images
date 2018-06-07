@@ -69,14 +69,8 @@ else
  BOOTLOADER = grub
  S_OFFSET = 8192
 
- # Logical
+ # Linux
  PART_TYPE = L
-endif
-
-ifeq "$(EFI)" "1"
- S_EFI = 204800
-else
- S_EFI = 0
 endif
 
 # /boot:  128MB - OFFSET
@@ -84,18 +78,23 @@ endif
 S_BOOT := $(shell echo $$(( 262144 - $(S_OFFSET) )))
 S_ROOT := 2477600
 
+ifeq "$(EFI)" "1"
+ S_EFI = 204800
+else
+ S_EFI = 0
+endif
+
 PADDING = 100 # MB
 
 ifeq "$(EFI)" "1"
- SFDISK_EFI  = $(S_OFFSET),$(S_EFI),U\n
  SFDISK      = $(SFDISK_BOOT)$(SFDISK_EFI)$(SFDISK_ROOT)
 else
- SFDISK_SWAP = ,0,0\n
- SFDISK      = $(SFDISK_BOOT)$(SFDISK_SWAP)$(SFDISK_ROOT)
+ SFDISK      = $(SFDISK_BOOT)$(SFDISK_ROOT)
 endif
 
-SFDISK_BOOT = $(shell echo $$(( $(S_OFFSET) + $(S_EFI) ))),$(S_BOOT),$(PART_TYPE),*\n
-SFDISK_ROOT = $(shell echo $$(( $(S_OFFSET) + $(S_EFI) + $(S_BOOT) ))),$(S_ROOT),L\n
+SFDISK_BOOT = $(S_OFFSET),$(S_BOOT),$(PART_TYPE),*\n
+SFDISK_EFI  = $(shell echo $$(( $(S_OFFSET) + $(S_BOOT) ))),$(S_EFI),U\n
+SFDISK_ROOT = $(shell echo $$(( $(S_OFFSET) + $(S_BOOT) + $(S_EFI) ))),$(S_ROOT),L\n
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Stop if $(MNThdd) is still mounted
@@ -109,11 +108,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Write Partition table
 	echo -e "$(SFDISK)" | sfdisk -uS $(DEVICE)
-
-	# Remove 2nd empty partition
-ifneq "$(EFI)" "1"
-	-echo -e "d\n2\nw\n\q\n" | fdisk $(DEVICE)
-endif
 
 	kpartx -v -a $(DEVICE)
 
