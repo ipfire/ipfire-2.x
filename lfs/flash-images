@@ -95,7 +95,7 @@ endif
 PADDING = 100 # MB
 
 ifeq "$(EFI)" "1"
- SFDISK_EFI  = $(S_OFFSET),$(S_EFI),c,*\n
+ SFDISK_EFI  = $(S_OFFSET),$(S_EFI),U,*\n
  SFDISK      = $(SFDISK_BOOT)$(SFDISK_EFI)$(SFDISK_ROOT)
 else
  SFDISK_SWAP = ,0,0\n
