@@ -100,10 +100,6 @@ ifeq "$(BUILD_EFI)" "1"
 		--with-platform=efi CFLAGS= LDFLAGS=
 	cd $(DIR_APP_EFI) && make $(MAKETUNING)
 	cd $(DIR_APP_EFI) && make install
-
-	# Install empty configuration file
-	-mkdir -pv /boot/efi/EFI/ipfire/grub-efi
-	touch /boot/efi/EFI/ipfire/grub-efi/grub.cfg
 endif
 
 ifeq "$(BUILD_PC)" "1"

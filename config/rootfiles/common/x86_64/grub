@@ -1,8 +1,3 @@
-#boot/efi
-#boot/efi/EFI
-#boot/efi/EFI/ipfire
-#boot/efi/EFI/ipfire/grub-efi
-boot/efi/EFI/ipfire/grub-efi/grub.cfg
 #boot/grub
 boot/grub/grub.cfg
 boot/grub/splash.png
