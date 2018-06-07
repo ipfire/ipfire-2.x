@@ -79,7 +79,7 @@ S_BOOT := $(shell echo $$(( 262144 - $(S_OFFSET) )))
 S_ROOT := 2477600
 
 ifeq "$(EFI)" "1"
- S_EFI = 204800
+ S_EFI = 65536 # 32 MB
 else
  S_EFI = 0
 endif
