@@ -73,11 +73,8 @@ else
  PART_TYPE = L
 endif
 
-GRUB_CFGS = /boot/grub/grub.cfg
-
 ifeq "$(EFI)" "1"
  S_EFI = 204800
- GRUB_CFGS += /boot/efi/EFI/ipfire/grub-efi/grub.cfg
 else
  S_EFI = 0
 endif
@@ -201,17 +198,14 @@ ifeq "$(BOOTLOADER)" "grub"
 			$(MNThdd)/etc/grub.d/
 
 	# Create configuration
-	for i in $(GRUB_CFGS); do \
-		mkdir -pv $$(dirname $(MNThdd)$(GRUB_CFG)); \
-		chroot $(MNThdd) grub-mkconfig -o $$i || exit 1; \
-	done
+	mkdir -pv $(MNThdd)/boot/grub
+	chroot $(MNThdd) grub-mkconfig -o /boot/grub/grub.cfg
 
 	# Boot the first kernel by default
 	chroot $(MNThdd) grub-set-default 0
 
 	# Insert the UUID because grub-mkconfig often fails to
 	# detect that correctly
-	sed -i $(addprefix $(MNThdd),$(GRUB_CFGS)) \
 	sed -i $(MNThdd)/boot/grub/grub.cfg \
 		-e "s/root=[A-Za-z0-9\/=-]*/root=UUID=$$(blkid -o value -s UUID $(PART_ROOT))/g"
 
