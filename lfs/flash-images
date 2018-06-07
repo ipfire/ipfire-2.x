@@ -87,14 +87,14 @@ S_ROOT := 2477600
 PADDING = 100 # MB
 
 ifeq "$(EFI)" "1"
- SFDISK_EFI  = $(S_OFFSET),$(S_EFI),U,*\n
+ SFDISK_EFI  = $(S_OFFSET),$(S_EFI),U\n
  SFDISK      = $(SFDISK_BOOT)$(SFDISK_EFI)$(SFDISK_ROOT)
 else
  SFDISK_SWAP = ,0,0\n
  SFDISK      = $(SFDISK_BOOT)$(SFDISK_SWAP)$(SFDISK_ROOT)
 endif
 
-SFDISK_BOOT = $(shell echo $$(( $(S_OFFSET) + $(S_EFI) ))),$(S_BOOT),$(PART_TYPE)\n
+SFDISK_BOOT = $(shell echo $$(( $(S_OFFSET) + $(S_EFI) ))),$(S_BOOT),$(PART_TYPE),*\n
 SFDISK_ROOT = $(shell echo $$(( $(S_OFFSET) + $(S_EFI) + $(S_BOOT) ))),$(S_ROOT),L\n
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
