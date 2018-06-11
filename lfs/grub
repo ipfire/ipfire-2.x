@@ -31,11 +31,18 @@ DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = x86_64 i586
+SUP_ARCH   = aarch64 x86_64 i586
 
 # Build for which platforms?
-BUILD_PC    = 1
-BUILD_EFI   = $(EFI)
+ifeq "$(BUILD_ARCH)" "i586"
+	BUILD_PC = 1
+endif
+
+ifeq "$(BUILD_ARCH)" "x86_64"
+	BUILD_PC = 1
+endif
+
+BUILD_EFI = $(EFI)
 
 DIR_APP_PC  = $(DIR_APP)-pc
 DIR_APP_EFI = $(DIR_APP)-efi
@@ -115,6 +122,7 @@ ifeq "$(BUILD_PC)" "1"
 endif
 
 	# Install background image
+	-mkdir -pv /boot/grub
 	install -m 644 $(DIR_SRC)/config/grub2/splash.png /boot/grub/splash.png
 
 	# Install default configuration
