@@ -37,6 +37,7 @@
 #include <sys/stat.h>
 #include <sys/swap.h>
 #include <sys/sysinfo.h>
+#include <sys/utsname.h>
 #include <unistd.h>
 
 #include <linux/fs.h>
@@ -71,8 +72,14 @@ struct hw* hw_init() {
 		exit(1);
 	}
 
+	// What architecture are we running on?
+	struct utsname uname_data;
+	int ret = uname(&uname_data);
+	if (ret == 0)
+		snprintf(hw->arch, sizeof(hw->arch), "%s", uname_data.machine);
+
 	// Detect if we are running in EFI mode
-	int ret = access("/sys/firmware/efi", R_OK);
+	ret = access("/sys/firmware/efi", R_OK);
 	if (ret == 0)
 		hw->efi = 1;
 
@@ -140,7 +147,14 @@ int hw_mount(const char* source, const char* target, const char* fs, int flags) 
 		}
 	}
 
-	return mount(source, target, fs, flags, NULL);
+	int r = mount(source, target, fs, flags, NULL);
+
+	if (r) {
+		fprintf(stderr, "Error mounting %s to %s (fs = %s, flags = %d): %s\n",
+				source, target, fs, flags, strerror(r));
+	}
+
+	return r;
 }
 
 int hw_umount(const char* target) {
@@ -443,7 +457,7 @@ static int hw_device_has_p_suffix(const struct hw_destination* dest) {
 	return 0;
 }
 
-static int hw_calculate_partition_table(struct hw_destination* dest, int disable_swap) {
+static int hw_calculate_partition_table(struct hw* hw, struct hw_destination* dest, int disable_swap) {
 	char path[DEV_SIZE];
 	int part_idx = 1;
 
@@ -501,9 +515,15 @@ static int hw_calculate_partition_table(struct hw_destination* dest, int disable
 
 	dest->size_boot = hw_boot_size(dest);
 
+	// Create an EFI partition when running in EFI mode
+	if (hw->efi)
+		dest->size_boot_efi = MB2BYTES(32);
+	else
+		dest->size_boot_efi = 0;
+
 	// Determine the size of the data partition.
 	unsigned long long space_left = dest->size - \
-		(dest->size_bootldr + dest->size_boot);
+		(dest->size_bootldr + dest->size_boot + dest->size_boot_efi);
 
 	// If we have less than 2GB left, we disable swap
 	if (space_left <= MB2BYTES(2048))
@@ -530,6 +550,14 @@ static int hw_calculate_partition_table(struct hw_destination* dest, int disable
 	} else
 		*dest->part_boot = '\0';
 
+	if (dest->size_boot_efi > 0) {
+		dest->part_boot_efi_idx = part_idx;
+
+		snprintf(dest->part_boot_efi, sizeof(dest->part_boot_efi),
+			"%s%d", path, part_idx++);
+	} else
+		*dest->part_boot_efi = '\0';
+
 	if (dest->size_swap > 0)
 		snprintf(dest->part_swap, sizeof(dest->part_swap), "%s%d", path, part_idx++);
 	else
@@ -544,7 +572,7 @@ static int hw_calculate_partition_table(struct hw_destination* dest, int disable
 	return 0;
 }
 
-struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks, int disable_swap) {
+struct hw_destination* hw_make_destination(struct hw* hw, int part_type, struct hw_disk** disks, int disable_swap) {
 	struct hw_destination* dest = malloc(sizeof(*dest));
 
 	if (part_type == HW_PART_TYPE_NORMAL) {
@@ -564,7 +592,7 @@ struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks
 	// Is this a RAID device?
 	dest->is_raid = (part_type > HW_PART_TYPE_NORMAL);
 
-	int r = hw_calculate_partition_table(dest, disable_swap);
+	int r = hw_calculate_partition_table(hw, dest, disable_swap);
 	if (r)
 		return NULL;
 
@@ -652,6 +680,14 @@ int hw_create_partitions(struct hw_destination* dest, const char* output) {
 		part_start += dest->size_boot;
 	}
 
+	if (*dest->part_boot_efi) {
+		asprintf(&cmd, "%s mkpart %s fat32 %lluB %lluB", cmd,
+			(dest->part_table == HW_PART_TABLE_GPT) ? "ESP" : "primary",
+			part_start, part_start + dest->size_boot_efi - 1);
+
+		part_start += dest->size_boot_efi;
+	}
+
 	if (*dest->part_swap) {
 		asprintf(&cmd, "%s mkpart %s linux-swap %lluB %lluB", cmd,
 			(dest->part_table == HW_PART_TABLE_GPT) ? "SWAP" : "primary",
@@ -670,6 +706,9 @@ int hw_create_partitions(struct hw_destination* dest, const char* output) {
 
 	if (dest->part_boot_idx > 0)
 		asprintf(&cmd, "%s set %d boot on", cmd, dest->part_boot_idx);
+
+	if (dest->part_boot_efi_idx > 0)
+		asprintf(&cmd, "%s set %d esp on", cmd, dest->part_boot_efi_idx);
 
 	if (dest->part_table == HW_PART_TABLE_GPT) {
 		if (*dest->part_bootldr) {
@@ -691,6 +730,9 @@ int hw_create_partitions(struct hw_destination* dest, const char* output) {
 				continue;
 
 			if (*dest->part_boot && (try_open(dest->part_boot) != 0))
+				continue;
+
+			if (*dest->part_boot_efi && (try_open(dest->part_boot_efi) != 0))
 				continue;
 
 			if (*dest->part_swap && (try_open(dest->part_swap) != 0))
@@ -731,6 +773,10 @@ static int hw_format_filesystem(const char* path, int fs, const char* output) {
 	// XFS
 	} else if (fs == HW_FS_XFS) {
 		snprintf(cmd, sizeof(cmd), "/sbin/mkfs.xfs -f %s", path);
+
+	// FAT32
+	} else if (fs == HW_FS_FAT32) {
+		snprintf(cmd, sizeof(cmd), "/sbin/mkfs.vfat %s", path);
 	}
 
 	assert(*cmd);
@@ -746,6 +792,13 @@ int hw_create_filesystems(struct hw_destination* dest, const char* output) {
 	// boot
 	if (*dest->part_boot) {
 		r = hw_format_filesystem(dest->part_boot, dest->filesystem, output);
+		if (r)
+			return r;
+	}
+
+	// ESP
+	if (*dest->part_boot_efi) {
+		r = hw_format_filesystem(dest->part_boot_efi, HW_FS_FAT32, output);
 		if (r)
 			return r;
 	}
@@ -785,6 +838,10 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 			filesystem = "xfs";
 			break;
 
+		case HW_FS_FAT32:
+			filesystem = "vfat";
+			break;
+
 		default:
 			assert(0);
 	}
@@ -800,6 +857,19 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 		mkdir(target, S_IRWXU|S_IRWXG|S_IRWXO);
 
 		r = hw_mount(dest->part_boot, target, filesystem, 0);
+		if (r) {
+			hw_umount_filesystems(dest, prefix);
+
+			return r;
+		}
+	}
+
+	// ESP
+	if (*dest->part_boot_efi) {
+		snprintf(target, sizeof(target), "%s%s", prefix, HW_PATH_BOOT_EFI);
+		mkdir(target, S_IRWXU|S_IRWXG|S_IRWXO);
+
+		r = hw_mount(dest->part_boot_efi, target, "vfat", 0);
 		if (r) {
 			hw_umount_filesystems(dest, prefix);
 
@@ -842,6 +912,14 @@ int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
 
 	// Write all buffers to disk before umounting
 	hw_sync();
+
+	// ESP
+	if (*dest->part_boot_efi) {
+		snprintf(target, sizeof(target), "%s%s", prefix, HW_PATH_BOOT_EFI);
+		r = hw_umount(target);
+		if (r)
+			return -1;
+	}
 
 	// boot
 	if (*dest->part_boot) {
@@ -957,18 +1035,13 @@ int hw_stop_all_raid_arrays(const char* output) {
 	return mysystem(output, "/sbin/mdadm --stop --scan --verbose");
 }
 
-int hw_install_bootloader(struct hw_destination* dest, const char* output) {
+int hw_install_bootloader(struct hw* hw, struct hw_destination* dest, const char* output) {
 	char cmd[STRING_SIZE];
 	int r;
 
-	// Generate configuration file
-	snprintf(cmd, sizeof(cmd), "/usr/sbin/grub-mkconfig -o /boot/grub/grub.cfg");
-	r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
-	if (r)
-		return r;
-
 	char cmd_grub[STRING_SIZE];
-	snprintf(cmd_grub, sizeof(cmd_grub), "/usr/sbin/grub-install --no-floppy --recheck");
+	snprintf(cmd_grub, sizeof(cmd_grub), "/usr/sbin/grub-install --target=i386-pc"
+			" --no-floppy --recheck");
 
 	if (dest->is_raid) {
 		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->disk1->path);
@@ -978,14 +1051,34 @@ int hw_install_bootloader(struct hw_destination* dest, const char* output) {
 
 		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->disk2->path);
 		r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
+		if (r)
+			return r;
 	} else {
 		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->path);
 		r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
+		if (r)
+			return r;
 	}
+
+	// Install GRUB in EFI mode
+	if (hw->efi) {
+		snprintf(cmd, sizeof(cmd), "/usr/sbin/grub-install"
+			" --target=%s-efi --efi-directory=%s", hw->arch, HW_PATH_BOOT_EFI);
+
+		r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
+		if (r)
+			return r;
+	}
+
+	// Generate configuration file
+	snprintf(cmd, sizeof(cmd), "/usr/sbin/grub-mkconfig -o /boot/grub/grub.cfg");
+	r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
+	if (r)
+		return r;
 
 	hw_sync();
 
-	return r;
+	return 0;
 }
 
 static char* hw_get_uuid(const char* dev) {
@@ -1025,6 +1118,17 @@ int hw_write_fstab(struct hw_destination* dest) {
 			free(uuid);
 		}
 	}
+
+	// ESP
+	if (*dest->part_boot_efi) {
+		uuid = hw_get_uuid(dest->part_boot_efi);
+
+		if (uuid) {
+			fprintf(f, FSTAB_FMT, uuid, "/boot/efi", "auto", "defaults", 1, 2);
+			free(uuid);
+		}
+	}
+
 
 	// swap
 	if (*dest->part_swap) {

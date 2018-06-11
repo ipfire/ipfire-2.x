@@ -675,7 +675,8 @@ int main(int argc, char *argv[]) {
 
 	hw_free_disks(disks);
 
-	struct hw_destination* destination = hw_make_destination(part_type, selected_disks, config.disable_swap);
+	struct hw_destination* destination = hw_make_destination(hw, part_type,
+		selected_disks, config.disable_swap);
 
 	if (!destination) {
 		errorbox(_("Your harddisk is too small."));
@@ -685,6 +686,7 @@ int main(int argc, char *argv[]) {
 	fprintf(flog, "Destination drive: %s\n", destination->path);
 	fprintf(flog, "  bootldr: %s (%lluMB)\n", destination->part_bootldr, BYTES2MB(destination->size_bootldr));
 	fprintf(flog, "  boot   : %s (%lluMB)\n", destination->part_boot, BYTES2MB(destination->size_boot));
+	fprintf(flog, "  ESP    : %s (%lluMB)\n", destination->part_boot_efi, BYTES2MB(destination->size_boot_efi));
 	fprintf(flog, "  swap   : %s (%lluMB)\n", destination->part_swap, BYTES2MB(destination->size_swap));
 	fprintf(flog, "  root   : %s (%lluMB)\n", destination->part_root, BYTES2MB(destination->size_root));
 	fprintf(flog, "Memory   : %lluMB\n", BYTES2MB(hw_memory()));
@@ -836,7 +838,7 @@ int main(int argc, char *argv[]) {
 		fclose(f);
 	}
 
-	rc = hw_install_bootloader(destination, logfile);
+	rc = hw_install_bootloader(hw, destination, logfile);
 	if (rc) {
 		errorbox(_("Unable to install the bootloader."));
 		goto EXIT;
