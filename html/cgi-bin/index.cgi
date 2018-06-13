@@ -479,6 +479,9 @@ END
 						} elsif ($line =~ /$vpnconfig{$key}[1]\{.*ROUTED/) {
 							$activecolor = $Header::colourorange;
 							$activestatus = $Lang::tr{'vpn on-demand'};
+						} elsif ($vpnconfig{$key}[33] eq "add") {
+							$activecolor = ${Header::colourorange};
+							$activestatus = $Lang::tr{'vpn wait'};
 						}
 					}
 				}

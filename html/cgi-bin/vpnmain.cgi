@@ -2439,6 +2439,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$selected{'DPD_ACTION'}{'none'} = '';
 	$selected{'DPD_ACTION'}{$cgiparams{'DPD_ACTION'}} = "selected='selected'";
 
+	$selected{'START_ACTION'}{'add'} = '';
 	$selected{'START_ACTION'}{'route'} = '';
 	$selected{'START_ACTION'}{'start'} = '';
 	$selected{'START_ACTION'}{$cgiparams{'START_ACTION'}} = "selected='selected'";
@@ -2664,6 +2665,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			<select name="START_ACTION">
 				<option value="route" $selected{'START_ACTION'}{'route'}>$Lang::tr{'vpn start action route'}</option>
 				<option value="start" $selected{'START_ACTION'}{'start'}>$Lang::tr{'vpn start action start'}</option>
+				<option value="add"   $selected{'START_ACTION'}{'add'}  >$Lang::tr{'vpn start action add'}</option>
 			</select>
 		</td>
 	</tr>
@@ -2861,6 +2863,9 @@ END
 		} elsif ($line =~ /$confighash{$key}[1]\{.*ROUTED/) {
 			$col1="bgcolor='${Header::colourorange}'";
 			$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn on-demand'}</font></b>";
+		} elsif ($confighash{$key}[33] eq "add") {
+			$col1="bgcolor='${Header::colourorange}'";
+			$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn wait'}</font></b>";
 		}
 	}
 	# move to blue if really down
