@@ -829,6 +829,7 @@ WARNING: untranslated string: fwdfw REJECT
 WARNING: untranslated string: fwdfw action
 WARNING: untranslated string: fwdfw additional
 WARNING: untranslated string: fwdfw all icmp
+WARNING: untranslated string: fwdfw all subnets
 WARNING: untranslated string: fwdfw change
 WARNING: untranslated string: fwdfw copy
 WARNING: untranslated string: fwdfw delete
@@ -1059,7 +1060,6 @@ WARNING: untranslated string: monitor interface
 WARNING: untranslated string: most preferred
 WARNING: untranslated string: nameserver
 WARNING: untranslated string: no data
-WARNING: untranslated string: no hardware random number generator
 WARNING: untranslated string: none
 WARNING: untranslated string: not a valid dh key
 WARNING: untranslated string: notice
@@ -1129,9 +1129,12 @@ WARNING: untranslated string: snat new source ip address
 WARNING: untranslated string: software version
 WARNING: untranslated string: source ip country
 WARNING: untranslated string: ssh
+WARNING: untranslated string: ssh active sessions
+WARNING: untranslated string: ssh login time
+WARNING: untranslated string: ssh no active logins
+WARNING: untranslated string: ssh username
 WARNING: untranslated string: static routes
 WARNING: untranslated string: support donation
-WARNING: untranslated string: system has hwrng
 WARNING: untranslated string: system has rdrand
 WARNING: untranslated string: system information
 WARNING: untranslated string: ta key
@@ -1207,11 +1210,13 @@ WARNING: untranslated string: vpn inactivity timeout
 WARNING: untranslated string: vpn keyexchange
 WARNING: untranslated string: vpn on-demand
 WARNING: untranslated string: vpn start action
+WARNING: untranslated string: vpn start action add
 WARNING: untranslated string: vpn start action route
 WARNING: untranslated string: vpn start action start
 WARNING: untranslated string: vpn statistic n2n
 WARNING: untranslated string: vpn statistic rw
 WARNING: untranslated string: vpn statistics n2n
+WARNING: untranslated string: vpn wait
 WARNING: untranslated string: vpn weak
 WARNING: untranslated string: wireless network
 WARNING: untranslated string: wlan client

@@ -421,6 +421,7 @@ WARNING: translation string unused: no alcatelusb firmware
 WARNING: translation string unused: no cfg upload
 WARNING: translation string unused: no eciadsl synch.bin file
 WARNING: translation string unused: no fritzdsl driver
+WARNING: translation string unused: no hardware random number generator
 WARNING: translation string unused: no information available
 WARNING: translation string unused: no modem selected
 WARNING: translation string unused: no set selected
@@ -587,6 +588,7 @@ WARNING: translation string unused: subnet
 WARNING: translation string unused: subnet is invalid
 WARNING: translation string unused: successfully refreshed updates list
 WARNING: translation string unused: system graphs
+WARNING: translation string unused: system has hwrng
 WARNING: translation string unused: system log viewer
 WARNING: translation string unused: system status information
 WARNING: translation string unused: test
@@ -797,6 +799,7 @@ WARNING: untranslated string: firewall log port
 WARNING: untranslated string: firewall logs country
 WARNING: untranslated string: five minutes
 WARNING: untranslated string: four hours
+WARNING: untranslated string: fwdfw all subnets
 WARNING: untranslated string: fwdfw err concon
 WARNING: untranslated string: fwdfw err ratecon
 WARNING: untranslated string: fwdfw limitconcon
@@ -922,6 +925,10 @@ WARNING: untranslated string: show dh
 WARNING: untranslated string: show tls-auth key
 WARNING: untranslated string: software version
 WARNING: untranslated string: source ip country
+WARNING: untranslated string: ssh active sessions
+WARNING: untranslated string: ssh login time
+WARNING: untranslated string: ssh no active logins
+WARNING: untranslated string: ssh username
 WARNING: untranslated string: ta key
 WARNING: untranslated string: tcp more reliable
 WARNING: untranslated string: ten minutes
@@ -942,11 +949,13 @@ WARNING: untranslated string: vpn force mobike
 WARNING: untranslated string: vpn inactivity timeout
 WARNING: untranslated string: vpn on-demand
 WARNING: untranslated string: vpn start action
+WARNING: untranslated string: vpn start action add
 WARNING: untranslated string: vpn start action route
 WARNING: untranslated string: vpn start action start
 WARNING: untranslated string: vpn statistic n2n
 WARNING: untranslated string: vpn statistic rw
 WARNING: untranslated string: vpn statistics n2n
+WARNING: untranslated string: vpn wait
 WARNING: untranslated string: vpn weak
 WARNING: untranslated string: wireless network
 WARNING: untranslated string: wlan client anonymous identity

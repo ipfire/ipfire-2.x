@@ -288,6 +288,7 @@
 < fwdfw additional
 < fwdfw addrule
 < fwdfw all icmp
+< fwdfw all subnets
 < fwdfw change
 < fwdfw copy
 < fwdfw delete
@@ -620,6 +621,10 @@
 < software version
 < source ip country
 < ssh
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
 < static routes
 < support donation
 < system has hwrng
@@ -710,10 +715,12 @@
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
+< vpn start action add
 < vpn start action route
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn wait
 < vpn weak
 < wireless network
 < wlanap
@@ -999,6 +1006,7 @@
 < fwdfw additional
 < fwdfw addrule
 < fwdfw all icmp
+< fwdfw all subnets
 < fwdfw change
 < fwdfw copy
 < fwdfw delete
@@ -1325,6 +1333,10 @@
 < software version
 < source ip country
 < ssh
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
 < static routes
 < support donation
 < system has hwrng
@@ -1418,10 +1430,12 @@
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
+< vpn start action add
 < vpn start action route
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn wait
 < vpn weak
 < wireless network
 < wlanap
@@ -1596,6 +1610,7 @@
 < firewall log port
 < five minutes
 < four hours
+< fwdfw all subnets
 < fwdfw err concon
 < fwdfw err ratecon
 < fwdfw limitconcon
@@ -1650,6 +1665,10 @@
 < samba join a domain
 < samba join domain
 < search
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
 < tcp more reliable
 < ten minutes
 < thirty minutes
@@ -1667,10 +1686,12 @@
 < vpn inactivity timeout
 < vpn on-demand
 < vpn start action
+< vpn start action add
 < vpn start action route
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn wait
 < vpn weak
 < wireless network
 < wlanap
@@ -1813,6 +1834,7 @@
 < firewall logs country
 < five minutes
 < four hours
+< fwdfw all subnets
 < fwdfw err concon
 < fwdfw err ratecon
 < fwdfw limitconcon
@@ -1902,6 +1924,10 @@
 < show tls-auth key
 < software version
 < source ip country
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
 < ta key
 < tcp more reliable
 < ten minutes
@@ -1923,10 +1949,12 @@
 < vpn inactivity timeout
 < vpn on-demand
 < vpn start action
+< vpn start action add
 < vpn start action route
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn wait
 < vpn weak
 < wireless network
 < wlanap
@@ -2172,6 +2200,7 @@
 < fwdfw additional
 < fwdfw addrule
 < fwdfw all icmp
+< fwdfw all subnets
 < fwdfw change
 < fwdfw copy
 < fwdfw delete
@@ -2499,6 +2528,10 @@
 < software version
 < source ip country
 < ssh
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
 < static routes
 < support donation
 < system has hwrng
@@ -2588,10 +2621,12 @@
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
+< vpn start action add
 < vpn start action route
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn wait
 < vpn weak
 < wireless network
 < wlanap
@@ -2874,6 +2909,7 @@
 < fwdfw additional
 < fwdfw addrule
 < fwdfw all icmp
+< fwdfw all subnets
 < fwdfw change
 < fwdfw copy
 < fwdfw delete
@@ -3201,6 +3237,10 @@
 < software version
 < source ip country
 < ssh
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
 < static routes
 < support donation
 < system has hwrng
@@ -3290,10 +3330,12 @@
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
+< vpn start action add
 < vpn start action route
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn wait
 < vpn weak
 < week-graph
 < wireless network
@@ -3349,3 +3391,10 @@
 ############################################################################
 # Checking cgi-bin translations for language: tr                           #
 ############################################################################
+< fwdfw all subnets
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
+< vpn start action add
+< vpn wait
