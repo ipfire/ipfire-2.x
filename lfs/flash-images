@@ -59,7 +59,7 @@ MNThdd   := /install/harddisk
 IMG      := /install/images/image.img
 
 # All sizes in blocks
-ifeq "$(BUILD_PLATFORM)" "arm"
+ifeq "$(BUILD_ARCH)" "armv5tel"
  BOOTLOADER =
  S_OFFSET = 8192
 

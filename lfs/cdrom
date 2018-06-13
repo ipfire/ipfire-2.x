@@ -45,7 +45,7 @@ ISO_ARGS = -J -r -v \
 	-c boot/isolinux/boot.catalog
 
 # Only build a stub ISO for ARM
-ifeq "$(BUILD_PLATFORM)" "arm"
+ifeq "$(BUILD_ARCH)" "armv5tel"
 	ISO_ARGS = -J -r -V "$(NAME) $(VERSION) $(BUILD_ARCH)"
 endif
 
@@ -112,7 +112,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Make the ISO
 	mkdir -p /install/cdrom/boot/isolinux
 	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog
-ifneq "$(BUILD_PLATFORM)" "arm"
+ifneq "$(BUILD_ARCH)" "armv5tel"
 	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz
 	dracut --force -a "installer" --strip --xz /install/cdrom/boot/isolinux/instroot $(KVER)-ipfire
 	cp $(DIR_SRC)/config/syslinux/boot.png      /install/cdrom/boot/isolinux/boot.png
