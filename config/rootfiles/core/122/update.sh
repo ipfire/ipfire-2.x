@@ -39,13 +39,6 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
-# This update cannot be applied on ARM
-case "$(uname -a)" in
-	arm*)
-		exit_with_error "ERROR: Cannot update on ARM. Please re-install." 1
-		;;
-esac
-
 # Do some sanity checks.
 case $(uname -r) in
 	*-ipfire*)
