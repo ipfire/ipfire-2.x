@@ -39,6 +39,13 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+KVER="xxxKVERxxx"
+
+# Backup uEnv.txt if exist
+if [ -e /boot/uEnv.txt ]; then
+	cp -vf /boot/uEnv.txt /boot/uEnv.txt.org
+fi
+
 # Do some sanity checks.
 case $(uname -r) in
 	*-ipfire*)
@@ -96,6 +103,35 @@ rm -rvf \
 
 # Start services
 /etc/init.d/apache restart
+
+# Upadate Kernel version uEnv.txt
+if [ -e /boot/uEnv.txt ]; then
+	sed -i -e "s/KVER=.*/KVER=${KVER}/g" /boot/uEnv.txt
+fi
+
+# call user update script (needed for some arm boards)
+if [ -e /boot/pakfire-kernel-update ]; then
+	/boot/pakfire-kernel-update ${KVER}
+fi
+
+case "$(uname -m)" in
+	i?86)
+		# Force (re)install pae kernel if pae is supported
+		rm -rf /opt/pakfire/db/installed/meta-linux-pae
+		if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
+			ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
+			BOOTSPACE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
+			if [ $BOOTSPACE -lt 12000 -o $ROOTSPACE -lt 90000 ]; then
+				/usr/bin/logger -p syslog.emerg -t ipfire \
+				"core-update-${core}: WARNING not enough space for pae kernel."
+			else
+				echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
+				echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-pae
+				echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-pae
+			fi
+		fi
+		;;
+esac
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
