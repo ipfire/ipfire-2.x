@@ -2,3 +2,5 @@ etc/system-release
 etc/issue
 etc/rc.d/init.d/rngd
 etc/ssl/certs/ca-bundle.crt
+opt/pakfire/etc/pakfire.conf
+usr/sbin/setup
