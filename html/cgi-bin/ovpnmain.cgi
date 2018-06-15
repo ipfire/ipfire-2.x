@@ -3980,6 +3980,16 @@ if ($cgiparams{'TYPE'} eq 'net') {
       		goto VPNCONF_ERROR;
 	}
 
+	# Check for N2N that OpenSSL maximum of valid days will not be exceeded
+	if ($cgiparams{'TYPE'} eq 'net') {
+		if ($cgiparams{'DAYS_VALID'} >= '999999') {
+			$errormessage = $Lang::tr{'invalid input for valid till days'};
+			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+			rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+			goto VPNCONF_ERROR;
+		}
+	}
+
 	if ($cgiparams{'ENABLED'} !~ /^(on|off)$/) {
 	    $errormessage = $Lang::tr{'invalid input'};
 	    goto VPNCONF_ERROR;
@@ -4157,9 +4167,17 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		$errormessage = $Lang::tr{'passwords do not match'};
 		goto VPNCONF_ERROR;
 	    }
-	    if ($cgiparams{'DAYS_VALID'} ne '' && $cgiparams{'DAYS_VALID'} !~ /^[0-9]+$/) {
+	    if ($cgiparams{'DAYS_VALID'} eq '' && $cgiparams{'DAYS_VALID'} !~ /^[0-9]+$/) {
 		$errormessage = $Lang::tr{'invalid input for valid till days'};
 		goto VPNCONF_ERROR;
+	    }
+
+	    # Check for RW that OpenSSL maximum of valid days will not be exceeded
+	    if ($cgiparams{'TYPE'} eq 'host') {
+		if ($cgiparams{'DAYS_VALID'} >= '999999') {
+			$errormessage = $Lang::tr{'invalid input for valid till days'};
+			goto VPNCONF_ERROR;
+		}
 	    }
 
 	    # Replace empty strings with a .
@@ -4813,7 +4831,7 @@ END
 if ($cgiparams{'TYPE'} eq 'host') {
 	print <<END;
 	</select></td></tr>
-		<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):</td>
+		<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):&nbsp;<img src='/blob.gif' alt='*' /</td>
 		<td class='base' nowrap='nowrap'><input type='text' name='DAYS_VALID' value='$cgiparams{'DAYS_VALID'}' size='32' $cakeydisabled /></td></tr>
 		<tr><td>&nbsp;</td>
 		<td class='base'>$Lang::tr{'pkcs12 file password'}:</td>
@@ -4828,7 +4846,7 @@ END
 }else{
 	print <<END;
 	</select></td></tr>
-		<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):</td>
+		<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):&nbsp;<img src='/blob.gif' alt='*' /</td>
 		<td class='base' nowrap='nowrap'><input type='text' name='DAYS_VALID' value='$cgiparams{'DAYS_VALID'}' size='32' $cakeydisabled /></td></tr>
 		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
 		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
