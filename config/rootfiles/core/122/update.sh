@@ -123,7 +123,7 @@ case "$(uname -m)" in
 		if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
 			ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 			BOOTSPACE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
-			if [ $BOOTSPACE -lt 12000 -o $ROOTSPACE -lt 90000 ]; then
+			if [ $BOOTSPACE -lt 22000 -o $ROOTSPACE -lt 120000 ]; then
 				/usr/bin/logger -p syslog.emerg -t ipfire \
 				"core-update-${core}: WARNING not enough space for pae kernel."
 			else
