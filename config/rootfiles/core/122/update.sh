@@ -29,6 +29,8 @@ core=122
 exit_with_error() {
 	# Set last succesfull installed core.
 	echo $(($core-1)) > /opt/pakfire/db/core/mine
+	# don't start pakfire again at error
+	killall -KILL pak_update
 	/usr/bin/logger -p syslog.emerg -t ipfire \
 		"core-update-${core}: $1"
 	exit $2
