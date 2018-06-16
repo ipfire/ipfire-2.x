@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 73
+PAK_VER    = 74
 DEPS	   = ""
 
 ifeq "$(BUILD_ARCH)" "i586"
