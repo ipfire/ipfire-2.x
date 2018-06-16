@@ -142,9 +142,9 @@ esac
 /etc/init.d/fireinfo start
 sendprofile
 
-# Update grub config to display new core version
+# Install new grub and update config
 if [ -e /boot/grub/grub.cfg ]; then
-	grub-mkconfig -o /boot/grub/grub.cfg
+	/usr/local/bin/update-bootloader
 fi
 
 sync
