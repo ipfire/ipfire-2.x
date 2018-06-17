@@ -22,6 +22,8 @@ bin/uname
 etc/DIR_COLORS
 usr/bin/[
 usr/bin/arch
+usr/bin/b2sum
+usr/bin/base32
 usr/bin/base64
 usr/bin/basename
 usr/bin/chcon
@@ -128,8 +130,6 @@ usr/sbin/chroot
 #usr/share/locale/el/LC_MESSAGES/coreutils.mo
 #usr/share/locale/el/LC_TIME
 #usr/share/locale/el/LC_TIME/coreutils.mo
-#usr/share/locale/eo
-#usr/share/locale/eo/LC_MESSAGES
 #usr/share/locale/eo/LC_MESSAGES/coreutils.mo
 #usr/share/locale/eo/LC_TIME
 #usr/share/locale/eo/LC_TIME/coreutils.mo
@@ -152,8 +152,6 @@ usr/sbin/chroot
 #usr/share/locale/fr/LC_MESSAGES/coreutils.mo
 #usr/share/locale/fr/LC_TIME
 #usr/share/locale/fr/LC_TIME/coreutils.mo
-#usr/share/locale/ga
-#usr/share/locale/ga/LC_MESSAGES
 #usr/share/locale/ga/LC_MESSAGES/coreutils.mo
 #usr/share/locale/ga/LC_TIME
 #usr/share/locale/ga/LC_TIME/coreutils.mo
@@ -166,8 +164,6 @@ usr/sbin/chroot
 #usr/share/locale/hu/LC_MESSAGES/coreutils.mo
 #usr/share/locale/hu/LC_TIME
 #usr/share/locale/hu/LC_TIME/coreutils.mo
-#usr/share/locale/ia
-#usr/share/locale/ia/LC_MESSAGES
 #usr/share/locale/ia/LC_MESSAGES/coreutils.mo
 #usr/share/locale/ia/LC_TIME
 #usr/share/locale/ia/LC_TIME/coreutils.mo
@@ -196,8 +192,6 @@ usr/sbin/chroot
 #usr/share/locale/lt/LC_MESSAGES/coreutils.mo
 #usr/share/locale/lt/LC_TIME
 #usr/share/locale/lt/LC_TIME/coreutils.mo
-#usr/share/locale/ms
-#usr/share/locale/ms/LC_MESSAGES
 #usr/share/locale/ms/LC_MESSAGES/coreutils.mo
 #usr/share/locale/ms/LC_TIME
 #usr/share/locale/ms/LC_TIME/coreutils.mo
@@ -218,8 +212,6 @@ usr/sbin/chroot
 #usr/share/locale/pt_BR/LC_MESSAGES/coreutils.mo
 #usr/share/locale/pt_BR/LC_TIME
 #usr/share/locale/pt_BR/LC_TIME/coreutils.mo
-#usr/share/locale/ro
-#usr/share/locale/ro/LC_MESSAGES
 #usr/share/locale/ro/LC_MESSAGES/coreutils.mo
 #usr/share/locale/ro/LC_TIME
 #usr/share/locale/ro/LC_TIME/coreutils.mo
@@ -229,19 +221,18 @@ usr/sbin/chroot
 #usr/share/locale/sk/LC_MESSAGES/coreutils.mo
 #usr/share/locale/sk/LC_TIME
 #usr/share/locale/sk/LC_TIME/coreutils.mo
-#usr/share/locale/sl
-#usr/share/locale/sl/LC_MESSAGES
 #usr/share/locale/sl/LC_MESSAGES/coreutils.mo
 #usr/share/locale/sl/LC_TIME
 #usr/share/locale/sl/LC_TIME/coreutils.mo
+#usr/share/locale/sr/LC_MESSAGES/coreutils.mo
+#usr/share/locale/sr/LC_TIME
+#usr/share/locale/sr/LC_TIME/coreutils.mo
 #usr/share/locale/sv/LC_MESSAGES/coreutils.mo
 #usr/share/locale/sv/LC_TIME
 #usr/share/locale/sv/LC_TIME/coreutils.mo
 #usr/share/locale/tr/LC_MESSAGES/coreutils.mo
 #usr/share/locale/tr/LC_TIME
 #usr/share/locale/tr/LC_TIME/coreutils.mo
-#usr/share/locale/uk
-#usr/share/locale/uk/LC_MESSAGES
 #usr/share/locale/uk/LC_MESSAGES/coreutils.mo
 #usr/share/locale/uk/LC_TIME
 #usr/share/locale/uk/LC_TIME/coreutils.mo
@@ -255,6 +246,8 @@ usr/sbin/chroot
 #usr/share/locale/zh_TW/LC_TIME
 #usr/share/locale/zh_TW/LC_TIME/coreutils.mo
 #usr/share/man/man1/arch.1
+#usr/share/man/man1/b2sum.1
+#usr/share/man/man1/base32.1
 #usr/share/man/man1/base64.1
 #usr/share/man/man1/basename.1
 #usr/share/man/man1/cat.1
