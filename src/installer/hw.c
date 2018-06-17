@@ -1066,13 +1066,17 @@ int hw_install_bootloader(struct hw* hw, struct hw_destination* dest, const char
 
 	// Install GRUB in EFI mode
 	if (hw->efi) {
-		snprintf(cmd, sizeof(cmd), "/usr/sbin/grub-install"
-			" --target=%s-efi --efi-directory=%s %s", hw->arch, HW_PATH_BOOT_EFI,
-			(hw->efi_supported) ? "" : "--no-nvram");
+		for (int removable = 0; removable < 1; removable++) {
+			snprintf(cmd, sizeof(cmd), "/usr/sbin/grub-install"
+				" --target=%s-efi --efi-directory=%s %s %s",
+				hw->arch, HW_PATH_BOOT_EFI,
+				(hw->efi_supported) ? "" : "--no-nvram",
+				(removable) ? "--removable" : "");
 
-		r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
-		if (r)
-			return r;
+			r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
+			if (r)
+				return r;
+		}
 	}
 
 	// Generate configuration file
