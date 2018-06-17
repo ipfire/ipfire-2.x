@@ -81,7 +81,10 @@ struct hw* hw_init() {
 	// Detect if we are running in EFI mode
 	ret = access("/sys/firmware/efi", R_OK);
 	if (ret == 0)
-		hw->efi = 1;
+		hw->efi_supported = 1;
+
+	// Should we install in EFI mode?
+	hw->efi = 1;
 
 	return hw;
 }
@@ -1063,7 +1066,8 @@ int hw_install_bootloader(struct hw* hw, struct hw_destination* dest, const char
 	// Install GRUB in EFI mode
 	if (hw->efi) {
 		snprintf(cmd, sizeof(cmd), "/usr/sbin/grub-install"
-			" --target=%s-efi --efi-directory=%s", hw->arch, HW_PATH_BOOT_EFI);
+			" --target=%s-efi --efi-directory=%s %s", hw->arch, HW_PATH_BOOT_EFI,
+			(hw->efi_supported) ? "" : "--no-nvram");
 
 		r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
 		if (r)
