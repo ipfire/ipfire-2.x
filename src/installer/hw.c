@@ -84,7 +84,8 @@ struct hw* hw_init() {
 		hw->efi_supported = 1;
 
 	// Should we install in EFI mode?
-	hw->efi = 1;
+	if ((strcmp(hw->arch, "x86_64") == 0) || (strcmp(hw->arch, "aarch64") == 0))
+		hw->efi = 1;
 
 	return hw;
 }
