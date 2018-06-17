@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.03
+VER        = 6.04-pre1
 
 THISAPP    = syslinux-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 92a253df9211e9c20172796ecf388f13
+$(DL_FILE)_MD5 = f9c956fde0de29be297402ecbc8ff4d0
 
 install : $(TARGET)
 
@@ -74,7 +74,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/syslinux-6.03-fix-FTBFS-no-dynamic-linker.patch
 
 	# Build
 	cd $(DIR_APP) && make bios $(MAKETUNING)
