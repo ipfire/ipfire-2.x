@@ -1973,7 +1973,7 @@ END
 	    </select></td>
 	<tr><td class='base'>$Lang::tr{'ovpn dh'}:</td>
 		<td class='base'><select name='DHLENGHT'>
-				<option value='1024' $selected{'DHLENGHT'}{'1024'}>1024 $Lang::tr{'bit'} ($Lang::tr{'vpn weak'}</option>
+				<option value='1024' $selected{'DHLENGHT'}{'1024'}>1024 $Lang::tr{'bit'} ($Lang::tr{'vpn weak'})</option>
 				<option value='2048' $selected{'DHLENGHT'}{'2048'}>2048 $Lang::tr{'bit'}</option>
 				<option value='3072' $selected{'DHLENGHT'}{'3072'}>3072 $Lang::tr{'bit'}</option>
 				<option value='4096' $selected{'DHLENGHT'}{'4096'}>4096 $Lang::tr{'bit'}</option>
