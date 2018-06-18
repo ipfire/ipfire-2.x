@@ -4451,7 +4451,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$cgiparams{'CERT_CITY'}         = $vpnsettings{'ROOTCERT_CITY'};
 	$cgiparams{'CERT_STATE'}        = $vpnsettings{'ROOTCERT_STATE'};
 	$cgiparams{'CERT_COUNTRY'}      = $vpnsettings{'ROOTCERT_COUNTRY'};
-	$cgiparams{'DAYS_VALID'}     	= $vpnsettings{'DAYS_VALID'};
+	$cgiparams{'DAYS_VALID'}     	= $vpnsettings{'DAYS_VALID'} = '730';
     }
 
     VPNCONF_ERROR:
