@@ -4045,7 +4045,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    }
 
 	    my $temp = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
-	    $temp =~ /Subject:.*CN=(.*)[\n]/;
+	    $temp =~ /Subject:.*CN\s?=\s?(.*)[\n]/;
 	    $temp = $1;
 	    $temp =~ s+/Email+, E+;
 	    $temp =~ s/ ST=/ S=/;
@@ -4099,7 +4099,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    }
 
 	    my $temp = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
-	    $temp =~ /Subject:.*CN=(.*)[\n]/;
+	    $temp =~ /Subject:.*CN\s?=\s?(.*)[\n]/;
 	    $temp = $1;
 	    $temp =~ s+/Email+, E+;
 	    $temp =~ s/ ST=/ S=/;
