@@ -61,7 +61,7 @@ esac
 # Check diskspace on root
 ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 
-if [ $ROOTSPACE -lt 100000 ]; then
+if [ $ROOTSPACE -lt 80000 ]; then
 	exit_with_error "ERROR cannot update because not enough free space on root." 2
 	exit 2
 fi

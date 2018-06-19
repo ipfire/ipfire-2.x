@@ -41,6 +41,23 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Do some sanity checks.
+case $(uname -r) in
+	*-ipfire*)
+		# Ok.
+		;;
+	*)
+		exit_with_error "ERROR cannot update. No IPFire Kernel." 1
+		;;
+esac
+
+# Check diskspace on root
+ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
+
+if [ $ROOTSPACE -lt 220000 ]; then
+	exit_with_error "ERROR cannot update because not enough free space on root." 2
+	exit 2
+fi
 
 # Stop services
 
@@ -95,3 +112,4 @@ sync
 
 # Don't report the exitcode last command
 exit 0
+
