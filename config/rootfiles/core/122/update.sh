@@ -77,6 +77,7 @@ rm -rf /boot/zImage-ipfire-*
 rm -rf /boot/uInit-ipfire-*
 rm -rf /boot/dtb-*-ipfire-*
 rm -rf /lib/modules
+rm -f  /etc/sysconfig/lm_sensors
 
 # Stop services
 
