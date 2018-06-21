@@ -71,8 +71,13 @@ ifeq "$(KCFG)" "-kirkwood"
 endif
 
 ifeq "$(KCFG)" "-multi"
+ifeq "$(BUILD_ARCH)" "aarch64"
+	cd /boot && mkimage -A arm64 -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(KVER)-$(VERSUFIX)
+	# dont remove initramfs because grub need this to boot.
+else
 	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(KVER)-$(VERSUFIX)
 	cd /boot && rm initramfs-$(KVER)-$(VERSUFIX).img
+endif
 endif
 
 endif
