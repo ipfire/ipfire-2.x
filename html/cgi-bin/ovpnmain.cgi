@@ -1181,7 +1181,7 @@ SETTINGS_ERROR:
 	    delete $confighash{$cgiparams{'$key'}};
 	}
 
-	system ("/usr/local/bin/openvpnctrl -drrd $name");
+	system ("/usr/local/bin/openvpnctrl -drrd $name &>/dev/null");
     }
     while ($file = glob("${General::swroot}/ovpn/ca/*")) {
 	unlink $file;
