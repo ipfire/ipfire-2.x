@@ -61,6 +61,9 @@ case "$1" in
 		# Generate all required certificates
 		generate_certificates
 
+		# Update hostname
+		echo "ServerName ${HOSTNAME}" > /etc/httpd/conf/hostname.conf
+
 		boot_mesg "Starting Apache daemon..."
 		/usr/sbin/apachectl -k start
 		evaluate_retval

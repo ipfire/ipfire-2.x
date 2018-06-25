@@ -57,15 +57,6 @@ int writehostsfiles(void)
 	findkey(kv, "DOMAINNAME", domainname);
 	freekeyvalues(kv);
 		
-	if (!(file = fopen(CONFIG_ROOT "/main/hostname.conf", "w")))
-	{
-		sprintf (message, _("Unable to write %s/main/hostname.conf"), CONFIG_ROOT);
-		errorbox(message);
-		return 0;
-	}
-	fprintf(file, "ServerName %s.%s\n", hostname,domainname);
-	fclose(file);
-	
 	if (!(file = fopen(CONFIG_ROOT "/main/hosts", "r")))
 	{
 		errorbox(_("Unable to open main hosts file."));

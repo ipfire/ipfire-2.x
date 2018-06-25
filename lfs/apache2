@@ -113,7 +113,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install apache config
 	cp -rf $(DIR_CONF)/httpd/* /etc/httpd/conf
-	ln -sf $(CONFIG_ROOT)/main/hostname.conf /etc/httpd/conf/
+	touch /etc/httpd/conf/hostname.conf
 
 	# Create captive logging directory
 	-mkdir -pv /var/log/httpd/captive
