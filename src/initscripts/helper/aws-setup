@@ -1,0 +1,215 @@
+#!/bin/bash
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+get() {
+	local file="${1}"
+
+	wget -qO - "http://169.254.169.254/latest/meta-data/${file}"
+}
+
+to_address() {
+	local n="${1}"
+
+	local o1=$(( (n & 0xff000000) >> 24 ))
+	local o2=$(( (n & 0xff0000) >> 16 ))
+	local o3=$(( (n & 0xff00) >> 8 ))
+	local o4=$(( (n & 0xff) ))
+
+	printf "%d.%d.%d.%d\n" "${o1}" "${o2}" "${o3}" "${o4}"
+}
+
+to_integer() {
+	local address="${1}"
+
+	local integer=0
+
+	local i
+	for i in ${address//\./ }; do
+		integer=$(( (integer << 8) + i ))
+	done
+
+	printf "%d\n" "${integer}"
+}
+
+prefix2netmask() {
+	local prefix=${1}
+
+	local zeros=$(( 32 - prefix ))
+	local netmask=0
+
+	local i
+	for (( i=0; i<${zeros}; i++ )); do
+		netmask=$(( (netmask << 1) ^ 1 ))
+	done
+
+	to_address "$(( netmask ^ 0xffffffff ))"
+}
+
+import_aws_configuration() {
+	local instance_id="$(get instance-id)"
+
+	boot_mesg "Importing AWS configuration for instance ${instance_id}..."
+
+	# Initialise system settings
+	if [ ! -s "/var/ipfire/main/settings" ]; then
+		local hostname=$(get local-hostname)
+
+		(
+			echo "HOSTNAME=${hostname%%.*}"
+			echo "DOMAINNAME=${hostname#*.}"
+		) > /var/ipfire/main/settings
+	fi
+
+	# Import any DNS server settings
+	eval $(/usr/local/bin/readhash <(grep -E "^DNS([0-9])=" /var/ipfire/ethernet/settings 2>/dev/null))
+
+	# Import network configuration
+	(
+		# RED + GREEN
+       		echo "CONFIG_TYPE=1"
+	) > /var/ipfire/ethernet/settings
+
+	for mac in $(get network/interfaces/macs/); do
+		# Remove trailing slash
+		mac="${mac//\//}"
+
+		local device_number="$(get "network/interfaces/macs/${mac}/device-number")"
+		local interface_id="$(get "network/interfaces/macs/${mac}/interface-id")"
+
+		# First IPv4 address
+		local ipv4_address="$(get "network/interfaces/macs/${mac}/local-ipv4s" | head -n1)"
+		local ipv4_address_num="$(to_integer "${ipv4_address}")"
+
+		# Get subnet size
+		local subnet="$(get "network/interfaces/macs/${mac}/subnet-ipv4-cidr-block")"
+
+		local prefix="${subnet#*/}"
+		local netmask="$(prefix2netmask "${prefix}")"
+		local netmask_num="$(to_integer "${netmask}")"
+
+		# Calculate the network and broadcast addresses
+		local netaddress="${subnet%/*}"
+		local netaddress_num="$(to_integer "${netaddress}")"
+		local broadcast="$(to_address $(( ipv4_address_num | (0xffffffff ^ netmask_num) )))"
+
+		# The gateway is always the first IP address in the subnet
+		local gateway="$(to_address $(( netaddress_num + 1 )))"
+
+		# The AWS internal DNS service is available on the fourth IP address of each subnet
+		local dns1="$(to_address $(( netaddress_num + 4 )))"
+		local dns2=
+
+		case "${device_number}" in
+			# RED
+			0)
+				(
+					echo "RED_TYPE=STATIC"
+					echo "RED_DEV=red0"
+					echo "RED_MACADDR=${mac}"
+					echo "RED_DESCRIPTION='${interface_id}'"
+					echo "RED_ADDRESS=${ipv4_address}"
+					echo "RED_NETMASK=${netmask}"
+					echo "RED_NETADDRESS=${netaddress}"
+					echo "RED_BROADCAST=${broadcast}"
+					echo "DEFAULT_GATEWAY=${gateway}"
+					echo "DNS1=${DNS1:-${dns1}}"
+					echo "DNS2=${DNS2:-${dns2}}"
+				) >> /var/ipfire/ethernet/settings
+
+				# Import aliases for RED
+				for alias in $(get "network/interfaces/macs/${mac}/local-ipv4s" | tail -n +2); do
+					echo "${alias},on,"
+				done > /var/ipfire/ethernet/aliases
+				;;
+
+			# GREEN
+			1)
+				(
+					echo "GREEN_DEV=green0"
+					echo "GREEN_MACADDR=${mac}"
+					echo "GREEN_DESCRIPTION='${interface_id}'"
+					echo "GREEN_ADDRESS=${ipv4_address}"
+					echo "GREEN_NETMASK=${netmask}"
+					echo "GREEN_NETADDRESS=${netaddress}"
+					echo "GREEN_BROADCAST=${broadcast}"
+				) >> /var/ipfire/ethernet/settings
+				;;
+		esac
+	done
+
+	# DEBUG
+	cat /var/ipfire/ethernet/settings
+
+	# Import SSH keys
+	local line
+	for line in $(get "public-keys/"); do
+		local key_no="${line%=*}"
+
+		local key="$(get public-keys/${key_no}/openssh-key)"
+		if [ -n "${key}" ] && ! grep -q "^${key}$" /root/.ssh/authorized_keys 2>/dev/null; then
+			mkdir -p /root/.ssh
+			chmod 700 /root/.ssh
+
+			echo "${key}" >> /root/.ssh/authorized_keys
+			chmod 600 /root/.ssh/authorized_keys
+		fi
+	done
+
+	# Enable SSH
+	touch /var/ipfire/remote/enablessh
+	chown nobody:nobody /var/ipfire/remote/enablessh
+
+	# Enable SSH key authentication
+	sed -e "s/^ENABLE_SSH_KEYS=.*/ENABLE_SSH_KEYS=on/" -i /var/ipfire/remote/settings
+
+	# Actions performed only on the very first start
+	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
+		# Firewall rules for SSH and WEBIF
+		(
+			echo "1,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,cust_srv,SSH,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
+			echo "2,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,TGT_PORT,444,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
+		) >> /var/ipfire/firewall/input
+
+		# This script has now completed the first steps of setup
+		touch /var/ipfire/main/firstsetup_ok
+	fi
+
+	# All done
+	echo_ok
+}
+
+case "${reason}" in
+	PREINIT)
+		# Bring up the interface
+		ip link set "${interface}" up
+		;;
+
+	BOUND|RENEW|REBIND|REBOOT)
+		# Remove any previous IP addresses
+		ip addr flush dev "${interface}"
+
+		# Add (or re-add) the new IP address
+		ip addr add "${new_ip_address}/${new_subnet_mask}" dev "${interface}"
+
+		# Add the default route
+		ip route add default via "${new_routers}"
+
+		# Import AWS configuration
+		import_aws_configuration
+		;;
+
+	EXPIRE|FAIL|RELEASE|STOP)
+		# Remove all IP addresses
+		ip addr flush dev "${interface}"
+		;;
+
+	*)
+		echo "Unhandled reason: ${reason}" >&2
+		exit 2
+		;;
+esac
+
+# Terminate
+exit 0

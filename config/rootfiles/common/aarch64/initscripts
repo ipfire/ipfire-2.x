@@ -1,6 +1,7 @@
 etc/init.d
 #etc/rc.d
 #etc/rc.d/helper
+etc/rc.d/helper/aws-setup
 etc/rc.d/helper/getdnsfromdhcpc.pl
 #etc/rc.d/init.d
 etc/rc.d/init.d/acpid
