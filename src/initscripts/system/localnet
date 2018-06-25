@@ -22,6 +22,18 @@ write_resolv_conf() {
 	) > /etc/resolv.conf
 }
 
+write_hosts() {
+	eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+	(
+		echo "127.0.0.1	localhost.localdomain localhost"
+
+		if [ -n "${GREEN_ADDRESS}" ]; then
+			echo "${GREEN_ADDRESS} ${HOSTNAME}.${DOMAINNAME} ${HOSTNAME}"
+		fi
+	) > /etc/hosts
+}
+
 case "${1}" in
 	start)
 		eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
@@ -39,6 +51,9 @@ case "${1}" in
 			domainname ${DOMAINNAME}
 			evaluate_retval
 		fi
+
+		# Update hosts
+		write_hosts
 
 		# Update resolv.conf
 		write_resolv_conf
