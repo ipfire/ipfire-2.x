@@ -101,26 +101,7 @@ int writehostsfiles(void)
 	}
 	fclose(file);
 	fclose(hosts);
-	
-	/* TCP wrappers stuff. */
-	if (!(file = fopen("/etc/hosts.deny", "w")))
-	{
-		errorbox(_("Unable to write /etc/hosts.deny."));
-		return 0;
-	}
-	fprintf(file, "ALL : ALL\n");
-	fclose(file);
-	
-	if (!(file = fopen("/etc/hosts.allow", "w")))
-	{
-		errorbox(_("Unable to write /etc/hosts.allow."));
-		return 0;
-	}
-	fprintf(file, "sshd : ALL\n");
-	fprintf(file, "ALL  : localhost\n");
-	fprintf(file, "ALL  : %s/%s\n", netaddress, netmask);
-	fclose(file);
-	
+
 	sprintf(commandstring, "/bin/hostname %s.%s", hostname, domainname);
 	if (mysystem(NULL, commandstring))
 	{
