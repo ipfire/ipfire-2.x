@@ -53,13 +53,16 @@ import_aws_configuration() {
 	boot_mesg "Importing AWS configuration for instance ${instance_id}..."
 
 	# Initialise system settings
-	if [ ! -s "/var/ipfire/main/settings" ]; then
-		local hostname=$(get local-hostname)
+	local hostname=$(get local-hostname)
 
-		(
-			echo "HOSTNAME=${hostname%%.*}"
-			echo "DOMAINNAME=${hostname#*.}"
-		) > /var/ipfire/main/settings
+	# Set hostname
+	if ! grep -q "^HOSTNAME=" /var/ipfire/main/settings; then
+		echo "HOSTNAME=${hostname%%.*}" >> /var/ipfire/main/settings
+	fi
+
+	# Set domainname
+	if ! grep -q "^DOMAINNAME=" /var/ipfire/main/settings; then
+		echo "DOMAINNAME=${hostname#*.}" >> /var/ipfire/main/settings
 	fi
 
 	# Import any DNS server settings
@@ -71,6 +74,7 @@ import_aws_configuration() {
        		echo "CONFIG_TYPE=1"
 	) > /var/ipfire/ethernet/settings
 
+	local mac
 	for mac in $(get network/interfaces/macs/); do
 		# Remove trailing slash
 		mac="${mac//\//}"
