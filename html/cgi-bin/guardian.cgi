@@ -52,7 +52,6 @@ my $ignorefile ='/var/ipfire/guardian/guardian.ignore';
 # file locations on IPFire systems.
 my %module_file_locations = (
 	"HTTPD" => "/var/log/httpd/error_log",
-	"OWNCLOUD" => "/var/owncloud/data/owncloud.log",
 	"SNORT" => "/var/log/snort/alert",
 	"SSH" => "/var/log/messages",
 );
@@ -64,11 +63,6 @@ our %color = ();
 our %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
-
-# Pakfire meta file for owncloud.
-# (File exists when the addon is installed.)
-my $owncloud_meta = "/opt/pakfire/db/installed/meta-owncloud";
-
 
 # File declarations.
 my $settingsfile = "${General::swroot}/guardian/settings";
@@ -95,11 +89,6 @@ $settings{'GUARDIAN_BLOCKTIME'} = '86400';
 $settings{'GUARDIAN_FIREWALL_ACTION'} = 'DROP';
 $settings{'GUARDIAN_LOGFILE'} = '/var/log/guardian/guardian.log';
 $settings{'GUARDIAN_SNORT_PRIORITY_LEVEL'} = '3';
-
-# Default settings for owncloud if installed.
-if ( -e "$owncloud_meta") {
-	$settings{'GUARDIAN_MONITOR_OWNCLOUD'} = 'off';
-}
 
 my $errormessage = '';
 
@@ -561,17 +550,7 @@ END
 				<td align='left'>on <input type='radio' name='GUARDIAN_MONITOR_HTTPD' value='on' $checked{'GUARDIAN_MONITOR_HTTPD'}{'on'} /> /
 				<input type='radio' name='GUARDIAN_MONITOR_HTTPD' value='off' $checked{'GUARDIAN_MONITOR_HTTPD'}{'off'} /> off</td>
 			</tr>
-END
 
-			# Display owncloud checkbox when the addon is installed.
-			if ( -e "$owncloud_meta" ) {
-				print"<tr>\n";
-				print"<td width='25%' class='base'>$Lang::tr{'guardian block owncloud brute-force'}</td>\n";
-				print"<td align='left'>on <input type='radio' name='GUARDIAN_MONITOR_OWNCLOUD' value='on' $checked{'GUARDIAN_MONITOR_OWNCLOUD'}{'on'} /> /\n";
-				print"<input type='radio' name='GUARDIAN_MONITOR_OWNCLOUD' value='off' $checked{'GUARDIAN_MONITOR_OWNCLOUD'}{'off'} /> off</td>\n";
-				print"</tr>\n";
-			}
-	print <<END;
 			<tr>
 				<td colspan='2'><br></td>
 			</tr>
