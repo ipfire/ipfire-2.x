@@ -157,15 +157,15 @@ import_aws_configuration() {
 		fi
 	done
 
-	# Enable SSH
-	touch /var/ipfire/remote/enablessh
-	chown nobody:nobody /var/ipfire/remote/enablessh
-
-	# Enable SSH key authentication
-	sed -e "s/^ENABLE_SSH_KEYS=.*/ENABLE_SSH_KEYS=on/" -i /var/ipfire/remote/settings
-
 	# Actions performed only on the very first start
 	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
+		# Enable SSH
+		touch /var/ipfire/remote/enablessh
+		chown nobody:nobody /var/ipfire/remote/enablessh
+
+		# Enable SSH key authentication
+		sed -e "s/^ENABLE_SSH_KEYS=.*/ENABLE_SSH_KEYS=on/" -i /var/ipfire/remote/settings
+
 		# Firewall rules for SSH and WEBIF
 		(
 			echo "1,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,cust_srv,SSH,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
