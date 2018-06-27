@@ -1,17 +1,63 @@
 ############################################################################
-# Checking cgi-bin translations for language: en                           #
+# Checking cgi-bin translations for language: de                           #
 ############################################################################
-< addon
-< Captive clients
-< Captive genvoucher
-< Captive logo_upload
-< Captive logo_upload1
-< ccd maxclients
-< ovpn_fragment
+< addons
+< advproxy update information
+< ansi t1.483
+< backup archive
+< backup clear archive
+< backup erase key
+< backup explain key
+< backup explain key li1
+< backup explain key li2
+< backup explain key li3
+< backup explain key no1
+< backup explain key no2
+< backup extract key
+< backup import key
+< backup key file
+< backup key info
+< backup media info
+< backup protect key password
+< bewan adsl pci st
+< bewan adsl usb
+< Captive heading terms
+< Captive heading voucher
+< Captive invalid coupon
+< Captive please enter a coupon code
+< choose media
+< community rules
+< could not connect to www ipfire org
+< dead peer detection
+< dhcp server disabled on blue interface
+< dhcp server enabled on blue interface
+< dh name is invalid
+< done
+< emerging rules
+< g.dtm
+< g.lite
+< guardian
+< insert removable device
+< none
+< notes
+< qos add subclass
+< quick control
+< shaping add options
+< show areas
+< show lines
+< show tls-auth key
+< teovpn_fragment
+< tor bridge enabled
+< tor errmsg invalid node id
+< updxlrtr used by
+< upload fcdsl.o
+< vpn configuration main
+< vpn force mobike
 ############################################################################
-# Checking cgi-bin translations for language: fr                           #
+# Checking cgi-bin translations for language: es                           #
 ############################################################################
-< addon
+< 24 hours
+< addons
 < administrator password
 < administrator username
 < adsl settings
@@ -31,11 +77,13 @@
 < age sminute
 < age ssecond
 < application layer gateways
+< Async logging enabled
 < atm device
 < attention
 < bit
 < block
 < capabilities
+< Captive
 < Captive 1day
 < Captive 1month
 < Captive 1week
@@ -49,7 +97,6 @@
 < Captive auth_vou
 < Captive brand color
 < Captive branding
-< Captive clients
 < Captive client session expiry time
 < Captive config
 < Captive coupon
@@ -60,21 +107,21 @@
 < Captive GAIN ACCESS
 < Captive generate coupons
 < Captive generated coupon no
-< Captive genvoucher
+< Captive heading terms
+< Captive heading voucher
+< Captive invalid coupon
 < Captive invalid logosize
 < Captive invalid_voucher
 < Captive ip
 < Captive issued coupons
 < Captive logo_set
-< Captive logo_upload
-< Captive logo_upload1
 < Captive logo uploaded
 < Captive mac
-< Captive menu
 < Captive noexpiretime
 < Captive nolimit
 < Captive nr
 < Captive please accept the terms and conditions
+< Captive please enter a coupon code
 < Captive portal
 < Captive portal coupons
 < Captive terms
@@ -121,7 +168,6 @@
 < ccd iroute
 < ccd iroute2
 < ccd iroutehint
-< ccd maxclients
 < ccd modify
 < ccd name
 < ccd net
@@ -139,6 +185,7 @@
 < countries
 < countrycode
 < country codes and flags
+< dead peer detection
 < default
 < default ip
 < deprecated fs warn
@@ -152,6 +199,724 @@
 < dh key move failed
 < dh key warn
 < dh key warn1
+< dh name is invalid
+< dh parameter
+< dl client arch insecure
+< dnat address
+< dnsforward
+< dnsforward add a new entry
+< dnsforward configuration
+< dnsforward edit an entry
+< dnsforward entries
+< dnsforward forward_server
+< dnsforward zone
+< dnssec aware
+< dnssec disabled warning
+< dnssec information
+< dnssec not supported
+< dnssec validating
+< dns servers
+< downlink
+< download dh parameter
+< download tls-auth key
+< dpd delay
+< dpd timeout
+< drop action
+< drop action1
+< drop action2
+< drop forward
+< drop outgoing
+< eight hours
+< email config
+< email empty field
+< email error
+< email invalid
+< email invalid mailfqdn
+< email invalid mailip
+< email invalid mailport
+< email mailaddr
+< email mailpass
+< email mailport
+< email mailrcpt
+< email mailsender
+< email mailuser
+< email settings
+< email subject
+< email success
+< email testmail
+< email text
+< email tls
+< email usemail
+< emerging rules
+< encryption
+< entropy
+< entropy graphs
+< fifteen minutes
+< fireinfo ipfire version
+< fireinfo is disabled
+< fireinfo is enabled
+< fireinfo is submitted
+< fireinfo is submitted button
+< fireinfo kernel version
+< fireinfo not submitted
+< fireinfo not submitted button
+< fireinfo pakfire version
+< fireinfo please enable
+< fireinfo settings
+< fireinfo system version
+< fireinfo why descr1
+< fireinfo why descr2
+< fireinfo why enable
+< fireinfo why read more
+< fireinfo your profile id
+< firewall graph country
+< firewall graph ip
+< firewall graph port
+< firewall log country
+< firewall log ip
+< firewall log port
+< firewall logs country
+< firewall rules
+< first
+< five minutes
+< flag
+< forward firewall
+< four hours
+< fw default drop
+< fwdfw ACCEPT
+< fwdfw action
+< fwdfw additional
+< fwdfw addrule
+< fwdfw all icmp
+< fwdfw all subnets
+< fwdfw change
+< fwdfw copy
+< fwdfw delete
+< fwdfw dnat
+< fwdfw dnat error
+< fwdfw dnat extport
+< fwdfw dnat nochoice
+< fwdfw dnat porterr
+< fwdfw dnat porterr2
+< fwdfw DROP
+< fwdfw edit
+< fwdfw err concon
+< fwdfw err nosrc
+< fwdfw err nosrcip
+< fwdfw err notgt
+< fwdfw err notgtip
+< fwdfw err prot_port
+< fwdfw err prot_port1
+< fwdfw err ratecon
+< fwdfw err remark
+< fwdfw err ruleexists
+< fwdfw err same
+< fwdfw err samesub
+< fwdfw err src_addr
+< fwdfw err tgt_addr
+< fwdfw err tgt_grp
+< fwdfw err tgt_mac
+< fwdfw err tgt_port
+< fwdfw err time
+< fwdfw external port nat
+< fwdfw final_rule
+< fwdfw from
+< fwdfw hint ip1
+< fwdfw hint ip2
+< fwdfw hint mac
+< fwdfw iface
+< fwdfw ipsec network
+< fwdfw limitconcon
+< fwdfw log
+< fwdfw log rule
+< fwdfw man port
+< fwdfw many
+< fwdfw maxconcon
+< fwdfw menu
+< fwdfw MODE1
+< fwdfw MODE2
+< fwdfw movedown
+< fwdfw moveup
+< fwdfw natport used
+< fwdfw newrule
+< fwdfw numcon
+< fwdfw p2p txt
+< fwdfw pol allow
+< fwdfw pol block
+< fwdfw pol text
+< fwdfw pol text1
+< fwdfw pol title
+< fwdfw prot41
+< fwdfw prot41 short
+< fwdfw ratelimit
+< fwdfw red
+< fwdfw REJECT
+< fwdfw reread
+< fwdfw rule action
+< fwdfw rule activate
+< fwdfw rulepos
+< fwdfw rules
+< fwdfw snat
+< fwdfw source
+< fwdfw sourceip
+< fwdfw std network
+< fwdfw target
+< fwdfw targetip
+< fwdfw till
+< fwdfw time
+< fwdfw timeframe
+< fwdfw toggle
+< fwdfw togglelog
+< fwdfw useless rule
+< fwdfw use nat
+< fwdfw use srcport
+< fwdfw use srv
+< fwdfw warn1
+< fwdfw wd_fri
+< fwdfw wd_mon
+< fwdfw wd_sat
+< fwdfw wd_sun
+< fwdfw wd_thu
+< fwdfw wd_tue
+< fwdfw wd_wed
+< fwdfw xt access
+< fwhost addgeoipgrp
+< fwhost addgrp
+< fwhost addgrpname
+< fwhost addhost
+< fwhost addnet
+< fwhost addservice
+< fwhost addservicegrp
+< fwhost any
+< fwhost attention
+< fwhost back
+< fwhost blue
+< fwhost ccdhost
+< fwhost ccdnet
+< fwhost change
+< fwhost changeremark
+< fwhost cust addr
+< fwhost cust geoip
+< fwhost cust geoipgroup
+< fwhost cust geoiplocation
+< fwhost cust grp
+< fwhost cust net
+< fwhost Custom Host
+< fwhost Custom Network
+< fwhost cust service
+< fwhost cust srvgrp
+< fwhost deleted
+< fwhost empty
+< fwhost err addr
+< fwhost err addrgrp
+< fwhost err empty
+< fwhost err emptytable
+< fwhost err groupempty
+< fwhost err grpexist
+< fwhost err hostexist
+< fwhost err hostorip
+< fwhost err ip
+< fwhost err ipcheck
+< fwhost err ipmac
+< fwhost err ipwithsub
+< fwhost err isccdhost
+< fwhost err isccdiphost
+< fwhost err isccdipnet
+< fwhost err isccdnet
+< fwhost err isingrp
+< fwhost err mac
+< fwhost err maxservicetcp
+< fwhost err maxserviceudp
+< fwhost err name
+< fwhost err name1
+< fwhost err net
+< fwhost err netexist
+< fwhost err partofnet
+< fwhost err port
+< fwhost err remark
+< fwhost err srvexist
+< fwhost err srv exists
+< fwhost err sub32
+< fwhost green
+< fwhost hint
+< fwhost hosts
+< fwhost icmptype
+< fwhost ipadr
+< fwhost ip_mac
+< fwhost ipsec host
+< fwhost IpSec Host
+< fwhost ipsec net
+< fwhost IpSec Network
+< fwhost menu
+< fwhost netaddress
+< fwhost newgeoipgrp
+< fwhost newgrp
+< fwhost newhost
+< fwhost newnet
+< fwhost newservice
+< fwhost newservicegrp
+< fwhost OpenVPN N-2-N
+< fwhost OpenVPN static host
+< fwhost OpenVPN static network
+< fwhost orange
+< fwhost ovpn_n2n
+< fwhost port
+< fwhost prot
+< fwhost reread
+< fwhost reset
+< fwhost services
+< fwhost srv_name
+< fwhost Standard Network
+< fwhost stdnet
+< fwhost type
+< fwhost used
+< fwhost welcome
+< fwhost wo subnet
+< fw settings
+< fw settings color
+< fw settings dropdown
+< fw settings remark
+< fw settings ruletable
+< gen dh
+< generate dh key
+< grouptype
+< guardian
+< hardware support
+< imei
+< imsi
+< incoming compression in bytes per second
+< incoming firewall access
+< incoming overhead in bytes per second
+< integrity
+< invalid input for dpd delay
+< invalid input for dpd timeout
+< invalid input for inactivity timeout
+< invalid input for valid till days
+< invalid logserver protocol
+< ipsec
+< ipsec network
+< ipsec no connections
+< last
+< least preferred
+< lifetime
+< log server protocol
+< mac filter
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
+< maximum
+< MB read
+< MB written
+< messages
+< minimum
+< minute
+< model
+< modem hardware details
+< modem information
+< modem network bit error rate
+< modem network information
+< modem network mode
+< modem network operator
+< modem network registration
+< modem network signal quality
+< modem no connection
+< modem no connection message
+< modem sim information
+< modem status
+< monitor interface
+< most preferred
+< MTU settings
+< nameserver
+< never
+< no hardware random number generator
+< none
+< not a valid dh key
+< notice
+< Number of Countries for the pie chart
+< one hour
+< one month
+< one week
+< one year
+< openvpn default
+< openvpn destination port used
+< openvpn disabled
+< openvpn enabled
+< openvpn fragment allowed with udp
+< openvpn mssfix allowed with udp
+< openvpn network
+< openvpn prefix local subnet
+< openvpn prefix openvpn subnet
+< openvpn prefix remote subnet
+< openvpn subnet is used
+< other
+< our donors
+< outgoing compression in bytes per second
+< outgoing firewall access
+< outgoing firewall add ip group
+< outgoing firewall add mac group
+< outgoing firewall edit ip group
+< outgoing firewall edit mac group
+< outgoing firewall group error
+< outgoing firewall groups
+< outgoing firewall ip groups
+< outgoing firewall mac groups
+< outgoing firewall p2p allow
+< outgoing firewall p2p deny
+< outgoing firewall p2p description 1
+< outgoing firewall p2p description 2
+< outgoing firewall p2p description 3
+< outgoing firewall view group
+< outgoing overhead in bytes per second
+< ovpn add conf
+< ovpn crypt options
+< ovpn dh
+< ovpn dh new key
+< ovpn dh parameters
+< ovpn dh upload
+< ovpn engines
+< ovpn errmsg green already pushed
+< ovpn errmsg invalid ip or mask
+< ovpn generating the root and host certificates
+< ovpn ha
+< ovpn hmac
+< ovpn mgmt in root range
+< ovpn mtu-disc
+< ovpn mtu-disc and mtu not 1500
+< ovpn mtu-disc maybe
+< ovpn mtu-disc no
+< ovpn mtu-disc off
+< ovpn mtu-disc with mssfix or fragment
+< ovpn mtu-disc yes
+< ovpn no connections
+< ovpn port in root range
+< ovpn reneg sec
+< ovpn routes push
+< ovpn routes push options
+< p2p block
+< p2p block save notice
+< pptp netconfig
+< pptp peer
+< pptp route
+< proxy reports
+< proxy reports daily
+< proxy reports monthly
+< proxy reports today
+< proxy reports weekly
+< qos enter bandwidths
+< random number generator daemon
+< rdns
+< red1
+< required field
+< samba join a domain
+< samba join domain
+< search
+< server restart
+< Set time on boot
+< show dh
+< show tls-auth key
+< snat new source ip address
+< software version
+< source ip country
+< ssh
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
+< static routes
+< support donation
+< system has hwrng
+< system has rdrand
+< system information
+< ta key
+< tcp more reliable
+< ten minutes
+< teovpn_fragment
+< thirty minutes
+< tor
+< tor 0 = disabled
+< tor accounting
+< tor accounting bytes
+< tor accounting bytes left
+< tor accounting interval
+< tor accounting limit
+< tor accounting period
+< tor accounting period daily
+< tor accounting period monthly
+< tor accounting period weekly
+< tor acls
+< tor allowed subnets
+< tor bandwidth burst
+< tor bandwidth rate
+< tor bandwidth settings
+< tor bandwidth unlimited
+< tor bridge enabled
+< tor common settings
+< tor configuration
+< tor connected relays
+< tor contact info
+< tor daemon
+< tor directory port
+< tor enabled
+< tor errmsg invalid accounting limit
+< tor errmsg invalid directory port
+< tor errmsg invalid ip or mask
+< tor errmsg invalid node id
+< tor errmsg invalid relay address
+< tor errmsg invalid relay name
+< tor errmsg invalid relay port
+< tor errmsg invalid socks port
+< tor exit country
+< tor exit country any
+< tor exit nodes
+< tor relay address
+< tor relay configuration
+< tor relay enabled
+< tor relay external address
+< tor relay fingerprint
+< tor relay mode
+< tor relay mode bridge
+< tor relay mode exit
+< tor relay mode private bridge
+< tor relay mode relay
+< tor relay nickname
+< tor relay port
+< tor service
+< tor socks port
+< tor stats
+< tor traffic limit hard
+< tor traffic limit soft
+< tor traffic read written
+< tor use exit nodes
+< twelve hours
+< two weeks
+< udp less overhead
+< unblock
+< unblock all
+< uncheck all
+< unlimited
+< updxlrtr sources
+< updxlrtr standard view
+< updxlrtr used by
+< uplink
+< uplink bit rate
+< upload dh key
+< uptime
+< uptime load average
+< urlfilter redirect template
+< vendor
+< visit us at
+< vpn broken
+< vpn connecting
+< vpn force mobike
+< vpn inactivity timeout
+< vpn keyexchange
+< vpn on-demand
+< vpn start action
+< vpn start action add
+< vpn start action route
+< vpn start action start
+< vpn statistic n2n
+< vpn statistic rw
+< vpn wait
+< vpn weak
+< wireless network
+< wlanap
+< wlanap configuration
+< wlanap country
+< wlan client
+< wlan client advanced settings
+< wlan client and
+< wlan client anonymous identity
+< wlan client auth auto
+< wlan client authentication settings
+< wlan client auth peap
+< wlan client auth ttls
+< wlan client bssid
+< wlan client ccmp
+< wlan client configuration
+< wlan client disconnected
+< wlan client duplicate ssid
+< wlan client eap authentication method
+< wlan client eap phase2 method
+< wlan client eap state
+< wlan client edit entry
+< wlan client encryption
+< wlan client encryption eap
+< wlan client encryption none
+< wlan client encryption wep
+< wlan client encryption wpa
+< wlan client encryption wpa2
+< wlan client group cipher
+< wlan client group key algorithm
+< wlan client identity
+< wlan client invalid key length
+< wlan client method
+< wlan client new entry
+< wlan client new network
+< wlan client pairwise cipher
+< wlan client pairwise key algorithm
+< wlan client pairwise key group key
+< wlan client password
+< wlan client psk
+< wlan clients
+< wlan client ssid
+< wlan client tkip
+< wlan client tls cipher
+< wlan client tls version
+< wlan client wpa mode
+< wlan client wpa mode all
+< wlan client wpa mode ccmp ccmp
+< wlan client wpa mode ccmp tkip
+< wlan client wpa mode tkip tkip
+############################################################################
+# Checking cgi-bin translations for language: fr                           #
+############################################################################
+< 24 hours
+< addons
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
+< advproxy cache-digest
+< advproxy errmsg cache
+< advproxy errmsg invalid upstream proxy
+< advproxy errmsg proxy ports equal
+< advproxy group access control
+< advproxy group required
+< advproxy proxy port transparent
+< age second
+< age seconds
+< age shour
+< age sminute
+< age ssecond
+< application layer gateways
+< atm device
+< attention
+< bit
+< block
+< capabilities
+< Captive
+< Captive 1day
+< Captive 1month
+< Captive 1week
+< Captive activate
+< Captive ACTIVATE
+< Captive activated
+< Captive active on
+< Captive agree tac
+< Captive authentication
+< Captive auth_lic
+< Captive auth_vou
+< Captive brand color
+< Captive branding
+< Captive client session expiry time
+< Captive config
+< Captive coupon
+< Captive err doublevoucher
+< Captive expire
+< Captive expiry time
+< Captive export coupons
+< Captive GAIN ACCESS
+< Captive generate coupons
+< Captive generated coupon no
+< Captive heading terms
+< Captive heading voucher
+< Captive invalid coupon
+< Captive invalid logosize
+< Captive invalid_voucher
+< Captive ip
+< Captive issued coupons
+< Captive logo_set
+< Captive logo uploaded
+< Captive mac
+< Captive noexpiretime
+< Captive nolimit
+< Captive nr
+< Captive please accept the terms and conditions
+< Captive please enter a coupon code
+< Captive portal
+< Captive portal coupons
+< Captive terms
+< Captive terms short
+< Captive time
+< Captive title
+< Captive upload logo
+< Captive upload logo recommendations
+< Captive valid for
+< Captive voactive
+< Captive voucher
+< Captive vouchervalid
+< Captive vout
+< Captive WiFi coupon
+< Captive wrong ext
+< ccd add
+< ccd choose net
+< ccd clientip
+< ccd client options
+< ccd dynrange
+< ccd err blue
+< ccd err green
+< ccd err hostinnet
+< ccd err inuse
+< ccd err invalidname
+< ccd err invalidnet
+< ccd err iroute
+< ccd err irouteexist
+< ccd err isipsecnet
+< ccd err isipsecrw
+< ccd err isovpnn2n
+< ccd err isovpnnet
+< ccd err issubnet
+< ccd err name
+< ccd err nameexist
+< ccd err netadr
+< ccd err netadrexist
+< ccd err orange
+< ccd err red
+< ccd err routeovpn
+< ccd err routeovpn2
+< ccd hint
+< ccd invalid
+< ccd iroute
+< ccd iroute2
+< ccd iroutehint
+< ccd modify
+< ccd name
+< ccd net
+< ccd noaddnet
+< ccd none
+< ccd routes
+< ccd subnet
+< ccd used
+< check all
+< ConnSched dial
+< ConnSched hangup
+< ConnSched reboot
+< ConnSched shutdown
+< count
+< countries
+< countrycode
+< country codes and flags
+< dead peer detection
+< default
+< default ip
+< deprecated fs warn
+< details
+< dh
+< dhcp dns enable update
+< dhcp dns key name
+< dhcp dns update
+< dhcp dns update algo
+< dhcp dns update secret
+< dh key move failed
+< dh key warn
+< dh key warn1
+< dh name is invalid
 < dh parameter
 < dl client arch insecure
 < dnat address
@@ -200,9 +965,11 @@
 < email text
 < email tls
 < email usemail
+< emerging rules
 < encryption
 < entropy
 < entropy graphs
+< fifteen minutes
 < fireinfo ipfire version
 < fireinfo is disabled
 < fireinfo is enabled
@@ -229,6 +996,7 @@
 < firewall logs country
 < firewall rules
 < first
+< five minutes
 < flag
 < forward firewall
 < four hours
@@ -238,6 +1006,7 @@
 < fwdfw additional
 < fwdfw addrule
 < fwdfw all icmp
+< fwdfw all subnets
 < fwdfw change
 < fwdfw copy
 < fwdfw delete
@@ -439,6 +1208,7 @@
 < geoipblock enable feature
 < geoipblock flag
 < grouptype
+< guardian
 < hardware support
 < imei
 < imsi
@@ -448,13 +1218,16 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for inactivity timeout
 < invalid input for valid till days
+< invalid logserver protocol
 < ipsec
 < ipsec network
 < ipsec no connections
 < last
 < least preferred
 < lifetime
+< log server protocol
 < mac filter
 < masquerade blue
 < masquerade green
@@ -487,11 +1260,15 @@
 < nameserver
 < never
 < no hardware random number generator
+< none
 < not a valid dh key
 < notice
 < ntp common settings
 < ntp sync
 < Number of Countries for the pie chart
+< one hour
+< one month
+< one week
 < one year
 < openvpn default
 < openvpn destination port used
@@ -542,6 +1319,7 @@
 < proxy reports weekly
 < qos enter bandwidths
 < random number generator daemon
+< rdns
 < red1
 < required field
 < samba join a domain
@@ -549,17 +1327,26 @@
 < search
 < server restart
 < show dh
+< show tls-auth key
 < snat new source ip address
 < snort working
 < software version
 < source ip country
 < ssh
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
 < static routes
 < support donation
 < system has hwrng
 < system has rdrand
 < system information
 < ta key
+< tcp more reliable
+< ten minutes
+< teovpn_fragment
+< thirty minutes
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -577,6 +1364,7 @@
 < tor bandwidth rate
 < tor bandwidth settings
 < tor bandwidth unlimited
+< tor bridge enabled
 < tor common settings
 < tor configuration
 < tor connected relays
@@ -587,6 +1375,7 @@
 < tor errmsg invalid accounting limit
 < tor errmsg invalid directory port
 < tor errmsg invalid ip or mask
+< tor errmsg invalid node id
 < tor errmsg invalid relay address
 < tor errmsg invalid relay name
 < tor errmsg invalid relay port
@@ -615,11 +1404,14 @@
 < tor use exit nodes
 < twelve hours
 < two weeks
+< udp less overhead
 < unblock
 < unblock all
 < uncheck all
+< unlimited
 < updxlrtr sources
 < updxlrtr standard view
+< updxlrtr used by
 < uplink
 < uplink bit rate
 < upload dh key
@@ -633,13 +1425,17 @@
 < visit us at
 < vpn broken
 < vpn connecting
+< vpn force mobike
+< vpn inactivity timeout
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
+< vpn start action add
 < vpn start action route
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn wait
 < vpn weak
 < wireless network
 < wlanap
@@ -710,34 +1506,19 @@
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
 ############################################################################
-# Checking cgi-bin translations for language: es                           #
+# Checking cgi-bin translations for language: it                           #
 ############################################################################
-< addon
+< 24 hours
 < administrator password
 < administrator username
 < adsl settings
-< advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
 < advproxy basic authentication
-< advproxy cache-digest
-< advproxy errmsg cache
-< advproxy errmsg invalid upstream proxy
-< advproxy errmsg proxy ports equal
 < advproxy group access control
 < advproxy group required
-< advproxy proxy port transparent
-< age second
-< age seconds
-< age shour
-< age sminute
-< age ssecond
 < application layer gateways
-< Async logging enabled
-< atm device
-< attention
-< bit
 < block
-< capabilities
+< Captive
 < Captive 1day
 < Captive 1month
 < Captive 1week
@@ -751,7 +1532,6 @@
 < Captive auth_vou
 < Captive brand color
 < Captive branding
-< Captive clients
 < Captive client session expiry time
 < Captive config
 < Captive coupon
@@ -762,21 +1542,21 @@
 < Captive GAIN ACCESS
 < Captive generate coupons
 < Captive generated coupon no
-< Captive genvoucher
+< Captive heading terms
+< Captive heading voucher
+< Captive invalid coupon
 < Captive invalid logosize
 < Captive invalid_voucher
 < Captive ip
 < Captive issued coupons
 < Captive logo_set
-< Captive logo_upload
-< Captive logo_upload1
 < Captive logo uploaded
 < Captive mac
-< Captive menu
 < Captive noexpiretime
 < Captive nolimit
 < Captive nr
 < Captive please accept the terms and conditions
+< Captive please enter a coupon code
 < Captive portal
 < Captive portal coupons
 < Captive terms
@@ -792,59 +1572,216 @@
 < Captive vout
 < Captive WiFi coupon
 < Captive wrong ext
-< ccd add
-< ccd choose net
-< ccd clientip
-< ccd client options
-< ccd dynrange
-< ccd err blue
-< ccd err green
-< ccd err hostinnet
-< ccd err inuse
-< ccd err invalidname
-< ccd err invalidnet
-< ccd err iroute
-< ccd err irouteexist
-< ccd err isipsecnet
-< ccd err isipsecrw
-< ccd err isovpnn2n
-< ccd err isovpnnet
-< ccd err issubnet
-< ccd err name
-< ccd err nameexist
-< ccd err netadr
-< ccd err netadrexist
-< ccd err orange
-< ccd err red
-< ccd err routeovpn
-< ccd err routeovpn2
-< ccd hint
-< ccd invalid
-< ccd iroute
-< ccd iroute2
-< ccd iroutehint
-< ccd maxclients
-< ccd modify
-< ccd name
-< ccd net
-< ccd noaddnet
-< ccd none
-< ccd routes
-< ccd subnet
-< ccd used
 < check all
-< ConnSched dial
-< ConnSched hangup
-< ConnSched reboot
-< ConnSched shutdown
-< count
-< countries
-< countrycode
-< country codes and flags
+< dhcp dns enable update
+< dhcp dns key name
+< dhcp dns update
+< dhcp dns update algo
+< dhcp dns update secret
+< dl client arch insecure
+< dnssec disabled warning
+< eight hours
+< email config
+< email empty field
+< email error
+< email invalid
+< email invalid mailfqdn
+< email invalid mailip
+< email invalid mailport
+< email mailaddr
+< email mailpass
+< email mailport
+< email mailrcpt
+< email mailsender
+< email mailuser
+< email settings
+< email subject
+< email success
+< email testmail
+< email text
+< email tls
+< email usemail
+< fifteen minutes
+< firewall graph country
+< firewall graph ip
+< firewall graph port
+< firewall log country
+< firewall log ip
+< firewall log port
+< five minutes
+< four hours
+< fwdfw all subnets
+< fwdfw err concon
+< fwdfw err ratecon
+< fwdfw limitconcon
+< fwdfw maxconcon
+< fwdfw numcon
+< fwdfw ratelimit
+< fwhost addgeoipgrp
+< fwhost cust geoip
+< fwhost cust geoipgroup
+< fwhost cust geoiplocation
+< fwhost newgeoipgrp
+< geoip
+< geoipblock
+< geoipblock block countries
+< geoipblock configuration
+< geoipblock country code
+< geoipblock country is allowed
+< geoipblock country is blocked
+< geoipblock country name
+< geoipblock enable feature
+< geoipblock flag
+< guaranteed bandwith
+< guardian
+< incoming compression in bytes per second
+< incoming overhead in bytes per second
+< invalid input for inactivity timeout
+< invalid input for valid till days
+< invalid logserver protocol
+< log server protocol
+< masquerade blue
+< masquerade green
+< masquerade orange
+< masquerading
+< masquerading disabled
+< masquerading enabled
+< messages
+< MTU settings
+< none
+< Number of Countries for the pie chart
+< one hour
+< one month
+< one week
+< one year
+< outgoing compression in bytes per second
+< outgoing overhead in bytes per second
+< ovpn add conf
+< pptp netconfig
+< pptp peer
+< pptp route
+< rdns
+< required field
+< samba join a domain
+< samba join domain
+< search
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
+< tcp more reliable
+< ten minutes
+< thirty minutes
+< twelve hours
+< two weeks
+< udp less overhead
+< unblock
+< unblock all
+< uncheck all
+< unlimited
+< uplink bit rate
+< vpn broken
+< vpn connecting
+< vpn force mobike
+< vpn inactivity timeout
+< vpn on-demand
+< vpn start action
+< vpn start action add
+< vpn start action route
+< vpn start action start
+< vpn statistic n2n
+< vpn statistic rw
+< vpn wait
+< vpn weak
+< wireless network
+< wlanap
+< wlanap configuration
+< wlan client anonymous identity
+< wlan client auth auto
+< wlan client authentication settings
+< wlan client auth peap
+< wlan client auth ttls
+< wlan client eap authentication method
+< wlan client eap phase2 method
+< wlan client eap state
+< wlan client encryption eap
+< wlan client identity
+< wlan client method
+< wlan client password
+< wlan client tls cipher
+< wlan client tls version
+############################################################################
+# Checking cgi-bin translations for language: nl                           #
+############################################################################
+< 24 hours
+< administrator password
+< administrator username
+< adsl settings
+< advproxy AUTH method ntlm
+< advproxy AUTH method ntlm auth
+< advproxy basic authentication
+< advproxy group access control
+< advproxy group required
+< application layer gateways
+< atm device
+< block
+< capabilities
+< Captive
+< Captive 1day
+< Captive 1month
+< Captive 1week
+< Captive activate
+< Captive ACTIVATE
+< Captive activated
+< Captive active on
+< Captive agree tac
+< Captive authentication
+< Captive auth_lic
+< Captive auth_vou
+< Captive brand color
+< Captive branding
+< Captive client session expiry time
+< Captive config
+< Captive coupon
+< Captive err doublevoucher
+< Captive expire
+< Captive expiry time
+< Captive export coupons
+< Captive GAIN ACCESS
+< Captive generate coupons
+< Captive generated coupon no
+< Captive heading terms
+< Captive heading voucher
+< Captive invalid coupon
+< Captive invalid logosize
+< Captive invalid_voucher
+< Captive ip
+< Captive issued coupons
+< Captive logo_set
+< Captive logo uploaded
+< Captive mac
+< Captive noexpiretime
+< Captive nolimit
+< Captive nr
+< Captive please accept the terms and conditions
+< Captive please enter a coupon code
+< Captive portal
+< Captive portal coupons
+< Captive terms
+< Captive terms short
+< Captive time
+< Captive title
+< Captive upload logo
+< Captive upload logo recommendations
+< Captive valid for
+< Captive voactive
+< Captive voucher
+< Captive vouchervalid
+< Captive vout
+< Captive WiFi coupon
+< Captive wrong ext
+< check all
 < default
-< default ip
-< deprecated fs warn
-< details
 < dh
 < dhcp dns enable update
 < dhcp dns key name
@@ -854,31 +1791,17 @@
 < dh key move failed
 < dh key warn
 < dh key warn1
+< dh name is invalid
 < dh parameter
 < dl client arch insecure
-< dnat address
-< dnsforward
-< dnsforward add a new entry
-< dnsforward configuration
-< dnsforward edit an entry
-< dnsforward entries
-< dnsforward forward_server
-< dnsforward zone
 < dnssec aware
 < dnssec disabled warning
 < dnssec information
 < dnssec not supported
 < dnssec validating
 < dns servers
-< downlink
 < download dh parameter
 < download tls-auth key
-< dpd delay
-< dpd timeout
-< drop action
-< drop action1
-< drop action2
-< drop forward
 < drop outgoing
 < eight hours
 < email config
@@ -901,26 +1824,7 @@
 < email text
 < email tls
 < email usemail
-< encryption
-< entropy
-< entropy graphs
-< fireinfo ipfire version
-< fireinfo is disabled
-< fireinfo is enabled
-< fireinfo is submitted
-< fireinfo is submitted button
-< fireinfo kernel version
-< fireinfo not submitted
-< fireinfo not submitted button
-< fireinfo pakfire version
-< fireinfo please enable
-< fireinfo settings
-< fireinfo system version
-< fireinfo why descr1
-< fireinfo why descr2
-< fireinfo why enable
-< fireinfo why read more
-< fireinfo your profile id
+< fifteen minutes
 < firewall graph country
 < firewall graph ip
 < firewall graph port
@@ -928,237 +1832,48 @@
 < firewall log ip
 < firewall log port
 < firewall logs country
-< firewall rules
-< first
-< flag
-< forward firewall
+< five minutes
 < four hours
-< fw default drop
-< fwdfw ACCEPT
-< fwdfw action
-< fwdfw additional
-< fwdfw addrule
-< fwdfw all icmp
-< fwdfw change
-< fwdfw copy
-< fwdfw delete
-< fwdfw dnat
-< fwdfw dnat error
-< fwdfw dnat extport
-< fwdfw dnat nochoice
-< fwdfw dnat porterr
-< fwdfw dnat porterr2
-< fwdfw DROP
-< fwdfw edit
+< fwdfw all subnets
 < fwdfw err concon
-< fwdfw err nosrc
-< fwdfw err nosrcip
-< fwdfw err notgt
-< fwdfw err notgtip
-< fwdfw err prot_port
-< fwdfw err prot_port1
 < fwdfw err ratecon
-< fwdfw err remark
-< fwdfw err ruleexists
-< fwdfw err same
-< fwdfw err samesub
-< fwdfw err src_addr
-< fwdfw err tgt_addr
-< fwdfw err tgt_grp
-< fwdfw err tgt_mac
-< fwdfw err tgt_port
-< fwdfw err time
-< fwdfw external port nat
-< fwdfw final_rule
-< fwdfw from
-< fwdfw hint ip1
-< fwdfw hint ip2
-< fwdfw hint mac
-< fwdfw iface
-< fwdfw ipsec network
 < fwdfw limitconcon
-< fwdfw log
-< fwdfw log rule
-< fwdfw man port
-< fwdfw many
 < fwdfw maxconcon
-< fwdfw menu
-< fwdfw MODE1
-< fwdfw MODE2
-< fwdfw movedown
-< fwdfw moveup
-< fwdfw natport used
-< fwdfw newrule
 < fwdfw numcon
-< fwdfw p2p txt
-< fwdfw pol allow
-< fwdfw pol block
-< fwdfw pol text
-< fwdfw pol text1
-< fwdfw pol title
-< fwdfw prot41
-< fwdfw prot41 short
 < fwdfw ratelimit
-< fwdfw red
-< fwdfw REJECT
-< fwdfw reread
-< fwdfw rule action
-< fwdfw rule activate
-< fwdfw rulepos
-< fwdfw rules
-< fwdfw snat
-< fwdfw source
-< fwdfw sourceip
-< fwdfw std network
-< fwdfw target
-< fwdfw targetip
-< fwdfw till
-< fwdfw time
-< fwdfw timeframe
-< fwdfw toggle
-< fwdfw togglelog
-< fwdfw useless rule
-< fwdfw use nat
-< fwdfw use srcport
-< fwdfw use srv
-< fwdfw warn1
-< fwdfw wd_fri
-< fwdfw wd_mon
-< fwdfw wd_sat
-< fwdfw wd_sun
-< fwdfw wd_thu
-< fwdfw wd_tue
-< fwdfw wd_wed
-< fwdfw xt access
 < fwhost addgeoipgrp
-< fwhost addgrp
-< fwhost addgrpname
-< fwhost addhost
-< fwhost addnet
-< fwhost addservice
-< fwhost addservicegrp
-< fwhost any
-< fwhost attention
-< fwhost back
-< fwhost blue
-< fwhost ccdhost
-< fwhost ccdnet
-< fwhost change
-< fwhost changeremark
-< fwhost cust addr
 < fwhost cust geoip
 < fwhost cust geoipgroup
 < fwhost cust geoiplocation
-< fwhost cust grp
-< fwhost cust net
-< fwhost Custom Host
-< fwhost Custom Network
-< fwhost cust service
-< fwhost cust srvgrp
-< fwhost deleted
-< fwhost empty
-< fwhost err addr
-< fwhost err addrgrp
-< fwhost err empty
-< fwhost err emptytable
-< fwhost err groupempty
-< fwhost err grpexist
-< fwhost err hostexist
-< fwhost err hostorip
-< fwhost err ip
-< fwhost err ipcheck
-< fwhost err ipmac
-< fwhost err ipwithsub
-< fwhost err isccdhost
-< fwhost err isccdiphost
-< fwhost err isccdipnet
-< fwhost err isccdnet
-< fwhost err isingrp
-< fwhost err mac
-< fwhost err maxservicetcp
-< fwhost err maxserviceudp
-< fwhost err name
-< fwhost err name1
-< fwhost err net
-< fwhost err netexist
-< fwhost err partofnet
-< fwhost err port
-< fwhost err remark
-< fwhost err srvexist
-< fwhost err srv exists
-< fwhost err sub32
-< fwhost green
-< fwhost hint
-< fwhost hosts
-< fwhost icmptype
-< fwhost ipadr
-< fwhost ip_mac
-< fwhost ipsec host
-< fwhost IpSec Host
-< fwhost ipsec net
-< fwhost IpSec Network
-< fwhost menu
-< fwhost netaddress
 < fwhost newgeoipgrp
-< fwhost newgrp
-< fwhost newhost
-< fwhost newnet
-< fwhost newservice
-< fwhost newservicegrp
-< fwhost OpenVPN N-2-N
-< fwhost OpenVPN static host
-< fwhost OpenVPN static network
-< fwhost orange
-< fwhost ovpn_n2n
-< fwhost port
-< fwhost prot
-< fwhost reread
-< fwhost reset
-< fwhost services
-< fwhost srv_name
-< fwhost Standard Network
-< fwhost stdnet
-< fwhost type
-< fwhost used
-< fwhost welcome
-< fwhost wo subnet
-< fw settings
-< fw settings color
-< fw settings dropdown
-< fw settings remark
-< fw settings ruletable
 < gen dh
 < generate dh key
-< grouptype
-< hardware support
+< geoip
+< geoipblock
+< geoipblock block countries
+< geoipblock configuration
+< geoipblock country code
+< geoipblock country is allowed
+< geoipblock country is blocked
+< geoipblock country name
+< geoipblock enable feature
+< geoipblock flag
+< guardian
 < imei
 < imsi
 < incoming compression in bytes per second
-< incoming firewall access
 < incoming overhead in bytes per second
-< integrity
-< invalid input for dpd delay
-< invalid input for dpd timeout
+< invalid input for inactivity timeout
 < invalid input for valid till days
-< ipsec
-< ipsec network
-< ipsec no connections
-< last
-< least preferred
-< lifetime
-< mac filter
+< invalid logserver protocol
+< log server protocol
 < masquerade blue
 < masquerade green
 < masquerade orange
 < masquerading
 < masquerading disabled
 < masquerading enabled
-< maximum
-< MB read
-< MB written
 < messages
-< minimum
-< minute
 < model
 < modem hardware details
 < modem information
@@ -1173,44 +1888,17 @@
 < modem sim information
 < modem status
 < monitor interface
-< most preferred
 < MTU settings
 < nameserver
 < never
-< no hardware random number generator
+< none
 < not a valid dh key
-< notice
 < Number of Countries for the pie chart
+< one hour
+< one month
+< one week
 < one year
-< openvpn default
-< openvpn destination port used
-< openvpn disabled
-< openvpn enabled
-< openvpn fragment allowed with udp
-< openvpn mssfix allowed with udp
-< openvpn network
-< openvpn prefix local subnet
-< openvpn prefix openvpn subnet
-< openvpn prefix remote subnet
-< openvpn subnet is used
-< other
-< our donors
 < outgoing compression in bytes per second
-< outgoing firewall access
-< outgoing firewall add ip group
-< outgoing firewall add mac group
-< outgoing firewall edit ip group
-< outgoing firewall edit mac group
-< outgoing firewall group error
-< outgoing firewall groups
-< outgoing firewall ip groups
-< outgoing firewall mac groups
-< outgoing firewall p2p allow
-< outgoing firewall p2p deny
-< outgoing firewall p2p description 1
-< outgoing firewall p2p description 2
-< outgoing firewall p2p description 3
-< outgoing firewall view group
 < outgoing overhead in bytes per second
 < ovpn add conf
 < ovpn crypt options
@@ -1219,185 +1907,77 @@
 < ovpn dh parameters
 < ovpn dh upload
 < ovpn engines
-< ovpn errmsg green already pushed
-< ovpn errmsg invalid ip or mask
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn hmac
-< ovpn mgmt in root range
-< ovpn mtu-disc
-< ovpn mtu-disc and mtu not 1500
-< ovpn mtu-disc maybe
-< ovpn mtu-disc no
-< ovpn mtu-disc off
-< ovpn mtu-disc with mssfix or fragment
-< ovpn mtu-disc yes
-< ovpn no connections
-< ovpn port in root range
 < ovpn reneg sec
-< ovpn routes push
-< ovpn routes push options
-< p2p block
-< p2p block save notice
 < pptp netconfig
 < pptp peer
 < pptp route
-< proxy reports
-< proxy reports daily
-< proxy reports monthly
-< proxy reports today
-< proxy reports weekly
-< qos enter bandwidths
 < random number generator daemon
-< red1
+< rdns
 < required field
 < samba join a domain
 < samba join domain
 < search
-< server restart
-< Set time on boot
 < show dh
-< snat new source ip address
+< show tls-auth key
 < software version
 < source ip country
-< ssh
-< static routes
-< support donation
-< system has hwrng
-< system has rdrand
-< system information
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
 < ta key
-< tor
-< tor 0 = disabled
-< tor accounting
-< tor accounting bytes
-< tor accounting bytes left
-< tor accounting interval
-< tor accounting limit
-< tor accounting period
-< tor accounting period daily
-< tor accounting period monthly
-< tor accounting period weekly
-< tor acls
-< tor allowed subnets
-< tor bandwidth burst
-< tor bandwidth rate
-< tor bandwidth settings
-< tor bandwidth unlimited
-< tor common settings
-< tor configuration
-< tor connected relays
-< tor contact info
-< tor daemon
-< tor directory port
-< tor enabled
-< tor errmsg invalid accounting limit
-< tor errmsg invalid directory port
-< tor errmsg invalid ip or mask
-< tor errmsg invalid relay address
-< tor errmsg invalid relay name
-< tor errmsg invalid relay port
-< tor errmsg invalid socks port
-< tor exit country
-< tor exit country any
-< tor exit nodes
-< tor relay address
-< tor relay configuration
-< tor relay enabled
-< tor relay external address
-< tor relay fingerprint
-< tor relay mode
-< tor relay mode bridge
-< tor relay mode exit
-< tor relay mode private bridge
-< tor relay mode relay
-< tor relay nickname
-< tor relay port
-< tor service
-< tor socks port
-< tor stats
-< tor traffic limit hard
-< tor traffic limit soft
-< tor traffic read written
-< tor use exit nodes
+< tcp more reliable
+< ten minutes
+< teovpn_fragment
+< thirty minutes
 < twelve hours
 < two weeks
+< udp less overhead
 < unblock
 < unblock all
 < uncheck all
-< updxlrtr sources
-< updxlrtr standard view
-< uplink
+< unlimited
 < uplink bit rate
 < upload dh key
-< uptime
-< uptime load average
-< urlfilter redirect template
 < vendor
-< visit us at
 < vpn broken
 < vpn connecting
-< vpn keyexchange
+< vpn force mobike
+< vpn inactivity timeout
 < vpn on-demand
 < vpn start action
+< vpn start action add
 < vpn start action route
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn wait
 < vpn weak
 < wireless network
 < wlanap
 < wlanap configuration
-< wlanap country
-< wlan client
-< wlan client advanced settings
-< wlan client and
 < wlan client anonymous identity
 < wlan client auth auto
 < wlan client authentication settings
 < wlan client auth peap
 < wlan client auth ttls
-< wlan client bssid
-< wlan client ccmp
-< wlan client configuration
-< wlan client disconnected
-< wlan client duplicate ssid
 < wlan client eap authentication method
 < wlan client eap phase2 method
 < wlan client eap state
-< wlan client edit entry
-< wlan client encryption
 < wlan client encryption eap
-< wlan client encryption none
-< wlan client encryption wep
-< wlan client encryption wpa
-< wlan client encryption wpa2
-< wlan client group cipher
-< wlan client group key algorithm
 < wlan client identity
-< wlan client invalid key length
 < wlan client method
-< wlan client new entry
-< wlan client new network
-< wlan client pairwise cipher
-< wlan client pairwise key algorithm
-< wlan client pairwise key group key
 < wlan client password
-< wlan client psk
-< wlan clients
-< wlan client ssid
-< wlan client tkip
 < wlan client tls cipher
 < wlan client tls version
-< wlan client wpa mode
-< wlan client wpa mode all
-< wlan client wpa mode ccmp ccmp
-< wlan client wpa mode ccmp tkip
-< wlan client wpa mode tkip tkip
 ############################################################################
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
-< addon
+< 24 hours
+< addons
 < administrator password
 < administrator username
 < adsl settings
@@ -1422,6 +2002,7 @@
 < bit
 < block
 < capabilities
+< Captive
 < Captive 1day
 < Captive 1month
 < Captive 1week
@@ -1435,7 +2016,6 @@
 < Captive auth_vou
 < Captive brand color
 < Captive branding
-< Captive clients
 < Captive client session expiry time
 < Captive config
 < Captive coupon
@@ -1446,21 +2026,21 @@
 < Captive GAIN ACCESS
 < Captive generate coupons
 < Captive generated coupon no
-< Captive genvoucher
+< Captive heading terms
+< Captive heading voucher
+< Captive invalid coupon
 < Captive invalid logosize
 < Captive invalid_voucher
 < Captive ip
 < Captive issued coupons
 < Captive logo_set
-< Captive logo_upload
-< Captive logo_upload1
 < Captive logo uploaded
 < Captive mac
-< Captive menu
 < Captive noexpiretime
 < Captive nolimit
 < Captive nr
 < Captive please accept the terms and conditions
+< Captive please enter a coupon code
 < Captive portal
 < Captive portal coupons
 < Captive terms
@@ -1507,7 +2087,6 @@
 < ccd iroute
 < ccd iroute2
 < ccd iroutehint
-< ccd maxclients
 < ccd modify
 < ccd name
 < ccd net
@@ -1517,6 +2096,7 @@
 < ccd subnet
 < ccd used
 < check all
+< community rules
 < ConnSched dial
 < ConnSched hangup
 < ConnSched reboot
@@ -1525,6 +2105,7 @@
 < countries
 < countrycode
 < country codes and flags
+< dead peer detection
 < default
 < default ip
 < deprecated fs warn
@@ -1538,6 +2119,7 @@
 < dh key move failed
 < dh key warn
 < dh key warn1
+< dh name is invalid
 < dh parameter
 < dl client arch insecure
 < dnat address
@@ -1585,6 +2167,7 @@
 < email text
 < email tls
 < email usemail
+< emerging rules
 < encryption
 < entropy
 < entropy graphs
@@ -1597,6 +2180,7 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< fifteen minutes
 < firewall graph country
 < firewall graph ip
 < firewall graph port
@@ -1606,6 +2190,7 @@
 < firewall logs country
 < firewall rules
 < first
+< five minutes
 < flag
 < forward firewall
 < four hours
@@ -1615,6 +2200,7 @@
 < fwdfw additional
 < fwdfw addrule
 < fwdfw all icmp
+< fwdfw all subnets
 < fwdfw change
 < fwdfw copy
 < fwdfw delete
@@ -1816,6 +2402,7 @@
 < geoipblock enable feature
 < geoipblock flag
 < grouptype
+< guardian
 < hardware support
 < imei
 < imsi
@@ -1825,13 +2412,16 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for inactivity timeout
 < invalid input for valid till days
+< invalid logserver protocol
 < ipsec
 < ipsec network
 < ipsec no connections
 < last
 < least preferred
 < lifetime
+< log server protocol
 < mac filter
 < masquerade blue
 < masquerade green
@@ -1864,9 +2454,13 @@
 < nameserver
 < never
 < no hardware random number generator
+< none
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
+< one hour
+< one month
+< one week
 < one year
 < openvpn default
 < openvpn destination port used
@@ -1921,6 +2515,7 @@
 < proxy reports weekly
 < qos enter bandwidths
 < random number generator daemon
+< rdns
 < red1
 < required field
 < samba join a domain
@@ -1928,15 +2523,24 @@
 < search
 < server restart
 < show dh
+< show tls-auth key
 < snat new source ip address
 < software version
 < source ip country
 < ssh
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
 < static routes
 < support donation
 < system has hwrng
 < system has rdrand
 < ta key
+< tcp more reliable
+< ten minutes
+< teovpn_fragment
+< thirty minutes
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -1954,6 +2558,7 @@
 < tor bandwidth rate
 < tor bandwidth settings
 < tor bandwidth unlimited
+< tor bridge enabled
 < tor common settings
 < tor configuration
 < tor connected relays
@@ -1964,6 +2569,7 @@
 < tor errmsg invalid accounting limit
 < tor errmsg invalid directory port
 < tor errmsg invalid ip or mask
+< tor errmsg invalid node id
 < tor errmsg invalid relay address
 < tor errmsg invalid relay name
 < tor errmsg invalid relay port
@@ -1992,11 +2598,14 @@
 < tor use exit nodes
 < twelve hours
 < two weeks
+< udp less overhead
 < unblock
 < unblock all
 < uncheck all
+< unlimited
 < updxlrtr sources
 < updxlrtr standard view
+< updxlrtr used by
 < uplink
 < uplink bit rate
 < upload dh key
@@ -2007,13 +2616,17 @@
 < visit us at
 < vpn broken
 < vpn connecting
+< vpn force mobike
+< vpn inactivity timeout
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
+< vpn start action add
 < vpn start action route
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn wait
 < vpn weak
 < wireless network
 < wlanap
@@ -2067,8 +2680,9 @@
 ############################################################################
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
+< 24 hours
 < Add a route
-< addon
+< addons
 < administrator password
 < administrator username
 < adsl settings
@@ -2093,6 +2707,7 @@
 < bit
 < block
 < capabilities
+< Captive
 < Captive 1day
 < Captive 1month
 < Captive 1week
@@ -2106,7 +2721,6 @@
 < Captive auth_vou
 < Captive brand color
 < Captive branding
-< Captive clients
 < Captive client session expiry time
 < Captive config
 < Captive coupon
@@ -2117,21 +2731,21 @@
 < Captive GAIN ACCESS
 < Captive generate coupons
 < Captive generated coupon no
-< Captive genvoucher
+< Captive heading terms
+< Captive heading voucher
+< Captive invalid coupon
 < Captive invalid logosize
 < Captive invalid_voucher
 < Captive ip
 < Captive issued coupons
 < Captive logo_set
-< Captive logo_upload
-< Captive logo_upload1
 < Captive logo uploaded
 < Captive mac
-< Captive menu
 < Captive noexpiretime
 < Captive nolimit
 < Captive nr
 < Captive please accept the terms and conditions
+< Captive please enter a coupon code
 < Captive portal
 < Captive portal coupons
 < Captive terms
@@ -2178,7 +2792,6 @@
 < ccd iroute
 < ccd iroute2
 < ccd iroutehint
-< ccd maxclients
 < ccd modify
 < ccd name
 < ccd net
@@ -2188,6 +2801,7 @@
 < ccd subnet
 < ccd used
 < check all
+< community rules
 < ConnSched dial
 < ConnSched hangup
 < ConnSched reboot
@@ -2197,6 +2811,7 @@
 < countrycode
 < country codes and flags
 < day-graph
+< dead peer detection
 < default
 < default ip
 < deprecated fs warn
@@ -2210,6 +2825,7 @@
 < dh key move failed
 < dh key warn
 < dh key warn1
+< dh name is invalid
 < dh parameter
 < disk access per
 < dl client arch insecure
@@ -2259,6 +2875,7 @@
 < email text
 < email tls
 < email usemail
+< emerging rules
 < encryption
 < entropy
 < entropy graphs
@@ -2271,6 +2888,7 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< fifteen minutes
 < firewall graph country
 < firewall graph ip
 < firewall graph port
@@ -2280,6 +2898,7 @@
 < firewall logs country
 < firewall rules
 < first
+< five minutes
 < flag
 < forward firewall
 < four hours
@@ -2290,6 +2909,7 @@
 < fwdfw additional
 < fwdfw addrule
 < fwdfw all icmp
+< fwdfw all subnets
 < fwdfw change
 < fwdfw copy
 < fwdfw delete
@@ -2491,6 +3111,7 @@
 < geoipblock enable feature
 < geoipblock flag
 < grouptype
+< guardian
 < hardware support
 < hour-graph
 < imei
@@ -2502,13 +3123,16 @@
 < integrity
 < invalid input for dpd delay
 < invalid input for dpd timeout
+< invalid input for inactivity timeout
 < invalid input for valid till days
+< invalid logserver protocol
 < ipsec
 < ipsec network
 < ipsec no connections
 < last
 < least preferred
 < lifetime
+< log server protocol
 < mac filter
 < masquerade blue
 < masquerade green
@@ -2542,9 +3166,13 @@
 < nameserver
 < never
 < no hardware random number generator
+< none
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
+< one hour
+< one month
+< one week
 < one year
 < openvpn default
 < openvpn destination port used
@@ -2596,6 +3224,7 @@
 < proxy reports weekly
 < qos enter bandwidths
 < random number generator daemon
+< rdns
 < red1
 < required field
 < samba join a domain
@@ -2603,15 +3232,24 @@
 < search
 < server restart
 < show dh
+< show tls-auth key
 < snat new source ip address
 < software version
 < source ip country
 < ssh
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
 < static routes
 < support donation
 < system has hwrng
 < system has rdrand
 < ta key
+< tcp more reliable
+< ten minutes
+< teovpn_fragment
+< thirty minutes
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -2629,6 +3267,7 @@
 < tor bandwidth rate
 < tor bandwidth settings
 < tor bandwidth unlimited
+< tor bridge enabled
 < tor common settings
 < tor configuration
 < tor connected relays
@@ -2639,6 +3278,7 @@
 < tor errmsg invalid accounting limit
 < tor errmsg invalid directory port
 < tor errmsg invalid ip or mask
+< tor errmsg invalid node id
 < tor errmsg invalid relay address
 < tor errmsg invalid relay name
 < tor errmsg invalid relay port
@@ -2667,11 +3307,14 @@
 < tor use exit nodes
 < twelve hours
 < two weeks
+< udp less overhead
 < unblock
 < unblock all
 < uncheck all
+< unlimited
 < updxlrtr sources
 < updxlrtr standard view
+< updxlrtr used by
 < uplink
 < uplink bit rate
 < upload dh key
@@ -2682,13 +3325,17 @@
 < visit us at
 < vpn broken
 < vpn connecting
+< vpn force mobike
+< vpn inactivity timeout
 < vpn keyexchange
 < vpn on-demand
 < vpn start action
+< vpn start action add
 < vpn start action route
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn wait
 < vpn weak
 < week-graph
 < wireless network
@@ -2741,3 +3388,13 @@
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
 < year-graph
+############################################################################
+# Checking cgi-bin translations for language: tr                           #
+############################################################################
+< fwdfw all subnets
+< ssh active sessions
+< ssh login time
+< ssh no active logins
+< ssh username
+< vpn start action add
+< vpn wait

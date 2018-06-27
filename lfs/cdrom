@@ -29,15 +29,6 @@ VER = ipfire
 THISAPP    = cdrom
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-ifeq "$(BUILD_PLATFORM)" "arm"
-	TAR_OPTIONS =
-else
-	TAR_OPTIONS = --xz
-endif
-
-# Enable multi-threaded compression for LZMA
-export XZ_OPT = --threads=0
-
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -74,14 +65,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Compress root filesystem
 	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
-	tar -c -C / --files-from=/tmp/ROOTFILES \
-		-f /$(SNAME).tar --exclude='#*' --exclude='dev/pts/*' \
-		--exclude='proc/*' --exclude='tmp/ROOTFILES'
+	tar -c --exclude='#*' --exclude='proc/*' --exclude='dev/pts/*' --exclude='tmp/ROOTFILES' \
+		-C / --files-from=/tmp/ROOTFILES -f /$(SNAME).tar
 	rm -f /tmp/ROOTFILES
 	tar -x -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
 	@mkdir /tmp/sys
-	cd /tmp && tar  cf /install/cdrom/distro.img $(TAR_OPTIONS) * && rm -rf *
+	cd /tmp && tar cf - * | xz $(XZ_OPT) > /install/cdrom/distro.img && rm -rf *
 
 	# Other files
 	touch /install/cdrom/$(SNAME)-$(VERSION)-core$(CORE).media

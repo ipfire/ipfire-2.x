@@ -292,6 +292,7 @@ WARNING: translation string unused: generatereport
 WARNING: translation string unused: genkey
 WARNING: translation string unused: green interface
 WARNING: translation string unused: gz with key
+WARNING: translation string unused: harddisk temperature graphs
 WARNING: translation string unused: hint
 WARNING: translation string unused: host
 WARNING: translation string unused: host configuration
@@ -420,6 +421,7 @@ WARNING: translation string unused: no alcatelusb firmware
 WARNING: translation string unused: no cfg upload
 WARNING: translation string unused: no eciadsl synch.bin file
 WARNING: translation string unused: no fritzdsl driver
+WARNING: translation string unused: no hardware random number generator
 WARNING: translation string unused: no information available
 WARNING: translation string unused: no modem selected
 WARNING: translation string unused: no set selected
@@ -464,6 +466,12 @@ WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn log
+WARNING: translation string unused: ovpn mtu-disc and mtu not 1500
+WARNING: translation string unused: ovpn mtu-disc maybe
+WARNING: translation string unused: ovpn mtu-disc no
+WARNING: translation string unused: ovpn mtu-disc off
+WARNING: translation string unused: ovpn mtu-disc with mssfix or fragment
+WARNING: translation string unused: ovpn mtu-disc yes
 WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_fragment
 WARNING: translation string unused: ovpn_mssfix
@@ -580,6 +588,7 @@ WARNING: translation string unused: subnet
 WARNING: translation string unused: subnet is invalid
 WARNING: translation string unused: successfully refreshed updates list
 WARNING: translation string unused: system graphs
+WARNING: translation string unused: system has hwrng
 WARNING: translation string unused: system log viewer
 WARNING: translation string unused: system status information
 WARNING: translation string unused: test
@@ -693,6 +702,7 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: 24 hours
+WARNING: untranslated string: Captive
 WARNING: untranslated string: Captive ACTIVATE
 WARNING: untranslated string: Captive GAIN ACCESS
 WARNING: untranslated string: Captive WiFi coupon
@@ -713,7 +723,6 @@ WARNING: untranslated string: Captive generated coupon no
 WARNING: untranslated string: Captive issued coupons
 WARNING: untranslated string: Captive logo uploaded
 WARNING: untranslated string: Captive mac
-WARNING: untranslated string: Captive menu
 WARNING: untranslated string: Captive nolimit
 WARNING: untranslated string: Captive please accept the terms and conditions
 WARNING: untranslated string: Captive portal
@@ -780,6 +789,7 @@ WARNING: untranslated string: email settings
 WARNING: untranslated string: email testmail
 WARNING: untranslated string: email tls
 WARNING: untranslated string: email usemail
+WARNING: untranslated string: fifteen minutes
 WARNING: untranslated string: firewall graph country
 WARNING: untranslated string: firewall graph ip
 WARNING: untranslated string: firewall graph port
@@ -787,7 +797,9 @@ WARNING: untranslated string: firewall log country
 WARNING: untranslated string: firewall log ip
 WARNING: untranslated string: firewall log port
 WARNING: untranslated string: firewall logs country
+WARNING: untranslated string: five minutes
 WARNING: untranslated string: four hours
+WARNING: untranslated string: fwdfw all subnets
 WARNING: untranslated string: fwdfw err concon
 WARNING: untranslated string: fwdfw err ratecon
 WARNING: untranslated string: fwdfw limitconcon
@@ -852,7 +864,10 @@ WARNING: untranslated string: imsi
 WARNING: untranslated string: incoming compression in bytes per second
 WARNING: untranslated string: incoming overhead in bytes per second
 WARNING: untranslated string: info messages
+WARNING: untranslated string: invalid input for inactivity timeout
 WARNING: untranslated string: invalid input for valid till days
+WARNING: untranslated string: invalid logserver protocol
+WARNING: untranslated string: log server protocol
 WARNING: untranslated string: masquerade blue
 WARNING: untranslated string: masquerade green
 WARNING: untranslated string: masquerade orange
@@ -897,6 +912,7 @@ WARNING: untranslated string: pptp netconfig
 WARNING: untranslated string: pptp peer
 WARNING: untranslated string: pptp route
 WARNING: untranslated string: random number generator daemon
+WARNING: untranslated string: rdns
 WARNING: untranslated string: required field
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
@@ -909,9 +925,17 @@ WARNING: untranslated string: show dh
 WARNING: untranslated string: show tls-auth key
 WARNING: untranslated string: software version
 WARNING: untranslated string: source ip country
+WARNING: untranslated string: ssh active sessions
+WARNING: untranslated string: ssh login time
+WARNING: untranslated string: ssh no active logins
+WARNING: untranslated string: ssh username
 WARNING: untranslated string: ta key
+WARNING: untranslated string: tcp more reliable
+WARNING: untranslated string: ten minutes
+WARNING: untranslated string: thirty minutes
 WARNING: untranslated string: twelve hours
 WARNING: untranslated string: two weeks
+WARNING: untranslated string: udp less overhead
 WARNING: untranslated string: unblock
 WARNING: untranslated string: unblock all
 WARNING: untranslated string: uncheck all
@@ -922,13 +946,16 @@ WARNING: untranslated string: vendor
 WARNING: untranslated string: vpn broken
 WARNING: untranslated string: vpn connecting
 WARNING: untranslated string: vpn force mobike
+WARNING: untranslated string: vpn inactivity timeout
 WARNING: untranslated string: vpn on-demand
 WARNING: untranslated string: vpn start action
+WARNING: untranslated string: vpn start action add
 WARNING: untranslated string: vpn start action route
 WARNING: untranslated string: vpn start action start
 WARNING: untranslated string: vpn statistic n2n
 WARNING: untranslated string: vpn statistic rw
 WARNING: untranslated string: vpn statistics n2n
+WARNING: untranslated string: vpn wait
 WARNING: untranslated string: vpn weak
 WARNING: untranslated string: wireless network
 WARNING: untranslated string: wlan client anonymous identity

@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 67
+PAK_VER    = 68
 
 DEPS       = "cups krb5"
 
@@ -77,6 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 
 	# Apply patches from RHEL6
 	# Upstream patches
@@ -152,9 +153,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_member_auth_after_changed_secret.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_dirsort_ea-support.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2017-7494-v3-6.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-winbind_fix_trusted_domain_handling.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2017-2619.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2017-12150-v3-6.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2017-12163.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2017-15275.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/doc-update.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.x-winbind_tevent_poll.patch
-
 
 	cd $(DIR_APP)/source3 && ./autogen.sh
 	cd $(DIR_APP)/source3 && ./configure \

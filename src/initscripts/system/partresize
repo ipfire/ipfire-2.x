@@ -18,6 +18,7 @@
 case "${1}" in
 	start)
 		if [ -e "/.partresize" ]; then
+
 			boot_mesg "Mounting root file system in read/write mode ..."
 			mount -o remount,rw / > /dev/null
 			evaluate_retval
@@ -27,6 +28,21 @@ case "${1}" in
 			mount -f / || failed=1
 			(exit ${failed})
 			evaluate_retval
+
+			mount /boot > /dev/null
+			if [ -e /boot/grub/grub.cfg ]; then
+				# swtich permanent to serial console if it was selected on first boot
+				if [ ! "$(grep "console=ttyS0" /proc/cmdline)" == "" ]; then
+					# Enable also serial console on GRUB
+					echo "GRUB_TERMINAL=\"serial console\"" >> /etc/default/grub
+					echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> /etc/default/grub
+					sed -i -e "s|panic=10|& console=ttyS0,115200n8|g" /etc/default/grub
+				fi
+				/usr/local/bin/update-bootloader
+			fi
+			umount /boot > /dev/null
+
+			sleep 30
 
 			# Detect device
 			mount | while read -r dev tmp1 mountpoint tmp2; do

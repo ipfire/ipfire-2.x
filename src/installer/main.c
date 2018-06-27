@@ -685,7 +685,6 @@ int main(int argc, char *argv[]) {
 	fprintf(flog, "  boot   : %s (%lluMB)\n", destination->part_boot, BYTES2MB(destination->size_boot));
 	fprintf(flog, "  swap   : %s (%lluMB)\n", destination->part_swap, BYTES2MB(destination->size_swap));
 	fprintf(flog, "  root   : %s (%lluMB)\n", destination->part_root, BYTES2MB(destination->size_root));
-	fprintf(flog, "  data   : %s (%lluMB)\n", destination->part_data, BYTES2MB(destination->size_data));
 	fprintf(flog, "Memory   : %lluMB\n", BYTES2MB(hw_memory()));
 
 	// Warn the user if there is not enough space to create a swap partition
@@ -820,15 +819,6 @@ int main(int argc, char *argv[]) {
 		fclose(f);
 
 		replace(DESTINATION_MOUNT_PATH "/etc/default/grub", "panic=10", "panic=10 console=ttyS0,115200n8");
-
-		/* inittab */
-		replace("/harddisk/etc/inittab", "1:2345:respawn:", "#1:2345:respawn:");
-		replace("/harddisk/etc/inittab", "2:2345:respawn:", "#2:2345:respawn:");
-		replace("/harddisk/etc/inittab", "3:2345:respawn:", "#3:2345:respawn:");
-		replace("/harddisk/etc/inittab", "4:2345:respawn:", "#4:2345:respawn:");
-		replace("/harddisk/etc/inittab", "5:2345:respawn:", "#5:2345:respawn:");
-		replace("/harddisk/etc/inittab", "6:2345:respawn:", "#6:2345:respawn:");
-		replace("/harddisk/etc/inittab", "#7:2345:respawn:", "7:2345:respawn:");
 	}
 
 	/* novga */

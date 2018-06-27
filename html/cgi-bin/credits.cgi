@@ -41,7 +41,7 @@ print <<END
 <p>$Lang::tr{'donation-text'}</p>
 
 <div align="center">
-	<a href="http://www.ipfire.org/donate">
+	<a href="https://www.ipfire.org/donate">
 		<strong>$Lang::tr{'donation'}</strong>
 	</a>
 </div>
@@ -54,7 +54,7 @@ END
 print <<END
 <br>
 <center>
-	$Lang::tr{'visit us at'}: <b><a href='http://www.ipfire.org/' target="_blank">http://www.ipfire.org/</a></b>
+	$Lang::tr{'visit us at'}: <b><a href='https://www.ipfire.org/' target="_blank">https://www.ipfire.org/</a></b>
 </center>
 <br><br>
 

@@ -1,3 +1,4 @@
+#usr/etc
 #usr/etc/rc.d
 #usr/etc/rc.d/init.d
 #usr/etc/rc.d/init.d/smartd
@@ -16,7 +17,6 @@ usr/sbin/update-smart-drivedb
 #usr/share/doc/smartmontools/NEWS
 #usr/share/doc/smartmontools/README
 #usr/share/doc/smartmontools/TODO
-#usr/share/doc/smartmontools/WARNINGS
 #usr/share/doc/smartmontools/examplescripts
 #usr/share/doc/smartmontools/examplescripts/Example1
 #usr/share/doc/smartmontools/examplescripts/Example2

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.1
+VER        = 3.0.12
 
 THISAPP    = swig-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = df4465a62ccc5f0120fee0890ea1a31f
+$(DL_FILE)_MD5 = 82133dfa7bba75ff9ad98a7046be687c
 
 install : $(TARGET)
 
@@ -70,6 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

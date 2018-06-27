@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.3.1
+VER        = 4.4.1
 
 THISAPP    = dhcp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b3a42ece3c7f2cd2e74a3e12ca881d20
+$(DL_FILE)_MD5 = 18c7f4dcbb0a63df25098216d47b1ede
 
 install : $(TARGET)
 
@@ -71,48 +71,20 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-remove-bind.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-errwarn-message.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-dhclient-options.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-release-by-ifup.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-dhclient-decline-backoff.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-unicast-bootp.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-default-requested-options.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-xen-checksum.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-manpages.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-paths.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-CLOEXEC.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-garbage-chars.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-add_timeout_when_NULL.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-64_bit_lease_parse.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-capability.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-logpid.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-UseMulticast.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-sendDecline.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-rfc3442-classless-static-routes.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-honor-expired.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-sharedlib.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-PPP.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-paranoia.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-lpf-ib.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-improved-xid.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-gpxe-cid.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcp/dhcp-stateless-DUID-LLT.patch
-
 	# Help unpacking bundled BIND
-	cd $(DIR_APP) && sed -e "s/gunzip -c/&d/" -i bind/Makefile
+	cd $(DIR_APP) && sed -e "s/gunzip -c/&d/" -i bind/Makefile.in
 
 	cd $(DIR_APP) && \
 		./configure \
 			--prefix=/usr \
 			--sysconfdir=/etc/dhcp \
+			--with-srv-conf-file=/etc/dhcp/dhcpd.conf \
 			--with-srv-lease-file=/var/state/dhcp/dhcpd.leases \
-			--disable-static \
 			--enable-paranoia \
 			--enable-early-chroot \
 			--disable-dhcpv6
 
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 
 	mkdir -pv /var/state/dhcp

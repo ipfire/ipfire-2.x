@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2017  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,14 +24,14 @@
 
 include Config
 
-VER        = 6.3.0
+VER        = 7.3.0
 
-GMP_VER    = 5.0.5
-MPFR_VER   = 2.4.2
+GMP_VER    = 6.1.2
+MPFR_VER   = 3.1.6
 MPC_VER    = 1.0.3
 
 THISAPP    = gcc-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
@@ -40,6 +40,12 @@ CFLAGS    := $(patsubst -mfpu=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mtune=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mfloat-abi=%,,$(CFLAGS))
 CFLAGS    := $(filter-out -fexceptions,$(CFLAGS))
+
+ifeq "$(PASS)" "1"
+CFLAGS    := $(patsubst -mindirect-branch=%,,$(CFLAGS))
+CFLAGS    := $(patsubst -mfunction-return=%,,$(CFLAGS))
+endif
+
 CXXFLAGS  := $(CFLAGS)
 
 ifeq "$(BUILD_ARCH)" "armv7hl"
@@ -50,7 +56,7 @@ ifeq "$(BUILD_ARCH)" "armv5tel"
 	FULL_BOOTSTRAP = 1
 endif
 
-# Normal build or /tools build.
+# Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
@@ -71,10 +77,10 @@ ifeq "$(PASS)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = \
 	--target=$(CROSSTARGET) \
-	--prefix=/tools \
+	--prefix=$(TOOLS_DIR) \
 	--with-sysroot=$(ROOT) \
-	--with-local-prefix=/tools \
-	--with-native-system-header-dir=/tools/include \
+	--with-local-prefix=$(TOOLS_DIR) \
+	--with-native-system-header-dir=$(TOOLS_DIR)/include \
 	--disable-nls \
 	--disable-shared \
 	--disable-decimal-float \
@@ -107,9 +113,9 @@ ifeq "$(PASS)" "2"
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
 	--build=$(BUILDTARGET) \
-	--prefix=/tools \
-	--with-local-prefix=/tools \
-	--with-native-system-header-dir=/tools/include \
+	--prefix=$(TOOLS_DIR) \
+	--with-local-prefix=$(TOOLS_DIR) \
+	--with-native-system-header-dir=$(TOOLS_DIR)/include \
 	--enable-languages=c,c++ \
 	--disable-libstdcxx-pch \
 	--disable-libgomp
@@ -130,13 +136,13 @@ else
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
 	--host=$(CROSSTARGET) \
-	--prefix=/tools \
+	--prefix=$(TOOLS_DIR) \
 	--with-sysroot=$(ROOT) \
 	--disable-shared \
 	--disable-nls \
 	--disable-libstdcxx-threads \
 	--disable-libstdcxx-pch \
-	--with-gxx-include-dir=/tools/$(CROSSTARGET)/include/c++/$(VER)
+	--with-gxx-include-dir=$(TOOLS_DIR)/$(CROSSTARGET)/include/c++/$(VER)
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif
@@ -174,18 +180,18 @@ export TCFLAGS = $(CFLAGS)
 ###############################################################################
 
 objects = $(DL_FILE) \
-	gmp-$(GMP_VER).tar.bz2 \
-	mpfr-$(MPFR_VER).tar.bz2 \
+	gmp-$(GMP_VER).tar.xz \
+	mpfr-$(MPFR_VER).tar.xz \
 	mpc-$(MPC_VER).tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-gmp-$(GMP_VER).tar.bz2 = $(DL_FROM)/gmp-$(GMP_VER).tar.bz2
-mpfr-$(MPFR_VER).tar.bz2 = $(DL_FROM)/mpfr-$(MPFR_VER).tar.bz2
+gmp-$(GMP_VER).tar.xz = $(DL_FROM)/gmp-$(GMP_VER).tar.xz
+mpfr-$(MPFR_VER).tar.xz = $(DL_FROM)/mpfr-$(MPFR_VER).tar.xz
 mpc-$(MPC_VER).tar.gz = $(DL_FROM)/mpc-$(MPC_VER).tar.gz
 
-$(DL_FILE)_MD5			= 6e5ea04789678f1250c1b30c4d9ec417
-gmp-$(GMP_VER).tar.bz2_MD5	= 041487d25e9c230b0c42b106361055fe
-mpfr-$(MPFR_VER).tar.bz2_MD5	= 89e59fe665e2b3ad44a6789f40b059a0
+$(DL_FILE)_MD5			= be2da21680f27624f3a87055c4ba5af2
+gmp-$(GMP_VER).tar.xz_MD5	= f58fa8001d60c4c77595fbbb62b63c1d
+mpfr-$(MPFR_VER).tar.xz_MD5	= 51bfdbf81553966c8d43808122cc81b3
 mpc-$(MPC_VER).tar.gz_MD5	= d6a1d5f8ddea3abd2cc3e98f58352d26
 
 install : $(TARGET)
@@ -225,27 +231,27 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 ifeq "$(TOOLCHAIN)" "1"
 	# Build gmp and mpfr internally in toolchain.
-	cd $(DIR_APP) && tar xfa $(DIR_DL)/gmp-$(GMP_VER).tar.bz2
+	cd $(DIR_APP) && tar xfa $(DIR_DL)/gmp-$(GMP_VER).tar.xz
 	cd $(DIR_APP) && mv -v gmp-$(GMP_VER) gmp
-	cd $(DIR_APP) && tar xfa $(DIR_DL)/mpfr-$(MPFR_VER).tar.bz2
+	cd $(DIR_APP) && tar xfa $(DIR_DL)/mpfr-$(MPFR_VER).tar.xz
 	cd $(DIR_APP) && mv -v mpfr-$(MPFR_VER) mpfr
 	cd $(DIR_APP) && tar xfa $(DIR_DL)/mpc-$(MPC_VER).tar.gz
 	cd $(DIR_APP) && mv -v mpc-$(MPC_VER) mpc
 
 ifeq "$(PASS)" "2"
 	cd $(DIR_APP) && cat gcc/limitx.h gcc/glimits.h gcc/limity.h > \
-			`dirname $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name)`/include-fixed/limits.h
+			`dirname $$($(TOOLS_DIR)/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name)`/include-fixed/limits.h
 endif
 
 	for file in $$(find $(DIR_APP)/gcc/config -name linux64.h -o -name linux.h \
 			-o -name sysv4.h -o -name linux-eabi.h -o -name linux-elf.h -o -name aarch64-linux.h); do \
 		echo "Processing $${file}..."; \
 		sed -i $${file} \
-			-e 's@/lib\(64\)\?\(32\)\?/ld@/tools&@g' \
-			-e 's@/usr@/tools@g'; \
+			-e 's@/lib\(64\)\?\(32\)\?/ld@$(TOOLS_DIR)&@g' \
+			-e 's@/usr@$(TOOLS_DIR)@g'; \
 		echo '#undef STANDARD_STARTFILE_PREFIX_1' >> $${file}; \
 		echo '#undef STANDARD_STARTFILE_PREFIX_2' >> $${file}; \
-		echo '#define STANDARD_STARTFILE_PREFIX_1 "/tools/lib/"' >> $${file}; \
+		echo '#define STANDARD_STARTFILE_PREFIX_1 "$(TOOLS_DIR)/lib/"' >> $${file}; \
 		echo '#define STANDARD_STARTFILE_PREFIX_2 ""' >> $${file}; \
 	done
 endif
@@ -271,18 +277,18 @@ endif
 
 ifeq "$(TOOLCHAIN)" "1"
  ifeq "$(PASS)" "1"
-	ln -svf libgcc.a $$(/tools/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name | sed 's/libgcc/&_eh/')
+	ln -svf libgcc.a $$($(TOOLS_DIR)/bin/$(CROSSTARGET)-gcc -print-libgcc-file-name | sed 's/libgcc/&_eh/')
  endif
 
  ifeq "$(PASS)" "2"
-	ln -svf gcc /tools/bin/cc
+	ln -svf gcc $(TOOLS_DIR)/bin/cc
 	# remove gdb python files from libdir
-	rm -rf /tools/lib/*-gdb.py
+	rm -rf $(TOOLS_DIR)/lib/*-gdb.py
  endif
 
  ifeq "$(PASS)" "L"
 	# Workaround for https://gcc.gnu.org/bugzilla/show_bug.cgi?id=70936
-	sed -e "s/^#include_next/#include/" -i /tools/$(CROSSTARGET)/include/c++/$(VER)/cstdlib
+	sed -e "s/^#include_next/#include/" -i $(TOOLS_DIR)/$(CROSSTARGET)/include/c++/$(VER)/cstdlib
  endif
 
 else # NON-TOOLCHAIN

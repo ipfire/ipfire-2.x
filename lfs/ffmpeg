@@ -24,16 +24,17 @@
 
 include Config
 
-VER        = 3.2.4
+VER        = 3.4
+
 THISAPP    = ffmpeg-$(VER)
-DL_FILE    = $(THISAPP).tar.xz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ffmpeg
-PAK_VER    = 6
+PAK_VER    = 8
 
-DEPS       = "ffmpeg-libs sdl lame libvorbis xvid"
+DEPS       = "sdl lame libvorbis xvid"
 
 ###############################################################################
 # Top-level Rules
@@ -43,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 39fd71024ac76ba35f04397021af5606
+$(DL_FILE)_MD5 = 4d368db3431895d140e6f5f7b4987911
 
 install : $(TARGET)
 
@@ -76,13 +77,15 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr \
-				--enable-shared \
-				--enable-postproc \
-				--enable-pthreads \
-				--enable-gpl
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--enable-shared \
+		--enable-gpl \
+		--enable-version3 \
+		--enable-avfilter \
+		--enable-avresample
+
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && make install-libs
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

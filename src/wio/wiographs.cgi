@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2017 Stephan Feddersen <addons@h-loit.de>                     #
+# Copyright (C) 2017-2018 Stephan Feddersen <sfeddersen@ipfire.org>           #
 # All Rights Reserved.                                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
@@ -21,7 +21,7 @@
 #                                                                             #
 ###############################################################################
 #
-# id: wiographs.cgi, v1.3.2 2017/08/27 14:11:16 sfeddersen
+# Version: 2017/08/27 14:07:23
 #
 # This wiographs.cgi is based on the Code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.

@@ -76,6 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && tar axf $(DIR_DL)/udev-lfs-$(VER)-1.tar.bz2
 
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-208_remove_systemd_log.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/udev-208-fix_uint8_t.patch
 
 	rm -rf /lib/udev/devices
 	install -dv /lib/firmware

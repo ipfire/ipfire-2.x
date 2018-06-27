@@ -1,0 +1,2 @@
+etc/rc.d/init.d/mdns-repeater
+usr/bin/mdns-repeater

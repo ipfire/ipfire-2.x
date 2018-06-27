@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/${THISAPP}
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpd
-PAK_VER    = 17
+PAK_VER    = 18
 
-DEPS       = "alsa faad2 ffmpeg-libs flac lame libmad libshout libogg libid3tag libvorbis opus"
+DEPS       = "alsa faad2 ffmpeg flac lame libmad libshout libogg libid3tag libvorbis opus"
 
 ###############################################################################
 # Top-level Rules

@@ -31,14 +31,14 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-# Normal build or /tools build.
+# Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
   PREFIX = /usr
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  PREFIX = /tools
+  PREFIX = $(TOOLS_DIR)
 endif
 
 EXTRA_CONFIG += \
@@ -95,6 +95,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && mkdir -pv narrowc widec
 
 	# Build narrowc version.

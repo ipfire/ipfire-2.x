@@ -1,0 +1,38 @@
+#!/bin/sh
+# Begin $rc_base/init.d/nrpe
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+NRPEBIN=/usr/bin/nrpe
+NRPECFG=/etc/nagios/nrpe.cfg
+
+case "$1" in
+	start)
+		boot_mesg "Starting nrpe..."
+		loadproc $NRPEBIN -c $NRPECFG -d
+	;;
+
+	stop)
+		boot_mesg "Stopping nrpe..."
+		killproc $NRPEBIN
+		rm -f /var/run/nrpe.pid
+	;;
+
+	restart)
+		$0 stop
+		sleep 1
+		$0 start
+		;;
+
+	status)
+		statusproc $NRPEBIN
+	;;
+
+	*)
+		echo "Usage: $0 {start|stop|restart|status}"
+		exit 1
+	;;
+esac
+
+# End $rc_base/init.d/nrpe

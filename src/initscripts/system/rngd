@@ -11,30 +11,10 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-function has_rdrand() {
-	grep -q "rdrand" /proc/cpuinfo
-}
-
-function has_hwrng() {
-	[ -e "/dev/hwrng" ]
-}
-
 case "${1}" in
 	start)
-		if ! has_hwrng && ! has_rdrand; then
-			boot_mesg "No Hardware Random Number Generator found..."
-			echo_warning
-			exit 0
-		fi
-
 		boot_mesg "Starting Random Number Generator Daemon..."
-
-		if pidofproc /usr/sbin/rngd &>/dev/null; then
-			# Is already running.
-			echo_ok
-		else
-			loadproc /usr/sbin/rngd --no-tpm=1
-		fi
+		loadproc /usr/sbin/rngd --quiet
 		;;
 
 	stop)

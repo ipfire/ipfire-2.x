@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = squidclamav
-PAK_VER    = 20
+PAK_VER    = 21
 
 DEPS       = "clamav"
 
@@ -77,6 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/squidclamav-5.11-dont_use_ipv6.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/squidclamav-5.11-squid-helper-protocol.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/squidclamav-5.11-source-address-parsing-issue.patch

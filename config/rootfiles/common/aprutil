@@ -43,5 +43,5 @@ usr/lib/apr-util-1/apr_crypto_openssl.so
 #usr/lib/libaprutil-1.la
 #usr/lib/libaprutil-1.so
 usr/lib/libaprutil-1.so.0
-usr/lib/libaprutil-1.so.0.6.0
+usr/lib/libaprutil-1.so.0.6.1
 #usr/lib/pkgconfig/apr-util-1.pc

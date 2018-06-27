@@ -2,7 +2,7 @@ lib/xtables/libxt_ACCOUNT.so
 lib/xtables/libxt_CHAOS.so
 lib/xtables/libxt_DELUDE.so
 lib/xtables/libxt_DHCPMAC.so
-lib/xtables/libxt_DNETMAP.so
+#lib/xtables/libxt_DNETMAP.so
 lib/xtables/libxt_ECHO.so
 lib/xtables/libxt_IPMARK.so
 lib/xtables/libxt_LOGMARK.so

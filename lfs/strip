@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2017  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -29,6 +29,16 @@ VER = ipfire
 THISAPP    = strip
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+ifeq "$(TOOLCHAIN)" "1"
+	SHELL = /bin/bash
+	STRIP = /usr/bin/strip
+	ROOT = $(TOOLS_DIR)
+else
+	SHELL = $(TOOLS_DIR)/bin/bash
+	STRIP = $(TOOLS_DIR)/bin/strip
+	ROOT = /
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -49,6 +59,6 @@ $(TARGET) :
 	# Don't strip VDR binaries, because they use a weird plugin system
 	# which does not work when unneeded symbols get stripped from
 	# /usr/sbin/vdr.
-	$(DIR_SRC)/src/stripper $(ROOT) \
-		--exclude=/usr/src --exclude=/tools \
+	STRIP=$(STRIP) $(SHELL) $(DIR_SRC)/src/stripper $(ROOT) \
+		--exclude=/usr/src --exclude=$(TOOLS_DIR) \
 		--exclude=/usr/sbin/vdr --exclude=/usr/lib/vdr

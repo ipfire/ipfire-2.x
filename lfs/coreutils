@@ -24,24 +24,23 @@
 
 include Config
 
-VER        = 8.27
+VER        = 8.29
 
 THISAPP    = coreutils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-# Normal build or /tools build.
+# Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  CONFIGURE_OPTIONS = --prefix=/usr
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  CONFIGURE_OPTIONS = --prefix=/tools
 endif
 
 CONFIGURE_OPTIONS += \
+	--prefix=$(PREFIX) \
 	--enable-largefile \
 	--disable-rpath \
 	--enable-install-program=arch \
@@ -59,7 +58,7 @@ objects =$(DL_FILE)
 
 $(DL_FILE)= $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 502795792c212932365e077946d353ae
+$(DL_FILE)_MD5 = 960cfe75a42c9907c71439f8eb436303
 
 install : $(TARGET)
 

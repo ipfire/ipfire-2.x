@@ -24,21 +24,13 @@
 
 include Config
 
-VER        = 5.6.0
+VER        = 5.6.2
 
 THISAPP    = strongswan-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/strongswan-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-
-ifeq "$(BUILD_ARCH)" "i586"
-	CONFIGURE_OPTIONS = \
-		--enable-padlock
-else
-	CONFIGURE_OPTIONS = \
-		--disable-padlock
-endif
 
 ###############################################################################
 # Top-level Rules
@@ -48,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = befb5e827d02433fea6669c20e11530a
+$(DL_FILE)_MD5 = 46aa3aa18fbc4bd528f9a0345ce79913
 
 install : $(TARGET)
 
@@ -100,6 +92,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-eap-peap \
 		--enable-eap-mschapv2 \
 		--enable-eap-identity \
+		--disable-padlock \
 		--disable-chapoly \
 		$(CONFIGURE_OPTIONS)
 

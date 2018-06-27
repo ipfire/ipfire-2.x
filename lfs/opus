@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.1.2
+VER        = 1.2.1
 
 THISAPP    = opus-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = opus
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 1f08a661bc72930187893a07f3741a91
+$(DL_FILE)_MD5 = 54bc867f13066407bc7b95be1fede090
 
 install : $(TARGET)
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))

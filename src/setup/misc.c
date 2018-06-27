@@ -139,13 +139,3 @@ int writehostsfiles(void)
 	
 	return 1;
 }	
-
-int handleisdn(void)
-{
-	char command[STRING_SIZE];
-	sprintf(command, "/etc/rc.d/init.d/mISDN config");
-	if (runcommandwithstatus(command, _("ISDN"), _("Scanning and configuring ISDN devices."), NULL))
-		errorbox(_("Unable to scan for ISDN devices."));
-	// Need to write some lines that count the cards and say the names...
-	return 1;
-}

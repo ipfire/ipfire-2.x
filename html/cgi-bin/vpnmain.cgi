@@ -68,6 +68,17 @@ if (&Header::orange_used() && $netsettings{'ORANGE_DEV'}) {
 	$orange_cidr = &General::ipcidr("$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}");
 }
 
+my %INACTIVITY_TIMEOUTS = (
+	300		=> $Lang::tr{'five minutes'},
+	600		=> $Lang::tr{'ten minutes'},
+	900		=> $Lang::tr{'fifteen minutes'},
+	1800		=> $Lang::tr{'thirty minutes'},
+	3600		=> $Lang::tr{'one hour'},
+	43200		=> $Lang::tr{'twelve hours'},
+	86400		=> $Lang::tr{'24 hours'},
+	0		=> "- $Lang::tr{'unlimited'} -",
+);
+
 my $col="";
 
 $cgiparams{'ENABLED'} = 'off';
@@ -109,6 +120,7 @@ $cgiparams{'DPD_DELAY'} = '30';
 $cgiparams{'DPD_TIMEOUT'} = '120';
 $cgiparams{'FORCE_MOBIKE'} = 'off';
 $cgiparams{'START_ACTION'} = 'start';
+$cgiparams{'INACTIVITY_TIMEOUT'} = 900;
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 ###
@@ -187,10 +199,10 @@ sub callssl ($) {
 sub getCNfromcert ($) {
 	#&General::log("ipsec", "Extracting name from $_[0]...");
 	my $temp = `/usr/bin/openssl x509 -text -in $_[0]`;
-	$temp =~ /Subject:.*CN=(.*)[\n]/;
+	$temp =~ /Subject:.*CN = (.*)[\n]/;
 	$temp = $1;
 	$temp =~ s+/Email+, E+;
-	$temp =~ s/ ST=/ S=/;
+	$temp =~ s/ ST = / S = /;
 	$temp =~ s/,//g;
 	$temp =~ s/\'//g;
 	return $temp;
@@ -204,7 +216,7 @@ sub getsubjectfromcert ($) {
 	$temp =~ /Subject: (.*)[\n]/;
 	$temp = $1;
 	$temp =~ s+/Email+, E+;
-	$temp =~ s/ ST=/ S=/;
+	$temp =~ s/ ST = / S = /;
 	return $temp;
 }
 ###
@@ -407,6 +419,11 @@ sub writeipsecfiles {
 			$start_action = "start";
 		}
 
+		my $inactivity_timeout = $lconfighash{$key}[34];
+		if ($inactivity_timeout eq "") {
+			$inactivity_timeout = 900;
+		}
+
 		# Automatically start only if a net-to-net connection
 		if ($lconfighash{$key}[3] eq 'host') {
 			print CONF "\tauto=add\n";
@@ -416,8 +433,8 @@ sub writeipsecfiles {
 
 			# If in on-demand mode, we terminate the tunnel
 			# after 15 min of no traffic
-			if ($start_action eq 'route') {
-				print CONF "\tinactivity=900\n";
+			if ($start_action eq 'route' && $inactivity_timeout > 0) {
+				print CONF "\tinactivity=$inactivity_timeout\n";
 			}
 		}
 
@@ -1299,6 +1316,7 @@ END
 		$cgiparams{'DPD_TIMEOUT'}		= $confighash{$cgiparams{'KEY'}}[30];
 		$cgiparams{'DPD_DELAY'}			= $confighash{$cgiparams{'KEY'}}[31];
 		$cgiparams{'FORCE_MOBIKE'}		= $confighash{$cgiparams{'KEY'}}[32];
+		$cgiparams{'INACTIVITY_TIMEOUT'}	= $confighash{$cgiparams{'KEY'}}[34];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -1306,6 +1324,10 @@ END
 
 		if (!$cgiparams{'DPD_TIMEOUT'}) {
 			$cgiparams{'DPD_TIMEOUT'} = 120;
+		}
+
+		if ($cgiparams{'INACTIVITY_TIMEOUT'} eq "") {
+			$cgiparams{'INACTIVITY_TIMEOUT'} = 900;
 		}
 
 	} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
@@ -1790,7 +1812,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 		$key = &General::findhasharraykey (\%confighash);
-		foreach my $i (0 .. 33) { $confighash{$key}[$i] = "";}
+		foreach my $i (0 .. 34) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -1834,6 +1856,7 @@ END
 	$confighash{$key}[30] = $cgiparams{'DPD_TIMEOUT'};
 	$confighash{$key}[31] = $cgiparams{'DPD_DELAY'};
 	$confighash{$key}[32] = $cgiparams{'FORCE_MOBIKE'};
+	$confighash{$key}[34] = $cgiparams{'INACTIVITY_TIMEOUT'};
 
 	# free unused fields!
 	$confighash{$key}[6] = 'off';
@@ -1904,9 +1927,10 @@ END
 	$cgiparams{'ESP_INTEGRITY'}		= 'sha2_512|sha2_256'; #[22];
 	$cgiparams{'ESP_GROUPTYPE'}		= 'curve25519|4096|3072|2048'; #[23];
 	$cgiparams{'ESP_KEYLIFE'}		= '1'; #[17];
-	$cgiparams{'COMPRESSION'}		= 'on'; #[13];
+	$cgiparams{'COMPRESSION'}		= 'off'; #[13];
 	$cgiparams{'ONLY_PROPOSED'}		= 'on'; #[24];
 	$cgiparams{'PFS'}				= 'on'; #[28];
+	$cgiparams{'INACTIVITY_TIMEOUT'}        = 900;
 }
 
 VPNCONF_ERROR:
@@ -2178,7 +2202,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 		foreach my $val (@temp) {
-			if ($val !~ /^(curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|768|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192)$/) {
+			if ($val !~ /^(curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|768|1024|1536|2048|3072|4096|6144|8192)$/) {
 				$errormessage = $Lang::tr{'invalid input'};
 				goto ADVANCED_ERROR;
 			}
@@ -2219,7 +2243,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 		foreach my $val (@temp) {
-			if ($val !~ /^(curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|768|1024|1536|2048|2048s256|2048s224|2048s160|3072|4096|6144|8192|none)$/) {
+			if ($val !~ /^(curve25519|e521|e384|e256|e224|e192|e512bp|e384bp|e256bp|e224bp|768|1024|1536|2048|3072|4096|6144|8192|none)$/) {
 				$errormessage = $Lang::tr{'invalid input'};
 				goto ADVANCED_ERROR;
 			}
@@ -2251,6 +2275,11 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 
+		if ($cgiparams{'INACTIVITY_TIMEOUT'} !~ /^\d+$/) {
+			$errormessage = $Lang::tr{'invalid input for inactivity timeout'};
+			goto ADVANCED_ERROR;
+		}
+
 		$confighash{$cgiparams{'KEY'}}[29] = $cgiparams{'IKE_VERSION'};
 		$confighash{$cgiparams{'KEY'}}[18] = $cgiparams{'IKE_ENCRYPTION'};
 		$confighash{$cgiparams{'KEY'}}[19] = $cgiparams{'IKE_INTEGRITY'};
@@ -2269,6 +2298,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$confighash{$cgiparams{'KEY'}}[31] = $cgiparams{'DPD_DELAY'};
 		$confighash{$cgiparams{'KEY'}}[32] = $cgiparams{'FORCE_MOBIKE'};
 		$confighash{$cgiparams{'KEY'}}[33] = $cgiparams{'START_ACTION'};
+		$confighash{$cgiparams{'KEY'}}[34] = $cgiparams{'INACTIVITY_TIMEOUT'};
 		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 		&writeipsecfiles();
 		if (&vpnenabled) {
@@ -2297,6 +2327,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$cgiparams{'DPD_DELAY'}			= $confighash{$cgiparams{'KEY'}}[31];
 		$cgiparams{'FORCE_MOBIKE'}		= $confighash{$cgiparams{'KEY'}}[32];
 		$cgiparams{'START_ACTION'}		= $confighash{$cgiparams{'KEY'}}[33];
+		$cgiparams{'INACTIVITY_TIMEOUT'}	= $confighash{$cgiparams{'KEY'}}[34];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -2308,6 +2339,10 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 
 		if (!$cgiparams{'START_ACTION'}) {
 			$cgiparams{'START_ACTION'} = "start";
+		}
+
+		if ($cgiparams{'INACTIVITY_TIMEOUT'} eq "") {
+			$cgiparams{'INACTIVITY_TIMEOUT'} = 900; # 15 min
 		}
 	}
 
@@ -2404,9 +2439,16 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$selected{'DPD_ACTION'}{'none'} = '';
 	$selected{'DPD_ACTION'}{$cgiparams{'DPD_ACTION'}} = "selected='selected'";
 
+	$selected{'START_ACTION'}{'add'} = '';
 	$selected{'START_ACTION'}{'route'} = '';
 	$selected{'START_ACTION'}{'start'} = '';
 	$selected{'START_ACTION'}{$cgiparams{'START_ACTION'}} = "selected='selected'";
+
+	$selected{'INACTIVITY_TIMEOUT'} = ();
+	foreach my $timeout (keys %INACTIVITY_TIMEOUTS) {
+		$selected{'INACTIVITY_TIMEOUT'}{$timeout} = "";
+	}
+	$selected{'INACTIVITY_TIMEOUT'}{$cgiparams{'INACTIVITY_TIMEOUT'}} = "selected";
 
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
@@ -2470,7 +2512,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='aes128gcm64' $checked{'IKE_ENCRYPTION'}{'aes128gcm64'}>128 bit AES-GCM/64 bit ICV</option>
 					<option value='aes128' $checked{'IKE_ENCRYPTION'}{'aes128'}>128 bit AES-CBC</option>
 					<option value='camellia128' $checked{'IKE_ENCRYPTION'}{'camellia128'}>128 bit Camellia-CBC</option>
-					<option value='3des' $checked{'IKE_ENCRYPTION'}{'3des'}>168 bit 3DES-EDE-CBC</option>
+					<option value='3des' $checked{'IKE_ENCRYPTION'}{'3des'}>168 bit 3DES-EDE-CBC ($Lang::tr{'vpn weak'})</option>
 				</select>
 			</td>
 			<td class='boldbase'>
@@ -2490,7 +2532,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='aes128gcm64' $checked{'ESP_ENCRYPTION'}{'aes128gcm64'}>128 bit AES-GCM/64 bit ICV</option>
 					<option value='aes128' $checked{'ESP_ENCRYPTION'}{'aes128'}>128 bit AES-CBC</option>
 					<option value='camellia128' $checked{'ESP_ENCRYPTION'}{'camellia128'}>128 bit Camellia-CBC</option>
-					<option value='3des' $checked{'ESP_ENCRYPTION'}{'3des'}>168 bit 3DES-EDE-CBC</option>
+					<option value='3des' $checked{'ESP_ENCRYPTION'}{'3des'}>168 bit 3DES-EDE-CBC ($Lang::tr{'vpn weak'})</option>
 				</select>
 			</td>
 		</tr>
@@ -2545,9 +2587,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='6144' $checked{'IKE_GROUPTYPE'}{'6144'}>MODP-6144</option>
 					<option value='4096' $checked{'IKE_GROUPTYPE'}{'4096'}>MODP-4096</option>
 					<option value='3072' $checked{'IKE_GROUPTYPE'}{'3072'}>MODP-3072</option>
-					<option value='2048s256' $checked{'IKE_GROUPTYPE'}{'2048s256'}>MODP-2048/256</option>
-					<option value='2048s224' $checked{'IKE_GROUPTYPE'}{'2048s224'}>MODP-2048/224</option>
-					<option value='2048s160' $checked{'IKE_GROUPTYPE'}{'2048s160'}>MODP-2048/160</option>
 					<option value='2048' $checked{'IKE_GROUPTYPE'}{'2048'}>MODP-2048</option>
 					<option value='1536' $checked{'IKE_GROUPTYPE'}{'1536'}>MODP-1536</option>
 					<option value='1024' $checked{'IKE_GROUPTYPE'}{'1024'}>MODP-1024 ($Lang::tr{'vpn broken'})</option>
@@ -2570,9 +2609,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='6144' $checked{'ESP_GROUPTYPE'}{'6144'}>MODP-6144</option>
 					<option value='4096' $checked{'ESP_GROUPTYPE'}{'4096'}>MODP-4096</option>
 					<option value='3072' $checked{'ESP_GROUPTYPE'}{'3072'}>MODP-3072</option>
-					<option value='2048s256' $checked{'ESP_GROUPTYPE'}{'2048s256'}>MODP-2048/256</option>
-					<option value='2048s224' $checked{'ESP_GROUPTYPE'}{'2048s224'}>MODP-2048/224</option>
-					<option value='2048s160' $checked{'ESP_GROUPTYPE'}{'2048s160'}>MODP-2048/160</option>
 					<option value='2048' $checked{'ESP_GROUPTYPE'}{'2048'}>MODP-2048</option>
 					<option value='1536' $checked{'ESP_GROUPTYPE'}{'1536'}>MODP-1536</option>
 					<option value='1024' $checked{'ESP_GROUPTYPE'}{'1024'}>MODP-1024 ($Lang::tr{'vpn broken'})</option>
@@ -2629,15 +2665,28 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			<select name="START_ACTION">
 				<option value="route" $selected{'START_ACTION'}{'route'}>$Lang::tr{'vpn start action route'}</option>
 				<option value="start" $selected{'START_ACTION'}{'start'}>$Lang::tr{'vpn start action start'}</option>
+				<option value="add"   $selected{'START_ACTION'}{'add'}  >$Lang::tr{'vpn start action add'}</option>
 			</select>
 		</td>
 	</tr>
 	<tr>
-		<td colspan="2">
+		<td>
 			<label>
 				<input type='checkbox' name='PFS' $checked{'PFS'} />
 				$Lang::tr{'pfs yes no'}
 			</label>
+		</td>
+		<td>
+			<label>$Lang::tr{'vpn inactivity timeout'}</label>
+			<select name="INACTIVITY_TIMEOUT">
+EOF
+	foreach my $t (sort { $a <=> $b } keys %INACTIVITY_TIMEOUTS) {
+		print "<option value=\"$t\" $selected{'INACTIVITY_TIMEOUT'}{$t}>$INACTIVITY_TIMEOUTS{$t}</option>\n";
+	}
+
+	print <<EOF;
+
+			</select>
 		</td>
 	</tr>
 	<tr>
@@ -2814,6 +2863,9 @@ END
 		} elsif ($line =~ /$confighash{$key}[1]\{.*ROUTED/) {
 			$col1="bgcolor='${Header::colourorange}'";
 			$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn on-demand'}</font></b>";
+		} elsif ($confighash{$key}[33] eq "add") {
+			$col1="bgcolor='${Header::colourorange}'";
+			$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn wait'}</font></b>";
 		}
 	}
 	# move to blue if really down

@@ -304,6 +304,10 @@ if ($cgiparams{'LOGTYPE'} eq 'urlfilter')
 
 if ($logsettings{'LOGVIEW_REVERSE'} eq 'on') { @slice = reverse @slice; }
 
+if ($lines != 0) {
+
+&oldernewer();
+
 if ($lines)
 {
 
@@ -369,7 +373,7 @@ if ($lines)
 	print "</table><br>\n";
 
 }
-
+}
 &oldernewer();
 
 &Header::closebox();

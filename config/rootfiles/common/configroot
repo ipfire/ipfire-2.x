@@ -27,7 +27,6 @@ var/ipfire/crls
 var/ipfire/ddns
 #var/ipfire/ddns/config
 #var/ipfire/ddns/ipcache
-#var/ipfire/ddns/noipsettings
 #var/ipfire/ddns/settings
 var/ipfire/dhcp
 #var/ipfire/dhcp/advoptions

@@ -55,8 +55,6 @@ CONFIGURE_OPTIONS = \
 	cflags="$(CFLAGS)" \
 	cxxflags="$(CXXFLAGS)"
 
-MAKETUNING = -j2
-
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -97,8 +95,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	cd $(DIR_APP) && ./bootstrap.sh --with-toolset=gcc
-	cd $(DIR_APP) && ./b2 -d+2 -q $(MAKETUNING) $(CONFIGURE_OPTIONS) stage
-	cd $(DIR_APP) && ./b2 $(MAKETUNING) $(CONFIGURE_OPTIONS) install
+	cd $(DIR_APP) && ./b2 -d+2 -q $(CONFIGURE_OPTIONS) stage
+	cd $(DIR_APP) && ./b2 $(CONFIGURE_OPTIONS) install
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

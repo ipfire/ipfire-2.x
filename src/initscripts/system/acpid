@@ -9,15 +9,11 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-# Test if ACPI is present
-if [ ! -d /proc/acpi ]; then
-	exit 0
-fi
-
 case "${1}" in
 	start)
 		boot_mesg "Starting ACPI daemon..."
-		loadproc /usr/sbin/acpid
+		loadproc /usr/sbin/acpid > /dev/null 2>&1
+		echo_ok;
 		;;
 
 	stop)

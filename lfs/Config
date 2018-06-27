@@ -31,7 +31,7 @@
 ###############################################################################
 
 # Cleanup environment from any variables
-unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN
+unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN TOOLS_DIR
 
 ifeq "$(BUILD_ARCH)" "aarch64"
 	IS_64BIT = 1
@@ -40,6 +40,14 @@ endif
 ifeq "$(BUILD_ARCH)" "x86_64"
 	IS_64BIT = 1
 endif
+
+ifeq "$(TOOLCHAIN)" "1"
+	PREFIX = $(TOOLS_DIR)
+else
+	PREFIX = /usr
+endif
+
+TAR_OPTIONS = --xz
 
 # URLs that are common sources of downloads.  If you're having trouble with
 # a site you should change its URL to that of a suitable mirror site.
@@ -80,7 +88,7 @@ CCACHE_COMPILERCHECK += $(shell gcc -dumpspecs 2>/dev/null | md5sum | cut -d ' '
 #
 define FIND_FILES
 	cd $(ROOT)/ && find -mount \
-		\( -path './tools' -or -path './tmp' -or -path './usr/src' \
+		\( -path '.$(TOOLS_DIR)' -or -path './tmp' -or -path './usr/src' \
 		-or -path './run' -or -path './dev' -or -path './proc' \
 		-or -path './install' \) -prune -or -print | sort
 endef
@@ -128,7 +136,7 @@ define POSTBUILD
 	if [ -s "$(TARGET)_diff" ]; then \
 		LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))$(KCFG); \
 		echo $(LFS_SCRIPT); \
-		ROOTFILE=$$(find $(DIR_SRC)/config/rootfiles/{common,packages}/{$(BUILD_ARCH),} -maxdepth 1 -type f -name $$LFS_SCRIPT 2>/dev/null | head -1); \
+		ROOTFILE=$$(find -L $(DIR_SRC)/config/rootfiles/{common,packages}/{$(BUILD_ARCH),} -maxdepth 1 -type f -name $$LFS_SCRIPT 2>/dev/null | head -1); \
 		if [ "$$ROOTFILE" = "" ]; then \
 			touch $(TARGET)_missing_rootfile; \
 			ROOTFILE=$(TARGET)_missing_rootfile ; \
@@ -175,7 +183,6 @@ define MD5
 	# error mean file signature don't match the one in lfs script
 	[ "$($@_MD5)" = `md5sum $(DIR_DL)/$@ | awk '{ print $$1 }'` ]
 	echo "$@ checksum OK"
-	echo "$@" >>$(DIR_INFO)/_build.othersrc-list.log
 endef
 
 define PAK
@@ -198,13 +205,11 @@ define PAK
 	sed -e 's/BUILDTARGET/$(BUILDTARGET)/g' -e 's/KVER/$(KVER)/g' -e 's/MACHINE/$(BUILD_ARCH)/g' -i /install/packages/package/ROOTFILES
 	sed -e 's/xxxKVERxxx/$(KVER)/g' -i /install/packages/package/install.sh
 	chmod 755 /install/packages/package/{{,un}install,update}.sh
-	cd / && tar cf /install/packages/package/files.tmp --files-from=/install/packages/package/ROOTFILES --exclude='#*' \
-		-p --numeric-owner
+	cd / && tar cfp /install/packages/package/files.tmp --numeric-owner --exclude='#*' --files-from=/install/packages/package/ROOTFILES
 	# Double tar to remove double files
-	tar xf /install/packages/package/files.tmp -C /install/packages/package/tmp/ \
-		-p --numeric-owner
+	tar xfp /install/packages/package/files.tmp --numeric-owner -C /install/packages/package/tmp/
 	rm -f /install/packages/package/files.tmp
-	cd /install/packages/package/tmp/ && XZ_OPT=-T0 tar -c -p --numeric-owner -J -f /install/packages/package/files.tar.xz *
+	cd /install/packages/package/tmp/ && tar cf - -p --numeric-owner * | xz $(XZ_OPT) > /install/packages/package/files.tar.xz
 	rm -r /install/packages/package/tmp
 	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES.tmp
 	mv /install/packages/package/ROOTFILES.tmp /install/packages/package/ROOTFILES
@@ -221,6 +226,14 @@ endef
 define INSTALL_INITSCRIPT
 	install -m 754 -v $(DIR_SRC)/src/initscripts/packages/$(1)  /etc/rc.d/init.d/$(1)
 endef
+
+ifeq "$(BUILD_ARCH)" "aarch64"
+define UPDATE_AUTOMAKE
+	for i in $$(find $(DIR_APP) -name config.guess -o -name config.sub); do \
+		cp -vf /usr/share/automake*/$$(basename $${i}) $${i}; \
+	done
+endef
+endif
 
 test:
 	$(call INSTALL_INITSCRIPT,hostapd)

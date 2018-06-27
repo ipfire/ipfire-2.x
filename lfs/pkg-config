@@ -32,14 +32,12 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-# Normal build or /tools build.
+# Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  PREFIX = /usr
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  PREFIX = /tools
 endif
 
 ###############################################################################
@@ -80,12 +78,13 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-ifeq "$(ROOT)" ""
-else
-	mkdir -pv /tools/lib/pkgconfig
-endif
 	cd $(DIR_APP) && ./configure --prefix=$(PREFIX) --with-internal-glib
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+ifeq "$(TOOLCHAIN)" "1"
+	mkdir -pv $(TOOLS_DIR)/lib/pkgconfig
+endif
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

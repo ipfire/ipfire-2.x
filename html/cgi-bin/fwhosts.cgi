@@ -54,6 +54,7 @@ my %fwinp=();
 my %fwout=();
 my %ovpnsettings=();
 my %netsettings=();
+my %optionsfw=();
 
 my $errormessage;
 my $hint;
@@ -70,6 +71,7 @@ my $configgeoipgrp	= "${General::swroot}/fwhosts/customgeoipgrp";
 my $fwconfigfwd		= "${General::swroot}/firewall/config";
 my $fwconfiginp		= "${General::swroot}/firewall/input";
 my $fwconfigout		= "${General::swroot}/firewall/outgoing";
+my $fwoptions 		= "${General::swroot}/optionsfw/settings";
 my $configovpn		= "${General::swroot}/ovpn/settings";
 my $configipsecrw	= "${General::swroot}/vpn/settings";
 
@@ -87,8 +89,9 @@ unless (-e $configgeoipgrp) { system("touch $configgeoipgrp"); }
 &General::readhasharray("$configipsec", \%ipsecconf);
 &General::readhash("$configipsecrw", \%ipsecsettings);
 &General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
-&Header::getcgihash(\%fwhostsettings);
+&General::readhash($fwoptions, \%optionsfw);
 
+&Header::getcgihash(\%fwhostsettings);
 &Header::showhttpheaders();
 &Header::openpage($Lang::tr{'fwhost menu'}, 1, '');
 &Header::openbigbox('100%', 'center');
@@ -1278,7 +1281,7 @@ if ($fwhostsettings{'ACTION'} eq 'changegeoipgrpname')
 			}
 			&General::writehasharray("$configgeoipgrp", \%customgeoipgrp );
 			#change name in FW Rules
-			&changenameinfw($fwhostsettings{'oldgrpname'},$fwhostsettings{'grp'},6);
+			&changenameinfw($fwhostsettings{'oldgrpname'},$fwhostsettings{'grp'},4,"geoip");
 		}
 	}
 	&addgeoipgrp;
@@ -1548,27 +1551,30 @@ END
 				print"</select></td></tr>";
 			}
 			#IPsec networks
-			my @IPSEC_N2N=();
+
 			foreach my $key (sort { ncmp($ipsecconf{$a}[0],$ipsecconf{$b}[0]) } keys %ipsecconf) {
-				if ($ipsecconf{$key}[3] eq 'net'){
-					$show='1';
-					push (@IPSEC_N2N,$ipsecconf{$key}[1]);
-				}
-			}
-			if ($show eq '1'){
-				$show='';
-				print<<END;
-					<td style='width:15em;'>
-						<label>
-							<input type='radio' name='grp2' id='IPSEC_NET' value='ipsec_net' $checked{'grp2'}{'ipsec_net'}>
-							$Lang::tr{'fwhost ipsec net'}
-						</label>
-					</td>
-					<td style='text-align:right;'>
-					<select name='IPSEC_NET' style='width:16em;'>"
-END
-				foreach(@IPSEC_N2N){
-					print"<option value='$_'>$_</option>";
+				if ($ipsecconf{$key}[3] eq 'net' || ($optionsfw{'SHOWDROPDOWN'} eq 'on' && $ipsecconf{$key}[3] ne 'host')){
+					print "<td style='width:15em;'><label><input type='radio' name='grp2' id='IPSEC_NET' value='ipsec_net' $checked{'grp2'}{'ipsec_net'}>$Lang::tr{'fwhost ipsec net'}</label></td><td style='text-align:right;'><select name='IPSEC_NET' style='width:16em;'>" if $show eq '';
+					$show=1;
+					#Check if we have more than one REMOTE subnet in config
+					my @arr1 = split /\|/, $ipsecconf{$key}[11];
+					my $cnt1 += @arr1;
+
+					print"<option value=$ipsecconf{$key}[1]>";
+					print"$ipsecconf{$key}[1]";
+					print" ($Lang::tr{'fwdfw all subnets'})" if $cnt1 > 1; #If this Conenction has more than one subnet, print one option for all subnets
+					print"</option>";
+
+					if ($cnt1 > 1){
+						foreach my $val (@arr1){
+							#normalize subnet to cidr notation
+							my ($val1,$val2) = split /\//, $val;
+							my $val3 = &General::iporsubtocidr($val2);
+							print "<option ";
+							print "value='$ipsecconf{$key}[1]|$val1/$val3'";
+							print ">$ipsecconf{$key}[1] ($val1/$val3)</option>";
+						}
+					}
 				}
 			}
 			print"</select></td></tr>";
@@ -2116,14 +2122,15 @@ sub viewtablegrp
 			print "<td width='39%' align='left' $col>";
 			if($customgrp{$key}[3] eq 'Standard Network'){
 				print &get_name($customgrp{$key}[2])."</td>";
+			}elsif($customgrp{$key}[3] eq "IpSec Network" && $customgrp{$key}[2] =~ /\|/){
+				my ($a,$b) = split /\|/, $customgrp{$key}[2];
+					print "$a</td>";
 			}else{
 				print "$customgrp{$key}[2]</td>";
 			}
 			if ($ip eq '' && $customgrp{$key}[2] ne $Lang::tr{'fwhost err emptytable'}){
 				print "<td align='center' $col>$Lang::tr{'fwhost deleted'}</td><td align='center' $col>$Lang::tr{'fwhost '.$customgrp{$key}[3]}</td><td width='1%' $col><form method='post'>";
 			}else{
-				my ($colip,$colsub) = split("/",$ip);
-				$ip="$colip/".&General::iporsubtocidr($colsub) if ($colsub);
 				print"<td align='center' $col>".&getcolor($ip)."</td><td align='center' $col>$Lang::tr{'fwhost '.$customgrp{$key}[3]}</td><td width='1%' $col><form method='post'>";
 			}
 			if ($delflag > 0 && $ip ne ''){
@@ -2896,7 +2903,23 @@ sub getipforgroup
 	if ($type eq 'IpSec Network'){
 		foreach my $key (keys %ipsecconf) {
 			if ($ipsecconf{$key}[1] eq $name){
-				return $ipsecconf{$key}[11];
+				if ($ipsecconf{$key}[11] =~ /\|/) {
+					my $string;
+					my @parts = split /\|/ , $ipsecconf{$key}[11];
+					foreach my $key1 (@parts){
+						my ($val1,$val2) = split (/\//, $key1);
+						my $val3 = &Network::convert_netmask2prefix($val2) || $val2;
+						$string .= "$val1/$val3<br>";
+					}
+					return $string;
+				}else{
+					return $ipsecconf{$key}[11];
+				}
+			}else{
+				if ($name =~ /\|/) {
+					my ($a,$b) = split /\|/, $name;
+					return $b;
+				}
 			}
 		}
 		&deletefromgrp($name,$configgrp);
@@ -2917,7 +2940,7 @@ sub getipforgroup
 		foreach my $key (keys %ccdhost) {
 			if($ccdhost{$key}[1] eq $name){
 				my ($a,$b) = split ("/",$ccdhost{$key}[11]);
-				$b=&General::iporsubtodec($b);
+				$b=&Network::convert_netmask2prefix($b) || ($b);
 				return "$a/$b";
 			}
 		}
@@ -2929,7 +2952,7 @@ sub getipforgroup
 		foreach my $key (keys %ccdhost) {
 			if($ccdhost{$key}[1] eq $name){
 				my ($a,$b) = split (/\//,$ccdhost{$key}[33]);
-				$b=&General::iporsubtodec($b);
+				$b=&Network::convert_netmask2prefix($b) || ($b) ;
 				return "$a/$b";
 			}
 		}
@@ -2941,7 +2964,7 @@ sub getipforgroup
 		foreach my $key (keys %ccdnet) {
 			if ($ccdnet{$key}[0] eq $name){
 				my ($a,$b) = split (/\//,$ccdnet{$key}[1]);
-				$b=&General::iporsubtodec($b);
+				$b=&Network::convert_netmask2prefix($b) || ($b);
 				return "$a/$b";
 			}
 		}
@@ -2961,7 +2984,7 @@ sub getipforgroup
 	if ($type eq 'Custom Network'){
 		foreach my $key (keys %customnetwork) {
 			if($customnetwork{$key}[0] eq $name){
-				return $customnetwork{$key}[1]."/".$customnetwork{$key}[2];
+				return $customnetwork{$key}[1]."/".&Network::convert_netmask2prefix($customnetwork{$key}[2]) || $customnetwork{$key}[2];
 			}
 		}
 	}
@@ -2976,20 +2999,20 @@ sub getipforgroup
 		if ($name eq 'GREEN'){
 			my %hash=();
 			&General::readhash("${General::swroot}/ethernet/settings",\%hash);
-			return $hash{'GREEN_NETADDRESS'}."/".$hash{'GREEN_NETMASK'};
+			return $hash{'GREEN_NETADDRESS'}."/".&Network::convert_netmask2prefix($hash{'GREEN_NETMASK'}) || $hash{'GREEN_NETMASK'};
 		}
 		if ($name eq 'BLUE'){
 			my %hash=();
 			&General::readhash("${General::swroot}/ethernet/settings",\%hash);
-			return $hash{'BLUE_NETADDRESS'}."/".$hash{'BLUE_NETMASK'};
+			return $hash{'BLUE_NETADDRESS'}."/".&Network::convert_netmask2prefix($hash{'BLUE_NETMASK'}) || $hash{'BLUE_NETMASK'};
 		}
 		if ($name eq 'ORANGE'){
 			my %hash=();
 			&General::readhash("${General::swroot}/ethernet/settings",\%hash);
-			return $hash{'ORANGE_NETADDRESS'}."/".$hash{'ORANGE_NETMASK'};
+			return $hash{'ORANGE_NETADDRESS'}."/".&Network::convert_netmask2prefix($hash{'ORANGE_NETMASK'}) || $hash{'ORANGE_NETMASK'};
 		}
 		if ($name eq 'ALL'){
-			return "0.0.0.0/0.0.0.0";
+			return "0.0.0.0/0";
 		}
 		if ($name =~ /IPsec/i){
 			my %hash=();
@@ -3052,6 +3075,12 @@ sub changenameinfw
 	my $old=shift;
 	my $new=shift;
 	my $fld=shift;
+	my $type=shift;
+
+	if ($type eq 'geoip'){
+		$old="group:$old";
+		$new="group:$new";
+	}
 	&General::readhasharray("$fwconfigfwd", \%fwfwd);
 	&General::readhasharray("$fwconfiginp", \%fwinp);
 	&General::readhasharray("$fwconfigout", \%fwout);

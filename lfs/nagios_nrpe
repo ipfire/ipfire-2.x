@@ -24,18 +24,17 @@
 
 include Config
 
-VER        = 2.12
+VER        = 3.2.1
 
 THISAPP    = nrpe-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-
 PROG       = nagios_nrpe
-PAK_VER    = 2
+PAK_VER    = 5
 
-DEPS       = "nagios"
+DEPS       = "nagios-plugins"
 
 ###############################################################################
 # Top-level Rules
@@ -45,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b2d75e2962f1e3151ef58794d60c9e97
+$(DL_FILE)_MD5 = 8997e195fea93cdceb8c7ed8ac1d43bc
 
 install : $(TARGET)
 
@@ -78,17 +77,23 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--libexecdir=/usr/lib/nagios \
+		--sysconfdir=/etc/nagios \
+		--with-init-type=sysv \
 		--with-nrpe-user=nobody \
 		--with-nrpe-group=nobody \
 		--with-nagios-user=nobody \
-		--with-nagios-group=nobody \
-		--enable-command-args \
-		ac_cv_lib_wrap_main=no
+		--with-nagios-group=nobody
 
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make all $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && make install-config
+
+	# install initscript
+	$(call INSTALL_INITSCRIPT,nrpe)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

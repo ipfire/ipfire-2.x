@@ -25,14 +25,22 @@ use strict;
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
 
+use IO::Socket;
+
 require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/geoip-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+my %color = ();
+my %mainsettings = ();
 my %remotesettings=();
 my %checked=();
 my $errormessage='';
 my $counter = 0;
+
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 &Header::showhttpheaders();
 
@@ -166,14 +174,20 @@ END
 
 print "</form>\n";
 
-&Header::openbox('100%', 'left', $Lang::tr{'ssh host keys'});
+&Header::openbox('100%', 'center', $Lang::tr{'ssh host keys'});
 
-print "<table>\n";
+print "<table class='tbl'>\n";
 
 print <<END
-<tr><td class='boldbase'><b>$Lang::tr{'ssh key'}</b></td>
-    <td class='boldbase'><b>$Lang::tr{'ssh fingerprint'}</b></td>
-    <td class='boldbase'><b>$Lang::tr{'ssh key size'}</b></td></tr>
+<thead>
+	<tr>
+		<th align="center"><strong>$Lang::tr{'ssh key'}</strong></th>
+		<th align="center"><strong>$Lang::tr{'type'}</strong></th>
+		<th align="center"><strong>$Lang::tr{'ssh fingerprint'}</strong></th>
+		<th align="center"><strong>$Lang::tr{'ssh key size'}</strong></th>
+	</tr>
+</thead>
+<tbody>
 END
 ;
 
@@ -183,7 +197,39 @@ END
 &viewkey("/etc/ssh/ssh_host_ecdsa_key.pub","ECDSA");
 &viewkey("/etc/ssh/ssh_host_ed25519_key.pub","ED25519");
 
-print "</table>\n";
+print "</tbody>\n</table>\n";
+
+&Header::closebox();
+
+&Header::openbox('100%', 'center', $Lang::tr{'ssh active sessions'});
+
+print <<END;
+		<table class="tbl" width='66%'>
+			<thead>
+				<tr>
+					<th align="center">
+						<strong>$Lang::tr{'ssh username'}</strong>
+					</th>
+					<th align="center">
+						<strong>$Lang::tr{'ssh login time'}</strong>
+					</th>
+					<th align="center">
+						<strong>$Lang::tr{'ip address'}</strong>
+					</th>
+					<th align="center">
+						<strong>$Lang::tr{'country'}</strong>
+					</th>
+					<th align="center">
+						<strong>$Lang::tr{'rdns'}</strong>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+END
+
+&printactivelogins();
+
+print "</tbody>\n</table>\n";
 
 &Header::closebox();
 
@@ -202,6 +248,57 @@ sub viewkey
     my @temp = split(/ /,`/usr/bin/ssh-keygen -l -f $key`);
     my $keysize = &Header::cleanhtml($temp[0],"y");
     my $fingerprint = &Header::cleanhtml($temp[1],"y");
-    print "<tr><td>$key ($name)</td><td><code>$fingerprint</code></td><td align='center'>$keysize</td></tr>\n";
+    print "<tr><td><code>$key</code></td><td align='center'>$name</td><td><code>$fingerprint</code></td><td align='center'>$keysize</td></tr>\n";
   }
+}
+
+sub printactivelogins()
+{
+	# print active SSH logins (grep outpout of "who -s")
+	my $command = "who -s";
+	my @output = `$command`;
+	chomp(@output);
+
+	my $id = 0;
+
+	if ( scalar(@output) == 0 )
+	{
+		# no logins appeared
+		my $table_colour = ($id++ % 2) ? $color{'color22'} : $color{'color20'};
+		print "<tr bgcolor='$table_colour'><td colspan='5'>$Lang::tr{'ssh no active logins'}</td></tr>\n";
+	} else {
+		# list active logins...
+
+		foreach my $line (@output)
+		{
+			my @arry = split(/\ +/, $line);
+
+			my $username = @arry[0];
+			my $logintime = join(' ', @arry[2..4]);
+			my $remoteip = @arry[5];
+			$remoteip =~ s/[()]//g;
+
+			# display more information about that IP adress...
+			my $ccode = &GeoIP::lookup($remoteip);
+			my $flag_icon = &GeoIP::get_flag_icon($ccode);
+
+			# get rDNS...
+			my $iaddr = inet_aton($remoteip);
+			my $rdns = gethostbyaddr($iaddr, AF_INET);
+			if (!$rdns) { $rdns = $Lang::tr{'lookup failed'}; };
+
+			my $table_colour = ($id++ % 2) ? $color{'color22'} : $color{'color20'};
+
+			print <<END;
+			<tr bgcolor='$table_colour'>
+				<td>$username</td>
+				<td>$logintime</td>
+				<td align='center'><a href='ipinfo.cgi?ip=$remoteip'>$remoteip</a></td>
+				<td align='center'><a href='country.cgi#$ccode'><img src='$flag_icon' border='0' alt='$ccode' title='$ccode' /></a></td>
+				<td>$rdns</td>
+			</tr>
+END
+;
+		}
+	}
 }

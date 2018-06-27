@@ -1,0 +1,30 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/pakfire
+#
+# Description : Imports the keyring to make Pakfire operational
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+export GNUPGHOME="/opt/pakfire/etc/.gnupg"
+
+case "${1}" in
+	start)
+		boot_mesg "Setting up Pakfire Package Manager..."
+		gpg --import /opt/pakfire/pakfire-2018.key &>/dev/null
+		evaluate_retval
+
+		# Try to import the old key, too
+		gpg --import /opt/pakfire/pakfire-2007.key &>/dev/null
+		;;
+
+	*)
+		echo "Usage: ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/pakfire

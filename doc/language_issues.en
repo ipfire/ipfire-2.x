@@ -321,6 +321,7 @@ WARNING: translation string unused: geoipblock country name
 WARNING: translation string unused: geoipblock flag
 WARNING: translation string unused: green interface
 WARNING: translation string unused: gz with key
+WARNING: translation string unused: harddisk temperature graphs
 WARNING: translation string unused: hint
 WARNING: translation string unused: host
 WARNING: translation string unused: host configuration
@@ -450,6 +451,7 @@ WARNING: translation string unused: no alcatelusb firmware
 WARNING: translation string unused: no cfg upload
 WARNING: translation string unused: no eciadsl synch.bin file
 WARNING: translation string unused: no fritzdsl driver
+WARNING: translation string unused: no hardware random number generator
 WARNING: translation string unused: no information available
 WARNING: translation string unused: no modem selected
 WARNING: translation string unused: no set selected
@@ -495,6 +497,12 @@ WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
 WARNING: translation string unused: ovpn log
+WARNING: translation string unused: ovpn mtu-disc and mtu not 1500
+WARNING: translation string unused: ovpn mtu-disc maybe
+WARNING: translation string unused: ovpn mtu-disc no
+WARNING: translation string unused: ovpn mtu-disc off
+WARNING: translation string unused: ovpn mtu-disc with mssfix or fragment
+WARNING: translation string unused: ovpn mtu-disc yes
 WARNING: translation string unused: ovpn reneg sec
 WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_mssfix
@@ -611,6 +619,7 @@ WARNING: translation string unused: subnet
 WARNING: translation string unused: subnet is invalid
 WARNING: translation string unused: successfully refreshed updates list
 WARNING: translation string unused: system graphs
+WARNING: translation string unused: system has hwrng
 WARNING: translation string unused: system log viewer
 WARNING: translation string unused: system status information
 WARNING: translation string unused: teovpn_fragment

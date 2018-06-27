@@ -1,0 +1,12 @@
+diff -Naur org/sun8i-h2-plus-orangepi-zero.dts new/sun8i-h2-plus-orangepi-zero.dts
+--- org/arch/arm/dts/sun8i-h2-plus-orangepi-zero.dts	2018-01-09 01:25:29.000000000 +0000
++++ new/arch/arm/dts/sun8i-h2-plus-orangepi-zero.dts	2018-03-09 16:32:32.233836000 +0000
+@@ -59,6 +59,8 @@
+ 		serial0 = &uart0;
+ 		/* ethernet0 is the H3 emac, defined in sun8i-h3.dtsi */
+ 		ethernet1 = &xr819;
++		ethernet2 = &xr819;
++		//ethernet3 = &xr819;
+ 	};
+ 
+ 	chosen {

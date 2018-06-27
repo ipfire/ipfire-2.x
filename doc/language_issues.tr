@@ -1,4 +1,26 @@
 WARNING: translation string unused: Async logging enabled
+WARNING: translation string unused: Captive 1day
+WARNING: translation string unused: Captive 1month
+WARNING: translation string unused: Captive 1week
+WARNING: translation string unused: Captive activate
+WARNING: translation string unused: Captive auth_lic
+WARNING: translation string unused: Captive auth_vou
+WARNING: translation string unused: Captive err doublevoucher
+WARNING: translation string unused: Captive expire
+WARNING: translation string unused: Captive heading terms
+WARNING: translation string unused: Captive heading voucher
+WARNING: translation string unused: Captive invalid coupon
+WARNING: translation string unused: Captive invalid logosize
+WARNING: translation string unused: Captive invalid_voucher
+WARNING: translation string unused: Captive ip
+WARNING: translation string unused: Captive logo_set
+WARNING: translation string unused: Captive noexpiretime
+WARNING: translation string unused: Captive nr
+WARNING: translation string unused: Captive please enter a coupon code
+WARNING: translation string unused: Captive time
+WARNING: translation string unused: Captive voactive
+WARNING: translation string unused: Captive voucher
+WARNING: translation string unused: Captive vout
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
 WARNING: translation string unused: HDD temperature
@@ -228,8 +250,6 @@ WARNING: translation string unused: extrahd
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
-WARNING: translation string unused: firewall graphs
-WARNING: translation string unused: firewall log viewer
 WARNING: translation string unused: firmware
 WARNING: translation string unused: firmware upload
 WARNING: translation string unused: force update
@@ -301,6 +321,7 @@ WARNING: translation string unused: geoipblock country name
 WARNING: translation string unused: geoipblock flag
 WARNING: translation string unused: green interface
 WARNING: translation string unused: gz with key
+WARNING: translation string unused: harddisk temperature graphs
 WARNING: translation string unused: hint
 WARNING: translation string unused: host
 WARNING: translation string unused: host configuration
@@ -430,6 +451,7 @@ WARNING: translation string unused: no alcatelusb firmware
 WARNING: translation string unused: no cfg upload
 WARNING: translation string unused: no eciadsl synch.bin file
 WARNING: translation string unused: no fritzdsl driver
+WARNING: translation string unused: no hardware random number generator
 WARNING: translation string unused: no information available
 WARNING: translation string unused: no modem selected
 WARNING: translation string unused: no set selected
@@ -475,6 +497,12 @@ WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
 WARNING: translation string unused: ovpn log
+WARNING: translation string unused: ovpn mtu-disc and mtu not 1500
+WARNING: translation string unused: ovpn mtu-disc maybe
+WARNING: translation string unused: ovpn mtu-disc no
+WARNING: translation string unused: ovpn mtu-disc off
+WARNING: translation string unused: ovpn mtu-disc with mssfix or fragment
+WARNING: translation string unused: ovpn mtu-disc yes
 WARNING: translation string unused: ovpn reneg sec
 WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_mssfix
@@ -591,6 +619,7 @@ WARNING: translation string unused: subnet
 WARNING: translation string unused: subnet is invalid
 WARNING: translation string unused: successfully refreshed updates list
 WARNING: translation string unused: system graphs
+WARNING: translation string unused: system has hwrng
 WARNING: translation string unused: system log viewer
 WARNING: translation string unused: system status information
 WARNING: translation string unused: teovpn_fragment
@@ -698,62 +727,18 @@ WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: week-graph
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: wildcards
-WARNING: translation string unused: wlanap access point
 WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
-WARNING: untranslated string: 24 hours
-WARNING: untranslated string: Captive ACTIVATE
-WARNING: untranslated string: Captive GAIN ACCESS
-WARNING: untranslated string: Captive WiFi coupon
-WARNING: untranslated string: Captive activated
-WARNING: untranslated string: Captive active on
-WARNING: untranslated string: Captive agree tac
-WARNING: untranslated string: Captive authentication
-WARNING: untranslated string: Captive brand color
-WARNING: untranslated string: Captive branding
-WARNING: untranslated string: Captive client session expiry time
 WARNING: untranslated string: Captive clients
-WARNING: untranslated string: Captive config
-WARNING: untranslated string: Captive coupon
-WARNING: untranslated string: Captive expiry time
-WARNING: untranslated string: Captive export coupons
-WARNING: untranslated string: Captive generate coupons
-WARNING: untranslated string: Captive generated coupon no
-WARNING: untranslated string: Captive issued coupons
-WARNING: untranslated string: Captive logo uploaded
-WARNING: untranslated string: Captive mac
-WARNING: untranslated string: Captive menu
-WARNING: untranslated string: Captive nolimit
-WARNING: untranslated string: Captive please accept the terms and conditions
-WARNING: untranslated string: Captive portal
-WARNING: untranslated string: Captive portal coupons
-WARNING: untranslated string: Captive terms
-WARNING: untranslated string: Captive terms short
-WARNING: untranslated string: Captive title
-WARNING: untranslated string: Captive upload logo
-WARNING: untranslated string: Captive upload logo recommendations
-WARNING: untranslated string: Captive valid for
-WARNING: untranslated string: Captive vouchervalid
-WARNING: untranslated string: Captive wrong ext
 WARNING: untranslated string: Scan for Songs
-WARNING: untranslated string: application layer gateways
 WARNING: untranslated string: bytes
 WARNING: untranslated string: captive
-WARNING: untranslated string: dnssec disabled warning
-WARNING: untranslated string: eight hours
-WARNING: untranslated string: firewall graph country
-WARNING: untranslated string: firewall graph ip
-WARNING: untranslated string: firewall graph port
-WARNING: untranslated string: firewall log country
-WARNING: untranslated string: firewall log ip
-WARNING: untranslated string: firewall log port
-WARNING: untranslated string: four hours
+WARNING: untranslated string: fwdfw all subnets
 WARNING: untranslated string: fwhost cust geoipgrp
 WARNING: untranslated string: fwhost err hostip
-WARNING: untranslated string: guardian
 WARNING: untranslated string: guardian block a host
 WARNING: untranslated string: guardian block httpd brute-force
 WARNING: untranslated string: guardian block owncloud brute-force
@@ -793,40 +778,14 @@ WARNING: untranslated string: guardian watch snort alertfile
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
 WARNING: untranslated string: info messages
 WARNING: untranslated string: no data
-WARNING: untranslated string: one hour
-WARNING: untranslated string: one month
-WARNING: untranslated string: one week
-WARNING: untranslated string: one year
 WARNING: untranslated string: route config changed
 WARNING: untranslated string: routing config added
 WARNING: untranslated string: routing config changed
 WARNING: untranslated string: routing table
-WARNING: untranslated string: twelve hours
-WARNING: untranslated string: two weeks
-WARNING: untranslated string: unlimited
-WARNING: untranslated string: uplink bit rate
-WARNING: untranslated string: vpn broken
-WARNING: untranslated string: vpn connecting
-WARNING: untranslated string: vpn on-demand
-WARNING: untranslated string: vpn start action
-WARNING: untranslated string: vpn start action route
-WARNING: untranslated string: vpn start action start
+WARNING: untranslated string: ssh active sessions
+WARNING: untranslated string: ssh login time
+WARNING: untranslated string: ssh no active logins
+WARNING: untranslated string: ssh username
+WARNING: untranslated string: vpn start action add
 WARNING: untranslated string: vpn statistics n2n
-WARNING: untranslated string: vpn weak
-WARNING: untranslated string: wireless network
-WARNING: untranslated string: wlan client anonymous identity
-WARNING: untranslated string: wlan client auth auto
-WARNING: untranslated string: wlan client auth peap
-WARNING: untranslated string: wlan client auth ttls
-WARNING: untranslated string: wlan client authentication settings
-WARNING: untranslated string: wlan client eap authentication method
-WARNING: untranslated string: wlan client eap phase2 method
-WARNING: untranslated string: wlan client eap state
-WARNING: untranslated string: wlan client encryption eap
-WARNING: untranslated string: wlan client identity
-WARNING: untranslated string: wlan client method
-WARNING: untranslated string: wlan client password
-WARNING: untranslated string: wlan client tls cipher
-WARNING: untranslated string: wlan client tls version
-WARNING: untranslated string: wlanap
-WARNING: untranslated string: wlanap configuration
+WARNING: untranslated string: vpn wait

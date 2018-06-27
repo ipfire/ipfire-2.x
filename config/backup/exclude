@@ -2,6 +2,7 @@
 /etc/sysconfig/lm_sensors
 /var/ipfire/ethernet/settings
 /var/ipfire/firewall/bin/*
+/var/ipfire/ovpn/openssl/*
 /var/ipfire/proxy/calamaris/bin/*
 /var/ipfire/qos/bin/qos.pl
 /var/ipfire/urlfilter/blacklists/*/*.db

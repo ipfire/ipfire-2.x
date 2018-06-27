@@ -1,0 +1,44 @@
+From 8b32b8b088be1f29e8bfea57a97b9bfaa76ec8ee Mon Sep 17 00:00:00 2001
+From: Chris Wong <chrisyco@gmail.com>
+Date: Wed, 23 Nov 2011 10:39:53 +1300
+Subject: [PATCH] Fixed Makefile
+
+* Use /usr/share/man (see http://www.pathname.com/fhs/2.2/fhs-4.11.html#4.11.5)
+
+* Removed trailing spaces
+
+* Added optimization flag (must beep FAST!!!)
+---
+ Makefile | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/Makefile b/Makefile
+index cc359c4..0f4f810 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,19 +1,19 @@
+ CC=gcc
+-FLAGS=-Wall
++FLAGS=-Wall -O2
+ EXEC_NAME=beep
+ INSTALL_DIR=/usr/bin
+ MAN_FILE=beep.1.gz
+-MAN_DIR=/usr/man/man1
++MAN_DIR=/usr/share/man/man1
+ 
+ default : beep
+ 
+-clean : 
++clean :
+ 	rm ${EXEC_NAME}
+ 
+ beep : beep.c
+ 	${CC} ${FLAGS} -o ${EXEC_NAME} beep.c
+ 
+-install : 
++install :
+ 	cp ${EXEC_NAME} ${INSTALL_DIR}
+ 	# rm -f /usr/man/man1/beep.1.bz2
+ 	cp ${MAN_FILE} ${MAN_DIR}
+-- 
+2.7.5

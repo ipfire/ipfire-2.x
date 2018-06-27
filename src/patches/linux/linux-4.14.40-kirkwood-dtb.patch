@@ -1,0 +1,59 @@
+diff --git a/arch/arm/boot/dts/kirkwood-iconnect.dts b/arch/arm/boot/dts/kirkwood-iconnect.dts
+index 4a512d8..f550bba 100644
+--- a/arch/arm/boot/dts/kirkwood-iconnect.dts
++++ b/arch/arm/boot/dts/kirkwood-iconnect.dts
+@@ -5,7 +5,7 @@
+ #include "kirkwood-6281.dtsi"
+ 
+ / {
+-	model = "Iomega Iconnect";
++	model = "Iomega iConnect";
+ 	compatible = "iom,iconnect-1.1", "iom,iconnect", "marvell,kirkwood-88f6281", "marvell,kirkwood";
+ 
+ 	memory {
+@@ -85,37 +85,37 @@
+ 		pinctrl-names = "default";
+ 
+ 		led-level {
+-			label = "led_level";
++			label = "iconnect::led_level";
+ 			gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+ 			default-state = "on";
+ 		};
+ 		power-blue {
+-			label = "power:blue";
++			label = "iconnect:blue:power";
+ 			gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
+ 			default-state = "keep";
+ 		};
+ 		power-red {
+-			label = "power:red";
++			label = "iconnect:red:power";
+ 			gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+ 		};
+ 		usb1 {
+-			label = "usb1:blue";
++			label = "iconnect:blue:usb_1";
+ 			gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
+ 		};
+ 		usb2 {
+-			label = "usb2:blue";
++			label = "iconnect:blue:usb_2";
+ 			gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
+ 		};
+ 		usb3 {
+-			label = "usb3:blue";
++			label = "iconnect:blue:usb_3";
+ 			gpios = <&gpio1 14 GPIO_ACTIVE_HIGH>;
+ 		};
+ 		usb4 {
+-			label = "usb4:blue";
++			label = "iconnect:blue:usb_4";
+ 			gpios = <&gpio1 15 GPIO_ACTIVE_HIGH>;
+ 		};
+ 		otb {
+-			label = "otb:blue";
++			label = "iconnect:blue:otb";
+ 			gpios = <&gpio1 16 GPIO_ACTIVE_HIGH>;
+ 		};
+ 	};

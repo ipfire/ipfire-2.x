@@ -17,6 +17,8 @@ usr/bin/bzmore
 #usr/include/bzlib.h
 #usr/lib/libbz2.a
 #usr/lib/libbz2.so
+#usr/man
+#usr/man/man1
 #usr/man/man1/bzcmp.1
 #usr/man/man1/bzdiff.1
 #usr/man/man1/bzegrep.1

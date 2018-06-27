@@ -51,14 +51,9 @@ if ( $querry[0] ne~ "") {
 	# Check for hardware support.
 	my $message;
 	my $message_colour = $Header::colourred;
-	if (&has_hwrng()) {
-		$message = $Lang::tr{'system has hwrng'};
-		$message_colour = $Header::colourgreen;
-	} elsif (&has_rdrand()) {
+	if (&has_rdrand()) {
 		$message = $Lang::tr{'system has rdrand'};
 		$message_colour = $Header::colourgreen;
-	} else {
-		$message = $Lang::tr{'no hardware random number generator'};
 	}
 
 	my $rngd_status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td>";
@@ -67,9 +62,13 @@ if ( $querry[0] ne~ "") {
 	}
 
 	&Header::openbox('100%', 'center', $Lang::tr{'hardware support'});
-	print <<EOF;
-		<p style="color: $message_colour; text-align: center;">$message</p>
+	if ($message) {
+		print <<EOF;
+			<p style="color: $message_colour; text-align: center;">$message</p>
+EOF
+	}
 
+	print <<EOF;
 		<table width='80%' cellspacing='1' class='tbl'>
 			<tr>
 				<th align='center'><b>$Lang::tr{'service'}</b></th>
@@ -87,10 +86,6 @@ EOF
 
 	&Header::closebigbox();
 	&Header::closepage();
-}
-
-sub has_hwrng() {
-	return (-c "/dev/hwrng");
 }
 
 sub has_rdrand() {

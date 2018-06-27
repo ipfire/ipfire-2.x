@@ -237,7 +237,7 @@ if ($cgiparams{'ACTION'} eq 'delete-client') {
 }
 
 #open webpage, print header and open box
-&Header::openpage($Lang::tr{'Captive menu'}, 1, '');
+&Header::openpage($Lang::tr{'Captive'}, 1, '');
 &Header::openbigbox();
 
 # If an error message exists, show a box with the error message
@@ -757,7 +757,7 @@ sub generate_pdf() {
 			$f_subheadline->translate($cx, ($y + $h - $cy) / 2.4 + $cy);
 
 			if ($settings{'TITLE'}) {
-				$f_headline->text_center($settings{'TITLE'});
+				$f_headline->text_center(decode("utf8", $settings{'TITLE'}));
 				$f_subheadline->text_center(decode("utf8", $Lang::tr{'Captive WiFi coupon'}));
 			} else {
 				$f_headline->text_center(decode("utf8", $Lang::tr{'Captive WiFi coupon'}));

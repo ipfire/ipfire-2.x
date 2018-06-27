@@ -5,24 +5,17 @@ if [ -e /var/ipfire/main/firstsetup_ok ]; then
 	exit 0;
 fi
 
-# Edit the serial console entry at /etc/inittab matching to console parameter.
-ser_console() {
-	while test x"$1" != x
-	do
-		case $1 in
-			console=*)
-				scon=${1##console=};
-				sed -i -e "s|^7:2345:respawn:/sbin/agetty.*|7:2345:respawn:/sbin/agetty ${scon%%,*}|g" /etc/inittab
-				shift
-			;;
-			*)
-				shift
-			;;
-		esac
-	done
-}
-cmdline=`cat /proc/cmdline`
-ser_console $cmdline
+# disable consoles if tty are not present
+openvt -f -w -- /bin/sh -c echo > /dev/null 2>&1
+if [ ! "${?}" == "0" ]; then
+	# Disable console on tty2-6
+	sed -i -e "s|2:2345:respawn:|#2:2345:respawn:|g" /etc/inittab
+	sed -i -e "s|3:2345:respawn:|#3:2345:respawn:|g" /etc/inittab
+	sed -i -e "s|4:2345:respawn:|#4:2345:respawn:|g" etc/inittab
+	sed -i -e "s|5:2345:respawn:|#5:2345:respawn:|g" /etc/inittab
+	sed -i -e "s|6:2345:respawn:|#6:2345:respawn:|g" /etc/inittab
+fi
+
 # reload inittab
 /sbin/init q
 #

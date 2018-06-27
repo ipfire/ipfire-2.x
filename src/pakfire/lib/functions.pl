@@ -31,11 +31,16 @@ use HTTP::Message;
 use HTTP::Request;
 use Net::Ping;
 
+use Switch;
+
 package Pakfire;
 
-# GPG Keys
-my $myid = "179740DC4D8C47DC63C099C74BDE364C64D96617";		# Our own gpg-key paks@ipfire.org
-my $trustid = "A31D4F81EF4EBD07B456FA04D2BB0D0165D0FD58";	# gpg-key of CaCert
+my @VALID_KEY_FINGERPRINTS = (
+	# 2018
+	"3ECA8AA4478208B924BB96206FEF7A8ED713594B",
+	# 2007
+	"179740DC4D8C47DC63C099C74BDE364C64D96617",
+);
 
 # A small color-hash :D
 my %color;
@@ -168,15 +173,26 @@ sub fetchfile {
 		if ($proxysettings{'UPSTREAM_PROXY'}) {
 			logger("DOWNLOAD INFO: Upstream proxy: \"$proxysettings{'UPSTREAM_PROXY'}\"") unless ($bfile =~ /^counter.py\?.*/); 
 			if ($proxysettings{'UPSTREAM_USER'}) {
-				$ua->proxy("http","http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$proxysettings{'UPSTREAM_PROXY'}/");
+				$ua->proxy([["http", "https"] => "http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$proxysettings{'UPSTREAM_PROXY'}/"]);
 				logger("DOWNLOAD INFO: Logging in with: \"$proxysettings{'UPSTREAM_USER'}\" - \"$proxysettings{'UPSTREAM_PASSWORD'}\"") unless ($bfile =~ /^counter.py\?.*/);
 			} else {
-				$ua->proxy("http","http://$proxysettings{'UPSTREAM_PROXY'}/");
+				$ua->proxy([["http", "https"] => "http://$proxysettings{'UPSTREAM_PROXY'}/"]);
 			}
 		}
 
 		$final_data = undef;
-	 	my $url = "http://$host/$file";
+
+		my $url;
+		switch ($proto) {
+			case "HTTP" { $url = "http://$host/$file"; }
+			case "HTTPS" { $url = "https://$host/$file"; }
+			else {
+				# skip all lines with unknown protocols
+				logger("DOWNLOAD WARNING: Skipping Host: $host due to unknown protocol ($proto) in mirror database");
+				next;
+			}
+		}
+
 		my $response;
 		
 		unless ($bfile =~ /^counter.py\?.*/) {
@@ -206,7 +222,7 @@ sub fetchfile {
 					print FILE $final_data;
 					close(FILE);
 					logger("DOWNLOAD INFO: File received. Start checking signature...");
-					if (system("gpg --verify \"$Conf::tmpdir/$bfile\" &>/dev/null") eq 0) {
+					if (&valid_signature("$Conf::tmpdir/$bfile")) {
 						logger("DOWNLOAD INFO: Signature of $bfile is fine.");
 						move("$Conf::tmpdir/$bfile","$Conf::cachedir/$bfile");
 					} else {
@@ -279,6 +295,25 @@ sub getcoredb {
 	}
 }
 
+sub valid_signature($) {
+	my $filename = shift;
+
+	open(my $cmd, "gpg --verify --status-fd 1 \"$filename\" 2>/dev/null |");
+	while (<$cmd>) {
+		# Process valid signature lines
+		if (/VALIDSIG ([A-Z0-9]+)/) {
+			# Check if we know the key
+			foreach my $key (@VALID_KEY_FINGERPRINTS) {
+				# Signature is valid
+				return 1 if ($key eq $1);
+			}
+		}
+	}
+	close($cmd);
+
+	# Signature is invalid
+	return 0;
+}
 
 sub selectmirror {
 	### Check if there is a current server list and read it.
@@ -897,21 +932,6 @@ sub senduuid {
 		logger("Sending my uuid: $Conf::uuid");
 		fetchfile("counter.py?ver=$Conf::version&uuid=$Conf::uuid", "$Conf::mainserver");
 		system("rm -f $Conf::tmpdir/counter* 2>/dev/null");
-	}
-}
-
-sub checkcryptodb {
-	logger("CRYPTO INFO: Checking GnuPG Database");
-	my $ret = system("gpg --list-keys | grep -q $myid");
-	unless ( "$ret" eq "0" ) {
-		message("CRYPTO WARN: The GnuPG isn't configured corectly. Trying now to fix this.");
-		message("CRYPTO WARN: It's normal to see this on first execution.");
-		message("CRYPTO WARN: If this message is being shown repeatedly, check if time and date are set correctly, and if IPFire can connect via port 11371 TCP.");
-		my $command = "gpg --keyserver pgp.ipfire.org --always-trust --status-fd 2";
-		system("$command --recv-key $myid >> $Conf::logdir/gnupg-database.log 2>&1");
-		system("$command --recv-key $trustid >> $Conf::logdir/gnupg-database.log 2>&1");
-	} else {
-		logger("CRYPTO INFO: Database is okay");
 	}
 }
 

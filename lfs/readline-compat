@@ -70,6 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 
 	for i in $$(seq 1 14); do \
 		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/readline/readline52-$$(printf "%03d" "$${i}") || exit 1; \

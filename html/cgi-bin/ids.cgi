@@ -259,9 +259,9 @@ if ($snortsettings{'OINKCODE'} ne "") {
 
 if (!$errormessage) {
 	if ($snortsettings{'RULES'} eq 'subscripted') {
-		$url=" https://www.snort.org/rules/snortrules-snapshot-29110.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
+		$url=" https://www.snort.org/rules/snortrules-snapshot-29111.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
 	} elsif ($snortsettings{'RULES'} eq 'registered') {
-		$url=" https://www.snort.org/rules/snortrules-snapshot-29110.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
+		$url=" https://www.snort.org/rules/snortrules-snapshot-29111.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
 	} elsif ($snortsettings{'RULES'} eq 'community') {
 		$url=" https://www.snort.org/rules/community";
 	} else {
@@ -692,8 +692,8 @@ sub downloadrulesfile {
 	}
 
 	if ($peer) {
-		system("wget -r --proxy=on --proxy-user=$proxysettings{'UPSTREAM_USER'} --proxy-passwd=$proxysettings{'UPSTREAM_PASSWORD'} -e http_proxy=http://$peer:$peerport/ -o /var/tmp/log --no-check-certificate --output-document=/var/tmp/snortrules.tar.gz $url");
+		system("wget -r --proxy=on --proxy-user=$proxysettings{'UPSTREAM_USER'} --proxy-passwd=$proxysettings{'UPSTREAM_PASSWORD'} -e http_proxy=http://$peer:$peerport/ -o /var/tmp/log --output-document=/var/tmp/snortrules.tar.gz $url");
 	} else {
-		system("wget -r --no-check-certificate -o /var/tmp/log --output-document=/var/tmp/snortrules.tar.gz $url");
+		system("wget -r -o /var/tmp/log --output-document=/var/tmp/snortrules.tar.gz $url");
 	}
 }

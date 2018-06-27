@@ -15,7 +15,7 @@ THISAPP    = squid-accounting-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = squid-accounting
-PAK_VER    = 10
+PAK_VER    = 11
 
 DEPS       = "perl-DBI perl-DBD-SQLite perl-File-ReadBackwards"
 
@@ -54,9 +54,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 755 $(DIR_APP)/squid-accounting/accounting.cgi /srv/web/ipfire/cgi-bin/
 	install -v -m 755 $(DIR_APP)/squid-accounting/acct.pl /usr/local/bin/
 	install -v -m 644 $(DIR_APP)/squid-accounting/acct-lib.pl /var/ipfire/accounting/
-	install -v -m 655 $(DIR_APP)/squid-accounting/acct.de.pl /var/ipfire/addon-lang/
-	install -v -m 655 $(DIR_APP)/squid-accounting/acct.en.pl /var/ipfire/addon-lang/
-	install -v -m 655 $(DIR_APP)/squid-accounting/EX-squid-accounting.menu /var/ipfire/menu.d/
+	install -v -m 644 $(DIR_APP)/squid-accounting/acct.de.pl /var/ipfire/addon-lang/
+	install -v -m 644 $(DIR_APP)/squid-accounting/acct.en.pl /var/ipfire/addon-lang/
+	install -v -m 644 $(DIR_APP)/squid-accounting/acct.tr.pl /var/ipfire/addon-lang/
+	install -v -m 644 $(DIR_APP)/squid-accounting/EX-squid-accounting.menu /var/ipfire/menu.d/
 	install -v -m 755 $(DIR_APP)/squid-accounting/dbinstall.pl /var/ipfire/accounting/
 	install -v -m 644 $(DIR_APP)/squid-accounting/config/backup/includes/squid-accounting  \
 			/var/ipfire/backup/addons/includes/squid-accounting

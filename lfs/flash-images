@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2017  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -33,11 +33,7 @@ DEVICE     = $(shell losetup -f)
 PART_BOOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p1
 PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
 
-ifeq "$(SCON)" "1"
-	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).1gb-ext4-scon.$(BUILD_ARCH)-full-core$(CORE).img.gz
-else
-	IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).1gb-ext4.$(BUILD_ARCH)-full-core$(CORE).img.gz
-endif
+IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).2gb-ext4.$(BUILD_ARCH)-full-core$(CORE).img.xz
 
 FSTAB_FMT = UUID=%s %-8s %-4s %-10s %d %d\n
 
@@ -74,10 +70,10 @@ else
  PART_TYPE = L
 endif
 
-# /boot:  64MB - OFFSET
-# /    : 850MB
-S_BOOT := $(shell echo $$(( 131072 - $(S_OFFSET) )))
-S_ROOT := 1740800
+# /boot:  128MB - OFFSET
+# /    : 1200 MB
+S_BOOT := $(shell echo $$(( 262144 - $(S_OFFSET) )))
+S_ROOT := 2477600
 
 PADDING = 100 # MB
 
@@ -118,18 +114,9 @@ endif
 	mount $(PART_BOOT) $(MNThdd)/boot
 
 	# Install Pandaboard MLO and uboot first
-ifeq "$(BUILD_PLATFORM)" "arm"
+ifeq "$(BUILD_ARCH)" "armv5tel"
 	cp -v /boot/MLO $(MNThdd)/boot/
 	cp -v /boot/u-boot.img $(MNThdd)/boot/
-	cp -v /boot/zImage-ipfire-multi $(MNThdd)/boot/
-	cp -v /boot/uInit-ipfire-multi $(MNThdd)/boot/
-	cp -v /boot/uImage-ipfire-kirkwood $(MNThdd)/boot/
-	cp -v /boot/uInit-ipfire-kirkwood $(MNThdd)/boot/
-	cp -v /boot/uEnv.txt $(MNThdd)/boot/
-	# work around a u-boot bug not find the folders sometimes
-	mkdir -pv $(MNThdd)/boot/dtb-$(KVER)-ipfire-multi
-	mkdir -pv $(MNThdd)/boot/dtb-$(KVER)-ipfire-kirkwood
-	
 	sync
 	umount $(MNThdd)/boot
 	mount $(PART_BOOT) $(MNThdd)/boot
@@ -144,22 +131,6 @@ endif
 	echo "LANGUAGE=en" >> $(MNThdd)/var/ipfire/main/settings
 	echo "HOSTNAME=$(SNAME)" >> $(MNThdd)/var/ipfire/main/settings
 	echo "THEME=ipfire" >> $(MNThdd)/var/ipfire/main/settings
-
-ifeq "$(SCON)" "1"
-	# Enable serial console
-	sed -i -e "s|1:2345:respawn:|#1:2345:respawn:|g" $(MNThdd)/etc/inittab
-	sed -i -e "s|2:2345:respawn:|#2:2345:respawn:|g" $(MNThdd)/etc/inittab
-	sed -i -e "s|3:2345:respawn:|#3:2345:respawn:|g" $(MNThdd)/etc/inittab
-	sed -i -e "s|4:2345:respawn:|#4:2345:respawn:|g" $(MNThdd)/etc/inittab
-	sed -i -e "s|5:2345:respawn:|#5:2345:respawn:|g" $(MNThdd)/etc/inittab
-	sed -i -e "s|6:2345:respawn:|#6:2345:respawn:|g" $(MNThdd)/etc/inittab
-	sed -i -e "s|#7:2345:respawn:|7:2345:respawn:|g" $(MNThdd)/etc/inittab
-
-ifeq "$(BUILD_PLATFORM)" "arm"
-	sed -i -e "s| console=tty1 | console=ttyAMA0,115200n8 |g" $(MNThdd)/boot/cmdline.txt
-	sed -i -e "s| console=tty1 | console=ttyO2,115200n8 |g" $(MNThdd)/boot/uEnv.txt
-endif
-endif
 
 	-touch $(MNThdd)/lib/modules/$(KVER)-ipfire/modules.dep
 	mkdir $(MNThdd)/proc
@@ -176,13 +147,17 @@ endif
 		"auto" "defaults" 1 1 >> $(MNThdd)/etc/fstab
 
 ifeq "$(BOOTLOADER)" "grub"
-ifeq "$(SCON)" "1"
-	# Enable serial console on GRUB
-	echo "GRUB_TERMINAL=\"serial\"" >> $(MNThdd)/etc/default/grub
-	echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> $(MNThdd)/etc/default/grub
+	# backup defaults file
+	cp $(MNThdd)/etc/default/grub $(MNThdd)/etc/default/grub.backup
 
-	sed -i -e "s|panic=10|& console=ttyS0,115200n8|g" $(MNThdd)/etc/default/grub
-endif
+	# Enable also serial console on GRUB
+	echo "GRUB_TERMINAL=\"serial console\"" >> $(MNThdd)/etc/default/grub
+	echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> $(MNThdd)/etc/default/grub
+	echo "GRUB_TIMEOUT=-1" >> $(MNThdd)/etc/default/grub
+
+	# Add additional entry for Serial console
+	cp $(DIR_SRC)/config/flash-images/grub/11_linux_scon \
+			$(MNThdd)/etc/grub.d/
 
 	# Create configuration
 	mkdir -pv $(MNThdd)/boot/grub
@@ -196,6 +171,10 @@ endif
 	# Install GRUB
 	grub-install --force --recheck --no-floppy --target=i386-pc \
 		--root-directory=$(MNThdd) $(DEVICE)
+
+	# restore orginal defaults
+	mv -f $(MNThdd)/etc/default/grub.backup $(MNThdd)/etc/default/grub
+	rm -f $(MNThdd)/etc/grub.d/11_linux_scon
 endif
 
 	# Set ramdisk mode to automatic
@@ -229,11 +208,11 @@ endif
 	# not copied to a block device)
 	dd if=/dev/zero bs=1M count=$(PADDING) >> $(IMG)
 
-ifeq "$(BUILD_PLATFORM)" "arm"
-	# Install u-boot for LeMaker Banana Pi into image 8KB
-	dd if=/usr/share/u-boot/banana_pi/u-boot-sunxi-with-spl.bin of=$(IMG) bs=1K seek=8 conv=notrunc
+ifeq "$(BUILD_ARCH)" "armv5tel"
+	# Install u-boot for Orangepi Zero/Nanopi DUO into image 8KB
+	dd if=/usr/share/u-boot/orangepi_zero/u-boot-sunxi-with-spl.bin of=$(IMG) bs=1K seek=8 conv=notrunc
 endif
 
 	# Compress Image
-	pigz -f9 < $(IMG) > $(IMAGE_FILE)
+	xz $(XZ_OPT) < $(IMG) > $(IMAGE_FILE)
 	rm -rf $(IMG) $(MNThdd)

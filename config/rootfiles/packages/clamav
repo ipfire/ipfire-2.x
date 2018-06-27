@@ -4,7 +4,6 @@ usr/bin/clamconf
 usr/bin/clamdscan
 usr/bin/clamdtop
 usr/bin/clamscan
-usr/bin/clamsubmit
 usr/bin/freshclam
 usr/bin/sigtool
 #usr/include/clamav.h
@@ -12,6 +11,11 @@ usr/bin/sigtool
 usr/lib/libclamav.so
 usr/lib/libclamav.so.7
 usr/lib/libclamav.so.7.1.1
+#usr/lib/libclammspack.a
+#usr/lib/libclammspack.la
+usr/lib/libclammspack.so
+usr/lib/libclammspack.so.0
+usr/lib/libclammspack.so.0.1.0
 #usr/lib/libclamunrar.la
 usr/lib/libclamunrar.so
 usr/lib/libclamunrar.so.7
@@ -21,6 +25,7 @@ usr/lib/libclamunrar_iface.so
 usr/lib/libclamunrar_iface.so.7
 usr/lib/libclamunrar_iface.so.7.1.1
 #usr/lib/pkgconfig/libclamav.pc
+#usr/lib/pkgconfig/libclammspack.pc
 usr/sbin/clamd
 usr/share/clamav
 #usr/share/man/man1/clambc.1
@@ -28,7 +33,6 @@ usr/share/clamav
 #usr/share/man/man1/clamdscan.1
 #usr/share/man/man1/clamdtop.1
 #usr/share/man/man1/clamscan.1
-#usr/share/man/man1/clamsubmit.1
 #usr/share/man/man1/freshclam.1
 #usr/share/man/man1/sigtool.1
 #usr/share/man/man5/clamav-milter.conf.5

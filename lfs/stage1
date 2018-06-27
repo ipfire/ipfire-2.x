@@ -48,10 +48,10 @@ md5 :
 $(TARGET) :
 	@$(PREBUILD)
 
-	mkdir -pv /tools/lib
+	mkdir -pv $(TOOLS_DIR)/lib
 
 ifeq "$(IS_64BIT)" "1"
-	ln -svf lib /tools/lib64
+	ln -svf lib $(TOOLS_DIR)/lib64
 endif
 
 	@$(POSTBUILD)

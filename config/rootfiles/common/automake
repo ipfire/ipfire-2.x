@@ -118,8 +118,8 @@
 #usr/share/automake-1.15/test-driver
 #usr/share/automake-1.15/texinfo.tex
 #usr/share/automake-1.15/ylwrap
-#usr/share/doc/automake-1.15
-#usr/share/doc/automake-1.15/amhello-1.0.tar.gz
+#usr/share/doc/automake
+#usr/share/doc/automake/amhello-1.0.tar.gz
 #usr/share/info/automake-history.info
 #usr/share/info/automake.info
 #usr/share/info/automake.info-1

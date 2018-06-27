@@ -5,8 +5,6 @@ etc/dhcp/dhcpd.conf
 #usr/bin/omshell
 #usr/include/dhcpctl
 #usr/include/dhcpctl/dhcpctl.h
-#usr/include/isc-dhcp
-#usr/include/isc-dhcp/dst.h
 #usr/include/omapip
 #usr/include/omapip/alloc.h
 #usr/include/omapip/buffer.h
@@ -17,8 +15,8 @@ etc/dhcp/dhcpd.conf
 #usr/include/omapip/omapip_p.h
 #usr/include/omapip/result.h
 #usr/include/omapip/trace.h
+#usr/lib/libdhcp.a
 #usr/lib/libdhcpctl.a
-#usr/lib/libdst.a
 #usr/lib/libomapi.a
 #usr/sbin/dhclient
 usr/sbin/dhcpd

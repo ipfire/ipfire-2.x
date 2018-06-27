@@ -26,31 +26,53 @@ fi
 case "${1}" in
 	start)
 		case `cat /proc/device-tree/model 2>/dev/null` in
-			"Lamobo-R1")
+			"Lamobo R1")
 				#
 				# Lamobo R1 aka BPi R1 Routerboard
 				#
-				# Speaker | LAN1 | LAN2 | LAN3 | LAN4 || LAN5 | HDMI
+				# Speaker | LAN4 | LAN3 | LAN2 | LAN1 || WAN  | HDMI
 				# SW-Port |  P2  |  P1  |  P0  |  P4  ||  P3  |
-				# VLAN    |  11  |  12  |  13  |  14  ||ALL(t)|
+				# VLAN    |  14  |  13  |  12  |  11  || all  |
 				#
 				# Switch-Port P8 - ALL(t) boards internal CPU Port
 				#
-				device=`ls /sys/class/net/*/device/stmmac-0* | head -1 | cut -d/ -f5`
+
+				device=`ls /sys/class/net/*/device/driver/1c50000.ethernet/net | head -1`
 				ip link set $device up
-				boot_mesg "Configure vlan-switch on $device ..."
-				# Reset switch, counter and enable vlan mode
-				swconfig dev $device set reset 1
-				swconfig dev $device set reset_mib 1
-				swconfig dev $device set enable_vlan 1
+
+				# create bridge
+				ip link add switch0 type bridge
+				ip link set wan master switch0
+				ip link set lan1 master switch0
+				ip link set lan2 master switch0
+				ip link set lan3 master switch0
+				ip link set lan4 master switch0
+
 				# configure vlans
-				swconfig dev $device vlan 11 set ports "2 3t 8t"
-				swconfig dev $device vlan 12 set ports "1 3t 8t"
-				swconfig dev $device vlan 13 set ports "0 3t 8t"
-				swconfig dev $device vlan 14 set ports "4 3t 8t"
-				# activate new config
-				swconfig dev $device set apply 1
-				# create interfaces for the vlan's
+				bridge vlan add vid 11 dev lan1 pvid untagged
+				bridge vlan add vid 12 dev lan2 pvid untagged
+				bridge vlan add vid 13 dev lan3 pvid untagged
+				bridge vlan add vid 14 dev lan4 pvid untagged
+				bridge vlan add vid 11 dev wan
+				bridge vlan add vid 12 dev wan
+				bridge vlan add vid 13 dev wan
+				bridge vlan add vid 14 dev wan
+
+				# Remove wrong vlan1 from all ports
+				bridge vlan del vid 1 dev lan1
+				bridge vlan del vid 1 dev lan2
+				bridge vlan del vid 1 dev lan3
+				bridge vlan del vid 1 dev lan4
+				bridge vlan del vid 1 dev wan
+
+				# enable all ports
+				ip link set lan1 up
+				ip link set lan2 up
+				ip link set lan3 up
+				ip link set lan4 up
+				ip link set wan up
+
+				# create virtual interfaces for the vlan's
 				modprobe 8021q
 				vconfig add $device 11
 				vconfig add $device 12

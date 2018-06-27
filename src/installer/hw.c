@@ -420,23 +420,8 @@ static unsigned long long hw_swap_size(struct hw_destination* dest) {
 	return swap_size;
 }
 
-static unsigned long long hw_root_size(struct hw_destination* dest) {
-	unsigned long long root_size;
-
-	if (dest->size < MB2BYTES(2048))
-		root_size = MB2BYTES(1024);
-
-	else if (dest->size >= MB2BYTES(2048) && dest->size <= MB2BYTES(3072))
-		root_size = MB2BYTES(1536);
-
-	else
-		root_size = MB2BYTES(2048);
-
-	return root_size;
-}
-
 static unsigned long long hw_boot_size(struct hw_destination* dest) {
-	return MB2BYTES(64);
+	return MB2BYTES(128);
 }
 
 static int hw_device_has_p_suffix(const struct hw_destination* dest) {
@@ -480,6 +465,10 @@ static int hw_calculate_partition_table(struct hw_destination* dest, int disable
 	// Add some more space for partition tables, etc.
 	dest->size -= MB2BYTES(1);
 
+	// The disk has to have at least 2GB
+	if (dest->size <= MB2BYTES(2048))
+		return -1;
+
 	// Determine partition table
 	dest->part_table = HW_PART_TABLE_MSDOS;
 
@@ -506,7 +495,14 @@ static int hw_calculate_partition_table(struct hw_destination* dest, int disable
 	}
 
 	dest->size_boot = hw_boot_size(dest);
-	dest->size_root = hw_root_size(dest);
+
+	// Determine the size of the data partition.
+	unsigned long long space_left = dest->size - \
+		(dest->size_bootldr + dest->size_boot);
+
+	// If we have less than 2GB left, we disable swap
+	if (space_left <= MB2BYTES(2048))
+		disable_swap = 1;
 
 	// Should we use swap?
 	if (disable_swap)
@@ -514,21 +510,11 @@ static int hw_calculate_partition_table(struct hw_destination* dest, int disable
 	else
 		dest->size_swap = hw_swap_size(dest);
 
-	// Determine the size of the data partition.
-	unsigned long long used_space = dest->size_bootldr + dest->size_boot
-		+ dest->size_swap + dest->size_root;
+	// Subtract swap
+	space_left -= dest->size_swap;
 
-	// Disk is way too small
-	if (used_space >= dest->size)
-		return -1;
-
-	dest->size_data = dest->size - used_space;
-
-	// If it gets too small, we remove the swap space.
-	if (dest->size_data <= MB2BYTES(256)) {
-		dest->size_data += dest->size_swap;
-		dest->size_swap = 0;
-	}
+	// Root is getting what ever is left
+	dest->size_root = space_left;
 
 	// Set partition names
 	if (dest->size_boot > 0) {
@@ -549,11 +535,6 @@ static int hw_calculate_partition_table(struct hw_destination* dest, int disable
 		dest->part_boot_idx = part_idx;
 
 	snprintf(dest->part_root, sizeof(dest->part_root), "%s%d", path, part_idx++);
-
-	if (dest->size_data > 0)
-		snprintf(dest->part_data, sizeof(dest->part_data), "%s%d", path, part_idx++);
-	else
-		*dest->part_data = '\0';
 
 	return 0;
 }
@@ -682,14 +663,6 @@ int hw_create_partitions(struct hw_destination* dest, const char* output) {
 		part_start += dest->size_root;
 	}
 
-	if (*dest->part_data) {
-		asprintf(&cmd, "%s mkpart %s ext2 %lluB %lluB", cmd,
-			(dest->part_table == HW_PART_TABLE_GPT) ? "DATA" : "primary",
-			part_start, part_start + dest->size_data - 1);
-
-		part_start += dest->size_data;
-	}
-
 	if (dest->part_boot_idx > 0)
 		asprintf(&cmd, "%s set %d boot on", cmd, dest->part_boot_idx);
 
@@ -719,9 +692,6 @@ int hw_create_partitions(struct hw_destination* dest, const char* output) {
 				continue;
 
 			if (*dest->part_root && (try_open(dest->part_root) != 0))
-				continue;
-
-			if (*dest->part_data && (try_open(dest->part_data) != 0))
 				continue;
 
 			// All partitions do exist, exiting the loop.
@@ -787,13 +757,6 @@ int hw_create_filesystems(struct hw_destination* dest, const char* output) {
 	if (r)
 		return r;
 
-	// data
-	if (*dest->part_data) {
-		r = hw_format_filesystem(dest->part_data, dest->filesystem, output);
-		if (r)
-			return r;
-	}
-
 	return 0;
 }
 
@@ -832,19 +795,6 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 		mkdir(target, S_IRWXU|S_IRWXG|S_IRWXO);
 
 		r = hw_mount(dest->part_boot, target, filesystem, 0);
-		if (r) {
-			hw_umount_filesystems(dest, prefix);
-
-			return r;
-		}
-	}
-
-	// data
-	if (*dest->part_data) {
-		snprintf(target, sizeof(target), "%s%s", prefix, HW_PATH_DATA);
-		mkdir(target, S_IRWXU|S_IRWXG|S_IRWXO);
-
-		r = hw_mount(dest->part_data, target, filesystem, 0);
 		if (r) {
 			hw_umount_filesystems(dest, prefix);
 
@@ -891,14 +841,6 @@ int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
 	// boot
 	if (*dest->part_boot) {
 		snprintf(target, sizeof(target), "%s%s", prefix, HW_PATH_BOOT);
-		r = hw_umount(target);
-		if (r)
-			return -1;
-	}
-
-	// data
-	if (*dest->part_data) {
-		snprintf(target, sizeof(target), "%s%s", prefix, HW_PATH_DATA);
 		r = hw_umount(target);
 		if (r)
 			return -1;
@@ -1094,16 +1036,6 @@ int hw_write_fstab(struct hw_destination* dest) {
 	if (uuid) {
 		fprintf(f, FSTAB_FMT, uuid, "/", "auto", "defaults", 1, 1);
 		free(uuid);
-	}
-
-	// data
-	if (*dest->part_data) {
-		uuid = hw_get_uuid(dest->part_data);
-
-		if (uuid) {
-			fprintf(f, FSTAB_FMT, uuid, "/var", "auto", "defaults", 1, 1);
-			free(uuid);
-		}
 	}
 
 	fclose(f);

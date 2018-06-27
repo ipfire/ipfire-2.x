@@ -35,6 +35,7 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/countries.pl";
+require "${General::swroot}/geoip-functions.pl";
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -92,7 +93,6 @@ $cgiparams{'ROUTES_PUSH'} = '';
 $cgiparams{'DCOMPLZO'} = 'off';
 $cgiparams{'MSSFIX'} = '';
 $cgiparams{'number'} = '';
-$cgiparams{'PMTU_DISCOVERY'} = '';
 $cgiparams{'DCIPHER'} = '';
 $cgiparams{'DAUTH'} = '';
 $cgiparams{'TLSAUTH'} = '';
@@ -216,7 +216,7 @@ sub writeserverconf {
     print CONF "dev tun\n";
     print CONF "proto $sovpnsettings{'DPROTOCOL'}\n";
     print CONF "port $sovpnsettings{'DDEST_PORT'}\n";
-    print CONF "script-security 3 system\n";
+    print CONF "script-security 3\n";
     print CONF "ifconfig-pool-persist /var/ipfire/ovpn/ovpn-leases.db 3600\n";
     print CONF "client-config-dir /var/ipfire/ovpn/ccd\n";
     print CONF "tls-server\n";
@@ -234,10 +234,6 @@ sub writeserverconf {
 	{ print CONF "tun-mtu 1500\n"; }
     elsif ($sovpnsettings{'FRAGMENT'} ne '' && $sovpnsettings{'DPROTOCOL'} ne 'tcp') 
 	{ print CONF "tun-mtu 1500\n"; }
-    elsif (($sovpnsettings{'PMTU_DISCOVERY'} eq 'yes') ||
-	($sovpnsettings{'PMTU_DISCOVERY'} eq 'maybe') ||
-	($sovpnsettings{'PMTU_DISCOVERY'} eq 'no' ))
-	{ print CONF "tun-mtu 1500\n"; } 
     else 
 	{ print CONF "tun-mtu $sovpnsettings{'DMTU'}\n"; }
 
@@ -277,18 +273,12 @@ sub writeserverconf {
 		print CONF "fragment $sovpnsettings{'FRAGMENT'}\n";
     }
 
-    # Check if a valid operating mode has been choosen and use it.
-    if (($sovpnsettings{'PMTU_DISCOVERY'} eq 'yes') ||
-	($sovpnsettings{'PMTU_DISCOVERY'} eq 'maybe') ||
-	($sovpnsettings{'PMTU_DISCOVERY'} eq 'no' )) {
-		print CONF "mtu-disc $sovpnsettings{'PMTU_DISCOVERY'}\n";
-    }
-
     if ($sovpnsettings{KEEPALIVE_1} > 0 && $sovpnsettings{KEEPALIVE_2} > 0) {	
 	print CONF "keepalive $sovpnsettings{'KEEPALIVE_1'} $sovpnsettings{'KEEPALIVE_2'}\n";
     }	
     print CONF "status-version 1\n";
     print CONF "status /var/run/ovpnserver.log 30\n";
+    print CONF "ncp-disable\n";
     print CONF "cipher $sovpnsettings{DCIPHER}\n";
     if ($sovpnsettings{'DAUTH'} eq '') {
         print CONF "";
@@ -754,7 +744,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'DHCP_DNS'} = $cgiparams{'DHCP_DNS'};
     $vpnsettings{'DHCP_WINS'} = $cgiparams{'DHCP_WINS'};
     $vpnsettings{'ROUTES_PUSH'} = $cgiparams{'ROUTES_PUSH'};
-    $vpnsettings{'PMTU_DISCOVERY'} = $cgiparams{'PMTU_DISCOVERY'};
     $vpnsettings{'DAUTH'} = $cgiparams{'DAUTH'};
     $vpnsettings{'TLSAUTH'} = $cgiparams{'TLSAUTH'};
     my @temp=();
@@ -776,16 +765,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     	$vpnsettings{'MSSFIX'} = $cgiparams{'MSSFIX'};
     }
 
-    if (($cgiparams{'PMTU_DISCOVERY'} eq 'yes') ||
-        ($cgiparams{'PMTU_DISCOVERY'} eq 'maybe') ||
-        ($cgiparams{'PMTU_DISCOVERY'} eq 'no' )) {
-
-	if (($cgiparams{'MSSFIX'} eq 'on') || ($cgiparams{'FRAGMENT'} ne '')) {
-		$errormessage = $Lang::tr{'ovpn mtu-disc with mssfix or fragment'};
-		goto ADV_ERROR;
-	}
-    }
-		
     if ($cgiparams{'DHCP_DOMAIN'} ne ''){
 	unless (&General::validdomainname($cgiparams{'DHCP_DOMAIN'}) || &General::validip($cgiparams{'DHCP_DOMAIN'})) {
 		$errormessage = $Lang::tr{'invalid input for dhcp domain'};
@@ -951,16 +930,6 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   if ($cgiparams{'MSSFIX'} eq 'on') {print SERVERCONF "mssfix\n"; }; 
   }
 
-  # Check if a valid operating mode has been choosen and use it.
-  if (($cgiparams{'PMTU_DISCOVERY'} eq 'yes') ||
-      ($cgiparams{'PMTU_DISCOVERY'} eq 'maybe') ||
-      ($cgiparams{'PMTU_DISCOVERY'} eq 'no' )) {
-	if(($cgiparams{'MSSFIX'} ne 'on') || ($cgiparams{'FRAGMENT'} eq '')) {
-		if($cgiparams{'MTU'} eq '1500') {
-			print SERVERCONF "mtu-disc $cgiparams{'PMTU_DISCOVERY'}\n";
-		}
-	}
-  }
   print SERVERCONF "# Auth. Server\n"; 
   print SERVERCONF "tls-server\n"; 
   print SERVERCONF "ca ${General::swroot}/ovpn/ca/cacert.pem\n"; 
@@ -969,12 +938,18 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print SERVERCONF "dh ${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}\n";
   print SERVERCONF "# Cipher\n"; 
   print SERVERCONF "cipher $cgiparams{'DCIPHER'}\n";
-  if ($cgiparams{'DAUTH'} eq '') {
-	print SERVERCONF "auth SHA1\n";
+
+  # If GCM cipher is used, do not use --auth
+  if (($cgiparams{'DCIPHER'} eq 'AES-256-GCM') ||
+      ($cgiparams{'DCIPHER'} eq 'AES-192-GCM') ||
+      ($cgiparams{'DCIPHER'} eq 'AES-128-GCM')) {
+    print SERVERCONF unless "# HMAC algorithm\n";
+    print SERVERCONF unless "auth $cgiparams{'DAUTH'}\n";
   } else {
-	print SERVERCONF "# HMAC algorithm\n";
-	print SERVERCONF "auth $cgiparams{'DAUTH'}\n";
+    print SERVERCONF "# HMAC algorithm\n";
+    print SERVERCONF "auth $cgiparams{'DAUTH'}\n";
   }
+
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print SERVERCONF "# Enable Compression\n";
    print SERVERCONF "comp-lzo\n";
@@ -1051,16 +1026,6 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   if ($cgiparams{'MSSFIX'} eq 'on') {print CLIENTCONF "mssfix\n"; }; 
   }
 
-  # Check if a valid operating mode has been choosen and use it.
-  if (($cgiparams{'PMTU_DISCOVERY'} eq 'yes') ||
-      ($cgiparams{'PMTU_DISCOVERY'} eq 'maybe') ||
-      ($cgiparams{'PMTU_DISCOVERY'} eq 'no' )) {
-        if(($cgiparams{'MSSFIX'} ne 'on') || ($cgiparams{'FRAGMENT'} eq '')) {
-		if ($cgiparams{'MTU'} eq '1500') {
-                	print CLIENTCONF "mtu-disc $cgiparams{'PMTU_DISCOVERY'}\n";
-		}
-        }
-  }
   # Check host certificate if X509 is RFC3280 compliant.
   # If not, old --ns-cert-type directive will be used.
   # If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
@@ -1075,12 +1040,18 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print CLIENTCONF "# Cipher\n"; 
   print CLIENTCONF "cipher $cgiparams{'DCIPHER'}\n";
   print CLIENTCONF "pkcs12 ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}.p12\r\n";
-  if ($cgiparams{'DAUTH'} eq '') {
-	print CLIENTCONF "auth SHA1\n";
+
+  # If GCM cipher is used, do not use --auth
+  if (($cgiparams{'DCIPHER'} eq 'AES-256-GCM') ||
+      ($cgiparams{'DCIPHER'} eq 'AES-192-GCM') ||
+      ($cgiparams{'DCIPHER'} eq 'AES-128-GCM')) {
+    print CLIENTCONF unless "# HMAC algorithm\n";
+    print CLIENTCONF unless "auth $cgiparams{'DAUTH'}\n";
   } else {
-	print CLIENTCONF "# HMAC algorithm\n";
-	print CLIENTCONF "auth $cgiparams{'DAUTH'}\n";
+    print CLIENTCONF "# HMAC algorithm\n";
+    print CLIENTCONF "auth $cgiparams{'DAUTH'}\n";
   }
+
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print CLIENTCONF "# Enable Compression\n";
    print CLIENTCONF "comp-lzo\n";
@@ -1320,7 +1291,6 @@ END
 		<form method='post'><input type='hidden' name='AREUSURE' value='yes' />
 		<input type='hidden' name='KEY' value='$cgiparams{'KEY'}' />
 			<select name='DHLENGHT'>
-				<option value='1024' $selected{'DHLENGHT'}{'1024'}>1024 $Lang::tr{'bit'}</option>
 				<option value='2048' $selected{'DHLENGHT'}{'2048'}>2048 $Lang::tr{'bit'}</option>
 				<option value='3072' $selected{'DHLENGHT'}{'3072'}>3072 $Lang::tr{'bit'}</option>
 				<option value='4096' $selected{'DHLENGHT'}{'4096'}>4096 $Lang::tr{'bit'}</option>
@@ -2002,7 +1972,6 @@ END
 	    </select></td>
 	<tr><td class='base'>$Lang::tr{'ovpn dh'}:</td>
 		<td class='base'><select name='DHLENGHT'>
-				<option value='1024' $selected{'DHLENGHT'}{'1024'}>1024 $Lang::tr{'bit'}</option>
 				<option value='2048' $selected{'DHLENGHT'}{'2048'}>2048 $Lang::tr{'bit'}</option>
 				<option value='3072' $selected{'DHLENGHT'}{'3072'}>3072 $Lang::tr{'bit'}</option>
 				<option value='4096' $selected{'DHLENGHT'}{'4096'}>4096 $Lang::tr{'bit'}</option>
@@ -2197,13 +2166,18 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
 	 print CLIENTCONF "pkcs12 ${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12\r\n";
      $zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12", "$confighash{$cgiparams{'KEY'}}[1].p12") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1].p12\n";
    }
-   if ($confighash{$cgiparams{'KEY'}}[39] eq '') {
-	print CLIENTCONF "# HMAC algorithm\n";
-	print CLIENTCONF "auth SHA1\n";
+
+   # If GCM cipher is used, do not use --auth
+   if (($confighash{$cgiparams{'KEY'}}[40] eq 'AES-256-GCM') ||
+       ($confighash{$cgiparams{'KEY'}}[40] eq 'AES-192-GCM') ||
+       ($confighash{$cgiparams{'KEY'}}[40] eq 'AES-128-GCM')) {
+        print CLIENTCONF unless "# HMAC algorithm\n";
+        print CLIENTCONF unless "auth $confighash{$cgiparams{'KEY'}}[39]\n";
    } else {
-   print CLIENTCONF "# HMAC algorithm\n";
-   print CLIENTCONF "auth $confighash{$cgiparams{'KEY'}}[39]\n";
+        print CLIENTCONF "# HMAC algorithm\n";
+        print CLIENTCONF "auth $confighash{$cgiparams{'KEY'}}[39]\n";
    }
+
    if ($confighash{$cgiparams{'KEY'}}[30] eq 'on') {
    print CLIENTCONF "# Enable Compression\n";
    print CLIENTCONF "comp-lzo\n";
@@ -2260,10 +2234,6 @@ else
     if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' )
 	{ print CLIENTCONF "tun-mtu 1500\r\n"; }
     elsif ($vpnsettings{MSSFIX} eq 'on')
-	{ print CLIENTCONF "tun-mtu 1500\r\n"; }
-    elsif (($vpnsettings{'PMTU_DISCOVERY'} eq 'yes') ||
-           ($vpnsettings{'PMTU_DISCOVERY'} eq 'maybe') ||
-           ($vpnsettings{'PMTU_DISCOVERY'} eq 'no' )) 
 	{ print CLIENTCONF "tun-mtu 1500\r\n"; }
     else
 	{ print CLIENTCONF "tun-mtu $vpnsettings{'DMTU'}\r\n"; }
@@ -2362,15 +2332,6 @@ else
     }
     if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
 	print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
-    }
-
-    # Check if a valid operating mode has been choosen and use it.
-    if (($vpnsettings{'PMTU_DISCOVERY'} eq 'yes') ||
-        ($vpnsettings{'PMTU_DISCOVERY'} eq 'maybe') ||
-        ($vpnsettings{'PMTU_DISCOVERY'} eq 'no' )) {
-	if(($vpnsettings{MSSFIX} ne 'on') || ($vpnsettings{FRAGMENT} eq '')) {
-		print CLIENTCONF "mtu-disc $vpnsettings{'PMTU_DISCOVERY'}\r\n";
-	}
     }
 
     if ($include_certs) {
@@ -2650,9 +2611,6 @@ ADV_ERROR:
     if ($cgiparams{'LOG_VERB'} eq '') {
 		$cgiparams{'LOG_VERB'} =  '3';
     }
-    if ($cgiparams{'PMTU_DISCOVERY'} eq '') {
-		$cgiparams{'PMTU_DISCOVERY'} = 'off';
-    }
     if ($cgiparams{'DAUTH'} eq '') {
 		$cgiparams{'DAUTH'} = 'SHA512';
     }
@@ -2671,7 +2629,6 @@ ADV_ERROR:
     $checked{'MSSFIX'}{'off'} = '';
     $checked{'MSSFIX'}{'on'} = '';
     $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
-    $checked{'PMTU_DISCOVERY'}{$cgiparams{'PMTU_DISCOVERY'}} = 'checked=\'checked\'';
     $selected{'LOG_VERB'}{'0'} = '';
     $selected{'LOG_VERB'}{'1'} = '';
     $selected{'LOG_VERB'}{'2'} = '';
@@ -2793,14 +2750,6 @@ print <<END;
 		(ping/ping-restart)</td>
 		<td><input type='TEXT' name='KEEPALIVE_1' value='$cgiparams{'KEEPALIVE_1'}' size='10' /></td>
 		<td><input type='TEXT' name='KEEPALIVE_2' value='$cgiparams{'KEEPALIVE_2'}' size='10' /></td>
-	</tr>
-
-	<tr>
-		<td class='base'>$Lang::tr{'ovpn mtu-disc'}</td>
-		<td><input type='radio' name='PMTU_DISCOVERY' value='yes' $checked{'PMTU_DISCOVERY'}{'yes'} /> $Lang::tr{'ovpn mtu-disc yes'}</td>
-		<td><input type='radio' name='PMTU_DISCOVERY' value='maybe' $checked{'PMTU_DISCOVERY'}{'maybe'} /> $Lang::tr{'ovpn mtu-disc maybe'}</td>
-		<td><input type='radio' name='PMTU_DISCOVERY' value='no' $checked{'PMTU_DISCOVERY'}{'no'} /> $Lang::tr{'ovpn mtu-disc no'}</td>
-		<td><input type='radio' name='PMTU_DISCOVERY' value='off' $checked{'PMTU_DISCOVERY'}{'off'} /> $Lang::tr{'ovpn mtu-disc off'}</td>
 	</tr>
 </table>
 
@@ -3041,6 +2990,7 @@ END
     <tr>
 	<th><b>$Lang::tr{'common name'}</b></th>
 	<th><b>$Lang::tr{'real address'}</b></th>
+	<th><b>$Lang::tr{'country'}</b></th>
 	<th><b>$Lang::tr{'virtual address'}</b></th>
 	<th><b>$Lang::tr{'loged in at'}</b></th>
 	<th><b>$Lang::tr{'bytes sent'}</b></th>
@@ -3080,6 +3030,11 @@ END
 		    $users[$uid]{'BytesSent'} = &sizeformat($match[4]);
 		    $users[$uid]{'Since'} = $match[5];
 		    $users[$uid]{'Proto'} = $proto;
+
+		    # get country code for "RealAddress"...
+		    my $ccode = &GeoIP::lookup((split ':', $users[$uid]{'RealAddress'})[0]);
+		    my $flag_icon = &GeoIP::get_flag_icon($ccode);
+		    $users[$uid]{'Country'} = "<a href='country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode' title='$ccode' /></a>";
 		    $uid++;
 		}    
 	    }
@@ -3106,7 +3061,8 @@ END
 						}
 						print "<td align='left' $col>$users[$idx-1]{'CommonName'}</td>";
 						print "<td align='left' $col>$users[$idx-1]{'RealAddress'}</td>";
-						print "<td align='left' $col>$users[$idx-1]{'VirtualAddress'}</td>";
+						print "<td align='center' $col>$users[$idx-1]{'Country'}</td>";
+						print "<td align='center' $col>$users[$idx-1]{'VirtualAddress'}</td>";
 						print "<td align='left' $col>$users[$idx-1]{'Since'}</td>";
 						print "<td align='left' $col>$users[$idx-1]{'BytesSent'}</td>";
 						print "<td align='left' $col>$users[$idx-1]{'BytesReceived'}</td>";
@@ -3632,7 +3588,6 @@ if ($confighash{$cgiparams{'KEY'}}) {
 		$cgiparams{'CCD_DNS1'}		= $confighash{$cgiparams{'KEY'}}[35];
 		$cgiparams{'CCD_DNS2'}		= $confighash{$cgiparams{'KEY'}}[36];
 		$cgiparams{'CCD_WINS'}		= $confighash{$cgiparams{'KEY'}}[37];
-		$cgiparams{'PMTU_DISCOVERY'} 	= $confighash{$cgiparams{'KEY'}}[38];
 		$cgiparams{'DAUTH'}		= $confighash{$cgiparams{'KEY'}}[39];
 		$cgiparams{'DCIPHER'}		= $confighash{$cgiparams{'KEY'}}[40];
 		$cgiparams{'TLSAUTH'}		= $confighash{$cgiparams{'KEY'}}[41];
@@ -3901,22 +3856,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    goto VPNCONF_ERROR;
     }
 
-    if ($cgiparams{'PMTU_DISCOVERY'} ne 'off') {
-	if (($cgiparams{'FRAGMENT'} ne '') || ($cgiparams{'MSSFIX'} eq 'on')) {
-		$errormessage = $Lang::tr{'ovpn mtu-disc with mssfix or fragment'};
-		unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
-		rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
-		goto VPNCONF_ERROR;
-	}
-    }
-
-    if (($cgiparams{'PMTU_DISCOVERY'} ne 'off') && ($cgiparams{'MTU'} ne '1500')) {
-	$errormessage = $Lang::tr{'ovpn mtu-disc and mtu not 1500'};
-	unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
-	rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
-	goto VPNCONF_ERROR;
-    }
-
     if ( &validdotmask ($cgiparams{'LOCAL_SUBNET'}))  {
 		  $errormessage = $Lang::tr{'openvpn prefix local subnet'};
 		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
@@ -4039,6 +3978,16 @@ if ($cgiparams{'TYPE'} eq 'net') {
       		goto VPNCONF_ERROR;
 	}
 
+	# Check for N2N that OpenSSL maximum of valid days will not be exceeded
+	if ($cgiparams{'TYPE'} eq 'net') {
+		if ($cgiparams{'DAYS_VALID'} >= '999999') {
+			$errormessage = $Lang::tr{'invalid input for valid till days'};
+			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+			rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+			goto VPNCONF_ERROR;
+		}
+	}
+
 	if ($cgiparams{'ENABLED'} !~ /^(on|off)$/) {
 	    $errormessage = $Lang::tr{'invalid input'};
 	    goto VPNCONF_ERROR;
@@ -4094,7 +4043,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    }
 
 	    my $temp = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
-	    $temp =~ /Subject:.*CN=(.*)[\n]/;
+	    $temp =~ /Subject:.*CN\s?=\s?(.*)[\n]/;
 	    $temp = $1;
 	    $temp =~ s+/Email+, E+;
 	    $temp =~ s/ ST=/ S=/;
@@ -4148,7 +4097,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    }
 
 	    my $temp = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
-	    $temp =~ /Subject:.*CN=(.*)[\n]/;
+	    $temp =~ /Subject:.*CN\s?=\s?(.*)[\n]/;
 	    $temp = $1;
 	    $temp =~ s+/Email+, E+;
 	    $temp =~ s/ ST=/ S=/;
@@ -4216,10 +4165,28 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		$errormessage = $Lang::tr{'passwords do not match'};
 		goto VPNCONF_ERROR;
 	    }
-	    if ($cgiparams{'DAYS_VALID'} ne '' && $cgiparams{'DAYS_VALID'} !~ /^[0-9]+$/) {
+	    if ($cgiparams{'DAYS_VALID'} eq '' && $cgiparams{'DAYS_VALID'} !~ /^[0-9]+$/) {
 		$errormessage = $Lang::tr{'invalid input for valid till days'};
 		goto VPNCONF_ERROR;
 	    }
+
+	    # Check for RW that OpenSSL maximum of valid days will not be exceeded
+	    if ($cgiparams{'TYPE'} eq 'host') {
+		if ($cgiparams{'DAYS_VALID'} >= '999999') {
+			$errormessage = $Lang::tr{'invalid input for valid till days'};
+			goto VPNCONF_ERROR;
+		}
+	    }
+
+		# Check for RW if client name is already set
+		if ($cgiparams{'TYPE'} eq 'host') {
+			foreach my $key (keys %confighash) {
+				if ($confighash{$key}[1] eq $cgiparams{'NAME'}) {
+					$errormessage = $Lang::tr{'a connection with this name already exists'};
+					goto VPNCONF_ERROR;
+				}
+			}
+		}
 
 	    # Replace empty strings with a .
 	    (my $ou = $cgiparams{'CERT_OU'}) =~ s/^\s*$/\./;
@@ -4360,7 +4327,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$confighash{$key}[35] 		= $cgiparams{'CCD_DNS1'};
 	$confighash{$key}[36] 		= $cgiparams{'CCD_DNS2'};
 	$confighash{$key}[37] 		= $cgiparams{'CCD_WINS'};
-	$confighash{$key}[38]		= $cgiparams{'PMTU_DISCOVERY'};
 	$confighash{$key}[39]		= $cgiparams{'DAUTH'};
 	$confighash{$key}[40]		= $cgiparams{'DCIPHER'};
 
@@ -4476,7 +4442,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 ###	
         $cgiparams{'MSSFIX'} = 'on';
         $cgiparams{'FRAGMENT'} = '1300';
-	$cgiparams{'PMTU_DISCOVERY'} = 'off';
 	$cgiparams{'DAUTH'} = 'SHA512';
 ###
 # m.a.d n2n end
@@ -4494,7 +4459,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$cgiparams{'CERT_CITY'}         = $vpnsettings{'ROOTCERT_CITY'};
 	$cgiparams{'CERT_STATE'}        = $vpnsettings{'ROOTCERT_STATE'};
 	$cgiparams{'CERT_COUNTRY'}      = $vpnsettings{'ROOTCERT_COUNTRY'};
-	$cgiparams{'DAYS_VALID'}     	= $vpnsettings{'DAYS_VALID'};
+	$cgiparams{'DAYS_VALID'}     	= $vpnsettings{'DAYS_VALID'} = '730';
     }
 
     VPNCONF_ERROR:
@@ -4538,11 +4503,9 @@ if ($cgiparams{'TYPE'} eq 'net') {
     $checked{'MSSFIX'}{'on'} = '';
     $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
 
-    if ($cgiparams{'PMTU_DISCOVERY'} eq '') {
-	$cgiparams{'PMTU_DISCOVERY'} = 'off';
-    }
-    $checked{'PMTU_DISCOVERY'}{$cgiparams{'PMTU_DISCOVERY'}} = 'checked=\'checked\'';
-
+    $selected{'DCIPHER'}{'AES-256-GCM'} = '';
+    $selected{'DCIPHER'}{'AES-192-GCM'} = '';
+    $selected{'DCIPHER'}{'AES-128-GCM'} = '';
     $selected{'DCIPHER'}{'CAMELLIA-256-CBC'} = '';
     $selected{'DCIPHER'}{'CAMELLIA-192-CBC'} = '';
     $selected{'DCIPHER'}{'CAMELLIA-128-CBC'} = '';
@@ -4628,6 +4591,15 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    } else {
 		print "<td width='25%'><input type='text' name='NAME' value='$cgiparams{'NAME'}' maxlength='20' /></td>";
 	    }
+
+		# If GCM ciphers are in usage, HMAC menu is disabled
+		my $hmacdisabled;
+		if (($confighash{$cgiparams{'KEY'}}[40] eq 'AES-256-GCM') ||
+			($confighash{$cgiparams{'KEY'}}[40] eq 'AES-192-GCM') ||
+			($confighash{$cgiparams{'KEY'}}[40] eq 'AES-128-GCM')) {
+				$hmacdisabled = "disabled='disabled'";
+		};
+
 	    print <<END;
 		    <td width='25%'>&nbsp;</td>
 		    <td width='25%'>&nbsp;</td></tr>	
@@ -4691,39 +4663,33 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		<td><input type='checkbox' name='COMPLZO' $checked{'COMPLZO'}{'on'} /></td>
 	</tr>
 
-	<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn mtu-disc'}</td>
-		<td colspan='3'>
-			<input type='radio' name='PMTU_DISCOVERY' value='yes' $checked{'PMTU_DISCOVERY'}{'yes'} /> $Lang::tr{'ovpn mtu-disc yes'}
-			<input type='radio' name='PMTU_DISCOVERY' value='maybe' $checked{'PMTU_DISCOVERY'}{'maybe'} /> $Lang::tr{'ovpn mtu-disc maybe'}
-        		<input type='radio' name='PMTU_DISCOVERY' value='no' $checked{'PMTU_DISCOVERY'}{'no'} /> $Lang::tr{'ovpn mtu-disc no'}
-	        	<input type='radio' name='PMTU_DISCOVERY' value='off' $checked{'PMTU_DISCOVERY'}{'off'} /> $Lang::tr{'ovpn mtu-disc off'}
-		</td>
-	</tr>
-
 <tr><td colspan=4><hr /></td></tr><tr>
 	<tr>
 		<td class'base'><b>$Lang::tr{'ovpn crypt options'}:</b></td>
 	</tr>
 
 	<tr><td class='boldbase'>$Lang::tr{'cipher'}</td>
-		<td><select name='DCIPHER'>
+		<td><select name='DCIPHER'  id="n2ncipher" required>
+				<option value='AES-256-GCM'		$selected{'DCIPHER'}{'AES-256-GCM'}>AES-GCM (256 $Lang::tr{'bit'})</option>
+				<option value='AES-192-GCM'		$selected{'DCIPHER'}{'AES-192-GCM'}>AES-GCM (192 $Lang::tr{'bit'})</option>
+				<option value='AES-128-GCM'		$selected{'DCIPHER'}{'AES-128-GCM'}>AES-GCM (128 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-256-CBC'	$selected{'DCIPHER'}{'CAMELLIA-256-CBC'}>CAMELLIA-CBC (256 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-192-CBC'	$selected{'DCIPHER'}{'CAMELLIA-192-CBC'}>CAMELLIA-CBC (192 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-128-CBC'	$selected{'DCIPHER'}{'CAMELLIA-128-CBC'}>CAMELLIA-CBC (128 $Lang::tr{'bit'})</option>
 				<option value='AES-256-CBC' 	 	$selected{'DCIPHER'}{'AES-256-CBC'}>AES-CBC (256 $Lang::tr{'bit'}, $Lang::tr{'default'})</option>
 				<option value='AES-192-CBC' 	 	$selected{'DCIPHER'}{'AES-192-CBC'}>AES-CBC (192 $Lang::tr{'bit'})</option>
 				<option value='AES-128-CBC' 	 	$selected{'DCIPHER'}{'AES-128-CBC'}>AES-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='DES-EDE3-CBC'	 	$selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'})</option>
-				<option value='DESX-CBC' 		$selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC (192 $Lang::tr{'bit'})</option>
-				<option value='SEED-CBC' 		$selected{'DCIPHER'}{'SEED-CBC'}>SEED-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='DES-EDE-CBC' 		$selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='BF-CBC' 			$selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='CAST5-CBC' 		$selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'})</option>
+				<option value='SEED-CBC' 			$selected{'DCIPHER'}{'SEED-CBC'}>SEED-CBC (128 $Lang::tr{'bit'})</option>
+				<option value='DES-EDE3-CBC'	 	$selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+				<option value='DESX-CBC' 			$selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+				<option value='DES-EDE-CBC' 		$selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+				<option value='BF-CBC' 				$selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+				<option value='CAST5-CBC' 			$selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
 			</select>
 		</td>
 
 		<td class='boldbase'>$Lang::tr{'ovpn ha'}:</td>
-		<td><select name='DAUTH'>
+		<td><select name='DAUTH' id="n2nhmac" $hmacdisabled>
 				<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'})</option>
 				<option value='SHA512'			$selected{'DAUTH'}{'SHA512'}>SHA2 (512 $Lang::tr{'bit'})</option>
 				<option value='SHA384'			$selected{'DAUTH'}{'SHA384'}>SHA2 (384 $Lang::tr{'bit'})</option>
@@ -4737,6 +4703,22 @@ if ($cgiparams{'TYPE'} eq 'net') {
 END
 ;
 	}
+
+#### JAVA SCRIPT ####
+# Validate N2N cipher. If GCM will be used, HMAC menu will be disabled onchange
+print<<END;
+	<script>
+		var disable_options = false;
+		document.getElementById('n2ncipher').onchange = function () {
+			if((this.value == "AES-256-GCM"||this.value == "AES-192-GCM"||this.value == "AES-128-GCM")) {
+				document.getElementById('n2nhmac').setAttribute('disabled', true);
+			} else {
+				document.getElementById('n2nhmac').removeAttribute('disabled');
+			}
+		}
+	</script>
+END
+
 #jumper
 	print "<tr><td class='boldbase'>$Lang::tr{'remark title'}</td>";
 	print "<td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='55' maxlength='50' /></td></tr></table>";
@@ -4857,7 +4839,7 @@ END
 if ($cgiparams{'TYPE'} eq 'host') {
 	print <<END;
 	</select></td></tr>
-		<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):</td>
+		<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):&nbsp;<img src='/blob.gif' alt='*' /</td>
 		<td class='base' nowrap='nowrap'><input type='text' name='DAYS_VALID' value='$cgiparams{'DAYS_VALID'}' size='32' $cakeydisabled /></td></tr>
 		<tr><td>&nbsp;</td>
 		<td class='base'>$Lang::tr{'pkcs12 file password'}:</td>
@@ -4872,7 +4854,7 @@ END
 }else{
 	print <<END;
 	</select></td></tr>
-		<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):</td>
+		<td>&nbsp;</td><td class='base'>$Lang::tr{'valid till'} (days):&nbsp;<img src='/blob.gif' alt='*' /</td>
 		<td class='base' nowrap='nowrap'><input type='text' name='DAYS_VALID' value='$cgiparams{'DAYS_VALID'}' size='32' $cakeydisabled /></td></tr>
 		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
 		<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>
@@ -4975,6 +4957,35 @@ END
 		}
 		if ($set == '1' && $#temp != -1){ print"<option selected>$temp[1]</option>";$set=0;}elsif($set == '0' && $#temp != -1){print"<option>$temp[1]</option>";}
 	}	
+
+	my %vpnconfig = ();
+	&General::readhasharray("${General::swroot}/vpn/config", \%vpnconfig);
+	foreach my $vpn (keys %vpnconfig) {
+		# Skip all disabled VPN connections
+		my $enabled = $vpnconfig{$vpn}[0];
+		next unless ($enabled eq "on");
+
+		my $name = $vpnconfig{$vpn}[1];
+
+		# Remote subnets
+		my @networks = split(/\|/, $vpnconfig{$vpn}[11]);
+		foreach my $network (@networks) {
+			my $selected = "";
+
+			foreach my $key (keys %ccdroute2hash) {
+				if ($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}) {
+					foreach my $i (1 .. $#{$ccdroute2hash{$key}}) {
+						if ($ccdroute2hash{$key}[$i] eq $network) {
+							$selected = "selected";
+						}
+					}
+				}
+			}
+
+			print "<option value=\"$network\" $selected>$name ($network)</option>\n";
+		}
+	}
+
 	#check if green,blue,orange are defined for client
 	foreach my $key (keys %ccdroute2hash) {
 		if($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}){
@@ -5079,6 +5090,9 @@ END
     $selected{'DPROTOCOL'}{'tcp'} = '';
     $selected{'DPROTOCOL'}{$cgiparams{'DPROTOCOL'}} = 'SELECTED';
 
+    $selected{'DCIPHER'}{'AES-256-GCM'} = '';
+    $selected{'DCIPHER'}{'AES-192-GCM'} = '';
+    $selected{'DCIPHER'}{'AES-128-GCM'} = '';
     $selected{'DCIPHER'}{'CAMELLIA-256-CBC'} = '';
     $selected{'DCIPHER'}{'CAMELLIA-192-CBC'} = '';
     $selected{'DCIPHER'}{'CAMELLIA-128-CBC'} = '';
@@ -5175,18 +5189,21 @@ END
 
 		<td class='boldbase' nowrap='nowrap'>$Lang::tr{'cipher'}</td>
 		<td><select name='DCIPHER'>
+				<option value='AES-256-GCM' $selected{'DCIPHER'}{'AES-256-GCM'}>AES-GCM (256 $Lang::tr{'bit'})</option>
+				<option value='AES-192-GCM' $selected{'DCIPHER'}{'AES-192-GCM'}>AES-GCM (192 $Lang::tr{'bit'})</option>
+				<option value='AES-128-GCM' $selected{'DCIPHER'}{'AES-128-GCM'}>AES-GCM (128 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-256-CBC' $selected{'DCIPHER'}{'CAMELLIA-256-CBC'}>CAMELLIA-CBC (256 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-192-CBC' $selected{'DCIPHER'}{'CAMELLIA-192-CBC'}>CAMELLIA-CBC (192 $Lang::tr{'bit'})</option>
 				<option value='CAMELLIA-128-CBC' $selected{'DCIPHER'}{'CAMELLIA-128-CBC'}>CAMELLIA-CBC (128 $Lang::tr{'bit'})</option>
 				<option value='AES-256-CBC' $selected{'DCIPHER'}{'AES-256-CBC'}>AES-CBC (256 $Lang::tr{'bit'})</option>
 				<option value='AES-192-CBC' $selected{'DCIPHER'}{'AES-192-CBC'}>AES-CBC (192 $Lang::tr{'bit'})</option>
 				<option value='AES-128-CBC' $selected{'DCIPHER'}{'AES-128-CBC'}>AES-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='DES-EDE3-CBC' $selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'})</option>
-				<option value='DESX-CBC' $selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC (192 $Lang::tr{'bit'})</option>
 				<option value='SEED-CBC' $selected{'DCIPHER'}{'SEED-CBC'}>SEED-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='DES-EDE-CBC' $selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'})</option>
+				<option value='DES-EDE3-CBC' $selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+				<option value='DESX-CBC' $selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+				<option value='DES-EDE-CBC' $selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+				<option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+				<option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
 			</select>
 		</td>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>

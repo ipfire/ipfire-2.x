@@ -12,4 +12,5 @@ usr/lib/libgdbm.so.3.0.0
 usr/lib/libgdbm_compat.so
 usr/lib/libgdbm_compat.so.3
 usr/lib/libgdbm_compat.so.3.0.0
+#usr/man/man3
 #usr/man/man3/gdbm.3

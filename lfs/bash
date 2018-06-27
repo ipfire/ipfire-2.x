@@ -31,15 +31,15 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
-# Normal build or /tools build.
+# Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
   TARGET = $(DIR_INFO)/$(THISAPP)
-  CONFIGURE_OPTIONS = --prefix=/usr --bindir=/bin \
-    --with-installed-readline
+  CONFIGURE_OPTIONS = \
+	--bindir=/bin \
+	--with-installed-readline
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
-  CONFIGURE_OPTIONS = --prefix=/tools
 endif
 
 CONFIGURE_OPTIONS += \
@@ -95,15 +95,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-4.0-profile-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-3.2-ssh_source_bash.patch
 
-	cd $(DIR_APP) && ./configure $(CONFIGURE_OPTIONS)
+	cd $(DIR_APP) && ./configure --prefix=$(PREFIX) $(CONFIGURE_OPTIONS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
 ifeq "$(TOOLCHAIN)" "1"
-	ln -svf bash /tools/bin/sh
+	ln -svf bash $(TOOLS_DIR)/bin/sh
 
 	mkdir -pv $(ROOT)/bin
-	ln -svf ../tools/bin/bash $(ROOT)/bin/sh
+	ln -svf ..$(TOOLS_DIR)/bin/bash $(ROOT)/bin/sh
 else
 	ln -svf bash /bin/sh
 endif

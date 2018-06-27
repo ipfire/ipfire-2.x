@@ -1,0 +1,22 @@
+diff -Naur linux-4.9.8.org/drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.c linux-4.9.8/drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.c
+--- linux-4.9.8.org/drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.c	2017-02-04 09:47:29.000000000 +0100
++++ linux-4.9.8/drivers/net/wireless/intel/iwlwifi/iwl-eeprom-parse.c	2017-02-11 10:35:20.216560908 +0100
+@@ -615,14 +615,15 @@
+ 			/* set no-HT40, will enable as appropriate later */
+ 			channel->flags = IEEE80211_CHAN_NO_HT40;
+ 
++			if (eeprom_ch->flags & EEPROM_CHANNEL_RADAR) {
++				channel->flags |= IEEE80211_CHAN_RADAR;
++
+ 			if (!(eeprom_ch->flags & EEPROM_CHANNEL_IBSS))
+ 				channel->flags |= IEEE80211_CHAN_NO_IR;
+ 
+ 			if (!(eeprom_ch->flags & EEPROM_CHANNEL_ACTIVE))
+ 				channel->flags |= IEEE80211_CHAN_NO_IR;
+-
+-			if (eeprom_ch->flags & EEPROM_CHANNEL_RADAR)
+-				channel->flags |= IEEE80211_CHAN_RADAR;
++}
+ 
+ 			/* Initialize regulatory-based run-time data */
+ 			channel->max_power =
