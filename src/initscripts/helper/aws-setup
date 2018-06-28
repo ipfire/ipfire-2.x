@@ -69,10 +69,8 @@ import_aws_configuration() {
 	eval $(/usr/local/bin/readhash <(grep -E "^DNS([0-9])=" /var/ipfire/ethernet/settings 2>/dev/null))
 
 	# Import network configuration
-	(
-		# RED + GREEN
-       		echo "CONFIG_TYPE=1"
-	) > /var/ipfire/ethernet/settings
+	local config_type=1
+	: > /var/ipfire/ethernet/settings
 
 	local mac
 	for mac in $(get network/interfaces/macs/); do
@@ -145,8 +143,26 @@ import_aws_configuration() {
 					echo "GREEN_BROADCAST=${broadcast}"
 				) >> /var/ipfire/ethernet/settings
 				;;
+
+			# ORANGE
+			2)
+				config_type=2
+
+				(
+					echo "ORANGE_DEV=orange0"
+					echo "ORANGE_MACADDR=${mac}"
+					echo "ORANGE_DESCRIPTION='${interface_id}'"
+					echo "ORANGE_ADDRESS=${ipv4_address}"
+					echo "ORANGE_NETMASK=${netmask}"
+					echo "ORANGE_NETADDRESS=${netaddress}"
+					echo "ORANGE_BROADCAST=${broadcast}"
+				) >> /var/ipfire/ethernet/settings
+				;;
 		esac
 	done
+
+	# Save CONFIG_TYPE
+	echo "CONFIG_TYPE=${config_type}" >> /var/ipfire/ethernet/settings
 
 	# Import SSH keys
 	local line
