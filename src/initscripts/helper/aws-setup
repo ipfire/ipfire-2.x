@@ -86,6 +86,11 @@ import_aws_configuration() {
 		local ipv4_address="$(get "network/interfaces/macs/${mac}/local-ipv4s" | head -n1)"
 		local ipv4_address_num="$(to_integer "${ipv4_address}")"
 
+		# Get VPC subnet
+		local vpc="$(get "network/interfaces/macs/${mac}/vpc-ipv4-cidr-block")"
+		local vpc_netaddress="${vpc%/*}"
+		local vpc_netaddress_num="$(to_integer "${vpc_netaddress}")"
+
 		# Get subnet size
 		local subnet="$(get "network/interfaces/macs/${mac}/subnet-ipv4-cidr-block")"
 
@@ -101,8 +106,8 @@ import_aws_configuration() {
 		# The gateway is always the first IP address in the subnet
 		local gateway="$(to_address $(( netaddress_num + 1 )))"
 
-		# The AWS internal DNS service is available on the fourth IP address of each subnet
-		local dns1="$(to_address $(( netaddress_num + 4 )))"
+		# The AWS internal DNS service is available on the second IP address of the VPC
+		local dns1="$(to_address $(( vpc_netaddress_num + 2 )))"
 		local dns2=
 
 		case "${device_number}" in
