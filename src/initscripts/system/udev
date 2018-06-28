@@ -60,7 +60,8 @@ case "${1}" in
 
 		# Start the udev daemon to continually watch for, and act on,
 		# uevents
-		/sbin/udevd --daemon
+		boot_mesg "Starting udev daemon..."
+		loadproc udevd --daemon
 
 		# Now traverse /sys in order to "coldplug" devices that have
 		# already been discovered
@@ -70,6 +71,13 @@ case "${1}" in
 		/bin/udevadm settle
 		evaluate_retval
 
+		;;
+
+	restart)
+		boot_mesg "Stopping udev daemon..."
+		killproc udevd
+
+		exec $0 start
 		;;
 
 	*)
