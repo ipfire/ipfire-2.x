@@ -148,9 +148,6 @@ import_aws_configuration() {
 		esac
 	done
 
-	# DEBUG
-	cat /var/ipfire/ethernet/settings
-
 	# Import SSH keys
 	local line
 	for line in $(get "public-keys/"); do
