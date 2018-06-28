@@ -103,16 +103,16 @@ import_aws_configuration() {
 		local netaddress_num="$(to_integer "${netaddress}")"
 		local broadcast="$(to_address $(( ipv4_address_num | (0xffffffff ^ netmask_num) )))"
 
-		# The gateway is always the first IP address in the subnet
-		local gateway="$(to_address $(( netaddress_num + 1 )))"
-
-		# The AWS internal DNS service is available on the second IP address of the VPC
-		local dns1="$(to_address $(( vpc_netaddress_num + 2 )))"
-		local dns2=
-
 		case "${device_number}" in
 			# RED
 			0)
+				# The gateway is always the first IP address in the subnet
+				local gateway="$(to_address $(( netaddress_num + 1 )))"
+
+				# The AWS internal DNS service is available on the second IP address of the VPC
+				local dns1="$(to_address $(( vpc_netaddress_num + 2 )))"
+				local dns2=
+
 				(
 					echo "RED_TYPE=STATIC"
 					echo "RED_DEV=red0"
