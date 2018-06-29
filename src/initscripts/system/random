@@ -1,28 +1,45 @@
 #!/bin/sh
-# Begin $rc_base/init.d/random
-
-# Based on sysklogd script from LFS-3.1 and earlier.
-# Rewritten by Gerard Beekmans  - gerard@linuxfromscratch.org
-# Random script elements by Larry Lawrence
-
 . /etc/sysconfig/rc
 . $rc_functions
 
+if [ -e /proc/sys/kernel/random/poolsize ]; then
+	poolsize=$(</proc/sys/kernel/random/poolsize);
+	poolsize=$(expr $poolsize / 8 );
+else
+	poolsize=512;
+fi
+
 case "$1" in
 	start)
-		boot_mesg "Initializing kernel random number generator..."
+
+		#CRNG init need 128bit so wait until there is more)
+		avail=$(</proc/sys/kernel/random/entropy_avail)
+		while [ $avail -lt 130 ]; do
+			avail=$(</proc/sys/kernel/random/entropy_avail)
+			boot_mesg -n "\rWait for entropy: $avail/130   "
+			# Generate some disc access to gather entropy
+			echo  avail > /var/tmp/random-tmpfile
+			sync
+			rm -f /var/tmp/random-tmpfile
+		done;
+
+		boot_mesg "\rInitializing kernel random number generator..."
 		if [ -f /var/tmp/random-seed ]; then
 			/bin/cat /var/tmp/random-seed >/dev/urandom
 		fi
+		touch /var/tmp/random-seed
+		chmod 600 /var/tmp/random-seed
 		/bin/dd if=/dev/urandom of=/var/tmp/random-seed \
-			count=4 &>/dev/null
+			count=1 bs=$poolsize &>/dev/null
 		evaluate_retval
 		;;
 
 	stop)
 		boot_mesg "Saving random seed..."
+		touch /var/tmp/random-seed
+		chmod 600 /var/tmp/random-seed
 		/bin/dd if=/dev/urandom of=/var/tmp/random-seed \
-			count=4 &>/dev/null
+			count=1 bs=$poolsize &>/dev/null
 		evaluate_retval
 		;;
 

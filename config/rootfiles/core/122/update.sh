@@ -117,6 +117,8 @@ if [ -e /boot/pakfire-kernel-update ]; then
 	/boot/pakfire-kernel-update ${KVER}
 fi
 
+mv /etc/rc.d/rc3.d/S??random /etc/rc.d/rc3.d/S00random
+
 case "$(uname -m)" in
 	i?86)
 		# Force (re)install pae kernel if pae is supported
