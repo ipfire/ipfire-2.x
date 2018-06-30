@@ -1535,6 +1535,7 @@ buildipfire() {
   lfsmake2 iftop
   lfsmake2 mdns-repeater
   lfsmake2 i2c-tools
+  lfsmake2 nss-myhostname
 }
 
 buildinstaller() {
