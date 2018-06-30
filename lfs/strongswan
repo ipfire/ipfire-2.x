@@ -92,8 +92,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-eap-peap \
 		--enable-eap-mschapv2 \
 		--enable-eap-identity \
+		--enable-chapoly \
 		--disable-padlock \
-		--disable-chapoly \
+		--disable-rc2 \
 		$(CONFIGURE_OPTIONS)
 
 	cd $(DIR_APP) && make $(MAKETUNING)
