@@ -47,6 +47,22 @@ prefix2netmask() {
 	to_address "$(( netmask ^ 0xffffffff ))"
 }
 
+find_interface() {
+	local mac="${1}"
+
+	local path
+	for path in /sys/class/net/*; do
+		local address="$(<${path}/address)"
+
+		if [ "${mac}" = "${address}" ]; then
+			basename "${path}"
+			return 0
+		fi
+	done
+
+	return 1
+}
+
 import_aws_configuration() {
 	local instance_id="$(get instance-id)"
 
@@ -104,6 +120,8 @@ import_aws_configuration() {
 		case "${device_number}" in
 			# RED
 			0)
+				local interface_name="red0"
+
 				# The gateway is always the first IP address in the subnet
 				local gateway="$(to_address $(( netaddress_num + 1 )))"
 
@@ -113,7 +131,7 @@ import_aws_configuration() {
 
 				(
 					echo "RED_TYPE=STATIC"
-					echo "RED_DEV=red0"
+					echo "RED_DEV=${interface_name}"
 					echo "RED_MACADDR=${mac}"
 					echo "RED_DESCRIPTION='${interface_id}'"
 					echo "RED_ADDRESS=${ipv4_address}"
@@ -133,8 +151,10 @@ import_aws_configuration() {
 
 			# GREEN
 			1)
+				local interface_name="green0"
+
 				(
-					echo "GREEN_DEV=green0"
+					echo "GREEN_DEV=${interface_name}"
 					echo "GREEN_MACADDR=${mac}"
 					echo "GREEN_DESCRIPTION='${interface_id}'"
 					echo "GREEN_ADDRESS=${ipv4_address}"
@@ -146,10 +166,11 @@ import_aws_configuration() {
 
 			# ORANGE
 			2)
+				local interface_name="orange0"
 				config_type=2
 
 				(
-					echo "ORANGE_DEV=orange0"
+					echo "ORANGE_DEV=${interface_name}"
 					echo "ORANGE_MACADDR=${mac}"
 					echo "ORANGE_DESCRIPTION='${interface_id}'"
 					echo "ORANGE_ADDRESS=${ipv4_address}"
@@ -159,6 +180,14 @@ import_aws_configuration() {
 				) >> /var/ipfire/ethernet/settings
 				;;
 		esac
+
+		# Rename interface
+		local interface="$(find_interface "${mac}")"
+
+		if [ -n "${interface}" ] && [ -n "${interface_name}" ]; then
+			ip link set "${interface}" down
+			ip link set "${interface}" name "${interface_name}"
+		fi
 	done
 
 	# Save CONFIG_TYPE
