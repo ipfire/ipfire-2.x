@@ -234,9 +234,6 @@ import_aws_configuration() {
 
 	# All done
 	echo_ok
-
-	# Restart udev to rename network interfaces
-	/etc/init.d/udev restart
 }
 
 case "${reason}" in
