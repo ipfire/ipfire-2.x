@@ -68,6 +68,9 @@ import_aws_configuration() {
 
 	boot_mesg "Importing AWS configuration for instance ${instance_id}..."
 
+	# Store instance ID
+	echo "${instance_id}" > /var/run/aws-instance-id
+
 	# Initialise system settings
 	local hostname=$(get local-hostname)
 
