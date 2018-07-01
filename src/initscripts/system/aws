@@ -58,7 +58,7 @@ case "${1}" in
 		dhclient -sf /etc/rc.d/helper/aws-setup "${intf}"
 
 		# End DHCP client immediately
-		dhclient -sf /etc/rc.d/helper/aws-setup -r "${intf}"
+		dhclient -sf /etc/rc.d/helper/aws-setup -r "${intf}" &>/dev/null
 		;;
 
 	status)
