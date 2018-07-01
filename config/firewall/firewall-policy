@@ -58,7 +58,9 @@ HAVE_OPENVPN="true"
 # INPUT
 
 # Allow access from GREEN
-iptables -A POLICYIN -i "${GREEN_DEV}" -j ACCEPT
+if [ -n "${GREEN_DEV}" ]; then
+	iptables -A POLICYIN -i "${GREEN_DEV}" -j ACCEPT
+fi
 
 # Allow access from BLUE
 if [ "${HAVE_BLUE}" = "true" ] && [ -n "${BLUE_DEV}" ]; then
@@ -119,12 +121,14 @@ case "${POLICY}" in
 
 	*)
 		# Access from GREEN is granted to everywhere
-		if [ "${IFACE}" = "${GREEN_DEV}" ]; then
-			# internet via green
-			# don't check source IP/NET if IFACE is GREEN
-			iptables -A POLICYFWD -i "${GREEN_DEV}" -j ACCEPT
-		else
-			iptables -A POLICYFWD -i "${GREEN_DEV}" -s "${GREEN_NETADDRESS}/${GREEN_NETMASK}" -j ACCEPT
+		if [ -n "${GREEN_DEV}" ]; then
+			if [ "${IFACE}" = "${GREEN_DEV}" ]; then
+				# internet via green
+				# don't check source IP/NET if IFACE is GREEN
+				iptables -A POLICYFWD -i "${GREEN_DEV}" -j ACCEPT
+			else
+				iptables -A POLICYFWD -i "${GREEN_DEV}" -s "${GREEN_NETADDRESS}/${GREEN_NETMASK}" -j ACCEPT
+			fi
 		fi
 
 		# Grant access for IPsec VPN connections
