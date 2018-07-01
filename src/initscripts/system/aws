@@ -31,7 +31,7 @@ running_on_ec2() {
 case "${1}" in
 	start)
 		# Do nothing if we are not running on AWS EC2
-		#running_on_ec2 || exit 0
+		running_on_ec2 || exit 0
 
 		# Find the first interface to use
 		for i in /sys/class/net/*; do
