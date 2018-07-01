@@ -59,9 +59,6 @@ case "${1}" in
 
 		# End DHCP client immediately
 		dhclient -sf /etc/rc.d/helper/aws-setup -r "${intf}"
-
-		# Trigger udev again to rename interfaces
-		udevadm trigger && udevadm settle
 		;;
 
 	status)
