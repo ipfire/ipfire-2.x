@@ -1,7 +1,15 @@
 etc/system-release
 etc/issue
+etc/rc.d/helper/aws-setup
+etc/rc.d/init.d/aws
+etc/rc.d/rcsysinit.d/S74aws
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
+usr/sbin/dhclient
 var/ipfire/backup/exclude
 var/ipfire/langs
+var/ipfire/aws-functions.pl
+var/ipfire/header.pl
+var/ipfire/general-functions.pl
