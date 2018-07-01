@@ -81,10 +81,27 @@ import_aws_configuration() {
 		echo "DOMAINNAME=${hostname#*.}" >> /var/ipfire/main/settings
 	fi
 
+	# Import SSH keys
+	local line
+	for line in $(get "public-keys/"); do
+		local key_no="${line%=*}"
+
+		local key="$(get public-keys/${key_no}/openssh-key)"
+		if [ -n "${key}" ] && ! grep -q "^${key}$" /root/.ssh/authorized_keys 2>/dev/null; then
+			mkdir -p /root/.ssh
+			chmod 700 /root/.ssh
+
+			echo "${key}" >> /root/.ssh/authorized_keys
+			chmod 600 /root/.ssh/authorized_keys
+		fi
+	done
+
 	# Import any DNS server settings
 	eval $(/usr/local/bin/readhash <(grep -E "^DNS([0-9])=" /var/ipfire/ethernet/settings 2>/dev/null))
 
 	# Import network configuration
+	# After this, no network connectivity will be available from this script due to the
+	# renaming of the network interfaces for which they have to be shut down
 	local config_type=1
 	: > /var/ipfire/ethernet/settings
 
@@ -192,21 +209,6 @@ import_aws_configuration() {
 
 	# Save CONFIG_TYPE
 	echo "CONFIG_TYPE=${config_type}" >> /var/ipfire/ethernet/settings
-
-	# Import SSH keys
-	local line
-	for line in $(get "public-keys/"); do
-		local key_no="${line%=*}"
-
-		local key="$(get public-keys/${key_no}/openssh-key)"
-		if [ -n "${key}" ] && ! grep -q "^${key}$" /root/.ssh/authorized_keys 2>/dev/null; then
-			mkdir -p /root/.ssh
-			chmod 700 /root/.ssh
-
-			echo "${key}" >> /root/.ssh/authorized_keys
-			chmod 600 /root/.ssh/authorized_keys
-		fi
-	done
 
 	# Actions performed only on the very first start
 	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
