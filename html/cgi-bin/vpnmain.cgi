@@ -58,16 +58,6 @@ my %mainsettings = ();
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
-my $green_cidr = &General::ipcidr("$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}");
-my $blue_cidr = "# Blue not defined";
-if (&Header::blue_used() && $netsettings{'BLUE_DEV'}) {
-	$blue_cidr = &General::ipcidr("$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}");
-}
-my $orange_cidr = "# Orange not defined";
-if (&Header::orange_used() && $netsettings{'ORANGE_DEV'}) {
-	$orange_cidr = &General::ipcidr("$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}");
-}
-
 my %INACTIVITY_TIMEOUTS = (
 	300		=> $Lang::tr{'five minutes'},
 	600		=> $Lang::tr{'ten minutes'},
