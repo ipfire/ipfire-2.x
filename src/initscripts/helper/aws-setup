@@ -201,7 +201,7 @@ import_aws_configuration() {
 		# Rename interface
 		local interface="$(find_interface "${mac}")"
 
-		if [ -n "${interface}" ] && [ -n "${interface_name}" ]; then
+		if [ -n "${interface}" ] && [ -n "${interface_name}" ] && [ "${interface}" != "${interface_name}" ]; then
 			ip link set "${interface}" down
 			ip link set "${interface}" name "${interface_name}"
 		fi
