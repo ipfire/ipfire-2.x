@@ -1,4 +1,4 @@
-#etc/udev/rules.d/kpartx.rules
-#lib/udev/kpartx_id
 #sbin/kpartx
+#usr/lib/udev/rules.d/11-dm-parts.rules
+#usr/lib/udev/rules.d/68-del-part-nodes.rules
 #usr/share/man/man8/kpartx.8.gz
