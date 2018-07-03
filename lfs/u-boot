@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-$(MKIMAGE)
-SUP_ARCH   = armv5tel
+SUP_ARCH   = armv5tel aarch64
 
 ###############################################################################
 # Top-level Rules
@@ -76,6 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 ifneq "$(MKIMAGE)" "1"
+ifeq "${BUILD_ARCH}" "armv5tel"
 	# Pandaboard
 	-mkdir -pv /usr/share/u-boot/pandaboard
 	cd $(DIR_APP) && make CROSS_COMPILE="" omap4_panda_config
@@ -121,7 +122,7 @@ ifneq "$(MKIMAGE)" "1"
 	cd $(DIR_APP) && install u-boot.bin /boot/kernel7.img
 	cd $(DIR_APP) && make distclean
 
-	# Raspberry Pi 3
+	# Raspberry Pi 3 32bit
 	-mkdir -pv /usr/share/u-boot/rpi3
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/rpi/u-boot-2018.03_add_rpi3-b-plus.patch
 	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_3_32b_config
@@ -129,7 +130,7 @@ ifneq "$(MKIMAGE)" "1"
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot.bin \
 		/usr/share/u-boot/rpi3/kernel8-32.img
-	# Install rpi2 u-boot as default rpi kernel8-32
+	# Install rpi3 32bit u-boot as default rpi kernel8-32
 	cd $(DIR_APP) && install u-boot.bin /boot/kernel8-32.img
 	cd $(DIR_APP) && make distclean
 
@@ -161,6 +162,20 @@ ifneq "$(MKIMAGE)" "1"
 		/usr/share/u-boot/banana_pi
 	cd $(DIR_APP) && make distclean
 
+else
+	# Raspberry Pi 3
+	-mkdir -pv /usr/share/u-boot/rpi3
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/rpi/u-boot-2018.03_add_rpi3-b-plus.patch
+	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_3_config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" RPi3 - IPFire.org"!' .config
+	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && install -v -m 644 u-boot.bin \
+		/usr/share/u-boot/rpi3/kernel8.img
+	# Install rpi3 u-boot as default rpi kernel8
+	cd $(DIR_APP) && install u-boot.bin /boot/kernel8.img
+	cd $(DIR_APP) && make distclean
+
+endif
 	# create an empty 128 KB File for the u-boot env
 	dd if=/dev/zero of=/boot/uboot.env bs=1K count=128
 	
@@ -171,7 +186,11 @@ ifneq "$(MKIMAGE)" "1"
 
 else
 	# mkimage
+ifeq "${BUILD_ARCH}" "armv5tel"
 	cd $(DIR_APP) && make CROSS_COMPILE="" omap4_panda_config
+else
+	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_3_config
+endif
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)" tools
 	cd $(DIR_APP) && install -v -m 755 tools/mkimage /usr/bin
 endif

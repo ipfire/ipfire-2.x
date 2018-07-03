@@ -31,6 +31,9 @@ case "$1" in
 		if [ "${machine:0:3}" = "arm" ]; then
 			touch /etc/sysconfig/lm_sensors
 		fi
+		if [ "${machine:0:7}" = "aarch64" ]; then
+			touch /etc/sysconfig/lm_sensors
+		fi
 
 		# At first run search for sensors with sensors-detect
 		if [ ! -e /etc/sysconfig/lm_sensors ]; then

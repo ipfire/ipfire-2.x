@@ -36,6 +36,9 @@ done
 # Extract files
 extract_files
 
+# move exec random initskript earlier
+mv /etc/rc.d/rc3.d/S??random /etc/rc.d/rc3.d/S00random
+
 # update linker config
 ldconfig
 
@@ -61,3 +64,4 @@ sync
 
 # Don't report the exitcode last command
 exit 0
+

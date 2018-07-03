@@ -1141,6 +1141,17 @@ buildipfire() {
 		lfsmake2 xtables-addons		KCFG="-multi"
 		lfsmake2 linux-initrd			KCFG="-multi"
 		;;
+
+	aarch64)
+		# arm multi platform (RPi3, OrangePi PC2 ...) kernel build
+		lfsmake2 linux			KCFG="-multi"
+#		lfsmake2 backports			KCFG="-multi"
+#		lfsmake2 e1000e			KCFG="-multi"
+#		lfsmake2 igb				KCFG="-multi"
+#		lfsmake2 ixgbe			KCFG="-multi"
+		lfsmake2 xtables-addons		KCFG="-multi"
+		lfsmake2 linux-initrd			KCFG="-multi"
+		;;
   esac
   lfsmake2 intel-microcode
   lfsmake2 xtables-addons			USPACE="1"
@@ -1323,7 +1334,6 @@ buildipfire() {
   lfsmake2 mc
   lfsmake2 wget
   lfsmake2 bridge-utils
-#  lfsmake2 screen
   lfsmake2 smartmontools
   lfsmake2 htop
   lfsmake2 chkconfig
