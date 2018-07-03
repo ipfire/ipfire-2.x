@@ -64,6 +64,8 @@ my %cahash=();
 my %selected=();
 my $warnmessage = '';
 my $errormessage = '';
+my $cryptoerror = '';
+my $cryptowarning = '';
 my %settings=();
 my $routes_push_file = '';
 my $confighost="${General::swroot}/fwhosts/customhosts";
@@ -1069,7 +1071,42 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   close(CLIENTCONF);
 
 }
-  
+
+###
+### Check for cryptography problems
+###
+
+# Warning if DH parameter is 1024 bit
+if (-f "${General::swroot}/ovpn/ca/dh1024.pem") {
+	my $dhlenght = `/usr/bin/openssl dhparam -text -in ${General::swroot}/ovpn/ca/dh1024.pem`;
+	if ($dhlenght =~ /1024 bit/) {
+		$cryptoerror = "$Lang::tr{'ovpn error dh'}";
+		goto CRYPTO_ERROR;
+	}
+}
+
+# Warning if md5 is in usage
+if (-f "${General::swroot}/ovpn/certs/servercert.pem") {
+	my $signature = `/usr/bin/openssl x509 -noout -text -in ${General::swroot}/ovpn/certs/servercert.pem`;
+	if ($signature =~ /md5WithRSAEncryption/) {
+		$cryptoerror = "$Lang::tr{'ovpn error md5'}";
+		goto CRYPTO_ERROR;
+	}
+}
+
+CRYPTO_ERROR:
+
+# Warning if certificate is not compliant to RFC3280 TLS rules
+if (-f "${General::swroot}/ovpn/openssl/ovpn.cnf") {
+	my $extendkeyusage = `/usr/bin/openssl x509 -noout -text -in ${General::swroot}/ovpn/certs/servercert.pem`;
+	if ($extendkeyusage =~ /TLS Web Server Authentication/) {
+		$cryptowarning = "$Lang::tr{'ovpn warning rfc3280'}";
+		goto CRYPTO_WARNING;
+	}
+}
+
+CRYPTO_WARNING:
+
 ###
 ### Save main settings
 ###
@@ -1181,7 +1218,7 @@ SETTINGS_ERROR:
 	    delete $confighash{$cgiparams{'$key'}};
 	}
 
-	system ("/usr/local/bin/openvpnctrl -drrd $name");
+	system ("/usr/local/bin/openvpnctrl -drrd $name &>/dev/null");
     }
     while ($file = glob("${General::swroot}/ovpn/ca/*")) {
 	unlink $file;
@@ -5134,6 +5171,20 @@ END
 	print "&nbsp;</class>\n";
 	&Header::closebox();
     }
+
+	if ($cryptoerror) {
+		&Header::openbox('100%', 'LEFT', $Lang::tr{'crypto error'});
+		print "<class name='base'>$cryptoerror";
+		print "&nbsp;</class>";
+		&Header::closebox();
+	}
+
+	if ($cryptowarning) {
+		&Header::openbox('100%', 'LEFT', $Lang::tr{'crypto warning'});
+		print "<class name='base'>$cryptowarning";
+		print "&nbsp;</class>";
+		&Header::closebox();
+	}
 
 	if ($warnmessage) {
 		&Header::openbox('100%', 'LEFT', $Lang::tr{'warning messages'});

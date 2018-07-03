@@ -25,7 +25,7 @@
 include Config
 
 VER        = 1.25
-DATVER     = 07012017
+DATVER     = 30062018
 
 THISAPP    = Geo-IP-PurePerl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,7 +43,7 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 GeoIP.dat-$(DATVER).gz = $(DL_FROM)/GeoIP.dat-$(DATVER).gz
 
 $(DL_FILE)_MD5 = a47a1b71f7cd7c46cca9efcc448e0726
-GeoIP.dat-$(DATVER).gz_MD5 = fac676d18785585568312f30b7851657
+GeoIP.dat-$(DATVER).gz_MD5 = d538e57ad9268fdc7955c6cf9a37c4a9
 
 install : $(TARGET)
 

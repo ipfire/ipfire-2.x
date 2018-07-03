@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0
+VER        = 2.0.2
 
 THISAPP    = guardian-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = guardian
-PAK_VER    = 14
+PAK_VER    = 15
 
 DEPS       = "perl-inotify2 perl-Net-IP"
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 15be3b14a70e21502368deca74903f5c
+$(DL_FILE)_MD5 = f83a7ca312cd3cb3ddf79fb33826027d
 
 install : $(TARGET)
 
