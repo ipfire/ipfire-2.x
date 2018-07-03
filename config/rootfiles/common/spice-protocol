@@ -16,4 +16,5 @@
 #usr/include/spice-1/spice/types.h
 #usr/include/spice-1/spice/vd_agent.h
 #usr/include/spice-1/spice/vdi_dev.h
+#usr/share/pkgconfig
 #usr/share/pkgconfig/spice-protocol.pc
