@@ -753,6 +753,8 @@ WARNING: untranslated string: block
 WARNING: untranslated string: bytes
 WARNING: untranslated string: captive
 WARNING: untranslated string: check all
+WARNING: untranslated string: crypto error
+WARNING: untranslated string: crypto warning
 WARNING: untranslated string: dhcp dns enable update
 WARNING: untranslated string: dhcp dns key name
 WARNING: untranslated string: dhcp dns update
@@ -810,7 +812,6 @@ WARNING: untranslated string: guaranteed bandwith
 WARNING: untranslated string: guardian
 WARNING: untranslated string: guardian block a host
 WARNING: untranslated string: guardian block httpd brute-force
-WARNING: untranslated string: guardian block owncloud brute-force
 WARNING: untranslated string: guardian block ssh brute-force
 WARNING: untranslated string: guardian blockcount
 WARNING: untranslated string: guardian blocked hosts
@@ -868,6 +869,9 @@ WARNING: untranslated string: one year
 WARNING: untranslated string: outgoing compression in bytes per second
 WARNING: untranslated string: outgoing overhead in bytes per second
 WARNING: untranslated string: ovpn add conf
+WARNING: untranslated string: ovpn error dh
+WARNING: untranslated string: ovpn error md5
+WARNING: untranslated string: ovpn warning rfc3280
 WARNING: untranslated string: pptp netconfig
 WARNING: untranslated string: pptp peer
 WARNING: untranslated string: pptp route

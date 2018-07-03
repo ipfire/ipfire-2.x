@@ -740,7 +740,6 @@ WARNING: untranslated string: fwhost cust geoipgrp
 WARNING: untranslated string: fwhost err hostip
 WARNING: untranslated string: guardian block a host
 WARNING: untranslated string: guardian block httpd brute-force
-WARNING: untranslated string: guardian block owncloud brute-force
 WARNING: untranslated string: guardian block ssh brute-force
 WARNING: untranslated string: guardian blockcount
 WARNING: untranslated string: guardian blocked hosts

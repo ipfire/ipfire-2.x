@@ -728,6 +728,8 @@ WARNING: untranslated string: count
 WARNING: untranslated string: countries
 WARNING: untranslated string: country codes and flags
 WARNING: untranslated string: countrycode
+WARNING: untranslated string: crypto error
+WARNING: untranslated string: crypto warning
 WARNING: untranslated string: dead peer detection
 WARNING: untranslated string: default
 WARNING: untranslated string: deprecated fs warn
@@ -978,7 +980,6 @@ WARNING: untranslated string: grouptype
 WARNING: untranslated string: guardian
 WARNING: untranslated string: guardian block a host
 WARNING: untranslated string: guardian block httpd brute-force
-WARNING: untranslated string: guardian block owncloud brute-force
 WARNING: untranslated string: guardian block ssh brute-force
 WARNING: untranslated string: guardian blockcount
 WARNING: untranslated string: guardian blocked hosts
@@ -1090,6 +1091,8 @@ WARNING: untranslated string: ovpn dh parameters
 WARNING: untranslated string: ovpn dh upload
 WARNING: untranslated string: ovpn errmsg green already pushed
 WARNING: untranslated string: ovpn errmsg invalid ip or mask
+WARNING: untranslated string: ovpn error dh
+WARNING: untranslated string: ovpn error md5
 WARNING: untranslated string: ovpn generating the root and host certificates
 WARNING: untranslated string: ovpn ha
 WARNING: untranslated string: ovpn hmac
@@ -1099,6 +1102,7 @@ WARNING: untranslated string: ovpn no connections
 WARNING: untranslated string: ovpn port in root range
 WARNING: untranslated string: ovpn routes push
 WARNING: untranslated string: ovpn routes push options
+WARNING: untranslated string: ovpn warning rfc3280
 WARNING: untranslated string: p2p block
 WARNING: untranslated string: p2p block save notice
 WARNING: untranslated string: pakfire ago

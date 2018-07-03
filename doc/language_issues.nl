@@ -752,6 +752,8 @@ WARNING: untranslated string: bytes
 WARNING: untranslated string: capabilities
 WARNING: untranslated string: captive
 WARNING: untranslated string: check all
+WARNING: untranslated string: crypto error
+WARNING: untranslated string: crypto warning
 WARNING: untranslated string: default
 WARNING: untranslated string: dh
 WARNING: untranslated string: dh key move failed
@@ -824,7 +826,6 @@ WARNING: untranslated string: geoipblock enable feature
 WARNING: untranslated string: guardian
 WARNING: untranslated string: guardian block a host
 WARNING: untranslated string: guardian block httpd brute-force
-WARNING: untranslated string: guardian block owncloud brute-force
 WARNING: untranslated string: guardian block ssh brute-force
 WARNING: untranslated string: guardian blockcount
 WARNING: untranslated string: guardian blocked hosts
@@ -905,9 +906,12 @@ WARNING: untranslated string: ovpn dh
 WARNING: untranslated string: ovpn dh new key
 WARNING: untranslated string: ovpn dh parameters
 WARNING: untranslated string: ovpn dh upload
+WARNING: untranslated string: ovpn error dh
+WARNING: untranslated string: ovpn error md5
 WARNING: untranslated string: ovpn generating the root and host certificates
 WARNING: untranslated string: ovpn ha
 WARNING: untranslated string: ovpn hmac
+WARNING: untranslated string: ovpn warning rfc3280
 WARNING: untranslated string: pptp netconfig
 WARNING: untranslated string: pptp peer
 WARNING: untranslated string: pptp route

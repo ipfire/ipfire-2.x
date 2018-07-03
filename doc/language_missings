@@ -185,6 +185,8 @@
 < countries
 < countrycode
 < country codes and flags
+< crypto error
+< crypto warning
 < dead peer detection
 < default
 < default ip
@@ -579,6 +581,8 @@
 < ovpn engines
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
+< ovpn error dh
+< ovpn error md5
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn hmac
@@ -595,6 +599,7 @@
 < ovpn reneg sec
 < ovpn routes push
 < ovpn routes push options
+< ovpn warning rfc3280
 < p2p block
 < p2p block save notice
 < pptp netconfig
@@ -902,6 +907,8 @@
 < countries
 < countrycode
 < country codes and flags
+< crypto error
+< crypto warning
 < dead peer detection
 < default
 < default ip
@@ -1293,6 +1300,8 @@
 < ovpn dh parameters
 < ovpn dh upload
 < ovpn engines
+< ovpn error dh
+< ovpn error md5
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn hmac
@@ -1307,6 +1316,7 @@
 < ovpn no connections
 < ovpn port in root range
 < ovpn reneg sec
+< ovpn warning rfc3280
 < p2p block
 < p2p block save notice
 < pptp netconfig
@@ -1573,6 +1583,8 @@
 < Captive WiFi coupon
 < Captive wrong ext
 < check all
+< crypto error
+< crypto warning
 < dhcp dns enable update
 < dhcp dns key name
 < dhcp dns update
@@ -1657,6 +1669,9 @@
 < outgoing compression in bytes per second
 < outgoing overhead in bytes per second
 < ovpn add conf
+< ovpn error dh
+< ovpn error md5
+< ovpn warning rfc3280
 < pptp netconfig
 < pptp peer
 < pptp route
@@ -1781,6 +1796,8 @@
 < Captive WiFi coupon
 < Captive wrong ext
 < check all
+< crypto error
+< crypto warning
 < default
 < dh
 < dhcp dns enable update
@@ -1907,10 +1924,13 @@
 < ovpn dh parameters
 < ovpn dh upload
 < ovpn engines
+< ovpn error dh
+< ovpn error md5
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn hmac
 < ovpn reneg sec
+< ovpn warning rfc3280
 < pptp netconfig
 < pptp peer
 < pptp route
@@ -2105,6 +2125,8 @@
 < countries
 < countrycode
 < country codes and flags
+< crypto error
+< crypto warning
 < dead peer detection
 < default
 < default ip
@@ -2487,6 +2509,8 @@
 < ovpn engines
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
+< ovpn error dh
+< ovpn error md5
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn hmac
@@ -2503,6 +2527,7 @@
 < ovpn reneg sec
 < ovpn routes push
 < ovpn routes push options
+< ovpn warning rfc3280
 < p2p block
 < p2p block save notice
 < pptp netconfig
@@ -2810,6 +2835,8 @@
 < countries
 < countrycode
 < country codes and flags
+< crypto error
+< crypto warning
 < day-graph
 < dead peer detection
 < default
@@ -3198,6 +3225,8 @@
 < ovpn dh parameters
 < ovpn dh upload
 < ovpn engines
+< ovpn error dh
+< ovpn error md5
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn hmac
@@ -3212,6 +3241,7 @@
 < ovpn no connections
 < ovpn port in root range
 < ovpn reneg sec
+< ovpn warning rfc3280
 < p2p block
 < p2p block save notice
 < pptp netconfig
@@ -3391,7 +3421,12 @@
 ############################################################################
 # Checking cgi-bin translations for language: tr                           #
 ############################################################################
+< crypto error
+< crypto warning
 < fwdfw all subnets
+< ovpn error dh
+< ovpn error md5
+< ovpn warning rfc3280
 < ssh active sessions
 < ssh login time
 < ssh no active logins
