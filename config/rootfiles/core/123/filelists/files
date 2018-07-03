@@ -9,6 +9,7 @@ srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/sbin/dhclient
+usr/share/GeoIP/GeoIP.dat
 var/ipfire/backup/exclude
 var/ipfire/langs
 var/ipfire/aws-functions.pl
