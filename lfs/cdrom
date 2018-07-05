@@ -59,6 +59,12 @@ ifeq "$(EFI)" "1"
 	ISOHYBRID_ARGS += --uefi
 endif
 
+HAS_MEMTEST = 0
+
+ifeq "$(BUILD_PLATFORM)" "x86"
+	HAS_MEMTEST = 1
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -116,9 +122,13 @@ ifneq "$(BUILD_ARCH)" "armv5tel"
 	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz
 	dracut --force -a "installer" --strip --xz /install/cdrom/boot/isolinux/instroot $(KVER)-ipfire
 	cp $(DIR_SRC)/config/syslinux/boot.png      /install/cdrom/boot/isolinux/boot.png
-	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest
 	cp /usr/share/ipfire-netboot/ipxe.lkrn      /install/cdrom/boot/isolinux/netboot
 	cp /usr/share/syslinux/isolinux.bin         /install/cdrom/boot/isolinux/isolinux.bin
+
+ifeq "$(HAS_MEMTEST)" "1"
+	# Install memtest
+	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest
+endif
 
 ifeq "$(EFI)" "1"
 	# Generate embedded GRUB configuration
