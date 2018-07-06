@@ -271,7 +271,7 @@ sub writeserverconf {
     print CONF "server $tempovpnsubnet[0] $tempovpnsubnet[1]\n";
     #print CONF "push \"route $netsettings{'GREEN_NETADDRESS'} $netsettings{'GREEN_NETMASK'}\"\n";
 
-    # Check if we are using mssfix, fragment or mtu-disc and set the corretct mtu of 1500.
+    # Check if we are using mssfix, fragment and set the corretct mtu of 1500.
     # If we doesn't use one of them, we can use the configured mtu value.
     if ($sovpnsettings{'MSSFIX'} eq 'on') 
 	{ print CONF "tun-mtu 1500\n"; }
@@ -2183,15 +2183,6 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    if ($confighash{$cgiparams{'KEY'}}[24] ne '') {print CLIENTCONF "fragment $confighash{$cgiparams{'KEY'}}[24]\n";}
    if ($confighash{$cgiparams{'KEY'}}[23] eq 'on') {print CLIENTCONF "mssfix\n";}
    }
-   if (($confighash{$cgiparams{'KEY'}}[38] eq 'yes') ||
-       ($confighash{$cgiparams{'KEY'}}[38] eq 'maybe') ||
-       ($confighash{$cgiparams{'KEY'}}[38] eq 'no' )) {
-	if (($confighash{$cgiparams{'KEY'}}[23] ne 'on') || ($confighash{$cgiparams{'KEY'}}[24] eq '')) {
-		if ($tunmtu eq '1500' ) {
-			print CLIENTCONF "mtu-disc $confighash{$cgiparams{'KEY'}}[38]\n";
-		}
-	}
-   }
    # Check host certificate if X509 is RFC3280 compliant.
    # If not, old --ns-cert-type directive will be used.
    # If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
@@ -2272,7 +2263,7 @@ else
     print CLIENTCONF "dev tun\r\n";
     print CLIENTCONF "proto $vpnsettings{'DPROTOCOL'}\r\n";
 
-    # Check if we are using fragment, mssfix or mtu-disc and set MTU to 1500
+    # Check if we are using fragment, mssfix and set MTU to 1500
     # or use configured value.
     if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' )
 	{ print CLIENTCONF "tun-mtu 1500\r\n"; }
@@ -3378,7 +3369,6 @@ my $complzoactive;
 my $mssfixactive;
 my $authactive;
 my $n2nfragment;
-my @n2nmtudisc = split(/ /, (grep { /^mtu-disc/ } @firen2nconf)[0]);
 my @n2nproto2 = split(/ /, (grep { /^proto/ } @firen2nconf)[0]);
 my @n2nproto = split(/-/, $n2nproto2[1]);
 my @n2nport = split(/ /, (grep { /^port/ } @firen2nconf)[0]);
@@ -3414,7 +3404,6 @@ $n2nremsub[2] =~ s/\n|\r//g;
 $n2nlocalsub[2] =~ s/\n|\r//g;
 $n2nfragment[1] =~ s/\n|\r//g;
 $n2nmgmt[2] =~ s/\n|\r//g;
-$n2nmtudisc[1] =~ s/\n|\r//g;
 $n2ncipher[1] =~ s/\n|\r//g;
 $n2nauth[1] =~ s/\n|\r//g;
 chomp ($complzoactive);
@@ -3491,7 +3480,6 @@ foreach my $dkey (keys %confighash) {
 	$confighash{$key}[29] = $n2nport[1];
 	$confighash{$key}[30] = $complzoactive;
 	$confighash{$key}[31] = $n2ntunmtu[1];
-	$confighash{$key}[38] = $n2nmtudisc[1];
 	$confighash{$key}[39] = $n2nauth[1];
 	$confighash{$key}[40] = $n2ncipher[1];
 	$confighash{$key}[41] = 'disabled';
@@ -3531,7 +3519,6 @@ foreach my $dkey (keys %confighash) {
 		<tr><td class='boldbase' nowrap='nowrap'>MSSFIX:</td><td><b>$confighash{$key}[23]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>Fragment:</td><td><b>$confighash{$key}[24]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}</td><td><b>$confighash{$key}[31]</b></td></tr>
-		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn mtu-disc'}</td><td><b>$confighash{$key}[38]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>Management Port </td><td><b>$confighash{$key}[22]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn hmac'}:</td><td><b>$confighash{$key}[39]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'cipher'}</td><td><b>$confighash{$key}[40]</b></td></tr>
