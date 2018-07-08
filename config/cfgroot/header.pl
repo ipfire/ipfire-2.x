@@ -19,6 +19,8 @@ use Time::Local;
 
 $|=1; # line buffering
 
+require "/var/ipfire/aws-functions.pl";
+
 $Header::revision = 'final';
 $Header::swroot = '/var/ipfire';
 $Header::graphdir='/srv/web/ipfire/html/graphs';
@@ -97,6 +99,14 @@ require "${swroot}/langs/en.pl";
 require "${swroot}/langs/${language}.pl";
 eval `/bin/cat /srv/web/ipfire/html/themes/$THEME_NAME/include/functions.pl`;
 
+sub green_used() {
+    if ($ethsettings{'GREEN_DEV'} && $ethsettings{'GREEN_DEV'} ne "") {
+        return 1;
+    }
+
+    return 0;
+}
+
 sub orange_used () {
     if ($ethsettings{'CONFIG_TYPE'} =~ /^[24]$/) {
 	return 1;
@@ -160,6 +170,20 @@ sub genmenu {
 
     if ( $ethsettings{'RED_TYPE'} eq "PPPOE" && $pppsettings{'MONPORT'} ne "" ) {
         $menu->{'02.status'}{'subMenu'}->{'74.modem-status'}{'enabled'} = 1;
+    }
+
+    # Disbale unusable things on EC2
+    if (&AWS::running_on_ec2()) {
+        $menu->{'03.network'}{'subMenu'}->{'30.dhcp'}{'enabled'} = 0;
+        $menu->{'03.network'}{'subMenu'}->{'80.macadressmenu'}{'enabled'} = 0;
+        $menu->{'03.network'}{'subMenu'}->{'90.wakeonlan'}{'enabled'} = 0;
+    }
+
+    # Disable proxy when no GREEN is available
+    if (!&green_used()) {
+        $menu->{'03.network'}{'subMenu'}->{'20.proxy'}{'enabled'} = 0;
+        $menu->{'03.network'}{'subMenu'}->{'21.urlfilter'}{'enabled'} = 0;
+        $menu->{'03.network'}{'subMenu'}->{'22.updxlrator'}{'enabled'} = 0;
     }
   }
 }

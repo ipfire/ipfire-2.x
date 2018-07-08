@@ -1,0 +1,80 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/aws
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/identify_ec2_instances.html
+running_on_ec2() {
+	local uuid
+
+	# Check if the hypervisor UUID starts with ec2
+	if [ -r "/sys/hypervisor/uuid" ]; then
+		uuid=$(</sys/hypervisor/uuid)
+
+		[ "${uuid:0:3}" = "ec2" ] && return 0
+	fi
+
+	# Check if the DMI product UUID starts with EC2
+	if [ -r "/sys/devices/virtual/dmi/id/product_uuid" ]; then
+		uuid=$(</sys/devices/virtual/dmi/id/product_uuid)
+
+		[ "${uuid:0:3}" = "EC2" ] && return 0
+	fi
+
+	# We are not running on AWS EC2
+	return 1
+}
+
+case "${1}" in
+	start)
+		# Do nothing if we are not running on AWS EC2
+		running_on_ec2 || exit 0
+
+		# Find the first interface to use
+		for i in /sys/class/net/*; do
+			[ -d "${i}" ] || continue
+			i=$(basename ${i})
+
+			# Skip loopback
+			[ "${i}" = "lo" ] && continue
+
+			# Use whatever we have found
+			intf="${i}"
+			break
+		done
+
+		# Check if we found a network interface
+		if [ ! -n "${intf}" ]; then
+			echo_failure
+
+			boot_mesg -n "Could not find a network interface" ${FAILURE}
+			boot_mesg "" ${NORMAL}
+		fi
+
+		# Run a DHCP client and set up the system accordingly
+		dhclient -sf /etc/rc.d/helper/aws-setup "${intf}"
+
+		# End DHCP client immediately
+		dhclient -sf /etc/rc.d/helper/aws-setup -r "${intf}" &>/dev/null
+		;;
+
+	status)
+		if running_on_ec2; then
+			echo "This system is running on AWS EC2"
+			exit 0
+		else
+			echo "This system is NOT running on AWS EC2"
+			exit 1
+		fi
+		;;
+
+	*)
+		echo "Usage: ${0} {start|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/aws

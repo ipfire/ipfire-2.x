@@ -280,7 +280,9 @@ iptables_init() {
 	# Always allow accessing the web GUI from GREEN.
 	iptables -N GUIINPUT
 	iptables -A INPUT -j GUIINPUT
-	iptables -A GUIINPUT -i "${GREEN_DEV}" -p tcp --dport 444 -j ACCEPT
+	if [ -n "${GREEN_DEV}" ]; then
+		iptables -A GUIINPUT -i "${GREEN_DEV}" -p tcp --dport 444 -j ACCEPT
+	fi
 
 	# WIRELESS chains
 	iptables -N WIRELESSINPUT
@@ -329,8 +331,10 @@ iptables_init() {
 	iptables -t nat -N NAT_DESTINATION_FIX
 	iptables -t nat -A POSTROUTING -j NAT_DESTINATION_FIX
 
-	iptables -t nat -A NAT_DESTINATION_FIX \
-		-m mark --mark 1 -j SNAT --to-source "${GREEN_ADDRESS}"
+	if [ -n "${GREEN_ADDRESS}" ]; then
+		iptables -t nat -A NAT_DESTINATION_FIX \
+			-m mark --mark 1 -j SNAT --to-source "${GREEN_ADDRESS}"
+	fi
 
 	if [ -n "${BLUE_ADDRESS}" ]; then
 		iptables -t nat -A NAT_DESTINATION_FIX \

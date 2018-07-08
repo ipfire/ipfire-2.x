@@ -30,7 +30,7 @@ DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-SUP_ARCH   = armv5tel
+SUP_ARCH   = armv5tel aarch64
 
 ###############################################################################
 # Top-level Rules

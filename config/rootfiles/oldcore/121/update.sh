@@ -29,6 +29,8 @@ core=121
 exit_with_error() {
 	# Set last succesfull installed core.
 	echo $(($core-1)) > /opt/pakfire/db/core/mine
+	# don't start pakfire again at error
+	killall -KILL pak_update
 	/usr/bin/logger -p syslog.emerg -t ipfire \
 		"core-update-${core}: $1"
 	exit $2
@@ -38,13 +40,6 @@ exit_with_error() {
 for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
-
-# This update cannot be applied on ARM
-case "$(uname -a)" in
-	arm*)
-		exit_with_error "ERROR: Cannot update on ARM. Please re-install." 1
-		;;
-esac
 
 # Do some sanity checks.
 case $(uname -r) in
@@ -59,22 +54,10 @@ esac
 # Check diskspace on root
 ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 
-if [ $ROOTSPACE -lt 100000 ]; then
+if [ $ROOTSPACE -lt 220000 ]; then
 	exit_with_error "ERROR cannot update because not enough free space on root." 2
 	exit 2
 fi
-
-# Remove the old kernel
-rm -rf /boot/System.map-*
-rm -rf /boot/config-*
-rm -rf /boot/ipfirerd-*
-rm -rf /boot/initramfs-*
-rm -rf /boot/vmlinuz-*
-rm -rf /boot/uImage-ipfire-*
-rm -rf /boot/zImage-ipfire-*
-rm -rf /boot/uInit-ipfire-*
-rm -rf /boot/dtb-*-ipfire-*
-rm -rf /lib/modules
 
 # Stop services
 
@@ -85,27 +68,12 @@ extract_files
 ldconfig
 
 # Update Language cache
-/usr/local/bin/update-lang-cache
-
-# Remove Nagios files, if any...
-rm -rvf \
-	/etc/rc.d/init.d/nagios \
-	/usr/bin/nagios \
-	/etc/rc.d/rc6.d/K33nagios \
-	/etc/rc.d/rc3.d/off/S67nagios \
-	/etc/rc.d/rc0.d/K33nagios \
-	/etc/httpd/conf/conf.d/nagios.conf \
-	/etc/nagios/nagios.cfg \
-	/usr/bin/p1.pl \
-	/usr/bin/nagiostats \
-	/usr/share/nagios/ \
-	/var/nagios/
 
 # Start services
 /etc/init.d/apache restart
 
 # This update needs a reboot...
-touch /var/run/need_reboot
+#touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
@@ -116,7 +84,32 @@ if [ -e /boot/grub/grub.cfg ]; then
 	grub-mkconfig -o /boot/grub/grub.cfg
 fi
 
+
+#
+# After pakfire has ended run it again and update the lists and do upgrade
+#
+echo '#!/bin/bash'                                        >  /tmp/pak_update
+echo 'while [ "$(ps -A | grep " update.sh")" != "" ]; do' >> /tmp/pak_update
+echo '    sleep 1'                                        >> /tmp/pak_update
+echo 'done'                                               >> /tmp/pak_update
+echo 'while [ "$(ps -A | grep " pakfire")" != "" ]; do'   >> /tmp/pak_update
+echo '    sleep 1'                                        >> /tmp/pak_update
+echo 'done'                                               >> /tmp/pak_update
+echo '/opt/pakfire/pakfire update -y --force'             >> /tmp/pak_update
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
+echo '/opt/pakfire/pakfire upgrade -y'                    >> /tmp/pak_update
+echo '/usr/bin/logger -p syslog.emerg -t ipfire "Core-upgrade finished. If you use a customized grub/uboot config"' >> /tmp/pak_update
+echo '/usr/bin/logger -p syslog.emerg -t ipfire "Check it before reboot !!!"' >> /tmp/pak_update
+echo '/usr/bin/logger -p syslog.emerg -t ipfire " *** Please reboot... *** "' >> /tmp/pak_update
+echo 'touch /var/run/need_reboot ' >> /tmp/pak_update
+#
+killall -KILL pak_update
+chmod +x /tmp/pak_update
+/tmp/pak_update &
+
 sync
 
 # Don't report the exitcode last command
 exit 0
+

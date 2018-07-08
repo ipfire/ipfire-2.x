@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 4.14.48
-ARM_PATCHES = 4.14.48-ipfire0
+VER         = 4.14.50
+ARM_PATCHES = 4.14.50-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 73
+PAK_VER    = 75
 DEPS	   = ""
 
 ifeq "$(BUILD_ARCH)" "i586"
@@ -75,8 +75,8 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= 417214059879164ab422fa359af80900
-arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 7c6e98b0514945a4e65e0c43b9920035
+$(DL_FILE)_MD5					= 0d397a2e14669a97d54c1b82ab2b1994
+arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= c38181f9fd416f10352e3dd3a01bb1d1
 
 install : $(TARGET)
 
@@ -177,8 +177,14 @@ ifeq "$(KCFG)" "-kirkwood"
 #	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage-$(VERSUFIX)
 else
 ifeq "$(KCFG)" "-multi"
+ifeq "$(BUILD_ARCH)" "armv5tel"
 	cd $(DIR_APP) && make $(MAKETUNING) zImage modules
 	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
+endif
+ifeq "$(BUILD_ARCH)" "aarch64"
+	cd $(DIR_APP) && make $(MAKETUNING) Image modules
+	cd $(DIR_APP) && cp -v arch/arm64/boot/Image /boot/vmlinuz-$(VER)-$(VERSUFIX)
+endif
 else
 	cd $(DIR_APP) && make $(MAKETUNING) bzImage modules
 	cd $(DIR_APP) && cp -v arch/$(KERNEL_ARCH)/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
@@ -191,9 +197,10 @@ endif
 
 ifeq "$(BUILD_PLATFORM)" "arm"
 	cd $(DIR_APP) && make $(MAKETUNING) dtbs
-	cd $(DIR_APP) && for f in $$(find arch/arm/boot/dts/ -name *.dtb); do \
-				mkdir -p /boot/dtb-$(VER)-$(VERSUFIX) ; \
-				install -m 644 $$f /boot/dtb-$(VER)-$(VERSUFIX)/ ; \
+	mkdir -p /boot/dtb-$(VER)-$(VERSUFIX)
+	cd $(DIR_APP)/arch/$(HEADERS_ARCH)/boot/dts && for f in $$(find -name *.dtb); do \
+				cp -v --parents $$f /boot/dtb-$(VER)-$(VERSUFIX)/ ; \
+				chmod 644 /boot/dtb-$(VER)-$(VERSUFIX)/$$f ; \
 			done
 endif
 

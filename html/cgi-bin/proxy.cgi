@@ -3428,7 +3428,7 @@ END
 				my $ntlm_auth_group = $proxysettings{'NTLM_AUTH_GROUP'};
 				$ntlm_auth_group =~ s/\\/\+/;
 
-				print FILE " --require-membership-of=\"$ntlm_auth_group\"";
+				print FILE " --require-membership-of=$ntlm_auth_group";
 			}
 			print FILE "\n";
 
@@ -3441,7 +3441,7 @@ END
 					my $ntlm_auth_group = $proxysettings{'NTLM_AUTH_GROUP'};
 					$ntlm_auth_group =~ s/\\/\+/;
 
-					print FILE " --require-membership-of=\"$ntlm_auth_group\"";
+					print FILE " --require-membership-of=$ntlm_auth_group";
 				}
 				print FILE "\n";
 				print FILE "auth_param basic children 10\n";

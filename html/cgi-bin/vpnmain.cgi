@@ -58,16 +58,6 @@ my %mainsettings = ();
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
-my $green_cidr = &General::ipcidr("$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}");
-my $blue_cidr = "# Blue not defined";
-if (&Header::blue_used() && $netsettings{'BLUE_DEV'}) {
-	$blue_cidr = &General::ipcidr("$netsettings{'BLUE_NETADDRESS'}/$netsettings{'BLUE_NETMASK'}");
-}
-my $orange_cidr = "# Orange not defined";
-if (&Header::orange_used() && $netsettings{'ORANGE_DEV'}) {
-	$orange_cidr = &General::ipcidr("$netsettings{'ORANGE_NETADDRESS'}/$netsettings{'ORANGE_NETMASK'}");
-}
-
 my %INACTIVITY_TIMEOUTS = (
 	300		=> $Lang::tr{'five minutes'},
 	600		=> $Lang::tr{'ten minutes'},
@@ -1919,11 +1909,11 @@ END
 	$cgiparams{'REMOTE_ID'} = '';
 
 	#use default advanced value
-	$cgiparams{'IKE_ENCRYPTION'}	= 'aes256gcm128|aes256gcm96|aes256gcm64|aes256|aes192gcm128|aes192gcm96|aes192gcm64|aes192|aes128gcm128|aes128gcm96|aes128gcm64|aes128'; #[18];
+	$cgiparams{'IKE_ENCRYPTION'}	= 'chacha20poly1305|aes256gcm128|aes256gcm96|aes256gcm64|aes256|aes192gcm128|aes192gcm96|aes192gcm64|aes192|aes128gcm128|aes128gcm96|aes128gcm64|aes128'; #[18];
 	$cgiparams{'IKE_INTEGRITY'}		= 'sha2_512|sha2_256'; #[19];
 	$cgiparams{'IKE_GROUPTYPE'}		= 'curve25519|4096|3072|2048'; #[20];
 	$cgiparams{'IKE_LIFETIME'}		= '3'; #[16];
-	$cgiparams{'ESP_ENCRYPTION'}	= 'aes256gcm128|aes256gcm96|aes256gcm64|aes256|aes192gcm128|aes192gcm96|aes192gcm64|aes192|aes128gcm128|aes128gcm96|aes128gcm64|aes128'; #[21];
+	$cgiparams{'ESP_ENCRYPTION'}	= 'chacha20poly1305|aes256gcm128|aes256gcm96|aes256gcm64|aes256|aes192gcm128|aes192gcm96|aes192gcm64|aes192|aes128gcm128|aes128gcm96|aes128gcm64|aes128'; #[21];
 	$cgiparams{'ESP_INTEGRITY'}		= 'sha2_512|sha2_256'; #[22];
 	$cgiparams{'ESP_GROUPTYPE'}		= 'curve25519|4096|3072|2048'; #[23];
 	$cgiparams{'ESP_KEYLIFE'}		= '1'; #[17];
@@ -2180,7 +2170,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 		foreach my $val (@temp) {
-			if ($val !~ /^(aes(256|192|128)(gcm(128|96|64))?|3des|camellia(256|192|128))$/) {
+			if ($val !~ /^(aes(256|192|128)(gcm(128|96|64))?|3des|chacha20poly1305|camellia(256|192|128))$/) {
 				$errormessage = $Lang::tr{'invalid input'};
 				goto ADVANCED_ERROR;
 			}
@@ -2221,7 +2211,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 		foreach my $val (@temp) {
-			if ($val !~ /^(aes(256|192|128)(gcm(128|96|64))?|3des|camellia(256|192|128))$/) {
+			if ($val !~ /^(aes(256|192|128)(gcm(128|96|64))?|3des|chacha20poly1305|camellia(256|192|128))$/) {
 				$errormessage = $Lang::tr{'invalid input'};
 				goto ADVANCED_ERROR;
 			}
@@ -2347,6 +2337,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	}
 
 	ADVANCED_ERROR:
+	$checked{'IKE_ENCRYPTION'}{'chacha20poly1305'} = '';
 	$checked{'IKE_ENCRYPTION'}{'aes256'} = '';
 	$checked{'IKE_ENCRYPTION'}{'aes192'} = '';
 	$checked{'IKE_ENCRYPTION'}{'aes128'} = '';
@@ -2385,6 +2376,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	@temp = split('\|', $cgiparams{'IKE_GROUPTYPE'});
 	foreach my $key (@temp) {$checked{'IKE_GROUPTYPE'}{$key} = "selected='selected'"; }
 
+	$checked{'ESP_ENCRYPTION'}{'chacha20poly1305'} = '';
 	$checked{'ESP_ENCRYPTION'}{'aes256'} = '';
 	$checked{'ESP_ENCRYPTION'}{'aes192'} = '';
 	$checked{'ESP_ENCRYPTION'}{'aes128'} = '';
@@ -2497,6 +2489,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			<td class='boldbase' width="15%">$Lang::tr{'encryption'}</td>
 			<td class='boldbase'>
 				<select name='IKE_ENCRYPTION' multiple='multiple' size='6' style='width: 100%'>
+					<option value='chacha20poly1305' $checked{'IKE_ENCRYPTION'}{'chacha20poly1305'}>256 bit ChaCha20-Poly1305/128 bit ICV</option>
 					<option value='aes256gcm128' $checked{'IKE_ENCRYPTION'}{'aes256gcm128'}>256 bit AES-GCM/128 bit ICV</option>
 					<option value='aes256gcm96' $checked{'IKE_ENCRYPTION'}{'aes256gcm96'}>256 bit AES-GCM/96 bit ICV</option>
 					<option value='aes256gcm64' $checked{'IKE_ENCRYPTION'}{'aes256gcm64'}>256 bit AES-GCM/64 bit ICV</option>
@@ -2517,6 +2510,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			</td>
 			<td class='boldbase'>
 				<select name='ESP_ENCRYPTION' multiple='multiple' size='6' style='width: 100%'>
+					<option value='chacha20poly1305' $checked{'ESP_ENCRYPTION'}{'chacha20poly1305'}>256 bit ChaCha20-Poly1305/128 bit ICV</option>
 					<option value='aes256gcm128' $checked{'ESP_ENCRYPTION'}{'aes256gcm128'}>256 bit AES-GCM/128 bit ICV</option>
 					<option value='aes256gcm96' $checked{'ESP_ENCRYPTION'}{'aes256gcm96'}>256 bit AES-GCM/96 bit ICV</option>
 					<option value='aes256gcm64' $checked{'ESP_ENCRYPTION'}{'aes256gcm64'}>256 bit AES-GCM/64 bit ICV</option>

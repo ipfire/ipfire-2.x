@@ -65,6 +65,7 @@ else
 	setenv ramdisk_addr -;
 fi ;
 bootz ${kernel_addr_r} ${ramdisk_addr} ${fdt_addr_r};
+booti ${kernel_addr_r} ${ramdisk_addr} ${fdt_addr_r};
 
 # Recompile with:
 # mkimage -C none -A arm -T script -d /boot/boot.cmd /boot/boot.scr 

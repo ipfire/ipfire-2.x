@@ -1,0 +1,5 @@
+THEME=ipfire
+LANGUAGE=en
+RRDLOG=/var/log/rrd
+KEYMAP=/lib/kbd/keymaps/i386/qwerty/us.map.gz
+TIMEZONE=/usr/share/zoneinfo/posix/UTC
