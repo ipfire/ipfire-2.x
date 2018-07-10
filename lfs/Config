@@ -83,28 +83,26 @@ CCACHE_COMPILERCHECK += $(shell gcc -dumpspecs 2>/dev/null | md5sum | cut -d ' '
 ifeq "$(BUILD_ARCH)" "x86_64"
 	EFI = 1
 	EFI_ARCH = x64
+	GRUB_ARCH = $(BUILD_ARCH)
 endif
 
 ifeq "$(BUILD_ARCH)" "aarch64"
 	EFI = 1
 	EFI_ARCH = aa64
+	GRUB_ARCH = arm64
 endif
 
 # Basic modules
 GRUB_EFI_MODULES = \
 	configfile \
-	efi_gop \
-	efi_uga \
 	gzio \
 	linux \
-	loadbios \
 	loadenv \
 	normal \
 	regexp
 
 # Stuff for accessing file systems
 GRUB_EFI_MODULES += \
-	ahci \
 	ext2 \
 	fat \
 	iso9660 \
@@ -115,15 +113,13 @@ GRUB_EFI_MODULES += \
 # Graphics & IO
 GRUB_EFI_MODULES += \
 	all_video \
-	at_keyboard \
 	bitmap_scale \
 	font \
 	gfxmenu \
 	gfxterm \
 	jpeg \
 	png \
-	tga \
-	usb_keyboard
+	tga
 
 # Commands
 GRUB_EFI_MODULES += \
@@ -143,6 +139,15 @@ GRUB_EFI_MODULES += \
 	search_label \
 	test \
 	true
+
+# Platform dependent modules
+ifeq "$(BUILD_ARCH)" "x86_64"
+	GRUB_EFI_MODULES += \
+		loadbios \
+		ahci \
+		at_keyboard \
+		usb_keyboard
+endif
 
 ###############################################################################
 # Common Macro Definitions

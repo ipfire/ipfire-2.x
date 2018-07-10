@@ -158,7 +158,7 @@ ifeq "$(EFI)" "1"
 	# Build a GRUB EFI image
 	mkdir -pv /install/cdrom/EFI/BOOT
 	grub-mkimage \
-		--format=$(BUILD_ARCH)-efi \
+		--format=$(GRUB_ARCH)-efi \
 		--output=/install/cdrom/EFI/BOOT/boot$(EFI_ARCH).efi \
 		--config=/tmp/grub-efi.cfg \
 		--compression=xz \
