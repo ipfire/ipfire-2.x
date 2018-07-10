@@ -35,19 +35,24 @@ else
 	TAR_OPTIONS = --lzma
 endif
 
+HAS_MEMTEST = 0
+HAS_IPXE = 0
+HAS_ISOLINUX = 0
+HAS_KERNEL = 1
+
+ifeq "$(BUILD_PLATFORM)" "x86"
+	HAS_MEMTEST = 1
+	HAS_IPXE = 1
+	HAS_ISOLINUX = 1
+endif
+
+ifeq "$(BUILD_ARCH)" "armv5tel"
+	HAS_KERNEL = 0
+endif
+
 ISO_ARGS = -J -r -v \
 	-A "$(NAME) $(VERSION) $(BUILD_ARCH)" \
-	-V "$(NAME) $(VERSION) $(BUILD_ARCH)" \
-	-no-emul-boot \
-	-boot-load-size 4 \
-	-boot-info-table \
-	-b boot/isolinux/isolinux.bin \
-	-c boot/isolinux/boot.catalog
-
-# Only build a stub ISO for ARM
-ifeq "$(BUILD_ARCH)" "armv5tel"
-	ISO_ARGS = -J -r -V "$(NAME) $(VERSION) $(BUILD_ARCH)"
-endif
+	-V "$(NAME) $(VERSION) $(BUILD_ARCH)"
 
 ISOHYBRID_ARGS =
 
@@ -59,12 +64,13 @@ ifeq "$(EFI)" "1"
 	ISOHYBRID_ARGS += --uefi
 endif
 
-HAS_MEMTEST = 0
-HAS_IPXE = 0
-
-ifeq "$(BUILD_PLATFORM)" "x86"
-	HAS_MEMTEST = 1
-	HAS_IPXE = 1
+ifeq "$(HAS_ISOLINUX)" "1"
+	ISO_ARGS += \
+		-no-emul-boot \
+		-boot-load-size 4 \
+		-boot-info-table \
+		-b boot/isolinux/isolinux.bin \
+		-c boot/isolinux/boot.catalog
 endif
 
 ###############################################################################
@@ -117,14 +123,23 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp $(DIR_SRC)/doc/COPYING				/install/cdrom/
 	cp $(DIR_SRC)/doc/{ChangeLog,packages-list.txt}	/install/cdrom/doc
 
-	# Make the ISO
 	mkdir -p /install/cdrom/boot/isolinux
-	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog
-ifneq "$(BUILD_ARCH)" "armv5tel"
+
+ifeq "$(HAS_KERNEL)" "1"
 	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz
 	dracut --force -a "installer" --strip --xz /install/cdrom/boot/isolinux/instroot $(KVER)-ipfire
+endif
+
+ifeq "$(HAS_ISOLINUX)" "1"
+	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog
 	cp $(DIR_SRC)/config/syslinux/boot.png      /install/cdrom/boot/isolinux/boot.png
 	cp /usr/share/syslinux/isolinux.bin         /install/cdrom/boot/isolinux/isolinux.bin
+	cp /usr/share/hwdata/pci.ids                /install/cdrom/boot/isolinux/pci.ids
+	cp -vf /usr/share/syslinux/*.c32            /install/cdrom/boot/isolinux/
+	sed -e "s/VERSION/$(VERSION) - Core $(CORE)/g" \
+		$(DIR_SRC)/config/syslinux/syslinux.cfg \
+		> /install/cdrom/boot/isolinux/isolinux.cfg
+endif
 
 ifeq "$(HAS_MEMTEST)" "1"
 	# Install memtest
@@ -173,12 +188,6 @@ ifeq "$(EFI)" "1"
 	rm -rf /install/efiboot.img /tmp/grub-efi.cfg
 endif
 
-	cp /usr/share/hwdata/pci.ids                /install/cdrom/boot/isolinux/pci.ids
-	cp -vf /usr/share/syslinux/*.c32            /install/cdrom/boot/isolinux/
-	sed -e "s/VERSION/$(VERSION) - Core $(CORE)/g" \
-		$(DIR_SRC)/config/syslinux/syslinux.cfg \
-		> /install/cdrom/boot/isolinux/isolinux.cfg
-endif
 	cd /install/cdrom && find -type f ! -name md5sum.txt | grep -v "./boot" | \
 						xargs md5sum > md5sum.txt
 
