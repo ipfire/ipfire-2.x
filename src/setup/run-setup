@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Runs setup and tries to gain root privileges
+exec sudo setup

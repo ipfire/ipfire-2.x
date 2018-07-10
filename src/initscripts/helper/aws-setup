@@ -84,19 +84,27 @@ import_aws_configuration() {
 		echo "DOMAINNAME=${hostname#*.}" >> /var/ipfire/main/settings
 	fi
 
+	# Create setup user
+	if ! getent passwd setup &>/dev/null; then
+		useradd -r setup -s /usr/bin/run-setup -g nobody -m
+	fi
+
 	# Import SSH keys
-	local line
-	for line in $(get "public-keys/"); do
-		local key_no="${line%=*}"
+	local user
+	for user in /root /home/setup; do
+		local line
+		for line in $(get "public-keys/"); do
+			local key_no="${line%=*}"
 
-		local key="$(get public-keys/${key_no}/openssh-key)"
-		if [ -n "${key}" ] && ! grep -q "^${key}$" /root/.ssh/authorized_keys 2>/dev/null; then
-			mkdir -p /root/.ssh
-			chmod 700 /root/.ssh
+			local key="$(get public-keys/${key_no}/openssh-key)"
+			if [ -n "${key}" ] && ! grep -q "^${key}$" "${user}/.ssh/authorized_keys" 2>/dev/null; then
+				mkdir -p "${user}/.ssh"
+				chmod 700 "${user}/.ssh"
 
-			echo "${key}" >> /root/.ssh/authorized_keys
-			chmod 600 /root/.ssh/authorized_keys
-		fi
+				echo "${key}" >> "${user}/.ssh/authorized_keys"
+				chmod 600 "${user}/.ssh/authorized_keys"
+			fi
+		done
 	done
 
 	# Import any DNS server settings

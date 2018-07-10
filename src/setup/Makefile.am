@@ -25,10 +25,15 @@ AM_CFLAGS = $(OUR_CFLAGS)
 AM_CXXFLAGS = $(OUR_CXXFLAGS)
 AM_LDFLAGS = $(OUR_LDFLAGS)
 
+sudodir = /etc/sudoers.d
+
 bin_SCRIPTS =
 sbin_PROGRAMS =
 
 #- setup -----------------------------------------------------------------------
+
+bin_SCRIPTS += \
+	run-setup
 
 sbin_PROGRAMS += \
 	setup
@@ -56,3 +61,6 @@ setup_LDADD = \
 
 bin_SCRIPTS += \
 	probenic.sh
+
+sudo_DATA = \
+	sudo/setup
