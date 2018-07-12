@@ -86,7 +86,7 @@ import_aws_configuration() {
 
 	# Create setup user
 	if ! getent passwd setup &>/dev/null; then
-		useradd -r setup -s /usr/bin/run-setup -g nobody -m
+		useradd setup -s /usr/bin/run-setup -g nobody -m
 	fi
 
 	# Import SSH keys
