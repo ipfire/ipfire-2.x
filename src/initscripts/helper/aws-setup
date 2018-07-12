@@ -87,6 +87,9 @@ import_aws_configuration() {
 	# Create setup user
 	if ! getent passwd setup &>/dev/null; then
 		useradd setup -s /usr/bin/run-setup -g nobody -m
+
+		# Unlock the account
+		usermod -p "x" setup
 	fi
 
 	# Import SSH keys for setup user
