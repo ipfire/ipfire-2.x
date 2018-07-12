@@ -1,3 +1,4 @@
+#etc/sudoers.d
 etc/sudoers.d/setup
 usr/bin/probenic.sh
 usr/bin/run-setup

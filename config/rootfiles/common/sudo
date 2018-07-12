@@ -1,5 +1,4 @@
 etc/sudoers
-etc/sudoers.d
 usr/bin/sudo
 usr/bin/sudoedit
 usr/bin/sudoreplay
