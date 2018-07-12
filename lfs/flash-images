@@ -195,13 +195,15 @@ ifeq "$(BOOTLOADER)" "grub"
 	sed -i $(MNThdd)/boot/grub/grub.cfg \
 		-e "s/root=[A-Za-z0-9\/=-]*/root=UUID=$$(blkid -o value -s UUID $(PART_ROOT))/g"
 
+ifeq "$(BUILD_PLATFORM)" "x86"
 	# Install GRUB
 	grub-install --force --recheck --no-floppy --target=i386-pc \
 		--root-directory=$(MNThdd) $(DEVICE)
+endif
 
 ifeq "$(EFI)" "1"
 	# Install GRUB for EFI
-	grub-install --target=$(BUILD_ARCH)-efi --removable --no-nvram \
+	grub-install --target=$(GRUB_ARCH)-efi --removable --no-nvram \
 		--boot-directory=$(MNThdd)/boot --efi-directory=$(MNThdd)/boot/efi
 endif
 
