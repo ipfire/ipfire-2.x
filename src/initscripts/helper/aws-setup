@@ -89,22 +89,19 @@ import_aws_configuration() {
 		useradd setup -s /usr/bin/run-setup -g nobody -m
 	fi
 
-	# Import SSH keys
-	local user
-	for user in /root /home/setup; do
-		local line
-		for line in $(get "public-keys/"); do
-			local key_no="${line%=*}"
+	# Import SSH keys for setup user
+	local line
+	for line in $(get "public-keys/"); do
+		local key_no="${line%=*}"
 
-			local key="$(get public-keys/${key_no}/openssh-key)"
-			if [ -n "${key}" ] && ! grep -q "^${key}$" "${user}/.ssh/authorized_keys" 2>/dev/null; then
-				mkdir -p "${user}/.ssh"
-				chmod 700 "${user}/.ssh"
+		local key="$(get public-keys/${key_no}/openssh-key)"
+		if [ -n "${key}" ] && ! grep -q "^${key}$" "/home/setup/.ssh/authorized_keys" 2>/dev/null; then
+			mkdir -p "/home/setup/.ssh"
+			chmod 700 "/home/setup/.ssh"
 
-				echo "${key}" >> "${user}/.ssh/authorized_keys"
-				chmod 600 "${user}/.ssh/authorized_keys"
-			fi
-		done
+			echo "${key}" >> "/home/setup/.ssh/authorized_keys"
+			chmod 600 "/home/setup/.ssh/authorized_keys"
+		fi
 	done
 
 	# Import any DNS server settings
