@@ -56,14 +56,6 @@ ISO_ARGS = -J -r -v \
 
 ISOHYBRID_ARGS =
 
-ifeq "$(EFI)" "1"
-	ISO_ARGS += \
-		-eltorito-alt-boot \
-		-e boot/isolinux/efiboot.img
-
-	ISOHYBRID_ARGS += --uefi
-endif
-
 ifeq "$(HAS_ISOLINUX)" "1"
 	ISO_ARGS += \
 		-no-emul-boot \
@@ -71,6 +63,14 @@ ifeq "$(HAS_ISOLINUX)" "1"
 		-boot-info-table \
 		-b boot/isolinux/isolinux.bin \
 		-c boot/isolinux/boot.catalog
+endif
+
+ifeq "$(EFI)" "1"
+	ISO_ARGS += \
+		-eltorito-alt-boot \
+		-e boot/isolinux/efiboot.img
+
+	ISOHYBRID_ARGS += --uefi
 endif
 
 ###############################################################################
