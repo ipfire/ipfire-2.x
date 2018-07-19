@@ -8,9 +8,13 @@ if test ${boot_part} = ""; then
 fi;
 
 if test ${soc} = "kirkwood"; then
-	setenv kernel_type kirkwood;
+	setenv kernel_type -kirkwood;
 else
-	setenv kernel_type multi;
+	if test ${cpu} = "armv8"; then
+		echo ;
+	else
+		setenv kernel_type -multi;
+	fi;
 fi;
 
 # Import uEnv txt...
@@ -34,13 +38,25 @@ fi;
 if test "${SERIAL-CONSOLE}" = "ON"; then
 	if test ${console} = ""; then
 		if test "${board}" = "rpi"; then
-			if test "${fdtfile}" = "bcm2837-rpi-3-b-plus.dtb"; then
-				setenv console ttyS1,115200n8;
-			else
-				if test "${fdtfile}" = "bcm2837-rpi-3-b.dtb"; then
+			if test ${cpu} = "armv8"; then
+				if test "${fdtfile}" = "boradcom/bcm2837-rpi-3-b-plus.dtb"; then
 					setenv console ttyS1,115200n8;
 				else
-					setenv console ttyAMA0,115200n8;
+					if test "${fdtfile}" = "broadcom/bcm2837-rpi-3-b.dtb"; then
+						setenv console ttyS1,115200n8;
+					else
+						setenv console ttyAMA0,115200n8;
+					fi;
+				fi;
+			else
+				if test "${fdtfile}" = "bcm2837-rpi-3-b-plus.dtb"; then
+					setenv console ttyS1,115200n8;
+				else
+					if test "${fdtfile}" = "bcm2837-rpi-3-b.dtb"; then
+						setenv console ttyS1,115200n8;
+					else
+						setenv console ttyAMA0,115200n8;
+					fi;
 				fi;
 			fi;
 		else
@@ -55,10 +71,10 @@ else
 fi;
 
 setenv fdt_high ffffffff;
-fatload ${boot_dev} ${boot_part} ${kernel_addr_r} vmlinuz-${KVER}-ipfire-${kernel_type};
-fatload ${boot_dev} ${boot_part} ${fdt_addr_r} dtb-${KVER}-ipfire-${kernel_type}/${fdtfile};
+fatload ${boot_dev} ${boot_part} ${kernel_addr_r} vmlinuz-${KVER}-ipfire${kernel_type};
+fatload ${boot_dev} ${boot_part} ${fdt_addr_r} dtb-${KVER}-ipfire${kernel_type}/${fdtfile};
 setenv ramdisk_addr ${ramdisk_addr_r}
-if fatload ${boot_dev} ${boot_part} ${ramdisk_addr} uInit-${KVER}-ipfire-${kernel_type}; then
+if fatload ${boot_dev} ${boot_part} ${ramdisk_addr} uInit-${KVER}-ipfire${kernel_type}; then
 	echo Ramdisk loaded...;
 else
 	echo Ramdisk not loaded...;
