@@ -48,8 +48,8 @@ boot/dtb-KVER-ipfire
 #boot/dtb-KVER-ipfire/arm/rtsm_ve-aemv8a.dtb
 #boot/dtb-KVER-ipfire/arm/vexpress-v2f-1xv7-ca53x2.dtb
 #boot/dtb-KVER-ipfire/broadcom
-#boot/dtb-KVER-ipfire/broadcom/bcm2837-rpi-3-b.dtb
 #boot/dtb-KVER-ipfire/broadcom/bcm2837-rpi-3-b-plus.dtb
+#boot/dtb-KVER-ipfire/broadcom/bcm2837-rpi-3-b.dtb
 #boot/dtb-KVER-ipfire/marvell
 #boot/dtb-KVER-ipfire/marvell/armada-3720-db.dtb
 #boot/dtb-KVER-ipfire/marvell/armada-3720-espressobin.dtb
@@ -100,6 +100,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/crypto/cast_common.ko
 #lib/modules/KVER-ipfire/kernel/crypto/ccm.ko
 #lib/modules/KVER-ipfire/kernel/crypto/cmac.ko
+#lib/modules/KVER-ipfire/kernel/crypto/crypto_engine.ko
 #lib/modules/KVER-ipfire/kernel/crypto/cts.ko
 #lib/modules/KVER-ipfire/kernel/crypto/deflate.ko
 #lib/modules/KVER-ipfire/kernel/crypto/ecdh_generic.ko
@@ -160,6 +161,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/bcma/bcma.ko
 #lib/modules/KVER-ipfire/kernel/drivers/block
 #lib/modules/KVER-ipfire/kernel/drivers/block/cryptoloop.ko
+#lib/modules/KVER-ipfire/kernel/drivers/block/virtio_blk.ko
 #lib/modules/KVER-ipfire/kernel/drivers/bluetooth
 #lib/modules/KVER-ipfire/kernel/drivers/bluetooth/ath3k.ko
 #lib/modules/KVER-ipfire/kernel/drivers/bluetooth/bcm203x.ko
@@ -188,6 +190,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/char/ipmi/ipmi_watchdog.ko
 #lib/modules/KVER-ipfire/kernel/drivers/char/lp.ko
 #lib/modules/KVER-ipfire/kernel/drivers/char/ppdev.ko
+#lib/modules/KVER-ipfire/kernel/drivers/char/virtio_console.ko
 #lib/modules/KVER-ipfire/kernel/drivers/clk
 #lib/modules/KVER-ipfire/kernel/drivers/clk/clk-si5351.ko
 #lib/modules/KVER-ipfire/kernel/drivers/clk/clk-si570.ko
@@ -195,6 +198,9 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/cpufreq
 #lib/modules/KVER-ipfire/kernel/drivers/cpufreq/arm_big_little.ko
 #lib/modules/KVER-ipfire/kernel/drivers/cpufreq/arm_big_little_dt.ko
+#lib/modules/KVER-ipfire/kernel/drivers/crypto
+#lib/modules/KVER-ipfire/kernel/drivers/crypto/virtio
+#lib/modules/KVER-ipfire/kernel/drivers/crypto/virtio/virtio_crypto.ko
 #lib/modules/KVER-ipfire/kernel/drivers/dma
 #lib/modules/KVER-ipfire/kernel/drivers/dma/dw
 #lib/modules/KVER-ipfire/kernel/drivers/dma/dw/dw_dmac_core.ko
@@ -203,6 +209,9 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/firewire/firewire-core.ko
 #lib/modules/KVER-ipfire/kernel/drivers/firewire/firewire-ohci.ko
 #lib/modules/KVER-ipfire/kernel/drivers/firewire/firewire-sbp2.ko
+#lib/modules/KVER-ipfire/kernel/drivers/firmware
+#lib/modules/KVER-ipfire/kernel/drivers/firmware/efi
+#lib/modules/KVER-ipfire/kernel/drivers/firmware/efi/efibc.ko
 #lib/modules/KVER-ipfire/kernel/drivers/gpio
 #lib/modules/KVER-ipfire/kernel/drivers/gpio/gpio-adnp.ko
 #lib/modules/KVER-ipfire/kernel/drivers/gpio/gpio-viperboard.ko
@@ -254,15 +263,6 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/panel/panel-simple.ko
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/pl111
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/pl111/pl111_drm.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun4i-backend.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun4i-drm-hdmi.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun4i-drm.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun4i-tcon.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun4i_tv.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun6i_drc.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun8i-mixer.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.ko
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/tinydrm
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/tinydrm/core
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/tinydrm/core/tinydrm.ko
@@ -272,6 +272,8 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/udl/udl.ko
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/vc4
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/vc4/vc4.ko
+#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/virtio
+#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/virtio/virtio-gpu.ko
 #lib/modules/KVER-ipfire/kernel/drivers/hid
 #lib/modules/KVER-ipfire/kernel/drivers/hid/hid-aureal.ko
 #lib/modules/KVER-ipfire/kernel/drivers/hid/hid-gyration.ko
@@ -525,7 +527,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/md/dm-cache.ko
 #lib/modules/KVER-ipfire/kernel/drivers/md/dm-crypt.ko
 #lib/modules/KVER-ipfire/kernel/drivers/md/dm-log-userspace.ko
-#lib/modules/KVER-ipfire/kernel/drivers/md/dmpath.ko
+#lib/modules/KVER-ipfire/kernel/drivers/md/dm-multipath.ko
 #lib/modules/KVER-ipfire/kernel/drivers/md/dm-queue-length.ko
 #lib/modules/KVER-ipfire/kernel/drivers/md/dm-raid.ko
 #lib/modules/KVER-ipfire/kernel/drivers/md/dm-round-robin.ko
@@ -1483,6 +1485,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/net/usb/usbnet.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/usb/zaurus.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/veth.ko
+#lib/modules/KVER-ipfire/kernel/drivers/net/virtio_net.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/vmxnet3
 #lib/modules/KVER-ipfire/kernel/drivers/net/vmxnet3/vmxnet3.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/vrf.ko
@@ -1899,6 +1902,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/video/fbdev/ocfb.ko
 #lib/modules/KVER-ipfire/kernel/drivers/video/fbdev/smscufx.ko
 #lib/modules/KVER-ipfire/kernel/drivers/video/fbdev/ssd1307fb.ko
+#lib/modules/KVER-ipfire/kernel/drivers/video/fbdev/vfb.ko
 #lib/modules/KVER-ipfire/kernel/drivers/w1
 #lib/modules/KVER-ipfire/kernel/drivers/w1/masters
 #lib/modules/KVER-ipfire/kernel/drivers/w1/masters/ds1wm.ko
@@ -1941,6 +1945,8 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/fs/configfs/configfs.ko
 #lib/modules/KVER-ipfire/kernel/fs/dlm
 #lib/modules/KVER-ipfire/kernel/fs/dlm/dlm.ko
+#lib/modules/KVER-ipfire/kernel/fs/efivarfs
+#lib/modules/KVER-ipfire/kernel/fs/efivarfs/efivarfs.ko
 #lib/modules/KVER-ipfire/kernel/fs/fat
 #lib/modules/KVER-ipfire/kernel/fs/fat/fat.ko
 #lib/modules/KVER-ipfire/kernel/fs/fat/msdos.ko
@@ -2493,6 +2499,8 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/net/unix
 #lib/modules/KVER-ipfire/kernel/net/unix/unix_diag.ko
 #lib/modules/KVER-ipfire/kernel/net/vmw_vsock
+#lib/modules/KVER-ipfire/kernel/net/vmw_vsock/vmw_vsock_virtio_transport.ko
+#lib/modules/KVER-ipfire/kernel/net/vmw_vsock/vmw_vsock_virtio_transport_common.ko
 #lib/modules/KVER-ipfire/kernel/net/vmw_vsock/vsock.ko
 #lib/modules/KVER-ipfire/kernel/net/wireless
 #lib/modules/KVER-ipfire/kernel/net/wireless/cfg80211.ko
