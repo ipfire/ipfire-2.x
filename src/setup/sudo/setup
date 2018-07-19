@@ -1,0 +1,2 @@
+# The setup is allowed to run the setup command
+setup ALL=(ALL) NOPASSWD: /usr/sbin/setup

@@ -1,2 +1,3 @@
-usr/share/hwdata/usb.ids
+#usr/share/hwdata
 usr/share/hwdata/pci.ids
+usr/share/hwdata/usb.ids

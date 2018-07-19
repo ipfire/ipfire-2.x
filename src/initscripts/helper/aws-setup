@@ -84,18 +84,28 @@ import_aws_configuration() {
 		echo "DOMAINNAME=${hostname#*.}" >> /var/ipfire/main/settings
 	fi
 
-	# Import SSH keys
+	# Create setup user
+	if ! getent passwd setup &>/dev/null; then
+		useradd setup -s /usr/bin/run-setup -g nobody -m
+
+		# Unlock the account
+		usermod -p "x" setup
+	fi
+
+	# Import SSH keys for setup user
 	local line
 	for line in $(get "public-keys/"); do
 		local key_no="${line%=*}"
 
 		local key="$(get public-keys/${key_no}/openssh-key)"
-		if [ -n "${key}" ] && ! grep -q "^${key}$" /root/.ssh/authorized_keys 2>/dev/null; then
-			mkdir -p /root/.ssh
-			chmod 700 /root/.ssh
+		if [ -n "${key}" ] && ! grep -q "^${key}$" "/home/setup/.ssh/authorized_keys" 2>/dev/null; then
+			mkdir -p "/home/setup/.ssh"
+			chmod 700 "/home/setup/.ssh"
+			chown setup.nobody "/home/setup/.ssh"
 
-			echo "${key}" >> /root/.ssh/authorized_keys
-			chmod 600 /root/.ssh/authorized_keys
+			echo "${key}" >> "/home/setup/.ssh/authorized_keys"
+			chmod 600 "/home/setup/.ssh/authorized_keys"
+			chown setup.nobody "/home/setup/.ssh/authorized_keys"
 		fi
 	done
 
@@ -218,14 +228,15 @@ import_aws_configuration() {
 		# Enable SSH
 		sed -e "s/ENABLE_SSH=.*/ENABLE_SSH=on/g" -i /var/ipfire/remote/settings
 
-		touch /var/ipfire/remote/enablessh
-		chown nobody:nobody /var/ipfire/remote/enablessh
-
 		# Enable SSH key authentication
 		sed -e "s/^ENABLE_SSH_KEYS=.*/ENABLE_SSH_KEYS=on/" -i /var/ipfire/remote/settings
 
 		# Apply SSH settings
 		/usr/local/bin/sshctrl
+
+		# Mark SSH to start immediately (but not right now)
+		touch /var/ipfire/remote/enablessh
+		chown nobody:nobody /var/ipfire/remote/enablessh
 
 		# Firewall rules for SSH and WEBIF
 		(

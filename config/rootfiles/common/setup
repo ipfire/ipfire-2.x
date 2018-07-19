@@ -1,4 +1,7 @@
+#etc/sudoers.d
+etc/sudoers.d/setup
 usr/bin/probenic.sh
+usr/bin/run-setup
 usr/sbin/setup
 usr/share/locale/ar/LC_MESSAGES/setup.mo
 usr/share/locale/ca/LC_MESSAGES/setup.mo

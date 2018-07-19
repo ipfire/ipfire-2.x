@@ -37,16 +37,22 @@ CXXFLAGS   =
 PAK_VER    = 75
 DEPS	   = ""
 
+KERNEL_ARCH   = $(BUILD_ARCH)
+KERNEL_TARGET = bzImage
+HEADERS_ARCH  = $(BUILD_PLATFORM)
+
 ifeq "$(BUILD_ARCH)" "i586"
 	KERNEL_ARCH = i386
-else
-	KERNEL_ARCH = $(BUILD_ARCH)
 endif
 
 ifeq "$(BUILD_ARCH)" "aarch64"
 	HEADERS_ARCH = arm64
-else
-	HEADERS_ARCH = $(BUILD_PLATFORM)
+	KERNEL_ARCH  = arm64
+	KERNEL_TARGET = Image
+endif
+
+ifeq "$(BUILD_ARCH)" "armv5tel"
+	KERNEL_TARGET = zImage
 endif
 
 VERSUFIX=ipfire$(KCFG)
@@ -171,26 +177,11 @@ else
 	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ -$(VERSUFIX)/' Makefile
 
-ifeq "$(KCFG)" "-kirkwood"
-	cd $(DIR_APP) && make $(MAKETUNING) zImage modules
-	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
-#	cd $(DIR_APP) && cp -v arch/arm/boot/uImage /boot/uImage-$(VERSUFIX)
-else
-ifeq "$(KCFG)" "-multi"
-ifeq "$(BUILD_ARCH)" "armv5tel"
-	cd $(DIR_APP) && make $(MAKETUNING) zImage modules
-	cd $(DIR_APP) && cp -v arch/arm/boot/zImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
-endif
-ifeq "$(BUILD_ARCH)" "aarch64"
-	cd $(DIR_APP) && make $(MAKETUNING) Image modules
-	cd $(DIR_APP) && cp -v arch/arm64/boot/Image /boot/vmlinuz-$(VER)-$(VERSUFIX)
-endif
-else
-	cd $(DIR_APP) && make $(MAKETUNING) bzImage modules
-	cd $(DIR_APP) && cp -v arch/$(KERNEL_ARCH)/boot/bzImage /boot/vmlinuz-$(VER)-$(VERSUFIX)
-endif
-endif
+	# Build the kernel
+	cd $(DIR_APP) && make $(MAKETUNING) $(KERNEL_TARGET) modules
 
+	# Install the kernel
+	cd $(DIR_APP) && cp -v arch/$(KERNEL_ARCH)/boot/$(KERNEL_TARGET) /boot/vmlinuz-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v System.map /boot/System.map-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && make $(MAKETUNING) modules_install

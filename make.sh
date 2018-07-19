@@ -1093,7 +1093,7 @@ buildipfire() {
   lfsmake2 elfutils
 
   case "${BUILD_ARCH}" in
-	x86_64)
+	x86_64|aarch64)
 		lfsmake2 linux			KCFG=""
 #		lfsmake2 backports			KCFG=""
 #		lfsmake2 e1000e			KCFG=""
@@ -1133,17 +1133,6 @@ buildipfire() {
 		lfsmake2 linux-initrd			KCFG="-kirkwood"
 
 		# arm multi platform (Panda, Wandboard ...) kernel build
-		lfsmake2 linux			KCFG="-multi"
-#		lfsmake2 backports			KCFG="-multi"
-#		lfsmake2 e1000e			KCFG="-multi"
-#		lfsmake2 igb				KCFG="-multi"
-#		lfsmake2 ixgbe			KCFG="-multi"
-		lfsmake2 xtables-addons		KCFG="-multi"
-		lfsmake2 linux-initrd			KCFG="-multi"
-		;;
-
-	aarch64)
-		# arm multi platform (RPi3, OrangePi PC2 ...) kernel build
 		lfsmake2 linux			KCFG="-multi"
 #		lfsmake2 backports			KCFG="-multi"
 #		lfsmake2 e1000e			KCFG="-multi"
