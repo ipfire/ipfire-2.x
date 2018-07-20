@@ -6,7 +6,7 @@
 get() {
 	local file="${1}"
 
-	wget -qO - "http://169.254.169.254/latest/meta-data/${file}"
+	wget -qO - "http://169.254.169.254/latest/${file}"
 }
 
 to_address() {
@@ -64,7 +64,7 @@ find_interface() {
 }
 
 import_aws_configuration() {
-	local instance_id="$(get instance-id)"
+	local instance_id="$(get meta-data/instance-id)"
 
 	boot_mesg "Importing AWS configuration for instance ${instance_id}..."
 
@@ -72,7 +72,7 @@ import_aws_configuration() {
 	echo "${instance_id}" > /var/run/aws-instance-id
 
 	# Initialise system settings
-	local hostname=$(get local-hostname)
+	local hostname=$(get meta-data/local-hostname)
 
 	# Set hostname
 	if ! grep -q "^HOSTNAME=" /var/ipfire/main/settings; then
@@ -94,10 +94,10 @@ import_aws_configuration() {
 
 	# Import SSH keys for setup user
 	local line
-	for line in $(get "public-keys/"); do
+	for line in $(get "meta-data/public-keys/"); do
 		local key_no="${line%=*}"
 
-		local key="$(get public-keys/${key_no}/openssh-key)"
+		local key="$(get meta-data/public-keys/${key_no}/openssh-key)"
 		if [ -n "${key}" ] && ! grep -q "^${key}$" "/home/setup/.ssh/authorized_keys" 2>/dev/null; then
 			mkdir -p "/home/setup/.ssh"
 			chmod 700 "/home/setup/.ssh"
@@ -109,6 +109,9 @@ import_aws_configuration() {
 		fi
 	done
 
+	# Download user-data
+	local user_data="$(get user-data)"
+
 	# Import any DNS server settings
 	eval $(/usr/local/bin/readhash <(grep -E "^DNS([0-9])=" /var/ipfire/ethernet/settings 2>/dev/null))
 
@@ -119,24 +122,24 @@ import_aws_configuration() {
 	: > /var/ipfire/ethernet/settings
 
 	local mac
-	for mac in $(get network/interfaces/macs/); do
+	for mac in $(get meta-data/network/interfaces/macs/); do
 		# Remove trailing slash
 		mac="${mac//\//}"
 
-		local device_number="$(get "network/interfaces/macs/${mac}/device-number")"
-		local interface_id="$(get "network/interfaces/macs/${mac}/interface-id")"
+		local device_number="$(get "meta-data/network/interfaces/macs/${mac}/device-number")"
+		local interface_id="$(get "meta-data/network/interfaces/macs/${mac}/interface-id")"
 
 		# First IPv4 address
-		local ipv4_address="$(get "network/interfaces/macs/${mac}/local-ipv4s" | head -n1)"
+		local ipv4_address="$(get "meta-data/network/interfaces/macs/${mac}/local-ipv4s" | head -n1)"
 		local ipv4_address_num="$(to_integer "${ipv4_address}")"
 
 		# Get VPC subnet
-		local vpc="$(get "network/interfaces/macs/${mac}/vpc-ipv4-cidr-block")"
+		local vpc="$(get "meta-data/network/interfaces/macs/${mac}/vpc-ipv4-cidr-block")"
 		local vpc_netaddress="${vpc%/*}"
 		local vpc_netaddress_num="$(to_integer "${vpc_netaddress}")"
 
 		# Get subnet size
-		local subnet="$(get "network/interfaces/macs/${mac}/subnet-ipv4-cidr-block")"
+		local subnet="$(get "meta-data/network/interfaces/macs/${mac}/subnet-ipv4-cidr-block")"
 
 		local prefix="${subnet#*/}"
 		local netmask="$(prefix2netmask "${prefix}")"
@@ -174,7 +177,7 @@ import_aws_configuration() {
 				) >> /var/ipfire/ethernet/settings
 
 				# Import aliases for RED
-				for alias in $(get "network/interfaces/macs/${mac}/local-ipv4s" | tail -n +2); do
+				for alias in $(get "meta-data/network/interfaces/macs/${mac}/local-ipv4s" | tail -n +2); do
 					echo "${alias},on,"
 				done > /var/ipfire/ethernet/aliases
 				;;
@@ -246,6 +249,12 @@ import_aws_configuration() {
 
 		# This script has now completed the first steps of setup
 		touch /var/ipfire/main/firstsetup_ok
+
+		# Save user-data script to be executed later
+		if [ "${user_data:0:2}" = "#!" ]; then
+			echo "${user_data}" > /tmp/aws-user-data.script
+			chmod 700 /tmp/aws-user-data.script
+		fi
 	fi
 
 	# All done

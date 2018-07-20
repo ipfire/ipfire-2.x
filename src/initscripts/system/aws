@@ -60,6 +60,14 @@ case "${1}" in
 		# End DHCP client immediately
 		dhclient -sf /etc/rc.d/helper/aws-setup -r "${intf}" &>/dev/null
 
+		# Run AWS user-data script
+		if [ -x "/tmp/aws-user-data.script" ]; then
+			/tmp/aws-user-data.script
+
+			# Delete the script right away
+			rm /tmp/aws-user-data.script
+		fi
+
 		exit 0
 		;;
 
