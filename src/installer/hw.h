@@ -63,9 +63,6 @@ struct hw {
 
 	// Enabled if we should install in EFI mode
 	int efi;
-
-	// Enabled if this system supports EFI
-	int efi_supported;
 };
 
 struct hw_disk {

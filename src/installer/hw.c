@@ -78,11 +78,6 @@ struct hw* hw_init() {
 	if (ret == 0)
 		snprintf(hw->arch, sizeof(hw->arch), "%s", uname_data.machine);
 
-	// Detect if we are running in EFI mode
-	ret = access("/sys/firmware/efi", R_OK);
-	if (ret == 0)
-		hw->efi_supported = 1;
-
 	// Should we install in EFI mode?
 	if ((strcmp(hw->arch, "x86_64") == 0) || (strcmp(hw->arch, "aarch64") == 0))
 		hw->efi = 1;
@@ -1041,47 +1036,9 @@ int hw_stop_all_raid_arrays(const char* output) {
 
 int hw_install_bootloader(struct hw* hw, struct hw_destination* dest, const char* output) {
 	char cmd[STRING_SIZE];
-	int r;
 
-	char cmd_grub[STRING_SIZE];
-	snprintf(cmd_grub, sizeof(cmd_grub), "/usr/sbin/grub-install --target=i386-pc"
-			" --no-floppy --recheck");
-
-	if (dest->is_raid) {
-		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->disk1->path);
-		r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
-		if (r)
-			return r;
-
-		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->disk2->path);
-		r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
-		if (r)
-			return r;
-	} else {
-		snprintf(cmd, sizeof(cmd), "%s %s", cmd_grub, dest->path);
-		r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
-		if (r)
-			return r;
-	}
-
-	// Install GRUB in EFI mode
-	if (hw->efi) {
-		for (int removable = 0; removable < 1; removable++) {
-			snprintf(cmd, sizeof(cmd), "/usr/sbin/grub-install"
-				" --target=%s-efi --efi-directory=%s %s %s",
-				hw->arch, HW_PATH_BOOT_EFI,
-				(hw->efi_supported) ? "" : "--no-nvram",
-				(removable) ? "--removable" : "");
-
-			r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
-			if (r)
-				return r;
-		}
-	}
-
-	// Generate configuration file
-	snprintf(cmd, sizeof(cmd), "/usr/sbin/grub-mkconfig -o /boot/grub/grub.cfg");
-	r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
+	snprintf(cmd, sizeof(cmd), "/usr/bin/install-bootloader %s", dest->path);
+	int r = system_chroot(output, DESTINATION_MOUNT_PATH, cmd);
 	if (r)
 		return r;
 
