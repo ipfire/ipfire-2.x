@@ -21,7 +21,7 @@
 #                                                                          #
 ############################################################################
 
-GRUB_INSTALL_ARGS="--no-floppy --recheck"
+GRUB_INSTALL_ARGS="--no-floppy --recheck --force"
 
 function find_bootloader_device() {
 	local mp
@@ -99,15 +99,54 @@ function grub_install() {
 		return 1
 	fi
 
-	local args
-	for args in "" "--force"; do
-		if grub-install ${GRUB_INSTALL_ARGS} ${args} "${device}" &>/dev/null; then
-			return 0
-		fi
+	local arches
+	case "$(uname -m)" in
+		aarch64)
+			arches="arm64-efi"
+			;;
+		i?86)
+			arches="i386-pc"
+			;;
+		x86_64)
+			arches="i386-pc x86_64-efi"
+			;;
+	esac
+
+	local arch
+	for arch in ${arches}; do
+		local args="--target=${arch}"
+
+		case "${arch}" in
+			*-efi)
+				# Skip all EFI architectures if no EFI partition exists
+				if [ ! -d "/boot/efi" ]; then
+					continue
+				fi
+
+				args="${args} --efi-directory=/boot/efi"
+
+				# Don't try to modify the BIOS when we are
+				# not running on EFI right now
+				if [ ! -d "/sys/firmware/efi" ]; then
+					args="${args} --no-nvram"
+				fi
+				;;
+		esac
+
+		local removable
+		for removable in "" "--removable"; do
+			if ! grub-install ${GRUB_INSTALL_ARGS} ${args} \
+					${removable} "${device}" &>/dev/null; then
+				echo "Could not install GRUB on ${device}" >&2
+				return 1
+			fi
+
+			# Do not try to install with --removable for non-efi architectures
+			[[ "${arch}" =~ \-efi$ ]] || break
+		done
 	done
 
-	echo "Could not install GRUB on ${device}" >&2
-	return 1
+	return 0
 }
 
 function main() {
