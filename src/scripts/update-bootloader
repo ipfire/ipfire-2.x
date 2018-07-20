@@ -52,7 +52,7 @@ function find_device() {
 	# Get the actual device from the partition that holds /
 	while [ -n "${root}" ]; do
 		if [ -e "/sys/block/${root}" ]; then
-			echo "${root}"
+			echo "/dev/${root}"
 			return 0
 		fi
 
@@ -66,15 +66,15 @@ function find_device() {
 function device_is_mdraid() {
 	local device="${1}"
 
-	[ -d "/sys/block/${device}/md" ]
+	[ -d "/sys/block/${device/\/dev/}/md" ]
 }
 
 function mdraid_get_slaves() {
 	local device="${1}"
 
 	local slave
-	for slave in /sys/block/${device}/slaves/*; do
-		basename "${slave}"
+	for slave in /sys/block/${device/\/dev/}/slaves/*; do
+		echo "/dev/$(basename "${slave}")"
 	done 2>/dev/null
 }
 
@@ -150,32 +150,41 @@ function grub_install() {
 }
 
 function main() {
+	local device="${1}"
+
 	# Find the root device
-	local device="$(find_bootloader_device)"
 	if [ -z "${device}" ]; then
-		echo "Could not find root device. Aborting." >&2
-		exit 1
+		device="$(find_bootloader_device)"
+		if [ -z "${device}" ]; then
+			echo "Could not find root device. Aborting." >&2
+			return 1
+		fi
+
+		echo "Found bootloader device: ${device}"
 	fi
 
-	echo "Found bootloader device: /dev/${device}"
+	if [ ! -b "${device}" ]; then
+		echo "${device} does not exist" >&2
+		return 2
+	fi
 
 	# Update configuration files
-	grub_update_config || exit $?
+	grub_update_config || return $?
 
 	# Handle mdraid devices
 	if device_is_mdraid "${device}"; then
 		local slave
 		for slave in $(mdraid_get_slaves "${device}"); do
-			grub_install "/dev/${slave}"
+			grub_install "${slave}"
 		done
 
 	# Handle normal block devices
 	else
-		grub_install "/dev/${device}"
+		grub_install "${device}"
 	fi
 
 	return 0
 }
 
 # Run main function
-main
+main "$@" || exit $?
