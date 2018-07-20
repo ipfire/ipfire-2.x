@@ -44,8 +44,6 @@ case "${1}" in
 			fi
 			umount /boot > /dev/null
 
-			sleep 30
-
 			# Detect device
 			mount | while read -r dev tmp1 mountpoint tmp2; do
 				[ "${dev}" = "rootfs" ] && continue
