@@ -28,7 +28,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
-PAK_VER    = 24
+PAK_VER    = 25
 
 DEPS       = "jansson libsrtp opus"
 
@@ -99,6 +99,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable res_srtp \
 		--enable EXTRA-SOUNDS-EN-GSM \
 		--enable MOH-OPSOUND-GSM  \
+		--disable BUILD_NATIVE \
 		menuselect.makeopts
 
 	# add additional sounds
