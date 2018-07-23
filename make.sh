@@ -1292,6 +1292,7 @@ buildipfire() {
   lfsmake2 snort
   lfsmake2 yaml
   lfsmake2 libhtp
+  lfsmake2 suricata
   lfsmake2 oinkmaster
   lfsmake2 squid
   lfsmake2 squidguard
