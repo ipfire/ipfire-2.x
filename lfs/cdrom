@@ -67,8 +67,9 @@ endif
 
 ifeq "$(EFI)" "1"
 	ISO_ARGS += \
+		-eltorito-alt-boot \
 		-e boot/isolinux/efiboot.img \
-		-eltorito-alt-boot
+		-no-emul-boot
 
 	ISOHYBRID_ARGS += --uefi
 endif
