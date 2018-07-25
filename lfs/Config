@@ -92,63 +92,6 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 	GRUB_ARCH = arm64
 endif
 
-# Basic modules
-GRUB_EFI_MODULES = \
-	configfile \
-	gzio \
-	linux \
-	loadenv \
-	normal \
-	regexp
-
-# Stuff for accessing file systems
-GRUB_EFI_MODULES += \
-	ext2 \
-	fat \
-	iso9660 \
-	part_gpt \
-	part_msdos \
-	udf
-
-# Graphics & IO
-GRUB_EFI_MODULES += \
-	all_video \
-	bitmap_scale \
-	font \
-	gfxmenu \
-	gfxterm \
-	jpeg \
-	png \
-	tga
-
-# Commands
-GRUB_EFI_MODULES += \
-	boot \
-	cat \
-	chain \
-	echo \
-	halt \
-	help \
-	ls \
-	minicmd \
-	probe \
-	reboot \
-	search \
-	search_fs_file \
-	search_fs_uuid \
-	search_label \
-	test \
-	true
-
-# Platform dependent modules
-ifeq "$(BUILD_ARCH)" "x86_64"
-	GRUB_EFI_MODULES += \
-		loadbios \
-		ahci \
-		at_keyboard \
-		usb_keyboard
-endif
-
 ###############################################################################
 # Common Macro Definitions
 ###############################################################################

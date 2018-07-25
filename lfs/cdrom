@@ -74,6 +74,58 @@ ifeq "$(EFI)" "1"
 	ISOHYBRID_ARGS += --uefi
 endif
 
+GRUB_EFI_MODULES = \
+	all_video \
+	at_keyboard \
+	boot \
+	bitmap_scale \
+	cat \
+	chain \
+	configfile \
+	disk \
+	echo \
+	efi_gop \
+	efi_uga \
+	ext2 \
+	extcmd \
+	fat \
+	file \
+	font \
+	fxterm_menu \
+	gfxterm \
+	gfxmenu \
+	gfxterm_background \
+	gzio \
+	halt \
+	help \
+	iso9660 \
+	jpeg \
+	loadbios \
+	loadenv \
+	loopback \
+	linux \
+	ls \
+	memdisk \
+	minicmd \
+	nativedisk \
+	normal \
+	ntfs \
+	part_gpt \
+	part_msdos \
+	png \
+	probe \
+	reboot \
+	regexp \
+	search \
+	search_fs_file \
+	search_fs_uuid \
+	search_label \
+	tar \
+	test \
+	tga \
+	true \
+	usb_keyboard
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -164,7 +216,7 @@ ifeq "$(EFI)" "1"
 		--config=/tmp/grub-efi.cfg \
 		--compression=xz \
 		--prefix=/EFI/BOOT \
-		$(GRUB_EFI_MODULES)
+		$$(for mod in $(GRUB_EFI_MODULES); do [ -f "/usr/lib/grub/$(GRUB_ARCH)-efi/$${mod}.mod" ] && echo "$${mod}"; done)
 
 	# Install GRUB configuration
 	mkdir -pv /install/cdrom/EFI/BOOT
