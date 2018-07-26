@@ -32,6 +32,9 @@ our $rulestarball = "/var/tmp/snortrules.tar.gz";
 # File to store any errors, which also will be read and displayed by the wui.
 our $storederrorfile = "/tmp/ids_storederror";
 
+# Location where the rulefiles are stored.
+our $rulespath = "/etc/snort/rules";
+
 #
 ## Function for checking if at least 300MB of free disk space are available
 ## on the "/var" partition.
@@ -161,7 +164,7 @@ sub oinkmaster () {
 	openlog('oinkmaster', 'cons,pid', 'user');
 
 	# Call oinkmaster to generate ruleset.
-	open(OINKMASTER, "/usr/local/bin/oinkmaster.pl -v -s -u file://$rulestarball -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules|");
+	open(OINKMASTER, "/usr/local/bin/oinkmaster.pl -v -s -u file://$rulestarball -C /var/ipfire/snort/oinkmaster.conf -o $rulespath|");
 
 	# Log output of oinkmaster to syslog.
 	while(<OINKMASTER>) {

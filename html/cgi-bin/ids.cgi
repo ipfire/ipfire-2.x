@@ -47,7 +47,6 @@ my %selected=();
 # Get netsettings.
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
-my $snortrulepath = "/etc/snort/rules";
 my $snortusedrulefilesfile = "${General::swroot}/snort/snort-used-rulefiles.conf";
 my $errormessage;
 
@@ -83,21 +82,21 @@ if (-e $IDS::storederrorfile) {
 ## Grab all available snort rules and store them in the idsrules hash.
 #
 # Open snort rules directory and do a directory listing.
-opendir(DIR, $snortrulepath) or die $!;
+opendir(DIR, $IDS::rulespath) or die $!;
 	# Loop through the direcory.
 	while (my $file = readdir(DIR)) {
 
 		# We only want files.
-		next unless (-f "$snortrulepath/$file");
+		next unless (-f "$IDS::rulespath/$file");
 
 		# Ignore empty files.
-		next if (-z "$snortrulepath/$file");
+		next if (-z "$IDS::rulespath/$file");
 
 		# Use a regular expression to find files ending in .rules
 		next unless ($file =~ m/\.rules$/);
 
 		# Ignore files which are not read-able.
-		next unless (-R "$snortrulepath/$file");
+		next unless (-R "$IDS::rulespath/$file");
 
 		# Call subfunction to read-in rulefile and add rules to
 		# the idsrules hash.
@@ -611,7 +610,7 @@ sub readrulesfile ($) {
 	my $rulefile = shift;
 
 	# Open rule file and read in contents
-	open(RULEFILE, "$snortrulepath/$rulefile") or die "Unable to read $rulefile!";
+	open(RULEFILE, "$IDS::rulespath/$rulefile") or die "Unable to read $rulefile!";
 
 	# Store file content in an array.
 	my @lines = <RULEFILE>;
