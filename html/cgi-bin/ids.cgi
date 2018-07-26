@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -33,7 +33,7 @@ require "${General::swroot}/ids-functions.pl";
 my %color = ();
 my %mainsettings = ();
 my %netsettings = ();
-my %snortrules = ();
+my %idsrules = ();
 my %snortsettings=();
 my %rulesetsources = ();
 my %cgiparams=();
@@ -80,7 +80,7 @@ if (-e $IDS::storederrorfile) {
 }
 
 
-## Grab all available snort rules and store them in the snortrules hash.
+## Grab all available snort rules and store them in the idsrules hash.
 #
 # Open snort rules directory and do a directory listing.
 opendir(DIR, $snortrulepath) or die $!;
@@ -100,7 +100,7 @@ opendir(DIR, $snortrulepath) or die $!;
 		next unless (-R "$snortrulepath/$file");
 
 		# Call subfunction to read-in rulefile and add rules to
-		# the snortrules hash.
+		# the idsrules hash.
 		&readrulesfile("$file");
 	}
 
@@ -134,8 +134,8 @@ if(-f $snortusedrulefilesfile) {
 		if ($line =~ /.*include \$RULE_PATH\/(.*)/) {
 			my $rulefile = $1;
 
-			# Add the rulefile to the %snortrules hash.
-			$snortrules{$rulefile}{'Rulefile'}{'State'} = "on";
+			# Add the rulefile to the %idsrules hash.
+			$idsrules{$rulefile}{'Rulefile'}{'State'} = "on";
 		}
 	}
 }
@@ -150,8 +150,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	my @disabled_sids;
 	my @enabled_rulefiles;
 
-	# Loop through the hash of snortrules.
-	foreach my $rulefile(keys %snortrules) {
+	# Loop through the hash of idsrules.
+	foreach my $rulefile(keys %idsrules) {
 		# Check if the rulefile is enabled.
 		if ($cgiparams{$rulefile} eq "on") {
 			# Add rulefile to the array of enabled rulefiles.
@@ -162,17 +162,17 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 		}
 	}
 
-	# Loop through the hash of snortrules.
-	foreach my $rulefile (keys %snortrules) {
+	# Loop through the hash of idsrules.
+	foreach my $rulefile (keys %idsrules) {
 		# Loop through the single rules of the rulefile.
-		foreach my $sid (keys %{$snortrules{$rulefile}}) {
+		foreach my $sid (keys %{$idsrules{$rulefile}}) {
 			# Skip the current sid if it is not numeric.
 			next unless ($sid =~ /\d+/ );
 
 			# Check if there exists a key in the cgiparams hash for this sid.
 			if (exists($cgiparams{$sid})) {
 				# Look if the rule is disabled.
-				if ($snortrules{$rulefile}{$sid}{'State'} eq "off") {
+				if ($idsrules{$rulefile}{$sid}{'State'} eq "off") {
 					# Check if the state has been set to 'on'.
 					if ($cgiparams{$sid} eq "on") {
 						# Add the sid to the enabled_sids array.
@@ -184,7 +184,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 				}
 			} else {
 				# Look if the rule is enabled.
-				if ($snortrules{$rulefile}{$sid}{'State'} eq "on") {
+				if ($idsrules{$rulefile}{$sid}{'State'} eq "on") {
 					# Check if the state is 'on' and should be disabled.
 					# In this case there is no entry
 					# for the sid in the cgiparams hash.
@@ -469,11 +469,11 @@ END
 	my $rulesetcount = 1;
 
 	# Loop over each rule file
-	foreach my $rulefile (sort keys(%snortrules)) {
+	foreach my $rulefile (sort keys(%idsrules)) {
 		my $rulechecked = '';
 
 		# Check if rule file is enabled
-		if ($snortrules{$rulefile}{'Rulefile'}{'State'} eq 'on') {
+		if ($idsrules{$rulefile}{'Rulefile'}{'State'} eq 'on') {
 			$rulechecked = 'CHECKED';
 		}
 
@@ -501,7 +501,7 @@ END
 		print "<table width='100%'>\n";
 
 		# Loop over rule file rules
-		foreach my $sid (sort {$a <=> $b} keys(%{$snortrules{$rulefile}})) {
+		foreach my $sid (sort {$a <=> $b} keys(%{$idsrules{$rulefile}})) {
 			# Local vars
 			my $ruledefchecked = '';
 
@@ -524,7 +524,7 @@ END
 			}
 
 			# Set rule state
-			if ($snortrules{$rulefile}{$sid}{'State'} eq 'on') {
+			if ($idsrules{$rulefile}{$sid}{'State'} eq 'on') {
 				$ruledefchecked = 'CHECKED';
 			}
 
@@ -532,7 +532,7 @@ END
 			print "<td class='base' width='5%' align='right' $col>\n";
 			print "<input type='checkbox' NAME='$sid' $ruledefchecked>\n";
 			print "</td>\n";
-			print "<td class='base' width='45%' $col>$snortrules{$rulefile}{$sid}{'Description'}</td>";
+			print "<td class='base' width='45%' $col>$idsrules{$rulefile}{$sid}{'Description'}</td>";
 
 			# Increment rule count
 			$lines++;
@@ -605,7 +605,7 @@ sub reload () {
 ## Private function to read-in and parse rules of a given rulefile.
 #
 ## The given file will be read, parsed and all valid rules will be stored by ID,
-## message/description and it's state in the snortrules hash.
+## message/description and it's state in the idsrules hash.
 #
 sub readrulesfile ($) {
 	my $rulefile = shift;
@@ -638,16 +638,16 @@ sub readrulesfile ($) {
 
 			# Check if a rule has been found.
 			if ($sid && $msg) {
-				# Add rule to the snortrules hash.
-				$snortrules{$rulefile}{$sid}{'Description'} = $msg;
+				# Add rule to the idsrules hash.
+				$idsrules{$rulefile}{$sid}{'Description'} = $msg;
 
 				# Grab status of the rule. Check if ruleline starts with a "dash".
 				if ($line =~ /^\#/) {
 					# If yes, the rule is disabled.
-					$snortrules{$rulefile}{$sid}{'State'} = "off";
+					$idsrules{$rulefile}{$sid}{'State'} = "off";
 				} else {
 					# Otherwise the rule is enabled.
-					$snortrules{$rulefile}{$sid}{'State'} = "on";
+					$idsrules{$rulefile}{$sid}{'State'} = "on";
 				}
 			}
 		}
