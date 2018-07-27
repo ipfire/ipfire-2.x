@@ -26,6 +26,9 @@ package IDS;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 
+# Location where all config and settings files are stored.
+our $settingsdir = "${General::swroot}/snort";
+
 # Location and name of the tarball which contains the ruleset.
 our $rulestarball = "/var/tmp/snortrules.tar.gz";
 
@@ -81,11 +84,11 @@ sub checkdiskspace () {
 sub downloadruleset {
 	# Get snort settings.
 	my %snortsettings=();
-	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
+	&General::readhash("$settingsdir/settings", \%snortsettings);
 
 	# Get all available ruleset locations.
 	my %rulesetsources=();
-	&General::readhash("${General::swroot}/snort/ruleset-sources.list", \%rulesetsources);
+	&General::readhash("$settingsdir/ruleset-sources.list", \%rulesetsources);
 
 	# Read proxysettings.
 	my %proxysettings=();
@@ -164,7 +167,7 @@ sub oinkmaster () {
 	openlog('oinkmaster', 'cons,pid', 'user');
 
 	# Call oinkmaster to generate ruleset.
-	open(OINKMASTER, "/usr/local/bin/oinkmaster.pl -v -s -u file://$rulestarball -C /var/ipfire/snort/oinkmaster.conf -o $rulespath|");
+	open(OINKMASTER, "/usr/local/bin/oinkmaster.pl -v -s -u file://$rulestarball -C $settingsdir/oinkmaster.conf -o $rulespath|");
 
 	# Log output of oinkmaster to syslog.
 	while(<OINKMASTER>) {
