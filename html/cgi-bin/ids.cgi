@@ -265,7 +265,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	}
 
 	# Check if enought free disk space is availabe.
-	$errormessage = &IDS::checkdiskspace();
+	if(&IDS::checkdiskspace()) {
+		$errormessage = "$Lang::tr{'not enough disk space'}";
+	}
 
 	# Check if any errors happend.
 	unless ($errormessage) {
@@ -274,12 +276,11 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 		&working_notice("$Lang::tr{'snort working'}");
 
 		# Call subfunction to download the ruleset.
-		$errormessage = &IDS::downloadruleset();
+		if(&IDS::downloadruleset()) {
+			$errormessage = $Lang::tr{'could not download latest updates'};
 
-		# Check if the downloader returned an error.
-		if ($errormessage) {
 			# Call function to store the errormessage.
-			&IDS::log_error($errormessage);
+			&IDS::_store_error_message($errormessage);
 
 			# Preform a reload of the page.
 			&reload();

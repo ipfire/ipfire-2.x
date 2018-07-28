@@ -24,7 +24,6 @@
 package IDS;
 
 require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/lang.pl";
 
 # Location where all config and settings files are stored.
 our $settingsdir = "${General::swroot}/snort";
@@ -59,11 +58,11 @@ sub checkdiskspace () {
 
 			# Check if the available disk space is more than 300MB.
 			if ($available < 300) {
-				# If there is not enough space, print out an error message.
-				my $errormessage = "$Lang::tr{'not enough disk space'} < 300MB, /var $available MB";
+				# Log error to syslog.
+				&_log_to_syslog("Not enough free disk space on /var. Only $available MB from 300 MB available.");
 
-				# Exit function and return the error message.
-				return $errormessage;
+				# Exit function and return "1" - False.
+				return 1;
 			}
 		}
 	}
@@ -120,8 +119,11 @@ sub downloadruleset {
 			# Add proxy server address and port.
 			$proxy_url .= "$peer\:$peerport";
 		} else {
-			# Break and return error message.
-			return "$Lang::tr{'could not download latest updates'}";
+			# Log error message and break.
+			&_log_to_syslog("Could not proper configure the proxy server access.");
+
+			# Return "1" - false.
+			return 1;
 		}
 
 		# Setup proxy settings.
@@ -136,8 +138,9 @@ sub downloadruleset {
 
 	# Abort if no url could be determined for the vendor.
 	unless ($url) {
-		# Abort and return errormessage.
-		return "$Lang::tr{'could not download latest updates'}";
+		# Log error and abort.
+		&_log_to_syslog("Unable to gather a download URL for the selected ruleset.");
+		return 1;
 	}
 
 	# Pass the requested url to the downloader.
@@ -148,8 +151,11 @@ sub downloadruleset {
 
 	# Check if there was any error.
 	unless ($response->is_success) {
-		# Return error message.
-		return "$response->status_line";
+		# Log error message.
+		&_log_to_syslog("Unable to download the ruleset. $response->status_line");
+
+		# Return "1" - false.
+		return 1;
 	}
 
 	# If we got here, everything worked fine. Return nothing.
