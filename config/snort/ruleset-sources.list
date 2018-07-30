@@ -1,0 +1,11 @@
+# Ruleset for registered sourcefire users.
+registered = https://www.snort.org/downloads/registered/snortrules-snapshot-29110.tar.gz?oinkcode=<oinkcode>
+
+# Ruleset for registered sourcefire users with valid subscription.
+subscripted = https://www.snort.org/downloads/registered/snortrules-snapshot-29110.tar.gz?oinkcode=<oinkcode>
+
+# Community rules from sourcefire.
+community = https://www.snort.org/downloads/community/community-rules.tar.gz
+
+# Emerging threads community rules.
+emerging = http://rules.emergingthreats.net/open/snort-2.9.0/emerging.rules.tar.gz

@@ -232,4 +232,5 @@ usr/sbin/snort
 #usr/share/doc/snort/WISHLIST
 #usr/share/doc/snort/generators
 #usr/share/man/man8/snort.8
+var/ipfire/snort/ruleset-sources.list
 var/log/snort
