@@ -26,16 +26,16 @@ package IDS;
 require '/var/ipfire/general-functions.pl';
 
 # Location where all config and settings files are stored.
-our $settingsdir = "${General::swroot}/snort";
+our $settingsdir = "${General::swroot}/suricata";
 
 # Location and name of the tarball which contains the ruleset.
-our $rulestarball = "/var/tmp/snortrules.tar.gz";
+our $rulestarball = "/var/tmp/idsrules.tar.gz";
 
 # File to store any errors, which also will be read and displayed by the wui.
 our $storederrorfile = "/tmp/ids_storederror";
 
 # Location where the rulefiles are stored.
-our $rulespath = "/etc/snort/rules";
+our $rulespath = "/etc/suricata/rules";
 
 #
 ## Function for checking if at least 300MB of free disk space are available
