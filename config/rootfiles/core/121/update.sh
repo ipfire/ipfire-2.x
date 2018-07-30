@@ -61,7 +61,7 @@ fi
 
 BOOTSPACE=`df /boot -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 
-if [ $BOOTSPACE -lt 22000 ]; then
+if [ $BOOTSPACE -lt 19000 ]; then
 	exit_with_error "ERROR cannot update because not enough free space on /boot." 3
 	exit 3
 fi
