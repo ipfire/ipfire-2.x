@@ -10,6 +10,7 @@ srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+usr/local/bin/backupiso
 usr/sbin/dhclient
 usr/share/GeoIP/GeoIP.dat
 var/ipfire/backup/exclude
