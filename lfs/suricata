@@ -83,6 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && make install-conf
 	mv /etc/suricata/suricata.yaml /etc/suricata/suricata-example.yaml
+	install -m 0644 $(DIR_SRC)/config/suricata/suricata.yaml /etc/suricata
 	-mkdir -p /etc/suricata/rules
 	-mkdir -p /var/log/suricata
 	@rm -rf $(DIR_APP)

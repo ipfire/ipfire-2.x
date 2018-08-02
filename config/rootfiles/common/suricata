@@ -2,6 +2,7 @@ etc/suricata
 etc/suricata/classification.config
 etc/suricata/reference.config
 etc/suricata/rules
+etc/suricata/suricata.yaml
 etc/suricata/suricata-example.yaml
 etc/suricata/threshold.config
 usr/bin/suricata
