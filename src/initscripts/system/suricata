@@ -1,0 +1,65 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/suricata
+#
+# Description : Suricata Initscript
+#
+# Author      : Stefan Schantl <stefan.schantl@ipfire.org>
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin; export PATH
+
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/suricata/settings)
+
+case "$1" in
+        start)
+		# Get amount of CPU cores.
+		NFQUEUES=
+		CPUCOUNT=0
+		while read line; do
+			[ "$line" ] && [ -z "${line%processor*}" ] && NFQUEUES+="-q $CPUCOUNT " && ((CPUCOUNT++))
+		done </proc/cpuinfo
+
+		boot_mesg "Starting Intrusion Detection System..."
+                /usr/bin/suricata -c /etc/suricata/suricata.yaml -D $NFQUEUES
+               	evaluate_retval
+	;;
+
+        stop)
+		boot_mesg "Stopping Intrusion Detection System..."
+		killproc -p /var/run/suricata.pid /var/run
+
+		# Remove suricata control socket.              
+		rm /var/run/suricata/* >/dev/null 2>/dev/null
+
+		# Don't report returncode of rm if suricata was not started
+		exit 0
+        ;;
+                
+        status)
+                statusproc /usr/bin/suricata
+                ;;
+                
+        restart)
+                $0 stop
+                $0 start
+                ;;
+                
+        *)
+                echo "Usage: $0 {start|stop|restart|status}"
+                exit 1
+                ;;
+esac
+
+chmod 644 /var/log/suricata/* 2>/dev/null
+
+# End $rc_base/init.d/suricata

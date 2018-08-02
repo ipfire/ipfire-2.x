@@ -79,6 +79,7 @@ etc/rc.d/init.d/snort
 etc/rc.d/init.d/squid
 etc/rc.d/init.d/sshd
 etc/rc.d/init.d/static-routes
+etc/rc.d/init.d/suricata
 etc/rc.d/init.d/swap
 etc/rc.d/init.d/swconfig
 etc/rc.d/init.d/sysctl
