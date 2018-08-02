@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5d98692
+VER        = 7b5835fd37630d18ac0c755329172f6a17c1af29
 
 THISAPP    = linux-firmware-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a9e561b3070508614fdaf3386aaa6745
+$(DL_FILE)_MD5 = 09fc172e36a431c44ecb8171c4c07a3c
 
 install : $(TARGET)
 
