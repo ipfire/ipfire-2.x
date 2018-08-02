@@ -1294,6 +1294,7 @@ buildipfire() {
   lfsmake2 libhtp
   lfsmake2 suricata
   lfsmake2 oinkmaster
+  lfsmake2 ids-ruleset-sources
   lfsmake2 squid
   lfsmake2 squidguard
   lfsmake2 calamaris
