@@ -37,6 +37,10 @@ our $storederrorfile = "/tmp/ids_storederror";
 # Location where the rulefiles are stored.
 our $rulespath = "/etc/suricata/rules";
 
+# File which contains a list of all supported ruleset sources.
+# (Sourcefire, Emergingthreads, etc..)
+our $rulesetsourcesfile = "$settingsdir/ruleset-sources";
+
 #
 ## Function for checking if at least 300MB of free disk space are available
 ## on the "/var" partition.
@@ -87,7 +91,7 @@ sub downloadruleset {
 
 	# Get all available ruleset locations.
 	my %rulesetsources=();
-	&General::readhash("$settingsdir/ruleset-sources.list", \%rulesetsources);
+	&General::readhash($rulesetsourcesfile, \%rulesetsources);
 
 	# Read proxysettings.
 	my %proxysettings=();
