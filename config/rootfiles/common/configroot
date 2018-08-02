@@ -176,8 +176,8 @@ var/ipfire/remote
 #var/ipfire/remote/settings
 var/ipfire/sensors
 #var/ipfire/sensors/settings
-var/ipfire/snort
-#var/ipfire/snort/settings
+var/ipfire/suricata
+#var/ipfire/suricata/settings
 var/ipfire/time
 #var/ipfire/time/settings
 var/ipfire/updatexlrator
