@@ -75,7 +75,6 @@ etc/rc.d/init.d/rngd
 etc/rc.d/init.d/sendsignals
 etc/rc.d/init.d/setclock
 etc/rc.d/init.d/smartenabler
-etc/rc.d/init.d/snort
 etc/rc.d/init.d/squid
 etc/rc.d/init.d/sshd
 etc/rc.d/init.d/static-routes

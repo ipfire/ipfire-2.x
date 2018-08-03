@@ -1289,7 +1289,6 @@ buildipfire() {
   lfsmake2 setup
   lfsmake2 libdnet
   lfsmake2 daq
-  lfsmake2 snort
   lfsmake2 yaml
   lfsmake2 libhtp
   lfsmake2 suricata
