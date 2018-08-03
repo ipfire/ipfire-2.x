@@ -314,8 +314,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 		# Store settings into settings file.
 		&General::writehash("$IDS::settingsdir/settings", \%cgiparams);
 
-		# Call snortctrl to restart snort
-		system('/usr/local/bin/snortctrl restart >/dev/null');
+		# Call suricatactrl to restart the IDS
+		system('/usr/local/bin/suricatactrl restart >/dev/null');
 	}
 }
 
