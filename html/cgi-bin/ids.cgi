@@ -289,9 +289,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 		}
 	}
 # Save snort settings.
-} elsif ($cgiparams{'SNORT'} eq $Lang::tr{'save'}) {
+} elsif ($cgiparams{'IDS'} eq $Lang::tr{'save'}) {
 	# Prevent form name from been stored in conf file.
-	delete $cgiparams{'SNORT'};
+	delete $cgiparams{'IDS'};
 
 	# Check if an oinkcode has been provided.
 	if ($cgiparams{'OINKCODE'}) {
@@ -395,8 +395,6 @@ END
 				<td align='center' width='75%' bgcolor='${Header::colourred}'><font color='white'><strong>$Lang::tr{'stopped'}</strong></font></td>
 			</tr>
 		</table>
-
-		<br>br>
 END
 }
 &Header::closebox();
@@ -518,7 +516,7 @@ print <<END
 
 	<table width='100%'>
 		<tr>
-			<td align='right'><input type='submit' name='SNORT' value='$Lang::tr{'save'}' /></td>
+			<td align='right'><input type='submit' name='IDS' value='$Lang::tr{'save'}' /></td>
 		</tr>
 	</table>
 </form>
