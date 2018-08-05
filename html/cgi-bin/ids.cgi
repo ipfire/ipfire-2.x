@@ -32,9 +32,8 @@ require "${General::swroot}/ids-functions.pl";
 
 my %color = ();
 my %mainsettings = ();
-my %netsettings = ();
 my %idsrules = ();
-my %snortsettings=();
+my %idssettings=();
 my %rulesetsources = ();
 my %cgiparams=();
 my %checked=();
@@ -44,21 +43,14 @@ my %selected=();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
-# Get netsettings.
-&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+# Get the available network zones, based on the config type of the system and store
+# the list of zones in an array.
+my @network_zones = &IDS::get_available_network_zones();
 
 my $idsusedrulefilesfile = "$IDS::settingsdir/suricata-used-rulefiles.yaml";
 my $errormessage;
 
 &Header::showhttpheaders();
-
-# Default settings for snort.
-$snortsettings{'ENABLE_SNORT'} = 'off';
-$snortsettings{'ENABLE_SNORT_GREEN'} = 'off';
-$snortsettings{'ENABLE_SNORT_BLUE'} = 'off';
-$snortsettings{'ENABLE_SNORT_ORANGE'} = 'off';
-$snortsettings{'RULES'} = '';
-$snortsettings{'OINKCODE'} = '';
 
 #Get GUI values
 &Header::getcgihash(\%cgiparams);
@@ -319,27 +311,18 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	}
 }
 
-# Read-in snortsettings
-&General::readhash("$IDS::settingsdir/settings", \%snortsettings);
+# Read-in idssettings
+&General::readhash("$IDS::settingsdir/settings", \%idssettings);
 
-$checked{'ENABLE_SNORT'}{'off'} = '';
-$checked{'ENABLE_SNORT'}{'on'} = '';
-$checked{'ENABLE_SNORT'}{$snortsettings{'ENABLE_SNORT'}} = "checked='checked'";
-$checked{'ENABLE_SNORT_GREEN'}{'off'} = '';
-$checked{'ENABLE_SNORT_GREEN'}{'on'} = '';
-$checked{'ENABLE_SNORT_GREEN'}{$snortsettings{'ENABLE_SNORT_GREEN'}} = "checked='checked'";
-$checked{'ENABLE_SNORT_BLUE'}{'off'} = '';
-$checked{'ENABLE_SNORT_BLUE'}{'on'} = '';
-$checked{'ENABLE_SNORT_BLUE'}{$snortsettings{'ENABLE_SNORT_BLUE'}} = "checked='checked'";
-$checked{'ENABLE_SNORT_ORANGE'}{'off'} = '';
-$checked{'ENABLE_SNORT_ORANGE'}{'on'} = '';
-$checked{'ENABLE_SNORT_ORANGE'}{$snortsettings{'ENABLE_SNORT_ORANGE'}} = "checked='checked'";
+$checked{'ENABLE_IDS'}{'off'} = '';
+$checked{'ENABLE_IDS'}{'on'} = '';
+$checked{'ENABLE_IDS'}{$idssettings{'ENABLE_IDS'}} = "checked='checked'";
 $selected{'RULES'}{'nothing'} = '';
 $selected{'RULES'}{'community'} = '';
 $selected{'RULES'}{'emerging'} = '';
 $selected{'RULES'}{'registered'} = '';
 $selected{'RULES'}{'subscripted'} = '';
-$selected{'RULES'}{$snortsettings{'RULES'}} = "selected='selected'";
+$selected{'RULES'}{$idssettings{'RULES'}} = "selected='selected'";
 
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
 
@@ -382,33 +365,60 @@ print <<END
 	<table width='100%' border='0'>
 		<tr>
 			<td class='base' width='25%'>
-				<input type='checkbox' name='ENABLE_SNORT' $checked{'ENABLE_SNORT'}{'on'}>RED Snort
+				<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>$Lang::tr{'ids activate'} $Lang::tr{'intrusion detection system'}
 			</td>
 
 			<td class='base' width='25%'>
-				<input type='checkbox' name='ENABLE_SNORT_GREEN' $checked{'ENABLE_SNORT_GREEN'}{'on'}>GREEN Snort
+				&nbsp
+			</td>
+		</tr>
+
+		<tr>
+			<td colspan='2'><br><br>
+		</tr>
+
+		<tr>
+			<td class='base' width='25%'>
+				<b>$Lang::tr{'ids analyze incomming traffic'}</b>
 			</td>
 
 			<td class='base' width='25%'>
+				<b>$Lang::tr{'ids analyze routing traffic'}</b>
+			</td>
+		</tr>
 END
 ;
 
-# Check if a blue device is configured.
-if ($netsettings{'BLUE_DEV'}) {
-  print "<input type='checkbox' name='ENABLE_SNORT_BLUE' $checked{'ENABLE_SNORT_BLUE'}{'on'} />BLUE Snort\n";
-}
+# Loop through the array of available networks and print config options.
+foreach my $zone (@network_zones) {
+	my $checked_input;
+	my $checked_forward;
 
-print "</td>\n";
+	# Convert current zone name to upper case.
+	my $zone_upper = uc($zone);
 
-print "<td width='25%'>\n";
+	# Grab checkbox status from settings hash.
+	if ($idssettings{"ENABLE_IDS_INPUT_$zone_upper"} eq "on") {
+		$checked_input = "checked = 'checked'";
+	}
 
-# Check if an orange device is configured.
-if ($netsettings{'ORANGE_DEV'}) {
-  print "<input type='checkbox' name='ENABLE_SNORT_ORANGE' $checked{'ENABLE_SNORT_ORANGE'}{'on'} />ORANGE Snort\n";
+	# Do the same for the forward setting.
+	if ($idssettings{"ENABLE_IDS_FORWARD_$zone_upper"} eq "on") {
+		$checked_forward = "checked = 'checked'";
+	}
+
+	print "<tr>\n";
+	print "<td class='base' width='25%'>\n";
+	print "<input type='checkbox' name='ENABLE_IDS_INPUT_$zone_upper' $checked_input>$Lang::tr{'ids active on'} $Lang::tr{$zone}\n";
+	print "</td>\n";
+
+	print "<td class='base' width='25%'>\n";
+	print "<input type='checkbox' name='ENABLE_IDS_FORWARD_$zone_upper' $checked_forward>$Lang::tr{'ids active on'} $Lang::tr{$zone}\n";
+	print "</td>\n";
+	print "</tr>\n";
 }
 
 print <<END
-			</td>
 		</tr>
 
 		<tr>
@@ -438,7 +448,7 @@ print <<END
 		</tr>
 
 		<tr>
-			<td colspan='4' nowrap='nowrap'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$snortsettings{'OINKCODE'}'></td>
+			<td colspan='4' nowrap='nowrap'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$idssettings{'OINKCODE'}'></td>
 		</tr>
 
 		<tr>
