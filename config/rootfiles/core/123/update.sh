@@ -51,6 +51,9 @@ ldconfig
 /etc/init.d/unbound restart
 /etc/init.d/squid start
 
+# rebuild initrd to add early microcode updates
+rebuild-initrd
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
