@@ -41,6 +41,9 @@ our $rulespath = "/etc/suricata/rules";
 # (Sourcefire, Emergingthreads, etc..)
 our $rulesetsourcesfile = "$settingsdir/ruleset-sources";
 
+# The pidfile of the IDS.
+our $idspidfile = "/var/run/suricata.pid";
+
 #
 ## Function for checking if at least 300MB of free disk space are available
 ## on the "/var" partition.
@@ -288,6 +291,34 @@ sub get_available_network_zones () {
 
 	# Return them.
 	return @network_zones;
+}
+
+#
+## Function to check if the IDS is running.
+#
+sub ids_is_running () {
+	if(-f $idspidfile) {
+		# Open PID file for reading.
+		open(PIDFILE, "$idspidfile") or die "Could not open $idspidfile. $!\n";
+
+		# Grab the process-id.
+		my $pid = <PIDFILE>;
+
+		# Close filehandle.
+		close(PIDFILE);
+
+		# Remove any newline.
+		chomp($pid);
+
+		# Check if a directory for the process-id exists in proc.
+		if(-d "/proc/$pid") {
+			# The IDS daemon is running return the process id.
+			return $pid;
+		}
+	}
+
+	# Return nothing - IDS is not running.
+	return;
 }
 
 1;
