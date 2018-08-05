@@ -175,7 +175,7 @@ diff -Naur linux-4.9.8.org/arch/x86/platform/apu/apu2-led.c linux-4.9.8/arch/x86
 +		goto out;
 +
 +	product = dmi_get_system_info(DMI_PRODUCT_NAME);
-+	if (!product || strcmp(product, "apu2"))
++	if (!product || (strcmp(product, "PC Engines apu2") && strcmp(product, "apu2")) )
 +			goto out;
 +
 +	printk(KERN_INFO "%s: system is recognized as \"%s %s\"\n",
