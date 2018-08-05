@@ -347,7 +347,62 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
+# Draw current state of the IDS
 &Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system'});
+
+# Check if the IDS is running and obtain the process-id.
+my $pid = &IDS::ids_is_running();
+
+# Display some useful information, if suricata daemon is running.
+if ($pid) {
+	# Gather used memory.
+	my $memory = &get_memory_usage($pid);
+
+	print <<END;
+		<table width='95%' cellspacing='0' class='tbl'>
+			<tr>
+				<th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'intrusion detection'}</strong></th>
+			</tr>
+
+			<tr>
+				<td class='base'>$Lang::tr{'guardian daemon'}</td>
+				<td align='center' colspan='2' width='75%' bgcolor='${Header::colourgreen}'><font color='white'><strong>$Lang::tr{'running'}</strong></font></td>
+			</tr>
+
+			<tr>
+				<td class='base'></td>
+				<td bgcolor='$color{'color20'}' align='center'><strong>PID</strong></td>
+				<td bgcolor='$color{'color20'}' align='center'><strong>$Lang::tr{'memory'}</strong></td>
+			</tr>
+
+			<tr>
+				<td class='base'></td>
+				<td bgcolor='$color{'color22'}' align='center'>$pid</td>
+				<td bgcolor='$color{'color22'}' align='center'>$memory KB</td>
+			</tr>
+		</table>
+END
+} else {
+	# Otherwise display a hint that the service is not launched.
+	print <<END;
+		<table width='95%' cellspacing='0' class='tbl'>
+			<tr>
+				<th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'intrusion detection'}</strong></th>
+			</tr>
+
+			<tr>
+				<td class='base'>$Lang::tr{'guardian daemon'}</td>
+				<td align='center' width='75%' bgcolor='${Header::colourred}'><font color='white'><strong>$Lang::tr{'stopped'}</strong></font></td>
+			</tr>
+		</table>
+
+		<br>br>
+END
+}
+&Header::closebox();
+
+# Draw elements for IDS configuration.
+&Header::openbox('100%', 'center', $Lang::tr{'settings'});
 
 my $rulesdate;
 
@@ -667,3 +722,33 @@ sub readrulesfile ($) {
 		}
         }
 }
+
+# Function to get the used memory of a given process-id.
+sub get_memory_usage($) {
+	my $pid = @_;
+
+	my $memory=0;
+
+	# Try to open statm file for the given process-id on the pseudo
+	# file system proc.
+        if (open(FILE, "/proc/$pid/statm")) {
+		# Read file content.
+                my $temp = <FILE>;
+
+		# Splitt file content and store in an array.
+                my @memory = split(/ /,$temp);
+
+		# Close file handle.
+                close(FILE);
+
+		# Calculate memory usage.
+		$memory+=$memory[0];
+
+		# Return memory usage.
+		return $memory;
+        }
+
+	# If the file could not be open, return nothing.
+	return;
+}
+
