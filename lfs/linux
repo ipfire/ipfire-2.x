@@ -37,7 +37,6 @@ CXXFLAGS   =
 PAK_VER    = 76
 DEPS	   = ""
 
-KERNEL_ARCH   = $(BUILD_ARCH)
 KERNEL_TARGET = bzImage
 HEADERS_ARCH  = $(BUILD_PLATFORM)
 
@@ -52,6 +51,7 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 endif
 
 ifeq "$(BUILD_ARCH)" "armv5tel"
+	KERNEL_ARCH  = arm
 	KERNEL_TARGET = zImage
 endif
 
