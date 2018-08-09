@@ -86,7 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-e 's/^#\?Protocol .*$$/Protocol 2/' \
 		-e 's/^#\?LoginGraceTime .*$$/LoginGraceTime 30s/' \
 		-e 's/^#\?PubkeyAuthentication .*$$/PubkeyAuthentication yes/' \
-		-e 's/^#\?PasswordAuthentication .*$$/PasswordAuthentication yes/' \
+		-e 's/^#\?PasswordAuthentication .*$$/PasswordAuthentication no/' \
 		-e 's/^#\?MaxStartups .*$$/MaxStartups 5/' \
 		-e 's/^#\?IgnoreUserKnownHosts .*$$/IgnoreUserKnownHosts yes/' \
 		-e 's/^#\?UsePAM .*$$//' \
