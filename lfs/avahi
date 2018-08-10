@@ -34,7 +34,7 @@ TARGET = $(DIR_INFO)/$(THISAPP)
 PROG       = avahi
 PAK_VER    = 4
 
-DEPS	   = "dbus libdaemon"
+DEPS	   = "libdaemon"
 
 CFLAGS    += -U_FORTIFY_SOURCE
 
@@ -89,6 +89,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-gtk \
 		--disable-gtk3 \
 		--disable-pygtk \
+		--disable-dbus \
 		--disable-python \
 		--disable-pygobject \
 		--disable-python-dbus \

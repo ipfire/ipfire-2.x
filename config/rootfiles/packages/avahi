@@ -7,7 +7,6 @@ etc/avahi/services
 etc/avahi/services/sftp-ssh.service
 etc/avahi/services/smb.service
 etc/avahi/services/ssh.service
-etc/dbus-1/system.d/avahi-dbus.conf
 etc/rc.d/init.d/avahi
 usr/bin/avahi-browse
 usr/bin/avahi-browse-domains
@@ -90,16 +89,6 @@ usr/sbin/avahi-daemon
 usr/sbin/avahi-dnsconfd
 usr/share/avahi
 usr/share/avahi/avahi-service.dtd
-#usr/share/dbus-1/interfaces
-usr/share/dbus-1/interfaces/org.freedesktop.Avahi.AddressResolver.xml
-usr/share/dbus-1/interfaces/org.freedesktop.Avahi.DomainBrowser.xml
-usr/share/dbus-1/interfaces/org.freedesktop.Avahi.EntryGroup.xml
-usr/share/dbus-1/interfaces/org.freedesktop.Avahi.HostNameResolver.xml
-usr/share/dbus-1/interfaces/org.freedesktop.Avahi.RecordBrowser.xml
-usr/share/dbus-1/interfaces/org.freedesktop.Avahi.Server.xml
-usr/share/dbus-1/interfaces/org.freedesktop.Avahi.ServiceBrowser.xml
-usr/share/dbus-1/interfaces/org.freedesktop.Avahi.ServiceResolver.xml
-usr/share/dbus-1/interfaces/org.freedesktop.Avahi.ServiceTypeBrowser.xml
 #usr/share/locale/ach
 #usr/share/locale/ach/LC_MESSAGES
 #usr/share/locale/ach/LC_MESSAGES/avahi.mo
