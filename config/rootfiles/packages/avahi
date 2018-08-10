@@ -56,7 +56,6 @@ usr/bin/avahi-set-host-name
 #usr/include/avahi-gobject/ga-service-browser.h
 #usr/include/avahi-gobject/ga-service-resolver.h
 #usr/lib/avahi
-usr/lib/avahi/service-types.db
 #usr/lib/libavahi-client.a
 #usr/lib/libavahi-client.la
 #usr/lib/libavahi-client.so
@@ -81,19 +80,16 @@ usr/lib/libavahi-glib.so.1.0.2
 #usr/lib/libavahi-gobject.la
 #usr/lib/libavahi-gobject.so
 usr/lib/libavahi-gobject.so.0
-usr/lib/libavahi-gobject.so.0.0.4
+usr/lib/libavahi-gobject.so.0.0.5
 #usr/lib/pkgconfig/avahi-client.pc
 #usr/lib/pkgconfig/avahi-core.pc
 #usr/lib/pkgconfig/avahi-glib.pc
 #usr/lib/pkgconfig/avahi-gobject.pc
-usr/lib/python2.7/site-packages/avahi
-usr/lib/python2.7/site-packages/avahi/ServiceTypeDatabase.py
 usr/sbin/avahi-autoipd
 usr/sbin/avahi-daemon
 usr/sbin/avahi-dnsconfd
 usr/share/avahi
 usr/share/avahi/avahi-service.dtd
-usr/share/avahi/service-types
 #usr/share/dbus-1/interfaces
 usr/share/dbus-1/interfaces/org.freedesktop.Avahi.AddressResolver.xml
 usr/share/dbus-1/interfaces/org.freedesktop.Avahi.DomainBrowser.xml
@@ -139,6 +135,7 @@ usr/share/dbus-1/interfaces/org.freedesktop.Avahi.ServiceTypeBrowser.xml
 #usr/share/locale/lv/LC_MESSAGES/avahi.mo
 #usr/share/locale/ms/LC_MESSAGES/avahi.mo
 #usr/share/locale/nl/LC_MESSAGES/avahi.mo
+#usr/share/locale/oc/LC_MESSAGES/avahi.mo
 #usr/share/locale/pl/LC_MESSAGES/avahi.mo
 #usr/share/locale/pt_BR/LC_MESSAGES/avahi.mo
 #usr/share/locale/ro/LC_MESSAGES/avahi.mo
@@ -152,7 +149,6 @@ usr/share/dbus-1/interfaces/org.freedesktop.Avahi.ServiceTypeBrowser.xml
 #usr/share/locale/uk/LC_MESSAGES/avahi.mo
 #usr/share/locale/zh_CN/LC_MESSAGES/avahi.mo
 #usr/share/locale/zh_TW/LC_MESSAGES/avahi.mo
-#usr/share/man/man1/avahi-bookmarks.1
 #usr/share/man/man1/avahi-browse-domains.1
 #usr/share/man/man1/avahi-browse.1
 #usr/share/man/man1/avahi-publish-address.1
