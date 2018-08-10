@@ -1329,6 +1329,7 @@ buildipfire() {
   lfsmake2 dbus
   lfsmake2 intltool
   lfsmake2 libdaemon
+  lfsmake2 avahi
   lfsmake2 cups
   lfsmake2 lcms2
   lfsmake2 ghostscript
