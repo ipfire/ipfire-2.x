@@ -44,6 +44,12 @@ our $rulesetsourcesfile = "$settingsdir/ruleset-sources";
 # The pidfile of the IDS.
 our $idspidfile = "/var/run/suricata.pid";
 
+# Location of suricatactrl.
+my $suricatactrl = "/usr/local/bin/suricatactrl";
+
+# Array with allowed commands of suricatactrl.
+my @suricatactrl_cmds = ( 'start', 'stop', 'restart', 'reload' );
+
 #
 ## Function for checking if at least 300MB of free disk space are available
 ## on the "/var" partition.
@@ -318,6 +324,31 @@ sub ids_is_running () {
 	}
 
 	# Return nothing - IDS is not running.
+	return;
+}
+
+#
+## Function to call suricatactrl binary with a given command.
+#
+sub call_suricatactrl ($) {
+	# Get called option.
+	my ($option) = @_;
+
+	# Loop through the array of supported commands and check if
+	# the given one is part of it.
+	foreach my $cmd (@suricatactrl_cmds) {
+		# Skip current command unless the given one has been found.
+		next unless($cmd eq $option);
+
+		# Call the suricatactrl binary and pass the requrested
+		# option to it.
+		system("$suricatactrl $option &>/dev/null");
+
+		# Return "1" - True.
+		return 1;
+	}
+
+	# Command not found - return nothing.
 	return;
 }
 
