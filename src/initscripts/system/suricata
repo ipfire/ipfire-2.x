@@ -53,9 +53,14 @@ case "$1" in
                 $0 stop
                 $0 start
                 ;;
+	reload)
+		# Send SIGUSR2 to the suricata process to perform a reload
+		# of the ruleset.
+		kill -USR2 $(pidof suricata)
+		;;
                 
         *)
-                echo "Usage: $0 {start|stop|restart|status}"
+                echo "Usage: $0 {start|stop|restart|reload|status}"
                 exit 1
                 ;;
 esac
