@@ -17,6 +17,7 @@ usr/bin/cancel
 #usr/bin/cups-config
 usr/bin/cupstestdsc
 usr/bin/cupstestppd
+usr/bin/ippfind
 usr/bin/ipptool
 usr/bin/lp
 usr/bin/lpoptions
@@ -47,6 +48,7 @@ usr/bin/ppdpo
 #usr/include/cups/versioning.h
 usr/lib/cups
 usr/lib/cups/backend
+usr/lib/cups/backend/dnssd
 usr/lib/cups/backend/http
 usr/lib/cups/backend/https
 usr/lib/cups/backend/ipp
@@ -721,6 +723,7 @@ usr/share/locale/ru/cups_ru.po
 #usr/share/man/man1/cups.1.gz
 #usr/share/man/man1/cupstestdsc.1.gz
 #usr/share/man/man1/cupstestppd.1.gz
+#usr/share/man/man1/ippfind.1.gz
 #usr/share/man/man1/ipptool.1.gz
 #usr/share/man/man1/lp.1.gz
 #usr/share/man/man1/lpoptions.1.gz

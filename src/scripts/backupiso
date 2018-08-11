@@ -18,8 +18,8 @@ esac
 
 COREVER=$(cat /opt/pakfire/db/core/mine)
 # FIXME: edit this lines before release
-URL="https://downloads.ipfire.org/releases/ipfire-2.x/2.19-core$COREVER/"
-ISO="ipfire-2.19.$arch-full-core$COREVER.iso"
+URL="https://downloads.ipfire.org/releases/ipfire-2.x/2.21-core$COREVER/"
+ISO="ipfire-2.21.$arch-full-core$COREVER.iso"
 
 if [ -z $1 ]; then
 	echo usage: $0 backup-file

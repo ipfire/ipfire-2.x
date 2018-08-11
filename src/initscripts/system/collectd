@@ -92,7 +92,7 @@ case "$1" in
 		fi
 
 		# Enable cpufreq plugin if cpufreq found
-		if [ ! -e  /sys/devices/system/cpu/cpufreq/policy0/*_cur_freq ]; then
+		if [ ! -e  /sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq ]; then
 			sed -i -e "s|^LoadPlugin cpufreq|#LoadPlugin cpufreq|g" /etc/collectd.conf
 		else
 			sed -i -e "s|^#LoadPlugin cpufreq|LoadPlugin cpufreq|g" /etc/collectd.conf

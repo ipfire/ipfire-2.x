@@ -231,6 +231,9 @@ import_aws_configuration() {
 		# Enable SSH
 		sed -e "s/ENABLE_SSH=.*/ENABLE_SSH=on/g" -i /var/ipfire/remote/settings
 
+		# Disable SSH password authentication
+		sed -e "s/^ENABLE_SSH_PASSWORDS=.*/ENABLE_SSH_PASSWORDS=off/" -i /var/ipfire/remote/settings
+
 		# Enable SSH key authentication
 		sed -e "s/^ENABLE_SSH_KEYS=.*/ENABLE_SSH_KEYS=on/" -i /var/ipfire/remote/settings
 

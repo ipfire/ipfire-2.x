@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/cups-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
-PAK_VER    = 16
+PAK_VER    = 17
 
-DEPS       = "cups-filters dbus ghostscript krb5 libtiff"
+DEPS       = "avahi cups-filters dbus ghostscript krb5 libtiff"
 
 ###############################################################################
 # Top-level Rules
@@ -83,10 +83,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--sysconfdir=/var/ipfire \
 			--localstatedir=/var \
 			--enable-debug \
+			--enable-avahi \
 			--enable-dbus \
 			--enable-gnutls \
-			--enable-libusb \
-			--disable-avahi
+			--enable-libusb
 
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install

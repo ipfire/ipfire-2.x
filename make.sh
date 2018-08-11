@@ -871,6 +871,28 @@ update_language_list() {
 	done | sort -u > "${path}/LINGUAS"
 }
 
+contributors() {
+	local commits name
+
+	git shortlog --summary --numbered | while read -r commits name; do
+		echo "${name}"
+	done | grep -vE -e "^(alpha197|morlix|root|ummeegge)$" -e "via Development$" -e "@" -e "#$"
+}
+
+update_contributors() {
+	echo -n "Updating list of contributors"
+
+	local contributors="$(contributors | paste -sd , - | sed -e "s/,/&\\\\n/g")"
+
+	# Edit contributors into credits.cgi
+	awk -i inplace \
+		"/<!-- CONTRIBUTORS -->/{ p=1; print; printf \"${contributors}\n\"}/<!-- END -->/{ p=0 } !p" \
+		"${BASEDIR}/html/cgi-bin/credits.cgi"
+
+	print_status DONE
+	return 0
+}
+
 # Load configuration file
 if [ -f .config ]; then
 	. .config
@@ -1307,6 +1329,7 @@ buildipfire() {
   lfsmake2 dbus
   lfsmake2 intltool
   lfsmake2 libdaemon
+  lfsmake2 avahi
   lfsmake2 cups
   lfsmake2 lcms2
   lfsmake2 ghostscript
@@ -1864,8 +1887,11 @@ lang)
 	update_language_list ${BASEDIR}/src/setup/po
 	print_status DONE
 	;;
+update-contributors)
+	update_contributors
+	;;
 *)
-	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain}"
+	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain|update-contributors}"
 	cat doc/make.sh-usage
 	;;
 esac

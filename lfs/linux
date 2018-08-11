@@ -34,12 +34,12 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 75
+PAK_VER    = 76
 DEPS	   = ""
 
+HEADERS_ARCH  = $(BUILD_PLATFORM)
 KERNEL_ARCH   = $(BUILD_ARCH)
 KERNEL_TARGET = bzImage
-HEADERS_ARCH  = $(BUILD_PLATFORM)
 
 ifeq "$(BUILD_ARCH)" "i586"
 	KERNEL_ARCH = i386
@@ -52,6 +52,7 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 endif
 
 ifeq "$(BUILD_ARCH)" "armv5tel"
+	KERNEL_ARCH  = arm
 	KERNEL_TARGET = zImage
 endif
 

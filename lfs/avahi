@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2017   IPFire Team  <info@ipfire.org>                    #
+# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -18,24 +18,25 @@
 #                                                                             #
 ###############################################################################
 
-
 ###############################################################################
 # Definitions
 ###############################################################################
 
 include Config
 
-VER        = 2.4.34
+VER        = 0.7
 
-THISAPP    = httpd-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = avahi-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET = $(DIR_INFO)/$(THISAPP)
+PROG       = avahi
+PAK_VER    = 5
 
-TARGET     = $(DIR_INFO)/$(THISAPP)
+DEPS	   = "libdaemon"
 
-DEPS       = "aprutil pcre"
+CFLAGS    += -U_FORTIFY_SOURCE
 
 ###############################################################################
 # Top-level Rules
@@ -45,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 818adca52f3be187fe45d6822755be95
+$(DL_FILE)_MD5 = d76c59d0882ac6c256d70a2a585362a6
 
 install : $(TARGET)
 
@@ -54,6 +55,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -74,49 +78,32 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	### Add IPFire's layout, too
-	echo "# IPFire layout" >> $(DIR_APP)/config.layout
-	echo "<Layout IPFire>" >> $(DIR_APP)/config.layout
-	echo "    prefix:             /usr" >> $(DIR_APP)/config.layout
-	echo "    exec_prefix:        /usr" >> $(DIR_APP)/config.layout
-	echo "    bindir:             /usr/bin" >> $(DIR_APP)/config.layout
-	echo "    sbindir:            /usr/sbin" >> $(DIR_APP)/config.layout
-	echo "    libdir:             /usr/lib" >> $(DIR_APP)/config.layout
-	echo "    libexecdir:         /usr/lib/apache" >> $(DIR_APP)/config.layout
-	echo "    mandir:             /usr/share/man" >> $(DIR_APP)/config.layout
-	echo "    sysconfdir:         /etc/httpd/conf" >> $(DIR_APP)/config.layout
-	echo "    datadir:            /srv/web/ipfire" >> $(DIR_APP)/config.layout
-	echo "    installbuilddir:    /usr/lib/apache/build" >> $(DIR_APP)/config.layout
-	echo "    errordir:           /srv/web/ipfire/error" >> $(DIR_APP)/config.layout
-	echo "    iconsdir:           /srv/web/ipfire/icons" >> $(DIR_APP)/config.layout
-	echo "    htdocsdir:          /srv/web/ipfire/htdocs" >> $(DIR_APP)/config.layout
-	echo "    manualdir:          /srv/web/ipfire/manual" >> $(DIR_APP)/config.layout
-	echo "    cgidir:             /srv/web/ipfire/cgi-bin" >> $(DIR_APP)/config.layout
-	echo "    includedir:         /usr/include/apache" >> $(DIR_APP)/config.layout
-	echo "    localstatedir:      /srv/web/ipfire" >> $(DIR_APP)/config.layout
-	echo "    runtimedir:         /var/run" >> $(DIR_APP)/config.layout
-	echo "    logfiledir:         /var/log/httpd" >> $(DIR_APP)/config.layout
-	echo "    proxycachedir:      /var/cache/apache/proxy" >> $(DIR_APP)/config.layout
-	echo "</Layout>" >> $(DIR_APP)/config.layout
-
-	cd $(DIR_APP) && ./configure --enable-layout=IPFire \
-				--enable-ssl --enable-mods-shared=all --enable-proxy --with-mpm=event
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--localstatedir=/var \
+		--with-avahi-user=avahi \
+		--disable-qt3 \
+		--disable-qt4 \
+		--disable-gtk \
+		--disable-gtk3 \
+		--disable-pygtk \
+		--disable-dbus \
+		--disable-python \
+		--disable-pygobject \
+		--disable-python-dbus \
+		--disable-mono \
+		--disable-monodoc \
+		--with-distro=none
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	chown -v root:root /usr/lib/apache/httpd.exp \
-	    /usr/bin/{apxs,dbmmanage} \
-	    /usr/sbin/apachectl \
-	    /usr/share/man/man1/{ab,apxs,dbmmanage,ht{dbm,digest,passwd,txt2dbm},logresolve}.1 \
-	    /usr/share/man/man8/{apachectl,htcacheclean,httpd}.8 \
-	    /usr/share/man/man8/{rotatelogs,suexec}.8
 
-	# Install apache config
-	cp -rf $(DIR_CONF)/httpd/* /etc/httpd/conf
-	touch /etc/httpd/conf/hostname.conf
+	# Install configuration for samba
+	cp -avf $(DIR_SRC)/config/avahi/smb.service /etc/avahi/services/smb.service
 
-	# Create captive logging directory
-	-mkdir -pv /var/log/httpd/captive
+	# Install initscript
+	$(call INSTALL_INITSCRIPT,avahi)
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
