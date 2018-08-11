@@ -255,6 +255,12 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	# Call oinkmaster to alter the ruleset.
 	&IDS::oinkmaster();
 
+	# Check if the IDS is running.
+	if(&IDS::is_ids_running()) {
+		# Call suricatactrl to perform a reload.
+		&IDS::call_suricatactrl("reload");
+	}
+
 	# Reload page.
 	&reload();
 
@@ -289,6 +295,12 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 			# Call subfunction to launch oinkmaster.
 			&IDS::oinkmaster();
 
+			# Check if the IDS is running.
+			if(&IDS::is_ids_running()) {
+				# Call suricatactrl to perform a reload.
+				&IDS::call_suricatactrl("reload");
+			}
+
 			# Perform a reload of the page.
 			&reload();
 		}
@@ -314,6 +326,21 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 
 	# Generate file to store the home net.
 	&generate_home_net_file();
+
+	# Check if the IDS currently is running.
+	if(&IDS::ids_is_running()) {
+		# Check if ENABLE_IDS is set to on.
+		if($cgiparams{'ENABLE_IDS'} eq "on") {
+			# Call suricatactrl to perform a reload of suricata.
+			&IDS::call_suricatactrl("reload");
+		} else {
+			# Call suricatactrl to stop suricata.
+			&IDS::call_suricatactrl("stop");
+		}
+	} else {
+		# Call suricatactrl to start suricata.
+		&IDS::call_suricatactrl("start");
+	}
 }
 
 # Read-in idssettings
