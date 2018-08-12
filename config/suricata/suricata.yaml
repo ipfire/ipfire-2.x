@@ -12,11 +12,8 @@
 vars:
   # more specifc is better for alert accuracy and performance
   address-groups:
-    HOME_NET: "[192.168.0.0/16,10.0.0.0/8,172.16.0.0/12]"
-    #HOME_NET: "[192.168.0.0/16]"
-    #HOME_NET: "[10.0.0.0/8]"
-    #HOME_NET: "[172.16.0.0/12]"
-    #HOME_NET: "any"
+    # Include HOME_NET declaration from external file.
+    include /var/ipfire/suricata/suricata-homenet.yaml
 
     EXTERNAL_NET: "!$HOME_NET"
     #EXTERNAL_NET: "any"
