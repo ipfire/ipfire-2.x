@@ -109,8 +109,23 @@ import_aws_configuration() {
 		fi
 	done
 
-	# Download user-data
-	local user_data="$(get user-data)"
+	# Download the user-data script only on the first boot
+	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
+		# Download user-data
+		local user_data="$(get user-data)"
+
+		# Save user-data script to be executed later
+		if [ "${user_data:0:2}" = "#!" ]; then
+			echo "${user_data}" > /tmp/aws-user-data.script
+			chmod 700 /tmp/aws-user-data.script
+
+			# Run the user-data script
+			/tmp/aws-user-data.script
+
+			# Delete the script right away
+			rm /tmp/aws-user-data.script
+		fi
+	fi
 
 	# Import any DNS server settings
 	eval $(/usr/local/bin/readhash <(grep -E "^DNS([0-9])=" /var/ipfire/ethernet/settings 2>/dev/null))
@@ -252,12 +267,6 @@ import_aws_configuration() {
 
 		# This script has now completed the first steps of setup
 		touch /var/ipfire/main/firstsetup_ok
-
-		# Save user-data script to be executed later
-		if [ "${user_data:0:2}" = "#!" ]; then
-			echo "${user_data}" > /tmp/aws-user-data.script
-			chmod 700 /tmp/aws-user-data.script
-		fi
 	fi
 
 	# All done
