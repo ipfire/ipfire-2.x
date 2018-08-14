@@ -13,6 +13,7 @@ srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/local/bin/backupiso
 usr/sbin/dhclient
 usr/share/GeoIP/GeoIP.dat
+var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/exclude
 var/ipfire/langs
 var/ipfire/aws-functions.pl
