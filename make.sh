@@ -1495,6 +1495,7 @@ buildipfire() {
   lfsmake2 python3-colorama
   lfsmake2 python3-docutils
   lfsmake2 python3-yaml
+  lfsmake2 python3-s3transfer
   lfsmake2 python3-botocore
   lfsmake2 aws-cli
   lfsmake2 transmission
