@@ -1489,6 +1489,17 @@ buildipfire() {
   lfsmake2 python-progressbar
   lfsmake2 python-xattr
   lfsmake2 ddns
+  lfsmake2 python3-six
+  lfsmake2 python3-dateutil
+  lfsmake2 python3-jmespath
+  lfsmake2 python3-colorama
+  lfsmake2 python3-docutils
+  lfsmake2 python3-yaml
+  lfsmake2 python3-s3transfer
+  lfsmake2 python3-rsa
+  lfsmake2 python3-pyasn1
+  lfsmake2 python3-botocore
+  lfsmake2 aws-cli
   lfsmake2 transmission
   lfsmake2 dpfhack
   lfsmake2 lcd4linux
