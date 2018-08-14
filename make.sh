@@ -1489,6 +1489,7 @@ buildipfire() {
   lfsmake2 python-progressbar
   lfsmake2 python-xattr
   lfsmake2 ddns
+  lfsmake2 aws-cli
   lfsmake2 transmission
   lfsmake2 dpfhack
   lfsmake2 lcd4linux
