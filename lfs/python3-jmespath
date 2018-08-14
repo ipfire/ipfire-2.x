@@ -24,17 +24,17 @@
 
 include Config
 
-VER        = 1.10.76
+VER        = 0.9.3
 
-THISAPP    = botocore-$(VER)
+THISAPP    = jmespath-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = python3-botocore
+PROG       = python3-jmespath
 PAK_VER    = 1
 
-DEPS       = "python3 python3-dateutil python3-jmespath"
+DEPS       = "python3"
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = decef6de0649195cd6fa5647fdcaf4d6
+$(DL_FILE)_MD5 = 37a906c06de62bed25ec5cf99cee04a6
 
 install : $(TARGET)
 
