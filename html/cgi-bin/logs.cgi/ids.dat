@@ -335,10 +335,18 @@ print <<END
 <td valign='top'>
 END
 	;
-	if ($sid ne "n/a") {
-		print "<a href='https://www.snort.org/rule_docs/$sid' ";
+	if ($sid eq "n/a") {
+		print $sid;
+	} elsif ($sid < 1000000) {
+		# Link to sourcefire if the the rule sid is less than 1000000.
+		print "<a href='https://www.snort.org/rule_docs/1-$sid' ";
+		print "target='_blank'>$sid</a></td>\n";
+	} elsif ($sid >= 2000000 and $sid < 3000000) {
+		# Link to emergingthreats if the rule sid is between 2000000 and 3000000.
+		print "<a href='http://doc.emergingthreats.net/$sid' ";
 		print "target='_blank'>$sid</a></td>\n";
 	} else {
+		# No external link for user defined rules
 		print $sid;
 	}
 print <<END
