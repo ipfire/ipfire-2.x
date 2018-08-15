@@ -111,6 +111,9 @@ import_aws_configuration() {
 
 	# Download the user-data script only on the first boot
 	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
+		# Initialize pakfire
+		/etc/init.d/pakfire start
+
 		# Install all available updates
 		pakfire update && pakfire upgrade -y
 
