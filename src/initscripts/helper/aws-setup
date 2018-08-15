@@ -123,7 +123,7 @@ import_aws_configuration() {
 			chmod 700 /tmp/aws-user-data.script
 
 			# Run the user-data script
-			/tmp/aws-user-data.script
+			/tmp/aws-user-data.script 2>&1 | tee /root/user-data.log
 
 			# Delete the script right away
 			rm /tmp/aws-user-data.script
