@@ -3,6 +3,9 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+# Set PATH to find our own executables
+export PATH=/usr/local/sbin:/usr/local/bin:${PATH}
+
 get() {
 	local file="${1}"
 
