@@ -115,10 +115,10 @@ import_aws_configuration() {
 	# Download the user-data script only on the first boot
 	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
 		# Initialize pakfire
-		/etc/init.d/pakfire start
+		/etc/init.d/pakfire start &>/dev/null
 
 		# Install all available updates
-		pakfire update && pakfire upgrade -y
+		( pakfire update && pakfire upgrade -y ) &>/dev/null
 
 		# If an update requires a reboot, we will do it
 		if [ -e "/var/run/need_reboot" ]; then
