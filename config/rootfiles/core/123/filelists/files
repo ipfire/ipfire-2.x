@@ -3,6 +3,7 @@ etc/issue
 etc/rc.d/helper/aws-setup
 etc/rc.d/init.d/aws
 etc/rc.d/init.d/collectd
+etc/rc.d/init.d/unbound
 etc/rc.d/rcsysinit.d/S74aws
 etc/sysctl.conf
 srv/web/ipfire/cgi-bin/ids.cgi
