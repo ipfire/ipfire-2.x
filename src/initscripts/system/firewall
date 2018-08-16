@@ -185,6 +185,11 @@ iptables_init() {
 	iptables -A INPUT -j GUARDIAN
 	iptables -A FORWARD -j GUARDIAN
 
+	# IPS (suricata) chains
+	iptables -N IPS
+	iptables -A INPUT -j IPS
+	iptables -A FORWARD -j IPS
+
 	# Block non-established IPsec networks
 	iptables -N IPSECBLOCK
 	iptables -A FORWARD -m policy --dir out --pol none -j IPSECBLOCK
