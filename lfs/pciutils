@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 3.4.1
+VER        = 3.5.6
 
 THISAPP    = pciutils-$(VER)
-DL_FILE    = $(THISAPP).tar.xz
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 35763bb1eab7bc9bf6eb6efb72cbc8a1
+$(DL_FILE)_MD5 = 63b347d2bb5719b7769c03a1bb72a5b7
 
 install : $(TARGET)
 
