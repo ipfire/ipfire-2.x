@@ -32,6 +32,7 @@
 #define DEV_SIZE                    128
 
 #define HW_PATH_BOOT                  "/boot"
+#define HW_PATH_BOOT_EFI              "/boot/efi"
 #define HW_PATH_DATA                  "/var"
 
 #define HW_PART_TYPE_NORMAL           0
@@ -45,6 +46,7 @@
 #define HW_FS_EXT4                    2
 #define HW_FS_EXT4_WO_JOURNAL         3
 #define HW_FS_XFS                     4
+#define HW_FS_FAT32                   5
 
 #define HW_FS_DEFAULT                 HW_FS_EXT4
 
@@ -57,6 +59,10 @@
 
 struct hw {
 	struct udev *udev;
+	char arch[STRING_SIZE];
+
+	// Enabled if we should install in EFI mode
+	int efi;
 };
 
 struct hw_disk {
@@ -82,15 +88,18 @@ struct hw_destination {
 	int part_table;
 	char part_bootldr[DEV_SIZE];
 	char part_boot[DEV_SIZE];
+	char part_boot_efi[DEV_SIZE];
 	char part_swap[DEV_SIZE];
 	char part_root[DEV_SIZE];
 	int part_boot_idx;
+	int part_boot_efi_idx;
 
 	int filesystem;
 
 	unsigned long long size;
 	unsigned long long size_bootldr;
 	unsigned long long size_boot;
+	unsigned long long size_boot_efi;
 	unsigned long long size_swap;
 	unsigned long long size_root;
 };
@@ -109,7 +118,7 @@ unsigned int hw_count_disks(const struct hw_disk** disks);
 struct hw_disk** hw_select_disks(struct hw_disk** disks, int* selection);
 struct hw_disk** hw_select_first_disk(const struct hw_disk** disks);
 
-struct hw_destination* hw_make_destination(int part_type, struct hw_disk** disks,
+struct hw_destination* hw_make_destination(struct hw* hw, int part_type, struct hw_disk** disks,
 	int disable_swap);
 
 unsigned long long hw_memory();
@@ -124,7 +133,7 @@ int hw_destroy_raid_superblocks(const struct hw_destination* dest, const char* o
 int hw_setup_raid(struct hw_destination* dest, const char* output);
 int hw_stop_all_raid_arrays(const char* output);
 
-int hw_install_bootloader(struct hw_destination* dest, const char* output);
+int hw_install_bootloader(struct hw* hw, struct hw_destination* dest, const char* output);
 int hw_write_fstab(struct hw_destination* dest);
 
 char* hw_find_backup_file(const char* output, const char* search_path);

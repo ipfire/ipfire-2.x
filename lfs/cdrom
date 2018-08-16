@@ -29,6 +29,103 @@ VER = ipfire
 THISAPP    = cdrom
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+ifeq "$(BUILD_PLATFORM)" "arm"
+	TAR_OPTIONS =
+else
+	TAR_OPTIONS = --lzma
+endif
+
+HAS_MEMTEST = 0
+HAS_IPXE = 0
+HAS_ISOLINUX = 0
+HAS_KERNEL = 1
+
+ifeq "$(BUILD_PLATFORM)" "x86"
+	HAS_MEMTEST = 1
+	HAS_IPXE = 1
+	HAS_ISOLINUX = 1
+endif
+
+ifeq "$(BUILD_ARCH)" "armv5tel"
+	HAS_KERNEL = 0
+endif
+
+ISO_ARGS = -J -r -v \
+	-A "$(NAME) $(VERSION) $(BUILD_ARCH)" \
+	-V "$(NAME) $(VERSION) $(BUILD_ARCH)"
+
+ISOHYBRID_ARGS =
+
+ifeq "$(HAS_ISOLINUX)" "1"
+	ISO_ARGS += \
+		-no-emul-boot \
+		-boot-load-size 4 \
+		-boot-info-table \
+		-b boot/isolinux/isolinux.bin \
+		-c boot/isolinux/boot.catalog
+endif
+
+ifeq "$(EFI)" "1"
+	ISO_ARGS += \
+		-eltorito-alt-boot \
+		-e boot/isolinux/efiboot.img \
+		-no-emul-boot
+
+	ISOHYBRID_ARGS += --uefi
+endif
+
+GRUB_EFI_MODULES = \
+	all_video \
+	at_keyboard \
+	boot \
+	bitmap_scale \
+	cat \
+	chain \
+	configfile \
+	disk \
+	echo \
+	efi_gop \
+	efi_uga \
+	ext2 \
+	extcmd \
+	fat \
+	file \
+	font \
+	fxterm_menu \
+	gfxterm \
+	gfxmenu \
+	gfxterm_background \
+	gzio \
+	halt \
+	help \
+	iso9660 \
+	jpeg \
+	loadbios \
+	loadenv \
+	loopback \
+	linux \
+	ls \
+	memdisk \
+	minicmd \
+	nativedisk \
+	normal \
+	ntfs \
+	part_gpt \
+	part_msdos \
+	png \
+	probe \
+	reboot \
+	regexp \
+	search \
+	search_fs_file \
+	search_fs_uuid \
+	search_label \
+	tar \
+	test \
+	tga \
+	true \
+	usb_keyboard
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -79,15 +176,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp $(DIR_SRC)/doc/COPYING				/install/cdrom/
 	cp $(DIR_SRC)/doc/{ChangeLog,packages-list.txt}	/install/cdrom/doc
 
-	# Make the ISO
 	mkdir -p /install/cdrom/boot/isolinux
-	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog
-ifneq "$(BUILD_PLATFORM)" "arm"
+
+ifeq "$(HAS_KERNEL)" "1"
 	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz
 	dracut --force --early-microcode -a "installer" --strip --xz /install/cdrom/boot/isolinux/instroot $(KVER)-ipfire
+endif
+
+ifeq "$(HAS_ISOLINUX)" "1"
+	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog
 	cp $(DIR_SRC)/config/syslinux/boot.png      /install/cdrom/boot/isolinux/boot.png
-	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest
-	cp /usr/share/ipfire-netboot/ipxe.lkrn      /install/cdrom/boot/isolinux/netboot
 	cp /usr/share/syslinux/isolinux.bin         /install/cdrom/boot/isolinux/isolinux.bin
 	cp /usr/share/hwdata/pci.ids                /install/cdrom/boot/isolinux/pci.ids
 	cp -vf /usr/share/syslinux/*.c32            /install/cdrom/boot/isolinux/
@@ -95,16 +193,61 @@ ifneq "$(BUILD_PLATFORM)" "arm"
 		$(DIR_SRC)/config/syslinux/syslinux.cfg \
 		> /install/cdrom/boot/isolinux/isolinux.cfg
 endif
+
+ifeq "$(HAS_MEMTEST)" "1"
+	# Install memtest
+	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest
+endif
+
+ifeq "$(HAS_IPXE)" "1"
+	cp /usr/share/ipfire-netboot/ipxe.lkrn      /install/cdrom/boot/isolinux/netboot
+endif
+
+ifeq "$(EFI)" "1"
+	# Generate embedded GRUB configuration
+	sed -e "s/NAME/$(NAME)/g" -e "s/VERSION/$(VERSION)/g" -e "s/ARCH/$(BUILD_ARCH)/g" \
+		$(DIR_SRC)/config/cdrom/grub-efi.cfg > /tmp/grub-efi.cfg
+
+	# Build a GRUB EFI image
+	mkdir -pv /install/cdrom/EFI/BOOT
+	grub-mkimage \
+		--format=$(GRUB_ARCH)-efi \
+		--output=/install/cdrom/EFI/BOOT/boot$(EFI_ARCH).efi \
+		--config=/tmp/grub-efi.cfg \
+		--compression=xz \
+		--prefix=/EFI/BOOT \
+		$$(for mod in $(GRUB_EFI_MODULES); do [ -f "/usr/lib/grub/$(GRUB_ARCH)-efi/$${mod}.mod" ] && echo "$${mod}"; done)
+
+	# Install GRUB configuration
+	mkdir -pv /install/cdrom/EFI/BOOT
+	sed -e "s/NAME/$(NAME)/g" -e "s/VERSION/$(VERSION)/g" -e "s/ARCH/$(BUILD_ARCH)/g" \
+		< $(DIR_SRC)/config/cdrom/grub.cfg > /install/cdrom/EFI/BOOT/grub.cfg
+
+	# Create the EFI Eltorito image
+	dd if=/dev/zero of=/install/cdrom/boot/isolinux/efiboot.img bs=1k count=1440
+	mkdosfs -F 12 -n "IPFIRE_EFI" /install/cdrom/boot/isolinux/efiboot.img
+
+	# Mount the EFI image
+	mkdir -pv /install/efiboot.img
+	mount -o loop /install/cdrom/boot/isolinux/efiboot.img /install/efiboot.img
+
+	# Copy the bootloader into the image
+	mkdir -pv /install/efiboot.img/EFI/BOOT
+	cp -a /install/cdrom/EFI/BOOT/boot$(EFI_ARCH).efi \
+		/install/efiboot.img/EFI/BOOT/boot$(EFI_ARCH).efi
+
+	# Cleanup
+	umount /install/efiboot.img
+	rm -rf /install/efiboot.img /tmp/grub-efi.cfg
+endif
+
 	cd /install/cdrom && find -type f ! -name md5sum.txt | grep -v "./boot" | \
 						xargs md5sum > md5sum.txt
 
 	mkdir -p /install/images
-ifeq "$(BUILD_PLATFORM)" "arm"
-	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
-		. > /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
-else
-	cd /install/cdrom && mkisofs -J -r -V "$(NAME)_$(VERSION)" \
-    	    -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
-    	    -c boot/isolinux/boot.catalog . > /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
-	isohybrid /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
+	cd /install/cdrom && mkisofs $(ISO_ARGS) \
+		-o /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso .
+
+ifeq "$(HAS_ISOLINUX)" "1"
+	isohybrid $(ISOHYBRID_ARGS) /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
 endif

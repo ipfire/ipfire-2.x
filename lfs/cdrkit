@@ -24,9 +24,9 @@
 
 include Config
 
-VER        = 0.2.1
+VER        = 1.1.11
 
-THISAPP    = dvdrtools-$(VER)
+THISAPP    = cdrkit-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e82d359137e716e8c0b04d5c73bd3e79
+$(DL_FILE)_MD5 = efe08e2f3ca478486037b053acd512e9
 
 install : $(TARGET)
 
@@ -70,10 +70,40 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --mandir=/usr/share/man \
-		--disable-static
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.8-werror.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.9-buffer_overflow.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.9-no_mp3.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.9-efi-boot.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.10-build-fix.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-cmakewarn.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-devname.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-dvdman.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-format.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-handler.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-manpagefix.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-memset.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-paranoiacdda.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-ppc64le_elfheader.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-readsegfault.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-rootstat.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-usalinst.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-utf8.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cdrkit/cdrkit-1.1.11-werror_gcc5.patch
+
+	cd $(DIR_APP) && sed -i CMakeLists.txt -e "s/icedax//g"
+
+	cd $(DIR_APP) && mkdir -pv build
+	cd $(DIR_APP)/build && cmake .. \
+		-DCMAKE_INSTALL_PREFIX:PATH=/usr \
+		-DBUILD_SHARED_LIBS:BOOL=ON
+	cd $(DIR_APP)/build && make $(MAKETUNING)
+	cd $(DIR_APP)/build && make install
+
+	ln -svf genisoimage /usr/bin/mkisofs
+	ln -svf genisoimage /usr/bin/mkhybrid
+	ln -svf icedax /usr/bin/cdda2wav
+	ln -svf wodim /usr/bin/cdrecord
+	ln -svf wodim /usr/bin/dvdrecord
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

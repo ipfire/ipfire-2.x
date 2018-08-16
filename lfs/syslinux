@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.06
+VER        = 6.04-pre1
 
 THISAPP    = syslinux-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -32,6 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = x86_64 i586
+
+# Clear compiler flags (mainly hardening)
+CFLAGS     =
 
 ###############################################################################
 # Top-level Rules
@@ -41,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 77d33140860621cd850c3a7ab0ebb7d6
+$(DL_FILE)_MD5 = f9c956fde0de29be297402ecbc8ff4d0
 
 install : $(TARGET)
 
@@ -71,6 +74,18 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make install
+
+	# Build
+	cd $(DIR_APP) && make bios $(MAKETUNING)
+ifeq "$(BUILD_ARCH)" "x86_64"
+	cd $(DIR_APP) && make efi64 $(MAKETUNING)
+endif
+
+	# Install
+	cd $(DIR_APP) && make bios install
+ifeq "$(BUILD_ARCH)" "x86_64"
+	cd $(DIR_APP) && make efi64 install
+endif
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

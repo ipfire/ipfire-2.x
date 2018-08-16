@@ -1,5 +1,6 @@
 #usr/bin/downloadsource.sh
 #usr/bin/execute-postinstall.sh
+usr/bin/install-bootloader
 #usr/bin/installer
 #usr/bin/start-networking.sh
 #usr/lib/dracut/modules.d/99installer

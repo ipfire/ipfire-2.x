@@ -1083,6 +1083,7 @@ buildipfire() {
   lfsmake2 configroot
   lfsmake2 initscripts
   lfsmake2 backup
+  lfsmake2 popt
   lfsmake2 libusb
   lfsmake2 libusb-compat
   lfsmake2 libpcap
@@ -1104,6 +1105,8 @@ buildipfire() {
   lfsmake2 multipath-tools
   lfsmake2 freetype
   lfsmake2 grub
+  lfsmake2 efivar
+  lfsmake2 efibootmgr
   lfsmake2 libmnl
   lfsmake2 libnfnetlink
   lfsmake2 libnetfilter_queue
@@ -1207,7 +1210,6 @@ buildipfire() {
   lfsmake2 libtiff
   lfsmake2 libart
   lfsmake2 gd
-  lfsmake2 popt
   lfsmake2 slang
   lfsmake2 newt
   lfsmake2 libsmooth
@@ -1228,7 +1230,9 @@ buildipfire() {
   lfsmake2 bootstrap
   lfsmake2 arping
   lfsmake2 beep
-  lfsmake2 dvdrtools
+  lfsmake2 libarchive
+  lfsmake2 cmake
+  lfsmake2 cdrkit
   lfsmake2 dosfstools
   lfsmake2 reiserfsprogs
   lfsmake2 xfsprogs
@@ -1370,8 +1374,6 @@ buildipfire() {
   lfsmake2 libshout
   lfsmake2 xvid
   lfsmake2 libmpeg2
-  lfsmake2 libarchive
-  lfsmake2 cmake
   lfsmake2 gnump3d
   lfsmake2 rsync
   lfsmake2 libtirpc

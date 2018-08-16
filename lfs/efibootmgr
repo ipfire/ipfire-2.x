@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,27 +24,24 @@
 
 include Config
 
-VER        = v2.0
-PXE_VER    = 1b67a05
+VER        = 16
 
-THISAPP    = ipfire-netboot-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = https://source.ipfire.org/releases/ipfire-netboot/
+THISAPP    = efibootmgr-$(VER)
+DL_FILE    = $(THISAPP).tar.bz2
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = x86_64 i586
+SUP_ARCH   = aarch64 x86_64
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) ipxe-$(PXE_VER).tar.gz
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-ipxe-$(PXE_VER).tar.gz = $(URL_IPFIRE)/ipxe-$(PXE_VER).tar.gz
 
-$(DL_FILE)_MD5 = a1f78e4b92457ecefb97d557b1b7a48e
-ipxe-$(PXE_VER).tar.gz_MD5 = 300fe0e096e58bfb4318bc39b63f9a88
+$(DL_FILE)_MD5 = ab7cf46774fda951a0e8a40beb65a90e
 
 install : $(TARGET)
 
@@ -75,21 +72,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
-	# Extract iPXE source
-	cd $(DIR_APP) && tar axf $(DIR_DL)/ipxe-$(PXE_VER).tar.gz
-	cd $(DIR_APP) && rm -rfv ipxe && ln -s ipxe-$(PXE_VER) ipxe
-	cd $(DIR_APP) && make bin/ipxe.lkrn
-ifeq "$(BUILD_ARCH)" "x86_64"
-	cd $(DIR_APP) && make bin-x86_64-efi/ipxe.efi
-endif
-
-	# Installation
-	-mkdir -pv /usr/share/ipfire-netboot
-	cd $(DIR_APP) && install -m 644 bin/ipxe.lkrn /usr/share/ipfire-netboot
-ifeq "$(BUILD_ARCH)" "x86_64"
-	cd $(DIR_APP) && install -m 644 bin-x86_64-efi/ipxe.efi \
-		/usr/share/ipfire-netboot
-endif
+	cd $(DIR_APP) && make CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
+		EFIDIR=$(SNAME) $(MAKETUNING)
+	cd $(DIR_APP) && make install EFIDIR=$(SNAME)
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

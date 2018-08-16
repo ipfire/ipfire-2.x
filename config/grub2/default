@@ -4,4 +4,3 @@ GRUB_DEFAULT=saved
 GRUB_CMDLINE_LINUX="panic=10"
 GRUB_DISABLE_RECOVERY="true"
 GRUB_BACKGROUND="/boot/grub/splash.png"
-GRUB_FONT="/boot/grub/unifont.pf2"

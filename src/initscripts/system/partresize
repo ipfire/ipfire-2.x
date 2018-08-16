@@ -38,11 +38,11 @@ case "${1}" in
 					echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> /etc/default/grub
 					sed -i -e "s|panic=10|& console=ttyS0,115200n8|g" /etc/default/grub
 				fi
-				/usr/local/bin/update-bootloader
+
+				# Re-generate GRUB configuration
+				/usr/sbin/grub-mkconfig -o /boot/grub/grub.cfg
 			fi
 			umount /boot > /dev/null
-
-			sleep 30
 
 			# Detect device
 			mount | while read -r dev tmp1 mountpoint tmp2; do
