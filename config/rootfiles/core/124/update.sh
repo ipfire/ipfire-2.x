@@ -47,6 +47,11 @@ ldconfig
 # rebuild initrd to add early microcode updates
 rebuild-initrd
 
+# Remove deprecated GRUB configuration option
+if [ -e "/etc/default/grub" ]; then
+	sed -e "/^GRUB_FONT/d" -i /etc/default/grub
+fi
+
 # This update needs a reboot...
 #touch /var/run/need_reboot
 

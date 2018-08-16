@@ -1,4 +1,7 @@
 etc/system-release
 etc/issue
 etc/rc.d/init.d/localnet
+etc/rc.d/init.d/partresize
+usr/bin/install-bootloader
+usr/local/bin/backupiso
 var/ipfire/langs
