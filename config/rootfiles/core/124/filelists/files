@@ -2,6 +2,7 @@ etc/system-release
 etc/issue
 etc/rc.d/init.d/localnet
 etc/rc.d/init.d/partresize
+srv/web/ipfire/cgi-bin/ids.cgi
 usr/bin/install-bootloader
 usr/local/bin/backupiso
 var/ipfire/langs
