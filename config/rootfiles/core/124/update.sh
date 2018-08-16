@@ -52,8 +52,11 @@ if [ -e "/etc/default/grub" ]; then
 	sed -e "/^GRUB_FONT/d" -i /etc/default/grub
 fi
 
+# Update bootloader
+/usr/bin/install-bootloader
+
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
