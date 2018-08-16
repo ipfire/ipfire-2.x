@@ -37,12 +37,12 @@ case "${1}" in
 		evaluate_retval
 
 		boot_mesg "Setting hostname to ${HOSTNAME}..."
-		hostname ${HOSTNAME}
+		hostname "${HOSTNAME}"
 		evaluate_retval
 
-		if [ -n "$DOMAINNAME" ]; then
+		if [ -n "${DOMAINNAME}" ]; then
 			boot_mesg "Setting domainname to ${DOMAINNAME}..."
-			domainname ${DOMAINNAME}
+			domainname "${DOMAINNAME}"
 			evaluate_retval
 		fi
 
