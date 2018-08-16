@@ -40,7 +40,7 @@ case "${1}" in
 		hostname ${HOSTNAME}
 		evaluate_retval
 
-		if [ -z "$DOMAINNAME" ]; then
+		if [ -n "$DOMAINNAME" ]; then
 			boot_mesg "Setting domainname to ${DOMAINNAME}..."
 			domainname ${DOMAINNAME}
 			evaluate_retval
