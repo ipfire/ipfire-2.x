@@ -51,8 +51,12 @@ case "$1" in
 				# Convert zone into upper case.
 				zone_upper=${zone^^}
 
+				# Generate variable name for checking if the IDS is
+				# enabled on the zone.
+				enable_ids_zone="ENABLE_IDS_$zone_upper"
+
 				# Check if the IDS is enabled for this network zone.
-				if [ "$ENABLE_IDS_$$zone_upper" == "on" ]; then
+				if [ "${!enable_ids_zone}" == "on" ]; then
 					# Generate name of the network interface.
 					network_device=$zone
 					network_device+="0"
@@ -72,8 +76,8 @@ case "$1" in
 
 					# Create firewall rules to queue the traffic and pass to
 					# the IDS.
-					iptables -I "$FW_CHAIN" -i "$network_device" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE "$NFQ_OPTIONS"
-					iptables -I "$FW_CHAIN" -o "$network_device" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE "$NFQ_OPTIONS"
+					iptables -I "$FW_CHAIN" -i "$network_device" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
+					iptables -I "$FW_CHAIN" -o "$network_device" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
 				fi
 			done
 
