@@ -32,6 +32,9 @@ network_zones=( red green blue orange )
 MARK="0x1"
 MASK="0x1"
 
+# PID file of suricata.
+PID_FILE="/var/run/suricata.pid"
+
 case "$1" in
         start)
 		# Get amount of CPU cores.
@@ -78,12 +81,15 @@ case "$1" in
 			boot_mesg "Starting Intrusion Detection System..."
 			/usr/bin/suricata -c /etc/suricata/suricata.yaml -D $NFQUEUES
 			evaluate_retval
+
+			# Allow reading the pidfile.
+			chmod 644 $PID_FILE
 		fi
 	;;
 
         stop)
 		boot_mesg "Stopping Intrusion Detection System..."
-		killproc -p /var/run/suricata.pid /var/run
+		killproc -p $PID_FILE /var/run
 
 		# Flush firewall chain.
 		iptables -F $FW_CHAIN
