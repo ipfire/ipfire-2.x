@@ -164,8 +164,11 @@ sub downloadruleset {
 
 	# Check if there was any error.
 	unless ($response->is_success) {
+		# Obtain error.
+		my $error = $response->content;
+
 		# Log error message.
-		&_log_to_syslog("Unable to download the ruleset. $response->status_line");
+		&_log_to_syslog("Unable to download the ruleset. \($error\)");
 
 		# Return "1" - false.
 		return 1;
