@@ -346,9 +346,18 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 # Read-in idssettings
 &General::readhash("$IDS::settingsdir/settings", \%idssettings);
 
+# If the runmode has not been configured yet, set default value.
+unless(exists($idssettings{'RUN_MODE'})) {
+        # Set default to IPS.
+        $idssettings{'RUN_MODE'} = 'IPS';
+}
+
 $checked{'ENABLE_IDS'}{'off'} = '';
 $checked{'ENABLE_IDS'}{'on'} = '';
 $checked{'ENABLE_IDS'}{$idssettings{'ENABLE_IDS'}} = "checked='checked'";
+$checked{'RUN_MODE'}{'IDS'} = '';
+$checked{'RUN_MODE'}{'IPS'} = '';
+$checked{'RUN_MODE'}{$idssettings{'RUN_MODE'}} = "checked='checked'";
 $selected{'RULES'}{'nothing'} = '';
 $selected{'RULES'}{'community'} = '';
 $selected{'RULES'}{'emerging'} = '';
@@ -449,28 +458,35 @@ print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%' border='0'>
 		<tr>
-			<td class='base' width='25%'>
+			<td class='base' colspan='4'>
 				<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>$Lang::tr{'ids activate'} $Lang::tr{'intrusion detection system'}
 			</td>
+		</tr>
 
-			<td class='base' width='25%'>
-				&nbsp
+		<tr>
+			<td colspan='4'><br><br></td>
+		</tr>
+
+		<tr>
+			<td class='base' colspan='4'><b>$Lang::tr{'runmode'}</b></td>
+		</tr>
+
+		<tr>
+			<td class='base' colspan='4'>
+				<input type='radio' name='RUN_MODE' value='IDS' $checked{'RUN_MODE'}{'IDS'}>$Lang::tr{'intrusion detection system2'} &nbsp&nbsp&nbsp
+				<input type='radio' name='RUN_MODE' value='IPS' $checked{'RUN_MODE'}{'IPS'}>$Lang::tr{'intrusion prevention system'}
 			</td>
 		</tr>
 
 		<tr>
-			<td colspan='2'><br><br>
+			<td colspan='4'><br></td>
 		</tr>
 
 		<tr>
-			<td class='base' width='25%'>
-				<b>$Lang::tr{'ids analyze incomming traffic'}</b>
-			</td>
-
-			<td class='base' width='25%'>
-				<b>$Lang::tr{'ids analyze routing traffic'}</b>
-			</td>
+			<td colspan='4'><b>$Lang::tr{'ids traffic analyze'}</b><br></td>
 		</tr>
+
+		<tr>
 END
 ;
 
@@ -483,24 +499,13 @@ foreach my $zone (@network_zones) {
 	my $zone_upper = uc($zone);
 
 	# Grab checkbox status from settings hash.
-	if ($idssettings{"ENABLE_IDS_INPUT_$zone_upper"} eq "on") {
+	if ($idssettings{"ENABLE_IDS_$zone_upper"} eq "on") {
 		$checked_input = "checked = 'checked'";
 	}
 
-	# Do the same for the forward setting.
-	if ($idssettings{"ENABLE_IDS_FORWARD_$zone_upper"} eq "on") {
-		$checked_forward = "checked = 'checked'";
-	}
-
-	print "<tr>\n";
 	print "<td class='base' width='25%'>\n";
-	print "<input type='checkbox' name='ENABLE_IDS_INPUT_$zone_upper' $checked_input>$Lang::tr{'ids active on'} $Lang::tr{$zone}\n";
+	print "<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>$Lang::tr{'enabled on'} $Lang::tr{$zone}\n";
 	print "</td>\n";
-
-	print "<td class='base' width='25%'>\n";
-	print "<input type='checkbox' name='ENABLE_IDS_FORWARD_$zone_upper' $checked_forward>$Lang::tr{'ids active on'} $Lang::tr{$zone}\n";
-	print "</td>\n";
-	print "</tr>\n";
 }
 
 print <<END
