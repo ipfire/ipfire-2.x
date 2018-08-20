@@ -13,6 +13,8 @@ srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/local/bin/backupiso
+usr/lib/libssp.so.0
+usr/lib/libssp.so.0.0.0
 usr/sbin/dhclient
 usr/share/GeoIP/GeoIP.dat
 var/ipfire/backup/bin/backup.pl
