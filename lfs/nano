@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.9.7
+VER        = 2.9.8
 
 THISAPP    = nano-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nano
-PAK_VER    = 22
+PAK_VER    = 23
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 804a0e91cb11f2e8884aee7bfac2d18d
+$(DL_FILE)_MD5 = fd58e87c20abbf029e5c4b153c89232a
 
 install : $(TARGET)
 
