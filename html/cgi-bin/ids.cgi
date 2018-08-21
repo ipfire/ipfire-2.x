@@ -256,7 +256,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	&IDS::oinkmaster();
 
 	# Check if the IDS is running.
-	if(&IDS::is_ids_running()) {
+	if(&IDS::ids_is_running()) {
 		# Call suricatactrl to perform a reload.
 		&IDS::call_suricatactrl("reload");
 	}
@@ -296,7 +296,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 			&IDS::oinkmaster();
 
 			# Check if the IDS is running.
-			if(&IDS::is_ids_running()) {
+			if(&IDS::ids_is_running()) {
 				# Call suricatactrl to perform a reload.
 				&IDS::call_suricatactrl("reload");
 			}
