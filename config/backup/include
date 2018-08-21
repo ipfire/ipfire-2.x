@@ -13,6 +13,8 @@
 /etc/shadow
 /etc/ssh/sshd_config
 /etc/ssh/ssh_host*
+/etc/squid/squid.conf.local
+/etc/squid/squid.conf.pre.local
 /etc/sysconfig/*
 /etc/sysconfig/firewall.local
 /etc/sysconfig/rc.local
