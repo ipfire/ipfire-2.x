@@ -21,6 +21,7 @@
 /etc/unbound
 /root/.bash_history
 /root/.gitconfig
+/root/.ssh
 /var/ipfire/auth/users
 /var/ipfire/captive/*
 /var/ipfire/*/*.conf
