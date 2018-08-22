@@ -50,22 +50,6 @@ prefix2netmask() {
 	to_address "$(( netmask ^ 0xffffffff ))"
 }
 
-find_interface() {
-	local mac="${1}"
-
-	local path
-	for path in /sys/class/net/*; do
-		local address="$(<${path}/address)"
-
-		if [ "${mac}" = "${address}" ]; then
-			basename "${path}"
-			return 0
-		fi
-	done
-
-	return 1
-}
-
 import_aws_configuration() {
 	local instance_id="$(get meta-data/instance-id)"
 
@@ -243,18 +227,12 @@ import_aws_configuration() {
 				) >> /var/ipfire/ethernet/settings
 				;;
 		esac
-
-		# Rename interface
-		local interface="$(find_interface "${mac}")"
-
-		if [ -n "${interface}" ] && [ -n "${interface_name}" ] && [ "${interface}" != "${interface_name}" ]; then
-			ip link set "${interface}" down
-			ip link set "${interface}" name "${interface_name}"
-		fi
 	done
 
 	# Save CONFIG_TYPE
 	echo "CONFIG_TYPE=${config_type}" >> /var/ipfire/ethernet/settings
+
+
 
 	# Actions performed only on the very first start
 	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
@@ -322,6 +300,9 @@ case "${reason}" in
 
 		# Remove all IP addresses
 		ip addr flush dev "${interface}"
+
+		# Shut down the interface
+		ip link set "${interface}" down
 		;;
 
 	*)
