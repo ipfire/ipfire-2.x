@@ -1,6 +1,6 @@
 etc/system-release
 etc/issue
-etc/rc.d/helpers/aws-setup
+etc/rc.d/helper/aws-setup
 etc/rc.d/init.d/aws
 etc/rc.d/init.d/localnet
 etc/rc.d/init.d/partresize
