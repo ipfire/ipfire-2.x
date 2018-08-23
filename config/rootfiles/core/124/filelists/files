@@ -6,6 +6,8 @@ etc/rc.d/init.d/localnet
 etc/rc.d/init.d/partresize
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/bin/install-bootloader
 usr/local/bin/backupiso
 var/ipfire/backup/exclude
