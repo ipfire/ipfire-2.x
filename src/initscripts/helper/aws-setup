@@ -3,6 +3,9 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+# Set PATH to find our own executables
+export PATH=/usr/local/sbin:/usr/local/bin:${PATH}
+
 get() {
 	local file="${1}"
 
@@ -45,22 +48,6 @@ prefix2netmask() {
 	done
 
 	to_address "$(( netmask ^ 0xffffffff ))"
-}
-
-find_interface() {
-	local mac="${1}"
-
-	local path
-	for path in /sys/class/net/*; do
-		local address="$(<${path}/address)"
-
-		if [ "${mac}" = "${address}" ]; then
-			basename "${path}"
-			return 0
-		fi
-	done
-
-	return 1
 }
 
 import_aws_configuration() {
@@ -109,8 +96,35 @@ import_aws_configuration() {
 		fi
 	done
 
-	# Download user-data
-	local user_data="$(get user-data)"
+	# Download the user-data script only on the first boot
+	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
+		# Initialize pakfire
+		/etc/init.d/pakfire start &>/dev/null
+
+		# Install all available updates
+		( pakfire update && pakfire upgrade -y ) &>/dev/null
+
+		# If an update requires a reboot, we will do it
+		if [ -e "/var/run/need_reboot" ]; then
+			reboot
+			exit 1
+		fi
+
+		# Download user-data
+		local user_data="$(get user-data)"
+
+		# Save user-data script to be executed later
+		if [ "${user_data:0:2}" = "#!" ]; then
+			echo "${user_data}" > /tmp/aws-user-data.script
+			chmod 700 /tmp/aws-user-data.script
+
+			# Run the user-data script
+			/tmp/aws-user-data.script &>/root/user-data.log
+
+			# Delete the script right away
+			rm /tmp/aws-user-data.script
+		fi
+	fi
 
 	# Import any DNS server settings
 	eval $(/usr/local/bin/readhash <(grep -E "^DNS([0-9])=" /var/ipfire/ethernet/settings 2>/dev/null))
@@ -213,18 +227,12 @@ import_aws_configuration() {
 				) >> /var/ipfire/ethernet/settings
 				;;
 		esac
-
-		# Rename interface
-		local interface="$(find_interface "${mac}")"
-
-		if [ -n "${interface}" ] && [ -n "${interface_name}" ] && [ "${interface}" != "${interface_name}" ]; then
-			ip link set "${interface}" down
-			ip link set "${interface}" name "${interface_name}"
-		fi
 	done
 
 	# Save CONFIG_TYPE
 	echo "CONFIG_TYPE=${config_type}" >> /var/ipfire/ethernet/settings
+
+
 
 	# Actions performed only on the very first start
 	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
@@ -252,12 +260,6 @@ import_aws_configuration() {
 
 		# This script has now completed the first steps of setup
 		touch /var/ipfire/main/firstsetup_ok
-
-		# Save user-data script to be executed later
-		if [ "${user_data:0:2}" = "#!" ]; then
-			echo "${user_data}" > /tmp/aws-user-data.script
-			chmod 700 /tmp/aws-user-data.script
-		fi
 	fi
 
 	# All done
@@ -280,13 +282,27 @@ case "${reason}" in
 		# Add the default route
 		ip route add default via "${new_routers}"
 
+		# Setup DNS
+		for domain_name_server in ${new_domain_name_servers}; do
+			echo "nameserver ${domain_name_server}"
+		done > /etc/resolv.conf
+
+		# The system is online now
+		touch /var/ipfire/red/active
+
 		# Import AWS configuration
 		import_aws_configuration
 		;;
 
 	EXPIRE|FAIL|RELEASE|STOP)
+		# The system is no longer online
+		rm -f /var/ipfire/red/active
+
 		# Remove all IP addresses
 		ip addr flush dev "${interface}"
+
+		# Shut down the interface
+		ip link set "${interface}" down
 		;;
 
 	*)

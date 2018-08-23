@@ -209,6 +209,9 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/firewire/firewire-core.ko
 #lib/modules/KVER-ipfire/kernel/drivers/firewire/firewire-ohci.ko
 #lib/modules/KVER-ipfire/kernel/drivers/firewire/firewire-sbp2.ko
+#lib/modules/KVER-ipfire/kernel/drivers/firmware
+#lib/modules/KVER-ipfire/kernel/drivers/firmware/efi
+#lib/modules/KVER-ipfire/kernel/drivers/firmware/efi/efibc.ko
 #lib/modules/KVER-ipfire/kernel/drivers/gpio
 #lib/modules/KVER-ipfire/kernel/drivers/gpio/gpio-adnp.ko
 #lib/modules/KVER-ipfire/kernel/drivers/gpio/gpio-viperboard.ko
@@ -260,15 +263,6 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/panel/panel-simple.ko
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/pl111
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/pl111/pl111_drm.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun4i-backend.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun4i-drm-hdmi.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun4i-drm.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun4i-tcon.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun4i_tv.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun6i_drc.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun8i-mixer.ko
-#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/sun4i/sun8i_dw_hdmi.ko
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/tinydrm
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/tinydrm/core
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/tinydrm/core/tinydrm.ko
@@ -1951,6 +1945,8 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/fs/configfs/configfs.ko
 #lib/modules/KVER-ipfire/kernel/fs/dlm
 #lib/modules/KVER-ipfire/kernel/fs/dlm/dlm.ko
+#lib/modules/KVER-ipfire/kernel/fs/efivarfs
+#lib/modules/KVER-ipfire/kernel/fs/efivarfs/efivarfs.ko
 #lib/modules/KVER-ipfire/kernel/fs/fat
 #lib/modules/KVER-ipfire/kernel/fs/fat/fat.ko
 #lib/modules/KVER-ipfire/kernel/fs/fat/msdos.ko

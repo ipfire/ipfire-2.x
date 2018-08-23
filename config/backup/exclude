@@ -1,5 +1,5 @@
-*.tmp
 /etc/sysconfig/lm_sensors
+*.tmp
 /var/ipfire/ethernet/settings
 /var/ipfire/firewall/bin/*
 /var/ipfire/ovpn/openssl/*

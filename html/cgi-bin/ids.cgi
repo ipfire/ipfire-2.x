@@ -265,7 +265,7 @@ if (!$errormessage) {
 	} elsif ($snortsettings{'RULES'} eq 'community') {
 		$url=" https://www.snort.org/rules/community";
 	} else {
-		$url="http://rules.emergingthreats.net/open/snort-2.9.0/emerging.rules.tar.gz";
+		$url="https://rules.emergingthreats.net/open/snort-2.9.0/emerging.rules.tar.gz";
 	}
 
 	if ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} eq "snort" ) {

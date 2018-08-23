@@ -1,6 +1,32 @@
 #!/bin/sh
 arch=$(uname -m)
 
+makeiso() {
+	local dir="${1}"
+	local output="${2}"
+
+	local args="-J -r -V 'ipfire backup ${TS}' \
+		-b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
+		-c boot/isolinux/boot.catalog"
+
+	# Add EFI options when EFI image is present
+	if [ -e "${dir}/boot/isolinux/efiboot.img" ]; then
+		args="${args} -eltorito-alt-boot -e boot/isolinux/efiboot.img -no-emul-boot"
+	fi
+
+	# Compose ISO
+	mkisofs ${args} ${dir} > ${output}
+
+	# Add DOS paritition table
+	if [ -e "${dir}/boot/isolinux/efiboot.img" ]; then
+		isohybrid --uefi ${output}
+	else
+		isohybrid ${output}
+	fi
+
+	return 0
+}
+
 case $arch in
 	i?86)
 		arch="i586"
@@ -73,10 +99,7 @@ rm -r backupiso.tmp.${TS}
 cp "/var/ipfire/backup/${TS}.ipf" "backupiso.${TS}/backup.ipf"
 
 echo "Running mkisofs"
-mkisofs -J -r -V "ipfire backup ${TS}" \
-            -b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
-            -c boot/isolinux/boot.catalog backupiso.${TS} > $(basename ${ISO} .iso)-${TS}.iso
-isohybrid $(basename ${ISO} .iso)-${TS}.iso
+makeiso backupiso.${TS} $(basename ${ISO} .iso)-${TS}.iso
 
 echo "Cleaning up"
 rm -rf backupiso.${TS}

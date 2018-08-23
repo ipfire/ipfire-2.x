@@ -241,10 +241,6 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 			$checkorange='on';
 		}
 	}
-	#check useless rules
-	if(	($fwdfwsettings{$fwdfwsettings{'grp1'}} eq 'ORANGE' || $checkorange eq 'on') && $fwdfwsettings{'grp2'} eq 'ipfire'){
-		$errormessage.=$Lang::tr{'fwdfw useless rule'}."<br>";
-	}
 	#check if we try to break rules
 	if(	$fwdfwsettings{'grp1'} eq 'ipfire_src' && $fwdfwsettings{'grp2'} eq 'ipfire'){
 		$errormessage=$Lang::tr{'fwdfw err same'};

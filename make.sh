@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.21"							# Version number
-CORE="123"							# Core Level (Filename)
-PAKFIRE_CORE="122"						# Core Level (PAKFIRE)
+CORE="124"							# Core Level (Filename)
+PAKFIRE_CORE="123"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -1083,6 +1083,7 @@ buildipfire() {
   lfsmake2 configroot
   lfsmake2 initscripts
   lfsmake2 backup
+  lfsmake2 popt
   lfsmake2 libusb
   lfsmake2 libusb-compat
   lfsmake2 libpcap
@@ -1104,6 +1105,8 @@ buildipfire() {
   lfsmake2 multipath-tools
   lfsmake2 freetype
   lfsmake2 grub
+  lfsmake2 efivar
+  lfsmake2 efibootmgr
   lfsmake2 libmnl
   lfsmake2 libnfnetlink
   lfsmake2 libnetfilter_queue
@@ -1207,7 +1210,6 @@ buildipfire() {
   lfsmake2 libtiff
   lfsmake2 libart
   lfsmake2 gd
-  lfsmake2 popt
   lfsmake2 slang
   lfsmake2 newt
   lfsmake2 libsmooth
@@ -1228,7 +1230,9 @@ buildipfire() {
   lfsmake2 bootstrap
   lfsmake2 arping
   lfsmake2 beep
-  lfsmake2 dvdrtools
+  lfsmake2 libarchive
+  lfsmake2 cmake
+  lfsmake2 cdrkit
   lfsmake2 dosfstools
   lfsmake2 reiserfsprogs
   lfsmake2 xfsprogs
@@ -1370,8 +1374,6 @@ buildipfire() {
   lfsmake2 libshout
   lfsmake2 xvid
   lfsmake2 libmpeg2
-  lfsmake2 libarchive
-  lfsmake2 cmake
   lfsmake2 gnump3d
   lfsmake2 rsync
   lfsmake2 libtirpc
@@ -1489,6 +1491,17 @@ buildipfire() {
   lfsmake2 python-progressbar
   lfsmake2 python-xattr
   lfsmake2 ddns
+  lfsmake2 python3-six
+  lfsmake2 python3-dateutil
+  lfsmake2 python3-jmespath
+  lfsmake2 python3-colorama
+  lfsmake2 python3-docutils
+  lfsmake2 python3-yaml
+  lfsmake2 python3-s3transfer
+  lfsmake2 python3-rsa
+  lfsmake2 python3-pyasn1
+  lfsmake2 python3-botocore
+  lfsmake2 aws-cli
   lfsmake2 transmission
   lfsmake2 dpfhack
   lfsmake2 lcd4linux

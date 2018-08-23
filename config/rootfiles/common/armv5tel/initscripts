@@ -30,7 +30,6 @@ etc/rc.d/init.d/mountfs
 etc/rc.d/init.d/mountkernfs
 etc/rc.d/init.d/mounttmpfs
 etc/rc.d/init.d/network
-etc/rc.d/init.d/network-trigger
 #etc/rc.d/init.d/networking
 etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/blue
@@ -191,7 +190,6 @@ etc/rc.d/rcsysinit.d/S75firstsetup
 etc/rc.d/rcsysinit.d/S80localnet
 etc/rc.d/rcsysinit.d/S81pakfire
 etc/rc.d/rcsysinit.d/S85firewall
-etc/rc.d/rcsysinit.d/S90network-trigger
 etc/rc.d/rcsysinit.d/S92rngd
 #etc/sysconfig
 etc/sysconfig/createfiles

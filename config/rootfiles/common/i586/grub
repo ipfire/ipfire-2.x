@@ -1,7 +1,6 @@
 #boot/grub
 boot/grub/grub.cfg
 boot/grub/splash.png
-boot/grub/unifont.pf2
 #etc/bash_completion.d
 #etc/bash_completion.d/grub
 etc/default/grub
@@ -12,8 +11,7 @@ etc/grub.d/20_linux_xen
 etc/grub.d/30_os-prober
 etc/grub.d/40_custom
 etc/grub.d/41_custom
-etc/grub.d/README
-etc/grub2.cfg
+#etc/grub.d/README
 usr/bin/grub-editenv
 usr/bin/grub-file
 usr/bin/grub-fstest
@@ -150,8 +148,6 @@ usr/lib/grub/i386-pc
 #usr/lib/grub/i386-pc/echo.module
 #usr/lib/grub/i386-pc/efiemu.mod
 #usr/lib/grub/i386-pc/efiemu.module
-#usr/lib/grub/i386-pc/efiemu32.o
-#usr/lib/grub/i386-pc/efiemu64.o
 #usr/lib/grub/i386-pc/ehci.mod
 #usr/lib/grub/i386-pc/ehci.module
 #usr/lib/grub/i386-pc/elf.mod
@@ -598,8 +594,13 @@ usr/sbin/grub-probe
 usr/sbin/grub-reboot
 usr/sbin/grub-set-default
 usr/sbin/grub-sparc64-setup
-usr/share/grub
+#usr/share/grub
+#usr/share/grub/ascii.h
+usr/share/grub/ascii.pf2
+usr/share/grub/euro.pf2
 usr/share/grub/grub-mkconfig_lib
+usr/share/grub/unicode.pf2
+#usr/share/grub/widthspec.h
 #usr/share/info/grub-dev.info
 #usr/share/info/grub.info
 #usr/share/locale/ast/LC_MESSAGES/grub.mo

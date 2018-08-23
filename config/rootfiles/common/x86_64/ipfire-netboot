@@ -1,2 +1,3 @@
 #usr/share/ipfire-netboot
+#usr/share/ipfire-netboot/ipxe.efi
 #usr/share/ipfire-netboot/ipxe.lkrn
