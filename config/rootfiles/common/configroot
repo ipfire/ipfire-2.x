@@ -77,6 +77,7 @@ var/ipfire/general-functions.pl
 var/ipfire/geoip-functions.pl
 var/ipfire/graphs.pl
 var/ipfire/header.pl
+var/ipfire/ids-functions.pl
 var/ipfire/isdn
 #var/ipfire/isdn/settings
 var/ipfire/key
@@ -175,8 +176,8 @@ var/ipfire/remote
 #var/ipfire/remote/settings
 var/ipfire/sensors
 #var/ipfire/sensors/settings
-var/ipfire/snort
-#var/ipfire/snort/settings
+var/ipfire/suricata
+#var/ipfire/suricata/settings
 var/ipfire/time
 #var/ipfire/time/settings
 var/ipfire/updatexlrator

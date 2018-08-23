@@ -19,16 +19,16 @@ int main(int argc, char *argv[]) {
 		exit(1);
 
 	if (argc < 2) {
-		fprintf(stderr, "\nNo argument given.\n\nsnortctrl (start|stop|restart)\n\n");
+		fprintf(stderr, "\nNo argument given.\n\nidsctrl (start|stop|restart)\n\n");
 		exit(1);
 	}
 
 	if (strcmp(argv[1], "start") == 0) {
-		safe_system("/etc/rc.d/init.d/snort start");
+		safe_system("/etc/rc.d/init.d/suricata start");
 	} else if (strcmp(argv[1], "stop") == 0) {
-		safe_system("/etc/rc.d/init.d/snort stop");
+		safe_system("/etc/rc.d/init.d/suricata stop");
 	} else if (strcmp(argv[1], "restart") == 0) {
-		safe_system("/etc/rc.d/init.d/snort restart");
+		safe_system("/etc/rc.d/init.d/suricata restart");
 	} else {
 		fprintf(stderr, "\nBad argument given.\n\nsnortctrl (start|stop|restart)\n\n");
 		exit(1);

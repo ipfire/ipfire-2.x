@@ -18,41 +18,36 @@
 #                                                                             #
 ###############################################################################
 
-CC      = gcc
-CFLAGS ?= -O2 -Wall
-LIBS    = -lsmooth -lnewt
+###############################################################################
+# Definitions
+###############################################################################
 
-PROGS = iowrap
-SUID_PROGS = squidctrl sshctrl ipfirereboot \
-	ipsecctrl timectrl dhcpctrl suricatactrl \
-	applejuicectrl rebuildhosts backupctrl collectdctrl \
-	logwatch wioscan wiohelper openvpnctrl firewallctrl \
-	wirelessctrl getipstat qosctrl launch-ether-wake \
-	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl \
-	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
-	setaliases urlfilterctrl updxlratorctrl fireinfoctrl rebuildroutes \
-	getconntracktable wirelessclient torctrl ddnsctrl unboundctrl \
-	captivectrl
-SUID_UPDX = updxsetperms
+include Config
 
-OBJS = $(patsubst %,%.o,$(PROGS) $(SUID_PROGS))
+VER        = ipfire
 
-install: all
-	install -m 755  $(PROGS) /usr/local/bin
-	install -m 4750 -g nobody $(SUID_PROGS) /usr/local/bin
+THISAPP    = ids-ruleset-sources
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
-all: $(PROGS) $(SUID_PROGS)
+###############################################################################
+# Top-level Rules
+###############################################################################
 
-clean:
-	-rm -f $(PROGS) $(SUID_PROGS) *.o core
+install : $(TARGET)
 
-######
+check :
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+download :
 
-setuid.o: setuid.c setuid.h
-	$(CC) $(CFLAGS) -c $< -o $@
+md5 :
 
-$(PROGS) $(SUID_PROGS): setuid.o | $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $@.o $< $(LIBS)
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) :
+	@$(PREBUILD)
+	# Simple install the ruleset sources file.
+	install -m 644 $(DIR_SRC)/config/suricata/ruleset-sources \
+		/var/ipfire/suricata/
+	@$(POSTBUILD)

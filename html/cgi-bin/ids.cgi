@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,389 +24,416 @@ use strict;
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
-use File::Copy;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
-
-sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
-
-$a = new CGI;
+require "${General::swroot}/ids-functions.pl";
 
 my %color = ();
 my %mainsettings = ();
+my %idsrules = ();
+my %idssettings=();
+my %rulesetsources = ();
+my %cgiparams=();
+my %checked=();
+my %selected=();
+
+# Read-in main settings, for language, theme and colors.
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
-my %snortsettings=();
-my %checked=();
-my %selected=();
-my %netsettings=();
-our $errormessage = '';
-our $results = '';
-our $tempdir = '';
-our $url='';
-&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+# Get the available network zones, based on the config type of the system and store
+# the list of zones in an array.
+my @network_zones = &IDS::get_available_network_zones();
+
+# File where the used rulefiles are stored.
+my $idsusedrulefilesfile = "$IDS::settingsdir/suricata-used-rulefiles.yaml";
+
+# File where the addresses of the homenet are stored.
+my $idshomenetfile = "$IDS::settingsdir/suricata-homenet.yaml";
+
+my $errormessage;
 
 &Header::showhttpheaders();
 
-$snortsettings{'ENABLE_SNORT'} = 'off';
-$snortsettings{'ENABLE_SNORT_GREEN'} = 'off';
-$snortsettings{'ENABLE_SNORT_BLUE'} = 'off';
-$snortsettings{'ENABLE_SNORT_ORANGE'} = 'off';
-$snortsettings{'ACTION'} = '';
-$snortsettings{'RULES'} = '';
-$snortsettings{'OINKCODE'} = '';
-$snortsettings{'INSTALLDATE'} = '';
-$snortsettings{'FILE'} = '';
-$snortsettings{'UPLOAD'} = '';
+#Get GUI values
+&Header::getcgihash(\%cgiparams);
 
-&Header::getcgihash(\%snortsettings, {'wantfile' => 1, 'filevar' => 'FH'});
+# Check if any error has been stored.
+if (-e $IDS::storederrorfile) {
+        # Open file to read in the stored error message.
+        open(FILE, "<$IDS::storederrorfile") or die "Could not open $IDS::storederrorfile. $!\n";
 
-####################### Added for snort rules control #################################
-my $snortrulepath; # change to "/etc/snort/rules" - maniac
-my @snortconfig;
-my $restartsnortrequired = 0;
-my %snortrules;
-my $rule = '';
-my $table1colour = '';
-my $table2colour = '';
-my $var = '';
-my $value = '';
-my $tmp = '';
-my $linkedrulefile = '';
-my $border = '';
-my $checkboxname = '';
+        # Read the stored error message.
+        $errormessage = <FILE>;
 
-if (-e "/etc/snort/snort.conf") {
+        # Close file.
+        close (FILE);
+
+        # Delete the file, which is now not longer required.
+        unlink($IDS::storederrorfile);
+}
 
 
-	# Open snort.conf file, read it in, close it, and re-open for writing
-	open(FILE, "/etc/snort/snort.conf") or die 'Unable to read snort config file.';
-	@snortconfig = <FILE>;
+## Grab all available snort rules and store them in the idsrules hash.
+#
+# Open snort rules directory and do a directory listing.
+opendir(DIR, $IDS::rulespath) or die $!;
+	# Loop through the direcory.
+	while (my $file = readdir(DIR)) {
+
+		# We only want files.
+		next unless (-f "$IDS::rulespath/$file");
+
+		# Ignore empty files.
+		next if (-z "$IDS::rulespath/$file");
+
+		# Use a regular expression to find files ending in .rules
+		next unless ($file =~ m/\.rules$/);
+
+		# Ignore files which are not read-able.
+		next unless (-R "$IDS::rulespath/$file");
+
+		# Call subfunction to read-in rulefile and add rules to
+		# the idsrules hash.
+		&readrulesfile("$file");
+	}
+
+closedir(DIR);
+
+# Gather used rulefiles.
+#
+# Check if the file for activated rulefiles is not empty.
+if(-f $idsusedrulefilesfile) {
+	# Open the file for used rulefile and read-in content.
+	open(FILE, $idsusedrulefilesfile) or die "Could not open $idsusedrulefilesfile. $!\n";
+
+	# Read-in content.
+	my @lines = <FILE>;
+
+	# Close file.
 	close(FILE);
-	open(FILE, ">/etc/snort/snort.conf") or die 'Unable to write snort config file.';
 
-    my @rules = `cd /etc/snort/rules/ && ls *.rules 2>/dev/null`;    # With this loop the rule might be display with correct rulepath set
-  	foreach (@rules) {
-  	chomp $_;
-  	my $temp = join(";",@snortconfig);
-    if ( $temp =~ /$_/ ){next;}
-    else { push(@snortconfig,"#include \$RULE_PATH/".$_);}
-  	}
+	# Loop through the array.
+	foreach my $line (@lines) {
+		# Remove newlines.
+		chomp($line);
 
-	# Loop over each line
-	foreach my $line (@snortconfig) {
-		# Trim the line
-		chomp $line;
+		# Skip comments.
+		next if ($line =~ /\#/);
 
-		# Check for a line with .rules
-		if ($line =~ /\.rules$/) {
-			# Parse out rule file name
-			$rule = $line;
-			$rule =~ s/\$RULE_PATH\///i;
-			$rule =~ s/ ?include ?//i;
-			$rule =~ s/\#//i;
-			my $snortrulepathrule = "$snortrulepath/$rule";
+		# Skip blank  lines.
+		next if ($line =~ /^\s*$/);
 
-			# Open rule file and read in contents
-			open(RULEFILE, "$snortrulepath/$rule") or die "Unable to read snort rule file for reading => $snortrulepath/$rule.";
-			my @snortrulefile = <RULEFILE>;
-			close(RULEFILE);
-			open(RULEFILE, ">$snortrulepath/$rule") or die "Unable to write snort rule file for writing $snortrulepath/$rule";
+		# Gather rule sid and message from the ruleline.
+		if ($line =~ /.*- (.*)/) {
+			my $rulefile = $1;
 
-			# Local vars
-			my $dashlinecnt = 0;
-			my $desclook = 1;
-			my $snortruledesc = '';
-			my %snortruledef = ();
-			my $rulecnt = 1;
+			# Add the rulefile to the %idsrules hash.
+			$idsrules{$rulefile}{'Rulefile'}{'State'} = "on";
+		}
+	}
+}
 
-			# Loop over rule file contents
-			foreach my $ruleline (@snortrulefile) {
-				chomp $ruleline;
+# Save ruleset.
+if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
+	my $enabled_sids_file = "$IDS::settingsdir/oinkmaster-enabled-sids.conf";
+	my $disabled_sids_file = "$IDS::settingsdir/oinkmaster-disabled-sids.conf";
 
-				# If still looking for a description
-				if ($desclook) {
-					# If line does not start with a # anymore, then done looking for a description
-					if ($ruleline !~ /^\#/) {
-						$desclook = 0;
-					}
+	# Arrays to store which rulefiles have been enabled and will be used.
+	my @enabled_rulefiles;
 
-					# If see more than one dashed line, (start to) create rule file description
-					if ($dashlinecnt > 1) {
-						# Check for a line starting with a #
-						if ($ruleline =~ /^\#/ and $ruleline !~ /^\#alert/) {
-							# Create tempruleline
-							my $tempruleline = $ruleline;
+	# Hash to store the user-enabled and disabled sids.
+	my %enabled_disabled_sids;
 
-							# Strip off # and clean up line
-							$tempruleline =~ s/\# ?//i;
+	# Loop through the hash of idsrules.
+	foreach my $rulefile(keys %idsrules) {
+		# Check if the rulefile is enabled.
+		if ($cgiparams{$rulefile} eq "on") {
+			# Add rulefile to the array of enabled rulefiles.
+			push(@enabled_rulefiles, $rulefile);
 
-							# Check for part of a description
-							if ($snortruledesc eq '') {
-								$snortruledesc = $tempruleline;
-							} else {
-								$snortruledesc .= " $tempruleline";
-							}
-						} else {
-							# Must be done
-							$desclook = 0;
-						}
-					}
+			# Drop item from cgiparams hash.
+			delete $cgiparams{$rulefile};
+		}
+	}
 
-					# If have a dashed line, increment count
-					if ($ruleline =~ /\# ?\-+/) {
-						$dashlinecnt++;
-					}
-				} else {
-					# Parse out rule file rule's message for display
-					if ($ruleline =~ /(msg\:\"[^\"]+\";)/) {
-						my $msg = '';
-						$msg = $1;
-						$msg =~ s/msg\:\"//i;
-						$msg =~ s/\";//i;
-						$snortruledef{$rulecnt}{'Description'} = $msg;
+	# Read-in the files for enabled/disabled sids.
+	# This will be done by calling the read_enabled_disabled_sids_file function two times
+	# and merge the returned hashes together into the enabled_disabled_sids hash.
+	%enabled_disabled_sids = (
+		&read_enabled_disabled_sids_file($disabled_sids_file),
+		&read_enabled_disabled_sids_file($enabled_sids_file));
 
-						# Check for 'Save' and rule file displayed in query string
-						if (($snortsettings{'ACTION'} eq $Lang::tr{'update'}) && ($ENV{'QUERY_STRING'} =~ /$rule/i)) {
-							# Check for a disable rule which is now enabled, or an enabled rule which is now disabled
-							if ((($ruleline =~ /^\#/) && (exists $snortsettings{"SNORT_RULE_$rule\_$rulecnt"})) || (($ruleline !~ /^\#/) && (!exists $snortsettings{"SNORT_RULE_$rule\_$rulecnt"}))) {
-								$restartsnortrequired = 1;
-							}
+	# Loop through the hash of idsrules.
+	foreach my $rulefile (keys %idsrules) {
+		# Loop through the single rules of the rulefile.
+		foreach my $sid (keys %{$idsrules{$rulefile}}) {
+			# Skip the current sid if it is not numeric.
+			next unless ($sid =~ /\d+/ );
 
-							# Strip out leading # from rule line
-							$ruleline =~ s/\# ?//i;
+			# Check if there exists a key in the cgiparams hash for this sid.
+			if (exists($cgiparams{$sid})) {
+				# Look if the rule is disabled.
+				if ($idsrules{$rulefile}{$sid}{'State'} eq "off") {
+					# Check if the state has been set to 'on'.
+					if ($cgiparams{$sid} eq "on") {
+						# Add/Modify the sid to/in the enabled_disabled_sids hash.
+						$enabled_disabled_sids{$sid} = "enabled";
 
-							# Check if it does not exists (which means it is disabled), append a #
-							if (!exists $snortsettings{"SNORT_RULE_$rule\_$rulecnt"}) {
-								$ruleline = "#"." $ruleline";
-							}
-						}
-
-						# Check if ruleline does not begin with a #, so it is enabled
-						if ($ruleline !~ /^\#/) {
-							$snortruledef{$rulecnt++}{'State'} = 'Enabled';
-						} else {
-							# Otherwise it is disabled
-							$snortruledef{$rulecnt++}{'State'} = 'Disabled';
-						}
+						# Drop item from cgiparams hash.
+						delete $cgiparams{$rulefile}{$sid};
 					}
 				}
-
-				# Print ruleline to RULEFILE
-				print RULEFILE "$ruleline\n";
-			}
-
-			# Close RULEFILE
-			close(RULEFILE);
-
-			# Check for 'Save'
-			if ($snortsettings{'ACTION'} eq $Lang::tr{'update'}) {
-				# Check for a disable rule which is now enabled, or an enabled rule which is now disabled
-				if ((($line =~ /^\#/) && (exists $snortsettings{"SNORT_RULE_$rule"})) || (($line !~ /^\#/) && (!exists $snortsettings{"SNORT_RULE_$rule"}))) {
-					$restartsnortrequired = 1;
-				}
-
-				# Strip out leading # from rule line
-				$line =~ s/\# ?//i;
-
-				# Check if it does not exists (which means it is disabled), append a #
-				if (!exists $snortsettings{"SNORT_RULE_$rule"}) {
-					$line = "# $line";
-				}
-
-			}
-
-			# Check for rule state
-			if ($line =~ /^\#/) {
-				$snortrules{$rule}{"State"} = "Disabled";
 			} else {
-				$snortrules{$rule}{"State"} = "Enabled";
-			}
+				# Look if the rule is enabled.
+				if ($idsrules{$rulefile}{$sid}{'State'} eq "on") {
+					# Check if the state is 'on' and should be disabled.
+					# In this case there is no entry
+					# for the sid in the cgiparams hash.
+					# Add/Modify it to/in the enabled_disabled_sids hash.
+					$enabled_disabled_sids{$sid} = "disabled";
 
-			# Set rule description
-			$snortrules{$rule}{"Description"} = $snortruledesc;
-
-			# Loop over sorted rules
-			foreach my $ruledef (sort {$a <=> $b} keys(%snortruledef)) {
-				$snortrules{$rule}{"Definition"}{$ruledef}{'Description'} = $snortruledef{$ruledef}{'Description'};
-				$snortrules{$rule}{"Definition"}{$ruledef}{'State'} = $snortruledef{$ruledef}{'State'};
-			}
-
-			$snortruledesc = '';
-			print FILE "$line\n";
-		} elsif ($line =~ /var RULE_PATH/) {
-			($tmp, $tmp, $snortrulepath) = split(' ', $line);
-			print FILE "$line\n";
-		} else {
-			print FILE "$line\n";
-		}
-	}
-	close(FILE);
-
-	if ($restartsnortrequired) {
-		system('/usr/local/bin/snortctrl restart >/dev/null');
-	}
-}
-
-#######################  End added for snort rules control  #################################
-
-if ($snortsettings{'OINKCODE'} ne "") {
-	$errormessage = $Lang::tr{'invalid input for oink code'} unless ($snortsettings{'OINKCODE'} =~ /^[a-z0-9]+$/);
-}
-
-if (!$errormessage) {
-	if ($snortsettings{'RULES'} eq 'subscripted') {
-		$url=" https://www.snort.org/rules/snortrules-snapshot-29111.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
-	} elsif ($snortsettings{'RULES'} eq 'registered') {
-		$url=" https://www.snort.org/rules/snortrules-snapshot-29111.tar.gz?oinkcode=$snortsettings{'OINKCODE'}";
-	} elsif ($snortsettings{'RULES'} eq 'community') {
-		$url=" https://www.snort.org/rules/community";
-	} else {
-		$url="https://rules.emergingthreats.net/open/snort-2.9.0/emerging.rules.tar.gz";
-	}
-
-	if ($snortsettings{'ACTION'} eq $Lang::tr{'save'} && $snortsettings{'ACTION2'} eq "snort" ) {
-		&General::writehash("${General::swroot}/snort/settings", \%snortsettings);
-		if ($snortsettings{'ENABLE_SNORT'} eq 'on')
-		{
-			system ('/usr/bin/touch', "${General::swroot}/snort/enable");
-		} else {
-			unlink "${General::swroot}/snort/enable";
-		}
-		if ($snortsettings{'ENABLE_SNORT_GREEN'} eq 'on')
-		{
-			system ('/usr/bin/touch', "${General::swroot}/snort/enable_green");
-		} else {
-			unlink "${General::swroot}/snort/enable_green";
-		}
-		if ($snortsettings{'ENABLE_SNORT_BLUE'} eq 'on')
-		{
-			system ('/usr/bin/touch', "${General::swroot}/snort/enable_blue");
-		} else {
-			unlink "${General::swroot}/snort/enable_blue";
-		}
-		if ($snortsettings{'ENABLE_SNORT_ORANGE'} eq 'on')
-		{
-			system ('/usr/bin/touch', "${General::swroot}/snort/enable_orange");
-		} else {
-			unlink "${General::swroot}/snort/enable_orange";
-		}
-		if ($snortsettings{'ENABLE_PREPROCESSOR_HTTP_INSPECT'} eq 'on')
-		{
-			system ('/usr/bin/touch', "${General::swroot}/snort/enable_preprocessor_http_inspect");
-		} else {
-			unlink "${General::swroot}/snort/enable_preprocessor_http_inspect";
-		}
-
-		system('/usr/local/bin/snortctrl restart >/dev/null');
-	}
-
-	# INSTALLMD5 is not in the form, so not retrieved by getcgihash
-	&General::readhash("${General::swroot}/snort/settings", \%snortsettings);
-
-	if ($snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'} || $snortsettings{'ACTION'} eq $Lang::tr{'upload new ruleset'}) {
-		my @df = `/bin/df -B M /var`;
-		foreach my $line (@df) {
-			next if $line =~ m/^Filesystem/;
-			my $return;
-
-			if ($line =~ m/dev/ ) {
-				$line =~ m/^.* (\d+)M.*$/;
-				my @temp = split(/ +/,$line);
-				if ($1<300) {
-					$errormessage = "$Lang::tr{'not enough disk space'} < 300MB, /var $1MB";
-				} else {
-					if ( $snortsettings{'ACTION'} eq $Lang::tr{'download new ruleset'}) {
-						&downloadrulesfile();
-						sleep(3);
-						$return = `cat /var/tmp/log 2>/dev/null`;
-
-					} elsif ( $snortsettings{'ACTION'} eq $Lang::tr{'upload new ruleset'}) {
-						my $upload = $a->param("UPLOAD");
-						open UPLOADFILE, ">/var/tmp/snortrules.tar.gz";
-						binmode $upload;
-						while ( <$upload> ) {
-							print UPLOADFILE;
-						}
-						close UPLOADFILE;
-					}
-
-					if ($return =~ "ERROR") {
-						$errormessage = "<br /><pre>".$return."</pre>";
-					} else {
-						system("/usr/local/bin/oinkmaster.pl -v -s -u file:///var/tmp/snortrules.tar.gz -C /var/ipfire/snort/oinkmaster.conf -o /etc/snort/rules >>/var/tmp/log 2>&1 &");
-						sleep(2);
-					}
+					# Drop item from cgiparams hash.
+					delete $cgiparams{$rulefile}{$sid};
 				}
 			}
 		}
 	}
+
+	# Open enabled sid's file for writing.
+	open(ENABLED_FILE, ">$enabled_sids_file") or die "Could not write to $enabled_sids_file. $!\n";
+
+	# Open disabled sid's file for writing.
+	open(DISABLED_FILE, ">$disabled_sids_file") or die "Could not write to $disabled_sids_file. $!\n";
+
+	# Write header to the files.
+	print ENABLED_FILE "#Autogenerated file. Any custom changes will be overwritten!\n";
+	print DISABLED_FILE "#Autogenerated file. Any custom changes will be overwritten!\n";
+
+	# Check if the hash for enabled/disabled files contains any entries.
+	if (%enabled_disabled_sids) {
+		# Loop through the hash.
+		foreach my $sid (keys %enabled_disabled_sids) {
+			# Check if the sid is enabled.
+			if ($enabled_disabled_sids{$sid} eq "enabled") {
+				# Print the sid to the enabled_sids file.
+				print ENABLED_FILE "enablesid $sid\n";
+			# Check if the sid is disabled.
+			} elsif ($enabled_disabled_sids{$sid} eq "disabled") {
+				# Print the sid to the disabled_sids file.
+				print DISABLED_FILE "disablesid $sid\n";
+			# Something strange happende - skip the current sid.
+			} else {
+				next;
+			}
+		}
+	}
+
+	# Close file for enabled_sids after writing.
+	close(ENABLED_FILE);
+
+	# Close file for disabled_sids after writing.
+	close(DISABLED_FILE);
+
+	# Open file for used rulefiles.
+	open (FILE, ">$idsusedrulefilesfile") or die "Could not write to $idsusedrulefilesfile. $!\n";
+
+	# Write yaml header to the file.
+	print FILE "%YAML 1.1\n";
+	print FILE "---\n\n";
+
+	# Write header to file.
+	print FILE "#Autogenerated file. Any custom changes will be overwritten!\n";
+
+	# Check if the enabled_rulefiles array contains any entries.
+	if (@enabled_rulefiles) {
+		# Loop through the array of rulefiles which should be loaded and write the to the file.
+		foreach my $file (@enabled_rulefiles) {
+			print FILE " - $file\n";
+		}
+	}
+
+	# Close file after writing.
+	close(FILE);
+
+	# Lock the webpage and print message.
+	&working_notice("$Lang::tr{'snort working'}");
+
+	# Call oinkmaster to alter the ruleset.
+	&IDS::oinkmaster();
+
+	# Check if the IDS is running.
+	if(&IDS::ids_is_running()) {
+		# Call suricatactrl to perform a reload.
+		&IDS::call_suricatactrl("reload");
+	}
+
+	# Reload page.
+	&reload();
+
+# Download new ruleset.
+} elsif ($cgiparams{'RULESET'} eq $Lang::tr{'download new ruleset'}) {
+	# Check if the red device is active.
+	unless (-e "${General::swroot}/red/active") {
+		$errormessage = $Lang::tr{'could not download latest updates'};
+	}
+
+	# Check if enought free disk space is availabe.
+	if(&IDS::checkdiskspace()) {
+		$errormessage = "$Lang::tr{'not enough disk space'}";
+	}
+
+	# Check if any errors happend.
+	unless ($errormessage) {
+		# Lock the webpage and print notice about downloading
+		# a new ruleset.
+		&working_notice("$Lang::tr{'snort working'}");
+
+		# Call subfunction to download the ruleset.
+		if(&IDS::downloadruleset()) {
+			$errormessage = $Lang::tr{'could not download latest updates'};
+
+			# Call function to store the errormessage.
+			&IDS::_store_error_message($errormessage);
+
+			# Preform a reload of the page.
+			&reload();
+		} else {
+			# Call subfunction to launch oinkmaster.
+			&IDS::oinkmaster();
+
+			# Check if the IDS is running.
+			if(&IDS::ids_is_running()) {
+				# Call suricatactrl to perform a reload.
+				&IDS::call_suricatactrl("reload");
+			}
+
+			# Perform a reload of the page.
+			&reload();
+		}
+	}
+# Save snort settings.
+} elsif ($cgiparams{'IDS'} eq $Lang::tr{'save'}) {
+	my %oldidssettings;
+	my $reload_page;
+
+	# Read-in current (old) IDS settings.
+	&General::readhash("$IDS::settingsdir/settings", \%oldidssettings);
+
+	# Prevent form name from been stored in conf file.
+	delete $cgiparams{'IDS'};
+
+	# Check if an oinkcode has been provided.
+	if ($cgiparams{'OINKCODE'}) {
+		# Check if the oinkcode contains unallowed chars.
+		unless ($cgiparams{'OINKCODE'} =~ /^[a-z0-9]+$/) {
+			$errormessage = $Lang::tr{'invalid input for oink code'};
+		}
+	}
+
+	# Go on if there are no error messages.
+	if (!$errormessage) {
+		# Store settings into settings file.
+		&General::writehash("$IDS::settingsdir/settings", \%cgiparams);
+	}
+
+	# Generate file to store the home net.
+	&generate_home_net_file();
+
+	# File which contains wheater the rules should be changed.
+	my $modify_sids_file = "$IDS::settingsdir/oinkmaster-modify-sids.conf";
+
+	# Open modify sid's file for writing.
+	open(FILE, ">$modify_sids_file") or die "Could not write to $modify_sids_file. $!\n";
+
+	# Write file header.
+	print FILE "#Autogenerated file. Any custom changes will be overwritten!\n";
+
+	# Check if the configured runmode is IPS.
+	if ($cgiparams{'RUN_MODE'} eq 'IPS') {
+		# Tell oinkmaster to switch all rules from alert to drop.
+		print FILE "modifysid \* \"alert\" \| \"drop\"\n";
+	}
+
+	# Close file handle.
+	close(FILE);
+
+	# Check if the runmode has been changed.
+	if($cgiparams{'RUN_MODE'} ne $oldidssettings{'RUN_MODE'}) {
+		# Check if a ruleset exists.
+		if (%idsrules) {
+			# Lock the webpage and print message.
+			&working_notice("$Lang::tr{'snort working'}");
+
+			# Call oinkmaster to alter the ruleset.
+			&IDS::oinkmaster();
+
+			# Set reload_page to "True".
+			$reload_page="True";
+		}
+	}
+
+	# Check if the IDS currently is running.
+	if(&IDS::ids_is_running()) {
+		# Check if ENABLE_IDS is set to on.
+		if($cgiparams{'ENABLE_IDS'} eq "on") {
+			# Call suricatactrl to perform a reload of suricata.
+			&IDS::call_suricatactrl("reload");
+		} else {
+			# Call suricatactrl to stop suricata.
+			&IDS::call_suricatactrl("stop");
+		}
+	} else {
+		# Call suricatactrl to start suricata.
+		&IDS::call_suricatactrl("start");
+	}
+
+	# Check if the page should be reloaded.
+	if ($reload_page) {
+		# Perform a reload of the page.
+		&reload();
+	}
 }
 
-$checked{'ENABLE_SNORT'}{'off'} = '';
-$checked{'ENABLE_SNORT'}{'on'} = '';
-$checked{'ENABLE_SNORT'}{$snortsettings{'ENABLE_SNORT'}} = "checked='checked'";
-$checked{'ENABLE_SNORT_GREEN'}{'off'} = '';
-$checked{'ENABLE_SNORT_GREEN'}{'on'} = '';
-$checked{'ENABLE_SNORT_GREEN'}{$snortsettings{'ENABLE_SNORT_GREEN'}} = "checked='checked'";
-$checked{'ENABLE_SNORT_BLUE'}{'off'} = '';
-$checked{'ENABLE_SNORT_BLUE'}{'on'} = '';
-$checked{'ENABLE_SNORT_BLUE'}{$snortsettings{'ENABLE_SNORT_BLUE'}} = "checked='checked'";
-$checked{'ENABLE_SNORT_ORANGE'}{'off'} = '';
-$checked{'ENABLE_SNORT_ORANGE'}{'on'} = '';
-$checked{'ENABLE_SNORT_ORANGE'}{$snortsettings{'ENABLE_SNORT_ORANGE'}} = "checked='checked'";
+# Read-in idssettings
+&General::readhash("$IDS::settingsdir/settings", \%idssettings);
+
+# If the runmode has not been configured yet, set default value.
+unless(exists($idssettings{'RUN_MODE'})) {
+        # Set default to IPS.
+        $idssettings{'RUN_MODE'} = 'IPS';
+}
+
+$checked{'ENABLE_IDS'}{'off'} = '';
+$checked{'ENABLE_IDS'}{'on'} = '';
+$checked{'ENABLE_IDS'}{$idssettings{'ENABLE_IDS'}} = "checked='checked'";
+$checked{'RUN_MODE'}{'IDS'} = '';
+$checked{'RUN_MODE'}{'IPS'} = '';
+$checked{'RUN_MODE'}{$idssettings{'RUN_MODE'}} = "checked='checked'";
 $selected{'RULES'}{'nothing'} = '';
 $selected{'RULES'}{'community'} = '';
 $selected{'RULES'}{'emerging'} = '';
 $selected{'RULES'}{'registered'} = '';
 $selected{'RULES'}{'subscripted'} = '';
-$selected{'RULES'}{$snortsettings{'RULES'}} = "selected='selected'";
+$selected{'RULES'}{$idssettings{'RULES'}} = "selected='selected'";
 
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
 
-####################### Added for snort rules control #################################
-print "<script type='text/javascript' src='/include/snortupdateutility.js'></script>";
+### Java Script ###
 print <<END
-<style type="text/css">
-<!--
-.section {
-	border: groove;
-}
-.row1color {
-	border: ridge;
-	background-color: $color{'color22'};
-}
-.row2color {
-	border: ridge;
-	background-color: $color{'color20'};
-}
-.rowselected {
-	border: double #FF0000;
-	background-color: #DCDCDC;
-}
--->
-</style>
+<script>
+	// Tiny java script function to show/hide the rules
+	// of a given category.
+	function showhide(tblname) {
+		\$("#" + tblname).toggle();
+	}
+</script>
 END
 ;
-#######################  End added for snort rules control  #################################
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
-
-###############
-# DEBUG DEBUG
-# &Header::openbox('100%', 'left', 'DEBUG');
-# my $debugCount = 0;
-# foreach my $line (sort keys %snortsettings) {
-# print "$line = $snortsettings{$line}<br />\n";
-# $debugCount++;
-# }
-# print "&nbsp;Count: $debugCount\n";
-# &Header::closebox();
-# DEBUG DEBUG
-###############
 
 if ($errormessage) {
 	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
@@ -415,250 +442,279 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
-my $return = `pidof oinkmaster.pl -x`;
-chomp($return);
-if ($return) {
-	&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='10;'>" );
+# Draw current state of the IDS
+&Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system'});
+
+# Check if the IDS is running and obtain the process-id.
+my $pid = &IDS::ids_is_running();
+
+# Display some useful information, if suricata daemon is running.
+if ($pid) {
+	# Gather used memory.
+	my $memory = &get_memory_usage($pid);
+
 	print <<END;
-	<table>
-		<tr><td>
-				<img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' />&nbsp;
-			<td>
-				$Lang::tr{'snort working'}
-		<tr><td colspan='2' align='center'>
-			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<input type='image' alt='$Lang::tr{'reload'}' title='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
-			</form>
-		<tr><td colspan='2' align='left'><pre>
-END
-	my @output = `tail -20 /var/tmp/log`;
-	foreach (@output) {
-		print "$_";
-	}
-	print <<END;
-			</pre>
+		<table width='95%' cellspacing='0' class='tbl'>
+			<tr>
+				<th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'intrusion detection'}</strong></th>
+			</tr>
+
+			<tr>
+				<td class='base'>$Lang::tr{'guardian daemon'}</td>
+				<td align='center' colspan='2' width='75%' bgcolor='${Header::colourgreen}'><font color='white'><strong>$Lang::tr{'running'}</strong></font></td>
+			</tr>
+
+			<tr>
+				<td class='base'></td>
+				<td bgcolor='$color{'color20'}' align='center'><strong>PID</strong></td>
+				<td bgcolor='$color{'color20'}' align='center'><strong>$Lang::tr{'memory'}</strong></td>
+			</tr>
+
+			<tr>
+				<td class='base'></td>
+				<td bgcolor='$color{'color22'}' align='center'>$pid</td>
+				<td bgcolor='$color{'color22'}' align='center'>$memory KB</td>
+			</tr>
 		</table>
 END
-	&Header::closebox();
-	&Header::closebigbox();
-	&Header::closepage();
-	exit;
-	refreshpage();
+} else {
+	# Otherwise display a hint that the service is not launched.
+	print <<END;
+		<table width='95%' cellspacing='0' class='tbl'>
+			<tr>
+				<th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'intrusion detection'}</strong></th>
+			</tr>
+
+			<tr>
+				<td class='base'>$Lang::tr{'guardian daemon'}</td>
+				<td align='center' width='75%' bgcolor='${Header::colourred}'><font color='white'><strong>$Lang::tr{'stopped'}</strong></font></td>
+			</tr>
+		</table>
+END
+}
+&Header::closebox();
+
+# Draw elements for IDS configuration.
+&Header::openbox('100%', 'center', $Lang::tr{'settings'});
+
+my $rulesdate;
+
+# Check if a ruleset allready has been downloaded.
+if ( -f "$IDS::rulestarball"){
+	# Call stat on the filename to obtain detailed information.
+        my @Info = stat("$IDS::rulestarball");
+
+	# Grab details about the creation time.
+        $rulesdate = localtime($Info[9]);
 }
 
-&Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system'});
 print <<END
-<form method='post' action='$ENV{'SCRIPT_NAME'}'><table width='100%'>
-<tr><td class='base'><input type='checkbox' name='ENABLE_SNORT_GREEN' $checked{'ENABLE_SNORT_GREEN'}{'on'} />GREEN Snort
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+	<table width='100%' border='0'>
+		<tr>
+			<td class='base' colspan='4'>
+				<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>$Lang::tr{'ids activate'} $Lang::tr{'intrusion detection system'}
+			</td>
+		</tr>
+
+		<tr>
+			<td colspan='4'><br><br></td>
+		</tr>
+
+		<tr>
+			<td class='base' colspan='4'><b>$Lang::tr{'runmode'}</b></td>
+		</tr>
+
+		<tr>
+			<td class='base' colspan='4'>
+				<input type='radio' name='RUN_MODE' value='IDS' $checked{'RUN_MODE'}{'IDS'}>$Lang::tr{'intrusion detection system2'} &nbsp&nbsp&nbsp
+				<input type='radio' name='RUN_MODE' value='IPS' $checked{'RUN_MODE'}{'IPS'}>$Lang::tr{'intrusion prevention system'}
+			</td>
+		</tr>
+
+		<tr>
+			<td colspan='4'><br></td>
+		</tr>
+
+		<tr>
+			<td colspan='4'><b>$Lang::tr{'ids traffic analyze'}</b><br></td>
+		</tr>
+
+		<tr>
 END
 ;
-if ($netsettings{'BLUE_DEV'} ne '') {
-  print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='ENABLE_SNORT_BLUE' $checked{'ENABLE_SNORT_BLUE'}{'on'} />   BLUE Snort";
+
+# Loop through the array of available networks and print config options.
+foreach my $zone (@network_zones) {
+	my $checked_input;
+	my $checked_forward;
+
+	# Convert current zone name to upper case.
+	my $zone_upper = uc($zone);
+
+	# Grab checkbox status from settings hash.
+	if ($idssettings{"ENABLE_IDS_$zone_upper"} eq "on") {
+		$checked_input = "checked = 'checked'";
+	}
+
+	print "<td class='base' width='25%'>\n";
+	print "<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>$Lang::tr{'enabled on'} $Lang::tr{$zone}\n";
+	print "</td>\n";
 }
-if ($netsettings{'ORANGE_DEV'} ne '') {
-  print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='ENABLE_SNORT_ORANGE' $checked{'ENABLE_SNORT_ORANGE'}{'on'} />   ORANGE Snort";
-}
-  print "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type='checkbox' name='ENABLE_SNORT' $checked{'ENABLE_SNORT'}{'on'} />   RED Snort";
 
 print <<END
-</td></tr>
-<tr>
-	<td><br><br></td>
-</tr>
-<tr>
-	<td><b>$Lang::tr{'ids rules update'}</b></td>
-</tr>
-<tr>
-	<td><select name='RULES'>
+		</tr>
+
+		<tr>
+			<td colspan='4'><br><br></td>
+		</tr>
+
+		<tr>
+			<td colspan='4'><b>$Lang::tr{'ids rules update'}</b></td>
+		</tr>
+
+		<tr>
+			<td colspan='4'><select name='RULES'>
 				<option value='nothing' $selected{'RULES'}{'nothing'} >$Lang::tr{'no'}</option>
 				<option value='emerging' $selected{'RULES'}{'emerging'} >$Lang::tr{'emerging rules'}</option>
 				<option value='community' $selected{'RULES'}{'community'} >$Lang::tr{'community rules'}</option>
 				<option value='registered' $selected{'RULES'}{'registered'} >$Lang::tr{'registered user rules'}</option>
 				<option value='subscripted' $selected{'RULES'}{'subscripted'} >$Lang::tr{'subscripted user rules'}</option>
 			</select>
-	</td>
-</tr>
-<tr>
-	<td><br />
-		$Lang::tr{'ids rules license'} <a href='https://www.snort.org/subscribe' target='_blank'>www.snort.org</a>$Lang::tr{'ids rules license1'}<br /><br />
-		$Lang::tr{'ids rules license2'} <a href='https://www.snort.org/account/oinkcode' target='_blank'>Get an Oinkcode</a>, $Lang::tr{'ids rules license3'}
-	</td>
-</tr>
-<tr>
-	<td nowrap='nowrap'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$snortsettings{'OINKCODE'}' /></td>
-</tr>
-<tr>
-	<td width='30%' align='left'><br><input type='submit' name='ACTION' value='$Lang::tr{'download new ruleset'}' />
-END
-;
-if ( -e "/var/tmp/snortrules.tar.gz"){
-	my @Info = stat("/var/tmp/snortrules.tar.gz");
-	$snortsettings{'INSTALLDATE'} = localtime($Info[9]);
-}
-print "&nbsp;$Lang::tr{'updates installed'}: $snortsettings{'INSTALLDATE'}</td>";
+			</td>
+		</tr>
 
-print <<END
-</tr>
-</table>
-<br><br>
-<table width='100%'>
-<tr>
-	<td align='right'><input type='hidden' name='ACTION2' value='snort' /><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
-</tr>
-</table>
+		<tr>
+			<td colspan='4'>
+				<br>$Lang::tr{'ids rules license'} <a href='https://www.snort.org/subscribe' target='_blank'>www.snort.org</a>$Lang::tr{'ids rules license1'}</br>
+				<br>$Lang::tr{'ids rules license2'} <a href='https://www.snort.org/account/oinkcode' target='_blank'>Get an Oinkcode</a>, $Lang::tr{'ids rules license3'}</br>
+			</td>
+		</tr>
+
+		<tr>
+			<td colspan='4' nowrap='nowrap'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$idssettings{'OINKCODE'}'></td>
+		</tr>
+
+		<tr>
+			<td colspan='4' align='left'><br>
+				<input type='submit' name='RULESET' value='$Lang::tr{'download new ruleset'}'>&nbsp;$Lang::tr{'updates installed'}: $rulesdate
+			</td>
+
+		</tr>
+	</table>
+
+	<br><br>
+
+	<table width='100%'>
+		<tr>
+			<td align='right'><input type='submit' name='IDS' value='$Lang::tr{'save'}' /></td>
+		</tr>
+	</table>
 </form>
 END
 ;
 
-if ($results ne '') {
-	print "$results";
-}
-
 &Header::closebox();
 
-####################### Added for snort rules control #################################
-if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable_green" || -e "${General::swroot}/snort/enable_blue" || -e "${General::swroot}/snort/enable_orange" ) {
-	&Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
-		# Output display table for rule files
-		print "<table width='100%'><tr><td valign='top'><table>";
+&Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
+	print"<form method='POST' action='$ENV{'SCRIPT_NAME'}'>\n";
 
-		print "<form method='post'>";
+	# Output display table for rule files
+	print "<table width='100%'>\n";
+
+	# Local variable required for java script to show/hide
+	# rules of a rulefile.
+	my $rulesetcount = 1;
+
+	# Loop over each rule file
+	foreach my $rulefile (sort keys(%idsrules)) {
+		my $rulechecked = '';
+
+		# Check if rule file is enabled
+		if ($idsrules{$rulefile}{'Rulefile'}{'State'} eq 'on') {
+			$rulechecked = 'CHECKED';
+		}
+
+		# Table and rows for the rule files.
+		print"<tr>\n";
+		print"<td class='base' width='5%'>\n";
+		print"<input type='checkbox' name='$rulefile' $rulechecked>\n";
+		print"</td>\n";
+		print"<td class='base' width='90%'><b>$rulefile</b></td>\n";
+		print"<td class='base' width='5%' align='right'>\n";
+		print"<a href=\"javascript:showhide('ruleset$rulesetcount')\">SHOW</a>\n";
+		print"</td>\n";
+		print"</tr>\n";
+
+		# Rows which will be hidden per default and will contain the single rules.
+		print"<tr  style='display:none' id='ruleset$rulesetcount'>\n";
+		print"<td colspan='3'>\n";
 
 		# Local vars
-		my $ruledisplaycnt = 1;
-		my $rulecnt = keys %snortrules;
-		$rulecnt++;
-		$rulecnt = $rulecnt / 2;
+		my $lines;
+		my $rows;
+		my $col;
 
-		# Loop over each rule file
-		foreach my $rulefile (sort keys(%snortrules)) {
-			my $rulechecked = '';
+		# New table for the single rules.
+		print "<table width='100%'>\n";
 
-			# Hide inkompatible Block rules
-			if ($rulefile =~'-BLOCK.rules') {
-				next;
+		# Loop over rule file rules
+		foreach my $sid (sort {$a <=> $b} keys(%{$idsrules{$rulefile}})) {
+			# Local vars
+			my $ruledefchecked = '';
+
+			# Skip rulefile itself.
+			next if ($sid eq "Rulefile");
+
+			# If 2 rules have been displayed, start a new row
+			if (($lines % 2) == 0) {
+				print "</tr><tr>\n";
+
+				# Increase rows by once.
+				$rows++;
 			}
 
-			# Check if reached half-way through rule file rules to start new column
- 		if ($ruledisplaycnt > $rulecnt) {
-				print "</table></td><td valign='top'><table>";
-				$ruledisplaycnt = 0;
-			}
-
-			# Check if rule file is enabled
-			if ($snortrules{$rulefile}{"State"} eq 'Enabled') {
-				$rulechecked = 'CHECKED';
-			}
-
-			# Create rule file link, vars array, and display flag
-			my $rulefilelink = "?RULEFILE=$rulefile";
-			my $rulefiletoclose = '';
-			my @queryvars = ();
-			my $displayrulefilerules = 0;
-
-			# Check for passed in query string
-			if ($ENV{'QUERY_STRING'}) {
-				# Split out vars
-				@queryvars = split(/\&/, $ENV{'QUERY_STRING'});
-
-				# Loop over values
-				foreach $value (@queryvars) {
-					# Split out var pairs
-					($var, $linkedrulefile) = split(/=/, $value);
-
-					# Check if var is 'RULEFILE'
-					if ($var eq 'RULEFILE') {
-						# Check if rulefile equals linkedrulefile
-						if ($rulefile eq $linkedrulefile) {
-							# Set display flag
-							$displayrulefilerules = 1;
-
-							# Strip out rulefile from rulefilelink
-							$rulefilelink =~ s/RULEFILE=$linkedrulefile//g;
-						} else {
-							# Add linked rule file to rulefilelink
-							$rulefilelink .= "&RULEFILE=$linkedrulefile";
-						}
-					}
-				}
-			}
-
-			# Strip out extra & & ? from rulefilelink
-			$rulefilelink =~ s/^\?\&/\?/i;
-
-			# Check for a single '?' and replace with page for proper link display
-			if ($rulefilelink eq '?') {
-				$rulefilelink = "ids.cgi";
-			}
-
-			# Output rule file name and checkbox
-			print "<tr><td class='base' valign='top'><input type='checkbox' NAME='SNORT_RULE_$rulefile' $rulechecked> <a href='$rulefilelink'>$rulefile</a></td></tr>";
-			print "<tr><td class='base' valign='top'>";
-
-			# Check for empty 'Description'
-			if ($snortrules{$rulefile}{'Description'} eq '') {
-				print "<table width='100%'><tr><td class='base'>No description available</td></tr>";
+			# Colour lines.
+			if ($rows % 2) {
+				$col="bgcolor='$color{'color20'}'";
 			} else {
-				# Output rule file 'Description'
-				print "<table width='100%'><tr><td class='base'>$snortrules{$rulefile}{'Description'}</td></tr>";
+				$col="bgcolor='$color{'color22'}'";
 			}
 
-			# Check for display flag
-			if ($displayrulefilerules) {
-				# Rule file definition rule display
-				print "<tr><td class='base' valign='top'><table border='0'><tr>";
+			# Set rule state
+			if ($idsrules{$rulefile}{$sid}{'State'} eq 'on') {
+				$ruledefchecked = 'CHECKED';
+			}
 
-				# Local vars
-			 	my $ruledefdisplaycnt = 0;
-				my $ruledefcnt = keys %{$snortrules{$rulefile}{"Definition"}};
-				$ruledefcnt++;
-				$ruledefcnt = $ruledefcnt / 2;
+			# Create rule checkbox and display rule description
+			print "<td class='base' width='5%' align='right' $col>\n";
+			print "<input type='checkbox' NAME='$sid' $ruledefchecked>\n";
+			print "</td>\n";
+			print "<td class='base' width='45%' $col>$idsrules{$rulefile}{$sid}{'Description'}</td>";
 
-				# Loop over rule file rules
-				foreach my $ruledef (sort {$a <=> $b} keys(%{$snortrules{$rulefile}{"Definition"}})) {
-					# Local vars
-					my $ruledefchecked = '';
-
-					# If have display 2 rules, start new row
-					if (($ruledefdisplaycnt % 2) == 0) {
-						print "</tr><tr>";
-						$ruledefdisplaycnt = 0;
-					}
-
-					# Check for rules state
-					if ($snortrules{$rulefile}{'Definition'}{$ruledef}{'State'} eq 'Enabled') {
-						$ruledefchecked = 'CHECKED';
-					}
-
-					# Create rule file rule's checkbox
-					$checkboxname = "SNORT_RULE_$rulefile";
-					$checkboxname .= "_$ruledef";
-					print "<td class='base'><input type='checkbox' NAME='$checkboxname' $ruledefchecked> $snortrules{$rulefile}{'Definition'}{$ruledef}{'Description'}</td>";
-
-					# Increment count
-					$ruledefdisplaycnt++;
-				}
-
-				# If do not have second rule for row, create empty cell
-				if (($ruledefdisplaycnt % 2) != 0) {
-					print "<td class='base'></td>";
-				}
-
-				# Close display table
-				print "</tr></table></td></tr>";
+			# Increment rule count
+			$lines++;
 		}
 
-			# Close display table
-			print "</table>";
-
-			# Increment ruledisplaycnt
-		$ruledisplaycnt++;
+		# If do not have a second rule for row, create empty cell
+		if (($lines % 2) != 0) {
+			print "<td class='base'></td>";
 		}
-	print "</td></tr></table></td></tr></table>";
-	print <<END
+
+		# Close display table
+		print "</tr></table></td></tr>";
+
+		# Finished whith the rule file, increase count.
+		$rulesetcount++;
+	}
+
+	# Close display table
+	print "</table>";
+
+print <<END
 <table width='100%'>
 <tr>
-	<td width='100%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
+	<td width='100%' align='right'><input type='submit' name='RULESET' value='$Lang::tr{'update'}'>
 		&nbsp; <!-- space for future online help link -->
 	</td>
 </tr>
@@ -666,34 +722,255 @@ if ( -e "${General::swroot}/snort/enable" || -e "${General::swroot}/snort/enable
 </form>
 END
 ;
-	&Header::closebox();
-}
-
-#######################  End added for snort rules control  #################################
+&Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
 
-sub downloadrulesfile {
-	my $peer;
-	my $peerport;
+#
+## A function to display a notice, to lock the webpage and
+## tell the user which action currently will be performed.
+#
+sub working_notice ($) {
+	my ($message) = @_;
 
-	unlink("/var/tmp/log");
+	&Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
+	&Header::openbigbox('100%', 'left', '', $errormessage);
+	&Header::openbox( 'Waiting', 1,);
+		print <<END;
+			<table>
+				<tr>
+					<td><img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' /></td>
+					<td>$message</td>
+				</tr>
+			</table>
+END
+	&Header::closebox();
+	&Header::closebigbox();
+	&Header::closepage();
+}
 
-	unless (-e "${General::swroot}/red/active") {
-		$errormessage = $Lang::tr{'could not download latest updates'};
-		return undef;
+#
+## A tiny function to perform a reload of the webpage after one second.
+#
+sub reload () {
+	print "<meta http-equiv='refresh' content='1'>\n";
+
+	# Stop the script.
+	exit;
+}
+
+#
+## Private function to read-in and parse rules of a given rulefile.
+#
+## The given file will be read, parsed and all valid rules will be stored by ID,
+## message/description and it's state in the idsrules hash.
+#
+sub readrulesfile ($) {
+	my $rulefile = shift;
+
+	# Open rule file and read in contents
+	open(RULEFILE, "$IDS::rulespath/$rulefile") or die "Unable to read $rulefile!";
+
+	# Store file content in an array.
+	my @lines = <RULEFILE>;
+
+	# Close file.
+	close(RULEFILE);
+
+	# Loop over rule file contents
+	foreach my $line (@lines) {
+		# Remove whitespaces.
+		chomp $line;
+
+		# Skip blank  lines.
+		next if ($line =~ /^\s*$/);
+
+		# Local vars.
+		my $sid;
+		my $msg;
+
+		# Gather rule sid and message from the ruleline.
+		if ($line =~ m/.*msg:\"(.*?)\"\; .* sid:(.*?); /) {
+			$msg = $1;
+			$sid = $2;
+
+			# Check if a rule has been found.
+			if ($sid && $msg) {
+				# Add rule to the idsrules hash.
+				$idsrules{$rulefile}{$sid}{'Description'} = $msg;
+
+				# Grab status of the rule. Check if ruleline starts with a "dash".
+				if ($line =~ /^\#/) {
+					# If yes, the rule is disabled.
+					$idsrules{$rulefile}{$sid}{'State'} = "off";
+				} else {
+					# Otherwise the rule is enabled.
+					$idsrules{$rulefile}{$sid}{'State'} = "on";
+				}
+			}
+		}
+        }
+}
+
+#
+## Function to get the used memory of a given process-id.
+#
+sub get_memory_usage($) {
+	my $pid = @_;
+
+	my $memory=0;
+
+	# Try to open statm file for the given process-id on the pseudo
+	# file system proc.
+        if (open(FILE, "/proc/$pid/statm")) {
+		# Read file content.
+                my $temp = <FILE>;
+
+		# Splitt file content and store in an array.
+                my @memory = split(/ /,$temp);
+
+		# Close file handle.
+                close(FILE);
+
+		# Calculate memory usage.
+		$memory+=$memory[0];
+
+		# Return memory usage.
+		return $memory;
+        }
+
+	# If the file could not be open, return nothing.
+	return;
+}
+
+#
+## Function to generate the file which contains the home net information.
+#
+sub generate_home_net_file() {
+	my %netsettings;
+
+	# Read-in network settings.
+	&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+
+	# Get available network zones.
+	my @network_zones = &IDS::get_available_network_zones();
+
+	# Temporary array to store network address and prefix of the configured
+	# networks.
+	my @networks;
+
+	# Loop through the array of available network zones.
+	foreach my $zone (@network_zones) {
+		# Skip the red network - It never can be part to the home_net!
+		next if($zone eq "red");
+
+		# Convert current zone name into upper case.
+		$zone = uc($zone);
+
+		# Generate key to access the required data from the netsettings hash.
+		my $zone_netaddress = $zone . "_NETADDRESS";
+		my $zone_netmask = $zone . "_NETMASK";
+
+		# Obtain the settings from the netsettings hash.
+		my $netaddress = $netsettings{$zone_netaddress};
+		my $netmask = $netsettings{$zone_netmask};
+
+		# Convert the subnetmask into prefix notation.
+		my $prefix = &Network::convert_netmask2prefix($netmask);
+
+		# Generate full network string.
+		my $network = join("/", $netaddress,$prefix);
+
+		# Check if the network is valid.
+		if(&Network::check_subnet($network)) {
+			# Add the generated network to the array of networks.
+			push(@networks, $network);
+		}
 	}
 
-	my %proxysettings=();
-	&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
+	# Format home net declaration.
+	my $line = "\"\[";
 
-	if ($_=$proxysettings{'UPSTREAM_PROXY'}) {
-		($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
+	# Loop through the array of networks.
+	foreach my $network (@networks) {
+		# Add the network to the line.
+		$line = "$line" . "$network";
+
+		# Check if the current network was the last in the array.
+		if ($network eq $networks[-1]) {
+			# Close the line.
+			$line = "$line" . "\]\"";
+		} else {
+			# Add "," for the next network.
+			$line = "$line" . "\,";
+		}
 	}
 
-	if ($peer) {
-		system("wget -r --proxy=on --proxy-user=$proxysettings{'UPSTREAM_USER'} --proxy-passwd=$proxysettings{'UPSTREAM_PASSWORD'} -e http_proxy=http://$peer:$peerport/ -o /var/tmp/log --output-document=/var/tmp/snortrules.tar.gz $url");
-	} else {
-		system("wget -r -o /var/tmp/log --output-document=/var/tmp/snortrules.tar.gz $url");
+	# Open file to store the addresses of the home net.
+	open(FILE, ">$idshomenetfile") or die "Could not open $idshomenetfile. $!\n";
+
+	# Print yaml header.
+	print FILE "%YAML 1.1\n";
+	print FILE "---\n\n";
+
+	# Print notice about autogenerated file.
+	print FILE "#Autogenerated file. Any custom changes will be overwritten!\n";
+
+	# Print the generated and required HOME_NET declaration to the file.
+	print FILE "HOME_NET:\t$line\n";
+
+	# Close file handle.
+	close(FILE);
+
+}
+
+#
+## Function to read-in the given enabled or disables sids file.
+#
+sub read_enabled_disabled_sids_file($) {
+	my ($file) = @_;
+
+	# Temporary hash to store the sids and their state. It will be
+	# returned at the end of this function.
+	my %temphash;
+
+	# Open the given filename.
+	open(FILE, "$file") or die "Could not open $file. $!\n";
+
+	# Loop through the file.
+	while(<FILE>) {
+		# Remove newlines.
+		chomp $_;
+
+		# Skip blank lines.
+		next if ($_ =~ /^\s*$/);
+
+		# Skip coments.
+		next if ($_ =~ /^\#/);
+
+		# Splitt line into sid and state part.
+		my ($state, $sid) = split(" ", $_);
+
+		# Skip line if the sid is not numeric.
+		next unless ($sid =~ /\d+/ );
+
+		# Check if the sid was enabled.
+		if ($state eq "enablesid") {
+			# Add the sid and its state as enabled to the temporary hash.
+			$temphash{$sid} = "enabled";
+		# Check if the sid was disabled.
+		} elsif ($state eq "disablesid") {
+			# Add the sid and its state as disabled to the temporary hash.
+			$temphash{$sid} = "disabled";
+		# Invalid state - skip the current sid and state.
+		} else {
+			next;
+		}
 	}
+
+	# Close filehandle.
+	close(FILE);
+
+	# Return the hash.
+	return %temphash;
 }
