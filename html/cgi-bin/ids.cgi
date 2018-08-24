@@ -53,7 +53,21 @@ my $idsusedrulefilesfile = "$IDS::settingsdir/suricata-used-rulefiles.yaml";
 # File where the addresses of the homenet are stored.
 my $idshomenetfile = "$IDS::settingsdir/suricata-homenet.yaml";
 
+# File which contains the enabled sids.
+my $enabled_sids_file = "$IDS::settingsdir/oinkmaster-enabled-sids.conf";
+
+# File which contains the disabled sids.
+my $disabled_sids_file = "$IDS::settingsdir/oinkmaster-disabled-sids.conf";
+
+# File which contains wheater the rules should be changed.
+my $modify_sids_file = "$IDS::settingsdir/oinkmaster-modify-sids.conf";
+
 my $errormessage;
+
+# Create oinkmaster related files if they does not exist yet.
+unless (-f "$enabled_sids_file") { &IDS::create_empty_file($enabled_sids_file); }
+unless (-f "$disabled_sids_file") { &IDS::create_empty_file($disabled_sids_file); }
+unless (-f "$modify_sids_file") { &IDS::create_empty_file($modify_sids_file); }
 
 &Header::showhttpheaders();
 
@@ -138,9 +152,6 @@ if(-f $idsusedrulefilesfile) {
 
 # Save ruleset.
 if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
-	my $enabled_sids_file = "$IDS::settingsdir/oinkmaster-enabled-sids.conf";
-	my $disabled_sids_file = "$IDS::settingsdir/oinkmaster-disabled-sids.conf";
-
 	# Arrays to store which rulefiles have been enabled and will be used.
 	my @enabled_rulefiles;
 
@@ -341,9 +352,6 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 
 	# Generate file to store the home net.
 	&generate_home_net_file();
-
-	# File which contains wheater the rules should be changed.
-	my $modify_sids_file = "$IDS::settingsdir/oinkmaster-modify-sids.conf";
 
 	# Open modify sid's file for writing.
 	open(FILE, ">$modify_sids_file") or die "Could not write to $modify_sids_file. $!\n";
