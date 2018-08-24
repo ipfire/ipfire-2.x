@@ -48,6 +48,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/ntp restart
 
 # Remove deprecated GRUB configuration option
 if [ -e "/etc/default/grub" ]; then
