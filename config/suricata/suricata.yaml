@@ -50,8 +50,8 @@ default-rule-path: /etc/suricata/rules
 rule-files:
     include: /var/ipfire/suricata/suricata-used-rulefiles.yaml
 
-classification-file: /etc/suricata/classification.config
-reference-config-file: /etc/suricata/reference.config
+classification-file: /etc/suricata/rules/classification.config
+reference-config-file: /etc/suricata/rules/reference.config
 # threshold-file: /etc/suricata/threshold.config
 
 
