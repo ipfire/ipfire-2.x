@@ -29,8 +29,10 @@ int main(int argc, char *argv[]) {
 		safe_system("/etc/rc.d/init.d/suricata stop");
 	} else if (strcmp(argv[1], "restart") == 0) {
 		safe_system("/etc/rc.d/init.d/suricata restart");
+	} else if (strcmp(argv[1], "reload") == 0) {
+		safe_system("/etc/rc.d/init.d/suricata reload");
 	} else {
-		fprintf(stderr, "\nBad argument given.\n\nsnortctrl (start|stop|restart)\n\n");
+		fprintf(stderr, "\nBad argument given.\n\nsnortctrl (start|stop|restart|reload)\n\n");
 		exit(1);
 	}
 
