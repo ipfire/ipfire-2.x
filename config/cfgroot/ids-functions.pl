@@ -355,4 +355,26 @@ sub call_suricatactrl ($) {
 	return;
 }
 
+#
+## Function to create a new empty file.
+#
+sub create_empty_file($) {
+	my ($file) = @_;
+
+	# Check if the given file exists.
+	if(-e $file) {
+		# Do nothing to prevent from overwriting existing files.
+		return;
+	}
+
+	# Open the file for writing.
+	open(FILE, ">$file") or die "Could not write to $file. $!\n";
+
+	# Close file handle.
+	close(FILE);
+
+	# Return true.
+	return 1;
+}
+
 1;
