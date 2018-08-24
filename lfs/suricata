@@ -85,6 +85,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mv /etc/suricata/suricata.yaml /etc/suricata/suricata-example.yaml
 	install -m 0644 $(DIR_SRC)/config/suricata/suricata.yaml /etc/suricata
 	-mkdir -p /etc/suricata/rules
+	mv /etc/suricata/*.config /etc/suricata/rules/
 	-mkdir -p /var/log/suricata
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
