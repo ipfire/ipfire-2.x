@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
 		exit(1);
 
 	if (argc < 2) {
-		fprintf(stderr, "\nNo argument given.\n\nidsctrl (start|stop|restart)\n\n");
+		fprintf(stderr, "\nNo argument given.\n\nsuricatactrl (start|stop|restart|reload)\n\n");
 		exit(1);
 	}
 
@@ -31,8 +31,10 @@ int main(int argc, char *argv[]) {
 		safe_system("/etc/rc.d/init.d/suricata restart");
 	} else if (strcmp(argv[1], "reload") == 0) {
 		safe_system("/etc/rc.d/init.d/suricata reload");
+	} else if (strcmp(argv[1], "fix-rules-dir") == 0) {
+		safe_system("chown nobody:nobody /etc/suricata/rules/*");
 	} else {
-		fprintf(stderr, "\nBad argument given.\n\nsnortctrl (start|stop|restart|reload)\n\n");
+		fprintf(stderr, "\nBad argument given.\n\nsuricatactrl (start|stop|restart|reload)\n\n");
 		exit(1);
 	}
 
