@@ -65,7 +65,7 @@ case "$1" in
 					NFQ_OPTIONS=$NFQ_OPTS
 
 					# Check if there are multiple cpu cores available.
-					if [ "$CPUCOUNT" > 0 ]; then
+					if [ "$CPUCOUNT" -gt "1" ]; then
 						# Balance beetween all queues.
 						NFQ_OPTIONS+="--queue-balance 0:"
 						NFQ_OPTIONS+=$(($CPUCOUNT-1))
