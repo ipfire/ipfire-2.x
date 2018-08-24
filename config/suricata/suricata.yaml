@@ -13,7 +13,7 @@ vars:
   # more specifc is better for alert accuracy and performance
   address-groups:
     # Include HOME_NET declaration from external file.
-    include /var/ipfire/suricata/suricata-homenet.yaml
+    include: /var/ipfire/suricata/suricata-homenet.yaml
 
     EXTERNAL_NET: "!$HOME_NET"
     #EXTERNAL_NET: "any"
