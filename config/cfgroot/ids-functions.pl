@@ -48,7 +48,7 @@ our $idspidfile = "/var/run/suricata.pid";
 my $suricatactrl = "/usr/local/bin/suricatactrl";
 
 # Array with allowed commands of suricatactrl.
-my @suricatactrl_cmds = ( 'start', 'stop', 'restart', 'reload' );
+my @suricatactrl_cmds = ( 'start', 'stop', 'restart', 'reload', 'fix-rules-dir' );
 
 #
 ## Function for checking if at least 300MB of free disk space are available
@@ -182,6 +182,9 @@ sub downloadruleset {
 ## A tiny wrapper function to call the oinkmaster script.
 #
 sub oinkmaster () {
+	# Check if the files in rulesdir have the correct permissions.
+	&_check_rulesdir_permissions();
+
 	# Load perl module to talk to the kernel syslog.
 	use Sys::Syslog qw(:DEFAULT setlogsock);
 
@@ -375,6 +378,29 @@ sub create_empty_file($) {
 
 	# Return true.
 	return 1;
+}
+
+#
+## Private function to check if the file permission of the rulespath are correct.
+## If not, call suricatactrl to fix them.
+#
+sub _check_rulesdir_permissions() {
+	# Open snort rules directory and do a directory listing.
+	opendir(DIR, $rulespath) or die $!;
+	# Loop through the direcory.
+	while (my $file = readdir(DIR)) {
+		# We only want files.
+		next unless (-f "$rulespath/$file");
+
+		# Check if the file is writable by the user.
+		if (-W "$rulespath/$file") {
+			# Everything is okay - go on to the next file.
+			next;
+		} else {
+			# There are wrong permissions, call suricatactrl to fix it.
+			&call_suricatactrl("fix-rules-dir");
+		}
+	}
 }
 
 1;
