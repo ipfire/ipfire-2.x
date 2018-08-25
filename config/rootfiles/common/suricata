@@ -2,9 +2,9 @@ etc/suricata
 #etc/suricata/rules
 etc/suricata/rules/classification.config
 etc/suricata/rules/reference.config
+etc/suricata/rules/threshold.config
 etc/suricata/suricata.yaml
 etc/suricata/suricata-example.yaml
-etc/suricata/threshold.config
 usr/bin/suricata
 #usr/bin/suricatasc
 #usr/lib/python2.7/site-packages/suricatasc
