@@ -385,6 +385,12 @@ sub create_empty_file($) {
 ## If not, call suricatactrl to fix them.
 #
 sub _check_rulesdir_permissions() {
+	# Check if the rulepath main directory is writable.
+	unless (-W $rulespath) {
+		# If not call suricatctrl to fix it.
+		&call_suricatactrl("fix-rules-dir");
+	}
+
 	# Open snort rules directory and do a directory listing.
 	opendir(DIR, $rulespath) or die $!;
 	# Loop through the direcory.
