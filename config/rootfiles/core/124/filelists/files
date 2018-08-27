@@ -4,10 +4,13 @@ etc/rc.d/helper/aws-setup
 etc/rc.d/init.d/aws
 etc/rc.d/init.d/localnet
 etc/rc.d/init.d/partresize
+opt/pakfire/lib/functions.pl
+opt/pakfire/pakfire
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/bin/install-bootloader
 usr/local/bin/backupiso
