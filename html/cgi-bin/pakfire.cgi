@@ -288,10 +288,6 @@ print <<END;
 			<tr><td align='left' width='45%'>$Lang::tr{'pakfire update daily'}</td><td width="55%" align="left">
           on <input type='radio' name='AUTOUPDATE' value='on' $checked{'AUTOUPDATE'}{'on'} /> |
           <input type='radio' name='AUTOUPDATE' value='off' $checked{'AUTOUPDATE'}{'off'} /> off </td></tr>
-			<tr><td align='left' width='45%'>$Lang::tr{'pakfire register'}</td><td align="left">
-          on <input type='radio' name='UUID' value='on' $checked{'UUID'}{'on'} /> |
-          <input type='radio' name='UUID' value='off' $checked{'UUID'}{'off'} /> off </td></tr>
-			<tr><td colspan="2" align="center"><input type="submit" name="ACTION" value="$Lang::tr{'save'}" /></td></tr>
 		</table>
 	</form>
 END

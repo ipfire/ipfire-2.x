@@ -127,7 +127,7 @@ sub fetchfile {
 	use File::Basename;
 	$bfile = basename("$getfile");
 	
-	logger("DOWNLOAD STARTED: $getfile") unless ($bfile =~ /^counter\?.*/);
+	logger("DOWNLOAD STARTED: $getfile");
 
 	$i = 0;	
 	while (($allok == 0) && $i < 5) {
@@ -145,9 +145,7 @@ sub fetchfile {
 		
 		$proto = "HTTP" unless $proto;
 		
-		unless ($bfile =~ /^counter\?.*/) {
-			logger("DOWNLOAD INFO: Host: $host ($proto) - File: $file");
-		}
+		logger("DOWNLOAD INFO: Host: $host ($proto) - File: $file");
 
 		my $ua = LWP::UserAgent->new;
 		$ua->agent("Pakfire/$Conf::version");
@@ -157,10 +155,10 @@ sub fetchfile {
 		&General::readhash("${General::swroot}/proxy/advanced/settings", \%proxysettings);
 
 		if ($proxysettings{'UPSTREAM_PROXY'}) {
-			logger("DOWNLOAD INFO: Upstream proxy: \"$proxysettings{'UPSTREAM_PROXY'}\"") unless ($bfile =~ /^counter.py\?.*/); 
+			logger("DOWNLOAD INFO: Upstream proxy: \"$proxysettings{'UPSTREAM_PROXY'}\"");
 			if ($proxysettings{'UPSTREAM_USER'}) {
 				$ua->proxy([["http", "https"] => "http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$proxysettings{'UPSTREAM_PROXY'}/"]);
-				logger("DOWNLOAD INFO: Logging in with: \"$proxysettings{'UPSTREAM_USER'}\" - \"$proxysettings{'UPSTREAM_PASSWORD'}\"") unless ($bfile =~ /^counter.py\?.*/);
+				logger("DOWNLOAD INFO: Logging in with: \"$proxysettings{'UPSTREAM_USER'}\" - \"$proxysettings{'UPSTREAM_PASSWORD'}\"");
 			} else {
 				$ua->proxy([["http", "https"] => "http://$proxysettings{'UPSTREAM_PROXY'}/"]);
 			}
@@ -179,19 +177,13 @@ sub fetchfile {
 			}
 		}
 
-		my $response;
+		my $result = $ua->head($url);
+		my $remote_headers = $result->headers;
+		$total_size = $remote_headers->content_length;
+		logger("DOWNLOAD INFO: $file has size of $total_size bytes");
 		
-		unless ($bfile =~ /^counter.py\?.*/) {
-			my $result = $ua->head($url);
-			my $remote_headers = $result->headers;
-			$total_size = $remote_headers->content_length;
-			logger("DOWNLOAD INFO: $file has size of $total_size bytes");
-			
-			$response = $ua->get($url, ':content_cb' => \&callback );
-			message("");
-		} else {
-			$response = $ua->get($url);
-		}
+		my $response = $ua->get($url, ':content_cb' => \&callback );
+		message("");
 		
 		my $code = $response->code();
 		my $log = $response->status_line;
@@ -203,31 +195,27 @@ sub fetchfile {
 		}
 		
 		if ($response->is_success) {
-			unless ($bfile =~ /^counter.py\?.*/) {
-				if (open(FILE, ">$Conf::tmpdir/$bfile")) {
-					print FILE $final_data;
-					close(FILE);
-					logger("DOWNLOAD INFO: File received. Start checking signature...");
-					if (&valid_signature("$Conf::tmpdir/$bfile")) {
-						logger("DOWNLOAD INFO: Signature of $bfile is fine.");
-						move("$Conf::tmpdir/$bfile","$Conf::cachedir/$bfile");
-					} else {
-						message("DOWNLOAD ERROR: The downloaded file ($file) wasn't verified by IPFire.org. Sorry - Exiting...");
-						my $ntp = `ntpdate -q -t 10 pool.ntp.org 2>/dev/null | tail -1`;
-						if ( $ntp !~ /time\ server(.*)offset(.*)/ ){message("TIME ERROR: Unable to get the nettime, this may lead to the verification error.");}
-						else { $ntp =~ /time\ server(.*)offset(.*)/; message("TIME INFO: Time Server$1has$2 offset to localtime.");}
-						exit 1;
-					}
-					logger("DOWNLOAD FINISHED: $file");
-					$allok = 1;
-					return 0;
+			if (open(FILE, ">$Conf::tmpdir/$bfile")) {
+				print FILE $final_data;
+				close(FILE);
+				logger("DOWNLOAD INFO: File received. Start checking signature...");
+				if (&valid_signature("$Conf::tmpdir/$bfile")) {
+					logger("DOWNLOAD INFO: Signature of $bfile is fine.");
+					move("$Conf::tmpdir/$bfile","$Conf::cachedir/$bfile");
 				} else {
-					logger("DOWNLOAD ERROR: Could not open $Conf::tmpdir/$bfile for writing.");
+					message("DOWNLOAD ERROR: The downloaded file ($file) wasn't verified by IPFire.org. Sorry - Exiting...");
+					my $ntp = `ntpdate -q -t 10 pool.ntp.org 2>/dev/null | tail -1`;
+					if ( $ntp !~ /time\ server(.*)offset(.*)/ ){message("TIME ERROR: Unable to get the nettime, this may lead to the verification error.");}
+					else { $ntp =~ /time\ server(.*)offset(.*)/; message("TIME INFO: Time Server$1has$2 offset to localtime.");}
+					exit 1;
 				}
-			} else {
+				logger("DOWNLOAD FINISHED: $file");
+				$allok = 1;
 				return 0;
+			} else {
+				logger("DOWNLOAD ERROR: Could not open $Conf::tmpdir/$bfile for writing.");
 			}
-		}	else {
+		} else {
 			logger("DOWNLOAD ERROR: $log");
 		}
 	}
@@ -759,9 +747,6 @@ sub setuppak {
 	message("PAKFIRE INST: $pak: Copying files and running post-installation scripts...");
 	my $return = system("cd $Conf::tmpdir && NAME=$pak ./install.sh >> $Conf::logdir/install-$pak.log 2>&1");
 	$return %= 255;
-	if ($pakfiresettings{'UUID'} ne "off") {
-		fetchfile("counter.py?ver=$Conf::version&uuid=$Conf::uuid&ipak=$pak&return=$return", "$Conf::mainserver");
-	}
 	if ($return == 0) {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
 	  cleanup("tmp");
@@ -820,9 +805,6 @@ sub upgradepak {
 	message("PAKFIRE UPGR: $pak: Upgrading files and running post-upgrading scripts...");
 	my $return = system("cd $Conf::tmpdir && NAME=$pak ./update.sh >> $Conf::logdir/update-$pak.log 2>&1");
 	$return %= 255;
-	if ($pakfiresettings{'UUID'} ne "off") {
-		fetchfile("counter.py?ver=$Conf::version&uuid=$Conf::uuid&upak=$pak&return=$return", "$Conf::mainserver");
-	}
 	if ($return == 0) {
 	  move("$Conf::tmpdir/ROOTFILES", "$Conf::dbdir/rootfiles/$pak");
 	  cleanup("tmp");
@@ -845,9 +827,6 @@ sub removepak {
 	message("PAKFIRE REMV: $pak: Removing files and running post-removing scripts...");
 	my $return = system("cd $Conf::tmpdir && NAME=$pak ./uninstall.sh >> $Conf::logdir/uninstall-$pak.log 2>&1");
 	$return %= 255;
-	if ($pakfiresettings{'UUID'} ne "off") {
-		fetchfile("counter.py?ver=$Conf::version&uuid=$Conf::uuid&dpak=$pak&return=$return", "$Conf::mainserver");
-	}
 	if ($return == 0) {
 	  unlink("$Conf::dbdir/rootfiles/$pak");
 	  unlink("$Conf::dbdir/installed/meta-$pak");
@@ -891,17 +870,6 @@ sub makeuuid {
 			print FILE $_;
 		}
 		close(FILE);
-	}
-}
-
-sub senduuid {
-	if ($pakfiresettings{'UUID'} ne "off") {
-		unless("$Conf::uuid") {
-			$Conf::uuid = `cat $Conf::dbdir/uuid`;
-		}
-		logger("Sending my uuid: $Conf::uuid");
-		fetchfile("counter.py?ver=$Conf::version&uuid=$Conf::uuid", "$Conf::mainserver");
-		system("rm -f $Conf::tmpdir/counter* 2>/dev/null");
 	}
 }
 
