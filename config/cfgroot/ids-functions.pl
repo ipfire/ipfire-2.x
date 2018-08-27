@@ -98,6 +98,15 @@ sub downloadruleset {
 	my %snortsettings=();
 	&General::readhash("$settingsdir/settings", \%snortsettings);
 
+	# Check if a ruleset has been configured.
+	unless($snortsettings{'RULES'}) {
+		# Log that no ruleset has been configured and abort.
+		&_log_to_syslog("No ruleset source has been configured.");
+
+		# Return "1".
+		return 1;
+	}
+
 	# Get all available ruleset locations.
 	my %rulesetsources=();
 	&General::readhash($rulesetsourcesfile, \%rulesetsources);
