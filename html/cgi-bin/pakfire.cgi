@@ -43,7 +43,6 @@ $pakfiresettings{'VALID'} = '';
 $pakfiresettings{'INSPAKS'} = '';
 $pakfiresettings{'DELPAKS'} = '';
 $pakfiresettings{'AUTOUPDATE'} = 'off';
-$pakfiresettings{'HEALTHCHECK'} = 'on';
 $pakfiresettings{'UUID'} = 'on';
 
 sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
@@ -163,9 +162,6 @@ my %checked=();
 $checked{'AUTOUPDATE'}{'off'} = '';
 $checked{'AUTOUPDATE'}{'on'} = '';
 $checked{'AUTOUPDATE'}{$pakfiresettings{'AUTOUPDATE'}} = "checked='checked'";
-$checked{'HEALTHCHECK'}{'off'} = '';
-$checked{'HEALTHCHECK'}{'on'} = '';
-$checked{'HEALTHCHECK'}{$pakfiresettings{'HEALTHCHECK'}} = "checked='checked'";
 $checked{'UUID'}{'off'} = '';
 $checked{'UUID'}{'on'} = '';
 $checked{'UUID'}{$pakfiresettings{'UUID'}} = "checked='checked'";
@@ -292,9 +288,6 @@ print <<END;
 			<tr><td align='left' width='45%'>$Lang::tr{'pakfire update daily'}</td><td width="55%" align="left">
           on <input type='radio' name='AUTOUPDATE' value='on' $checked{'AUTOUPDATE'}{'on'} /> |
           <input type='radio' name='AUTOUPDATE' value='off' $checked{'AUTOUPDATE'}{'off'} /> off </td></tr>
-			<tr><td align='left' width='45%'>$Lang::tr{'pakfire health check'}</td><td align="left">
-          on <input type='radio' name='HEALTHCHECK' value='on' $checked{'HEALTHCHECK'}{'on'} /> |
-          <input type='radio' name='HEALTHCHECK' value='off' $checked{'HEALTHCHECK'}{'off'} /> off </td></tr>          
 			<tr><td align='left' width='45%'>$Lang::tr{'pakfire register'}</td><td align="left">
           on <input type='radio' name='UUID' value='on' $checked{'UUID'}{'on'} /> |
           <input type='radio' name='UUID' value='off' $checked{'UUID'}{'off'} /> off </td></tr>

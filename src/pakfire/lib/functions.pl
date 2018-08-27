@@ -118,20 +118,6 @@ sub usage {
   exit 1;
 }
 
-sub pinghost {
-	my $host = shift;
-	
-	$p = Net::Ping->new("icmp");
-  if ($p->ping($host)) {
- 	 logger("PING INFO: $host is alive");
-  	return 1;
-  } else {
-		logger("PING INFO: $host is unreachable");
-		return 0;
-	}
-  $p->close();
-}
-
 sub fetchfile {
 	my $getfile = shift;
 	my $gethost = shift;
@@ -349,10 +335,8 @@ sub selectmirror {
 	### Choose a random server and test if it is online
 	#   If the check fails try a new server.
 	#   This will never give up.
-	my $found = 0;
 	my $servers = 0;
-	my $pingdelay = 1;
-	while ($found == 0) {
+	while (1) {
 		$server = int(rand($scount) + 1);
 		$servers = 0;
 		my ($line, $proto, $path, $host);
@@ -364,22 +348,8 @@ sub selectmirror {
 				$proto = $templine[0];
 				$host = $templine[1];
 				$path = $templine[2];
-				if ($pakfiresettings{'HEALTHCHECK'} eq "off") {
-				 	logger("PING INFO: Healthcheck is disabled");
-					$found = 1;
-					return ($proto, $host, $path);
-				}
-				elsif (pinghost("$host")) {
-					$found = 1;
-					return ($proto, $host, $path);
-				}
-				if ($found == 0) {
-					sleep($pingdelay);
-					$pingdelay=$pingdelay*2;
-					if ($pingdelay>1200) {
-						$pingdelay=1200;
-					}
-				}
+
+				return ($proto, $host, $path);
 			}
 		}
 	}
