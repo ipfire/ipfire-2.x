@@ -194,7 +194,7 @@ else
 ifeq "$(BUILD_PLATFORM)" "arm"
 	cd $(DIR_APP) && make $(MAKETUNING) dtbs
 	mkdir -p /boot/dtb-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP)/arch/$(HEADERS_ARCH)/boot/dts && for f in $$(find -name *.dtb); do \
+	cd $(DIR_APP)/arch/$(KERNEL_ARCH)/boot/dts && for f in $$(find -name "*.dtb"); do \
 				cp -v --parents $$f /boot/dtb-$(VER)-$(VERSUFIX)/ ; \
 				chmod 644 /boot/dtb-$(VER)-$(VERSUFIX)/$$f ; \
 			done

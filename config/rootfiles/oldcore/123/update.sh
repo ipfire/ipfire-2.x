@@ -34,6 +34,9 @@ done
 # Stop services
 /etc/init.d/squid stop
 
+# remove old xtables modules / some are renamend
+rm -rf /lib/xtables
+
 # Extract files
 extract_files
 
