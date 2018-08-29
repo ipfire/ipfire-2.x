@@ -88,8 +88,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install IPFire related config file.
 	install -m 0644 $(DIR_SRC)/config/suricata/suricata.yaml /etc/suricata
-	-mkdir -p /etc/suricata/rules
-	mv /etc/suricata/*.config /etc/suricata/rules/
+
+	# Create emtpy rules directory.
+	-mkdir -p /var/lib/suricata
+
+	# Move config files for references, threshold and classification
+	# to the rules directory.
+	mv /etc/suricata/*.config /var/lib/suricata
+
+	# Create logging directory.
 	-mkdir -p /var/log/suricata
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -1,8 +1,4 @@
 etc/suricata
-#etc/suricata/rules
-etc/suricata/rules/classification.config
-etc/suricata/rules/reference.config
-etc/suricata/rules/threshold.config
 etc/suricata/suricata.yaml
 usr/bin/suricata
 #usr/bin/suricatasc
@@ -43,6 +39,10 @@ usr/bin/suricata
 #usr/share/doc/suricata/Ubuntu_Installation_from_GIT.txt
 #usr/share/doc/suricata/Windows.txt
 #usr/share/man/man1/suricata.1
+#var/lib/suricata
+var/lib/suricata/classification.config
+var/lib/suricata/reference.config
+var/lib/suricata/threshold.config
 var/log/suricata
 #var/log/suricata/certs
 #var/log/suricata/files

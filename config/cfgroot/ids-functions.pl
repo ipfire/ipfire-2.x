@@ -35,7 +35,7 @@ our $rulestarball = "/var/tmp/idsrules.tar.gz";
 our $storederrorfile = "/tmp/ids_storederror";
 
 # Location where the rulefiles are stored.
-our $rulespath = "/etc/suricata/rules";
+our $rulespath = "/var/lib/suricata";
 
 # File which contains a list of all supported ruleset sources.
 # (Sourcefire, Emergingthreads, etc..)

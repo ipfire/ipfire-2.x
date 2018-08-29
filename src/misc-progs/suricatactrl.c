@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(argv[1], "reload") == 0) {
 		safe_system("/etc/rc.d/init.d/suricata reload");
 	} else if (strcmp(argv[1], "fix-rules-dir") == 0) {
-		safe_system("chown -R nobody:nobody /etc/suricata/rules/");
+		safe_system("chown -R nobody:nobody /var/lib/suricata");
 	} else {
 		fprintf(stderr, "\nBad argument given.\n\nsuricatactrl (start|stop|restart|reload)\n\n");
 		exit(1);
