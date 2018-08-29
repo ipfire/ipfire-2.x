@@ -64,10 +64,11 @@ my $modify_sids_file = "$IDS::settingsdir/oinkmaster-modify-sids.conf";
 
 my $errormessage;
 
-# Create oinkmaster related files if they does not exist yet.
+# Create files if they does not exist yet.
 unless (-f "$enabled_sids_file") { &IDS::create_empty_file($enabled_sids_file); }
 unless (-f "$disabled_sids_file") { &IDS::create_empty_file($disabled_sids_file); }
 unless (-f "$modify_sids_file") { &IDS::create_empty_file($modify_sids_file); }
+unless (-f "$idsusedrulefilesfile") { &IDS::create_empty_file($idsusedrulefilesfile); }
 
 &Header::showhttpheaders();
 
