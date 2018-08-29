@@ -824,28 +824,36 @@ sub readrulesfile ($) {
 ## Function to get the used memory of a given process-id.
 #
 sub get_memory_usage($) {
-	my $pid = @_;
+	my ($pid) = @_;
 
-	my $memory=0;
+	my $memory = 0;
 
-	# Try to open statm file for the given process-id on the pseudo
+	# Try to open the status file for the given process-id on the pseudo
 	# file system proc.
-        if (open(FILE, "/proc/$pid/statm")) {
-		# Read file content.
-                my $temp = <FILE>;
+	if (open(FILE, "/proc/$pid/status")) {
+		# Loop through the entire file.
+		while (<FILE>) {
+			# Splitt current line content and store them into variables.
+			my ($key, $value) = split(":", $_, 2);
 
-		# Splitt file content and store in an array.
-                my @memory = split(/ /,$temp);
+			# Check if the current key is the one which contains the memory usage.
+			# The wanted one is VmRSS which contains the Real-memory (resident set)
+			# of the entire process.
+			if ($key eq "VmRSS") {
+				# Found the memory usage add it to the memory variable.
+				$memory += $value;
+
+				# Break the loop.
+				last;
+			}
+		}
 
 		# Close file handle.
-                close(FILE);
-
-		# Calculate memory usage.
-		$memory+=$memory[0];
+		close(FILE);
 
 		# Return memory usage.
 		return $memory;
-        }
+	}
 
 	# If the file could not be open, return nothing.
 	return;
