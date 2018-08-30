@@ -625,100 +625,103 @@ END
 
 &Header::closebox();
 
-&Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
-	print"<form method='POST' action='$ENV{'SCRIPT_NAME'}'>\n";
+# Only show the section for configuring the ruleset if one is present.
+if (%idsrules) {
+	&Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
 
-	# Output display table for rule files
-	print "<table width='100%'>\n";
+		print"<form method='POST' action='$ENV{'SCRIPT_NAME'}'>\n";
 
-	# Local variable required for java script to show/hide
-	# rules of a rulefile.
-	my $rulesetcount = 1;
-
-	# Loop over each rule file
-	foreach my $rulefile (sort keys(%idsrules)) {
-		my $rulechecked = '';
-
-		# Check if rule file is enabled
-		if ($idsrules{$rulefile}{'Rulefile'}{'State'} eq 'on') {
-			$rulechecked = 'CHECKED';
-		}
-
-		# Table and rows for the rule files.
-		print"<tr>\n";
-		print"<td class='base' width='5%'>\n";
-		print"<input type='checkbox' name='$rulefile' $rulechecked>\n";
-		print"</td>\n";
-		print"<td class='base' width='90%'><b>$rulefile</b></td>\n";
-		print"<td class='base' width='5%' align='right'>\n";
-		print"<a href=\"javascript:showhide('ruleset$rulesetcount')\">SHOW</a>\n";
-		print"</td>\n";
-		print"</tr>\n";
-
-		# Rows which will be hidden per default and will contain the single rules.
-		print"<tr  style='display:none' id='ruleset$rulesetcount'>\n";
-		print"<td colspan='3'>\n";
-
-		# Local vars
-		my $lines;
-		my $rows;
-		my $col;
-
-		# New table for the single rules.
+		# Output display table for rule files
 		print "<table width='100%'>\n";
 
-		# Loop over rule file rules
-		foreach my $sid (sort {$a <=> $b} keys(%{$idsrules{$rulefile}})) {
+		# Local variable required for java script to show/hide
+		# rules of a rulefile.
+		my $rulesetcount = 1;
+
+		# Loop over each rule file
+		foreach my $rulefile (sort keys(%idsrules)) {
+			my $rulechecked = '';
+
+			# Check if rule file is enabled
+			if ($idsrules{$rulefile}{'Rulefile'}{'State'} eq 'on') {
+				$rulechecked = 'CHECKED';
+			}
+
+			# Table and rows for the rule files.
+			print"<tr>\n";
+			print"<td class='base' width='5%'>\n";
+			print"<input type='checkbox' name='$rulefile' $rulechecked>\n";
+			print"</td>\n";
+			print"<td class='base' width='90%'><b>$rulefile</b></td>\n";
+			print"<td class='base' width='5%' align='right'>\n";
+			print"<a href=\"javascript:showhide('ruleset$rulesetcount')\">SHOW</a>\n";
+			print"</td>\n";
+			print"</tr>\n";
+
+			# Rows which will be hidden per default and will contain the single rules.
+			print"<tr  style='display:none' id='ruleset$rulesetcount'>\n";
+			print"<td colspan='3'>\n";
+
 			# Local vars
-			my $ruledefchecked = '';
+			my $lines;
+			my $rows;
+			my $col;
 
-			# Skip rulefile itself.
-			next if ($sid eq "Rulefile");
+			# New table for the single rules.
+			print "<table width='100%'>\n";
 
-			# If 2 rules have been displayed, start a new row
-			if (($lines % 2) == 0) {
-				print "</tr><tr>\n";
+			# Loop over rule file rules
+			foreach my $sid (sort {$a <=> $b} keys(%{$idsrules{$rulefile}})) {
+				# Local vars
+				my $ruledefchecked = '';
 
-				# Increase rows by once.
-				$rows++;
+				# Skip rulefile itself.
+				next if ($sid eq "Rulefile");
+
+				# If 2 rules have been displayed, start a new row
+				if (($lines % 2) == 0) {
+					print "</tr><tr>\n";
+
+					# Increase rows by once.
+					$rows++;
+				}
+
+				# Colour lines.
+				if ($rows % 2) {
+					$col="bgcolor='$color{'color20'}'";
+				} else {
+					$col="bgcolor='$color{'color22'}'";
+				}
+
+				# Set rule state
+				if ($idsrules{$rulefile}{$sid}{'State'} eq 'on') {
+					$ruledefchecked = 'CHECKED';
+				}
+
+				# Create rule checkbox and display rule description
+				print "<td class='base' width='5%' align='right' $col>\n";
+				print "<input type='checkbox' NAME='$sid' $ruledefchecked>\n";
+				print "</td>\n";
+				print "<td class='base' width='45%' $col>$idsrules{$rulefile}{$sid}{'Description'}</td>";
+
+				# Increment rule count
+				$lines++;
 			}
 
-			# Colour lines.
-			if ($rows % 2) {
-				$col="bgcolor='$color{'color20'}'";
-			} else {
-				$col="bgcolor='$color{'color22'}'";
+			# If do not have a second rule for row, create empty cell
+			if (($lines % 2) != 0) {
+				print "<td class='base'></td>";
 			}
 
-			# Set rule state
-			if ($idsrules{$rulefile}{$sid}{'State'} eq 'on') {
-				$ruledefchecked = 'CHECKED';
-			}
+			# Close display table
+			print "</tr></table></td></tr>";
 
-			# Create rule checkbox and display rule description
-			print "<td class='base' width='5%' align='right' $col>\n";
-			print "<input type='checkbox' NAME='$sid' $ruledefchecked>\n";
-			print "</td>\n";
-			print "<td class='base' width='45%' $col>$idsrules{$rulefile}{$sid}{'Description'}</td>";
-
-			# Increment rule count
-			$lines++;
-		}
-
-		# If do not have a second rule for row, create empty cell
-		if (($lines % 2) != 0) {
-			print "<td class='base'></td>";
+			# Finished whith the rule file, increase count.
+			$rulesetcount++;
 		}
 
 		# Close display table
-		print "</tr></table></td></tr>";
-
-		# Finished whith the rule file, increase count.
-		$rulesetcount++;
-	}
-
-	# Close display table
-	print "</table>";
+		print "</table>";
 
 print <<END
 <table width='100%'>
@@ -731,7 +734,9 @@ print <<END
 </form>
 END
 ;
-&Header::closebox();
+	&Header::closebox();
+}
+
 &Header::closebigbox();
 &Header::closepage();
 
