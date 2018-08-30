@@ -47,7 +47,7 @@ rule-files:
 
 classification-file: /var/lib/suricata/classification.config
 reference-config-file: /var/lib/suricata/reference.config
-# threshold-file: /var/lib/suricata/threshold.config
+threshold-file: /var/lib/suricata/threshold.config
 
 
 ##
