@@ -124,6 +124,12 @@ if ( $cgiparams{'ACTION'} eq "backup" )
 }
 if ( $cgiparams{'ACTION'} eq "addonbackup" )
 {
+	# Exit if there is any dots or slashes in the addon name
+	exit(1) if ($cgiparams{'ADDON'} =~ /(\.|\/)/);
+
+	# Check if the addon exists
+	exit(1) unless (-e "/var/ipfire/backup/addons/includes/$cgiparams{'ADDON'}");
+
 	system("/usr/local/bin/backupctrl addonbackup $cgiparams{'ADDON'} >/dev/null 2>&1");
 }
 elsif ( $cgiparams{'ACTION'} eq "delete" )
