@@ -24,6 +24,7 @@ use strict;
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
 use File::Copy;
+use File::Basename;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -58,44 +59,25 @@ system("/usr/local/bin/backupctrl makedirs >/dev/null 2>&1 ") unless ( -e '/var/
 ############################################################################################################################
 ############################################## System calls ohne Http Header ###############################################
 
-# Replace slashes from filename
-$cgiparams{'FILE'} =~ s/\///;
+if ($cgiparams{'ACTION'} eq "download") {
+		my $file = &sanitise_file($cgiparams{'FILE'});
+		exit(1) unless defined($file);
 
-if ( $cgiparams{'ACTION'} eq "download" )
-{
-		open(DLFILE, "</var/ipfire/backup/$cgiparams{'FILE'}") or die "Unable to open $cgiparams{'FILE'}: $!";
-		my @fileholder = <DLFILE>;
-		print "Content-Type:application/x-download\n";
-		my @fileinfo = stat("/var/ipfire/backup/$cgiparams{'FILE'}");
-		print "Content-Length:$fileinfo[7]\n";
-		print "Content-Disposition:attachment;filename=$cgiparams{'FILE'}\n\n";
-		print @fileholder;
-		exit (0);
-}
-if ( $cgiparams{'ACTION'} eq "downloadiso" )
-{
-		open(DLFILE, "</var/tmp/backupiso/$cgiparams{'FILE'}") or die "Unable to open $cgiparams{'FILE'}: $!";
-		my @fileholder = <DLFILE>;
-		print "Content-Type:application/x-download\n";
-		my @fileinfo = stat("/var/tmp/backupiso/$cgiparams{'FILE'}");
-		print "Content-Length:$fileinfo[7]\n";
-		print "Content-Disposition:attachment;filename=$cgiparams{'FILE'}\n\n";
-		print @fileholder;
-		exit (0);
-}
-if ( $cgiparams{'ACTION'} eq "downloadaddon" )
-{
-		open(DLFILE, "</var/ipfire/backup/addons/backup/$cgiparams{'FILE'}") or die "Unable to open $cgiparams{'FILE'}: $!";
-		my @fileholder = <DLFILE>;
-		print "Content-Type:application/x-download\n";
-		my @fileinfo = stat("/var/ipfire/backup/addons/backup/$cgiparams{'FILE'}");
-		print "Content-Length:$fileinfo[7]\n";
-		print "Content-Disposition:attachment;filename=$cgiparams{'FILE'}\n\n";
-		print @fileholder;
-		exit (0);
-}
-elsif ( $cgiparams{'ACTION'} eq "restore" )
-{
+		&deliver_file($file);
+		exit(0);
+} elsif ($cgiparams{'ACTION'} eq "downloadiso") {
+		my $file = &sanitise_file($cgiparams{'FILE'});
+		exit(1) unless defined($file);
+
+		&deliver_file($file);
+		exit(0);
+} elsif ($cgiparams{'ACTION'} eq "downloadaddon") {
+		my $file = &sanitise_file($cgiparams{'FILE'});
+		exit(1) unless defined($file);
+
+		&deliver_file($file);
+		exit(0);
+} elsif ( $cgiparams{'ACTION'} eq "restore") {
 		my $upload = $a->param("UPLOAD");
 		open UPLOADFILE, ">/tmp/restore.ipf";
 		binmode $upload;
@@ -146,7 +128,12 @@ if ( $cgiparams{'ACTION'} eq "addonbackup" )
 }
 elsif ( $cgiparams{'ACTION'} eq "delete" )
 {
-	system("/usr/local/bin/backupctrl $cgiparams{'FILE'} >/dev/null 2>&1");
+	my $file = &sanitise_file($cgiparams{'FILE'});
+	exit(1) unless defined($file);
+
+	$file = &File::Basename::basename($file);
+
+	system("/usr/local/bin/backupctrl $file >/dev/null 2>&1");
 }
 
 ############################################################################################################################
@@ -340,3 +327,41 @@ END
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
+
+sub sanitise_file() {
+	my $file = shift;
+
+	# Filenames cannot contain any slashes
+	return undef if ($file =~ /\//);
+
+	# File must end with .ipf or .iso
+	return undef unless ($file =~ /\.(ipf|iso)$/);
+
+	# Convert to absolute path
+	if (-e "/var/ipfire/backup/$file") {
+		return "/var/ipfire/backup/$file";
+	} elsif (-e "/var/ipfire/backup/addons/backup/$file") {
+		return "/var/ipfire/backup/addons/backup/$file";
+	} elsif (-e "/var/tmp/backupiso/$file") {
+		return "/var/tmp/backupiso/$file";
+	}
+
+	# File does not seem to exist
+	return undef;
+}
+
+sub deliver_file() {
+	my $file = shift;
+	my @stat = stat($file);
+
+	# Print headers
+	print "Content-Disposition: attachment; filename=" . &File::Basename::basename($file) . "\n";
+	print "Content-Type: application/octet-stream\n";
+	print "Content-Length: $stat[7]\n";
+	print "\n";
+
+	# Deliver content
+	open(FILE, "<$file") or die "Unable to open $file: $!";
+	print <FILE>;
+	close(FILE);
+}
