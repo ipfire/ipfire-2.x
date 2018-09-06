@@ -167,6 +167,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 	{
 		my ($datetime,$title,$priority,$classification,$srcip,$srcport,$destip,$destport,$sid,$refs) = split(/\|/);
 		$refs =~ s/,$//;
+
+		# Skip event if no datetime and title are available.
+		next unless (($datetime) && ($title));
+
 		print "Date: $datetime\n";
 		print "Name: $title\n";
 		print "Priority: $priority\n";
@@ -285,6 +289,10 @@ foreach $_ (@slice)
 	else {
 		print "<tr bgcolor='$color{'color22'}'><td>\n"; }
 	my ($datetime,$title,$priority,$classification,$srcip,$srcport,$destip,$destport,$sid,$refs) = split(/\|/);
+
+	# Only show the current event if at least datetime and title are available.
+	next unless (($datetime) && ($title));
+
 	print <<END
 <table width='100%'>
 <tr>
