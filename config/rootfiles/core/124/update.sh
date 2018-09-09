@@ -51,6 +51,9 @@ ldconfig
 /etc/init.d/rngd restart
 /etc/init.d/ntp restart
 
+# Reload sysctl.conf
+sysctl -p
+
 # Remove deprecated GRUB configuration option
 if [ -e "/etc/default/grub" ]; then
 	sed -e "/^GRUB_FONT/d" -i /etc/default/grub
