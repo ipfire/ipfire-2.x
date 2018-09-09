@@ -15,6 +15,7 @@ srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/bin/install-bootloader
 usr/local/bin/backupiso
+usr/local/bin/rebuild-initrd
 var/ipfire/backup/exclude
 var/ipfire/backup/include
 var/ipfire/langs

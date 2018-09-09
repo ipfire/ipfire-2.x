@@ -54,6 +54,9 @@ ldconfig
 # Reload sysctl.conf
 sysctl -p
 
+# rebuild initrd to add early microcode updates
+rebuild-initrd
+
 # Remove deprecated GRUB configuration option
 if [ -e "/etc/default/grub" ]; then
 	sed -e "/^GRUB_FONT/d" -i /etc/default/grub
@@ -78,4 +81,3 @@ sync
 
 # Don't report the exitcode last command
 exit 0
-
