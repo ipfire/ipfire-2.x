@@ -1,0 +1,33 @@
+# OpenSSH client configuration
+#
+# set some basic hardening options for all connections
+Host *
+        # disable Roaming as it is known to be vulnerable
+        UseRoaming no
+
+        # only use secure crypto algorithm
+        KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+        Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
+        MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com
+
+        # always visualise server host keys (has no technical
+        # effect, but helps to identify key based MITM attacks)
+        VisualHostKey yes
+
+        # use SSHFP (might work on some up-to-date networks) to look up host keys
+        VerifyHostKeyDNS yes
+
+        # send keep-alive messages to connected server to avoid broken connections
+        ServerAliveInterval 10
+        ServerAliveCountMax 6
+
+        # disable X11 forwarding (security risk)
+        ForwardX11 no
+
+        # always check server IP address
+        CheckHostIP yes
+
+        # ensure only allowed authentication methods are used
+        PreferredAuthentications publickey,keyboard-interactive,password
+
+# EOF
