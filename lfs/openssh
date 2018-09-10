@@ -82,23 +82,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	sed -i -e 's/^#\?Port .*$$/Port 22/' \
-		-e 's/^#\?Protocol .*$$/Protocol 2/' \
-		-e 's/^#\?LoginGraceTime .*$$/LoginGraceTime 30s/' \
-		-e 's/^#\?PubkeyAuthentication .*$$/PubkeyAuthentication yes/' \
-		-e 's/^#\?PasswordAuthentication .*$$/PasswordAuthentication no/' \
-		-e 's/^#\?MaxStartups .*$$/MaxStartups 5/' \
-		-e 's/^#\?IgnoreUserKnownHosts .*$$/IgnoreUserKnownHosts yes/' \
-		-e 's/^#\?UsePAM .*$$//' \
-		-e 's/^#\?X11Forwarding .*$$/X11Forwarding no/' \
-		-e 's/^#\?SyslogFacility AUTH .*$$/SyslogFacility AUTH/' \
-		-e 's/^#\?LogLevel INFO .*$$/LogLevel INFO/' \
-		-e 's/^#\?AllowTcpForwarding .*$$/AllowTcpForwarding no/' \
-		-e 's/^#\?PermitRootLogin .*$$/PermitRootLogin yes/' \
-		-e 's|^#\?HostKey /etc/ssh/ssh_host_dsa_key$$||' \
-		-e 's|^#\?HostKey /etc/ssh/ssh_host_ecdsa_key$$||' \
-		-e 's|^#\?HostKey /etc/ssh/ssh_host_ed25519_key$$||' \
-		-e 's|^#\?HostKey /etc/ssh/ssh_host_rsa_key$$|HostKey /etc/ssh/ssh_host_ecdsa_key\nHostKey /etc/ssh/ssh_host_ed25519_key\nHostKey /etc/ssh/ssh_host_rsa_key|' \
+
+	# install custom OpenSSH server configuration
+	install -v -m 644 $(DIR_SRC)/config/ssh/sshd_config \
 		/etc/ssh/sshd_config
 
 	# install custom OpenSSH client configuration
