@@ -50,6 +50,7 @@ ldconfig
 # Start services
 /etc/init.d/rngd restart
 /etc/init.d/ntp restart
+/etc/init.d/unbound restart
 
 # Reload sysctl.conf
 sysctl -p
