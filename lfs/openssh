@@ -100,5 +100,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-e 's|^#\?HostKey /etc/ssh/ssh_host_ed25519_key$$||' \
 		-e 's|^#\?HostKey /etc/ssh/ssh_host_rsa_key$$|HostKey /etc/ssh/ssh_host_ecdsa_key\nHostKey /etc/ssh/ssh_host_ed25519_key\nHostKey /etc/ssh/ssh_host_rsa_key|' \
 		/etc/ssh/sshd_config
+
+	# install custom OpenSSH client configuration
+	install -v -m 644 $(DIR_SRC)/config/ssh/ssh_config \
+		/etc/ssh/ssh_config
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
