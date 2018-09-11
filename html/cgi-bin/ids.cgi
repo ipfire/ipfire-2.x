@@ -300,8 +300,13 @@ if(-f $idsusedrulefilesfile) {
 		if ($line =~ /.*- (.*)/) {
 			my $rulefile = $1;
 
-			# Add the rulefile to the %idsrules hash.
-			$idsrules{$rulefile}{'Rulefile'}{'State'} = "on";
+			# Check if the current rulefile exists in the %idsrules hash.
+			# If not, the file probably does not exist anymore or contains
+			# no rules.
+			if($idsrules{$rulefile}) {
+				# Add the rulefile state to the %idsrules hash.
+				$idsrules{$rulefile}{'Rulefile'}{'State'} = "on";
+			}
 		}
 	}
 }
