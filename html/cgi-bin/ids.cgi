@@ -38,6 +38,7 @@ my %rulesetsources = ();
 my %cgiparams=();
 my %checked=();
 my %selected=();
+my %ignored=();
 
 # Read-in main settings, for language, theme and colors.
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -62,6 +63,12 @@ my $disabled_sids_file = "$IDS::settingsdir/oinkmaster-disabled-sids.conf";
 # File which contains wheater the rules should be changed.
 my $modify_sids_file = "$IDS::settingsdir/oinkmaster-modify-sids.conf";
 
+# File which stores the configured settings for whitelisted addresses.
+my $ignoredfile = "$IDS::settingsdir/ignored";
+
+# File which contains the rules to whitelist addresses on suricata.
+my $whitelistfile = "$IDS::rulespath/whitelist.rules";
+
 my $errormessage;
 
 # Create files if they does not exist yet.
@@ -69,11 +76,156 @@ unless (-f "$enabled_sids_file") { &IDS::create_empty_file($enabled_sids_file); 
 unless (-f "$disabled_sids_file") { &IDS::create_empty_file($disabled_sids_file); }
 unless (-f "$modify_sids_file") { &IDS::create_empty_file($modify_sids_file); }
 unless (-f "$idsusedrulefilesfile") { &IDS::create_empty_file($idsusedrulefilesfile); }
+unless (-f "$ignoredfile") { &IDS::create_empty_file($ignoredfile); }
+unless (-f "$whitelistfile" ) { &IDS::create_empty_file($whitelistfile); }
 
 &Header::showhttpheaders();
 
 #Get GUI values
 &Header::getcgihash(\%cgiparams);
+
+## Add/edit an entry to the ignore file.
+#
+if (($cgiparams{'WHITELIST'} eq $Lang::tr{'add'}) || ($cgiparams{'WHITELIST'} eq $Lang::tr{'update'})) {
+
+	# Check if any input has been performed.
+	if ($cgiparams{'IGNORE_ENTRY_ADDRESS'} ne '') {
+
+		# Check if the given input is no valid IP-address or IP-address with subnet, display an error message.
+		if ((!&General::validip($cgiparams{'IGNORE_ENTRY_ADDRESS'})) && (!&General::validipandmask($cgiparams{'IGNORE_ENTRY_ADDRESS'}))) {
+			$errormessage = "$Lang::tr{'guardian invalid address or subnet'}";
+		}
+	} else {
+		$errormessage = "$Lang::tr{'guardian empty input'}";
+	}
+
+	# Go further if there was no error.
+	if ($errormessage eq '') {
+		my %ignored = ();
+		my $id;
+		my $status;
+
+		# Assign hash values.
+		my $new_entry_address = $cgiparams{'IGNORE_ENTRY_ADDRESS'};
+		my $new_entry_remark = $cgiparams{'IGNORE_ENTRY_REMARK'};
+
+		# Read-in ignoredfile.
+		&General::readhasharray($ignoredfile, \%ignored);
+
+		# Check if we should edit an existing entry and got an ID.
+		if (($cgiparams{'WHITELIST'} eq $Lang::tr{'update'}) && ($cgiparams{'ID'})) {
+			# Assin the provided id.
+			$id = $cgiparams{'ID'};
+
+			# Undef the given ID.
+			undef($cgiparams{'ID'});
+
+			# Grab the configured status of the corresponding entry.
+			$status = $ignored{$id}[2];
+		} else {
+			# Each newly added entry automatically should be enabled.
+			$status = "enabled";
+
+			# Generate the ID for the new entry.
+			#
+			# Sort the keys by their ID and store them in an array.
+			my @keys = sort { $a <=> $b } keys %ignored;
+
+			# Reverse the key array.
+			my @reversed = reverse(@keys);
+
+			# Obtain the last used id.
+			my $last_id = @reversed[0];
+
+			# Increase the last id by one and use it as id for the new entry.
+			$id = ++$last_id;
+		}
+
+		# Add/Modify the entry to/in the ignored hash.
+		$ignored{$id} = ["$new_entry_address", "$new_entry_remark", "$status"];
+
+		# Write the changed ignored hash to the ignored file.
+		&General::writehasharray($ignoredfile, \%ignored);
+
+		# Regenerate the ignore file.
+		&GenerateIgnoreFile();
+	}
+
+	# Check if the IDS is running.
+	if(&IDS::ids_is_running()) {
+		# Call suricatactrl to perform a reload.
+		&IDS::call_suricatactrl("reload");
+	}
+
+## Toggle Enabled/Disabled for an existing entry on the ignore list.
+#
+
+} elsif ($cgiparams{'WHITELIST'} eq $Lang::tr{'toggle enable disable'}) {
+	my %ignored = ();
+
+	# Only go further, if an ID has been passed.
+	if ($cgiparams{'ID'}) {
+		# Assign the given ID.
+		my $id = $cgiparams{'ID'};
+
+		# Undef the given ID.
+		undef($cgiparams{'ID'});
+
+		# Read-in ignoredfile.
+		&General::readhasharray($ignoredfile, \%ignored);
+
+		# Grab the configured status of the corresponding entry.
+		my $status = $ignored{$id}[2];
+
+		# Switch the status.
+		if ($status eq "disabled") {
+			$status = "enabled";
+		} else {
+			$status = "disabled";
+		}
+
+		# Modify the status of the existing entry.
+		$ignored{$id} = ["$ignored{$id}[0]", "$ignored{$id}[1]", "$status"];
+
+		# Write the changed ignored hash to the ignored file.
+		&General::writehasharray($ignoredfile, \%ignored);
+
+		# Regenerate the ignore file.
+		&GenerateIgnoreFile();
+
+		# Check if the IDS is running.
+		if(&IDS::ids_is_running()) {
+			# Call suricatactrl to perform a reload.
+			&IDS::call_suricatactrl("reload");
+		}
+	}
+
+## Remove entry from ignore list.
+#
+} elsif ($cgiparams{'WHITELIST'} eq $Lang::tr{'remove'}) {
+	my %ignored = ();
+
+	# Read-in ignoredfile.
+	&General::readhasharray($ignoredfile, \%ignored);
+
+	# Drop entry from the hash.
+	delete($ignored{$cgiparams{'ID'}});
+
+	# Undef the given ID.
+	undef($cgiparams{'ID'});
+
+	# Write the changed ignored hash to the ignored file.
+	&General::writehasharray($ignoredfile, \%ignored);
+
+	# Regenerate the ignore file.
+	&GenerateIgnoreFile();
+
+	# Check if the IDS is running.
+	if(&IDS::ids_is_running()) {
+		# Call suricatactrl to perform a reload.
+		&IDS::call_suricatactrl("reload");
+	}
+}
 
 # Check if any error has been stored.
 if (-e $IDS::storederrorfile) {
@@ -109,6 +261,9 @@ opendir(DIR, $IDS::rulespath) or die $!;
 
 		# Ignore files which are not read-able.
 		next unless (-R "$IDS::rulespath/$file");
+
+		# Skip whitelist rules file.
+		next if( $file eq "whitelist.rules");
 
 		# Call subfunction to read-in rulefile and add rules to
 		# the idsrules hash.
@@ -261,7 +416,10 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 
 	# Check if the enabled_rulefiles array contains any entries.
 	if (@enabled_rulefiles) {
-		# Loop through the array of rulefiles which should be loaded and write the to the file.
+		# Allways load the whitelist.
+		print FILE " - whitelist.rules\n";
+
+		# Loop through the array of rulefiles which should be loaded and write them to the file.
 		foreach my $file (@enabled_rulefiles) {
 			print FILE " - $file\n";
 		}
@@ -414,6 +572,9 @@ unless(exists($idssettings{'RUN_MODE'})) {
         # Set default to IPS.
         $idssettings{'RUN_MODE'} = 'IPS';
 }
+
+# Read-in ignored hosts.
+&General::readhasharray("$IDS::settingsdir/ignored", \%ignored);
 
 $checked{'ENABLE_IDS'}{'off'} = '';
 $checked{'ENABLE_IDS'}{'on'} = '';
@@ -625,6 +786,138 @@ END
 
 &Header::closebox();
 
+#
+# Whitelist / Ignorelist
+#
+&Header::openbox('100%', 'center', $Lang::tr{'guardian ignored hosts'});
+
+print <<END;
+	<table width='100%'>
+		<tr>
+			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'ip address'}</b></td>
+			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'remark'}</b></td>
+			<td class='base' colspan='3' bgcolor='$color{'color20'}'></td>
+		</tr>
+END
+		# Check if some hosts have been added to be ignored.
+		if (keys (%ignored)) {
+			my $col = "";
+
+			# Loop through all entries of the hash.
+			while( (my $key) = each %ignored)  {
+				# Assign data array positions to some nice variable names.
+				my $address = $ignored{$key}[0];
+				my $remark = $ignored{$key}[1];
+				my $status  = $ignored{$key}[2];
+
+				# Check if the key (id) number is even or not.
+				if ($cgiparams{'ID'} eq $key) {
+					$col="bgcolor='${Header::colouryellow}'";
+				} elsif ($key % 2) {
+					$col="bgcolor='$color{'color22'}'";
+				} else {
+					$col="bgcolor='$color{'color20'}'";
+				}
+
+				# Choose icon for the checkbox.
+				my $gif;
+				my $gdesc;
+
+				# Check if the status is enabled and select the correct image and description.
+				if ($status eq 'enabled' ) {
+					$gif = 'on.gif';
+					$gdesc = $Lang::tr{'click to disable'};
+				} else {
+					$gif = 'off.gif';
+					$gdesc = $Lang::tr{'click to enable'};
+				}
+
+print <<END;
+				<tr>
+					<td width='20%' class='base' $col>$address</td>
+					<td width='65%' class='base' $col>$remark</td>
+
+					<td align='center' $col>
+						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='WHITELIST' value='$Lang::tr{'toggle enable disable'}' />
+							<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$gdesc' title='$gdesc' />
+							<input type='hidden' name='ID' value='$key' />
+						</form>
+					</td>
+
+					<td align='center' $col>
+						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='WHITELIST' value='$Lang::tr{'edit'}' />
+							<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
+							<input type='hidden' name='ID' value='$key' />
+						</form>
+					</td>
+
+					<td align='center' $col>
+						<form method='post' name='$key' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' title='$Lang::tr{'remove'}' alt='$Lang::tr{'remove'}'>
+							<input type='hidden' name='ID' value='$key'>
+							<input type='hidden' name='WHITELIST' value='$Lang::tr{'remove'}'>
+						</form>
+					</td>
+				</tr>
+END
+			}
+		} else {
+			# Print notice that currently no hosts are ignored.
+			print "<tr>\n";
+			print "<td class='base' colspan='2'>$Lang::tr{'guardian no entries'}</td>\n";
+			print "</tr>\n";
+		}
+
+	print "</table>\n";
+
+	# Section to add new elements or edit existing ones.
+print <<END;
+	<br>
+	<hr>
+	<br>
+
+	<div align='center'>
+		<table width='100%'>
+END
+
+	# Assign correct headline and button text.
+	my $buttontext;
+	my $entry_address;
+	my $entry_remark;
+
+	# Check if an ID (key) has been given, in this case an existing entry should be edited.
+	if ($cgiparams{'ID'} ne '') {
+		$buttontext = $Lang::tr{'update'};
+			print "<tr><td class='boldbase' colspan='3'><b>$Lang::tr{'update'}</b></td></tr>\n";
+
+			# Grab address and remark for the given key.
+			$entry_address = $ignored{$cgiparams{'ID'}}[0];
+			$entry_remark = $ignored{$cgiparams{'ID'}}[1];
+		} else {
+			$buttontext = $Lang::tr{'add'};
+			print "<tr><td class='boldbase' colspan='3'><b>$Lang::tr{'dnsforward add a new entry'}</b></td></tr>\n";
+		}
+
+print <<END;
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='hidden' name='ID' value='$cgiparams{'ID'}'>
+			<tr>
+				<td width='30%'>$Lang::tr{'ip address'}: </td>
+				<td width='50%'><input type='text' name='IGNORE_ENTRY_ADDRESS' value='$entry_address' size='24' /></td>
+
+				<td width='30%'>$Lang::tr{'remark'}: </td>
+				<td wicth='50%'><input type='text' name=IGNORE_ENTRY_REMARK value='$entry_remark' size='24' /></td>
+				<td align='center' width='20%'><input type='submit' name='WHITELIST' value='$buttontext' /></td>
+			</tr>
+			</form>
+		</table>
+	</div>
+END
+
+&Header::closebox();
+
 # Only show the section for configuring the ruleset if one is present.
 if (%idsrules) {
 	&Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
@@ -823,7 +1116,7 @@ sub readrulesfile ($) {
 				}
 			}
 		}
-        }
+	}
 }
 
 #
@@ -944,6 +1237,54 @@ sub generate_home_net_file() {
 	# Close file handle.
 	close(FILE);
 
+}
+
+#
+## Function to generate the rules file with whitelisted addresses.
+#
+sub GenerateIgnoreFile() {
+	my %ignored = ();
+
+	# SID range 1000000-1999999 Reserved for Local Use
+	# Put your custom rules in this range to avoid conflicts
+	my $sid = 1500000;
+
+	# Read-in ignoredfile.
+	&General::readhasharray($ignoredfile, \%ignored);
+
+	# Open ignorefile for writing.
+	open(FILE, ">$whitelistfile") or die "Could not write to $whitelistfile. $!\n";
+
+	# Config file header.
+	print FILE "# Autogenerated file.\n";
+	print FILE "# All user modifications will be overwritten.\n\n";
+
+	# Add all user defined addresses to the whitelist.
+	#
+	# Check if the hash contains any elements.
+	if (keys (%ignored)) {
+		# Loop through the entire hash and write the host/network
+		# and remark to the ignore file.
+		while ( (my $key) = each %ignored) {
+			my $address = $ignored{$key}[0];
+			my $remark = $ignored{$key}[1];
+			my $status = $ignored{$key}[2];
+
+			# Check if the status of the entry is "enabled".
+			if ($status eq "enabled") {
+				# Check if the address/network is valid.
+				if ((&General::validip($address)) || (&General::validipandmask($address))) {
+					# Write rule line to the file to pass any traffic from this IP
+					print FILE "pass ip $address any -> any any (msg:\"pass all traffic from/to $address\"\; sid:$sid\;)\n";
+
+					# Increment sid.
+					$sid++;
+				}
+			}
+                }
+	}
+
+	close(FILE);
 }
 
 #
