@@ -3,7 +3,9 @@ etc/issue
 etc/rc.d/helper/aws-setup
 etc/rc.d/init.d/aws
 etc/rc.d/init.d/localnet
+etc/rc.d/init.d/networking/red.down/10-static-routes
 etc/rc.d/init.d/partresize
+etc/rc.d/init.d/static-routes
 etc/sysctl.conf
 etc/unbound/unbound.conf
 opt/pakfire/lib/functions.pl

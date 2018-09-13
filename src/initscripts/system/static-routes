@@ -42,7 +42,7 @@ function create_all_routes() {
 CONFIGFILE="/var/ipfire/main/routing"
 
 case "${1}" in
-	start)
+	start|reload)
 		boot_mesg "Adding static routes..."
 
 		# First, initialize the table
@@ -61,7 +61,7 @@ case "${1}" in
 		;;
 
 	*)
-		echo "Usage: ${0} {start|stop}"
+		echo "Usage: ${0} {start|stop|reload}"
 		exit 1
 		;;
 esac
