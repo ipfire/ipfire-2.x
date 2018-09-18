@@ -65,6 +65,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/devlink-dev.8
 #usr/share/man/man8/devlink-monitor.8
 #usr/share/man/man8/devlink-port.8
+#usr/share/man/man8/devlink-resource.8
 #usr/share/man/man8/devlink-sb.8
 #usr/share/man/man8/devlink.8
 #usr/share/man/man8/genl.8
@@ -97,6 +98,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/nstat.8
 #usr/share/man/man8/rdma-dev.8
 #usr/share/man/man8/rdma-link.8
+#usr/share/man/man8/rdma-resource.8
 #usr/share/man/man8/rdma.8
 #usr/share/man/man8/routef.8
 #usr/share/man/man8/routel.8
@@ -111,6 +113,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/tc-bpf.8
 #usr/share/man/man8/tc-cbq-details.8
 #usr/share/man/man8/tc-cbq.8
+#usr/share/man/man8/tc-cbs.8
 #usr/share/man/man8/tc-cgroup.8
 #usr/share/man/man8/tc-choke.8
 #usr/share/man/man8/tc-codel.8
