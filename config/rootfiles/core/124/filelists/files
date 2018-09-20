@@ -6,6 +6,8 @@ etc/rc.d/init.d/localnet
 etc/rc.d/init.d/networking/red.down/10-static-routes
 etc/rc.d/init.d/partresize
 etc/rc.d/init.d/static-routes
+etc/ssh/ssh_config
+etc/ssh/sshd_config
 etc/sysctl.conf
 etc/unbound/unbound.conf
 opt/pakfire/lib/functions.pl
