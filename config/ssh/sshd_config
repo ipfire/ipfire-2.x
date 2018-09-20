@@ -49,9 +49,6 @@ PermitEmptyPasswords no
 # permit root login as there is no other user in IPFire 2.x
 PermitRootLogin yes
 
-# specify preferred authentication methods (public keys come first)
-AuthenticationMethods publickey,password
-
 # ignore user ~/.rhost* files
 IgnoreRhosts yes
 
