@@ -17,11 +17,11 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2008 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2018 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
 #
-KVER=`uname -r | cut -d"-" -f1`
+KVER=`uname -r`
 
-dracut --force --early-microcode --verbose /boot/ipfirerd-$KVER.img $KVER-ipfire
+dracut --force --early-microcode --xz /boot/initramfs-$KVER.img $KVER
