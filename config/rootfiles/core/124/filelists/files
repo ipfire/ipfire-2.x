@@ -21,6 +21,7 @@ srv/web/ipfire/html/redirect-templates/legacy/template.html
 usr/bin/install-bootloader
 usr/local/bin/backupiso
 usr/local/bin/rebuild-initrd
+var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/exclude
 var/ipfire/backup/include
 var/ipfire/langs

@@ -137,8 +137,6 @@ elsif ( $cgiparams{'ACTION'} eq "delete" )
 	my $file = &sanitise_file($cgiparams{'FILE'});
 	exit(1) unless defined($file);
 
-	$file = &File::Basename::basename($file);
-
 	system("/usr/local/bin/backupctrl $file >/dev/null 2>&1");
 }
 
@@ -266,7 +264,7 @@ print <<END
 	<td align='right' width='5'>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='hidden' name='ACTION' value='delete' />
-		<input type='hidden' name='FILE' value='addons//backup/$_.ipf' />
+		<input type='hidden' name='FILE' value='$_.ipf' />
 		<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
 		</form>
 	</td>
@@ -305,7 +303,7 @@ print <<END
 	<td align='right' width='5'>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<input type='hidden' name='ACTION' value='delete' />
-		<input type='hidden' name='FILE' value='addons//backup/$_.ipf' />
+		<input type='hidden' name='FILE' value='$_.ipf' />
 		<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
 		</form>
 	</td>
