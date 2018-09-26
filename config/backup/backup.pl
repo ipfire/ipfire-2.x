@@ -138,11 +138,8 @@ elsif ($ARGV[0] eq 'cli') {
 elsif ($ARGV[0] eq 'addonbackup') {
   system("tar -cvzf /var/ipfire/backup/addons/backup/$ARGV[1].ipf --files-from='/var/ipfire/backup/addons/includes/$ARGV[1]'");
 }
-elsif ($ARGV[0] =~ /ipf$/ ) {
-  system("rm /var/ipfire/backup/$ARGV[0]");
-}
-elsif ($ARGV[0] =~ /iso$/ ) {
-  system("rm /var/tmp/backupiso/$ARGV[0]");
+elsif ($ARGV[0] =~ /\.(iso|ipf)$/ ) {
+  unlink("$ARGV[0]");
 }
 elsif ($ARGV[0] eq '') {
  printf "No argument given, please use <include><exclude><cli>\n"

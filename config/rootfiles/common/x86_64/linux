@@ -22,7 +22,6 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/des3_ede-x86_64.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/ghash-clmulni-intel.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/poly1305-x86_64.ko
-#lib/modules/KVER-ipfire/kernel/arch/x86/crypto/salsa20-x86_64.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/serpent-avx-x86_64.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/serpent-avx2.ko
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/serpent-sse2-x86_64.ko
@@ -1474,7 +1473,6 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/net/dsa/b53/b53_mmap.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/dsa/b53/b53_srab.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/dsa/dsa_loop.ko
-#lib/modules/KVER-ipfire/kernel/drivers/net/dsa/dsa_loop_bdinfo.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/dsa/lan9303-core.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/dsa/lan9303_i2c.ko
 #lib/modules/KVER-ipfire/kernel/drivers/net/dsa/lan9303_mdio.ko

@@ -73,6 +73,14 @@ fi;
 setenv fdt_high ffffffff;
 fatload ${boot_dev} ${boot_part} ${kernel_addr_r} vmlinuz-${KVER}-ipfire${kernel_type};
 fatload ${boot_dev} ${boot_part} ${fdt_addr_r} dtb-${KVER}-ipfire${kernel_type}/${fdtfile};
+
+if test "${FDTCMDS}" = ""; then
+	echo ;
+else
+	fdt addr ${fdt_addr_r};
+	run FDTCMDS;
+fi;
+
 setenv ramdisk_addr ${ramdisk_addr_r}
 if fatload ${boot_dev} ${boot_part} ${ramdisk_addr} uInit-${KVER}-ipfire${kernel_type}; then
 	echo Ramdisk loaded...;

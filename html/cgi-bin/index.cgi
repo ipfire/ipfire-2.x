@@ -465,6 +465,10 @@ END
 
 				my $activecolor = $Header::colourred;
 				my $activestatus = $Lang::tr{'capsclosed'};
+				if ($vpnconfig{$key}[33] eq "add") {
+					$activecolor = ${Header::colourorange};
+					$activestatus = $Lang::tr{'vpn wait'};
+				}
 				if ($vpnconfig{$key}[0] eq 'off') {
 					$activecolor = $Header::colourblue;
 					$activestatus = $Lang::tr{'capsclosed'};
@@ -479,9 +483,6 @@ END
 						} elsif ($line =~ /$vpnconfig{$key}[1]\{.*ROUTED/) {
 							$activecolor = $Header::colourorange;
 							$activestatus = $Lang::tr{'vpn on-demand'};
-						} elsif ($vpnconfig{$key}[33] eq "add") {
-							$activecolor = ${Header::colourorange};
-							$activestatus = $Lang::tr{'vpn wait'};
 						}
 					}
 				}

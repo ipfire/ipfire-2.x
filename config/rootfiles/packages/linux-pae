@@ -10,7 +10,6 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/arch/x86/crypto
 #lib/modules/KVER-ipfire-pae/kernel/arch/x86/crypto/crc32-pclmul.ko
 #lib/modules/KVER-ipfire-pae/kernel/arch/x86/crypto/glue_helper.ko
-#lib/modules/KVER-ipfire-pae/kernel/arch/x86/crypto/salsa20-i586.ko
 #lib/modules/KVER-ipfire-pae/kernel/arch/x86/crypto/serpent-sse2-i586.ko
 #lib/modules/KVER-ipfire-pae/kernel/arch/x86/crypto/twofish-i586.ko
 #lib/modules/KVER-ipfire-pae/kernel/arch/x86/events
@@ -1471,7 +1470,6 @@ lib/modules/KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/dsa/b53/b53_mmap.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/dsa/b53/b53_srab.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/dsa/dsa_loop.ko
-#lib/modules/KVER-ipfire-pae/kernel/drivers/net/dsa/dsa_loop_bdinfo.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/dsa/lan9303-core.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/dsa/lan9303_i2c.ko
 #lib/modules/KVER-ipfire-pae/kernel/drivers/net/dsa/lan9303_mdio.ko

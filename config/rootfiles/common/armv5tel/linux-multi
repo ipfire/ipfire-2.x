@@ -521,6 +521,8 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/crypto/cast6_generic.ko
 #lib/modules/KVER-ipfire-multi/kernel/crypto/cast_common.ko
 #lib/modules/KVER-ipfire-multi/kernel/crypto/ccm.ko
+#lib/modules/KVER-ipfire-multi/kernel/crypto/chacha20_generic.ko
+#lib/modules/KVER-ipfire-multi/kernel/crypto/chacha20poly1305.ko
 #lib/modules/KVER-ipfire-multi/kernel/crypto/cmac.ko
 #lib/modules/KVER-ipfire-multi/kernel/crypto/crypto_engine.ko
 #lib/modules/KVER-ipfire-multi/kernel/crypto/cts.ko
@@ -540,6 +542,7 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/crypto/michael_mic.ko
 #lib/modules/KVER-ipfire-multi/kernel/crypto/pcbc.ko
 #lib/modules/KVER-ipfire-multi/kernel/crypto/pcrypt.ko
+#lib/modules/KVER-ipfire-multi/kernel/crypto/poly1305_generic.ko
 #lib/modules/KVER-ipfire-multi/kernel/crypto/rmd128.ko
 #lib/modules/KVER-ipfire-multi/kernel/crypto/rmd160.ko
 #lib/modules/KVER-ipfire-multi/kernel/crypto/rmd256.ko
@@ -1614,7 +1617,6 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/dsa/b53/b53_mdio.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/dsa/bcm-sf2.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/dsa/dsa_loop.ko
-#lib/modules/KVER-ipfire-multi/kernel/drivers/net/dsa/dsa_loop_bdinfo.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/dsa/lan9303-core.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/dsa/lan9303_i2c.ko
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/dsa/lan9303_mdio.ko

@@ -249,7 +249,6 @@
 	
 	} elsif ("$ARGV[0]" eq "update") {
 		&Pakfire::makeuuid();
-		&Pakfire::senduuid();
 		&Pakfire::getmirrors("$force");
 		&Pakfire::dbgetlist("$force");
 		&Pakfire::getcoredb("$force");

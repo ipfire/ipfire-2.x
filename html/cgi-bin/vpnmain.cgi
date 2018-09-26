@@ -2844,8 +2844,11 @@ END
 	}
 	print "<td align='center' $col>$confighash{$key}[25]</td>";
 	my $col1="bgcolor='${Header::colourred}'";
-	# get real state
 	my $active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
+	if ($confighash{$key}[33] eq "add") {
+		$col1="bgcolor='${Header::colourorange}'";
+		$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn wait'}</font></b>";
+	}
 	foreach my $line (@status) {
 		if (($line =~ /\"$confighash{$key}[1]\".*IPsec SA established/) ||
 		($line =~ /$confighash{$key}[1]\{.*INSTALLED/)) {
@@ -2857,9 +2860,6 @@ END
 		} elsif ($line =~ /$confighash{$key}[1]\{.*ROUTED/) {
 			$col1="bgcolor='${Header::colourorange}'";
 			$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn on-demand'}</font></b>";
-		} elsif ($confighash{$key}[33] eq "add") {
-			$col1="bgcolor='${Header::colourorange}'";
-			$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn wait'}</font></b>";
 		}
 	}
 	# move to blue if really down

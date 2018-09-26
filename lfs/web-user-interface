@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015   IPFire Team  <info@ipfire.org>                    #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -54,6 +54,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /srv/web/ipfire/{cgi-bin,html}
 	mkdir -p /var/updatecache/{download,metadata}
 	cp -aR $(DIR_SRC)/html/* /srv/web/ipfire
+
+	# Add base64 encoded background image to Squid content access page
+	basedata="$$( base64 $(DIR_SRC)/html/html/images/background.gif | tr -d '\n' )"; \
+		sed -i "s|IMAGEDATAPLACEHOLDER|$${basedata}|g" \
+		/srv/web/ipfire/html/redirect-templates/legacy/template.html
 
 	# Change CONFIG_ROOT in cgi-scripts
 	for i in /srv/web/ipfire/cgi-bin/{*,logs.cgi/*,vpn.cgi/*}; do \

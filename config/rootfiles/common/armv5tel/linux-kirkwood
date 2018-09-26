@@ -117,6 +117,8 @@ lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/kernel/crypto/cast6_generic.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/crypto/cast_common.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/crypto/ccm.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/crypto/chacha20_generic.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/crypto/chacha20poly1305.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/crypto/cmac.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/crypto/cts.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/crypto/deflate.ko
@@ -134,6 +136,7 @@ lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/kernel/crypto/md4.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/crypto/michael_mic.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/crypto/pcbc.ko
+#lib/modules/KVER-ipfire-kirkwood/kernel/crypto/poly1305_generic.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/crypto/rmd128.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/crypto/rmd160.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/crypto/rmd256.ko
@@ -1063,7 +1066,6 @@ lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/net/dsa/b53/b53_mdio.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/net/dsa/bcm-sf2.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/net/dsa/dsa_loop.ko
-#lib/modules/KVER-ipfire-kirkwood/kernel/drivers/net/dsa/dsa_loop_bdinfo.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/net/dsa/lan9303-core.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/net/dsa/lan9303_i2c.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/drivers/net/dsa/lan9303_mdio.ko
@@ -2003,7 +2005,6 @@ lib/modules/KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/kernel/net/netfilter/nft_set_bitmap.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/net/netfilter/nft_set_hash.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/net/netfilter/nft_set_rbtree.ko
-#lib/modules/KVER-ipfire-kirkwood/kernel/net/netfilter/xt_AUDIT.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/net/netfilter/xt_CHECKSUM.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/net/netfilter/xt_CLASSIFY.ko
 #lib/modules/KVER-ipfire-kirkwood/kernel/net/netfilter/xt_CONNSECMARK.ko

@@ -99,6 +99,8 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/crypto/cast6_generic.ko
 #lib/modules/KVER-ipfire/kernel/crypto/cast_common.ko
 #lib/modules/KVER-ipfire/kernel/crypto/ccm.ko
+#lib/modules/KVER-ipfire/kernel/crypto/chacha20_generic.ko
+#lib/modules/KVER-ipfire/kernel/crypto/chacha20poly1305.ko
 #lib/modules/KVER-ipfire/kernel/crypto/cmac.ko
 #lib/modules/KVER-ipfire/kernel/crypto/crypto_engine.ko
 #lib/modules/KVER-ipfire/kernel/crypto/cts.ko
@@ -118,6 +120,7 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/crypto/michael_mic.ko
 #lib/modules/KVER-ipfire/kernel/crypto/pcbc.ko
 #lib/modules/KVER-ipfire/kernel/crypto/pcrypt.ko
+#lib/modules/KVER-ipfire/kernel/crypto/poly1305_generic.ko
 #lib/modules/KVER-ipfire/kernel/crypto/rmd128.ko
 #lib/modules/KVER-ipfire/kernel/crypto/rmd160.ko
 #lib/modules/KVER-ipfire/kernel/crypto/rmd256.ko

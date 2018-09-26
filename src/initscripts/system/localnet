@@ -36,15 +36,9 @@ case "${1}" in
 		ip link set lo up
 		evaluate_retval
 
-		boot_mesg "Setting hostname to ${HOSTNAME}..."
-		hostname "${HOSTNAME}"
+		boot_mesg "Setting hostname to ${HOSTNAME}.${DOMAINNAME}..."
+		hostname "${HOSTNAME}.${DOMAINNAME}"
 		evaluate_retval
-
-		if [ -n "${DOMAINNAME}" ]; then
-			boot_mesg "Setting domainname to ${DOMAINNAME}..."
-			domainname "${DOMAINNAME}"
-			evaluate_retval
-		fi
 
 		# Update hosts
 		write_hosts

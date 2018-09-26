@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 4.14.50
-ARM_PATCHES = 4.14.50-ipfire0
+VER         = 4.14.71
+ARM_PATCHES = 4.14.71-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 76
+PAK_VER    = 77
 DEPS	   = ""
 
 HEADERS_ARCH  = $(BUILD_PLATFORM)
@@ -82,8 +82,9 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= 0d397a2e14669a97d54c1b82ab2b1994
-arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= c38181f9fd416f10352e3dd3a01bb1d1
+$(DL_FILE)_MD5					= 14b21e5f11e8e195731c89a14794a0fc
+arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 889a8d49a63bf462067409887f8105bb
+
 
 install : $(TARGET)
 
@@ -194,7 +195,7 @@ else
 ifeq "$(BUILD_PLATFORM)" "arm"
 	cd $(DIR_APP) && make $(MAKETUNING) dtbs
 	mkdir -p /boot/dtb-$(VER)-$(VERSUFIX)
-	cd $(DIR_APP)/arch/$(HEADERS_ARCH)/boot/dts && for f in $$(find -name *.dtb); do \
+	cd $(DIR_APP)/arch/$(KERNEL_ARCH)/boot/dts && for f in $$(find -name "*.dtb"); do \
 				cp -v --parents $$f /boot/dtb-$(VER)-$(VERSUFIX)/ ; \
 				chmod 644 /boot/dtb-$(VER)-$(VERSUFIX)/$$f ; \
 			done

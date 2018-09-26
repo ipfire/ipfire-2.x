@@ -146,14 +146,7 @@ int hw_mount(const char* source, const char* target, const char* fs, int flags) 
 		}
 	}
 
-	int r = mount(source, target, fs, flags, NULL);
-
-	if (r) {
-		fprintf(stderr, "Error mounting %s to %s (fs = %s, flags = %d): %s\n",
-				source, target, fs, flags, strerror(r));
-	}
-
-	return r;
+	return mount(source, target, fs, flags, NULL);
 }
 
 int hw_umount(const char* target) {
