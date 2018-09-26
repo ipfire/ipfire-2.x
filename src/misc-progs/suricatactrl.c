@@ -33,6 +33,18 @@ int main(int argc, char *argv[]) {
 		safe_system("/etc/rc.d/init.d/suricata reload");
 	} else if (strcmp(argv[1], "fix-rules-dir") == 0) {
 		safe_system("chown -R nobody:nobody /var/lib/suricata");
+	} else if (strcmp(argv[1], "cron") == 0) {
+			safe_system("rm /etc/fcron.*/suricata >/dev/null 2>&1");
+		if (strcmp(argv[2], "off") == 0) {
+			return(1);
+		} else if (strcmp(argv[2], "daily") == 0){
+                        safe_system("ln -s /usr/local/bin/update-ids-ruleset /etc/fcron.daily/suricata");
+                } else if (strcmp(argv[2], "weekly") == 0){
+                        safe_system("ln -s /usr/local/bin/update-ids-ruleset /etc/fcron.weekly/suricata");
+                } else{
+                        printf("invalid parameter(s)\n");
+                return(1);
+                }
 	} else {
 		fprintf(stderr, "\nBad argument given.\n\nsuricatactrl (start|stop|restart|reload)\n\n");
 		exit(1);
