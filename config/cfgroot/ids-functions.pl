@@ -48,7 +48,10 @@ our $idspidfile = "/var/run/suricata.pid";
 my $suricatactrl = "/usr/local/bin/suricatactrl";
 
 # Array with allowed commands of suricatactrl.
-my @suricatactrl_cmds = ( 'start', 'stop', 'restart', 'reload', 'fix-rules-dir' );
+my @suricatactrl_cmds = ( 'start', 'stop', 'restart', 'reload', 'fix-rules-dir', 'cron' );
+
+# Array with supported cron intervals.
+my @cron_intervals = ('off', 'daily', 'weekly' );
 
 #
 ## Function for checking if at least 300MB of free disk space are available
@@ -347,7 +350,7 @@ sub ids_is_running () {
 #
 sub call_suricatactrl ($) {
 	# Get called option.
-	my ($option) = @_;
+	my ($option, $interval) = @_;
 
 	# Loop through the array of supported commands and check if
 	# the given one is part of it.
@@ -355,12 +358,34 @@ sub call_suricatactrl ($) {
 		# Skip current command unless the given one has been found.
 		next unless($cmd eq $option);
 
-		# Call the suricatactrl binary and pass the requrested
-		# option to it.
-		system("$suricatactrl $option &>/dev/null");
+		# Check if the given command is "cron".
+		if ($option eq "cron") {
+			# Check if an interval has been given.
+			if ($interval) {
+				# Check if the given interval is valid.
+				foreach my $element (@cron_intervals) {
+					# Skip current element until the given one has been found.
+					next unless($element eq $interval);
 
-		# Return "1" - True.
-		return 1;
+					# Call the suricatactrl binary and pass the "cron" command
+					# with the requrested interval.
+					system("$suricatactrl $option $interval &>/dev/null");
+
+					# Return "1" - True.
+					return 1;
+				}
+			}
+
+			# If we got here, the given interval is not supported or none has been given. - Return nothing.
+			return;
+		} else {
+			# Call the suricatactrl binary and pass the requrested
+			# option to it.
+			system("$suricatactrl $option &>/dev/null");
+
+			# Return "1" - True.
+			return 1;
+		}
 	}
 
 	# Command not found - return nothing.
