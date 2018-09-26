@@ -517,6 +517,12 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	# Generate file to store the home net.
 	&generate_home_net_file();
 
+	# Check if the the automatic rule update hass been touched.
+	if($cgiparams{'AUTOUPDATE_INTERVAL'} ne $oldidssettings{'AUTOUPDATE_INTERVAL'}) {
+		# Call suricatactrl to set the new interval.
+		&IDS::call_suricatactrl("cron", $cgiparams{'AUTOUPDATE_INTERVAL'});
+	}
+
 	# Check if the runmode has been changed.
 	if($cgiparams{'RUN_MODE'} ne $oldidssettings{'RUN_MODE'}) {
 		# Open modify sid's file for writing.
@@ -593,6 +599,10 @@ $selected{'RULES'}{'emerging'} = '';
 $selected{'RULES'}{'registered'} = '';
 $selected{'RULES'}{'subscripted'} = '';
 $selected{'RULES'}{$idssettings{'RULES'}} = "selected='selected'";
+$selected{'AUTOUPDATE_INTERVAL'}{'off'} = '';
+$selected{'AUTOUPDATE_INTERVAL'}{'daily'} = '';
+$selected{'AUTOUPDATE_INTERVAL'}{'weekly'} = '';
+$selected{'AUTOUPDATE_INTERVAL'}{$idssettings{'AUTOUPDATE_INTERVAL'}} = "selected='selected'";
 
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
 
@@ -745,17 +755,26 @@ print <<END
 		</tr>
 
 		<tr>
-			<td colspan='4'><b>$Lang::tr{'ids rules update'}</b></td>
+			<td colspan='2'><b>$Lang::tr{'ids rules update'}</b></td>
+			<td colspan='2'><b>$Lang::tr{'ids automatic rules update'}</b></td>
 		</tr>
 
 		<tr>
-			<td colspan='4'><select name='RULES'>
+			<td colspan='2'><select name='RULES'>
 				<option value='nothing' $selected{'RULES'}{'nothing'} >$Lang::tr{'no'}</option>
 				<option value='emerging' $selected{'RULES'}{'emerging'} >$Lang::tr{'emerging rules'}</option>
 				<option value='community' $selected{'RULES'}{'community'} >$Lang::tr{'community rules'}</option>
 				<option value='registered' $selected{'RULES'}{'registered'} >$Lang::tr{'registered user rules'}</option>
 				<option value='subscripted' $selected{'RULES'}{'subscripted'} >$Lang::tr{'subscripted user rules'}</option>
 			</select>
+			</td>
+
+			<td colspan='2'>
+				<select name='AUTOUPDATE_INTERVAL'>
+					<option value='off' $selected{'AUTOUPDATE_INTERVAL'}{'off'} >$Lang::tr{'no'}</option>
+					<option value='daily' $selected{'AUTOUPDATE_INTERVAL'}{'daily'} >$Lang::tr{'urlfilter daily'}</option>
+					<option value='weekly' $selected{'AUTOUPDATE_INTERVAL'}{'weekly'} >$Lang::tr{'urlfilter weekly'}</option>
+				</select>
 			</td>
 		</tr>
 
