@@ -82,9 +82,6 @@ rm -f  /etc/sysconfig/lm_sensors
 # Stop services
 
 # Remove files
-rm -f \
-	/etc/rc.d/rcsysinit.d/S90network-trigger \
-	/etc/rc.d/init.d/network-trigger
 
 # Extract files
 extract_files
