@@ -1,6 +1,8 @@
 etc/system-release
 etc/issue
+etc/nsswitch.conf
 etc/rc.d/helper/aws-setup
+etc/rc.d/init.d/apache
 etc/rc.d/init.d/aws
 etc/rc.d/init.d/localnet
 etc/rc.d/init.d/networking/red.down/10-static-routes
