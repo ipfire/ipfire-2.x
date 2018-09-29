@@ -138,14 +138,16 @@ case "$(uname -m)" in
 				echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-pae
 				echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-pae
 			fi
+		else
+			# This update needs a reboot...
+			touch /var/run/need_reboot
 		fi
 		;;
+	*)
+		# This update needs a reboot...
+		touch /var/run/need_reboot
+		;;
 esac
-
-# This update needs a reboot...
-if [ ! -e /opt/pakfire/db/installed/meta-linux-pae ]; then
-	touch /var/run/need_reboot
-fi
 
 # Finish
 /etc/init.d/fireinfo start
