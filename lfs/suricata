@@ -96,6 +96,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# to the rules directory.
 	mv /etc/suricata/*.config /var/lib/suricata
 
+	# Set correct ownership for /var/lib/suricata
+	chown nobody:nobody /var/lib/suricata
+
 	# Create logging directory.
 	-mkdir -p /var/log/suricata
 
