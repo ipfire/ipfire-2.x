@@ -72,9 +72,9 @@ rm -rf /boot/config-*
 rm -rf /boot/ipfirerd-*
 rm -rf /boot/initramfs-*
 rm -rf /boot/vmlinuz-*
-rm -rf /boot/uImage-ipfire-*
-rm -rf /boot/zImage-ipfire-*
-rm -rf /boot/uInit-ipfire-*
+rm -rf /boot/uImage-*-ipfire-*
+rm -rf /boot/zImage-*-ipfire-*
+rm -rf /boot/uInit-*-ipfire-*
 rm -rf /boot/dtb-*-ipfire-*
 rm -rf /lib/modules
 rm -f  /etc/sysconfig/lm_sensors
@@ -82,9 +82,6 @@ rm -f  /etc/sysconfig/lm_sensors
 # Stop services
 
 # Remove files
-rm -f \
-	/etc/rc.d/rcsysinit.d/S90network-trigger \
-	/etc/rc.d/init.d/network-trigger
 
 # Extract files
 extract_files
@@ -106,16 +103,15 @@ ldconfig
 # Reload sysctl.conf
 sysctl -p
 
-# rebuild initrd to add early microcode updates
-rebuild-initrd
-
 # Remove deprecated GRUB configuration option
 if [ -e "/etc/default/grub" ]; then
 	sed -e "/^GRUB_FONT/d" -i /etc/default/grub
 fi
 
 # Update bootloader
+if [ -e /usr/bin/install-bootloader ]; then
 /usr/bin/install-bootloader
+fi
 
 # Upadate Kernel version uEnv.txt
 if [ -e /boot/uEnv.txt ]; then
