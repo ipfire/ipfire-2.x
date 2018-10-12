@@ -443,4 +443,23 @@ sub _check_rulesdir_permissions() {
 	}
 }
 
+#
+## Private function to cleanup the directory which contains
+## the IDS rules, before extracting and modifing the new ruleset.
+#
+sub _cleanup_rulesdir() {
+	# Loop through the rules-directory.
+	while ($item = glob($rulespath/*)) {
+		# Skip element if it is a directory.
+		next if -d $item;
+
+		# Delete the current processed item, if not, exit this function
+		# and return an error message.
+		unlink($item) or return "Could not delete $item. $!\n";
+	}
+
+	# Return noting;
+	return;
+}
+
 1;
