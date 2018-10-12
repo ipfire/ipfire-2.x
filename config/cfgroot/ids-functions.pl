@@ -197,6 +197,9 @@ sub oinkmaster () {
 	# Check if the files in rulesdir have the correct permissions.
 	&_check_rulesdir_permissions();
 
+	# Cleanup the rules directory before filling it with the new rulest.
+	&_cleanup_rulesdir();
+
 	# Load perl module to talk to the kernel syslog.
 	use Sys::Syslog qw(:DEFAULT setlogsock);
 
