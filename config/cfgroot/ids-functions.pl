@@ -461,7 +461,7 @@ sub _cleanup_rulesdir() {
 		unlink($item) or return "Could not delete $item. $!\n";
 	}
 
-	# Return noting;
+	# Return nothing;
 	return;
 }
 
