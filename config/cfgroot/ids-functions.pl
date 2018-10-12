@@ -451,14 +451,20 @@ sub _check_rulesdir_permissions() {
 ## the IDS rules, before extracting and modifing the new ruleset.
 #
 sub _cleanup_rulesdir() {
-	# Loop through the rules-directory.
-	while ($item = glob($rulespath/*)) {
-		# Skip element if it is a directory.
-		next if -d $item;
+	# Open rules directory and do a directory listing.
+	opendir(DIR, $rulespath) or die $!;
 
-		# Delete the current processed item, if not, exit this function
+	# Loop through the direcory.
+	while (my $file = readdir(DIR)) {
+		# We only want files.
+		next unless (-f "$rulespath/$file");
+
+		# Skip element if it has config as file extension.
+		next if ($file =~ m/\.config$/);
+
+		# Delete the current processed file, if not, exit this function
 		# and return an error message.
-		unlink($item) or return "Could not delete $item. $!\n";
+		unlink($rulespath/$file) or return "Could not delete $rulespath/$file. $!\n";
 	}
 
 	# Return nothing;
