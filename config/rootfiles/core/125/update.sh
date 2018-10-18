@@ -43,6 +43,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/unbound restart
 /etc/init.d/apache restart
 
 # Reload sysctl.conf
