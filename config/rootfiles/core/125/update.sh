@@ -45,6 +45,9 @@ ldconfig
 # Start services
 /etc/init.d/apache restart
 
+# Reload sysctl.conf
+sysctl -p
+
 # This update needs a reboot...
 #touch /var/run/need_reboot
 
