@@ -40,7 +40,7 @@ extract_files
 ldconfig
 
 # Update Language cache
-#/usr/local/bin/update-lang-cache
+/usr/local/bin/update-lang-cache
 
 # Start services
 /etc/init.d/apache restart

@@ -2,3 +2,4 @@ etc/system-release
 etc/issue
 etc/sysctl.conf
 srv/web/ipfire/cgi-bin/credits.cgi
+var/ipfire/langs
