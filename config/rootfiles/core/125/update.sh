@@ -45,6 +45,7 @@ ldconfig
 # Start services
 /etc/init.d/unbound restart
 /etc/init.d/apache restart
+/etc/init.d/sshd restart
 
 # Reload sysctl.conf
 sysctl -p

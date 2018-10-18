@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/ssh/sshd_config
 etc/sysctl.conf
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
