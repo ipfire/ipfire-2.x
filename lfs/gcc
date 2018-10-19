@@ -224,6 +224,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/gcc-build
 
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc-7-glibc-2.28-ustat.patch
+
 	cd $(DIR_APP) && sed -i 's/install_to_$$(INSTALL_DEST) //' libiberty/Makefile.in
 	cd $(DIR_APP) && sed -i gcc/Makefile.in \
 		-e 's@\./fixinc\.sh@-c true@' \
