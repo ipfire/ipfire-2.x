@@ -1104,6 +1104,7 @@ buildipfire() {
   lfsmake2 cpio
   lfsmake2 mdadm
   lfsmake2 dracut
+  lfsmake2 libaio
   lfsmake2 lvm2
   lfsmake2 multipath-tools
   lfsmake2 freetype
