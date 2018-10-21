@@ -5,9 +5,7 @@ sbin/lsmod
 sbin/modinfo
 sbin/modprobe
 sbin/rmmod
-#usr/include/libkmod.h
-#usr/lib/libkmod.la
-usr/lib/libkmod.so
+#usr/lib/libkmod.so
 usr/lib/libkmod.so.2
-usr/lib/libkmod.so.2.2.3
-#usr/lib/pkgconfig/libkmod.pc
+usr/lib/libkmod.so.2.3.3
+#usr/share/bash-completion/completions/kmod

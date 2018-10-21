@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 13
+VER        = 25
 
 THISAPP    = kmod-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d5aba43b9370cd52f3cb35e82a1aa595
+$(DL_FILE)_MD5 = 34f325cab568f842fdde4f8b2182f220
 
 install : $(TARGET)
 
@@ -74,9 +74,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--prefix=/usr \
 		--bindir=/bin \
 		--sysconfdir=/etc \
-		--disable-manpages
-
-#		--libdir=/lib \
+		--disable-manpages \
+		--with-zlib
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
