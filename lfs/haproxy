@@ -98,5 +98,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	#install initscripts
 	$(call INSTALL_INITSCRIPT,haproxy)
 
+	# Logrotate
+	-mkdir -pv /etc/logrotate.d
+	install -v -m 644 $(DIR_SRC)/config/haproxy/logrotate \
+		/etc/logrotate.d/haproxy
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
