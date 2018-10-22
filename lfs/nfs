@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 1.3.3
+VER        = 2.3.3
 
 THISAPP    = nfs-utils-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nfs
-PAK_VER    = 10
+PAK_VER    = 11
 
 DEPS       = "rpcbind"
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 libnfsidmap-$(LIBNFSIDMAP).tar.gz = $(DL_FROM)/libnfsidmap-$(LIBNFSIDMAP).tar.gz
 
-$(DL_FILE)_MD5 = 9b87d890669eaaec8e97a2b0a35b2665
+$(DL_FILE)_MD5 = 11490e3f85a8676c647fe1bddbf32f99
 libnfsidmap-$(LIBNFSIDMAP).tar.gz_MD5 = 2ac4893c92716add1a1447ae01df77ab
 
 install : $(TARGET)
@@ -81,7 +81,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && tar zxf $(DIR_DL)/libnfsidmap-$(LIBNFSIDMAP).tar.gz
 
 	$(UPDATE_AUTOMAKE)
@@ -89,7 +89,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/libnfsidmap* && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/libnfsidmap* && make install
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/nfs-1.3.3-glibc-stdint.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc  \
