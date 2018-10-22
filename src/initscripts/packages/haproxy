@@ -11,6 +11,15 @@
 
 case "${1}" in
 	start)
+		# Prepare chroot
+		mkdir -p /var/lib/haproxy/dev
+
+		# Create link for syslog socket
+		if ! mountpoint /var/lib/haproxy/dev/log &>/dev/null; then
+			touch /var/lib/haproxy/dev/log
+			mount --bind /dev/log /var/lib/haproxy/dev/log
+		fi
+
 		boot_mesg "Starting HAProxy..."
 		loadproc /usr/sbin/haproxy -D -f /etc/haproxy/haproxy.cfg \
 			-p /var/run/haproxy.pid
@@ -19,6 +28,11 @@ case "${1}" in
 	stop)
 		boot_mesg "Stopping HAProxy..."
 		killproc /usr/sbin/haproxy
+
+		# umount /dev/log
+		if mountpoint /var/lib/haproxy/dev/log &>/dev/null; then
+			umount /var/lib/haproxy/dev/log
+		fi
 		;;
 
 	reload)
