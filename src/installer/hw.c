@@ -706,7 +706,6 @@ int hw_create_partitions(struct hw_destination* dest, const char* output) {
 		if (*dest->part_bootldr) {
 			asprintf(&cmd, "%s set %d bios_grub on", cmd, dest->part_boot_idx);
 		}
-		asprintf(&cmd, "%s disk_set pmbr_boot on", cmd);
 	}
 
 	r = mysystem(output, cmd);
