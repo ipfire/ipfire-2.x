@@ -279,19 +279,5 @@ print <<END;
 END
 
 &Header::closebox();
-&Header::openbox("100%", "center", "$Lang::tr{'settings'}");
-
-print <<END;
-	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='95%'>
-			<tr><td colspan='2' bgcolor='$color{'color20'}'><b>$Lang::tr{'basic options'}</b></td></tr>
-			<tr><td align='left' width='45%'>$Lang::tr{'pakfire update daily'}</td><td width="55%" align="left">
-          on <input type='radio' name='AUTOUPDATE' value='on' $checked{'AUTOUPDATE'}{'on'} /> |
-          <input type='radio' name='AUTOUPDATE' value='off' $checked{'AUTOUPDATE'}{'off'} /> off </td></tr>
-		</table>
-	</form>
-END
-
-&Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
