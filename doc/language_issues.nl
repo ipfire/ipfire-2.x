@@ -258,6 +258,7 @@ WARNING: translation string unused: fwdfw rules
 WARNING: translation string unused: fwdfw std network
 WARNING: translation string unused: fwdfw till
 WARNING: translation string unused: fwdfw time
+WARNING: translation string unused: fwdfw useless rule
 WARNING: translation string unused: fwdfw xt access
 WARNING: translation string unused: fwhost Custom Host
 WARNING: translation string unused: fwhost Custom Network
@@ -466,6 +467,7 @@ WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn log
+WARNING: translation string unused: ovpn mtu-disc
 WARNING: translation string unused: ovpn mtu-disc and mtu not 1500
 WARNING: translation string unused: ovpn mtu-disc maybe
 WARNING: translation string unused: ovpn mtu-disc no
@@ -490,6 +492,9 @@ WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
 WARNING: translation string unused: pakfire core update auto
+WARNING: translation string unused: pakfire health check
+WARNING: translation string unused: pakfire register
+WARNING: translation string unused: pakfire update daily
 WARNING: translation string unused: pakfire updates
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key

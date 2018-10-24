@@ -430,6 +430,9 @@ WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
 WARNING: translation string unused: pakfire core update auto
+WARNING: translation string unused: pakfire health check
+WARNING: translation string unused: pakfire register
+WARNING: translation string unused: pakfire update daily
 WARNING: translation string unused: pakfire updates
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key
@@ -903,7 +906,6 @@ WARNING: untranslated string: fwdfw togglelog
 WARNING: untranslated string: fwdfw use nat
 WARNING: untranslated string: fwdfw use srcport
 WARNING: untranslated string: fwdfw use srv
-WARNING: untranslated string: fwdfw useless rule
 WARNING: untranslated string: fwdfw warn1
 WARNING: untranslated string: fwdfw wd_fri
 WARNING: untranslated string: fwdfw wd_mon
@@ -1111,7 +1113,6 @@ WARNING: untranslated string: ovpn generating the root and host certificates
 WARNING: untranslated string: ovpn ha
 WARNING: untranslated string: ovpn hmac
 WARNING: untranslated string: ovpn mgmt in root range
-WARNING: untranslated string: ovpn mtu-disc
 WARNING: untranslated string: ovpn no connections
 WARNING: untranslated string: ovpn port in root range
 WARNING: untranslated string: ovpn warning rfc3280
