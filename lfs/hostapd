@@ -88,6 +88,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -p1 < $(DIR_SRC)/src/patches/wpa_supplicant/rebased-v2.6-0008-FT-Do-not-allow-multiple-Reassociation-Response-fram.patch
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/hostapd-2.3_increase_EAPOL-timeouts.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/hostapd/hostapd-2.6-noscan.patch
+
 	cd $(DIR_APP)/hostapd && cp $(DIR_SRC)/config/hostapd/config ./.config
 	cd $(DIR_APP)/hostapd && sed -e "s@/usr/local@/usr@g" -i Makefile
 	cd $(DIR_APP)/hostapd && make $(MAKETUNING) $(EXTRA_MAKE)
