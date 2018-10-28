@@ -3,4 +3,7 @@ etc/issue
 etc/ssh/sshd_config
 etc/sysctl.conf
 srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
+srv/web/ipfire/cgi-bin/media.cgi
+usr/local/bin/makegraphs
 var/ipfire/langs
