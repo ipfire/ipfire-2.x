@@ -935,3 +935,5 @@ WARNING: untranslated string: wlan client tls cipher
 WARNING: untranslated string: wlan client tls version
 WARNING: untranslated string: wlanap
 WARNING: untranslated string: wlanap configuration
+WARNING: untranslated string: wlanap neighbor scan
+WARNING: untranslated string: wlanap neighbor scan warning

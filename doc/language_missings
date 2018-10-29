@@ -731,6 +731,8 @@
 < wlanap
 < wlanap configuration
 < wlanap country
+< wlanap neighbor scan
+< wlanap neighbor scan warning
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -1460,6 +1462,8 @@
 < wlanap invalid wpa
 < wlanap link dhcp
 < wlanap link wireless
+< wlanap neighbor scan
+< wlanap neighbor scan warning
 < wlanap no interface
 < wlanap none
 < wlanap notifications
@@ -1711,6 +1715,8 @@
 < wireless network
 < wlanap
 < wlanap configuration
+< wlanap neighbor scan
+< wlanap neighbor scan warning
 < wlan client anonymous identity
 < wlan client auth auto
 < wlan client authentication settings
@@ -1979,6 +1985,8 @@
 < wireless network
 < wlanap
 < wlanap configuration
+< wlanap neighbor scan
+< wlanap neighbor scan warning
 < wlan client anonymous identity
 < wlan client auth auto
 < wlan client authentication settings
@@ -2657,6 +2665,8 @@
 < wlanap
 < wlanap configuration
 < wlanap country
+< wlanap neighbor scan
+< wlanap neighbor scan warning
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -3372,6 +3382,8 @@
 < wlanap
 < wlanap configuration
 < wlanap country
+< wlanap neighbor scan
+< wlanap neighbor scan warning
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -3433,3 +3445,5 @@
 < ssh username
 < vpn start action add
 < vpn wait
+< wlanap neighbor scan
+< wlanap neighbor scan warning

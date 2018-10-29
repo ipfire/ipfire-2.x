@@ -1272,3 +1272,5 @@ WARNING: untranslated string: wlan clients
 WARNING: untranslated string: wlanap
 WARNING: untranslated string: wlanap configuration
 WARNING: untranslated string: wlanap country
+WARNING: untranslated string: wlanap neighbor scan
+WARNING: untranslated string: wlanap neighbor scan warning

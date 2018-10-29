@@ -1297,6 +1297,8 @@ WARNING: untranslated string: wlanap interface
 WARNING: untranslated string: wlanap invalid wpa
 WARNING: untranslated string: wlanap link dhcp
 WARNING: untranslated string: wlanap link wireless
+WARNING: untranslated string: wlanap neighbor scan
+WARNING: untranslated string: wlanap neighbor scan warning
 WARNING: untranslated string: wlanap no interface
 WARNING: untranslated string: wlanap none
 WARNING: untranslated string: wlanap notifications
