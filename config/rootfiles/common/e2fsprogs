@@ -144,5 +144,3 @@ usr/sbin/uuidd
 #usr/share/ss
 #usr/share/ss/ct_c.awk
 #usr/share/ss/ct_c.sed
--sbin/fsck.ext4dev
--sbin/mkfs.ext4dev
