@@ -1074,7 +1074,6 @@ buildbase() {
 	lfsmake2 util-linux
 	lfsmake2 udev
 	lfsmake2 vim
-	lfsmake2 paxctl
 }
 
 buildipfire() {
