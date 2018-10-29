@@ -85,10 +85,17 @@ sub updatehdddata{
 		my $smart_output = '';
 		system("$path_smartctl -iHA /dev/$disk > /var/run/smartctl_out_hddtemp-$disk");
 		if ( -e "/var/run/smartctl_out_hddtemp-".$array[$#array] ){
-			my $hdd_output = `cat /var/run/smartctl_out_hddtemp-$array[$#array] | grep Temperature_`;
-			my @t = split(/\s+/,$hdd_output);
-			$temp = $t[9];
-		}else{$temp = 0;}
+			my $hdd_nvme = `grep "NVMe Log" /var/run/smartctl_out_hddtemp-$array[$#array]`;
+			if ( $hdd_nvme !~/NVMe Log/ ) {
+				my $hdd_output = `cat /var/run/smartctl_out_hddtemp-$array[$#array] | grep Temperature_`;
+				my @t = split(/\s+/,$hdd_output);
+				$temp = $t[9];
+			} else {
+				my $hdd_output = `cat /var/run/smartctl_out_hddtemp-$array[$#array] | grep Temperature:`;
+				my @t = split(/\s+/,$hdd_output);
+				$temp = $t[1];
+			}
+		} else { $temp = 0; }
 		print "Temperature for ".$array[$#array]."->".$temp."<-\n";
 		# Nur ins RDD wenn nicht 0 (sonst klappt die min Anzeige nicht)
 		if ($temp){
@@ -102,7 +109,7 @@ sub updatehdddata{
 ## Update vnstat
 system ('/usr/bin/vnstat -u');
 
-my @disks = `ls -1 /sys/block | grep -E '^sd|^mmcblk|^xvd|^vd|^md' | sort | uniq`;
+my @disks = `ls -1 /sys/block | grep -E '^sd|^nvme|^mmcblk|^xvd|^vd|^md' | sort | uniq`;
 system("unlink /var/run/hddstatus 2>/dev/null && touch /var/run/hddstatus");
 foreach (@disks){
 	my $disk = $_;
