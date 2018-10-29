@@ -31,7 +31,8 @@
 ###############################################################################
 
 # Cleanup environment from any variables
-unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN TOOLS_DIR
+unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN
+unexport TOOLS_DIR LOG_DIR
 
 ifeq "$(BUILD_ARCH)" "aarch64"
 	IS_64BIT = 1
@@ -85,7 +86,7 @@ DIR_SRC = $(ROOT)/usr/src
 DIR_DL      = $(LFS_BASEDIR)/cache
 DIR_CHK     = $(LFS_BASEDIR)/cache/check
 DIR_CONF    = $(LFS_BASEDIR)/config
-DIR_INFO    = $(LFS_BASEDIR)/log
+DIR_INFO    = $(LFS_BASEDIR)/$(LOG_DIR)
 DIR_TMP     = /tmp
 
 # Add the compiler location and version and specs to the ccache hash
@@ -109,7 +110,7 @@ endif
 ###############################################################################
 
 # For each package we create a list of files that it installed under 
-# log/<TARGET> name. Modified files are not identified
+# $(LOG_DIR/)<TARGET> name. Modified files are not identified
 #
 define FIND_FILES
 	cd $(ROOT)/ && find -mount \

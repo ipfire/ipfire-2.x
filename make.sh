@@ -109,10 +109,7 @@ fi
 # This is the directory where make.sh is in
 export BASEDIR=$(echo $FULLPATH | sed "s/\/$BASENAME//g")
 
-LOGFILE=$BASEDIR/log/_build.preparation.log
-export LOGFILE
 DIR_CHK=$BASEDIR/cache/check
-mkdir $BASEDIR/log/ 2>/dev/null
 
 system_processors() {
 	getconf _NPROCESSORS_ONLN 2>/dev/null || echo "1"
@@ -193,6 +190,7 @@ configure_build() {
 
 	BUILD_ARCH="${build_arch}"
 	TOOLS_DIR="/tools_${BUILD_ARCH}"
+	LOG_DIR="log_${BUILD_ARCH}"
 
 	# Enables hardening
 	HARDENING_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong"
@@ -285,7 +283,7 @@ stdumount() {
 	umount $BASEDIR/build/usr/src/html		2>/dev/null;
 	umount $BASEDIR/build/usr/src/langs	2>/dev/null;
 	umount $BASEDIR/build/usr/src/lfs		2>/dev/null;
-	umount $BASEDIR/build/usr/src/log		2>/dev/null;
+	umount $BASEDIR/build/usr/src/${LOG_DIR}	2>/dev/null;
 	umount $BASEDIR/build/usr/src/src		2>/dev/null;
 }
 
@@ -421,6 +419,9 @@ exiterror() {
 }
 
 prepareenv() {
+	# Create log directory if it doesn't exist, yet
+	mkdir -p "${BASEDIR}/${LOG_DIR}"
+
 	# Are we running the right shell?
 	if [ -z "${BASH}" ]; then
 		exiterror "BASH environment variable is not set.  You're probably running the wrong shell."
@@ -474,7 +475,7 @@ prepareenv() {
 	mkdir -p $BASEDIR/build/{etc,usr/src} 2>/dev/null
 	mkdir -p $BASEDIR/build/{dev/{shm,pts},proc,sys}
 	mkdir -p $BASEDIR/{cache,ccache} 2>/dev/null
-	mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
+	mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,${LOG_DIR},src,ccache}
 
 	mknod -m 600 $BASEDIR/build/dev/console c 5 1 2>/dev/null
 	mknod -m 666 $BASEDIR/build/dev/null c 1 3 2>/dev/null
@@ -492,7 +493,7 @@ prepareenv() {
 	mount --bind $BASEDIR/html   $BASEDIR/build/usr/src/html
 	mount --bind $BASEDIR/langs  $BASEDIR/build/usr/src/langs
 	mount --bind $BASEDIR/lfs    $BASEDIR/build/usr/src/lfs
-	mount --bind $BASEDIR/log    $BASEDIR/build/usr/src/log
+	mount --bind $BASEDIR/${LOG_DIR} $BASEDIR/build/usr/src/${LOG_DIR}
 	mount --bind $BASEDIR/src    $BASEDIR/build/usr/src/src
 
 	# Run LFS static binary creation scripts one by one
@@ -539,6 +540,7 @@ enterchroot() {
 		CORE="${CORE}" \
 		SLOGAN="${SLOGAN}" \
 		TOOLS_DIR="${TOOLS_DIR}" \
+		LOG_DIR="${LOG_DIR}" \
 		CONFIG_ROOT="${CONFIG_ROOT}" \
 		CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
 		CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
@@ -963,7 +965,7 @@ buildtoolchain() {
 		exiterror "Could not create ${TOOLS_DIR} symbolic link"
 	fi
 
-	LOGFILE="$BASEDIR/log/_build.toolchain.log"
+	LOGFILE="$BASEDIR/${LOG_DIR}/_build.toolchain.log"
 	export LOGFILE
 
 	lfsmake1 stage1
@@ -1008,7 +1010,7 @@ buildtoolchain() {
 }
 
 buildbase() {
-	LOGFILE="$BASEDIR/log/_build.base.log"
+	LOGFILE="$BASEDIR/${LOG_DIR}/_build.base.log"
 	export LOGFILE
 	lfsmake2 stage2
 	lfsmake2 linux			KCFG="-headers"
@@ -1077,7 +1079,7 @@ buildbase() {
 }
 
 buildipfire() {
-  LOGFILE="$BASEDIR/log/_build.ipfire.log"
+  LOGFILE="$BASEDIR/${LOG_DIR}/_build.ipfire.log"
   export LOGFILE
   lfsmake2 configroot
   lfsmake2 initscripts
@@ -1576,7 +1578,7 @@ buildipfire() {
 
 buildinstaller() {
   # Run installer scripts one by one
-  LOGFILE="$BASEDIR/log/_build.installer.log"
+  LOGFILE="$BASEDIR/${LOG_DIR}/_build.installer.log"
   export LOGFILE
   lfsmake2 memtest
   lfsmake2 installer
@@ -1585,7 +1587,7 @@ buildinstaller() {
 }
 
 buildpackages() {
-  LOGFILE="$BASEDIR/log/_build.packages.log"
+  LOGFILE="$BASEDIR/${LOG_DIR}/_build.packages.log"
   export LOGFILE
   echo "... see detailed log in _build.*.log files" >> $LOGFILE
 
@@ -1593,8 +1595,8 @@ buildpackages() {
   # Generating list of packages used
   print_line "Generating packages list from logs"
   rm -f $BASEDIR/doc/packages-list
-  for i in `ls -1tr $BASEDIR/log/[^_]*`; do
-	if [ "$i" != "$BASEDIR/log/FILES" -a -n $i ]; then
+  for i in `ls -1tr $BASEDIR/${LOG_DIR}/[^_]*`; do
+	if [ "$i" != "$BASEDIR/${LOG_DIR}/FILES" -a -n $i ]; then
 		echo "* `basename $i`" >>$BASEDIR/doc/packages-list
 	fi
   done
@@ -1753,7 +1755,7 @@ clean)
 	rm -rf $BASEDIR/build
 	rm -rf $BASEDIR/cdrom
 	rm -rf $BASEDIR/packages
-	rm -rf $BASEDIR/log
+	rm -rf $BASEDIR/${LOG_DIR}
 	if [ -h "${TOOLS_DIR}" ]; then
 		rm -f "${TOOLS_DIR}"
 	fi
@@ -1764,7 +1766,7 @@ downloadsrc)
 	if [ ! -d $BASEDIR/cache ]; then
 		mkdir $BASEDIR/cache
 	fi
-	mkdir -p $BASEDIR/log
+	mkdir -p $BASEDIR/${LOG_DIR}
 	echo -e "${BOLD}Preload all source files${NORMAL}" | tee -a $LOGFILE
 	FINISHED=0
 	cd $BASEDIR/lfs
@@ -1823,7 +1825,7 @@ toolchain)
 	buildtoolchain
 	echo "`date -u '+%b %e %T'`: Create toolchain image for ${BUILD_ARCH}" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
-	cd $BASEDIR && tar -cf- --exclude='log/_build.*.log' build/${TOOLS_DIR} build/bin/sh log | xz ${XZ_OPT} \
+	cd $BASEDIR && tar -cf- --exclude='${LOG_DIR}/_build.*.log' build/${TOOLS_DIR} build/bin/sh ${LOG_DIR} | xz ${XZ_OPT} \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.xz
 	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.xz \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.md5
