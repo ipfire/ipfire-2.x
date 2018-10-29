@@ -1039,6 +1039,7 @@ buildbase() {
 	lfsmake2 readline
 	lfsmake2 readline-compat
 	lfsmake2 bzip2
+	lfsmake2 xz
 	lfsmake2 pcre
 	lfsmake2 pcre-compat
 	lfsmake2 bash
@@ -1073,7 +1074,6 @@ buildbase() {
 	lfsmake2 util-linux
 	lfsmake2 udev
 	lfsmake2 vim
-	lfsmake2 xz
 	lfsmake2 paxctl
 }
 
