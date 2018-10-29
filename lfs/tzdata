@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2018e
+VER        = 2018g
 TZDATA_VER = $(VER)
 TZCODE_VER = $(VER)
 
@@ -45,8 +45,8 @@ objects = tzdata$(TZDATA_VER).tar.gz tzcode$(TZCODE_VER).tar.gz
 tzdata$(TZDATA_VER).tar.gz = $(DL_FROM)/tzdata$(TZDATA_VER).tar.gz
 tzcode$(TZCODE_VER).tar.gz = $(DL_FROM)/tzcode$(TZCODE_VER).tar.gz
 
-tzdata$(TZDATA_VER).tar.gz_MD5 = 97d654f4d7253173b3eeb76a836dd65e
-tzcode$(TZCODE_VER).tar.gz_MD5 = c4d7df0fff7ba5588b32c5f27e2caf97
+tzdata$(TZDATA_VER).tar.gz_MD5 = e71cb1f9d8d53c43904d79d7aeeedc1b
+tzcode$(TZCODE_VER).tar.gz_MD5 = b48f0282b80bb7dbe16e35626f446ae9
 
 install : $(TARGET)
 
