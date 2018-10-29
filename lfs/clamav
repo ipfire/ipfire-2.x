@@ -32,13 +32,15 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = clamav
-PAK_VER    = 40
+PAK_VER    = 41
 
 DEPS       = ""
 
 ifeq "$(BUILD_PLATFORM)" "arm"
 CONFIGURE_FLAGS = --disable-fanotify
 endif
+
+DATABASE_DIR = /var/lib/clamav
 
 ###############################################################################
 # Top-level Rules
@@ -84,13 +86,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/var/ipfire/clamav \
+		--with-dbdir=$(DATABASE_DIR) \
 		$(CONFIGURE_FLAGS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	mkdir -p /usr/share/clamav/
-	chown clamav.clamav -R /usr/share/clamav/
+	mkdir -pv $(DATABASE_DIR)
+	chown clamav.clamav -R $(DATABASE_DIR)
+	rm -rfv $(DATABASE_DIR)/*.cvd
 	cp -rf $(DIR_SRC)/config/clamav/* /var/ipfire/clamav/
-	rm -rfv /usr/share/clamav/*.cvd
 	mkdir -p /var/run/clamav
 	chown clamav:clamav /var/run/clamav
 	#install initscripts

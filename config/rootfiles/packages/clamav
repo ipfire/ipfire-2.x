@@ -27,7 +27,6 @@ usr/lib/libclamunrar_iface.so.7.1.1
 #usr/lib/pkgconfig/libclamav.pc
 #usr/lib/pkgconfig/libclammspack.pc
 usr/sbin/clamd
-usr/share/clamav
 #usr/share/man/man1/clambc.1
 #usr/share/man/man1/clamconf.1
 #usr/share/man/man1/clamdscan.1
@@ -45,5 +44,6 @@ var/ipfire/clamav/clamd.conf
 var/ipfire/clamav/clamd.conf.sample
 var/ipfire/clamav/freshclam.conf
 var/ipfire/clamav/freshclam.conf.sample
+var/lib/clamav
 etc/rc.d/init.d/clamav
 usr/local/bin/clamavctrl
