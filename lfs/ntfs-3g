@@ -24,13 +24,13 @@
 
 include Config
 
-VER        = 2014.2.15
+VER        = 2017.3.23
 
 THISAPP    = ntfs-3g_ntfsprogs-$(VER)
 DL_FILE    = $(THISAPP).tgz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET = $(DIR_INFO)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f11d563816249d730a00498983485f3a
+$(DL_FILE)_MD5 = d97474ae1954f772c6d2fa386a6f462c
 
 install : $(TARGET)
 
@@ -73,7 +73,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

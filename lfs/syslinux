@@ -75,6 +75,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
+	# Apply patches
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/syslinux-6.03-sysmacros.patch
+
 	# Build
 	cd $(DIR_APP) && make bios $(MAKETUNING)
 ifeq "$(BUILD_ARCH)" "x86_64"

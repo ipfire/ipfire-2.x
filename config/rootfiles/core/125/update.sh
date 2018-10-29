@@ -50,6 +50,9 @@ ldconfig
 # Reload sysctl.conf
 sysctl -p
 
+# restart init
+telinit u
+
 # This update needs a reboot...
 #touch /var/run/need_reboot
 

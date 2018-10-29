@@ -80,6 +80,13 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+
+	# Newer C libraries omit this include from sys/types.h.
+	# https://lists.gnu.org/archive/html/bug-gnulib/2016-03/msg00018.html
+	cd $(DIR_APP) && sed -i gl/lib/mountlist.c \
+		-e "/include.*config.h/a#ifdef MAJOR_IN_SYSMACROS\n#include <sys/sysmacros.h>\n#endif\n"
+
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/findutils-4.6.0-glibc2.28.patch
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

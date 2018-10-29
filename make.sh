@@ -1083,6 +1083,9 @@ buildipfire() {
   lfsmake2 configroot
   lfsmake2 initscripts
   lfsmake2 backup
+  lfsmake2 openssl
+  [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
+  lfsmake2 openssl-compat
   lfsmake2 popt
   lfsmake2 libusb
   lfsmake2 libusb-compat
@@ -1101,6 +1104,7 @@ buildipfire() {
   lfsmake2 cpio
   lfsmake2 mdadm
   lfsmake2 dracut
+  lfsmake2 libaio
   lfsmake2 lvm2
   lfsmake2 multipath-tools
   lfsmake2 freetype
@@ -1169,9 +1173,6 @@ buildipfire() {
   esac
   lfsmake2 intel-microcode
   lfsmake2 xtables-addons			USPACE="1"
-  lfsmake2 openssl
-  [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
-  lfsmake2 openssl-compat
   lfsmake2 libgpg-error
   lfsmake2 libgcrypt
   lfsmake2 libassuan
@@ -1378,6 +1379,7 @@ buildipfire() {
   lfsmake2 rsync
   lfsmake2 libtirpc
   lfsmake2 rpcbind
+  lfsmake2 keyutils
   lfsmake2 nfs
   lfsmake2 gnu-netcat
   lfsmake2 ncat
