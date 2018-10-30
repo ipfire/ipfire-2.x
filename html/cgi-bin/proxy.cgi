@@ -287,7 +287,6 @@ $proxysettings{'IDENT_USER_ACL'} = 'positive';
 $proxysettings{'ENABLE_FILTER'} = 'off';
 $proxysettings{'ENABLE_UPDXLRATOR'} = 'off';
 $proxysettings{'ENABLE_CLAMAV'} = 'off';
-$proxysettings{'CHILDREN'} = '10';
 
 $ncsa_buttontext = $Lang::tr{'advproxy NCSA create user'};
 
@@ -435,11 +434,6 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 	if (!($proxysettings{'MAX_INCOMING_SIZE'} =~ /^\d+/))
 	{
 		$errormessage = $Lang::tr{'invalid maximum incoming size'};
-		goto ERROR;
-	}
-		if (!($proxysettings{'CHILDREN'} =~ /^\d+$/) || ($proxysettings{'CHILDREN'} < 1))
-	{
-		$errormessage = $Lang::tr{'advproxy invalid num of children'};
 		goto ERROR;
 	}
 	if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on')
@@ -1034,12 +1028,8 @@ print <<END
 </table>
 <hr size='1'>
 <table width='100%'>
-<tr><td class='base' colspan='4'><b>$Lang::tr{'advproxy redirector children'}</b></td></tr>
-<tr><td class='base' >$Lang::tr{'processes'}:&nbsp;<img src='/blob.gif' alt='*' /><input type='text' name='CHILDREN' value='$proxysettings{'CHILDREN'}' size='5' /></td>
 END
 ;
-my $count = `ip n| wc -l`;
-if ( $count < 1 ){$count = 1;}
 if ( -e "/usr/bin/squidclamav" ) {
 	print "<td class='base'><b>".$Lang::tr{'advproxy squidclamav'}."</b><br />";
 	if ( ! -e "/var/run/clamav/clamd.pid" ){
@@ -1048,18 +1038,16 @@ if ( -e "/usr/bin/squidclamav" ) {
 		}
 	else {
 		print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_CLAMAV' ".$checked{'ENABLE_CLAMAV'}{'on'}." /><br />";
-		print "+ ".int(( $count**(1/3)) * 8);}
+}
 	print "</td>";
 } else {
 	print "<td></td>";
 }
 print "<td class='base'><a href='/cgi-bin/urlfilter.cgi'><b>".$Lang::tr{'advproxy url filter'}."</a></b><br />";
 print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_FILTER' ".$checked{'ENABLE_FILTER'}{'on'}." /><br />";
-print "+ ".int(($count**(1/3)) * 6);
 print "</td>";
 print "<td class='base'><a href='/cgi-bin/updatexlrator.cgi'><b>".$Lang::tr{'advproxy update accelerator'}."</a></b><br />";
 print $Lang::tr{'advproxy enabled'}."<input type='checkbox' name='ENABLE_UPDXLRATOR' ".$checked{'ENABLE_UPDXLRATOR'}{'on'}." /><br />";
-print "+ ".int(($count**(1/3)) * 5);
 print "</td></tr>";
 print <<END
 </table>
@@ -4095,7 +4083,7 @@ END
 	if (($proxysettings{'ENABLE_FILTER'} eq 'on') || ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on') || ($proxysettings{'ENABLE_CLAMAV'} eq 'on'))
 	{
 		print FILE "url_rewrite_program /usr/sbin/redirect_wrapper\n";
-		print FILE "url_rewrite_children $proxysettings{'CHILDREN'}\n\n";
+		print FILE "url_rewrite_children ", &General::number_cpu_cores(), "\n\n";
 	}
 
 	# Include file with user defined settings.
