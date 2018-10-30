@@ -90,8 +90,7 @@ ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 else
-	cd $(DIR_APP) && ./Configure -des -Dprefix=$(TOOLS_DIR) \
-		-Dlibs="-lm" -Uloclibpth -Ulocincpth
+	cd $(DIR_APP) && ./Configure -des -Dprefix=$(TOOLS_DIR)
 	cd $(DIR_APP) && sed -i 's/^0$$//' makefile
 	cd $(DIR_APP) && sed -i 's/^0$$//' x2p/makefile
 	cd $(DIR_APP) && make
