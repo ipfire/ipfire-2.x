@@ -7,6 +7,7 @@ etc/frr/ripngd.conf.sample
 etc/frr/staticd.conf.sample
 etc/frr/vtysh.conf.sample
 etc/frr/zebra.conf.sample
+etc/rc.d/init.d/frr
 usr/bin/bgp_btoa
 usr/bin/vtysh
 #usr/include/frr

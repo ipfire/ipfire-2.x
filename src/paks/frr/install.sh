@@ -43,3 +43,10 @@ restore_backup "${NAME}"
 
 # Start services
 start_service "${NAME}"
+
+# Enable autostart
+ln -svf ../init.d/frr /etc/rc.d/rc0.d/K40frr
+ln -svf ../init.d/frr /etc/rc.d/rc3.d/S50frr
+ln -svf ../init.d/frr /etc/rc.d/rc6.d/K40frr
+
+exit 0

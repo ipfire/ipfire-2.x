@@ -101,6 +101,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-ripngd
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+	# Install initscript
+	$(call INSTALL_INITSCRIPT,frr)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
 
