@@ -51,6 +51,8 @@
 #usr/share/locale/ast
 #usr/share/locale/ast/LC_MESSAGES
 #usr/share/locale/ast/LC_MESSAGES/bison-runtime.mo
+#usr/share/locale/ca/LC_MESSAGES/bison-runtime.mo
+#usr/share/locale/ca/LC_MESSAGES/bison.mo
 #usr/share/locale/da/LC_MESSAGES/bison-runtime.mo
 #usr/share/locale/da/LC_MESSAGES/bison.mo
 #usr/share/locale/de/LC_MESSAGES/bison-runtime.mo
