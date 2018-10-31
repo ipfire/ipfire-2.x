@@ -23,6 +23,7 @@
 /root/.gitconfig
 /root/.ssh
 /var/ipfire/auth/users
+/var/ipfire/backup/addons/backup
 /var/ipfire/backup/exclude.user
 /var/ipfire/backup/include.user
 /var/ipfire/captive/*
