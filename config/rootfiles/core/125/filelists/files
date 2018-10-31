@@ -7,4 +7,5 @@ srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 usr/local/bin/makegraphs
+var/ipfire/backup/include
 var/ipfire/langs
