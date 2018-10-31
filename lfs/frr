@@ -102,6 +102,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
+	# Install backup include
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/frr \
+		 /var/ipfire/backup/addons/includes/frr
+
 	# Install initscript
 	$(call INSTALL_INITSCRIPT,frr)
 

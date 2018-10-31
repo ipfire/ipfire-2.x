@@ -126,3 +126,4 @@ usr/sbin/ssd
 usr/sbin/staticd
 usr/sbin/watchfrr
 usr/sbin/zebra
+var/ipfire/backup/addons/includes/frr
