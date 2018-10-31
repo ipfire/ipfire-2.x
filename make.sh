@@ -1176,6 +1176,7 @@ buildipfire() {
   lfsmake2 libgcrypt
   lfsmake2 libassuan
   lfsmake2 nettle
+  lfsmake2 json-c
   lfsmake2 libevent
   lfsmake2 libevent2
   lfsmake2 expat
@@ -1556,6 +1557,7 @@ buildipfire() {
   lfsmake2 lua
   lfsmake2 dnsdist
   lfsmake2 bird
+  lfsmake2 frr
   lfsmake2 dmidecode
   lfsmake2 mcelog
   lfsmake2 rtpproxy
