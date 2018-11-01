@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/squid stop
 
 # Extract files
 extract_files
@@ -46,6 +47,7 @@ ldconfig
 /etc/init.d/unbound restart
 /etc/init.d/apache restart
 /etc/init.d/sshd restart
+/etc/init.d/squid start
 
 # Reload sysctl.conf
 sysctl -p
