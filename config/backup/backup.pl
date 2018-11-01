@@ -38,11 +38,11 @@ process_includes() {
 	for include in $@; do
 		local file
 		while read -r file; do
-			while read file; do
+			for file in ${file}; do
 				if [ -e "${file}" ]; then
 					echo "${file}"
 				fi
-			done <<< ${file}
+			done
 		done < "${include}"
 	done | sort -u
 }
@@ -199,6 +199,10 @@ main() {
 
 		makedirs)
 			mkdir -p /var/ipfire/backup/addons/{backup,includes}
+			;;
+
+		list)
+			process_includes "/var/ipfire/backup/include" "/var/ipfire/backup/include.user"
 			;;
 
 		/var/ipfire/backup/*.ipf|/var/ipfire/backup/addons/backup/*.ipf|/var/tmp/backupiso/*.iso)
