@@ -24,23 +24,51 @@
 
 include Config
 
-VER        = 20181027
+VER        = 6.0
 
-THISAPP    = ca-certificates
+THISAPP    = frr-$(VER)
+DL_FILE    = $(THISAPP).tar.xz
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = frr
+PAK_VER    = 1
+
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = d725c08e0093f58e5fcac0969c781813
+
 install : $(TARGET)
 
-check : 
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
-download : 
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : 
+md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
 
 ###############################################################################
 # Installation Details
@@ -48,14 +76,39 @@ md5 :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cp -av $(DIR_CONF)/$(THISAPP) $(DIR_APP)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--sysconfdir=/etc/frr \
+		--localstatedir=/var/run/frr \
+		--enable-user="frr" \
+		--enable-group="frr" \
+		--enable-vty-group="frrvty" \
+		--enable-multipath=64 \
+		--disable-doc \
+		--disable-babeld \
+		--disable-bfdd \
+		--disable-eigrpd \
+		--disable-irdp \
+		--disable-isisd \
+		--disable-ldpd \
+		--disable-nhrpd \
+		--disable-ospf6d \
+		--disable-ospfapi \
+		--disable-pbrd \
+		--disable-pimd \
+		--disable-ripd \
+		--disable-ripngd
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
 
-	cd $(DIR_APP) && sh ./build.sh
+	# Install backup include
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/frr \
+		 /var/ipfire/backup/addons/includes/frr
 
-	-mkdir -pv /etc/ssl/certs
-	cd $(DIR_APP) && install -p -m 644 ca-bundle.crt ca-bundle.trust.crt \
-		/etc/ssl/certs
-	ln -svf certs/ca-bundle.crt /etc/ssl/cert.pem
+	# Install initscript
+	$(call INSTALL_INITSCRIPT,frr)
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
+
