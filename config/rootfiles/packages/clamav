@@ -1,9 +1,11 @@
+etc/rc.d/init.d/clamav
 usr/bin/clamav-config
 usr/bin/clambc
 usr/bin/clamconf
 usr/bin/clamdscan
 usr/bin/clamdtop
 usr/bin/clamscan
+usr/bin/clamsubmit
 usr/bin/freshclam
 usr/bin/sigtool
 #usr/include/clamav.h
@@ -32,6 +34,7 @@ usr/sbin/clamd
 #usr/share/man/man1/clamdscan.1
 #usr/share/man/man1/clamdtop.1
 #usr/share/man/man1/clamscan.1
+#usr/share/man/man1/clamsubmit.1
 #usr/share/man/man1/freshclam.1
 #usr/share/man/man1/sigtool.1
 #usr/share/man/man5/clamav-milter.conf.5
@@ -45,5 +48,4 @@ var/ipfire/clamav/clamd.conf.sample
 var/ipfire/clamav/freshclam.conf
 var/ipfire/clamav/freshclam.conf.sample
 var/lib/clamav
-etc/rc.d/init.d/clamav
-usr/local/bin/clamavctrl
+-usr/local/bin/clamavctrl
