@@ -480,6 +480,9 @@ usr/lib/freeradius/rlm_realm.so
 #usr/lib/freeradius/rlm_replicate.a
 #usr/lib/freeradius/rlm_replicate.la
 usr/lib/freeradius/rlm_replicate.so
+#usr/lib/freeradius/rlm_rest.a
+#usr/lib/freeradius/rlm_rest.la
+usr/lib/freeradius/rlm_rest.so
 #usr/lib/freeradius/rlm_soh.a
 #usr/lib/freeradius/rlm_soh.la
 usr/lib/freeradius/rlm_soh.so
