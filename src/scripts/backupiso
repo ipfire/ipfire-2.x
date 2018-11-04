@@ -5,9 +5,7 @@ makeiso() {
 	local dir="${1}"
 	local output="${2}"
 
-	local args="-J -r -V 'ipfire backup ${TS}' \
-		-b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
-		-c boot/isolinux/boot.catalog"
+	local args=
 
 	# Add EFI options when EFI image is present
 	if [ -e "${dir}/boot/isolinux/efiboot.img" ]; then
@@ -15,7 +13,10 @@ makeiso() {
 	fi
 
 	# Compose ISO
-	mkisofs ${args} ${dir} > ${output}
+	mkisofs -J -r -V "ipfire backup ${TS}" \
+		-b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
+		-c boot/isolinux/boot.catalog \
+		${args} ${dir} > ${output}
 
 	# Add DOS paritition table
 	if [ -e "${dir}/boot/isolinux/efiboot.img" ]; then
