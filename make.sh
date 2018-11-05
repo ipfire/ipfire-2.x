@@ -1087,7 +1087,6 @@ buildipfire() {
   lfsmake2 backup
   lfsmake2 openssl
   [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
-  lfsmake2 openssl-compat
   lfsmake2 popt
   lfsmake2 libusb
   lfsmake2 libusb-compat
