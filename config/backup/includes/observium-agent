@@ -1,0 +1,2 @@
+etc/xinetd.d/observium_agent_xinetd
+usr/lib/observium_agent/scripts-enabled

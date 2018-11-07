@@ -1412,6 +1412,7 @@ buildipfire() {
   lfsmake2 nagios_nrpe
   lfsmake2 nagios-plugins
   lfsmake2 icinga
+  lfsmake2 observium-agent
   lfsmake2 ebtables
   lfsmake2 directfb
   lfsmake2 faad2
