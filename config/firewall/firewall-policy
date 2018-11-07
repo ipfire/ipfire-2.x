@@ -57,6 +57,18 @@ HAVE_OPENVPN="true"
 
 # INPUT
 
+# Drop syslog from anywhere but localhost
+# sysklogd cannot bind to specific interface and therefore we need to
+# block access by adding firewall rules
+case "${FWPOLICY}" in
+	REJECT)
+		iptables -A POLICYIN -p udp --dport 514 -j REJECT --reject-with icmp-host-unreachable
+		;;
+	*)
+		iptables -A POLICYIN -p udp --dport 514 -j DROP
+		;;
+esac
+
 # Allow access from GREEN
 if [ -n "${GREEN_DEV}" ]; then
 	iptables -A POLICYIN -i "${GREEN_DEV}" -j ACCEPT
