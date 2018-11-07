@@ -3,6 +3,7 @@ etc/issue
 etc/ssh/sshd_config
 etc/sysctl.conf
 etc/rc.d/init.d/sysklogd
+etc/rc.d/init.d/udev
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
