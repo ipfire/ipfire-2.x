@@ -51,10 +51,6 @@ case "${1}" in
 			mount -t devpts devpts -o gid=5,mode=620 /dev/pts
 		fi
 
-		# Udev handles uevents itself, so we don't need to have
-		# the kernel call out to any binary in response to them
-		echo > /proc/sys/kernel/hotplug
-
 		# Start the udev daemon to continually watch for, and act on,
 		# uevents
 		boot_mesg "Starting udev daemon..."
