@@ -1,5 +1,10 @@
 #!/bin/sh
 arch=$(uname -m)
+IPFVER=2.21
+COREVER=$(cat /opt/pakfire/db/core/mine)
+# FIXME: edit this lines before release
+URL="https://downloads.ipfire.org/releases/ipfire-2.x/$IPFVER-core$COREVER/"
+ISO="ipfire-$IPFVER.$arch-full-core$COREVER.iso"
 
 makeiso() {
 	local dir="${1}"
@@ -13,7 +18,7 @@ makeiso() {
 	fi
 
 	# Compose ISO
-	mkisofs -J -r -V "ipfire backup ${TS}" \
+	mkisofs -J -r -V "IPFire ${IPFVER} ${arch}" \
 		-b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
 		-c boot/isolinux/boot.catalog \
 		${args} ${dir} > ${output}
@@ -42,11 +47,6 @@ case $arch in
 		exit 1
 		;;
 esac
-
-COREVER=$(cat /opt/pakfire/db/core/mine)
-# FIXME: edit this lines before release
-URL="https://downloads.ipfire.org/releases/ipfire-2.x/2.21-core$COREVER/"
-ISO="ipfire-2.21.$arch-full-core$COREVER.iso"
 
 if [ -z $1 ]; then
 	echo usage: $0 backup-file
@@ -98,6 +98,9 @@ rm -r backupiso.tmp.${TS}
 
 # Copy backup file to disk
 cp "/var/ipfire/backup/${TS}.ipf" "backupiso.${TS}/backup.ipf"
+
+# Add a version tag
+touch "backupiso.${TS}/backup-${TS}.media"
 
 echo "Running mkisofs"
 makeiso backupiso.${TS} $(basename ${ISO} .iso)-${TS}.iso
