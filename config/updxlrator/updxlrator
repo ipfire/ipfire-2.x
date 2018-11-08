@@ -97,8 +97,8 @@ while (<>) {
 
 
 	if (
-	    ($source_url =~ m@^http://(ar)?download\.adobe\.com/.*\.(exe|msi|bin|dmg|idx|gz)$@i) ||
-	    ($source_url =~ m@^http://swupdl\.adobe\.com/updates/.*\.(exe|msi|bin|dmg|idx|gz|[a-z][a-z]_[A-Z][A-Z])$@i) ||
+	    ($source_url =~ m@^http://(ar)?download\.adobe\.com/.*\.(exe|ms[ip]|bin|dmg|idx|gz)$@i) ||
+	    ($source_url =~ m@^http://swupdl\.adobe\.com/updates/.*\.(exe|ms[ip]|bin|dmg|idx|gz|[a-z][a-z]_[A-Z][A-Z])$@i) ||
 	    ($source_url =~ m@^http://swupmf\.adobe\.com/manifest/.*\.upd$@i)
 	   )
 	{
