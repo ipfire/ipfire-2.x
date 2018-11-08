@@ -1,3 +1,4 @@
+#etc/xinetd.d
 etc/xinetd.d/observium_agent_xinetd
 usr/bin/observium_agent
 #usr/lib/observium_agent

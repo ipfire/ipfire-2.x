@@ -1,6 +1,5 @@
 etc/rc.d/init.d/xinetd
 etc/xinetd.conf
-#etc/xinetd.d
 #usr/man/man5/xinetd.conf.5
 #usr/man/man8/itox.8
 #usr/man/man8/xconv.pl.8

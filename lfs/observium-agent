@@ -79,6 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	# Install xinet.d configuration
+	mkdir -pv /etc/xinetd.d
 	cd $(DIR_APP) && install -m 644 scripts/observium_agent_xinetd \
 		/etc/xinetd.d/observium_agent_xinetd
 
