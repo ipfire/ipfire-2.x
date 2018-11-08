@@ -1,8 +1,26 @@
 #!/bin/sh
-arch=$(uname -m)
+
+# FIXME: edit this lines before release
 IPFVER=2.21
 COREVER=$(cat /opt/pakfire/db/core/mine)
-# FIXME: edit this lines before release
+
+arch=$(uname -m)
+
+case $arch in
+	i?86)
+		arch="i586"
+		echo "Your arch is $arch"
+		;;
+	x86_64)
+		arch="x86_64"
+		echo "Your arch is $arch"
+		;;
+	*)
+		echo "Arch is not supported"
+		exit 1
+		;;
+esac
+
 URL="https://downloads.ipfire.org/releases/ipfire-2.x/$IPFVER-core$COREVER/"
 ISO="ipfire-$IPFVER.$arch-full-core$COREVER.iso"
 
@@ -32,21 +50,6 @@ makeiso() {
 
 	return 0
 }
-
-case $arch in
-	i?86)
-		arch="i586"
-		echo "Your arch is $arch"
-		;;
-	x86_64)
-		arch="x86_64"
-		echo "Your arch is $arch"
-		;;
-	*)
-		echo "Arch is not supported"
-		exit 1
-		;;
-esac
 
 if [ -z $1 ]; then
 	echo usage: $0 backup-file
