@@ -1,0 +1,11 @@
+etc/dehydrated
+#etc/dehydrated/accounts
+#etc/dehydrated/archive
+#etc/dehydrated/certs
+#etc/dehydrated/conf.d
+#etc/dehydrated/config
+#etc/dehydrated/domains.txt
+#etc/dehydrated/hook.sh
+etc/fcron.daily/dehydrated
+usr/bin/dehydrated
+var/ipfire/backup/addons/includes/dehydrated
