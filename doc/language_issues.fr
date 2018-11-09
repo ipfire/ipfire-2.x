@@ -632,679 +632,679 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
-WARNING: untranslated string: 24 hours
-WARNING: untranslated string: Captive
-WARNING: untranslated string: Captive ACTIVATE
-WARNING: untranslated string: Captive GAIN ACCESS
-WARNING: untranslated string: Captive WiFi coupon
-WARNING: untranslated string: Captive activated
-WARNING: untranslated string: Captive active on
-WARNING: untranslated string: Captive agree tac
-WARNING: untranslated string: Captive authentication
-WARNING: untranslated string: Captive brand color
-WARNING: untranslated string: Captive branding
-WARNING: untranslated string: Captive client session expiry time
-WARNING: untranslated string: Captive clients
-WARNING: untranslated string: Captive config
-WARNING: untranslated string: Captive coupon
-WARNING: untranslated string: Captive expiry time
-WARNING: untranslated string: Captive export coupons
-WARNING: untranslated string: Captive generate coupons
-WARNING: untranslated string: Captive generated coupon no
-WARNING: untranslated string: Captive issued coupons
-WARNING: untranslated string: Captive logo uploaded
-WARNING: untranslated string: Captive mac
-WARNING: untranslated string: Captive nolimit
-WARNING: untranslated string: Captive please accept the terms and conditions
-WARNING: untranslated string: Captive portal
-WARNING: untranslated string: Captive portal coupons
-WARNING: untranslated string: Captive terms
-WARNING: untranslated string: Captive terms short
-WARNING: untranslated string: Captive title
-WARNING: untranslated string: Captive upload logo
-WARNING: untranslated string: Captive upload logo recommendations
-WARNING: untranslated string: Captive valid for
-WARNING: untranslated string: Captive vouchervalid
-WARNING: untranslated string: Captive wrong ext
-WARNING: untranslated string: ConnSched dial
-WARNING: untranslated string: ConnSched hangup
-WARNING: untranslated string: ConnSched reboot
-WARNING: untranslated string: ConnSched shutdown
-WARNING: untranslated string: MB read
-WARNING: untranslated string: MB written
-WARNING: untranslated string: MTU settings
-WARNING: untranslated string: Number of Countries for the pie chart
-WARNING: untranslated string: Scan for Songs
-WARNING: untranslated string: addons
-WARNING: untranslated string: administrator password
-WARNING: untranslated string: administrator username
-WARNING: untranslated string: advproxy AUTH method ntlm
-WARNING: untranslated string: advproxy AUTH method ntlm auth
-WARNING: untranslated string: advproxy basic authentication
-WARNING: untranslated string: advproxy cache-digest
-WARNING: untranslated string: advproxy errmsg cache
-WARNING: untranslated string: advproxy errmsg invalid upstream proxy
-WARNING: untranslated string: advproxy errmsg proxy ports equal
-WARNING: untranslated string: advproxy group access control
-WARNING: untranslated string: advproxy group required
-WARNING: untranslated string: advproxy proxy port transparent
-WARNING: untranslated string: age second
-WARNING: untranslated string: application layer gateways
-WARNING: untranslated string: atm device
-WARNING: untranslated string: attention
-WARNING: untranslated string: bit
-WARNING: untranslated string: block
-WARNING: untranslated string: bytes
-WARNING: untranslated string: capabilities
-WARNING: untranslated string: captive
-WARNING: untranslated string: ccd add
-WARNING: untranslated string: ccd choose net
-WARNING: untranslated string: ccd client options
-WARNING: untranslated string: ccd clientip
-WARNING: untranslated string: ccd dynrange
-WARNING: untranslated string: ccd err blue
-WARNING: untranslated string: ccd err green
-WARNING: untranslated string: ccd err hostinnet
-WARNING: untranslated string: ccd err inuse
-WARNING: untranslated string: ccd err invalidname
-WARNING: untranslated string: ccd err invalidnet
-WARNING: untranslated string: ccd err irouteexist
-WARNING: untranslated string: ccd err isipsecnet
-WARNING: untranslated string: ccd err isipsecrw
-WARNING: untranslated string: ccd err isovpnn2n
-WARNING: untranslated string: ccd err isovpnnet
-WARNING: untranslated string: ccd err issubnet
-WARNING: untranslated string: ccd err name
-WARNING: untranslated string: ccd err nameexist
-WARNING: untranslated string: ccd err netadrexist
-WARNING: untranslated string: ccd err orange
-WARNING: untranslated string: ccd err red
-WARNING: untranslated string: ccd err routeovpn
-WARNING: untranslated string: ccd err routeovpn2
-WARNING: untranslated string: ccd hint
-WARNING: untranslated string: ccd invalid
-WARNING: untranslated string: ccd iroute
-WARNING: untranslated string: ccd iroute2
-WARNING: untranslated string: ccd iroutehint
-WARNING: untranslated string: ccd modify
-WARNING: untranslated string: ccd name
-WARNING: untranslated string: ccd net
-WARNING: untranslated string: ccd noaddnet
-WARNING: untranslated string: ccd none
-WARNING: untranslated string: ccd routes
-WARNING: untranslated string: ccd subnet
-WARNING: untranslated string: ccd used
-WARNING: untranslated string: check all
-WARNING: untranslated string: count
-WARNING: untranslated string: countries
-WARNING: untranslated string: country codes and flags
-WARNING: untranslated string: countrycode
-WARNING: untranslated string: crypto error
-WARNING: untranslated string: crypto warning
-WARNING: untranslated string: dead peer detection
-WARNING: untranslated string: default
-WARNING: untranslated string: deprecated fs warn
-WARNING: untranslated string: details
-WARNING: untranslated string: dh
-WARNING: untranslated string: dh key move failed
-WARNING: untranslated string: dh key warn
-WARNING: untranslated string: dh key warn1
-WARNING: untranslated string: dh parameter
-WARNING: untranslated string: dhcp dns enable update
-WARNING: untranslated string: dhcp dns key name
-WARNING: untranslated string: dhcp dns update
-WARNING: untranslated string: dhcp dns update algo
-WARNING: untranslated string: dhcp dns update secret
-WARNING: untranslated string: dl client arch insecure
-WARNING: untranslated string: dnat address
-WARNING: untranslated string: dns address deleted txt
-WARNING: untranslated string: dns servers
-WARNING: untranslated string: dnsforward
-WARNING: untranslated string: dnsforward add a new entry
-WARNING: untranslated string: dnsforward configuration
-WARNING: untranslated string: dnsforward edit an entry
-WARNING: untranslated string: dnsforward entries
-WARNING: untranslated string: dnsforward forward_server
-WARNING: untranslated string: dnsforward zone
-WARNING: untranslated string: dnssec aware
-WARNING: untranslated string: dnssec disabled warning
-WARNING: untranslated string: dnssec information
-WARNING: untranslated string: dnssec not supported
-WARNING: untranslated string: dnssec validating
-WARNING: untranslated string: downlink
-WARNING: untranslated string: download tls-auth key
-WARNING: untranslated string: dpd delay
-WARNING: untranslated string: dpd timeout
-WARNING: untranslated string: drop action
-WARNING: untranslated string: drop action1
-WARNING: untranslated string: drop action2
-WARNING: untranslated string: drop forward
-WARNING: untranslated string: drop outgoing
-WARNING: untranslated string: eight hours
-WARNING: untranslated string: email config
-WARNING: untranslated string: email empty field
-WARNING: untranslated string: email invalid
-WARNING: untranslated string: email invalid mailfqdn
-WARNING: untranslated string: email invalid mailip
-WARNING: untranslated string: email invalid mailport
-WARNING: untranslated string: email mailaddr
-WARNING: untranslated string: email mailpass
-WARNING: untranslated string: email mailport
-WARNING: untranslated string: email mailrcpt
-WARNING: untranslated string: email mailsender
-WARNING: untranslated string: email mailuser
-WARNING: untranslated string: email settings
-WARNING: untranslated string: email testmail
-WARNING: untranslated string: email tls
-WARNING: untranslated string: email usemail
-WARNING: untranslated string: emerging rules
-WARNING: untranslated string: encryption
-WARNING: untranslated string: entropy
-WARNING: untranslated string: entropy graphs
-WARNING: untranslated string: fifteen minutes
-WARNING: untranslated string: fireinfo ipfire version
-WARNING: untranslated string: fireinfo is disabled
-WARNING: untranslated string: fireinfo is enabled
-WARNING: untranslated string: fireinfo is submitted
-WARNING: untranslated string: fireinfo is submitted button
-WARNING: untranslated string: fireinfo kernel version
-WARNING: untranslated string: fireinfo not submitted
-WARNING: untranslated string: fireinfo not submitted button
-WARNING: untranslated string: fireinfo pakfire version
-WARNING: untranslated string: fireinfo please enable
-WARNING: untranslated string: fireinfo settings
-WARNING: untranslated string: fireinfo system version
-WARNING: untranslated string: fireinfo why descr1
-WARNING: untranslated string: fireinfo why descr2
-WARNING: untranslated string: fireinfo why enable
-WARNING: untranslated string: fireinfo why read more
-WARNING: untranslated string: fireinfo your profile id
-WARNING: untranslated string: firewall graph country
-WARNING: untranslated string: firewall graph ip
-WARNING: untranslated string: firewall graph port
-WARNING: untranslated string: firewall log country
-WARNING: untranslated string: firewall log ip
-WARNING: untranslated string: firewall log port
-WARNING: untranslated string: firewall logs country
-WARNING: untranslated string: firewall rules
-WARNING: untranslated string: first
-WARNING: untranslated string: five minutes
-WARNING: untranslated string: flag
-WARNING: untranslated string: four hours
-WARNING: untranslated string: fw default drop
-WARNING: untranslated string: fw settings
-WARNING: untranslated string: fw settings color
-WARNING: untranslated string: fw settings dropdown
-WARNING: untranslated string: fw settings remark
-WARNING: untranslated string: fw settings ruletable
-WARNING: untranslated string: fwdfw ACCEPT
-WARNING: untranslated string: fwdfw DROP
-WARNING: untranslated string: fwdfw REJECT
-WARNING: untranslated string: fwdfw action
-WARNING: untranslated string: fwdfw additional
-WARNING: untranslated string: fwdfw all icmp
-WARNING: untranslated string: fwdfw all subnets
-WARNING: untranslated string: fwdfw change
-WARNING: untranslated string: fwdfw copy
-WARNING: untranslated string: fwdfw delete
-WARNING: untranslated string: fwdfw dnat
-WARNING: untranslated string: fwdfw dnat error
-WARNING: untranslated string: fwdfw dnat extport
-WARNING: untranslated string: fwdfw dnat nochoice
-WARNING: untranslated string: fwdfw dnat porterr
-WARNING: untranslated string: fwdfw dnat porterr2
-WARNING: untranslated string: fwdfw edit
-WARNING: untranslated string: fwdfw err concon
-WARNING: untranslated string: fwdfw err nosrc
-WARNING: untranslated string: fwdfw err notgt
-WARNING: untranslated string: fwdfw err prot_port
-WARNING: untranslated string: fwdfw err ratecon
-WARNING: untranslated string: fwdfw err remark
-WARNING: untranslated string: fwdfw err ruleexists
-WARNING: untranslated string: fwdfw err same
-WARNING: untranslated string: fwdfw err samesub
-WARNING: untranslated string: fwdfw err src_addr
-WARNING: untranslated string: fwdfw err tgt_addr
-WARNING: untranslated string: fwdfw err tgt_grp
-WARNING: untranslated string: fwdfw err tgt_mac
-WARNING: untranslated string: fwdfw err tgt_port
-WARNING: untranslated string: fwdfw err time
-WARNING: untranslated string: fwdfw external port nat
-WARNING: untranslated string: fwdfw hint ip1
-WARNING: untranslated string: fwdfw hint ip2
-WARNING: untranslated string: fwdfw hint mac
-WARNING: untranslated string: fwdfw iface
-WARNING: untranslated string: fwdfw limitconcon
-WARNING: untranslated string: fwdfw log
-WARNING: untranslated string: fwdfw log rule
-WARNING: untranslated string: fwdfw many
-WARNING: untranslated string: fwdfw maxconcon
-WARNING: untranslated string: fwdfw movedown
-WARNING: untranslated string: fwdfw moveup
-WARNING: untranslated string: fwdfw newrule
-WARNING: untranslated string: fwdfw numcon
-WARNING: untranslated string: fwdfw pol allow
-WARNING: untranslated string: fwdfw pol block
-WARNING: untranslated string: fwdfw pol text
-WARNING: untranslated string: fwdfw pol text1
-WARNING: untranslated string: fwdfw pol title
-WARNING: untranslated string: fwdfw prot41
-WARNING: untranslated string: fwdfw prot41 short
-WARNING: untranslated string: fwdfw ratelimit
-WARNING: untranslated string: fwdfw red
-WARNING: untranslated string: fwdfw reread
-WARNING: untranslated string: fwdfw rule activate
-WARNING: untranslated string: fwdfw rulepos
-WARNING: untranslated string: fwdfw snat
-WARNING: untranslated string: fwdfw source
-WARNING: untranslated string: fwdfw sourceip
-WARNING: untranslated string: fwdfw target
-WARNING: untranslated string: fwdfw targetip
-WARNING: untranslated string: fwdfw timeframe
-WARNING: untranslated string: fwdfw toggle
-WARNING: untranslated string: fwdfw togglelog
-WARNING: untranslated string: fwdfw use nat
-WARNING: untranslated string: fwdfw use srcport
-WARNING: untranslated string: fwdfw use srv
-WARNING: untranslated string: fwdfw warn1
-WARNING: untranslated string: fwdfw wd_fri
-WARNING: untranslated string: fwdfw wd_mon
-WARNING: untranslated string: fwdfw wd_sat
-WARNING: untranslated string: fwdfw wd_sun
-WARNING: untranslated string: fwdfw wd_thu
-WARNING: untranslated string: fwdfw wd_tue
-WARNING: untranslated string: fwdfw wd_wed
-WARNING: untranslated string: fwhost OpenVPN N-2-N
-WARNING: untranslated string: fwhost addgeoipgrp
-WARNING: untranslated string: fwhost addgrp
-WARNING: untranslated string: fwhost addgrpname
-WARNING: untranslated string: fwhost addhost
-WARNING: untranslated string: fwhost addnet
-WARNING: untranslated string: fwhost addservice
-WARNING: untranslated string: fwhost addservicegrp
-WARNING: untranslated string: fwhost any
-WARNING: untranslated string: fwhost back
-WARNING: untranslated string: fwhost ccdhost
-WARNING: untranslated string: fwhost ccdnet
-WARNING: untranslated string: fwhost change
-WARNING: untranslated string: fwhost cust addr
-WARNING: untranslated string: fwhost cust geoipgroup
-WARNING: untranslated string: fwhost cust geoipgrp
-WARNING: untranslated string: fwhost cust geoiplocation
-WARNING: untranslated string: fwhost cust grp
-WARNING: untranslated string: fwhost cust net
-WARNING: untranslated string: fwhost cust service
-WARNING: untranslated string: fwhost cust srvgrp
-WARNING: untranslated string: fwhost deleted
-WARNING: untranslated string: fwhost empty
-WARNING: untranslated string: fwhost err addr
-WARNING: untranslated string: fwhost err empty
-WARNING: untranslated string: fwhost err emptytable
-WARNING: untranslated string: fwhost err groupempty
-WARNING: untranslated string: fwhost err grpexist
-WARNING: untranslated string: fwhost err hostexist
-WARNING: untranslated string: fwhost err hostip
-WARNING: untranslated string: fwhost err ip
-WARNING: untranslated string: fwhost err ipcheck
-WARNING: untranslated string: fwhost err ipmac
-WARNING: untranslated string: fwhost err ipwithsub
-WARNING: untranslated string: fwhost err isccdhost
-WARNING: untranslated string: fwhost err isccdiphost
-WARNING: untranslated string: fwhost err isccdipnet
-WARNING: untranslated string: fwhost err isccdnet
-WARNING: untranslated string: fwhost err isingrp
-WARNING: untranslated string: fwhost err maxservicetcp
-WARNING: untranslated string: fwhost err maxserviceudp
-WARNING: untranslated string: fwhost err name
-WARNING: untranslated string: fwhost err name1
-WARNING: untranslated string: fwhost err net
-WARNING: untranslated string: fwhost err netexist
-WARNING: untranslated string: fwhost err port
-WARNING: untranslated string: fwhost err remark
-WARNING: untranslated string: fwhost err srv exists
-WARNING: untranslated string: fwhost err srvexist
-WARNING: untranslated string: fwhost err sub32
-WARNING: untranslated string: fwhost hint
-WARNING: untranslated string: fwhost icmptype
-WARNING: untranslated string: fwhost ip_mac
-WARNING: untranslated string: fwhost ipsec net
-WARNING: untranslated string: fwhost menu
-WARNING: untranslated string: fwhost netaddress
-WARNING: untranslated string: fwhost newgeoipgrp
-WARNING: untranslated string: fwhost newgrp
-WARNING: untranslated string: fwhost newhost
-WARNING: untranslated string: fwhost newnet
-WARNING: untranslated string: fwhost newservice
-WARNING: untranslated string: fwhost newservicegrp
-WARNING: untranslated string: fwhost ovpn_n2n
-WARNING: untranslated string: fwhost port
-WARNING: untranslated string: fwhost prot
-WARNING: untranslated string: fwhost services
-WARNING: untranslated string: fwhost srv_name
-WARNING: untranslated string: fwhost stdnet
-WARNING: untranslated string: fwhost type
-WARNING: untranslated string: fwhost used
-WARNING: untranslated string: fwhost welcome
-WARNING: untranslated string: gen dh
-WARNING: untranslated string: generate dh key
-WARNING: untranslated string: geoip
-WARNING: untranslated string: geoipblock
-WARNING: untranslated string: geoipblock block countries
-WARNING: untranslated string: geoipblock configuration
-WARNING: untranslated string: geoipblock country is allowed
-WARNING: untranslated string: geoipblock country is blocked
-WARNING: untranslated string: geoipblock enable feature
-WARNING: untranslated string: grouptype
-WARNING: untranslated string: guardian
-WARNING: untranslated string: guardian block a host
-WARNING: untranslated string: guardian block httpd brute-force
-WARNING: untranslated string: guardian block ssh brute-force
-WARNING: untranslated string: guardian blockcount
-WARNING: untranslated string: guardian blocked hosts
-WARNING: untranslated string: guardian blocking of this address is not allowed
-WARNING: untranslated string: guardian blocktime
-WARNING: untranslated string: guardian common settings
-WARNING: untranslated string: guardian configuration
-WARNING: untranslated string: guardian daemon
-WARNING: untranslated string: guardian empty input
-WARNING: untranslated string: guardian enabled
-WARNING: untranslated string: guardian firewallaction
-WARNING: untranslated string: guardian ignored hosts
-WARNING: untranslated string: guardian invalid address or subnet
-WARNING: untranslated string: guardian invalid blockcount
-WARNING: untranslated string: guardian invalid blocktime
-WARNING: untranslated string: guardian invalid logfile
-WARNING: untranslated string: guardian logfacility
-WARNING: untranslated string: guardian logfile
-WARNING: untranslated string: guardian loglevel
-WARNING: untranslated string: guardian loglevel_debug
-WARNING: untranslated string: guardian loglevel_info
-WARNING: untranslated string: guardian loglevel_off
-WARNING: untranslated string: guardian logtarget_console
-WARNING: untranslated string: guardian logtarget_file
-WARNING: untranslated string: guardian logtarget_syslog
-WARNING: untranslated string: guardian no entries
-WARNING: untranslated string: guardian priolevel_high
-WARNING: untranslated string: guardian priolevel_low
-WARNING: untranslated string: guardian priolevel_medium
-WARNING: untranslated string: guardian priolevel_very_low
-WARNING: untranslated string: guardian priority level
-WARNING: untranslated string: guardian service
-WARNING: untranslated string: guardian watch snort alertfile
-WARNING: untranslated string: hardware support
-WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
-WARNING: untranslated string: imei
-WARNING: untranslated string: imsi
-WARNING: untranslated string: incoming compression in bytes per second
-WARNING: untranslated string: incoming firewall access
-WARNING: untranslated string: incoming overhead in bytes per second
-WARNING: untranslated string: info messages
-WARNING: untranslated string: integrity
-WARNING: untranslated string: invalid input for dpd delay
-WARNING: untranslated string: invalid input for dpd timeout
-WARNING: untranslated string: invalid input for inactivity timeout
-WARNING: untranslated string: invalid input for valid till days
-WARNING: untranslated string: invalid logserver protocol
-WARNING: untranslated string: ipsec
-WARNING: untranslated string: ipsec network
-WARNING: untranslated string: last
-WARNING: untranslated string: least preferred
-WARNING: untranslated string: lifetime
-WARNING: untranslated string: log server protocol
-WARNING: untranslated string: mac filter
-WARNING: untranslated string: masquerade blue
-WARNING: untranslated string: masquerade green
-WARNING: untranslated string: masquerade orange
-WARNING: untranslated string: masquerading
-WARNING: untranslated string: masquerading disabled
-WARNING: untranslated string: masquerading enabled
-WARNING: untranslated string: maximum
-WARNING: untranslated string: messages
-WARNING: untranslated string: minimum
-WARNING: untranslated string: minute
-WARNING: untranslated string: model
-WARNING: untranslated string: modem hardware details
-WARNING: untranslated string: modem information
-WARNING: untranslated string: modem network bit error rate
-WARNING: untranslated string: modem network information
-WARNING: untranslated string: modem network mode
-WARNING: untranslated string: modem network operator
-WARNING: untranslated string: modem network registration
-WARNING: untranslated string: modem network signal quality
-WARNING: untranslated string: modem no connection
-WARNING: untranslated string: modem no connection message
-WARNING: untranslated string: modem sim information
-WARNING: untranslated string: modem status
-WARNING: untranslated string: monitor interface
-WARNING: untranslated string: most preferred
-WARNING: untranslated string: nameserver
-WARNING: untranslated string: no data
-WARNING: untranslated string: none
-WARNING: untranslated string: not a valid dh key
-WARNING: untranslated string: notice
-WARNING: untranslated string: ntp common settings
-WARNING: untranslated string: ntp sync
-WARNING: untranslated string: one hour
-WARNING: untranslated string: one month
-WARNING: untranslated string: one week
-WARNING: untranslated string: one year
-WARNING: untranslated string: openvpn default
-WARNING: untranslated string: openvpn destination port used
-WARNING: untranslated string: openvpn fragment allowed with udp
-WARNING: untranslated string: openvpn mssfix allowed with udp
-WARNING: untranslated string: openvpn network
-WARNING: untranslated string: openvpn prefix local subnet
-WARNING: untranslated string: openvpn prefix openvpn subnet
-WARNING: untranslated string: openvpn prefix remote subnet
-WARNING: untranslated string: openvpn subnet is used
-WARNING: untranslated string: other
-WARNING: untranslated string: outgoing compression in bytes per second
-WARNING: untranslated string: outgoing firewall access
-WARNING: untranslated string: outgoing overhead in bytes per second
-WARNING: untranslated string: ovpn add conf
-WARNING: untranslated string: ovpn crypt options
-WARNING: untranslated string: ovpn dh
-WARNING: untranslated string: ovpn dh new key
-WARNING: untranslated string: ovpn dh parameters
-WARNING: untranslated string: ovpn dh upload
-WARNING: untranslated string: ovpn error dh
-WARNING: untranslated string: ovpn error md5
-WARNING: untranslated string: ovpn generating the root and host certificates
-WARNING: untranslated string: ovpn ha
-WARNING: untranslated string: ovpn hmac
-WARNING: untranslated string: ovpn mgmt in root range
-WARNING: untranslated string: ovpn no connections
-WARNING: untranslated string: ovpn port in root range
-WARNING: untranslated string: ovpn warning rfc3280
-WARNING: untranslated string: p2p block
-WARNING: untranslated string: p2p block save notice
-WARNING: untranslated string: pakfire ago
-WARNING: untranslated string: pptp netconfig
-WARNING: untranslated string: pptp peer
-WARNING: untranslated string: pptp route
-WARNING: untranslated string: proxy reports
-WARNING: untranslated string: proxy reports daily
-WARNING: untranslated string: proxy reports monthly
-WARNING: untranslated string: proxy reports today
-WARNING: untranslated string: proxy reports weekly
-WARNING: untranslated string: qos enter bandwidths
-WARNING: untranslated string: random number generator daemon
-WARNING: untranslated string: rdns
-WARNING: untranslated string: red1
-WARNING: untranslated string: required field
-WARNING: untranslated string: route config changed
-WARNING: untranslated string: routing config added
-WARNING: untranslated string: routing config changed
-WARNING: untranslated string: routing table
-WARNING: untranslated string: samba join a domain
-WARNING: untranslated string: samba join domain
-WARNING: untranslated string: search
-WARNING: untranslated string: server restart
-WARNING: untranslated string: show dh
-WARNING: untranslated string: show tls-auth key
-WARNING: untranslated string: snat new source ip address
-WARNING: untranslated string: snort working
-WARNING: untranslated string: software version
-WARNING: untranslated string: source ip country
-WARNING: untranslated string: ssh
-WARNING: untranslated string: ssh active sessions
-WARNING: untranslated string: ssh login time
-WARNING: untranslated string: ssh no active logins
-WARNING: untranslated string: ssh username
-WARNING: untranslated string: static routes
-WARNING: untranslated string: support donation
-WARNING: untranslated string: system has rdrand
-WARNING: untranslated string: system information
-WARNING: untranslated string: ta key
-WARNING: untranslated string: tcp more reliable
-WARNING: untranslated string: ten minutes
-WARNING: untranslated string: thirty minutes
-WARNING: untranslated string: tor
-WARNING: untranslated string: tor accounting
-WARNING: untranslated string: tor accounting bytes
-WARNING: untranslated string: tor accounting bytes left
-WARNING: untranslated string: tor accounting interval
-WARNING: untranslated string: tor accounting limit
-WARNING: untranslated string: tor accounting period
-WARNING: untranslated string: tor acls
-WARNING: untranslated string: tor allowed subnets
-WARNING: untranslated string: tor bandwidth burst
-WARNING: untranslated string: tor bandwidth rate
-WARNING: untranslated string: tor bandwidth settings
-WARNING: untranslated string: tor bandwidth unlimited
-WARNING: untranslated string: tor common settings
-WARNING: untranslated string: tor configuration
-WARNING: untranslated string: tor connected relays
-WARNING: untranslated string: tor contact info
-WARNING: untranslated string: tor daemon
-WARNING: untranslated string: tor directory port
-WARNING: untranslated string: tor enabled
-WARNING: untranslated string: tor errmsg invalid accounting limit
-WARNING: untranslated string: tor errmsg invalid directory port
-WARNING: untranslated string: tor errmsg invalid ip or mask
-WARNING: untranslated string: tor errmsg invalid relay address
-WARNING: untranslated string: tor errmsg invalid relay name
-WARNING: untranslated string: tor errmsg invalid relay port
-WARNING: untranslated string: tor errmsg invalid socks port
-WARNING: untranslated string: tor exit country any
-WARNING: untranslated string: tor exit nodes
-WARNING: untranslated string: tor relay address
-WARNING: untranslated string: tor relay configuration
-WARNING: untranslated string: tor relay enabled
-WARNING: untranslated string: tor relay external address
-WARNING: untranslated string: tor relay fingerprint
-WARNING: untranslated string: tor relay mode
-WARNING: untranslated string: tor relay mode bridge
-WARNING: untranslated string: tor relay mode exit
-WARNING: untranslated string: tor relay mode private bridge
-WARNING: untranslated string: tor relay mode relay
-WARNING: untranslated string: tor relay nickname
-WARNING: untranslated string: tor relay port
-WARNING: untranslated string: tor service
-WARNING: untranslated string: tor socks port
-WARNING: untranslated string: tor stats
-WARNING: untranslated string: tor traffic limit hard
-WARNING: untranslated string: tor traffic limit soft
-WARNING: untranslated string: tor traffic read written
-WARNING: untranslated string: tor use exit nodes
-WARNING: untranslated string: twelve hours
-WARNING: untranslated string: two weeks
-WARNING: untranslated string: udp less overhead
-WARNING: untranslated string: unblock
-WARNING: untranslated string: unblock all
-WARNING: untranslated string: uncheck all
-WARNING: untranslated string: unlimited
-WARNING: untranslated string: uplink
-WARNING: untranslated string: uplink bit rate
-WARNING: untranslated string: upload dh key
-WARNING: untranslated string: upload new ruleset
-WARNING: untranslated string: uptime load average
-WARNING: untranslated string: urlfilter file ext block
-WARNING: untranslated string: urlfilter mode block
-WARNING: untranslated string: urlfilter redirect template
-WARNING: untranslated string: vendor
-WARNING: untranslated string: visit us at
-WARNING: untranslated string: vpn broken
-WARNING: untranslated string: vpn connecting
-WARNING: untranslated string: vpn force mobike
-WARNING: untranslated string: vpn inactivity timeout
-WARNING: untranslated string: vpn keyexchange
-WARNING: untranslated string: vpn on-demand
-WARNING: untranslated string: vpn start action
-WARNING: untranslated string: vpn start action add
-WARNING: untranslated string: vpn start action route
-WARNING: untranslated string: vpn start action start
-WARNING: untranslated string: vpn statistic n2n
-WARNING: untranslated string: vpn statistic rw
-WARNING: untranslated string: vpn statistics n2n
-WARNING: untranslated string: vpn wait
-WARNING: untranslated string: vpn weak
-WARNING: untranslated string: wireless network
-WARNING: untranslated string: wlan client
-WARNING: untranslated string: wlan client advanced settings
-WARNING: untranslated string: wlan client and
-WARNING: untranslated string: wlan client anonymous identity
-WARNING: untranslated string: wlan client auth auto
-WARNING: untranslated string: wlan client auth peap
-WARNING: untranslated string: wlan client auth ttls
-WARNING: untranslated string: wlan client authentication settings
-WARNING: untranslated string: wlan client bssid
-WARNING: untranslated string: wlan client ccmp
-WARNING: untranslated string: wlan client configuration
-WARNING: untranslated string: wlan client disconnected
-WARNING: untranslated string: wlan client duplicate ssid
-WARNING: untranslated string: wlan client eap authentication method
-WARNING: untranslated string: wlan client eap phase2 method
-WARNING: untranslated string: wlan client eap state
-WARNING: untranslated string: wlan client edit entry
-WARNING: untranslated string: wlan client encryption
-WARNING: untranslated string: wlan client encryption eap
-WARNING: untranslated string: wlan client encryption none
-WARNING: untranslated string: wlan client encryption wep
-WARNING: untranslated string: wlan client encryption wpa
-WARNING: untranslated string: wlan client encryption wpa2
-WARNING: untranslated string: wlan client group cipher
-WARNING: untranslated string: wlan client group key algorithm
-WARNING: untranslated string: wlan client identity
-WARNING: untranslated string: wlan client invalid key length
-WARNING: untranslated string: wlan client method
-WARNING: untranslated string: wlan client new entry
-WARNING: untranslated string: wlan client new network
-WARNING: untranslated string: wlan client pairwise cipher
-WARNING: untranslated string: wlan client pairwise key algorithm
-WARNING: untranslated string: wlan client pairwise key group key
-WARNING: untranslated string: wlan client password
-WARNING: untranslated string: wlan client psk
-WARNING: untranslated string: wlan client ssid
-WARNING: untranslated string: wlan client tkip
-WARNING: untranslated string: wlan client tls cipher
-WARNING: untranslated string: wlan client tls version
-WARNING: untranslated string: wlan client wpa mode
-WARNING: untranslated string: wlan client wpa mode all
-WARNING: untranslated string: wlan client wpa mode ccmp ccmp
-WARNING: untranslated string: wlan client wpa mode ccmp tkip
-WARNING: untranslated string: wlan client wpa mode tkip tkip
-WARNING: untranslated string: wlan clients
-WARNING: untranslated string: wlanap
-WARNING: untranslated string: wlanap channel
-WARNING: untranslated string: wlanap configuration
-WARNING: untranslated string: wlanap country
-WARNING: untranslated string: wlanap debugging
-WARNING: untranslated string: wlanap del interface
-WARNING: untranslated string: wlanap encryption
-WARNING: untranslated string: wlanap informations
-WARNING: untranslated string: wlanap interface
-WARNING: untranslated string: wlanap invalid wpa
-WARNING: untranslated string: wlanap link dhcp
-WARNING: untranslated string: wlanap link wireless
-WARNING: untranslated string: wlanap neighbor scan
-WARNING: untranslated string: wlanap neighbor scan warning
-WARNING: untranslated string: wlanap no interface
-WARNING: untranslated string: wlanap none
-WARNING: untranslated string: wlanap notifications
-WARNING: untranslated string: wlanap select interface
-WARNING: untranslated string: wlanap verbose
-WARNING: untranslated string: wlanap warnings
-WARNING: untranslated string: wlanap wlan card
-WARNING: untranslated string: wlanap wlan settings
-WARNING: untranslated string: wlanap wlan status
+WARNING: untranslated string: 24 hours = 24 Hours
+WARNING: untranslated string: Captive = Captive Portal
+WARNING: untranslated string: Captive ACTIVATE = ACTIVATE
+WARNING: untranslated string: Captive GAIN ACCESS = GAIN ACCESS
+WARNING: untranslated string: Captive WiFi coupon = WiFi Coupon
+WARNING: untranslated string: Captive activated = Activated
+WARNING: untranslated string: Captive active on = Activated on
+WARNING: untranslated string: Captive agree tac = I agree with the terms & conditions below.
+WARNING: untranslated string: Captive authentication = Type of Access
+WARNING: untranslated string: Captive brand color = Brand Color
+WARNING: untranslated string: Captive branding = Branding
+WARNING: untranslated string: Captive client session expiry time = Session Expiry Time
+WARNING: untranslated string: Captive clients = unknown string
+WARNING: untranslated string: Captive config = Settings
+WARNING: untranslated string: Captive coupon = Coupon
+WARNING: untranslated string: Captive expiry time = Expiry Time
+WARNING: untranslated string: Captive export coupons = Export Coupons
+WARNING: untranslated string: Captive generate coupons = Generate Coupons
+WARNING: untranslated string: Captive generated coupon no = Number of coupons
+WARNING: untranslated string: Captive issued coupons = Issued Coupons
+WARNING: untranslated string: Captive logo uploaded = Logo uploaded
+WARNING: untranslated string: Captive mac = MAC Address
+WARNING: untranslated string: Captive nolimit = unlimited
+WARNING: untranslated string: Captive please accept the terms and conditions = Please accept the terms &amp; conditions
+WARNING: untranslated string: Captive portal = IPFire Captive Portal
+WARNING: untranslated string: Captive portal coupons = Captive Portal Coupons
+WARNING: untranslated string: Captive terms = Terms &amp; Conditions
+WARNING: untranslated string: Captive terms short = T&Cs
+WARNING: untranslated string: Captive title = Title of Login Page
+WARNING: untranslated string: Captive upload logo = Upload Logo
+WARNING: untranslated string: Captive upload logo recommendations = (PNG or JPEG, recommended 1280x720 pixels)
+WARNING: untranslated string: Captive valid for = Valid for
+WARNING: untranslated string: Captive vouchervalid = Allowed time for this coupon
+WARNING: untranslated string: Captive wrong ext = Uploaded file has wrong filetype
+WARNING: untranslated string: ConnSched dial = Connect
+WARNING: untranslated string: ConnSched hangup = Disconnect
+WARNING: untranslated string: ConnSched reboot = Reboot
+WARNING: untranslated string: ConnSched shutdown = Shutdown
+WARNING: untranslated string: MB read = MB read
+WARNING: untranslated string: MB written = MB written
+WARNING: untranslated string: MTU settings = MTU settings:
+WARNING: untranslated string: Number of Countries for the pie chart = Number of Countries for the pie chart
+WARNING: untranslated string: Scan for Songs = unknown string
+WARNING: untranslated string: addons = Addons
+WARNING: untranslated string: administrator password = Administrator password
+WARNING: untranslated string: administrator username = Administrator username
+WARNING: untranslated string: advproxy AUTH method ntlm = Windows NT4 Domain
+WARNING: untranslated string: advproxy AUTH method ntlm auth = Windows Active Directory
+WARNING: untranslated string: advproxy basic authentication = Allow HTTP Basic authentication
+WARNING: untranslated string: advproxy cache-digest = Enable Cache-Digest Generation
+WARNING: untranslated string: advproxy errmsg cache = The RAM cache size is greater than the harddisk cache size:
+WARNING: untranslated string: advproxy errmsg invalid upstream proxy = Invalid upstream proxy IP/hostname
+WARNING: untranslated string: advproxy errmsg proxy ports equal = The proxy port and the transparent port cannot be equal.
+WARNING: untranslated string: advproxy group access control = Group based access control
+WARNING: untranslated string: advproxy group required = Required group
+WARNING: untranslated string: advproxy proxy port transparent = Transparent port
+WARNING: untranslated string: age second = second
+WARNING: untranslated string: application layer gateways = Application Layer Gateways
+WARNING: untranslated string: atm device = Device:
+WARNING: untranslated string: attention = ATTENTION
+WARNING: untranslated string: bit = bit
+WARNING: untranslated string: block = Block
+WARNING: untranslated string: bytes = unknown string
+WARNING: untranslated string: capabilities = Capabilities
+WARNING: untranslated string: captive = unknown string
+WARNING: untranslated string: ccd add = Add network
+WARNING: untranslated string: ccd choose net = Choose network
+WARNING: untranslated string: ccd client options = Advanced client options
+WARNING: untranslated string: ccd clientip = Host address
+WARNING: untranslated string: ccd dynrange = Dynamic OpenVPN IP address pool
+WARNING: untranslated string: ccd err blue = This is the BLUE subnet.
+WARNING: untranslated string: ccd err green = This is the GREEN subnet.
+WARNING: untranslated string: ccd err hostinnet = You are not able to delete this network, while it still contains clients.
+WARNING: untranslated string: ccd err inuse = Already used by another client.
+WARNING: untranslated string: ccd err invalidname = Invalid name. Allowed characters are A-Z, a-z, dash and space.
+WARNING: untranslated string: ccd err invalidnet = Invalid IP address. Format: 192.168.0.0/24 or 192.168.0.0/255.255.255.0.
+WARNING: untranslated string: ccd err irouteexist = This route is already in use.
+WARNING: untranslated string: ccd err isipsecnet = The given subnet address is already used by an IPsec network.
+WARNING: untranslated string: ccd err isipsecrw = The given subnet address is already used by the IPsec rw network.
+WARNING: untranslated string: ccd err isovpnn2n = The subnet address is already in use for an OpenVPN net-to-net connection.
+WARNING: untranslated string: ccd err isovpnnet = The subnet address is already in use for the OpenVPN server.
+WARNING: untranslated string: ccd err issubnet = Subnet address already in use.
+WARNING: untranslated string: ccd err name = Please choose a name.
+WARNING: untranslated string: ccd err nameexist = Name already exists.
+WARNING: untranslated string: ccd err netadrexist = Network already exists.
+WARNING: untranslated string: ccd err orange = This is the ORANGE subnet.
+WARNING: untranslated string: ccd err red = This is the RED subnet.
+WARNING: untranslated string: ccd err routeovpn = Already used by OpenVPN server.
+WARNING: untranslated string: ccd err routeovpn2 = Already pushed from OpenVPN server.
+WARNING: untranslated string: ccd hint = On this page you are able to define static networks from which the roadwarrior clients can get fixed IP address assignments.
+WARNING: untranslated string: ccd invalid = Invalid.
+WARNING: untranslated string: ccd iroute = IPFire has access to these networks on the client's site
+WARNING: untranslated string: ccd iroute2 = Client has access to these networks on IPFire's site
+WARNING: untranslated string: ccd iroutehint = Attention! If you change these settings, you have to restart the OpenVPN server that the changes take effect!
+WARNING: untranslated string: ccd modify = Change network
+WARNING: untranslated string: ccd name = Name
+WARNING: untranslated string: ccd net = Static IP address pools
+WARNING: untranslated string: ccd noaddnet = You can only add new static networks when OpenVPN server is stopped.
+WARNING: untranslated string: ccd none = None
+WARNING: untranslated string: ccd routes = Routing:
+WARNING: untranslated string: ccd subnet = Subnet
+WARNING: untranslated string: ccd used = Used addresses
+WARNING: untranslated string: check all = Check all
+WARNING: untranslated string: count = Count
+WARNING: untranslated string: countries = Countries
+WARNING: untranslated string: country codes and flags = Country Codes and Flags:
+WARNING: untranslated string: countrycode = Code
+WARNING: untranslated string: crypto error = Cryptographic error
+WARNING: untranslated string: crypto warning = Cryptographic warning
+WARNING: untranslated string: dead peer detection = Dead Peer Detection
+WARNING: untranslated string: default = Default
+WARNING: untranslated string: deprecated fs warn = Deprecated filesystem! Newer kernel drop the support. Backup and reformat!
+WARNING: untranslated string: details = Details
+WARNING: untranslated string: dh = Diffie-Hellman parameters
+WARNING: untranslated string: dh key move failed = Diffie-Hellman parameters move failed.
+WARNING: untranslated string: dh key warn = Creating DH-parameters with a length of 2048 bits takes up to several minutes. Lengths of 3072 or 4096 bits might needs several hours. Please be patient.
+WARNING: untranslated string: dh key warn1 = For weak systems or systems with little entropy, it is recommended to upload long Diffie-Hellman parameters by usage of the upload function.
+WARNING: untranslated string: dh parameter = Diffie-Hellman parameters
+WARNING: untranslated string: dhcp dns enable update = Enable DNS Update (RFC2136):
+WARNING: untranslated string: dhcp dns key name = Key Name:
+WARNING: untranslated string: dhcp dns update = DNS Update
+WARNING: untranslated string: dhcp dns update algo = Algorithm:
+WARNING: untranslated string: dhcp dns update secret = Secret:
+WARNING: untranslated string: dl client arch insecure = Download insecure Client Package (zip)
+WARNING: untranslated string: dnat address = Firewall Interface
+WARNING: untranslated string: dns address deleted txt = The DNS-Server addresses have been successfully deleted.<br />You have to reboot or reconnect that the changes have effect!
+WARNING: untranslated string: dns servers = DNS Servers
+WARNING: untranslated string: dnsforward = DNS Forwarding
+WARNING: untranslated string: dnsforward add a new entry = Add a new entry
+WARNING: untranslated string: dnsforward configuration = DNS forward configuration
+WARNING: untranslated string: dnsforward edit an entry = Edit an existing entry
+WARNING: untranslated string: dnsforward entries = Current entries
+WARNING: untranslated string: dnsforward forward_server = Nameserver
+WARNING: untranslated string: dnsforward zone = Zone
+WARNING: untranslated string: dnssec aware = DNSSEC Aware
+WARNING: untranslated string: dnssec disabled warning = WARNING: DNSSEC has been disabled
+WARNING: untranslated string: dnssec information = DNSSEC Information
+WARNING: untranslated string: dnssec not supported = DNSSEC Not supported
+WARNING: untranslated string: dnssec validating = DNSSEC Validating
+WARNING: untranslated string: downlink = Downlink
+WARNING: untranslated string: download tls-auth key = Download tls-auth key
+WARNING: untranslated string: dpd delay = Delay
+WARNING: untranslated string: dpd timeout = Timeout
+WARNING: untranslated string: drop action = Default behaviour of (forward) firewall in mode "Blocked"
+WARNING: untranslated string: drop action1 = Default behaviour of (outgoing) firewall in mode "Blocked"
+WARNING: untranslated string: drop action2 = Default behaviour of (input) firewall
+WARNING: untranslated string: drop forward = Log dropped forward packets
+WARNING: untranslated string: drop outgoing = Log dropped outgoing packets
+WARNING: untranslated string: eight hours = 8 Hours
+WARNING: untranslated string: email config = Configuration
+WARNING: untranslated string: email empty field = Empty field
+WARNING: untranslated string: email invalid = Invalid field
+WARNING: untranslated string: email invalid mailfqdn = Invalid mail server fqdn
+WARNING: untranslated string: email invalid mailip = Invalid mail server IP address
+WARNING: untranslated string: email invalid mailport = Invalid mail server port
+WARNING: untranslated string: email mailaddr = Mail Server Address
+WARNING: untranslated string: email mailpass = Password
+WARNING: untranslated string: email mailport = Mail Server Port
+WARNING: untranslated string: email mailrcpt = Mail Recipient
+WARNING: untranslated string: email mailsender = Mail Sender
+WARNING: untranslated string: email mailuser = Username
+WARNING: untranslated string: email settings = Mail Service
+WARNING: untranslated string: email testmail = Send test mail
+WARNING: untranslated string: email tls = Use TLS
+WARNING: untranslated string: email usemail = Activate Mail Service
+WARNING: untranslated string: emerging rules = Emergingthreats.net Community Rules
+WARNING: untranslated string: encryption = Encryption:
+WARNING: untranslated string: entropy = Entropy
+WARNING: untranslated string: entropy graphs = Entropy Graphs
+WARNING: untranslated string: fifteen minutes = 15 Minutes
+WARNING: untranslated string: fireinfo ipfire version = IPFire version
+WARNING: untranslated string: fireinfo is disabled = Fireinfo is disabled
+WARNING: untranslated string: fireinfo is enabled = Fireinfo is enabled
+WARNING: untranslated string: fireinfo is submitted = Your profile is submitted to the fireinfo service.
+WARNING: untranslated string: fireinfo is submitted button = No, I do not want to send my profile anymore
+WARNING: untranslated string: fireinfo kernel version = Kernel version
+WARNING: untranslated string: fireinfo not submitted = Your profile is not submitted to the fireinfo service.
+WARNING: untranslated string: fireinfo not submitted button = Yes, I want to send my profile
+WARNING: untranslated string: fireinfo pakfire version = Pakfire version
+WARNING: untranslated string: fireinfo please enable = Please enable the fireinfo service.
+WARNING: untranslated string: fireinfo settings = Fireinfo settings
+WARNING: untranslated string: fireinfo system version = System versions
+WARNING: untranslated string: fireinfo why descr1 = It is very important for the development of IPFire that you enable this
+WARNING: untranslated string: fireinfo why descr2 = service. 
+WARNING: untranslated string: fireinfo why enable = Why should I enable fireinfo?
+WARNING: untranslated string: fireinfo why read more = Read more about the reasons.
+WARNING: untranslated string: fireinfo your profile id = Your profile ID
+WARNING: untranslated string: firewall graph country = Firewall-Diagram (Country)
+WARNING: untranslated string: firewall graph ip = Firewall-Diagram (IP)
+WARNING: untranslated string: firewall graph port = Firewall-Diagram (Port)
+WARNING: untranslated string: firewall log country = Firewall log (Country)
+WARNING: untranslated string: firewall log ip = Firewall log (IP)
+WARNING: untranslated string: firewall log port = Firewall log (Port)
+WARNING: untranslated string: firewall logs country = Fw-Loggraphs (Country)
+WARNING: untranslated string: firewall rules = Firewall Rules
+WARNING: untranslated string: first = First
+WARNING: untranslated string: five minutes = 5 Minutes
+WARNING: untranslated string: flag = Flag
+WARNING: untranslated string: four hours = 4 Hours
+WARNING: untranslated string: fw default drop = Firewall policy
+WARNING: untranslated string: fw settings = Firewall settings
+WARNING: untranslated string: fw settings color = Show colors in ruletable
+WARNING: untranslated string: fw settings dropdown = Show all networks on rulecreation site
+WARNING: untranslated string: fw settings remark = Show remarks in ruletable
+WARNING: untranslated string: fw settings ruletable = Show empty ruletables
+WARNING: untranslated string: fwdfw ACCEPT = ACCEPT
+WARNING: untranslated string: fwdfw DROP = DROP
+WARNING: untranslated string: fwdfw REJECT = REJECT
+WARNING: untranslated string: fwdfw action = Action
+WARNING: untranslated string: fwdfw additional = Additional settings
+WARNING: untranslated string: fwdfw all icmp = All ICMP types
+WARNING: untranslated string: fwdfw all subnets = All subnets
+WARNING: untranslated string: fwdfw change = Update
+WARNING: untranslated string: fwdfw copy = Copy
+WARNING: untranslated string: fwdfw delete = Delete
+WARNING: untranslated string: fwdfw dnat = Destination NAT (Port forwarding)
+WARNING: untranslated string: fwdfw dnat error = You have to select a single host for DNAT. Groups or networks are not allowed.
+WARNING: untranslated string: fwdfw dnat extport = The external port has to be empty when using Source NAT rules.
+WARNING: untranslated string: fwdfw dnat nochoice = Please pick Source NAT or Destination NAT from the NAT section.
+WARNING: untranslated string: fwdfw dnat porterr = You have to select a single port or portrange (tcp/udp) for NAT
+WARNING: untranslated string: fwdfw dnat porterr2 = Cannot use external port (NAT) when no destination port is defined.
+WARNING: untranslated string: fwdfw edit = Edit
+WARNING: untranslated string: fwdfw err concon = Invalid number for concurrent connections
+WARNING: untranslated string: fwdfw err nosrc = No source selected.
+WARNING: untranslated string: fwdfw err notgt = No destination selected.
+WARNING: untranslated string: fwdfw err prot_port = Source- or targetport are not allowed with selected protocol
+WARNING: untranslated string: fwdfw err ratecon = Invalid value for connections in Rate-limit
+WARNING: untranslated string: fwdfw err remark = Invalid characters in remark.
+WARNING: untranslated string: fwdfw err ruleexists = This rule already exists.
+WARNING: untranslated string: fwdfw err same = Source and destination are identical.
+WARNING: untranslated string: fwdfw err samesub = Source and destination IP addresses are from the same subnet.
+WARNING: untranslated string: fwdfw err src_addr = Invalid source MAC/IP address.
+WARNING: untranslated string: fwdfw err tgt_addr = Invalid destination IP address.
+WARNING: untranslated string: fwdfw err tgt_grp = The destination service group is empty
+WARNING: untranslated string: fwdfw err tgt_mac = A MAC addresses cannot be used as destination.
+WARNING: untranslated string: fwdfw err tgt_port = Invalid destination port.
+WARNING: untranslated string: fwdfw err time = You have to select at least one day.
+WARNING: untranslated string: fwdfw external port nat = External port (NAT)
+WARNING: untranslated string: fwdfw hint ip1 = The last generated rule may never match, because source and destination subnets may overlap.
+WARNING: untranslated string: fwdfw hint ip2 = Please double-check if this rule makes sense: 
+WARNING: untranslated string: fwdfw hint mac = The destination group contains MAC addresses, which will be skipped during rule creation.
+WARNING: untranslated string: fwdfw iface = Interface
+WARNING: untranslated string: fwdfw limitconcon = Limit concurrent connections per IP address
+WARNING: untranslated string: fwdfw log = Log
+WARNING: untranslated string: fwdfw log rule = Log rule
+WARNING: untranslated string: fwdfw many = Many
+WARNING: untranslated string: fwdfw maxconcon = Max. concurrent connections
+WARNING: untranslated string: fwdfw movedown = Move down
+WARNING: untranslated string: fwdfw moveup = Move up
+WARNING: untranslated string: fwdfw newrule = New rule
+WARNING: untranslated string: fwdfw numcon = Number of connections
+WARNING: untranslated string: fwdfw pol allow = Allowed
+WARNING: untranslated string: fwdfw pol block = Blocked
+WARNING: untranslated string: fwdfw pol text = Sets the default firewall behaviour for connections from local networks. You may either allow all new connections or block them by default. Connections between the local networks are also blocked in the latter mode.
+WARNING: untranslated string: fwdfw pol text1 = Sets the default firewall behaviour for connections initiated by the firewall itself. Attention! You may lock yourself out.
+WARNING: untranslated string: fwdfw pol title = Default firewall behaviour
+WARNING: untranslated string: fwdfw prot41 = IPv6 Encapsulation (Protocol 41)
+WARNING: untranslated string: fwdfw prot41 short = IPv6 Encap
+WARNING: untranslated string: fwdfw ratelimit = Rate-limit new connections
+WARNING: untranslated string: fwdfw red = RED
+WARNING: untranslated string: fwdfw reread = Apply changes
+WARNING: untranslated string: fwdfw rule activate = Activate rule
+WARNING: untranslated string: fwdfw rulepos = Rule position
+WARNING: untranslated string: fwdfw snat = Source NAT
+WARNING: untranslated string: fwdfw source = Source
+WARNING: untranslated string: fwdfw sourceip = Source address (MAC/IP address or network):
+WARNING: untranslated string: fwdfw target = Destination
+WARNING: untranslated string: fwdfw targetip = Destination address (IP address or network):
+WARNING: untranslated string: fwdfw timeframe = Use time constraints
+WARNING: untranslated string: fwdfw toggle = Activate or deactivate
+WARNING: untranslated string: fwdfw togglelog = Activate or deactivate logging
+WARNING: untranslated string: fwdfw use nat = Use Network Address Translation (NAT)
+WARNING: untranslated string: fwdfw use srcport = Source port:
+WARNING: untranslated string: fwdfw use srv = Destination port:
+WARNING: untranslated string: fwdfw warn1 = This might lead to firewallrules which are applied to networks for which they are not intended to be.
+WARNING: untranslated string: fwdfw wd_fri = Fri
+WARNING: untranslated string: fwdfw wd_mon = Mon
+WARNING: untranslated string: fwdfw wd_sat = Sat
+WARNING: untranslated string: fwdfw wd_sun = Sun
+WARNING: untranslated string: fwdfw wd_thu = Thu
+WARNING: untranslated string: fwdfw wd_tue = Tue
+WARNING: untranslated string: fwdfw wd_wed = Wed
+WARNING: untranslated string: fwhost OpenVPN N-2-N = OpenVPN Net-to-Net
+WARNING: untranslated string: fwhost addgeoipgrp = Add new GeoIP group
+WARNING: untranslated string: fwhost addgrp = Add new network/host group
+WARNING: untranslated string: fwhost addgrpname = Group name:
+WARNING: untranslated string: fwhost addhost = Add new host
+WARNING: untranslated string: fwhost addnet = Add new network
+WARNING: untranslated string: fwhost addservice = Add service
+WARNING: untranslated string: fwhost addservicegrp = Add new service group
+WARNING: untranslated string: fwhost any = Any
+WARNING: untranslated string: fwhost back = Back
+WARNING: untranslated string: fwhost ccdhost = OpenVPN clients:
+WARNING: untranslated string: fwhost ccdnet = OpenVPN networks:
+WARNING: untranslated string: fwhost change = Modify
+WARNING: untranslated string: fwhost cust addr = Hosts
+WARNING: untranslated string: fwhost cust geoipgroup = GeoIP Groups
+WARNING: untranslated string: fwhost cust geoipgrp = unknown string
+WARNING: untranslated string: fwhost cust geoiplocation = GeoIP Locations
+WARNING: untranslated string: fwhost cust grp = Network/Host Groups
+WARNING: untranslated string: fwhost cust net = Networks
+WARNING: untranslated string: fwhost cust service = Services
+WARNING: untranslated string: fwhost cust srvgrp = Service Groups
+WARNING: untranslated string: fwhost deleted = Deleted
+WARNING: untranslated string: fwhost empty = No rules defined
+WARNING: untranslated string: fwhost err addr = Invalid IP address or subnet
+WARNING: untranslated string: fwhost err empty = Please fill in all input fields
+WARNING: untranslated string: fwhost err emptytable = No entries in this group
+WARNING: untranslated string: fwhost err groupempty = The selected group is empty
+WARNING: untranslated string: fwhost err grpexist = A group with the same name already exists
+WARNING: untranslated string: fwhost err hostexist = A host with the same name already exists
+WARNING: untranslated string: fwhost err hostip = unknown string
+WARNING: untranslated string: fwhost err ip = IP address invalid
+WARNING: untranslated string: fwhost err ipcheck = This IP address is already in use
+WARNING: untranslated string: fwhost err ipmac = IP/MAC address invalid
+WARNING: untranslated string: fwhost err ipwithsub = Please provide only an IP address (without subnet mask)
+WARNING: untranslated string: fwhost err isccdhost = This name is already used by an OpenVPN client connection
+WARNING: untranslated string: fwhost err isccdiphost = This IP address is already used by an OpenVPN client connection
+WARNING: untranslated string: fwhost err isccdipnet = This IP address is already used by an OpenVPN network connection
+WARNING: untranslated string: fwhost err isccdnet = This name is already used by an OpenVPN network
+WARNING: untranslated string: fwhost err isingrp = This entry already exists in the group
+WARNING: untranslated string: fwhost err maxservicetcp = The maximal number of 15 TCP services has been reached in this group (port ranges count twice)
+WARNING: untranslated string: fwhost err maxserviceudp = The maximal number of 15 UDP services has been reached in this group (port ranges count twice)
+WARNING: untranslated string: fwhost err name = Invalid name. Allowed characters: Upper- and lowercase letters, digits, space and dash.
+WARNING: untranslated string: fwhost err name1 = Empty name.
+WARNING: untranslated string: fwhost err net = Network/IP address already exists
+WARNING: untranslated string: fwhost err netexist = A network with the same name already exists
+WARNING: untranslated string: fwhost err port = Port is empty
+WARNING: untranslated string: fwhost err remark = Invalid remark. Allowed characters: Upper- and lowercase letters, digits, space, dash, braces, semicolon, pipe and dot.
+WARNING: untranslated string: fwhost err srv exists = A service with the same name already exists
+WARNING: untranslated string: fwhost err srvexist = This service already exists in the group
+WARNING: untranslated string: fwhost err sub32 = Please add a network, not a single host
+WARNING: untranslated string: fwhost hint = Note
+WARNING: untranslated string: fwhost icmptype = ICMP type:
+WARNING: untranslated string: fwhost ip_mac = IP/MAC address
+WARNING: untranslated string: fwhost ipsec net = IPsec networks:
+WARNING: untranslated string: fwhost menu = Firewall Groups
+WARNING: untranslated string: fwhost netaddress = Network address
+WARNING: untranslated string: fwhost newgeoipgrp = GeoIP Groups
+WARNING: untranslated string: fwhost newgrp = Network/Host Groups
+WARNING: untranslated string: fwhost newhost = Hosts
+WARNING: untranslated string: fwhost newnet = Networks
+WARNING: untranslated string: fwhost newservice = Services
+WARNING: untranslated string: fwhost newservicegrp = Service Groups
+WARNING: untranslated string: fwhost ovpn_n2n = OpenVPN Net-to-Net
+WARNING: untranslated string: fwhost port = Port(s)
+WARNING: untranslated string: fwhost prot = Protocol
+WARNING: untranslated string: fwhost services = Services:
+WARNING: untranslated string: fwhost srv_name = Service name
+WARNING: untranslated string: fwhost stdnet = Standard networks:
+WARNING: untranslated string: fwhost type = Type
+WARNING: untranslated string: fwhost used = Used
+WARNING: untranslated string: fwhost welcome = Over here, you can group single hosts, networks and services together, which will creating new rules more easy and faster.
+WARNING: untranslated string: gen dh = Generate new Diffie-Hellman parameters
+WARNING: untranslated string: generate dh key = Generate Diffie-Hellman parameters
+WARNING: untranslated string: geoip = GeoIP
+WARNING: untranslated string: geoipblock = GeoIP Block
+WARNING: untranslated string: geoipblock block countries = Block countries
+WARNING: untranslated string: geoipblock configuration = GeoIP Configuration
+WARNING: untranslated string: geoipblock country is allowed = Incoming traffic from this country is allowed
+WARNING: untranslated string: geoipblock country is blocked = Incoming traffic from this country will be blocked
+WARNING: untranslated string: geoipblock enable feature = Enable GeoIP based blocking:
+WARNING: untranslated string: grouptype = Grouptype:
+WARNING: untranslated string: guardian = Guardian
+WARNING: untranslated string: guardian block a host = unknown string
+WARNING: untranslated string: guardian block httpd brute-force = unknown string
+WARNING: untranslated string: guardian block ssh brute-force = unknown string
+WARNING: untranslated string: guardian blockcount = unknown string
+WARNING: untranslated string: guardian blocked hosts = unknown string
+WARNING: untranslated string: guardian blocking of this address is not allowed = unknown string
+WARNING: untranslated string: guardian blocktime = unknown string
+WARNING: untranslated string: guardian common settings = unknown string
+WARNING: untranslated string: guardian configuration = unknown string
+WARNING: untranslated string: guardian daemon = unknown string
+WARNING: untranslated string: guardian empty input = unknown string
+WARNING: untranslated string: guardian enabled = unknown string
+WARNING: untranslated string: guardian firewallaction = unknown string
+WARNING: untranslated string: guardian ignored hosts = unknown string
+WARNING: untranslated string: guardian invalid address or subnet = unknown string
+WARNING: untranslated string: guardian invalid blockcount = unknown string
+WARNING: untranslated string: guardian invalid blocktime = unknown string
+WARNING: untranslated string: guardian invalid logfile = unknown string
+WARNING: untranslated string: guardian logfacility = unknown string
+WARNING: untranslated string: guardian logfile = unknown string
+WARNING: untranslated string: guardian loglevel = unknown string
+WARNING: untranslated string: guardian loglevel_debug = unknown string
+WARNING: untranslated string: guardian loglevel_info = unknown string
+WARNING: untranslated string: guardian loglevel_off = unknown string
+WARNING: untranslated string: guardian logtarget_console = unknown string
+WARNING: untranslated string: guardian logtarget_file = unknown string
+WARNING: untranslated string: guardian logtarget_syslog = unknown string
+WARNING: untranslated string: guardian no entries = unknown string
+WARNING: untranslated string: guardian priolevel_high = unknown string
+WARNING: untranslated string: guardian priolevel_low = unknown string
+WARNING: untranslated string: guardian priolevel_medium = unknown string
+WARNING: untranslated string: guardian priolevel_very_low = unknown string
+WARNING: untranslated string: guardian priority level = unknown string
+WARNING: untranslated string: guardian service = unknown string
+WARNING: untranslated string: guardian watch snort alertfile = unknown string
+WARNING: untranslated string: hardware support = Hardware Support
+WARNING: untranslated string: ike lifetime should be between 1 and 8 hours = unknown string
+WARNING: untranslated string: imei = IMEI
+WARNING: untranslated string: imsi = IMSI
+WARNING: untranslated string: incoming compression in bytes per second = Incoming Compression
+WARNING: untranslated string: incoming firewall access = Incoming Firewall Access
+WARNING: untranslated string: incoming overhead in bytes per second = Incoming Overhead
+WARNING: untranslated string: info messages = unknown string
+WARNING: untranslated string: integrity = Integrity:
+WARNING: untranslated string: invalid input for dpd delay = Invalid input for DPD delay
+WARNING: untranslated string: invalid input for dpd timeout = Invalid input for DPD timeout
+WARNING: untranslated string: invalid input for inactivity timeout = Invalid input for Inactivity Timeout
+WARNING: untranslated string: invalid input for valid till days = Invalid input for Valid till (days).
+WARNING: untranslated string: invalid logserver protocol = Invalid syslogd server protocol
+WARNING: untranslated string: ipsec = IPsec
+WARNING: untranslated string: ipsec network = IPsec network
+WARNING: untranslated string: last = Last
+WARNING: untranslated string: least preferred = least preferred
+WARNING: untranslated string: lifetime = Lifetime:
+WARNING: untranslated string: log server protocol = protocol:
+WARNING: untranslated string: mac filter = MAC filter
+WARNING: untranslated string: masquerade blue = Masquerade BLUE
+WARNING: untranslated string: masquerade green = Masquerade GREEN
+WARNING: untranslated string: masquerade orange = Masquerade ORANGE
+WARNING: untranslated string: masquerading = Masquerading
+WARNING: untranslated string: masquerading disabled = Masquerading disabled
+WARNING: untranslated string: masquerading enabled = Masquerading enabled
+WARNING: untranslated string: maximum = Maximum
+WARNING: untranslated string: messages = Messages
+WARNING: untranslated string: minimum = Minimum
+WARNING: untranslated string: minute = Minute
+WARNING: untranslated string: model = Model
+WARNING: untranslated string: modem hardware details = Modem Hardware
+WARNING: untranslated string: modem information = Modem Information
+WARNING: untranslated string: modem network bit error rate = Bit Error Rate
+WARNING: untranslated string: modem network information = Network Information
+WARNING: untranslated string: modem network mode = Network Mode
+WARNING: untranslated string: modem network operator = Network Operator
+WARNING: untranslated string: modem network registration = Network Registration
+WARNING: untranslated string: modem network signal quality = Signal Quality
+WARNING: untranslated string: modem no connection = No Connection
+WARNING: untranslated string: modem no connection message = No connection to the modem could be established.
+WARNING: untranslated string: modem sim information = SIM Information
+WARNING: untranslated string: modem status = Modem Status
+WARNING: untranslated string: monitor interface = Monitor Interface
+WARNING: untranslated string: most preferred = most preferred
+WARNING: untranslated string: nameserver = Nameserver
+WARNING: untranslated string: no data = unknown string
+WARNING: untranslated string: none = none
+WARNING: untranslated string: not a valid dh key = Not a valid Diffie-Hellman parameters file. Please use a length of 2048, 3072 or 4096 bits and the PKCS#3 format.
+WARNING: untranslated string: notice = Notice
+WARNING: untranslated string: ntp common settings = Common settings
+WARNING: untranslated string: ntp sync = Synchronization
+WARNING: untranslated string: one hour = One Hour
+WARNING: untranslated string: one month = One Month
+WARNING: untranslated string: one week = One Week
+WARNING: untranslated string: one year = One Year
+WARNING: untranslated string: openvpn default = Default
+WARNING: untranslated string: openvpn destination port used = The destination port is already used by another OpenVPN server.
+WARNING: untranslated string: openvpn fragment allowed with udp = Using fragment is only allowed when using the UDP protocol.
+WARNING: untranslated string: openvpn mssfix allowed with udp = Using "mssfix" is only allowed when using the UDP protocol.
+WARNING: untranslated string: openvpn network = OpenVPN networks
+WARNING: untranslated string: openvpn prefix local subnet = Using the prefix notation is not supported for the local subnet. Please enter a subnet mask like 255.255.255.0.
+WARNING: untranslated string: openvpn prefix openvpn subnet = Using the prefix notation is not supported for the OpenVPN subnet. Please enter a subnet mask like 255.255.255.0.
+WARNING: untranslated string: openvpn prefix remote subnet = Using the prefix notation is not supported for the remote subnet. Please enter a subnet mask like 255.255.255.0.
+WARNING: untranslated string: openvpn subnet is used = The given subnet is used by another OpenVPN server.
+WARNING: untranslated string: other = Other
+WARNING: untranslated string: outgoing compression in bytes per second = Outgoing compression
+WARNING: untranslated string: outgoing firewall access = Outgoing Firewall Access
+WARNING: untranslated string: outgoing overhead in bytes per second = Outgoing Overhead
+WARNING: untranslated string: ovpn add conf = Additional configuration
+WARNING: untranslated string: ovpn crypt options = Cryptographic options
+WARNING: untranslated string: ovpn dh = Diffie-Hellman parameters length
+WARNING: untranslated string: ovpn dh new key = Generate new Diffie-Hellman parameters
+WARNING: untranslated string: ovpn dh parameters = Diffie-Hellman parameters options
+WARNING: untranslated string: ovpn dh upload = Upload new Diffie-Hellman parameters
+WARNING: untranslated string: ovpn error dh = The Diffie-Hellman parameter needs to be in minimum 2048 bit! <br>Please generate or upload a new Diffie-Hellman parameter, this can be made below in the section "Diffie-Hellman parameters options".</br>
+WARNING: untranslated string: ovpn error md5 = You host certificate uses MD5 for the signature which is not accepted anymore. <br>Please update to the latest IPFire version and generate a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: ovpn generating the root and host certificates = Generating the root and host certificate can take a long time.
+WARNING: untranslated string: ovpn ha = Hash algorithm
+WARNING: untranslated string: ovpn hmac = HMAC options
+WARNING: untranslated string: ovpn mgmt in root range = A port number of 1024 or higher is required.
+WARNING: untranslated string: ovpn no connections = No active OpenVPN connections
+WARNING: untranslated string: ovpn port in root range = A port number of 1024 or higher is required.
+WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: p2p block = P2P networks
+WARNING: untranslated string: p2p block save notice = Please reload the firewall ruleset in order to apply your changes.
+WARNING: untranslated string: pakfire ago = ago.
+WARNING: untranslated string: pptp netconfig = My Net Config
+WARNING: untranslated string: pptp peer = Peer
+WARNING: untranslated string: pptp route = PPTP Route
+WARNING: untranslated string: proxy reports = Proxy Reports
+WARNING: untranslated string: proxy reports daily = Daily reports
+WARNING: untranslated string: proxy reports monthly = Monthly reports
+WARNING: untranslated string: proxy reports today = Today
+WARNING: untranslated string: proxy reports weekly = Weekly reports
+WARNING: untranslated string: qos enter bandwidths = You will need to enter your downstream and upstream bandwidth!
+WARNING: untranslated string: random number generator daemon = Random Number Generator Daemon
+WARNING: untranslated string: rdns = rDNS
+WARNING: untranslated string: red1 = RED
+WARNING: untranslated string: required field = Required field
+WARNING: untranslated string: route config changed = unknown string
+WARNING: untranslated string: routing config added = unknown string
+WARNING: untranslated string: routing config changed = unknown string
+WARNING: untranslated string: routing table = unknown string
+WARNING: untranslated string: samba join a domain = Join a domain
+WARNING: untranslated string: samba join domain = Join domain
+WARNING: untranslated string: search = Search
+WARNING: untranslated string: server restart = You are not able to save any changes while the OpenVPN server is running.
+WARNING: untranslated string: show dh = Show Diffie-Hellman parameters
+WARNING: untranslated string: show tls-auth key = Show tls-auth key
+WARNING: untranslated string: snat new source ip address = New source IP address
+WARNING: untranslated string: snort working = Snort is working ... Please wait until all operations have completed successfully.
+WARNING: untranslated string: software version = Software Version
+WARNING: untranslated string: source ip country = Source IP Country
+WARNING: untranslated string: ssh = SSH
+WARNING: untranslated string: ssh active sessions = Active logins
+WARNING: untranslated string: ssh login time = Logged in since
+WARNING: untranslated string: ssh no active logins = No active logins
+WARNING: untranslated string: ssh username = Username
+WARNING: untranslated string: static routes = Static Routes
+WARNING: untranslated string: support donation = Support the IPFire project with your donation
+WARNING: untranslated string: system has rdrand = This system has support for Intel(R) RDRAND.
+WARNING: untranslated string: system information = System Information
+WARNING: untranslated string: ta key = TLS-Authentification-Key
+WARNING: untranslated string: tcp more reliable = TCP (more reliable)
+WARNING: untranslated string: ten minutes = 10 Minutes
+WARNING: untranslated string: thirty minutes = 30 Minutes
+WARNING: untranslated string: tor = Tor
+WARNING: untranslated string: tor accounting = Accounting
+WARNING: untranslated string: tor accounting bytes = Traffic (read/written)
+WARNING: untranslated string: tor accounting bytes left = left
+WARNING: untranslated string: tor accounting interval = Interval (UTC)
+WARNING: untranslated string: tor accounting limit = Accounting limit (MB)
+WARNING: untranslated string: tor accounting period = Accounting period
+WARNING: untranslated string: tor acls = Access Control
+WARNING: untranslated string: tor allowed subnets = Allowed subnets (one per line)
+WARNING: untranslated string: tor bandwidth burst = Max. burst
+WARNING: untranslated string: tor bandwidth rate = Max. rate
+WARNING: untranslated string: tor bandwidth settings = Bandwidth Settings
+WARNING: untranslated string: tor bandwidth unlimited = unlimited
+WARNING: untranslated string: tor common settings = Common Settings
+WARNING: untranslated string: tor configuration = Tor Configuration
+WARNING: untranslated string: tor connected relays = Connected relays
+WARNING: untranslated string: tor contact info = Contact Info
+WARNING: untranslated string: tor daemon = Daemon
+WARNING: untranslated string: tor directory port = Directory port
+WARNING: untranslated string: tor enabled = Enable Tor
+WARNING: untranslated string: tor errmsg invalid accounting limit = Invalid accounting limit
+WARNING: untranslated string: tor errmsg invalid directory port = Invalid directory port
+WARNING: untranslated string: tor errmsg invalid ip or mask = Invalid IP subnet
+WARNING: untranslated string: tor errmsg invalid relay address = Invalid relay address
+WARNING: untranslated string: tor errmsg invalid relay name = Invalid relay nickname
+WARNING: untranslated string: tor errmsg invalid relay port = Invalid relay port
+WARNING: untranslated string: tor errmsg invalid socks port = Invalid SOCKS port
+WARNING: untranslated string: tor exit country any = Any country
+WARNING: untranslated string: tor exit nodes = Exit Nodes
+WARNING: untranslated string: tor relay address = Relay address
+WARNING: untranslated string: tor relay configuration = Tor Relay Configuration
+WARNING: untranslated string: tor relay enabled = Enable Tor Relay
+WARNING: untranslated string: tor relay external address = Relay external address
+WARNING: untranslated string: tor relay fingerprint = Relay fingerprint
+WARNING: untranslated string: tor relay mode = Relay mode
+WARNING: untranslated string: tor relay mode bridge = Bridge
+WARNING: untranslated string: tor relay mode exit = Exit-Node
+WARNING: untranslated string: tor relay mode private bridge = Private bridge
+WARNING: untranslated string: tor relay mode relay = Relay only
+WARNING: untranslated string: tor relay nickname = Relay nickname
+WARNING: untranslated string: tor relay port = Relay port
+WARNING: untranslated string: tor service = Tor Service
+WARNING: untranslated string: tor socks port = SOCKS port
+WARNING: untranslated string: tor stats = Statistics
+WARNING: untranslated string: tor traffic limit hard = Traffic limit has been reached.
+WARNING: untranslated string: tor traffic limit soft = Traffic limit almost reached. Not accepting any new connections.
+WARNING: untranslated string: tor traffic read written = Total traffic (read/written)
+WARNING: untranslated string: tor use exit nodes = Use only these exit nodes (one per line)
+WARNING: untranslated string: twelve hours = 12 Hours
+WARNING: untranslated string: two weeks = Two Weeks
+WARNING: untranslated string: udp less overhead = UDP (less overhead)
+WARNING: untranslated string: unblock = Unblock
+WARNING: untranslated string: unblock all = Unblock all
+WARNING: untranslated string: uncheck all = Uncheck all
+WARNING: untranslated string: unlimited = Unlimited
+WARNING: untranslated string: uplink = Uplink
+WARNING: untranslated string: uplink bit rate = Uplink Bit Rate
+WARNING: untranslated string: upload dh key = Upload Diffie-Hellman parameters
+WARNING: untranslated string: upload new ruleset = Upload new ruleset
+WARNING: untranslated string: uptime load average = Load average
+WARNING: untranslated string: urlfilter file ext block = File extension blocking
+WARNING: untranslated string: urlfilter mode block = block
+WARNING: untranslated string: urlfilter redirect template = Redirect page template
+WARNING: untranslated string: vendor = Vendor
+WARNING: untranslated string: visit us at = Visit us at
+WARNING: untranslated string: vpn broken = Broken
+WARNING: untranslated string: vpn connecting = CONNECTING
+WARNING: untranslated string: vpn force mobike = Force using MOBIKE (only IKEv2)
+WARNING: untranslated string: vpn inactivity timeout = Inactivity Timeout
+WARNING: untranslated string: vpn keyexchange = Keyexchange
+WARNING: untranslated string: vpn on-demand = ON-DEMAND
+WARNING: untranslated string: vpn start action = Start Action
+WARNING: untranslated string: vpn start action add = Wait for connection initiation
+WARNING: untranslated string: vpn start action route = On Demand
+WARNING: untranslated string: vpn start action start = Always On
+WARNING: untranslated string: vpn statistic n2n = OpenVPN Net-to-Net Statistics
+WARNING: untranslated string: vpn statistic rw = OpenVPN Roadwarrior Statistics
+WARNING: untranslated string: vpn statistics n2n = unknown string
+WARNING: untranslated string: vpn wait = WAITING
+WARNING: untranslated string: vpn weak = Weak
+WARNING: untranslated string: wireless network = WiFi Network
+WARNING: untranslated string: wlan client = Wireless client
+WARNING: untranslated string: wlan client advanced settings = Advanced settings
+WARNING: untranslated string: wlan client and = and
+WARNING: untranslated string: wlan client anonymous identity = Anonymous Identity
+WARNING: untranslated string: wlan client auth auto = Auto
+WARNING: untranslated string: wlan client auth peap = PEAP
+WARNING: untranslated string: wlan client auth ttls = TTLS
+WARNING: untranslated string: wlan client authentication settings = Authentication Settings
+WARNING: untranslated string: wlan client bssid = BSSID
+WARNING: untranslated string: wlan client ccmp = CCMP
+WARNING: untranslated string: wlan client configuration = Wireless Client Configuration
+WARNING: untranslated string: wlan client disconnected = Disconnected
+WARNING: untranslated string: wlan client duplicate ssid = Duplicate SSID
+WARNING: untranslated string: wlan client eap authentication method = EAP Authentication Method
+WARNING: untranslated string: wlan client eap phase2 method = EAP Phase 2 Method
+WARNING: untranslated string: wlan client eap state = EAP Status
+WARNING: untranslated string: wlan client edit entry = Edit wireless client configuration
+WARNING: untranslated string: wlan client encryption = Encryption
+WARNING: untranslated string: wlan client encryption eap = EAP
+WARNING: untranslated string: wlan client encryption none = None
+WARNING: untranslated string: wlan client encryption wep = WEP
+WARNING: untranslated string: wlan client encryption wpa = WPA
+WARNING: untranslated string: wlan client encryption wpa2 = WPA2
+WARNING: untranslated string: wlan client group cipher = Group cipher
+WARNING: untranslated string: wlan client group key algorithm = GKA
+WARNING: untranslated string: wlan client identity = Identity
+WARNING: untranslated string: wlan client invalid key length = Invalid key length.
+WARNING: untranslated string: wlan client method = Method
+WARNING: untranslated string: wlan client new entry = Create new wireless client configuration
+WARNING: untranslated string: wlan client new network = New network
+WARNING: untranslated string: wlan client pairwise cipher = Pairwise cipher
+WARNING: untranslated string: wlan client pairwise key algorithm = PKA
+WARNING: untranslated string: wlan client pairwise key group key = Pairwise key/group key
+WARNING: untranslated string: wlan client password = Password
+WARNING: untranslated string: wlan client psk = Pre-shared key
+WARNING: untranslated string: wlan client ssid = SSID
+WARNING: untranslated string: wlan client tkip = TKIP
+WARNING: untranslated string: wlan client tls cipher = TLS Cipher
+WARNING: untranslated string: wlan client tls version = TLS Version
+WARNING: untranslated string: wlan client wpa mode = WPA mode
+WARNING: untranslated string: wlan client wpa mode all = Auto
+WARNING: untranslated string: wlan client wpa mode ccmp ccmp = CCMP-CCMP
+WARNING: untranslated string: wlan client wpa mode ccmp tkip = CCMP-TKIP
+WARNING: untranslated string: wlan client wpa mode tkip tkip = TKIP-TKIP
+WARNING: untranslated string: wlan clients = Wireless clients
+WARNING: untranslated string: wlanap = Access Point
+WARNING: untranslated string: wlanap channel = Channel
+WARNING: untranslated string: wlanap configuration = Access Point Configuration
+WARNING: untranslated string: wlanap country = Country Code
+WARNING: untranslated string: wlanap debugging = Debugging
+WARNING: untranslated string: wlanap del interface = Remove selected interface?
+WARNING: untranslated string: wlanap encryption = Encryption
+WARNING: untranslated string: wlanap informations = Informations
+WARNING: untranslated string: wlanap interface = Select interface
+WARNING: untranslated string: wlanap invalid wpa = Invalid length in WPA Passphrase. Must be between 8 and 63 characters.
+WARNING: untranslated string: wlanap link dhcp = Wireless lan DHCP configuration
+WARNING: untranslated string: wlanap link wireless = Activate wireless lan clients
+WARNING: untranslated string: wlanap neighbor scan = Neighborhood scan
+WARNING: untranslated string: wlanap neighbor scan warning = Warning! Disabling may violate regulatory rules!
+WARNING: untranslated string: wlanap no interface = Selected interface is not a wirless lan card!
+WARNING: untranslated string: wlanap none = none
+WARNING: untranslated string: wlanap notifications = Notifications
+WARNING: untranslated string: wlanap select interface = Please select the wireless lan interface.
+WARNING: untranslated string: wlanap verbose = Verbose
+WARNING: untranslated string: wlanap warnings = Warnings
+WARNING: untranslated string: wlanap wlan card = WLan Card
+WARNING: untranslated string: wlanap wlan settings = WLan Settings
+WARNING: untranslated string: wlanap wlan status = WLan Status
