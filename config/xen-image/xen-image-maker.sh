@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2016  Arne Fitzenreiter  <arne_f@ipfire.org>             #
+# Copyright (C) 2007-2018  Arne Fitzenreiter  <arne_f@ipfire.org>             #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -29,10 +29,9 @@ KERN_PACK=xxxKERN_PACKxxx
 KRNDOWN=http://mirror0.ipfire.org/pakfire2/$VERSION/paks
 CONSOLE=hvc0
 
-SIZEboot=64
+SIZEboot=128
 SIZEswap=512
-SIZEroot=1024
-SIZEvar=1024
+SIZEroot=3072
 FSTYPE=ext3
 
 ##############################################################################
@@ -47,7 +46,6 @@ MNThdd=$TMPDIR/harddisk
 IMGboot=./$SNAME-boot.img
 IMGswap=./$SNAME-swap.img
 IMGroot=./$SNAME-root.img
-IMGvar=./$SNAME-var.img
 
 KERNEL=linux-$KERN_TYPE-$KVER-$KERN_PACK.ipfire
 
@@ -61,13 +59,11 @@ if [ "$XEN_IMG_TYPE" == "xva" ]; then
 	P1=xvda
 	P2=xvdb
 	P3=xvdc
-	P4=xvde
 else
 	# old style xen image partition names
 	P1=xvda1
 	P2=xvda2
 	P3=xvda3
-	P4=xvda4
 fi
 
 rm -rf $TMPDIR && mkdir -p $MNThdd && mkdir -p $ISODIR
@@ -99,10 +95,6 @@ mkswap $IMGswap
 dd bs=1M if=/dev/zero of=$IMGroot count=$SIZEroot
 mkfs.$FSTYPE -F $IMGroot
 
-#Create varimage
-dd bs=1M if=/dev/zero of=$IMGvar count=$SIZEvar
-mkfs.$FSTYPE -F $IMGvar
-
 echo --------------------------------------------------------
 echo - Install IPFire to the images ...
 echo --------------------------------------------------------
@@ -113,7 +105,6 @@ mkdir $MNThdd/boot
 mkdir $MNThdd/var
 mkdir $MNThdd/var/log
 mount -o loop $IMGboot $MNThdd/boot
-mount -o loop $IMGvar $MNThdd/var
 
 # Install IPFire without kernel modules
 xz -d < $ISODIR/distro.img > $TMPDIR/$SNAME-$VERSION.tar
@@ -167,7 +158,6 @@ chroot $MNThdd /usr/bin/perl -e "require '/var/ipfire/lang.pl'; &Lang::BuildCach
 echo "/dev/$P1 /boot auto defaults 1 3" > $MNThdd/etc/fstab
 echo "/dev/$P2 swap swap defaults 0 0" >> $MNThdd/etc/fstab
 echo "/dev/$P3 / auto defaults 1 1"    >> $MNThdd/etc/fstab
-echo "/dev/$P4 /var auto defaults 1 2" >> $MNThdd/etc/fstab
 
 
 #Remove root / fstab check
@@ -199,7 +189,6 @@ sed -i -e "s|^video|#video|g" $MNThdd/etc/sysconfig/modules
 umount $MNThdd/proc
 umount $MNThdd/dev
 umount $MNThdd/sys
-umount $MNThdd/var
 umount $MNThdd/boot
 umount $MNThdd
 
