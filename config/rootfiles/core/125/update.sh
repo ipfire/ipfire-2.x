@@ -55,8 +55,8 @@ telinit u
 # Reload sysctl.conf
 sysctl -p
 
-# restart init
-telinit u
+# regenerate ssh configfile
+/usr/local/bin/sshctrl
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
