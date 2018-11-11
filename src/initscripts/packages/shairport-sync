@@ -1,0 +1,41 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/shairport-sync
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting Shairport Sync..."
+		loadproc /usr/bin/shairport-sync --daemon
+		;;
+
+	stop)
+		boot_mesg "Stopping Shairport Sync..."
+		killproc /usr/bin/shairport-sync
+		;;
+
+	reload)
+		boot_mesg "Reloading Shairport Sync..."
+		reloadproc /usr/bin/shairport-sync
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/bin/shairport-sync
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/shairport-sync
