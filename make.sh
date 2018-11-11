@@ -1578,6 +1578,7 @@ buildipfire() {
   lfsmake2 i2c-tools
   lfsmake2 nss-myhostname
   lfsmake2 dehydrated
+  lfsmake2 shairport-sync
 }
 
 buildinstaller() {

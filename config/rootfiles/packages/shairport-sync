@@ -1,0 +1,4 @@
+etc/shairport-sync.conf
+#etc/shairport-sync.conf.sample
+usr/bin/shairport-sync
+#usr/share/man/man7/shairport-sync.7
