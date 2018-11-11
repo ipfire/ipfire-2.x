@@ -1372,6 +1372,7 @@ buildipfire() {
   lfsmake2 flac
   lfsmake2 lame
   lfsmake2 sox
+  lfsmake2 soxr
   lfsmake2 libshout
   lfsmake2 xvid
   lfsmake2 libmpeg2
