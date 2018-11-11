@@ -83,7 +83,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--sysconfdir=/etc \
 		--with-alsa \
 		--with-avahi \
-		--with-ssl=openssl
+		--with-ssl=openssl \
+		--with-soxr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
