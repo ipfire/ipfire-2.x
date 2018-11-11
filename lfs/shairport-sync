@@ -86,5 +86,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--with-ssl=openssl
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+	# Backup
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/shairport-sync \
+		/var/ipfire/backup/addons/includes/shairport-sync
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
