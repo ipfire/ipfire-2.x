@@ -1,0 +1,15 @@
+#usr/include/alac
+#usr/include/alac/ALACAudioTypes.h
+#usr/include/alac/ALACBitUtilities.h
+#usr/include/alac/ALACDecoder.h
+#usr/include/alac/ALACEncoder.h
+#usr/include/alac/EndianPortable.h
+#usr/include/alac/aglib.h
+#usr/include/alac/dplib.h
+#usr/include/alac/matrixlib.h
+#usr/lib/libalac.a
+#usr/lib/libalac.la
+#usr/lib/libalac.so
+usr/lib/libalac.so.0
+usr/lib/libalac.so.0.0.0
+#usr/lib/pkgconfig/alac.pc
