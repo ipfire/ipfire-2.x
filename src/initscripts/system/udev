@@ -51,6 +51,12 @@ case "${1}" in
 			mount -t devpts devpts -o gid=5,mode=620 /dev/pts
 		fi
 
+		# eudev does not support firmware handling
+		# and we have never used it. but it is enabled in kernel
+		# and cause long delays if a driver like ath10k try different
+		# firmware for init...
+		echo 1 > /sys/class/firmware/timeout
+
 		# Start the udev daemon to continually watch for, and act on,
 		# uevents
 		boot_mesg "Starting udev daemon..."
