@@ -1909,8 +1909,6 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/icplus.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/intel-xway.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/lxt.ko.xz
-#lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/marvell.ko.xz
-#lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/marvell10g.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/mdio-bcm-unimac.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/mdio-bitbang.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/phy/mdio-gpio.ko.xz
@@ -2321,7 +2319,6 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/kernel/drivers/usb/host/isp1362-hcd.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/drivers/usb/host/sl811-hcd.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/drivers/usb/host/ssb-hcd.ko.xz
-#lib/modules/KVER-ipfire-multi/kernel/drivers/usb/host/xhci-plat-hcd.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/drivers/usb/image
 #lib/modules/KVER-ipfire-multi/kernel/drivers/usb/image/mdc800.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/drivers/usb/image/microtek.ko.xz
