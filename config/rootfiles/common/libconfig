@@ -1,5 +1,6 @@
 #usr/include/libconfig.h
 #usr/include/libconfig.h++
+#usr/lib/cmake
 #usr/lib/cmake/libconfig
 #usr/lib/cmake/libconfig++
 #usr/lib/cmake/libconfig++/libconfig++Config.cmake
