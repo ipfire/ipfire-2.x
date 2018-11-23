@@ -1768,6 +1768,20 @@ clean)
 	rm -f $BASEDIR/ipfire-*
 	print_status DONE
 	;;
+docker)
+	# Build the docker image if it does not exist, yet
+	if ! docker images -a | grep -q ^ipfire-builder; then
+		if docker build -t ipfire-builder ${BASEDIR}/tools/docker; then
+			print_status DONE
+		else
+			print_status FAIL
+			exit 1
+		fi
+	fi
+
+	# Run the container and enter a shell
+	docker run -it --privileged -v "${BASEDIR}:/build" -w "/build" ipfire-builder bash -l
+	;;
 downloadsrc)
 	if [ ! -d $BASEDIR/cache ]; then
 		mkdir $BASEDIR/cache
