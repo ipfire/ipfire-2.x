@@ -13,7 +13,8 @@ RUN apt-get install -y \
 	flex \
 	gawk \
 	git \
-	libz-dev
+	libz-dev \
+	wget
 
 # Enable colors in git
 RUN git config --global color.ui auto
