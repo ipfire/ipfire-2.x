@@ -4942,7 +4942,10 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/OCSP_resp_get0_certs.3
 #usr/share/man/man3/OCSP_resp_get0_id.3
 #usr/share/man/man3/OCSP_resp_get0_produced_at.3
+#usr/share/man/man3/OCSP_resp_get0_respdata.3
+#usr/share/man/man3/OCSP_resp_get0_signature.3
 #usr/share/man/man3/OCSP_resp_get0_signer.3
+#usr/share/man/man3/OCSP_resp_get0_tbs_sigalg.3
 #usr/share/man/man3/OCSP_response_create.3
 #usr/share/man/man3/OCSP_response_get1_basic.3
 #usr/share/man/man3/OCSP_response_status.3
@@ -4964,6 +4967,7 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/OPENSSL_LH_stats.3
 #usr/share/man/man3/OPENSSL_LH_stats_bio.3
 #usr/share/man/man3/OPENSSL_VERSION_NUMBER.3
+#usr/share/man/man3/OPENSSL_VERSION_TEXT.3
 #usr/share/man/man3/OPENSSL_atexit.3
 #usr/share/man/man3/OPENSSL_buf2hexstr.3
 #usr/share/man/man3/OPENSSL_cleanse.3
