@@ -111,6 +111,7 @@ $cgiparams{'DPD_TIMEOUT'} = '120';
 $cgiparams{'FORCE_MOBIKE'} = 'off';
 $cgiparams{'START_ACTION'} = 'start';
 $cgiparams{'INACTIVITY_TIMEOUT'} = 900;
+$cgiparams{'MODE'} = "tunnel";
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 ###
@@ -1316,6 +1317,7 @@ END
 		$cgiparams{'DPD_DELAY'}			= $confighash{$cgiparams{'KEY'}}[31];
 		$cgiparams{'FORCE_MOBIKE'}		= $confighash{$cgiparams{'KEY'}}[32];
 		$cgiparams{'INACTIVITY_TIMEOUT'}	= $confighash{$cgiparams{'KEY'}}[34];
+		$cgiparams{'MODE'}			= $confighash{$cgiparams{'KEY'}}[35];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -1327,6 +1329,10 @@ END
 
 		if ($cgiparams{'INACTIVITY_TIMEOUT'} eq "") {
 			$cgiparams{'INACTIVITY_TIMEOUT'} = 900;
+		}
+
+		if ($cgiparams{'MODE'} eq "") {
+			$cgiparams{'MODE'} = "tunnel";
 		}
 
 	} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
@@ -1811,7 +1817,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 		$key = &General::findhasharraykey (\%confighash);
-		foreach my $i (0 .. 34) { $confighash{$key}[$i] = "";}
+		foreach my $i (0 .. 35) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -1856,6 +1862,7 @@ END
 	$confighash{$key}[31] = $cgiparams{'DPD_DELAY'};
 	$confighash{$key}[32] = $cgiparams{'FORCE_MOBIKE'};
 	$confighash{$key}[34] = $cgiparams{'INACTIVITY_TIMEOUT'};
+	$confighash{$key}[35] = $cgiparams{'MODE'};
 
 	# free unused fields!
 	$confighash{$key}[6] = 'off';
@@ -1930,6 +1937,7 @@ END
 	$cgiparams{'ONLY_PROPOSED'}		= 'on'; #[24];
 	$cgiparams{'PFS'}				= 'on'; #[28];
 	$cgiparams{'INACTIVITY_TIMEOUT'}        = 900;
+	$cgiparams{'MODE'}        		= "tunnel";
 }
 
 VPNCONF_ERROR:
@@ -1985,6 +1993,7 @@ VPNCONF_ERROR:
 	<input type='hidden' name='DPD_DELAY' value='$cgiparams{'DPD_DELAY'}' />
 	<input type='hidden' name='DPD_TIMEOUT' value='$cgiparams{'DPD_TIMEOUT'}' />
 	<input type='hidden' name='FORCE_MOBIKE' value='$cgiparams{'FORCE_MOBIKE'}' />
+	<input type='hidden' name='MODE' value='$cgiparams{'MODE'}' />
 END
 ;
 	if ($cgiparams{'KEY'}) {
@@ -2279,6 +2288,11 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 
+		if ($cgiparams{'MODE'} !~ /^(tunnel|transport)$/) {
+			$errormessage = $Lang::tr{'invalid input for mode'};
+			goto ADVANCED_ERROR;
+		}
+
 		$confighash{$cgiparams{'KEY'}}[29] = $cgiparams{'IKE_VERSION'};
 		$confighash{$cgiparams{'KEY'}}[18] = $cgiparams{'IKE_ENCRYPTION'};
 		$confighash{$cgiparams{'KEY'}}[19] = $cgiparams{'IKE_INTEGRITY'};
@@ -2298,6 +2312,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$confighash{$cgiparams{'KEY'}}[32] = $cgiparams{'FORCE_MOBIKE'};
 		$confighash{$cgiparams{'KEY'}}[33] = $cgiparams{'START_ACTION'};
 		$confighash{$cgiparams{'KEY'}}[34] = $cgiparams{'INACTIVITY_TIMEOUT'};
+		$confighash{$cgiparams{'KEY'}}[35] = $cgiparams{'MODE'};
 		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 		&writeipsecfiles();
 		if (&vpnenabled) {
@@ -2327,6 +2342,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$cgiparams{'FORCE_MOBIKE'}		= $confighash{$cgiparams{'KEY'}}[32];
 		$cgiparams{'START_ACTION'}		= $confighash{$cgiparams{'KEY'}}[33];
 		$cgiparams{'INACTIVITY_TIMEOUT'}	= $confighash{$cgiparams{'KEY'}}[34];
+		$cgiparams{'MODE'}			= $confighash{$cgiparams{'KEY'}}[35];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -2342,6 +2358,10 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 
 		if ($cgiparams{'INACTIVITY_TIMEOUT'} eq "") {
 			$cgiparams{'INACTIVITY_TIMEOUT'} = 900; # 15 min
+		}
+
+		if ($cgiparams{'MODE'} eq "") {
+			$cgiparams{'MODE'} = "tunnel";
 		}
 	}
 
@@ -2451,6 +2471,10 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	}
 	$selected{'INACTIVITY_TIMEOUT'}{$cgiparams{'INACTIVITY_TIMEOUT'}} = "selected";
 
+	$selected{'MODE'}{'tunnel'} = '';
+	$selected{'MODE'}{'transport'} = '';
+	$selected{'MODE'}{$cgiparams{'MODE'}} = "selected='selected'";
+
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', $errormessage);
@@ -2474,6 +2498,24 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	<form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'>
 	<input type='hidden' name='ADVANCED' value='yes' />
 	<input type='hidden' name='KEY' value='$cgiparams{'KEY'}' />
+
+	<table width="100%">
+		<tbody>
+			<tr>
+				<td width="15%">$Lang::tr{'mode'}:</td>
+				<td>
+					<select name='MODE'>
+						<option value='tunnel' $selected{'MODE'}{'tunnel'}>$Lang::tr{'ipsec mode tunnel'}</option>
+						<option value='transport' $selected{'MODE'}{'transport'}>$Lang::tr{'ipsec mode transport'}</option>
+					</select>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+
+	<br><br>
+
+	<h2>$Lang::tr{'cryptographic settings'}</h2>
 
 	<table width='100%'>
 	<thead>

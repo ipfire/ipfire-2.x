@@ -365,7 +365,6 @@ WARNING: translation string unused: messages logging
 WARNING: translation string unused: min size
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
-WARNING: translation string unused: mode
 WARNING: translation string unused: modem on com1
 WARNING: translation string unused: modem on com2
 WARNING: translation string unused: modem on com3
@@ -759,6 +758,7 @@ WARNING: untranslated string: country codes and flags = Country Codes and Flags:
 WARNING: untranslated string: countrycode = Code
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
+WARNING: untranslated string: cryptographic settings = Cryptographic Settings
 WARNING: untranslated string: dead peer detection = Dead Peer Detection
 WARNING: untranslated string: default = Default
 WARNING: untranslated string: deprecated fs warn = Deprecated filesystem! Newer kernel drop the support. Backup and reformat!
@@ -1053,10 +1053,13 @@ WARNING: untranslated string: integrity = Integrity:
 WARNING: untranslated string: invalid input for dpd delay = Invalid input for DPD delay
 WARNING: untranslated string: invalid input for dpd timeout = Invalid input for DPD timeout
 WARNING: untranslated string: invalid input for inactivity timeout = Invalid input for Inactivity Timeout
+WARNING: untranslated string: invalid input for mode = Invalid input for mode
 WARNING: untranslated string: invalid input for valid till days = Invalid input for Valid till (days).
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: invalid logserver protocol = Invalid syslogd server protocol
 WARNING: untranslated string: ipsec = IPsec
+WARNING: untranslated string: ipsec mode transport = Transport
+WARNING: untranslated string: ipsec mode tunnel = Tunnel
 WARNING: untranslated string: ipsec network = IPsec network
 WARNING: untranslated string: last = Last
 WARNING: untranslated string: least preferred = least preferred

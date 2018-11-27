@@ -415,7 +415,6 @@ WARNING: translation string unused: messages logging
 WARNING: translation string unused: min size
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
-WARNING: translation string unused: mode
 WARNING: translation string unused: modem on com1
 WARNING: translation string unused: modem on com2
 WARNING: translation string unused: modem on com3
@@ -786,6 +785,7 @@ WARNING: untranslated string: capabilities = Capabilities
 WARNING: untranslated string: check all = Check all
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
+WARNING: untranslated string: cryptographic settings = Cryptographic Settings
 WARNING: untranslated string: default = Default
 WARNING: untranslated string: dh = Diffie-Hellman parameters
 WARNING: untranslated string: dh key move failed = Diffie-Hellman parameters move failed.
@@ -899,9 +899,12 @@ WARNING: untranslated string: incoming compression in bytes per second = Incomin
 WARNING: untranslated string: incoming overhead in bytes per second = Incoming Overhead
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: invalid input for inactivity timeout = Invalid input for Inactivity Timeout
+WARNING: untranslated string: invalid input for mode = Invalid input for mode
 WARNING: untranslated string: invalid input for valid till days = Invalid input for Valid till (days).
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: invalid logserver protocol = Invalid syslogd server protocol
+WARNING: untranslated string: ipsec mode transport = Transport
+WARNING: untranslated string: ipsec mode tunnel = Tunnel
 WARNING: untranslated string: log server protocol = protocol:
 WARNING: untranslated string: masquerade blue = Masquerade BLUE
 WARNING: untranslated string: masquerade green = Masquerade GREEN

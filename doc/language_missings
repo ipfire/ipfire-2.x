@@ -28,6 +28,7 @@
 < choose media
 < community rules
 < could not connect to www ipfire org
+< cryptographic settings
 < dead peer detection
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
@@ -38,6 +39,9 @@
 < g.lite
 < guardian
 < insert removable device
+< invalid input for mode
+< ipsec mode transport
+< ipsec mode tunnel
 < none
 < notes
 < qos add subclass
@@ -186,6 +190,7 @@
 < countrycode
 < country codes and flags
 < crypto error
+< cryptographic settings
 < crypto warning
 < dead peer detection
 < default
@@ -493,10 +498,13 @@
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
+< invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
 < ipsec
+< ipsec mode transport
+< ipsec mode tunnel
 < ipsec network
 < ipsec no connections
 < last
@@ -782,8 +790,12 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< cryptographic settings
 < dnsforward forward_servers
+< invalid input for mode
 < invalid ip or hostname
+< ipsec mode transport
+< ipsec mode tunnel
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -853,6 +865,7 @@
 < Captive wrong ext
 < check all
 < crypto error
+< cryptographic settings
 < crypto warning
 < dhcp dns enable update
 < dhcp dns key name
@@ -919,9 +932,12 @@
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
 < invalid input for inactivity timeout
+< invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ipsec mode transport
+< ipsec mode tunnel
 < log server protocol
 < masquerade blue
 < masquerade green
@@ -1070,6 +1086,7 @@
 < Captive wrong ext
 < check all
 < crypto error
+< cryptographic settings
 < crypto warning
 < default
 < dh
@@ -1155,9 +1172,12 @@
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
 < invalid input for inactivity timeout
+< invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ipsec mode transport
+< ipsec mode tunnel
 < log server protocol
 < masquerade blue
 < masquerade green
@@ -1403,6 +1423,7 @@
 < countrycode
 < country codes and flags
 < crypto error
+< cryptographic settings
 < crypto warning
 < dead peer detection
 < default
@@ -1712,10 +1733,13 @@
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
+< invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
 < ipsec
+< ipsec mode transport
+< ipsec mode tunnel
 < ipsec network
 < ipsec no connections
 < last
@@ -2116,6 +2140,7 @@
 < countrycode
 < country codes and flags
 < crypto error
+< cryptographic settings
 < crypto warning
 < day-graph
 < dead peer detection
@@ -2431,10 +2456,13 @@
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
+< invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
 < ipsec
+< ipsec mode transport
+< ipsec mode tunnel
 < ipsec network
 < ipsec no connections
 < last
@@ -2705,10 +2733,14 @@
 # Checking cgi-bin translations for language: tr                           #
 ############################################################################
 < crypto error
+< cryptographic settings
 < crypto warning
 < dnsforward forward_servers
 < fwdfw all subnets
+< invalid input for mode
 < invalid ip or hostname
+< ipsec mode transport
+< ipsec mode tunnel
 < ovpn error dh
 < ovpn error md5
 < ovpn warning rfc3280
