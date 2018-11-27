@@ -313,6 +313,13 @@ sub writeipsecfiles {
 		print CONF "\tleftid=\"$lconfighash{$key}[7]\"\n" if ($lconfighash{$key}[7]);
 		print CONF "\trightid=\"$lconfighash{$key}[9]\"\n" if ($lconfighash{$key}[9]);
 
+		# Set mode
+		if ($lconfighash{$key}[35] eq "transport") {
+			print CONF "\ttype=transport\n";
+		} else {
+			print CONF "\ttype=tunnel\n";
+		}
+
 		# Is PFS enabled?
 		my $pfs = $lconfighash{$key}[28] eq 'on' ? 'on' : 'off';
 
