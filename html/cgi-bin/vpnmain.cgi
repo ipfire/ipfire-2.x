@@ -110,7 +110,7 @@ $cgiparams{'DPD_DELAY'} = '30';
 $cgiparams{'DPD_TIMEOUT'} = '120';
 $cgiparams{'FORCE_MOBIKE'} = 'off';
 $cgiparams{'START_ACTION'} = 'route';
-$cgiparams{'INACTIVITY_TIMEOUT'} = 900;
+$cgiparams{'INACTIVITY_TIMEOUT'} = 1800;
 $cgiparams{'MODE'} = "tunnel";
 $cgiparams{'INTERFACE_MODE'} = "";
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
