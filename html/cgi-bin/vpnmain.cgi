@@ -113,6 +113,7 @@ $cgiparams{'START_ACTION'} = 'route';
 $cgiparams{'INACTIVITY_TIMEOUT'} = 1800;
 $cgiparams{'MODE'} = "tunnel";
 $cgiparams{'INTERFACE_MODE'} = "";
+$cgiparams{'INTERFACE_ADDRESS'} = "";
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 ###
@@ -1327,6 +1328,7 @@ END
 		$cgiparams{'INACTIVITY_TIMEOUT'}	= $confighash{$cgiparams{'KEY'}}[34];
 		$cgiparams{'MODE'}			= $confighash{$cgiparams{'KEY'}}[35];
 		$cgiparams{'INTERFACE_MODE'}		= $confighash{$cgiparams{'KEY'}}[36];
+		$cgiparams{'INTERFACE_ADDRESS'}		= $confighash{$cgiparams{'KEY'}}[37];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -1873,6 +1875,7 @@ END
 	$confighash{$key}[34] = $cgiparams{'INACTIVITY_TIMEOUT'};
 	$confighash{$key}[35] = $cgiparams{'MODE'};
 	$confighash{$key}[36] = $cgiparams{'INTERFACE_MODE'};
+	$confighash{$key}[37] = $cgiparams{'INTERFACE_ADDRESS'};
 
 	# free unused fields!
 	$confighash{$key}[6] = 'off';
@@ -1949,6 +1952,7 @@ END
 	$cgiparams{'INACTIVITY_TIMEOUT'}        = 900;
 	$cgiparams{'MODE'}        		= "tunnel";
 	$cgiparams{'INTERFACE_MODE'}        	= "";
+	$cgiparams{'INTERFACE_ADDRESS'}        	= "";
 }
 
 VPNCONF_ERROR:
@@ -2007,6 +2011,7 @@ VPNCONF_ERROR:
 	<input type='hidden' name='INACTIVITY_TIMEOUT' value='$cgiparams{'INACTIVITY_TIMEOUT'}' />
 	<input type='hidden' name='MODE' value='$cgiparams{'MODE'}' />
 	<input type='hidden' name='INTERFACE_MODE' value='$cgiparams{'INTERFACE_MODE'}' />
+	<input type='hidden' name='INTERFACE_ADDRESS' value='$cgiparams{'INTERFACE_ADDRESS'}' />
 END
 ;
 	if ($cgiparams{'KEY'}) {
@@ -2311,6 +2316,11 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 
+		if (($cgiparams{'INTERFACE_MODE'} ne "") && !&Network::check_subnet($cgiparams{'INTERFACE_ADDRESS'})) {
+			$errormessage = $Lang::tr{'invalid input for interface address'};
+			goto ADVANCED_ERROR;
+		}
+
 		$confighash{$cgiparams{'KEY'}}[29] = $cgiparams{'IKE_VERSION'};
 		$confighash{$cgiparams{'KEY'}}[18] = $cgiparams{'IKE_ENCRYPTION'};
 		$confighash{$cgiparams{'KEY'}}[19] = $cgiparams{'IKE_INTEGRITY'};
@@ -2332,6 +2342,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$confighash{$cgiparams{'KEY'}}[34] = $cgiparams{'INACTIVITY_TIMEOUT'};
 		$confighash{$cgiparams{'KEY'}}[35] = $cgiparams{'MODE'};
 		$confighash{$cgiparams{'KEY'}}[36] = $cgiparams{'INTERFACE_MODE'};
+		$confighash{$cgiparams{'KEY'}}[37] = $cgiparams{'INTERFACE_ADDRESS'};
 		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 		&writeipsecfiles();
 		if (&vpnenabled) {
@@ -2363,6 +2374,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$cgiparams{'INACTIVITY_TIMEOUT'}	= $confighash{$cgiparams{'KEY'}}[34];
 		$cgiparams{'MODE'}			= $confighash{$cgiparams{'KEY'}}[35];
 		$cgiparams{'INTERFACE_MODE'}		= $confighash{$cgiparams{'KEY'}}[36];
+		$cgiparams{'INTERFACE_ADDRESS'}		= $confighash{$cgiparams{'KEY'}}[37];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -2534,16 +2546,22 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 						<option value='transport' $selected{'MODE'}{'transport'}>$Lang::tr{'ipsec mode transport'}</option>
 					</select>
 				</td>
+				<td></td>
 			</tr>
 
 			<tr>
 				<td width="15%">$Lang::tr{'interface mode'}:</td>
 				<td>
+					<label></label>
 					<select name='INTERFACE_MODE'>
 						<option value='' $selected{'INTERFACE_MODE'}{''}>$Lang::tr{'ipsec interface mode none'}</option>
 						<option value='gre' $selected{'INTERFACE_MODE'}{'gre'}>$Lang::tr{'ipsec interface mode gre'}</option>
 						<option value='vti' $selected{'INTERFACE_MODE'}{'vti'}>$Lang::tr{'ipsec interface mode vti'}</option>
 					</select>
+				</td>
+				<td>
+					<label>$Lang::tr{'ip address'}/$Lang::tr{'subnet mask'}</label>
+					<input type="text" name="INTERFACE_ADDRESS" value="$cgiparams{'INTERFACE_ADDRESS'}">
 				</td>
 			</tr>
 		</tbody>

@@ -40,6 +40,7 @@
 < guardian
 < insert removable device
 < interface mode
+< invalid input for interface address
 < invalid input for interface mode
 < invalid input for mode
 < ipsec interface mode gre
@@ -55,6 +56,7 @@
 < show areas
 < show lines
 < show tls-auth key
+< subnet mask
 < teovpn_fragment
 < tor bridge enabled
 < tor errmsg invalid node id
@@ -504,6 +506,7 @@
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
+< invalid input for interface address
 < invalid input for interface mode
 < invalid input for mode
 < invalid input for valid till days
@@ -650,6 +653,7 @@
 < ssh no active logins
 < ssh username
 < static routes
+< subnet mask
 < support donation
 < system has hwrng
 < system has rdrand
@@ -803,6 +807,7 @@
 < cryptographic settings
 < dnsforward forward_servers
 < interface mode
+< invalid input for interface address
 < invalid input for interface mode
 < invalid input for mode
 < invalid ip or hostname
@@ -811,6 +816,7 @@
 < ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
+< subnet mask
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -948,6 +954,7 @@
 < incoming overhead in bytes per second
 < interface mode
 < invalid input for inactivity timeout
+< invalid input for interface address
 < invalid input for interface mode
 < invalid input for mode
 < invalid input for valid till days
@@ -991,6 +998,7 @@
 < ssh login time
 < ssh no active logins
 < ssh username
+< subnet mask
 < tcp more reliable
 < ten minutes
 < thirty minutes
@@ -1193,6 +1201,7 @@
 < incoming overhead in bytes per second
 < interface mode
 < invalid input for inactivity timeout
+< invalid input for interface address
 < invalid input for interface mode
 < invalid input for mode
 < invalid input for valid till days
@@ -1268,6 +1277,7 @@
 < ssh login time
 < ssh no active logins
 < ssh username
+< subnet mask
 < ta key
 < tcp more reliable
 < ten minutes
@@ -1759,6 +1769,7 @@
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
+< invalid input for interface address
 < invalid input for interface mode
 < invalid input for mode
 < invalid input for valid till days
@@ -1890,6 +1901,7 @@
 < ssh no active logins
 < ssh username
 < static routes
+< subnet mask
 < support donation
 < system has hwrng
 < system has rdrand
@@ -2487,6 +2499,7 @@
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
+< invalid input for interface address
 < invalid input for interface mode
 < invalid input for mode
 < invalid input for valid till days
@@ -2616,6 +2629,7 @@
 < ssh no active logins
 < ssh username
 < static routes
+< subnet mask
 < support donation
 < system has hwrng
 < system has rdrand
@@ -2773,6 +2787,7 @@
 < dnsforward forward_servers
 < fwdfw all subnets
 < interface mode
+< invalid input for interface address
 < invalid input for interface mode
 < invalid input for mode
 < invalid ip or hostname
@@ -2788,6 +2803,7 @@
 < ssh login time
 < ssh no active logins
 < ssh username
+< subnet mask
 < vpn start action add
 < vpn wait
 < wlanap neighbor scan
