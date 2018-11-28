@@ -112,6 +112,7 @@ $cgiparams{'FORCE_MOBIKE'} = 'off';
 $cgiparams{'START_ACTION'} = 'start';
 $cgiparams{'INACTIVITY_TIMEOUT'} = 900;
 $cgiparams{'MODE'} = "tunnel";
+$cgiparams{'INTERFACE_MODE'} = "";
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 ###
@@ -1325,6 +1326,7 @@ END
 		$cgiparams{'FORCE_MOBIKE'}		= $confighash{$cgiparams{'KEY'}}[32];
 		$cgiparams{'INACTIVITY_TIMEOUT'}	= $confighash{$cgiparams{'KEY'}}[34];
 		$cgiparams{'MODE'}			= $confighash{$cgiparams{'KEY'}}[35];
+		$cgiparams{'INTERFACE_MODE'}		= $confighash{$cgiparams{'KEY'}}[36];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -1824,7 +1826,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 		$key = &General::findhasharraykey (\%confighash);
-		foreach my $i (0 .. 35) { $confighash{$key}[$i] = "";}
+		foreach my $i (0 .. 36) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -1870,6 +1872,7 @@ END
 	$confighash{$key}[32] = $cgiparams{'FORCE_MOBIKE'};
 	$confighash{$key}[34] = $cgiparams{'INACTIVITY_TIMEOUT'};
 	$confighash{$key}[35] = $cgiparams{'MODE'};
+	$confighash{$key}[36] = $cgiparams{'INTERFACE_MODE'};
 
 	# free unused fields!
 	$confighash{$key}[6] = 'off';
@@ -1945,6 +1948,7 @@ END
 	$cgiparams{'PFS'}				= 'on'; #[28];
 	$cgiparams{'INACTIVITY_TIMEOUT'}        = 900;
 	$cgiparams{'MODE'}        		= "tunnel";
+	$cgiparams{'INTERFACE_MODE'}        	= "";
 }
 
 VPNCONF_ERROR:
@@ -2002,6 +2006,7 @@ VPNCONF_ERROR:
 	<input type='hidden' name='FORCE_MOBIKE' value='$cgiparams{'FORCE_MOBIKE'}' />
 	<input type='hidden' name='INACTIVITY_TIMEOUT' value='$cgiparams{'INACTIVITY_TIMEOUT'}' />
 	<input type='hidden' name='MODE' value='$cgiparams{'MODE'}' />
+	<input type='hidden' name='INTERFACE_MODE' value='$cgiparams{'INTERFACE_MODE'}' />
 END
 ;
 	if ($cgiparams{'KEY'}) {
@@ -2301,6 +2306,11 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 
+		if ($cgiparams{'INTERFACE_MODE'} !~ /^(|gre|vti)$/) {
+			$errormessage = $Lang::tr{'invalid input for interface mode'};
+			goto ADVANCED_ERROR;
+		}
+
 		$confighash{$cgiparams{'KEY'}}[29] = $cgiparams{'IKE_VERSION'};
 		$confighash{$cgiparams{'KEY'}}[18] = $cgiparams{'IKE_ENCRYPTION'};
 		$confighash{$cgiparams{'KEY'}}[19] = $cgiparams{'IKE_INTEGRITY'};
@@ -2321,6 +2331,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$confighash{$cgiparams{'KEY'}}[33] = $cgiparams{'START_ACTION'};
 		$confighash{$cgiparams{'KEY'}}[34] = $cgiparams{'INACTIVITY_TIMEOUT'};
 		$confighash{$cgiparams{'KEY'}}[35] = $cgiparams{'MODE'};
+		$confighash{$cgiparams{'KEY'}}[36] = $cgiparams{'INTERFACE_MODE'};
 		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 		&writeipsecfiles();
 		if (&vpnenabled) {
@@ -2351,6 +2362,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$cgiparams{'START_ACTION'}		= $confighash{$cgiparams{'KEY'}}[33];
 		$cgiparams{'INACTIVITY_TIMEOUT'}	= $confighash{$cgiparams{'KEY'}}[34];
 		$cgiparams{'MODE'}			= $confighash{$cgiparams{'KEY'}}[35];
+		$cgiparams{'INTERFACE_MODE'}		= $confighash{$cgiparams{'KEY'}}[36];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -2483,6 +2495,11 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	$selected{'MODE'}{'transport'} = '';
 	$selected{'MODE'}{$cgiparams{'MODE'}} = "selected='selected'";
 
+	$selected{'INTERFACE_MODE'}{''} = '';
+	$selected{'INTERFACE_MODE'}{'gre'} = '';
+	$selected{'INTERFACE_MODE'}{'vti'} = '';
+	$selected{'INTERFACE_MODE'}{$cgiparams{'INTERFACE_MODE'}} = "selected='selected'";
+
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', $errormessage);
@@ -2515,6 +2532,17 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<select name='MODE'>
 						<option value='tunnel' $selected{'MODE'}{'tunnel'}>$Lang::tr{'ipsec mode tunnel'}</option>
 						<option value='transport' $selected{'MODE'}{'transport'}>$Lang::tr{'ipsec mode transport'}</option>
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td width="15%">$Lang::tr{'interface mode'}:</td>
+				<td>
+					<select name='INTERFACE_MODE'>
+						<option value='' $selected{'INTERFACE_MODE'}{''}>$Lang::tr{'ipsec interface mode none'}</option>
+						<option value='gre' $selected{'INTERFACE_MODE'}{'gre'}>$Lang::tr{'ipsec interface mode gre'}</option>
+						<option value='vti' $selected{'INTERFACE_MODE'}{'vti'}>$Lang::tr{'ipsec interface mode vti'}</option>
 					</select>
 				</td>
 			</tr>

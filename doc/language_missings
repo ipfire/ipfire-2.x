@@ -39,7 +39,12 @@
 < g.lite
 < guardian
 < insert removable device
+< interface mode
+< invalid input for interface mode
 < invalid input for mode
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
 < none
@@ -495,14 +500,19 @@
 < incoming firewall access
 < incoming overhead in bytes per second
 < integrity
+< interface mode
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
+< invalid input for interface mode
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
 < ipsec
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec network
@@ -792,8 +802,13 @@
 ############################################################################
 < cryptographic settings
 < dnsforward forward_servers
+< interface mode
+< invalid input for interface mode
 < invalid input for mode
 < invalid ip or hostname
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
 ############################################################################
@@ -931,11 +946,16 @@
 < guardian
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
+< interface mode
 < invalid input for inactivity timeout
+< invalid input for interface mode
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
 < log server protocol
@@ -1171,11 +1191,16 @@
 < imsi
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
+< interface mode
 < invalid input for inactivity timeout
+< invalid input for interface mode
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
 < log server protocol
@@ -1730,14 +1755,19 @@
 < incoming firewall access
 < incoming overhead in bytes per second
 < integrity
+< interface mode
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
+< invalid input for interface mode
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
 < ipsec
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec network
@@ -2453,14 +2483,19 @@
 < incoming overhead in bytes per second
 < incoming traffic in bytes per second
 < integrity
+< interface mode
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
+< invalid input for interface mode
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
 < ipsec
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec network
@@ -2737,8 +2772,13 @@
 < crypto warning
 < dnsforward forward_servers
 < fwdfw all subnets
+< interface mode
+< invalid input for interface mode
 < invalid input for mode
 < invalid ip or hostname
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
 < ovpn error dh
