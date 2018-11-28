@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nfs
-PAK_VER    = 11
+PAK_VER    = 12
 
 DEPS       = "rpcbind"
 
@@ -100,7 +100,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
-	#install initscripts
+
+	# Install initscript
 	$(call INSTALL_INITSCRIPT,nfs-server)
+
+	# Install configuration
+	install -v -m 644 $(DIR_SRC)/config/cfgroot/nfs-server $(CONFIG_ROOT)/nfs/nfs-server
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

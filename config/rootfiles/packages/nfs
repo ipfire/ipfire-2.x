@@ -68,6 +68,8 @@ usr/sbin/start-statd
 #usr/share/man/man8/sm-notify.8
 #usr/share/man/man8/statd.8
 #usr/share/man/man8/umount.nfs.8
+#var/ipfire/nfs
+var/ipfire/nfs/nfs-server
 #var/lib/nfs
 var/lib/nfs/etab
 var/lib/nfs/rmtab

@@ -124,8 +124,6 @@ var/ipfire/modem-lib.pl
 #var/ipfire/modem/settings
 var/ipfire/modem-lib.pl
 var/ipfire/network-functions.pl
-#var/ipfire/nfs
-#var/ipfire/nfs/nfs-server
 var/ipfire/optionsfw
 #var/ipfire/optionsfw/settings
 var/ipfire/ovpn
