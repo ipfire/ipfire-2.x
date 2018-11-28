@@ -295,15 +295,31 @@ sub writeipsecfiles {
 			$localside = $lvpnsettings{'VPN_IP'};
 		}
 
+		my $interface_mode = $lconfighash{$key}[36];
+
 		print CONF "conn $lconfighash{$key}[1]\n";
 		print CONF "\tleft=$localside\n";
-		print CONF "\tleftsubnet=" . &make_subnets($lconfighash{$key}[8]) . "\n";
+
+		if ($interface_mode eq "gre") {
+			print CONF "\tleftsubnet=%dynamic[gre]\n";
+		} elsif ($interface_mode eq "vti") {
+			print CONF "\tleftsubnet=0.0.0.0/0\n";
+		} else {
+			print CONF "\tleftsubnet=" . &make_subnets($lconfighash{$key}[8]) . "\n";
+		}
+
 		print CONF "\tleftfirewall=yes\n";
 		print CONF "\tlefthostaccess=yes\n";
 		print CONF "\tright=$lconfighash{$key}[10]\n";
 
 		if ($lconfighash{$key}[3] eq 'net') {
-			print CONF "\trightsubnet=" . &make_subnets($lconfighash{$key}[11]) . "\n";
+			if ($interface_mode eq "gre") {
+				print CONF "\trightsubnet=%dynamic[gre]\n";
+			} elsif ($interface_mode eq "vti") {
+				print CONF "\trightsubnet=0.0.0.0/0\n";
+			} else {
+				print CONF "\trightsubnet=" . &make_subnets($lconfighash{$key}[11]) . "\n";
+			}
 		}
 
 		# Local Cert and Remote Cert (unless auth is DN dn-auth)
@@ -321,6 +337,11 @@ sub writeipsecfiles {
 			print CONF "\ttype=transport\n";
 		} else {
 			print CONF "\ttype=tunnel\n";
+		}
+
+		# Add mark for VTI
+		if ($interface_mode eq "vti") {
+			print CONF "\tmark=$key\n";
 		}
 
 		# Is PFS enabled?
