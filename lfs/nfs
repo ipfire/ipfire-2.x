@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nfs
-PAK_VER    = 12
+PAK_VER    = 13
 
 DEPS       = "rpcbind"
 
@@ -106,6 +106,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install configuration
 	install -v -m 644 $(DIR_SRC)/config/cfgroot/nfs-server $(CONFIG_ROOT)/nfs/nfs-server
+
+	# Install backup include
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/nfs \
+		 /var/ipfire/backup/addons/includes/nfs
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
