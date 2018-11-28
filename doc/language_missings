@@ -42,12 +42,14 @@
 < interface mode
 < invalid input for interface address
 < invalid input for interface mode
+< invalid input for interface mtu
 < invalid input for mode
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
+< mtu
 < none
 < notes
 < qos add subclass
@@ -508,6 +510,7 @@
 < invalid input for inactivity timeout
 < invalid input for interface address
 < invalid input for interface mode
+< invalid input for interface mtu
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
@@ -552,6 +555,7 @@
 < modem status
 < monitor interface
 < most preferred
+< mtu
 < MTU settings
 < nameserver
 < never
@@ -809,6 +813,7 @@
 < interface mode
 < invalid input for interface address
 < invalid input for interface mode
+< invalid input for interface mtu
 < invalid input for mode
 < invalid ip or hostname
 < ipsec interface mode gre
@@ -816,6 +821,7 @@
 < ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
+< mtu
 < subnet mask
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -956,6 +962,7 @@
 < invalid input for inactivity timeout
 < invalid input for interface address
 < invalid input for interface mode
+< invalid input for interface mtu
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
@@ -973,6 +980,7 @@
 < masquerading disabled
 < masquerading enabled
 < messages
+< mtu
 < MTU settings
 < none
 < Number of Countries for the pie chart
@@ -1203,6 +1211,7 @@
 < invalid input for inactivity timeout
 < invalid input for interface address
 < invalid input for interface mode
+< invalid input for interface mtu
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
@@ -1234,6 +1243,7 @@
 < modem sim information
 < modem status
 < monitor interface
+< mtu
 < MTU settings
 < nameserver
 < never
@@ -1771,6 +1781,7 @@
 < invalid input for inactivity timeout
 < invalid input for interface address
 < invalid input for interface mode
+< invalid input for interface mtu
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
@@ -1815,6 +1826,7 @@
 < modem status
 < monitor interface
 < most preferred
+< mtu
 < MTU settings
 < nameserver
 < never
@@ -2501,6 +2513,7 @@
 < invalid input for inactivity timeout
 < invalid input for interface address
 < invalid input for interface mode
+< invalid input for interface mtu
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
@@ -2546,6 +2559,7 @@
 < monitor interface
 < month-graph
 < most preferred
+< mtu
 < MTU settings
 < nameserver
 < never
@@ -2789,6 +2803,7 @@
 < interface mode
 < invalid input for interface address
 < invalid input for interface mode
+< invalid input for interface mtu
 < invalid input for mode
 < invalid ip or hostname
 < ipsec interface mode gre
@@ -2796,6 +2811,7 @@
 < ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
+< mtu
 < ovpn error dh
 < ovpn error md5
 < ovpn warning rfc3280

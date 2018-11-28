@@ -114,6 +114,7 @@ $cgiparams{'INACTIVITY_TIMEOUT'} = 1800;
 $cgiparams{'MODE'} = "tunnel";
 $cgiparams{'INTERFACE_MODE'} = "";
 $cgiparams{'INTERFACE_ADDRESS'} = "";
+$cgiparams{'INTERFACE_MTU'} = 1500;
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 ###
@@ -1329,6 +1330,7 @@ END
 		$cgiparams{'MODE'}			= $confighash{$cgiparams{'KEY'}}[35];
 		$cgiparams{'INTERFACE_MODE'}		= $confighash{$cgiparams{'KEY'}}[36];
 		$cgiparams{'INTERFACE_ADDRESS'}		= $confighash{$cgiparams{'KEY'}}[37];
+		$cgiparams{'INTERFACE_MTU'}		= $confighash{$cgiparams{'KEY'}}[38];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -1828,7 +1830,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 		$key = &General::findhasharraykey (\%confighash);
-		foreach my $i (0 .. 36) { $confighash{$key}[$i] = "";}
+		foreach my $i (0 .. 38) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -1876,6 +1878,7 @@ END
 	$confighash{$key}[35] = $cgiparams{'MODE'};
 	$confighash{$key}[36] = $cgiparams{'INTERFACE_MODE'};
 	$confighash{$key}[37] = $cgiparams{'INTERFACE_ADDRESS'};
+	$confighash{$key}[38] = $cgiparams{'INTERFACE_MTU'};
 
 	# free unused fields!
 	$confighash{$key}[6] = 'off';
@@ -1953,6 +1956,7 @@ END
 	$cgiparams{'MODE'}        		= "tunnel";
 	$cgiparams{'INTERFACE_MODE'}        	= "";
 	$cgiparams{'INTERFACE_ADDRESS'}        	= "";
+	$cgiparams{'INTERFACE_MTU'}        	= 1500;
 }
 
 VPNCONF_ERROR:
@@ -2012,6 +2016,7 @@ VPNCONF_ERROR:
 	<input type='hidden' name='MODE' value='$cgiparams{'MODE'}' />
 	<input type='hidden' name='INTERFACE_MODE' value='$cgiparams{'INTERFACE_MODE'}' />
 	<input type='hidden' name='INTERFACE_ADDRESS' value='$cgiparams{'INTERFACE_ADDRESS'}' />
+	<input type='hidden' name='INTERFACE_MTU' value='$cgiparams{'INTERFACE_MTU'}' />
 END
 ;
 	if ($cgiparams{'KEY'}) {
@@ -2321,6 +2326,11 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 
+		if ($cgiparams{'INTERFACE_MTU'} !~ /^\d+$/) {
+			$errormessage = $Lang::tr{'invalid input for interface mtu'};
+			goto ADVANCED_ERROR;
+		}
+
 		$confighash{$cgiparams{'KEY'}}[29] = $cgiparams{'IKE_VERSION'};
 		$confighash{$cgiparams{'KEY'}}[18] = $cgiparams{'IKE_ENCRYPTION'};
 		$confighash{$cgiparams{'KEY'}}[19] = $cgiparams{'IKE_INTEGRITY'};
@@ -2343,6 +2353,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$confighash{$cgiparams{'KEY'}}[35] = $cgiparams{'MODE'};
 		$confighash{$cgiparams{'KEY'}}[36] = $cgiparams{'INTERFACE_MODE'};
 		$confighash{$cgiparams{'KEY'}}[37] = $cgiparams{'INTERFACE_ADDRESS'};
+		$confighash{$cgiparams{'KEY'}}[38] = $cgiparams{'INTERFACE_MTU'};
 		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 		&writeipsecfiles();
 		if (&vpnenabled) {
@@ -2375,6 +2386,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$cgiparams{'MODE'}			= $confighash{$cgiparams{'KEY'}}[35];
 		$cgiparams{'INTERFACE_MODE'}		= $confighash{$cgiparams{'KEY'}}[36];
 		$cgiparams{'INTERFACE_ADDRESS'}		= $confighash{$cgiparams{'KEY'}}[37];
+		$cgiparams{'INTERFACE_MTU'}		= $confighash{$cgiparams{'KEY'}}[38];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -2562,6 +2574,10 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 				<td>
 					<label>$Lang::tr{'ip address'}/$Lang::tr{'subnet mask'}</label>
 					<input type="text" name="INTERFACE_ADDRESS" value="$cgiparams{'INTERFACE_ADDRESS'}">
+				</td>
+				<td>
+					<label>$Lang::tr{'mtu'}</label>
+					<input type="number" name="INTERFACE_MTU" value="$cgiparams{'INTERFACE_MTU'}" min="576" max="9000">
 				</td>
 			</tr>
 		</tbody>
