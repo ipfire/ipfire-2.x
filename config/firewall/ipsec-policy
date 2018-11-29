@@ -95,6 +95,9 @@ install_policy() {
 				;;
 		esac
 
+		# Install firewall rules only for interfaces without interface
+		[ -n "${interface_mode}" ] && continue
+
 		# Split multiple subnets
 		rightsubnets="${rightsubnets//\|/ }"
 
