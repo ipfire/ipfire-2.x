@@ -124,7 +124,7 @@ void turn_connection_on(char *name, char *type) {
 
 	// Bring the connection up again.
 	snprintf(command, STRING_SIZE - 1,
-		"/usr/sbin/ipsec up %s >/dev/null", name);
+		"/usr/sbin/ipsec stroke up-nb %s >/dev/null", name);
 	safe_system(command);
 }
 
