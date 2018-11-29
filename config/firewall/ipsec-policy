@@ -21,6 +21,8 @@
 
 VPN_CONFIG="/var/ipfire/vpn/config"
 
+eval $(/usr/local/bin/readhash /var/ipfire/vpn/settings)
+
 VARS=(
 	id status name lefthost type ctype x1 x2 x3 leftsubnets
 	x4 righthost rightsubnets x5 x6 x7 x8 x9 x10 x11 x12
@@ -53,8 +55,21 @@ block_subnet() {
 }
 
 install_policy() {
-	# Flush all exists rules
+	# Flush existing rules
+	iptables -F IPSECINPUT
+	iptables -F IPSECOUTPUT
 	iptables -F IPSECBLOCK
+
+	# We are done when IPsec is not enabled
+	[ "${ENABLED}" = "on" ] || exit 0
+
+	# IKE
+	iptables -A IPSECINPUT  -p udp --dport 500 -j ACCEPT
+	iptables -A IPSECOUTPUT -p udp --dport 500 -j ACCEPT
+
+	# IKE NAT
+	iptables -A IPSECINPUT  -p udp --dport 4500 -j ACCEPT
+	iptables -A IPSECOUTPUT -p udp --dport 4500 -j ACCEPT
 
 	# Register local variables
 	local "${VARS[@]}"
