@@ -105,6 +105,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	$(call INSTALL_INITSCRIPT,nfs-server)
 
 	# Install configuration
+	mkdir -pv $(CONFIG_ROOT)/nfs
 	install -v -m 644 $(DIR_SRC)/config/cfgroot/nfs-server $(CONFIG_ROOT)/nfs/nfs-server
 
 	# Install backup include
