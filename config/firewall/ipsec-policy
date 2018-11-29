@@ -82,6 +82,19 @@ install_policy() {
 		# Check if this a net-to-net connection
 		[ "${type}" = "net" ] || continue
 
+		# Install permissions for GRE traffic
+		case "${interface_mode}" in
+			gre)
+				if [ -n "${remote}" ]; then
+					iptables -A IPSECINPUT -p gre \
+						-s "${remote}" -j ACCEPT
+
+					iptables -A IPSECOUTPUT -p gre \
+						-d "${remote}" -j ACCEPT
+				fi
+				;;
+		esac
+
 		# Split multiple subnets
 		rightsubnets="${rightsubnets//\|/ }"
 
