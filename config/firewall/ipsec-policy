@@ -21,6 +21,13 @@
 
 VPN_CONFIG="/var/ipfire/vpn/config"
 
+VARS=(
+	id status name lefthost type ctype x1 x2 x3 leftsubnets
+	x4 righthost rightsubnets x5 x6 x7 x8 x9 x10 x11 x12
+	x13 x14 x15 x16 x17 x18 x19 x20 x21 proto x22 x23 x24
+	route rest
+)
+
 block_subnet() {
 	local subnet="${1}"
 	local action="${2}"
@@ -45,21 +52,15 @@ block_subnet() {
 	return 0
 }
 
-block_ipsec() {
+install_policy() {
 	# Flush all exists rules
 	iptables -F IPSECBLOCK
 
+	# Register local variables
+	local "${VARS[@]}"
 	local action
 
-	local vars="id status name lefthost type ctype x1 x2 x3 leftsubnets"
-	vars="${vars} x4 righthost rightsubnets x5 x6 x7 x8 x9 x10 x11 x12"
-	vars="${vars} x13 x14 x15 x16 x17 x18 x19 x20 x21 proto x22 x23 x24"
-	vars="${vars} route rest"
-
-	# Register local variables
-	local ${vars}
-
-	while IFS="," read -r ${vars}; do
+	while IFS="," read -r "${VARS[@]}"; do
 		# Check if the connection is enabled
 		[ "${status}" = "on" ] || continue
 
@@ -85,4 +86,4 @@ block_ipsec() {
 	done < "${VPN_CONFIG}"
 }
 
-block_ipsec || exit $?
+install_policy || exit $?

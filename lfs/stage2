@@ -115,8 +115,8 @@ endif
 		/usr/lib/firewall/rules.pl
 	install -m 644 $(DIR_SRC)/config/firewall/firewall-lib.pl \
 		/usr/lib/firewall/firewall-lib.pl
-	install -m 755 $(DIR_SRC)/config/firewall/ipsec-block \
-		/usr/lib/firewall/ipsec-block
+	install -m 755 $(DIR_SRC)/config/firewall/ipsec-policy \
+		/usr/lib/firewall/ipsec-policy
 
 	# Nobody user
 	-mkdir -p /home/nobody
