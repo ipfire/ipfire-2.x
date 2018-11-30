@@ -2,7 +2,7 @@
 FROM debian:stable
 
 # Install all updates
-RUN apt-get update && apt-get dist-upgrade
+RUN apt-get update && apt-get dist-upgrade -y
 
 # Install all packages needed for the build
 RUN apt-get install -y \
