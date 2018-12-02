@@ -253,7 +253,10 @@ configure_build() {
 
 configure_build_guess() {
 	case "${HOST_ARCH}" in
-		x86_64|i686|i586)
+		x86_64)
+			echo "x86_64"
+			;;
+		i?86)
 			echo "i586"
 			;;
 
