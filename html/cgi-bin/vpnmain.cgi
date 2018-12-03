@@ -301,7 +301,7 @@ sub writeipsecfiles {
 		print CONF "\tleft=$localside\n";
 
 		if ($interface_mode eq "gre") {
-			print CONF "\tleftsubnet=%dynamic[gre]\n";
+			print CONF "\tleftprotoport=gre\n";
 		} elsif ($interface_mode eq "vti") {
 			print CONF "\tleftsubnet=0.0.0.0/0\n";
 		} else {
@@ -314,7 +314,7 @@ sub writeipsecfiles {
 
 		if ($lconfighash{$key}[3] eq 'net') {
 			if ($interface_mode eq "gre") {
-				print CONF "\trightsubnet=%dynamic[gre]\n";
+				print CONF "\trightprotoport=gre\n";
 			} elsif ($interface_mode eq "vti") {
 				print CONF "\trightsubnet=0.0.0.0/0\n";
 			} else {
