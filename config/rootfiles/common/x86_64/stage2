@@ -93,6 +93,7 @@ usr/local/bin/connscheduler
 usr/local/bin/consort.sh
 usr/local/bin/convert-ovpn
 usr/local/bin/hddshutdown
+usr/local/bin/ipsec-interfaces
 usr/local/bin/makegraphs
 usr/local/bin/qosd
 usr/local/bin/readhash
