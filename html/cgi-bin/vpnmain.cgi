@@ -305,7 +305,7 @@ sub writeipsecfiles {
 		} elsif ($interface_mode eq "vti") {
 			print CONF "\tleftsubnet=0.0.0.0/0\n";
 		} else {
-			print CONF "\tleftsubnet=" . &make_subnets($lconfighash{$key}[8]) . "\n";
+			print CONF "\tleftsubnet=" . &make_subnets("left", $lconfighash{$key}[8]) . "\n";
 		}
 
 		print CONF "\tleftfirewall=yes\n";
@@ -318,7 +318,7 @@ sub writeipsecfiles {
 			} elsif ($interface_mode eq "vti") {
 				print CONF "\trightsubnet=0.0.0.0/0\n";
 			} else {
-				print CONF "\trightsubnet=" . &make_subnets($lconfighash{$key}[11]) . "\n";
+				print CONF "\trightsubnet=" . &make_subnets("right", $lconfighash{$key}[11]) . "\n";
 			}
 		}
 
@@ -3345,13 +3345,19 @@ sub make_algos($$$$$) {
 	return &array_unique(\@algos);
 }
 
-sub make_subnets($) {
+sub make_subnets($$) {
+	my $direction = shift;
 	my $subnets = shift;
 
 	my @nets = split(/\|/, $subnets);
 	my @cidr_nets = ();
 	foreach my $net (@nets) {
 		my $cidr_net = &General::ipcidr($net);
+
+		# Skip 0.0.0.0/0 for remote because this renders the
+		# while system inaccessible
+		next if (($direction eq "right") && ($cidr_net eq "0.0.0.0/0"));
+
 		push(@cidr_nets, $cidr_net);
 	}
 
