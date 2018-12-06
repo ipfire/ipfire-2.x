@@ -1,4 +1,6 @@
 etc/system-release
 etc/issue
+etc/rc.d/init.d/rngd
+lib/udev/rules.d/90-hwrng.rules
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
