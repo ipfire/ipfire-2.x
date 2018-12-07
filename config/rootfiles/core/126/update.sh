@@ -82,6 +82,7 @@ rm -f  /etc/sysconfig/lm_sensors
 # Stop services
 
 # Remove files
+rm -vf /etc/rc.d/rcsysinit.d/S81pakfire
 
 # Extract files
 extract_files
