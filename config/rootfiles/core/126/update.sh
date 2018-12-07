@@ -116,19 +116,21 @@ case "$(uname -m)" in
 			if [ $BOOTSPACE -lt 22000 -o $ROOTSPACE -lt 120000 ]; then
 				/usr/bin/logger -p syslog.emerg -t ipfire \
 				"core-update-${core}: WARNING not enough space for pae kernel."
+				touch /var/run/need_reboot
 			else
 				echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
 				echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-pae
 				echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-pae
 			fi
+		else
+			touch /var/run/need_reboot
 		fi
 		;;
+	*)
+		# This update needs a reboot...
+		touch /var/run/need_reboot
+		;;
 esac
-
-# This update needs a reboot...
-if [ ! -e /opt/pakfire/db/installed/meta-linux-pae ]; then
-	touch /var/run/need_reboot
-fi
 
 # Finish
 /etc/init.d/fireinfo start
