@@ -37,67 +37,67 @@ log() {
 }
 
 main() {
-	# We are done when IPsec is not enabled
-	[ "${ENABLED}" = "on" ] || exit 0
-
 	# Register local variables
 	local "${VARS[@]}"
 	local action
 
 	local interfaces=()
 
-	while IFS="," read -r "${VARS[@]}"; do
-		# Check if the connection is enabled
-		[ "${status}" = "on" ] || continue
+	# We are done when IPsec is not enabled
+	if [ "${ENABLED}" = "on" ]; then
+		while IFS="," read -r "${VARS[@]}"; do
+			# Check if the connection is enabled
+			[ "${status}" = "on" ] || continue
 
-		# Check if this a net-to-net connection
-		[ "${type}" = "net" ] || continue
+			# Check if this a net-to-net connection
+			[ "${type}" = "net" ] || continue
 
-		# Determine the interface name
-		case "${interface_mode}" in
-			gre|vti)
-				local intf="${interface_mode}${id}"
-				;;
-			*)
-				continue
-				;;
-		esac
+			# Determine the interface name
+			case "${interface_mode}" in
+				gre|vti)
+					local intf="${interface_mode}${id}"
+					;;
+				*)
+					continue
+					;;
+			esac
 
-		# Add the interface to the list of all interfaces
-		interfaces+=( "${intf}" )
+			# Add the interface to the list of all interfaces
+			interfaces+=( "${intf}" )
 
-		local args=(
-			"local" "${VPN_IP}"
-			"remote" "${righthost}"
-			"ttl" "255"
-		)
+			local args=(
+				"local" "${VPN_IP}"
+				"remote" "${righthost}"
+				"ttl" "255"
+			)
 
-		# Add key for VTI
-		if [ "${interface_mode}" = "vti" ]; then
-			args+=( key "${id}" )
-		fi
+			# Add key for VTI
+			if [ "${interface_mode}" = "vti" ]; then
+				args+=( key "${id}" )
+			fi
 
-		# Update the settings when the interface already exists
-		if [ -d "/sys/class/net/${intf}" ]; then
-			ip link change dev "${intf}" \
-				type "${interface_mode}" "${args[@]}" &>/dev/null
+			# Update the settings when the interface already exists
+			if [ -d "/sys/class/net/${intf}" ]; then
+				ip link change dev "${intf}" \
+					type "${interface_mode}" "${args[@]}" &>/dev/null
 
-		# Create a new interface and bring it up
-		else
-			log "Creating interface ${intf}"
-			ip link add name "${intf}" type "${interface_mode}" "${args[@]}"
-		fi
+			# Create a new interface and bring it up
+			else
+				log "Creating interface ${intf}"
+				ip link add name "${intf}" type "${interface_mode}" "${args[@]}"
+			fi
 
-		# Add an IP address
-		ip addr flush dev "${intf}"
-		ip addr add "${interface_address}" dev "${intf}"
+			# Add an IP address
+			ip addr flush dev "${intf}"
+			ip addr add "${interface_address}" dev "${intf}"
 
-		# Set MTU
-		ip link set dev "${intf}" mtu "${interface_mtu}"
+			# Set MTU
+			ip link set dev "${intf}" mtu "${interface_mtu}"
 
-		# Bring up the interface
-		ip link set dev "${intf}" up
-	done < "${VPN_CONFIG}"
+			# Bring up the interface
+			ip link set dev "${intf}" up
+		done < "${VPN_CONFIG}"
+	fi
 
 	# Delete all other interfaces
 	local intf
