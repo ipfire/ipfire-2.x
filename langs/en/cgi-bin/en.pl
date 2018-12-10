@@ -1494,6 +1494,7 @@
 'ipsec mode tunnel' => 'Tunnel',
 'ipsec network' => 'IPsec network',
 'ipsec no connections' => 'No active IPsec connections',
+'ipsec settings' => 'IPsec Settings',
 'iptable rules' => 'IPTable rules',
 'iptmangles' => 'IPTable Mangles',
 'iptnats' => 'IPTable Network Address Translation',

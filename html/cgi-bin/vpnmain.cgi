@@ -1447,6 +1447,26 @@ END
 					goto VPNCONF_ERROR;
 				}
 			}
+
+			if ($cgiparams{'MODE'} !~ /^(tunnel|transport)$/) {
+				$errormessage = $Lang::tr{'invalid input for mode'};
+				goto VPNCONF_ERROR;
+			}
+
+			if ($cgiparams{'INTERFACE_MODE'} !~ /^(|gre|vti)$/) {
+				$errormessage = $Lang::tr{'invalid input for interface mode'};
+				goto VPNCONF_ERROR;
+			}
+
+			if (($cgiparams{'INTERFACE_MODE'} ne "") && !&Network::check_subnet($cgiparams{'INTERFACE_ADDRESS'})) {
+				$errormessage = $Lang::tr{'invalid input for interface address'};
+				goto VPNCONF_ERROR;
+			}
+
+			if ($cgiparams{'INTERFACE_MTU'} !~ /^\d+$/) {
+				$errormessage = $Lang::tr{'invalid input for interface mtu'};
+				goto VPNCONF_ERROR;
+			}
 		}
 
 		if ($cgiparams{'ENABLED'} !~ /^(on|off)$/) {
@@ -1997,6 +2017,15 @@ VPNCONF_ERROR:
 	$checked{'AUTH'}{'auth-dn'} = '';
 	$checked{'AUTH'}{$cgiparams{'AUTH'}} = "checked='checked'";
 
+	$selected{'MODE'}{'tunnel'} = '';
+	$selected{'MODE'}{'transport'} = '';
+	$selected{'MODE'}{$cgiparams{'MODE'}} = "selected='selected'";
+
+	$selected{'INTERFACE_MODE'}{''} = '';
+	$selected{'INTERFACE_MODE'}{'gre'} = '';
+	$selected{'INTERFACE_MODE'}{'vti'} = '';
+	$selected{'INTERFACE_MODE'}{$cgiparams{'INTERFACE_MODE'}} = "selected='selected'";
+
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', $errormessage);
@@ -2034,10 +2063,6 @@ VPNCONF_ERROR:
 	<input type='hidden' name='DPD_TIMEOUT' value='$cgiparams{'DPD_TIMEOUT'}' />
 	<input type='hidden' name='FORCE_MOBIKE' value='$cgiparams{'FORCE_MOBIKE'}' />
 	<input type='hidden' name='INACTIVITY_TIMEOUT' value='$cgiparams{'INACTIVITY_TIMEOUT'}' />
-	<input type='hidden' name='MODE' value='$cgiparams{'MODE'}' />
-	<input type='hidden' name='INTERFACE_MODE' value='$cgiparams{'INTERFACE_MODE'}' />
-	<input type='hidden' name='INTERFACE_ADDRESS' value='$cgiparams{'INTERFACE_ADDRESS'}' />
-	<input type='hidden' name='INTERFACE_MTU' value='$cgiparams{'INTERFACE_MTU'}' />
 END
 ;
 	if ($cgiparams{'KEY'}) {
@@ -2119,6 +2144,51 @@ END
 	}
 	print "</table>";
 	&Header::closebox();
+
+	if ($cgiparams{'TYPE'} eq 'net') {
+		&Header::openbox('100%', 'left', $Lang::tr{'ipsec settings'});
+		print <<EOF;
+		<table width='100%'>
+			<tbody>
+				<tr>
+					<td class='boldbase' width='20%'>$Lang::tr{'mode'}:</td>
+					<td width='30%'>
+						<select name='MODE'>
+							<option value='tunnel' $selected{'MODE'}{'tunnel'}>$Lang::tr{'ipsec mode tunnel'}</option>
+							<option value='transport' $selected{'MODE'}{'transport'}>$Lang::tr{'ipsec mode transport'}</option>
+						</select>
+					</td>
+					<td colspan='2'></td>
+				</tr>
+
+				<tr>
+					<td class='boldbase' width='20%'>$Lang::tr{'interface mode'}:</td>
+					<td width='30%'>
+						<select name='INTERFACE_MODE'>
+							<option value='' $selected{'INTERFACE_MODE'}{''}>$Lang::tr{'ipsec interface mode none'}</option>
+							<option value='gre' $selected{'INTERFACE_MODE'}{'gre'}>$Lang::tr{'ipsec interface mode gre'}</option>
+							<option value='vti' $selected{'INTERFACE_MODE'}{'vti'}>$Lang::tr{'ipsec interface mode vti'}</option>
+						</select>
+					</td>
+
+					<td class='boldbase' width='20%'>$Lang::tr{'ip address'}/$Lang::tr{'subnet mask'}:</td>
+					<td width='30%'>
+						<input type="text" name="INTERFACE_ADDRESS" value="$cgiparams{'INTERFACE_ADDRESS'}">
+					</td>
+				</tr>
+
+				<tr>
+					<td class='boldbase' width='20%'>$Lang::tr{'mtu'}:</td>
+					<td width='30%'>
+						<input type="number" name="INTERFACE_MTU" value="$cgiparams{'INTERFACE_MTU'}" min="576" max="9000">
+					</td>
+					<td colspan='2'></td>
+				</tr>
+			</tbody>
+		</table>
+EOF
+		&Header::closebox();
+	}
 
 	if ($cgiparams{'KEY'} && $cgiparams{'AUTH'} eq 'psk') {
 		&Header::openbox('100%', 'left', $Lang::tr{'authentication'});
@@ -2332,26 +2402,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 			goto ADVANCED_ERROR;
 		}
 
-		if ($cgiparams{'MODE'} !~ /^(tunnel|transport)$/) {
-			$errormessage = $Lang::tr{'invalid input for mode'};
-			goto ADVANCED_ERROR;
-		}
-
-		if ($cgiparams{'INTERFACE_MODE'} !~ /^(|gre|vti)$/) {
-			$errormessage = $Lang::tr{'invalid input for interface mode'};
-			goto ADVANCED_ERROR;
-		}
-
-		if (($cgiparams{'INTERFACE_MODE'} ne "") && !&Network::check_subnet($cgiparams{'INTERFACE_ADDRESS'})) {
-			$errormessage = $Lang::tr{'invalid input for interface address'};
-			goto ADVANCED_ERROR;
-		}
-
-		if ($cgiparams{'INTERFACE_MTU'} !~ /^\d+$/) {
-			$errormessage = $Lang::tr{'invalid input for interface mtu'};
-			goto ADVANCED_ERROR;
-		}
-
 		$confighash{$cgiparams{'KEY'}}[29] = $cgiparams{'IKE_VERSION'};
 		$confighash{$cgiparams{'KEY'}}[18] = $cgiparams{'IKE_ENCRYPTION'};
 		$confighash{$cgiparams{'KEY'}}[19] = $cgiparams{'IKE_INTEGRITY'};
@@ -2371,10 +2421,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$confighash{$cgiparams{'KEY'}}[32] = $cgiparams{'FORCE_MOBIKE'};
 		$confighash{$cgiparams{'KEY'}}[33] = $cgiparams{'START_ACTION'};
 		$confighash{$cgiparams{'KEY'}}[34] = $cgiparams{'INACTIVITY_TIMEOUT'};
-		$confighash{$cgiparams{'KEY'}}[35] = $cgiparams{'MODE'};
-		$confighash{$cgiparams{'KEY'}}[36] = $cgiparams{'INTERFACE_MODE'};
-		$confighash{$cgiparams{'KEY'}}[37] = $cgiparams{'INTERFACE_ADDRESS'};
-		$confighash{$cgiparams{'KEY'}}[38] = $cgiparams{'INTERFACE_MTU'};
 		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 		&writeipsecfiles();
 		if (&vpnenabled) {
@@ -2536,15 +2582,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	}
 	$selected{'INACTIVITY_TIMEOUT'}{$cgiparams{'INACTIVITY_TIMEOUT'}} = "selected";
 
-	$selected{'MODE'}{'tunnel'} = '';
-	$selected{'MODE'}{'transport'} = '';
-	$selected{'MODE'}{$cgiparams{'MODE'}} = "selected='selected'";
-
-	$selected{'INTERFACE_MODE'}{''} = '';
-	$selected{'INTERFACE_MODE'}{'gre'} = '';
-	$selected{'INTERFACE_MODE'}{'vti'} = '';
-	$selected{'INTERFACE_MODE'}{$cgiparams{'INTERFACE_MODE'}} = "selected='selected'";
-
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', $errormessage);
@@ -2568,45 +2605,6 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 	<form method='post' enctype='multipart/form-data' action='$ENV{'SCRIPT_NAME'}'>
 	<input type='hidden' name='ADVANCED' value='yes' />
 	<input type='hidden' name='KEY' value='$cgiparams{'KEY'}' />
-
-	<table width="100%">
-		<tbody>
-			<tr>
-				<td width="15%">$Lang::tr{'mode'}:</td>
-				<td>
-					<select name='MODE'>
-						<option value='tunnel' $selected{'MODE'}{'tunnel'}>$Lang::tr{'ipsec mode tunnel'}</option>
-						<option value='transport' $selected{'MODE'}{'transport'}>$Lang::tr{'ipsec mode transport'}</option>
-					</select>
-				</td>
-				<td></td>
-			</tr>
-
-			<tr>
-				<td width="15%">$Lang::tr{'interface mode'}:</td>
-				<td>
-					<label></label>
-					<select name='INTERFACE_MODE'>
-						<option value='' $selected{'INTERFACE_MODE'}{''}>$Lang::tr{'ipsec interface mode none'}</option>
-						<option value='gre' $selected{'INTERFACE_MODE'}{'gre'}>$Lang::tr{'ipsec interface mode gre'}</option>
-						<option value='vti' $selected{'INTERFACE_MODE'}{'vti'}>$Lang::tr{'ipsec interface mode vti'}</option>
-					</select>
-				</td>
-				<td>
-					<label>$Lang::tr{'ip address'}/$Lang::tr{'subnet mask'}</label>
-					<input type="text" name="INTERFACE_ADDRESS" value="$cgiparams{'INTERFACE_ADDRESS'}">
-				</td>
-				<td>
-					<label>$Lang::tr{'mtu'}</label>
-					<input type="number" name="INTERFACE_MTU" value="$cgiparams{'INTERFACE_MTU'}" min="576" max="9000">
-				</td>
-			</tr>
-		</tbody>
-	</table>
-
-	<br><br>
-
-	<h2>$Lang::tr{'cryptographic settings'}</h2>
 
 	<table width='100%'>
 	<thead>

@@ -49,6 +49,7 @@
 < ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec settings
 < mtu
 < none
 < notes
@@ -523,6 +524,7 @@
 < ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec settings
 < last
 < least preferred
 < lifetime
@@ -821,6 +823,7 @@
 < ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec settings
 < mtu
 < subnet mask
 ############################################################################
@@ -972,6 +975,7 @@
 < ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec settings
 < log server protocol
 < masquerade blue
 < masquerade green
@@ -1221,6 +1225,7 @@
 < ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec settings
 < log server protocol
 < masquerade blue
 < masquerade green
@@ -1794,6 +1799,7 @@
 < ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec settings
 < last
 < least preferred
 < lifetime
@@ -2526,6 +2532,7 @@
 < ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec settings
 < last
 < least preferred
 < lifetime
@@ -2811,6 +2818,7 @@
 < ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec settings
 < mtu
 < ovpn error dh
 < ovpn error md5

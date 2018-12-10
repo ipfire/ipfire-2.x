@@ -769,7 +769,6 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Captive clients = unknown string
 WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: bytes = unknown string
-WARNING: untranslated string: cryptographic settings = Cryptographic Settings
 WARNING: untranslated string: dnsforward forward_servers = Nameservers
 WARNING: untranslated string: fwhost cust geoipgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
@@ -821,6 +820,7 @@ WARNING: untranslated string: ipsec interface mode none = - None (Default) -
 WARNING: untranslated string: ipsec interface mode vti = VTI
 WARNING: untranslated string: ipsec mode transport = Transport
 WARNING: untranslated string: ipsec mode tunnel = Tunnel
+WARNING: untranslated string: ipsec settings = IPsec Settings
 WARNING: untranslated string: mtu = MTU
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: pakfire ago = ago.
