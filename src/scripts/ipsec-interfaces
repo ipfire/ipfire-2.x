@@ -37,9 +37,6 @@ log() {
 }
 
 main() {
-	# We are done when IPsec is not enabled
-	[ "${ENABLED}" = "on" ] || exit 0
-
 	# Register local variables
 	local "${VARS[@]}"
 	local action
