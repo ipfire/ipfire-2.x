@@ -22,5 +22,6 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+make_backup ${NAME}
 remove_files
 rm -rfv /etc/rc.d/rc*.d/*haproxy

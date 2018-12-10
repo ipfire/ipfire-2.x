@@ -23,6 +23,7 @@
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
+restore_backup ${NAME}
 
 # Enable autostart
 ln -sf  ../init.d/haproxy /etc/rc.d/rc0.d/K25haproxy
