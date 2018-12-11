@@ -45,6 +45,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/unbound restart
 
 # Finish
 /etc/init.d/fireinfo start
