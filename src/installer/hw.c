@@ -547,8 +547,10 @@ static int hw_calculate_partition_table(struct hw* hw, struct hw_destination* de
 
 		snprintf(dest->part_boot_efi, sizeof(dest->part_boot_efi),
 			"%s%d", path, part_idx++);
-	} else
+	} else {
 		*dest->part_boot_efi = '\0';
+		dest->part_boot_efi_idx = 0;
+	}
 
 	if (dest->size_swap > 0)
 		snprintf(dest->part_swap, sizeof(dest->part_swap), "%s%d", path, part_idx++);
