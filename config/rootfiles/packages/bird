@@ -1,4 +1,6 @@
 etc/bird.conf
+etc/rc.d/init.d/bird
 usr/sbin/bird
 usr/sbin/birdc
 usr/sbin/birdcl
+var/ipfire/backup/addons/includes/bird

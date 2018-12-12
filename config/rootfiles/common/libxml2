@@ -50,7 +50,6 @@
 #usr/include/libxml2/libxml/xpath.h
 #usr/include/libxml2/libxml/xpathInternals.h
 #usr/include/libxml2/libxml/xpointer.h
-#usr/lib/cmake
 #usr/lib/cmake/libxml2
 #usr/lib/cmake/libxml2/libxml2-config.cmake
 #usr/lib/libxml2.la

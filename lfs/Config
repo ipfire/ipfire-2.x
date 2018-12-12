@@ -37,8 +37,20 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 	IS_64BIT = 1
 endif
 
+ifeq "$(BUILD_ARCH)" "armv7hl"
+	IS_32BIT = 1
+endif
+
+ifeq "$(BUILD_ARCH)" "armv5tel"
+	IS_32BIT = 1
+endif
+
 ifeq "$(BUILD_ARCH)" "x86_64"
 	IS_64BIT = 1
+endif
+
+ifeq "$(BUILD_ARCH)" "i586"
+	IS_32BIT = 1
 endif
 
 ifeq "$(TOOLCHAIN)" "1"

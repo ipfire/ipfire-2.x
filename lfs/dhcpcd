@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.11.5
+VER        = 7.0.8
 
 THISAPP    = dhcpcd-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2465624b62c1154f0e89dc69c42c849b
+$(DL_FILE)_MD5 = 77bbb1d73b6f30d6ddcc8b0fd3eae266
 
 install : $(TARGET)
 
@@ -73,7 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix="" --sysconfdir=/var/ipfire/dhcpc \
 			--dbdir=/var/ipfire/dhcpc \
 			--libexecdir=/var/ipfire/dhcpc \
-			--mandir=/usr/share/man --disable-nls
+			--mandir=/usr/share/man
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

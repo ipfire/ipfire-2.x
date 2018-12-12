@@ -1,0 +1,2 @@
+etc/exports
+var/ipfire/nfs/nfs-server

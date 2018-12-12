@@ -1,0 +1,7 @@
+etc/system-release
+etc/issue
+etc/rc.d/init.d/rngd
+etc/rc.d/rcsysinit.d/S71pakfire
+lib/udev/rules.d/90-hwrng.rules
+srv/web/ipfire/cgi-bin/credits.cgi
+var/ipfire/langs

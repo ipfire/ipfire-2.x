@@ -1,0 +1,19 @@
+commit 4af4a4a71827c0bc5e0ec67af23edef4f15cee8e
+Author: Paul Eggert <address@hidden>
+Date:   Mon Mar 5 10:56:29 2018 -0800
+
+    fflush: adjust to glibc 2.28 libio.h removal
+    (Only part of this commit was backported as needed.)
+
+diff -Nrup a/lib/fseterr.c b/lib/fseterr.c
+--- a/lib/fseterr.c	2018-05-08 06:02:48.000000000 -0400
++++ b/lib/fseterr.c	2018-08-14 16:06:19.636282264 -0400
+@@ -29,7 +29,7 @@ fseterr (FILE *fp)
+   /* Most systems provide FILE as a struct and the necessary bitmask in
+      <stdio.h>, because they need it for implementing getc() and putc() as
+      fast macros.  */
+-#if defined _IO_EOF_SEEN || defined _IO_ftrylockfile || __GNU_LIBRARY__ == 1
++#if defined _IO_EOF_SEEN ||  __GNU_LIBRARY__ == 1
+   /* GNU libc, BeOS, Haiku, Linux libc5 */
+   fp->_flags |= _IO_ERR_SEEN;
+ #elif defined __sferror || defined __DragonFly__ || defined __ANDROID__

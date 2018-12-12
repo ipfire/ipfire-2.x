@@ -75,4 +75,7 @@ ClientAliveInterval 10
 # close unresponsive SSH sessions which fail to answer keep-alive
 ClientAliveCountMax 6
 
+# add support for SFTP
+Subsystem	sftp	/usr/lib/openssh/sftp-server
+
 # EOF

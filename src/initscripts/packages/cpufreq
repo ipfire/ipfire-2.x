@@ -21,7 +21,7 @@ case "${1}" in
 
 		# try cpufreq hardware depend modules
 		for i in $(find /lib/modules/$(uname -r)/kernel/drivers/cpufreq \
-		           ! -name speedstep-lib.ko ! -name p4-clockmod.ko ! -name "cpufreq_*" ! -name mperf.ko | sort -d -r); do
+		           ! -name speedstep-lib.ko.xz ! -name p4-clockmod.ko.xz ! -name "cpufreq_*" ! -name mperf.ko.xz | sort -d -r); do
 			module=$(basename $i | cut -d. -f1);
 			modprobe $module > /dev/null 2>&1;
 			if [ ${?} = 0 ]; then

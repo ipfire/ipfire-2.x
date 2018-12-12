@@ -22,7 +22,7 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-mv /usr/share/clamav /usr/share/clamav-update
+mv /var/lib/clamav /var/lib/clamav-update
 ./uninstall.sh
-mv /usr/share/clamav-update /usr/share/clamav
+mv /var/lib/clamav-update /var/lib/clamav
 ./install.sh

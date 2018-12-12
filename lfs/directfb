@@ -79,7 +79,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/DirectFB-1.5.3-add-missing-davinci-files.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/DirectFB-1.7.7-add-missing-davinci-files.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/DirectFB-1.7.7-fix_mknod.patch
 
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \

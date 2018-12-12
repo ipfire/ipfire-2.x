@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.21"							# Version number
-CORE="124"							# Core Level (Filename)
-PAKFIRE_CORE="124"						# Core Level (PAKFIRE)
+CORE="127"							# Core Level (Filename)
+PAKFIRE_CORE="126"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -37,7 +37,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 
-TOOLCHAINVER=20180606
+TOOLCHAINVER=20181030
 
 ###############################################################################
 #
@@ -253,7 +253,10 @@ configure_build() {
 
 configure_build_guess() {
 	case "${HOST_ARCH}" in
-		x86_64|i686|i586)
+		x86_64)
+			echo "x86_64"
+			;;
+		i?86)
 			echo "i586"
 			;;
 
@@ -1039,6 +1042,7 @@ buildbase() {
 	lfsmake2 readline
 	lfsmake2 readline-compat
 	lfsmake2 bzip2
+	lfsmake2 xz
 	lfsmake2 pcre
 	lfsmake2 pcre-compat
 	lfsmake2 bash
@@ -1073,8 +1077,6 @@ buildbase() {
 	lfsmake2 util-linux
 	lfsmake2 udev
 	lfsmake2 vim
-	lfsmake2 xz
-	lfsmake2 paxctl
 }
 
 buildipfire() {
@@ -1083,6 +1085,9 @@ buildipfire() {
   lfsmake2 configroot
   lfsmake2 initscripts
   lfsmake2 backup
+  lfsmake2 openssl
+  [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
+  lfsmake2 openssl-compat
   lfsmake2 popt
   lfsmake2 libusb
   lfsmake2 libusb-compat
@@ -1101,6 +1106,7 @@ buildipfire() {
   lfsmake2 cpio
   lfsmake2 mdadm
   lfsmake2 dracut
+  lfsmake2 libaio
   lfsmake2 lvm2
   lfsmake2 multipath-tools
   lfsmake2 freetype
@@ -1169,13 +1175,12 @@ buildipfire() {
   esac
   lfsmake2 intel-microcode
   lfsmake2 xtables-addons			USPACE="1"
-  lfsmake2 openssl
-  [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
-  lfsmake2 openssl-compat
   lfsmake2 libgpg-error
   lfsmake2 libgcrypt
   lfsmake2 libassuan
   lfsmake2 nettle
+  lfsmake2 json-c
+  lfsmake2 libconfig
   lfsmake2 libevent
   lfsmake2 libevent2
   lfsmake2 expat
@@ -1373,6 +1378,7 @@ buildipfire() {
   lfsmake2 flac
   lfsmake2 lame
   lfsmake2 sox
+  lfsmake2 soxr
   lfsmake2 libshout
   lfsmake2 xvid
   lfsmake2 libmpeg2
@@ -1380,6 +1386,7 @@ buildipfire() {
   lfsmake2 rsync
   lfsmake2 libtirpc
   lfsmake2 rpcbind
+  lfsmake2 keyutils
   lfsmake2 nfs
   lfsmake2 gnu-netcat
   lfsmake2 ncat
@@ -1412,9 +1419,11 @@ buildipfire() {
   lfsmake2 nagios_nrpe
   lfsmake2 nagios-plugins
   lfsmake2 icinga
+  lfsmake2 observium-agent
   lfsmake2 ebtables
   lfsmake2 directfb
   lfsmake2 faad2
+  lfsmake2 alac
   lfsmake2 ffmpeg
   lfsmake2 vdr
   lfsmake2 vdr_streamdev
@@ -1557,6 +1566,7 @@ buildipfire() {
   lfsmake2 lua
   lfsmake2 dnsdist
   lfsmake2 bird
+  lfsmake2 frr
   lfsmake2 dmidecode
   lfsmake2 mcelog
   lfsmake2 rtpproxy
@@ -1573,6 +1583,8 @@ buildipfire() {
   lfsmake2 mdns-repeater
   lfsmake2 i2c-tools
   lfsmake2 nss-myhostname
+  lfsmake2 dehydrated
+  lfsmake2 shairport-sync
 }
 
 buildinstaller() {
@@ -1760,6 +1772,20 @@ clean)
 	fi
 	rm -f $BASEDIR/ipfire-*
 	print_status DONE
+	;;
+docker)
+	# Build the docker image if it does not exist, yet
+	if ! docker images -a | grep -q ^ipfire-builder; then
+		if docker build -t ipfire-builder ${BASEDIR}/tools/docker; then
+			print_status DONE
+		else
+			print_status FAIL
+			exit 1
+		fi
+	fi
+
+	# Run the container and enter a shell
+	docker run -it --privileged -v "${BASEDIR}:/build" -w "/build" ipfire-builder bash -l
 	;;
 downloadsrc)
 	if [ ! -d $BASEDIR/cache ]; then

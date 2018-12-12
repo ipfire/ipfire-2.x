@@ -73,6 +73,8 @@ $wlanapsettings{'SYSLOGLEVEL'} = '0';
 $wlanapsettings{'DEBUG'} = '4';
 $wlanapsettings{'DRIVER'} = 'NL80211';
 $wlanapsettings{'HTCAPS'} = '';
+$wlanapsettings{'VHTCAPS'} = '';
+$wlanapsettings{'NOSCAN'} = 'off';
 
 &General::readhash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 &Header::getcgihash(\%wlanapsettings);
@@ -246,6 +248,10 @@ $checked{'HIDESSID'}{'off'} = '';
 $checked{'HIDESSID'}{'on'} = '';
 $checked{'HIDESSID'}{$wlanapsettings{'HIDESSID'}} = "checked='checked'";
 
+$checked{'NOSCAN'}{'off'} = '';
+$checked{'NOSCAN'}{'on'} = '';
+$checked{'NOSCAN'}{$wlanapsettings{'NOSCAN'}} = "checked='checked'";
+
 $selected{'ENC'}{$wlanapsettings{'ENC'}} = "selected='selected'";
 $selected{'CHANNEL'}{$wlanapsettings{'CHANNEL'}} = "selected='selected'";
 $selected{'COUNTRY'}{$wlanapsettings{'COUNTRY'}} = "selected='selected'";
@@ -389,6 +395,7 @@ print<<END
 		<option value='g' $selected{'HW_MODE'}{'g'}>802.11g</option>
 		<option value='an' $selected{'HW_MODE'}{'an'}>802.11an</option>
 		<option value='gn' $selected{'HW_MODE'}{'gn'}>802.11gn</option>
+		<option value='ac' $selected{'HW_MODE'}{'ac'}>802.11ac</option>
 	</select>
 </td></tr>
 END
@@ -413,6 +420,7 @@ END
 ;
 }
 print<<END
+<tr><td width='25%' class='base'>$Lang::tr{'wlanap neighbor scan'}:&nbsp;</td><td class='base' >on <input type='radio' name='NOSCAN' value='off' $checked{'NOSCAN'}{'off'} /> | <input type='radio' name='NOSCAN' value='on' $checked{'NOSCAN'}{'on'} /> off</td><td class='base' colspan='2'>$Lang::tr{'wlanap neighbor scan warning'}</td></tr>
 <tr><td colspan='4'><br></td></tr>
 <tr><td width='25%' class='base'>$Lang::tr{'wlanap encryption'}:&nbsp;</td><td class='base' colspan='3'>
 	<select name='ENC'>
@@ -428,6 +436,7 @@ END
 ;
 print <<END
 <tr><td width='25%' class='base'>HT Caps:&nbsp;</td><td class='base' colspan='3'><input type='text' name='HTCAPS' size='30' value='$wlanapsettings{'HTCAPS'}' /></td></tr>
+<tr><td width='25%' class='base'>VHT Caps:&nbsp;</td><td class='base' colspan='3'><input type='text' name='VHTCAPS' size='30' value='$wlanapsettings{'VHTCAPS'}' /></td></tr>
 <tr><td width='25%' class='base'>Tx Power:&nbsp;</td><td class='base' colspan='3'><input type='text' name='TXPOWER' size='10' value='$wlanapsettings{'TXPOWER'}' /></td></tr>
 <tr><td width='25%' class='base'>Loglevel (hostapd):&nbsp;</td><td class='base' width='25%'>
 	<select name='SYSLOGLEVEL'>
@@ -577,6 +586,17 @@ ht_capab=$wlanapsettings{'HTCAPS'}
 END
 ;
 
+ }elsif ( $wlanapsettings{'HW_MODE'} eq 'ac' ){
+	print CONFIGFILE <<END
+hw_mode=a
+ieee80211ac=1
+ieee80211n=1
+wmm_enabled=1
+ht_capab=$wlanapsettings{'HTCAPS'}
+vht_capab=$wlanapsettings{'VHTCAPS'}
+END
+;
+
  }else{
  	print CONFIGFILE <<END
 hw_mode=$wlanapsettings{'HW_MODE'}
@@ -607,6 +627,20 @@ END
  	print CONFIGFILE <<END
 ssid=$wlanapsettings{'SSID'}
 ignore_broadcast_ssid=0
+END
+;
+
+ }
+
+ if ( $wlanapsettings{'NOSCAN'} eq 'on' ){
+	print CONFIGFILE <<END
+noscan=1
+END
+;
+
+ }else{
+ 	print CONFIGFILE <<END
+noscan=0
 END
 ;
 

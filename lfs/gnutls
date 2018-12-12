@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.5.15
+VER        = 3.5.19
 
 THISAPP    = gnutls-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = bcdcbc65c50a7499617ad9f4d0058de9
+$(DL_FILE)_MD5 = 1002f4099ce11d785e9811099aaa59a6
 
 install : $(TARGET)
 

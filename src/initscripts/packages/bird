@@ -1,0 +1,41 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/bird
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting BIRD Internet Routing Daemon..."
+		loadproc /usr/sbin/bird
+		;;
+
+	stop)
+		boot_mesg "Stopping BIRD Internet Routing Daemon..."
+		killproc /usr/sbin/bird
+		;;
+
+	reload)
+		boot_mesg "Reloading BIRD Internet Routing Daemon..."
+		reloadproc /usr/sbin/bird
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/bird
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/bird

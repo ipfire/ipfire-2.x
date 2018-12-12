@@ -283,6 +283,7 @@ WARNING: translation string unused: fwdfw rules
 WARNING: translation string unused: fwdfw std network
 WARNING: translation string unused: fwdfw till
 WARNING: translation string unused: fwdfw time
+WARNING: translation string unused: fwdfw useless rule
 WARNING: translation string unused: fwdfw xt access
 WARNING: translation string unused: fwhost Custom Host
 WARNING: translation string unused: fwhost Custom Network
@@ -497,6 +498,7 @@ WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
 WARNING: translation string unused: ovpn log
+WARNING: translation string unused: ovpn mtu-disc
 WARNING: translation string unused: ovpn mtu-disc and mtu not 1500
 WARNING: translation string unused: ovpn mtu-disc maybe
 WARNING: translation string unused: ovpn mtu-disc no
@@ -521,6 +523,9 @@ WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
 WARNING: translation string unused: package failed to install
 WARNING: translation string unused: pakfire core update auto
+WARNING: translation string unused: pakfire health check
+WARNING: translation string unused: pakfire register
+WARNING: translation string unused: pakfire update daily
 WARNING: translation string unused: pakfire updates
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key
@@ -732,64 +737,66 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
-WARNING: untranslated string: Captive clients
-WARNING: untranslated string: Scan for Songs
-WARNING: untranslated string: bytes
-WARNING: untranslated string: captive
-WARNING: untranslated string: crypto error
-WARNING: untranslated string: crypto warning
-WARNING: untranslated string: fwdfw all subnets
-WARNING: untranslated string: fwhost cust geoipgrp
-WARNING: untranslated string: fwhost err hostip
-WARNING: untranslated string: guardian block a host
-WARNING: untranslated string: guardian block httpd brute-force
-WARNING: untranslated string: guardian block ssh brute-force
-WARNING: untranslated string: guardian blockcount
-WARNING: untranslated string: guardian blocked hosts
-WARNING: untranslated string: guardian blocking of this address is not allowed
-WARNING: untranslated string: guardian blocktime
-WARNING: untranslated string: guardian common settings
-WARNING: untranslated string: guardian configuration
-WARNING: untranslated string: guardian daemon
-WARNING: untranslated string: guardian empty input
-WARNING: untranslated string: guardian enabled
-WARNING: untranslated string: guardian firewallaction
-WARNING: untranslated string: guardian ignored hosts
-WARNING: untranslated string: guardian invalid address or subnet
-WARNING: untranslated string: guardian invalid blockcount
-WARNING: untranslated string: guardian invalid blocktime
-WARNING: untranslated string: guardian invalid logfile
-WARNING: untranslated string: guardian logfacility
-WARNING: untranslated string: guardian logfile
-WARNING: untranslated string: guardian loglevel
-WARNING: untranslated string: guardian loglevel_debug
-WARNING: untranslated string: guardian loglevel_info
-WARNING: untranslated string: guardian loglevel_off
-WARNING: untranslated string: guardian logtarget_console
-WARNING: untranslated string: guardian logtarget_file
-WARNING: untranslated string: guardian logtarget_syslog
-WARNING: untranslated string: guardian no entries
-WARNING: untranslated string: guardian priolevel_high
-WARNING: untranslated string: guardian priolevel_low
-WARNING: untranslated string: guardian priolevel_medium
-WARNING: untranslated string: guardian priolevel_very_low
-WARNING: untranslated string: guardian priority level
-WARNING: untranslated string: guardian service
-WARNING: untranslated string: guardian watch snort alertfile
-WARNING: untranslated string: ike lifetime should be between 1 and 8 hours
-WARNING: untranslated string: info messages
-WARNING: untranslated string: no data
-WARNING: untranslated string: ovpn error dh
-WARNING: untranslated string: ovpn error md5
-WARNING: untranslated string: ovpn warning rfc3280
-WARNING: untranslated string: route config changed
-WARNING: untranslated string: routing config added
-WARNING: untranslated string: routing config changed
-WARNING: untranslated string: routing table
-WARNING: untranslated string: ssh active sessions
-WARNING: untranslated string: ssh login time
-WARNING: untranslated string: ssh no active logins
-WARNING: untranslated string: ssh username
-WARNING: untranslated string: vpn start action add
-WARNING: untranslated string: vpn statistics n2n
-WARNING: untranslated string: vpn wait
+WARNING: untranslated string: Captive clients = unknown string
+WARNING: untranslated string: Scan for Songs = unknown string
+WARNING: untranslated string: bytes = unknown string
+WARNING: untranslated string: captive = unknown string
+WARNING: untranslated string: crypto error = Cryptographic error
+WARNING: untranslated string: crypto warning = Cryptographic warning
+WARNING: untranslated string: fwdfw all subnets = All subnets
+WARNING: untranslated string: fwhost cust geoipgrp = unknown string
+WARNING: untranslated string: fwhost err hostip = unknown string
+WARNING: untranslated string: guardian block a host = unknown string
+WARNING: untranslated string: guardian block httpd brute-force = unknown string
+WARNING: untranslated string: guardian block ssh brute-force = unknown string
+WARNING: untranslated string: guardian blockcount = unknown string
+WARNING: untranslated string: guardian blocked hosts = unknown string
+WARNING: untranslated string: guardian blocking of this address is not allowed = unknown string
+WARNING: untranslated string: guardian blocktime = unknown string
+WARNING: untranslated string: guardian common settings = unknown string
+WARNING: untranslated string: guardian configuration = unknown string
+WARNING: untranslated string: guardian daemon = unknown string
+WARNING: untranslated string: guardian empty input = unknown string
+WARNING: untranslated string: guardian enabled = unknown string
+WARNING: untranslated string: guardian firewallaction = unknown string
+WARNING: untranslated string: guardian ignored hosts = unknown string
+WARNING: untranslated string: guardian invalid address or subnet = unknown string
+WARNING: untranslated string: guardian invalid blockcount = unknown string
+WARNING: untranslated string: guardian invalid blocktime = unknown string
+WARNING: untranslated string: guardian invalid logfile = unknown string
+WARNING: untranslated string: guardian logfacility = unknown string
+WARNING: untranslated string: guardian logfile = unknown string
+WARNING: untranslated string: guardian loglevel = unknown string
+WARNING: untranslated string: guardian loglevel_debug = unknown string
+WARNING: untranslated string: guardian loglevel_info = unknown string
+WARNING: untranslated string: guardian loglevel_off = unknown string
+WARNING: untranslated string: guardian logtarget_console = unknown string
+WARNING: untranslated string: guardian logtarget_file = unknown string
+WARNING: untranslated string: guardian logtarget_syslog = unknown string
+WARNING: untranslated string: guardian no entries = unknown string
+WARNING: untranslated string: guardian priolevel_high = unknown string
+WARNING: untranslated string: guardian priolevel_low = unknown string
+WARNING: untranslated string: guardian priolevel_medium = unknown string
+WARNING: untranslated string: guardian priolevel_very_low = unknown string
+WARNING: untranslated string: guardian priority level = unknown string
+WARNING: untranslated string: guardian service = unknown string
+WARNING: untranslated string: guardian watch snort alertfile = unknown string
+WARNING: untranslated string: ike lifetime should be between 1 and 8 hours = unknown string
+WARNING: untranslated string: info messages = unknown string
+WARNING: untranslated string: no data = unknown string
+WARNING: untranslated string: ovpn error dh = The Diffie-Hellman parameter needs to be in minimum 2048 bit! <br>Please generate or upload a new Diffie-Hellman parameter, this can be made below in the section "Diffie-Hellman parameters options".</br>
+WARNING: untranslated string: ovpn error md5 = You host certificate uses MD5 for the signature which is not accepted anymore. <br>Please update to the latest IPFire version and generate a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: route config changed = unknown string
+WARNING: untranslated string: routing config added = unknown string
+WARNING: untranslated string: routing config changed = unknown string
+WARNING: untranslated string: routing table = unknown string
+WARNING: untranslated string: ssh active sessions = Active logins
+WARNING: untranslated string: ssh login time = Logged in since
+WARNING: untranslated string: ssh no active logins = No active logins
+WARNING: untranslated string: ssh username = Username
+WARNING: untranslated string: vpn start action add = Wait for connection initiation
+WARNING: untranslated string: vpn statistics n2n = unknown string
+WARNING: untranslated string: vpn wait = WAITING
+WARNING: untranslated string: wlanap neighbor scan = Neighborhood scan
+WARNING: untranslated string: wlanap neighbor scan warning = Warning! Disabling may violate regulatory rules!

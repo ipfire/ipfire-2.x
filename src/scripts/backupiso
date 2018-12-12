@@ -1,13 +1,31 @@
 #!/bin/sh
+
+# FIXME: edit this lines before release
+IPFVER=2.21
+COREVER=$(cat /opt/pakfire/db/core/mine)
+
 arch=$(uname -m)
+
+case "${arch}" in
+	aarch64|x86_64)
+		;;
+	i?86)
+		arch="i586"
+		;;
+	*)
+		echo "Arch is not supported" >&2
+		exit 1
+		;;
+esac
+
+URL="https://downloads.ipfire.org/releases/ipfire-2.x/$IPFVER-core$COREVER/"
+ISO="ipfire-$IPFVER.$arch-full-core$COREVER.iso"
 
 makeiso() {
 	local dir="${1}"
 	local output="${2}"
 
-	local args="-J -r -V 'ipfire backup ${TS}' \
-		-b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
-		-c boot/isolinux/boot.catalog"
+	local args=
 
 	# Add EFI options when EFI image is present
 	if [ -e "${dir}/boot/isolinux/efiboot.img" ]; then
@@ -15,7 +33,10 @@ makeiso() {
 	fi
 
 	# Compose ISO
-	mkisofs ${args} ${dir} > ${output}
+	mkisofs -J -r -V "IPFire ${IPFVER} ${arch}" \
+		-b boot/isolinux/isolinux.bin -no-emul-boot -boot-load-size 4 -boot-info-table \
+		-c boot/isolinux/boot.catalog \
+		${args} ${dir} > ${output}
 
 	# Add DOS paritition table
 	if [ -e "${dir}/boot/isolinux/efiboot.img" ]; then
@@ -26,26 +47,6 @@ makeiso() {
 
 	return 0
 }
-
-case $arch in
-	i?86)
-		arch="i586"
-		echo "Your arch is $arch"
-		;;
-	x86_64)
-		arch="x86_64"
-		echo "Your arch is $arch"
-		;;
-	*)
-		echo "Arch is not supported"
-		exit 1
-		;;
-esac
-
-COREVER=$(cat /opt/pakfire/db/core/mine)
-# FIXME: edit this lines before release
-URL="https://downloads.ipfire.org/releases/ipfire-2.x/2.21-core$COREVER/"
-ISO="ipfire-2.21.$arch-full-core$COREVER.iso"
 
 if [ -z $1 ]; then
 	echo usage: $0 backup-file
@@ -97,6 +98,9 @@ rm -r backupiso.tmp.${TS}
 
 # Copy backup file to disk
 cp "/var/ipfire/backup/${TS}.ipf" "backupiso.${TS}/backup.ipf"
+
+# Add a version tag
+touch "backupiso.${TS}/backup-${TS}.media"
 
 echo "Running mkisofs"
 makeiso backupiso.${TS} $(basename ${ISO} .iso)-${TS}.iso

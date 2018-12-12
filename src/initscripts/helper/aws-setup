@@ -107,7 +107,8 @@ import_aws_configuration() {
 			chmod 700 /tmp/aws-user-data.script
 
 			# Run the user-data script
-			/tmp/aws-user-data.script &>/root/user-data.log
+			local now="$(date -u +"%s")"
+			/tmp/aws-user-data.script &>/var/log/user-data.log.${now}
 
 			# Delete the script right away
 			rm /tmp/aws-user-data.script

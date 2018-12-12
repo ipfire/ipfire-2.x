@@ -52,7 +52,7 @@ $(TARGET) :
 	# Create all directories
 	for i in addon-lang auth backup ca captive certs connscheduler crls ddns dhcp dhcpc dns dnsforward \
 			ethernet extrahd/bin fwlogs fwhosts firewall isdn key langs logging mac main \
-			menu.d modem nfs optionsfw \
+			menu.d modem optionsfw \
 			ovpn patches pakfire portfw ppp private proxy/advanced/cre \
 			proxy/calamaris/bin qos/bin red remote sensors suricata time \
 			updatexlrator/bin updatexlrator/autocheck urlfilter/autoupdate urlfilter/bin upnp vpn \
@@ -93,7 +93,6 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/menu/*				$(CONFIG_ROOT)/menu.d/
 	cp $(DIR_SRC)/config/cfgroot/modem-defaults		$(CONFIG_ROOT)/modem/defaults
 	cp $(DIR_SRC)/config/cfgroot/modem-settings		$(CONFIG_ROOT)/modem/settings
-	cp $(DIR_SRC)/config/cfgroot/nfs-server			$(CONFIG_ROOT)/nfs/nfs-server
 	cp $(DIR_SRC)/config/cfgroot/proxy-acl			$(CONFIG_ROOT)/proxy/acl-1.4
 	cp $(DIR_SRC)/config/qos/*						$(CONFIG_ROOT)/qos/bin/
 	cp $(DIR_SRC)/config/cfgroot/main-settings		$(CONFIG_ROOT)/main/settings

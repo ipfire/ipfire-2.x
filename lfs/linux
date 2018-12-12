@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 4.14.72
-ARM_PATCHES = 4.14.72-ipfire0
+VER         = 4.14.86
+ARM_PATCHES = 4.14.86-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 78
+PAK_VER    = 79
 DEPS	   = ""
 
 HEADERS_ARCH  = $(BUILD_PLATFORM)
@@ -82,8 +82,8 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= 450b3f5f1124442dee768eaa097fd149
-arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 889a8d49a63bf462067409887f8105bb
+$(DL_FILE)_MD5					= 9ffeff88ca630a6e0ef0257b0a05b8c4
+arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 36b8a9adb8915cbccd18069e2f5af159
 
 install : $(TARGET)
 
@@ -157,10 +157,13 @@ endif
 ifeq "$(KCFG)" "-multi"
 	# Apply Arm-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).patch.xz | patch -Np1
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14-Revert-usb-dwc2-Fix-DMA-alignment.patch
+
 endif
 ifeq "$(BUILD_ARCH)" "aarch64"
 	# Apply Arm-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).patch.xz | patch -Np1
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14-Revert-usb-dwc2-Fix-DMA-alignment.patch
 endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-3.14.79-amba-fix.patch
 

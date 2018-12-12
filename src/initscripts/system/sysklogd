@@ -21,7 +21,7 @@ case "${1}" in
 		loadproc klogd -c 1
 
 		boot_mesg "Starting system log daemon..."
-		loadproc syslogd -m 0
+		loadproc syslogd -m 0 -r
 
 		boot_mesg "Saving Bootlog..."
 		if [ -e /var/log/bootlog ]; then

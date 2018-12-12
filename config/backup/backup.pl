@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/bin/bash
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
@@ -19,148 +19,203 @@
 #                                                                             #
 ###############################################################################
 
-require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/lang.pl";
-require "${General::swroot}/header.pl";
-use File::Path;
-my $debug = 1;
-my @include = "";
-my ($Sekunden, $Minuten, $Stunden, $Monatstag, $Monat, $Jahr, $Wochentag, $Jahrestag, $Sommerzeit) = localtime(time);
-$Jahr = $Jahr + 1900;$Monat = $Monat + 1;
-$Monat = sprintf("%02d", $Monat);
-$Monatstag = sprintf("%02d", $Monatstag);
-$Stunden = sprintf("%02d", $Stunden);
-$Minuten = sprintf("%02d", $Minuten);
+NOW="$(date "+%Y-%m-%d-%H:%M")"
 
-if (($ARGV[0] eq 'include') || ($ARGV[0] eq 'iso')) {
-  &createinclude;
-    my @files = `find / -name *.log* 2>/dev/null`;
-    foreach (@files){
-      push(@include,$_);
-     }
-    my @files = `find /var/log/ -name *messages* 2>/dev/null`;
-    foreach (@files){
-      push(@include,$_);
-     }
-  open(DATEI, ">/tmp/include") || die "Could not save temp include file";
-  print DATEI @include;
-  print "/var/log/messages";
-  close(DATEI);
-  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden$Minuten.ipf --exclude-from='/var/ipfire/backup/exclude' --exclude-from='/var/ipfire/backup/exclude.user' --files-from='/tmp/include' --files-from='/var/ipfire/backup/include.user'");
-  system("rm /tmp/include");
-  if ($ARGV[0] eq 'iso') {
-  	system("/usr/local/bin/backupiso $Jahr$Monat$Monatstag-$Stunden$Minuten &");
-  }
-}
-elsif ($ARGV[0] eq 'exclude') {
-  &createinclude;
-  open(DATEI, ">/tmp/include") || die "Could not save temp include file";
-  print DATEI @include;
-  close(DATEI);
-  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden$Minuten.ipf --exclude-from='/var/ipfire/backup/exclude' --exclude-from='/var/ipfire/backup/exclude.user' --files-from='/tmp/include' --files-from='/var/ipfire/backup/include.user'");
-  system("rm /tmp/include");
-}
-elsif ($ARGV[0] eq 'restore') {
-  system("cd / && tar -xvz -p -f /tmp/restore.ipf");
-  #Here some converter scripts to correct old Backups (before core 65)
-  system("/usr/sbin/ovpn-ccd-convert");
-  #OUTGOINGFW CONVERTER
-  if( -d "${General::swroot}/outgoing"){
-	  if( -f "${General::swroot}/firewall/config" ){
-		  unlink("${General::swroot}/firewall/config");
-		  system("touch ${General::swroot}/firewall/config");
-		  chown 99,99,"${General::swroot}/firewall/config";
-	  }
-	  if( -f "${General::swroot}/firewall/outgoing" ){
-		  unlink("${General::swroot}/firewall/outgoing");
-		  system("touch ${General::swroot}/firewall/outgoing");
-		  chown 99,99,"${General::swroot}/firewall/outgoing";
-	  }
-	  unlink("${General::swroot}/fwhosts/customgroups");
-	  unlink("${General::swroot}/fwhosts/customhosts");
-	  unlink("${General::swroot}/fwhosts/customgroups");
-	  unlink("${General::swroot}/fwhosts/customnetworks");
-	  unlink("${General::swroot}/fwhosts/customservicegrp");
-	  unlink("${General::swroot}/fwhosts/customnetworks");
-	  system("touch ${General::swroot}/fwhosts/customgroups");
-	  system("touch ${General::swroot}/fwhosts/customhosts");
-	  system("touch ${General::swroot}/fwhosts/customnetworks");
-	  system("touch ${General::swroot}/fwhosts/customservicegrp");
-	  #START CONVERTER "OUTGOINGFW"
-	  system("/usr/sbin/convert-outgoingfw");
-	  chown 99,99,"${General::swroot}/fwhosts/customgroups";
-	  chown 99,99,"${General::swroot}/fwhosts/customhosts";
-	  chown 99,99,"${General::swroot}/fwhosts/customnetworks";
-	  chown 99,99,"${General::swroot}/fwhosts/customservicegrp";
-	  #START CONVERTER "OUTGOINGFW"
-	  rmtree("${General::swroot}/outgoing");
-  }
-  #XTACCESS CONVERTER
-  if( -d "${General::swroot}/xtaccess"){
-	  if( -f "${General::swroot}/firewall/input" ){
-		  unlink("${General::swroot}/firewall/input");
-		  system("touch ${General::swroot}/firewall/input");
-	  }
-	  #START CONVERTER "XTACCESS"
-	  system("/usr/sbin/convert-xtaccess");
-	  chown 99,99,"${General::swroot}/firewall/input";
-	  rmtree("${General::swroot}/xtaccess");
-  }
-  #DMZ-HOLES CONVERTER
-  if( -d "${General::swroot}/dmzholes" || -d "${General::swroot}/portfw"){
-	  if( -f "${General::swroot}/firewall/config" ){
-		  unlink("${General::swroot}/firewall/config");
-		  system("touch ${General::swroot}/firewall/config");
-	  }
-	  #START CONVERTER "DMZ-HOLES"
-	  system("/usr/sbin/convert-dmz");
-	  chown 99,99,"${General::swroot}/firewall/config";
-	  rmtree("${General::swroot}/dmzholes");
-  }
-  #PORTFORWARD CONVERTER
-  if( -d "${General::swroot}/portfw"){
-	#START CONVERTER "PORTFW"
-	system("/usr/sbin/convert-portfw");
-	rmtree("${General::swroot}/portfw");
-  }
-  system("/usr/local/bin/firewallctrl");
+list_addons() {
+	local file
+	for file in /var/ipfire/backup/addons/includes/*; do
+		if [ -f "${file}" ]; then
+			basename "${file}"
+		fi
+	done
 
-  # Convert old OpenVPN CCD files (CN change, core 75).
-  system("/usr/local/bin/convert-ovpn");
-}
-elsif ($ARGV[0] eq 'restoreaddon') {
-  if ( -e "/tmp/$ARGV[1]" ){system("mv /tmp/$ARGV[1] /var/ipfire/backup/addons/backup/$ARGV[1]");}
-  system("cd / && tar -xvz -p -f /var/ipfire/backup/addons/backup/$ARGV[1]");
-}
-elsif ($ARGV[0] eq 'cli') {
-  system("tar -cvzf /var/ipfire/backup/$Jahr$Monat$Monatstag-$Stunden$Minuten-$ARGV[1].ipf --files-from='$ARGV[2]' --exclude-from='$ARGV[3]'");
-}
-elsif ($ARGV[0] eq 'addonbackup') {
-  system("tar -cvzf /var/ipfire/backup/addons/backup/$ARGV[1].ipf --files-from='/var/ipfire/backup/addons/includes/$ARGV[1]'");
-}
-elsif ($ARGV[0] =~ /\.(iso|ipf)$/ ) {
-  unlink("$ARGV[0]");
-}
-elsif ($ARGV[0] eq '') {
- printf "No argument given, please use <include><exclude><cli>\n"
-}
-elsif ($ARGV[0] eq 'makedirs') {
- system("mkdir -p /var/ipfire/backup/addons");
- system("mkdir -p /var/ipfire/backup/addons/backup");
- system("mkdir -p /var/ipfire/backup/addons/includes");
+	return 0
 }
 
-sub createinclude(){
+process_includes() {
+	local include
 
-  open(DATEI, "<${General::swroot}/backup/include") || die "Can not open include file";
-  my @Zeilen = <DATEI>;
-  close(DATEI);
-
-  foreach (@Zeilen){
-    chomp($_);
-    my @files = `find $_ -maxdepth 0 2>/dev/null`;
-    foreach (@files){
-      push(@include,$_);
-    }
-  }
+	for include in $@; do
+		local file
+		while read -r file; do
+			for file in ${file}; do
+				if [ -e "${file}" ]; then
+					echo "${file}"
+				fi
+			done
+		done < "${include}"
+	done | sort -u
 }
+
+make_backup() {
+	local filename="${1}"
+	shift
+
+	# Backup all addons first
+	local addon
+	for addon in $(list_addons); do
+		make_addon_backup "${addon}"
+	done
+
+	tar cvzf "${filename}" \
+		--exclude-from="/var/ipfire/backup/exclude" \
+		--exclude-from="/var/ipfire/backup/exclude.user" \
+		$(process_includes "/var/ipfire/backup/include" "/var/ipfire/backup/include.user") \
+		"$@"
+
+	return 0
+}
+
+restore_backup() {
+	local filename="${1}"
+
+	tar xvzpf "${filename}" -C /
+
+	# Run converters
+
+	# Outgoing Firewall
+	if [ -d "/var/ipfire/outgoing" ]; then
+		# Reset files
+		local file
+		for file in /var/ipfire/firewall/{config,outgoing} \
+				/var/ipfire/fwhosts/custom{hosts,groups,networks}; do
+			: > "${file}"
+			chown nobody:nobody "${file}"
+		done
+
+		# Run converter
+		convert-outgoingfw
+
+		# Remove old configuration
+		rm -rf "/var/ipfire/outgoing"
+	fi
+
+	# External Access
+	if [ -d "/var/ipfire/xtaccess" ]; then
+		: > /var/ipfire/firewall/config
+		chown nobody:nobody "/var/ipfire/firewall/config"
+
+		# Run converter
+		convert-xtaccess
+
+		# Remove old configuration
+		rm -rf "/var/ipfire/xtaccess"
+	fi
+
+	# DMZ Holes
+	if [ -d "/var/ipfire/dmzholes" ] || [ -d "/var/ipfire/portfw" ]; then
+		: > /var/ipfire/firewall/config
+		chown nobody:nobody "/var/ipfire/firewall/config"
+
+		# Run converter
+		convert-dmz
+
+		# Remove old configuration
+		rm -rf "/var/ipfire/dmzholes"
+	fi
+
+	# Port Forwardings
+	if [ -d "/var/ipfire/portfw" ]; then
+		# Run converter
+		convert-portfw
+
+		# Remove old configuration
+		rm -rf "/var/ipfire/portfw"
+	fi
+
+	# Reload firewall
+	firewallctrl
+
+	# Convert old OpenVPN CCD files (CN change, Core Update 75)
+	convert-ovpn
+
+	return 0
+}
+
+find_logfiles() {
+	local filelist=( /var/log/messages* /var/log/*.log /var/log/**/*.log )
+
+	echo "${filelist[@]}"
+}
+
+make_addon_backup() {
+	local name="${1}"
+	shift
+
+	if [ ! -f "/var/ipfire/backup/addons/includes/${name}" ]; then
+		echo "${name} does not have any backup includes" >&2
+		return 1
+	fi
+
+	local filename="/var/ipfire/backup/addons/backup/${name}.ipf"
+
+	tar cvzf "${filename}" \
+		$(process_includes "/var/ipfire/backup/addons/includes/${name}")
+}
+
+restore_addon_backup() {
+	local name="${1}"
+
+	if [ -d "/tmp/${name}.ipf" ]; then
+		mv "/tmp/${name}.ipf" "/var/ipfire/backup/addons/backup/${name}.ipf"
+	fi
+
+	tar xvzpf "/var/ipfire/backup/addons/backup/${name}.ipf" -C /
+}
+
+main() {
+	local command="${1}"
+	shift
+
+	# Desired backup filename
+	local filename="/var/ipfire/backup/${NOW}.ipf"
+
+	case "${command}" in
+		include)
+			make_backup "${filename}" $(find_logfiles)
+			;;
+
+		exclude)
+			make_backup "${filename}"
+			;;
+
+		restore)
+			restore_backup "/tmp/restore.ipf"
+			;;
+
+		addonbackup)
+			make_addon_backup "$@"
+			;;
+
+		restoreaddon)
+			restore_addon_backup "${1/.ipf/}"
+			;;
+
+		iso)
+			if make_backup "${filename}"; then
+				/usr/local/bin/backupiso "${NOW}" &
+			fi
+			;;
+
+		makedirs)
+			mkdir -p /var/ipfire/backup/addons/{backup,includes}
+			;;
+
+		list)
+			process_includes "/var/ipfire/backup/include" "/var/ipfire/backup/include.user"
+			;;
+
+		/var/ipfire/backup/*.ipf|/var/ipfire/backup/addons/backup/*.ipf|/var/tmp/backupiso/*.iso)
+			unlink "${command}"
+			;;
+
+		*)
+			echo "${0}: [include|exclude|restore|addonbackup <addon>|restoreaddon <addon>|iso]" >&2
+			return 2
+			;;
+	esac
+
+	return $?
+}
+
+main "$@" || exit $?

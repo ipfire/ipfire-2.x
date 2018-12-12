@@ -1,5 +1,6 @@
 #etc/haproxy
 etc/haproxy/haproxy.cfg
+etc/logrotate.d/haproxy
 etc/rc.d/init.d/haproxy
 usr/sbin/haproxy
 #usr/sbin/haproxy-systemd-wrapper

@@ -31,13 +31,22 @@ if ( $lang eq "") {
 }
 
 $basedir = cwd();
+
+# Load English strings
+require "${basedir}/langs/en/cgi-bin/en.pl";
+
+# Copy hash and empty %tr
+my %tr_en = %tr;
+%tr = ();
+
+# Load requested language
 require "${basedir}/langs/$lang/cgi-bin/$lang.pl";
 
 sub wanted {
 	if ( -f $File::Find::name && open(FILE, $File::Find::name)) {
 		while (<FILE>) {
 			while ($_ =~ /\$Lang::tr\{'([A-Za-z0-9,:_\s\/\.-]+)'\}/g) {
-				$tr2{$1} = 'empty string';
+				$tr2{$1} = $tr_en{$1} || "unknown string";
 			}
 		}
 		close(FILE);
@@ -60,6 +69,6 @@ for my $key ( sort (keys %tr) ) {
 for my $key ( sort(keys %tr2) ) {
 	my $value = $tr2{$key};
 	if (! $tr{$key}) {
-		print "WARNING: untranslated string: $key\n";
+		print "WARNING: untranslated string: $key = $value\n";
 	}
 }

@@ -12,12 +12,12 @@ case "$1" in
 
 			COUNTER=0
 			while [ "$COUNTER" -lt "61" ]; do
-				[ -e "/usr/share/clamav/main.cvd" ] && \
-					[ -e "/usr/share/clamav/daily.cvd" ] || \
-					[ -e "/usr/share/clamav/daily.cld" ] && \
+				[ -e "/var/lib/clamav/main.cvd" ] && \
+					[ -e "/var/lib/clamav/daily.cvd" ] || \
+					[ -e "/var/lib/clamav/daily.cld" ] && \
 				break
 				if [ "$COUNTER" -lt "1" ]; then
-					boot_mesg -n "Download db "
+					boot_mesg -n "Downloading database"
 				else
 					boot_mesg -n "."
 				fi
@@ -46,7 +46,7 @@ case "$1" in
 	stop)
 		boot_mesg "Stopping Clamav Definition Updater..."
 		killproc /usr/bin/freshclam
-		rm -rf /usr/share/clamav/*.tmp
+		rm -rf /var/lib/clamav/*.tmp
 
 		boot_mesg "Stopping Clamav Daemon..."
 		killproc /usr/sbin/clamd

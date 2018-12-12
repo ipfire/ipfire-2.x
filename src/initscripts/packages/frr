@@ -1,0 +1,63 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/frr
+#
+# Description : FRRouting Suite
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+DAEMONS="zebra bgpd ospfd staticd"
+
+case "${1}" in
+	start)
+		# Fix permissions of configuration directory
+		if [ -d "/etc/frr" ]; then
+			chown root.frr /etc/frr
+			chmod 775 /etc/frr
+		fi
+
+		for daemon in ${DAEMONS}; do
+			if [ -f "/etc/frr/${daemon}.conf" ]; then
+				# Set permissions
+				chown frr.frr "/etc/frr/${daemon}.conf"
+
+				boot_mesg "Starting FRRouting ${daemon}..."
+				loadproc "/usr/sbin/${daemon}" --daemon
+			fi
+		done
+		;;
+
+	stop)
+		for daemon in ${DAEMONS}; do
+			boot_mesg "Stopping FRRouting ${daemon}..."
+			killproc "/usr/sbin/${daemon}"
+		done
+		;;
+
+	reload)
+		boot_mesg "Reloading FRRouting..."
+		reloadproc /usr/sbin/frr-reload
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		for daemon in ${DAEMONS}; do
+			statusproc "/usr/sbin/${daemon}"
+		done
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/frr
