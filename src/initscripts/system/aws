@@ -34,7 +34,8 @@ case "${1}" in
 		running_on_ec2 || exit 0
 
 		# Find the first interface to use
-		for i in /sys/class/net/*; do
+		for i in /sys/class/net/red* /sys/class/net/eth* \
+				/sys/class/net/*; do
 			[ -d "${i}" ] || continue
 			i=$(basename ${i})
 
