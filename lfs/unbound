@@ -79,6 +79,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--disable-static \
 			--with-libevent \
 			--enable-event-api \
+			--enable-tfo-client \
+			--enable-tfo-server \
 			ac_cv_func_getentropy=no
 
 	cd $(DIR_APP) && make $(MAKETUNING)
