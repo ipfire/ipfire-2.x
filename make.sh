@@ -290,6 +290,9 @@ stdumount() {
 	umount $BASEDIR/build/usr/src/lfs		2>/dev/null;
 	umount $BASEDIR/build/usr/src/log		2>/dev/null;
 	umount $BASEDIR/build/usr/src/src		2>/dev/null;
+
+	# Umount ramdisk
+	ramdisk_save "${BASEDIR}/build"
 }
 
 now() {
@@ -423,6 +426,68 @@ exiterror() {
 	exit 1
 }
 
+ramdisk_save() {
+	local path="${1}"
+
+	# Check if the ramdisk is actually mounted
+	if ! mountpoint "${path}" &>/dev/null; then
+		return 1
+	fi
+
+	# Remove the bind-mount
+	umount "${path}"
+
+	echo -n "Saving ramdisk (this might take a moment)..."
+
+	# Copy all data
+	mkdir -p "${path}.tmpfs"
+	if ! rsync -aHAXq --delete "${path}.tmpfs/" "${path}/"; then
+		print_status FAIL
+		return 1
+	fi
+
+	# Umount ramdisk
+	umount "${path}.tmpfs"
+	rm -rf "${path}.tmpfs"
+
+	print_status DONE
+}
+
+ramdisk_restore() {
+	local path="${1}"
+
+	# Don't do anything if ramdisk support isn't enabled
+	if [ "${USE_RAMDISK}" != "1" ]; then
+		return 1
+	fi
+
+	# Check for sufficient memory
+	# XXX TODO
+
+	echo -n "Restoring ramdisk (this might take a moment)..."
+
+	# Mount new ramdisk
+	mkdir -p "${path}.tmpfs"
+	if ! mount -t tmpfs none "${path}.tmpfs"; then
+		exiterror "Could not mount ramdisk"
+	fi
+
+	# Restore all data
+	if ! rsync -aHAXq --delete "${path}/" "${path}.tmpfs/"; then
+		umount "${path}.tmpfs"
+		rm -rf "${path}.tmpfs"
+
+		exiterror "Could not restore ramdisk"
+	fi
+
+	# Overlay the files on disk
+	# We would use "mount --move ..." but systemd is always
+	# mounting / as shared which doesn't allow moving anything
+	mount --bind "${path}.tmpfs" "${path}"
+
+	print_status DONE
+}
+
 prepareenv() {
 	# Are we running the right shell?
 	if [ -z "${BASH}" ]; then
@@ -471,6 +536,9 @@ prepareenv() {
 	LC_ALL=POSIX
 	export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
 	unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
+
+	# Mount ramdisk (if requested)
+	ramdisk_restore "${BASEDIR}/build"
 
 	# Make some extra directories
 	mkdir -p "${BASEDIR}/build${TOOLS_DIR}" 2>/dev/null
