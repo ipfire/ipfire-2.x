@@ -117,10 +117,10 @@ logging:
 
 nfq:
    mode: repeat
-   repeat-mark: 1
-   repeat-mask: 1
-   bypass-mark: 1
-   bypass-mask: 1
+   repeat-mark: 2
+   repeat-mask: 2
+#   bypass-mark: 1
+#   bypass-mask: 1
 #  route-queue: 2
 #  batchcount: 20
    fail-open: yes
