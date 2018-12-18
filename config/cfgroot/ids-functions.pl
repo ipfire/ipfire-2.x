@@ -196,11 +196,18 @@ sub downloadruleset {
 	# variable.
 	my $remote_filesize = $header->content_length;
 
+	# Load perl module to deal with temporary files.
+	use File::Temp;
+
+	# Generate temporay file name, located in "/var/tmp" and with a suffix of ".tar.gz".
+	my $tmp = File::Temp->new( SUFFIX => ".tar.gz", DIR => "/var/tmp/", UNLINK => 0 );
+	my $tmpfile = $tmp->filename();
+
 	# Pass the requested url to the downloader.
 	my $request = HTTP::Request->new(GET => $url);
 
-	# Perform the request and save the output into the "$rulestarball" file.
-	my $response = $downloader->request($request, $rulestarball);
+	# Perform the request and save the output into the tmpfile.
+	my $response = $downloader->request($request, $tmpfile);
 
 	# Check if there was any error.
 	unless ($response->is_success) {
@@ -217,8 +224,8 @@ sub downloadruleset {
 	# Load perl stat module.
 	use File::stat;
 
-	# Perform stat on the rulestarball.
-	my $stat = stat($rulestarball);
+	# Perform stat on the tmpfile.
+	my $stat = stat($tmpfile);
 
 	# Grab the local filesize of the downloaded tarball.
 	my $local_filesize = $stat->size;
@@ -229,9 +236,18 @@ sub downloadruleset {
 		&_log_to_syslog("Unable to completely download the ruleset. ");
 		&_log_to_syslog("Only got $local_filesize Bytes instead of $remote_filesize Bytes. ");
 
+		# Delete temporary file.
+		unlink("$tmpfile");
+
 		# Return "1" - false.
 		return 1;
 	}
+
+	# Load file copy module, which contains the move() function.
+	use File::Copy;
+
+	# Overwrite existing rules tarball with the new downloaded one.
+	move("$tmpfile", "$rulestarball");
 
 	# If we got here, everything worked fine. Return nothing.
 	return;
