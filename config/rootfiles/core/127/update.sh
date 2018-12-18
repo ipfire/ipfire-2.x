@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/squid stop
 
 # Remove files
 
@@ -46,6 +47,7 @@ ldconfig
 
 # Start services
 /etc/init.d/unbound restart
+/etc/init.d/squid start
 
 # Finish
 /etc/init.d/fireinfo start
