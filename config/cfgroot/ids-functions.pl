@@ -464,7 +464,7 @@ sub _cleanup_rulesdir() {
 
 		# Delete the current processed file, if not, exit this function
 		# and return an error message.
-		unlink($rulespath/$file) or return "Could not delete $rulespath/$file. $!\n";
+		unlink("$rulespath/$file") or return "Could not delete $rulespath/$file. $!\n";
 	}
 
 	# Return nothing;
