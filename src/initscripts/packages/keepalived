@@ -24,7 +24,7 @@ case "${1}" in
 
 	reload)
 		boot_mesg "Reloading keepalive daemon..."
-		reloadproc /etc/sbin/keepalived
+		reloadproc /usr/sbin/keepalived
 		;;
 
 	restart)
