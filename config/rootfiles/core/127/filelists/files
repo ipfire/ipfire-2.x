@@ -3,3 +3,5 @@ etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 etc/rc.d/init.d/aws
+etc/rc.d/init.d/unbound
+srv/web/ipfire/cgi-bin/dnsforward.cgi
