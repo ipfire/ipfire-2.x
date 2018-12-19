@@ -216,7 +216,11 @@ write_forward_conf() {
 					echo "stub-zone:"
 					echo "	name: ${zone}"
 					for server in ${servers//|/ }; do
-						echo "	stub-addr: ${server}"
+						if [[ ${server} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+							echo "	stub-addr: ${server}"
+						else
+							echo "	stub-host: ${server}"
+						fi
 					done
 					echo
 					echo "server:"
@@ -227,7 +231,11 @@ write_forward_conf() {
 					echo "forward-zone:"
 					echo "	name: ${zone}"
 					for server in ${servers//|/ }; do
-						echo "	forward-addr: ${server}"
+						if [[ ${server} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+							echo "	forward-addr: ${server}"
+						else
+							echo "	forward-host: ${server}"
+						fi
 					done
 					echo
 					;;
