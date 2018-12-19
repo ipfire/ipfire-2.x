@@ -494,6 +494,7 @@
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
 < invalid input for valid till days
+< invalid ip or hostname
 < invalid logserver protocol
 < ipsec
 < ipsec network
@@ -782,6 +783,7 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < dnsforward forward_servers
+< invalid ip or hostname
 < ovpn warning rfc3280
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -921,6 +923,7 @@
 < incoming overhead in bytes per second
 < invalid input for inactivity timeout
 < invalid input for valid till days
+< invalid ip or hostname
 < invalid logserver protocol
 < log server protocol
 < masquerade blue
@@ -1156,6 +1159,7 @@
 < incoming overhead in bytes per second
 < invalid input for inactivity timeout
 < invalid input for valid till days
+< invalid ip or hostname
 < invalid logserver protocol
 < log server protocol
 < masquerade blue
@@ -1712,6 +1716,7 @@
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
 < invalid input for valid till days
+< invalid ip or hostname
 < invalid logserver protocol
 < ipsec
 < ipsec network
@@ -2430,6 +2435,7 @@
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
 < invalid input for valid till days
+< invalid ip or hostname
 < invalid logserver protocol
 < ipsec
 < ipsec network
@@ -2705,6 +2711,7 @@
 < crypto warning
 < dnsforward forward_servers
 < fwdfw all subnets
+< invalid ip or hostname
 < ovpn error dh
 < ovpn error md5
 < ovpn warning rfc3280

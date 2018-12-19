@@ -70,8 +70,8 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'add'})
 	my @forward_servers = split(/\,/, $cgiparams{'FORWARD_SERVERS'});
 	foreach my $forward_server (@forward_servers) {
 		# Check if the settings for the forward server are valid.
-		unless(&General::validip($forward_server)) {
-			$errormessage = "$Lang::tr{'invalid ip'}: $forward_server";
+		unless(&General::validip($forward_server) || &General::validfqdn($forward_server)) {
+			$errormessage = "$Lang::tr{'invalid ip or hostname'}: $forward_server";
 			last;
 		}
 	}

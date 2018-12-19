@@ -1121,6 +1121,7 @@ WARNING: untranslated string: invalid input for remote host/ip = Invalid input f
 WARNING: untranslated string: invalid input for state or province = Invalid input for state or province.
 WARNING: untranslated string: invalid input for valid till days = Invalid input for Valid till (days).
 WARNING: untranslated string: invalid ip = Invalid IP Address
+WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: invalid keep time = Keep time must be a valid number
 WARNING: untranslated string: invalid key = Invalid key.
 WARNING: untranslated string: invalid local-remote id = local & remote id must not be equal and begin with a "@" sign. These are leftid and rightid in strongswan terminology.

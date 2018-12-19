@@ -782,6 +782,7 @@ WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: guardian watch snort alertfile = unknown string
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours = unknown string
 WARNING: untranslated string: info messages = unknown string
+WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
 WARNING: untranslated string: pakfire ago = ago.

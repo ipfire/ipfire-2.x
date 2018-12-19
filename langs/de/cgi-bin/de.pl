@@ -1405,6 +1405,7 @@
 'invalid input for state or province' => 'Ungültige Eingabe für Bundesstaat oder Provinz.',
 'invalid input for valid till days' => 'Ungültige Eingabe für Gültig bis (Tage).',
 'invalid ip' => 'Ungültige IP-Adresse',
+'invalid ip or hostname' => 'Ungültige IP-Addresse oder Hostname',
 'invalid keep time' => 'Die Aufbewahrungszeit muss eine gültige Zahl sein',
 'invalid key' => 'Ungültiger Schlüssel.',
 'invalid loaded file' => 'Ungültige geladene Datei',

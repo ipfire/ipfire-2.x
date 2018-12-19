@@ -1029,6 +1029,7 @@ WARNING: untranslated string: invalid input for dpd delay = Invalid input for DP
 WARNING: untranslated string: invalid input for dpd timeout = Invalid input for DPD timeout
 WARNING: untranslated string: invalid input for inactivity timeout = Invalid input for Inactivity Timeout
 WARNING: untranslated string: invalid input for valid till days = Invalid input for Valid till (days).
+WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: invalid logserver protocol = Invalid syslogd server protocol
 WARNING: untranslated string: ipsec = IPsec
 WARNING: untranslated string: ipsec network = IPsec network

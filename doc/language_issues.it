@@ -857,6 +857,7 @@ WARNING: untranslated string: incoming overhead in bytes per second = Incoming O
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: invalid input for inactivity timeout = Invalid input for Inactivity Timeout
 WARNING: untranslated string: invalid input for valid till days = Invalid input for Valid till (days).
+WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: invalid logserver protocol = Invalid syslogd server protocol
 WARNING: untranslated string: log server protocol = protocol:
 WARNING: untranslated string: masquerade blue = Masquerade BLUE
