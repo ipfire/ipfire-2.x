@@ -846,7 +846,7 @@
 'dnsforward configuration' => 'DNS forward configuration',
 'dnsforward edit an entry' => 'Edit an existing entry',
 'dnsforward entries' => 'Current entries',
-'dnsforward forward_server' => 'Nameserver',
+'dnsforward forward_servers' => 'Nameservers',
 'dnsforward zone' => 'Zone',
 'dnssec aware' => 'DNSSEC Aware',
 'dnssec disabled warning' => 'WARNING: DNSSEC has been disabled',

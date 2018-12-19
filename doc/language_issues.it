@@ -766,6 +766,7 @@ WARNING: untranslated string: dhcp dns update = DNS Update
 WARNING: untranslated string: dhcp dns update algo = Algorithm:
 WARNING: untranslated string: dhcp dns update secret = Secret:
 WARNING: untranslated string: dl client arch insecure = Download insecure Client Package (zip)
+WARNING: untranslated string: dnsforward forward_servers = Nameservers
 WARNING: untranslated string: dnssec disabled warning = WARNING: DNSSEC has been disabled
 WARNING: untranslated string: eight hours = 8 Hours
 WARNING: untranslated string: email config = Configuration

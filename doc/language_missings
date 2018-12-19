@@ -210,7 +210,7 @@
 < dnsforward configuration
 < dnsforward edit an entry
 < dnsforward entries
-< dnsforward forward_server
+< dnsforward forward_servers
 < dnsforward zone
 < dnssec aware
 < dnssec disabled warning
@@ -781,6 +781,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< dnsforward forward_servers
 < ovpn warning rfc3280
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -860,6 +861,7 @@
 < dhcp dns update algo
 < dhcp dns update secret
 < dl client arch insecure
+< dnsforward forward_servers
 < dnssec disabled warning
 < eight hours
 < email config
@@ -1082,6 +1084,7 @@
 < dh name is invalid
 < dh parameter
 < dl client arch insecure
+< dnsforward forward_servers
 < dnssec aware
 < dnssec disabled warning
 < dnssec information
@@ -1423,7 +1426,7 @@
 < dnsforward configuration
 < dnsforward edit an entry
 < dnsforward entries
-< dnsforward forward_server
+< dnsforward forward_servers
 < dnsforward zone
 < dnssec aware
 < dnssec disabled warning
@@ -2137,7 +2140,7 @@
 < dnsforward configuration
 < dnsforward edit an entry
 < dnsforward entries
-< dnsforward forward_server
+< dnsforward forward_servers
 < dnsforward zone
 < dnssec aware
 < dnssec disabled warning
@@ -2700,6 +2703,7 @@
 ############################################################################
 < crypto error
 < crypto warning
+< dnsforward forward_servers
 < fwdfw all subnets
 < ovpn error dh
 < ovpn error md5

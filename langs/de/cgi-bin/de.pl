@@ -821,7 +821,7 @@
 'dnsforward configuration' => 'Einstellungen für DNS Weiterleitung',
 'dnsforward edit an entry' => 'Existierenden Eintrag bearbeiten',
 'dnsforward entries' => 'Aktuelle Einträge',
-'dnsforward forward_server' => 'DNS-Server',
+'dnsforward forward_servers' => 'DNS-Server',
 'dnsforward zone' => 'Zone',
 'dnssec aware' => 'DNSSEC-Informationen verfügbar, aber nicht validierend',
 'dnssec disabled warning' => 'WARNUNG: DNSSEC wurde deaktiviert',
