@@ -951,10 +951,6 @@ if (%idsrules) {
 		# Output display table for rule files
 		print "<table width='100%'>\n";
 
-		# Local variable required for java script to show/hide
-		# rules of a rulefile.
-		my $rulesetcount = 1;
-
 		# Loop over each rule file
 		foreach my $rulefile (sort keys(%idsrules)) {
 			my $rulechecked = '';
@@ -964,6 +960,9 @@ if (%idsrules) {
 				$rulechecked = 'CHECKED';
 			}
 
+			# Convert rulefile name into category name.
+			my $categoryname = &_rulefile_to_category($rulefile);
+
 			# Table and rows for the rule files.
 			print"<tr>\n";
 			print"<td class='base' width='5%'>\n";
@@ -971,12 +970,12 @@ if (%idsrules) {
 			print"</td>\n";
 			print"<td class='base' width='90%'><b>$rulefile</b></td>\n";
 			print"<td class='base' width='5%' align='right'>\n";
-			print"<a href=\"javascript:showhide('ruleset$rulesetcount')\">SHOW</a>\n";
+			print"<a href=\"javascript:showhide('$categoryname')\">SHOW</a>\n";
 			print"</td>\n";
 			print"</tr>\n";
 
 			# Rows which will be hidden per default and will contain the single rules.
-			print"<tr  style='display:none' id='ruleset$rulesetcount'>\n";
+			print"<tr  style='display:none' id='$categoryname'>\n";
 			print"<td colspan='3'>\n";
 
 			# Local vars
@@ -1032,9 +1031,6 @@ if (%idsrules) {
 
 			# Close display table
 			print "</tr></table></td></tr>";
-
-			# Finished whith the rule file, increase count.
-			$rulesetcount++;
 		}
 
 		# Close display table
@@ -1360,4 +1356,28 @@ sub read_enabled_disabled_sids_file($) {
 
 	# Return the hash.
 	return %temphash;
+}
+
+#
+## Private function to convert a given rulefile to a category name.
+## ( No file extension anymore and if the name contained a dot, it
+## would be replaced by a underline sign.)
+#
+sub _rulefile_to_category($) {
+        my ($filename) = @_;
+
+	# Splitt the filename into single chunks and store them in a
+	# temorary array.
+        my @parts = split(/\./, $filename);
+
+	# Return / Remove last element of the temporary array.
+	# This removes the file extension.
+        pop @parts;
+
+	# Join together the single elements of the temporary array.
+	# If these are more than one, use a "underline" for joining.
+        my $category = join '_', @parts;
+
+	# Return the converted filename.
+        return $category;
 }
