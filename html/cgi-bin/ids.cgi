@@ -493,6 +493,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 } elsif ($cgiparams{'IDS'} eq $Lang::tr{'save'}) {
 	my %oldidssettings;
 	my $reload_page;
+	my $monitored_zones = 0;
 
 	# Read-in current (old) IDS settings.
 	&General::readhash("$IDS::settingsdir/settings", \%oldidssettings);
@@ -505,6 +506,31 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 		# Check if the oinkcode contains unallowed chars.
 		unless ($cgiparams{'OINKCODE'} =~ /^[a-z0-9]+$/) {
 			$errormessage = $Lang::tr{'invalid input for oink code'};
+		}
+	}
+
+	# Check if the IDS should be enabled.
+	if ($cgiparams{'ENABLE_IDS'} eq "on") {
+		# Check if any ruleset is available. Otherwise abort and display an error.
+		unless(%idsrules) {
+			$errormessage = $Lang::tr{'ids no ruleset available'};
+		}
+
+		# Loop through the array of available interfaces.
+		foreach my $zone (@network_zones) {
+			# Convert interface name into upper case.
+			my $zone_upper = uc($zone);
+
+			# Check if the IDS is enabled for this interaces.
+			if ($cgiparams{"ENABLE_IDS_$zone_upper"}) {
+				# Increase count.
+				$monitored_zones++;
+			}
+		}
+
+		# Check if at least one zone should be monitored, or show an error.
+		unless ($monitored_zones >= 1) {
+			$errormessage = $Lang::tr{'ids no network zone'};
 		}
 	}
 

@@ -1329,6 +1329,8 @@
 'ids active on' => 'Aktiv auf',
 'ids log viewer' => 'Ansicht IDS-Protokoll',
 'ids logs' => 'IDS-Protokolldateien',
+'ids no network zone' => 'Mindestends eine Netzwerk-Zone muss überwacht werden!',
+'ids no ruleset available' => 'Kein Regelset verfügbar, bitte downloaden Sie eines!',
 'ids preprocessor' => 'IDS-Präprozessor',
 'ids rules license' => 'Um  Sourcefire VRT Zertifizierte Regeln zu nutzen, müssen Sie sich unter',
 'ids rules license1' => ' registrieren.',
