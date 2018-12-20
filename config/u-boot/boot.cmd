@@ -39,7 +39,7 @@ if test "${SERIAL-CONSOLE}" = "ON"; then
 	if test ${console} = ""; then
 		if test "${board}" = "rpi"; then
 			if test ${cpu} = "armv8"; then
-				if test "${fdtfile}" = "boradcom/bcm2837-rpi-3-b-plus.dtb"; then
+				if test "${fdtfile}" = "broadcom/bcm2837-rpi-3-b-plus.dtb"; then
 					setenv console ttyS1,115200n8;
 				else
 					if test "${fdtfile}" = "broadcom/bcm2837-rpi-3-b.dtb"; then
