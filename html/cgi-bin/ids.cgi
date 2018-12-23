@@ -34,6 +34,7 @@ my %color = ();
 my %mainsettings = ();
 my %idsrules = ();
 my %idssettings=();
+my %rulessettings=();
 my %rulesetsources = ();
 my %cgiparams=();
 my %checked=();
@@ -63,6 +64,12 @@ my $disabled_sids_file = "$IDS::settingsdir/oinkmaster-disabled-sids.conf";
 # File which contains wheater the rules should be changed.
 my $modify_sids_file = "$IDS::settingsdir/oinkmaster-modify-sids.conf";
 
+# File which stores the configured IPS settings.
+my $idssettingsfile = "$IDS::settingsdir/settings";
+
+# File which stores the configured rules-settings.
+my $rulessettingsfile = "$IDS::settingsdir/rules-settings";
+
 # File which stores the configured settings for whitelisted addresses.
 my $ignoredfile = "$IDS::settingsdir/ignored";
 
@@ -76,6 +83,8 @@ unless (-f "$enabled_sids_file") { &IDS::create_empty_file($enabled_sids_file); 
 unless (-f "$disabled_sids_file") { &IDS::create_empty_file($disabled_sids_file); }
 unless (-f "$modify_sids_file") { &IDS::create_empty_file($modify_sids_file); }
 unless (-f "$idsusedrulefilesfile") { &IDS::create_empty_file($idsusedrulefilesfile); }
+unless (-f "$idssettingsfile") { &IDS::create_empty_file($idssettingsfile); }
+unless (-f "$rulessettingsfile") { &IDS::create_empty_file($rulessettingsfile); }
 unless (-f "$ignoredfile") { &IDS::create_empty_file($ignoredfile); }
 unless (-f "$whitelistfile" ) { &IDS::create_empty_file($whitelistfile); }
 
@@ -311,8 +320,38 @@ if(-f $idsusedrulefilesfile) {
 	}
 }
 
+# Save ruleset configuration.
+if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
+	my %oldsettings;
+
+	# Read-in current (old) IDS settings.
+	&General::readhash("$rulessettingsfile", \%oldsettings);
+
+	# Prevent form name from been stored in conf file.
+	delete $cgiparams{'RULESET'};
+
+	# Check if an oinkcode has been provided.
+	if ($cgiparams{'OINKCODE'}) {
+		# Check if the oinkcode contains unallowed chars.
+		unless ($cgiparams{'OINKCODE'} =~ /^[a-z0-9]+$/) {
+			$errormessage = $Lang::tr{'invalid input for oink code'};
+		}
+	}
+
+	# Go on if there are no error messages.
+	if (!$errormessage) {
+		# Store settings into settings file.
+		&General::writehash("$rulessettingsfile", \%cgiparams);
+	}
+
+	# Check if the the automatic rule update hass been touched.
+	if($cgiparams{'AUTOUPDATE_INTERVAL'} ne $oldsettings{'AUTOUPDATE_INTERVAL'}) {
+		# Call suricatactrl to set the new interval.
+		&IDS::call_suricatactrl("cron", $cgiparams{'AUTOUPDATE_INTERVAL'});
+	}
+
 # Save ruleset.
-if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
+} elsif ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	# Arrays to store which rulefiles have been enabled and will be used.
 	my @enabled_rulefiles;
 
@@ -496,18 +535,10 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	my $monitored_zones = 0;
 
 	# Read-in current (old) IDS settings.
-	&General::readhash("$IDS::settingsdir/settings", \%oldidssettings);
+	&General::readhash("$idssettingsfile", \%oldidssettings);
 
 	# Prevent form name from been stored in conf file.
 	delete $cgiparams{'IDS'};
-
-	# Check if an oinkcode has been provided.
-	if ($cgiparams{'OINKCODE'}) {
-		# Check if the oinkcode contains unallowed chars.
-		unless ($cgiparams{'OINKCODE'} =~ /^[a-z0-9]+$/) {
-			$errormessage = $Lang::tr{'invalid input for oink code'};
-		}
-	}
 
 	# Check if the IDS should be enabled.
 	if ($cgiparams{'ENABLE_IDS'} eq "on") {
@@ -537,17 +568,11 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	# Go on if there are no error messages.
 	if (!$errormessage) {
 		# Store settings into settings file.
-		&General::writehash("$IDS::settingsdir/settings", \%cgiparams);
+		&General::writehash("$idssettingsfile", \%cgiparams);
 	}
 
 	# Generate file to store the home net.
 	&generate_home_net_file();
-
-	# Check if the the automatic rule update hass been touched.
-	if($cgiparams{'AUTOUPDATE_INTERVAL'} ne $oldidssettings{'AUTOUPDATE_INTERVAL'}) {
-		# Call suricatactrl to set the new interval.
-		&IDS::call_suricatactrl("cron", $cgiparams{'AUTOUPDATE_INTERVAL'});
-	}
 
 	# Check if the runmode has been changed.
 	if($cgiparams{'RUN_MODE'} ne $oldidssettings{'RUN_MODE'}) {
@@ -601,13 +626,20 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	}
 }
 
-# Read-in idssettings
-&General::readhash("$IDS::settingsdir/settings", \%idssettings);
+# Read-in idssettings and rulesetsettings
+&General::readhash("$idssettingsfile", \%idssettings);
+&General::readhash("$rulessettingsfile", \%rulessettings);
 
 # If the runmode has not been configured yet, set default value.
 unless(exists($idssettings{'RUN_MODE'})) {
         # Set default to IPS.
         $idssettings{'RUN_MODE'} = 'IPS';
+}
+
+# If no autoupdate intervall has been configured yet, set default value.
+unless(exists($rulessettings{'AUTOUPDATE_INTERVAL'})) {
+	# Set default to "weekly".
+	$rulessettings{'AUTOUPDATE_INTERVAL'} = 'weekly';
 }
 
 # Read-in ignored hosts.
@@ -624,11 +656,11 @@ $selected{'RULES'}{'community'} = '';
 $selected{'RULES'}{'emerging'} = '';
 $selected{'RULES'}{'registered'} = '';
 $selected{'RULES'}{'subscripted'} = '';
-$selected{'RULES'}{$idssettings{'RULES'}} = "selected='selected'";
+$selected{'RULES'}{$rulessettings{'RULES'}} = "selected='selected'";
 $selected{'AUTOUPDATE_INTERVAL'}{'off'} = '';
 $selected{'AUTOUPDATE_INTERVAL'}{'daily'} = '';
 $selected{'AUTOUPDATE_INTERVAL'}{'weekly'} = '';
-$selected{'AUTOUPDATE_INTERVAL'}{$idssettings{'AUTOUPDATE_INTERVAL'}} = "selected='selected'";
+$selected{'AUTOUPDATE_INTERVAL'}{$rulessettings{'AUTOUPDATE_INTERVAL'}} = "selected='selected'";
 
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
 
@@ -708,17 +740,6 @@ END
 # Draw elements for IDS configuration.
 &Header::openbox('100%', 'center', $Lang::tr{'settings'});
 
-my $rulesdate;
-
-# Check if a ruleset allready has been downloaded.
-if ( -f "$IDS::rulestarball"){
-	# Call stat on the filename to obtain detailed information.
-        my @Info = stat("$IDS::rulestarball");
-
-	# Grab details about the creation time.
-        $rulesdate = localtime($Info[9]);
-}
-
 print <<END
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%' border='0'>
@@ -775,19 +796,45 @@ foreach my $zone (@network_zones) {
 
 print <<END
 		</tr>
+        </table>
 
+        <br><br>
+
+        <table width='100%'>
+                <tr>
+                        <td align='right'><input type='submit' name='IDS' value='$Lang::tr{'save'}' /></td>
+                </tr>
+        </table>
+</form>
+END
+;
+
+&Header::closebox();
+
+# Draw elements for ruleset configuration.
+&Header::openbox('100%', 'center', $Lang::tr{'ids ruleset settings'});
+
+my $rulesdate;
+
+# Check if a ruleset allready has been downloaded.
+if ( -f "$IDS::rulestarball"){
+	# Call stat on the filename to obtain detailed information.
+	my @Info = stat("$IDS::rulestarball");
+
+	# Grab details about the creation time.
+	$rulesdate = localtime($Info[9]);
+}
+
+print <<END
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+        <table width='100%' border='0'>
 		<tr>
-			<td colspan='4'><br><br></td>
+			<td><b>$Lang::tr{'ids rules update'}</b></td>
+			<td><b>$Lang::tr{'ids automatic rules update'}</b></td>
 		</tr>
 
 		<tr>
-			<td colspan='2'><b>$Lang::tr{'ids rules update'}</b></td>
-			<td colspan='2'><b>$Lang::tr{'ids automatic rules update'}</b></td>
-		</tr>
-
-		<tr>
-			<td colspan='2'><select name='RULES'>
-				<option value='nothing' $selected{'RULES'}{'nothing'} >$Lang::tr{'no'}</option>
+			<td><select name='RULES'>
 				<option value='emerging' $selected{'RULES'}{'emerging'} >$Lang::tr{'emerging rules'}</option>
 				<option value='community' $selected{'RULES'}{'community'} >$Lang::tr{'community rules'}</option>
 				<option value='registered' $selected{'RULES'}{'registered'} >$Lang::tr{'registered user rules'}</option>
@@ -795,7 +842,7 @@ print <<END
 			</select>
 			</td>
 
-			<td colspan='2'>
+			<td>
 				<select name='AUTOUPDATE_INTERVAL'>
 					<option value='off' $selected{'AUTOUPDATE_INTERVAL'}{'off'} >$Lang::tr{'no'}</option>
 					<option value='daily' $selected{'AUTOUPDATE_INTERVAL'}{'daily'} >$Lang::tr{'urlfilter daily'}</option>
@@ -805,29 +852,40 @@ print <<END
 		</tr>
 
 		<tr>
-			<td colspan='4'>
+			<td colspan='2'>
 				<br>$Lang::tr{'ids rules license'} <a href='https://www.snort.org/subscribe' target='_blank'>www.snort.org</a>$Lang::tr{'ids rules license1'}</br>
 				<br>$Lang::tr{'ids rules license2'} <a href='https://www.snort.org/account/oinkcode' target='_blank'>Get an Oinkcode</a>, $Lang::tr{'ids rules license3'}</br>
 			</td>
 		</tr>
 
 		<tr>
-			<td colspan='4' nowrap='nowrap'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$idssettings{'OINKCODE'}'></td>
+			<td colspan='2' nowrap='nowrap'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$rulessettings{'OINKCODE'}'></td>
 		</tr>
 
 		<tr>
-			<td colspan='4' align='left'><br>
-				<input type='submit' name='RULESET' value='$Lang::tr{'download new ruleset'}'>&nbsp;$Lang::tr{'updates installed'}: $rulesdate
+			<td>&nbsp;</td>
+
+			<td align='right'>
+END
+;
+		# Check if a ruleset source has been configured yet.
+		unless($rulessettings{'RULES'}) {
+			# If no ruleset settings have been saved yet, disable the button to download / update the ruleset.
+			print"<input type='submit' name='RULESET' disabled='disabled' value='$Lang::tr{'download new ruleset'}'>\n";
+		} else {
+			# Ruleset setting have been saved. - Check if a ruleset already is downloaded.
+			if (%idsrules) {
+				# Allow to press the button and show it as "update ruleset".
+				print"<input type='submit' name='RULESET' value='$Lang::tr{'update ruleset'}'>\n";
+			} else {
+				# Also allow to press the button, but show it as "download new ruleset".
+				print"<input type='submit' name='RULESET' value='$Lang::tr{'download new ruleset'}'>\n";
+			}
+		}
+print <<END;
+				<input type='submit' name='RULESET' value='$Lang::tr{'save'}'>
 			</td>
 
-		</tr>
-	</table>
-
-	<br><br>
-
-	<table width='100%'>
-		<tr>
-			<td align='right'><input type='submit' name='IDS' value='$Lang::tr{'save'}' /></td>
 		</tr>
 	</table>
 </form>
