@@ -789,6 +789,14 @@ foreach my $zone (@network_zones) {
 	# Convert current zone name to upper case.
 	my $zone_upper = uc($zone);
 
+	# Set zone name.
+	my $zone_name = $zone;
+
+	# Dirty hack to get the correct language string for the red zone.
+	if ($zone eq "red") {
+		$zone_name = "red1";
+	}
+
 	# Grab checkbox status from settings hash.
 	if ($idssettings{"ENABLE_IDS_$zone_upper"} eq "on") {
 		$checked_input = "checked = 'checked'";
@@ -796,7 +804,7 @@ foreach my $zone (@network_zones) {
 
 	print "<td class='base' width='25%'>\n";
 	print "<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>\n";
-	print "&nbsp$Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone}</font>\n";
+	print "&nbsp$Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>\n";
 	print "</td>\n";
 }
 
