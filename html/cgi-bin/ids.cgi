@@ -88,6 +88,14 @@ unless (-f "$rulessettingsfile") { &IDS::create_empty_file($rulessettingsfile); 
 unless (-f "$ignoredfile") { &IDS::create_empty_file($ignoredfile); }
 unless (-f "$whitelistfile" ) { &IDS::create_empty_file($whitelistfile); }
 
+# Hash which contains the colour code of a network zone.
+my %colourhash = (
+	'red' => $Header::colourred,
+	'green' => $Header::colourgreen,
+	'blue' => $Header::colourblue,
+	'orange' => $Header::colourorange
+);
+
 &Header::showhttpheaders();
 
 #Get GUI values
@@ -787,7 +795,8 @@ foreach my $zone (@network_zones) {
 	}
 
 	print "<td class='base' width='25%'>\n";
-	print "<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>$Lang::tr{$zone}\n";
+	print "<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>\n";
+	print "&nbsp$Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone}</font>\n";
 	print "</td>\n";
 }
 
