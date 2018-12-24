@@ -1329,6 +1329,8 @@
 'ids active on' => 'Aktiv auf',
 'ids log viewer' => 'Ansicht IDS-Protokoll',
 'ids logs' => 'IDS-Protokolldateien',
+'ids monitored interfaces' => 'Überwachte Netzwerkzonen',
+'ids monitor traffic only' => 'Netzwerk-Pakete nur überpfrüfen',
 'ids no network zone' => 'Mindestends eine Netzwerk-Zone muss überwacht werden!',
 'ids no ruleset available' => 'Kein Regelset verfügbar, bitte downloaden Sie eines!',
 'ids ruleset settings' => 'Regelset-Einstellungen',

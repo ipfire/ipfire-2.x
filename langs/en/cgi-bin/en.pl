@@ -1359,6 +1359,8 @@
 'ids active on' => 'Active on',
 'ids log viewer' => 'IDS log viewer',
 'ids logs' => 'IDS Logs',
+'ids monitored interfaces' => 'Monitored interfaces',
+'ids monitor traffic only' => 'Monitor traffic only',
 'ids no network zone' => 'At least one network zone has to be monitored!',
 'ids no ruleset available' => 'No ruleset available, please download one!',
 'ids ruleset settings' => 'Ruleset settings',
