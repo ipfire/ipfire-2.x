@@ -49,44 +49,10 @@ my %ignored=();
 # the list of zones in an array.
 my @network_zones = &IDS::get_available_network_zones();
 
-# File where the used rulefiles are stored.
-my $idsusedrulefilesfile = "$IDS::settingsdir/suricata-used-rulefiles.yaml";
-
-# File where the addresses of the homenet are stored.
-my $idshomenetfile = "$IDS::settingsdir/suricata-homenet.yaml";
-
-# File which contains the enabled sids.
-my $enabled_sids_file = "$IDS::settingsdir/oinkmaster-enabled-sids.conf";
-
-# File which contains the disabled sids.
-my $disabled_sids_file = "$IDS::settingsdir/oinkmaster-disabled-sids.conf";
-
-# File which contains wheater the rules should be changed.
-my $modify_sids_file = "$IDS::settingsdir/oinkmaster-modify-sids.conf";
-
-# File which stores the configured IPS settings.
-my $idssettingsfile = "$IDS::settingsdir/settings";
-
-# File which stores the configured rules-settings.
-my $rulessettingsfile = "$IDS::settingsdir/rules-settings";
-
-# File which stores the configured settings for whitelisted addresses.
-my $ignoredfile = "$IDS::settingsdir/ignored";
-
-# File which contains the rules to whitelist addresses on suricata.
-my $whitelistfile = "$IDS::rulespath/whitelist.rules";
-
 my $errormessage;
 
 # Create files if they does not exist yet.
-unless (-f "$enabled_sids_file") { &IDS::create_empty_file($enabled_sids_file); }
-unless (-f "$disabled_sids_file") { &IDS::create_empty_file($disabled_sids_file); }
-unless (-f "$modify_sids_file") { &IDS::create_empty_file($modify_sids_file); }
-unless (-f "$idsusedrulefilesfile") { &IDS::create_empty_file($idsusedrulefilesfile); }
-unless (-f "$idssettingsfile") { &IDS::create_empty_file($idssettingsfile); }
-unless (-f "$rulessettingsfile") { &IDS::create_empty_file($rulessettingsfile); }
-unless (-f "$ignoredfile") { &IDS::create_empty_file($ignoredfile); }
-unless (-f "$whitelistfile" ) { &IDS::create_empty_file($whitelistfile); }
+&IDS::check_and_create_filelayout();
 
 # Hash which contains the colour code of a network zone.
 my %colourhash = (
@@ -127,7 +93,7 @@ if (($cgiparams{'WHITELIST'} eq $Lang::tr{'add'}) || ($cgiparams{'WHITELIST'} eq
 		my $new_entry_remark = $cgiparams{'IGNORE_ENTRY_REMARK'};
 
 		# Read-in ignoredfile.
-		&General::readhasharray($ignoredfile, \%ignored);
+		&General::readhasharray($IDS::ignored_file, \%ignored);
 
 		# Check if we should edit an existing entry and got an ID.
 		if (($cgiparams{'WHITELIST'} eq $Lang::tr{'update'}) && ($cgiparams{'ID'})) {
@@ -162,7 +128,7 @@ if (($cgiparams{'WHITELIST'} eq $Lang::tr{'add'}) || ($cgiparams{'WHITELIST'} eq
 		$ignored{$id} = ["$new_entry_address", "$new_entry_remark", "$status"];
 
 		# Write the changed ignored hash to the ignored file.
-		&General::writehasharray($ignoredfile, \%ignored);
+		&General::writehasharray($IDS::ignored_file, \%ignored);
 
 		# Regenerate the ignore file.
 		&GenerateIgnoreFile();
@@ -189,7 +155,7 @@ if (($cgiparams{'WHITELIST'} eq $Lang::tr{'add'}) || ($cgiparams{'WHITELIST'} eq
 		undef($cgiparams{'ID'});
 
 		# Read-in ignoredfile.
-		&General::readhasharray($ignoredfile, \%ignored);
+		&General::readhasharray($IDS::ignored_file, \%ignored);
 
 		# Grab the configured status of the corresponding entry.
 		my $status = $ignored{$id}[2];
@@ -205,7 +171,7 @@ if (($cgiparams{'WHITELIST'} eq $Lang::tr{'add'}) || ($cgiparams{'WHITELIST'} eq
 		$ignored{$id} = ["$ignored{$id}[0]", "$ignored{$id}[1]", "$status"];
 
 		# Write the changed ignored hash to the ignored file.
-		&General::writehasharray($ignoredfile, \%ignored);
+		&General::writehasharray($IDS::ignored_file, \%ignored);
 
 		# Regenerate the ignore file.
 		&GenerateIgnoreFile();
@@ -223,7 +189,7 @@ if (($cgiparams{'WHITELIST'} eq $Lang::tr{'add'}) || ($cgiparams{'WHITELIST'} eq
 	my %ignored = ();
 
 	# Read-in ignoredfile.
-	&General::readhasharray($ignoredfile, \%ignored);
+	&General::readhasharray($IDS::ignored_file, \%ignored);
 
 	# Drop entry from the hash.
 	delete($ignored{$cgiparams{'ID'}});
@@ -232,7 +198,7 @@ if (($cgiparams{'WHITELIST'} eq $Lang::tr{'add'}) || ($cgiparams{'WHITELIST'} eq
 	undef($cgiparams{'ID'});
 
 	# Write the changed ignored hash to the ignored file.
-	&General::writehasharray($ignoredfile, \%ignored);
+	&General::writehasharray($IDS::ignored_file, \%ignored);
 
 	# Regenerate the ignore file.
 	&GenerateIgnoreFile();
@@ -292,9 +258,9 @@ closedir(DIR);
 # Gather used rulefiles.
 #
 # Check if the file for activated rulefiles is not empty.
-if(-f $idsusedrulefilesfile) {
+if(-f $IDS::used_rulefiles_file) {
 	# Open the file for used rulefile and read-in content.
-	open(FILE, $idsusedrulefilesfile) or die "Could not open $idsusedrulefilesfile. $!\n";
+	open(FILE, $IDS::used_rulefiles_file) or die "Could not open $IDS::used_rulefiles_file. $!\n";
 
 	# Read-in content.
 	my @lines = <FILE>;
@@ -333,7 +299,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	my %oldsettings;
 
 	# Read-in current (old) IDS settings.
-	&General::readhash("$rulessettingsfile", \%oldsettings);
+	&General::readhash("$IDS::rules_settings_file", \%oldsettings);
 
 	# Prevent form name from been stored in conf file.
 	delete $cgiparams{'RULESET'};
@@ -349,7 +315,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	# Go on if there are no error messages.
 	if (!$errormessage) {
 		# Store settings into settings file.
-		&General::writehash("$rulessettingsfile", \%cgiparams);
+		&General::writehash("$IDS::rules_settings_file", \%cgiparams);
 	}
 
 	# Check if the the automatic rule update hass been touched.
@@ -382,8 +348,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	# This will be done by calling the read_enabled_disabled_sids_file function two times
 	# and merge the returned hashes together into the enabled_disabled_sids hash.
 	%enabled_disabled_sids = (
-		&read_enabled_disabled_sids_file($disabled_sids_file),
-		&read_enabled_disabled_sids_file($enabled_sids_file));
+		&read_enabled_disabled_sids_file($IDS::disabled_sids_file),
+		&read_enabled_disabled_sids_file($IDS::enabled_sids_file));
 
 	# Loop through the hash of idsrules.
 	foreach my $rulefile (keys %idsrules) {
@@ -422,10 +388,10 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	}
 
 	# Open enabled sid's file for writing.
-	open(ENABLED_FILE, ">$enabled_sids_file") or die "Could not write to $enabled_sids_file. $!\n";
+	open(ENABLED_FILE, ">$IDS::enabled_sids_file") or die "Could not write to $IDS::enabled_sids_file. $!\n";
 
 	# Open disabled sid's file for writing.
-	open(DISABLED_FILE, ">$disabled_sids_file") or die "Could not write to $disabled_sids_file. $!\n";
+	open(DISABLED_FILE, ">$IDS::disabled_sids_file") or die "Could not write to $IDS::disabled_sids_file. $!\n";
 
 	# Write header to the files.
 	print ENABLED_FILE "#Autogenerated file. Any custom changes will be overwritten!\n";
@@ -456,29 +422,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	# Close file for disabled_sids after writing.
 	close(DISABLED_FILE);
 
-	# Open file for used rulefiles.
-	open (FILE, ">$idsusedrulefilesfile") or die "Could not write to $idsusedrulefilesfile. $!\n";
-
-	# Write yaml header to the file.
-	print FILE "%YAML 1.1\n";
-	print FILE "---\n\n";
-
-	# Write header to file.
-	print FILE "#Autogenerated file. Any custom changes will be overwritten!\n";
-
-	# Allways load the whitelist.
-	print FILE " - whitelist.rules\n";
-
-	# Check if the enabled_rulefiles array contains any entries.
-	if (@enabled_rulefiles) {
-		# Loop through the array of rulefiles which should be loaded and write them to the file.
-		foreach my $file (@enabled_rulefiles) {
-			print FILE " - $file\n";
-		}
-	}
-
-	# Close file after writing.
-	close(FILE);
+	# Call function to generate and write the used rulefiles file.
+	&IDS::write_used_rulefiles_file(@enabled_rulefiles);
 
 	# Lock the webpage and print message.
 	&working_notice("$Lang::tr{'snort working'}");
@@ -543,7 +488,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	my $monitored_zones = 0;
 
 	# Read-in current (old) IDS settings.
-	&General::readhash("$idssettingsfile", \%oldidssettings);
+	&General::readhash("$IDS::ids_settings_file", \%oldidssettings);
 
 	# Prevent form name from been stored in conf file.
 	delete $cgiparams{'IDS'};
@@ -576,14 +521,14 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	# Go on if there are no error messages.
 	if (!$errormessage) {
 		# Store settings into settings file.
-		&General::writehash("$idssettingsfile", \%cgiparams);
+		&General::writehash("$IDS::ids_settings_file", \%cgiparams);
 	}
 
 	# Generate file to store the home net.
-	&generate_home_net_file();
+	&IDS::generate_home_net_file();
 
 	# Open modify sid's file for writing.
-	open(FILE, ">$modify_sids_file") or die "Could not write to $modify_sids_file. $!\n";
+	open(FILE, ">$IDS::modify_sids_file") or die "Could not write to $IDS::modify_sids_file. $!\n";
 
 	# Write file header.
 	print FILE "#Autogenerated file. Any custom changes will be overwritten!\n";
@@ -635,8 +580,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 }
 
 # Read-in idssettings and rulesetsettings
-&General::readhash("$idssettingsfile", \%idssettings);
-&General::readhash("$rulessettingsfile", \%rulessettings);
+&General::readhash("$IDS::ids_settings_file", \%idssettings);
+&General::readhash("$IDS::rules_settings_file", \%rulessettings);
 
 # If no autoupdate intervall has been configured yet, set default value.
 unless(exists($rulessettings{'AUTOUPDATE_INTERVAL'})) {
@@ -1266,87 +1211,6 @@ sub get_memory_usage($) {
 }
 
 #
-## Function to generate the file which contains the home net information.
-#
-sub generate_home_net_file() {
-	my %netsettings;
-
-	# Read-in network settings.
-	&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
-
-	# Get available network zones.
-	my @network_zones = &IDS::get_available_network_zones();
-
-	# Temporary array to store network address and prefix of the configured
-	# networks.
-	my @networks;
-
-	# Loop through the array of available network zones.
-	foreach my $zone (@network_zones) {
-		# Skip the red network - It never can be part to the home_net!
-		next if($zone eq "red");
-
-		# Convert current zone name into upper case.
-		$zone = uc($zone);
-
-		# Generate key to access the required data from the netsettings hash.
-		my $zone_netaddress = $zone . "_NETADDRESS";
-		my $zone_netmask = $zone . "_NETMASK";
-
-		# Obtain the settings from the netsettings hash.
-		my $netaddress = $netsettings{$zone_netaddress};
-		my $netmask = $netsettings{$zone_netmask};
-
-		# Convert the subnetmask into prefix notation.
-		my $prefix = &Network::convert_netmask2prefix($netmask);
-
-		# Generate full network string.
-		my $network = join("/", $netaddress,$prefix);
-
-		# Check if the network is valid.
-		if(&Network::check_subnet($network)) {
-			# Add the generated network to the array of networks.
-			push(@networks, $network);
-		}
-	}
-
-	# Format home net declaration.
-	my $line = "\"\[";
-
-	# Loop through the array of networks.
-	foreach my $network (@networks) {
-		# Add the network to the line.
-		$line = "$line" . "$network";
-
-		# Check if the current network was the last in the array.
-		if ($network eq $networks[-1]) {
-			# Close the line.
-			$line = "$line" . "\]\"";
-		} else {
-			# Add "," for the next network.
-			$line = "$line" . "\,";
-		}
-	}
-
-	# Open file to store the addresses of the home net.
-	open(FILE, ">$idshomenetfile") or die "Could not open $idshomenetfile. $!\n";
-
-	# Print yaml header.
-	print FILE "%YAML 1.1\n";
-	print FILE "---\n\n";
-
-	# Print notice about autogenerated file.
-	print FILE "#Autogenerated file. Any custom changes will be overwritten!\n";
-
-	# Print the generated and required HOME_NET declaration to the file.
-	print FILE "HOME_NET:\t$line\n";
-
-	# Close file handle.
-	close(FILE);
-
-}
-
-#
 ## Function to generate the rules file with whitelisted addresses.
 #
 sub GenerateIgnoreFile() {
@@ -1357,10 +1221,10 @@ sub GenerateIgnoreFile() {
 	my $sid = 1500000;
 
 	# Read-in ignoredfile.
-	&General::readhasharray($ignoredfile, \%ignored);
+	&General::readhasharray($IDS::ignored_file, \%ignored);
 
 	# Open ignorefile for writing.
-	open(FILE, ">$whitelistfile") or die "Could not write to $whitelistfile. $!\n";
+	open(FILE, ">$IDS::whitelist_file") or die "Could not write to $IDS::whitelist_file. $!\n";
 
 	# Config file header.
 	print FILE "# Autogenerated file.\n";
