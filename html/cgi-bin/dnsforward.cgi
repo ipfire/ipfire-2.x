@@ -220,7 +220,7 @@ print <<END
 	</tr>
 
 	<tr>
-		<td width='20%' class='base'>$Lang::tr{'dnsforward forward_server'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
+		<td width='20%' class='base'>$Lang::tr{'dnsforward forward_servers'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 		<td><input type='text' name='FORWARD_SERVERS' value='$cgiparams{'FORWARD_SERVERS'}' size='24' /></td>
 	</tr>
 </table>
