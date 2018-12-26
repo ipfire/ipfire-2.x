@@ -194,7 +194,7 @@ sub downloadruleset {
 		}
 
 		# Setup proxy settings.
-		$downloader->proxy('http', $proxy_url);
+		$downloader->proxy(['http', 'https'], $proxy_url);
 	}
 
 	# Grab the right url based on the configured vendor.
