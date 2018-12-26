@@ -709,4 +709,41 @@ sub write_modify_sids_file($) {
 	close(FILE);
 }
 
+#
+## Function to gather the version of suricata.
+#
+sub get_suricata_version($) {
+	my ($format) = @_;
+
+	# Execute piped suricata command and return the version information.
+	open(SURICATA, "suricata -V |") or die "Couldn't execute program: $!";
+
+	# Grab and store the output of the piped program.
+	my $version_string = <SURICATA>;
+
+	# Close pipe.
+        close(SURICATA);
+
+	# Remove newlines.
+        chomp($version_string);
+
+	# Grab the version from the version string. 
+	$version_string =~ /([0-9]+([.][0-9]+)+)/;
+
+	# Splitt the version into single chunks.
+	my ($major_ver, $minor_ver, $patchlevel) = split(/\./, $1);
+
+	# Check and return the requested version sheme.
+	if ($format eq "major") {
+		# Return the full version.
+		return "$major_ver";
+	} elsif ($format eq "minor") {
+		# Return the major and minor part.
+		return "$major_ver.$minor_ver";
+	} else {
+		# Return the full version string.
+		return "$major_ver.$minor_ver.$patchlevel";
+	} 
+}
+
 1;
