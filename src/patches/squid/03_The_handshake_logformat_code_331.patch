@@ -1,0 +1,132 @@
+commit 0022167d80725513d95b38aaebc90086fc0b6938 (tag: refs/tags/M-staged-PR331, refs/remotes/origin/v4)
+Author: Christos Tsantilas <christos@chtsanti.net>
+Date:   2018-11-14 15:17:06 +0000
+
+    The %>handshake logformat code (#331)
+    
+    Logging client "handshake" bytes is useful in at least two contexts:
+    
+    * Runtime traffic bypass and bumping/splicing decisions. Identifying
+      popular clients like Skype for Business (that uses a TLS handshake but
+      then may not speak TLS) is critical for handling their traffic
+      correctly. Squid does not have enough ACLs to interrogate most TLS
+      handshake aspects. Adding more ACLs may still be a good idea, but
+      initial sketches for SfB handshakes showed rather complex
+      ACLs/configurations, _and_ no reasonable ACLs would be able to handle
+      non-TLS handshakes. An external ACL receiving the handshake is in a
+      much better position to analyze/fingerprint it according to custom
+      admin needs.
+    
+    * A logged handshake can be used to analyze new/unusual traffic or even
+      trigger security-related alarms.
+    
+    The current support is limited to cases where Squid was saving handshake
+    for other reasons. With enough demand, this initial support can be
+    extended to all protocols and port configurations.
+    
+    This is a Measurement Factory project.
+
+diff --git a/src/cf.data.pre b/src/cf.data.pre
+index fa8af56..a8ca587 100644
+--- a/src/cf.data.pre
++++ b/src/cf.data.pre
+@@ -4394,6 +4394,37 @@ DOC_START
+ 		<qos	Server connection TOS/DSCP value set by Squid
+ 		<nfmark Server connection netfilter mark set by Squid
+ 
++		>handshake Raw client handshake
++			Initial client bytes received by Squid on a newly
++			accepted TCP connection or inside a just established
++			CONNECT tunnel. Squid stops accumulating handshake
++			bytes as soon as the handshake parser succeeds or
++			fails (determining whether the client is using the
++			expected protocol).
++
++			For HTTP clients, the handshake is the request line.
++			For TLS clients, the handshake consists of all TLS
++			records up to and including the TLS record that
++			contains the last byte of the first ClientHello
++			message. For clients using an unsupported protocol,
++			this field contains the bytes received by Squid at the
++			time of the handshake parsing failure.
++
++			See the on_unsupported_protocol directive for more
++			information on Squid handshake traffic expectations.
++
++			Current support is limited to these contexts:
++			- http_port connections, but only when the
++			  on_unsupported_protocol directive is in use.
++			- https_port connections (and CONNECT tunnels) that
++			  are subject to the ssl_bump peek or stare action.
++
++			To protect binary handshake data, this field is always
++			base64-encoded (RFC 4648 Section 4). If logformat
++			field encoding is configured, that encoding is applied
++			on top of base64. Otherwise, the computed base64 value
++			is recorded as is.
++
+ 	Time related format codes:
+ 
+ 		ts	Seconds since epoch
+diff --git a/src/format/ByteCode.h b/src/format/ByteCode.h
+index ad230bb..a6f8fd9 100644
+--- a/src/format/ByteCode.h
++++ b/src/format/ByteCode.h
+@@ -46,6 +46,8 @@ typedef enum {
+     LFT_CLIENT_LOCAL_TOS,
+     LFT_CLIENT_LOCAL_NFMARK,
+ 
++    LFT_CLIENT_HANDSHAKE,
++
+     /* client connection local squid.conf details */
+     LFT_LOCAL_LISTENING_IP,
+     LFT_LOCAL_LISTENING_PORT,
+diff --git a/src/format/Format.cc b/src/format/Format.cc
+index c1e19b4..8fd6720 100644
+--- a/src/format/Format.cc
++++ b/src/format/Format.cc
+@@ -8,6 +8,7 @@
+ 
+ #include "squid.h"
+ #include "AccessLogEntry.h"
++#include "base64.h"
+ #include "client_side.h"
+ #include "comm/Connection.h"
+ #include "err_detail_type.h"
+@@ -547,6 +548,24 @@ Format::Format::assemble(MemBuf &mb, const AccessLogEntry::Pointer &al, int logS
+             }
+             break;
+ 
++        case LFT_CLIENT_HANDSHAKE:
++            if (al->request && al->request->clientConnectionManager.valid()) {
++                const auto &handshake = al->request->clientConnectionManager->preservedClientData;
++                if (const auto rawLength = handshake.length()) {
++                    // add 1 byte to optimize the c_str() conversion below
++                    char *buf = sb.rawAppendStart(base64_encode_len(rawLength) + 1);
++
++                    struct base64_encode_ctx ctx;
++                    base64_encode_init(&ctx);
++                    auto encLength = base64_encode_update(&ctx, buf, rawLength, reinterpret_cast<const uint8_t*>(handshake.rawContent()));
++                    encLength += base64_encode_final(&ctx, buf + encLength);
++
++                    sb.rawAppendFinish(buf, encLength);
++                    out = sb.c_str();
++                }
++            }
++            break;
++
+         case LFT_TIME_SECONDS_SINCE_EPOCH:
+             // some platforms store time in 32-bit, some 64-bit...
+             outoff = static_cast<int64_t>(current_time.tv_sec);
+diff --git a/src/format/Token.cc b/src/format/Token.cc
+index 186ade5..06c60cf 100644
+--- a/src/format/Token.cc
++++ b/src/format/Token.cc
+@@ -141,6 +141,7 @@ static TokenTableEntry TokenTableMisc[] = {
+     TokenTableEntry("<qos", LFT_SERVER_LOCAL_TOS),
+     TokenTableEntry(">nfmark", LFT_CLIENT_LOCAL_NFMARK),
+     TokenTableEntry("<nfmark", LFT_SERVER_LOCAL_NFMARK),
++    TokenTableEntry(">handshake", LFT_CLIENT_HANDSHAKE),
+     TokenTableEntry("err_code", LFT_SQUID_ERROR ),
+     TokenTableEntry("err_detail", LFT_SQUID_ERROR_DETAIL ),
+     TokenTableEntry("note", LFT_NOTE ),

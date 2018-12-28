@@ -210,7 +210,7 @@
 < dnsforward configuration
 < dnsforward edit an entry
 < dnsforward entries
-< dnsforward forward_server
+< dnsforward forward_servers
 < dnsforward zone
 < dnssec aware
 < dnssec disabled warning
@@ -494,6 +494,7 @@
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
 < invalid input for valid till days
+< invalid ip or hostname
 < invalid logserver protocol
 < ipsec
 < ipsec network
@@ -781,6 +782,8 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< dnsforward forward_servers
+< invalid ip or hostname
 < ovpn warning rfc3280
 < wlanap neighbor scan
 < wlanap neighbor scan warning
@@ -860,6 +863,7 @@
 < dhcp dns update algo
 < dhcp dns update secret
 < dl client arch insecure
+< dnsforward forward_servers
 < dnssec disabled warning
 < eight hours
 < email config
@@ -919,6 +923,7 @@
 < incoming overhead in bytes per second
 < invalid input for inactivity timeout
 < invalid input for valid till days
+< invalid ip or hostname
 < invalid logserver protocol
 < log server protocol
 < masquerade blue
@@ -1082,6 +1087,7 @@
 < dh name is invalid
 < dh parameter
 < dl client arch insecure
+< dnsforward forward_servers
 < dnssec aware
 < dnssec disabled warning
 < dnssec information
@@ -1153,6 +1159,7 @@
 < incoming overhead in bytes per second
 < invalid input for inactivity timeout
 < invalid input for valid till days
+< invalid ip or hostname
 < invalid logserver protocol
 < log server protocol
 < masquerade blue
@@ -1423,7 +1430,7 @@
 < dnsforward configuration
 < dnsforward edit an entry
 < dnsforward entries
-< dnsforward forward_server
+< dnsforward forward_servers
 < dnsforward zone
 < dnssec aware
 < dnssec disabled warning
@@ -1709,6 +1716,7 @@
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
 < invalid input for valid till days
+< invalid ip or hostname
 < invalid logserver protocol
 < ipsec
 < ipsec network
@@ -2137,7 +2145,7 @@
 < dnsforward configuration
 < dnsforward edit an entry
 < dnsforward entries
-< dnsforward forward_server
+< dnsforward forward_servers
 < dnsforward zone
 < dnssec aware
 < dnssec disabled warning
@@ -2427,6 +2435,7 @@
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
 < invalid input for valid till days
+< invalid ip or hostname
 < invalid logserver protocol
 < ipsec
 < ipsec network
@@ -2700,7 +2709,9 @@
 ############################################################################
 < crypto error
 < crypto warning
+< dnsforward forward_servers
 < fwdfw all subnets
+< invalid ip or hostname
 < ovpn error dh
 < ovpn error md5
 < ovpn warning rfc3280

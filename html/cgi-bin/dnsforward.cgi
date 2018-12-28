@@ -50,7 +50,7 @@ my %mainsettings = ();
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'ACTION'} = '';
 $cgiparams{'ZONE'} = '';
-$cgiparams{'FORWARD_SERVER'} = '';
+$cgiparams{'FORWARD_SERVERS'} = '';
 $cgiparams{'REMARK'} ='';
 &Header::getcgihash(\%cgiparams);
 open(FILE, $filename) or die 'Unable to open config file.';
@@ -67,14 +67,21 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'add'})
 		$errormessage = $Lang::tr{'invalid domain name'};
 	}
 
-	# Check if the settings for the forward server are valid.
-	unless(&General::validip($cgiparams{'FORWARD_SERVER'})) {
-		$errormessage = $Lang::tr{'invalid ip'};
+	my @forward_servers = split(/\,/, $cgiparams{'FORWARD_SERVERS'});
+	foreach my $forward_server (@forward_servers) {
+		# Check if the settings for the forward server are valid.
+		unless(&General::validip($forward_server) || &General::validfqdn($forward_server)) {
+			$errormessage = "$Lang::tr{'invalid ip or hostname'}: $forward_server";
+			last;
+		}
 	}
 
 	# Go further if there was no error.
 	if ( ! $errormessage)
 	{
+		# Save servers separated by |
+		$cgiparams{'FORWARD_SERVERS'} = join("|", @forward_servers);
+
 	    # Check if a remark has been entered.
 	    $cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 
@@ -82,7 +89,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'add'})
 		if($cgiparams{'EDITING'} eq 'no') {
 			open(FILE,">>$filename") or die 'Unable to open config file.';
 			flock FILE, 2;
-			print FILE "$cgiparams{'ENABLED'},$cgiparams{'ZONE'},$cgiparams{'FORWARD_SERVER'},$cgiparams{'REMARK'}\n";
+			print FILE "$cgiparams{'ENABLED'},$cgiparams{'ZONE'},$cgiparams{'FORWARD_SERVERS'},$cgiparams{'REMARK'}\n";
 		} else {
 			open(FILE, ">$filename") or die 'Unable to open config file.';
 			flock FILE, 2;
@@ -91,7 +98,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'add'})
 			{
 				$id++;
 				if ($cgiparams{'EDITING'} eq $id) {
-					print FILE "$cgiparams{'ENABLED'},$cgiparams{'ZONE'},$cgiparams{'FORWARD_SERVER'},$cgiparams{'REMARK'}\n";
+					print FILE "$cgiparams{'ENABLED'},$cgiparams{'ZONE'},$cgiparams{'FORWARD_SERVERS'},$cgiparams{'REMARK'}\n";
 				} else { print FILE "$line"; }
 			}
 		}
@@ -167,7 +174,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'edit'})
 			my @temp = split(/\,/,$line);
 			$cgiparams{'ENABLED'} = $temp[0];
 			$cgiparams{'ZONE'} = $temp[1];
-			$cgiparams{'FORWARD_SERVER'} = $temp[2];
+			$cgiparams{'FORWARD_SERVERS'} = join(",", split(/\|/, $temp[2]));
 			$cgiparams{'REMARK'} = $temp[3];
 		}
 	}
@@ -214,7 +221,7 @@ print <<END
 
 	<tr>
 		<td width='20%' class='base'>$Lang::tr{'dnsforward forward_server'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-		<td><input type='text' name='FORWARD_SERVER' value='$cgiparams{'FORWARD_SERVER'}' size='24' /></td>
+		<td><input type='text' name='FORWARD_SERVERS' value='$cgiparams{'FORWARD_SERVERS'}' size='24' /></td>
 	</tr>
 </table>
 
@@ -255,7 +262,7 @@ print <<END
 <table width='100%' class='tbl'>
 	<tr>
 		<th width='35%' class='boldbase' align='center'><b>$Lang::tr{'dnsforward zone'}</b></th>
-		<th width='30%' class='boldbase' align='center'><b>$Lang::tr{'dnsforward forward_server'}</b></th>
+		<th width='30%' class='boldbase' align='center'><b>$Lang::tr{'dnsforward forward_servers'}</b></th>
 		<th width='30%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
 		<th width='5%' class='boldbase' colspan='3' align='center'><b>$Lang::tr{'action'}</b></th>
 	</tr>
@@ -284,7 +291,10 @@ foreach my $line (@current)
 	my $gif = '';
 	my $gdesc = '';
 	my $toggle = '';
-	
+
+	# Format lists of servers
+	my $servers = join(", ", split(/\|/, $temp[2]));
+
 	if($cgiparams{'ACTION'} eq $Lang::tr{'edit'} && $cgiparams{'ID'} eq $id) {
 		print "<tr>";
 		$col="bgcolor='${Header::colouryellow}'"; }
@@ -303,7 +313,7 @@ foreach my $line (@current)
 #
 print <<END
 	<td align='center' $col>$temp[1]</td>
-	<td align='center' $col>$temp[2]</td>
+	<td align='center' $col>$servers</td>
 	<td align='center' $col>$temp[3]</td>
 	<td align='center' $col>
 		<form method='post' name='frma$id' action='$ENV{'SCRIPT_NAME'}'>
