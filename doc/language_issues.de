@@ -706,7 +706,6 @@ WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: captive = unknown string
 WARNING: untranslated string: community rules = Snort/VRT GPLv2 Community Rules
 WARNING: untranslated string: dead peer detection = Dead Peer Detection
-WARNING: untranslated string: dnsforward forward_server = unknown string
 WARNING: untranslated string: emerging rules = Emergingthreats.net Community Rules
 WARNING: untranslated string: fwhost cust geoipgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string

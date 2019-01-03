@@ -759,7 +759,6 @@ WARNING: untranslated string: dnsforward add a new entry = Add a new entry
 WARNING: untranslated string: dnsforward configuration = DNS forward configuration
 WARNING: untranslated string: dnsforward edit an entry = Edit an existing entry
 WARNING: untranslated string: dnsforward entries = Current entries
-WARNING: untranslated string: dnsforward forward_server = unknown string
 WARNING: untranslated string: dnsforward forward_servers = Nameservers
 WARNING: untranslated string: dnsforward zone = Zone
 WARNING: untranslated string: dnssec aware = DNSSEC Aware
