@@ -508,7 +508,6 @@ WARNING: translation string unused: ovpn mtu-disc with mssfix or fragment
 WARNING: translation string unused: ovpn mtu-disc yes
 WARNING: translation string unused: ovpn reneg sec
 WARNING: translation string unused: ovpn_fastio
-WARNING: translation string unused: ovpn_fragment
 WARNING: translation string unused: ovpn_mssfix
 WARNING: translation string unused: ovpn_mtudisc
 WARNING: translation string unused: ovpn_processprio
@@ -785,12 +784,9 @@ WARNING: untranslated string: ike lifetime should be between 1 and 8 hours = unk
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: no data = unknown string
-WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
 WARNING: untranslated string: vpn statistics n2n = unknown string
-WARNING: untranslated string: wlanap neighbor scan = Neighborhood scan
-WARNING: untranslated string: wlanap neighbor scan warning = Warning! Disabling may violate regulatory rules!
