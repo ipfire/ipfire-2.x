@@ -2205,7 +2205,7 @@
 'ssh no active logins' => 'No active logins',
 'ssh no auth' => 'You have not allowed any authentication methods; this will stop you logging in',
 'ssh passwords' => 'Allow password based authentication',
-'ssh port' => 'SSH port set to 222 (default is 22)',
+'ssh port' => 'Set SSH port to default 22 (222 is used otherwise)',
 'ssh portfw' => 'Allow TCP forwarding',
 'ssh tempstart15' => 'Stop SSH demon in 15 minutes',
 'ssh tempstart30' => 'Stop SSH demon in 30 minutes',
