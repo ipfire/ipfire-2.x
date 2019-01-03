@@ -149,7 +149,12 @@ sub cleanssldatabase {
 		print FILE "";
 		close FILE;
 	}
+	if (open(FILE, ">${General::swroot}/certs/index.txt.attr")) {
+		print FILE "";
+		close FILE;
+	}
 	unlink ("${General::swroot}/certs/index.txt.old");
+	unlink ("${General::swroot}/certs/index.txt.attr.old");
 	unlink ("${General::swroot}/certs/serial.old");
 	unlink ("${General::swroot}/certs/01.pem");
 }
@@ -162,7 +167,11 @@ sub newcleanssldatabase {
 	if (! -s ">${General::swroot}/certs/index.txt") {
 		system ("touch ${General::swroot}/certs/index.txt");
 	}
+	if (! -s ">${General::swroot}/certs/index.txt.attr") {
+		system ("touch ${General::swroot}/certs/index.txt.attr");
+	}
 	unlink ("${General::swroot}/certs/index.txt.old");
+	unlink ("${General::swroot}/certs/index.txt.attr.old");
 	unlink ("${General::swroot}/certs/serial.old");
 #	unlink ("${General::swroot}/certs/01.pem");		numbering evolves. Wrong place to delete
 }

@@ -174,7 +174,12 @@ sub cleanssldatabase
 	print FILE "";
 	close FILE;
     }
+    if (open(FILE, ">${General::swroot}/ovpn/certs/index.txt.attr")) {
+      print FILE "";
+      close FILE;
+    }
     unlink ("${General::swroot}/ovpn/certs/index.txt.old");
+    unlink ("${General::swroot}/ovpn/certs/index.txt.attr.old");
     unlink ("${General::swroot}/ovpn/certs/serial.old");
     unlink ("${General::swroot}/ovpn/certs/01.pem");
 }
@@ -189,7 +194,11 @@ sub newcleanssldatabase
     if (! -s ">${General::swroot}/ovpn/certs/index.txt") {
 	system ("touch ${General::swroot}/ovpn/certs/index.txt");
     }
+    if (! -s ">${General::swroot}/ovpn/certs/index.txt.attr") {
+      system ("touch ${General::swroot}/ovpn/certs/index.txt.attr");
+    }
     unlink ("${General::swroot}/ovpn/certs/index.txt.old");
+    unlink ("${General::swroot}/ovpn/certs/index.txt.attr.old");
     unlink ("${General::swroot}/ovpn/certs/serial.old");
 }
 

@@ -25,6 +25,7 @@ var/ipfire/ovpn/caconfig
 var/ipfire/ovpn/ccd
 #var/ipfire/ovpn/certs
 var/ipfire/ovpn/certs/index.txt
+var/ipfire/ovpn/certs/index.txt.attr
 var/ipfire/ovpn/certs/serial
 var/ipfire/ovpn/crls
 var/ipfire/ovpn/n2nconf
