@@ -6,5 +6,6 @@ var/ipfire/langs
 etc/rc.d/init.d/aws
 etc/rc.d/init.d/unbound
 srv/web/ipfire/cgi-bin/dnsforward.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
