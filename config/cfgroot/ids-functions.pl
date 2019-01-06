@@ -130,21 +130,21 @@ sub checkdiskspace () {
 }
 
 #
-## This function is responsible for downloading the configured snort ruleset.
+## This function is responsible for downloading the configured IDS ruleset.
 ##
-## * At first it obtains from the stored snortsettings which ruleset should be downloaded.
+## * At first it obtains from the stored rules settings which ruleset should be downloaded.
 ## * The next step is to get the download locations for all available rulesets.
 ## * After that, the function will check if an upstream proxy should be used and grab the settings.
 ## * The last step will be to generate the final download url, by obtaining the URL for the desired
 ##   ruleset, add the settings for the upstream proxy and final grab the rules tarball from the server.
 #
 sub downloadruleset {
-	# Get snort settings.
-	my %snortsettings=();
-	&General::readhash("$settingsdir/settings", \%snortsettings);
+	# Get rules settings.
+	my %rulessettings=();
+	&General::readhash("$rules_settings_file", \%rulessettings);
 
 	# Check if a ruleset has been configured.
-	unless($snortsettings{'RULES'}) {
+	unless($rulessettings{'RULES'}) {
 		# Log that no ruleset has been configured and abort.
 		&_log_to_syslog("No ruleset source has been configured.");
 
@@ -198,10 +198,10 @@ sub downloadruleset {
 	}
 
 	# Grab the right url based on the configured vendor.
-	my $url = $rulesetsources{$snortsettings{'RULES'}};
+	my $url = $rulesetsources{$rulessettings{'RULES'}};
 
 	# Check if the vendor requires an oinkcode and add it if needed.
-	$url =~ s/\<oinkcode\>/$snortsettings{'OINKCODE'}/g;
+	$url =~ s/\<oinkcode\>/$rulessettings{'OINKCODE'}/g;
 
 	# Abort if no url could be determined for the vendor.
 	unless ($url) {
