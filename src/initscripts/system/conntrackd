@@ -1,0 +1,41 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/conntrackd
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		# Don't attempt to launch the daemon when we have no configuration
+		if [ ! -s "/etc/conntrackd/conntrackd.conf" ]; then
+			exit 0
+		fi
+
+		boot_mesg "Starting Connection Tracking Daemon..."
+		loadproc /usr/sbin/conntrackd -d
+		;;
+
+	stop)
+		boot_mesg "Stopping Connection Tracking Daemon..."
+		killproc /usr/sbin/conntrackd
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/conntrackd
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/conntrackd
