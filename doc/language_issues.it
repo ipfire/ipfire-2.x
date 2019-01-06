@@ -786,7 +786,6 @@ WARNING: untranslated string: advproxy group required = Required group
 WARNING: untranslated string: application layer gateways = Application Layer Gateways
 WARNING: untranslated string: block = Block
 WARNING: untranslated string: bytes = unknown string
-WARNING: untranslated string: captive = unknown string
 WARNING: untranslated string: check all = Check all
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning

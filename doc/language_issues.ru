@@ -717,7 +717,6 @@ WARNING: untranslated string: bit = bit
 WARNING: untranslated string: block = Block
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: capabilities = Capabilities
-WARNING: untranslated string: captive = unknown string
 WARNING: untranslated string: ccd add = Add network
 WARNING: untranslated string: ccd choose net = Choose network
 WARNING: untranslated string: ccd client options = Advanced client options

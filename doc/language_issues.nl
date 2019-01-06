@@ -783,7 +783,6 @@ WARNING: untranslated string: atm device = Device:
 WARNING: untranslated string: block = Block
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: capabilities = Capabilities
-WARNING: untranslated string: captive = unknown string
 WARNING: untranslated string: check all = Check all
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning

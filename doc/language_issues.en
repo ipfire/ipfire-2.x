@@ -404,7 +404,6 @@ WARNING: untranslated string: capsclosed = DISCONNECTED
 WARNING: untranslated string: capsopen = CONNECTED
 WARNING: untranslated string: capswarning = WARNING
 WARNING: untranslated string: caption = Caption
-WARNING: untranslated string: captive = unknown string
 WARNING: untranslated string: ccd add = Add network
 WARNING: untranslated string: ccd choose net = Choose network
 WARNING: untranslated string: ccd client options = Advanced client options

@@ -770,7 +770,6 @@ WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Captive clients = unknown string
 WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: bytes = unknown string
-WARNING: untranslated string: captive = unknown string
 WARNING: untranslated string: dnsforward forward_servers = Nameservers
 WARNING: untranslated string: fwhost cust geoipgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
