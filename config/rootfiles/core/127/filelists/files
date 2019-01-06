@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/modprobe.d/framebuffer.conf
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 etc/rc.d/init.d/aws
