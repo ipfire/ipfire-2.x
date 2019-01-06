@@ -52,6 +52,9 @@ sudo -u nobody /srv/web/ipfire/cgi-bin/proxy.cgi
 /etc/init.d/unbound restart
 /etc/init.d/squid start
 
+# Reload sysctl.conf
+sysctl -p
+
 # Finish
 /etc/init.d/fireinfo start
 sendprofile
