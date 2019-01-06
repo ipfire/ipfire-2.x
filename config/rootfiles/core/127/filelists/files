@@ -14,3 +14,4 @@ srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+var/ipfire/backup/include

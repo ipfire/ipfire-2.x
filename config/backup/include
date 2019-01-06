@@ -1,3 +1,4 @@
+/etc/conntrackd/conntrackd.conf
 /etc/group
 /etc/hosts*
 /etc/httpd/server.crt
