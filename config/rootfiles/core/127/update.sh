@@ -45,6 +45,9 @@ ldconfig
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# Regenerate squid configuration file
+sudo -u nobody /srv/web/ipfire/cgi-bin/proxy.cgi
+
 # Start services
 /etc/init.d/unbound restart
 /etc/init.d/squid start
