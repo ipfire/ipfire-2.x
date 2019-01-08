@@ -60,7 +60,9 @@ WARNING: translation string unused: advproxy NTLM use integrated auth
 WARNING: translation string unused: advproxy NTLM use negative access list
 WARNING: translation string unused: advproxy NTLM use positive access list
 WARNING: translation string unused: advproxy NTLM user based access restrictions
+WARNING: translation string unused: advproxy UA enable filter
 WARNING: translation string unused: advproxy advanced proxy
+WARNING: translation string unused: advproxy allowed web browsers
 WARNING: translation string unused: advproxy chgwebpwd ERROR
 WARNING: translation string unused: advproxy chgwebpwd SUCCESS
 WARNING: translation string unused: advproxy chgwebpwd change password
@@ -69,21 +71,28 @@ WARNING: translation string unused: advproxy chgwebpwd new password
 WARNING: translation string unused: advproxy chgwebpwd new password confirm
 WARNING: translation string unused: advproxy chgwebpwd old password
 WARNING: translation string unused: advproxy chgwebpwd username
+WARNING: translation string unused: advproxy content based throttling
 WARNING: translation string unused: advproxy errmsg auth ipcache ttl
 WARNING: translation string unused: advproxy errmsg change fail
 WARNING: translation string unused: advproxy errmsg change success
 WARNING: translation string unused: advproxy errmsg invalid bdc
 WARNING: translation string unused: advproxy errmsg invalid pdc
 WARNING: translation string unused: advproxy errmsg invalid user
+WARNING: translation string unused: advproxy errmsg no browser
 WARNING: translation string unused: advproxy errmsg no password
 WARNING: translation string unused: advproxy errmsg ntlm domain
 WARNING: translation string unused: advproxy errmsg ntlm pdc
 WARNING: translation string unused: advproxy errmsg password incorrect
 WARNING: translation string unused: advproxy invalid num of children
+WARNING: translation string unused: advproxy no clients defined
 WARNING: translation string unused: advproxy redirector children
 WARNING: translation string unused: advproxy ssadvanced proxy
+WARNING: translation string unused: advproxy throttle binary
+WARNING: translation string unused: advproxy throttle dskimg
+WARNING: translation string unused: advproxy throttle mmedia
 WARNING: translation string unused: advproxy update information
 WARNING: translation string unused: advproxy update notification
+WARNING: translation string unused: advproxy web browser
 WARNING: translation string unused: again
 WARNING: translation string unused: age seconds
 WARNING: translation string unused: age shour

@@ -57,9 +57,6 @@ my %checked=();
 my %selected=();
 
 my @throttle_limits=(64,128,256,384,512,768,1024,1280,1536,1792,2048,2560,3072,3584,4096,5120,6144,7168,8192,10240,12288,16384,20480);
-my $throttle_binary="7z|arj|bin|bz2|cab|exe|gz|lzh|rar|sea|tar|tgz|xz|zip";
-my $throttle_dskimg="b5t|bin|bwt|ccd|cdi|cue|gho|img|iso|mds|nrg|pqi|vmdk";
-my $throttle_mmedia="aiff?|asf|avi|divx|mov|mp3|mpe?g|ogg|qt|ra?m|ts|vob";
 
 my $def_ports_safe="80 # http\n21 # ftp\n443 # https\n563 # snews\n70 # gopher\n210 # wais\n1025-65535 # unregistered ports\n280 # http-mgmt\n488 # gss-http\n591 # filemaker\n777 # multiling http\n800 # Squids port (for icons)\n";
 my $def_ports_ssl="443 # https\n563 # snews\n";
@@ -230,9 +227,6 @@ $proxysettings{'THROTTLING_GREEN_TOTAL'} = 'unlimited';
 $proxysettings{'THROTTLING_GREEN_HOST'} = 'unlimited';
 $proxysettings{'THROTTLING_BLUE_TOTAL'} = 'unlimited';
 $proxysettings{'THROTTLING_BLUE_HOST'} = 'unlimited';
-$proxysettings{'THROTTLE_BINARY'} = 'off';
-$proxysettings{'THROTTLE_DSKIMG'} = 'off';
-$proxysettings{'THROTTLE_MMEDIA'} = 'off';
 $proxysettings{'ENABLE_MIME_FILTER'} = 'off';
 $proxysettings{'FAKE_USERAGENT'} = '';
 $proxysettings{'FAKE_REFERER'} = '';
@@ -766,16 +760,6 @@ $selected{'THROTTLING_GREEN_TOTAL'}{$proxysettings{'THROTTLING_GREEN_TOTAL'}} = 
 $selected{'THROTTLING_GREEN_HOST'}{$proxysettings{'THROTTLING_GREEN_HOST'}} = "selected='selected'";
 $selected{'THROTTLING_BLUE_TOTAL'}{$proxysettings{'THROTTLING_BLUE_TOTAL'}} = "selected='selected'";
 $selected{'THROTTLING_BLUE_HOST'}{$proxysettings{'THROTTLING_BLUE_HOST'}} = "selected='selected'";
-
-$checked{'THROTTLE_BINARY'}{'off'} = '';
-$checked{'THROTTLE_BINARY'}{'on'} = '';
-$checked{'THROTTLE_BINARY'}{$proxysettings{'THROTTLE_BINARY'}} = "checked='checked'";
-$checked{'THROTTLE_DSKIMG'}{'off'} = '';
-$checked{'THROTTLE_DSKIMG'}{'on'} = '';
-$checked{'THROTTLE_DSKIMG'}{$proxysettings{'THROTTLE_DSKIMG'}} = "checked='checked'";
-$checked{'THROTTLE_MMEDIA'}{'off'} = '';
-$checked{'THROTTLE_MMEDIA'}{'on'} = '';
-$checked{'THROTTLE_MMEDIA'}{$proxysettings{'THROTTLE_MMEDIA'}} = "checked='checked'";
 
 $checked{'ENABLE_MIME_FILTER'}{'off'} = '';
 $checked{'ENABLE_MIME_FILTER'}{'on'} = '';
@@ -1508,21 +1492,6 @@ END
 }
 
 print <<END
-</table>
-<table width='100%'>
-<tr>
-	<td colspan='4'><i>$Lang::tr{'advproxy content based throttling'}:</i></td>
-</tr>
-<tr>
-	<td width='15%' class='base'>$Lang::tr{'advproxy throttle binary'}:</td>
-	<td width='10%'><input type='checkbox' name='THROTTLE_BINARY' $checked{'THROTTLE_BINARY'}{'on'} /></td>
-	<td width='15%' class='base'>$Lang::tr{'advproxy throttle dskimg'}:</td>
-	<td width='10%'><input type='checkbox' name='THROTTLE_DSKIMG' $checked{'THROTTLE_DSKIMG'}{'on'} /></td>
-	<td width='15%' class='base'>$Lang::tr{'advproxy throttle mmedia'}:</td>
-	<td width='10%'><input type='checkbox' name='THROTTLE_MMEDIA' $checked{'THROTTLE_MMEDIA'}{'on'} /></td>
-	<td width='15%'>&nbsp;</td>
-	<td width='10%'>&nbsp;</td>
-</tr>
 </table>
 <hr size='1'>
 <table width='100%'>
@@ -2707,23 +2676,6 @@ sub write_acls
 	if (!$proxysettings{'PORTS_SSL'}) { print FILE $def_ports_ssl; } else { print FILE $proxysettings{'PORTS_SSL'}; }
 	close(FILE);
 
-	open(FILE, ">$acl_dst_throttle");
-	flock(FILE, 2);
-	if ($proxysettings{'THROTTLE_BINARY'} eq 'on')
-	{
-		@temp = split(/\|/,$throttle_binary);
-		foreach (@temp) { print FILE "\\.$_\$\n"; }
-	}
-	if ($proxysettings{'THROTTLE_DSKIMG'} eq 'on')
-	{
-		@temp = split(/\|/,$throttle_dskimg);
-		foreach (@temp) { print FILE "\\.$_\$\n"; }
-	}
-	if ($proxysettings{'THROTTLE_MMEDIA'} eq 'on')
-	{
-		@temp = split(/\|/,$throttle_mmedia);
-		foreach (@temp) { print FILE "\\.$_\$\n"; }
-	}
 	if (-s $throttled_urls)
 	{
 		open(URLFILE, $throttled_urls);
