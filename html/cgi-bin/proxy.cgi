@@ -3252,7 +3252,7 @@ END
 				print FILE "\n";
 				print FILE "auth_param basic children $proxysettings{'AUTH_CHILDREN'}\n";
 				print FILE "auth_param basic realm $authrealm\n";
-				print FILE "auth_param basic credentialsttl 2 hours\n\n";
+				print FILE "auth_param basic credentialsttl $proxysettings{'AUTH_CACHE_TTL'} minutes\n\n";
 			}
 		}
 
