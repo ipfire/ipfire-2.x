@@ -64,9 +64,6 @@ my $throttle_mmedia="aiff?|asf|avi|divx|mov|mp3|mpe?g|ogg|qt|ra?m|ts|vob";
 my $def_ports_safe="80 # http\n21 # ftp\n443 # https\n563 # snews\n70 # gopher\n210 # wais\n1025-65535 # unregistered ports\n280 # http-mgmt\n488 # gss-http\n591 # filemaker\n777 # multiling http\n800 # Squids port (for icons)\n";
 my $def_ports_ssl="443 # https\n563 # snews\n";
 
-my @useragent=();
-my @useragentlist=();
-
 my $hintcolour='#FFFFCC';
 my $ncsa_buttontext='';
 my $language='';
@@ -98,7 +95,6 @@ my $stdgrp = "$ncsadir/standard.grp";
 my $extgrp = "$ncsadir/extended.grp";
 my $disgrp = "$ncsadir/disabled.grp";
 
-my $browserdb = "${General::swroot}/proxy/advanced/useragents";
 my $mimetypes = "${General::swroot}/proxy/advanced/mimetypes";
 my $throttled_urls = "${General::swroot}/proxy/advanced/throttle";
 
@@ -168,14 +164,9 @@ unless (-e $acl_ports_safe) { system("touch $acl_ports_safe"); }
 unless (-e $acl_ports_ssl)  { system("touch $acl_ports_ssl"); }
 unless (-e $acl_include) { system("touch $acl_include"); }
 
-unless (-e $browserdb) { system("touch $browserdb"); }
 unless (-e $mimetypes) { system("touch $mimetypes"); }
 
 my $HAVE_NTLM_AUTH = (-e "/usr/bin/ntlm_auth");
-
-open FILE, $browserdb;
-@useragentlist = sort { reverse(substr(reverse(substr($a,index($a,',')+1)),index(reverse(substr($a,index($a,','))),',')+1)) cmp reverse(substr(reverse(substr($b,index($b,',')+1)),index(reverse(substr($b,index($b,','))),',')+1))} grep !/(^$)|(^\s*#)/,<FILE>;
-close(FILE);
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -243,7 +234,6 @@ $proxysettings{'THROTTLE_BINARY'} = 'off';
 $proxysettings{'THROTTLE_DSKIMG'} = 'off';
 $proxysettings{'THROTTLE_MMEDIA'} = 'off';
 $proxysettings{'ENABLE_MIME_FILTER'} = 'off';
-$proxysettings{'ENABLE_BROWSER_CHECK'} = 'off';
 $proxysettings{'FAKE_USERAGENT'} = '';
 $proxysettings{'FAKE_REFERER'} = '';
 $proxysettings{'AUTH_METHOD'} = 'none';
@@ -432,22 +422,6 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 	{
 		$errormessage = $Lang::tr{'invalid maximum incoming size'};
 		goto ERROR;
-	}
-	if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on')
-	{
-		$browser_regexp = '';
-		foreach (@useragentlist)
-		{
-			chomp;
-			@useragent = split(/,/);
-			if ($proxysettings{'UA_'.$useragent[0]} eq 'on') { $browser_regexp .= "$useragent[2]|"; }
-		}
-		chop($browser_regexp);
-		if (!$browser_regexp)
-		{
-			$errormessage = $Lang::tr{'advproxy errmsg no browser'};
-			goto ERROR;
-		}
 	}
 	if (!($proxysettings{'AUTH_METHOD'} eq 'none'))
 	{
@@ -806,17 +780,6 @@ $checked{'THROTTLE_MMEDIA'}{$proxysettings{'THROTTLE_MMEDIA'}} = "checked='check
 $checked{'ENABLE_MIME_FILTER'}{'off'} = '';
 $checked{'ENABLE_MIME_FILTER'}{'on'} = '';
 $checked{'ENABLE_MIME_FILTER'}{$proxysettings{'ENABLE_MIME_FILTER'}} = "checked='checked'";
-
-$checked{'ENABLE_BROWSER_CHECK'}{'off'} = '';
-$checked{'ENABLE_BROWSER_CHECK'}{'on'} = '';
-$checked{'ENABLE_BROWSER_CHECK'}{$proxysettings{'ENABLE_BROWSER_CHECK'}} = "checked='checked'";
-
-foreach (@useragentlist) {
-	@useragent = split(/,/);
-	$checked{'UA_'.$useragent[0]}{'off'} = '';
-	$checked{'UA_'.$useragent[0]}{'on'} = '';
-	$checked{'UA_'.$useragent[0]}{$proxysettings{'UA_'.$useragent[0]}} = "checked='checked'";
-}
 
 $checked{'AUTH_METHOD'}{'none'} = '';
 $checked{'AUTH_METHOD'}{'ncsa'} = '';
@@ -1594,42 +1557,7 @@ print <<END
 </table>
 
 <hr size='1'>
-<table width='100%'>
-<tr>
-	<td colspan='4'><b>$Lang::tr{'advproxy web browser'}</b> $Lang::tr{'advproxy UA enable filter'}:<input type='checkbox' name='ENABLE_BROWSER_CHECK' $checked{'ENABLE_BROWSER_CHECK'}{'on'} /></td>
-</tr>
-END
-;
-if ( $proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on' ){
-print <<END
-<tr>
-	<td colspan='4'><i>
-END
-;
-if (@useragentlist) { print "$Lang::tr{'advproxy allowed web browsers'}:"; } else { print "$Lang::tr{'advproxy no clients defined'}"; }
-print <<END
-</i></td>
-</tr>
-</table>
-<table width='100%'>
-END
-;
 
-for ($n=0; $n<=@useragentlist; $n = $n + $i) {
-	for ($i=0; $i<=3; $i++) {
-		if ($i eq 0) { print "<tr>\n"; }
-		if (($n+$i) < @useragentlist) {
-			@useragent = split(/,/,@useragentlist[$n+$i]);
-			print "<td width='15%'>$useragent[1]:<\/td>\n";
-			print "<td width='10%'><input type='checkbox' name='UA_$useragent[0]' $checked{'UA_'.$useragent[0]}{'on'} /></td>\n";
-		}
-		if ($i eq 3) { print "<\/tr>\n"; }
-	}
-}
-}
-print <<END
-</table>
-<hr size='1'>
 <table width='100%'>
 <tr>
 	<td><b>$Lang::tr{'advproxy privacy'}</b></td>
@@ -3321,8 +3249,6 @@ END
 
 	if (($delaypools) && (!-z $acl_dst_throttle)) { print FILE "acl for_throttled_urls url_regex -i \"$acl_dst_throttle\"\n\n"; }
 
-	if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on') { print FILE "acl with_allowed_useragents browser $browser_regexp\n\n"; }
-
 	print FILE "acl within_timeframe time ";
 	if ($proxysettings{'TIME_MON'} eq 'on') { print FILE "M"; }
 	if ($proxysettings{'TIME_TUE'} eq 'on') { print FILE "T"; }
@@ -3573,7 +3499,6 @@ END
 				print FILE " !within_timeframe";
 			} else {
 				print FILE " within_timeframe"; }
-			if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on') { print FILE " with_allowed_useragents"; }
 			print FILE " to_ipaddr_without_auth\n";
 		}
 		if (!-z $acl_dst_noauth_dom)
@@ -3583,7 +3508,6 @@ END
 				print FILE " !within_timeframe";
 			} else {
 				print FILE " within_timeframe"; }
-			if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on') { print FILE " with_allowed_useragents"; }
 			print FILE " to_domains_without_auth\n";
 		}
 		if (!-z $acl_dst_noauth_url)
@@ -3593,7 +3517,6 @@ END
 				print FILE " !within_timeframe";
 			} else {
 				print FILE " within_timeframe"; }
-			if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on') { print FILE " with_allowed_useragents"; }
 			print FILE " to_hosts_without_auth\n";
 		}
 	}
@@ -3715,7 +3638,6 @@ END
 			print FILE " !within_timeframe";
 		} else {
 			print FILE " within_timeframe"; }
-		if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on') { print FILE " with_allowed_useragents"; }
 		print FILE " !on_ident_aware_hosts\n";
 	}
 
@@ -3750,7 +3672,6 @@ END
 		print FILE " !within_timeframe";
 	} else {
 		print FILE " within_timeframe"; }
-	if ($proxysettings{'ENABLE_BROWSER_CHECK'} eq 'on') { print FILE " with_allowed_useragents"; }
 	print FILE "\n";
 
 	print FILE "http_access deny  all\n\n";

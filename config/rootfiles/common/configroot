@@ -151,7 +151,6 @@ var/ipfire/proxy
 #var/ipfire/proxy/advanced/cre
 #var/ipfire/proxy/advanced/cre/enable
 #var/ipfire/proxy/advanced/settings
-#var/ipfire/proxy/advanced/useragents
 #var/ipfire/proxy/calamaris
 #var/ipfire/proxy/calamaris/bin
 #var/ipfire/proxy/settings
