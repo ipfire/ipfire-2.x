@@ -3251,7 +3251,7 @@ END
 				}
 				print FILE "\n";
 				print FILE "auth_param basic children 10\n";
-				print FILE "auth_param basic realm IPFire Web Proxy Server\n";
+				print FILE "auth_param basic realm $authrealm\n";
 				print FILE "auth_param basic credentialsttl 2 hours\n\n";
 			}
 		}
