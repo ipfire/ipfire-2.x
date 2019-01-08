@@ -89,7 +89,6 @@ my $errormessage='';
 
 my $acldir   = "${General::swroot}/proxy/advanced/acls";
 my $ncsadir  = "${General::swroot}/proxy/advanced/ncsa";
-my $ntlmdir  = "${General::swroot}/proxy/advanced/ntlm";
 my $raddir   = "${General::swroot}/proxy/advanced/radius";
 my $identdir = "${General::swroot}/proxy/advanced/ident";
 my $credir   = "${General::swroot}/proxy/advanced/cre";
@@ -137,7 +136,6 @@ my $urlfilterversion = 'n/a';
 
 unless (-d "$acldir")   { mkdir("$acldir"); }
 unless (-d "$ncsadir")  { mkdir("$ncsadir"); }
-unless (-d "$ntlmdir")  { mkdir("$ntlmdir"); }
 unless (-d "$raddir")   { mkdir("$raddir"); }
 unless (-d "$identdir") { mkdir("$identdir"); }
 unless (-d "$credir")   { mkdir("$credir"); }
@@ -546,33 +544,6 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 			}
 		}
 	}
-	if ($proxysettings{'AUTH_METHOD'} eq 'ntlm')
-	{
-		if ($proxysettings{'NTLM_DOMAIN'} eq '')
-		{
-			$errormessage = $Lang::tr{'advproxy errmsg ntlm domain'};
-			goto ERROR;
-		}
-		if ($proxysettings{'NTLM_PDC'} eq '')
-		{
-			$errormessage = $Lang::tr{'advproxy errmsg ntlm pdc'};
-			goto ERROR;
-		}
-		if (!&General::validhostname($proxysettings{'NTLM_PDC'}))
-		{
-			$errormessage = $Lang::tr{'advproxy errmsg invalid pdc'};
-			goto ERROR;
-		}
-		if ((!($proxysettings{'NTLM_BDC'} eq '')) && (!&General::validhostname($proxysettings{'NTLM_BDC'})))
-		{
-			$errormessage = $Lang::tr{'advproxy errmsg invalid bdc'};
-			goto ERROR;
-		}
-
-		$proxysettings{'NTLM_DOMAIN'} = lc($proxysettings{'NTLM_DOMAIN'});
-		$proxysettings{'NTLM_PDC'}    = lc($proxysettings{'NTLM_PDC'});
-		$proxysettings{'NTLM_BDC'}    = lc($proxysettings{'NTLM_BDC'});
-	}
 	if ($proxysettings{'AUTH_METHOD'} eq 'radius')
 	{
 		if (!&General::validip($proxysettings{'RADIUS_SERVER'}))
@@ -857,7 +828,6 @@ $checked{'AUTH_METHOD'}{'none'} = '';
 $checked{'AUTH_METHOD'}{'ncsa'} = '';
 $checked{'AUTH_METHOD'}{'ident'} = '';
 $checked{'AUTH_METHOD'}{'ldap'} = '';
-$checked{'AUTH_METHOD'}{'ntlm'} = '';
 $checked{'AUTH_METHOD'}{'ntlm-auth'} = '';
 $checked{'AUTH_METHOD'}{'radius'} = '';
 $checked{'AUTH_METHOD'}{$proxysettings{'AUTH_METHOD'}} = "checked='checked'";
@@ -1699,7 +1669,6 @@ print <<END;
 	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ncsa' $checked{'AUTH_METHOD'}{'ncsa'} />$Lang::tr{'advproxy AUTH method ncsa'}</td>
 	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ident' $checked{'AUTH_METHOD'}{'ident'} />$Lang::tr{'advproxy AUTH method ident'}</td>
 	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ldap' $checked{'AUTH_METHOD'}{'ldap'} />$Lang::tr{'advproxy AUTH method ldap'}</td>
-	<td width='$auth_column_width%' class='base'><input type='radio' name='AUTH_METHOD' value='ntlm' $checked{'AUTH_METHOD'}{'ntlm'} />$Lang::tr{'advproxy AUTH method ntlm'}</td>
 END
 
 if ($HAVE_NTLM_AUTH) {
@@ -1915,80 +1884,6 @@ END
 ; }
 
 # ===================================================================
-#  NTLM auth settings
-# ===================================================================
-
-if ($proxysettings{'AUTH_METHOD'} eq 'ntlm') {
-print <<END
-<hr size='1'>
-<table width='100%'>
-<tr>
-	<td colspan='6'><b>$Lang::tr{'advproxy NTLM domain settings'}</b></td>
-</tr>
-<tr>
-	<td class='base'>$Lang::tr{'advproxy NTLM domain'}:</td>
-	<td><input type='text' name='NTLM_DOMAIN' value='$proxysettings{'NTLM_DOMAIN'}' size='15' /></td>
-	<td class='base'>$Lang::tr{'advproxy NTLM PDC hostname'}:</td>
-	<td><input type='text' name='NTLM_PDC' value='$proxysettings{'NTLM_PDC'}' size='14' /></td>
-	<td class='base'>$Lang::tr{'advproxy NTLM BDC hostname'}:</td>
-	<td><input type='text' name='NTLM_BDC' value='$proxysettings{'NTLM_BDC'}' size='14' /></td>
-</tr>
-</table>
-<hr size ='1'>
-<table width='100%'>
-<tr>
-	<td colspan='3'><b>$Lang::tr{'advproxy NTLM auth mode'}</b></td>
-</tr>
-<tr>
-	<td width='25%' class='base' width='25%'>$Lang::tr{'advproxy NTLM use integrated auth'}:</td>
-	<td width='20%'><input type='checkbox' name='NTLM_ENABLE_INT_AUTH' $checked{'NTLM_ENABLE_INT_AUTH'}{'on'} /></td>
-	<td>&nbsp;</td>
-</tr>
-</table>
-<hr size ='1'>
-<table width='100%'>
-<tr>
-	<td colspan='4'><b>$Lang::tr{'advproxy NTLM user based access restrictions'}</b></td>
-</tr>
-<tr>
-	<td width='25%' class='base'>$Lang::tr{'advproxy enabled'}:</td>
-	<td width='20%'><input type='checkbox' name='NTLM_ENABLE_ACL' $checked{'NTLM_ENABLE_ACL'}{'on'} /></td>
-	<td width='25%'>&nbsp;</td>
-	<td width='30%'>&nbsp;</td>
-</tr>
-<tr>
-	<td colspan='2'><input type='radio' name='NTLM_USER_ACL' value='positive' $checked{'NTLM_USER_ACL'}{'positive'} />
-	$Lang::tr{'advproxy NTLM use positive access list'}:</td>
-	<td colspan='2'><input type='radio' name='NTLM_USER_ACL' value='negative' $checked{'NTLM_USER_ACL'}{'negative'} />
-	$Lang::tr{'advproxy NTLM use negative access list'}:</td>
-</tr>
-<tr>
-	<td colspan='2'>$Lang::tr{'advproxy NTLM authorized users'}</td>
-	<td colspan='2'>$Lang::tr{'advproxy NTLM unauthorized users'}</td>
-</tr>
-<tr>
-	<td colspan='2'><textarea name='NTLM_ALLOW_USERS' cols='32' rows='6' wrap='off'>
-END
-; }
-
-if ($proxysettings{'AUTH_METHOD'} eq 'ntlm') { print $proxysettings{'NTLM_ALLOW_USERS'}; }
-
-if ($proxysettings{'AUTH_METHOD'} eq 'ntlm') { print <<END
-</textarea></td>
-	<td colspan='2'><textarea name='NTLM_DENY_USERS' cols='32' rows='6' wrap='off'>
-END
-; }
-
-if ($proxysettings{'AUTH_METHOD'} eq 'ntlm') { print $proxysettings{'NTLM_DENY_USERS'}; }
-
-if ($proxysettings{'AUTH_METHOD'} eq 'ntlm') { print <<END
-</textarea></td>
-</tr>
-</table>
-END
-; }
-
-# ===================================================================
 #  NTLM-AUTH settings
 # ===================================================================
 
@@ -2196,19 +2091,6 @@ print <<END
 <td><input type='hidden' name='LDAP_BINDDN_USER' value='$proxysettings{'LDAP_BINDDN_USER'}'></td>
 <td><input type='hidden' name='LDAP_BINDDN_PASS' value='$proxysettings{'LDAP_BINDDN_PASS'}'></td>
 <td><input type='hidden' name='LDAP_GROUP'       value='$proxysettings{'LDAP_GROUP'}'></td>
-END
-; }
-
-if (!($proxysettings{'AUTH_METHOD'} eq 'ntlm')) {
-print <<END
-<td><input type='hidden' name='NTLM_DOMAIN'          value='$proxysettings{'NTLM_DOMAIN'}'></td>
-<td><input type='hidden' name='NTLM_PDC'             value='$proxysettings{'NTLM_PDC'}'></td>
-<td><input type='hidden' name='NTLM_BDC'             value='$proxysettings{'NTLM_BDC'}'></td>
-<td><input type='hidden' name='NTLM_ENABLE_INT_AUTH' value='$proxysettings{'NTLM_ENABLE_INT_AUTH'}'></td>
-<td><input type='hidden' name='NTLM_ENABLE_ACL'      value='$proxysettings{'NTLM_ENABLE_ACL'}'></td>
-<td><input type='hidden' name='NTLM_USER_ACL'        value='$proxysettings{'NTLM_USER_ACL'}'></td>
-<td><input type='hidden' name='NTLM_ALLOW_USERS'     value='$proxysettings{'NTLM_ALLOW_USERS'}'></td>
-<td><input type='hidden' name='NTLM_DENY_USERS'      value='$proxysettings{'NTLM_DENY_USERS'}'></td>
 END
 ; }
 
@@ -2499,18 +2381,6 @@ sub read_acls
 		open(FILE,"$mimetypes");
 		delete $proxysettings{'MIME_TYPES'};
 		while (<FILE>) { $proxysettings{'MIME_TYPES'} .= $_ };
-		close(FILE);
-	}
-	if (-e "$ntlmdir/msntauth.allowusers") {
-		open(FILE,"$ntlmdir/msntauth.allowusers");
-		delete $proxysettings{'NTLM_ALLOW_USERS'};
-		while (<FILE>) { $proxysettings{'NTLM_ALLOW_USERS'} .= $_ };
-		close(FILE);
-	}
-	if (-e "$ntlmdir/msntauth.denyusers") {
-		open(FILE,"$ntlmdir/msntauth.denyusers");
-		delete $proxysettings{'NTLM_DENY_USERS'};
-		while (<FILE>) { $proxysettings{'NTLM_DENY_USERS'} .= $_ };
 		close(FILE);
 	}
 	if (-e "$raddir/radauth.allowusers") {
@@ -2952,16 +2822,6 @@ sub write_acls
 	print FILE $proxysettings{'MIME_TYPES'};
 	close(FILE);
 
-	open(FILE, ">$ntlmdir/msntauth.allowusers");
-	flock(FILE, 2);
-	print FILE $proxysettings{'NTLM_ALLOW_USERS'};
-	close(FILE);
-
-	open(FILE, ">$ntlmdir/msntauth.denyusers");
-	flock(FILE, 2);
-	print FILE $proxysettings{'NTLM_DENY_USERS'};
-	close(FILE);
-
 	open(FILE, ">$raddir/radauth.allowusers");
 	flock(FILE, 2);
 	print FILE $proxysettings{'RADIUS_ALLOW_USERS'};
@@ -3376,39 +3236,6 @@ END
 			if (!($proxysettings{'AUTH_IPCACHE_TTL'} eq '0')) { print FILE "\nauthenticate_ip_ttl $proxysettings{'AUTH_IPCACHE_TTL'} minutes\n"; }
 		}
 
-		if ($proxysettings{'AUTH_METHOD'} eq 'ntlm')
-		{
-			if ($proxysettings{'NTLM_ENABLE_INT_AUTH'} eq 'on')
-			{
-				print FILE "auth_param ntlm program $authdir/ntlm_smb_lm_auth $proxysettings{'NTLM_DOMAIN'}/$proxysettings{'NTLM_PDC'}";
-				if ($proxysettings{'NTLM_BDC'} eq '') { print FILE "\n"; } else { print FILE " $proxysettings{'NTLM_DOMAIN'}/$proxysettings{'NTLM_BDC'}\n"; }
-				print FILE "auth_param ntlm children $proxysettings{'AUTH_CHILDREN'}\n";
-				if (!($proxysettings{'AUTH_IPCACHE_TTL'} eq '0')) { print FILE "\nauthenticate_ip_ttl $proxysettings{'AUTH_IPCACHE_TTL'} minutes\n"; }
-			} else {
-				print FILE "auth_param basic program $authdir/basic_msnt_auth\n";
-				print FILE "auth_param basic children $proxysettings{'AUTH_CHILDREN'}\n";
-				print FILE "auth_param basic realm $authrealm\n";
-				print FILE "auth_param basic credentialsttl $proxysettings{'AUTH_CACHE_TTL'} minutes\n";
-				if (!($proxysettings{'AUTH_IPCACHE_TTL'} eq '0')) { print FILE "\nauthenticate_ip_ttl $proxysettings{'AUTH_IPCACHE_TTL'} minutes\n"; }
-
-				open(MSNTCONF, ">$ntlmdir/msntauth.conf");
-				flock(MSNTCONF,2);
-				print MSNTCONF "server $proxysettings{'NTLM_PDC'}";
-				if ($proxysettings{'NTLM_BDC'} eq '') { print MSNTCONF " $proxysettings{'NTLM_PDC'}"; } else { print MSNTCONF " $proxysettings{'NTLM_BDC'}"; }
-				print MSNTCONF " $proxysettings{'NTLM_DOMAIN'}\n";
-				if ($proxysettings{'NTLM_ENABLE_ACL'} eq 'on')
-				{
-					if ($proxysettings{'NTLM_USER_ACL'} eq 'positive')
-					{
-						print MSNTCONF "allowusers $ntlmdir/msntauth.allowusers\n";
-					} else {
-						print MSNTCONF "denyusers $ntlmdir/msntauth.denyusers\n";
-					}
-				}
-				close(MSNTCONF);
-			}
-		}
-
 		if ($proxysettings{'AUTH_METHOD'} eq 'ntlm-auth')
 		{
 			print FILE "auth_param ntlm program /usr/bin/ntlm_auth --helper-protocol=squid-2.5-ntlmssp";
@@ -3451,17 +3278,6 @@ END
 
 		print FILE "\n";
 		print FILE "acl for_inetusers proxy_auth REQUIRED\n";
-		if (($proxysettings{'AUTH_METHOD'} eq 'ntlm') && ($proxysettings{'NTLM_ENABLE_INT_AUTH'} eq 'on') && ($proxysettings{'NTLM_ENABLE_ACL'} eq 'on'))
-		{
-			if ((!-z "$ntlmdir/msntauth.allowusers") && ($proxysettings{'NTLM_USER_ACL'} eq 'positive'))
-			{
-				print FILE "acl for_acl_users proxy_auth \"$ntlmdir/msntauth.allowusers\"\n";
-			}
-			if ((!-z "$ntlmdir/msntauth.denyusers") && ($proxysettings{'NTLM_USER_ACL'} eq 'negative'))
-			{
-				print FILE "acl for_acl_users proxy_auth \"$ntlmdir/msntauth.denyusers\"\n";
-			}
-		}
 		if (($proxysettings{'AUTH_METHOD'} eq 'radius') && ($proxysettings{'RADIUS_ENABLE_ACL'} eq 'on'))
 		{
 			if ((!-z "$raddir/radauth.allowusers") && ($proxysettings{'RADIUS_USER_ACL'} eq 'positive'))
@@ -3820,23 +3636,9 @@ END
 			{
 				if (!-z $disgrp) { print FILE " !for_disabled_users"; } else { print FILE " for_inetusers"; }
 			}
-			if (($proxysettings{'AUTH_METHOD'} eq 'ldap') || (($proxysettings{'AUTH_METHOD'} eq 'ntlm') && ($proxysettings{'NTLM_ENABLE_INT_AUTH'} eq 'off')) || ($proxysettings{'AUTH_METHOD'} eq 'radius'))
+			if (($proxysettings{'AUTH_METHOD'} eq 'ldap') || ($proxysettings{'AUTH_METHOD'} eq 'radius'))
 			{
 				print FILE " for_inetusers";
-			}
-			if (($proxysettings{'AUTH_METHOD'} eq 'ntlm') && ($proxysettings{'NTLM_ENABLE_INT_AUTH'} eq 'on'))
-			{
-				if ($proxysettings{'NTLM_ENABLE_ACL'} eq 'on')
-				{
-					if (($proxysettings{'NTLM_USER_ACL'} eq 'positive') && (!-z "$ntlmdir/msntauth.allowusers"))
-					{
-						print FILE " for_acl_users";
-					}
-					if (($proxysettings{'NTLM_USER_ACL'} eq 'negative') && (!-z "$ntlmdir/msntauth.denyusers"))
-					{
-						print FILE " !for_acl_users";
-					}
-				} else { print FILE " for_inetusers"; }
 			}
 			if (($proxysettings{'AUTH_METHOD'} eq 'radius') && ($proxysettings{'RADIUS_ENABLE_ACL'} eq 'on'))
 			{
@@ -3865,23 +3667,9 @@ END
 			{
 				if (!-z $disgrp) { print FILE " !for_disabled_users"; } else { print FILE " for_inetusers"; }
 			}
-			if (($proxysettings{'AUTH_METHOD'} eq 'ldap') || (($proxysettings{'AUTH_METHOD'} eq 'ntlm') && ($proxysettings{'NTLM_ENABLE_INT_AUTH'} eq 'off')) || ($proxysettings{'AUTH_METHOD'} eq 'radius'))
+			if (($proxysettings{'AUTH_METHOD'} eq 'ldap') || ($proxysettings{'AUTH_METHOD'} eq 'radius'))
 			{
 				print FILE " for_inetusers";
-			}
-			if (($proxysettings{'AUTH_METHOD'} eq 'ntlm') && ($proxysettings{'NTLM_ENABLE_INT_AUTH'} eq 'on'))
-			{
-				if ($proxysettings{'NTLM_ENABLE_ACL'} eq 'on')
-				{
-					if (($proxysettings{'NTLM_USER_ACL'} eq 'positive') && (!-z "$ntlmdir/msntauth.allowusers"))
-					{
-						print FILE " for_acl_users";
-					}
-					if (($proxysettings{'NTLM_USER_ACL'} eq 'negative') && (!-z "$ntlmdir/msntauth.denyusers"))
-					{
-						print FILE " !for_acl_users";
-					}
-				} else { print FILE " for_inetusers"; }
 			}
 			if (($proxysettings{'AUTH_METHOD'} eq 'radius') && ($proxysettings{'RADIUS_ENABLE_ACL'} eq 'on'))
 			{
@@ -3908,14 +3696,6 @@ END
 	}
 
 	if (
-	    (
-	     ($proxysettings{'AUTH_METHOD'} eq 'ntlm') &&
-	     ($proxysettings{'NTLM_ENABLE_INT_AUTH'} eq 'on') &&
-	     ($proxysettings{'NTLM_ENABLE_ACL'} eq 'on') &&
-	     ($proxysettings{'NTLM_USER_ACL'} eq 'negative') &&
-	     (!-z "$ntlmdir/msntauth.denyusers")
-	    )
-		||
 	    (
 	     ($proxysettings{'AUTH_METHOD'} eq 'radius') &&
 	     ($proxysettings{'RADIUS_ENABLE_ACL'} eq 'on') &&
@@ -3950,14 +3730,6 @@ END
 
 	print FILE "http_access allow IPFire_networks";
 	if (
-	    (
-	     ($proxysettings{'AUTH_METHOD'} eq 'ntlm') &&
-	     ($proxysettings{'NTLM_ENABLE_INT_AUTH'} eq 'on') &&
-	     ($proxysettings{'NTLM_ENABLE_ACL'} eq 'on') &&
-	     ($proxysettings{'NTLM_USER_ACL'} eq 'positive') &&
-	     (!-z "$ntlmdir/msntauth.allowusers")
-	    )
-		||
 	    (
 	     ($proxysettings{'AUTH_METHOD'} eq 'radius') &&
 	     ($proxysettings{'RADIUS_ENABLE_ACL'} eq 'on') &&

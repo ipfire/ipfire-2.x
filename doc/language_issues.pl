@@ -23,7 +23,18 @@ WARNING: translation string unused: add-route
 WARNING: translation string unused: admin user password has been changed
 WARNING: translation string unused: administrator user password
 WARNING: translation string unused: advproxy LDAP auth
+WARNING: translation string unused: advproxy NTLM BDC hostname
+WARNING: translation string unused: advproxy NTLM PDC hostname
 WARNING: translation string unused: advproxy NTLM auth
+WARNING: translation string unused: advproxy NTLM auth mode
+WARNING: translation string unused: advproxy NTLM authorized users
+WARNING: translation string unused: advproxy NTLM domain
+WARNING: translation string unused: advproxy NTLM domain settings
+WARNING: translation string unused: advproxy NTLM unauthorized users
+WARNING: translation string unused: advproxy NTLM use integrated auth
+WARNING: translation string unused: advproxy NTLM use negative access list
+WARNING: translation string unused: advproxy NTLM use positive access list
+WARNING: translation string unused: advproxy NTLM user based access restrictions
 WARNING: translation string unused: advproxy advanced proxy
 WARNING: translation string unused: advproxy chgwebpwd ERROR
 WARNING: translation string unused: advproxy chgwebpwd SUCCESS
@@ -35,9 +46,15 @@ WARNING: translation string unused: advproxy chgwebpwd old password
 WARNING: translation string unused: advproxy chgwebpwd username
 WARNING: translation string unused: advproxy errmsg change fail
 WARNING: translation string unused: advproxy errmsg change success
+WARNING: translation string unused: advproxy errmsg invalid bdc
+WARNING: translation string unused: advproxy errmsg invalid pdc
 WARNING: translation string unused: advproxy errmsg invalid user
 WARNING: translation string unused: advproxy errmsg no password
+WARNING: translation string unused: advproxy errmsg ntlm domain
+WARNING: translation string unused: advproxy errmsg ntlm pdc
 WARNING: translation string unused: advproxy errmsg password incorrect
+WARNING: translation string unused: advproxy invalid num of children
+WARNING: translation string unused: advproxy redirector children
 WARNING: translation string unused: advproxy ssadvanced proxy
 WARNING: translation string unused: advproxy update information
 WARNING: translation string unused: advproxy update notification
@@ -670,7 +687,6 @@ WARNING: untranslated string: Set time on boot = Force setting the system clock 
 WARNING: untranslated string: addons = Addons
 WARNING: untranslated string: administrator password = Administrator password
 WARNING: untranslated string: administrator username = Administrator username
-WARNING: untranslated string: advproxy AUTH method ntlm = Windows NT4 Domain
 WARNING: untranslated string: advproxy AUTH method ntlm auth = Windows Active Directory
 WARNING: untranslated string: advproxy basic authentication = Allow HTTP Basic authentication
 WARNING: untranslated string: advproxy cache-digest = Enable Cache-Digest Generation
