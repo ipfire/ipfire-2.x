@@ -3250,7 +3250,7 @@ END
 					print FILE " --require-membership-of=$ntlm_auth_group";
 				}
 				print FILE "\n";
-				print FILE "auth_param basic children 10\n";
+				print FILE "auth_param basic children $proxysettings{'AUTH_CHILDREN'}\n";
 				print FILE "auth_param basic realm $authrealm\n";
 				print FILE "auth_param basic credentialsttl 2 hours\n\n";
 			}
