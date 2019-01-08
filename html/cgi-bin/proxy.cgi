@@ -56,7 +56,7 @@ my %mainsettings=();
 my %checked=();
 my %selected=();
 
-my @throttle_limits=(64,128,256,384,512,768,1024,1280,1536,1792,2048,2560,3072,3584,4096,5120,6144,7168,8192,10240,12288,16384,20480);
+my @throttle_limits=(64,128,256,512,1024,1536,2048,3072,4096,5120,6144,7168,8192,10240,16384,20480,51200,102400);
 
 my $def_ports_safe="80 # http\n21 # ftp\n443 # https\n563 # snews\n70 # gopher\n210 # wais\n1025-65535 # unregistered ports\n280 # http-mgmt\n488 # gss-http\n591 # filemaker\n777 # multiling http\n800 # Squids port (for icons)\n";
 my $def_ports_ssl="443 # https\n563 # snews\n";
@@ -1430,7 +1430,15 @@ END
 ;
 
 foreach (@throttle_limits) {
-	print "\t<option value='$_' $selected{'THROTTLING_GREEN_TOTAL'}{$_}>$_ kbit/s</option>\n";
+	my $val = $_;
+	my $unit = "kbit/s";
+
+	if ($val >= 1024) {
+		$unit = "Mbit/s";
+		$val /= 1024;
+	}
+
+	print "\t<option value='$_' $selected{'THROTTLING_GREEN_TOTAL'}{$_}>$val $unit</option>\n";
 }
 
 print <<END
