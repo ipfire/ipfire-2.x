@@ -1,5 +1,4 @@
 HOME		= .
-RANDFILE	= /var/tmp/.rnd
 oid_section	= new_oids
 
 [ new_oids ]
@@ -17,7 +16,6 @@ certificate	= $dir/ca/cacert.pem
 serial		= $dir/certs/serial
 crl		= $dir/crls/cacrl.pem
 private_key	= $dir/private/cakey.pem
-RANDFILE	= $dir/tmp/.rand
 x509_extensions	= usr_cert
 default_days	= 999999
 default_crl_days= 30
