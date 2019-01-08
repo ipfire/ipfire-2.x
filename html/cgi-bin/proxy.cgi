@@ -3239,6 +3239,7 @@ END
 			print FILE "\n";
 
 			print FILE "auth_param ntlm children $proxysettings{'AUTH_CHILDREN'}\n\n";
+			print FILE "auth_param ntlm credentialsttl $proxysettings{'AUTH_CACHE_TTL'} minutes\n\n";
 
 			# BASIC authentication
 			if ($proxysettings{'NTLM_AUTH_BASIC'} eq "on") {
