@@ -4083,7 +4083,10 @@ END
 	if (($proxysettings{'ENABLE_FILTER'} eq 'on') || ($proxysettings{'ENABLE_UPDXLRATOR'} eq 'on') || ($proxysettings{'ENABLE_CLAMAV'} eq 'on'))
 	{
 		print FILE "url_rewrite_program /usr/sbin/redirect_wrapper\n";
-		print FILE "url_rewrite_children ", &General::number_cpu_cores(), "\n\n";
+		print FILE "url_rewrite_children ", &General::number_cpu_cores();
+		print FILE " startup=", &General::number_cpu_cores();
+		print FILE " idle=", &General::number_cpu_cores();
+		print FILE " queue-size=", &General::number_cpu_cores() * 32, "\n\n";
 	}
 
 	# Include file with user defined settings.
