@@ -125,7 +125,7 @@ main() {
 
 	# Delete all other interfaces
 	local intf
-	for intf in /sys/class/net/gre* /sys/class/net/vti*; do
+	for intf in /sys/class/net/gre[0-9]* /sys/class/net/vti[0-9]*; do
 		intf="$(basename "${intf}")"
 
 		# Ignore a couple of interfaces that cannot be deleted
