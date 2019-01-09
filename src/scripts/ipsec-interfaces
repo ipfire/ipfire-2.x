@@ -83,13 +83,19 @@ main() {
 			local args=(
 				"local" "${vpn_ip}"
 				"remote" "${righthost}"
-				"ttl" "255"
 			)
 
-			# Add key for VTI
-			if [ "${interface_mode}" = "vti" ]; then
-				args+=( key "${id}" )
-			fi
+			case "${interface_mode}" in
+				gre)
+					# Add TTL
+					args+=( "ttl" "255" )
+					;;
+
+				vti)
+					# Add key for VTI
+					args+=( "key" "${id}" )
+					;;
+			esac
 
 			# Update the settings when the interface already exists
 			if [ -d "/sys/class/net/${intf}" ]; then
