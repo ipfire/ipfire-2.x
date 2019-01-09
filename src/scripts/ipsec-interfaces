@@ -23,6 +23,7 @@ shopt -s nullglob
 
 VPN_CONFIG="/var/ipfire/vpn/config"
 
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/vpn/settings)
 
 VARS=(
@@ -42,6 +43,20 @@ main() {
 	local action
 
 	local interfaces=()
+	local vpn_ip
+
+	# Handle %defaultroute
+	if [ "${VPN_IP}" = "%defaultroute" ]; then
+		if [ -r "/var/ipfire/red/local-ipaddress" ]; then
+			vpn_ip="$(</var/ipfire/red/local-ipaddress)"
+
+		elif [ "${RED_TYPE}" = "STATIC" -a -n "${RED_ADDRESS}" ]; then
+			vpn_ip="${RED_ADDRESS}"
+
+		fi
+	else
+		vpn_ip="${VPM_IP}"
+	fi
 
 	# We are done when IPsec is not enabled
 	if [ "${ENABLED}" = "on" ]; then
@@ -66,7 +81,7 @@ main() {
 			interfaces+=( "${intf}" )
 
 			local args=(
-				"local" "${VPN_IP}"
+				"local" "${vpn_ip}"
 				"remote" "${righthost}"
 				"ttl" "255"
 			)
