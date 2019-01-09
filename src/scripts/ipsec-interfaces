@@ -84,7 +84,10 @@ main() {
 			# Create a new interface and bring it up
 			else
 				log "Creating interface ${intf}"
-				ip link add name "${intf}" type "${interface_mode}" "${args[@]}"
+				if ! ip link add name "${intf}" type "${interface_mode}" "${args[@]}"; then
+					log "Could not create interface ${intf}"
+					continue
+				fi
 			fi
 
 			# Add an IP address
