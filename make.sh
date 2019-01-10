@@ -1434,6 +1434,7 @@ buildipfire() {
   lfsmake2 mpd
   lfsmake2 libmpdclient
   lfsmake2 mpc
+  lfsmake2 perl-Net-CIDR-Lite
   lfsmake2 perl-Net-SMTP-SSL
   lfsmake2 perl-MIME-Base64
   lfsmake2 perl-Authen-SASL
