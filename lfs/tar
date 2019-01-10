@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.30
+VER        = 1.31
 
 THISAPP    = tar-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8404e4c1fc5a3000228ab2b8ad674a65
+$(DL_FILE)_MD5 = 77afa35b696c8d760331fa0e12c2fac9
 
 install : $(TARGET)
 
@@ -80,6 +80,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/tar/01_extract.c.patch
+
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG) FORCE_UNSAFE_CONFIGURE=1
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
