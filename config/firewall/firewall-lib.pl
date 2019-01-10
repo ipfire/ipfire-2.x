@@ -39,6 +39,7 @@ my %ovpnsettings=();
 my %aliases=();
 
 require '/var/ipfire/general-functions.pl';
+require '${General::swroot}/geoip-locations.pl';
 
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
@@ -591,36 +592,7 @@ sub get_internal_firewall_ip_address
 }
 
 sub get_geoip_locations() {
-	# Path to the directory which contains the binary geoip
-	# databases.
-	my $directory="/usr/share/xt_geoip/LE";
-
-	# Array to store the final country list.
-	my @country_codes = ();
-
-	# Open location and do a directory listing.
-	opendir(DIR, "$directory");
-	my @locations = readdir(DIR);
-	closedir(DIR);
-
-	# Loop through the directory listing, and cut of the file extensions.
-	foreach my $location (sort @locations) {
-		# skip . and ..
-		next if($location =~ /^\.$/);
-		next if($location =~ /^\.\.$/);
-
-		# Remove whitespaces.
-		chomp($location);
-
-		# Cut-off file extension.
-		my ($country_code, $extension) = split(/\./, $location);
-
-		# Add country code to array.
-		push(@country_codes, $country_code);
-	}
-
-	# Return final array.
-	return @country_codes;
+	return &GeoIP::get_geoip_locations();
 }
 
 return 1;
