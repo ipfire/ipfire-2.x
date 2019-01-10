@@ -55,6 +55,9 @@ sudo -u nobody /srv/web/ipfire/cgi-bin/proxy.cgi
 # Reload sysctl.conf
 sysctl -p
 
+# Re-run depmod
+depmod -a
+
 # Finish
 /etc/init.d/fireinfo start
 sendprofile
