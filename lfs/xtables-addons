@@ -96,7 +96,7 @@ ifeq "$(USPACE)" "1"
 	cd $(DIR_APP) && make install
 
 	# Install xt_geoip_build.
-	cd $(DIR_APP) && install -m 755 GeoIP/xt_geoip_build \
+	cd $(DIR_APP) && install -m 755 geoip/xt_geoip_build \
 		/usr/local/bin/
 else
 	cd $(DIR_APP) && ./configure \
