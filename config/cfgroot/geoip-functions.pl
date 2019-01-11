@@ -23,82 +23,21 @@
 
 package GeoIP;
 
-require '/var/ipfire/network-functions.pl';
-
+use Geo::IP::PurePerl;
 use Locale::Codes::Country;
 
-# Path where all the GeoIP related databases are stored.
-my $geoip_database_dir = "/var/lib/GeoIP";
-
-# Database which contains all IPv4 networks.
-my $address_ipv4_database = "GeoLite2-Country-Blocks-IPv4.csv";
-
-# Database wich contains the locations data.
-my $location_database = "GeoLite2-Country-Locations-en.csv";
+my $database;
 
 sub lookup($) {
 	my $address = shift;
-	my $location_id;
-	my $country_code;
 
-	# Check if the given address is valid.
-	unless(&Network::check_ip_address($address)) {
-		return;
+	# Load the database into memory if not already done
+	if (!$database) {
+		$database = Geo::IP::PurePerl->new(GEOIP_MEMORY_CACHE);
 	}
 
-	# Open the address database.
-	open(ADDRESS, "$geoip_database_dir/$address_ipv4_database") or die "Could not open $geoip_database_dir/$address_ipv4_database. $!\n";
-
-	# Loop through the file.
-	while(my $line = <ADDRESS>) {
-		# Remove newlines.
-		chomp($line);
-
-		# Split the line content.
-		my ($network, $geoname_id, $registered_country_geoname_id, $represented_country_geoname_id, $is_anonymous_proxy, $is_satellite_provider) = split(/\,/, $line);
-
-		# Check if the given address is part of the current processed network.
-		if (&Network::ip_address_in_network($address, $network)) {
-			# Store the geoname_id for this address.
-			$location_id = $geoname_id;
-
-			# Break loop.
-			last;
-		}
-	}
-
-	# Return nothing if no location_id could be found.
-	return unless($location_id);
-
-	# Close filehandle.
-	close(ADDRESS);
-
-	# Open the location database.
-	open(LOCATION, "$geoip_database_dir/$location_database") or die "Could not open $geoip_database_dir/$location_database. $!\n";
-
-	# Loop through the file.
-	while(my $line = <LOCATION>) {
-		# Remove newlines.
-		chomp($line);
-
-		# Split the line content.
-		my ($geoname_id, $locale_code, $continent_code, $continent_name, $country_iso_code, $country_name, $is_in_european_union) = split(/\,/, $line);
-
-		# Check if the correct location_id has been found.
-		if ($geoname_id eq $location_id) {
-			# Store the county code.
-			$country_code = $country_iso_code;
-
-			# Break loop.
-			last;
-		}
-	}
-
-	# Close filehandle.
-	close(LOCATION);
-
-	# Return the obtained country code.
-	return $country_code;
+	# Return the name of the country
+	return $database->country_code_by_name($address);
 }
 
 # Function to get the flag icon for a specified country code.
