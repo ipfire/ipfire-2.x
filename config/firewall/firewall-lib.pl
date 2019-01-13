@@ -39,7 +39,7 @@ my %ovpnsettings=();
 my %aliases=();
 
 require '/var/ipfire/general-functions.pl';
-require '${General::swroot}/geoip-locations.pl';
+require '/var/ipfire/geoip-functions.pl';
 
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
