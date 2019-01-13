@@ -26,6 +26,9 @@ package GeoIP;
 use Geo::IP::PurePerl;
 use Locale::Codes::Country;
 
+my $geoip_database_dir = "/var/lib/GeoIP";
+my $location_database = "GeoLite2-Country-Locations-en.csv";
+
 my $database;
 
 sub lookup($) {
