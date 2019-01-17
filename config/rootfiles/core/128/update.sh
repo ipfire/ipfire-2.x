@@ -47,6 +47,9 @@ ldconfig
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# Reload sysctl.conf
+sysctl -p
+
 # Start services
 
 # Finish
