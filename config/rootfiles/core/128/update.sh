@@ -34,6 +34,9 @@ done
 # Stop services
 
 # Remove files
+rm -vf \
+	/usr/lib/libcrypto.so.10 \
+	/usr/lib/libssl.so.10
 
 # Extract files
 extract_files
