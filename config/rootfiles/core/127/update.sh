@@ -58,6 +58,9 @@ sysctl -p
 # Re-run depmod
 depmod -a
 
+# This update needs a reboot...
+touch /var/run/need_reboot
+
 # Finish
 /etc/init.d/fireinfo start
 sendprofile
