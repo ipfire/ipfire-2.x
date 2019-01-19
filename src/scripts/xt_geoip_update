@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2014 IPFire Development Team <info@ipfire.org>                #
+# Copyright (C) 2019 IPFire Development Team <info@ipfire.org>                #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ SCRIPT_PATH=/usr/local/bin
 DEST_PATH=/usr/share/xt_geoip
 DB_PATH=/var/lib/GeoIP
 
-DL_URL=http://geolite.maxmind.com/download/geoip/database/
+DL_URL=http://geolite.maxmind.com/download/geoip/database
 DL_FILE=GeoLite2-Country-CSV.zip
 
 eval $(/usr/local/bin/readhash /var/ipfire/proxy/settings)

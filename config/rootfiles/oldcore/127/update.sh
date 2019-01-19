@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2018 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2019 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -48,6 +48,14 @@ ldconfig
 # Regenerate squid configuration file
 sudo -u nobody /srv/web/ipfire/cgi-bin/proxy.cgi
 
+# If not exist create ovpn ca index.txt(.attr) and fix rights
+touch /var/ipfire/ovpn/ca/index.txt.attr
+chmod 644 /var/ipfire/ovpn/ca/index.txt.attr
+chown nobody:nobody /var/ipfire/ovpn/ca/index.txt.attr
+touch /var/ipfire/ovpn/ca/index.txt
+chmod 644 /var/ipfire/ovpn/ca/index.txt
+chown nobody:nobody /var/ipfire/ovpn/ca/index.txt
+
 # Start services
 /etc/init.d/unbound restart
 /etc/init.d/squid start
@@ -57,6 +65,12 @@ sysctl -p
 
 # Re-run depmod
 depmod -a
+
+# Update xt_geoip
+/usr/local/bin/xt_geoip_update
+
+# This update needs a reboot...
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
