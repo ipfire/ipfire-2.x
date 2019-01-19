@@ -51,7 +51,7 @@ sudo -u nobody /srv/web/ipfire/cgi-bin/proxy.cgi
 # If not exist create ovpn ca index.txt.attr and fix rights
 touch /var/ipfire/ovpn/ca/index.txt.attr
 chmod 644 /var/ipfire/ovpn/ca/index.txt.attr
-chmod nobody:nobody /var/ipfire/ovpn/ca/index.txt.attr
+chown nobody:nobody /var/ipfire/ovpn/ca/index.txt.attr
 
 # Start services
 /etc/init.d/unbound restart
