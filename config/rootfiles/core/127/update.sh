@@ -66,6 +66,9 @@ sysctl -p
 # Re-run depmod
 depmod -a
 
+# Update xt_geoip
+/usr/local/bin/xt_geoip_update
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
