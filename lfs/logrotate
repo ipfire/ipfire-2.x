@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.14.0
+VER        = 3.15.0
 
 THISAPP    = logrotate-$(VER)
 DL_FILE    = logrotate-$(VER).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9d9cf1d0a0b0433f56e152c5117f7b31
+$(DL_FILE)_MD5 = 240105d3288657d0ad7782c6a34c9a85
 
 install : $(TARGET)
 
