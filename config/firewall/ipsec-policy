@@ -24,10 +24,10 @@ VPN_CONFIG="/var/ipfire/vpn/config"
 eval $(/usr/local/bin/readhash /var/ipfire/vpn/settings)
 
 VARS=(
-	id status name lefthost type ctype x1 x2 x3 leftsubnets
-	remote righthost rightsubnets x5 x6 x7 x8 x9 x10 x11 x12
-	x13 x14 x15 x16 x17 x18 x19 x20 x21 proto x22 x23 x24
-	route x26 mode interface_mode interface_address interface_mtu rest
+	id status name lefthost type ctype psk local x1 leftsubnets
+	x2 remote rightsubnets x3 x4 x5 x6 x7 x8 x9 x10 x11 x12
+	x13 x14 x15 x16 x17 x18 x19 proto x20 x21 x22
+	route x23 mode interface_mode interface_address interface_mtu rest
 )
 
 block_subnet() {
@@ -82,15 +82,20 @@ install_policy() {
 		# Check if this a net-to-net connection
 		[ "${type}" = "net" ] || continue
 
+		# Default local to 0.0.0.0/0
+		if [ "${local}" = "" -o "${local}" = "off" ]; then
+			local="0.0.0.0/0"
+		fi
+
 		# Install permissions for GRE traffic
 		case "${interface_mode}" in
 			gre)
 				if [ -n "${remote}" ]; then
 					iptables -A IPSECINPUT -p gre \
-						-s "${remote}" -j ACCEPT
+						-s "${remote}" -d "${local}" -j ACCEPT
 
 					iptables -A IPSECOUTPUT -p gre \
-						-d "${remote}" -j ACCEPT
+						-s "${local}" -d "${remote}" -j ACCEPT
 				fi
 				;;
 		esac
