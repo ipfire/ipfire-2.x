@@ -69,6 +69,10 @@ my %INACTIVITY_TIMEOUTS = (
 	0		=> "- $Lang::tr{'unlimited'} -",
 );
 
+# Load aliases
+my %aliases;
+&General::get_aliases(\%aliases);
+
 my $col="";
 
 $cgiparams{'ENABLED'} = 'off';
@@ -81,6 +85,7 @@ $cgiparams{'ADVANCED'} = '';
 $cgiparams{'NAME'} = '';
 $cgiparams{'LOCAL_SUBNET'} = '';
 $cgiparams{'REMOTE_SUBNET'} = '';
+$cgiparams{'LOCAL'} = '';
 $cgiparams{'REMOTE'} = '';
 $cgiparams{'LOCAL_ID'} = '';
 $cgiparams{'REMOTE_ID'} = '';
@@ -284,15 +289,18 @@ sub writeipsecfiles {
 		#remote peer is not set? => use '%any'
 		$lconfighash{$key}[10] = '%any' if ($lconfighash{$key}[10] eq '');
 
+		# Field 6 might be "off" on old installations
+		if ($lconfighash{$key}[6] eq "off") {
+			$lconfighash{$key}[6] = "";
+		}
+
 		my $localside;
-		if ($lconfighash{$key}[26] eq 'BLUE') {
-			$localside = $netsettings{'BLUE_ADDRESS'};
-		} elsif ($lconfighash{$key}[26] eq 'GREEN') {
-			$localside = $netsettings{'GREEN_ADDRESS'};
-		} elsif ($lconfighash{$key}[26] eq 'ORANGE') {
-			$localside = $netsettings{'ORANGE_ADDRESS'};
-		} else { # it is RED
+		if ($lconfighash{$key}[6]) {
+			$localside = $lconfighash{$key}[6];
+		} elsif ($lvpnsettings{'VPN_IP'}) {
 			$localside = $lvpnsettings{'VPN_IP'};
+		} else {
+			$localside = "%defaultroute";
 		}
 
 		my $interface_mode = $lconfighash{$key}[36];
@@ -1319,7 +1327,7 @@ END
 		$cgiparams{'TYPE'}				= $confighash{$cgiparams{'KEY'}}[3];
 		$cgiparams{'AUTH'}				= $confighash{$cgiparams{'KEY'}}[4];
 		$cgiparams{'PSK'}				= $confighash{$cgiparams{'KEY'}}[5];
-		#$cgiparams{'free'}				= $confighash{$cgiparams{'KEY'}}[6];
+		$cgiparams{'LOCAL'}				= $confighash{$cgiparams{'KEY'}}[6];
 		$cgiparams{'LOCAL_ID'}			= $confighash{$cgiparams{'KEY'}}[7];
 		my @local_subnets = split(",", $confighash{$cgiparams{'KEY'}}[8]);
 		$cgiparams{'LOCAL_SUBNET'} 		= join(/\|/, @local_subnets);
@@ -1404,6 +1412,13 @@ END
 		if (($cgiparams{'TYPE'} eq 'net') && (! $cgiparams{'REMOTE'})) {
 			$errormessage = $Lang::tr{'invalid input for remote host/ip'};
 			goto VPNCONF_ERROR;
+		}
+
+		if ($cgiparams{'LOCAL'}) {
+			if (($cgiparams{'LOCAL'} ne "") && (!&General::validip($cgiparams{'LOCAL'}))) {
+				$errormessage = $Lang::tr{'invalid input for local ip address'};
+				goto VPNCONF_ERROR;
+			}
 		}
 
 		if ($cgiparams{'REMOTE'}) {
@@ -1894,6 +1909,7 @@ END
 		my @remote_subnets = split(",", $cgiparams{'REMOTE_SUBNET'});
 		$confighash{$key}[11] = join('|', @remote_subnets);
 	}
+	$confighash{$key}[6] = $cgiparams{'LOCAL'};
 	$confighash{$key}[7] = $cgiparams{'LOCAL_ID'};
 	my @local_subnets = split(",", $cgiparams{'LOCAL_SUBNET'});
 	$confighash{$key}[8] = join('|', @local_subnets);
@@ -1927,7 +1943,6 @@ END
 	$confighash{$key}[38] = $cgiparams{'INTERFACE_MTU'};
 
 	# free unused fields!
-	$confighash{$key}[6] = 'off';
 	$confighash{$key}[15] = 'off';
 
 	&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
@@ -2036,6 +2051,14 @@ VPNCONF_ERROR:
 	$selected{'INTERFACE_MODE'}{'vti'} = '';
 	$selected{'INTERFACE_MODE'}{$cgiparams{'INTERFACE_MODE'}} = "selected='selected'";
 
+	$selected{'LOCAL'}{''} = '';
+	foreach my $alias (sort keys %aliases) {
+		my $address = $aliases{$alias}{'IPT'};
+
+		$selected{'LOCAL'}{$address} = '';
+	}
+	$selected{'LOCAL'}{$cgiparams{'LOCAL'}} = "selected='selected'";
+
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', $errormessage);
@@ -2109,7 +2132,7 @@ EOF
 	my @remote_subnets = split(/\|/, $cgiparams{'REMOTE_SUBNET'});
 	my $remote_subnets = join(",", @remote_subnets);
 
-	print <<END
+	print <<END;
 	<tr>
 		<td width='20%'>$Lang::tr{'enabled'}</td>
 		<td width='30%'>
@@ -2118,7 +2141,22 @@ EOF
 		<td colspan="2"></td>
 	</tr>
 	<tr>
-		<td colspan="2"></td>
+		<td class='boldbase' width='20%'>$Lang::tr{'local ip address'}:</td>
+		<td width='30%'>
+			<select name="LOCAL">
+				<option value="" $selected{'LOCAL'}{''}>- $Lang::tr{'default IP address'} -</option>
+END
+
+				foreach my $alias (sort keys %aliases) {
+					my $address = $aliases{$alias}{'IPT'};
+					print <<END;
+						<option value="$address" $selected{'LOCAL'}{$address}>$alias ($address)</option>
+END
+				}
+
+	print <<END;
+			</select>
+		</td>
 		<td class='boldbase' width='20%'>$Lang::tr{'remote host/ip'}:&nbsp;$blob</td>
 		<td width='30%'>
 			<input type='text' name='REMOTE' value='$cgiparams{'REMOTE'}' size="25" />
