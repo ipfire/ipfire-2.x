@@ -1945,7 +1945,12 @@ END
 	} else {
 		$cgiparams{'AUTH'} = 'certgen';
 	}
-	$cgiparams{'LOCAL_SUBNET'}		= "$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}";
+
+	if ($netsettings{"GREEN_NETADDRESS"} && $netsettings{"GREEN_NETMASK"}) {
+		$cgiparams{"LOCAL_SUBNET"} = $netsettings{'GREEN_NETADDRESS'} . "/" . $netsettings{'GREEN_NETMASK'};
+	} else {
+		$cgiparams{"LOCAL_SUBNET"} = "";
+	}
 	$cgiparams{'CERT_EMAIL'}		= $vpnsettings{'ROOTCERT_EMAIL'};
 	$cgiparams{'CERT_OU'}			= $vpnsettings{'ROOTCERT_OU'};
 	$cgiparams{'CERT_ORGANIZATION'}	= $vpnsettings{'ROOTCERT_ORGANIZATION'};
