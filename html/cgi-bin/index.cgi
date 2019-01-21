@@ -367,13 +367,12 @@ END
 	}
 #check if IPSEC is running
 if ( $vpnsettings{'ENABLED'} eq 'on' || $vpnsettings{'ENABLED_BLUE'} eq 'on' ) {
-	my $ipsecip = $vpnsettings{'VPN_IP'};
 print<<END;
 		<tr>
 			<td style='width:25%; text-align:center; background-color:$Header::colourvpn;'>
 				<a href='/cgi-bin/vpnmain.cgi' style='color:white'><b>$Lang::tr{'ipsec'}</b></a>
 			</td>
-			<td style='width:30%; text-align:center;'>$ipsecip</td>
+			<td style='width:30%; text-align:center;'></td>
 			<td style='width:45%; text-align:center; color:$Header::colourgreen;'>Online</td>
 		</tr>
 END

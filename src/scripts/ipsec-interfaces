@@ -46,7 +46,11 @@ main() {
 
 	# Compat for older connections
 	if [ "${local}" = "off" ]; then
-		local=""
+		if [ "${VPN_IP}" = "%defaultroute" ]; then
+			local=""
+		else
+			local="${VPN_IP}"
+		fi
 	fi
 
 	# Handle %defaultroute

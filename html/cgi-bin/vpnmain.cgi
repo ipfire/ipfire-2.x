@@ -291,14 +291,12 @@ sub writeipsecfiles {
 
 		# Field 6 might be "off" on old installations
 		if ($lconfighash{$key}[6] eq "off") {
-			$lconfighash{$key}[6] = "";
+			$lconfighash{$key}[6] = $lvpnsettings{"VPN_IP"};
 		}
 
 		my $localside;
 		if ($lconfighash{$key}[6]) {
 			$localside = $lconfighash{$key}[6];
-		} elsif ($lvpnsettings{'VPN_IP'}) {
-			$localside = $lvpnsettings{'VPN_IP'};
 		} else {
 			$localside = "%defaultroute";
 		}
@@ -507,12 +505,6 @@ if ($ENV{"REMOTE_ADDR"} eq "") {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cgiparams{'KEY'} eq '') {
 	&General::readhash("${General::swroot}/vpn/settings", \%vpnsettings);
 
-	unless (&General::validfqdn($cgiparams{'VPN_IP'}) || &General::validip($cgiparams{'VPN_IP'})
-	|| $cgiparams{'VPN_IP'} eq '%defaultroute' ) {
-		$errormessage = $Lang::tr{'invalid input for hostname'};
-		goto SAVE_ERROR;
-	}
-
 	unless ($cgiparams{'VPN_DELAYED_START'} =~ /^[0-9]{1,3}$/ ) { #allow 0-999 seconds !
 		$errormessage = $Lang::tr{'invalid time period'};
 		goto SAVE_ERROR;
@@ -524,7 +516,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	}
 
 	$vpnsettings{'ENABLED'} = $cgiparams{'ENABLED'};
-	$vpnsettings{'VPN_IP'} = $cgiparams{'VPN_IP'};
 	$vpnsettings{'VPN_DELAYED_START'} = $cgiparams{'VPN_DELAYED_START'};
 	$vpnsettings{'RW_NET'} = $cgiparams{'RW_NET'};
 	&General::writehash("${General::swroot}/vpn/settings", \%vpnsettings);
@@ -2922,21 +2913,6 @@ EOF
 
 	my @status = `/usr/local/bin/ipsecctrl I 2>/dev/null`;
 
-	# suggest a default name for this side
-	if ($cgiparams{'VPN_IP'} eq '' && -e "${General::swroot}/red/active") {
-		if (open(IPADDR, "${General::swroot}/red/local-ipaddress")) {
-			my $ipaddr = <IPADDR>;
-			close IPADDR;
-			chomp ($ipaddr);
-			$cgiparams{'VPN_IP'} = (gethostbyaddr(pack("C4", split(/\./, $ipaddr)), 2))[0];
-			if ($cgiparams{'VPN_IP'} eq '') {
-				$cgiparams{'VPN_IP'} = $ipaddr;
-			}
-		}
-	}
-	# no IP found, use %defaultroute
-	$cgiparams{'VPN_IP'} ='%defaultroute' if ($cgiparams{'VPN_IP'} eq '');
-
 	$cgiparams{'VPN_DELAYED_START'} = 0 if (! defined ($cgiparams{'VPN_DELAYED_START'}));
 	$checked{'ENABLED'} = $cgiparams{'ENABLED'} eq 'on' ? "checked='checked'" : '';
 
@@ -2966,8 +2942,6 @@ EOF
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%'>
 	<tr>
-	<td width='20%' class='base' nowrap='nowrap'>$Lang::tr{'vpn red name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td width='20%'><input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' /></td>
 	<td width='20%' class='base'>$Lang::tr{'enabled'}<input type='checkbox' name='ENABLED' $checked{'ENABLED'} /></td>
 	</tr>
 END
@@ -2985,10 +2959,6 @@ print <<END
 <br>
 <hr />
 <table width='100%'>
-<tr>
-	<td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
-	<td width='70%' class='base' valign='top'>$Lang::tr{'required field'}</td><td width='30%' align='right' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
-</tr>
 <tr>
 	<td class='base' valign='top' nowrap='nowrap'><img src='/blob.gif' alt='*' /><img src='/blob.gif' alt='*' />&nbsp;</td>
 	<td class='base'>	<font class='base'>$Lang::tr{'vpn delayed start help'}</font></td>
