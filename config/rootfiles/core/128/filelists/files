@@ -3,3 +3,4 @@ etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 etc/sysctl.conf
+usr/local/bin/xt_geoip_update
