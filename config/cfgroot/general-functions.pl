@@ -1169,5 +1169,12 @@ sub dnssec_status() {
 
 	return $status;
 }
+sub number_cpu_cores() {
+	open my $cpuinfo, "/proc/cpuinfo" or die "Can't open cpuinfo: $!\n";
+	my $cores = scalar (map /^processor/, <$cpuinfo>);
+	close $cpuinfo;
+
+	return $cores;
+}
 
 1;

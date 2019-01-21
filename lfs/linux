@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 79
+PAK_VER    = 80
 DEPS	   = ""
 
 HEADERS_ARCH  = $(BUILD_PLATFORM)
@@ -211,14 +211,14 @@ ifeq "$(LASTKERNEL)" "1"
 	echo install drm /bin/false > /etc/modprobe.d/framebuffer.conf
 
 	# Blacklist old framebuffer modules
-	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/video/fbdev/ -name *.ko); do \
+	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/video/fbdev/ -name *.ko.xz); do \
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
 	done
 	# Blacklist new drm framebuffer modules
-	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/gpu/drm -name *.ko); do \
+	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/gpu/drm -name *.ko.xz); do \
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
 	done	
-	sed -i -e "s|.ko||g" /etc/modprobe.d/framebuffer.conf
+	sed -i -e "s|.ko.xz||g" /etc/modprobe.d/framebuffer.conf
 
 	# Disable ipv6 at runtime
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6.conf

@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2018 IPFire Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2019 IPFire Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 VERSION="2.21"							# Version number
-CORE="127"							# Core Level (Filename)
-PAKFIRE_CORE="126"						# Core Level (PAKFIRE)
+CORE="128"							# Core Level (Filename)
+PAKFIRE_CORE="127"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -1087,7 +1087,6 @@ buildipfire() {
   lfsmake2 backup
   lfsmake2 openssl
   [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
-  lfsmake2 openssl-compat
   lfsmake2 popt
   lfsmake2 libusb
   lfsmake2 libusb-compat
@@ -1436,6 +1435,7 @@ buildipfire() {
   lfsmake2 mpd
   lfsmake2 libmpdclient
   lfsmake2 mpc
+  lfsmake2 perl-Net-CIDR-Lite
   lfsmake2 perl-Net-SMTP-SSL
   lfsmake2 perl-MIME-Base64
   lfsmake2 perl-Authen-SASL

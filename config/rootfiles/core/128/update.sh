@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
-core=127
+core=128
 
 # Remove old core updates from pakfire cache to save space...
 for (( i=1; i<=$core; i++ )); do
@@ -32,9 +32,11 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
-/etc/init.d/squid stop
 
 # Remove files
+rm -vf \
+	/usr/lib/libcrypto.so.10 \
+	/usr/lib/libssl.so.10
 
 # Extract files
 extract_files
@@ -45,9 +47,10 @@ ldconfig
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# Reload sysctl.conf
+sysctl -p
+
 # Start services
-/etc/init.d/unbound restart
-/etc/init.d/squid start
 
 # Finish
 /etc/init.d/fireinfo start

@@ -2178,7 +2178,7 @@
 'ssh no active logins' => 'Keine aktiven Benutzeranmeldungen',
 'ssh no auth' => 'Sie haben keinerlei Authentifizierungverfahren zugelassen; dies wird Ihre Anmeldung verhindern',
 'ssh passwords' => 'Passwortbasierte Authentifizierung zulassen',
-'ssh port' => 'SSH-Port auf 222 setzen (Standard ist 22)',
+'ssh port' => 'SSH-Port auf Standardport 22 setzen (andernfalls 222)',
 'ssh portfw' => 'TCP-Weiterleitung zulassen',
 'ssh tempstart15' => 'SSH-Deamon in 15 Minuten beenden',
 'ssh tempstart30' => 'SSH-Deamon in 30 Minuten beenden',

@@ -13,6 +13,12 @@
 
 case "${1}" in
 	start)
+		# Load IPVS module
+		modprobe ip_vs
+
+		# Enable connection tracking for IPVS
+		sysctl -w net.ipv4.vs.conntrack=1 &>/dev/null
+
 		boot_mesg "Starting keepalive daemon..."
 		loadproc /usr/sbin/keepalived ${KEEPALIVED_OPTIONS}
 		;;

@@ -26,6 +26,9 @@ package GeoIP;
 use Geo::IP::PurePerl;
 use Locale::Codes::Country;
 
+my $geoip_database_dir = "/var/lib/GeoIP";
+my $location_database = "GeoLite2-Country-Locations-en.csv";
+
 my $database;
 
 sub lookup($) {
@@ -116,5 +119,38 @@ sub get_full_country_name($) {
 
 	return $name;
 }
+
+# Function to get all available GeoIP locations.
+sub get_geoip_locations() {
+	my @locations;
+
+	# Open the location database.
+	open(LOCATION, "$geoip_database_dir/$location_database") or die "Could not open $geoip_database_dir/$location_database. $!\n";
+
+	# Loop through the file.
+	while(my $line = <LOCATION>) {
+		# Remove newlines.
+		chomp($line);
+
+		# Split the line content.
+		my ($geoname_id, $locale_code, $continent_code, $continent_name, $country_iso_code, $country_name, $is_in_european_union) = split(/\,/, $line);
+
+		# Check if the country_iso_code is upper case.
+		if($country_iso_code =~ /[A-Z]/) {
+			# Add the current ISO code.
+			push(@locations, $country_iso_code);
+		}
+	}
+
+	# Close filehandle.
+	close(LOCATION);
+
+	# Sort locations array in alphabetical order.
+	my @sorted_locations = sort(@locations);
+
+	# Return the array..
+	return @sorted_locations;
+}
+
 
 1;

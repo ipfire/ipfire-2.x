@@ -19,6 +19,7 @@ var/ipfire/captive/settings
 var/ipfire/captive/voucher_out
 var/ipfire/certs
 #var/ipfire/certs/index.txt
+var/ipfire/certs/index.txt.attr
 #var/ipfire/certs/serial
 var/ipfire/connscheduler
 #var/ipfire/connscheduler/connscheduler.conf
@@ -151,7 +152,6 @@ var/ipfire/proxy
 #var/ipfire/proxy/advanced/cre
 #var/ipfire/proxy/advanced/cre/enable
 #var/ipfire/proxy/advanced/settings
-#var/ipfire/proxy/advanced/useragents
 #var/ipfire/proxy/calamaris
 #var/ipfire/proxy/calamaris/bin
 #var/ipfire/proxy/settings

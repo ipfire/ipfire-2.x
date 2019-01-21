@@ -24,57 +24,13 @@
 
 include Config
 
-VER        = 1.0.2q
+VER        = 0.21
 
-THISAPP    = openssl-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+THISAPP    = Net-CIDR-Lite-$(VER)
+DL_FILE    = ${THISAPP}.tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-
-TARGET = $(DIR_INFO)/$(THISAPP)$(KCFG)
-
-export RPM_OPT_FLAGS = $(CFLAGS)
-
-CONFIGURE_OPTIONS = \
-	--prefix=/usr \
-	--openssldir=/etc/ssl \
-	--enginesdir=/usr/lib/openssl/engines \
-	shared \
-	zlib-dynamic \
-	enable-camellia \
-	enable-md2 \
-	disable-ssl2 \
-	enable-seed \
-	enable-tlsext \
-	enable-rfc3779 \
-	no-idea \
-	no-mdc2 \
-	no-rc5 \
-	no-srp \
-	-DSSL_FORBID_ENULL \
-	$(OPENSSL_ARCH)
-
-ifeq "$(IS_64BIT)" "1"
-	OPENSSL_ARCH = linux-generic64
-else
-	OPENSSL_ARCH = linux-generic32
-endif
-
-ifeq "$(BUILD_ARCH)" "aarch64"
-	OPENSSL_ARCH = linux-aarch64
-endif
-
-ifeq "$(BUILD_ARCH)" "x86_64"
-	OPENSSL_ARCH = linux-x86_64
-endif
-
-ifeq "$(BUILD_ARCH)" "i586"
-	OPENSSL_ARCH = linux-elf
-
-  ifneq "$(KCFG)" "-sse2"
-	OPENSSL_ARCH += no-sse2
-  endif
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -84,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7563e1ce046cb21948eeb6ba1a0eb71c
+$(DL_FILE)_MD5 = 12280b3754886b876918f03f53aee4f5
 
 install : $(TARGET)
 
@@ -93,6 +49,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist:
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -114,35 +73,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.0-beta5-enginesdir.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a-rpmbuild.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2h-weak-ciphers.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2g-disable-sslv2v3.patch
-
-	# i586 specific patches
-ifeq "$(BUILD_ARCH)" "i586"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.0.2a_disable_ssse3_for_amd.patch
-endif
-
-	# With openssl 1.0.2e, pod2mantest is missing
-	echo -e "#!/bin/bash\necho \$$(which pod2man)" > $(DIR_APP)/util/pod2mantest
-	chmod a+x $(DIR_APP)/util/pod2mantest
-
-	# Apply our CFLAGS
-	cd $(DIR_APP) && sed -i Configure \
-		-e "s/-O3 -fomit-frame-pointer/$(CFLAGS)/g"
-
-	cd $(DIR_APP) && find crypto/ -name Makefile -exec \
-		sed 's/^ASFLAGS=/&-Wa,--noexecstack /' -i {} \;
-
-	cd $(DIR_APP) && ./Configure $(CONFIGURE_OPTIONS)
-
-	cd $(DIR_APP) && make depend
-	cd $(DIR_APP) && make
-
-	# Install libraries only
-	cd $(DIR_APP) && install -m 755 \
-		libcrypto.so.10 libssl.so.10 /usr/lib
-
+	cd $(DIR_APP) && perl Makefile.PL
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

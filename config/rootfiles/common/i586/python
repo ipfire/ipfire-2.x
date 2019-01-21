@@ -1463,8 +1463,8 @@ usr/lib/python2.7/encodings/zlib_codec.pyc
 #usr/lib/python2.7/ensurepip/__main__.pyc
 #usr/lib/python2.7/ensurepip/__main__.pyo
 #usr/lib/python2.7/ensurepip/_bundled
-#usr/lib/python2.7/ensurepip/_bundled/pip-9.0.1-py2.py3-none-any.whl
-#usr/lib/python2.7/ensurepip/_bundled/setuptools-28.8.0-py2.py3-none-any.whl
+#usr/lib/python2.7/ensurepip/_bundled/pip-9.0.3-py2.py3-none-any.whl
+#usr/lib/python2.7/ensurepip/_bundled/setuptools-39.0.1-py2.py3-none-any.whl
 #usr/lib/python2.7/ensurepip/_uninstall.py
 #usr/lib/python2.7/ensurepip/_uninstall.pyc
 #usr/lib/python2.7/ensurepip/_uninstall.pyo
@@ -1926,7 +1926,7 @@ usr/lib/python2.7/json/tool.pyc
 usr/lib/python2.7/keyword.pyc
 #usr/lib/python2.7/keyword.pyo
 #usr/lib/python2.7/lib-dynload
-#usr/lib/python2.7/lib-dynload/Python-2.7.13-py2.7.egg-info
+#usr/lib/python2.7/lib-dynload/Python-2.7.15-py2.7.egg-info
 usr/lib/python2.7/lib-dynload/_bisect.so
 usr/lib/python2.7/lib-dynload/_bsddb.so
 usr/lib/python2.7/lib-dynload/_codecs_cn.so
@@ -2102,9 +2102,9 @@ usr/lib/python2.7/lib-dynload/zlib.so
 #usr/lib/python2.7/lib-tk/turtle.pyo
 #usr/lib/python2.7/lib2to3
 #usr/lib/python2.7/lib2to3/Grammar.txt
-#usr/lib/python2.7/lib2to3/Grammar2.7.13.final.0.pickle
+#usr/lib/python2.7/lib2to3/Grammar2.7.15.final.0.pickle
 #usr/lib/python2.7/lib2to3/PatternGrammar.txt
-#usr/lib/python2.7/lib2to3/PatternGrammar2.7.13.final.0.pickle
+#usr/lib/python2.7/lib2to3/PatternGrammar2.7.15.final.0.pickle
 #usr/lib/python2.7/lib2to3/__init__.py
 #usr/lib/python2.7/lib2to3/__init__.pyc
 #usr/lib/python2.7/lib2to3/__init__.pyo
@@ -2754,6 +2754,9 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/__init__.py
 #usr/lib/python2.7/test/__init__.pyc
 #usr/lib/python2.7/test/__init__.pyo
+#usr/lib/python2.7/test/__main__.py
+#usr/lib/python2.7/test/__main__.pyc
+#usr/lib/python2.7/test/__main__.pyo
 #usr/lib/python2.7/test/_mock_backport.py
 #usr/lib/python2.7/test/_mock_backport.pyc
 #usr/lib/python2.7/test/_mock_backport.pyo
@@ -2792,6 +2795,9 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/badsyntax_future8.py
 #usr/lib/python2.7/test/badsyntax_future9.py
 #usr/lib/python2.7/test/badsyntax_nocaret.py
+#usr/lib/python2.7/test/bisect.py
+#usr/lib/python2.7/test/bisect.pyc
+#usr/lib/python2.7/test/bisect.pyo
 #usr/lib/python2.7/test/capath
 #usr/lib/python2.7/test/capath/0e4015b9.0
 #usr/lib/python2.7/test/capath/4e1295a3.0
@@ -3042,6 +3048,9 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/mp_fork_bomb.py
 #usr/lib/python2.7/test/mp_fork_bomb.pyc
 #usr/lib/python2.7/test/mp_fork_bomb.pyo
+#usr/lib/python2.7/test/multibytecodec_support.py
+#usr/lib/python2.7/test/multibytecodec_support.pyc
+#usr/lib/python2.7/test/multibytecodec_support.pyo
 #usr/lib/python2.7/test/nokia.pem
 #usr/lib/python2.7/test/nullbytecert.pem
 #usr/lib/python2.7/test/nullcert.pem
@@ -3067,6 +3076,9 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/pystone.py
 #usr/lib/python2.7/test/pystone.pyc
 #usr/lib/python2.7/test/pystone.pyo
+#usr/lib/python2.7/test/pythoninfo.py
+#usr/lib/python2.7/test/pythoninfo.pyc
+#usr/lib/python2.7/test/pythoninfo.pyo
 #usr/lib/python2.7/test/randv2_32.pck
 #usr/lib/python2.7/test/randv2_64.pck
 #usr/lib/python2.7/test/randv3.pck
@@ -3100,7 +3112,6 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/seq_tests.pyc
 #usr/lib/python2.7/test/seq_tests.pyo
 #usr/lib/python2.7/test/sgml_input.html
-#usr/lib/python2.7/test/sha256.pem
 #usr/lib/python2.7/test/sortperf.py
 #usr/lib/python2.7/test/sortperf.pyc
 #usr/lib/python2.7/test/sortperf.pyo
@@ -3120,6 +3131,13 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/subprocessdata/sigchild_ignore.py
 #usr/lib/python2.7/test/subprocessdata/sigchild_ignore.pyc
 #usr/lib/python2.7/test/subprocessdata/sigchild_ignore.pyo
+#usr/lib/python2.7/test/support
+#usr/lib/python2.7/test/support/__init__.py
+#usr/lib/python2.7/test/support/__init__.pyc
+#usr/lib/python2.7/test/support/__init__.pyo
+#usr/lib/python2.7/test/support/script_helper.py
+#usr/lib/python2.7/test/support/script_helper.pyc
+#usr/lib/python2.7/test/support/script_helper.pyo
 #usr/lib/python2.7/test/symlink_support.py
 #usr/lib/python2.7/test/symlink_support.pyc
 #usr/lib/python2.7/test/symlink_support.pyo
@@ -3665,6 +3683,9 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/test_import.py
 #usr/lib/python2.7/test/test_import.pyc
 #usr/lib/python2.7/test/test_import.pyo
+#usr/lib/python2.7/test/test_import_magic.py
+#usr/lib/python2.7/test/test_import_magic.pyc
+#usr/lib/python2.7/test/test_import_magic.pyo
 #usr/lib/python2.7/test/test_importhooks.py
 #usr/lib/python2.7/test/test_importhooks.pyc
 #usr/lib/python2.7/test/test_importhooks.pyo
@@ -3794,9 +3815,6 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/test_multibytecodec.py
 #usr/lib/python2.7/test/test_multibytecodec.pyc
 #usr/lib/python2.7/test/test_multibytecodec.pyo
-#usr/lib/python2.7/test/test_multibytecodec_support.py
-#usr/lib/python2.7/test/test_multibytecodec_support.pyc
-#usr/lib/python2.7/test/test_multibytecodec_support.pyo
 #usr/lib/python2.7/test/test_multifile.py
 #usr/lib/python2.7/test/test_multifile.pyc
 #usr/lib/python2.7/test/test_multifile.pyo
@@ -3965,6 +3983,9 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/test_readline.py
 #usr/lib/python2.7/test/test_readline.pyc
 #usr/lib/python2.7/test/test_readline.pyo
+#usr/lib/python2.7/test/test_regrtest.py
+#usr/lib/python2.7/test/test_regrtest.pyc
+#usr/lib/python2.7/test/test_regrtest.pyo
 #usr/lib/python2.7/test/test_repr.py
 #usr/lib/python2.7/test/test_repr.pyc
 #usr/lib/python2.7/test/test_repr.pyo
@@ -4142,6 +4163,9 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/test_tempfile.py
 #usr/lib/python2.7/test/test_tempfile.pyc
 #usr/lib/python2.7/test/test_tempfile.pyo
+#usr/lib/python2.7/test/test_test_support.py
+#usr/lib/python2.7/test/test_test_support.pyc
+#usr/lib/python2.7/test/test_test_support.pyo
 #usr/lib/python2.7/test/test_textwrap.py
 #usr/lib/python2.7/test/test_textwrap.pyc
 #usr/lib/python2.7/test/test_textwrap.pyo
@@ -4375,6 +4399,7 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/win_console_handler.pyo
 #usr/lib/python2.7/test/wrongcert.pem
 #usr/lib/python2.7/test/xmltestdata
+#usr/lib/python2.7/test/xmltestdata/expat224_utf8_bug.xml
 #usr/lib/python2.7/test/xmltestdata/simple-ns.xml
 #usr/lib/python2.7/test/xmltestdata/simple.xml
 #usr/lib/python2.7/test/xmltestdata/test.xml

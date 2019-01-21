@@ -784,9 +784,6 @@
 ############################################################################
 < dnsforward forward_servers
 < invalid ip or hostname
-< ovpn warning rfc3280
-< wlanap neighbor scan
-< wlanap neighbor scan warning
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################

@@ -62,7 +62,7 @@ $(TARGET) :
 
 	# Touch empty files
 	for i in auth/users backup/include.user backup/exclude.user \
-	    captive/settings captive/agb.txt captive/clients captive/voucher_out certs/index.txt ddns/config ddns/settings ddns/ipcache dhcp/settings \
+	    captive/settings captive/agb.txt captive/clients captive/voucher_out certs/index.txt certs/index.txt.attr ddns/config ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dns/settings dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
 	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings firewall/settings firewall/config firewall/geoipblock firewall/input firewall/outgoing \
 	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwhosts/customgeoipgrp fwlogs/ipsettings fwlogs/portsettings \
@@ -99,7 +99,6 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/ssh-settings		$(CONFIG_ROOT)/remote/settings
 	cp $(DIR_SRC)/config/cfgroot/time-settings		$(CONFIG_ROOT)/time/settings
 	cp $(DIR_SRC)/config/cfgroot/logging-settings	$(CONFIG_ROOT)/logging/settings
-	cp $(DIR_SRC)/config/cfgroot/useragents			$(CONFIG_ROOT)/proxy/advanced
 	cp $(DIR_SRC)/config/cfgroot/ethernet-vlans		$(CONFIG_ROOT)/ethernet/vlans
 	cp $(DIR_SRC)/langs/list						$(CONFIG_ROOT)/langs/
 	cp $(DIR_SRC)/config/firewall/convert-xtaccess	/usr/sbin/convert-xtaccess

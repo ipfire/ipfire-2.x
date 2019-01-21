@@ -179,6 +179,7 @@ usr/share/mc/syntax/m4.syntax
 usr/share/mc/syntax/mail.syntax
 usr/share/mc/syntax/makefile.syntax
 usr/share/mc/syntax/markdown.syntax
+usr/share/mc/syntax/meson.syntax
 usr/share/mc/syntax/ml.syntax
 usr/share/mc/syntax/named.syntax
 usr/share/mc/syntax/nemerle.syntax
@@ -198,6 +199,7 @@ usr/share/mc/syntax/puppet.syntax
 usr/share/mc/syntax/python.syntax
 usr/share/mc/syntax/r.syntax
 usr/share/mc/syntax/ruby.syntax
+usr/share/mc/syntax/rust.syntax
 usr/share/mc/syntax/sh.syntax
 usr/share/mc/syntax/slang.syntax
 usr/share/mc/syntax/smalltalk.syntax

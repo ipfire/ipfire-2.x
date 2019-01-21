@@ -225,7 +225,6 @@ if (-e $IDS::storederrorfile) {
         unlink($IDS::storederrorfile);
 }
 
-
 ## Grab all available snort rules and store them in the idsrules hash.
 #
 # Open snort rules directory and do a directory listing.
