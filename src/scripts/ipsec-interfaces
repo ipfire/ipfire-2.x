@@ -27,8 +27,8 @@ eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/vpn/settings)
 
 VARS=(
-	id status name lefthost type ctype psk local x1 leftsubnets
-	x2 remote rightsubnets x3 x4 x5 x6 x7 x8 x9 x10 x11 x12
+	id status name lefthost type ctype psk local local_id leftsubnets
+	remote_id remote rightsubnets x3 x4 x5 x6 x7 x8 x9 x10 x11 x12
 	x13 x14 x15 x16 x17 x18 x19 proto x20 x21 x22
 	route x23 mode interface_mode interface_address interface_mtu rest
 )
