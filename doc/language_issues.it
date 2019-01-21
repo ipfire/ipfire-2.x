@@ -939,6 +939,7 @@ WARNING: untranslated string: subnet mask = Subnet Mask
 WARNING: untranslated string: tcp more reliable = TCP (more reliable)
 WARNING: untranslated string: ten minutes = 10 Minutes
 WARNING: untranslated string: thirty minutes = 30 Minutes
+WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: twelve hours = 12 Hours
 WARNING: untranslated string: two weeks = Two Weeks
 WARNING: untranslated string: udp less overhead = UDP (less overhead)

@@ -829,4 +829,5 @@ WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
 WARNING: untranslated string: subnet mask = Subnet Mask
+WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: vpn statistics n2n = unknown string

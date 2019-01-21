@@ -1458,6 +1458,11 @@ END
 				goto VPNCONF_ERROR;
 			}
 
+			if (($cgiparams{'INTERFACE_MODE'} eq "vti") && ($cgiparams{'MODE'} eq "transport")) {
+				$errormessage = $Lang::tr{'transport mode does not support vti'};
+				goto VPNCONF_ERROR;
+			}
+
 			if (($cgiparams{'INTERFACE_MODE'} ne "") && !&Network::check_subnet($cgiparams{'INTERFACE_ADDRESS'})) {
 				$errormessage = $Lang::tr{'invalid input for interface address'};
 				goto VPNCONF_ERROR;

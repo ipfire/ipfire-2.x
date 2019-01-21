@@ -1228,6 +1228,7 @@ WARNING: untranslated string: tor traffic limit hard = Traffic limit has been re
 WARNING: untranslated string: tor traffic limit soft = Traffic limit almost reached. Not accepting any new connections.
 WARNING: untranslated string: tor traffic read written = Total traffic (read/written)
 WARNING: untranslated string: tor use exit nodes = Use only these exit nodes (one per line)
+WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: twelve hours = 12 Hours
 WARNING: untranslated string: two weeks = Two Weeks
 WARNING: untranslated string: udp less overhead = UDP (less overhead)

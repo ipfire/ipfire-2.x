@@ -63,6 +63,7 @@
 < teovpn_fragment
 < tor bridge enabled
 < tor errmsg invalid node id
+< transport mode does not support vti
 < updxlrtr used by
 < upload fcdsl.o
 < vpn configuration main
@@ -724,6 +725,7 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< transport mode does not support vti
 < twelve hours
 < two weeks
 < udp less overhead
@@ -826,6 +828,7 @@
 < ipsec settings
 < mtu
 < subnet mask
+< transport mode does not support vti
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -1014,6 +1017,7 @@
 < tcp more reliable
 < ten minutes
 < thirty minutes
+< transport mode does not support vti
 < twelve hours
 < two weeks
 < udp less overhead
@@ -1298,6 +1302,7 @@
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< transport mode does not support vti
 < twelve hours
 < two weeks
 < udp less overhead
@@ -1983,6 +1988,7 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< transport mode does not support vti
 < twelve hours
 < two weeks
 < udp less overhead
@@ -2714,6 +2720,7 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< transport mode does not support vti
 < twelve hours
 < two weeks
 < udp less overhead
@@ -2828,6 +2835,7 @@
 < ssh no active logins
 < ssh username
 < subnet mask
+< transport mode does not support vti
 < vpn start action add
 < vpn wait
 < wlanap neighbor scan

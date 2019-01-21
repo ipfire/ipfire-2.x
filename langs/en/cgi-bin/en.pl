@@ -2385,6 +2385,7 @@
 'trafficto' => 'To',
 'transfer limits' => 'Transfer limits',
 'transparent on' => 'Transparent on',
+'transport mode does not support vti' => 'VTI is not support in transport mode',
 'tripwire' => 'Tripwire',
 'tripwire cronjob' => 'tripwire cronjob',
 'tripwire functions' => 'tripwire functions',

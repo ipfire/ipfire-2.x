@@ -838,6 +838,7 @@ WARNING: untranslated string: ssh login time = Logged in since
 WARNING: untranslated string: ssh no active logins = No active logins
 WARNING: untranslated string: ssh username = Username
 WARNING: untranslated string: subnet mask = Subnet Mask
+WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: vpn start action add = Wait for connection initiation
 WARNING: untranslated string: vpn statistics n2n = unknown string
 WARNING: untranslated string: vpn wait = WAITING
