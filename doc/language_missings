@@ -30,6 +30,7 @@
 < could not connect to www ipfire org
 < cryptographic settings
 < dead peer detection
+< default IP address
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
 < dh name is invalid
@@ -43,6 +44,7 @@
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu
+< invalid input for local ip address
 < invalid input for mode
 < ipsec interface mode gre
 < ipsec interface mode none
@@ -50,6 +52,7 @@
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec settings
+< local ip address
 < mtu
 < none
 < notes
@@ -206,6 +209,7 @@
 < dead peer detection
 < default
 < default ip
+< default IP address
 < deprecated fs warn
 < details
 < dh
@@ -513,6 +517,7 @@
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu
+< invalid input for local ip address
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
@@ -529,6 +534,7 @@
 < last
 < least preferred
 < lifetime
+< local ip address
 < log server protocol
 < mac filter
 < masquerade blue
@@ -813,11 +819,13 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < cryptographic settings
+< default IP address
 < dnsforward forward_servers
 < interface mode
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu
+< invalid input for local ip address
 < invalid input for mode
 < invalid ip or hostname
 < ipsec interface mode gre
@@ -826,6 +834,7 @@
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec settings
+< local ip address
 < mtu
 < subnet mask
 < transport mode does not support vti
@@ -900,6 +909,7 @@
 < crypto error
 < cryptographic settings
 < crypto warning
+< default IP address
 < dhcp dns enable update
 < dhcp dns key name
 < dhcp dns update
@@ -969,6 +979,7 @@
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu
+< invalid input for local ip address
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
@@ -979,6 +990,7 @@
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec settings
+< local ip address
 < log server protocol
 < masquerade blue
 < masquerade green
@@ -1133,6 +1145,7 @@
 < cryptographic settings
 < crypto warning
 < default
+< default IP address
 < dh
 < dhcp dns enable update
 < dhcp dns key name
@@ -1220,6 +1233,7 @@
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu
+< invalid input for local ip address
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
@@ -1230,6 +1244,7 @@
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec settings
+< local ip address
 < log server protocol
 < masquerade blue
 < masquerade green
@@ -1483,6 +1498,7 @@
 < dead peer detection
 < default
 < default ip
+< default IP address
 < deprecated fs warn
 < details
 < dh
@@ -1792,6 +1808,7 @@
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu
+< invalid input for local ip address
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
@@ -1808,6 +1825,7 @@
 < last
 < least preferred
 < lifetime
+< local ip address
 < log server protocol
 < mac filter
 < masquerade blue
@@ -2212,6 +2230,7 @@
 < dead peer detection
 < default
 < default ip
+< default IP address
 < deprecated fs warn
 < details
 < dh
@@ -2526,6 +2545,7 @@
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu
+< invalid input for local ip address
 < invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
@@ -2542,6 +2562,7 @@
 < last
 < least preferred
 < lifetime
+< local ip address
 < log server protocol
 < mac filter
 < masquerade blue
@@ -2812,12 +2833,14 @@
 < crypto error
 < cryptographic settings
 < crypto warning
+< default IP address
 < dnsforward forward_servers
 < fwdfw all subnets
 < interface mode
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu
+< invalid input for local ip address
 < invalid input for mode
 < invalid ip or hostname
 < ipsec interface mode gre
@@ -2826,6 +2849,7 @@
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec settings
+< local ip address
 < mtu
 < ovpn error dh
 < ovpn error md5
