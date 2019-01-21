@@ -2115,19 +2115,23 @@ EOF
 		<td width='30%'>
 			<input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} />
 		</td>
-		<td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'local subnet'}&nbsp;<img src='/blob.gif' alt='*' /></td>
-		<td width='30%'>
-			<input type='text' name='LOCAL_SUBNET' value='$local_subnets' />
-		</td>
+		<td colspan="2"></td>
 	</tr>
 	<tr>
+		<td colspan="2"></td>
 		<td class='boldbase' width='20%'>$Lang::tr{'remote host/ip'}:&nbsp;$blob</td>
 		<td width='30%'>
 			<input type='text' name='REMOTE' value='$cgiparams{'REMOTE'}' size="25" />
 		</td>
+	</tr>
+	<tr>
+		<td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'local subnet'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+		<td width='30%'>
+			<input type='text' name='LOCAL_SUBNET' value='$local_subnets' size="25" />
+		</td>
 		<td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'remote subnet'}&nbsp;$blob</td>
 		<td width='30%'>
-			<input $disabled type='text' name='REMOTE_SUBNET' value='$remote_subnets' />
+			<input $disabled type='text' name='REMOTE_SUBNET' value='$remote_subnets' size="25" />
 		</td>
 	</tr>
 	<tr>
