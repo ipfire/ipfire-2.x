@@ -111,7 +111,6 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/fwhosts/customservices             $(CONFIG_ROOT)/fwhosts/customservices.default
 	# Oneliner configfiles
 	echo  "ENABLED=off"		> $(CONFIG_ROOT)/vpn/settings
-	echo  "VPN_DELAYED_START=0"	>>$(CONFIG_ROOT)/vpn/settings
 	echo  "01"			> $(CONFIG_ROOT)/certs/serial
 	echo  "nameserver    1.2.3.4"	> $(CONFIG_ROOT)/ppp/fake-resolv.conf
 	echo  "DROPNEWNOTSYN=on"		>> $(CONFIG_ROOT)/optionsfw/settings

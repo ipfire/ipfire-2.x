@@ -505,18 +505,12 @@ if ($ENV{"REMOTE_ADDR"} eq "") {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cgiparams{'KEY'} eq '') {
 	&General::readhash("${General::swroot}/vpn/settings", \%vpnsettings);
 
-	unless ($cgiparams{'VPN_DELAYED_START'} =~ /^[0-9]{1,3}$/ ) { #allow 0-999 seconds !
-		$errormessage = $Lang::tr{'invalid time period'};
-		goto SAVE_ERROR;
-	}
-
 	if ( $cgiparams{'RW_NET'} ne '' and !&General::validipandmask($cgiparams{'RW_NET'}) ) {
 		$errormessage = $Lang::tr{'urlfilter invalid ip or mask error'};
 		goto SAVE_ERROR;
 	}
 
 	$vpnsettings{'ENABLED'} = $cgiparams{'ENABLED'};
-	$vpnsettings{'VPN_DELAYED_START'} = $cgiparams{'VPN_DELAYED_START'};
 	$vpnsettings{'RW_NET'} = $cgiparams{'RW_NET'};
 	&General::writehash("${General::swroot}/vpn/settings", \%vpnsettings);
 	&writeipsecfiles();
@@ -2913,7 +2907,6 @@ EOF
 
 	my @status = `/usr/local/bin/ipsecctrl I 2>/dev/null`;
 
-	$cgiparams{'VPN_DELAYED_START'} = 0 if (! defined ($cgiparams{'VPN_DELAYED_START'}));
 	$checked{'ENABLED'} = $cgiparams{'ENABLED'} eq 'on' ? "checked='checked'" : '';
 
 	&Header::showhttpheaders();
@@ -2941,29 +2934,21 @@ EOF
 	print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%'>
-	<tr>
-	<td width='20%' class='base'>$Lang::tr{'enabled'}<input type='checkbox' name='ENABLED' $checked{'ENABLED'} /></td>
-	</tr>
-END
-;
-print <<END
-	<tr>
-	<td class='base' nowrap='nowrap'>$Lang::tr{'vpn delayed start'}:&nbsp;<img src='/blob.gif' alt='*' /><img src='/blob.gif' alt='*' /></td>
-	<td ><input type='text' name='VPN_DELAYED_START' value='$cgiparams{'VPN_DELAYED_START'}' /></td>
-	</tr>
-	<tr>
-	<td class='base' nowrap='nowrap'>$Lang::tr{'host to net vpn'}:</td>
-	<td ><input type='text' name='RW_NET' value='$cgiparams{'RW_NET'}' /></td>
-	</tr>
-</table>
-<br>
-<hr />
-<table width='100%'>
-<tr>
-	<td class='base' valign='top' nowrap='nowrap'><img src='/blob.gif' alt='*' /><img src='/blob.gif' alt='*' />&nbsp;</td>
-	<td class='base'>	<font class='base'>$Lang::tr{'vpn delayed start help'}</font></td>
-	<td></td>
-</tr>
+		<tr>
+			<td width='60%' class='base'>
+				$Lang::tr{'enabled'}
+			</td>
+			<td width="40%">
+				<input type='checkbox' name='ENABLED' $checked{'ENABLED'} />
+			</td>
+		</tr>
+		<tr>
+			<td class='base' nowrap='nowrap' width="60%">$Lang::tr{'host to net vpn'}:</td>
+			<td width="40%"><input type='text' name='RW_NET' value='$cgiparams{'RW_NET'}' /></td>
+		</tr>
+		<tr>
+			<td width='100%' colspan="2" align='right' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+		</tr>
 </table>
 END
 ;

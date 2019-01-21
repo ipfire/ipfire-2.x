@@ -1,7 +1,3 @@
 #!/bin/bash
 
-eval $(/usr/local/bin/readhash /var/ipfire/vpn/settings)
-
-sleep $VPN_DELAYED_START && /usr/local/bin/ipsecctrl S &
-
-exit 0
+exec /usr/local/bin/ipsecctrl S
