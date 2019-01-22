@@ -169,6 +169,15 @@ sub get_ipsec_host_ip
 		}
 	}
 }
+sub get_ipsec_id {
+	my $val = shift;
+
+	foreach my $key (keys %ipsecconf) {
+		if ($ipsecconf{$key}[1] eq $val) {
+			return $key;
+		}
+	}
+}
 sub get_ovpn_n2n_ip
 {
 	my $val=shift;
@@ -399,10 +408,16 @@ sub get_address
 			my @parts = split(/\|/, $value);
 			push(@ret, [$parts[1], ""]);
 		}else{
-			my $network_address = &get_ipsec_net_ip($value, 11);
-			my @nets = split(/\|/, $network_address);
-			foreach my $net (@nets) {
-				push(@ret, [$net, ""]);
+			my $interface_mode = &get_ipsec_net_ip($value, 36);
+			if ($interface_mode ~~ ["gre", "vti"]) {
+				my $id = &get_ipsec_id($value);
+				push(@ret, ["0.0.0.0/0", "${interface_mode}${id}"]);
+			} else {
+				my $network_address = &get_ipsec_net_ip($value, 11);
+				my @nets = split(/\|/, $network_address);
+				foreach my $net (@nets) {
+					push(@ret, [$net, ""]);
+				}
 			}
 		}
 
