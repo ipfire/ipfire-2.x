@@ -51,6 +51,9 @@ ldconfig
 sysctl -p
 
 # Start services
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/init.d/ipsec restart
+fi
 
 # Finish
 /etc/init.d/fireinfo start
