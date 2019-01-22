@@ -1,0 +1,331 @@
+#!/usr/bin/perl
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2019 IPFire Development Team <info@ipfire.org>                #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+use strict;
+
+require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/ids-functions.pl";
+
+# Snort settings file, which contains the settings from the WUI.
+my $snort_settings_file = "${General::swroot}/snort/settings";
+
+# Main snort config file.
+my $snort_config_file = "/etc/snort/snort.conf";
+
+# Snort rules tarball.
+my $snort_rules_tarball = "/var/tmp/snortrules.tar.gz";
+
+# Check if a snort settings file exists.
+unless( -f "$snort_settings_file") {
+        print "$snort_settings_file not found - Nothing to do. Exiting!\n";
+        exit(0);
+}
+
+# Check if the snort settings file is empty.
+if (-z "$snort_settings_file") {
+	print "$snort_settings_file is empty - Nothing to do. Exiting!\n";
+	exit(0);
+}
+
+#
+## Step 1: Setup directory and file layout, if not present and set correct
+##         ownership. The converter runs as a privileged user, but the files
+##         needs to be full access-able by the WUI user and group (nobody:nobody).
+#
+
+# User and group of the WUI.
+my $uname = "nobody";
+my $grname = "nobody";
+
+# The chown function implemented in perl requies the user and group as nummeric id's.
+my $uid = getpwnam($uname);
+my $gid = getgrnam($grname);
+
+# Check if the settings directory exists.
+unless (-d $IDS::settingsdir) {
+	# Create the directory.
+	mkdir($IDS::settingsdir);
+}
+
+# Check if the rules directory exists.
+unless (-d $IDS::rulespath) {
+	# Create the directory.
+	mkdir($IDS::rulespath);
+}
+
+# Set correct ownership for the settings and rules folder.
+chown($uid, $gid, $IDS::settingsdir);
+chown($uid, $gid, $IDS::rulespath);
+
+# Create file layout, if not exists yet.
+&IDS::check_and_create_filelayout();
+
+# Set correct ownership for the files - Open settings directory and do a directory listing.
+opendir(DIR, $IDS::settingsdir) or die $!;
+        # Loop through the direcory.
+        while (my $file = readdir(DIR)) {
+
+                # We only want files.
+                next unless (-f "$IDS::settingsdir/$file");
+
+		# Set correct ownership for the files.
+		chown($uid, $gid, "$IDS::settingsdir/$file");
+	}
+
+closedir(DIR);
+
+#
+## Step 2: Import snort settings and convert to the required format for the new IDS
+##         (suricata).
+#
+
+# Hash which contains the "old" snort settings.
+my %snortsettings;
+
+# Hash which contains the IDS (suricata) settings.
+#
+# Add default value for MONITOR_TRAFFIC_ONLY which will be "on"
+# when migrating from snort to the new IDS.
+my %idssettings = (
+	"MONITOR_TRAFFIC_ONLY" => "on",
+);
+
+# Hash which contains the RULES settings.
+#
+# Set default value for UPDATE_INTERVAL to weekly.
+my %rulessettings = (
+	"AUTOUPDATE_INTERVAL" => "weekly",
+);
+
+# Get all available network zones.
+my @network_zones = &IDS::get_available_network_zones();
+
+# Read-in snort settings file.
+&General::readhash("$snort_settings_file", \%snortsettings);
+
+# Loop through the array of network zones.
+foreach my $zone (@network_zones) {
+	# Convert current zone into upper case.
+	my $zone_upper = uc($zone);
+
+	# Check if the current network zone is "red".
+	if($zone eq "red") {
+		# Check if snort was enabled and enabled on red.
+		if ($snortsettings{"ENABLE_SNORT"} eq "on") {
+			# Enable the IDS.
+			$idssettings{"ENABLE_IDS"} = "on";
+
+			# Enable the IDS on RED.
+			$idssettings{"ENABLE_IDS_$zone_upper"} = "on";
+		}
+	} else {
+		# Check if snort was enabled on the current zone.
+		if ($snortsettings{"ENABLE_SNORT_$zone_upper"} eq "on") {
+			# Enable the IDS on this zone too.
+			$idssettings{"ENABLE_IDS_$zone_upper"} = "on";
+		}
+	}
+}
+
+# Grab the choosen ruleset from snort settings hash and store it in the rules
+# settings hash.
+$rulessettings{"RULES"} = $snortsettings{"RULES"};
+
+# Check if an oinkcode has been provided.
+if($snortsettings{"OINKCODE"}) {
+	# Take the oinkcode from snort settings hash and store it in the rules
+	# settings hash.
+	$rulessettings{"OINKCODE"} = $snortsettings{"OINKCODE"};
+}
+
+#
+## Step 3: Import guardian settings and whitelist if the addon is installed.
+#
+
+# Pakfire meta file for owncloud.
+# (File exists when the addon is installed.)
+my $guardian_meta = "/opt/pakfire/db/installed/meta-guardian";
+
+# Check if the guardian addon is installed.
+if (-f $guardian_meta) {
+	# File which contains the taken setting for guardian.
+	my $guardian_settings_file = "${General::swroot}/guardian/settings";
+
+	# File which contains the white-listed hosts.
+	my $guardian_ignored_file = "${General::swroot}/guardian/ignored";
+
+	# Hash which will contain the settings of guardian.
+	my %guardiansettings;
+
+	# Check if the settings file of guardian is empty.
+	unless (-z $guardian_settings_file) {
+		# Read-in settings.
+		&General::readhash("$guardian_settings_file", \%guardiansettings);
+	}
+
+	# Check if guardian is not configured to take actions on snort events.
+	if ($guardiansettings{"GUARDIAN_MONITOR_SNORT"} eq "on") {
+		# Change the IDS into MONITOR_TRAFFIC_ONLY mode.
+		$idssettings{"MONITOR_TRAFFIC_ONLY"} = "off";
+	}
+
+	# Check if guardian has any white-listed hosts configured.
+	unless (-z $guardian_ignored_file) {
+		# Temporary hash to store the ignored hosts.
+		my %ignored_hosts;
+
+		# Read-in white-listed hosts and store them in the hash.
+		&General::readhasharray($guardian_ignored_file, \%ignored_hosts);
+
+		# Write-out the white-listed hosts for the IDS system.
+		&General::writehasharray($IDS::ignored_file, \%ignored_hosts);
+
+		# Call subfunction to generate the file for white-listing the hosts.
+		&IDS::generate_ignored_file();
+	}
+
+}
+
+#
+## Step 4: Save IDS and rules settings.
+#
+
+# Write IDS settings.
+&General::writehash("$IDS::ids_settings_file", \%idssettings);
+
+# Write rules settings.
+&General::writehash("$IDS::rules_settings_file", \%rulessettings);
+
+#
+## Step 5: Generate and write the file to modify the ruleset.
+#
+
+# Converters default is to only monitor the traffic, so set the IDS action to
+# "alert".
+my $IDS_action = "alert";
+
+# Check if the traffic only should be monitored.
+if ($idssettings{"MONITOR_TRAFFIC_ONLY"} eq "off") {
+	# Swith IDS action to alert only.
+	$IDS_action = "drop";
+}
+
+# Call subfunction and pass the desired IDS action.
+&IDS::write_modify_sids_file($IDS_action);
+
+#
+## Step 6: Move rulestarball to its new location.
+#
+
+# Check if a rulestarball has been downloaded yet.
+if (-f $snort_rules_tarball) {
+	# Load perl module which contains the move command.
+	use File::Copy;
+
+	# Move the rulestarball to the new location.
+	move($snort_rules_tarball, $IDS::rulestarball);
+
+	# Set correct ownership.
+	chown($uid, $gid, $IDS::rulestarball);
+}
+
+#
+## Step 7: Call oinkmaster to extract and setup the rules structures.
+#
+
+# Check if a rulestarball is present.
+if (-f $IDS::rulestarball) {
+	# Launch oinkmaster by calling the subfunction.
+	&IDS::oinkmaster();
+}
+
+#
+## Step 8: Grab used ruleset files from snort config file and convert
+##         them into the new format.
+#
+
+# Check if the snort config file exists.
+unless (-f $snort_config_file) {
+	print "$snort_config_file does not exist - Nothing to do. Exiting!\n";
+	exit(0);
+}
+
+# Array to store the enabled rules files.
+my @enabled_rule_files;
+
+# Open snort config file.
+open(SNORTCONF, $snort_config_file) or die "Could not open $snort_config_file. $!\n";
+
+# Loop through the file content.
+while (my $line = <SNORTCONF>) {
+	# Skip comments.
+	next if ($line =~ /\#/);
+
+	# Skip blank  lines.
+	next if ($line =~ /^\s*$/);
+
+	# Remove newlines.
+	chomp($line);
+
+	# Check for a line with .rules
+	if ($line =~ /\.rules$/) {
+		# Parse out rule file name
+		my $rulefile = $line;
+		$rulefile =~ s/\$RULE_PATH\///i;
+		$rulefile =~ s/ ?include ?//i;
+
+		# Add the enabled rulefile to the array of enabled rule files.
+		push(@enabled_rule_files, $rulefile);
+	}
+}
+
+# Close filehandle.
+close(SNORTCONF);
+
+# Pass the array of enabled rule files to the subfunction and write the file.
+&IDS::write_used_rulefiles_file(@enabled_rule_files);
+
+#
+## Step 9: Generate file for the HOME Net.
+#
+
+# Call subfunction to generate the file.
+&IDS::generate_home_net_file();
+
+#
+## Step 10: Setup automatic ruleset updates.
+#
+
+# Check if a ruleset is configured.
+if($rulessettings{"RULES"}) {
+	# Call suricatactrl and setup the periodic update mechanism.
+	&IDS::call_suricatactrl("cron", $rulessettings{'AUTOUPDATE_INTERVAL'});
+}
+
+#
+## Step 11: Start the IDS if enabled.
+#
+
+# Check if the IDS should be started.
+if($idssettings{"ENABLE_IDS"} eq "on") {
+	# Call suricatactrl and launch the IDS.
+	&IDS::call_suricatactrl("start");
+}
