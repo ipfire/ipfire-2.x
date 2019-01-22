@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 4.14.81-ipfire Kernel Configuration
+# Linux/arm64 4.14.94-ipfire Kernel Configuration
 #
 CONFIG_ARM64=y
 CONFIG_64BIT=y
@@ -3389,6 +3389,11 @@ CONFIG_ARMADA_THERMAL=m
 #
 # ACPI INT340X thermal drivers
 #
+
+#
+# Broadcom thermal drivers
+#
+CONFIG_BCM2835_THERMAL=y
 CONFIG_GENERIC_ADC_THERMAL=m
 CONFIG_WATCHDOG=y
 CONFIG_WATCHDOG_CORE=y
@@ -6290,7 +6295,6 @@ CONFIG_CIFS_STATS=y
 # CONFIG_CIFS_WEAK_PW_HASH is not set
 # CONFIG_CIFS_UPCALL is not set
 CONFIG_CIFS_XATTR=y
-CONFIG_CIFS_POSIX=y
 CONFIG_CIFS_ACL=y
 # CONFIG_CIFS_DEBUG is not set
 CONFIG_CIFS_DFS_UPCALL=y

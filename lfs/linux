@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 4.14.86
-ARM_PATCHES = 4.14.86-ipfire0
+VER         = 4.14.94
+ARM_PATCHES = 4.14.94-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 80
+PAK_VER    = 81
 DEPS	   = ""
 
 HEADERS_ARCH  = $(BUILD_PLATFORM)
@@ -82,8 +82,8 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= 9ffeff88ca630a6e0ef0257b0a05b8c4
-arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 36b8a9adb8915cbccd18069e2f5af159
+$(DL_FILE)_MD5					= 2b06ce0be8f5dcdf0db0d4c63270aab8
+arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= d8b93abb38fcea15bed335fef46f745d
 
 install : $(TARGET)
 
