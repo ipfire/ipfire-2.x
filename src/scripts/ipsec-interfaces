@@ -44,25 +44,6 @@ main() {
 
 	local interfaces=()
 
-	# Compat for older connections
-	if [ "${local}" = "off" ]; then
-		if [ "${VPN_IP}" = "%defaultroute" ]; then
-			local=""
-		else
-			local="${VPN_IP}"
-		fi
-	fi
-
-	# Handle %defaultroute
-	if [ -z "${local}" ]; then
-		if [ -r "/var/ipfire/red/local-ipaddress" ]; then
-			local="$(</var/ipfire/red/local-ipaddress)"
-
-		elif [ "${RED_TYPE}" = "STATIC" -a -n "${RED_ADDRESS}" ]; then
-			local="${RED_ADDRESS}"
-		fi
-	fi
-
 	# We are done when IPsec is not enabled
 	if [ "${ENABLED}" = "on" ]; then
 		while IFS="," read -r "${VARS[@]}"; do
@@ -84,6 +65,25 @@ main() {
 
 			# Add the interface to the list of all interfaces
 			interfaces+=( "${intf}" )
+
+			# Compat for older connections
+			if [ "${local}" = "off" ]; then
+				if [ "${VPN_IP}" = "%defaultroute" ]; then
+					local=""
+				else
+					local="${VPN_IP}"
+				fi
+			fi
+
+			# Handle %defaultroute
+			if [ -z "${local}" ]; then
+				if [ -r "/var/ipfire/red/local-ipaddress" ]; then
+					local="$(</var/ipfire/red/local-ipaddress)"
+
+				elif [ "${RED_TYPE}" = "STATIC" -a -n "${RED_ADDRESS}" ]; then
+					local="${RED_ADDRESS}"
+				fi
+			fi
 
 			local args=(
 				"local" "${local}"
