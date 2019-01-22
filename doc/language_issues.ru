@@ -636,11 +636,14 @@ WARNING: translation string unused: use ibod
 WARNING: translation string unused: view log
 WARNING: translation string unused: vpn aggrmode
 WARNING: translation string unused: vpn configuration main
+WARNING: translation string unused: vpn delayed start
+WARNING: translation string unused: vpn delayed start help
 WARNING: translation string unused: vpn incompatible use of defaultroute
 WARNING: translation string unused: vpn mtu invalid
 WARNING: translation string unused: vpn on blue
 WARNING: translation string unused: vpn on green
 WARNING: translation string unused: vpn on orange
+WARNING: translation string unused: vpn red name
 WARNING: translation string unused: vpn watch
 WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
@@ -1065,6 +1068,7 @@ WARNING: untranslated string: invalid input for valid till days = Invalid input 
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: invalid logserver protocol = Invalid syslogd server protocol
 WARNING: untranslated string: ipsec = IPsec
+WARNING: untranslated string: ipsec connection = unknown string
 WARNING: untranslated string: ipsec interface mode gre = GRE
 WARNING: untranslated string: ipsec interface mode none = - None (Default) -
 WARNING: untranslated string: ipsec interface mode vti = VTI

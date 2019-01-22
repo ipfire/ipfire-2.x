@@ -1,6 +1,7 @@
 %tr = ( 
 %tr,
 
+'ipsec connection' => 'IPsec Connection',
 '24 hours' => '24 Hours',
 'Act as' => 'Act as:',
 'Add Level7 rule' => 'Add Level7 rule',
