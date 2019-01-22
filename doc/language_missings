@@ -46,6 +46,7 @@
 < invalid input for interface mtu
 < invalid input for local ip address
 < invalid input for mode
+< ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
@@ -523,6 +524,7 @@
 < invalid ip or hostname
 < invalid logserver protocol
 < ipsec
+< ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
@@ -828,6 +830,7 @@
 < invalid input for local ip address
 < invalid input for mode
 < invalid ip or hostname
+< ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
@@ -984,6 +987,7 @@
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
@@ -1238,6 +1242,7 @@
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
@@ -1814,6 +1819,7 @@
 < invalid ip or hostname
 < invalid logserver protocol
 < ipsec
+< ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
@@ -2551,6 +2557,7 @@
 < invalid ip or hostname
 < invalid logserver protocol
 < ipsec
+< ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
@@ -2843,6 +2850,7 @@
 < invalid input for local ip address
 < invalid input for mode
 < invalid ip or hostname
+< ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti

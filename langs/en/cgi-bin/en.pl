@@ -1,7 +1,6 @@
 %tr = ( 
 %tr,
 
-'ipsec connection' => 'IPsec Connection',
 '24 hours' => '24 Hours',
 'Act as' => 'Act as:',
 'Add Level7 rule' => 'Add Level7 rule',
@@ -1490,6 +1489,7 @@
 'ipfires hostname' => 'IPFire\'s Hostname',
 'ipinfo' => 'IP info',
 'ipsec' => 'IPsec',
+'ipsec connection' => 'IPsec Connection',
 'ipsec interface mode gre' => 'GRE',
 'ipsec interface mode none' => '- None (Default) -',
 'ipsec interface mode vti' => 'VTI',
@@ -2781,8 +2781,8 @@
 'vpn start action add' => 'Wait for connection initiation',
 'vpn start action route' => 'On Demand',
 'vpn start action start' => 'Always On',
-'vpn statistic n2n' => 'OpenVPN Net-to-Net Statistics',
-'vpn statistic rw' => 'OpenVPN Roadwarrior Statistics',
+'vpn statistic n2n' => 'VPN: Net-to-Net Statistics',
+'vpn statistic rw' => 'VPN: Roadwarrior Statistics',
 'vpn subjectaltname' => 'Subject Alt Name',
 'vpn wait' => 'WAITING',
 'vpn watch' => 'Restart net-to-net vpn when remote peer IP changes (dyndns).',
