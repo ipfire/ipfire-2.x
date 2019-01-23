@@ -54,6 +54,7 @@ sysctl -p
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec restart
 fi
+/etc/init.d/sshd restart
 
 # Finish
 /etc/init.d/fireinfo start
