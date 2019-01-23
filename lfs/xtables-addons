@@ -82,6 +82,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/xtables-addons-3.2-fix-database-generation.patch
+
 	# Only build the specified modules.
 	cp -avf $(DIR_SRC)/config/xtables-addons/mconfig \
 		$(DIR_APP)/mconfig
