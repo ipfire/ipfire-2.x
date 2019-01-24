@@ -66,6 +66,9 @@ sysctl -p
 # Re-run depmod
 depmod -a
 
+# Remove old xt_geoip LE data
+rm -rf /usr/share/xt_geoip/LE
+
 # Update xt_geoip
 /usr/local/bin/xt_geoip_update
 
