@@ -26,7 +26,7 @@ SCRIPT_PATH=/usr/local/bin
 DEST_PATH=/usr/share/xt_geoip
 DB_PATH=/var/lib/GeoIP
 
-DL_URL=http://geolite.maxmind.com/download/geoip/database
+DL_URL=https://geolite.maxmind.com/download/geoip/database
 DL_FILE=GeoLite2-Country-CSV.zip
 
 eval $(/usr/local/bin/readhash /var/ipfire/proxy/settings)
@@ -40,7 +40,7 @@ function download() {
 	# Proxy settings.
 	# Check if a proxy should be used.
 	if [[ $UPSTREAM_PROXY ]]; then
-		PROXYSETTINGS="-e http_proxy=http://"
+		PROXYSETTINGS="-e https_proxy=http://"
 
 		# Check if authentication against the proxy is configured.
 		if [[ $UPSTREAM_USER && $UPSTREAM_PASSWORD ]]; then
