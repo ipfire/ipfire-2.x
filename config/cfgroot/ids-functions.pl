@@ -794,4 +794,48 @@ sub generate_ignore_file() {
 	close(FILE);
 }
 
+#
+## Function to set correct ownership for single files and directories.
+#
+
+sub set_ownership($) {
+	my ($target) = @_;
+
+	# User and group of the WUI.
+	my $uname = "nobody";
+	my $grname = "nobody";
+
+	# The chown function implemented in perl requies the user and group as nummeric id's.
+	my $uid = getpwnam($uname);
+	my $gid = getgrnam($grname);
+
+	# Check if the given target exists.
+	unless ($target) {
+		# Stop the script and print error message.
+		die "The $target does not exist. Cannot change the ownership!\n";
+	}
+
+	# Check weather the target is a file or directory.
+	if (-f $target) {
+		# Change ownership ot the single file.
+		chown($uid, $gid, "$target");
+	} elsif (-d $target) {
+		# Do a directory listing.
+		opendir(DIR, $target) or die $!;
+			# Loop through the direcory.
+			while (my $file = readdir(DIR)) {
+
+				# We only want files.
+				next unless (-f "$target/$file");
+
+				# Set correct ownership for the files.
+				chown($uid, $gid, "$target/$file");
+			}
+
+		closedir(DIR);
+
+		# Change ownership of the directory.
+		chown($uid, $gid, "$target");
+	}
+}
 1;
