@@ -51,14 +51,6 @@ if (-z "$snort_settings_file") {
 ##         needs to be full access-able by the WUI user and group (nobody:nobody).
 #
 
-# User and group of the WUI.
-my $uname = "nobody";
-my $grname = "nobody";
-
-# The chown function implemented in perl requies the user and group as nummeric id's.
-my $uid = getpwnam($uname);
-my $gid = getgrnam($grname);
-
 # Check if the settings directory exists.
 unless (-d $IDS::settingsdir) {
 	# Create the directory.
@@ -71,26 +63,12 @@ unless (-d $IDS::rulespath) {
 	mkdir($IDS::rulespath);
 }
 
-# Set correct ownership for the settings and rules folder.
-chown($uid, $gid, $IDS::settingsdir);
-chown($uid, $gid, $IDS::rulespath);
-
 # Create file layout, if not exists yet.
 &IDS::check_and_create_filelayout();
 
-# Set correct ownership for the files - Open settings directory and do a directory listing.
-opendir(DIR, $IDS::settingsdir) or die $!;
-        # Loop through the direcory.
-        while (my $file = readdir(DIR)) {
-
-                # We only want files.
-                next unless (-f "$IDS::settingsdir/$file");
-
-		# Set correct ownership for the files.
-		chown($uid, $gid, "$IDS::settingsdir/$file");
-	}
-
-closedir(DIR);
+# Set correct ownership for settingsdir and rulespath.
+&IDS::set_ownership("$IDS::settingsdir");
+&IDS::set_ownership("$IDS::rulespath");
 
 #
 ## Step 2: Import snort settings and convert to the required format for the new IDS
