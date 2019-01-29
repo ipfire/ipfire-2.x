@@ -134,6 +134,9 @@ $(TARGET) :
 	echo  "POLICY=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 	echo  "POLICY1=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 
+	# Install snort to suricata converter.
+	cp $(DIR_SRC)/config/suricata/convert-snort	/usr/sbin/convert-snort
+
 	# Add conntrack helper default settings
 	for proto in FTP H323 IRC SIP TFTP; do \
 		echo "CONNTRACK_$${proto}=on" >> $(CONFIG_ROOT)/optionsfw/settings; \

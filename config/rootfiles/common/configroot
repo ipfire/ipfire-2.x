@@ -1,6 +1,7 @@
 usr/sbin/convert-dmz
 usr/sbin/convert-outgoingfw
 usr/sbin/convert-portfw
+usr/sbin/convert-snort
 usr/sbin/convert-xtaccess
 usr/sbin/firewall-policy
 #var/ipfire
