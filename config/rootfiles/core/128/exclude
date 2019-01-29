@@ -11,7 +11,6 @@ etc/ipsec.user.secrets
 etc/localtime
 etc/shadow
 etc/snort/snort.conf
-etc/ssl/openssl.cnf
 etc/sudoers
 etc/sysconfig/firewall.local
 etc/sysconfig/rc.local
