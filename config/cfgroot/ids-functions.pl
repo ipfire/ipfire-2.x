@@ -387,6 +387,9 @@ sub _store_error_message ($) {
 
         # Close file.
         close (ERRORFILE);
+
+	# Set correct ownership for the file.
+	&set_ownership("$storederrorfile");
 }
 
 #
