@@ -9,3 +9,7 @@ community = https://www.snort.org/downloads/community/community-rules.tar.gz
 
 # Emerging threads community rules.
 emerging = https://rules.emergingthreats.net/open/suricata-4.0/emerging.rules.tar.gz
+
+# Emerging threads pro rules.
+emerging_pro = https://rules.emergingthreatspro.com/<oinkcode>/suricata-4.0/etpro.rules.tar.gz
+
