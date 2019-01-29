@@ -189,6 +189,7 @@ iptables_init() {
 	iptables -N IPS
 	iptables -A INPUT -j IPS
 	iptables -A FORWARD -j IPS
+	iptables -A OUTPUT -j IPS
 
 	# Block non-established IPsec networks
 	iptables -N IPSECBLOCK
