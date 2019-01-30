@@ -31,7 +31,7 @@ unless (-e "${General::swroot}/red/active") {
 	&IDS::_log_to_syslog("The system is offline.");
 
 	# Store error message for displaying in the WUI.
-	&IDS::_store_error_message("$Lang::tr{'could not download latest updates'}");
+	&IDS::_store_error_message("$Lang::tr{'could not download latest updates'} - $Lang::tr{'system is offline'}");
 
 	# Exit.
 	exit 0;
