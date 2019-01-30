@@ -948,6 +948,7 @@
 'email usemail' => 'Activate Mail Service',
 'emailreportlevel' => 'E-mailreportlevel',
 'emerging rules' => 'Emergingthreats.net Community Rules',
+'emerging pro rules' => 'Emergingthreats.net Pro Rules',
 'empty' => 'This field may be left blank',
 'empty profile' => 'empty',
 'enable ignore filter' => 'Enable ignore filter',

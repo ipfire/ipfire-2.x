@@ -797,6 +797,7 @@ print <<END
 		<tr>
 			<td><select name='RULES' id='RULES'>
 				<option value='emerging' $selected{'RULES'}{'emerging'} >$Lang::tr{'emerging rules'}</option>
+				<option value='emerging_pro' $selected{'RULES'}{'emerging_pro'} >$Lang::tr{'emerging pro rules'}</option>
 				<option value='community' $selected{'RULES'}{'community'} >$Lang::tr{'community rules'}</option>
 				<option value='registered' $selected{'RULES'}{'registered'} >$Lang::tr{'registered user rules'}</option>
 				<option value='subscripted' $selected{'RULES'}{'subscripted'} >$Lang::tr{'subscripted user rules'}</option>
