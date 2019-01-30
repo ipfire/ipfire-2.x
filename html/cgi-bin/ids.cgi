@@ -327,7 +327,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	unless (%idsrules) {
 		# Check if the red device is active.
 		unless (-e "${General::swroot}/red/active") {
-			$errormessage = $Lang::tr{'could not download latest updates'};
+			$errormessage = "$Lang::tr{'could not download latest updates'} - $Lang::tr{'system is offline'}";
 		}
 
 		# Check if enought free disk space is availabe.
@@ -477,7 +477,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 } elsif ($cgiparams{'RULESET'} eq $Lang::tr{'update ruleset'}) {
 	# Check if the red device is active.
 	unless (-e "${General::swroot}/red/active") {
-		$errormessage = $Lang::tr{'could not download latest updates'};
+		$errormessage = "$Lang::tr{'could not download latest updates'} - $Lang::tr{'system is offline'}";
 	}
 
 	# Check if enought free disk space is availabe.

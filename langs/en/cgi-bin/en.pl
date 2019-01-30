@@ -2263,6 +2263,7 @@
 'system has hwrng' => 'This system has a hardware random number generator.',
 'system has rdrand' => 'This system has support for Intel(R) RDRAND.',
 'system information' => 'System Information',
+'system is offline' => 'The system is offline.',
 'system log viewer' => 'System Log Viewer',
 'system logs' => 'System Logs',
 'system status information' => 'System Status Information',
