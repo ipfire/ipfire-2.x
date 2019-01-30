@@ -597,9 +597,6 @@ sub generate_home_net_file() {
 
 	# Loop through the array of available network zones.
 	foreach my $zone (@network_zones) {
-		# Skip the red network - It never can be part to the home_net!
-		next if($zone eq "red");
-
 		# Convert current zone name into upper case.
 		$zone = uc($zone);
 
@@ -621,6 +618,24 @@ sub generate_home_net_file() {
 		if(&Network::check_subnet($network)) {
 			# Add the generated network to the array of networks.
 			push(@networks, $network);
+		}
+
+		# Check if the current processed zone is red.
+		if($zone eq "RED") {
+			# Check if the configured RED_TYPE is static.
+			if ($netsettings{'RED_TYPE'} eq "STATIC") {
+				# Get configured and enabled aliases.
+				my @aliases = &get_aliases();
+
+				# Loop through the array.
+				foreach my $alias (@aliases) {
+					# Add "/32" prefix.
+					my $network = join("/", $alias, "32");
+
+					# Add the generated network to the array of networks.
+					push(@networks, $network);
+				}
+			}
 		}
 	}
 
