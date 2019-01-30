@@ -696,7 +696,6 @@ END
 		</table>
 END
 }
-&Header::closebox();
 
 my $rulesdate;
 
@@ -709,10 +708,10 @@ if ( -f "$IDS::rulestarball"){
         $rulesdate = localtime($Info[9]);
 }
 
-# Draw elements for IDS configuration.
-&Header::openbox('100%', 'center', $Lang::tr{'settings'});
-
 print <<END
+
+<br><br><h2>$Lang::tr{'settings'}</h2>
+
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%' border='0'>
 		<tr>
