@@ -742,78 +742,83 @@ if ( -f "$IDS::rulestarball"){
         $rulesdate = localtime($Info[9]);
 }
 
-print <<END
+# Only show this area, if a ruleset is present.
+if (%idsrules) {
 
-<br><br><h2>$Lang::tr{'settings'}</h2>
+	print <<END
 
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-	<table width='100%' border='0'>
-		<tr>
-			<td class='base' colspan='2'>
-				<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>$Lang::tr{'ids activate'} $Lang::tr{'intrusion detection system'}
+	<br><br><h2>$Lang::tr{'settings'}</h2>
+
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<table width='100%' border='0'>
+			<tr>
+				<td class='base' colspan='2'>
+					<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>$Lang::tr{'ids activate'} $Lang::tr{'intrusion detection system'}
+				</td>
+
+				<td class='base' colspan='2'>
+					<input type='checkbox' name='MONITOR_TRAFFIC_ONLY' $checked{'MONITOR_TRAFFIC_ONLY'}{'on'}>$Lang::tr{'ids monitor traffic only'}
 			</td>
+			</tr>
 
-			<td class='base' colspan='2'>
-				<input type='checkbox' name='MONITOR_TRAFFIC_ONLY' $checked{'MONITOR_TRAFFIC_ONLY'}{'on'}>$Lang::tr{'ids monitor traffic only'}
-			</td>
-		</tr>
+			<tr>
+				<td><br><br></td>
+				<td><br><br></td>
+				<td><br><br></td>
+				<td><br><br></td>
+			</tr>
 
-		<tr>
-			<td><br><br></td>
-			<td><br><br></td>
-			<td><br><br></td>
-			<td><br><br></td>
-		</tr>
+			<tr>
+				<td colspan='4'><b>$Lang::tr{'ids monitored interfaces'}</b><br></td>
+			</tr>
 
-		<tr>
-			<td colspan='4'><b>$Lang::tr{'ids monitored interfaces'}</b><br></td>
-		</tr>
-
-		<tr>
+			<tr>
 END
 ;
 
-# Loop through the array of available networks and print config options.
-foreach my $zone (@network_zones) {
-	my $checked_input;
-	my $checked_forward;
+	# Loop through the array of available networks and print config options.
+	foreach my $zone (@network_zones) {
+		my $checked_input;
+		my $checked_forward;
 
-	# Convert current zone name to upper case.
-	my $zone_upper = uc($zone);
+		# Convert current zone name to upper case.
+		my $zone_upper = uc($zone);
 
-	# Set zone name.
-	my $zone_name = $zone;
+		# Set zone name.
+		my $zone_name = $zone;
 
-	# Dirty hack to get the correct language string for the red zone.
-	if ($zone eq "red") {
-		$zone_name = "red1";
+		# Dirty hack to get the correct language string for the red zone.
+		if ($zone eq "red") {
+			$zone_name = "red1";
+		}
+
+		# Grab checkbox status from settings hash.
+		if ($idssettings{"ENABLE_IDS_$zone_upper"} eq "on") {
+			$checked_input = "checked = 'checked'";
+		}
+
+		print "<td class='base' width='25%'>\n";
+		print "<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>\n";
+		print "&nbsp$Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>\n";
+		print "</td>\n";
 	}
 
-	# Grab checkbox status from settings hash.
-	if ($idssettings{"ENABLE_IDS_$zone_upper"} eq "on") {
-		$checked_input = "checked = 'checked'";
-	}
+print <<END
+			</tr>
+		</table>
 
-	print "<td class='base' width='25%'>\n";
-	print "<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>\n";
-	print "&nbsp$Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>\n";
-	print "</td>\n";
+		<br><br>
+
+		<table width='100%'>
+			<tr>
+				<td align='right'><input type='submit' name='IDS' value='$Lang::tr{'save'}' /></td>
+			</tr>
+		</table>
+	</form>
+END
+;
+
 }
-
-print <<END
-		</tr>
-        </table>
-
-        <br><br>
-
-        <table width='100%'>
-                <tr>
-                        <td align='right'><input type='submit' name='IDS' value='$Lang::tr{'save'}' /></td>
-                </tr>
-        </table>
-</form>
-END
-;
 
 &Header::closebox();
 
