@@ -841,4 +841,50 @@ sub set_ownership($) {
 		chown($uid, $gid, "$target");
 	}
 }
+
+#
+## Function to read-in the aliases file and returns all configured and enabled aliases.
+#
+sub get_aliases() {
+	# Location of the aliases file.
+	my $aliases_file = "${General::swroot}/ethernet/aliases";
+
+	# Array to store the aliases.
+	my @aliases;
+
+	# Check if the file is empty.
+	if (-z $aliases_file) {
+		# Abort nothing to do.
+		return;
+	}
+
+	# Open the aliases file.
+	open(ALIASES, $aliases_file) or die "Could not open $aliases_file. $!\n";
+
+	# Loop through the file content.
+	while (my $line = <ALIASES>) {
+		# Remove newlines.
+		chomp($line);
+
+		# Splitt line content into single chunks.
+		my ($address, $state, $remark) = split(/\,/, $line);
+
+		# Check if the state of the current processed alias is "on".
+		if ($state eq "on") {
+			# Check if the address is valid.
+			if(&Network::check_ip_address($address)) {
+				# Add the alias to the array of aliases.
+				push(@aliases, $address);
+			}
+		}
+	}
+
+	# Close file handle.
+	close(ALIASES);
+
+	# Return the array.
+	return @aliases;
+}
+
+
 1;
