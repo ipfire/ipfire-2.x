@@ -323,6 +323,40 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 		&IDS::call_suricatactrl("cron", $cgiparams{'AUTOUPDATE_INTERVAL'});
 	}
 
+	# Check if a ruleset is present - if not download it.
+	unless (%idsrules) {
+		# Check if the red device is active.
+		unless (-e "${General::swroot}/red/active") {
+			$errormessage = $Lang::tr{'could not download latest updates'};
+		}
+
+		# Check if enought free disk space is availabe.
+		if(&IDS::checkdiskspace()) {
+			$errormessage = "$Lang::tr{'not enough disk space'}";
+		}
+
+		# Check if any errors happend.
+		unless ($errormessage) {
+			# Lock the webpage and print notice about downloading
+			# a new ruleset.
+			&working_notice("$Lang::tr{'snort working'}");
+
+			# Call subfunction to download the ruleset.
+			if(&IDS::downloadruleset()) {
+				$errormessage = $Lang::tr{'could not download latest updates'};
+
+				# Call function to store the errormessage.
+				&IDS::_store_error_message($errormessage);
+			} else {
+				# Call subfunction to launch oinkmaster.
+				&IDS::oinkmaster();
+			}
+
+			# Perform a reload of the page.
+			&reload();
+		}
+	}
+
 # Save ruleset.
 } elsif ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
 	# Arrays to store which rulefiles have been enabled and will be used.
@@ -440,7 +474,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	&reload();
 
 # Download new ruleset.
-} elsif ($cgiparams{'RULESET'} eq $Lang::tr{'download new ruleset'}) {
+} elsif ($cgiparams{'RULESET'} eq $Lang::tr{'update ruleset'}) {
 	# Check if the red device is active.
 	unless (-e "${General::swroot}/red/active") {
 		$errormessage = $Lang::tr{'could not download latest updates'};
