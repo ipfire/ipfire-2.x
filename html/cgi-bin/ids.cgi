@@ -612,6 +612,22 @@ $selected{'AUTOUPDATE_INTERVAL'}{$rulessettings{'AUTOUPDATE_INTERVAL'}} = "selec
 ### Java Script ###
 print <<END
 <script>
+	// JQuery function to show/hide the text input field for
+	// Oinkcode/Subscription code.
+	\$(function() {
+		\$('#RULES').change(function(){
+			if(\$('#RULES').val() == 'registered') {
+				\$('#code').show();
+			} else if(\$('#RULES').val() == 'subscripted') {
+				\$('#code').show();
+			} else if(\$('#RULES').val() == 'emerging_pro') {
+				\$('#code').show();
+			} else {
+				\$('#code').hide();
+			}
+		});
+	});
+
 	// Tiny java script function to show/hide the rules
 	// of a given category.
 	function showhide(tblname) {
@@ -780,7 +796,7 @@ print <<END
 		</tr>
 
 		<tr>
-			<td><select name='RULES'>
+			<td><select name='RULES' id='RULES'>
 				<option value='emerging' $selected{'RULES'}{'emerging'} >$Lang::tr{'emerging rules'}</option>
 				<option value='community' $selected{'RULES'}{'community'} >$Lang::tr{'community rules'}</option>
 				<option value='registered' $selected{'RULES'}{'registered'} >$Lang::tr{'registered user rules'}</option>
@@ -801,8 +817,8 @@ print <<END
 			<td colspan='2'><br><br></td>
 		</tr>
 
-		<tr>
-			<td colspan='2' nowrap='nowrap'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$rulessettings{'OINKCODE'}'></td>
+		<tr style='display:none' id='code'>
+			<td colspan='2'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$rulessettings{'OINKCODE'}'></td>
 		</tr>
 
 		<tr>
