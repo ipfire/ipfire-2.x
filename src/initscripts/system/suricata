@@ -35,52 +35,81 @@ MASK="0x2"
 # PID file of suricata.
 PID_FILE="/var/run/suricata.pid"
 
+# Function to get the amount of CPU cores of the system.
+function get_cpu_count {
+	CPUCOUNT=0
+
+	# Loop through "/proc/cpuinfo" and count the amount of CPU cores.
+	while read line; do
+		[ "$line" ] && [ -z "${line%processor*}" ]  && ((CPUCOUNT++))
+	done </proc/cpuinfo
+
+	echo $CPUCOUNT
+}
+
+# Function to create the firewall rules to pass the traffic to suricata.
+function generate_fw_rules {
+	cpu_count=$(get_cpu_count)
+
+	# Flush the firewall chain.
+	iptables -F "$FW_CHAIN"
+
+	# Loop through the array of network zones.
+	for zone in "${network_zones[@]}"; do
+		# Convert zone into upper case.
+		zone_upper=${zone^^}
+
+		# Generate variable name for checking if the IDS is
+		# enabled on the zone.
+		enable_ids_zone="ENABLE_IDS_$zone_upper"
+
+		# Check if the IDS is enabled for this network zone.
+		if [ "${!enable_ids_zone}" == "on" ]; then
+			# Generate name of the network interface.
+			network_device=$zone
+			network_device+="0"
+
+			# Assign NFQ_OPTS
+			NFQ_OPTIONS=$NFQ_OPTS
+
+			# Check if there are multiple cpu cores available.
+			if [ "$cpu_count" -gt "1" ]; then
+				# Balance beetween all queues.
+				NFQ_OPTIONS+="--queue-balance 0:"
+				NFQ_OPTIONS+=$(($cpu_count-1))
+			else
+				# Send all packets to queue 0.
+				NFQ_OPTIONS+="--queue-num 0"
+			fi
+
+			# Create firewall rules to queue the traffic and pass to
+			# the IDS.
+			iptables -I "$FW_CHAIN" -i "$network_device" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
+			iptables -I "$FW_CHAIN" -o "$network_device" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
+		fi
+	done
+}
+
+# Function to flush the firewall chain.
+function flush_fw_chain {
+	# Call iptables and flush the chain
+	iptables -F "$FW_CHAIN"
+}
+
 case "$1" in
         start)
 		# Get amount of CPU cores.
+		cpu_count=$(get_cpu_count)
+
+		# Numer of NFQUES.
 		NFQUEUES=
-		CPUCOUNT=0
-		while read line; do
-			[ "$line" ] && [ -z "${line%processor*}" ] && NFQUEUES+="-q $CPUCOUNT " && ((CPUCOUNT++))
-		done </proc/cpuinfo
+
+		for i in $(seq 0 $cpu_count); do
+			NFQUEUES+="-q $i "
+		done
 
 		# Check if the IDS should be started.
 		if [ "$ENABLE_IDS" == "on" ]; then
-			# Loop through the array of network zones.
-			for zone in "${network_zones[@]}"; do
-				# Convert zone into upper case.
-				zone_upper=${zone^^}
-
-				# Generate variable name for checking if the IDS is
-				# enabled on the zone.
-				enable_ids_zone="ENABLE_IDS_$zone_upper"
-
-				# Check if the IDS is enabled for this network zone.
-				if [ "${!enable_ids_zone}" == "on" ]; then
-					# Generate name of the network interface.
-					network_device=$zone
-					network_device+="0"
-
-					# Assign NFQ_OPTS
-					NFQ_OPTIONS=$NFQ_OPTS
-
-					# Check if there are multiple cpu cores available.
-					if [ "$CPUCOUNT" -gt "1" ]; then
-						# Balance beetween all queues.
-						NFQ_OPTIONS+="--queue-balance 0:"
-						NFQ_OPTIONS+=$(($CPUCOUNT-1))
-					else
-						# Send all packets to queue 0.
-						NFQ_OPTIONS+="--queue-num 0"
-					fi
-
-					# Create firewall rules to queue the traffic and pass to
-					# the IDS.
-					iptables -I "$FW_CHAIN" -i "$network_device" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
-					iptables -I "$FW_CHAIN" -o "$network_device" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
-				fi
-			done
-
 			# Start the IDS.
 			boot_mesg "Starting Intrusion Detection System..."
 			/usr/bin/suricata -c /etc/suricata/suricata.yaml -D $NFQUEUES
@@ -88,6 +117,12 @@ case "$1" in
 
 			# Allow reading the pidfile.
 			chmod 644 $PID_FILE
+
+			# Flush the firewall chain
+			flush_fw_chain
+
+			# Generate firewall rules
+			generate_fw_rules
 		fi
 	;;
 
@@ -96,7 +131,7 @@ case "$1" in
 		killproc -p $PID_FILE /var/run
 
 		# Flush firewall chain.
-		iptables -F $FW_CHAIN
+		flush_fw_chain
 
 		# Remove suricata control socket.              
 		rm /var/run/suricata/* >/dev/null 2>/dev/null
@@ -117,6 +152,12 @@ case "$1" in
 		# Send SIGUSR2 to the suricata process to perform a reload
 		# of the ruleset.
 		kill -USR2 $(pidof suricata)
+
+		# Flush the firewall chain.
+		flush_fw_chain
+
+		# Generate firewall rules.
+		generate_fw_rules
 		;;
                 
         *)
