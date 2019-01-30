@@ -644,8 +644,13 @@ $selected{'AUTOUPDATE_INTERVAL'}{$rulessettings{'AUTOUPDATE_INTERVAL'}} = "selec
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
 
 ### Java Script ###
+print"<script>\n";
+
+# Java script variable declaration for show and hide.
+print"var show = \"$Lang::tr{'ids show'}\"\;\n";
+print"var hide = \"$Lang::tr{'ids hide'}\"\;\n";
+
 print <<END
-<script>
 	// JQuery function to show/hide the text input field for
 	// Oinkcode/Subscription code.
 	\$(function() {
@@ -666,6 +671,15 @@ print <<END
 	// of a given category.
 	function showhide(tblname) {
 		\$("#" + tblname).toggle();
+
+		// Get current content of the span element.
+		var content = document.getElementById("span_" + tblname);
+
+		if (content.innerHTML === show) {
+			content.innerHTML = hide;
+		} else {
+			content.innerHTML = show;
+		}
 	}
 </script>
 END
@@ -1043,7 +1057,7 @@ if (%idsrules) {
 			print"</td>\n";
 			print"<td class='base' width='90%'><b>$rulefile</b></td>\n";
 			print"<td class='base' width='5%' align='right'>\n";
-			print"<a href=\"javascript:showhide('$categoryname')\">SHOW</a>\n";
+			print"<a href=\"javascript:showhide('$categoryname')\"><span id='span_$categoryname'>$Lang::tr{'ids show'}</span></a>\n";
 			print"</td>\n";
 			print"</tr>\n";
 
