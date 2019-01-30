@@ -798,10 +798,7 @@ print <<END
 		</tr>
 
 		<tr>
-			<td colspan='2'>
-				<br>$Lang::tr{'ids rules license'} <a href='https://www.snort.org/subscribe' target='_blank'>www.snort.org</a>$Lang::tr{'ids rules license1'}</br>
-				<br>$Lang::tr{'ids rules license2'} <a href='https://www.snort.org/account/oinkcode' target='_blank'>Get an Oinkcode</a>, $Lang::tr{'ids rules license3'}</br>
-			</td>
+			<td colspan='2'><br><br></td>
 		</tr>
 
 		<tr>
