@@ -826,19 +826,10 @@ print <<END
 			<td align='right'>
 END
 ;
-		# Check if a ruleset source has been configured yet.
-		unless($rulessettings{'RULES'}) {
-			# If no ruleset settings have been saved yet, disable the button to download / update the ruleset.
-			print"<input type='submit' name='RULESET' disabled='disabled' value='$Lang::tr{'download new ruleset'}'>\n";
-		} else {
-			# Ruleset setting have been saved. - Check if a ruleset already is downloaded.
+			# Check if a ruleset has been downloaded yet.
 			if (%idsrules) {
-				# Allow to press the button and show it as "update ruleset".
+				# Display button to update the ruleset.
 				print"<input type='submit' name='RULESET' value='$Lang::tr{'update ruleset'}'>\n";
-			} else {
-				# Also allow to press the button, but show it as "download new ruleset".
-				print"<input type='submit' name='RULESET' value='$Lang::tr{'download new ruleset'}'>\n";
-			}
 		}
 print <<END;
 				<input type='submit' name='RULESET' value='$Lang::tr{'save'}'>
