@@ -901,5 +901,36 @@ sub get_aliases() {
 	return @aliases;
 }
 
+#
+## Function to grab the current assigned IP-address on red.
+#
+sub get_red_address() {
+	# File, which contains the current IP-address of the red interface.
+	my $file = "${General::swroot}/red/local-ipaddress";
+
+	# Check if the file exists.
+	if (-e $file) {
+		# Open the given file.
+		open(FILE, "$file") or die "Could not open $file.";
+
+		# Obtain the address from the first line of the file.
+		my $address = <FILE>;
+
+		# Close filehandle
+		close(FILE);
+
+		# Remove newlines.
+		chomp $address;
+
+		# Check if the grabbed address is valid.
+		if (&General::validip($address)) {
+			# Return the address.
+			return $address;
+		}
+	}
+
+	# Return nothing.
+	return;
+}
 
 1;
