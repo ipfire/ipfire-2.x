@@ -597,31 +597,20 @@ sub generate_home_net_file() {
 
 	# Loop through the array of available network zones.
 	foreach my $zone (@network_zones) {
-		# Convert current zone name into upper case.
-		$zone = uc($zone);
-
-		# Generate key to access the required data from the netsettings hash.
-		my $zone_netaddress = $zone . "_NETADDRESS";
-		my $zone_netmask = $zone . "_NETMASK";
-
-		# Obtain the settings from the netsettings hash.
-		my $netaddress = $netsettings{$zone_netaddress};
-		my $netmask = $netsettings{$zone_netmask};
-
-		# Convert the subnetmask into prefix notation.
-		my $prefix = &Network::convert_netmask2prefix($netmask);
-
-		# Generate full network string.
-		my $network = join("/", $netaddress,$prefix);
-
-		# Check if the network is valid.
-		if(&Network::check_subnet($network)) {
-			# Add the generated network to the array of networks.
-			push(@networks, $network);
-		}
-
 		# Check if the current processed zone is red.
-		if($zone eq "RED") {
+		if($zone eq "red") {
+			# Grab the IP-address of the red interface.
+			my $red_address = &get_red_address();
+
+			# Check if an address has been obtained.
+			if ($red_address) {
+				# Generate full network string.
+				my $red_network = join("/", $red_address, "32");
+
+				# Add the red network to the array of networks.
+				push(@networks, $red_network);
+			}
+
 			# Check if the configured RED_TYPE is static.
 			if ($netsettings{'RED_TYPE'} eq "STATIC") {
 				# Get configured and enabled aliases.
@@ -635,6 +624,30 @@ sub generate_home_net_file() {
 					# Add the generated network to the array of networks.
 					push(@networks, $network);
 				}
+			}
+		# Process remaining network zones.
+		} else {
+			# Convert current zone name into upper case.
+			$zone = uc($zone);
+
+			# Generate key to access the required data from the netsettings hash.
+			my $zone_netaddress = $zone . "_NETADDRESS";
+			my $zone_netmask = $zone . "_NETMASK";
+
+			# Obtain the settings from the netsettings hash.
+			my $netaddress = $netsettings{$zone_netaddress};
+			my $netmask = $netsettings{$zone_netmask};
+
+			# Convert the subnetmask into prefix notation.
+			my $prefix = &Network::convert_netmask2prefix($netmask);
+
+			# Generate full network string.
+			my $network = join("/", $netaddress,$prefix);
+
+			# Check if the network is valid.
+			if(&Network::check_subnet($network)) {
+				# Add the generated network to the array of networks.
+				push(@networks, $network);
 			}
 		}
 	}
