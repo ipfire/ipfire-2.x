@@ -323,8 +323,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 		&IDS::call_suricatactrl("cron", $cgiparams{'AUTOUPDATE_INTERVAL'});
 	}
 
-	# Check if a ruleset is present - if not download it.
-	unless (%idsrules) {
+	# Check if a ruleset is present - if not or the source has been changed download it.
+	unless ((%idsrules) || ($oldsettings{'RULES'} eq $cgiparams{'RULES'})) {
 		# Check if the red device is active.
 		unless (-e "${General::swroot}/red/active") {
 			$errormessage = "$Lang::tr{'could not download latest updates'} - $Lang::tr{'system is offline'}";
