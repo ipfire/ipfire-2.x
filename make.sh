@@ -1587,6 +1587,7 @@ buildipfire() {
   lfsmake2 nss-myhostname
   lfsmake2 dehydrated
   lfsmake2 shairport-sync
+  lfsmake2 borgbackup
 }
 
 buildinstaller() {
