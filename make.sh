@@ -1500,6 +1500,7 @@ buildipfire() {
   lfsmake2 python-progressbar
   lfsmake2 python-xattr
   lfsmake2 ddns
+  lfsmake2 python3-setuptools
   lfsmake2 python3-six
   lfsmake2 python3-dateutil
   lfsmake2 python3-jmespath
