@@ -36,7 +36,13 @@ done
 # Remove files
 rm -vf \
 	/usr/lib{,/sse2}/libcrypto.so.10 \
-	/usr/lib{,/sse2}/libssl.so.10
+	/usr/lib{,/sse2}/libssl.so.10 \
+	/home/nobody/.rnd \
+	/var/ipfire/ovpn/ca/.rnd \
+	/var/tmp/.rnd \
+	/.rnd \
+	/root/.rnd
+
 
 # Extract files
 extract_files
