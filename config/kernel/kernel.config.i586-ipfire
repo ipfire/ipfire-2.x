@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 4.14.94-ipfire-pae Kernel Configuration
+# Linux/x86 4.14.97-ipfire-pae Kernel Configuration
 #
 # CONFIG_64BIT is not set
 CONFIG_X86_32=y
@@ -6411,7 +6411,7 @@ CONFIG_SUNRPC_DEBUG=y
 CONFIG_CIFS=m
 CONFIG_CIFS_STATS=y
 # CONFIG_CIFS_STATS2 is not set
-# CONFIG_CIFS_WEAK_PW_HASH is not set
+# CONFIG_CIFS_ALLOW_INSECURE_LEGACY is not set
 # CONFIG_CIFS_UPCALL is not set
 CONFIG_CIFS_XATTR=y
 CONFIG_CIFS_ACL=y
