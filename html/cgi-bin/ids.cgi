@@ -775,7 +775,7 @@ if (%idsrules) {
 		<table width='100%' border='0'>
 			<tr>
 				<td class='base' colspan='2'>
-					<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>$Lang::tr{'ids activate'} $Lang::tr{'intrusion detection system'}
+					<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>$Lang::tr{'ids enable'} $Lang::tr{'intrusion detection system'}
 				</td>
 
 				<td class='base' colspan='2'>
