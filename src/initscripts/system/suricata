@@ -112,7 +112,7 @@ case "$1" in
 		if [ "$ENABLE_IDS" == "on" ]; then
 			# Start the IDS.
 			boot_mesg "Starting Intrusion Detection System..."
-			/usr/bin/suricata -c /etc/suricata/suricata.yaml -D $NFQUEUES
+			/usr/bin/suricata -c /etc/suricata/suricata.yaml -D $NFQUEUES >/dev/null 2>/dev/null
 			evaluate_retval
 
 			# Allow reading the pidfile.
