@@ -222,7 +222,7 @@ sub downloadruleset {
 	# Check if there was any error.
 	unless ($response->is_success) {
 		# Obtain error.
-		my $error = $response->content;
+		my $error = $response->status_line();
 
 		# Log error message.
 		&_log_to_syslog("Unable to download the ruleset. \($error\)");
@@ -232,7 +232,7 @@ sub downloadruleset {
 	}
 
 	# Assign the fetched header object.
-	my $header = $response->headers;
+	my $header = $response->headers();
 
 	# Grab the remote file size from the object and store it in the
 	# variable.
