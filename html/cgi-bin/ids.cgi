@@ -859,9 +859,9 @@ print <<END
 
 			<td>
 				<select name='AUTOUPDATE_INTERVAL'>
-					<option value='off' $selected{'AUTOUPDATE_INTERVAL'}{'off'} >$Lang::tr{'no'}</option>
-					<option value='daily' $selected{'AUTOUPDATE_INTERVAL'}{'daily'} >$Lang::tr{'urlfilter daily'}</option>
-					<option value='weekly' $selected{'AUTOUPDATE_INTERVAL'}{'weekly'} >$Lang::tr{'urlfilter weekly'}</option>
+					<option value='off' $selected{'AUTOUPDATE_INTERVAL'}{'off'} >- $Lang::tr{'Disabled'} -</option>
+					<option value='daily' $selected{'AUTOUPDATE_INTERVAL'}{'daily'} >$Lang::tr{'Daily'}</option>
+					<option value='weekly' $selected{'AUTOUPDATE_INTERVAL'}{'weekly'} >$Lang::tr{'Weekly'}</option>
 				</select>
 			</td>
 		</tr>
