@@ -352,6 +352,14 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 				&IDS::oinkmaster();
 			}
 
+			# Check if the IDS is running.
+			if(&IDS::ids_is_running()) {
+				# Call suricatactrl to stop the IDS - because of the changed
+				# ruleset - the use has to configure it before suricata can be
+				# used again.
+				&IDS::call_suricatactrl("stop");
+			}
+
 			# Perform a reload of the page.
 			&reload();
 		}
