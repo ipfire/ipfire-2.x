@@ -775,11 +775,11 @@ if (%idsrules) {
 		<table width='100%' border='0'>
 			<tr>
 				<td class='base' colspan='2'>
-					<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>&nbsp$Lang::tr{'ids enable'}
+					<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>&nbsp;$Lang::tr{'ids enable'}
 				</td>
 
 				<td class='base' colspan='2'>
-					<input type='checkbox' name='MONITOR_TRAFFIC_ONLY' $checked{'MONITOR_TRAFFIC_ONLY'}{'on'}>&nbsp$Lang::tr{'ids monitor traffic only'}
+					<input type='checkbox' name='MONITOR_TRAFFIC_ONLY' $checked{'MONITOR_TRAFFIC_ONLY'}{'on'}>&nbsp;$Lang::tr{'ids monitor traffic only'}
 			</td>
 			</tr>
 
@@ -821,7 +821,7 @@ END
 
 		print "<td class='base' width='25%'>\n";
 		print "<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>\n";
-		print "&nbsp$Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>\n";
+		print "&nbsp;$Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>\n";
 		print "</td>\n";
 	}
 
