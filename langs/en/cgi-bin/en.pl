@@ -1360,7 +1360,7 @@
 'ids automatic rules update' => 'Automatic rules update',
 'ids traffic analyze' => 'Traffic analyzing',
 'ids active on' => 'Active on',
-'ids enable' => 'Enable',
+'ids enable' => 'Enable Intrusion Prevention System',
 'ids hide' => 'Hide',
 'ids log viewer' => 'IPS log viewer',
 'ids logs' => 'IPS Logs',

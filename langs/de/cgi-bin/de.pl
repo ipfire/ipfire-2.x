@@ -1329,7 +1329,7 @@
 'ids automatic rules update' => 'Automatische Regeln-Aktualisierung',
 'ids traffic analyze' => 'Packet-Analyse',
 'ids active on' => 'Aktiv auf',
-'ids enable' => 'Aktiviere',
+'ids enable' => 'Intrusion-Prevention-System aktivieren',
 'ids log viewer' => 'Ansicht IPS-Protokoll',
 'ids logs' => 'IPS-Protokolldateien',
 'ids monitored interfaces' => 'Überwachte Netzwerkzonen',
