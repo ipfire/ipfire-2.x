@@ -53,7 +53,7 @@ etc/rc.d/init.d/networking/red.up/10-miniupnpd
 etc/rc.d/init.d/networking/red.up/10-multicast
 etc/rc.d/init.d/networking/red.up/10-static-routes
 etc/rc.d/init.d/networking/red.up/20-firewall
-etc/rc.d/init.d/networking/red.up/23-RS-suricata
+etc/rc.d/init.d/networking/red.up/23-suricata
 etc/rc.d/init.d/networking/red.up/24-RS-qos
 etc/rc.d/init.d/networking/red.up/27-RS-squid
 etc/rc.d/init.d/networking/red.up/30-ddns

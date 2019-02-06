@@ -1,0 +1,30 @@
+#!/usr/bin/perl
+#
+# Helper script to regenerate the file which contains the HOME_NET declaration
+# including the assigned IP-address of red and any configured aliases.
+
+use strict;
+
+require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/ids-functions.pl";
+
+# Hash to store the IDS settings.
+my %ids_settings = ();
+
+# Read-in IDS settings.
+&General::readhash("$IDS::ids_settings_file", \%ids_settings);
+
+# Check if suricata is enabled.
+if($ids_settings{'ENABLE_IDS'} eq "on") {
+	# Regenerate the file with HOME_NET details.
+	&IDS::generate_home_net_file();
+
+	# Set correct ownership.
+	&IDS::set_ownership("$IDS::homenet_file");
+
+	# Check if suricata is running.
+	if(&IDS::ids_is_running()) {
+		# Call suricatactrl to perform a restart of suricata.
+		&IDS::call_suricatactrl("restart");
+	}
+}
