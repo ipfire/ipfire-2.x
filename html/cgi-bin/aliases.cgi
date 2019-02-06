@@ -33,6 +33,7 @@ use strict;
 require '/var/ipfire/general-functions.pl';	# replace /var/ipcop with /var/ipcop in case of manual install
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/ids-functions.pl";
 
 my $configfwdfw		= "${General::swroot}/firewall/config";
 my $configinput		= "${General::swroot}/firewall/input";
@@ -105,6 +106,9 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	
 	# Rebuild configuration file if needed
 	&BuildConfiguration;
+
+	# Handle suricata related actions.
+	&HandleSuricata();
     }
 
     ERROR:						# Leave the faulty field untouched
@@ -139,6 +143,9 @@ if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
 	
     # Rebuild configuration file
     &BuildConfiguration;
+
+    # Handle Suricata related actions.
+    &HandleSuricata();
 }
 
 if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
@@ -220,6 +227,9 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 	&SortDataFile;				# sort newly added/modified entry
 
 	&BuildConfiguration;			# then re-build conf which use new data
+
+	# Handle Suricata related actions.
+	&HandleSuricata();
 	
 ##
 ## if entering data line is repetitive, choose here to not erase fields between each addition
@@ -251,6 +261,9 @@ if ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
     &General::log($Lang::tr{'ip alias removed'});
 
     &BuildConfiguration;				# then re-build conf which use new data
+
+    # Handle Suricata related actions.
+    &HandleSuricata();
 }
 
 
@@ -557,3 +570,16 @@ sub BuildConfiguration {
     system '/usr/local/bin/setaliases';
 }
 
+#
+## Handle Suricata related actions.
+#
+sub HandleSuricata() {
+	# Check if suricata is running.
+	if(&IDS::ids_is_running()) {
+		# Re-generate file which contains the HOME_NET declaration.
+		&IDS::generate_home_net_file();
+
+		# Call suricatactrl to perform a restart of suricata.
+		&IDS::call_suricatactrl("restart");
+	}
+}
