@@ -1336,7 +1336,7 @@
 'ids monitor traffic only' => 'Netzwerk-Pakete nur überpfrüfen',
 'ids no network zone' => 'Mindestends eine Netzwerk-Zone muss überwacht werden!',
 'ids no ruleset available' => 'Kein Regelset verfügbar, bitte downloaden Sie eines!',
-'ids oinkcode required' => 'Für das ausgewählte Regelset wird eine Subscription oder ein Oinkcode benötigt',
+'ids oinkcode required' => 'Für das ausgewählte Regelset wird ein Abonnement oder ein Oinkcode benötigt',
 'ids ruleset settings' => 'Regelset-Einstellungen',
 'ids preprocessor' => 'IDS-Präprozessor',
 'ids rules license' => 'Um  Sourcefire VRT Zertifizierte Regeln zu nutzen, müssen Sie sich unter',
