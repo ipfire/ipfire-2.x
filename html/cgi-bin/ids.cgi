@@ -296,18 +296,32 @@ if(-f $IDS::used_rulefiles_file) {
 # Save ruleset configuration.
 if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	my %oldsettings;
+	my %rulesetsources;
 
 	# Read-in current (old) IDS settings.
 	&General::readhash("$IDS::rules_settings_file", \%oldsettings);
 
+	# Get all available ruleset locations.
+	&General::readhash("$IDS::rulesetsourcesfile", \%rulesetsources);
+
 	# Prevent form name from been stored in conf file.
 	delete $cgiparams{'RULESET'};
 
-	# Check if an oinkcode has been provided.
-	if ($cgiparams{'OINKCODE'}) {
-		# Check if the oinkcode contains unallowed chars.
-		unless ($cgiparams{'OINKCODE'} =~ /^[a-z0-9]+$/) {
-			$errormessage = $Lang::tr{'invalid input for oink code'};
+	# Grab the URL based on the choosen vendor.
+	my $url = $rulesetsources{$cgiparams{'RULES'}};
+
+	# Check if the choosen vendor (URL) requires an subscription/oinkcode.
+	if ($url =~ /\<oinkcode\>/ ) {
+		# Check if an subscription/oinkcode has been provided.
+		if ($cgiparams{'OINKCODE'}) {
+			# Check if the oinkcode contains unallowed chars.
+			unless ($cgiparams{'OINKCODE'} =~ /^[a-z0-9]+$/) {
+				$errormessage = $Lang::tr{'invalid input for oink code'};
+			}
+		} else {
+			# Print an error message, that an subsription/oinkcode is required for this
+			# vendor.
+			$errormessage = $Lang::tr{'ids oinkcode required'};
 		}
 	}
 

@@ -1368,6 +1368,7 @@
 'ids monitor traffic only' => 'Monitor traffic only',
 'ids no network zone' => 'At least one network zone has to be monitored!',
 'ids no ruleset available' => 'No ruleset available, please download one!',
+'ids oinkcode required' => 'The selected ruleset requires a subscription or an oinkcode',
 'ids ruleset settings' => 'Ruleset settings',
 'ids preprocessor' => 'IDS preprocessor',
 'ids rules license' => 'To utilize Sourcefire VRT Certified Rules, you need to register on',
