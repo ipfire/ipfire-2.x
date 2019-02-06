@@ -210,33 +210,42 @@ sub downloadruleset {
 		return 1;
 	}
 
-	# Pass the requrested url to the downloader.
-	my $request = HTTP::Request->new(HEAD => $url);
+	# Variable to store the filesize of the remote object.
+	my $remote_filesize;
 
-	# Accept the html header.
-	$request->header('Accept' => 'text/html');
+	# The sourcfire (snort rules) does not allow to send "HEAD" requests, so skip this check
+	# for this webserver.
+	#
+	# Check if the ruleset source contains "snort.org".
+	unless ($url =~ /\.snort\.org/) {
+		# Pass the requrested url to the downloader.
+		my $request = HTTP::Request->new(HEAD => $url);
 
-	# Perform the request and fetch the html header.
-	my $response = $downloader->request($request);
+		# Accept the html header.
+		$request->header('Accept' => 'text/html');
 
-	# Check if there was any error.
-	unless ($response->is_success) {
-		# Obtain error.
-		my $error = $response->status_line();
+		# Perform the request and fetch the html header.
+		my $response = $downloader->request($request);
 
-		# Log error message.
-		&_log_to_syslog("Unable to download the ruleset. \($error\)");
+		# Check if there was any error.
+		unless ($response->is_success) {
+			# Obtain error.
+			my $error = $response->status_line();
 
-		# Return "1" - false.
-		return 1;
+			# Log error message.
+			&_log_to_syslog("Unable to download the ruleset. \($error\)");
+
+			# Return "1" - false.
+			return 1;
+		}
+
+		# Assign the fetched header object.
+		my $header = $response->headers();
+
+		# Grab the remote file size from the object and store it in the
+		# variable.
+		$remote_filesize = $header->content_length;
 	}
-
-	# Assign the fetched header object.
-	my $header = $response->headers();
-
-	# Grab the remote file size from the object and store it in the
-	# variable.
-	my $remote_filesize = $header->content_length;
 
 	# Load perl module to deal with temporary files.
 	use File::Temp;
@@ -273,7 +282,7 @@ sub downloadruleset {
 	my $local_filesize = $stat->size;
 
 	# Check if both file sizes match.
-	unless ($remote_filesize eq $local_filesize) {
+	if (($remote_filesize) && ($remote_filesize ne $local_filesize)) {
 		# Log error message.
 		&_log_to_syslog("Unable to completely download the ruleset. ");
 		&_log_to_syslog("Only got $local_filesize Bytes instead of $remote_filesize Bytes. ");
