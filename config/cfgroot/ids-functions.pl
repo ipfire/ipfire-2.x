@@ -211,7 +211,7 @@ sub downloadruleset {
 	}
 
 	# Pass the requrested url to the downloader.
-	my $request = HTTP::Request->new(GET => $url);
+	my $request = HTTP::Request->new(HEAD => $url);
 
 	# Accept the html header.
 	$request->header('Accept' => 'text/html');
