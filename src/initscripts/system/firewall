@@ -294,7 +294,7 @@ iptables_init() {
 	iptables -N OVPNINPUT
 	iptables -A INPUT -j OVPNINPUT
 
-	# TOR
+	# Tor
 	iptables -N TOR_INPUT
 	iptables -A INPUT -j TOR_INPUT
 	
@@ -414,15 +414,6 @@ iptables_red_up() {
 		iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $DEVICE -j ACCEPT
 	fi
 
-	# Orange pinholes
-	if [ "$ORANGE_DEV" != "" ]; then
-		# This rule enables a host on ORANGE network to connect to the outside
-		# (only if we have a red connection)
-		if [ "$IFACE" != "" ]; then
-			iptables -A REDFORWARD -i $ORANGE_DEV -o $IFACE -j ACCEPT
-		fi
-	fi
-
 	if [ "$IFACE" != "" -a -f /var/ipfire/red/active ]; then
 		# DHCP
 		if [ "$RED_DEV" != "" -a "$RED_TYPE" == "DHCP" ]; then
@@ -470,7 +461,7 @@ iptables_red_up() {
 
 iptables_red_down() {
 	# Prohibit packets to reach the masquerading rule
-	# while the wan interface is down - this is required to
+	# while the WAN interface is down - this is required to
 	# circumvent udp related NAT issues
 	# http://forum.ipfire.org/index.php?topic=11127.0
 	if [ -n "${IFACE}" ]; then
