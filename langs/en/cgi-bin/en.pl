@@ -1376,6 +1376,7 @@
 'ids rules license2' => 'Acknowledge the license, activate your account by visiting the url you got via mail. Then go to',
 'ids rules license3' => 'press the "Generate code"-button and copy the 40 character Oinkcode into the field below.',
 'ids rules update' => 'IPS rules',
+'ids ruleset autoupdate in progress' => 'Ruleset update in progress ... Please wait until all operations have completed successfully.',
 'ids show' => 'Show',
 'iface' => 'Iface',
 'ignore filter' => 'Ignore filter',

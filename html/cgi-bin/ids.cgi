@@ -210,6 +210,22 @@ if (($cgiparams{'WHITELIST'} eq $Lang::tr{'add'}) || ($cgiparams{'WHITELIST'} eq
 	}
 }
 
+# Check if the page is locked, in this case, the ids_page_lock_file exists.
+if (-e $IDS::ids_page_lock_file) {
+	# Lock the webpage and print notice about autoupgrade of the ruleset
+	# is in progess.
+	&working_notice("$Lang::tr{'ids ruleset autoupdate in progress'}");
+
+	# Loop and check if the file still exists.
+	while(-e $IDS::ids_page_lock_file) {
+		# Sleep for a second and re-check.
+		sleep 1;
+	}
+
+	# Page has been unlocked, perform a reload.
+	&reload();
+}
+
 # Check if any error has been stored.
 if (-e $IDS::storederrorfile) {
         # Open file to read in the stored error message.

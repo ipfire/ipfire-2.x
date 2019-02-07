@@ -1344,6 +1344,7 @@
 'ids rules license2' => 'Bestätigen Sie die Lizenz; aktivieren Sie Ihren Account, indem Sie auf den Link, den Sie per Mail erhalten haben, klicken. Gehen Sie dann zu',
 'ids rules license3' => 'klicken Sie den "Generate code"-Knopf und kopieren Sie den 40-Zeichen Oinkcode in das untere Feld.',
 'ids rules update' => 'IPS-Regeln',
+'ids ruleset autoupdate in progress' => 'Das Regelset wird gerade aktualisiert ... Bitte warten Sie, bis dieser Vorgang erfolgreich beendet wurde.',
 'iface' => 'Iface',
 'ignore filter' => '&quot;Ignorieren&quot;-Filter',
 'ike encryption' => 'IKE Verschlüsselung:',
