@@ -1333,6 +1333,7 @@
 'ids enable' => 'Intrusion-Prevention-System aktivieren',
 'ids download new ruleset' => 'Das neue Regelset wird heruntergeladen und entpackt ... Bitte warten Sie, bis dieser Vorgang erfolgreich beendet wurde.',
 'ids log viewer' => 'Ansicht IPS-Protokoll',
+'ids log hits' => 'Gesamtanzahl der aktivierten Regeln für',
 'ids logs' => 'IPS-Protokolldateien',
 'ids monitored interfaces' => 'Überwachte Netzwerkzonen',
 'ids monitor traffic only' => 'Netzwerk-Pakete nur überpfrüfen',

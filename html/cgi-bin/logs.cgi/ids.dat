@@ -157,7 +157,7 @@ if ($multifile) {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 {
 	print "Content-type: text/plain\n\n";
-	print "IPFire IDS snort log\r\n";
+	print "IPFire IPS log\r\n";
 	print "Date: $cgiparams{'DAY'} $longmonths[$cgiparams{'MONTH'}]\r\n"; 
 	print "\r\n";
 
@@ -254,7 +254,7 @@ END
 &Header::closebox();
 
 &Header::openbox('100%', 'left', $Lang::tr{'log'});
-print "<p><b>$Lang::tr{'snort hits'} $longmonthstr $daystr: $lines</b></p>";
+print "<p><b>$Lang::tr{'ids log hits'} $longmonthstr $daystr: $lines</b></p>";
 
 if ($start == -1) {
         $start = $lines - ${Header::viewsize}; }
