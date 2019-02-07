@@ -902,8 +902,8 @@ print <<END
 			<td align='right'>
 END
 ;
-			# Check if a ruleset has been downloaded yet.
-			if (%idsrules) {
+			# Show the "Update Ruleset"-Button only if a ruleset has been downloaded yet and automatic updates are disabled.
+			if ((%idsrules) && ($rulessettings{'AUTOUPDATE_INTERVAL'} eq "off")) {
 				# Display button to update the ruleset.
 				print"<input type='submit' name='RULESET' value='$Lang::tr{'update ruleset'}'>\n";
 		}
