@@ -58,6 +58,9 @@ our $rulestarball = "/var/tmp/idsrules.tar.gz";
 # File to store any errors, which also will be read and displayed by the wui.
 our $storederrorfile = "/tmp/ids_storederror";
 
+# File to lock the WUI, while the autoupdate script runs.
+our $ids_page_lock_file = "/tmp/ids_page_locked";
+
 # Location where the rulefiles are stored.
 our $rulespath = "/var/lib/suricata";
 
@@ -953,6 +956,23 @@ sub get_red_address() {
 
 	# Return nothing.
 	return;
+}
+
+#
+## Function to write the lock file for locking the WUI, while
+## the autoupdate script runs.
+#
+sub lock_ids_page() {
+	# Call subfunction to create the file.
+	&create_empty_file($ids_page_lock_file);
+}
+
+#
+## Function to release the lock of the WUI, again.
+#
+sub unlock_ids_page() {
+	# Delete lock file.
+	unlink($ids_page_lock_file);
 }
 
 1;
