@@ -63,6 +63,9 @@ fi
 /etc/init.d/sshd restart
 /etc/init.d/apache restart
 
+# This update needs a reboot...
+touch /var/run/need_reboot
+
 # Finish
 /etc/init.d/fireinfo start
 sendprofile

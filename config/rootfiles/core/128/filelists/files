@@ -4,6 +4,7 @@ srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 etc/rc.d/helper/aws-setup
 etc/rc.d/init.d/aws
+etc/rc.d/init.d/firewall
 etc/ssl/openssl.cnf
 etc/sysctl.conf
 srv/web/ipfire/cgi-bin/proxy.cgi
