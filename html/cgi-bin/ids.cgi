@@ -783,17 +783,6 @@ END
 END
 }
 
-my $rulesdate;
-
-# Check if a ruleset allready has been downloaded.
-if ( -f "$IDS::rulestarball"){
-        # Call stat on the filename to obtain detailed information.
-        my @Info = stat("$IDS::rulestarball");
-
-        # Grab details about the creation time.
-        $rulesdate = localtime($Info[9]);
-}
-
 # Only show this area, if a ruleset is present.
 if (%idsrules) {
 
@@ -1069,7 +1058,20 @@ END
 
 # Only show the section for configuring the ruleset if one is present.
 if (%idsrules) {
-	&Header::openbox('100%', 'LEFT', $Lang::tr{'intrusion detection system rules'});
+	# Load neccessary perl modules for file stat and to format the timestamp.
+	use File::stat;
+	use POSIX qw( strftime );
+
+	# Call stat on the rulestarball.
+	my $stat = stat("$IDS::rulestarball");
+
+	# Get timestamp the file creation.
+	my $mtime = $stat->mtime;
+
+	# Convert into human read-able format.
+	my $rulesdate = strftime('%Y-%m-%d %H:%M:%S', localtime($mtime));
+
+	&Header::openbox('100%', 'LEFT', "$Lang::tr{'intrusion detection system rules'} ($rulesdate)" );
 
 		print"<form method='POST' action='$ENV{'SCRIPT_NAME'}'>\n";
 
