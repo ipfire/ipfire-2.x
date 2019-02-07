@@ -1357,6 +1357,7 @@
 'idle' => 'Idle',
 'idle timeout' => 'Idle timeout (mins; 0 to disable):',
 'idle timeout not set' => 'Idle timeout not set.',
+'ids apply' => 'Apply',
 'ids apply ruleset changes' => 'The ruleset changes will be applied ... Please wait until all operations have completed successfully.',
 'ids automatic rules update' => 'Automatic rules update',
 'ids traffic analyze' => 'Traffic analyzing',

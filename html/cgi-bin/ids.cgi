@@ -396,7 +396,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	}
 
 # Save ruleset.
-} elsif ($cgiparams{'RULESET'} eq $Lang::tr{'update'}) {
+} elsif ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	# Arrays to store which rulefiles have been enabled and will be used.
 	my @enabled_rulefiles;
 
@@ -1164,9 +1164,7 @@ if (%idsrules) {
 print <<END
 <table width='100%'>
 <tr>
-	<td width='100%' align='right'><input type='submit' name='RULESET' value='$Lang::tr{'update'}'>
-		&nbsp; <!-- space for future online help link -->
-	</td>
+	<td width='100%' align='right'><input type='submit' name='RULESET' value='$Lang::tr{'ids apply'}'></td>
 </tr>
 </table>
 </form>

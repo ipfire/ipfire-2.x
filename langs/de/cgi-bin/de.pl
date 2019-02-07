@@ -1326,6 +1326,7 @@
 'idle' => 'Leerlauf',
 'idle timeout' => 'Leerlauf-Wartezeit in Min. (0 zum Deaktivieren):',
 'idle timeout not set' => 'Leerlauf-Wartezeit nicht angegeben.',
+'ids apply' => 'Übernehmen',
 'ids apply ruleset changes' => 'Regel-Änderungen werden übernommen ... Bitte warten Sie, bis dieser Vorgang erfolgreich beendet wurde.',
 'ids automatic rules update' => 'Automatische Regeln-Aktualisierung',
 'ids traffic analyze' => 'Packet-Analyse',
