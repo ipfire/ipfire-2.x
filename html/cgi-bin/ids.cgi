@@ -241,9 +241,9 @@ if (-e $IDS::storederrorfile) {
         unlink($IDS::storederrorfile);
 }
 
-## Grab all available snort rules and store them in the idsrules hash.
+## Grab all available rules and store them in the idsrules hash.
 #
-# Open snort rules directory and do a directory listing.
+# Open rules directory and do a directory listing.
 opendir(DIR, $IDS::rulespath) or die $!;
 	# Loop through the direcory.
 	while (my $file = readdir(DIR)) {
@@ -368,7 +368,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 			unless ($errormessage) {
 				# Lock the webpage and print notice about downloading
 				# a new ruleset.
-				&working_notice("$Lang::tr{'snort working'}");
+				&working_notice("$Lang::tr{'ids working'}");
 
 				# Call subfunction to download the ruleset.
 				if(&IDS::downloadruleset()) {
@@ -497,7 +497,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	&IDS::write_used_rulefiles_file(@enabled_rulefiles);
 
 	# Lock the webpage and print message.
-	&working_notice("$Lang::tr{'snort working'}");
+	&working_notice("$Lang::tr{'ids apply ruleset changes'}");
 
 	# Call oinkmaster to alter the ruleset.
 	&IDS::oinkmaster();
@@ -527,7 +527,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	unless ($errormessage) {
 		# Lock the webpage and print notice about downloading
 		# a new ruleset.
-		&working_notice("$Lang::tr{'snort working'}");
+		&working_notice("$Lang::tr{'ids download new ruleset'}");
 
 		# Call subfunction to download the ruleset.
 		if(&IDS::downloadruleset()) {
@@ -552,7 +552,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 			&reload();
 		}
 	}
-# Save snort settings.
+# Save IDS settings.
 } elsif ($cgiparams{'IDS'} eq $Lang::tr{'save'}) {
 	my %oldidssettings;
 	my $reload_page;
@@ -617,7 +617,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 		# Check if a ruleset exists.
 		if (%idsrules) {
 			# Lock the webpage and print message.
-			&working_notice("$Lang::tr{'snort working'}");
+			&working_notice("$Lang::tr{'ids working'}");
 
 			# Call oinkmaster to alter the ruleset.
 			&IDS::oinkmaster();
