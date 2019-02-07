@@ -46,6 +46,9 @@ if(&IDS::checkdiskspace()) {
 	exit 0;
 }
 
+# Lock the IDS page.
+&IDS::lock_ids_page();
+
 # Call the download function and gather the new ruleset.
 if(&IDS::downloadruleset()) {
 	# Store error message for displaying in the WUI.
@@ -60,6 +63,9 @@ if(&IDS::downloadruleset()) {
 
 # Set correct ownership for the rulesdir and files.
 &IDS::set_ownership("$IDS::rulespath");
+
+# Unlock the IDS page.
+&IDS::unlock_ids_page();
 
 # Check if the IDS is running.
 if(&IDS::ids_is_running()) {
