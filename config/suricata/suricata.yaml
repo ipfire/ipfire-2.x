@@ -182,9 +182,9 @@ app-layer:
         content-inspect-min-size: 32768
         content-inspect-window: 4096
     imap:
-      enabled: detection-only
+      enabled: yes
     msn:
-      enabled: detection-only
+      enabled: yes
     smb:
       enabled: yes
       detection-ports:
