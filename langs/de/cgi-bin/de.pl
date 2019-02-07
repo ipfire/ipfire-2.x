@@ -2229,6 +2229,7 @@
 'system has hwrng' => 'Dieses System hat einen Hardware-Zufallszahlengenerator.',
 'system has rdrand' => 'Dieses System unterstützt Intel(R) RDRAND.',
 'system information' => 'Systeminformationen',
+'system is offline' => 'Das System ist offline.',
 'system log viewer' => 'Betrachter der Systemprotokolldateien',
 'system logs' => 'Systemprotokolldateien',
 'system status information' => 'System-Statusinformationen',
