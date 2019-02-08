@@ -35,8 +35,14 @@ done
 
 # Remove files
 rm -vf \
-	/usr/lib/libcrypto.so.10 \
-	/usr/lib/libssl.so.10
+	/usr/lib{,/sse2}/libcrypto.so.10 \
+	/usr/lib{,/sse2}/libssl.so.10 \
+	/home/nobody/.rnd \
+	/var/ipfire/ovpn/ca/.rnd \
+	/var/tmp/.rnd \
+	/.rnd \
+	/root/.rnd
+
 
 # Extract files
 extract_files
@@ -55,6 +61,10 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec restart
 fi
 /etc/init.d/sshd restart
+/etc/init.d/apache restart
+
+# This update needs a reboot...
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start

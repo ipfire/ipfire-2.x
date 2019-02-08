@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 2.4.35
+VER        = 2.4.38
 
 THISAPP    = httpd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 30c1cde80ffe814a8d16b4fdffda330a
+$(DL_FILE)_MD5 = 4a2b87ca55e42017d21f18724c560084
 
 install : $(TARGET)
 
@@ -101,7 +101,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	echo "</Layout>" >> $(DIR_APP)/config.layout
 
 	cd $(DIR_APP) && ./configure --enable-layout=IPFire \
-				--enable-ssl --enable-mods-shared=all --enable-proxy --with-mpm=event
+				--enable-ssl --enable-mods-shared=all --enable-proxy --with-mpm=event --disable-lua --disable-md
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	chown -v root:root /usr/lib/apache/httpd.exp \

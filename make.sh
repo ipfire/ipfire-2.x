@@ -1502,6 +1502,8 @@ buildipfire() {
   lfsmake2 python-progressbar
   lfsmake2 python-xattr
   lfsmake2 ddns
+  lfsmake2 python3-setuptools
+  lfsmake2 python3-setuptools-scm
   lfsmake2 python3-six
   lfsmake2 python3-dateutil
   lfsmake2 python3-jmespath
@@ -1512,6 +1514,8 @@ buildipfire() {
   lfsmake2 python3-rsa
   lfsmake2 python3-pyasn1
   lfsmake2 python3-botocore
+  lfsmake2 python3-llfuse
+  lfsmake2 python3-msgpack
   lfsmake2 aws-cli
   lfsmake2 transmission
   lfsmake2 dpfhack
@@ -1585,6 +1589,7 @@ buildipfire() {
   lfsmake2 nss-myhostname
   lfsmake2 dehydrated
   lfsmake2 shairport-sync
+  lfsmake2 borgbackup
 }
 
 buildinstaller() {
