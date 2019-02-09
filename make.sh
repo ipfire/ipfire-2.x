@@ -1589,6 +1589,7 @@ buildipfire() {
   lfsmake2 shairport-sync
   lfsmake2 borgbackup
   lfsmake2 libedit
+  lfsmake2 knot
 }
 
 buildinstaller() {
