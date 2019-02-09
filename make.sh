@@ -1588,6 +1588,7 @@ buildipfire() {
   lfsmake2 dehydrated
   lfsmake2 shairport-sync
   lfsmake2 borgbackup
+  lfsmake2 libedit
 }
 
 buildinstaller() {
