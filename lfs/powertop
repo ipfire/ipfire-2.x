@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = v2.9
+VER        = v2.10
 
 THISAPP    = powertop-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = powertop
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 583518c5c4434c6e9b9c58c3920950b6
+$(DL_FILE)_MD5 = a69bd55901cf919cc564187402ea2c9c
 
 install : $(TARGET)
 
