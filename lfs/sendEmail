@@ -17,7 +17,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = sendEmail
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = ""
 
@@ -63,6 +63,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && cp -pvf sendEmail /usr/local/bin
+	chown root.root /usr/local/bin/sendEmail
 	chmod 755 /usr/local/bin/sendEmail
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
