@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,9 +24,9 @@
 
 include Config
 
-VER        = 7.1.1
+VER        = 2.7.6
 
-THISAPP    = dhcpcd-$(VER)
+THISAPP    = knot-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = adc0a949cb718b455d81deea9ba2875f
+$(DL_FILE)_MD5 = 6afbbaff4e9d93de8d6311958d86b323
 
 install : $(TARGET)
 
@@ -49,6 +49,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -69,28 +72,18 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix="" --sysconfdir=/var/ipfire/dhcpc \
-			--dbdir=/var/ipfire/dhcpc \
-			--libexecdir=/var/ipfire/dhcpc \
-			--mandir=/usr/share/man
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure	\
+		--prefix=/usr		\
+		--enable-static=no	\
+		--disable-daemon	\
+		--disable-modules	\
+		--enable-maxminddb=no	\
+		--disable-documentation
+
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
-	rm -rf /usr/share/dhcpcd
-
-	ln -sf /etc/rc.d/init.d/networking/dhcpcd.exe \
-		$(CONFIG_ROOT)/dhcpc/dhcpcd-hooks/70-dhcpcd.exe
-	rm -f $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks/20-resolv.conf
-	rm -f $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks/50-dhcpcd-compat
-	rm -f $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks/50-ntp.conf
-	rm -f $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks/50-yp.conf
-	rm -f $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks/50-ypbind
-
-	install -m 644 $(DIR_SRC)/config/dhcpc/dhcpcd.conf $(CONFIG_ROOT)/dhcpc/
-	install -m 444 $(DIR_SRC)/config/dhcpc/dhcpcd-hooks/10-mtu $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks
-
-	chown root:root $(CONFIG_ROOT)/dhcpc/dhcpcd.conf
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
+

@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 4.14.97
-ARM_PATCHES = 4.14.97-ipfire0
+VER         = 4.14.98
+ARM_PATCHES = 4.14.98-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -82,7 +82,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= 14dc56d3933045782caca454d32e8874
+$(DL_FILE)_MD5					= 3df5c7536542b6cb3d6158c84f8fc70e
 arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= b2f6559b08f764c0d974e860660d416a
 
 install : $(TARGET)
@@ -128,11 +128,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
 
 	# Wlan Patches
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/backports-4.2.6-1_ath10k_remove_logspam.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-ath_ignore_eeprom_regd.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-iwlwifi-noibss_only_on_radar_chan.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-rt2x00usb_suppress_queue_warnings.patch
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.39-add_libertas_uap.patch
 
 	# Add LED trigger
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.16-ledtrig_netdev.patch
@@ -150,20 +147,19 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-2.6.32.27_mcs7830-fix-driver-name.patch
 
 ifeq "$(KCFG)" "-kirkwood"
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-3.10.10-mv_cesa_disable_failing_hmac_sha1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.40-kirkwood-dtb.patch
 endif
 
 ifeq "$(KCFG)" "-multi"
 	# Apply Arm-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).patch.xz | patch -Np1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14-Revert-usb-dwc2-Fix-DMA-alignment.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14-Revert-usb-dwc2-Fix-DMA-alignment.patch
 
 endif
 ifeq "$(BUILD_ARCH)" "aarch64"
 	# Apply Arm-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).patch.xz | patch -Np1
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14-Revert-usb-dwc2-Fix-DMA-alignment.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14-Revert-usb-dwc2-Fix-DMA-alignment.patch
 endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-3.14.79-amba-fix.patch
 
