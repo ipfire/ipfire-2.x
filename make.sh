@@ -1587,6 +1587,7 @@ buildipfire() {
   lfsmake2 libedit
   lfsmake2 knot
   lfsmake2 spectre-meltdown-checker
+  lfsmake2 zabbix_agentd
 }
 
 buildinstaller() {

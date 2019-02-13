@@ -1,0 +1,17 @@
+etc/logrotate.d/zabbix_agentd
+etc/rc.d/init.d/zabbix_agentd
+etc/sudoers.d/zabbix.user
+etc/zabbix_agentd
+etc/zabbix_agentd/scripts
+etc/zabbix_agentd/zabbix_agentd.conf
+etc/zabbix_agentd/zabbix_agentd.d
+usr/bin/zabbix_get
+usr/bin/zabbix_sender
+usr/lib/modules
+usr/lib/zabbix
+usr/sbin/zabbix_agentd
+#usr/share/man/man1/zabbix_get.1
+#usr/share/man/man1/zabbix_sender.1
+#usr/share/man/man8/zabbix_agentd.8
+var/ipfire/backup/addons/includes/zabbix_agentd
+#var/log/zabbix

@@ -42,3 +42,4 @@ nut:x:115:
 cdrom:x:116:
 usb:x:117:
 samba:x:1000:
+zabbix:x:118:

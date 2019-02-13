@@ -1,0 +1,45 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/zabbix_agentd
+#
+# Description : This script starts the Zabbix Agent as a daemon (zabbix_agentd)
+#
+# Authors     : Alexander Koch (ipfire@starkstromkonsument.de)
+#
+# Version     : 01.00
+#
+# Notes       :
+#
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+        start)
+                boot_mesg "Starting Zabbix Agent..."
+                loadproc /usr/sbin/zabbix_agentd -c /etc/zabbix_agentd/zabbix_agentd.conf
+                ;;
+
+        stop)
+                boot_mesg "Stopping Zabbix Agent..."
+                killproc /usr/sbin/zabbix_agentd
+                ;;
+
+        restart)
+                ${0} stop
+                sleep 1
+                ${0} start
+                ;;
+
+        status)
+                statusproc /usr/sbin/zabbix_agentd
+                ;;
+
+        *)
+                echo "Usage: ${0} {start|stop|restart|status}"
+                exit 1
+                ;;
+esac
+
+# End $rc_base/init.d/zabbix_agentd

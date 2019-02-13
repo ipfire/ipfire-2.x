@@ -1,0 +1,2 @@
+/etc/sudoers.d/zabbix.user
+/etc/zabbix_agentd/*
