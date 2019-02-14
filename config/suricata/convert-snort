@@ -33,18 +33,6 @@ my $snort_config_file = "/etc/snort/snort.conf";
 # Snort rules tarball.
 my $snort_rules_tarball = "/var/tmp/snortrules.tar.gz";
 
-# Check if a snort settings file exists.
-unless( -f "$snort_settings_file") {
-        print "$snort_settings_file not found - Nothing to do. Exiting!\n";
-        exit(0);
-}
-
-# Check if the snort settings file is empty.
-if (-z "$snort_settings_file") {
-	print "$snort_settings_file is empty - Nothing to do. Exiting!\n";
-	exit(0);
-}
-
 #
 ## Step 1: Setup directory and file layout, if not present and set correct
 ##         ownership. The converter runs as a privileged user, but the files
@@ -69,6 +57,18 @@ unless (-d $IDS::rulespath) {
 # Set correct ownership for settingsdir and rulespath.
 &IDS::set_ownership("$IDS::settingsdir");
 &IDS::set_ownership("$IDS::rulespath");
+
+# Check if a snort settings file exists.
+unless( -f "$snort_settings_file") {
+	print "$snort_settings_file not found - Nothing to do. Exiting!\n";
+	exit(0);
+}
+
+# Check if the snort settings file is empty.
+if (-z "$snort_settings_file") {
+	print "$snort_settings_file is empty - Nothing to do. Exiting!\n";
+	exit(0);
+}
 
 #
 ## Step 2: Import snort settings and convert to the required format for the new IDS
