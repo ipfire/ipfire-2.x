@@ -222,7 +222,7 @@ if (-f $snort_rules_tarball) {
 	move($snort_rules_tarball, $IDS::rulestarball);
 
 	# Set correct ownership.
-	chown($uid, $gid, $IDS::rulestarball);
+	&IDS::set_ownership("$IDS::rulestarball");
 }
 
 #
