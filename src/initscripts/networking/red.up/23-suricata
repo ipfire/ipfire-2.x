@@ -26,5 +26,8 @@ if($ids_settings{'ENABLE_IDS'} eq "on") {
 	if(&IDS::ids_is_running()) {
 		# Call suricatactrl to perform a restart of suricata.
 		&IDS::call_suricatactrl("restart");
+	} else {
+		# Call suricatactrl to start suricata.
+		&IDS::call_suricatactrl("start");
 	}
 }
