@@ -507,11 +507,6 @@ case "$1" in
 
 		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
-		# Create control keys at first run
-		if [ ! -r "/etc/unbound/unbound_control.key" ]; then
-			unbound-control-setup -d /etc/unbound &>/dev/null
-		fi
-
 		# Update configuration files
 		write_tuning_conf
 		write_forward_conf

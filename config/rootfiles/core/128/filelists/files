@@ -5,8 +5,10 @@ var/ipfire/langs
 etc/rc.d/helper/aws-setup
 etc/rc.d/init.d/aws
 etc/rc.d/init.d/firewall
+etc/rc.d/init.d/unbound
 etc/ssl/openssl.cnf
 etc/sysctl.conf
+etc/unbound/unbound.conf
 srv/web/ipfire/cgi-bin/proxy.cgi
 usr/local/bin/xt_geoip_update
 var/ipfire/ovpn/openssl/ovpn.cnf

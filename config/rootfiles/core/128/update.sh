@@ -62,6 +62,7 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 fi
 /etc/init.d/sshd restart
 /etc/init.d/apache restart
+/etc/init.d/unbound restart
 
 # This update needs a reboot...
 touch /var/run/need_reboot
