@@ -29,8 +29,8 @@ NFQ_OPTS="--queue-bypass "
 network_zones=( red green blue orange )
 
 # Mark and Mask options.
-MARK="0x2"
-MASK="0x2"
+MARK="0x16"
+MASK="0x16"
 
 # PID file of suricata.
 PID_FILE="/var/run/suricata.pid"
