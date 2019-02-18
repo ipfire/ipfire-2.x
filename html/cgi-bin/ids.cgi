@@ -927,7 +927,7 @@ END
 #
 # Whitelist / Ignorelist
 #
-&Header::openbox('100%', 'center', $Lang::tr{'guardian ignored hosts'});
+&Header::openbox('100%', 'center', $Lang::tr{'ids ignored hosts'});
 
 print <<END;
 	<table width='100%'>

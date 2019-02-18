@@ -1365,6 +1365,7 @@
 'ids download new ruleset' => 'Downloading and unpacking new ruleset ... Please wait until all operations have completed successfully.',
 'ids enable' => 'Enable Intrusion Prevention System',
 'ids hide' => 'Hide',
+'ids ignored hosts' => 'Ignored hosts',
 'ids log hits' => 'Total of number of activated rules for',
 'ids log viewer' => 'IPS log viewer',
 'ids logs' => 'IPS Logs',

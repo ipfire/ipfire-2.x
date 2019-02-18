@@ -1333,6 +1333,7 @@
 'ids active on' => 'Aktiv auf',
 'ids enable' => 'Intrusion-Prevention-System aktivieren',
 'ids download new ruleset' => 'Das neue Regelset wird heruntergeladen und entpackt ... Bitte warten Sie, bis dieser Vorgang erfolgreich beendet wurde.',
+'ids ignored hosts' => 'Ignorierte Hosts',
 'ids log viewer' => 'Ansicht IPS-Protokoll',
 'ids log hits' => 'Gesamtanzahl der aktivierten Regeln für',
 'ids logs' => 'IPS-Protokolldateien',
