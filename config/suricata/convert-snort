@@ -209,6 +209,9 @@ if ($idssettings{"MONITOR_TRAFFIC_ONLY"} eq "off") {
 # Call subfunction and pass the desired IDS action.
 &IDS::write_modify_sids_file($IDS_action);
 
+# Set correct ownership.
+&IDS::set_ownership("$IDS::modify_sids_file");
+
 #
 ## Step 6: Move rulestarball to its new location.
 #
