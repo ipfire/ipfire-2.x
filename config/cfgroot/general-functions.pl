@@ -151,7 +151,7 @@ sub readhash
 		chop;
 
 		# Skip comments.
-		next if ($_ =~ /\#/);
+		next if ($_ =~ /^#/);
 
 		($var, $val) = split /=/, $_, 2;
 		if ($var)
