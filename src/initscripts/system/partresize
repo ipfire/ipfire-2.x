@@ -29,10 +29,22 @@ case "${1}" in
 			(exit ${failed})
 			evaluate_retval
 
+			# check if serial console enabled
+			scon="off";
+			if [ ! "$(grep "console=ttyS0" /proc/cmdline)" == "" ]; then
+				scon="on";
+			fi
+			IFS= read -r DMI_PRODUCT_NAME < /sys/class/dmi/id/product_name;
+			case ${DMI_PRODUCT_NAME} in
+				APU|apu[2-4]|PC\ Engines\ apu[1-4] )
+						scon="on";
+					;;
+			esac
+
 			mount /boot > /dev/null
 			if [ -e /boot/grub/grub.cfg ]; then
 				# swtich permanent to serial console if it was selected on first boot
-				if [ ! "$(grep "console=ttyS0" /proc/cmdline)" == "" ]; then
+				if [ "${scon}" = "on" ]; then
 					# Enable also serial console on GRUB
 					echo "GRUB_TERMINAL=\"serial console\"" >> /etc/default/grub
 					echo "GRUB_SERIAL_COMMAND=\"serial --unit=0 --speed=115200\"" >> /etc/default/grub
