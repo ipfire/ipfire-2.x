@@ -73,7 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && PAGE=A4 ./configure \
 		--prefix=/usr
 
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make #This package does not support parallel build
 	cd $(DIR_APP) && make install
 	ln -svf eqn /usr/bin/geqn
 	ln -svf tbl /usr/bin/gtbl

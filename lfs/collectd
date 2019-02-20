@@ -116,7 +116,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-{network,nfs,ntpd,ping,processes,rrdtool,sensors,swap,syslog} \
 		--enable-{tcpconns,unixsock,users,wireless} \
 		--with-librrd=/usr/share/rrdtool-1.2.30
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && make install #collectd-4 does not support parallel build
 	cp -vf $(DIR_SRC)/config/collectd/collectd.* /etc/
 	mv /etc/collectd.vpn /var/ipfire/ovpn/collectd.vpn
 	chown nobody.nobody /var/ipfire/ovpn/collectd.vpn

@@ -73,7 +73,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make DEBUG=-DNDEBUG INSTALL_USER=root INSTALL_GROUP=root \
+	cd $(DIR_APP) && make $(MAKETUNING) DEBUG=-DNDEBUG INSTALL_USER=root INSTALL_GROUP=root \
 		LOCAL_CONFIGURE_OPTIONS="--enable-readline=yes"
 	cd $(DIR_APP) && make install install-dev
 	cd $(DIR_APP) && install -v -m755 -D libhandle/libhandle.la /usr/lib/libhandle.la

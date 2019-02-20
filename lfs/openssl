@@ -130,7 +130,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		$(CFLAGS) $(LDFLAGS)
 
 	cd $(DIR_APP) && make depend
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 
 ifeq "$(KCFG)" "-sse2"
 	-mkdir -pv /usr/lib/sse2

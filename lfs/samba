@@ -180,8 +180,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-cups \
 		--disable-avahi \
 		--with-syslog
-	cd $(DIR_APP)/source3 && make idl_full
-	cd $(DIR_APP)/source3 && make proto && make all $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP)/source3 && make $(MAKETUNING) idl_full
+	cd $(DIR_APP)/source3 && make $(MAKETUNING) proto && make all $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/source3 && make install
 	cd $(DIR_APP)/source3 && chmod -v 644 /usr/include/libsmbclient.h
 	#cd $(DIR_APP)/source3 && install -v -m755 nsswitch/libnss_wins.so /lib

@@ -81,7 +81,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	rm -rf /usr/netpbm
 	cp $(DIR_SRC)/config/netpbm/config.mk $(DIR_APP)
-	cd $(DIR_APP) && make CFLAGS="$(CFLAGS)"
+	cd $(DIR_APP) && make CFLAGS="$(CFLAGS)" #The build of this version cannot be parallelized
 	cd $(DIR_APP) && make package PKGDIR=/usr/netpbm
 	mkdir -pv /usr/include/netpbm 
 	mkdir -pv /usr/share/netpbm

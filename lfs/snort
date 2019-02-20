@@ -88,7 +88,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-react \
 		--enable-flexresp3
 
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	mv /usr/bin/snort /usr/sbin/
 	-mkdir -p /etc/snort/rules

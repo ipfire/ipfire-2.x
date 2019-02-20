@@ -81,13 +81,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 else
 	cd $(DIR_APP)/gettext-tools && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP)/gettext-tools && make -C gnulib-lib
-	cd $(DIR_APP)/gettext-tools && make -C intl pluralx.c
-	cd $(DIR_APP)/gettext-tools && make -C src msgfmt
+	cd $(DIR_APP)/gettext-tools && make $(MAKETUNING) -C gnulib-lib
+	cd $(DIR_APP)/gettext-tools && make $(MAKETUNING) -C intl pluralx.c
+	cd $(DIR_APP)/gettext-tools && make $(MAKETUNING) -C src msgfmt
 	cd $(DIR_APP)/gettext-tools && cp -v src/msgfmt $(TOOLS_DIR)/bin
 endif
 	@rm -rf $(DIR_APP)
