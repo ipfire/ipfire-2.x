@@ -5,6 +5,7 @@ var/ipfire/langs
 etc/rc.d/helper/aws-setup
 etc/rc.d/init.d/aws
 etc/rc.d/init.d/firewall
+etc/rc.d/init.d/partresize
 etc/rc.d/init.d/unbound
 etc/ssl/openssl.cnf
 etc/sysctl.conf
