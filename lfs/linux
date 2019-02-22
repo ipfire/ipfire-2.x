@@ -146,6 +146,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Fix uevent PHYSDEVDRIVER
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-2.6.32.27_mcs7830-fix-driver-name.patch
 
+	# Fix cve 2019-8912
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-cve-2019-8912.patch
+
 ifeq "$(KCFG)" "-kirkwood"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.40-kirkwood-dtb.patch
 endif
