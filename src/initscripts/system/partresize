@@ -36,7 +36,7 @@ case "${1}" in
 			fi
 			IFS= read -r DMI_PRODUCT_NAME < /sys/class/dmi/id/product_name;
 			case ${DMI_PRODUCT_NAME} in
-				APU|apu[2-4]|PC\ Engines\ apu[1-4] )
+				APU|apu[1-4]|PC\ Engines\ apu[1-4] )
 						scon="on";
 					;;
 			esac
