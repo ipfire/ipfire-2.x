@@ -226,6 +226,14 @@ if (-f $snort_rules_tarball) {
 
 	# Set correct ownership.
 	&IDS::set_ownership("$IDS::rulestarball");
+
+# In case no tarball is present, try to download the ruleset.
+} else {
+	# Check if enought disk space is available.
+	if(&IDS::checkdiskspace()) {
+		# Call the download function and grab the new ruleset.
+		&IDS::downloadruleset();
+	}
 }
 
 #
@@ -236,6 +244,9 @@ if (-f $snort_rules_tarball) {
 if (-f $IDS::rulestarball) {
 	# Launch oinkmaster by calling the subfunction.
 	&IDS::oinkmaster();
+
+	# Set correct ownership for the rulesdir and files.
+	&IDS::set_ownership("$IDS::rulespath");
 }
 
 #
