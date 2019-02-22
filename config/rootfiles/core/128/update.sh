@@ -80,6 +80,7 @@ rm -rf /lib/modules
 rm -f  /etc/sysconfig/lm_sensors
 
 # Stop services
+/etc/init.d/apache stop
 
 # Remove files
 rm -vf \
@@ -108,7 +109,7 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec restart
 fi
 /etc/init.d/sshd restart
-/etc/init.d/apache restart
+/etc/init.d/apache start
 /etc/init.d/unbound restart
 
 # Upadate Kernel version uEnv.txt
