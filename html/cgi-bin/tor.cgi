@@ -519,7 +519,7 @@ END
 					<tr>
 						<td width='40%' class='base'>$Lang::tr{'tor relay fingerprint'}:</td>
 						<td width='60%'>
-							<a href='https://atlas.torproject.org/#details/$fingerprint' target='_blank'>$fingerprint</a>
+							<a href='https://metrics.torproject.org/rs.html#details/$fingerprint' target='_blank'>$fingerprint</a>
 						</td>
 					</tr>
 END
@@ -612,7 +612,7 @@ END
 				print <<END;
 					<tr>
 						<td width='40%'>
-							<a href='https://atlas.torproject.org/#details/$node->{'fingerprint'}' target='_blank'>
+							<a href='https://metrics.torproject.org/rs.html#details/$node->{'fingerprint'}' target='_blank'>
 								$node->{'name'}
 							</a>
 						</td>
