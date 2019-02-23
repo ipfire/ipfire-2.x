@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 4.14.102
-ARM_PATCHES = 4.14.102-ipfire0
+VER         = 4.14.103
+ARM_PATCHES = 4.14.103-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -82,7 +82,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= 8e45ababe805901139c58a0af3711f90
+$(DL_FILE)_MD5					= 7092950433828a3dbe62a981decfd4f8
 arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 1cda52264dad96fcba65bd335fbbfa95
 
 install : $(TARGET)
@@ -145,9 +145,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Fix uevent PHYSDEVDRIVER
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-2.6.32.27_mcs7830-fix-driver-name.patch
-
-	# Fix cve 2019-8912
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-cve-2019-8912.patch
 
 ifeq "$(KCFG)" "-kirkwood"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.40-kirkwood-dtb.patch
