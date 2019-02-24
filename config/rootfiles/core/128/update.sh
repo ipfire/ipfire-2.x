@@ -83,9 +83,10 @@ rm -f  /etc/sysconfig/lm_sensors
 /etc/init.d/apache stop
 
 # Remove files
-rm -vf \
+rm -rvf \
 	/usr/lib{,/sse2}/libcrypto.so.10 \
 	/usr/lib{,/sse2}/libssl.so.10 \
+	/usr/lib/openssl/engines \
 	/home/nobody/.rnd \
 	/var/ipfire/ovpn/ca/.rnd \
 	/var/tmp/.rnd \
