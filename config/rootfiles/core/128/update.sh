@@ -104,6 +104,9 @@ ldconfig
 # Reload sysctl.conf
 sysctl -p
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Start services
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec restart
