@@ -33,6 +33,7 @@ done
 
 # Stop services
 /usr/local/bin/ipsecctrl D
+/etc/init.d/unbound stop
 
 # Remove files
 rm -vf \
@@ -49,6 +50,7 @@ ldconfig
 
 # Start services
 /etc/init.d/firewall restart
+/etc/init.d/unbound start
 /usr/local/bin/ipsecctrl S
 
 # This update needs a reboot...
