@@ -32,8 +32,11 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/usr/local/bin/ipsecctrl D
 
 # Remove files
+rm -vf \
+	/usr/lib/firewall/ipsec-block
 
 # Extract files
 extract_files
@@ -45,6 +48,8 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/firewall restart
+/usr/local/bin/ipsecctrl S
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
