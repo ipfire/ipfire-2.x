@@ -32,6 +32,8 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/usr/local/bin/openvpnctrl -k
+/usr/local/bin/openvpnctrl -kn2n
 /usr/local/bin/ipsecctrl D
 /etc/init.d/unbound stop
 
@@ -52,6 +54,8 @@ ldconfig
 /etc/init.d/firewall restart
 /etc/init.d/unbound start
 /usr/local/bin/ipsecctrl S
+/usr/local/bin/openvpnctrl -s
+/usr/local/bin/openvpnctrl -sn2n
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
