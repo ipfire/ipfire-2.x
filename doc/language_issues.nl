@@ -415,7 +415,6 @@ WARNING: translation string unused: messages logging
 WARNING: translation string unused: min size
 WARNING: translation string unused: missing dat
 WARNING: translation string unused: missing gz
-WARNING: translation string unused: mode
 WARNING: translation string unused: modem on com1
 WARNING: translation string unused: modem on com2
 WARNING: translation string unused: modem on com3
@@ -718,11 +717,14 @@ WARNING: translation string unused: use ibod
 WARNING: translation string unused: view log
 WARNING: translation string unused: vpn aggrmode
 WARNING: translation string unused: vpn configuration main
+WARNING: translation string unused: vpn delayed start
+WARNING: translation string unused: vpn delayed start help
 WARNING: translation string unused: vpn incompatible use of defaultroute
 WARNING: translation string unused: vpn mtu invalid
 WARNING: translation string unused: vpn on blue
 WARNING: translation string unused: vpn on green
 WARNING: translation string unused: vpn on orange
+WARNING: translation string unused: vpn red name
 WARNING: translation string unused: vpn watch
 WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
@@ -787,6 +789,7 @@ WARNING: untranslated string: check all = Check all
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
 WARNING: untranslated string: default = Default
+WARNING: untranslated string: default IP address = Default IP Address
 WARNING: untranslated string: dh = Diffie-Hellman parameters
 WARNING: untranslated string: dh key move failed = Diffie-Hellman parameters move failed.
 WARNING: untranslated string: dh key warn = Creating DH-parameters with a length of 2048 bits takes up to several minutes. Lengths of 3072 or 4096 bits might needs several hours. Please be patient.
@@ -898,10 +901,24 @@ WARNING: untranslated string: imsi = IMSI
 WARNING: untranslated string: incoming compression in bytes per second = Incoming Compression
 WARNING: untranslated string: incoming overhead in bytes per second = Incoming Overhead
 WARNING: untranslated string: info messages = unknown string
+WARNING: untranslated string: interface mode = Interface
 WARNING: untranslated string: invalid input for inactivity timeout = Invalid input for Inactivity Timeout
+WARNING: untranslated string: invalid input for interface address = Invalid input for interface address
+WARNING: untranslated string: invalid input for interface mode = Invalid input for interface mode
+WARNING: untranslated string: invalid input for interface mtu = Invalid input to interface MTU
+WARNING: untranslated string: invalid input for local ip address = Invalid input for local IP address
+WARNING: untranslated string: invalid input for mode = Invalid input for mode
 WARNING: untranslated string: invalid input for valid till days = Invalid input for Valid till (days).
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: invalid logserver protocol = Invalid syslogd server protocol
+WARNING: untranslated string: ipsec connection = IPsec Connection
+WARNING: untranslated string: ipsec interface mode gre = GRE
+WARNING: untranslated string: ipsec interface mode none = - None (Default) -
+WARNING: untranslated string: ipsec interface mode vti = VTI
+WARNING: untranslated string: ipsec mode transport = Transport
+WARNING: untranslated string: ipsec mode tunnel = Tunnel
+WARNING: untranslated string: ipsec settings = IPsec Settings
+WARNING: untranslated string: local ip address = Local IP Address
 WARNING: untranslated string: log server protocol = protocol:
 WARNING: untranslated string: masquerade blue = Masquerade BLUE
 WARNING: untranslated string: masquerade green = Masquerade GREEN
@@ -924,6 +941,7 @@ WARNING: untranslated string: modem no connection message = No connection to the
 WARNING: untranslated string: modem sim information = SIM Information
 WARNING: untranslated string: modem status = Modem Status
 WARNING: untranslated string: monitor interface = Monitor Interface
+WARNING: untranslated string: mtu = MTU
 WARNING: untranslated string: nameserver = Nameserver
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: none = none
@@ -967,10 +985,12 @@ WARNING: untranslated string: ssh active sessions = Active logins
 WARNING: untranslated string: ssh login time = Logged in since
 WARNING: untranslated string: ssh no active logins = No active logins
 WARNING: untranslated string: ssh username = Username
+WARNING: untranslated string: subnet mask = Subnet Mask
 WARNING: untranslated string: ta key = TLS-Authentification-Key
 WARNING: untranslated string: tcp more reliable = TCP (more reliable)
 WARNING: untranslated string: ten minutes = 10 Minutes
 WARNING: untranslated string: thirty minutes = 30 Minutes
+WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: twelve hours = 12 Hours
 WARNING: untranslated string: two weeks = Two Weeks
 WARNING: untranslated string: udp less overhead = UDP (less overhead)
@@ -990,8 +1010,8 @@ WARNING: untranslated string: vpn start action = Start Action
 WARNING: untranslated string: vpn start action add = Wait for connection initiation
 WARNING: untranslated string: vpn start action route = On Demand
 WARNING: untranslated string: vpn start action start = Always On
-WARNING: untranslated string: vpn statistic n2n = OpenVPN Net-to-Net Statistics
-WARNING: untranslated string: vpn statistic rw = OpenVPN Roadwarrior Statistics
+WARNING: untranslated string: vpn statistic n2n = VPN: Net-to-Net Statistics
+WARNING: untranslated string: vpn statistic rw = VPN: Roadwarrior Statistics
 WARNING: untranslated string: vpn statistics n2n = unknown string
 WARNING: untranslated string: vpn wait = WAITING
 WARNING: untranslated string: vpn weak = Weak

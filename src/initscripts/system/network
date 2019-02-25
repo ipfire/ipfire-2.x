@@ -63,6 +63,9 @@ case "${DO}" in
 			fi
 		fi
 
+		# Create IPsec interfaces
+		/usr/local/bin/ipsec-interfaces
+
 		/etc/rc.d/init.d/static-routes start
 		;;
 

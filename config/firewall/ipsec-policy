@@ -21,6 +21,15 @@
 
 VPN_CONFIG="/var/ipfire/vpn/config"
 
+eval $(/usr/local/bin/readhash /var/ipfire/vpn/settings)
+
+VARS=(
+	id status name lefthost type ctype psk local local_id leftsubnets
+	remote_id remote rightsubnets x3 x4 x5 x6 x7 x8 x9 x10 x11 x12
+	x13 x14 x15 x16 x17 x18 x19 proto x20 x21 x22
+	route x23 mode interface_mode interface_address interface_mtu rest
+)
+
 block_subnet() {
 	local subnet="${1}"
 	local action="${2}"
@@ -45,26 +54,54 @@ block_subnet() {
 	return 0
 }
 
-block_ipsec() {
-	# Flush all exists rules
+install_policy() {
+	# Flush existing rules
+	iptables -F IPSECINPUT
+	iptables -F IPSECOUTPUT
 	iptables -F IPSECBLOCK
 
-	local action
+	# We are done when IPsec is not enabled
+	[ "${ENABLED}" = "on" ] || exit 0
 
-	local vars="id status name lefthost type ctype x1 x2 x3 leftsubnets"
-	vars="${vars} x4 righthost rightsubnets x5 x6 x7 x8 x9 x10 x11 x12"
-	vars="${vars} x13 x14 x15 x16 x17 x18 x19 x20 x21 proto x22 x23 x24"
-	vars="${vars} route rest"
+	# IKE
+	iptables -A IPSECINPUT  -p udp --dport 500 -j ACCEPT
+	iptables -A IPSECOUTPUT -p udp --dport 500 -j ACCEPT
+
+	# IKE NAT
+	iptables -A IPSECINPUT  -p udp --dport 4500 -j ACCEPT
+	iptables -A IPSECOUTPUT -p udp --dport 4500 -j ACCEPT
 
 	# Register local variables
-	local ${vars}
+	local "${VARS[@]}"
+	local action
 
-	while IFS="," read -r ${vars}; do
+	while IFS="," read -r "${VARS[@]}"; do
 		# Check if the connection is enabled
 		[ "${status}" = "on" ] || continue
 
 		# Check if this a net-to-net connection
 		[ "${type}" = "net" ] || continue
+
+		# Default local to 0.0.0.0/0
+		if [ "${local}" = "" -o "${local}" = "off" ]; then
+			local="0.0.0.0/0"
+		fi
+
+		# Install permissions for GRE traffic
+		case "${interface_mode}" in
+			gre)
+				if [ -n "${remote}" ]; then
+					iptables -A IPSECINPUT -p gre \
+						-s "${remote}" -d "${local}" -j ACCEPT
+
+					iptables -A IPSECOUTPUT -p gre \
+						-s "${local}" -d "${remote}" -j ACCEPT
+				fi
+				;;
+		esac
+
+		# Install firewall rules only for interfaces without interface
+		[ -n "${interface_mode}" ] && continue
 
 		# Split multiple subnets
 		rightsubnets="${rightsubnets//\|/ }"
@@ -85,4 +122,4 @@ block_ipsec() {
 	done < "${VPN_CONFIG}"
 }
 
-block_ipsec || exit $?
+install_policy || exit $?

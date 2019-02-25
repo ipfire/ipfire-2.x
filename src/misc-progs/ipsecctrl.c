@@ -53,42 +53,6 @@ static void ipsec_reload() {
 }
 
 /*
-        ACCEPT the ipsec protocol ah, esp & udp (for nat traversal) on the specified interface
-*/
-void open_physical (char *interface, int nat_traversal_port) {
-        char str[STRING_SIZE];
-
-        // IKE
-        sprintf(str, "/sbin/iptables --wait -D IPSECINPUT -p udp -i %s --dport 500 -j ACCEPT >/dev/null 2>&1", interface);
-        safe_system(str);
-        sprintf(str, "/sbin/iptables --wait -A IPSECINPUT -p udp -i %s --dport 500 -j ACCEPT", interface);
-        safe_system(str);
-        sprintf(str, "/sbin/iptables --wait -D IPSECOUTPUT -p udp -o %s --dport 500 -j ACCEPT >/dev/null 2>&1", interface);
-        safe_system(str);
-        sprintf(str, "/sbin/iptables --wait -A IPSECOUTPUT -p udp -o %s --dport 500 -j ACCEPT", interface);
-        safe_system(str);
-
-        if (! nat_traversal_port) 
-            return;
-
-        sprintf(str, "/sbin/iptables --wait -D IPSECINPUT -p udp -i %s --dport %i -j ACCEPT >/dev/null 2>&1", interface, nat_traversal_port);
-        safe_system(str);
-        sprintf(str, "/sbin/iptables --wait -A IPSECINPUT -p udp -i %s --dport %i -j ACCEPT", interface, nat_traversal_port);
-        safe_system(str);
-        sprintf(str, "/sbin/iptables --wait -D IPSECOUTPUT -p udp -o %s --dport %i -j ACCEPT >/dev/null 2>&1", interface, nat_traversal_port);
-        safe_system(str);
-        sprintf(str, "/sbin/iptables --wait -A IPSECOUTPUT -p udp -o %s --dport %i -j ACCEPT", interface, nat_traversal_port);
-        safe_system(str);
-}
-
-void ipsec_norules() {
-        /* clear input rules */
-        safe_system("/sbin/iptables --wait -F IPSECINPUT");
-        safe_system("/sbin/iptables --wait -F IPSECFORWARD");
-        safe_system("/sbin/iptables --wait -F IPSECOUTPUT");
-}
-
-/*
  return values from the vpn config file or false if not 'on'
 */
 int decode_line (char *s, 
@@ -152,15 +116,18 @@ void turn_connection_on(char *name, char *type) {
                 "/usr/sbin/ipsec down %s >/dev/null", name);
         safe_system(command);
 
-	// Reload the IPsec block chain
-	safe_system("/usr/lib/firewall/ipsec-block >/dev/null");
+	// Reload the IPsec firewall policy
+	safe_system("/usr/lib/firewall/ipsec-policy >/dev/null");
+
+	// Create or destroy interfaces
+	safe_system("/usr/local/bin/ipsec-interfaces >/dev/null");
 
 	// Reload the configuration into the daemon (#10339).
 	ipsec_reload();
 
 	// Bring the connection up again.
 	snprintf(command, STRING_SIZE - 1,
-		"/usr/sbin/ipsec up %s >/dev/null", name);
+		"/usr/sbin/ipsec stroke up-nb %s >/dev/null", name);
 	safe_system(command);
 }
 
@@ -182,13 +149,14 @@ void turn_connection_off (char *name) {
 	// Reload, so the connection is dropped.
 	ipsec_reload();
 
-	// Reload the IPsec block chain
-	safe_system("/usr/lib/firewall/ipsec-block >/dev/null");
+	// Reload the IPsec firewall policy
+	safe_system("/usr/lib/firewall/ipsec-policy >/dev/null");
+
+	// Create or destroy interfaces
+	safe_system("/usr/local/bin/ipsec-interfaces >/dev/null");
 }
 
 int main(int argc, char *argv[]) {
-        char configtype[STRING_SIZE];
-        char redtype[STRING_SIZE] = "";
         struct keyvalue *kv = NULL;
                         
         if (argc < 2) {
@@ -197,9 +165,8 @@ int main(int argc, char *argv[]) {
         }
         if (!(initsetuid()))
                 exit(1);
-                
- FILE *file = NULL;
-                
+
+	FILE *file = NULL;
 
         if (strcmp(argv[1], "I") == 0) {
                 safe_system("/usr/sbin/ipsec status");
@@ -219,7 +186,8 @@ int main(int argc, char *argv[]) {
         if (argc == 2) {
                 if (strcmp(argv[1], "D") == 0) {
                         safe_system("/usr/sbin/ipsec stop >/dev/null 2>&1");
-                        ipsec_norules();
+			safe_system("/usr/lib/firewall/ipsec-policy >/dev/null");
+			safe_system("/usr/local/bin/ipsec-interfaces >/dev/null");
                         exit(0);
                 }
         }
@@ -241,82 +209,12 @@ int main(int argc, char *argv[]) {
                 exit(0);
         }
 
-        /* read interface settings */
-        kv=initkeyvalues();
-        if (!readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings"))
-        {
-                fprintf(stderr, "Cannot read ethernet settings\n");
-                exit(1);
-        }
-        if (!findkey(kv, "CONFIG_TYPE", configtype))
-        {
-                fprintf(stderr, "Cannot read CONFIG_TYPE\n");
-                exit(1);
-        }
-        findkey(kv, "RED_TYPE", redtype);
-
-
-        /* Loop through the config file to find physical interface that will accept IPSEC */
-        int enable_red=0;       // states 0: not used
-        int enable_green=0;     //        1: error condition
-        int enable_orange=0;    //        2: good
-        int enable_blue=0;
-        char if_red[STRING_SIZE] = "";
-        char if_green[STRING_SIZE] = "";
-        char if_orange[STRING_SIZE] = "";
-        char if_blue[STRING_SIZE] = "";
         char s[STRING_SIZE];
 
-        // when RED is up, find interface name in special file
-        FILE *ifacefile = NULL;
-        if ((ifacefile = fopen(CONFIG_ROOT "/red/iface", "r"))) {
-                if (fgets(if_red, STRING_SIZE, ifacefile)) {
-                        if (if_red[strlen(if_red) - 1] == '\n')
-                                if_red[strlen(if_red) - 1] = '\0';
-                }
-                fclose (ifacefile);
-
-                if (VALID_DEVICE(if_red))
-                        enable_red++;
-        }
-
-	// Check if GREEN is enabled.
-        findkey(kv, "GREEN_DEV", if_green);
-        if (VALID_DEVICE(if_green))
-                enable_green++;
-
-	// Check if ORANGE is enabled.
-        findkey(kv, "ORANGE_DEV", if_orange);
-        if (VALID_DEVICE(if_orange))
-                enable_orange++;
-
-	// Check if BLUE is enabled.
-        findkey(kv, "BLUE_DEV", if_blue);
-        if (VALID_DEVICE(if_blue))
-                enable_blue++;
-
-        freekeyvalues(kv);
-
-        // exit if nothing to do
-        if ((enable_red+enable_green+enable_orange+enable_blue) == 0)
-            exit(0);
-
-        // open needed ports
-        if (enable_red > 0)
-                open_physical(if_red, 4500);
-
-        if (enable_green > 0)
-                open_physical(if_green, 4500);
-
-        if (enable_orange > 0)
-                open_physical(if_orange, 4500);
-
-        if (enable_blue > 0)
-                open_physical(if_blue, 4500);
-
-        // start the system
+	// start the system
         if ((argc == 2) && strcmp(argv[1], "S") == 0) {
-		safe_system("/usr/lib/firewall/ipsec-block >/dev/null");
+		safe_system("/usr/lib/firewall/ipsec-policy >/dev/null");
+		safe_system("/usr/local/bin/ipsec-interfaces >/dev/null");
 		safe_system("/usr/sbin/ipsec restart >/dev/null");
                 exit(0);
         }

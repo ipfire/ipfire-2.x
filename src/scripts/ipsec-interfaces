@@ -1,0 +1,172 @@
+#!/bin/bash
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2015 IPFire Team                                              #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+shopt -s nullglob
+
+VPN_CONFIG="/var/ipfire/vpn/config"
+
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/vpn/settings)
+
+VARS=(
+	id status name lefthost type ctype psk local local_id leftsubnets
+	remote_id remote rightsubnets x3 x4 x5 x6 x7 x8 x9 x10 x11 x12
+	x13 x14 x15 x16 x17 x18 x19 proto x20 x21 x22
+	route x23 mode interface_mode interface_address interface_mtu rest
+)
+
+log() {
+	logger -t ipsec "$@"
+}
+
+resolve_hostname() {
+	local hostname="${1}"
+
+	dig +short A "${hostname}" | tail -n1
+}
+
+main() {
+	# Register local variables
+	local "${VARS[@]}"
+	local action
+
+	local interfaces=()
+
+	# We are done when IPsec is not enabled
+	if [ "${ENABLED}" = "on" ]; then
+		while IFS="," read -r "${VARS[@]}"; do
+			# Check if the connection is enabled
+			[ "${status}" = "on" ] || continue
+
+			# Check if this a net-to-net connection
+			[ "${type}" = "net" ] || continue
+
+			# Determine the interface name
+			case "${interface_mode}" in
+				gre|vti)
+					local intf="${interface_mode}${id}"
+					;;
+				*)
+					continue
+					;;
+			esac
+
+			# Add the interface to the list of all interfaces
+			interfaces+=( "${intf}" )
+
+			# Compat for older connections
+			if [ "${local}" = "off" ]; then
+				if [ "${VPN_IP}" = "%defaultroute" ]; then
+					local=""
+				else
+					local="${VPN_IP}"
+				fi
+			fi
+
+			# Handle %defaultroute
+			if [ -z "${local}" ]; then
+				if [ -r "/var/ipfire/red/local-ipaddress" ]; then
+					local="$(</var/ipfire/red/local-ipaddress)"
+
+				elif [ "${RED_TYPE}" = "STATIC" -a -n "${RED_ADDRESS}" ]; then
+					local="${RED_ADDRESS}"
+				fi
+			fi
+
+			# Resolve any hostnames
+			if [[ ! ${remote} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+				remote="$(resolve_hostname "${remote}")"
+			fi
+
+			local args=(
+				"local" "${local}"
+				"remote" "${remote}"
+			)
+
+			case "${interface_mode}" in
+				gre)
+					# Add TTL
+					args+=( "ttl" "255" )
+					;;
+
+				vti)
+					# Add key for VTI
+					args+=( "key" "${id}" )
+					;;
+			esac
+
+			# Update the settings when the interface already exists
+			if [ -d "/sys/class/net/${intf}" ]; then
+				ip link change dev "${intf}" \
+					type "${interface_mode}" "${args[@]}" &>/dev/null
+
+			# Create a new interface and bring it up
+			else
+				log "Creating interface ${intf}"
+				if ! ip link add name "${intf}" type "${interface_mode}" "${args[@]}"; then
+					log "Could not create interface ${intf}"
+					continue
+				fi
+			fi
+
+			# Add an IP address
+			ip addr flush dev "${intf}"
+			ip addr add "${interface_address}" dev "${intf}"
+
+			# Set MTU
+			ip link set dev "${intf}" mtu "${interface_mtu}"
+
+			# Bring up the interface
+			ip link set dev "${intf}" up
+		done < "${VPN_CONFIG}"
+	fi
+
+	# Delete all other interfaces
+	local intf
+	for intf in /sys/class/net/gre[0-9]* /sys/class/net/vti[0-9]*; do
+		intf="$(basename "${intf}")"
+
+		# Ignore a couple of interfaces that cannot be deleted
+		case "${intf}" in
+			gre0|gretap0)
+				continue
+				;;
+		esac
+
+		# Check if interface is on the list
+		local i found="false"
+		for i in ${interfaces[@]}; do
+			if [ "${intf}" = "${i}" ]; then
+				found="true"
+				break
+			fi
+		done
+
+		# Nothing to do if interface was found
+		${found} && continue
+
+		# Delete the interface
+		log "Deleting interface ${intf}"
+		ip link del "${intf}" &>/dev/null
+	done
+}
+
+main || exit $?

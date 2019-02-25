@@ -69,6 +69,10 @@ my %INACTIVITY_TIMEOUTS = (
 	0		=> "- $Lang::tr{'unlimited'} -",
 );
 
+# Load aliases
+my %aliases;
+&General::get_aliases(\%aliases);
+
 my $col="";
 
 $cgiparams{'ENABLED'} = 'off';
@@ -81,6 +85,7 @@ $cgiparams{'ADVANCED'} = '';
 $cgiparams{'NAME'} = '';
 $cgiparams{'LOCAL_SUBNET'} = '';
 $cgiparams{'REMOTE_SUBNET'} = '';
+$cgiparams{'LOCAL'} = '';
 $cgiparams{'REMOTE'} = '';
 $cgiparams{'LOCAL_ID'} = '';
 $cgiparams{'REMOTE_ID'} = '';
@@ -109,8 +114,12 @@ $cgiparams{'RW_NET'} = '';
 $cgiparams{'DPD_DELAY'} = '30';
 $cgiparams{'DPD_TIMEOUT'} = '120';
 $cgiparams{'FORCE_MOBIKE'} = 'off';
-$cgiparams{'START_ACTION'} = 'start';
-$cgiparams{'INACTIVITY_TIMEOUT'} = 900;
+$cgiparams{'START_ACTION'} = 'route';
+$cgiparams{'INACTIVITY_TIMEOUT'} = 1800;
+$cgiparams{'MODE'} = "tunnel";
+$cgiparams{'INTERFACE_MODE'} = "";
+$cgiparams{'INTERFACE_ADDRESS'} = "";
+$cgiparams{'INTERFACE_MTU'} = 1500;
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 ###
@@ -280,26 +289,43 @@ sub writeipsecfiles {
 		#remote peer is not set? => use '%any'
 		$lconfighash{$key}[10] = '%any' if ($lconfighash{$key}[10] eq '');
 
-		my $localside;
-		if ($lconfighash{$key}[26] eq 'BLUE') {
-			$localside = $netsettings{'BLUE_ADDRESS'};
-		} elsif ($lconfighash{$key}[26] eq 'GREEN') {
-			$localside = $netsettings{'GREEN_ADDRESS'};
-		} elsif ($lconfighash{$key}[26] eq 'ORANGE') {
-			$localside = $netsettings{'ORANGE_ADDRESS'};
-		} else { # it is RED
-			$localside = $lvpnsettings{'VPN_IP'};
+		# Field 6 might be "off" on old installations
+		if ($lconfighash{$key}[6] eq "off") {
+			$lconfighash{$key}[6] = $lvpnsettings{"VPN_IP"};
 		}
+
+		my $localside;
+		if ($lconfighash{$key}[6]) {
+			$localside = $lconfighash{$key}[6];
+		} else {
+			$localside = "%defaultroute";
+		}
+
+		my $interface_mode = $lconfighash{$key}[36];
 
 		print CONF "conn $lconfighash{$key}[1]\n";
 		print CONF "\tleft=$localside\n";
-		print CONF "\tleftsubnet=" . &make_subnets($lconfighash{$key}[8]) . "\n";
+
+		if ($interface_mode eq "gre") {
+			print CONF "\tleftprotoport=gre\n";
+		} elsif ($interface_mode eq "vti") {
+			print CONF "\tleftsubnet=0.0.0.0/0\n";
+		} else {
+			print CONF "\tleftsubnet=" . &make_subnets("left", $lconfighash{$key}[8]) . "\n";
+		}
+
 		print CONF "\tleftfirewall=yes\n";
 		print CONF "\tlefthostaccess=yes\n";
 		print CONF "\tright=$lconfighash{$key}[10]\n";
 
 		if ($lconfighash{$key}[3] eq 'net') {
-			print CONF "\trightsubnet=" . &make_subnets($lconfighash{$key}[11]) . "\n";
+			if ($interface_mode eq "gre") {
+				print CONF "\trightprotoport=gre\n";
+			} elsif ($interface_mode eq "vti") {
+				print CONF "\trightsubnet=0.0.0.0/0\n";
+			} else {
+				print CONF "\trightsubnet=" . &make_subnets("right", $lconfighash{$key}[11]) . "\n";
+			}
 		}
 
 		# Local Cert and Remote Cert (unless auth is DN dn-auth)
@@ -311,6 +337,18 @@ sub writeipsecfiles {
 		# Local and Remote IDs
 		print CONF "\tleftid=\"$lconfighash{$key}[7]\"\n" if ($lconfighash{$key}[7]);
 		print CONF "\trightid=\"$lconfighash{$key}[9]\"\n" if ($lconfighash{$key}[9]);
+
+		# Set mode
+		if ($lconfighash{$key}[35] eq "transport") {
+			print CONF "\ttype=transport\n";
+		} else {
+			print CONF "\ttype=tunnel\n";
+		}
+
+		# Add mark for VTI
+		if ($interface_mode eq "vti") {
+			print CONF "\tmark=$key\n";
+		}
 
 		# Is PFS enabled?
 		my $pfs = $lconfighash{$key}[28] eq 'on' ? 'on' : 'off';
@@ -467,25 +505,12 @@ if ($ENV{"REMOTE_ADDR"} eq "") {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cgiparams{'KEY'} eq '') {
 	&General::readhash("${General::swroot}/vpn/settings", \%vpnsettings);
 
-	unless (&General::validfqdn($cgiparams{'VPN_IP'}) || &General::validip($cgiparams{'VPN_IP'})
-	|| $cgiparams{'VPN_IP'} eq '%defaultroute' ) {
-		$errormessage = $Lang::tr{'invalid input for hostname'};
-		goto SAVE_ERROR;
-	}
-
-	unless ($cgiparams{'VPN_DELAYED_START'} =~ /^[0-9]{1,3}$/ ) { #allow 0-999 seconds !
-		$errormessage = $Lang::tr{'invalid time period'};
-		goto SAVE_ERROR;
-	}
-
 	if ( $cgiparams{'RW_NET'} ne '' and !&General::validipandmask($cgiparams{'RW_NET'}) ) {
 		$errormessage = $Lang::tr{'urlfilter invalid ip or mask error'};
 		goto SAVE_ERROR;
 	}
 
 	$vpnsettings{'ENABLED'} = $cgiparams{'ENABLED'};
-	$vpnsettings{'VPN_IP'} = $cgiparams{'VPN_IP'};
-	$vpnsettings{'VPN_DELAYED_START'} = $cgiparams{'VPN_DELAYED_START'};
 	$vpnsettings{'RW_NET'} = $cgiparams{'RW_NET'};
 	&General::writehash("${General::swroot}/vpn/settings", \%vpnsettings);
 	&writeipsecfiles();
@@ -1287,7 +1312,7 @@ END
 		$cgiparams{'TYPE'}				= $confighash{$cgiparams{'KEY'}}[3];
 		$cgiparams{'AUTH'}				= $confighash{$cgiparams{'KEY'}}[4];
 		$cgiparams{'PSK'}				= $confighash{$cgiparams{'KEY'}}[5];
-		#$cgiparams{'free'}				= $confighash{$cgiparams{'KEY'}}[6];
+		$cgiparams{'LOCAL'}				= $confighash{$cgiparams{'KEY'}}[6];
 		$cgiparams{'LOCAL_ID'}			= $confighash{$cgiparams{'KEY'}}[7];
 		my @local_subnets = split(",", $confighash{$cgiparams{'KEY'}}[8]);
 		$cgiparams{'LOCAL_SUBNET'} 		= join(/\|/, @local_subnets);
@@ -1316,6 +1341,10 @@ END
 		$cgiparams{'DPD_DELAY'}			= $confighash{$cgiparams{'KEY'}}[31];
 		$cgiparams{'FORCE_MOBIKE'}		= $confighash{$cgiparams{'KEY'}}[32];
 		$cgiparams{'INACTIVITY_TIMEOUT'}	= $confighash{$cgiparams{'KEY'}}[34];
+		$cgiparams{'MODE'}			= $confighash{$cgiparams{'KEY'}}[35];
+		$cgiparams{'INTERFACE_MODE'}		= $confighash{$cgiparams{'KEY'}}[36];
+		$cgiparams{'INTERFACE_ADDRESS'}		= $confighash{$cgiparams{'KEY'}}[37];
+		$cgiparams{'INTERFACE_MTU'}		= $confighash{$cgiparams{'KEY'}}[38];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -1327,6 +1356,10 @@ END
 
 		if ($cgiparams{'INACTIVITY_TIMEOUT'} eq "") {
 			$cgiparams{'INACTIVITY_TIMEOUT'} = 900;
+		}
+
+		if ($cgiparams{'MODE'} eq "") {
+			$cgiparams{'MODE'} = "tunnel";
 		}
 
 	} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
@@ -1364,6 +1397,13 @@ END
 		if (($cgiparams{'TYPE'} eq 'net') && (! $cgiparams{'REMOTE'})) {
 			$errormessage = $Lang::tr{'invalid input for remote host/ip'};
 			goto VPNCONF_ERROR;
+		}
+
+		if ($cgiparams{'LOCAL'}) {
+			if (($cgiparams{'LOCAL'} ne "") && (!&General::validip($cgiparams{'LOCAL'}))) {
+				$errormessage = $Lang::tr{'invalid input for local ip address'};
+				goto VPNCONF_ERROR;
+			}
 		}
 
 		if ($cgiparams{'REMOTE'}) {
@@ -1406,6 +1446,31 @@ END
 					$errormessage = $Lang::tr{'remote subnet is invalid'};
 					goto VPNCONF_ERROR;
 				}
+			}
+
+			if ($cgiparams{'MODE'} !~ /^(tunnel|transport)$/) {
+				$errormessage = $Lang::tr{'invalid input for mode'};
+				goto VPNCONF_ERROR;
+			}
+
+			if ($cgiparams{'INTERFACE_MODE'} !~ /^(|gre|vti)$/) {
+				$errormessage = $Lang::tr{'invalid input for interface mode'};
+				goto VPNCONF_ERROR;
+			}
+
+			if (($cgiparams{'INTERFACE_MODE'} eq "vti") && ($cgiparams{'MODE'} eq "transport")) {
+				$errormessage = $Lang::tr{'transport mode does not support vti'};
+				goto VPNCONF_ERROR;
+			}
+
+			if (($cgiparams{'INTERFACE_MODE'} ne "") && !&Network::check_subnet($cgiparams{'INTERFACE_ADDRESS'})) {
+				$errormessage = $Lang::tr{'invalid input for interface address'};
+				goto VPNCONF_ERROR;
+			}
+
+			if ($cgiparams{'INTERFACE_MTU'} !~ /^\d+$/) {
+				$errormessage = $Lang::tr{'invalid input for interface mtu'};
+				goto VPNCONF_ERROR;
 			}
 		}
 
@@ -1811,7 +1876,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 		$key = &General::findhasharraykey (\%confighash);
-		foreach my $i (0 .. 34) { $confighash{$key}[$i] = "";}
+		foreach my $i (0 .. 38) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -1829,6 +1894,7 @@ END
 		my @remote_subnets = split(",", $cgiparams{'REMOTE_SUBNET'});
 		$confighash{$key}[11] = join('|', @remote_subnets);
 	}
+	$confighash{$key}[6] = $cgiparams{'LOCAL'};
 	$confighash{$key}[7] = $cgiparams{'LOCAL_ID'};
 	my @local_subnets = split(",", $cgiparams{'LOCAL_SUBNET'});
 	$confighash{$key}[8] = join('|', @local_subnets);
@@ -1856,9 +1922,12 @@ END
 	$confighash{$key}[31] = $cgiparams{'DPD_DELAY'};
 	$confighash{$key}[32] = $cgiparams{'FORCE_MOBIKE'};
 	$confighash{$key}[34] = $cgiparams{'INACTIVITY_TIMEOUT'};
+	$confighash{$key}[35] = $cgiparams{'MODE'};
+	$confighash{$key}[36] = $cgiparams{'INTERFACE_MODE'};
+	$confighash{$key}[37] = $cgiparams{'INTERFACE_ADDRESS'};
+	$confighash{$key}[38] = $cgiparams{'INTERFACE_MTU'};
 
 	# free unused fields!
-	$confighash{$key}[6] = 'off';
 	$confighash{$key}[15] = 'off';
 
 	&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
@@ -1881,7 +1950,12 @@ END
 	} else {
 		$cgiparams{'AUTH'} = 'certgen';
 	}
-	$cgiparams{'LOCAL_SUBNET'}		= "$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}";
+
+	if ($netsettings{"GREEN_NETADDRESS"} && $netsettings{"GREEN_NETMASK"}) {
+		$cgiparams{"LOCAL_SUBNET"} = $netsettings{'GREEN_NETADDRESS'} . "/" . $netsettings{'GREEN_NETMASK'};
+	} else {
+		$cgiparams{"LOCAL_SUBNET"} = "";
+	}
 	$cgiparams{'CERT_EMAIL'}		= $vpnsettings{'ROOTCERT_EMAIL'};
 	$cgiparams{'CERT_OU'}			= $vpnsettings{'ROOTCERT_OU'};
 	$cgiparams{'CERT_ORGANIZATION'}	= $vpnsettings{'ROOTCERT_ORGANIZATION'};
@@ -1930,6 +2004,10 @@ END
 	$cgiparams{'ONLY_PROPOSED'}		= 'on'; #[24];
 	$cgiparams{'PFS'}				= 'on'; #[28];
 	$cgiparams{'INACTIVITY_TIMEOUT'}        = 900;
+	$cgiparams{'MODE'}        		= "tunnel";
+	$cgiparams{'INTERFACE_MODE'}        	= "";
+	$cgiparams{'INTERFACE_ADDRESS'}        	= "";
+	$cgiparams{'INTERFACE_MTU'}        	= 1500;
 }
 
 VPNCONF_ERROR:
@@ -1948,6 +2026,23 @@ VPNCONF_ERROR:
 	$checked{'AUTH'}{'pkcs12'} = '';
 	$checked{'AUTH'}{'auth-dn'} = '';
 	$checked{'AUTH'}{$cgiparams{'AUTH'}} = "checked='checked'";
+
+	$selected{'MODE'}{'tunnel'} = '';
+	$selected{'MODE'}{'transport'} = '';
+	$selected{'MODE'}{$cgiparams{'MODE'}} = "selected='selected'";
+
+	$selected{'INTERFACE_MODE'}{''} = '';
+	$selected{'INTERFACE_MODE'}{'gre'} = '';
+	$selected{'INTERFACE_MODE'}{'vti'} = '';
+	$selected{'INTERFACE_MODE'}{$cgiparams{'INTERFACE_MODE'}} = "selected='selected'";
+
+	$selected{'LOCAL'}{''} = '';
+	foreach my $alias (sort keys %aliases) {
+		my $address = $aliases{$alias}{'IPT'};
+
+		$selected{'LOCAL'}{$address} = '';
+	}
+	$selected{'LOCAL'}{$cgiparams{'LOCAL'}} = "selected='selected'";
 
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
@@ -1985,6 +2080,7 @@ VPNCONF_ERROR:
 	<input type='hidden' name='DPD_DELAY' value='$cgiparams{'DPD_DELAY'}' />
 	<input type='hidden' name='DPD_TIMEOUT' value='$cgiparams{'DPD_TIMEOUT'}' />
 	<input type='hidden' name='FORCE_MOBIKE' value='$cgiparams{'FORCE_MOBIKE'}' />
+	<input type='hidden' name='INACTIVITY_TIMEOUT' value='$cgiparams{'INACTIVITY_TIMEOUT'}' />
 END
 ;
 	if ($cgiparams{'KEY'}) {
@@ -2021,25 +2117,44 @@ EOF
 	my @remote_subnets = split(/\|/, $cgiparams{'REMOTE_SUBNET'});
 	my $remote_subnets = join(",", @remote_subnets);
 
-	print <<END
+	print <<END;
 	<tr>
 		<td width='20%'>$Lang::tr{'enabled'}</td>
 		<td width='30%'>
 			<input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} />
 		</td>
-		<td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'local subnet'}&nbsp;<img src='/blob.gif' alt='*' /></td>
-		<td width='30%'>
-			<input type='text' name='LOCAL_SUBNET' value='$local_subnets' />
-		</td>
+		<td colspan="2"></td>
 	</tr>
 	<tr>
+		<td class='boldbase' width='20%'>$Lang::tr{'local ip address'}:</td>
+		<td width='30%'>
+			<select name="LOCAL">
+				<option value="" $selected{'LOCAL'}{''}>- $Lang::tr{'default IP address'} -</option>
+END
+
+				foreach my $alias (sort keys %aliases) {
+					my $address = $aliases{$alias}{'IPT'};
+					print <<END;
+						<option value="$address" $selected{'LOCAL'}{$address}>$alias ($address)</option>
+END
+				}
+
+	print <<END;
+			</select>
+		</td>
 		<td class='boldbase' width='20%'>$Lang::tr{'remote host/ip'}:&nbsp;$blob</td>
 		<td width='30%'>
 			<input type='text' name='REMOTE' value='$cgiparams{'REMOTE'}' size="25" />
 		</td>
+	</tr>
+	<tr>
+		<td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'local subnet'}&nbsp;<img src='/blob.gif' alt='*' /></td>
+		<td width='30%'>
+			<input type='text' name='LOCAL_SUBNET' value='$local_subnets' size="25" />
+		</td>
 		<td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'remote subnet'}&nbsp;$blob</td>
 		<td width='30%'>
-			<input $disabled type='text' name='REMOTE_SUBNET' value='$remote_subnets' />
+			<input $disabled type='text' name='REMOTE_SUBNET' value='$remote_subnets' size="25" />
 		</td>
 	</tr>
 	<tr>
@@ -2066,6 +2181,51 @@ END
 	}
 	print "</table>";
 	&Header::closebox();
+
+	if ($cgiparams{'TYPE'} eq 'net') {
+		&Header::openbox('100%', 'left', $Lang::tr{'ipsec settings'});
+		print <<EOF;
+		<table width='100%'>
+			<tbody>
+				<tr>
+					<td class='boldbase' width='20%'>$Lang::tr{'mode'}:</td>
+					<td width='30%'>
+						<select name='MODE'>
+							<option value='tunnel' $selected{'MODE'}{'tunnel'}>$Lang::tr{'ipsec mode tunnel'}</option>
+							<option value='transport' $selected{'MODE'}{'transport'}>$Lang::tr{'ipsec mode transport'}</option>
+						</select>
+					</td>
+					<td colspan='2'></td>
+				</tr>
+
+				<tr>
+					<td class='boldbase' width='20%'>$Lang::tr{'interface mode'}:</td>
+					<td width='30%'>
+						<select name='INTERFACE_MODE'>
+							<option value='' $selected{'INTERFACE_MODE'}{''}>$Lang::tr{'ipsec interface mode none'}</option>
+							<option value='gre' $selected{'INTERFACE_MODE'}{'gre'}>$Lang::tr{'ipsec interface mode gre'}</option>
+							<option value='vti' $selected{'INTERFACE_MODE'}{'vti'}>$Lang::tr{'ipsec interface mode vti'}</option>
+						</select>
+					</td>
+
+					<td class='boldbase' width='20%'>$Lang::tr{'ip address'}/$Lang::tr{'subnet mask'}:</td>
+					<td width='30%'>
+						<input type="text" name="INTERFACE_ADDRESS" value="$cgiparams{'INTERFACE_ADDRESS'}">
+					</td>
+				</tr>
+
+				<tr>
+					<td class='boldbase' width='20%'>$Lang::tr{'mtu'}:</td>
+					<td width='30%'>
+						<input type="number" name="INTERFACE_MTU" value="$cgiparams{'INTERFACE_MTU'}" min="576" max="9000">
+					</td>
+					<td colspan='2'></td>
+				</tr>
+			</tbody>
+		</table>
+EOF
+		&Header::closebox();
+	}
 
 	if ($cgiparams{'KEY'} && $cgiparams{'AUTH'} eq 'psk') {
 		&Header::openbox('100%', 'left', $Lang::tr{'authentication'});
@@ -2327,6 +2487,10 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$cgiparams{'FORCE_MOBIKE'}		= $confighash{$cgiparams{'KEY'}}[32];
 		$cgiparams{'START_ACTION'}		= $confighash{$cgiparams{'KEY'}}[33];
 		$cgiparams{'INACTIVITY_TIMEOUT'}	= $confighash{$cgiparams{'KEY'}}[34];
+		$cgiparams{'MODE'}			= $confighash{$cgiparams{'KEY'}}[35];
+		$cgiparams{'INTERFACE_MODE'}		= $confighash{$cgiparams{'KEY'}}[36];
+		$cgiparams{'INTERFACE_ADDRESS'}		= $confighash{$cgiparams{'KEY'}}[37];
+		$cgiparams{'INTERFACE_MTU'}		= $confighash{$cgiparams{'KEY'}}[38];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -2342,6 +2506,10 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 
 		if ($cgiparams{'INACTIVITY_TIMEOUT'} eq "") {
 			$cgiparams{'INACTIVITY_TIMEOUT'} = 900; # 15 min
+		}
+
+		if ($cgiparams{'MODE'} eq "") {
+			$cgiparams{'MODE'} = "tunnel";
 		}
 	}
 
@@ -2739,22 +2907,6 @@ EOF
 
 	my @status = `/usr/local/bin/ipsecctrl I 2>/dev/null`;
 
-	# suggest a default name for this side
-	if ($cgiparams{'VPN_IP'} eq '' && -e "${General::swroot}/red/active") {
-		if (open(IPADDR, "${General::swroot}/red/local-ipaddress")) {
-			my $ipaddr = <IPADDR>;
-			close IPADDR;
-			chomp ($ipaddr);
-			$cgiparams{'VPN_IP'} = (gethostbyaddr(pack("C4", split(/\./, $ipaddr)), 2))[0];
-			if ($cgiparams{'VPN_IP'} eq '') {
-				$cgiparams{'VPN_IP'} = $ipaddr;
-			}
-		}
-	}
-	# no IP found, use %defaultroute
-	$cgiparams{'VPN_IP'} ='%defaultroute' if ($cgiparams{'VPN_IP'} eq '');
-
-	$cgiparams{'VPN_DELAYED_START'} = 0 if (! defined ($cgiparams{'VPN_DELAYED_START'}));
 	$checked{'ENABLED'} = $cgiparams{'ENABLED'} eq 'on' ? "checked='checked'" : '';
 
 	&Header::showhttpheaders();
@@ -2782,35 +2934,21 @@ EOF
 	print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 	<table width='100%'>
-	<tr>
-	<td width='20%' class='base' nowrap='nowrap'>$Lang::tr{'vpn red name'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td width='20%'><input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' /></td>
-	<td width='20%' class='base'>$Lang::tr{'enabled'}<input type='checkbox' name='ENABLED' $checked{'ENABLED'} /></td>
-	</tr>
-END
-;
-print <<END
-	<tr>
-	<td class='base' nowrap='nowrap'>$Lang::tr{'vpn delayed start'}:&nbsp;<img src='/blob.gif' alt='*' /><img src='/blob.gif' alt='*' /></td>
-	<td ><input type='text' name='VPN_DELAYED_START' value='$cgiparams{'VPN_DELAYED_START'}' /></td>
-	</tr>
-	<tr>
-	<td class='base' nowrap='nowrap'>$Lang::tr{'host to net vpn'}:</td>
-	<td ><input type='text' name='RW_NET' value='$cgiparams{'RW_NET'}' /></td>
-	</tr>
-</table>
-<br>
-<hr />
-<table width='100%'>
-<tr>
-	<td class='base' valign='top'><img src='/blob.gif' alt='*' /></td>
-	<td width='70%' class='base' valign='top'>$Lang::tr{'required field'}</td><td width='30%' align='right' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
-</tr>
-<tr>
-	<td class='base' valign='top' nowrap='nowrap'><img src='/blob.gif' alt='*' /><img src='/blob.gif' alt='*' />&nbsp;</td>
-	<td class='base'>	<font class='base'>$Lang::tr{'vpn delayed start help'}</font></td>
-	<td></td>
-</tr>
+		<tr>
+			<td width='60%' class='base'>
+				$Lang::tr{'enabled'}
+			</td>
+			<td width="40%">
+				<input type='checkbox' name='ENABLED' $checked{'ENABLED'} />
+			</td>
+		</tr>
+		<tr>
+			<td class='base' nowrap='nowrap' width="60%">$Lang::tr{'host to net vpn'}:</td>
+			<td width="40%"><input type='text' name='RW_NET' value='$cgiparams{'RW_NET'}' /></td>
+		</tr>
+		<tr>
+			<td width='100%' colspan="2" align='right' class='base'><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
+		</tr>
 </table>
 END
 ;
@@ -3212,13 +3350,19 @@ sub make_algos($$$$$) {
 	return &array_unique(\@algos);
 }
 
-sub make_subnets($) {
+sub make_subnets($$) {
+	my $direction = shift;
 	my $subnets = shift;
 
 	my @nets = split(/\|/, $subnets);
 	my @cidr_nets = ();
 	foreach my $net (@nets) {
 		my $cidr_net = &General::ipcidr($net);
+
+		# Skip 0.0.0.0/0 for remote because this renders the
+		# while system inaccessible
+		next if (($direction eq "right") && ($cidr_net eq "0.0.0.0/0"));
+
 		push(@cidr_nets, $cidr_net);
 	}
 

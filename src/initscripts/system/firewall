@@ -360,8 +360,8 @@ iptables_init() {
 	iptables -t nat -N REDNAT
 	iptables -t nat -A POSTROUTING -j REDNAT
 
-	# Populate IPsec block chain
-	/usr/lib/firewall/ipsec-block
+	# Populate IPsec chains
+	/usr/lib/firewall/ipsec-policy
 
 	# Apply OpenVPN firewall rules
 	/usr/local/bin/openvpnctrl --firewall-rules

@@ -28,7 +28,9 @@
 < choose media
 < community rules
 < could not connect to www ipfire org
+< cryptographic settings
 < dead peer detection
+< default IP address
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
 < dh name is invalid
@@ -38,6 +40,21 @@
 < g.lite
 < guardian
 < insert removable device
+< interface mode
+< invalid input for interface address
+< invalid input for interface mode
+< invalid input for interface mtu
+< invalid input for local ip address
+< invalid input for mode
+< ipsec connection
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
+< ipsec mode transport
+< ipsec mode tunnel
+< ipsec settings
+< local ip address
+< mtu
 < none
 < notes
 < qos add subclass
@@ -46,9 +63,11 @@
 < show areas
 < show lines
 < show tls-auth key
+< subnet mask
 < teovpn_fragment
 < tor bridge enabled
 < tor errmsg invalid node id
+< transport mode does not support vti
 < updxlrtr used by
 < upload fcdsl.o
 < vpn configuration main
@@ -186,10 +205,12 @@
 < countrycode
 < country codes and flags
 < crypto error
+< cryptographic settings
 < crypto warning
 < dead peer detection
 < default
 < default ip
+< default IP address
 < deprecated fs warn
 < details
 < dh
@@ -490,18 +511,32 @@
 < incoming firewall access
 < incoming overhead in bytes per second
 < integrity
+< interface mode
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
+< invalid input for interface address
+< invalid input for interface mode
+< invalid input for interface mtu
+< invalid input for local ip address
+< invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
 < ipsec
+< ipsec connection
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
+< ipsec mode transport
+< ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec settings
 < last
 < least preferred
 < lifetime
+< local ip address
 < log server protocol
 < mac filter
 < masquerade blue
@@ -531,6 +566,7 @@
 < modem status
 < monitor interface
 < most preferred
+< mtu
 < MTU settings
 < nameserver
 < never
@@ -632,6 +668,7 @@
 < ssh no active logins
 < ssh username
 < static routes
+< subnet mask
 < support donation
 < system has hwrng
 < system has rdrand
@@ -696,6 +733,7 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< transport mode does not support vti
 < twelve hours
 < two weeks
 < udp less overhead
@@ -782,8 +820,27 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< cryptographic settings
+< default IP address
 < dnsforward forward_servers
+< interface mode
+< invalid input for interface address
+< invalid input for interface mode
+< invalid input for interface mtu
+< invalid input for local ip address
+< invalid input for mode
 < invalid ip or hostname
+< ipsec connection
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
+< ipsec mode transport
+< ipsec mode tunnel
+< ipsec settings
+< local ip address
+< mtu
+< subnet mask
+< transport mode does not support vti
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -853,7 +910,9 @@
 < Captive wrong ext
 < check all
 < crypto error
+< cryptographic settings
 < crypto warning
+< default IP address
 < dhcp dns enable update
 < dhcp dns key name
 < dhcp dns update
@@ -918,10 +977,24 @@
 < guardian
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
+< interface mode
 < invalid input for inactivity timeout
+< invalid input for interface address
+< invalid input for interface mode
+< invalid input for interface mtu
+< invalid input for local ip address
+< invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ipsec connection
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
+< ipsec mode transport
+< ipsec mode tunnel
+< ipsec settings
+< local ip address
 < log server protocol
 < masquerade blue
 < masquerade green
@@ -930,6 +1003,7 @@
 < masquerading disabled
 < masquerading enabled
 < messages
+< mtu
 < MTU settings
 < none
 < Number of Countries for the pie chart
@@ -955,9 +1029,11 @@
 < ssh login time
 < ssh no active logins
 < ssh username
+< subnet mask
 < tcp more reliable
 < ten minutes
 < thirty minutes
+< transport mode does not support vti
 < twelve hours
 < two weeks
 < udp less overhead
@@ -1070,8 +1146,10 @@
 < Captive wrong ext
 < check all
 < crypto error
+< cryptographic settings
 < crypto warning
 < default
+< default IP address
 < dh
 < dhcp dns enable update
 < dhcp dns key name
@@ -1154,10 +1232,24 @@
 < imsi
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
+< interface mode
 < invalid input for inactivity timeout
+< invalid input for interface address
+< invalid input for interface mode
+< invalid input for interface mtu
+< invalid input for local ip address
+< invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ipsec connection
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
+< ipsec mode transport
+< ipsec mode tunnel
+< ipsec settings
+< local ip address
 < log server protocol
 < masquerade blue
 < masquerade green
@@ -1180,6 +1272,7 @@
 < modem sim information
 < modem status
 < monitor interface
+< mtu
 < MTU settings
 < nameserver
 < never
@@ -1223,11 +1316,13 @@
 < ssh login time
 < ssh no active logins
 < ssh username
+< subnet mask
 < ta key
 < tcp more reliable
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< transport mode does not support vti
 < twelve hours
 < two weeks
 < udp less overhead
@@ -1403,10 +1498,12 @@
 < countrycode
 < country codes and flags
 < crypto error
+< cryptographic settings
 < crypto warning
 < dead peer detection
 < default
 < default ip
+< default IP address
 < deprecated fs warn
 < details
 < dh
@@ -1709,18 +1806,32 @@
 < incoming firewall access
 < incoming overhead in bytes per second
 < integrity
+< interface mode
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
+< invalid input for interface address
+< invalid input for interface mode
+< invalid input for interface mtu
+< invalid input for local ip address
+< invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
 < ipsec
+< ipsec connection
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
+< ipsec mode transport
+< ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec settings
 < last
 < least preferred
 < lifetime
+< local ip address
 < log server protocol
 < mac filter
 < masquerade blue
@@ -1750,6 +1861,7 @@
 < modem status
 < monitor interface
 < most preferred
+< mtu
 < MTU settings
 < nameserver
 < never
@@ -1836,6 +1948,7 @@
 < ssh no active logins
 < ssh username
 < static routes
+< subnet mask
 < support donation
 < system has hwrng
 < system has rdrand
@@ -1899,6 +2012,7 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< transport mode does not support vti
 < twelve hours
 < two weeks
 < udp less overhead
@@ -2116,11 +2230,13 @@
 < countrycode
 < country codes and flags
 < crypto error
+< cryptographic settings
 < crypto warning
 < day-graph
 < dead peer detection
 < default
 < default ip
+< default IP address
 < deprecated fs warn
 < details
 < dh
@@ -2428,18 +2544,32 @@
 < incoming overhead in bytes per second
 < incoming traffic in bytes per second
 < integrity
+< interface mode
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
+< invalid input for interface address
+< invalid input for interface mode
+< invalid input for interface mtu
+< invalid input for local ip address
+< invalid input for mode
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
 < ipsec
+< ipsec connection
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
+< ipsec mode transport
+< ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec settings
 < last
 < least preferred
 < lifetime
+< local ip address
 < log server protocol
 < mac filter
 < masquerade blue
@@ -2470,6 +2600,7 @@
 < monitor interface
 < month-graph
 < most preferred
+< mtu
 < MTU settings
 < nameserver
 < never
@@ -2553,6 +2684,7 @@
 < ssh no active logins
 < ssh username
 < static routes
+< subnet mask
 < support donation
 < system has hwrng
 < system has rdrand
@@ -2616,6 +2748,7 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< transport mode does not support vti
 < twelve hours
 < two weeks
 < udp less overhead
@@ -2705,10 +2838,27 @@
 # Checking cgi-bin translations for language: tr                           #
 ############################################################################
 < crypto error
+< cryptographic settings
 < crypto warning
+< default IP address
 < dnsforward forward_servers
 < fwdfw all subnets
+< interface mode
+< invalid input for interface address
+< invalid input for interface mode
+< invalid input for interface mtu
+< invalid input for local ip address
+< invalid input for mode
 < invalid ip or hostname
+< ipsec connection
+< ipsec interface mode gre
+< ipsec interface mode none
+< ipsec interface mode vti
+< ipsec mode transport
+< ipsec mode tunnel
+< ipsec settings
+< local ip address
+< mtu
 < ovpn error dh
 < ovpn error md5
 < ovpn warning rfc3280
@@ -2716,6 +2866,8 @@
 < ssh login time
 < ssh no active logins
 < ssh username
+< subnet mask
+< transport mode does not support vti
 < vpn start action add
 < vpn wait
 < wlanap neighbor scan
