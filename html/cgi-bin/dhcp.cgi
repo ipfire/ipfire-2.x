@@ -446,15 +446,17 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'add'}.'2') {
 	    &General::log($Lang::tr{'fixed ip lease added'});
 
 	    # Enter edit mode
-	    $dhcpsettings{'KEY2'} = $key;
+	    $dhcpsettings{'KEY2'} = 0;
 	} else {
 	    @current2[$dhcpsettings{'KEY2'}] = "$dhcpsettings{'FIX_MAC'},$dhcpsettings{'FIX_ADDR'},$dhcpsettings{'FIX_ENABLED'},$dhcpsettings{'FIX_NEXTADDR'},$dhcpsettings{'FIX_FILENAME'},$dhcpsettings{'FIX_ROOTPATH'},$dhcpsettings{'FIX_REMARK'}\n";
 	    $dhcpsettings{'KEY2'} = '';       # End edit mode
 	    &General::log($Lang::tr{'fixed ip lease modified'});
+
+	    # sort newly added/modified entry
+	    &sortcurrent2;
 	}
 
         #Write changes to dhcpd.conf.
-        &sortcurrent2;    # sort newly added/modified entry
         &buildconf;       # before calling buildconf which use fixed lease file !
     }
 }
