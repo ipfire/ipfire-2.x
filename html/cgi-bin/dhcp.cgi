@@ -1335,7 +1335,7 @@ sub buildconf {
     close FILE;
     if ( $dhcpsettings{"ENABLE_GREEN"} eq 'on' || $dhcpsettings{"ENABLE_BLUE"} eq 'on' ) {system '/usr/local/bin/dhcpctrl enable >/dev/null 2>&1';}
     else {system '/usr/local/bin/dhcpctrl disable >/dev/null 2>&1';}
-    system '/usr/local/bin/dhcpctrl restart >/dev/null 2>&1';
+    system '/usr/local/bin/dhcpctrl restart >/dev/null 2>&1 &';
 }
 
 #
