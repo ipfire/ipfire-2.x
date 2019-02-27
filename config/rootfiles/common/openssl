@@ -2029,6 +2029,8 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/OPENSSL_INIT_free.html
 #usr/share/doc/openssl/html/man3/OPENSSL_INIT_new.html
 #usr/share/doc/openssl/html/man3/OPENSSL_INIT_set_config_appname.html
+#usr/share/doc/openssl/html/man3/OPENSSL_INIT_set_config_file_flags.html
+#usr/share/doc/openssl/html/man3/OPENSSL_INIT_set_config_filename.html
 #usr/share/doc/openssl/html/man3/OPENSSL_LH_COMPFUNC.html
 #usr/share/doc/openssl/html/man3/OPENSSL_LH_DOALL_FUNC.html
 #usr/share/doc/openssl/html/man3/OPENSSL_LH_HASHFUNC.html
@@ -5941,6 +5943,8 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/OPENSSL_INIT_free.3
 #usr/share/man/man3/OPENSSL_INIT_new.3
 #usr/share/man/man3/OPENSSL_INIT_set_config_appname.3
+#usr/share/man/man3/OPENSSL_INIT_set_config_file_flags.3
+#usr/share/man/man3/OPENSSL_INIT_set_config_filename.3
 #usr/share/man/man3/OPENSSL_LH_COMPFUNC.3
 #usr/share/man/man3/OPENSSL_LH_DOALL_FUNC.3
 #usr/share/man/man3/OPENSSL_LH_HASHFUNC.3
