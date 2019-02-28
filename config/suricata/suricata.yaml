@@ -627,7 +627,8 @@ flow-timeouts:
 #                               # is used in a rule.
 #
 stream:
-  memcap: 64mb
+  memcap: 256mb
+  prealloc-sessions: 4k
   checksum-validation: yes      # reject wrong csums
   inline: auto                  # auto will use inline mode in IPS mode, yes or no set it statically
   reassembly:
@@ -636,10 +637,9 @@ stream:
     toserver-chunk-size: 2560
     toclient-chunk-size: 2560
     randomize-chunk-size: yes
-    #randomize-chunk-range: 10
-    #raw: yes
-    #segment-prealloc: 2048
-    #check-overlap-different-data: true
+    raw: yes
+    segment-prealloc: 2048
+    check-overlap-different-data: true
 
 # Host table:
 #
