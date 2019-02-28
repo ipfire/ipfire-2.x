@@ -628,7 +628,7 @@ flow-timeouts:
 #
 stream:
   memcap: 256mb
-  prealloc-sessions: 4k
+  prealloc-sessions: 4096
   checksum-validation: yes      # reject wrong csums
   inline: auto                  # auto will use inline mode in IPS mode, yes or no set it statically
   reassembly:
