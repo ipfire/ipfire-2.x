@@ -29,8 +29,8 @@ NFQ_OPTS="--queue-bypass "
 network_zones=( red green blue orange )
 
 # Mark and Mask options.
-MARK="0x16"
-MASK="0x16"
+MARK="0x70000000"
+MASK="0x70000000"
 
 # PID file of suricata.
 PID_FILE="/var/run/suricata.pid"
@@ -88,6 +88,9 @@ function generate_fw_rules {
 			iptables -I "$FW_CHAIN" -o "$network_device" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
 		fi
 	done
+
+	# Clear repeat bit, so that it does not confuse IPsec or QoS
+	iptables -A "${FW_CHAIN}" -j MARK --set-xmark "0x0/${MASK}"
 }
 
 # Function to flush the firewall chain.
