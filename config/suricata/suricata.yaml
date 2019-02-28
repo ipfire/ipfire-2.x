@@ -665,7 +665,7 @@ decoder:
   # Teredo decoder is known to not be completely accurate
   # it will sometimes detect non-teredo as teredo.
   teredo:
-    enabled: true
+    enabled: false
 
 
 ##
