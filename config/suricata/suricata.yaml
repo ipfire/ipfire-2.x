@@ -433,12 +433,6 @@ legacy:
 #   - reject
 #   - alert
 
-# IP Reputation
-#reputation-categories-file: /etc/suricata/iprep/categories.txt
-#default-reputation-path: /etc/suricata/iprep
-#reputation-files:
-# - reputation.list
-
 # When run with the option --engine-analysis, the engine will read each of
 # the parameters below, and print reports for each of the enabled sections
 # and exit.  The reports are printed to a file in the default log dir
