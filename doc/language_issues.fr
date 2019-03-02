@@ -224,7 +224,6 @@ WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
 WARNING: translation string unused: dmzpinholes for same net not necessary
 WARNING: translation string unused: dns server
-WARNING: translation string unused: dnsforward forward_server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
@@ -773,7 +772,6 @@ WARNING: untranslated string: Captive clients = unknown string
 WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: default IP address = Default IP Address
-WARNING: untranslated string: dnsforward forward_servers = Nameservers
 WARNING: untranslated string: fwhost cust geoipgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
@@ -819,7 +817,6 @@ WARNING: untranslated string: invalid input for interface mode = Invalid input f
 WARNING: untranslated string: invalid input for interface mtu = Invalid input to interface MTU
 WARNING: untranslated string: invalid input for local ip address = Invalid input for local IP address
 WARNING: untranslated string: invalid input for mode = Invalid input for mode
-WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: ipsec connection = IPsec Connection
 WARNING: untranslated string: ipsec interface mode gre = GRE
 WARNING: untranslated string: ipsec interface mode none = - None (Default) -

@@ -822,14 +822,12 @@
 ############################################################################
 < cryptographic settings
 < default IP address
-< dnsforward forward_servers
 < interface mode
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu
 < invalid input for local ip address
 < invalid input for mode
-< invalid ip or hostname
 < ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
