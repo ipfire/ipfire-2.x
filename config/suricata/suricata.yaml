@@ -140,7 +140,7 @@ app-layer:
     tls:
       enabled: yes
       detection-ports:
-        dp: "[443,444,465,993,995]"
+        dp: "[443,444,465,853,993,995]"
 
       # Completely stop processing TLS/SSL session after the handshake
       # completed. If bypass is enabled this will also trigger flow
@@ -204,11 +204,11 @@ app-layer:
       tcp:
         enabled: yes
         detection-ports:
-          dp: "[53,853]"
+          dp: 53
       udp:
         enabled: yes
         detection-ports:
-          dp: "[53,853]"
+          dp: 53
     http:
       enabled: yes
       # memcap: 64mb
