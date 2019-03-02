@@ -7,6 +7,7 @@ etc/rc.d/init.d/networking/red.up/50-ipsec
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/netovpnsrv.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/bin/readelf
 usr/bin/strings
