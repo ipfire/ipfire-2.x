@@ -41,37 +41,18 @@
 < guardian
 < insert removable device
 < interface mode
-< invalid input for interface address
-< invalid input for interface mode
-< invalid input for interface mtu
-< invalid input for local ip address
-< invalid input for mode
-< ipsec connection
-< ipsec interface mode gre
-< ipsec interface mode none
-< ipsec interface mode vti
-< ipsec mode transport
-< ipsec mode tunnel
-< ipsec settings
-< local ip address
-< mtu
-< none
 < notes
-< qos add subclass
 < quick control
 < shaping add options
 < show areas
 < show lines
 < show tls-auth key
-< subnet mask
 < teovpn_fragment
 < tor bridge enabled
 < tor errmsg invalid node id
-< transport mode does not support vti
 < updxlrtr used by
 < upload fcdsl.o
 < vpn configuration main
-< vpn force mobike
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
