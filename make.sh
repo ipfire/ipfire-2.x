@@ -1590,6 +1590,7 @@ buildipfire() {
   lfsmake2 borgbackup
   lfsmake2 libedit
   lfsmake2 knot
+  lfsmake2 spectre-meltdown-checker
 }
 
 buildinstaller() {
