@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/squid stop
 /usr/local/bin/openvpnctrl -k
 /usr/local/bin/openvpnctrl -kn2n
 /usr/local/bin/ipsecctrl D
@@ -56,6 +57,7 @@ ldconfig
 /usr/local/bin/ipsecctrl S
 /usr/local/bin/openvpnctrl -s
 /usr/local/bin/openvpnctrl -sn2n
+/etc/init.d/squid start
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
