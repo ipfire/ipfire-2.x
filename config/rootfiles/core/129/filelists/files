@@ -8,6 +8,8 @@ srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/netovpnsrv.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+usr/bin/readelf
+usr/bin/strings
 usr/lib/firewall/firewall-lib.pl
 usr/lib/firewall/ipsec-policy
 usr/local/bin/ipsec-interfaces

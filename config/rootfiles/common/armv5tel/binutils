@@ -10,9 +10,9 @@
 #usr/bin/objcopy
 #usr/bin/objdump
 #usr/bin/ranlib
-#usr/bin/readelf
+usr/bin/readelf
 #usr/bin/size
-#usr/bin/strings
+usr/bin/strings
 #usr/bin/strip
 #usr/include/ansidecl.h
 #usr/include/bfd.h
