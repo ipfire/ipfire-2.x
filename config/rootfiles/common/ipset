@@ -3,6 +3,7 @@ etc/ipset
 #usr/include/libipset/args.h
 #usr/include/libipset/data.h
 #usr/include/libipset/errcode.h
+#usr/include/libipset/ipset.h
 #usr/include/libipset/linux_ip_set.h
 #usr/include/libipset/linux_ip_set_bitmap.h
 #usr/include/libipset/linux_ip_set_hash.h
@@ -16,12 +17,12 @@ etc/ipset
 #usr/include/libipset/session.h
 #usr/include/libipset/transport.h
 #usr/include/libipset/types.h
-#usr/include/libipset/ui.h
 #usr/include/libipset/utils.h
 #usr/lib/libipset.la
 #usr/lib/libipset.so
-usr/lib/libipset.so.11
-usr/lib/libipset.so.11.1.0
+usr/lib/libipset.so.13
+usr/lib/libipset.so.13.1.0
 #usr/lib/pkgconfig/libipset.pc
 usr/sbin/ipset
+#usr/share/man/man3/libipset.3
 #usr/share/man/man8/ipset.8
