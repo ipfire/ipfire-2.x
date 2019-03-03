@@ -1220,6 +1220,7 @@ buildipfire() {
   lfsmake2 attr
   lfsmake2 acl
   lfsmake2 libcap
+  lfsmake2 libcap-ng
   lfsmake2 pciutils
   lfsmake2 usbutils
   lfsmake2 libxml2
