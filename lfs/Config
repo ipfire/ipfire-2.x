@@ -41,7 +41,7 @@ PARALLELISM = $(shell echo $$( \
 	fi) \
 )
 
-MAKETUNING = -j $(PARALLELISM)
+MAKETUNING = -j$(PARALLELISM)
 
 ifeq "$(BUILD_ARCH)" "aarch64"
 	IS_64BIT = 1
