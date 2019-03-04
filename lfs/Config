@@ -33,7 +33,15 @@
 # Cleanup environment from any variables
 unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN TOOLS_DIR
 
-MAKETUNING = -j $(DEFAULT_PARALLELISM)
+PARALLELISM = $(shell echo $$( \
+	if [ -n "$(MAX_PARALLELISM)" ] && [ $(MAX_PARALLELISM) -lt $(DEFAULT_PARALLELISM) ]; then \
+		echo $(MAX_PARALLELISM); \
+	else \
+		echo $(DEFAULT_PARALLELISM); \
+	fi) \
+)
+
+MAKETUNING = -j $(PARALLELISM)
 
 ifeq "$(BUILD_ARCH)" "aarch64"
 	IS_64BIT = 1
