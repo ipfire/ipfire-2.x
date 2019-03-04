@@ -201,31 +201,21 @@ configure_build() {
 	CXXFLAGS="${CFLAGS}"
 
 	# Determine parallelism
-	if [ -z "${MAKETUNING}" ]; then
-		# We assume that each process consumes about
-		# 192MB of memory. Therefore we find out how
-		# many processes fit into memory.
-		local mem_max=$(( ${SYSTEM_MEMORY} / 192 ))
-		local cpu_max=$(( ${SYSTEM_PROCESSORS} + 1 ))
+	# We assume that each process consumes about
+	# 192MB of memory. Therefore we find out how
+	# many processes fit into memory.
+	local mem_max=$(( ${SYSTEM_MEMORY} / 192 ))
+	local cpu_max=$(( ${SYSTEM_PROCESSORS} + 1 ))
 
-		local parallelism
-		if [ ${mem_max} -lt ${cpu_max} ]; then
-			parallelism=${mem_max}
-		else
-			parallelism=${cpu_max}
-		fi
-
-		# Use this as default PARALLELISM
-		DEFAULT_PARALLELISM="${parallelism}"
-
-		# limit to -j23 because perl will not build
-		# more
-		if [ ${parallelism} -gt 23 ]; then
-			parallelism=23
-		fi
-
-		MAKETUNING="-j${parallelism}"
+	local parallelism
+	if [ ${mem_max} -lt ${cpu_max} ]; then
+		parallelism=${mem_max}
+	else
+		parallelism=${cpu_max}
 	fi
+
+	# Use this as default PARALLELISM
+	DEFAULT_PARALLELISM="${parallelism}"
 
 	# Compression parameters
 	# We use mode 8 for reasonable memory usage when decompressing
@@ -470,7 +460,7 @@ prepareenv() {
 	# Setup environment
 	set +h
 	LC_ALL=POSIX
-	export LFS LC_ALL CFLAGS CXXFLAGS DEFAULT_PARALLELISM MAKETUNING
+	export LFS LC_ALL CFLAGS CXXFLAGS DEFAULT_PARALLELISM
 	unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
 	# Make some extra directories
@@ -637,7 +627,6 @@ lfsmake1() {
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
 		CFLAGS="${CFLAGS}" \
 		CXXFLAGS="${CXXFLAGS}" \
-		MAKETUNING="${MAKETUNING}" \
 		DEFAULT_PARALLELISM="${DEFAULT_PARALLELISM}" \
 		SYSTEM_PROCESSORS="${SYSTEM_PROCESSORS}" \
 		SYSTEM_MEMORY="${SYSTEM_MEMORY}" \
@@ -669,7 +658,6 @@ lfsmake2() {
 
 	enterchroot \
 		${EXTRA_PATH}bash -x -c "cd /usr/src/lfs && \
-			MAKETUNING=${MAKETUNING} \
 			make -f $* \
 			LFS_BASEDIR=/usr/src install" \
 		>> ${LOGFILE} 2>&1 &
