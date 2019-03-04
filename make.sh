@@ -206,9 +206,7 @@ configure_build() {
 		# 192MB of memory. Therefore we find out how
 		# many processes fit into memory.
 		local mem_max=$(( ${SYSTEM_MEMORY} / 192 ))
-
-		local processors="$(system_processors)"
-		local cpu_max=$(( ${processors} + 1 ))
+		local cpu_max=$(( ${SYSTEM_PROCESSORS} + 1 ))
 
 		local parallelism
 		if [ ${mem_max} -lt ${cpu_max} ]; then
