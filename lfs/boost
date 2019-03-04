@@ -32,8 +32,8 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-CFLAGS    += -O3 -fno-strict-aliasing
-CXXFLAGS  += -O3 -fno-strict-aliasing
+CFLAGS    += -fno-strict-aliasing
+CXXFLAGS  += -fno-strict-aliasing
 
 # The compiler uses a lot of memory to compile boost, hence we reduce
 # the total number of processes a little bit to be able to build on
