@@ -215,6 +215,9 @@ configure_build() {
 			parallelism=${cpu_max}
 		fi
 
+		# Use this as default PARALLELISM
+		DEFAULT_PARALLELISM="${parallelism}"
+
 		# limit to -j23 because perl will not build
 		# more
 		if [ ${parallelism} -gt 23 ]; then
@@ -467,7 +470,7 @@ prepareenv() {
 	# Setup environment
 	set +h
 	LC_ALL=POSIX
-	export LFS LC_ALL CFLAGS CXXFLAGS MAKETUNING
+	export LFS LC_ALL CFLAGS CXXFLAGS DEFAULT_PARALLELISM MAKETUNING
 	unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
 	# Make some extra directories
@@ -552,6 +555,7 @@ enterchroot() {
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
 		KVER="${KVER}" \
 		XZ_OPT="${XZ_OPT}" \
+		DEFAULT_PARALLELISM="${DEFAULT_PARALLELISM}" \
 		SYSTEM_PROCESSORS="${SYSTEM_PROCESSORS}" \
 		SYSTEM_MEMORY="${SYSTEM_MEMORY}" \
 		$(fake_environ) \
@@ -634,6 +638,7 @@ lfsmake1() {
 		CFLAGS="${CFLAGS}" \
 		CXXFLAGS="${CXXFLAGS}" \
 		MAKETUNING="${MAKETUNING}" \
+		DEFAULT_PARALLELISM="${DEFAULT_PARALLELISM}" \
 		SYSTEM_PROCESSORS="${SYSTEM_PROCESSORS}" \
 		SYSTEM_MEMORY="${SYSTEM_MEMORY}" \
 		make -f $* \

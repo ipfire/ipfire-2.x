@@ -33,6 +33,8 @@
 # Cleanup environment from any variables
 unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN TOOLS_DIR
 
+MAKETUNING = -j $(DEFAULT_PARALLELISM)
+
 ifeq "$(BUILD_ARCH)" "aarch64"
 	IS_64BIT = 1
 endif
