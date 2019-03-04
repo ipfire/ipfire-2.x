@@ -205,7 +205,7 @@ configure_build() {
 		# We assume that each process consumes about
 		# 192MB of memory. Therefore we find out how
 		# many processes fit into memory.
-		local mem_max=$(( ${HOST_MEM} / 192 ))
+		local mem_max=$(( ${SYSTEM_MEMORY} / 192 ))
 
 		local processors="$(system_processors)"
 		local cpu_max=$(( ${processors} + 1 ))
@@ -237,7 +237,7 @@ configure_build() {
 	# We need to limit memory because XZ uses too much when running
 	# in parallel and it isn't very smart in limiting itself.
 	# We allow XZ to use up to 70% of all system memory.
-	local xz_memory=$(( HOST_MEM * 7 / 10 ))
+	local xz_memory=$(( SYSTEM_MEMORY * 7 / 10 ))
 
 	# XZ memory cannot be larger than 2GB on 32 bit systems
 	case "${build_arch}" in
@@ -914,9 +914,6 @@ fi
 # Get some information about the host system
 SYSTEM_PROCESSORS="$(system_processors)"
 SYSTEM_MEMORY="$(system_memory)"
-
-# Get the amount of memory in this build system
-HOST_MEM=$(system_memory)
 
 if [ -n "${BUILD_ARCH}" ]; then
 	configure_build "${BUILD_ARCH}"
