@@ -554,6 +554,8 @@ enterchroot() {
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
 		KVER="${KVER}" \
 		XZ_OPT="${XZ_OPT}" \
+		SYSTEM_PROCESSORS="${SYSTEM_PROCESSORS}" \
+		SYSTEM_MEMORY="${SYSTEM_MEMORY}" \
 		$(fake_environ) \
 		$(qemu_environ) \
 		"$@"
@@ -634,6 +636,8 @@ lfsmake1() {
 		CFLAGS="${CFLAGS}" \
 		CXXFLAGS="${CXXFLAGS}" \
 		MAKETUNING="${MAKETUNING}" \
+		SYSTEM_PROCESSORS="${SYSTEM_PROCESSORS}" \
+		SYSTEM_MEMORY="${SYSTEM_MEMORY}" \
 		make -f $* \
 			TOOLCHAIN=1 \
 			TOOLS_DIR="${TOOLS_DIR}" \
@@ -906,6 +910,10 @@ if [ -n "${TARGET_ARCH}" ]; then
 	BUILD_ARCH="${TARGET_ARCH}"
 	unset TARGET_ARCH
 fi
+
+# Get some information about the host system
+SYSTEM_PROCESSORS="$(system_processors)"
+SYSTEM_MEMORY="$(system_memory)"
 
 # Get the amount of memory in this build system
 HOST_MEM=$(system_memory)
