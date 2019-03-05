@@ -109,7 +109,7 @@ $cgiparams{'RW_NET'} = '';
 $cgiparams{'DPD_DELAY'} = '30';
 $cgiparams{'DPD_TIMEOUT'} = '120';
 $cgiparams{'FORCE_MOBIKE'} = 'off';
-$cgiparams{'START_ACTION'} = 'start';
+$cgiparams{'START_ACTION'} = 'route';
 $cgiparams{'INACTIVITY_TIMEOUT'} = 900;
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
