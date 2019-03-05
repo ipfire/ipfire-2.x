@@ -1315,6 +1315,7 @@ END
 		$cgiparams{'DPD_TIMEOUT'}		= $confighash{$cgiparams{'KEY'}}[30];
 		$cgiparams{'DPD_DELAY'}			= $confighash{$cgiparams{'KEY'}}[31];
 		$cgiparams{'FORCE_MOBIKE'}		= $confighash{$cgiparams{'KEY'}}[32];
+		$cgiparams{'START_ACTION'}		= $confighash{$cgiparams{'KEY'}}[33];
 		$cgiparams{'INACTIVITY_TIMEOUT'}	= $confighash{$cgiparams{'KEY'}}[34];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
@@ -1855,6 +1856,7 @@ END
 	$confighash{$key}[30] = $cgiparams{'DPD_TIMEOUT'};
 	$confighash{$key}[31] = $cgiparams{'DPD_DELAY'};
 	$confighash{$key}[32] = $cgiparams{'FORCE_MOBIKE'};
+	$confighash{$key}[33] = $cgiparams{'START_ACTION'};
 	$confighash{$key}[34] = $cgiparams{'INACTIVITY_TIMEOUT'};
 
 	# free unused fields!
@@ -1985,6 +1987,7 @@ VPNCONF_ERROR:
 	<input type='hidden' name='DPD_DELAY' value='$cgiparams{'DPD_DELAY'}' />
 	<input type='hidden' name='DPD_TIMEOUT' value='$cgiparams{'DPD_TIMEOUT'}' />
 	<input type='hidden' name='FORCE_MOBIKE' value='$cgiparams{'FORCE_MOBIKE'}' />
+	<input type='hidden' name='START_ACTION' value='$cgiparams{'START_ACTION'}' />
 END
 ;
 	if ($cgiparams{'KEY'}) {
