@@ -1,16 +1,16 @@
-diff -Naur hostapd-2.3.org/src/ap/wpa_auth.c hostapd-2.3/src/ap/wpa_auth.c
---- hostapd-2.3.org/src/ap/wpa_auth.c	2014-10-09 16:41:31.000000000 +0200
-+++ hostapd-2.3/src/ap/wpa_auth.c	2015-04-07 16:32:10.671422975 +0200
-@@ -45,9 +45,9 @@
+diff U3 a/src/ap/wpa_auth.c b/src/ap/wpa_auth.c
+--- a/src/ap/wpa_auth.c	Sun Dec  2 20:34:59 2018
++++ b/src/ap/wpa_auth.c	Mon Mar  4 15:47:26 2019
+@@ -63,9 +63,9 @@
+ 			  struct wpa_group *group);
+ static u8 * ieee80211w_kde_add(struct wpa_state_machine *sm, u8 *pos);
  
- static const u32 dot11RSNAConfigGroupUpdateCount = 4;
- static const u32 dot11RSNAConfigPairwiseUpdateCount = 4;
 -static const u32 eapol_key_timeout_first = 100; /* ms */
 -static const u32 eapol_key_timeout_subseq = 1000; /* ms */
 -static const u32 eapol_key_timeout_first_group = 500; /* ms */
 +static const u32 eapol_key_timeout_first = 300; /* ms */
 +static const u32 eapol_key_timeout_subseq = 3000; /* ms */
 +static const u32 eapol_key_timeout_first_group = 1500; /* ms */
+ static const u32 eapol_key_timeout_no_retrans = 4000; /* ms */
  
  /* TODO: make these configurable */
- static const int dot11RSNAConfigPMKLifetime = 43200;
