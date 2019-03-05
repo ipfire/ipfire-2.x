@@ -197,8 +197,8 @@ write_forward_conf() {
 
 		local insecure_zones="${INSECURE_ZONES}"
 
-		local enabled zone server servers remark
-		while IFS="," read -r enabled zone servers remark; do
+		local enabled zone server servers remark disable_dnssec rest
+		while IFS="," read -r enabled zone servers remark disable_dnssec rest; do
 			# Line must be enabled.
 			[ "${enabled}" = "on" ] || continue
 
@@ -207,6 +207,11 @@ write_forward_conf() {
 			case "${zone}" in
 				*.local)
 					insecure_zones="${insecure_zones} ${zone}"
+					;;
+				*)
+					if [ "${disable_dnssec}" = "on" ]; then
+						insecure_zones="${insecure_zones} ${zone}"
+					fi
 					;;
 			esac
 
