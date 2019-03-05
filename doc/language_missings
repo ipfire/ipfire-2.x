@@ -210,9 +210,11 @@
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
+< dns forward disable dnssec
 < dnsforward edit an entry
 < dnsforward entries
 < dnsforward forward_servers
+< dns forwarding dnssec disabled notice
 < dnsforward zone
 < dnssec aware
 < dnssec disabled warning
@@ -803,6 +805,8 @@
 ############################################################################
 < cryptographic settings
 < default IP address
+< dns forward disable dnssec
+< dns forwarding dnssec disabled notice
 < interface mode
 < invalid input for interface address
 < invalid input for interface mode
@@ -898,7 +902,9 @@
 < dhcp dns update algo
 < dhcp dns update secret
 < dl client arch insecure
+< dns forward disable dnssec
 < dnsforward forward_servers
+< dns forwarding dnssec disabled notice
 < dnssec disabled warning
 < eight hours
 < email config
@@ -1141,7 +1147,9 @@
 < dh name is invalid
 < dh parameter
 < dl client arch insecure
+< dns forward disable dnssec
 < dnsforward forward_servers
+< dns forwarding dnssec disabled notice
 < dnssec aware
 < dnssec disabled warning
 < dnssec information
@@ -1501,9 +1509,11 @@
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
+< dns forward disable dnssec
 < dnsforward edit an entry
 < dnsforward entries
 < dnsforward forward_servers
+< dns forwarding dnssec disabled notice
 < dnsforward zone
 < dnssec aware
 < dnssec disabled warning
@@ -2235,9 +2245,11 @@
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
+< dns forward disable dnssec
 < dnsforward edit an entry
 < dnsforward entries
 < dnsforward forward_servers
+< dns forwarding dnssec disabled notice
 < dnsforward zone
 < dnssec aware
 < dnssec disabled warning
@@ -2820,7 +2832,9 @@
 < cryptographic settings
 < crypto warning
 < default IP address
+< dns forward disable dnssec
 < dnsforward forward_servers
+< dns forwarding dnssec disabled notice
 < fwdfw all subnets
 < interface mode
 < invalid input for interface address

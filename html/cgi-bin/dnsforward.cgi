@@ -52,6 +52,7 @@ $cgiparams{'ACTION'} = '';
 $cgiparams{'ZONE'} = '';
 $cgiparams{'FORWARD_SERVERS'} = '';
 $cgiparams{'REMARK'} ='';
+$cgiparams{'DISABLE_DNSSEC'} = 'off';
 &Header::getcgihash(\%cgiparams);
 open(FILE, $filename) or die 'Unable to open config file.';
 my @current = <FILE>;
@@ -76,6 +77,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'add'})
 		}
 	}
 
+	if ($cgiparams{'DISABLE_DNSSEC'} !~ /^(on|off)?$/) {
+		$errormessage = $Lang::tr{'invalid input'};
+	}
+
 	# Go further if there was no error.
 	if ( ! $errormessage)
 	{
@@ -85,11 +90,16 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'add'})
 	    # Check if a remark has been entered.
 	    $cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 
+		# Set to off if not enabled
+		if (!$cgiparams{'DISABLE_DNSSEC'}) {
+			$cgiparams{'DISABLE_DNSSEC'} = "off";
+		}
+
 		# Check if we want to edit an existing or add a new entry.
 		if($cgiparams{'EDITING'} eq 'no') {
 			open(FILE,">>$filename") or die 'Unable to open config file.';
 			flock FILE, 2;
-			print FILE "$cgiparams{'ENABLED'},$cgiparams{'ZONE'},$cgiparams{'FORWARD_SERVERS'},$cgiparams{'REMARK'}\n";
+			print FILE "$cgiparams{'ENABLED'},$cgiparams{'ZONE'},$cgiparams{'FORWARD_SERVERS'},$cgiparams{'REMARK'},$cgiparams{'DISABLE_DNSSEC'}\n";
 		} else {
 			open(FILE, ">$filename") or die 'Unable to open config file.';
 			flock FILE, 2;
@@ -98,7 +108,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'add'})
 			{
 				$id++;
 				if ($cgiparams{'EDITING'} eq $id) {
-					print FILE "$cgiparams{'ENABLED'},$cgiparams{'ZONE'},$cgiparams{'FORWARD_SERVERS'},$cgiparams{'REMARK'}\n";
+					print FILE "$cgiparams{'ENABLED'},$cgiparams{'ZONE'},$cgiparams{'FORWARD_SERVERS'},$cgiparams{'REMARK'},$cgiparams{'DISABLE_DNSSEC'}\n";
 				} else { print FILE "$line"; }
 			}
 		}
@@ -151,7 +161,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'toggle enable disable'})
 		{
 			chomp($line);
 			my @temp = split(/\,/,$line);
-			print FILE "$cgiparams{'ENABLE'},$temp[1],$temp[2],$temp[3]\n";
+
+			$temp[0] = $cgiparams{'ENABLE'};
+
+			print FILE join(",", @temp) . "\n";
 		}
 	}
 	close(FILE);
@@ -176,6 +189,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'edit'})
 			$cgiparams{'ZONE'} = $temp[1];
 			$cgiparams{'FORWARD_SERVERS'} = join(",", split(/\|/, $temp[2]));
 			$cgiparams{'REMARK'} = $temp[3];
+			$cgiparams{'DISABLE_DNSSEC'} = $temp[4];
 		}
 	}
 }
@@ -183,6 +197,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'edit'})
 $checked{'ENABLED'}{'off'} = '';
 $checked{'ENABLED'}{'on'} = '';
 $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = "checked='checked'";
+
+$checked{'DISABLE_DNSSEC'}{'off'} = '';
+$checked{'DISABLE_DNSSEC'}{'on'} = '';
+$checked{'DISABLE_DNSSEC'}{$cgiparams{'DISABLE_DNSSEC'}} = "checked='checked'";
 
 &Header::openpage($Lang::tr{'dnsforward configuration'}, 1, '');
 
@@ -229,6 +247,10 @@ print <<END
 	<tr>
 		<td width ='20%' class='base'>$Lang::tr{'remark'}:</td>
 		<td><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='40' maxlength='50' /></td>
+	</tr>
+	<tr>
+		<td width ='20%' class='base'>$Lang::tr{'dns forward disable dnssec'}:</td>
+		<td><input type='checkbox' name='DISABLE_DNSSEC' $checked{'DISABLE_DNSSEC'}' /></td>
 	</tr>
 </table>
 <br>
@@ -291,13 +313,19 @@ foreach my $line (@current)
 	my $gif = '';
 	my $gdesc = '';
 	my $toggle = '';
+	my $notice = "";
 
 	# Format lists of servers
 	my $servers = join(", ", split(/\|/, $temp[2]));
 
+	my $disable_dnssec = $temp[4];
+
 	if($cgiparams{'ACTION'} eq $Lang::tr{'edit'} && $cgiparams{'ID'} eq $id) {
 		print "<tr>";
 		$col="bgcolor='${Header::colouryellow}'"; }
+	elsif ($disable_dnssec eq 'on') {
+		print "<tr>";
+		$col="bgcolor='${Header::colourred}' style='color: white'"; }
 	elsif ($id % 2) {
 		print "<tr>";
 		$col="bgcolor='$color{'color22'}'"; }
@@ -308,11 +336,15 @@ foreach my $line (@current)
 	if ($temp[0] eq 'on') { $gif='on.gif'; $toggle='off'; $gdesc=$Lang::tr{'click to disable'};}
 	else { $gif='off.gif'; $toggle='on'; $gdesc=$Lang::tr{'click to enable'}; }
 
+	if ($disable_dnssec eq "on") {
+		$notice = $Lang::tr{'dns forwarding dnssec disabled notice'};
+	}
+
 ###
 # Display edit page.
 #
 print <<END
-	<td align='center' $col>$temp[1]</td>
+	<td align='center' $col>$temp[1] $notice</td>
 	<td align='center' $col>$servers</td>
 	<td align='center' $col>$temp[3]</td>
 	<td align='center' $col>
