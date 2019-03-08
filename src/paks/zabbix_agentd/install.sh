@@ -23,6 +23,14 @@
 #
 . /opt/pakfire/lib/functions.sh
 
+if ! getent group zabbix &>/dev/null; then
+	groupadd -g 118 zabbix
+fi
+
+if ! getent passwd zabbix; then
+	useradd -u 118 -g zabbix -d /var/empty -s /bin/false zabbix
+fi
+
 extract_files
 
 # Create symlinks for runlevel interaction.
