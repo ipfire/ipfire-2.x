@@ -39,6 +39,7 @@ usr/lib/postfix/post-install
 usr/lib/postfix/postfix-script
 usr/lib/postfix/postfix-tls-script
 usr/lib/postfix/postfix-wrapper
+usr/lib/postfix/postlogd
 usr/lib/postfix/postmulti-script
 usr/lib/postfix/postscreen
 usr/lib/postfix/proxymap
@@ -122,6 +123,7 @@ usr/sbin/sendmail.postfix
 #usr/share/man/man8/oqmgr.8
 #usr/share/man/man8/pickup.8
 #usr/share/man/man8/pipe.8
+#usr/share/man/man8/postlogd.8
 #usr/share/man/man8/postscreen.8
 #usr/share/man/man8/proxymap.8
 #usr/share/man/man8/qmgr.8
