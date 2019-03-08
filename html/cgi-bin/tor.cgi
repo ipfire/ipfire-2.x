@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2013  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2013-2019  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -36,10 +36,10 @@ my @dummy = ( ${Header::colouryellow} );
 undef (@dummy);
 
 my @bandwidth_limits = (
-	1000 * 1024, # 1G
+	1000 * 1024, # 1 GBit/s
 	 500 * 1024,
 	 200 * 1024,
-	 100 * 1024, # 100M
+	 100 * 1024, # 100 MBit/s
 	  64 * 1024,
 	  50 * 1024,
 	  25 * 1024,
@@ -49,10 +49,7 @@ my @bandwidth_limits = (
 	   8 * 1024,
 	   4 * 1024,
 	   2 * 1024,
-	       1024, # 1M
-	        512,
-	        256,
-	        160
+	       1024  # 1 MBit/s
 );
 my @accounting_periods = ('daily', 'weekly', 'monthly');
 
