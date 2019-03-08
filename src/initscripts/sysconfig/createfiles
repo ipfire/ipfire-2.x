@@ -27,6 +27,5 @@
 
 /var/run/ovpnserver.log	file	644	nobody	nobody
 /var/run/openvpn	dir	644	nobody	nobody
-/var/run/zabbix		dir	755	zabbix	zabbix
 
 # End /etc/sysconfig/createfiles
