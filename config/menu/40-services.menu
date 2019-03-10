@@ -25,11 +25,6 @@
 				'title' => "Quality of Service",
 				'enabled' => 1,
 				};
-    $subservices->{'60.ids'} = {'caption' => $Lang::tr{'intrusion detection'},
-				'enabled' => 1,
-				'uri' => '/cgi-bin/ids.cgi',
-				'title' => "$Lang::tr{'intrusion detection system'}",
-				};
     $subservices->{'70.extrahd'} = {'caption' => "ExtraHD",
 				'enabled' => 1,
 				'uri' => '/cgi-bin/extrahd.cgi',
