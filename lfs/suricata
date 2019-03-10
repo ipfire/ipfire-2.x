@@ -102,5 +102,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Create logging directory.
 	-mkdir -p /var/log/suricata
 
+	# Set correct ownership for /var/log/suricata.
+	chown suricata:suricata /var/log/suricata
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
