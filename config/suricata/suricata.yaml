@@ -20,6 +20,7 @@ vars:
     DNS_SERVERS: "$HOME_NET"
     TELNET_SERVERS: "$HOME_NET"
     AIM_SERVERS: "$EXTERNAL_NET"
+    DC_SERVERS: "$HOME_NET"
     DNP3_SERVER: "$HOME_NET"
     DNP3_CLIENT: "$HOME_NET"
     MODBUS_CLIENT: "$HOME_NET"
@@ -61,6 +62,14 @@ stats:
   # The interval field (in seconds) controls at what interval
   # the loggers are invoked.
   interval: 8
+
+  # Add decode events as stats.
+  #decoder-events: true
+  # Decoder event prefix in stats. Has been 'decoder' before, but that leads
+  # to missing events in the eve.stats records. See issue #2225.
+  decoder-events-prefix: "decoder.event"
+  # Add stream events as stats.
+  #stream-events: false
 
 # Configure the type of alert (and other) logging you would like.
 outputs:
@@ -137,6 +146,10 @@ nfq:
 # "detection-only" enables protocol detection only (parser disabled).
 app-layer:
   protocols:
+    krb5:
+      enabled: no # Requires rust
+    ikev2:
+      enabled: yes
     tls:
       enabled: yes
       detection-ports:
