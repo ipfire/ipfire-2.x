@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tor
-PAK_VER    = 34
+PAK_VER    = 35
 
 DEPS       = ""
 
@@ -82,8 +82,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--prefix=/usr \
 			--sysconfdir=/etc \
 			--localstatedir=/var \
-			--with-tor-user=nobody \
-			--with-tor-group=nobody
+			--with-tor-user=tor \
+			--with-tor-group=tor
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
