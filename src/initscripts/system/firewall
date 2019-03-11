@@ -294,9 +294,11 @@ iptables_init() {
 	iptables -N OVPNINPUT
 	iptables -A INPUT -j OVPNINPUT
 
-	# Tor
+	# Tor (inbound and outbound)
 	iptables -N TOR_INPUT
 	iptables -A INPUT -j TOR_INPUT
+	iptables -N TOR_OUTPUT
+	iptables -A OUTPUT -j TOR_OUTPUT
 	
 	# Jump into the actual firewall ruleset.
 	iptables -N INPUTFW
