@@ -832,6 +832,8 @@
 'dns error 0' => 'The IP address of the <strong>primary</strong> DNS server is not valid, please check your entries!<br />The entered <strong>secondary</strong> DNS server address is valid.',
 'dns error 01' => 'The entered IP address of the <strong>primary</strong> and <strong>secondary</strong> DNS server are not valid, please check your entries!',
 'dns error 1' => 'The IP address of the <strong>secondary</strong> DNS server is not valid, please check your entries!<br />The entered <strong>primary</strong> DNS server address is valid.',
+'dns forward disable dnssec' => 'Disable DNSSEC (dangerous)',
+'dns forwarding dnssec disabled notice' => '(DNSSEC disabled)',
 'dns header' => 'Assign DNS server addresses only for DHCP on red0',
 'dns list' => 'List of free public DNS servers',
 'dns menu' => 'Assign DNS-Server',

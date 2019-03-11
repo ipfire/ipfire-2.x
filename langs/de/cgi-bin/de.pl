@@ -805,6 +805,8 @@
 'dns error 0' => 'Die IP Adresse vom <strong>primären</strong> DNS Server ist nicht gültig, bitte überprüfen Sie Ihre Eingabe!<br />Die eingegebene <strong>sekundären</strong> DNS Server Adresse ist jedoch gültig.<br />',
 'dns error 01' => 'Die eingegebene IP Adresse des <strong>primären</strong> wie auch des <strong>sekundären</strong> DNS-Servers sind nicht gültig, bitte überprüfen Sie Ihre Eingaben!',
 'dns error 1' => 'Die IP Adresse vom <strong>sekundären</strong> DNS Server ist nicht gültig, bitte überprüfen Sie Ihre Eingabe!<br />Die eingegebene <strong>primäre</strong> DNS Server Adresse ist jedoch gültig.',
+'dns forward disable dnssec' => 'DNSSEC deaktivieren (nicht empfohlen)',
+'dns forwarding dnssec disabled notice' => '(DNSSEC deaktiviert)',
 'dns header' => 'DNS Server Adressen zuweisen nur mit DHCP an red0',
 'dns list' => 'Liste von freien öffentlichen DNS Servern',
 'dns menu' => 'DNS-Server zuweisen',
