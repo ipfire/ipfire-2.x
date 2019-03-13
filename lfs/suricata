@@ -78,7 +78,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-gccmarch-native \
 		--enable-non-bundled-htp \
 		--enable-nfqueue \
-		--disable-static
+		--disable-static \
+		--disable-python \
+		--disable-suricata-update
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && make install-conf
@@ -88,6 +90,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install IPFire related config file.
 	install -m 0644 $(DIR_SRC)/config/suricata/suricata.yaml /etc/suricata
+
+	# Remove shipped rules.
+	rm -rvf /usr/share/suricata
 
 	# Create emtpy rules directory.
 	-mkdir -p /var/lib/suricata
