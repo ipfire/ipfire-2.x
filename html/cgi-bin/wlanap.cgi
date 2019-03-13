@@ -620,6 +620,7 @@ dump_file=/tmp/hostapd.dump
 auth_algs=1
 ctrl_interface=/var/run/hostapd
 ctrl_interface_group=0
+disassoc_low_ack=1
 END
 ;
  if ( $wlanapsettings{'HIDESSID'} eq 'on' ){
