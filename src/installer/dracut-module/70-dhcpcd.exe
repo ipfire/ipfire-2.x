@@ -46,6 +46,9 @@ case "${reason}" in
 
 		# Create system configuration files
 		make_resolvconf
+
+		# Set time
+		ntpdate "ntp.ipfire.org"
 		;;
 
 	EXPIRE|FAIL|IPV4LL|NAK|NOCARRIER|RELEASE|STOP)

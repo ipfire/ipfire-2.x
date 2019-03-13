@@ -50,7 +50,7 @@ install() {
     inst_libdir_file "libnss_dns.so.*"
 
     # Misc. tools
-    inst_multiple chmod cut grep eject id killall md5sum touch
+    inst_multiple chmod cut grep eject id killall md5sum ntpdate touch
     inst_multiple -o fdisk cfdisk df ps top
 
     # Hardware IDs
