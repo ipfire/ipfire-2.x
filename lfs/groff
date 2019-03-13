@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.22.3
+VER        = 1.22.4
 
 THISAPP    = groff-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = cc825fa64bc7306a885f2fb2268d3ec5
+$(DL_FILE)_MD5 = 08fb04335e2f5e73f23ea4c3adbf0c5f
 
 install : $(TARGET)
 
@@ -73,7 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && PAGE=A4 ./configure \
 		--prefix=/usr
 
-	cd $(DIR_APP) && make #This package does not support parallel build
+	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	ln -svf eqn /usr/bin/geqn
 	ln -svf tbl /usr/bin/gtbl
