@@ -40,7 +40,8 @@ done
 
 # Remove files
 rm -vf \
-	/usr/lib/firewall/ipsec-block
+	/usr/lib/firewall/ipsec-block \
+	/sbin/dracut*
 
 # Extract files
 extract_files
@@ -59,8 +60,11 @@ ldconfig
 /usr/local/bin/openvpnctrl -sn2n
 /etc/init.d/squid start
 
+# Rebuild initrd
+rebuild-initrd
+
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
