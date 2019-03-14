@@ -24,9 +24,9 @@
 
 include Config
 
-VER        = 2.0.6
+VER        = 4.1.3
 
-THISAPP    = daq-$(VER)
+THISAPP    = suricata-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2cd6da422a72c129c685fc4bb848c24c
+$(DL_FILE)_MD5 = 35c4a8e6be3910831649a073950195df
 
 install : $(TARGET)
 
@@ -70,8 +70,45 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--localstatedir=/var \
+		--enable-gccprotect \
+		--disable-gccmarch-native \
+		--enable-non-bundled-htp \
+		--enable-nfqueue \
+		--disable-static \
+		--disable-python \
+		--disable-suricata-update
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && make install-conf
+
+	# Remove default suricata config file.
+	rm -rvf /etc/suricata/suricata.yaml
+
+	# Install IPFire related config file.
+	install -m 0644 $(DIR_SRC)/config/suricata/suricata.yaml /etc/suricata
+
+	# Remove shipped rules.
+	rm -rvf /usr/share/suricata
+
+	# Create emtpy rules directory.
+	-mkdir -p /var/lib/suricata
+
+	# Move config files for references, threshold and classification
+	# to the rules directory.
+	mv /etc/suricata/*.config /var/lib/suricata
+
+	# Set correct ownership for /var/lib/suricata
+	chown nobody:nobody /var/lib/suricata
+
+	# Create logging directory.
+	-mkdir -p /var/log/suricata
+
+	# Set correct ownership for /var/log/suricata.
+	chown suricata:suricata /var/log/suricata
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

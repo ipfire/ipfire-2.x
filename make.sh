@@ -1216,6 +1216,7 @@ buildipfire() {
   lfsmake2 attr
   lfsmake2 acl
   lfsmake2 libcap
+  lfsmake2 libcap-ng
   lfsmake2 pciutils
   lfsmake2 usbutils
   lfsmake2 libxml2
@@ -1314,9 +1315,11 @@ buildipfire() {
   lfsmake2 setserial
   lfsmake2 setup
   lfsmake2 libdnet
-  lfsmake2 daq
-  lfsmake2 snort
+  lfsmake2 yaml
+  lfsmake2 libhtp
+  lfsmake2 suricata
   lfsmake2 oinkmaster
+  lfsmake2 ids-ruleset-sources
   lfsmake2 squid
   lfsmake2 squidguard
   lfsmake2 calamaris

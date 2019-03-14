@@ -56,6 +56,7 @@ my %servicenames =(
 	$Lang::tr{'secure shell server'} => 'sshd',
 	$Lang::tr{'vpn'} => 'charon',
 	$Lang::tr{'web proxy'} => 'squid',
+	$Lang::tr{'intrusion detection system'} => 'suricata',
 	'OpenVPN' => 'openvpn'
 );
 
@@ -71,30 +72,15 @@ my %link =(
 	$Lang::tr{'vpn'} => "<a href=\'vpnmain.cgi\'>$Lang::tr{'vpn'}</a>",
 	$Lang::tr{'web proxy'} => "<a href=\'proxy.cgi\'>$Lang::tr{'web proxy'}</a>",
 	'OpenVPN' => "<a href=\'ovpnmain.cgi\'>OpenVPN</a>",
-	"$Lang::tr{'intrusion detection system'} (GREEN)" => "<a href=\'ids.cgi\'>$Lang::tr{'intrusion detection system'} (GREEN)</a>",
-	"$Lang::tr{'intrusion detection system'} (RED)" => "<a href=\'ids.cgi\'>$Lang::tr{'intrusion detection system'} (RED)</a>",
-	"$Lang::tr{'intrusion detection system'} (ORANGE)" => "<a href=\'ids.cgi\'>$Lang::tr{'intrusion detection system'} (ORANGE)</a>",
-	"$Lang::tr{'intrusion detection system'} (BLUE)" => "<a href=\'ids.cgi\'>$Lang::tr{'intrusion detection system'} (BLUE)</a>"
+	"$Lang::tr{'intrusion detection system'}" => "<a href=\'ids.cgi\'>$Lang::tr{'intrusion detection system'}</a>",
+);
+
+# Hash to overwrite the process name of a process if it differs fromt the launch command.
+my %overwrite_exename_hash = (
+	"suricata" => "Suricata-Main"
 );
 
 my $lines=0; # Used to count the outputlines to make different bgcolor
-
-my $iface = '';
-if (open(FILE, "${General::swroot}/red/iface")){
-	$iface = <FILE>;
-	close FILE;
-	chomp $iface;
-}
-
-$servicenames{"$Lang::tr{'intrusion detection system'} (RED)"}   = "snort_${iface}";
-$servicenames{"$Lang::tr{'intrusion detection system'} (GREEN)"} = "snort_$netsettings{'GREEN_DEV'}";
-
-if ($netsettings{'ORANGE_DEV'} ne ''){
-	$servicenames{"$Lang::tr{'intrusion detection system'} (ORANGE)"} = "snort_$netsettings{'ORANGE_DEV'}";
-}
-if ($netsettings{'BLUE_DEV'} ne ''){
-	$servicenames{"$Lang::tr{'intrusion detection system'} (BLUE)"} = "snort_$netsettings{'BLUE_DEV'}";
-}
 
 my @querry = split(/\?/,$ENV{'QUERY_STRING'});
 $querry[0] = '' unless defined $querry[0];
@@ -258,7 +244,20 @@ sub isrunning{
 	my $memory;
 
 	$cmd =~ /(^[a-z]+)/;
-	$exename = $1;
+
+	# Check if the exename needs to be overwritten.
+	# This happens if the expected process name string
+	# differs from the real one. This may happened if
+	# a service uses multiple processes or threads.
+	if (exists($overwrite_exename_hash{$1})) {
+		# Grab the string which will be reported by
+		# the process from the corresponding hash.
+		$exename = $overwrite_exename_hash{$1};
+	} else {
+		# Directly expect the launched command as
+		# process name.
+		$exename = $1;
+	}
 
 	if (open(FILE, "/var/run/${cmd}.pid")){
 		$pid = <FILE>; chomp $pid;

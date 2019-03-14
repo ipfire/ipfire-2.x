@@ -1,7 +1,8 @@
+#!/usr/bin/perl
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2018 IPFire Team  <info@ipfire.org>                           #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -18,41 +19,58 @@
 #                                                                             #
 ###############################################################################
 
-CC      = gcc
-CFLAGS ?= -O2 -Wall
-LIBS    = -lsmooth -lnewt
+use strict;
 
-PROGS = iowrap
-SUID_PROGS = squidctrl sshctrl ipfirereboot \
-	ipsecctrl timectrl dhcpctrl suricatactrl \
-	applejuicectrl rebuildhosts backupctrl collectdctrl \
-	logwatch wioscan wiohelper openvpnctrl firewallctrl \
-	wirelessctrl getipstat qosctrl launch-ether-wake \
-	redctrl syslogdctrl extrahdctrl sambactrl upnpctrl \
-	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
-	setaliases urlfilterctrl updxlratorctrl fireinfoctrl rebuildroutes \
-	getconntracktable wirelessclient torctrl ddnsctrl unboundctrl \
-	captivectrl
-SUID_UPDX = updxsetperms
+require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/ids-functions.pl";
+require "${General::swroot}/lang.pl";
 
-OBJS = $(patsubst %,%.o,$(PROGS) $(SUID_PROGS))
+# Check if the red device is active.
+unless (-e "${General::swroot}/red/active") {
+	# Store notice in the syslog.
+	&IDS::_log_to_syslog("The system is offline.");
 
-install: all
-	install -m 755  $(PROGS) /usr/local/bin
-	install -m 4750 -g nobody $(SUID_PROGS) /usr/local/bin
+	# Store error message for displaying in the WUI.
+	&IDS::_store_error_message("$Lang::tr{'could not download latest updates'} - $Lang::tr{'system is offline'}");
 
-all: $(PROGS) $(SUID_PROGS)
+	# Exit.
+	exit 0;
+}
 
-clean:
-	-rm -f $(PROGS) $(SUID_PROGS) *.o core
+# Check if enought free disk space is availabe.
+if(&IDS::checkdiskspace()) {
+	# Store the error message for displaying in the WUI.
+	&IDS::_store_error_message("$Lang::tr{'not enough disk space'}");
 
-######
+	# Exit.
+	exit 0;
+}
 
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
+# Lock the IDS page.
+&IDS::lock_ids_page();
 
-setuid.o: setuid.c setuid.h
-	$(CC) $(CFLAGS) -c $< -o $@
+# Call the download function and gather the new ruleset.
+if(&IDS::downloadruleset()) {
+	# Store error message for displaying in the WUI.
+	&IDS::_store_error_message("$Lang::tr{'could not download latest updates'}");
 
-$(PROGS) $(SUID_PROGS): setuid.o | $(OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $@.o $< $(LIBS)
+	# Exit.
+	exit 0;
+}
+
+# Call oinkmaster to alter the ruleset.
+&IDS::oinkmaster();
+
+# Set correct ownership for the rulesdir and files.
+&IDS::set_ownership("$IDS::rulespath");
+
+# Unlock the IDS page.
+&IDS::unlock_ids_page();
+
+# Check if the IDS is running.
+if(&IDS::ids_is_running()) {
+	# Call suricatactrl to perform a reload.
+	&IDS::call_suricatactrl("reload");
+}
+
+1;

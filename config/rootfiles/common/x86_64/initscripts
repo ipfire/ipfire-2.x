@@ -53,7 +53,7 @@ etc/rc.d/init.d/networking/red.up/10-miniupnpd
 etc/rc.d/init.d/networking/red.up/10-multicast
 etc/rc.d/init.d/networking/red.up/10-static-routes
 etc/rc.d/init.d/networking/red.up/20-firewall
-etc/rc.d/init.d/networking/red.up/23-RS-snort
+etc/rc.d/init.d/networking/red.up/23-suricata
 etc/rc.d/init.d/networking/red.up/24-RS-qos
 etc/rc.d/init.d/networking/red.up/27-RS-squid
 etc/rc.d/init.d/networking/red.up/30-ddns
@@ -75,10 +75,10 @@ etc/rc.d/init.d/rngd
 etc/rc.d/init.d/sendsignals
 etc/rc.d/init.d/setclock
 etc/rc.d/init.d/smartenabler
-etc/rc.d/init.d/snort
 etc/rc.d/init.d/squid
 etc/rc.d/init.d/sshd
 etc/rc.d/init.d/static-routes
+etc/rc.d/init.d/suricata
 etc/rc.d/init.d/swap
 etc/rc.d/init.d/sysctl
 etc/rc.d/init.d/sysklogd
@@ -104,7 +104,7 @@ etc/rc.d/rc0.d/K47setclock
 etc/rc.d/rc0.d/K49cyrus-sasl
 etc/rc.d/rc0.d/K51vnstat
 etc/rc.d/rc0.d/K77conntrackd
-etc/rc.d/rc0.d/K78snort
+etc/rc.d/rc0.d/K78suricata
 etc/rc.d/rc0.d/K79leds
 etc/rc.d/rc0.d/K79unbound
 etc/rc.d/rc0.d/K80network
@@ -157,7 +157,7 @@ etc/rc.d/rc6.d/K47setclock
 etc/rc.d/rc6.d/K49cyrus-sasl
 etc/rc.d/rc6.d/K51vnstat
 etc/rc.d/rc6.d/K77conntrackd
-etc/rc.d/rc6.d/K78snort
+etc/rc.d/rc6.d/K78suricata
 etc/rc.d/rc6.d/K79leds
 etc/rc.d/rc6.d/K79unbound
 etc/rc.d/rc6.d/K80network

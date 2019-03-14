@@ -157,7 +157,7 @@ if ($multifile) {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 {
 	print "Content-type: text/plain\n\n";
-	print "IPFire IDS snort log\r\n";
+	print "IPFire IPS log\r\n";
 	print "Date: $cgiparams{'DAY'} $longmonths[$cgiparams{'MONTH'}]\r\n"; 
 	print "\r\n";
 
@@ -167,6 +167,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 	{
 		my ($datetime,$title,$priority,$classification,$srcip,$srcport,$destip,$destport,$sid,$refs) = split(/\|/);
 		$refs =~ s/,$//;
+
+		# Skip event if no datetime and title are available.
+		next unless (($datetime) && ($title));
+
 		print "Date: $datetime\n";
 		print "Name: $title\n";
 		print "Priority: $priority\n";
@@ -250,7 +254,7 @@ END
 &Header::closebox();
 
 &Header::openbox('100%', 'left', $Lang::tr{'log'});
-print "<p><b>$Lang::tr{'snort hits'} $longmonthstr $daystr: $lines</b></p>";
+print "<p><b>$Lang::tr{'ids log hits'} $longmonthstr $daystr: $lines</b></p>";
 
 if ($start == -1) {
         $start = $lines - ${Header::viewsize}; }
@@ -285,6 +289,10 @@ foreach $_ (@slice)
 	else {
 		print "<tr bgcolor='$color{'color22'}'><td>\n"; }
 	my ($datetime,$title,$priority,$classification,$srcip,$srcport,$destip,$destport,$sid,$refs) = split(/\|/);
+
+	# Only show the current event if at least datetime and title are available.
+	next unless (($datetime) && ($title));
+
 	print <<END
 <table width='100%'>
 <tr>
@@ -351,7 +359,7 @@ END
 	}
 print <<END
 </tr>
-</table>
+</table><br>
 </td></tr>
 END
 	;
@@ -375,11 +383,26 @@ sub processevent
 	our ($title,$classification,$priority,$date,$time,$srcip,$srcport,$destip,$destport, $sid, @refs);
 
 	my $filestr='';
+	my $readmode='';
 	if ($datediff==0) {
-		$filestr="/var/log/snort/alert";
+		# If there is no datediff, directly assign the suricata fast.log.
+		$filestr="/var/log/suricata/fast.log";
 	} else {
-		$filestr="/var/log/snort/alert.$datediff";
-		$filestr = "$filestr.gz" if -f "$filestr.gz";
+		# If there is a datediff, assign the datediff to the filestring.
+		$filestr="/var/log/suricata/fast.log.$datediff";
+
+		# The files are compressed add the extension to the filestring.
+		$filestr="$filestr.gz";
+
+		# If the file does not exist, try to fallback to legacy snort alert file.
+		unless (-f $filestr) {
+			# Assign snort alert file, the datediff and extension for compressed file.
+			$filestr = "/var/log/snort/alert.$datediff";
+			$filestr = "$filestr.gz";
+
+			# Assign "snort" as readmode.
+			$readmode="snort";
+		}
 	}
 	if (!(open (LOG,($filestr =~ /.gz$/ ? "gzip -dc $filestr |" : $filestr)))) {
 		$errormessage="$errormessage$Lang::tr{'date not in logs'}: $filestr $Lang::tr{'could not be opened'}";
@@ -388,13 +411,24 @@ sub processevent
 
 		while(<LOG>) {
 			$line++;
-			if ($_ =~ m/\[\*\*\]/) {
+			if (($_ =~ m/\[\*\*\]/) && ($readmode eq "snort")) {
 				unless ($line == 1 || $date ne "$monthstr/$daystr") {
 					&append;
 					$line = 1;
 				}
-				($title,$classification,$priority,$date,$time,$srcip,$srcport,$destip,$destport, $sid) = ("n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a", "n/a");
+				($title,$classification,$priority,$date,$time,$srcip,$srcport,$destip,$destport,$sid) = ("n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a", "n/a");
 				@refs = ();
+				$_ =~ m/:([0-9]{1,5})\] (.*) \[\*\*\]/;
+				$title = &Header::cleanhtml($2,"y");
+			} else {
+				&append;
+				$line = 1;
+
+				# Assign default values.
+				($title,$classification,$priority,$date,$time,$srcip,$srcport,$destip,$destport,$sid) = ("n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a", "n/a");
+				@refs = ();
+
+				# Gather title details from line.
 				$_ =~ m/:([0-9]{1,5})\] (.*) \[\*\*\]/;
 				$title = &Header::cleanhtml($2,"y");
 			}
@@ -413,7 +447,7 @@ sub processevent
 				$destport = $10;
 			}
 
-			if ($_  =~ m/^([0-9\/]{3,5})\-([0-9\:]{5,8})\.([0-9]{1,14})/) {
+			if ($_  =~ m/^([0-9\/]{3,10})\-([0-9\:]{5,8})\.([0-9]{1,14})/) {
 				($date,$time) = ($1,$2);
 			}
 			if ($_ =~ m/\[Xref \=\>.*\]/) {
