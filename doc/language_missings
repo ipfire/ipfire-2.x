@@ -495,7 +495,6 @@
 < grouptype
 < guardian
 < hardware support
-< ids active on
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -512,7 +511,6 @@
 < ids ruleset autoupdate in progress
 < ids ruleset settings
 < ids show
-< ids traffic analyze
 < ids working
 < imei
 < imsi
@@ -841,7 +839,6 @@
 < dns forward disable dnssec
 < dns forwarding dnssec disabled notice
 < emerging pro rules
-< ids active on
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -858,7 +855,6 @@
 < ids ruleset autoupdate in progress
 < ids ruleset settings
 < ids show
-< ids traffic analyze
 < ids working
 < interface mode
 < intrusion prevention system
@@ -1021,7 +1017,6 @@
 < geoipblock flag
 < guaranteed bandwith
 < guardian
-< ids active on
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -1038,7 +1033,6 @@
 < ids ruleset autoupdate in progress
 < ids ruleset settings
 < ids show
-< ids traffic analyze
 < ids working
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
@@ -1303,7 +1297,6 @@
 < geoipblock enable feature
 < geoipblock flag
 < guardian
-< ids active on
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -1320,7 +1313,6 @@
 < ids ruleset autoupdate in progress
 < ids ruleset settings
 < ids show
-< ids traffic analyze
 < ids working
 < imei
 < imsi
@@ -1904,7 +1896,6 @@
 < grouptype
 < guardian
 < hardware support
-< ids active on
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -1921,7 +1912,6 @@
 < ids ruleset autoupdate in progress
 < ids ruleset settings
 < ids show
-< ids traffic analyze
 < ids working
 < imei
 < imsi
@@ -2670,7 +2660,6 @@
 < guardian
 < hardware support
 < hour-graph
-< ids active on
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -2687,7 +2676,6 @@
 < ids ruleset autoupdate in progress
 < ids ruleset settings
 < ids show
-< ids traffic analyze
 < ids working
 < imei
 < imsi
@@ -3005,7 +2993,6 @@
 < dns forwarding dnssec disabled notice
 < emerging pro rules
 < fwdfw all subnets
-< ids active on
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -3022,7 +3009,6 @@
 < ids ruleset autoupdate in progress
 < ids ruleset settings
 < ids show
-< ids traffic analyze
 < ids working
 < interface mode
 < intrusion prevention system

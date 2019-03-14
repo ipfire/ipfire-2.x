@@ -336,8 +336,6 @@ WARNING: translation string unused: ibod for dual isdn only
 WARNING: translation string unused: icmp selected but no type
 WARNING: translation string unused: icmp type
 WARNING: translation string unused: id
-WARNING: translation string unused: ids active on
-WARNING: translation string unused: ids traffic analyze
 WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
@@ -783,7 +781,7 @@ WARNING: untranslated string: guardian priority level = unknown string
 WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: guardian watch snort alertfile = unknown string
 WARNING: untranslated string: ids hide = Hide
-WARNING: untranslated string: ids rules update = IPS rules
+WARNING: untranslated string: ids rules update = Ruleset
 WARNING: untranslated string: ids show = Show
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours = unknown string
 WARNING: untranslated string: info messages = unknown string
