@@ -35,10 +35,14 @@
 < dhcp server enabled on blue interface
 < dh name is invalid
 < done
+< emerging pro rules
 < emerging rules
 < g.dtm
 < g.lite
 < guardian
+< ids hide
+< ids rules update
+< ids show
 < insert removable device
 < interface mode
 < notes
@@ -188,6 +192,7 @@
 < crypto error
 < cryptographic settings
 < crypto warning
+< Daily
 < dead peer detection
 < default
 < default ip
@@ -205,6 +210,7 @@
 < dh key warn1
 < dh name is invalid
 < dh parameter
+< Disabled
 < dl client arch insecure
 < dnat address
 < dnsforward
@@ -253,6 +259,7 @@
 < email text
 < email tls
 < email usemail
+< emerging pro rules
 < emerging rules
 < encryption
 < entropy
@@ -488,6 +495,25 @@
 < grouptype
 < guardian
 < hardware support
+< ids active on
+< ids apply
+< ids apply ruleset changes
+< ids automatic rules update
+< ids download new ruleset
+< ids enable
+< ids hide
+< ids ignored hosts
+< ids log hits
+< ids monitored interfaces
+< ids monitor traffic only
+< ids no network zone
+< ids no ruleset available
+< ids oinkcode required
+< ids ruleset autoupdate in progress
+< ids ruleset settings
+< ids show
+< ids traffic analyze
+< ids working
 < imei
 < imsi
 < incoming compression in bytes per second
@@ -495,6 +521,7 @@
 < incoming overhead in bytes per second
 < integrity
 < interface mode
+< intrusion prevention system
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
@@ -635,6 +662,7 @@
 < rdns
 < red1
 < required field
+< runmode
 < samba join a domain
 < samba join domain
 < search
@@ -656,6 +684,7 @@
 < system has hwrng
 < system has rdrand
 < system information
+< system is offline
 < ta key
 < tcp more reliable
 < ten minutes
@@ -724,6 +753,7 @@
 < unblock all
 < uncheck all
 < unlimited
+< update ruleset
 < updxlrtr sources
 < updxlrtr standard view
 < updxlrtr used by
@@ -749,6 +779,7 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< Weekly
 < wireless network
 < wlanap
 < wlanap configuration
@@ -804,10 +835,33 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < cryptographic settings
+< Daily
 < default IP address
+< Disabled
 < dns forward disable dnssec
 < dns forwarding dnssec disabled notice
+< emerging pro rules
+< ids active on
+< ids apply
+< ids apply ruleset changes
+< ids automatic rules update
+< ids download new ruleset
+< ids enable
+< ids hide
+< ids ignored hosts
+< ids log hits
+< ids monitored interfaces
+< ids monitor traffic only
+< ids no network zone
+< ids no ruleset available
+< ids oinkcode required
+< ids ruleset autoupdate in progress
+< ids ruleset settings
+< ids show
+< ids traffic analyze
+< ids working
 < interface mode
+< intrusion prevention system
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu
@@ -822,8 +876,12 @@
 < ipsec settings
 < local ip address
 < mtu
+< runmode
 < subnet mask
+< system is offline
 < transport mode does not support vti
+< update ruleset
+< Weekly
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -895,12 +953,14 @@
 < crypto error
 < cryptographic settings
 < crypto warning
+< Daily
 < default IP address
 < dhcp dns enable update
 < dhcp dns key name
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< Disabled
 < dl client arch insecure
 < dns forward disable dnssec
 < dnsforward forward_servers
@@ -927,6 +987,7 @@
 < email text
 < email tls
 < email usemail
+< emerging pro rules
 < fifteen minutes
 < firewall graph country
 < firewall graph ip
@@ -960,9 +1021,29 @@
 < geoipblock flag
 < guaranteed bandwith
 < guardian
+< ids active on
+< ids apply
+< ids apply ruleset changes
+< ids automatic rules update
+< ids download new ruleset
+< ids enable
+< ids hide
+< ids ignored hosts
+< ids log hits
+< ids monitored interfaces
+< ids monitor traffic only
+< ids no network zone
+< ids no ruleset available
+< ids oinkcode required
+< ids ruleset autoupdate in progress
+< ids ruleset settings
+< ids show
+< ids traffic analyze
+< ids working
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
 < interface mode
+< intrusion prevention system
 < invalid input for inactivity timeout
 < invalid input for interface address
 < invalid input for interface mode
@@ -1007,6 +1088,7 @@
 < pptp route
 < rdns
 < required field
+< runmode
 < samba join a domain
 < samba join domain
 < search
@@ -1015,6 +1097,7 @@
 < ssh no active logins
 < ssh username
 < subnet mask
+< system is offline
 < tcp more reliable
 < ten minutes
 < thirty minutes
@@ -1026,6 +1109,7 @@
 < unblock all
 < uncheck all
 < unlimited
+< update ruleset
 < uplink bit rate
 < vpn broken
 < vpn connecting
@@ -1040,6 +1124,7 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< Weekly
 < wireless network
 < wlanap
 < wlanap configuration
@@ -1133,6 +1218,7 @@
 < crypto error
 < cryptographic settings
 < crypto warning
+< Daily
 < default
 < default IP address
 < dh
@@ -1146,6 +1232,7 @@
 < dh key warn1
 < dh name is invalid
 < dh parameter
+< Disabled
 < dl client arch insecure
 < dns forward disable dnssec
 < dnsforward forward_servers
@@ -1180,6 +1267,7 @@
 < email text
 < email tls
 < email usemail
+< emerging pro rules
 < fifteen minutes
 < firewall graph country
 < firewall graph ip
@@ -1215,11 +1303,31 @@
 < geoipblock enable feature
 < geoipblock flag
 < guardian
+< ids active on
+< ids apply
+< ids apply ruleset changes
+< ids automatic rules update
+< ids download new ruleset
+< ids enable
+< ids hide
+< ids ignored hosts
+< ids log hits
+< ids monitored interfaces
+< ids monitor traffic only
+< ids no network zone
+< ids no ruleset available
+< ids oinkcode required
+< ids ruleset autoupdate in progress
+< ids ruleset settings
+< ids show
+< ids traffic analyze
+< ids working
 < imei
 < imsi
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
 < interface mode
+< intrusion prevention system
 < invalid input for inactivity timeout
 < invalid input for interface address
 < invalid input for interface mode
@@ -1292,6 +1400,7 @@
 < random number generator daemon
 < rdns
 < required field
+< runmode
 < samba join a domain
 < samba join domain
 < search
@@ -1304,6 +1413,7 @@
 < ssh no active logins
 < ssh username
 < subnet mask
+< system is offline
 < ta key
 < tcp more reliable
 < ten minutes
@@ -1317,6 +1427,7 @@
 < unblock all
 < uncheck all
 < unlimited
+< update ruleset
 < uplink bit rate
 < upload dh key
 < vendor
@@ -1333,6 +1444,7 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< Weekly
 < wireless network
 < wlanap
 < wlanap configuration
@@ -1487,6 +1599,7 @@
 < crypto error
 < cryptographic settings
 < crypto warning
+< Daily
 < dead peer detection
 < default
 < default ip
@@ -1504,6 +1617,7 @@
 < dh key warn1
 < dh name is invalid
 < dh parameter
+< Disabled
 < dl client arch insecure
 < dnat address
 < dnsforward
@@ -1552,6 +1666,7 @@
 < email text
 < email tls
 < email usemail
+< emerging pro rules
 < emerging rules
 < encryption
 < entropy
@@ -1789,6 +1904,25 @@
 < grouptype
 < guardian
 < hardware support
+< ids active on
+< ids apply
+< ids apply ruleset changes
+< ids automatic rules update
+< ids download new ruleset
+< ids enable
+< ids hide
+< ids ignored hosts
+< ids log hits
+< ids monitored interfaces
+< ids monitor traffic only
+< ids no network zone
+< ids no ruleset available
+< ids oinkcode required
+< ids ruleset autoupdate in progress
+< ids ruleset settings
+< ids show
+< ids traffic analyze
+< ids working
 < imei
 < imsi
 < incoming compression in bytes per second
@@ -1796,6 +1930,7 @@
 < incoming overhead in bytes per second
 < integrity
 < interface mode
+< intrusion prevention system
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
@@ -1922,6 +2057,7 @@
 < rdns
 < red1
 < required field
+< runmode
 < samba join a domain
 < samba join domain
 < search
@@ -1941,6 +2077,7 @@
 < support donation
 < system has hwrng
 < system has rdrand
+< system is offline
 < ta key
 < tcp more reliable
 < ten minutes
@@ -2009,6 +2146,7 @@
 < unblock all
 < uncheck all
 < unlimited
+< update ruleset
 < updxlrtr sources
 < updxlrtr standard view
 < updxlrtr used by
@@ -2034,6 +2172,7 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< Weekly
 < wireless network
 < wlanap
 < wlanap configuration
@@ -2221,6 +2360,7 @@
 < crypto error
 < cryptographic settings
 < crypto warning
+< Daily
 < day-graph
 < dead peer detection
 < default
@@ -2239,6 +2379,7 @@
 < dh key warn1
 < dh name is invalid
 < dh parameter
+< Disabled
 < disk access per
 < dl client arch insecure
 < dnat address
@@ -2289,6 +2430,7 @@
 < email text
 < email tls
 < email usemail
+< emerging pro rules
 < emerging rules
 < encryption
 < entropy
@@ -2528,6 +2670,25 @@
 < guardian
 < hardware support
 < hour-graph
+< ids active on
+< ids apply
+< ids apply ruleset changes
+< ids automatic rules update
+< ids download new ruleset
+< ids enable
+< ids hide
+< ids ignored hosts
+< ids log hits
+< ids monitored interfaces
+< ids monitor traffic only
+< ids no network zone
+< ids no ruleset available
+< ids oinkcode required
+< ids ruleset autoupdate in progress
+< ids ruleset settings
+< ids show
+< ids traffic analyze
+< ids working
 < imei
 < imsi
 < incoming compression in bytes per second
@@ -2536,6 +2697,7 @@
 < incoming traffic in bytes per second
 < integrity
 < interface mode
+< intrusion prevention system
 < invalid input for dpd delay
 < invalid input for dpd timeout
 < invalid input for inactivity timeout
@@ -2660,6 +2822,7 @@
 < rdns
 < red1
 < required field
+< runmode
 < samba join a domain
 < samba join domain
 < search
@@ -2679,6 +2842,7 @@
 < support donation
 < system has hwrng
 < system has rdrand
+< system is offline
 < ta key
 < tcp more reliable
 < ten minutes
@@ -2747,6 +2911,7 @@
 < unblock all
 < uncheck all
 < unlimited
+< update ruleset
 < updxlrtr sources
 < updxlrtr standard view
 < updxlrtr used by
@@ -2773,6 +2938,7 @@
 < vpn wait
 < vpn weak
 < week-graph
+< Weekly
 < wireless network
 < wlanap
 < wlanap configuration
@@ -2831,12 +2997,35 @@
 < crypto error
 < cryptographic settings
 < crypto warning
+< Daily
 < default IP address
+< Disabled
 < dns forward disable dnssec
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
+< emerging pro rules
 < fwdfw all subnets
+< ids active on
+< ids apply
+< ids apply ruleset changes
+< ids automatic rules update
+< ids download new ruleset
+< ids enable
+< ids hide
+< ids ignored hosts
+< ids log hits
+< ids monitored interfaces
+< ids monitor traffic only
+< ids no network zone
+< ids no ruleset available
+< ids oinkcode required
+< ids ruleset autoupdate in progress
+< ids ruleset settings
+< ids show
+< ids traffic analyze
+< ids working
 < interface mode
+< intrusion prevention system
 < invalid input for interface address
 < invalid input for interface mode
 < invalid input for interface mtu
@@ -2855,13 +3044,17 @@
 < ovpn error dh
 < ovpn error md5
 < ovpn warning rfc3280
+< runmode
 < ssh active sessions
 < ssh login time
 < ssh no active logins
 < ssh username
 < subnet mask
+< system is offline
 < transport mode does not support vti
+< update ruleset
 < vpn start action add
 < vpn wait
+< Weekly
 < wlanap neighbor scan
 < wlanap neighbor scan warning

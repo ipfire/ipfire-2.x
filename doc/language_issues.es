@@ -196,6 +196,7 @@ WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
+WARNING: translation string unused: download new ruleset
 WARNING: translation string unused: driver
 WARNING: translation string unused: drop output
 WARNING: translation string unused: dstprt range overlaps
@@ -212,7 +213,6 @@ WARNING: translation string unused: email server can not be empty
 WARNING: translation string unused: emailreportlevel
 WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enable wildcards
-WARNING: translation string unused: enabled on
 WARNING: translation string unused: enabledtitle
 WARNING: translation string unused: encrypted
 WARNING: translation string unused: err bk 1
@@ -285,6 +285,10 @@ WARNING: translation string unused: icmp selected but no type
 WARNING: translation string unused: icmp type
 WARNING: translation string unused: id
 WARNING: translation string unused: ids preprocessor
+WARNING: translation string unused: ids rules license
+WARNING: translation string unused: ids rules license1
+WARNING: translation string unused: ids rules license2
+WARNING: translation string unused: ids rules license3
 WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
@@ -520,6 +524,8 @@ WARNING: translation string unused: sitekeyfile
 WARNING: translation string unused: smbreload
 WARNING: translation string unused: smtphost
 WARNING: translation string unused: smtpport
+WARNING: translation string unused: snort hits
+WARNING: translation string unused: snort working
 WARNING: translation string unused: source ip bad
 WARNING: translation string unused: source ip in use
 WARNING: translation string unused: source ip or net
@@ -603,6 +609,7 @@ WARNING: translation string unused: unencrypted
 WARNING: translation string unused: update transcript
 WARNING: translation string unused: updatedatabase
 WARNING: translation string unused: updates
+WARNING: translation string unused: updates installed
 WARNING: translation string unused: updates is old1
 WARNING: translation string unused: updates is old2
 WARNING: translation string unused: updxlrtr children
@@ -612,6 +619,7 @@ WARNING: translation string unused: updxlrtr update information
 WARNING: translation string unused: updxlrtr update notification
 WARNING: translation string unused: upload fcdsl.o
 WARNING: translation string unused: upload file
+WARNING: translation string unused: upload new ruleset
 WARNING: translation string unused: upload static key
 WARNING: translation string unused: upload successful
 WARNING: translation string unused: upload synch.bin
@@ -691,12 +699,15 @@ WARNING: untranslated string: ConnSched dial = Connect
 WARNING: untranslated string: ConnSched hangup = Disconnect
 WARNING: untranslated string: ConnSched reboot = Reboot
 WARNING: untranslated string: ConnSched shutdown = Shutdown
+WARNING: untranslated string: Daily = Daily
+WARNING: untranslated string: Disabled = Disabled
 WARNING: untranslated string: MB read = MB read
 WARNING: untranslated string: MB written = MB written
 WARNING: untranslated string: MTU settings = MTU settings:
 WARNING: untranslated string: Number of Countries for the pie chart = Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: Set time on boot = Force setting the system clock on boot
+WARNING: untranslated string: Weekly = Weekly
 WARNING: untranslated string: addons = Addons
 WARNING: untranslated string: administrator password = Administrator password
 WARNING: untranslated string: administrator username = Administrator username
@@ -819,6 +830,7 @@ WARNING: untranslated string: email settings = Mail Service
 WARNING: untranslated string: email testmail = Send test mail
 WARNING: untranslated string: email tls = Use TLS
 WARNING: untranslated string: email usemail = Activate Mail Service
+WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
 WARNING: untranslated string: emerging rules = Emergingthreats.net Community Rules
 WARNING: untranslated string: encryption = Encryption:
 WARNING: untranslated string: entropy = Entropy
@@ -1047,6 +1059,23 @@ WARNING: untranslated string: guardian priority level = unknown string
 WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: guardian watch snort alertfile = unknown string
 WARNING: untranslated string: hardware support = Hardware Support
+WARNING: untranslated string: ids apply = Apply
+WARNING: untranslated string: ids apply ruleset changes = The ruleset changes will be applied ... Please wait until all operations have completed successfully.
+WARNING: untranslated string: ids automatic rules update = Automatic rules update
+WARNING: untranslated string: ids download new ruleset = Downloading and unpacking new ruleset ... Please wait until all operations have completed successfully.
+WARNING: untranslated string: ids enable = Enable Intrusion Prevention System
+WARNING: untranslated string: ids hide = Hide
+WARNING: untranslated string: ids ignored hosts = Ignored hosts
+WARNING: untranslated string: ids log hits = Total of number of activated rules for
+WARNING: untranslated string: ids monitor traffic only = Monitor traffic only
+WARNING: untranslated string: ids monitored interfaces = Monitored interfaces
+WARNING: untranslated string: ids no network zone = At least one network zone has to be monitored!
+WARNING: untranslated string: ids no ruleset available = No ruleset available, please download one!
+WARNING: untranslated string: ids oinkcode required = The selected ruleset requires a subscription or an oinkcode
+WARNING: untranslated string: ids ruleset autoupdate in progress = Ruleset update in progress ... Please wait until all operations have completed successfully.
+WARNING: untranslated string: ids ruleset settings = Ruleset settings
+WARNING: untranslated string: ids show = Show
+WARNING: untranslated string: ids working = Changes will be applied ... Please wait until all operations have completed successfully.
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours = unknown string
 WARNING: untranslated string: imei = IMEI
 WARNING: untranslated string: imsi = IMSI
@@ -1190,6 +1219,7 @@ WARNING: untranslated string: subnet mask = Subnet Mask
 WARNING: untranslated string: support donation = Support the IPFire project with your donation
 WARNING: untranslated string: system has rdrand = This system has support for Intel(R) RDRAND.
 WARNING: untranslated string: system information = System Information
+WARNING: untranslated string: system is offline = The system is offline.
 WARNING: untranslated string: ta key = TLS-Authentification-Key
 WARNING: untranslated string: tcp more reliable = TCP (more reliable)
 WARNING: untranslated string: ten minutes = 10 Minutes
@@ -1250,6 +1280,7 @@ WARNING: untranslated string: unblock = Unblock
 WARNING: untranslated string: unblock all = Unblock all
 WARNING: untranslated string: uncheck all = Uncheck all
 WARNING: untranslated string: unlimited = Unlimited
+WARNING: untranslated string: update ruleset = Update ruleset
 WARNING: untranslated string: uplink = Uplink
 WARNING: untranslated string: uplink bit rate = Uplink Bit Rate
 WARNING: untranslated string: upload dh key = Upload Diffie-Hellman parameters

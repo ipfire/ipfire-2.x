@@ -205,6 +205,7 @@ WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: download dh parameter
+WARNING: translation string unused: download new ruleset
 WARNING: translation string unused: driver
 WARNING: translation string unused: dstprt range overlaps
 WARNING: translation string unused: dstprt within existing
@@ -224,7 +225,6 @@ WARNING: translation string unused: email text
 WARNING: translation string unused: emailreportlevel
 WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enable wildcards
-WARNING: translation string unused: enabled on
 WARNING: translation string unused: enabledtitle
 WARNING: translation string unused: encrypted
 WARNING: translation string unused: err bk 1
@@ -336,7 +336,8 @@ WARNING: translation string unused: ibod for dual isdn only
 WARNING: translation string unused: icmp selected but no type
 WARNING: translation string unused: icmp type
 WARNING: translation string unused: id
-WARNING: translation string unused: ids preprocessor
+WARNING: translation string unused: ids active on
+WARNING: translation string unused: ids traffic analyze
 WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
@@ -353,6 +354,7 @@ WARNING: translation string unused: installed
 WARNING: translation string unused: installed updates
 WARNING: translation string unused: intrusion detection system log viewer
 WARNING: translation string unused: intrusion detection system2
+WARNING: translation string unused: intrusion prevention system
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
 WARNING: translation string unused: invalid downlink speed
@@ -569,6 +571,7 @@ WARNING: translation string unused: router ip
 WARNING: translation string unused: rsvd dst port overlap
 WARNING: translation string unused: rsvd src port overlap
 WARNING: translation string unused: rules already up to date
+WARNING: translation string unused: runmode
 WARNING: translation string unused: safe removal of umounted device
 WARNING: translation string unused: save error
 WARNING: translation string unused: select dest net
@@ -681,6 +684,7 @@ WARNING: translation string unused: unencrypted
 WARNING: translation string unused: update transcript
 WARNING: translation string unused: updatedatabase
 WARNING: translation string unused: updates
+WARNING: translation string unused: updates installed
 WARNING: translation string unused: updates is old1
 WARNING: translation string unused: updates is old2
 WARNING: translation string unused: updxlrtr children
@@ -691,6 +695,7 @@ WARNING: translation string unused: updxlrtr unknown
 WARNING: translation string unused: updxlrtr update information
 WARNING: translation string unused: updxlrtr update notification
 WARNING: translation string unused: upload file
+WARNING: translation string unused: upload new ruleset
 WARNING: translation string unused: upload static key
 WARNING: translation string unused: upload successful
 WARNING: translation string unused: upload synch.bin
@@ -737,6 +742,7 @@ WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: community rules = Snort/VRT GPLv2 Community Rules
 WARNING: untranslated string: dead peer detection = Dead Peer Detection
 WARNING: untranslated string: default IP address = Default IP Address
+WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
 WARNING: untranslated string: emerging rules = Emergingthreats.net Community Rules
 WARNING: untranslated string: fwhost cust geoipgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
@@ -776,6 +782,9 @@ WARNING: untranslated string: guardian priolevel_very_low = unknown string
 WARNING: untranslated string: guardian priority level = unknown string
 WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: guardian watch snort alertfile = unknown string
+WARNING: untranslated string: ids hide = Hide
+WARNING: untranslated string: ids rules update = IPS rules
+WARNING: untranslated string: ids show = Show
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours = unknown string
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: interface mode = Interface
