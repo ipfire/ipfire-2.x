@@ -32,8 +32,35 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/snort stop
+if [ -e "/etc/init.d/suricata" ]; then
+	/etc/init.d/suricata stop
+fi
 
 # Remove files
+rm -rfv \
+	/etc/rc.d/rc*.d/*snort \
+	/etc/rc.d/init.d/networking/red.up/23-RS-snort \
+	/etc/snort \
+	/usr/bin/daq-modules-config \
+	/usr/bin/u2boat \
+	/usr/bin/u2spewfoo \
+	/usr/lib/daq \
+	/usr/lib/snort \
+	/usr/lib/libdaq.so* \
+	/usr/lib/libsfbpf.so* \
+	/usr/local/bin/snortctl \
+	/usr/sbin/snort
+
+# Rename snort user to suricata
+if getent group snort &>/dev/null; then
+	groupmod -n suricata snort
+fi
+
+if getent passwd snort &>/dev/null; then
+	usermod -l suricata -c "Suricata" \
+		-d /var/log/suricata snort
+fi
 
 # Extract files
 extract_files
@@ -44,7 +71,13 @@ ldconfig
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# Migrate snort configuration to suricata
+/usr/sbin/convert-snort
+
 # Start services
+/etc/init.d/collectd restart
+/etc/init.d/firewall restart
+/etc/init.d/suricata start
 
 # This update needs a reboot...
 touch /var/run/need_reboot
