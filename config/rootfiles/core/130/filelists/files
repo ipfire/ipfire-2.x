@@ -2,7 +2,7 @@ etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
-etc/collectd/collectd.conf
+etc/collectd.conf
 etc/logrotate.conf
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/networking/red.up/23-suricata
@@ -12,12 +12,12 @@ srv/web/ipfire/cgi-bin/aliases.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/ids.dat
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
-usr/local/bin/suricatactl
-usr/local/bin/update-ids-rulese
+usr/local/bin/suricatactrl
+usr/local/bin/update-ids-rules
 usr/sbin/convert-snort
 var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/include
 var/ipfire/general-functions.pl
 var/ipfire/ids-functions.pl
 var/ipfire/menu.d/40-services.menu
-var/ipfire/menu.d/50-firewall.menub
+var/ipfire/menu.d/50-firewall.menu
