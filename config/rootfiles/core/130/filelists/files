@@ -13,7 +13,7 @@ srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/ids.dat
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 usr/local/bin/suricatactrl
-usr/local/bin/update-ids-rules
+usr/local/bin/update-ids-ruleset
 usr/sbin/convert-snort
 var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/include
