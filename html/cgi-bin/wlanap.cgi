@@ -75,6 +75,7 @@ $wlanapsettings{'DRIVER'} = 'NL80211';
 $wlanapsettings{'HTCAPS'} = '';
 $wlanapsettings{'VHTCAPS'} = '';
 $wlanapsettings{'NOSCAN'} = 'off';
+$wlanapsettings{'CLIENTISOLATION'} = 'off';
 
 &General::readhash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 &Header::getcgihash(\%wlanapsettings);
@@ -252,6 +253,10 @@ $checked{'NOSCAN'}{'off'} = '';
 $checked{'NOSCAN'}{'on'} = '';
 $checked{'NOSCAN'}{$wlanapsettings{'NOSCAN'}} = "checked='checked'";
 
+$checked{'CLIENTISOLATION'}{'off'} = '';
+$checked{'CLIENTISOLATION'}{'on'} = '';
+$checked{'CLIENTISOLATION'}{$wlanapsettings{'CLIENTISOLATION'}} = "checked='checked'";
+
 $selected{'ENC'}{$wlanapsettings{'ENC'}} = "selected='selected'";
 $selected{'CHANNEL'}{$wlanapsettings{'CHANNEL'}} = "selected='selected'";
 $selected{'COUNTRY'}{$wlanapsettings{'COUNTRY'}} = "selected='selected'";
@@ -377,6 +382,7 @@ print <<END
 <tr><td width='25%' class='base'>SSID:&nbsp;</td><td class='base' colspan='3'><input type='text' name='SSID' size='30' value='$wlanapsettings{'SSID'}' /></td></tr>
 <!--SSID Broadcast: on => HIDESSID: off -->
 <tr><td width='25%' class='base'>SSID Broadcast:&nbsp;</td><td class='base' colspan='3'>on <input type='radio' name='HIDESSID' value='off' $checked{'HIDESSID'}{'off'} /> | <input type='radio' name='HIDESSID' value='on' $checked{'HIDESSID'}{'on'} /> off</td></tr>
+<tr><td width='25%' class='base'>Client Isolation:&nbsp;</td><td class='base' colspan='3'>on <input type='radio' name='CLIENTISOLATION' value='off' $checked{'CLIENTISOLATION'}{'off'} /> | <input type='radio' name='CLIENTISOLATION' value='on' $checked{'CLIENTISOLATION'}{'on'} /> off</td></tr>
 
 
 <tr><td width='25%' class='base'>$Lang::tr{'wlanap country'}:&nbsp;</td><td class='base' colspan='3'>
@@ -630,6 +636,14 @@ ignore_broadcast_ssid=0
 END
 ;
 
+ }
+
+ # https://forum.ipfire.org/viewtopic.php?f=22&t=12274&p=79070#p79070
+ if ( $wlanapsettings{'CLIENTISOLATION'} eq 'on' ){
+	print CONFIGFILE <<END
+ap_isolate=1
+END
+;
  }
 
  if ( $wlanapsettings{'NOSCAN'} eq 'on' ){
