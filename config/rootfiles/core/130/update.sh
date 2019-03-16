@@ -77,6 +77,7 @@ ldconfig
 # Start services
 /etc/init.d/collectd restart
 /etc/init.d/firewall restart
+/etc/init.d/unbound restart
 /etc/init.d/suricata start
 
 # This update needs a reboot...
