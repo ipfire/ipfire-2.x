@@ -460,7 +460,14 @@ sub processevent
 			}
 		}
 		$line++;
-		unless ($line == 1 || $date ne "$monthstr/$daystr") { &append; }
+
+		# Split the date into single chunks.
+		my ($month, $day, $year) = split('/', $date);
+
+		# Check if all data is collected and the date of the event fits the desired date to
+		# get displayed.
+		if ($line gt 1 || "$month/$day" eq "$monthstr/$daystr") { &append; }
+
 		close(LOG);
 	}
 }
