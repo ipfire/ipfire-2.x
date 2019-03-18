@@ -37,21 +37,6 @@ if [ -e "/etc/init.d/suricata" ]; then
 	/etc/init.d/suricata stop
 fi
 
-# Remove files
-rm -rfv \
-	/etc/rc.d/rc*.d/*snort \
-	/etc/rc.d/init.d/networking/red.up/23-RS-snort \
-	/etc/snort \
-	/usr/bin/daq-modules-config \
-	/usr/bin/u2boat \
-	/usr/bin/u2spewfoo \
-	/usr/lib/daq \
-	/usr/lib/snort \
-	/usr/lib/libdaq.so* \
-	/usr/lib/libsfbpf.so* \
-	/usr/local/bin/snortctl \
-	/usr/sbin/snort
-
 # Rename snort user to suricata
 if getent group snort &>/dev/null; then
 	groupmod -n suricata snort
@@ -73,6 +58,22 @@ ldconfig
 
 # Migrate snort configuration to suricata
 /usr/sbin/convert-snort
+
+# Remove files
+rm -rfv \
+	/etc/rc.d/rc*.d/*snort \
+	/etc/rc.d/init.d/networking/red.up/23-RS-snort \
+	/etc/snort \
+	/usr/bin/daq-modules-config \
+	/usr/bin/u2boat \
+	/usr/bin/u2spewfoo \
+	/usr/lib/daq \
+	/usr/lib/snort \
+	/usr/lib/libdaq.so* \
+	/usr/lib/libsfbpf.so* \
+	/usr/local/bin/snortctl \
+	/usr/sbin/snort \
+	/var/ipfire/snort
 
 # Start services
 /etc/init.d/collectd restart
