@@ -14,7 +14,8 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting dnsdist..."
-		loadproc /usr/bin/dnsdist -d ${ARGS}
+		/usr/bin/dnsdist --supervised ${ARGS} >/dev/null &
+		evaluate_retval
 		;;
 
 	stop)
