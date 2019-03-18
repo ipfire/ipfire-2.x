@@ -167,6 +167,9 @@ main() {
 		log "Deleting interface ${intf}"
 		ip link del "${intf}" &>/dev/null
 	done
+
+	# (Re-)Apply all static routes
+	/etc/init.d/static-routes start
 }
 
 main || exit $?
