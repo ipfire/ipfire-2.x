@@ -189,7 +189,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'edit'})
 			$cgiparams{'ZONE'} = $temp[1];
 			$cgiparams{'FORWARD_SERVERS'} = join(",", split(/\|/, $temp[2]));
 			$cgiparams{'REMARK'} = $temp[3];
-			$cgiparams{'DISABLE_DNSSEC'} = $temp[4];
+			$cgiparams{'DISABLE_DNSSEC'} = ($temp[4] eq "on") ? "on" : "off";
 		}
 	}
 }
@@ -250,7 +250,7 @@ print <<END
 	</tr>
 	<tr>
 		<td width ='20%' class='base'>$Lang::tr{'dns forward disable dnssec'}:</td>
-		<td><input type='checkbox' name='DISABLE_DNSSEC' $checked{'DISABLE_DNSSEC'}' /></td>
+		<td><input type='checkbox' name='DISABLE_DNSSEC' $checked{'DISABLE_DNSSEC'}{'on'} /></td>
 	</tr>
 </table>
 <br>
