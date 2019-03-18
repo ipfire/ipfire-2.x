@@ -392,6 +392,8 @@ print <<END
 		<td class='base'>$Lang::tr{'edit'}</td>
 		<td>&nbsp; &nbsp; <img src='/images/delete.gif' alt='$Lang::tr{'remove'}' /></td>
 		<td class='base'>$Lang::tr{'remove'}</td>
+		<td>&nbsp; &nbsp; <span style="background-color: $Header::colourred">&nbsp; &nbsp;</span></td>
+		<td class='base'>$Lang::tr{'dnsforward dnssec disabled'}</td>
 	</tr>
 </table>
 END

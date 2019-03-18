@@ -815,6 +815,7 @@ WARNING: untranslated string: dl client arch insecure = Download insecure Client
 WARNING: untranslated string: dns forward disable dnssec = Disable DNSSEC (dangerous)
 WARNING: untranslated string: dns forwarding dnssec disabled notice = (DNSSEC disabled)
 WARNING: untranslated string: dns servers = DNS Servers
+WARNING: untranslated string: dnsforward dnssec disabled = DNSSEC Validation is disabled
 WARNING: untranslated string: dnsforward forward_servers = Nameservers
 WARNING: untranslated string: dnssec aware = DNSSEC Aware
 WARNING: untranslated string: dnssec disabled warning = WARNING: DNSSEC has been disabled

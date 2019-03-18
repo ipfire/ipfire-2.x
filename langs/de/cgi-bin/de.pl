@@ -824,6 +824,7 @@
 'dnsforward' => 'DNS-Weiterleitung',
 'dnsforward add a new entry' => 'Neuen Eintrag hinzufügen',
 'dnsforward configuration' => 'Einstellungen für DNS Weiterleitung',
+'dnsforward dnssec disabled' => 'DNSSEC-Validierung deaktiviert',
 'dnsforward edit an entry' => 'Existierenden Eintrag bearbeiten',
 'dnsforward entries' => 'Aktuelle Einträge',
 'dnsforward forward_servers' => 'DNS-Server',

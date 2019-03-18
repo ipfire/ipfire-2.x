@@ -624,6 +624,7 @@ WARNING: untranslated string: dns title = Domain Name System
 WARNING: untranslated string: dnsforward = DNS Forwarding
 WARNING: untranslated string: dnsforward add a new entry = Add a new entry
 WARNING: untranslated string: dnsforward configuration = DNS forward configuration
+WARNING: untranslated string: dnsforward dnssec disabled = DNSSEC Validation is disabled
 WARNING: untranslated string: dnsforward edit an entry = Edit an existing entry
 WARNING: untranslated string: dnsforward entries = Current entries
 WARNING: untranslated string: dnsforward forward_servers = Nameservers

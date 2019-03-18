@@ -217,6 +217,7 @@
 < dnsforward add a new entry
 < dnsforward configuration
 < dns forward disable dnssec
+< dnsforward dnssec disabled
 < dnsforward edit an entry
 < dnsforward entries
 < dnsforward forward_servers
@@ -837,6 +838,7 @@
 < default IP address
 < Disabled
 < dns forward disable dnssec
+< dnsforward dnssec disabled
 < dns forwarding dnssec disabled notice
 < emerging pro rules
 < ids apply
@@ -959,6 +961,7 @@
 < Disabled
 < dl client arch insecure
 < dns forward disable dnssec
+< dnsforward dnssec disabled
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
 < dnssec disabled warning
@@ -1229,6 +1232,7 @@
 < Disabled
 < dl client arch insecure
 < dns forward disable dnssec
+< dnsforward dnssec disabled
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
 < dnssec aware
@@ -1616,6 +1620,7 @@
 < dnsforward add a new entry
 < dnsforward configuration
 < dns forward disable dnssec
+< dnsforward dnssec disabled
 < dnsforward edit an entry
 < dnsforward entries
 < dnsforward forward_servers
@@ -2377,6 +2382,7 @@
 < dnsforward add a new entry
 < dnsforward configuration
 < dns forward disable dnssec
+< dnsforward dnssec disabled
 < dnsforward edit an entry
 < dnsforward entries
 < dnsforward forward_servers
@@ -2989,6 +2995,7 @@
 < default IP address
 < Disabled
 < dns forward disable dnssec
+< dnsforward dnssec disabled
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
 < emerging pro rules

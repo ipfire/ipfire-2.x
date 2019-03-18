@@ -851,6 +851,7 @@
 'dnsforward' => 'DNS Forwarding',
 'dnsforward add a new entry' => 'Add a new entry',
 'dnsforward configuration' => 'DNS forward configuration',
+'dnsforward dnssec disabled' => 'DNSSEC Validation is disabled',
 'dnsforward edit an entry' => 'Edit an existing entry',
 'dnsforward entries' => 'Current entries',
 'dnsforward forward_servers' => 'Nameservers',
