@@ -970,14 +970,14 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print SERVERCONF "port $cgiparams{'DEST_PORT'}\n"; 
 
   if ($cgiparams{'PROTOCOL'} eq 'tcp') {
-  print SERVERCONF "proto tcp-server\n";
+  print SERVERCONF "proto tcp4-server\n";
   print SERVERCONF "# Packet size\n";
   if ($cgiparams{'MTU'} eq '') {$tunmtu = '1400'} else {$tunmtu = $cgiparams{'MTU'}};
   print SERVERCONF "tun-mtu $tunmtu\n";
   }
   
   if ($cgiparams{'PROTOCOL'} eq 'udp') {
-  print SERVERCONF "proto udp\n"; 
+  print SERVERCONF "proto udp4\n";
   print SERVERCONF "# Paketsize\n";
   if ($cgiparams{'MTU'} eq '') {$tunmtu = '1500'} else {$tunmtu = $cgiparams{'MTU'}};
   print SERVERCONF "tun-mtu $tunmtu\n";
@@ -1069,14 +1069,14 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print CLIENTCONF "port $cgiparams{'DEST_PORT'}\n"; 
 
   if ($cgiparams{'PROTOCOL'} eq 'tcp') {
-  print CLIENTCONF "proto tcp-client\n";
+  print CLIENTCONF "proto tcp4-client\n";
   print CLIENTCONF "# Packet size\n";
   if ($cgiparams{'MTU'} eq '') {$tunmtu = '1400'} else {$tunmtu = $cgiparams{'MTU'}};
   print CLIENTCONF "tun-mtu $tunmtu\n";
   }
   
   if ($cgiparams{'PROTOCOL'} eq 'udp') {
-  print CLIENTCONF "proto udp\n"; 
+  print CLIENTCONF "proto udp4\n";
   print CLIENTCONF "# Paketsize\n";
   if ($cgiparams{'MTU'} eq '') {$tunmtu = '1500'} else {$tunmtu = $cgiparams{'MTU'}};
   print CLIENTCONF "tun-mtu $tunmtu\n";
@@ -2239,14 +2239,14 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    print CLIENTCONF "port $confighash{$cgiparams{'KEY'}}[29]\n"; 
    
    if ($confighash{$cgiparams{'KEY'}}[28] eq 'tcp') {
-   print CLIENTCONF "proto tcp-client\n";
+   print CLIENTCONF "proto tcp4-client\n";
    print CLIENTCONF "# Packet size\n";
    if ($confighash{$cgiparams{'KEY'}}[31] eq '') {$tunmtu = '1400'} else {$tunmtu = $confighash{$cgiparams{'KEY'}}[31]};
    print CLIENTCONF "tun-mtu $tunmtu\n";
    }
   
    if ($confighash{$cgiparams{'KEY'}}[28] eq 'udp') {
-   print CLIENTCONF "proto udp\n"; 
+   print CLIENTCONF "proto udp4\n";
    print CLIENTCONF "# Paketsize\n";
    if ($confighash{$cgiparams{'KEY'}}[31] eq '') {$tunmtu = '1500'} else {$tunmtu = $confighash{$cgiparams{'KEY'}}[31]};
    print CLIENTCONF "tun-mtu $tunmtu\n";
