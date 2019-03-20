@@ -61,7 +61,7 @@ ldconfig
 /etc/init.d/squid start
 
 # Rebuild initrd
-rebuild-initrd
+/usr/local/bin/rebuild-initrd
 
 # This update needs a reboot...
 touch /var/run/need_reboot
