@@ -1084,6 +1084,7 @@ buildipfire() {
   lfsmake2 openssl
   [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
   lfsmake2 popt
+  lfsmake2 libedit
   lfsmake2 libusb
   lfsmake2 libusb-compat
   lfsmake2 libpcap
@@ -1587,7 +1588,6 @@ buildipfire() {
   lfsmake2 dehydrated
   lfsmake2 shairport-sync
   lfsmake2 borgbackup
-  lfsmake2 libedit
   lfsmake2 knot
   lfsmake2 spectre-meltdown-checker
   lfsmake2 zabbix_agentd
