@@ -469,10 +469,7 @@ sub addccdnet
 		$errormessage=$Lang::tr{'ccd err invalidnet'};
 		return;
 	}
-	
-	$errormessage=&General::checksubnets($ccdname,$ccdnet);
-	
-		
+
 	if (!$errormessage) {
 		my %ccdconfhash=();
 		$baseaddress=&General::getnetworkip($ccdip,$subcidr);

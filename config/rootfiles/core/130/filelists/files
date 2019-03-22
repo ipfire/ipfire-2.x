@@ -13,6 +13,7 @@ srv/web/ipfire/cgi-bin/dnsforward.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/ids.dat
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
 usr/local/bin/ipsec-interfaces
 usr/local/bin/suricatactrl
 usr/local/bin/update-ids-ruleset
