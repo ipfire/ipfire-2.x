@@ -122,10 +122,10 @@ sub get_full_country_name($) {
 
 # Function to get all available GeoIP locations.
 sub get_geoip_locations() {
-	my @locations;
+	my @locations = ();
 
 	# Open the location database.
-	open(LOCATION, "$geoip_database_dir/$location_database") or die "Could not open $geoip_database_dir/$location_database. $!\n";
+	open(LOCATION, "$geoip_database_dir/$location_database") or return @locations;
 
 	# Loop through the file.
 	while(my $line = <LOCATION>) {
