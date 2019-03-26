@@ -1,4 +1,4 @@
-etc/nginx
+#etc/nginx
 etc/nginx/fastcgi.conf
 etc/nginx/fastcgi.conf.default
 etc/nginx/fastcgi_params
@@ -16,8 +16,8 @@ etc/nginx/uwsgi_params.default
 etc/nginx/win-utf
 etc/rc.d/init.d/nginx
 usr/sbin/nginx
-usr/share/nginx
-usr/share/nginx/html
+#usr/share/nginx
+#usr/share/nginx/html
 usr/share/nginx/html/50x.html
 usr/share/nginx/html/index.html
 var/ipfire/backup/addons/includes/nginx
