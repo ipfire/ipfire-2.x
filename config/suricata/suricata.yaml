@@ -697,7 +697,7 @@ spm-algo: auto
 
 # Suricata is multi-threaded. Here the threading can be influenced.
 threading:
-  set-cpu-affinity: no
+  set-cpu-affinity: yes
   # Tune cpu affinity of threads. Each family of threads can be bound
   # on specific CPUs.
   #
@@ -717,18 +717,15 @@ threading:
     - worker-cpu-set:
         cpu: [ "all" ]
         mode: "exclusive"
-        # Use explicitely 3 threads and don't compute number by using
-        # detect-thread-ratio variable:
-        # threads: 3
         prio:
           low: [ 0 ]
           medium: [ "1-2" ]
           high: [ 3 ]
           default: "medium"
-    #- verdict-cpu-set:
-    #    cpu: [ 0 ]
-    #    prio:
-    #      default: "high"
+    - verdict-cpu-set:
+        cpu: [ 0 ]
+        prio:
+          default: "high"
   #
   # By default Suricata creates one "detect" thread per available CPU/CPU core.
   # This setting allows controlling this behaviour. A ratio setting of 2 will
