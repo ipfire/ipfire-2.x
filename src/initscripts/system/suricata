@@ -75,8 +75,8 @@ function generate_fw_rules {
 			# Check if there are multiple cpu cores available.
 			if [ "$cpu_count" -gt "1" ]; then
 				# Balance beetween all queues.
-				NFQ_OPTIONS+="--queue-balance 0:"
-				NFQ_OPTIONS+=$(($cpu_count-1))
+				NFQ_OPTIONS+="--queue-balance 0:$(($cpu_count-1))"
+				NFQ_OPTIONS+=" --queue-cpu-fanout"
 			else
 				# Send all packets to queue 0.
 				NFQ_OPTIONS+="--queue-num 0"
