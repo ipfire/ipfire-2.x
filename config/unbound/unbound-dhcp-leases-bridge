@@ -25,9 +25,11 @@ import daemon
 import ipaddress
 import logging
 import logging.handlers
+import os
 import re
 import signal
 import subprocess
+import tempfile
 
 import inotify.adapters
 
@@ -519,10 +521,14 @@ class UnboundConfigWriter(object):
 				self._cached_leases.append(l)
 
 	def write_dhcp_leases(self, leases):
-		with open(self.path, "w") as f:
+		with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
+			filename = f.name
+
 			for l in leases:
 				for rr in l.rrset:
 					f.write("local-data: \"%s\"\n" % " ".join(rr))
+
+		os.rename(filename, self.path)
 
 	def _control(self, *args):
 		command = ["unbound-control"]

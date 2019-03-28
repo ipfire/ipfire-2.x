@@ -18,6 +18,7 @@ usr/local/bin/ipsec-interfaces
 usr/local/bin/suricatactrl
 usr/local/bin/update-ids-ruleset
 usr/sbin/convert-snort
+usr/sbin/unbound-dhcp-leases-bridge
 var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/include
 var/ipfire/general-functions.pl
