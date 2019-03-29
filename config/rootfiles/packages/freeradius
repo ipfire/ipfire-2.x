@@ -6,6 +6,7 @@ etc/raddb
 #etc/raddb/certs/bootstrap
 #etc/raddb/certs/ca.cnf
 #etc/raddb/certs/client.cnf
+#etc/raddb/certs/inner-server.cnf
 #etc/raddb/certs/passwords.mk
 #etc/raddb/certs/server.cnf
 #etc/raddb/certs/xpextensions
@@ -156,7 +157,6 @@ etc/raddb
 #etc/raddb/mods-config/sql/main/postgresql
 #etc/raddb/mods-config/sql/main/postgresql/extras
 #etc/raddb/mods-config/sql/main/postgresql/extras/cisco_h323_db_schema.sql
-#etc/raddb/mods-config/sql/main/postgresql/extras/update_radacct_group.sql
 #etc/raddb/mods-config/sql/main/postgresql/extras/voip-postpaid.conf
 #etc/raddb/mods-config/sql/main/postgresql/queries.conf
 #etc/raddb/mods-config/sql/main/postgresql/schema.sql
@@ -183,7 +183,6 @@ etc/raddb
 #etc/raddb/mods-enabled/date
 #etc/raddb/mods-enabled/detail
 #etc/raddb/mods-enabled/detail.log
-#etc/raddb/mods-enabled/dhcp
 #etc/raddb/mods-enabled/digest
 #etc/raddb/mods-enabled/dynamic_clients
 #etc/raddb/mods-enabled/eap
@@ -219,6 +218,7 @@ etc/raddb
 #etc/raddb/policy.d/filter
 #etc/raddb/policy.d/moonshot-targeted-ids
 #etc/raddb/policy.d/operator-name
+#etc/raddb/policy.d/rfc7542
 #etc/raddb/proxy.conf
 #etc/raddb/radiusd.conf
 #etc/raddb/sites-available
@@ -269,6 +269,7 @@ usr/bin/rlm_ippool_tool
 usr/bin/smbencrypt
 #usr/include/freeradius
 #usr/include/freeradius/attributes.h
+#usr/include/freeradius/autoconf.h
 #usr/include/freeradius/base64.h
 #usr/include/freeradius/build.h
 #usr/include/freeradius/conf.h
@@ -293,6 +294,7 @@ usr/bin/smbencrypt
 #usr/include/freeradius/radpaths.h
 #usr/include/freeradius/radutmp.h
 #usr/include/freeradius/realms.h
+#usr/include/freeradius/regex.h
 #usr/include/freeradius/rfc2865.h
 #usr/include/freeradius/rfc2866.h
 #usr/include/freeradius/rfc2867.h
@@ -325,9 +327,12 @@ usr/bin/smbencrypt
 #usr/include/freeradius/rfc7268.h
 #usr/include/freeradius/rfc7499.h
 #usr/include/freeradius/rfc7930.h
+#usr/include/freeradius/rfc8045.h
 #usr/include/freeradius/sha1.h
 #usr/include/freeradius/stats.h
 #usr/include/freeradius/sysutmp.h
+#usr/include/freeradius/tcp.h
+#usr/include/freeradius/threads.h
 #usr/include/freeradius/tls.h
 #usr/include/freeradius/token.h
 #usr/include/freeradius/udpfromto.h
@@ -659,6 +664,13 @@ usr/sbin/radmin
 #usr/share/doc/freeradius/schemas/ldap/openldap/freeradius-clients.schema
 #usr/share/doc/freeradius/schemas/ldap/openldap/freeradius.ldif
 #usr/share/doc/freeradius/schemas/ldap/openldap/freeradius.schema
+#usr/share/doc/freeradius/schemas/ldap/samba
+#usr/share/doc/freeradius/schemas/ldap/samba/README.txt
+#usr/share/doc/freeradius/schemas/ldap/samba/freeradius-attrs.ldif
+#usr/share/doc/freeradius/schemas/ldap/samba/freeradius-classes.ldif
+#usr/share/doc/freeradius/schemas/ldap/samba/freeradius-clients-attrs.ldif
+#usr/share/doc/freeradius/schemas/ldap/samba/freeradius-clients-classes.ldif
+#usr/share/doc/freeradius/schemas/ldap/samba/freeradius-user.ldif
 #usr/share/doc/freeradius/schemas/logstash
 #usr/share/doc/freeradius/schemas/logstash/README
 #usr/share/doc/freeradius/schemas/logstash/kibana4-dashboard.json
@@ -703,6 +715,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.avaya
 #usr/share/freeradius/dictionary.azaire
 #usr/share/freeradius/dictionary.bay
+#usr/share/freeradius/dictionary.bigswitch
 #usr/share/freeradius/dictionary.bintec
 #usr/share/freeradius/dictionary.bluecoat
 #usr/share/freeradius/dictionary.boingo
@@ -761,6 +774,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.huawei
 #usr/share/freeradius/dictionary.iana
 #usr/share/freeradius/dictionary.iea
+#usr/share/freeradius/dictionary.infinera
 #usr/share/freeradius/dictionary.infoblox
 #usr/share/freeradius/dictionary.infonet
 #usr/share/freeradius/dictionary.ipunplugged
@@ -782,6 +796,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.microsemi
 #usr/share/freeradius/dictionary.microsoft
 #usr/share/freeradius/dictionary.mikrotik
+#usr/share/freeradius/dictionary.mimosa
 #usr/share/freeradius/dictionary.motorola
 #usr/share/freeradius/dictionary.motorola.illegal
 #usr/share/freeradius/dictionary.motorola.wimax
@@ -838,6 +853,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.rfc7268
 #usr/share/freeradius/dictionary.rfc7499
 #usr/share/freeradius/dictionary.rfc7930
+#usr/share/freeradius/dictionary.rfc8045
 #usr/share/freeradius/dictionary.riverbed
 #usr/share/freeradius/dictionary.riverstone
 #usr/share/freeradius/dictionary.roaringpenguin
@@ -850,6 +866,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.siemens
 #usr/share/freeradius/dictionary.slipstream
 #usr/share/freeradius/dictionary.sofaware
+#usr/share/freeradius/dictionary.softbank
 #usr/share/freeradius/dictionary.sonicwall
 #usr/share/freeradius/dictionary.springtide
 #usr/share/freeradius/dictionary.starent
@@ -869,6 +886,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.usr.illegal
 #usr/share/freeradius/dictionary.utstarcom
 #usr/share/freeradius/dictionary.valemount
+#usr/share/freeradius/dictionary.verizon
 #usr/share/freeradius/dictionary.versanet
 #usr/share/freeradius/dictionary.vqp
 #usr/share/freeradius/dictionary.walabi
