@@ -600,6 +600,8 @@ ieee80211n=1
 wmm_enabled=1
 ht_capab=$wlanapsettings{'HTCAPS'}
 vht_capab=$wlanapsettings{'VHTCAPS'}
+vht_oper_chwidth=1
+vht_oper_centr_freq_seg0_idx=42
 END
 ;
 
@@ -620,6 +622,7 @@ dump_file=/tmp/hostapd.dump
 auth_algs=1
 ctrl_interface=/var/run/hostapd
 ctrl_interface_group=0
+disassoc_low_ack=1
 END
 ;
  if ( $wlanapsettings{'HIDESSID'} eq 'on' ){
