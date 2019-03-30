@@ -1,0 +1,71 @@
+diff -Naur linux-4.14.103.org/drivers/net/wireless/ath/regd.c linux-4.14.103/drivers/net/wireless/ath/regd.c
+--- linux-4.14.103.org/drivers/net/wireless/ath/regd.c	2019-02-23 09:06:44.000000000 +0100
++++ linux-4.14.103/drivers/net/wireless/ath/regd.c	2019-03-30 11:35:53.177299394 +0100
+@@ -24,6 +24,7 @@
+ #include "regd_common.h"
+ 
+ static int __ath_regd_init(struct ath_regulatory *reg);
++static struct reg_dmn_pair_mapping *ath_get_regpair(int regdmn);
+ 
+ /*
+  * This is a set of common rules used by our world regulatory domains.
+@@ -116,6 +117,9 @@
+ 
+ static bool dynamic_country_user_possible(struct ath_regulatory *reg)
+ {
++//	if (IS_ENABLED(CPTCFG_ATH_USER_REGD))
++		return true;
++
+ 	if (IS_ENABLED(CONFIG_ATH_REG_DYNAMIC_USER_CERT_TESTING))
+ 		return true;
+ 
+@@ -188,6 +192,8 @@
+ 
+ static bool ath_reg_dyn_country_user_allow(struct ath_regulatory *reg)
+ {
++//	if (IS_ENABLED(CPTCFG_ATH_USER_REGD))
++		return true;
+ 	if (!IS_ENABLED(CONFIG_ATH_REG_DYNAMIC_USER_REG_HINTS))
+ 		return false;
+ 	if (!dynamic_country_user_possible(reg))
+@@ -345,6 +351,9 @@
+ 	struct ieee80211_channel *ch;
+ 	unsigned int i;
+ 
++//	if (IS_ENABLED(CPTCFG_ATH_USER_REGD))
++		return;
++
+ 	for (band = 0; band < NUM_NL80211_BANDS; band++) {
+ 		if (!wiphy->bands[band])
+ 			continue;
+@@ -378,6 +387,9 @@
+ {
+ 	struct ieee80211_supported_band *sband;
+ 
++//	if (IS_ENABLED(CPTCFG_ATH_USER_REGD))
++		return;
++
+ 	sband = wiphy->bands[NL80211_BAND_2GHZ];
+ 	if (!sband)
+ 		return;
+@@ -407,6 +419,9 @@
+ 	struct ieee80211_channel *ch;
+ 	unsigned int i;
+ 
++//	if (IS_ENABLED(CPTCFG_ATH_USER_REGD))
++		return;
++
+ 	if (!wiphy->bands[NL80211_BAND_5GHZ])
+ 		return;
+ 
+@@ -639,6 +654,10 @@
+ 	const struct ieee80211_regdomain *regd;
+ 
+ 	wiphy->reg_notifier = reg_notifier;
++
++//	if (IS_ENABLED(CPTCFG_ATH_USER_REGD))
++		return 0;
++
+ 	wiphy->regulatory_flags |= REGULATORY_STRICT_REG |
+ 				   REGULATORY_CUSTOM_REG;
+ 
