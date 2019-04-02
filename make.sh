@@ -1098,6 +1098,7 @@ buildipfire() {
   lfsmake2 zd1211-firmware
   lfsmake2 rpi-firmware
   lfsmake2 intel-microcode
+  lfsmake2 pcengines-apu-firmware
   lfsmake2 bc
   lfsmake2 u-boot MKIMAGE=1
   lfsmake2 cpio
