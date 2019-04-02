@@ -1591,6 +1591,7 @@ buildipfire() {
   lfsmake2 knot
   lfsmake2 spectre-meltdown-checker
   lfsmake2 zabbix_agentd
+  lfsmake2 flashrom
 }
 
 buildinstaller() {
