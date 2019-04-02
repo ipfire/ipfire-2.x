@@ -1592,6 +1592,7 @@ buildipfire() {
   lfsmake2 spectre-meltdown-checker
   lfsmake2 zabbix_agentd
   lfsmake2 flashrom
+  lfsmake2 firmware-update
 }
 
 buildinstaller() {
