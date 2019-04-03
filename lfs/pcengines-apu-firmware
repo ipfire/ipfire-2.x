@@ -1,0 +1,97 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 4.9.0.3
+
+THISAPP    = pcengines-apu-firmware-$(VER)
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = pcengines-apu-firmware
+PAK_VER    = 1
+
+DEPS       = "firmware-update"
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = \
+	apu1_v$(VER).rom \
+	apu2_v$(VER).rom \
+	apu3_v$(VER).rom \
+	apu4_v$(VER).rom \
+	apu5_v$(VER).rom
+
+apu1_v$(VER).rom = $(DL_FROM)/apu1_v$(VER).rom
+apu2_v$(VER).rom = $(DL_FROM)/apu2_v$(VER).rom
+apu3_v$(VER).rom = $(DL_FROM)/apu3_v$(VER).rom
+apu4_v$(VER).rom = $(DL_FROM)/apu4_v$(VER).rom
+apu5_v$(VER).rom = $(DL_FROM)/apu5_v$(VER).rom
+
+apu1_v$(VER).rom_MD5 = eb446600520f9abc3704cd806cbf160f
+apu2_v$(VER).rom_MD5 = c61e10a6b2f76c8ada4e81f9e654decd
+apu3_v$(VER).rom_MD5 = d1390d76d0ee18912825fd95b08e3f26
+apu4_v$(VER).rom_MD5 = c36cc13a1ba196b33eb85592bd44fad7
+apu5_v$(VER).rom_MD5 = da69300aed63e89e827f1e3ee3adc06d
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+
+	# Install firmware to /lib/firmware
+	mkdir -pv /lib/firmware/pcengines/apu
+	cd $(DIR_DL) && install -v -m 644 $(objects) \
+		/lib/firmware/pcengines/apu
+
+	@$(POSTBUILD)
