@@ -98,7 +98,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--without-rlm_sql_db2 \
 			--without-rlm_sql_oracle \
 			--without-rlm_sql_sqlite \
-			--without-rlm_sql_mysql
+			--without-rlm_sql_mysql \
+			LDFLAGS="$(LDFLAGS)"
+
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
