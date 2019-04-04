@@ -76,6 +76,7 @@ rm -rfv \
 	/var/ipfire/snort
 
 # Start services
+/etc/init.d/apache restart
 /etc/init.d/collectd restart
 /etc/init.d/firewall restart
 /etc/init.d/unbound restart
