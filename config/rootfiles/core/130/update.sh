@@ -32,15 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
-/etc/init.d/squid stop
-/usr/local/bin/openvpnctrl -k
-/usr/local/bin/openvpnctrl -kn2n
 /usr/local/bin/ipsecctrl D
-/etc/init.d/unbound stop
-
-# Remove files
-rm -vf \
-	/usr/lib/firewall/ipsec-block
 
 # Extract files
 extract_files
@@ -52,12 +44,8 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
-/etc/init.d/firewall restart
-/etc/init.d/unbound start
+/etc/init.d/apache restart
 /usr/local/bin/ipsecctrl S
-/usr/local/bin/openvpnctrl -s
-/usr/local/bin/openvpnctrl -sn2n
-/etc/init.d/squid start
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
