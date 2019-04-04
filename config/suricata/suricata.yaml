@@ -697,7 +697,7 @@ spm-algo: auto
 
 # Suricata is multi-threaded. Here the threading can be influenced.
 threading:
-  set-cpu-affinity: yes
+  set-cpu-affinity: no
   # Tune cpu affinity of threads. Each family of threads can be bound
   # on specific CPUs.
   #
