@@ -35,6 +35,11 @@ case "$1" in
 			touch /etc/sysconfig/lm_sensors
 		fi
 
+		# Do not search for sensors when running on AWS
+		if [ -e "/var/run/aws-instance-id" ]; then
+			touch /etc/sysconfig/lm_sensors
+		fi
+
 		# At first run search for sensors with sensors-detect
 		if [ ! -e /etc/sysconfig/lm_sensors ]; then
 			boot_mesg "Searching for Sensors..."

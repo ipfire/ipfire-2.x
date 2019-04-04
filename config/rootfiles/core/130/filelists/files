@@ -4,6 +4,7 @@ srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 etc/collectd.conf
 etc/logrotate.conf
+etc/rc.d/init.d/collectd
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/networking/red.up/23-suricata
 etc/rc.d/init.d/suricata
