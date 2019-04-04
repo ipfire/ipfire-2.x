@@ -1646,6 +1646,7 @@ usr/lib/apache/mod_slotmem_plain.so
 usr/lib/apache/mod_slotmem_shm.so
 usr/lib/apache/mod_socache_dbm.so
 usr/lib/apache/mod_socache_memcache.so
+usr/lib/apache/mod_socache_redis.so
 usr/lib/apache/mod_socache_shmcb.so
 usr/lib/apache/mod_speling.so
 usr/lib/apache/mod_ssl.so
