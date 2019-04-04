@@ -1363,6 +1363,10 @@ END
 			$cgiparams{'MODE'} = "tunnel";
 		}
 
+		if ($cgiparams{'INTERFACE_MTU'} eq "") {
+			$cgiparams{'INTERFACE_MTU'} = 1500;
+		}
+
 	} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 		$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 		if ($cgiparams{'TYPE'} !~ /^(host|net)$/) {
