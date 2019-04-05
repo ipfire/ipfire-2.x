@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 4.14.97-ipfire-kirkwood Kernel Configuration
+# Linux/arm 4.14.110-ipfire-kirkwood Kernel Configuration
 #
 CONFIG_ARM=y
 CONFIG_ARM_HAS_SG_CHAIN=y
@@ -2315,6 +2315,7 @@ CONFIG_ATH5K=m
 # CONFIG_ATH5K_DEBUG is not set
 # CONFIG_ATH5K_TRACER is not set
 CONFIG_ATH5K_PCI=y
+# CONFIG_ATH5K_TEST_CHANNELS is not set
 CONFIG_ATH9K_HW=m
 CONFIG_ATH9K_COMMON=m
 CONFIG_ATH9K_BTCOEX_SUPPORT=y
@@ -2340,6 +2341,7 @@ CONFIG_ATH6KL=m
 CONFIG_ATH6KL_USB=m
 # CONFIG_ATH6KL_DEBUG is not set
 # CONFIG_ATH6KL_TRACING is not set
+# CONFIG_ATH6KL_REGDOMAIN is not set
 CONFIG_AR5523=m
 CONFIG_WIL6210=m
 CONFIG_WIL6210_ISR_COR=y
