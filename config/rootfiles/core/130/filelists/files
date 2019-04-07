@@ -1,7 +1,6 @@
 etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
-var/ipfire/langs
 etc/collectd.conf
 etc/logrotate.conf
 etc/rc.d/init.d/collectd
@@ -9,6 +8,7 @@ etc/rc.d/init.d/firewall
 etc/rc.d/init.d/networking/red.up/23-suricata
 etc/rc.d/init.d/suricata
 etc/syslog.conf
+opt/pakfire/etc/pakfire.conf
 srv/web/ipfire/cgi-bin/aliases.cgi
 srv/web/ipfire/cgi-bin/dnsforward.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
@@ -26,5 +26,6 @@ var/ipfire/backup/include
 var/ipfire/general-functions.pl
 var/ipfire/geoip-functions.pl
 var/ipfire/ids-functions.pl
+var/ipfire/langs
 var/ipfire/menu.d/40-services.menu
 var/ipfire/menu.d/50-firewall.menu
