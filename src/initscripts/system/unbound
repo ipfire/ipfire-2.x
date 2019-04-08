@@ -172,9 +172,9 @@ own_hostname() {
 }
 
 update_hosts() {
-	local enabled address hostname domainname
+	local enabled address hostname domainname generateptr
 
-	while IFS="," read -r enabled address hostname domainname; do
+	while IFS="," read -r enabled address hostname domainname generateptr; do
 		[ "${enabled}" = "on" ] || continue
 
 		# Build FQDN
@@ -184,6 +184,9 @@ update_hosts() {
 
 		# Skip reverse resolution if the address equals the GREEN address
 		[ "${address}" = "${GREEN_ADDRESS}" ] && continue
+
+		# Skip reverse resolution if user requested not to do so
+		[ "${generateptr}" = "off" ] && continue
 
 		# Add RDNS
 		address=$(ip_address_revptr ${address})
