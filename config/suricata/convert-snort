@@ -253,7 +253,24 @@ if (-f $IDS::rulestarball) {
 }
 
 #
-## Step 8: Grab used ruleset files from snort config file and convert
+## Step 8: Generate file for the HOME Net.
+#
+
+# Call subfunction to generate the file.
+&IDS::generate_home_net_file();
+
+#
+## Step 9: Setup automatic ruleset updates.
+#
+
+# Check if a ruleset is configured.
+if($rulessettings{"RULES"}) {
+	# Call suricatactrl and setup the periodic update mechanism.
+	&IDS::call_suricatactrl("cron", $rulessettings{'AUTOUPDATE_INTERVAL'});
+}
+
+#
+## Step 10: Grab used ruleset files from snort config file and convert
 ##         them into the new format.
 #
 
@@ -297,23 +314,6 @@ close(SNORTCONF);
 
 # Pass the array of enabled rule files to the subfunction and write the file.
 &IDS::write_used_rulefiles_file(@enabled_rule_files);
-
-#
-## Step 9: Generate file for the HOME Net.
-#
-
-# Call subfunction to generate the file.
-&IDS::generate_home_net_file();
-
-#
-## Step 10: Setup automatic ruleset updates.
-#
-
-# Check if a ruleset is configured.
-if($rulessettings{"RULES"}) {
-	# Call suricatactrl and setup the periodic update mechanism.
-	&IDS::call_suricatactrl("cron", $rulessettings{'AUTOUPDATE_INTERVAL'});
-}
 
 #
 ## Step 11: Start the IDS if enabled.
