@@ -133,6 +133,9 @@ rm -rfv \
 # Update pakfire database
 /usr/local/bin/pakfire update --force
 
+# Search sensors again after reboot into the new kernel
+rm -f  /etc/sysconfig/lm_sensors
+
 # Upadate Kernel version uEnv.txt
 if [ -e /boot/uEnv.txt ]; then
 	sed -i -e "s/KVER=.*/KVER=${KVER}/g" /boot/uEnv.txt

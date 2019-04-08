@@ -73,6 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-disable-ipv6.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-ipfire.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-ipfire-interfaces.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/strongswan-ipfire-revert.patch
 
 	cd $(DIR_APP) && ./configure \
 		--prefix="/usr" \

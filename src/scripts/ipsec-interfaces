@@ -23,8 +23,18 @@ shopt -s nullglob
 
 VPN_CONFIG="/var/ipfire/vpn/config"
 
+ROUTE_TABLE="220"
+ROUTE_TABLE_PRIO="128"
+
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/vpn/settings)
+
+# Get RED interface name
+if [ -r "/var/ipfire/red/iface" ]; then
+	RED_INTF="$(</var/ipfire/red/iface)"
+else
+	RED_INTF="red0"
+fi
 
 VARS=(
 	id status name lefthost type ctype psk local local_id leftsubnets
@@ -43,6 +53,52 @@ resolve_hostname() {
 	dig +short A "${hostname}" | tail -n1
 }
 
+ip_encode() {
+	local address="${1}"
+
+	local int=0
+	for field in ${address//./ }; do
+		int=$(( $(( ${int} << 8 )) | ${field} ))
+	done
+
+	echo ${int}
+}
+
+function ip_in_subnet() {
+	local address="${1}"
+	local subnet="${2}"
+
+	local netmask="${subnet#*/}"
+
+	# Convert netmask to prefix if necessary
+	case "${netmask}" in
+		[0-9]+)
+			;;
+		*)
+			netmask="$(netmask2prefix "${netmask}")"
+			;;
+	esac
+
+	local vlsm=$(( -1 << $(( 32 - ${netmask} )) ))
+
+	[ "$(( $(ip_encode "${address}") & ${vlsm} ))" -eq "$(( $(ip_encode "${subnet%/*}") & ${vlsm} ))" ]
+}
+
+netmask2prefix() {
+	local netmask="${1}"
+	local mask="$(ip_encode "${netmask}")"
+
+	local cidr=0
+	local x="$(( 128 << 24 ))" # 0x80000000
+
+	while [ $(( ${x} & ${mask} )) -ne 0 ]; do
+		[ ${mask} -eq ${x} ] && mask=0 || mask=$(( ${mask} << 1 ))
+		cidr=$(( ${cidr} + 1 ))
+	done
+
+	echo "${cidr}"
+}
+
 main() {
 	# Register local variables
 	local "${VARS[@]}"
@@ -50,8 +106,17 @@ main() {
 
 	local interfaces=()
 
+	# Flush IPsec routes
+	ip route flush table "${ROUTE_TABLE}"
+
+	# Remove lookups
+	ip rule del lookup "${ROUTE_TABLE}"
+
 	# We are done when IPsec is not enabled
 	if [ "${ENABLED}" = "on" ]; then
+		# Enable route table lookup
+		ip rule add lookup "${ROUTE_TABLE}" prio "${ROUTE_TABLE_PRIO}"
+
 		while IFS="," read -r "${VARS[@]}"; do
 			# Check if the connection is enabled
 			[ "${status}" = "on" ] || continue
@@ -65,6 +130,38 @@ main() {
 					local intf="${interface_mode}${id}"
 					;;
 				*)
+					# Install routes
+					local address
+
+					local _address
+					for _address in ${GREEN_ADDRESS} ${BLUE_ADDRESS} ${ORANGE_ADDRESS}; do
+						local leftsubnet
+						for leftsubnet in ${leftsubnets//\|/ }; do
+							if ip_in_subnet "${_address}" "${leftsubnet}"; then
+								address="${_address}"
+								break
+							fi
+						done
+
+						# End loop when address is set
+						[ -n "${address}" ] && break
+					done
+
+					local rightsubnet
+					for rightsubnet in ${rightsubnets//\|/ }; do
+						# Ignore default
+						case "${rightsubnet}" in
+							0.0.0.0/*)
+								continue
+								;;
+						esac
+
+						log "Creating route to ${rightsubnet} (via ${address} and ${RED_INTF})"
+						ip route add table "${ROUTE_TABLE}" "${rightsubnet}" proto static \
+							dev "${RED_INTF}" src "${address}"
+					done
+
+					# No interface processing required
 					continue
 					;;
 			esac
