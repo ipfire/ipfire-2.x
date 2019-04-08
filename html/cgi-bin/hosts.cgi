@@ -2,9 +2,9 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
-# This program is free software you can redistribute it and/or modify        #
+# This program is free software you can redistribute it and/or modify         #
 # it under the terms of the GNU General Public License as published by        #
 # the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
@@ -50,9 +50,10 @@ our %settings = ();
 #Must not be saved !
 $settings{'EN'} = '';			# reuse for dummy field in position zero
 $settings{'IP'} = '';
-$settings{'HOST'} = '';			
-$settings{'DOM'} = '';			
-my @nosaved=('EN','IP','HOST','DOM');	# List here ALL setting2 fields. Mandatory
+$settings{'HOST'} = '';
+$settings{'DOM'} = '';
+$settings{'PTR'} = '';
+my @nosaved=('EN','IP','HOST','DOM','PTR');	# List here ALL setting2 fields. Mandatory
     
 $settings{'ACTION'} = '';		# add/edit/remove
 $settings{'KEY1'} = '';			# point record for ACTION
@@ -78,6 +79,10 @@ if (open(FILE, "$datafile")) {
 ## Settings1 Box not used...
 &General::readhash("${General::swroot}/main/settings", \%settings);
 
+# Set PTR to off if filed was not received
+if ($settings{'PTR'} eq '') {
+	$settings{'PTR'} = 'off';
+}
 
 ## Now manipulate the multi-line list with Settings2
 # Basic actions are:
@@ -122,13 +127,12 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
         $errormessage = $Lang::tr{'invalid domain name'};
     }
 
-
     unless ($errormessage) {
 	if ($settings{'KEY1'} eq '') { #add or edit ?
-	    unshift (@current, "$settings{'EN'},$settings{'IP'},$settings{'HOST'},$settings{'DOM'}\n");
+	    unshift (@current, "$settings{'EN'},$settings{'IP'},$settings{'HOST'},$settings{'DOM'},$settings{'PTR'}\n");
 	    &General::log($Lang::tr{'hosts config added'});
 	} else {
-	    @current[$settings{'KEY1'}] = "$settings{'EN'},$settings{'IP'},$settings{'HOST'},$settings{'DOM'}\n";
+	    @current[$settings{'KEY1'}] = "$settings{'EN'},$settings{'IP'},$settings{'HOST'},$settings{'DOM'},$settings{'PTR'}\n";
 	    $settings{'KEY1'} = '';       # End edit mode
 	    &General::log($Lang::tr{'hosts config changed'});
 	}
@@ -150,6 +154,11 @@ if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
     $settings{'IP'}=$temp[1];
     $settings{'HOST'}=$temp[2];
     $settings{'DOM'}=$temp[3];
+    if ($temp[4] eq '') {
+	$settings{'PTR'} = 'on';
+    } else {
+	$settings{'PTR'}=$temp[4];
+    }
 }
 
 if ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
@@ -190,6 +199,7 @@ if ($settings{'ACTION'} eq '' ) { # First launch from GUI
     # Place here default value when nothing is initialized
     $settings{'EN'} = 'on';
     $settings{'DOM'} = $settings{'DOMAINNAME'};
+    $settings{'PTR'} = 'on';
 }
 
 &Header::openpage($Lang::tr{'hostname'}, 1, '');
@@ -238,6 +248,7 @@ if ($errormessage) {
 # Second check box is for editing the list
 #
 $checked{'EN'}{'on'} = ($settings{'EN'} eq '' ) ? '' : "checked='checked'";
+$checked{'PTR'}{'on'} = ($settings{'PTR'} eq 'off' ) ? '' : "checked='checked'";
 
 my $buttontext = $Lang::tr{'add'};
 if ($settings{'KEY1'} ne '') {
@@ -257,9 +268,16 @@ print <<END
     <td><input type='text' name='IP' value='$settings{'IP'}' /></td>
     <td class='base'>$Lang::tr{'hostname'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='HOST' value='$settings{'HOST'}' /></td>
-</tr><tr>
+</tr>
+<tr>
     <td class='base'>$Lang::tr{'domain name'}:</td>
     <td><input type='text' name='DOM' value='$settings{'DOM'}' /></td>
+    <td class='base'>$Lang::tr{'generate ptr'}:</td>
+    <td><input type='checkbox' name='PTR' $checked{'PTR'}{'on'} /></td>
+</tr>
+<tr>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
     <td class='base'>$Lang::tr{'enabled'}</td>
     <td><input type='checkbox' name='EN' $checked{'EN'}{'on'} /></td>
 </tr>
@@ -288,7 +306,8 @@ print <<END
 <tr>
     <th width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IP'><b>$Lang::tr{'host ip'}</b></a></th>
     <th width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?HOST'><b>$Lang::tr{'hostname'}</b></a></th>
-    <th width='50%' align='center'><a href='$ENV{'SCRIPT_NAME'}?DOM'><b>$Lang::tr{'domain name'}</b></a></th>
+    <th width='40%' align='center'><a href='$ENV{'SCRIPT_NAME'}?DOM'><b>$Lang::tr{'domain name'}</b></a></th>
+    <th width='10%' align='center' class='boldbase'><b>$Lang::tr{'ptr'}</b></th>
     <th width='10%' colspan='3' class='boldbase' align='center'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
@@ -315,6 +334,12 @@ foreach my $line (@current) {
 	$gdesc = $Lang::tr{'click to enable'}; 
     }
 
+   if ($temp[4] eq '' || $temp[4] eq 'on') {
+        $temp[4] = $Lang::tr{'yes'};
+   } else {
+        $temp[4] = $Lang::tr{'no'};
+   }
+
     #Colorize each line
     if ($settings{'KEY1'} eq $key) {
 	print "<tr bgcolor='${Header::colouryellow}'>";
@@ -329,6 +354,7 @@ foreach my $line (@current) {
 <td align='center' $col>$temp[1]</td>
 <td align='center' $col>$temp[2]</td>
 <td align='center' $col>$temp[3]</td>
+<td align='center' $col>$temp[4]</td>
 <td align='center' $col>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='ACTION' value='$Lang::tr{'toggle enable disable'}' />
@@ -430,14 +456,14 @@ sub SortDataFile
     my $key = 0;
     foreach my $line (@current) {
 	chomp( $line); #remove newline because can be on field 5 or 6 (addition of REMARK)
-	my @temp = ( '','','', '');
+	my @temp = ( '','','','','');
 	@temp = split (',',$line);
 
 	# Build a pair 'Field Name',value for each of the data dataline.
 	# Each SORTABLE field must have is pair.
 	# Other data fields (non sortable) can be grouped in one
 	
-	my @record = ('KEY',$key++,'EN',$temp[0],'IP',$temp[1],'HOST',$temp[2],'DOM',$temp[3]);
+	my @record = ('KEY',$key++,'EN',$temp[0],'IP',$temp[1],'HOST',$temp[2],'DOM',$temp[3],'PTR',$temp[4]);
 	my $record = {};                        	# create a reference to empty hash
 	%{$record} = @record;                		# populate that hash with @record
 	$entries{$record->{KEY}} = $record; 		# add this to a hash of hashes
@@ -447,7 +473,7 @@ sub SortDataFile
 
     # Each field value is printed , with the newline ! Don't forget separator and order of them.
     foreach my $entry (sort fixedleasesort keys %entries) {
-	print FILE "$entries{$entry}->{EN},$entries{$entry}->{IP},$entries{$entry}->{HOST},$entries{$entry}->{DOM}\n";
+	print FILE "$entries{$entry}->{EN},$entries{$entry}->{IP},$entries{$entry}->{HOST},$entries{$entry}->{DOM},$entries{$entry}->{PTR}\n";
     }
 
     close(FILE);
