@@ -231,6 +231,9 @@ if (-f $snort_rules_tarball) {
 } else {
 	# Check if enought disk space is available.
 	if(&IDS::checkdiskspace()) {
+		# Print error message.
+		print "Could not download ruleset - Not enough free diskspace available.\n";
+	} else {
 		# Call the download function and grab the new ruleset.
 		&IDS::downloadruleset();
 	}
