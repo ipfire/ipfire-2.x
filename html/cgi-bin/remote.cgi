@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -105,6 +105,7 @@ else {
 # used
 	$remotesettings{'ENABLE_SSH_PASSWORDS'} = 'on' unless exists $remotesettings{'ENABLE_SSH_PASSWORDS'};
 	$remotesettings{'ENABLE_SSH_KEYS'} = 'on' unless exists $remotesettings{'ENABLE_SSH_KEYS'};
+	$remotesettings{'SSH_AGENT_FORWARDING'} = 'off' unless exists $remotesettings{'SSH_AGENT_FORWARDING'};
 
 $checked{'ENABLE_SSH'}{'off'} = '';
 $checked{'ENABLE_SSH'}{'on'} = '';
@@ -121,6 +122,9 @@ $checked{'ENABLE_SSH_KEYS'}{$remotesettings{'ENABLE_SSH_KEYS'}} = "checked='chec
 $checked{'SSH_PORT'}{'off'} = '';
 $checked{'SSH_PORT'}{'on'} = '';
 $checked{'SSH_PORT'}{$remotesettings{'SSH_PORT'}} = "checked='checked'";
+$checked{'SSH_AGENT_FORWARDING'}{'off'} = '';
+$checked{'SSH_AGENT_FORWARDING'}{'on'} = '';
+$checked{'SSH_AGENT_FORWARDING'}{$remotesettings{'SSH_AGENT_FORWARDING'}} = "checked='checked'";
 
 &Header::openpage($Lang::tr{'remote access'}, 1, '');
 
@@ -160,6 +164,11 @@ print <<END
 	<td>&nbsp;</td>
 	<td><input type='checkbox' name='SSH_PORT' $checked{'SSH_PORT'}{'on'} /></td>
 	<td width='100%' class='base'>$Lang::tr{'ssh port'}</td>
+</tr>
+<tr>
+	<td>&nbsp;</td>
+	<td><input type='checkbox' name='SSH_AGENT_FORWARDING' $checked{'SSH_AGENT_FORWARDING'}{'on'} /></td>
+	<td width='100%' class='base'>$Lang::tr{'ssh agent forwarding'}</td>
 </tr>
 <tr>
 	<td align='right' colspan='3'>
