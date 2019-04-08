@@ -130,6 +130,9 @@ rm -rfv \
 /etc/init.d/unbound restart
 /etc/init.d/suricata start
 
+# Update pakfire database
+/usr/local/bin/pakfire update --force
+
 # Upadate Kernel version uEnv.txt
 if [ -e /boot/uEnv.txt ]; then
 	sed -i -e "s/KVER=.*/KVER=${KVER}/g" /boot/uEnv.txt
