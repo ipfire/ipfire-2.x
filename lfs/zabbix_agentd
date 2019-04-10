@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.0.4
+VER        = 4.2.0
 
 THISAPP    = zabbix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 46fdb83d4b24e13127a20a3e874b1d8f
+$(DL_FILE)_MD5 = 20f261708f95787f3dbea3eab89f804d
 
 install : $(TARGET)
 
