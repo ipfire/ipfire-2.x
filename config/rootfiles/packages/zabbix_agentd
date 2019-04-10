@@ -1,6 +1,6 @@
 etc/logrotate.d/zabbix_agentd
 etc/rc.d/init.d/zabbix_agentd
-etc/sudoers.d/zabbix.user
+etc/sudoers.d/zabbix
 etc/zabbix_agentd
 etc/zabbix_agentd/scripts
 etc/zabbix_agentd/zabbix_agentd.conf

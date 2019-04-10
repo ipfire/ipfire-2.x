@@ -24,3 +24,8 @@
 . /opt/pakfire/lib/functions.sh
 ./uninstall.sh
 ./install.sh
+
+# Ensure /etc/sudoers.d/zabbix.user is renamed to /etc/sudoers.d/zabbix
+if [ -e /etc/sudoers.d/zabbix.user ]; then
+	mv -v /etc/sudoers.d/zabbix.user /etc/sudoers.d/zabbix
+fi
