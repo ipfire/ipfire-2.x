@@ -7,11 +7,13 @@ etc/rc.d/init.d/collectd
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/networking/red.up/23-suricata
 etc/rc.d/init.d/suricata
+etc/rc.d/init.d/unbound
 etc/syslog.conf
 lib/udev/network-hotplug-rename
 opt/pakfire/etc/pakfire.conf
 srv/web/ipfire/cgi-bin/aliases.cgi
 srv/web/ipfire/cgi-bin/dnsforward.cgi
+srv/web/ipfire/cgi-bin/hosts.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/ids.dat
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
