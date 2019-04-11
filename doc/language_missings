@@ -493,6 +493,7 @@
 < fw settings ruletable
 < gen dh
 < generate dh key
+< generate ptr
 < grouptype
 < guardian
 < hardware support
@@ -656,6 +657,7 @@
 < proxy reports monthly
 < proxy reports today
 < proxy reports weekly
+< ptr
 < qos enter bandwidths
 < random number generator daemon
 < rdns
@@ -674,6 +676,7 @@
 < source ip country
 < ssh
 < ssh active sessions
+< ssh agent forwarding
 < ssh login time
 < ssh no active logins
 < ssh username
@@ -841,6 +844,7 @@
 < dnsforward dnssec disabled
 < dns forwarding dnssec disabled notice
 < emerging pro rules
+< generate ptr
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -874,7 +878,9 @@
 < ipsec settings
 < local ip address
 < mtu
+< ptr
 < runmode
+< ssh agent forwarding
 < subnet mask
 < system is offline
 < transport mode does not support vti
@@ -1008,6 +1014,7 @@
 < fwhost cust geoipgroup
 < fwhost cust geoiplocation
 < fwhost newgeoipgrp
+< generate ptr
 < geoip
 < geoipblock
 < geoipblock block countries
@@ -1083,6 +1090,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< ptr
 < rdns
 < required field
 < runmode
@@ -1090,6 +1098,7 @@
 < samba join domain
 < search
 < ssh active sessions
+< ssh agent forwarding
 < ssh login time
 < ssh no active logins
 < ssh username
@@ -1290,6 +1299,7 @@
 < fwhost newgeoipgrp
 < gen dh
 < generate dh key
+< generate ptr
 < geoip
 < geoipblock
 < geoipblock block countries
@@ -1393,6 +1403,7 @@
 < pptp netconfig
 < pptp peer
 < pptp route
+< ptr
 < random number generator daemon
 < rdns
 < required field
@@ -1405,6 +1416,7 @@
 < software version
 < source ip country
 < ssh active sessions
+< ssh agent forwarding
 < ssh login time
 < ssh no active logins
 < ssh username
@@ -1888,6 +1900,7 @@
 < fw settings ruletable
 < gen dh
 < generate dh key
+< generate ptr
 < geoip
 < geoipblock
 < geoipblock block countries
@@ -2047,6 +2060,7 @@
 < proxy reports monthly
 < proxy reports today
 < proxy reports weekly
+< ptr
 < qos enter bandwidths
 < random number generator daemon
 < rdns
@@ -2064,6 +2078,7 @@
 < source ip country
 < ssh
 < ssh active sessions
+< ssh agent forwarding
 < ssh login time
 < ssh no active logins
 < ssh username
@@ -2652,6 +2667,7 @@
 < fw settings ruletable
 < gen dh
 < generate dh key
+< generate ptr
 < geoip
 < geoipblock
 < geoipblock block countries
@@ -2811,6 +2827,7 @@
 < proxy reports monthly
 < proxy reports today
 < proxy reports weekly
+< ptr
 < qos enter bandwidths
 < random number generator daemon
 < rdns
@@ -2828,6 +2845,7 @@
 < source ip country
 < ssh
 < ssh active sessions
+< ssh agent forwarding
 < ssh login time
 < ssh no active logins
 < ssh username
@@ -3000,6 +3018,7 @@
 < dns forwarding dnssec disabled notice
 < emerging pro rules
 < fwdfw all subnets
+< generate ptr
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -3037,8 +3056,10 @@
 < ovpn error dh
 < ovpn error md5
 < ovpn warning rfc3280
+< ptr
 < runmode
 < ssh active sessions
+< ssh agent forwarding
 < ssh login time
 < ssh no active logins
 < ssh username
