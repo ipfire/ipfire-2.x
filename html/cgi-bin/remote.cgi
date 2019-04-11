@@ -147,6 +147,11 @@ print <<END
 </tr>
 <tr>
 	<td>&nbsp;</td>
+	<td><input type='checkbox' name='SSH_AGENT_FORWARDING' $checked{'SSH_AGENT_FORWARDING'}{'on'} /></td>
+	<td width='100%' class='base'>$Lang::tr{'ssh agent forwarding'}</td>
+</tr>
+<tr>
+	<td>&nbsp;</td>
 	<td><input type='checkbox' name='ENABLE_SSH_PORTFW' $checked{'ENABLE_SSH_PORTFW'}{'on'} /></td>
 	<td width='100%' class='base'>$Lang::tr{'ssh portfw'}</td>
 </tr>
@@ -164,11 +169,6 @@ print <<END
 	<td>&nbsp;</td>
 	<td><input type='checkbox' name='SSH_PORT' $checked{'SSH_PORT'}{'on'} /></td>
 	<td width='100%' class='base'>$Lang::tr{'ssh port'}</td>
-</tr>
-<tr>
-	<td>&nbsp;</td>
-	<td><input type='checkbox' name='SSH_AGENT_FORWARDING' $checked{'SSH_AGENT_FORWARDING'}{'on'} /></td>
-	<td width='100%' class='base'>$Lang::tr{'ssh agent forwarding'}</td>
 </tr>
 <tr>
 	<td align='right' colspan='3'>

@@ -2232,7 +2232,7 @@
 'ssh access' => 'SSH Access',
 'ssh access tip' => 'IPFire SSH is not using default port 22!',
 'ssh active sessions' => 'Active logins',
-'ssh agent forwarding' => 'Enable SSH agent forwarding',
+'ssh agent forwarding' => 'Allow SSH Agent Forwarding',
 'ssh fingerprint' => 'Fingerprint',
 'ssh host keys' => 'SSH Host Keys',
 'ssh is disabled' => 'SSH is disabled.  Stopping.',
