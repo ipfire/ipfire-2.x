@@ -16,35 +16,35 @@
 				'title' => "$Lang::tr{'options fw'}",
 				'enabled' => 1,
 				};
-	$subfirewall->{'40.p2p'} = {
+     $subfirewall->{'40.ids'} = {'caption' => $Lang::tr{'intrusion detection'},
+                                'uri' => '/cgi-bin/ids.cgi',
+                                'title' => "$Lang::tr{'intrusion detection system'}",
+				'enabled' => 1,
+                                };
+	$subfirewall->{'50.p2p'} = {
 				'caption' => $Lang::tr{'p2p block'},
 				'uri' => '/cgi-bin/p2p-block.cgi',
 				'title' => "P2P-Block",
 				'enabled' => 1,
 				};
-    $subfirewall->{'50.geoipblock'} = {
+    $subfirewall->{'60.geoipblock'} = {
 				'caption' => $Lang::tr{'geoipblock'},
 				'uri' => '/cgi-bin/geoip-block.cgi',
 				'title' => $Lang::tr{'geoipblock'},
 				'enabled' => 1,
 				};
-    $subfirewall->{'60.wireless'} = {
+    $subfirewall->{'70.wireless'} = {
 				'caption' => $Lang::tr{'blue access'},
 				'uri' => '/cgi-bin/wireless.cgi',
 				'title' => "$Lang::tr{'blue access'}",
 				'enabled' => 1,
 				 };			 
-    $subfirewall->{'70.upnp'} = {
+    $subfirewall->{'80.upnp'} = {
 				'caption' => 'UPnP',
 				'uri' => '/cgi-bin/upnp.cgi',
 				'title' => "Universal Plug and Play",
 				'enabled' => 0,
 				};
-     $subfirewall->{'80.ids'} = {'caption' => $Lang::tr{'intrusion detection'},
-                                'uri' => '/cgi-bin/ids.cgi',
-                                'title' => "$Lang::tr{'intrusion detection system'}",
-				'enabled' => 1,
-                                };
 	$subfirewall->{'90.iptables'} = {
 				'caption' => $Lang::tr{'ipts'},
 				'uri' => '/cgi-bin/iptables.cgi',
