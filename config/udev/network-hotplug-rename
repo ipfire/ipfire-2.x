@@ -63,7 +63,7 @@ for zone in ${ZONES}; do
 	[ -n "${!address}" -a -n "${!device}" ] || continue
 
 	# Compare MAC addresses
-	[ "${ADDRESS}" = "${!address}" ] || continue
+	[ "${ADDRESS}" = "${!address,,}" ] || continue
 
 	# If a matching interface has been found we will
 	# print the name to which udev will rename it.
