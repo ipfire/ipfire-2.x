@@ -2187,6 +2187,7 @@
 'ssh access' => 'SSH-Zugriff',
 'ssh access tip' => 'IPFire SSH läuft nicht auf dem Standardport 22!',
 'ssh active sessions' => 'Aktive Benutzeranmeldungen',
+'ssh agent forwarding' => 'Weiterleitung des SSH-Agenten (Agent Forwarding) zulassen',
 'ssh fingerprint' => 'Fingerabdruck',
 'ssh host keys' => 'SSH Host Schlüssel',
 'ssh is disabled' => 'Secure Shell ist deaktiviert.  Halte an.',

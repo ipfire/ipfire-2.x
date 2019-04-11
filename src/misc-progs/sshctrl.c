@@ -76,6 +76,11 @@ int main(int argc, char *argv[])
 				else
 						strlcat(command, "s/^Port .*$/Port 222/", STRING_SIZE - 1 );
 
+				if(findkey(kv, "SSH_AGENT_FORWARDING", buffer) && !strcmp(buffer,"on"))
+						strlcat(command, "s/^AllowAgentForwarding .*$/AllowAgentForwarding yes/;", STRING_SIZE - 1 );
+				else
+						strlcat(command, "s/^AllowAgentForwarding .*$/AllowAgentForwarding no/;", STRING_SIZE - 1 );
+
 				freekeyvalues(kv);
 
 				snprintf(buffer, STRING_SIZE - 1, "' /etc/ssh/sshd_config >&%d", config_fd );
