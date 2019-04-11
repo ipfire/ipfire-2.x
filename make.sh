@@ -24,7 +24,6 @@
 
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
-<<<<<<< HEAD
 VERSION="2.23"							# Version number
 CORE="131"							# Core Level (Filename)
 PAKFIRE_CORE="130"						# Core Level (PAKFIRE)
