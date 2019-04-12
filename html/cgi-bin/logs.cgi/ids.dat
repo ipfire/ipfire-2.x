@@ -383,7 +383,6 @@ sub processevent
 	our ($title,$classification,$priority,$date,$time,$srcip,$srcport,$destip,$destport, $sid, @refs);
 
 	my $filestr='';
-	my $readmode='';
 	if ($datediff==0) {
 		# If there is no datediff, directly assign the suricata fast.log.
 		$filestr="/var/log/suricata/fast.log";
@@ -399,9 +398,6 @@ sub processevent
 			# Assign snort alert file, the datediff and extension for compressed file.
 			$filestr = "/var/log/snort/alert.$datediff";
 			$filestr = "$filestr.gz";
-
-			# Assign "snort" as readmode.
-			$readmode="snort";
 		}
 	}
 	if (!(open (LOG,($filestr =~ /.gz$/ ? "gzip -dc $filestr |" : $filestr)))) {
@@ -411,24 +407,13 @@ sub processevent
 
 		while(<LOG>) {
 			$line++;
-			if (($_ =~ m/\[\*\*\]/) && ($readmode eq "snort")) {
+			if ($_ =~ m/\[\*\*\]/) {
 				unless ($line == 1 || $date ne "$monthstr/$daystr") {
 					&append;
 					$line = 1;
 				}
 				($title,$classification,$priority,$date,$time,$srcip,$srcport,$destip,$destport,$sid) = ("n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a", "n/a");
 				@refs = ();
-				$_ =~ m/:([0-9]{1,5})\] (.*) \[\*\*\]/;
-				$title = &Header::cleanhtml($2,"y");
-			} else {
-				&append;
-				$line = 1;
-
-				# Assign default values.
-				($title,$classification,$priority,$date,$time,$srcip,$srcport,$destip,$destport,$sid) = ("n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a", "n/a");
-				@refs = ();
-
-				# Gather title details from line.
 				$_ =~ m/:([0-9]{1,5})\] (.*) \[\*\*\]/;
 				$title = &Header::cleanhtml($2,"y");
 			}
