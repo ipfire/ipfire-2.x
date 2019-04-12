@@ -689,20 +689,26 @@ print"var show = \"$Lang::tr{'ids show'}\"\;\n";
 print"var hide = \"$Lang::tr{'ids hide'}\"\;\n";
 
 print <<END
-	// JQuery function to show/hide the text input field for
+	// Java Script function to show/hide the text input field for
 	// Oinkcode/Subscription code.
-	\$(function() {
-		\$('#RULES').change(function(){
-			if(\$('#RULES').val() == 'registered') {
-				\$('#code').show();
-			} else if(\$('#RULES').val() == 'subscripted') {
-				\$('#code').show();
-			} else if(\$('#RULES').val() == 'emerging_pro') {
-				\$('#code').show();
-			} else {
-				\$('#code').hide();
-			}
-		});
+	var update_code = function() {
+		if(\$('#RULES').val() == 'registered') {
+			\$('#code').show();
+		} else if(\$('#RULES').val() == 'subscripted') {
+			\$('#code').show();
+		} else if(\$('#RULES').val() == 'emerging_pro') {
+			\$('#code').show();
+		} else {
+			\$('#code').hide();
+		}
+	};
+
+	// JQuery function to call corresponding function when
+	// the ruleset is changed or the page is loaded for showing/hiding
+	// the code area.
+	\$(document).ready(function() {
+		\$('#RULES').change(update_code);
+		update_code();
 	});
 
 	// Tiny java script function to show/hide the rules
