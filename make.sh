@@ -1410,6 +1410,7 @@ buildipfire() {
   lfsmake2 spice
   lfsmake2 sdl
   lfsmake2 libusbredir
+  lfsmake2 libseccomp
   lfsmake2 qemu
   lfsmake2 sane
   lfsmake2 netpbm
