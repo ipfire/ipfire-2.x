@@ -124,6 +124,9 @@ my $acl_ports_safe = "$acldir/ports_safe.acl";
 my $acl_ports_ssl  = "$acldir/ports_ssl.acl";
 my $acl_include = "$acldir/include.acl";
 
+my $acl_dst_noproxy_url = "$acldir/dst_noproxy_url.acl";
+my $acl_dst_noproxy_ip = "$acldir/dst_noproxy_ip.acl";
+
 my $updaccelversion  = 'n/a';
 my $urlfilterversion = 'n/a';
 
@@ -2761,6 +2764,42 @@ END
 
 	if (&Header::orange_used() && $netsettings{'ORANGE_DEV'}) {
 		print FILE "     (isInNet(host, \"$netsettings{'ORANGE_NETADDRESS'}\", \"$netsettings{'ORANGE_NETMASK'}\")) ||\n";
+	}
+
+	# Additional exceptions for URLs
+	# The file has to be created by the user and should contain one entry per line
+	# Line-Format: <URL incl. wildcards>
+	# e.g. *ipfire.org*
+	if (-s "$acl_dst_noproxy_url") {
+		undef @templist;
+
+		open(NOPROXY,"$acl_dst_noproxy_url");
+		@templist = <NOPROXY>;
+		close(NOPROXY);
+		chomp (@templist);
+
+		foreach (@templist)
+		{
+			print FILE "     (shExpMatch(url, \"$_\")) ||\n";
+		}
+	}
+
+	# Additional exceptions for Subnets
+	# The file has to be created by the user and should contain one entry per line
+	# Line-Format: "<IP>", "<SUBNET MASK>"
+	# e.g. "192.168.0.0", "255.255.255.0"
+	if (-s "$acl_dst_noproxy_ip") {
+		undef @templist;
+
+		open(NOPROXY,"$acl_dst_noproxy_ip");
+		@templist = <NOPROXY>;
+		close(NOPROXY);
+		chomp (@templist);
+
+		foreach (@templist)
+		{
+			print FILE "     (isInNet(host, $_)) ||\n";
+		}
 	}
 
 	print FILE <<END
