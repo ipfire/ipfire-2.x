@@ -72,6 +72,9 @@ my $netsettings		= "${General::swroot}/ethernet/settings";
 &General::readhasharray("$configsrvgrp", \%customservicegrp);
 &General::get_aliases(\%aliases);
 
+# Get all available GeoIP locations.
+my @available_geoip_locations = &get_geoip_locations();
+
 sub get_srv_prot
 {
 	my $val=shift;
@@ -458,17 +461,23 @@ sub get_address
 
 	# Handle rule options with GeoIP as source.
 	} elsif ($key eq "cust_geoip_src") {
-		# Get external interface.
-		my $external_interface = &get_external_interface();
+		# Check if the given GeoIP location is available.
+		if(&geoip_location_is_available($value)) {
+			# Get external interface.
+			my $external_interface = &get_external_interface();
 
-		push(@ret, ["-m geoip --src-cc $value", "$external_interface"]);
+			push(@ret, ["-m geoip --src-cc $value", "$external_interface"]);
+		}
 
 	# Handle rule options with GeoIP as target.
 	} elsif ($key eq "cust_geoip_tgt") {
-		# Get external interface.
-		my $external_interface = &get_external_interface();
+		# Check if the given GeoIP location is available.
+		if(&geoip_location_is_available($value)) {
+			# Get external interface.
+			my $external_interface = &get_external_interface();
 
-		push(@ret, ["-m geoip --dst-cc $value", "$external_interface"]);
+			push(@ret, ["-m geoip --dst-cc $value", "$external_interface"]);
+		}
 
 	# If nothing was selected, we assume "any".
 	} else {
@@ -610,6 +619,25 @@ sub get_internal_firewall_ip_address
 
 sub get_geoip_locations() {
 	return &GeoIP::get_geoip_locations();
+}
+
+# Function to check if a database of a given GeoIP location is
+# available.
+sub geoip_location_is_available($) {
+	my ($location) = @_;
+
+	# Loop through the global array of available GeoIP locations.
+	foreach my $geoip_location (@available_geoip_locations) {
+		# Check if the current processed location is the searched one.
+		if($location eq $geoip_location) {
+			# If it is part of the array, return "1" - True.
+			return 1;
+		}
+	}
+
+	# If we got here, the given location is not part of the array of available
+	# zones. Return nothing.
+	return;
 }
 
 return 1;
