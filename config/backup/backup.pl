@@ -176,19 +176,34 @@ main() {
 	local command="${1}"
 	shift
 
-	# Desired backup filename
-	local filename="/var/ipfire/backup/${NOW}.ipf"
-
 	case "${command}" in
 		include)
+			local filename="${1}"
+
+			if [ -z "${filename}" ]; then
+				filename="/var/ipfire/backup/${NOW}.ipf"
+			fi
+
 			make_backup "${filename}" $(find_logfiles)
 			;;
 
 		exclude)
+			local filename="${1}"
+
+			if [ -z "${filename}" ]; then
+				filename="/var/ipfire/backup/${NOW}.ipf"
+			fi
+
 			make_backup "${filename}"
 			;;
 
 		restore)
+			local filename="${1}"
+
+			if [ -z "${filename}" ]; then
+				filename="/tmp/restore.ipf"
+			fi
+
 			restore_backup "/tmp/restore.ipf"
 			;;
 
@@ -201,6 +216,9 @@ main() {
 			;;
 
 		iso)
+			# Desired backup filename
+			local filename="/var/ipfire/backup/${NOW}.ipf"
+
 			if make_backup "${filename}"; then
 				/usr/local/bin/backupiso "${NOW}" &
 			fi
