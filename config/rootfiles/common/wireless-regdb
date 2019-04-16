@@ -1,5 +1,8 @@
+lib/firmware/regulatory.db
+lib/firmware/regulatory.db.p7s
 #usr/lib/crda
 #usr/lib/crda/pubkeys
-usr/lib/crda/pubkeys/linville.key.pub.pem
+usr/lib/crda/pubkeys/sforshee.key.pub.pem
 usr/lib/crda/regulatory.bin
 #usr/share/man/man5/regulatory.bin.5.gz
+#usr/share/man/man5/regulatory.db.5.gz
