@@ -2352,7 +2352,6 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/tty/cyclades.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/n_gsm.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/n_hdlc.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/tty/n_r3964.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/nozomi.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/rocket.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/serial

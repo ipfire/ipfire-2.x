@@ -1760,7 +1760,6 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/kernel/drivers/tty
 #lib/modules/KVER-ipfire/kernel/drivers/tty/n_gsm.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/n_hdlc.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/tty/n_r3964.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/serial
 #lib/modules/KVER-ipfire/kernel/drivers/tty/serial/arc_uart.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/serial/fsl_lpuart.ko.xz
