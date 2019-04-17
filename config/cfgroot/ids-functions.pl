@@ -324,7 +324,7 @@ sub oinkmaster () {
 	openlog('oinkmaster', 'cons,pid', 'user');
 
 	# Call oinkmaster to generate ruleset.
-	open(OINKMASTER, "/usr/local/bin/oinkmaster.pl -v -s -u file://$rulestarball -C $settingsdir/oinkmaster.conf -o $rulespath 2>&1 |") or die "Could not execute oinkmaster $!\n";
+	open(OINKMASTER, "/usr/local/bin/oinkmaster.pl -s -u file://$rulestarball -C $settingsdir/oinkmaster.conf -o $rulespath 2>&1 |") or die "Could not execute oinkmaster $!\n";
 
 	# Log output of oinkmaster to syslog.
 	while(<OINKMASTER>) {
