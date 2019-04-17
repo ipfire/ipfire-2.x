@@ -600,8 +600,6 @@ ieee80211n=1
 wmm_enabled=1
 ht_capab=$wlanapsettings{'HTCAPS'}
 vht_capab=$wlanapsettings{'VHTCAPS'}
-vht_oper_chwidth=1
-vht_oper_centr_freq_seg0_idx=42
 END
 ;
 
