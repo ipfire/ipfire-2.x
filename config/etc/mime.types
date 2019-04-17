@@ -168,6 +168,8 @@ application/x-javascript	js
 application/x-koan		skp skd skt skm
 application/x-latex		latex
 application/x-netcdf		nc cdf
+application/x-ns-proxy-autoconfig       pac
+application/x-ns-proxy-autoconfig       dat
 # The standard is that rpm is audio/x-pn-realaudio-plugin... oh well...
 application/x-rpm		rpm
 application/x-sh		sh
