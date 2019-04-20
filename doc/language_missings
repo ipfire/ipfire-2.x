@@ -72,9 +72,17 @@
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy errmsg wpad invalid ip or mask
 < advproxy group access control
 < advproxy group required
 < advproxy proxy port transparent
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
 < age second
 < age seconds
 < age shour
@@ -836,6 +844,14 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< advproxy errmsg wpad invalid ip or mask
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
 < cryptographic settings
 < Daily
 < default IP address
@@ -895,8 +911,16 @@
 < adsl settings
 < advproxy AUTH method ntlm auth
 < advproxy basic authentication
+< advproxy errmsg wpad invalid ip or mask
 < advproxy group access control
 < advproxy group required
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
 < application layer gateways
 < block
 < Captive
@@ -1160,8 +1184,16 @@
 < advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
 < advproxy basic authentication
+< advproxy errmsg wpad invalid ip or mask
 < advproxy group access control
 < advproxy group required
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
 < application layer gateways
 < atm device
 < block
@@ -1487,9 +1519,17 @@
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy errmsg wpad invalid ip or mask
 < advproxy group access control
 < advproxy group required
 < advproxy proxy port transparent
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
 < age second
 < age seconds
 < age shour
@@ -2250,9 +2290,17 @@
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy errmsg wpad invalid ip or mask
 < advproxy group access control
 < advproxy group required
 < advproxy proxy port transparent
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
 < age second
 < age seconds
 < age shour
@@ -3006,6 +3054,14 @@
 ############################################################################
 # Checking cgi-bin translations for language: tr                           #
 ############################################################################
+< advproxy errmsg wpad invalid ip or mask
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
 < crypto error
 < cryptographic settings
 < crypto warning

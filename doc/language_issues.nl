@@ -789,8 +789,16 @@ WARNING: untranslated string: administrator password = Administrator password
 WARNING: untranslated string: administrator username = Administrator username
 WARNING: untranslated string: advproxy AUTH method ntlm auth = Windows Active Directory
 WARNING: untranslated string: advproxy basic authentication = Allow HTTP Basic authentication
+WARNING: untranslated string: advproxy errmsg wpad invalid ip or mask = WPAD: Invalid IP or subnet for excluded IP subnet
 WARNING: untranslated string: advproxy group access control = Group based access control
 WARNING: untranslated string: advproxy group required = Required group
+WARNING: untranslated string: advproxy wpad example dst_noproxy_ip = e.g. 192.168.2.0/255.255.255.0
+WARNING: untranslated string: advproxy wpad example dst_noproxy_url = e.g. *.ipfire.org*
+WARNING: untranslated string: advproxy wpad label dst_noproxy_ip = Excluded IP Subnets (one per line)
+WARNING: untranslated string: advproxy wpad label dst_noproxy_url = Excluded URL s (one per line)
+WARNING: untranslated string: advproxy wpad notice = Notice: For WPAD/PAC to work properly, furtcher changes need to be made. Please see the <a href="https://wiki.ipfire.org/configuration/network/proxy/extend/wpad" target="_blank">Wiki</a>.
+WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Protocol (WPAD) / Proxy Auto-Config (PAC)
+WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: application layer gateways = Application Layer Gateways
 WARNING: untranslated string: atm device = Device:
 WARNING: untranslated string: block = Block
