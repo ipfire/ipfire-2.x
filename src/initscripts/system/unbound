@@ -24,30 +24,6 @@ EDNS_DEFAULT_BUFFER_SIZE=4096
 # Load optional configuration
 [ -e "/etc/sysconfig/unbound" ] && . /etc/sysconfig/unbound
 
-function cidr() {
-    local cidr nbits IFS;
-    IFS=. read -r i1 i2 i3 i4 <<< ${1}
-    IFS=. read -r m1 m2 m3 m4 <<< ${2}
-    cidr=$(printf "%d.%d.%d.%d\n" "$((i1 & m1))" "$((i2 & m2))" "$((i3 & m3))" "$((i4 & m4))")
-    nbits=0
-    IFS=.
-    for dec in $2 ; do
-        case $dec in
-            255) let nbits+=8;;
-            254) let nbits+=7;;
-            252) let nbits+=6;;
-            248) let nbits+=5;;
-            240) let nbits+=4;;
-            224) let nbits+=3;;
-            192) let nbits+=2;;
-            128) let nbits+=1;;
-            0);;
-            *) echo "Error: $dec is not recognised"; exit 1
-        esac
-    done
-    echo "${cidr}/${nbits}"
-}
-
 ip_address_revptr() {
 	local addr=${1}
 
