@@ -1,3 +1,5 @@
 etc/system-release
 etc/issue
 etc/suricata/suricata.yaml
+srv/web/ipfire/cgi-bin/proxy.cgi
+var/ipfire/lang
