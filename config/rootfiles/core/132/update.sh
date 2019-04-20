@@ -43,6 +43,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/suricata restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
