@@ -82,7 +82,7 @@ outputs:
 
   # Stats.log contains data from various counters of the suricata engine.
   - stats:
-      enabled: yes
+      enabled: no
       filename: stats.log
       append: no       # append to file (yes) or overwrite it (no)
       totals: yes       # stats for all threads merged together
