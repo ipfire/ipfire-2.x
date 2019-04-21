@@ -559,6 +559,8 @@ ERROR:
 		delete $proxysettings{'SRC_UNRESTRICTED_MAC'};
 		delete $proxysettings{'DST_NOCACHE'};
 		delete $proxysettings{'DST_NOAUTH'};
+		delete $proxysettings{'DST_NOPROXY_IP'};
+		delete $proxysettings{'DST_NOPROXY_URL'};
 		delete $proxysettings{'PORTS_SAFE'};
 		delete $proxysettings{'PORTS_SSL'};
 		delete $proxysettings{'MIME_TYPES'};
@@ -1317,6 +1319,58 @@ print "</table><hr size='1'>";
 END
 ;
 }
+
+# ===================================================================
+#  WPAD settings
+# ===================================================================
+
+print <<END
+<table width='100%'>
+<tr>
+	<td colspan='4'><b>$Lang::tr{'advproxy wpad title'}</b></td>
+</tr>
+<tr>
+	<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
+</tr>
+<tr>
+	<td colspan='2' class='base'>$Lang::tr{'advproxy wpad label dst_noproxy_ip'}:</td>
+	<td colspan='2' class='base'>$Lang::tr{'advproxy wpad label dst_noproxy_url'}:</td>
+</tr>
+<tr>
+	<td colspan='2'><textarea name='DST_NOPROXY_IP' cols='32' rows='3' wrap='off'>
+END
+;
+
+	print $proxysettings{'DST_NOPROXY_IP'};
+
+print <<END
+</textarea></td>
+
+	<td colspan='2'><textarea name='DST_NOPROXY_URL' cols='32' rows='3' wrap='off'>
+END
+;
+
+	print $proxysettings{'DST_NOPROXY_URL'};
+
+print <<END
+</textarea></td>
+</tr>
+<tr>
+	<td colspan='2' class='base'>$Lang::tr{'advproxy wpad example dst_noproxy_ip'}</td>
+	<td colspan='2' class='base'>$Lang::tr{'advproxy wpad example dst_noproxy_url'}</td>
+</tr>
+<tr>
+	<td colspan="4">&nbsp;</td>
+</tr>
+<tr>
+	<td colspan="4">$Lang::tr{'advproxy wpad view pac'}: <a href="http://$ENV{SERVER_ADDR}:81/wpad.dat" target="_blank">http://$ENV{SERVER_ADDR}:81/wpad.dat</a></td>
+</tr>
+</table>
+
+<hr size='1'>
+
+END
+;
 
 # -------------------------------------------------------------------
 
@@ -2261,6 +2315,18 @@ sub read_acls
 		while (<FILE>) { $proxysettings{'DST_NOAUTH'} .= $_ };
 		close(FILE);
 	}
+	if (-e "$acl_dst_noproxy_ip") {
+		open(FILE,"$acl_dst_noproxy_ip");
+		delete $proxysettings{'DST_NOPROXY_IP'};
+		while (<FILE>) { $proxysettings{'DST_NOPROXY_IP'} .= $_ };
+		close(FILE);
+	}
+	if (-e "$acl_dst_noproxy_url") {
+		open(FILE,"$acl_dst_noproxy_url");
+		delete $proxysettings{'DST_NOPROXY_URL'};
+		while (<FILE>) { $proxysettings{'DST_NOPROXY_URL'} .= $_ };
+		close(FILE);
+	}
 	if (-e "$acl_ports_safe") {
 		open(FILE,"$acl_ports_safe");
 		delete $proxysettings{'PORTS_SAFE'};
@@ -2446,6 +2512,31 @@ sub check_acls
 		}
 	}
 
+	@temp = split(/\n/,$proxysettings{'DST_NOPROXY_IP'});
+	undef $proxysettings{'DST_NOPROXY_IP'};
+	foreach (@temp)
+	{
+			s/^\s+//g; s/\s+$//g;
+			if ($_)
+			{
+					unless (&General::validipormask($_)) { $errormessage = $Lang::tr{'advproxy errmsg wpad invalid ip or mask'}; }
+					$proxysettings{'DST_NOPROXY_IP'} .= $_."\n";
+			}
+	}
+
+	@temp = split(/\n/,$proxysettings{'DST_NOPROXY_URL'});
+	undef $proxysettings{'DST_NOPROXY_URL'};
+	foreach (@temp)
+	{
+			s/^\s+//g;
+			unless (/^#/) { s/\s+//g; }
+			if ($_)
+			{
+					if (/^\./) { $_ = '*'.$_; }
+					$proxysettings{'DST_NOPROXY_URL'} .= $_."\n";
+			}
+	}
+
 	if (($proxysettings{'NTLM_ENABLE_ACL'} eq 'on') && ($proxysettings{'NTLM_USER_ACL'} eq 'positive'))
 	{
 		@temp = split(/\n/,$proxysettings{'NTLM_ALLOW_USERS'});
@@ -2582,6 +2673,16 @@ sub write_acls
 	open(FILE, ">$acl_dst_noauth");
 	flock(FILE, 2);
 	print FILE $proxysettings{'DST_NOAUTH'};
+	close(FILE);
+
+	open(FILE, ">$acl_dst_noproxy_ip");
+	flock(FILE, 2);
+	print FILE $proxysettings{'DST_NOPROXY_IP'};
+	close(FILE);
+
+	open(FILE, ">$acl_dst_noproxy_url");
+	flock(FILE, 2);
+	print FILE $proxysettings{'DST_NOPROXY_URL'};
 	close(FILE);
 
 	open(FILE, ">$acl_dst_noauth_net");
@@ -2769,7 +2870,7 @@ END
 	# Additional exceptions for URLs
 	# The file has to be created by the user and should contain one entry per line
 	# Line-Format: <URL incl. wildcards>
-	# e.g. *ipfire.org*
+	# e.g. *.ipfire.org*
 	if (-s "$acl_dst_noproxy_url") {
 		undef @templist;
 
@@ -2786,8 +2887,8 @@ END
 
 	# Additional exceptions for Subnets
 	# The file has to be created by the user and should contain one entry per line
-	# Line-Format: "<IP>", "<SUBNET MASK>"
-	# e.g. "192.168.0.0", "255.255.255.0"
+	# Line-Format: <IP>/<SUBNET MASK>
+	# e.g. 192.168.0.0/255.255.255.0
 	if (-s "$acl_dst_noproxy_ip") {
 		undef @templist;
 
@@ -2798,7 +2899,8 @@ END
 
 		foreach (@templist)
 		{
-			print FILE "     (isInNet(host, $_)) ||\n";
+			@temp = split(/\//);
+			print FILE "     (isInNet(host, \"$temp[0]\", \"$temp[1]\")) ||\n";
 		}
 	}
 
