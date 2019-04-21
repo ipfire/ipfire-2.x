@@ -1365,6 +1365,12 @@ print <<END
 <tr>
 	<td colspan="4">$Lang::tr{'advproxy wpad view pac'}: <a href="http://$ENV{SERVER_ADDR}:81/wpad.dat" target="_blank">http://$ENV{SERVER_ADDR}:81/wpad.dat</a></td>
 </tr>
+<tr>
+	<td colspan="4">&nbsp;</td>
+</tr>
+<tr>
+	<td colspan="4">$Lang::tr{'advproxy wpad notice'}</td>
+</tr>
 </table>
 
 <hr size='1'>

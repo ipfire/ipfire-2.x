@@ -403,6 +403,7 @@
 'advproxy wpad example dst_noproxy_ip' => 'z.B. 192.168.2.0/255.255.255.0',
 'advproxy errmsg wpad invalid ip or mask' => 'WPAD: Ung&uuml;ltige IP oder Subnetz f&uuml;r ausgenommenes IP-Subnetz',
 'advproxy wpad view pac' => 'PAC-Datei aufrufen',
+'advproxy wpad notice' => 'Hinweis: Damit WPAD / PAC korrekt funktioniert, sind weitere Anpassungen erforderlich. Bitte in das <a href="https://wiki.ipfire.org/configuration/network/proxy/extend/wpad" target="_blank">Wiki</a> schauen.',
 'again' => 'Wiederholung:',
 'age second' => 'Sekunde',
 'age seconds' => 'Sekunden',
