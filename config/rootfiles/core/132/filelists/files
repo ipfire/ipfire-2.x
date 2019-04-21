@@ -3,4 +3,5 @@ etc/issue
 etc/suricata/suricata.yaml
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
+var/ipfire/ids-functions.pl
 var/ipfire/lang
