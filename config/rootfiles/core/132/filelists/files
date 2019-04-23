@@ -4,5 +4,6 @@ etc/mime.types
 etc/suricata/suricata.yaml
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
+usr/sbin/convert-snort
 var/ipfire/ids-functions.pl
 var/ipfire/langs
