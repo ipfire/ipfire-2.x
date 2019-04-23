@@ -259,6 +259,9 @@ if (-f $IDS::rulestarball) {
 # Call subfunction to generate the file.
 &IDS::generate_home_net_file();
 
+# Set correct ownership for the homenet file.
+&IDS::set_ownership("$IDS::homenet_file");
+
 #
 ## Step 9: Setup automatic ruleset updates.
 #
