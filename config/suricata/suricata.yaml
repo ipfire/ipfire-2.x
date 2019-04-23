@@ -11,8 +11,7 @@ vars:
     # Include HOME_NET declaration from external file.
     include: /var/ipfire/suricata/suricata-homenet.yaml
 
-    EXTERNAL_NET: "!$HOME_NET"
-    #EXTERNAL_NET: "any"
+    EXTERNAL_NET: "any"
 
     HTTP_SERVERS: "$HOME_NET"
     SMTP_SERVERS: "$HOME_NET"
