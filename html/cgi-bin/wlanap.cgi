@@ -384,10 +384,10 @@ print <<END
 <table width='80%' cellspacing='0' class='tbl' border='0'>
 <tr><th bgcolor='$color{'color20'}' colspan='4' align='left'><strong>$Lang::tr{'wlanap wlan settings'}</strong></th></tr>
 <tr><td colspan='4'><br></td></tr>
-<tr><td width='25%' class='base'>SSID:&nbsp;</td><td class='base' colspan='3'><input type='text' name='SSID' size='30' value='$wlanapsettings{'SSID'}' /></td></tr>
+<tr><td width='25%' class='base'>$Lang::tr{'wlanap ssid'}:&nbsp;</td><td class='base' colspan='3'><input type='text' name='SSID' size='30' value='$wlanapsettings{'SSID'}' /></td></tr>
 <!--SSID Broadcast: on => HIDESSID: off -->
-<tr><td width='25%' class='base'>SSID Broadcast:&nbsp;</td><td class='base' colspan='3'>on <input type='radio' name='HIDESSID' value='off' $checked{'HIDESSID'}{'off'} /> | <input type='radio' name='HIDESSID' value='on' $checked{'HIDESSID'}{'on'} /> off</td></tr>
-<tr><td width='25%' class='base'>Client Isolation:&nbsp;</td><td class='base' colspan='3'>on <input type='radio' name='CLIENTISOLATION' value='on' $checked{'CLIENTISOLATION'}{'on'} /> | <input type='radio' name='CLIENTISOLATION' value='off' $checked{'CLIENTISOLATION'}{'off'} /> off</td></tr>
+<tr><td width='25%' class='base'>$Lang::tr{'wlanap broadcast ssid'}:&nbsp;</td><td class='base' colspan='3'>$Lang::tr{'on'} <input type='radio' name='HIDESSID' value='off' $checked{'HIDESSID'}{'off'} /> | <input type='radio' name='HIDESSID' value='on' $checked{'HIDESSID'}{'on'} /> $Lang::tr{'off'}</td></tr>
+<tr><td width='25%' class='base'>$Lang::tr{'wlanap client isolation'}:&nbsp;</td><td class='base' colspan='3'>$Lang::tr{'on'} <input type='radio' name='CLIENTISOLATION' value='on' $checked{'CLIENTISOLATION'}{'on'} /> | <input type='radio' name='CLIENTISOLATION' value='off' $checked{'CLIENTISOLATION'}{'off'} /> $Lang::tr{'off'}</td></tr>
 
 
 <tr><td width='25%' class='base'>$Lang::tr{'wlanap country'}:&nbsp;</td><td class='base' colspan='3'>

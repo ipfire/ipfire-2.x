@@ -793,11 +793,14 @@
 < wireless network
 < wlanap
 < wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
 < wlanap configuration
 < wlanap country
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap ssid
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -905,7 +908,10 @@
 < update ruleset
 < Weekly
 < wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
 < wlanap management frame protection
+< wlanap ssid
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -1162,10 +1168,13 @@
 < wireless network
 < wlanap
 < wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
 < wlanap configuration
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap ssid
 < wlan client anonymous identity
 < wlan client auth auto
 < wlan client authentication settings
@@ -1494,10 +1503,13 @@
 < wireless network
 < wlanap
 < wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
 < wlanap configuration
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap ssid
 < wlan client anonymous identity
 < wlan client auth auto
 < wlan client authentication settings
@@ -2234,11 +2246,14 @@
 < wireless network
 < wlanap
 < wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
 < wlanap configuration
 < wlanap country
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap ssid
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -3012,11 +3027,14 @@
 < wireless network
 < wlanap
 < wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
 < wlanap configuration
 < wlanap country
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap ssid
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -3139,6 +3157,9 @@
 < vpn wait
 < Weekly
 < wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
 < wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap ssid

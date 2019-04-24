@@ -881,4 +881,7 @@ WARNING: untranslated string: transport mode does not support vti = VTI is not s
 WARNING: untranslated string: update ruleset = Update ruleset
 WARNING: untranslated string: vpn statistics n2n = unknown string
 WARNING: untranslated string: wlanap auto = Automatic Channel Selection
+WARNING: untranslated string: wlanap broadcast ssid = Broadcast SSID
+WARNING: untranslated string: wlanap client isolation = Client Isolation
 WARNING: untranslated string: wlanap management frame protection = Management Frame Protection (802.11w)
+WARNING: untranslated string: wlanap ssid = SSID
