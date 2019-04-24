@@ -76,6 +76,7 @@ $wlanapsettings{'HTCAPS'} = '';
 $wlanapsettings{'VHTCAPS'} = '';
 $wlanapsettings{'NOSCAN'} = 'off';
 $wlanapsettings{'CLIENTISOLATION'} = 'off';
+$wlanapsettings{'IEEE80211W'} = 'off';
 
 &General::readhash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 &Header::getcgihash(\%wlanapsettings);
@@ -256,6 +257,10 @@ $checked{'NOSCAN'}{$wlanapsettings{'NOSCAN'}} = "checked='checked'";
 $checked{'CLIENTISOLATION'}{'off'} = '';
 $checked{'CLIENTISOLATION'}{'on'} = '';
 $checked{'CLIENTISOLATION'}{$wlanapsettings{'CLIENTISOLATION'}} = "checked='checked'";
+
+$checked{'IEEE80211W'}{'off'} = '';
+$checked{'IEEE80211W'}{'on'} = '';
+$checked{'IEEE80211W'}{$wlanapsettings{'IEEE80211W'}} = "checked='checked'";
 
 $selected{'ENC'}{$wlanapsettings{'ENC'}} = "selected='selected'";
 $selected{'CHANNEL'}{$wlanapsettings{'CHANNEL'}} = "selected='selected'";
@@ -443,6 +448,17 @@ print<<END
 	</select>
 </td></tr>
 <tr><td width='25%' class='base'>Passphrase:&nbsp;</td><td class='base' colspan='3'><input type='text' name='PWD' size='30' value='$wlanapsettings{'PWD'}' /></td></tr>
+<tr>
+	<td width='25%' class='base'>$Lang::tr{'wlanap management frame protection'}:&nbsp;</td>
+	<td class='base' colspan="3">
+		<label>
+			$Lang::tr{'on'} <input type='radio' name='IEEE80211W' value='on' $checked{'IEEE80211W'}{'on'} />
+		</label> |
+		<label>
+			<input type='radio' name='IEEE80211W' value='off' $checked{'IEEE80211W'}{'off'} /> $Lang::tr{'off'}
+		</label>
+	</td>
+</tr>
 <tr><td colspan='4'><br></td></tr>
 END
 ;
@@ -665,6 +681,13 @@ noscan=0
 END
 ;
 
+ }
+
+ # Management Frame Protection (802.11w)
+ if ($wlanapsettings{'IEEE80211W'} eq "on") {
+	print CONFIGFILE "ieee80211w=2\n";
+ } else {
+	print CONFIGFILE "ieee80211w=0\n";
  }
 
  if ( $wlanapsettings{'ENC'} eq 'wpa1'){

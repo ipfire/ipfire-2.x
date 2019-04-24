@@ -2851,6 +2851,7 @@
 'wlanap invalid wpa' => 'Ungültige Länge in WPA-Passphrase. Muss zwischen 8 und 63 Zeichen lang sein.',
 'wlanap link dhcp' => 'Wireless Lan DHCP-Einstellungen',
 'wlanap link wireless' => 'Wireless Lan Clients freischalten',
+'wlanap management frame protection' => 'Management Frame Protection (802.11w)',
 'wlanap neighbor scan' => 'Nachbarschaftsscan',
 'wlanap neighbor scan warning' => 'Warnung! Deaktivierung kann gegen Funkregeln verstoßen.',
 'wlanap no interface' => 'Ausgewähltes Interface ist keine WLAN-Karte!',

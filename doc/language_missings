@@ -795,6 +795,7 @@
 < wlanap auto
 < wlanap configuration
 < wlanap country
+< wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
 < wlan client
@@ -904,6 +905,7 @@
 < update ruleset
 < Weekly
 < wlanap auto
+< wlanap management frame protection
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -1161,6 +1163,7 @@
 < wlanap
 < wlanap auto
 < wlanap configuration
+< wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
 < wlan client anonymous identity
@@ -1492,6 +1495,7 @@
 < wlanap
 < wlanap auto
 < wlanap configuration
+< wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
 < wlan client anonymous identity
@@ -2232,6 +2236,7 @@
 < wlanap auto
 < wlanap configuration
 < wlanap country
+< wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
 < wlan client
@@ -3009,6 +3014,7 @@
 < wlanap auto
 < wlanap configuration
 < wlanap country
+< wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
 < wlan client
@@ -3133,5 +3139,6 @@
 < vpn wait
 < Weekly
 < wlanap auto
+< wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning

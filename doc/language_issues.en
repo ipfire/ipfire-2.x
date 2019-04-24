@@ -2176,6 +2176,7 @@ WARNING: untranslated string: wlanap interface = Select interface
 WARNING: untranslated string: wlanap invalid wpa = Invalid length in WPA Passphrase. Must be between 8 and 63 characters.
 WARNING: untranslated string: wlanap link dhcp = Wireless lan DHCP configuration
 WARNING: untranslated string: wlanap link wireless = Activate wireless lan clients
+WARNING: untranslated string: wlanap management frame protection = Management Frame Protection (802.11w)
 WARNING: untranslated string: wlanap neighbor scan = Neighborhood scan
 WARNING: untranslated string: wlanap neighbor scan warning = Warning! Disabling may violate regulatory rules!
 WARNING: untranslated string: wlanap no interface = Selected interface is not a wirless lan card!

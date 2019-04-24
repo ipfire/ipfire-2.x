@@ -2900,6 +2900,7 @@
 'wlanap invalid wpa' => 'Invalid length in WPA Passphrase. Must be between 8 and 63 characters.',
 'wlanap link dhcp' => 'Wireless lan DHCP configuration',
 'wlanap link wireless' => 'Activate wireless lan clients',
+'wlanap management frame protection' => 'Management Frame Protection (802.11w)',
 'wlanap neighbor scan' => 'Neighborhood scan',
 'wlanap neighbor scan warning' => 'Warning! Disabling may violate regulatory rules!',
 'wlanap no interface' => 'Selected interface is not a wirless lan card!',
