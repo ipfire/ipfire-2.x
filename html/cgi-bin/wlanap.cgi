@@ -639,7 +639,6 @@ logger_syslog=-1
 logger_syslog_level=$wlanapsettings{'SYSLOGLEVEL'}
 logger_stdout=-1
 logger_stdout_level=$wlanapsettings{'DEBUG'}
-dump_file=/tmp/hostapd.dump
 auth_algs=1
 ctrl_interface=/var/run/hostapd
 ctrl_interface_group=0
