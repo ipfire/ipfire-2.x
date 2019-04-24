@@ -382,7 +382,7 @@ print <<END
 <tr><td width='25%' class='base'>SSID:&nbsp;</td><td class='base' colspan='3'><input type='text' name='SSID' size='30' value='$wlanapsettings{'SSID'}' /></td></tr>
 <!--SSID Broadcast: on => HIDESSID: off -->
 <tr><td width='25%' class='base'>SSID Broadcast:&nbsp;</td><td class='base' colspan='3'>on <input type='radio' name='HIDESSID' value='off' $checked{'HIDESSID'}{'off'} /> | <input type='radio' name='HIDESSID' value='on' $checked{'HIDESSID'}{'on'} /> off</td></tr>
-<tr><td width='25%' class='base'>Client Isolation:&nbsp;</td><td class='base' colspan='3'>on <input type='radio' name='CLIENTISOLATION' value='off' $checked{'CLIENTISOLATION'}{'off'} /> | <input type='radio' name='CLIENTISOLATION' value='on' $checked{'CLIENTISOLATION'}{'on'} /> off</td></tr>
+<tr><td width='25%' class='base'>Client Isolation:&nbsp;</td><td class='base' colspan='3'>on <input type='radio' name='CLIENTISOLATION' value='on' $checked{'CLIENTISOLATION'}{'on'} /> | <input type='radio' name='CLIENTISOLATION' value='off' $checked{'CLIENTISOLATION'}{'off'} /> off</td></tr>
 
 
 <tr><td width='25%' class='base'>$Lang::tr{'wlanap country'}:&nbsp;</td><td class='base' colspan='3'>
