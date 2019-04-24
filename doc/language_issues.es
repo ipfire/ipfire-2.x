@@ -1362,6 +1362,7 @@ WARNING: untranslated string: wlan client wpa mode ccmp tkip = CCMP-TKIP
 WARNING: untranslated string: wlan client wpa mode tkip tkip = TKIP-TKIP
 WARNING: untranslated string: wlan clients = Wireless clients
 WARNING: untranslated string: wlanap = Access Point
+WARNING: untranslated string: wlanap auto = Automatic Channel Selection
 WARNING: untranslated string: wlanap configuration = Access Point Configuration
 WARNING: untranslated string: wlanap country = Country Code
 WARNING: untranslated string: wlanap neighbor scan = Neighborhood scan

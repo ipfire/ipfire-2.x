@@ -880,3 +880,4 @@ WARNING: untranslated string: system is offline = The system is offline.
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: update ruleset = Update ruleset
 WARNING: untranslated string: vpn statistics n2n = unknown string
+WARNING: untranslated string: wlanap auto = Automatic Channel Selection

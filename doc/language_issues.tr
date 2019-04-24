@@ -894,5 +894,6 @@ WARNING: untranslated string: update ruleset = Update ruleset
 WARNING: untranslated string: vpn start action add = Wait for connection initiation
 WARNING: untranslated string: vpn statistics n2n = unknown string
 WARNING: untranslated string: vpn wait = WAITING
+WARNING: untranslated string: wlanap auto = Automatic Channel Selection
 WARNING: untranslated string: wlanap neighbor scan = Neighborhood scan
 WARNING: untranslated string: wlanap neighbor scan warning = Warning! Disabling may violate regulatory rules!

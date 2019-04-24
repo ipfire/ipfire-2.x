@@ -270,7 +270,7 @@ if ( -d '/sys/class/net/mon.'.$wlanapsettings{'INTERFACE'} ) {
 }
 
 my @channellist_cmd;
-my @channellist;
+my @channellist = (0);
 
 if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
 my $wiphy = `iw dev $wlanapsettings{'INTERFACE'} info | grep wiphy | cut -d" " -f2`;
@@ -285,7 +285,7 @@ $_ =~ /(.*) \[(\d+)(.*)\]/;
 $channel = $2;chomp $channel;
 if ( $channel =~ /\d+/ ){push(@temp,$channel + 0);}
 }
-@channellist = @temp;
+push(@channellist, @temp);
 } else {
 @channellist_cmd = `iwlist $monwlaninterface channel|tail -n +2 2>/dev/null`;
 # get available channels
@@ -296,7 +296,7 @@ $_ =~ /(.*)Channel (\d+)(.*):/;
 $channel = $2;chomp $channel;
 if ( $channel =~ /\d+/ ){push(@temp,$channel + 0);}
 }
-@channellist = @temp;
+push(@channellist, @temp);
 }
 
 my @countrylist_cmd = `regdbdump /usr/lib/crda/regulatory.bin 2>/dev/null`;
@@ -414,7 +414,13 @@ if ( scalar @channellist > 0 ){
 END
 ;
 	foreach $channel (@channellist){
-		print "<option $selected{'CHANNEL'}{$channel}>$channel</option>";
+		print "<option $selected{'CHANNEL'}{$channel}>";
+		if ($channel eq 0) {
+			print "- $Lang::tr{'wlanap auto'} -";
+		} else {
+			print $channel;
+		}
+		print "</option>";
 	}
 	print "</select></td></tr>"
 } else {

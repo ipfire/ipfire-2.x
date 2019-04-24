@@ -1030,6 +1030,7 @@ WARNING: untranslated string: wlan client password = Password
 WARNING: untranslated string: wlan client tls cipher = TLS Cipher
 WARNING: untranslated string: wlan client tls version = TLS Version
 WARNING: untranslated string: wlanap = Access Point
+WARNING: untranslated string: wlanap auto = Automatic Channel Selection
 WARNING: untranslated string: wlanap configuration = Access Point Configuration
 WARNING: untranslated string: wlanap neighbor scan = Neighborhood scan
 WARNING: untranslated string: wlanap neighbor scan warning = Warning! Disabling may violate regulatory rules!

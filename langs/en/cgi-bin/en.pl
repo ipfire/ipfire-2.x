@@ -2888,6 +2888,7 @@
 'wlan client wpa mode tkip tkip' => 'TKIP-TKIP',
 'wlan clients' => 'Wireless clients',
 'wlanap' => 'Access Point',
+'wlanap auto' => 'Automatic Channel Selection',
 'wlanap channel' => 'Channel',
 'wlanap configuration' => 'Access Point Configuration',
 'wlanap country' => 'Country Code',

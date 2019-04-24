@@ -2839,6 +2839,7 @@
 'wlan client wpa mode tkip tkip' => 'TKIP-TKIP',
 'wlan clients' => 'WLAN-Clients',
 'wlanap' => 'Access Point',
+'wlanap auto' => 'Automatic Channel Selection',
 'wlanap channel' => 'Kanal',
 'wlanap configuration' => 'Access Point Konfiguration',
 'wlanap country' => 'Ländercode',
