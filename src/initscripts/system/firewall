@@ -186,10 +186,12 @@ iptables_init() {
 	iptables -A FORWARD -j GUARDIAN
 
 	# IPS (suricata) chains
-	iptables -N IPS
-	iptables -A INPUT -j IPS
-	iptables -A FORWARD -j IPS
-	iptables -A OUTPUT -j IPS
+	iptables -N IPS_INPUT
+	iptables -N IPS_FORWARD
+	iptables -N IPS_OUTPUT
+	iptables -A INPUT -j IPS_INPUT
+	iptables -A FORWARD -j IPS_FORWARD
+	iptables -A OUTPUT -j IPS_OUTPUT
 
 	# Block non-established IPsec networks
 	iptables -N IPSECBLOCK
