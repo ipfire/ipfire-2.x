@@ -6,7 +6,7 @@
 #
 # Author      : Stefan Schantl <stefan.schantl@ipfire.org>
 #
-# Version     : 01.00
+# Version     : 01.01
 #
 # Notes       :
 #
@@ -20,14 +20,19 @@ PATH=/usr/local/sbin:/usr/local/bin:/bin:/usr/bin:/sbin:/usr/sbin; export PATH
 eval $(/usr/local/bin/readhash /var/ipfire/suricata/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
-# Name of the firewall chain.
-FW_CHAIN="IPS"
+# Name of the firewall chains.
+IPS_INPUT_CHAIN="IPS_INPUT"
+IPS_FORWARD_CHAIN="IPS_FORWARD"
+IPS_OUTPUT_CHAIN="IPS_OUTPUT"
 
 # Optional options for the Netfilter queue.
 NFQ_OPTS="--queue-bypass "
 
 # Array containing the 4 possible network zones.
 network_zones=( red green blue orange )
+
+# Array to store the network zones weather the IPS is enabled for.
+enabled_ips_zones=()
 
 # Mark and Mask options.
 MARK="0x70000000"
@@ -48,18 +53,17 @@ function get_cpu_count {
 	echo $CPUCOUNT
 }
 
-# Function to flush the firewall chain.
+# Function to flush the firewall chains.
 function flush_fw_chain {
-	# Call iptables and flush the chain
-	iptables -F "$FW_CHAIN"
+	# Call iptables and flush the chains
+	iptables -F "$IPS_INPUT_CHAIN"
+	iptables -F "$IPS_FORWARD_CHAIN"
+	iptables -F "$IPS_OUTPUT_CHAIN"
 }
 
 # Function to create the firewall rules to pass the traffic to suricata.
 function generate_fw_rules {
 	cpu_count=$(get_cpu_count)
-
-	# Flush the firewall chain.
-	flush_fw_chain
 
 	# Loop through the array of network zones.
 	for zone in "${network_zones[@]}"; do
@@ -85,28 +89,46 @@ function generate_fw_rules {
 				network_device=${!zone_name}
 			fi
 
-			# Assign NFQ_OPTS
-			NFQ_OPTIONS=$NFQ_OPTS
-
-			# Check if there are multiple cpu cores available.
-			if [ "$cpu_count" -gt "1" ]; then
-				# Balance beetween all queues.
-				NFQ_OPTIONS+="--queue-balance 0:$(($cpu_count-1))"
-				NFQ_OPTIONS+=" --queue-cpu-fanout"
-			else
-				# Send all packets to queue 0.
-				NFQ_OPTIONS+="--queue-num 0"
-			fi
-
-			# Create firewall rules to queue the traffic and pass to
-			# the IDS.
-			iptables -I "$FW_CHAIN" -i "$network_device" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
-			iptables -I "$FW_CHAIN" -o "$network_device" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
+			# Add the network device to the array of enabled zones.
+			enabled_ips_zones+=( "$network_device" )
 		fi
 	done
 
-	# Clear repeat bit, so that it does not confuse IPsec or QoS
-	iptables -A "${FW_CHAIN}" -j MARK --set-xmark "0x0/${MASK}"
+	# Assign NFQ_OPTS
+	NFQ_OPTIONS=$NFQ_OPTS
+
+	# Check if there are multiple cpu cores available.
+	if [ "$cpu_count" -gt "1" ]; then
+		# Balance beetween all queues.
+		NFQ_OPTIONS+="--queue-balance 0:$(($cpu_count-1))"
+		NFQ_OPTIONS+=" --queue-cpu-fanout"
+	else
+		# Send all packets to queue 0.
+		NFQ_OPTIONS+="--queue-num 0"
+	fi
+
+	# Flush the firewall chains.
+	flush_fw_chain
+
+	# Check if the array of enabled_ips_zones contains any elements.
+	if [[ ${enabled_ips_zones[@]} ]]; then
+		# Loop through the array and create firewall rules.
+		for enabled_ips_zone in "${enabled_ips_zones[@]}"; do
+			# Create rules queue input and output related traffic and pass it to the IPS.
+			iptables -I "$IPS_INPUT_CHAIN" -i "$enabled_ips_zone" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
+			iptables -I "$IPS_OUTPUT_CHAIN" -o "$enabled_ips_zone" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
+
+			# Create rules which are required to handle forwarded traffic.
+			for enabled_ips_zone_forward in "${enabled_ips_zones[@]}"; do
+				iptables -I "$IPS_FORWARD_CHAIN" -i "$enabled_ips_zone" -o "$enabled_ips_zone_forward" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
+			done
+		done
+
+		# Clear repeat bit, so that it does not confuse IPsec or QoS
+		iptables -A "${IPS_INPUT_CHAIN}" -j MARK --set-xmark "0x0/${MASK}"
+		iptables -A "${IPS_FORWARD_CHAIN}" -j MARK --set-xmark "0x0/${MASK}"
+		iptables -A "${IPS_OUTPUT_CHAIN}" -j MARK --set-xmark "0x0/${MASK}"
+	fi
 }
 
 case "$1" in
