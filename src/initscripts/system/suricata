@@ -48,12 +48,18 @@ function get_cpu_count {
 	echo $CPUCOUNT
 }
 
+# Function to flush the firewall chain.
+function flush_fw_chain {
+	# Call iptables and flush the chain
+	iptables -F "$FW_CHAIN"
+}
+
 # Function to create the firewall rules to pass the traffic to suricata.
 function generate_fw_rules {
 	cpu_count=$(get_cpu_count)
 
 	# Flush the firewall chain.
-	iptables -F "$FW_CHAIN"
+	flush_fw_chain
 
 	# Loop through the array of network zones.
 	for zone in "${network_zones[@]}"; do
@@ -101,12 +107,6 @@ function generate_fw_rules {
 
 	# Clear repeat bit, so that it does not confuse IPsec or QoS
 	iptables -A "${FW_CHAIN}" -j MARK --set-xmark "0x0/${MASK}"
-}
-
-# Function to flush the firewall chain.
-function flush_fw_chain {
-	# Call iptables and flush the chain
-	iptables -F "$FW_CHAIN"
 }
 
 case "$1" in
