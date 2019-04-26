@@ -115,7 +115,7 @@ endif
 ifeq "$(BUILD_PC)" "1"
 	cp -r $(DIR_APP) $(DIR_APP_PC)
 	cd $(DIR_APP_PC) && ./configure $(CONFIGURE_ARGS) \
-		--with-platform=pc CFLAGS= LDFLAGS=
+		--with-platform=pc --disable-efiemu CFLAGS= LDFLAGS=
 	cd $(DIR_APP_PC) && make $(MAKETUNING)
 	cd $(DIR_APP_PC) && make install
 
