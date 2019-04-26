@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.3.0
+VER        = 8.3.0
 
 GMP_VER    = 6.1.2
 MPFR_VER   = 3.1.6
@@ -189,7 +189,7 @@ gmp-$(GMP_VER).tar.xz = $(DL_FROM)/gmp-$(GMP_VER).tar.xz
 mpfr-$(MPFR_VER).tar.xz = $(DL_FROM)/mpfr-$(MPFR_VER).tar.xz
 mpc-$(MPC_VER).tar.gz = $(DL_FROM)/mpc-$(MPC_VER).tar.gz
 
-$(DL_FILE)_MD5			= be2da21680f27624f3a87055c4ba5af2
+$(DL_FILE)_MD5			= 65b210b4bfe7e060051f799e0f994896
 gmp-$(GMP_VER).tar.xz_MD5	= f58fa8001d60c4c77595fbbb62b63c1d
 mpfr-$(MPFR_VER).tar.xz_MD5	= 51bfdbf81553966c8d43808122cc81b3
 mpc-$(MPC_VER).tar.gz_MD5	= d6a1d5f8ddea3abd2cc3e98f58352d26
@@ -223,8 +223,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/gcc-build
-
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/gcc-7-glibc-2.28-ustat.patch
 
 	cd $(DIR_APP) && sed -i 's/install_to_$$(INSTALL_DEST) //' libiberty/Makefile.in
 	cd $(DIR_APP) && sed -i gcc/Makefile.in \
