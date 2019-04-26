@@ -1284,7 +1284,7 @@
 'generate a certificate' => 'Générer un certificat :',
 'generate dh key' => 'Générer paramètres Diffie-Hellman',
 'generate iso' => 'Générer ISO',
-'generate root/host certificates' => 'Générer des certificats root / hôte ',
+'generate root/host certificates' => 'Générer des certificats root / hôte',
 'generate tripwire keys and init' => 'Générer des clef Tripwire et init',
 'generatekeys' => 'Générer des clefs',
 'generatepolicy' => 'Générer une nouvelle politique',
