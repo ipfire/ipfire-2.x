@@ -388,8 +388,6 @@ print <<END
 <!--SSID Broadcast: on => HIDESSID: off -->
 <tr><td width='25%' class='base'>$Lang::tr{'wlanap broadcast ssid'}:&nbsp;</td><td class='base' colspan='3'>$Lang::tr{'on'} <input type='radio' name='HIDESSID' value='off' $checked{'HIDESSID'}{'off'} /> | <input type='radio' name='HIDESSID' value='on' $checked{'HIDESSID'}{'on'} /> $Lang::tr{'off'}</td></tr>
 <tr><td width='25%' class='base'>$Lang::tr{'wlanap client isolation'}:&nbsp;</td><td class='base' colspan='3'>$Lang::tr{'on'} <input type='radio' name='CLIENTISOLATION' value='on' $checked{'CLIENTISOLATION'}{'on'} /> | <input type='radio' name='CLIENTISOLATION' value='off' $checked{'CLIENTISOLATION'}{'off'} /> $Lang::tr{'off'}</td></tr>
-
-
 <tr><td width='25%' class='base'>$Lang::tr{'wlanap country'}:&nbsp;</td><td class='base' colspan='3'>
 	<select name='COUNTRY'>
 END

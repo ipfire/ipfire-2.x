@@ -19,6 +19,7 @@ srv/web/ipfire/cgi-bin/logs.cgi/ids.dat
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/remote.cgi
+srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/local/bin/ipsec-interfaces
 usr/local/bin/sshctrl
