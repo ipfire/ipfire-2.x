@@ -790,7 +790,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'DHCP_DNS'} = $cgiparams{'DHCP_DNS'};
     $vpnsettings{'DHCP_WINS'} = $cgiparams{'DHCP_WINS'};
     $vpnsettings{'ROUTES_PUSH'} = $cgiparams{'ROUTES_PUSH'};
-    $vpnsettings{'TLSAUTH'} = $cgiparams{'TLSAUTH'};
     my @temp=();
     
     if ($cgiparams{'FRAGMENT'} eq '') {
@@ -1201,6 +1200,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'DCOMPLZO'} = $cgiparams{'DCOMPLZO'};
     $vpnsettings{'DCIPHER'} = $cgiparams{'DCIPHER'};
     $vpnsettings{'DAUTH'} = $cgiparams{'DAUTH'};
+    $vpnsettings{'TLSAUTH'} = $cgiparams{'TLSAUTH'};
 #wrtie enable
 
   if ( $vpnsettings{'ENABLED_BLUE'} eq 'on' ) {system("touch ${General::swroot}/ovpn/enable_blue 2>/dev/null");}else{system("unlink ${General::swroot}/ovpn/enable_blue 2>/dev/null");}
@@ -2673,9 +2673,6 @@ ADV_ERROR:
     $selected{'LOG_VERB'}{'10'} = '';
     $selected{'LOG_VERB'}{'11'} = '';
     $selected{'LOG_VERB'}{$cgiparams{'LOG_VERB'}} = 'SELECTED';
-    $checked{'TLSAUTH'}{'off'} = '';
-    $checked{'TLSAUTH'}{'on'} = '';
-    $checked{'TLSAUTH'}{$cgiparams{'TLSAUTH'}} = 'CHECKED';
    
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
@@ -2805,17 +2802,6 @@ print <<END;
     </table>
 
 <hr size='1'>
-
-<table width='100%'>
-    <tr>
-	<td width='20%'></td> <td width='15%'> </td><td width='15%'> </td><td width='15%'></td><td width='35%'></td>
-    </tr>
-
-    <tr>
-	<td class='base'>HMAC tls-auth</td>
-	<td><input type='checkbox' name='TLSAUTH' $checked{'TLSAUTH'}{'on'} /></td>
-    </tr>
-    </table><hr>
 END
 
 if ( -e "/var/run/openvpn.pid"){
@@ -3492,7 +3478,7 @@ foreach my $dkey (keys %confighash) {
 		<tr><td class='boldbase' nowrap='nowrap'>Fragment:</td><td><b>$confighash{$key}[24]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}</td><td><b>$confighash{$key}[31]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>Management Port </td><td><b>$confighash{$key}[22]</b></td></tr>
-		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn hmac'}:</td><td><b>$confighash{$key}[39]</b></td></tr>
+		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'ovpn tls auth'}:</td><td><b>$confighash{$key}[39]</b></td></tr>
 		<tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'cipher'}</td><td><b>$confighash{$key}[40]</b></td></tr>
 		<tr><td>&nbsp;</td><td>&nbsp;</td></tr>	
     </table>
@@ -4533,6 +4519,9 @@ if ($cgiparams{'TYPE'} eq 'net') {
     $selected{'DAUTH'}{'SHA256'} = '';
     $selected{'DAUTH'}{'SHA1'} = '';
     $selected{'DAUTH'}{$cgiparams{'DAUTH'}} = 'SELECTED';
+    $checked{'TLSAUTH'}{'off'} = '';
+    $checked{'TLSAUTH'}{'on'} = '';
+    $checked{'TLSAUTH'}{$cgiparams{'TLSAUTH'}} = 'CHECKED';
 
     if (1) {
 	&Header::showhttpheaders();
@@ -5079,6 +5068,9 @@ END
 			}
 		}
 	}
+	if ($cgiparams{'TLSAUTH'} eq '') {
+		$cgiparams{'TLSAUTH'} = 'off';
+	}
     if ($cgiparams{'DOVPN_SUBNET'} eq '') {
 		$cgiparams{'DOVPN_SUBNET'} = '10.' . int(rand(256)) . '.' . int(rand(256)) . '.0/255.255.255.0';
     }
@@ -5120,6 +5112,10 @@ END
     $selected{'DAUTH'}{'SHA256'} = '';
     $selected{'DAUTH'}{'SHA1'} = '';
     $selected{'DAUTH'}{$cgiparams{'DAUTH'}} = 'SELECTED';
+
+    $checked{'TLSAUTH'}{'off'} = '';
+    $checked{'TLSAUTH'}{'on'} = '';
+    $checked{'TLSAUTH'}{$cgiparams{'TLSAUTH'}} = 'CHECKED';
 
     $checked{'DCOMPLZO'}{'off'} = '';
     $checked{'DCOMPLZO'}{'on'} = '';
@@ -5255,6 +5251,13 @@ END
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>
         <td><input type='checkbox' name='DCOMPLZO' $checked{'DCOMPLZO'}{'on'} /></td>
 	</tr>
+
+    <tr><td colspan='4'><br></td></tr>
+	<tr>
+		<td class='base'>$Lang::tr{'ovpn tls auth'}</td>
+		<td><input type='checkbox' name='TLSAUTH' $checked{'TLSAUTH'}{'on'} /></td>
+	</tr>
+
     <tr><td colspan='4'><br><br></td></tr>
 END
 ;				   
