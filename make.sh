@@ -37,7 +37,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 
-TOOLCHAINVER=20190424
+TOOLCHAINVER=20190427
 
 ###############################################################################
 #
@@ -995,6 +995,7 @@ buildtoolchain() {
 	lfsmake1 make
 	lfsmake1 patch
 	lfsmake1 perl
+	lfsmake1 python3
 	lfsmake1 sed
 	lfsmake1 tar
 	lfsmake1 texinfo
