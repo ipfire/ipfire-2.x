@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.2.0
+VER        = 4.2.1
 
 THISAPP    = zabbix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = zabbix_agentd
-PAK_VER    = 2
+PAK_VER    = 3
 DEPS       = ""
 
 ###############################################################################
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 20f261708f95787f3dbea3eab89f804d
+$(DL_FILE)_MD5 = e55ba94060ba2548ae8a1c29fd7cb7dd
 
 install : $(TARGET)
 
