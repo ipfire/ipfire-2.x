@@ -785,6 +785,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'MAX_CLIENTS'} = $cgiparams{'MAX_CLIENTS'};
     $vpnsettings{'REDIRECT_GW_DEF1'} = $cgiparams{'REDIRECT_GW_DEF1'};
     $vpnsettings{'CLIENT2CLIENT'} = $cgiparams{'CLIENT2CLIENT'};
+    $vpnsettings{'COMPLZO'} = $cgiparams{'DCOMPLZO'};
     $vpnsettings{'ADDITIONAL_CONFIGS'} = $cgiparams{'ADDITIONAL_CONFIGS'};
     $vpnsettings{'DHCP_DOMAIN'} = $cgiparams{'DHCP_DOMAIN'};
     $vpnsettings{'DHCP_DNS'} = $cgiparams{'DHCP_DNS'};
@@ -2654,6 +2655,9 @@ ADV_ERROR:
     $checked{'REDIRECT_GW_DEF1'}{'off'} = '';
     $checked{'REDIRECT_GW_DEF1'}{'on'} = '';
     $checked{'REDIRECT_GW_DEF1'}{$cgiparams{'REDIRECT_GW_DEF1'}} = 'CHECKED';
+    $checked{'DCOMPLZO'}{'off'} = '';
+    $checked{'DCOMPLZO'}{'on'} = '';
+    $checked{'DCOMPLZO'}{$cgiparams{'DCOMPLZO'}} = 'CHECKED';
     $checked{'ADDITIONAL_CONFIGS'}{'off'} = '';
     $checked{'ADDITIONAL_CONFIGS'}{'on'} = '';
     $checked{'ADDITIONAL_CONFIGS'}{$cgiparams{'ADDITIONAL_CONFIGS'}} = 'CHECKED';
@@ -2732,7 +2736,7 @@ print <<END;
 	</tr>
 
 	<tr>
-		<td width='20%'></td> <td width='15%'> </td><td width='15%'> </td><td width='15%'></td><td width='35%'></td>
+		<td width='20%'></td> <td width='15%'> </td><td width='20%'> </td><td width='20%'></td><td width='35%'></td>
 	</tr>
 
 	<tr>
@@ -2744,6 +2748,11 @@ print <<END;
 		<td class='base'>Redirect-Gateway def1</td>
 		<td><input type='checkbox' name='REDIRECT_GW_DEF1' $checked{'REDIRECT_GW_DEF1'}{'on'} /></td>
 	</tr>
+
+    <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>
+        <td><input type='checkbox' name='DCOMPLZO' $checked{'DCOMPLZO'}{'on'} /></td>
+        <td>$Lang::tr{'openvpn default'}: off <font color='red'>($Lang::tr{'attention'} exploitable via Voracle)</font></td>
+    </tr>
 
 	<tr>
 		<td class='base'>$Lang::tr{'ovpn add conf'}</td>
@@ -5248,8 +5257,6 @@ END
 				<option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
 			</select>
 		</td>
-    <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>
-        <td><input type='checkbox' name='DCOMPLZO' $checked{'DCOMPLZO'}{'on'} /></td>
 	</tr>
 
     <tr><td colspan='4'><br></td></tr>
