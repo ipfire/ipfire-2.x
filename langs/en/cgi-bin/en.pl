@@ -1905,7 +1905,6 @@
 'ovpn error md5' => 'You host certificate uses MD5 for the signature which is not accepted anymore. <br>Please update to the latest IPFire version and generate a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>',
 'ovpn generating the root and host certificates' => 'Generating the root and host certificate can take a long time.',
 'ovpn ha' => 'Hash algorithm',
-'ovpn hmac' => 'HMAC options',
 'ovpn log' => 'OVPN-Log',
 'ovpn mgmt in root range' => 'A port number of 1024 or higher is required.',
 'ovpn mtu-disc' => 'Path MTU Discovery',

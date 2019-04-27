@@ -1866,7 +1866,6 @@
 'ovpn error md5' => 'Das Host Zertifikat nutzt einen MD5 Algorithmus welcher nicht mehr akzeptiert wird. <br>Bitte IPFire auf die neueste Version updaten und generieren sie ein neues Root und Host Zertifikate.</br><br>Es müssen dann alle OpenVPN clients erneuert werden!</br>',
 'ovpn generating the root and host certificates' => 'Die Erzeugung der Root- und Host-Zertifikate kann lange Zeit dauern.',
 'ovpn ha' => 'Hash-Algorithmus',
-'ovpn hmac' => 'HMAC-Optionen',
 'ovpn log' => 'OVPN-Protokoll',
 'ovpn mgmt in root range' => 'Ein Port von 1024 oder höher ist erforderlich.',
 'ovpn mtu-disc' => 'Path MTU Discovery',

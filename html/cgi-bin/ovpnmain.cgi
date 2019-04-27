@@ -332,11 +332,8 @@ sub writeserverconf {
     print CONF "status /var/run/ovpnserver.log 30\n";
     print CONF "ncp-disable\n";
     print CONF "cipher $sovpnsettings{DCIPHER}\n";
-    if ($sovpnsettings{'DAUTH'} eq '') {
-        print CONF "";
-    } else {
 	print CONF "auth $sovpnsettings{'DAUTH'}\n";
-    }
+
     if ($sovpnsettings{'TLSAUTH'} eq 'on') {
 	print CONF "tls-auth ${General::swroot}/ovpn/certs/ta.key\n";
     }
@@ -793,7 +790,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'DHCP_DNS'} = $cgiparams{'DHCP_DNS'};
     $vpnsettings{'DHCP_WINS'} = $cgiparams{'DHCP_WINS'};
     $vpnsettings{'ROUTES_PUSH'} = $cgiparams{'ROUTES_PUSH'};
-    $vpnsettings{'DAUTH'} = $cgiparams{'DAUTH'};
     $vpnsettings{'TLSAUTH'} = $cgiparams{'TLSAUTH'};
     my @temp=();
     
@@ -1204,6 +1200,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
     $vpnsettings{'DCOMPLZO'} = $cgiparams{'DCOMPLZO'};
     $vpnsettings{'DCIPHER'} = $cgiparams{'DCIPHER'};
+    $vpnsettings{'DAUTH'} = $cgiparams{'DAUTH'};
 #wrtie enable
 
   if ( $vpnsettings{'ENABLED_BLUE'} eq 'on' ) {system("touch ${General::swroot}/ovpn/enable_blue 2>/dev/null");}else{system("unlink ${General::swroot}/ovpn/enable_blue 2>/dev/null");}
@@ -2341,11 +2338,8 @@ else
 	$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem", "$confighash{$cgiparams{'KEY'}}[1]cert.pem") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1]cert.pem\n";    
     }
     print CLIENTCONF "cipher $vpnsettings{DCIPHER}\r\n";
-    if ($vpnsettings{'DAUTH'} eq '') {
-        print CLIENTCONF "";
-    } else {
 	print CLIENTCONF "auth $vpnsettings{'DAUTH'}\r\n";
-    }
+
     if ($vpnsettings{'TLSAUTH'} eq 'on') {
 	if ($cgiparams{'MODE'} eq 'insecure') {
 		print CLIENTCONF ";";
@@ -2651,9 +2645,6 @@ ADV_ERROR:
     if ($cgiparams{'LOG_VERB'} eq '') {
 		$cgiparams{'LOG_VERB'} =  '3';
     }
-    if ($cgiparams{'DAUTH'} eq '') {
-		$cgiparams{'DAUTH'} = 'SHA512';
-    }
     if ($cgiparams{'TLSAUTH'} eq '') {
 		$cgiparams{'TLSAUTH'} = 'off';
     }
@@ -2682,12 +2673,6 @@ ADV_ERROR:
     $selected{'LOG_VERB'}{'10'} = '';
     $selected{'LOG_VERB'}{'11'} = '';
     $selected{'LOG_VERB'}{$cgiparams{'LOG_VERB'}} = 'SELECTED';
-    $selected{'DAUTH'}{'whirlpool'} = '';
-    $selected{'DAUTH'}{'SHA512'} = '';
-    $selected{'DAUTH'}{'SHA384'} = '';
-    $selected{'DAUTH'}{'SHA256'} = '';
-    $selected{'DAUTH'}{'SHA1'} = '';
-    $selected{'DAUTH'}{$cgiparams{'DAUTH'}} = 'SELECTED';
     $checked{'TLSAUTH'}{'off'} = '';
     $checked{'TLSAUTH'}{'on'} = '';
     $checked{'TLSAUTH'}{$cgiparams{'TLSAUTH'}} = 'CHECKED';
@@ -2820,25 +2805,6 @@ print <<END;
     </table>
 
 <hr size='1'>
-<table width='100%'>
-    <tr>
-		<td class'base'><b>$Lang::tr{'ovpn crypt options'}</b></td>
-	</tr>
-	<tr>
-		<td width='20%'></td> <td width='30%'> </td><td width='25%'> </td><td width='25%'></td>
-    </tr>	
-    <tr><td class='base'>$Lang::tr{'ovpn ha'}</td>
-		<td><select name='DAUTH'>
-				<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'})</option>
-				<option value='SHA512'			$selected{'DAUTH'}{'SHA512'}>SHA2 (512 $Lang::tr{'bit'})</option>
-				<option value='SHA384'			$selected{'DAUTH'}{'SHA384'}>SHA2 (384 $Lang::tr{'bit'})</option>
-				<option value='SHA256'			$selected{'DAUTH'}{'SHA256'}>SHA2 (256 $Lang::tr{'bit'})</option>
-				<option value='SHA1'			$selected{'DAUTH'}{'SHA1'}>SHA1 (160 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-			</select>
-		</td>
-		<td>$Lang::tr{'openvpn default'}: <span class="base">SHA1 (160 $Lang::tr{'bit'})</span></td>
-    </tr>
-</table>
 
 <table width='100%'>
     <tr>
@@ -4566,11 +4532,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
     $selected{'DAUTH'}{'SHA384'} = '';
     $selected{'DAUTH'}{'SHA256'} = '';
     $selected{'DAUTH'}{'SHA1'} = '';
-    # If no hash algorythm has been choosen yet, select
-    # the old default value (SHA1) for compatiblity reasons.
-    if ($cgiparams{'DAUTH'} eq '') {
-	$cgiparams{'DAUTH'} = 'SHA1';
-    }
     $selected{'DAUTH'}{$cgiparams{'DAUTH'}} = 'SELECTED';
 
     if (1) {
@@ -5107,8 +5068,17 @@ END
 		$cgiparams{'MSSFIX'} = 'off';
     }
 	if ($cgiparams{'DAUTH'} eq '') {
-		$cgiparams{'DAUTH'} = 'SHA512';
-    }
+		if (-z "${General::swroot}/ovpn/ovpnconfig") {
+			$cgiparams{'DAUTH'} = 'SHA512';
+		}
+		foreach my $key (keys %confighash) {
+			if ($confighash{$key}[3] ne 'host') {
+				$cgiparams{'DAUTH'} = 'SHA512';
+			} else {
+				$cgiparams{'DAUTH'} = 'SHA1';
+			}
+		}
+	}
     if ($cgiparams{'DOVPN_SUBNET'} eq '') {
 		$cgiparams{'DOVPN_SUBNET'} = '10.' . int(rand(256)) . '.' . int(rand(256)) . '.0/255.255.255.0';
     }
@@ -5225,8 +5195,16 @@ END
     if (&haveOrangeNet()) {    
 	print "<tr><td class='boldbase'>$Lang::tr{'ovpn on orange'}</td>";
 	print "<td><input type='checkbox' name='ENABLED_ORANGE' $checked{'ENABLED_ORANGE'}{'on'} /></td>";
-    }	
-    print <<END;
+    }
+
+	print <<END;
+
+	<tr><td colspan='4'><br></td></tr>
+	<tr>
+		<td class'base'><b>$Lang::tr{'net config'}:</b></td>
+	</tr>
+    <tr><td colspan='1'><br></td></tr>
+
     <tr><td class='base' nowrap='nowrap' colspan='2'>$Lang::tr{'local vpn hostname/ip'}:<br /><input type='text' name='VPN_IP' value='$cgiparams{'VPN_IP'}' size='30' /></td>
 	<td class='boldbase' nowrap='nowrap' colspan='2'>$Lang::tr{'ovpn subnet'}<br /><input type='TEXT' name='DOVPN_SUBNET' value='$cgiparams{'DOVPN_SUBNET'}' size='30' /></td></tr>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'protocol'}</td>
@@ -5236,6 +5214,24 @@ END
         <td><input type='TEXT' name='DDEST_PORT' value='$cgiparams{'DDEST_PORT'}' size='5' /></td></tr>
     <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}&nbsp;</td>
         <td> <input type='TEXT' name='DMTU' VALUE='$cgiparams{'DMTU'}' size='5' /></td>
+    </tr>
+
+	<tr><td colspan='4'><br></td></tr>
+	<tr>
+		<td class'base'><b>$Lang::tr{'ovpn crypt options'}:</b></td>
+	</tr>
+	<tr><td colspan='1'><br></td></tr>
+
+	<tr>
+		<td class='base'>$Lang::tr{'ovpn ha'}</td>
+		<td><select name='DAUTH'>
+				<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'})</option>
+				<option value='SHA512'			$selected{'DAUTH'}{'SHA512'}>SHA2 (512 $Lang::tr{'bit'})</option>
+				<option value='SHA384'			$selected{'DAUTH'}{'SHA384'}>SHA2 (384 $Lang::tr{'bit'})</option>
+				<option value='SHA256'			$selected{'DAUTH'}{'SHA256'}>SHA2 (256 $Lang::tr{'bit'})</option>
+				<option value='SHA1'			$selected{'DAUTH'}{'SHA1'}>SHA1 (160 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+			</select>
+		</td>
 
 		<td class='boldbase' nowrap='nowrap'>$Lang::tr{'cipher'}</td>
 		<td><select name='DCIPHER'>
