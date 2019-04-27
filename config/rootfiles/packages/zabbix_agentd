@@ -5,6 +5,7 @@ etc/zabbix_agentd
 etc/zabbix_agentd/scripts
 etc/zabbix_agentd/zabbix_agentd.conf
 etc/zabbix_agentd/zabbix_agentd.d
+etc/zabbix_agentd/zabbix_agentd.d/userparameter_pakfire.conf
 usr/bin/zabbix_get
 usr/bin/zabbix_sender
 usr/lib/modules

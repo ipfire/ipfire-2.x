@@ -91,6 +91,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -pv /etc/zabbix_agentd/scripts
 	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/zabbix_agentd.conf \
 		/etc/zabbix_agentd/zabbix_agentd.conf
+	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_pakfire.conf \
+		/etc/zabbix_agentd/zabbix_agentd.d/userparameter_pakfire.conf
 
 	# Create directory for additional agent modules
 	-mkdir -pv /usr/lib/zabbix
