@@ -175,9 +175,9 @@ sub buildrules {
 	}
 
 	if ($POLICY_INPUT_ACTION eq "DROP") {
-		push(@special_input_targets, "REJECT");
+		push(@special_input_targets, ("ACCEPT", "REJECT"));
 	} elsif ($POLICY_INPUT_ACTION eq "REJECT") {
-		push(@special_input_targets, "DROP");
+		push(@special_input_targets, ("ACCEPT", "DROP"));
 	}
 
 	my @special_output_targets = ();
@@ -187,9 +187,9 @@ sub buildrules {
 		push(@special_output_targets, "ACCEPT");
 
 		if ($POLICY_OUTPUT_ACTION eq "DROP") {
-			push(@special_output_targets, "REJECT");
+			push(@special_output_targets, ("ACCEPT", "REJECT"));
 		} elsif ($POLICY_OUTPUT_ACTION eq "REJECT") {
-			push(@special_output_targets, "DROP");
+			push(@special_output_targets, ("ACCEPT", "DROP"));
 		}
 	}
 
