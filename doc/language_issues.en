@@ -1989,7 +1989,6 @@ WARNING: untranslated string: urlfilter restore results = Restore results
 WARNING: untranslated string: urlfilter restore settings = Restore URL filter settings
 WARNING: untranslated string: urlfilter restore success = URL filter configuration has been restored. The URL filter must be restarted to activate the new settings.
 WARNING: untranslated string: urlfilter restore text = To restore a previously saved configuration upload the .tar.gz backup file below
-WARNING: untranslated string: urlfilter safesearch = Enable SafeSearch
 WARNING: untranslated string: urlfilter sat = S
 WARNING: untranslated string: urlfilter saturday = Sat
 WARNING: untranslated string: urlfilter save and restart = Save and Restart

@@ -634,6 +634,7 @@ WARNING: translation string unused: uptime and users
 WARNING: translation string unused: urlfilter background image
 WARNING: translation string unused: urlfilter background text
 WARNING: translation string unused: urlfilter enable jpeg
+WARNING: translation string unused: urlfilter safesearch
 WARNING: translation string unused: urlfilter update information
 WARNING: translation string unused: urlfilter update notification
 WARNING: translation string unused: urlfilter update results
