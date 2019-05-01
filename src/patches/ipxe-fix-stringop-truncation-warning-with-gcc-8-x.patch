@@ -1,0 +1,32 @@
+From ddfb60813c74e988ba7c16dbbe1b163593c9da4e Mon Sep 17 00:00:00 2001
+From: Christian Hesse <mail@eworm.de>
+Date: Tue, 15 May 2018 23:25:01 +0200
+Subject: [PATCH] [build] fix stringop truncation warning with GCC 8.x
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+GCC 8.x gives a warning about stringop truncation:
+
+util/elf2efi.c:497:2: error: ‘strncpy’ specified bound 8 equals destination
+size [-Werror=stringop-truncation]
+
+It assumes that strncpy() is intended to copy strings, which are NULL
+terminated. We do copy fixed size memory regions, so use memcpy() instead.
+---
+ src/util/elf2efi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/util/elf2efi.c b/src/util/elf2efi.c
+index 6718df777..de3c92463 100644
+--- a/src/util/elf2efi.c
++++ b/src/util/elf2efi.c
+@@ -494,7 +494,7 @@ static struct pe_section * process_section ( struct elf_file *elf,
+ 	memset ( new, 0, sizeof ( *new ) + section_filesz );
+ 
+ 	/* Fill in section header details */
+-	strncpy ( ( char * ) new->hdr.Name, name, sizeof ( new->hdr.Name ) );
++	memcpy ( ( char * ) new->hdr.Name, name, sizeof ( new->hdr.Name ) );
+ 	new->hdr.Misc.VirtualSize = section_memsz;
+ 	new->hdr.VirtualAddress = shdr->sh_addr;
+ 	new->hdr.SizeOfRawData = section_filesz;
