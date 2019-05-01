@@ -58,6 +58,9 @@ if(&IDS::downloadruleset()) {
 	exit 0;
 }
 
+# Set correct ownership for the downloaded tarball.
+&IDS::set_ownership("$IDS::rulestarball");
+
 # Call oinkmaster to alter the ruleset.
 &IDS::oinkmaster();
 
