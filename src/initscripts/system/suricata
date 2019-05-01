@@ -171,6 +171,9 @@ case "$1" in
 		# Remove suricata control socket.              
 		rm /var/run/suricata/* >/dev/null 2>/dev/null
 
+		# Trash remain pid file if still exists.
+		rm -f $PID_FILE >/dev/null 2>/dev/null
+
 		# Don't report returncode of rm if suricata was not started
 		exit 0
         ;;
