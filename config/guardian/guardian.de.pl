@@ -6,7 +6,7 @@
 'guardian block httpd brute-force' => 'httpd-Brute-Force-Erkennung',
 'guardian block owncloud brute-force' => 'Owncloud-Brute-Force-Erkennung',
 'guardian block ssh brute-force' => 'SSH-Brute-Force-Erkennung',
-'guardian blockcount' => 'Trefferschwelle (Snort)',
+'guardian blockcount' => 'Trefferschwelle',
 'guardian blocked hosts' => 'Aktuell geblockte Hosts',
 'guardian blocking of this address is not allowed' => 'Diese Addresse darf nicht geblockt werden.',
 'guardian blocktime' => 'Blockzeit (Sekunden)',
@@ -36,9 +36,7 @@
 'guardian priolevel_medium' => '2 - Mittel',
 'guardian priolevel_low' => '3 - Niedrig',
 'guardian priolevel_very_low' => '4 - Sehr niedrig',
-'guardian priority level' => 'Prioritätslevel (Snort)',
 'guardian service' => 'Guardian-Dienst',
-'guardian watch snort alertfile' => 'Snort-Alarme auswerten',
 
 );
 
