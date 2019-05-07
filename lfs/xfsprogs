@@ -32,6 +32,14 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+CONFIGURE_OPTIONS = \
+	--enable-readline=yes
+
+ifeq "$(BUILD_ARCH)" "armv5tel"
+	CONFIGURE_OPTIONS += \
+		--enable-lto=no
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -74,7 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make $(MAKETUNING) DEBUG=-DNDEBUG INSTALL_USER=root INSTALL_GROUP=root \
-		LOCAL_CONFIGURE_OPTIONS="--enable-readline=yes"
+		LOCAL_CONFIGURE_OPTIONS="$(CONFIGURE_OPTIONS)"
 	cd $(DIR_APP) && make install install-dev
 	cd $(DIR_APP) && install -v -m755 -D libhandle/libhandle.la /usr/lib/libhandle.la
 	chmod -v 755 /lib/libhandle.so*
