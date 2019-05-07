@@ -4,6 +4,7 @@ etc/mime.types
 etc/rc.d/init.d/suricata
 etc/suricata/suricata.yaml
 srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 usr/lib/firewall/rules.pl
 usr/sbin/convert-snort
