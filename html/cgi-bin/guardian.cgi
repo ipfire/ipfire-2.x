@@ -52,7 +52,6 @@ my $ignorefile ='/var/ipfire/guardian/guardian.ignore';
 # file locations on IPFire systems.
 my %module_file_locations = (
 	"HTTPD" => "/var/log/httpd/error_log",
-	"SNORT" => "/var/log/snort/alert",
 	"SSH" => "/var/log/messages",
 );
 
@@ -78,7 +77,6 @@ our %ignored  = ();
 $settings{'ACTION'} = '';
 
 $settings{'GUARDIAN_ENABLED'} = 'off';
-$settings{'GUARDIAN_MONITOR_SNORT'} = 'on';
 $settings{'GUARDIAN_MONITOR_SSH'} = 'on';
 $settings{'GUARDIAN_MONITOR_HTTPD'} = 'on';
 $settings{'GUARDIAN_MONITOR_OWNCLOUD'} = '';
@@ -88,7 +86,6 @@ $settings{'GUARDIAN_BLOCKCOUNT'} = '3';
 $settings{'GUARDIAN_BLOCKTIME'} = '86400';
 $settings{'GUARDIAN_FIREWALL_ACTION'} = 'DROP';
 $settings{'GUARDIAN_LOGFILE'} = '/var/log/guardian/guardian.log';
-$settings{'GUARDIAN_SNORT_PRIORITY_LEVEL'} = '3';
 
 my $errormessage = '';
 
@@ -379,9 +376,6 @@ sub showMainBox() {
 	$checked{'GUARDIAN_ENABLED'}{'on'} = '';
 	$checked{'GUARDIAN_ENABLED'}{'off'} = '';
 	$checked{'GUARDIAN_ENABLED'}{$settings{'GUARDIAN_ENABLED'}} = 'checked';
-	$checked{'GUARDIAN_MONITOR_SNORT'}{'off'} = '';
-	$checked{'GUARDIAN_MONITOR_SNORT'}{'on'} = '';
-	$checked{'GUARDIAN_MONITOR_SNORT'}{$settings{'GUARDIAN_MONITOR_SNORT'}} = "checked='checked'";
 	$checked{'GUARDIAN_MONITOR_SSH'}{'off'} = '';
 	$checked{'GUARDIAN_MONITOR_SSH'}{'on'} = '';
 	$checked{'GUARDIAN_MONITOR_SSH'}{$settings{'GUARDIAN_MONITOR_SSH'}} = "checked='checked'";
@@ -394,7 +388,6 @@ sub showMainBox() {
 
 	$selected{'GUARDIAN_LOG_FACILITY'}{$settings{'GUARDIAN_LOG_FACILITY'}} = 'selected';
 	$selected{'GUARDIAN_LOGLEVEL'}{$settings{'GUARDIAN_LOGLEVEL'}} = 'selected';
-	$selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{$settings{'GUARDIAN_SNORT_PRIORITY_LEVEL'}} = 'selected';
 	$selected{'GUARDIAN_FIREWALL_ACTION'}{$settings{'GUARDIAN_FIREWALL_ACTION'}} = 'selected';
 
 	&Header::openpage($Lang::tr{'guardian configuration'}, 1, '');
@@ -447,19 +440,6 @@ sub showMainBox() {
 			\$("#GUARDIAN_LOG_FACILITY").change(update_options);
 			\$("#GUARDIAN_LOGLEVEL").change(update_options);
 			update_options();
-
-			// Show / Hide snort priority level option, based if
-			// snort is enabled / disabled.
-			if (\$('input[name=GUARDIAN_MONITOR_SNORT]:checked').val() == 'on') {
-				\$('.GUARDIAN_SNORT_PRIORITY_LEVEL').show();
-			} else {
-				\$('.GUARDIAN_SNORT_PRIORITY_LEVEL').hide();
-			}
-
-			// Show/Hide snort priority level when GUARDIAN_MONITOR_SNORT get changed.
-			\$('input[name=GUARDIAN_MONITOR_SNORT]').change(function() {
-				\$('.GUARDIAN_SNORT_PRIORITY_LEVEL').toggle();
-			});
 		});
 	</script>
 END
@@ -534,12 +514,6 @@ END
 			</tr>
 
 			<tr>
-				<td width='25%' class='base'>$Lang::tr{'guardian watch snort alertfile'}</td>
-				<td align='left'>on <input type='radio' name='GUARDIAN_MONITOR_SNORT' value='on' $checked{'GUARDIAN_MONITOR_SNORT'}{'on'} /> /
-				<input type='radio' name='GUARDIAN_MONITOR_SNORT' value='off' $checked{'GUARDIAN_MONITOR_SNORT'}{'off'} /> off</td>
-			</tr>
-
-			<tr>
 				<td width='25%' class='base'>$Lang::tr{'guardian block ssh brute-force'}</td>
 				<td align='left'>on <input type='radio' name='GUARDIAN_MONITOR_SSH' value='on' $checked{'GUARDIAN_MONITOR_SSH'}{'on'} /> /
 				<input type='radio' name='GUARDIAN_MONITOR_SSH' value='off' $checked{'GUARDIAN_MONITOR_SSH'}{'off'} /> off</td>
@@ -580,23 +554,6 @@ END
 				<td><input type='text' name='GUARDIAN_LOGFILE' value='$settings{'GUARDIAN_LOGFILE'}' size='30' /></td>
 			</tr>
 
-			<tr class="GUARDIAN_SNORT_PRIORITY_LEVEL">
-				<td colspan='2'><br></td>
-			</tr>
-
-			<tr class="GUARDIAN_SNORT_PRIORITY_LEVEL">
-				<td align='left' width='20%'>$Lang::tr{'guardian priority level'}:</td>
-				<td><select name='GUARDIAN_SNORT_PRIORITY_LEVEL'>
-					<option value='1' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'1'}>$Lang::tr{'guardian priolevel_high'}</option>
-					<option value='2' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'2'}>$Lang::tr{'guardian priolevel_medium'}</option>
-					<option value='3' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'3'}>$Lang::tr{'guardian priolevel_low'}</option>
-					<option value='4' $selected{'GUARDIAN_SNORT_PRIORITY_LEVEL'}{'4'}>$Lang::tr{'guardian priolevel_very_low'}</option>
-				</select></td>
-
-				<td width='25%' class='base'>$Lang::tr{'guardian blockcount'}:</td>
-				<td><input type='text' name='GUARDIAN_BLOCKCOUNT' value='$settings{'GUARDIAN_BLOCKCOUNT'}' size='5' /></td>
-			</tr>
-
 			<tr>
 				<td colspan='2'><br></td>
 			</tr>
@@ -608,6 +565,15 @@ END
 					<option value='REJECT' $selected{'GUARDIAN_FIREWALL_ACTION'}{'REJECT'}>Reject</option>
 				</select></td>
 
+				<td width='25%' class='base'>$Lang::tr{'guardian blockcount'}:</td>
+				<td><input type='text' name='GUARDIAN_BLOCKCOUNT' value='$settings{'GUARDIAN_BLOCKCOUNT'}' size='5' /></td>
+			</tr>
+
+			<tr>
+				<td colspan='2'><br></td>
+			</tr>
+
+			<tr>
 				<td width='25%' class='base'>$Lang::tr{'guardian blocktime'}:</td>
 				<td><input type='text' name='GUARDIAN_BLOCKTIME' value='$settings{'GUARDIAN_BLOCKTIME'}' size='10' /></td>
 			</tr>
@@ -977,11 +943,6 @@ sub BuildConfiguration() {
 
 	# Module settings.
 	print FILE "\n# Module settings.\n";
-	# Check if SNORT is enabled and add snort priority.
-	if ($settings{'GUARDIAN_MONITOR_SNORT'} eq "on") {
-		print FILE "SnortPriorityLevel = $settings{'GUARDIAN_SNORT_PRIORITY_LEVEL'}\n";
-	}
-
 	close(FILE);
 
 	# Generate ignore file.

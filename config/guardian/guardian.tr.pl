@@ -6,7 +6,7 @@
 'guardian block httpd brute-force' => 'httpd kaba kuvvet algılama',
 'guardian block owncloud brute-force' => 'Owncloud kaba kuvvet algılama',
 'guardian block ssh brute-force' => 'SSH kaba kuvvet algılama',
-'guardian blockcount' => 'Vurgu eşiği (Snort)',
+'guardian blockcount' => 'Vurgu eşiği',
 'guardian blocked hosts' => 'Şu anda engellenen ana makineler',
 'guardian blocking of this address is not allowed' => 'Verilen adresin engellenmesine izin verilmiyor.',
 'guardian blocktime' => 'Engelleme zamanı (saniye)',
@@ -36,9 +36,7 @@
 'guardian priolevel_medium' => '2 - Orta',
 'guardian priolevel_low' => '3 - Düşük',
 'guardian priolevel_very_low' => '4 - Çok düşük',
-'guardian priority level' => 'Öncelik seviyesi (Snort)',
 'guardian service' => 'Koruyucu servisi',
-'guardian watch snort alertfile' => 'Snort uyarı dosyası',
 
 );
 
