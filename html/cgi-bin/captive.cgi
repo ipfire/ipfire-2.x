@@ -104,7 +104,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$settings{'ENABLE_GREEN'}		= $cgiparams{'ENABLE_GREEN'};
 	$settings{'ENABLE_BLUE'}		= $cgiparams{'ENABLE_BLUE'};
 	$settings{'AUTH'}				= $cgiparams{'AUTH'};
-	$settings{'TITLE'}				= $cgiparams{'TITLE'};
+	$settings{'TITLE'}			= &Header::escape($cgiparams{'TITLE'});
 	$settings{'COLOR'}			= $cgiparams{'COLOR'};
 	$settings{'SESSION_TIME'}		= $cgiparams{'SESSION_TIME'};
 
