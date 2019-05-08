@@ -961,6 +961,7 @@
 'err rs 6 decrypt' => 'Fehler beim Entschlüsseln des Archivs',
 'err rs 7 untartst' => 'Ungültiges entschlüsseltes Archiv',
 'err rs 8 untar' => 'Fehler beim un-tar-en des Archivs',
+'error' => 'Fehler',
 'error config' => 'Kann /var/ipfire/ovpn/config/ZERINA.ovpn nicht öffnen!',
 'error external access' => 'Kann /var/ipfire/xtaccess/config nicht öffnen (external acccess could not be granted)!',
 'error messages' => 'Fehlermeldungen',
@@ -2879,6 +2880,19 @@
 'you can only define one roadwarrior connection when using pre-shared key authentication' => 'Sie können nur eine Roadwarrior-Verbindung definieren, wenn die Pre-shared-Schlüsselauthentifizierung verwendet wird.<br/>Entweder haben Sie bereits eine Roadwarrior-Verbindung mit Pre-shared-Schlüsselauthentifizierung, oder Sie versuchen gerade, eine hinzuzufügen.',
 'your department' => 'Ihre Abteilung',
 'your e-mail' => 'Ihre E-Mail-Adresse',
+'zoneconf access native' => 'Nativ',
+'zoneconf access none' => 'Keine',
+'zoneconf access vlan' => 'VLAN',
+'zoneconf nic assignment' => 'Netzwerkkarten-Zuordnung',
+'zoneconf nicmode bridge' => 'Brücke',
+'zoneconf nicmode default' => 'Normal',
+'zoneconf nicmode macvtap' => 'Macvtap',
+'zoneconf title' => 'Zonen einrichten',
+'zoneconf val native assignment error' => 'Eine Netzwerkkarte kann nicht von mehreren Zonen nativ verwendet werden.',
+'zoneconf val ppp assignment error' => 'Die Netzwerkkarte, die von RED im PPP-Modus verwendet wird, kann keiner anderen Zone zugeordnet werden.',
+'zoneconf val vlan amount assignment error' => 'Pro Zone kann nur ein VLAN verwendet werden.',
+'zoneconf val vlan tag assignment error' => 'Pro Netzwerkkarte kann derselbe VLAN-Tag nur einmal verwendet werden.',
+'zoneconf warning incorrect configuration' => 'Achtung: Fehlerhafte Einstellungen können dazu führen, dass diese Webseite nicht mehr erreichbar ist!',
 );
 
 #EOF

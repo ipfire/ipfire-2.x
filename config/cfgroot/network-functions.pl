@@ -402,6 +402,48 @@ sub get_hardware_address($) {
 	return $ret;
 }
 
+sub get_nic_property {
+	my $nicname = shift;
+	my $property = shift;
+	my $result;
+
+	open(FILE, "/sys/class/net/$nicname/$property") or die("Could not read property");
+	$result = <FILE>;
+	close(FILE);
+
+	chomp($result);
+
+	return $result;
+}
+
+sub valid_mac($) {
+	my $mac = shift;
+
+	return $mac =~ /^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$/;
+}
+
+sub random_mac {
+	my $address = "02";
+
+	for my $i (0 .. 4) {
+		$address = sprintf("$address:%02x", int(rand(255)));
+	}
+
+	return $address;
+}
+
+sub get_mac_by_name($) {
+	my $mac = shift;
+
+	if ((!&valid_mac($mac)) && ($mac ne "")) {
+		if (-e "/sys/class/net/$mac/") {
+			$mac = get_nic_property($mac, "address");
+		}
+	}
+
+	return $mac;
+}
+
 1;
 
 # Remove the next line to enable the testsuite

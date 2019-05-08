@@ -237,6 +237,7 @@ WARNING: translation string unused: err rs 1
 WARNING: translation string unused: err rs 6 decrypt
 WARNING: translation string unused: err rs 7 untartst
 WARNING: translation string unused: err rs 8 untar
+WARNING: translation string unused: error
 WARNING: translation string unused: error config
 WARNING: translation string unused: error external access
 WARNING: translation string unused: esp encryption
@@ -734,6 +735,18 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
+WARNING: translation string unused: zoneconf access native
+WARNING: translation string unused: zoneconf access none
+WARNING: translation string unused: zoneconf access vlan
+WARNING: translation string unused: zoneconf nic assignment
+WARNING: translation string unused: zoneconf nicmode bridge
+WARNING: translation string unused: zoneconf nicmode default
+WARNING: translation string unused: zoneconf nicmode macvtap
+WARNING: translation string unused: zoneconf val native assignment error
+WARNING: translation string unused: zoneconf val ppp assignment error
+WARNING: translation string unused: zoneconf val vlan amount assignment error
+WARNING: translation string unused: zoneconf val vlan tag assignment error
+WARNING: translation string unused: zoneconf warning incorrect configuration
 WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: addons = Addons
 WARNING: untranslated string: bytes = unknown string

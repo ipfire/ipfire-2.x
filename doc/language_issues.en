@@ -2199,3 +2199,4 @@ WARNING: untranslated string: yes = Yes
 WARNING: untranslated string: you can only define one roadwarrior connection when using pre-shared key authentication = You can only define one Roadwarrior connection when using pre-shared key authentication.<br />Either you already have a Roadwarrior connection with pre-shared key authentication, or you're trying to add one now.
 WARNING: untranslated string: your department = Your department
 WARNING: untranslated string: your e-mail = Your e-mail address
+WARNING: untranslated string: zoneconf title = Zone Configuration

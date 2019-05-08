@@ -991,6 +991,7 @@
 'err rs 6 decrypt' => 'Error decrypting archive',
 'err rs 7 untartst' => 'Invalid decrypted archive',
 'err rs 8 untar' => 'Error untarring archive',
+'error' => 'Error',
 'error config' => 'Could not open /var/ipfire/ovpn/config/ZERINA.ovpn !',
 'error external access' => 'Could not open /var/ipfire/xtaccess/config (external acccess could not be granted)!',
 'error messages' => 'Error messages',
@@ -2928,6 +2929,19 @@
 'you can only define one roadwarrior connection when using pre-shared key authentication' => 'You can only define one Roadwarrior connection when using pre-shared key authentication.<br />Either you already have a Roadwarrior connection with pre-shared key authentication, or you\'re trying to add one now.',
 'your department' => 'Your department',
 'your e-mail' => 'Your e-mail address',
+'zoneconf access native' => 'Native',
+'zoneconf access none' => 'None',
+'zoneconf access vlan' => 'VLAN',
+'zoneconf nic assignment' => 'NIC Assignment',
+'zoneconf nicmode bridge' => 'Bridge',
+'zoneconf nicmode default' => 'Default',
+'zoneconf nicmode macvtap' => 'Macvtap',
+'zoneconf title' => 'Zone Configuration',
+'zoneconf val native assignment error' => 'A NIC can\'t be accessed natively by more than one zone.',
+'zoneconf val ppp assignment error' => 'The NIC used for RED in PPP mode can\'t be accessed by any other zone.',
+'zoneconf val vlan amount assignment error' => 'A zone can\'t have more than one VLAN assigned.',
+'zoneconf val vlan tag assignment error' => 'You can\'t use the same VLAN tag more than once per NIC.',
+'zoneconf warning incorrect configuration' => 'Warning: Incorrect configuration may render this web interface unreachable!',
 );
 
 #EOF

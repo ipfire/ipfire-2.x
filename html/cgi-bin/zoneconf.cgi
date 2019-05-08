@@ -1,0 +1,444 @@
+#!/usr/bin/perl
+###############################################################################
+#                                                                             #
+# VLAN Management for IPFire                                                  #
+# Copyright (C) 2019 Florian Bührle <fbuehrle@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+use strict;
+use Scalar::Util qw(looks_like_number);
+
+require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/lang.pl";
+require "${General::swroot}/header.pl";
+
+my $css = <<END
+<style>
+	table {
+		width: 100%;
+	}
+
+	tr {
+		height: 4em;
+	}
+
+	td:first-child {
+		width: 1px;
+	}
+
+	td {
+		padding: 5px;
+		padding-left: 10px;
+		padding-right: 10px;
+		border: 0.5px solid black;
+	}
+
+	table {
+		border-collapse: collapse;
+	}
+
+	td.h {
+		background-color: grey;
+		color: white;
+		font-weight: 800;
+	}
+
+	td.green {
+		background-color: $Header::colourgreen;
+	}
+
+	td.red {
+		background-color: $Header::colourred;
+	}
+
+	td.blue {
+		background-color: $Header::colourblue;
+	}
+
+	td.orange {
+		background-color: $Header::colourorange;
+	}
+
+	td.topleft {
+		background-color: white;
+		border-top-style: none;
+		border-left-style: none;
+	}
+
+	td.disabled {
+		background-color: #cccccc;
+	}
+
+	td.textcenter {
+		text-align: center;
+	}
+
+	#submit-container {
+		display: flex;
+		width: 100%;
+		justify-content: space-between;
+		padding-top: 20px;
+		text-align: left;
+	}
+
+	#submit-container.input {
+		margin-left: auto;
+	}
+
+	button {
+		margin-top: 1em;
+	}
+
+</style>
+END
+;
+
+my %ethsettings = ();
+my %vlansettings = ();
+my %cgiparams = ();
+
+&General::readhash("${General::swroot}/ethernet/settings",\%ethsettings);
+&General::readhash("${General::swroot}/ethernet/vlans",\%vlansettings);
+
+&Header::getcgihash(\%cgiparams);
+&Header::showhttpheaders();
+
+# Define all zones we will check for NIC assignment
+my @zones = ("green", "red", "orange", "blue");
+
+# Get all physical NICs present
+opendir(my $dh, "/sys/class/net/");
+my @nics = ();
+
+while (my $nic = readdir($dh)) {
+	if (-e "/sys/class/net/$nic/device") { # Indicates that the NIC is physical
+		push(@nics, [&Network::get_nic_property($nic, "address"), $nic, 0]);
+	}
+}
+
+closedir($dh);
+
+@nics = sort {$a->[0] cmp $b->[0]} @nics; # Sort nics by their MAC address
+
+# Name the physical NICs
+# Even though they may not be really named like this, we will name them ethX or wlanX
+my $ethcount = 0;
+my $wlancount = 0;
+
+foreach (@nics) {
+	my $nic = $_->[1];
+
+	if (-e "/sys/class/net/$nic/wireless") {
+		$_->[1] = "wlan$wlancount";
+		$_->[2] = 1;
+		$wlancount++;
+	} else {
+		$_->[1] = "eth$ethcount";
+		$ethcount++;
+	}
+}
+
+&Header::openpage($Lang::tr{"zoneconf title"}, 1, $css);
+&Header::openbigbox('100%', 'center');
+
+### Evaluate POST parameters ###
+
+if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
+	my %VALIDATE_nic_check = ();
+	my $VALIDATE_error = "";
+
+	foreach (@zones) {
+		my $uc = uc $_;
+		my $slave_string = "";
+		my $zone_mode = $cgiparams{"MODE $uc"};
+		my $VALIDATE_vlancount = 0;
+
+		$ethsettings{"${uc}_MACADDR"} = "";
+		$ethsettings{"${uc}_MODE"} = "";
+		$ethsettings{"${uc}_SLAVES"} = "";
+		$vlansettings{"${uc}_PARENT_DEV"} = "";
+		$vlansettings{"${uc}_VLAN_ID"} = "";
+		$vlansettings{"${uc}_MAC_ADDRESS"} = "";
+
+		# If RED is not in DHCP or static mode, we only set its MACADDR property
+		if ($uc eq "RED" && ! $cgiparams{"PPPACCESS"} eq "") {
+			foreach (@nics) {
+				my $mac = $_->[0];
+
+				if ($mac eq $cgiparams{"PPPACCESS"}) {
+					$ethsettings{"${uc}_MACADDR"} = $mac;
+
+					# Check if this interface is already accessed by any other zone
+					# If this is the case, show an error message
+					if ($VALIDATE_nic_check{"ACC $mac"}) {
+						$VALIDATE_error = $Lang::tr{"zoneconf val ppp assignment error"};
+					}
+
+					$VALIDATE_nic_check{"RESTRICT $mac"} = 1;
+					last;
+				}
+			}
+
+			next;
+		}
+
+		foreach (@nics) {
+			my $mac = $_->[0];
+			my $nic_access = $cgiparams{"ACCESS $uc $mac"};
+
+			if (! ($nic_access eq "NONE")) {
+				if ($VALIDATE_nic_check{"RESTRICT $mac"}) { # If this interface is already assigned to RED in PPP mode, throw an error
+					$VALIDATE_error = $Lang::tr{"zoneconf val ppp assignment error"};
+					next;
+				}
+
+				$VALIDATE_nic_check{"ACC $mac"} = 1;
+			}
+
+			if ($nic_access eq "NATIVE") {
+				if ($VALIDATE_nic_check{"NATIVE $mac"}) {
+					$VALIDATE_error = $Lang::tr{"zoneconf val native assignment error"};
+					next;
+				}
+
+				$VALIDATE_nic_check{"NATIVE $mac"} = 1;
+
+				if ($zone_mode eq "BRIDGE") {
+					$slave_string = "${slave_string}${mac} ";
+				} else {
+					$ethsettings{"${uc}_MACADDR"} = $mac;
+				}
+			} elsif ($nic_access eq "VLAN") {
+				my $vlan_tag = $cgiparams{"TAG $uc $mac"};
+
+				if ($VALIDATE_nic_check{"VLAN $mac $vlan_tag"}) {
+					$VALIDATE_error = $Lang::tr{"zoneconf val vlan tag assignment error"};
+					next;
+				}
+
+				$VALIDATE_nic_check{"VLAN $mac $vlan_tag"} = 1;
+
+				if (! looks_like_number($vlan_tag)) {
+					next;
+				}
+				if ($vlan_tag < 1 || $vlan_tag > 4095) {
+					next;
+				}
+
+				my $rnd_mac = &Network::random_mac();
+
+				$vlansettings{"${uc}_PARENT_DEV"} = $mac;
+				$vlansettings{"${uc}_VLAN_ID"} = $vlan_tag;
+				$vlansettings{"${uc}_MAC_ADDRESS"} = $rnd_mac;
+
+				if ($zone_mode eq "BRIDGE") {
+					$slave_string = "${slave_string}${rnd_mac} ";
+				}
+
+				$VALIDATE_vlancount++; # We can't allow more than one VLAN per zone
+			}
+		}
+
+		if ($VALIDATE_vlancount > 1) {
+			$VALIDATE_error = $Lang::tr{"zoneconf val vlan amount assignment error"};
+			next;
+		}
+
+		chop($slave_string);
+
+		if ($zone_mode eq "BRIDGE") {
+			$ethsettings{"${uc}_MODE"} = "bridge";
+			$ethsettings{"${uc}_SLAVES"} = $slave_string;
+		} elsif ($zone_mode eq "MACVTAP") {
+			$ethsettings{"${uc}_MODE"} = "macvtap";
+		}
+	}
+
+	if ($VALIDATE_error) {
+		&Header::openbox('100%', 'left', $Lang::tr{"error"});
+
+		print "$VALIDATE_error<br><a href='/cgi-bin/zoneconf.cgi'><button>$Lang::tr{'ok'}</button></a>";
+
+		&Header::closebox();
+		&Header::closebigbox();
+		&Header::closepage();
+
+		exit 0;
+	}
+
+	&General::writehash("${General::swroot}/ethernet/settings",\%ethsettings);
+	&General::writehash("${General::swroot}/ethernet/vlans",\%vlansettings);
+}
+
+&Header::openbox('100%', 'left', $Lang::tr{"zoneconf nic assignment"});
+
+### START OF TABLE ###
+
+print <<END
+	<form method='post' enctype='multipart/form-data'>
+		<table>
+			<tr>
+			<td class="h topleft" /td>
+END
+;
+
+# Fill the table header with all physical NICs
+foreach (@nics) {
+	my $mac = $_->[0];
+	my $nic = $_->[1];
+
+	print "<td class='h textcenter'>$nic<br>$mac</td>";
+}
+
+print "</tr>";
+
+foreach (@zones) {
+	print "<tr>";
+	my $uc = uc $_;
+
+	my $dev_name = $ethsettings{"${uc}_DEV"};
+
+	if ($dev_name eq "") { # If the zone is not activated, color it light grey
+		print "<td class='h disabled'>$uc</td>";
+
+		foreach (@nics) {
+			print "<td class='disabled'/>";
+		}
+
+		print "</tr>";
+		next;
+	}
+
+	if ($uc eq "RED") {
+		my $red_type = $ethsettings{"RED_TYPE"};
+		my $red_restricted = ($uc eq "RED" && ! ($red_type eq "STATIC" || $red_type eq "DHCP"));
+
+		# VLANs/Bridging is not possible if the RED interface is set to PPP, PPPoE, VDSL, ...
+		if ($red_restricted) {
+			print "<td class='h $_'>$uc<br>($red_type)</td>";
+
+			foreach (@nics) {
+				my $mac = $_->[0];
+				my $checked = "";
+
+				if ($mac eq $ethsettings{"${uc}_MACADDR"}) {
+					$checked = "checked";
+				}
+
+				print "<td class='textcenter'><input type='radio' id='PPPACCESS $mac' name='PPPACCESS' value='$mac' $checked></td>";
+			}
+
+			print "</tr>";
+			next; # We're done here
+		}
+	}
+
+	my %mode_selected = ();
+	my $zone_mode = $ethsettings{"${uc}_MODE"};
+
+	if ($zone_mode eq "") {
+		$mode_selected{"DEFAULT"} = "selected";
+	} elsif ($zone_mode eq "bridge") {
+		$mode_selected{"BRIDGE"} = "selected";
+	} elsif ($zone_mode eq "macvtap") {
+		$mode_selected{"MACVTAP"} = "selected";
+	}
+
+	print <<END
+		<td class='h $_'>$uc<br>
+			<select name="MODE $uc">
+				<option value="DEFAULT" $mode_selected{"DEFAULT"}>$Lang::tr{"zoneconf nicmode default"}</option>
+				<option value="BRIDGE" $mode_selected{"BRIDGE"}>$Lang::tr{"zoneconf nicmode bridge"}</option>
+				<option value="MACVTAP" $mode_selected{"MACVTAP"}>$Lang::tr{"zoneconf nicmode macvtap"}</option>
+			</select>
+		</td>
+END
+;
+
+	# ZONE_PARENT_DEV is set if this zone accesses any interface via a VLAN
+	my $zone_parent_dev = $vlansettings{"${uc}_PARENT_DEV"};
+
+	# If ZONE_PARENT_DEV is set to a NICs name (e.g. green0 or eth0) instead of a MAC address, we have to find out this NICs MAC address
+	$zone_parent_dev = &Network::get_mac_by_name($zone_parent_dev);
+
+	foreach (@nics) { # Check for all nics if they are assigned to the current zone
+		my %access_selected = ();
+		my $mac = $_->[0];
+		my $wlan = $_->[2];
+		my $field_disabled = "disabled"; # Only enable the VLAN ID input field if the current access mode is VLAN
+		my $zone_vlan_id = "";
+
+		# If the current NIC is accessed by the current zone via a VLAN, the ZONE_PARENT_DEV option corresponds to the current NIC
+		if ($mac eq $zone_parent_dev) {
+			$access_selected{"VLAN"} = "selected";
+			$field_disabled = "";
+			$zone_vlan_id = $vlansettings{"${uc}_VLAN_ID"};
+		}
+
+		# If the current zone is in bridge mode, all corresponding NICs (Native as well as VLAN) are set via the ZONE_SLAVES option
+		if ($zone_mode eq "bridge") {
+			my @slaves = split(/ /, $ethsettings{"${uc}_SLAVES"});
+
+			foreach (@slaves) {
+				# Slaves can be set to a NICs name so we have to find out its MAC address
+				$_ = &Network::get_mac_by_name($_);
+
+				if ($_ eq $mac) {
+					$access_selected{"NATIVE"} = "selected";
+					last;
+				}
+			}
+		} else { # Native access via ZONE_MACADDR is only set if the zone does not access a NIC via a VLAN and the zone is not in bridge mode
+			if ($mac eq $ethsettings{"${uc}_MACADDR"}) {
+				$access_selected{"NATIVE"} = "selected";
+			}
+		}
+
+		$access_selected{"NONE"} = ($access_selected{"NATIVE"} eq "") && ($access_selected{"VLAN"} eq "") ? "selected" : "";
+		my $vlan_disabled = ($wlan) ? "disabled" : "";
+
+		print <<END
+			<td class="textcenter">
+				<select name="ACCESS $uc $mac" onchange="document.getElementById('TAG $uc $mac').disabled = (this.value === 'VLAN' ? false : true)">
+					<option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
+					<option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
+					<option value="NONE" $access_selected{"NONE"}>$Lang::tr{"zoneconf access none"}</option>
+				</select>
+				<input type="number" id="TAG $uc $mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" $field_disabled>
+			</td>
+END
+;
+
+	}
+	print "</tr>";
+}
+
+print <<END
+	</table>
+		<div id="submit-container">
+			<font color="red">$Lang::tr{"zoneconf warning incorrect configuration"}</font>
+			<input type="submit" name="ACTION" value="$Lang::tr{"save"}">
+		</div>
+	</form>
+END
+;
+
+### END OF TABLE ###
+
+&Header::closebox();
+&Header::closebigbox();
+&Header::closepage();

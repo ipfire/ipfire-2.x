@@ -273,6 +273,7 @@
 < encryption
 < entropy
 < entropy graphs
+< error
 < fifteen minutes
 < fireinfo ipfire version
 < fireinfo is disabled
@@ -846,6 +847,19 @@
 < wlan client wpa mode ccmp ccmp
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf warning incorrect configuration
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
@@ -865,6 +879,7 @@
 < dnsforward dnssec disabled
 < dns forwarding dnssec disabled notice
 < emerging pro rules
+< error
 < generate ptr
 < ids apply
 < ids apply ruleset changes
@@ -912,6 +927,19 @@
 < wlanap client isolation
 < wlanap management frame protection
 < wlanap ssid
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf warning incorrect configuration
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -1027,6 +1055,7 @@
 < email tls
 < email usemail
 < emerging pro rules
+< error
 < fifteen minutes
 < firewall graph country
 < firewall graph ip
@@ -1189,6 +1218,19 @@
 < wlan client password
 < wlan client tls cipher
 < wlan client tls version
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf warning incorrect configuration
 ############################################################################
 # Checking cgi-bin translations for language: nl                           #
 ############################################################################
@@ -1322,6 +1364,7 @@
 < email tls
 < email usemail
 < emerging pro rules
+< error
 < fifteen minutes
 < firewall graph country
 < firewall graph ip
@@ -1524,6 +1567,19 @@
 < wlan client password
 < wlan client tls cipher
 < wlan client tls version
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf warning incorrect configuration
 ############################################################################
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
@@ -1740,6 +1796,7 @@
 < encryption
 < entropy
 < entropy graphs
+< error
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -2299,6 +2356,19 @@
 < wlan client wpa mode ccmp ccmp
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf warning incorrect configuration
 ############################################################################
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
@@ -2519,6 +2589,7 @@
 < encryption
 < entropy
 < entropy graphs
+< error
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -3081,6 +3152,19 @@
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
 < year-graph
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf warning incorrect configuration
 ############################################################################
 # Checking cgi-bin translations for language: tr                           #
 ############################################################################
@@ -3103,6 +3187,7 @@
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
 < emerging pro rules
+< error
 < fwdfw all subnets
 < generate ptr
 < ids apply
@@ -3163,3 +3248,16 @@
 < wlanap neighbor scan
 < wlanap neighbor scan warning
 < wlanap ssid
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf warning incorrect configuration
