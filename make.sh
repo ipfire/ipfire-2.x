@@ -39,6 +39,8 @@ GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 
 TOOLCHAINVER=20181030
 
+ENABLE_RAMDISK="on"
+
 ###############################################################################
 #
 # Beautifying variables & presentation & input output interface
@@ -281,6 +283,7 @@ stdumount() {
 	umount $BASEDIR/build/usr/src/lfs		2>/dev/null;
 	umount $BASEDIR/build/usr/src/log		2>/dev/null;
 	umount $BASEDIR/build/usr/src/src		2>/dev/null;
+	umount $BASEDIR/build/usr/src		2>/dev/null;
 }
 
 now() {
@@ -468,6 +471,12 @@ prepareenv() {
 	mkdir -p $BASEDIR/build/{etc,usr/src} 2>/dev/null
 	mkdir -p $BASEDIR/build/{dev/{shm,pts},proc,sys}
 	mkdir -p $BASEDIR/{cache,ccache} 2>/dev/null
+
+	if [ "${ENABLE_RAMDISK}" = "on" ]; then
+		mkdir -p $BASEDIR/build/usr/src
+		mount -t tmpfs tmpfs -o size=4G,mode=1777 $BASEDIR/build/usr/src
+	fi
+
 	mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
 
 	mknod -m 600 $BASEDIR/build/dev/console c 5 1 2>/dev/null
