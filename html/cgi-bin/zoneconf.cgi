@@ -88,11 +88,9 @@ my $css = <<END
 	}
 
 	#submit-container {
-		display: flex;
 		width: 100%;
-		justify-content: space-between;
 		padding-top: 20px;
-		text-align: left;
+		text-align: right;
 	}
 
 	#submit-container.input {
@@ -429,11 +427,11 @@ END
 
 print <<END
 	</table>
-		<div id="submit-container">
-			<font color="red">$Lang::tr{"zoneconf warning incorrect configuration"}</font>
-			<input type="submit" name="ACTION" value="$Lang::tr{"save"}">
-		</div>
-	</form>
+
+	<div id="submit-container">
+		<input type="submit" name="ACTION" value="$Lang::tr{"save"}">
+	</div>
+</form>
 END
 ;
 

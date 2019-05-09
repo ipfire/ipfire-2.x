@@ -2941,7 +2941,6 @@
 'zoneconf val ppp assignment error' => 'The NIC used for RED in PPP mode cannot be accessed by any other zone.',
 'zoneconf val vlan amount assignment error' => 'A zone cannot have more than one VLAN assigned.',
 'zoneconf val vlan tag assignment error' => 'You cannot use the same VLAN tag more than once per NIC.',
-'zoneconf warning incorrect configuration' => 'Warning: Incorrect configuration may render this web interface unreachable!',
 );
 
 #EOF

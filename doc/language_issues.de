@@ -746,7 +746,6 @@ WARNING: translation string unused: zoneconf val native assignment error
 WARNING: translation string unused: zoneconf val ppp assignment error
 WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
-WARNING: translation string unused: zoneconf warning incorrect configuration
 WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: addons = Addons
 WARNING: untranslated string: bytes = unknown string

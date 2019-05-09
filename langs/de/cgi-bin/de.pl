@@ -2892,7 +2892,6 @@
 'zoneconf val ppp assignment error' => 'Die Netzwerkkarte, die von RED im PPP-Modus verwendet wird, kann keiner anderen Zone zugeordnet werden.',
 'zoneconf val vlan amount assignment error' => 'Pro Zone kann nur ein VLAN verwendet werden.',
 'zoneconf val vlan tag assignment error' => 'Pro Netzwerkkarte kann derselbe VLAN-Tag nur einmal verwendet werden.',
-'zoneconf warning incorrect configuration' => 'Achtung: Fehlerhafte Einstellungen können dazu führen, dass diese Webseite nicht mehr erreichbar ist!',
 );
 
 #EOF
