@@ -414,9 +414,9 @@ END
 		print <<END
 			<td class="textcenter">
 				<select name="ACCESS $uc $mac" onchange="document.getElementById('TAG $uc $mac').disabled = (this.value === 'VLAN' ? false : true)">
+					<option value="NONE" $access_selected{"NONE"}>- $Lang::tr{"zoneconf access none"} -</option>
 					<option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
 					<option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
-					<option value="NONE" $access_selected{"NONE"}>$Lang::tr{"zoneconf access none"}</option>
 				</select>
 				<input type="number" id="TAG $uc $mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" $field_disabled>
 			</td>
