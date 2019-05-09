@@ -925,7 +925,8 @@ sub reboot_required {
 
 sub status {
 	# General info
-	my $return = "Core-Update-Level: $Conf::core_mine\n";
+	my $return = "Core-Version: $Conf::version\n";
+	$return .= "Core-Update-Level: $Conf::core_mine\n";
 	$return .= "Last update: " . &General::age("/opt/pakfire/db/core/mine") . " ago\n";
 	$return .= "Last core-list update: " . &General::age("/opt/pakfire/db/lists/core-list.db") . " ago\n";
 	$return .= "Last server-list update: " . &General::age("/opt/pakfire/db/lists/server-list.db") . " ago\n";
