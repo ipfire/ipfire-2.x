@@ -137,6 +137,9 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 	$errormessage = $Lang::tr{'invalid ip'}. " - ".$Lang::tr{'gateway ip'};
 	}
 
+	# Escape input in REMARK field
+	$settings{'REMARK'} = &Header::escape($settings{'REMARK'});
+
 	#set networkip if not already correctly defined
 	my($ip,$cidr) = split(/\//,$settings{'IP'});
 	my $netip=&General::getnetworkip($ip,$cidr);
