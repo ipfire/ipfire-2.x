@@ -2935,12 +2935,12 @@
 'zoneconf nic assignment' => 'NIC Assignment',
 'zoneconf nicmode bridge' => 'Bridge',
 'zoneconf nicmode default' => 'Default',
-'zoneconf nicmode macvtap' => 'Macvtap',
+'zoneconf nicmode macvtap' => 'MacVTtap',
 'zoneconf title' => 'Zone Configuration',
-'zoneconf val native assignment error' => 'A NIC can\'t be accessed natively by more than one zone.',
-'zoneconf val ppp assignment error' => 'The NIC used for RED in PPP mode can\'t be accessed by any other zone.',
-'zoneconf val vlan amount assignment error' => 'A zone can\'t have more than one VLAN assigned.',
-'zoneconf val vlan tag assignment error' => 'You can\'t use the same VLAN tag more than once per NIC.',
+'zoneconf val native assignment error' => 'A NIC cannot be accessed natively by more than one zone.',
+'zoneconf val ppp assignment error' => 'The NIC used for RED in PPP mode cannot be accessed by any other zone.',
+'zoneconf val vlan amount assignment error' => 'A zone cannot have more than one VLAN assigned.',
+'zoneconf val vlan tag assignment error' => 'You cannot use the same VLAN tag more than once per NIC.',
 'zoneconf warning incorrect configuration' => 'Warning: Incorrect configuration may render this web interface unreachable!',
 );
 
