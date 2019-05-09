@@ -5,6 +5,7 @@ etc/rc.d/init.d/suricata
 etc/suricata/suricata.yaml
 opt/pakfire/lib/functions.pl
 opt/pakfire/pakfire
+srv/web/ipfire/cgi-bin/captive.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
