@@ -39,8 +39,6 @@ GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 
 TOOLCHAINVER=20181030
 
-ENABLE_RAMDISK="on"
-
 ###############################################################################
 #
 # Beautifying variables & presentation & input output interface
@@ -900,6 +898,9 @@ update_contributors() {
 	return 0
 }
 
+# Default settings
+ENABLE_RAMDISK="auto"
+
 # Load configuration file
 if [ -f .config ]; then
 	. .config
@@ -919,6 +920,14 @@ if [ -n "${BUILD_ARCH}" ]; then
 	configure_build "${BUILD_ARCH}"
 else
 	configure_build "default"
+fi
+
+# Automatically enable/disable ramdisk usage
+if [ "${ENABLE_RAMDISK}" = "auto" ]; then
+	# Enable only when the host system has 4GB of RAM or more
+	if [ ${SYSTEM_MEMORY} -ge 3900 ]; then
+		ENABLE_RAMDISK="on"
+	fi
 fi
 
 buildtoolchain() {
