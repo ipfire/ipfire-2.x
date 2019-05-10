@@ -859,6 +859,7 @@
 < zoneconf val ppp assignment error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
@@ -938,6 +939,7 @@
 < zoneconf val ppp assignment error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -1228,6 +1230,7 @@
 < zoneconf val ppp assignment error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: nl                           #
 ############################################################################
@@ -1576,6 +1579,7 @@
 < zoneconf val ppp assignment error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
@@ -2364,6 +2368,7 @@
 < zoneconf val ppp assignment error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
@@ -3159,6 +3164,7 @@
 < zoneconf val ppp assignment error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: tr                           #
 ############################################################################
@@ -3254,3 +3260,4 @@
 < zoneconf val ppp assignment error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error
