@@ -32,6 +32,7 @@
 
 # Cleanup environment from any variables
 unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN TOOLS_DIR
+unexport XZ_OPT
 
 PARALLELISM = $(shell echo $$( \
 	if [ -n "$(MAX_PARALLELISM)" ] && [ $(MAX_PARALLELISM) -lt $(DEFAULT_PARALLELISM) ]; then \
