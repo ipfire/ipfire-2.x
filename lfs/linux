@@ -199,6 +199,45 @@ ifeq "$(BUILD_PLATFORM)" "arm"
 			done
 endif
 
+	# Recreate source and build links
+	rm -rf /lib/modules/$(VER)-$(VERSUFIX)/{build,source}
+	mkdir -p /lib/modules/$(VER)-$(VERSUFIX)/build
+	ln -sf build /lib/modules/$(VER)-$(VERSUFIX)/source
+
+	# Create dirs for extra modules
+	mkdir -p /lib/modules/$(VER)-$(VERSUFIX)/extra
+
+	cd $(DIR_APP) && cp --parents $$(find -type f -name "Makefile*" -o -name "Kconfig*") \
+		/lib/modules/$(VER)-$(VERSUFIX)/build
+	cd $(DIR_APP) && cp Module.symvers System.map /lib/modules/$(VER)-$(VERSUFIX)/build
+	rm -rf /lib/modules/$(VER)-$(VERSUFIX)/build/{Documentation,scripts,include}
+
+	cd $(DIR_APP) && cp .config /lib/modules/$(VER)-$(VERSUFIX)/build
+	cd $(DIR_APP) && cp -a scripts /lib/modules/$(VER)-$(VERSUFIX)/build
+	find /lib/modules/$(VER)-$(VERSUFIX)/build/scripts -name "*.o" -exec rm -vf {} \;
+
+	cd $(DIR_APP) && cp -a --parents arch/$(HEADERS_ARCH)/include /lib/modules/$(VER)-$(VERSUFIX)/build
+	cd $(DIR_APP) && cp -a include /lib/modules/$(VER)-$(VERSUFIX)/build/include
+
+	# Install objtool
+	cd $(DIR_APP) && cp -a tools/objtool/objtool /lib/modules/$(VER)-$(VERSUFIX)/build/tools/objtool/
+	cd $(DIR_APP) && cp -a --parents tools/build/{Build,Build.include,fixdep.c} \
+		tools/scripts/utilities.mak /lib/modules/$(VER)-$(VERSUFIX)/build
+
+	# Make sure we can build external modules
+	touch -r /lib/modules/$(VER)-$(VERSUFIX)/build/Makefile \
+		/lib/modules/$(VER)-$(VERSUFIX)/build/include/linux/version.h
+	touch -r /lib/modules/$(VER)-$(VERSUFIX)/build/.config \
+		/lib/modules/$(VER)-$(VERSUFIX)/build/autoconf.h
+	cp /lib/modules/$(VER)-$(VERSUFIX)/build/.config \
+		/lib/modules/$(VER)-$(VERSUFIX)/build/include/config/auto.conf
+
+	# Fix permissions
+	find /lib/modules/$(VER)-$(VERSUFIX) -name "modules.order" \
+		-exec chmod 644 {} \;
+
+	find /lib/modules/$(VER)-$(VERSUFIX) -name ".*.cmd" -exec rm -f {} \;
+
 ifeq "$(LASTKERNEL)" "1"
 	# Only do this once
 	cd $(DIR_APP) && install -m 755 usr/gen_init_cpio /sbin/
@@ -225,5 +264,5 @@ endif
 	-rm -f /usr/src/log/*-kmod-$(VER)-$(VERSUFIX)
 	-rm -f /usr/src/log/linux-initrd-$(VER)-$(VERSUFIX)
 
-	@rm -rf $(DIR_SRC)/patch-o-matic* $(DIR_SRC)/iptables* $(DIR_SRC)/squashfs* $(DIR_SRC)/netfilter-layer7-*
+	@rm -rf $(DIR_APP) $(DIR_SRC)/linux
 	@$(POSTBUILD)
