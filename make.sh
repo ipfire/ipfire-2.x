@@ -733,7 +733,7 @@ fake_environ() {
 
 	# Fake kernel version, because some of the packages do not compile
 	# with kernel 3.0 and later.
-	env="${env} UTS_RELEASE=${KVER}"
+	env="${env} UTS_RELEASE=${KVER}-ipfire"
 
 	# Fake machine version.
 	env="${env} UTS_MACHINE=${BUILD_ARCH}"
