@@ -166,10 +166,6 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 		my $VALIDATE_vlancount = 0;
 		my $VALIDATE_zoneslaves = 0;
 
-		if ($zone_mode eq "") { # If this zone is not activated, we don't check it
-			next;
-		}
-
 		$ethsettings{"${uc}_MACADDR"} = "";
 		$ethsettings{"${uc}_MODE"} = "";
 		$ethsettings{"${uc}_SLAVES"} = "";
@@ -203,13 +199,13 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 			my $mac = $_->[0];
 			my $nic_access = $cgiparams{"ACCESS $uc $mac"};
 
-			if (! ($nic_access eq "NONE")) {
+			if ($nic_access ne "NONE") {
 				if ($VALIDATE_nic_check{"RESTRICT $mac"}) { # If this interface is already assigned to RED in PPP mode, throw an error
 					$VALIDATE_error = $Lang::tr{"zoneconf val ppp assignment error"};
 					last;
 				}
 
-				if ($zone_mode ne "BRIDGE" && $VALIDATE_zoneslaves > 0) {
+				if ($zone_mode ne "BRIDGE" && $VALIDATE_zoneslaves > 0 && $nic_access ne "") {
 					$VALIDATE_error = $Lang::tr{"zoneconf val zoneslave amount error"};
 					last;
 				}
