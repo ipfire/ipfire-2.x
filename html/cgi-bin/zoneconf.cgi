@@ -164,6 +164,11 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 		my $slave_string = "";
 		my $zone_mode = $cgiparams{"MODE $uc"};
 		my $VALIDATE_vlancount = 0;
+		my $VALIDATE_zoneslaves = 0;
+
+		if ($zone_mode eq "") { # If this zone is not activated, we don't check it
+			next;
+		}
 
 		$ethsettings{"${uc}_MACADDR"} = "";
 		$ethsettings{"${uc}_MODE"} = "";
@@ -201,16 +206,22 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 			if (! ($nic_access eq "NONE")) {
 				if ($VALIDATE_nic_check{"RESTRICT $mac"}) { # If this interface is already assigned to RED in PPP mode, throw an error
 					$VALIDATE_error = $Lang::tr{"zoneconf val ppp assignment error"};
-					next;
+					last;
+				}
+
+				if ($zone_mode ne "BRIDGE" && $VALIDATE_zoneslaves > 0) {
+					$VALIDATE_error = $Lang::tr{"zoneconf val zoneslave amount error"};
+					last;
 				}
 
 				$VALIDATE_nic_check{"ACC $mac"} = 1;
+				$VALIDATE_zoneslaves++;
 			}
 
 			if ($nic_access eq "NATIVE") {
 				if ($VALIDATE_nic_check{"NATIVE $mac"}) {
 					$VALIDATE_error = $Lang::tr{"zoneconf val native assignment error"};
-					next;
+					last;
 				}
 
 				$VALIDATE_nic_check{"NATIVE $mac"} = 1;
@@ -225,16 +236,16 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 
 				if ($VALIDATE_nic_check{"VLAN $mac $vlan_tag"}) {
 					$VALIDATE_error = $Lang::tr{"zoneconf val vlan tag assignment error"};
-					next;
+					last;
 				}
 
 				$VALIDATE_nic_check{"VLAN $mac $vlan_tag"} = 1;
 
 				if (! looks_like_number($vlan_tag)) {
-					next;
+					last;
 				}
 				if ($vlan_tag < 1 || $vlan_tag > 4095) {
-					next;
+					last;
 				}
 
 				my $rnd_mac = &Network::random_mac();
@@ -253,7 +264,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 
 		if ($VALIDATE_vlancount > 1) {
 			$VALIDATE_error = $Lang::tr{"zoneconf val vlan amount assignment error"};
-			next;
+			last;
 		}
 
 		chop($slave_string);
@@ -305,21 +316,14 @@ foreach (@nics) {
 print "</tr>";
 
 foreach (@zones) {
-	print "<tr>";
 	my $uc = uc $_;
-
 	my $dev_name = $ethsettings{"${uc}_DEV"};
 
-	if ($dev_name eq "") { # If the zone is not activated, color it light grey
-		print "<td class='h disabled'>$uc</td>";
-
-		foreach (@nics) {
-			print "<td class='disabled'/>";
-		}
-
-		print "</tr>";
+	if ($dev_name eq "") { # If the zone is not activated, don't show it
 		next;
 	}
+
+	print "<tr>";
 
 	if ($uc eq "RED") {
 		my $red_type = $ethsettings{"RED_TYPE"};
