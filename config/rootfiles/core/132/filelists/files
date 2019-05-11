@@ -2,7 +2,9 @@ etc/system-release
 etc/issue
 etc/mime.types
 etc/rc.d/init.d/suricata
+etc/rc.d/init.d/unbound
 etc/suricata/suricata.yaml
+etc/unbound/unbound.conf
 opt/pakfire/lib/functions.pl
 opt/pakfire/pakfire
 srv/web/ipfire/cgi-bin/captive.cgi
