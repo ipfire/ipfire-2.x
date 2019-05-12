@@ -220,7 +220,8 @@ endif
 	cd $(DIR_APP) && cp -a include /lib/modules/$(VER)-$(VERSUFIX)/build/include
 
 	# Install objtool
-	cd $(DIR_APP) && cp -a tools/objtool/objtool /lib/modules/$(VER)-$(VERSUFIX)/build/tools/objtool/
+	cd $(DIR_APP) && cp -a tools/objtool/objtool \
+		/lib/modules/$(VER)-$(VERSUFIX)/build/tools/objtool/ || :
 	cd $(DIR_APP) && cp -a --parents tools/build/{Build,Build.include,fixdep.c} \
 		tools/scripts/utilities.mak /lib/modules/$(VER)-$(VERSUFIX)/build
 
