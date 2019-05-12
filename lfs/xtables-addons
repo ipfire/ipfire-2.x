@@ -101,7 +101,8 @@ ifeq "$(USPACE)" "1"
 	cd $(DIR_APP) && install -m 755 geoip/xt_geoip_build \
 		/usr/local/bin/
 else
-	cd $(DIR_APP) && ./configure
+	cd $(DIR_APP) && ./configure \
+		--with-kbuild=/lib/modules/$$(uname -r)$(KCFG)/build
 	cd $(DIR_APP) && make $(MAKETUNING)
 
 	# Install the built kernel modules.
