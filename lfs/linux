@@ -227,7 +227,7 @@ endif
 
 	# Make sure we can build external modules
 	touch -r /lib/modules/$(VER)-$(VERSUFIX)/build/Makefile \
-		/lib/modules/$(VER)-$(VERSUFIX)/build/include/linux/version.h
+		/lib/modules/$(VER)-$(VERSUFIX)/build/include/generated/uapi/linux/version.h
 	touch -r /lib/modules/$(VER)-$(VERSUFIX)/build/.config \
 		/lib/modules/$(VER)-$(VERSUFIX)/build/autoconf.h
 	cp /lib/modules/$(VER)-$(VERSUFIX)/build/.config \
