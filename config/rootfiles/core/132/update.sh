@@ -92,7 +92,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
-/etc/init.d/apache restart
+/etc/init.d/apache reload
 /etc/init.d/collectd restart
 /etc/init.d/firewall restart
 /etc/init.d/unbound restart

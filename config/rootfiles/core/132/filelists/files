@@ -1,6 +1,7 @@
 etc/system-release
 etc/issue
 etc/mime.types
+etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/rc.d/init.d/suricata
 etc/rc.d/init.d/unbound
 etc/suricata/suricata.yaml
