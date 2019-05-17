@@ -677,6 +677,7 @@ WARNING: untranslated string: Captive client session expiry time = Session Expir
 WARNING: untranslated string: Captive clients = unknown string
 WARNING: untranslated string: Captive config = Settings
 WARNING: untranslated string: Captive coupon = Coupon
+WARNING: untranslated string: Captive delete logo = Delete Logo
 WARNING: untranslated string: Captive expiry time = Expiry Time
 WARNING: untranslated string: Captive export coupons = Export Coupons
 WARNING: untranslated string: Captive generate coupons = Generate Coupons

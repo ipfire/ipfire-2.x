@@ -112,6 +112,7 @@
 < Captive client session expiry time
 < Captive config
 < Captive coupon
+< Captive delete logo
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
@@ -871,6 +872,7 @@
 < advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
+< Captive delete logo
 < cryptographic settings
 < Daily
 < default IP address
@@ -978,6 +980,7 @@
 < Captive client session expiry time
 < Captive config
 < Captive coupon
+< Captive delete logo
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
@@ -1272,6 +1275,7 @@
 < Captive client session expiry time
 < Captive config
 < Captive coupon
+< Captive delete logo
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
@@ -1634,6 +1638,7 @@
 < Captive client session expiry time
 < Captive config
 < Captive coupon
+< Captive delete logo
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
@@ -2424,6 +2429,7 @@
 < Captive client session expiry time
 < Captive config
 < Captive coupon
+< Captive delete logo
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
@@ -3176,6 +3182,7 @@
 < advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
+< Captive delete logo
 < crypto error
 < cryptographic settings
 < crypto warning
