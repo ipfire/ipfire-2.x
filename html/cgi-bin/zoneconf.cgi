@@ -53,6 +53,10 @@ my $css = <<END
 		border: 0.5px solid black;
 	}
 
+    td.slightlygrey {
+        background-color: #F0F0F0;
+    }
+
 	td.h {
 		background-color: grey;
 		color: white;
@@ -93,6 +97,7 @@ my $css = <<END
 		width: 100%;
         padding-top: 20px;
 		text-align: right;
+        color: red;
 	}
 
 	#submit-container.input {
@@ -109,6 +114,8 @@ END
 my %ethsettings = ();
 my %vlansettings = ();
 my %cgiparams = ();
+
+my $restart_notice = "";
 
 &General::readhash("${General::swroot}/ethernet/settings",\%ethsettings);
 &General::readhash("${General::swroot}/ethernet/vlans",\%vlansettings);
@@ -288,6 +295,8 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 
 	&General::writehash("${General::swroot}/ethernet/settings",\%ethsettings);
 	&General::writehash("${General::swroot}/ethernet/vlans",\%vlansettings);
+
+    $restart_notice = $Lang::tr{'zoneconf notice reboot'};
 }
 
 &Header::openbox('100%', 'left', $Lang::tr{"zoneconf nic assignment"});
@@ -348,6 +357,8 @@ END
 
 print "</tr>";
 
+my $slightlygrey = "";
+
 foreach (@nics) {
     my $mac = $_->[0];
 	my $nic = $_->[1];
@@ -376,7 +387,7 @@ foreach (@nics) {
 					$checked = "checked";
 				}
 
-				print "<td class='textcenter'><input type='radio' id='PPPACCESS $mac' name='PPPACCESS' value='$mac' $checked></td>";
+				print "<td class='textcenter $slightlygrey'><input type='radio' id='PPPACCESS $mac' name='PPPACCESS' value='$mac' $checked></td>";
 			    next; # We're done here
 		    }
 	    }
@@ -415,7 +426,7 @@ foreach (@nics) {
 		my $vlan_disabled = ($wlan) ? "disabled" : "";
 
         print <<END
-            <td class="textcenter">
+            <td class="textcenter $slightlygrey">
                 <select name="ACCESS $uc $mac" onchange="document.getElementById('TAG $uc $mac').disabled = (this.value === 'VLAN' ? false : true)">
                     <option value="NONE" $access_selected{"NONE"}>- $Lang::tr{"zoneconf access none"} -</option>
                     <option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
@@ -428,12 +439,19 @@ END
     }
 
     print "</tr>";
+
+    if ($slightlygrey) {
+        $slightlygrey = "";
+    } else {
+        $slightlygrey = "slightlygrey";
+    }
 }
 
 print <<END
 	</table>
 
 	<div id="submit-container">
+        $restart_notice
 		<input type="submit" name="ACTION" value="$Lang::tr{"save"}">
 	</div>
 </form>

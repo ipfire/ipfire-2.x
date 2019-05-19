@@ -2943,6 +2943,7 @@
 'zoneconf val vlan amount assignment error' => 'A zone cannot have more than one VLAN assigned.',
 'zoneconf val vlan tag assignment error' => 'You cannot use the same VLAN tag more than once per NIC.',
 'zoneconf val zoneslave amount error' => 'A zone that is not in bridge mode can\'t have more than one NIC assigned',
+'zoneconf notice reboot' => 'Please reboot to apply your changes.',
 );
 
 #EOF

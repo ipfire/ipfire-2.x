@@ -2894,6 +2894,7 @@
 'zoneconf val vlan amount assignment error' => 'Pro Zone kann nur ein VLAN verwendet werden.',
 'zoneconf val vlan tag assignment error' => 'Pro Netzwerkkarte kann derselbe VLAN-Tag nur einmal verwendet werden.',
 'zoneconf val zoneslave amount error' => 'Wenn eine Zone nicht im Brückenmodus ist, kann ihr nur eine Netzwerkkarte zugewiesen werden.',
+'zoneconf notice reboot' => 'Bitte einen Neustart durchführen, um die Änderungen zu übernehmen.',
 );
 
 #EOF
