@@ -30,14 +30,20 @@ my $css = <<END
 <style>
 	table {
 		width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed;
 	}
 
 	tr {
 		height: 4em;
 	}
 
-	td:first-child {
-		width: 1px;
+    tr.thin {
+        height: 3em;
+    }
+
+	td.narrow {
+		width: 11em;
 	}
 
 	td {
@@ -45,10 +51,6 @@ my $css = <<END
 		padding-left: 10px;
 		padding-right: 10px;
 		border: 0.5px solid black;
-	}
-
-	table {
-		border-collapse: collapse;
 	}
 
 	td.h {
@@ -89,7 +91,7 @@ my $css = <<END
 
 	#submit-container {
 		width: 100%;
-		padding-top: 20px;
+        padding-top: 20px;
 		text-align: right;
 	}
 
@@ -100,7 +102,6 @@ my $css = <<END
 	button {
 		margin-top: 1em;
 	}
-
 </style>
 END
 ;
@@ -294,53 +295,30 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 ### START OF TABLE ###
 
 print <<END
-	<form method='post' enctype='multipart/form-data'>
-		<table>
-			<tr>
-			<td class="h topleft" /td>
+<form method='post' enctype='multipart/form-data'>
+    <table>
+        <tr>
+        <td class="h narrow topleft" /td>
 END
 ;
 
-# Fill the table header with all physical NICs
-foreach (@nics) {
-	my $mac = $_->[0];
-	my $nic = $_->[1];
-
-	print "<td class='h textcenter'>$nic<br>$mac</td>";
-}
-
-print "</tr>";
-
+# Fill the table header with all activated zones
 foreach (@zones) {
 	my $uc = uc $_;
-	my $dev_name = $ethsettings{"${uc}_DEV"};
+    my $dev_name = $ethsettings{"${uc}_DEV"};
 
-	if ($dev_name eq "") { # If the zone is not activated, don't show it
-		next;
-	}
+    if ($dev_name eq "") { # If the zone is not activated, don't show it
+        next;
+    }
 
-	print "<tr>";
-
-	if ($uc eq "RED") {
+    # If the zone is in PPP mode, don't show a mode dropdown
+    if ($uc eq "RED") {
 		my $red_type = $ethsettings{"RED_TYPE"};
 		my $red_restricted = ($uc eq "RED" && ! ($red_type eq "STATIC" || $red_type eq "DHCP"));
 
-		# VLANs/Bridging is not possible if the RED interface is set to PPP, PPPoE, VDSL, ...
 		if ($red_restricted) {
-			print "<td class='h $_'>$uc<br>($red_type)</td>";
+			print "<td class='h textcenter $_'>$uc ($red_type)</td>";
 
-			foreach (@nics) {
-				my $mac = $_->[0];
-				my $checked = "";
-
-				if ($mac eq $ethsettings{"${uc}_MACADDR"}) {
-					$checked = "checked";
-				}
-
-				print "<td class='textcenter'><input type='radio' id='PPPACCESS $mac' name='PPPACCESS' value='$mac' $checked></td>";
-			}
-
-			print "</tr>";
 			next; # We're done here
 		}
 	}
@@ -357,7 +335,7 @@ foreach (@zones) {
 	}
 
 	print <<END
-		<td class='h $_'>$uc<br>
+		<td class='h textcenter $_'>$uc</br>
 			<select name="MODE $uc">
 				<option value="DEFAULT" $mode_selected{"DEFAULT"}>$Lang::tr{"zoneconf nicmode default"}</option>
 				<option value="BRIDGE" $mode_selected{"BRIDGE"}>$Lang::tr{"zoneconf nicmode bridge"}</option>
@@ -366,29 +344,58 @@ foreach (@zones) {
 		</td>
 END
 ;
+}
 
-	# ZONE_PARENT_DEV is set if this zone accesses any interface via a VLAN
-	my $zone_parent_dev = $vlansettings{"${uc}_PARENT_DEV"};
+print "</tr>";
 
-	# If ZONE_PARENT_DEV is set to a NICs name (e.g. green0 or eth0) instead of a MAC address, we have to find out this NICs MAC address
-	$zone_parent_dev = &Network::get_mac_by_name($zone_parent_dev);
+foreach (@nics) {
+    my $mac = $_->[0];
+	my $nic = $_->[1];
+    my $wlan = $_->[2];
 
-	foreach (@nics) { # Check for all nics if they are assigned to the current zone
-		my %access_selected = ();
-		my $mac = $_->[0];
-		my $wlan = $_->[2];
-		my $field_disabled = "disabled"; # Only enable the VLAN ID input field if the current access mode is VLAN
+	print "<tr><td class='h narrow textcenter'>$nic<br>$mac</td>";
+
+    # Iterate through all zones and check if the current NIC is assigned to it
+    foreach (@zones) {
+        my $uc = uc $_;
+        my $dev_name = $ethsettings{"${uc}_DEV"};
+
+        if ($dev_name eq "") { # Again, skip the zone if it is not activated
+            next;
+        }
+
+        if ($uc eq "RED") {
+            my $red_type = $ethsettings{"RED_TYPE"};
+            my $red_restricted = ($uc eq "RED" && ! ($red_type eq "STATIC" || $red_type eq "DHCP"));
+
+		    # VLANs/Bridging is not possible if the RED interface is set to PPP, PPPoE, VDSL, ...
+		    if ($red_restricted) {
+                my $checked = "";
+
+				if ($mac eq $ethsettings{"${uc}_MACADDR"}) {
+					$checked = "checked";
+				}
+
+				print "<td class='textcenter'><input type='radio' id='PPPACCESS $mac' name='PPPACCESS' value='$mac' $checked></td>";
+			    next; # We're done here
+		    }
+	    }
+
+        my %access_selected = ();
+        my $zone_mode = $ethsettings{"${uc}_MODE"};
+        my $zone_parent_dev = $vlansettings{"${uc}_PARENT_DEV"};  # ZONE_PARENT_DEV is set if this zone accesses any interface via a VLAN
+        my $field_disabled = "disabled"; # Only enable the VLAN ID input field if the current access mode is VLAN
 		my $zone_vlan_id = "";
 
-		# If the current NIC is accessed by the current zone via a VLAN, the ZONE_PARENT_DEV option corresponds to the current NIC
-		if ($mac eq $zone_parent_dev) {
+        # If ZONE_PARENT_DEV is set to a NICs name (e.g. green0 or eth0) instead of a MAC address, we have to find out this NICs MAC address
+        $zone_parent_dev = &Network::get_mac_by_name($zone_parent_dev);
+
+        # If the current NIC is accessed by the current zone via a VLAN, the ZONE_PARENT_DEV option corresponds to the current NIC
+        if ($mac eq $zone_parent_dev) {
 			$access_selected{"VLAN"} = "selected";
 			$field_disabled = "";
 			$zone_vlan_id = $vlansettings{"${uc}_VLAN_ID"};
-		}
-
-		# If the current zone is in bridge mode, all corresponding NICs (Native as well as VLAN) are set via the ZONE_SLAVES option
-		if ($zone_mode eq "bridge") {
+		} elsif ($zone_mode eq "bridge") { # If the current zone is in bridge mode, all corresponding NICs (Native as well as VLAN) are set via the ZONE_SLAVES option
 			my @slaves = split(/ /, $ethsettings{"${uc}_SLAVES"});
 
 			foreach (@slaves) {
@@ -400,29 +407,27 @@ END
 					last;
 				}
 			}
-		} else { # Native access via ZONE_MACADDR is only set if the zone does not access a NIC via a VLAN and the zone is not in bridge mode
-			if ($mac eq $ethsettings{"${uc}_MACADDR"}) {
-				$access_selected{"NATIVE"} = "selected";
-			}
+		} elsif ($mac eq $ethsettings{"${uc}_MACADDR"}) { # Native access via ZONE_MACADDR is only set if the zone does not access a NIC via a VLAN and the zone is not in bridge mode
+			$access_selected{"NATIVE"} = "selected";
 		}
 
-		$access_selected{"NONE"} = ($access_selected{"NATIVE"} eq "") && ($access_selected{"VLAN"} eq "") ? "selected" : "";
+        $access_selected{"NONE"} = ($access_selected{"NATIVE"} eq "") && ($access_selected{"VLAN"} eq "") ? "selected" : "";
 		my $vlan_disabled = ($wlan) ? "disabled" : "";
 
-		print <<END
-			<td class="textcenter">
-				<select name="ACCESS $uc $mac" onchange="document.getElementById('TAG $uc $mac').disabled = (this.value === 'VLAN' ? false : true)">
-					<option value="NONE" $access_selected{"NONE"}>- $Lang::tr{"zoneconf access none"} -</option>
-					<option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
-					<option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
-				</select>
-				<input type="number" id="TAG $uc $mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" $field_disabled>
-			</td>
+        print <<END
+            <td class="textcenter">
+                <select name="ACCESS $uc $mac" onchange="document.getElementById('TAG $uc $mac').disabled = (this.value === 'VLAN' ? false : true)">
+                    <option value="NONE" $access_selected{"NONE"}>- $Lang::tr{"zoneconf access none"} -</option>
+                    <option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
+                    <option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
+                </select>
+                <input type="number" id="TAG $uc $mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" $field_disabled>
+            </td>
 END
 ;
+    }
 
-	}
-	print "</tr>";
+    print "</tr>";
 }
 
 print <<END
