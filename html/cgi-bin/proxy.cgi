@@ -2848,6 +2848,10 @@ sub write_acls
 
 sub writepacfile
 {
+	my %vpnconfig=();
+	my %ovpnconfig=();
+	&General::readhasharray("${General::swroot}/vpn/config", \%vpnconfig);
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%ovpnconfig);
 	open(FILE, ">/srv/web/ipfire/html/proxy.pac");
 	flock(FILE, 2);
 	print FILE "function FindProxyForURL(url, host)\n";
@@ -2907,6 +2911,27 @@ END
 		{
 			@temp = split(/\//);
 			print FILE "     (isInNet(host, \"$temp[0]\", \"$temp[1]\")) ||\n";
+		}
+	}
+
+	foreach my $key (sort { uc($vpnconfig{$a}[1]) cmp uc($vpnconfig{$b}[1]) } keys %vpnconfig) {
+		if ($vpnconfig{$key}[0] eq 'on' && $vpnconfig{$key}[3] ne 'host') {
+			my @networks = split(/\|/, $vpnconfig{$key}[11]);
+			foreach my $network (@networks) {
+				my ($vpnip, $vpnsub) = split("/", $network);
+				$vpnsub = &Network::convert_prefix2netmask($vpnsub) || $vpnsub;
+				print FILE "     (isInNet(host, \"$vpnip\", \"$vpnsub\")) ||\n";
+			}
+		}
+	}
+
+	foreach my $key (sort { uc($ovpnconfig{$a}[1]) cmp uc($ovpnconfig{$b}[1]) } keys %ovpnconfig) {
+		if ($ovpnconfig{$key}[0] eq 'on' && $ovpnconfig{$key}[3] ne 'host') {
+			my @networks = split(/\|/, $ovpnconfig{$key}[11]);
+			foreach my $network (@networks) {
+				my ($vpnip, $vpnsub) = split("/", $network);
+				print FILE "     (isInNet(host, \"$vpnip\", \"$vpnsub\")) ||\n";
+			}
 		}
 	}
 
