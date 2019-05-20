@@ -874,13 +874,9 @@
 < advproxy wpad title
 < advproxy wpad view pac
 < Captive delete logo
-< cryptographic settings
 < Daily
-< default IP address
 < Disabled
-< dns forward disable dnssec
 < dnsforward dnssec disabled
-< dns forwarding dnssec disabled notice
 < emerging pro rules
 < error
 < generate ptr
@@ -901,29 +897,12 @@
 < ids ruleset settings
 < ids show
 < ids working
-< interface mode
 < intrusion prevention system
-< invalid input for interface address
-< invalid input for interface mode
-< invalid input for interface mtu
-< invalid input for local ip address
-< invalid input for mode
-< ipsec connection
-< ipsec interface mode gre
-< ipsec interface mode none
-< ipsec interface mode vti
-< ipsec mode transport
-< ipsec mode tunnel
-< ipsec settings
-< local ip address
-< mtu
 < ovpn tls auth
 < ptr
 < runmode
 < ssh agent forwarding
-< subnet mask
 < system is offline
-< transport mode does not support vti
 < update ruleset
 < Weekly
 < wlanap auto
