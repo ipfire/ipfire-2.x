@@ -1347,6 +1347,7 @@
 'harddisk temperature graphs' => 'HDD Graphs',
 'hardware graphs' => 'Hardware Graphs',
 'hardware support' => 'Hardware Support',
+'hardware vulnerabilities' => 'Hardware Vulnerabilities',
 'hdd temperature in' => 'Harddisk temperature in',
 'help' => 'Help',
 'high' => 'High',

@@ -45,7 +45,13 @@
 				'title' => "$Lang::tr{'system information'}",
 				'enabled' => 1,
 				};
-	$subsystem->{'42.shutdown'} = {
+    $subsystem->{'42.hwvuln'} = {
+				'caption' => $Lang::tr{'hardware vulnerabilities'},
+				'uri' => '/cgi-bin/vulnerabilities.cgi',
+				'title' => "$Lang::tr{'hardware vulnerabilities'}",
+				'enabled' => 1,
+				};
+    $subsystem->{'43.shutdown'} = {
 				'caption' => $Lang::tr{'shutdown'},
 				'uri' => '/cgi-bin/shutdown.cgi',
 				'title' => "$Lang::tr{'shutdown'}",

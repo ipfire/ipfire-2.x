@@ -1071,6 +1071,7 @@ WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: hardware support = Hardware Support
+WARNING: untranslated string: hardware vulnerabilities = Hardware Vulnerabilities
 WARNING: untranslated string: ids apply = Apply
 WARNING: untranslated string: ids apply ruleset changes = The ruleset changes are being applied. Please wait until all operations have completed successfully...
 WARNING: untranslated string: ids automatic rules update = Automatic Rule Update

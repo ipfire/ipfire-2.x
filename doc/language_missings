@@ -45,6 +45,7 @@
 < g.dtm
 < g.lite
 < guardian
+< hardware vulnerabilities
 < ids hide
 < ids rules update
 < ids show
@@ -526,6 +527,7 @@
 < grouptype
 < guardian
 < hardware support
+< hardware vulnerabilities
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -914,6 +916,7 @@
 < force enable
 < foreshadow
 < generate ptr
+< hardware vulnerabilities
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -1123,6 +1126,7 @@
 < geoipblock flag
 < guaranteed bandwith
 < guardian
+< hardware vulnerabilities
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -1451,6 +1455,7 @@
 < geoipblock enable feature
 < geoipblock flag
 < guardian
+< hardware vulnerabilities
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -2097,6 +2102,7 @@
 < grouptype
 < guardian
 < hardware support
+< hardware vulnerabilities
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -2907,6 +2913,7 @@
 < grouptype
 < guardian
 < hardware support
+< hardware vulnerabilities
 < hour-graph
 < ids apply
 < ids apply ruleset changes
@@ -3289,6 +3296,7 @@
 < foreshadow
 < fwdfw all subnets
 < generate ptr
+< hardware vulnerabilities
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
