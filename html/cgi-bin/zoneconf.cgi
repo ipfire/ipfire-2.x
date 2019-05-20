@@ -30,17 +30,17 @@ my $css = <<END
 <style>
 	table {
 		width: 100%;
-        border-collapse: collapse;
-        table-layout: fixed;
+		border-collapse: collapse;
+		table-layout: fixed;
 	}
 
 	tr {
 		height: 4em;
 	}
 
-    tr.thin {
-        height: 3em;
-    }
+	tr.thin {
+		height: 3em;
+	}
 
 	td.narrow {
 		width: 11em;
@@ -53,9 +53,9 @@ my $css = <<END
 		border: 0.5px solid black;
 	}
 
-    td.slightlygrey {
-        background-color: #F0F0F0;
-    }
+	td.slightlygrey {
+		background-color: #F0F0F0;
+	}
 
 	td.h {
 		background-color: grey;
@@ -95,9 +95,9 @@ my $css = <<END
 
 	#submit-container {
 		width: 100%;
-        padding-top: 20px;
+		padding-top: 20px;
 		text-align: right;
-        color: red;
+		color: red;
 	}
 
 	#submit-container.input {
@@ -296,7 +296,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 	&General::writehash("${General::swroot}/ethernet/settings",\%ethsettings);
 	&General::writehash("${General::swroot}/ethernet/vlans",\%vlansettings);
 
-    $restart_notice = $Lang::tr{'zoneconf notice reboot'};
+	$restart_notice = $Lang::tr{'zoneconf notice reboot'};
 }
 
 &Header::openbox('100%', 'left', $Lang::tr{"zoneconf nic assignment"});
@@ -305,23 +305,23 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 
 print <<END
 <form method='post' enctype='multipart/form-data'>
-    <table>
-        <tr>
-        <td class="h narrow topleft" /td>
+	<table>
+		<tr>
+		<td class="h narrow topleft" /td>
 END
 ;
 
 # Fill the table header with all activated zones
 foreach (@zones) {
 	my $uc = uc $_;
-    my $dev_name = $ethsettings{"${uc}_DEV"};
+	my $dev_name = $ethsettings{"${uc}_DEV"};
 
-    if ($dev_name eq "") { # If the zone is not activated, don't show it
-        next;
-    }
+	if ($dev_name eq "") { # If the zone is not activated, don't show it
+		next;
+	}
 
-    # If the zone is in PPP mode, don't show a mode dropdown
-    if ($uc eq "RED") {
+	# If the zone is in PPP mode, don't show a mode dropdown
+	if ($uc eq "RED") {
 		my $red_type = $ethsettings{"RED_TYPE"};
 		my $red_restricted = ($uc eq "RED" && ! ($red_type eq "STATIC" || $red_type eq "DHCP"));
 
@@ -360,49 +360,49 @@ print "</tr>";
 my $slightlygrey = "";
 
 foreach (@nics) {
-    my $mac = $_->[0];
+	my $mac = $_->[0];
 	my $nic = $_->[1];
-    my $wlan = $_->[2];
+	my $wlan = $_->[2];
 
 	print "<tr><td class='h narrow textcenter'>$nic<br>$mac</td>";
 
-    # Iterate through all zones and check if the current NIC is assigned to it
-    foreach (@zones) {
-        my $uc = uc $_;
-        my $dev_name = $ethsettings{"${uc}_DEV"};
+	# Iterate through all zones and check if the current NIC is assigned to it
+	foreach (@zones) {
+		my $uc = uc $_;
+		my $dev_name = $ethsettings{"${uc}_DEV"};
 
-        if ($dev_name eq "") { # Again, skip the zone if it is not activated
-            next;
-        }
+		if ($dev_name eq "") { # Again, skip the zone if it is not activated
+			next;
+		}
 
-        if ($uc eq "RED") {
-            my $red_type = $ethsettings{"RED_TYPE"};
-            my $red_restricted = ($uc eq "RED" && ! ($red_type eq "STATIC" || $red_type eq "DHCP"));
+		if ($uc eq "RED") {
+			my $red_type = $ethsettings{"RED_TYPE"};
+			my $red_restricted = ($uc eq "RED" && ! ($red_type eq "STATIC" || $red_type eq "DHCP"));
 
-		    # VLANs/Bridging is not possible if the RED interface is set to PPP, PPPoE, VDSL, ...
-		    if ($red_restricted) {
-                my $checked = "";
+			# VLANs/Bridging is not possible if the RED interface is set to PPP, PPPoE, VDSL, ...
+			if ($red_restricted) {
+				my $checked = "";
 
 				if ($mac eq $ethsettings{"${uc}_MACADDR"}) {
 					$checked = "checked";
 				}
 
 				print "<td class='textcenter $slightlygrey'><input type='radio' id='PPPACCESS $mac' name='PPPACCESS' value='$mac' $checked></td>";
-			    next; # We're done here
-		    }
-	    }
+				next; # We're done here
+			}
+		}
 
-        my %access_selected = ();
-        my $zone_mode = $ethsettings{"${uc}_MODE"};
-        my $zone_parent_dev = $vlansettings{"${uc}_PARENT_DEV"};  # ZONE_PARENT_DEV is set if this zone accesses any interface via a VLAN
-        my $field_disabled = "disabled"; # Only enable the VLAN ID input field if the current access mode is VLAN
+		my %access_selected = ();
+		my $zone_mode = $ethsettings{"${uc}_MODE"};
+		my $zone_parent_dev = $vlansettings{"${uc}_PARENT_DEV"};  # ZONE_PARENT_DEV is set if this zone accesses any interface via a VLAN
+		my $field_disabled = "disabled"; # Only enable the VLAN ID input field if the current access mode is VLAN
 		my $zone_vlan_id = "";
 
-        # If ZONE_PARENT_DEV is set to a NICs name (e.g. green0 or eth0) instead of a MAC address, we have to find out this NICs MAC address
-        $zone_parent_dev = &Network::get_mac_by_name($zone_parent_dev);
+		# If ZONE_PARENT_DEV is set to a NICs name (e.g. green0 or eth0) instead of a MAC address, we have to find out this NICs MAC address
+		$zone_parent_dev = &Network::get_mac_by_name($zone_parent_dev);
 
-        # If the current NIC is accessed by the current zone via a VLAN, the ZONE_PARENT_DEV option corresponds to the current NIC
-        if ($mac eq $zone_parent_dev) {
+		# If the current NIC is accessed by the current zone via a VLAN, the ZONE_PARENT_DEV option corresponds to the current NIC
+		if ($mac eq $zone_parent_dev) {
 			$access_selected{"VLAN"} = "selected";
 			$field_disabled = "";
 			$zone_vlan_id = $vlansettings{"${uc}_VLAN_ID"};
@@ -422,36 +422,36 @@ foreach (@nics) {
 			$access_selected{"NATIVE"} = "selected";
 		}
 
-        $access_selected{"NONE"} = ($access_selected{"NATIVE"} eq "") && ($access_selected{"VLAN"} eq "") ? "selected" : "";
+		$access_selected{"NONE"} = ($access_selected{"NATIVE"} eq "") && ($access_selected{"VLAN"} eq "") ? "selected" : "";
 		my $vlan_disabled = ($wlan) ? "disabled" : "";
 
-        print <<END
-            <td class="textcenter $slightlygrey">
-                <select name="ACCESS $uc $mac" onchange="document.getElementById('TAG $uc $mac').disabled = (this.value === 'VLAN' ? false : true)">
-                    <option value="NONE" $access_selected{"NONE"}>- $Lang::tr{"zoneconf access none"} -</option>
-                    <option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
-                    <option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
-                </select>
-                <input type="number" id="TAG $uc $mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" $field_disabled>
-            </td>
+		print <<END
+			<td class="textcenter $slightlygrey">
+				<select name="ACCESS $uc $mac" onchange="document.getElementById('TAG $uc $mac').disabled = (this.value === 'VLAN' ? false : true)">
+					<option value="NONE" $access_selected{"NONE"}>- $Lang::tr{"zoneconf access none"} -</option>
+					<option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
+					<option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
+				</select>
+				<input type="number" id="TAG $uc $mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" $field_disabled>
+			</td>
 END
 ;
-    }
+	}
 
-    print "</tr>";
+	print "</tr>";
 
-    if ($slightlygrey) {
-        $slightlygrey = "";
-    } else {
-        $slightlygrey = "slightlygrey";
-    }
+	if ($slightlygrey) {
+		$slightlygrey = "";
+	} else {
+		$slightlygrey = "slightlygrey";
+	}
 }
 
 print <<END
 	</table>
 
 	<div id="submit-container">
-        $restart_notice
+		$restart_notice
 		<input type="submit" name="ACTION" value="$Lang::tr{"save"}">
 	</div>
 </form>
