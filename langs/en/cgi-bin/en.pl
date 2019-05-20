@@ -1926,7 +1926,7 @@
 'ovpn subnet' => 'OpenVPN subnet:',
 'ovpn subnet is invalid' => 'OpenVPN subnet is invalid.',
 'ovpn subnet overlap' => 'OpenVPN Subnet overlaps with : ',
-'ovpn tls auth' => 'TLS-Channel Protection:',
+'ovpn tls auth' => 'TLS Channel Protection:',
 'ovpn warning rfc3280' => 'Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>',
 'ovpn_fastio' => 'Fast-IO',
 'ovpn_mssfix' => 'MSSFIX Size',

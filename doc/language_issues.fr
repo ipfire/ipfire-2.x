@@ -529,6 +529,7 @@ WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
+WARNING: translation string unused: ovpn hmac
 WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn mtu-disc
 WARNING: translation string unused: ovpn mtu-disc and mtu not 1500
@@ -864,6 +865,7 @@ WARNING: untranslated string: ipsec settings = IPsec Settings
 WARNING: untranslated string: local ip address = Local IP Address
 WARNING: untranslated string: mtu = MTU
 WARNING: untranslated string: no data = unknown string
+WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: route config changed = unknown string

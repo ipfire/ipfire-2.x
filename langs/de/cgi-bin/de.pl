@@ -1887,7 +1887,7 @@
 'ovpn subnet' => 'OpenVPN-Subnetz:',
 'ovpn subnet is invalid' => 'Das OpenVPN-Subnetz ist ungültig.',
 'ovpn subnet overlap' => 'OpenVPNSubnetz überschneidet sich mit  ',
-'ovpn tls auth' => 'TLS-Kanal Absicherung:',
+'ovpn tls auth' => 'TLS-Kanalabsicherung:',
 'ovpn warning rfc3280' => 'Das Host Zertifikat ist nicht RFC3280 Regelkonform. <br>Bitte IPFire auf die letzte Version updaten und generieren sie ein neues Root und Host Zertifikat so bald wie möglich.</br><br>Es müssen dann alle OpenVPN clients erneuert werden!</br>',
 'ovpn_fastio' => 'Fast-IO',
 'ovpn_fragment' => 'Fragmentgrösse',
