@@ -170,12 +170,20 @@ print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
 
 &Header::openbox('100%', 'center', $Lang::tr{'settings'});
 
+my $smt_status = &smt_status();
+
 print <<END;
 	<table class="tbl" width="66%">
 		<tbody>
 			<tr>
+				<th colspan="2" align="center">
+					<strong>$smt_status</strong>
+				</th>
+			</tr>
+
+			<tr>
 				<td width="50%" align="left">
-					<strong>$Lang::tr{'enable smt'}</strong>
+					$Lang::tr{'enable smt'}
 				</td>
 
 				<td width="50%" align="center">
@@ -219,6 +227,24 @@ sub check_status($) {
 	if ($status =~ /^(Mitigation): (.*)$/) {
 		return ($1, $2);
 	} 
+
+	return $status;
+}
+
+sub smt_status() {
+	open(FILE, "/sys/devices/system/cpu/smt/control");
+	my $status = <FILE>;
+	close(FILE);
+
+	chomp($status);
+
+	if ($status eq "on") {
+		return $Lang::tr{'smt enabled'};
+	} elsif (($status eq "off") || ($status eq "forceoff")) {
+		return $Lang::tr{'smt disabled'};
+	} elsif ($status eq "notsupported") {
+		return $Lang::tr{'smt not supported'};
+	}
 
 	return $status;
 }
