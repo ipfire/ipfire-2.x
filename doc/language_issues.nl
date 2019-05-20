@@ -1080,4 +1080,5 @@ WARNING: untranslated string: wlanap management frame protection = Management Fr
 WARNING: untranslated string: wlanap neighbor scan = Neighborhood scan
 WARNING: untranslated string: wlanap neighbor scan warning = Warning! Disabling may violate regulatory rules!
 WARNING: untranslated string: wlanap ssid = SSID
+WARNING: untranslated string: zoneconf notice reboot = Please reboot to apply your changes.
 WARNING: untranslated string: zoneconf title = Zone Configuration

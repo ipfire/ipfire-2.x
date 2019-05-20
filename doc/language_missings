@@ -855,6 +855,7 @@
 < zoneconf nicmode bridge
 < zoneconf nicmode default
 < zoneconf nicmode macvtap
+< zoneconf notice reboot
 < zoneconf title
 < zoneconf val native assignment error
 < zoneconf val ppp assignment error
@@ -937,6 +938,7 @@
 < zoneconf nicmode bridge
 < zoneconf nicmode default
 < zoneconf nicmode macvtap
+< zoneconf notice reboot
 < zoneconf title
 < zoneconf val native assignment error
 < zoneconf val ppp assignment error
@@ -1230,6 +1232,7 @@
 < zoneconf nicmode bridge
 < zoneconf nicmode default
 < zoneconf nicmode macvtap
+< zoneconf notice reboot
 < zoneconf title
 < zoneconf val native assignment error
 < zoneconf val ppp assignment error
@@ -1580,6 +1583,7 @@
 < zoneconf nicmode bridge
 < zoneconf nicmode default
 < zoneconf nicmode macvtap
+< zoneconf notice reboot
 < zoneconf title
 < zoneconf val native assignment error
 < zoneconf val ppp assignment error
@@ -2370,6 +2374,7 @@
 < zoneconf nicmode bridge
 < zoneconf nicmode default
 < zoneconf nicmode macvtap
+< zoneconf notice reboot
 < zoneconf title
 < zoneconf val native assignment error
 < zoneconf val ppp assignment error
@@ -3167,6 +3172,7 @@
 < zoneconf nicmode bridge
 < zoneconf nicmode default
 < zoneconf nicmode macvtap
+< zoneconf notice reboot
 < zoneconf title
 < zoneconf val native assignment error
 < zoneconf val ppp assignment error
@@ -3265,6 +3271,7 @@
 < zoneconf nicmode bridge
 < zoneconf nicmode default
 < zoneconf nicmode macvtap
+< zoneconf notice reboot
 < zoneconf title
 < zoneconf val native assignment error
 < zoneconf val ppp assignment error

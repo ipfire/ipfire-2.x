@@ -2888,13 +2888,13 @@
 'zoneconf nicmode bridge' => 'Brücke',
 'zoneconf nicmode default' => 'Normal',
 'zoneconf nicmode macvtap' => 'MacVTap',
+'zoneconf notice reboot' => 'Bitte einen Neustart durchführen, um die Änderungen zu übernehmen.',
 'zoneconf title' => 'Zonen einrichten',
 'zoneconf val native assignment error' => 'Eine Netzwerkkarte kann nicht von mehreren Zonen nativ verwendet werden.',
 'zoneconf val ppp assignment error' => 'Die Netzwerkkarte, die von RED im PPP-Modus verwendet wird, kann keiner anderen Zone zugeordnet werden.',
 'zoneconf val vlan amount assignment error' => 'Pro Zone kann nur ein VLAN verwendet werden.',
 'zoneconf val vlan tag assignment error' => 'Pro Netzwerkkarte kann derselbe VLAN-Tag nur einmal verwendet werden.',
 'zoneconf val zoneslave amount error' => 'Wenn eine Zone nicht im Brückenmodus ist, kann ihr nur eine Netzwerkkarte zugewiesen werden.',
-'zoneconf notice reboot' => 'Bitte einen Neustart durchführen, um die Änderungen zu übernehmen.',
 );
 
 #EOF
