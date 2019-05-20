@@ -24,6 +24,7 @@
 
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
+# If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.23"							# Version number
 CORE="132"							# Core Level (Filename)
 PAKFIRE_CORE="131"						# Core Level (PAKFIRE)
