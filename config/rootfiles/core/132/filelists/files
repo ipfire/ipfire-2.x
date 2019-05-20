@@ -12,6 +12,7 @@ srv/web/ipfire/cgi-bin/captive.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/routing.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
