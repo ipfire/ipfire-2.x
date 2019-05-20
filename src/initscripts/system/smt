@@ -1,0 +1,40 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/smt
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+eval $(/usr/local/bin/readhash /var/ipfire/main/security)
+
+case "${1}" in
+	start)
+		# Nothing to do here when SMT is forced on
+		if [ "${ENABLE_SMT}" = "on" ]; then
+			exit 0
+		fi
+
+		# Nothing to do if this processor is not vulnerable
+		# to Fallout/RIDL.
+		if [ -r "/sys/devices/system/cpu/vulnerabilities/mds" ]; then
+			if [ "$(</sys/devices/system/cpu/vulnerabilities/mds)" = "Not affected" ]; then
+				exit 0
+			fi
+
+			# Disable SMT when supported and enabled
+			if [ "$(</sys/devices/system/cpu/smt/control)" = "on" ]; then
+				boot_mesg "Disabling Simultaneous Multi-Threading (SMT)..."
+				echo "forceoff" > /sys/devices/system/cpu/smt/control
+				echo_ok
+			fi
+		fi
+		;;
+
+	*)
+		echo "Usage: ${0} {start}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/smt
