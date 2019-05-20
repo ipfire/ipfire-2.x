@@ -29,6 +29,7 @@
 < community rules
 < could not connect to www ipfire org
 < cryptographic settings
+< dangerous
 < dead peer detection
 < default IP address
 < dhcp server disabled on blue interface
@@ -37,6 +38,10 @@
 < done
 < emerging pro rules
 < emerging rules
+< enable smt
+< fallout zombieload ridl
+< force enable
+< foreshadow
 < g.dtm
 < g.lite
 < guardian
@@ -45,18 +50,28 @@
 < ids show
 < insert removable device
 < interface mode
+< meltdown
+< mitigated
+< not affected
 < notes
+< please reboot to apply your changes
+< processor vulnerability mitigations
 < quick control
 < shaping add options
 < show areas
 < show lines
 < show tls-auth key
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < teovpn_fragment
 < tor bridge enabled
 < tor errmsg invalid node id
 < updxlrtr used by
 < upload fcdsl.o
 < vpn configuration main
+< vulnerability
+< vulnerable
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
@@ -100,7 +115,6 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
-< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive agree tac
@@ -202,6 +216,7 @@
 < cryptographic settings
 < crypto warning
 < Daily
+< dangerous
 < dead peer detection
 < default
 < default ip
@@ -271,10 +286,12 @@
 < email usemail
 < emerging pro rules
 < emerging rules
+< enable smt
 < encryption
 < entropy
 < entropy graphs
 < error
+< fallout zombieload ridl
 < fifteen minutes
 < fireinfo ipfire version
 < fireinfo is disabled
@@ -304,6 +321,8 @@
 < first
 < five minutes
 < flag
+< force enable
+< foreshadow
 < forward firewall
 < four hours
 < fw default drop
@@ -568,9 +587,11 @@
 < maximum
 < MB read
 < MB written
+< meltdown
 < messages
 < minimum
 < minute
+< mitigated
 < model
 < modem hardware details
 < modem information
@@ -592,6 +613,7 @@
 < never
 < no hardware random number generator
 < none
+< not affected
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
@@ -659,9 +681,11 @@
 < ovpn warning rfc3280
 < p2p block
 < p2p block save notice
+< please reboot to apply your changes
 < pptp netconfig
 < pptp peer
 < pptp route
+< processor vulnerability mitigations
 < proxy reports
 < proxy reports daily
 < proxy reports monthly
@@ -684,6 +708,9 @@
 < snat new source ip address
 < software version
 < source ip country
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh
 < ssh active sessions
 < ssh agent forwarding
@@ -791,6 +818,8 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< vulnerability
+< vulnerable
 < Weekly
 < wireless network
 < wlanap
@@ -875,10 +904,15 @@
 < advproxy wpad view pac
 < Captive delete logo
 < Daily
+< dangerous
 < Disabled
 < dnsforward dnssec disabled
 < emerging pro rules
+< enable smt
 < error
+< fallout zombieload ridl
+< force enable
+< foreshadow
 < generate ptr
 < ids apply
 < ids apply ruleset changes
@@ -898,12 +932,22 @@
 < ids show
 < ids working
 < intrusion prevention system
+< meltdown
+< mitigated
+< not affected
 < ovpn tls auth
+< please reboot to apply your changes
+< processor vulnerability mitigations
 < ptr
 < runmode
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh agent forwarding
 < system is offline
 < update ruleset
+< vulnerability
+< vulnerable
 < Weekly
 < wlanap auto
 < wlanap broadcast ssid
@@ -950,7 +994,6 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
-< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive agree tac
@@ -1005,6 +1048,7 @@
 < cryptographic settings
 < crypto warning
 < Daily
+< dangerous
 < default IP address
 < dhcp dns enable update
 < dhcp dns key name
@@ -1040,7 +1084,9 @@
 < email tls
 < email usemail
 < emerging pro rules
+< enable smt
 < error
+< fallout zombieload ridl
 < fifteen minutes
 < firewall graph country
 < firewall graph ip
@@ -1049,6 +1095,8 @@
 < firewall log ip
 < firewall log port
 < five minutes
+< force enable
+< foreshadow
 < four hours
 < fwdfw all subnets
 < fwdfw err concon
@@ -1120,10 +1168,13 @@
 < masquerading
 < masquerading disabled
 < masquerading enabled
+< meltdown
 < messages
+< mitigated
 < mtu
 < MTU settings
 < none
+< not affected
 < Number of Countries for the pie chart
 < one hour
 < one month
@@ -1136,9 +1187,11 @@
 < ovpn error md5
 < ovpn tls auth
 < ovpn warning rfc3280
+< please reboot to apply your changes
 < pptp netconfig
 < pptp peer
 < pptp route
+< processor vulnerability mitigations
 < ptr
 < rdns
 < required field
@@ -1146,6 +1199,9 @@
 < samba join a domain
 < samba join domain
 < search
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh active sessions
 < ssh agent forwarding
 < ssh login time
@@ -1179,6 +1235,8 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< vulnerability
+< vulnerable
 < Weekly
 < wireless network
 < wlanap
@@ -1247,7 +1305,6 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
-< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive agree tac
@@ -1302,6 +1359,7 @@
 < cryptographic settings
 < crypto warning
 < Daily
+< dangerous
 < default
 < default IP address
 < dh
@@ -1352,7 +1410,9 @@
 < email tls
 < email usemail
 < emerging pro rules
+< enable smt
 < error
+< fallout zombieload ridl
 < fifteen minutes
 < firewall graph country
 < firewall graph ip
@@ -1362,6 +1422,8 @@
 < firewall log port
 < firewall logs country
 < five minutes
+< force enable
+< foreshadow
 < four hours
 < fwdfw all subnets
 < fwdfw err concon
@@ -1436,7 +1498,9 @@
 < masquerading
 < masquerading disabled
 < masquerading enabled
+< meltdown
 < messages
+< mitigated
 < model
 < modem hardware details
 < modem information
@@ -1456,6 +1520,7 @@
 < nameserver
 < never
 < none
+< not affected
 < not a valid dh key
 < Number of Countries for the pie chart
 < one hour
@@ -1478,9 +1543,11 @@
 < ovpn reneg sec
 < ovpn tls auth
 < ovpn warning rfc3280
+< please reboot to apply your changes
 < pptp netconfig
 < pptp peer
 < pptp route
+< processor vulnerability mitigations
 < ptr
 < random number generator daemon
 < rdns
@@ -1493,6 +1560,9 @@
 < show tls-auth key
 < software version
 < source ip country
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh active sessions
 < ssh agent forwarding
 < ssh login time
@@ -1530,6 +1600,8 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< vulnerability
+< vulnerable
 < Weekly
 < wireless network
 < wlanap
@@ -1611,7 +1683,6 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
-< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive agree tac
@@ -1714,6 +1785,7 @@
 < cryptographic settings
 < crypto warning
 < Daily
+< dangerous
 < dead peer detection
 < default
 < default ip
@@ -1783,6 +1855,7 @@
 < email usemail
 < emerging pro rules
 < emerging rules
+< enable smt
 < encryption
 < entropy
 < entropy graphs
@@ -1796,6 +1869,7 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< fallout zombieload ridl
 < fifteen minutes
 < firewall graph country
 < firewall graph ip
@@ -1808,6 +1882,8 @@
 < first
 < five minutes
 < flag
+< force enable
+< foreshadow
 < forward firewall
 < four hours
 < fw default drop
@@ -2082,9 +2158,11 @@
 < maximum
 < MB read
 < MB written
+< meltdown
 < messages
 < minimum
 < minute
+< mitigated
 < model
 < modem hardware details
 < modem information
@@ -2106,6 +2184,7 @@
 < never
 < no hardware random number generator
 < none
+< not affected
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
@@ -2159,9 +2238,11 @@
 < ovpn warning rfc3280
 < p2p block
 < p2p block save notice
+< please reboot to apply your changes
 < pptp netconfig
 < pptp peer
 < pptp route
+< processor vulnerability mitigations
 < proxy reports
 < proxy reports daily
 < proxy reports monthly
@@ -2183,6 +2264,9 @@
 < snat new source ip address
 < software version
 < source ip country
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh
 < ssh active sessions
 < ssh agent forwarding
@@ -2289,6 +2373,8 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< vulnerability
+< vulnerable
 < Weekly
 < wireless network
 < wlanap
@@ -2403,7 +2489,6 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
-< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive agree tac
@@ -2506,6 +2591,7 @@
 < cryptographic settings
 < crypto warning
 < Daily
+< dangerous
 < day-graph
 < dead peer detection
 < default
@@ -2578,6 +2664,7 @@
 < email usemail
 < emerging pro rules
 < emerging rules
+< enable smt
 < encryption
 < entropy
 < entropy graphs
@@ -2591,6 +2678,7 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< fallout zombieload ridl
 < fifteen minutes
 < firewall graph country
 < firewall graph ip
@@ -2603,6 +2691,8 @@
 < first
 < five minutes
 < flag
+< force enable
+< foreshadow
 < forward firewall
 < four hours
 < frequency
@@ -2880,9 +2970,11 @@
 < maximum
 < MB read
 < MB written
+< meltdown
 < messages
 < minimum
 < minute
+< mitigated
 < model
 < modem hardware details
 < modem information
@@ -2905,6 +2997,7 @@
 < never
 < no hardware random number generator
 < none
+< not affected
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
@@ -2955,9 +3048,11 @@
 < ovpn warning rfc3280
 < p2p block
 < p2p block save notice
+< please reboot to apply your changes
 < pptp netconfig
 < pptp peer
 < pptp route
+< processor vulnerability mitigations
 < proxy reports
 < proxy reports daily
 < proxy reports monthly
@@ -2979,6 +3074,9 @@
 < snat new source ip address
 < software version
 < source ip country
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh
 < ssh active sessions
 < ssh agent forwarding
@@ -3085,6 +3183,8 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< vulnerability
+< vulnerable
 < week-graph
 < Weekly
 < wireless network
@@ -3174,6 +3274,7 @@
 < cryptographic settings
 < crypto warning
 < Daily
+< dangerous
 < default IP address
 < Disabled
 < dns forward disable dnssec
@@ -3181,7 +3282,11 @@
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
 < emerging pro rules
+< enable smt
 < error
+< fallout zombieload ridl
+< force enable
+< foreshadow
 < fwdfw all subnets
 < generate ptr
 < ids apply
@@ -3217,13 +3322,21 @@
 < ipsec mode tunnel
 < ipsec settings
 < local ip address
+< meltdown
+< mitigated
 < mtu
+< not affected
 < ovpn error dh
 < ovpn error md5
 < ovpn tls auth
 < ovpn warning rfc3280
+< please reboot to apply your changes
+< processor vulnerability mitigations
 < ptr
 < runmode
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh active sessions
 < ssh agent forwarding
 < ssh login time
@@ -3235,6 +3348,8 @@
 < update ruleset
 < vpn start action add
 < vpn wait
+< vulnerability
+< vulnerable
 < Weekly
 < wlanap auto
 < wlanap broadcast ssid
