@@ -88,6 +88,9 @@ extract_files
 # update linker config
 ldconfig
 
+# create main/security file
+touch /var/ipfire/main/security
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
