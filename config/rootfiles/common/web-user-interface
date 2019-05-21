@@ -87,6 +87,7 @@ srv/web/ipfire/cgi-bin/updatexlrator.cgi
 #srv/web/ipfire/cgi-bin/upnp.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 srv/web/ipfire/cgi-bin/wakeonlan.cgi
 srv/web/ipfire/cgi-bin/webaccess.cgi
 srv/web/ipfire/cgi-bin/wireless.cgi
