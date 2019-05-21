@@ -85,5 +85,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -i 's|/var/lib/vnstat|/var/log/vnstat|g' /etc/vnstat.conf
 	sed -i 's|/var/log/vnstat/vnstat.log|/var/log/vnstat.log|g' /etc/vnstat.conf
 	sed -i 's|/var/run/vnstat/vnstat.pid|/var/run/vnstat.pid|g' /etc/vnstat.conf
+
+	mkdir -p /var/log/vnstat
+	touch /var/log/vnstat/tag
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

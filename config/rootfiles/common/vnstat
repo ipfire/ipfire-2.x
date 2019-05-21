@@ -9,3 +9,5 @@ usr/bin/vnstati
 #usr/share/man/man1/vnstati.1
 #usr/share/man/man1/vnstat.1
 #var/lib/vnstat
+#var/log/vnstat
+var/log/vnstat/tag
