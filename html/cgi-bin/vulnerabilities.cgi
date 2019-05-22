@@ -125,14 +125,22 @@ for my $vuln (sort keys %VULNERABILITIES) {
 		$colour = "white";
 		$bgcolour = ${Header::colourred};
 
-	# Mitigated
-	} elsif ($status eq "Mitigation") {
+	# Mitigated but smt is enabled
+	} elsif ($status eq "Mitigation-SMT") {
 		$status_message = $Lang::tr{'mitigated'};
 		$colour = "black";
 		$bgcolour = ${Header::colourorange};
 
+	# Mitigated
+	} elsif ($status eq "Mitigation") {
+		$status_message = $Lang::tr{'mitigated'};
+		$colour = "black";
+		$bgcolour = ${Header::colouryellow};
+
 	} else {
-		next;
+		$status_message = $status;
+		$colour = "white";
+		$bgcolour = ${Header::colourblue};
 	}
 
 	my $table_colour = ($id++ % 2) ? $color{'color22'} : $color{'color20'};
@@ -223,6 +231,14 @@ sub check_status($) {
 	open(FILE, "/sys/devices/system/cpu/vulnerabilities/$vuln") or return undef;
 	my $status = <FILE>;
 	close(FILE);
+
+	if ($status =~ /^(Vulnerable): (.*)$/) {
+		return ($1, $2);
+	}
+
+	if ($status =~ /^(Mitigation): (.*vulnerable.*)$/) {
+		return ("Mitigation-SMT", $2);
+	}
 
 	if ($status =~ /^(Mitigation): (.*)$/) {
 		return ($1, $2);
