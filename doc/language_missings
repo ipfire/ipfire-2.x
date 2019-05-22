@@ -45,34 +45,19 @@
 < g.dtm
 < g.lite
 < guardian
-< hardware vulnerabilities
-< ids hide
-< ids rules update
-< ids show
 < insert removable device
-< interface mode
-< meltdown
-< mitigated
-< not affected
 < notes
-< please reboot to apply your changes
-< processor vulnerability mitigations
 < quick control
 < shaping add options
 < show areas
 < show lines
 < show tls-auth key
-< spectre variant 1
-< spectre variant 2
-< spectre variant 4
 < teovpn_fragment
 < tor bridge enabled
 < tor errmsg invalid node id
 < updxlrtr used by
 < upload fcdsl.o
 < vpn configuration main
-< vulnerability
-< vulnerable
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
@@ -707,6 +692,9 @@
 < Set time on boot
 < show dh
 < show tls-auth key
+< smt disabled
+< smt enabled
+< smt not supported
 < snat new source ip address
 < software version
 < source ip country
@@ -943,6 +931,9 @@
 < processor vulnerability mitigations
 < ptr
 < runmode
+< smt disabled
+< smt enabled
+< smt not supported
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
@@ -1203,6 +1194,9 @@
 < samba join a domain
 < samba join domain
 < search
+< smt disabled
+< smt enabled
+< smt not supported
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
@@ -1563,6 +1557,9 @@
 < search
 < show dh
 < show tls-auth key
+< smt disabled
+< smt enabled
+< smt not supported
 < software version
 < source ip country
 < spectre variant 1
@@ -2267,6 +2264,9 @@
 < server restart
 < show dh
 < show tls-auth key
+< smt disabled
+< smt enabled
+< smt not supported
 < snat new source ip address
 < software version
 < source ip country
@@ -3078,6 +3078,9 @@
 < server restart
 < show dh
 < show tls-auth key
+< smt disabled
+< smt enabled
+< smt not supported
 < snat new source ip address
 < software version
 < source ip country
@@ -3342,6 +3345,9 @@
 < processor vulnerability mitigations
 < ptr
 < runmode
+< smt disabled
+< smt enabled
+< smt not supported
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
