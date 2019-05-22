@@ -1718,6 +1718,7 @@ END
 						<td width='25%' align='right'><span class='snat'>$Lang::tr{'snat new source ip address'}:</span></td>
 						<td width='30%'>
 							<select name='snat' class='snat' style='width: 100%;'>
+								<option value='RED' $selected{'snat'}{'RED'}>$Lang::tr{'red1'} ($redip)</option>
 END
 
 		foreach my $alias (sort keys %aliases) {

@@ -6,7 +6,7 @@
 #
 # Author      : Stefan Schantl <stefan.schantl@ipfire.org>
 #
-# Version     : 01.01
+# Version     : 01.02
 #
 # Notes       :
 #
@@ -50,7 +50,13 @@ function get_cpu_count {
 		[ "$line" ] && [ -z "${line%processor*}" ]  && ((CPUCOUNT++))
 	done </proc/cpuinfo
 
-	echo $CPUCOUNT
+	# Limit to a maximum of 16 cores, because suricata does not support more than
+	# 16 netfilter queues at the moment.
+	if [ $CPUCOUNT -gt "16" ]; then
+		echo "16"
+	else
+		echo $CPUCOUNT
+	fi
 }
 
 # Function to flush the firewall chains.

@@ -175,9 +175,9 @@ sub buildrules {
 	}
 
 	if ($POLICY_INPUT_ACTION eq "DROP") {
-		push(@special_input_targets, "REJECT");
+		push(@special_input_targets, ("ACCEPT", "REJECT"));
 	} elsif ($POLICY_INPUT_ACTION eq "REJECT") {
-		push(@special_input_targets, "DROP");
+		push(@special_input_targets, ("ACCEPT", "DROP"));
 	}
 
 	my @special_output_targets = ();
@@ -187,9 +187,9 @@ sub buildrules {
 		push(@special_output_targets, "ACCEPT");
 
 		if ($POLICY_OUTPUT_ACTION eq "DROP") {
-			push(@special_output_targets, "REJECT");
+			push(@special_output_targets, ("ACCEPT", "REJECT"));
 		} elsif ($POLICY_OUTPUT_ACTION eq "REJECT") {
-			push(@special_output_targets, "DROP");
+			push(@special_output_targets, ("ACCEPT", "DROP"));
 		}
 	}
 
@@ -383,6 +383,19 @@ sub buildrules {
 						push(@destination_options, ("-d", $destination));
 					}
 
+					# Add source and destination interface to the filter rules.
+					# These are supposed to help filtering forged packets that originate
+					# from BLUE with an IP address from GREEN for instance.
+					my @source_intf_options = ();
+					if ($source_intf) {
+						push(@source_intf_options, ("-i", $source_intf));
+					}
+
+					my @destination_intf_options = ();
+					if ($destination_intf) {
+						push(@destination_intf_options, ("-o", $destination_intf));
+					}
+
 					# Add time constraint options.
 					push(@options, @time_options);
 
@@ -467,10 +480,7 @@ sub buildrules {
 						} elsif ($NAT_MODE eq "SNAT") {
 							my @nat_options = @options;
 
-							if ($destination_intf) {
-								push(@nat_options, ("-o", $destination_intf));
-							}
-
+							push(@nat_options, @destination_intf_options);
 							push(@nat_options, @source_options);
 							push(@nat_options, @destination_options);
 
@@ -481,25 +491,14 @@ sub buildrules {
 						}
 					}
 
-					# Add source and destination interface to the filter rules.
-					# These are supposed to help filtering forged packets that originate
-					# from BLUE with an IP address from GREEN for instance.
-					if ($source_intf) {
-						push(@source_options, ("-i", $source_intf));
-					}
-
-					if ($destination_intf) {
-						push(@destination_options, ("-o", $destination_intf));
-					}
-
 					push(@options, @source_options);
 					push(@options, @destination_options);
 
 					# Insert firewall rule.
 					if ($LOG && !$NAT) {
-						run("$IPTABLES -A $chain @options @log_limit_options -j LOG --log-prefix '$chain '");
+						run("$IPTABLES -A $chain @options @source_intf_options @destination_intf_options @log_limit_options -j LOG --log-prefix '$chain '");
 					}
-					run("$IPTABLES -A $chain @options -j $target");
+					run("$IPTABLES -A $chain @options @source_intf_options @destination_intf_options -j $target");
 
 					# Handle forwarding rules and add corresponding rules for firewall access.
 					if ($chain eq $CHAIN_FORWARD) {
@@ -508,17 +507,17 @@ sub buildrules {
 						# for the firewall, too.
 						if ($firewall_is_in_destination_subnet && ($target ~~ @special_input_targets)) {
 							if ($LOG && !$NAT) {
-								run("$IPTABLES -A $CHAIN_INPUT @options @log_limit_options -j LOG --log-prefix '$CHAIN_INPUT '");
+								run("$IPTABLES -A $CHAIN_INPUT @options @source_intf_options @log_limit_options -j LOG --log-prefix '$CHAIN_INPUT '");
 							}
-							run("$IPTABLES -A $CHAIN_INPUT @options -j $target");
+							run("$IPTABLES -A $CHAIN_INPUT @options @source_intf_options -j $target");
 						}
 
 						# Likewise.
 						if ($firewall_is_in_source_subnet && ($target ~~ @special_output_targets)) {
 							if ($LOG && !$NAT) {
-								run("$IPTABLES -A $CHAIN_OUTPUT @options @log_limit_options -j LOG --log-prefix '$CHAIN_OUTPUT '");
+								run("$IPTABLES -A $CHAIN_OUTPUT @options @destination_intf_options @log_limit_options -j LOG --log-prefix '$CHAIN_OUTPUT '");
 							}
-							run("$IPTABLES -A $CHAIN_OUTPUT @options -j $target");
+							run("$IPTABLES -A $CHAIN_OUTPUT @options @destination_intf_options -j $target");
 						}
 					}
 				}

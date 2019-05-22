@@ -54,6 +54,9 @@ if(&IDS::downloadruleset()) {
 	# Store error message for displaying in the WUI.
 	&IDS::_store_error_message("$Lang::tr{'could not download latest updates'}");
 
+	# Unlock the IDS page.
+	&IDS::unlock_ids_page();
+
 	# Exit.
 	exit 0;
 }

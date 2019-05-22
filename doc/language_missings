@@ -29,6 +29,7 @@
 < community rules
 < could not connect to www ipfire org
 < cryptographic settings
+< dangerous
 < dead peer detection
 < default IP address
 < dhcp server disabled on blue interface
@@ -37,26 +38,41 @@
 < done
 < emerging pro rules
 < emerging rules
+< enable smt
+< fallout zombieload ridl
+< force enable
+< foreshadow
 < g.dtm
 < g.lite
 < guardian
+< hardware vulnerabilities
 < ids hide
 < ids rules update
 < ids show
 < insert removable device
 < interface mode
+< meltdown
+< mitigated
+< not affected
 < notes
+< please reboot to apply your changes
+< processor vulnerability mitigations
 < quick control
 < shaping add options
 < show areas
 < show lines
 < show tls-auth key
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < teovpn_fragment
 < tor bridge enabled
 < tor errmsg invalid node id
 < updxlrtr used by
 < upload fcdsl.o
 < vpn configuration main
+< vulnerability
+< vulnerable
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
@@ -72,9 +88,17 @@
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy errmsg wpad invalid ip or mask
 < advproxy group access control
 < advproxy group required
 < advproxy proxy port transparent
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
 < age second
 < age seconds
 < age shour
@@ -92,7 +116,6 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
-< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive agree tac
@@ -104,6 +127,7 @@
 < Captive client session expiry time
 < Captive config
 < Captive coupon
+< Captive delete logo
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
@@ -193,6 +217,7 @@
 < cryptographic settings
 < crypto warning
 < Daily
+< dangerous
 < dead peer detection
 < default
 < default ip
@@ -262,9 +287,12 @@
 < email usemail
 < emerging pro rules
 < emerging rules
+< enable smt
 < encryption
 < entropy
 < entropy graphs
+< error
+< fallout zombieload ridl
 < fifteen minutes
 < fireinfo ipfire version
 < fireinfo is disabled
@@ -294,6 +322,8 @@
 < first
 < five minutes
 < flag
+< force enable
+< foreshadow
 < forward firewall
 < four hours
 < fw default drop
@@ -497,6 +527,7 @@
 < grouptype
 < guardian
 < hardware support
+< hardware vulnerabilities
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -558,9 +589,11 @@
 < maximum
 < MB read
 < MB written
+< meltdown
 < messages
 < minimum
 < minute
+< mitigated
 < model
 < modem hardware details
 < modem information
@@ -582,6 +615,7 @@
 < never
 < no hardware random number generator
 < none
+< not affected
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
@@ -632,7 +666,6 @@
 < ovpn error md5
 < ovpn generating the root and host certificates
 < ovpn ha
-< ovpn hmac
 < ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
@@ -646,12 +679,15 @@
 < ovpn reneg sec
 < ovpn routes push
 < ovpn routes push options
+< ovpn tls auth
 < ovpn warning rfc3280
 < p2p block
 < p2p block save notice
+< please reboot to apply your changes
 < pptp netconfig
 < pptp peer
 < pptp route
+< processor vulnerability mitigations
 < proxy reports
 < proxy reports daily
 < proxy reports monthly
@@ -674,6 +710,9 @@
 < snat new source ip address
 < software version
 < source ip country
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh
 < ssh active sessions
 < ssh agent forwarding
@@ -781,13 +820,20 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< vulnerability
+< vulnerable
 < Weekly
 < wireless network
 < wlanap
+< wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
 < wlanap configuration
 < wlanap country
+< wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap ssid
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -833,18 +879,44 @@
 < wlan client wpa mode ccmp ccmp
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf notice reboot
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
-< cryptographic settings
+< advproxy errmsg wpad invalid ip or mask
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
+< Captive delete logo
 < Daily
-< default IP address
+< dangerous
 < Disabled
-< dns forward disable dnssec
 < dnsforward dnssec disabled
-< dns forwarding dnssec disabled notice
 < emerging pro rules
+< enable smt
+< error
+< fallout zombieload ridl
+< force enable
+< foreshadow
 < generate ptr
+< hardware vulnerabilities
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -862,30 +934,43 @@
 < ids ruleset settings
 < ids show
 < ids working
-< interface mode
 < intrusion prevention system
-< invalid input for interface address
-< invalid input for interface mode
-< invalid input for interface mtu
-< invalid input for local ip address
-< invalid input for mode
-< ipsec connection
-< ipsec interface mode gre
-< ipsec interface mode none
-< ipsec interface mode vti
-< ipsec mode transport
-< ipsec mode tunnel
-< ipsec settings
-< local ip address
-< mtu
+< meltdown
+< mitigated
+< not affected
+< ovpn tls auth
+< please reboot to apply your changes
+< processor vulnerability mitigations
 < ptr
 < runmode
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh agent forwarding
-< subnet mask
 < system is offline
-< transport mode does not support vti
 < update ruleset
+< vulnerability
+< vulnerable
 < Weekly
+< wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
+< wlanap management frame protection
+< wlanap ssid
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf notice reboot
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -895,8 +980,16 @@
 < adsl settings
 < advproxy AUTH method ntlm auth
 < advproxy basic authentication
+< advproxy errmsg wpad invalid ip or mask
 < advproxy group access control
 < advproxy group required
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
 < application layer gateways
 < block
 < Captive
@@ -904,7 +997,6 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
-< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive agree tac
@@ -916,6 +1008,7 @@
 < Captive client session expiry time
 < Captive config
 < Captive coupon
+< Captive delete logo
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
@@ -958,6 +1051,7 @@
 < cryptographic settings
 < crypto warning
 < Daily
+< dangerous
 < default IP address
 < dhcp dns enable update
 < dhcp dns key name
@@ -993,6 +1087,9 @@
 < email tls
 < email usemail
 < emerging pro rules
+< enable smt
+< error
+< fallout zombieload ridl
 < fifteen minutes
 < firewall graph country
 < firewall graph ip
@@ -1001,6 +1098,8 @@
 < firewall log ip
 < firewall log port
 < five minutes
+< force enable
+< foreshadow
 < four hours
 < fwdfw all subnets
 < fwdfw err concon
@@ -1027,6 +1126,7 @@
 < geoipblock flag
 < guaranteed bandwith
 < guardian
+< hardware vulnerabilities
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -1072,10 +1172,13 @@
 < masquerading
 < masquerading disabled
 < masquerading enabled
+< meltdown
 < messages
+< mitigated
 < mtu
 < MTU settings
 < none
+< not affected
 < Number of Countries for the pie chart
 < one hour
 < one month
@@ -1086,10 +1189,13 @@
 < ovpn add conf
 < ovpn error dh
 < ovpn error md5
+< ovpn tls auth
 < ovpn warning rfc3280
+< please reboot to apply your changes
 < pptp netconfig
 < pptp peer
 < pptp route
+< processor vulnerability mitigations
 < ptr
 < rdns
 < required field
@@ -1097,6 +1203,9 @@
 < samba join a domain
 < samba join domain
 < search
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh active sessions
 < ssh agent forwarding
 < ssh login time
@@ -1130,12 +1239,19 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< vulnerability
+< vulnerable
 < Weekly
 < wireless network
 < wlanap
+< wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
 < wlanap configuration
+< wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap ssid
 < wlan client anonymous identity
 < wlan client auth auto
 < wlan client authentication settings
@@ -1150,6 +1266,20 @@
 < wlan client password
 < wlan client tls cipher
 < wlan client tls version
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf notice reboot
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: nl                           #
 ############################################################################
@@ -1160,8 +1290,16 @@
 < advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
 < advproxy basic authentication
+< advproxy errmsg wpad invalid ip or mask
 < advproxy group access control
 < advproxy group required
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
 < application layer gateways
 < atm device
 < block
@@ -1171,7 +1309,6 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
-< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive agree tac
@@ -1183,6 +1320,7 @@
 < Captive client session expiry time
 < Captive config
 < Captive coupon
+< Captive delete logo
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
@@ -1225,6 +1363,7 @@
 < cryptographic settings
 < crypto warning
 < Daily
+< dangerous
 < default
 < default IP address
 < dh
@@ -1275,6 +1414,9 @@
 < email tls
 < email usemail
 < emerging pro rules
+< enable smt
+< error
+< fallout zombieload ridl
 < fifteen minutes
 < firewall graph country
 < firewall graph ip
@@ -1284,6 +1426,8 @@
 < firewall log port
 < firewall logs country
 < five minutes
+< force enable
+< foreshadow
 < four hours
 < fwdfw all subnets
 < fwdfw err concon
@@ -1311,6 +1455,7 @@
 < geoipblock enable feature
 < geoipblock flag
 < guardian
+< hardware vulnerabilities
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -1358,7 +1503,9 @@
 < masquerading
 < masquerading disabled
 < masquerading enabled
+< meltdown
 < messages
+< mitigated
 < model
 < modem hardware details
 < modem information
@@ -1378,6 +1525,7 @@
 < nameserver
 < never
 < none
+< not affected
 < not a valid dh key
 < Number of Countries for the pie chart
 < one hour
@@ -1397,12 +1545,14 @@
 < ovpn error md5
 < ovpn generating the root and host certificates
 < ovpn ha
-< ovpn hmac
 < ovpn reneg sec
+< ovpn tls auth
 < ovpn warning rfc3280
+< please reboot to apply your changes
 < pptp netconfig
 < pptp peer
 < pptp route
+< processor vulnerability mitigations
 < ptr
 < random number generator daemon
 < rdns
@@ -1415,6 +1565,9 @@
 < show tls-auth key
 < software version
 < source ip country
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh active sessions
 < ssh agent forwarding
 < ssh login time
@@ -1452,12 +1605,19 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< vulnerability
+< vulnerable
 < Weekly
 < wireless network
 < wlanap
+< wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
 < wlanap configuration
+< wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap ssid
 < wlan client anonymous identity
 < wlan client auth auto
 < wlan client authentication settings
@@ -1472,6 +1632,20 @@
 < wlan client password
 < wlan client tls cipher
 < wlan client tls version
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf notice reboot
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
@@ -1487,9 +1661,17 @@
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy errmsg wpad invalid ip or mask
 < advproxy group access control
 < advproxy group required
 < advproxy proxy port transparent
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
 < age second
 < age seconds
 < age shour
@@ -1506,7 +1688,6 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
-< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive agree tac
@@ -1518,6 +1699,7 @@
 < Captive client session expiry time
 < Captive config
 < Captive coupon
+< Captive delete logo
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
@@ -1608,6 +1790,7 @@
 < cryptographic settings
 < crypto warning
 < Daily
+< dangerous
 < dead peer detection
 < default
 < default ip
@@ -1677,9 +1860,11 @@
 < email usemail
 < emerging pro rules
 < emerging rules
+< enable smt
 < encryption
 < entropy
 < entropy graphs
+< error
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -1689,6 +1874,7 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< fallout zombieload ridl
 < fifteen minutes
 < firewall graph country
 < firewall graph ip
@@ -1701,6 +1887,8 @@
 < first
 < five minutes
 < flag
+< force enable
+< foreshadow
 < forward firewall
 < four hours
 < fw default drop
@@ -1914,6 +2102,7 @@
 < grouptype
 < guardian
 < hardware support
+< hardware vulnerabilities
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -1975,9 +2164,11 @@
 < maximum
 < MB read
 < MB written
+< meltdown
 < messages
 < minimum
 < minute
+< mitigated
 < model
 < modem hardware details
 < modem information
@@ -1999,6 +2190,7 @@
 < never
 < no hardware random number generator
 < none
+< not affected
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
@@ -2035,7 +2227,6 @@
 < ovpn error md5
 < ovpn generating the root and host certificates
 < ovpn ha
-< ovpn hmac
 < ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
@@ -2049,12 +2240,15 @@
 < ovpn reneg sec
 < ovpn routes push
 < ovpn routes push options
+< ovpn tls auth
 < ovpn warning rfc3280
 < p2p block
 < p2p block save notice
+< please reboot to apply your changes
 < pptp netconfig
 < pptp peer
 < pptp route
+< processor vulnerability mitigations
 < proxy reports
 < proxy reports daily
 < proxy reports monthly
@@ -2076,6 +2270,9 @@
 < snat new source ip address
 < software version
 < source ip country
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh
 < ssh active sessions
 < ssh agent forwarding
@@ -2182,13 +2379,20 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< vulnerability
+< vulnerable
 < Weekly
 < wireless network
 < wlanap
+< wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
 < wlanap configuration
 < wlanap country
+< wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap ssid
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -2234,6 +2438,20 @@
 < wlan client wpa mode ccmp ccmp
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf notice reboot
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
@@ -2250,9 +2468,17 @@
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
+< advproxy errmsg wpad invalid ip or mask
 < advproxy group access control
 < advproxy group required
 < advproxy proxy port transparent
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
 < age second
 < age seconds
 < age shour
@@ -2269,7 +2495,6 @@
 < Captive 1month
 < Captive 1week
 < Captive activate
-< Captive ACTIVATE
 < Captive activated
 < Captive active on
 < Captive agree tac
@@ -2281,6 +2506,7 @@
 < Captive client session expiry time
 < Captive config
 < Captive coupon
+< Captive delete logo
 < Captive err doublevoucher
 < Captive expire
 < Captive expiry time
@@ -2371,6 +2597,7 @@
 < cryptographic settings
 < crypto warning
 < Daily
+< dangerous
 < day-graph
 < dead peer detection
 < default
@@ -2443,9 +2670,11 @@
 < email usemail
 < emerging pro rules
 < emerging rules
+< enable smt
 < encryption
 < entropy
 < entropy graphs
+< error
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -2455,6 +2684,7 @@
 < extrahd unable to read
 < extrahd unable to write
 < extrahd you cant mount
+< fallout zombieload ridl
 < fifteen minutes
 < firewall graph country
 < firewall graph ip
@@ -2467,6 +2697,8 @@
 < first
 < five minutes
 < flag
+< force enable
+< foreshadow
 < forward firewall
 < four hours
 < frequency
@@ -2681,6 +2913,7 @@
 < grouptype
 < guardian
 < hardware support
+< hardware vulnerabilities
 < hour-graph
 < ids apply
 < ids apply ruleset changes
@@ -2744,9 +2977,11 @@
 < maximum
 < MB read
 < MB written
+< meltdown
 < messages
 < minimum
 < minute
+< mitigated
 < model
 < modem hardware details
 < modem information
@@ -2769,6 +3004,7 @@
 < never
 < no hardware random number generator
 < none
+< not affected
 < not a valid dh key
 < notice
 < Number of Countries for the pie chart
@@ -2804,7 +3040,6 @@
 < ovpn error md5
 < ovpn generating the root and host certificates
 < ovpn ha
-< ovpn hmac
 < ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
@@ -2816,12 +3051,15 @@
 < ovpn no connections
 < ovpn port in root range
 < ovpn reneg sec
+< ovpn tls auth
 < ovpn warning rfc3280
 < p2p block
 < p2p block save notice
+< please reboot to apply your changes
 < pptp netconfig
 < pptp peer
 < pptp route
+< processor vulnerability mitigations
 < proxy reports
 < proxy reports daily
 < proxy reports monthly
@@ -2843,6 +3081,9 @@
 < snat new source ip address
 < software version
 < source ip country
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh
 < ssh active sessions
 < ssh agent forwarding
@@ -2949,14 +3190,21 @@
 < vpn statistic rw
 < vpn wait
 < vpn weak
+< vulnerability
+< vulnerable
 < week-graph
 < Weekly
 < wireless network
 < wlanap
+< wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
 < wlanap configuration
 < wlanap country
+< wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap ssid
 < wlan client
 < wlan client advanced settings
 < wlan client and
@@ -3003,13 +3251,37 @@
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
 < year-graph
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf notice reboot
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: tr                           #
 ############################################################################
+< advproxy errmsg wpad invalid ip or mask
+< advproxy wpad example dst_noproxy_ip
+< advproxy wpad example dst_noproxy_url
+< advproxy wpad label dst_noproxy_ip
+< advproxy wpad label dst_noproxy_url
+< advproxy wpad notice
+< advproxy wpad title
+< advproxy wpad view pac
+< Captive delete logo
 < crypto error
 < cryptographic settings
 < crypto warning
 < Daily
+< dangerous
 < default IP address
 < Disabled
 < dns forward disable dnssec
@@ -3017,8 +3289,14 @@
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
 < emerging pro rules
+< enable smt
+< error
+< fallout zombieload ridl
+< force enable
+< foreshadow
 < fwdfw all subnets
 < generate ptr
+< hardware vulnerabilities
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
@@ -3052,12 +3330,21 @@
 < ipsec mode tunnel
 < ipsec settings
 < local ip address
+< meltdown
+< mitigated
 < mtu
+< not affected
 < ovpn error dh
 < ovpn error md5
+< ovpn tls auth
 < ovpn warning rfc3280
+< please reboot to apply your changes
+< processor vulnerability mitigations
 < ptr
 < runmode
+< spectre variant 1
+< spectre variant 2
+< spectre variant 4
 < ssh active sessions
 < ssh agent forwarding
 < ssh login time
@@ -3069,6 +3356,27 @@
 < update ruleset
 < vpn start action add
 < vpn wait
+< vulnerability
+< vulnerable
 < Weekly
+< wlanap auto
+< wlanap broadcast ssid
+< wlanap client isolation
+< wlanap management frame protection
 < wlanap neighbor scan
 < wlanap neighbor scan warning
+< wlanap ssid
+< zoneconf access native
+< zoneconf access none
+< zoneconf access vlan
+< zoneconf nic assignment
+< zoneconf nicmode bridge
+< zoneconf nicmode default
+< zoneconf nicmode macvtap
+< zoneconf notice reboot
+< zoneconf title
+< zoneconf val native assignment error
+< zoneconf val ppp assignment error
+< zoneconf val vlan amount assignment error
+< zoneconf val vlan tag assignment error
+< zoneconf val zoneslave amount error

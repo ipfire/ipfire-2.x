@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # FIXME: edit this lines before release
-IPFVER=2.21
+IPFVER=2.23
 COREVER=$(cat /opt/pakfire/db/core/mine)
 
 arch=$(uname -m)

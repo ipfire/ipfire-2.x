@@ -502,6 +502,7 @@ WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
+WARNING: translation string unused: ovpn hmac
 WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn mtu-disc
 WARNING: translation string unused: ovpn mtu-disc and mtu not 1500
@@ -720,6 +721,7 @@ WARNING: translation string unused: uptime and users
 WARNING: translation string unused: urlfilter background image
 WARNING: translation string unused: urlfilter background text
 WARNING: translation string unused: urlfilter enable jpeg
+WARNING: translation string unused: urlfilter safesearch
 WARNING: translation string unused: urlfilter update information
 WARNING: translation string unused: urlfilter update notification
 WARNING: translation string unused: urlfilter update results
@@ -752,7 +754,7 @@ WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: 24 hours = 24 Hours
 WARNING: untranslated string: Captive = Captive Portal
-WARNING: untranslated string: Captive ACTIVATE = ACTIVATE
+WARNING: untranslated string: Captive ACTIVATE = unknown string
 WARNING: untranslated string: Captive GAIN ACCESS = GAIN ACCESS
 WARNING: untranslated string: Captive WiFi coupon = WiFi Coupon
 WARNING: untranslated string: Captive activated = Activated
@@ -765,6 +767,7 @@ WARNING: untranslated string: Captive client session expiry time = Session Expir
 WARNING: untranslated string: Captive clients = unknown string
 WARNING: untranslated string: Captive config = Settings
 WARNING: untranslated string: Captive coupon = Coupon
+WARNING: untranslated string: Captive delete logo = Delete Logo
 WARNING: untranslated string: Captive expiry time = Expiry Time
 WARNING: untranslated string: Captive export coupons = Export Coupons
 WARNING: untranslated string: Captive generate coupons = Generate Coupons
@@ -794,14 +797,23 @@ WARNING: untranslated string: administrator password = Administrator password
 WARNING: untranslated string: administrator username = Administrator username
 WARNING: untranslated string: advproxy AUTH method ntlm auth = Windows Active Directory
 WARNING: untranslated string: advproxy basic authentication = Allow HTTP Basic authentication
+WARNING: untranslated string: advproxy errmsg wpad invalid ip or mask = WPAD: Invalid IP or subnet for excluded IP subnet
 WARNING: untranslated string: advproxy group access control = Group based access control
 WARNING: untranslated string: advproxy group required = Required group
+WARNING: untranslated string: advproxy wpad example dst_noproxy_ip = e.g. 192.168.2.0/255.255.255.0
+WARNING: untranslated string: advproxy wpad example dst_noproxy_url = e.g. *.ipfire.org*
+WARNING: untranslated string: advproxy wpad label dst_noproxy_ip = Excluded IP Subnets (one per line)
+WARNING: untranslated string: advproxy wpad label dst_noproxy_url = Excluded URL s (one per line)
+WARNING: untranslated string: advproxy wpad notice = Notice: For WPAD/PAC to work properly, furtcher changes need to be made. Please see the <a href="https://wiki.ipfire.org/configuration/network/proxy/extend/wpad" target="_blank">Wiki</a>.
+WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Protocol (WPAD) / Proxy Auto-Config (PAC)
+WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: application layer gateways = Application Layer Gateways
 WARNING: untranslated string: block = Block
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: check all = Check all
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
+WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: default IP address = Default IP Address
 WARNING: untranslated string: dhcp dns enable update = Enable DNS Update (RFC2136):
 WARNING: untranslated string: dhcp dns key name = Key Name
@@ -832,6 +844,8 @@ WARNING: untranslated string: email testmail = Send test mail
 WARNING: untranslated string: email tls = Use TLS
 WARNING: untranslated string: email usemail = Activate Mail Service
 WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
+WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
+WARNING: untranslated string: fallout zombieload ridl = Fallout/ZombieLoad/RIDL
 WARNING: untranslated string: fifteen minutes = 15 Minutes
 WARNING: untranslated string: firewall graph country = Firewall-Diagram (Country)
 WARNING: untranslated string: firewall graph ip = Firewall-Diagram (IP)
@@ -840,6 +854,8 @@ WARNING: untranslated string: firewall log country = Firewall log (Country)
 WARNING: untranslated string: firewall log ip = Firewall log (IP)
 WARNING: untranslated string: firewall log port = Firewall log (Port)
 WARNING: untranslated string: five minutes = 5 Minutes
+WARNING: untranslated string: force enable = Forced
+WARNING: untranslated string: foreshadow = Foreshadow
 WARNING: untranslated string: four hours = 4 Hours
 WARNING: untranslated string: fwdfw all subnets = All subnets
 WARNING: untranslated string: fwdfw err concon = Invalid number for concurrent connections
@@ -892,13 +908,8 @@ WARNING: untranslated string: guardian logtarget_console = unknown string
 WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
-WARNING: untranslated string: guardian priolevel_high = unknown string
-WARNING: untranslated string: guardian priolevel_low = unknown string
-WARNING: untranslated string: guardian priolevel_medium = unknown string
-WARNING: untranslated string: guardian priolevel_very_low = unknown string
-WARNING: untranslated string: guardian priority level = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: guardian watch snort alertfile = unknown string
+WARNING: untranslated string: hardware vulnerabilities = Hardware Vulnerabilities
 WARNING: untranslated string: ids apply = Apply
 WARNING: untranslated string: ids apply ruleset changes = The ruleset changes are being applied. Please wait until all operations have completed successfully...
 WARNING: untranslated string: ids automatic rules update = Automatic Rule Update
@@ -945,10 +956,13 @@ WARNING: untranslated string: masquerade orange = Masquerade ORANGE
 WARNING: untranslated string: masquerading = Masquerading
 WARNING: untranslated string: masquerading disabled = Masquerading disabled
 WARNING: untranslated string: masquerading enabled = Masquerading enabled
+WARNING: untranslated string: meltdown = Meltdown
 WARNING: untranslated string: messages = Messages
+WARNING: untranslated string: mitigated = Mitigated
 WARNING: untranslated string: mtu = MTU
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: none = none
+WARNING: untranslated string: not affected = Not Affected
 WARNING: untranslated string: one hour = One Hour
 WARNING: untranslated string: one month = One Month
 WARNING: untranslated string: one week = One Week
@@ -958,10 +972,13 @@ WARNING: untranslated string: outgoing overhead in bytes per second = Outgoing O
 WARNING: untranslated string: ovpn add conf = Additional configuration
 WARNING: untranslated string: ovpn error dh = The Diffie-Hellman parameter needs to be in minimum 2048 bit! <br>Please generate or upload a new Diffie-Hellman parameter, this can be made below in the section "Diffie-Hellman parameters options".</br>
 WARNING: untranslated string: ovpn error md5 = You host certificate uses MD5 for the signature which is not accepted anymore. <br>Please update to the latest IPFire version and generate a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: please reboot to apply your changes = Please reboot to apply your changes
 WARNING: untranslated string: pptp netconfig = My Net Config
 WARNING: untranslated string: pptp peer = Peer
 WARNING: untranslated string: pptp route = PPTP Route
+WARNING: untranslated string: processor vulnerability mitigations = Processor Vulnerability Mitigations
 WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: rdns = rDNS
 WARNING: untranslated string: required field = Required field
@@ -972,6 +989,12 @@ WARNING: untranslated string: routing table = unknown string
 WARNING: untranslated string: samba join a domain = Join a domain
 WARNING: untranslated string: samba join domain = Join domain
 WARNING: untranslated string: search = Search
+WARNING: untranslated string: smt disabled = unknown string
+WARNING: untranslated string: smt enabled = unknown string
+WARNING: untranslated string: smt not supported = unknown string
+WARNING: untranslated string: spectre variant 1 = Spectre Variant 1
+WARNING: untranslated string: spectre variant 2 = Spectre Variant 2
+WARNING: untranslated string: spectre variant 4 = Spectre Variant 4
 WARNING: untranslated string: ssh active sessions = Active logins
 WARNING: untranslated string: ssh agent forwarding = Allow SSH Agent Forwarding
 WARNING: untranslated string: ssh login time = Logged in since
@@ -1006,6 +1029,8 @@ WARNING: untranslated string: vpn statistic rw = VPN: Roadwarrior Statistics
 WARNING: untranslated string: vpn statistics n2n = unknown string
 WARNING: untranslated string: vpn wait = WAITING
 WARNING: untranslated string: vpn weak = Weak
+WARNING: untranslated string: vulnerability = Vulnerability
+WARNING: untranslated string: vulnerable = Vulnerable
 WARNING: untranslated string: wireless network = WiFi Network
 WARNING: untranslated string: wlan client anonymous identity = Anonymous Identity
 WARNING: untranslated string: wlan client auth auto = Auto
@@ -1022,6 +1047,13 @@ WARNING: untranslated string: wlan client password = Password
 WARNING: untranslated string: wlan client tls cipher = TLS Cipher
 WARNING: untranslated string: wlan client tls version = TLS Version
 WARNING: untranslated string: wlanap = Access Point
+WARNING: untranslated string: wlanap auto = Automatic Channel Selection
+WARNING: untranslated string: wlanap broadcast ssid = Broadcast SSID
+WARNING: untranslated string: wlanap client isolation = Client Isolation
 WARNING: untranslated string: wlanap configuration = Access Point Configuration
+WARNING: untranslated string: wlanap management frame protection = Management Frame Protection (802.11w)
 WARNING: untranslated string: wlanap neighbor scan = Neighborhood scan
 WARNING: untranslated string: wlanap neighbor scan warning = Warning! Disabling may violate regulatory rules!
+WARNING: untranslated string: wlanap ssid = SSID
+WARNING: untranslated string: zoneconf notice reboot = Please reboot to apply your changes.
+WARNING: untranslated string: zoneconf title = Zone Configuration

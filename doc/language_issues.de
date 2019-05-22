@@ -237,6 +237,7 @@ WARNING: translation string unused: err rs 1
 WARNING: translation string unused: err rs 6 decrypt
 WARNING: translation string unused: err rs 7 untartst
 WARNING: translation string unused: err rs 8 untar
+WARNING: translation string unused: error
 WARNING: translation string unused: error config
 WARNING: translation string unused: error external access
 WARNING: translation string unused: esp encryption
@@ -706,6 +707,7 @@ WARNING: translation string unused: uptime and users
 WARNING: translation string unused: urlfilter background image
 WARNING: translation string unused: urlfilter background text
 WARNING: translation string unused: urlfilter enable jpeg
+WARNING: translation string unused: urlfilter safesearch
 WARNING: translation string unused: urlfilter update information
 WARNING: translation string unused: urlfilter update notification
 WARNING: translation string unused: urlfilter update results
@@ -734,14 +736,31 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
+WARNING: translation string unused: zoneconf access native
+WARNING: translation string unused: zoneconf access none
+WARNING: translation string unused: zoneconf access vlan
+WARNING: translation string unused: zoneconf nic assignment
+WARNING: translation string unused: zoneconf nicmode bridge
+WARNING: translation string unused: zoneconf nicmode default
+WARNING: translation string unused: zoneconf nicmode macvtap
+WARNING: translation string unused: zoneconf val native assignment error
+WARNING: translation string unused: zoneconf val ppp assignment error
+WARNING: translation string unused: zoneconf val vlan amount assignment error
+WARNING: translation string unused: zoneconf val vlan tag assignment error
+WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: addons = Addons
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: community rules = Snort/VRT GPLv2 Community Rules
+WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: dead peer detection = Dead Peer Detection
 WARNING: untranslated string: default IP address = Default IP Address
 WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
 WARNING: untranslated string: emerging rules = Emergingthreats.net Community Rules
+WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
+WARNING: untranslated string: fallout zombieload ridl = Fallout/ZombieLoad/RIDL
+WARNING: untranslated string: force enable = Forced
+WARNING: untranslated string: foreshadow = Foreshadow
 WARNING: untranslated string: fwhost cust geoipgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian = Guardian
@@ -773,23 +792,31 @@ WARNING: untranslated string: guardian logtarget_console = unknown string
 WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
-WARNING: untranslated string: guardian priolevel_high = unknown string
-WARNING: untranslated string: guardian priolevel_low = unknown string
-WARNING: untranslated string: guardian priolevel_medium = unknown string
-WARNING: untranslated string: guardian priolevel_very_low = unknown string
-WARNING: untranslated string: guardian priority level = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: guardian watch snort alertfile = unknown string
+WARNING: untranslated string: hardware vulnerabilities = Hardware Vulnerabilities
 WARNING: untranslated string: ids hide = Hide
 WARNING: untranslated string: ids rules update = Ruleset
 WARNING: untranslated string: ids show = Show
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours = unknown string
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: interface mode = Interface
+WARNING: untranslated string: meltdown = Meltdown
+WARNING: untranslated string: mitigated = Mitigated
 WARNING: untranslated string: no data = unknown string
+WARNING: untranslated string: not affected = Not Affected
+WARNING: untranslated string: please reboot to apply your changes = Please reboot to apply your changes
+WARNING: untranslated string: processor vulnerability mitigations = Processor Vulnerability Mitigations
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
 WARNING: untranslated string: show tls-auth key = Show tls-auth key
+WARNING: untranslated string: smt disabled = unknown string
+WARNING: untranslated string: smt enabled = unknown string
+WARNING: untranslated string: smt not supported = unknown string
+WARNING: untranslated string: spectre variant 1 = Spectre Variant 1
+WARNING: untranslated string: spectre variant 2 = Spectre Variant 2
+WARNING: untranslated string: spectre variant 4 = Spectre Variant 4
 WARNING: untranslated string: vpn statistics n2n = unknown string
+WARNING: untranslated string: vulnerability = Vulnerability
+WARNING: untranslated string: vulnerable = Vulnerable

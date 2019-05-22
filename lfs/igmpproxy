@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.1
+VER        = 0.2.1
 
 THISAPP    = igmpproxy-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = igmpproxy
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = ""
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c56f41ec195bc1fe016369bf74efc5a1
+$(DL_FILE)_MD5 = 3a9c2cb42c1f5ee0cb769a4884545641
 
 install : $(TARGET)
 
@@ -77,13 +77,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1  < $(DIR_SRC)/src/patches/igmpproxy-001-Send-IGMP-packets-with-IP-Router-Alert-option-RFC-21.patch
-	cd $(DIR_APP) && patch -Np1  < $(DIR_SRC)/src/patches/igmpproxy-002-Change-default-interface-state-to-disabled-wrt-29458.patch
-	cd $(DIR_APP) && patch -Np1  < $(DIR_SRC)/src/patches/igmpproxy-003-Restrict-igmp-reports-for-downstream-interfaces-wrt-.patch
-	cd $(DIR_APP) && patch -Np1  < $(DIR_SRC)/src/patches/igmpproxy-004-Restrict-igmp-reports-forwarding-to-upstream-interfa.patch
-	cd $(DIR_APP) && patch -Np1  < $(DIR_SRC)/src/patches/igmpproxy-100-use-monotic-clock-instead-of-time-of-day.patch
-	cd $(DIR_APP) && aclocal && automake --add-missing && autoreconf
-	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

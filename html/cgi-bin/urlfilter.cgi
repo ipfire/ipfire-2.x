@@ -138,7 +138,6 @@ $filtersettings{'BLOCK_IP_ADDR'} = 'off';
 $filtersettings{'BLOCK_ALL'} = 'off';
 $filtersettings{'ENABLE_EMPTY_ADS'} = 'off';
 $filtersettings{'ENABLE_GLOBAL_WHITELIST'} = 'off';
-$filtersettings{'ENABLE_SAFESEARCH'} = 'off';
 $filtersettings{'ENABLE_LOG'} = 'off';
 $filtersettings{'ENABLE_USERNAME_LOG'} = 'off';
 $filtersettings{'ENABLE_CATEGORY_LOG'} = 'off';
@@ -1057,9 +1056,6 @@ $checked{'ENABLE_EMPTY_ADS'}{$filtersettings{'ENABLE_EMPTY_ADS'}} = "checked='ch
 $checked{'ENABLE_GLOBAL_WHITELIST'}{'off'} = '';
 $checked{'ENABLE_GLOBAL_WHITELIST'}{'on'} = '';
 $checked{'ENABLE_GLOBAL_WHITELIST'}{$filtersettings{'ENABLE_GLOBAL_WHITELIST'}} = "checked='checked'";
-$checked{'ENABLE_SAFESEARCH'}{'off'} = '';
-$checked{'ENABLE_SAFESEARCH'}{'on'} = '';
-$checked{'ENABLE_SAFESEARCH'}{$filtersettings{'ENABLE_SAFESEARCH'}} = "checked='checked'";
 $checked{'ENABLE_LOG'}{'off'} = '';
 $checked{'ENABLE_LOG'}{'on'} = '';
 $checked{'ENABLE_LOG'}{$filtersettings{'ENABLE_LOG'}} = "checked='checked'";
@@ -1474,20 +1470,16 @@ print <<END
 	<td><input type='checkbox' name='ENABLE_LOG' $checked{'ENABLE_LOG'}{'on'} /></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'urlfilter safesearch'}:</td>
-	<td><input type='checkbox' name='ENABLE_SAFESEARCH' $checked{'ENABLE_SAFESEARCH'}{'on'} /></td>
+	<td class='base'>$Lang::tr{'urlfilter empty ads'}:</td>
+	<td><input type='checkbox' name='ENABLE_EMPTY_ADS' $checked{'ENABLE_EMPTY_ADS'}{'on'} /></td>
 	<td class='base'>$Lang::tr{'urlfilter username log'}:</td>
 	<td><input type='checkbox' name='ENABLE_USERNAME_LOG' $checked{'ENABLE_USERNAME_LOG'}{'on'} /></td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'urlfilter empty ads'}:</td>
-	<td><input type='checkbox' name='ENABLE_EMPTY_ADS' $checked{'ENABLE_EMPTY_ADS'}{'on'} /></td>
-	<td class='base'>$Lang::tr{'urlfilter category log'}:</td>
-	<td><input type='checkbox' name='ENABLE_CATEGORY_LOG' $checked{'ENABLE_CATEGORY_LOG'}{'on'} /></td>
-</tr>
-<tr>
 	<td class='base'>$Lang::tr{'urlfilter block ip'}:</td>
 	<td><input type='checkbox' name='BLOCK_IP_ADDR' $checked{'BLOCK_IP_ADDR'}{'on'} /></td>
+	<td class='base'>$Lang::tr{'urlfilter category log'}:</td>
+	<td><input type='checkbox' name='ENABLE_CATEGORY_LOG' $checked{'ENABLE_CATEGORY_LOG'}{'on'} /></td>
 </tr>
 <tr>
 	<td class='base'>$Lang::tr{'urlfilter block all'}:</td>
@@ -2834,47 +2826,15 @@ sub writeconfigfile
 		}
 	}
 
-	if ((($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles)) || ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on'))
-	{
+	if (($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles)) {
 		print FILE "rewrite rew-rule-1 {\n";
 
-		if (($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles))
+		print FILE "    # rewrite localfiles\n";
+		foreach (@repositoryfiles)
 		{
-			print FILE "    # rewrite localfiles\n";
-			foreach (@repositoryfiles)
-			{
-				print FILE "    s@.*/$_\$\@http://$netsettings{'GREEN_ADDRESS'}:$http_port/repository/$_\@i\n";
-			}
+			print FILE "    s@.*/$_\$\@http://$netsettings{'GREEN_ADDRESS'}:$http_port/repository/$_\@i\n";
 		}
-
-		if ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on')
-		{
-			print FILE "    # rewrite safesearch\n";
-			print FILE "    s@(.*\\Wgoogle\\.\\w+/(webhp|search|imghp|images|grphp|groups|nwshp|frghp|froogle)\\?)(.*)(\\bsafe=\\w+)(.*)\@\\1\\3safe=strict\\5\@i\n";
-			print FILE "    s@(.*\\Wgoogle\\.\\w+/(webhp|search|imghp|images|grphp|groups|nwshp|frghp|froogle)\\?)(.*)\@\\1safe=strict\\\&\\3\@i\n";
-			print FILE "    s@(.*\\Wsearch\\.yahoo\\.\\w+/search\\W)(.*)(\\bvm=\\w+)(.*)\@\\1\\2vm=r\\4\@i\n";
-			print FILE "    s@(.*\\Wsearch\\.yahoo\\.\\w+/search\\W.*)\@\\1\\\&vm=r\@i\n";
-			print FILE "    s@(.*\\Walltheweb\\.com/customize\\?)(.*)(\\bcopt_offensive=\\w+)(.*)\@\\1\\2copt_offensive=on\\4\@i\n";
-			print FILE "    s@(.*\\Wbing\\.\\w+/)(.*)(\\badlt=\\w+)(.*)\@\\1\\2adlt=strict\\4\@i\n";
-			print FILE "    s@(.*\\Wbing\\.\\w+/.*)\@\\1\\\&adlt=strict\@i\n";
-		}
-
 		print FILE "}\n\n";
-
-		if ((!($filtersettings{'UNFILTERED_CLIENTS'} eq '')) && ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on')) {
-			print FILE "rewrite rew-rule-2 {\n";
-			if (($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles))
-			{
-				print FILE "    # rewrite localfiles\n";
-				foreach (@repositoryfiles)
-				{
-					print FILE "    s@.*/$_\$\@http://$netsettings{'GREEN_ADDRESS'}:$http_port/repository/$_\@i\n";
-				}
-			} else {
-				print FILE "    # rewrite nothing\n";
-			}
-			print FILE "}\n\n";
-		}
 	}
 
 	if (!($filtersettings{'UNFILTERED_CLIENTS'} eq '')) {
@@ -3083,10 +3043,6 @@ sub writeconfigfile
 	if (!($filtersettings{'UNFILTERED_CLIENTS'} eq '')) {
 		print FILE "    unfiltered {\n";
 		print FILE "        pass all\n";
-		if ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on')
-		{
-			print FILE "        rewrite rew-rule-2\n";
-		}
 		print FILE "    }\n\n";
 	}
 	if (!($filtersettings{'BANNED_CLIENTS'} eq '')) {
@@ -3215,7 +3171,7 @@ sub writeconfigfile
 			print FILE "        logfile".$ident." urlfilter.log\n";
 		}
 	}
-	if ((($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles)) || ($filtersettings{'ENABLE_SAFESEARCH'} eq 'on'))
+	if (($filtersettings{'ENABLE_REWRITE'} eq 'on') && (@repositoryfiles))
 	{
 		print FILE "        rewrite rew-rule-1\n";
 	}

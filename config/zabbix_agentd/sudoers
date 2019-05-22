@@ -8,10 +8,10 @@
 # Some hints:
 # - It is strongly recommended to edit this file only using the visudo -f <filename> command. If you mess up this file,
 #   you might end up locking yourself out of your system!
-# - Append the full path to each command, using "," as separator.
+# - Append the full path incl. parameters to each command, using "," as separator.
 # - Only add commands you really need. Zabbix should not have more rights than it has to.
 #
-# Uncomment the following two lines and edit the example of commands to fit your needs:
+# Append / edit the following list of commands to fit your needs:
 #
-#Defaults:zabbix !requiretty
-#zabbix ALL=(ALL) NOPASSWD: <path to command1>, <path to command2>
+Defaults:zabbix !requiretty
+zabbix ALL=(ALL) NOPASSWD: /opt/pakfire/pakfire status

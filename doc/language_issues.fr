@@ -177,6 +177,7 @@ WARNING: translation string unused: could not open installed updates file
 WARNING: translation string unused: could not open update information file
 WARNING: translation string unused: create
 WARNING: translation string unused: create new backup
+WARNING: translation string unused: cryptographic settings
 WARNING: translation string unused: current dynamic leases
 WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
@@ -529,6 +530,7 @@ WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
+WARNING: translation string unused: ovpn hmac
 WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn mtu-disc
 WARNING: translation string unused: ovpn mtu-disc and mtu not 1500
@@ -747,6 +749,7 @@ WARNING: translation string unused: uptime and users
 WARNING: translation string unused: urlfilter background image
 WARNING: translation string unused: urlfilter background text
 WARNING: translation string unused: urlfilter enable jpeg
+WARNING: translation string unused: urlfilter safesearch
 WARNING: translation string unused: urlfilter update information
 WARNING: translation string unused: urlfilter update notification
 WARNING: translation string unused: urlfilter update results
@@ -777,16 +780,27 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Captive clients = unknown string
+WARNING: untranslated string: Captive delete logo = Delete Logo
 WARNING: untranslated string: Daily = Daily
 WARNING: untranslated string: Disabled = Disabled
 WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: Weekly = Weekly
+WARNING: untranslated string: advproxy errmsg wpad invalid ip or mask = WPAD: Invalid IP or subnet for excluded IP subnet
+WARNING: untranslated string: advproxy wpad example dst_noproxy_ip = e.g. 192.168.2.0/255.255.255.0
+WARNING: untranslated string: advproxy wpad example dst_noproxy_url = e.g. *.ipfire.org*
+WARNING: untranslated string: advproxy wpad label dst_noproxy_ip = Excluded IP Subnets (one per line)
+WARNING: untranslated string: advproxy wpad label dst_noproxy_url = Excluded URL s (one per line)
+WARNING: untranslated string: advproxy wpad notice = Notice: For WPAD/PAC to work properly, furtcher changes need to be made. Please see the <a href="https://wiki.ipfire.org/configuration/network/proxy/extend/wpad" target="_blank">Wiki</a>.
+WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Protocol (WPAD) / Proxy Auto-Config (PAC)
+WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: bytes = unknown string
-WARNING: untranslated string: default IP address = Default IP Address
-WARNING: untranslated string: dns forward disable dnssec = Disable DNSSEC (dangerous)
-WARNING: untranslated string: dns forwarding dnssec disabled notice = (DNSSEC disabled)
+WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: dnsforward dnssec disabled = DNSSEC Validation is disabled
 WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
+WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
+WARNING: untranslated string: fallout zombieload ridl = Fallout/ZombieLoad/RIDL
+WARNING: untranslated string: force enable = Forced
+WARNING: untranslated string: foreshadow = Foreshadow
 WARNING: untranslated string: fwhost cust geoipgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: generate ptr = Generate PTR
@@ -818,13 +832,8 @@ WARNING: untranslated string: guardian logtarget_console = unknown string
 WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
-WARNING: untranslated string: guardian priolevel_high = unknown string
-WARNING: untranslated string: guardian priolevel_low = unknown string
-WARNING: untranslated string: guardian priolevel_medium = unknown string
-WARNING: untranslated string: guardian priolevel_very_low = unknown string
-WARNING: untranslated string: guardian priority level = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: guardian watch snort alertfile = unknown string
+WARNING: untranslated string: hardware vulnerabilities = Hardware Vulnerabilities
 WARNING: untranslated string: ids apply = Apply
 WARNING: untranslated string: ids apply ruleset changes = The ruleset changes are being applied. Please wait until all operations have completed successfully...
 WARNING: untranslated string: ids automatic rules update = Automatic Rule Update
@@ -844,31 +853,35 @@ WARNING: untranslated string: ids show = Show
 WARNING: untranslated string: ids working = Changes are being applied. Please wait until all operations have completed successfully...
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours = unknown string
 WARNING: untranslated string: info messages = unknown string
-WARNING: untranslated string: interface mode = Interface
-WARNING: untranslated string: invalid input for interface address = Invalid input for interface address
-WARNING: untranslated string: invalid input for interface mode = Invalid input for interface mode
-WARNING: untranslated string: invalid input for interface mtu = Invalid input to interface MTU
-WARNING: untranslated string: invalid input for local ip address = Invalid input for local IP address
-WARNING: untranslated string: invalid input for mode = Invalid input for mode
-WARNING: untranslated string: ipsec connection = IPsec Connection
-WARNING: untranslated string: ipsec interface mode gre = GRE
-WARNING: untranslated string: ipsec interface mode none = - None (Default) -
-WARNING: untranslated string: ipsec interface mode vti = VTI
-WARNING: untranslated string: ipsec mode transport = Transport
-WARNING: untranslated string: ipsec mode tunnel = Tunnel
-WARNING: untranslated string: ipsec settings = IPsec Settings
-WARNING: untranslated string: local ip address = Local IP Address
-WARNING: untranslated string: mtu = MTU
+WARNING: untranslated string: meltdown = Meltdown
+WARNING: untranslated string: mitigated = Mitigated
 WARNING: untranslated string: no data = unknown string
+WARNING: untranslated string: not affected = Not Affected
+WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: pakfire ago = ago.
+WARNING: untranslated string: please reboot to apply your changes = Please reboot to apply your changes
+WARNING: untranslated string: processor vulnerability mitigations = Processor Vulnerability Mitigations
 WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
+WARNING: untranslated string: smt disabled = unknown string
+WARNING: untranslated string: smt enabled = unknown string
+WARNING: untranslated string: smt not supported = unknown string
+WARNING: untranslated string: spectre variant 1 = Spectre Variant 1
+WARNING: untranslated string: spectre variant 2 = Spectre Variant 2
+WARNING: untranslated string: spectre variant 4 = Spectre Variant 4
 WARNING: untranslated string: ssh agent forwarding = Allow SSH Agent Forwarding
-WARNING: untranslated string: subnet mask = Subnet Mask
 WARNING: untranslated string: system is offline = The system is offline.
-WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: update ruleset = Update ruleset
 WARNING: untranslated string: vpn statistics n2n = unknown string
+WARNING: untranslated string: vulnerability = Vulnerability
+WARNING: untranslated string: vulnerable = Vulnerable
+WARNING: untranslated string: wlanap auto = Automatic Channel Selection
+WARNING: untranslated string: wlanap broadcast ssid = Broadcast SSID
+WARNING: untranslated string: wlanap client isolation = Client Isolation
+WARNING: untranslated string: wlanap management frame protection = Management Frame Protection (802.11w)
+WARNING: untranslated string: wlanap ssid = SSID
+WARNING: untranslated string: zoneconf notice reboot = Please reboot to apply your changes.
+WARNING: untranslated string: zoneconf title = Zone Configuration

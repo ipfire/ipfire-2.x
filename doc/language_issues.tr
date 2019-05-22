@@ -530,6 +530,7 @@ WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
+WARNING: translation string unused: ovpn hmac
 WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn mtu-disc
 WARNING: translation string unused: ovpn mtu-disc and mtu not 1500
@@ -748,6 +749,7 @@ WARNING: translation string unused: uptime and users
 WARNING: translation string unused: urlfilter background image
 WARNING: translation string unused: urlfilter background text
 WARNING: translation string unused: urlfilter enable jpeg
+WARNING: translation string unused: urlfilter safesearch
 WARNING: translation string unused: urlfilter update information
 WARNING: translation string unused: urlfilter update notification
 WARNING: translation string unused: urlfilter update results
@@ -778,19 +780,33 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: Captive clients = unknown string
+WARNING: untranslated string: Captive delete logo = Delete Logo
 WARNING: untranslated string: Daily = Daily
 WARNING: untranslated string: Disabled = Disabled
 WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: Weekly = Weekly
+WARNING: untranslated string: advproxy errmsg wpad invalid ip or mask = WPAD: Invalid IP or subnet for excluded IP subnet
+WARNING: untranslated string: advproxy wpad example dst_noproxy_ip = e.g. 192.168.2.0/255.255.255.0
+WARNING: untranslated string: advproxy wpad example dst_noproxy_url = e.g. *.ipfire.org*
+WARNING: untranslated string: advproxy wpad label dst_noproxy_ip = Excluded IP Subnets (one per line)
+WARNING: untranslated string: advproxy wpad label dst_noproxy_url = Excluded URL s (one per line)
+WARNING: untranslated string: advproxy wpad notice = Notice: For WPAD/PAC to work properly, furtcher changes need to be made. Please see the <a href="https://wiki.ipfire.org/configuration/network/proxy/extend/wpad" target="_blank">Wiki</a>.
+WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Protocol (WPAD) / Proxy Auto-Config (PAC)
+WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
+WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: default IP address = Default IP Address
 WARNING: untranslated string: dns forward disable dnssec = Disable DNSSEC (dangerous)
 WARNING: untranslated string: dns forwarding dnssec disabled notice = (DNSSEC disabled)
 WARNING: untranslated string: dnsforward dnssec disabled = DNSSEC Validation is disabled
 WARNING: untranslated string: dnsforward forward_servers = Nameservers
 WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
+WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
+WARNING: untranslated string: fallout zombieload ridl = Fallout/ZombieLoad/RIDL
+WARNING: untranslated string: force enable = Forced
+WARNING: untranslated string: foreshadow = Foreshadow
 WARNING: untranslated string: fwdfw all subnets = All subnets
 WARNING: untranslated string: fwhost cust geoipgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
@@ -823,13 +839,8 @@ WARNING: untranslated string: guardian logtarget_console = unknown string
 WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
-WARNING: untranslated string: guardian priolevel_high = unknown string
-WARNING: untranslated string: guardian priolevel_low = unknown string
-WARNING: untranslated string: guardian priolevel_medium = unknown string
-WARNING: untranslated string: guardian priolevel_very_low = unknown string
-WARNING: untranslated string: guardian priority level = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: guardian watch snort alertfile = unknown string
+WARNING: untranslated string: hardware vulnerabilities = Hardware Vulnerabilities
 WARNING: untranslated string: ids apply = Apply
 WARNING: untranslated string: ids apply ruleset changes = The ruleset changes are being applied. Please wait until all operations have completed successfully...
 WARNING: untranslated string: ids automatic rules update = Automatic Rule Update
@@ -864,16 +875,28 @@ WARNING: untranslated string: ipsec mode transport = Transport
 WARNING: untranslated string: ipsec mode tunnel = Tunnel
 WARNING: untranslated string: ipsec settings = IPsec Settings
 WARNING: untranslated string: local ip address = Local IP Address
+WARNING: untranslated string: meltdown = Meltdown
+WARNING: untranslated string: mitigated = Mitigated
 WARNING: untranslated string: mtu = MTU
 WARNING: untranslated string: no data = unknown string
+WARNING: untranslated string: not affected = Not Affected
 WARNING: untranslated string: ovpn error dh = The Diffie-Hellman parameter needs to be in minimum 2048 bit! <br>Please generate or upload a new Diffie-Hellman parameter, this can be made below in the section "Diffie-Hellman parameters options".</br>
 WARNING: untranslated string: ovpn error md5 = You host certificate uses MD5 for the signature which is not accepted anymore. <br>Please update to the latest IPFire version and generate a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: please reboot to apply your changes = Please reboot to apply your changes
+WARNING: untranslated string: processor vulnerability mitigations = Processor Vulnerability Mitigations
 WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
+WARNING: untranslated string: smt disabled = unknown string
+WARNING: untranslated string: smt enabled = unknown string
+WARNING: untranslated string: smt not supported = unknown string
+WARNING: untranslated string: spectre variant 1 = Spectre Variant 1
+WARNING: untranslated string: spectre variant 2 = Spectre Variant 2
+WARNING: untranslated string: spectre variant 4 = Spectre Variant 4
 WARNING: untranslated string: ssh active sessions = Active logins
 WARNING: untranslated string: ssh agent forwarding = Allow SSH Agent Forwarding
 WARNING: untranslated string: ssh login time = Logged in since
@@ -886,5 +909,14 @@ WARNING: untranslated string: update ruleset = Update ruleset
 WARNING: untranslated string: vpn start action add = Wait for connection initiation
 WARNING: untranslated string: vpn statistics n2n = unknown string
 WARNING: untranslated string: vpn wait = WAITING
+WARNING: untranslated string: vulnerability = Vulnerability
+WARNING: untranslated string: vulnerable = Vulnerable
+WARNING: untranslated string: wlanap auto = Automatic Channel Selection
+WARNING: untranslated string: wlanap broadcast ssid = Broadcast SSID
+WARNING: untranslated string: wlanap client isolation = Client Isolation
+WARNING: untranslated string: wlanap management frame protection = Management Frame Protection (802.11w)
 WARNING: untranslated string: wlanap neighbor scan = Neighborhood scan
 WARNING: untranslated string: wlanap neighbor scan warning = Warning! Disabling may violate regulatory rules!
+WARNING: untranslated string: wlanap ssid = SSID
+WARNING: untranslated string: zoneconf notice reboot = Please reboot to apply your changes.
+WARNING: untranslated string: zoneconf title = Zone Configuration

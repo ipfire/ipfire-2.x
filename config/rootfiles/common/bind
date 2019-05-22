@@ -274,7 +274,7 @@ usr/lib/libdns.so.1105.0.0
 #usr/lib/libisc.la
 #usr/lib/libisc.so
 usr/lib/libisc.so.1100
-usr/lib/libisc.so.1100.0.1
+usr/lib/libisc.so.1100.1.0
 #usr/lib/libisccc.la
 #usr/lib/libisccc.so
 usr/lib/libisccc.so.161

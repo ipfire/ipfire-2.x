@@ -87,11 +87,13 @@ srv/web/ipfire/cgi-bin/updatexlrator.cgi
 #srv/web/ipfire/cgi-bin/upnp.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 srv/web/ipfire/cgi-bin/wakeonlan.cgi
 srv/web/ipfire/cgi-bin/webaccess.cgi
 srv/web/ipfire/cgi-bin/wireless.cgi
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
 srv/web/ipfire/cgi-bin/wlanap.cgi
+srv/web/ipfire/cgi-bin/zoneconf.cgi
 #srv/web/ipfire/html
 srv/web/ipfire/html/blob.gif
 #srv/web/ipfire/html/captive

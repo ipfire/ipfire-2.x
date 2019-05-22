@@ -80,6 +80,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	$(UPDATE_AUTOMAKE)
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/sarg/sarg-2.3.11-format.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/sarg/sarg-2.3.11-configure.patch
+
+	cd $(DIR_APP) && autoreconf -vfi
 
 	# Update gettext Makefile
 	cd $(DIR_APP) && cp -vf /usr/share/gettext/po/Makefile.in.in po/Makefile.in.in

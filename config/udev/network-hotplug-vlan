@@ -23,40 +23,51 @@
 
 [ -n "${INTERFACE}" ] || exit 2
 
-CONFIG_FILE="/var/ipfire/ethernet/vlans"
+VLAN_CONFIG_FILE="/var/ipfire/ethernet/vlans"
+MAIN_CONFIG_FILE="/var/ipfire/ethernet/settings"
 
-# Skip immediately if no configuration file has been found.
-[ -e "${CONFIG_FILE}" ] || exit 0
+# Skip immediately if a configuration file is missing.
+[ -e "${VLAN_CONFIG_FILE}" ] && [ -e "${MAIN_CONFIG_FILE}" ] || exit 0
 
-eval $(/usr/local/bin/readhash ${CONFIG_FILE})
+eval $(/usr/local/bin/readhash ${VLAN_CONFIG_FILE})
+eval $(/usr/local/bin/readhash ${MAIN_CONFIG_FILE})
 
 for interface in green0 red0 blue0 orange0; do
 	case "${interface}" in
 		green*)
+			ZONE_MODE=${GREEN_MODE}
 			PARENT_DEV=${GREEN_PARENT_DEV}
 			VLAN_ID=${GREEN_VLAN_ID}
 			MAC_ADDRESS=${GREEN_MAC_ADDRESS}
 			;;
 		red*)
+			ZONE_MODE=${RED_MODE}
 			PARENT_DEV=${RED_PARENT_DEV}
 			VLAN_ID=${RED_VLAN_ID}
 			MAC_ADDRESS=${RED_MAC_ADDRESS}
 			;;
 		blue*)
+			ZONE_MODE=${BLUE_MODE}
 			PARENT_DEV=${BLUE_PARENT_DEV}
 			VLAN_ID=${BLUE_VLAN_ID}
 			MAC_ADDRESS=${BLUE_MAC_ADDRESS}
 			;;
 		orange*)
+			ZONE_MODE=${ORANGE_MODE}
 			PARENT_DEV=${ORANGE_PARENT_DEV}
 			VLAN_ID=${ORANGE_VLAN_ID}
 			MAC_ADDRESS=${ORANGE_MAC_ADDRESS}
 			;;
 	esac
 
-	# If the parent device does not match the interface that
+	# If the parent device (MAC or name) does not match the interface that
 	# has just come up, we will go on for the next one.
-	[ "${PARENT_DEV}" = "${INTERFACE}" ] || continue
+	[ "${PARENT_DEV}" = "${INTERFACE}" ] || [ "${PARENT_DEV}" = "$(</sys/class/net/${INTERFACE}/address)" ] || continue
+
+	# If the current zone is operating in bridge mode, give the VLAN interface a generic name (e.g. eth0.99 for VLAN 99 on eth0)
+	if [ "${ZONE_MODE}" = "bridge" ]; then
+		interface="${INTERFACE}.${VLAN_ID}"
+	fi
 
 	# Check if the interface does already exists.
 	# If so, we skip creating it.
@@ -71,7 +82,7 @@ for interface in green0 red0 blue0 orange0; do
 	fi
 
 	# Build command line.
-	command="ip link add link ${PARENT_DEV} name ${interface}"
+	command="ip link add link ${INTERFACE} name ${interface}"
 	if [ -n "${MAC_ADDRESS}" ]; then
 		command="${command} address ${MAC_ADDRESS}"
 	fi
@@ -81,7 +92,7 @@ for interface in green0 red0 blue0 orange0; do
 	${command}
 
 	# Bring up the parent device.
-	ip link set ${PARENT_DEV} up
+	ip link set ${INTERFACE} up
 done
 
 exit 0

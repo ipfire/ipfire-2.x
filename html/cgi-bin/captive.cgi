@@ -104,7 +104,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$settings{'ENABLE_GREEN'}		= $cgiparams{'ENABLE_GREEN'};
 	$settings{'ENABLE_BLUE'}		= $cgiparams{'ENABLE_BLUE'};
 	$settings{'AUTH'}				= $cgiparams{'AUTH'};
-	$settings{'TITLE'}				= $cgiparams{'TITLE'};
+	$settings{'TITLE'}			= &Header::escape($cgiparams{'TITLE'});
 	$settings{'COLOR'}			= $cgiparams{'COLOR'};
 	$settings{'SESSION_TIME'}		= $cgiparams{'SESSION_TIME'};
 
@@ -140,6 +140,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 				system("/usr/local/bin/wirelessctrl");
 		}
 	}
+}
+
+if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive delete logo'}") {
+	unlink $logo;
 }
 
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'Captive generate coupons'}") {
@@ -381,7 +385,10 @@ if (-e $logo) {
 	print <<END;
 		<tr>
 			<td>$Lang::tr{'Captive logo uploaded'}</td>
-			<td>$Lang::tr{'yes'}</td>
+			<td>
+				$Lang::tr{'yes'}&nbsp;
+				<input type='submit' name='ACTION' value="$Lang::tr{'Captive delete logo'}"/>
+			</td>
 		</tr>
 END
 }

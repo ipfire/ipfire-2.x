@@ -24,9 +24,10 @@
 
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
+# If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.23"							# Version number
-CORE="131"							# Core Level (Filename)
-PAKFIRE_CORE="131"						# Core Level (PAKFIRE)
+CORE="132"							# Core Level (Filename)
+PAKFIRE_CORE="132"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -1410,6 +1411,7 @@ buildipfire() {
   lfsmake2 spice
   lfsmake2 sdl
   lfsmake2 libusbredir
+  lfsmake2 libseccomp
   lfsmake2 qemu
   lfsmake2 sane
   lfsmake2 netpbm
@@ -1594,6 +1596,7 @@ buildipfire() {
   lfsmake2 zabbix_agentd
   lfsmake2 flashrom
   lfsmake2 firmware-update
+  lfsmake2 tshark
 }
 
 buildinstaller() {

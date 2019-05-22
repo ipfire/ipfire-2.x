@@ -174,27 +174,17 @@ sub downloadruleset {
 
 	# Check if an upstream proxy is configured.
 	if ($proxysettings{'UPSTREAM_PROXY'}) {
-		my ($peer, $peerport) = (/^(?:[a-zA-Z ]+\:\/\/)?(?:[A-Za-z0-9\_\.\-]*?(?:\:[A-Za-z0-9\_\.\-]*?)?\@)?([a-zA-Z0-9\.\_\-]*?)(?:\:([0-9]{1,5}))?(?:\/.*?)?$/);
 		my $proxy_url;
 
-		# Check if we got a peer.
-		if ($peer) {
-			$proxy_url = "http://";
+		$proxy_url = "http://";
 
-			# Check if the proxy requires authentication.
-			if (($proxysettings{'UPSTREAM_USER'}) && ($proxysettings{'UPSTREAM_PASSWORD'})) {
-				$proxy_url .= "$proxysettings{'UPSTREAM_USER'}\:$proxysettings{'UPSTREAM_PASSWORD'}\@";
-			}
-
-			# Add proxy server address and port.
-			$proxy_url .= "$peer\:$peerport";
-		} else {
-			# Log error message and break.
-			&_log_to_syslog("Could not proper configure the proxy server access.");
-
-			# Return "1" - false.
-			return 1;
+		# Check if the proxy requires authentication.
+		if (($proxysettings{'UPSTREAM_USER'}) && ($proxysettings{'UPSTREAM_PASSWORD'})) {
+			$proxy_url .= "$proxysettings{'UPSTREAM_USER'}\:$proxysettings{'UPSTREAM_PASSWORD'}\@";
 		}
+
+		# Add proxy server address and port.
+		$proxy_url .= $proxysettings{'UPSTREAM_PROXY'};
 
 		# Setup proxy settings.
 		$downloader->proxy(['http', 'https'], $proxy_url);

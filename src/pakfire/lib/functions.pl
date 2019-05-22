@@ -108,6 +108,7 @@ sub usage {
   &Pakfire::message("               <update> - Contacts the servers for new lists of paks.");
   &Pakfire::message("               <upgrade> - Installs the latest version of all paks.");
   &Pakfire::message("               <list> - Outputs a short list with all available paks.");
+  &Pakfire::message("               <status> - Outputs a summary about available core upgrades, updates and a required reboot");
   &Pakfire::message("");
   &Pakfire::message("       Global options:");
   &Pakfire::message("               --non-interactive --> Enables the non-interactive mode.");
@@ -891,6 +892,58 @@ sub progress_bar {
 		}	
 		$progress = sprintf("%.2f%%", 100*$got/+$total);
     sprintf "$color{'lightgreen'}%-20s %7s |%-${width}s| %10s$color{'normal'}\r",$show_bfile, $progress, $char x (($width-1)*$got/$total). '>', beautifysize($got);
+}
+
+sub updates_available {
+	# Get packets with updates available
+	my @upgradepaks = &Pakfire::dblist("upgrade", "noweb");
+
+	# Get the length of the returned array
+	my $updatecount = scalar @upgradepaks;
+
+	return "$updatecount";
+}
+
+sub coreupdate_available {
+	eval(`grep "core_" $Conf::dbdir/lists/core-list.db`);
+	if ("$core_release" > "$Conf::core_mine") {
+		return "yes ($core_release)";
+	}
+	else {
+		return "no";
+	}
+}
+
+sub reboot_required {
+	if ( -e "/var/run/need_reboot" ) {
+		return "yes";
+	}
+	else {
+		return "no";
+	}
+}
+
+sub status {
+	# General info
+	my $return = "Core-Version: $Conf::version\n";
+	$return .= "Core-Update-Level: $Conf::core_mine\n";
+	$return .= "Last update: " . &General::age("/opt/pakfire/db/core/mine") . " ago\n";
+	$return .= "Last core-list update: " . &General::age("/opt/pakfire/db/lists/core-list.db") . " ago\n";
+	$return .= "Last server-list update: " . &General::age("/opt/pakfire/db/lists/server-list.db") . " ago\n";
+	$return .= "Last packages-list update: " . &General::age("/opt/pakfire/db/lists/packages_list.db") . " ago\n";
+
+	# Get availability of core updates
+	$return .= "Core-Update available: " . &Pakfire::coreupdate_available() . "\n";
+
+	# Get availability of package updates
+	$return .= "Package-Updates available: " . &Pakfire::updates_available() . "\n";
+
+	# Test if reboot is required
+	$return .= "Reboot required: " . &Pakfire::reboot_required() . "\n";
+
+	# Return status text
+	print "$return";
+	exit 1;
 }
 
 1;
