@@ -707,6 +707,10 @@ write_safe_search_conf() {
 		# Yandex
 		echo "	local-zone: yandex.ru transparent"
 		echo "	local-data: \"yandex.ru A 213.180.193.56\""
+
+		# YouTube
+		echo "	local-zone: youtube.com transparent"
+		echo "	local-data: \"www.youtube.com CNAME restrictmoderate.youtube.com.\""
 	) > /etc/unbound/safe-search.conf
 }
 
