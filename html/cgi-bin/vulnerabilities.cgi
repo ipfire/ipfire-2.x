@@ -233,15 +233,11 @@ sub check_status($) {
 	my $status = <FILE>;
 	close(FILE);
 
-	if ($status =~ /^(Vulnerable): (.*)$/) {
-		return ($1, $2);
-	}
-
 	if ($status =~ /^(Mitigation): (.*vulnerable.*)$/) {
 		return ("Mitigation-SMT", $2);
 	}
 
-	if ($status =~ /^(Mitigation): (.*)$/) {
+	if ($status =~ /^(Vulnerable|Mitigation): (.*)$/) {
 		return ($1, $2);
 	} 
 
