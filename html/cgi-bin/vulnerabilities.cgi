@@ -125,12 +125,6 @@ for my $vuln (sort keys %VULNERABILITIES) {
 		$colour = "white";
 		$bgcolour = ${Header::colourred};
 
-	# Mitigated but smt is enabled
-	} elsif ($status eq "Mitigation-SMT") {
-		$status_message = $Lang::tr{'mitigated'};
-		$colour = "white";
-		$bgcolour = ${Header::colourred};
-
 	# Mitigated
 	} elsif ($status eq "Mitigation") {
 		$status_message = $Lang::tr{'mitigated'};
@@ -233,8 +227,9 @@ sub check_status($) {
 	my $status = <FILE>;
 	close(FILE);
 
+	# Fix status when something has been mitigated, but not fully, yet
 	if ($status =~ /^(Mitigation): (.*vulnerable.*)$/) {
-		return ("Mitigation-SMT", $2);
+		return ("Vulnerable", $2);
 	}
 
 	if ($status =~ /^(Vulnerable|Mitigation): (.*)$/) {
