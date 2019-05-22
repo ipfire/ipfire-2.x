@@ -128,19 +128,20 @@ for my $vuln (sort keys %VULNERABILITIES) {
 	# Mitigated but smt is enabled
 	} elsif ($status eq "Mitigation-SMT") {
 		$status_message = $Lang::tr{'mitigated'};
-		$colour = "black";
-		$bgcolour = ${Header::colourorange};
+		$colour = "white";
+		$bgcolour = ${Header::colourred};
 
 	# Mitigated
 	} elsif ($status eq "Mitigation") {
 		$status_message = $Lang::tr{'mitigated'};
-		$colour = "black";
-		$bgcolour = ${Header::colouryellow};
+		$colour = "white";
+		$bgcolour = ${Header::colourgreen};
 
+	# Unknown report from kernel
 	} else {
 		$status_message = $status;
-		$colour = "white";
-		$bgcolour = ${Header::colourblue};
+		$colour = "black";
+		$bgcolour = ${Header::colouryellow};
 	}
 
 	my $table_colour = ($id++ % 2) ? $color{'color22'} : $color{'color20'};
