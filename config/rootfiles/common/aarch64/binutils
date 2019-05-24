@@ -16,7 +16,9 @@ usr/bin/strings
 #usr/bin/strip
 #usr/include/ansidecl.h
 #usr/include/bfd.h
+#usr/include/bfd_stdint.h
 #usr/include/bfdlink.h
+#usr/include/diagnostics.h
 #usr/include/dis-asm.h
 #usr/include/libiberty.h
 #usr/include/plugin-api.h
@@ -286,11 +288,11 @@ usr/bin/strings
 #usr/lib/ldscripts/armelfb_linux_eabi.xu
 #usr/lib/ldscripts/armelfb_linux_eabi.xw
 #usr/lib/ldscripts/armelfb_linux_eabi.xwe
-usr/lib/libbfd-2.30.so
+usr/lib/libbfd-2.32.so
 #usr/lib/libbfd.a
 #usr/lib/libbfd.la
 #usr/lib/libbfd.so
-usr/lib/libopcodes-2.30.so
+usr/lib/libopcodes-2.32.so
 #usr/lib/libopcodes.a
 #usr/lib/libopcodes.la
 #usr/lib/libopcodes.so
@@ -358,6 +360,10 @@ usr/lib/libopcodes-2.30.so
 #usr/share/locale/ms/LC_MESSAGES/gprof.mo
 #usr/share/locale/nl/LC_MESSAGES/gprof.mo
 #usr/share/locale/nl/LC_MESSAGES/opcodes.mo
+#usr/share/locale/pt
+#usr/share/locale/pt/LC_MESSAGES
+#usr/share/locale/pt/LC_MESSAGES/bfd.mo
+#usr/share/locale/pt/LC_MESSAGES/binutils.mo
 #usr/share/locale/pt_BR/LC_MESSAGES/gprof.mo
 #usr/share/locale/pt_BR/LC_MESSAGES/ld.mo
 #usr/share/locale/pt_BR/LC_MESSAGES/opcodes.mo
@@ -422,7 +428,6 @@ usr/lib/libopcodes-2.30.so
 #usr/share/man/man1/elfedit.1
 #usr/share/man/man1/gprof.1
 #usr/share/man/man1/ld.1
-#usr/share/man/man1/nlmconv.1
 #usr/share/man/man1/nm.1
 #usr/share/man/man1/objcopy.1
 #usr/share/man/man1/objdump.1

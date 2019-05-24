@@ -36,6 +36,23 @@ PAK_VER    = 3
 
 DEPS       = ""
 
+# Normal build or $(TOOLS_DIR) build.
+#
+ifeq "$(ROOT)" ""
+  TARGET = $(DIR_INFO)/$(THISAPP)
+  CONFIGURE_ARGS = \
+	--prefix=/usr \
+	--enable-shared \
+	--with-system-expat \
+	--with-system-ffi \
+	--with-ensurepip
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+  CONFIGURE_ARGS = \
+	--prefix=$(TOOLS_DIR) \
+	--without-ensurepip
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -77,12 +94,14 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
-	rm -rf $(DIR_APP)/Modules/_ctypes/{darwin,libffi,libffi_arm_wince,libffi_msvc,libffi_osx}
-	cd $(DIR_APP) && OPT="$(CFLAGS)" ./configure \
-		--prefix=/usr \
-		--enable-shared \
-		--with-system-ffi
 
+ifeq "$(ROOT)" ""
+	rm -rf $(DIR_APP)/Modules/_ctypes/{darwin,libffi,libffi_arm_wince,libffi_msvc,libffi_osx}
+else
+	cd $(DIR_APP) && sed -i '/def add_multiarch_paths/a \        return' setup.py
+endif
+
+	cd $(DIR_APP) && OPT="$(CFLAGS)" ./configure $(CONFIGURE_ARGS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
