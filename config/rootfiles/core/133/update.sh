@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/squid stop
 
 # Extract files
 extract_files
@@ -43,6 +44,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/squid start
 
 # Finish
 /etc/init.d/fireinfo start
