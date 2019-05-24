@@ -572,6 +572,9 @@ sub _cleanup_rulesdir() {
 		# Skip element if it has config as file extension.
 		next if ($file =~ m/\.config$/);
 
+		# Skip rules file for whitelisted hosts.
+		next if ("$rulespath/$file" eq $whitelist_file);
+
 		# Delete the current processed file, if not, exit this function
 		# and return an error message.
 		unlink("$rulespath/$file") or return "Could not delete $rulespath/$file. $!\n";
