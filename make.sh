@@ -282,6 +282,7 @@ stdumount() {
 	umount $BASEDIR/build/usr/src/lfs		2>/dev/null;
 	umount $BASEDIR/build/usr/src/log		2>/dev/null;
 	umount $BASEDIR/build/usr/src/src		2>/dev/null;
+	umount $BASEDIR/build/usr/src		2>/dev/null;
 }
 
 now() {
@@ -469,6 +470,12 @@ prepareenv() {
 	mkdir -p $BASEDIR/build/{etc,usr/src} 2>/dev/null
 	mkdir -p $BASEDIR/build/{dev/{shm,pts},proc,sys}
 	mkdir -p $BASEDIR/{cache,ccache} 2>/dev/null
+
+	if [ "${ENABLE_RAMDISK}" = "on" ]; then
+		mkdir -p $BASEDIR/build/usr/src
+		mount -t tmpfs tmpfs -o size=4G,mode=1777 $BASEDIR/build/usr/src
+	fi
+
 	mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
 
 	mknod -m 600 $BASEDIR/build/dev/console c 5 1 2>/dev/null
@@ -727,7 +734,7 @@ fake_environ() {
 
 	# Fake kernel version, because some of the packages do not compile
 	# with kernel 3.0 and later.
-	env="${env} UTS_RELEASE=${KVER}"
+	env="${env} UTS_RELEASE=${KVER}-ipfire"
 
 	# Fake machine version.
 	env="${env} UTS_MACHINE=${BUILD_ARCH}"
@@ -892,6 +899,9 @@ update_contributors() {
 	return 0
 }
 
+# Default settings
+ENABLE_RAMDISK="auto"
+
 # Load configuration file
 if [ -f .config ]; then
 	. .config
@@ -911,6 +921,14 @@ if [ -n "${BUILD_ARCH}" ]; then
 	configure_build "${BUILD_ARCH}"
 else
 	configure_build "default"
+fi
+
+# Automatically enable/disable ramdisk usage
+if [ "${ENABLE_RAMDISK}" = "auto" ]; then
+	# Enable only when the host system has 4GB of RAM or more
+	if [ ${SYSTEM_MEMORY} -ge 3900 ]; then
+		ENABLE_RAMDISK="on"
+	fi
 fi
 
 buildtoolchain() {

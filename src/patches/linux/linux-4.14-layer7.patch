@@ -1,27 +1,8 @@
-diff --git a/include/linux/netfilter/xt_layer7.h b/include/linux/netfilter/xt_layer7.h
-new file mode 100644
-index 0000000..147cd64
---- /dev/null
-+++ b/include/linux/netfilter/xt_layer7.h
-@@ -0,0 +1,13 @@
-+#ifndef _XT_LAYER7_H
-+#define _XT_LAYER7_H
-+
-+#define MAX_PATTERN_LEN 8192
-+#define MAX_PROTOCOL_LEN 256
-+
-+struct xt_layer7_info {
-+    char protocol[MAX_PROTOCOL_LEN];
-+    char pattern[MAX_PATTERN_LEN];
-+    u_int8_t invert;
-+};
-+
-+#endif /* _XT_LAYER7_H */
 diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index d448a48..868a876 100644
+index 3172e14..798b8c9 100644
 --- a/include/linux/skbuff.h
 +++ b/include/linux/skbuff.h
-@@ -693,6 +693,9 @@ struct sk_buff {
+@@ -700,6 +700,9 @@ struct sk_buff {
  #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
  	unsigned long		 _nfct;
  #endif
@@ -59,6 +40,25 @@ index 792c3f6..f24a6ac 100644
  	/* Storage reserved for other modules, must be the last member */
  	union nf_conntrack_proto proto;
  };
+diff --git a/include/uapi/linux/netfilter/xt_layer7.h b/include/uapi/linux/netfilter/xt_layer7.h
+new file mode 100644
+index 0000000..147cd64
+--- /dev/null
++++ b/include/uapi/linux/netfilter/xt_layer7.h
+@@ -0,0 +1,13 @@
++#ifndef _XT_LAYER7_H
++#define _XT_LAYER7_H
++
++#define MAX_PATTERN_LEN 8192
++#define MAX_PROTOCOL_LEN 256
++
++struct xt_layer7_info {
++    char protocol[MAX_PROTOCOL_LEN];
++    char pattern[MAX_PATTERN_LEN];
++    u_int8_t invert;
++};
++
++#endif /* _XT_LAYER7_H */
 diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
 index e4a13cc..0b0f501 100644
 --- a/net/netfilter/Kconfig
@@ -103,7 +103,7 @@ index f78ed24..268b7e7 100644
  obj-$(CONFIG_NETFILTER_XT_MATCH_STRING) += xt_string.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_TCPMSS) += xt_tcpmss.o
 diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 0113039..871eaa2 100644
+index 06520bf..0109de4 100644
 --- a/net/netfilter/nf_conntrack_core.c
 +++ b/net/netfilter/nf_conntrack_core.c
 @@ -427,6 +427,11 @@ destroy_conntrack(struct nf_conntrack *nfct)

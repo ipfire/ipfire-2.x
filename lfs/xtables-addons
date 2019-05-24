@@ -102,8 +102,7 @@ ifeq "$(USPACE)" "1"
 		/usr/local/bin/
 else
 	cd $(DIR_APP) && ./configure \
-		--with-kbuild=/usr/src/linux-$(KVER)/
-
+		--with-kbuild=/lib/modules/$$(uname -r)$(KCFG)/build
 	cd $(DIR_APP) && make $(MAKETUNING)
 
 	# Install the built kernel modules.
