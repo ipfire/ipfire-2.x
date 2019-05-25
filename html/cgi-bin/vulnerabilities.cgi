@@ -150,7 +150,7 @@ for my $vuln (sort keys %VULNERABILITIES) {
 				<font color="$colour">
 END
 	if ($message) {
-		print "<strong>$status_message</strong>: $message";
+		print "<strong>$status_message</strong> - $message";
 	} else {
 		print "<strong>$status_message</strong>";
 	}
@@ -227,9 +227,11 @@ sub check_status($) {
 	my $status = <FILE>;
 	close(FILE);
 
+	chomp($status);
+
 	# Fix status when something has been mitigated, but not fully, yet
 	if ($status =~ /^(Mitigation): (.*vulnerable.*)$/) {
-		return ("Vulnerable", $2);
+		return ("Vulnerable", $status);
 	}
 
 	if ($status =~ /^(Vulnerable|Mitigation): (.*)$/) {
