@@ -117,7 +117,7 @@ for my $vuln (sort keys %VULNERABILITIES) {
 	if ($status eq "Not affected") {
 		$status_message = $Lang::tr{'not affected'};
 		$colour = "white";
-		$bgcolour = ${Header::colourblack};
+		$bgcolour = ${Header::colourgreen};
 
 	# Vulnerable
 	} elsif ($status eq "Vulnerable") {
@@ -129,7 +129,7 @@ for my $vuln (sort keys %VULNERABILITIES) {
 	} elsif ($status eq "Mitigation") {
 		$status_message = $Lang::tr{'mitigated'};
 		$colour = "white";
-		$bgcolour = ${Header::colourgreen};
+		$bgcolour = ${Header::colourblue};
 
 	# Unknown report from kernel
 	} else {
