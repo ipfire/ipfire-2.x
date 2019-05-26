@@ -37,6 +37,11 @@ done
 # Extract files
 extract_files
 
+# create main/security file
+touch /var/ipfire/main/security
+chmod 644 /var/ipfire/main/security
+chown nobody:nobody /var/ipfire/main/security
+
 # update linker config
 ldconfig
 
