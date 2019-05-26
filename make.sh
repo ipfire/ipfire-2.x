@@ -1340,6 +1340,7 @@ buildipfire() {
   lfsmake2 jansson
   lfsmake2 yaml
   lfsmake2 libhtp
+  lfsmake2 colm
   lfsmake2 suricata
   lfsmake2 oinkmaster
   lfsmake2 ids-ruleset-sources
