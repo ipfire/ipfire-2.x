@@ -28,9 +28,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
-PAK_VER    = 25
+PAK_VER    = 26
 
-DEPS       = "jansson libsrtp opus"
+DEPS       = "libsrtp opus"
 
 ###############################################################################
 # Top-level Rules
