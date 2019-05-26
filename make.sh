@@ -1341,6 +1341,7 @@ buildipfire() {
   lfsmake2 yaml
   lfsmake2 libhtp
   lfsmake2 colm
+  lfsmake2 ragel
   lfsmake2 suricata
   lfsmake2 oinkmaster
   lfsmake2 ids-ruleset-sources
