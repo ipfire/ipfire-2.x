@@ -117,7 +117,7 @@ for my $vuln (sort keys %VULNERABILITIES) {
 	if ($status eq "Not affected") {
 		$status_message = $Lang::tr{'not affected'};
 		$colour = "white";
-		$bgcolour = ${Header::colourblack};
+		$bgcolour = ${Header::colourgreen};
 
 	# Vulnerable
 	} elsif ($status eq "Vulnerable") {
@@ -129,7 +129,7 @@ for my $vuln (sort keys %VULNERABILITIES) {
 	} elsif ($status eq "Mitigation") {
 		$status_message = $Lang::tr{'mitigated'};
 		$colour = "white";
-		$bgcolour = ${Header::colourgreen};
+		$bgcolour = ${Header::colourblue};
 
 	# Unknown report from kernel
 	} else {
@@ -150,7 +150,7 @@ for my $vuln (sort keys %VULNERABILITIES) {
 				<font color="$colour">
 END
 	if ($message) {
-		print "<strong>$status_message</strong>: $message";
+		print "<strong>$status_message</strong> - $message";
 	} else {
 		print "<strong>$status_message</strong>";
 	}
@@ -227,9 +227,11 @@ sub check_status($) {
 	my $status = <FILE>;
 	close(FILE);
 
+	chomp($status);
+
 	# Fix status when something has been mitigated, but not fully, yet
 	if ($status =~ /^(Mitigation): (.*vulnerable.*)$/) {
-		return ("Vulnerable", $2);
+		return ("Vulnerable", $status);
 	}
 
 	if ($status =~ /^(Vulnerable|Mitigation): (.*)$/) {
