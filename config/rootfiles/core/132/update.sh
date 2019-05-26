@@ -90,7 +90,7 @@ ldconfig
 
 # create main/security file
 touch /var/ipfire/main/security
-chmod 755 /var/ipfire/main/security
+chmod 644 /var/ipfire/main/security
 chown nobody:nobody /var/ipfire/main/security
 
 # Update Language cache
