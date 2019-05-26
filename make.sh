@@ -1337,6 +1337,7 @@ buildipfire() {
   lfsmake2 setserial
   lfsmake2 setup
   lfsmake2 libdnet
+  lfsmake2 jansson
   lfsmake2 yaml
   lfsmake2 libhtp
   lfsmake2 suricata
@@ -1498,7 +1499,6 @@ buildipfire() {
   lfsmake2 watchdog
   lfsmake2 libpri
   lfsmake2 libsrtp
-  lfsmake2 jansson
   lfsmake2 asterisk
   lfsmake2 usb_modeswitch
   lfsmake2 usb_modeswitch_data

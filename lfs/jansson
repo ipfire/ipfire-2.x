@@ -24,17 +24,13 @@
 
 include Config
 
-VER        = 2.10
+VER        = 2.12
 
 THISAPP    = jansson-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = jansson
-PAK_VER    = 1
-
-DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 16a2c4e84c0a80ca61bd6e619a0f9358
+$(DL_FILE)_MD5 = 0ed1f3a924604aae68067c214b0010ef
 
 install : $(TARGET)
 
