@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 010
+VER        = 011
 
 THISAPP    = ddns-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 51e74b613732c0d7be3adb3348a5ed95
+$(DL_FILE)_MD5 = f0399ba5bad3272f32e539c45cd1abe9
 
 install : $(TARGET)
 
@@ -70,9 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-0001-New-provider-Schokokeks.org.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-0002-Schokokeks.org-Fix-malformed-update-URL.patch
 
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure \
