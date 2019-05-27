@@ -31,6 +31,13 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# remove dropped packages
+for package in jansson; do
+	rm -f "/opt/pakfire/db/installed/meta-${package}"
+	rm -f "/opt/pakfire/db/meta/meta-${package}"
+	rm -f "/opt/pakfire/db/rootfiles/${package}"
+done
+
 # Stop services
 /etc/init.d/squid stop
 
