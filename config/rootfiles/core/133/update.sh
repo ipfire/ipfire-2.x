@@ -49,6 +49,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/suricata restart
 /etc/init.d/squid start
 
 # Finish
