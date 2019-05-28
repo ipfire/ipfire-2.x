@@ -52,6 +52,9 @@ chown nobody:nobody /var/ipfire/main/security
 # update linker config
 ldconfig
 
+# restart init after glibc update
+telinit u
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
