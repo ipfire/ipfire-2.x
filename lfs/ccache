@@ -40,9 +40,6 @@ ifeq "$(PASS)" "1"
 	CFLAGS := $(patsubst -mfunction-return=%,,$(CFLAGS))
 endif
 
-# Set max cache size to 5GB
-CFLAGS += -DDEFAULT_MAXSIZE=5242880
-
 ###############################################################################
 # Top-level Rules
 ###############################################################################

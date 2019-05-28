@@ -520,6 +520,9 @@ prepareenv() {
 		SYSTEM_RELEASE="${SYSTEM_RELEASE} - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT$GIT_STATUS"
 		;;
 	esac
+
+	# Setup ccache cache size
+	enterchroot ccache --max-size="${CCACHE_CACHE_SIZE}" >/dev/null
 }
 
 enterchroot() {
@@ -900,6 +903,7 @@ update_contributors() {
 }
 
 # Default settings
+CCACHE_CACHE_SIZE="8G"
 ENABLE_RAMDISK="auto"
 
 # Load configuration file
