@@ -608,10 +608,10 @@ usr/bin/tshark
 #usr/include/wireshark/wsutil/xtea.h
 #usr/lib/libwireshark.so
 usr/lib/libwireshark.so.12
-usr/lib/libwireshark.so.12.0.1
+usr/lib/libwireshark.so.12.0.2
 #usr/lib/libwiretap.so
 usr/lib/libwiretap.so.9
-usr/lib/libwiretap.so.9.0.1
+usr/lib/libwiretap.so.9.0.2
 #usr/lib/libwscodecs.so
 usr/lib/libwscodecs.so.2
 usr/lib/libwscodecs.so.2.0.0
@@ -628,7 +628,7 @@ usr/lib/libwsutil.so.10.0.0
 #usr/lib/wireshark/cmake/UseMakePluginReg.cmake
 #usr/lib/wireshark/cmake/WiresharkConfig.cmake
 #usr/lib/wireshark/cmake/WiresharkConfigVersion.cmake
-#usr/lib/wireshark/cmake/WiresharkTargets-relwithdebinfo.cmake
+#usr/lib/wireshark/cmake/WiresharkTargets-release.cmake
 #usr/lib/wireshark/cmake/WiresharkTargets.cmake
 #usr/lib/wireshark/extcap
 usr/lib/wireshark/extcap/androiddump
@@ -652,7 +652,7 @@ usr/lib/wireshark/plugins/3.0/epan/unistim.so
 usr/lib/wireshark/plugins/3.0/epan/wimax.so
 usr/lib/wireshark/plugins/3.0/epan/wimaxasncp.so
 usr/lib/wireshark/plugins/3.0/epan/wimaxmacphy.so
-usr/lib/wireshark/plugins/3.0/wiretap
+#usr/lib/wireshark/plugins/3.0/wiretap
 usr/lib/wireshark/plugins/3.0/wiretap/usbdump.so
 #usr/share/doc/wireshark
 #usr/share/doc/wireshark/androiddump.html
@@ -765,10 +765,10 @@ usr/share/wireshark/dtds/xcap-error.dtd
 #usr/share/wireshark/pdml2html.xsl
 #usr/share/wireshark/profiles
 #usr/share/wireshark/profiles/Bluetooth
-usr/share/wireshark/profiles/Bluetooth/colorfilters
-usr/share/wireshark/profiles/Bluetooth/preferences
+#usr/share/wireshark/profiles/Bluetooth/colorfilters
+#usr/share/wireshark/profiles/Bluetooth/preferences
 #usr/share/wireshark/profiles/Classic
-usr/share/wireshark/profiles/Classic/colorfilters
+#usr/share/wireshark/profiles/Classic/colorfilters
 #usr/share/wireshark/profiles/No
 #Reassembly
 #usr/share/wireshark/profiles/No
@@ -776,7 +776,7 @@ usr/share/wireshark/profiles/Classic/colorfilters
 #usr/share/wireshark/radius
 #usr/share/wireshark/radius/README.radius_dictionary
 usr/share/wireshark/radius/custom.includes
-#usr/share/wireshark/radius/dictionary
+usr/share/wireshark/radius/dictionary
 usr/share/wireshark/radius/dictionary.3com
 usr/share/wireshark/radius/dictionary.3gpp
 usr/share/wireshark/radius/dictionary.3gpp2
@@ -994,7 +994,7 @@ usr/share/wireshark/tpncp/tpncp.dat
 #usr/share/wireshark/wimaxasncp
 usr/share/wireshark/wimaxasncp/dictionary.dtd
 usr/share/wireshark/wimaxasncp/dictionary.xml
-usr/share/wireshark/wireshark-filter.html
-usr/share/wireshark/wireshark.html
+#usr/share/wireshark/wireshark-filter.html
+#usr/share/wireshark/wireshark.html
 usr/share/wireshark/wka
 usr/share/wireshark/ws.css
