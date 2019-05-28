@@ -168,6 +168,7 @@ usr/libexec/ipsec/charon
 usr/libexec/ipsec/scepclient
 usr/libexec/ipsec/starter
 usr/libexec/ipsec/stroke
+usr/libexec/ipsec/xfrmi
 usr/sbin/ipsec
 usr/sbin/swanctl
 #usr/share/man/man1/pki---acert.1

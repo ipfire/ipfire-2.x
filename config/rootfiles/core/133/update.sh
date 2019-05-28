@@ -40,6 +40,7 @@ done
 
 # Stop services
 /etc/init.d/squid stop
+/usr/local/bin/ipsecctrl D
 
 # Extract files
 extract_files
@@ -59,6 +60,7 @@ telinit u
 /usr/local/bin/update-lang-cache
 
 # Start services
+/usr/local/bin/ipsecctrl S
 /etc/init.d/suricata restart
 /etc/init.d/squid start
 
