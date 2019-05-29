@@ -1494,7 +1494,6 @@ buildipfire() {
   lfsmake2 perl-gettext
   lfsmake2 perl-Sort-Naturally
   lfsmake2 vdradmin
-  lfsmake2 miau
   lfsmake2 perl-DBI
   lfsmake2 perl-DBD-SQLite
   lfsmake2 perl-File-ReadBackwards
