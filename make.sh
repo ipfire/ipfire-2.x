@@ -469,7 +469,7 @@ prepareenv() {
 	mkdir -p "${BASEDIR}/build${TOOLS_DIR}" 2>/dev/null
 	mkdir -p $BASEDIR/build/{etc,usr/src} 2>/dev/null
 	mkdir -p $BASEDIR/build/{dev/{shm,pts},proc,sys}
-	mkdir -p $BASEDIR/{cache,ccache} 2>/dev/null
+	mkdir -p $BASEDIR/{cache,ccache/${BUILD_ARCH}} 2>/dev/null
 
 	if [ "${ENABLE_RAMDISK}" = "on" ]; then
 		mkdir -p $BASEDIR/build/usr/src
@@ -488,7 +488,7 @@ prepareenv() {
 	mount --bind /proc           $BASEDIR/build/proc
 	mount --bind /sys            $BASEDIR/build/sys
 	mount --bind $BASEDIR/cache  $BASEDIR/build/usr/src/cache
-	mount --bind $BASEDIR/ccache $BASEDIR/build/usr/src/ccache
+	mount --bind $BASEDIR/ccache/${BUILD_ARCH} $BASEDIR/build/usr/src/ccache
 	mount --bind $BASEDIR/config $BASEDIR/build/usr/src/config
 	mount --bind $BASEDIR/doc    $BASEDIR/build/usr/src/doc
 	mount --bind $BASEDIR/html   $BASEDIR/build/usr/src/html
