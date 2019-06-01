@@ -2736,7 +2736,7 @@ print <<END;
 	</tr>
 
 	<tr>
-		<td width='20%'></td> <td width='15%'> </td><td width='20%'> </td><td width='20%'></td><td width='35%'></td>
+		<td width='20%'></td> <td width='15%'> </td><td width='35%'> </td><td width='20%'></td><td width='35%'></td>
 	</tr>
 
 	<tr>
