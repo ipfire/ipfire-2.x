@@ -903,7 +903,7 @@ update_contributors() {
 }
 
 # Default settings
-CCACHE_CACHE_SIZE="8G"
+CCACHE_CACHE_SIZE="4G"
 ENABLE_RAMDISK="auto"
 
 # Load configuration file
