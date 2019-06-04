@@ -2,5 +2,6 @@ etc/system-release
 etc/issue
 etc/rc.d/init.d/smt
 srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
