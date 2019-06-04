@@ -80,6 +80,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-nfqueue \
 		--disable-static \
 		--disable-python \
+		--with-libjansson-libraries=/usr/lib \
+		--with-libjansson-includes=/usr/include \
 		--disable-suricata-update
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
