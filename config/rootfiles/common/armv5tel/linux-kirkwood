@@ -10952,6 +10952,7 @@ boot/vmlinuz-KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/build/include/linux/bitmap.h
 #lib/modules/KVER-ipfire-kirkwood/build/include/linux/bitops.h
 #lib/modules/KVER-ipfire-kirkwood/build/include/linux/bitrev.h
+#lib/modules/KVER-ipfire-kirkwood/build/include/linux/bits.h
 #lib/modules/KVER-ipfire-kirkwood/build/include/linux/blk-cgroup.h
 #lib/modules/KVER-ipfire-kirkwood/build/include/linux/blk-mq-pci.h
 #lib/modules/KVER-ipfire-kirkwood/build/include/linux/blk-mq-rdma.h
@@ -13451,6 +13452,7 @@ boot/vmlinuz-KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/build/include/net/ipcomp.h
 #lib/modules/KVER-ipfire-kirkwood/build/include/net/ipconfig.h
 #lib/modules/KVER-ipfire-kirkwood/build/include/net/ipv6.h
+#lib/modules/KVER-ipfire-kirkwood/build/include/net/ipv6_frag.h
 #lib/modules/KVER-ipfire-kirkwood/build/include/net/ipx.h
 #lib/modules/KVER-ipfire-kirkwood/build/include/net/iucv
 #lib/modules/KVER-ipfire-kirkwood/build/include/net/iucv/af_iucv.h
