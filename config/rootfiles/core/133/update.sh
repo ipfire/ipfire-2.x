@@ -63,6 +63,7 @@ telinit u
 /usr/local/bin/ipsecctrl S
 /etc/init.d/suricata restart
 /etc/init.d/squid start
+/etc/init.d/collectd restart
 
 # Finish
 /etc/init.d/fireinfo start
