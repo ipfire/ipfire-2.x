@@ -443,6 +443,9 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'add'}.'2') {
 	$dhcpsettings{'FIX_ROOTPATH'} = &Header::cleanhtml($dhcpsettings{'FIX_ROOTPATH'});
 	if ($dhcpsettings{'KEY2'} eq '') { #add or edit ?
 	    unshift (@current2, "$dhcpsettings{'FIX_MAC'},$dhcpsettings{'FIX_ADDR'},$dhcpsettings{'FIX_ENABLED'},$dhcpsettings{'FIX_NEXTADDR'},$dhcpsettings{'FIX_FILENAME'},$dhcpsettings{'FIX_ROOTPATH'},$dhcpsettings{'FIX_REMARK'}\n");
+	    open(FILE, ">$filename2") or die 'Unable to open fixed lease file.';
+	    print FILE @current2;
+	    close(FILE);
 	    &General::log($Lang::tr{'fixed ip lease added'});
 
 	    # Enter edit mode
