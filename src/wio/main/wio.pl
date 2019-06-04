@@ -21,7 +21,7 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2017/08/04 18:55:23
+# Version: 2019/06/04 21:12:23
 #
 # This wio.pl is based on the Code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
@@ -86,9 +86,9 @@ my $redip      = $hostname;
 my $vpnpid     = ( -e "/var/run/charon.pid" ? `awk '{print $1}' /var/run/charon.pid`: '');
 my $ovpnpid    = ( -e  "/var/run/openvpn.pid" ? `awk '{print $1}' /var/run/openvpn.pid`: '');
 
-my $steptime = $wiosettings{'CRON'} *= 60;
-my $i_ping   = 'icmp';
-my $t_ping   = 'tcp';
+my $steptime   = $wiosettings{'CRON'} *= 60;
+my $i_ping     = 'icmp';
+my $t_ping     = 'tcp';
 
 my $nr = 1;
 my $poweroff = 0;
@@ -100,7 +100,6 @@ my ( $msg, $logmsg, $mailmsg, $smailtxt, $infomsg, $client, $mode, $onbak, $arpc
 my ( $ping_i, $ping_t, $ping_ib, $ping_tb, $ping_iv, $ping_tv, $pingmode ) = '';
 my ( @tmp, @arptmp, @myarray, @status, @arpclients ) = '';
 my @ifaces = ('GREEN','BLUE','ORANGE');
-
 
 if ( $mailsettings{'USEMAIL'} eq 'on' ) { $mailen = 'on'; }
 else { $mailen = 'off'; }
@@ -299,7 +298,7 @@ if ($debug) {
 
 if ( $smailtxt ne '' ) { &WIO::mailsender($Lang::tr{'wio_sub'}, $smailtxt); }
 
-if ($shutdown eq 'on') {
+if ($shutdown eq 'on' && ! -e $onoffip) {
 	foreach (@status) {
 		chomp;
 		@tmp = split( /\,/, $_ );
