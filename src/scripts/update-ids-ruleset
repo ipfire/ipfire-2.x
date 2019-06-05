@@ -20,10 +20,24 @@
 ###############################################################################
 
 use strict;
+use POSIX;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/ids-functions.pl";
 require "${General::swroot}/lang.pl";
+
+# The user and group name as which this script should be run.
+my $run_as = 'nobody';
+
+# Get user and group id of the user.
+my ( $uid, $gid ) = ( getpwnam $run_as )[ 2, 3 ];
+
+# Check if the script currently runs as root.
+if ( $> == 0 ) {
+	# Drop privileges and switch to the specified user and group.
+	POSIX::setgid( $gid );
+	POSIX::setuid( $uid );
+}
 
 # Check if the red device is active.
 unless (-e "${General::swroot}/red/active") {
