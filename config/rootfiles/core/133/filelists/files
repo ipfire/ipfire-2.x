@@ -6,3 +6,4 @@ srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
+usr/local/bin/update-ids-ruleset
