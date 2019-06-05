@@ -24,44 +24,20 @@ use strict;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/ids-functions.pl";
 
-# Hash which contains the IDS (suricata) settings.
-my %idssettings;
-
-# Hash which contains the RULES settings.
-my %rulessettings;
-
-#
-## Step 1: Read IDS and rules settings.
-#
-
 exit unless(-f $IDS::ids_settings_file and -f $IDS::rules_settings_file);
 
-# Read IDS settings.
-&General::readhash("$IDS::ids_settings_file", \%idssettings);
-
-# Read rules settings.
-&General::readhash("$IDS::rules_settings_file", \%rulessettings);
-
 #
-## Step 2: Generate and write the file to modify the ruleset.
+## Step 1: Re-generate and write the file to modify the ruleset.
 #
-
-my $IDS_action = "drop";
-
-# Check if the traffic only should be monitored.
-if ($idssettings{"MONITOR_TRAFFIC_ONLY"} eq "on") {
-	# Switch IDS action to alert only.
-	$IDS_action = "alert";
-}
 
 # Call subfunction and pass the desired IDS action.
-&IDS::write_modify_sids_file($IDS_action, $rulessettings{RULES});
+&IDS::write_modify_sids_file();
 
 # Set correct ownership.
 &IDS::set_ownership("$IDS::modify_sids_file");
 
 #
-## Step 3: Call oinkmaster to extract and setup the rules structures.
+## Step 2: Call oinkmaster to extract and setup the rules structures.
 #
 
 # Check if a rulestarball is present.
@@ -74,7 +50,7 @@ if (-f $IDS::rulestarball) {
 }
 
 #
-## Step 4: Start the IDS if enabled.
+## Step 3: Reload the IDS ruleset if running.
 #
 
 # Check if the IDS should be started.
