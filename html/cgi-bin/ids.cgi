@@ -359,7 +359,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 				$errormessage = "$Lang::tr{'could not download latest updates'} - $Lang::tr{'system is offline'}";
 			}
 
-			# Check if enought free disk space is availabe.
+			# Check if enough free disk space is availabe.
 			if(&IDS::checkdiskspace()) {
 				$errormessage = "$Lang::tr{'not enough disk space'}";
 			}
@@ -369,6 +369,22 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 				# Lock the webpage and print notice about downloading
 				# a new ruleset.
 				&working_notice("$Lang::tr{'ids working'}");
+
+				&General::readhash("$IDS::ids_settings_file", \%idssettings);
+
+				# Temporary variable to set the ruleaction.
+				# Default is "drop" to use suricata as IPS.
+				my $ruleaction="drop";
+
+				# Check if the traffic only should be monitored.
+				if($idssettings{'MONITOR_TRAFFIC_ONLY'} eq 'on') {
+					# Switch the ruleaction to "alert".
+					# Suricata acts as an IDS only.
+					$ruleaction="alert";
+				}
+
+				# Write the modify sid's file and pass the taken ruleaction.
+				&IDS::write_modify_sids_file($ruleaction, $cgiparams{'RULES'});
 
 				# Call subfunction to download the ruleset.
 				if(&IDS::downloadruleset()) {
@@ -609,8 +625,10 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 		$ruleaction="alert";
 	}
 
+	&General::readhash("$IDS::rules_settings_file", \%rulessettings);
+
 	# Write the modify sid's file and pass the taken ruleaction.
-	&IDS::write_modify_sids_file($ruleaction);
+	&IDS::write_modify_sids_file($ruleaction, $rulessettings{'RULES'});
 
 	# Check if "MONITOR_TRAFFIC_ONLY" has been changed.
 	if($cgiparams{'MONITOR_TRAFFIC_ONLY'} ne $oldidssettings{'MONITOR_TRAFFIC_ONLY'}) {

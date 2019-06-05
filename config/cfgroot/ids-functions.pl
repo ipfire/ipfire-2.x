@@ -243,7 +243,7 @@ sub downloadruleset {
 	# Load perl module to deal with temporary files.
 	use File::Temp;
 
-	# Generate temporay file name, located in "/var/tmp" and with a suffix of ".tar.gz".
+	# Generate temporary file name, located in "/var/tmp" and with a suffix of ".tar.gz".
 	my $tmp = File::Temp->new( SUFFIX => ".tar.gz", DIR => "/var/tmp/", UNLINK => 0 );
 	my $tmpfile = $tmp->filename();
 
@@ -292,6 +292,9 @@ sub downloadruleset {
 
 	# Overwrite existing rules tarball with the new downloaded one.
 	move("$tmpfile", "$rulestarball");
+
+	# Set correct ownership for the rulesdir and files.
+	set_ownership("$rulestarball");
 
 	# If we got here, everything worked fine. Return nothing.
 	return;
@@ -726,8 +729,8 @@ sub write_used_rulefiles_file(@) {
 #
 ## Function to generate and write the file for modify the ruleset.
 #
-sub write_modify_sids_file($) {
-	my ($ruleaction) = @_;
+sub write_modify_sids_file($$) {
+	my ($ruleaction,$rulefile) = @_;
 
 	# Open modify sid's file for writing.
 	open(FILE, ">$modify_sids_file") or die "Could not write to $modify_sids_file. $!\n";
@@ -737,8 +740,39 @@ sub write_modify_sids_file($) {
 
 	# Check if the traffic only should be monitored.
 	unless($ruleaction eq "alert") {
-		# Tell oinkmaster to switch all rules from alert to drop.
-		print FILE "modifysid \* \"alert\" \| \"drop\"\n";
+		# Suricata is in IPS mode, which means that the rule actions have to be changed
+		# from 'alert' to 'drop', however not all rules should be changed.  Some rules
+		# exist purely to set a flowbit which is used to convey other information, such
+		# as a specific type of file being downloaded, to other rulewhich then check for
+		# malware in that file.  Rules which fall into the first category should stay as
+		# alert since not all flows of that type contain malware.
+
+		if($rulefile eq 'registered' or $rulefile eq 'subscripted' or $rulefile eq 'community') {
+			# These types of rulesfiles contain meta-data which gives the action that should
+			# be used when in IPS mode.  Do the following:
+			#
+			# 1. Disable all rules and set the action to 'drop'
+			# 2. Set the action back to 'alert' if the rule contains 'flowbits:noalert;'
+			#    This should give rules not in the policy a reasonable default if the user
+			#    manually enables them.
+			# 3. Enable rules and set actions according to the meta-data strings.
+
+			my $policy = 'balanced';  # Placeholder to allow policy to be changed.
+
+			print FILE <<END;
+modifysid * "^#?(?:alert|drop)" | "#drop"
+modifysid * "^#drop(.+flowbits:noalert;)" | "#alert\${1}"
+modifysid * "^#(?:alert|drop)(.+policy $policy-ips alert)" | "alert\${1}"
+modifysid * "^#(?:alert|drop)(.+policy $policy-ips drop)" | "drop\${1}"
+END
+		} else {
+			# These rulefiles don't have the metadata, so set rules to 'drop' unless they
+			# contain the string 'flowbits:noalert;'.
+			print FILE <<END;
+modifysid * "^(#?)(?:alert|drop)" | "\${1}drop"
+modifysid * "^(#?)drop(.+flowbits:noalert;)" | "\${1}alert\${2}"
+END
+		}
 	}
 
 	# Close file handle.

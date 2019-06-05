@@ -62,6 +62,9 @@ telinit u
 # Regenerate /etc/ipsec.conf
 sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
 
+# Modify suricata modify-sids file
+/usr/sbin/convert-ids-modifysids-file
+
 # Start services
 /usr/local/bin/ipsecctrl S
 /etc/init.d/suricata restart

@@ -135,6 +135,7 @@ $(TARGET) :
 
 	# Install snort to suricata converter.
 	cp $(DIR_SRC)/config/suricata/convert-snort	/usr/sbin/convert-snort
+	cp $(DIR_SRC)/config/suricata/convert-ids-modifysids-file   /usr/sbin/convert-ids-modifysids-file
 
 	# Add conntrack helper default settings
 	for proto in FTP H323 IRC SIP TFTP; do \
