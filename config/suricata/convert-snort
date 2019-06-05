@@ -196,18 +196,8 @@ if (-f $guardian_meta) {
 ## Step 5: Generate and write the file to modify the ruleset.
 #
 
-# Converters default is to only monitor the traffic, so set the IDS action to
-# "alert".
-my $IDS_action = "alert";
-
-# Check if the traffic only should be monitored.
-if ($idssettings{"MONITOR_TRAFFIC_ONLY"} eq "off") {
-	# Swith IDS action to alert only.
-	$IDS_action = "drop";
-}
-
 # Call subfunction and pass the desired IDS action.
-&IDS::write_modify_sids_file($IDS_action);
+&IDS::write_modify_sids_file();
 
 # Set correct ownership.
 &IDS::set_ownership("$IDS::modify_sids_file");
