@@ -59,6 +59,9 @@ telinit u
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# Regenerate /etc/ipsec.conf
+sudo -u nobody /srv/web/ipfire/cgi-bin/vpnmain.cgi
+
 # Start services
 /usr/local/bin/ipsecctrl S
 /etc/init.d/suricata restart
