@@ -3331,14 +3331,14 @@ sub make_algos($$$$$) {
 						push(@algo, "modp$grp");
 					}
 
-				} elsif ($mode eq "esp" && $pfs) {
+				} elsif ($mode eq "esp") {
 					my $is_aead = ($enc =~ m/[cg]cm/);
 
 					if (!$is_aead) {
 						push(@algo, $int);
 					}
 
-					if ($grp eq "none") {
+					if ($pfs || $grp eq "none") {
 						# noop
 					} elsif ($grp =~ m/^e(.*)$/) {
 						push(@algo, "ecp$1");
