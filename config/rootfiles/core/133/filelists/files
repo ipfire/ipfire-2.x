@@ -3,7 +3,10 @@ etc/issue
 etc/rc.d/init.d/smt
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/dhcp.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 usr/local/bin/update-ids-ruleset
+usr/sbin/convert-ids-modifysids-file
+var/ipfire/ids-functions.pl
