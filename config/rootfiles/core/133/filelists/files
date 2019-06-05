@@ -9,4 +9,5 @@ srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 usr/local/bin/update-ids-ruleset
 usr/sbin/convert-ids-modifysids-file
+usr/sbin/convert-snort
 var/ipfire/ids-functions.pl
