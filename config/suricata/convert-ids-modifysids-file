@@ -54,7 +54,7 @@ if (-f $IDS::rulestarball) {
 #
 
 # Check if the IDS should be started.
-if($idssettings{"ENABLE_IDS"} eq "on") {
+if(&IDS::ids_is_running()) {
 	# Call suricatactrl and reload the rules.
 	&IDS::call_suricatactrl("reload");
 }
