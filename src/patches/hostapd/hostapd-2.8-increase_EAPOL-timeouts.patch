@@ -1,7 +1,7 @@
-diff U3 a/src/ap/wpa_auth.c b/src/ap/wpa_auth.c
---- a/src/ap/wpa_auth.c	Sun Dec  2 20:34:59 2018
-+++ b/src/ap/wpa_auth.c	Mon Mar  4 15:47:26 2019
-@@ -63,9 +63,9 @@
+diff U3 src/ap/wpa_auth.c src/ap/wpa_auth.c
+--- a/src/ap/wpa_auth.c	Sun Apr 21 09:10:22 2019
++++ b/src/ap/wpa_auth.c	Sun Jun  9 01:05:24 2019
+@@ -65,9 +65,9 @@
  			  struct wpa_group *group);
  static u8 * ieee80211w_kde_add(struct wpa_state_machine *sm, u8 *pos);
  
