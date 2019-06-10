@@ -11,3 +11,4 @@ usr/local/bin/update-ids-ruleset
 usr/sbin/convert-ids-modifysids-file
 usr/sbin/convert-snort
 var/ipfire/ids-functions.pl
+var/ipfire/langs
