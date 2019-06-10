@@ -32,9 +32,10 @@ if ! getent passwd tor; then
        useradd -u 119 -g tor -c "Tor daemon user" -d /var/empty -s /bin/false tor
 fi
 
+extract_files
+restore_backup ${NAME}
+
 # Adjust some folder permission for new UID/GID
 chown -R tor:tor /var/lib/tor /var/ipfire/tor
 
-extract_files
-restore_backup ${NAME}
 start_service --background ${NAME}
