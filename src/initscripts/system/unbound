@@ -733,8 +733,12 @@ write_safe_search_conf() {
 		done
 
 		# Yandex
-		echo "	local-zone: yandex.ru transparent"
-		echo "	local-data: \"yandex.ru A 213.180.193.56\""
+		for domain in yandex.com yandex.ru; do
+			echo "	local-zone: ${domain} transparent"
+			for address in $(resolve "familysearch.${domain}"); do
+				echo "	local-data: \"${domain} ${LOCAL_TTL} IN A ${address}\""
+			done
+		done
 
 		# YouTube
 		echo "	local-zone: youtube.com transparent"
