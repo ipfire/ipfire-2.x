@@ -711,13 +711,13 @@ write_safe_search_conf() {
 		echo "server:"
 
 		# Bing
-		echo "	local-zone: www.bing.com transparent"
+		echo "	local-zone: bing.com transparent"
 		for address in $(resolve "strict.bing.com"); do
 			echo "	local-data: \"www.bing.com ${LOCAL_TTL} IN A ${address}\""
 		done
 
 		# DuckDuckGo
-		echo "	local-zone: duckduckgo.com transparent"
+		echo "	local-zone: duckduckgo.com typetransparent"
 		for address in $(resolve "safe.duckduckgo.com"); do
 			echo "	local-data: \"duckduckgo.com ${LOCAL_TTL} IN A ${address}\""
 		done
@@ -734,7 +734,7 @@ write_safe_search_conf() {
 
 		# Yandex
 		for domain in yandex.com yandex.ru; do
-			echo "	local-zone: ${domain} transparent"
+			echo "	local-zone: ${domain} typetransparent"
 			for address in $(resolve "familysearch.${domain}"); do
 				echo "	local-data: \"${domain} ${LOCAL_TTL} IN A ${address}\""
 			done
