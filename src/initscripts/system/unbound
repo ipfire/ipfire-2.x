@@ -482,6 +482,27 @@ fix_time_if_dns_fail() {
 	fi
 }
 
+resolve() {
+	local hostname="${1}"
+
+	local found=0
+	local ns
+	for ns in $(read_name_servers); do
+		local answer
+		for answer in $(dig +short "@${ns}" A "${hostname}"); do
+			found=1
+
+			# Filter out non-IP addresses
+			if [[ ! "${answer}" =~ \.$ ]]; then
+				echo "${answer}"
+			fi
+		done
+
+		# End loop when we have got something
+		[ ${found} -eq 1 ] && break
+	done
+}
+
 # Sets up Safe Search for various search engines
 write_safe_search_conf() {
 	local google_tlds=(
@@ -690,18 +711,25 @@ write_safe_search_conf() {
 		echo "server:"
 
 		# Bing
-		echo "	local-zone: bing.com transparent"
-		echo "	local-data: \"www.bing.com CNAME strict.bing.com.\""
+		echo "	local-zone: www.bing.com transparent"
+		for address in $(resolve "strict.bing.com"); do
+			echo "	local-data: \"www.bing.com ${LOCAL_TTL} IN A ${address}\""
+		done
 
 		# DuckDuckGo
 		echo "	local-zone: duckduckgo.com transparent"
-		echo "	local-data: \"duckduckgo.com CNAME safe.duckduckgo.com.\""
+		for address in $(resolve "safe.duckduckgo.com"); do
+			echo "	local-data: \"duckduckgo.com ${LOCAL_TTL} IN A ${address}\""
+		done
 
 		# Google
+		addresses="$(resolve "forcesafesearch.google.com")"
 		local domain
 		for domain in ${google_tlds[@]}; do
 			echo "	local-zone: ${domain} transparent"
-			echo "	local-data: \"www.${domain} CNAME forcesafesearch.google.com.\""
+			for address in ${addresses}; do
+				echo "	local-data: \"www.${domain} ${LOCAL_TTL} IN A ${address}\""
+			done
 		done
 
 		# Yandex
@@ -710,7 +738,9 @@ write_safe_search_conf() {
 
 		# YouTube
 		echo "	local-zone: youtube.com transparent"
-		echo "	local-data: \"www.youtube.com CNAME restrictmoderate.youtube.com.\""
+		for address in $(resolve "restrictmoderate.youtube.com"); do
+			echo "	local-data: \"www.youtube.com ${LOCAL_TTL} IN A ${address}\""
+		done
 	) > /etc/unbound/safe-search.conf
 }
 
@@ -809,8 +839,12 @@ case "$1" in
 		exit ${ret}
 		;;
 
+	resolve)
+		resolve "${2}"
+		;;
+
 	*)
-		echo "Usage: $0 {start|stop|restart|status|update-forwarders|test-name-server}"
+		echo "Usage: $0 {start|stop|restart|status|update-forwarders|test-name-server|resolve}"
 		exit 1
 		;;
 esac
