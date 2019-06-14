@@ -1,0 +1,326 @@
+#!/bin/bash
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+# Set PATH to find our own executables
+export PATH=/usr/local/sbin:/usr/local/bin:${PATH}
+
+get() {
+	local file="${1}"
+
+	wget -qO - --header="Metadata:true" "http://169.254.169.254/metadata/instance/${file}?api-version=2019-06-01&format=text"
+}
+
+format_mac() {
+	local mac="${1,,}"
+
+	echo "${mac:0:2}:${mac:2:2}:${mac:4:2}:${mac:6:2}:${mac:8:2}"
+}
+
+to_address() {
+	local n="${1}"
+
+	local o1=$(( (n & 0xff000000) >> 24 ))
+	local o2=$(( (n & 0xff0000) >> 16 ))
+	local o3=$(( (n & 0xff00) >> 8 ))
+	local o4=$(( (n & 0xff) ))
+
+	printf "%d.%d.%d.%d\n" "${o1}" "${o2}" "${o3}" "${o4}"
+}
+
+to_integer() {
+	local address="${1}"
+
+	local integer=0
+
+	local i
+	for i in ${address//\./ }; do
+		integer=$(( (integer << 8) + i ))
+	done
+
+	printf "%d\n" "${integer}"
+}
+
+prefix2netmask() {
+	local prefix=${1}
+
+	local zeros=$(( 32 - prefix ))
+	local netmask=0
+
+	local i
+	for (( i=0; i<${zeros}; i++ )); do
+		netmask=$(( (netmask << 1) ^ 1 ))
+	done
+
+	to_address "$(( netmask ^ 0xffffffff ))"
+}
+
+import_azure_configuration() {
+	local instance_id="$(get compute/vmId)"
+
+	boot_mesg "Importing Microsoft Azure configuration for instance ${instance_id}..."
+
+	# Store instance ID
+	echo "${instance_id}" > /var/run/azure-instance-id
+
+	# Initialise system settings
+	local hostname=$(get compute/name)
+
+	# Set hostname
+	if ! grep -q "^HOSTNAME=" /var/ipfire/main/settings; then
+		echo "HOSTNAME=${hostname%%.*}" >> /var/ipfire/main/settings
+	fi
+
+	# Set domainname
+	if ! grep -q "^DOMAINNAME=" /var/ipfire/main/settings; then
+		echo "DOMAINNAME=${hostname#*.}" >> /var/ipfire/main/settings
+	fi
+
+	# Import SSH keys for setup user
+	local line
+	for line in $(get "compute/publicKeys/"); do
+		# Remove trailing slash
+		local key_no="${line//\//}"
+
+		# Get the path where this key should be installed
+		local path="$(get "compute/publicKeys/${key_no}/path")"
+		local key="$(get "compute/publicKeys/${key_no}/keyData")"
+
+		local user
+		if [[ "${path}" =~ ^/home ]]; then
+			user="${path:6}"
+			user="${user%%/*}"
+		else
+			# Cannot process this user
+			continue
+		fi
+
+		# Create user if it does not exist
+		if ! getent passwd "${user}" &>/dev/null; then
+			useradd "${user}" -s /usr/bin/run-setup -g nobody -m
+
+			# Unlock the account
+			usermod -p "x" "${user}"
+		fi
+
+		if [ -n "${key}" ] && ! grep -q "^${key}$" "${path}" 2>/dev/null; then
+			local dir="$(dirname "${path}")"
+
+			# Install directory
+			mkdir -p "${dir}"
+			chmod 700 "${dir}"
+			chown "${user}.nobody" "${dir}"
+
+			# Install the key
+			echo "${key}" >> "${path}"
+			chmod 600 "${path}"
+			chown "${user}.nobody" "${path}"
+		fi
+	done
+
+	# Download the user-data script only on the first boot
+	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
+		# Download user-data
+		local user_data="$(get customData)"
+
+		# Save user-data script to be executed later
+		if [ "${user_data:0:2}" = "#!" ]; then
+			echo "${user_data}" > /tmp/azure-user-data.script
+			chmod 700 /tmp/azure-user-data.script
+
+			# Run the user-data script
+			local now="$(date -u +"%s")"
+			/tmp/azure-user-data.script &>/var/log/user-data.log.${now}
+
+			# Delete the script right away
+			rm /tmp/azure-user-data.script
+		fi
+	fi
+
+	# Import any DNS server settings
+	eval $(/usr/local/bin/readhash <(grep -E "^DNS([0-9])=" /var/ipfire/ethernet/settings 2>/dev/null))
+
+	# Import network configuration
+	# After this, no network connectivity will be available from this script due to the
+	# renaming of the network interfaces for which they have to be shut down
+	local config_type=1
+	: > /var/ipfire/ethernet/settings
+
+	local device_number
+	for device_number in $(get network/interface); do
+		# Remove trailing slash
+		device_number="${device_number//\//}"
+
+		local mac="$(get "network/interface/${device_number}/macAddress")"
+		mac="$(format_mac "${mac}")"
+
+		# First IPv4 address
+		local ipv4_address="$(get "network/interface/${device_number}/ipv4/ipAddress/0/privateIpAddress")"
+		local ipv4_address_num="$(to_integer "${ipv4_address}")"
+		local prefix="$(get "network/interface/${device_number}/ipv4/subnet/0/prefix")"
+		local netmask="$(prefix2netmask "${prefix}")"
+		local netmask_num="$(to_integer "${netmask}")"
+
+		# Calculate the network and broadcast addresses
+		local netaddress="$(get "network/interface/${device_number}/ipv4/subnet/0/address")"
+		local netaddress_num="$(to_integer "${netaddress}")"
+		local broadcast="$(to_address $(( ipv4_address_num | (0xffffffff ^ netmask_num) )))"
+
+		case "${device_number}" in
+			# RED
+			0)
+				local interface_name="red0"
+
+				# The gateway is always the first IP address in the subnet
+				local gateway="$(to_address $(( netaddress_num + 1 )))"
+
+				# Microsoft uses a special IP address for DNS
+				# https://blogs.msdn.microsoft.com/mast/2015/05/18/what-is-the-ip-address-168-63-129-16/
+				local dns1="168.63.129.16"
+				local dns2=
+
+				(
+					echo "RED_TYPE=STATIC"
+					echo "RED_DEV=${interface_name}"
+					echo "RED_MACADDR=${mac}"
+					echo "RED_DESCRIPTION='${interface_id}'"
+					echo "RED_ADDRESS=${ipv4_address}"
+					echo "RED_NETMASK=${netmask}"
+					echo "RED_NETADDRESS=${netaddress}"
+					echo "RED_BROADCAST=${broadcast}"
+					echo "DEFAULT_GATEWAY=${gateway}"
+					echo "DNS1=${DNS1:-${dns1}}"
+					echo "DNS2=${DNS2:-${dns2}}"
+				) >> /var/ipfire/ethernet/settings
+
+				# Import aliases for RED
+				local address_no
+				for address_no in $(get "network/interface/0/ipv4/ipAddress"); do
+					# Remove trailing slash
+					address_no="${address_no//\//}"
+
+					# Skip the first address
+					[ "${address_no}" = "0" ] && continue
+
+					# Fetch the IP address
+					local alias="$(get "network/interface/0/ipv4/ipAddress/${address_no}/privateIpAddress")"
+					echo "${alias},on,"
+				done > /var/ipfire/ethernet/aliases
+				;;
+
+			# GREEN
+			1)
+				local interface_name="green0"
+
+				(
+					echo "GREEN_DEV=${interface_name}"
+					echo "GREEN_MACADDR=${mac}"
+					echo "GREEN_DESCRIPTION='${interface_id}'"
+					echo "GREEN_ADDRESS=${ipv4_address}"
+					echo "GREEN_NETMASK=${netmask}"
+					echo "GREEN_NETADDRESS=${netaddress}"
+					echo "GREEN_BROADCAST=${broadcast}"
+				) >> /var/ipfire/ethernet/settings
+				;;
+
+			# ORANGE
+			2)
+				local interface_name="orange0"
+				config_type=2
+
+				(
+					echo "ORANGE_DEV=${interface_name}"
+					echo "ORANGE_MACADDR=${mac}"
+					echo "ORANGE_DESCRIPTION='${interface_id}'"
+					echo "ORANGE_ADDRESS=${ipv4_address}"
+					echo "ORANGE_NETMASK=${netmask}"
+					echo "ORANGE_NETADDRESS=${netaddress}"
+					echo "ORANGE_BROADCAST=${broadcast}"
+				) >> /var/ipfire/ethernet/settings
+				;;
+		esac
+	done
+
+	# Save CONFIG_TYPE
+	echo "CONFIG_TYPE=${config_type}" >> /var/ipfire/ethernet/settings
+
+	# Actions performed only on the very first start
+	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
+		# Enable SSH
+		sed -e "s/ENABLE_SSH=.*/ENABLE_SSH=on/g" -i /var/ipfire/remote/settings
+
+		# Disable SSH password authentication
+		sed -e "s/^ENABLE_SSH_PASSWORDS=.*/ENABLE_SSH_PASSWORDS=off/" -i /var/ipfire/remote/settings
+
+		# Enable SSH key authentication
+		sed -e "s/^ENABLE_SSH_KEYS=.*/ENABLE_SSH_KEYS=on/" -i /var/ipfire/remote/settings
+
+		# Apply SSH settings
+		/usr/local/bin/sshctrl
+
+		# Mark SSH to start immediately (but not right now)
+		touch /var/ipfire/remote/enablessh
+		chown nobody:nobody /var/ipfire/remote/enablessh
+
+		# Firewall rules for SSH and WEBIF
+		(
+			echo "1,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,cust_srv,SSH,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
+			echo "2,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,TGT_PORT,444,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
+		) >> /var/ipfire/firewall/input
+
+		# This script has now completed the first steps of setup
+		touch /var/ipfire/main/firstsetup_ok
+	fi
+
+	# All done
+	echo_ok
+}
+
+case "${reason}" in
+	PREINIT)
+		# Bring up the interface
+		ip link set "${interface}" up
+		;;
+
+	BOUND|RENEW|REBIND|REBOOT)
+		# Remove any previous IP addresses
+		ip addr flush dev "${interface}"
+
+		# Add (or re-add) the new IP address
+		ip addr add "${new_ip_address}/${new_subnet_mask}" dev "${interface}"
+
+		# Add the default route
+		ip route add default via "${new_routers}"
+
+		# Setup DNS
+		for domain_name_server in ${new_domain_name_servers}; do
+			echo "nameserver ${domain_name_server}"
+		done > /etc/resolv.conf
+
+		# The system is online now
+		touch /var/ipfire/red/active
+
+		# Import Azure configuration
+		import_azure_configuration
+		;;
+
+	EXPIRE|FAIL|RELEASE|STOP)
+		# The system is no longer online
+		rm -f /var/ipfire/red/active
+
+		# Remove all IP addresses
+		ip addr flush dev "${interface}"
+
+		# Shut down the interface
+		ip link set "${interface}" down
+		;;
+
+	*)
+		echo "Unhandled reason: ${reason}" >&2
+		exit 2
+		;;
+esac
+
+# Terminate
+exit 0
