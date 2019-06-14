@@ -1,6 +1,6 @@
 #!/bin/sh
 ########################################################################
-# Begin $rc_base/init.d/aws
+# Begin $rc_base/init.d/cloud-init
 ########################################################################
 
 . /etc/sysconfig/rc
@@ -83,4 +83,4 @@ case "${1}" in
 		;;
 esac
 
-# End $rc_base/init.d/aws
+# End $rc_base/init.d/cloud-init
