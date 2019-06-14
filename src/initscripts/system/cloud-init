@@ -28,6 +28,22 @@ running_on_ec2() {
 	return 1
 }
 
+running_on_azure() {
+	# Check if the vendor is Microsoft
+	if [ -r "/sys/devices/virtual/dmi/id/sys_vendor" ] && \
+			[ "$(</sys/devices/virtual/dmi/id/sys_vendor)" = "Microsoft Corporation" ]; then
+		# Check if this product is a "Virtual Machine"
+		if [ -r "/sys/devices/virtual/dmi/id/product_name" ] && \
+				[ "$(</sys/devices/virtual/dmi/id/product_name)" = "Virtual Machine" ]; then
+			# Yes, we are running on Azure
+			return 0
+		fi
+	fi
+
+	# We are not running on Azure
+	return 1
+}
+
 case "${1}" in
 	start)
 		# Do nothing if we are not running on AWS EC2
@@ -68,11 +84,19 @@ case "${1}" in
 		;;
 
 	status)
+		# Check Amazon
 		if running_on_ec2; then
 			echo "This system is running on AWS EC2"
 			exit 0
+
+		# Check Microsoft
+		elif running_on_azure; then
+			echo "This system is running on Microsoft Azure"
+			exit 0
+
+		# The rest
 		else
-			echo "This system is NOT running on AWS EC2"
+			echo "This system is NOT running in the cloud"
 			exit 1
 		fi
 		;;
