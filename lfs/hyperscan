@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -36,7 +36,7 @@ SUP_ARCH   = x86_64 i586
 # The compiler uses a lot of memory to compile hyperscan, hence we reduce
 # the total number of processes a little bit to be able to build on
 # smaller machines
-MAX_PARALLELISM = $(shell echo $$(( $(SYSTEM_MEMORY) / 512)))
+MAX_PARALLELISM = $(shell echo $$(( $(SYSTEM_MEMORY) / 1024)))
 
 ###############################################################################
 # Top-level Rules
