@@ -41,6 +41,11 @@ case "${1}" in
 					;;
 			esac
 
+			# Enable the serial console on all systems on Azure
+			if running_on_azure; then
+				scon="on"
+			fi
+
 			mount /boot > /dev/null
 			if [ -e /boot/grub/grub.cfg ]; then
 				# swtich permanent to serial console if it was selected on first boot
