@@ -3338,7 +3338,7 @@ sub make_algos($$$$$) {
 						push(@algo, $int);
 					}
 
-					if ($pfs || $grp eq "none") {
+					if (!$pfs || $grp eq "none") {
 						# noop
 					} elsif ($grp =~ m/^e(.*)$/) {
 						push(@algo, "ecp$1");
