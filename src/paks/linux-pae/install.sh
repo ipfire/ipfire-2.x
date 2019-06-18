@@ -67,7 +67,9 @@ if [ -e /boot/grub/grub.cfg ]; then
 	# Update grub2 config
 	#
 	grub-mkconfig > /boot/grub/grub.cfg
-else
+fi
+
+if [ -e /boot/grub/grub.conf ]; then
 	#
 	# xen pv with pygrub need grub.conf / menu.lst
 	#
