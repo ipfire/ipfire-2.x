@@ -15469,6 +15469,7 @@ boot/vmlinuz-KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/build/scripts/coccinelle/api/resource_size.cocci
 #lib/modules/KVER-ipfire-kirkwood/build/scripts/coccinelle/api/setup_timer.cocci
 #lib/modules/KVER-ipfire-kirkwood/build/scripts/coccinelle/api/simple_open.cocci
+#lib/modules/KVER-ipfire-kirkwood/build/scripts/coccinelle/api/stream_open.cocci
 #lib/modules/KVER-ipfire-kirkwood/build/scripts/coccinelle/api/vma_pages.cocci
 #lib/modules/KVER-ipfire-kirkwood/build/scripts/coccinelle/free
 #lib/modules/KVER-ipfire-kirkwood/build/scripts/coccinelle/free/clk_put.cocci
