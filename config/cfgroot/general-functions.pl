@@ -784,7 +784,7 @@ sub validemail {
     return 0 if ( substr($parts[1],-1,1) eq '.' );
 
     #check first addresspart (before '@' sign)
-    return 0 if  ( $parts[0] !~ m/^[a-zA-Z0-9\.!\-\+#]+$/ );
+    return 0 if  ( $parts[0] !~ m/^[a-zA-Z0-9\.!\-\_\+#]+$/ );
 
     #check second addresspart (after '@' sign)
     return 0 if  ( $parts[1] !~ m/^[a-zA-Z0-9\.\-]+$/ );
