@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 4.14.121-ipfire Kernel Configuration
+# Linux/x86 4.14.128-ipfire Kernel Configuration
 #
 # CONFIG_64BIT is not set
 CONFIG_X86_32=y
@@ -4522,6 +4522,7 @@ CONFIG_DRM_AMDGPU=m
 #
 # CONFIG_DRM_AMD_ACP is not set
 CONFIG_DRM_NOUVEAU=m
+CONFIG_NOUVEAU_LEGACY_CTX_SUPPORT=y
 CONFIG_NOUVEAU_DEBUG=5
 CONFIG_NOUVEAU_DEBUG_DEFAULT=3
 CONFIG_DRM_NOUVEAU_BACKLIGHT=y

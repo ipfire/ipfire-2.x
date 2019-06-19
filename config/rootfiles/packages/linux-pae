@@ -9765,6 +9765,9 @@ boot/vmlinuz-KVER-ipfire-pae
 #lib/modules/KVER-ipfire-pae/build/include/config/nouveau/debug
 #lib/modules/KVER-ipfire-pae/build/include/config/nouveau/debug.h
 #lib/modules/KVER-ipfire-pae/build/include/config/nouveau/debug/default.h
+#lib/modules/KVER-ipfire-pae/build/include/config/nouveau/legacy
+#lib/modules/KVER-ipfire-pae/build/include/config/nouveau/legacy/ctx
+#lib/modules/KVER-ipfire-pae/build/include/config/nouveau/legacy/ctx/support.h
 #lib/modules/KVER-ipfire-pae/build/include/config/nozomi.h
 #lib/modules/KVER-ipfire-pae/build/include/config/nr
 #lib/modules/KVER-ipfire-pae/build/include/config/nr/cpus.h
