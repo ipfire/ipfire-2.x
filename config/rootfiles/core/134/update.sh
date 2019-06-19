@@ -79,6 +79,9 @@ rm -rf /boot/dtb-*-ipfire-*
 rm -rf /lib/modules
 rm -f  /etc/sysconfig/lm_sensors
 
+# Remove old vim 7.4 files
+rm -rf /usr/share/vim74
+
 # Stop services
 
 # Extract files
