@@ -379,6 +379,9 @@ iptables_init() {
 	# run wirelessctrl
 	/usr/local/bin/wirelessctrl
 
+	# run captivectrl
+	/usr/local/bin/captivectrl
+
 	# POLICY CHAIN
 	iptables -N POLICYIN
 	iptables -A INPUT -j POLICYIN
