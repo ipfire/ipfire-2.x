@@ -15,7 +15,7 @@ get() {
 format_mac() {
 	local mac="${1,,}"
 
-	echo "${mac:0:2}:${mac:2:2}:${mac:4:2}:${mac:6:2}:${mac:8:2}"
+	echo "${mac:0:2}:${mac:2:2}:${mac:4:2}:${mac:6:2}:${mac:8:2}:${mac:10:2}"
 }
 
 to_address() {
