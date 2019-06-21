@@ -2,5 +2,6 @@ etc/system-release
 etc/issue
 etc/rc.d/init.d/unbound
 srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/general-functions.pl
 var/ipfire/langs
