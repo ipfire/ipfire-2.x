@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 20190514
+VER        = 20190618
 
 THISAPP    = Intel-Linux-Processor-Microcode-Data-Files-microcode-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -41,8 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ad5fe712f54387c0737caef8131b4770
-
+$(DL_FILE)_MD5 = 18af9bd8b6c7164f0cd917080a387244
 
 install : $(TARGET)
 
@@ -74,7 +73,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && mkdir -p $(DIR_APP) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && mkdir -p $(DIR_APP) && tar axf $(DIR_DL)/$(DL_FILE)
 	# Copy the firmware files into the right position
 	cd $(DIR_APP) && cp -R intel-ucode /lib/firmware/
 	@rm -rf $(DIR_APP)
