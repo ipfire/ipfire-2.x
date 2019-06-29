@@ -48,7 +48,7 @@ config_header() {
 }
 
 update_forwarders() {
-	if [ "${USE_FORWARDERS}" = "1" -a -e "/var/ipfire/red/active" ]; then
+	if [ "${USE_FORWARDERS}" = "1" -a "$(</sys/class/net/$(</var/ipfire/red/iface)/carrier)" = "1" ]; then
 		local forwarders
 		local broken_forwarders
 
@@ -473,7 +473,7 @@ disable_dnssec() {
 fix_time_if_dns_fail() {
 	# If DNS still not work try to init ntp with
 	# hardcoded ntp.ipfire.org (81.3.27.46)
-	if [ -e /var/ipfire/red/active ]; then
+	if [ "$(</sys/class/net/$(</var/ipfire/red/iface)/carrier)" = "1" ]; then
 		host 0.ipfire.pool.ntp.org > /dev/null 2>&1
 		if [ "${?}" != "0" ]; then
 			boot_mesg "DNS still not functioning... Trying to sync time with ntp.ipfire.org (81.3.27.46)..."
