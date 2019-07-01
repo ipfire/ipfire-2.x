@@ -31,12 +31,15 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Remove files
+rm -vf \
+	/etc/rc.d/init.d/aws \
+	/etc/rc.d/rcsysinit.d/S74aws
+
 # Stop services
 
 # Extract files
 extract_files
-
-# create main/security file
 
 # update linker config
 ldconfig
