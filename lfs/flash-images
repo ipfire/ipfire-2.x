@@ -36,7 +36,7 @@ ifeq "$(EFI)" "1"
 endif
 PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
 
-IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).2gb-ext4.$(BUILD_ARCH)-full-core$(CORE)
+IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).2gb-ext4.$(BUILD_ARCH)-full-core$(CORE).img.xz
 
 FSTAB_FMT = UUID=%s %-8s %-4s %-10s %d %d\n
 
@@ -255,9 +255,5 @@ ifeq "$(BUILD_ARCH)" "armv5tel"
 endif
 
 	# Compress Image
-	xz $(XZ_OPT) < $(IMG) > $(IMAGE_FILE).img.xz
-
-	# Make VHD image
-	qemu-img convert -O vpc -o subformat=fixed,force_size $(IMG) $(IMAGE_FILE).vhd
-
+	xz $(XZ_OPT) < $(IMG) > $(IMAGE_FILE)
 	rm -rf $(IMG) $(MNThdd)
