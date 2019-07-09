@@ -37,6 +37,7 @@ rm -vf \
 	/etc/rc.d/rcsysinit.d/S74aws
 
 # Stop services
+/etc/init.d/squid stop
 
 # Extract files
 extract_files
@@ -48,6 +49,7 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
+/etc/init.d/squid start
 
 # Finish
 /etc/init.d/fireinfo start
