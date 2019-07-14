@@ -9,3 +9,4 @@ etc/rc.d/init.d/functions
 etc/rc.d/init.d/partresize
 etc/rc.d/init.d/unbound
 etc/sysctl.conf
+usr/sbin/unbound-dhcp-leases-bridge
