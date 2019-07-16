@@ -35,6 +35,7 @@ done
 rm -vf \
 	/etc/rc.d/init.d/aws \
 	/etc/rc.d/rcsysinit.d/S74aws
+	/etc/rc.d/init.d/networking/red.down/05-update-dns-forwarders
 
 # Stop services
 /etc/init.d/squid stop

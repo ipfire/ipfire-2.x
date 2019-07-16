@@ -1,4 +1,0 @@
-#!/bin/bash
-
-# Update DNS forwarders for unbound
-exec /etc/init.d/unbound update-forwarders
