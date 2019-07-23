@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.8.2
+VER        = 2.8.3
 
 THISAPP    = knot-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7b2e9d44070e0559b13dac575547845b
+$(DL_FILE)_MD5 = fb7623a6c1f40cf2f330c91ad9a7898f
 
 install : $(TARGET)
 
