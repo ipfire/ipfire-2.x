@@ -34,20 +34,20 @@ iptables_init() {
 
 	# Empty LOG_DROP and LOG_REJECT chains
 	iptables -N LOG_DROP
-	iptables -A LOG_DROP   -m limit --limit 10/minute -j LOG
+	iptables -A LOG_DROP   -m limit --limit 10/second -j LOG
 	iptables -A LOG_DROP   -j DROP
 	iptables -N LOG_REJECT
-	iptables -A LOG_REJECT -m limit --limit 10/minute -j LOG
+	iptables -A LOG_REJECT -m limit --limit 10/second -j LOG
 	iptables -A LOG_REJECT -j REJECT
 
 	# This chain will log, then DROPs packets with certain bad combinations
 	# of flags might indicate a port-scan attempt (xmas, null, etc)
 	iptables -N PSCAN
 	if [ "$DROPPORTSCAN" == "on" ]; then
-		iptables -A PSCAN -p tcp  -m limit --limit 10/minute -j LOG --log-prefix "DROP_TCP Scan " -m comment --comment "DROP_TCP PScan"
-		iptables -A PSCAN -p udp  -m limit --limit 10/minute -j LOG --log-prefix "DROP_UDP Scan " -m comment --comment "DROP_UDP PScan"
-		iptables -A PSCAN -p icmp -m limit --limit 10/minute -j LOG --log-prefix "DROP_ICMP Scan " -m comment --comment "DROP_ICMP PScan"
-		iptables -A PSCAN -f      -m limit --limit 10/minute -j LOG --log-prefix "DROP_FRAG Scan " -m comment --comment "DROP_FRAG PScan"
+		iptables -A PSCAN -p tcp  -m limit --limit 10/second -j LOG --log-prefix "DROP_TCP Scan " -m comment --comment "DROP_TCP PScan"
+		iptables -A PSCAN -p udp  -m limit --limit 10/second -j LOG --log-prefix "DROP_UDP Scan " -m comment --comment "DROP_UDP PScan"
+		iptables -A PSCAN -p icmp -m limit --limit 10/second -j LOG --log-prefix "DROP_ICMP Scan " -m comment --comment "DROP_ICMP PScan"
+		iptables -A PSCAN -f      -m limit --limit 10/second -j LOG --log-prefix "DROP_FRAG Scan " -m comment --comment "DROP_FRAG PScan"
 	fi
 	iptables -A PSCAN -j DROP -m comment --comment "DROP_PScan"
 
@@ -55,7 +55,7 @@ iptables_init() {
 	# that's not covered above, may just be a broken windows machine
 	iptables -N NEWNOTSYN
 	if [ "$DROPNEWNOTSYN" == "on" ]; then
-		iptables -A NEWNOTSYN  -m limit --limit 10/minute -j LOG  --log-prefix "DROP_NEWNOTSYN "
+		iptables -A NEWNOTSYN  -m limit --limit 10/second -j LOG  --log-prefix "DROP_NEWNOTSYN "
 	fi
 	iptables -A NEWNOTSYN  -j DROP -m comment --comment "DROP_NEWNOTSYN"
 
