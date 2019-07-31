@@ -70,5 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@cd / && tar axf $(DIR_DL)/$(DL_FILE)
+	cp -f /lib/firmware/brcm/brcmfmac43430-sdio.txt \
+	      /lib/firmware/brcm/brcmfmac43430-sdio.RPI3.txt
 	cp -f $(DIR_SRC)/config/rpi-firmware/config.txt /boot
 	@$(POSTBUILD)
