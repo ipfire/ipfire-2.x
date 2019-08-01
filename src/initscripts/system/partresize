@@ -3,6 +3,8 @@
 # Begin $rc_base/init.d/partresize
 #
 # Description : Resize the root partition to the drivesize
+#		and setup some platform or hardware options in
+#		flashimage
 #
 # Authors     : Arne Fitzenreiter - arne_f@ipfire.org
 #
@@ -45,6 +47,14 @@ case "${1}" in
 			if running_on_azure; then
 				scon="on"
 			fi
+
+			# Install AP6112 wlan config on NanoPi R1
+			case "$(< /proc/device-tree/model )" in
+				"FriendlyElec NanoPi-R1")
+					cp -f   /lib/firmware/brcm/brcmfmac43430-sdio.AP6212.txt \
+						/lib/firmware/brcm/brcmfmac43430-sdio.txt
+				;;
+			esac 2>/dev/null
 
 			mount /boot > /dev/null
 			if [ -e /boot/grub/grub.cfg ]; then
