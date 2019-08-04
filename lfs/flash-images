@@ -215,6 +215,12 @@ endif
 	rm -f $(MNThdd)/etc/grub.d/11_linux_scon
 endif
 
+ifeq "$(BUILD_ARCH)" "armv5tel"
+	# Insert the UUID to uENV.txt
+	sed -i $(MNThdd)/boot/uENV.txt \
+		-e "s/^root_dev=.*/root_dev=UUID=$$(blkid -o value -s UUID $(PART_ROOT))/g"
+endif
+
 	# Set ramdisk mode to automatic
 	echo RAMDISK_MODE=2 > $(MNThdd)/etc/sysconfig/ramdisk
 
