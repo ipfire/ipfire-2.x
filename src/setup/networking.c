@@ -144,9 +144,13 @@ int oktoleave(void)
 		strcpy(temp, ""); findkey(kv, "GREEN_DEV", temp);
 		if (!(strlen(temp)))
 		{
-			errorbox(_("No GREEN interface assigned."));
-			freekeyvalues(kv);
-			return 0;
+			rc = newtWinChoice(_("Error"), _("OK"), _("Ignore"),
+				_("No GREEN interface assigned."));
+			if (rc == 0 || rc == 1)
+			{
+				freekeyvalues(kv);
+				return 0;
+			}
 		}
 		if (!(interfacecheck(kv, "GREEN")))
 		{
@@ -181,9 +185,13 @@ int oktoleave(void)
 		strcpy(temp, ""); findkey(kv, "ORANGE_DEV", temp);
 		if (!(strlen(temp)))
 		{
-			errorbox(_("No ORANGE interface assigned."));
-			freekeyvalues(kv);
-			return 0;
+			rc = newtWinChoice(_("Error"), _("OK"), _("Ignore"),
+				_("No ORANGE interface assigned."));
+			if (rc == 0 || rc == 1)
+			{
+				freekeyvalues(kv);
+				return 0;
+			}
 		}
 		if (!(interfacecheck(kv, "ORANGE")))
 		{
@@ -197,9 +205,13 @@ int oktoleave(void)
 		strcpy(temp, ""); findkey(kv, "BLUE_DEV", temp);
 		if (!(strlen(temp)))
 		{
-			errorbox(_("No BLUE interface assigned."));
-			freekeyvalues(kv);
-			return 0;
+			rc = newtWinChoice(_("Error"), _("OK"), _("Ignore"),
+				_("No BLUE interface assigned."));
+			if (rc == 0 || rc == 1)
+			{
+				freekeyvalues(kv);
+				return 0;
+			}
 		}
 		if (!(interfacecheck(kv, "BLUE")))
 		{

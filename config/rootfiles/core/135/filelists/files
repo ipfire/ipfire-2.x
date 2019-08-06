@@ -10,4 +10,5 @@ etc/rc.d/init.d/networking/red.down/05-remove-dns-forwarders
 etc/rc.d/init.d/partresize
 etc/rc.d/init.d/unbound
 etc/sysctl.conf
+usr/sbin/setup
 usr/sbin/unbound-dhcp-leases-bridge
