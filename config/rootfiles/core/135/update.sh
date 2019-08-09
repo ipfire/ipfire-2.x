@@ -91,6 +91,11 @@ rm -vf \
 # Extract files
 extract_files
 
+# update dhcpcd.conf
+sed -i -e "s|.*ipv4ll.*||g" /var/ipfire/dhcpc/dhcpcd.conf
+echo "# disable ipv4ll (IPv4 local link/apipa) ip's" >> /var/ipfire/dhcpc/dhcpcd.conf
+echo "noipv4ll"                                      >> /var/ipfire/dhcpc/dhcpcd.conf
+
 # update linker config
 ldconfig
 
