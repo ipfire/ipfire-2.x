@@ -18,7 +18,7 @@ case "${1}" in
 		# Nothing to do when SMT is not enabled or not supported anyways
 		if [ "$(</sys/devices/system/cpu/smt/control)" != "on" ]; then
 			exit 0
-		fi
+		fi 2>/dev/null
 
 		# Disable SMT when the processor is vulnerable to Foreshadow or Fallout/ZombieLoad/RIDL
 		for vuln in l1tf mds; do

@@ -468,6 +468,7 @@ boot/dtb-KVER-ipfire-multi
 #boot/dtb-KVER-ipfire-multi/sun8i-h3-nanopi-m1.dtb
 #boot/dtb-KVER-ipfire-multi/sun8i-h3-nanopi-neo-air.dtb
 #boot/dtb-KVER-ipfire-multi/sun8i-h3-nanopi-neo.dtb
+#boot/dtb-KVER-ipfire-multi/sun8i-h3-nanopi-r1.dtb
 #boot/dtb-KVER-ipfire-multi/sun8i-h3-orangepi-2.dtb
 #boot/dtb-KVER-ipfire-multi/sun8i-h3-orangepi-lite.dtb
 #boot/dtb-KVER-ipfire-multi/sun8i-h3-orangepi-one.dtb

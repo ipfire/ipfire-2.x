@@ -2,11 +2,12 @@ etc/init.d
 #etc/rc.d
 #etc/rc.d/helper
 etc/rc.d/helper/aws-setup
+etc/rc.d/helper/azure-setup
 etc/rc.d/helper/getdnsfromdhcpc.pl
 #etc/rc.d/init.d
 etc/rc.d/init.d/acpid
 etc/rc.d/init.d/apache
-etc/rc.d/init.d/aws
+etc/rc.d/init.d/cloud-init
 etc/rc.d/init.d/beep
 etc/rc.d/init.d/checkfs
 etc/rc.d/init.d/cleanfs
@@ -40,7 +41,7 @@ etc/rc.d/init.d/networking/green
 etc/rc.d/init.d/networking/orange
 etc/rc.d/init.d/networking/red
 #etc/rc.d/init.d/networking/red.down
-etc/rc.d/init.d/networking/red.down/05-update-dns-forwarders
+etc/rc.d/init.d/networking/red.down/05-remove-dns-forwarders
 etc/rc.d/init.d/networking/red.down/10-ipsec
 etc/rc.d/init.d/networking/red.down/10-miniupnpd
 etc/rc.d/init.d/networking/red.down/10-ovpn
@@ -190,7 +191,7 @@ etc/rc.d/rcsysinit.d/S50cleanfs
 etc/rc.d/rcsysinit.d/S60setclock
 etc/rc.d/rcsysinit.d/S70console
 etc/rc.d/rcsysinit.d/S71pakfire
-etc/rc.d/rcsysinit.d/S74aws
+etc/rc.d/rcsysinit.d/S74cloud-init
 etc/rc.d/rcsysinit.d/S75firstsetup
 etc/rc.d/rcsysinit.d/S80localnet
 etc/rc.d/rcsysinit.d/S85firewall

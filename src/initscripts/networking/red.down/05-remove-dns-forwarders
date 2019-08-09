@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Remove DNS forwarders for unbound
+exec /etc/init.d/unbound remove-forwarders

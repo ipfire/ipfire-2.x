@@ -3,8 +3,12 @@ if test ${boot_dev} = ""; then
 	setenv root_dev /dev/mmcblk0p3;
 fi;
 
+if test ${dev_num} = ""; then
+	setenv dev_num 0;
+fi;
+
 if test ${boot_part} = ""; then
-	setenv boot_part 0:1;
+	setenv boot_part ${dev_num}:1;
 fi;
 
 if test ${soc} = "kirkwood"; then

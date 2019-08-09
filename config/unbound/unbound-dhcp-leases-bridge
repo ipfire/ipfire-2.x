@@ -153,7 +153,7 @@ class UnboundDHCPLeasesBridge(object):
 				line = line.rstrip()
 
 				try:
-					enabled, ipaddr, hostname, domainname = line.split(",")
+					enabled, ipaddr, hostname, domainname, generateptr = line.split(",")
 				except:
 					log.warning("Could not parse line: %s" % line)
 					continue

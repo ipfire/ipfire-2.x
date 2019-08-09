@@ -1,0 +1,17 @@
+etc/system-release
+etc/issue
+srv/web/ipfire/cgi-bin/credits.cgi
+var/ipfire/langs
+etc/unbound/root.hints
+etc/rc.d/helper/azure-setup
+etc/rc.d/init.d/cloud-init
+etc/rc.d/init.d/functions
+etc/rc.d/init.d/leds
+etc/rc.d/init.d/networking/red.down/05-remove-dns-forwarders
+etc/rc.d/init.d/partresize
+etc/rc.d/init.d/smt
+etc/rc.d/init.d/sysctl
+etc/rc.d/init.d/unbound
+etc/sysctl.conf
+usr/sbin/setup
+usr/sbin/unbound-dhcp-leases-bridge

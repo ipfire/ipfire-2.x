@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 4.14.131
-ARM_PATCHES = 4.14.131-ipfire0
+VER         = 4.14.138
+ARM_PATCHES = 4.14.138-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
 
-PAK_VER    = 85
+PAK_VER    = 86
 DEPS	   = ""
 
 HEADERS_ARCH  = $(BUILD_PLATFORM)
@@ -82,9 +82,8 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= 895790cf47b6a565ac5e5ce71b322dac
-
-arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 5c5f6da89606e63701cdcd84a500aca1
+$(DL_FILE)_MD5					= 00a16e1b1c6f295d236e5f82e20a0d2f
+arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= aac1fa091598028a8c27d64f206b6fca
 
 install : $(TARGET)
 
@@ -178,6 +177,9 @@ else
 	cd $(DIR_APP) && make oldconfig
 	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ -$(VERSUFIX)/' Makefile
+
+	# Remove modules folder if exists
+	rm -rf /lib/modules/$(VER)-$(VERSUFIX)
 
 	# Build the kernel
 	cd $(DIR_APP) && make $(MAKETUNING) $(KERNEL_TARGET) modules

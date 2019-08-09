@@ -1,37 +1,22 @@
 #!/bin/sh
 ########################################################################
-# Begin $rc_base/init.d/aws
+# Begin $rc_base/init.d/cloud-init
 ########################################################################
 
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/identify_ec2_instances.html
-running_on_ec2() {
-	local uuid
-
-	# Check if the hypervisor UUID starts with ec2
-	if [ -r "/sys/hypervisor/uuid" ]; then
-		uuid=$(</sys/hypervisor/uuid)
-
-		[ "${uuid:0:3}" = "ec2" ] && return 0
-	fi
-
-	# Check if the DMI product UUID starts with EC2
-	if [ -r "/sys/devices/virtual/dmi/id/product_uuid" ]; then
-		uuid=$(</sys/devices/virtual/dmi/id/product_uuid)
-
-		[ "${uuid:0:3}" = "EC2" ] && return 0
-	fi
-
-	# We are not running on AWS EC2
-	return 1
-}
-
 case "${1}" in
 	start)
-		# Do nothing if we are not running on AWS EC2
-		running_on_ec2 || exit 0
+		# Check if we are running in the cloud
+		if running_on_ec2; then
+			scriptname="/etc/rc.d/helper/aws-setup"
+		elif running_on_azure; then
+			scriptname="/etc/rc.d/helper/azure-setup"
+		else
+			# This system is not running in the cloud
+			exit 0
+		fi
 
 		# Find the first interface to use
 		for i in /sys/class/net/red* /sys/class/net/eth* \
@@ -56,10 +41,10 @@ case "${1}" in
 		fi
 
 		# Run a DHCP client and set up the system accordingly
-		dhclient -sf /etc/rc.d/helper/aws-setup "${intf}"
+		dhclient -sf "${scriptname}" "${intf}"
 
 		# End DHCP client immediately
-		dhclient -sf /etc/rc.d/helper/aws-setup -r "${intf}" &>/dev/null
+		dhclient -sf "${scriptname}" -r "${intf}" &>/dev/null
 
 		# Rename network devices
 		udevadm trigger --action="add" --subsystem-match="net"
@@ -68,11 +53,19 @@ case "${1}" in
 		;;
 
 	status)
+		# Check Amazon
 		if running_on_ec2; then
 			echo "This system is running on AWS EC2"
 			exit 0
+
+		# Check Microsoft
+		elif running_on_azure; then
+			echo "This system is running on Microsoft Azure"
+			exit 0
+
+		# The rest
 		else
-			echo "This system is NOT running on AWS EC2"
+			echo "This system is NOT running in the cloud"
 			exit 1
 		fi
 		;;
@@ -83,4 +76,4 @@ case "${1}" in
 		;;
 esac
 
-# End $rc_base/init.d/aws
+# End $rc_base/init.d/cloud-init

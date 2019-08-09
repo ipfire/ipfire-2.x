@@ -1,0 +1,15 @@
+diff -Naur u-boot-1ee53f5cff60d4daf9e5b49873932c454d53383a.org/arch/arm/dts/sun8i-h3-nanopi-r1.dts u-boot-1ee53f5cff60d4daf9e5b49873932c454d53383a/arch/arm/dts/sun8i-h3-nanopi-r1.dts
+--- u-boot-1ee53f5cff60d4daf9e5b49873932c454d53383a.org/arch/arm/dts/sun8i-h3-nanopi-r1.dts	2019-08-05 09:02:22.211159367 +0000
++++ u-boot-1ee53f5cff60d4daf9e5b49873932c454d53383a/arch/arm/dts/sun8i-h3-nanopi-r1.dts	2019-08-05 09:05:25.745207373 +0000
+@@ -46,6 +46,11 @@
+ 	model = "FriendlyElec NanoPi H3";
+ 	compatible = "friendlyarm,nanopi-m1-plus", "allwinner,sun8i-h3";
+ 
++	aliases {
++		/* entry to generate a second mac address for the realtek
++		   u-boot ignore that it point to wrong device */
++		ethernet1 = &emac;
++	};
+ 
+ 	reg_gmac_3v3: gmac-3v3 {
+ 		compatible = "regulator-fixed";

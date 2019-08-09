@@ -3,6 +3,8 @@
 # Begin $rc_base/init.d/partresize
 #
 # Description : Resize the root partition to the drivesize
+#		and setup some platform or hardware options in
+#		flashimage
 #
 # Authors     : Arne Fitzenreiter - arne_f@ipfire.org
 #
@@ -34,12 +36,27 @@ case "${1}" in
 			if [ ! "$(grep "console=ttyS0" /proc/cmdline)" == "" ]; then
 				scon="on";
 			fi
-			IFS= read -r DMI_PRODUCT_NAME < /sys/class/dmi/id/product_name;
-			case ${DMI_PRODUCT_NAME} in
-				APU|apu[1-4]|PC\ Engines\ apu[1-4] )
-						scon="on";
-					;;
-			esac
+			if [ -e /sys/class/dmi/id/product_name ]; then
+				IFS= read -r DMI_PRODUCT_NAME < /sys/class/dmi/id/product_name;
+				case ${DMI_PRODUCT_NAME} in
+					APU|apu[1-4]|PC\ Engines\ apu[1-4] )
+							scon="on";
+						;;
+				esac
+			fi
+
+			# Enable the serial console on all systems on Azure
+			if running_on_azure; then
+				scon="on"
+			fi
+
+			# Install AP6112 wlan config on NanoPi R1
+			case "$(< /proc/device-tree/model )" in
+				"FriendlyElec NanoPi-R1")
+					cp -f   /lib/firmware/brcm/brcmfmac43430-sdio.AP6212.txt \
+						/lib/firmware/brcm/brcmfmac43430-sdio.txt
+				;;
+			esac 2>/dev/null
 
 			mount /boot > /dev/null
 			if [ -e /boot/grub/grub.cfg ]; then

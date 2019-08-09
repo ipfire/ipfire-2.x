@@ -20,9 +20,9 @@
 #usr/include/nettle/cfb.h
 #usr/include/nettle/chacha-poly1305.h
 #usr/include/nettle/chacha.h
+#usr/include/nettle/cmac.h
 #usr/include/nettle/ctr.h
 #usr/include/nettle/curve25519.h
-#usr/include/nettle/des-compat.h
 #usr/include/nettle/des.h
 #usr/include/nettle/dsa-compat.h
 #usr/include/nettle/dsa.h
@@ -44,7 +44,6 @@
 #usr/include/nettle/memops.h
 #usr/include/nettle/memxor.h
 #usr/include/nettle/nettle-meta.h
-#usr/include/nettle/nettle-stdint.h
 #usr/include/nettle/nettle-types.h
 #usr/include/nettle/pbkdf2.h
 #usr/include/nettle/pgp.h
@@ -65,12 +64,13 @@
 #usr/include/nettle/twofish.h
 #usr/include/nettle/umac.h
 #usr/include/nettle/version.h
+#usr/include/nettle/xts.h
 #usr/include/nettle/yarrow.h
 usr/lib/libhogweed.so
-usr/lib/libhogweed.so.4
-usr/lib/libhogweed.so.4.5
+usr/lib/libhogweed.so.5
+usr/lib/libhogweed.so.5.0
 #usr/lib/libnettle.so
-usr/lib/libnettle.so.6
-usr/lib/libnettle.so.6.5
+usr/lib/libnettle.so.7
+usr/lib/libnettle.so.7.0
 #usr/lib/pkgconfig/hogweed.pc
 #usr/lib/pkgconfig/nettle.pc
