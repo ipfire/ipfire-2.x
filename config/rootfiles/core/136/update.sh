@@ -55,6 +55,10 @@ ldconfig
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# move unbound down after network down
+mv /etc/rc.d/rc0.d/K79unbound /etc/rc.d/rc0.d/K86unbound
+mv /etc/rc.d/rc6.d/K79unbound /etc/rc.d/rc6.d/K86unbound
+
 # Start services
 
 # This update needs a reboot...

@@ -108,11 +108,11 @@ etc/rc.d/rc0.d/K51vnstat
 etc/rc.d/rc0.d/K77conntrackd
 etc/rc.d/rc0.d/K78suricata
 etc/rc.d/rc0.d/K79leds
-etc/rc.d/rc0.d/K79unbound
 etc/rc.d/rc0.d/K80network
 etc/rc.d/rc0.d/K82wlanclient
 #etc/rc.d/rc0.d/K84bluetooth
 #etc/rc.d/rc0.d/K85messagebus
+etc/rc.d/rc0.d/K86unbound
 etc/rc.d/rc0.d/K87acpid
 etc/rc.d/rc0.d/K90sysklogd
 etc/rc.d/rc0.d/S60sendsignals
@@ -161,11 +161,11 @@ etc/rc.d/rc6.d/K51vnstat
 etc/rc.d/rc6.d/K77conntrackd
 etc/rc.d/rc6.d/K78suricata
 etc/rc.d/rc6.d/K79leds
-etc/rc.d/rc6.d/K79unbound
 etc/rc.d/rc6.d/K80network
 etc/rc.d/rc6.d/K82wlanclient
 #etc/rc.d/rc6.d/K84bluetooth
 #etc/rc.d/rc6.d/K85messagebus
+etc/rc.d/rc6.d/K86unbound
 etc/rc.d/rc6.d/K87acpid
 etc/rc.d/rc6.d/K90sysklogd
 etc/rc.d/rc6.d/S60sendsignals
