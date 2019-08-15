@@ -1044,6 +1044,8 @@ srv/web/ipfire/html/captive
 #srv/web/ipfire/manual/mod/mod_socache_memcache.html
 #srv/web/ipfire/manual/mod/mod_socache_memcache.html.en
 #srv/web/ipfire/manual/mod/mod_socache_memcache.html.fr.utf8
+#srv/web/ipfire/manual/mod/mod_socache_redis.html
+#srv/web/ipfire/manual/mod/mod_socache_redis.html.en
 #srv/web/ipfire/manual/mod/mod_socache_shmcb.html
 #srv/web/ipfire/manual/mod/mod_socache_shmcb.html.en
 #srv/web/ipfire/manual/mod/mod_socache_shmcb.html.fr.utf8
@@ -1128,6 +1130,7 @@ srv/web/ipfire/html/captive
 #srv/web/ipfire/manual/mod/mpmt_os2.html.fr.utf8
 #srv/web/ipfire/manual/mod/overrides.html
 #srv/web/ipfire/manual/mod/overrides.html.en
+#srv/web/ipfire/manual/mod/overrides.html.fr.utf8
 #srv/web/ipfire/manual/mod/prefork.html
 #srv/web/ipfire/manual/mod/prefork.html.de
 #srv/web/ipfire/manual/mod/prefork.html.en
