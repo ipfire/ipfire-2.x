@@ -20,6 +20,7 @@
 ###############################################################################
 
 use strict;
+use experimental 'smartmatch';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
