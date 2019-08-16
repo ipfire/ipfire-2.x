@@ -89,6 +89,7 @@ ifeq "$(ROOT)" ""
 else
 	cd $(DIR_APP) && ./Configure -des -Dprefix=$(TOOLS_DIR)
 	cd $(DIR_APP) && make
+	cd $(DIR_APP) && cp -v perl cpan/podlators/scripts/pod2man $(TOOLS_DIR)/bin
 	cd $(DIR_APP) && mkdir -pv $(TOOLS_DIR)/lib/perl5/$(VER)
 	cd $(DIR_APP) && cp -Rv lib/* $(TOOLS_DIR)/lib/perl5/$(VER)
 endif
