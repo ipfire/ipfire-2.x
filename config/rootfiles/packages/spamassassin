@@ -135,8 +135,8 @@ usr/lib/perl5/site_perl/5.30.0/Mail/SpamAssassin
 #usr/lib/perl5/site_perl/5.30.0/Mail/SpamAssassin/Util/TieOneStringHash.pm
 #usr/lib/perl5/site_perl/5.30.0/Mail/SpamAssassin/Util/TinyRedis.pm
 #usr/lib/perl5/site_perl/5.30.0/spamassassin-run.pod
-#usr/lib/perl5/site_perl/5.30.0/x86_64-linux-thread-multi/auto/Mail/SpamAssassin
-#usr/lib/perl5/site_perl/5.30.0/x86_64-linux-thread-multi/auto/Mail/SpamAssassin/.packlist
+#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Mail/SpamAssassin
+#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Mail/SpamAssassin/.packlist
 #usr/share/man/man1/sa-awl.1
 #usr/share/man/man1/sa-compile.1
 #usr/share/man/man1/sa-learn.1
