@@ -20,7 +20,7 @@
 ###############################################################################
 
 use strict;
-use ecperimental 'smartmatch';
+use experimental 'smartmatch';
 
 # enable only the following on debugging purpose
 #use warnings;
