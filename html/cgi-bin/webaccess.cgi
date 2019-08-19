@@ -232,8 +232,8 @@ print <<END
 <tr>
    <td bgcolor='#C0C0C0' align='right'>
       <font face='verdana,arial,helvetica' color='#FFFFFF' size='1'>
-      <a href='http://www.advproxy.net' target='_blank'>Advanced Proxy</a> running on
-      <a href='https://www.ipfire.org' target='_blank'>IPFire</a>
+      <a href='http://www.advproxy.net' target='_blank' rel='noopener'>Advanced Proxy</a> running on
+      <a href='https://www.ipfire.org' target='_blank' rel='noopener'>IPFire</a>
       </font>
    </td>
 </tr>

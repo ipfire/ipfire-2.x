@@ -1021,7 +1021,7 @@ print <<END
 	<td colspan='4'><b>$Lang::tr{'advproxy cache management'}</b></td>
 </tr>
 <tr>
-	<td class='base'><a href='/cgi-bin/cachemgr.cgi' target='_blank'>$Lang::tr{'proxy cachemgr'}:</td>
+	<td class='base'><a href='/cgi-bin/cachemgr.cgi' target='_blank' rel='noopener'>$Lang::tr{'proxy cachemgr'}:</td>
 	<td><input type='checkbox' name='CACHEMGR' $checked{'CACHEMGR'}{'on'} /></td>
 	<td class='base'>$Lang::tr{'advproxy admin mail'}:</td>
 	<td><input type='text' name='ADMIN_MAIL_ADDRESS' value='$proxysettings{'ADMIN_MAIL_ADDRESS'}' /></td>

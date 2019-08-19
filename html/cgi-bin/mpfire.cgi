@@ -605,7 +605,7 @@ foreach (@webradio){
 	}
 	chomp $stream[1];chomp $stream[2];
 	print <<END
-<td align='left'><a href='$stream[2]' target='_blank'>$stream[1]</a></td>
+<td align='left'><a href='$stream[2]' target='_blank' rel='noopener'>$stream[1]</a></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='FILE' value='$stream[0]' /><input type='hidden' name='ACTION' value='playweb' /><input type='image' alt='$Lang::tr{'play'}' title='$Lang::tr{'play'}' src='/images/media-playback-start.png' align='middle' />
 <input type='hidden' name='FRAME' value='$mpfiresettings{'FRAME'}' />
 </form></td>
