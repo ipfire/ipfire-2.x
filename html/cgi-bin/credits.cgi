@@ -54,7 +54,7 @@ END
 print <<END
 <br>
 <center>
-	$Lang::tr{'visit us at'}: <b><a href='https://www.ipfire.org/' target="_blank">https://www.ipfire.org/</a></b>
+	$Lang::tr{'visit us at'}: <b><a href='https://www.ipfire.org/' target="_blank" rel="noopener">https://www.ipfire.org/</a></b>
 </center>
 <br><br>
 
@@ -147,7 +147,7 @@ END
 print <<END
 	<p>
 		This product includes GeoLite data created by MaxMind, available from
-		<a href='http://www.maxmind.com/' target="_blank">http://www.maxmind.com/</a>.
+		<a href='http://www.maxmind.com/' target="_blank" rel="noopener">http://www.maxmind.com/</a>.
 	</p>
 END
 ;

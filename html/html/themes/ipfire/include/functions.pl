@@ -208,8 +208,8 @@ print <<END;
 
 	<div id="footer" class='bigbox fixed'>
 		<span class="pull-right">
-			<a href="https://www.ipfire.org/" target="_blank"><strong>IPFire.org</strong></a> &bull;
-			<a href="https://www.ipfire.org/donate" target="_blank">$Lang::tr{'support donation'}</a>
+			<a href="https://www.ipfire.org/" target="_blank" rel="noopener"><strong>IPFire.org</strong></a> &bull;
+			<a href="https://www.ipfire.org/donate" target="_blank" rel="noopener">$Lang::tr{'support donation'}</a>
 		</span>
 
 		<strong>$system_release</strong>
