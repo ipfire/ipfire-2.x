@@ -39,7 +39,7 @@ require "${General::swroot}/lang.pl";
 # @param submenu entries
 sub showsubmenu() {
 	my $submenus = shift;
-	
+
 	print "<ul>";
 	foreach my $item (sort keys %$submenus) {
 		$link = getlink($submenus->{$item});
@@ -126,10 +126,13 @@ print <<END;
 	<title>$headline - $title</title>
 	$extrahead
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#E12917"/>
+	<meta name="Description" content="$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}">
 	<link rel="shortcut icon" href="/favicon.ico" />
-	<script type="text/javascript" src="/include/jquery.js"></script>
+	<script src="/include/jquery.js"></script>
 
-	<script type="text/javascript">
+	<script>
 		function swapVisibility(id) {
 			\$('#' + id).toggle();
 		}
@@ -137,12 +140,12 @@ print <<END;
 END
 
 	foreach my $stylesheet (@stylesheets) {
-		print "<link href=\"/themes/ipfire/include/css/$stylesheet\" rel=\"stylesheet\" type=\"text/css\" />\n";
+		print "<link href=\"/themes/ipfire/include/css/$stylesheet\" rel=\"stylesheet\" />\n";
 	}
 
 if ($settings{'SPEED'} ne 'off') {
 print <<END
-	<script type="text/javascript" src="/themes/ipfire/include/js/refreshInetInfo.js"></script>
+	<script src="/themes/ipfire/include/js/refreshInetInfo.js"></script>
 END
 ;
 }
@@ -152,8 +155,8 @@ print <<END
 	<body>
 		<div id="header" class="fixed">
 			<div id="logo">
-				<a href="https://www.ipfire.org" style="text-decoration: none;">
-					<img src="/themes/ipfire/images/tux2.png" style="float:left; margin-left: -3px; margin-top: -3px;"/>
+				<a href="https://www.ipfire.org" aria-label="ipfire logo" style="text-decoration: none;">
+					<img src="/themes/ipfire/images/tux2.png" alt="ipfire logo" style="float:left; margin-left: -3px; margin-top: -3px;"/>
 END
 ;
 	if ($settings{'WINDOWWITHHOSTNAME'} ne 'off') {
