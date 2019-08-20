@@ -23,6 +23,7 @@ use strict;
 use Sort::Naturally;
 use utf8;
 use feature 'unicode_strings';
+use experimental 'smartmatch';
 
 no warnings 'uninitialized';
 

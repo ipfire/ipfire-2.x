@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 5.12.3
+VER        = 5.30.0
 
 THISAPP    = perl-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)                  = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5              = 72f3f7e1c700e79bbf9d9279ca5b42d9
+$(DL_FILE)_MD5              = 9770584cdf9b5631c38097645ce33549
 
 install : $(TARGET)
 
@@ -79,25 +79,17 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/perl-Fix-Errno.pm-generation-for-gcc-5.0.patch
-ifneq "$(ROOT)" ""
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-libc-2.patch
-endif
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && sed -i -e 's|-fstack-protector|-fno-stack-protector|g' Configure
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && ./configure.gnu --prefix=/usr -Dman1dir=/usr/share/man/man1 \
 		-Dman3dir=/usr/share/man/man3 -Dpager="/usr/bin/less -isR" -Dusethreads
-	cd $(DIR_APP) && sed -i 's/^0$$//' makefile
-	cd $(DIR_APP) && sed -i 's/^0$$//' x2p/makefile
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 else
 	cd $(DIR_APP) && ./Configure -des -Dprefix=$(TOOLS_DIR)
-	cd $(DIR_APP) && sed -i 's/^0$$//' makefile
-	cd $(DIR_APP) && sed -i 's/^0$$//' x2p/makefile
 	cd $(DIR_APP) && make
-	cd $(DIR_APP) && cp -v perl pod/pod2man $(TOOLS_DIR)/bin
+	cd $(DIR_APP) && cp -v perl cpan/podlators/scripts/pod2man $(TOOLS_DIR)/bin
 	cd $(DIR_APP) && mkdir -pv $(TOOLS_DIR)/lib/perl5/$(VER)
 	cd $(DIR_APP) && cp -Rv lib/* $(TOOLS_DIR)/lib/perl5/$(VER)
 endif

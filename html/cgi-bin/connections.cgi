@@ -20,6 +20,7 @@
 ###############################################################################
 
 use strict;
+use experimental 'smartmatch';
 
 use Net::IPv4Addr qw( :all );
 use Switch;
