@@ -1,0 +1,11 @@
+/var/log/radius/*.log /var/log/radius/radacct/*/* {
+    weekly
+    rotate 4
+    copytruncate
+    compress
+    notifempty
+    missingok
+    postrotate
+	/etc/init.d/freeradius reload &>/dev/null || true
+    endscript
+}
