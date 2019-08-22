@@ -14,6 +14,11 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting dnsdist..."
+
+		# Increasing maximum number of open files
+		ulimit -n 65536
+
+		# Starting daemon
 		/usr/bin/dnsdist --supervised ${ARGS} >/dev/null &
 		evaluate_retval
 		;;
