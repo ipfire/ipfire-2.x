@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = spamassassin
 PAK_VER    = 3
 
-DEPS       = "perl-NetAddr-IP"
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
