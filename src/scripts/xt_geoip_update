@@ -91,7 +91,8 @@ function build_legacy() {
 	cat $DB_PATH/GeoLite2-Country-Blocks-IPv4.csv | \
 	    $DB1_PATH/bin/geolite2-to-legacy-csv.sh $DB1_PATH/bin/countryInfo.txt > \
 	    $TMP_FILE
-	$DB1_PATH/bin/geoip-generator -v -4 --info="$(date -u +'GEO-106FREE %Y%m%d Build')" -o \
+	$DB1_PATH/bin/geoip-generator -v -4 --info="$(date -u +'GEO-106FREE %Y%m%d Build -IPFire-' \
+	    -r $DB_PATH/GeoLite2-Country-Blocks-IPv4.csv) $(<$DB_PATH/COPYRIGHT.txt)" -o \
 	    $DB1_PATH/GeoIP.dat $TMP_FILE
 
 	return 0
