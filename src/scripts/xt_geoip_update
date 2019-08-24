@@ -25,6 +25,7 @@ TMP_FILE=$(mktemp -p $TMP_PATH)
 SCRIPT_PATH=/usr/local/bin
 DEST_PATH=/usr/share/xt_geoip
 DB_PATH=/var/lib/GeoIP
+DB1_PATH=/usr/share/GeoIP
 
 DL_URL=https://geolite.maxmind.com/download/geoip/database
 DL_FILE=GeoLite2-Country-CSV.zip
@@ -82,6 +83,21 @@ function install() {
 	return 0
 }
 
+function build_legacy() {
+	# Create temporary directory.
+	mkdir -pv $TMP_PATH
+	
+	echo "Convert database to legacy GeoIP.dat ..."
+	cat $DB_PATH/GeoLite2-Country-Blocks-IPv4.csv | \
+	    $DB1_PATH/bin/geolite2-to-legacy-csv.sh $DB1_PATH/bin/countryInfo.txt > \
+	    $TMP_FILE
+	$DB1_PATH/bin/geoip-generator -v -4 --info="$(date -u +'GEO-106FREE %Y%m%d Build')" -o \
+	    $DB1_PATH/GeoIP.dat $TMP_FILE
+
+	return 0
+}
+
+
 function build() {
 	echo "Convert database..."
 
@@ -121,7 +137,12 @@ function main() {
 	# Convert the ruleset.
 	build || exit $?
 
+	# Convert GeoIP2 to lagacy.
+	build_legacy || exit $?
 	return 0
+
+	# Remove temporary files.
+	cleanup || exit $?
 }
 
 # Run the main function.
