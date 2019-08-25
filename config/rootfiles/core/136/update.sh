@@ -71,7 +71,7 @@ mv /etc/rc.d/rc6.d/K79unbound /etc/rc.d/rc6.d/K86unbound
 /usr/local/bin/xt_geoup_update
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
