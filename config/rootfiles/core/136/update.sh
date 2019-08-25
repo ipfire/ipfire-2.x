@@ -67,6 +67,9 @@ mv /etc/rc.d/rc6.d/K79unbound /etc/rc.d/rc6.d/K86unbound
 # Start services
 /etc/init.d/apache restart
 
+# Update GeoIP
+/usr/local/bin/xt_geoup_update
+
 # This update needs a reboot...
 #touch /var/run/need_reboot
 
