@@ -49,6 +49,11 @@ done
 # Extract files
 extract_files
 
+# Remove old perl files
+rm -rf /usr/bin/perl5.12.3
+rm -rf /usr/lib/perl5/5.12.3
+rm -rf /usr/lib/perl5/site_perl/5.12.3
+
 # update linker config
 ldconfig
 
