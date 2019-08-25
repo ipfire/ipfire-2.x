@@ -65,6 +65,7 @@ mv /etc/rc.d/rc0.d/K79unbound /etc/rc.d/rc0.d/K86unbound
 mv /etc/rc.d/rc6.d/K79unbound /etc/rc.d/rc6.d/K86unbound
 
 # Start services
+/etc/init.d/apache restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
