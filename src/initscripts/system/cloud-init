@@ -13,6 +13,8 @@ case "${1}" in
 			scriptname="/etc/rc.d/helper/aws-setup"
 		elif running_on_azure; then
 			scriptname="/etc/rc.d/helper/azure-setup"
+		elif running_on_gcp; then
+			scriptname="/etc/rc.d/helper/gcp-setup"
 		else
 			# This system is not running in the cloud
 			exit 0
@@ -61,6 +63,11 @@ case "${1}" in
 		# Check Microsoft
 		elif running_on_azure; then
 			echo "This system is running on Microsoft Azure"
+			exit 0
+
+		# Check Google
+		elif running_on_gcp; then
+			echo "This system is running on Google Cloud"
 			exit 0
 
 		# The rest

@@ -822,4 +822,16 @@ running_on_azure() {
 	return 1
 }
 
+running_on_gcp() {
+	# Check if the BIOS vendor is "Google"
+	if [ -r "/sys/devices/virtual/dmi/id/bios_vendor" ]; then
+		local bios_vendor="$(</sys/devices/virtual/dmi/id/bios_vendor)"
+
+		[ "${bios_vendor}" = "Google" ] && return 0
+	fi
+
+	# We are not running on GCP
+	return 1
+}
+
 # End $rc_base/init.d/functions
