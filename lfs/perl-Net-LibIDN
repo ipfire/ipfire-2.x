@@ -18,23 +18,22 @@
 #                                                                             #
 ###############################################################################
 
+
 ###############################################################################
 # Definitions
 ###############################################################################
-
 include Config
+VER        = 0.12
 
-VER        = 2.11.1
-
-THISAPP    = amavisd-new-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = Net-LibIDN-$(VER)
+DL_FILE    = ${THISAPP}.tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = amavisd
-PAK_VER    = 3
 
-DEPS       = "clamav spamassassin perl-Net-LibIDN"
+PROG       = perl-Net-LibIDN
+DEPS       = ""
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f89fc043c790e35137121e45f2890703
+$(DL_FILE)_MD5 = c3e4de2065009d67bcb1df0afb473e12
 
 install : $(TARGET)
 
@@ -54,7 +53,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -76,19 +75,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && cp -f amavisd /usr/bin
-	chown root.root /usr/bin/amavisd
-	chmod 755 /usr/bin/amavisd
-
-	#install initscripts
-	$(call INSTALL_INITSCRIPT,amavisd)
-
-	cp -fv $(DIR_SRC)/config/amavisd/amavisd.conf /etc
-	chown root.root /etc/amavisd.conf
-	chmod 644 /etc/amavisd.conf
-	-mkdir -p /var/amavis/{db,tmp} /var/virusmails
-	chown amavis.amavis -Rv /var/{amavis,virusmails}
-	chmod 750 -Rv /var/{amavis,virusmails}
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && perl Makefile.PL
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
