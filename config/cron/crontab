@@ -31,7 +31,7 @@ HOME=/
 */5 * * * *	[ -f "/var/ipfire/red/active" ] && /usr/bin/ddns update-all
 
 # Logwatch
-01 0 * * *	/usr/local/bin/logwatch > /var/log/logwatch/`date -I -d yesterday`; \
+05 0 * * *	/usr/local/bin/logwatch > /var/log/logwatch/`date -I -d yesterday`; \
 		LOGWATCH_KEEP=$(sed -ne 's/^LOGWATCH_KEEP=\([0-9]\+\)$/\1/p' /var/ipfire/logging/settings); \
 		find /var/log/logwatch/ -ctime +${LOGWATCH_KEEP=56} -exec rm -f '{}' ';'
 
