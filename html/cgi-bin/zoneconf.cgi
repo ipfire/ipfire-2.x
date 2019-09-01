@@ -93,6 +93,10 @@ my $css = <<END
 		text-align: center;
 	}
 
+	input.vlanid {
+		width: 4em;
+	}
+
 	#submit-container {
 		width: 100%;
 		padding-top: 20px;
@@ -432,7 +436,7 @@ foreach (@nics) {
 					<option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
 					<option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
 				</select>
-				<input type="number" id="TAG $uc $mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" $field_disabled>
+				<input type="number" class="vlanid" id="TAG $uc $mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" $field_disabled>
 			</td>
 END
 ;
