@@ -1,2 +1,3 @@
 /var/ipfire/wio/wio.conf
 /var/log/wio
+/var/log/rrd/wio/
