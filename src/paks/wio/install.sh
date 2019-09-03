@@ -26,7 +26,6 @@ extract_files
 restore_backup ${NAME}
 
 chown -R nobody.nobody /var/ipfire/wio
-chown -R nobody.nobody /var/log/rrd/wio
 chown -R nobody.nobody /var/log/wio
 chown root.nobody /usr/local/bin/wioscan
 chown root.nobody /usr/local/bin/wiohelper
