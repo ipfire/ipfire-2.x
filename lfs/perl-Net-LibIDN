@@ -18,46 +18,32 @@
 #                                                                             #
 ###############################################################################
 
+
 ###############################################################################
 # Definitions
 ###############################################################################
-
 include Config
+VER        = 0.12
 
-VER        = 4.10.0.0
-
-THISAPP    = pcengines-apu-firmware-$(VER)
+THISAPP    = Net-LibIDN-$(VER)
+DL_FILE    = ${THISAPP}.tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = pcengines-apu-firmware
-PAK_VER    = 3
-SUP_ARCH   = i586 x86_64
 
-DEPS       = "firmware-update"
+PROG       = perl-Net-LibIDN
+DEPS       = ""
+PAK_VER    = 1
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = \
-	apu1_v$(VER).rom \
-	apu2_v$(VER).rom \
-	apu3_v$(VER).rom \
-	apu4_v$(VER).rom \
-	apu5_v$(VER).rom
+objects = $(DL_FILE)
 
-apu1_v$(VER).rom = $(DL_FROM)/apu1_v$(VER).rom
-apu2_v$(VER).rom = $(DL_FROM)/apu2_v$(VER).rom
-apu3_v$(VER).rom = $(DL_FROM)/apu3_v$(VER).rom
-apu4_v$(VER).rom = $(DL_FROM)/apu4_v$(VER).rom
-apu5_v$(VER).rom = $(DL_FROM)/apu5_v$(VER).rom
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-apu1_v$(VER).rom_MD5 = 21c754ae5390722e04aa7ea55e339478
-apu2_v$(VER).rom_MD5 = a509bc0384ba4f368bda267b8ed1761d
-apu3_v$(VER).rom_MD5 = 6951e3c8742dab67c84ef467c69edd66
-apu4_v$(VER).rom_MD5 = 0b30b739fccd22c43a13023c2bb7e867
-apu5_v$(VER).rom_MD5 = c1b5b9f393a099f0952b4138bc71901e
+$(DL_FILE)_MD5 = c3e4de2065009d67bcb1df0afb473e12
 
 install : $(TARGET)
 
@@ -67,7 +53,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -89,10 +75,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-
-	# Install firmware to /lib/firmware
-	mkdir -pv /lib/firmware/pcengines/apu
-	cd $(DIR_DL) && install -v -m 644 $(objects) \
-		/lib/firmware/pcengines/apu
-
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && perl Makefile.PL
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
