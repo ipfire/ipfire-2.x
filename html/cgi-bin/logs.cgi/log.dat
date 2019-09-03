@@ -50,7 +50,7 @@ $cgiparams{'SECTION'} = 'ipfire';
 
 my %sections = (
         'auth' => '(\w+\(pam_unix\)\[.*\]: )',
-		'wio' => '(wio|wio\[.*\])',
+		'wio' => '(wio:|wio\[.*\])',
         'captive' => '(Captive:)',
         'clamav' => '(clamd\[.*\]: |freshclam\[.*\]: )',
         'collectd' => '(collectd\[.*\]: )',
