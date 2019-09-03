@@ -1504,7 +1504,7 @@ my $dotip = length($ipaddresses[$a]) - rindex($ipaddresses[$a],'.');
 			$ic = "${_}";
 
 			foreach $interface (@devs_net) {
-			next if ( $netsettings{"$ic"."_DEV"} eq 'red0' && ($netsettings{"RED_TYPE"} eq 'DHCP' || $netsettings{"RED_TYPE"} eq 'PPPOE'));
+			next if ( $netsettings{"$ic"."_DEV"} eq 'red0' && $netsettings{"RED_TYPE"} eq 'PPPOE');
 				if ( $netsettings{"$ic"."_DEV"} eq $interface ) {
 					if ( &General::IpInSubnet($ipaddresses[$a], $netsettings{"$ic"."_NETADDRESS"}, $netsettings{"$ic"."_NETMASK"}) ) {
 						print"<td align='center' height='20'><img src='$imgstatic/$devs_img[$in]' alt='$Lang::tr{$devs_alt[$in]}' title='$Lang::tr{$devs_alt[$in]}' /></td>";
@@ -1558,7 +1558,7 @@ my $dotip = length($ipaddresses[$a]) - rindex($ipaddresses[$a],'.');
 			}
 		}
 
-		if ($netsettings{"RED_TYPE"} eq 'DHCP' || $netsettings{"RED_TYPE"} eq 'PPPOE') {
+		if ( $netsettings{"RED_TYPE"} eq 'PPPOE' ) {
 			my $redipadr = qx'ip addr | grep red0 | grep inet | awk "{print \$2}"';
 			my @rednet = split ("/", $redipadr);
 			chomp ($rednet[1]);
@@ -1569,10 +1569,10 @@ my $dotip = length($ipaddresses[$a]) - rindex($ipaddresses[$a],'.');
 				print"<td align='center' height='20'><img src='$imgstatic/red.png' alt='$Lang::tr{'wio_red_lan'}' title='$Lang::tr{'wio_red_lan'}' /></td>";
 				last SWITCH;
 			}
-			else {
+		}
+		else {
 				print"<td align='center'><img align='middle' src='$imgstatic/white.png' alt='$Lang::tr{'wio_unknown_lan'}' title='$Lang::tr{'wio_unknown_lan'}' /></td>";
 				last SWITCH;
-			}
 		}
 	}
 
@@ -1872,7 +1872,7 @@ SWITCH: {
 		}
 	}
 
-			if ($netsettings{"RED_TYPE"} eq 'DHCP' || $netsettings{"RED_TYPE"} eq 'PPPOE') {
+			if ($netsettings{"RED_TYPE"} eq 'DHCP' || $netsettings{"RED_TYPE"} eq 'PPPOE' || $netsettings{"RED_TYPE"} eq 'STATIC') {
 			my $redipadr = qx'ip addr | grep red0 | grep inet | awk "{print \$2}"';
 			my @rednet = split ("/", $redipadr);
 			chomp ($rednet[1]);
