@@ -40,9 +40,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/doc/iproute2/examples/README.cbq
 #usr/share/doc/iproute2/examples/README.iproute2+tc
 #usr/share/doc/iproute2/examples/SYN-DoS.rate.limit
-#usr/share/doc/iproute2/examples/cbq.init-v0.7.3
 #usr/share/doc/iproute2/examples/cbqinit.eth1
-#usr/share/doc/iproute2/examples/dhcp-client-script
 #usr/share/doc/iproute2/examples/diffserv
 #usr/share/doc/iproute2/examples/diffserv/Edge1
 #usr/share/doc/iproute2/examples/diffserv/Edge2
@@ -63,8 +61,10 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/bridge.8
 #usr/share/man/man8/ctstat.8
 #usr/share/man/man8/devlink-dev.8
+#usr/share/man/man8/devlink-health.8
 #usr/share/man/man8/devlink-monitor.8
 #usr/share/man/man8/devlink-port.8
+#usr/share/man/man8/devlink-region.8
 #usr/share/man/man8/devlink-resource.8
 #usr/share/man/man8/devlink-sb.8
 #usr/share/man/man8/devlink.8
@@ -111,6 +111,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/tc-basic.8
 #usr/share/man/man8/tc-bfifo.8
 #usr/share/man/man8/tc-bpf.8
+#usr/share/man/man8/tc-cake.8
 #usr/share/man/man8/tc-cbq-details.8
 #usr/share/man/man8/tc-cbq.8
 #usr/share/man/man8/tc-cbs.8
@@ -121,6 +122,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/tc-csum.8
 #usr/share/man/man8/tc-drr.8
 #usr/share/man/man8/tc-ematch.8
+#usr/share/man/man8/tc-etf.8
 #usr/share/man/man8/tc-flow.8
 #usr/share/man/man8/tc-flower.8
 #usr/share/man/man8/tc-fq.8
@@ -148,7 +150,9 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/tc-simple.8
 #usr/share/man/man8/tc-skbedit.8
 #usr/share/man/man8/tc-skbmod.8
+#usr/share/man/man8/tc-skbprio.8
 #usr/share/man/man8/tc-stab.8
+#usr/share/man/man8/tc-taprio.8
 #usr/share/man/man8/tc-tbf.8
 #usr/share/man/man8/tc-tcindex.8
 #usr/share/man/man8/tc-tunnel_key.8
