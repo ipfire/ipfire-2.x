@@ -57,6 +57,10 @@ rm -rf /usr/lib/perl5/site_perl/5.12.3
 # update linker config
 ldconfig
 
+# Update crontab
+sed -i -e "s|^01 0 \* \* \*./usr/local/bin/logwatch|05 0 \* \* \*\t/usr/local/bin/logwatch|g" /var/spool/cron/root.orig
+fcrontab -z &>/dev/null
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
