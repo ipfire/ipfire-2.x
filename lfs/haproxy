@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.8.14
+VER        = 2.0.5
 
 THISAPP    = haproxy-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = haproxy
-PAK_VER    = 10
+PAK_VER    = 12
 
 DEPS       = ""
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a050bcb90426d1c939b4b0ce3098a8c4
+$(DL_FILE)_MD5 = 497c716adf4b056484601a887f34d152
 
 install : $(TARGET)
 
@@ -82,8 +82,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
-	cd $(DIR_APP) && make $(MAKETUNING) CPU="generic" TARGET="linux2628" \
-		USE_OPENSSL=1 USE_PCRE=1 USE_ZLIB=1 USE_REGPARM=1 \
+	cd $(DIR_APP) && make $(MAKETUNING) CPU="generic" TARGET="linux-glibc" \
+		USE_OPENSSL=1 USE_PCRE=1 USE_PCRE_JIT=1 USE_ZLIB=1 USE_REGPARM=1 \
 		ADDINC="$(CFLAGS)" USE_LINUX_TPROXY=1 ADDLIB="$(LDFLAGS)"
 
 	cd $(DIR_APP) && make install-bin install-man PREFIX=/usr

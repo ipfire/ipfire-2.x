@@ -26,8 +26,8 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.23"							# Version number
-CORE="135"							# Core Level (Filename)
-PAKFIRE_CORE="135"						# Core Level (PAKFIRE)
+CORE="136"							# Core Level (Filename)
+PAKFIRE_CORE="136"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
@@ -38,7 +38,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 
-TOOLCHAINVER=20190427
+TOOLCHAINVER=20190814
 
 ###############################################################################
 #
@@ -1291,6 +1291,8 @@ buildipfire() {
   lfsmake2 misc-progs
   lfsmake2 nano
   lfsmake2 URI
+  lfsmake2 perl-CGI
+  lfsmake2 perl-Switch
   lfsmake2 HTML-Tagset
   lfsmake2 HTML-Parser
   lfsmake2 HTML-Template
@@ -1390,7 +1392,9 @@ buildipfire() {
   lfsmake2 fetchmail
   lfsmake2 cyrus-imapd
   lfsmake2 clamav
+  lfsmake2 perl-NetAddr-IP
   lfsmake2 spamassassin
+  lfsmake2 perl-Net-LibIDN
   lfsmake2 amavisd
   lfsmake2 dma
   lfsmake2 alsa
@@ -1623,6 +1627,7 @@ buildipfire() {
   lfsmake2 flashrom
   lfsmake2 firmware-update
   lfsmake2 tshark
+  lfsmake2 geoip-generator
 }
 
 buildinstaller() {

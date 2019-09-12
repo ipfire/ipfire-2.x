@@ -1,3 +1,4 @@
+etc/logrotate.d/freeradius
 etc/raddb
 #etc/raddb/README.rst
 #etc/raddb/certs
@@ -136,6 +137,7 @@ etc/raddb
 #etc/raddb/mods-config/sql/ippool/mysql/queries.conf
 #etc/raddb/mods-config/sql/ippool/mysql/schema.sql
 #etc/raddb/mods-config/sql/ippool/postgresql
+#etc/raddb/mods-config/sql/ippool/postgresql/procedure.sql
 #etc/raddb/mods-config/sql/ippool/postgresql/queries.conf
 #etc/raddb/mods-config/sql/ippool/postgresql/schema.sql
 #etc/raddb/mods-config/sql/ippool/sqlite
@@ -328,6 +330,7 @@ usr/bin/smbencrypt
 #usr/include/freeradius/rfc7499.h
 #usr/include/freeradius/rfc7930.h
 #usr/include/freeradius/rfc8045.h
+#usr/include/freeradius/rfc8559.h
 #usr/include/freeradius/sha1.h
 #usr/include/freeradius/stats.h
 #usr/include/freeradius/sysutmp.h
@@ -814,6 +817,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.paloalto
 #usr/share/freeradius/dictionary.patton
 #usr/share/freeradius/dictionary.perle
+#usr/share/freeradius/dictionary.pfsense
 #usr/share/freeradius/dictionary.propel
 #usr/share/freeradius/dictionary.prosoft
 #usr/share/freeradius/dictionary.proxim
@@ -854,6 +858,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.rfc7499
 #usr/share/freeradius/dictionary.rfc7930
 #usr/share/freeradius/dictionary.rfc8045
+#usr/share/freeradius/dictionary.rfc8559
 #usr/share/freeradius/dictionary.riverbed
 #usr/share/freeradius/dictionary.riverstone
 #usr/share/freeradius/dictionary.roaringpenguin

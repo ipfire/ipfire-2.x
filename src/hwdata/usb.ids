@@ -9,8 +9,8 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# Version: 2019.05.08
-# Date:    2019-05-08 20:34:05
+# Version: 2019.07.27
+# Date:    2019-07-27 20:34:05
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -19196,6 +19196,7 @@
 	0101  RTL8812AU Archer T4U 802.11ac
 	0103  Archer T4UH wireless Realtek 8812AU
 	0105  Archer T1U 802.11a/n/ac Wireless Adapter [MediaTek MT7610U]
+	0106  Archer T9UH v1 [Realtek RTL8814AU]
 	0107  TL-WN821N Version 5 RTL8192EU
 	0108  TL-WN822N Version 4 RTL8192EU
 	0109  TL WN823N RTL8192EU

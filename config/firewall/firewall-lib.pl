@@ -20,6 +20,8 @@
 ###############################################################################
 
 use strict;
+use experimental 'smartmatch';
+
 no warnings 'uninitialized';
 
 package fwlib;

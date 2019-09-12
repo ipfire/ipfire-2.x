@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.9p1
+VER        = 8.0p1
 
 THISAPP    = openssh-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c6af50b7a474d04726a5aa747a5dce8f
+$(DL_FILE)_MD5 = bf050f002fe510e1daecd39044e1122d
 
 install : $(TARGET)
 

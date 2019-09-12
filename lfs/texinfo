@@ -24,12 +24,12 @@
 
 include Config
 
-VER        = 6.3
+VER        = 6.6
 
 THISAPP    = texinfo-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/texinfo-6.3
+DIR_APP    = $(DIR_SRC)/texinfo-6.6
 
 # Normal build or $(TOOLS_DIR) build.
 #
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 32baefe5c7080dfb512a4eac5ce67b2a
+$(DL_FILE)_MD5 = 5231da3e6aa106cd0532b8609e5b3702
 
 install : $(TARGET)
 

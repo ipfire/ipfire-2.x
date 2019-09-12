@@ -84,7 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-DCMAKE_BUILD_TYPE=Release	\
 		-DBUILD_mmdbresolve=OFF
 
-	cd $(DIR_APP)/build && make $(PARALELLISMFLAGS)
+	cd $(DIR_APP)/build && make $(MAKETUNING)
 	cd $(DIR_APP)/build && make install
 
 	@rm -rf $(DIR_APP)

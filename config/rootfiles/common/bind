@@ -128,6 +128,7 @@ usr/bin/nsupdate
 #usr/include/isc/crc64.h
 #usr/include/isc/deprecated.h
 #usr/include/isc/dir.h
+#usr/include/isc/endian.h
 #usr/include/isc/entropy.h
 #usr/include/isc/errno.h
 #usr/include/isc/error.h
@@ -192,6 +193,7 @@ usr/bin/nsupdate
 #usr/include/isc/serial.h
 #usr/include/isc/sha1.h
 #usr/include/isc/sha2.h
+#usr/include/isc/siphash.h
 #usr/include/isc/sockaddr.h
 #usr/include/isc/socket.h
 #usr/include/isc/stat.h
@@ -266,15 +268,15 @@ usr/bin/nsupdate
 #usr/lib/libbind9.la
 #usr/lib/libbind9.so
 usr/lib/libbind9.so.161
-usr/lib/libbind9.so.161.0.2
+usr/lib/libbind9.so.161.0.3
 #usr/lib/libdns.la
 #usr/lib/libdns.so
-usr/lib/libdns.so.1106
-usr/lib/libdns.so.1106.0.1
+usr/lib/libdns.so.1107
+usr/lib/libdns.so.1107.0.0
 #usr/lib/libisc.la
 #usr/lib/libisc.so
 usr/lib/libisc.so.1100
-usr/lib/libisc.so.1100.2.0
+usr/lib/libisc.so.1100.3.0
 #usr/lib/libisccc.la
 #usr/lib/libisccc.so
 usr/lib/libisccc.so.161
@@ -282,7 +284,7 @@ usr/lib/libisccc.so.161.0.1
 #usr/lib/libisccfg.la
 #usr/lib/libisccfg.so
 usr/lib/libisccfg.so.163
-usr/lib/libisccfg.so.163.0.1
+usr/lib/libisccfg.so.163.0.2
 #usr/lib/liblwres.la
 #usr/lib/liblwres.so
 usr/lib/liblwres.so.161
