@@ -68,7 +68,11 @@ fcrontab -z &>/dev/null
 mv /etc/rc.d/rc0.d/K79unbound /etc/rc.d/rc0.d/K86unbound
 mv /etc/rc.d/rc6.d/K79unbound /etc/rc.d/rc6.d/K86unbound
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Start services
+/etc/init.d/sshd restart
 /etc/init.d/apache restart
 
 # Update GeoIP
