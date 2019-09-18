@@ -1947,6 +1947,13 @@ END
 #	} else {
 #	    &cleanssldatabase();
 	}
+	# Create ta.key for tls-auth
+	system('/usr/sbin/openvpn', '--genkey', '--secret', "${General::swroot}/ovpn/certs/ta.key");
+	if ($?) {
+	    $errormessage = "$Lang::tr{'openssl produced an error'}: $?";
+	    &cleanssldatabase();
+	    goto ROOTCERT_ERROR;
+	}
 	# Create Diffie Hellmann Parameter
 	system('/usr/bin/openssl', 'dhparam', '-out', "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
 	if ($?) {
@@ -1960,13 +1967,6 @@ END
 	    goto ROOTCERT_ERROR;
 #	} else {
 #	    &cleanssldatabase();
-	}
-	# Create ta.key for tls-auth
-	system('/usr/sbin/openvpn', '--genkey', '--secret', "${General::swroot}/ovpn/certs/ta.key");
-	if ($?) {
-	    $errormessage = "$Lang::tr{'openssl produced an error'}: $?";
-	    &cleanssldatabase();
-	    goto ROOTCERT_ERROR;
 	}
 	goto ROOTCERT_SUCCESS;
     }
