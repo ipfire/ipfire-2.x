@@ -158,7 +158,7 @@ endif
 ifneq "$(TOOLCHAIN)" "1"
 	# Creating the locales
 	mkdir -p /usr/lib/locale
-	cd $(DIR_SRC)/glibc-build && make localedata/install-locales
+	cd $(DIR_SRC)/glibc-build && make localedata/install-locales $(MAKETUNING)
 
 	# Timezone data will be shipped by tzdata.
 	rm -rfv /usr/share/zoneinfo
