@@ -898,17 +898,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
         $errormessage = $Lang::tr{'invalid input for keepalive 1:2'};
         goto ADV_ERROR;	
     }
-    # Create ta.key for tls-auth if not presant
-    if ($cgiparams{'TLSAUTH'} eq 'on') {
-	if ( ! -e "${General::swroot}/ovpn/certs/ta.key") {
-		system('/usr/sbin/openvpn', '--genkey', '--secret', "${General::swroot}/ovpn/certs/ta.key");
-		if ($?) {
-		$errormessage = "$Lang::tr{'openssl produced an error'}: $?";
-        goto ADV_ERROR;
-		}
-	}
-    }
-    
     &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
     &writeserverconf();#hier ok
 }
@@ -1188,6 +1177,17 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	$errormessage = $Lang::tr{'invalid port'};
 	goto SETTINGS_ERROR;
     }
+
+	# Create ta.key for tls-auth if not presant
+	if ($cgiparams{'TLSAUTH'} eq 'on') {
+		if ( ! -e "${General::swroot}/ovpn/certs/ta.key") {
+			system('/usr/sbin/openvpn', '--genkey', '--secret', "${General::swroot}/ovpn/certs/ta.key");
+			if ($?) {
+				$errormessage = "$Lang::tr{'openssl produced an error'}: $?";
+				goto SETTINGS_ERROR;
+			}
+		}
+	}
 
     $vpnsettings{'ENABLED_BLUE'} = $cgiparams{'ENABLED_BLUE'};
     $vpnsettings{'ENABLED_ORANGE'} =$cgiparams{'ENABLED_ORANGE'};
