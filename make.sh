@@ -473,7 +473,7 @@ prepareenv() {
 
 	if [ "${ENABLE_RAMDISK}" = "on" ]; then
 		mkdir -p $BASEDIR/build/usr/src
-		mount -t tmpfs tmpfs -o size=4G,mode=1777 $BASEDIR/build/usr/src
+		mount -t tmpfs tmpfs -o size=4G,nr_inodes=1M,mode=1777 $BASEDIR/build/usr/src
 	fi
 
 	mkdir -p $BASEDIR/build/usr/src/{cache,config,doc,html,langs,lfs,log,src,ccache}
