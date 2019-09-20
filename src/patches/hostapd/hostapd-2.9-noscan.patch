@@ -1,7 +1,7 @@
 diff U3 hostapd/config_file.c hostapd/config_file.c
---- a/hostapd/config_file.c	Sun Apr 21 09:10:22 2019
-+++ b/hostapd/config_file.c	Sun Jun  9 01:08:21 2019
-@@ -3390,6 +3390,10 @@
+--- a/hostapd/config_file.c	Wed Aug  7 15:25:25 2019
++++ b/hostapd/config_file.c	Fri Sep 20 17:36:33 2019
+@@ -3411,6 +3411,10 @@
  			bss->ieee80211w = 1;
  #endif /* CONFIG_OCV */
  #ifdef CONFIG_IEEE80211N
@@ -13,9 +13,9 @@ diff U3 hostapd/config_file.c hostapd/config_file.c
  		conf->ieee80211n = atoi(pos);
  	} else if (os_strcmp(buf, "ht_capab") == 0) {
 diff U3 src/ap/ap_config.h src/ap/ap_config.h
---- a/src/ap/ap_config.h	Sun Apr 21 09:10:22 2019
-+++ b/src/ap/ap_config.h	Sun Jun  9 01:06:42 2019
-@@ -801,6 +801,8 @@
+--- a/src/ap/ap_config.h	Wed Aug  7 15:25:25 2019
++++ b/src/ap/ap_config.h	Fri Sep 20 17:38:06 2019
+@@ -932,6 +932,8 @@
  
  	int ht_op_mode_fixed;
  	u16 ht_capab;
@@ -25,8 +25,8 @@ diff U3 src/ap/ap_config.h src/ap/ap_config.h
  	int secondary_channel;
  	int no_pri_sec_switch;
 diff U3 src/ap/hw_features.c src/ap/hw_features.c
---- a/src/ap/hw_features.c	Sun Apr 21 09:10:22 2019
-+++ b/src/ap/hw_features.c	Sun Jun  9 01:09:41 2019
+--- a/src/ap/hw_features.c	Wed Aug  7 15:25:25 2019
++++ b/src/ap/hw_features.c	Fri Sep 20 17:39:02 2019
 @@ -477,7 +477,8 @@
  	int ret;
  
@@ -38,8 +38,8 @@ diff U3 src/ap/hw_features.c src/ap/hw_features.c
  
  	hostapd_set_state(iface, HAPD_IFACE_HT_SCAN);
 diff U3 src/ap/ieee802_11_ht.c src/ap/ieee802_11_ht.c
---- a/src/ap/ieee802_11_ht.c	Sun Apr 21 09:10:22 2019
-+++ b/src/ap/ieee802_11_ht.c	Sun Jun  9 01:13:09 2019
+--- a/src/ap/ieee802_11_ht.c	Wed Aug  7 15:25:25 2019
++++ b/src/ap/ieee802_11_ht.c	Fri Sep 20 17:41:24 2019
 @@ -252,6 +252,9 @@
  		return;
  	}
