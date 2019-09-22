@@ -8,7 +8,7 @@
 		<deviceType>urn:schemas-upnp-org:device:InternetGatewayDevice:1</deviceType>
 		<friendlyName>IPFire UPnP Device</friendlyName>
 		<manufacturer>IPFire Project</manufacturer>
-		<manufacturerURL>http://www.ipfire.org</manufacturerURL>
+		<manufacturerURL>https://www.ipfire.org</manufacturerURL>
 		<modelName>IPFire 2.3</modelName>
 		<UDN>uuid:75802409-bccb-40e7-8e6c-fa095ecce13e</UDN>
 		<iconList>
@@ -34,7 +34,7 @@
 				<deviceType>urn:schemas-upnp-org:device:WANDevice:1</deviceType>
 				<friendlyName>WANDevice</friendlyName>
 				<manufacturer>IPFire Project</manufacturer>
-				<manufacturerURL>http://www.ipfire.org</manufacturerURL>
+				<manufacturerURL>https://www.ipfire.org</manufacturerURL>
 				<modelDescription>WAN Device on Linux IGD</modelDescription>
 				<modelName>IPFire</modelName>
 				<modelNumber>2.3</modelNumber>
@@ -56,11 +56,11 @@
 						<deviceType>urn:schemas-upnp-org:device:WANConnectionDevice:1</deviceType>
 						<friendlyName>Internet Connection</friendlyName>
 						<manufacturer>IPFire Project</manufacturer>
-						<manufacturerURL>http://www.ipfire.org</manufacturerURL>
+						<manufacturerURL>https://www.ipfire.org</manufacturerURL>
 						<modelDescription>Internet connection on Linux IPFire Firewall</modelDescription>
 						<modelName>IPFire</modelName>
 						<modelNumber>2.3</modelNumber>
-						<modelURL>http://www.ipfire.org</modelURL>
+						<modelURL>https://www.ipfire.org</modelURL>
 						<serialNumber>2.3</serialNumber>
 						<UDN>uuid:75802409-bccb-40e7-8e6c-fa095ecce13e</UDN>
 						<UPC>Linux IGD</UPC>

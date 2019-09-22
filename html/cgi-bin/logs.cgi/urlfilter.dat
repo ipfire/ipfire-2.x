@@ -365,7 +365,7 @@ if ($lines)
 				if (length($dsturl) > 69) { $site .= "..."; }
 			}
 			#print "<td>$site</td>\n";
-			print "<td $col><a href='$dsturl' title='$dsturl' target='_blank'>$site</a></td>\n";
+			print "<td $col><a href='$dsturl' title='$dsturl' target='_blank' rel='noopener'>$site</a></td>\n";
 		}
 		print "</tr>\n";
 	}

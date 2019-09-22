@@ -74,7 +74,7 @@ print <<END;
 			<input type='submit' name='ACTION' value=$Lang::tr{'yes'} />
 		</form>
 	</p>
-	<a href='http://www.gnu.org/licenses/translations.html' target='_blank'>$Lang::tr{'gpl unofficial translation of the general public license v3'}</a>
+	<a href='http://www.gnu.org/licenses/translations.html' target='_blank' rel='noopener'>$Lang::tr{'gpl unofficial translation of the general public license v3'}</a>
 
 END
 

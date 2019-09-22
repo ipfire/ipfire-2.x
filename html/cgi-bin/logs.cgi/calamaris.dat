@@ -255,7 +255,7 @@ END
 	if (-e "$sargdir/today") {
 		print <<END;
 			<td width="25%" align="center">
-				<a href="/proxy-reports/today" target="_blank">$Lang::tr{'proxy reports today'}</a>
+				<a href="/proxy-reports/today" target="_blank" rel="noopener">$Lang::tr{'proxy reports today'}</a>
 			</td>
 END
 	} else {
@@ -270,7 +270,7 @@ END
 	if (-e "$sargdir/daily") {
 		print <<END;
 			<td width="25%" align="center">
-				<a href="/proxy-reports/daily" target="_blank">$Lang::tr{'proxy reports daily'}</a>
+				<a href="/proxy-reports/daily" target="_blank" rel="noopener">$Lang::tr{'proxy reports daily'}</a>
 			</td>
 END
 	} else {
@@ -285,7 +285,7 @@ END
 	if (-e "$sargdir/weekly") {
 		print <<END;
 			<td width="25%" align="center">
-				<a href="/proxy-reports/weekly" target="_blank">$Lang::tr{'proxy reports weekly'}</a>
+				<a href="/proxy-reports/weekly" target="_blank" rel="noopener">$Lang::tr{'proxy reports weekly'}</a>
 			</td>
 END
 	} else {
@@ -300,7 +300,7 @@ END
 	if (-e "$sargdir/monthly") {
 		print <<END;
 			<td width="25%" align="center">
-				<a href="/proxy-reports/monthly" target="_blank">$Lang::tr{'proxy reports monthly'}</a>
+				<a href="/proxy-reports/monthly" target="_blank" rel="noopener">$Lang::tr{'proxy reports monthly'}</a>
 			</td>
 END
 	} else {

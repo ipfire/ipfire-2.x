@@ -3,7 +3,7 @@
 * Modified: March 6th, 2013 by michael@koehler.tk
 * Authors: 	IPFire Team (info@ipfire.org)
 			Kay-Michael Köhler (michael@koehler.tk)
-* Visit http://www.ipfire.org/
+* Visit https://www.ipfire.org/
 */
 
 var t_current;
