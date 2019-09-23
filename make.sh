@@ -1259,6 +1259,7 @@ buildipfire() {
   lfsmake2 beep
   lfsmake2 libarchive
   lfsmake2 cmake
+  lfsmake2 libssh
   lfsmake2 cdrkit
   lfsmake2 dosfstools
   lfsmake2 reiserfsprogs
