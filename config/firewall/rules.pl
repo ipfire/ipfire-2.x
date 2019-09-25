@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2013 Alexander Marx <amarx@ipfire.org>                        #
+# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -804,8 +804,8 @@ sub make_log_limit_options {
 	# Maybe we should get this from the configuration.
 	my $limit = 10;
 
-	# We limit log messages to $limit messages per minute.
-	push(@options, ("--limit", "$limit/min"));
+	# We limit log messages to $limit messages per second.
+	push(@options, ("--limit", "$limit/second"));
 
 	# And we allow bursts of 2x $limit.
 	push(@options, ("--limit-burst", $limit * 2));
