@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.24
+VER        = 1.0.28
 
 THISAPP    = sane-$(VER)
 DL_FILE    = sane-backends-$(VER).tar.gz
@@ -33,9 +33,9 @@ DIR_APP    = $(DIR_SRC)/sane-backends-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = sane
-PAK_VER    = 5
+PAK_VER    = 6
 
-DEPS       = "cups libtiff"
+DEPS       = "avahi cups libtiff"
 
 ###############################################################################
 # Top-level Rules
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 1ca68e536cd7c1852322822f5f6ac3a4
+$(DL_FILE)_MD5 = 02493493072769a1d4ad904d30f04e6b
 
 install : $(TARGET)
 
@@ -80,10 +80,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
 				     --disable-ipv6 \
-				     --enable-parport-directio
+				     --enable-parport-directio \
+				     --enable-avahi
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	chmod 4755 /usr/bin/scanimage
+
+	# Install configuration
 	cp -vf $(DIR_SRC)/config/sane/saned.conf /etc/sane.d/
 
 	#install initscripts

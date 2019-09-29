@@ -98,7 +98,6 @@ usr/local/bin/qosd
 usr/local/bin/readhash
 usr/local/bin/rebuild-initrd
 usr/local/bin/run-parts
-#usr/local/bin/sanedloop
 usr/local/bin/scanhd
 usr/local/bin/settime
 usr/local/bin/timecheck

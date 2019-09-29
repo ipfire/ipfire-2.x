@@ -8,9 +8,6 @@
 #
 # Version     : 01.00
 #
-# Notes       : runs sanedloop ibecause saned is intended
-#		for use with (x)inet.d
-#
 ########################################################################
 
 . /etc/sysconfig/rc
@@ -19,15 +16,13 @@
 case "${1}" in
 	start)
 		boot_mesg "Starting saned - network scanner deamon..."
-		loadproc /usr/local/bin/sanedloop
+		loadproc /usr/sbin/saned -lD
 		evaluate_retval
 		;;
 
 	stop)
 		boot_mesg "Stopping saned - network scanner deamon..."
-		killproc sanedloop
-		killall -s KILL -w saned > /dev/null 2>&1
-		exit 0
+		killproc /usr/sbin/saned
 		;;
 
 	restart)
@@ -37,7 +32,6 @@ case "${1}" in
 		;;
 
 	status)
-		statusproc /usr/bin/sanedloop
 		statusproc /usr/sbin/saned
 		;;
 
