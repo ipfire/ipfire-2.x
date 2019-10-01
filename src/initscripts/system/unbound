@@ -15,6 +15,7 @@ TEST_DOMAIN_FAIL="dnssec-failed.org"
 INSECURE_ZONES=
 USE_FORWARDERS=1
 ENABLE_SAFE_SEARCH=off
+FORCE_TCP=off
 
 # Cache any local zones for 60 seconds
 LOCAL_TTL=60
@@ -24,6 +25,12 @@ EDNS_DEFAULT_BUFFER_SIZE=4096
 
 # Load optional configuration
 [ -e "/etc/sysconfig/unbound" ] && . /etc/sysconfig/unbound
+
+DIG_ARGS=()
+
+if [ "${FORCE_TCP}" = "on" ]; then
+	DIG_ARGS+=( "+tcp" )
+fi
 
 ip_address_revptr() {
 	local addr=${1}
@@ -198,6 +205,14 @@ update_hosts() {
 write_forward_conf() {
 	(
 		config_header
+
+		# Force using TCP for upstream servers only
+		if [ "${FORCE_TCP}" = "on" ]; then
+			echo "# Force using TCP for upstream servers only"
+			echo "server:"
+			echo "	tcp-upstream: yes"
+			echo
+		fi
 
 		local insecure_zones="${INSECURE_ZONES}"
 
@@ -391,7 +406,7 @@ ns_is_online() {
 	local ns=${1}
 	shift
 
-	dig @${ns} +nodnssec A ${TEST_DOMAIN} $@ >/dev/null
+	dig "${DIG_ARGS[@]}" @${ns} +nodnssec A ${TEST_DOMAIN} $@ >/dev/null
 }
 
 # Resolving ${TEST_DOMAIN_FAIL} will fail if the nameserver is validating
@@ -399,11 +414,11 @@ ns_is_validating() {
 	local ns=${1}
 	shift
 
-	if ! dig @${ns} A ${TEST_DOMAIN_FAIL} $@ | grep -q SERVFAIL; then
+	if ! dig "${DIG_ARGS[@]}" @${ns} A ${TEST_DOMAIN_FAIL} $@ | grep -q SERVFAIL; then
 		return 1
 	else
 		# Determine if NS replies with "ad" data flag if DNSSEC enabled
-		dig @${ns} +dnssec SOA ${TEST_DOMAIN} $@ | awk -F: '/\;\;\ flags\:/ { s=1; if (/\ ad/) s=0; exit s }'
+		dig "${DIG_ARGS[@]}" @${ns} +dnssec SOA ${TEST_DOMAIN} $@ | awk -F: '/\;\;\ flags\:/ { s=1; if (/\ ad/) s=0; exit s }'
 	fi
 }
 
@@ -413,28 +428,33 @@ ns_forwards_DNSKEY() {
 	local ns=${1}
 	shift
 
-	dig @${ns} DNSKEY ${TEST_DOMAIN} $@ | grep -qv SOA
+	dig "${DIG_ARGS[@]}" @${ns} DNSKEY ${TEST_DOMAIN} $@ | grep -qv SOA
 }
 
 ns_forwards_DS() {
 	local ns=${1}
 	shift
 
-	dig @${ns} DS ${TEST_DOMAIN} $@ | grep -qv SOA
+	dig "${DIG_ARGS[@]}" @${ns} DS ${TEST_DOMAIN} $@ | grep -qv SOA
 }
 
 ns_forwards_RRSIG() {
 	local ns=${1}
 	shift
 
-	dig @${ns} +dnssec A ${TEST_DOMAIN} $@ | grep -q RRSIG
+	dig "${DIG_ARGS[@]}" @${ns} +dnssec A ${TEST_DOMAIN} $@ | grep -q RRSIG
 }
 
 ns_supports_tcp() {
 	local ns=${1}
 	shift
 
-	dig @${ns} +tcp A ${TEST_DOMAIN} $@ >/dev/null || return 1
+	# If TCP is forced we know by now if the server responds to it
+	if [ "${FORCE_TCP}" = "on" ]; then
+		return 0
+	fi
+
+	dig "${DIG_ARGS[@]}" @${ns} +tcp A ${TEST_DOMAIN} $@ >/dev/null || return 1
 }
 
 ns_determine_edns_buffer_size() {
@@ -443,7 +463,7 @@ ns_determine_edns_buffer_size() {
 
 	local b
 	for b in 4096 2048 1500 1480 1464 1400 1280 512; do
-		if dig @${ns} +dnssec +bufsize=${b} A ${TEST_DOMAIN} $@ >/dev/null; then
+		if dig "${DIG_ARGS[@]}" @${ns} +dnssec +bufsize=${b} A ${TEST_DOMAIN} $@ >/dev/null; then
 			echo "${b}"
 			return 0
 		fi
@@ -464,7 +484,7 @@ get_root_nameservers() {
 can_resolve_root() {
 	local ns
 	for ns in $(get_root_nameservers); do
-		if dig @${ns} +dnssec SOA . $@ >/dev/null; then
+		if dig "${DIG_ARGS[@]}" @${ns} +dnssec SOA . $@ >/dev/null; then
 			return 0
 		fi
 	done
@@ -514,7 +534,7 @@ resolve() {
 	local ns
 	for ns in $(read_name_servers); do
 		local answer
-		for answer in $(dig +short "@${ns}" A "${hostname}"); do
+		for answer in $(dig "${DIG_ARGS[@]}" +short "@${ns}" A "${hostname}"); do
 			found=1
 
 			# Filter out non-IP addresses
