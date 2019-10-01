@@ -16,6 +16,7 @@ var/log/rrd/wio
 var/ipfire/addon-lang/wio.de.pl
 var/ipfire/addon-lang/wio.en.pl
 var/ipfire/addon-lang/wio.tr.pl
+var/ipfire/addon-lang/wio.fr.pl
 var/ipfire/menu.d/EX-wio.menu
 srv/web/ipfire/html/images/wio
 srv/web/ipfire/html/images/wio/add.png
