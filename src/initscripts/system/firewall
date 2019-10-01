@@ -6,6 +6,7 @@
 eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/optionsfw/settings)
+ROOTHINTS="/etc/unbound/root.hints"
 IFACE=`/bin/cat /var/ipfire/red/iface 2> /dev/null | /usr/bin/tr -d '\012'`
 
 if [ -f /var/ipfire/red/device ]; then
@@ -307,6 +308,17 @@ iptables_init() {
 	iptables -A INPUT -j TOR_INPUT
 	iptables -N TOR_OUTPUT
 	iptables -A OUTPUT -j TOR_OUTPUT
+
+	# Allow outgoing DNS traffic (TCP and UDP) to DNS root servers
+	local rootserverips="$( awk '/\s+A\s+/ { print $4 }' ${ROOTHINTS} )"
+	ipset -N root-servers iphash
+
+	for ip in "${rootserverips[@]}"; do
+		ipset add root-servers $ip
+	done
+
+	iptables -A OUTPUT -m set --match-set root-servers dst -p tcp --dport 53 -j ACCEPT
+	iptables -A OUTPUT -m set --match-set root-servers dst -p udp --dport 53 -j ACCEPT
 	
 	# Jump into the actual firewall ruleset.
 	iptables -N INPUTFW
