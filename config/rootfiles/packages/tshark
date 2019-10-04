@@ -608,10 +608,10 @@ usr/bin/tshark
 #usr/include/wireshark/wsutil/xtea.h
 #usr/lib/libwireshark.so
 usr/lib/libwireshark.so.12
-usr/lib/libwireshark.so.12.0.2
+usr/lib/libwireshark.so.12.0.5
 #usr/lib/libwiretap.so
 usr/lib/libwiretap.so.9
-usr/lib/libwiretap.so.9.0.2
+usr/lib/libwiretap.so.9.0.5
 #usr/lib/libwscodecs.so
 usr/lib/libwscodecs.so.2
 usr/lib/libwscodecs.so.2.0.0
@@ -755,7 +755,7 @@ usr/share/wireshark/dtds/xcap-error.dtd
 #usr/share/wireshark/help/capture_filters.txt
 #usr/share/wireshark/help/capturing.txt
 #usr/share/wireshark/help/display_filters.txt
-#usr/share/wireshark/help/faq.py
+#usr/share/wireshark/help/faq.txt
 #usr/share/wireshark/help/getting_started.txt
 #usr/share/wireshark/help/overview.txt
 #usr/share/wireshark/help/toc
