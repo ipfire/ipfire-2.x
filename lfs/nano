@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.4
+VER        = 4.5
 
 THISAPP    = nano-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9650dd3eb0adbab6aaa748a6f1398ccb
+$(DL_FILE)_MD5 = 686a169b6e5e1f76fe79570f07934001
 
 install : $(TARGET)
 
