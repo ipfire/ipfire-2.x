@@ -3,7 +3,7 @@ usr/bin/nmap
 usr/bin/nping
 #usr/bin/uninstall_ndiff
 usr/lib/python2.7/site-packages/ndiff.py
-usr/lib/python2.7/site-packages/ndiff.pyc
+#usr/lib/python2.7/site-packages/ndiff.pyc
 #usr/share/man/de/man1/nmap.1
 #usr/share/man/es/man1/nmap.1
 #usr/share/man/fr/man1/nmap.1
@@ -59,7 +59,6 @@ usr/share/nmap/nselib/asn1.lua
 usr/share/nmap/nselib/base32.lua
 usr/share/nmap/nselib/base64.lua
 usr/share/nmap/nselib/bin.lua
-usr/share/nmap/nselib/bit.lua
 usr/share/nmap/nselib/bitcoin.lua
 usr/share/nmap/nselib/bits.lua
 usr/share/nmap/nselib/bittorrent.lua
@@ -150,6 +149,7 @@ usr/share/nmap/nselib/iscsi.lua
 usr/share/nmap/nselib/isns.lua
 usr/share/nmap/nselib/jdwp.lua
 usr/share/nmap/nselib/json.lua
+usr/share/nmap/nselib/knx.lua
 usr/share/nmap/nselib/ldap.lua
 usr/share/nmap/nselib/lfs.luadoc
 usr/share/nmap/nselib/libssh2-utility.lua
@@ -178,6 +178,7 @@ usr/share/nmap/nselib/nmap.luadoc
 usr/share/nmap/nselib/nrpc.lua
 usr/share/nmap/nselib/nsedebug.lua
 usr/share/nmap/nselib/omp2.lua
+usr/share/nmap/nselib/oops.lua
 usr/share/nmap/nselib/openssl.luadoc
 usr/share/nmap/nselib/ospf.lua
 usr/share/nmap/nselib/packet.lua
@@ -187,6 +188,7 @@ usr/share/nmap/nselib/pop3.lua
 usr/share/nmap/nselib/pppoe.lua
 usr/share/nmap/nselib/proxy.lua
 usr/share/nmap/nselib/punycode.lua
+usr/share/nmap/nselib/rand.lua
 usr/share/nmap/nselib/rdp.lua
 usr/share/nmap/nselib/re.lua
 usr/share/nmap/nselib/redis.lua
@@ -213,8 +215,10 @@ usr/share/nmap/nselib/sslv2.lua
 usr/share/nmap/nselib/stdnse.lua
 usr/share/nmap/nselib/strbuf.lua
 usr/share/nmap/nselib/strict.lua
+usr/share/nmap/nselib/stringaux.lua
 usr/share/nmap/nselib/stun.lua
 usr/share/nmap/nselib/tab.lua
+usr/share/nmap/nselib/tableaux.lua
 usr/share/nmap/nselib/target.lua
 usr/share/nmap/nselib/tftp.lua
 usr/share/nmap/nselib/tls.lua
@@ -269,7 +273,9 @@ usr/share/nmap/scripts/broadcast-dhcp6-discover.nse
 usr/share/nmap/scripts/broadcast-dns-service-discovery.nse
 usr/share/nmap/scripts/broadcast-dropbox-listener.nse
 usr/share/nmap/scripts/broadcast-eigrp-discovery.nse
+usr/share/nmap/scripts/broadcast-hid-discoveryd.nse
 usr/share/nmap/scripts/broadcast-igmp-discovery.nse
+usr/share/nmap/scripts/broadcast-jenkins-discover.nse
 usr/share/nmap/scripts/broadcast-listener.nse
 usr/share/nmap/scripts/broadcast-ms-sql-discover.nse
 usr/share/nmap/scripts/broadcast-netbios-master-browser.nse
@@ -383,7 +389,6 @@ usr/share/nmap/scripts/hddtemp-info.nse
 usr/share/nmap/scripts/hnap-info.nse
 usr/share/nmap/scripts/hostmap-bfk.nse
 usr/share/nmap/scripts/hostmap-crtsh.nse
-usr/share/nmap/scripts/hostmap-ip2hosts.nse
 usr/share/nmap/scripts/hostmap-robtex.nse
 usr/share/nmap/scripts/http-adobe-coldfusion-apsa1301.nse
 usr/share/nmap/scripts/http-affiliate-id.nse
@@ -433,6 +438,7 @@ usr/share/nmap/scripts/http-gitweb-projects-enum.nse
 usr/share/nmap/scripts/http-google-malware.nse
 usr/share/nmap/scripts/http-grep.nse
 usr/share/nmap/scripts/http-headers.nse
+usr/share/nmap/scripts/http-hp-ilo-info.nse
 usr/share/nmap/scripts/http-huawei-hg5xx-vuln.nse
 usr/share/nmap/scripts/http-icloud-findmyiphone.nse
 usr/share/nmap/scripts/http-icloud-sendmsg.nse
@@ -464,6 +470,7 @@ usr/share/nmap/scripts/http-rfi-spider.nse
 usr/share/nmap/scripts/http-robots.txt.nse
 usr/share/nmap/scripts/http-robtex-reverse-ip.nse
 usr/share/nmap/scripts/http-robtex-shared-ns.nse
+usr/share/nmap/scripts/http-sap-netweaver-leak.nse
 usr/share/nmap/scripts/http-security-headers.nse
 usr/share/nmap/scripts/http-server-header.nse
 usr/share/nmap/scripts/http-shellshock.nse
@@ -517,6 +524,7 @@ usr/share/nmap/scripts/http-wordpress-brute.nse
 usr/share/nmap/scripts/http-wordpress-enum.nse
 usr/share/nmap/scripts/http-wordpress-users.nse
 usr/share/nmap/scripts/http-xssed.nse
+usr/share/nmap/scripts/https-redirect.nse
 usr/share/nmap/scripts/iax2-brute.nse
 usr/share/nmap/scripts/iax2-version.nse
 usr/share/nmap/scripts/icap-info.nse
@@ -566,6 +574,7 @@ usr/share/nmap/scripts/ldap-search.nse
 usr/share/nmap/scripts/lexmark-config.nse
 usr/share/nmap/scripts/llmnr-resolve.nse
 usr/share/nmap/scripts/lltd-discovery.nse
+usr/share/nmap/scripts/lu-enum.nse
 usr/share/nmap/scripts/maxdb-info.nse
 usr/share/nmap/scripts/mcafee-epo-agent.nse
 usr/share/nmap/scripts/membase-brute.nse
@@ -662,6 +671,7 @@ usr/share/nmap/scripts/quake1-info.nse
 usr/share/nmap/scripts/quake3-info.nse
 usr/share/nmap/scripts/quake3-master-getservers.nse
 usr/share/nmap/scripts/rdp-enum-encryption.nse
+usr/share/nmap/scripts/rdp-ntlm-info.nse
 usr/share/nmap/scripts/rdp-vuln-ms12-020.nse
 usr/share/nmap/scripts/realvnc-auth-bypass.nse
 usr/share/nmap/scripts/redis-brute.nse
@@ -723,6 +733,8 @@ usr/share/nmap/scripts/smb-vuln-ms10-054.nse
 usr/share/nmap/scripts/smb-vuln-ms10-061.nse
 usr/share/nmap/scripts/smb-vuln-ms17-010.nse
 usr/share/nmap/scripts/smb-vuln-regsvc-dos.nse
+usr/share/nmap/scripts/smb-vuln-webexec.nse
+usr/share/nmap/scripts/smb-webexec-exploit.nse
 usr/share/nmap/scripts/smb2-capabilities.nse
 usr/share/nmap/scripts/smb2-security-mode.nse
 usr/share/nmap/scripts/smb2-time.nse
@@ -799,6 +811,7 @@ usr/share/nmap/scripts/tor-consensus-checker.nse
 usr/share/nmap/scripts/traceroute-geolocation.nse
 usr/share/nmap/scripts/tso-brute.nse
 usr/share/nmap/scripts/tso-enum.nse
+usr/share/nmap/scripts/ubiquiti-discovery.nse
 usr/share/nmap/scripts/unittest.nse
 usr/share/nmap/scripts/unusual-port.nse
 usr/share/nmap/scripts/upnp-info.nse
@@ -812,6 +825,7 @@ usr/share/nmap/scripts/vnc-info.nse
 usr/share/nmap/scripts/vnc-title.nse
 usr/share/nmap/scripts/voldemort-info.nse
 usr/share/nmap/scripts/vtam-enum.nse
+usr/share/nmap/scripts/vulners.nse
 usr/share/nmap/scripts/vuze-dht-info.nse
 usr/share/nmap/scripts/wdb-version.nse
 usr/share/nmap/scripts/weblogic-t3-info.nse
