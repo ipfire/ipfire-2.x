@@ -1344,6 +1344,7 @@ buildipfire() {
   lfsmake2 setserial
   lfsmake2 setup
   lfsmake2 libdnet
+  lfsmake2 rust
   lfsmake2 jansson
   lfsmake2 yaml
   lfsmake2 libhtp
