@@ -52,7 +52,10 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3f84df04bd0cf0ea4668390be263945e
+$(THISAPP)-x86_64-unknown-linux-gnu.tar.gz_MD5    3f84df04bd0cf0ea4668390be263945e
+$(THISAPP)-i686-unknown-linux-gnu.tar.gz_MD5 =    29411d7420184ad51f99339b2e2cf20a
+$(THISAPP)-aarch64-unknown-linux-gnu.tar.gz_MD5 = 28f9556a3febd2d38c0ba97337d56cb8
+$(THISAPP)-arm-unknown-linux-gnueabi.tar.gz_MD5 = 970ad24c516394466e7b8ca40689ee76
 
 install : $(TARGET)
 
