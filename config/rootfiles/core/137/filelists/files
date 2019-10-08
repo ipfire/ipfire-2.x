@@ -2,4 +2,5 @@ etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
+etc/logrotate.conf
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
