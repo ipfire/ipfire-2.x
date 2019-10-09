@@ -1,5 +1,0 @@
-#!/bin/sh
-#
-# saned is intended for use with (x)inet.d so we have to recall it in a loop
-#
-(while true; do /usr/sbin/saned -s0; done) &
