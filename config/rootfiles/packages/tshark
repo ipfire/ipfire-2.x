@@ -632,8 +632,10 @@ usr/lib/libwsutil.so.10.0.0
 #usr/lib/wireshark/cmake/WiresharkTargets.cmake
 #usr/lib/wireshark/extcap
 usr/lib/wireshark/extcap/androiddump
+usr/lib/wireshark/extcap/ciscodump
 usr/lib/wireshark/extcap/dpauxmon
 usr/lib/wireshark/extcap/randpktdump
+usr/lib/wireshark/extcap/sshdump
 usr/lib/wireshark/extcap/udpdump
 #usr/lib/wireshark/plugins
 #usr/lib/wireshark/plugins/3.0
