@@ -537,7 +537,7 @@ usr/sbin/saned
 #usr/share/locale/ca@valencia/LC_MESSAGES/sane-backends.mo
 #usr/share/locale/cs/LC_MESSAGES/sane-backends.mo
 #usr/share/locale/da/LC_MESSAGES/sane-backends.mo
-#sr/share/locale/de/LC_MESSAGES/sane-backends.mo
+#usr/share/locale/de/LC_MESSAGES/sane-backends.mo
 #usr/share/locale/en@boldquot/LC_MESSAGES/sane-backends.mo
 #usr/share/locale/en@quot/LC_MESSAGES/sane-backends.mo
 #usr/share/locale/en_GB/LC_MESSAGES/sane-backends.mo
