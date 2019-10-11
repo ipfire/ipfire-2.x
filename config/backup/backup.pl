@@ -71,6 +71,11 @@ restore_backup() {
 
 	tar xvzpf "${filename}" -C /
 
+	# Restart syslogd, httpd and suricata in case we've just loaded old logs
+	apachectl -k graceful
+	/bin/kill -HUP `cat /var/run/suricata.pid 2> /dev/null` 2> /dev/null
+	/bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null
+
 	# Run converters
 
 	# Outgoing Firewall
