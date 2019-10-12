@@ -93,6 +93,10 @@ ldconfig
 /usr/local/bin/update-lang-cache
 
 # Start services
+/usr/local/bin/ipsecctrl S
+/etc/init.d/suricata restart
+/etc/init.d/unbound restart
+/etc/init.d/collectd restart
 
 # Search sensors again after reboot into the new kernel
 rm -f  /etc/sysconfig/lm_sensors
