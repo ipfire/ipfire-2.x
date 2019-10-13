@@ -32,7 +32,7 @@ case "${1}" in
 
 		# Check if INTERFACE is an actual wireless device
 		if [ ! -d "/sys/class/net/${INTERFACE}/wireless" ]; then
-			boot_mesg "Interface $INTERFACE is no wireless device." ${FAILURE}
+			boot_mesg "Interface $INTERFACE is not a wireless device." ${FAILURE}
 			echo_failure
 			exit 0
 		fi
