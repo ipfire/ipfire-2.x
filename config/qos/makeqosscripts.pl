@@ -659,7 +659,7 @@ print <<END
 	( sleep 10 && /usr/local/bin/qosd $qossettings{'IMQ_DEV'} >/dev/null 2>&1) &
 
 	for i in \$(ls \$RRDLOG/class_*.rrd); do
-		rrdtool update \$i \$(date +%s):
+		rrdtool update \$i \$(date +%s): 2>/dev/null
 	done
 
 	echo "Quality of Service was successfully started!"
