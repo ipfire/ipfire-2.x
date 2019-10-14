@@ -251,9 +251,6 @@ foreach $subclassentry (sort @subclasses) {
 }
 print <<END
 
-	### add l7-filter to PREROUTING chain to see all traffic
-	iptables -t mangle -A PREROUTING -m layer7 --l7proto unset
-
 	### ADD QOS-OUT CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-OUT
 	iptables -t mangle -N QOS-TOS
@@ -517,8 +514,8 @@ print <<END
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN
-	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
-	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS
+	iptables -t mangle -A FORWARD -i $qossettings{'RED_DEV'} -j QOS-INC
+	iptables -t mangle -A FORWARD -i $qossettings{'RED_DEV'} -j QOS-TOS
 
 	### SET TOS
 END
@@ -688,16 +685,14 @@ print <<END
 	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN >/dev/null 2>&1
 	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT >/dev/null 2>&1
 	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS >/dev/null 2>&1
-	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC >/dev/null 2>&1
-	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS >/dev/null 2>&1
+	iptables -t mangle --delete FORWARD -i $qossettings{'RED_DEV'} -j QOS-INC >/dev/null 2>&1
+	iptables -t mangle --delete FORWARD -i $qossettings{'RED_DEV'} -j QOS-TOS >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-OUT >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-OUT >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-INC >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-INC >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-TOS >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-TOS >/dev/null 2>&1
-	# remove l7-filter
-	iptables -t mangle --delete PREROUTING -m layer7 --l7proto unset
 
 	rmmod sch_htb >/dev/null 2>&1
 
