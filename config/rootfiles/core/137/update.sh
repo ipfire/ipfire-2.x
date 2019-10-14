@@ -82,6 +82,7 @@ rm -f  /etc/sysconfig/lm_sensors
 # Remove files
 
 # Stop services
+qosctrl stop
 
 # Extract files
 extract_files
@@ -97,6 +98,10 @@ ldconfig
 /etc/init.d/suricata restart
 /etc/init.d/unbound restart
 /etc/init.d/collectd restart
+
+# generate new qos script
+qosctrl generate
+qosctrl start
 
 # Search sensors again after reboot into the new kernel
 rm -f  /etc/sysconfig/lm_sensors
