@@ -35,9 +35,6 @@ eval $(/usr/local/bin/readhash /var/ipfire/proxy/settings)
 function download() {
 	echo "Downloading latest GeoIP ruleset..."
 
-	# Create temporary directory.
-	mkdir -pv $TMP_PATH
-
 	# Proxy settings.
 	# Check if a proxy should be used.
 	if [[ $UPSTREAM_PROXY ]]; then
@@ -84,9 +81,6 @@ function install() {
 }
 
 function build_legacy() {
-	# Create temporary directory.
-	mkdir -pv $TMP_PATH
-	
 	echo "Convert database to legacy GeoIP.dat ..."
 	cat $DB_PATH/GeoLite2-Country-Blocks-IPv4.csv | \
 	    $DB1_PATH/bin/geolite2-to-legacy-csv.sh $DB1_PATH/bin/countryInfo.txt > \
