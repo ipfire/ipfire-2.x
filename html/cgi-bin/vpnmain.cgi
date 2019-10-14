@@ -604,7 +604,7 @@ END
 		}
 	}
 
-	if (ref ($cgiparams{'FH'}) ne 'Fh') {
+	unless (ref ($cgiparams{'FH'})) {
 		$errormessage = $Lang::tr{'there was no file upload'};
 		goto UPLOADCA_ERROR;
 	}
@@ -830,7 +830,7 @@ END
 	} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'upload p12 file'}) {
 		&General::log("ipsec", "Importing from p12...");
 
-		if (ref ($cgiparams{'FH'}) ne 'Fh') {
+		unless (ref ($cgiparams{'FH'})) {
 			$errormessage = $Lang::tr{'there was no file upload'};
 			goto ROOTCERT_ERROR;
 		}
@@ -1531,7 +1531,7 @@ END
 			$errormessage = $Lang::tr{'cant change certificates'};
 			goto VPNCONF_ERROR;
 		}
-		if (ref ($cgiparams{'FH'}) ne 'Fh') {
+		unless (ref ($cgiparams{'FH'})) {
 			$errormessage = $Lang::tr{'there was no file upload'};
 			goto VPNCONF_ERROR;
 		}
@@ -1568,7 +1568,7 @@ END
 	} elsif ($cgiparams{'AUTH'} eq 'pkcs12') {
 		&General::log("ipsec", "Importing from p12...");
 
-		if (ref ($cgiparams{'FH'}) ne 'Fh') {
+		unless (ref ($cgiparams{'FH'})) {
 			$errormessage = $Lang::tr{'there was no file upload'};
 			goto ROOTCERT_ERROR;
 		}
@@ -1658,7 +1658,7 @@ END
 			$errormessage = $Lang::tr{'cant change certificates'};
 			goto VPNCONF_ERROR;
 		}
-		if (ref ($cgiparams{'FH'}) ne 'Fh') {
+		unless (ref ($cgiparams{'FH'})) {
 			$errormessage = $Lang::tr{'there was no file upload'};
 			goto VPNCONF_ERROR;
 		}

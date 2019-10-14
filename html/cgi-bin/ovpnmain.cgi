@@ -1372,7 +1372,7 @@ END
 ### Upload DH key
 ###
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'upload dh key'}) {
-    if (ref ($cgiparams{'FH'}) ne 'Fh') {
+    unless (ref ($cgiparams{'FH'})) {
          $errormessage = $Lang::tr{'there was no file upload'};
          goto UPLOADCA_ERROR;
     }
@@ -1429,7 +1429,7 @@ END
 	}
     }
 
-    if (ref ($cgiparams{'FH'}) ne 'Fh') {
+    unless (ref ($cgiparams{'FH'})) {
 	$errormessage = $Lang::tr{'there was no file upload'};
 	goto UPLOADCA_ERROR;
     }
@@ -1662,8 +1662,7 @@ END
 	    }
 	}
     } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'upload p12 file'}) {
-
-	if (ref ($cgiparams{'FH'}) ne 'Fh') {
+	unless (ref ($cgiparams{'FH'})) {
 	    $errormessage = $Lang::tr{'there was no file upload'};
 	    goto ROOTCERT_ERROR;
 	}
@@ -3218,9 +3217,8 @@ END
 
 	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);	
 
-# Check if a file is uploaded
-
-	if (ref ($cgiparams{'FH'}) ne 'Fh') {
+	# Check if a file is uploaded
+	unless (ref ($cgiparams{'FH'})) {
 		$errormessage = $Lang::tr{'there was no file upload'};
 		goto N2N_ERROR;
     }
@@ -4009,7 +4007,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		$errormessage = $Lang::tr{'cant change certificates'};
 		goto VPNCONF_ERROR;
 	    }
-	    if (ref ($cgiparams{'FH'}) ne 'Fh') {
+	    unless (ref ($cgiparams{'FH'})) {
 		$errormessage = $Lang::tr{'there was no file upload'};
 		goto VPNCONF_ERROR;
 	    }
@@ -4056,7 +4054,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		$errormessage = $Lang::tr{'cant change certificates'};
 		goto VPNCONF_ERROR;
 	    }
-	    if (ref ($cgiparams{'FH'}) ne 'Fh') {
+	    unless (ref ($cgiparams{'FH'})) {
 		$errormessage = $Lang::tr{'there was no file upload'};
 		goto VPNCONF_ERROR;
 	    }
