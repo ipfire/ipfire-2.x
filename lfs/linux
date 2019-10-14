@@ -118,9 +118,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
-	# Linux Intermediate Queueing Device
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14-imq.diff
-
 	# Layer7-patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14-layer7.patch
 
