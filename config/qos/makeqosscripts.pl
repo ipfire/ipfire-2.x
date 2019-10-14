@@ -515,11 +515,11 @@ print <<END
 
 	### ADD QOS-INC CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-INC
-	iptables -t mangle -A POSTROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN
-	iptables -t mangle -A POSTROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN
-	iptables -t mangle -A POSTROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN
-	iptables -t mangle -I FORWARD -i $qossettings{'RED_DEV'} -j QOS-INC
-	iptables -t mangle -A FORWARD -i $qossettings{'RED_DEV'} -j QOS-TOS
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS
 
 	### SET TOS
 END
@@ -689,10 +689,10 @@ print <<END
 	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN >/dev/null 2>&1
 	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT >/dev/null 2>&1
 	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS >/dev/null 2>&1
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC >/dev/null 2>&1
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-OUT >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-OUT >/dev/null 2>&1
-	iptables -t mangle --delete FORWARD -i $qossettings{'RED_DEV'} -j QOS-INC
-	iptables -t mangle --delete FORWARD -i $qossettings{'RED_DEV'} -j QOS-TOS
 	iptables -t mangle --flush  QOS-INC >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-INC >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-TOS >/dev/null 2>&1
