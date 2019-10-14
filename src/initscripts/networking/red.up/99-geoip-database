@@ -1,22 +1,19 @@
 #!/bin/bash
 
-# Get the GeoIP database if no one exists yet.
+# Get the GeoIP database if no one exists yet
 
-DIR="/usr/share/xt_geoip/*"
+database_exists() {
+	local file
+	for file in /usr/share/xt_geoip/*.iv4; do
+		[ -e "${file}" ] && return 0
+	done
 
-found=false
-
-# Check if the directory contains any data.
-for i in $DIR; do
-	# Ignore "." and ".."
-	if [ -d "$i" ]; then
-        	found=true
-        	break
-	fi
-done
+	# Does not exist
+	return 1
+}
 
 # Download ruleset if none has been found.
-if ! ${found}; then
+if ! database_exists; then
 	/usr/local/bin/xt_geoip_update >/dev/null 2>&1 &
 fi
 
