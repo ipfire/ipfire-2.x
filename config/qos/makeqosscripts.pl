@@ -671,11 +671,14 @@ print <<END
 	(sleep 3 && killall -9 qosd &>/dev/null) &
 	# DELETE QDISCS
 	tc qdisc del dev $qossettings{'RED_DEV'} root >/dev/null 2>&1
+	tc qdisc del dev $qossettings{'RED_DEV'} ingress >/dev/null 2>&1
 	tc qdisc add root dev $qossettings{'RED_DEV'} fq_codel >/dev/null 2>&1
 	tc qdisc del dev $qossettings{'IMQ_DEV'} root >/dev/null 2>&1
+	tc qdisc del dev $qossettings{'IMQ_DEV'} ingress >/dev/null 2>&1
 	tc qdisc add root dev $qossettings{'IMQ_DEV'} fq_codel >/dev/null 2>&1
 	# STOP IMQ-DEVICE
 	ip link set $qossettings{'IMQ_DEV'} down >/dev/null 2>&1
+	ip link del $qossettings{'IMQ_DEV'} >/dev/null 2>&1
 
 	# REMOVE & FLUSH CHAINS
 	iptables -t mangle --delete POSTROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN >/dev/null 2>&1
