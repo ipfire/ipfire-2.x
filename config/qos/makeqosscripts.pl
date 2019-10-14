@@ -654,8 +654,8 @@ END
 print <<END
 
 	## STARTING COLLECTOR
-	( sleep 10 && /usr/local/bin/qosd $qossettings{'RED_DEV'} >/dev/null 2>&1) &
-	( sleep 10 && /usr/local/bin/qosd $qossettings{'IMQ_DEV'} >/dev/null 2>&1) &
+	/usr/local/bin/qosd $qossettings{'RED_DEV'} >/dev/null 2>&1
+	/usr/local/bin/qosd $qossettings{'IMQ_DEV'} >/dev/null 2>&1
 
 	for i in \$(ls \$RRDLOG/class_*.rrd); do
 		rrdtool update \$i \$(date +%s): 2>/dev/null
@@ -667,7 +667,7 @@ print <<END
   clear|stop)
 	### RESET EVERYTHING TO A KNOWN STATE
 	killall qosd >/dev/null 2>&1
-	(sleep 3 && killall -9 qosd &>/dev/null) &
+
 	# DELETE QDISCS
 	tc qdisc del dev $qossettings{'RED_DEV'} root >/dev/null 2>&1
 	tc qdisc del dev $qossettings{'RED_DEV'} ingress >/dev/null 2>&1
