@@ -117,27 +117,22 @@ function cleanup() {
 }
 
 function main() {
-	# Download ruleset.
-	download || exit $?
+	local func
+	for func in download install build build_legacy; do
+		if ! ${func}; then
+			# Cleanup any temporary data
+			cleanup
 
-	if ! install; then
-		# Do cleanup.
-		cleanup || exit $?
-		exit 1
-	fi
+			return 1
+		fi
+	done
 
-	# Remove temporary files.
-	cleanup || exit $?
+	# Cleanup
+	cleanup || return $?
 
-	# Convert the ruleset.
-	build || exit $?
-
-	# Convert GeoIP2 to lagacy.
-	build_legacy || exit $?
-
-	# Remove temporary files.
-	cleanup || exit $?
+	# All done
+	return 0
 }
 
 # Run the main function.
-main
+main || exit $?
