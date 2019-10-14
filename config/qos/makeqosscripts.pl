@@ -407,10 +407,6 @@ print <<END
 	###
 
 	### BRING UP $qossettings{'IMQ_DEV'}
-	if [ `lsmod | grep -q ipt_IMQ` ]; then
-		insmod ipt_IMQ
-		sleep 2
-	fi
 	modprobe imq numdevs=1 numqueues=\$(grep -c "^processor" /proc/cpuinfo || echo 1)
 	ip link set $qossettings{'IMQ_DEV'} up
 
