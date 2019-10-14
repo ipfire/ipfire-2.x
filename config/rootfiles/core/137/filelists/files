@@ -5,6 +5,7 @@ var/ipfire/langs
 etc/logrotate.conf
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/unbound
+etc/rc.d/init.d/networking/red.up/99-geoip-database
 srv/web/ipfire/cgi-bin/dns.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
