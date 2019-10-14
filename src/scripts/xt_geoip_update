@@ -140,7 +140,6 @@ function main() {
 
 	# Convert GeoIP2 to lagacy.
 	build_legacy || exit $?
-	return 0
 
 	# Remove temporary files.
 	cleanup || exit $?
