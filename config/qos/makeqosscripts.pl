@@ -405,7 +405,7 @@ print <<END
 	### $qossettings{'IMQ_DEV'}
 	###
 
-	tc qdisc del dev $qossettings{'RED_DEV'} ingress
+	tc qdisc del dev $qossettings{'RED_DEV'} ingress >/dev/null 2>&1
 	tc qdisc add dev $qossettings{'RED_DEV'} handle ffff: ingress
 
 	### BRING UP $qossettings{'IMQ_DEV'}
