@@ -35,26 +35,22 @@ my $errormessage = "";
 my $c = "";
 my $direntry = "";
 my $classentry = "";
-my $subclassentry = "";
 my $l7ruleentry = "";
 my $portruleentry = "";
 my $tosruleentry = "";
 my @tmp = ();
 my @classes = ();
-my @subclasses = ();
 my @l7rules = ();
 my @portrules = ();
 my @tosrules = ();
 my @tmpline = ();
 my @classline = ();
-my @subclassline = ();
 my @tosruleline = ();
 my @l7ruleline = ();
 my @portruleline = ();
 my @proto = ();
 my %selected= () ;
 my $classfile = "/var/ipfire/qos/classes";
-my $subclassfile = "/var/ipfire/qos/subclasses";
 my $level7file = "/var/ipfire/qos/level7config";
 my $portfile = "/var/ipfire/qos/portconfig";
 my $tosfile = "/var/ipfire/qos/tosconfig";
@@ -80,9 +76,6 @@ $qossettings{'VALID'} = 'yes';
 
 open( FILE, "< $classfile" ) or die "Unable to read $classfile";
 @classes = <FILE>;
-close FILE;
-open( FILE, "< $subclassfile" ) or die "Unable to read $subclassfile";
-@subclasses = <FILE>;
 close FILE;
 open( FILE, "< $level7file" ) or die "Unable to read $level7file";
 @l7rules = <FILE>;
@@ -183,27 +176,6 @@ foreach $classentry (sort @classes)
 		print "\n";
 	}
 }
-foreach $subclassentry (sort @subclasses) {
-	@subclassline = split( /\;/, $subclassentry );
-	if ($qossettings{'RED_DEV'} eq $subclassline[0]) {
-		$qossettings{'DEVICE'} = $subclassline[0];
-		$qossettings{'CLASS'} = $subclassline[1];
-		$qossettings{'SCLASS'} = $subclassline[2];
-		$qossettings{'SPRIO'} = $subclassline[3];
-		$qossettings{'SRATE'} = $subclassline[4];
-		$qossettings{'SCEIL'} = $subclassline[5];
-		$qossettings{'SBURST'} = $subclassline[6];
-		$qossettings{'SCBURST'} = $subclassline[7];
-		print "\ttc class add dev $qossettings{'DEVICE'} parent 1:$qossettings{'CLASS'} classid 1:$qossettings{'SCLASS'} htb rate $qossettings{'SRATE'}kbit ceil $qossettings{'SCEIL'}kbit prio $qossettings{'SPRIO'} ";
-		if ($qossettings{'SBURST'} > 0) {
-			print "burst $qossettings{'SBURST'}k ";
-		}
-		if (($qossettings{'SCBURST'} ne '') && ($qossettings{'SCBURST'} ne 0)) {
-			print "cburst $qossettings{'CBURST'}k";
-		}
-		print "\n";
-	}
-}
 
 print "\n\t### ATTACH QDISC TO LEAF CLASSES\n";
 foreach $classentry (sort @classes)
@@ -213,14 +185,6 @@ foreach $classentry (sort @classes)
 		$qossettings{'DEVICE'} = $classline[0];
 		$qossettings{'CLASS'} = $classline[1];
 		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 1:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: fq_codel $fqcodel_options\n";
-	}
-}
-foreach $subclassentry (sort @subclasses) {
-	@subclassline = split( /\;/, $subclassentry );
-	if ($qossettings{'RED_DEV'} eq $subclassline[0]) {
-		$qossettings{'DEVICE'} = $subclassline[0];
-		$qossettings{'SCLASS'} = $subclassline[2];
-		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 1:$qossettings{'SCLASS'} handle $qossettings{'SCLASS'}: fq_codel $fqcodel_options\n";
 	}
 }
 print <<END
@@ -421,27 +385,6 @@ foreach $classentry (sort @classes)
 		print "\n";
 	}
 }
-foreach $subclassentry (sort @subclasses) {
-	@subclassline = split( /\;/, $subclassentry );
-	if ($qossettings{'IMQ_DEV'} eq $subclassline[0]) {
-		$qossettings{'DEVICE'} = $subclassline[0];
-		$qossettings{'CLASS'} = $subclassline[1];
-		$qossettings{'SCLASS'} = $subclassline[2];
-		$qossettings{'SPRIO'} = $subclassline[3];
-		$qossettings{'SRATE'} = $subclassline[4];
-		$qossettings{'SCEIL'} = $subclassline[5];
-		$qossettings{'SBURST'} = $subclassline[6];
-		$qossettings{'SCBURST'} = $subclassline[7];
-		print "\ttc class add dev $qossettings{'DEVICE'} parent 2:$qossettings{'CLASS'} classid 2:$qossettings{'SCLASS'} htb rate $qossettings{'SRATE'}kbit ceil $qossettings{'SCEIL'}kbit prio $qossettings{'SPRIO'} ";
-		if ($qossettings{'SBURST'} > 0) {
-			print "burst $qossettings{'SBURST'}k ";
-		}
-		if (($qossettings{'SCBURST'} ne '') && ($qossettings{'SCBURST'} ne 0)) {
-			print "cburst $qossettings{'CBURST'}k";
-		}
-		print "\n";
-	}
-}
 
 print "\n\t### ATTACH QDISC TO LEAF CLASSES\n";
 foreach $classentry (sort @classes)
@@ -453,15 +396,6 @@ foreach $classentry (sort @classes)
 		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 2:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: fq_codel $fqcodel_options\n";
 	}
 }
-foreach $subclassentry (sort @subclasses) {
-	@subclassline = split( /\;/, $subclassentry );
-	if ($qossettings{'IMQ_DEV'} eq $subclassline[0]) {
-		$qossettings{'DEVICE'} = $subclassline[0];
-		$qossettings{'SCLASS'} = $subclassline[2];
-		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 2:$qossettings{'SCLASS'} handle $qossettings{'SCLASS'}: fq_codel $fqcodel_options\n";
-	}
-}
-
 print <<END
 
 	### ADD QOS-INC CHAIN TO THE MANGLE TABLE IN IPTABLES
@@ -586,17 +520,6 @@ END
 		if ($qossettings{'TOS'} ne "0") {
 			print "\tiptables -t mangle -A QOS-TOS -m mark --mark $qossettings{'CLASS'} -j TOS --set-tos $qossettings{'TOS'}\n";
 			print "\tiptables -t mangle -A QOS-TOS -m mark --mark $qossettings{'CLASS'} -j RETURN\n";
-		}
-	}
-	foreach $subclassentry (sort @subclasses)
-	{
-		@subclassline = split( /\;/, $subclassentry );
-		$qossettings{'SUBCLASS'} = $subclassline[1];
-		$qossettings{'TOS'} = $subclassline[8];
-		$qossettings{'TOS'} = abs $qossettings{'TOS'} * 2;
-		if ($qossettings{'TOS'} ne "0") {
-			print "\tiptables -t mangle -A QOS-TOS -m mark --mark $qossettings{'SUBCLASS'} -j TOS --set-tos $qossettings{'TOS'}\n";
-			print "\tiptables -t mangle -A QOS-TOS -m mark --mark $qossettings{'SUBCLASS'} -j RETURN\n";
 		}
 	}
 

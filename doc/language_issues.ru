@@ -10,6 +10,7 @@ WARNING: translation string unused: Queuelenght
 WARNING: translation string unused: Remote IP
 WARNING: translation string unused: Remote VPN IP
 WARNING: translation string unused: Resolv
+WARNING: translation string unused: Subclass
 WARNING: translation string unused: TOS Bits
 WARNING: translation string unused: Verbose
 WARNING: translation string unused: access allowed
@@ -19,6 +20,7 @@ WARNING: translation string unused: add cron
 WARNING: translation string unused: add network
 WARNING: translation string unused: add new ovpn
 WARNING: translation string unused: add service
+WARNING: translation string unused: add subclass
 WARNING: translation string unused: add xtaccess
 WARNING: translation string unused: add-route
 WARNING: translation string unused: admin user password has been changed
@@ -130,6 +132,7 @@ WARNING: translation string unused: cfg restart
 WARNING: translation string unused: check for net traffic update
 WARNING: translation string unused: choose config
 WARNING: translation string unused: choose media
+WARNING: translation string unused: class in use
 WARNING: translation string unused: clear cache
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
@@ -478,6 +481,7 @@ WARNING: translation string unused: proxy no proxy extend
 WARNING: translation string unused: proxy no proxy local
 WARNING: translation string unused: proxy port
 WARNING: translation string unused: psk
+WARNING: translation string unused: qos add subclass
 WARNING: translation string unused: quick control
 WARNING: translation string unused: reboot ask
 WARNING: translation string unused: reboot question
