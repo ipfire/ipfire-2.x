@@ -196,34 +196,27 @@ print <<END
 	iptables -t mangle -A QOS-OUT -m mark --mark 50 -j RETURN
 
 	### MARK ACKs
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j TOS --set-tos 4
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j CLASSIFY --set-class 1:$qossettings{'ACK'}
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j RETURN
 
 	iptables -t mangle -A QOS-OUT -p icmp -m length --length 40:100 -j CLASSIFY --set-class 1:$qossettings{'ACK'}
 	iptables -t mangle -A QOS-OUT -p icmp -m length --length 40:100 -j RETURN
 
-	iptables -t mangle -A QOS-OUT -p tcp --syn -m length --length 40:68 -j TOS --set-tos 4
 	iptables -t mangle -A QOS-OUT -p tcp --syn -m length --length 40:68 -j CLASSIFY --set-class 1:$qossettings{'ACK'}
 	iptables -t mangle -A QOS-OUT -p tcp --syn -m length --length 40:68 -j RETURN
 
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL SYN,ACK -m length --length 40:68 -j TOS --set-tos 4
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL SYN,ACK -m length --length 40:68 -j CLASSIFY --set-class 1:$qossettings{'ACK'}
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL SYN,ACK -m length --length 40:68 -j RETURN
 
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK -m length --length 40:100 -j TOS --set-tos 4
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK -m length --length 40:100 -j CLASSIFY --set-class 1:$qossettings{'ACK'}
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK -m length --length 40:100 -j RETURN
 
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL RST -j TOS --set-tos 4
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL RST -j CLASSIFY --set-class 1:$qossettings{'ACK'}
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL RST -j RETURN
 
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,RST -j TOS --set-tos 4
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,RST -j CLASSIFY --set-class 1:$qossettings{'ACK'}
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,RST -j RETURN
 
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,FIN -j TOS --set-tos 4
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,FIN -j CLASSIFY --set-class 1:$qossettings{'ACK'}
 	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,FIN -j RETURN
 
