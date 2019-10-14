@@ -19,7 +19,7 @@
 #                                                                             #
 ###############################################################################
 
-TMP_PATH=$(mktemp -d)
+TMP_PATH=$(mktemp -dp /var/tmp)
 TMP_FILE=$(mktemp -p $TMP_PATH)
 
 SCRIPT_PATH=/usr/local/bin
