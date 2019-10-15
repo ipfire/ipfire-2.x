@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.0.3
+VER        = 8.0.2
 
 THISAPP    = dhcpcd-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 182d506dd88773aec017d93a22d0f025
+$(DL_FILE)_MD5 = c0375a1f725f1c191b43af60e4f7175b
 
 install : $(TARGET)
 
