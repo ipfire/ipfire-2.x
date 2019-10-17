@@ -1132,9 +1132,6 @@ buildipfire() {
   lfsmake2 lvm2
   lfsmake2 multipath-tools
   lfsmake2 freetype
-  lfsmake2 grub
-  lfsmake2 efivar
-  lfsmake2 efibootmgr
   lfsmake2 libmnl
   lfsmake2 libnfnetlink
   lfsmake2 libnetfilter_queue
@@ -1222,6 +1219,9 @@ buildipfire() {
   lfsmake2 libffi
   lfsmake2 python
   lfsmake2 python3
+  lfsmake2 grub
+  lfsmake2 efivar
+  lfsmake2 efibootmgr
   lfsmake2 ca-certificates
   lfsmake2 fireinfo
   lfsmake2 libnet
