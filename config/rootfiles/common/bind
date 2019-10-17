@@ -272,11 +272,11 @@ usr/lib/libbind9.so.161.0.3
 #usr/lib/libdns.la
 #usr/lib/libdns.so
 usr/lib/libdns.so.1107
-usr/lib/libdns.so.1107.0.1
+usr/lib/libdns.so.1107.0.2
 #usr/lib/libisc.la
 #usr/lib/libisc.so
 usr/lib/libisc.so.1100
-usr/lib/libisc.so.1100.3.1
+usr/lib/libisc.so.1100.3.2
 #usr/lib/libisccc.la
 #usr/lib/libisccc.so
 usr/lib/libisccc.so.161
@@ -284,11 +284,11 @@ usr/lib/libisccc.so.161.0.1
 #usr/lib/libisccfg.la
 #usr/lib/libisccfg.so
 usr/lib/libisccfg.so.163
-usr/lib/libisccfg.so.163.0.2
+usr/lib/libisccfg.so.163.0.3
 #usr/lib/liblwres.la
 #usr/lib/liblwres.so
 usr/lib/liblwres.so.161
-usr/lib/liblwres.so.161.0.1
+usr/lib/liblwres.so.161.0.2
 #usr/share/man/man1/dig.1
 #usr/share/man/man1/host.1
 #usr/share/man/man1/nslookup.1
