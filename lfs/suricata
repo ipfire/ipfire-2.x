@@ -82,9 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-python \
 		--with-libjansson-libraries=/usr/lib \
 		--with-libjansson-includes=/usr/include \
-		--disable-suricata-update \
-		--enable-rust
-
+		--disable-suricata-update
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && make install-conf
