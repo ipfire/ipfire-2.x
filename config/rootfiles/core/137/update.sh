@@ -77,12 +77,11 @@ rm -rf /boot/zImage-*-ipfire-*
 rm -rf /boot/uInit-*-ipfire-*
 rm -rf /boot/dtb-*-ipfire-*
 rm -rf /lib/modules
-rm -f  /etc/sysconfig/lm_sensors
 
 # Remove files
 
 # Stop services
-qosctrl stop
+/usr/local/bin/qosctrl stop
 
 # Extract files
 extract_files
@@ -104,8 +103,8 @@ ldconfig
 rm -f  /etc/sysconfig/lm_sensors
 
 # generate new qos script
-qosctrl generate
-qosctrl start
+/usr/local/bin/qosctrl generate
+/usr/local/bin/qosctrl start
 
 # Search sensors again after reboot into the new kernel
 rm -f  /etc/sysconfig/lm_sensors
