@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 4.14.146-ipfire Kernel Configuration
+# Linux/x86 4.14.150-ipfire Kernel Configuration
 #
 # CONFIG_64BIT is not set
 CONFIG_X86_32=y
@@ -5227,7 +5227,6 @@ CONFIG_USB_EMI62=m
 CONFIG_USB_EMI26=m
 CONFIG_USB_ADUTUX=m
 CONFIG_USB_SEVSEG=m
-# CONFIG_USB_RIO500 is not set
 # CONFIG_USB_LEGOTOWER is not set
 CONFIG_USB_LCD=m
 # CONFIG_USB_CYPRESS_CY7C63 is not set

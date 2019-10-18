@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 4.14.146-ipfire Kernel Configuration
+# Linux/arm64 4.14.150-ipfire Kernel Configuration
 #
 CONFIG_ARM64=y
 CONFIG_64BIT=y
@@ -5032,7 +5032,6 @@ CONFIG_USB_EMI62=m
 CONFIG_USB_EMI26=m
 CONFIG_USB_ADUTUX=m
 CONFIG_USB_SEVSEG=m
-# CONFIG_USB_RIO500 is not set
 # CONFIG_USB_LEGOTOWER is not set
 CONFIG_USB_LCD=m
 # CONFIG_USB_CYPRESS_CY7C63 is not set
