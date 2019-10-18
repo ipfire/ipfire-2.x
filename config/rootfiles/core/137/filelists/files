@@ -1,6 +1,8 @@
 etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
+usr/lib/firewall/rules.pl
+usr/sbin/firewall-policy
 var/ipfire/langs
 etc/logrotate.conf
 etc/rc.d/init.d/firewall
@@ -17,3 +19,4 @@ usr/local/bin/xt_geoip_update
 var/ipfire/backup/bin/backup.pl
 var/ipfire/qos/bin/makeqosscripts.pl
 var/ipfire/suricata/ruleset-sources
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
