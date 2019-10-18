@@ -99,6 +99,10 @@ ldconfig
 /etc/init.d/unbound restart
 /etc/init.d/collectd restart
 
+# remove lm_sensor config after collectd was started
+# to reserch sensors at next boot with updated kernel
+rm -f  /etc/sysconfig/lm_sensors
+
 # generate new qos script
 qosctrl generate
 qosctrl start
