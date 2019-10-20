@@ -81,7 +81,6 @@ rm -rf /lib/modules
 # Remove files
 
 # Stop services
-/usr/local/bin/qosctrl stop
 
 # Extract files
 extract_files
