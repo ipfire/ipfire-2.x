@@ -64,6 +64,7 @@ lib/xtables/libxt_CT.so
 lib/xtables/libxt_DSCP.so
 lib/xtables/libxt_HMARK.so
 lib/xtables/libxt_IDLETIMER.so
+lib/xtables/libxt_IMQ.so
 lib/xtables/libxt_LED.so
 lib/xtables/libxt_MARK.so
 lib/xtables/libxt_NFLOG.so
