@@ -406,21 +406,9 @@ print <<END
 	### $qossettings{'IMQ_DEV'}
 	###
 
-	tc qdisc del dev $qossettings{'RED_DEV'} root
-	tc qdisc del dev $qossettings{'RED_DEV'} ingress
-	tc qdisc add dev $qossettings{'RED_DEV'} handle ffff: ingress
-
 	### BRING UP $qossettings{'IMQ_DEV'}
-	if [ ! -d "/sys/class/net/$qossettings{'IMQ_DEV'}" ]; then
-		ip link add name $qossettings{'IMQ_DEV'} type ifb
-	fi
-
-	#tc qdisc del dev $qossettings{'IMQ_DEV'} root
-	#tc qdisc del dev $qossettings{'IMQ_DEV'} ingress
+	modprobe imq numdevs=1 numqueues=\$(grep -c "^processor" /proc/cpuinfo || echo 1)
 	ip link set $qossettings{'IMQ_DEV'} up
-
-	tc filter add dev $qossettings{'RED_DEV'} parent ffff: protocol all u32 match u32 0 0 \\
-		action mirred egress redirect dev $qossettings{'IMQ_DEV'}
 
 	### ADD HTB QDISC FOR $qossettings{'IMQ_DEV'}
 	tc qdisc del dev $qossettings{'IMQ_DEV'} root >/dev/null 2>&1
@@ -522,6 +510,7 @@ print <<END
 	iptables -t mangle -A POSTROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN
 	iptables -t mangle -A POSTROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN
 	iptables -t mangle -A POSTROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN
+	iptables -t mangle -A POSTROUTING -m mark ! --mark 0 ! -o $qossettings{'RED_DEV'} -j IMQ --todev 0
 	iptables -t mangle -I FORWARD -i $qossettings{'RED_DEV'} -j QOS-INC
 	iptables -t mangle -A FORWARD -i $qossettings{'RED_DEV'} -j QOS-TOS
 
@@ -538,6 +527,7 @@ print <<END
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j IMQ --todev 0
 	iptables -t mangle -I PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS
 
@@ -698,14 +688,16 @@ print <<END
 	tc qdisc add root dev $qossettings{'IMQ_DEV'} fq_codel >/dev/null 2>&1
 	# STOP IMQ-DEVICE
 	ip link set $qossettings{'IMQ_DEV'} down >/dev/null 2>&1
-
-	# REMOVE & FLUSH CHAINS
 	iptables -t mangle --delete POSTROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN >/dev/null 2>&1
 	iptables -t mangle --delete POSTROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN >/dev/null 2>&1
 	iptables -t mangle --delete POSTROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN >/dev/null 2>&1
 	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN >/dev/null 2>&1
 	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN >/dev/null 2>&1
 	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN >/dev/null 2>&1
+	iptables -t mangle --delete POSTROUTING -m mark ! --mark 0 ! -o $qossettings{'RED_DEV'} -j IMQ --todev 0 >/dev/null 2>&1
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j IMQ --todev 0  >/dev/null 2>&1
+	# rmmod imq # this crash on 2.6.25.xx
+	# REMOVE & FLUSH CHAINS
 	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT >/dev/null 2>&1
 	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-OUT >/dev/null 2>&1
