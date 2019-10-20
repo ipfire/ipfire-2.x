@@ -131,6 +131,12 @@ case "\$1" in
 		tc -s class show dev $qossettings{'IMQ_DEV'}
 		exit 0
 	  ;;
+	  filter)
+		echo "[filter]"
+		tc -s filter show dev $qossettings{'RED_DEV'}
+		tc -s filter show dev $qossettings{'IMQ_DEV'}
+		exit 0
+	  ;;
 	  iptables)
 		echo "[iptables]"
 		iptables -t mangle -n -L QOS-OUT -v -x 2> /dev/null
@@ -141,6 +147,7 @@ case "\$1" in
 	esac
 	\$0 \$1 qdisc
 	\$0 \$1 class
+	\$0 \$1 filter
 	\$0 \$1 iptables
 	exit 0
   ;;
@@ -221,6 +228,25 @@ foreach $subclassentry (sort @subclasses) {
 		$qossettings{'DEVICE'} = $subclassline[0];
 		$qossettings{'SCLASS'} = $subclassline[2];
 		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 1:$qossettings{'SCLASS'} handle $qossettings{'SCLASS'}: fq_codel $fqcodel_options\n";
+	}
+}
+print "\n\t### FILTER TRAFFIC INTO CLASSES\n";
+foreach $classentry (sort @classes)
+{
+	@classline = split( /\;/, $classentry );
+	if ($qossettings{'RED_DEV'} eq $classline[0]) {
+		$qossettings{'DEVICE'} = $classline[0];
+		$qossettings{'CLASS'} = $classline[1];
+		print "\ttc filter add dev $qossettings{'DEVICE'} parent 1:0 prio 0 protocol ip handle $qossettings{'CLASS'} fw flowid 1:$qossettings{'CLASS'}\n";
+	}
+}
+foreach $subclassentry (sort @subclasses) {
+	@subclassline = split( /\;/, $subclassentry );
+	if ($qossettings{'RED_DEV'} eq $subclassline[0]) {
+		$qossettings{'DEVICE'} = $subclassline[0];
+		$qossettings{'CLASS'} = $subclassline[1];
+		$qossettings{'SCLASS'} = $subclassline[2];
+		print "\ttc filter add dev $qossettings{'DEVICE'} parent 1:0 prio 0 protocol ip handle $qossettings{'SCLASS'} fw flowid 1:$qossettings{'SCLASS'}\n";
 	}
 }
 print <<END
@@ -332,6 +358,7 @@ print "\n\t### SET PORT-RULES\n";
 			print "-j RETURN\n\n";
 		}
 	}
+
 print <<END
 
 	### SET LEVEL7-RULES
@@ -461,7 +488,25 @@ foreach $subclassentry (sort @subclasses) {
 		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 2:$qossettings{'SCLASS'} handle $qossettings{'SCLASS'}: fq_codel $fqcodel_options\n";
 	}
 }
-
+print "\n\t### FILTER TRAFFIC INTO CLASSES\n";
+foreach $classentry (sort @classes)
+{
+	@classline = split( /\;/, $classentry );
+	if ($qossettings{'IMQ_DEV'} eq $classline[0]) {
+		$qossettings{'DEVICE'} = $classline[0];
+		$qossettings{'CLASS'} = $classline[1];
+		print "\ttc filter add dev $qossettings{'DEVICE'} parent 2:0 prio 0 protocol ip handle $qossettings{'CLASS'} fw flowid 2:$qossettings{'CLASS'}\n";
+	}
+}
+foreach $subclassentry (sort @subclasses) {
+	@subclassline = split( /\;/, $subclassentry );
+	if ($qossettings{'IMQ_DEV'} eq $subclassline[0]) {
+		$qossettings{'DEVICE'} = $subclassline[0];
+		$qossettings{'CLASS'} = $subclassline[1];
+		$qossettings{'SCLASS'} = $subclassline[2];
+		print "\ttc filter add dev $qossettings{'DEVICE'} parent 2:0 prio 0 protocol ip handle $qossettings{'SCLASS'} fw flowid 2:$qossettings{'SCLASS'}\n";
+	}
+}
 print <<END
 
 	### ADD QOS-INC CHAIN TO THE MANGLE TABLE IN IPTABLES
