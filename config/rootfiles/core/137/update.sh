@@ -110,7 +110,6 @@ rm -f  /etc/sysconfig/lm_sensors
 
 # generate new qos script
 /usr/local/bin/qosctrl generate
-/usr/local/bin/qosctrl start
 
 # Search sensors again after reboot into the new kernel
 rm -f  /etc/sysconfig/lm_sensors
