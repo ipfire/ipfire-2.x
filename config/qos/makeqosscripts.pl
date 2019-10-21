@@ -134,7 +134,6 @@ case "\$1" in
 		echo "[iptables]"
 		iptables -t mangle -n -L QOS-OUT -v -x 2> /dev/null
 		iptables -t mangle -n -L QOS-INC -v -x 2> /dev/null
-		iptables -t mangle -n -L QOS-TOS -v -x 2> /dev/null
 		exit 0
 	  ;;
 	esac
@@ -211,9 +210,7 @@ print <<END
 
 	### ADD QOS-OUT CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-OUT
-	iptables -t mangle -N QOS-TOS
 	iptables -t mangle -I POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
-	iptables -t mangle -A POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS
 
 	### Don't change mark on traffic for the ipsec tunnel
 	iptables -t mangle -A QOS-OUT -m mark --mark 50 -j RETURN
@@ -424,7 +421,6 @@ print <<END
 	### ADD QOS-INC CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-INC
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
-	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS
 
 	# If the packet is already marked, then skip the processing
 	iptables -t mangle -A QOS-INC -m mark ! --mark 0 -j RETURN
@@ -511,22 +507,6 @@ print <<END
 	# Save mark in connection tracking
 	iptables -t mangle -A QOS-INC -j CONNMARK --save-mark
 
-	### SETTING TOS BITS
-END
-;
-	foreach $classentry (sort @classes)
-	{
-		@classline = split( /\;/, $classentry );
-		$qossettings{'CLASS'} = $classline[1];
-		$qossettings{'TOS'} = abs $classline[7] * 2;
-		if ($qossettings{'TOS'} ne "0") {
-			print "\tiptables -t mangle -A QOS-TOS -m mark --mark $qossettings{'CLASS'} -j TOS --set-tos $qossettings{'TOS'}\n";
-			print "\tiptables -t mangle -A QOS-TOS -m mark --mark $qossettings{'CLASS'} -j RETURN\n";
-		}
-	}
-
-print <<END
-
 	## STARTING COLLECTOR
 	/usr/local/bin/qosd $qossettings{'RED_DEV'} >/dev/null 2>&1
 	/usr/local/bin/qosd $qossettings{'IMQ_DEV'} >/dev/null 2>&1
@@ -561,15 +541,11 @@ print <<END
 	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN >/dev/null 2>&1
 	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN >/dev/null 2>&1
 	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT >/dev/null 2>&1
-	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS >/dev/null 2>&1
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-OUT >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-OUT >/dev/null 2>&1
-	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
-	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS
 	iptables -t mangle --flush  QOS-INC >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-INC >/dev/null 2>&1
-	iptables -t mangle --flush  QOS-TOS >/dev/null 2>&1
-	iptables -t mangle --delete-chain QOS-TOS >/dev/null 2>&1
 	# remove l7-filter
 	iptables -t mangle --delete PREROUTING -m layer7 --l7proto unset
 
