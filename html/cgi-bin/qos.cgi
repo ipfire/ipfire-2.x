@@ -38,19 +38,16 @@ my $errormessage = "";
 my $c = "";
 my $direntry = "";
 my $classentry = "";
-my $subclassentry = "";
 my $l7ruleentry = "";
 my $portruleentry = "";
 my $tosruleentry = "";
 my @tmp = ();
 my @classes = ();
-my @subclasses = ();
 my @l7rules = ();
 my @portrules = ();
 my @tosrules = ();
 my @tmpline = ();
 my @classline = ();
-my @subclassline = ();
 my @l7ruleline = ();
 my @portruleline = ();
 my @tosruleline = ();
@@ -58,7 +55,6 @@ my @proto = ();
 my %selected= ();
 my @checked = ();
 my $classfile = "/var/ipfire/qos/classes";
-my $subclassfile = "/var/ipfire/qos/subclasses";
 my $level7file = "/var/ipfire/qos/level7config";
 my $portfile = "/var/ipfire/qos/portconfig";
 my $tosfile = "/var/ipfire/qos/tosconfig";
@@ -85,7 +81,6 @@ $qossettings{'IMQ_DEV_SEL'} = '';
 $qossettings{'PRIO'} = '';
 $qossettings{'SPD'} = '';
 $qossettings{'CLASS'} = '';
-$qossettings{'SCLASS'} = '';
 $qossettings{'QPORT'} = '';
 $qossettings{'DPORT'} = '';
 $qossettings{'QIP'} = '';
@@ -98,7 +93,6 @@ $qossettings{'MAXBWDTH'} = '';
 $qossettings{'BURST'} = '';
 $qossettings{'CBURST'} = '';
 $qossettings{'DOCLASS'} = '';
-$qossettings{'DOSCLASS'} = '';
 $qossettings{'DOLEVEL7'} = '';
 $qossettings{'DOPORT'} = '';
 $qossettings{'CLASS'} = '';
@@ -194,55 +188,7 @@ elsif ($qossettings{'DOCLASS'} eq $Lang::tr{'delete'})
 		}
 	}
 	close FILE;
-	open( FILE, "< $subclassfile" ) or die "Unable to read $classfile";
-	@tmp = <FILE>;
-	close FILE;
-	open( FILE, "> $subclassfile" ) or die "Unable to write $classfile";
-	foreach $subclassentry (sort @tmp)
-	{
-		@tmpline = split( /\;/, $subclassentry );
-		if ( $tmpline[1] ne $qossettings{'CLASS'} )
-		{
-			print FILE $subclassentry;
-		}
-	}
-	close FILE;
 	$message = "$Lang::tr{'Class'} $qossettings{'CLASS'} $Lang::tr{'Class was deleted'}";
-}
-
-############################################################################################################################
-############################################################################################################################
-
-if ($qossettings{'DOSCLASS'} eq $Lang::tr{'save'})
-{
-	&validsubclass();
-	&validminbwdth();
-	if ( $qossettings{'VALID'} eq 'yes' ) {
-		open( FILE, ">> $subclassfile" ) or die "Unable to write $subclassfile";
-		print FILE <<END
-$qossettings{'DEVICE'};$qossettings{'CLASS'};$qossettings{'SCLASS'};$qossettings{'PRIO'};$qossettings{'MINBWDTH'};$qossettings{'MAXBWDTH'};$qossettings{'BURST'};$qossettings{'CBURST'};$qossettings{'TOS'};
-END
-;
-		close FILE;
-	} else {
-		$qossettings{'ACTION'} = $Lang::tr{'qos add subclass'};
-	}
-} elsif ($qossettings{'DOSCLASS'} eq $Lang::tr{'delete'})
-{
-	open( FILE, "< $subclassfile" ) or die "Unable to read $classfile";
-	@tmp = <FILE>;
-	close FILE;
-	open( FILE, "> $subclassfile" ) or die "Unable to write $classfile";
-	foreach $subclassentry (sort @tmp)
-	{
-		@tmpline = split( /\;/, $subclassentry );
-		if ( $tmpline[2] ne $qossettings{'CLASS'} )
-		{
-			print FILE $subclassentry;
-		}
-	}
-	close FILE;
-	$message = "$Lang::tr{'Subclass'} $qossettings{'CLASS'} $Lang::tr{'was deleted'}.";
 }
 
 ############################################################################################################################
@@ -612,13 +558,6 @@ elsif ($qossettings{'ACTION'} eq $Lang::tr{'parentclass add'} )
 	&Header::closepage();
 	exit
 }
-elsif ($qossettings{'ACTION'} eq $Lang::tr{'qos add subclass'})
-{
-	&subclass();
-	&Header::closebigbox();
-	&Header::closepage();
-	exit
-}
 elsif ($qossettings{'ACTION'} eq $Lang::tr{'Add Rule'})
 {
 	&Header::openbox('100%', 'center', $Lang::tr{'Add Rule'});
@@ -967,81 +906,6 @@ END
 	&Header::closebox();
 }
 
-sub subclass {
-	&Header::openbox('100%', 'center', $Lang::tr{'Subclass'});
-	print <<END
-		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='66%'>
-END
-;
-	if ( $message ne "" ) {
-		print "<tr><td colspan='3' align='center'>$message";
-	}
-	print <<END
-		<tr><td colspan='3' width='100%'>$Lang::tr{'current class'}: $qossettings{'CLASS'}
-		<tr><td width='100%' colspan='3'>$Lang::tr{'enter data'}
-		<tr><td width='33%' align='right'>$Lang::tr{'Subclass'}:<td width='33%' align='left'><select name='SCLASS'>
-END
-;
-	if ($qossettings{'CLASS'} >= 100 && $qossettings{'CLASS'} < 121) {
-		$qossettings{'DEVICE'} = $qossettings{'RED_DEV'};
-		for ( $c = 1000 ; $c <= 1020 ; $c++ )
-		{
-			if ( $qossettings{'SCLASS'} ne $c )
-			{ print "<option value='$c'>$c</option>\n"; }
-			else { print "<option selected value='$c'>$c</option>\n"; }
-		}
-	} elsif ($qossettings{'CLASS'} >= 200 && $qossettings{'CLASS'} < 221) {
-		$qossettings{'DEVICE'} = $qossettings{'IMQ_DEV'};
-		for ( $c = 2000 ; $c <= 2020 ; $c++ )
-		{
-			if ( $qossettings{'SCLASS'} ne $c )
-			{ print "<option value='$c'>$c</option>\n"; }
-			else { print "<option selected value='$c'>$c</option>\n"; }
-		}
-	}
-	print <<END
-		</select>
-		<td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>$Lang::tr{'priority'}:<td width='33%' align='left'><select name='PRIO'>
-END
-;
-		for ( $c = 1 ; $c <= 7 ; $c++ )
-		{
-			if ( $qossettings{'PRIO'} ne $c )
-			{ print "<option value='$c'>$c</option>\n"; }
-			else { print "<option selected value='$c'>$c</option>\n"; }
-		}
-		print <<END
-		<td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>$Lang::tr{'guaranteed bandwith'}:
-		    <td width='33%' align='left'><input type='text' name='MINBWDTH' maxlength='8' required='1' value="$qossettings{'MINBWDTH'}" />
-		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>$Lang::tr{'max bandwith'}:
-		    <td width='33%' align='left'><input type='text' name='MAXBWDTH' maxlength='8' required='1' value="$qossettings{'MAXBWDTH'}" />
-		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Burst:
-		    <td width='33%' align='left'><input type='text' name='BURST' maxlength='8' value="$qossettings{'BURST'}" />
-		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>Ceilburst:
-		    <td width='33%' align='left'><input type='text' name='CBURST' maxlength='8' value="$qossettings{'CBURST'}" />
-		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>TOS-Bit:
-		    <td width='33%' align='left'><select name='TOS'>
-				<option value='0'>$Lang::tr{'disabled'} (0)</option>
-				<option value='8'>$Lang::tr{'min delay'} (8)</option>
-				<option value='4'>$Lang::tr{'max throughput'} (4)</option>
-				<option value='2'>$Lang::tr{'max reliability'} (2)</option>
-				<option value='1'>$Lang::tr{'min costs'} (1)</option></select>
-		    <td width='33%' align='center'><input type='hidden' name='CLASS' value="$qossettings{'CLASS'}" />
-							<input type='hidden' name='DEVICE' value="$qossettings{'DEVICE'}" />
-							<input type='submit' name='DOSCLASS' value='$Lang::tr{'save'}' />&nbsp;<input type='reset' value='$Lang::tr{'reset'}' />
-		</table></form>
-END
-;
-	&Header::closebox();
-}
-
 sub level7rule {
 	&Header::openbox('100%', 'center', $Lang::tr{'Level7 Rule'});
 	print <<END
@@ -1164,9 +1028,6 @@ sub showclasses {
 	@classes = <FILE>;
 	close FILE;
 	if (@classes) {
-		open( FILE, "< $subclassfile" ) or die "Unable to read $subclassfile";
-		@subclasses = <FILE>;
-		close FILE;
 		open( FILE, "< $level7file" ) or die "Unable to read $level7file";
 		@l7rules = <FILE>;
 		close FILE;
@@ -1203,11 +1064,6 @@ sub showclasses {
 				    <td align='center' bgcolor='$color{'color22'}'>$classline[7]</td>
 				    <td align='right'  bgcolor='$color{'color22'}'>
 					<table border='0'><tr>
-					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='CLASS' value='$classline[1]' />
-						<input type='hidden' name='ACTION' value='$Lang::tr{'qos add subclass'}' />
-						<input type='image' alt='$Lang::tr{'add subclass'}' title='$Lang::tr{'add subclass'}' src='/images/addblue.gif' />
-					</form>
 					<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 						<input type='hidden' name='CLASS' value='$classline[1]' />
 						<input type='hidden' name='ACTION' value='$Lang::tr{'Add Rule'}' />
@@ -1386,41 +1242,6 @@ END
 				}
 END
 ;
-			  	foreach $subclassentry (sort @subclasses)
-	  			{
-	  				@subclassline = split( /\;/, $subclassentry );
-		  			if ( $subclassline[1] eq $classline[1] ) {
-						print <<END
-							<tr><td align='center' bgcolor='#FAFAFA'>$Lang::tr{'Subclass'}:
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[2]
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[3]
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[4]
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[5]
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[6]
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[7]
-							    <td align='center' bgcolor='#FAFAFA'>$subclassline[8]
-							    <td align='right'  bgcolor='#FAFAFA'>
-						<table border='0'><tr>
-						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='CLASS' value='$subclassline[2]' />
-							<input type='hidden' name='ACTION' value='$Lang::tr{'Add Rule'}' />
-							<input type='image' alt='$Lang::tr{'Add Rule'}' title='$Lang::tr{'Add Rule'}' src='/images/addgreen.gif' />
-						</form>
-						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='CLASS' value='$subclassline[2]' />
-							<input type='hidden' name='DOSCLASS' value='$Lang::tr{'edit'}' />
-							<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
-						</form>
-						<td><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='CLASS' value='$subclassline[2]' />
-							<input type='hidden' name='DOSCLASS' value='$Lang::tr{'delete'}' />
-							<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/delete.gif' />
-						</form>
-						</table>
-END
-;
-					}
-				}
 			print <<END
 			</table>
 END
@@ -1483,24 +1304,6 @@ sub validclass {
   			{
 				$qossettings{'VALID'} = 'no';
 				$message = "$Lang::tr{'false classnumber'}";
-				last
-			}
-		}
-	}
-}
-
-sub validsubclass {
-	if ( $qossettings{'VALID'} eq 'yes' ) {
-		open( FILE, "< $subclassfile" ) or die "Unable to read $subclassfile";
-		@tmp = <FILE>;
-		close FILE;
-		foreach $subclassentry (sort @tmp)
-	  	{
-	  		@tmpline = split( /\;/, $subclassentry );
-	  		if ( $tmpline[2] eq $qossettings{'SCLASS'} )
-  			{
-				$qossettings{'VALID'} = 'no';
-				$message = "$Lang::tr{'class in use'}";
 				last
 			}
 		}
