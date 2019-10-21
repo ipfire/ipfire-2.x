@@ -433,8 +433,8 @@ print <<END
 	iptables -t mangle -A POSTROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN
 	iptables -t mangle -A POSTROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN
 	iptables -t mangle -A POSTROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN
-	iptables -t mangle -I FORWARD -i $qossettings{'RED_DEV'} -j QOS-INC
-	iptables -t mangle -A FORWARD -i $qossettings{'RED_DEV'} -j QOS-TOS
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
+	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS
 
 	# If the packet is already marked, then skip the processing
 	iptables -t mangle -A QOS-INC -m mark ! --mark 0 -j RETURN
@@ -574,8 +574,8 @@ print <<END
 	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-TOS >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-OUT >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-OUT >/dev/null 2>&1
-	iptables -t mangle --delete FORWARD -i $qossettings{'RED_DEV'} -j QOS-INC
-	iptables -t mangle --delete FORWARD -i $qossettings{'RED_DEV'} -j QOS-TOS
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
+	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-TOS
 	iptables -t mangle --flush  QOS-INC >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-INC >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-TOS >/dev/null 2>&1
