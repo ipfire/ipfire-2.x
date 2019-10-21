@@ -8353,12 +8353,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire-multi/build/include/config/iio/kfifo
 #lib/modules/KVER-ipfire-multi/build/include/config/iio/kfifo/buf.h
 #lib/modules/KVER-ipfire-multi/build/include/config/iio/trigger.h
-#lib/modules/KVER-ipfire-multi/build/include/config/imq
-#lib/modules/KVER-ipfire-multi/build/include/config/imq.h
-#lib/modules/KVER-ipfire-multi/build/include/config/imq/behavior
-#lib/modules/KVER-ipfire-multi/build/include/config/imq/behavior/ab.h
-#lib/modules/KVER-ipfire-multi/build/include/config/imq/num
-#lib/modules/KVER-ipfire-multi/build/include/config/imq/num/devs.h
 #lib/modules/KVER-ipfire-multi/build/include/config/imx
 #lib/modules/KVER-ipfire-multi/build/include/config/imx/dma.h
 #lib/modules/KVER-ipfire-multi/build/include/config/imx/gpcv2.h
@@ -9588,7 +9582,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire-multi/build/include/config/netfilter/xt/target/hl.h
 #lib/modules/KVER-ipfire-multi/build/include/config/netfilter/xt/target/hmark.h
 #lib/modules/KVER-ipfire-multi/build/include/config/netfilter/xt/target/idletimer.h
-#lib/modules/KVER-ipfire-multi/build/include/config/netfilter/xt/target/imq.h
 #lib/modules/KVER-ipfire-multi/build/include/config/netfilter/xt/target/led.h
 #lib/modules/KVER-ipfire-multi/build/include/config/netfilter/xt/target/log.h
 #lib/modules/KVER-ipfire-multi/build/include/config/netfilter/xt/target/mark.h
@@ -13192,7 +13185,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire-multi/build/include/linux/iio/triggered_event.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/iio/types.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/ima.h
-#lib/modules/KVER-ipfire-multi/build/include/linux/imq.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/imx-media.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/in.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/in6.h
@@ -13805,7 +13797,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire-multi/build/include/linux/netfilter/nfnetlink.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/netfilter/nfnetlink_acct.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/netfilter/x_tables.h
-#lib/modules/KVER-ipfire-multi/build/include/linux/netfilter/xt_IMQ.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/netfilter/xt_hashlimit.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/netfilter/xt_physdev.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/netfilter_arp
@@ -13819,11 +13810,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire-multi/build/include/linux/netfilter_ipv4
 #lib/modules/KVER-ipfire-multi/build/include/linux/netfilter_ipv4.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/netfilter_ipv4/ip_tables.h
-#lib/modules/KVER-ipfire-multi/build/include/linux/netfilter_ipv4/ipt_IMQ.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/netfilter_ipv6
 #lib/modules/KVER-ipfire-multi/build/include/linux/netfilter_ipv6.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/netfilter_ipv6/ip6_tables.h
-#lib/modules/KVER-ipfire-multi/build/include/linux/netfilter_ipv6/ip6t_IMQ.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/netlink.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/netpoll.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/nfs.h
@@ -19598,7 +19587,6 @@ lib/modules/KVER-ipfire-multi/kernel
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ethernet/wiznet/w5300.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/geneve.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ifb.ko.xz
-#lib/modules/KVER-ipfire-multi/kernel/drivers/net/imq.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ipvlan
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ipvlan/ipvlan.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/drivers/net/ipvlan/ipvtap.ko.xz
@@ -20588,7 +20576,6 @@ lib/modules/KVER-ipfire-multi/kernel
 #lib/modules/KVER-ipfire-multi/kernel/net/netfilter/xt_HL.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/net/netfilter/xt_HMARK.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/net/netfilter/xt_IDLETIMER.ko.xz
-#lib/modules/KVER-ipfire-multi/kernel/net/netfilter/xt_IMQ.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/net/netfilter/xt_LED.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/net/netfilter/xt_LOG.ko.xz
 #lib/modules/KVER-ipfire-multi/kernel/net/netfilter/xt_NETMAP.ko.xz
