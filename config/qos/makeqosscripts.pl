@@ -534,12 +534,6 @@ print <<END
 	ip link del $qossettings{'IMQ_DEV'} >/dev/null 2>&1
 
 	# REMOVE & FLUSH CHAINS
-	iptables -t mangle --delete POSTROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN >/dev/null 2>&1
-	iptables -t mangle --delete POSTROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN >/dev/null 2>&1
-	iptables -t mangle --delete POSTROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN >/dev/null 2>&1
-	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -p ah -j RETURN >/dev/null 2>&1
-	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -p esp -j RETURN >/dev/null 2>&1
-	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -p ip -j RETURN >/dev/null 2>&1
 	iptables -t mangle --delete POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT >/dev/null 2>&1
 	iptables -t mangle --delete PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-OUT >/dev/null 2>&1
