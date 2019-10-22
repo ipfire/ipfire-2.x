@@ -205,9 +205,6 @@ foreach $classentry (sort @classes)
 }
 print <<END
 
-	### add l7-filter to PREROUTING chain to see all traffic
-	iptables -t mangle -A PREROUTING -m layer7 --l7proto unset
-
 	### ADD QOS-OUT CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-OUT
 	iptables -t mangle -I POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
@@ -502,7 +499,7 @@ END
 
 print <<END
 	### REDUNDANT: SET ALL NONMARKED PACKETS TO DEFAULT CLASS
-	iptables -t mangle -A QOS-INC -m mark --mark 0 -j MARK --set-mark $qossettings{'DEFCLASS_INC'}
+	iptables -t mangle -A QOS-INC -m mark --mark 0 -m layer7 ! --l7proto unset -j MARK --set-mark $qossettings{'DEFCLASS_INC'}
 
 	# Save mark in connection tracking
 	iptables -t mangle -A QOS-INC -j CONNMARK --save-mark
@@ -540,8 +537,6 @@ print <<END
 	iptables -t mangle --delete-chain QOS-OUT >/dev/null 2>&1
 	iptables -t mangle --flush  QOS-INC >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-INC >/dev/null 2>&1
-	# remove l7-filter
-	iptables -t mangle --delete PREROUTING -m layer7 --l7proto unset
 
 	rmmod sch_htb >/dev/null 2>&1
 
