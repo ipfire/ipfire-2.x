@@ -82,12 +82,6 @@ rm -rf /lib/modules
 
 # Stop services
 
-# Delete imq0 if it is still present after QoS has been stopped
-if [ -d "/sys/class/net/imq0" ]; then
-	ip link del dev imq0
-	modprobe -r imq
-fi
-
 # Extract files
 extract_files
 
