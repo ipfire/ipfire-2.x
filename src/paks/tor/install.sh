@@ -36,10 +36,10 @@ extract_files
 restore_backup ${NAME}
 
 # Adjust some folder permission for new UID/GID
-chown -R tor:tor /var/lib/tor /var/ipfire/tor
+chown -R tor:tor /var/lib/tor
+chown -R tor:nobody /var/ipfire/tor
 
-# Tor settings file needs to be writeable by nobody group for WebUI
-chown tor:nobody /var/ipfire/tor/settings
-chmod 664 /var/ipfire/tor/settings
+# Tor settings files needs to be writeable by nobody group for WebUI
+chmod 664 /var/ipfire/tor/{settings,torrc}
 
 start_service --background ${NAME}
