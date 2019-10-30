@@ -81,19 +81,10 @@ if ( -f $mailfile){
 
 #ACTIONS
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){ #SaveButton on configsite
-	#Check fields
-	if ($cgiparams{'USEMAIL'} eq 'on'){
-		$errormessage=&checkmailsettings;
-	}else{
-		$cgiparams{'txt_mailserver'}='';
-		$cgiparams{'txt_mailport'}='';
-		$cgiparams{'txt_mailuser'}='';
-		$cgiparams{'txt_mailpass'}='';
-		$cgiparams{'mail_tls'}='';
-		$cgiparams{'txt_mailsender'}='';
-		$cgiparams{'txt_recipient'}='';
-	}
-	if(!$errormessage){
+	# Check fields
+	$errormessage = &checkmailsettings();
+
+	if (!$errormessage) {
 		#clear hashes
 		%auth=();
 		%dma=();
