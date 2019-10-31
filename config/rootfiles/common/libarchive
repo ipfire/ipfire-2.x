@@ -6,7 +6,7 @@
 #usr/lib/libarchive.la
 #usr/lib/libarchive.so
 #usr/lib/libarchive.so.13
-#usr/lib/libarchive.so.13.3.1
+#usr/lib/libarchive.so.13.4.0
 #usr/lib/pkgconfig/libarchive.pc
 #usr/share/man/man1/bsdcat.1
 #usr/share/man/man1/bsdcpio.1
@@ -14,6 +14,7 @@
 #usr/share/man/man3/archive_entry.3
 #usr/share/man/man3/archive_entry_acl.3
 #usr/share/man/man3/archive_entry_linkify.3
+#usr/share/man/man3/archive_entry_misc.3
 #usr/share/man/man3/archive_entry_paths.3
 #usr/share/man/man3/archive_entry_perms.3
 #usr/share/man/man3/archive_entry_stat.3
