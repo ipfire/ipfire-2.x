@@ -117,7 +117,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.1.1c-default-cipherlist.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssl-1.1.1d-default-cipherlist.patch
 
 	# Apply our CFLAGS
 	cd $(DIR_APP) && sed -i Configure \
