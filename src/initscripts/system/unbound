@@ -16,6 +16,7 @@ INSECURE_ZONES=
 USE_FORWARDERS=1
 ENABLE_SAFE_SEARCH=off
 FORCE_TCP=off
+FORCE_TLS=off
 
 # Cache any local zones for 60 seconds
 LOCAL_TTL=60
@@ -184,8 +185,15 @@ write_forward_conf() {
 	(
 		config_header
 
+		# Force using TLS for upstream servers only
+		if [ "${FORCE_TLS}" = "on" ]; then
+			echo "# Force using TLS for upstream servers only"
+			echo "server:"
+			echo "	tls-upstream: yes"
+			echo
+
 		# Force using TCP for upstream servers only
-		if [ "${FORCE_TCP}" = "on" ]; then
+		elif [ "${FORCE_TCP}" = "on" ]; then
 			echo "# Force using TCP for upstream servers only"
 			echo "server:"
 			echo "	tcp-upstream: yes"
