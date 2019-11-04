@@ -355,10 +355,10 @@ sub writeserverconf {
         print CONF "push \"dhcp-option WINS $sovpnsettings{DHCP_WINS}\"\n";
     }
     
-    if ($sovpnsettings{DHCP_WINS} eq '') {
+    if ($sovpnsettings{MAX_CLIENTS} eq '') {
 	print CONF "max-clients 100\n";
     }
-    if ($sovpnsettings{DHCP_WINS} ne '') {
+    if ($sovpnsettings{MAX_CLIENTS} ne '') {
 	print CONF "max-clients $sovpnsettings{MAX_CLIENTS}\n";
     }	
     print CONF "tls-verify /usr/lib/openvpn/verify\n";
