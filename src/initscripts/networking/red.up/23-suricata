@@ -19,8 +19,12 @@ if($ids_settings{'ENABLE_IDS'} eq "on") {
 	# Regenerate the file with HOME_NET details.
 	&IDS::generate_home_net_file();
 
-	# Set correct ownership.
+	# Regenerate the file with DNS_SERVERS details.
+	&IDS::generate_dns_servers_file();
+
+	# Set correct ownerships.
 	&IDS::set_ownership("$IDS::homenet_file");
+	&IDS::set_ownership("$IDS::dns_servers_file");
 
 	# Check if suricata is running.
 	if(&IDS::ids_is_running()) {
