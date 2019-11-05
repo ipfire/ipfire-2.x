@@ -253,7 +253,17 @@ if (-f $IDS::rulestarball) {
 &IDS::set_ownership("$IDS::homenet_file");
 
 #
-## Step 9: Setup automatic ruleset updates.
+## Step 9: Generate file for the DNS servers.
+#
+
+# Call subfunction to generate the file.
+&IDS::generate_dns_servers_file();
+
+# Set correct ownership for the dns_servers_file.
+&IDS::set_ownership("$IDS::dns_servers_file");
+
+#
+## Step 10: Setup automatic ruleset updates.
 #
 
 # Check if a ruleset is configured.
@@ -263,7 +273,7 @@ if($rulessettings{"RULES"}) {
 }
 
 #
-## Step 10: Grab used ruleset files from snort config file and convert
+## Step 11: Grab used ruleset files from snort config file and convert
 ##         them into the new format.
 #
 
@@ -309,7 +319,7 @@ close(SNORTCONF);
 &IDS::write_used_rulefiles_file(@enabled_rule_files);
 
 #
-## Step 11: Start the IDS if enabled.
+## Step 12: Start the IDS if enabled.
 #
 
 # Check if the IDS should be started.
