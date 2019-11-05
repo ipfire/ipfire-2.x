@@ -24,7 +24,9 @@ usr/share/logwatch/default.conf/logfiles/cron.conf
 #usr/share/logwatch/default.conf/logfiles/daemon.conf
 #usr/share/logwatch/default.conf/logfiles/denyhosts.conf
 #usr/share/logwatch/default.conf/logfiles/dirsrv.conf
+#usr/share/logwatch/default.conf/logfiles/dnf-rpm.conf
 #usr/share/logwatch/default.conf/logfiles/dnssec.conf
+#usr/share/logwatch/default.conf/logfiles/dovecot.conf
 #usr/share/logwatch/default.conf/logfiles/dpkg.conf
 #usr/share/logwatch/default.conf/logfiles/emerge.conf
 #usr/share/logwatch/default.conf/logfiles/eventlog.conf
@@ -51,6 +53,7 @@ usr/share/logwatch/default.conf/logfiles/php.conf
 #usr/share/logwatch/default.conf/logfiles/qmail-send-current.conf
 #usr/share/logwatch/default.conf/logfiles/qmail-smtpd-current.conf
 usr/share/logwatch/default.conf/logfiles/resolver.conf
+#usr/share/logwatch/default.conf/logfiles/rsnapshot.conf
 #usr/share/logwatch/default.conf/logfiles/rt314.conf
 usr/share/logwatch/default.conf/logfiles/samba.conf
 #usr/share/logwatch/default.conf/logfiles/secure.conf
@@ -86,6 +89,7 @@ usr/share/logwatch/default.conf/services/cron.conf
 #usr/share/logwatch/default.conf/services/denyhosts.conf
 usr/share/logwatch/default.conf/services/dhcpd.conf
 #usr/share/logwatch/default.conf/services/dirsrv.conf
+#usr/share/logwatch/default.conf/services/dnf-rpm.conf
 #usr/share/logwatch/default.conf/services/dnssec.conf
 #usr/share/logwatch/default.conf/services/dovecot.conf
 #usr/share/logwatch/default.conf/services/dpkg.conf
@@ -146,6 +150,7 @@ usr/share/logwatch/default.conf/services/postfix.conf
 #usr/share/logwatch/default.conf/services/qmail.conf
 #usr/share/logwatch/default.conf/services/raid.conf
 usr/share/logwatch/default.conf/services/resolver.conf
+#usr/share/logwatch/default.conf/services/rsnapshot.conf
 #usr/share/logwatch/default.conf/services/rsyslogd.conf
 #usr/share/logwatch/default.conf/services/rt314.conf
 usr/share/logwatch/default.conf/services/samba.conf
@@ -178,7 +183,6 @@ usr/share/logwatch/default.conf/services/windows.conf
 #usr/share/logwatch/default.conf/services/yum.conf
 #usr/share/logwatch/default.conf/services/zypp.conf
 usr/share/logwatch/default.conf/services/zz-disk_space.conf
-#usr/share/logwatch/default.conf/services/zz-fortune.conf
 usr/share/logwatch/default.conf/services/zz-lm_sensors.conf
 usr/share/logwatch/default.conf/services/zz-network.conf
 usr/share/logwatch/default.conf/services/zz-runtime.conf
@@ -230,6 +234,7 @@ usr/share/logwatch/scripts/services/cron
 usr/share/logwatch/scripts/services/dhcpd
 usr/share/logwatch/scripts/services/dialup
 #usr/share/logwatch/scripts/services/dirsrv
+#usr/share/logwatch/scripts/services/dnf-rpm
 #usr/share/logwatch/scripts/services/dnssec
 #usr/share/logwatch/scripts/services/dovecot
 #usr/share/logwatch/scripts/services/dpkg
@@ -290,6 +295,7 @@ usr/share/logwatch/scripts/services/postfix
 #usr/share/logwatch/scripts/services/qmail-smtpd
 #usr/share/logwatch/scripts/services/raid
 usr/share/logwatch/scripts/services/resolver
+#usr/share/logwatch/scripts/services/rsnapshot
 #usr/share/logwatch/scripts/services/rsyslogd
 #usr/share/logwatch/scripts/services/rt314
 usr/share/logwatch/scripts/services/samba
@@ -322,7 +328,6 @@ usr/share/logwatch/scripts/services/windows
 #usr/share/logwatch/scripts/services/yum
 #usr/share/logwatch/scripts/services/zypp
 usr/share/logwatch/scripts/services/zz-disk_space
-#usr/share/logwatch/scripts/services/zz-fortune
 usr/share/logwatch/scripts/services/zz-lm_sensors
 usr/share/logwatch/scripts/services/zz-network
 usr/share/logwatch/scripts/services/zz-runtime
@@ -340,6 +345,7 @@ usr/share/logwatch/scripts/shared/eventlogremoveservice
 usr/share/logwatch/scripts/shared/expandrepeats
 usr/share/logwatch/scripts/shared/hosthash
 usr/share/logwatch/scripts/shared/hostlist
+usr/share/logwatch/scripts/shared/journalctl
 usr/share/logwatch/scripts/shared/multiservice
 usr/share/logwatch/scripts/shared/onlycontains
 usr/share/logwatch/scripts/shared/onlyhost
