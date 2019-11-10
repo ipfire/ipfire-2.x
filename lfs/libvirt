@@ -78,7 +78,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libvirt/0001-Change-default-behavior-of-libvirt-guests.sh-for-IPF.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libvirt/0002-Change-options-in-libvirtd.conf-for-IPFire.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc \
 			--with-openssl --without-sasl \
 			--without-uml --without-vbox --without-lxc --without-esx --without-vmware --without-openvz \
@@ -95,5 +94,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mv /usr/libexec/libvirt-guests.sh /etc/rc.d/init.d/libvirt-guests
 	# Backup
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/libvirt /var/ipfire/backup/addons/includes/libvirt
+	# Install libvirtd.conf
+	cp -fv $(DIR_SRC)/config/libvirt/libvirtd.conf /etc/libvirt
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
