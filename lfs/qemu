@@ -82,7 +82,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
 		--localstatedir=/var --enable-kvm --disable-bluez --disable-attr \
 		--target-list="i386-linux-user x86_64-linux-user arm-linux-user i386-softmmu x86_64-softmmu arm-softmmu" \
-		--extra-cflags="$(CFLAGS)" --enable-spice --enable-usb-redir --enable-seccomp
+		--extra-cflags="$(CFLAGS)" --enable-spice --enable-usb-redir --enable-seccomp \
+		--disable-docs --disable-sdl
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
