@@ -84,7 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--without-firewalld --without-network --with-interface --with-virtualport --with-macvtap --without-wireshark-dissector \
 			--disable-nls --without-avahi --without-test-suite --without-dbus \
 			--with-qemu-user=nobody --with-qemu-group=kvm \
-			--with-storage-dir --with-storage-fs --without-storage-lvm  --without-storage-iscsi \
+			--with-storage-dir --with-storage-fs --with-storage-lvm  --without-storage-iscsi \
 			--without-storage-scsi --without-storage-mpath --without-storage-disk --without-storage-rbd --without-storage-sheepdog --without-storage-gluster  --without-storage-zfs
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install

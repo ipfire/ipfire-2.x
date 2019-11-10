@@ -94,6 +94,8 @@ usr/lib/libvirt/lock-driver/lockd.so
 #usr/lib/libvirt/storage-backend
 #usr/lib/libvirt/storage-backend/libvirt_storage_backend_fs.la
 usr/lib/libvirt/storage-backend/libvirt_storage_backend_fs.so
+#usr/lib/libvirt/storage-backend/libvirt_storage_backend_logical.la
+usr/lib/libvirt/storage-backend/libvirt_storage_backend_logical.so
 #usr/lib/libvirt/storage-file
 #usr/lib/libvirt/storage-file/libvirt_storage_file_fs.la
 usr/lib/libvirt/storage-file/libvirt_storage_file_fs.so
