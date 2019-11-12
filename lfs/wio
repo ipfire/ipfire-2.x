@@ -1,6 +1,6 @@
 ###############################################################################
 # IPFire.org    - An Open Source Firewall Solution                            #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
 ###############################################################################
 
 ###############################################################################
@@ -15,7 +15,7 @@ THISAPP    = wio-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = wio
-PAK_VER    = 6
+PAK_VER    = 7
 
 ###############################################################################
 # Top-level Rules

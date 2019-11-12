@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2017-2018 Stephan Feddersen <sfeddersen@ipfire.org>           #
+# Copyright (C) 2017-2019 Stephan Feddersen <sfeddersen@ipfire.org>           #
 # All Rights Reserved.                                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
@@ -21,14 +21,14 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2018/02/27 16:54:23
+# Version: 2019/11/08 14:35:23
 #
 # This wio.cgi is based on the Code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
 #
 # Autor: Stephan Feddersen
 # Co-Autor: Alexander Marx
-# Co-Autor: Frank Mainz
+# Co-Autor: Frank Mainz (for some Code for the IPCop WIO Addon)
 #
 
 use strict;
@@ -215,7 +215,7 @@ if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_save'}.'2' ) {
 	unless ( `ps -A | grep wio.pl` ) {
 		while ( $count < $wiosettings{'COUNT'} ) {
 			if ( defined($wiosettings{"USE$count"}) && $wiosettings{"USE$count"} eq 'on' ) {
-				$wiosettings{'CLIENTID'} = $wiosettings{'CLIENTID$count'};
+				$wiosettings{'CLIENTID'} = $wiosettings{"CLIENTID$count"};
 				$wiosettings{'TIMESTAMP'} = $wiosettings{"TIMESTAMP$count"};
 				$wiosettings{'IPADR'} = $wiosettings{"IPADR$count"};
 				$wiosettings{'HOST'} = $wiosettings{"HOST$count"};
@@ -226,6 +226,7 @@ if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_save'}.'2' ) {
 				$wiosettings{'SENDEMAILOFF'} = $wiosettings{"SENDEMAILOFF$count"};
 				$wiosettings{'PINGMETHODE'} = $wiosettings{"PINGMETHODE$count"};
 				$wiosettings{'ONLINE'} = $wiosettings{"ONLINE$count"};
+				$wiosettings{'WEBINTERFACE'} = $wiosettings{"WEBINTERFACE$count"};
 
 				&validSave();
 
@@ -281,39 +282,54 @@ if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_client_add'} ) {
 ## show / hide arptable
 
 if ( $wiosettings{'WIOGUISHOWARPTABLE'} eq 'arptable' ) {
-	if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_show_table_off'} ) {
-		$wiosettings{'WIOGUISHOWARPTABLE'} = 'off';
-		$arpbuttontext = "$Lang::tr{'wio_show_table_on'}";
+	unless ( `ps -A | grep wio.pl` ) {
+		if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_show_table_off'} ) {
+			$wiosettings{'WIOGUISHOWARPTABLE'} = 'off';
+			$arpbuttontext = "$Lang::tr{'wio_show_table_on'}";
+		}
+		else {
+			$wiosettings{'WIOGUISHOWARPTABLE'} = 'on';
+			$arpbuttontext = "$Lang::tr{'wio_show_table_off'}";
+		}
 	}
 	else {
-		$wiosettings{'WIOGUISHOWARPTABLE'} = 'on';
-		$arpbuttontext = "$Lang::tr{'wio_show_table_off'}";
+		$infomessage = "$Lang::tr{'wio_error_function'}";
 	}
 }
 
 ## show / hide clientimporttable
 
 if ( $wiosettings{'WIOGUISHOWCLIENTIMPORTTABLE'} eq 'clientimport' ) {
-	if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_show_table_off'} ) {
-		$wiosettings{'WIOGUISHOWCLIENTIMPORTTABLE'} = 'off';
-		$clientimportbuttontext = "$Lang::tr{'wio_show_table_on'}";
+	unless ( `ps -A | grep wio.pl` ) {
+		if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_show_table_off'} ) {
+			$wiosettings{'WIOGUISHOWCLIENTIMPORTTABLE'} = 'off';
+			$clientimportbuttontext = "$Lang::tr{'wio_show_table_on'}";
+		}
+		else {
+			$wiosettings{'WIOGUISHOWCLIENTIMPORTTABLE'} = 'on';
+			$clientimportbuttontext = "$Lang::tr{'wio_show_table_off'}";
+		}
 	}
 	else {
-		$wiosettings{'WIOGUISHOWCLIENTIMPORTTABLE'} = 'on';
-		$clientimportbuttontext = "$Lang::tr{'wio_show_table_off'}";
+		$infomessage = "$Lang::tr{'wio_error_function'}";
 	}
 }
 
 ## show / hide networksearchtable
 
 if ( $wiosettings{'WIOGUISHOWNETWORKSEARCHTABLE'} eq 'networksearch' ) {
-	if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_show_table_off'} ) {
-		$wiosettings{'WIOGUISHOWNETWORKSEARCHTABLE'} = 'off';
-		$networksearchbuttontext = "$Lang::tr{'wio_show_table_on'}";
+	unless ( `ps -A | grep wio.pl` ) {
+		if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_show_table_off'} ) {
+			$wiosettings{'WIOGUISHOWNETWORKSEARCHTABLE'} = 'off';
+			$networksearchbuttontext = "$Lang::tr{'wio_show_table_on'}";
+		}
+		else {
+			$wiosettings{'WIOGUISHOWNETWORKSEARCHTABLE'} = 'on';
+			$networksearchbuttontext = "$Lang::tr{'wio_show_table_off'}";
+		}
 	}
 	else {
-		$wiosettings{'WIOGUISHOWNETWORKSEARCHTABLE'} = 'on';
-		$networksearchbuttontext = "$Lang::tr{'wio_show_table_off'}";
+		$infomessage = "$Lang::tr{'wio_error_function'}";
 	}
 }
 
@@ -388,6 +404,8 @@ if ( defined($edc) || defined($edd) || defined($wmon) || defined($wmoff) || defi
 
 if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_refresh'} || $wiosettings{'ACTION'} eq $Lang::tr{'wio_sc_refresh'} ) {
 
+unless ( `ps -A | grep wio.pl` ) {
+
 	if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_sc_refresh'} ) {
 		open(FILE, "> $onoffip");
 		print FILE @current[$wiosettings{'ID'}];
@@ -395,8 +413,6 @@ if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_refresh'} || $wiosettings{'ACTION'
 
 		undef($wiosettings{'ID'});
 	}
-
-unless ( `ps -A | grep wio.pl` ) {
 
 &Header::showhttpheaders();
 &Header::openpage($Lang::tr{'wio'}, 1, $refreshbox);
@@ -417,7 +433,7 @@ print"
 
 while ( system("/usr/local/bin/wiohelper", "&") ) {}
 
-exit 0;		
+exit 0;
 }
 else {
 	$infomessage = "$Lang::tr{'wio_already_running'}";
@@ -662,7 +678,6 @@ foreach (@hosts) {
 			$wiosettings{'HOST$count'} = gethostbyaddr(inet_aton($line[1]), AF_INET);
 			if ($wiosettings{'HOST$count'} eq '') { $wiosettings{'HOST$count'} = $line[1]; }
 			$wiosettings{'REMARK$count'} = '';
-			$wiosettings{'WEBINTERFACE$count'} = '';
 		}
 		else {
 			$wiosettings{'HOST$count'} = $line[7];
