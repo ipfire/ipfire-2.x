@@ -1,0 +1,36 @@
+commit c0277eeea2b2c1ed8f40f1248b28438e44e51912
+Author: Stefan Schantl <stefan.schantl@ipfire.org>
+Date:   Tue Nov 12 08:43:31 2019 +0100
+
+    NoIP.com: Rename handle back to no-ip.com
+    
+    The old handle name is required for backward compatiblity.
+    
+    Signed-off-by: Stefan Schantl <stefan.schantl@ipfire.org>
+
+diff --git a/ddns.conf.sample b/ddns.conf.sample
+index 528684f..61a608a 100644
+--- a/ddns.conf.sample
++++ b/ddns.conf.sample
+@@ -120,7 +120,7 @@
+ # password = pass
+ 
+ # [test.noip.org]
+-# provider = noip.com
++# provider = no-ip.com
+ # username = user
+ # password = pass
+ 
+diff --git a/src/ddns/providers.py b/src/ddns/providers.py
+index 4789107..661fbcc 100644
+--- a/src/ddns/providers.py
++++ b/src/ddns/providers.py
+@@ -1344,7 +1344,7 @@ class DDNSProviderNamecheap(DDNSResponseParserXML, DDNSProvider):
+ 
+ 
+ class DDNSProviderNOIP(DDNSProtocolDynDNS2, DDNSProvider):
+-	handle    = "noip.com"
++	handle    = "no-ip.com"
+ 	name      = "NoIP"
+ 	website   = "http://www.noip.com/"
+ 	protocols = ("ipv4",)
