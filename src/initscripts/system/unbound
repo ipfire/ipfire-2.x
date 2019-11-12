@@ -220,33 +220,22 @@ write_forward_conf() {
 					;;
 			esac
 
-			# Reverse-lookup zones must be stubs
+			echo "stub-zone:"
+			echo "	name: ${zone}"
+			for server in ${servers//|/ }; do
+				if [[ ${server} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+					echo "	stub-addr: ${server}"
+				else
+					echo "	stub-host: ${server}"
+				fi
+			done
+			echo
+
+			# Make all reverse lookup zones transparent
 			case "${zone}" in
 				*.in-addr.arpa)
-					echo "stub-zone:"
-					echo "	name: ${zone}"
-					for server in ${servers//|/ }; do
-						if [[ ${server} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-							echo "	stub-addr: ${server}"
-						else
-							echo "	stub-host: ${server}"
-						fi
-					done
-					echo
 					echo "server:"
 					echo "	local-zone: \"${zone}\" transparent"
-					echo
-					;;
-				*)
-					echo "forward-zone:"
-					echo "	name: ${zone}"
-					for server in ${servers//|/ }; do
-						if [[ ${server} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-							echo "	forward-addr: ${server}"
-						else
-							echo "	forward-host: ${server}"
-						fi
-					done
 					echo
 					;;
 			esac
