@@ -1,6 +1,8 @@
 bin/sh
 bin/bash
 #bin/bashbug
+#usr/include/bash
+#usr/lib/bash
 #usr/share/doc/bash
 #usr/share/doc/bash/CHANGES
 #usr/share/doc/bash/COMPAT
@@ -39,15 +41,15 @@ bin/bash
 #usr/share/locale/it/LC_MESSAGES/bash.mo
 #usr/share/locale/ja/LC_MESSAGES/bash.mo
 #usr/share/locale/lt/LC_MESSAGES/bash.mo
+#usr/share/locale/nb/LC_MESSAGES/bash.mo
 #usr/share/locale/nl/LC_MESSAGES/bash.mo
 #usr/share/locale/pl/LC_MESSAGES/bash.mo
+#usr/share/locale/pt/LC_MESSAGES/bash.mo
 #usr/share/locale/pt_BR/LC_MESSAGES/bash.mo
 #usr/share/locale/ro/LC_MESSAGES/bash.mo
 #usr/share/locale/ru/LC_MESSAGES/bash.mo
 #usr/share/locale/sk/LC_MESSAGES/bash.mo
 #usr/share/locale/sl/LC_MESSAGES/bash.mo
-#usr/share/locale/sr
-#usr/share/locale/sr/LC_MESSAGES
 #usr/share/locale/sr/LC_MESSAGES/bash.mo
 #usr/share/locale/sv/LC_MESSAGES/bash.mo
 #usr/share/locale/tr/LC_MESSAGES/bash.mo
