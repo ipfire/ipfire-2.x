@@ -3,5 +3,6 @@ etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 etc/rc.d/init.d/functions
+etc/rc.d/init.d/unbound
 srv/web/ipfire/cgi-bin/mail.cgi
 usr/lib/firewall/firewall-lib.pl
