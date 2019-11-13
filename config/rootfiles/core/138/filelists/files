@@ -3,3 +3,4 @@ etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 usr/lib/firewall/firewall-lib.pl
+srv/web/ipfire/cgi-bin/mail.cgi
