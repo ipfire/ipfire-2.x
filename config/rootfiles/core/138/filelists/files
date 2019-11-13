@@ -2,6 +2,7 @@ etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
+etc/httpd/conf/vhosts.d/interface-ipfire-ssl.conf
 etc/rc.d/init.d/functions
 etc/rc.d/init.d/unbound
 srv/web/ipfire/cgi-bin/mail.cgi
