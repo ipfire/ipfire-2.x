@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -35,7 +35,7 @@ SUP_ARCH   = i586 x86_64
 PROG       = qemu
 PAK_VER    = 25
 
-DEPS       = "libusbredir sdl spice libseccomp"
+DEPS       = "libusbredir spice libseccomp"
 
 ###############################################################################
 # Top-level Rules
