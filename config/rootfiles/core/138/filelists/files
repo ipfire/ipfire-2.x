@@ -2,5 +2,6 @@ etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
-usr/lib/firewall/firewall-lib.pl
+etc/rc.d/init.d/functions
 srv/web/ipfire/cgi-bin/mail.cgi
+usr/lib/firewall/firewall-lib.pl
