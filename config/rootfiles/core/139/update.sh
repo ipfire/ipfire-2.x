@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
-core=138
+core=139
 
 exit_with_error() {
 	# Set last succesfull installed core.
