@@ -9329,6 +9329,8 @@ boot/vmlinuz-KVER-ipfire-kirkwood
 #lib/modules/KVER-ipfire-kirkwood/build/include/config/sg/pool.h
 #lib/modules/KVER-ipfire-kirkwood/build/include/config/sgetmask
 #lib/modules/KVER-ipfire-kirkwood/build/include/config/sgetmask/syscall.h
+#lib/modules/KVER-ipfire-kirkwood/build/include/config/sgl
+#lib/modules/KVER-ipfire-kirkwood/build/include/config/sgl/alloc.h
 #lib/modules/KVER-ipfire-kirkwood/build/include/config/shmem.h
 #lib/modules/KVER-ipfire-kirkwood/build/include/config/signalfd.h
 #lib/modules/KVER-ipfire-kirkwood/build/include/config/simple
