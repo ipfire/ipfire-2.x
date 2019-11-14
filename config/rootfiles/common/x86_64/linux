@@ -10850,6 +10850,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/sg/pool.h
 #lib/modules/KVER-ipfire/build/include/config/sgetmask
 #lib/modules/KVER-ipfire/build/include/config/sgetmask/syscall.h
+#lib/modules/KVER-ipfire/build/include/config/sgl
+#lib/modules/KVER-ipfire/build/include/config/sgl/alloc.h
 #lib/modules/KVER-ipfire/build/include/config/shmem.h
 #lib/modules/KVER-ipfire/build/include/config/signalfd.h
 #lib/modules/KVER-ipfire/build/include/config/sis190.h
@@ -12122,6 +12124,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/x86/intel/memory/protection
 #lib/modules/KVER-ipfire/build/include/config/x86/intel/memory/protection/keys.h
 #lib/modules/KVER-ipfire/build/include/config/x86/intel/pstate.h
+#lib/modules/KVER-ipfire/build/include/config/x86/intel/tsx
+#lib/modules/KVER-ipfire/build/include/config/x86/intel/tsx/mode
+#lib/modules/KVER-ipfire/build/include/config/x86/intel/tsx/mode/auto.h
 #lib/modules/KVER-ipfire/build/include/config/x86/internode
 #lib/modules/KVER-ipfire/build/include/config/x86/internode/cache
 #lib/modules/KVER-ipfire/build/include/config/x86/internode/cache/shift.h
@@ -14042,7 +14047,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/linux/net.h
 #lib/modules/KVER-ipfire/build/include/linux/netdev_features.h
 #lib/modules/KVER-ipfire/build/include/linux/netdevice.h
-#lib/modules/KVER-ipfire/build/include/linux/netdevice.h.orig
 #lib/modules/KVER-ipfire/build/include/linux/netfilter
 #lib/modules/KVER-ipfire/build/include/linux/netfilter.h
 #lib/modules/KVER-ipfire/build/include/linux/netfilter/ipset
@@ -14788,7 +14792,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/linux/sizes.h
 #lib/modules/KVER-ipfire/build/include/linux/skb_array.h
 #lib/modules/KVER-ipfire/build/include/linux/skbuff.h
-#lib/modules/KVER-ipfire/build/include/linux/skbuff.h.orig
 #lib/modules/KVER-ipfire/build/include/linux/slab.h
 #lib/modules/KVER-ipfire/build/include/linux/slab_def.h
 #lib/modules/KVER-ipfire/build/include/linux/slub_def.h
@@ -15602,7 +15605,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/net/route.h
 #lib/modules/KVER-ipfire/build/include/net/rtnetlink.h
 #lib/modules/KVER-ipfire/build/include/net/sch_generic.h
-#lib/modules/KVER-ipfire/build/include/net/sch_generic.h.orig
 #lib/modules/KVER-ipfire/build/include/net/scm.h
 #lib/modules/KVER-ipfire/build/include/net/sctp
 #lib/modules/KVER-ipfire/build/include/net/sctp/auth.h
@@ -17257,9 +17259,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/net/ncsi/Makefile
 #lib/modules/KVER-ipfire/build/net/netfilter
 #lib/modules/KVER-ipfire/build/net/netfilter/Kconfig
-#lib/modules/KVER-ipfire/build/net/netfilter/Kconfig.orig
 #lib/modules/KVER-ipfire/build/net/netfilter/Makefile
-#lib/modules/KVER-ipfire/build/net/netfilter/Makefile.orig
 #lib/modules/KVER-ipfire/build/net/netfilter/ipset
 #lib/modules/KVER-ipfire/build/net/netfilter/ipset/Kconfig
 #lib/modules/KVER-ipfire/build/net/netfilter/ipset/Makefile

@@ -10752,6 +10752,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire-multi/build/include/config/sg/pool.h
 #lib/modules/KVER-ipfire-multi/build/include/config/sgetmask
 #lib/modules/KVER-ipfire-multi/build/include/config/sgetmask/syscall.h
+#lib/modules/KVER-ipfire-multi/build/include/config/sgl
+#lib/modules/KVER-ipfire-multi/build/include/config/sgl/alloc.h
 #lib/modules/KVER-ipfire-multi/build/include/config/shmem.h
 #lib/modules/KVER-ipfire-multi/build/include/config/signalfd.h
 #lib/modules/KVER-ipfire-multi/build/include/config/simple
