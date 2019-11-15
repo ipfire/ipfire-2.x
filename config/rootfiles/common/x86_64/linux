@@ -12126,7 +12126,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/x86/intel/pstate.h
 #lib/modules/KVER-ipfire/build/include/config/x86/intel/tsx
 #lib/modules/KVER-ipfire/build/include/config/x86/intel/tsx/mode
-#lib/modules/KVER-ipfire/build/include/config/x86/intel/tsx/mode/auto.h
+#lib/modules/KVER-ipfire/build/include/config/x86/intel/tsx/mode/off.h
 #lib/modules/KVER-ipfire/build/include/config/x86/internode
 #lib/modules/KVER-ipfire/build/include/config/x86/internode/cache
 #lib/modules/KVER-ipfire/build/include/config/x86/internode/cache/shift.h
