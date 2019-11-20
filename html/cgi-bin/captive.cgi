@@ -514,6 +514,25 @@ END
 	}
 }
 
+sub cleanup_expired_coupons
+{
+	my $acttime=time();
+	&General::readhasharray($clients, \%clientshash) if (-e $clients);
+	foreach my $key (keys %clientshash) {
+
+		#calculate endtime from clientshash
+		my $endtime;
+		if ($clientshash{$key}[3] > '0'){
+			$endtime = $clientshash{$key}[2]+$clientshash{$key}[3];
+			if ($acttime > $endtime) {
+				delete $clientshash{$key};
+			}
+		}
+	}
+	#write back hash
+	&General::writehasharray("$clients", \%clientshash);
+}
+
 sub show_coupons() {
 	&General::readhasharray($coupons, \%couponhash) if (-e $coupons);
 
@@ -601,9 +620,9 @@ sub show_clients() {
 				<th align='center' width='5%'>$Lang::tr{'delete'}</th>
 			</tr>
 END
-
+	&cleanup_expired_coupons();
 	&General::readhasharray($clients, \%clientshash) if (-e $clients);
-	foreach my $key (keys %clientshash) {
+	foreach my $key (sort {$clientshash{$a}[2] <=> $clientshash{$b}[2]} keys %clientshash) {
 		#calculate time from clientshash (starttime)
 		my $starttime = sub{sprintf '%02d.%02d.%04d %02d:%02d', $_[3], $_[4]+1, $_[5]+1900, $_[2], $_[1]  }->(localtime($clientshash{$key}[2]));
 
