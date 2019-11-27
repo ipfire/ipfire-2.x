@@ -134,7 +134,7 @@ main() {
 					local address
 
 					local _address
-					for _address in ${GREEN_ADDRESS} ${BLUE_ADDRESS} ${ORANGE_ADDRESS}; do
+					for _address in $(hostname -I); do
 						local leftsubnet
 						for leftsubnet in ${leftsubnets//\|/ }; do
 							if ip_in_subnet "${_address}" "${leftsubnet}"; then
