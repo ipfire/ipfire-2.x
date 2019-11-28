@@ -800,6 +800,7 @@ usr/lib/python2.7/dis.pyc
 #usr/lib/python2.7/distutils/tests/__init__.py
 #usr/lib/python2.7/distutils/tests/__init__.pyc
 #usr/lib/python2.7/distutils/tests/__init__.pyo
+#usr/lib/python2.7/distutils/tests/includetest.rst
 #usr/lib/python2.7/distutils/tests/setuptools_build_ext.py
 #usr/lib/python2.7/distutils/tests/setuptools_build_ext.pyc
 #usr/lib/python2.7/distutils/tests/setuptools_build_ext.pyo
@@ -1463,8 +1464,8 @@ usr/lib/python2.7/encodings/zlib_codec.pyc
 #usr/lib/python2.7/ensurepip/__main__.pyc
 #usr/lib/python2.7/ensurepip/__main__.pyo
 #usr/lib/python2.7/ensurepip/_bundled
-#usr/lib/python2.7/ensurepip/_bundled/pip-9.0.3-py2.py3-none-any.whl
-#usr/lib/python2.7/ensurepip/_bundled/setuptools-39.0.1-py2.py3-none-any.whl
+#usr/lib/python2.7/ensurepip/_bundled/pip-19.2.3-py2.py3-none-any.whl
+#usr/lib/python2.7/ensurepip/_bundled/setuptools-41.2.0-py2.py3-none-any.whl
 #usr/lib/python2.7/ensurepip/_uninstall.py
 #usr/lib/python2.7/ensurepip/_uninstall.pyc
 #usr/lib/python2.7/ensurepip/_uninstall.pyo
@@ -1926,7 +1927,7 @@ usr/lib/python2.7/json/tool.pyc
 usr/lib/python2.7/keyword.pyc
 #usr/lib/python2.7/keyword.pyo
 #usr/lib/python2.7/lib-dynload
-#usr/lib/python2.7/lib-dynload/Python-2.7.15-py2.7.egg-info
+#usr/lib/python2.7/lib-dynload/Python-2.7.17-py2.7.egg-info
 usr/lib/python2.7/lib-dynload/_bisect.so
 usr/lib/python2.7/lib-dynload/_bsddb.so
 usr/lib/python2.7/lib-dynload/_codecs_cn.so
@@ -2045,6 +2046,9 @@ usr/lib/python2.7/lib-dynload/zlib.so
 #usr/lib/python2.7/lib-tk/test/test_tkinter/test_loadtk.py
 #usr/lib/python2.7/lib-tk/test/test_tkinter/test_loadtk.pyc
 #usr/lib/python2.7/lib-tk/test/test_tkinter/test_loadtk.pyo
+#usr/lib/python2.7/lib-tk/test/test_tkinter/test_misc.py
+#usr/lib/python2.7/lib-tk/test/test_tkinter/test_misc.pyc
+#usr/lib/python2.7/lib-tk/test/test_tkinter/test_misc.pyo
 #usr/lib/python2.7/lib-tk/test/test_tkinter/test_text.py
 #usr/lib/python2.7/lib-tk/test/test_tkinter/test_text.pyc
 #usr/lib/python2.7/lib-tk/test/test_tkinter/test_text.pyo
@@ -2102,9 +2106,9 @@ usr/lib/python2.7/lib-dynload/zlib.so
 #usr/lib/python2.7/lib-tk/turtle.pyo
 #usr/lib/python2.7/lib2to3
 #usr/lib/python2.7/lib2to3/Grammar.txt
-#usr/lib/python2.7/lib2to3/Grammar2.7.15.final.0.pickle
+#usr/lib/python2.7/lib2to3/Grammar2.7.17.final.0.pickle
 #usr/lib/python2.7/lib2to3/PatternGrammar.txt
-#usr/lib/python2.7/lib2to3/PatternGrammar2.7.15.final.0.pickle
+#usr/lib/python2.7/lib2to3/PatternGrammar2.7.17.final.0.pickle
 #usr/lib/python2.7/lib2to3/__init__.py
 #usr/lib/python2.7/lib2to3/__init__.pyc
 #usr/lib/python2.7/lib2to3/__init__.pyo
@@ -2795,9 +2799,9 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/badsyntax_future8.py
 #usr/lib/python2.7/test/badsyntax_future9.py
 #usr/lib/python2.7/test/badsyntax_nocaret.py
-#usr/lib/python2.7/test/bisect.py
-#usr/lib/python2.7/test/bisect.pyc
-#usr/lib/python2.7/test/bisect.pyo
+#usr/lib/python2.7/test/bisect_cmd.py
+#usr/lib/python2.7/test/bisect_cmd.pyc
+#usr/lib/python2.7/test/bisect_cmd.pyo
 #usr/lib/python2.7/test/capath
 #usr/lib/python2.7/test/capath/0e4015b9.0
 #usr/lib/python2.7/test/capath/4e1295a3.0
@@ -2805,6 +2809,7 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/capath/6e88d7b8.0
 #usr/lib/python2.7/test/capath/99d0fa06.0
 #usr/lib/python2.7/test/capath/ce7b8643.0
+#usr/lib/python2.7/test/capath/efa5f9c3.0
 #usr/lib/python2.7/test/cfgparser.1
 #usr/lib/python2.7/test/cjkencodings
 #usr/lib/python2.7/test/cjkencodings/big5-utf8.txt
@@ -2987,7 +2992,6 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/decimaltestdata/tointegral.decTest
 #usr/lib/python2.7/test/decimaltestdata/tointegralx.decTest
 #usr/lib/python2.7/test/decimaltestdata/xor.decTest
-#usr/lib/python2.7/test/dh1024.pem
 #usr/lib/python2.7/test/doctest_aliases.py
 #usr/lib/python2.7/test/doctest_aliases.pyc
 #usr/lib/python2.7/test/doctest_aliases.pyo
@@ -2996,6 +3000,7 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/double_const.pyo
 #usr/lib/python2.7/test/empty.vbs
 #usr/lib/python2.7/test/exception_hierarchy.txt
+#usr/lib/python2.7/test/ffdh3072.pem
 #usr/lib/python2.7/test/floating_points.txt
 #usr/lib/python2.7/test/fork_wait.py
 #usr/lib/python2.7/test/fork_wait.pyc
@@ -3141,6 +3146,7 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/symlink_support.py
 #usr/lib/python2.7/test/symlink_support.pyc
 #usr/lib/python2.7/test/symlink_support.pyo
+#usr/lib/python2.7/test/talos-2019-0758.pem
 #usr/lib/python2.7/test/test_MimeWriter.py
 #usr/lib/python2.7/test/test_MimeWriter.pyc
 #usr/lib/python2.7/test/test_MimeWriter.pyo
@@ -3216,6 +3222,9 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/test_bastion.py
 #usr/lib/python2.7/test/test_bastion.pyc
 #usr/lib/python2.7/test/test_bastion.pyo
+#usr/lib/python2.7/test/test_bdb.py
+#usr/lib/python2.7/test/test_bdb.pyc
+#usr/lib/python2.7/test/test_bdb.pyo
 #usr/lib/python2.7/test/test_bigaddrspace.py
 #usr/lib/python2.7/test/test_bigaddrspace.pyc
 #usr/lib/python2.7/test/test_bigaddrspace.pyo
@@ -4397,7 +4406,6 @@ usr/lib/python2.7/tempfile.pyc
 #usr/lib/python2.7/test/win_console_handler.py
 #usr/lib/python2.7/test/win_console_handler.pyc
 #usr/lib/python2.7/test/win_console_handler.pyo
-#usr/lib/python2.7/test/wrongcert.pem
 #usr/lib/python2.7/test/xmltestdata
 #usr/lib/python2.7/test/xmltestdata/expat224_utf8_bug.xml
 #usr/lib/python2.7/test/xmltestdata/simple-ns.xml
