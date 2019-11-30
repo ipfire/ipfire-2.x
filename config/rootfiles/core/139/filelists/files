@@ -14,3 +14,4 @@ srv/web/ipfire/cgi-bin/ovpnmain.cgi
 usr/sbin/convert-snort
 usr/lib/firewall/firewall-lib.pl
 var/ipfire/ids-functions.pl
+var/ipfire/proxy/calamaris/bin/mkreport
