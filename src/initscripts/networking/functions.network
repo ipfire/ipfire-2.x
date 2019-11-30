@@ -80,24 +80,32 @@ dhcpcd_start() {
 
 	if [ "${ret}" -eq 0 ]; then
 		. /var/ipfire/dhcpc/dhcpcd-"${device}".info
-		echo ""
-		echo_ok
-		boot_mesg "           DHCP Assigned Settings for ${device}:"
-		boot_mesg_flush
-		boot_mesg "           IP Address:      $ip_address"
-		boot_mesg_flush
 
-		if [ -n "${RED_DHCP_HOSTNAME}" ]; then
-			boot_mesg "           Hostname:        $RED_DHCP_HOSTNAME"
+			if [ $ip_address ]; then
+			echo ""
+			echo_ok
+			boot_mesg "           DHCP Assigned Settings for ${device}:"
+			boot_mesg_flush
+			boot_mesg "           IP Address:      $ip_address"
+			boot_mesg_flush
+
+			if [ -n "${RED_DHCP_HOSTNAME}" ]; then
+				boot_mesg "           Hostname:        $RED_DHCP_HOSTNAME"
+				boot_mesg_flush
+			fi
+
+			boot_mesg "           Subnet Mask:     $subnet_mask"
+			boot_mesg_flush
+			boot_mesg "           Default Gateway: $routers"
+			boot_mesg_flush
+			boot_mesg "           DNS Server:      $domain_name_servers"
+			boot_mesg_flush
+		else
+			echo ""
+			echo_ok
+			boot_mesg "DHCP for ${device} still running..."
 			boot_mesg_flush
 		fi
-
-		boot_mesg "           Subnet Mask:     $subnet_mask"
-		boot_mesg_flush
-		boot_mesg "           Default Gateway: $routers"
-		boot_mesg_flush
-		boot_mesg "           DNS Server:      $domain_name_servers"
-		boot_mesg_flush
 	else
 		echo ""
 		$(exit "${ret}")
