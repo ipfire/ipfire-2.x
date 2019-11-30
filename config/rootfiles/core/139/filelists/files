@@ -5,6 +5,8 @@ var/ipfire/langs
 etc/httpd/conf/vhosts.d/ipfire-interface.conf
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/rc.d/init.d/functions
+etc/rc.d/init.d/networking/red
+etc/rc.d/init.d/networking/functions.network
 etc/rc.d/init.d/networking/red.up/23-suricata
 etc/rc.d/init.d/unbound
 etc/suricata/suricata.yaml
@@ -15,5 +17,6 @@ srv/web/ipfire/cgi-bin/ovpnmain.cgi
 usr/bin/pcregrep
 usr/sbin/convert-snort
 usr/lib/firewall/firewall-lib.pl
+var/ipfire/dhcpc/dhcpcd-hooks/10-mtu
 var/ipfire/ids-functions.pl
 var/ipfire/proxy/calamaris/bin/mkreport
