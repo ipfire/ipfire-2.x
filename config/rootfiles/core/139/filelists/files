@@ -5,6 +5,7 @@ var/ipfire/langs
 etc/httpd/conf/vhosts.d/ipfire-interface.conf
 etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/rc.d/init.d/functions
+etc/rc.d/init.d/networking/dhcpcd.exe
 etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/networking/functions.network
 etc/rc.d/init.d/networking/red.down/99-beep
