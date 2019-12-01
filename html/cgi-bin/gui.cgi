@@ -78,9 +78,9 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
         # Beep on ip-up or ip-down. Default is ON.
         if ($cgiparams{'PPPUPDOWNBEEP'} ne 'on') {
             $cgiparams{'PPPUPDOWNBEEP'} = 'off';
-            system ('/usr/bin/touch', "${General::swroot}/ppp/nobeeps");
+            system ('/usr/bin/touch', "${General::swroot}/red/nobeeps");
         } else {
-            unlink "${General::swroot}/ppp/nobeeps";
+            unlink "${General::swroot}/red/nobeeps";
         }
 
         # write cgi vars to the file.

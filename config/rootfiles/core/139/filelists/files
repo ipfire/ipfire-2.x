@@ -7,9 +7,13 @@ etc/httpd/conf/vhosts.d/ipfire-interface-ssl.conf
 etc/rc.d/init.d/functions
 etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/networking/functions.network
+etc/rc.d/init.d/networking/red.down/99-beep
 etc/rc.d/init.d/networking/red.up/23-suricata
+etc/rc.d/init.d/networking/red.up/99-beep
 etc/rc.d/init.d/unbound
 etc/suricata/suricata.yaml
+etc/ppp/ip-down
+etc/ppp/ip-up
 srv/web/ipfire/cgi-bin/captive.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/mail.cgi
