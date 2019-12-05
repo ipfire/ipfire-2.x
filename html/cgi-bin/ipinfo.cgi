@@ -52,7 +52,8 @@ if (&General::validip($addr)) {
 	if (!$hostname) { $hostname = $Lang::tr{'lookup failed'}; }
 
 	# enumerate GeoIP information for IP address...
-	my $ccode = &GeoIP::lookup($addr);
+	my $db_handle = &GeoIP::init();
+	my $ccode = &GeoIP::lookup_country_code($db_handle, $addr);
 	my $flag_icon = &GeoIP::get_flag_icon($ccode);
 
 	my $sock = new IO::Socket::INET ( PeerAddr => $whoisname, PeerPort => 43, Proto => 'tcp');
