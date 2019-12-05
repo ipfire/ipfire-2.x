@@ -23,20 +23,15 @@
 
 package GeoIP;
 
-use Geo::IP::PurePerl;
+use Location;
 use Locale::Codes::Country;
-
-my $geoip_database_dir = "/var/lib/GeoIP";
-my $location_database = "GeoLite2-Country-Locations-en.csv";
-
-my $database;
 
 # Hash which contains country codes and their names which are special or not
 # part of ISO 3166-1.
 my %not_iso_3166_location = (
 	"a1" => "Anonymous Proxy",
 	"a2" => "Satellite Provider",
-	"a3" => "Worldwide Anycast Anstance",
+	"a3" => "Worldwide Anycast Instance",
 	"an" => "Netherlands Antilles",
 	"ap" => "Asia/Pacific Region",
 	"eu" => "Europe",
@@ -45,16 +40,53 @@ my %not_iso_3166_location = (
 	"yu" => "Yugoslavia"
 );
 
-sub lookup($) {
-	my $address = shift;
+# Directory where the libloc database and keyfile lives.
+my $location_dir = "/usr/share/location/";
 
-	# Load the database into memory if not already done
-	if (!$database) {
-		$database = Geo::IP::PurePerl->new(GEOIP_MEMORY_CACHE);
+# Libloc database file.
+my $database = "$location_dir/database.db";
+
+# Libloc keyfile to verify the database.
+my $keyfile = "$location_dir/signing-key.pem";
+
+#
+## Tiny function to init the location database.
+#
+sub init () {
+	# Init and open the database.
+	my $db = &Location::init($database);
+
+	# Return the database handle.
+	return $db;
+}
+
+#
+## Function to verify the integrity of the location database.
+#
+sub verify ($) {
+	my ($db_handle) = @_;
+
+	# Verify the integrity of the database.
+	if(&Location::verify($db_handle, $keyfile)) {
+		# Success, return "1".
+		return 1;
 	}
 
+	# If we got here, return nothing.
+	return;
+}
+
+#
+## Function to the the country code of a given address.
+#
+sub lookup_country_code($$) {
+	my ($db_handle, $address) = @_;
+
+	# Lookup the given address.
+	my $country_code = &Location::lookup_country_code($db_handle, $address);
+
 	# Return the name of the country
-	return $database->country_code_by_name($address);
+	return $country_code;
 }
 
 # Function to get the flag icon for a specified country code.
@@ -115,6 +147,7 @@ sub get_full_country_name($) {
 
 	# Remove whitespaces.
 	chomp($input);
+
 
 	# Convert input into lower case format.
 	my $code = lc($input);
