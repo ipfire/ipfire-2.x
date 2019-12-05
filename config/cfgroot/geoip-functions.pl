@@ -31,6 +31,20 @@ my $location_database = "GeoLite2-Country-Locations-en.csv";
 
 my $database;
 
+# Hash which contains country codes and their names which are special or not
+# part of ISO 3166-1.
+my %not_iso_3166_location = (
+	"a1" => "Anonymous Proxy",
+	"a2" => "Satellite Provider",
+	"a3" => "Worldwide Anycast Anstance",
+	"an" => "Netherlands Antilles",
+	"ap" => "Asia/Pacific Region",
+	"eu" => "Europe",
+	"fx" => "France, Metropolitan",
+	"o1" => "Other Country",
+	"yu" => "Yugoslavia"
+);
+
 sub lookup($) {
 	my $address = shift;
 
@@ -106,13 +120,10 @@ sub get_full_country_name($) {
 	my $code = lc($input);
 
 	# Handle country codes which are not in the list.
-	if ($code eq "a1") { $name = "Anonymous Proxy" }
-	elsif ($code eq "a2") { $name = "Satellite Provider" }
-	elsif ($code eq "o1") { $name = "Other Country" }
-	elsif ($code eq "ap") { $name = "Asia/Pacific Region" }
-	elsif ($code eq "eu") { $name = "Europe" }
-	elsif ($code eq "yu") { $name = "Yugoslavia" }
-	else {
+	if ($not_iso_3166_location{$code}) {
+		# Grab location name from hash.
+		$name = $not_iso_3166_location{$code};
+	} else {
 		# Use perl built-in module to get the country code.
 		$name = &Locale::Codes::Country::code2country($code);
 	}
@@ -124,26 +135,13 @@ sub get_full_country_name($) {
 sub get_geoip_locations() {
 	my @locations = ();
 
-	# Open the location database.
-	open(LOCATION, "$geoip_database_dir/$location_database") or return @locations;
+	# Get listed country codes from ISO 3166-1.
+	@locations = &Locale::Codes::Country::all_country_codes();
 
-	# Loop through the file.
-	while(my $line = <LOCATION>) {
-		# Remove newlines.
-		chomp($line);
-
-		# Split the line content.
-		my ($geoname_id, $locale_code, $continent_code, $continent_name, $country_iso_code, $country_name, $is_in_european_union) = split(/\,/, $line);
-
-		# Check if the country_iso_code is upper case.
-		if($country_iso_code =~ /[A-Z]/) {
-			# Add the current ISO code.
-			push(@locations, $country_iso_code);
-		}
+	# Add locations from not_iso_3166_locations.
+	foreach my $location (keys %not_iso_3166_location) {
+		push(@locations, $location);
 	}
-
-	# Close filehandle.
-	close(LOCATION);
 
 	# Sort locations array in alphabetical order.
 	my @sorted_locations = sort(@locations);
