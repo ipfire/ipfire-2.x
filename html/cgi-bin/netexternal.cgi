@@ -34,6 +34,9 @@ require "${General::swroot}/header.pl";
 require "${General::swroot}/geoip-functions.pl";
 require "${General::swroot}/graphs.pl";
 
+# Libloc database handle.
+my $libloc_db_handle = &GeoIP::init();
+
 my %color = ();
 my %mainsettings = ();
 my %netsettings=();
@@ -150,7 +153,7 @@ END
 		my $table_colour = ($id++ % 2) ? $color{'color22'} : $color{'color20'};
 
 		# collect more information about name server (rDNS, GeoIP country code)
-		my $ccode = &GeoIP::lookup($nameserver);
+		my $ccode = &GeoIP::lookup_country_code($libloc_db_handle, $nameserver);
 		my $flag_icon = &GeoIP::get_flag_icon($ccode);
 
 		my $iaddr = inet_aton($nameserver);
