@@ -19,6 +19,9 @@ require "${General::swroot}/geoip-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+# Libloc database handle.
+my $libloc_db_handle = &GeoIP::init();
+
 use POSIX();
 
 #workaround to suppress a warning when a variable is used only once
@@ -178,7 +181,7 @@ if (!$skip)
 			}
 			elsif($srcaddr ne '') {
 				# or srcaddr matches country code
-				my $ccode = &GeoIP::lookup($srcaddr);
+				my $ccode = &GeoIP::lookup_country_code($libloc_db_handle, $srcaddr);
 				if($ccode eq uc($country)){
 					$log[$lines] = $_;
 					$lines++;
