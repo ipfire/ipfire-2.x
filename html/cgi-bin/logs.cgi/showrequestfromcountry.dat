@@ -352,7 +352,7 @@ foreach $_ (@slice)
 	if($iface eq $country || $srcaddr ne '') {
 		my $ccode='';
 		if($iface ne $country) {
-			$ccode = &GeoIP::lookup($srcaddr);
+			$ccode = &GeoIP::lookup_country_code($libloc_db_handle, $srcaddr);
 		}
 		if($iface eq $country || $ccode eq uc($country)) {
 			my $chain = '';
