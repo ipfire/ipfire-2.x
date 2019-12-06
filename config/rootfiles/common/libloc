@@ -17,10 +17,10 @@ usr/bin/location-query
 #usr/lib/libloc.so
 usr/lib/libloc.so.0
 usr/lib/libloc.so.0.0.0
-usr/lib/perl5/site_perl/5.30.0/x86_64-linux-thread-multi/Location.pm
-#usr/lib/perl5/site_perl/5.30.0/x86_64-linux-thread-multi/auto/Location
-#usr/lib/perl5/site_perl/5.30.0/x86_64-linux-thread-multi/auto/Location/.packlist
-usr/lib/perl5/site_perl/5.30.0/x86_64-linux-thread-multi/auto/Location/Location.so
+usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/Location.pm
+#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Location
+#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Location/.packlist
+usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Location/Location.so
 #usr/lib/pkgconfig/libloc.pc
 #usr/lib/python3.6/site-packages/location.la
 usr/lib/python3.6/site-packages/location.so
