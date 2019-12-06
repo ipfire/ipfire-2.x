@@ -2982,6 +2982,9 @@ END
 	&Header::openbigbox('100%', 'LEFT', '', '');
     &Header::openbox('100%', 'LEFT', $Lang::tr{'ovpn con stat'});
 
+    # Libloc database handle.
+    my $libloc_db_handle = &GeoIP::init();
+
 #
 #	<td><b>$Lang::tr{'protocol'}</b></td>
 # protocol temp removed 
@@ -3032,7 +3035,7 @@ END
 		    $users[$uid]{'Proto'} = $proto;
 
 		    # get country code for "RealAddress"...
-		    my $ccode = &GeoIP::lookup((split ':', $users[$uid]{'RealAddress'})[0]);
+		    my $ccode = &GeoIP::lookup_country_code($libloc_db_handle, (split ':', $users[$uid]{'RealAddress'})[0]);
 		    my $flag_icon = &GeoIP::get_flag_icon($ccode);
 		    $users[$uid]{'Country'} = "<a href='country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode' title='$ccode' /></a>";
 		    $uid++;
