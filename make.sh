@@ -174,6 +174,7 @@ configure_build() {
 			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
 			BUILD_PLATFORM="arm"
 			CFLAGS_ARCH="-march=armv5te -mfloat-abi=soft -fomit-frame-pointer"
+			RUSTFLAGS="-Ccodegen-units=1"
 			;;
 
 		*)
@@ -462,7 +463,7 @@ prepareenv() {
 	# Setup environment
 	set +h
 	LC_ALL=POSIX
-	export LFS LC_ALL CFLAGS CXXFLAGS DEFAULT_PARALLELISM
+	export LFS LC_ALL CFLAGS CXXFLAGS DEFAULT_PARALLELISM RUSTFLAGS
 	unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
 	# Make some extra directories
@@ -547,6 +548,7 @@ enterchroot() {
 		CONFIG_ROOT="${CONFIG_ROOT}" \
 		CFLAGS="${CFLAGS} ${HARDENING_CFLAGS}" \
 		CXXFLAGS="${CXXFLAGS} ${HARDENING_CFLAGS}" \
+		RUSTFLAGS="${RUSTFLAGS}" \
 		BUILDTARGET="${BUILDTARGET}" \
 		CROSSTARGET="${CROSSTARGET}" \
 		BUILD_ARCH="${BUILD_ARCH}" \
