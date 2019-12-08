@@ -41,13 +41,16 @@ my %not_iso_3166_location = (
 );
 
 # Directory where the libloc database and keyfile lives.
-my $location_dir = "/usr/share/location/";
+our $location_dir = "/usr/share/location/";
 
 # Libloc database file.
-my $database = "$location_dir/database.db";
+our $database = "$location_dir/database.db";
 
 # Libloc keyfile to verify the database.
-my $keyfile = "$location_dir/signing-key.pem";
+our $keyfile = "$location_dir/signing-key.pem";
+
+# Directory which contains the exported databases.
+our $xt_geoip_db_directory = "/usr/share/xt_geoip/";
 
 #
 ## Tiny function to init the location database.
