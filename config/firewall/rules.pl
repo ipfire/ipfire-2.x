@@ -55,6 +55,10 @@ my %customgrp=();
 my %configinputfw=();
 my %configoutgoingfw=();
 my %confignatfw=();
+my %geoipsettings = (
+	"GEOIPBLOCK_ENABLED" => "off"
+);
+
 my @p2ps=();
 
 my $configfwdfw		= "${General::swroot}/firewall/config";
@@ -72,6 +76,15 @@ my $netsettings		= "${General::swroot}/ethernet/settings";
 &General::readhasharray($configinput, \%configinputfw);
 &General::readhasharray($configoutgoing, \%configoutgoingfw);
 &General::readhasharray($configgrp, \%customgrp);
+
+# Check if the geoip settings file exists
+if (-e "$geoipfile") {
+	# Read settings file
+	&General::readhash("$geoipfile", \%geoipsettings);
+}
+
+# Get all GeoIP locations.
+my @locations = &fwlib::get_geoip_locations();
 
 my @log_limit_options = &make_log_limit_options();
 
@@ -583,26 +596,14 @@ sub p2pblock {
 }
 
 sub geoipblock {
-	my %geoipsettings = ();
-	$geoipsettings{'GEOIPBLOCK_ENABLED'} = "off";
-
 	# Flush iptables chain.
 	run("$IPTABLES -F GEOIPBLOCK");
-
-	# Check if the geoip settings file exists
-	if (-e "$geoipfile") {
-		# Read settings file
-		&General::readhash("$geoipfile", \%geoipsettings);
-	}
 
 	# If geoip blocking is not enabled, we are finished here.
 	if ($geoipsettings{'GEOIPBLOCK_ENABLED'} ne "on") {
 		# Exit submodule. Process remaining script.
 		return;
 	}
-
-	# Get supported locations.
-	my @locations = &fwlib::get_geoip_locations();
 
 	# Loop through all supported geoip locations and
 	# create iptables rules, if blocking this country
