@@ -549,7 +549,7 @@ resolve() {
 }
 
 # Sets up Safe Search for various search engines
-write_safe_search_conf() {
+update_safe_search() {
 	local google_tlds=(
 		google.ad
 		google.ae
@@ -746,51 +746,59 @@ write_safe_search_conf() {
 		google.ws
 	)
 
-	(
-		# Nothing to do if safe search is not enabled
-		if [ "${ENABLE_SAFE_SEARCH}" != "on" ]; then
-			exit 0
-		fi
+	# Cleanup previous settings
+	unbound-control local_zone_remove "bing.com" >/dev/null
+	unbound-control local_zone_remove "duckduckgo.com" >/dev/null
+	unbound-control local_zone_remove "yandex.com" >/dev/null
+	unbound-control local_zone_remove "yandex.ru" >/dev/null
+	unbound-control local_zone_remove "youtube.com" >/dev/null
 
-		# This all belongs into the server: section
-		echo "server:"
+	local domain
+	for domain in ${google_tlds[@]}; do
+		unbound-control local_zone_remove "${domain}"
+	done >/dev/null
 
-		# Bing
-		echo "	local-zone: bing.com transparent"
-		for address in $(resolve "strict.bing.com"); do
-			echo "	local-data: \"www.bing.com ${LOCAL_TTL} IN A ${address}\""
-		done
+	# Nothing to do if safe search is not enabled
+	if [ "${ENABLE_SAFE_SEARCH}" != "on" ]; then
+		return 0
+	fi
 
-		# DuckDuckGo
-		echo "	local-zone: duckduckgo.com typetransparent"
-		for address in $(resolve "safe.duckduckgo.com"); do
-			echo "	local-data: \"duckduckgo.com ${LOCAL_TTL} IN A ${address}\""
-		done
+	# Bing
+	unbound-control bing.com transparent >/dev/null
+	for address in $(resolve "strict.bing.com"); do
+		unbound-control local_data "www.bing.com ${LOCAL_TTL} IN A ${address}"
+	done >/dev/null
 
-		# Google
-		addresses="$(resolve "forcesafesearch.google.com")"
-		local domain
-		for domain in ${google_tlds[@]}; do
-			echo "	local-zone: ${domain} transparent"
-			for address in ${addresses}; do
-				echo "	local-data: \"www.${domain} ${LOCAL_TTL} IN A ${address}\""
-			done
-		done
+	# DuckDuckGo
+	unbound-control local_zone duckduckgo.com typetransparent >/dev/null
+	for address in $(resolve "safe.duckduckgo.com"); do
+		unbound-control local_data "duckduckgo.com ${LOCAL_TTL} IN A ${address}"
+	done >/dev/null
 
-		# Yandex
-		for domain in yandex.com yandex.ru; do
-			echo "	local-zone: ${domain} typetransparent"
-			for address in $(resolve "familysearch.${domain}"); do
-				echo "	local-data: \"${domain} ${LOCAL_TTL} IN A ${address}\""
-			done
-		done
+	# Google
+	local addresses="$(resolve "forcesafesearch.google.com")"
+	for domain in ${google_tlds[@]}; do
+		unbound-control local_zone "${domain}" transparent >/dev/null
+		for address in ${addresses}; do
+			unbound-control local_data: "www.${domain} ${LOCAL_TTL} IN A ${address}"
+		done >/dev/null
+	done
 
-		# YouTube
-		echo "	local-zone: youtube.com transparent"
-		for address in $(resolve "restrictmoderate.youtube.com"); do
-			echo "	local-data: \"www.youtube.com ${LOCAL_TTL} IN A ${address}\""
-		done
-	) > /etc/unbound/safe-search.conf
+	# Yandex
+	for domain in yandex.com yandex.ru; do
+		unbound-control local_zone "${domain}" typetransparent >/dev/null
+		for address in $(resolve "familysearch.${domain}"); do
+			unbound-control local_data "${domain} ${LOCAL_TTL} IN A ${address}"
+		done >/dev/null
+	done
+
+	# YouTube
+	unbound-control local_zone youtube.com transparent >/dev/null
+	for address in $(resolve "restrictmoderate.youtube.com"); do
+		unbound-control local_data "www.youtube.com ${LOCAL_TTL} IN A ${address}"
+	done >/dev/null
+
+	return 0
 }
 
 case "$1" in
@@ -806,7 +814,6 @@ case "$1" in
 		# Update configuration files
 		write_tuning_conf
 		write_forward_conf
-		write_safe_search_conf
 
 		boot_mesg "Starting Unbound DNS Proxy..."
 		loadproc /usr/sbin/unbound || exit $?
@@ -816,6 +823,11 @@ case "$1" in
 
 		# Update any known forwarding name servers
 		update_forwarders
+
+		# Install Safe Search rules when the system is already online
+		if [ -e "/var/ipfire/red/active" ]; then
+			update_safe_search
+		fi
 
 		# Update hosts
 		update_hosts
@@ -905,8 +917,12 @@ case "$1" in
 		resolve "${2}"
 		;;
 
+	update-safe-search)
+		update_safe_search
+		;;
+
 	*)
-		echo "Usage: $0 {start|stop|restart|status|update-forwarders|remove-forwarders|test-name-server|resolve}"
+		echo "Usage: $0 {start|stop|restart|status|update-forwarders|remove-forwarders|test-name-server|resolve|update-safe-search}"
 		exit 1
 		;;
 esac
