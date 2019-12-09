@@ -110,8 +110,11 @@ sub main {
 	# Flush exported locations.
 	&GeoIP::flush_exported_locations();
 
-	# Export required locations.
-	&GeoIP::export_locations(\@locations_to_export);
+	# Check if there are any locations to export.
+	if (@locations_to_export) {
+		# Export required locations.
+		&GeoIP::export_locations(\@locations_to_export);
+	}
 
 	# Prepare firewall rules.
 	if (! -z  "${General::swroot}/firewall/input"){
