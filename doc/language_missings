@@ -46,12 +46,14 @@
 < g.lite
 < guardian
 < insert removable device
+< itlb multihit
 < notes
 < quick control
 < shaping add options
 < show areas
 < show lines
 < show tls-auth key
+< taa zombieload2
 < teovpn_fragment
 < tor bridge enabled
 < tor errmsg invalid node id
@@ -559,6 +561,7 @@
 < ipsec network
 < ipsec no connections
 < ipsec settings
+< itlb multihit
 < last
 < least preferred
 < lifetime
@@ -714,6 +717,7 @@
 < system has rdrand
 < system information
 < system is offline
+< taa zombieload2
 < ta key
 < tcp more reliable
 < ten minutes
@@ -884,6 +888,8 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< itlb multihit
+< taa zombieload2
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -1077,6 +1083,7 @@
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec settings
+< itlb multihit
 < local ip address
 < log server protocol
 < masquerade blue
@@ -1129,6 +1136,7 @@
 < ssh username
 < subnet mask
 < system is offline
+< taa zombieload2
 < tcp more reliable
 < ten minutes
 < thirty minutes
@@ -1411,6 +1419,7 @@
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec settings
+< itlb multihit
 < local ip address
 < log server protocol
 < masquerade blue
@@ -1494,6 +1503,7 @@
 < ssh username
 < subnet mask
 < system is offline
+< taa zombieload2
 < ta key
 < tcp more reliable
 < ten minutes
@@ -2068,6 +2078,7 @@
 < ipsec network
 < ipsec no connections
 < ipsec settings
+< itlb multihit
 < last
 < least preferred
 < lifetime
@@ -2207,6 +2218,7 @@
 < system has hwrng
 < system has rdrand
 < system is offline
+< taa zombieload2
 < ta key
 < tcp more reliable
 < ten minutes
@@ -2884,6 +2896,7 @@
 < ipsec network
 < ipsec no connections
 < ipsec settings
+< itlb multihit
 < last
 < least preferred
 < lifetime
@@ -3021,6 +3034,7 @@
 < system has hwrng
 < system has rdrand
 < system is offline
+< taa zombieload2
 < ta key
 < tcp more reliable
 < ten minutes
@@ -3254,6 +3268,7 @@
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec settings
+< itlb multihit
 < local ip address
 < meltdown
 < mitigated
@@ -3280,6 +3295,7 @@
 < ssh username
 < subnet mask
 < system is offline
+< taa zombieload2
 < transport mode does not support vti
 < update ruleset
 < vpn start action add
