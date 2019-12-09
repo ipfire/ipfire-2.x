@@ -1,0 +1,45 @@
+#!/bin/bash
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2019 IPFire Development Team <info@ipfire.org>                #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+eval $(/usr/local/bin/readhash /var/ipfire/proxy/settings)
+
+# Proxy settings.
+# Check if a proxy should be used.
+if [[ $UPSTREAM_PROXY ]]; then
+	PROXYSETTINGS="https_proxy=http://"
+
+	# Check if authentication against the proxy is configured.
+	if [[ $UPSTREAM_USER && $UPSTREAM_PASSWORD ]]; then
+		PROXYSETTINGS="$PROXYSETTINGS$UPSTREAM_USER:$UPSTREAM_PASSWORD@"
+	fi
+
+	# Add proxy server.
+	PROXYSETTINGS="$PROXYSETTINGS$UPSTREAM_PROXY"
+
+	# Export proxy settings.
+	export HTTPS_PROXY="$PROXYSETTINGS"
+fi
+
+# Get the latest location database from server.
+/usr/bin/location-downloader update
+
+# Call initscript to reload the firewall.
+/etc/init.d/firewall reload
