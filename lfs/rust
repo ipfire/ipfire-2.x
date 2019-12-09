@@ -24,15 +24,13 @@
 
 include Config
 
-VER        = 1.37.0
+VER        = 1.39.0
 
 THISAPP    = rust-$(VER)
 DL_FILE    = $(THISAPP)-$(RUST_BOOTSTRAP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)-$(RUST_BOOTSTRAP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-
-SUP_ARCH   = none
 
 ifeq "$(BUILD_ARCH)" "i586"
 	RUST_ARCH = i686
@@ -54,10 +52,10 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(THISAPP)-x86_64-unknown-linux-gnu.tar.gz_MD5 =  3f84df04bd0cf0ea4668390be263945e
-$(THISAPP)-i686-unknown-linux-gnu.tar.gz_MD5 =    29411d7420184ad51f99339b2e2cf20a
-$(THISAPP)-aarch64-unknown-linux-gnu.tar.gz_MD5 = 28f9556a3febd2d38c0ba97337d56cb8
-$(THISAPP)-arm-unknown-linux-gnueabi.tar.gz_MD5 = 970ad24c516394466e7b8ca40689ee76
+$(THISAPP)-x86_64-unknown-linux-gnu.tar.gz_MD5 =  33926ca331369ab20181ba1c91a5ee4a
+$(THISAPP)-i686-unknown-linux-gnu.tar.gz_MD5 =    4932dd0b7631072a314ba5c1ef750318
+$(THISAPP)-aarch64-unknown-linux-gnu.tar.gz_MD5 = 18b29539aa705dd2404e5839fc7507c1
+$(THISAPP)-arm-unknown-linux-gnueabi.tar.gz_MD5 = d5f82cc615da78076d9fc15cc8f9aac0
 
 install : $(TARGET)
 
