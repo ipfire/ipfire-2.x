@@ -601,6 +601,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	# Generate file to store the home net.
 	&IDS::generate_home_net_file();
 
+	# Generate file to the store the DNS servers.
+	&IDS::generate_dns_servers_file();
+
 	# Write the modify sid's file and pass the taken ruleaction.
 	&IDS::write_modify_sids_file();
 

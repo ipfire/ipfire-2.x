@@ -79,5 +79,3 @@ else
 fi
 mv /tmp/hosts /etc/hosts
 
-[ -e "/var/ipfire/ppp/nobeeps" ] || /etc/rc.d/init.d/beep up
-

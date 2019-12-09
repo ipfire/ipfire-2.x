@@ -450,7 +450,7 @@ ns_supports_tcp() {
 	shift
 
 	# If TCP is forced we know by now if the server responds to it
-	if [ "${FORCE_TCP}" = "on" ]; then
+	if [ "${FORCE_TCP}" = "on" ]; then
 		return 0
 	fi
 

@@ -1,5 +1,5 @@
 #usr/bin/pcre-config
-#usr/bin/pcregrep
+usr/bin/pcregrep
 #usr/bin/pcretest
 #usr/include/pcre.h
 #usr/include/pcre_scanner.h

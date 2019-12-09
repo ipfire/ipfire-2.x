@@ -1,0 +1,2 @@
+#!/bin/bash
+[ -e /var/ipfire/red/nobeeps ] || /etc/rc.d/init.d/beep up

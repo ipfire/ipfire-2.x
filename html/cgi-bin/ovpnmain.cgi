@@ -355,10 +355,10 @@ sub writeserverconf {
         print CONF "push \"dhcp-option WINS $sovpnsettings{DHCP_WINS}\"\n";
     }
     
-    if ($sovpnsettings{DHCP_WINS} eq '') {
+    if ($sovpnsettings{MAX_CLIENTS} eq '') {
 	print CONF "max-clients 100\n";
     }
-    if ($sovpnsettings{DHCP_WINS} ne '') {
+    if ($sovpnsettings{MAX_CLIENTS} ne '') {
 	print CONF "max-clients $sovpnsettings{MAX_CLIENTS}\n";
     }	
     print CONF "tls-verify /usr/lib/openvpn/verify\n";
@@ -785,7 +785,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'MAX_CLIENTS'} = $cgiparams{'MAX_CLIENTS'};
     $vpnsettings{'REDIRECT_GW_DEF1'} = $cgiparams{'REDIRECT_GW_DEF1'};
     $vpnsettings{'CLIENT2CLIENT'} = $cgiparams{'CLIENT2CLIENT'};
-    $vpnsettings{'COMPLZO'} = $cgiparams{'DCOMPLZO'};
+    $vpnsettings{'DCOMPLZO'} = $cgiparams{'DCOMPLZO'};
     $vpnsettings{'ADDITIONAL_CONFIGS'} = $cgiparams{'ADDITIONAL_CONFIGS'};
     $vpnsettings{'DHCP_DOMAIN'} = $cgiparams{'DHCP_DOMAIN'};
     $vpnsettings{'DHCP_DNS'} = $cgiparams{'DHCP_DNS'};

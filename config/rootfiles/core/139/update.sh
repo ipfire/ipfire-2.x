@@ -49,6 +49,9 @@ done
 # Extract files
 extract_files
 
+# move nobeeps if exist
+[ -e "/var/ipfire/ppp/nobeeps" ] mv /var/ipfire/ppp/nobeeps /var/ipfire/red/nobeeps
+
 # update linker config
 ldconfig
 

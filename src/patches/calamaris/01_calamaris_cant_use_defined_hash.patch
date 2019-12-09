@@ -1,0 +1,12 @@
+diff U3 a/calamaris b/calamaris
+--- a/calamaris	Sun Jun  6 18:26:14 2004
++++ b/calamaris	Wed Nov 13 19:59:15 2019
+@@ -2606,7 +2606,7 @@
+ 	    100, 100 * $tcp_hit / $tcp );
+   }
+   outstop(10);
+-  if ( defined(%tcp_content) ) {
++  if (%tcp_content) {
+     outstart(11);
+     if ( $tcp == 0 ) {
+       outline( 11, 'no matching requests' );

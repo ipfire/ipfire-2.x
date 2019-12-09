@@ -81,19 +81,10 @@ if ( -f $mailfile){
 
 #ACTIONS
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){ #SaveButton on configsite
-	#Check fields
-	if ($cgiparams{'USEMAIL'} eq 'on'){
-		$errormessage=&checkmailsettings;
-	}else{
-		$cgiparams{'txt_mailserver'}='';
-		$cgiparams{'txt_mailport'}='';
-		$cgiparams{'txt_mailuser'}='';
-		$cgiparams{'txt_mailpass'}='';
-		$cgiparams{'mail_tls'}='';
-		$cgiparams{'txt_mailsender'}='';
-		$cgiparams{'txt_recipient'}='';
-	}
-	if(!$errormessage){
+	# Check fields
+	$errormessage = &checkmailsettings();
+
+	if (!$errormessage) {
 		#clear hashes
 		%auth=();
 		%dma=();
@@ -269,21 +260,21 @@ sub checkmailsettings {
 	#Check if mailserver is an ip address or a domain
 	if ($cgiparams{'txt_mailserver'} =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/){
 		if (! &General::validip($cgiparams{'txt_mailserver'})){
-			$errormessage.="$Lang::tr{'email invalid mailip'} $cgiparams{'txt_mailserver'}<br>";
+			$errormessage .= $Lang::tr{'email invalid mailip'} . "<br>";
 		}
 	}elsif(! &General::validfqdn($cgiparams{'txt_mailserver'})){
-			$errormessage.="$Lang::tr{'email invalid mailfqdn'} $cgiparams{'txt_mailserver'}<br>";
+			$errormessage .= $Lang::tr{'email invalid mailfqdn'} . "<br>";
 	}
 	#Check valid mailserverport
 	if($cgiparams{'txt_mailport'} < 1 || $cgiparams{'txt_mailport'} > 65535){
-		$errormessage.="$Lang::tr{'email invalid mailport'} $cgiparams{'txt_mailport'}<br>";
+		$errormessage .= $Lang::tr{'email invalid mailport'} . "<br>";
 	}
 	#Check valid sender
 	if(! $cgiparams{'txt_mailsender'}){
-		$errormessage.="$Lang::tr{'email empty field'} $Lang::tr{'email mailsender'}<br>";
+		$errormessage .= $Lang::tr{'email empty field'} . "<br>";
 	}else{
 		if (! &General::validemail($cgiparams{'txt_mailsender'})){
-			$errormessage.="<br>$Lang::tr{'email invalid'} $Lang::tr{'email mailsender'}<br>";
+			$errormessage .= "$Lang::tr{'email invalid'} $Lang::tr{'email mailsender'}<br>";
 		}
 	}
 	return $errormessage;
