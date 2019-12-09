@@ -1330,7 +1330,6 @@ buildipfire() {
   lfsmake2 python-daemon
   lfsmake2 python-ipaddress
   lfsmake2 glib
-  lfsmake2 GeoIP
   lfsmake2 ntp
   lfsmake2 openssh
   lfsmake2 fontconfig
@@ -1629,7 +1628,6 @@ buildipfire() {
   lfsmake2 flashrom
   lfsmake2 firmware-update
   lfsmake2 tshark
-  lfsmake2 geoip-generator
   lfsmake2 speedtest-cli
   lfsmake2 libloc
 }
@@ -1983,3 +1981,4 @@ update-contributors)
 	cat doc/make.sh-usage
 	;;
 esac
+
