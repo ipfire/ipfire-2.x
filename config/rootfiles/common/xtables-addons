@@ -23,9 +23,8 @@ lib/xtables/libxt_quota2.so
 usr/lib/libxt_ACCOUNT_cl.so.0
 usr/lib/libxt_ACCOUNT_cl.so.0.0.0
 #usr/libexec/xtables-addons
-usr/libexec/xtables-addons/xt_geoip_build
-usr/libexec/xtables-addons/xt_geoip_dl
-usr/local/bin/xt_geoip_build
+#usr/libexec/xtables-addons/xt_geoip_build
+#usr/libexec/xtables-addons/xt_geoip_dl
 usr/sbin/iptaccount
 #usr/share/man/man1/xt_geoip_build.1
 #usr/share/man/man1/xt_geoip_dl.1

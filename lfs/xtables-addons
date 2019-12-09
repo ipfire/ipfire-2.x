@@ -27,7 +27,7 @@ include Config
 VERSUFIX = ipfire$(KCFG)
 MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/extra/
 
-VER        = 3.2
+VER        = 3.7
 
 THISAPP    = xtables-addons-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 80ea89ba8d5a001a8d71c7f05b2f0141
+$(DL_FILE)_MD5 = d81776d6320ebd741042bf8eb7e13d1d
 
 install : $(TARGET)
 
