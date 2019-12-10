@@ -39,7 +39,8 @@ if [[ $UPSTREAM_PROXY ]]; then
 fi
 
 # Get the latest location database from server.
-/usr/bin/location-downloader update
+if /usr/bin/location-downloader update; then
 
-# Call initscript to reload the firewall.
-/etc/init.d/firewall reload
+	# Call initscript to reload the firewall.
+	/etc/init.d/firewall reload
+fi
