@@ -186,6 +186,16 @@ sub get_geoip_locations() {
 	return @sorted_locations;
 }
 
+# Function to get the continent code of a given country code.
+sub get_continent_code($$) {
+	my ($db_handle, $ccode) = @_;
+
+	# Omit the continent code.
+	my $continent_code = &Location::get_continent_code($db_handle, $ccode);
+
+	return $continent_code;
+}
+
 # Function to flush all exported GeoIP locations.
 sub flush_exported_locations () {
 	# Check if the xt_geoip_db_directory exists.
