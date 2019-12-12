@@ -25,11 +25,12 @@
 include Config
 
 VER        = 0.9.0
+GIT_REV    = cd022c
 
-THISAPP    = libloc-$(VER)
+THISAPP    = libloc-$(VER)-$(GIT_REV)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/libloc-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
@@ -40,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 320eeb00e8876af1983a9ed969372a55
+$(DL_FILE)_MD5 = a40fcbdd5585f720ca801166befeef85
 install : $(TARGET)
 
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
@@ -74,6 +75,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
+		--sysconfdir=/etc \
+		--localstatedir=/var \
 		--disable-manpages
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

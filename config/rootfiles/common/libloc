@@ -26,3 +26,6 @@ usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Location/Location
 usr/lib/python3.6/site-packages/location.so
 #usr/share/locale/de/LC_MESSAGES/libloc.mo
 #usr/share/man/man3/Location.3
+var/lib/location
+var/lib/location/signing-key.pem
+
