@@ -15,6 +15,9 @@
 #usr/include/htp/htp_urlencoded.h
 #usr/include/htp/htp_utf8_decoder.h
 #usr/include/htp/htp_version.h
+#usr/include/htp/lzma
+#usr/include/htp/lzma/7zTypes.h
+#usr/include/htp/lzma/LzmaDec.h
 #usr/lib/libhtp.la
 #usr/lib/libhtp.so
 usr/lib/libhtp.so.2
