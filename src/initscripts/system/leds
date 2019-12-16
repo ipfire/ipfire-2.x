@@ -60,6 +60,25 @@ enable_led ()
 	fi
 }
 
+#Handle new APU ACPI Leds introduced on APU2 with bios 4.10.0.0
+if [ -e /sys/class/leds/apu1:green:led1 ]; then
+	APULED="apu1:green:led";
+else if [ -e /sys/class/leds/apu2:green:led1 ]; then
+	APULED="apu2:green:led";
+else if [ -e /sys/class/leds/apu3:green:led1 ]; then
+	APULED="apu3:green:led";
+else if [ -e /sys/class/leds/apu4:green:led1 ]; then
+	APULED="apu4:green:led";
+else if [ -e /sys/class/leds/apu5:green:led1 ]; then
+	APULED="apu5:green:led";
+else
+	APULED="apu:";
+fi
+fi
+fi
+fi
+fi
+
 case "${1}" in
 	start)
 		# Alix LED start
@@ -68,9 +87,9 @@ case "${1}" in
 		setup_netdev_trigger alix:3 ${RED_DEV} tx
 
 		# Apu LED start
-		setup_heartbeat_trigger apu:1
-		setup_netdev_trigger apu:2 ${RED_DEV} rx
-		setup_netdev_trigger apu:3 ${RED_DEV} tx
+		setup_heartbeat_trigger ${APULED}1
+		setup_netdev_trigger ${APULED}2 ${RED_DEV} rx
+		setup_netdev_trigger ${APULED}3 ${RED_DEV} tx
 
 		# Geos LED start
 		setup_heartbeat_trigger geos:1
@@ -115,10 +134,10 @@ case "${1}" in
 		disable_led_trigger alix:3
 
 		# Apu LED stop
-		disable_led_trigger apu:1
-		enable_led apu:1
-		disable_led_trigger apu:2
-		disable_led_trigger apu:3
+		disable_led_trigger ${APULED}1
+		enable_led ${APULED}1
+		disable_led_trigger ${APULED}2
+		disable_led_trigger ${APULED}3
 
 		# Geos LED stop
 		disable_led_trigger geos:1
