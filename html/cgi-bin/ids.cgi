@@ -49,6 +49,11 @@ my %ignored=();
 # the list of zones in an array.
 my @network_zones = &IDS::get_available_network_zones();
 
+# Check if openvpn is started and add it to the array of network zones.
+if ( -e "/var/run/openvpn.pid") {
+	push(@network_zones, "ovpn");
+}
+
 my $errormessage;
 
 # Create files if they does not exist yet.
@@ -59,7 +64,8 @@ my %colourhash = (
 	'red' => $Header::colourred,
 	'green' => $Header::colourgreen,
 	'blue' => $Header::colourblue,
-	'orange' => $Header::colourorange
+	'orange' => $Header::colourorange,
+	'ovpn' => $Header::colourovpn
 );
 
 &Header::showhttpheaders();
@@ -839,7 +845,7 @@ END
 			$checked_input = "checked = 'checked'";
 		}
 
-		print "<td class='base' width='25%'>\n";
+		print "<td class='base' width='20%'>\n";
 		print "<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>\n";
 		print "&nbsp;$Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>\n";
 		print "</td>\n";
