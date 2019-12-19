@@ -1633,6 +1633,7 @@ buildipfire() {
   lfsmake2 tshark
   lfsmake2 geoip-generator
   lfsmake2 speedtest-cli
+  lfsmake2 rfkill
 }
 
 buildinstaller() {
