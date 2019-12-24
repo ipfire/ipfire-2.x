@@ -1,0 +1,13 @@
+#etc/amazon
+etc/amazon/ssm
+etc/amazon/ssm/amazon-ssm-agent.json
+etc/amazon/ssm/seelog.xml
+etc/rc.d/init.d/amazon-ssm-agent
+usr/bin/amazon-ssm-agent
+usr/bin/ssm-cli
+usr/bin/ssm-document-worker
+usr/bin/ssm-session-logger
+usr/bin/ssm-session-worker
+var/ipfire/backup/addons/includes/amazon-ssm-agent
+#var/lib/amazon
+var/lib/amazon/ssm

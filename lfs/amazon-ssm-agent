@@ -1,0 +1,118 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2019  IPFire Team  <info@ipfire.org>                          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 2.3.786.0
+SUP_ARCH   = x86_64
+
+THISAPP    = amazon-ssm-agent-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = amazon-ssm-agent
+PAK_VER    = 1
+
+DEPS       = ""
+
+export GOPATH = $(HOME)/gopath
+
+DIR_BUILD  = $(GOPATH)/src/github.com/aws/amazon-ssm-agent
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_MD5 = a2887445875d335b021c5044eab955dc
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+dist:
+	@$(PAK)
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) $(DIR_BUILD) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+
+	# The build system is searching for code in a certain path
+	mkdir -pv $$(dirname $(DIR_BUILD))
+	ln -svf --relative $(DIR_APP) $(DIR_BUILD)
+
+	# Disable style check
+	cd $(DIR_BUILD) && sed -e "/checkstyle.sh/d" -i makefile
+
+	# Build
+	cd $(DIR_BUILD) && make build-linux
+
+	# Install
+	mkdir -pv /etc/amazon/ssm /usr/bin /var/lib/amazon/ssm
+	cd $(DIR_BUILD) && install -v -m 755 \
+		bin/linux_amd64/amazon-ssm-agent \
+		bin/linux_amd64/ssm-cli \
+		bin/linux_amd64/ssm-document-worker \
+		bin/linux_amd64/ssm-session-worker \
+		bin/linux_amd64/ssm-session-logger \
+		/usr/bin
+	cd $(DIR_BUILD) && install -v -m 644 \
+		seelog_unix.xml /etc/amazon/ssm/seelog.xml
+	cd $(DIR_BUILD) && install -v -m 644 \
+		amazon-ssm-agent.json.template /etc/amazon/ssm/amazon-ssm-agent.json
+
+	# Install initscript
+	$(call INSTALL_INITSCRIPT,amazon-ssm-agent)
+
+	# Install backup include
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/amazon-ssm-agent \
+		/var/ipfire/backup/addons/includes/amazon-ssm-agent
+
+	@rm -rf $(DIR_APP) $(DIR_BUILD)
+	@$(POSTBUILD)

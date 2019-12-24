@@ -1,0 +1,42 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/amazon-ssm-agent
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		# Do not launch the agent when we are not running on EC2
+		if ! running_on_ec2; then
+			exit 0
+		fi
+
+		boot_mesg "Starting Amazon SSM Agent..."
+		/usr/bin/amazon-ssm-agent &>/dev/null &
+		evaluate_retval
+		;;
+
+	stop)
+		boot_mesg "Stopping Amazon SSM Agent..."
+		killproc /usr/bin/amazon-ssm-agent
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/bin/amazon-ssm-agent
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/amazon-ssm-agent
