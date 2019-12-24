@@ -17,7 +17,7 @@ done
 
 function _strip() {
 	local file=${1}
-	local cmd="${STRIP-strip}"
+	local strip="${STRIP-strip}"
 
 	local exclude l
 	for exclude in ${excludes}; do
@@ -27,17 +27,19 @@ function _strip() {
 		fi
 	done
 
+	local cmd=( "${strip}" )
+
 	case "$(file -bi ${file})" in
-		application/x-sharedlib*|application/x-archive*)
-			cmd="${cmd} --strip-debug --remove-section=.comment --remove-section=.note"
+		application/x-archive*)
+			cmd+=( "--strip-debug" "--remove-section=.comment" "--remove-section=.note" )
 			;;
 		*)
-			cmd="${cmd} --strip-unneeded"
+			cmd+=( "--strip-all" )
 			;;
 	esac
 
 	echo "Stripping ${file}..."
-	${cmd} ${file}
+	${cmd[*]} ${file}
 }
 
 for dir in ${dirs}; do
