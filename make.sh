@@ -556,6 +556,7 @@ enterchroot() {
 		CCACHE_DIR=/usr/src/ccache \
 		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
+		GOCACHE="/usr/src/ccache/go" \
 		KVER="${KVER}" \
 		XZ_OPT="${XZ_OPT}" \
 		DEFAULT_PARALLELISM="${DEFAULT_PARALLELISM}" \
