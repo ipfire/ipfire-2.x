@@ -37,8 +37,6 @@ PAK_VER    = 1
 
 DEPS       = ""
 
-export GOPATH = $(HOME)/gopath
-
 DIR_BUILD  = $(GOPATH)/src/github.com/aws/amazon-ssm-agent
 
 ###############################################################################
