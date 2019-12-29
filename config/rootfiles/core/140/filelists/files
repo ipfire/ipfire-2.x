@@ -4,3 +4,5 @@ srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 etc/rc.d/init.d/networking/red.up/06-safe-search
 etc/rc.d/init.d/unbound
+etc/rc.d/init.d/suricata
+srv/web/ipfire/cgi-bin/ids.cgi
