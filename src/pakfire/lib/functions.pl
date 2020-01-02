@@ -144,7 +144,7 @@ sub fetchfile {
 			$file = $getfile;
 		}
 		
-		$proto = "HTTP" unless $proto;
+		$proto = "HTTPS" unless $proto;
 		
 		logger("DOWNLOAD INFO: Host: $host ($proto) - File: $file");
 
@@ -318,7 +318,7 @@ sub selectmirror {
 
 	if ($scount eq 0) {
 		logger("MIRROR INFO: Could not find any servers. Falling back to main server $Conf::mainserver");
-		return ("HTTP", $Conf::mainserver, "/$Conf::version");
+		return ("HTTPS", $Conf::mainserver, "/$Conf::version");
 	}
 
 	### Choose a random server and test if it is online
