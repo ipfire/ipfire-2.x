@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2018 IPFire Team <info@ipfire.org>.                        #
+# Copyright (C) 2018-2019 IPFire Team <info@ipfire.org>                    #
 #                                                                          #
 ############################################################################
 
@@ -706,7 +706,7 @@ sub generate_dns_servers_file() {
 	open (FILE, "${General::swroot}/red/dns") or die "Could not read DNS configuration from ${General::swroot}/red/dns. $!\n";
 
 	# Read-in whole file content and store it in a temporary array.
-	my @file_content = <FILE>;
+	my @file_content = split(' ', <FILE>);
 
 	# Close file handle.
 	close(FILE);
@@ -714,31 +714,32 @@ sub generate_dns_servers_file() {
 	# Format dns servers declaration.
 	my $line = "\"\[";
 
-	# Loop through the array which contains the file content.
-	foreach my $server (@file_content) {
-		# Remove newlines.
-		chomp($server);
+	# Check if the current DNS configuration is using the local recursor mode.
+	if ($file_content[0] eq "local" && $file_content[1] eq "recursor") {
+		# The responsible DNS servers on red are directly used, and because we are not able
+		# to specify each single DNS server address here, we currently have to thread each
+		# address which is not part of the HOME_NET as possible DNS server.
+		$line = "$line" . "!\$HOME_NET";
 
-		# Check if the current DNS configuration is using the local recursor mode.
-		if ($server eq "local recursor") {
-			# The responsible DNS servers on red are directly used, and because we are not able
-			# to specify each single DNS server address here, we currently have to thread each
-			# address which is not part of the HOME_NET as possible DNS server.
-			$line = "$line" . "!\$HOME_NET";
-		} else {
+	} else {
+		# Loop through the array which contains the file content.
+		foreach my $server (@file_content) {
+			# Remove newlines.
+			chomp($server);
+
 			# Add the DNS server to the line.
 			$line = "$line" . "$server";
-		}
 
-                # Check if the current DNS server was the last in the array.
-                if ($server eq $file_content[-1]) {
-                        # Close the line.
-                        $line = "$line" . "\]\"";
-                } else {
-                        # Add "," for the next DNS server.
-                        $line = "$line" . "\,";
-                }
-        }
+			# Check if the current DNS server was the last in the array.
+			if ($server ne $file_content[-1]) {
+				# Add "," for the next DNS server.
+				$line = "$line" . "\,";
+			}
+		}
+	}
+
+	# Close the line...
+	$line = "$line" . "\]\"";
 
 	# Open file to store the used DNS server addresses.
 	open(FILE, ">$dns_servers_file") or die "Could not open $dns_servers_file. $!\n";
@@ -866,7 +867,7 @@ sub get_suricata_version($) {
 	# Remove newlines.
         chomp($version_string);
 
-	# Grab the version from the version string. 
+	# Grab the version from the version string.
 	$version_string =~ /([0-9]+([.][0-9]+)+)/;
 
 	# Splitt the version into single chunks.
@@ -882,7 +883,7 @@ sub get_suricata_version($) {
 	} else {
 		# Return the full version string.
 		return "$major_ver.$minor_ver.$patchlevel";
-	} 
+	}
 }
 
 #
