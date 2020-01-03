@@ -9,6 +9,7 @@ var/ipfire/accounting/bill
 var/ipfire/accounting/dbinstall.pl
 var/ipfire/addon-lang/acct.de.pl
 var/ipfire/addon-lang/acct.en.pl
+var/ipfire/addon-lang/acct.fr.pl
 var/ipfire/addon-lang/acct.tr.pl
 var/ipfire/backup/addons/includes/squid-accounting
 var/ipfire/menu.d/EX-squid-accounting.menu

@@ -24,17 +24,13 @@
 
 include Config
 
-VER        = 4.7
+VER        = 0.5
 
-THISAPP    = nano-$(VER)
+THISAPP    = rfkill-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = nano
-PAK_VER    = 28
-
-DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8622b7b733dc5d9645f5ceaec24e6ba6
+$(DL_FILE)_MD5 = ce834c00c049cd86a04ab115c92ef548
 
 install : $(TARGET)
 
@@ -53,9 +49,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist:
-	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -77,17 +70,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--sysconfdir=/etc/nano \
-		--enable-color \
-		--enable-multibuffer \
-		--enable-nanorc \
-		--disable-nls
+
+	# Apply upstream patches.
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/rfkill-5.0-use_uapi_rfkill.patch
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && install -v -m644 -D doc/sample.nanorc /etc/nano/sample.nanorc
-	ln -sf /usr/bin/nano /usr/bin/pico
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

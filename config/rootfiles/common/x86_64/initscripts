@@ -51,6 +51,7 @@ etc/rc.d/init.d/networking/red.down/99-beep
 #etc/rc.d/init.d/networking/red.up
 etc/rc.d/init.d/networking/red.up/01-conntrack-cleanup
 etc/rc.d/init.d/networking/red.up/05-update-dns-forwarders
+etc/rc.d/init.d/networking/red.up/06-safe-search
 etc/rc.d/init.d/networking/red.up/10-miniupnpd
 etc/rc.d/init.d/networking/red.up/10-multicast
 etc/rc.d/init.d/networking/red.up/10-static-routes

@@ -58,10 +58,14 @@ ldconfig
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Start services
+/etc/init.d/sshd restart
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start

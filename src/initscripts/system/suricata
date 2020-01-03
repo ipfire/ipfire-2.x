@@ -29,7 +29,7 @@ IPS_OUTPUT_CHAIN="IPS_OUTPUT"
 NFQ_OPTS="--queue-bypass "
 
 # Array containing the 4 possible network zones.
-network_zones=( red green blue orange )
+network_zones=( red green blue orange ovpn )
 
 # Array to store the network zones weather the IPS is enabled for.
 enabled_ips_zones=()
@@ -86,6 +86,22 @@ function generate_fw_rules {
 			if [ "$zone" == "red" ] && [ "$RED_TYPE" == "PPPOE" ]; then
 				# Set device name to ppp0.
 				network_device="ppp0"
+			elif [ "$zone" == "ovpn" ]; then
+				# Get all virtual net devices because the RW server and each
+				# N2N connection creates it's own tun device.
+				for virt_dev in /sys/devices/virtual/net/*; do
+					# Cut-off the directory.
+					dev="${virt_dev##*/}"
+
+					# Only process tun devices.
+					if [[ $dev =~ "tun" ]]; then
+						# Add the network device to the array of enabled zones.
+						enabled_ips_zones+=( "$dev" )
+					fi
+				done
+
+				# Process next zone.
+				continue
 			else
 				# Generate variable name which contains the device name.
 				zone_name="$zone_upper"

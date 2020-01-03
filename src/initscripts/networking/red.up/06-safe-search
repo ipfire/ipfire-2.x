@@ -1,0 +1,3 @@
+#!/bin/bash
+
+exec /etc/init.d/unbound update-safe-search
