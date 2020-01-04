@@ -8,10 +8,10 @@ usr/bin/efivar
 #usr/include/efivar/efivar.h
 #usr/lib/libefiboot.so
 usr/lib/libefiboot.so.1
-usr/lib/libefiboot.so.1.35
+usr/lib/libefiboot.so.1.37
 #usr/lib/libefivar.so
 usr/lib/libefivar.so.1
-usr/lib/libefivar.so.1.35
+usr/lib/libefivar.so.1.37
 #usr/lib/pkgconfig/efiboot.pc
 #usr/lib/pkgconfig/efivar.pc
 #usr/share/man/man1/efivar.1
