@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.1.5
+VER        = 4.0.2
 
 THISAPP    = mpfr-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c4ac246cf9795a4491e7766002cd528f
+$(DL_FILE)_MD5 = 320fbc4463d4c8cb1e566929d8adc4f8
 
 install : $(TARGET)
 
