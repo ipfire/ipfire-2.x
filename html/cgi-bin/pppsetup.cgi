@@ -116,19 +116,6 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
                 $errormessage = $Lang::tr{'bad characters in script field'};
                 goto ERROR; }
 
-        if ($pppsettings{'DNS1'})
-        {
-                if (!(&General::validip($pppsettings{'DNS1'}))) {
-                        $errormessage = $Lang::tr{'invalid primary dns'};
-                        goto ERROR;  }
-        }
-        if ($pppsettings{'DNS2'})
-        {
-                if (!(&General::validip($pppsettings{'DNS2'}))) {
-                        $errormessage = $Lang::tr{'invalid secondary dns'};
-                        goto ERROR; }
-        }
-
         if ($pppsettings{'MAXRETRIES'} eq '') {
                 $errormessage = $Lang::tr{'max retries not set'};
                 goto ERROR; }
@@ -947,22 +934,6 @@ print <<END
         </select></td>
         <td width='25%'>$Lang::tr{'script name'}</td>
         <td width='25%'><input type='text' name='LOGINSCRIPT' value='$pppsettings{'LOGINSCRIPT'}' /></td>
-</tr>
-<tr><td colspan='4' width='100%'><br></br></td></tr>
-<tr>
-        <td bgcolor='$color{'color20'}' colspan='4' width='100%'><b>DNS:</b></td>
-</tr>
-<tr>
-        <td colspan='4' width='100%'><input type='radio' name='DNS' value='Automatic' $checked{'DNS'}{'Automatic'} />$Lang::tr{'automatic'}</td>
-</tr>
-<tr>
-        <td colspan='4' width='100%'><input type='radio' name='DNS' value='Manual' $checked{'DNS'}{'Manual'} />$Lang::tr{'manual'}</td>
-</tr>
-<tr>
-        <td width='25%'>$Lang::tr{'primary dns'}</td>
-        <td width='25%'><input type='text' name='DNS1' value='$pppsettings{'DNS1'}'></td>
-        <td width='25%'>$Lang::tr{'secondary dns'}</td>
-        <td width='25%'><input type='text' name='DNS2' value='$pppsettings{'DNS2'}'></td>
 </tr>
 <tr><td colspan='4' width='100%'><br></br><hr></hr><br></br></td></tr>
 <tr>
