@@ -7,3 +7,4 @@ etc/rc.d/init.d/unbound
 etc/rc.d/init.d/suricata
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/ids.cgi
+usr/sbin/convert-snort

@@ -34,7 +34,42 @@ my $snort_config_file = "/etc/snort/snort.conf";
 my $snort_rules_tarball = "/var/tmp/snortrules.tar.gz";
 
 #
-## Step 1: Setup directory and file layout, if not present and set correct
+## Step 1: Convert snort user and group to suricata if exist.
+#
+
+# Check if the snort user exists.
+if (getpwnam("snort")) {
+	# Change username.
+	my @command = (
+		'/usr/sbin/usermod',
+		'-l', 'suricata', 'snort'
+	);
+
+	system(@command) == 0 or die "Could not change username: @command failed: $?\n";
+
+	# Adjust home directory.
+	@command = (
+		'/usr/sbin/usermod',
+		'-d', "/var/log/suricata",
+		'suricata'
+	);
+
+	system(@command) == 0 or die "Failed to adjust home directory: @command failed: $?\n";
+}
+
+# Check if the snort group exists.
+if (getgrnam("snort")) {
+	# Change groupname
+	my @command = (
+		'/usr/sbin/groupmod',
+		'-n', 'suricata', 'snort'
+	);
+
+	system(@command) == 0 or die "Could not rename groupname: @command failed: $?\n";
+}
+
+#
+## Step 2: Setup directory and file layout, if not present and set correct
 ##         ownership. The converter runs as a privileged user, but the files
 ##         needs to be full access-able by the WUI user and group (nobody:nobody).
 #
@@ -71,7 +106,7 @@ if (-z "$snort_settings_file") {
 }
 
 #
-## Step 2: Import snort settings and convert to the required format for the new IDS
+## Step 3: Import snort settings and convert to the required format for the new IDS
 ##         (suricata).
 #
 
@@ -135,7 +170,7 @@ if($snortsettings{"OINKCODE"}) {
 }
 
 #
-## Step 3: Import guardian settings and whitelist if the addon is installed.
+## Step 4: Import guardian settings and whitelist if the addon is installed.
 #
 
 # Pakfire meta file for owncloud.
@@ -183,7 +218,7 @@ if (-f $guardian_meta) {
 }
 
 #
-## Step 4: Save IDS and rules settings.
+## Step 5: Save IDS and rules settings.
 #
 
 # Write IDS settings.
@@ -193,7 +228,7 @@ if (-f $guardian_meta) {
 &General::writehash("$IDS::rules_settings_file", \%rulessettings);
 
 #
-## Step 5: Generate and write the file to modify the ruleset.
+## Step 6: Generate and write the file to modify the ruleset.
 #
 
 # Call subfunction and pass the desired IDS action.
@@ -203,7 +238,7 @@ if (-f $guardian_meta) {
 &IDS::set_ownership("$IDS::modify_sids_file");
 
 #
-## Step 6: Move rulestarball to its new location.
+## Step 7: Move rulestarball to its new location.
 #
 
 # Check if a rulestarball has been downloaded yet.
@@ -230,7 +265,7 @@ if (-f $snort_rules_tarball) {
 }
 
 #
-## Step 7: Call oinkmaster to extract and setup the rules structures.
+## Step 8: Call oinkmaster to extract and setup the rules structures.
 #
 
 # Check if a rulestarball is present.
@@ -243,7 +278,7 @@ if (-f $IDS::rulestarball) {
 }
 
 #
-## Step 8: Generate file for the HOME Net.
+## Step 9: Generate file for the HOME Net.
 #
 
 # Call subfunction to generate the file.
@@ -253,7 +288,7 @@ if (-f $IDS::rulestarball) {
 &IDS::set_ownership("$IDS::homenet_file");
 
 #
-## Step 9: Generate file for the DNS servers.
+## Step 10: Generate file for the DNS servers.
 #
 
 # Call subfunction to generate the file.
@@ -263,7 +298,7 @@ if (-f $IDS::rulestarball) {
 &IDS::set_ownership("$IDS::dns_servers_file");
 
 #
-## Step 10: Setup automatic ruleset updates.
+## Step 11: Setup automatic ruleset updates.
 #
 
 # Check if a ruleset is configured.
@@ -273,7 +308,7 @@ if($rulessettings{"RULES"}) {
 }
 
 #
-## Step 11: Grab used ruleset files from snort config file and convert
+## Step 12: Grab used ruleset files from snort config file and convert
 ##         them into the new format.
 #
 
@@ -319,7 +354,7 @@ close(SNORTCONF);
 &IDS::write_used_rulefiles_file(@enabled_rule_files);
 
 #
-## Step 12: Start the IDS if enabled.
+## Step 13: Start the IDS if enabled.
 #
 
 # Check if the IDS should be started.

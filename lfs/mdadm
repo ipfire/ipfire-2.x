@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.0
+VER        = 4.1
 
 THISAPP    = mdadm-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2cb4feffea9167ba71b5f346a0c0a40d
+$(DL_FILE)_MD5 = 51bf3651bd73a06c413a2f964f299598
 
 install : $(TARGET)
 
@@ -73,7 +73,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mdadm/gcc-7.patch
+	cd $(DIR_APP) && sed 's@-Werror@@' -i Makefile
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
