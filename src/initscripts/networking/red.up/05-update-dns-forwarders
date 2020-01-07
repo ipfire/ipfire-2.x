@@ -1,13 +1,4 @@
 #!/bin/bash
 
-# If network has not fully been brought up here, we start unbound
-# so that all following scripts can rely on DNS resolution
-
-pidof unbound > /dev/null
-if [ "${?}" = "0" ]; then
-	# unbound is run so update the forwarders
-	/etc/init.d/unbound update-forwarders
-else
-	# Start unbound if it is not running, yet
-	/etc/init.d/unbound start
-fi
+# Update DNS forwarders
+exec /etc/init.d/unbound update-forwarders

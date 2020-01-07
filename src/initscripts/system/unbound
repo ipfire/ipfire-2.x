@@ -62,79 +62,6 @@ config_header() {
 	echo
 }
 
-update_forwarders() {
-	check_red_has_carrier_and_ip
-	if [ "${?}" = "1" ]; then
-		local forwarders
-		local broken_forwarders
-
-		local ns
-		for ns in $(read_name_servers); do
-			test_name_server ${ns} &>/dev/null
-			case "$?" in
-				# Only use DNSSEC-validating or DNSSEC-aware name servers
-				0|2)
-					forwarders="${forwarders} ${ns}"
-					;;
-				*)
-					broken_forwarders="${broken_forwarders} ${ns}"
-					;;
-			esac
-		done
-
-		# Show warning for any broken upstream name servers
-		if [ -n "${broken_forwarders}" ]; then
-			boot_mesg "Ignoring broken upstream name server(s): ${broken_forwarders:1}" ${WARNING}
-			echo_warning
-		fi
-
-		if [ -n "${forwarders}" ]; then
-			boot_mesg "Configuring upstream name server(s): ${forwarders:1}" ${INFO}
-			echo_ok
-
-			# Make sure DNSSEC is activated
-			enable_dnssec
-
-			echo "${forwarders}" > /var/ipfire/red/dns
-			unbound-control -q forward ${forwarders}
-			return 0
-
-		# In case we have found no working forwarders
-		else
-			# Test if the recursor mode is available
-			if can_resolve_root; then
-				# Make sure DNSSEC is activated
-				enable_dnssec
-
-				boot_mesg "Falling back to recursor mode" ${WARNING}
-				echo_warning
-
-			# If not, we set DNSSEC in permissive mode and allow using all recursors
-			elif [ -n "${broken_forwarders}" ]; then
-				disable_dnssec
-
-				boot_mesg "DNSSEC has been set to permissive mode" ${FAILURE}
-				echo_failure
-
-				echo "${broken_forwarders}" > /var/ipfire/red/dns
-				unbound-control -q forward ${broken_forwarders}
-				return 0
-			fi
-		fi
-	fi
-
-	# If forwarders cannot be used we run in recursor mode
-	echo "local recursor" > /var/ipfire/red/dns
-	unbound-control -q forward off
-}
-
-remove_forwarders() {
-	enable_dnssec
-	echo "local recursor" > /var/ipfire/red/dns
-	unbound-control -q forward off
-
-}
-
 own_hostname() {
 	local hostname=$(hostname -f)
 	# 1.1.1.1 is reserved for unused green, skip this
@@ -345,138 +272,6 @@ get_memory_amount() {
 				;;
 		esac
 	done < /proc/meminfo
-}
-
-test_name_server() {
-	local ns=${1}
-	local args
-
-	# Return codes:
-	# 0	DNSSEC validating
-	# 1	Error: unreachable, etc.
-	# 2	DNSSEC aware
-	# 3	NOT DNSSEC-aware
-
-	# Exit when the server is not reachable
-	ns_is_online ${ns} || return 1
-
-	local errors
-	for rr in DNSKEY DS RRSIG; do
-		if ! ns_forwards_${rr} ${ns} ${args}; then
-			errors="${errors} ${rr}"
-		fi
-	done
-
-	if [ -n "${errors}" ]; then
-		echo >&2 "Unable to retrieve the following resource records from ${ns}: ${errors:1}"
-		return 3
-	fi
-
-	if ns_is_validating ${ns} ${args}; then
-		# Return 0 if validating
-		return 0
-	else
-		# Is DNSSEC-aware
-		return 2
-	fi
-}
-
-# Sends an A query to the nameserver w/o DNSSEC
-ns_is_online() {
-	local ns=${1}
-	shift
-
-	dig "${DIG_ARGS[@]}" @${ns} +nodnssec A ${TEST_DOMAIN} $@ >/dev/null
-}
-
-# Resolving ${TEST_DOMAIN_FAIL} will fail if the nameserver is validating
-ns_is_validating() {
-	local ns=${1}
-	shift
-
-	if ! dig "${DIG_ARGS[@]}" @${ns} A ${TEST_DOMAIN_FAIL} $@ | grep -q SERVFAIL; then
-		return 1
-	else
-		# Determine if NS replies with "ad" data flag if DNSSEC enabled
-		dig "${DIG_ARGS[@]}" @${ns} +dnssec SOA ${TEST_DOMAIN} $@ | awk -F: '/\;\;\ flags\:/ { s=1; if (/\ ad/) s=0; exit s }'
-	fi
-}
-
-# Checks if we can retrieve the DNSKEY for this domain.
-# dig will print the SOA if nothing was found
-ns_forwards_DNSKEY() {
-	local ns=${1}
-	shift
-
-	dig "${DIG_ARGS[@]}" @${ns} DNSKEY ${TEST_DOMAIN} $@ | grep -qv SOA
-}
-
-ns_forwards_DS() {
-	local ns=${1}
-	shift
-
-	dig "${DIG_ARGS[@]}" @${ns} DS ${TEST_DOMAIN} $@ | grep -qv SOA
-}
-
-ns_forwards_RRSIG() {
-	local ns=${1}
-	shift
-
-	dig "${DIG_ARGS[@]}" @${ns} +dnssec A ${TEST_DOMAIN} $@ | grep -q RRSIG
-}
-
-ns_supports_tcp() {
-	local ns=${1}
-	shift
-
-	# If TCP is forced we know by now if the server responds to it
-	if [ "${PROTO}" = "TCP" ]; then
-		return 0
-	fi
-
-	dig "${DIG_ARGS[@]}" @${ns} +tcp A ${TEST_DOMAIN} $@ >/dev/null || return 1
-}
-
-get_root_nameservers() {
-	while read -r hostname ttl record address; do
-		# Searching for A records
-		[ "${record}" = "A" ] || continue
-
-		echo "${address}"
-	done < /etc/unbound/root.hints
-}
-
-can_resolve_root() {
-	local ns
-	for ns in $(get_root_nameservers); do
-		if dig "${DIG_ARGS[@]}" @${ns} +dnssec SOA . $@ >/dev/null; then
-			return 0
-		fi
-	done
-
-	# none of the servers was reachable
-	return 1
-}
-
-enable_dnssec() {
-	local status=$(unbound-control get_option val-permissive-mode)
-
-	# Log DNSSEC status
-	echo "on" > /var/ipfire/red/dnssec-status
-
-	# Don't do anything if DNSSEC is already activated
-	[ "${status}" = "no" ] && return 0
-
-	# Activate DNSSEC and flush cache with any stale and unvalidated data
-	unbound-control -q set_option val-permissive-mode: no
-	unbound-control -q flush_zone .
-}
-
-disable_dnssec() {
-	# Log DNSSEC status
-	echo "off" > /var/ipfire/red/dnssec-status
-
-	unbound-control -q set_option val-permissive-mode: yes
 }
 
 fix_time_if_dns_fail() {
@@ -786,9 +581,6 @@ case "$1" in
 		# Make own hostname resolveable
 		own_hostname
 
-		# Update any known forwarding name servers
-		update_forwarders
-
 		# Install Safe Search rules when the system is already online
 		if [ -e "/var/ipfire/red/active" ]; then
 			update_safe_search
@@ -816,31 +608,12 @@ case "$1" in
 		;;
 
 	update-forwarders)
-		# Do not try updating forwarders when unbound is not running
-		if ! pgrep unbound &>/dev/null; then
-			exit 0
-		fi
-
-		update_forwarders
-
-		unbound-control flush_negative > /dev/null
-		unbound-control flush_bogus > /dev/null
-
-		fix_time_if_dns_fail
+		: # XXX must set ISP name servers if necessary
 		;;
 
 	remove-forwarders)
-		# Do not try updating forwarders when unbound is not running
-		if ! pgrep unbound &>/dev/null; then
-			exit 0
-		fi
-
-		remove_forwarders
-
-		unbound-control flush_negative > /dev/null
-		unbound-control flush_bogus > /dev/null
+		: # XXX must remove ISP name servers
 		;;
-
 
 	resolve)
 		resolve "${2}"
@@ -851,7 +624,7 @@ case "$1" in
 		;;
 
 	*)
-		echo "Usage: $0 {start|stop|restart|status|update-forwarders|remove-forwarders|resolve|update-safe-search}"
+		echo "Usage: $0 {start|stop|restart|status|resolve|update-forwarders|remove-forwarders|update-safe-search}"
 		exit 1
 		;;
 esac
