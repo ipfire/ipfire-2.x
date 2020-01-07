@@ -795,16 +795,24 @@ sub check_nameserver($$$$) {
         my $output = join("", @output);
 
 	my $status = 0;
-	if ($output =~ m/WARNING: (.*)/) {
-		return $1;
-
-	}
 
 	if ($output =~ m/status: (\w+)/) {
 		$status = ($1 eq "NOERROR");
 
 		if (!$status) {
 			return -1;
+		}
+	} else {
+		my $warning;
+
+		while ($output =~ m/WARNING: (.*)/g) {
+			# Add the current grabbed warning to the warning string.
+			$warning .= "$1\; ";
+		}
+
+		# Return the warning string, if we grabbed at least one.
+		if ($warning) {
+			return $warning;
 		}
 	}
 
