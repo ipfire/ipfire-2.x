@@ -764,7 +764,8 @@ sub check_nameserver($$$$) {
 	my $retry = "+retry=0";
 
 	# Default values.
-	my @command = ("kdig", "$timeout", "$retry", "+dnssec");
+	my @command = ("kdig", "$timeout", "$retry", "+dnssec",
+		"+bufsize=1232");
 
 	# Handle different protols.
 	if ($proto eq "TCP") {
