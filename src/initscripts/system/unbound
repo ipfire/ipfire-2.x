@@ -17,6 +17,7 @@ LOCAL_TTL=60
 
 # Load configuration
 eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 ip_address_revptr() {
 	local addr=${1}
@@ -573,8 +574,6 @@ case "$1" in
 			statusproc /usr/sbin/unbound
 			exit 0
 		fi
-
-		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 		# Update configuration files
 		write_tuning_conf
