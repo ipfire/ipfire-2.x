@@ -143,6 +143,9 @@ restore_backup() {
 		rm -rf "/var/ipfire/snort"
 	fi
 
+	# Convert DNS settings
+	convert-dns-settings
+
 	return 0
 }
 

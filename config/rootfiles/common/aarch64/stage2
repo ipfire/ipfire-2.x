@@ -91,6 +91,7 @@ usr/lib64
 usr/local/bin/backupiso
 usr/local/bin/connscheduler
 usr/local/bin/consort.sh
+usr/local/bin/convert-dns-settings
 usr/local/bin/convert-ovpn
 usr/local/bin/hddshutdown
 usr/local/bin/ipsec-interfaces
