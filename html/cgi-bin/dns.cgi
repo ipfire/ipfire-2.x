@@ -759,12 +759,8 @@ sub grab_address_from_file($) {
 sub check_nameserver($$$$) {
 	my ($nameserver, $record, $proto, $tls_hostname) = @_;
 
-	# Timout for the query in seconds.
-	my $timeout;
-	my $retry = "+retry=0";
-
 	# Default values.
-	my @command = ("kdig", "$timeout", "$retry", "+dnssec",
+	my @command = ("kdig", "+timeout=2", "+retry=0", "+dnssec",
 		"+bufsize=1232");
 
 	# Handle different protols.
