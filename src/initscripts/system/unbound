@@ -20,9 +20,6 @@ FORCE_TCP=off
 # Cache any local zones for 60 seconds
 LOCAL_TTL=60
 
-# EDNS buffer size
-EDNS_DEFAULT_BUFFER_SIZE=4096
-
 # Load optional configuration
 [ -e "/etc/sysconfig/unbound" ] && . /etc/sysconfig/unbound
 
@@ -90,25 +87,6 @@ update_forwarders() {
 			esac
 		done
 
-		# Determine EDNS buffer size
-		local new_edns_buffer_size=${EDNS_DEFAULT_BUFFER_SIZE}
-
-		for ns in ${forwarders}; do
-			local edns_buffer_size=$(ns_determine_edns_buffer_size ${ns})
-			if [ -n "${edns_buffer_size}" ]; then
-				if [ ${edns_buffer_size} -lt ${new_edns_buffer_size} ]; then
-					new_edns_buffer_size=${edns_buffer_size}
-				fi
-			fi
-		done
-
-		if [ ${new_edns_buffer_size} -lt ${EDNS_DEFAULT_BUFFER_SIZE} ]; then
-			boot_mesg "EDNS buffer size reduced to ${new_edns_buffer_size}" ${WARNING}
-			echo_warning
-
-			unbound-control -q set_option edns-buffer-size: ${new_edns_buffer_size}
-		fi
-
 		# Show warning for any broken upstream name servers
 		if [ -n "${broken_forwarders}" ]; then
 			boot_mesg "Ignoring broken upstream name server(s): ${broken_forwarders:1}" ${WARNING}
@@ -129,7 +107,7 @@ update_forwarders() {
 		# In case we have found no working forwarders
 		else
 			# Test if the recursor mode is available
-			if can_resolve_root +bufsize=${new_edns_buffer_size}; then
+			if can_resolve_root; then
 				# Make sure DNSSEC is activated
 				enable_dnssec
 
@@ -374,12 +352,6 @@ test_name_server() {
 	# Exit when the server is not reachable
 	ns_is_online ${ns} || return 1
 
-	# Determine the maximum edns buffer size that works
-	local edns_buffer_size=$(ns_determine_edns_buffer_size ${ns})
-	if [ -n "${edns_buffer_size}" ]; then
-		args="${args} +bufsize=${edns_buffer_size}"
-	fi
-
 	local errors
 	for rr in DNSKEY DS RRSIG; do
 		if ! ns_forwards_${rr} ${ns} ${args}; then
@@ -455,21 +427,6 @@ ns_supports_tcp() {
 	fi
 
 	dig "${DIG_ARGS[@]}" @${ns} +tcp A ${TEST_DOMAIN} $@ >/dev/null || return 1
-}
-
-ns_determine_edns_buffer_size() {
-	local ns=${1}
-	shift
-
-	local b
-	for b in 4096 2048 1500 1480 1464 1400 1280 512; do
-		if dig "${DIG_ARGS[@]}" @${ns} +dnssec +bufsize=${b} A ${TEST_DOMAIN} $@ >/dev/null; then
-			echo "${b}"
-			return 0
-		fi
-	done
-
-	return 1
 }
 
 get_root_nameservers() {
@@ -903,11 +860,6 @@ case "$1" in
 			echo "${ns} supports TCP fallback"
 		else
 			echo "${ns} does not support TCP fallback"
-		fi
-
-		edns_buffer_size=$(ns_determine_edns_buffer_size ${ns})
-		if [ -n "${edns_buffer_size}" ]; then
-			echo "EDNS buffer size for ${ns}: ${edns_buffer_size}"
 		fi
 
 		exit ${ret}
