@@ -8,6 +8,12 @@
 			        'title' => "$Lang::tr{'zoneconf title'}",
 			        'enabled' => 1,
 			        };
+    $subnetwork->{'12.dns'} = {
+                                  'caption' => $Lang::tr{'dns title'},
+                                  'uri' => '/cgi-bin/dns.cgi',
+                                  'title' => "$Lang::tr{'dns title'}",
+                                  'enabled' => 1,
+                                  };
     $subnetwork->{'20.proxy'} = {'caption' => "$Lang::tr{'web proxy'}",
 			        'uri' => '/cgi-bin/proxy.cgi',
 			        'title' => "$Lang::tr{'web proxy'}",
@@ -45,12 +51,6 @@
 				 'title' => "$Lang::tr{'edit hosts'}",
 				 'enabled' => 1,
 				 };
-    $subnetwork->{'51.dnsmenu'} = {
-                                  'caption' => $Lang::tr{'dns menu'},
-                                  'uri' => '/cgi-bin/dns.cgi',
-                                  'title' => "$Lang::tr{'dns menu'}",
-                                  'enabled' => `grep "RED_TYPE=DHCP" /var/ipfire/ethernet/settings`,
-                                  };
     $subnetwork->{'52.dnsforward'} = {
                                   'caption' => $Lang::tr{'dnsforward'},
                                   'uri' => '/cgi-bin/dnsforward.cgi',
