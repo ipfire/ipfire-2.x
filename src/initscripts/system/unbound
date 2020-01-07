@@ -18,12 +18,6 @@ LOCAL_TTL=60
 # Load configuration
 eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
 
-DIG_ARGS=()
-
-if [ "${PROTO}" = "TCP" ]; then
-	DIG_ARGS+=( "+tcp" )
-fi
-
 ip_address_revptr() {
 	local addr=${1}
 
@@ -290,21 +284,12 @@ fix_time_if_dns_fail() {
 resolve() {
 	local hostname="${1}"
 
-	local found=0
-	local ns
-	for ns in $(read_name_servers); do
-		local answer
-		for answer in $(dig "${DIG_ARGS[@]}" +short "@${ns}" A "${hostname}"); do
-			found=1
-
-			# Filter out non-IP addresses
-			if [[ ! "${answer}" =~ \.$ ]]; then
-				echo "${answer}"
-			fi
-		done
-
-		# End loop when we have got something
-		[ ${found} -eq 1 ] && break
+	local answer
+	for answer in $(dig +short A "${hostname}"); do
+		# Filter out non-IP addresses
+		if [[ ! "${answer}" =~ \.$ ]]; then
+			echo "${answer}"
+		fi
 	done
 }
 
@@ -609,6 +594,9 @@ case "$1" in
 
 	update-forwarders)
 		: # XXX must set ISP name servers if necessary
+
+		# Update Safe Search settings
+		update_safe_search
 		;;
 
 	remove-forwarders)
