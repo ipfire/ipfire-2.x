@@ -102,6 +102,13 @@ write_forward_conf() {
 	(
 		config_header
 
+		# Enable strict QNAME minimisation
+		if [ "${QNAME_MIN}" = "strict" ]; then
+			echo "server:"
+			echo "	qname-minimisation-strict: yes"
+			echo
+		fi
+
 		# Force using TCP for upstream servers only
 		if [ "${PROTO}" = "TCP" ]; then
 			echo "# Force using TCP for upstream servers only"
