@@ -12,21 +12,15 @@ TEST_DOMAIN="ipfire.org"
 # This domain will never validate
 TEST_DOMAIN_FAIL="dnssec-failed.org"
 
-INSECURE_ZONES=
-USE_FORWARDERS=1
-ENABLE_SAFE_SEARCH=off
-FORCE_TCP=off
-FORCE_TLS=off
-
 # Cache any local zones for 60 seconds
 LOCAL_TTL=60
 
-# Load optional configuration
-[ -e "/etc/sysconfig/unbound" ] && . /etc/sysconfig/unbound
+# Load configuration
+eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
 
 DIG_ARGS=()
 
-if [ "${FORCE_TCP}" = "on" ]; then
+if [ "${PROTO}" = "TCP" ]; then
 	DIG_ARGS+=( "+tcp" )
 fi
 
@@ -70,7 +64,7 @@ config_header() {
 
 update_forwarders() {
 	check_red_has_carrier_and_ip
-	if [ "${USE_FORWARDERS}" = "1" -a "${?}" = "1" ]; then
+	if [ "${?}" = "1" ]; then
 		local forwarders
 		local broken_forwarders
 
@@ -185,22 +179,15 @@ write_forward_conf() {
 	(
 		config_header
 
-		# Force using TLS for upstream servers only
-		if [ "${FORCE_TLS}" = "on" ]; then
-			echo "# Force using TLS for upstream servers only"
-			echo "server:"
-			echo "	tls-upstream: yes"
-			echo
-
 		# Force using TCP for upstream servers only
-		elif [ "${FORCE_TCP}" = "on" ]; then
+		if [ "${PROTO}" = "TCP" ]; then
 			echo "# Force using TCP for upstream servers only"
 			echo "server:"
 			echo "	tcp-upstream: yes"
 			echo
 		fi
 
-		local insecure_zones="${INSECURE_ZONES}"
+		local insecure_zones=""
 
 		local enabled zone server servers remark disable_dnssec rest
 		while IFS="," read -r enabled zone servers remark disable_dnssec rest; do
@@ -253,7 +240,7 @@ write_forward_conf() {
 		echo "	name: \".\""
 
 		# Force using TLS only
-		if [ "${FORCE_TLS}" = "on" ]; then
+		if [ "${PROTO}" = "TLS" ]; then
 			echo "	forward-tls-upstream: yes"
 		fi
 
@@ -443,7 +430,7 @@ ns_supports_tcp() {
 	shift
 
 	# If TCP is forced we know by now if the server responds to it
-	if [ "${FORCE_TCP}" = "on" ]; then
+	if [ "${PROTO}" = "TCP" ]; then
 		return 0
 	fi
 
