@@ -120,8 +120,6 @@ case "${1}" in
 			grep -v -E "\<gateway\>" /etc/hosts > /tmp/hosts
 			echo "$GATEWAY	gateway"  >> /tmp/hosts
 			mv /tmp/hosts /etc/hosts
-			echo -n "${DNS1}" > /var/ipfire/red/dns1
-			echo -n "${DNS2}" > /var/ipfire/red/dns2
 			touch /var/ipfire/red/active
 			
 			# Create route to default gateway

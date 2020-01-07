@@ -51,7 +51,7 @@ unless (-f $settings_file) { system("touch $settings_file") };
 unless (-f $servers_file) { system("touch $servers_file") };
 
 # File which stores the ISP assigned DNS servers.
-my @ISP_nameserver_files = ( "${General::swroot}/dns/dns1", "${General::swroot}/dns/dns2" );
+my @ISP_nameserver_files = ( "/var/run/dns1", "/var/run/dns2" );
 
 # File which contains the ca-certificates.
 my $ca_certs_file = "/etc/ssl/certs/ca-bundle.crt";

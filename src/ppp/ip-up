@@ -22,31 +22,16 @@
 . /etc/sysconfig/rc
 . $rc_functions
 
-PRIMARY_DNS=$DNS1
-SECONDARY_DNS=$DNS2
-
 eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 
-if [ "$DNS" == "Automatic" ]; then
-	if [ "$TYPE" == "isdn" ]; then
-		echo -n "$MS_DNS1" > /var/ipfire/red/dns1
-		echo -n "$MS_DNS2" > /var/ipfire/red/dns2
-	else
-		if [ "$PRIMARY_DNS" == "10.11.12.13" ]; then
-			echo -n "$DNS1" > /var/ipfire/red/dns1
-		else
-			echo -n "$PRIMARY_DNS" > /var/ipfire/red/dns1
-		fi
-		if [ "$SECONDARY_DNS" == "10.11.12.14" ]; then
-			echo -n "$DNS2" > /var/ipfire/red/dns2
-		else
-			echo -n "$SECONDARY_DNS" > /var/ipfire/red/dns2
-		fi
-	fi
-else
-	echo -n "$DNS1" > /var/ipfire/red/dns1
-	echo -n "$DNS2" > /var/ipfire/red/dns2
+if [ "$TYPE" = "isdn" ]; then
+	DNS1="${MS_DNS1}"
+	DNS2="${MS_DNS2}"
 fi
+
+# Write DNS servers to configuration
+echo "${DNS1}" > /var/run/dns1
+echo "${DNS2}" > /var/run/dns2
 
 echo -n "$1" > /var/ipfire/red/iface
 echo -n "$4" > /var/ipfire/red/local-ipaddress

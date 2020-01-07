@@ -22,9 +22,8 @@
 . /etc/sysconfig/rc
 . $rc_functions
 
-eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
-
-rm -f /var/ipfire/red/active
+rm -f /var/ipfire/red/active \
+	/var/run/dns1 /var/run/dns2
 
 run_subdir ${rc_base}/init.d/networking/red.down/
 

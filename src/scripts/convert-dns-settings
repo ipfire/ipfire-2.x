@@ -27,6 +27,9 @@ main() {
 
 		if [ -s "/var/ipfire/ppp/settings" ]; then
 			eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+
+			# Remove DNS, DNS1 and DNS2
+			sed -i "/^DNS[12]?=/d" /var/ipfire/ppp/settings
 		elif [ -s "/var/ipfire/dns/settings" ]; then
 			eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
 		fi
