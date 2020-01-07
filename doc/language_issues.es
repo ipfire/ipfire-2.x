@@ -194,6 +194,21 @@ WARNING: translation string unused: dmz pinhole configuration
 WARNING: translation string unused: dmz pinhole rule added
 WARNING: translation string unused: dmz pinhole rule removed
 WARNING: translation string unused: dmzpinholes for same net not necessary
+WARNING: translation string unused: dns address deleted
+WARNING: translation string unused: dns address deleted txt
+WARNING: translation string unused: dns address done
+WARNING: translation string unused: dns address recon
+WARNING: translation string unused: dns desc
+WARNING: translation string unused: dns error 0
+WARNING: translation string unused: dns error 01
+WARNING: translation string unused: dns error 1
+WARNING: translation string unused: dns header
+WARNING: translation string unused: dns list
+WARNING: translation string unused: dns menu
+WARNING: translation string unused: dns new 0
+WARNING: translation string unused: dns new 1
+WARNING: translation string unused: dns saved
+WARNING: translation string unused: dns saved txt
 WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain not set
@@ -359,6 +374,7 @@ WARNING: translation string unused: mac address error not 00
 WARNING: translation string unused: mailmethod
 WARNING: translation string unused: mailprogramm
 WARNING: translation string unused: manage ovpn
+WARNING: translation string unused: manual
 WARNING: translation string unused: manual control and status
 WARNING: translation string unused: marked
 WARNING: translation string unused: max incoming size
@@ -740,6 +756,7 @@ WARNING: untranslated string: atm device = Device:
 WARNING: untranslated string: attention = ATTENTION
 WARNING: untranslated string: bit = bit
 WARNING: untranslated string: block = Block
+WARNING: untranslated string: broken = Broken
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: capabilities = Capabilities
 WARNING: untranslated string: ccd add = Add network
@@ -804,9 +821,19 @@ WARNING: untranslated string: dhcp dns update algo = Algorithm
 WARNING: untranslated string: dhcp dns update secret = Secret
 WARNING: untranslated string: dl client arch insecure = Download insecure Client Package (zip)
 WARNING: untranslated string: dnat address = Firewall Interface
+WARNING: untranslated string: dns = unknown string
+WARNING: untranslated string: dns configuration = DNS Configuration
+WARNING: untranslated string: dns could not add server = Could not add server - Reason:
+WARNING: untranslated string: dns enable safe-search = Enable Safe Search
 WARNING: untranslated string: dns forward disable dnssec = Disable DNSSEC (dangerous)
 WARNING: untranslated string: dns forwarding dnssec disabled notice = (DNSSEC disabled)
+WARNING: untranslated string: dns isp assigned nameserver = ISP-assigned DNS server
+WARNING: untranslated string: dns mode for qname minimisation = QNAME Minimisation
+WARNING: untranslated string: dns no tls hostname given = No TLS hostname given.
 WARNING: untranslated string: dns servers = DNS Servers
+WARNING: untranslated string: dns tls hostname = TLS Hostname
+WARNING: untranslated string: dns use isp assigned nameservers = Use ISP-assigned DNS servers
+WARNING: untranslated string: dns use protocol for dns queries = Protocol for DNS queries
 WARNING: untranslated string: dnsforward = DNS Forwarding
 WARNING: untranslated string: dnsforward add a new entry = Add a new entry
 WARNING: untranslated string: dnsforward configuration = DNS forward configuration
@@ -817,7 +844,6 @@ WARNING: untranslated string: dnsforward forward_servers = Nameservers
 WARNING: untranslated string: dnsforward zone = Zone
 WARNING: untranslated string: dnssec aware = DNSSEC Aware
 WARNING: untranslated string: dnssec disabled warning = WARNING: DNSSEC has been disabled
-WARNING: untranslated string: dnssec information = DNSSEC Information
 WARNING: untranslated string: dnssec not supported = DNSSEC Not supported
 WARNING: untranslated string: dnssec validating = DNSSEC Validating
 WARNING: untranslated string: downlink = Downlink
@@ -852,6 +878,7 @@ WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (
 WARNING: untranslated string: encryption = Encryption:
 WARNING: untranslated string: entropy = Entropy
 WARNING: untranslated string: entropy graphs = Entropy Graphs
+WARNING: untranslated string: error = Error
 WARNING: untranslated string: fallout zombieload ridl = Fallout/ZombieLoad/RIDL
 WARNING: untranslated string: fifteen minutes = 15 Minutes
 WARNING: untranslated string: fireinfo ipfire version = IPFire version
@@ -1161,6 +1188,7 @@ WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: none = none
 WARNING: untranslated string: not a valid dh key = Not a valid Diffie-Hellman parameters file. Please use a length of 2048, 3072 or 4096 bits and the PKCS#3 format.
 WARNING: untranslated string: not affected = Not Affected
+WARNING: untranslated string: not validating = Not validating
 WARNING: untranslated string: notice = Notice
 WARNING: untranslated string: one hour = One Hour
 WARNING: untranslated string: one month = One Month
@@ -1244,7 +1272,9 @@ WARNING: untranslated string: ssh agent forwarding = Allow SSH Agent Forwarding
 WARNING: untranslated string: ssh login time = Logged in since
 WARNING: untranslated string: ssh no active logins = No active logins
 WARNING: untranslated string: ssh username = Username
+WARNING: untranslated string: standard = Standard
 WARNING: untranslated string: static routes = Static Routes
+WARNING: untranslated string: strict = Strict
 WARNING: untranslated string: subnet mask = Subnet Mask
 WARNING: untranslated string: support donation = Support the IPFire project with your donation
 WARNING: untranslated string: system has rdrand = This system has support for Intel(R) RDRAND.

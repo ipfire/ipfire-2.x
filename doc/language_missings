@@ -21,6 +21,7 @@
 < backup protect key password
 < bewan adsl pci st
 < bewan adsl usb
+< broken
 < Captive heading terms
 < Captive heading voucher
 < Captive invalid coupon
@@ -35,6 +36,15 @@
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
 < dh name is invalid
+< dns configuration
+< dns could not add server
+< dns enable safe-search
+< dns isp assigned nameserver
+< dns mode for qname minimisation
+< dns no tls hostname given
+< dns tls hostname
+< dns use isp assigned nameservers
+< dns use protocol for dns queries
 < done
 < emerging pro rules
 < emerging rules
@@ -48,11 +58,15 @@
 < insert removable device
 < itlb multihit
 < notes
+< not validating
+< okay
 < quick control
 < shaping add options
 < show areas
 < show lines
 < show tls-auth key
+< standard
+< strict
 < taa zombieload2
 < teovpn_fragment
 < tor bridge enabled
@@ -97,6 +111,7 @@
 < attention
 < bit
 < block
+< broken
 < capabilities
 < Captive
 < Captive 1day
@@ -225,6 +240,9 @@
 < Disabled
 < dl client arch insecure
 < dnat address
+< dns configuration
+< dns could not add server
+< dns enable safe-search
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
@@ -235,12 +253,18 @@
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
 < dnsforward zone
+< dns isp assigned nameserver
+< dns mode for qname minimisation
+< dns no tls hostname given
 < dnssec aware
 < dnssec disabled warning
 < dnssec information
 < dnssec not supported
 < dnssec validating
 < dns servers
+< dns tls hostname
+< dns use isp assigned nameservers
+< dns use protocol for dns queries
 < downlink
 < download dh parameter
 < download tls-auth key
@@ -606,7 +630,9 @@
 < not affected
 < not a valid dh key
 < notice
+< not validating
 < Number of Countries for the pie chart
+< okay
 < one hour
 < one month
 < one week
@@ -710,7 +736,9 @@
 < ssh login time
 < ssh no active logins
 < ssh username
+< standard
 < static routes
+< strict
 < subnet mask
 < support donation
 < system has hwrng
@@ -888,6 +916,20 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< broken
+< dns configuration
+< dns could not add server
+< dns enable safe-search
+< dns isp assigned nameserver
+< dns mode for qname minimisation
+< dns no tls hostname given
+< dns tls hostname
+< dns use isp assigned nameservers
+< dns use protocol for dns queries
+< not validating
+< okay
+< standard
+< strict
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -909,6 +951,7 @@
 < advproxy wpad view pac
 < application layer gateways
 < block
+< broken
 < Captive
 < Captive 1day
 < Captive 1month
@@ -977,11 +1020,20 @@
 < dhcp dns update secret
 < Disabled
 < dl client arch insecure
+< dns configuration
+< dns could not add server
+< dns enable safe-search
 < dns forward disable dnssec
 < dnsforward dnssec disabled
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
+< dns isp assigned nameserver
+< dns mode for qname minimisation
+< dns no tls hostname given
 < dnssec disabled warning
+< dns tls hostname
+< dns use isp assigned nameservers
+< dns use protocol for dns queries
 < eight hours
 < email config
 < email empty field
@@ -1097,7 +1149,9 @@
 < MTU settings
 < none
 < not affected
+< not validating
 < Number of Countries for the pie chart
+< okay
 < one hour
 < one month
 < one week
@@ -1132,6 +1186,8 @@
 < ssh login time
 < ssh no active logins
 < ssh username
+< standard
+< strict
 < subnet mask
 < system is offline
 < taa zombieload2
@@ -1225,6 +1281,7 @@
 < application layer gateways
 < atm device
 < block
+< broken
 < capabilities
 < Captive
 < Captive 1day
@@ -1301,16 +1358,25 @@
 < dh parameter
 < Disabled
 < dl client arch insecure
+< dns configuration
+< dns could not add server
+< dns enable safe-search
 < dns forward disable dnssec
 < dnsforward dnssec disabled
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
+< dns isp assigned nameserver
+< dns mode for qname minimisation
+< dns no tls hostname given
 < dnssec aware
 < dnssec disabled warning
 < dnssec information
 < dnssec not supported
 < dnssec validating
 < dns servers
+< dns tls hostname
+< dns use isp assigned nameservers
+< dns use protocol for dns queries
 < download dh parameter
 < download tls-auth key
 < drop outgoing
@@ -1450,7 +1516,9 @@
 < none
 < not affected
 < not a valid dh key
+< not validating
 < Number of Countries for the pie chart
+< okay
 < one hour
 < one month
 < one week
@@ -1499,6 +1567,8 @@
 < ssh login time
 < ssh no active logins
 < ssh username
+< standard
+< strict
 < subnet mask
 < system is offline
 < taa zombieload2
@@ -1609,6 +1679,7 @@
 < attention
 < bit
 < block
+< broken
 < capabilities
 < Captive
 < Captive 1day
@@ -1738,6 +1809,9 @@
 < Disabled
 < dl client arch insecure
 < dnat address
+< dns configuration
+< dns could not add server
+< dns enable safe-search
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
@@ -1748,12 +1822,18 @@
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
 < dnsforward zone
+< dns isp assigned nameserver
+< dns mode for qname minimisation
+< dns no tls hostname given
 < dnssec aware
 < dnssec disabled warning
 < dnssec information
 < dnssec not supported
 < dnssec validating
 < dns servers
+< dns tls hostname
+< dns use isp assigned nameservers
+< dns use protocol for dns queries
 < downlink
 < download dh parameter
 < download tls-auth key
@@ -2121,7 +2201,9 @@
 < not affected
 < not a valid dh key
 < notice
+< not validating
 < Number of Countries for the pie chart
+< okay
 < one hour
 < one month
 < one week
@@ -2210,7 +2292,9 @@
 < ssh login time
 < ssh no active logins
 < ssh username
+< standard
 < static routes
+< strict
 < subnet mask
 < support donation
 < system has hwrng
@@ -2421,6 +2505,7 @@
 < attention
 < bit
 < block
+< broken
 < capabilities
 < Captive
 < Captive 1day
@@ -2552,6 +2637,9 @@
 < disk access per
 < dl client arch insecure
 < dnat address
+< dns configuration
+< dns could not add server
+< dns enable safe-search
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
@@ -2562,12 +2650,18 @@
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
 < dnsforward zone
+< dns isp assigned nameserver
+< dns mode for qname minimisation
+< dns no tls hostname given
 < dnssec aware
 < dnssec disabled warning
 < dnssec information
 < dnssec not supported
 < dnssec validating
 < dns servers
+< dns tls hostname
+< dns use isp assigned nameservers
+< dns use protocol for dns queries
 < downlink
 < download dh parameter
 < download tls-auth key
@@ -2940,7 +3034,9 @@
 < not affected
 < not a valid dh key
 < notice
+< not validating
 < Number of Countries for the pie chart
+< okay
 < one hour
 < one month
 < one week
@@ -3026,7 +3122,9 @@
 < ssh login time
 < ssh no active logins
 < ssh username
+< standard
 < static routes
+< strict
 < subnet mask
 < support donation
 < system has hwrng
@@ -3213,6 +3311,7 @@
 < advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
+< broken
 < Captive delete logo
 < crypto error
 < cryptographic settings
@@ -3221,10 +3320,19 @@
 < dangerous
 < default IP address
 < Disabled
+< dns configuration
+< dns could not add server
+< dns enable safe-search
 < dns forward disable dnssec
 < dnsforward dnssec disabled
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
+< dns isp assigned nameserver
+< dns mode for qname minimisation
+< dns no tls hostname given
+< dns tls hostname
+< dns use isp assigned nameservers
+< dns use protocol for dns queries
 < emerging pro rules
 < enable smt
 < error
@@ -3272,6 +3380,8 @@
 < mitigated
 < mtu
 < not affected
+< not validating
+< okay
 < ovpn error dh
 < ovpn error md5
 < ovpn tls auth
@@ -3291,6 +3401,8 @@
 < ssh login time
 < ssh no active logins
 < ssh username
+< standard
+< strict
 < subnet mask
 < system is offline
 < taa zombieload2
