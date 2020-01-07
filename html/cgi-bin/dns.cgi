@@ -421,22 +421,22 @@ print <<END;
 END
 
 		# Check the usage of ISP assigned nameservers is enabled.
-		if ($settings{'USE_ISP_NAMESERVERS'} eq "on") {
-			my $id="1";
+		my $id = 1;
 
-			# Loop through the array which stores the files.
-			foreach my $file (@ISP_nameserver_files) {
-				# Grab the address of the nameserver.
-				my $address = &grab_address_from_file($file);
+		# Loop through the array which stores the files.
+		foreach my $file (@ISP_nameserver_files) {
+			# Grab the address of the nameserver.
+			my $address = &grab_address_from_file($file);
 
-				# Check if we got an address.
-				if ($address) {
-					# Add the address to the hash of nameservers.
-					$dns_servers{$id} = [ "$address", "none", "enabled", "$Lang::tr{'dns isp assigned nameserver'}" ];
+			# Check if we got an address.
+			if ($address) {
+				# Add the address to the hash of nameservers.
+				$dns_servers{$id} = [ "$address", "none",
+					($settings{'USE_ISP_NAMESERVERS'} eq "on") ? "enabled" : "disabled",
+					"$Lang::tr{'dns isp assigned nameserver'}" ];
 
-					# Increase id by one.
-					$id++;
-				}
+				# Increase id by one.
+				$id++;
 			}
 		}
 
@@ -523,6 +523,11 @@ END
 				my $rdns = gethostbyaddr($iaddr, AF_INET);
 
 				if (!$rdns) { $rdns = $Lang::tr{'lookup failed'}; }
+
+				# Mark ISP name servers as disabled
+				if ($id <= 2 && $enabled eq "disabled") {
+					$nameserver = "<del>$nameserver</del>";
+				}
 
 print <<END;
 			<tr>
