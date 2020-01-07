@@ -248,6 +248,30 @@ write_forward_conf() {
 				echo "	domain-insecure: ${zone}"
 			done
 		fi
+
+		echo "forward-zone:"
+		echo "	name: \".\""
+
+		# Force using TLS only
+		if [ "${FORCE_TLS}" = "on" ]; then
+			echo "	forward-tls-upstream: yes"
+		fi
+
+		# Add upstream name servers
+		local id address tls_hostname enabled remark
+		while IFS="," read -r id address tls_hostname enabled remark; do
+			# Skip disabled servers
+			[ "${enabled}" != "enabled" ] && continue
+
+			# Set DNS server
+			if [ "${PROTO}" = "TLS" ]; then
+				if [ -n "${tls_hostname}" ]; then
+					echo "	forward-addr: ${address}@853#${tls_hostname}"
+				fi
+			else
+				echo "	forward-addr: ${address}"
+			fi
+		done < /var/ipfire/dns/servers
 	) > /etc/unbound/forward.conf
 }
 
