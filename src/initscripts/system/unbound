@@ -831,37 +831,6 @@ case "$1" in
 		;;
 
 
-	test-name-server)
-		ns=${2}
-
-		test_name_server ${ns}
-		ret=${?}
-
-		case "${ret}" in
-			0)
-				echo "${ns} is validating"
-				;;
-			2)
-				echo "${ns} is DNSSEC-aware"
-				;;
-			3)
-				echo "${ns} is NOT DNSSEC-aware"
-				;;
-			*)
-				echo "Test failed for an unknown reason"
-				exit ${ret}
-				;;
-		esac
-
-		if ns_supports_tcp ${ns}; then
-			echo "${ns} supports TCP fallback"
-		else
-			echo "${ns} does not support TCP fallback"
-		fi
-
-		exit ${ret}
-		;;
-
 	resolve)
 		resolve "${2}"
 		;;
@@ -871,7 +840,7 @@ case "$1" in
 		;;
 
 	*)
-		echo "Usage: $0 {start|stop|restart|status|update-forwarders|remove-forwarders|test-name-server|resolve|update-safe-search}"
+		echo "Usage: $0 {start|stop|restart|status|update-forwarders|remove-forwarders|resolve|update-safe-search}"
 		exit 1
 		;;
 esac
