@@ -814,7 +814,7 @@ sub check_nameserver($$$$) {
 	}
 
 	my $aware = ($output =~ m/RRSIG/);
-	my $validating = ("ad;" ~~ @flags);
+	my $validating = (grep(/ad;/, @flags));
 
 	return $aware + $validating;
 }
