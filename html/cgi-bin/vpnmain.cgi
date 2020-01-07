@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2019  IPFire Team  info@ipfire.org                       #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -822,8 +822,10 @@ END
 			close IPADDR;
 			chomp ($ipaddr);
 			$cgiparams{'ROOTCERT_HOSTNAME'} = (gethostbyaddr(pack("C4", split(/\./, $ipaddr)), 2))[0];
+			$cgiparams{'SUBJECTALTNAME'} = "DNS:" . $cgiparams{'ROOTCERT_HOSTNAME'};
 			if ($cgiparams{'ROOTCERT_HOSTNAME'} eq '') {
 				$cgiparams{'ROOTCERT_HOSTNAME'} = $ipaddr;
+				$cgiparams{'SUBJECTALTNAME'} = "IP:" . $cgiparams{'ROOTCERT_HOSTNAME'};
 			}
 		}
 		$cgiparams{'ROOTCERT_COUNTRY'} = $vpnsettings{'ROOTCERT_COUNTRY'} if (!$cgiparams{'ROOTCERT_COUNTRY'});
@@ -974,6 +976,11 @@ END
 		#	RID: a registered OBJECT IDENTIFIER
 		#	IP: an IP address
 		# example: email:franck@foo.com,IP:10.0.0.10,DNS:franck.foo.com
+
+		if ($cgiparams{'SUBJECTALTNAME'} eq '') {
+			$errormessage = $Lang::tr{'vpn subjectaltname missing'};
+			goto ROOTCERT_ERROR;
+		}
 
 		if ($cgiparams{'SUBJECTALTNAME'} ne '' && $cgiparams{'SUBJECTALTNAME'} !~ /^(email|URI|DNS|RID|IP):[a-zA-Z0-9 :\/,\.\-_@]*$/) {
 			$errormessage = $Lang::tr{'vpn altname syntax'};
@@ -1129,7 +1136,7 @@ END
 	}
 	print <<END
 		</select></td></tr>
-	<tr><td class='base'>$Lang::tr{'vpn subjectaltname'} (subjectAltName=email:*,URI:*,DNS:*,RID:*)</td>
+	<tr><td class='base'>$Lang::tr{'vpn subjectaltname'} (subjectAltName=email:*,URI:*,DNS:*,RID:*)&nbsp;<img src='/blob.gif' alt='*' /></td>
 	<td class='base' nowrap='nowrap'><input type='text' name='SUBJECTALTNAME' value='$cgiparams{'SUBJECTALTNAME'}' size='32' /></td></tr>
 	<tr><td>&nbsp;</td>
 		<td><br /><input type='submit' name='ACTION' value='$Lang::tr{'generate root/host certificates'}' /><br /><br /></td></tr>
