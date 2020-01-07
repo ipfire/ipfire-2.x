@@ -28,10 +28,27 @@ ip_address_revptr() {
 }
 
 read_name_servers() {
-	local i
-	for i in 1 2; do
-		echo "$(</var/ipfire/red/dns${i})"
-	done 2>/dev/null | xargs echo
+	# Read name servers from ISP
+	if [ "${USE_ISP_NAMESERVERS}" = "on" -a "${PROTO}" != "TLS" ]; then
+		local i
+		for i in 1 2; do
+			echo "$(</var/run/dns${i})"
+		done 2>/dev/null
+	fi
+
+	# Read configured name servers
+	local id address tls_hostname enabled remark
+	while IFS="," read -r id address tls_hostname enabled remark; do
+		[ "${enabled}" != "enabled" ] && continue
+
+		if [ "${PROTO}" = "TLS" ]; then
+			if [ -n "${tls_hostname}" ]; then
+				echo "${address}@853#${tls_hostname}"
+			fi
+		else
+			echo "${address}"
+		fi
+	done < /var/ipfire/dns/servers
 }
 
 check_red_has_carrier_and_ip() {
@@ -166,20 +183,10 @@ write_forward_conf() {
 		fi
 
 		# Add upstream name servers
-		local id address tls_hostname enabled remark
-		while IFS="," read -r id address tls_hostname enabled remark; do
-			# Skip disabled servers
-			[ "${enabled}" != "enabled" ] && continue
-
-			# Set DNS server
-			if [ "${PROTO}" = "TLS" ]; then
-				if [ -n "${tls_hostname}" ]; then
-					echo "	forward-addr: ${address}@853#${tls_hostname}"
-				fi
-			else
-				echo "	forward-addr: ${address}"
-			fi
-		done < /var/ipfire/dns/servers
+		local ns
+		for ns in $(read_name_servers); do
+			echo "	forward-addr: ${ns}"
+		done
 	) > /etc/unbound/forward.conf
 }
 
@@ -291,6 +298,19 @@ resolve() {
 			echo "${answer}"
 		fi
 	done
+}
+
+update_forwarders() {
+	# DO nothing when we do not use the ISP name servers
+	[ "${USE_ISP_NAMESERVERS}" != "on" ] && return 0
+
+	# Update unbound about the new servers
+	local nameservers=( $(read_name_servers) )
+	if [ -n "${nameservers[*]}" ]; then
+		unbound-control -q forward "${nameservers[@]}"
+	else
+		unbound-control -q forward off
+	fi
 }
 
 # Sets up Safe Search for various search engines
@@ -593,14 +613,14 @@ case "$1" in
 		;;
 
 	update-forwarders)
-		: # XXX must set ISP name servers if necessary
+		update_forwarders
 
 		# Update Safe Search settings
 		update_safe_search
 		;;
 
 	remove-forwarders)
-		: # XXX must remove ISP name servers
+		update_forwarders
 		;;
 
 	resolve)
