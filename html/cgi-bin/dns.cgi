@@ -480,7 +480,7 @@ END
 		# Loop through the array which stores the files.
 		foreach my $file (@ISP_nameserver_files) {
 			# Grab the address of the nameserver.
-			my $address = &grab_address_from_file($file);
+			my $address = &General::grab_address_from_file($file);
 
 			# Check if we got an address.
 			if ($address) {
@@ -813,37 +813,6 @@ sub red_is_active () {
 		# Return nothing - False.
 		return;
 	}
-}
-
-# Tiny function to grab an IP-address of a given file.
-sub grab_address_from_file($) {
-	my ($file) = @_;
-
-	my $address;
-
-	# Check if the given file exists.
-	if(-f $file) {
-		# Open the file for reading.
-		open(FILE, $file) or die "Could not read from $file. $!\n";
-
-		# Read the address from the file.
-		$address = <FILE>;
-
-		# Close filehandle.
-		close(FILE);
-
-		# Remove newlines.
-		chomp($address);
-
-		# Check if the obtained address is valid.
-		if (&General::validip($address)) {
-			# Return the address.
-			return $address;
-		}
-	}
-
-	# Return nothing.
-	return;
 }
 
 # Function to check a given nameserver against propper work.
