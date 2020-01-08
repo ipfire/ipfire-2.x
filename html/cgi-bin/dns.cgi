@@ -216,6 +216,9 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 
 		# Write the changed hash back to the config file.
 		&General::writehasharray($servers_file, \%dns_servers);
+
+		# Call function to handle unbound restart, etc.
+		&_handle_unbound_and_more();
 	}
 
 ## Remove entry from DNS servers list.
@@ -234,6 +237,9 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 
 	# Write the changed hash to the config file.
 	&General::writehasharray($servers_file, \%dns_servers);
+
+	# Call function to handle unbound restart, etc.
+	&_handle_unbound_and_more();
 
 ## Handle request to check the servers.
 #
