@@ -415,7 +415,7 @@ sub show_nameservers () {
 		$dns_status_string = "$Lang::tr{'working'}";
 		$dns_status_col = "${Header::colourgreen}";
 	} else {
-		$dns_status_string = "$Lang::tr{'broken'} status: $dns_status_ret";
+		$dns_status_string = "$Lang::tr{'broken'}";
 		$dns_status_col = "${Header::colourred}";
 	}
 
