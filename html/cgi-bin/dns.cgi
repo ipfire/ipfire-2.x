@@ -384,7 +384,7 @@ END
 # Section to display the configured and used DNS servers.
 #
 sub show_nameservers () {
-	&Header::openbox('100%', 'center', "DNS-Servers");
+	&Header::openbox('100%', 'center', "$Lang::tr{'dns title'}");
 
 print <<END;
 		<table class="tbl" width='100%'>
