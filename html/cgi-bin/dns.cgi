@@ -117,16 +117,6 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 		}
 	}
 
-	# Check the nameserver.
-	my $status = &check_nameserver("$cgiparams{'NAMESERVER'}", "ping.ipfire.org", "$settings{'PROTO'}", "$cgiparams{'TLS_HOSTNAME'}");
-
-	# Assign errormessage, if the nameserver does not support dnssec or any other kind of error happened.
-	if ($status eq "0") {
-		$errormessage = "$Lang::tr{'dns could not add server'} $Lang::tr{'dnssec not supported'}";
-	} elsif (($status ne "1") && ($status ne "2")) {
-		$errormessage = "$Lang::tr{'dns could not add server'} $status";
-	}
-
 	# Go further if there was no error.
 	if ( ! $errormessage) {
 		# Check if a remark has been entered.
