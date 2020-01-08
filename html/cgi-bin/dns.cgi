@@ -781,6 +781,11 @@ sub grab_address_from_file($) {
 sub check_nameserver($$$$) {
 	my ($nameserver, $record, $proto, $tls_hostname) = @_;
 
+	# Check if the system is online.
+	unless (&red_is_active()) {
+		return "$Lang::tr{'system is offline'}";
+	}
+
 	# Default values.
 	my @command = ("kdig", "+timeout=2", "+retry=0", "+dnssec",
 		"+bufsize=1232");
