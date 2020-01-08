@@ -519,8 +519,13 @@ END
 				my $ccode = &GeoIP::lookup($nameserver);
 				my $flag_icon = &GeoIP::get_flag_icon($ccode);
 
-				my $iaddr = inet_aton($nameserver);
-				my $rdns = gethostbyaddr($iaddr, AF_INET);
+				my $rdns;
+
+				# Only do the reverse lookup if the system is online.
+				if ( -f "/var/ipfire/red/active") {
+					my $iaddr = inet_aton($nameserver);
+					$rdns = gethostbyaddr($iaddr, AF_INET);
+				}
 
 				if (!$rdns) { $rdns = $Lang::tr{'lookup failed'}; }
 
