@@ -522,7 +522,7 @@ END
 				my $rdns;
 
 				# Only do the reverse lookup if the system is online.
-				if ( -f "/var/ipfire/red/active") {
+				if (&red_is_active()) {
 					my $iaddr = inet_aton($nameserver);
 					$rdns = gethostbyaddr($iaddr, AF_INET);
 				}
@@ -732,6 +732,18 @@ END
 	print "</form>\n";
 
 	&Header::closebox();
+}
+
+# Check if the system is online (RED is connected).
+sub red_is_active () {
+	# Check if the "active" file is present.
+	if ( -f "${General::swroot}/red/active") {
+		# Return "1" - True.
+		return 1;
+	} else {
+		# Return nothing - False.
+		return;
+	}
 }
 
 # Tiny function to grab an IP-address of a given file.
