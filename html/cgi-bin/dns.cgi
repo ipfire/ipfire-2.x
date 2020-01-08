@@ -683,6 +683,13 @@ sub show_add_edit_nameserver() {
 		&Header::openbox('100%', 'left', $Lang::tr{'dnsforward add a new entry'});
 	}
 
+	my $tls_required_image;
+
+	# If the protocol is TLS, dispaly the required image.
+	if ($settings{'PROTO'} eq "TLS") {
+		$tls_required_image = "<img src='/blob.gif' alt='*'>";
+	}
+
 	# Add hidden input to store the mode.
 	print "<input type='hidden' name='MODE' value='$cgiparams{'SERVERS'}'>\n";
 
@@ -692,20 +699,13 @@ print <<END
 			<td width='20%' class='base'>$Lang::tr{'ip address'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
 			<td><input type='text' name='NAMESERVER' value='$cgiparams{"NAMESERVER"}' size='24' /></td>
 		</tr>
-END
-;
-	# If the protocol is TLS, display the TLS hostname input.
-	if ($settings{'PROTO'} eq "TLS") {
-print <<END
+
+
 		<tr>
-			<td width='20%' class='base'>$Lang::tr{'dns tls hostname'}:&nbsp;<img src='/blob.gif' alt='*'></td>
+			<td width='20%' class='base'>$Lang::tr{'dns tls hostname'}:&nbsp;$tls_required_image</td>
 			<td><input type='text' name='TLS_HOSTNAME' value='$cgiparams{'TLS_HOSTNAME'}' size='24'></td>
 		</tr>
-END
-;
-	}
 
-print <<END
 
 		<tr>
 			<td width ='20%' class='base'>$Lang::tr{'remark'}:</td>
