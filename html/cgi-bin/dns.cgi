@@ -56,6 +56,8 @@ my @ISP_nameserver_files = ( "/var/run/dns1", "/var/run/dns2" );
 # File which contains the ca-certificates.
 my $ca_certs_file = "/etc/ssl/certs/ca-bundle.crt";
 
+my $check_servers;
+
 my %color = ();
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -223,6 +225,11 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 
 	# Write the changed hash to the config file.
 	&General::writehasharray($servers_file, \%dns_servers);
+
+## Handle request to check the servers.
+#
+} elsif ($cgiparams{'SERVERS'} eq $Lang::tr{'dns check servers'}) {
+	$check_servers = 1;
 }
 
 # Hash to store the generic DNS settings.
@@ -404,16 +411,25 @@ print <<END;
 				<td align="center">
 					<strong>$Lang::tr{'remark'}</strong>
 				</td>
-
+END
+	# Check if the status should be displayed.
+	if ($check_servers) {
+print <<END
 				<td align="center">
 					<strong>$Lang::tr{'status'}</strong>
 				</td>
+END
+;
+	}
+
+print <<END
 
 				<td align="center" colspan="3">
 					<strong>$Lang::tr{'action'}</strong>
 				</td>
 			</tr>
 END
+;
 
 		# Check the usage of ISP assigned nameservers is enabled.
 		my $id = 1;
@@ -478,7 +494,7 @@ END
 				my $status_colour;
 
 				# Only grab the status if the nameserver is enabled.
-				if ($enabled eq "enabled") {
+				if (($check_servers) && ($enabled eq "enabled")) {
 					$status = &check_nameserver("$nameserver", "ping.ipfire.org", "$settings{'PROTO'}", "$tls_hostname");
 				}
 
@@ -546,12 +562,18 @@ print <<END;
 				<td align="center" $col>
 					$remark
 				</td>
-
-				<td align="center" $col>
-					<strong><font color="$status_colour"><abbr title="$status_message">$status_short</abbr></font></strong>
-				</td>
 END
 ;
+				# Display server status if requested.
+				if ($check_servers) {
+print <<END
+					<td align="center" $col>
+						<strong><font color="$status_colour"><abbr title="$status_message">$status_short</abbr></font></strong>
+					</td>
+END
+;
+				}
+
 				# Check if the id is greater than "2".
 				#
 				# Nameservers with an ID's of one or two are ISP assigned,
@@ -619,7 +641,10 @@ END
 print <<END;
 			<tr>
 				<form method="post" action="$ENV{'SCRIPT_NAME'}">
-					<td colspan="9" align="right"><input type="submit" name="SERVERS" value="$Lang::tr{'add'}"></td>
+					<td colspan="9" align="right">
+						<input type="submit" name="SERVERS" value="$Lang::tr{'add'}">
+						<input type="submit" name="SERVERS" value="$Lang::tr{'dns check servers'}">
+					</td>
 				</form>
 			</tr>
 		</table>

@@ -841,6 +841,7 @@
 'dns address done' => 'The DNS server address settings are going to be saved.',
 'dns address recon' => 'Trying to reconnect!',
 'dns check failed' => 'DNS check failed',
+'dns check servers' => 'Check DNS Servers',
 'dns configuration' => 'DNS Configuration',
 'dns could not add server' => 'Could not add server - Reason:',
 'dns desc' => 'If the red0 interface gets the IP address information via DHCP from the provider, the DNS server addresses will be set automatically. Now here you are able to change these DNS server IP addresses with your own ones.',
