@@ -857,6 +857,7 @@
 'dns mode for qname minimisation' => 'QNAME Minimisation',
 'dns new 0' => 'New <strong>primary</strong> DNS server IP:',
 'dns new 1' => 'New <strong>secondary</strong> DNS server IP:',
+'dns no address given' => 'No IP Address given.',
 'dns no tls hostname given' => 'No TLS hostname given.',
 'dns proxy server' => 'DNS Proxy Server',
 'dns saved' => 'Successfully saved!',

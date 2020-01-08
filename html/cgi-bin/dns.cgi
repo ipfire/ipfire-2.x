@@ -95,8 +95,13 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 	# Read-in generic settings.
 	&General::readhash("$settings_file", \%settings);
 
+	# Check if an IP-address has been given.
+	if ($cgiparams{"NAMESERVER"} eq "") {
+		$errormessage = "$Lang::tr{'dns no address given'}";
+	}
+
 	# Check if the given DNS server is valid.
-	if(!&General::validip($cgiparams{"NAMESERVER"})) {
+	elsif(!&General::validip($cgiparams{"NAMESERVER"})) {
 		$errormessage = "$Lang::tr{'invalid ip'}: $cgiparams{'NAMESERVER'}";
 	}
 
