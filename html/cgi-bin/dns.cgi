@@ -56,6 +56,9 @@ my @ISP_nameserver_files = ( "/var/run/dns1", "/var/run/dns2" );
 # File which contains the ca-certificates.
 my $ca_certs_file = "/etc/ssl/certs/ca-bundle.crt";
 
+# Server which is used, to determine if the whole DNS system works properly.
+my $dns_test_server = "ping.ipfire.org";
+
 my $check_servers;
 
 my %color = ();
@@ -393,7 +396,35 @@ END
 sub show_nameservers () {
 	&Header::openbox('100%', 'center', "$Lang::tr{'dns title'}");
 
+	my $dns_status_string;
+	my $dns_status_col;
+
+	# Test if the DNS system is working.
+	#
+	# Simple send a request to unbound and check if it can resolve the
+	# DNS test server.
+	my $dns_status_ret = &check_nameserver("127.0.0.1", "$dns_test_server", "UDP");
+
+	if ($dns_status_ret eq "2") {
+		$dns_status_string = "$Lang::tr{'working'}";
+		$dns_status_col = "${Header::colourgreen}";
+	} else {
+		$dns_status_string = "$Lang::tr{'broken'} status: $dns_status_ret";
+		$dns_status_col = "${Header::colourred}";
+	}
+
 print <<END;
+		<table width='100%'>
+			<tr>
+				<td>
+					<strong>$Lang::tr{'status'}:&nbsp;</strong>
+					<strong><font color='$dns_status_col'>$dns_status_string</font></strong>
+				</td>
+			</tr>
+		</table>
+
+		<br>
+
 		<table class="tbl" width='100%'>
 			<tr>
 				<td align="center">
