@@ -88,6 +88,9 @@ if ($cgiparams{'GENERAL'} eq $Lang::tr{'save'}) {
 
 	# Store settings into settings file.
 	&General::writehash("$settings_file", \%cgiparams);
+
+	# Call function to handle unbound restart, etc.
+	&_handle_unbound_and_more()
 }
 
 ###
@@ -174,6 +177,9 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 
 		# Write the changed hash to the config file.
 		&General::writehasharray($servers_file, \%dns_servers);
+
+		# Call function to handle unbound restart, etc.
+		&_handle_unbound_and_more();
 	} else {
 		# Switch back to previous mode.
 		$cgiparams{'SERVERS'} = $cgiparams{'MODE'};
@@ -783,6 +789,12 @@ END
 	print "</form>\n";
 
 	&Header::closebox();
+}
+
+# Private function to handle the restart of unbound and more.
+sub _handle_unbound_and_more () {
+	# Restart unbound
+	system('/usr/local/bin/unboundctrl restart >/dev/null');
 }
 
 # Check if the system is online (RED is connected).
