@@ -200,25 +200,6 @@ END
 END
 	}
 
-	my $dns_servers;
-	if ( -e "${General::swroot}/red/dns" ) {
-		open (TMP, "<${General::swroot}/red/dns");
-		$dns_servers = <TMP>;
-		chomp($dns_servers);
-		close TMP;
-	}
-	print <<END;
-		<tr>
-			<td>
-				<b><a href="netexternal.cgi">$Lang::tr{'dns servers'}</a>:</b>
-			</td>
-			<td style='text-align:center;'>
-				$dns_servers
-			</td>
-			<td></td>
-		</tr>
-END
-
 	if (&General::RedIsWireless()) {
 		my $iface = $netsettings{"RED_DEV"} || "red0";
 
