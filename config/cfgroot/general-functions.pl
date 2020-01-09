@@ -1208,4 +1208,54 @@ sub grab_address_from_file($) {
 	return;
 }
 
+# Function to get all configured and enabled nameservers.
+sub get_nameservers () {
+	my %settings;
+	my %servers;
+
+	my @nameservers;
+
+	# Read DNS configuration.
+	&readhash("$General::swroot/dns/settings", \%settings);
+
+	# Read configured DNS servers.
+	&readhasharray("$General::swroot/dns/servers", \%servers);
+
+	# Check if the ISP assigned server should be used.
+	if ($settings{'USE_ISP_NAMESERVERS'} eq "on") {
+		# Assign ISP nameserver files.
+		my @ISP_nameserver_files = ( "/var/run/dns1", "/var/run/dns2" );
+
+		# Loop through the array of ISP assigned DNS servers.
+		foreach my $file (@ISP_nameserver_files) {
+			# Grab the IP address.
+			my $address = &grab_address_from_file($file);
+
+			# Check if an address has been grabbed.
+			if ($address) {
+				# Add the address to the array of nameservers.
+				push(@nameservers, $address);
+			}
+		}
+	}
+
+	# Check if DNS servers are configured.
+	if (%servers) {
+		# Loop through the hash of configured DNS servers.
+		foreach my $id (keys %servers) {
+			my $address = $servers{$id}[0];
+			my $status = $servers{$id}[2];
+
+			# Check if the current processed server is enabled.
+			if ($status eq "enabled") {
+				# Add the address to the array of nameservers.
+				push(@nameservers, $address);
+			}
+		}
+	}
+
+	# Return the array.
+	return @nameservers;
+}
+
 1;
