@@ -28,6 +28,7 @@ use IO::Socket;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/geoip-functions.pl";
+require "${General::swroot}/ids-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
@@ -801,6 +802,16 @@ END
 sub _handle_unbound_and_more () {
 	# Restart unbound
 	system('/usr/local/bin/unboundctrl restart >/dev/null');
+
+	# Check if the IDS is running.
+	if(&IDS::ids_is_running()) {
+		# Re-generate the file which contains the DNS Server
+		# details.
+		&IDS::generate_dns_servers_file();
+
+		# Call suricatactrl to perform a reload.
+		&IDS::call_suricatactrl("restart");
+	}
 }
 
 # Check if the system is online (RED is connected).
