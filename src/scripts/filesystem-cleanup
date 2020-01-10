@@ -1,0 +1,76 @@
+#!/bin/bash
+############################################################################
+#                                                                          #
+# This file is part of the IPFire Firewall.                                #
+#                                                                          #
+# IPFire is free software; you can redistribute it and/or modify           #
+# it under the terms of the GNU General Public License as published by     #
+# the Free Software Foundation; either version 2 of the License, or        #
+# (at your option) any later version.                                      #
+#                                                                          #
+# IPFire is distributed in the hope that it will be useful,                #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+# GNU General Public License for more details.                             #
+#                                                                          #
+# You should have received a copy of the GNU General Public License        #
+# along with IPFire; if not, write to the Free Software                    #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
+#                                                                          #
+# Copyright (C) 2020 IPFire Team <info@ipfire.org>.                        #
+#                                                                          #
+############################################################################
+
+PATHS=(
+	/usr/lib
+	/lib
+)
+
+main() {
+	# Update the runtime linker cache (this may fix any broken symlinks)
+	ldconfig
+
+	local path
+	for path in ${PATHS[@]}; do
+		echo "Searching in ${path}..."
+
+		# Find all files called libsomething.so.N
+		local lib
+		for lib in $(find "${path}" -maxdepth 1 -type l -name "lib*.so.*" | sort); do
+			# Read the name of the linked library
+			local link="$(readlink -m "${lib}")"
+
+			# We have two versioning schemas that we need to distinguish...
+			local files=()
+			case "${link}" in
+				# Libraries called libsomething-N.so
+				*/lib*-*.so)
+					files+=( ${link%-*}-* )
+					;;
+
+				# Libraries called libsomething.so.N.*
+				*)
+					files+=( ${lib}* )
+					;;
+			esac
+
+			# Remove all files that have the same base name than
+			# the library we are looking at, apart from the symlink
+			# and the linked file itself.
+			local file
+			for file in ${files[@]}; do
+				case "${file}" in
+					# Ignore these files
+					${lib}|${link})
+						;;
+
+					*)
+						unlink "${file}"
+						;;
+				esac
+			done
+		done
+	done
+}
+
+main "$@" || exit $?
