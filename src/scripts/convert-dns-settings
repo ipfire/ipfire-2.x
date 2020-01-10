@@ -53,6 +53,9 @@ main() {
 		fi
 	fi
 
+	# Set correct ownership.
+	chown nobody:nobody /var/ipfire/dns/settings
+
 	# Convert old unbound settings file
 	if [ -e "/etc/sysconfig/unbound" ]; then
 		local USE_FORWARDERS
@@ -81,6 +84,9 @@ main() {
 
 		rm -f "/etc/sysconfig/unbound"
 	fi
+
+	# Set correct ownership.
+	chown nobody:nobody /var/ipfire/dns/servers
 }
 
 main "$@" || exit $?
