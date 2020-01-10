@@ -27,6 +27,22 @@ PATHS=(
 )
 
 main() {
+	local dry_run="false"
+
+	while [ $# -gt 0 ]; do
+		case "${1}" in
+			--dry-run)
+				dry_run="true"
+				;;
+
+			*)
+				echo "${0}: Invalid argument: ${1}" >&2
+				return 2
+				;;
+		esac
+		shift
+	done
+
 	# Update the runtime linker cache (this may fix any broken symlinks)
 	ldconfig
 
@@ -65,7 +81,12 @@ main() {
 						;;
 
 					*)
-						unlink "${file}"
+						echo "Removing ${file}..."
+
+						# Actually remove the file (maybe)
+						if [ "${dry_run}" = "false" ]; then
+							unlink "${file}"
+						fi
 						;;
 				esac
 			done
