@@ -803,7 +803,7 @@ END
 # Private function to handle the restart of unbound and more.
 sub _handle_unbound_and_more () {
 	# Restart unbound
-	system('/usr/local/bin/unboundctrl restart >/dev/null');
+	system('/usr/local/bin/unboundctrl reload >/dev/null');
 
 	# Check if the IDS is running.
 	if(&IDS::ids_is_running()) {
