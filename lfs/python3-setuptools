@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-setuptools
 PAK_VER    = 1
 
-DEPS       = "python3"
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -81,5 +81,4 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && python3 bootstrap.py
 	cd $(DIR_APP) && python3 setup.py build
 	cd $(DIR_APP) && python3 setup.py install --root=/
-	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
