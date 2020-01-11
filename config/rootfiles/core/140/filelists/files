@@ -8,5 +8,6 @@ etc/rc.d/init.d/suricata
 opt/pakfire/etc/pakfire.conf
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/sbin/convert-snort
 usr/sbin/setup
