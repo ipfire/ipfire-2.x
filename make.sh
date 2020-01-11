@@ -25,7 +25,7 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
-VERSION="2.23"							# Version number
+VERSION="2.25"							# Version number
 CORE="140"							# Core Level (Filename)
 PAKFIRE_CORE="139"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
@@ -38,7 +38,7 @@ KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
 GIT_TAG=$(git tag | tail -1)					# Git Tag
 GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
 
-TOOLCHAINVER=20190814
+TOOLCHAINVER=20200108
 
 ###############################################################################
 #
