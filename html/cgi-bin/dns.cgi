@@ -411,6 +411,7 @@ sub show_nameservers () {
 
 	my $dns_status_string;
 	my $dns_status_col;
+	my $dns_working;
 
 	# Test if the DNS system is working.
 	#
@@ -421,6 +422,7 @@ sub show_nameservers () {
 	if ($dns_status_ret eq "2") {
 		$dns_status_string = "$Lang::tr{'working'}";
 		$dns_status_col = "${Header::colourgreen}";
+		$dns_working = 1;
 	} else {
 		$dns_status_string = "$Lang::tr{'broken'}";
 		$dns_status_col = "${Header::colourred}";
@@ -577,7 +579,7 @@ END
 				my $rdns;
 
 				# Only do the reverse lookup if the system is online.
-				if (&red_is_active()) {
+				if ($dns_working) {
 					my $iaddr = inet_aton($nameserver);
 					$rdns = gethostbyaddr($iaddr, AF_INET);
 				}
