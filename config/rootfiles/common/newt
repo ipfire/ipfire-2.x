@@ -7,8 +7,8 @@ usr/lib/libnewt.so.0.52.18
 #usr/lib/pkgconfig/libnewt.pc
 #usr/lib/python2.7/site-packages/_snack.so
 #usr/lib/python2.7/site-packages/snack.py
-#usr/lib/python3.6/site-packages/_snack.so
-#usr/lib/python3.6/site-packages/snack.py
+#usr/lib/python3.8/site-packages/_snack.so
+#usr/lib/python3.8/site-packages/snack.py
 #usr/share/locale/ar
 #usr/share/locale/ar/LC_MESSAGES
 #usr/share/locale/ar/LC_MESSAGES/newt.mo

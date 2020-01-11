@@ -126,7 +126,7 @@ define FIND_FILES
 	cd $(ROOT)/ && find -mount \
 		\( -path '.$(TOOLS_DIR)' -or -path './tmp' -or -path './usr/src' \
 		-or -path './run' -or -path './dev' -or -path './proc' \
-		-or -path './install' \) -prune -or -print | sort
+		-or -path './install' -or -path '.*/__pycache__' \) -prune -or -print | sort
 endef
 
 # This is common starting logic for builds.

@@ -13,11 +13,9 @@ usr/lib/libcap-ng.so.0.0.0
 #usr/lib/python2.7/site-packages/capng.py
 #usr/lib/python2.7/site-packages/capng.pyc
 #usr/lib/python2.7/site-packages/capng.pyo
-#usr/lib/python3.6/site-packages/__pycache__/capng.cpython-36.opt-1.pyc
-#usr/lib/python3.6/site-packages/__pycache__/capng.cpython-36.pyc
-#usr/lib/python3.6/site-packages/_capng.la
-#usr/lib/python3.6/site-packages/_capng.so
-#usr/lib/python3.6/site-packages/capng.py
+#usr/lib/python3.8/site-packages/_capng.la
+#usr/lib/python3.8/site-packages/_capng.so
+#usr/lib/python3.8/site-packages/capng.py
 #usr/share/aclocal/cap-ng.m4
 #usr/share/man/man3/capng_apply.3
 #usr/share/man/man3/capng_capability_to_name.3
