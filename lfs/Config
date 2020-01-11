@@ -241,7 +241,7 @@ define PAK
 	sed -e 's/BUILDTARGET/$(BUILDTARGET)/g' -e 's/KVER/$(KVER)/g' -e 's/MACHINE/$(BUILD_ARCH)/g' -i /install/packages/package/ROOTFILES
 	sed -e 's/xxxKVERxxx/$(KVER)/g' -i /install/packages/package/install.sh
 	chmod 755 /install/packages/package/{{,un}install,update}.sh
-	cd / && tar cfp /install/packages/package/files.tmp --numeric-owner --exclude='#*' --files-from=/install/packages/package/ROOTFILES
+	cd / && tar cfp /install/packages/package/files.tmp --numeric-owner --exclude='#*' --exclude='__pycache__' --files-from=/install/packages/package/ROOTFILES
 	# Double tar to remove double files
 	tar xfp /install/packages/package/files.tmp --numeric-owner -C /install/packages/package/tmp/
 	rm -f /install/packages/package/files.tmp

@@ -72,7 +72,7 @@ core/%:
 	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
 
 	#Remove doubled files with tar/untar/tar to save space
-	tar -c --exclude='proc/*' --exclude='tmp/ROOTFILES' --exclude='#*' --exclude='dev/pts/*' \
+	tar -c --exclude='proc/*' --exclude='tmp/ROOTFILES' --exclude='__pycache__' --exclude='#*' --exclude='dev/pts/*' \
 		--exclude-from=$(DIR_SRC)/config/rootfiles/$@/exclude \
 		-C / --files-from=/tmp/ROOTFILES -f /$(SNAME).tar
 	mv -f /tmp/ROOTFILES /install/packages/package/ROOTFILES
