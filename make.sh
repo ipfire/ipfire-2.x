@@ -1334,6 +1334,7 @@ buildipfire() {
   lfsmake2 python-ipaddress
   lfsmake2 glib
   lfsmake2 GeoIP
+  lfsmake2 geoip-database
   lfsmake2 ntp
   lfsmake2 openssh
   lfsmake2 fontconfig
