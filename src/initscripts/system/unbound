@@ -58,47 +58,45 @@ config_header() {
 	echo
 }
 
-own_hostname() {
-	local hostname=$(hostname -f)
-	# 1.1.1.1 is reserved for unused green, skip this
-	if [ -n "${GREEN_ADDRESS}" -a "${GREEN_ADDRESS}" != "1.1.1.1" ]; then
-		unbound-control -q local_data "${hostname} ${LOCAL_TTL} IN A ${GREEN_ADDRESS}"
-	fi
+write_hosts_conf() {
+	(
+		config_header
 
-	local address
-	for address in ${GREEN_ADDRESS} ${BLUE_ADDRESS} ${ORANGE_ADDRESS}; do
-		[ -n "${address}" ] || continue
-		[ "${address}" = "1.1.1.1" ] && continue
+		# Make own hostname resolveable
+		# 1.1.1.1 is reserved for unused green, skip this
+		if [ -n "${GREEN_ADDRESS}" -a "${GREEN_ADDRESS}" != "1.1.1.1" ]; then
+			echo "local-data: \"${HOSTNAME} ${LOCAL_TTL} IN A ${GREEN_ADDRESS}\""
+		fi
 
-		address=$(ip_address_revptr ${address})
-		unbound-control -q local_data "${address} ${LOCAL_TTL} IN PTR ${hostname}"
-	done
-}
+		local address
+		for address in ${GREEN_ADDRESS} ${BLUE_ADDRESS} ${ORANGE_ADDRESS}; do
+			[ -n "${address}" ] || continue
+			[ "${address}" = "1.1.1.1" ] && continue
 
-update_hosts() {
-	# Make own hostname resolveable
-	own_hostname
+			address=$(ip_address_revptr ${address})
+			echo "local-data: \"${address} ${LOCAL_TTL} IN PTR ${HOSTNAME}\""
+		done
 
-	local enabled address hostname domainname generateptr
+		# Add all hosts
+		local enabled address hostname domainname generateptr
+		while IFS="," read -r enabled address hostname domainname generateptr; do
+			[ "${enabled}" = "on" ] || continue
 
-	while IFS="," read -r enabled address hostname domainname generateptr; do
-		[ "${enabled}" = "on" ] || continue
+			# Build FQDN
+			local fqdn="${hostname}.${domainname}"
+			echo "local-data: \"${fqdn} ${LOCAL_TTL} IN A ${address}\""
 
-		# Build FQDN
-		local fqdn="${hostname}.${domainname}"
+			# Skip reverse resolution if the address equals the GREEN address
+			[ "${address}" = "${GREEN_ADDRESS}" ] && continue
 
-		unbound-control -q local_data "${fqdn} ${LOCAL_TTL} IN A ${address}"
+			# Skip reverse resolution if user requested not to do so
+			[ "${generateptr}" = "off" ] && continue
 
-		# Skip reverse resolution if the address equals the GREEN address
-		[ "${address}" = "${GREEN_ADDRESS}" ] && continue
-
-		# Skip reverse resolution if user requested not to do so
-		[ "${generateptr}" = "off" ] && continue
-
-		# Add RDNS
-		address=$(ip_address_revptr ${address})
-		unbound-control -q local_data "${address} ${LOCAL_TTL} IN PTR ${fqdn}"
-	done < /var/ipfire/main/hosts
+			# Add RDNS
+			address=$(ip_address_revptr ${address})
+			echo "local-data: \"${address} ${LOCAL_TTL} IN PTR ${fqdn}\""
+		done < /var/ipfire/main/hosts
+	) > /etc/unbound/hosts.conf
 }
 
 write_forward_conf() {
@@ -573,6 +571,7 @@ case "$1" in
 
 		# Update configuration files
 		write_tuning_conf
+		write_hosts_conf
 		write_forward_conf
 
 		boot_mesg "Starting Unbound DNS Proxy..."
@@ -582,9 +581,6 @@ case "$1" in
 		if [ -e "/var/ipfire/red/active" ]; then
 			update_safe_search
 		fi
-
-		# Update hosts
-		update_hosts
 		;;
 
 	stop)
@@ -600,14 +596,12 @@ case "$1" in
 	reload)
 		# Update configuration files
 		write_forward_conf
+		write_hosts_conf
 
 		# Update Safe Search rules if the system is online.
 		if [ -e "/var/ipfire/red/active" ]; then
 			update_safe_search
 		fi
-
-		# Update hosts.
-		update_hosts
 
 		# Call unbound-control and perform the reload
 		/usr/sbin/unbound-control -q reload
