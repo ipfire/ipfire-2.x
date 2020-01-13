@@ -600,12 +600,8 @@ case "$1" in
 		resolve "${2}"
 		;;
 
-	update-safe-search)
-		update_safe_search
-		;;
-
 	*)
-		echo "Usage: $0 {start|stop|restart|reload|status|resolve|update-forwarders|remove-forwarders|update-safe-search}"
+		echo "Usage: $0 {start|stop|restart|reload|status|resolve|update-forwarders|remove-forwarders}"
 		exit 1
 		;;
 esac
