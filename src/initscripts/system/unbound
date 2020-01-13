@@ -76,6 +76,9 @@ own_hostname() {
 }
 
 update_hosts() {
+	# Make own hostname resolveable
+	own_hostname
+
 	local enabled address hostname domainname generateptr
 
 	while IFS="," read -r enabled address hostname domainname generateptr; do
@@ -574,9 +577,6 @@ case "$1" in
 
 		boot_mesg "Starting Unbound DNS Proxy..."
 		loadproc /usr/sbin/unbound || exit $?
-
-		# Make own hostname resolveable
-		own_hostname
 
 		# Install Safe Search rules when the system is already online
 		if [ -e "/var/ipfire/red/active" ]; then
