@@ -87,6 +87,9 @@ main() {
 
 	# Set correct ownership.
 	chown nobody:nobody /var/ipfire/dns/servers
+
+	# Make DHCP leases readable for nobody
+	chown 644 /etc/unbound/dhcp-leases.conf
 }
 
 main "$@" || exit $?

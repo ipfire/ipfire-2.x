@@ -28,6 +28,7 @@ import logging.handlers
 import os
 import re
 import signal
+import stat
 import subprocess
 import tempfile
 
@@ -527,6 +528,9 @@ class UnboundConfigWriter(object):
 			for l in leases:
 				for rr in l.rrset:
 					f.write("local-data: \"%s\"\n" % " ".join(rr))
+
+			# Make file readable for everyone
+			os.fchmod(f.fileno(), stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IROTH)
 
 		os.rename(filename, self.path)
 
