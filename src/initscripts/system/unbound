@@ -599,7 +599,6 @@ case "$1" in
 		;;
 	reload)
 		# Update configuration files
-		write_tuning_conf
 		write_forward_conf
 
 		# Update Safe Search rules if the system is online.
