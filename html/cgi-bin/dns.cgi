@@ -553,7 +553,7 @@ END
 					$status = &check_nameserver("$nameserver", "ping.ipfire.org", "$settings{'PROTO'}", "$tls_hostname");
 				}
 
-				if (!$status) {
+				if (!defined $status) {
 					$status_short = "$Lang::tr{'disabled'}";
 
 				# DNSSEC Not supported
