@@ -87,11 +87,20 @@ if ($cgiparams{'GENERAL'} eq $Lang::tr{'save'}) {
 		$cgiparams{'ENABLE_SAFE_SEARCH'} = "off";
 	}
 
-	# Store settings into settings file.
-	&General::writehash("$settings_file", \%cgiparams);
+	# Check if using ISP nameservers and TLS is enabled at the same time.
+	if (($cgiparams{'USE_ISP_NAMESERVERS'} eq "on") && ($cgiparams{'PROTO'} eq "TLS")) {
+		$errormessage = $Lang::tr{'dns isp nameservers and tls not allowed'}
+	}
 
-	# Call function to handle unbound restart, etc.
-	&_handle_unbound_and_more()
+	# Check if there was an error.
+	if ( ! $errormessage) {
+
+		# Store settings into settings file.
+		&General::writehash("$settings_file", \%cgiparams);
+
+		# Call function to handle unbound restart, etc.
+		&_handle_unbound_and_more()
+	}
 }
 
 ###
