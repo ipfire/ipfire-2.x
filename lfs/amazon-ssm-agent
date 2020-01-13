@@ -83,7 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# The build system is searching for code in a certain path
 	mkdir -pv $$(dirname $(DIR_BUILD))
-	ln -svf --relative $(DIR_APP) $(DIR_BUILD)
+	mv -v $(DIR_APP) $(DIR_BUILD)
 
 	# Disable style check
 	cd $(DIR_BUILD) && sed -e "/checkstyle.sh/d" -i makefile
