@@ -7,11 +7,6 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-TEST_DOMAIN="ipfire.org"
-
-# This domain will never validate
-TEST_DOMAIN_FAIL="dnssec-failed.org"
-
 # Cache any local zones for 60 seconds
 LOCAL_TTL=60
 
