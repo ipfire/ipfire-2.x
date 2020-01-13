@@ -168,7 +168,7 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 
 			# The first allowed id is 3 to keep space for
 			# possible ISP assigned DNS servers.
-			if ($id le "2") {
+			if ($id <= "2") {
 				$id = "3";
 			}
 		}
