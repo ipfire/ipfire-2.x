@@ -1,0 +1,95 @@
+#!/bin/bash
+###############################################################################
+#                                                                             #
+# IPFire.org - A Linux-based firewall                                         #
+# Copyright (C) 2020 IPFire Team <info@ipfire.org>                            #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+main() {
+	# Do not convert anything if we already have some servers set
+	if [ ! -s "/var/ipfire/dns/servers" ]; then
+		local DNS0 DNS1 DNS2
+		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+		if [ -s "/var/ipfire/ppp/settings" ]; then
+			eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+
+			# Remove DNS, DNS1 and DNS2
+			sed -i "/^DNS[12]?=/d" /var/ipfire/ppp/settings
+		elif [ -s "/var/ipfire/dns/settings" ]; then
+			eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
+		fi
+
+		local var
+		local i=3
+		for var in DNS0 DNS1 DNS2; do
+			if [ -n "${!var}" ]; then
+				echo "${i},${!var},,enabled,"
+				(( i++ ))
+			fi
+		done > /var/ipfire/dns/servers
+
+		# Empty the old settings file
+		: > /var/ipfire/dns/settings
+
+		# Disable using ISP name servers when we already have some configured
+		if [ ${i} -gt 3 ]; then
+			echo "USE_ISP_NAMESERVERS=off" \
+				>> /var/ipfire/dns/settings
+		fi
+	fi
+
+	# Set correct ownership.
+	chown nobody:nobody /var/ipfire/dns/settings
+
+	# Convert old unbound settings file
+	if [ -e "/etc/sysconfig/unbound" ]; then
+		local USE_FORWARDERS
+		local ENABLE_SAFE_SEARCH
+		local FORCE_TCP
+
+		# Read settings
+		eval $(/usr/local/bin/readhash /etc/sysconfig/unbound)
+
+		# Safe Search
+		if [ "${ENABLE_SAFE_SEARCH}" = "on" ]; then
+			echo "ENABLE_SAFE_SEARCH=${ENABLE_SAFE_SEARCH}" \
+				>> /var/ipfire/dns/settings
+		fi
+
+		# Force TCP
+		if [ "${FORCE_TCP}" = "on" ]; then
+			echo "PROTO=TCP" >> /var/ipfire/dns/settings
+		fi
+	
+		# Run in recursor mode
+		if [ "${USE_FORWARDERS}" = "0" ]; then
+			# Remove all servers
+			: > /var/ipfire/dns/servers
+		fi
+
+		rm -f "/etc/sysconfig/unbound"
+	fi
+
+	# Set correct ownership.
+	chown nobody:nobody /var/ipfire/dns/servers
+
+	# Make DHCP leases readable for nobody
+	chown 644 /etc/unbound/dhcp-leases.conf
+}
+
+main "$@" || exit $?

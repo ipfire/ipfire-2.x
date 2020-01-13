@@ -702,40 +702,31 @@ sub generate_home_net_file() {
 # Function to generate and write the file which contains the configured and used DNS servers.
 #
 sub generate_dns_servers_file() {
-	# Open file which contains the current used DNS configuration.
-	open (FILE, "${General::swroot}/red/dns") or die "Could not read DNS configuration from ${General::swroot}/red/dns. $!\n";
-
-	# Read-in whole file content and store it in a temporary array.
-	my @file_content = split(' ', <FILE>);
-
-	# Close file handle.
-	close(FILE);
+	# Get the used DNS servers.
+	my @nameservers = &General::get_nameservers();
 
 	# Format dns servers declaration.
 	my $line = "\"\[";
 
-	# Check if the current DNS configuration is using the local recursor mode.
-	if ($file_content[0] eq "local" && $file_content[1] eq "recursor") {
+	# Check if the system has configured nameservers.
+	if (@nameservers) {
+		# Loop through the array of nameservers.
+		foreach my $server (@nameservers) {
+			# Add the DNS server to the line.
+			$line = "$line" . "$server";
+
+			# Check if the current DNS server was the last in the array.
+			if ($server ne $nameservers[-1]) {
+				# Add "," for the next DNS server.
+				$line = "$line" . "\,";
+			}
+		}
+	} else {
 		# The responsible DNS servers on red are directly used, and because we are not able
 		# to specify each single DNS server address here, we currently have to thread each
 		# address which is not part of the HOME_NET as possible DNS server.
 		$line = "$line" . "!\$HOME_NET";
 
-	} else {
-		# Loop through the array which contains the file content.
-		foreach my $server (@file_content) {
-			# Remove newlines.
-			chomp($server);
-
-			# Add the DNS server to the line.
-			$line = "$line" . "$server";
-
-			# Check if the current DNS server was the last in the array.
-			if ($server ne $file_content[-1]) {
-				# Add "," for the next DNS server.
-				$line = "$line" . "\,";
-			}
-		}
 	}
 
 	# Close the line...

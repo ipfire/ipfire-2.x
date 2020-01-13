@@ -280,15 +280,9 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 
 	# File declarations.
 	my $gatewayfile = "${General::swroot}/red/remote-ipaddress";
-	my $dns1file = "${General::swroot}/red/dns1";
-	my $dns2file = "${General::swroot}/red/dns2";
 
 	# Get gateway address.
-	my $gateway = &_get_address_from_file($gatewayfile);
-
-	# Get addresses from the used dns servers.
-	my $dns1 = &_get_address_from_file($dns1file);
-	my $dns2 = &_get_address_from_file($dns2file);
+	my $gateway = &General::grab_address_from_file($gatewayfile);
 
 	# Check if any input has been performed.
 	if ($input eq '') {
@@ -306,7 +300,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	}
 
 	# Check if the given input is one of the interface addresses or our gateway.
-	elsif ($input eq "$green" || $input eq "$blue" || $input eq "$orange" || $input eq "$red" || $input eq "$gateway" || $input eq "$dns1" || $input eq "$dns2") {
+	elsif ($input eq "$green" || $input eq "$blue" || $input eq "$orange" || $input eq "$red" || $input eq "$gateway") {
 		$errormessage = "$Lang::tr{'guardian blocking of this address is not allowed'}";
 	}
 
@@ -989,8 +983,6 @@ sub GenerateIgnoreFile() {
 	# File declarations.
 	my $public_address_file = "${General::swroot}/red/local-ipaddress";
 	my $gatewayfile = "${General::swroot}/red/remote-ipaddress";
-	my $dns1file = "${General::swroot}/red/dns1";
-	my $dns2file = "${General::swroot}/red/dns2";
 
 	# Write the obtained addresses to the ignore file.
 	print FILE "# IPFire local interfaces.\n";
@@ -1012,8 +1004,6 @@ sub GenerateIgnoreFile() {
 	print FILE "# Include the corresponding files to obtain the addresses.\n";
 	print FILE "Include_File = $public_address_file\n";
 	print FILE "Include_File = $gatewayfile\n";
-	print FILE "Include_File = $dns1file\n";
-	print FILE "Include_File = $dns2file\n";
 
 	# Add all user defined hosts and networks to the ignore file.
 	#
@@ -1044,34 +1034,4 @@ sub GenerateIgnoreFile() {
 	}
 
 	close(FILE);
-}
-
-# Private subfunction to obtain IP-addresses from given file names.
-#
-sub _get_address_from_file ($) {
-	my $file = shift;
-
-	# Check if the file exists.
-	if (-e $file) {
-		# Open the given file.
-		open(FILE, "$file") or die "Could not open $file.";
-
-		# Obtain the address from the first line of the file.
-		my $address = <FILE>;
-
-		# Close filehandle
-		close(FILE);
-
-		# Remove newlines.
-		chomp $address;
-
-		# Check if the grabbed address is valid.
-		if (&General::validip($address)) {
-			# Return the address.
-			return $address;
-		}
-	}
-
-	# Return nothing.
-	return;
 }

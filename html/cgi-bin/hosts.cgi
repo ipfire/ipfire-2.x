@@ -488,5 +488,5 @@ sub SortDataFile
 #
 sub BuildConfiguration {
     system '/usr/local/bin/rebuildhosts';
-    system '/usr/local/bin/unboundctrl restart &>/dev/null';
+    system '/usr/local/bin/unboundctrl reload &>/dev/null';
 }

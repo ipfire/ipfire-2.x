@@ -7,30 +7,12 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-TEST_DOMAIN="ipfire.org"
-
-# This domain will never validate
-TEST_DOMAIN_FAIL="dnssec-failed.org"
-
-INSECURE_ZONES=
-USE_FORWARDERS=1
-ENABLE_SAFE_SEARCH=off
-FORCE_TCP=off
-
 # Cache any local zones for 60 seconds
 LOCAL_TTL=60
 
-# EDNS buffer size
-EDNS_DEFAULT_BUFFER_SIZE=4096
-
-# Load optional configuration
-[ -e "/etc/sysconfig/unbound" ] && . /etc/sysconfig/unbound
-
-DIG_ARGS=()
-
-if [ "${FORCE_TCP}" = "on" ]; then
-	DIG_ARGS+=( "+tcp" )
-fi
+# Load configuration
+eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
 ip_address_revptr() {
 	local addr=${1}
@@ -42,26 +24,27 @@ ip_address_revptr() {
 }
 
 read_name_servers() {
-	local i
-	for i in 1 2; do
-		echo "$(</var/ipfire/red/dns${i})"
-	done 2>/dev/null | xargs echo
-}
+	# Read name servers from ISP
+	if [ "${USE_ISP_NAMESERVERS}" = "on" -a "${PROTO}" != "TLS" ]; then
+		local i
+		for i in 1 2; do
+			echo "$(</var/run/dns${i})"
+		done 2>/dev/null
+	fi
 
-check_red_has_carrier_and_ip() {
-	# Interface configured ?
-	[ ! -e "/var/ipfire/red/iface" ] && return 0;
+	# Read configured name servers
+	local id address tls_hostname enabled remark
+	while IFS="," read -r id address tls_hostname enabled remark; do
+		[ "${enabled}" != "enabled" ] && continue
 
-	# Interface present ?
-	[ ! -e "/sys/class/net/$(</var/ipfire/red/iface)" ] && return 0;
-
-	# has carrier ?
-	[ ! "$(</sys/class/net/$(</var/ipfire/red/iface)/carrier)" = "1" ] && return 0;
-
-	# has ip ?
-	[ "$(ip address show dev $(</var/ipfire/red/iface) | grep "inet")" = "" ] && return 0;
-
-	return 1;
+		if [ "${PROTO}" = "TLS" ]; then
+			if [ -n "${tls_hostname}" ]; then
+				echo "${address}@853#${tls_hostname}"
+			fi
+		else
+			echo "${address}"
+		fi
+	done < /var/ipfire/dns/servers
 }
 
 config_header() {
@@ -70,151 +53,67 @@ config_header() {
 	echo
 }
 
-update_forwarders() {
-	check_red_has_carrier_and_ip
-	if [ "${USE_FORWARDERS}" = "1" -a "${?}" = "1" ]; then
-		local forwarders
-		local broken_forwarders
+write_hosts_conf() {
+	(
+		config_header
 
-		local ns
-		for ns in $(read_name_servers); do
-			test_name_server ${ns} &>/dev/null
-			case "$?" in
-				# Only use DNSSEC-validating or DNSSEC-aware name servers
-				0|2)
-					forwarders="${forwarders} ${ns}"
-					;;
-				*)
-					broken_forwarders="${broken_forwarders} ${ns}"
-					;;
-			esac
+		# Make own hostname resolveable
+		# 1.1.1.1 is reserved for unused green, skip this
+		if [ -n "${GREEN_ADDRESS}" -a "${GREEN_ADDRESS}" != "1.1.1.1" ]; then
+			echo "local-data: \"${HOSTNAME} ${LOCAL_TTL} IN A ${GREEN_ADDRESS}\""
+		fi
+
+		local address
+		for address in ${GREEN_ADDRESS} ${BLUE_ADDRESS} ${ORANGE_ADDRESS}; do
+			[ -n "${address}" ] || continue
+			[ "${address}" = "1.1.1.1" ] && continue
+
+			address=$(ip_address_revptr ${address})
+			echo "local-data: \"${address} ${LOCAL_TTL} IN PTR ${HOSTNAME}\""
 		done
 
-		# Determine EDNS buffer size
-		local new_edns_buffer_size=${EDNS_DEFAULT_BUFFER_SIZE}
+		# Add all hosts
+		local enabled address hostname domainname generateptr
+		while IFS="," read -r enabled address hostname domainname generateptr; do
+			[ "${enabled}" = "on" ] || continue
 
-		for ns in ${forwarders}; do
-			local edns_buffer_size=$(ns_determine_edns_buffer_size ${ns})
-			if [ -n "${edns_buffer_size}" ]; then
-				if [ ${edns_buffer_size} -lt ${new_edns_buffer_size} ]; then
-					new_edns_buffer_size=${edns_buffer_size}
-				fi
-			fi
-		done
+			# Build FQDN
+			local fqdn="${hostname}.${domainname}"
+			echo "local-data: \"${fqdn} ${LOCAL_TTL} IN A ${address}\""
 
-		if [ ${new_edns_buffer_size} -lt ${EDNS_DEFAULT_BUFFER_SIZE} ]; then
-			boot_mesg "EDNS buffer size reduced to ${new_edns_buffer_size}" ${WARNING}
-			echo_warning
+			# Skip reverse resolution if the address equals the GREEN address
+			[ "${address}" = "${GREEN_ADDRESS}" ] && continue
 
-			unbound-control -q set_option edns-buffer-size: ${new_edns_buffer_size}
-		fi
+			# Skip reverse resolution if user requested not to do so
+			[ "${generateptr}" = "off" ] && continue
 
-		# Show warning for any broken upstream name servers
-		if [ -n "${broken_forwarders}" ]; then
-			boot_mesg "Ignoring broken upstream name server(s): ${broken_forwarders:1}" ${WARNING}
-			echo_warning
-		fi
-
-		if [ -n "${forwarders}" ]; then
-			boot_mesg "Configuring upstream name server(s): ${forwarders:1}" ${INFO}
-			echo_ok
-
-			# Make sure DNSSEC is activated
-			enable_dnssec
-
-			echo "${forwarders}" > /var/ipfire/red/dns
-			unbound-control -q forward ${forwarders}
-			return 0
-
-		# In case we have found no working forwarders
-		else
-			# Test if the recursor mode is available
-			if can_resolve_root +bufsize=${new_edns_buffer_size}; then
-				# Make sure DNSSEC is activated
-				enable_dnssec
-
-				boot_mesg "Falling back to recursor mode" ${WARNING}
-				echo_warning
-
-			# If not, we set DNSSEC in permissive mode and allow using all recursors
-			elif [ -n "${broken_forwarders}" ]; then
-				disable_dnssec
-
-				boot_mesg "DNSSEC has been set to permissive mode" ${FAILURE}
-				echo_failure
-
-				echo "${broken_forwarders}" > /var/ipfire/red/dns
-				unbound-control -q forward ${broken_forwarders}
-				return 0
-			fi
-		fi
-	fi
-
-	# If forwarders cannot be used we run in recursor mode
-	echo "local recursor" > /var/ipfire/red/dns
-	unbound-control -q forward off
-}
-
-remove_forwarders() {
-	enable_dnssec
-	echo "local recursor" > /var/ipfire/red/dns
-	unbound-control -q forward off
-
-}
-
-own_hostname() {
-	local hostname=$(hostname -f)
-	# 1.1.1.1 is reserved for unused green, skip this
-	if [ -n "${GREEN_ADDRESS}" -a "${GREEN_ADDRESS}" != "1.1.1.1" ]; then
-		unbound-control -q local_data "${hostname} ${LOCAL_TTL} IN A ${GREEN_ADDRESS}"
-	fi
-
-	local address
-	for address in ${GREEN_ADDRESS} ${BLUE_ADDRESS} ${ORANGE_ADDRESS}; do
-		[ -n "${address}" ] || continue
-		[ "${address}" = "1.1.1.1" ] && continue
-
-		address=$(ip_address_revptr ${address})
-		unbound-control -q local_data "${address} ${LOCAL_TTL} IN PTR ${hostname}"
-	done
-}
-
-update_hosts() {
-	local enabled address hostname domainname generateptr
-
-	while IFS="," read -r enabled address hostname domainname generateptr; do
-		[ "${enabled}" = "on" ] || continue
-
-		# Build FQDN
-		local fqdn="${hostname}.${domainname}"
-
-		unbound-control -q local_data "${fqdn} ${LOCAL_TTL} IN A ${address}"
-
-		# Skip reverse resolution if the address equals the GREEN address
-		[ "${address}" = "${GREEN_ADDRESS}" ] && continue
-
-		# Skip reverse resolution if user requested not to do so
-		[ "${generateptr}" = "off" ] && continue
-
-		# Add RDNS
-		address=$(ip_address_revptr ${address})
-		unbound-control -q local_data "${address} ${LOCAL_TTL} IN PTR ${fqdn}"
-	done < /var/ipfire/main/hosts
+			# Add RDNS
+			address=$(ip_address_revptr ${address})
+			echo "local-data: \"${address} ${LOCAL_TTL} IN PTR ${fqdn}\""
+		done < /var/ipfire/main/hosts
+	) > /etc/unbound/hosts.conf
 }
 
 write_forward_conf() {
 	(
 		config_header
 
+		# Enable strict QNAME minimisation
+		if [ "${QNAME_MIN}" = "strict" ]; then
+			echo "server:"
+			echo "	qname-minimisation-strict: yes"
+			echo
+		fi
+
 		# Force using TCP for upstream servers only
-		if [ "${FORCE_TCP}" = "on" ]; then
+		if [ "${PROTO}" = "TCP" ]; then
 			echo "# Force using TCP for upstream servers only"
 			echo "server:"
 			echo "	tcp-upstream: yes"
 			echo
 		fi
 
-		local insecure_zones="${INSECURE_ZONES}"
+		local insecure_zones=""
 
 		local enabled zone server servers remark disable_dnssec rest
 		while IFS="," read -r enabled zone servers remark disable_dnssec rest; do
@@ -234,33 +133,22 @@ write_forward_conf() {
 					;;
 			esac
 
-			# Reverse-lookup zones must be stubs
+			echo "stub-zone:"
+			echo "	name: ${zone}"
+			for server in ${servers//|/ }; do
+				if [[ ${server} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+					echo "	stub-addr: ${server}"
+				else
+					echo "	stub-host: ${server}"
+				fi
+			done
+			echo
+
+			# Make all reverse lookup zones transparent
 			case "${zone}" in
 				*.in-addr.arpa)
-					echo "stub-zone:"
-					echo "	name: ${zone}"
-					for server in ${servers//|/ }; do
-						if [[ ${server} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-							echo "	stub-addr: ${server}"
-						else
-							echo "	stub-host: ${server}"
-						fi
-					done
-					echo
 					echo "server:"
 					echo "	local-zone: \"${zone}\" transparent"
-					echo
-					;;
-				*)
-					echo "forward-zone:"
-					echo "	name: ${zone}"
-					for server in ${servers//|/ }; do
-						if [[ ${server} =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-							echo "	forward-addr: ${server}"
-						else
-							echo "	forward-host: ${server}"
-						fi
-					done
 					echo
 					;;
 			esac
@@ -273,6 +161,20 @@ write_forward_conf() {
 				echo "	domain-insecure: ${zone}"
 			done
 		fi
+
+		echo "forward-zone:"
+		echo "	name: \".\""
+
+		# Force using TLS only
+		if [ "${PROTO}" = "TLS" ]; then
+			echo "	forward-tls-upstream: yes"
+		fi
+
+		# Add upstream name servers
+		local ns
+		for ns in $(read_name_servers); do
+			echo "	forward-addr: ${ns}"
+		done
 	) > /etc/unbound/forward.conf
 }
 
@@ -361,190 +263,26 @@ get_memory_amount() {
 	done < /proc/meminfo
 }
 
-test_name_server() {
-	local ns=${1}
-	local args
-
-	# Return codes:
-	# 0	DNSSEC validating
-	# 1	Error: unreachable, etc.
-	# 2	DNSSEC aware
-	# 3	NOT DNSSEC-aware
-
-	# Exit when the server is not reachable
-	ns_is_online ${ns} || return 1
-
-	# Determine the maximum edns buffer size that works
-	local edns_buffer_size=$(ns_determine_edns_buffer_size ${ns})
-	if [ -n "${edns_buffer_size}" ]; then
-		args="${args} +bufsize=${edns_buffer_size}"
-	fi
-
-	local errors
-	for rr in DNSKEY DS RRSIG; do
-		if ! ns_forwards_${rr} ${ns} ${args}; then
-			errors="${errors} ${rr}"
-		fi
-	done
-
-	if [ -n "${errors}" ]; then
-		echo >&2 "Unable to retrieve the following resource records from ${ns}: ${errors:1}"
-		return 3
-	fi
-
-	if ns_is_validating ${ns} ${args}; then
-		# Return 0 if validating
-		return 0
-	else
-		# Is DNSSEC-aware
-		return 2
-	fi
-}
-
-# Sends an A query to the nameserver w/o DNSSEC
-ns_is_online() {
-	local ns=${1}
-	shift
-
-	dig "${DIG_ARGS[@]}" @${ns} +nodnssec A ${TEST_DOMAIN} $@ >/dev/null
-}
-
-# Resolving ${TEST_DOMAIN_FAIL} will fail if the nameserver is validating
-ns_is_validating() {
-	local ns=${1}
-	shift
-
-	if ! dig "${DIG_ARGS[@]}" @${ns} A ${TEST_DOMAIN_FAIL} $@ | grep -q SERVFAIL; then
-		return 1
-	else
-		# Determine if NS replies with "ad" data flag if DNSSEC enabled
-		dig "${DIG_ARGS[@]}" @${ns} +dnssec SOA ${TEST_DOMAIN} $@ | awk -F: '/\;\;\ flags\:/ { s=1; if (/\ ad/) s=0; exit s }'
-	fi
-}
-
-# Checks if we can retrieve the DNSKEY for this domain.
-# dig will print the SOA if nothing was found
-ns_forwards_DNSKEY() {
-	local ns=${1}
-	shift
-
-	dig "${DIG_ARGS[@]}" @${ns} DNSKEY ${TEST_DOMAIN} $@ | grep -qv SOA
-}
-
-ns_forwards_DS() {
-	local ns=${1}
-	shift
-
-	dig "${DIG_ARGS[@]}" @${ns} DS ${TEST_DOMAIN} $@ | grep -qv SOA
-}
-
-ns_forwards_RRSIG() {
-	local ns=${1}
-	shift
-
-	dig "${DIG_ARGS[@]}" @${ns} +dnssec A ${TEST_DOMAIN} $@ | grep -q RRSIG
-}
-
-ns_supports_tcp() {
-	local ns=${1}
-	shift
-
-	# If TCP is forced we know by now if the server responds to it
-	if [ "${FORCE_TCP}" = "on" ]; then
+fix_time_if_dns_fails() {
+	# If DNS is working, everything is fine
+	if resolve "ping.ipfire.org" &>/dev/null; then
 		return 0
 	fi
 
-	dig "${DIG_ARGS[@]}" @${ns} +tcp A ${TEST_DOMAIN} $@ >/dev/null || return 1
-}
-
-ns_determine_edns_buffer_size() {
-	local ns=${1}
-	shift
-
-	local b
-	for b in 4096 2048 1500 1480 1464 1400 1280 512; do
-		if dig "${DIG_ARGS[@]}" @${ns} +dnssec +bufsize=${b} A ${TEST_DOMAIN} $@ >/dev/null; then
-			echo "${b}"
-			return 0
-		fi
-	done
-
-	return 1
-}
-
-get_root_nameservers() {
-	while read -r hostname ttl record address; do
-		# Searching for A records
-		[ "${record}" = "A" ] || continue
-
-		echo "${address}"
-	done < /etc/unbound/root.hints
-}
-
-can_resolve_root() {
-	local ns
-	for ns in $(get_root_nameservers); do
-		if dig "${DIG_ARGS[@]}" @${ns} +dnssec SOA . $@ >/dev/null; then
-			return 0
-		fi
-	done
-
-	# none of the servers was reachable
-	return 1
-}
-
-enable_dnssec() {
-	local status=$(unbound-control get_option val-permissive-mode)
-
-	# Log DNSSEC status
-	echo "on" > /var/ipfire/red/dnssec-status
-
-	# Don't do anything if DNSSEC is already activated
-	[ "${status}" = "no" ] && return 0
-
-	# Activate DNSSEC and flush cache with any stale and unvalidated data
-	unbound-control -q set_option val-permissive-mode: no
-	unbound-control -q flush_zone .
-}
-
-disable_dnssec() {
-	# Log DNSSEC status
-	echo "off" > /var/ipfire/red/dnssec-status
-
-	unbound-control -q set_option val-permissive-mode: yes
-}
-
-fix_time_if_dns_fail() {
-	# If DNS still not work try to init ntp with
-	# hardcoded ntp.ipfire.org (81.3.27.46)
-	check_red_has_carrier_and_ip
-	if [ -e "/var/ipfire/red/iface" -a "${?}" = "1" ]; then
-		host 0.ipfire.pool.ntp.org > /dev/null 2>&1
-		if [ "${?}" != "0" ]; then
-			boot_mesg "DNS still not functioning... Trying to sync time with ntp.ipfire.org (81.3.27.46)..."
-			loadproc /usr/local/bin/settime 81.3.27.46
-		fi
-	fi
+	# Try to sync time with a known time server
+	boot_mesg "DNS not functioning... Trying to sync time with ntp.ipfire.org (81.3.27.46)..."
+	loadproc /usr/local/bin/settime 81.3.27.46
 }
 
 resolve() {
 	local hostname="${1}"
 
-	local found=0
-	local ns
-	for ns in $(read_name_servers); do
-		local answer
-		for answer in $(dig "${DIG_ARGS[@]}" +short "@${ns}" A "${hostname}"); do
-			found=1
-
-			# Filter out non-IP addresses
-			if [[ ! "${answer}" =~ \.$ ]]; then
-				echo "${answer}"
-			fi
-		done
-
-		# End loop when we have got something
-		[ ${found} -eq 1 ] && break
+	local answer
+	for answer in $(dig +short A "${hostname}"); do
+		# Filter out non-IP addresses
+		if [[ ! "${answer}" =~ \.$ ]]; then
+			echo "${answer}"
+		fi
 	done
 }
 
@@ -809,30 +547,18 @@ case "$1" in
 			exit 0
 		fi
 
-		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
-
 		# Update configuration files
 		write_tuning_conf
+		write_hosts_conf
 		write_forward_conf
 
 		boot_mesg "Starting Unbound DNS Proxy..."
 		loadproc /usr/sbin/unbound || exit $?
 
-		# Make own hostname resolveable
-		own_hostname
-
-		# Update any known forwarding name servers
-		update_forwarders
-
 		# Install Safe Search rules when the system is already online
 		if [ -e "/var/ipfire/red/active" ]; then
 			update_safe_search
 		fi
-
-		# Update hosts
-		update_hosts
-
-		fix_time_if_dns_fail
 		;;
 
 	stop)
@@ -845,84 +571,37 @@ case "$1" in
 		sleep 1
 		$0 start
 		;;
+	reload|remove-forwarders)
+		# Update configuration files
+		write_forward_conf
+		write_hosts_conf
+
+		# Update Safe Search rules if the system is online.
+		if [ -e "/var/ipfire/red/active" ]; then
+			update_safe_search
+		fi
+
+		# Call unbound-control and perform the reload
+		/usr/sbin/unbound-control -q reload
+		;;
 
 	status)
 		statusproc /usr/sbin/unbound
 		;;
 
 	update-forwarders)
-		# Do not try updating forwarders when unbound is not running
-		if ! pgrep unbound &>/dev/null; then
-			exit 0
-		fi
+		$0 reload
 
-		update_forwarders
-
-		unbound-control flush_negative > /dev/null
-		unbound-control flush_bogus > /dev/null
-
-		fix_time_if_dns_fail
-		;;
-
-	remove-forwarders)
-		# Do not try updating forwarders when unbound is not running
-		if ! pgrep unbound &>/dev/null; then
-			exit 0
-		fi
-
-		remove_forwarders
-
-		unbound-control flush_negative > /dev/null
-		unbound-control flush_bogus > /dev/null
-		;;
-
-
-	test-name-server)
-		ns=${2}
-
-		test_name_server ${ns}
-		ret=${?}
-
-		case "${ret}" in
-			0)
-				echo "${ns} is validating"
-				;;
-			2)
-				echo "${ns} is DNSSEC-aware"
-				;;
-			3)
-				echo "${ns} is NOT DNSSEC-aware"
-				;;
-			*)
-				echo "Test failed for an unknown reason"
-				exit ${ret}
-				;;
-		esac
-
-		if ns_supports_tcp ${ns}; then
-			echo "${ns} supports TCP fallback"
-		else
-			echo "${ns} does not support TCP fallback"
-		fi
-
-		edns_buffer_size=$(ns_determine_edns_buffer_size ${ns})
-		if [ -n "${edns_buffer_size}" ]; then
-			echo "EDNS buffer size for ${ns}: ${edns_buffer_size}"
-		fi
-
-		exit ${ret}
+		# Make sure DNS works at this point
+		fix_time_if_dns_fails
 		;;
 
 	resolve)
 		resolve "${2}"
 		;;
 
-	update-safe-search)
-		update_safe_search
-		;;
-
 	*)
-		echo "Usage: $0 {start|stop|restart|status|update-forwarders|remove-forwarders|test-name-server|resolve|update-safe-search}"
+		echo "Usage: $0 {start|stop|restart|reload|status|resolve|update-forwarders|remove-forwarders}"
 		exit 1
 		;;
 esac

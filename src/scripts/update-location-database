@@ -1,8 +1,8 @@
-#!/bin/sh
+#!/bin/bash
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2019 IPFire Development Team <info@ipfire.org>                #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -19,48 +19,27 @@
 #                                                                             #
 ###############################################################################
 
-. /etc/sysconfig/rc
-. $rc_functions
+eval $(/usr/local/bin/readhash /var/ipfire/proxy/settings)
 
-eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+# Proxy settings.
+# Check if a proxy should be used.
+if [[ $UPSTREAM_PROXY ]]; then
+	PROXYSETTINGS="https_proxy=http://"
 
-if [ "$TYPE" = "isdn" ]; then
-	DNS1="${MS_DNS1}"
-	DNS2="${MS_DNS2}"
-fi
-
-# Write DNS servers to configuration
-echo "${DNS1}" > /var/run/dns1
-echo "${DNS2}" > /var/run/dns2
-
-echo -n "$1" > /var/ipfire/red/iface
-echo -n "$4" > /var/ipfire/red/local-ipaddress
-echo -n "$5" > /var/ipfire/red/remote-ipaddress
-touch /var/ipfire/red/active
-
-/sbin/ip route replace default via ${IPREMOTE} dev ppp0
-run_subdir ${rc_base}/init.d/networking/red.up/
-
-#Check if gateway has answerd to ping, if not replace with ping.ipfire.org
-TEST=`/usr/bin/ping -c 2 $5 2>/dev/null | tail -2 | head -1 | cut -d"," -f2`;
-
-grep -v -E "\<gateway\>" /etc/hosts > /tmp/hosts
-
-if [ "$TEST" == " 2 received" ]; then
-	#ping the ppp-gateway
-	echo "$5	gateway" >> /tmp/hosts
-else
-	#no answer
-	HOST=`host ping.ipfire.org`;
-	FIRE=`echo $HOST | cut -d" " -f4`;
-	CHK=`echo $HOST | cut -d" " -f3`;
-	if [ "$CHK" == "address" ]; then
-	    #use ping.ipfire.org
-	    echo "$FIRE	gateway" >> /tmp/hosts
-	else
-	    #DNS lookup failed use direct ip
-	    echo "81.3.27.38	gateway" >> /tmp/hosts
+	# Check if authentication against the proxy is configured.
+	if [[ $UPSTREAM_USER && $UPSTREAM_PASSWORD ]]; then
+		PROXYSETTINGS="$PROXYSETTINGS$UPSTREAM_USER:$UPSTREAM_PASSWORD@"
 	fi
-fi
-mv /tmp/hosts /etc/hosts
 
+	# Add proxy server.
+	PROXYSETTINGS="$PROXYSETTINGS$UPSTREAM_PROXY"
+
+	# Export proxy settings.
+	export HTTPS_PROXY="$PROXYSETTINGS"
+fi
+
+# Get the latest location database from server.
+/usr/bin/location-downloader update
+
+# Call initscript to reload the firewall.
+/etc/init.d/firewall reload
