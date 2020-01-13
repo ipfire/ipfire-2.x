@@ -291,23 +291,6 @@ resolve() {
 	done
 }
 
-update_forwarders() {
-	# Do nothing when we do not use the ISP name servers
-	[ "${USE_ISP_NAMESERVERS}" != "on" ] && return 0
-
-	# We cannot update anything when using TLS
-	# Unbound will then try to connect to the servers using UDP on port 853
-	[ "${PROTO}" = "TLS" ] && return 0
-
-	# Update unbound about the new servers
-	local nameservers=( $(read_name_servers) )
-	if [ -n "${nameservers[*]}" ]; then
-		unbound-control -q forward "${nameservers[@]}"
-	else
-		unbound-control -q forward off
-	fi
-}
-
 # Sets up Safe Search for various search engines
 update_safe_search() {
 	local google_tlds=(
@@ -593,7 +576,7 @@ case "$1" in
 		sleep 1
 		$0 start
 		;;
-	reload)
+	reload|remove-forwarders)
 		# Update configuration files
 		write_forward_conf
 		write_hosts_conf
@@ -612,17 +595,10 @@ case "$1" in
 		;;
 
 	update-forwarders)
-		update_forwarders
+		$0 reload
 
 		# Make sure DNS works at this point
 		fix_time_if_dns_fails
-
-		# Update Safe Search settings
-		update_safe_search
-		;;
-
-	remove-forwarders)
-		update_forwarders
 		;;
 
 	resolve)
