@@ -634,7 +634,7 @@ END
 				# Nameservers with an ID's of one or two are ISP assigned,
 				# and we cannot perform any actions on them, so hide the tools for
 				# them.
-				if ($id gt "2") {
+				if ($id > 2) {
 
 print <<END;
 					<td align='center' width='5%' $col>
@@ -677,7 +677,7 @@ END
 		print"<table width='100%'>\n";
 
 		# Check if the usage of the ISP nameservers is enabled and there are more than 2 servers.
-		if (($settings{'USE_ISP_NAMESERVERS'} eq "on") && ($server_amount gt "2")) {
+		if (($settings{'USE_ISP_NAMESERVERS'} eq "on") && ($server_amount > 2)) {
 print <<END;
 			<tr>
 				<td class='boldbase'>&nbsp; <b>$Lang::tr{'legend'}:</b></td>
