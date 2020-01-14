@@ -2,12 +2,12 @@ etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
-etc/rc.d/init.d/networking/red.up/06-safe-search
 etc/rc.d/init.d/unbound
 etc/rc.d/init.d/suricata
 opt/pakfire/etc/pakfire.conf
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+usr/local/bin/backupiso
 usr/sbin/convert-snort
 usr/sbin/setup
