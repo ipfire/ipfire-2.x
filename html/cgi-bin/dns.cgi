@@ -847,7 +847,7 @@ sub check_nameserver($$$$) {
 	}
 
 	# Default values.
-	my @command = ("kdig", "+timeout=2", "+retry=0", "+dnssec",
+	my @command = ("kdig", "+dnssec",
 		"+bufsize=1232");
 
 	# Handle different protols.
