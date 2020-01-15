@@ -243,6 +243,7 @@ WARNING: translation string unused: dns new 1
 WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
 WARNING: translation string unused: dns server
+WARNING: translation string unused: dns servers
 WARNING: translation string unused: dnssec information
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain not set
@@ -812,11 +813,13 @@ WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: broken = Broken
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: dns = unknown string
+WARNING: untranslated string: dns check servers = Check DNS Servers
 WARNING: untranslated string: dns configuration = DNS Configuration
-WARNING: untranslated string: dns could not add server = Could not add server - Reason:
 WARNING: untranslated string: dns enable safe-search = Enable Safe Search
 WARNING: untranslated string: dns isp assigned nameserver = ISP-assigned DNS server
+WARNING: untranslated string: dns isp nameservers and tls not allowed = ISP-assigned DNS servers and TLS cannot be used at the same time.
 WARNING: untranslated string: dns mode for qname minimisation = QNAME Minimisation
+WARNING: untranslated string: dns no address given = No IP Address given.
 WARNING: untranslated string: dns no tls hostname given = No TLS hostname given.
 WARNING: untranslated string: dns tls hostname = TLS Hostname
 WARNING: untranslated string: dns use isp assigned nameservers = Use ISP-assigned DNS servers
@@ -864,3 +867,4 @@ WARNING: untranslated string: routing table = unknown string
 WARNING: untranslated string: standard = Standard
 WARNING: untranslated string: strict = Strict
 WARNING: untranslated string: vpn statistics n2n = unknown string
+WARNING: untranslated string: working = Working

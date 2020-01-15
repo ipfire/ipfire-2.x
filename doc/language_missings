@@ -36,11 +36,14 @@
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
 < dh name is invalid
+< dns check servers
 < dns configuration
 < dns could not add server
 < dns enable safe-search
 < dns isp assigned nameserver
+< dns isp nameservers and tls not allowed
 < dns mode for qname minimisation
+< dns no address given
 < dns no tls hostname given
 < dns tls hostname
 < dns use isp assigned nameservers
@@ -74,6 +77,7 @@
 < updxlrtr used by
 < upload fcdsl.o
 < vpn configuration main
+< working
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
@@ -240,6 +244,7 @@
 < Disabled
 < dl client arch insecure
 < dnat address
+< dns check servers
 < dns configuration
 < dns could not add server
 < dns enable safe-search
@@ -254,7 +259,9 @@
 < dns forwarding dnssec disabled notice
 < dnsforward zone
 < dns isp assigned nameserver
+< dns isp nameservers and tls not allowed
 < dns mode for qname minimisation
+< dns no address given
 < dns no tls hostname given
 < dnssec aware
 < dnssec disabled warning
@@ -838,6 +845,7 @@
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn subjectaltname missing
 < vpn wait
 < vpn weak
 < vulnerability
@@ -899,6 +907,7 @@
 < wlan client wpa mode ccmp ccmp
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
+< working
 < zoneconf access native
 < zoneconf access none
 < zoneconf access vlan
@@ -917,11 +926,14 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < broken
+< dns check servers
 < dns configuration
 < dns could not add server
 < dns enable safe-search
 < dns isp assigned nameserver
+< dns isp nameservers and tls not allowed
 < dns mode for qname minimisation
+< dns no address given
 < dns no tls hostname given
 < dns tls hostname
 < dns use isp assigned nameservers
@@ -930,6 +942,7 @@
 < okay
 < standard
 < strict
+< working
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -1020,6 +1033,7 @@
 < dhcp dns update secret
 < Disabled
 < dl client arch insecure
+< dns check servers
 < dns configuration
 < dns could not add server
 < dns enable safe-search
@@ -1028,7 +1042,9 @@
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
 < dns isp assigned nameserver
+< dns isp nameservers and tls not allowed
 < dns mode for qname minimisation
+< dns no address given
 < dns no tls hostname given
 < dnssec disabled warning
 < dns tls hostname
@@ -1215,6 +1231,7 @@
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn subjectaltname missing
 < vpn wait
 < vpn weak
 < vulnerability
@@ -1244,6 +1261,7 @@
 < wlan client password
 < wlan client tls cipher
 < wlan client tls version
+< working
 < zoneconf access native
 < zoneconf access none
 < zoneconf access vlan
@@ -1358,6 +1376,7 @@
 < dh parameter
 < Disabled
 < dl client arch insecure
+< dns check servers
 < dns configuration
 < dns could not add server
 < dns enable safe-search
@@ -1366,7 +1385,9 @@
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
 < dns isp assigned nameserver
+< dns isp nameservers and tls not allowed
 < dns mode for qname minimisation
+< dns no address given
 < dns no tls hostname given
 < dnssec aware
 < dnssec disabled warning
@@ -1600,6 +1621,7 @@
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn subjectaltname missing
 < vpn wait
 < vpn weak
 < vulnerability
@@ -1629,6 +1651,7 @@
 < wlan client password
 < wlan client tls cipher
 < wlan client tls version
+< working
 < zoneconf access native
 < zoneconf access none
 < zoneconf access vlan
@@ -1809,6 +1832,7 @@
 < Disabled
 < dl client arch insecure
 < dnat address
+< dns check servers
 < dns configuration
 < dns could not add server
 < dns enable safe-search
@@ -1823,7 +1847,9 @@
 < dns forwarding dnssec disabled notice
 < dnsforward zone
 < dns isp assigned nameserver
+< dns isp nameservers and tls not allowed
 < dns mode for qname minimisation
+< dns no address given
 < dns no tls hostname given
 < dnssec aware
 < dnssec disabled warning
@@ -2393,6 +2419,7 @@
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn subjectaltname missing
 < vpn wait
 < vpn weak
 < vulnerability
@@ -2454,6 +2481,7 @@
 < wlan client wpa mode ccmp ccmp
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
+< working
 < zoneconf access native
 < zoneconf access none
 < zoneconf access vlan
@@ -2637,6 +2665,7 @@
 < disk access per
 < dl client arch insecure
 < dnat address
+< dns check servers
 < dns configuration
 < dns could not add server
 < dns enable safe-search
@@ -2651,7 +2680,9 @@
 < dns forwarding dnssec disabled notice
 < dnsforward zone
 < dns isp assigned nameserver
+< dns isp nameservers and tls not allowed
 < dns mode for qname minimisation
+< dns no address given
 < dns no tls hostname given
 < dnssec aware
 < dnssec disabled warning
@@ -3223,6 +3254,7 @@
 < vpn start action start
 < vpn statistic n2n
 < vpn statistic rw
+< vpn subjectaltname missing
 < vpn wait
 < vpn weak
 < vulnerability
@@ -3285,6 +3317,7 @@
 < wlan client wpa mode ccmp ccmp
 < wlan client wpa mode ccmp tkip
 < wlan client wpa mode tkip tkip
+< working
 < year-graph
 < zoneconf access native
 < zoneconf access none
@@ -3320,6 +3353,7 @@
 < dangerous
 < default IP address
 < Disabled
+< dns check servers
 < dns configuration
 < dns could not add server
 < dns enable safe-search
@@ -3328,7 +3362,9 @@
 < dnsforward forward_servers
 < dns forwarding dnssec disabled notice
 < dns isp assigned nameserver
+< dns isp nameservers and tls not allowed
 < dns mode for qname minimisation
+< dns no address given
 < dns no tls hostname given
 < dns tls hostname
 < dns use isp assigned nameservers
@@ -3409,6 +3445,7 @@
 < transport mode does not support vti
 < update ruleset
 < vpn start action add
+< vpn subjectaltname missing
 < vpn wait
 < vulnerability
 < vulnerable
@@ -3420,6 +3457,7 @@
 < wlanap neighbor scan
 < wlanap neighbor scan warning
 < wlanap ssid
+< working
 < zoneconf access native
 < zoneconf access none
 < zoneconf access vlan

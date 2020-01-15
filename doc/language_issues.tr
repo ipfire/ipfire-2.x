@@ -242,6 +242,7 @@ WARNING: translation string unused: dns new 1
 WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
 WARNING: translation string unused: dns server
+WARNING: translation string unused: dns servers
 WARNING: translation string unused: dnsforward forward_server
 WARNING: translation string unused: dnssec information
 WARNING: translation string unused: do not log this port list
@@ -821,13 +822,15 @@ WARNING: untranslated string: crypto warning = Cryptographic warning
 WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: default IP address = Default IP Address
 WARNING: untranslated string: dns = unknown string
+WARNING: untranslated string: dns check servers = Check DNS Servers
 WARNING: untranslated string: dns configuration = DNS Configuration
-WARNING: untranslated string: dns could not add server = Could not add server - Reason:
 WARNING: untranslated string: dns enable safe-search = Enable Safe Search
 WARNING: untranslated string: dns forward disable dnssec = Disable DNSSEC (dangerous)
 WARNING: untranslated string: dns forwarding dnssec disabled notice = (DNSSEC disabled)
 WARNING: untranslated string: dns isp assigned nameserver = ISP-assigned DNS server
+WARNING: untranslated string: dns isp nameservers and tls not allowed = ISP-assigned DNS servers and TLS cannot be used at the same time.
 WARNING: untranslated string: dns mode for qname minimisation = QNAME Minimisation
+WARNING: untranslated string: dns no address given = No IP Address given.
 WARNING: untranslated string: dns no tls hostname given = No TLS hostname given.
 WARNING: untranslated string: dns tls hostname = TLS Hostname
 WARNING: untranslated string: dns use isp assigned nameservers = Use ISP-assigned DNS servers
@@ -946,6 +949,7 @@ WARNING: untranslated string: transport mode does not support vti = VTI is not s
 WARNING: untranslated string: update ruleset = Update ruleset
 WARNING: untranslated string: vpn start action add = Wait for connection initiation
 WARNING: untranslated string: vpn statistics n2n = unknown string
+WARNING: untranslated string: vpn subjectaltname missing = SubjectAlternativeName cannot be emtpy.
 WARNING: untranslated string: vpn wait = WAITING
 WARNING: untranslated string: vulnerability = Vulnerability
 WARNING: untranslated string: vulnerable = Vulnerable
@@ -956,5 +960,6 @@ WARNING: untranslated string: wlanap management frame protection = Management Fr
 WARNING: untranslated string: wlanap neighbor scan = Neighborhood scan
 WARNING: untranslated string: wlanap neighbor scan warning = Warning! Disabling may violate regulatory rules!
 WARNING: untranslated string: wlanap ssid = SSID
+WARNING: untranslated string: working = Working
 WARNING: untranslated string: zoneconf notice reboot = Please reboot to apply your changes.
 WARNING: untranslated string: zoneconf title = Zone Configuration
