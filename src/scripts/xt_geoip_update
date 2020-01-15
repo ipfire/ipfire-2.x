@@ -1,0 +1,138 @@
+#!/bin/bash
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2019 IPFire Development Team <info@ipfire.org>                #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+TMP_PATH=$(mktemp -dp /var/tmp)
+TMP_FILE=$(mktemp -p $TMP_PATH)
+
+SCRIPT_PATH=/usr/local/bin
+DEST_PATH=/usr/share/xt_geoip
+DB_PATH=/var/lib/GeoIP
+DB1_PATH=/usr/share/GeoIP
+
+DL_URL=https://geolite.maxmind.com/download/geoip/database
+DL_FILE=GeoLite2-Country-CSV.zip
+
+eval $(/usr/local/bin/readhash /var/ipfire/proxy/settings)
+
+function download() {
+	echo "Downloading latest GeoIP ruleset..."
+
+	# Proxy settings.
+	# Check if a proxy should be used.
+	if [[ $UPSTREAM_PROXY ]]; then
+		PROXYSETTINGS="-e https_proxy=http://"
+
+		# Check if authentication against the proxy is configured.
+		if [[ $UPSTREAM_USER && $UPSTREAM_PASSWORD ]]; then
+			PROXYSETTINGS="$PROXYSETTINGS$UPSTREAM_USER:$UPSTREAM_PASSWORD@"
+		fi
+
+		# Add proxy server.
+		PROXYSETTINGS="$PROXYSETTINGS$UPSTREAM_PROXY"
+	fi
+
+	# Get the latest GeoIP database from server.
+	wget $DL_URL/$DL_FILE $PROXYSETTINGS -O $TMP_FILE
+
+	# Extract files to database path.
+	unzip $TMP_FILE -d $TMP_PATH
+
+	return 0
+}
+
+function install() {
+	echo "Install CSV database..."
+
+	# Check if the database dir exists.
+	if [ ! -e "$DB_PATH" ]; then
+		mkdir -p $DB_PATH &>/dev/null
+	fi
+
+	# Check if the directory for binary databases exists.
+        if [ ! -e "$DEST_PATH" ]; then
+                mkdir -p $DEST_PATH &>/dev/null
+        fi
+
+	# Install CSV databases.
+	if ! cp -af $TMP_PATH/*/* $DB_PATH &>/dev/null; then
+		echo "Could not copy files. Aborting." >&2
+		return 1
+	fi
+
+	return 0
+}
+
+function build_legacy() {
+	echo "Convert database to legacy GeoIP.dat ..."
+	cat $DB_PATH/GeoLite2-Country-Blocks-IPv4.csv | \
+	    $DB1_PATH/bin/geolite2-to-legacy-csv.sh $DB1_PATH/bin/countryInfo.txt > \
+	    $TMP_FILE
+	$DB1_PATH/bin/geoip-generator -v -4 --info="$(date -u +'GEO-106FREE %Y%m%d Build -IPFire-' \
+	    -r $DB_PATH/GeoLite2-Country-Blocks-IPv4.csv) $(<$DB_PATH/COPYRIGHT.txt)" -o \
+	    $DB1_PATH/GeoIP.dat $TMP_FILE
+
+	return 0
+}
+
+
+function build() {
+	echo "Convert database..."
+
+	# Run script to convert the CSV file into several xtables
+	# compatible binary files.
+	if ! $SCRIPT_PATH/xt_geoip_build -S $DB_PATH -D $DEST_PATH; then
+		echo "Could not convert ruleset. Aborting." >&2
+		return 1
+	fi
+
+	return 0
+}
+
+function cleanup() {
+	echo "Cleaning up temporary files..."
+	if ! rm -rf $TMP_PATH &>/dev/null; then
+		echo "Could not remove files. Aborting." >&2
+		return 1
+	fi
+
+	return 0
+}
+
+function main() {
+	local func
+	for func in download install build build_legacy; do
+		if ! ${func}; then
+			# Cleanup any temporary data
+			cleanup
+
+			return 1
+		fi
+	done
+
+	# Cleanup
+	cleanup || return $?
+
+	# All done
+	return 0
+}
+
+# Run the main function.
+main || exit $?
