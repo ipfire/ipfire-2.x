@@ -9,6 +9,10 @@ etc/lvm/lvm.conf
 #etc/lvm/profile/metadata_profile_template.profile
 #etc/lvm/profile/thin-generic.profile
 #etc/lvm/profile/thin-performance.profile
+lib/udev/rules.d/10-dm.rules
+lib/udev/rules.d/11-dm-lvm.rules
+lib/udev/rules.d/13-dm-disk.rules
+lib/udev/rules.d/95-dm-notify.rules
 #usr/include/libdevmapper.h
 #usr/lib/libdevmapper.so
 usr/lib/libdevmapper.so.1.02
