@@ -80,6 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--with-usrlibdir=/usr/lib \
 			--enable-pkgconfig \
 			--with-udevdir=/lib/udev/rules.d \
+			--with-default-locking-dir=/run/lvm \
 			--enable-lvmetad \
 			--enable-udev_rules \
 			--enable-udev_sync
