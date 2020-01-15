@@ -1,0 +1,41 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/lvmeta2
+#
+# Description : LVM2 Metadata Daemon
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		# Create diretory for control socket
+		mkdir -p /run/lvm
+
+		boot_mesg "Starting LVM2 Metadata Daemon..."
+		loadproc /usr/sbin/lvmetad
+		;;
+
+	stop)
+		boot_mesg "Stopping LVM2 Metadata Daemon..."
+		killproc /usr/sbin/lvmetad
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/lvmetad
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/lvmetad
