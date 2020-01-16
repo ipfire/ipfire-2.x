@@ -41,6 +41,7 @@ var/ipfire/dhcp
 var/ipfire/dhcpc
 var/ipfire/dns
 #var/ipfire/dns/settings
+#var/ipfire/dns/servers
 var/ipfire/dnsforward
 #var/ipfire/dnsforward/config
 var/ipfire/ethernet
