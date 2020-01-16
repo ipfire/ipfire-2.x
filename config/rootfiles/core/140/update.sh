@@ -43,6 +43,7 @@ done
 
 
 # Remove files
+rm -f /etc/rc.d/init.d/networking/red.up/06-safe-search
 
 # Stop services
 
