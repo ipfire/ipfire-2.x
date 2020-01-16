@@ -2,11 +2,13 @@ etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
+etc/rc.d/init.d/lvmetad
 etc/rc.d/init.d/networking/dhcpcd.exe
 etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/networking/red.up/05-update-dns-forwarders
 etc/rc.d/init.d/unbound
 etc/rc.d/init.d/suricata
+etc/rc.d/rcsysinit.d/S09lvmetad
 etc/ppp/ip-down
 etc/ppp/ip-up
 etc/unbound/unbound.conf
