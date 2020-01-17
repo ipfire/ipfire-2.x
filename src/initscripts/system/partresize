@@ -55,6 +55,8 @@ case "${1}" in
 				"FriendlyElec NanoPi-R1")
 					cp -f   /lib/firmware/brcm/brcmfmac43430-sdio.AP6212.txt \
 						/lib/firmware/brcm/brcmfmac43430-sdio.txt
+					cp -f   /lib/firmware/brcm/brcmfmac43430a0-sdio.ONDA-V80_PLUS.txt \
+						/lib/firmware/brcm/brcmfmac43430a0-sdio.txt
 				;;
 			esac 2>/dev/null
 
