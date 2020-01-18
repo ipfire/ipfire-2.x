@@ -22,25 +22,49 @@
 main() {
 	# Do not convert anything if we already have some servers set
 	if [ ! -s "/var/ipfire/dns/servers" ]; then
-		local DNS0 DNS1 DNS2
+		# Array to store all found DNS servers.
+		SERVERS=()
+
+		# Try to get the DNS servers from ethernet settings file.
+		local DNS1 DNS2
 		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
-		if [ -s "/var/ipfire/ppp/settings" ]; then
-			eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+		# Add the grabbed DNS servers to the servers array.
+		SERVERS+=($DNS1 $DNS2)
 
-			# Remove DNS, DNS1 and DNS2
-			sed -i "/^DNS[12]?=/d" /var/ipfire/ppp/settings
+		# Check if the ppp settings file is not empty.
+		if [ -s "/var/ipfire/ppp/settings" ]; then
+			# Loop though all profile files.
+			for file in /var/ipfire/ppp/settings*; do
+				local DNS1 DNS2
+				eval $(/usr/local/bin/readhash $file)
+
+				# Add the DNS servers to the array of SERVERS.
+				for var in DNS1 DNS2; do
+					local server="${!var}"
+
+					# Check if the current server is allready part
+					# of the array.
+					for element in "${SERVERS[@]}"; do
+						[[ $element == $server ]] && continue
+					done
+
+					SERVERS+=($server)
+				done
+
+				# Remove DNS1 and DNS2 settings from profile file.
+				sed -i "/^DNS[12]?=/d" $file
+			done
+
 		elif [ -s "/var/ipfire/dns/settings" ]; then
 			eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
 		fi
 
-		local var
+		local server
 		local i=3
-		for var in DNS0 DNS1 DNS2; do
-			if [ -n "${!var}" ]; then
-				echo "${i},${!var},,enabled,"
-				(( i++ ))
-			fi
+		for server in "${SERVERS[@]}"; do
+			echo "${i},${server},,enabled,"
+			(( i++ ))
 		done > /var/ipfire/dns/servers
 
 		# Empty the old settings file
