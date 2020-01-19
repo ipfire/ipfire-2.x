@@ -25,11 +25,6 @@ processor
 thermal
 video
 
-### parport
-#
-parport_pc
-lp
-
 ### fusion
 # fusion
 
