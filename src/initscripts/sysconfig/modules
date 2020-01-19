@@ -15,8 +15,7 @@
 # a space or a tab.
 ########################################################################
 
-### ACPI
-#
+# ACPI
 ac
 battery
 button
@@ -24,8 +23,5 @@ fan
 processor
 thermal
 video
-
-### fusion
-# fusion
 
 # End /etc/sysconfig/modules
