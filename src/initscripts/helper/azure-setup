@@ -138,9 +138,6 @@ import_azure_configuration() {
 		fi
 	fi
 
-	# Import any DNS server settings
-	eval $(/usr/local/bin/readhash <(grep -E "^DNS([0-9])=" /var/ipfire/ethernet/settings 2>/dev/null))
-
 	# Import network configuration
 	# After this, no network connectivity will be available from this script due to the
 	# renaming of the network interfaces for which they have to be shut down
@@ -175,11 +172,6 @@ import_azure_configuration() {
 				# The gateway is always the first IP address in the subnet
 				local gateway="$(to_address $(( netaddress_num + 1 )))"
 
-				# Microsoft uses a special IP address for DNS
-				# https://blogs.msdn.microsoft.com/mast/2015/05/18/what-is-the-ip-address-168-63-129-16/
-				local dns1="168.63.129.16"
-				local dns2=
-
 				(
 					echo "RED_TYPE=STATIC"
 					echo "RED_DEV=${interface_name}"
@@ -190,8 +182,6 @@ import_azure_configuration() {
 					echo "RED_NETADDRESS=${netaddress}"
 					echo "RED_BROADCAST=${broadcast}"
 					echo "DEFAULT_GATEWAY=${gateway}"
-					echo "DNS1=${DNS1:-${dns1}}"
-					echo "DNS2=${DNS2:-${dns2}}"
 				) >> /var/ipfire/ethernet/settings
 
 				# Import aliases for RED
