@@ -58,6 +58,9 @@ prefix2netmask() {
 
 import_azure_configuration() {
 	local instance_id="$(get compute/vmId)"
+	if [ -z "${instance_id}" ]; then
+		return 0
+	fi
 
 	boot_mesg "Importing Microsoft Azure configuration for instance ${instance_id}..."
 
