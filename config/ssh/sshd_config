@@ -1,81 +1,59 @@
-# ultra-secure OpenSSH server configuration
+# OpenSSH server configuration file for IPFire
+#
+# The full documentation is available at: https://man.openbsd.org/sshd_config
+#
 
-# only allow version 2 of SSH protocol
+# Only allow version 2 of SSH protocol
 Protocol 2
 
-# listen on port 22 by default
+# Listen on port 22 by default
 Port 22
 
-# listen on these interfaces and protocols
-AddressFamily any
+# Listen on every interface and IPv4 only
+AddressFamily inet
 ListenAddress 0.0.0.0
 
-# limit authentication thresholds
+# Limit authentication timeout to 30 seconds
 LoginGraceTime 30s
-MaxAuthTries 6
 
-# limit maximum instanctes to prevent DoS
+# Limit maximum instanctes to prevent DoS
 MaxStartups 5
 
-# ensure proper logging
-SyslogFacility AUTH
-LogLevel INFO
-
-# enforce permission checks before a login is accepted
-# (prevents damage because of hacked systems with world-writeable
-# home directories or similar)
-StrictModes yes
-
-# only allow safe crypto algorithms (may break some _very_ outdated clients)
-# see also: https://stribika.github.io/2015/01/04/secure-secure-shell.html
+# Only allow safe crypto algorithms (may break some _very_ outdated clients)
+# See also: https://stribika.github.io/2015/01/04/secure-secure-shell.html
 KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
 Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
 MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com
 
-# enable data compression after successful login only
-Compression delayed
-
-# only allow cryptographically safe SSH host keys (adjust paths if needed)
+# Only allow cryptographically safe SSH host keys (adjust paths if needed)
 HostKey /etc/ssh/ssh_host_ed25519_key
 HostKey /etc/ssh/ssh_host_ecdsa_key
 HostKey /etc/ssh/ssh_host_rsa_key
 
-# only allow login via public key by default
+# Only allow login via public key by default
 PubkeyAuthentication yes
 PasswordAuthentication no
 ChallengeResponseAuthentication no
-PermitEmptyPasswords no
 
-# permit root login as there is no other user in IPFire 2.x
+# Permit root login as there is no other user in IPFire 2.x
 PermitRootLogin yes
 
-# ignore user ~/.rhost* files
-IgnoreRhosts yes
-
-# ignore user known hosts file
+# Ignore user ~/.ssh/known_hosts file
 IgnoreUserKnownHosts yes
 
-# ignore user environments
-PermitUserEnvironment no
-
-# do not allow any kind of forwarding (provides only low security)
+# Do not allow any kind of forwarding (provides only low security);
 # some of them might need to be re-enabled if SSH server is a jump platform
-X11Forwarding no
 AllowTcpForwarding no
 AllowAgentForwarding no
-PermitTunnel no
-GatewayPorts no
 PermitOpen none
 
-# detect broken sessions by sending keep-alive messages to
-# clients (both via TCP and SSH)
-TCPKeepAlive yes
+# Detect broken sessions by sending keep-alive messages to clients via SSH connection
 ClientAliveInterval 10
 
-# close unresponsive SSH sessions which fail to answer keep-alive
+# Close unresponsive SSH sessions which fail to answer keep-alive
 ClientAliveCountMax 6
 
-# add support for SFTP
+# Add support for SFTP
 Subsystem	sftp	/usr/lib/openssh/sftp-server
 
 # EOF
