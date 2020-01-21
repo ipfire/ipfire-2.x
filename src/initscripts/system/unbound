@@ -162,19 +162,29 @@ write_forward_conf() {
 			done
 		fi
 
-		echo "forward-zone:"
-		echo "	name: \".\""
+		# Read name servers.
+		nameservers=$(read_name_servers)
 
-		# Force using TLS only
-		if [ "${PROTO}" = "TLS" ]; then
-			echo "	forward-tls-upstream: yes"
+		# Only write forward zones if any nameservers are configured.
+		#
+		# Otherwise fall-back into recursor mode.
+		if [ -n "${nameservers}" ]; then
+
+			echo "forward-zone:"
+			echo "	name: \".\""
+
+			# Force using TLS only
+			if [ "${PROTO}" = "TLS" ]; then
+				echo "	forward-tls-upstream: yes"
+			fi
+
+			# Add upstream name servers
+			local ns
+			for ns in ${nameservers}; do
+				echo "	forward-addr: ${ns}"
+			done
 		fi
 
-		# Add upstream name servers
-		local ns
-		for ns in $(read_name_servers); do
-			echo "	forward-addr: ${ns}"
-		done
 	) > /etc/unbound/forward.conf
 }
 
