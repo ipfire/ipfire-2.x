@@ -711,7 +711,7 @@ print <<END;
 		<table width="100%">
 			<tr>
 				<td colspan="6" align="center">
-					<br>$Lang::tr{'guardian no entries'}<br>
+					<br>$Lang::tr{'dns recursor mode'}<br>
 				</td>
 			</tr>
 
