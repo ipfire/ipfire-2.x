@@ -67,6 +67,9 @@ our $ids_page_lock_file = "/tmp/ids_page_locked";
 # Location where the rulefiles are stored.
 our $rulespath = "/var/lib/suricata";
 
+# Location to store local rules. This file will not be touched.
+our $local_rules_file = "$rulespath/local.rules";
+
 # File which contains the rules to whitelist addresses on suricata.
 our $whitelist_file = "$rulespath/whitelist.rules";
 
@@ -580,6 +583,9 @@ sub _cleanup_rulesdir() {
 
 		# Skip rules file for whitelisted hosts.
 		next if ("$rulespath/$file" eq $whitelist_file);
+
+		# Skip rules file with local rules.
+		next if ("$rulespath/$file" eq $local_rules_file);
 
 		# Delete the current processed file, if not, exit this function
 		# and return an error message.
