@@ -148,13 +148,21 @@ nfq:
 app-layer:
   protocols:
     krb5:
-      enabled: no # Requires rust
+      enabled: yes
+    snmp:
+      enabled: yes
     ikev2:
       enabled: yes
     tls:
       enabled: yes
       detection-ports:
         dp: "[443,444,465,853,993,995]"
+
+      # Generate JA3 fingerprint from client hello. If not specified it
+      # will be disabled by default, but enabled if rules require it.
+      #ja3-fingerprints: auto
+      # Generate JA3 fingerprint from client hello
+      ja3-fingerprints: no
 
       # Completely stop processing TLS/SSL session after the handshake
       # completed. If bypass is enabled this will also trigger flow
@@ -165,6 +173,8 @@ app-layer:
       enabled: yes
     ftp:
       enabled: yes
+    rdp:
+      enabled: no
     ssh:
       enabled: yes
     smtp:
@@ -203,9 +213,10 @@ app-layer:
       enabled: yes
       detection-ports:
         dp: 139, 445
-    # smb2 detection is disabled internally inside the engine.
-    #smb2:
-    #  enabled: yes
+    nfs:
+      enabled: yes
+    tftp:
+      enabled: yes
     dns:
       # memcaps. Globally and per flow/state.
       global-memcap: 32mb
@@ -271,6 +282,12 @@ app-layer:
            double-decode-path: no
            double-decode-query: no
 
+    ntp:
+      enabled: yes
+    dhcp:
+      enabled: yes
+    sip:
+      enabled: yes
 
 # Limit for the maximum number of asn1 frames to decode (default 256)
 asn1-max-frames: 256
