@@ -6,7 +6,7 @@
 #
 # Author      : Stefan Schantl <stefan.schantl@ipfire.org>
 #
-# Version     : 01.02
+# Version     : 01.03
 #
 # Notes       :
 #
@@ -159,11 +159,11 @@ case "$1" in
 		cpu_count=$(get_cpu_count)
 
 		# Numer of NFQUES.
-		NFQUEUES=
+		NFQUEUES="-q 0"
 
-		for i in $(seq 0 $((cpu_count-1)) ); do
-			NFQUEUES+="-q $i "
-		done
+		if [ $cpu_count -gt "1" ]; then
+			NFQUEUES+=":$(($cpu_count-1))"
+		fi
 
 		# Check if the IDS should be started.
 		if [ "$ENABLE_IDS" == "on" ]; then
