@@ -43,6 +43,7 @@ done
 
 
 # Remove files
+rm -rf /usr/lib/libboost*1.55.0
 rm -rf /usr/lib/mysql
 rm -rf /usr/lib/pppd/2.4.4
 rm -rf /usr/lib/pppd/2.4.5
