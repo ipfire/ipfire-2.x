@@ -29,6 +29,8 @@ core=141
 exit_with_error() {
 	# Set last succesfull installed core.
 	echo $(($core-1)) > /opt/pakfire/db/core/mine
+	# force fsck at next boot, this may fix free space on xfs
+	touch /forcefsck
 	# don't start pakfire again at error
 	killall -KILL pak_update
 	/usr/bin/logger -p syslog.emerg -t ipfire \
@@ -41,6 +43,12 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Check diskspace on root
+ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
+
+if [ $ROOTSPACE -lt 180000 ]; then
+	exit_with_error "ERROR cannot update because not enough free space on root." 2
+fi
 
 # Remove files
 rm -f /etc/rc.d/init.d/networking/red.up/06-safe-search
