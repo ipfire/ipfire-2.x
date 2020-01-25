@@ -1,5 +1,1 @@
-etc/system-release
-etc/issue
-srv/web/ipfire/cgi-bin/credits.cgi
-#var/ipfire/langs
 usr/local/bin/filesystem-cleanup
