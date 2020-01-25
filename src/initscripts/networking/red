@@ -129,21 +129,23 @@ case "${1}" in
 			ip route add default via ${GATEWAY} dev ${DEVICE}
 			evaluate_retval
 			
-			# has carrier ?
-			if [ ! "$(</sys/class/net/${DEVICE}/carrier)" = "1" ]; then
-				boot_mesg -n "Wait for carrier on ${DEVICE} "
-				for (( i=30; i>1; i-- )) do
-					if [ "$(</sys/class/net/${DEVICE}/carrier)" = "1" ]; then
-						break;
-					fi
-					boot_mesg -n "."
-					sleep 2
-				done
-				boot_mesg ""
+			if [ -d "/sys/class/net/${DEVICE}" ]; then
+				# has carrier ?
 				if [ ! "$(</sys/class/net/${DEVICE}/carrier)" = "1" ]; then
-					echo_failure
-				else
-					echo_ok
+					boot_mesg -n "Wait for carrier on ${DEVICE} "
+					for (( i=30; i>1; i-- )) do
+						if [ "$(</sys/class/net/${DEVICE}/carrier)" = "1" ]; then
+							break;
+						fi
+						boot_mesg -n "."
+						sleep 2
+					done
+					boot_mesg ""
+					if [ ! "$(</sys/class/net/${DEVICE}/carrier)" = "1" ]; then
+						echo_failure
+					else
+						echo_ok
+					fi
 				fi
 			fi
 
