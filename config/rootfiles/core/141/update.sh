@@ -71,7 +71,11 @@ telinit u
 # Update Language cache
 /usr/local/bin/filesystem-cleanup
 
+# Convert DNS settings
+/usr/local/bin/convert-dns-settings
+
 # Start services
+/etc/init.d/unbound restart
 
 # This update needs a reboot...
 touch /var/run/need_reboot
