@@ -111,6 +111,7 @@ usr/share/mc/skins/featured.ini
 usr/share/mc/skins/gotar.ini
 usr/share/mc/skins/gray-green-purple256.ini
 usr/share/mc/skins/gray-orange-blue256.ini
+usr/share/mc/skins/julia256.ini
 usr/share/mc/skins/mc46.ini
 usr/share/mc/skins/modarcon16-defbg.ini
 usr/share/mc/skins/modarcon16.ini
@@ -217,6 +218,7 @@ usr/share/mc/syntax/unknown.syntax
 usr/share/mc/syntax/verilog.syntax
 usr/share/mc/syntax/vhdl.syntax
 usr/share/mc/syntax/xml.syntax
+usr/share/mc/syntax/yabasic.syntax
 usr/share/mc/syntax/yaml.syntax
 usr/share/mc/syntax/yum-repo.syntax
 usr/share/mc/syntax/yxx.syntax
