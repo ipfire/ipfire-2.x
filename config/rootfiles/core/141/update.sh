@@ -44,6 +44,7 @@ done
 
 # Remove files
 rm -f /etc/rc.d/init.d/networking/red.up/06-safe-search
+rm -f /usr/lib/go/8.3.0
 
 # Stop services
 
@@ -59,10 +60,13 @@ telinit u
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
+# Update Language cache
+/usr/local/bin/filesystem-cleanup
+
 # Start services
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
