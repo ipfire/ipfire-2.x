@@ -83,6 +83,9 @@ telinit u
 # This update needs a reboot...
 touch /var/run/need_reboot
 
+# Force update the package lists
+pakfire update --force
+
 # Finish
 /etc/init.d/fireinfo start
 sendprofile
