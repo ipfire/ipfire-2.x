@@ -86,6 +86,12 @@ touch /var/run/need_reboot
 # Force update the package lists
 pakfire update --force
 
+# Let pakfire forget the elinks and python3 package
+rm -fv /opt/pakfire/db/rootfiles/elinks
+rm -fv /opt/pakfire/db/*/meta-elinks
+rm -fv /opt/pakfire/db/rootfiles/python3
+rm -fv /opt/pakfire/db/*/meta-python3
+
 # Finish
 /etc/init.d/fireinfo start
 sendprofile
