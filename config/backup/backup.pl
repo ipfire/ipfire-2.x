@@ -146,6 +146,9 @@ restore_backup() {
 	# Convert DNS settings
 	convert-dns-settings
 
+	# move nobeeps if exist
+	[ -e "/var/ipfire/ppp/nobeeps" ] && mv /var/ipfire/ppp/nobeeps /var/ipfire/red/nobeeps
+
 	return 0
 }
 

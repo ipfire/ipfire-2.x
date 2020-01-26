@@ -74,6 +74,9 @@ telinit u
 # Convert DNS settings
 /usr/local/bin/convert-dns-settings
 
+# move nobeeps if exist
+[ -e "/var/ipfire/ppp/nobeeps" ] && mv /var/ipfire/ppp/nobeeps /var/ipfire/red/nobeeps
+
 # Start services
 /etc/init.d/unbound restart
 
