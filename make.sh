@@ -26,8 +26,8 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.25"							# Version number
-CORE="140"							# Core Level (Filename)
-PAKFIRE_CORE="140"						# Core Level (PAKFIRE)
+CORE="141"							# Core Level (Filename)
+PAKFIRE_CORE="141"						# Core Level (PAKFIRE)
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
