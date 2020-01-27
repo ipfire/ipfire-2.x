@@ -83,8 +83,8 @@ telinit u
 # This update needs a reboot...
 touch /var/run/need_reboot
 
-# Force update the package lists
-/usr/local/bin/pakfire update --force
+# Force pakfire to redownload lists
+rm -f /opt/pakfire/db/lists/*.db
 
 # Let pakfire forget the elinks and python3 package
 rm -fv /opt/pakfire/db/rootfiles/elinks
