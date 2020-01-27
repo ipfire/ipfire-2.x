@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2019 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2020 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -52,7 +52,7 @@ fi
 
 # Remove files
 rm -f /etc/rc.d/init.d/networking/red.up/06-safe-search
-rm -f /usr/lib/go/8.3.0
+rm -rf /usr/lib/go/8.3.0
 
 # Stop services
 
