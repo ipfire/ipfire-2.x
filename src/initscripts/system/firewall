@@ -185,14 +185,6 @@ iptables_init() {
 	iptables -A INPUT -j GUARDIAN
 	iptables -A FORWARD -j GUARDIAN
 
-	# IPS (suricata) chains
-	iptables -N IPS_INPUT
-	iptables -N IPS_FORWARD
-	iptables -N IPS_OUTPUT
-	iptables -A INPUT -j IPS_INPUT
-	iptables -A FORWARD -j IPS_FORWARD
-	iptables -A OUTPUT -j IPS_OUTPUT
-
 	# Block non-established IPsec networks
 	iptables -N IPSECBLOCK
 	iptables -A FORWARD -m policy --dir out --pol none -j IPSECBLOCK
@@ -203,6 +195,14 @@ iptables_init() {
 	iptables -A INPUT   -i tun+ -j OVPNBLOCK
 	iptables -A FORWARD -i tun+ -j OVPNBLOCK
 	iptables -A FORWARD -o tun+ -j OVPNBLOCK
+
+	# IPS (suricata) chains
+	iptables -N IPS_INPUT
+	iptables -N IPS_FORWARD
+	iptables -N IPS_OUTPUT
+	iptables -A INPUT -j IPS_INPUT
+	iptables -A FORWARD -j IPS_FORWARD
+	iptables -A OUTPUT -j IPS_OUTPUT
 
 	# OpenVPN transfer network translation
 	iptables -t nat -N OVPNNAT
