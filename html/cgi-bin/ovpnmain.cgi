@@ -490,6 +490,13 @@ sub modccdnet
 	my $oldname=$_[1];
 	my %ccdconfhash=();
 	my %ccdhash=();
+
+	# Check if the new name is valid.
+	if(!&General::validhostname($newname)) {
+		$errormessage=$Lang::tr{'ccd err invalidname'};
+		return;
+	}
+
 	&General::readhasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
 	foreach my $key (keys %ccdconfhash) {
 		if ($ccdconfhash{$key}[0] eq $oldname) {
