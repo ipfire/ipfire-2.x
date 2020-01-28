@@ -23,55 +23,33 @@ main() {
 	# Do not convert anything if we already have some servers set
 	if [ ! -s "/var/ipfire/dns/servers" ]; then
 		# Array to store all found DNS servers.
-		SERVERS=()
+		local SERVERS=()
 
-		# Try to get the DNS servers from ethernet settings file.
-		local DNS1 DNS2
-		eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+		# Loop through all PPP profiles
+		local file
+		for file in /var/ipfire/ethernet/settings /var/ipfire/dns/settings /var/ipfire/ppp/settings-*; do
+			if [ -s "${file}" ]; then
+				local DNS0 DNS1 DNS2
+				eval $(/usr/local/bin/readhash "${file}")
 
-		# Add the grabbed DNS servers to the servers array.
-		SERVERS+=($DNS1 $DNS2)
-
-		# Check if the ppp settings file is not empty.
-		if [ -s "/var/ipfire/ppp/settings" ]; then
-			# Loop though all profile files.
-			for file in /var/ipfire/ppp/settings*; do
-				local DNS1 DNS2
-				eval $(/usr/local/bin/readhash $file)
-
-				# Add the DNS servers to the array of SERVERS.
-				for var in DNS1 DNS2; do
-					local server="${!var}"
-
-					# Check if the servers array is empty.
-					if [ ${#SERVERS[@]} -eq 0 ]; then
-						# Allways add the first found nameserver to the array.
-						SERVERS+=($server)
-					else
-						# Check if the current server is allready part ot the array.
-						if [[ ! "${SERVERS[@]}" =~ "${server}" ]]; then
-							# Add the server to the array.
-							SERVERS+=($server)
-						fi
-					fi
+				# Add the DNS servers to the array of SERVERS
+				local var
+				for var in DNS0 DNS1 DNS2; do
+					SERVERS+=( "${!var}" )
 				done
 
-				# Remove DNS1 and DNS2 settings from profile file.
-				sed -i "/^DNS[12]=/d" $file
-
-				# Unset the local variables for the next round.
-				unset DNS1 DNS2
-			done
-
-		elif [ -s "/var/ipfire/dns/settings" ]; then
-			eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
-		fi
+				# Remove DNS0, DNS1 and DNS2 settings from profile file
+				sed -i "/^DNS[012]=/d" "${file}"
+			fi
+		done
 
 		local server
 		local i=3
-		for server in "${SERVERS[@]}"; do
-			echo "${i},${server},,enabled,"
-			(( i++ ))
+		for server in $(printf "%s\n" "${SERVERS[@]}" | sort -u); do
+			if [ -n "${server}" ]; then
+				echo "${i},${server},,enabled,"
+				(( i++ ))
+			fi
 		done > /var/ipfire/dns/servers
 
 		# Empty the old settings file
