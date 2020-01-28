@@ -43,17 +43,24 @@ main() {
 				for var in DNS1 DNS2; do
 					local server="${!var}"
 
-					# Check if the current server is allready part
-					# of the array.
-					for element in "${SERVERS[@]}"; do
-						[[ $element == $server ]] && continue
-					done
-
-					SERVERS+=($server)
+					# Check if the servers array is empty.
+					if [ ${#SERVERS[@]} -eq 0 ]; then
+						# Allways add the first found nameserver to the array.
+						SERVERS+=($server)
+					else
+						# Check if the current server is allready part ot the array.
+						if [[ ! "${SERVERS[@]}" =~ "${server}" ]]; then
+							# Add the server to the array.
+							SERVERS+=($server)
+						fi
+					fi
 				done
 
 				# Remove DNS1 and DNS2 settings from profile file.
-				sed -i "/^DNS[12]?=/d" $file
+				sed -i "/^DNS[12]=/d" $file
+
+				# Unset the local variables for the next round.
+				unset DNS1 DNS2
 			done
 
 		elif [ -s "/var/ipfire/dns/settings" ]; then
