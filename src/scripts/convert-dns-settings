@@ -38,8 +38,8 @@ main() {
 					SERVERS+=( "${!var}" )
 				done
 
-				# Remove DNS0, DNS1 and DNS2 settings from profile file
-				sed -i "/^DNS[012]=/d" "${file}"
+				# Remove DNS, DNS0, DNS1 and DNS2 settings from profile file
+				sed -Ei "/^DNS[012]?=/d" "${file}"
 			fi
 		done
 
