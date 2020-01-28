@@ -19,6 +19,12 @@
 #                                                                             #
 ###############################################################################
 
+FILES=(
+	/var/ipfire/ethernet/settings
+	/var/ipfire/dns/settings
+	/var/ipfire/ppp/settings-*
+)
+
 main() {
 	# Do not convert anything if we already have some servers set
 	if [ ! -s "/var/ipfire/dns/servers" ]; then
@@ -27,7 +33,7 @@ main() {
 
 		# Loop through all PPP profiles
 		local file
-		for file in /var/ipfire/ethernet/settings /var/ipfire/dns/settings /var/ipfire/ppp/settings-*; do
+		for file in "${FILES[@]}"; do
 			if [ -s "${file}" ]; then
 				local DNS0 DNS1 DNS2
 				eval $(/usr/local/bin/readhash "${file}")
@@ -37,9 +43,6 @@ main() {
 				for var in DNS0 DNS1 DNS2; do
 					SERVERS+=( "${!var}" )
 				done
-
-				# Remove DNS, DNS0, DNS1 and DNS2 settings from profile file
-				sed -Ei "/^DNS[012]?=/d" "${file}"
 			fi
 		done
 
@@ -61,6 +64,13 @@ main() {
 				>> /var/ipfire/dns/settings
 		fi
 	fi
+
+	# Remove all old settings from files
+	local file
+	for file in "${FILES[@]}"; do	
+		# Remove DNS, DNS0, DNS1 and DNS2
+		sed -Ei "/^DNS[012]?=/d" "${file}"
+	done
 
 	# Set correct ownership.
 	chown nobody:nobody /var/ipfire/dns/settings
