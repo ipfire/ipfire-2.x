@@ -58,9 +58,9 @@ main() {
 		# Empty the old settings file
 		: > /var/ipfire/dns/settings
 
-		# Disable using ISP name servers when we already have some configured
-		if [ ${i} -gt 3 ]; then
-			echo "USE_ISP_NAMESERVERS=off" \
+		# Enable using ISP name servers when no servers are configured
+		if [ ${i} -eq 3 ]; then
+			echo "USE_ISP_NAMESERVERS=on" \
 				>> /var/ipfire/dns/settings
 		fi
 	fi
