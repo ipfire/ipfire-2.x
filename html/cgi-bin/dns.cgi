@@ -434,7 +434,7 @@ sub show_nameservers () {
 	#
 	# Simple send a request to unbound and check if it can resolve the
 	# DNS test server.
-	my $dns_status_ret = &check_nameserver("127.0.0.1", "$dns_test_server", "UDP");
+	my $dns_status_ret = &check_nameserver("127.0.0.1", "$dns_test_server", "UDP", undef, "+timeout=1", "+retry=0");
 
 	if ($dns_status_ret eq "2") {
 		$dns_status_string = "$Lang::tr{'working'}";
@@ -841,8 +841,8 @@ sub red_is_active () {
 }
 
 # Function to check a given nameserver against propper work.
-sub check_nameserver($$$$) {
-	my ($nameserver, $record, $proto, $tls_hostname) = @_;
+sub check_nameserver($$$$$) {
+	my ($nameserver, $record, $proto, $tls_hostname, @args) = @_;
 
 	# Check if the system is online.
 	unless (&red_is_active()) {
@@ -851,7 +851,7 @@ sub check_nameserver($$$$) {
 
 	# Default values.
 	my @command = ("kdig", "+dnssec",
-		"+bufsize=1232");
+		"+bufsize=1232", @args);
 
 	# Handle different protols.
 	if ($proto eq "TCP") {
