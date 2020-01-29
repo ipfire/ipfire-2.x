@@ -897,9 +897,14 @@ update_contributors() {
 	local contributors="$(contributors | paste -sd , - | sed -e "s/,/&\\\\n/g")"
 
 	# Edit contributors into credits.cgi
-	awk -i inplace \
-		"/<!-- CONTRIBUTORS -->/{ p=1; print; printf \"${contributors}\n\"}/<!-- END -->/{ p=0 } !p" \
-		"${BASEDIR}/html/cgi-bin/credits.cgi"
+	local tmp="$(mktemp)"
+
+	awk "/<!-- CONTRIBUTORS -->/{ p=1; print; printf \"${contributors}\n\"}/<!-- END -->/{ p=0 } !p" \
+		< "${BASEDIR}/html/cgi-bin/credits.cgi" > "${tmp}"
+
+	# Copy back modified content
+	cat "${tmp}" > "${BASEDIR}/html/cgi-bin/credits.cgi"
+	unlink "${tmp}"
 
 	print_status DONE
 	return 0
