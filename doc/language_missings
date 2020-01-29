@@ -263,6 +263,7 @@
 < dns mode for qname minimisation
 < dns no address given
 < dns no tls hostname given
+< dns recursor mode
 < dnssec aware
 < dnssec disabled warning
 < dnssec information
@@ -935,6 +936,7 @@
 < dns mode for qname minimisation
 < dns no address given
 < dns no tls hostname given
+< dns recursor mode
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
@@ -1046,6 +1048,7 @@
 < dns mode for qname minimisation
 < dns no address given
 < dns no tls hostname given
+< dns recursor mode
 < dnssec disabled warning
 < dns tls hostname
 < dns use isp assigned nameservers
@@ -1389,6 +1392,7 @@
 < dns mode for qname minimisation
 < dns no address given
 < dns no tls hostname given
+< dns recursor mode
 < dnssec aware
 < dnssec disabled warning
 < dnssec information
@@ -1851,6 +1855,7 @@
 < dns mode for qname minimisation
 < dns no address given
 < dns no tls hostname given
+< dns recursor mode
 < dnssec aware
 < dnssec disabled warning
 < dnssec information
@@ -2684,6 +2689,7 @@
 < dns mode for qname minimisation
 < dns no address given
 < dns no tls hostname given
+< dns recursor mode
 < dnssec aware
 < dnssec disabled warning
 < dnssec information
@@ -3366,6 +3372,7 @@
 < dns mode for qname minimisation
 < dns no address given
 < dns no tls hostname given
+< dns recursor mode
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries

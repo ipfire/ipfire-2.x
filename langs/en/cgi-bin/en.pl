@@ -862,7 +862,7 @@
 'dns no address given' => 'No IP Address given.',
 'dns no tls hostname given' => 'No TLS hostname given.',
 'dns proxy server' => 'DNS Proxy Server',
-'dns recursor mode' => 'Running in Recursor mode.',
+'dns recursor mode' => 'Recursor Mode',
 'dns saved' => 'Successfully saved!',
 'dns saved txt' => 'The two entered DNS server addresses have been saved successfully.<br />You have to reboot or reconnect that the changes have effect!',
 'dns server' => 'DNS Server',

@@ -418,9 +418,17 @@ END
 sub show_nameservers () {
 	&Header::openbox('100%', 'center', "$Lang::tr{'dns title'}");
 
+	# Determine if we are running in recursor mode
+	my $recursor = 0;
+	my $unbound_forward = qx(unbound-control forward);
+	if ($unbound_forward =~ m/^off/) {
+		$recursor = 1;
+	}
+
 	my $dns_status_string;
 	my $dns_status_col;
 	my $dns_working;
+
 
 	# Test if the DNS system is working.
 	#
@@ -435,6 +443,10 @@ sub show_nameservers () {
 	} else {
 		$dns_status_string = "$Lang::tr{'broken'}";
 		$dns_status_col = "${Header::colourred}";
+	}
+
+	if ($recursor) {
+		$dns_status_string .= " (" . $Lang::tr{'dns recursor mode'} . ")";
 	}
 
 print <<END;
@@ -705,25 +717,16 @@ print <<END;
 		</table>
 END
 ;
-
 		} else {
-print <<END;
+			print <<END;
 		<table width="100%">
-			<tr>
-				<td colspan="6" align="center">
-					<br>$Lang::tr{'dns recursor mode'}<br>
-				</td>
-			</tr>
-
 			<tr>
 				<form method="post" action="$ENV{'SCRIPT_NAME'}">
 					<td colspan="6" align="right"><input type="submit" name="SERVERS" value="$Lang::tr{'add'}"></td>
 				</form>
 			</tr>
 		</table>
-
 END
-;
 		}
 
 	&Header::closebox();

@@ -825,6 +825,7 @@
 'dns new 0' => 'Neue <strong>primäre</strong> DNS Server IP:',
 'dns new 1' => 'Neue <strong>sekundäre</strong> DNS Server IP:',
 'dns proxy server' => 'DNS-Proxyserver',
+'dns recursor mode' => 'Recursor-Modus',
 'dns saved' => 'Erfolgreich gespeichert!',
 'dns saved txt' => 'Die beiden eingegebenen DNS-Server-Adressen wurde erfolgreich gespeichert.<br/>Um die Änderung wirksam zu machen, müssen Sie neustarten oder wiederverbinden!',
 'dns server' => 'DNS Server',
