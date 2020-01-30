@@ -718,10 +718,7 @@ sub generate_dns_servers_file() {
 	if (@nameservers) {
 		$line = join(",", @nameservers);
 	} else {
-		# The responsible DNS servers on red are directly used, and because we are not able
-		# to specify each single DNS server address here, we currently have to thread each
-		# address which is not part of the HOME_NET as possible DNS server.
-		$line = "!\$HOME_NET";
+		$line = "\$EXTERNAL_NET";
 	}
 
 	# Open file to store the used DNS server addresses.
