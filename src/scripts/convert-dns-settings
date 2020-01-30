@@ -22,6 +22,7 @@
 FILES=(
 	/var/ipfire/ethernet/settings
 	/var/ipfire/dns/settings
+	/var/ipfire/ppp/settings
 	/var/ipfire/ppp/settings-*
 )
 
