@@ -92,6 +92,10 @@ rm -fv /opt/pakfire/db/*/meta-elinks
 rm -fv /opt/pakfire/db/rootfiles/python3
 rm -fv /opt/pakfire/db/*/meta-python3
 
+# run pakfire update twice (first sometimes fail)
+/usr/local/bin/pakfire update
+/usr/local/bin/pakfire update
+
 # Finish
 /etc/init.d/fireinfo start
 sendprofile
