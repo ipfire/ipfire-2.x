@@ -434,7 +434,7 @@ sub show_nameservers () {
 	#
 	# Simple send a request to unbound and check if it can resolve the
 	# DNS test server.
-	my $dns_status_ret = &check_nameserver("127.0.0.1", "$dns_test_server", "UDP", undef, "+timeout=1", "+retry=0");
+	my $dns_status_ret = &check_nameserver("127.0.0.1", "$dns_test_server", "UDP", undef, "+timeout=5", "+retry=0");
 
 	if ($dns_status_ret eq "2") {
 		$dns_status_string = "$Lang::tr{'working'}";
