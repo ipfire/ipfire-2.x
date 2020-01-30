@@ -29,6 +29,9 @@ $General::adminmanualurl = 'http://wiki.ipfire.org';
 
 require "${General::swroot}/network-functions.pl";
 
+# Function to remove duplicates from an array
+sub uniq { my %seen; grep !$seen{$_}++, @_ }
+
 #
 # log ("message") use default 'ipcop' tag
 # log ("tag","message") use your tag
@@ -1255,7 +1258,7 @@ sub get_nameservers () {
 	}
 
 	# Return the array.
-	return @nameservers;
+	return &uniq(@nameservers);
 }
 
 1;
