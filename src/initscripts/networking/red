@@ -376,16 +376,6 @@ case "${1}" in
 				AUTH=""
 			fi
 
-			### DNS Config
-			#
-			if [ "${DNS}" == "Automatic" ]; then
-				DNS="usepeerdns"
-			else
-				DNS=""
-				echo nameserver=$DNS1 > /etc/ppp/resolv.conf
-				echo nameserver=$DNS2 >> /etc/ppp/resolv.conf
-			fi
-
 			### Dial On Demand		
 			#
 			if [ "${RECONNECTION}" != "persistent" ]; then
@@ -417,7 +407,7 @@ case "${1}" in
 		
 			### Standard PPP options we always use
 			#
-			PPP_STD_OPTIONS="$PLUGOPTS $DNS defaultroute noipdefault noauth"
+			PPP_STD_OPTIONS="$PLUGOPTS usepeerdns defaultroute noipdefault noauth"
 			PPP_STD_OPTIONS+=" default-asyncmap hide-password nodetach"
 			PPP_STD_OPTIONS+=" noaccomp nodeflate nopcomp novj novjccomp"
 			PPP_STD_OPTIONS+=" nobsdcomp user ${USERNAME} lcp-echo-interval 20"
