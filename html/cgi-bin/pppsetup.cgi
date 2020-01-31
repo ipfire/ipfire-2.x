@@ -169,8 +169,6 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
                         if (! &General::validip($pppsettings{'BROADCAST'})) {
                                  $errormessage = $errormessage.' '.$Lang::tr{'broadcast'}.' '.$Lang::tr{'invalid broadcast ip'}; }
                 }
-                if( $pppsettings{'DNS'} eq 'Automatic') {
-                        $errormessage = $Lang::tr{'invalid input'}; }
                 if ($errormessage ne '') {goto ERROR; }
         }
 
@@ -441,10 +439,6 @@ $selected{'AUTH'}{'standard-login-script'} = '';
 $selected{'AUTH'}{'demon-login-script'} = '';
 $selected{'AUTH'}{'other-login-script'} = '';
 $selected{'AUTH'}{$pppsettings{'AUTH'}} = "selected='selected'";
-
-$checked{'DNS'}{'Automatic'} = '';
-$checked{'DNS'}{'Manual'} = '';
-$checked{'DNS'}{$pppsettings{'DNS'}} = "checked='checked'";
 
 $checked{'IPTV'}{'enable'} = '';
 $checked{'IPTV'}{'disable'} = '';
@@ -1014,7 +1008,6 @@ sub initprofile
         $pppsettings{'TIMEOUT'} = 15;
         $pppsettings{'MODULATION'} = 'AUTO';
         $pppsettings{'AUTH'} = 'pap-or-chap';
-        $pppsettings{'DNS'} = 'Automatic';
         $pppsettings{'DEBUG'} = 'off';
         $pppsettings{'BACKUPPROFILE'} = $pppsettings{'PROFILE'};
         $pppsettings{'IPTVSERVERS'} = '192.168.2.51/32';
