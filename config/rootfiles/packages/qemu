@@ -54,7 +54,7 @@ usr/libexec/qemu-bridge-helper
 usr/share/qemu/bios-256k.bin
 usr/share/qemu/bios.bin
 #usr/share/qemu/canyonlands.dtb
-usr/share/qemu/edk2-aarch64-code.fd
+#usr/share/qemu/edk2-aarch64-code.fd
 usr/share/qemu/edk2-arm-code.fd
 usr/share/qemu/edk2-arm-vars.fd
 usr/share/qemu/edk2-i386-code.fd
@@ -74,11 +74,11 @@ usr/share/qemu/efi-vmxnet3.rom
 usr/share/qemu/firmware
 usr/share/qemu/firmware/50-edk2-i386-secure.json
 usr/share/qemu/firmware/50-edk2-x86_64-secure.json
-usr/share/qemu/firmware/60-edk2-aarch64.json
+#usr/share/qemu/firmware/60-edk2-aarch64.json
 usr/share/qemu/firmware/60-edk2-arm.json
 usr/share/qemu/firmware/60-edk2-i386.json
 usr/share/qemu/firmware/60-edk2-x86_64.json
-usr/share/qemu/hppa-firmware.img
+#usr/share/qemu/hppa-firmware.img
 usr/share/qemu/keymaps
 usr/share/qemu/keymaps/ar
 usr/share/qemu/keymaps/bepo
