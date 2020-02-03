@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2015  IPFire Team  <alexander.marx@ipfire.org>                #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -110,8 +110,8 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}"){ #SaveButton on configsite
 
 		$dma{'SMARTHOST'}		= $cgiparams{'txt_mailserver'};
 		$dma{'PORT'}			= $cgiparams{'txt_mailport'};
-		$dma{'STARTTLS'}		= '' if ($cgiparams{'mail_tls'});
-		$dma{'SECURETRANSFER'}	= '' if exists $dma{'STARTTLS'};
+		$dma{'STARTTLS'}		= '' if ($cgiparams{'mail_tls'} eq 'explicit');
+		$dma{'SECURETRANSFER'}	= '' if ($cgiparams{'mail_tls'} eq 'explicit' || $cgiparams{'mail_tls'} eq 'implicit');
 		$dma{'SPOOLDIR'}		= "/var/spool/dma";
 		$dma{'FULLBOUNCE'}		= '';
 		$dma{'MAILNAME'}		= "$mainsettings{'HOSTNAME'}.$mainsettings{DOMAINNAME}";
@@ -140,8 +140,6 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'email testmail'}"){ #Testmail button on 
 
 #FUNCTIONS
 sub configsite{
-	
-
 	#If update set fieldvalues new
 	if($cgiparams{'update'} eq 'on'){
 		$mail{'USEMAIL'}	= 'on';
@@ -156,7 +154,9 @@ sub configsite{
 	}
 	#find preselections
 	$checked{'usemail'}{$mail{'USEMAIL'}}	= 'CHECKED';
-	$checked{'mail_tls'}{'on'}				= 'CHECKED' if exists $dma{'STARTTLS'};
+	$selected{'mail_tls'}{'explicit'} = 'selected' if exists $dma{'STARTTLS'};
+	$selected{'mail_tls'}{'implicit'} = 'selected' if (exists $dma{'SECURETRANSFER'}) and (not exists $dma{'STARTTLS'});
+	$selected{'mail_tls'}{'disabled'} = 'selected' if (not exists $dma{'SECURETRANSFER'}) and (not exists $dma{'STARTTLS'});
 	
 	#Open site
 	&Header::openpage($Lang::tr{'email settings'}, 1, '');
@@ -226,7 +226,13 @@ END
 		</tr>
 		<tr>
 			<td>$Lang::tr{'email tls'}</td>
-			<td><input type='checkbox' name='mail_tls' $checked{'mail_tls'}{'on'}></td>
+			<td>
+				<select name='mail_tls'>
+					<option value='implicit' $selected{'mail_tls'}{'implicit'}>$Lang::tr{'email tls implicit'}</option>
+					<option value='explicit' $selected{'mail_tls'}{'explicit'}>$Lang::tr{'email tls explicit'}</option>
+					<option value='disabled' $selected{'mail_tls'}{'disabled'}>$Lang::tr{'disabled'}</option>
+				</select>
+			</td>
 		</tr>
 END
 		if (! -z $dmafile && $mail{'USEMAIL'} eq 'on' && !$errormessage){
