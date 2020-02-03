@@ -1181,15 +1181,6 @@ buildipfire() {
 		;;
 
 	armv5tel)
-		# arm-kirkwood (Dreamplug, ICY-Box ...) kernel build
-		lfsmake2 linux			KCFG="-kirkwood"
-#		lfsmake2 backports			KCFG="-kirkwood"
-#		lfsmake2 e1000e			KCFG="-kirkwood"
-#		lfsmake2 igb				KCFG="-kirkwood"
-#		lfsmake2 ixgbe			KCFG="-kirkwood"
-		lfsmake2 xtables-addons		KCFG="-kirkwood"
-		lfsmake2 linux-initrd			KCFG="-kirkwood"
-
 		# arm multi platform (Panda, Wandboard ...) kernel build
 		lfsmake2 linux			KCFG="-multi"
 #		lfsmake2 backports			KCFG="-multi"
