@@ -26,6 +26,7 @@ usr/bin/b2sum
 usr/bin/base32
 usr/bin/base64
 usr/bin/basename
+usr/bin/basenc
 usr/bin/chcon
 usr/bin/cksum
 usr/bin/comm
@@ -204,8 +205,6 @@ usr/sbin/chroot
 #usr/share/locale/pl/LC_MESSAGES/coreutils.mo
 #usr/share/locale/pl/LC_TIME
 #usr/share/locale/pl/LC_TIME/coreutils.mo
-#usr/share/locale/pt
-#usr/share/locale/pt/LC_MESSAGES
 #usr/share/locale/pt/LC_MESSAGES/coreutils.mo
 #usr/share/locale/pt/LC_TIME
 #usr/share/locale/pt/LC_TIME/coreutils.mo
@@ -250,6 +249,7 @@ usr/sbin/chroot
 #usr/share/man/man1/base32.1
 #usr/share/man/man1/base64.1
 #usr/share/man/man1/basename.1
+#usr/share/man/man1/basenc.1
 #usr/share/man/man1/cat.1
 #usr/share/man/man1/chcon.1
 #usr/share/man/man1/chroot.1
@@ -271,10 +271,13 @@ usr/sbin/chroot
 #usr/share/man/man1/head.1
 #usr/share/man/man1/hostid.1
 #usr/share/man/man1/id.1
+#usr/share/man/man1/install.1
 #usr/share/man/man1/join.1
 #usr/share/man/man1/link.1
 #usr/share/man/man1/logname.1
+#usr/share/man/man1/ls.1
 #usr/share/man/man1/md5sum.1
+#usr/share/man/man1/mknod.1
 #usr/share/man/man1/mktemp.1
 #usr/share/man/man1/nice.1
 #usr/share/man/man1/nl.1
@@ -292,6 +295,7 @@ usr/sbin/chroot
 #usr/share/man/man1/pwd.1
 #usr/share/man/man1/readlink.1
 #usr/share/man/man1/realpath.1
+#usr/share/man/man1/rm.1
 #usr/share/man/man1/runcon.1
 #usr/share/man/man1/seq.1
 #usr/share/man/man1/sha1sum.1
