@@ -274,6 +274,8 @@ get_memory_amount() {
 }
 
 fix_time_if_dns_fails() {
+	# Sometimes the first try fails so do it twice
+	resolve "ping.ipfire.org" &>/dev/null
 	# If DNS is working, everything is fine
 	if resolve "ping.ipfire.org" &>/dev/null; then
 		return 0
