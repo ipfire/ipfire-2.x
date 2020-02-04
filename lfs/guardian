@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = guardian
-PAK_VER    = 18
+PAK_VER    = 19
 
 DEPS       = "perl-inotify2 perl-Net-IP"
 
@@ -78,6 +78,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axvf $(DIR_DL)/$(DL_FILE)
+
+	# Add upstream patches.
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/guardian-2.0.2-http-parser.patch
 
 	# Adjust path for firewall binaries.
 	cd $(DIR_APP) && sed -i "s|/usr/sbin/|/sbin/|g" modules/IPtables.pm

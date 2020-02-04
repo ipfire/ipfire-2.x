@@ -1,0 +1,45 @@
+commit 5028c7fde1fa15e4960f2fec3c025d0338382895
+Author: Stefan Schantl <stefan.schantl@ipfire.org>
+Date:   Tue Feb 4 07:55:48 2020 +0100
+
+    Parser: Adjust HTTP parser to be compatible with newer log format.
+    
+    Signed-off-by: Stefan Schantl <stefan.schantl@ipfire.org>
+
+diff --git a/modules/Parser.pm b/modules/Parser.pm
+index 3880228..bcca88f 100644
+--- a/modules/Parser.pm
++++ b/modules/Parser.pm
+@@ -302,7 +302,7 @@ sub message_parser_httpd (@) {
+ 	# been passed.
+ 	foreach my $line (@message) {
+ 		# This will catch brute-force attacks against htaccess logins (username).
+-		if ($line =~ /.*\[error\] \[client (.*)\] user(.*) not found:.*/) {
++		if ($line =~ /.*\[client (.*)\] .* user(.*) not found:.*/) {
+ 			# Store the grabbed IP-address.
+ 			$address = $1;
+ 
+@@ -311,7 +311,7 @@ sub message_parser_httpd (@) {
+ 		}
+ 
+ 		# Detect htaccess password brute-forcing against a username.
+-		elsif ($line =~ /.*\[error\] \[client (.*)\] user(.*): authentication failure for.*/) {
++		elsif ($line =~ /.*\[client (.*)\] .* user(.*): authentication failure for.*/) {
+ 			# Store the extracted IP-address.
+ 			$address = $1;
+ 
+@@ -321,6 +321,14 @@ sub message_parser_httpd (@) {
+ 
+ 		# Check if at least the IP-address information has been extracted.
+ 		if (defined ($address)) {
++			# Check if the address also contains a port value.
++			if ($address =~ m/:/) {
++				my ($add_address, $port) = split(/:/, $address);
++
++				# Only process the address.
++				$address = $add_address;
++			}
++
+ 			# Add the extracted values and event message to the actions array.
+ 			push(@actions, "count $address $name $message");
+ 		}
