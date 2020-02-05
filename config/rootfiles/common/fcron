@@ -93,6 +93,6 @@ usr/sbin/fcron
 #usr/share/man/man5/fcron.conf.5
 #usr/share/man/man5/fcrontab.5
 #usr/share/man/man8/fcron.8
-#var/spool/cron
+var/spool/cron
 var/spool/cron/new.root
 var/spool/cron/root.orig
