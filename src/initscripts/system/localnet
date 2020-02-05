@@ -19,6 +19,7 @@ write_resolv_conf() {
 	(
 		[ -n "${DOMAINNAME}" ] && echo "search ${DOMAINNAME}"
 		echo "nameserver 127.0.0.1"
+		echo "options trust-ad"
 	) > /etc/resolv.conf
 }
 
