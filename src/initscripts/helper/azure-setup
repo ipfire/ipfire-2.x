@@ -240,6 +240,9 @@ import_azure_configuration() {
 
 	# Actions performed only on the very first start
 	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
+		# Disable using ISP nameservers
+		sed -e "s/^USE_ISP_NAMESERVERS=.*/USE_ISP_NAMESERVERS=off/" -i /var/ipfire/dns/settings
+
 		# Enable SSH
 		sed -e "s/ENABLE_SSH=.*/ENABLE_SSH=on/g" -i /var/ipfire/remote/settings
 
