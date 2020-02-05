@@ -449,7 +449,7 @@ sub show_nameservers () {
 		$dns_status_string .= " (" . $Lang::tr{'dns recursor mode'} . ")";
 	}
 
-print <<END;
+	print <<END;
 		<table width='100%'>
 			<tr>
 				<td>
@@ -458,7 +458,36 @@ print <<END;
 				</td>
 			</tr>
 		</table>
+END
 
+	# Check the usage of ISP assigned nameservers is enabled.
+	my $id = 1;
+
+	# Loop through the array which stores the files.
+	foreach my $file (@ISP_nameserver_files) {
+		# Grab the address of the nameserver.
+		my $address = &General::grab_address_from_file($file);
+
+		# Check if we got an address.
+		if ($address) {
+			# Add the address to the hash of nameservers.
+			$dns_servers{$id} = [ "$address", "none",
+				($settings{'USE_ISP_NAMESERVERS'} eq "on") ? "enabled" : "disabled",
+				"$Lang::tr{'dns isp assigned nameserver'}" ];
+
+			# Increase id by one.
+			$id++;
+		}
+	}
+
+	# Check some DNS servers have been configured. In this case
+	# the hash contains at least one key.
+	my $server_amount;
+	if (keys %dns_servers) {
+		# Sort the keys by their ID and store them in an array.
+		my @keys = sort { $a <=> $b } keys %dns_servers;
+
+		print <<END;
 		<br>
 
 		<table class="tbl" width='100%'>
@@ -479,51 +508,23 @@ print <<END;
 					<strong>$Lang::tr{'remark'}</strong>
 				</td>
 END
-	# Check if the status should be displayed.
-	if ($check_servers) {
-print <<END
+
+		# Check if the status should be displayed.
+		if ($check_servers) {
+			print <<END;
 				<td align="center">
 					<strong>$Lang::tr{'status'}</strong>
 				</td>
 END
-;
-	}
+		}
 
-print <<END
+		print <<END;
 
 				<td align="center" colspan="3">
 					<strong>$Lang::tr{'action'}</strong>
 				</td>
 			</tr>
 END
-;
-
-		# Check the usage of ISP assigned nameservers is enabled.
-		my $id = 1;
-
-		# Loop through the array which stores the files.
-		foreach my $file (@ISP_nameserver_files) {
-			# Grab the address of the nameserver.
-			my $address = &General::grab_address_from_file($file);
-
-			# Check if we got an address.
-			if ($address) {
-				# Add the address to the hash of nameservers.
-				$dns_servers{$id} = [ "$address", "none",
-					($settings{'USE_ISP_NAMESERVERS'} eq "on") ? "enabled" : "disabled",
-					"$Lang::tr{'dns isp assigned nameserver'}" ];
-
-				# Increase id by one.
-				$id++;
-			}
-		}
-
-		# Check some DNS servers have been configured. In this case
-		# the hash contains at least one key.
-		my $server_amount;
-		if (keys %dns_servers) {
-			# Sort the keys by their ID and store them in an array.
-			my @keys = sort { $a <=> $b } keys %dns_servers;
 
 			# Loop through all entries of the array/hash.
 			foreach my $id (@keys) {
