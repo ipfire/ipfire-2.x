@@ -212,8 +212,6 @@ import_aws_configuration() {
 	# Save CONFIG_TYPE
 	echo "CONFIG_TYPE=${config_type}" >> /var/ipfire/ethernet/settings
 
-
-
 	# Actions performed only on the very first start
 	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
 		# Enable SSH
