@@ -1408,7 +1408,6 @@ buildipfire() {
   lfsmake2 chkconfig
   lfsmake2 postfix
   lfsmake2 fetchmail
-  lfsmake2 cyrus-imapd
   lfsmake2 clamav
   lfsmake2 perl-NetAddr-IP
   lfsmake2 spamassassin
