@@ -178,6 +178,9 @@ else
 	cd $(DIR_APP) && make clean
 	cd $(DIR_APP) && sed -i -e 's/EXTRAVERSION\ =.*/EXTRAVERSION\ =\ -$(VERSUFIX)/' Makefile
 
+	# Copy Module signing key configuration
+	cp -f $(DIR_SRC)/config/kernel/x509.genkey $(DIR_APP)/certs/x509.genkey
+
 	# Remove modules folder if exists
 	rm -rf /lib/modules/$(VER)-$(VERSUFIX)
 
@@ -218,6 +221,9 @@ endif
 
 	cd $(DIR_APP) && cp -a --parents arch/$(HEADERS_ARCH)/include /lib/modules/$(VER)-$(VERSUFIX)/build
 	cd $(DIR_APP) && cp -a include /lib/modules/$(VER)-$(VERSUFIX)/build/include
+
+	# Copy module signing key for off tree modules
+	cd $(DIR_APP) && cp -f certs/signing_key.* /lib/modules/$(VER)-$(VERSUFIX)/build/certs/
 
 	# Install objtool
 	cd $(DIR_APP) && cp -a tools/objtool/objtool \
