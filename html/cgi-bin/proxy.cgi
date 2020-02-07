@@ -3945,7 +3945,13 @@ sub adduser
 	} else {
 		&deluser($str_user);
 
-		my $htpasswd = new Apache::Htpasswd("$userdb");
+		my %htpasswd_options = (
+			passwdFile => "$userdb",
+			UseMD5 => 1,
+		);
+
+		my $htpasswd = new Apache::Htpasswd(\%htpasswd_options);
+
 		$htpasswd->htpasswd($str_user, $str_pass);
 	}
 
