@@ -71,6 +71,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
+	# Apply upstream patches.
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-013-dyfi-use-https.patch
+
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
