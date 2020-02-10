@@ -835,7 +835,10 @@ WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: wildcards
 WARNING: translation string unused: wins server
 WARNING: translation string unused: wins support
+WARNING: translation string unused: wlan clients
 WARNING: translation string unused: wlanap access point
+WARNING: translation string unused: wlanap link dhcp
+WARNING: translation string unused: wlanap link wireless
 WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
@@ -946,6 +949,7 @@ WARNING: untranslated string: dnssec aware = DNSSEC Aware
 WARNING: untranslated string: dnssec disabled warning = WARNING: DNSSEC has been disabled
 WARNING: untranslated string: dnssec not supported = DNSSEC Not supported
 WARNING: untranslated string: dnssec validating = DNSSEC Validating
+WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
 WARNING: untranslated string: download tls-auth key = Download tls-auth key
 WARNING: untranslated string: drop outgoing = Log dropped outgoing packets
 WARNING: untranslated string: duration = Duration

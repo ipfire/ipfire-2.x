@@ -913,6 +913,7 @@
 'downlink speed' => 'Downlink speed (kbit/sec)',
 'downlink std class' => 'downlink standard class',
 'download' => 'download',
+'download apple profile' => 'Download Apple Configuration Profile',
 'download ca certificate' => 'Download CA certificate',
 'download certificate' => 'Download file',
 'download dh parameter' => 'Download Diffie-Hellman parameters',

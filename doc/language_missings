@@ -34,6 +34,7 @@
 < disable
 < dns could not add server
 < done
+< download apple profile
 < enable
 < error the to date has to be later than the from date
 < g.dtm
@@ -218,6 +219,7 @@
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
 < downlink
+< download apple profile
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -920,6 +922,7 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< download apple profile
 < g.dtm
 < g.lite
 < upload fcdsl.o
@@ -1042,6 +1045,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< download apple profile
 < duration
 < eight hours
 < email config
@@ -1445,6 +1449,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< download apple profile
 < download dh parameter
 < download tls-auth key
 < drop outgoing
@@ -1965,6 +1970,7 @@
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
 < downlink
+< download apple profile
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -2855,6 +2861,7 @@
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
 < downlink
+< download apple profile
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -3588,6 +3595,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< download apple profile
 < duration
 < email tls explicit
 < email tls implicit

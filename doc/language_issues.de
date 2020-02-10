@@ -828,6 +828,9 @@ WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: wildcards
 WARNING: translation string unused: wins server
 WARNING: translation string unused: wins support
+WARNING: translation string unused: wlan clients
+WARNING: translation string unused: wlanap link dhcp
+WARNING: translation string unused: wlanap link wireless
 WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
@@ -852,6 +855,7 @@ WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: desired = Desired
 WARNING: untranslated string: disable = Disable
+WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
 WARNING: untranslated string: enable = Enable
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
 WARNING: untranslated string: fwhost cust locationgrp = unknown string

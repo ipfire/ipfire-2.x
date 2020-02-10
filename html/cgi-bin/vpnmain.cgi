@@ -19,6 +19,7 @@
 #                                                                             #
 ###############################################################################
 
+use MIME::Base64;
 use Net::DNS;
 use File::Copy;
 use File::Temp qw/ tempfile tempdir /;
@@ -1178,6 +1179,122 @@ END
 	print `/bin/cat ${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1].p12`;
 	exit (0);
 
+# Export Apple profile to browser
+} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'download apple profile'}) {
+	&General::readhasharray("${General::swroot}/vpn/config", \%confighash);
+	my $key = $cgiparams{'KEY'};
+
+	my $uuid1 = "AAAABBBB";
+	my $uuid2 = "CCCCDDDD";
+
+	my $cert = "";
+	my $cert_uuid = "123456789";
+
+	# Read and encode certificate
+	if ($confighash{$key}[4] eq "cert") {
+		my $cert_path = "${General::swroot}/certs/$confighash{$key}[1].p12";
+
+		# Read certificate and encode it into Base64
+		open(CERT, "<${cert_path}");
+		local($/) = undef; # slurp
+		$cert = MIME::Base64::encode_base64(<CERT>);
+		close(CERT);
+	}
+
+	print "Content-Type: application/octet-stream\n";
+	print "Content-Disposition: attachment; filename=" . $confighash{$key}[1] . ".mobileconfig\n";
+	print "\n"; # end headers
+
+	print "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
+	print "<plist version=\"1.0\">\n";
+	print "	<dict>\n";
+        print "		<key>PayloadDisplayName</key>\n";
+	print "		<string>$confighash{$key}[1]</string>\n";
+	print "		<key>PayloadIdentifier</key>\n";
+	print "		<string>$confighash{$key}[1]</string>\n";
+	print "		<key>PayloadUUID</key>\n";
+	print "		<string>${uuid1}</string>\n";
+	print "		<key>PayloadType</key>\n";
+	print "		<string>Configuration</string>\n";
+	print "		<key>PayloadVersion</key>\n";
+	print "		<integer>1</integer>\n";
+	print "		<key>PayloadContent</key>\n";
+	print "		<array>\n";
+	print "			<dict>\n";
+	print "				<key>PayloadIdentifier</key>\n";
+	print "				<string>org.example.vpn1.conf1</string>\n";
+	print "				<key>PayloadUUID</key>\n";
+	print "				<string>${uuid2}</string>\n";
+	print "				<key>PayloadType</key>\n";
+	print "				<string>com.apple.vpn.managed</string>\n";
+	print "				<key>PayloadVersion</key>\n";
+	print "				<integer>1</integer>\n";
+	print "				<key>UserDefinedName</key>\n";
+	print "				<string>$confighash{$key}[1]</string>\n";
+	print "				<key>VPNType</key>\n";
+	print "				<string>IKEv2</string>\n";
+	print "				<key>IKEv2</key>\n";
+	print "				<dict>\n";
+	print "					<key>RemoteAddress</key>\n";
+	print "					<string>18.206.152.26</string>\n";
+
+	# Left ID
+	if ($confighash{$key}[9]) {
+		print "				<key>LocalIdentifier</key>\n";
+		print "				<string>$confighash{$key}[9]</string>\n";
+	}
+
+	# Right ID
+	if ($confighash{$key}[7]) {
+		print "				<key>RemoteIdentifier</key>\n";
+		print "				<string>$confighash{$key}[7]</string>\n";
+	}
+
+	if ($confighash{$key}[4] eq "cert") {
+		print "				<key>AuthenticationMethod</key>\n";
+		print "				<string>Certificate</string>\n";
+
+		print "				<key>PayloadCertificateUUID</key>\n";
+		print "				<string>${cert_uuid}</string>\n";
+	} else {
+		print "				<key>AuthenticationMethod</key>\n";
+		print "				<string>SharedSecret</string>\n";
+		print "				<key>SharedSecret</key>\n";
+		print "				<string>$confighash{$key}[5]</string>\n";
+	}
+
+	print "					<key>ExtendedAuthEnabled</key>\n";
+	print "					<integer>0</integer>\n";
+	print "				</dict>\n";
+	print "			</dict>\n";
+
+	if ($confighash{$key}[4] eq "cert") {
+		print "			<dict>\n";
+		print "				<key>PayloadIdentifier</key>\n";
+		print "				<string>org.example.vpn1.client</string>\n";
+		print "				<key>PayloadUUID</key>\n";
+		print "				<string>${cert_uuid}</string>\n";
+		print "				<key>PayloadType</key>\n";
+		print "				<string>com.apple.security.pkcs12</string>\n";
+		print "				<key>PayloadVersion</key>\n";
+		print "				<integer>1</integer>\n";
+		print "				<key>PayloadContent</key>\n";
+		print "				<data>\n";
+
+		foreach (split /\n/,${cert}) {
+			print "					$_\n";
+		}
+
+		print "				</data>\n";
+		print "			</dict>\n";
+	}
+
+	print "		</array>\n";
+	print "	</dict>\n";
+	print "</plist>\n";
+
+	# Done
+	exit(0);
 ###
 ### Display certificate
 ###
@@ -2982,7 +3099,7 @@ END
 	<th width='23%' class='boldbase' align='center'><b>$Lang::tr{'common name'}</b></th>
 	<th width='30%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
 	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
-	<th class='boldbase' align='center' colspan='6'><b>$Lang::tr{'action'}</b></th>
+	<th class='boldbase' align='center' colspan='7'><b>$Lang::tr{'action'}</b></th>
 	</tr>
 END
 ;
@@ -3083,6 +3200,22 @@ END
 	} else {
 		print "<td width='2%' $col>&nbsp;</td>";
 	}
+
+	# Apple Profile
+	if ($confighash{$key}[3] eq 'host') {
+		print <<END;
+		<td align='center' $col>
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='image' name='$Lang::tr{'download apple profile'}' src='/images/apple.png' alt='$Lang::tr{'download apple profile'}' title='$Lang::tr{'download apple profile'}' />
+			<input type='hidden' name='ACTION' value='$Lang::tr{'download apple profile'}' />
+			<input type='hidden' name='KEY' value='$key' />
+			</form>
+		</td>
+END
+	} else {
+		print "<td width='2%' $col>&nbsp;</td>";
+	}
+
 	print <<END
 	<td align='center' $col>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>

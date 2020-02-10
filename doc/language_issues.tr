@@ -871,6 +871,9 @@ WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: wildcards
 WARNING: translation string unused: wins server
 WARNING: translation string unused: wins support
+WARNING: translation string unused: wlan clients
+WARNING: translation string unused: wlanap link dhcp
+WARNING: translation string unused: wlanap link wireless
 WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
@@ -922,6 +925,7 @@ WARNING: untranslated string: dns use isp assigned nameservers = Use ISP-assigne
 WARNING: untranslated string: dns use protocol for dns queries = Protocol for DNS queries
 WARNING: untranslated string: dnsforward dnssec disabled = DNSSEC Validation is disabled
 WARNING: untranslated string: dnsforward forward_servers = Nameservers
+WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
 WARNING: untranslated string: duration = Duration
 WARNING: untranslated string: email tls explicit = explicit (STARTTLS)
 WARNING: untranslated string: email tls implicit = implicit (TLS)
