@@ -1007,7 +1007,7 @@ END
 			&General::log("ipsec", "Creating cacert...");
 			if (open(STDIN, "-|")) {
 				my $opt = " req -x509 -sha256 -nodes";
-				$opt .= " -days 999999";
+				$opt .= " -days 3650";
 				$opt .= " -newkey rsa:4096";
 				$opt .= " -keyout ${General::swroot}/private/cakey.pem";
 				$opt .= " -out ${General::swroot}/ca/cacert.pem";
@@ -1065,7 +1065,7 @@ END
 			print $fh "subjectAltName=$cgiparams{'SUBJECTALTNAME'}" if ($cgiparams{'SUBJECTALTNAME'});
 			close ($fh);
 
-			my $opt = " ca -md sha256 -days 999999";
+			my $opt = " ca -md sha256 -days 825";
 			$opt .= " -batch -notext";
 			$opt .= " -in ${General::swroot}/certs/hostreq.pem";
 			$opt .= " -out ${General::swroot}/certs/hostcert.pem";
@@ -1552,7 +1552,7 @@ END
 
 		# Sign the certificate request
 		&General::log("ipsec", "Signing your cert $cgiparams{'NAME'}...");
-		my $opt = " ca -md sha256 -days 999999";
+		my $opt = " ca -md sha256 -days 825";
 		$opt .= " -batch -notext";
 		$opt .= " -in $filename";
 		$opt .= " -out ${General::swroot}/certs/$cgiparams{'NAME'}cert.pem";
@@ -1825,7 +1825,7 @@ END
 		print $fh "subjectAltName=$cgiparams{'SUBJECTALTNAME'}" if ($cgiparams{'SUBJECTALTNAME'});
 		close ($fh);
 
-		my $opt = " ca -md sha256 -days 999999 -batch -notext";
+		my $opt = " ca -md sha256 -days 825 -batch -notext";
 		$opt .= " -in ${General::swroot}/certs/$cgiparams{'NAME'}req.pem";
 		$opt .= " -out ${General::swroot}/certs/$cgiparams{'NAME'}cert.pem";
 		$opt .= " -extfile $v3extname";
