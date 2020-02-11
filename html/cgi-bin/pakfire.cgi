@@ -42,8 +42,6 @@ $pakfiresettings{'VALID'} = '';
 
 $pakfiresettings{'INSPAKS'} = '';
 $pakfiresettings{'DELPAKS'} = '';
-$pakfiresettings{'AUTOUPDATE'} = 'off';
-$pakfiresettings{'UUID'} = 'on';
 
 sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
 
@@ -144,13 +142,6 @@ END
 	system("$command");
 	system("/bin/sleep 1");
 } elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}") {
-
-	if ($pakfiresettings{'AUTOUPDATE'} eq 'on') {
-		system("/usr/local/bin/pakfire enable updates >/dev/null 2>&1");
-	} else {
-		system("/usr/local/bin/pakfire disable updates  >/dev/null 2>&1");
-	}
-
 	&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
 }
 
@@ -158,13 +149,6 @@ END
 
 my %selected=();
 my %checked=();
-
-$checked{'AUTOUPDATE'}{'off'} = '';
-$checked{'AUTOUPDATE'}{'on'} = '';
-$checked{'AUTOUPDATE'}{$pakfiresettings{'AUTOUPDATE'}} = "checked='checked'";
-$checked{'UUID'}{'off'} = '';
-$checked{'UUID'}{'on'} = '';
-$checked{'UUID'}{$pakfiresettings{'UUID'}} = "checked='checked'";
 
 # DPC move error message to top so it is seen!
 if ($errormessage) {
