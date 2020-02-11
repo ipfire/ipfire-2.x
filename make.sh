@@ -509,20 +509,24 @@ prepareenv() {
 	rm -f $BASEDIR/build/usr/src/lsalr 2>/dev/null
 
 	# Prepare string for /etc/system-release.
-	SYSTEM_RELEASE="${NAME} ${VERSION} (${BUILD_ARCH})"
-	if [ "$(git status -s | wc -l)" == "0" ]; then
-	GIT_STATUS=""
-	else
-	GIT_STATUS="-dirty"
-	fi
-	case "$GIT_BRANCH" in
-	core*|beta?|rc?)
-		SYSTEM_RELEASE="${SYSTEM_RELEASE} - $GIT_BRANCH$GIT_STATUS"
-		;;
-	*)
-		SYSTEM_RELEASE="${SYSTEM_RELEASE} - Development Build: $GIT_BRANCH/${GIT_LASTCOMMIT:0:8}$GIT_STATUS"
-		;;
+	local system_release="${NAME} ${VERSION} (${BUILD_ARCH})"
+
+	case "${GIT_BRANCH}" in
+		core*|beta?|rc?)
+			system_release="${system_release} - ${GIT_BRANCH}"
+			;;
+		*)
+			system_release="${system_release} - Development Build: ${GIT_BRANCH}/${GIT_LASTCOMMIT:0:8}"
+			;;
 	esac
+
+	# Append -dirty tag for local changes
+	if [ "$(git status -s | wc -l)" != "0" ]; then
+		system_release="${system_release}-dirty"
+	fi
+
+	# Export variable
+	SYSTEM_RELEASE="${system_release}"
 
 	# Setup ccache cache size
 	enterchroot ccache --max-size="${CCACHE_CACHE_SIZE}" >/dev/null
