@@ -30,22 +30,23 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "/opt/pakfire/lib/functions.pl";
 
-my %pakfiresettings=();
+my %cgiparams=();
 my $errormessage = '';
 my %color = ();
+my %pakfiresettings = ();
 my %mainsettings = ();
 
 &Header::showhttpheaders();
 
-$pakfiresettings{'ACTION'} = '';
-$pakfiresettings{'VALID'} = '';
+$cgiparams{'ACTION'} = '';
+$cgiparams{'VALID'} = '';
 
-$pakfiresettings{'INSPAKS'} = '';
-$pakfiresettings{'DELPAKS'} = '';
+$cgiparams{'INSPAKS'} = '';
+$cgiparams{'DELPAKS'} = '';
 
 sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
 
-&Header::getcgihash(\%pakfiresettings);
+&Header::getcgihash(\%cgiparams);
 
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
@@ -53,17 +54,17 @@ sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' cont
 &Header::openpage($Lang::tr{'pakfire configuration'}, 1);
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
-if ($pakfiresettings{'ACTION'} eq 'install'){
-	$pakfiresettings{'INSPAKS'} =~ s/\|/\ /g;
-	if ("$pakfiresettings{'FORCE'}" eq "on") {
-		my $command = "/usr/local/bin/pakfire install --non-interactive --no-colors $pakfiresettings{'INSPAKS'} &>/dev/null &";
+if ($cgiparams{'ACTION'} eq 'install'){
+	$cgiparams{'INSPAKS'} =~ s/\|/\ /g;
+	if ("$cgiparams{'FORCE'}" eq "on") {
+		my $command = "/usr/local/bin/pakfire install --non-interactive --no-colors $cgiparams{'INSPAKS'} &>/dev/null &";
 		system("$command");
 		system("/bin/sleep 1");
 	} else {
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
-  	my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $pakfiresettings{'INSPAKS'}`;
+		my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $cgiparams{'INSPAKS'}`;
 		print <<END;
-		<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'}.$pakfiresettings{'INSPAKS'}.$Lang::tr{'pakfire possible dependency'}
+		<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'}.$cgiparams{'INSPAKS'}.$Lang::tr{'pakfire possible dependency'}
 		<pre>
 END
 		foreach (@output) {
@@ -75,7 +76,7 @@ END
 		<tr><td colspan='2'>$Lang::tr{'pakfire accept all'}
 		<tr><td colspan='2'>&nbsp;
 		<tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='INSPAKS' value='$pakfiresettings{'INSPAKS'}' />
+							<input type='hidden' name='INSPAKS' value='$cgiparams{'INSPAKS'}' />
 							<input type='hidden' name='FORCE' value='on' />
 							<input type='hidden' name='ACTION' value='install' />
 							<input type='image' alt='$Lang::tr{'install'}' title='$Lang::tr{'install'}' src='/images/go-next.png' />
@@ -92,18 +93,18 @@ END
 		&Header::closepage();
 		exit;
 	}
-} elsif ($pakfiresettings{'ACTION'} eq 'remove') {
+} elsif ($cgiparams{'ACTION'} eq 'remove') {
 
-	$pakfiresettings{'DELPAKS'} =~ s/\|/\ /g;
-	if ("$pakfiresettings{'FORCE'}" eq "on") {
-		my $command = "/usr/local/bin/pakfire remove --non-interactive --no-colors $pakfiresettings{'DELPAKS'} &>/dev/null &";
+	$cgiparams{'DELPAKS'} =~ s/\|/\ /g;
+	if ("$cgiparams{'FORCE'}" eq "on") {
+		my $command = "/usr/local/bin/pakfire remove --non-interactive --no-colors $cgiparams{'DELPAKS'} &>/dev/null &";
 		system("$command");
 		system("/bin/sleep 1");
 	} else {
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
-  	my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $pakfiresettings{'DELPAKS'}`;
+		my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $cgiparams{'DELPAKS'}`;
 		print <<END;
-		<table><tr><td colspan='2'>$Lang::tr{'pakfire uninstall package'}.$pakfiresettings{'DELPAKS'}.$Lang::tr{'pakfire possible dependency'}
+		<table><tr><td colspan='2'>$Lang::tr{'pakfire uninstall package'}.$cgiparams{'DELPAKS'}.$Lang::tr{'pakfire possible dependency'}
 		<pre>
 END
 		foreach (@output) {
@@ -115,7 +116,7 @@ END
 		<tr><td colspan='2'>$Lang::tr{'pakfire accept all'}
 		<tr><td colspan='2'>&nbsp;
 		<tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='DELPAKS' value='$pakfiresettings{'DELPAKS'}' />
+							<input type='hidden' name='DELPAKS' value='$cgiparams{'DELPAKS'}' />
 							<input type='hidden' name='FORCE' value='on' />
 							<input type='hidden' name='ACTION' value='remove' />
 							<input type='image' alt='$Lang::tr{'uninstall'}' title='$Lang::tr{'uninstall'}' src='/images/go-next.png' />
@@ -133,15 +134,15 @@ END
 		exit;
 	}
 
-} elsif ($pakfiresettings{'ACTION'} eq 'update') {
+} elsif ($cgiparams{'ACTION'} eq 'update') {
 
 	system("/usr/local/bin/pakfire update --force --no-colors &>/dev/null &");
 	system("/bin/sleep 1");
-} elsif ($pakfiresettings{'ACTION'} eq 'upgrade') {
+} elsif ($cgiparams{'ACTION'} eq 'upgrade') {
 	my $command = "/usr/local/bin/pakfire upgrade -y --no-colors &>/dev/null &";
 	system("$command");
 	system("/bin/sleep 1");
-} elsif ($pakfiresettings{'ACTION'} eq "$Lang::tr{'save'}") {
+} elsif ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
 	&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
 }
 
