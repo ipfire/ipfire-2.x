@@ -70,6 +70,9 @@ my $bfile;
 my %pakfiresettings = ();
 &General::readhash("${General::swroot}/pakfire/settings", \%pakfiresettings);
 
+# Make version
+$Conf::version = &make_version();
+
 sub message {
 	my $message = shift;
 		
@@ -944,6 +947,44 @@ sub status {
 	# Return status text
 	print "$return";
 	exit 1;
+}
+
+sub get_arch() {
+	# Append architecture
+	my ($sysname, $nodename, $release, $version, $machine) = POSIX::uname();
+
+	# We only support armv5tel for all 32 bit arches
+	if ($machine =~ m/armv[567]/) {
+		return "armv5tel";
+
+	# We only support i586 for 32 bit x86
+	} elsif ($machine =~ m/i[0-9]86/) {
+		return "i586";
+	}
+
+	return $machine;
+}
+
+sub make_version() {
+	my $version = "";
+
+	# Open /etc/system-release
+	open(RELEASE, "</etc/system-release");
+	my $release = <RELEASE>;
+	close(RELEASE);
+
+	# Add the main relase
+	if ($release =~ m/IPFire ([\d\.]+)/) {
+		$version .= $1;
+	}
+
+	# Append architecture
+	my $arch = &get_arch();
+	if ($arch ne "i586") {
+		$version .= "-${arch}";
+	}
+
+	return $version;
 }
 
 1;
