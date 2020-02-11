@@ -28,15 +28,17 @@ SNAME="ipfire"							# Short name
 VERSION="2.25"							# Version number
 CORE="142"							# Core Level (Filename)
 PAKFIRE_CORE="141"						# Core Level (PAKFIRE)
-GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`			# Git Branch
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 NICE=10								# Nice level
 MAX_RETRIES=1							# prefetch/check loop
 BUILD_IMAGES=1							# Flash and Xen Downloader
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
-GIT_TAG=$(git tag | tail -1)					# Git Tag
-GIT_LASTCOMMIT=$(git log | head -n1 | cut -d" " -f2 |head -c8)	# Last commit
+
+# Information from Git
+GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"			# Git Branch
+GIT_TAG="$(git tag | tail -1)"					# Git Tag
+GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
 TOOLCHAINVER=20200108
 
@@ -518,7 +520,7 @@ prepareenv() {
 		SYSTEM_RELEASE="${SYSTEM_RELEASE} - $GIT_BRANCH$GIT_STATUS"
 		;;
 	*)
-		SYSTEM_RELEASE="${SYSTEM_RELEASE} - Development Build: $GIT_BRANCH/$GIT_LASTCOMMIT$GIT_STATUS"
+		SYSTEM_RELEASE="${SYSTEM_RELEASE} - Development Build: $GIT_BRANCH/${GIT_LASTCOMMIT:0:8}$GIT_STATUS"
 		;;
 	esac
 
