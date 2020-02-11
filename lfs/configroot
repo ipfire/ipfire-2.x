@@ -133,6 +133,7 @@ $(TARGET) :
 	echo  "POLICY=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 	echo  "POLICY1=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 	echo  "USE_ISP_NAMESERVERS=on"  >> $(CONFIG_ROOT)/dns/settings
+	echo  "TREE=$(PAKFIRE_TREE)"    >> $(CONFIG_ROOT)/pakfire/settings
 
 	# Install snort to suricata converter.
 	cp $(DIR_SRC)/config/suricata/convert-snort	/usr/sbin/convert-snort

@@ -528,6 +528,19 @@ prepareenv() {
 	# Export variable
 	SYSTEM_RELEASE="${system_release}"
 
+	# Decide on PAKFIRE_TREE
+	case "${GIT_BRANCH}" in
+		core*)
+			PAKFIRE_TREE="stable"
+			;;
+		master)
+			PAKFIRE_TREE="testing"
+			;;
+		*)
+			PAKFIRE_TREE="unstable"
+			;;
+	esac
+
 	# Setup ccache cache size
 	enterchroot ccache --max-size="${CCACHE_CACHE_SIZE}" >/dev/null
 }
@@ -545,6 +558,7 @@ enterchroot() {
 		PATH="${PATH}" \
 		SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
 		PAKFIRE_CORE="${PAKFIRE_CORE}" \
+		PAKFIRE_TREE="${PAKFIRE_TREE}" \
 		NAME="${NAME}" \
 		SNAME="${SNAME}" \
 		VERSION="${VERSION}" \
