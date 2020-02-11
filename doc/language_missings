@@ -63,6 +63,11 @@
 < notes
 < not validating
 < okay
+< pakfire invalid tree
+< pakfire tree
+< pakfire tree stable
+< pakfire tree testing
+< pakfire tree unstable
 < quick control
 < shaping add options
 < show areas
@@ -705,6 +710,11 @@
 < ovpn warning rfc3280
 < p2p block
 < p2p block save notice
+< pakfire invalid tree
+< pakfire tree
+< pakfire tree stable
+< pakfire tree testing
+< pakfire tree unstable
 < please reboot to apply your changes
 < pptp netconfig
 < pptp peer
@@ -942,6 +952,11 @@
 < dns use protocol for dns queries
 < not validating
 < okay
+< pakfire invalid tree
+< pakfire tree
+< pakfire tree stable
+< pakfire tree testing
+< pakfire tree unstable
 < standard
 < strict
 < working
@@ -1182,6 +1197,11 @@
 < ovpn error md5
 < ovpn tls auth
 < ovpn warning rfc3280
+< pakfire invalid tree
+< pakfire tree
+< pakfire tree stable
+< pakfire tree testing
+< pakfire tree unstable
 < please reboot to apply your changes
 < pptp netconfig
 < pptp peer
@@ -1564,6 +1584,11 @@
 < ovpn reneg sec
 < ovpn tls auth
 < ovpn warning rfc3280
+< pakfire invalid tree
+< pakfire tree
+< pakfire tree stable
+< pakfire tree testing
+< pakfire tree unstable
 < please reboot to apply your changes
 < pptp netconfig
 < pptp peer
@@ -2285,6 +2310,11 @@
 < ovpn warning rfc3280
 < p2p block
 < p2p block save notice
+< pakfire invalid tree
+< pakfire tree
+< pakfire tree stable
+< pakfire tree testing
+< pakfire tree unstable
 < please reboot to apply your changes
 < pptp netconfig
 < pptp peer
@@ -3121,6 +3151,11 @@
 < ovpn warning rfc3280
 < p2p block
 < p2p block save notice
+< pakfire invalid tree
+< pakfire tree
+< pakfire tree stable
+< pakfire tree testing
+< pakfire tree unstable
 < please reboot to apply your changes
 < pptp netconfig
 < pptp peer
@@ -3429,6 +3464,11 @@
 < ovpn error md5
 < ovpn tls auth
 < ovpn warning rfc3280
+< pakfire invalid tree
+< pakfire tree
+< pakfire tree stable
+< pakfire tree testing
+< pakfire tree unstable
 < please reboot to apply your changes
 < processor vulnerability mitigations
 < ptr

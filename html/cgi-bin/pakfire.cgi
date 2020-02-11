@@ -143,13 +143,31 @@ END
 	system("$command");
 	system("/bin/sleep 1");
 } elsif ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
-	&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
+	$pakfiresettings{"TREE"} = $cgiparams{"TREE"};
+
+	# Check for valid input
+	if ($pakfiresettings{"TREE"} !~ m/^(stable|testing|unstable)$/) {
+		$errormessage .= $Lang::tr{'pakfire invalid tree'};
+	}
+
+	unless ($errormessage) {
+		&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
+
+		# Update lists
+		system("/usr/local/bin/pakfire update --force --no-colors &>/dev/null &");
+	}
 }
 
 &General::readhash("${General::swroot}/pakfire/settings", \%pakfiresettings);
 
 my %selected=();
 my %checked=();
+
+$selected{"TREE"} = ();
+$selected{"TREE"}{"stable"} = "";
+$selected{"TREE"}{"testing"} = "";
+$selected{"TREE"}{"unstable"} = "";
+$selected{"TREE"}{$pakfiresettings{"TREE"}} = "selected";
 
 # DPC move error message to top so it is seen!
 if ($errormessage) {
@@ -261,6 +279,34 @@ print <<END;
 			<input type='image' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' src='/images/list-remove.png' />
 		</form>
 	</table>
+END
+
+&Header::closebox();
+&Header::openbox("100%", "center", "$Lang::tr{'settings'}");
+
+print <<END;
+	<form method='POST' action='$ENV{'SCRIPT_NAME'}'>
+		<table width='95%'>
+			<tr>
+				<td align='left' width='45%'>$Lang::tr{'pakfire tree'}</td>
+				<td width="55%" align="left">
+					<select name="TREE">
+						<option value="stable" $selected{"TREE"}{"stable"}>$Lang::tr{'pakfire tree stable'}</option>
+						<option value="testing" $selected{"TREE"}{"testing"}>$Lang::tr{'pakfire tree testing'}</option>
+						<option value="unstable" $selected{"TREE"}{"unstable"}>$Lang::tr{'pakfire tree unstable'}</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td colspan="2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td colspan="2" align="center">
+					<input type="submit" name="ACTION" value="$Lang::tr{'save'}" />
+				</td>
+			</tr>
+		</table>
+	</form>
 END
 
 &Header::closebox();
