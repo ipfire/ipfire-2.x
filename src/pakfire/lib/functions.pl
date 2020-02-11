@@ -965,6 +965,13 @@ sub get_arch() {
 	return $machine;
 }
 
+sub get_tree() {
+	# Return stable if nothing is set
+	return "stable" unless (defined $pakfiresettings{'TREE'});
+
+	return $pakfiresettings{'TREE'};
+}
+
 sub make_version() {
 	my $version = "";
 
@@ -976,6 +983,14 @@ sub make_version() {
 	# Add the main relase
 	if ($release =~ m/IPFire ([\d\.]+)/) {
 		$version .= $1;
+	}
+
+	# Append suffix for tree
+	my $tree = &get_tree();
+	if ($tree eq "testing") {
+		$version .= ".1";
+	} elsif ($tree eq "unstable") {
+		$version .= ".2";
 	}
 
 	# Append architecture
