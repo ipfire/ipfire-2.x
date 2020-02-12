@@ -1593,8 +1593,6 @@ buildipfire() {
   lfsmake2 ltrace
   lfsmake2 ipfire-netboot
   lfsmake2 lcdproc
-  lfsmake2 bitstream
-  lfsmake2 multicat
   lfsmake2 keepalived
   lfsmake2 ipvsadm
   lfsmake2 perl-Carp-Clan
