@@ -1287,7 +1287,6 @@ buildipfire() {
   lfsmake2 fuse
   lfsmake2 ntfs-3g
   lfsmake2 ethtool
-  lfsmake2 ez-ipupdate
   lfsmake2 fcron
   lfsmake2 perl-GD
   lfsmake2 GD-Graph
