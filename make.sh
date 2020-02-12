@@ -1360,7 +1360,6 @@ buildipfire() {
   lfsmake2 cairo
   lfsmake2 pango
   lfsmake2 rrdtool
-  lfsmake2 setserial
   lfsmake2 setup
   lfsmake2 libdnet
   lfsmake2 rust
