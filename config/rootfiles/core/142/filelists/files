@@ -2,3 +2,5 @@ etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
+etc/suricata/suricata.yaml
+var/ipfire/suricata/ruleset-sources
