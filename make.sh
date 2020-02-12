@@ -1585,7 +1585,6 @@ buildipfire() {
   lfsmake2 stress
   lfsmake2 libstatgrab
   lfsmake2 sarg
-  lfsmake2 check_mk_agent
   lfsmake2 nginx
   lfsmake2 sendEmail
   lfsmake2 sysbench

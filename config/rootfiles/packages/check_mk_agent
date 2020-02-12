@@ -1,3 +1,0 @@
-usr/bin/check_mk_agent
-etc/xinetd.d/check_mk_agent
-usr/bin/waitmax
