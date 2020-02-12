@@ -1508,7 +1508,6 @@ buildipfire() {
   lfsmake2 iperf3
   lfsmake2 7zip
   lfsmake2 lynis
-  lfsmake2 streamripper
   lfsmake2 sshfs
   lfsmake2 taglib
   lfsmake2 sslh
