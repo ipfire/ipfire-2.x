@@ -1604,7 +1604,6 @@ buildipfire() {
   lfsmake2 perl-TimeDate
   lfsmake2 swatch
   lfsmake2 tor
-  lfsmake2 arm
   lfsmake2 wavemon
   lfsmake2 iptraf-ng
   lfsmake2 iotop
