@@ -1474,7 +1474,6 @@ buildipfire() {
   lfsmake2 icinga
   lfsmake2 observium-agent
   lfsmake2 ebtables
-  lfsmake2 directfb
   lfsmake2 faad2
   lfsmake2 alac
   lfsmake2 ffmpeg
