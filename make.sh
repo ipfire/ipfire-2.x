@@ -1609,7 +1609,6 @@ buildipfire() {
   lfsmake2 iotop
   lfsmake2 stunnel
   lfsmake2 bacula
-  lfsmake2 batctl
   lfsmake2 perl-Font-TTF
   lfsmake2 perl-IO-String
   lfsmake2 perl-PDF-API2
