@@ -93,6 +93,10 @@ case "${MODE}" in
 			#ip link set "${BRIDGE}" up
 		fi
 
+		if grep -q "INTERFACE=${INTERFACE}" "/var/ipfire/wlanap/settings" 2>/dev/null; then
+			iw dev "${INTERFACE}" set type __ap
+		fi
+
 		# Attach the physical device
 		logger "Attach ${INTERFACE} to ${BRIDGE}"
 		ip link set dev "${INTERFACE}" master "${BRIDGE}"
