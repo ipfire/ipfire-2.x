@@ -72,6 +72,7 @@ ZONE=$(detect_zone)
 
 # Cannot proceed if we could not find a zone
 if [ -z "${ZONE}" ]; then
+	logger "Could not find a bridged zone for ${INTERFACE}"
 	exit 0
 fi
 
@@ -93,6 +94,7 @@ case "${MODE}" in
 		fi
 
 		# Attach the physical device
+		logger "Attach ${INTERFACE} to ${BRIDGE}"
 		ip link set dev "${INTERFACE}" master "${BRIDGE}"
 		ip link set dev "${INTERFACE}" up
 		;;
