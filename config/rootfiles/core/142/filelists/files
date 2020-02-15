@@ -3,4 +3,7 @@ etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 etc/suricata/suricata.yaml
+opt/pakfire/etc/pakfire.conf
+opt/pakfire/lib/functions.pl
+srv/web/ipfire/cgi-bin/pakfire.cgi
 var/ipfire/suricata/ruleset-sources
