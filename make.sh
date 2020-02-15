@@ -1618,9 +1618,9 @@ buildipfire() {
   lfsmake2 pigz
   lfsmake2 tmux
   lfsmake2 perl-Text-CSV_XS
+  lfsmake2 lua
   lfsmake2 haproxy
   lfsmake2 ipset
-  lfsmake2 lua
   lfsmake2 dnsdist
   lfsmake2 bird
   lfsmake2 frr
