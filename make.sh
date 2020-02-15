@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2019 IPFire Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2020 IPFire Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -27,7 +27,6 @@ SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.25"							# Version number
 CORE="142"							# Core Level (Filename)
-PAKFIRE_CORE="141"						# Core Level (PAKFIRE)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 NICE=10								# Nice level
@@ -557,7 +556,6 @@ enterchroot() {
 		PS1="${PS1}" \
 		PATH="${PATH}" \
 		SYSTEM_RELEASE="${SYSTEM_RELEASE}" \
-		PAKFIRE_CORE="${PAKFIRE_CORE}" \
 		PAKFIRE_TREE="${PAKFIRE_TREE}" \
 		NAME="${NAME}" \
 		SNAME="${SNAME}" \
