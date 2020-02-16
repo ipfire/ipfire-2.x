@@ -1,3 +1,4 @@
+etc/rc.d/init.d/vdradmin
 #etc/vdradmin
 etc/vdradmin/vdradmind.conf
 usr/bin/vdradmind
@@ -24,6 +25,7 @@ usr/share/locale/de/LC_MESSAGES/vdradmin.mo
 #usr/share/locale/es/LC_MESSAGES/vdradmin.mo
 #usr/share/locale/fi/LC_MESSAGES/vdradmin.mo
 #usr/share/locale/fr/LC_MESSAGES/vdradmin.mo
+#usr/share/locale/hu/LC_MESSAGES/vdradmin.mo
 #usr/share/locale/it/LC_MESSAGES/vdradmin.mo
 #usr/share/locale/nl/LC_MESSAGES/vdradmin.mo
 #usr/share/locale/ru/LC_MESSAGES/vdradmin.mo
@@ -174,12 +176,8 @@ usr/share/vdradmin
 #usr/share/vdradmin/template/default/timer_new.html
 #usr/share/vdradmin/template/default/tv.html
 #usr/share/vdradmin/template/default/vdr_cmds.html
-etc/rc.d/init.d/vdradmin
+var/cache/vdradmin
+var/log/vdradmin
 etc/rc.d/rc0.d/K01vdradmin
 etc/rc.d/rc6.d/K01vdradmin
 etc/rc.d/rc3.d/S99vdradmin
-#usr/share/locale/de_DE.utf8/LC_MESSAGES/vdradmin.mo
-#usr/share/locale/en_US.utf8/LC_MESSAGES/vdradmin.mo
-var/cache/vdradmin
-var/log/vdradmin
-#var/run/vdradmin
