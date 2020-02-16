@@ -5,7 +5,9 @@ etc/rc.d/rc6.d/K40vdr
 etc/sysconfig/vdr
 #etc/sysconfig/vdr-plugins.d
 etc/vdr
+etc/vdr/camresponses.conf
 etc/vdr/channels.conf
+etc/vdr/conf.d
 etc/vdr/diseqc.conf
 etc/vdr/keymacros.conf
 etc/vdr/scr.conf
@@ -19,6 +21,7 @@ usr/bin/svdrpsend
 #usr/include/libsi/si.h
 #usr/include/libsi/util.h
 #usr/include/vdr
+#usr/include/vdr/args.h
 #usr/include/vdr/audio.h
 #usr/include/vdr/channels.h
 #usr/include/vdr/ci.h
@@ -42,12 +45,14 @@ usr/bin/svdrpsend
 #usr/include/vdr/lirc.h
 #usr/include/vdr/menu.h
 #usr/include/vdr/menuitems.h
+#usr/include/vdr/mtd.h
 #usr/include/vdr/nit.h
 #usr/include/vdr/osd.h
 #usr/include/vdr/osdbase.h
 #usr/include/vdr/pat.h
 #usr/include/vdr/player.h
 #usr/include/vdr/plugin.h
+#usr/include/vdr/positioner.h
 #usr/include/vdr/receiver.h
 #usr/include/vdr/recorder.h
 #usr/include/vdr/recording.h

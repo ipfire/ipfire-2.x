@@ -24,21 +24,20 @@
 
 include Config
 
-VER        = 1.0.1.beta5
-SUP_ARCHES =
+VER        = 2.4.0+git20191101
 
-THISAPP    = vdr-epgsearch-$(VER)
-DL_FILE    = $(THISAPP).tgz
+THISAPP    = vdr-plugin-epgsearch_$(VER).orig
+DL_FILE    = $(THISAPP).tar.gz
 
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/epgsearch-$(VER)
+DIR_APP    = $(DIR_SRC)/vdr-plugin-epgsearch
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr_epgsearch
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       = ""
 
-VDRPLUGVER = 2.0.0
+VDRPLUGVER = 2.4.1
 
 EXTRA_FLAGS= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
 CFLAGS    += $(EXTRA_FLAGS)
@@ -52,7 +51,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)  = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5  = 6e63cc29df02f48fabf6e12e1e71b2fc
+$(DL_FILE)_MD5  = cf7e8ca02af3068df2fa71c026c92390
 
 install : $(TARGET)
 
@@ -85,7 +84,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -p1 < $(DIR_SRC)/src/patches/vdr-epgsearch-1.0.1.beta3-paths.patch
+	cd $(DIR_APP) && patch -p1 < $(DIR_SRC)/src/patches/vdr-epgsearch-2.4.0-debian-paths.patch
 
 	cd $(DIR_APP) && make $(MAKE_TUNING) LIBDIR=. VDRDIR=/usr/lib/vdr \
 		CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" \

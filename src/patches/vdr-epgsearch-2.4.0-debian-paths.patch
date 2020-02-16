@@ -1,0 +1,82 @@
+diff -Naur vdr-plugin-epgsearch.org/epgsearch.c vdr-plugin-epgsearch/epgsearch.c
+--- vdr-plugin-epgsearch.org/epgsearch.c	2020-02-16 07:56:33.307310006 +0100
++++ vdr-plugin-epgsearch/epgsearch.c	2020-02-16 07:50:53.826938247 +0100
+@@ -465,16 +465,16 @@
+     LoadConfD();
+     LoadUserVars();
+ 
+-    ChannelGroups.Load(AddDirectory(CONFIGDIR, "epgsearchchangrps.conf"), true);
+-    Blacklists.Load(AddDirectory(CONFIGDIR, "epgsearchblacklists.conf"));
+-    SearchExts.Load(AddDirectory(CONFIGDIR, "epgsearch.conf"));
+-    SearchTemplates.Load(AddDirectory(CONFIGDIR, "epgsearchtemplates.conf"));
+-    RecsDone.Load(AddDirectory(CONFIGDIR, "epgsearchdone.data"));
+-    SwitchTimers.Load(AddDirectory(CONFIGDIR, "epgsearchswitchtimers.conf"));
+-    NoAnnounces.Load(AddDirectory(CONFIGDIR, "noannounce.conf"));
+-    DefTimerCheckModes.Load(AddDirectory(CONFIGDIR, "deftimerchkmodes.conf"));
+-    TimersDone.Load(AddDirectory(CONFIGDIR, "timersdone.conf"));
+-    PendingNotifications.Load(AddDirectory(CONFIGDIR, "pendingnotifications.conf"));
++    ChannelGroups.Load(AddDirectory("/var/lib/vdr/data/epgsearch", "epgsearchchangrps.conf"), true);
++    Blacklists.Load(AddDirectory("/var/lib/vdr/data/epgsearch", "epgsearchblacklists.conf"));
++    SearchExts.Load(AddDirectory("/var/lib/vdr/data/epgsearch", "epgsearch.conf"));
++    SearchTemplates.Load(AddDirectory("/var/lib/vdr/data/epgsearch", "epgsearchtemplates.conf"));
++    RecsDone.Load(AddDirectory("/var/lib/vdr/data/epgsearch", "epgsearchdone.data"));
++    SwitchTimers.Load(AddDirectory("/var/lib/vdr/data/epgsearch", "epgsearchswitchtimers.conf"));
++    NoAnnounces.Load(AddDirectory("/var/lib/vdr/data/epgsearch", "noannounce.conf"));
++    DefTimerCheckModes.Load(AddDirectory("/var/lib/vdr/data/epgsearch", "deftimerchkmodes.conf"));
++    TimersDone.Load(AddDirectory("/var/lib/vdr/data/epgsearch", "timersdone.conf"));
++    PendingNotifications.Load(AddDirectory("/var/lib/vdr/data/epgsearch", "pendingnotifications.conf"));
+ 
+     cSearchTimerThread::Init(this);
+     cSwitchTimerThread::Init();
+diff -Naur vdr-plugin-epgsearch.org/epgsearchcfg.c vdr-plugin-epgsearch/epgsearchcfg.c
+--- vdr-plugin-epgsearch.org/epgsearchcfg.c	2020-02-16 07:56:33.323310490 +0100
++++ vdr-plugin-epgsearch/epgsearchcfg.c	2020-02-16 07:51:58.065261524 +0100
+@@ -76,7 +76,7 @@
+     strcpy(MailAuthUser, "");
+     strcpy(MailAuthPass, "");
+     strcpy(LastMailConflicts, "");
+-    mailViaScript = 1;
++    mailViaScript = 0;
+     manualTimerCheckDefault = 0;
+     noAnnounceWhileReplay = 0;
+     TimerProgRepeat = 0;
+diff -Naur vdr-plugin-epgsearch.org/scripts/recordingdone.sh vdr-plugin-epgsearch/scripts/recordingdone.sh
+--- vdr-plugin-epgsearch.org/scripts/recordingdone.sh	2020-02-16 07:56:33.319310370 +0100
++++ vdr-plugin-epgsearch/scripts/recordingdone.sh	2020-02-16 07:53:37.255598512 +0100
+@@ -60,10 +60,10 @@
+ SVDRPSEND=svdrpsend
+ 
+ # Home of EPGsearch
+-EPGSEARCH_HOME="/etc/vdr/plugins"
++EPGSEARCH_HOME="/var/lib/vdr/data/epgsearch"
+ 
+ # Video root
+-VIDEO_ROOT="/video"
++VIDEO_ROOT="/var/video"
+ 
+ # do not edit below this line
+ #------------------------------------------------------------------------------
+diff -Naur vdr-plugin-epgsearch.org/scripts/recrep.sh vdr-plugin-epgsearch/scripts/recrep.sh
+--- vdr-plugin-epgsearch.org/scripts/recrep.sh	2020-02-16 07:56:33.319310370 +0100
++++ vdr-plugin-epgsearch/scripts/recrep.sh	2020-02-16 07:54:21.508751492 +0100
+@@ -15,7 +15,7 @@
+ # adjust the following lines to your config
+ 
+ # your plugins config dir
+-PLUGINCONFDIR=/var/lib/vdr/plugins/epgsearch
++PLUGINCONFDIR=/etc/vdr/plugins/epgsearch
+ # path to svdrpsend
+ SVDRPSEND=svdrpsend
+ # the key used to call epgsearch
+diff -Naur vdr-plugin-epgsearch.org/scripts/timercmds-auxinfo.sh vdr-plugin-epgsearch/scripts/timercmds-auxinfo.sh
+--- vdr-plugin-epgsearch.org/scripts/timercmds-auxinfo.sh	2020-02-16 07:56:33.319310370 +0100
++++ vdr-plugin-epgsearch/scripts/timercmds-auxinfo.sh	2020-02-16 07:54:58.685432309 +0100
+@@ -15,7 +15,7 @@
+ #<Configuration>
+ 
+ # Your timers.conf
+-TIMERS="/video/timers.conf"
++TIMERS="/etc/vdr/timers.conf"
+ 
+ #</Configuration>
+ 

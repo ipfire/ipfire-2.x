@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,21 +25,20 @@
 include Config
 
 VER        = 0.6.1
-GIT_VER    = 10db11ac
-SUP_ARCHES =
+GIT_VER    = e2a9b979d3fb92967c7a6a8221e674eb7e55c813
 
-THISAPP    = vdr-streamdev-$(GIT_VER)
-DL_FILE    = $(THISAPP).tar.xz
+THISAPP    = vdr-plugin-streamdev-$(GIT_VER)
+DL_FILE    = $(THISAPP).tar.bz2
 
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr_streamdev
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
-VDRPLUGVER = 2.0.0
+VDRPLUGVER = 2.4.1
 
 EXTRA_FLAGS= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
 CFLAGS    += $(EXTRA_FLAGS)
@@ -53,7 +52,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)  = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5  = e5011fd1a4b0624b192911f37c6040e3
+$(DL_FILE)_MD5  = 2ac0a951d47808d00e97d42d59182e36
 
 install : $(TARGET)
 
@@ -87,7 +86,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/vdr-streamdev_recordings-64.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/vdr-streamdev_recordings-64.patch
 
 	cd $(DIR_APP) && sed -i 's@$(VDRDIR)/device.h@/usr/include/vdr/device.h@' Makefile
 	cd $(DIR_APP) && make $(MAKE_TUNING) LIBDIR=. VDRDIR=/usr/lib/vdr \
