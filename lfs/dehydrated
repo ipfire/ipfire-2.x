@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = dehydrated
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       = ""
 
@@ -92,8 +92,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install example configuration
 	cd $(DIR_APP) && sed \
-		-e 's|^#CONFIG_D=|CONFIG_D="\${BASEDIR}/conf.d"|' \
-		-e 's|^#HOOK=|HOOK="\${BASEDIR}/hook.sh"|' \
+		-e 's|^#CONFIG_D=|CONFIG_D="\$${BASEDIR}/conf.d"|' \
+		-e 's|^#HOOK=|HOOK="\$${BASEDIR}/hook.sh"|' \
 		docs/examples/config > /etc/dehydrated/config
 
 	# Install example hook
