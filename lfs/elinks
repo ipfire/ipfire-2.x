@@ -87,5 +87,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /usr/local/etc/elinks
 	cp -vf $(DIR_SRC)/config/elinks/elinks.conf /usr/local/etc/elinks/elinks.conf
 
+	# Suppress first welcome dialog by creating bookmark
+	# and history files for root
+	mkdir -p /root/.elinks
+	touch /root/.elinks/bookmarks
+	touch /root/.elinks/globhist
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

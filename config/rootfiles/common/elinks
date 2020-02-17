@@ -1,3 +1,6 @@
+#root/.elinks
+root/.elinks/bookmarks
+root/.elinks/globhist
 usr/local/bin/elinks
 #usr/local/etc
 #usr/local/etc/elinks
