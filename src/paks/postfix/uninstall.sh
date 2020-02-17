@@ -22,7 +22,6 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-extract_backup_includes
 stop_service ${NAME}
 make_backup ${NAME}
 /usr/sbin/alternatives --remove sendmail /usr/sbin/sendmail.postfix

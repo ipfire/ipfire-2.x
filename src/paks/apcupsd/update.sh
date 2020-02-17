@@ -22,5 +22,6 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+extract_backup_includes
 ./uninstall.sh
 ./install.sh

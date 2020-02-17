@@ -27,7 +27,6 @@
 stop_service "${NAME}"
 
 # Create backup
-extract_backup_includes
 make_backup "${NAME}"
 
 # Remove all files

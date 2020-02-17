@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2007-2020 IPFire-Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -27,7 +27,6 @@
 stop_service "${NAME}"
 
 # Create backup
-extract_backup_includes
 make_backup "${NAME}"
 
 # Remove all files
