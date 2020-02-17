@@ -84,6 +84,7 @@ rm -rf /boot/dtb-*-ipfire-*
 rm -rf /lib/modules
 
 # Remove files
+rm -rf /usr/lib/python2.7/site-packages/ddns
 
 # Stop services
 
