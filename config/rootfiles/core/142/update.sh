@@ -85,6 +85,7 @@ rm -rf /lib/modules
 
 # Remove files
 rm -rf /usr/lib/python2.7/site-packages/ddns
+rm -rf /usr/lib/pppd/2.4.7
 
 # Stop services
 
@@ -95,7 +96,7 @@ extract_files
 ldconfig
 
 # Update Language cache
-# /usr/local/bin/update-lang-cache
+/usr/local/bin/update-lang-cache
 
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
