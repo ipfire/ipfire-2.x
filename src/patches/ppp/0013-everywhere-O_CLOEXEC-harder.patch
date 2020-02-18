@@ -140,16 +140,17 @@ index 8a12fa0..00a2cf5 100644
      if (mfd >= 0) {
  	int ptn;
  	if (ioctl(mfd, TIOCGPTN, &ptn) >= 0) {
-@@ -2581,7 +2581,7 @@ get_pty(master_fdp, slave_fdp, slave_name, uid)
+@@ -2851,7 +2851,8 @@
  	    if (ioctl(mfd, TIOCSPTLCK, &ptn) < 0)
  		warn("Couldn't unlock pty slave %s: %m", pty_name);
  #endif
 -	    if ((sfd = open(pty_name, O_RDWR | O_NOCTTY)) < 0)
-+	    if ((sfd = open(pty_name, O_RDWR | O_NOCTTY | O_CLOEXEC)) < 0)
++
++            if ((sfd = open(pty_name, O_RDWR | O_NOCTTY | O_CLOEXEC)) < 0)
+	    {
  		warn("Couldn't open pty slave %s: %m", pty_name);
- 	}
-     }
-@@ -2592,10 +2592,10 @@ get_pty(master_fdp, slave_fdp, slave_name, uid)
+		close(mfd);
+@@ -2865,10 +2866,10 @@
  	for (i = 0; i < 64; ++i) {
  	    slprintf(pty_name, sizeof(pty_name), "/dev/pty%c%x",
  		     'p' + i / 16, i % 16);

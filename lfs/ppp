@@ -24,12 +24,12 @@
 
 include Config
 
-VER        = 2.4.7
+VER        = 2.4.8
 
 THISAPP    = ppp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/ppp-$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 CFLAGS    += -fno-strict-aliasing
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 78818f40e6d33a1d1de68a1551f6595a
+$(DL_FILE)_MD5 = fa325e90e43975a1bd7e1012c8676123
 
 install : $(TARGET)
 
@@ -79,7 +79,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/0014-everywhere-use-SOCK_CLOEXEC-when-creating-socket.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/ppp-2.4.6-increase-max-padi-attempts.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/ppp-2.4.7-headers_4.9.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp-2.4.7-openssl.patch
 	cd $(DIR_APP) && sed -i -e "s+/etc/ppp/connect-errors+/var/log/connect-errors+" pppd/pathnames.h
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING) CC="gcc" RPM_OPT_FLAGS="$(CFLAGS)"
