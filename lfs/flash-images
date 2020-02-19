@@ -215,7 +215,7 @@ endif
 	rm -f $(MNThdd)/etc/grub.d/11_linux_scon
 endif
 
-ifeq "$(BUILD_ARCH)" "armv5tel"
+ifeq "$(BUILD_PLATFORM)" "arm"
 	# Insert the UUID to uENV.txt
 	sed -i $(MNThdd)/boot/uENV.txt \
 		-e "s/^root_dev=.*/root_dev=UUID=$$(blkid -o value -s UUID $(PART_ROOT))/g"
