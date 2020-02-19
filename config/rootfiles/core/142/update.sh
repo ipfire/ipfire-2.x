@@ -92,6 +92,10 @@ rm -rf /usr/lib/pppd/2.4.7
 # Extract files
 extract_files
 
+# move update forwarders below firewall
+mv -f /etc/rc.d/init.d/netowrking/red.up/05-update-dns-forwarders \
+      /etc/rc.d/init.d/netowrking/red.up/22-update-dns-forwarders
+
 # update linker config
 ldconfig
 
