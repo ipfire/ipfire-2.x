@@ -27,6 +27,7 @@ etc/strongswan.d/charon/curve25519.conf
 etc/strongswan.d/charon/des.conf
 etc/strongswan.d/charon/dhcp.conf
 etc/strongswan.d/charon/dnskey.conf
+etc/strongswan.d/charon/drbg.conf
 etc/strongswan.d/charon/eap-identity.conf
 etc/strongswan.d/charon/eap-mschapv2.conf
 etc/strongswan.d/charon/eap-peap.conf
@@ -122,6 +123,7 @@ usr/lib/ipsec/plugins/libstrongswan-curve25519.so
 usr/lib/ipsec/plugins/libstrongswan-des.so
 usr/lib/ipsec/plugins/libstrongswan-dhcp.so
 usr/lib/ipsec/plugins/libstrongswan-dnskey.so
+usr/lib/ipsec/plugins/libstrongswan-drbg.so
 usr/lib/ipsec/plugins/libstrongswan-eap-identity.so
 usr/lib/ipsec/plugins/libstrongswan-eap-mschapv2.so
 usr/lib/ipsec/plugins/libstrongswan-eap-peap.so
@@ -208,6 +210,7 @@ usr/sbin/swanctl
 #usr/share/strongswan/templates/config/plugins/des.conf
 #usr/share/strongswan/templates/config/plugins/dhcp.conf
 #usr/share/strongswan/templates/config/plugins/dnskey.conf
+#usr/share/strongswan/templates/config/plugins/drbg.conf
 #usr/share/strongswan/templates/config/plugins/eap-identity.conf
 #usr/share/strongswan/templates/config/plugins/eap-mschapv2.conf
 #usr/share/strongswan/templates/config/plugins/eap-peap.conf
