@@ -87,7 +87,17 @@ if fatload ${boot_dev} ${boot_part} ${ramdisk_addr} uInit-${KVER}-ipfire${kernel
 else
 	echo Ramdisk not loaded...;
 	setenv ramdisk_addr -;
-fi ;
+fi;
+
+# Quirk for RPi on aarch64 becuase u-boot cannot use the
+# initrd on aarch64
+if test ${cpu} = "armv8"; then
+	if test ${board} = "rpi"; then
+	setenv ramdisk_addr -;
+	setenv root_dev /dev/mmcblk0p3;
+	fi;
+fi;
+
 bootz ${kernel_addr_r} ${ramdisk_addr} ${fdt_addr_r};
 booti ${kernel_addr_r} ${ramdisk_addr} ${fdt_addr_r};
 
