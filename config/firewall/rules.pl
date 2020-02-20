@@ -479,16 +479,31 @@ sub buildrules {
 
 						# Source NAT
 						} elsif ($NAT_MODE eq "SNAT") {
+							my @snat_options = ( "-m", "policy", "--dir", "out", "--pol", "none" );
 							my @nat_options = @options;
+
+							# Get addresses for the configured firewall interfaces.
+							my @local_addresses = &fwlib::get_internal_firewall_ip_addresses(1);
+
+							# Check if the nat_address is one of the local addresses.
+							foreach my $local_address (@local_addresses) {
+								if ($nat_address eq $local_address) {
+									# Clear SNAT options.
+									@snat_options = ();
+
+									# Finish loop.
+									last;
+								}
+							}
 
 							push(@nat_options, @destination_intf_options);
 							push(@nat_options, @source_options);
 							push(@nat_options, @destination_options);
 
 							if ($LOG) {
-								run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options @log_limit_options -j LOG --log-prefix 'SNAT '");
+								run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options @snat_options @log_limit_options -j LOG --log-prefix 'SNAT '");
 							}
-							run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options -j SNAT --to-source $nat_address");
+							run("$IPTABLES -t nat -A $CHAIN_NAT_SOURCE @nat_options @snat_options -j SNAT --to-source $nat_address");
 						}
 					}
 
