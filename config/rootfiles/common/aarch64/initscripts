@@ -183,10 +183,10 @@ etc/rc.d/rcsysinit.d/S05modules
 etc/rc.d/rcsysinit.d/S09lvmetad
 etc/rc.d/rcsysinit.d/S10udev
 etc/rc.d/rcsysinit.d/S19waitdrives
-etc/rc.d/rcsysinit.d/S20swap
 etc/rc.d/rcsysinit.d/S25partresize
 etc/rc.d/rcsysinit.d/S30checkfs
 etc/rc.d/rcsysinit.d/S40mountfs
+etc/rc.d/rcsysinit.d/S41swap
 etc/rc.d/rcsysinit.d/S42fsresize
 etc/rc.d/rcsysinit.d/S43mounttmpfs
 etc/rc.d/rcsysinit.d/S44smt

@@ -161,10 +161,10 @@ $(TARGET) :
 	ln -sf ../init.d/lvmetad     /etc/rc.d/rcsysinit.d/S09lvmetad
 	ln -sf ../init.d/udev        /etc/rc.d/rcsysinit.d/S10udev
 	ln -sf ../init.d/waitdrives  /etc/rc.d/rcsysinit.d/S19waitdrives
-	ln -sf ../init.d/swap        /etc/rc.d/rcsysinit.d/S20swap
 	ln -sf ../init.d/partresize  /etc/rc.d/rcsysinit.d/S25partresize
 	ln -sf ../init.d/checkfs     /etc/rc.d/rcsysinit.d/S30checkfs
 	ln -sf ../init.d/mountfs     /etc/rc.d/rcsysinit.d/S40mountfs
+	ln -sf ../init.d/swap        /etc/rc.d/rcsysinit.d/S41swap
 	ln -sf ../init.d/fsresize    /etc/rc.d/rcsysinit.d/S42fsresize
 	ln -sf ../init.d/mounttmpfs  /etc/rc.d/rcsysinit.d/S43mounttmpfs
 	ln -sf ../init.d/smt         /etc/rc.d/rcsysinit.d/S44smt
