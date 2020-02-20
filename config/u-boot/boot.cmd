@@ -11,15 +11,11 @@ if test ${boot_part} = ""; then
 	setenv boot_part ${dev_num}:1;
 fi;
 
-if test ${soc} = "kirkwood"; then
-	setenv kernel_type -kirkwood;
+if test ${cpu} = "armv8"; then
+	echo ;
 else
-	if test ${cpu} = "armv8"; then
-		echo ;
-	else
-		setenv kernel_type -multi;
+	setenv kernel_type -multi;
 	fi;
-fi;
 
 # Import uEnv txt...
 if fatload ${boot_dev} ${boot_part} ${kernel_addr_r} uEnv.txt; then
