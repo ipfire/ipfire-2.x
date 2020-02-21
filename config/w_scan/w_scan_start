@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -19,9 +19,10 @@
 #                                                                             #
 ###############################################################################
 ###############################################################################
-# w_scan_start for IPFire v 1.02 - 2013-04-30 Arne Fitzenreiter - add atsc    #
-#                                - 2013-04-20 Arne Fitzenreiter - path vdr 2  #
-#                                - 2012-11-15 Arne Fitzenreiter - inital vers.#
+# w_scan_start - 2020-02-21 Arne Fitzenreiter - update for 2017 wscan version #
+#              - 2013-04-30 Arne Fitzenreiter - add atsc                      #
+#              - 2013-04-20 Arne Fitzenreiter - path vdr 2                    #
+#              - 2012-11-15 Arne Fitzenreiter - inital vers.                  #
 ###############################################################################
 
 err_msg ()
@@ -82,7 +83,7 @@ if [[ "$W_SCAN_TYPE" == *ATSC* ]] || [[ "$W_SCAN_TYPE" == *DVB-T* ]] || [[ "$W_S
 	# Generate and run separate country menubox and default germany
 	echo '#!/bin/bash' > /tmp/w_scan_countryselect.sh
 	echo 'whiptail --radiolist "\nSelect country" 19 70 10 \' >> /tmp/w_scan_countryselect.sh
-	$WSCAN -c? 2>&1 | cut -f2,4 | sed 's|[	]| "|g' | sed 's|$|" off \\|g' | sed 's|"GERMANY" off |"GERMANY" on |g' >> /tmp/w_scan_countryselect.sh
+	$WSCAN -c? 2>&1 | tail -n +2 | cut -f2,4 | sed 's|[	]| "|g' | sed 's|$|" off \\|g' | sed 's|"GERMANY" off |"GERMANY" on |g' >> /tmp/w_scan_countryselect.sh
 	echo ' 2>/tmp/w_scan_country' >> /tmp/w_scan_countryselect.sh
 	sh /tmp/w_scan_countryselect.sh
 	chk_cancel
@@ -95,7 +96,7 @@ if [[ "$W_SCAN_TYPE" == *DVB-S* ]]; then
 	# Generate and run separate satelite menubox and default astra
 	echo '#!/bin/bash' > /tmp/w_scan_satselect.sh
 	echo 'whiptail --checklist "\nSelect satellites" 19 70 10 \' >> /tmp/w_scan_satselect.sh
-	$WSCAN -s? 2>&1 | cut -f2,4 | sed 's|[	]| "|g' | sed 's|$|" off \\|g' | sed 's|19.2 east.*|19.2 east Astra 1F/1G/1H/1KR/1L" on \\|g' >> /tmp/w_scan_satselect.sh
+	$WSCAN -s? 2>&1 | tail -n +2 | cut -f2,4 | sed 's|[	]| "|g' | sed 's|$|" off \\|g' | sed 's|19.2 east.*|19.2 east Astra 1F/1G/1H/1KR/1L" on \\|g' >> /tmp/w_scan_satselect.sh
 	echo ' 2>/tmp/w_scan_satellite' >> /tmp/w_scan_satselect.sh
 	sh /tmp/w_scan_satselect.sh
 	chk_cancel
