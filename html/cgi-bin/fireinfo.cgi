@@ -28,6 +28,7 @@ use CGI::Carp 'fatalsToBrowser';
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require '/opt/pakfire/lib/functions.pl';
 
 my $configfile = "/var/ipfire/main/send_profile";
 
@@ -84,7 +85,7 @@ if ($errormessage) {
 }
 
 my $ipfire_version = `cat /etc/system-release`;
-my $pakfire_version = `cat /opt/pakfire/etc/pakfire.conf | grep "version =" | cut -d\\" -f2`;
+my $pakfire_version = &Pakfire::make_version();
 my $kernel_version = `uname -a`;
 
 &Header::openbox('100%', 'left', $Lang::tr{'fireinfo system version'});
