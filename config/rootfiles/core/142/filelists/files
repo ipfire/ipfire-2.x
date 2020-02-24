@@ -9,6 +9,7 @@ lib/udev/network-hotplug-bridges
 opt/pakfire/etc/pakfire.conf
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/dns.cgi
+srv/web/ipfire/cgi-bin/fireingo.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 var/ipfire/suricata/ruleset-sources
