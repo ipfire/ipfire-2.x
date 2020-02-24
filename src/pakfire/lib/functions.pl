@@ -768,6 +768,12 @@ sub upgradecore {
 	getcoredb("noforce");
 	eval(`grep "core_" $Conf::dbdir/lists/core-list.db`);
 	if ("$core_release" > "$Conf::core_mine") {
+		# Safety check for lazy testers:
+		# Before we upgrade to the latest release, we re-install the previous release
+		# to make sure that the tester has always been on the latest version.
+		my $tree = &get_tree();
+		$Conf::core_mine-- if ($tree eq "testing" || $tree eq "unstable");
+
 		message("CORE UPGR: Upgrading from release $Conf::core_mine to $core_release");
 		
 		my @seq = `seq $Conf::core_mine $core_release`;
