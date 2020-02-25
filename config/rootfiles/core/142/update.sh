@@ -104,7 +104,10 @@ for package in arm bitstream multicat check_mk_agent directfb \
                icecast icegenerator rtpproxy streamripper \
                cyrus-imapd; do
         if [ -e /opt/pakfire/db/installed/meta-$package ]; then
-                pakfire remove -y $package
+		stop_service $package
+		for i in $(cat /opt/pakfire/db/rootfiles/$package); do
+			rm -rfv /${i}
+		done
         fi
         rm -f /opt/pakfire/db/installed/meta-$package
         rm -f /opt/pakfire/db/meta/meta-$package
