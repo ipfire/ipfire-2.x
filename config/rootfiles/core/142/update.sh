@@ -99,6 +99,18 @@ mv -f /etc/rc.d/init.d/netowrking/red.up/05-update-dns-forwarders \
 # update linker config
 ldconfig
 
+# remove dropped packages
+for package in arm bitstream multicat check_mk_agent directfb \
+               icecast icegenerator rtpproxy streamripper \
+               cyrus-imapd; do
+        if [ -e /opt/pakfire/db/installed/meta-$package ]; then
+                pakfire remove -y $package
+        fi
+        rm -f /opt/pakfire/db/installed/meta-$package
+        rm -f /opt/pakfire/db/meta/meta-$package
+        rm -f /opt/pakfire/db/rootfiles/$package
+done
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
