@@ -515,7 +515,7 @@ prepareenv() {
 			system_release="${system_release} - ${GIT_BRANCH}"
 			;;
 		*)
-			system_release="${system_release} - Development Build: ${GIT_BRANCH}/${GIT_LASTCOMMIT:0:8}"
+			system_release="${system_release} - core${CORE} Development Build: ${GIT_BRANCH}/${GIT_LASTCOMMIT:0:8}"
 			;;
 	esac
 
