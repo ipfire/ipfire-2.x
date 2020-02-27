@@ -1111,7 +1111,6 @@ buildbase() {
 	lfsmake2 pkg-config
 	lfsmake2 make
 	lfsmake2 man
-	lfsmake2 kmod
 	lfsmake2 net-tools
 	lfsmake2 patch
 	lfsmake2 psmisc
@@ -1133,6 +1132,7 @@ buildipfire() {
   lfsmake2 backup
   lfsmake2 openssl
   [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
+  lfsmake2 kmod
   lfsmake2 popt
   lfsmake2 libedit
   lfsmake2 libusb
