@@ -936,30 +936,11 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
-< broken
-< dns check servers
-< dns configuration
-< dns could not add server
-< dns enable safe-search
-< dns isp assigned nameserver
-< dns isp nameservers and tls not allowed
-< dns mode for qname minimisation
-< dns no address given
-< dns no tls hostname given
-< dns recursor mode
-< dns tls hostname
-< dns use isp assigned nameservers
-< dns use protocol for dns queries
-< not validating
-< okay
 < pakfire invalid tree
 < pakfire tree
 < pakfire tree stable
 < pakfire tree testing
 < pakfire tree unstable
-< standard
-< strict
-< working
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################

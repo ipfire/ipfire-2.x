@@ -231,6 +231,7 @@ WARNING: translation string unused: dns address deleted
 WARNING: translation string unused: dns address deleted txt
 WARNING: translation string unused: dns address done
 WARNING: translation string unused: dns address recon
+WARNING: translation string unused: dns could not add server
 WARNING: translation string unused: dns desc
 WARNING: translation string unused: dns error 0
 WARNING: translation string unused: dns error 01
@@ -511,6 +512,7 @@ WARNING: translation string unused: noservicename
 WARNING: translation string unused: notes
 WARNING: translation string unused: o-no
 WARNING: translation string unused: o-yes
+WARNING: translation string unused: okay
 WARNING: translation string unused: online help en
 WARNING: translation string unused: only red
 WARNING: translation string unused: open to all
@@ -810,21 +812,8 @@ WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: Captive ACTIVATE = unknown string
 WARNING: untranslated string: Captive clients = unknown string
 WARNING: untranslated string: Scan for Songs = unknown string
-WARNING: untranslated string: broken = Broken
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: dns = unknown string
-WARNING: untranslated string: dns check servers = Check DNS Servers
-WARNING: untranslated string: dns configuration = DNS Configuration
-WARNING: untranslated string: dns enable safe-search = Enable Safe Search
-WARNING: untranslated string: dns isp assigned nameserver = ISP-assigned DNS server
-WARNING: untranslated string: dns isp nameservers and tls not allowed = ISP-assigned DNS servers and TLS cannot be used at the same time.
-WARNING: untranslated string: dns mode for qname minimisation = QNAME Minimisation
-WARNING: untranslated string: dns no address given = No IP Address given.
-WARNING: untranslated string: dns no tls hostname given = No TLS hostname given.
-WARNING: untranslated string: dns recursor mode = Recursor Mode
-WARNING: untranslated string: dns tls hostname = TLS Hostname
-WARNING: untranslated string: dns use isp assigned nameservers = Use ISP-assigned DNS servers
-WARNING: untranslated string: dns use protocol for dns queries = Protocol for DNS queries
 WARNING: untranslated string: fwhost cust geoipgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
@@ -859,7 +848,6 @@ WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: ike lifetime should be between 1 and 8 hours = unknown string
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: no data = unknown string
-WARNING: untranslated string: not validating = Not validating
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: pakfire invalid tree = Invalid repository selected
 WARNING: untranslated string: pakfire tree = Repository
@@ -870,7 +858,4 @@ WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
-WARNING: untranslated string: standard = Standard
-WARNING: untranslated string: strict = Strict
 WARNING: untranslated string: vpn statistics n2n = unknown string
-WARNING: untranslated string: working = Working
