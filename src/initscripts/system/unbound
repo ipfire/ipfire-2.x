@@ -587,13 +587,21 @@ case "$1" in
 		sleep 1
 		$0 start
 		;;
-	reload|remove-forwarders)
+	reload|remove-forwarders|update-forwarders)
 		# Update configuration files
 		write_forward_conf
 		write_hosts_conf
 
 		# Call unbound-control and perform the reload
 		/usr/sbin/unbound-control -q reload
+
+		# Dummy Resolve to wait for unbound
+		resolve "ping.ipfire.org" &>/dev/null
+
+		if [ "$1" = "update-forwarders" ]; then
+			# Make sure DNS works at this point
+			fix_time_if_dns_fails
+		fi
 
 		# Update Safe Search rules if the system is online.
 		if [ -e "/var/ipfire/red/active" ]; then
@@ -604,9 +612,6 @@ case "$1" in
 	status)
 		statusproc /usr/sbin/unbound
 		;;
-
-	update-forwarders)
-		$0 reload
 
 		# Make sure DNS works at this point
 		fix_time_if_dns_fails
