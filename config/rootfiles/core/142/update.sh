@@ -88,6 +88,8 @@ rm -rf /usr/lib/python2.7/site-packages/ddns
 rm -rf /usr/lib/pppd/2.4.7
 
 # Stop services
+/etc/init.d/squid stop
+/etc/init.d/suricata stop
 
 # Extract files
 extract_files
@@ -121,6 +123,9 @@ done
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/unbound restart
+/etc/init.d/suricata start
+/etc/init.d/squid start
 
 # remove lm_sensor config after collectd was started
 # to reserch sensors at next boot with updated kernel
