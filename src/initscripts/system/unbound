@@ -595,6 +595,10 @@ case "$1" in
 		# Call unbound-control and perform the reload
 		/usr/sbin/unbound-control -q reload
 
+		if [ "$1" = "remove-forwarders" ]; then
+			exit 0
+		fi
+
 		# Dummy Resolve to wait for unbound
 		resolve "ping.ipfire.org" &>/dev/null
 
