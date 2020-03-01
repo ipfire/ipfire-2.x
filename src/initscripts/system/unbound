@@ -534,7 +534,7 @@ update_safe_search() {
 	for domain in ${google_tlds[@]}; do
 		unbound-control local_zone "${domain}" transparent >/dev/null
 		for address in ${addresses}; do
-			unbound-control local_data: "www.${domain} ${LOCAL_TTL} IN A ${address}"
+			unbound-control local_data "www.${domain} ${LOCAL_TTL} IN A ${address}"
 		done >/dev/null
 	done
 
