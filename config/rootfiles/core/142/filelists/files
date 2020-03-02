@@ -13,4 +13,5 @@ srv/web/ipfire/cgi-bin/dns.cgi
 srv/web/ipfire/cgi-bin/fireinfo.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
+var/ipfire/backup/include
 var/ipfire/suricata/ruleset-sources

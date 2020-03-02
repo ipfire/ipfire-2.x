@@ -31,6 +31,7 @@
 /var/ipfire/*/*.conf
 /var/ipfire/*/config
 /var/ipfire/dhcp/*
+/var/ipfire/dns/server
 /var/ipfire/dnsforward/*
 /var/ipfire/*/enable
 /var/ipfire/*/*enable*
