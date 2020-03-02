@@ -274,8 +274,6 @@ get_memory_amount() {
 }
 
 fix_time_if_dns_fails() {
-	# Sometimes the first try fails so do it twice
-	resolve "ping.ipfire.org" &>/dev/null
 	# If DNS is working, everything is fine
 	if resolve "ping.ipfire.org" &>/dev/null; then
 		return 0
@@ -587,17 +585,13 @@ case "$1" in
 		sleep 1
 		$0 start
 		;;
-	reload|remove-forwarders|update-forwarders)
+	reload|update-forwarders)
 		# Update configuration files
 		write_forward_conf
 		write_hosts_conf
 
 		# Call unbound-control and perform the reload
 		/usr/sbin/unbound-control -q reload
-
-		if [ "$1" = "remove-forwarders" ]; then
-			exit 0
-		fi
 
 		# Dummy Resolve to wait for unbound
 		resolve "ping.ipfire.org" &>/dev/null
@@ -617,16 +611,12 @@ case "$1" in
 		statusproc /usr/sbin/unbound
 		;;
 
-		# Make sure DNS works at this point
-		fix_time_if_dns_fails
-		;;
-
 	resolve)
 		resolve "${2}" || exit $?
 		;;
 
 	*)
-		echo "Usage: $0 {start|stop|restart|reload|status|resolve|update-forwarders|remove-forwarders}"
+		echo "Usage: $0 {start|stop|restart|reload|status|resolve|update-forwarders}"
 		exit 1
 		;;
 esac
