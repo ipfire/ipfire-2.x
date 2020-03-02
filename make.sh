@@ -1498,7 +1498,6 @@ buildipfire() {
   lfsmake2 syslinux
   lfsmake2 tftpd
   lfsmake2 cpufrequtils
-  lfsmake2 bluetooth
   lfsmake2 gutenprint
   lfsmake2 apcupsd
   lfsmake2 iperf

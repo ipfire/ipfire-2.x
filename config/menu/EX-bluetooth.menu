@@ -1,5 +1,0 @@
-    $subipfire->{'55.bluetooth'} = {'caption' => bluetooth,
-				  'uri' => '/cgi-bin/bluetooth.cgi',
-				  'title' => bluetooth,
-				  'enabled' => 1,
-				  };

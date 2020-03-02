@@ -7,7 +7,6 @@ srv/web/ipfire/cgi-bin/aliases.cgi
 #srv/web/ipfire/cgi-bin/asterisk/status.cgi
 srv/web/ipfire/cgi-bin/atm-status.cgi
 srv/web/ipfire/cgi-bin/backup.cgi
-srv/web/ipfire/cgi-bin/bluetooth.cgi
 #srv/web/ipfire/cgi-bin/captive
 srv/web/ipfire/cgi-bin/captive.cgi
 srv/web/ipfire/cgi-bin/captive/index.cgi
