@@ -5,6 +5,7 @@ usr/bin/apr-1-config
 #usr/include/apr-1/apr_atomic.h
 #usr/include/apr-1/apr_cstr.h
 #usr/include/apr-1/apr_dso.h
+#usr/include/apr-1/apr_encode.h
 #usr/include/apr-1/apr_env.h
 #usr/include/apr-1/apr_errno.h
 #usr/include/apr-1/apr_escape.h
@@ -44,7 +45,7 @@ usr/bin/apr-1-config
 #usr/lib/libapr-1.la
 #usr/lib/libapr-1.so
 usr/lib/libapr-1.so.0
-usr/lib/libapr-1.so.0.6.5
+usr/lib/libapr-1.so.0.7.0
 #usr/lib/pkgconfig/apr-1.pc
 #usr/share/apr-1
 #usr/share/apr-1/build
