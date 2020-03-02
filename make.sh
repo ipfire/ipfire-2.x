@@ -1120,7 +1120,6 @@ buildbase() {
 	lfsmake2 tar
 	lfsmake2 texinfo
 	lfsmake2 util-linux
-	lfsmake2 udev
 	lfsmake2 vim
 }
 
@@ -1133,6 +1132,7 @@ buildipfire() {
   lfsmake2 openssl
   [ "${BUILD_ARCH}" = "i586" ] && lfsmake2 openssl KCFG='-sse2'
   lfsmake2 kmod
+  lfsmake2 udev
   lfsmake2 popt
   lfsmake2 libedit
   lfsmake2 libusb
