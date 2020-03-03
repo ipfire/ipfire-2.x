@@ -91,15 +91,15 @@ rm -rf /usr/lib/pppd/2.4.7
 /etc/init.d/squid stop
 /etc/init.d/suricata stop
 
-# drop unbound remove-forwarders
-rm -f /etc/rc.d/init.d/netowrking/red.down/05-remove-dns-forwarders
+# drop unbound remove and update forwarders
+rm -f /etc/rc.d/init.d/networking/red.down/05-*-dns-forwarders
 
 # Extract files
 extract_files
 
 # move update forwarders below firewall
-mv -f /etc/rc.d/init.d/netowrking/red.up/05-update-dns-forwarders \
-      /etc/rc.d/init.d/netowrking/red.up/22-update-dns-forwarders
+mv -f /etc/rc.d/init.d/networking/red.up/05-update-dns-forwarders \
+      /etc/rc.d/init.d/networking/red.up/22-update-dns-forwarders
 
 # update linker config
 ldconfig
