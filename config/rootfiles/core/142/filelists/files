@@ -2,6 +2,7 @@ etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
+etc/unbound/unbound.conf
 etc/rc.d/helper/aws-setup
 etc/rc.d/helper/azure-setup
 etc/rc.d/init.d/unbound
