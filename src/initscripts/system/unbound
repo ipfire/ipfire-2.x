@@ -191,15 +191,6 @@ write_forward_conf() {
 write_tuning_conf() {
 	# https://www.unbound.net/documentation/howto_optimise.html
 
-	# Determine number of online processors
-	local processors=$(getconf _NPROCESSORS_ONLN)
-
-	# Determine number of slabs
-	local slabs=1
-	while [ ${slabs} -lt ${processors} ]; do
-		slabs=$(( ${slabs} * 2 ))
-	done
-
 	# Determine amount of system memory
 	local mem=$(get_memory_amount)
 
@@ -233,16 +224,6 @@ write_tuning_conf() {
 
 	(
 		config_header
-
-		# We run one thread per processor
-		echo "num-threads: ${processors}"
-		echo "so-reuseport: yes"
-
-		# Adjust number of slabs
-		echo "infra-cache-slabs: ${slabs}"
-		echo "key-cache-slabs: ${slabs}"
-		echo "msg-cache-slabs: ${slabs}"
-		echo "rrset-cache-slabs: ${slabs}"
 
 		# Slice up the cache
 		echo "rrset-cache-size: $(( ${mem} / 2 ))m"
