@@ -97,9 +97,9 @@ rm -f /etc/rc.d/init.d/networking/red.down/05-*-dns-forwarders
 # Extract files
 extract_files
 
-# move update forwarders below firewall
-mv -f /etc/rc.d/init.d/networking/red.up/05-update-dns-forwarders \
-      /etc/rc.d/init.d/networking/red.up/22-update-dns-forwarders
+# move update forwarders below suricata
+mv -f /etc/rc.d/init.d/networking/red.up/*-update-dns-forwarders \
+      /etc/rc.d/init.d/networking/red.up/25-update-dns-forwarders
 
 # update linker config
 ldconfig
