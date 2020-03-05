@@ -350,6 +350,12 @@ sub writeipsecfiles {
 
 		print CONF "\tleftfirewall=yes\n";
 		print CONF "\tlefthostaccess=yes\n";
+
+		# Always send the host certificate
+		if ($lconfighash{$key}[3] eq 'host') {
+			print CONF "\tleftsendcert=always\n";
+		}
+
 		print CONF "\tright=$lconfighash{$key}[10]\n";
 
 		if ($lconfighash{$key}[3] eq 'net') {
