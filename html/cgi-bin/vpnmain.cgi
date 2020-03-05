@@ -19,6 +19,7 @@
 #                                                                             #
 ###############################################################################
 
+use Data::UUID;
 use MIME::Base64;
 use Net::DNS;
 use File::Copy;
@@ -1184,11 +1185,14 @@ END
 	&General::readhasharray("${General::swroot}/vpn/config", \%confighash);
 	my $key = $cgiparams{'KEY'};
 
-	my $uuid1 = "AAAABBBB";
-	my $uuid2 = "CCCCDDDD";
+	# Create a UUID generator
+	my $uuid = Data::UUID->new();
+
+	my $uuid1 = $uuid->create_str();
+	my $uuid2 = $uuid->create_str();
 
 	my $cert = "";
-	my $cert_uuid = "123456789";
+	my $cert_uuid = $uuid->create_str();
 
 	# Read and encode certificate
 	if ($confighash{$key}[4] eq "cert") {
