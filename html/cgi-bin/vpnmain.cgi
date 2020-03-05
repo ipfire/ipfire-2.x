@@ -1401,6 +1401,12 @@ END
 
 	print "					<key>ExtendedAuthEnabled</key>\n";
 	print "					<integer>0</integer>\n";
+
+	# These are not needed, but we provide some default to stop iPhone asking for credentials
+	print "					<key>AuthName</key>\n";
+	print "					<string>$confighash{$key}[1]</string>\n";
+	print "					<key>AuthPassword</key>\n";
+	print "					<string></string>\n";
 	print "				</dict>\n";
 	print "			</dict>\n";
 
