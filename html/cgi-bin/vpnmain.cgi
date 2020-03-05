@@ -1259,27 +1259,27 @@ END
 
 	# Left ID
 	if ($confighash{$key}[9]) {
-		print "				<key>LocalIdentifier</key>\n";
-		print "				<string>$confighash{$key}[9]</string>\n";
+		print "					<key>LocalIdentifier</key>\n";
+		print "					<string>$confighash{$key}[9]</string>\n";
 	}
 
 	# Right ID
 	if ($confighash{$key}[7]) {
-		print "				<key>RemoteIdentifier</key>\n";
-		print "				<string>$confighash{$key}[7]</string>\n";
+		print "					<key>RemoteIdentifier</key>\n";
+		print "					<string>$confighash{$key}[7]</string>\n";
 	}
 
 	if ($confighash{$key}[4] eq "cert") {
-		print "				<key>AuthenticationMethod</key>\n";
-		print "				<string>Certificate</string>\n";
+		print "					<key>AuthenticationMethod</key>\n";
+		print "					<string>Certificate</string>\n";
 
-		print "				<key>PayloadCertificateUUID</key>\n";
-		print "				<string>${cert_uuid}</string>\n";
+		print "					<key>PayloadCertificateUUID</key>\n";
+		print "					<string>${cert_uuid}</string>\n";
 	} else {
-		print "				<key>AuthenticationMethod</key>\n";
-		print "				<string>SharedSecret</string>\n";
-		print "				<key>SharedSecret</key>\n";
-		print "				<string>$confighash{$key}[5]</string>\n";
+		print "					<key>AuthenticationMethod</key>\n";
+		print "					<string>SharedSecret</string>\n";
+		print "					<key>SharedSecret</key>\n";
+		print "					<string>$confighash{$key}[5]</string>\n";
 	}
 
 	print "					<key>ExtendedAuthEnabled</key>\n";
