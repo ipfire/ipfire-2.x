@@ -40,6 +40,8 @@
 < g.dtm
 < g.lite
 < insert removable device
+< ipsec invalid ip address or fqdn for rw endpoint
+< ipsec roadwarrior endpoint
 < netbios nameserver daemon
 < no entries
 < notes
@@ -541,10 +543,12 @@
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
+< ipsec invalid ip address or fqdn for rw endpoint
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit
@@ -925,6 +929,8 @@
 < download apple profile
 < g.dtm
 < g.lite
+< ipsec invalid ip address or fqdn for rw endpoint
+< ipsec roadwarrior endpoint
 < upload fcdsl.o
 < zoneconf val vlan tag range error
 ############################################################################
@@ -1139,8 +1145,10 @@
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
+< ipsec invalid ip address or fqdn for rw endpoint
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit
@@ -1550,8 +1558,10 @@
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
+< ipsec invalid ip address or fqdn for rw endpoint
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit
@@ -2284,10 +2294,12 @@
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
+< ipsec invalid ip address or fqdn for rw endpoint
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit
@@ -3179,10 +3191,12 @@
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
+< ipsec invalid ip address or fqdn for rw endpoint
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit
@@ -3641,8 +3655,10 @@
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
+< ipsec invalid ip address or fqdn for rw endpoint
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit

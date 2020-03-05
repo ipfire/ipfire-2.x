@@ -26,6 +26,7 @@ use File::Copy;
 use File::Temp qw/ tempfile tempdir /;
 use strict;
 use Sort::Naturally;
+use Sys::Hostname;
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
@@ -112,6 +113,7 @@ $cgiparams{'ROOTCERT_EMAIL'} = '';
 $cgiparams{'ROOTCERT_OU'} = '';
 $cgiparams{'ROOTCERT_CITY'} = '';
 $cgiparams{'ROOTCERT_STATE'} = '';
+$cgiparams{'RW_ENDPOINT'} = '';
 $cgiparams{'RW_NET'} = '';
 $cgiparams{'DPD_DELAY'} = '30';
 $cgiparams{'DPD_TIMEOUT'} = '120';
@@ -507,12 +509,18 @@ if ($ENV{"REMOTE_ADDR"} eq "") {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cgiparams{'KEY'} eq '') {
 	&General::readhash("${General::swroot}/vpn/settings", \%vpnsettings);
 
+	if ($cgiparams{'RW_ENDPOINT'} ne '' && !&General::validip($cgiparams{'RW_ENDPOINT'}) && !&General::validfqdn($cgiparams{'RW_ENDPOINT'})) {
+		$errormessage = $Lang::tr{'ipsec invalid ip address or fqdn for rw endpoint'};
+		goto SAVE_ERROR;
+	}
+
 	if ( $cgiparams{'RW_NET'} ne '' and !&General::validipandmask($cgiparams{'RW_NET'}) ) {
 		$errormessage = $Lang::tr{'urlfilter invalid ip or mask error'};
 		goto SAVE_ERROR;
 	}
 
 	$vpnsettings{'ENABLED'} = $cgiparams{'ENABLED'};
+	$vpnsettings{'RW_ENDPOINT'} = $cgiparams{'RW_ENDPOINT'};
 	$vpnsettings{'RW_NET'} = $cgiparams{'RW_NET'};
 	&General::writehash("${General::swroot}/vpn/settings", \%vpnsettings);
 	&writeipsecfiles();
@@ -1182,6 +1190,10 @@ END
 
 # Export Apple profile to browser
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'download apple profile'}) {
+	# Read global configuration
+	&General::readhash("${General::swroot}/vpn/settings", \%vpnsettings);
+
+	# Read connections
 	&General::readhasharray("${General::swroot}/vpn/config", \%confighash);
 	my $key = $cgiparams{'KEY'};
 
@@ -1208,6 +1220,9 @@ END
 	print "Content-Type: application/octet-stream\n";
 	print "Content-Disposition: attachment; filename=" . $confighash{$key}[1] . ".mobileconfig\n";
 	print "\n"; # end headers
+
+	# Use our own FQDN if nothing else is configured
+	my $endpoint = ($vpnsettings{'RW_ENDPOINT'} ne "") ? $vpnsettings{'RW_ENDPOINT'} : &hostname();
 
 	print "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
 	print "<plist version=\"1.0\">\n";
@@ -1240,7 +1255,7 @@ END
 	print "				<key>IKEv2</key>\n";
 	print "				<dict>\n";
 	print "					<key>RemoteAddress</key>\n";
-	print "					<string>18.206.152.26</string>\n";
+	print "					<string>$endpoint</string>\n";
 
 	# Left ID
 	if ($confighash{$key}[9]) {
@@ -3080,6 +3095,10 @@ EOF
 			<td width="40%">
 				<input type='checkbox' name='ENABLED' $checked{'ENABLED'} />
 			</td>
+		</tr>
+		<tr>
+			<td class='base' nowrap='nowrap' width="60%">$Lang::tr{'ipsec roadwarrior endpoint'}:</td>
+			<td width="40%"><input type='text' name='RW_ENDPOINT' value='$cgiparams{'RW_ENDPOINT'}' /></td>
 		</tr>
 		<tr>
 			<td class='base' nowrap='nowrap' width="60%">$Lang::tr{'host to net vpn'}:</td>
