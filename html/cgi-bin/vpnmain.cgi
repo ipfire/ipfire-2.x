@@ -124,6 +124,7 @@ $cgiparams{'MODE'} = "tunnel";
 $cgiparams{'INTERFACE_MODE'} = "";
 $cgiparams{'INTERFACE_ADDRESS'} = "";
 $cgiparams{'INTERFACE_MTU'} = 1500;
+$cgiparams{'DNS_SERVERS'} = "";
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 my %APPLE_CIPHERS = (
@@ -510,6 +511,13 @@ sub writeipsecfiles {
 
 		# Fragmentation
 		print CONF "\tfragmentation=yes\n";
+
+		# DNS Servers for RW
+		if ($lconfighash{$key}[3] eq 'host') {
+			my @servers = split(/\|/, $lconfighash{$key}[39]);
+
+			print CONF "\trightdns=" . join(",", @servers) . "\n";
+		}
 
 		print CONF "\n";
 	} #foreach key
@@ -1612,6 +1620,7 @@ END
 		$cgiparams{'INTERFACE_MODE'}		= $confighash{$cgiparams{'KEY'}}[36];
 		$cgiparams{'INTERFACE_ADDRESS'}		= $confighash{$cgiparams{'KEY'}}[37];
 		$cgiparams{'INTERFACE_MTU'}		= $confighash{$cgiparams{'KEY'}}[38];
+		$cgiparams{'DNS_SERVERS'}		= $confighash{$cgiparams{'KEY'}}[39];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -1742,6 +1751,16 @@ END
 			if ($cgiparams{'INTERFACE_MTU'} !~ /^\d+$/) {
 				$errormessage = $Lang::tr{'invalid input for interface mtu'};
 				goto VPNCONF_ERROR;
+			}
+		}
+
+		if ($cgiparams{'TYPE'} eq 'host') {
+			my @servers = split(",", $cgiparams{'DNS_SERVERS'});
+			foreach my $server (@servers) {
+				unless (&Network::check_ip_address($server)) {
+					$errormessage = $Lang::tr{'ipsec dns server address is invalid'};
+					goto VPNCONF_ERROR;
+				}
 			}
 		}
 
@@ -2147,7 +2166,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 		$key = &General::findhasharraykey (\%confighash);
-		foreach my $i (0 .. 38) { $confighash{$key}[$i] = "";}
+		foreach my $i (0 .. 39) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -2198,6 +2217,7 @@ END
 	$confighash{$key}[36] = $cgiparams{'INTERFACE_MODE'};
 	$confighash{$key}[37] = $cgiparams{'INTERFACE_ADDRESS'};
 	$confighash{$key}[38] = $cgiparams{'INTERFACE_MTU'};
+	$confighash{$key}[39] = join("|", split(",", $cgiparams{'DNS_SERVERS'}));
 
 	# free unused fields!
 	$confighash{$key}[15] = 'off';
@@ -2280,6 +2300,7 @@ END
 	$cgiparams{'INTERFACE_MODE'}        	= "";
 	$cgiparams{'INTERFACE_ADDRESS'}        	= "";
 	$cgiparams{'INTERFACE_MTU'}        	= 1500;
+	$cgiparams{'DNS_SERVERS'}        	= "";
 }
 
 VPNCONF_ERROR:
@@ -2376,11 +2397,8 @@ END
 EOF
 	}
 
-	my $disabled;
-	my $blob;
-	if ($cgiparams{'TYPE'} eq 'host') {
-		$disabled = "disabled='disabled'";
-	} elsif ($cgiparams{'TYPE'} eq 'net') {
+	my $blob = "";
+	if ($cgiparams{'TYPE'} eq 'net') {
 		$blob = "<img src='/blob.gif' alt='*' />";
 	};
 
@@ -2389,6 +2407,9 @@ EOF
 
 	my @remote_subnets = split(/\|/, $cgiparams{'REMOTE_SUBNET'});
 	my $remote_subnets = join(",", @remote_subnets);
+
+	my @dns_servers = split(/\|/, $cgiparams{'DNS_SERVERS'});
+	my $dns_servers = join(",", @dns_servers);
 
 	print <<END;
 	<tr>
@@ -2425,10 +2446,26 @@ END
 		<td width='30%'>
 			<input type='text' name='LOCAL_SUBNET' value='$local_subnets' size="25" />
 		</td>
-		<td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'remote subnet'}&nbsp;$blob</td>
+END
+
+	if ($cgiparams{'TYPE'} eq "net") {
+		print <<END;
+		<td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'remote subnet'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 		<td width='30%'>
-			<input $disabled type='text' name='REMOTE_SUBNET' value='$remote_subnets' size="25" />
+			<input type='text' name='REMOTE_SUBNET' value='$remote_subnets' size="25" />
 		</td>
+END
+
+	} elsif ($cgiparams{'TYPE'} eq "host") {
+		print <<END;
+		<td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'dns servers'}:</td>
+		<td width='30%'>
+			<input type='text' name='DNS_SERVERS' value='$dns_servers' size="25" />
+		</td>
+END
+	}
+
+	print <<END;
 	</tr>
 	<tr>
 		<td class='boldbase' width='20%'>$Lang::tr{'vpn local id'}:</td>
@@ -2764,6 +2801,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$cgiparams{'INTERFACE_MODE'}		= $confighash{$cgiparams{'KEY'}}[36];
 		$cgiparams{'INTERFACE_ADDRESS'}		= $confighash{$cgiparams{'KEY'}}[37];
 		$cgiparams{'INTERFACE_MTU'}		= $confighash{$cgiparams{'KEY'}}[38];
+		$cgiparams{'DNS_SERVERS'}		= $confighash{$cgiparams{'KEY'}}[39];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;

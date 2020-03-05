@@ -1227,6 +1227,7 @@ WARNING: untranslated string: ip basic info = Basic IP information
 WARNING: untranslated string: ip info for = IP information for
 WARNING: untranslated string: ipsec = IPsec
 WARNING: untranslated string: ipsec connection = IPsec Connection
+WARNING: untranslated string: ipsec dns server address is invalid = Invalid DNS server IP address(es)
 WARNING: untranslated string: ipsec interface mode gre = GRE
 WARNING: untranslated string: ipsec interface mode none = - None (Default) -
 WARNING: untranslated string: ipsec interface mode vti = VTI

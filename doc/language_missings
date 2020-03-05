@@ -40,6 +40,7 @@
 < g.dtm
 < g.lite
 < insert removable device
+< ipsec dns server address is invalid
 < ipsec invalid ip address or fqdn for rw endpoint
 < ipsec roadwarrior endpoint
 < netbios nameserver daemon
@@ -540,6 +541,7 @@
 < ip info for
 < ipsec
 < ipsec connection
+< ipsec dns server address is invalid
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
@@ -929,6 +931,7 @@
 < download apple profile
 < g.dtm
 < g.lite
+< ipsec dns server address is invalid
 < ipsec invalid ip address or fqdn for rw endpoint
 < ipsec roadwarrior endpoint
 < upload fcdsl.o
@@ -1142,6 +1145,7 @@
 < ip basic info
 < ip info for
 < ipsec connection
+< ipsec dns server address is invalid
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
@@ -1555,6 +1559,7 @@
 < ip basic info
 < ip info for
 < ipsec connection
+< ipsec dns server address is invalid
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
@@ -2291,6 +2296,7 @@
 < ip info for
 < ipsec
 < ipsec connection
+< ipsec dns server address is invalid
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
@@ -3188,6 +3194,7 @@
 < ip info for
 < ipsec
 < ipsec connection
+< ipsec dns server address is invalid
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
@@ -3652,6 +3659,7 @@
 < ip basic info
 < ip info for
 < ipsec connection
+< ipsec dns server address is invalid
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti

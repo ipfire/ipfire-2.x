@@ -1547,6 +1547,7 @@
 'ipinfo' => 'IP info',
 'ipsec' => 'IPsec',
 'ipsec connection' => 'IPsec Connection',
+'ipsec dns server address is invalid' => 'Invalid DNS server IP address(es)',
 'ipsec interface mode gre' => 'GRE',
 'ipsec interface mode none' => '- None (Default) -',
 'ipsec interface mode vti' => 'VTI',
