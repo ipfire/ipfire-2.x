@@ -126,8 +126,8 @@ done
 /usr/local/bin/filesystem-cleanup
 
 # Start services
-/etc/init.d/unbound restart
 /etc/init.d/suricata start
+/etc/init.d/unbound restart
 /etc/init.d/squid start
 
 # remove lm_sensor config after collectd was started
