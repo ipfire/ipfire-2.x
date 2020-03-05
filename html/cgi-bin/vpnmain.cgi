@@ -1257,6 +1257,13 @@ END
 	print "					<key>RemoteAddress</key>\n";
 	print "					<string>$endpoint</string>\n";
 
+	# PFS
+	my $pfs = $confighash{$key}[28];
+	if ($pfs eq "on") {
+		print "					<key>EnablePFS</key>\n";
+		print "					<true/>\n";
+	}
+
 	# Left ID
 	if ($confighash{$key}[9]) {
 		print "					<key>LocalIdentifier</key>\n";
