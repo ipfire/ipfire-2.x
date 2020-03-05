@@ -126,6 +126,35 @@ $cgiparams{'INTERFACE_ADDRESS'} = "";
 $cgiparams{'INTERFACE_MTU'} = 1500;
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
+my %APPLE_CIPHERS = (
+	"aes256gcm128" => "AES-256-GCM",
+	"aes128gcm128" => "AES-128-GCM",
+	"aes256"       => "AES-256",
+	"aes128"       => "AES-128",
+	"3des"         => "3DES",
+);
+
+my %APPLE_INTEGRITIES = (
+	"sha2_512" => "SHA2-512",
+	"sha2_384" => "SHA2-384",
+	"sha2_256" => "SHA2-256",
+	"sha1"     => "SHA1-160",
+);
+
+my %APPLE_DH_GROUPS = (
+	"768" => 1,
+	"1024" => 2,
+	"1536" => 5,
+	"2048" => 14,
+	"3072" => 15,
+	"4096" => 16,
+	"6144" => 17,
+	"8192" => 18,
+	"e256" => 19,
+	"e384" => 20,
+	"e521" => 21,
+);
+
 ###
 ### Useful functions
 ###
@@ -1263,6 +1292,87 @@ END
 		print "					<key>EnablePFS</key>\n";
 		print "					<true/>\n";
 	}
+
+	# IKE Cipher Suite
+	print "					<key>IKESecurityAssociationParameters</key>\n";
+	print "					<dict>\n";
+
+	# Encryption
+	foreach my $cipher (split(/\|/,$confighash{$key}[18])) {
+		# Skip all unsupported ciphers
+		next unless (exists $APPLE_CIPHERS{$cipher});
+
+		print "						<key>EncryptionAlgorithm</key>\n";
+		print "						<string>$APPLE_CIPHERS{$cipher}</string>\n";
+		last;
+	}
+
+	# Integrity
+	foreach my $integrity (split(/\|/,$confighash{$key}[19])) {
+		# Skip all unsupported algorithms
+		next unless (exists $APPLE_INTEGRITIES{$integrity});
+
+		print "						<key>IntegrityAlgorithm</key>\n";
+		print "						<string>$APPLE_INTEGRITIES{$integrity}</string>\n";
+		last;
+	}
+
+	# Diffie Hellman Groups
+	foreach my $group (split(/\|/,$confighash{$key}[20])) {
+		# Skip all unsupported algorithms
+		next unless (exists $APPLE_DH_GROUPS{$group});
+
+		print "						<key>DiffieHellmanGroup</key>\n";
+		print "						<string>$APPLE_DH_GROUPS{$group}</string>\n";
+		last;
+	}
+
+	# Lifetime
+	my $lifetime = $confighash{$key}[16] * 60;
+	print "						<key>LifeTimeInMinutes</key>\n";
+	print "						<integer>$lifetime</integer>\n";
+	print "					</dict>\n";
+
+	# ESP Cipher Suite
+	print "					<key>ChildSecurityAssociationParameters</key>\n";
+	print "					<dict>\n";
+
+	# Encryption
+	foreach my $cipher (split(/\|/,$confighash{$key}[21])) {
+		# Skip all unsupported ciphers
+		next unless (exists $APPLE_CIPHERS{$cipher});
+
+		print "						<key>EncryptionAlgorithm</key>\n";
+		print "						<string>$APPLE_CIPHERS{$cipher}</string>\n";
+		last;
+	}
+
+	# Integrity
+	foreach my $integrity (split(/\|/,$confighash{$key}[22])) {
+		# Skip all unsupported algorithms
+		next unless (exists $APPLE_INTEGRITIES{$integrity});
+
+		print "						<key>IntegrityAlgorithm</key>\n";
+		print "						<string>$APPLE_INTEGRITIES{$integrity}</string>\n";
+		last;
+	}
+
+	# Diffie Hellman Groups
+	foreach my $group (split(/\|/,$confighash{$key}[23])) {
+		# Skip all unsupported algorithms
+		next unless (exists $APPLE_DH_GROUPS{$group});
+
+		print "						<key>DiffieHellmanGroup</key>\n";
+		print "						<string>$APPLE_DH_GROUPS{$group}</string>\n";
+		last;
+	}
+
+	# Lifetime
+	my $lifetime = $confighash{$key}[17] * 60;
+	print "						<key>LifeTimeInMinutes</key>\n";
+	print "						<integer>$lifetime</integer>\n";
+	print "					</dict>\n";
+
 
 	# Left ID
 	if ($confighash{$key}[9]) {
