@@ -621,7 +621,7 @@ $checked{'DNS_UPDATE_ENABLED'}{'on'} = ( $dhcpsettings{'DNS_UPDATE_ENABLED'} ne 
 print <<END
 <table  width='100%'>
 	<tr>
-		<td width='25%' class='boldbase'>$Lang::tr{'dhcp dns enable update'}</td>
+		<td width='30%' class='boldbase'>$Lang::tr{'dhcp dns enable update'}</td>
 		<td class='base'><input type='checkbox' name='DNS_UPDATE_ENABLED' $checked{'DNS_UPDATE_ENABLED'}{'on'}>
 		</td>
 	<tr>
