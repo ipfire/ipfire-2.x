@@ -190,7 +190,10 @@ case "$1" in
 		# Flush firewall chain.
 		flush_fw_chain
 
-		# Remove suricata control socket.              
+		# Sometimes suricata not correct shutdown. So killall.
+		killall -KILL /usr/bin/suricata 2>/dev/null
+
+		# Remove suricata control socket.
 		rm /var/run/suricata/* >/dev/null 2>/dev/null
 
 		# Trash remain pid file if still exists.

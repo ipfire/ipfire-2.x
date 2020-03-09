@@ -5,6 +5,7 @@ var/ipfire/langs
 etc/unbound/unbound.conf
 etc/rc.d/helper/aws-setup
 etc/rc.d/helper/azure-setup
+etc/rc.d/init.d/suricata
 etc/rc.d/init.d/unbound
 etc/suricata/suricata.yaml
 lib/udev/network-hotplug-bridges
