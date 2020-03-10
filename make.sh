@@ -504,6 +504,7 @@ prepareenv() {
 
 	# Run LFS static binary creation scripts one by one
 	export CCACHE_DIR=$BASEDIR/ccache
+	export CCACHE_TEMPDIR="/tmp"
 	export CCACHE_COMPRESS=1
 	export CCACHE_COMPILERCHECK="string:toolchain-${TOOLCHAINVER} ${BUILD_ARCH}"
 
@@ -575,6 +576,7 @@ enterchroot() {
 		BUILD_ARCH="${BUILD_ARCH}" \
 		BUILD_PLATFORM="${BUILD_PLATFORM}" \
 		CCACHE_DIR=/usr/src/ccache \
+		CCACHE_TEMPDIR="${CCACHE_TEMPDIR}" \
 		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
 		GOCACHE="/usr/src/ccache/go" \
@@ -658,6 +660,7 @@ lfsmake1() {
 	cd $BASEDIR/lfs && env -i \
 		PATH="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/bin:$PATH" \
 		CCACHE_DIR="${CCACHE_DIR}" \
+		CCACHE_TEMPDIR="${CCACHE_TEMPDIR}" \
 		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
 		CFLAGS="${CFLAGS}" \
