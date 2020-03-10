@@ -7,9 +7,10 @@
 #usr/include/libssh/sftp.h
 #usr/include/libssh/ssh2.h
 #usr/lib/cmake/libssh
+#usr/lib/cmake/libssh/libssh-config-noconfig.cmake
 #usr/lib/cmake/libssh/libssh-config-version.cmake
 #usr/lib/cmake/libssh/libssh-config.cmake
 #usr/lib/libssh.so
 usr/lib/libssh.so.4
-usr/lib/libssh.so.4.8.1
+usr/lib/libssh.so.4.8.4
 #usr/lib/pkgconfig/libssh.pc
