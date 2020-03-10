@@ -1398,7 +1398,6 @@
 'ike integrity' => 'IKE-Integrität:',
 'ike lifetime' => 'IKE-Lebensdauer:',
 'ike lifetime should be between 1 and 24 hours' => 'IKE Lebensdauer sollte zwischen 1 und 24 Stunden betragen.',
-'ike lifetime should be between 1 and 8 hours' => 'Die IKE-Laufzeit sollte zwischen einer und acht Stunden betragen',
 'imei' => 'IMEI',
 'import' => 'Import',
 'importkey' => 'PSK importieren',
