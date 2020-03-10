@@ -285,6 +285,7 @@ stdumount() {
 	umount $BASEDIR/build/usr/src/log		2>/dev/null;
 	umount $BASEDIR/build/usr/src/src		2>/dev/null;
 	umount $BASEDIR/build/usr/src		2>/dev/null;
+	umount $BASEDIR/build/tmp		2>/dev/null;
 }
 
 now() {
