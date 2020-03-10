@@ -29,6 +29,9 @@ VER = ipfire
 THISAPP    = cdrom
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+# Fail when there is an error in the tar pipe
+SHELL=/bin/bash -o pipefail
+
 ifeq "$(BUILD_PLATFORM)" "arm"
 	TAR_OPTIONS =
 else
@@ -147,7 +150,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# since stage2 has been executed..
 	echo "$(SYSTEM_RELEASE)" > /etc/system-release
 
-	rm -rf /install/cdrom /tmp/*
+	rm -rf /install/cdrom
 	mkdir -p /install/cdrom/doc
 
 	# Clear mtab (prevents .journal problems)
@@ -158,18 +161,18 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	BUILDTARGET="$(BUILDTARGET)" BUILD_ARCH="$(BUILD_ARCH)" KVER="$(KVER)" \
 		$(DIR_SRC)/src/scripts/archive.files \
 		$(DIR_SRC)/config/rootfiles/common \
-		> /tmp/ROOTFILES
+		> $(DIR_TMP)/ROOTFILES
 
 	# Compress root filesystem
 	# Reason for this tar+untar+tar is removing of entries listed two or more in src/ROOTFILES
-	tar -c --exclude='#*' --exclude='proc/*' --exclude='dev/pts/*' \
-		--exclude='__pycache__' --exclude='tmp/ROOTFILES' \
-		-C / --files-from=/tmp/ROOTFILES -f /$(SNAME).tar
-	rm -f /tmp/ROOTFILES
-	tar -x -C /tmp -f /$(SNAME).tar
-	rm -f /$(SNAME).tar
-	@mkdir /tmp/sys
-	cd /tmp && tar cf - * | xz $(XZ_OPT) > /install/cdrom/distro.img && rm -rf *
+	rm -rf $(DIR_TMP)/root && mkdir -p $(DIR_TMP)/root
+	tar -c --exclude='#*' --exclude='proc/*' --exclude='dev/pts/*' --exclude='tmp/*' \
+		--exclude='__pycache__' \
+		-C / --files-from=$(DIR_TMP)/ROOTFILES | tar -x -C $(DIR_TMP)/root
+	rm -f $(DIR_TMP)/ROOTFILES
+	mkdir $(DIR_TMP)/root/sys
+	cd $(DIR_TMP)/root && tar cf - * | xz $(XZ_OPT) > /install/cdrom/distro.img
+	rm -rf $(DIR_TMP)/root
 
 	# Other files
 	touch /install/cdrom/$(SNAME)-$(VERSION)-core$(CORE).media
