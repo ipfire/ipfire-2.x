@@ -25,3 +25,6 @@
 stop_service ${NAME}
 make_backup ${NAME}
 remove_files
+
+# Remove symlinks
+rm -rf /etc/rc.d/rc?.d/*xinetd
