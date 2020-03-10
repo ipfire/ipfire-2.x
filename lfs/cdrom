@@ -150,8 +150,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# since stage2 has been executed..
 	echo "$(SYSTEM_RELEASE)" > /etc/system-release
 
-	rm -rf /install/cdrom
-	mkdir -p /install/cdrom/doc
+	# Create a directory to authorise the CDROM in
+	rm -rf $(DIR_TMP)/cdrom && mkdir -p $(DIR_TMP)/cdrom
 
 	# Clear mtab (prevents .journal problems)
 	rm -vf /etc/mtab
@@ -171,40 +171,43 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-C / --files-from=$(DIR_TMP)/ROOTFILES | tar -x -C $(DIR_TMP)/root
 	rm -f $(DIR_TMP)/ROOTFILES
 	mkdir $(DIR_TMP)/root/sys
-	cd $(DIR_TMP)/root && tar cf - * | xz $(XZ_OPT) > /install/cdrom/distro.img
+	cd $(DIR_TMP)/root && tar cf - * | xz $(XZ_OPT) > $(DIR_TMP)/cdrom/distro.img
 	rm -rf $(DIR_TMP)/root
 
 	# Other files
-	touch /install/cdrom/$(SNAME)-$(VERSION)-core$(CORE).media
-	sed 's/VERSION/$(VERSION)/' $(DIR_SRC)/config/cdrom/README.txt > /install/cdrom/README.txt
-	cp $(DIR_SRC)/doc/COPYING				/install/cdrom/
-	cp $(DIR_SRC)/doc/{ChangeLog,packages-list.txt}	/install/cdrom/doc
+	touch $(DIR_TMP)/cdrom/$(SNAME)-$(VERSION)-core$(CORE).media
+	sed 's/VERSION/$(VERSION)/' $(DIR_SRC)/config/cdrom/README.txt > $(DIR_TMP)/cdrom/README.txt
+	cp $(DIR_SRC)/doc/COPYING $(DIR_TMP)/cdrom/
 
-	mkdir -p /install/cdrom/boot/isolinux
+	# Install documentation
+	-mkdir -pv $(DIR_TMP)/cdrom/doc
+	cp $(DIR_SRC)/doc/{ChangeLog,packages-list.txt}	$(DIR_TMP)/cdrom/doc
+
+	mkdir -p $(DIR_TMP)/cdrom/boot/isolinux
 
 ifeq "$(HAS_KERNEL)" "1"
-	cp /boot/vmlinuz-$(KVER)-ipfire             /install/cdrom/boot/isolinux/vmlinuz
-	dracut --force --early-microcode -a "installer" --strip --xz /install/cdrom/boot/isolinux/instroot $(KVER)-ipfire
+	cp /boot/vmlinuz-$(KVER)-ipfire $(DIR_TMP)/cdrom/boot/isolinux/vmlinuz
+	dracut --force --early-microcode -a "installer" --strip --xz $(DIR_TMP)/cdrom/boot/isolinux/instroot $(KVER)-ipfire
 endif
 
 ifeq "$(HAS_ISOLINUX)" "1"
-	dd if=/dev/zero  bs=1k count=2            > /install/cdrom/boot/isolinux/boot.catalog
-	cp $(DIR_SRC)/config/syslinux/boot.png      /install/cdrom/boot/isolinux/boot.png
-	cp /usr/share/syslinux/isolinux.bin         /install/cdrom/boot/isolinux/isolinux.bin
-	cp /usr/share/hwdata/pci.ids                /install/cdrom/boot/isolinux/pci.ids
-	cp -vf /usr/share/syslinux/*.c32            /install/cdrom/boot/isolinux/
+	dd if=/dev/zero  bs=1k count=2            > $(DIR_TMP)/cdrom/boot/isolinux/boot.catalog
+	cp $(DIR_SRC)/config/syslinux/boot.png      $(DIR_TMP)/cdrom/boot/isolinux/boot.png
+	cp /usr/share/syslinux/isolinux.bin         $(DIR_TMP)/cdrom/boot/isolinux/isolinux.bin
+	cp /usr/share/hwdata/pci.ids                $(DIR_TMP)/cdrom/boot/isolinux/pci.ids
+	cp -vf /usr/share/syslinux/*.c32            $(DIR_TMP)/cdrom/boot/isolinux/
 	sed -e "s/VERSION/$(VERSION) - Core $(CORE)/g" \
 		$(DIR_SRC)/config/syslinux/syslinux.cfg \
-		> /install/cdrom/boot/isolinux/isolinux.cfg
+		> $(DIR_TMP)/cdrom/boot/isolinux/isolinux.cfg
 endif
 
 ifeq "$(HAS_MEMTEST)" "1"
 	# Install memtest
-	cp /usr/lib/memtest86+/memtest.bin          /install/cdrom/boot/isolinux/memtest
+	cp /usr/lib/memtest86+/memtest.bin $(DIR_TMP)/cdrom/boot/isolinux/memtest
 endif
 
 ifeq "$(HAS_IPXE)" "1"
-	cp /usr/share/ipfire-netboot/ipxe.lkrn      /install/cdrom/boot/isolinux/netboot
+	cp /usr/share/ipfire-netboot/ipxe.lkrn $(DIR_TMP)/cdrom/boot/isolinux/netboot
 endif
 
 ifeq "$(EFI)" "1"
@@ -213,43 +216,43 @@ ifeq "$(EFI)" "1"
 		$(DIR_SRC)/config/cdrom/grub-efi.cfg > /tmp/grub-efi.cfg
 
 	# Build a GRUB EFI image
-	mkdir -pv /install/cdrom/EFI/BOOT
+	mkdir -pv $(DIR_TMP)/cdrom/EFI/BOOT
 	grub-mkimage \
 		--format=$(GRUB_ARCH)-efi \
-		--output=/install/cdrom/EFI/BOOT/boot$(EFI_ARCH).efi \
-		--config=/tmp/grub-efi.cfg \
+		--output=$(DIR_TMP)/cdrom/EFI/BOOT/boot$(EFI_ARCH).efi \
+		--config=$(DIR_TMP)/grub-efi.cfg \
 		--compression=xz \
 		--prefix=/EFI/BOOT \
 		$$(for mod in $(GRUB_EFI_MODULES); do [ -f "/usr/lib/grub/$(GRUB_ARCH)-efi/$${mod}.mod" ] && echo "$${mod}"; done)
 
 	# Install GRUB configuration
-	mkdir -pv /install/cdrom/EFI/BOOT
+	mkdir -pv $(DIR_TMP)/cdrom/EFI/BOOT
 	sed -e "s/NAME/$(NAME)/g" -e "s/VERSION/$(VERSION)/g" -e "s/ARCH/$(BUILD_ARCH)/g" \
-		< $(DIR_SRC)/config/cdrom/grub.cfg > /install/cdrom/EFI/BOOT/grub.cfg
+		< $(DIR_SRC)/config/cdrom/grub.cfg > $(DIR_TMP)/cdrom/EFI/BOOT/grub.cfg
 
 	# Create the EFI Eltorito image
-	dd if=/dev/zero of=/install/cdrom/boot/isolinux/efiboot.img bs=1k count=1440
-	mkdosfs -F 12 -n "IPFIRE_EFI" /install/cdrom/boot/isolinux/efiboot.img
+	dd if=/dev/zero of=$(DIR_TMP)/cdrom/boot/isolinux/efiboot.img bs=1k count=1440
+	mkdosfs -F 12 -n "IPFIRE_EFI" $(DIR_TMP)/cdrom/boot/isolinux/efiboot.img
 
 	# Mount the EFI image
-	mkdir -pv /install/efiboot.img
-	mount -o loop /install/cdrom/boot/isolinux/efiboot.img /install/efiboot.img
+	mkdir -pv $(DIR_TMP)/efiboot.img
+	mount -o loop $(DIR_TMP)/cdrom/boot/isolinux/efiboot.img $(DIR_TMP)/efiboot.img
 
 	# Copy the bootloader into the image
-	mkdir -pv /install/efiboot.img/EFI/BOOT
-	cp -a /install/cdrom/EFI/BOOT/boot$(EFI_ARCH).efi \
-		/install/efiboot.img/EFI/BOOT/boot$(EFI_ARCH).efi
+	mkdir -p $(DIR_TMP)/efiboot.img/EFI/BOOT
+	cp -a $(DIR_TMP)/cdrom/EFI/BOOT/boot$(EFI_ARCH).efi \
+		$(DIR_TMP)/efiboot.img/EFI/BOOT/boot$(EFI_ARCH).efi
 
 	# Cleanup
-	umount /install/efiboot.img
-	rm -rf /install/efiboot.img /tmp/grub-efi.cfg
+	umount $(DIR_TMP)/efiboot.img
+	rm -rf $(DIR_TMP)/efiboot.img $(DIR_TMP)/grub-efi.cfg
 endif
 
-	cd /install/cdrom && find -type f ! -name md5sum.txt | grep -v "./boot" | \
+	cd $(DIR_TMP)/cdrom && find -type f ! -name md5sum.txt | grep -v "./boot" | \
 						xargs md5sum > md5sum.txt
 
 	mkdir -p /install/images
-	cd /install/cdrom && mkisofs $(ISO_ARGS) \
+	cd $(DIR_TMP)/cdrom && mkisofs $(ISO_ARGS) \
 		-o /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso .
 
 ifeq "$(HAS_ISOLINUX)" "1"
