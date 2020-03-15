@@ -1,7 +1,6 @@
 ############################################################################
 # Checking cgi-bin translations for language: de                           #
 ############################################################################
-< addons
 < advproxy update information
 < ansi t1.483
 < backup archive
@@ -21,68 +20,34 @@
 < backup protect key password
 < bewan adsl pci st
 < bewan adsl usb
-< broken
 < Captive heading terms
 < Captive heading voucher
 < Captive invalid coupon
 < Captive please enter a coupon code
 < choose media
-< community rules
 < could not connect to www ipfire org
 < cryptographic settings
-< dangerous
-< dead peer detection
-< default IP address
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
 < dh name is invalid
-< dns check servers
-< dns configuration
 < dns could not add server
-< dns enable safe-search
-< dns isp assigned nameserver
-< dns isp nameservers and tls not allowed
-< dns mode for qname minimisation
-< dns no address given
-< dns no tls hostname given
-< dns tls hostname
-< dns use isp assigned nameservers
-< dns use protocol for dns queries
 < done
-< emerging pro rules
-< emerging rules
-< enable smt
-< fallout zombieload ridl
-< force enable
-< foreshadow
 < g.dtm
 < g.lite
-< guardian
 < insert removable device
-< itlb multihit
 < notes
-< not validating
 < okay
-< pakfire invalid tree
-< pakfire tree
-< pakfire tree stable
-< pakfire tree testing
-< pakfire tree unstable
 < quick control
 < shaping add options
 < show areas
 < show lines
 < show tls-auth key
-< standard
-< strict
-< taa zombieload2
 < teovpn_fragment
 < tor bridge enabled
 < tor errmsg invalid node id
 < updxlrtr used by
 < upload fcdsl.o
 < vpn configuration main
-< working
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
