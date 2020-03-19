@@ -1428,6 +1428,8 @@ END
 		print "			<dict>\n";
 		print "				<key>PayloadIdentifier</key>\n";
 		print "				<string>org.example.vpn1.client</string>\n";
+		print "				<key>PayloadDisplayName</key>\n";
+		print "				<string>$confighash{$key}[1]</string>\n";
 		print "				<key>PayloadUUID</key>\n";
 		print "				<string>${cert_uuid}</string>\n";
 		print "				<key>PayloadType</key>\n";
