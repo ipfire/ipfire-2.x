@@ -1421,6 +1421,18 @@ END
 	print "					<string>$confighash{$key}[1]</string>\n";
 	print "					<key>AuthPassword</key>\n";
 	print "					<string></string>\n";
+
+	# Connect the VPN automatically
+	print "					<key>OnDemandEnabled</key>\n";
+	print "					<integer>1</integer>\n";
+	print "					<key>OnDemandRules</key>\n";
+	print "					<array>\n";
+	print "						<dict>\n";
+	print "							<key>Action</key>\n";
+	print "							<string>Connect</string>\n";
+	print "						</dict>\n";
+	print "					</array>\n";
+
 	print "				</dict>\n";
 	print "			</dict>\n";
 
