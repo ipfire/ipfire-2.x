@@ -49,6 +49,10 @@ rm -rf /usr/lib/go/9.2.0
 
 # Stop services
 
+# move swap after mount
+mv -f /etc/rc.d/rcsysinit.d/S20swap \
+      /etc/rc.d/rcsysinit.d/S41swap
+      
 # Extract files
 extract_files
 
