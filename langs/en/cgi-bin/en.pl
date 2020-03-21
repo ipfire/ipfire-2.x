@@ -1547,6 +1547,7 @@
 'ipsec mode tunnel' => 'Tunnel',
 'ipsec network' => 'IPsec network',
 'ipsec no connections' => 'No active IPsec connections',
+'ipsec routing table entries' => 'IPsec Routing Table Entries',
 'ipsec settings' => 'IPsec Settings',
 'iptable rules' => 'IPTable rules',
 'iptmangles' => 'IPTable Mangles',

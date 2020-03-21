@@ -79,6 +79,14 @@ if ( $querry[0] =~ "fwhits"){
 	print "<pre>$output</pre>\n";
 	&Header::closebox();
 
+	$output = `/sbin/ip route list table 220`;
+	if ( $output ) {
+		&Header::openbox('100%', 'left', $Lang::tr{'ipsec routing table entries'});
+		$output = &Header::cleanhtml($output,"y");
+		print "<pre>$output</pre>\n";
+		&Header::closebox()
+	}
+
 	&Header::openbox('100%', 'left', $Lang::tr{'arp table entries'});
 	$output = `/sbin/ip neigh show`;
 	$output = &Header::cleanhtml($output,"y");
