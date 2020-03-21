@@ -45,6 +45,7 @@ done
 
 
 # Remove files
+rm -rf /usr/lib/go/9.2.0
 
 # Stop services
 
