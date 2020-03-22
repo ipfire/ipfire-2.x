@@ -59,6 +59,9 @@ extract_files
 # update linker config
 ldconfig
 
+# restart init after glibc replace
+telinit u
+
 # remove dropped packages
 for package in bluetooth; do
 	if [ -e /opt/pakfire/db/installed/meta-$package ]; then
