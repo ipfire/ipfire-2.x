@@ -37,7 +37,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr
-PAK_VER    = 10
+PAK_VER    = 11
 
 DEPS       = "vdr_streamdev"
 
@@ -98,6 +98,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	# stime was removed from glibc with version 2.31
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/vdr/vdr-2.4.1_replace_stime.patch
 
 	# Compile main package.
 	cd $(DIR_APP) && make $(MAKE_OPTIONS) $(MAKETUNING) vdr include-dir
