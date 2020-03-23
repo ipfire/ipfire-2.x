@@ -98,6 +98,7 @@ DIR_CHK     = $(LFS_BASEDIR)/cache/check
 DIR_CONF    = $(LFS_BASEDIR)/config
 DIR_INFO    = $(LFS_BASEDIR)/log
 DIR_TMP     = /tmp
+DIR_TMP_PAK = $(DIR_TMP)/package-$(PROG)
 
 # Add the compiler location and version and specs to the ccache hash
 CCACHE_COMPILERCHECK += $(shell gcc -dumpspecs 2>/dev/null | md5sum | cut -d ' ' -f1)
@@ -227,39 +228,62 @@ endef
 
 define PAK
 	# Bringing the files to their right place.
-	@rm -rf /install/packages/package
-	@mkdir -p /install/packages/package/tmp
+	@rm -rf $(DIR_TMP_PAK) && mkdir -p $(DIR_TMP_PAK)
 	if [ -e "/usr/src/src/paks/$(PROG)" ]; then \
 		cp -f /usr/src/src/paks/$(PROG)/{,un}install.sh /usr/src/src/paks/$(PROG)/update.sh \
-		/install/packages/package; \
+		$(DIR_TMP_PAK); \
 	else \
 		cp -f /usr/src/src/paks/default/{,un}install.sh /usr/src/src/paks/default/update.sh \
-		/install/packages/package; \
+		$(DIR_TMP_PAK); \
 	fi
 	for i in $(DIR_SRC)/config/rootfiles/packages/{$(BUILD_ARCH),}/$(PROG); do \
 		if [ -e "$${i}" ]; then \
-			cp -v $${i} /install/packages/package/ROOTFILES; \
+			cp -v $${i} $(DIR_TMP_PAK)/ROOTFILES; \
 			break; \
 		fi; \
 	done
-	sed -e 's/BUILDTARGET/$(BUILDTARGET)/g' -e 's/KVER/$(KVER)/g' -e 's/MACHINE/$(BUILD_ARCH)/g' -i /install/packages/package/ROOTFILES
-	sed -e 's/xxxKVERxxx/$(KVER)/g' -i /install/packages/package/install.sh
-	chmod 755 /install/packages/package/{{,un}install,update}.sh
-	cd / && tar cfp /install/packages/package/files.tmp --numeric-owner --exclude='#*' --exclude='__pycache__' --files-from=/install/packages/package/ROOTFILES
-	# Double tar to remove double files
-	tar xfp /install/packages/package/files.tmp --numeric-owner -C /install/packages/package/tmp/
-	rm -f /install/packages/package/files.tmp
-	cd /install/packages/package/tmp/ && tar cf - -p --numeric-owner * | xz $(XZ_OPT) > /install/packages/package/files.tar.xz
-	rm -r /install/packages/package/tmp
-	-cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES.tmp
-	mv /install/packages/package/ROOTFILES.tmp /install/packages/package/ROOTFILES
-	cd /install/packages/package && tar cf ../$(PROG)-$(VER)-$(PAK_VER).ipfire --files-from=/usr/src/src/paks/files
-	rm -rf /install/packages/package
-	sed -e s/NAME/$(PROG)/g \
-			-e s/VER/$(VER)/g \
-			-e s/RELEASE/$(PAK_VER)/g \
-			-e s/DEPS/$(DEPS)/g \
-			-e s/SIZE/`ls -l \/install\/packages\/$(PROG)-$(VER)-$(PAK_VER).ipfire | awk '{ print $$5 }'`/g \
+
+	# Replace variables in rootfiles
+	sed -i $(DIR_TMP_PAK)/ROOTFILES \
+		-e 's/BUILDTARGET/$(BUILDTARGET)/g' \
+		-e 's/KVER/$(KVER)/g' \
+		-e 's/MACHINE/$(BUILD_ARCH)/g'
+
+	# Replace variables in scripts
+	sed -i $(DIR_TMP_PAK)/install.sh \
+		-e 's/xxxKVERxxx/$(KVER)/g'
+
+	# Make scripts executable
+	chmod 754 $(DIR_TMP_PAK)/{{,un}install,update}.sh
+
+	# Collect all files
+	rm -rf $(DIR_TMP_PAK)/root && mkdir -p $(DIR_TMP_PAK)/root
+	tar -c --exclude='#*' --exclude='proc/*' --exclude='dev/pts/*' --exclude='tmp/*' \
+		--exclude='__pycache__' \
+		-C / --files-from=$(DIR_TMP_PAK)/ROOTFILES | tar -x -C $(DIR_TMP_PAK)/root
+
+	# Compress tarball
+	cd $(DIR_TMP_PAK)/root && tar cf - * | xz $(XZ_OPT) > $(DIR_TMP_PAK)/files.tar.xz
+
+	# Cleanup temporary files
+	rm -rf $(DIR_TMP_PAK)/root
+
+	# Remove any commented lines
+	sed -i $(DIR_TMP_PAK)/ROOTFILES -e "/^#/d"
+
+	# Make package
+	cd $(DIR_TMP_PAK) && tar cf /install/packages/$(PROG)-$(VER)-$(PAK_VER).ipfire *
+
+	# Cleanup
+	rm -rf $(DIR_TMP_PAK)
+
+	# Create meta file
+	sed \
+		-e "s/NAME/$(PROG)/g" \
+		-e "s/VER/$(VER)/g" \
+		-e "s/RELEASE/$(PAK_VER)/g" \
+		-e "s/DEPS/$(DEPS)/g" \
+		-e "s/SIZE/$$(stat --format=\"%s\" /install/packages/$(PROG)-$(VER)-$(PAK_VER).ipfire)/g" \
 	  < /usr/src/src/pakfire/meta > /install/packages/meta-$(PROG)
 endef
 
