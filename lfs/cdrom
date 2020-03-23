@@ -255,6 +255,9 @@ endif
 	cd $(DIR_TMP)/cdrom && mkisofs $(ISO_ARGS) \
 		-o /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso .
 
+	# Cleanup everything
+	rm -rf $(DIR_TMP)/cdrom
+
 ifeq "$(HAS_ISOLINUX)" "1"
 	isohybrid $(ISOHYBRID_ARGS) /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
 endif
