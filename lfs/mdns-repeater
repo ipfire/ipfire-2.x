@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mdns-repeater
 PAK_VER    = 1
 
-DEPS       = ""
+DEPS       =
 
 CFLAGS    += -DHGVERSION='\"$(VER)\"'
 

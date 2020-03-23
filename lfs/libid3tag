@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libid3tag
 PAK_VER    = 1
 
-DEPS       = ""
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

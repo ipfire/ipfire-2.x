@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = pygpgme
 PAK_VER    = 1
 
-DEPS       = "gpgme"
+DEPS       = gpgme
 
 ###############################################################################
 # Top-level Rules

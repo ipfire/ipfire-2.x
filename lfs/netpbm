@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = netpbm
 PAK_VER    = 2
 
-DEPS       = ""
+DEPS       =
 
 CFLAGS    += -flax-vector-conversions
 

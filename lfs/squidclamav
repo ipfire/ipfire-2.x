@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = squidclamav
 PAK_VER    = 21
 
-DEPS       = "clamav"
+DEPS       = clamav
 
 ###############################################################################
 # Top-level Rules

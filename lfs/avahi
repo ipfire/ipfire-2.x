@@ -34,7 +34,7 @@ TARGET = $(DIR_INFO)/$(THISAPP)
 PROG       = avahi
 PAK_VER    = 5
 
-DEPS	   = "dbus libdaemon"
+DEPS       = dbus libdaemon
 
 CFLAGS    += -U_FORTIFY_SOURCE
 

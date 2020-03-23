@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python-rssdler
 PAK_VER    = 2
 
-DEPS       = "python-feedparser python-mechanize"
+DEPS       = python-feedparser python-mechanize
 
 ###############################################################################
 # Top-level Rules

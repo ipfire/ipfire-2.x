@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libvorbis
 PAK_VER    = 4
 
-DEPS       = "libogg"
+DEPS       = libogg
 
 ###############################################################################
 # Top-level Rules

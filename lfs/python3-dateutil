@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-dateutil
 PAK_VER    = 2
 
-DEPS       = "python3-six"
+DEPS       = python3-six
 
 ###############################################################################
 # Top-level Rules

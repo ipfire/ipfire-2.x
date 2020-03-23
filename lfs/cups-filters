@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups-filters
 PAK_VER    = 2
 
-DEPS       = "cups ghostscript"
+DEPS       = cups ghostscript
 
 ###############################################################################
 # Top-level Rules

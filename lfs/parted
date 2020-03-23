@@ -35,7 +35,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = parted
 PAK_VER    = 3
 
-DEPS       = ""
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

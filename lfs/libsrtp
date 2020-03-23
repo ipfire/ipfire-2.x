@@ -33,7 +33,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libsrtp
 PAK_VER    = 3
 
-DEPS       = ""
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

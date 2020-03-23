@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = haproxy
 PAK_VER    = 13
 
-DEPS       = ""
+DEPS       =
 
 ifeq "$(BUILD_ARCH)" "armv5tel"
 	LDFLAGS += -latomic

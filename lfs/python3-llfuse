@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-llfuse
 PAK_VER    = 2
 
-DEPS       = ""
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

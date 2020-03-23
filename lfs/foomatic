@@ -37,7 +37,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = foomatic
 PAK_VER    = 4
 
-DEPS       = "cups ghostscript libtiff hplip"
+DEPS       = cups ghostscript libtiff hplip
 
 export LIB_CUPS=/usr/lib/cups
 export CUPS_BACKENDS=/usr/lib/cups/backends

@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = postfix
 PAK_VER    = 23
 
-DEPS       = ""
+DEPS       =
 
 CCARGS     = `getconf LFS_CFLAGS` \
 	-DDEF_DAEMON_DIR="'\"/usr/lib/postfix\"'" \

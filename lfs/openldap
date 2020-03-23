@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = openldap
 PAK_VER    = 3
 
-DEPS       = ""
+DEPS       =
 
 export CPPFLAGS = -D_GNU_SOURCE
 

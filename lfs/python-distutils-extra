@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python-distutils-extra
 PAK_VER    = 1
 
-DEPS       = "python-distutils"
+DEPS       = python-distutils
 
 ###############################################################################
 # Top-level Rules

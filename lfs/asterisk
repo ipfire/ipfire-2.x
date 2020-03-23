@@ -30,7 +30,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = asterisk
 PAK_VER    = 26
 
-DEPS       = "libsrtp opus"
+DEPS       = libsrtp opus
 
 ###############################################################################
 # Top-level Rules

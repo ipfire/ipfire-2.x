@@ -32,7 +32,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = backup
 PAK_VER    = 1
 
-DEPS       = ""
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = minicom
 PAK_VER    = 0
 
-DEPS       = ""
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

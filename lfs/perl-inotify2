@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = perl-inotify2
-DEPS       = "perl-common-sense"
+DEPS       = perl-common-sense
 PAK_VER    = 2
 
 ###############################################################################

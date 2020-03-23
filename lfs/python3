@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3
 
-DEPS       = ""
+DEPS       =
 
 # Normal build or $(TOOLS_DIR) build.
 #

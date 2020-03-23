@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = transmission
 PAK_VER    = 16
 
-DEPS       = ""
+DEPS       =
 
 CXXFLAGS  += -fno-exceptions
 

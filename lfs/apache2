@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-DEPS       = "aprutil pcre"
+DEPS       = aprutil pcre
 
 ###############################################################################
 # Top-level Rules

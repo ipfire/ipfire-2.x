@@ -35,7 +35,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ltrace
 PAK_VER    = 2
 
-DEPS       = "elfutils"
+DEPS       = elfutils
 
 ###############################################################################
 # Top-level Rules

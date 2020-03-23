@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = observium-agent
 PAK_VER    = 1
 
-DEPS       = "xinetd"
+DEPS       = xinetd
 
 ###############################################################################
 # Top-level Rules

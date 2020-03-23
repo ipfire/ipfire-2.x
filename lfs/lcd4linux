@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = lcd4linux
 PAK_VER    = 6
 
-DEPS       = "dpfhack libmpdclient"
+DEPS       = dpfhack libmpdclient
 
 ###############################################################################
 # Top-level Rules

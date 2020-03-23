@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-botocore
 PAK_VER    = 2
 
-DEPS       = "python3-dateutil python3-jmespath"
+DEPS       = python3-dateutil python3-jmespath
 
 ###############################################################################
 # Top-level Rules

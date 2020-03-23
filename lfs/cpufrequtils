@@ -35,7 +35,7 @@ SUP_ARCH   = x86_64 i586
 PROG       = cpufrequtils
 PAK_VER    = 9
 
-DEPS       = ""
+DEPS       =
 
 CFLAGS    += -fno-PIC
 

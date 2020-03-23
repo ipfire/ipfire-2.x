@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = bird
 PAK_VER    = 6
 
-DEPS       = ""
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

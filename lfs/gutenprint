@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = gutenprint
 PAK_VER    = 3
 
-DEPS       = "cups"
+DEPS       = cups
 
 ###############################################################################
 # Top-level Rules

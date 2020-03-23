@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nfs
 PAK_VER    = 13
 
-DEPS       = "rpcbind"
+DEPS       = rpcbind
 
 LIBNFSIDMAP = 0.25
 

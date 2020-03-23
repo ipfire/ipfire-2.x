@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = borgbackup
 PAK_VER    = 3
 
-DEPS       = "python3-llfuse python3-msgpack"
+DEPS       = python3-llfuse python3-msgpack
 
 ###############################################################################
 # Top-level Rules

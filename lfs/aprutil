@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-DEPS       = "apr"
+DEPS       = apr
 
 ###############################################################################
 # Top-level Rules

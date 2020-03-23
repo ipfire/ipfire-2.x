@@ -35,7 +35,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = guardian
 PAK_VER    = 19
 
-DEPS       = "perl-inotify2 perl-Net-IP"
+DEPS       = perl-inotify2 perl-Net-IP
 
 ###############################################################################
 # Top-level Rules

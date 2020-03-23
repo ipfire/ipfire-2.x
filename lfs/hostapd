@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = hostapd
 PAK_VER    = 50
 
-DEPS       = ""
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

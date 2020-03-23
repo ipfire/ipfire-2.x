@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = aws-cli
 PAK_VER    = 2
 
-DEPS       = "python3-botocore python3-colorama python3-docutils python3-pyasn1 python3-rsa python3-s3transfer python3-yaml"
+DEPS       = python3-botocore python3-colorama python3-docutils python3-pyasn1 python3-rsa python3-s3transfer python3-yaml
 
 ###############################################################################
 # Top-level Rules

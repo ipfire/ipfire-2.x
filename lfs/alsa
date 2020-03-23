@@ -38,7 +38,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = alsa
 PAK_VER    = 12
 
-DEPS       = ""
+DEPS       =
 
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

@@ -39,7 +39,7 @@ else
 	TARGET     = $(DIR_INFO)/$(THISAPP)-ldap
 endif
 
-DEPS       = ""
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

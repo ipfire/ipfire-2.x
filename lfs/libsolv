@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = libsolv
-DEPS       = ""
+DEPS       =
 PAK_VER    = 2
 
 ###############################################################################

@@ -34,7 +34,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = collectd
 
-DEPS       = ""
+DEPS       =
 
 CFLAGS    += -Wno-error=deprecated-declarations
 

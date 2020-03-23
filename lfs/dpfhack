@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = dpfhack
 PAK_VER    = 1
 
-DEPS       = ""
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

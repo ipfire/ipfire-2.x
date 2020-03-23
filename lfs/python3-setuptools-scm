@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-setuptools-scm
 PAK_VER    = 1
 
-DEPS       = ""
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

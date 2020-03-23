@@ -32,7 +32,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpfire
 PAK_VER    = 12
 
-DEPS       = "mpd mpc"
+DEPS       = mpd mpc
 
 ###############################################################################
 # Top-level Rules

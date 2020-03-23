@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = krb5
 PAK_VER    = 3
 
-DEPS       = ""
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

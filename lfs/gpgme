@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = gpgme
 PAK_VER    = 2
 
-DEPS       = "libassuan"
+DEPS       = libassuan
 
 ###############################################################################
 # Top-level Rules

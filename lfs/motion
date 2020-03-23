@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = motion
 PAK_VER    = 2
-DEPS       = "ffmpeg"
+DEPS       = ffmpeg
 
 ###############################################################################
 # Top-level Rules

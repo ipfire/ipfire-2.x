@@ -34,7 +34,7 @@ PROG       = pcengines-apu-firmware
 PAK_VER    = 4
 SUP_ARCH   = i586 x86_64
 
-DEPS       = "firmware-update"
+DEPS       = firmware-update
 
 ###############################################################################
 # Top-level Rules

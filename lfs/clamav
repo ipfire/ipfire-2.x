@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = clamav
 PAK_VER    = 49
 
-DEPS       = ""
+DEPS       =
 
 ifeq "$(BUILD_PLATFORM)" "arm"
 CONFIGURE_FLAGS = --disable-fanotify

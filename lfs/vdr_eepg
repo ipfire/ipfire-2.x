@@ -38,7 +38,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr_eepg
 PAK_VER    = 2
 
-DEPS       = ""
+DEPS       =
 
 VDRPLUGVER = 2.4.1
 

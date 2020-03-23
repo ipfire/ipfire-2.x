@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = netsnmpd
 PAK_VER    = 9
 
-DEPS       = ""
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

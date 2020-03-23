@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tor
 PAK_VER    = 47
 
-DEPS       = "libseccomp"
+DEPS       = libseccomp
 
 ###############################################################################
 # Top-level Rules

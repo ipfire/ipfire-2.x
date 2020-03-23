@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = rpcbind
 PAK_VER    = 2
 
-DEPS       = "libtirpc"
+DEPS       = libtirpc
 
 ###############################################################################
 # Top-level Rules

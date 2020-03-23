@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	   = pakfire3
 PAK_VER    = 5
 
-DEPS       = "libsolv pycurl pygpgme python-progressbar python-xattr urlgrabber"
+DEPS       = libsolv pycurl pygpgme python-progressbar python-xattr urlgrabber
 
 ###############################################################################
 # Top-level Rules

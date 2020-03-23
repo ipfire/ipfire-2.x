@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
 PAK_VER    = 19
 
-DEPS       = "avahi cups-filters dbus ghostscript krb5 libtiff"
+DEPS       = avahi cups-filters dbus ghostscript krb5 libtiff
 
 ###############################################################################
 # Top-level Rules

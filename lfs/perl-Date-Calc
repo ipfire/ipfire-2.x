@@ -31,7 +31,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-Date-Calc
-DEPS       = "perl-Carp-Clan"
+DEPS       = perl-Carp-Clan
 PAK_VER    = 4
 
 ###############################################################################
