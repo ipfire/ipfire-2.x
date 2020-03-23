@@ -262,4 +262,4 @@ endif
 
 	# Compress Image
 	xz $(XZ_OPT) < $(IMG) > $(IMAGE_FILE)
-	rm -rf $(IMG) $(MNThdd)
+	rm -rf $(IMG) $(MNThdd) $(DIR_TMP)/cdrom

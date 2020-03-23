@@ -52,7 +52,7 @@ $(TARGET) : $(CORE)
 
 .PHONY:
 core/%:
-	rm -rf /install/packages/package
+	rm -rf /install/packages/package /tmp/*
 	mkdir -p /install/packages/package
 	eval $$(cat /usr/src/config/rootfiles/$@/meta)
 
