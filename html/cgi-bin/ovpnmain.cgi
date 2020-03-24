@@ -2464,7 +2464,7 @@ else
 
 		if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 			# Stop the N2N connection before it is removed
-			system("/usr/local/bin/openvpnctrl -kn2n $confighash{$cgiparams{'KEY'}}[1] &>/dev/null");
+			system('/usr/local/bin/openvpnctrl', '-kn2n', $confighash{$cgiparams{'KEY'}}[1]);
 
 			my $conffile = glob("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]/$confighash{$cgiparams{'KEY'}}[1].conf");
 			my $certfile = glob("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
