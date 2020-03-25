@@ -6,6 +6,28 @@
 
 eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 
+scan_for_sensors() {
+	touch /var/lock/sensors_search
+	# pre scan and try to load modules
+	"yes" | /usr/sbin/sensors-detect > /dev/null
+	if [ -e /etc/sysconfig/lm_sensors ]; then
+
+		# Module load
+		. /etc/sysconfig/lm_sensors
+		for modul in $BUS_MODULES $HWMON_MODULES ; do
+			modprobe $modul > /dev/null 2>&1;
+		done
+	fi
+
+	# Final scan
+	"yes" | /usr/sbin/sensors-detect > /dev/null
+
+	if [ ! -e /etc/sysconfig/lm_sensors ]; then
+		echo "#No Sensors detected " > /etc/sysconfig/lm_sensors
+	fi
+	rm /var/lock/sensors_search
+}
+
 if [ "$RRDLOG" = '' ]; then
 	RRDLOG=/var/log/rrd
 fi
@@ -42,27 +64,23 @@ case "$1" in
 
 		# At first run search for sensors with sensors-detect
 		if [ ! -e /etc/sysconfig/lm_sensors ]; then
-			boot_mesg "Searching for Sensors..."
-
-			# pre scan and try to load modules
-			"yes" | /usr/sbin/sensors-detect > /dev/null
-			if [ -e /etc/sysconfig/lm_sensors ]; then
-
-				# Module load
-				. /etc/sysconfig/lm_sensors
-				for modul in $BUS_MODULES $HWMON_MODULES ; do
-					modprobe $modul > /dev/null 2>&1;
-				done
-			fi
-
-			# Final scan
-			"yes" | /usr/sbin/sensors-detect > /dev/null
-			evaluate_retval
-
-			if [ ! -e /etc/sysconfig/lm_sensors ]; then
-				echo "#No Sensors detected " > /etc/sysconfig/lm_sensors
-			fi
+			# Don't run at next boot again
+			touch /etc/sysconfig/lm_sensors
+			boot_mesg -n "Searching for Sensors..."
+			scan_for_sensors &
+			sleep 2
 		fi
+
+		if [ -e /var/lock/sensors_search ]; then
+			for (( i=1; i<30; i++)) do
+				if [ ! -e /var/lock/sensors_search ]; then
+					break;
+				fi
+				boot_mesg -n "."
+				sleep 2
+			done
+		fi
+		boot_mesg ""
 
 		# Load sensor modules only first start
 		if [ ! -e /var/lock/sensors_modules ]; then
