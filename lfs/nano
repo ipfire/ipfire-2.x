@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.7
+VER        = 4.9
 
 THISAPP    = nano-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nano
-PAK_VER    = 28
+PAK_VER    = 29
 
-DEPS       =
+DEPS       = ""
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8622b7b733dc5d9645f5ceaec24e6ba6
+$(DL_FILE)_MD5 = 280c9b40b1c6984a644467a2346a8536
 
 install : $(TARGET)
 
@@ -54,7 +54,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist:
+dist: 
 	@$(PAK)
 
 ###############################################################################
