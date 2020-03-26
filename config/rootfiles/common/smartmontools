@@ -24,6 +24,8 @@ usr/sbin/update-smart-drivedb
 #usr/share/doc/smartmontools/examplescripts/Example4
 #usr/share/doc/smartmontools/examplescripts/Example5
 #usr/share/doc/smartmontools/examplescripts/Example6
+#usr/share/doc/smartmontools/examplescripts/Example7
+#usr/share/doc/smartmontools/examplescripts/Example8
 #usr/share/doc/smartmontools/examplescripts/README
 #usr/share/doc/smartmontools/smartd.conf
 #usr/share/man/man5/smartd.conf.5
