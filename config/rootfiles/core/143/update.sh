@@ -65,6 +65,9 @@ rm -f /var/log/vnstat/tag
 # restart init after glibc replace
 telinit u
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # remove dropped packages
 for package in bluetooth; do
 	if [ -e /opt/pakfire/db/installed/meta-$package ]; then
