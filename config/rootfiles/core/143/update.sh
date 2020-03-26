@@ -59,6 +59,9 @@ extract_files
 # update linker config
 ldconfig
 
+# remove wrong vnstat tag file
+rm -f /var/log/vnstat/tag
+
 # restart init after glibc replace
 telinit u
 

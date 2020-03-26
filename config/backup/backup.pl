@@ -76,6 +76,9 @@ restore_backup() {
 	/bin/kill -HUP `cat /var/run/suricata.pid 2> /dev/null` 2> /dev/null
 	/bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null
 
+	# remove wrong vnstat tag file
+	rm -f /var/log/vnstat/tag
+
 	# Run converters
 
 	# Outgoing Firewall
