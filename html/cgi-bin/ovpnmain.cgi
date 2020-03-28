@@ -2513,7 +2513,7 @@ else
 # CCD end
 		# Update collectd configuration and delete all RRD files of the removed connection
 		&writecollectdconf();
-		system ("/usr/local/bin/openvpnctrl -drrd $confighash{$cgiparams{'KEY'}}[1]");
+		system ('/usr/local/bin/openvpnctrl', '-drrd', $confighash{$cgiparams{'KEY'}}[1]);
 
 		delete $confighash{$cgiparams{'KEY'}};
 		my $temp2 = `/usr/bin/openssl ca -gencrl -out ${General::swroot}/ovpn/crls/cacrl.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
