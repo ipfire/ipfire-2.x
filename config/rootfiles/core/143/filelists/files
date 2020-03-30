@@ -6,8 +6,10 @@ etc/rc.d/init.d/firewall
 etc/rc.d/init.d/localnet
 srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/fireinfo.cgi
+srv/web/ipfire/cgi-bin/mail.cgi
 srv/web/ipfire/cgi-bin/netother.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/lib/firewall/rules.pl
 var/ipfire/backup/bin/backup.pl
 var/ipfire/suricata/oinkmaster.conf
