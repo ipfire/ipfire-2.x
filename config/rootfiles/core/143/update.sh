@@ -62,6 +62,9 @@ ldconfig
 # remove wrong vnstat tag file
 rm -f /var/log/vnstat/tag
 
+# set /var/spool/cron to cron user
+chown cron:cron /var/spool/cron
+
 # restart init after glibc replace
 telinit u
 
