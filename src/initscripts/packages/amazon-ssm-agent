@@ -13,6 +13,12 @@ case "${1}" in
 			exit 0
 		fi
 
+		# Allow the kernel to overcommit memory.
+		# The SSM agent fails to clone() itself when there is
+		# "not enough memory" available. This simply seems to
+		# fail no matter how much free memory is available.
+		echo 1 > /proc/sys/vm/overcommit_memory
+
 		boot_mesg "Starting Amazon SSM Agent..."
 		/usr/bin/amazon-ssm-agent &>/dev/null &
 		evaluate_retval
