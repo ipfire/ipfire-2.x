@@ -68,6 +68,9 @@ chown cron:cron /var/spool/cron
 # restart init after glibc replace
 telinit u
 
+# Apply changed sysctl settings
+/etc/init.d/sysctl start
+
 # Apply local configuration to sshd_config
 /usr/local/bin/sshctrl
 
