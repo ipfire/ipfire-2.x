@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.3.786.0
+VER        = 2.3.930.0
 SUP_ARCH   = x86_64
 
 THISAPP    = amazon-ssm-agent-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = amazon-ssm-agent
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a2887445875d335b021c5044eab955dc
+$(DL_FILE)_MD5 = cf7c50976e2853764d308581f94cbdd1
 
 install : $(TARGET)
 
@@ -87,6 +87,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Disable style check
 	cd $(DIR_BUILD) && sed -e "/checkstyle.sh/d" -i makefile
+
+	# agent/plugins/inventory/gatherers/application/dataProvider.go:10:78: error: imported and not used: localpackages
+	cd $(DIR_BUILD) && sed -e "/localpackages/d" \
+		-i agent/plugins/inventory/gatherers/application/dataProvider.go
 
 	# Build
 	cd $(DIR_BUILD) && make build-linux
