@@ -57,6 +57,7 @@ etc/strongswan.d/charon/resolve.conf
 etc/strongswan.d/charon/revocation.conf
 etc/strongswan.d/charon/sha1.conf
 etc/strongswan.d/charon/sha2.conf
+etc/strongswan.d/charon/sha3.conf
 etc/strongswan.d/charon/socket-default.conf
 etc/strongswan.d/charon/sshkey.conf
 etc/strongswan.d/charon/stroke.conf
@@ -153,6 +154,7 @@ usr/lib/ipsec/plugins/libstrongswan-resolve.so
 usr/lib/ipsec/plugins/libstrongswan-revocation.so
 usr/lib/ipsec/plugins/libstrongswan-sha1.so
 usr/lib/ipsec/plugins/libstrongswan-sha2.so
+usr/lib/ipsec/plugins/libstrongswan-sha3.so
 usr/lib/ipsec/plugins/libstrongswan-socket-default.so
 usr/lib/ipsec/plugins/libstrongswan-sshkey.so
 usr/lib/ipsec/plugins/libstrongswan-stroke.so
@@ -240,6 +242,7 @@ usr/sbin/swanctl
 #usr/share/strongswan/templates/config/plugins/revocation.conf
 #usr/share/strongswan/templates/config/plugins/sha1.conf
 #usr/share/strongswan/templates/config/plugins/sha2.conf
+#usr/share/strongswan/templates/config/plugins/sha3.conf
 #usr/share/strongswan/templates/config/plugins/socket-default.conf
 #usr/share/strongswan/templates/config/plugins/sshkey.conf
 #usr/share/strongswan/templates/config/plugins/stroke.conf

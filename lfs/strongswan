@@ -95,6 +95,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-eap-mschapv2 \
 		--enable-eap-identity \
 		--enable-chapoly \
+		--enable-sha3 \
 		--disable-padlock \
 		--disable-rc2 \
 		$(CONFIGURE_OPTIONS)
