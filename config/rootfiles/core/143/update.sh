@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
-core=142
+core=143
 
 exit_with_error() {
 	# Set last succesfull installed core.
@@ -48,6 +48,7 @@ done
 rm -rf /usr/lib/go/9.2.0
 
 # Stop services
+/etc/init.d/suricata stop
 
 # move swap after mount
 mv -f /etc/rc.d/rcsysinit.d/S20swap \
@@ -73,6 +74,12 @@ telinit u
 
 # Apply local configuration to sshd_config
 /usr/local/bin/sshctrl
+
+# Start services
+/usr/local/bin/ipsecctrl S
+/etc/init.d/unbound restart
+/etc/init.d/sshd restart
+/etc/init.d/suricata start
 
 # remove dropped packages
 for package in bluetooth; do
