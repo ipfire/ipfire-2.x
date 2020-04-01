@@ -412,12 +412,21 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	# Hash to store the user-enabled and disabled sids.
 	my %enabled_disabled_sids;
 
+	# Store if a restart of suricata is required.
+	my $suricata_restart_required;
+
 	# Loop through the hash of idsrules.
 	foreach my $rulefile(keys %idsrules) {
 		# Check if the rulefile is enabled.
 		if ($cgiparams{$rulefile} eq "on") {
 			# Add rulefile to the array of enabled rulefiles.
 			push(@enabled_rulefiles, $rulefile);
+
+			# Check if the state of the rulefile has been changed.
+			unless ($cgiparams{$rulefile} eq $idsrules{$rulefile}{'Rulefile'}{'State'}) {
+				# A restart of suricata is required to apply the changes of the used rulefiles.
+				$suricata_restart_required = 1;
+			}
 
 			# Drop item from cgiparams hash.
 			delete $cgiparams{$rulefile};
@@ -513,8 +522,14 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 
 	# Check if the IDS is running.
 	if(&IDS::ids_is_running()) {
-		# Call suricatactrl to perform a reload.
-		&IDS::call_suricatactrl("reload");
+		# Check if a restart of suricata is required.
+		if ($suricata_restart_required) {
+			# Call suricatactrl to perform the restart.
+			&IDS::call_suricatactrl("restart");
+		} else {
+			# Call suricatactrl to perform a reload.
+			&IDS::call_suricatactrl("reload");
+		}
 	}
 
 	# Reload page.
