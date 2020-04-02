@@ -283,7 +283,7 @@ define PAK
 		-e "s/VER/$(VER)/g" \
 		-e "s/RELEASE/$(PAK_VER)/g" \
 		-e "s/DEPS/$(DEPS)/g" \
-		-e "s/SIZE/$$(stat --format=\"%s\" /install/packages/$(PROG)-$(VER)-$(PAK_VER).ipfire)/g" \
+		-e "s/SIZE/$$(stat --format=%s /install/packages/$(PROG)-$(VER)-$(PAK_VER).ipfire)/g" \
 	  < /usr/src/src/pakfire/meta > /install/packages/meta-$(PROG)
 endef
 
