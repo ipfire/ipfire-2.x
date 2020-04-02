@@ -224,7 +224,7 @@ app-layer:
 
       # How many unreplied DNS requests are considered a flood.
       # If the limit is reached, app-layer-event:dns.flooded; will match.
-      request-flood: 512
+      request-flood: 2048
 
       tcp:
         enabled: yes
