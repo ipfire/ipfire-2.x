@@ -1,4 +1,5 @@
 usr/bin/strace
 #usr/bin/strace-graph
 #usr/bin/strace-log-merge
+#usr/share/man/man1/strace-log-merge.1
 #usr/share/man/man1/strace.1
