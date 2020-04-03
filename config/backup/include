@@ -49,6 +49,7 @@
 /var/ipfire/qos/bin/qos.sh
 /var/ipfire/suricata/*.conf
 /var/ipfire/suricata/*.yaml
+/var/ipfire/suricata/rules-settings
 /var/ipfire/*/settings
 /var/ipfire/time/
 /var/ipfire/urlfilter
