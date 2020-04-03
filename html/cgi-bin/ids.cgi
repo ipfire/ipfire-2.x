@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -624,6 +624,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 
 	# Generate file to the store the DNS servers.
 	&IDS::generate_dns_servers_file();
+
+	# Generate file to store the HTTP ports.
+	&IDS::generate_http_ports_file();
 
 	# Write the modify sid's file and pass the taken ruleaction.
 	&IDS::write_modify_sids_file();

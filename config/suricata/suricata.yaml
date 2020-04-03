@@ -30,7 +30,9 @@ vars:
     ENIP_SERVER: "$HOME_NET"
 
   port-groups:
-    HTTP_PORTS: "[80,81]"
+    # Incluse HTTP_PORTS declaration from external file.
+    include: /var/ipfire/suricata/suricata-http-ports.yaml
+
     SHELLCODE_PORTS: "!80"
     ORACLE_PORTS: 1521
     SSH_PORTS: "[22,222]"

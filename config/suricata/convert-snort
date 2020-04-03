@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2019 IPFire Development Team <info@ipfire.org>                #
+# Copyright (C) 2020 IPFire Development Team <info@ipfire.org>                #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -298,7 +298,17 @@ if (-f $IDS::rulestarball) {
 &IDS::set_ownership("$IDS::dns_servers_file");
 
 #
-## Step 11: Setup automatic ruleset updates.
+## Step 11: Generate file which contains the HTTP ports.
+#
+
+# Call subfunction to generate the file.
+&IDS::generate_http_ports_file();
+
+# Set correct ownership for the http_ports_file.
+&IDS::set_ownership("$IDS::http_ports_file");
+
+#
+## Step 12: Setup automatic ruleset updates.
 #
 
 # Check if a ruleset is configured.
@@ -308,7 +318,7 @@ if($rulessettings{"RULES"}) {
 }
 
 #
-## Step 12: Grab used ruleset files from snort config file and convert
+## Step 13: Grab used ruleset files from snort config file and convert
 ##         them into the new format.
 #
 
@@ -354,7 +364,7 @@ close(SNORTCONF);
 &IDS::write_used_rulefiles_file(@enabled_rule_files);
 
 #
-## Step 13: Start the IDS if enabled.
+## Step 14: Start the IDS if enabled.
 #
 
 # Check if the IDS should be started.

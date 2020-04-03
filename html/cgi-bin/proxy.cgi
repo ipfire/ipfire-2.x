@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -36,6 +36,8 @@ use Apache::Htpasswd;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+
+require "${General::swroot}/ids-functions.pl";
 
 my @squidversion = `/usr/sbin/squid -v`;
 my $http_port='81';
@@ -550,6 +552,29 @@ ERROR:
 
 	if ($proxysettings{'VALID'} eq 'yes')
 	{
+		# Determine if suricata may needs to be restarted.
+		my $suricata_proxy_ports_changed;
+
+		# Check if the IDS is running
+		if(&IDS::ids_is_running()) {
+			my %oldproxysettings;
+
+			# Read-in current proxy settings and store them as oldsettings hash.
+			&General::readhash("${General::swroot}/proxy/advanced/settings", \%oldproxysettings);
+
+			# Check if the proxy port has been changed.
+			unless ($proxysettings{'PROXY_PORT'} eq $oldproxysettings{'PROXY_PORT'}) {
+				# Port has changed, suricata needs to be adjusted.
+				$suricata_proxy_ports_changed = 1;
+			}
+
+			# Check if the transparent port has been changed.
+			unless ($proxysettings{'TRANSPARENT_PORT'} eq $oldproxysettings{'TRANSPARENT_PORT'}) {
+				# Transparent port has changed, suricata needs to be adjusted.
+				$suricata_proxy_ports_changed = 1;
+			}
+		}
+
 		&write_acls;
 
 		delete $proxysettings{'SRC_SUBNETS'};
@@ -627,6 +652,15 @@ ERROR:
 
 		if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}) { system('/usr/local/bin/squidctrl restart >/dev/null 2>&1'); }
 		if ($proxysettings{'ACTION'} eq $Lang::tr{'proxy reconfigure'}) { system('/usr/local/bin/squidctrl reconfigure >/dev/null 2>&1'); }
+
+		# Check if the suricata_proxy_ports_changed flag has been set.
+		if ($suricata_proxy_ports_changed) {
+			# Re-generate HTTP ports file.
+			&IDS::generate_http_ports_file();
+
+			# Restart suricata.
+			&IDS::call_suricatactrl("restart");
+		}
   }
 }
 
