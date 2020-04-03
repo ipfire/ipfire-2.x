@@ -59,3 +59,4 @@
 /var/log/rrd/*
 /var/log/rrd/collectd
 /var/log/vnstat
+/var/tmp/idsrules.tar.gz
