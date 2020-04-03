@@ -711,13 +711,28 @@ sub generate_dns_servers_file() {
 	# Get the used DNS servers.
 	my @nameservers = &General::get_nameservers();
 
+	# Get network settings.
+	my %netsettings;
+	&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+
 	# Format dns servers declaration.
 	my $line = "";
 
 	# Check if the system has configured nameservers.
 	if (@nameservers) {
+		# Add the GREEN address as DNS servers.
+		push(@nameservers, $netsettings{'GREEN_ADDRESS'});
+
+		# Check if a BLUE zone exists.
+		if ($netsettings{'BLUE_ADDRESS'}) {
+			# Add the BLUE address to the array of nameservers.
+			push(@nameservers, $netsettings{'BLUE_ADDRESS'});
+		}
+
+		# Generate the line which will be written to the DNS servers file.
 		$line = join(",", @nameservers);
 	} else {
+		# External net simply contains (any).
 		$line = "\$EXTERNAL_NET";
 	}
 
