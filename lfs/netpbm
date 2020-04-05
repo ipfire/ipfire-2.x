@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 10.47.61
+VER        = 10.73.31
 
 THISAPP    = netpbm-$(VER)
 DL_FILE    = $(THISAPP).tgz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = netpbm
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       =
 
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a5d2ec8acc99f60e5b92a720ed292c3e
+$(DL_FILE)_MD5 = 02b2383af38501a3012bdd85aa03bd02
 
 install : $(TARGET)
 
@@ -83,13 +83,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp $(DIR_SRC)/config/netpbm/config.mk $(DIR_APP)
 	cd $(DIR_APP) && make CFLAGS="$(CFLAGS)" #The build of this version cannot be parallelized
 	cd $(DIR_APP) && make package PKGDIR=/usr/netpbm
-	mkdir -pv /usr/include/netpbm 
+	mkdir -pv /usr/include/netpbm
 	mkdir -pv /usr/share/netpbm
 	mv -fv /usr/netpbm/include/netpbm/* /usr/include/netpbm
 	mv -fv /usr/netpbm/lib/* /usr/lib
 	mv -fv /usr/netpbm/bin/* /usr/bin
 	mv -fv /usr/netpbm/misc/* /usr/share/netpbm
 	rm -Rfv /usr/netpbm/
-	cd /usr/lib && ln -sfv libnetpbm.so.10.47 libnetpbm.so
+	cd /usr/lib && ln -sfv libnetpbm.so.11.73 libnetpbm.so
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

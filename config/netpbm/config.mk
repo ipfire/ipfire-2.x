@@ -93,6 +93,17 @@ INTTYPES_H = <inttypes.h>
 HAVE_INT64 = Y
 #HAVE_INT64 = N
 
+# WANT_SSE tells whether the build should use SSE instructions, via the the
+# standard SSE intrinsics (operators such as '_mm_movemask_epi8').  SSE
+# instructions are faster than traditional instructions, but aren't available
+# on all CPUs.  Also, the standard intrinsics are not available in all
+# compilers.  Even if you say N here, Netpbm may still be built with some
+# SSE exploitation (e.g. SSE floating point) because the compiler will 
+# do it automatically.  You can add a -nomsse or -nomsse2 option to
+# CFLAGS or CFLAGS_PERSONAL to stop that.
+WANT_SSE = N
+#WANT_SSE = Y
+
 # CC and LD are for building the Netpbm programs, which are not necessarily
 # intended to run on the same system on which Make is running.  But when we 
 # build a build tool such as Libopt, it is meant to run only on the same 
@@ -100,8 +111,12 @@ HAVE_INT64 = Y
 # to use to compile and link build tools.
 CC_FOR_BUILD = $(CC)
 LD_FOR_BUILD = $(LD)
-CFLAGS_FOR_BUILD = $(CFLAGS)
+CFLAGS_FOR_BUILD = $(CFLAGS_CONFIG)
 LDFLAGS_FOR_BUILD = $(LDFLAGS)
+
+# WINDRES is the program that creates a linkable object file from 
+# a Windows Icon (.ico) file.
+WINDRES = windres
 
 # MAKE is set automatically by Make to what was used to invoke Make.
 
@@ -158,7 +173,7 @@ LEX = flex
 # -pedantic isn't a problem because it causes at worst a warning.
 #CFLAGS = -O3 -ffast-math -pedantic -fno-common \
 #          -Wall -Wno-uninitialized -Wmissing-declarations -Wimplicit \
-#          -Wwrite-strings -Wmissing-prototypes -Wundef
+#          -Wwrite-strings -Wmissing-prototypes -Wundef -Wno-unknown-pragmas
 # The merged programs have a main_XXX subroutine instead of main(),
 # which would cause a warning with -Wmissing-declarations or 
 # -Wmissing-prototypes.
@@ -379,12 +394,11 @@ TIFFHDR_DIR =
 #TIFFHDR_DIR = /usr/local1/DEC/include
 
 # Some TIFF libraries do Jpeg and/or Z (flate) compression and thus any
-# program linked with the TIFF library needs a Jpeg and/or Z library.
-# Some TIFF libraries have such library statically linked in, but others
-# need it to be dynamically linked at program load time.
-# Make this 'N' if youf TIFF library doesn't need such dynamic linking.
-# As of 2005.01, the most usual build of the TIFF library appears to require
-# both.
+# program linked with the TIFF library needs a Jpeg and/or Z library.  Some
+# TIFF libraries have such library statically linked in, but others need it to
+# be linked with the program at link-edit time or dynamically at program load
+# time.  Make this 'N' if your TIFF library doesn't need such linking.  As of
+# 2005.01, the most usual build of the TIFF library appears to require both.
 TIFFLIB_NEEDS_JPEG = Y
 TIFFLIB_NEEDS_Z = Y
 
@@ -428,6 +442,14 @@ JPEGHDR_DIR =
 # files will use that program if it exists (must be in the PATH).  In that
 # case, PNGLIB and PNGHDR_DIR are irrelevant, but PNGVER is still meaningful,
 # because the make file runs 'libpng$(PNGVER)-config'.
+#
+# Even more recent versions have the more modern Pkgconfig database entry
+# to tell how to link it.  The make files will try to use that first.
+#
+# The normal way to choose the libpng the Netpbm build uses from among multiple
+# versions on your system is not to mess with the variables below, but rather
+# to mess with PKG_CONFIG_PATH or PATH environment variable so that the version
+# you want to use appears first in the search path.
 
 PNGLIB = NONE
 PNGHDR_DIR =
@@ -454,8 +476,8 @@ ZHDR_DIR =
 
 # The JBIG lossless image compression library (aka JBIG-KIT):
 
-JBIGLIB = $(BUILDDIR)/converter/other/jbig/libjbig.a
-JBIGHDR_DIR = $(SRCDIR)/converter/other/jbig
+JBIGLIB = $(INTERNAL_JBIGLIB)
+JBIGHDR_DIR = $(INTERNAL_JBIGHDR_DIR)
 
 # The Jasper JPEG-2000 image compression library (aka JasPer):
 JASPERLIB = $(INTERNAL_JASPERLIB)
@@ -489,7 +511,12 @@ LINUXSVGAHDR_DIR =
 #LINUXSVGALIB = /usr/lib/libvga.so
 #LINUXSVGAHDR_DIR = /usr/include/vgalib
 
-# If you don't want any network functions, set OMIT_NETWORK to "y".
+# WINICON_OBJECT is the object file to bind into all Netpbm executables
+# to provide the icon for Windows to use for it.  Null for none.
+WINICON_OBJECT =
+#WINICON_OBJECT = $(BUILDDIR)/icon/netpbm.o
+
+# If you don't want any network functions, set OMIT_NETWORK to "Y".
 # The only thing that requires network functions is the option in
 # ppmtompeg to run it on multiple computers simultaneously.  On some
 # systems network functions don't work or we haven't figured out how to 
@@ -498,21 +525,17 @@ OMIT_NETWORK =
 #DJGPP/Windows, Tru64:
 #   (there's some minor header problem that prevents network functions from 
 #   building on Tru64 2000.10.06)
-#OMIT_NETWORK = y
+#OMIT_NETWORK = Y
 
 # These are -l options to link in the network libraries.  Often, these are
 # built into the standard C library, so this can be null.  This is irrelevant
-# if OMIT_NETWORK is "y".
+# if OMIT_NETWORK is "Y".
 
 NETWORKLD = 
 # Solaris, SunOS:
 #NETWORKLD = -lsocket -lnsl
 # SCO:
 #NETWORKLD = -lsocket, -lresolv
-
-VMS = 
-#VMS:
-#VMS = yes
 
 # DONT_HAVE_PROCESS_MGMT is Y if this system doesn't have the usual
 # Unix process management stuff - fork, wait, etc.  N for a regular Unix
@@ -526,6 +549,10 @@ DONT_HAVE_PROCESS_MGMT = N
 # This is where everything goes when you do 'make package', unless you
 # override it by setting 'pkgdir' on the Make command line.
 PKGDIR_DEFAULT = /tmp/netpbm
+
+# This is where test results are written when you do 'make check', unless
+# you override it by setting 'resultdir' on the Make command line.
+RESULTDIR_DEFAULT = /tmp/netpbm-test
 
 # Subdirectory of the package directory ($(pkgdir)) in which man pages
 # go.
@@ -588,12 +615,12 @@ NETPBMLIBSUFFIX = so
 # Windows shared library:
 #NETPBMLIBSUFFIX = dll
 
-#STATICLIB_TOO is "y" to signify that you want a static library built
+#STATICLIB_TOO is "Y" to signify that you want a static library built
 #and installed in addition to whatever library type you specified by
 #NETPBMLIBTYPE.  If NETPBMLIBTYPE specified a static library,
 #STATICLIB_TOO simply has no effect.
-STATICLIB_TOO = y
-#STATICLIB_TOO = n
+STATICLIB_TOO = Y
+#STATICLIB_TOO = N
 
 #STATICLIBSUFFIX is the suffix that static libraries have.  It's
 #meaningless if you aren't building static libraries.
@@ -633,10 +660,16 @@ DLLVER =
 #library, and file type.  E.g. The documentation for jpegtopnm might be in
 #http://netpbm.sourceforge.net/doc/jpegtopnm.html .  This value gets
 #installed in the man pages (which say no more than to read the webpage)
-#and in the Webman netpbm.url file.
+#and in the Manweb netpbm.url file.
 NETPBM_DOCURL = http://netpbm.sourceforge.net/doc/
 #For a system with no web access, but a local copy of the doc:
 #NETPBM_DOCURL = file:/usr/doc/netpbm/
+
+# RGB_DB_PATH is where Netpbm looks for the color database when the RGBDEF
+# environment variable is not set.  See pm_config_in.h for details.
+RGB_DB_PATH = /usr/share/netpbm/rgb.txt:/usr/lib/X11/rgb.txt:/usr/share/X11/rgb.txt:/usr/X11R6/lib/X11/rgb.txt
+
+
 
 
 ####Lines above were copied from config.mk.in by 'configure'.
@@ -644,8 +677,8 @@ NETPBM_DOCURL = http://netpbm.sourceforge.net/doc/
 DEFAULT_TARGET = nonmerge
 NETPBMLIBTYPE=unixshared
 NETPBMLIBSUFFIX=so
-STATICLIB_TOO=n
-CFLAGS = -O3 -ffast-math  -pedantic -fno-common -Wall -Wno-uninitialized -Wmissing-declarations -Wimplicit -Wwrite-strings -Wmissing-prototypes -Wundef
+STATICLIB_TOO=N
+CFLAGS = -O3 -ffast-math  -pedantic -fno-common -Wall -Wno-uninitialized -Wmissing-declarations -Wimplicit -Wwrite-strings -Wmissing-prototypes -Wundef -Wno-unknown-pragmas
 CFLAGS_MERGE = -Wno-missing-declarations -Wno-missing-prototypes
 LDRELOC = ld --reloc
 LINKER_CAN_DO_EXPLICIT_LIBRARY=Y
@@ -655,3 +688,4 @@ TIFFLIB = libtiff.so
 JPEGLIB = libjpeg.so
 ZLIB = libz.so
 NETPBM_DOCURL = http://netpbm.sourceforge.net/doc/
+WANT_SSE = Y
