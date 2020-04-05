@@ -1254,6 +1254,8 @@ buildipfire() {
   lfsmake2 libnl-3
   lfsmake2 libidn
   lfsmake2 nasm
+  lfsmake2 libarchive
+  lfsmake2 cmake
   lfsmake2 libjpeg
   lfsmake2 libjpeg-compat
   lfsmake2 libexif
@@ -1282,8 +1284,6 @@ buildipfire() {
   lfsmake2 bootstrap
   lfsmake2 arping
   lfsmake2 beep
-  lfsmake2 libarchive
-  lfsmake2 cmake
   lfsmake2 libssh
   lfsmake2 cdrkit
   lfsmake2 dosfstools
