@@ -1,5 +1,8 @@
 #usr/include/shout
 #usr/include/shout/shout.h
+#usr/lib/ckport
+#usr/lib/ckport/db
+#usr/lib/ckport/db/libshout.ckport
 #usr/lib/libshout.a
 #usr/lib/libshout.la
 usr/lib/libshout.so
