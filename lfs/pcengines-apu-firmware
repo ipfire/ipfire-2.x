@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,14 +24,14 @@
 
 include Config
 
-VER        = 4.10.0.3
+VER        = 4.11.0.5
 
 THISAPP    = pcengines-apu-firmware-$(VER)
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = pcengines-apu-firmware
-PAK_VER    = 4
+PAK_VER    = 5
 SUP_ARCH   = i586 x86_64
 
 DEPS       = firmware-update
@@ -53,11 +53,11 @@ apu3_v$(VER).rom = $(DL_FROM)/apu3_v$(VER).rom
 apu4_v$(VER).rom = $(DL_FROM)/apu4_v$(VER).rom
 apu5_v$(VER).rom = $(DL_FROM)/apu5_v$(VER).rom
 
-apu1_v$(VER).rom_MD5 = f996d2272685683b1bf8be1f27b44f18
-apu2_v$(VER).rom_MD5 = 1ec2df4c0f9be2443192fead8e3b49e9
-apu3_v$(VER).rom_MD5 = 4a5cee9b621432627d7f3dcbb6191904
-apu4_v$(VER).rom_MD5 = a4a8bd06ebfa88907f5a4ddb6d7c3edc
-apu5_v$(VER).rom_MD5 = c389d490d02810bf65f0f3abb461070e
+apu1_v$(VER).rom_MD5 = eb9513cdb9bb212db524307d71d9f87c
+apu2_v$(VER).rom_MD5 = e3ce78e1cbc1eb35b10d97349afabf04
+apu3_v$(VER).rom_MD5 = 42ece2873efc4a4b86bb507df40423c6
+apu4_v$(VER).rom_MD5 = e5eb7a15efbfc1a434d3bd48d1bc5062
+apu5_v$(VER).rom_MD5 = f2924f98bbb1e2816760103ab045a175
 
 install : $(TARGET)
 
@@ -96,3 +96,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/lib/firmware/pcengines/apu
 
 	@$(POSTBUILD)
+eb9513cdb9bb212db524307d71d9f87c  cache/apu1_v4.11.0.5.rom
+e3ce78e1cbc1eb35b10d97349afabf04  cache/apu2_v4.11.0.5.rom
+42ece2873efc4a4b86bb507df40423c6  cache/apu3_v4.11.0.5.rom
+e5eb7a15efbfc1a434d3bd48d1bc5062  cache/apu4_v4.11.0.5.rom
+f2924f98bbb1e2816760103ab045a175  cache/apu5_v4.11.0.5.rom
