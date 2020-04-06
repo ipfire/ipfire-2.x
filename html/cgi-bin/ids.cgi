@@ -417,16 +417,16 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 
 	# Loop through the hash of idsrules.
 	foreach my $rulefile(keys %idsrules) {
+		# Check if the state of the rulefile has been changed.
+		unless ($cgiparams{$rulefile} eq $idsrules{$rulefile}{'Rulefile'}{'State'}) {
+			# A restart of suricata is required to apply the changes of the used rulefiles.
+			$suricata_restart_required = 1;
+		}
+
 		# Check if the rulefile is enabled.
 		if ($cgiparams{$rulefile} eq "on") {
 			# Add rulefile to the array of enabled rulefiles.
 			push(@enabled_rulefiles, $rulefile);
-
-			# Check if the state of the rulefile has been changed.
-			unless ($cgiparams{$rulefile} eq $idsrules{$rulefile}{'Rulefile'}{'State'}) {
-				# A restart of suricata is required to apply the changes of the used rulefiles.
-				$suricata_restart_required = 1;
-			}
 
 			# Drop item from cgiparams hash.
 			delete $cgiparams{$rulefile};
