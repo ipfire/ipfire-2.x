@@ -72,8 +72,18 @@ write_hosts_conf() {
 			echo "local-data: \"${address} ${LOCAL_TTL} IN PTR ${HOSTNAME}\""
 		done
 
-		# Add all hosts
 		local enabled address hostname domainname generateptr
+
+		# Find all unique domain names
+		while IFS="," read -r enabled address hostname domainname generateptr; do
+			[ "${enabled}" = "on" ] || continue
+
+			echo "${domainname}"
+		done < /var/ipfire/main/hosts | sort -u | while read -r domainname; do
+			echo "local-zone: ${domainname} typetransparent"
+		done
+
+		# Add all hosts
 		while IFS="," read -r enabled address hostname domainname generateptr; do
 			[ "${enabled}" = "on" ] || continue
 
