@@ -211,6 +211,8 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 			my $mac = $_->[0];
 			my $nic_access = $cgiparams{"ACCESS $uc $mac"};
 
+			next unless ($nic_access);
+
 			if ($nic_access ne "NONE") {
 				if ($VALIDATE_nic_check{"RESTRICT $mac"}) { # If this interface is already assigned to RED in PPP mode, throw an error
 					$VALIDATE_error = $Lang::tr{"zoneconf val ppp assignment error"};
