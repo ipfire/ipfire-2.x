@@ -75,6 +75,11 @@ telinit u
 # Apply local configuration to sshd_config
 /usr/local/bin/sshctrl
 
+# Generate new http ports file for suricata
+perl -e "require '/var/ipfire/ids-functions.pl'; \
+     &IDS::generate_http_ports_file(); \
+     &IDS::set_ownership(\"\$IDS::http_ports_file\"); "
+
 # Start services
 /usr/local/bin/ipsecctrl S
 /etc/init.d/unbound restart
@@ -99,8 +104,6 @@ done
 
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
-
-# Start services
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
