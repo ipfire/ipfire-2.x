@@ -96,8 +96,3 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/lib/firmware/pcengines/apu
 
 	@$(POSTBUILD)
-eb9513cdb9bb212db524307d71d9f87c  cache/apu1_v4.11.0.5.rom
-e3ce78e1cbc1eb35b10d97349afabf04  cache/apu2_v4.11.0.5.rom
-42ece2873efc4a4b86bb507df40423c6  cache/apu3_v4.11.0.5.rom
-e5eb7a15efbfc1a434d3bd48d1bc5062  cache/apu4_v4.11.0.5.rom
-f2924f98bbb1e2816760103ab045a175  cache/apu5_v4.11.0.5.rom
