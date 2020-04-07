@@ -41,18 +41,18 @@ iptables_init() {
 	iptables -A LOG_REJECT -j REJECT
 
 	# This chain will log, then DROPs packets with certain bad combinations
-	# of flags might indicate a port-scan attempt (xmas, null, etc)
+	# of flags might indicate a port-scan attempt (xmas, null, etc.)
 	iptables -N PSCAN
 	if [ "$DROPPORTSCAN" == "on" ]; then
-		iptables -A PSCAN -p tcp  -m limit --limit 10/second -j LOG --log-prefix "DROP_TCP Scan " -m comment --comment "DROP_TCP PScan"
-		iptables -A PSCAN -p udp  -m limit --limit 10/second -j LOG --log-prefix "DROP_UDP Scan " -m comment --comment "DROP_UDP PScan"
+		iptables -A PSCAN -p tcp  -m limit --limit 10/second -j LOG --log-prefix "DROP_TCP Scan "  -m comment --comment "DROP_TCP PScan"
+		iptables -A PSCAN -p udp  -m limit --limit 10/second -j LOG --log-prefix "DROP_UDP Scan "  -m comment --comment "DROP_UDP PScan"
 		iptables -A PSCAN -p icmp -m limit --limit 10/second -j LOG --log-prefix "DROP_ICMP Scan " -m comment --comment "DROP_ICMP PScan"
 		iptables -A PSCAN -f      -m limit --limit 10/second -j LOG --log-prefix "DROP_FRAG Scan " -m comment --comment "DROP_FRAG PScan"
 	fi
 	iptables -A PSCAN -j DROP -m comment --comment "DROP_PScan"
 
 	# New tcp packets without SYN set - could well be an obscure type of port scan
-	# that's not covered above, may just be a broken windows machine
+	# that's not covered above, may just be a broken Windows machine
 	iptables -N NEWNOTSYN
 	if [ "$DROPNEWNOTSYN" == "on" ]; then
 		iptables -A NEWNOTSYN  -m limit --limit 10/second -j LOG  --log-prefix "DROP_NEWNOTSYN "
@@ -159,7 +159,7 @@ iptables_init() {
 		iptables -t raw -A CONNTRACK -p tcp -j CT --helper amanda
 	fi
 
-	# Fix for braindead ISP's
+	# Fix for braindead ISPs
 	iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
 	# CUSTOM chains, can be used by the users themselves
@@ -180,7 +180,7 @@ iptables_init() {
 	iptables -A FORWARD -j P2PBLOCK
 	iptables -A OUTPUT -j P2PBLOCK
 	
-	# Guardian (IPS) chains
+	# IPS (Guardian) chains
 	iptables -N GUARDIAN
 	iptables -A INPUT -j GUARDIAN
 	iptables -A FORWARD -j GUARDIAN
@@ -196,7 +196,7 @@ iptables_init() {
 	iptables -A FORWARD -i tun+ -j OVPNBLOCK
 	iptables -A FORWARD -o tun+ -j OVPNBLOCK
 
-	# IPS (suricata) chains
+	# IPS (Suricata) chains
 	iptables -N IPS_INPUT
 	iptables -N IPS_FORWARD
 	iptables -N IPS_OUTPUT
@@ -261,7 +261,7 @@ iptables_init() {
 		iptables -A OUTPUT -o "${GREEN_DEV}" -j DHCPGREENOUTPUT
 	fi
 
-	# allow DHCP on BLUE to be turned on/off
+	# Allow DHCP on BLUE to be turned on/off
 	iptables -N DHCPBLUEINPUT
 	iptables -N DHCPBLUEOUTPUT
 	if [ -n "${BLUE_DEV}" ]; then
@@ -438,7 +438,7 @@ iptables_red_up() {
 			iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
 		fi
 
-		# Outgoing masquerading (don't masqerade IPSEC (mark 50))
+		# Outgoing masquerading (don't masqerade IPsec (mark 50))
 		iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
 
 		if [ "${IFACE}" = "${GREEN_DEV}" ]; then
