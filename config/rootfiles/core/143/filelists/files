@@ -4,6 +4,7 @@ srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/localnet
+etc/rc.d/init.d/unbound
 etc/suricata/suricata.yaml
 srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/fireinfo.cgi
