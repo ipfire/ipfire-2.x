@@ -21,3 +21,4 @@ var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/include
 var/ipfire/ids-functions.pl
 var/ipfire/suricata/oinkmaster.conf
+var/ipfire/suricata/ruleset-sources
