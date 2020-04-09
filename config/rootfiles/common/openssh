@@ -21,7 +21,6 @@ usr/bin/ssh-keyscan
 usr/lib/openssh/sftp-server
 usr/lib/openssh/ssh-keysign
 usr/lib/openssh/ssh-pkcs11-helper
-usr/lib/openssh/ssh-sk-helper
 usr/sbin/sshd
 #usr/share/man/man1/scp.1
 #usr/share/man/man1/sftp.1
@@ -36,5 +35,4 @@ usr/sbin/sshd
 #usr/share/man/man8/sftp-server.8
 #usr/share/man/man8/ssh-keysign.8
 #usr/share/man/man8/ssh-pkcs11-helper.8
-#usr/share/man/man8/ssh-sk-helper.8
 #usr/share/man/man8/sshd.8
