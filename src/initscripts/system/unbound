@@ -78,10 +78,11 @@ write_hosts_conf() {
 		while IFS="," read -r enabled address hostname domainname generateptr; do
 			[ "${enabled}" = "on" ] || continue
 
-			echo "${domainname}"
-		done < /var/ipfire/main/hosts | sort -u | while read -r domainname; do
+			# Skip empty domainnames
+			[ "${domainname}" = "" ] && continue
+
 			echo "local-zone: ${domainname} typetransparent"
-		done
+		done < /var/ipfire/main/hosts | sort -u
 
 		# Add all hosts
 		while IFS="," read -r enabled address hostname domainname generateptr; do
