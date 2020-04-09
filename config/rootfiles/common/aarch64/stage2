@@ -28,6 +28,7 @@ etc/modules.conf
 etc/mtab
 etc/nsswitch.conf
 #etc/opt
+etc/os-release
 etc/passwd
 etc/profile
 #etc/profile.d
