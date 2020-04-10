@@ -1,0 +1,13 @@
+diff -Naur openssh-8.2p1.org/sandbox-seccomp-filter.c openssh-8.2p1/sandbox-seccomp-filter.c
+--- openssh-8.2p1.org/sandbox-seccomp-filter.c	2020-04-10 18:14:56.152309584 +0200
++++ openssh-8.2p1/sandbox-seccomp-filter.c	2020-04-10 21:05:45.827921765 +0200
+@@ -253,6 +253,9 @@
+ #endif
+ #ifdef __NR_clock_nanosleep_time64
+ 	SC_ALLOW(__NR_clock_nanosleep_time64),
++#else
++	/* on i586 glibc call syscall 407 which is not defined */
++	SC_ALLOW(407),
+ #endif
+ #ifdef __NR_clock_gettime64
+ 	SC_ALLOW(__NR_clock_gettime64),

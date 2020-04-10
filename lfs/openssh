@@ -71,6 +71,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && sed -i "s/lkrb5 -ldes/lkrb5/" configure
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/OpenSSH-8.2p1_glibc-2.31_clock_nanosleep_time64.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc/ssh \
