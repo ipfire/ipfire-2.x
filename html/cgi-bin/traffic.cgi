@@ -86,15 +86,15 @@ sub display_vnstat
 	if ( $testdata =~ 'enough') {
 		print"No data for $device !<br>";
 	} else {
-	    system("/usr/bin/vnstati -c 5 -s -i $device -o /srv/web/ipfire/html/graphs/vnstat-s-$device.png");
+	    system("/usr/bin/vnstati -c 1 -s -i $device -o /srv/web/ipfire/html/graphs/vnstat-s-$device.png");
 	    # Hour graph
-	    system("/usr/bin/vnstati -c 5 -h -i $device -o /srv/web/ipfire/html/graphs/vnstat-h-$device.png");
+	    system("/usr/bin/vnstati -c 1 -h -i $device -o /srv/web/ipfire/html/graphs/vnstat-h-$device.png");
 	    # Day graph
-	    system("/usr/bin/vnstati -c 5 -d -i $device -o /srv/web/ipfire/html/graphs/vnstat-d-$device.png");
+	    system("/usr/bin/vnstati -c 1 -d -i $device -o /srv/web/ipfire/html/graphs/vnstat-d-$device.png");
 	    # Month graph
-	    system("/usr/bin/vnstati -c 5 -m -i $device -o /srv/web/ipfire/html/graphs/vnstat-m-$device.png");
+	    system("/usr/bin/vnstati -c 1 -m -i $device -o /srv/web/ipfire/html/graphs/vnstat-m-$device.png");
 	    # Top10 graph
-	    system("/usr/bin/vnstati -c 5 -t -i $device -o /srv/web/ipfire/html/graphs/vnstat-t-$device.png");
+	    system("/usr/bin/vnstati -c 1 -t -i $device -o /srv/web/ipfire/html/graphs/vnstat-t-$device.png");
 
 # Generate HTML-Table with the graphs
 print <<END
