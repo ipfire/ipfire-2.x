@@ -106,9 +106,6 @@ sub updatehdddata{
 	}
 }
 
-## Update vnstat
-system ('/usr/bin/vnstat -u');
-
 my @disks = `ls -1 /sys/block | grep -E '^sd|^nvme|^mmcblk|^xvd|^vd|^md' | sort | uniq`;
 system("unlink /var/run/hddstatus 2>/dev/null && touch /var/run/hddstatus");
 foreach (@disks){
