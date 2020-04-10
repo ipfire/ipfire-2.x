@@ -8,9 +8,9 @@ bin/zcat
 #usr/bin/zegrep
 #usr/bin/zfgrep
 #usr/bin/zforce
-#usr/bin/zgrep
-#usr/bin/zless
-#usr/bin/zmore
+usr/bin/zgrep
+usr/bin/zless
+usr/bin/zmore
 #usr/bin/znew
 #usr/share/info/gzip.info
 #usr/share/man/man1/gunzip.1
