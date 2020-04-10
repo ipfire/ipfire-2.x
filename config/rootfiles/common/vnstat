@@ -1,12 +1,9 @@
-#etc/cron.d
-#etc/cron.d/vnstat
 etc/vnstat.conf
 usr/bin/vnstat
 usr/bin/vnstati
-#usr/sbin/vnstatd
-#usr/share/man/man5/vnstat.conf.5
-#usr/share/man/man1/vnstatd.1
-#usr/share/man/man1/vnstati.1
+usr/sbin/vnstatd
 #usr/share/man/man1/vnstat.1
-#var/lib/vnstat
-var/log/vnstat
+#usr/share/man/man1/vnstati.1
+#usr/share/man/man5/vnstat.conf.5
+#usr/share/man/man8/vnstatd.8
+#var/log/vnstat
