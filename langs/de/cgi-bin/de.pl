@@ -662,6 +662,7 @@
 'country' => 'Land',
 'country codes and flags' => 'Länder und Länderkennungen',
 'countrycode' => 'Kennung',
+'cpu frequency' => 'CPU-Frequenz',
 'cpu frequency per' => 'CPU-Frequenz pro',
 'cpu idle usage' => 'Leerlauf CPU-Nutzung',
 'cpu interrupt usage' => 'Interrupt CPU-Nutzung',

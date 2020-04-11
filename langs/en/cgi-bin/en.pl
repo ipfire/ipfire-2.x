@@ -678,6 +678,7 @@
 'country' => 'Country',
 'country codes and flags' => 'Country Codes and Flags:',
 'countrycode' => 'Code',
+'cpu frequency' => 'CPU frequency',
 'cpu frequency per' => 'CPU frequency per',
 'cpu idle usage' => 'Idle CPU Usage',
 'cpu interrupt usage' => 'Interrupt CPU Usage',
