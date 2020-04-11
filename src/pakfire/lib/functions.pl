@@ -162,7 +162,7 @@ sub fetchfile {
 			logger("DOWNLOAD INFO: Upstream proxy: \"$proxysettings{'UPSTREAM_PROXY'}\"");
 			if ($proxysettings{'UPSTREAM_USER'}) {
 				$ua->proxy(["http", "https"], "http://$proxysettings{'UPSTREAM_USER'}:$proxysettings{'UPSTREAM_PASSWORD'}@"."$proxysettings{'UPSTREAM_PROXY'}/");
-				logger("DOWNLOAD INFO: Logging in with: \"$proxysettings{'UPSTREAM_USER'}\" - \"$proxysettings{'UPSTREAM_PASSWORD'}\"");
+				logger("DOWNLOAD INFO: Logging in with \"$proxysettings{'UPSTREAM_USER'}\" against \"$proxysettings{'UPSTREAM_PROXY'}\"");
 			} else {
 				$ua->proxy(["http", "https"], "http://$proxysettings{'UPSTREAM_PROXY'}/");
 			}
