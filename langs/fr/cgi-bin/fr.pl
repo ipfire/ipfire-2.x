@@ -2976,7 +2976,7 @@
 'zoneconf nic assignment' => 'Affectation de carte réseau',
 'zoneconf nicmode bridge' => 'Pont',
 'zoneconf nicmode default' => 'Défaut',
-'zoneconf nicmode macvtap' => 'MacVTtap',
+'zoneconf nicmode macvtap' => 'MacVTap',
 'zoneconf notice reboot' => 'Veuillez redémarrer pour appliquer vos changements.',
 'zoneconf title' => 'Configuration de zones',
 'zoneconf val native assignment error' => 'Une carte réseau ne peut pas être atteinte nativement par davantage qu\'une zone.',

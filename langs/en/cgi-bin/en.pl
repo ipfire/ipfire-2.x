@@ -2984,7 +2984,7 @@
 'zoneconf nic assignment' => 'NIC Assignment',
 'zoneconf nicmode bridge' => 'Bridge',
 'zoneconf nicmode default' => 'Default',
-'zoneconf nicmode macvtap' => 'MacVTtap',
+'zoneconf nicmode macvtap' => 'MacVTap',
 'zoneconf notice reboot' => 'Please reboot to apply your changes.',
 'zoneconf title' => 'Zone Configuration',
 'zoneconf val native assignment error' => 'A NIC cannot be accessed natively by more than one zone.',
