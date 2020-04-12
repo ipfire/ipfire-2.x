@@ -6,12 +6,10 @@ sbin/dhcpcd
 #usr/share/man/man8/dhcpcd-run-hooks.8
 #usr/share/man/man8/dhcpcd.8
 var/ipfire/dhcpc/dhcpcd-hooks
+#var/ipfire/dhcpc/dhcpcd-hooks/00-linux
 #var/ipfire/dhcpc/dhcpcd-hooks/01-test
 #var/ipfire/dhcpc/dhcpcd-hooks/02-dump
 #var/ipfire/dhcpc/dhcpcd-hooks/10-mtu
-#var/ipfire/dhcpc/dhcpcd-hooks/10-wpa_supplicant
-#var/ipfire/dhcpc/dhcpcd-hooks/15-timezone
-#var/ipfire/dhcpc/dhcpcd-hooks/29-lookup-hostname
 #var/ipfire/dhcpc/dhcpcd-hooks/30-hostname
 #var/ipfire/dhcpc/dhcpcd-hooks/70-dhcpcd.exe
 var/ipfire/dhcpc/dhcpcd-run-hooks
