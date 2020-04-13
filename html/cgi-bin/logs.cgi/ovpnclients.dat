@@ -262,8 +262,8 @@ my $col = "bgcolor='$color{'color20'}'";
 	if ($cgiparams{'CONNECTION_NAME'}) {
 		print "<td width='20%' $col><b>$Lang::tr{'connected'}</b></td>\n";
 		print "<td width='20%' $col><b>$Lang::tr{'disconnected'}</b></td>\n";
-		print "<td width='10%' $col><b>$Lang::tr{'received'}</b></td>\n";
-		print "<td width='10%' $col><b>$Lang::tr{'sent'}</b></td>\n";
+		print "<td width='10%' align='right' $col><b>$Lang::tr{'received'}</b></td>\n";
+		print "<td width='10%' align='right' $col><b>$Lang::tr{'sent'}</b></td>\n";
 	} else {
 		print "<td $col><b>$Lang::tr{'total connection time'}</b>\n";
 	}
@@ -293,8 +293,8 @@ unless ($errormessage) {
 		if ($cgiparams{'CONNECTION_NAME'}) {
 			print "<td width='20%' $col>$connection_open_time</td>\n";
 			print "<td width='20%' $col>$connection_close_time</td>\n";
-			print "<td width='10%' $col>$connection_bytes_recieved</td>\n";
-			print "<td width='10%' $col>$connection_bytes_sent</td>\n";
+			print "<td width='10%' align='right' $col>$connection_bytes_recieved</td>\n";
+			print "<td width='10%' align='right' $col>$connection_bytes_sent</td>\n";
 		} else {
 			# Convert total connection time into human-readable format.
 			my $total_time = &General::format_time($row[1]);
