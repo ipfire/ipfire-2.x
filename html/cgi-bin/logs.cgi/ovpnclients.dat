@@ -207,7 +207,7 @@ print "<table width='100%'>\n";
 		print "<td class='base' colspan='2'>\n";
 
 			print "<select name='CONNECTION_NAME' size='1'>\n";
-				print "<option value=''>All</option>\n";
+				print "<option value=''>$Lang::tr{'all'}</option>\n";
 
 				# Loop through all configured OpenVPN connections and sort them by name.
 				foreach my $key (sort { $ovpnsettings{$a}[2] cmp $ovpnsettings{$b}[2] } keys %ovpnsettings) {
