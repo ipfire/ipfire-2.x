@@ -114,8 +114,8 @@ class OpenVPNMetrics(object):
 		db.executescript("""
 			CREATE TABLE IF NOT EXISTS sessions(
 				common_name TEXT NOT NULL,
-				connected_at INTEGER NOT NULL,
-				duration INTEGER,
+				connected_at TEXT NOT NULL,
+				disconnected_at TEXT,
 				bytes_received INTEGER,
 				bytes_sent INTEGER
 			);
@@ -144,7 +144,7 @@ class OpenVPNMetrics(object):
 
 		c = self.db.cursor()
 		c.execute("INSERT INTO sessions(common_name, connected_at) \
-			VALUES(?, ?)", (common_name, time_unix))
+			VALUES(?, DATETIME(?, 'unixepoch'))", (common_name, time_unix))
 		self.db.commit()
 
 	def client_disconnect(self, args):
@@ -159,8 +159,9 @@ class OpenVPNMetrics(object):
 			% (common_name, duration, bytes_received, bytes_sent))
 
 		c = self.db.cursor()
-		c.execute("UPDATE sessions SET duration = ?, bytes_received = ?, \
-			bytes_sent = ? WHERE common_name = ? AND duration IS NULL",
+		c.execute("UPDATE sessions SET disconnected_at = DATETIME(connected_at, '+'  || ? || ' seconds'), \
+                        bytes_received = ?, bytes_sent = ? \
+                        WHERE common_name = ? AND disconnected_at IS NULL",
 			(duration, bytes_received, bytes_sent, common_name))
 		self.db.commit()
 
