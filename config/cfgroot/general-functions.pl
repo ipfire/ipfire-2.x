@@ -1261,4 +1261,29 @@ sub get_nameservers () {
 	return &uniq(@nameservers);
 }
 
+# Function to format a string containing the amount of bytes to
+# something human-readable. 
+sub formatBytes {
+	# Private array which contains the units.
+	my @units = qw(B KB MB GB TB PB);
+
+	my $bytes = shift;
+	my $unit;
+
+	# Loop through the array of units.
+	foreach my $element (@units) {
+		# Break loop if the bytes are less than the next unit.
+		last if $bytes < 1024;
+
+		# Divide bytes amount with 1024.
+        	$bytes /= 1024;
+
+		# Assign current processed element to unit.
+        	$unit = $element;
+    	}
+
+	# Return the divided and rounded bytes count and the unit.
+	return sprintf("%.2f %s", $bytes, $unit);
+}
+
 1;
