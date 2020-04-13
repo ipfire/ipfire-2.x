@@ -1804,6 +1804,7 @@
 'no alcatelusb firmware' => 'No Alcatel USB firmware. Please upload.',
 'no cfg upload' => 'No data was uploaded',
 'no dhcp lease' => 'No DHCP lease has been acquired',
+'no entries' => 'No entries at the moment.',
 'no eciadsl synch.bin file' => 'No ECI ADSL synch.bin file. Please upload.',
 'no filter pass' => 'Enter the standard class for non-filtered packets.',
 'no fritzdsl driver' => 'No Fritz!DSL driver.  Please upload.',

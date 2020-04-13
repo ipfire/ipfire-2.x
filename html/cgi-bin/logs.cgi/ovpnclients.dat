@@ -293,8 +293,13 @@ while(my @row = $statement_handle->fetchrow_array()) {
 
 	# Increase lines count.
 	$lines++;
+}
 
-	}
+# If nothing has been fetched, the amount of lines is still zero.
+# In this case display a hint about no data.
+unless ($lines) {
+	print "<tr><td bgcolor='$color{'color22'}' colspan='5' align='center'>$Lang::tr{'no entries'}</td></tr>\n";
+}
 
 print "</table><br>\n";
 
