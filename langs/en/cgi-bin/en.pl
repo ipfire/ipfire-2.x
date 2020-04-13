@@ -937,6 +937,7 @@
 'duplicate ip bold' => 'Duplicate addresses are in <b>bold</b>',
 'duplicate mac' => 'Duplicate MAC address entered',
 'duplicate name' => 'That name is already being used, please choose another.',
+'duration' => 'Duration',
 'dyn dns source choice' => 'Dynamic DNS provider(s) will receive an IP address for this IPFire from:',
 'dynamic dns' => 'Dynamic DNS',
 'dynamic dns client' => 'Dynamic DNS Client',
