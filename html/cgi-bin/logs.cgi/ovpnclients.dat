@@ -243,7 +243,21 @@ my $lines = 0;
 
 print "<table width='100%' class='tbl'>";
 
-my $col="";
+my $col = "bgcolor='$color{'color20'}'";
+
+	print "<tr>\n";
+		print "<td width='40%' $col><b>$Lang::tr{'ovpn connection name'}</b></td>\n";
+
+	if ($cgiparams{'CONNECTION_NAME'}) {
+		print "<td width='20%' $col><b>$Lang::tr{'connected'}</b></td>\n";
+		print "<td width='20%' $col><b>$Lang::tr{'disconnected'}</b></td>\n";
+		print "<td width='10%' $col><b>$Lang::tr{'recieved'}</b></td>\n";
+		print "<td width='10%' $col><b>$Lang::tr{'sent'}</b></td>\n";
+	} else {
+		print "<td $col><b>$Lang::tr{'total connection time'}</b>\n";
+	}
+
+	print "</tr>\n";
 
 while(my @row = $statement_handle->fetchrow_array()) {
 	# Assign some nice to read variable names for the DB fields.
@@ -253,23 +267,29 @@ while(my @row = $statement_handle->fetchrow_array()) {
 	my $connection_bytes_recieved = &General::formatBytes($row[3]);
 	my $connection_bytes_sent = &General::formatBytes($row[4]);
 
-	# Colorize columns. 
+	# Colorize columns.
 	if ($lines % 2) {
-		$col="bgcolor='$color{'color22'}'";
-	} else {
 		$col="bgcolor='$color{'color20'}'";
+	} else {
+		$col="bgcolor='$color{'color22'}'";
 	}
 
-print <<END
-	<tr>
-		<td width="40%" align="left" $col>$connection_name</td>
-		<td width="20%" align="center" $col>$connection_open_time</td>
-		<td width="20%" align="center" $col>$connection_close_time</td>
-		<td width="10%" align="center" $col>$connection_bytes_recieved</td>
-		<td width="10%" align="center" $col>$connection_bytes_sent</td>
-	</tr>
-END
-;
+	print "<tr>\n";
+		print "<td width='40%' $col>$connection_name</td>\n";
+
+	if ($cgiparams{'CONNECTION_NAME'}) {
+		print "<td width='20%' $col>$connection_open_time</td>\n";
+		print "<td width='20%' $col>$connection_close_time</td>\n";
+		print "<td width='10%' $col>$connection_bytes_recieved</td>\n";
+		print "<td width='10%' $col>$connection_bytes_sent</td>\n";
+	} else {
+		# Convert total connection time into human-readable format.
+		my $total_time = &General::format_time($row[1]);
+
+		print "<td $col>$total_time</td>\n";
+	}
+
+	print "</tr>\n";
 
 	# Increase lines count.
 	$lines++;
