@@ -250,8 +250,8 @@ while(my @row = $statement_handle->fetchrow_array()) {
 	my $connection_name = $row[0];
 	my $connection_open_time = $row[1];
 	my $connection_close_time = $row[2];
-	my $connection_bytes_recieved = $row[3];
-	my $connection_bytes_sent = $row[4];
+	my $connection_bytes_recieved = &General::formatBytes($row[3]);
+	my $connection_bytes_sent = &General::formatBytes($row[4]);
 
 	# Colorize columns. 
 	if ($lines % 2) {
