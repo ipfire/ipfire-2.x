@@ -20,7 +20,6 @@ case "$1" in
 
 		boot_mesg "Starting vnstatd..."
 		loadproc /usr/sbin/vnstatd -d --alwaysadd
-		evaluate_retval
 		;;
 
 	stop)
@@ -30,7 +29,6 @@ case "$1" in
 
 		umount_ramdisk "${VNSTATLOG}"
 		boot_mesg "Unmounting vnstat ramdisk..."
-		evaluate_retval
 		;;
 
 	restart)
