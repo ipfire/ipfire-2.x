@@ -372,6 +372,11 @@ sub writeserverconf {
 	} else {
 		print CONF "verb 3\n";
 	}
+
+    print CONF "# Log clients connecting/disconnecting\n";
+    print CONF "client-connect \"/usr/sbin/openvpn-metrics client-connect\"\n";
+    print CONF "client-disconnect \"/usr/sbin/openvpn-metrics client-disconnect\"\n";
+
     # Print server.conf.local if entries exist to server.conf
     if ( !-z $local_serverconf  && $sovpnsettings{'ADDITIONAL_CONFIGS'} eq 'on') {
        open (LSC, "$local_serverconf");
