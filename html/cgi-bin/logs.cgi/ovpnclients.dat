@@ -262,7 +262,7 @@ my $col = "bgcolor='$color{'color20'}'";
 	if ($cgiparams{'CONNECTION_NAME'}) {
 		print "<td width='20%' $col><b>$Lang::tr{'connected'}</b></td>\n";
 		print "<td width='20%' $col><b>$Lang::tr{'disconnected'}</b></td>\n";
-		print "<td width='10%' $col><b>$Lang::tr{'recieved'}</b></td>\n";
+		print "<td width='10%' $col><b>$Lang::tr{'received'}</b></td>\n";
 		print "<td width='10%' $col><b>$Lang::tr{'sent'}</b></td>\n";
 	} else {
 		print "<td $col><b>$Lang::tr{'total connection time'}</b>\n";

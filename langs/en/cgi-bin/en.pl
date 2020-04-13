@@ -2110,7 +2110,7 @@
 'reboot sure' => 'Are you sure that you want to reboot?',
 'rebooting' => 'Rebooting',
 'rebooting ipfire' => 'Rebooting IPFire',
-'recieved' => 'Recieved',
+'received' => 'Received',
 'reconnect' => 'Reconnect',
 'reconnection' => 'Reconnection',
 'red' => 'Internet',
