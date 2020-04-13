@@ -1272,14 +1272,14 @@ sub formatBytes {
 
 	# Loop through the array of units.
 	foreach my $element (@units) {
+		# Assign current processed element to unit.
+		$unit = $element;
+
 		# Break loop if the bytes are less than the next unit.
 		last if $bytes < 1024;
 
 		# Divide bytes amount with 1024.
         	$bytes /= 1024;
-
-		# Assign current processed element to unit.
-        	$unit = $element;
     	}
 
 	# Return the divided and rounded bytes count and the unit.
