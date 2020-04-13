@@ -128,7 +128,8 @@ my $database_query = qq(
 
 if ($cgiparams{'CONNECTION_NAME'}) {
 	$database_query = qq(
-		SELECT common_name, DATETIME(connected_at, 'localtime'), DATETIME(disconnected_at, 'localtime'), bytes_received, bytes_sent FROM sessions
+		SELECT common_name, DATETIME(connected_at, 'localtime'), DATETIME(disconnected_at, 'localtime'), bytes_received, bytes_sent,
+			STRFTIME('%s', DATETIME(disconnected_at)) - STRFTIME('%s', DATETIME(connected_at)) AS duration FROM sessions
 		WHERE
 			common_name = '$cgiparams{"CONNECTION_NAME"}'
 			AND (
@@ -260,8 +261,9 @@ my $col = "bgcolor='$color{'color20'}'";
 		print "<td width='40%' $col><b>$Lang::tr{'ovpn connection name'}</b></td>\n";
 
 	if ($cgiparams{'CONNECTION_NAME'}) {
-		print "<td width='20%' $col><b>$Lang::tr{'connected'}</b></td>\n";
-		print "<td width='20%' $col><b>$Lang::tr{'disconnected'}</b></td>\n";
+		print "<td width='15%' $col><b>$Lang::tr{'connected'}</b></td>\n";
+		print "<td width='15%' $col><b>$Lang::tr{'disconnected'}</b></td>\n";
+		print "<td width='10%' align='right' $col><b>$Lang::tr{'duration'}</b></td>\n";
 		print "<td width='10%' align='right' $col><b>$Lang::tr{'received'}</b></td>\n";
 		print "<td width='10%' align='right' $col><b>$Lang::tr{'sent'}</b></td>\n";
 	} else {
@@ -279,6 +281,7 @@ unless ($errormessage) {
 		my $connection_close_time = $row[2];
 		my $connection_bytes_recieved = &General::formatBytes($row[3]);
 		my $connection_bytes_sent = &General::formatBytes($row[4]);
+		my $duration = &General::format_time($row[5]);
 
 		# Colorize columns.
 		if ($lines % 2) {
@@ -291,8 +294,9 @@ unless ($errormessage) {
 			print "<td width='40%' $col>$connection_name</td>\n";
 
 		if ($cgiparams{'CONNECTION_NAME'}) {
-			print "<td width='20%' $col>$connection_open_time</td>\n";
-			print "<td width='20%' $col>$connection_close_time</td>\n";
+			print "<td width='15%' $col>$connection_open_time</td>\n";
+			print "<td width='15%' $col>$connection_close_time</td>\n";
+			print "<td width='10%' align='right' $col>$duration</td>\n";
 			print "<td width='10%' align='right' $col>$connection_bytes_recieved</td>\n";
 			print "<td width='10%' align='right' $col>$connection_bytes_sent</td>\n";
 		} else {
@@ -312,7 +316,7 @@ unless ($errormessage) {
 # If nothing has been fetched, the amount of lines is still zero.
 # In this case display a hint about no data.	
 unless ($lines) {
-	print "<tr><td bgcolor='$color{'color22'}' colspan='5' align='center'>$Lang::tr{'no entries'}</td></tr>\n";
+	print "<tr><td bgcolor='$color{'color22'}' colspan='6' align='center'>$Lang::tr{'no entries'}</td></tr>\n";
 }
 
 print "</table><br>\n";
