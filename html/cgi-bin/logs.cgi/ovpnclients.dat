@@ -123,7 +123,7 @@ my $database_query = qq(
 
 if ($cgiparams{'CONNECTION_NAME'}) {
 	$database_query = qq(
-		SELECT * FROM sessions
+		SELECT common_name, DATETIME(connected_at, 'localtime'), DATETIME(disconnected_at, 'localtime'), bytes_received, bytes_sent FROM sessions
 		WHERE
 			common_name = '$cgiparams{"CONNECTION_NAME"}'
 			AND (
