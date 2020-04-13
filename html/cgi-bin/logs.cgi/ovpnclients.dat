@@ -107,27 +107,31 @@ my $database_query = qq(
                                         ELSE DATETIME('$from_datestring', 'localtime', 'start of day')
                         END
                 ), 'utc')
-        )
+        ) AS duration
         FROM sessions
         WHERE
-                disconnected_at IS NULL
-                OR
-                DATETIME(disconnected_at, 'localtime') > DATETIME('$from_datestring', 'localtime', 'start of day')
-                OR
+                (
+			disconnected_at IS NULL
+	                OR
+	                DATETIME(disconnected_at, 'localtime') > DATETIME('$from_datestring', 'localtime', 'start of day')
+		)
+                AND
                 DATETIME(connected_at, 'localtime') < DATETIME('$to_datestring', 'localtime', 'start of day', '+86399 seconds')
         GROUP BY common_name
-        ORDER BY common_name;
+        ORDER BY common_name, duration DESC;
 );
 
 if ($cgiparams{'CONNECTION_NAME'}) {
 	$database_query = qq(
-		SELECT *
-		FROM sessions
+		SELECT * FROM sessions
 		WHERE
-			common_name = '$cgiparams{"CONNECTION_NAME"}' AND (
-			DATETIME(disconnected_at, 'localtime') > DATETIME('$from_datestring', 'localtime', 'start of day')
-			OR
-			DATETIME(connected_at, 'localtime') < DATETIME('$to_datestring', 'localtime', 'start of day', '+86399 seconds'));
+			common_name = '$cgiparams{"CONNECTION_NAME"}'
+			AND (
+				DATETIME(disconnected_at, 'localtime') > DATETIME('$from_datestring', 'localtime', 'start of day')
+				AND
+				DATETIME(connected_at, 'localtime') < DATETIME('$to_datestring', 'localtime', 'start of day', '+86399 seconds')
+			)
+		ORDER BY connected_at;
 	);
 }
 
