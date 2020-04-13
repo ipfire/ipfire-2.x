@@ -1015,6 +1015,7 @@
 'error config' => 'Could not open /var/ipfire/ovpn/config/ZERINA.ovpn !',
 'error external access' => 'Could not open /var/ipfire/xtaccess/config (external acccess could not be granted)!',
 'error messages' => 'Error messages',
+'error the to date has to be later than the from date' => 'The to date has to be later than the from date!',
 'esp encryption' => 'ESP Encryption:',
 'esp grouptype' => 'ESP Grouptype:',
 'esp integrity' => 'ESP Integrity:',

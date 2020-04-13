@@ -90,6 +90,11 @@ my $database_handle = DBI->connect("DBI:SQLite:dbname=$database", "", "", { Rais
 my $from_datestring = sprintf '%04d-%02d-%02d', ($cgiparams{"FROM_YEAR"}, $cgiparams{"FROM_MONTH"}, $cgiparams{"FROM_DAY"});
 my $to_datestring = sprintf '%04d-%02d-%02d', ($cgiparams{"TO_YEAR"}, $cgiparams{"TO_MONTH"}, $cgiparams{"TO_DAY"});
 
+# Check if the to datestring is later than the from datestring.
+unless ($to_datestring ge $from_datestring) {
+	$errormessage = "$Lang::tr{'error the to date has to be later than the from date'}";
+}
+
 my $database_query = qq(
 	SELECT
         common_name, SUM(
