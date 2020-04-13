@@ -140,11 +140,17 @@ if ($cgiparams{'CONNECTION_NAME'}) {
 	);
 }
 
-# Prepare SQL statement.
-my $statement_handle = $database_handle->prepare($database_query);
+my $statement_handle;
+my $database_return_value;
 
-# Execute SQL statement and get retun value if any error happened.
-my $database_return_value = $statement_handle->execute();
+# Only process SQL actions if there is no error message.
+unless ($errormessage) {
+	# Prepare SQL statement.
+	$statement_handle = $database_handle->prepare($database_query);
+
+	# Execute SQL statement and get retun value if any error happened.
+	$database_return_value = $statement_handle->execute();
+}
 
 # If an error has been returned, assign it to the errorstring value for displaying.
 if($database_return_value < 0) {
@@ -264,44 +270,47 @@ my $col = "bgcolor='$color{'color20'}'";
 
 	print "</tr>\n";
 
-while(my @row = $statement_handle->fetchrow_array()) {
-	# Assign some nice to read variable names for the DB fields.
-	my $connection_name = $row[0];
-	my $connection_open_time = $row[1];
-	my $connection_close_time = $row[2];
-	my $connection_bytes_recieved = &General::formatBytes($row[3]);
-	my $connection_bytes_sent = &General::formatBytes($row[4]);
+# Only try to fetch the DB items if there is no error message.
+unless ($errormessage) {
+	while(my @row = $statement_handle->fetchrow_array()) {
+		# Assign some nice to read variable names for the DB fields.
+		my $connection_name = $row[0];
+		my $connection_open_time = $row[1];
+		my $connection_close_time = $row[2];
+		my $connection_bytes_recieved = &General::formatBytes($row[3]);
+		my $connection_bytes_sent = &General::formatBytes($row[4]);
 
-	# Colorize columns.
-	if ($lines % 2) {
-		$col="bgcolor='$color{'color20'}'";
-	} else {
-		$col="bgcolor='$color{'color22'}'";
+		# Colorize columns.
+		if ($lines % 2) {
+			$col="bgcolor='$color{'color20'}'";
+		} else {
+			$col="bgcolor='$color{'color22'}'";
+		}
+
+		print "<tr>\n";
+			print "<td width='40%' $col>$connection_name</td>\n";
+
+		if ($cgiparams{'CONNECTION_NAME'}) {
+			print "<td width='20%' $col>$connection_open_time</td>\n";
+			print "<td width='20%' $col>$connection_close_time</td>\n";
+			print "<td width='10%' $col>$connection_bytes_recieved</td>\n";
+			print "<td width='10%' $col>$connection_bytes_sent</td>\n";
+		} else {
+			# Convert total connection time into human-readable format.
+			my $total_time = &General::format_time($row[1]);
+
+			print "<td $col>$total_time</td>\n";
+		}
+
+		print "</tr>\n";
+
+		# Increase lines count.
+		$lines++;
 	}
-
-	print "<tr>\n";
-		print "<td width='40%' $col>$connection_name</td>\n";
-
-	if ($cgiparams{'CONNECTION_NAME'}) {
-		print "<td width='20%' $col>$connection_open_time</td>\n";
-		print "<td width='20%' $col>$connection_close_time</td>\n";
-		print "<td width='10%' $col>$connection_bytes_recieved</td>\n";
-		print "<td width='10%' $col>$connection_bytes_sent</td>\n";
-	} else {
-		# Convert total connection time into human-readable format.
-		my $total_time = &General::format_time($row[1]);
-
-		print "<td $col>$total_time</td>\n";
-	}
-
-	print "</tr>\n";
-
-	# Increase lines count.
-	$lines++;
 }
 
 # If nothing has been fetched, the amount of lines is still zero.
-# In this case display a hint about no data.
+# In this case display a hint about no data.	
 unless ($lines) {
 	print "<tr><td bgcolor='$color{'color22'}' colspan='5' align='center'>$Lang::tr{'no entries'}</td></tr>\n";
 }
