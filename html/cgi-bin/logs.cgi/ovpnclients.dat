@@ -1,0 +1,327 @@
+#!/usr/bin/perl
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2020 IPFire Team  <info@ipfire.org>                           #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+use strict;
+use POSIX();
+use DBI;
+
+# enable only the following on debugging purpose
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
+
+require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/lang.pl";
+require "${General::swroot}/header.pl";
+
+my %color = ();
+my %mainsettings = ();
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+
+# Path and file of the OVPN connections database.
+my $database = "/var/ipfire/ovpn/clients.db";
+
+my %cgiparams=();
+my %logsettings=();
+my %ovpnsettings=();
+
+my $errormessage='';
+
+# Hash wich contains the month numbers and the translated names for easy access.
+my %monthhash = (
+	"1" => "$Lang::tr{'january'}",
+	"2" => "$Lang::tr{'february'}",
+	"3" => "$Lang::tr{'march'}",
+	"4" => "$Lang::tr{'april'}",
+	"5" => "$Lang::tr{'may'}",
+	"6" => "$Lang::tr{'june'}",
+	"7" => "$Lang::tr{'july'}",
+	"8" => "$Lang::tr{'august'}",
+	"9" => "$Lang::tr{'september'}",
+	"10" => "$Lang::tr{'october'}",
+	"11" => "$Lang::tr{'november'}",
+	"12" => "$Lang::tr{'december'}"
+);
+
+# Get current time.
+my ($sec,$min,$hour,$mday,$month,$year,$wday,$yday,$isdst) = localtime(time);
+
+# Adjust month, because Jan starts as month "0".
+$month = $month+1;
+
+# Adjust year number.
+$year = $year+1900;
+
+# Assign default vaules.
+$cgiparams{'FROM_DAY'} = $mday;
+$cgiparams{'FROM_MONTH'} = $month;
+$cgiparams{'FROM_YEAR'} = $year;
+$cgiparams{'TO_DAY'} = $mday;
+$cgiparams{'TO_MONTH'} = $month;
+$cgiparams{'TO_YEAR'} = $year;
+
+&Header::getcgihash(\%cgiparams);
+
+# Read-in OpenVPN settings and connections.
+&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%ovpnsettings);
+
+# Init DB Module and connect to the database.
+my $database_handle = DBI->connect("DBI:SQLite:dbname=$database", "", "", { RaiseError => 1 });
+
+# Generate datestrings for SQL queries.
+my $from_datestring = sprintf '%04d-%02d-%02d', ($cgiparams{"FROM_YEAR"}, $cgiparams{"FROM_MONTH"}, $cgiparams{"FROM_DAY"});
+my $to_datestring = sprintf '%04d-%02d-%02d', ($cgiparams{"TO_YEAR"}, $cgiparams{"TO_MONTH"}, $cgiparams{"TO_DAY"});
+
+my $database_query = qq(
+	SELECT
+        common_name, SUM(
+                STRFTIME('%s', (
+                        CASE
+                                WHEN DATETIME(COALESCE(disconnected_at, CURRENT_TIMESTAMP), 'localtime') < DATETIME('$to_datestring', 'localtime', 'start of day', '+86399 seconds')
+                                        THEN DATETIME(COALESCE(disconnected_at, CURRENT_TIMESTAMP), 'localtime')
+                                        ELSE DATETIME('$to_datestring', 'localtime', 'start of day', '+86399 seconds')
+                        END
+                ), 'utc') -
+                STRFTIME('%s', (
+                        CASE
+                                WHEN DATETIME(connected_at, 'localtime') > DATETIME('$from_datestring', 'localtime', 'start of day')
+                                        THEN DATETIME(connected_at, 'localtime')
+                                        ELSE DATETIME('$from_datestring', 'localtime', 'start of day')
+                        END
+                ), 'utc')
+        )
+        FROM sessions
+        WHERE
+                disconnected_at IS NULL
+                OR
+                DATETIME(disconnected_at, 'localtime') > DATETIME('$from_datestring', 'localtime', 'start of day')
+                OR
+                DATETIME(connected_at, 'localtime') < DATETIME('$to_datestring', 'localtime', 'start of day', '+86399 seconds')
+        GROUP BY common_name
+        ORDER BY common_name;
+);
+
+if ($cgiparams{'CONNECTION_NAME'}) {
+	$database_query = qq(
+		SELECT *
+		FROM sessions
+		WHERE
+			common_name = '$cgiparams{"CONNECTION_NAME"}' AND (
+			DATETIME(disconnected_at, 'localtime') > DATETIME('$from_datestring', 'localtime', 'start of day')
+			OR
+			DATETIME(connected_at, 'localtime') < DATETIME('$to_datestring', 'localtime', 'start of day', '+86399 seconds'));
+	);
+}
+
+# Prepare SQL statement.
+my $statement_handle = $database_handle->prepare($database_query);
+
+# Execute SQL statement and get retun value if any error happened.
+my $database_return_value = $statement_handle->execute();
+
+# If an error has been returned, assign it to the errorstring value for displaying.
+if($database_return_value < 0) {
+   $errormessage = "$DBI::errstr";
+}
+
+&Header::showhttpheaders();
+
+&Header::openpage($Lang::tr{'ovpn rw connection log'}, 1, '');
+
+&Header::openbigbox('100%', 'left', '', $errormessage);
+
+if ($errormessage) {
+	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
+	print "<font class='base'>$errormessage&nbsp;</font>\n";
+	&Header::closebox();
+}
+
+&Header::openbox('100%', 'left', "$Lang::tr{'settings'}:");
+
+print "<form method='post' action=\"$ENV{'SCRIPT_NAME'}\">\n";
+print "<table width='100%'>\n";
+	print "<tr>\n";
+		print "<td class='base' colspan='2'><b>$Lang::tr{'from'}:</b></td>\n";
+	print "</tr>\n";
+
+	print "<tr>\n";
+		print "<td class='base'>$Lang::tr{'day'}:&nbsp\;\n";
+			&generate_select("FROM_DAY", "days");
+		print "</td>\n";
+
+		print "<td class='base'>$Lang::tr{'month'}:&nbsp\;\n";
+			&generate_select("FROM_MONTH", "months");
+		print "</td>\n";
+
+		print "<td class='base'>$Lang::tr{'year'}:&nbsp\;\n";
+			&generate_select("FROM_YEAR", "years");
+		print "</td>\n";
+	print "</tr>\n";
+
+	print "<tr><td><br></td></tr>\n";
+
+	print "<tr>\n";
+		print "<td class='base' colspan='2'><b>$Lang::tr{'to'}:</b></td>\n";
+	print "</tr>\n";
+
+	print "<tr>\n";
+		print "<td class='base'>$Lang::tr{'day'}:&nbsp\;\n";
+			&generate_select("TO_DAY", "days");
+		print "</td>\n";
+
+		print "<td class='base'>$Lang::tr{'month'}:&nbsp\;\n";
+			&generate_select("TO_MONTH", "months");
+		print "</td>\n";
+
+		print "<td class='base'>$Lang::tr{'year'}:&nbsp\;\n";
+			&generate_select("TO_YEAR", "years");
+		print "</td>\n";
+	print "</tr>\n";
+
+	print "<tr><td><br></td></tr>\n";
+
+	print "<tr>\n";
+		print "<td class='base'>$Lang::tr{'ovpn connection name'}:</td>\n";
+		print "<td class='base' colspan='2'>\n";
+
+			print "<select name='CONNECTION_NAME' size='1'>\n";
+				print "<option value=''>All</option>\n";
+
+				# Loop through all configured OpenVPN connections and sort them by name.
+				foreach my $key (sort { $ovpnsettings{$a}[2] cmp $ovpnsettings{$b}[2] } keys %ovpnsettings) {
+					my $connection_name = $ovpnsettings{$key}[2];
+					my $selected;
+
+					# Skip all non roadwarrior connections.
+					next unless ($ovpnsettings{"$key"}[3] eq "host");
+
+					# Check and mark the selected one.
+					if ($connection_name eq "$cgiparams{'CONNECTION_NAME'}") {
+						$selected = "selected";
+					}
+
+					print "<option value='$connection_name' $selected>$connection_name</option>\n";
+				}
+
+			print "</select>\n";
+		print "</td>\n";
+	print "</tr>\n";
+
+	print "<tr>\n";
+		print "<td width='100%' align='right' colspan='3'><input type='submit' name='ACTION' value='$Lang::tr{'update'}'></td>\n";
+	print "</tr>\n";
+print "</table>\n";
+print "</form>\n";
+
+&Header::closebox();
+
+&Header::openbox('100%', 'left', $Lang::tr{'log'});
+
+my $lines = 0;
+
+print "<table width='100%' class='tbl'>";
+
+my $col="";
+
+while(my @row = $statement_handle->fetchrow_array()) {
+	# Assign some nice to read variable names for the DB fields.
+	my $connection_name = $row[0];
+	my $connection_open_time = $row[1];
+	my $connection_close_time = $row[2];
+	my $connection_bytes_recieved = $row[3];
+	my $connection_bytes_sent = $row[4];
+
+	# Colorize columns. 
+	if ($lines % 2) {
+		$col="bgcolor='$color{'color22'}'";
+	} else {
+		$col="bgcolor='$color{'color20'}'";
+	}
+
+print <<END
+	<tr>
+		<td width="40%" align="left" $col>$connection_name</td>
+		<td width="20%" align="center" $col>$connection_open_time</td>
+		<td width="20%" align="center" $col>$connection_close_time</td>
+		<td width="10%" align="center" $col>$connection_bytes_recieved</td>
+		<td width="10%" align="center" $col>$connection_bytes_sent</td>
+	</tr>
+END
+;
+
+	# Increase lines count.
+	$lines++;
+
+	}
+
+print "</table><br>\n";
+
+&Header::closebox();
+
+# Close database connection.
+$database_handle->disconnect();
+
+&Header::closebigbox();
+
+&Header::closepage();
+
+#
+## Function for easy select generation.
+#
+sub generate_select($$) {
+	my ($name, $type) = @_;
+
+	my $start = 1;
+	my $stop;
+
+	# Adjust start and stop by the given type.
+	if ($type eq "days") {
+		$stop = 31;
+	} elsif ($type eq "months") {
+		$stop = 12;
+	} elsif ($type = "years") {
+		$stop = $year;
+		$start = $stop - 10;
+	}
+
+	# Print select HTML tag.
+	print "<select name='$name' size='1'>\n";
+
+	# Loop through the range.
+	for ( my $i = $start; $i <= $stop; $i++) {
+                print "\t<option ";
+
+		# Check and select the current processed item.
+                if ($i == $cgiparams{$name}) {
+                	print 'selected="selected" ';
+		}
+
+		# Check if months are processed and display the corresponding names.
+		if ($type eq "months") {
+			print "value='$i'>$monthhash{$i}</option>\n";
+		} else {
+			print "value='$i'>$i</option>\n";
+		}
+        }
+
+	# Close select HTML tag.
+        print "</select>\n\n";
+}
