@@ -3770,41 +3770,42 @@ if ($cgiparams{'TYPE'} eq 'host') {
 #CCD End
 
 	
- if ($cgiparams{'TYPE'} !~ /^(host|net)$/) {
-	    $errormessage = $Lang::tr{'connection type is invalid'};
-	    if ($cgiparams{'TYPE'} eq 'net') {
-      unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
-	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
-      }
-	    goto VPNCONF_ERROR;
+	if ($cgiparams{'TYPE'} !~ /^(host|net)$/) {
+		$errormessage = $Lang::tr{'connection type is invalid'};
+		if ($cgiparams{'TYPE'} eq 'net') {
+			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+			rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+			goto VPNCONF_ERROR;
+		}
+		goto VPNCONF_ERROR;
 	}
 
-
 	if ($cgiparams{'NAME'} !~ /^[a-zA-Z0-9]+$/) {
-	    $errormessage = $Lang::tr{'name must only contain characters'};
-      if ($cgiparams{'TYPE'} eq 'net') {
-      unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
-	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
-      }
-      goto VPNCONF_ERROR;
-  }
+		$errormessage = $Lang::tr{'name must only contain characters'};
+		if ($cgiparams{'TYPE'} eq 'net') {
+			goto VPNCONF_ERROR;
+		}
+		goto VPNCONF_ERROR;
+	}
 
 	if ($cgiparams{'NAME'} =~ /^(host|01|block|private|clear|packetdefault)$/) {
-	    $errormessage = $Lang::tr{'name is invalid'};
-	    if ($cgiparams{'TYPE'} eq 'net') {
-      unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
-	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
-      }
-	    goto VPNCONF_ERROR;
+		$errormessage = $Lang::tr{'name is invalid'};
+		if ($cgiparams{'TYPE'} eq 'net') {
+			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+			rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+			goto VPNCONF_ERROR;
+		}
+		goto VPNCONF_ERROR;
 	}
 
 	if (length($cgiparams{'NAME'}) >60) {
-	    $errormessage = $Lang::tr{'name too long'};
-	    if ($cgiparams{'TYPE'} eq 'net') {
-      unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
-	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
-      }
-	    goto VPNCONF_ERROR;
+		$errormessage = $Lang::tr{'name too long'};
+		if ($cgiparams{'TYPE'} eq 'net') {
+			unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
+			rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
+			goto VPNCONF_ERROR;
+		}
+		goto VPNCONF_ERROR;
 	}
 
 ###
