@@ -67,7 +67,7 @@ ifeq "$(ROOT)" ""
 	--enable-threads=posix \
 	--enable-__cxa_atexit \
 	--enable-clocale=gnu \
-	--enable-languages=c,c++,go \
+	--enable-languages=c,c++ \
 	--disable-bootstrap \
 	--disable-nls
   EXTRA_MAKE =
