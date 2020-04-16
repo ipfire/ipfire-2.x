@@ -95,6 +95,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Build
 	cd $(DIR_BUILD) && make build-linux
 
+	# Remove some temporary files (no idea why those are being created)
+	rm -rfv /usr/lib/go/pkg/linux_$(GOARCH)_shared
+
 	# Install
 	mkdir -pv /etc/amazon/ssm /usr/bin /var/lib/amazon/ssm
 	cd $(DIR_BUILD) && install -v -m 755 \
