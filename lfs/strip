@@ -61,4 +61,5 @@ $(TARGET) :
 	# /usr/sbin/vdr.
 	STRIP=$(STRIP) $(SHELL) $(DIR_SRC)/src/stripper $(ROOT) \
 		--exclude=/usr/src --exclude=$(TOOLS_DIR) \
-		--exclude=/usr/sbin/vdr --exclude=/usr/lib/vdr
+		--exclude=/usr/sbin/vdr --exclude=/usr/lib/vdr \
+		--exclude=/usr/lib/go
