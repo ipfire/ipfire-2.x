@@ -1106,6 +1106,7 @@ buildbase() {
 	lfsmake2 flex
 	lfsmake2 gawk
 	lfsmake2 gettext
+	lfsmake2 go
 	lfsmake2 grep
 	lfsmake2 groff
 	lfsmake2 gperf
