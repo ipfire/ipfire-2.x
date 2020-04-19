@@ -228,13 +228,13 @@ case "${1}" in
 				TYPE="pppoe"
 			fi
 			if [ "${IPTV}" == "enable" ]; then
-				PIDFILE="/var/run/dhcpcd-${DEVICE}.${IPTV_VLAN}.pid"
+				PIDFILE="/var/run/dhcpcd/${DEVICE}.${IPTV_VLAN}.pid"
 				LEASEINFO="/var/ipfire/dhcpc/dhcpcd-${DEVICE}.${IPTV_VLAN}.info"
 				# Test to see if there is a stale pid file
 				if [ -f "$PIDFILE" ]; then
 					ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
 					if [ $? != 0 ]; then
-						rm -f /var/run/dhcpcd-${DEVICE}.${IPTV_VLAN}.pid > /dev/null
+						rm -f /var/run/dhcpcd/${DEVICE}.${IPTV_VLAN}.pid > /dev/null
 					fi
 				fi
 
@@ -289,7 +289,7 @@ case "${1}" in
 						if [ -f "$PIDFILE" ]; then
 							ps `cat "$PIDFILE"` | grep dhcpcd > /dev/null
 							if [ $? != 0 ]; then
-								rm -f /var/run/dhcpcd-${DEVICE}.pid > /dev/null
+								rm -f /var/run/dhcpcd/${DEVICE}.pid > /dev/null
 							fi
 						fi
 

@@ -25,7 +25,7 @@ dhcpcd_get_pid() {
 		# network device, if a pidfile exists.
 
 		local device="$1"
-		local pidfile="/var/run/dhcpcd-${device}.pid"
+		local pidfile="/var/run/dhcpcd/${device}.pid"
 
 		# Check if a pid file exists.
 		if [ -f "${pidfile}" ] ; then
