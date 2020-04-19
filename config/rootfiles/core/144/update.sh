@@ -56,6 +56,14 @@ ldconfig
 
 # Start services
 
+# create dhcpcd user
+groupadd -g 52 dhcpcd
+useradd -c 'dhcpcd privsep user' \
+	-d /run/dhcpcd/chroot    \
+	-g dhcpcd                \
+	-s /bin/false            \
+	-u 52 dhcpcd
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 

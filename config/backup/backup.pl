@@ -79,6 +79,14 @@ restore_backup() {
 	# remove wrong vnstat tag file
 	rm -f /var/log/vnstat/tag
 
+	# create dhcpcd user
+	groupadd -g 52 dhcpcd
+	useradd -c 'dhcpcd privsep user'	\
+		-d /run/dhcpcd/chroot		\
+		-g dhcpcd			\
+		-s /bin/false			\
+		-u 52 dhcpcd
+
 	# Run converters
 
 	# Outgoing Firewall
