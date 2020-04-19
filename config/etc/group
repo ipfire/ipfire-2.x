@@ -20,6 +20,7 @@ dip:x:40:
 ftp:x:45:
 rsyncd:x:48:
 stunnel:x:51:
+dhcpcd:x:52:
 lock:x:54:
 sshd:x:74:
 pcap:x:77:
