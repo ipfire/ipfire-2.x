@@ -43,8 +43,10 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
-
 # Remove files
+rm -rf /usr/bin/go
+rm -rf /usr/lib/go
+rm -rf /usr/lib/libgo.*
 
 # Stop services
 
