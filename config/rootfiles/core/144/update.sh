@@ -55,6 +55,7 @@ extract_files
 ldconfig
 
 # Start services
+/etc/init.d/apache restart
 
 # create dhcpcd user
 groupadd -g 52 dhcpcd
