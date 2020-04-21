@@ -58,6 +58,7 @@ ldconfig
 
 # Start services
 /etc/init.d/apache restart
+/etc/init.d/squid restart
 
 # create dhcpcd user
 groupadd -g 52 dhcpcd
