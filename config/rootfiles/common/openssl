@@ -3570,6 +3570,7 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/X509_check_ip_asc.html
 #usr/share/doc/openssl/html/man3/X509_check_issued.html
 #usr/share/doc/openssl/html/man3/X509_check_private_key.html
+#usr/share/doc/openssl/html/man3/X509_check_purpose.html
 #usr/share/doc/openssl/html/man3/X509_cmp.html
 #usr/share/doc/openssl/html/man3/X509_cmp_current_time.html
 #usr/share/doc/openssl/html/man3/X509_cmp_time.html
@@ -7534,6 +7535,7 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/X509_check_ip_asc.3
 #usr/share/man/man3/X509_check_issued.3
 #usr/share/man/man3/X509_check_private_key.3
+#usr/share/man/man3/X509_check_purpose.3
 #usr/share/man/man3/X509_cmp.3
 #usr/share/man/man3/X509_cmp_current_time.3
 #usr/share/man/man3/X509_cmp_time.3
