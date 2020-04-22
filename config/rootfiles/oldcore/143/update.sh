@@ -61,7 +61,9 @@ extract_files
 ldconfig
 
 # remove wrong vnstat tag file
+/etc/init.d/vnstat stop
 rm -f /var/log/vnstat/tag
+/etc/init.d/vnstat start
 
 # set /var/spool/cron to cron user
 chown cron:cron /var/spool/cron
