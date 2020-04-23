@@ -904,14 +904,6 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
-< email tls explicit
-< email tls implicit
-< ipsec routing table entries
-< pakfire invalid tree
-< pakfire tree
-< pakfire tree stable
-< pakfire tree testing
-< pakfire tree unstable
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
