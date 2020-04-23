@@ -360,7 +360,6 @@ WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
 WARNING: translation string unused: ike lifetime
-WARNING: translation string unused: ike lifetime should be between 1 and 24 hours
 WARNING: translation string unused: import
 WARNING: translation string unused: importkey
 WARNING: translation string unused: in
@@ -882,7 +881,9 @@ WARNING: untranslated string: email mailsender = Mail Sender
 WARNING: untranslated string: email mailuser = Username
 WARNING: untranslated string: email settings = Mail Service
 WARNING: untranslated string: email testmail = Send test mail
-WARNING: untranslated string: email tls = Use TLS
+WARNING: untranslated string: email tls = TLS mode
+WARNING: untranslated string: email tls explicit = explicit (STARTTLS)
+WARNING: untranslated string: email tls implicit = implicit (TLS)
 WARNING: untranslated string: email usemail = Activate Mail Service
 WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
 WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
@@ -971,7 +972,6 @@ WARNING: untranslated string: ids ruleset autoupdate in progress = Ruleset updat
 WARNING: untranslated string: ids ruleset settings = Ruleset Settings
 WARNING: untranslated string: ids show = Show
 WARNING: untranslated string: ids working = Changes are being applied. Please wait until all operations have completed successfully...
-WARNING: untranslated string: ike lifetime should be between 1 and 8 hours = unknown string
 WARNING: untranslated string: imei = IMEI
 WARNING: untranslated string: imsi = IMSI
 WARNING: untranslated string: incoming compression in bytes per second = Incoming Compression
@@ -993,6 +993,7 @@ WARNING: untranslated string: ipsec interface mode none = - None (Default) -
 WARNING: untranslated string: ipsec interface mode vti = VTI
 WARNING: untranslated string: ipsec mode transport = Transport
 WARNING: untranslated string: ipsec mode tunnel = Tunnel
+WARNING: untranslated string: ipsec routing table entries = IPsec Routing Table Entries
 WARNING: untranslated string: ipsec settings = IPsec Settings
 WARNING: untranslated string: itlb multihit = iTLB MultiHit
 WARNING: untranslated string: local ip address = Local IP Address

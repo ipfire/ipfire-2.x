@@ -388,7 +388,6 @@ WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
 WARNING: translation string unused: ike lifetime
-WARNING: translation string unused: ike lifetime should be between 1 and 24 hours
 WARNING: translation string unused: import
 WARNING: translation string unused: importkey
 WARNING: translation string unused: in
@@ -814,6 +813,8 @@ WARNING: untranslated string: Captive clients = unknown string
 WARNING: untranslated string: Scan for Songs = unknown string
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: dns = unknown string
+WARNING: untranslated string: email tls explicit = explicit (STARTTLS)
+WARNING: untranslated string: email tls implicit = implicit (TLS)
 WARNING: untranslated string: fwhost cust geoipgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
@@ -845,8 +846,8 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: ike lifetime should be between 1 and 8 hours = unknown string
 WARNING: untranslated string: info messages = unknown string
+WARNING: untranslated string: ipsec routing table entries = IPsec Routing Table Entries
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: pakfire invalid tree = Invalid repository selected

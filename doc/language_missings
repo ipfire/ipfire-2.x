@@ -273,6 +273,8 @@
 < email testmail
 < email text
 < email tls
+< email tls explicit
+< email tls implicit
 < email usemail
 < emerging pro rules
 < emerging rules
@@ -562,6 +564,7 @@
 < ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec routing table entries
 < ipsec settings
 < itlb multihit
 < last
@@ -901,6 +904,9 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< email tls explicit
+< email tls implicit
+< ipsec routing table entries
 < pakfire invalid tree
 < pakfire tree
 < pakfire tree stable
@@ -1034,6 +1040,8 @@
 < email testmail
 < email text
 < email tls
+< email tls explicit
+< email tls implicit
 < email usemail
 < emerging pro rules
 < enable smt
@@ -1112,6 +1120,7 @@
 < ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec routing table entries
 < ipsec settings
 < itlb multihit
 < local ip address
@@ -1391,6 +1400,8 @@
 < email testmail
 < email text
 < email tls
+< email tls explicit
+< email tls implicit
 < email usemail
 < emerging pro rules
 < enable smt
@@ -1473,6 +1484,7 @@
 < ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec routing table entries
 < ipsec settings
 < itlb multihit
 < local ip address
@@ -1866,6 +1878,8 @@
 < email testmail
 < email text
 < email tls
+< email tls explicit
+< email tls implicit
 < email usemail
 < emerging pro rules
 < emerging rules
@@ -2157,6 +2171,7 @@
 < ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec routing table entries
 < ipsec settings
 < itlb multihit
 < last
@@ -2706,6 +2721,8 @@
 < email testmail
 < email text
 < email tls
+< email tls explicit
+< email tls implicit
 < email usemail
 < emerging pro rules
 < emerging rules
@@ -3000,6 +3017,7 @@
 < ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec routing table entries
 < ipsec settings
 < itlb multihit
 < last
@@ -3357,6 +3375,8 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< email tls explicit
+< email tls implicit
 < emerging pro rules
 < enable smt
 < error
@@ -3397,6 +3417,7 @@
 < ipsec interface mode vti
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec routing table entries
 < ipsec settings
 < itlb multihit
 < local ip address
