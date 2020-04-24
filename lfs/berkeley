@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.4.20
+VER        = 5.3.28
 
 THISAPP    = db-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d84dff288a19186b136b0daf7067ade3
+$(DL_FILE)_MD5 = b99454564d5b4479750567031d66fe24
 
 install : $(TARGET)
 
@@ -70,12 +70,22 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/db-4.4.20-fixes-1.patch
-	cd $(DIR_APP)/build_unix && ../dist/configure --prefix=/usr --enable-compat185 --enable-cxx
+	cd $(DIR_APP) && sed -i "s/\(__atomic_compare_exchange\)/\1_db/" src/dbinc/atomic.h
+	cd $(DIR_APP)/build_unix && ../dist/configure \
+		--prefix=/usr \
+		--enable-compat185 \
+		--enable-dbm \
+		--enable-cxx \
+		--disable-static
 	cd $(DIR_APP)/build_unix && make $(MAKETUNING)
 	cd $(DIR_APP)/build_unix && make docdir=/usr/share/doc/$(THISAPP) install
-	chown -v root:root /usr/bin/db_* /usr/lib/libdb* /usr/include/db*
-	chown -Rv root:root /usr/share/doc/$(THISAPP)
+
+	# Fix file permissions
+	chown -vR root:root \
+		/usr/bin/db_* \
+		/usr/include/db{,_185,_cxx}.h \
+		/usr/lib/libdb*.{so,la} \
+		/usr/share/doc/$(THISAPP)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
