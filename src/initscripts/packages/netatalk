@@ -1,0 +1,41 @@
+#!/bin/sh
+########################################################################
+# Begin $rc_base/init.d/netatalk
+########################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+case "${1}" in
+	start)
+		boot_mesg "Starting Netatalk AFP File Server..."
+		loadproc /usr/sbin/netatalk
+		;;
+
+	stop)
+		boot_mesg "Stopping Netatalk AFP File Server..."
+		killproc /usr/sbin/netatalk
+		;;
+
+	reload)
+		boot_mesg "Reloading Netatalk AFP File Server..."
+		reloadproc /usr/sbin/netatalk
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		statusproc /usr/sbin/netatalk
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
+
+# End $rc_base/init.d/netatalk

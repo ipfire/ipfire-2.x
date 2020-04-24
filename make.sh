@@ -1408,6 +1408,7 @@ buildipfire() {
   lfsmake2 cifs-utils
   lfsmake2 krb5
   lfsmake2 samba
+  lfsmake2 netatalk
   lfsmake2 sudo
   lfsmake2 mc
   lfsmake2 wget
