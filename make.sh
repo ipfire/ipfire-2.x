@@ -1084,6 +1084,7 @@ buildbase() {
 	lfsmake2 autoconf
 	lfsmake2 automake
 	lfsmake2 berkeley
+	lfsmake2 berkeley-compat
 	lfsmake2 coreutils
 	lfsmake2 iana-etc
 	lfsmake2 m4
