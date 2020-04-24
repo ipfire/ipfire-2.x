@@ -24,17 +24,13 @@
 
 include Config
 
-VER        = 2.3.20
+VER        = 2.4.49
 
 THISAPP    = openldap-$(VER)
 DL_FILE    = $(THISAPP).tgz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = openldap
-PAK_VER    = 3
-
-DEPS       =
 
 export CPPFLAGS = -D_GNU_SOURCE
 
@@ -46,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 49d2c5b9378a7b57e1fb03948acb8e32
+$(DL_FILE)_MD5 = 2a47a6bb4319357ea7b032c45283e79e
 
 install : $(TARGET)
 
@@ -55,9 +51,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
-
-dist :
-	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -79,25 +72,17 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/openldap-gcc44-fixes.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openldap-2.4.49-consolidated-1.patch
+	cd $(DIR_APP) && autoconf
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
-		--libexecdir=/usr/lib \
 		--sysconfdir=/etc \
-		--localstatedir=/srv/ldap \
-		--with-threads=posix \
-		--disable-perl \
 		--enable-dynamic \
-		--enable-crypt \
-		--enable-modules \
-		--enable-rlookups \
-		--enable-backends=mod \
-		--enable-overlays=mod \
-		--enable-sql=no \
-		--enable-ndb=no \
-		--disable-static
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+		--disable-perl \
+		--disable-static \
+		--disable-slapd
+	cd $(DIR_APP) && make depend
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
