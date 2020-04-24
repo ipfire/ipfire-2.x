@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.27
+VER        = 0.63
 
 THISAPP    = BerkeleyDB-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 43aa72c0c6941af0d656d749ad543e96
+$(DL_FILE)_MD5 = ee2c070f007093c8e0e27af79bf426de
 
 install : $(TARGET)
 

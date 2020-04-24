@@ -7,7 +7,7 @@ usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/BerkeleyDB/Hash.pm
 #usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto
 #usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/BerkeleyDB
 #usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/BerkeleyDB/.packlist
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/BerkeleyDB/BerkeleyDB.bs
 usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/BerkeleyDB/BerkeleyDB.so
-usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/BerkeleyDB/autosplit.ix
+usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/mkconsts.pl
+usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/scan.pl
 #usr/share/man/man3/BerkeleyDB.3
