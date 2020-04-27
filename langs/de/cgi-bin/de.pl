@@ -902,7 +902,7 @@
 'drop action2' => 'Standardverhalten der (Input) Firewall',
 'drop forward' => 'Verworfene, von der Firewall weitergeleitete Pakete protokollieren',
 'drop input' => 'Verworfene eingehende Pakete protokollieren',
-'drop newnotsyn' => 'Verworfene neue Pakete ohne SYN-Markierung protokollieren',
+'drop newnotsyn' => 'Verworfene neue Pakete ohne SYN-Markierung protokollieren (NewNotSYN)',
 'drop outgoing' => 'Verworfene, von der Firewall ausgehende Pakete protokollieren',
 'drop portscan' => 'Verworfene Portscan Pakete protokollieren',
 'drop proxy' => 'Alle Pakete verwerfen, die nicht direkt an den Proxy gerichtet sind',
