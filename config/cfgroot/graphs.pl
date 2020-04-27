@@ -698,7 +698,7 @@ sub updatefwhitsgraph {
 		"GPRINT:input:AVERAGE:%8.1lf %sBps",
 		"GPRINT:input:MIN:%8.1lf %sBps",
 		"GPRINT:input:LAST:%8.1lf %sBps\\j",
-		"STACK:newnotsyn".$color{"color14"}."A0:".sprintf("%-25s","NewNotSyn"),
+		"STACK:newnotsyn".$color{"color14"}."A0:".sprintf("%-25s","NewNotSYN"),
 		"GPRINT:newnotsyn:MAX:%8.1lf %sBps",
 		"GPRINT:newnotsyn:MIN:%8.1lf %sBps",
 		"GPRINT:newnotsyn:AVERAGE:%8.1lf %sBps",
