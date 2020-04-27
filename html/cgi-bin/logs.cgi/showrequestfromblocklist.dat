@@ -1,0 +1,415 @@
+#!/usr/bin/perl
+# SmoothWall CGIs
+#
+# This code is distributed under the terms of the GPL
+#
+# JC HERITIER
+# page inspired from the initial firewalllog.dat
+#
+# Modified for IPFire by Christian Schmidt (www.ipfire.org)
+
+# enable only the following on debugging purpose
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
+
+require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/lang.pl";
+require "${General::swroot}/header.pl";
+
+use POSIX();
+
+#workaround to suppress a warning when a variable is used only once
+my @dummy = ( ${Header::table2colour} );
+undef (@dummy);
+
+my %cgiparams=();
+my %logsettings=();
+my $errormessage = '';
+
+my @shortmonths = ( 'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug',
+	'Sep', 'Oct', 'Nov', 'Dec' );
+my @longmonths = ( $Lang::tr{'january'}, $Lang::tr{'february'}, $Lang::tr{'march'},
+	$Lang::tr{'april'}, $Lang::tr{'may'}, $Lang::tr{'june'}, $Lang::tr{'july'}, $Lang::tr{'august'},
+	$Lang::tr{'september'}, $Lang::tr{'october'}, $Lang::tr{'november'},
+	$Lang::tr{'december'} );
+
+my @now = localtime();
+my $dow = $now[6];
+my $doy = $now[7];
+my $tdoy = $now[7];
+my $year = $now[5]+1900;
+
+$cgiparams{'DAY'} = $now[3];
+$cgiparams{'MONTH'} = $now[4];
+$cgiparams{'ACTION'} = '';
+
+&Header::getcgihash(\%cgiparams);
+
+$logsettings{'LOGVIEW_REVERSE'} = 'off';
+&General::readhash("${General::swroot}/logging/settings", \%logsettings);
+
+my $start = -1;
+my @blocklists;
+if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} ne $Lang::tr{'update'})
+{
+	my @temp = split(',',$ENV{'QUERY_STRING'}, 5);
+	$start = shift @temp;
+	$cgiparams{'MONTH'} = shift @temp;
+	$cgiparams{'DAY'} = shift @temp;
+	$cgiparams{'blocklist'} = shift @temp;
+	$cgiparams{'blocklists'} = shift @temp;
+}
+
+if (!($cgiparams{'MONTH'} =~ /^(0|1|2|3|4|5|6|7|8|9|10|11)$/) ||
+	!($cgiparams{'DAY'} =~ /^(1|2|3|4|5|6|7|8|9|10|11|12|13|14|15|16|17|18|19|20|21|22|23|24|25|26|27|28|29|30|31)$/))
+{
+	$cgiparams{'DAY'} = $now[3];
+	$cgiparams{'MONTH'} = $now[4];
+}
+elsif($cgiparams{'ACTION'} eq '>>')
+{
+	my @temp_then=();
+	my @temp_now = localtime(time);
+	$temp_now[4] = $cgiparams{'MONTH'};
+	$temp_now[3] = $cgiparams{'DAY'};
+	@temp_then = localtime(POSIX::mktime(@temp_now) + 86400);
+	   ## Retrieve the same time on the next day -
+	   ## 86400 seconds in a day
+	$cgiparams{'MONTH'} = $temp_then[4];
+	$cgiparams{'DAY'} = $temp_then[3];
+}
+elsif($cgiparams{'ACTION'} eq '<<')
+{
+	my @temp_then=();
+	my @temp_now = localtime(time);
+	$temp_now[4] = $cgiparams{'MONTH'};
+	$temp_now[3] = $cgiparams{'DAY'};
+	@temp_then = localtime(POSIX::mktime(@temp_now) - 86400);
+	   ## Retrieve the same time on the previous day -
+	   ## 86400 seconds in a day
+	$cgiparams{'MONTH'} = $temp_then[4];
+	$cgiparams{'DAY'} = $temp_then[3];
+}
+
+if (($cgiparams{'DAY'} ne $now[3]) || ($cgiparams{'MONTH'} ne $now[4]))
+{
+	my @then = ();
+	if ( (  $cgiparams{'MONTH'} eq $now[4]) && ($cgiparams{'DAY'} > $now[3]) ||
+			( $cgiparams{'MONTH'} > $now[4] ) ) {
+		@then = localtime(POSIX::mktime( 0, 0, 0, $cgiparams{'DAY'}, $cgiparams{'MONTH'}, $year - 1901 ));
+	} else {
+		@then = localtime(POSIX::mktime( 0, 0, 0, $cgiparams{'DAY'}, $cgiparams{'MONTH'}, $year - 1900 ));
+	}
+	$tdoy = $then[7];
+	my $lastleap=($year-1)%4;
+	if ($tdoy>$doy) {
+		if ($lastleap == 0 && $tdoy < 60) {
+			$doy=$tdoy+366;
+		} else {
+			$doy=$doy+365;
+		}
+	}
+}
+
+if ($cgiparams{'blocklists'})
+{
+  @blocklists = split ',', $cgiparams{'blocklists'};
+}
+
+my $datediff=0;
+my $dowd=0;
+my $multifile=0;
+if ($tdoy ne $doy) {
+	$datediff=int(($doy-$tdoy)/7);
+	$dowd=($doy-$tdoy)%7;
+	if (($dow-$dowd)<1) {
+		$datediff=$datediff+1;
+	}
+	if (($dow-$dowd)==0) {
+		$multifile=1;
+	}
+}
+
+my $monthstr = $shortmonths[$cgiparams{'MONTH'}];
+my $longmonthstr = $longmonths[$cgiparams{'MONTH'}];
+my $day = $cgiparams{'DAY'};
+my $daystr='';
+if ($day <= 9) {
+	$daystr = " $day"; }
+else {
+	$daystr = $day;
+}
+
+my $skip=0;
+my $filestr='';
+if ($datediff==0) {
+	$filestr="/var/log/messages";
+} else {
+	$filestr="/var/log/messages.$datediff";
+	$filestr = "$filestr.gz" if -f "$filestr.gz";
+}
+
+if (!(open (FILE,($filestr =~ /.gz$/ ? "gzip -dc $filestr |" : $filestr)))) {
+	$errormessage = "$Lang::tr{'date not in logs'}: $filestr $Lang::tr{'could not be opened'}";
+	$skip=1;
+	# Note: This is in case the log does not exist for that date
+}
+my $lines = 0;
+my @log=();
+my $blaoklist = $cgiparams{blocklist};
+
+if (!$skip)
+{
+	while (<FILE>) {
+		if (/^${monthstr} ${daystr} ..:..:.. [\w\-]+ kernel:.*BLKLST_(\w+)IN=.*/) {
+			if($1 eq $blocklist){
+				$log[$lines] = $_;
+				$lines++;
+			}
+		}
+	}
+	close (FILE);
+}
+
+$skip=0;
+if ($multifile) {
+	$datediff=$datediff-1;
+	if ($datediff==0) {
+		$filestr="/var/log/messages";
+	} else {
+		$filestr="/var/log/messages.$datediff";
+		$filestr = "$filestr.gz" if -f "$filestr.gz";
+	}
+	if (!(open (FILE,($filestr =~ /.gz$/ ? "gzip -dc $filestr |" : $filestr)))) {
+		$errormessage="$Lang::tr{'date not in logs'}: $filestr $Lang::tr{'could not be opened'}";
+		$skip=1;
+	}
+	if (!$skip) {
+		while (<FILE>) {
+			if (/^${monthstr} ${daystr} ..:..:.. [\w\-]+ kernel:.*BLKLST_(\w+)IN=.*/) {
+				if($1 eq $blocklist){
+					$log[$lines] = $_;
+					$lines++;
+				}
+			 }
+		}
+		close (FILE);
+	}
+}
+
+&Header::showhttpheaders();
+&Header::openpage($Lang::tr{'ipblocklist log list'}, 1, '');
+&Header::openbigbox('100%', 'left', '', $errormessage);
+
+if ($errormessage) {
+	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
+	print "<font class='base'>$errormessage&nbsp;</font>\n";
+	&Header::closebox();
+}
+
+&Header::openbox('100%', 'left', "$Lang::tr{'settings'}:");
+
+print <<END
+<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+<input type='hidden' name='blocklists' value='$cgiparams{blocklists}'>
+<table width='100%'>
+<tr>
+	<td width='10%' class='base'>$Lang::tr{'month'}:&nbsp;</td>
+	<td width='10%'>
+	<select name='MONTH'>
+END
+;
+my $month;
+for ($month = 0; $month < 12; $month++)
+{
+	print "\t<option ";
+	if ($month == $cgiparams{'MONTH'}) {
+		print "selected='selected' "; }
+	print "value='$month'>$longmonths[$month]</option>\n";
+}
+print <<END
+	</select>
+	</td>
+	<td width='10%' class='base' align='right'>&nbsp;$Lang::tr{'day'}:&nbsp;</td>
+	<td width='40%'>
+	<select name='DAY'>
+END
+;
+for ($day = 1; $day <= 31; $day++)
+{
+	print "\t<option ";
+	if ($day == $cgiparams{'DAY'}) {
+		print "selected='selected' "; }
+	print "value='$day'>$day</option>\n";
+}
+print <<END
+</select>
+</td>
+<td width='5%'  align='center'><input type='submit' name='ACTION' title='$Lang::tr{'day before'}' value='&lt;&lt;' /></td>
+<td width='5%'  align='center'><input type='submit' name='ACTION' title='$Lang::tr{'day after'}' value='&gt;&gt;' /></td>
+<td width='10%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'update'}' /></td>
+<tr><td width='15%'>$Lang::tr{'ipblocklist id'}</td><td><select name='blocklist'>
+END
+;
+
+foreach my $option (@blocklists)
+{
+	my $selected = $option eq $cgiparams{blocklist} ? ' selected' : '';
+	print "<option value='$option'$selected>$option</option>";
+}
+
+print <<END
+</select></td></tr>
+</tr>
+</table>
+</form>
+END
+;
+
+&Header::closebox();
+
+&Header::openbox('100%', 'left', $Lang::tr{'ipblocklist log list'});
+print "<p><b>$Lang::tr{'firewall hits'} $longmonthstr $daystr: $lines</b></p>";
+
+if ($start == -1) {
+	$start = $lines - ${Header::viewsize};
+}
+if ($start >= $lines - ${Header::viewsize}) { $start = $lines - ${Header::viewsize}; };
+if ($start < 0) { $start = 0; }
+
+my $prev = $start - ${Header::viewsize};
+my $next = $start + ${Header::viewsize};
+
+if ($prev < 0) { $prev = 0; }
+if ($next >= $lines) { $next = -1 }
+if ($start == 0) { $prev = -1; }
+
+if ($lines != 0) { &oldernewer(); }
+
+print <<END
+<table width='100%'>
+<tr>
+<td width='12%' align='center' class='boldbase'><b>$Lang::tr{'time'}</b></td>
+<td width='6%' align='center' class='boldbase'><b>$Lang::tr{'iface'}</b></td>
+<td width='6%' align='center' class='boldbase'><b>$Lang::tr{'proto'}</b></td>
+<td width='18%' align='center' class='boldbase'><b>$Lang::tr{'source'}</b></td>
+<td width='15%' align='center' class='boldbase'><b>$Lang::tr{'src port'}</b></td>
+<td width='18%' align='center' class='boldbase'><b>$Lang::tr{'destination'}</b></td>
+<td width='15%' align='center' class='boldbase'><b>$Lang::tr{'dst port'}</b></td>
+</tr>
+END
+;
+
+my @slice = splice(@log, $start, ${Header::viewsize});
+
+if ($logsettings{'LOGVIEW_REVERSE'} eq 'on') { @slice = reverse @slice; }
+
+$lines = 0;
+foreach $_ (@slice) {
+	$a = $_;
+	# Check whether valid ipv4 or ipv6 address
+	if (($_ =~ /BLKLST_(\w+)IN=/)) {
+		if($1 eq $blocklist) {
+
+			my $in = '-'; my $out = '-';
+			my $srcaddr = ''; my $dstaddr = '';
+			my $protostr = '';
+			my $srcport = ''; my $dstport = '';
+
+			# If ipv6 uses bridge, the use PHYSIN, otherwise use IN
+			if    ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:.*(IN=.*)(PHYSIN=.*)$/) {}
+			elsif ($_ =~ /(^.* ..:..:..) [\w\-]+ kernel:.*(IN=.*)$/) {}
+			my $timestamp = $1; my $packet = $2;
+			$timestamp =~ /(...) (..) (..:..:..)/;
+			my $month = $1; my $day = $2; my $time = $3;
+
+			# If ipv6 uses bridge, the use PHYSIN and PHYSOUT, otherwise use IN and OUT
+			if ($a =~ /PHYSIN=(\w+)/)  { $iface = $1; } elsif ($a =~ /IN=(\w+)/)  { $iface = $1; }
+			if ($a =~ /PHYSOUT=(\w+)/) { $out = $1; }   elsif ($a =~ /OUT=(\w+)/) { $out = $1; }
+			# Detect ipv4 and ipv6 addresses
+			if (($a =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($a =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) { $srcaddr = $1; }
+			if (($a =~ /DST\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($a =~ /DST\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) { $dstaddr = $1; }
+			if ($a =~ /PROTO\=(\w+)/) { $protostr = $1; }
+			my $protostrlc = lc($protostr);
+			if ($a =~  /SPT\=([\d\.]+)/){ $srcport = $1; }
+			if ($a =~  /DPT\=([\d\.]+)/){ $dstport = $1; }
+
+			if ($lines % 2) {
+				print "<tr bgcolor='${Header::table1colour}'>\n";
+			}
+			else {
+				print "<tr bgcolor='${Header::table2colour}'>\n";
+			}
+			print <<END
+			<td align='center'>$time</td>
+			<td align='center'>$iface</td>
+			<td align='center'>$protostr</td>
+			<td align='center'>
+			<table width='100%' cellpadding='0' cellspacing='0'><tr>
+			<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$srcaddr'>$srcaddr</a></td>
+			</tr></table>
+			</td>
+			<td align='center'>$srcport</td>
+			<td align='center'>
+			<table width='100%' cellpadding='0' cellspacing='0'><tr>
+			<td align='center'><a href='/cgi-bin/ipinfo.cgi?ip=$dstaddr'>$dstaddr</a></td>
+			</tr></table>
+			</td>
+			<td align='center'>$dstport</td>
+			</tr>
+END
+			;
+			$lines++;
+		}
+	}
+}
+
+print <<END
+</table>
+END
+;
+
+&oldernewer();
+
+	print"<table width='100%'><tr><td align='center'><a href='/cgi-bin/logs.cgi/ipblocklists.dat'><img src='/images/back.png' alt='$Lang::tr{'back'}' title='$Lang::tr{'back'}' /></a></td></tr></table>";
+
+&Header::closebox();
+
+&Header::closebigbox();
+
+&Header::closepage();
+
+sub oldernewer
+{
+	print <<END
+	<table width='100%'>
+	<tr>
+END
+	;
+
+	my $blocklists = join ',', @blocklists;
+
+	print "<td align='center' width='50%'>";
+	if ($prev != -1) {
+		print "<a href='/cgi-bin/logs.cgi/showrequestfromblocklist.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{blocklist},$blocklists'>$Lang::tr{'older'}</a>";
+	}
+	else {
+		print "$Lang::tr{'older'}";
+	}
+	print "</td>\n";
+
+	print "<td align='center' width='50%'>";
+	if ($next != -1) {
+		print "<a href='/cgi-bin/logs.cgi/showrequestfromblocklist.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{blocklist},$blocklists'>$Lang::tr{'newer'}</a>";
+	}
+	else {
+		print "$Lang::tr{'newer'}";
+	}
+	print "</td>\n";
+
+	print <<END
+	</tr>
+	</table>
+END
+	;
+}
