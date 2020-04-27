@@ -225,7 +225,7 @@ sub updatecpugraph {
 			,"GPRINT:stealpct:MIN:%3.2lf%%"
 			,"GPRINT:stealpct:LAST:%3.2lf%%\\j"
 			,"STACK:userpct".$color{"color11"}."A0:".sprintf("%-25s",$Lang::tr{'cpu user usage'})
-			,"GPRINT:userpct:MAX:%3.2lf%%"
+			,"GPRINT:userpct:MAX:%3.1lf%%"
 			,"GPRINT:userpct:AVERAGE:%3.2lf%%"
 			,"GPRINT:userpct:MIN:%3.2lf%%"
 			,"GPRINT:userpct:LAST:%3.2lf%%\\j"
