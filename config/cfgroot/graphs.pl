@@ -256,7 +256,7 @@ sub updateloadgraph {
 		"-1".$period,
 		"-l 0",
 		"-r",
-		"-t Load Average ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
+		"-t ".$Lang::tr{'uptime load average'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v ".$Lang::tr{'processes'},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},

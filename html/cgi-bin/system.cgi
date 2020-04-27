@@ -66,7 +66,7 @@ if ( $querry[0] =~ "cpufreq"){
 		&Header::closebox();
 	}
 
-	&Header::openbox('100%', 'center', "Load $Lang::tr{'graph'}");
+	&Header::openbox('100%', 'center', "$Lang::tr{'uptime load average'} $Lang::tr{'graph'}");
 	&Graphs::makegraphbox("system.cgi","load","day");
 	&Header::closebox();
 
