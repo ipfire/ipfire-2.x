@@ -81,7 +81,7 @@ write_hosts_conf() {
 			# Skip empty domainnames
 			[ "${domainname}" = "" ] && continue
 
-			echo "local-zone: ${domainname} typetransparent"
+			echo "local-zone: ${domainname} transparent"
 		done < /var/ipfire/main/hosts | sort -u
 
 		# Add all hosts
