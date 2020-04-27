@@ -923,7 +923,7 @@
 'drop action2' => 'Default behaviour of (input) firewall',
 'drop forward' => 'Log dropped forward packets',
 'drop input' => 'Log dropped input packets',
-'drop newnotsyn' => 'Log dropped new not syn packets',
+'drop newnotsyn' => 'Log dropped new not SYN packets',
 'drop outgoing' => 'Log dropped outgoing packets',
 'drop portscan' => 'Log dropped portscan packets',
 'drop proxy' => 'Drop all packets not addressed to proxy',
