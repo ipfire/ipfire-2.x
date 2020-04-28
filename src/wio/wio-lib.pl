@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2017-2018 Stephan Feddersen <sfeddersen@ipfire.org>           #
+# Copyright (C) 2017-2020 Stephan Feddersen <sfeddersen@ipfire.org>           #
 # All Rights Reserved.                                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
@@ -21,7 +21,7 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2017/07/11 21:32:23
+# Version: 2020/26/04 19:35:23
 #
 # This wio-lib.pl is based on the Code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
@@ -47,10 +47,8 @@ require '/var/ipfire/lang.pl';
 
 my $mailfile = "${General::swroot}/dma/mail.conf";
 my %mail = ();
-&General::readhash($mailfile, \%mail);
 
-my $redactive = "/var/ipfire/red/active";
-my $msg = '';
+&General::readhash($mailfile, \%mail);
 
 ############################################################################################################################
 
@@ -59,7 +57,7 @@ sub getdyndnsip {
 	my $host = $_[1];
 	my @fetchip = ();
 
-	if ( -e $redactive ) {
+	if ( -e "/var/ipfire/red/active" ) {
 		@fetchip = gethostbyname($host);
 
 		if ( defined($fetchip[0]) ) {
@@ -75,17 +73,37 @@ sub getdyndnsip {
 ############################################################################################################################
 
 sub contime {
-	my $str = $_[0];
+	chomp(my $str = $_[0]);
+	chomp(my $vpn = $_[1]);
+
 	my %m = ();
 	@m{qw/Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec/} = (0 .. 11);
 
-	if ( $str =~ /^\w{3}\ ([a-zA-Z]+)\ (\d{1,2})\ (\d{2})\:(\d{2})\:(\d{2}) (\d{4})$/ ||
-		 $str =~ /^\w{3}\ ([a-zA-Z]+)\  (\d{1})\ (\d{2})\:(\d{2})\:(\d{2}) (\d{4})$/ ) 
-	{
-		my $past = timelocal($5, $4, $3, $2, $m{$1}, $6);
-		my $now  = time;
+	my $totalsecs = '';
 
-		my $totalsecs = $now - $past;
+	if ( $vpn eq 'ipsec' ) {
+		my @temp = split (/ /, $str);
+
+		if ( $temp[1] eq 'seconds' ) {
+			$totalsecs = $temp[0];
+		}
+
+		if ( $temp[1] eq 'minutes' ) {
+			$totalsecs = $temp[0] * 60;
+		}
+	}
+
+	if ( $vpn eq 'ovpn' ) {
+		if ( $str =~ /^\w{3}\ ([a-zA-Z]+)\ (\d{1,2})\ (\d{2})\:(\d{2})\:(\d{2}) (\d{4})$/ ||
+			 $str =~ /^\w{3}\ ([a-zA-Z]+)\  (\d{1})\ (\d{2})\:(\d{2})\:(\d{2}) (\d{4})$/ )
+		{
+			my $past = timelocal($5, $4, $3, $2, $m{$1}, $6);
+			my $now  = time;
+			$totalsecs = $now - $past;
+		}
+	}
+
+	if ( $totalsecs ne '' )  {
 		my $days = int($totalsecs / 86400);
 		my $totalhours = int($totalsecs / 3600);
 		my $hours = $totalhours % 24;
@@ -126,6 +144,8 @@ sub statustime {
 ############################################################################################################################
 
 sub mailsender {
+	my $msg = '';
+
 	$msg = MIME::Lite->new(
 		From	=> $mail{'SENDER'},
 		To		=> $mail{'RECIPIENT'},
