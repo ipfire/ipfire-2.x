@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.0.2
+VER        = 5.0.3
 
 THISAPP    = suricata-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 28470c05f0f1d3eae2a0c7312c3eabc3
+$(DL_FILE)_MD5 = d302ae41735551e2e1198e965d452664
 
 install : $(TARGET)
 
