@@ -511,7 +511,7 @@ sub buildrules {
 					push(@options, @destination_options);
 
 					# Insert firewall rule.
-					if ($LOG && !$NAT) {
+					if ($LOG) {
 						run("$IPTABLES -A $chain @options @source_intf_options @destination_intf_options @log_limit_options -j LOG --log-prefix '$chain '");
 					}
 					run("$IPTABLES -A $chain @options @source_intf_options @destination_intf_options -j $target");
@@ -522,7 +522,7 @@ sub buildrules {
 						# is granted/forbidden for any network that the firewall itself is part of, we grant/forbid access
 						# for the firewall, too.
 						if ($firewall_is_in_destination_subnet && ($target ~~ @special_input_targets)) {
-							if ($LOG && !$NAT) {
+							if ($LOG) {
 								run("$IPTABLES -A $CHAIN_INPUT @options @source_intf_options @log_limit_options -j LOG --log-prefix '$CHAIN_INPUT '");
 							}
 							run("$IPTABLES -A $CHAIN_INPUT @options @source_intf_options -j $target");
@@ -530,7 +530,7 @@ sub buildrules {
 
 						# Likewise.
 						if ($firewall_is_in_source_subnet && ($target ~~ @special_output_targets)) {
-							if ($LOG && !$NAT) {
+							if ($LOG) {
 								run("$IPTABLES -A $CHAIN_OUTPUT @options @destination_intf_options @log_limit_options -j LOG --log-prefix '$CHAIN_OUTPUT '");
 							}
 							run("$IPTABLES -A $CHAIN_OUTPUT @options @destination_intf_options -j $target");
