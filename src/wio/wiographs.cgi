@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2017-2018 Stephan Feddersen <sfeddersen@ipfire.org>           #
+# Copyright (C) 2017-2020 Stephan Feddersen <sfeddersen@ipfire.org>           #
 # All Rights Reserved.                                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
@@ -21,7 +21,7 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2017/08/27 14:07:23
+# Version: 2020/26/04 19:35:23
 #
 # This wiographs.cgi is based on the Code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
@@ -64,7 +64,7 @@ else {
 	&Header::openbigbox('100%', 'left');
 	&Header::openbox('100%', 'left', "$Lang::tr{'wio_graphs_stat'} $hostname");
 	&WIOGraphs::wiographbox("wiographs.cgi","$hostid","day","$hostname");
-	print"<table width='100%'><tr><td align='center'><a href='/cgi-bin/wio.cgi'><img src='/images/wio/back.png' alt='$Lang::tr{'wio_back'}' title='$Lang::tr{'wio_back'}' /></a></td></tr></table>";
+	print"<table width='100%'><tr><td align='left'><a href='/cgi-bin/wio.cgi'><img src='/images/wio/back.png' alt='$Lang::tr{'wio_back'}' title='$Lang::tr{'wio_back'}' /></a></td></tr></table>";
 	&Header::closebox();
 	&Header::closebigbox();
 	&Header::closepage();
