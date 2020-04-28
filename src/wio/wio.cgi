@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2017-2019 Stephan Feddersen <sfeddersen@ipfire.org>           #
+# Copyright (C) 2017-2020 Stephan Feddersen <sfeddersen@ipfire.org>           #
 # All Rights Reserved.                                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
@@ -21,7 +21,7 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2019/11/08 14:35:23
+# Version: 2020/26/04 19:35:23
 #
 # This wio.cgi is based on the Code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
@@ -1217,7 +1217,7 @@ print"
 
 foreach $key (sort SortByTunnelName (keys(%vpnconfighash))) {
 
-my $vpncheck = '';
+my ( $vpncheck, $vpntime, $vpnclient ) = '';
 
 if ( -e '/var/log/wio/.vpncache' ) {
 	$vpncheck = strftime("%d.%m.%Y - %H:%M:%S",localtime(((stat('/var/log/wio/.vpncache'))[9])));
@@ -1225,6 +1225,7 @@ if ( -e '/var/log/wio/.vpncache' ) {
 
 $status = "bgcolor='${Header::colourred}'";
 $statustxt = "$Lang::tr{'capsclosed'}";
+$vpnclient = $vpnconfighash{$key}[1];
 
 	if ($vpnconfighash{$key}[0] eq 'off') {
 		$status = "bgcolor='${Header::colourblue}'";
@@ -1232,9 +1233,11 @@ $statustxt = "$Lang::tr{'capsclosed'}";
 	}
 
 	foreach (@vpnstatus) {
-		if ($_ =~ /$vpnconfighash{$key}[1]\{.*INSTALLED/) {
+		if ($_ =~ /$vpnclient.*ESTABLISHED/) {
 			$status = "bgcolor='${Header::colourgreen}'";
 			$statustxt = "$Lang::tr{'capsopen'}";
+			$vpntime = `/usr/local/bin/ipsecctrl I | grep $vpnclient.*ESTABLISHED | sed 's/^[ \t]*//' | cut -d " " -f 3-4`;
+			$vpntime = &WIO::contime($vpntime, "ipsec");
 			last;
 		}
 	}
@@ -1243,11 +1246,11 @@ $statustxt = "$Lang::tr{'capsclosed'}";
 
 	my $vpnnr = $idvpn+1;
 
-	printf ("<td align='center'> %02d</td>", $vpnnr);
+	printf ("<td align='center'>%02d</td>", $vpnnr);
 
 	print"<td align='center'>$vpncheck</td>
-		  <td align='center'>$vpnconfighash{$key}[1]</td>
-		  <td align='center'><img align='middle' src='$imgstatic/".( $vpnconfighash{$key}[3] eq 'host' ? "vpnrw.png' alt='$Lang::tr{'wio_rw'}' title='$Lang::tr{'wio_rw'}'" : "vpnn2n.png' alt='$Lang::tr{'wio_n2n'}' title='$Lang::tr{'wio_n2n'}'")." /></td>
+		  <td align='center'>$vpnclient</td>
+		  <td align='center'><img align='middle' src='$imgstatic/".($vpnconfighash{$key}[3] eq 'host' ? "vpnrw.png' alt='$Lang::tr{'wio_rw'}' title='$Lang::tr{'wio_rw'}'" : "vpnn2n.png' alt='$Lang::tr{'wio_n2n'}' title='$Lang::tr{'wio_n2n'}'")." /></td>
 		  <td align='center'>".($vpnconfighash{$key}[2] eq '%auth-dn' ? "$vpnconfighash{$key}[9]" : ($vpnconfighash{$key}[4] eq 'cert' ? "$vpnconfighash{$key}[2]" : ($vpnconfighash{$key}[8] ne '' ? "$vpnconfighash{$key}[10]" : "&nbsp;")))."</td>
 		  <td align='center'>
 		  	<table $status cellpadding='2' cellspacing='0' width='100%'>
@@ -1256,7 +1259,7 @@ $statustxt = "$Lang::tr{'capsclosed'}";
 		  		</tr>
 		  	</table>
 		  </td>
-		  <td align='center' height='20'>&nbsp;</td>
+		  <td align='center' height='20'>".(defined($vpntime)? "$vpntime" : "-")."</td>
 		  </tr>
 ";
 
@@ -1335,7 +1338,7 @@ print"
 						$tnet->open('127.0.0.1');
 						@output = $tnet->cmd(String => 'state', Prompt => '/(END.*\n|ERROR:.*\n)/');
 						@tustate = split(/\,/, $output[1]);
-						$ovpntime = &WIO::contime(scalar localtime($tustate[0]));
+						$ovpntime = &WIO::contime(scalar localtime($tustate[0]), "ovpn");
 						
 						if (($tustate[1] eq 'CONNECTED')) {
 							$status = "${Header::colourgreen}";
@@ -1356,7 +1359,7 @@ print"
 
 					if ( $match[1] ne "Common Name" && ($match[1] eq $ovpnconfighash{$key}[2]) ) {
 						$ovpnclt = $match[1];
-						$ovpntime = &WIO::contime($match[5]);
+						$ovpntime = &WIO::contime($match[5], "ovpn");
 					}
 
 					if ( $_ =~ /^(\d+\.\d+\.\d+\.\d+),(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(.+)/ ) {
@@ -1381,12 +1384,12 @@ print"
 }
 
 	print"
-	<td align='center'>$ovpncheck</td>
-	<td align='center'>".( defined($ovpnrwip)? "$ovpnrwip" : "&nbsp;")."</td>
+	<td align='center'>".(defined($ovpncheck)? "$ovpncheck" : "-")."</td>
+	<td align='center'>".(defined($ovpnrwip)? "$ovpnrwip" : "-")."</td>
 	<td align='center'><img align='middle' src='$image' alt='$text' title='$text' /></td>
 	<td align='center'>".($ovpnconfighash{$key}[2] eq '%auth-dn' ? "$ovpnconfighash{$key}[9]" : ($ovpnconfighash{$key}[4] eq 'cert' ? "$ovpnconfighash{$key}[2]": "&nbsp;"))."</td>
 	<td align='center'><table bgcolor='$status' cellpadding='2' cellspacing='0' width='100%'><tr height='20'><td align='center'><font color='white'><b>$statustxt</b></font></td></tr></table></td>
-	<td align='center'>".(defined($ovpntime)? "$ovpntime" : "&nbsp;")."</td>
+	<td align='center'>".(defined($ovpntime)? "$ovpntime" : "-")."</td>
 </tr>
 ";
 		if ($ovpnconfighash{$key}[25] && $wiosettings{'CLIENTREMARK'} eq 'on') {
