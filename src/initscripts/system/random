@@ -22,29 +22,10 @@ case "$1" in
 			sync
 			rm -f /var/tmp/random-tmpfile
 		done;
-
-		boot_mesg "\rInitializing kernel random number generator..."
-		if [ -f /var/tmp/random-seed ]; then
-			/bin/cat /var/tmp/random-seed >/dev/urandom
-		fi
-		touch /var/tmp/random-seed
-		chmod 600 /var/tmp/random-seed
-		/bin/dd if=/dev/urandom of=/var/tmp/random-seed \
-			count=1 bs=$poolsize &>/dev/null
-		evaluate_retval
-		;;
-
-	stop)
-		boot_mesg "Saving random seed..."
-		touch /var/tmp/random-seed
-		chmod 600 /var/tmp/random-seed
-		/bin/dd if=/dev/urandom of=/var/tmp/random-seed \
-			count=1 bs=$poolsize &>/dev/null
-		evaluate_retval
 		;;
 
 	*)
-		echo "Usage: $0 {start|stop}"
+		echo "Usage: $0 {start}"
 		exit 1
 		;;
 esac
