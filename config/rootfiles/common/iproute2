@@ -10,14 +10,12 @@ etc/iproute2/rt_scopes
 etc/iproute2/rt_tables
 sbin/bridge
 sbin/ctstat
-sbin/devlink
 sbin/genl
 sbin/ifcfg
 sbin/ifstat
 sbin/ip
 sbin/lnstat
 sbin/nstat
-sbin/rdma
 sbin/routef
 sbin/routel
 sbin/rtacct
@@ -26,7 +24,6 @@ sbin/rtpr
 sbin/rtstat
 sbin/ss
 sbin/tc
-sbin/tipc
 #usr/include/iproute2
 #usr/include/iproute2/bpf_elf.h
 #usr/lib/tc
@@ -160,3 +157,4 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/tipc-socket.8
 #usr/share/man/man8/tipc.8
 #var/lib/arpd
+
