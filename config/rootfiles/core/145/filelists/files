@@ -4,4 +4,5 @@ etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 etc/rc.d/init.d/firewall
+opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/system.cgi
