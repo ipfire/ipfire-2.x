@@ -4,5 +4,8 @@ etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 etc/rc.d/init.d/firewall
+etc/rc.d/init.d/vnstat
 opt/pakfire/lib/functions.pl
+usr/local/bin/makegraphs
 srv/web/ipfire/cgi-bin/system.cgi
+srv/web/ipfire/cgi-bin/traffic.cgi

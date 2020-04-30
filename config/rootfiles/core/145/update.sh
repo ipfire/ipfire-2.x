@@ -46,6 +46,7 @@ done
 # Remove files
 
 # Stop services
+/etc/init.d/vnstat stop
 
 # Extract files
 extract_files
@@ -54,6 +55,7 @@ extract_files
 ldconfig
 
 # Start services
+/etc/init.d/vnstat start
 
 # Update Language cache
 /usr/local/bin/update-lang-cache
