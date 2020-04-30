@@ -12,9 +12,12 @@ case "$1" in
 
 			COUNTER=0
 			while [ "$COUNTER" -lt "61" ]; do
+				[ -e "/var/lib/clamav/main.cld" ] || \
 				[ -e "/var/lib/clamav/main.cvd" ] && \
-					[ -e "/var/lib/clamav/daily.cvd" ] || \
-					[ -e "/var/lib/clamav/daily.cld" ] && \
+				[ -e "/var/lib/clamav/bytecode.cld" ] || \
+				[ -e "/var/lib/clamav/bytecode.cvd" ] && \
+				[ -e "/var/lib/clamav/daily.cld" ] || \
+				[ -e "/var/lib/clamav/daily.cvd" ] && \
 				break
 				if [ "$COUNTER" -lt "1" ]; then
 					boot_mesg -n "Downloading database"
