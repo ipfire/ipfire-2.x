@@ -95,6 +95,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils-8.27-uname-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils-8.32-i18n-1.patch
+	# this is upstream and also fix the aarch64 build
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils/ls-restore-8.31-behavior-on-removed-directories.patch
 	cd $(DIR_APP) && FORCE_UNSAFE_CONFIGURE=1 && ./configure $(CONFIGURE_OPTIONS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
