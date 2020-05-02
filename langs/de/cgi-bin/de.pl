@@ -1565,7 +1565,7 @@
 'local vpn hostname/ip' => 'Lokaler VPN Hostname/IP',
 'localkey' => 'Localkey',
 'localkeyfile' => 'Localkeyfile',
-'location' => 'Länderfilter konfigurieren',
+'location' => 'Länderfilter',
 'locationblock' => 'Location-Filter',
 'locationblock block countries' => 'Länderfilter',
 'locationblock configuration' => 'Location-Konfiguration',
