@@ -28,7 +28,6 @@ case "$1" in
 		evaluate_retval
 
 		umount_ramdisk "${VNSTATLOG}"
-		boot_mesg "Unmounting vnstat ramdisk..."
 		;;
 
 	restart)
