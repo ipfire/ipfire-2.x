@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.1.13
+VER        = 0.3.3
 
 THISAPP    = s3transfer-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-s3transfer
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7bad7a38ca2442d650455fadeb3578b0
+$(DL_FILE)_MD5 = 9f90989a42a0f02f388d15928aa96c5f
 
 install : $(TARGET)
 
