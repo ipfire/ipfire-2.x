@@ -1,9 +1,12 @@
 usr/bin/rst2html4.py
 usr/bin/rst2html5.py
 #usr/lib/python3.8/site-packages/docutils
-#usr/lib/python3.8/site-packages/docutils-0.14-py3.8.egg-info
+#usr/lib/python3.8/site-packages/docutils-0.16-py3.8.egg-info
+#usr/lib/python3.8/site-packages/docutils-0.16-py3.8.egg-info/PKG-INFO
+#usr/lib/python3.8/site-packages/docutils-0.16-py3.8.egg-info/SOURCES.txt
+#usr/lib/python3.8/site-packages/docutils-0.16-py3.8.egg-info/dependency_links.txt
+#usr/lib/python3.8/site-packages/docutils-0.16-py3.8.egg-info/top_level.txt
 usr/lib/python3.8/site-packages/docutils/__init__.py
-usr/lib/python3.8/site-packages/docutils/_compat.py
 usr/lib/python3.8/site-packages/docutils/core.py
 usr/lib/python3.8/site-packages/docutils/examples.py
 usr/lib/python3.8/site-packages/docutils/frontend.py
@@ -25,6 +28,7 @@ usr/lib/python3.8/site-packages/docutils/languages/gl.py
 usr/lib/python3.8/site-packages/docutils/languages/he.py
 usr/lib/python3.8/site-packages/docutils/languages/it.py
 usr/lib/python3.8/site-packages/docutils/languages/ja.py
+usr/lib/python3.8/site-packages/docutils/languages/ko.py
 usr/lib/python3.8/site-packages/docutils/languages/lt.py
 usr/lib/python3.8/site-packages/docutils/languages/lv.py
 usr/lib/python3.8/site-packages/docutils/languages/nl.py
@@ -103,6 +107,7 @@ usr/lib/python3.8/site-packages/docutils/parsers/rst/languages/gl.py
 usr/lib/python3.8/site-packages/docutils/parsers/rst/languages/he.py
 usr/lib/python3.8/site-packages/docutils/parsers/rst/languages/it.py
 usr/lib/python3.8/site-packages/docutils/parsers/rst/languages/ja.py
+usr/lib/python3.8/site-packages/docutils/parsers/rst/languages/ko.py
 usr/lib/python3.8/site-packages/docutils/parsers/rst/languages/lt.py
 usr/lib/python3.8/site-packages/docutils/parsers/rst/languages/lv.py
 usr/lib/python3.8/site-packages/docutils/parsers/rst/languages/nl.py
