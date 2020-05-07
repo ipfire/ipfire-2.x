@@ -48,6 +48,10 @@ done
 # Stop services
 /etc/init.d/vnstat stop
 
+# Prepare OpenVPN for update
+/usr/local/bin/openvpnctrl -k
+/usr/local/bin/openvpnctrl -kn2n
+
 # Extract files
 extract_files
 
@@ -61,6 +65,10 @@ mv /etc/rc.d/rc3.d/S00random /etc/rc.d/rcsysinit.d/S66random
 mv /etc/rc.d/rcsysinit.d/S92rngd /etc/rc.d/rcsysinit.d/S65rngd
 # Start services
 /etc/init.d/vnstat start
+
+# Start OpenVPN again
+/usr/local/bin/openvpnctrl -s
+/usr/local/bin/openvpnctrl -sn2n
 
 # Update Language cache
 /usr/local/bin/update-lang-cache
