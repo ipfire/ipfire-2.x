@@ -1,10 +1,10 @@
 usr/bin/scmp_sys_resolver
-#usr/include/seccomp.h
 #usr/include/seccomp-syscalls.h
+#usr/include/seccomp.h
 #usr/lib/libseccomp.la
 #usr/lib/libseccomp.so
 usr/lib/libseccomp.so.2
-usr/lib/libseccomp.so.2.4.2
+usr/lib/libseccomp.so.2.4.3
 #usr/lib/pkgconfig/libseccomp.pc
 #usr/share/man/man1/scmp_sys_resolver.1
 #usr/share/man/man3/seccomp_api_get.3
