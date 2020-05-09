@@ -612,10 +612,10 @@ usr/bin/tshark
 #usr/include/wireshark/wsutil/xtea.h
 #usr/lib/libwireshark.so
 usr/lib/libwireshark.so.13
-usr/lib/libwireshark.so.13.0.2
+usr/lib/libwireshark.so.13.0.3
 #usr/lib/libwiretap.so
 usr/lib/libwiretap.so.10
-usr/lib/libwiretap.so.10.0.2
+usr/lib/libwiretap.so.10.0.3
 #usr/lib/libwsutil.so
 usr/lib/libwsutil.so.11
 usr/lib/libwsutil.so.11.0.0
@@ -623,6 +623,7 @@ usr/lib/libwsutil.so.11.0.0
 #usr/lib/wireshark
 #usr/lib/wireshark/cmake
 #usr/lib/wireshark/cmake/FindGLIB2.cmake
+#usr/lib/wireshark/cmake/FindWSLibrary.cmake
 #usr/lib/wireshark/cmake/FindWSWinLibs.cmake
 #usr/lib/wireshark/cmake/LocatePythonModule.cmake
 #usr/lib/wireshark/cmake/UseAsn2Wrs.cmake
