@@ -14,3 +14,4 @@ usr/local/bin/makegraphs
 usr/sbin/openvpn-metrics
 var/ipfire/menu.d/70-log.menu
 var/ipfire/general-functions.pl
+var/ipfire/graphs.pl
