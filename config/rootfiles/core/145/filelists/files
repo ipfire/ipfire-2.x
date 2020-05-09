@@ -8,6 +8,7 @@ etc/rc.d/init.d/vnstat
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/logs.cgi/ovpnclients.dat
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/system.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
 usr/local/bin/makegraphs
