@@ -14,9 +14,9 @@ usr/lib/perl5/site_perl/5.30.0/Authen/SASL/Perl/EXTERNAL.pm
 usr/lib/perl5/site_perl/5.30.0/Authen/SASL/Perl/GSSAPI.pm
 usr/lib/perl5/site_perl/5.30.0/Authen/SASL/Perl/LOGIN.pm
 usr/lib/perl5/site_perl/5.30.0/Authen/SASL/Perl/PLAIN.pm
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Authen
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Authen/SASL
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Authen/SASL/.packlist
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Authen
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Authen/SASL
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Authen/SASL/.packlist
 #usr/share/man/man3/Authen::SASL.3
 #usr/share/man/man3/Authen::SASL::Perl.3
 #usr/share/man/man3/Authen::SASL::Perl::ANONYMOUS.3

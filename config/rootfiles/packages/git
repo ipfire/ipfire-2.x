@@ -22,8 +22,8 @@ usr/lib/perl5/site_perl/5.30.0/Git/SVN
 #usr/lib/perl5/site_perl/5.30.0/Git/SVN/Prompt.pm
 #usr/lib/perl5/site_perl/5.30.0/Git/SVN/Ra.pm
 #usr/lib/perl5/site_perl/5.30.0/Git/SVN/Utils.pm
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Git
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Git/.packlist
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Git
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Git/.packlist
 #usr/libexec/git-core
 #usr/libexec/git-core/git
 usr/libexec/git-core/git-add

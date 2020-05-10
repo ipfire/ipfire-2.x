@@ -59,4 +59,4 @@ for dir in $@; do
 done
 
 cat ${FILELIST} 2>/dev/null | grep -v ^# | sort | uniq | \
-	sed -e "s/KVER/${KVER}/g" -e "s/MACHINE/${BUILD_ARCH}/g" -e "s/BUILDTARGET/${BUILDTARGET}/g"
+	sed -e "s/KVER/${KVER}/g" -e "s/xxxMACHINExxx/${BUILD_ARCH}/g" -e "s/BUILDTARGET/${BUILDTARGET}/g"

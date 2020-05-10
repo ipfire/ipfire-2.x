@@ -1394,7 +1394,7 @@
 #usr/share/cmake-3.17/Help/variable/CMAKE_JOB_POOL_COMPILE.rst
 #usr/share/cmake-3.17/Help/variable/CMAKE_JOB_POOL_LINK.rst
 #usr/share/cmake-3.17/Help/variable/CMAKE_JOB_POOL_PRECOMPILE_HEADER.rst
-#usr/share/cmake-3.17/Help/variable/CMAKE_LANG_ANDROID_TOOLCHAIN_MACHINE.rst
+#usr/share/cmake-3.17/Help/variable/CMAKE_LANG_ANDROID_TOOLCHAIN_xxxMACHINExxx.rst
 #usr/share/cmake-3.17/Help/variable/CMAKE_LANG_ANDROID_TOOLCHAIN_PREFIX.rst
 #usr/share/cmake-3.17/Help/variable/CMAKE_LANG_ANDROID_TOOLCHAIN_SUFFIX.rst
 #usr/share/cmake-3.17/Help/variable/CMAKE_LANG_ARCHIVE_APPEND.rst

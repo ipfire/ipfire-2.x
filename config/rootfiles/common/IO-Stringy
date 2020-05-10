@@ -7,9 +7,9 @@ usr/lib/perl5/site_perl/5.30.0/IO/ScalarArray.pm
 usr/lib/perl5/site_perl/5.30.0/IO/Stringy.pm
 usr/lib/perl5/site_perl/5.30.0/IO/Wrap.pm
 usr/lib/perl5/site_perl/5.30.0/IO/WrapTie.pm
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/IO
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/IO/Stringy
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/IO/Stringy/.packlist
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/IO
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/IO/Stringy
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/IO/Stringy/.packlist
 #usr/share/man/man3/IO::AtomicFile.3
 #usr/share/man/man3/IO::InnerFile.3
 #usr/share/man/man3/IO::Lines.3

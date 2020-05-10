@@ -8,8 +8,8 @@ usr/lib/perl5/site_perl/5.30.0/Device/Modem/Log/Syslog.pm
 #usr/lib/perl5/site_perl/5.30.0/Device/Modem/Protocol
 usr/lib/perl5/site_perl/5.30.0/Device/Modem/Protocol/Xmodem.pm
 usr/lib/perl5/site_perl/5.30.0/Device/Modem/UsRobotics.pm
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Device/Modem
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Device/Modem/.packlist
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Device/Modem
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Device/Modem/.packlist
 #usr/share/man/man3/Device::Modem.3
 #usr/share/man/man3/Device::Modem::FAQ.3
 #usr/share/man/man3/Device::Modem::Log::File.3

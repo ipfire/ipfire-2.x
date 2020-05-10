@@ -82,9 +82,9 @@ usr/lib/perl5/site_perl/5.30.0/Font/TTF/Woff/MetaData.pm
 usr/lib/perl5/site_perl/5.30.0/Font/TTF/Woff/PrivateData.pm
 usr/lib/perl5/site_perl/5.30.0/Font/TTF/XMLparse.pm
 #usr/lib/perl5/site_perl/5.30.0/ttfmod.pl
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Font
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Font/TTF
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/Font/TTF/.packlist
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Font
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Font/TTF
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Font/TTF/.packlist
 #usr/share/man/man3/Font::TTF.3
 #usr/share/man/man3/Font::TTF::AATKern.3
 #usr/share/man/man3/Font::TTF::AATutils.3

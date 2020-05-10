@@ -36,8 +36,8 @@ usr/lib/perl5/site_perl/5.30.0/Date/Language/Turkish.pm
 usr/lib/perl5/site_perl/5.30.0/Date/Parse.pm
 #usr/lib/perl5/site_perl/5.30.0/Time
 usr/lib/perl5/site_perl/5.30.0/Time/Zone.pm
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/TimeDate
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/TimeDate/.packlist
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/TimeDate
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/TimeDate/.packlist
 #usr/share/man/man3/Date::Format.3
 #usr/share/man/man3/Date::Language.3
 #usr/share/man/man3/Date::Language::Hungarian.3

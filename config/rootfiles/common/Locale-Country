@@ -41,9 +41,9 @@ usr/lib/perl5/5.30.0/Locale/Language.pm
 #usr/lib/perl5/5.30.0/Locale/Language.pod
 usr/lib/perl5/5.30.0/Locale/Script.pm
 #usr/lib/perl5/5.30.0/Locale/Script.pod
-#usr/lib/perl5/5.30.0/MACHINE-linux-thread-multi/auto/Locale
-#usr/lib/perl5/5.30.0/MACHINE-linux-thread-multi/auto/Locale/Codes
-#usr/lib/perl5/5.30.0/MACHINE-linux-thread-multi/auto/Locale/Codes/.packlist
+#usr/lib/perl5/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Locale
+#usr/lib/perl5/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Locale/Codes
+#usr/lib/perl5/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Locale/Codes/.packlist
 #usr/share/man/man3/Locale::Codes.3
 #usr/share/man/man3/Locale::Codes::API.3
 #usr/share/man/man3/Locale::Codes::Changes.3

@@ -12,8 +12,8 @@ usr/lib/perl5/site_perl/5.30.0/CGI/Pretty.pm
 usr/lib/perl5/site_perl/5.30.0/CGI/Push.pm
 usr/lib/perl5/site_perl/5.30.0/CGI/Util.pm
 usr/lib/perl5/site_perl/5.30.0/Fh.pm
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/CGI
-#usr/lib/perl5/site_perl/5.30.0/MACHINE-linux-thread-multi/auto/CGI/.packlist
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/CGI
+#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/CGI/.packlist
 #usr/share/man/man3/CGI.3
 #usr/share/man/man3/CGI::Carp.3
 #usr/share/man/man3/CGI::Cookie.3

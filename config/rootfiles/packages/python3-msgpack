@@ -1,7 +1,7 @@
 #usr/lib/python3.8/site-packages/msgpack
 usr/lib/python3.8/site-packages/msgpack/__init__.py
-usr/lib/python3.8/site-packages/msgpack/_packer.cpython-38-MACHINE-linux-gnu.so
-usr/lib/python3.8/site-packages/msgpack/_unpacker.cpython-38-MACHINE-linux-gnu.so
+usr/lib/python3.8/site-packages/msgpack/_packer.cpython-38-xxxMACHINExxx-linux-gnu.so
+usr/lib/python3.8/site-packages/msgpack/_unpacker.cpython-38-xxxMACHINExxx-linux-gnu.so
 usr/lib/python3.8/site-packages/msgpack/_version.py
 usr/lib/python3.8/site-packages/msgpack/exceptions.py
 usr/lib/python3.8/site-packages/msgpack/fallback.py
