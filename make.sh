@@ -1993,8 +1993,12 @@ lang)
 update-contributors)
 	update_contributors
 	;;
+find-dependencies)
+	shift
+	exec "${BASEDIR}/tools/find-dependencies" "${BASEDIR}/build" "$@"
+	;;
 *)
-	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain|update-contributors}"
+	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain|update-contributors|find-dependencies}"
 	cat doc/make.sh-usage
 	;;
 esac

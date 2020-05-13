@@ -1,0 +1,32 @@
+#!/bin/bash
+
+main() {
+	if [ $# -lt 2 ]; then
+		echo "${0}: Usage: PATH LIBRARY ..."
+		return 2
+	fi
+
+	local root="${1}"
+	shift
+
+	if [ ! -d "${root}" ]; then
+		echo "${0}: ${root}: No such file or directory"
+		return 1
+	fi
+
+	local libraries="$@"
+
+	# Build the regex filter
+	local filter="(${libraries[*]// /|})"
+
+	local file
+	for file in $(find "${root}" -xdev -type f -executable); do
+		if readelf -d "${file}" 2>/dev/null | grep -qE "NEEDED.*\[${filter}\]$"; then
+			echo "${file}"
+		fi
+	done
+
+	return 0
+}
+
+main "$@" || exit $?
