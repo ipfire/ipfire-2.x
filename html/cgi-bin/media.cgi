@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -96,7 +96,7 @@ END
 	}
 }
 close DF;
-print "<tr><td colspan='7'>&nbsp;\n<tr><td colspan='7'><h3>Inodes</h3>\n";
+print "<tr><td colspan='7'>&nbsp;\n<tr><td colspan='7'><h3>$Lang::tr{'inodes'}</h3>\n";
 
 open(DF,'/bin/df -P -i -x rootfs|');
 while(<DF>){

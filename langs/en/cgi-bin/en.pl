@@ -1475,6 +1475,7 @@
 'incorrect password' => 'Incorrect password',
 'info' => 'Info',
 'init string' => 'Init:',
+'inodes' => 'Index-Nodes',
 'insert floppy' => 'To backup to floppy, insert a formatted floppy into the drive on IPFire and click <i>backup to floppy</i> to backup the system configuration. Please examine the results carefully to make sure the backup completed successfully. This can take a while to complete, so please be patient.<p>',
 'insert removable device' => 'Insert a removable device',
 'install' => 'Install',

@@ -1432,6 +1432,7 @@
 'info' => 'Info',
 'info messages' => 'Info',
 'init string' => 'Initialisierung:',
+'inodes' => 'Index Nodes',
 'insert floppy' => 'Legen Sie eine formatierte Diskette in das Floppy-Laufwerk in IPFire und klicken auf <i>Datensicherung auf Diskette</i>, um die Systemeinstellungen zu sichern.  Überprüfen Sie das Ergebnis sorgfältig, um sicher zu sein, dass die Datensicherung vollständig und erfolgreich abgeschlossen wurde.',
 'install' => 'Installieren',
 'install new update' => 'Installiere neues Update:',
