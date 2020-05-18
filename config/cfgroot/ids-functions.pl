@@ -677,22 +677,7 @@ sub generate_home_net_file() {
 	}
 
 	# Format home net declaration.
-	my $line = "\"\[";
-
-	# Loop through the array of networks.
-	foreach my $network (@networks) {
-		# Add the network to the line.
-		$line = "$line" . "$network";
-
-		# Check if the current network was the last in the array.
-		if ($network eq $networks[-1]) {
-			# Close the line.
-			$line = "$line" . "\]\"";
-		} else {
-			# Add "," for the next network.
-			$line = "$line" . "\,";
-		}
-	}
+	my $line = "[" . join(',', @networks) . "]";
 
 	# Open file to store the addresses of the home net.
 	open(FILE, ">$homenet_file") or die "Could not open $homenet_file. $!\n";
