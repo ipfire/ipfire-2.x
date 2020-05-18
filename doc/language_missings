@@ -32,12 +32,15 @@
 < dh name is invalid
 < dns could not add server
 < done
+< error the to date has to be later than the from date
 < g.dtm
 < g.lite
 < insert removable device
+< no entries
 < notes
 < okay
 < quick control
+< received
 < shaping add options
 < show areas
 < show lines
@@ -189,6 +192,7 @@
 < countries
 < countrycode
 < country codes and flags
+< cpu frequency
 < crypto error
 < cryptographic settings
 < crypto warning
@@ -212,6 +216,7 @@
 < dh name is invalid
 < dh parameter
 < Disabled
+< disconnected
 < dl client arch insecure
 < dnat address
 < dns check servers
@@ -253,6 +258,7 @@
 < drop action2
 < drop forward
 < drop outgoing
+< duration
 < eight hours
 < email config
 < email empty field
@@ -283,6 +289,7 @@
 < entropy
 < entropy graphs
 < error
+< error the to date has to be later than the from date
 < fallout zombieload ridl
 < fifteen minutes
 < fireinfo ipfire version
@@ -606,6 +613,7 @@
 < MTU settings
 < nameserver
 < never
+< no entries
 < no hardware random number generator
 < none
 < not affected
@@ -649,6 +657,7 @@
 < outgoing firewall view group
 < outgoing overhead in bytes per second
 < ovpn add conf
+< ovpn connection name
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -674,6 +683,7 @@
 < ovpn reneg sec
 < ovpn routes push
 < ovpn routes push options
+< ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
 < p2p block
@@ -697,12 +707,14 @@
 < qos enter bandwidths
 < random number generator daemon
 < rdns
+< received
 < red1
 < required field
 < runmode
 < samba join a domain
 < samba join domain
 < search
+< sent
 < server restart
 < Set time on boot
 < show dh
@@ -904,6 +916,12 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< ansi t1.483
+< bewan adsl pci st
+< bewan adsl usb
+< g.dtm
+< g.lite
+< upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -981,6 +999,7 @@
 < Captive WiFi coupon
 < Captive wrong ext
 < check all
+< cpu frequency
 < crypto error
 < cryptographic settings
 < crypto warning
@@ -993,6 +1012,7 @@
 < dhcp dns update algo
 < dhcp dns update secret
 < Disabled
+< disconnected
 < dl client arch insecure
 < dns check servers
 < dns configuration
@@ -1012,6 +1032,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< duration
 < eight hours
 < email config
 < email empty field
@@ -1038,6 +1059,7 @@
 < emerging pro rules
 < enable smt
 < error
+< error the to date has to be later than the from date
 < fallout zombieload ridl
 < fifteen minutes
 < firewall graph country
@@ -1128,6 +1150,7 @@
 < mitigated
 < mtu
 < MTU settings
+< no entries
 < none
 < not affected
 < not validating
@@ -1140,8 +1163,10 @@
 < outgoing compression in bytes per second
 < outgoing overhead in bytes per second
 < ovpn add conf
+< ovpn connection name
 < ovpn error dh
 < ovpn error md5
+< ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
 < pakfire invalid tree
@@ -1156,11 +1181,13 @@
 < processor vulnerability mitigations
 < ptr
 < rdns
+< received
 < required field
 < runmode
 < samba join a domain
 < samba join domain
 < search
+< sent
 < smt disabled
 < smt enabled
 < smt not supported
@@ -1326,6 +1353,7 @@
 < Captive WiFi coupon
 < Captive wrong ext
 < check all
+< cpu frequency
 < crypto error
 < cryptographic settings
 < crypto warning
@@ -1345,6 +1373,7 @@
 < dh name is invalid
 < dh parameter
 < Disabled
+< disconnected
 < dl client arch insecure
 < dns check servers
 < dns configuration
@@ -1372,6 +1401,7 @@
 < download dh parameter
 < download tls-auth key
 < drop outgoing
+< duration
 < eight hours
 < email config
 < email empty field
@@ -1398,6 +1428,7 @@
 < emerging pro rules
 < enable smt
 < error
+< error the to date has to be later than the from date
 < fallout zombieload ridl
 < fifteen minutes
 < firewall graph country
@@ -1508,6 +1539,7 @@
 < MTU settings
 < nameserver
 < never
+< no entries
 < none
 < not affected
 < not a valid dh key
@@ -1521,6 +1553,7 @@
 < outgoing compression in bytes per second
 < outgoing overhead in bytes per second
 < ovpn add conf
+< ovpn connection name
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -1532,6 +1565,7 @@
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn reneg sec
+< ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
 < pakfire invalid tree
@@ -1547,11 +1581,13 @@
 < ptr
 < random number generator daemon
 < rdns
+< received
 < required field
 < runmode
 < samba join a domain
 < samba join domain
 < search
+< sent
 < show dh
 < show tls-auth key
 < smt disabled
@@ -1786,6 +1822,7 @@
 < countries
 < countrycode
 < country codes and flags
+< cpu frequency
 < crypto error
 < cryptographic settings
 < crypto warning
@@ -1809,6 +1846,7 @@
 < dh name is invalid
 < dh parameter
 < Disabled
+< disconnected
 < dl client arch insecure
 < dnat address
 < dns check servers
@@ -1850,6 +1888,7 @@
 < drop action2
 < drop forward
 < drop outgoing
+< duration
 < eight hours
 < email config
 < email empty field
@@ -1880,6 +1919,7 @@
 < entropy
 < entropy graphs
 < error
+< error the to date has to be later than the from date
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -2205,6 +2245,7 @@
 < MTU settings
 < nameserver
 < never
+< no entries
 < no hardware random number generator
 < none
 < not affected
@@ -2234,6 +2275,7 @@
 < outgoing firewall access
 < outgoing overhead in bytes per second
 < ovpn add conf
+< ovpn connection name
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -2259,6 +2301,7 @@
 < ovpn reneg sec
 < ovpn routes push
 < ovpn routes push options
+< ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
 < p2p block
@@ -2282,12 +2325,14 @@
 < qos enter bandwidths
 < random number generator daemon
 < rdns
+< received
 < red1
 < required field
 < runmode
 < samba join a domain
 < samba join domain
 < search
+< sent
 < server restart
 < show dh
 < show tls-auth key
@@ -2626,6 +2671,7 @@
 < countries
 < countrycode
 < country codes and flags
+< cpu frequency
 < crypto error
 < cryptographic settings
 < crypto warning
@@ -2650,6 +2696,7 @@
 < dh name is invalid
 < dh parameter
 < Disabled
+< disconnected
 < disk access per
 < dl client arch insecure
 < dnat address
@@ -2692,6 +2739,7 @@
 < drop action2
 < drop forward
 < drop outgoing
+< duration
 < Edit an existing route
 < eight hours
 < email config
@@ -2723,6 +2771,7 @@
 < entropy
 < entropy graphs
 < error
+< error the to date has to be later than the from date
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -3052,6 +3101,7 @@
 < MTU settings
 < nameserver
 < never
+< no entries
 < no hardware random number generator
 < none
 < not affected
@@ -3082,6 +3132,7 @@
 < outgoing overhead in bytes per second
 < outgoing traffic in bytes per second
 < ovpn add conf
+< ovpn connection name
 < ovpn crypt options
 < ovpn dh
 < ovpn dh new key
@@ -3103,6 +3154,7 @@
 < ovpn no connections
 < ovpn port in root range
 < ovpn reneg sec
+< ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
 < p2p block
@@ -3126,12 +3178,14 @@
 < qos enter bandwidths
 < random number generator daemon
 < rdns
+< received
 < red1
 < required field
 < runmode
 < samba join a domain
 < samba join domain
 < search
+< sent
 < server restart
 < show dh
 < show tls-auth key
@@ -3343,6 +3397,7 @@
 < advproxy wpad view pac
 < broken
 < Captive delete logo
+< cpu frequency
 < crypto error
 < cryptographic settings
 < crypto warning
@@ -3350,6 +3405,7 @@
 < dangerous
 < default IP address
 < Disabled
+< disconnected
 < dns check servers
 < dns configuration
 < dns could not add server
@@ -3367,11 +3423,13 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< duration
 < email tls explicit
 < email tls implicit
 < emerging pro rules
 < enable smt
 < error
+< error the to date has to be later than the from date
 < fallout zombieload ridl
 < force enable
 < foreshadow
@@ -3416,11 +3474,14 @@
 < meltdown
 < mitigated
 < mtu
+< no entries
 < not affected
 < not validating
 < okay
+< ovpn connection name
 < ovpn error dh
 < ovpn error md5
+< ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
 < pakfire invalid tree
@@ -3431,7 +3492,9 @@
 < please reboot to apply your changes
 < processor vulnerability mitigations
 < ptr
+< received
 < runmode
+< sent
 < smt disabled
 < smt enabled
 < smt not supported

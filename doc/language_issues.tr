@@ -709,7 +709,6 @@ WARNING: translation string unused: tor accounting period weekly
 WARNING: translation string unused: tor bridge enabled
 WARNING: translation string unused: tor errmsg invalid node id
 WARNING: translation string unused: tor exit country
-WARNING: translation string unused: total connection time
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad
@@ -816,10 +815,12 @@ WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Pro
 WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: broken = Broken
 WARNING: untranslated string: bytes = unknown string
+WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
 WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: default IP address = Default IP Address
+WARNING: untranslated string: disconnected = Disconnected
 WARNING: untranslated string: dns = unknown string
 WARNING: untranslated string: dns check servers = Check DNS Servers
 WARNING: untranslated string: dns configuration = DNS Configuration
@@ -837,11 +838,13 @@ WARNING: untranslated string: dns use isp assigned nameservers = Use ISP-assigne
 WARNING: untranslated string: dns use protocol for dns queries = Protocol for DNS queries
 WARNING: untranslated string: dnsforward dnssec disabled = DNSSEC Validation is disabled
 WARNING: untranslated string: dnsforward forward_servers = Nameservers
+WARNING: untranslated string: duration = Duration
 WARNING: untranslated string: email tls explicit = explicit (STARTTLS)
 WARNING: untranslated string: email tls implicit = implicit (TLS)
 WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
 WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
 WARNING: untranslated string: error = Error
+WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
 WARNING: untranslated string: fallout zombieload ridl = Fallout/ZombieLoad/RIDL
 WARNING: untranslated string: force enable = Forced
 WARNING: untranslated string: foreshadow = Foreshadow
@@ -918,10 +921,13 @@ WARNING: untranslated string: meltdown = Meltdown
 WARNING: untranslated string: mitigated = Mitigated
 WARNING: untranslated string: mtu = MTU
 WARNING: untranslated string: no data = unknown string
+WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: not affected = Not Affected
 WARNING: untranslated string: not validating = Not validating
+WARNING: untranslated string: ovpn connection name = Connection Name
 WARNING: untranslated string: ovpn error dh = The Diffie-Hellman parameter needs to be in minimum 2048 bit! <br>Please generate or upload a new Diffie-Hellman parameter, this can be made below in the section "Diffie-Hellman parameters options".</br>
 WARNING: untranslated string: ovpn error md5 = You host certificate uses MD5 for the signature which is not accepted anymore. <br>Please update to the latest IPFire version and generate a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
 WARNING: untranslated string: pakfire invalid tree = Invalid repository selected
@@ -932,10 +938,12 @@ WARNING: untranslated string: pakfire tree unstable = Unstable
 WARNING: untranslated string: please reboot to apply your changes = Please reboot to apply your changes
 WARNING: untranslated string: processor vulnerability mitigations = Processor Vulnerability Mitigations
 WARNING: untranslated string: ptr = PTR
+WARNING: untranslated string: received = Received
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
+WARNING: untranslated string: sent = Sent
 WARNING: untranslated string: smt disabled = Simultaneous Multi-Threading (SMT) is disabled
 WARNING: untranslated string: smt enabled = Simultaneous Multi-Threading (SMT) is enabled
 WARNING: untranslated string: smt not supported = Simultaneous Multi-Threading (SMT) is not supported

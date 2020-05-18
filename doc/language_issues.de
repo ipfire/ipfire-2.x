@@ -572,6 +572,7 @@ WARNING: translation string unused: reboot ask
 WARNING: translation string unused: reboot question
 WARNING: translation string unused: reboot schedule
 WARNING: translation string unused: reboot sure
+WARNING: translation string unused: recieved
 WARNING: translation string unused: refresh update list
 WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
@@ -668,7 +669,6 @@ WARNING: translation string unused: tor accounting period daily
 WARNING: translation string unused: tor accounting period monthly
 WARNING: translation string unused: tor accounting period weekly
 WARNING: translation string unused: tor exit country
-WARNING: translation string unused: total connection time
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad
@@ -768,6 +768,7 @@ WARNING: translation string unused: zoneconf val ppp assignment error
 WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
 WARNING: untranslated string: fwhost cust geoipgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
@@ -799,7 +800,9 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
+WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: pakfire invalid tree = Invalid repository selected
+WARNING: untranslated string: received = Received
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string

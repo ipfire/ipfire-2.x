@@ -7,6 +7,7 @@ WARNING: translation string unused: Captive auth_lic
 WARNING: translation string unused: Captive auth_vou
 WARNING: translation string unused: Captive err doublevoucher
 WARNING: translation string unused: Captive expire
+WARNING: translation string unused: Captive genvoucher
 WARNING: translation string unused: Captive heading terms
 WARNING: translation string unused: Captive heading voucher
 WARNING: translation string unused: Captive invalid coupon
@@ -14,6 +15,8 @@ WARNING: translation string unused: Captive invalid logosize
 WARNING: translation string unused: Captive invalid_voucher
 WARNING: translation string unused: Captive ip
 WARNING: translation string unused: Captive logo_set
+WARNING: translation string unused: Captive logo_upload
+WARNING: translation string unused: Captive logo_upload1
 WARNING: translation string unused: Captive noexpiretime
 WARNING: translation string unused: Captive nr
 WARNING: translation string unused: Captive please enter a coupon code
@@ -44,6 +47,7 @@ WARNING: translation string unused: add service
 WARNING: translation string unused: add subclass
 WARNING: translation string unused: add xtaccess
 WARNING: translation string unused: add-route
+WARNING: translation string unused: addon
 WARNING: translation string unused: admin user password has been changed
 WARNING: translation string unused: administrator user password
 WARNING: translation string unused: adsl settings
@@ -109,7 +113,6 @@ WARNING: translation string unused: alt information
 WARNING: translation string unused: alt ovpn
 WARNING: translation string unused: alt vpn
 WARNING: translation string unused: and
-WARNING: translation string unused: ansi t1.483
 WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: attemps
@@ -142,8 +145,6 @@ WARNING: translation string unused: backup sets
 WARNING: translation string unused: backup to floppy
 WARNING: translation string unused: bad characters in
 WARNING: translation string unused: behind a proxy
-WARNING: translation string unused: bewan adsl pci st
-WARNING: translation string unused: bewan adsl usb
 WARNING: translation string unused: bitrate
 WARNING: translation string unused: bleeding rules
 WARNING: translation string unused: blue access use hint
@@ -157,6 +158,7 @@ WARNING: translation string unused: cant enable xtaccess
 WARNING: translation string unused: capsinactive
 WARNING: translation string unused: ccd err iroute
 WARNING: translation string unused: ccd err netadr
+WARNING: translation string unused: ccd maxclients
 WARNING: translation string unused: cfg restart
 WARNING: translation string unused: check for net traffic update
 WARNING: translation string unused: choose config
@@ -359,8 +361,6 @@ WARNING: translation string unused: fwhost orange
 WARNING: translation string unused: fwhost reread
 WARNING: translation string unused: fwhost reset
 WARNING: translation string unused: fwhost wo subnet
-WARNING: translation string unused: g.dtm
-WARNING: translation string unused: g.lite
 WARNING: translation string unused: gen static key
 WARNING: translation string unused: generate
 WARNING: translation string unused: generate tripwire keys and init
@@ -558,6 +558,7 @@ WARNING: translation string unused: ovpn mtu-disc with mssfix or fragment
 WARNING: translation string unused: ovpn mtu-disc yes
 WARNING: translation string unused: ovpn reneg sec
 WARNING: translation string unused: ovpn_fastio
+WARNING: translation string unused: ovpn_fragment
 WARNING: translation string unused: ovpn_mssfix
 WARNING: translation string unused: ovpn_mtudisc
 WARNING: translation string unused: ovpn_processprio
@@ -705,7 +706,6 @@ WARNING: translation string unused: tor accounting period weekly
 WARNING: translation string unused: tor bridge enabled
 WARNING: translation string unused: tor errmsg invalid node id
 WARNING: translation string unused: tor exit country
-WARNING: translation string unused: total connection time
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad
@@ -751,7 +751,6 @@ WARNING: translation string unused: updxlrtr unknown
 WARNING: translation string unused: updxlrtr update information
 WARNING: translation string unused: updxlrtr update notification
 WARNING: translation string unused: updxlrtr used by
-WARNING: translation string unused: upload fcdsl.o
 WARNING: translation string unused: upload file
 WARNING: translation string unused: upload new ruleset
 WARNING: translation string unused: upload static key
@@ -808,11 +807,6 @@ WARNING: translation string unused: zoneconf val ppp assignment error
 WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val zoneslave amount error
-WARNING: untranslated string: Captive ACTIVATE = unknown string
-WARNING: untranslated string: Captive clients = unknown string
-WARNING: untranslated string: Scan for Songs = unknown string
-WARNING: untranslated string: bytes = unknown string
-WARNING: untranslated string: dns = unknown string
 WARNING: untranslated string: fwhost cust geoipgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
@@ -844,11 +838,7 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: info messages = unknown string
-WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
-WARNING: untranslated string: routing table = unknown string
-WARNING: untranslated string: vpn statistics n2n = unknown string

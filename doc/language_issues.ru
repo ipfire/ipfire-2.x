@@ -596,7 +596,6 @@ WARNING: translation string unused: to email adr
 WARNING: translation string unused: to install an update
 WARNING: translation string unused: to warn email bad
 WARNING: translation string unused: too long 80 char max
-WARNING: translation string unused: total connection time
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad
@@ -803,6 +802,7 @@ WARNING: untranslated string: count = Count
 WARNING: untranslated string: countries = Countries
 WARNING: untranslated string: country codes and flags = Country Codes and Flags:
 WARNING: untranslated string: countrycode = Code
+WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
 WARNING: untranslated string: dangerous = Dangerous
@@ -821,6 +821,7 @@ WARNING: untranslated string: dhcp dns key name = Key Name
 WARNING: untranslated string: dhcp dns update = DNS Update
 WARNING: untranslated string: dhcp dns update algo = Algorithm
 WARNING: untranslated string: dhcp dns update secret = Secret
+WARNING: untranslated string: disconnected = Disconnected
 WARNING: untranslated string: disk access per = Disk Access per
 WARNING: untranslated string: dl client arch insecure = Download insecure Client Package (zip)
 WARNING: untranslated string: dnat address = Firewall Interface
@@ -860,6 +861,7 @@ WARNING: untranslated string: drop action1 = Default behaviour of (outgoing) fir
 WARNING: untranslated string: drop action2 = Default behaviour of (input) firewall
 WARNING: untranslated string: drop forward = Log dropped forward packets
 WARNING: untranslated string: drop outgoing = Log dropped outgoing packets
+WARNING: untranslated string: duration = Duration
 WARNING: untranslated string: eight hours = 8 Hours
 WARNING: untranslated string: email config = Configuration
 WARNING: untranslated string: email empty field = Empty field
@@ -886,6 +888,7 @@ WARNING: untranslated string: encryption = Encryption:
 WARNING: untranslated string: entropy = Entropy
 WARNING: untranslated string: entropy graphs = Entropy Graphs
 WARNING: untranslated string: error = Error
+WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
 WARNING: untranslated string: extrahd because there is already a device mounted = , because there is already a device mounted
 WARNING: untranslated string: extrahd cant umount = Can't umount
 WARNING: untranslated string: extrahd install or load driver = If your device isn't listed here, you need to install or load the driver.<br />If you can see your device but no partitions you have to create them first.
@@ -1190,6 +1193,7 @@ WARNING: untranslated string: most preferred = most preferred
 WARNING: untranslated string: mtu = MTU
 WARNING: untranslated string: nameserver = Nameserver
 WARNING: untranslated string: no data = unknown string
+WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: none = none
 WARNING: untranslated string: not a valid dh key = Not a valid Diffie-Hellman parameters file. Please use a length of 2048, 3072 or 4096 bits and the PKCS#3 format.
 WARNING: untranslated string: not affected = Not Affected
@@ -1214,6 +1218,7 @@ WARNING: untranslated string: outgoing firewall access = Outgoing Firewall Acces
 WARNING: untranslated string: outgoing overhead in bytes per second = Outgoing Overhead
 WARNING: untranslated string: outgoing traffic in bytes per second = Outgoing Traffic
 WARNING: untranslated string: ovpn add conf = Additional configuration
+WARNING: untranslated string: ovpn connection name = Connection Name
 WARNING: untranslated string: ovpn crypt options = Cryptographic options
 WARNING: untranslated string: ovpn dh = Diffie-Hellman parameters length
 WARNING: untranslated string: ovpn dh new key = Generate new Diffie-Hellman parameters
@@ -1226,6 +1231,7 @@ WARNING: untranslated string: ovpn ha = Hash algorithm
 WARNING: untranslated string: ovpn mgmt in root range = A port number of 1024 or higher is required.
 WARNING: untranslated string: ovpn no connections = No active OpenVPN connections
 WARNING: untranslated string: ovpn port in root range = A port number of 1024 or higher is required.
+WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
 WARNING: untranslated string: p2p block = P2P networks
@@ -1249,6 +1255,7 @@ WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: qos enter bandwidths = You will need to enter your downstream and upstream bandwidth!
 WARNING: untranslated string: random number generator daemon = Random Number Generator Daemon
 WARNING: untranslated string: rdns = rDNS
+WARNING: untranslated string: received = Received
 WARNING: untranslated string: red1 = RED
 WARNING: untranslated string: required field = Required field
 WARNING: untranslated string: route config changed = unknown string
@@ -1258,6 +1265,7 @@ WARNING: untranslated string: routing table = unknown string
 WARNING: untranslated string: samba join a domain = Join a domain
 WARNING: untranslated string: samba join domain = Join domain
 WARNING: untranslated string: search = Search
+WARNING: untranslated string: sent = Sent
 WARNING: untranslated string: server restart = You are not able to save any changes while the OpenVPN server is running.
 WARNING: untranslated string: show dh = Show Diffie-Hellman parameters
 WARNING: untranslated string: show tls-auth key = Show tls-auth key

@@ -673,7 +673,6 @@ WARNING: translation string unused: tor accounting period weekly
 WARNING: translation string unused: tor bridge enabled
 WARNING: translation string unused: tor errmsg invalid node id
 WARNING: translation string unused: tor exit country
-WARNING: translation string unused: total connection time
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad
@@ -827,6 +826,7 @@ WARNING: untranslated string: broken = Broken
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: capabilities = Capabilities
 WARNING: untranslated string: check all = Check all
+WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
 WARNING: untranslated string: dangerous = Dangerous
@@ -842,6 +842,7 @@ WARNING: untranslated string: dhcp dns key name = Key Name
 WARNING: untranslated string: dhcp dns update = DNS Update
 WARNING: untranslated string: dhcp dns update algo = Algorithm
 WARNING: untranslated string: dhcp dns update secret = Secret
+WARNING: untranslated string: disconnected = Disconnected
 WARNING: untranslated string: dl client arch insecure = Download insecure Client Package (zip)
 WARNING: untranslated string: dns = unknown string
 WARNING: untranslated string: dns check servers = Check DNS Servers
@@ -866,6 +867,7 @@ WARNING: untranslated string: dnssec not supported = DNSSEC Not supported
 WARNING: untranslated string: dnssec validating = DNSSEC Validating
 WARNING: untranslated string: download tls-auth key = Download tls-auth key
 WARNING: untranslated string: drop outgoing = Log dropped outgoing packets
+WARNING: untranslated string: duration = Duration
 WARNING: untranslated string: eight hours = 8 Hours
 WARNING: untranslated string: email config = Configuration
 WARNING: untranslated string: email empty field = Empty field
@@ -888,6 +890,7 @@ WARNING: untranslated string: email usemail = Activate Mail Service
 WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
 WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
 WARNING: untranslated string: error = Error
+WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
 WARNING: untranslated string: fallout zombieload ridl = Fallout/ZombieLoad/RIDL
 WARNING: untranslated string: fifteen minutes = 15 Minutes
 WARNING: untranslated string: firewall graph country = Firewall-Diagram (Country)
@@ -1024,6 +1027,7 @@ WARNING: untranslated string: monitor interface = Monitor Interface
 WARNING: untranslated string: mtu = MTU
 WARNING: untranslated string: nameserver = Nameserver
 WARNING: untranslated string: no data = unknown string
+WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: none = none
 WARNING: untranslated string: not a valid dh key = Not a valid Diffie-Hellman parameters file. Please use a length of 2048, 3072 or 4096 bits and the PKCS#3 format.
 WARNING: untranslated string: not affected = Not Affected
@@ -1035,6 +1039,7 @@ WARNING: untranslated string: one year = One Year
 WARNING: untranslated string: outgoing compression in bytes per second = Outgoing compression
 WARNING: untranslated string: outgoing overhead in bytes per second = Outgoing Overhead
 WARNING: untranslated string: ovpn add conf = Additional configuration
+WARNING: untranslated string: ovpn connection name = Connection Name
 WARNING: untranslated string: ovpn crypt options = Cryptographic options
 WARNING: untranslated string: ovpn dh = Diffie-Hellman parameters length
 WARNING: untranslated string: ovpn dh new key = Generate new Diffie-Hellman parameters
@@ -1044,6 +1049,7 @@ WARNING: untranslated string: ovpn error dh = The Diffie-Hellman parameter needs
 WARNING: untranslated string: ovpn error md5 = You host certificate uses MD5 for the signature which is not accepted anymore. <br>Please update to the latest IPFire version and generate a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
 WARNING: untranslated string: ovpn generating the root and host certificates = Generating the root and host certificate can take a long time.
 WARNING: untranslated string: ovpn ha = Hash algorithm
+WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
 WARNING: untranslated string: pakfire invalid tree = Invalid repository selected
@@ -1059,6 +1065,7 @@ WARNING: untranslated string: processor vulnerability mitigations = Processor Vu
 WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: random number generator daemon = Random Number Generator Daemon
 WARNING: untranslated string: rdns = rDNS
+WARNING: untranslated string: received = Received
 WARNING: untranslated string: required field = Required field
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
@@ -1067,6 +1074,7 @@ WARNING: untranslated string: routing table = unknown string
 WARNING: untranslated string: samba join a domain = Join a domain
 WARNING: untranslated string: samba join domain = Join domain
 WARNING: untranslated string: search = Search
+WARNING: untranslated string: sent = Sent
 WARNING: untranslated string: show dh = Show Diffie-Hellman parameters
 WARNING: untranslated string: show tls-auth key = Show tls-auth key
 WARNING: untranslated string: smt disabled = Simultaneous Multi-Threading (SMT) is disabled
