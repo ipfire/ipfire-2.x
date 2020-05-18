@@ -16,6 +16,7 @@ usr/local/bin/makegraphs
 usr/sbin/openvpn-metrics
 usr/share/hwdata/pci.ids
 var/ipfire/menu.d/70-log.menu
+var/ipfire/ids-functions.pl
 var/ipfire/general-functions.pl
 var/ipfire/graphs.pl
 usr/bin/squidGuard
