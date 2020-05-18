@@ -572,7 +572,6 @@ WARNING: translation string unused: reboot ask
 WARNING: translation string unused: reboot question
 WARNING: translation string unused: reboot schedule
 WARNING: translation string unused: reboot sure
-WARNING: translation string unused: recieved
 WARNING: translation string unused: refresh update list
 WARNING: translation string unused: released
 WARNING: translation string unused: removable device advice
@@ -802,7 +801,6 @@ WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: pakfire invalid tree = Invalid repository selected
-WARNING: untranslated string: received = Received
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string

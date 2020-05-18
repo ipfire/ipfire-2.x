@@ -2085,7 +2085,7 @@
 'reboot sure' => 'Sind Sie sicher, dass Sie neustarten wollen?',
 'rebooting' => 'Starte neu ...',
 'rebooting ipfire' => 'Starte IPFire neu',
-'recieved' => 'Empfangen',
+'received' => 'Empfangen',
 'reconnect' => 'Neu Verbinden',
 'reconnection' => 'Wiederverbindung',
 'red' => 'Internet',
