@@ -47,6 +47,8 @@ done
 
 # Stop services
 /etc/init.d/vnstat stop
+/etc/init.d/squid stop
+/etc/init.d/suricata stop
 
 # Prepare OpenVPN for update
 /usr/local/bin/openvpnctrl -k
@@ -67,7 +69,8 @@ mv /etc/rc.d/rcsysinit.d/S92rngd /etc/rc.d/rcsysinit.d/S65rngd
 # Start services
 /etc/init.d/vnstat start
 /etc/init.d/unbound restart
-/etc/init.d/squid restart
+/etc/init.d/suricata start
+/etc/init.d/squid start
 
 # Start OpenVPN again
 /usr/local/bin/openvpnctrl -s
