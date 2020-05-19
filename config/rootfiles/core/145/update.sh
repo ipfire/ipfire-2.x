@@ -63,8 +63,10 @@ rm /etc/rc.d/rc0.d/K45random
 rm /etc/rc.d/rc6.d/K45random
 mv /etc/rc.d/rc3.d/S00random /etc/rc.d/rcsysinit.d/S66random
 mv /etc/rc.d/rcsysinit.d/S92rngd /etc/rc.d/rcsysinit.d/S65rngd
+
 # Start services
 /etc/init.d/vnstat start
+/etc/init.d/unbound restart
 
 # Start OpenVPN again
 /usr/local/bin/openvpnctrl -s
