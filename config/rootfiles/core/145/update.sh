@@ -67,6 +67,7 @@ mv /etc/rc.d/rcsysinit.d/S92rngd /etc/rc.d/rcsysinit.d/S65rngd
 # Start services
 /etc/init.d/vnstat start
 /etc/init.d/unbound restart
+/etc/init.d/squid restart
 
 # Start OpenVPN again
 /usr/local/bin/openvpnctrl -s
