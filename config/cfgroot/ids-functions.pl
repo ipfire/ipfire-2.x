@@ -677,7 +677,7 @@ sub generate_home_net_file() {
 	}
 
 	# Format home net declaration.
-	my $line = "[" . join(',', @networks) . "]";
+	my $line = "\"[" . join(',', @networks) . "]\"";
 
 	# Open file to store the addresses of the home net.
 	open(FILE, ">$homenet_file") or die "Could not open $homenet_file. $!\n";
