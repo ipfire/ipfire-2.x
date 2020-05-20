@@ -66,6 +66,13 @@ rm /etc/rc.d/rc6.d/K45random
 mv /etc/rc.d/rc3.d/S00random /etc/rc.d/rcsysinit.d/S66random
 mv /etc/rc.d/rcsysinit.d/S92rngd /etc/rc.d/rcsysinit.d/S65rngd
 
+# remove packages that are included now in core
+for package in perl-DBI perl-DBD-SQLite; do
+        rm -f /opt/pakfire/db/installed/meta-$package
+        rm -f /opt/pakfire/db/meta/meta-$package
+        rm -f /opt/pakfire/db/rootfiles/$package
+done
+
 # Start services
 /etc/init.d/vnstat start
 /etc/init.d/unbound restart
