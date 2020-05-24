@@ -1707,7 +1707,7 @@ buildpackages() {
   # remove not useable iso on armv5tel (needed to build flash images)
   [ "${BUILD_ARCH}" = "armv5tel" ] && rm -rf *.iso
 
-  for i in `ls *.bz2 *.img.xz *.iso`; do
+  for i in $(ls *.bz2 *.img.xz *.iso 2>/dev/null); do
 	md5sum $i > $i.md5
   done
   cd $PWD
