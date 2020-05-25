@@ -34,6 +34,9 @@ require "${General::swroot}/header.pl";
 require "${General::swroot}/geoip-functions.pl";
 require "${General::swroot}/graphs.pl";
 
+# Libloc database handle.
+my $libloc_db_handle = &GeoIP::init();
+
 my %color = ();
 my %mainsettings = ();
 my %netsettings=();

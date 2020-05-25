@@ -278,6 +278,9 @@ sub printactivelogins()
 	} else {
 		# list active logins...
 
+		# Libloc database handle.
+		my $libloc_db_handle = &GeoIP::init();
+
 		foreach my $line (@output)
 		{
 			my @arry = split(/\ +/, $line);
@@ -288,7 +291,7 @@ sub printactivelogins()
 			$remoteip =~ s/[()]//g;
 
 			# display more information about that IP adress...
-			my $ccode = &GeoIP::lookup($remoteip);
+			my $ccode = &GeoIP::lookup_country_code($libloc_db_handle, $remoteip);
 			my $flag_icon = &GeoIP::get_flag_icon($ccode);
 
 			# get rDNS...

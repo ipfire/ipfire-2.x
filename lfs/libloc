@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,27 +24,24 @@
 
 include Config
 
-VER        = 1.6.12
-DVER       = 1.6.12-3
+VER        = 0.9.0
+GIT_REV    = cd022c
 
-THISAPP    = geoip-api-c-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+THISAPP    = libloc-$(VER)-$(GIT_REV)
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/libloc-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) geoip_$(DVER).debian.tar.xz
+objects = $(DL_FILE)
 
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE) 
-geoip_$(DVER).debian.tar.xz = $(DL_FROM)/geoip_$(DVER).debian.tar.xz
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5                  = 727e5d6df9e9fc039dbc3a323cc56d2e
-geoip_$(DVER).debian.tar.xz_MD5 = 64fb561362dc456b45b799da20d47dd4
-
+$(DL_FILE)_MD5 = a40fcbdd5585f720ca801166befeef85
 install : $(TARGET)
 
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
@@ -52,6 +49,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
+
+dist:
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -72,18 +72,13 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./bootstrap
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--sysconfdir=/etc \
+		--localstatedir=/var \
+		--disable-manpages
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && tar axf $(DIR_DL)/geoip_$(DVER).debian.tar.xz
-	cd $(DIR_APP) && sed -i "s/use diagnostics;//g" debian/src/geolite2-to-legacy-csv.sh
-	cd $(DIR_APP) && g++ -std=gnu++11 -g debian/src/geoip-csv-to-dat.cpp \
-				-o geoip-generator -lGeoIP
-	-mkdir -p /usr/share/GeoIP/bin
-	cd $(DIR_APP) && install -m 755 geoip-generator /usr/share/GeoIP/bin
-	cd $(DIR_APP) && install -m 755 debian/src/geolite2-to-legacy-csv.sh /usr/share/GeoIP/bin
-	cd $(DIR_APP) && install -m 644 debian/src/countryInfo.txt /usr/share/GeoIP/bin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

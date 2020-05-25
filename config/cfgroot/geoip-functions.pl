@@ -23,24 +23,73 @@
 
 package GeoIP;
 
-use Geo::IP::PurePerl;
+use Location;
 use Locale::Codes::Country;
 
-my $geoip_database_dir = "/var/lib/GeoIP";
-my $location_database = "GeoLite2-Country-Locations-en.csv";
+# Hash which contains country codes and their names which are special or not
+# part of ISO 3166-1.
+my %not_iso_3166_location = (
+	"a1" => "Anonymous Proxy",
+	"a2" => "Satellite Provider",
+	"a3" => "Worldwide Anycast Instance",
+	"an" => "Netherlands Antilles",
+	"ap" => "Asia/Pacific Region",
+	"eu" => "Europe",
+	"fx" => "France, Metropolitan",
+	"o1" => "Other Country",
+	"yu" => "Yugoslavia"
+);
 
-my $database;
+# Directory where the libloc database and keyfile lives.
+our $location_dir = "/var/lib/location/";
 
-sub lookup($) {
-	my $address = shift;
+# Libloc database file.
+our $database = "$location_dir/database.db";
 
-	# Load the database into memory if not already done
-	if (!$database) {
-		$database = Geo::IP::PurePerl->new(GEOIP_MEMORY_CACHE);
+# Libloc keyfile to verify the database.
+our $keyfile = "$location_dir/signing-key.pem";
+
+# Directory which contains the exported databases.
+our $xt_geoip_db_directory = "/usr/share/xt_geoip/";
+
+#
+## Tiny function to init the location database.
+#
+sub init () {
+	# Init and open the database.
+	my $db = &Location::init($database);
+
+	# Return the database handle.
+	return $db;
+}
+
+#
+## Function to verify the integrity of the location database.
+#
+sub verify ($) {
+	my ($db_handle) = @_;
+
+	# Verify the integrity of the database.
+	if(&Location::verify($db_handle, $keyfile)) {
+		# Success, return "1".
+		return 1;
 	}
 
+	# If we got here, return nothing.
+	return;
+}
+
+#
+## Function to the the country code of a given address.
+#
+sub lookup_country_code($$) {
+	my ($db_handle, $address) = @_;
+
+	# Lookup the given address.
+	my $country_code = &Location::lookup_country_code($db_handle, $address);
+
 	# Return the name of the country
-	return $database->country_code_by_name($address);
+	return $country_code;
 }
 
 # Function to get the flag icon for a specified country code.
@@ -102,17 +151,15 @@ sub get_full_country_name($) {
 	# Remove whitespaces.
 	chomp($input);
 
+
 	# Convert input into lower case format.
 	my $code = lc($input);
 
 	# Handle country codes which are not in the list.
-	if ($code eq "a1") { $name = "Anonymous Proxy" }
-	elsif ($code eq "a2") { $name = "Satellite Provider" }
-	elsif ($code eq "o1") { $name = "Other Country" }
-	elsif ($code eq "ap") { $name = "Asia/Pacific Region" }
-	elsif ($code eq "eu") { $name = "Europe" }
-	elsif ($code eq "yu") { $name = "Yugoslavia" }
-	else {
+	if ($not_iso_3166_location{$code}) {
+		# Grab location name from hash.
+		$name = $not_iso_3166_location{$code};
+	} else {
 		# Use perl built-in module to get the country code.
 		$name = &Locale::Codes::Country::code2country($code);
 	}
@@ -124,26 +171,13 @@ sub get_full_country_name($) {
 sub get_geoip_locations() {
 	my @locations = ();
 
-	# Open the location database.
-	open(LOCATION, "$geoip_database_dir/$location_database") or return @locations;
+	# Get listed country codes from ISO 3166-1.
+	@locations = &Locale::Codes::Country::all_country_codes();
 
-	# Loop through the file.
-	while(my $line = <LOCATION>) {
-		# Remove newlines.
-		chomp($line);
-
-		# Split the line content.
-		my ($geoname_id, $locale_code, $continent_code, $continent_name, $country_iso_code, $country_name, $is_in_european_union) = split(/\,/, $line);
-
-		# Check if the country_iso_code is upper case.
-		if($country_iso_code =~ /[A-Z]/) {
-			# Add the current ISO code.
-			push(@locations, $country_iso_code);
-		}
+	# Add locations from not_iso_3166_locations.
+	foreach my $location (keys %not_iso_3166_location) {
+		push(@locations, $location);
 	}
-
-	# Close filehandle.
-	close(LOCATION);
 
 	# Sort locations array in alphabetical order.
 	my @sorted_locations = sort(@locations);
@@ -152,5 +186,63 @@ sub get_geoip_locations() {
 	return @sorted_locations;
 }
 
+# Function to get the continent code of a given country code.
+sub get_continent_code($$) {
+	my ($db_handle, $ccode) = @_;
+
+	# Omit the continent code.
+	my $continent_code = &Location::get_continent_code($db_handle, $ccode);
+
+	return $continent_code;
+}
+
+# Function to flush all exported GeoIP locations.
+sub flush_exported_locations () {
+	# Check if the xt_geoip_db_directory exists.
+	if (-e $xt_geoip_db_directory) {
+		# Perform a direcory listing.
+		opendir (DIR, $xt_geoip_db_directory) or die "Could not open $xt_geoip_db_directory. $!\n";
+
+		# Loop through the files.
+		while (my $file = readdir(DIR)) {
+			# Check if the element is a file.
+			if (-f "$xt_geoip_db_directory/$file") {
+				# Delete it.
+				unlink("$xt_geoip_db_directory/$file");
+			}
+		}
+	}
+}
+
+# Function which calls location-exporter to export a given array
+# of locations.
+sub export_locations (\@) {
+	my @locations = @{ shift() };
+
+	# String to store the given locations and pass it to the exporter tool.
+	my $locations_string;
+
+	# Only export IPv4 addresses.
+	my $family = "--family=ipv4";
+
+	# Specify xt_geoip as output format.
+	my $format = "--format=xt_geoip";
+
+	# Location export command.
+	my @command = ("/usr/bin/location-exporter", "--directory=$xt_geoip_db_directory", "$format", "$family");
+
+	# Check if the export directory exists, otherwise create it.
+	unless (-d $xt_geoip_db_directory) { mkdir $xt_geoip_db_directory };
+
+	# Loop through the array of locations which needs to be exported.
+	foreach my $location (@locations) {
+		# Add location to the command array.
+		push(@command, $location);
+	}
+
+	# Execute location-exporter to export the requested country codes.
+	system(@command) == 0
+		or die "@command failed: $?";
+}
 
 1;

@@ -41,33 +41,54 @@ my %cgiparams=();
 my @lines=();
 my $extraquery='';
 
+# Hash which contains the whois servers from
+# the responisible RIR of the continent.
+my %whois_servers_by_continent = (
+	"AF" => "whois.afrinic.net",
+	"AS" => "whois.apnic.net",
+	"EU" => "whois.ripe.net",
+	"NA" => "whois.arin.net",
+	"SA" => "whois.lacnic.net"
+);
+
+# Default whois server if no continent could be determined.
+my $whois_server = "whois.arin.net";
+
 my $addr = CGI::param("ip") || "";
 
 if (&General::validip($addr)) {
-	$extraquery='';
-	@lines=();
-	my $whoisname = "whois.arin.net";
 	my $iaddr = inet_aton($addr);
 	my $hostname = gethostbyaddr($iaddr, AF_INET);
 	if (!$hostname) { $hostname = $Lang::tr{'lookup failed'}; }
 
 	# enumerate GeoIP information for IP address...
-	my $ccode = &GeoIP::lookup($addr);
+	my $db_handle = &GeoIP::init();
+	my $ccode = &GeoIP::lookup_country_code($db_handle, $addr);
+
+	# Try to get the continent of the country code.
+	my $continent = &GeoIP::get_continent_code($db_handle, $ccode);
+
+	# Check if a whois server for the continent is known.
+	if($whois_servers_by_continent{$continent}) {
+		# Use it.
+		$whois_server = $whois_servers_by_continent{$continent};
+	}
+
 	my $flag_icon = &GeoIP::get_flag_icon($ccode);
 
-	my $sock = new IO::Socket::INET ( PeerAddr => $whoisname, PeerPort => 43, Proto => 'tcp');
+	my $sock = new IO::Socket::INET ( PeerAddr => $whois_server, PeerPort => 43, Proto => 'tcp');
 	if ($sock)
 	{
-		print $sock "n $addr\n";
+		print $sock "$addr\n";
 		while (<$sock>) {
-			$extraquery = $1 if (/ReferralServer: whois:\/\/(\S+)\s+/);
+			$extraquery = $1 if (/ReferralServer:  whois:\/\/(\S+)\s+/);
 			push(@lines,$_);
 		}
 		close($sock);
 		if ($extraquery) {
 			undef (@lines);
-			$whoisname = $extraquery;
-			my $sock = new IO::Socket::INET ( PeerAddr => $whoisname, PeerPort => 43, Proto => 'tcp');
+			$whois_server = $extraquery;
+			my $sock = new IO::Socket::INET ( PeerAddr => $whois_server, PeerPort => 43, Proto => 'tcp');
 			if ($sock)
 			{
 				print $sock "$addr\n";
@@ -77,16 +98,16 @@ if (&General::validip($addr)) {
 			}
 			else
 			{
-				@lines = ( "$Lang::tr{'unable to contact'} $whoisname" );
+				@lines = ( "$Lang::tr{'unable to contact'} $whois_server" );
 			}
 		}
 	}
 	else
 	{
-		@lines = ( "$Lang::tr{'unable to contact'} $whoisname" );
+		@lines = ( "$Lang::tr{'unable to contact'} $whois_server" );
 	}
 
-	&Header::openbox('100%', 'left', $addr . " <a href='country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode' title='$ccode' /></a> (" . $hostname . ') : '.$whoisname);
+	&Header::openbox('100%', 'left', $addr . " <a href='country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode' title='$ccode' /></a> (" . $hostname . ') : '.$whois_server);
 	print "<pre>\n";
 	foreach my $line (@lines) {
 		print &Header::cleanhtml($line,"y");

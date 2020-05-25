@@ -86,6 +86,9 @@ if ( $debug ){
 my @dummy = ( ${Header::table1colour} );
 undef (@dummy);
 
+# Init libloc database connection.
+my $libloc_db_handle = &GeoIP::init();
+
 # check sorting arguments
 if ( $cgiin{'sort_field'} ~~ [ '1','2','3','4','5','6','7','8','9' ] ) {
 	$SORT_FIELD = $cgiin{'sort_field'};
@@ -551,9 +554,9 @@ foreach my $line (@conntrack) {
 	my $bytes_out = format_bytes($bytes[1]);
 
 	# enumerate GeoIP information
-	my $srcccode = &GeoIP::lookup($sip_ret);
+	my $srcccode = &GeoIP::lookup_country_code($libloc_db_handle, $sip_ret);
 	my $src_flag_icon = &GeoIP::get_flag_icon($srcccode);
-	my $dstccode = &GeoIP::lookup($dip_ret);
+	my $dstccode = &GeoIP::lookup_country_code($libloc_db_handle, $dip_ret);
 	my $dst_flag_icon = &GeoIP::get_flag_icon($dstccode);
 
 	# Format TTL

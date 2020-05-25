@@ -22,6 +22,9 @@ require "${General::swroot}/geoip-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+# Libloc database handle.
+my $libloc_db_handle = &GeoIP::init();
+
 use POSIX();
 
 my %cgiparams=();
@@ -308,7 +311,7 @@ foreach $_ (@log)
 		# Traffic from red
 		if($srcaddr ne '') {
 			# srcaddr is set
-			my $ccode = &GeoIP::lookup($srcaddr);
+			my $ccode = &GeoIP::lookup_country_code($libloc_db_handle, $srcaddr);
 			if ($ccode eq '') {
 				$ccode = 'unknown';
 			}

@@ -1355,8 +1355,6 @@ buildipfire() {
   lfsmake2 python-daemon
   lfsmake2 python-ipaddress
   lfsmake2 glib
-  lfsmake2 GeoIP
-  lfsmake2 geoip-database
   lfsmake2 ntp
   lfsmake2 openssh
   lfsmake2 fontconfig
@@ -1643,10 +1641,10 @@ buildipfire() {
   lfsmake2 flashrom
   lfsmake2 firmware-update
   lfsmake2 tshark
-  lfsmake2 geoip-generator
   lfsmake2 speedtest-cli
   lfsmake2 rfkill
   lfsmake2 amazon-ssm-agent
+  lfsmake2 libloc
 }
 
 buildinstaller() {
@@ -2002,3 +2000,4 @@ find-dependencies)
 	cat doc/make.sh-usage
 	;;
 esac
+
