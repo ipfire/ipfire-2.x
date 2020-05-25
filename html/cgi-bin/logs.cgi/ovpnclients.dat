@@ -95,6 +95,21 @@ unless ($to_datestring ge $from_datestring) {
 	$errormessage = "$Lang::tr{'error the to date has to be later than the from date'}";
 }
 
+# Initialise database
+my $cursor = $database_handle->prepare("
+	CREATE TABLE IF NOT EXISTS sessions(
+		common_name TEXT NOT NULL,
+		connected_at TEXT NOT NULL,
+		disconnected_at TEXT,
+		bytes_received INTEGER,
+		bytes_sent INTEGER
+	);
+
+	-- Create index for speeding up searches
+	CREATE INDEX IF NOT EXISTS sessions_common_name ON sessions(common_name);
+");
+$cursor->execute();
+
 my $database_query = qq(
 	SELECT
         common_name, SUM(
