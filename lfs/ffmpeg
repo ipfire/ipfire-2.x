@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.2.2
+VER        = 4.2.3
 
 THISAPP    = ffmpeg-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ffmpeg
-PAK_VER    = 9
+PAK_VER    = 10
 
 DEPS       = sdl lame libvorbis xvid
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 829d56f158832dbf669b5b417af48060
+$(DL_FILE)_MD5 = 695fad11f3baf27784e24cb0e977b65a
 
 install : $(TARGET)
 
