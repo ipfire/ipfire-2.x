@@ -73,6 +73,13 @@ for package in perl-DBI perl-DBD-SQLite; do
         rm -f /opt/pakfire/db/rootfiles/$package
 done
 
+# Enable OpenVPN metrics collection
+cat <<EOF >> /var/ipfire/ovpn/server.conf
+# Log clients connecting/disconnecting
+client-connect "/usr/sbin/openvpn-metrics client-connect"
+client-disconnect "/usr/sbin/openvpn-metrics client-disconnect"
+EOF
+
 # Start services
 /etc/init.d/vnstat start
 /etc/init.d/unbound restart
