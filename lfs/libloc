@@ -24,11 +24,10 @@
 
 include Config
 
-VER        = 0.9.0
-GIT_REV    = cd022c
+VER        = 0.9.1
 
-THISAPP    = libloc-$(VER)-$(GIT_REV)
-DL_FILE    = $(THISAPP).tar.xz
+THISAPP    = libloc-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/libloc-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -41,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a40fcbdd5585f720ca801166befeef85
+$(DL_FILE)_MD5 = b62331e7a5bc5299bdd35f340342fc51
 install : $(TARGET)
 
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
@@ -73,6 +72,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
