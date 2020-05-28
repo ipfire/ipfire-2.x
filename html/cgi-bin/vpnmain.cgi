@@ -1390,14 +1390,28 @@ END
 
 	# Left ID
 	if ($confighash{$key}[9]) {
+		my $leftid = $confighash{$key}[9];
+
+		# Strip leading @ from FQDNs
+		if ($leftid =~ m/^@(.*)$/) {
+			$leftid = $1;
+		}
+
 		print "					<key>LocalIdentifier</key>\n";
-		print "					<string>$confighash{$key}[9]</string>\n";
+		print "					<string>$leftid</string>\n";
 	}
 
 	# Right ID
 	if ($confighash{$key}[7]) {
+		my $rightid = $confighash{$key}[7];
+
+		# Strip leading @ from FQDNs
+		if ($rightid =~ m/^@(.*)$/) {
+			$rightid = $1;
+		}
+
 		print "					<key>RemoteIdentifier</key>\n";
-		print "					<string>$confighash{$key}[7]</string>\n";
+		print "					<string>$rightid</string>\n";
 	}
 
 	if ($confighash{$key}[4] eq "cert") {
