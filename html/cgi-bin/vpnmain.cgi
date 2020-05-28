@@ -1246,12 +1246,22 @@ END
 	my $uuid1 = $uuid->create_str();
 	my $uuid2 = $uuid->create_str();
 
+	my $ca = "";
+	my $ca_uuid = $uuid->create_str();
+
 	my $cert = "";
 	my $cert_uuid = $uuid->create_str();
 
-	# Read and encode certificate
+	# Read and encode the CA & certificate
 	if ($confighash{$key}[4] eq "cert") {
+		my $ca_path = "${General::swroot}/ca/cacert.pem";
 		my $cert_path = "${General::swroot}/certs/$confighash{$key}[1].p12";
+
+		# Read the CA and encode it into Base64
+		open(CA, "<${ca_path}");
+		local($/) = undef; # slurp
+		$ca = MIME::Base64::encode_base64(<CA>);
+		close(CA);
 
 		# Read certificate and encode it into Base64
 		open(CERT, "<${cert_path}");
@@ -1460,6 +1470,25 @@ END
 		print "				<data>\n";
 
 		foreach (split /\n/,${cert}) {
+			print "					$_\n";
+		}
+
+		print "				</data>\n";
+		print "			</dict>\n";
+
+		print "			<dict>\n";
+		print "				<key>PayloadIdentifier</key>\n";
+		print "				<string>org.example.ca</string>\n";
+		print "				<key>PayloadUUID</key>\n";
+		print "				<string>${ca_uuid}</string>\n";
+		print "				<key>PayloadType</key>\n";
+		print "				<string>com.apple.security.root</string>\n";
+		print "				<key>PayloadVersion</key>\n";
+		print "				<integer>1</integer>\n";
+		print "				<key>PayloadContent</key>\n";
+		print "				<data>\n";
+
+		foreach (split /\n/,${ca}) {
 			print "					$_\n";
 		}
 
