@@ -68,7 +68,7 @@ mv /etc/rc.d/rcsysinit.d/S92rngd /etc/rc.d/rcsysinit.d/S65rngd
 
 # remove converted urlfilter database to force rebuilt
 rm -f /var/ipfire/urlfilter/blacklists/*/*.db
-rm -f /var/ipfire/urlfilter/blacklists/custom/*/*.db
+rm -f /var/ipfire/urlfilter/blacklists/*/*/*.db
 
 # remove packages that are included now in core
 for package in perl-DBI perl-DBD-SQLite; do
