@@ -111,5 +111,8 @@ else
 	done
 endif
 
+	# Create directory for the databases.
+	mkdir -pv /usr/share/xt_geoip/
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

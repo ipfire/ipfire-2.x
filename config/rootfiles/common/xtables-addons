@@ -30,3 +30,4 @@ usr/sbin/iptaccount
 #usr/share/man/man1/xt_geoip_dl.1
 #usr/share/man/man8/iptaccount.8
 #usr/share/man/man8/xtables-addons.8
+/usr/share/xt_geoip/
