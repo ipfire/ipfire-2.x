@@ -72,6 +72,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvf $(DIR_DL)/$(DL_FILE)
+
+	# Add upstream patches.
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-location-downloader-do-not-change-content-of-open-database.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-remove-python-path-overrides-for-debian.patch
+
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
