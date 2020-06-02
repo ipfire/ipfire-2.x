@@ -1690,9 +1690,6 @@ buildpackages() {
 
   ipfirepackages
 
-  lfsmake2 xen-image
-  mv $LFS/install/images/*.bz2 $BASEDIR >> $LOGFILE 2>&1
-
   cd $BASEDIR
 
   # remove not useable iso on armv5tel (needed to build flash images)
