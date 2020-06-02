@@ -1188,15 +1188,6 @@ buildipfire() {
 		lfsmake2 linux-initrd			KCFG=""
 		;;
 	i586)
-		# x86-pae (Native and new XEN) kernel build
-		lfsmake2 linux			KCFG="-pae"
-#		lfsmake2 backports			KCFG="-pae"
-#		lfsmake2 e1000e			KCFG="-pae"
-#		lfsmake2 igb				KCFG="-pae"
-#		lfsmake2 ixgbe			KCFG="-pae"
-		lfsmake2 xtables-addons		KCFG="-pae"
-		lfsmake2 linux-initrd			KCFG="-pae"
-
 		# x86 kernel build
 		lfsmake2 linux			KCFG=""
 #		lfsmake2 backports			KCFG=""

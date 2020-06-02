@@ -27,14 +27,5 @@ if [ "${?}" == "1" ]; then
 	reboot -f
 fi
 
-# plan install pae kernel at next pakfire update if pae is supported
-if [ ! "$(grep "^flags.* pae " /proc/cpuinfo)" == "" ]; then
-	if [ ! -e /opt/pakfire/db/installed/meta-linux-pae ]; then
-		echo "Name: linux-pae" > /opt/pakfire/db/installed/meta-linux-pae
-		echo "ProgVersion: 0" >> /opt/pakfire/db/installed/meta-linux-pae
-		echo "Release: 0"     >> /opt/pakfire/db/installed/meta-linux-pae
-	fi
-fi
-
 /etc/init.d/sysklogd stop
 touch /var/ipfire/main/firstsetup_ok
