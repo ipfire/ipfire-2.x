@@ -78,7 +78,7 @@ for package in perl-DBI perl-DBD-SQLite; do
 done
 
 # Enable OpenVPN metrics collection
-cat <<EOF >> /var/ipfire/ovpn/server.conf
+grep -q "^client-connect" /var/ipfire/ovpn/server.conf || cat <<EOF >> /var/ipfire/ovpn/server.conf
 # Log clients connecting/disconnecting
 client-connect "/usr/sbin/openvpn-metrics client-connect"
 client-disconnect "/usr/sbin/openvpn-metrics client-disconnect"
