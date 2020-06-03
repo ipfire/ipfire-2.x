@@ -170,11 +170,25 @@ sub get_geoip_locations() {
 	my @locations = ();
 
 	# Get listed country codes from ISO 3166-1.
-	@locations = &Locale::Codes::Country::all_country_codes();
+	my @locations_lc = &Locale::Codes::Country::all_country_codes();
+
+	# The Codes::Country module provides the country codes only in lower case.
+	# So we have to loop over the array and convert them into upper case format.
+	foreach my $ccode (@locations_lc) {
+		# Convert the country code to uppercase.
+		my $ccode_uc = uc($ccode);
+
+		# Add the converted ccode to the locations array.
+		push(@locations, $ccode_uc);
+	}
 
 	# Add locations from not_iso_3166_locations.
 	foreach my $location (keys %not_iso_3166_location) {
-		push(@locations, $location);
+		# Convert the location into uppercase.
+		my $location_uc = uc($location);
+
+		# Add the location to the locations array.
+		push(@locations, $location_uc);
 	}
 
 	# Sort locations array in alphabetical order.
