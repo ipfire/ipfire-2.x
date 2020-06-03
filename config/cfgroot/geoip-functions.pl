@@ -35,9 +35,7 @@ my %not_iso_3166_location = (
 	"an" => "Netherlands Antilles",
 	"ap" => "Asia/Pacific Region",
 	"eu" => "Europe",
-	"fx" => "France, Metropolitan",
-	"o1" => "Other Country",
-	"yu" => "Yugoslavia"
+	"fx" => "France, Metropolitan"
 );
 
 # Directory where the libloc database and keyfile lives.
