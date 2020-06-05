@@ -15,9 +15,9 @@ THISAPP    = squid-accounting-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = squid-accounting
-PAK_VER    = 12
+PAK_VER    = 13
 
-DEPS       = perl-DBI perl-DBD-SQLite perl-File-ReadBackwards
+DEPS       = perl-File-ReadBackwards
 
 ###############################################################################
 # Top-level Rules
