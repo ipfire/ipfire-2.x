@@ -1,6 +1,0 @@
-#!/bin/bash
-
-# Download / Check for updates of the location database.
-/usr/local/bin/update-location-database
-
-exit 0
