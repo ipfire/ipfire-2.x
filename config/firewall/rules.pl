@@ -24,7 +24,6 @@ use experimental 'smartmatch';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
-require "${General::swroot}/geoip-functions.pl";
 require "/usr/lib/firewall/firewall-lib.pl";
 
 # Set to one to enable debugging mode.
@@ -101,17 +100,8 @@ my $POLICY_OUTPUT_ACTION   = $fwoptions{"FWPOLICY1"};
 &main();
 
 sub main {
-	# Gather locations which should be exported.
-	my @locations_to_export = &gather_locations_to_export();
-
 	# Flush all chains.
 	&flush();
-
-	# Flush exported locations.
-	&GeoIP::flush_exported_locations();
-
-	# Export required locations.
-	&GeoIP::export_locations(\@locations_to_export);
 
 	# Prepare firewall rules.
 	if (! -z  "${General::swroot}/firewall/input"){
@@ -851,143 +841,4 @@ sub firewall_is_in_subnet {
 	}
 
 	return 0;
-}
-
-#
-# Function to gather which locations needs to be exported.
-#
-sub gather_locations_to_export () {
-	my %geoipblock_exports = ();
-
-	# Array to store the final list of locations.
-	my @export_locations;
-
-	# Array to temporary store all used GeoIP groups.
-	my @used_GeoIP_groups;
-
-	# Check if GeoIP-block is enabled.
-	if($geoipsettings{"GEOIPBLOCK_ENABLED"} eq "on") {
-		# Loop through the array of supported locations.
-		foreach my $location (@locations) {
-			if ($geoipsettings{$location} eq "on") {
-				$geoipblock_exports{$location} = "1";
-			}
-		}
-	}
-
-	# Get the firewall locations of the input, forward and output
-	# firewall settings hashhes.
-	my %input_exports = &_grab_geoip_locations_from_fw_settings_hash(\%configinputfw);
-	my %forward_exports = &_grab_geoip_locations_from_fw_settings_hash(\%configfwdfw);
-	my %output_exports = &_grab_geoip_locations_from_fw_settings_hash(\%configoutgoingfw);
-
-	# Merge the hashes.
-	#
-	# If a location is part of multiple hashes, it results in only one entry in the final hash.
-	my %export_locations = ( %geoipblock_exports, %input_exports, %forward_exports, %output_exports );
-
-	# Loop through the hash of exported locations.
-	foreach my $location (keys %export_locations) {
-		# Convert location into upper-case format.
-		my $location_uc = uc($location);
-
-		# Add the location to the array.
-		push(@export_locations, $location_uc);
-	}
-
-	# Return the array.
-	return @export_locations;
-}
-
-#
-# Function to gather the GeoIP locations from a given hash
-# containing the firewall settings.
-#
-sub _grab_geoip_locations_from_fw_settings_hash (\%) {
-	my $hash = shift;
-	my %exports;
-
-	# Loop through the given firewall config hash.
-	foreach my $rule ( keys %$hash ) {
-		# Skip if the rule is disabled.
-		next unless($$hash{$rule}[2] eq "ON");
-
-		# Process rules with GeoIP as source.
-		if($$hash{$rule}[3] eq "cust_geoip_src") {
-			my $source = $$hash{$rule}[4];
-
-			# Check if the source is a group.
-			if($source =~ m/group/) {
-			       my($group, $groupname) = split(":", $source);
-
-				# Get locations which are part of the group.
-				my @group_locations = &_grab_geoip_locations_from_group($groupname);
-
-				# Loop through the array.
-				foreach my $location (@group_locations) {
-					# Add location to the exports hash.
-					$exports{$location} = "1";
-				}
-			} else {
-				# Add location to the exports hash.
-				$exports{$source} = "1";
-			}
-
-			# Jump the next rule.
-			next;
-		}
-
-		# Process rules with GeoIP as target.
-		if($$hash{$rule}[5] eq "cust_geoip_tgt") {
-			my $destination = $$hash{$rule}[6];
-
-			# Check if the destination is a group.
-			if($destination =~ m/group/) {
-				my($group, $groupname) = split(":", $destination);
-
-				# Get locations which are part of the group.
-				my @group_locations = &_grab_geoip_locations_from_group($groupname);
-
-				# Loop through the array.
-				foreach my $location (@group_locations) {
-					# Add location to the exports hash.
-					$exports{$location} = "1";
-				}
-			} else {
-				# Add location to the exports hash.
-				$exports{$destination} = "1";
-			}
-
-			# Jump to next rule.
-			next;
-		}
-	}
-
-	# Return the array.
-	return %exports;
-}
-
-#
-# Function to gather the GeoIP locations from a given group name.
-#
-sub _grab_geoip_locations_from_group($) {
-	my ($groupname) = @_;
-
-	my %geoipgroups = ();
-	my @group_locations;
-
-	# Get all configured GeoIP related groups.
-	&General::readhasharray("${General::swroot}/fwhosts/customgeoipgrp", \%geoipgroups);
-
-	# Loop through the hash of GeoIP groups.
-	foreach my $key (keys %geoipgroups) {
-		# Seach for members of the given group.
-		if($geoipgroups{$key}[0] eq "$groupname") {
-			# Add the location to the group_locations array.
-			push(@group_locations, $geoipgroups{$key}[2]);
-		}
-	}
-
-	# Return the array.
-	return @group_locations;
 }
