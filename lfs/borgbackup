@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.1.11
+VER        = 1.1.13
 
 THISAPP    = borgbackup-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = borgbackup
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = python3-llfuse python3-msgpack
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ab9721f10c2500e0ca872545c64b6e2f
+$(DL_FILE)_MD5 = a82d2bdf61bfaeebb90ac8ab1347657a
 
 install : $(TARGET)
 
