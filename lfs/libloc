@@ -25,6 +25,7 @@
 include Config
 
 VER        = 0.9.1
+DB_DATE    = 2020-06-10
 
 THISAPP    = libloc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -36,11 +37,15 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) \
+	location-$(DB_DATE).db.xz
 
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+$(DL_FILE)                    = $(DL_FROM)/$(DL_FILE)
+location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE).db.xz
 
-$(DL_FILE)_MD5 = b62331e7a5bc5299bdd35f340342fc51
+$(DL_FILE)_MD5                = b62331e7a5bc5299bdd35f340342fc51
+location-$(DB_DATE).db.xz_MD5 = 268b6d58a26c6d36081ed1e899b89020
+
 install : $(TARGET)
 
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
@@ -99,5 +104,21 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-manpages
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+	# Copy database to correct location.
+	cd $(DIR_APP) && cp -avf $(DIR_DL)/location-$(DB_DATE).db.xz /var/lib/location/database.db.xz
+
+	# Uncompress database.
+	cd $(DIR_APP) && xz -d /var/lib/location/database.db.xz
+
+	# Launch location util and export all locations in xt_geoip format.
+	cd $(DIR_APP) && /usr/bin/location export \
+		--directory=/usr/share/xt_geoip \
+		--family=ipv4 \
+		--format=xt_geoip
+
+	# Remove exported IPv6 zones.
+	cd $(DIR_APP) && rm -rvf /usr/share/xt_geoip/*.iv6
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
