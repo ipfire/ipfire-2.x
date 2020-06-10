@@ -1,0 +1,36 @@
+commit 141b10999b280b2563580c705d5d23dc4c442deb
+Author: Michael Tremer <michael.tremer@ipfire.org>
+Date:   Wed Jun 3 16:31:44 2020 +0000
+
+    location-exporter: Do not mistake country AS for an AS number
+    
+    Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+
+diff --git a/src/python/location-exporter.in b/src/python/location-exporter.in
+index 894bb44..5454561 100644
+--- a/src/python/location-exporter.in
++++ b/src/python/location-exporter.in
+@@ -22,6 +22,7 @@ import io
+ import ipaddress
+ import logging
+ import os.path
++import re
+ import socket
+ import sys
+ 
+@@ -258,12 +259,9 @@ class CLI(object):
+ 			families = [ socket.AF_INET6, socket.AF_INET ]
+ 
+ 		for object in ns.objects:
+-			if object.startswith("AS"):
+-				try:
+-					object = int(object[2:])
+-				except ValueError:
+-					log.error("Invalid argument: %s" % object)
+-					return 2
++			m = re.match("^AS(\d+)$", object)
++			if m:
++				object = int(m.group(1))
+ 
+ 				asns.append(object)
+ 

@@ -1,0 +1,214 @@
+commit fa9a3663cb2dfb2490da43f6967f1a3a2948fc8a
+Author: Michael Tremer <michael.tremer@ipfire.org>
+Date:   Fri Jun 5 09:41:28 2020 +0000
+
+    Add option to iterate over all countries and print them to the console
+    
+    Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+
+diff --git a/man/location.txt b/man/location.txt
+index 672c2b2..0d70e0b 100644
+--- a/man/location.txt
++++ b/man/location.txt
+@@ -13,6 +13,7 @@ location - Query the location database
+ `location list-networks-by-as ASN`
+ `location list-networks-by-cc COUNTRY_CODE`
+ `location list-networks-by-flags [--anonymous-proxy|--satellite-provider|--anycast]`
++`location list-countries [--show-name] [--show-continent]`
+ 
+ == DESCRIPTION
+ `location` retrieves information from the location database.
+@@ -86,6 +87,12 @@ or countries.
+ 	+
+ 	See above for usage of the '--family' and '--output-format' parameters.
+ 
++'list-countries [--show-name] [--show-continent]'::
++	Lists all countries known to the database.
++	+
++	With the optional parameters '--show-name' and '--show-continent', the name and
++	continent code will be printed, too.
++
+ '--help'::
+ 	Shows a short help text on using this program.
+ 
+diff --git a/src/database.c b/src/database.c
+index d919278..8e6c5ab 100644
+--- a/src/database.c
++++ b/src/database.c
+@@ -107,6 +107,9 @@ struct loc_database_enumerator {
+ 	// Index of the AS we are looking at
+ 	unsigned int as_index;
+ 
++	// Index of the country we are looking at
++	unsigned int country_index;
++
+ 	// Network state
+ 	struct in6_addr network_address;
+ 	struct loc_node_stack network_stack[MAX_STACK_DEPTH];
+@@ -1219,3 +1222,30 @@ LOC_EXPORT int loc_database_enumerator_next_network(
+ 
+ 	return 0;
+ }
++
++LOC_EXPORT int loc_database_enumerator_next_country(
++		struct loc_database_enumerator* enumerator, struct loc_country** country) {
++	*country = NULL;
++
++	// Do not do anything if not in country mode
++	if (enumerator->mode != LOC_DB_ENUMERATE_COUNTRIES)
++		return 0;
++
++	struct loc_database* db = enumerator->db;
++
++	while (enumerator->country_index < db->countries_count) {
++		// Fetch the next country
++		int r = loc_database_fetch_country(db, country, enumerator->country_index++);
++		if (r)
++			return r;
++
++		// We do not filter here, so it always is a match
++		return 0;
++	}
++
++	// Reset the index
++	enumerator->country_index = 0;
++
++	// We have searched through all of them
++	return 0;
++}
+diff --git a/src/libloc.sym b/src/libloc.sym
+index e9e8549..9a1e6f0 100644
+--- a/src/libloc.sym
++++ b/src/libloc.sym
+@@ -68,6 +68,7 @@ global:
+ 	# Database Enumerator
+ 	loc_database_enumerator_new;
+ 	loc_database_enumerator_next_as;
++	loc_database_enumerator_next_country;
+ 	loc_database_enumerator_next_network;
+ 	loc_database_enumerator_ref;
+ 	loc_database_enumerator_set_asn;
+diff --git a/src/loc/database.h b/src/loc/database.h
+index ab9ef72..43173dd 100644
+--- a/src/loc/database.h
++++ b/src/loc/database.h
+@@ -50,8 +50,9 @@ int loc_database_get_country(struct loc_database* db,
+ 		struct loc_country** country, const char* code);
+ 
+ enum loc_database_enumerator_mode {
+-	LOC_DB_ENUMERATE_NETWORKS = 1,
+-	LOC_DB_ENUMERATE_ASES     = 2,
++	LOC_DB_ENUMERATE_NETWORKS  = 1,
++	LOC_DB_ENUMERATE_ASES      = 2,
++	LOC_DB_ENUMERATE_COUNTRIES = 3,
+ };
+ 
+ struct loc_database_enumerator;
+@@ -69,5 +70,7 @@ int loc_database_enumerator_next_as(
+ 	struct loc_database_enumerator* enumerator, struct loc_as** as);
+ int loc_database_enumerator_next_network(
+ 	struct loc_database_enumerator* enumerator, struct loc_network** network);
++int loc_database_enumerator_next_country(
++	struct loc_database_enumerator* enumerator, struct loc_country** country);
+ 
+ #endif
+diff --git a/src/python/database.c b/src/python/database.c
+index 581ed5b..1013a58 100644
+--- a/src/python/database.c
++++ b/src/python/database.c
+@@ -316,6 +316,10 @@ static PyObject* Database_search_networks(DatabaseObject* self, PyObject* args,
+ 	return obj;
+ }
+ 
++static PyObject* Database_countries(DatabaseObject* self) {
++	return Database_iterate_all(self, LOC_DB_ENUMERATE_COUNTRIES);
++}
++
+ static struct PyMethodDef Database_methods[] = {
+ 	{
+ 		"get_as",
+@@ -364,6 +368,13 @@ static struct PyGetSetDef Database_getsetters[] = {
+ 		NULL,
+ 		NULL,
+ 	},
++	{
++		"countries",
++		(getter)Database_countries,
++		NULL,
++		NULL,
++		NULL,
++	},
+ 	{
+ 		"created_at",
+ 		(getter)Database_get_created_at,
+@@ -462,6 +473,22 @@ static PyObject* DatabaseEnumerator_next(DatabaseEnumeratorObject* self) {
+ 		return obj;
+ 	}
+ 
++	// Enumerate all countries
++	struct loc_country* country = NULL;
++
++	r = loc_database_enumerator_next_country(self->enumerator, &country);
++	if (r) {
++		PyErr_SetFromErrno(PyExc_ValueError);
++		return NULL;
++	}
++
++	if (country) {
++		PyObject* obj = new_country(&CountryType, country);
++		loc_country_unref(country);
++
++		return obj;
++	}
++
+ 	// Nothing found, that means the end
+ 	PyErr_SetNone(PyExc_StopIteration);
+ 	return NULL;
+diff --git a/src/python/location.in b/src/python/location.in
+index 7614cae..5c1effd 100644
+--- a/src/python/location.in
++++ b/src/python/location.in
+@@ -147,6 +147,18 @@ class CLI(object):
+ 			choices=location.export.formats.keys(), default="list")
+ 		list_networks_by_flags.set_defaults(func=self.handle_list_networks_by_flags)
+ 
++		# List countries
++		list_countries = subparsers.add_parser("list-countries",
++			help=_("Lists all countries"),
++		)
++		list_countries.add_argument("--show-name",
++			action="store_true", help=_("Show the name of the country"),
++		)
++		list_countries.add_argument("--show-continent",
++			action="store_true", help=_("Show the continent"),
++		)
++		list_countries.set_defaults(func=self.handle_list_countries)
++
+ 		# Export
+ 		export = subparsers.add_parser("export",
+ 			help=_("Exports data in many formats to load it into packet filters"),
+@@ -435,6 +447,24 @@ class CLI(object):
+ 
+ 		return cls
+ 
++	def handle_list_countries(self, db, ns):
++		for country in db.countries:
++			line = [
++				country.code,
++			]
++
++			if ns.show_continent:
++				line.append(country.continent_code)
++
++			if ns.show_name:
++				line.append(country.name)
++
++			# Format the output
++			line = " ".join(line)
++
++			# Print the output
++			print(line)
++
+ 	def handle_list_networks_by_as(self, db, ns):
+ 		writer = self.__get_output_formatter(ns)
+ 

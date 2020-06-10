@@ -76,6 +76,20 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Add upstream patches.
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-location-downloader-do-not-change-content-of-open-database.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-remove-python-path-overrides-for-debian.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-location-query-require-at-least-one-flag.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-location-exporter-do-not-mistake-country-as-for-an-as-number.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-location-exporter-warn-but-do-not-fail-on-invalid-input.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-move-location-downloader-functionality-into-location-query.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-merge-location-downloader-manpage-into-location-query.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-downloader-rename-user-agent-to-location.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-rename-location-query-to-location.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-merge-location-exporter-into-location.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-remove-accidently-commited-hacks-for-debian.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-add-option-to-iterate-over-all-contries-and-print-them.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-export-all-countries-by-default.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-export-flagged-networks-with-their-faked-country-names-too.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-database-fix-brocken-search-for-networks-with-flags.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.1-adjust-format-to-print-ASes.patch
 
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \

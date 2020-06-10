@@ -1,0 +1,140 @@
+commit 889b932aa6172c96872be545af37d351f7c1c705
+Author: Michael Tremer <michael.tremer@ipfire.org>
+Date:   Wed Jun 3 17:10:35 2020 +0000
+
+    location-downloader: Merge man page into location-query
+    
+    Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+
+diff --git a/Makefile.am b/Makefile.am
+index c0b1300..91f0436 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -37,6 +37,9 @@ LIBLOC_CURRENT=0
+ LIBLOC_REVISION=0
+ LIBLOC_AGE=0
+ 
++pythondir = $(prefix)/lib/python3/dist-packages
++pyexecdir = $(prefix)/lib/python$(PYTHON_VERSION)/lib-dynload
++
+ DISTCHECK_CONFIGURE_FLAGS = \
+ 	--with-systemdsystemunitdir=$$dc_install_base/$(systemdsystemunitdir)
+ 
+@@ -371,7 +374,6 @@ src_test_signature_LDADD = \
+ # ------------------------------------------------------------------------------
+ 
+ MANPAGES = \
+-	man/location-downloader.8 \
+ 	man/location-query.8
+ 
+ MANPAGES_TXT  = $(patsubst %.8,%.txt,$(MANPAGES))
+diff --git a/man/location-downloader.txt b/man/location-downloader.txt
+deleted file mode 100644
+index d733923..0000000
+--- a/man/location-downloader.txt
++++ /dev/null
+@@ -1,61 +0,0 @@
+-= location-downloader(8)
+-
+-== NAME
+-location-downloader - Download a location database
+-
+-== SYNOPSIS
+-[verse]
+-`location-downloader update`
+-
+-== DESCRIPTION
+-The `location-downloader` command updates the local version of the
+-location database.
+-
+-== OPTIONS
+-
+---database FILE::
+--d FILE::
+-	The path of the database which is being updated.
+-	+
+-	If this option is omitted, the system's database will be opened.
+-
+---quiet::
+-	Enable quiet mode
+-
+---debug::
+-	Enable debugging mode
+-
+-== COMMANDS
+-
+-'update'::
+-	This command will try to update the local database.
+-	+
+-	It will terminate with a return code of zero if the database has been
+-	successfully updated. 1 on error, 2 on invalid call and 3 if the
+-	database was already the latest version.
+-
+-'verify'::
+-	Verifies the downloaded database.
+-
+-'--help'::
+-	Shows a short help text on using this program.
+-
+-'--version'::
+-	Shows the program's version and exists.
+-
+-== EXIT CODES
+-The 'location-downloader' command will normally exit with code zero.
+-If there has been a problem and the requested action could not be performed,
+-the exit code is unequal to zero.
+-
+-== HOW IT WORKS
+-The downloader checks a DNS record for the latest version of the database.
+-It will then try to download a file with that version from a mirror server.
+-If the downloaded file is outdated, the next mirror will be tried until we
+-have found a file that is recent enough.
+-
+-== BUGS
+-Please report all bugs to the bugtracker at https://bugzilla.ipfire.org/.
+-
+-== AUTHORS
+-Michael Tremer
+diff --git a/man/location-query.txt b/man/location-query.txt
+index b91e8e1..acb43cd 100644
+--- a/man/location-query.txt
++++ b/man/location-query.txt
+@@ -8,6 +8,8 @@ location-query - Query the location database
+ `location-query lookup ADDRESS [ADDRESS...]`
+ `location-query get-as ASN [ASN...]`
+ `location-query search-as STRING`
++`location-query update`
++`location-query verify`
+ `location-query list-networks-by-as ASN`
+ `location-query list-networks-by-cc COUNTRY_CODE`
+ `location-query list-networks-by-flags [--anonymous-proxy|--satellite-provider|--anycast]`
+@@ -47,6 +49,16 @@ or countries.
+ 	+
+ 	The search will be performed case-insensitively.
+ 
++'update'::
++	This command will try to update the local database.
++	+
++	It will terminate with a return code of zero if the database has been
++	successfully updated. 1 on error, 2 on invalid call and 3 if the
++	database was already the latest version.
++
++'verify'::
++	Verifies the downloaded database.
++
+ 'list-networks-by-as [--family=[ipv6|ipv4]] [--output-format FORMAT] ASN'::
+ 	Lists all networks which belong to this Autonomous System.
+ 	+
+@@ -85,6 +97,12 @@ The 'location-query' command will normally exit with code zero.
+ If there has been a problem and the requested action could not be performed,
+ the exit code is unequal to zero.
+ 
++== HOW IT WORKS
++The downloader checks a DNS record for the latest version of the database.
++It will then try to download a file with that version from a mirror server.
++If the downloaded file is outdated, the next mirror will be tried until we
++have found a file that is recent enough.
++
+ == BUGS
+ Please report all bugs to the bugtracker at https://bugzilla.ipfire.org/.
+ 

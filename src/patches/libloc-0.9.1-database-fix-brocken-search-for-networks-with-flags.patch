@@ -1,0 +1,24 @@
+commit 864dd22e17f7487a90e165274cf3f7898966028d
+Author: Michael Tremer <michael.tremer@ipfire.org>
+Date:   Fri Jun 5 10:01:47 2020 +0000
+
+    database: Fix broken search for networks with flags
+    
+    The search was ended after the first network. No matter if
+    it matched, or not.
+    
+    Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+
+diff --git a/src/database.c b/src/database.c
+index 8e6c5ab..fa1dad0 100644
+--- a/src/database.c
++++ b/src/database.c
+@@ -1208,6 +1208,8 @@ LOC_EXPORT int loc_database_enumerator_next_network(
+ 					!loc_network_match_flag(*network, enumerator->flags)) {
+ 				loc_network_unref(*network);
+ 				*network = NULL;
++
++				continue;
+ 			}
+ 
+ 			return 0;

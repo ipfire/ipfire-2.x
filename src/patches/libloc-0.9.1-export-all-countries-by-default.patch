@@ -1,0 +1,33 @@
+commit 10fa313b392a269e15bdaf316218a114d9b23b55
+Author: Michael Tremer <michael.tremer@ipfire.org>
+Date:   Fri Jun 5 09:47:36 2020 +0000
+
+    location(8): Export all countries by default
+    
+    Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+
+diff --git a/src/python/location.in b/src/python/location.in
+index 5c1effd..6ced5f5 100644
+--- a/src/python/location.in
++++ b/src/python/location.in
+@@ -169,7 +169,7 @@ class CLI(object):
+ 		export.add_argument("--family",
+ 			help=_("Specify address family"), choices=("ipv6", "ipv4"),
+ 		)
+-		export.add_argument("objects", nargs="+", help=_("List country codes or ASNs to export"))
++		export.add_argument("objects", nargs="*", help=_("List country codes or ASNs to export"))
+ 		export.set_defaults(func=self.handle_export)
+ 
+ 		args = parser.parse_args()
+@@ -539,9 +539,9 @@ class CLI(object):
+ 				log.warning("Invalid argument: %s" % object)
+ 				continue
+ 
++		# Default to exporting all countries
+ 		if not countries and not asns:
+-			log.error("Nothing to export")
+-			return 2
++			countries = ["A1", "A2", "A3"] + [country.code for country in db.countries]
+ 
+ 		# Select the output format
+ 		writer = self.__get_output_formatter(ns)

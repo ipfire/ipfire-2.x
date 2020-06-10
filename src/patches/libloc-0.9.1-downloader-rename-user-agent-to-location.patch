@@ -1,0 +1,21 @@
+commit dc1df0f469668ef3dc4e1a9a7623a0ebba2b051e
+Author: Michael Tremer <michael.tremer@ipfire.org>
+Date:   Wed Jun 3 17:15:27 2020 +0000
+
+    downloader: Change user-agent to location
+    
+    Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+
+diff --git a/src/python/downloader.py b/src/python/downloader.py
+index c9e6e00..eb28007 100644
+--- a/src/python/downloader.py
++++ b/src/python/downloader.py
+@@ -71,7 +71,7 @@ class Downloader(object):
+ 
+ 		# Update headers
+ 		headers.update({
+-			"User-Agent" : "location-downloader/@VERSION@",
++			"User-Agent" : "location/@VERSION@",
+ 		})
+ 
+ 		# Set headers
