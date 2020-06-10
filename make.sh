@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.25"							# Version number
-CORE="145"							# Core Level (Filename)
+CORE="146"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 NICE=10								# Nice level
@@ -1188,15 +1188,6 @@ buildipfire() {
 		lfsmake2 linux-initrd			KCFG=""
 		;;
 	i586)
-		# x86-pae (Native and new XEN) kernel build
-		lfsmake2 linux			KCFG="-pae"
-#		lfsmake2 backports			KCFG="-pae"
-#		lfsmake2 e1000e			KCFG="-pae"
-#		lfsmake2 igb				KCFG="-pae"
-#		lfsmake2 ixgbe			KCFG="-pae"
-		lfsmake2 xtables-addons		KCFG="-pae"
-		lfsmake2 linux-initrd			KCFG="-pae"
-
 		# x86 kernel build
 		lfsmake2 linux			KCFG=""
 #		lfsmake2 backports			KCFG=""
@@ -1696,9 +1687,6 @@ buildpackages() {
   mv $LFS/install/images/{*.iso,*.img.xz,*.bz2} $BASEDIR >> $LOGFILE 2>&1
 
   ipfirepackages
-
-  lfsmake2 xen-image
-  mv $LFS/install/images/*.bz2 $BASEDIR >> $LOGFILE 2>&1
 
   cd $BASEDIR
 

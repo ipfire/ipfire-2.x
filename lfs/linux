@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 4.14.173
-ARM_PATCHES = 4.14.173-ipfire0
+VER         = 4.14.183
+ARM_PATCHES = 4.14.183-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -33,9 +33,6 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 CFLAGS     =
 CXXFLAGS   =
-
-PAK_VER    = 94
-DEPS	   =
 
 HEADERS_ARCH  = $(BUILD_PLATFORM)
 KERNEL_ARCH   = $(BUILD_ARCH)
@@ -82,8 +79,8 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= 450adc5d8dc77bd2d89a4d7098f0abac
-arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 3072dd813363b20361f80ecc748a1084
+$(DL_FILE)_MD5					= bd6db02bdbe35609756842b8c4c72cad
+arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 55f6b8d709919adb8791e507836ceedc
 
 install : $(TARGET)
 
@@ -142,6 +139,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Fix uevent PHYSDEVDRIVER
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-2.6.32.27_mcs7830-fix-driver-name.patch
+
+	# Active try to add entropy if the kernel wait for it
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-random_try_to_actively_add_entropy.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.x-add_timer_setup_on_stack.patch
 
 ifeq "$(KCFG)" "-kirkwood"
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.40-kirkwood-dtb.patch
