@@ -39,8 +39,11 @@ if [[ $UPSTREAM_PROXY ]]; then
 fi
 
 # Get the latest location database from server.
-if /usr/bin/location-downloader update; then
+if /usr/bin/location update; then
+	# Call location and export all countries in xt_geoip compatible format.
+	if /usr/bin/location export --directory=/usr/share/xt_geoip --family=ipv4 --format=xt_geoip; then
 
-	# Call initscript to reload the firewall.
-	/etc/init.d/firewall reload
+		# Call initscript to reload the firewall.
+		/etc/init.d/firewall reload
+	fi
 fi
