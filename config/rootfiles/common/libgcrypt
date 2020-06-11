@@ -6,7 +6,8 @@
 #usr/lib/libgcrypt.la
 #usr/lib/libgcrypt.so
 usr/lib/libgcrypt.so.20
-usr/lib/libgcrypt.so.20.2.4
+usr/lib/libgcrypt.so.20.2.5
+#usr/lib/pkgconfig/libgcrypt.pc
 #usr/share/aclocal/libgcrypt.m4
 #usr/share/info/gcrypt.info
 #usr/share/info/gcrypt.info-1
