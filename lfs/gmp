@@ -100,7 +100,7 @@ ifeq "$(BUILD_ARCH)" "i586"
 	cd $(DIR_APP) && make $(MAKETUNING)
 
 	-mkdir -pv /usr/lib/sse2
-	cd $(DIR_APP) && install -v -m 755 .libs/libgmp.so.10.3.2 /usr/lib/sse2
+	cd $(DIR_APP) && install -v -m 755 .libs/libgmp.so.10.4.0 /usr/lib/sse2
 endif
 
 	@rm -rf $(DIR_APP)
