@@ -146,16 +146,6 @@ END
 ;
 &Header::closebox();
 
-&Header::openbox("100%", "left", $Lang::tr{'other'});
-print <<END
-	<p>
-		This product includes GeoLite data created by MaxMind, available from
-		<a href='http://www.maxmind.com/' target="_blank">http://www.maxmind.com/</a>.
-	</p>
-END
-;
-&Header::closebox();
-
 &Header::closebigbox();
 
 &Header::closepage();
