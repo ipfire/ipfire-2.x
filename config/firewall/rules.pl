@@ -25,6 +25,7 @@ use experimental 'smartmatch';
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "/usr/lib/firewall/firewall-lib.pl";
+require "${General::swroot}/location-functions.pl";
 
 # Set to one to enable debugging mode.
 my $DEBUG = 0;
@@ -55,8 +56,8 @@ my %customgrp=();
 my %configinputfw=();
 my %configoutgoingfw=();
 my %confignatfw=();
-my %geoipsettings = (
-	"GEOIPBLOCK_ENABLED" => "off"
+my %locationsettings = (
+	"LOCATIONBLOCK_ENABLED" => "off"
 );
 
 my @p2ps=();
@@ -65,7 +66,7 @@ my $configfwdfw		= "${General::swroot}/firewall/config";
 my $configinput	    = "${General::swroot}/firewall/input";
 my $configoutgoing  = "${General::swroot}/firewall/outgoing";
 my $p2pfile			= "${General::swroot}/firewall/p2protocols";
-my $geoipfile		= "${General::swroot}/firewall/geoipblock";
+my $locationfile		= "${General::swroot}/firewall/locationblock";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $netsettings		= "${General::swroot}/ethernet/settings";
 
@@ -77,14 +78,14 @@ my $netsettings		= "${General::swroot}/ethernet/settings";
 &General::readhasharray($configoutgoing, \%configoutgoingfw);
 &General::readhasharray($configgrp, \%customgrp);
 
-# Check if the geoip settings file exists
-if (-e "$geoipfile") {
+# Check if the location settings file exists
+if (-e "$locationfile") {
 	# Read settings file
-	&General::readhash("$geoipfile", \%geoipsettings);
+	&General::readhash("$locationfile", \%locationsettings);
 }
 
-# Get all GeoIP locations.
-my @locations = &fwlib::get_geoip_locations();
+# Get all available locations.
+my @locations = &Location::Functions::get_locations();
 
 my @log_limit_options = &make_log_limit_options();
 
@@ -117,8 +118,8 @@ sub main {
 	# Load P2P block rules.
 	&p2pblock();
 
-	# Load GeoIP block rules.
-	&geoipblock();
+	# Load Location block rules.
+	&locationblock();
 
 	# Reload firewall policy.
 	run("/usr/sbin/firewall-policy");
@@ -610,21 +611,21 @@ sub p2pblock {
 	}
 }
 
-sub geoipblock {
+sub locationblock {
 	# Flush iptables chain.
 	run("$IPTABLES -F LOCATIONBLOCK");
 
-	# If geoip blocking is not enabled, we are finished here.
-	if ($geoipsettings{'GEOIPBLOCK_ENABLED'} ne "on") {
+	# If location blocking is not enabled, we are finished here.
+	if ($locationsettings{'LOCATIONBLOCK_ENABLED'} ne "on") {
 		# Exit submodule. Process remaining script.
 		return;
 	}
 
-	# Loop through all supported geoip locations and
-	# create iptables rules, if blocking this country
+	# Loop through all supported locations and
+	# create iptables rules, if blocking for this country
 	# is enabled.
 	foreach my $location (@locations) {
-		if(exists $geoipsettings{$location} && $geoipsettings{$location} eq "on") {
+		if(exists $locationsettings{$location} && $locationsettings{$location} eq "on") {
 			run("$IPTABLES -A LOCATIONBLOCK -m geoip --src-cc $location -j DROP");
 		}
 	}
