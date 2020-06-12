@@ -7172,6 +7172,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/force/max
 #lib/modules/KVER-ipfire/build/include/config/force/max/zoneorder.h
 #lib/modules/KVER-ipfire/build/include/config/forcedeth.h
+#lib/modules/KVER-ipfire/build/include/config/fortify
+#lib/modules/KVER-ipfire/build/include/config/fortify/source.h
 #lib/modules/KVER-ipfire/build/include/config/frame
 #lib/modules/KVER-ipfire/build/include/config/frame/pointer.h
 #lib/modules/KVER-ipfire/build/include/config/frame/vector.h
@@ -7320,6 +7322,10 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/harden
 #lib/modules/KVER-ipfire/build/include/config/harden/branch
 #lib/modules/KVER-ipfire/build/include/config/harden/branch/predictor.h
+#lib/modules/KVER-ipfire/build/include/config/hardened
+#lib/modules/KVER-ipfire/build/include/config/hardened/usercopy
+#lib/modules/KVER-ipfire/build/include/config/hardened/usercopy.h
+#lib/modules/KVER-ipfire/build/include/config/hardened/usercopy/pagespan.h
 #lib/modules/KVER-ipfire/build/include/config/hardirqs
 #lib/modules/KVER-ipfire/build/include/config/hardirqs/sw
 #lib/modules/KVER-ipfire/build/include/config/hardirqs/sw/resend.h
@@ -9828,12 +9834,14 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/slab/freelist/random.h
 #lib/modules/KVER-ipfire/build/include/config/slab/merge
 #lib/modules/KVER-ipfire/build/include/config/slab/merge/default.h
+#lib/modules/KVER-ipfire/build/include/config/slabinfo.h
 #lib/modules/KVER-ipfire/build/include/config/slhc.h
 #lib/modules/KVER-ipfire/build/include/config/slicoss.h
 #lib/modules/KVER-ipfire/build/include/config/slub
 #lib/modules/KVER-ipfire/build/include/config/slub.h
 #lib/modules/KVER-ipfire/build/include/config/slub/cpu
 #lib/modules/KVER-ipfire/build/include/config/slub/cpu/partial.h
+#lib/modules/KVER-ipfire/build/include/config/slub/debug.h
 #lib/modules/KVER-ipfire/build/include/config/smc91x.h
 #lib/modules/KVER-ipfire/build/include/config/smp.h
 #lib/modules/KVER-ipfire/build/include/config/sms
