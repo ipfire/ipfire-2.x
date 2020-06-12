@@ -26,7 +26,6 @@ srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/fireinfo.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
-srv/web/ipfire/cgi-bin/geoip-block.cgi
 srv/web/ipfire/cgi-bin/gpl.cgi
 #srv/web/ipfire/cgi-bin/guardian.cgi
 srv/web/ipfire/cgi-bin/gui.cgi
@@ -36,6 +35,7 @@ srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ipinfo.cgi
 srv/web/ipfire/cgi-bin/iptables.cgi
+srv/web/ipfire/cgi-bin/location-block.cgi
 srv/web/ipfire/cgi-bin/logs.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/calamaris.dat
 srv/web/ipfire/cgi-bin/logs.cgi/config.dat
