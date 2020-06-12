@@ -35,7 +35,7 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/countries.pl";
-require "${General::swroot}/geoip-functions.pl";
+require "${General::swroot}/location-functions.pl";
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -2995,7 +2995,7 @@ END
     &Header::openbox('100%', 'LEFT', $Lang::tr{'ovpn con stat'});
 
     # Libloc database handle.
-    my $libloc_db_handle = &GeoIP::init();
+    my $libloc_db_handle = &Location::Functions::init();
 
 #
 #	<td><b>$Lang::tr{'protocol'}</b></td>
@@ -3047,8 +3047,8 @@ END
 		    $users[$uid]{'Proto'} = $proto;
 
 		    # get country code for "RealAddress"...
-		    my $ccode = &GeoIP::lookup_country_code($libloc_db_handle, (split ':', $users[$uid]{'RealAddress'})[0]);
-		    my $flag_icon = &GeoIP::get_flag_icon($ccode);
+		    my $ccode = &Location::Functions::lookup_country_code($libloc_db_handle, (split ':', $users[$uid]{'RealAddress'})[0]);
+		    my $flag_icon = &Location::Functions::get_flag_icon($ccode);
 		    $users[$uid]{'Country'} = "<a href='country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode' title='$ccode' /></a>";
 		    $uid++;
 		}    
