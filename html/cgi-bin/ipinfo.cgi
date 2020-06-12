@@ -30,7 +30,7 @@ use strict;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
-require "${General::swroot}/geoip-functions.pl";
+require "${General::swroot}/location-functions.pl";
 
 my %cgiparams=();
 
@@ -61,12 +61,12 @@ if (&General::validip($addr)) {
 	my $hostname = gethostbyaddr($iaddr, AF_INET);
 	if (!$hostname) { $hostname = $Lang::tr{'lookup failed'}; }
 
-	# enumerate GeoIP information for IP address...
-	my $db_handle = &GeoIP::init();
-	my $ccode = &GeoIP::lookup_country_code($db_handle, $addr);
+	# enumerate location information for IP address...
+	my $db_handle = &Location::Functions::init();
+	my $ccode = &Location::Functions::lookup_country_code($db_handle, $addr);
 
 	# Try to get the continent of the country code.
-	my $continent = &GeoIP::get_continent_code($db_handle, $ccode);
+	my $continent = &Location::Functions::get_continent_code($db_handle, $ccode);
 
 	# Check if a whois server for the continent is known.
 	if($whois_servers_by_continent{$continent}) {
@@ -74,7 +74,7 @@ if (&General::validip($addr)) {
 		$whois_server = $whois_servers_by_continent{$continent};
 	}
 
-	my $flag_icon = &GeoIP::get_flag_icon($ccode);
+	my $flag_icon = &Location::Functions::get_flag_icon($ccode);
 
 	my $sock = new IO::Socket::INET ( PeerAddr => $whois_server, PeerPort => 43, Proto => 'tcp');
 	if ($sock)
