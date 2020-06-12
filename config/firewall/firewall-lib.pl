@@ -29,7 +29,7 @@ package fwlib;
 my %customnetwork=();
 my %customhost=();
 my %customgrp=();
-my %customgeoipgrp=();
+my %customlocationgrp=();
 my %customservice=();
 my %customservicegrp=();
 my %ccdnet=();
@@ -41,12 +41,12 @@ my %ovpnsettings=();
 my %aliases=();
 
 require '/var/ipfire/general-functions.pl';
-require '/var/ipfire/geoip-functions.pl';
+require '/var/ipfire/location-functions.pl';
 
 my $confignet		= "${General::swroot}/fwhosts/customnetworks";
 my $confighost		= "${General::swroot}/fwhosts/customhosts";
 my $configgrp 		= "${General::swroot}/fwhosts/customgroups";
-my $configgeoipgrp 	= "${General::swroot}/fwhosts/customgeoipgrp";
+my $configlocationgrp 	= "${General::swroot}/fwhosts/customlocationgrp";
 my $configsrv 		= "${General::swroot}/fwhosts/customservices";
 my $configsrvgrp	= "${General::swroot}/fwhosts/customservicegrp";
 my $configccdnet 	= "${General::swroot}/ovpn/ccd.conf";
@@ -64,7 +64,7 @@ my $netsettings		= "${General::swroot}/ethernet/settings";
 &General::readhasharray("$confignet", \%customnetwork);
 &General::readhasharray("$confighost", \%customhost);
 &General::readhasharray("$configgrp", \%customgrp);
-&General::readhasharray("$configgeoipgrp", \%customgeoipgrp);
+&General::readhasharray("$configlocationgrp", \%customlocationgrp);
 &General::readhasharray("$configccdnet", \%ccdnet);
 &General::readhasharray("$configccdhost", \%ccdhost);
 &General::readhasharray("$configipsec", \%ipsecconf);
@@ -72,8 +72,8 @@ my $netsettings		= "${General::swroot}/ethernet/settings";
 &General::readhasharray("$configsrvgrp", \%customservicegrp);
 &General::get_aliases(\%aliases);
 
-# Get all available GeoIP locations.
-my @available_geoip_locations = &get_geoip_locations();
+# Get all available locations.
+my @available_locations = &get_locations();
 
 sub get_srv_prot
 {
@@ -321,11 +321,11 @@ sub get_addresses
 				}
 			}
 		}
-	}elsif ($addr_type ~~ ["cust_geoip_src", "cust_geoip_tgt"] && $value =~ "group:") {
+	}elsif ($addr_type ~~ ["cust_location_src", "cust_location_tgt"] && $value =~ "group:") {
 		$value=substr($value,6);
-		foreach my $grp (sort {$a <=> $b} keys %customgeoipgrp) {
-			if ($customgeoipgrp{$grp}[0] eq $value) {
-				my @address = &get_address($addr_type, $customgeoipgrp{$grp}[2], $type);
+		foreach my $grp (sort {$a <=> $b} keys %customlocationpgrp) {
+			if ($customlocationgrp{$grp}[0] eq $value) {
+				my @address = &get_address($addr_type, $customlocationgrp{$grp}[2], $type);
 
 				if (@address) {
 					push(@addresses, @address);
@@ -459,20 +459,20 @@ sub get_address
 			}
 		}
 
-	# Handle rule options with GeoIP as source.
-	} elsif ($key eq "cust_geoip_src") {
-		# Check if the given GeoIP location is available.
-		if(&geoip_location_is_available($value)) {
+	# Handle rule options with a location as source.
+	} elsif ($key eq "cust_location_src") {
+		# Check if the given location is available.
+		if(&location_is_available($value)) {
 			# Get external interface.
 			my $external_interface = &get_external_interface();
 
 			push(@ret, ["-m geoip --src-cc $value", "$external_interface"]);
 		}
 
-	# Handle rule options with GeoIP as target.
-	} elsif ($key eq "cust_geoip_tgt") {
-		# Check if the given GeoIP location is available.
-		if(&geoip_location_is_available($value)) {
+	# Handle rule options with a location as target.
+	} elsif ($key eq "cust_location_tgt") {
+		# Check if the given location is available.
+		if(&location_is_available($value)) {
 			# Get external interface.
 			my $external_interface = &get_external_interface();
 
@@ -617,19 +617,19 @@ sub get_internal_firewall_ip_address
 	return 0;
 }
 
-sub get_geoip_locations() {
-	return &GeoIP::get_geoip_locations();
+sub get_locations() {
+	return &Location::Functions::get_locations();
 }
 
-# Function to check if a database of a given GeoIP location is
+# Function to check if a database of a given location is
 # available.
-sub geoip_location_is_available($) {
-	my ($location) = @_;
+sub location_is_available($) {
+	my ($requested_location) = @_;
 
-	# Loop through the global array of available GeoIP locations.
-	foreach my $geoip_location (@available_geoip_locations) {
+	# Loop through the global array of available locations.
+	foreach my $location (@available_locations) {
 		# Check if the current processed location is the searched one.
-		if($location eq $geoip_location) {
+		if($location eq $requested_location) {
 			# If it is part of the array, return "1" - True.
 			return 1;
 		}
