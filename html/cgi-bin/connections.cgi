@@ -32,7 +32,7 @@ use Switch;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
-require "${General::swroot}/geoip-functions.pl";
+require "${General::swroot}/location-functions.pl";
 
 my $colour_multicast = "#A0A0A0";
 
@@ -87,7 +87,7 @@ my @dummy = ( ${Header::table1colour} );
 undef (@dummy);
 
 # Init libloc database connection.
-my $libloc_db_handle = &GeoIP::init();
+my $libloc_db_handle = &Location::Functions::init();
 
 # check sorting arguments
 if ( $cgiin{'sort_field'} ~~ [ '1','2','3','4','5','6','7','8','9' ] ) {
@@ -553,11 +553,11 @@ foreach my $line (@conntrack) {
 	my $bytes_in = format_bytes($bytes[0]);
 	my $bytes_out = format_bytes($bytes[1]);
 
-	# enumerate GeoIP information
-	my $srcccode = &GeoIP::lookup_country_code($libloc_db_handle, $sip_ret);
-	my $src_flag_icon = &GeoIP::get_flag_icon($srcccode);
-	my $dstccode = &GeoIP::lookup_country_code($libloc_db_handle, $dip_ret);
-	my $dst_flag_icon = &GeoIP::get_flag_icon($dstccode);
+	# enumerate location information
+	my $srcccode = &Location::Functions::lookup_country_code($libloc_db_handle, $sip_ret);
+	my $src_flag_icon = &Location::Functions::get_flag_icon($srcccode);
+	my $dstccode = &Location::Functions::lookup_country_code($libloc_db_handle, $dip_ret);
+	my $dst_flag_icon = &Location::Functions::get_flag_icon($dstccode);
 
 	# Format TTL
 	$ttl = format_time($ttl);
