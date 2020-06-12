@@ -269,10 +269,10 @@ iptables_init() {
 		iptables -A OUTPUT -o "${BLUE_DEV}" -j DHCPBLUEOUTPUT
 	fi
 
-	# GeoIP block
-	iptables -N GEOIPBLOCK
-	iptables -A INPUT -j GEOIPBLOCK
-	iptables -A FORWARD -j GEOIPBLOCK
+	# Location Block
+	iptables -N LOCATIONBLOCK
+	iptables -A INPUT -j LOCATIONBLOCK
+	iptables -A FORWARD -j LOCATIONBLOCK
 
 	# trafic from ipsecX/TUN/TAP interfaces, before "-i GREEN_DEV" accept everything
 	iptables -N IPSECINPUT

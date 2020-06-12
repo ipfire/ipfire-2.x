@@ -612,7 +612,7 @@ sub p2pblock {
 
 sub geoipblock {
 	# Flush iptables chain.
-	run("$IPTABLES -F GEOIPBLOCK");
+	run("$IPTABLES -F LOCATIONBLOCK");
 
 	# If geoip blocking is not enabled, we are finished here.
 	if ($geoipsettings{'GEOIPBLOCK_ENABLED'} ne "on") {
@@ -625,7 +625,7 @@ sub geoipblock {
 	# is enabled.
 	foreach my $location (@locations) {
 		if(exists $geoipsettings{$location} && $geoipsettings{$location} eq "on") {
-			run("$IPTABLES -A GEOIPBLOCK -m geoip --src-cc $location -j DROP");
+			run("$IPTABLES -A LOCATIONBLOCK -m geoip --src-cc $location -j DROP");
 		}
 	}
 }
