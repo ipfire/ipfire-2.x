@@ -18,12 +18,12 @@ use Getopt::Std;
 #use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/geoip-functions.pl";
+require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 # Libloc database handle.
-my $libloc_db_handle = &GeoIP::init();
+my $libloc_db_handle = &Location::Functions::init();
 
 use POSIX();
 
@@ -438,14 +438,14 @@ for($s=0;$s<$lines;$s++)
 	$col="bgcolor='$color{\"color$colorIndex\"}'";
 	print "<tr>";
 
-	my $ccode = &GeoIP::lookup_country_code($libloc_db_handle, $key[$s]);
+	my $ccode = &Location::Functions::lookup_country_code($libloc_db_handle, $key[$s]);
   
 	$color++;
 	print "<td align='center' $col><form method='post' action='showrequestfromip.dat'><input type='hidden' name='MONTH' value='$cgiparams{'MONTH'}'> <input type='hidden' name='DAY' value='$cgiparams{'DAY'}'> <input type='hidden' name='ip' value='$key[$s]'> <input type='submit' value='$Lang::tr{'details'}'></form></td>";
 	print "<td align='center' $col><a href='/cgi-bin/ipinfo.cgi?ip=$key[$s]'>$key[$s]</a></td>";
 
 	# Get flag icon for of the country.
-	my $flag_icon = &GeoIP::get_flag_icon($ccode);
+	my $flag_icon = &Location::Functions::get_flag_icon($ccode);
 
 	if ( $flag_icon ) {
 		print "<td align='center' $col><a href='/cgi-bin/country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode' title='$ccode'></a></td>";
