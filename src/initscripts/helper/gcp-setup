@@ -250,6 +250,7 @@ case "${reason}" in
 		ip addr add "${new_ip_address}/${new_subnet_mask}" dev "${interface}"
 
 		# Add the default route
+		ip route add "${new_routers}" dev "${interface}"
 		ip route add default via "${new_routers}"
 
 		# Setup DNS
