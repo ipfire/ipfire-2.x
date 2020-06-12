@@ -27,7 +27,7 @@ use IO::Socket;
 #use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/geoip-functions.pl";
+require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/ids-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
@@ -268,6 +268,9 @@ my %dns_servers = ();
 
 # Read-in config file.
 &General::readhasharray("$servers_file", \%dns_servers);
+
+# Libloc database handle
+my $libloc_db_handle = &Location::Functions::init();
 
 &Header::openpage($Lang::tr{'dns'}, 1, '');
 
@@ -594,9 +597,9 @@ END
 					$status_colour = ${Header::colourred};
 				}
 
-				# collect more information about name server (rDNS, GeoIP country code)
-				my $ccode = &GeoIP::lookup($nameserver);
-				my $flag_icon = &GeoIP::get_flag_icon($ccode);
+				# collect more information about name server (rDNS, country code)
+				my $ccode = &Location::Functions::lookup_country_code($libloc_db_handle, $nameserver);
+				my $flag_icon = &Location::Functions::get_flag_icon($ccode);
 
 				my $rdns;
 
