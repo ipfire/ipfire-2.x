@@ -17,11 +17,11 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2015 IPFire Team <info@ipfire.org>.                        #
+# Copyright (C) 2015 - 2020 IPFire Team <info@ipfire.org>.                 #
 #                                                                          #
 ############################################################################
 
-package GeoIP;
+package Location::Functions;
 
 use Location;
 use Locale::Codes::Country;
@@ -165,8 +165,8 @@ sub get_full_country_name($) {
 	return $name;
 }
 
-# Function to get all available GeoIP locations.
-sub get_geoip_locations() {
+# Function to get all available locations.
+sub get_locations() {
 	my @locations = ();
 
 	# Get listed country codes from ISO 3166-1.
