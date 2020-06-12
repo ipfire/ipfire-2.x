@@ -20,12 +20,12 @@ use Getopt::Std;
 #use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/geoip-functions.pl";
+require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 # Libloc database handle.
-my $libloc_db_handle = &GeoIP::init();
+my $libloc_db_handle = &Location::Functions::init();
 
 my %color = ();
 my %mainsettings = ();
@@ -354,7 +354,7 @@ foreach $_ (@log)
 	$srcport=$1 if $packet =~ /SPT=(\d+)/;
 	$dstport=$1 if $packet =~ /DPT=(\d+)/;
 
-	my $ccode = &GeoIP::lookup_country_code($libloc_db_handle, $srcaddr);
+	my $ccode = &Location::Functions::lookup_country_code($libloc_db_handle, $srcaddr);
 
 	my $servi = uc(getservbyport($srcport, lc($proto)));
 	if ($servi ne '' && $srcport < 1024) {
@@ -386,7 +386,7 @@ foreach $_ (@log)
 END
 	;
 	# Get flag icon for of the country.
-	my $flag_icon = &GeoIP::get_flag_icon($ccode);
+	my $flag_icon = &Location::Functions::get_flag_icon($ccode);
 
 	if ( $flag_icon) {
 		print "<td align='center' $col><a href='../country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode'></a></td>";
