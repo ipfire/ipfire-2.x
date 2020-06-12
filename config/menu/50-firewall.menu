@@ -27,10 +27,10 @@
 				'title' => "P2P-Block",
 				'enabled' => 1,
 				};
-    $subfirewall->{'60.geoipblock'} = {
-				'caption' => $Lang::tr{'geoipblock'},
-				'uri' => '/cgi-bin/geoip-block.cgi',
-				'title' => $Lang::tr{'geoipblock'},
+    $subfirewall->{'60.locationblock'} = {
+				'caption' => $Lang::tr{'locationblock'},
+				'uri' => '/cgi-bin/location-block.cgi',
+				'title' => $Lang::tr{'locationblock'},
 				'enabled' => 1,
 				};
     $subfirewall->{'70.wireless'} = {
