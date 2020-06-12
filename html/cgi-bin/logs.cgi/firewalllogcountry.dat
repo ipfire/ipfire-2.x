@@ -18,12 +18,12 @@ use Getopt::Std;
 #use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/geoip-functions.pl";
+require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 # Libloc database handle.
-my $libloc_db_handle = &GeoIP::init();
+my $libloc_db_handle = &Location::Functions::init();
 
 use POSIX();
 
@@ -311,7 +311,7 @@ foreach $_ (@log)
 		# Traffic from red
 		if($srcaddr ne '') {
 			# srcaddr is set
-			my $ccode = &GeoIP::lookup_country_code($libloc_db_handle, $srcaddr);
+			my $ccode = &Location::Functions::lookup_country_code($libloc_db_handle, $srcaddr);
 			if ($ccode eq '') {
 				$ccode = 'unknown';
 			}
@@ -485,7 +485,7 @@ for($s=0;$s<$lines;$s++)
 		my $fcode = lc($key[$s]);
 
 		# Get flag icon for of the country.
-		my $flag_icon = &GeoIP::get_flag_icon($fcode);
+		my $flag_icon = &Location::Functions::get_flag_icon($fcode);
 
 		if($flag_icon) {
 			print "<td align='center' $col><a href='/cgi-bin/country.cgi#$fcode'><img src='$flag_icon' border='0' align='absmiddle' alt='$key[$s]' title='$key[$s]'></a></td>";
