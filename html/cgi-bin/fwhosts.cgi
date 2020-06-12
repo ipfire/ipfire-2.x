@@ -28,7 +28,7 @@ use CGI::Carp 'fatalsToBrowser';
 no warnings 'uninitialized';
 require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/network-functions.pl';
-require "/var/ipfire/geoip-functions.pl";
+require "/var/ipfire/location-functions.pl";
 require "/usr/lib/firewall/firewall-lib.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
@@ -39,7 +39,7 @@ my %customhost=();
 my %customgrp=();
 my %customservice=();
 my %customservicegrp=();
-my %customgeoipgrp=();
+my %customlocationgrp=();
 my %ccdnet=();
 my %ccdhost=();
 my %ipsecconf=();
@@ -67,7 +67,7 @@ my $configccdhost	= "${General::swroot}/ovpn/ovpnconfig";
 my $configipsec		= "${General::swroot}/vpn/config";
 my $configsrv		= "${General::swroot}/fwhosts/customservices";
 my $configsrvgrp	= "${General::swroot}/fwhosts/customservicegrp";
-my $configgeoipgrp	= "${General::swroot}/fwhosts/customgeoipgrp";
+my $configlocationgrp	= "${General::swroot}/fwhosts/customlocationgrp";
 my $fwconfigfwd		= "${General::swroot}/firewall/config";
 my $fwconfiginp		= "${General::swroot}/firewall/input";
 my $fwconfigout		= "${General::swroot}/firewall/outgoing";
@@ -80,7 +80,7 @@ unless (-e $confighost)   { system("touch $confighost"); }
 unless (-e $configgrp)    { system("touch $configgrp"); }
 unless (-e $configsrv)    { system("touch $configsrv"); }
 unless (-e $configsrvgrp) { system("touch $configsrvgrp"); }
-unless (-e $configgeoipgrp) { system("touch $configgeoipgrp"); }
+unless (-e $configlocationgrp) { system("touch $configlocationgrp"); }
 
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
@@ -680,7 +680,7 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		&addgrp;
 		&viewtablegrp;
 }
-if ($fwhostsettings{'ACTION'} eq 'savegeoipgrp')
+if ($fwhostsettings{'ACTION'} eq 'savelocationgrp')
 {
 	my $grp=$fwhostsettings{'grp_name'};
 	my $rem=$fwhostsettings{'remark'};
@@ -688,7 +688,7 @@ if ($fwhostsettings{'ACTION'} eq 'savegeoipgrp')
 	my $type;
 	my @target;
 	my @newgrp;
-	&General::readhasharray("$configgeoipgrp", \%customgeoipgrp);
+	&General::readhasharray("$configlocationgrp", \%customlocationgrp);
 	&General::readhasharray("$fwconfigfwd", \%fwfwd);
 	&General::readhasharray("$fwconfiginp", \%fwinp);
 	&General::readhasharray("$fwconfigout", \%fwout);
@@ -705,12 +705,12 @@ if ($fwhostsettings{'ACTION'} eq 'savegeoipgrp')
 
 	if ($fwhostsettings{'update'} eq 'on'){
 		@target=$fwhostsettings{'COUNTRY_CODE'};
-		$type='GeoIP Group';
+		$type='Location Group';
 
 		#check if host/net exists in grp
 		my $test="$grp,$fwhostsettings{'oldremark'},@target";
-		foreach my $key (keys %customgeoipgrp) {
-			my $test1="$customgeoipgrp{$key}[0],$customgeoipgrp{$key}[1],$customgeoipgrp{$key}[2]";
+		foreach my $key (keys %customlocationgrp) {
+			my $test1="$customlocationgrp{$key}[0],$customlocationgrp{$key}[1],$customlocationgrp{$key}[2]";
 			if ($test1 eq $test){
 				$errormessage=$Lang::tr{'fwhost err isingrp'};
 				$fwhostsettings{'update'} = 'on';
@@ -725,41 +725,41 @@ if ($fwhostsettings{'ACTION'} eq 'savegeoipgrp')
 			@target="none";
 		}
 		#on update, we have to delete the dummy entry
-		foreach my $key (keys %customgeoipgrp){
-			if ($customgeoipgrp{$key}[0] eq $grp && $customgeoipgrp{$key}[2] eq "none"){
-				delete $customgeoipgrp{$key};
+		foreach my $key (keys %customlocationgrp){
+			if ($customlocationgrp{$key}[0] eq $grp && $customlocationgrp{$key}[2] eq "none"){
+				delete $customlocationgrp{$key};
 				last;
 			}
 		}
-		&General::writehasharray("$configgeoipgrp", \%customgeoipgrp);
-		&General::readhasharray("$configgeoipgrp", \%customgeoipgrp);
+		&General::writehasharray("$configlocationgrp", \%customlocationgrp);
+		&General::readhasharray("$configlocationgrp", \%customlocationgrp);
 		#create array with new lines
 		foreach my $line (@target){
 			push (@newgrp,"$grp,$rem,$line");
 		}
 		#append new entries
-		my $key = &General::findhasharraykey (\%customgeoipgrp);
+		my $key = &General::findhasharraykey (\%customlocationgrp);
 		foreach my $line (@newgrp){
-			foreach my $i (0 .. 3) { $customgeoipgrp{$key}[$i] = "";}
+			foreach my $i (0 .. 3) { $customlocationgrp{$key}[$i] = "";}
 			my ($a,$b,$c,$d) = split (",",$line);
-			$customgeoipgrp{$key}[0] = $a;
-			$customgeoipgrp{$key}[1] = $b;
-			$customgeoipgrp{$key}[2] = $c;
-			$customgeoipgrp{$key}[3] = $type;
+			$customlocationgrp{$key}[0] = $a;
+			$customlocationgrp{$key}[1] = $b;
+			$customlocationgrp{$key}[2] = $c;
+			$customlocationgrp{$key}[3] = $type;
 		}
-		&General::writehasharray("$configgeoipgrp", \%customgeoipgrp);
+		&General::writehasharray("$configlocationgrp", \%customlocationgrp);
 		#update counter in Host/Net
 		$fwhostsettings{'update'}='on';
 	}
 		#check if ruleupdate is needed
-		my $geoipgrpcount=0;
-		$geoipgrpcount=&getgeoipcount($grp);
-		if($geoipgrpcount > 0 )
+		my $locationgrpcount=0;
+		$locationgrpcount=&getlocationcount($grp);
+		if($locationgrpcount > 0 )
 		{
 			&General::firewall_config_changed();
 		}
-		&addgeoipgrp;
-		&viewtablegeoipgrp;
+		&addlocationgrp;
+		&viewtablelocationgrp;
 }
 if ($fwhostsettings{'ACTION'} eq 'saveservice')
 {
@@ -888,11 +888,11 @@ if ($fwhostsettings{'ACTION'} eq 'editgrp')
 	&addgrp;
 	&viewtablegrp;
 }
-if ($fwhostsettings{'ACTION'} eq 'editgeoipgrp')
+if ($fwhostsettings{'ACTION'} eq 'editlocationgrp')
 {
 	$fwhostsettings{'update'}='on';
-	&addgeoipgrp;
-	&viewtablegeoipgrp;
+	&addlocationgrp;
+	&viewtablelocationgrp;
 }
 if ($fwhostsettings{'ACTION'} eq 'editservice')
 {
@@ -926,7 +926,7 @@ if ($fwhostsettings{'ACTION'} eq 'resetgrp')
 	$fwhostsettings{'remark'} 	="";
 	&showmenu;
 }
-if ($fwhostsettings{'ACTION'} eq 'resetgeoipgrp')
+if ($fwhostsettings{'ACTION'} eq 'resetlocationgrp')
 {
 	$fwhostsettings{'grp_name'} ="";
 	$fwhostsettings{'remark'} 	="";
@@ -989,35 +989,35 @@ if ($fwhostsettings{'ACTION'} eq 'deletegrphost')
 	&addgrp;
 	&viewtablegrp;
 }
-if ($fwhostsettings{'ACTION'} eq 'deletegeoipgrpentry')
+if ($fwhostsettings{'ACTION'} eq 'deletelocationgrpentry')
 {
         my $grpremark;
         my $grpname;
-        &General::readhasharray("$configgeoipgrp", \%customgeoipgrp);
-        foreach my $key (keys %customgeoipgrp){
-                if($customgeoipgrp{$key}[0].",".$customgeoipgrp{$key}[1].",".$customgeoipgrp{$key}[2].",".$customgeoipgrp{$key}[3] eq $fwhostsettings{'delentry'}){
-                        $grpname=$customgeoipgrp{$key}[0];
-                        $grpremark=$customgeoipgrp{$key}[1];
+        &General::readhasharray("$configlocationgrp", \%customlocationgrp);
+        foreach my $key (keys %customlocationgrp){
+                if($customlocationgrp{$key}[0].",".$customlocationgrp{$key}[1].",".$customlocationgrp{$key}[2].",".$customlocationgrp{$key}[3] eq $fwhostsettings{'delentry'}){
+                        $grpname=$customlocationgrp{$key}[0];
+                        $grpremark=$customlocationgrp{$key}[1];
                         #check if we delete the last entry, then generate dummy
                         if ($fwhostsettings{'last'} eq 'on'){
-                                $customgeoipgrp{$key}[1] = '';
-                                $customgeoipgrp{$key}[2] = 'none';
-                                $customgeoipgrp{$key}[3] = '';
+                                $customlocationgrp{$key}[1] = '';
+                                $customlocationgrp{$key}[2] = 'none';
+                                $customlocationgrp{$key}[3] = '';
                                 $fwhostsettings{'last'}='';
                                 last;
                         }else{
-                                delete $customgeoipgrp{$key};
+                                delete $customlocationgrp{$key};
                         }
                 }
         }
-        &General::writehasharray("$configgeoipgrp", \%customgeoipgrp);
+        &General::writehasharray("$configlocationgrp", \%customlocationgrp);
         &General::firewall_config_changed();
         if ($fwhostsettings{'update'} eq 'on'){
                 $fwhostsettings{'remark'}= $grpremark;
                 $fwhostsettings{'grp_name'}=$grpname;
         }
-        &addgeoipgrp;
-        &viewtablegeoipgrp;
+        &addlocationgrp;
+        &viewtablelocationgrp;
 }
 
 if ($fwhostsettings{'ACTION'} eq 'delgrp')
@@ -1036,21 +1036,21 @@ if ($fwhostsettings{'ACTION'} eq 'delgrp')
 	&addgrp;
 	&viewtablegrp;
 }
-if ($fwhostsettings{'ACTION'} eq 'delgeoipgrp')
+if ($fwhostsettings{'ACTION'} eq 'dellocationgrp')
 {
-	&General::readhasharray("$configgeoipgrp", \%customgeoipgrp);
+	&General::readhasharray("$configlocationgrp", \%customlocationgrp);
 	&decrease($fwhostsettings{'grp_name'});
-	foreach my $key (sort keys %customgeoipgrp)
+	foreach my $key (sort keys %customlocationgrp)
 	{
-		if($customgeoipgrp{$key}[0] eq $fwhostsettings{'grp_name'})
+		if($customlocationgrp{$key}[0] eq $fwhostsettings{'grp_name'})
 		{
-			delete $customgeoipgrp{$key};
+			delete $customlocationgrp{$key};
 		}
 	}
-	&General::writehasharray("$configgeoipgrp", \%customgeoipgrp);
+	&General::writehasharray("$configlocationgrp", \%customlocationgrp);
 	$fwhostsettings{'grp_name'}='';
-	&addgeoipgrp;
-	&viewtablegeoipgrp;
+	&addlocationgrp;
+	&viewtablelocationgrp;
 }
 if ($fwhostsettings{'ACTION'} eq 'delservice')
 {
@@ -1126,10 +1126,10 @@ if ($fwhostsettings{'ACTION'} eq $Lang::tr{'fwhost newgrp'})
 	&addgrp;
 	&viewtablegrp;
 }
-if ($fwhostsettings{'ACTION'} eq $Lang::tr{'fwhost newgeoipgrp'})
+if ($fwhostsettings{'ACTION'} eq $Lang::tr{'fwhost newlocationgrp'})
 {
-	&addgeoipgrp;
-	&viewtablegeoipgrp;
+	&addlocationgrp;
+	&viewtablelocationgrp;
 }
 if ($fwhostsettings{'ACTION'} eq $Lang::tr{'fwhost newservice'})
 {
@@ -1165,19 +1165,19 @@ if ($fwhostsettings{'ACTION'} eq 'changegrpremark')
 	&addgrp;
 	&viewtablegrp;
 }
-if ($fwhostsettings{'ACTION'} eq 'changegeoipgrpremark')
+if ($fwhostsettings{'ACTION'} eq 'changelocationgrpremark')
 {
-	&General::readhasharray("$configgeoipgrp", \%customgeoipgrp);
+	&General::readhasharray("$configlocationgrp", \%customlocationgrp);
 	if ($fwhostsettings{'oldrem'} ne $fwhostsettings{'newrem'} && (&validremark($fwhostsettings{'newrem'}) || $fwhostsettings{'newrem'} eq '')){
-		foreach my $key (sort keys %customgeoipgrp)
+		foreach my $key (sort keys %customlocationgrp)
 			{
-				if($customgeoipgrp{$key}[0] eq $fwhostsettings{'grp'} && $customgeoipgrp{$key}[1] eq $fwhostsettings{'oldrem'})
+				if($customlocationgrp{$key}[0] eq $fwhostsettings{'grp'} && $customlocationgrp{$key}[1] eq $fwhostsettings{'oldrem'})
 				{
-					$customgeoipgrp{$key}[1]='';
-					$customgeoipgrp{$key}[1]=$fwhostsettings{'newrem'};
+					$customlocationgrp{$key}[1]='';
+					$customlocationgrp{$key}[1]=$fwhostsettings{'newrem'};
 				}
 			}
-			&General::writehasharray("$configgeoipgrp", \%customgeoipgrp);
+			&General::writehasharray("$configlocationgrp", \%customlocationgrp);
 			$fwhostsettings{'update'}='on';
 			$fwhostsettings{'remark'}=$fwhostsettings{'newrem'};
 	}else{
@@ -1187,8 +1187,8 @@ if ($fwhostsettings{'ACTION'} eq 'changegeoipgrpremark')
 		$fwhostsettings{'update'} = 'on';
 	}
 	$fwhostsettings{'grp_name'}=$fwhostsettings{'grp'};
-	&addgeoipgrp;
-	&viewtablegeoipgrp;
+	&addlocationgrp;
+	&viewtablelocationgrp;
 }
 if ($fwhostsettings{'ACTION'} eq 'changesrvgrpremark')
 {
@@ -1265,9 +1265,9 @@ if ($fwhostsettings{'ACTION'} eq 'changegrpname')
 	&addgrp;
 	&viewtablegrp;
 }
-if ($fwhostsettings{'ACTION'} eq 'changegeoipgrpname')
+if ($fwhostsettings{'ACTION'} eq 'changelocationgrpname')
 {
-	&General::readhasharray("$configgeoipgrp", \%customgeoipgrp );
+	&General::readhasharray("$configlocationgrp", \%customlocationgrp );
 	if ($fwhostsettings{'oldgrpname'} ne $fwhostsettings{'grp'}){
 		#Check new groupname
 		if (!&validhostname($fwhostsettings{'grp'})){
@@ -1275,19 +1275,19 @@ if ($fwhostsettings{'ACTION'} eq 'changegeoipgrpname')
 		}
 		if (!$errormessage){
 			# Rename group.
-			foreach my $key (keys %customgeoipgrp) {
-				if($customgeoipgrp{$key}[0] eq $fwhostsettings{'oldgrpname'}){
-					$customgeoipgrp{$key}[0]=$fwhostsettings{'grp'};
+			foreach my $key (keys %customlocationgrp) {
+				if($customlocationgrp{$key}[0] eq $fwhostsettings{'oldgrpname'}){
+					$customlocationgrp{$key}[0]=$fwhostsettings{'grp'};
 				}
 			}
-			&General::writehasharray("$configgeoipgrp", \%customgeoipgrp );
+			&General::writehasharray("$configlocationgrp", \%customlocationgrp );
 			#change name in FW Rules
-			&changenameinfw($fwhostsettings{'oldgrpname'},$fwhostsettings{'grp'},4,"geoip");
-			&changenameinfw($fwhostsettings{'oldgrpname'},$fwhostsettings{'grp'},6,"geoip");
+			&changenameinfw($fwhostsettings{'oldgrpname'},$fwhostsettings{'grp'},4,"location");
+			&changenameinfw($fwhostsettings{'oldgrpname'},$fwhostsettings{'grp'},6,"location");
 		}
 	}
-	&addgeoipgrp;
-	&viewtablegeoipgrp;
+	&addlocationgrp;
+	&viewtablelocationgrp;
 }
 ###  VIEW  ###
 if($fwhostsettings{'ACTION'} eq '')
@@ -1300,7 +1300,7 @@ sub showmenu {
 	print "$Lang::tr{'fwhost welcome'}";
 	print<<END;
 	<br><br><table border='0' width='100%'>
-	<tr><td><form method='post'><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newnet'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newhost'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newgrp'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newgeoipgrp'}' ></form></td>
+	<tr><td><form method='post'><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newnet'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newhost'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newgrp'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newlocationgrp'}' ></form></td>
 	<td align='right'><form method='post'><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservice'}' ><input type='submit' name='ACTION' value='$Lang::tr{'fwhost newservicegrp'}' ></form></td></tr>
 	<tr><td colspan='6'></td></tr></table>
 END
@@ -1588,12 +1588,12 @@ END
 		print"<tr><td style='text-align:right;'><input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' /><input type='hidden' name='oldremark' value='$fwhostsettings{'oldremark'}'><input type='hidden' name='update' value=\"$fwhostsettings{'update'}\"><input type='hidden' name='ACTION' value='savegrp' ></form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'><input type='hidden' name='ACTION' value='resetgrp'></form></td></table>";
 	&Header::closebox();
 }
-sub addgeoipgrp
+sub addlocationgrp
 {
 	&hint;
 	&error;
 	&showmenu;
-	&Header::openbox('100%', 'left', $Lang::tr{'fwhost addgeoipgrp'});
+	&Header::openbox('100%', 'left', $Lang::tr{'fwhost addlocationgrp'});
 
 	my %checked=();
 	my $show='';
@@ -1629,7 +1629,7 @@ END
 					<td>
 						<input type='submit' value='$Lang::tr{'fwhost change'}'>
 						<input type='hidden' name='oldgrpname' value='$fwhostsettings{'oldgrpname'}'>
-						<input type='hidden' name='ACTION' value='changegeoipgrpname'>
+						<input type='hidden' name='ACTION' value='changelocationgrpname'>
 					</td>
 					<td></td>
 				</tr></form>
@@ -1642,7 +1642,7 @@ END
 						<input type='submit' value='$Lang::tr{'fwhost change'}'>
 						<input type='hidden' name='grp' value='$fwhostsettings{'grp_name'}'>
 						<input type='hidden' name='oldrem' value='$fwhostsettings{'oldremark'}'>
-						<input type='hidden' name='ACTION' value='changegeoipgrpremark'>
+						<input type='hidden' name='ACTION' value='changelocationgrpremark'>
 					</td>
 				</tr></form>
 			</table>
@@ -1650,7 +1650,7 @@ END
 END
 		}
 		if ($fwhostsettings{'update'} eq 'on') {
-			my @geoip_locations = &fwlib::get_geoip_locations();
+			my @location_locations = &fwlib::get_location_locations();
 
 			print<<END;
 			<form method='post'>
@@ -1662,9 +1662,9 @@ END
 					<td style='text-align:left;'>
 						<select name='COUNTRY_CODE' style='width:16em;'>";
 END
-				foreach my $location (@geoip_locations) {
+				foreach my $location (@location_locations) {
 					# Get full country name.
-					my $fullname = &GeoIP::get_full_country_name($location);
+					my $fullname = &Location::Functions::get_full_country_name($location);
 
 					print"<option value='$location'>$location - $fullname</option>\n";
 				}
@@ -1682,13 +1682,13 @@ END
 				<input type='submit' value='$Lang::tr{'add'}' style='min-width:100px;' />
 				<input type='hidden' name='oldremark' value='$fwhostsettings{'oldremark'}'>
 				<input type='hidden' name='update' value=\"$fwhostsettings{'update'}\">
-				<input type='hidden' name='ACTION' value='savegeoipgrp' >
+				<input type='hidden' name='ACTION' value='savelocationgrp' >
 			</form>
 
 			<form method='post' style='display:inline'>
 
 			<input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;'>
-			<input type='hidden' name='ACTION' value='resetgeoipgrp'>
+			<input type='hidden' name='ACTION' value='resetlocationgrp'>
 
 			</form>
 			</td></tr></table>
@@ -2154,15 +2154,15 @@ sub viewtablegrp
 }
 
 }
-sub viewtablegeoipgrp
+sub viewtablelocationgrp
 {
 	# If our filesize is "zero" there is nothing to read-in.
-	if (-z "$configgeoipgrp") {
+	if (-z "$configlocationgrp") {
 		return;
 	}
 
-	&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust geoipgrp'});
-	&General::readhasharray("$configgeoipgrp", \%customgeoipgrp);
+	&Header::openbox('100%', 'left', $Lang::tr{'fwhost cust locationgrp'});
+	&General::readhasharray("$configlocationgrp", \%customlocationgrp);
 	&General::readhasharray("$fwconfigfwd", \%fwfwd);
 	&General::readhasharray("$fwconfiginp", \%fwinp);
 	&General::readhasharray("$fwconfigout", \%fwout);
@@ -2178,15 +2178,15 @@ sub viewtablegeoipgrp
 	my %hash;
 
 	# If there are no groups we are finished here.
-	if (!keys %customgeoipgrp) {
+	if (!keys %customlocationgrp) {
 		print "<center><b>$Lang::tr{'fwhost err emptytable'}</b>";
 		return;
 	}
 
 	# Put all groups in a hash.
-	foreach my $key (sort { ncmp($customgeoipgrp{$a}[0],$customgeoipgrp{$b}[0]) }
-			 sort { ncmp($customgeoipgrp{$a}[2],$customgeoipgrp{$b}[2]) } keys %customgeoipgrp) {
-				push (@counter,$customgeoipgrp{$key}[0]);
+	foreach my $key (sort { ncmp($customlocationgrp{$a}[0],$customlocationgrp{$b}[0]) }
+			 sort { ncmp($customlocationgrp{$a}[2],$customlocationgrp{$b}[2]) } keys %customlocationgrp) {
+				push (@counter,$customlocationgrp{$key}[0]);
 	}
 
 	# Increase current used key.
@@ -2195,16 +2195,16 @@ sub viewtablegeoipgrp
 	}
 
 	# Sort hash.
-	foreach my $key (sort { ncmp($customgeoipgrp{$a}[0],$customgeoipgrp{$b}[0]) }
-			 sort { ncmp($customgeoipgrp{$a}[2],$customgeoipgrp{$b}[2]) } keys %customgeoipgrp) {
+	foreach my $key (sort { ncmp($customlocationgrp{$a}[0],$customlocationgrp{$b}[0]) }
+			 sort { ncmp($customlocationgrp{$a}[2],$customlocationgrp{$b}[2]) } keys %customlocationgrp) {
 		$count++;
-		if ($helper ne $customgeoipgrp{$key}[0]) {
+		if ($helper ne $customlocationgrp{$key}[0]) {
 			$delflag='0';
 
-			foreach my $key1 (sort { ncmp($customgeoipgrp{$a}[0],$customgeoipgrp{$b}[0]) }
-					  sort { ncmp($customgeoipgrp{$a}[2],$customgeoipgrp{$b}[2]) } keys %customgeoipgrp) {
+			foreach my $key1 (sort { ncmp($customlocationgrp{$a}[0],$customlocationgrp{$b}[0]) }
+					  sort { ncmp($customlocationgrp{$a}[2],$customlocationgrp{$b}[2]) } keys %customlocationgrp) {
 
-				if ($customgeoipgrp{$key}[0] eq $customgeoipgrp{$key1}[0])
+				if ($customlocationgrp{$key}[0] eq $customlocationgrp{$key1}[0])
 				{
 					$delflag++;
 				}
@@ -2216,13 +2216,13 @@ sub viewtablegeoipgrp
 			$number=1;
 
 			# Groupname.
-			$grpname=$customgeoipgrp{$key}[0];
+			$grpname=$customlocationgrp{$key}[0];
 
 			# Group remark.
-			$remark="$customgeoipgrp{$key}[1]";
+			$remark="$customlocationgrp{$key}[1]";
 
 			# Country code.
-			$country_code="$customgeoipgrp{$key}[2]";
+			$country_code="$customlocationgrp{$key}[2]";
 
 			if ($count gt 1){
 				print"</table>";
@@ -2234,15 +2234,15 @@ sub viewtablegeoipgrp
 			print "<b>$Lang::tr{'remark'}:</b>&nbsp $remark &nbsp\n" if ($remark ne '');
 
 			# Get group count.
-			my $geoipgrpcount=&getgeoipcount($grpname);
-			print "<b>$Lang::tr{'used'}:</b> $geoipgrpcount x";
+			my $locationgrpcount=&getlocationcount($grpname);
+			print "<b>$Lang::tr{'used'}:</b> $locationgrpcount x";
 
 			# Only display delete icon, if the group is not used by a firewall rule.
-			if($geoipgrpcount == '0') {
+			if($locationgrpcount == '0') {
 				print"<form method='post' style='display:inline'>\n";
 				print"<input type='image' src='/images/delete.gif' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' align='right' />\n";
 				print"<input type='hidden' name='grp_name' value='$grpname' >\n";
-				print"<input type='hidden' name='ACTION' value='delgeoipgrp'>\n";
+				print"<input type='hidden' name='ACTION' value='dellocationgrp'>\n";
 				print"</form>";
 			}
 
@@ -2252,7 +2252,7 @@ print <<END;
 				<input type='image' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' align='right'/>
 				<input type='hidden' name='grp_name' value='$grpname' >
 				<input type='hidden' name='remark' value='$remark' >
-				<input type='hidden' name='ACTION' value='editgeoipgrp'>
+				<input type='hidden' name='ACTION' value='editlocationgrp'>
 			</form>
 
 			<table width='100%' cellspacing='0' class='tbl'>
@@ -2285,8 +2285,8 @@ END
 		} else {
 			# Check if we are currently editing a group and assign column backgound colors.
 			my $col='';
-			if ( ($fwhostsettings{'ACTION'} eq 'editgeoipgrp' || $fwhostsettings{'update'} ne '')
-				&& $fwhostsettings{'grp_name'} eq $customgeoipgrp{$key}[0]) {
+			if ( ($fwhostsettings{'ACTION'} eq 'editlocationgrp' || $fwhostsettings{'update'} ne '')
+				&& $fwhostsettings{'grp_name'} eq $customlocationgrp{$key}[0]) {
 				$col="bgcolor='${Header::colouryellow}'";
 			} elsif ($count %2 == 0){
 				$col="bgcolor='$color{'color20'}'";
@@ -2295,12 +2295,12 @@ END
 			}
 
 			# Get country flag.
-			my $icon = &GeoIP::get_flag_icon($customgeoipgrp{$key}[2]);
+			my $icon = &Location::Functions::get_flag_icon($customlocationgrp{$key}[2]);
 
 			# Print column with flag icon.
 			my $col_content;
 			if ($icon) {
-				$col_content = "<img src='$icon' alt='$customgeoipgrp{$key}[2]' title='$customgeoipgrp{$key}[2]'>";
+				$col_content = "<img src='$icon' alt='$customlocationgrp{$key}[2]' title='$customlocationgrp{$key}[2]'>";
 			} else {
 				$col_content = "<b>N/A</b>";
 			}
@@ -2308,10 +2308,10 @@ END
 			print "<td align='center' $col>$col_content</td>\n";
 
 			# Print column with country code.
-			print "<td align='center' $col>$customgeoipgrp{$key}[2]</td>\n";
+			print "<td align='center' $col>$customlocationgrp{$key}[2]</td>\n";
 
 			# Print column with full country name.
-			my $country_name = &GeoIP::get_full_country_name($customgeoipgrp{$key}[2]);
+			my $country_name = &Location::Functions::get_full_country_name($customlocationgrp{$key}[2]);
 			print "<td align='left' $col>$country_name</td>\n";
 
 			# Generate from for removing entries from a group.
@@ -2322,21 +2322,21 @@ END
 
 				# Check if this group only has a single entry.
 				foreach my $key2 (keys %hash) {
-					if ($hash{$key2}<2 && $key2 eq $customgeoipgrp{$key}[0]){
+					if ($hash{$key2}<2 && $key2 eq $customlocationgrp{$key}[0]){
 						print "<input type='hidden' name='last' value='on'>"  ;
 					}
 				}
 			}
 
-			print "<input type='hidden' name='ACTION' value='deletegeoipgrpentry'>\n";
+			print "<input type='hidden' name='ACTION' value='deletelocationgrpentry'>\n";
 			print "<input type='hidden' name='update' value='$fwhostsettings{'update'}'>\n";
-			print "<input type='hidden' name='delentry' value='$grpname,$remark,$customgeoipgrp{$key}[2],$customgeoipgrp{$key}[3]'>\n";
+			print "<input type='hidden' name='delentry' value='$grpname,$remark,$customlocationgrp{$key}[2],$customlocationgrp{$key}[3]'>\n";
 			print "</form>\n";
 			print "</td>\n";
 			print "</tr>\n";
 		}
 
-		$helper=$customgeoipgrp{$key}[0];
+		$helper=$customlocationgrp{$key}[0];
 		$number++;
 	}
 
@@ -2688,12 +2688,12 @@ sub gethostcount
 	}
 	return $srvcounter;
 }
-sub getgeoipcount
+sub getlocationcount
 {
 	my $groupname=shift;
 	my $counter=0;
 
-	# GeoIP groups are stored as "group:groupname" in the
+	# Location groups are stored as "group:groupname" in the
 	# firewall settings files.
 	my $searchstring = join(':', "group",$groupname);
 
@@ -3079,7 +3079,7 @@ sub changenameinfw
 	my $fld=shift;
 	my $type=shift;
 
-	if ($type eq 'geoip'){
+	if ($type eq 'location'){
 		$old="group:$old";
 		$new="group:$new";
 	}
