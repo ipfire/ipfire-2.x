@@ -27,7 +27,7 @@ use Locale::Codes::Country;
 #use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/geoip-functions.pl";
+require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
@@ -618,7 +618,7 @@ END
 
 				if (exists($node->{'country_code'})) {
 					# Get the flag icon of the country.
-					my $flag_icon = &GeoIP::get_flag_icon($node->{'country_code'});
+					my $flag_icon = &Location::Functions::get_flag_icon($node->{'country_code'});
 
 					# Check if a flag for the given country is available.
 					if ($flag_icon) {
