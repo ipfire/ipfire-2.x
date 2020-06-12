@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2014 IPFire Developemnt Team <info@ipfire.org>                #
+# Copyright (C) 2014 - 2020 IPFire Developemnt Team <info@ipfire.org>         #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,13 +25,13 @@ use strict;
 #use CGI::Carp 'fatalsToBrowser';
 
 require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/geoip-functions.pl";
+require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "/usr/lib/firewall/firewall-lib.pl";
 
 my $notice;
-my $settingsfile = "${General::swroot}/firewall/geoipblock";
+my $settingsfile = "${General::swroot}/firewall/locationblock";
 
 my %color = ();
 my %mainsettings = ();
@@ -50,14 +50,14 @@ my %cgiparams = ();
 &Header::getcgihash(\%cgiparams);
 
 # Call subfunction to get all available locations.
-my @locations = &fwlib::get_geoip_locations();
+my @locations = &Location::Functions::get_locations();
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
-	# Check if we want to disable geoipblock.
-	if (exists $cgiparams{'GEOIPBLOCK_ENABLED'}) {
-		$settings{'GEOIPBLOCK_ENABLED'} = "on";
+	# Check if we want to disable locationblock.
+	if (exists $cgiparams{'LOCATIONBLOCK_ENABLED'}) {
+		$settings{'LOCATIONBLOCK_ENABLED'} = "on";
 	} else {
-		$settings{'GEOIPBLOCK_ENABLED'} = "off";
+		$settings{'LOCATIONBLOCK_ENABLED'} = "off";
 	}
 
 	# Loop through our locations array to prevent from
@@ -81,7 +81,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$notice = $Lang::tr{'p2p block save notice'};
 }
 
-&Header::openpage($Lang::tr{'geoipblock configuration'}, 1, '');
+&Header::openpage($Lang::tr{'locationblock configuration'}, 1, '');
 
 # Print notice that a firewall reload is required.
 if ($notice) {
@@ -92,19 +92,19 @@ if ($notice) {
 
 # Checkbox pre-selection.
 my $checked;
-if ($settings{'GEOIPBLOCK_ENABLED'} eq "on") {
+if ($settings{'LOCATIONBLOCK_ENABLED'} eq "on") {
 	$checked = "checked='checked'";
 }
 
-# Print box to enable/disable geoipblock.
+# Print box to enable/disable locationblock.
 print"<form method='POST' action='$ENV{'SCRIPT_NAME'}'>\n";
 
-&Header::openbox('100%', 'center', $Lang::tr{'geoipblock'});
+&Header::openbox('100%', 'center', $Lang::tr{'locationblock'});
 print <<END;
 	<table width='95%'>
 		<tr>
-			<td width='25%' class='base'>$Lang::tr{'geoipblock enable feature'}
-			<td><input type='checkbox' name='GEOIPBLOCK_ENABLED' $checked></td>
+			<td width='25%' class='base'>$Lang::tr{'locationblock enable feature'}
+			<td><input type='checkbox' name='LOCATIONBLOCK_ENABLED' $checked></td>
 		</tr>
 		<tr>
 			<td colspan='2'><br></td>
@@ -122,7 +122,7 @@ END
 
 &Header::closebox();
 
-&Header::openbox('100%', 'center', $Lang::tr{'geoipblock block countries'});
+&Header::openbox('100%', 'center', $Lang::tr{'locationblock block countries'});
 ### JAVA SCRIPT ###
 print <<END;
 <script>
@@ -175,10 +175,10 @@ foreach my $location (@locations) {
 	my $ccode_lc = lc($location);
 
 	# Full name of the country based on the country code.
-	my $cname = &GeoIP::get_full_country_name($ccode_lc);
+	my $cname = &Location::Functions::get_full_country_name($ccode_lc);
 
 	# Get flag icon for of the country.
-	my $flag_icon = &GeoIP::get_flag_icon($ccode_uc);
+	my $flag_icon = &Location::Functions::get_flag_icon($ccode_uc);
 
 	my $flag;
 	# Check if a flag for the country is available.
@@ -258,9 +258,9 @@ print <<END;
 <table width='70%'>
 	<tr>
 		<td width='5%'><img src='/images/on.gif'></td>
-		<td>$Lang::tr{'geoipblock country is blocked'}</td>
+		<td>$Lang::tr{'locationblock country is blocked'}</td>
 		<td width='5%'><img src='/images/off.gif'></td>
-		<td>$Lang::tr{'geoipblock country is allowed'}</td>
+		<td>$Lang::tr{'locationblock country is allowed'}</td>
 	</tr>
 </table>
 END
