@@ -28,7 +28,7 @@ use strict;
 use IO::Socket;
 
 require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/geoip-functions.pl";
+require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
@@ -279,7 +279,7 @@ sub printactivelogins()
 		# list active logins...
 
 		# Libloc database handle.
-		my $libloc_db_handle = &GeoIP::init();
+		my $libloc_db_handle = &Location::Functions::init();
 
 		foreach my $line (@output)
 		{
@@ -291,8 +291,8 @@ sub printactivelogins()
 			$remoteip =~ s/[()]//g;
 
 			# display more information about that IP adress...
-			my $ccode = &GeoIP::lookup_country_code($libloc_db_handle, $remoteip);
-			my $flag_icon = &GeoIP::get_flag_icon($ccode);
+			my $ccode = &Location::Functions::lookup_country_code($libloc_db_handle, $remoteip);
+			my $flag_icon = &Location::Functions::get_flag_icon($ccode);
 
 			# get rDNS...
 			my $iaddr = inet_aton($remoteip);
