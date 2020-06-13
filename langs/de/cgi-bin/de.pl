@@ -2256,6 +2256,7 @@
 'squid extension methods' => 'Ihre <tt>extension_methods</tt> Liste',
 'squid extension methods invalid' => 'Ihre  \'extension_methods\' Liste darf nur Worte aus Großbuchstaben und Ziffer enthalten, die mittels eines Leerzeichens getrennt werden.',
 'squid fix cache' => 'Zwischenspeicher reparieren',
+'srbds' => 'Special Register Buffer Data Sampling',
 'src port' => 'Quellport',
 'srcprt range overlaps' => 'Quellportbereich überlappt mit einem bereits definierten Port.',
 'srcprt within existing' => 'Quellport befindet sich innnerhalb eines bereits definierten Portbereichs.',
