@@ -1650,7 +1650,7 @@ END
 END
 		}
 		if ($fwhostsettings{'update'} eq 'on') {
-			my @location_locations = &fwlib::get_location_locations();
+			my @location_locations = &fwlib::get_locations();
 
 			print<<END;
 			<form method='post'>
