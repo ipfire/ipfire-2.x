@@ -323,7 +323,7 @@ sub get_addresses
 		}
 	}elsif ($addr_type ~~ ["cust_location_src", "cust_location_tgt"] && $value =~ "group:") {
 		$value=substr($value,6);
-		foreach my $grp (sort {$a <=> $b} keys %customlocationpgrp) {
+		foreach my $grp (sort {$a <=> $b} keys %customlocationgrp) {
 			if ($customlocationgrp{$grp}[0] eq $value) {
 				my @address = &get_address($addr_type, $customlocationgrp{$grp}[2], $type);
 
