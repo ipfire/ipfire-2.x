@@ -1296,4 +1296,12 @@ sub running_on_ec2() {
 	return 0;
 }
 
+sub running_on_gcp() {
+	if (-e "/var/run/gcp-instance-id") {
+		return 1;
+	}
+
+	return 0;
+}
+
 1;
