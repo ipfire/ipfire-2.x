@@ -1288,6 +1288,10 @@ sub formatBytes {
 
 # Cloud Stuff
 
+sub running_in_cloud() {
+	return &running_on_ec2() || &running_on_gcp();
+}
+
 sub running_on_ec2() {
 	if (-e "/var/run/aws-instance-id") {
 		return 1;
