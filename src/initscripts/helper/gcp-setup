@@ -6,6 +6,9 @@
 # Set PATH to find our own executables
 export PATH=/usr/local/sbin:/usr/local/bin:${PATH}
 
+# GCP only supports an MTU of 1460
+DEFAULT_MTU=1460
+
 get() {
 	local file="${1}"
 
@@ -156,6 +159,7 @@ import_gcp_configuration() {
 					echo "RED_NETMASK=${netmask}"
 					echo "RED_NETADDRESS=${netaddress}"
 					echo "RED_BROADCAST=${broadcast}"
+					echo "RED_MTU=${DEFAULT_MTU}"
 					echo "DEFAULT_GATEWAY=${gateway}"
 				) >> /var/ipfire/ethernet/settings
 
@@ -177,6 +181,7 @@ import_gcp_configuration() {
 					echo "GREEN_NETMASK=${netmask}"
 					echo "GREEN_NETADDRESS=${netaddress}"
 					echo "GREEN_BROADCAST=${broadcast}"
+					echo "GREEN_MTU=${DEFAULT_MTU}"
 				) >> /var/ipfire/ethernet/settings
 				;;
 
@@ -193,6 +198,7 @@ import_gcp_configuration() {
 					echo "ORANGE_NETMASK=${netmask}"
 					echo "ORANGE_NETADDRESS=${netaddress}"
 					echo "ORANGE_BROADCAST=${broadcast}"
+					echo "ORANGE_MTU=${DEFAULT_MTU}"
 				) >> /var/ipfire/ethernet/settings
 				;;
 		esac
