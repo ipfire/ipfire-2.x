@@ -1,0 +1,50 @@
+#!/bin/bash
+
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2020 IPFire Development Team <info@ipfire.org>                #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+CONF_DIR="/var/ipfire"
+FW_CONF_DIR="$CONF_DIR/firewall"
+HOSTS_CONF_DIR="$CONF_DIR/fwhosts"
+
+# Check if the old blocking configuration file exists.
+if [ -f "$FW_CONF_DIR/geoipblock" ]; then
+	# Convert variable, if blocking is enabled or not.
+	sed -i 's/GEOIPBLOCK/LOCATIONBLOCK/g' "$FW_CONF_DIR/geoipblock"
+
+	# Rename file to the new name.
+	mv "$FW_CONF_DIR/geoipblock" "$FW_CONF_DIR/locationblock"
+
+	# Loop through the firewall config directory.
+	for file in "$FW_CONF_DIR/config" "$FW_CONF_DIR/input" "$FW_CONF_DIR/outgoing"; do
+		# Convert pattern which indicates location based rules to the new
+		# ones.
+		sed -i 's/cust_geoip/cust_location/g' "$FW_CONF_DIR/$file"
+	done
+
+	# Rename indicator for location based groups to the new one.
+	sed -i 's/GeoIP Group/Location Group/g' "$HOSTS_CONF_DIR/customgeoipgrp"
+
+	# Rename file to the new name.
+	mv "$HOSTS_CONF_DIR/customgeoipgrp" "$HOSTS_CONF_DIR/customlocationgrp"
+fi
+
+# Finished.
+exit 0

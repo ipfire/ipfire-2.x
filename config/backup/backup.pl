@@ -139,6 +139,9 @@ restore_backup() {
 		rm -rf "/var/ipfire/portfw"
 	fi
 
+	# Convert location
+	convert-to-location
+
 	# Reload firewall
 	firewallctrl
 
