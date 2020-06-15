@@ -1286,4 +1286,14 @@ sub formatBytes {
 	return sprintf("%.2f %s", $bytes, $unit);
 }
 
+# Cloud Stuff
+
+sub running_on_ec2() {
+	if (-e "/var/run/aws-instance-id") {
+		return 1;
+	}
+
+	return 0;
+}
+
 1;

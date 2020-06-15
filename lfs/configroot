@@ -79,7 +79,6 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/general-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/network-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/geoip-functions.pl		$(CONFIG_ROOT)/
-	cp $(DIR_SRC)/config/cfgroot/aws-functions.pl		$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/ids-functions.pl		$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/lang.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/countries.pl		$(CONFIG_ROOT)/

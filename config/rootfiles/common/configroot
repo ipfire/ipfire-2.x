@@ -9,7 +9,6 @@ usr/sbin/firewall-policy
 var/ipfire/addon-lang
 var/ipfire/auth
 #var/ipfire/auth/users
-var/ipfire/aws-functions.pl
 #var/ipfire/backup
 var/ipfire/backup/exclude.user
 var/ipfire/backup/include.user
