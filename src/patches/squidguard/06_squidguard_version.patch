@@ -1,8 +1,0 @@
---- a/src/version.h	Thu Apr 17 17:00:48 2008
-+++ b/src/version.h	Fri May 08 20:44:48 2009
-@@ -16,4 +16,4 @@
-   (GPL) along with this program.
- */
- 
--#define VERSION "1.5-alpha"
-+#define VERSION "1.5-beta"

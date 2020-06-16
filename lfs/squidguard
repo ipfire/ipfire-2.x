@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.5-beta
+VER        = 1.6.0
 
 THISAPP    = squidGuard-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 85216992d14acb29d6f345608f21f268
+$(DL_FILE)_MD5 = ebf207accc6da4ad07de2db6e71ce8dc
 
 install : $(TARGET)
 
@@ -70,12 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidguard/01_squidguard-1.5-beta_db_v4_up.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidguard/02_squidguard-1.5-beta_helper-protocol.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidguard/03_squidguard-1.5-beta_remove-debug-logging.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidguard/04_squidguard-1.5-beta_stdout-always.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidguard/05_squidguard-1.5-beta_fixes_htunescape-size_t-ldap_functions-unused_variables-noinput_and_nounput.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squidguard/06_squidguard_version.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--datadir=/usr/share \
