@@ -34,6 +34,7 @@ done
 # Remove files
 
 # Stop services
+/etc/init.d/squid stop
 
 # Extract files
 extract_files
@@ -48,6 +49,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/squid start
 
 # This update needs a reboot...
 touch /var/run/need_reboot
