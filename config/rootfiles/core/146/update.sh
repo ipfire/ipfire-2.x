@@ -89,6 +89,8 @@ rm -rf /lib/modules
 # Remove files
 
 # Stop services
+/usr/local/bin/openvpnctrl -k
+/usr/local/bin/openvpnctrl -kn2n
 
 # Extract files
 extract_files
@@ -115,7 +117,19 @@ done
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Enable OpenVPN metrics collection
+sed -E -i /var/ipfire/ovpn/server.conf \
+	-e "/^client-(dis)?connect/d"
+
+cat <<EOF >> /var/ipfire/ovpn/server.conf
+# Log clients connecting/disconnecting
+client-connect "/usr/sbin/openvpn-metrics client-connect"
+client-disconnect "/usr/sbin/openvpn-metrics client-disconnect"
+EOF
+
 # Start services
+/usr/local/bin/openvpnctrl -s
+/usr/local/bin/openvpnctrl -sn2n
 
 # remove lm_sensor config after collectd was started
 # to reserch sensors at next boot with updated kernel
