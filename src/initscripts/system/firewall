@@ -96,6 +96,9 @@ iptables_init() {
 
 	# Conntrack helpers (https://home.regit.org/netfilter-en/secure-use-of-helpers/)
 
+	# GRE (always enabled)
+	modprobe nf_conntrack_proto_gre
+
 	# SIP
 	if [ "${CONNTRACK_SIP}" = "on" ]; then
 		modprobe nf_nat_sip
