@@ -32,6 +32,8 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Remove files
+rm -vf \
+	/var/ipfire/aws-functions.pl
 
 # Stop services
 /etc/init.d/squid stop
