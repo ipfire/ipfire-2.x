@@ -213,6 +213,7 @@ usr/bin/nsupdate
 #usr/include/isc/timer.h
 #usr/include/isc/tm.h
 #usr/include/isc/types.h
+#usr/include/isc/utf8.h
 #usr/include/isc/util.h
 #usr/include/isc/version.h
 #usr/include/isc/xml.h
@@ -271,11 +272,11 @@ usr/lib/libbind9.so.161.0.4
 #usr/lib/libdns.la
 #usr/lib/libdns.so
 usr/lib/libdns.so.1110
-usr/lib/libdns.so.1110.0.2
+usr/lib/libdns.so.1110.0.3
 #usr/lib/libisc.la
 #usr/lib/libisc.so
 usr/lib/libisc.so.1105
-usr/lib/libisc.so.1105.0.2
+usr/lib/libisc.so.1105.1.0
 #usr/lib/libisccc.la
 #usr/lib/libisccc.so
 usr/lib/libisccc.so.161
@@ -283,11 +284,11 @@ usr/lib/libisccc.so.161.0.1
 #usr/lib/libisccfg.la
 #usr/lib/libisccfg.so
 usr/lib/libisccfg.so.163
-usr/lib/libisccfg.so.163.0.7
+usr/lib/libisccfg.so.163.0.8
 #usr/lib/liblwres.la
 #usr/lib/liblwres.so
 usr/lib/liblwres.so.161
-usr/lib/liblwres.so.161.0.3
+usr/lib/liblwres.so.161.0.4
 #usr/share/man/man1/dig.1
 #usr/share/man/man1/host.1
 #usr/share/man/man1/nslookup.1
