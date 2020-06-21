@@ -24,7 +24,6 @@ WARNING: translation string unused: add xtaccess
 WARNING: translation string unused: add-route
 WARNING: translation string unused: admin user password has been changed
 WARNING: translation string unused: administrator user password
-WARNING: translation string unused: advproxy AUTH user IP cache TTL
 WARNING: translation string unused: advproxy LDAP auth
 WARNING: translation string unused: advproxy NTLM BDC hostname
 WARNING: translation string unused: advproxy NTLM PDC hostname
@@ -49,8 +48,6 @@ WARNING: translation string unused: advproxy chgwebpwd new password
 WARNING: translation string unused: advproxy chgwebpwd new password confirm
 WARNING: translation string unused: advproxy chgwebpwd old password
 WARNING: translation string unused: advproxy chgwebpwd username
-WARNING: translation string unused: advproxy content based throttling
-WARNING: translation string unused: advproxy errmsg auth ipcache ttl
 WARNING: translation string unused: advproxy errmsg change fail
 WARNING: translation string unused: advproxy errmsg change success
 WARNING: translation string unused: advproxy errmsg invalid bdc
@@ -900,7 +897,7 @@ WARNING: untranslated string: fireinfo please enable = Please enable the fireinf
 WARNING: untranslated string: fireinfo settings = Fireinfo settings
 WARNING: untranslated string: fireinfo system version = System versions
 WARNING: untranslated string: fireinfo why descr1 = It is very important for the development of IPFire that you enable this
-WARNING: untranslated string: fireinfo why descr2 = service. 
+WARNING: untranslated string: fireinfo why descr2 = service.
 WARNING: untranslated string: fireinfo why enable = Why should I enable fireinfo?
 WARNING: untranslated string: fireinfo why read more = Read more about the reasons.
 WARNING: untranslated string: fireinfo your profile id = Your profile ID
@@ -958,7 +955,7 @@ WARNING: untranslated string: fwdfw err tgt_port = Invalid destination port.
 WARNING: untranslated string: fwdfw err time = You have to select at least one day.
 WARNING: untranslated string: fwdfw external port nat = External port (NAT)
 WARNING: untranslated string: fwdfw hint ip1 = The last generated rule may never match, because source and destination subnets may overlap.
-WARNING: untranslated string: fwdfw hint ip2 = Please double-check if this rule makes sense: 
+WARNING: untranslated string: fwdfw hint ip2 = Please double-check if this rule makes sense:
 WARNING: untranslated string: fwdfw hint mac = The destination group contains MAC addresses, which will be skipped during rule creation.
 WARNING: untranslated string: fwdfw iface = Interface
 WARNING: untranslated string: fwdfw limitconcon = Limit concurrent connections per IP address
