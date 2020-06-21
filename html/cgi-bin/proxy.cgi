@@ -18,13 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
-#
-# (c) 2004-2009 marco.s - http://www.advproxy.net
-#
-# This code is distributed under the terms of the GPL
-#
-# $Id: advproxy.cgi,v 3.0.2 2009/02/04 00:00:00 marco.s Exp $
-#
 
 use strict;
 use Apache::Htpasswd;
