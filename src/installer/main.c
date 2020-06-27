@@ -23,7 +23,7 @@
 #include <libintl.h>
 #define _(x) dgettext("installer", x)
 
-#define INST_FILECOUNT 24800
+#define INST_FILECOUNT 28000
 #define LICENSE_FILE	"/cdrom/COPYING"
 #define SOURCE_TEMPFILE "/tmp/downloads/image.iso"
 
