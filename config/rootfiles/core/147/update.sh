@@ -44,6 +44,9 @@ extract_files
 # update linker config
 ldconfig
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
@@ -52,6 +55,7 @@ ldconfig
 
 # Start services
 /etc/init.d/squid start
+/etc/init.d/sshd restart
 
 # This update needs a reboot...
 touch /var/run/need_reboot
