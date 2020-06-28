@@ -21,14 +21,14 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2020/26/04 19:35:23
+# Version: 2020/05/25 19:39:23
 #
-# This wio-lib.pl is based on the Code from the IPCop WIO Addon
+# This wio-lib.pl is based on the code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
 #
 # Autor: Stephan Feddersen
 # Co-Autor: Alexander Marx
-# Co-Autor: Frank Mainz
+# Co-Autor: Frank Mainz (for some code for the IPCop WIO Addon)
 #
 
 package WIO;
@@ -45,10 +45,9 @@ require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/header.pl';
 require '/var/ipfire/lang.pl';
 
-my $mailfile = "${General::swroot}/dma/mail.conf";
-my %mail = ();
+my %mailsettings = ();
 
-&General::readhash($mailfile, \%mail);
+&General::readhash('/var/ipfire/dma/mail.conf', \%mailsettings);
 
 ############################################################################################################################
 
@@ -90,6 +89,14 @@ sub contime {
 
 		if ( $temp[1] eq 'minutes' ) {
 			$totalsecs = $temp[0] * 60;
+		}
+
+		if ( $temp[1] eq 'hours' ) {
+			$totalsecs = $temp[0] * 3600;
+		}
+
+		if ( $temp[1] eq 'days' ) {
+			$totalsecs = $temp[0] * 86400;
 		}
 	}
 
@@ -147,8 +154,8 @@ sub mailsender {
 	my $msg = '';
 
 	$msg = MIME::Lite->new(
-		From	=> $mail{'SENDER'},
-		To		=> $mail{'RECIPIENT'},
+		From	=> $mailsettings{'SENDER'},
+		To		=> $mailsettings{'RECIPIENT'},
 		Subject	=> $_[0],
 		Type	=> 'multipart/mixed'
 	);
