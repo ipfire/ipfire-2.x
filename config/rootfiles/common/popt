@@ -3,6 +3,6 @@
 #usr/lib/libpopt.la
 usr/lib/libpopt.so
 usr/lib/libpopt.so.0
-usr/lib/libpopt.so.0.0.0
+usr/lib/libpopt.so.0.0.1
 #usr/lib/pkgconfig/popt.pc
 #usr/share/man/man3/popt.3
