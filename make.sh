@@ -1433,6 +1433,7 @@ buildipfire() {
   lfsmake2 xvid
   lfsmake2 libmpeg2
   lfsmake2 gnump3d
+  lfsmake2 zstd
   lfsmake2 rsync
   lfsmake2 rpcbind
   lfsmake2 keyutils
