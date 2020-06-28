@@ -21,14 +21,14 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2020/26/04 19:35:23
+# Version: 2020/06/01 13:29:23
 #
-# This wio.cgi is based on the Code from the IPCop WIO Addon
+# This wio.cgi is based on the code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
 #
 # Autor: Stephan Feddersen
 # Co-Autor: Alexander Marx
-# Co-Autor: Frank Mainz (for some Code for the IPCop WIO Addon)
+# Co-Autor: Frank Mainz (for some code for the IPCop WIO Addon)
 #
 
 use strict;
@@ -55,7 +55,7 @@ require '/usr/lib/wio/wio-graphs.pl';
 
 my $logdir = "/var/log/wio";
 
-my ( %mainsettings, %mailsettings, %wiosettings, %cgiparams, %netsettings, %ipshash,
+my ( %mainsettings, %mailsettings, %wiosettings, %cgiparams, %netsettings, %ipshash, %vpnsettings,
 	 %vpnconfighash, %ovpnconfighash, %ovpnccdconfhash, %ovpnsettings, %checked, %selected, %color ) = ();
 
 &General::readhash('/var/ipfire/main/settings', \%mainsettings);
@@ -67,6 +67,7 @@ my ( %mainsettings, %mailsettings, %wiosettings, %cgiparams, %netsettings, %ipsh
 &General::readhash('/var/ipfire/ovpn/settings', \%ovpnsettings);
 &General::readhasharray('/var/ipfire/ovpn/ccd.conf', \%ovpnccdconfhash);
 &General::readhasharray('/var/ipfire/vpn/config', \%vpnconfighash);
+&General::readhash('/var/ipfire/vpn/settings', \%vpnsettings);
 
 my $ipadrfile    = "$logdir/wioips";
 my $onoffip      = "$logdir/wioscip";
@@ -112,7 +113,7 @@ my $networksearchbuttontext = "$Lang::tr{'wio_show_table_on'}";
 my ( $message, $infomessage, $errormessage, $importmessage ) = '';
 
 my ( $buttontext, $host, $timestamp, $ipadr, $on, $remark, $dyndns, $dyndnsip, $sendemailon, $net, $dev, $iprange, $output, $write, $webinterface,
-	 $sendemailoff, $pingmethode, $online, $color, $bgcolor, $exitcode, $id, $line, $interface, $counter, $vpnn2nip, $vpnn2nmask, $ddns, $edc,
+	 $sendemailoff, $pingmethode, $online, $color, $bgcolor, $exitcode, $id, $line, $interface, $counter, $vpnn2nip, $vpnn2nmask, $edc,
 	 $edd, $wmon, $wmoff, $ipfqdn, $http, $wioscan, $statustxt, $status, $key, $ic, $text, $image ) = (); 
 
 my ( @temp, @dates, @ipaddresses, @names, @remark, @sendemailon, @sendemailoff, @current, @ddns, @match, @webinterface, @arpcache, @arpadd, @line,
@@ -126,6 +127,10 @@ my @devs_img   = ('green.png','blue.png','orange.png','red.png');
 my @devs_alt   = ('green','blue','orange','red');
 
 my %ifacecolor = ( GREEN => 'wio_run_green', BLUE => 'wio_run_blue', ORANGE => 'wio_run_orange');
+
+#if ( $netsettings{'RED_TYPE'} eq 'STATIC' || $netsettings{'RED_TYPE'} eq 'DHCP' ) {
+#	%ifacecolor = ( %ifacecolor, RED => 'wio_run_red' );
+#}
 
 &loadips();
 
@@ -156,7 +161,6 @@ $wiosettings{'LOGGING'} = 'off';
 $wiosettings{'MAILREMARK'} = 'off';
 $wiosettings{'MAILSTYLE'} = 'email';
 $wiosettings{'OVPNRWMAIL'} = 'off';
-$wiosettings{'SHUTDOWN'} = 'off';
 $wiosettings{'WIOGUISHOWARPTABLE'} = '';
 $wiosettings{'WIOGUISHOWCLIENTIMPORTTABLE'} = '';
 $wiosettings{'WIOGUISHOWNETWORKSEARCHTABLE'} = '';
@@ -194,7 +198,6 @@ if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_save'}.'1' ) {
 		$cgiparams{'MAILREMARK'} = $wiosettings{'MAILREMARK'};
 		$cgiparams{'MAILSTYLE'} = $wiosettings{'MAILSTYLE'};
 		$cgiparams{'OVPNRWMAIL'} = $wiosettings{'OVPNRWMAIL'};
-		$cgiparams{'SHUTDOWN'} = $wiosettings{'SHUTDOWN'};
 
 		&General::writehash($wiosettings, \%cgiparams);
 		&General::readhash($wiosettings, \%wiosettings);
@@ -535,6 +538,7 @@ if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_back'} ) {
 
 if ( $wiosettings{'ACTION'} eq 'wio_run_green'  ||
 	 $wiosettings{'ACTION'} eq 'wio_run_blue'   ||
+	 $wiosettings{'ACTION'} eq 'wio_run_red'   ||
 	 $wiosettings{'ACTION'} eq 'wio_run_orange') { $wioscan = 'on'; }
 
 if ( $wiosettings{'ACTION'} eq $Lang::tr{'wio_import'}.'1' ||
@@ -599,13 +603,14 @@ elsif ( $wioscan eq 'on' ) {
 
 			if ( $_ eq 'GREEN' ) { $color = "$Header::colourgreen"; $net = $Lang::tr{'wio_msg_green'}; }
 			elsif ( $_ eq 'BLUE' ) { $color = "$Header::colourblue"; $net = $Lang::tr{'wio_msg_blue'}; }
+			elsif ( $_ eq 'RED' ) { $color = "$Header::colourred"; $net = $Lang::tr{'wio_msg_red'}; }
 			else { $color = "$Header::colourorange"; $net = $Lang::tr{'wio_msg_orange'}; }
 		}
 	}
 
 &Header::openbox('100%', 'left', $Lang::tr{'wio_info'});
 	print"<table width='100%'>
-		  <tr><td align='center'><font class='base'>$Lang::tr{'wio_msg_left'} </font><font class='base' color='$color'><b>$net</b></font> $Lang::tr{'wio_msg_center'} <font class='base' color='$color'><b>$dev</b></font><font class='base'> $Lang::tr{'wio_msg_right'} $Lang::tr{'wio_msg_hint'}</font></td></tr>
+		  <tr><td align='center'><font class='base'>$Lang::tr{'wio_msg_left'} </font><font class='base' color='$color'><b>$net</b></font> $Lang::tr{'wio_msg_center'} <font class='base'> $Lang::tr{'wio_msg_right'} $Lang::tr{'wio_msg_hint'}</font></td></tr>
 		  <tr><td>&nbsp;</td></tr>
 		  <tr><td align='center'><img align='middle' src='/images/indicator.gif' /></td></tr>
 		  </table>";
@@ -884,9 +889,6 @@ $checked{'MAILREMARK'}{$wiosettings{'MAILREMARK'}} = "checked='checked'";
 $checked{'OVPNRWMAIL'}{'off'} = $checked{'OVPNRWMAIL'}{'on'} = '';
 $checked{'OVPNRWMAIL'}{$wiosettings{'OVPNRWMAIL'}} = "checked='checked'";
 
-$checked{'SHUTDOWN'}{'off'} = $checked{'SHUTDOWN'}{'on'} = '';
-$checked{'SHUTDOWN'}{$wiosettings{'SHUTDOWN'}} = "checked='checked'";
-
 $checked{'MAILSTYLE'}{'smail'} = $checked{'MAILSTYLE'}{'email'} = '';
 $checked{'MAILSTYLE'}{$wiosettings{'MAILSTYLE'}} = "checked='checked'";
 
@@ -942,15 +944,14 @@ print"
 <form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'>
 <table width='100%'>
 <tr>
-	<td width='55%' bgcolor='$color{'color20'}' align='left' height='20'><b>&nbsp;$Lang::tr{'wio_settings_msg'}</b></td>
-	<td width='2%'>&nbsp;</td>
-	<td width='43%'>&nbsp;</td>
+	<td bgcolor='$color{'color20'}' align='left'><b>$Lang::tr{'wio_settings_msg_hint'}</b></td>
+	<td colspan='2'>&nbsp;</td>
 </tr>
-<tr><td colspan='3'>&nbsp;</td></tr>
 <tr>
-	<td colspan='3'>$Lang::tr{'wio_settings_msg_hint'}</td>
+	<td width='48%'>&nbsp;</td>
+	<td width='2%'>&nbsp;</td>
+	<td width='50%'>&nbsp;</td>
 </tr>
-<tr><td colspan='3'>&nbsp;</td></tr>
 <tr>
 	<td align='right'>$Lang::tr{'wio enabled'}</td>
 ";
@@ -964,12 +965,6 @@ else {
 	print"<td align='left'><input type='checkbox' name='ENABLE' $checked{'ENABLE'}{'on'} /></td>";
 }
 print"
-</tr>
-<tr><td colspan='3'>&nbsp;</td></tr>
-<tr>
-	<td align='right'>$Lang::tr{'wio_shutdown'}</td>
-	<td>&nbsp;</td>
-	<td align='left'><input type='checkbox' name='SHUTDOWN' $checked{'SHUTDOWN'}{'on'} /></td>
 </tr>
 <tr><td colspan='3'>&nbsp;</td></tr>
 <tr>
@@ -1133,16 +1128,16 @@ print"
 <tr bgcolor='$color{'color20'}' height='20'>
 	<td width='3%' align='center'><b>$Lang::tr{'wio_id'}</b></td>
 	<td width='15%' align='center'><b>$Lang::tr{'wio ipadress'}</b></td>
-	<td width='3%' align='center'><b>$Lang::tr{'wio network'}</b></td>
+	<td width='7%' align='center'><b>$Lang::tr{'wio network'}</b></td>
 	<td width='15%' align='center'><b>$Lang::tr{'wio_lanname'}</b></td>
 	<td width='15%' align='center'><b>$Lang::tr{'wio_wanname'}</b></td>
-	<td width='24%' align='center'><b>$Lang::tr{'wio_dyndns_hosts'}</b></td>
+	<td width='20%' align='center'><b>$Lang::tr{'wio_dyndns_hosts'}</b></td>
 	<td width='11%' align='center'><b>$Lang::tr{'wio image'}</b></td>
 	<td width='14%' align='center'><b>$Lang::tr{'wio_connected'}</b></td>
 </tr>
 <tr bgcolor='$color{'color22'}' height='20'>
 	<td align='center'>01</td>
-	<td align='center'><font color='$Header::colourred'>$redip</b></font></td>
+	<td align='center'><font color='$Header::colourred'>$redip</font></td>
 	<td align='center'><img align='middle' src='$imgstatic/red.png' alt='$Lang::tr{'internet'}' title='$Lang::tr{'internet'}' /></td>
 	<td align='center'><font color='$Header::colourgreen'>".$mainsettings{'HOSTNAME'}.".".$mainsettings{'DOMAINNAME'}."</font></td>
 	<td align='center'><font color='$Header::colourred'>".( $redip ne '-' ? (gethostbyaddr(pack("C4", split (/\./, $redip)), 2))[0] : '-' )."</font></td>
@@ -1155,22 +1150,25 @@ open(FILE, "< $dyndnsconfig");
 @ddns = <FILE>;
 close (FILE);
 
-$ddns = @ddns;
-$bgcolor = "blue";
-
 	foreach (@ddns) {
 		chomp;
-
+		
 		@temp = split (/\,/, $_);
 
-		if ( $temp[7] eq "on" ) { $bgcolor = ( &General::DyndnsServiceSync (&General::GetDyndnsRedIP,$temp[1],$temp[2]) ? "$Header::colourgreen" : "$Header::colourred" ); }
-
+		if ( $temp[7] eq "on" ) {
+			$bgcolor = ( &General::DyndnsServiceSync (&General::GetDyndnsRedIP,$temp[1],$temp[2]) ? "$Header::colourgreen" : "$Header::colourred" );
+		}
+		else {
+			$bgcolor = "blue";
+		}
+		
 		print"<font color='$bgcolor'>$temp[1].$temp[2]</font>";
-
-		if ( $iddyndns++ ne ($ddns-1) ) { print"<b>, </b>"; }
+		if ( $iddyndns++ ne (@ddns-1) ) { print"<br />\n"; }
 	}
 }
-else { print"<b> - </b>"; }
+else {
+	print"-";
+}
 
 print"
 	</td>
@@ -1217,19 +1215,23 @@ print"
 
 foreach $key (sort SortByTunnelName (keys(%vpnconfighash))) {
 
-my ( $vpncheck, $vpntime, $vpnclient ) = '';
-
-if ( -e '/var/log/wio/.vpncache' ) {
-	$vpncheck = strftime("%d.%m.%Y - %H:%M:%S",localtime(((stat('/var/log/wio/.vpncache'))[9])));
-}
+my ( $vpnclient, $vpnclientip, $vpnrwnet, $vpnn2nnet, $vpntime, $vpncheck ) = '';
 
 $status = "bgcolor='${Header::colourred}'";
 $statustxt = "$Lang::tr{'capsclosed'}";
 $vpnclient = $vpnconfighash{$key}[1];
 
+my ($ip,$sub) = split(/\//,$vpnsettings{'RW_NET'});
+my @ip = split( /\./, $ip);
+$vpnrwnet = join( '.', ( $ip[0], $ip[1], $ip[2], ) );
+
 	if ($vpnconfighash{$key}[0] eq 'off') {
 		$status = "bgcolor='${Header::colourblue}'";
 		$statustxt = "$Lang::tr{'capsclosed'}";
+		$vpnn2nnet = '-';
+	}
+	else {
+		$vpnn2nnet = $vpnconfighash{$key}[11];
 	}
 
 	foreach (@vpnstatus) {
@@ -1238,6 +1240,8 @@ $vpnclient = $vpnconfighash{$key}[1];
 			$statustxt = "$Lang::tr{'capsopen'}";
 			$vpntime = `/usr/local/bin/ipsecctrl I | grep $vpnclient.*ESTABLISHED | sed 's/^[ \t]*//' | cut -d " " -f 3-4`;
 			$vpntime = &WIO::contime($vpntime, "ipsec");
+			$vpnclientip = `/usr/local/bin/ipsecctrl I | grep $vpnclient.*$vpnrwnet | sed 's/^[ \t]*//' | cut -d " " -f 6 | cut -d "/" -f 1`;
+			$vpncheck = strftime("%d.%m.%Y - %H:%M:%S",localtime);
 			last;
 		}
 	}
@@ -1248,10 +1252,10 @@ $vpnclient = $vpnconfighash{$key}[1];
 
 	printf ("<td align='center'>%02d</td>", $vpnnr);
 
-	print"<td align='center'>$vpncheck</td>
+	print"<td align='center'>".($vpncheck ne '' ? "$vpncheck" : "-")."</td>
 		  <td align='center'>$vpnclient</td>
 		  <td align='center'><img align='middle' src='$imgstatic/".($vpnconfighash{$key}[3] eq 'host' ? "vpnrw.png' alt='$Lang::tr{'wio_rw'}' title='$Lang::tr{'wio_rw'}'" : "vpnn2n.png' alt='$Lang::tr{'wio_n2n'}' title='$Lang::tr{'wio_n2n'}'")." /></td>
-		  <td align='center'>".($vpnconfighash{$key}[2] eq '%auth-dn' ? "$vpnconfighash{$key}[9]" : ($vpnconfighash{$key}[4] eq 'cert' ? "$vpnconfighash{$key}[2]" : ($vpnconfighash{$key}[8] ne '' ? "$vpnconfighash{$key}[10]" : "&nbsp;")))."</td>
+		  <td align='center'>".($vpnconfighash{$key}[3] eq 'host' ? (defined($vpnclientip) ? "$vpnclientip" : "-") : $vpnconfighash{$key}[3] eq 'net' ? "$vpnn2nnet" : "-")."</td>
 		  <td align='center'>
 		  	<table $status cellpadding='2' cellspacing='0' width='100%'>
 		  		<tr height='20'>
@@ -1259,15 +1263,16 @@ $vpnclient = $vpnconfighash{$key}[1];
 		  		</tr>
 		  	</table>
 		  </td>
-		  <td align='center' height='20'>".(defined($vpntime)? "$vpntime" : "-")."</td>
+		  <td align='center' height='20'>".($vpntime ne '' ? "$vpntime" : "-")."</td>
 		  </tr>
 ";
 
-if ($vpnconfighash{$key}[25] && $wiosettings{'CLIENTREMARK'} eq 'on') {
-	print"<tr".($idvpn % 2?" bgcolor='$color{'color20'}'":" bgcolor='$color{'color22'}'")." height='20'><td>&nbsp;</td><td colspan='16' align='left'>$vpnconfighash{$key}[25]</td></tr>";
+if ($wiosettings{'CLIENTREMARK'} eq 'on') {
+	print"<tr".($idvpn % 2?" bgcolor='$color{'color20'}'":" bgcolor='$color{'color22'}'")." height='20'><td>&nbsp;</td><td colspan='16' align='left'>".($vpnconfighash{$key}[25] ne '' ? "$vpnconfighash{$key}[25]" : "-")."</td></tr>";
 }
-	print"<tr height='1'><td colspan='7' bgcolor='#696565'></td></tr>";
-	$idvpn++
+
+print"<tr height='1'><td colspan='7' bgcolor='#696565'></td></tr>";
+$idvpn++
 }
 
 print"</table>";
@@ -1292,117 +1297,117 @@ print"
 <tr bgcolor='$color{'color20'}' height='20'>
 	<td width='3%' align='center'><b>$Lang::tr{'wio_id'}</b></td>
 	<td width='19%' align='center'><b>$Lang::tr{'wio checked'}</b></td>
-	<td width='20%' align='center'><b>$Lang::tr{'wio ipadress'}</b></td>
+	<td width='20%' align='center'><b>$Lang::tr{'name'}</b></td>
 	<td width='8%' align='center'><b>$Lang::tr{'type'}</b></td>
-	<td width='25%' align='center'><b>$Lang::tr{'common name'}</b></td>
+	<td width='25%' align='center'><b>$Lang::tr{'wio_common_name'}</b></td>
 	<td width='11%' align='center'><b>$Lang::tr{'wio image'}</b></td>
 	<td width='14%' align='center'><b>$Lang::tr{'wio_connected'}</b></td>
 </tr>
 ";
 
-	foreach $key (keys %ovpnconfighash) {
+foreach $key (keys %ovpnconfighash) {
 
-		my ( $ovpnclt, $ovpntime, $ovpnrwip, $ovpncheck ) = '';
+	my ( $ovpncheck, $ovpntime, $ovpnclt, $ovpnrwip ) = '';
 
-		if ( -e '/var/log/wio/.ovpncache' ) {
-			$ovpncheck = strftime("%d.%m.%Y - %H:%M:%S",localtime(((stat('/var/log/wio/.ovpncache'))[9])));
-		}
+	print"<tr".($idovpn % 2?" bgcolor='$color{'color20'}'":" bgcolor='$color{'color22'}'")." height='20'>";
 
-		print"<tr".($idovpn % 2?" bgcolor='$color{'color20'}'":" bgcolor='$color{'color22'}'")." height='20'>";
+	my $ovpnnr = $idovpn+1;
 
-		my $ovpnnr = $idovpn+1;
+	printf ("<td align='center' height='20'> %02d</td>", $ovpnnr);
 
-		printf ("<td align='center' height='20'> %02d</td>", $ovpnnr);
+	if ($ovpnconfighash{$key}[3] eq 'net') {
+		$image = "$imgstatic/ovpnn2n.png";
+		$text = "$Lang::tr{'wio_n2n'}";
+	}
+	else {
+		$image = "$imgstatic/ovpnrw.png";
+		$text = "$Lang::tr{'wio_rw'}";
+	}
 
+	if ( $ovpnconfighash{$key}[0] eq 'off' ) {
+		$status = "${Header::colourblue}";
+		$statustxt = "$Lang::tr{'capsclosed'}";
+		$ovpncheck = "-";
+	}
+	else {
 		if ($ovpnconfighash{$key}[3] eq 'net') {
-			$image = "$imgstatic/ovpnn2n.png";
-			$text = "$Lang::tr{'wio_n2n'}";
-		}
-		else {
-			$image = "$imgstatic/ovpnrw.png";
-			$text = "$Lang::tr{'wio_rw'}";
-		}
+			if (-e "/var/run/$ovpnconfighash{$key}[1]n2n.pid") {
+				my ( @output, @tustate ) = '';
+				my $tport = $ovpnconfighash{$key}[22];
+				my $tnet = new Net::Telnet ( Timeout=>5, Errmode=>'return', Port=>$tport); 
+				if ($tport ne '') {
+					$tnet->open('127.0.0.1');
+					@output = $tnet->cmd(String => 'state', Prompt => '/(END.*\n|ERROR:.*\n)/');
+					@tustate = split(/\,/, $output[1]);
+					$ovpntime = &WIO::contime(scalar localtime($tustate[0]), "ovpn");
+					$ovpncheck = strftime("%d.%m.%Y - %H:%M:%S", localtime);
 
-		if ( $ovpnconfighash{$key}[0] eq 'off' ) {
-			$status = "${Header::colourblue}";
-			$statustxt = "$Lang::tr{'capsclosed'}";
-		}
-		else {
-			if ($ovpnconfighash{$key}[3] eq 'net') {
-				if (-e "/var/run/$ovpnconfighash{$key}[1]n2n.pid") {
-					my @output = "";
-					my @tustate = "";
-					my $tport = $ovpnconfighash{$key}[22];
-					my $tnet = new Net::Telnet ( Timeout=>5, Errmode=>'return', Port=>$tport); 
-					if ($tport ne '') {
-						$tnet->open('127.0.0.1');
-						@output = $tnet->cmd(String => 'state', Prompt => '/(END.*\n|ERROR:.*\n)/');
-						@tustate = split(/\,/, $output[1]);
-						$ovpntime = &WIO::contime(scalar localtime($tustate[0]), "ovpn");
-						
-						if (($tustate[1] eq 'CONNECTED')) {
-							$status = "${Header::colourgreen}";
-							$statustxt = "$Lang::tr{'capsopen'}";
-						}else {
-							$status = "${Header::colourred}";
-							$statustxt = "$tustate[1]";
-						}
-					}
-				}
-			}
-			else {
-				foreach (@ovpnstatus) {
-					if ( $_ =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/ ) {
-						@match = split (m/^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/, $_);
-						$match[1] =~ s/[_]/ /g;
-					}
-
-					if ( $match[1] ne "Common Name" && ($match[1] eq $ovpnconfighash{$key}[2]) ) {
-						$ovpnclt = $match[1];
-						$ovpntime = &WIO::contime($match[5], "ovpn");
-					}
-
-					if ( $_ =~ /^(\d+\.\d+\.\d+\.\d+),(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(.+)/ ) {
-						@match = split(m/^(\d+\.\d+\.\d+\.\d+),(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(.+)/, $_);
-					}
-
-					if ( $match[1] ne "Virtual Address" && $match[2] eq $ovpnclt ) {
-							$ovpnrwip = $match[1];
-							$ovpncheck = &WIO::statustime($match[4]);
-					}
-
-					if ( $ovpnclt eq $ovpnconfighash{$key}[2] ) {
+					if (($tustate[1] eq 'CONNECTED')) {
 						$status = "${Header::colourgreen}";
 						$statustxt = "$Lang::tr{'capsopen'}";
+						$ovpnrwip = $ovpnconfighash{$key}[11];
 					}
 					else {
 						$status = "${Header::colourred}";
-						$statustxt = "$Lang::tr{'capsclosed'}";
+						$statustxt = "$tustate[1]";
 					}
 				}
 			}
-}
+		}
+		else {
+			foreach (@ovpnstatus) {
+				if ( $_ =~ /^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/ ) {
+					@match = split (m/^(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(\d+),(\d+),(.+)/, $_);
+					$match[1] =~ s/[_]/ /g;
+				}
 
-	print"
-	<td align='center'>".(defined($ovpncheck)? "$ovpncheck" : "-")."</td>
-	<td align='center'>".(defined($ovpnrwip)? "$ovpnrwip" : "-")."</td>
+				if ( $match[1] ne "Common Name" && ($match[1] eq $ovpnconfighash{$key}[2]) ) {
+					$ovpnclt = $match[1];
+					$ovpntime = &WIO::contime($match[5], "ovpn");
+				}
+
+				if ( $_ =~ /^(\d+\.\d+\.\d+\.\d+),(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(.+)/ ) {
+					@match = split(m/^(\d+\.\d+\.\d+\.\d+),(.+),(\d+\.\d+\.\d+\.\d+\:\d+),(.+)/, $_);
+				}
+
+				if ( $match[1] ne "Virtual Address" && $match[2] eq $ovpnclt ) {
+					$ovpnrwip = $match[1];
+					$ovpncheck = &WIO::statustime($match[4]);
+				}
+
+				if ( $ovpnclt eq $ovpnconfighash{$key}[2] ) {
+					$status = "${Header::colourgreen}";
+					$statustxt = "$Lang::tr{'capsopen'}";
+				}
+				else {
+					$status = "${Header::colourred}";
+					$statustxt = "$Lang::tr{'capsclosed'}";
+				}
+			}
+		}
+	}
+
+print"
+	<td align='center'>".(defined($ovpncheck) ? "$ovpncheck" : "-")."</td>
+	<td align='center'>".($ovpnconfighash{$key}[2] eq '%auth-dn' ? "$ovpnconfighash{$key}[9]" : ($ovpnconfighash{$key}[4] eq 'cert' ? "$ovpnconfighash{$key}[1]": "-"))."</td>
 	<td align='center'><img align='middle' src='$image' alt='$text' title='$text' /></td>
-	<td align='center'>".($ovpnconfighash{$key}[2] eq '%auth-dn' ? "$ovpnconfighash{$key}[9]" : ($ovpnconfighash{$key}[4] eq 'cert' ? "$ovpnconfighash{$key}[2]": "&nbsp;"))."</td>
+	<td align='center'>".($ovpnrwip ne '' ? "$ovpnrwip" : "-")."</td>
 	<td align='center'><table bgcolor='$status' cellpadding='2' cellspacing='0' width='100%'><tr height='20'><td align='center'><font color='white'><b>$statustxt</b></font></td></tr></table></td>
-	<td align='center'>".(defined($ovpntime)? "$ovpntime" : "-")."</td>
+	<td align='center'>".(defined($ovpntime) ? "$ovpntime" : "-")."</td>
 </tr>
 ";
-		if ($ovpnconfighash{$key}[25] && $wiosettings{'CLIENTREMARK'} eq 'on') {
-			print"<tr".($idovpn % 2?" bgcolor='$color{'color20'}'":" bgcolor='$color{'color22'}'")." height='20'><td>&nbsp;</td><td colspan='16' align='left'>$ovpnconfighash{$key}[25]</td></tr>";
-		}
 
-		print"<tr height='1'><td colspan='17' bgcolor='#696565'></td></tr>";
-		$idovpn++
-	}
-		print"</table>";
-		&hrline();
+if ($wiosettings{'CLIENTREMARK'} eq 'on') {
+	print"<tr".($idovpn % 2?" bgcolor='$color{'color20'}'":" bgcolor='$color{'color22'}'")." height='20'><td>&nbsp;</td><td colspan='16' align='left'>".($ovpnconfighash{$key}[25] ne '' ? "$ovpnconfighash{$key}[25]" : "-")."</td></tr>";
 }
-#}
+
+print"<tr height='1'><td colspan='17' bgcolor='#696565'></td></tr>";
+$idovpn++
+}
+
+print"</table>";
+&hrline();
+}
 
 ## client status
 
@@ -1424,9 +1429,9 @@ print"
 	<td width='4%' align='center'><b>$Lang::tr{'wio_webinterface'}</b></td>
 	<td width='11%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IPADR'><b>$Lang::tr{'wio ipadress'}</b></a></td>
 	<td width='5%' align='center'><b>$Lang::tr{'wio network'}</b></td>
-	<td width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?HOST'><b>$Lang::tr{'wio name'}</b></a></td>
-	<td width='11%' align='center'><b>$Lang::tr{'wio image'}</b></td>
-	<td width='4%' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'><input type='hidden' name='ACTION' value='$Lang::tr{'wio_refresh'}' /><input type='image' name='$Lang::tr{'wio_refresh'}' src='$imgstatic/refresh.png' align='middle' alt='$Lang::tr{'wio_refresh'}' title='$Lang::tr{'wio_refresh'}' /></form></td>
+	<td width='23%' align='center'><a href='$ENV{'SCRIPT_NAME'}?HOST'><b>$Lang::tr{'wio name'}</b></a></td>
+	<td width='9%' align='center'><b>$Lang::tr{'wio image'}</b></td>
+	<td width='3%' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'><input type='hidden' name='ACTION' value='$Lang::tr{'wio_refresh'}' /><input type='image' name='$Lang::tr{'wio_refresh'}' src='$imgstatic/refresh.png' align='middle' alt='$Lang::tr{'wio_refresh'}' title='$Lang::tr{'wio_refresh'}' /></form></td>
 	<td width='4%' colspan='2' align='center'><b>$Lang::tr{'wio_dyndns'}</b></td>
 	<td width='12%' colspan='4' align='center'><b>$Lang::tr{'action'}</b></td>
 	<td width='3%' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'><input type='hidden' name='ACTION' value='$Lang::tr{'wio_remove_all'}' /><input type='image' name='$Lang::tr{'wio_remove_all'}' src='/images/delete.gif' align='middle' alt='$Lang::tr{'wio_remove_all'}' title='$Lang::tr{'wio_remove_all'}' onClick=\"return confirm('$Lang::tr{'wio_remove_all_hint'}')\"/></form></td>
@@ -1525,8 +1530,14 @@ my $dotip = length($ipaddresses[$a]) - rindex($ipaddresses[$a],'.');
 			next if ( $netsettings{"$ic"."_DEV"} eq 'red0' && $netsettings{"RED_TYPE"} eq 'PPPOE');
 				if ( $netsettings{"$ic"."_DEV"} eq $interface ) {
 					if ( &General::IpInSubnet($ipaddresses[$a], $netsettings{"$ic"."_NETADDRESS"}, $netsettings{"$ic"."_NETMASK"}) ) {
-						print"<td align='center' height='20'><img src='$imgstatic/$devs_img[$in]' alt='$Lang::tr{$devs_alt[$in]}' title='$Lang::tr{$devs_alt[$in]}' /></td>";
-						last SWITCH;
+						if ( $netsettings{"$ic"."_DEV"} eq 'red0' ) {
+							print"<td align='center' height='20'><img src='$imgstatic/$devs_img[$in]' alt='$Lang::tr{'wio_red_lan'}' title='$Lang::tr{'wio_red_lan'}' /></td>";
+						}
+						else {
+							print"<td align='center' height='20'><img src='$imgstatic/$devs_img[$in]' alt='$Lang::tr{$devs_alt[$in]}' title='$Lang::tr{$devs_alt[$in]}' /></td>";
+						
+						}
+					last SWITCH;
 					}
 				}
 			$in++;
@@ -1545,7 +1556,7 @@ my $dotip = length($ipaddresses[$a]) - rindex($ipaddresses[$a],'.');
 					$vpnn2nmask = length($net[1]) - rindex($net[1],'.');
 
 					if (substr($ipaddresses[$a],0,length($ipaddresses[$a])-$dotip) eq substr($vpnn2nip,0,length($vpnn2nip)-$vpnn2nmask)) {
-						print"<td align='center'><img align='middle' src='$imgstatic/vpn.png' alt='IPSec' title='IPSec' /></td>";
+						print"<td align='center'><img align='middle' src='$imgstatic/vpn.png' alt='IPsec' title='IPsec' /></td>";
 						last SWITCH;
 					}
 			}
@@ -1584,7 +1595,7 @@ my $dotip = length($ipaddresses[$a]) - rindex($ipaddresses[$a],'.');
 			my $red_netaddress = Network::get_netaddress("$rednet[0]/$red_netmask");
 
 			if ( &General::IpInSubnet($ipaddresses[$a], $red_netaddress, $red_netmask) ) {
-				print"<td align='center' height='20'><img src='$imgstatic/red.png' alt='$Lang::tr{'wio_red_lan'}' title='$Lang::tr{'wio_red_lan'}' /></td>";
+				print"<td align='center' height='20'><img src='$imgstatic/red.png' alt='$Lang::tr{'internet'}' title='$Lang::tr{'internet'}' /></td>";
 				last SWITCH;
 			}
 		}
@@ -1671,8 +1682,8 @@ print"
 	  <input type='hidden' name='ID' value='$a' /></form></td></tr>
 ";
 
-if ($remark[$a] && $wiosettings{'CLIENTREMARK'} eq 'on') {
-	print"<tr".($a % 2?" bgcolor='$color{'color20'}'":" bgcolor='$color{'color22'}'")." height='20'><td>&nbsp;</td><td colspan='16' align='left'>$remark[$a]</td></tr>";
+if ($wiosettings{'CLIENTREMARK'} eq 'on') {
+	print"<tr".($a % 2?" bgcolor='$color{'color20'}'":" bgcolor='$color{'color22'}'")." height='20'><td>&nbsp;</td><td colspan='16' align='left'>".($remark[$a] ne '' ? "$remark[$a]" : "-")."</td></tr>";
 }
 	print"<tr height='1'><td colspan='17' bgcolor='#696565'></td></tr>";
 }
@@ -1898,7 +1909,7 @@ SWITCH: {
 			my $red_netaddress = Network::get_netaddress("$rednet[0]/$red_netmask");
 
 			if ( &General::IpInSubnet($line[1], $red_netaddress, $red_netmask) ) {
-				print"<td align='center' height='20'><img src='$imgstatic/red.png' alt='$Lang::tr{'wio_red_lan'}' title='$Lang::tr{'wio_red_lan'}' /></td>";
+				print"<td align='center' height='20'><img src='$imgstatic/red.png' alt='$Lang::tr{'internet'}' title='$Lang::tr{'internet'}' /></td>";
 				last SWITCH;
 			}
 			else {
@@ -1949,32 +1960,32 @@ print"
 <tr><td colspan='3'>&nbsp;</td></tr>
 <tr bgcolor='$color{'color22'}'>
 	<form method='post' action='/cgi-bin/wio.cgi' enctype='multipart/form-data'>
-	<td width='35%' align='right'>$Lang::tr{'wio_import_csv'}&nbsp;</td>
+	<td width='33%' align='right'>$Lang::tr{'wio_import_csv'}&nbsp;</td>
 	<td width='40%' align='center'><input type='file' name='CSVFILE' size='30' /></td>
-	<td width='25%' align='right'><input type='hidden' name='ACTION' value='$Lang::tr{'wio_import'}1' /><input type='submit' name='SUBMIT' value='$Lang::tr{'wio_import'}' /></td>
+	<td width='27%' align='right'><input type='hidden' name='ACTION' value='$Lang::tr{'wio_import'}1' /><input type='submit' name='SUBMIT' value='$Lang::tr{'wio_import'}' /></td>
 	</form>
 </tr>
 <tr><td colspan='3'>&nbsp;</td></tr>
 <tr bgcolor='$color{'color22'}'>
 	<form method='post' action='/cgi-bin/wio.cgi' enctype='multipart/form-data'>
-	<td width='35%' align='right'>$Lang::tr{'wio_import_hosts'}&nbsp;</td>
+	<td width='33%' align='right'>$Lang::tr{'wio_import_hosts'}&nbsp;</td>
 	<td width='40%' align='center'>&nbsp;</td>
-	<td width='25%' align='right'><input type='hidden' name='ACTION' value='$Lang::tr{'wio_import'}2' /><input type='submit' name='SUBMIT' value='$Lang::tr{'wio_import'}' /></td>
+	<td width='27%' align='right'><input type='hidden' name='ACTION' value='$Lang::tr{'wio_import'}2' /><input type='submit' name='SUBMIT' value='$Lang::tr{'wio_import'}' /></td>
 	</form>
 </tr>
 <tr><td colspan='3'>&nbsp;</td></tr>
 <tr bgcolor='$color{'color22'}'>
 	<form method='post' action='/cgi-bin/wio.cgi' enctype='multipart/form-data'>
-	<td width='35%' align='right'>$Lang::tr{'wio_import_fixleases'}&nbsp;</td>
+	<td width='33%' align='right'>$Lang::tr{'wio_import_fixleases'}&nbsp;</td>
 	<td width='40%' align='center'>&nbsp;</td>
-	<td width='25%' align='right'><input type='hidden' name='ACTION' value='$Lang::tr{'wio_import'}3' /><input type='submit' name='SUBMIT' value='$Lang::tr{'wio_import'}' /></td>
+	<td width='27%' align='right'><input type='hidden' name='ACTION' value='$Lang::tr{'wio_import'}3' /><input type='submit' name='SUBMIT' value='$Lang::tr{'wio_import'}' /></td>
 	</form>
 </tr>
 </table>
 ";
 }
 
-&hrline;
+&hrline();
 
 print"
 <table border='0' width='100%' bordercolor='$Header::bordercolour' cellspacing='0' cellpadding='0' style='border-collapse: collapse'>
@@ -1997,6 +2008,7 @@ print"
 foreach (keys(%ifacecolor)) {
 	if ( $_ eq 'GREEN' ) { $color = "$Header::colourgreen"; $net = $Lang::tr{'wio_net_scan_green'}; }
 	elsif ( $_ eq 'BLUE' ) { $color = "$Header::colourblue"; $net = $Lang::tr{'wio_net_scan_blue'}; }
+	elsif ( $_ eq 'RED' ) { $color = "$Header::colourred"; $net = $Lang::tr{'wio_net_scan_red'}; }
 	else { $color = "$Header::colourorange"; $net = $Lang::tr{'wio_net_scan_orange'}; }
 
 	if ( $netsettings{"${_}_DEV"} eq 'disabled' || $netsettings{"${_}_DEV"} eq '' || $netsettings{"${_}_ADDRESS"} eq '' ) { next; }
@@ -2004,9 +2016,9 @@ foreach (keys(%ifacecolor)) {
 		print <<END;
 
 			<tr bgcolor='$color{'color22'}'>
-				<td width='35%' align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'>$Lang::tr{'wio_net_scan_vl'} <font color='$color'><b>$net</b></font> $Lang::tr{'wio_net_scan_l'}<font color='$color'><b> $netsettings{"${_}_DEV"} </b></font>$Lang::tr{'wio_net_scan_r'}</td>
+				<td width='33%' align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'>$Lang::tr{'wio_net_scan_l'} <font color='$color'><b>$net&nbsp;</b></font>$Lang::tr{'wio_net_scan_r'}</td>
 				<td width='40%' align='center'><input type='text' name='${_}_IPLOW' value='$wiosettings{"${_}_IPLOW"}' size='14' STYLE='background-color:$color; text-align: center; color:white' /> - <input type='text' name='${_}_IPHIGH' value='$wiosettings{"${_}_IPHIGH"}' size='14' STYLE='background-color:$color; text-align: center; color:white' /></td>
-				<td width='25%' align='right'><input type='hidden' name='ACTION' value='$ifacecolor{$_}' /><input type='hidden' name='ID' value='$netsettings{"${_}_DEV"}' /><input type='submit' name='SUBMIT' value='$Lang::tr{'wio_net_scan_run'}'></form></td>
+				<td width='27%' align='right'><input type='hidden' name='ACTION' value='$ifacecolor{$_}' /><input type='hidden' name='ID' value='$netsettings{"${_}_DEV"}' /><input type='submit' name='SUBMIT' value='$Lang::tr{'wio_net_scan_run'}'></form></td>
 			</tr>
 			<tr>
 				<td colspan='3'>&nbsp;</td>
@@ -2144,14 +2156,6 @@ my ($data,@checkfile) = @_;
 sub hrline { 
 
 print"<table width='100%'><tr><td colspan='2' height='35'><hr></td></tr></table>";
-
-}
-
-############################################################################################################################
-
-sub back {
-
-print"<table width='100%'><tr><td width='10%'><a href='/cgi-bin/wio.cgi'><img src='/images/wio/back.png' alt='$Lang::tr{'wio_back'}' title='$Lang::tr{'wio_back'}' /></a></td><td>&nbsp;</td></tr></table>";
 
 }
 
