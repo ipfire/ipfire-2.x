@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2017-2018 Stephan Feddersen <sfeddersen@ipfire.org>           #
+# Copyright (C) 2017-2020 Stephan Feddersen <sfeddersen@ipfire.org>           #
 # All Rights Reserved.                                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
@@ -21,14 +21,14 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2019/06/04 21:12:23
+# Version: 2020/06/01 13:29:23
 #
-# This wio.pl is based on the Code from the IPCop WIO Addon
+# This wio.pl is based on the code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
 #
 # Autor: Stephan Feddersen
 # Co-Autor: Alexander Marx
-# Co-Autor: Frank Mainz
+# Co-Autor: Frank Mainz (for some code for the IPCop WIO Addon)
 #
 
 # enable only the following on debugging purpose
@@ -46,10 +46,9 @@ require '/var/ipfire/lang.pl';
 require '/usr/lib/wio/wio-lib.pl';
 
 my ( $debug, $i, $t, $ib, $tb, $ivpn, $tvpn ) = '';
-my $logdir    = "/var/log/wio";
 my $owner     = getpwnam "nobody";
 my $group     = getgrnam "nobody";
-my $ipadrfile = "$logdir/wioips";
+my $ipadrfile = "/var/log/wio/wioips";
 
 unless ( -e $ipadrfile ) { print ( "The file $ipadrfile doesn't exist!\n" ); exit; }
 
@@ -70,9 +69,8 @@ my $logging    = $wiosettings{'LOGGING'};
 my $mailstyle  = $wiosettings{'MAILSTYLE'};
 my $mailremark = $wiosettings{'MAILREMARK'};
 my $timeout    = $wiosettings{'TIMEOUT'};
-my $shutdown   = $wiosettings{'SHUTDOWN'};
 my $rrddir     = "/var/log/rrd/wio";
-my $onoffip    = "$logdir/wioscip";
+my $onoffip    = "/var/log/wio/wioscip";
 my $hostname   = "$mainsettings{'HOSTNAME'}.$mainsettings{'DOMAINNAME'}";
 my $redactive  = "/var/ipfire/red/active";
 my $rediface   = "/var/ipfire/red/iface";
@@ -91,7 +89,6 @@ my $i_ping     = 'icmp';
 my $t_ping     = 'tcp';
 
 my $nr = 1;
-my $poweroff = 0;
 
 my ( $togglestat, $arp, $time, $start, $timestamp ) = 0;
 my ( $id, $ipadr, $ipadrnew, $host, $hostnew, $enable, $remark, $dyndns, $dyndnsip ) = '';
@@ -100,6 +97,10 @@ my ( $msg, $logmsg, $mailmsg, $smailtxt, $infomsg, $client, $mode, $onbak, $arpc
 my ( $ping_i, $ping_t, $ping_ib, $ping_tb, $ping_iv, $ping_tv, $pingmode ) = '';
 my ( @tmp, @arptmp, @myarray, @status, @arpclients ) = '';
 my @ifaces = ('GREEN','BLUE','ORANGE');
+
+if ( $netsettings{'RED_TYPE'} eq 'STATIC' || $netsettings{'RED_TYPE'} eq 'DHCP' ) {
+	push (@ifaces, "RED");
+}
 
 if ( $mailsettings{'USEMAIL'} eq 'on' ) { $mailen = 'on'; }
 else { $mailen = 'off'; }
@@ -279,7 +280,7 @@ foreach (@myarray) {
 	}
 }
 
-# write adressfile new
+# write ipadressfile new
 
 if ( !-e $onoffip ) {
 	open( FILE, "> $ipadrfile" );
@@ -297,33 +298,6 @@ if ($debug) {
 }
 
 if ( $smailtxt ne '' ) { &WIO::mailsender($Lang::tr{'wio_sub'}, $smailtxt); }
-
-if ($shutdown eq 'on' && ! -e $onoffip) {
-	foreach (@status) {
-		chomp;
-		@tmp = split( /\,/, $_ );
-
-		($id,$timestamp,$ipadr,$host,$enable,$remark,$dyndns,$mailon,$mailoff,$ping,$on,$httphost) = @tmp;
-		
-		if ( $on eq 'on' ) {
-			$poweroff = 0;
-			last;
-		}
-		else {
-			$poweroff = 1;
-			next;
-		}
-	}
-
-	if ($poweroff == 1) {
-		if ($debug) {
-			printf "$Lang::tr{'shutting down ipfire'}!\n\n";
-		}
-
-		&General::log("wio","$Lang::tr{'shutting down ipfire'}!");
-		system '/usr/local/bin/ipfirereboot down';
-	}
-}
 
 undef (@tmp);
 undef (@myarray);
@@ -355,7 +329,6 @@ sub updatewiodata {
 }
 
 sub startdebug {
-
 printf "
 HOSTNAME    : $hostname
 TIMEOUT     : $timeout $Lang::tr{'age ssecond'}
@@ -363,10 +336,11 @@ MAILSTYLE   : $mailstyle
 RED TYPE    : $netsettings{'RED_TYPE'}
 RED DEVICE  : $reddev
 RED ADDRESS : $redip
-SHUTDOWN    : $shutdown
 ";
-	if ($ovpnpid) {printf "OVPN PID    : $ovpnpid"}
-	if ($vpnpid) {printf "VPN PID     : $vpnpid"}
+
+if ($ovpnpid) {printf "OpenVPN PID : $ovpnpid"}
+if ($vpnpid) {printf "IPsec PID   : $vpnpid"}
+
 printf  "
 $Lang::tr{'wio_search'}
 
