@@ -32,6 +32,10 @@ iptables_init() {
 	iptables -P FORWARD DROP
 	iptables -P OUTPUT ACCEPT
 
+	# Enable TRACE logging to syslog
+	modprobe nf_log_ipv4
+	sysctl -q -w net.netfilter.nf_log.2=nf_log_ipv4
+
 	# Empty LOG_DROP and LOG_REJECT chains
 	iptables -N LOG_DROP
 	iptables -A LOG_DROP   -m limit --limit 10/second -j LOG
