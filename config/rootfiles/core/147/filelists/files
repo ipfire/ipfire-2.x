@@ -11,5 +11,6 @@ etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/partresize
 etc/sysctl.conf
+srv/web/ipfire/cgi-bin/proxy.cgi
 var/ipfire/header.pl
 var/ipfire/general-functions.pl
