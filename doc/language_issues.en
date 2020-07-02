@@ -1665,6 +1665,7 @@ WARNING: untranslated string: speaker on = Speaker on:
 WARNING: untranslated string: spectre variant 1 = Spectre Variant 1
 WARNING: untranslated string: spectre variant 2 = Spectre Variant 2
 WARNING: untranslated string: spectre variant 4 = Spectre Variant 4
+WARNING: untranslated string: srbds = Special register buffer data sampling
 WARNING: untranslated string: src port = Src Port
 WARNING: untranslated string: ssh = SSH
 WARNING: untranslated string: ssh access = SSH Access

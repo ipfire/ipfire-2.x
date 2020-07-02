@@ -727,6 +727,7 @@
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
+< srbds
 < ssh
 < ssh active sessions
 < ssh agent forwarding
@@ -920,6 +921,7 @@
 < bewan adsl usb
 < g.dtm
 < g.lite
+< srbds
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -1193,6 +1195,7 @@
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
+< srbds
 < ssh active sessions
 < ssh agent forwarding
 < ssh login time
@@ -1597,6 +1600,7 @@
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
+< srbds
 < ssh active sessions
 < ssh agent forwarding
 < ssh login time
@@ -2344,6 +2348,7 @@
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
+< srbds
 < ssh
 < ssh active sessions
 < ssh agent forwarding
@@ -3197,6 +3202,7 @@
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
+< srbds
 < ssh
 < ssh active sessions
 < ssh agent forwarding
@@ -3500,6 +3506,7 @@
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
+< srbds
 < ssh active sessions
 < ssh agent forwarding
 < ssh login time

@@ -49,6 +49,7 @@ WARNING: translation string unused: advproxy chgwebpwd new password
 WARNING: translation string unused: advproxy chgwebpwd new password confirm
 WARNING: translation string unused: advproxy chgwebpwd old password
 WARNING: translation string unused: advproxy chgwebpwd username
+WARNING: translation string unused: advproxy content based throttling
 WARNING: translation string unused: advproxy errmsg change fail
 WARNING: translation string unused: advproxy errmsg change success
 WARNING: translation string unused: advproxy errmsg invalid bdc
@@ -1082,6 +1083,7 @@ WARNING: untranslated string: source ip country = Source IP Country
 WARNING: untranslated string: spectre variant 1 = Spectre Variant 1
 WARNING: untranslated string: spectre variant 2 = Spectre Variant 2
 WARNING: untranslated string: spectre variant 4 = Spectre Variant 4
+WARNING: untranslated string: srbds = Special register buffer data sampling
 WARNING: untranslated string: ssh active sessions = Active logins
 WARNING: untranslated string: ssh agent forwarding = Allow SSH Agent Forwarding
 WARNING: untranslated string: ssh login time = Logged in since
