@@ -5942,8 +5942,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/acpi/cpu
 #lib/modules/KVER-ipfire/build/include/config/acpi/cpu/freq
 #lib/modules/KVER-ipfire/build/include/config/acpi/cpu/freq/pss.h
-#lib/modules/KVER-ipfire/build/include/config/acpi/custom
-#lib/modules/KVER-ipfire/build/include/config/acpi/custom/method.h
 #lib/modules/KVER-ipfire/build/include/config/acpi/dock.h
 #lib/modules/KVER-ipfire/build/include/config/acpi/ec
 #lib/modules/KVER-ipfire/build/include/config/acpi/ec/debugfs.h
@@ -9025,9 +9023,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/mmu
 #lib/modules/KVER-ipfire/build/include/config/mmu.h
 #lib/modules/KVER-ipfire/build/include/config/mmu/notifier.h
-#lib/modules/KVER-ipfire/build/include/config/modify
-#lib/modules/KVER-ipfire/build/include/config/modify/ldt
-#lib/modules/KVER-ipfire/build/include/config/modify/ldt/syscall.h
 #lib/modules/KVER-ipfire/build/include/config/module
 #lib/modules/KVER-ipfire/build/include/config/module/compress
 #lib/modules/KVER-ipfire/build/include/config/module/compress.h
@@ -18519,7 +18514,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/acpi/acpi_extlog.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/acpi/acpi_ipmi.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/acpi/acpi_pad.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/acpi/custom_method.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/acpi/dptf
 #lib/modules/KVER-ipfire/kernel/drivers/acpi/dptf/dptf_power.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/acpi/ec_sys.ko.xz

@@ -33,9 +33,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = strace
-PAK_VER    = 2
+PAK_VER    = 3
 
-DEPS       = ""
+DEPS       = elfutils
 
 ###############################################################################
 # Top-level Rules

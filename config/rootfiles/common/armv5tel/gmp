@@ -4,12 +4,14 @@
 #usr/lib/libgmp.la
 #usr/lib/libgmp.so
 usr/lib/libgmp.so.10
-usr/lib/libgmp.so.10.3.2
+usr/lib/libgmp.so.10.4.0
 #usr/lib/libgmpxx.a
 #usr/lib/libgmpxx.la
 #usr/lib/libgmpxx.so
 usr/lib/libgmpxx.so.4
-usr/lib/libgmpxx.so.4.5.2
+usr/lib/libgmpxx.so.4.6.0
+#usr/lib/pkgconfig/gmp.pc
+#usr/lib/pkgconfig/gmpxx.pc
 #usr/share/info/gmp.info
 #usr/share/info/gmp.info-1
 #usr/share/info/gmp.info-2

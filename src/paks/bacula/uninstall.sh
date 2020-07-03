@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!/bin/bash
 ############################################################################
 #                                                                          #
 # This file is part of the IPFire Firewall.                                #
@@ -17,18 +17,16 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2018 IPFire Team <info@ipfire.org>.                        #
+# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
-
-package AWS;
-
-sub running_on_ec2() {
-	if (-e "/var/run/aws-instance-id") {
-		return 1;
-	}
-
-	return 0;
-}
-
-1;
+#
+. /opt/pakfire/lib/functions.sh
+stop_service ${NAME}
+make_backup ${NAME}
+# Remove /var/bacula/ directory
+rm -r /var/bacula
+remove_files
+# Remove all start links.
+rm -rf /etc/rc.d/rc*.d/*bacula
+exit 0

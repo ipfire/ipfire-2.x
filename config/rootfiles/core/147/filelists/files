@@ -1,0 +1,16 @@
+etc/system-release
+etc/issue
+srv/web/ipfire/cgi-bin/credits.cgi
+var/ipfire/langs
+etc/rc.d/helper/aws-setup
+etc/rc.d/helper/gcp-setup
+etc/rc.d/init.d/cloud-init
+etc/rc.d/init.d/firewall
+etc/rc.d/init.d/functions
+etc/rc.d/init.d/networking/any
+etc/rc.d/init.d/networking/red
+etc/rc.d/init.d/partresize
+etc/sysctl.conf
+srv/web/ipfire/cgi-bin/proxy.cgi
+var/ipfire/header.pl
+var/ipfire/general-functions.pl

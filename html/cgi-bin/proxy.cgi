@@ -18,13 +18,6 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
-#
-# (c) 2004-2009 marco.s - http://www.advproxy.net
-#
-# This code is distributed under the terms of the GPL
-#
-# $Id: advproxy.cgi,v 3.0.2 2009/02/04 00:00:00 marco.s Exp $
-#
 
 use strict;
 use Apache::Htpasswd;
@@ -239,6 +232,7 @@ $proxysettings{'AUTH_METHOD'} = 'none';
 $proxysettings{'AUTH_REALM'} = '';
 $proxysettings{'AUTH_MAX_USERIP'} = '';
 $proxysettings{'AUTH_CACHE_TTL'} = '60';
+$proxysettings{'AUTH_IPCACHE_TTL'} = '0';
 $proxysettings{'AUTH_CHILDREN'} = '5';
 $proxysettings{'NCSA_MIN_PASS_LEN'} = '6';
 $proxysettings{'NCSA_BYPASS_REDIR'} = 'off';
@@ -444,18 +438,23 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 				}
 			}
 		}
-		if (!($proxysettings{'AUTH_CACHE_TTL'} =~ /^\d+/))
-		{
-			$errormessage = $Lang::tr{'advproxy errmsg auth cache ttl'};
-			goto ERROR;
-		}
 		if ((!($proxysettings{'AUTH_MAX_USERIP'} eq '')) &&
 			((!($proxysettings{'AUTH_MAX_USERIP'} =~ /^\d+/)) || ($proxysettings{'AUTH_MAX_USERIP'} < 1) || ($proxysettings{'AUTH_MAX_USERIP'} > 255)))
 		{
 			$errormessage = $Lang::tr{'advproxy errmsg max userip'};
 			goto ERROR;
 		}
-		if (!($proxysettings{'AUTH_MAX_USERIP'} eq ''))
+		if (!($proxysettings{'AUTH_CACHE_TTL'} =~ /^\d+/))
+		{
+			$errormessage = $Lang::tr{'advproxy errmsg auth cache ttl'};
+			goto ERROR;
+		}
+		if (!($proxysettings{'AUTH_IPCACHE_TTL'} =~ /^\d+/))
+		{
+			$errormessage = $Lang::tr{'advproxy errmsg auth ipcache ttl'};
+			goto ERROR;
+		}
+		if ((!($proxysettings{'AUTH_MAX_USERIP'} eq '')) && ($proxysettings{'AUTH_IPCACHE_TTL'} eq '0'))
 		{
 			$errormessage = $Lang::tr{'advproxy errmsg auth ipcache may not be null'};
 			goto ERROR;
@@ -1743,6 +1742,10 @@ print <<END
 	<td><input type='text' name='AUTH_MAX_USERIP' value='$proxysettings{'AUTH_MAX_USERIP'}' size='5' /></td>
 </tr>
 <tr>
+	<td class='base'>$Lang::tr{'advproxy AUTH user IP cache TTL'}:</td>
+	<td><input type='text' name='AUTH_IPCACHE_TTL' value='$proxysettings{'AUTH_IPCACHE_TTL'}' size='5' /></td>
+</tr>
+<tr>
 	<td class='base'>$Lang::tr{'advproxy AUTH always required'}:</td>
 	<td><input type='checkbox' name='AUTH_ALWAYS_REQUIRED' $checked{'AUTH_ALWAYS_REQUIRED'}{'on'} /></td>
 </tr>
@@ -2038,6 +2041,7 @@ print <<END
 <td><input type='hidden' name='AUTH_CHILDREN'        value='$proxysettings{'AUTH_CHILDREN'}'></td>
 <td><input type='hidden' name='AUTH_CACHE_TTL'       value='$proxysettings{'AUTH_CACHE_TTL'}' size='5' /></td>
 <td><input type='hidden' name='AUTH_MAX_USERIP'      value='$proxysettings{'AUTH_MAX_USERIP'}' size='5' /></td>
+<td><input type='hidden' name='AUTH_IPCACHE_TTL'     value='$proxysettings{'AUTH_IPCACHE_TTL'}' size='5' /></td>
 <td><input type='hidden' name='AUTH_ALWAYS_REQUIRED' value='$proxysettings{'AUTH_ALWAYS_REQUIRED'}'></td>
 <td><input type='hidden' name='AUTH_REALM'           value='$proxysettings{'AUTH_REALM'}'></td>
 <td><input type='hidden' name='DST_NOAUTH'           value='$proxysettings{'DST_NOAUTH'}'></td>
@@ -2049,6 +2053,7 @@ print <<END
 <td><input type='hidden' name='AUTH_CHILDREN'        value='$proxysettings{'AUTH_CHILDREN'}'></td>
 <td><input type='hidden' name='AUTH_CACHE_TTL'       value='$proxysettings{'AUTH_CACHE_TTL'}' size='5' /></td>
 <td><input type='hidden' name='AUTH_MAX_USERIP'      value='$proxysettings{'AUTH_MAX_USERIP'}' size='5' /></td>
+<td><input type='hidden' name='AUTH_IPCACHE_TTL'     value='$proxysettings{'AUTH_IPCACHE_TTL'}' size='5' /></td>
 <td><input type='hidden' name='AUTH_REALM'           value='$proxysettings{'AUTH_REALM'}'></td>
 END
 ; }
@@ -3262,11 +3267,6 @@ END
 	}
 	print FILE "\n";
 
-	# If we use authentication, users must always authenticate
-	unless ($proxysettings{"AUTH_METHOD"} eq "") {
-		print FILE "authenticate_ip_ttl 0\n\n";
-	}
-
 	if ((!($proxysettings{'AUTH_METHOD'} eq 'none')) && (!($proxysettings{'AUTH_METHOD'} eq 'ident')))
 	{
 		if ($proxysettings{'AUTH_METHOD'} eq 'ncsa')
@@ -3275,6 +3275,7 @@ END
 			print FILE "auth_param basic children $proxysettings{'AUTH_CHILDREN'}\n";
 			print FILE "auth_param basic realm $authrealm\n";
 			print FILE "auth_param basic credentialsttl $proxysettings{'AUTH_CACHE_TTL'} minutes\n";
+			if (!($proxysettings{'AUTH_IPCACHE_TTL'} eq '0')) { print FILE "\nauthenticate_ip_ttl $proxysettings{'AUTH_IPCACHE_TTL'} minutes\n"; }
 		}
 
 		if ($proxysettings{'AUTH_METHOD'} eq 'ldap')
@@ -3319,6 +3320,7 @@ END
 			print FILE "auth_param basic children $proxysettings{'AUTH_CHILDREN'}\n";
 			print FILE "auth_param basic realm $authrealm\n";
 			print FILE "auth_param basic credentialsttl $proxysettings{'AUTH_CACHE_TTL'} minutes\n";
+			if (!($proxysettings{'AUTH_IPCACHE_TTL'} eq '0')) { print FILE "\nauthenticate_ip_ttl $proxysettings{'AUTH_IPCACHE_TTL'} minutes\n"; }
 		}
 
 		if ($proxysettings{'AUTH_METHOD'} eq 'ntlm-auth')
@@ -3359,6 +3361,7 @@ END
 			print FILE "auth_param basic children $proxysettings{'AUTH_CHILDREN'}\n";
 			print FILE "auth_param basic realm $authrealm\n";
 			print FILE "auth_param basic credentialsttl $proxysettings{'AUTH_CACHE_TTL'} minutes\n";
+			if (!($proxysettings{'AUTH_IPCACHE_TTL'} eq '0')) { print FILE "\nauthenticate_ip_ttl $proxysettings{'AUTH_IPCACHE_TTL'} minutes\n"; }
 		}
 
 		print FILE "\n";

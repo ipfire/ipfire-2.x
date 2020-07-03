@@ -15,7 +15,7 @@ THISAPP    = wio-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = wio
-PAK_VER    = 8
+PAK_VER    = 9
 
 ###############################################################################
 # Top-level Rules

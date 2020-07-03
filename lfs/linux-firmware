@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20191022
+VER        = 20200519
 
 THISAPP    = linux-firmware-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a9fa049840931f37469a8035b9c06318
+$(DL_FILE)_MD5 = 7ea1c59732569a01ec8b0e6a412a314c
 
 install : $(TARGET)
 
@@ -71,7 +71,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	mkdir -p /lib/firmware
-	cd $(DIR_APP) && cp -vr * /lib/firmware
+	cd $(DIR_APP) && make install
 	# Remove Space from Filenames
 	mv "/lib/firmware/brcm/brcmfmac43430a0-sdio.ONDA-V80 PLUS.txt" \
 	   "/lib/firmware/brcm/brcmfmac43430a0-sdio.ONDA-V80_PLUS.txt"

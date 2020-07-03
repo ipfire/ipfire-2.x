@@ -19,8 +19,6 @@ use Time::Local;
 
 $|=1; # line buffering
 
-require "/var/ipfire/aws-functions.pl";
-
 $Header::revision = 'final';
 $Header::swroot = '/var/ipfire';
 $Header::graphdir='/srv/web/ipfire/html/graphs';
@@ -172,8 +170,8 @@ sub genmenu {
         $menu->{'02.status'}{'subMenu'}->{'74.modem-status'}{'enabled'} = 1;
     }
 
-    # Disbale unusable things on EC2
-    if (&AWS::running_on_ec2()) {
+    # Disbale unusable things in cloud environments
+    if (&General::running_in_cloud()) {
         $menu->{'03.network'}{'subMenu'}->{'30.dhcp'}{'enabled'} = 0;
         $menu->{'03.network'}{'subMenu'}->{'80.macadressmenu'}{'enabled'} = 0;
         $menu->{'03.network'}{'subMenu'}->{'90.wakeonlan'}{'enabled'} = 0;

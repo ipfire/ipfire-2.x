@@ -21,9 +21,9 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2020/26/04 19:35:23
+# Version: 2020/05/26 11:01:23
 #
-# This wiographs.cgi is based on the Code from the IPCop WIO Addon
+# This wiographs.cgi is based on the code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
 #
 # Autor: Stephan Feddersen
@@ -56,7 +56,7 @@ $querry[2] = '' unless defined $querry[2]; # hostname
 if ($querry[0] =~ "$hostid") {
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
-	&WIOGraphs::wio($querry[0], $querry[2], $querry[1]);
+	&WIOGraphs::wiograph($querry[0], $querry[2], $querry[1]);
 }
 else {
 	&Header::showhttpheaders();

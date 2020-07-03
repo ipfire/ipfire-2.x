@@ -1,0 +1,292 @@
+#!/bin/bash
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+# Set PATH to find our own executables
+export PATH=/usr/local/sbin:/usr/local/bin:${PATH}
+
+# GCP only supports an MTU of 1460
+DEFAULT_MTU=1460
+
+get() {
+	local file="${1}"
+
+	wget --header="Metadata-Flavor: Google" -qO - "http://169.254.169.254/computeMetadata/v1/${file}"
+}
+
+to_address() {
+	local n="${1}"
+
+	local o1=$(( (n & 0xff000000) >> 24 ))
+	local o2=$(( (n & 0xff0000) >> 16 ))
+	local o3=$(( (n & 0xff00) >> 8 ))
+	local o4=$(( (n & 0xff) ))
+
+	printf "%d.%d.%d.%d\n" "${o1}" "${o2}" "${o3}" "${o4}"
+}
+
+to_integer() {
+	local address="${1}"
+
+	local integer=0
+
+	local i
+	for i in ${address//\./ }; do
+		integer=$(( (integer << 8) + i ))
+	done
+
+	printf "%d\n" "${integer}"
+}
+
+prefix2netmask() {
+	local prefix=${1}
+
+	local zeros=$(( 32 - prefix ))
+	local netmask=0
+
+	local i
+	for (( i=0; i<${zeros}; i++ )); do
+		netmask=$(( (netmask << 1) ^ 1 ))
+	done
+
+	to_address "$(( netmask ^ 0xffffffff ))"
+}
+
+import_gcp_configuration() {
+	local instance_id="$(get instance/id)"
+
+	boot_mesg "Importing Google Compute Platform configuration for instance ${instance_id}..."
+
+	# Store instance ID
+	echo "${instance_id}" > /var/run/gcp-instance-id
+
+	# Initialise system settings
+	local hostname=$(get instance/hostname)
+
+	# Set hostname
+	if ! grep -q "^HOSTNAME=" /var/ipfire/main/settings; then
+		echo "HOSTNAME=${hostname%%.*}" >> /var/ipfire/main/settings
+	fi
+
+	# Set domainname
+	if ! grep -q "^DOMAINNAME=" /var/ipfire/main/settings; then
+		echo "DOMAINNAME=${hostname#*.}" >> /var/ipfire/main/settings
+	fi
+
+	# Create setup user
+	if ! getent passwd setup &>/dev/null; then
+		useradd setup -s /usr/bin/run-setup -g nobody -m
+
+		# Unlock the account
+		usermod -p "x" setup
+	fi
+
+	# Import SSH keys for setup user
+	local line
+	while read -r line; do
+		# Strip the username part from the key
+		local key="${line#*:}"
+
+		if [ -n "${key}" ] && ! grep -q "^${key}$" "/home/setup/.ssh/authorized_keys" 2>/dev/null; then
+			mkdir -p "/home/setup/.ssh"
+			chmod 700 "/home/setup/.ssh"
+			chown setup.nobody "/home/setup/.ssh"
+
+			echo "${key}" >> "/home/setup/.ssh/authorized_keys"
+			chmod 600 "/home/setup/.ssh/authorized_keys"
+			chown setup.nobody "/home/setup/.ssh/authorized_keys"
+		fi
+	done <<<"$(get instance/attributes/ssh-keys)"
+
+	# Download the user-data script only on the first boot
+	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
+		# Download a startup script
+		local script="$(get instance/attributes/startup-script)"
+
+		# Execute the script
+		if [ "${script:0:2}" = "#!" ]; then
+			echo "${script}" > /tmp/gcp-startup.script
+			chmod 700 /tmp/gcp-startup.script
+
+			# Run the script
+			local now="$(date -u +"%s")"
+			/tmp/gcp-startup.script &>/var/log/startup-script.log.${now}
+
+			# Delete the script right away
+			rm /tmp/gcp-startup.script
+		fi
+	fi
+
+	# Import network configuration
+	# After this, no network connectivity will be available from this script due to the
+	# renaming of the network interfaces for which they have to be shut down
+	local config_type=1
+	: > /var/ipfire/ethernet/settings
+
+	local device_number
+	for device_number in $(get instance/network-interfaces/); do
+		# Remove trailing slash
+		device_number="${device_number//\//}"
+
+		local mac="$(get "instance/network-interfaces/${device_number}/mac")"
+
+		# XXX TODO read the MTU because Google seems to only support 1460
+
+		# First IPv4 address
+		local ipv4_address="$(get "instance/network-interfaces/${device_number}/ip")"
+		local ipv4_address_num="$(to_integer "${ipv4_address}")"
+
+		local netmask="$(get "instance/network-interfaces/${device_number}/subnetmask")"
+		local netmask_num="$(to_integer "${netmask}")"
+
+		# Calculate the network and broadcast addresses
+		local netaddress="$(to_address $(( ipv4_address_num & netmask_num )))"
+		local broadcast="$(to_address $(( ipv4_address_num | (0xffffffff ^ netmask_num) )))"
+
+		case "${device_number}" in
+			# RED
+			0)
+				local interface_name="red0"
+				local gateway="$(get instance/network-interfaces/${device_number}/gateway)"
+
+				(
+					echo "RED_TYPE=STATIC"
+					echo "RED_DEV=${interface_name}"
+					echo "RED_MACADDR=${mac}"
+					echo "RED_DESCRIPTION='${interface_id}'"
+					echo "RED_ADDRESS=${ipv4_address}"
+					echo "RED_NETMASK=${netmask}"
+					echo "RED_NETADDRESS=${netaddress}"
+					echo "RED_BROADCAST=${broadcast}"
+					echo "RED_MTU=${DEFAULT_MTU}"
+					echo "DEFAULT_GATEWAY=${gateway}"
+				) >> /var/ipfire/ethernet/settings
+
+				# Import aliases for RED
+				for alias in $(get "instance/network-interfaces/${device_number}/ip-aliases"); do
+					echo "${alias},on,"
+				done > /var/ipfire/ethernet/aliases
+				;;
+
+			# GREEN
+			1)
+				local interface_name="green0"
+
+				(
+					echo "GREEN_DEV=${interface_name}"
+					echo "GREEN_MACADDR=${mac}"
+					echo "GREEN_DESCRIPTION='${interface_id}'"
+					echo "GREEN_ADDRESS=${ipv4_address}"
+					echo "GREEN_NETMASK=${netmask}"
+					echo "GREEN_NETADDRESS=${netaddress}"
+					echo "GREEN_BROADCAST=${broadcast}"
+					echo "GREEN_MTU=${DEFAULT_MTU}"
+				) >> /var/ipfire/ethernet/settings
+				;;
+
+			# ORANGE
+			2)
+				local interface_name="orange0"
+				config_type=2
+
+				(
+					echo "ORANGE_DEV=${interface_name}"
+					echo "ORANGE_MACADDR=${mac}"
+					echo "ORANGE_DESCRIPTION='${interface_id}'"
+					echo "ORANGE_ADDRESS=${ipv4_address}"
+					echo "ORANGE_NETMASK=${netmask}"
+					echo "ORANGE_NETADDRESS=${netaddress}"
+					echo "ORANGE_BROADCAST=${broadcast}"
+					echo "ORANGE_MTU=${DEFAULT_MTU}"
+				) >> /var/ipfire/ethernet/settings
+				;;
+		esac
+	done
+
+	# Save CONFIG_TYPE
+	echo "CONFIG_TYPE=${config_type}" >> /var/ipfire/ethernet/settings
+
+	# Actions performed only on the very first start
+	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
+		# Disable using ISP nameservers
+		sed -e "s/^USE_ISP_NAMESERVERS=.*/USE_ISP_NAMESERVERS=off/" -i /var/ipfire/dns/settings
+
+		# Enable SSH
+		sed -e "s/ENABLE_SSH=.*/ENABLE_SSH=on/g" -i /var/ipfire/remote/settings
+
+		# Disable SSH password authentication
+		sed -e "s/^ENABLE_SSH_PASSWORDS=.*/ENABLE_SSH_PASSWORDS=off/" -i /var/ipfire/remote/settings
+
+		# Enable SSH key authentication
+		sed -e "s/^ENABLE_SSH_KEYS=.*/ENABLE_SSH_KEYS=on/" -i /var/ipfire/remote/settings
+
+		# Apply SSH settings
+		/usr/local/bin/sshctrl
+
+		# Mark SSH to start immediately (but not right now)
+		touch /var/ipfire/remote/enablessh
+		chown nobody:nobody /var/ipfire/remote/enablessh
+
+		# Firewall rules for SSH and WEBIF
+		(
+			echo "1,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,cust_srv,SSH,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
+			echo "2,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,TGT_PORT,444,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
+		) >> /var/ipfire/firewall/input
+
+		# This script has now completed the first steps of setup
+		touch /var/ipfire/main/firstsetup_ok
+	fi
+
+	# All done
+	echo_ok
+}
+
+case "${reason}" in
+	PREINIT)
+		# Bring up the interface
+		ip link set "${interface}" up
+		;;
+
+	BOUND|RENEW|REBIND|REBOOT)
+		# Remove any previous IP addresses
+		ip addr flush dev "${interface}"
+
+		# Add (or re-add) the new IP address
+		ip addr add "${new_ip_address}/${new_subnet_mask}" dev "${interface}"
+
+		# Add the default route
+		ip route add "${new_routers}" dev "${interface}"
+		ip route add default via "${new_routers}"
+
+		# Setup DNS
+		for domain_name_server in ${new_domain_name_servers}; do
+			echo "nameserver ${domain_name_server}"
+		done > /etc/resolv.conf
+
+		# The system is online now
+		touch /var/ipfire/red/active
+
+		# Import GCP configuration
+		import_gcp_configuration
+		;;
+
+	EXPIRE|FAIL|RELEASE|STOP)
+		# The system is no longer online
+		rm -f /var/ipfire/red/active
+
+		# Remove all IP addresses
+		ip addr flush dev "${interface}"
+
+		# Shut down the interface
+		ip link set "${interface}" down
+		;;
+
+	*)
+		echo "Unhandled reason: ${reason}" >&2
+		exit 2
+		;;
+esac
+
+# Terminate
+exit 0

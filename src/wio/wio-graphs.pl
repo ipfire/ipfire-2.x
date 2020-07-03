@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2017-2018 Stephan Feddersen <sfeddersen@ipfire.org>           #
+# Copyright (C) 2017-2020 Stephan Feddersen <sfeddersen@ipfire.org>           #
 # All Rights Reserved.                                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
@@ -21,9 +21,9 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2017/07/11 21:32:23
+# Version: 2020/05/26 10:34:23
 #
-# This wio-graphs.pl is based on the Code from the IPCop WIO Addon
+# This wio-graphs.pl is based on the code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
 #
 # Autor: Stephan Feddersen
@@ -45,18 +45,35 @@ require '/var/ipfire/lang.pl';
 my ( %mainsettings, %color ) = ();
 
 &General::readhash('/var/ipfire/main/settings', \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+&General::readhash('/srv/web/ipfire/html/themes/'.$mainsettings{'THEME'}.'/include/colors.txt', \%color);
 
-sub wio {
-	my $hostid   = $_[0];
-	my $hostname = $_[1];
-	my $period   = $_[2];
+sub wiograph {
+	my $hostid = $_[0];
+	my $host   = $_[1];
+	my $period = $_[2];
+
+	my $title  = "$host ($Lang::tr{$period})\n";
 
 	my @rrd = ();
 
 	push @rrd, ("-");
-	push @rrd, @{&header($period, "$hostname ($Lang::tr{$period})")};
-	push @rrd, @{&body($hostid)};
+	push @rrd, ("--title", "$title");
+	push @rrd, ("--start", "-1$period", "-aPNG", "-i", "-z");
+	push @rrd, ("--border", "0");
+	push @rrd, ("--full-size-mode");
+	push @rrd, ("--slope-mode");
+	push @rrd, ("--pango-markup");
+	push @rrd, ("--alt-y-grid", "-w 910", "-h 300");
+	if ( $period eq 'day' ) { push @rrd, ("--x-grid", "MINUTE:30:HOUR:1:HOUR:2:0:%H:%M"); }
+	push @rrd, ("--color", "SHADEA".$color{"color19"});
+	push @rrd, ("--color", "SHADEB".$color{"color19"});
+	push @rrd, ("--color", "BACK".$color{"color21"});
+	push @rrd, "DEF:mode=/var/log/rrd/wio/$hostid.rrd:mode:AVERAGE";
+	push @rrd, "CDEF:online=mode,UN,0,mode,IF,50,GT,100,0,IF";
+	push @rrd, "CDEF:offline=mode,UN,100,mode,IF,50,LT,100,0,IF";
+	push @rrd, "AREA:online".$color{"color12"}.":$Lang::tr{'wio up'}\\j";
+	push @rrd, "AREA:offline".$color{"color13"}.":$Lang::tr{'wio down'}\\j";
+	push @rrd, "-W www.ipfire.org";
 
 	RRDs::graph (@rrd);
 
@@ -64,64 +81,14 @@ sub wio {
 	print "Error in RRD::graph for Who Is Online: $error\n" if $error;
 }
 
-sub body {
-	my $hostid = shift;
-	my $result = [];
-
-	push @$result, "DEF:mode=/var/log/rrd/wio/$hostid.rrd:mode:AVERAGE";
-	push @$result, "CDEF:online=mode,UN,0,mode,IF,50,GT,100,0,IF";
-	push @$result, "CDEF:offline=mode,UN,100,mode,IF,50,LT,100,0,IF";
-	push @$result, "AREA:online".$color{"color12"}.":$Lang::tr{'wio up'}\\j";
-	push @$result, "AREA:offline".$color{"color13"}.":$Lang::tr{'wio down'}\\j";
-	push @$result, "COMMENT:\r<span size='smaller'>$Lang::tr{'wio_last_update'}\\: ". lastupdate(scalar localtime()) ."</span>\\r";
-
-	return $result;
-}
-
-sub lastupdate {
-    my $text = shift;
-
-    return undef if not defined $text;
-    $text =~ s/\\/\\\\/g;
-    $text =~ s/:/\\:/g;
-
-    return $text;
-}
-
-sub header {
-	my $period = shift;
-	my $title  = shift;
-	my $result = [];
-
-	push @$result, ("--title", "$title");
-	push @$result, ("--start", "-1$period", "-aPNG", "-i", "-z");
-	push @$result, ("--border", "0");
-	push @$result, ("--full-size-mode");
-	push @$result, ("--slope-mode");
-	push @$result, ("--pango-markup");
-	push @$result, ("--alt-y-grid", "-w 910", "-h 300");
-	if ( $period eq 'day' ) { push @$result, ("--x-grid", "MINUTE:30:HOUR:1:HOUR:2:0:%H:%M"); }
-	push @$result, ("--color", "SHADEA".$color{"color19"});
-	push @$result, ("--color", "SHADEB".$color{"color19"});
-	push @$result, ("--color", "BACK".$color{"color21"});
-
-	return $result;
-}
-
 sub wiographbox {
-	print "<center>";
-	print "<table width='100%' cellspacing='0'>";
-	print "<tr>";
-	print "<td align='center' bgcolor='".$color{"color20"}."'><a href='".$_[0]."?".$_[1]."?hour?".$_[3]."' target='".$_[1]."box'><b>".$Lang::tr{'hour'}."</b></a></td>";
+	print "<table width='100%' align='center' cellspacing='0' border='0'>";
+	print "<tr><td align='center' bgcolor='".$color{"color20"}."'><a href='".$_[0]."?".$_[1]."?hour?".$_[3]."' target='".$_[1]."box'><b>".$Lang::tr{'hour'}."</b></a></td>";
 	print "<td align='center' bgcolor='".$color{"color20"}."'><a href='".$_[0]."?".$_[1]."?day?".$_[3]."' target='".$_[1]."box'><b>".$Lang::tr{'day'}."</b></a></td>";
 	print "<td align='center' bgcolor='".$color{"color20"}."'><a href='".$_[0]."?".$_[1]."?week?".$_[3]."' target='".$_[1]."box'><b>".$Lang::tr{'week'}."</b></a></td>";
 	print "<td align='center' bgcolor='".$color{"color20"}."'><a href='".$_[0]."?".$_[1]."?month?".$_[3]."' target='".$_[1]."box'><b>".$Lang::tr{'month'}."</b></a></td>";
-	print "<td align='center' bgcolor='".$color{"color20"}."'><a href='".$_[0]."?".$_[1]."?year?".$_[3]."' target='".$_[1]."box'><b>".$Lang::tr{'year'}."</b></a></td>";
-	print "</tr>";
+	print "<td align='center' bgcolor='".$color{"color20"}."'><a href='".$_[0]."?".$_[1]."?year?".$_[3]."' target='".$_[1]."box'><b>".$Lang::tr{'year'}."</b></a></td></tr>";
+	print "<tr><td colspan='5' align='center'>&nbsp;</td></tr>";
+	print "<tr><td colspan='5' align='center'><iframe height='300px' width='940px' src='".$_[0]."?".$_[1]."?".$_[2]."?".$_[3]."' scrolling='no' marginheight='0' frameborder='no' name='".$_[1]."box'></iframe></td></tr>";
 	print "</table>";
-	print "<table width='100%' cellspacing='0'>";
-	print "<tr><td align='center' colspan='8'>&nbsp;</td></tr>";
-	print "<tr><td align='center' colspan='8'><iframe class='graph' src='".$_[0]."?".$_[1]."?".$_[2]."?".$_[3]."' scrolling='no' marginheight='0' frameborder='no' name='".$_[1]."box'></iframe></td></tr>";
-	print "</table>";
-	print "</center>";
 }

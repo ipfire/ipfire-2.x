@@ -54,11 +54,13 @@ if [ "${TYPE}" == "STATIC" ]; then
 		BROADCAST="${RED_BROADCAST}"
 		NETADDRESS="${RED_NETADDRESS}"
 		NETMASK="${RED_NETMASK}"
+		MTU="${RED_MTU}"
 	else
 		ADDRESS="${GREEN_ADDRESS}"
 		BROADCAST="${GREEN_BROADCAST}"
 		NETADDRESS="${GREEN_NETADDRESS}"
 		NETMASK="${GREEN_NETMASK}"
+		MTU="${GREEN_MTU}"
 	fi
 	GATEWAY="${DEFAULT_GATEWAY}"
 	# DNS1
@@ -108,7 +110,14 @@ case "${1}" in
 		/usr/bin/vnstat -u -i ${DEVICE} -r --enable --force > /dev/null 2>&1
 		
 		if [ "${TYPE}" == "STATIC" ]; then
-		
+			# Set the MTU
+			if [ -n "${MTU}" ]; then
+				if ! ip link set dev "${DEVICE}" mtu "${MTU}" &>/dev/null; then
+					boot_mesg "Could not set MTU of ${MTU} to ${DEVICE}..."
+					echo_warning
+				fi
+			fi
+
 			if [ "$DEVICE" != "${GREEN_DEV}" ]; then
 				boot_mesg "Adding IPv4 address ${ADDRESS} to the ${DEVICE} interface..."
 				ip addr add ${args} dev ${DEVICE}

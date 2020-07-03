@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.6.0
+VER        = 5.7.0
 
 THISAPP    = iproute2-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)             = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5         = 9da0c352707c34b8b1fec3bf42fcfd09
+$(DL_FILE)_MD5         = da22ab8562eda56ae232872fa72e4870
 
 install : $(TARGET)
 

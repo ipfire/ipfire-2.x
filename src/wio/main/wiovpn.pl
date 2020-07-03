@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2017-2018 Stephan Feddersen <sfeddersen@ipfire.org>           #
+# Copyright (C) 2017-2020 Stephan Feddersen <sfeddersen@ipfire.org>           #
 # All Rights Reserved.                                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
@@ -21,14 +21,14 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2018/01/05 12:32:23
+# Version: 2020/05/04 12:02:23
 #
-# This wioovpn.pl is based on the Code from the IPCop WIO Addon
+# This wioovpn.pl is based on the code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
 #
 # Autor: Stephan Feddersen
 # Co-Autor: Alexander Marx
-# Co-Autor: Frank Mainz
+# Co-Autor: Frank Mainz (for some code for the IPCop WIO Addon)
 #
 
 # enable only the following on debugging purpose
@@ -36,8 +36,6 @@
 
 use strict;
 use POSIX qw(strftime);
-
-my $logdir = "/var/log/wio";
 
 require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/lang.pl';
@@ -55,7 +53,7 @@ my ( @ovpnstatus, @ovpncfg, @ovpncache, @ovpnarray, @ovpnmatch, @ovpnwrite );
 my $now         = strftime "%a, %d.%m.%Y %H:%M:%S", localtime;
 my $ovpnpid     = "/var/run/openvpn.pid";
 my $ovpnmailmsg = '';
-my $ovpncache   = "$logdir/.ovpncache";
+my $ovpncache   = "/var/log/wio/.ovpncache";
 my $ovpnconfig  = "/var/ipfire/ovpn/ovpnconfig";
 
 my ( $name, $nameul, $ovpnclt, $ovpncltip, $realipadr, $connected )  = '';
@@ -65,10 +63,10 @@ my ( @vpnstatus, @vpncfg, @vpncache, @vpnarray, @vpnwrite );
 
 my $vpnpid       = "/var/run/charon.pid";
 my $vpnmailmsg   = '';
-my $vpncache     = "$logdir/.vpncache";
+my $vpncache     = "/var/log/wio/.vpncache";
 my $vpnconfig    = "/var/ipfire/vpn/config";
 
-my ( $activ, $vpnmailsub, $vpnrwstatus, $status,)  = '';
+my ( $vpnmailsub, $vpnrwstatus )  = '';
 
 my $togglestat = 0;
 
@@ -100,9 +98,7 @@ foreach (@ovpncfg) {
 
 	( $name, $remark ) = (split (/\,/, $_))[3, 26];
 
-	$status = 'off';
-
-	unless ( grep (/$name/, @ovpncache) ) { push (@ovpncache, "$name,$remark,$status\n"); }
+	unless ( grep (/$name/, @ovpncache) ) { push (@ovpncache, "$name,$remark,off\n"); }
 }
 
 foreach (@ovpncache) {
@@ -110,13 +106,16 @@ foreach (@ovpncache) {
 
 	( $name, $remark, $status ) = split (/\,/, $_);
 
-	if ( grep (/,$name,/, @ovpncfg) ) { push (@ovpnarray, "$name,$remark,$status\n"); }
+	if ( grep (/$name/, @ovpncfg) ) { push (@ovpnarray, "$name,$remark,$status\n"); }
 }
 
 foreach (@ovpnarray) {
 	chomp;
 
 	( $name, $remark, $status ) = split (/\,/, $_);
+
+	$remark = `/bin/cat $ovpnconfig | grep '$name' | cut -d "," -f 27`;
+	chomp ($remark);
 
 	if ( $name =~ m/_/ ) { $nameul = $name; }
 	else { ($nameul = $name) =~ s/ /_/g; }
@@ -196,15 +195,13 @@ if ( ! -e "$vpnpid" ) {
 }
 else {
 
-if ( -e "$vpnpid" ) {
-	@vpnstatus = `/usr/local/bin/ipsecctrl I`;
-}
+@vpnstatus = `/usr/local/bin/ipsecctrl I`;
 
 open(FILE, "$vpnconfig");
 @vpncfg = <FILE>;
 close (FILE);
 
-if ( ! -e "$vpncache" ) {
+unless ( -e "$vpncache" ) {
 	open(FILE, ">$vpncache");
 	close (FILE);
 }
@@ -217,15 +214,9 @@ else {
 foreach (@vpncfg) {
 	chomp;
 
-	( $activ, $name, $remark ) = (split (/\,/, $_))[1, 2, 26];
+	( $name, $remark ) = (split (/\,/, $_))[2, 26];
 
-	if ( $remark eq 'off' ) { $remark = '-'; }
-
-	$status = 'off';
-
-	if ( $activ eq "off" ) { next; }
-
-	unless ( grep (/$name/, @vpncache) ) { push (@vpncache, "$name,$remark,$status\n"); }
+	unless ( grep (/$name/, @vpncache) ) { push (@vpncache, "$name,$remark,off\n"); }
 }
 
 foreach (@vpncache) {
@@ -233,13 +224,16 @@ foreach (@vpncache) {
 
 	( $name, $remark, $status ) = split (/\,/, $_);
 	
-	if ( grep (/,$name,/, @vpncfg) ) { push (@vpnarray, "$name,$remark,$status\n"); }
+	if ( grep (/$name/, @vpncfg) ) { push (@vpnarray, "$name,$remark,$status\n"); }
 }
 
 foreach (@vpnarray) {
 	chomp;
 	
 	( $name, $remark, $status ) = split (/\,/, $_);
+
+	$remark = `/bin/cat $vpnconfig | grep '$name' | cut -d "," -f 27`;
+	chomp ($remark);
 
 	if ( grep (/$name\{.*INSTALLED/ , @vpnstatus) ) {
 		$vpnrwstatus = "$Lang::tr{'wio up'}";
@@ -255,8 +249,8 @@ foreach (@vpnarray) {
 	push (@vpnwrite, "$name,$remark,$status\n");
 
 	if ( $togglestat == 1 ) {
-		$vpnmailsub  = "WIO VPN - $name - $vpnrwstatus - $now";
-		$logmsg = "Client: WIO VPN $name - Status: $vpnrwstatus $now";
+		$vpnmailsub  = "WIO IPsec - $name - $vpnrwstatus - $now";
+		$logmsg = "Client: WIO IPSec $name - Status: $vpnrwstatus $now";
 		$vpnmailmsg = "Client : $name\n";
 
 		if ( $status eq 'on' ) {

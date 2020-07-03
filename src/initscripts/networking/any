@@ -26,6 +26,7 @@ if [ "$(basename $0)" == "green" ]; then
 	NETADDRESS="${GREEN_NETADDRESS}"
 	NETMASK="${GREEN_NETMASK}"
 	DEVICE="${GREEN_DEV}"
+	MTU="${GREEN_MTU}"
 elif [ "$(basename $0)" == "blue" ]; then
 	DEVICE="${BLUE_DEV}"
 	ADDRESS="${BLUE_ADDRESS}"
@@ -33,6 +34,7 @@ elif [ "$(basename $0)" == "blue" ]; then
 	NETADDRESS="${BLUE_NETADDRESS}"
 	NETMASK="${BLUE_NETMASK}"
 	DEVICE="${BLUE_DEV}"
+	MTU="${GREEN_MTU}"
 elif [ "$(basename $0)" == "orange" ]; then
 	DEVICE="${ORANGE_DEV}"
 	ADDRESS="${ORANGE_ADDRESS}"
@@ -40,6 +42,7 @@ elif [ "$(basename $0)" == "orange" ]; then
 	NETADDRESS="${ORANGE_NETADDRESS}"
 	NETMASK="${ORANGE_NETMASK}"
 	DEVICE="${ORANGE_DEV}"
+	MTU="${ORANGE_MTU}"
 fi
 
 if [ -z "${BROADCAST}" ]; then
@@ -75,6 +78,14 @@ case "${1}" in
 			boot_mesg "Interface ${DEVICE} doesn't exist." ${FAILURE}
 			echo_failure
 			exit 1
+		fi
+
+		# Set the MTU
+		if [ -n "${MTU}" ]; then
+			if ! ip link set dev "${DEVICE}" mtu "${MTU}" &>/dev/null; then
+				boot_mesg "Could not set MTU of ${MTU} to ${DEVICE}..."
+				echo_warning
+			fi
 		fi
 
 		# Create & Enable vnstat data collection

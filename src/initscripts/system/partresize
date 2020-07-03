@@ -45,8 +45,8 @@ case "${1}" in
 				esac
 			fi
 
-			# Enable the serial console on all systems on Azure
-			if running_on_azure; then
+			# Enable the serial console on all systems on Azure and Google Compute Platform
+			if running_on_azure || running_on_gcp; then
 				scon="on"
 			fi
 

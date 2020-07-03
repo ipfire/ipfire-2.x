@@ -1286,4 +1286,26 @@ sub formatBytes {
 	return sprintf("%.2f %s", $bytes, $unit);
 }
 
+# Cloud Stuff
+
+sub running_in_cloud() {
+	return &running_on_ec2() || &running_on_gcp();
+}
+
+sub running_on_ec2() {
+	if (-e "/var/run/aws-instance-id") {
+		return 1;
+	}
+
+	return 0;
+}
+
+sub running_on_gcp() {
+	if (-e "/var/run/gcp-instance-id") {
+		return 1;
+	}
+
+	return 0;
+}
+
 1;

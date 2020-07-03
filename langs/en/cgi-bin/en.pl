@@ -2284,6 +2284,7 @@
 'squid extension methods' => 'Your <tt>extension_methods</tt> list',
 'squid extension methods invalid' => 'Your \'extension_methods\' list can only contain uppercase words of letters and digits, separated with a space. ',
 'squid fix cache' => 'Repair cache',
+'srbds' => 'Special register buffer data sampling',
 'src port' => 'Src Port',
 'srcprt range overlaps' => 'Source port range overlaps an already defined port.',
 'srcprt within existing' => 'Source port is within an already defined port range.',
