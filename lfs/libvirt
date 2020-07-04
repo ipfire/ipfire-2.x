@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.6.0
+VER        = 6.5.0
 
 THISAPP    = libvirt-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = i586 x86_64
 PROG       = libvirt
-PAK_VER    = 20
+PAK_VER    = 21
 
 DEPS       = libpciaccess libyajl ncat qemu
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e818bb25ead24119925781b7519a8401
+$(DL_FILE)_MD5 = 19ea5c0d18bed1515c23a9e9c7427dc0
 
 install : $(TARGET)
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
@@ -54,7 +54,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist:.
+dist: 
 	$(PAK)
 
 ###############################################################################
@@ -77,23 +77,57 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
+
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libvirt/0001-Change-default-behavior-of-libvirt-guests.sh-for-IPF.patch
-	cd $(DIR_APP) && ./configure --prefix=/usr --localstatedir=/var --sysconfdir=/etc \
-			--with-openssl --without-sasl \
-			--without-uml --without-vbox --without-lxc --without-esx --without-vmware --without-openvz \
-			--without-firewalld --without-network --with-interface --with-virtualport --with-macvtap --without-wireshark-dissector \
-			--disable-nls --without-avahi --without-test-suite --without-dbus \
-			--with-qemu-user=nobody --with-qemu-group=kvm \
-			--with-storage-dir --with-storage-fs --with-storage-lvm  --without-storage-iscsi \
-			--without-storage-scsi --without-storage-mpath --without-storage-disk --without-storage-rbd --without-storage-sheepdog --without-storage-gluster  --without-storage-zfs
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make install
+
+	mkdir -p -v $(DIR_APP)/build_libvirt && cd $(DIR_APP)/build_libvirt
+
+	cd $(DIR_APP)/build_libvirt && ../autogen.sh --no-git
+
+	cd $(DIR_APP)/build_libvirt && ../configure \
+		--prefix=/usr \
+		--localstatedir=/var \
+		--sysconfdir=/etc \
+		--without-sasl \
+		--without-vbox \
+		--without-lxc \
+		--without-esx \
+		--without-vmware \
+		--without-openvz \
+		--without-firewalld \
+		--without-network \
+		--with-interface \
+		--with-virtualport \
+		--with-macvtap \
+		--without-wireshark-dissector \
+		--disable-nls \
+		--without-test-suite \
+		--without-dbus \
+		--with-qemu-user=nobody \
+		--with-qemu-group=kvm \
+		--with-storage-dir \
+		--with-storage-fs \
+		--with-storage-lvm \
+		--without-storage-iscsi \
+		--without-storage-scsi \
+		--without-storage-mpath \
+		--without-storage-disk \
+		--without-storage-rbd \
+		--without-storage-sheepdog \
+		--without-storage-gluster \
+		--without-storage-zfs
+
+	cd $(DIR_APP)/build_libvirt && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP)/build_libvirt && make install
+
 	#install initscripts
 	$(call INSTALL_INITSCRIPT,libvirtd)
 	$(call INSTALL_INITSCRIPT,virtlogd)
 	mv /usr/libexec/libvirt-guests.sh /etc/rc.d/init.d/libvirt-guests
+
 	# Backup
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/libvirt /var/ipfire/backup/addons/includes/libvirt
+
 	# Install libvirtd.conf
 	cp -fv $(DIR_SRC)/config/libvirt/libvirtd.conf /etc/libvirt
 	@rm -rf $(DIR_APP)
