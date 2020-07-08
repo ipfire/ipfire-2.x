@@ -66,7 +66,7 @@ if (&General::validip($addr)) {
 	my $ccode = &Location::Functions::lookup_country_code($db_handle, $addr);
 
 	# Try to get the continent of the country code.
-	my $continent = &Location::Functions::get_continent_code($db_handle, $ccode);
+	my $continent = &Location::get_continent_code($db_handle, $ccode);
 
 	# Check if a whois server for the continent is known.
 	if($whois_servers_by_continent{$continent}) {
