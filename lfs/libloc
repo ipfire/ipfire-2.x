@@ -24,8 +24,8 @@
 
 include Config
 
-VER        = 0.9.2
-DB_DATE    = 2020-06-10
+VER        = 0.9.3
+DB_DATE    = 2020-07-10
 
 THISAPP    = libloc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,8 +43,8 @@ objects = $(DL_FILE) \
 $(DL_FILE)                    = https://source.ipfire.org/releases/libloc//$(DL_FILE)
 location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE).db.xz
 
-$(DL_FILE)_MD5                = c6ed4fcbdb2ce4ca7e6df8abbd985411
-location-$(DB_DATE).db.xz_MD5 = 268b6d58a26c6d36081ed1e899b89020
+$(DL_FILE)_MD5                = 61f1d543f67baf665b0140d3676fdade
+location-$(DB_DATE).db.xz_MD5 = 3f68f631e94c29b953c4e60454567540
 
 install : $(TARGET)
 
