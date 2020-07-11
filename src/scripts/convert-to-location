@@ -36,7 +36,7 @@ if [ -f "$FW_CONF_DIR/geoipblock" ]; then
 	for file in "$FW_CONF_DIR/config" "$FW_CONF_DIR/input" "$FW_CONF_DIR/outgoing"; do
 		# Convert pattern which indicates location based rules to the new
 		# ones.
-		sed -i 's/cust_geoip/cust_location/g' "$FW_CONF_DIR/$file"
+		sed -i 's/cust_geoip/cust_location/g' "$file"
 	done
 
 	# Rename indicator for location based groups to the new one.
