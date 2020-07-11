@@ -44,6 +44,9 @@ if [ -f "$FW_CONF_DIR/geoipblock" ]; then
 
 	# Rename file to the new name.
 	mv "$HOSTS_CONF_DIR/customgeoipgrp" "$HOSTS_CONF_DIR/customlocationgrp"
+
+	# Regenerate firewall chains.
+	/etc/init.d/firewall restart
 fi
 
 # Finished.
