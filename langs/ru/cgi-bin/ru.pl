@@ -1381,6 +1381,7 @@
 'pakfire possible dependency' => ' There may be depending packages, here is a list of packages that need to be installed.',
 'pakfire register' => 'Регистрировать на pakfire-сервере:',
 'pakfire system state' => 'Статус системы',
+'pakfire uninstall all' => 'Вы хотите удалить следующие пакеты?',
 'pakfire uninstall description' => 'Пожалуйста, укажите один или несколько элементов в списке ниже и <br /> нажмите минус для удаления.',
 'pakfire uninstall package' => 'Вы собираетесь удалить следующие пакеты: ',
 'pakfire update daily' => 'Ежедневный поиск обновлений:',

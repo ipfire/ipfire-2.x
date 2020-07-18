@@ -1717,6 +1717,7 @@
 'pakfire possible dependency' => ' Er kunnen pakketafhankelijkheden zijn, hier is een lijst met pakketten die moeten worden geïnstalleerd.',
 'pakfire register' => 'Registreer bij de pakfire-server:',
 'pakfire system state' => 'Systeemstatus',
+'pakfire uninstall all' => 'Wilt u de volgende pakketten verwijderen?',
 'pakfire uninstall description' => 'Kies een of meer items uit de lijst hieronder en <br /> klik op de min om te deinstalleren.',
 'pakfire uninstall package' => 'U wilt de volgende pakketten deinstalleren: ',
 'pakfire update daily' => 'Zoek dagelijks naar updates:',

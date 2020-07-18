@@ -1386,6 +1386,7 @@
 'pakfire possible dependency' => ' Pewne pakiety mogą wymagać zależności. Oto lista pakietów które muszę zostać zainstalowane.',
 'pakfire register' => 'Register at pakfire-server:',
 'pakfire system state' => 'Status systemu',
+'pakfire uninstall all' => 'Czy chcesz odinstalować następujące pakiety?',
 'pakfire uninstall description' => 'Proszę wybrać jedną lub kilka pozycji z poniższej listy, <br /> a następnie kliknąć minus aby odinstalować.',
 'pakfire uninstall package' => 'Zamierzasz odinstalować następujące pakiety: ',
 'pakfire update daily' => 'Szukaj aktualizacje codziennie:',

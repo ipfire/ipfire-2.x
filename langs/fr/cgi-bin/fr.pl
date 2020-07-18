@@ -2012,6 +2012,7 @@
 'pakfire tree stable' => 'Stable',
 'pakfire tree testing' => 'En test',
 'pakfire tree unstable' => 'Instable',
+'pakfire uninstall all' => 'Souhaitez-vous désinstaller les packages suivants?',
 'pakfire uninstall description' => 'Veuillez choisir un ou plusieurs modules dans la liste ci-dessous<br>et cliquer sur le signe MOINS pour le(s) désinstaller.',
 'pakfire uninstall package' => 'Vous voulez désinstaller les paquets suivants : ',
 'pakfire update daily' => 'Rechercher des mises à jour quotidiennes :',

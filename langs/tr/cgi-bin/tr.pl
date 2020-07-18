@@ -1909,6 +1909,7 @@
 'pakfire possible dependency' => ' Yüklenemesi gereken paketlerin yüklenebilmesi için buradaki paketlere ihtiyaç duyulabilir.',
 'pakfire register' => 'Pakfire sunucusuna kayıt:',
 'pakfire system state' => 'Sistem durumu',
+'pakfire uninstall all' => 'Aşağıdaki paketleri kaldırmak istiyor musunuz?',
 'pakfire uninstall description' => 'Aşağıdaki listeden bir veya daha fazla öğeyi seçtikten sonra<br />kaldırmak için eksi simgesine tıklayınız.',
 'pakfire uninstall package' => 'Aşağıdaki paketleri kaldırmak istiyorum: ',
 'pakfire update daily' => 'Günlük güncellemeleri ara:',

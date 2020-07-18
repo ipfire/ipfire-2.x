@@ -1982,6 +1982,7 @@
 'pakfire tree stable' => 'Veröffentlichte Versionen (stable)',
 'pakfire tree testing' => 'Vorabversionen (testing)',
 'pakfire tree unstable' => 'Experimentelle Versionen (unstable)',
+'pakfire uninstall all' => 'Möchten Sie die folgenden Pakete deinstallieren?',
 'pakfire uninstall description' => 'Wählen Sie ein oder mehrere Pakete zur Deinstallation aus und drücken Sie auf das minus-Symbol.',
 'pakfire uninstall package' => 'Sie möchten folgende Pakete deinstallieren: ',
 'pakfire update daily' => 'Täglich nach Updates suchen:',
