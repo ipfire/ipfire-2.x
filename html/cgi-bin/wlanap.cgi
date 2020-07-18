@@ -435,7 +435,7 @@ END
 ;
 }
 print<<END
-<tr><td width='25%' class='base'>$Lang::tr{'wlanap neighbor scan'}:&nbsp;</td><td class='base' >on <input type='radio' name='NOSCAN' value='off' $checked{'NOSCAN'}{'off'} /> | <input type='radio' name='NOSCAN' value='on' $checked{'NOSCAN'}{'on'} /> off</td><td class='base' colspan='2'>$Lang::tr{'wlanap neighbor scan warning'}</td></tr>
+<tr><td width='25%' class='base'>$Lang::tr{'wlanap neighbor scan'}:&nbsp;</td><td class='base' >$Lang::tr{'on'} <input type='radio' name='NOSCAN' value='off' $checked{'NOSCAN'}{'off'} /> | <input type='radio' name='NOSCAN' value='on' $checked{'NOSCAN'}{'on'} /> $Lang::tr{'off'}</td><td class='base' colspan='2'>$Lang::tr{'wlanap neighbor scan warning'}</td></tr>
 <tr><td colspan='4'><br></td></tr>
 <tr><td width='25%' class='base'>$Lang::tr{'wlanap encryption'}:&nbsp;</td><td class='base' colspan='3'>
 	<select name='ENC'>
