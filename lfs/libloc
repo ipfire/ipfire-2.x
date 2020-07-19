@@ -78,6 +78,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvf $(DIR_DL)/$(DL_FILE)
 
+	# Apply upstream patches
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.3-country-terminate-buffer-when-reading-from-database.patch
+
 	# Add patch for i585 to disable the stack protector.
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.3-perl-no-stack-protector.patch
 

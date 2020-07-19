@@ -1,0 +1,24 @@
+commit 61d3516bbfce6b4e6393825329c07b1e2a88d47d
+Author: Michael Tremer <michael.tremer@ipfire.org>
+Date:   Mon Jul 13 10:47:30 2020 +0000
+
+    country: Terminate buffer when reading from database
+    
+    Compilers on ARM do not seem to initialise the buffer.
+    
+    Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+
+diff --git a/src/country.c b/src/country.c
+index d6ddf50..2ba93e6 100644
+--- a/src/country.c
++++ b/src/country.c
+@@ -125,6 +125,9 @@ int loc_country_new_from_database_v1(struct loc_ctx* ctx, struct loc_stringpool*
+ 	// Read country code
+ 	loc_country_code_copy(buffer, dbobj->code);
+ 
++	// Terminate buffer
++	buffer[2] = '\0';
++
+ 	// Create a new country object
+ 	int r = loc_country_new(ctx, country, buffer);
+ 	if (r)
