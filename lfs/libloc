@@ -82,7 +82,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.3-country-terminate-buffer-when-reading-from-database.patch
 
 	# Add patch for i586 to disable strong stack protector.
+ifeq "$(BUILD_ARCH)" "i586"
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.3-perl-regular-stack-protector.patch
+endif
 
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \
