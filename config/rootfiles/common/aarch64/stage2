@@ -173,7 +173,6 @@ var/run
 #var/spool
 var/tmp
 run
-usr/local/bin/xt_geoip_build
 dev/console
 dev/null
 tmp
