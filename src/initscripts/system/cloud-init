@@ -15,6 +15,8 @@ case "${1}" in
 			scriptname="/etc/rc.d/helper/azure-setup"
 		elif running_on_gcp; then
 			scriptname="/etc/rc.d/helper/gcp-setup"
+		elif running_on_oci; then
+			scriptname="/etc/rc.d/helper/oci-setup"
 		else
 			# This system is not running in the cloud
 			exit 0

@@ -834,4 +834,15 @@ running_on_gcp() {
 	return 1
 }
 
+running_on_oci() {
+	if [ -r "/sys/devices/virtual/dmi/id/chassis_asset_tag" ]; then
+		local asset_tag="$(</sys/devices/virtual/dmi/id/chassis_asset_tag)"
+
+		[ "${asset_tag}" = "OracleCloud.com" ] && return 0
+	fi
+
+	# We are not running on OCI
+	return 1
+}
+
 # End $rc_base/init.d/functions
