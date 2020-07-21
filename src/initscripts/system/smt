@@ -20,6 +20,11 @@ case "${1}" in
 			exit 0
 		fi 2>/dev/null
 
+		# Do not disable SMT inside virtual machines
+		if [ -d "/sys/hypervisor" ]; then
+			exit 0
+		fi
+
 		# Disable SMT when the processor is vulnerable to Foreshadow or Fallout/ZombieLoad/RIDL
 		for vuln in l1tf mds; do
 			if [ -r "/sys/devices/system/cpu/vulnerabilities/${vuln}" ] && \
