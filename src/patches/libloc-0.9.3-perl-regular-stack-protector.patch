@@ -6,7 +6,7 @@ index 38d5390..62016ca 100644
      LIBS              => ['-lloc'],
      DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
      INC               => '-I. -I../../',
-+    CCFLAGS           => '-fno-stack-protector',
++    CCFLAGS           => '-fstack-protector',
  	# Un-comment this if you add C files to link with later:
      # OBJECT            => '$(O_FILES)', # link all the C files too
  );
