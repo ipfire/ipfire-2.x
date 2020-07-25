@@ -115,7 +115,7 @@ sub network_equal {
 		return undef;
 	}
 
-	if ($bin1[0] eq $bin2[0] && $bin1[1] eq $bin2[1]) {
+	if ($bin1[0] == $bin2[0] && $bin1[1] == $bin2[1]) {
 		return 1;
 	}
 
@@ -295,7 +295,7 @@ sub ip_address_in_network($$) {
 	# Find end address
 	my $broadcast_bin = $network_bin ^ (~$netmask_bin % 2 ** 32);
 
-	return (($address_bin ge $network_bin) && ($address_bin le $broadcast_bin));
+	return (($address_bin >= $network_bin) && ($address_bin <= $broadcast_bin));
 }
 
 sub setup_upstream_proxy() {
