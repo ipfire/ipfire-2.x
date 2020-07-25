@@ -191,7 +191,7 @@ sub check_ip_address_and_netmask($$) {
 	my ($address, $netmask) = split(/\//, $network, 2);
 
 	# Check if the IP address is fine.
-	# 
+	#
 	my $result = &check_ip_address($address);
 	unless ($result) {
 		return $result;
@@ -449,14 +449,15 @@ sub get_mac_by_name($) {
 # Remove the next line to enable the testsuite
 __END__
 
-sub assert($) {
+sub assert($$) {
+	my $tst = shift;
 	my $ret = shift;
 
 	if ($ret) {
 		return;
 	}
 
-	print "ASSERTION ERROR";
+	print "ASSERTION ERROR - $tst\n";
 	exit(1);
 }
 
@@ -464,10 +465,10 @@ sub testsuite() {
 	my $result;
 
 	my $address1 = &ip2bin("8.8.8.8");
-	assert($address1 == 134744072);
+	assert('ip2bin("8.8.8.8")', $address1 == 134744072);
 
 	my $address2 = &bin2ip($address1);
-	assert($address2 eq "8.8.8.8");
+	assert("bin2ip($address1)", $address2 eq "8.8.8.8");
 
 	# Check if valid IP addresses are correctly recognised.
 	foreach my $address ("1.2.3.4", "192.168.180.1", "127.0.0.1") {
@@ -486,34 +487,37 @@ sub testsuite() {
 	}
 
 	$result = &check_ip_address_and_netmask("192.168.180.0/255.255.255.0");
-	assert($result);
+	assert('check_ip_address_and_netmask("192.168.180.0/255.255.255.0")', $result);
 
 	$result = &convert_netmask2prefix("255.255.254.0");
-	assert($result == 23);
+	assert('convert_netmask2prefix("255.255.254.0")', $result == 23);
 
 	$result = &convert_prefix2netmask(8);
-	assert($result eq "255.0.0.0");
+	assert('convert_prefix2netmask(8)', $result eq "255.0.0.0");
 
 	$result = &find_next_ip_address("1.2.3.4", 2);
-	assert($result eq "1.2.3.6");
+	assert('find_next_ip_address("1.2.3.4", 2)', $result eq "1.2.3.6");
 
 	$result = &network_equal("192.168.0.0/24", "192.168.0.0/255.255.255.0");
-	assert($result);
+	assert('network_equal("192.168.0.0/24", "192.168.0.0/255.255.255.0")', $result);
 
 	$result = &network_equal("192.168.0.0/24", "192.168.0.0/25");
-	assert(!$result);
+	assert('network_equal("192.168.0.0/24", "192.168.0.0/25")', !$result);
 
 	$result = &network_equal("192.168.0.0/24", "192.168.0.128/25");
-	assert(!$result);
+	assert('network_equal("192.168.0.0/24", "192.168.0.128/25")', !$result);
 
 	$result = &network_equal("192.168.0.1/24", "192.168.0.XXX/24");
-	assert(!$result);
+	assert('network_equal("192.168.0.1/24", "192.168.0.XXX/24")', !$result);
 
 	$result = &ip_address_in_network("10.0.1.4", "10.0.0.0/8");
-	assert($result);
+	assert('ip_address_in_network("10.0.1.4", "10.0.0.0/8"', $result);
 
 	$result = &ip_address_in_network("192.168.30.11", "192.168.30.0/255.255.255.0");
-	assert($result);
+	assert('ip_address_in_network("192.168.30.11", "192.168.30.0/255.255.255.0")', $result);
+
+	$result = &ip_address_in_network("192.168.30.11", "0.0.0.0/8");
+	assert('ip_address_in_network("192.168.30.11", "0.0.0.0/8")', !$result);
 
 	print "Testsuite completed successfully!\n";
 
