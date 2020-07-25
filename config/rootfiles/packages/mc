@@ -142,6 +142,7 @@ usr/share/mc/syntax/c.syntax
 usr/share/mc/syntax/cabal.syntax
 usr/share/mc/syntax/changelog.syntax
 usr/share/mc/syntax/cmake.syntax
+usr/share/mc/syntax/cobol.syntax
 usr/share/mc/syntax/cs.syntax
 usr/share/mc/syntax/css.syntax
 usr/share/mc/syntax/cuda.syntax
@@ -172,6 +173,7 @@ usr/share/mc/syntax/j.syntax
 usr/share/mc/syntax/jal.syntax
 usr/share/mc/syntax/java.syntax
 usr/share/mc/syntax/js.syntax
+usr/share/mc/syntax/kotlin.syntax
 usr/share/mc/syntax/latex.syntax
 usr/share/mc/syntax/lisp.syntax
 usr/share/mc/syntax/lkr.syntax
