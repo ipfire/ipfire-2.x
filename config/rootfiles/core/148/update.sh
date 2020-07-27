@@ -62,6 +62,13 @@ ldconfig
 
 # Start services
 
+# Update crontab
+sed -i /var/spool/cron/root.orig \
+	-e "s/xt_geoip_update/update-location-database/" \
+	-e "/location/s/monthly/hourly/" \
+	-e "s/GeoIP/location/"
+fcrontab -z
+
 # This update needs a reboot...
 #touch /var/run/need_reboot
 
