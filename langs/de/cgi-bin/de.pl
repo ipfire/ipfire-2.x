@@ -1971,7 +1971,7 @@
 'pakfire last core list update' => 'Letztes Corelisten Update ist',
 'pakfire last package update' => 'Letztes Paketlisten Update ist',
 'pakfire last serverlist update' => 'Letztes Serverlisten Update ist',
-'pakfire last update' => 'Letzes Update ist',
+'pakfire last update' => 'Letztes Update ist',
 'pakfire possible dependency' => ' Möglicherweise haben diese Pakete Abhängigkeiten, d.h. andere Pakete müssen zusätzlich installiert werden. Dazu sehen Sie unten eine Liste.',
 'pakfire register' => 'Registrierung am Pakfire-Server:',
 'pakfire system state' => 'System Status',
