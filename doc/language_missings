@@ -421,10 +421,10 @@
 < fwdfw wd_tue
 < fwdfw wd_wed
 < fwdfw xt access
-< fwhost addgeoipgrp
 < fwhost addgrp
 < fwhost addgrpname
 < fwhost addhost
+< fwhost addlocationgrp
 < fwhost addnet
 < fwhost addservice
 < fwhost addservicegrp
@@ -437,10 +437,10 @@
 < fwhost change
 < fwhost changeremark
 < fwhost cust addr
-< fwhost cust geoip
-< fwhost cust geoipgroup
-< fwhost cust geoiplocation
 < fwhost cust grp
+< fwhost cust location
+< fwhost cust locationgroup
+< fwhost cust locationlocation
 < fwhost cust net
 < fwhost Custom Host
 < fwhost Custom Network
@@ -490,9 +490,9 @@
 < fwhost IpSec Network
 < fwhost menu
 < fwhost netaddress
-< fwhost newgeoipgrp
 < fwhost newgrp
 < fwhost newhost
+< fwhost newlocationgrp
 < fwhost newnet
 < fwhost newservice
 < fwhost newservicegrp
@@ -921,7 +921,6 @@
 < bewan adsl usb
 < g.dtm
 < g.lite
-< srbds
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -1080,22 +1079,12 @@
 < fwdfw maxconcon
 < fwdfw numcon
 < fwdfw ratelimit
-< fwhost addgeoipgrp
-< fwhost cust geoip
-< fwhost cust geoipgroup
-< fwhost cust geoiplocation
-< fwhost newgeoipgrp
+< fwhost addlocationgrp
+< fwhost cust location
+< fwhost cust locationgroup
+< fwhost cust locationlocation
+< fwhost newlocationgrp
 < generate ptr
-< geoip
-< geoipblock
-< geoipblock block countries
-< geoipblock configuration
-< geoipblock country code
-< geoipblock country is allowed
-< geoipblock country is blocked
-< geoipblock country name
-< geoipblock enable feature
-< geoipblock flag
 < guaranteed bandwith
 < guardian
 < hardware vulnerabilities
@@ -1139,6 +1128,16 @@
 < ipsec settings
 < itlb multihit
 < local ip address
+< location
+< locationblock
+< locationblock block countries
+< locationblock configuration
+< locationblock country code
+< locationblock country is allowed
+< locationblock country is blocked
+< locationblock country name
+< locationblock enable feature
+< locationblock flag
 < log server protocol
 < masquerade blue
 < masquerade green
@@ -1451,24 +1450,14 @@
 < fwdfw maxconcon
 < fwdfw numcon
 < fwdfw ratelimit
-< fwhost addgeoipgrp
-< fwhost cust geoip
-< fwhost cust geoipgroup
-< fwhost cust geoiplocation
-< fwhost newgeoipgrp
+< fwhost addlocationgrp
+< fwhost cust location
+< fwhost cust locationgroup
+< fwhost cust locationlocation
+< fwhost newlocationgrp
 < gen dh
 < generate dh key
 < generate ptr
-< geoip
-< geoipblock
-< geoipblock block countries
-< geoipblock configuration
-< geoipblock country code
-< geoipblock country is allowed
-< geoipblock country is blocked
-< geoipblock country name
-< geoipblock enable feature
-< geoipblock flag
 < guardian
 < hardware vulnerabilities
 < ids apply
@@ -1513,6 +1502,16 @@
 < ipsec settings
 < itlb multihit
 < local ip address
+< location
+< locationblock
+< locationblock block countries
+< locationblock configuration
+< locationblock country code
+< locationblock country is allowed
+< locationblock country is blocked
+< locationblock country name
+< locationblock enable feature
+< locationblock flag
 < log server protocol
 < masquerade blue
 < masquerade green
@@ -2047,10 +2046,10 @@
 < fwdfw wd_tue
 < fwdfw wd_wed
 < fwdfw xt access
-< fwhost addgeoipgrp
 < fwhost addgrp
 < fwhost addgrpname
 < fwhost addhost
+< fwhost addlocationgrp
 < fwhost addnet
 < fwhost addservice
 < fwhost addservicegrp
@@ -2063,10 +2062,10 @@
 < fwhost change
 < fwhost changeremark
 < fwhost cust addr
-< fwhost cust geoip
-< fwhost cust geoipgroup
-< fwhost cust geoiplocation
 < fwhost cust grp
+< fwhost cust location
+< fwhost cust locationgroup
+< fwhost cust locationlocation
 < fwhost cust net
 < fwhost Custom Host
 < fwhost Custom Network
@@ -2116,9 +2115,9 @@
 < fwhost IpSec Network
 < fwhost menu
 < fwhost netaddress
-< fwhost newgeoipgrp
 < fwhost newgrp
 < fwhost newhost
+< fwhost newlocationgrp
 < fwhost newnet
 < fwhost newservice
 < fwhost newservicegrp
@@ -2147,16 +2146,6 @@
 < gen dh
 < generate dh key
 < generate ptr
-< geoip
-< geoipblock
-< geoipblock block countries
-< geoipblock configuration
-< geoipblock country code
-< geoipblock country is allowed
-< geoipblock country is blocked
-< geoipblock country name
-< geoipblock enable feature
-< geoipblock flag
 < grouptype
 < guardian
 < hardware support
@@ -2213,6 +2202,16 @@
 < least preferred
 < lifetime
 < local ip address
+< location
+< locationblock
+< locationblock block countries
+< locationblock configuration
+< locationblock country code
+< locationblock country is allowed
+< locationblock country is blocked
+< locationblock country name
+< locationblock enable feature
+< locationblock flag
 < log server protocol
 < mac filter
 < masquerade blue
@@ -2901,10 +2900,10 @@
 < fwdfw wd_tue
 < fwdfw wd_wed
 < fwdfw xt access
-< fwhost addgeoipgrp
 < fwhost addgrp
 < fwhost addgrpname
 < fwhost addhost
+< fwhost addlocationgrp
 < fwhost addnet
 < fwhost addservice
 < fwhost addservicegrp
@@ -2917,10 +2916,10 @@
 < fwhost change
 < fwhost changeremark
 < fwhost cust addr
-< fwhost cust geoip
-< fwhost cust geoipgroup
-< fwhost cust geoiplocation
 < fwhost cust grp
+< fwhost cust location
+< fwhost cust locationgroup
+< fwhost cust locationlocation
 < fwhost cust net
 < fwhost Custom Host
 < fwhost Custom Network
@@ -2970,9 +2969,9 @@
 < fwhost IpSec Network
 < fwhost menu
 < fwhost netaddress
-< fwhost newgeoipgrp
 < fwhost newgrp
 < fwhost newhost
+< fwhost newlocationgrp
 < fwhost newnet
 < fwhost newservice
 < fwhost newservicegrp
@@ -3001,16 +3000,6 @@
 < gen dh
 < generate dh key
 < generate ptr
-< geoip
-< geoipblock
-< geoipblock block countries
-< geoipblock configuration
-< geoipblock country code
-< geoipblock country is allowed
-< geoipblock country is blocked
-< geoipblock country name
-< geoipblock enable feature
-< geoipblock flag
 < grouptype
 < guardian
 < hardware support
@@ -3069,6 +3058,16 @@
 < least preferred
 < lifetime
 < local ip address
+< location
+< locationblock
+< locationblock block countries
+< locationblock configuration
+< locationblock country code
+< locationblock country is allowed
+< locationblock country is blocked
+< locationblock country name
+< locationblock enable feature
+< locationblock flag
 < log server protocol
 < mac filter
 < masquerade blue

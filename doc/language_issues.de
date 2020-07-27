@@ -318,7 +318,7 @@ WARNING: translation string unused: fwhost Standard Network
 WARNING: translation string unused: fwhost attention
 WARNING: translation string unused: fwhost blue
 WARNING: translation string unused: fwhost changeremark
-WARNING: translation string unused: fwhost cust geoip
+WARNING: translation string unused: fwhost cust locationlocation
 WARNING: translation string unused: fwhost err addrgrp
 WARNING: translation string unused: fwhost err hostorip
 WARNING: translation string unused: fwhost err mac
@@ -338,9 +338,6 @@ WARNING: translation string unused: generatekeys
 WARNING: translation string unused: generatepolicy
 WARNING: translation string unused: generatereport
 WARNING: translation string unused: genkey
-WARNING: translation string unused: geoipblock country code
-WARNING: translation string unused: geoipblock country name
-WARNING: translation string unused: geoipblock flag
 WARNING: translation string unused: green interface
 WARNING: translation string unused: gz with key
 WARNING: translation string unused: harddisk temperature graphs
@@ -402,6 +399,9 @@ WARNING: translation string unused: loaded modules
 WARNING: translation string unused: local hard disk
 WARNING: translation string unused: localkey
 WARNING: translation string unused: localkeyfile
+WARNING: translation string unused: locationblock country code
+WARNING: translation string unused: locationblock country name
+WARNING: translation string unused: locationblock flag
 WARNING: translation string unused: log enabled
 WARNING: translation string unused: log var messages
 WARNING: translation string unused: log viewer
@@ -489,6 +489,7 @@ WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
 WARNING: translation string unused: original
+WARNING: translation string unused: other
 WARNING: translation string unused: our donors
 WARNING: translation string unused: out
 WARNING: translation string unused: outgoing firewall
@@ -766,7 +767,7 @@ WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
-WARNING: untranslated string: fwhost cust geoipgrp = unknown string
+WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
 WARNING: untranslated string: guardian block httpd brute-force = unknown string

@@ -284,9 +284,6 @@ WARNING: translation string unused: generatekeys
 WARNING: translation string unused: generatepolicy
 WARNING: translation string unused: generatereport
 WARNING: translation string unused: genkey
-WARNING: translation string unused: geoipblock country code
-WARNING: translation string unused: geoipblock country name
-WARNING: translation string unused: geoipblock flag
 WARNING: translation string unused: green interface
 WARNING: translation string unused: gz with key
 WARNING: translation string unused: harddisk temperature graphs
@@ -352,6 +349,9 @@ WARNING: translation string unused: loaded modules
 WARNING: translation string unused: local hard disk
 WARNING: translation string unused: localkey
 WARNING: translation string unused: localkeyfile
+WARNING: translation string unused: locationblock country code
+WARNING: translation string unused: locationblock country name
+WARNING: translation string unused: locationblock flag
 WARNING: translation string unused: log enabled
 WARNING: translation string unused: log var messages
 WARNING: translation string unused: log viewer
@@ -1000,10 +1000,10 @@ WARNING: untranslated string: fwdfw wd_thu = Thu
 WARNING: untranslated string: fwdfw wd_tue = Tue
 WARNING: untranslated string: fwdfw wd_wed = Wed
 WARNING: untranslated string: fwhost OpenVPN N-2-N = OpenVPN Net-to-Net
-WARNING: untranslated string: fwhost addgeoipgrp = Add new Location group
 WARNING: untranslated string: fwhost addgrp = Add new network/host group
 WARNING: untranslated string: fwhost addgrpname = Group name:
 WARNING: untranslated string: fwhost addhost = Add new host
+WARNING: untranslated string: fwhost addlocationgrp = Add new Location group
 WARNING: untranslated string: fwhost addnet = Add new network
 WARNING: untranslated string: fwhost addservice = Add service
 WARNING: untranslated string: fwhost addservicegrp = Add new service group
@@ -1013,10 +1013,10 @@ WARNING: untranslated string: fwhost ccdhost = OpenVPN clients:
 WARNING: untranslated string: fwhost ccdnet = OpenVPN networks:
 WARNING: untranslated string: fwhost change = Modify
 WARNING: untranslated string: fwhost cust addr = Hosts
-WARNING: untranslated string: fwhost cust geoipgroup = Location Groups
-WARNING: untranslated string: fwhost cust geoipgrp = unknown string
-WARNING: untranslated string: fwhost cust geoiplocation = Location Locations
 WARNING: untranslated string: fwhost cust grp = Network/Host Groups
+WARNING: untranslated string: fwhost cust location = Location Groups
+WARNING: untranslated string: fwhost cust locationgroup = Location Groups
+WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost cust net = Networks
 WARNING: untranslated string: fwhost cust service = Services
 WARNING: untranslated string: fwhost cust srvgrp = Service Groups
@@ -1055,9 +1055,9 @@ WARNING: untranslated string: fwhost ip_mac = IP/MAC address
 WARNING: untranslated string: fwhost ipsec net = IPsec networks:
 WARNING: untranslated string: fwhost menu = Firewall Groups
 WARNING: untranslated string: fwhost netaddress = Network address
-WARNING: untranslated string: fwhost newgeoipgrp = Location Groups
 WARNING: untranslated string: fwhost newgrp = Network/Host Groups
 WARNING: untranslated string: fwhost newhost = Hosts
+WARNING: untranslated string: fwhost newlocationgrp = Location Groups
 WARNING: untranslated string: fwhost newnet = Networks
 WARNING: untranslated string: fwhost newservice = Services
 WARNING: untranslated string: fwhost newservicegrp = Service Groups
@@ -1208,7 +1208,6 @@ WARNING: untranslated string: openvpn prefix local subnet = Using the prefix not
 WARNING: untranslated string: openvpn prefix openvpn subnet = Using the prefix notation is not supported for the OpenVPN subnet. Please enter a subnet mask like 255.255.255.0.
 WARNING: untranslated string: openvpn prefix remote subnet = Using the prefix notation is not supported for the remote subnet. Please enter a subnet mask like 255.255.255.0.
 WARNING: untranslated string: openvpn subnet is used = The given subnet is used by another OpenVPN server.
-WARNING: untranslated string: other = Other
 WARNING: untranslated string: outgoing compression in bytes per second = Outgoing compression
 WARNING: untranslated string: outgoing firewall access = Outgoing Firewall Access
 WARNING: untranslated string: outgoing firewall p2p allow = Using the P2P protocol is allowed

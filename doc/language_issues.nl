@@ -489,6 +489,7 @@ WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
 WARNING: translation string unused: original
+WARNING: translation string unused: other
 WARNING: translation string unused: our donors
 WARNING: translation string unused: out
 WARNING: translation string unused: outgoing firewall
@@ -909,22 +910,15 @@ WARNING: untranslated string: fwdfw limitconcon = Limit concurrent connections p
 WARNING: untranslated string: fwdfw maxconcon = Max. concurrent connections
 WARNING: untranslated string: fwdfw numcon = Number of connections
 WARNING: untranslated string: fwdfw ratelimit = Rate-limit new connections
-WARNING: untranslated string: fwhost addgeoipgrp = Add new Location group
-WARNING: untranslated string: fwhost cust geoipgroup = Location Groups
-WARNING: untranslated string: fwhost cust geoipgrp = unknown string
-WARNING: untranslated string: fwhost cust geoiplocation = Location Locations
+WARNING: untranslated string: fwhost addlocationgrp = Add new Location group
+WARNING: untranslated string: fwhost cust location = Location Groups
+WARNING: untranslated string: fwhost cust locationgroup = Location Groups
+WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
-WARNING: untranslated string: fwhost newgeoipgrp = Location Groups
+WARNING: untranslated string: fwhost newlocationgrp = Location Groups
 WARNING: untranslated string: gen dh = Generate new Diffie-Hellman parameters
 WARNING: untranslated string: generate dh key = Generate Diffie-Hellman parameters
 WARNING: untranslated string: generate ptr = Generate PTR
-WARNING: untranslated string: geoip = Location
-WARNING: untranslated string: geoipblock = Location Block
-WARNING: untranslated string: geoipblock block countries = Block countries
-WARNING: untranslated string: geoipblock configuration = Location Configuration
-WARNING: untranslated string: geoipblock country is allowed = Incoming traffic from this country is allowed
-WARNING: untranslated string: geoipblock country is blocked = Incoming traffic from this country will be blocked
-WARNING: untranslated string: geoipblock enable feature = Enable Location based blocking:
 WARNING: untranslated string: guardian = Guardian
 WARNING: untranslated string: guardian block a host = unknown string
 WARNING: untranslated string: guardian block httpd brute-force = unknown string
@@ -998,6 +992,13 @@ WARNING: untranslated string: ipsec routing table entries = IPsec Routing Table 
 WARNING: untranslated string: ipsec settings = IPsec Settings
 WARNING: untranslated string: itlb multihit = iTLB MultiHit
 WARNING: untranslated string: local ip address = Local IP Address
+WARNING: untranslated string: location = Location
+WARNING: untranslated string: locationblock = Location Block
+WARNING: untranslated string: locationblock block countries = Block countries
+WARNING: untranslated string: locationblock configuration = Location Configuration
+WARNING: untranslated string: locationblock country is allowed = Incoming traffic from this country is allowed
+WARNING: untranslated string: locationblock country is blocked = Incoming traffic from this country will be blocked
+WARNING: untranslated string: locationblock enable feature = Enable Location based blocking:
 WARNING: untranslated string: log server protocol = protocol:
 WARNING: untranslated string: masquerade blue = Masquerade BLUE
 WARNING: untranslated string: masquerade green = Masquerade GREEN
