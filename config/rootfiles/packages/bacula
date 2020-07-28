@@ -63,3 +63,4 @@ usr/sbin/bacula-fd
 #usr/share/man/man8/dbcheck.8.gz
 #var/bacula
 #var/bacula/working
+var/ipfire/backup/addons/includes/bacula
