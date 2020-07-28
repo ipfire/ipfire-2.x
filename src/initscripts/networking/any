@@ -34,7 +34,7 @@ elif [ "$(basename $0)" == "blue" ]; then
 	NETADDRESS="${BLUE_NETADDRESS}"
 	NETMASK="${BLUE_NETMASK}"
 	DEVICE="${BLUE_DEV}"
-	MTU="${GREEN_MTU}"
+	MTU="${BLUE_MTU}"
 elif [ "$(basename $0)" == "orange" ]; then
 	DEVICE="${ORANGE_DEV}"
 	ADDRESS="${ORANGE_ADDRESS}"
