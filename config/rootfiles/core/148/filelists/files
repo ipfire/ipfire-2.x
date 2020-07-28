@@ -26,4 +26,5 @@ usr/local/bin/update-location-database
 var/ipfire/backup/bin/backup.pl
 var/ipfire/firewall/locationblock
 var/ipfire/location-functions.pl
+var/ipfire/network-functions.pl
 var/ipfire/menu.d/50-firewall.menu
