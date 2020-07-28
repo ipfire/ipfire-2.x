@@ -52,7 +52,6 @@ ldconfig
 
 # update location database
 /usr/local/bin/convert-to-location
-/usr/local/bin/update-location-database
 
 # Update Language cache
 /usr/local/bin/update-lang-cache
