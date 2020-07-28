@@ -3,6 +3,7 @@ etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 etc/rc.d/init.d/firewall
+etc/rc.d/init.d/networking/any
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/country.cgi
 srv/web/ipfire/cgi-bin/dns.cgi
