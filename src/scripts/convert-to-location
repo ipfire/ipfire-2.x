@@ -47,6 +47,11 @@ if [ -f "$FW_CONF_DIR/geoipblock" ]; then
 
 	# Regenerate firewall chains.
 	/etc/init.d/firewall restart
+
+	# Restart IPsec for dropped iptables rules
+	if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+		/etc/init.d/ipsec restart
+	fi
 fi
 
 # Finished.
