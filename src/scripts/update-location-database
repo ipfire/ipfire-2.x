@@ -21,6 +21,8 @@
 
 eval $(/usr/local/bin/readhash /var/ipfire/proxy/settings)
 
+UPDATE_INTERVAL="weekly"
+
 # Proxy settings.
 # Check if a proxy should be used.
 if [[ $UPSTREAM_PROXY ]]; then
@@ -39,7 +41,7 @@ if [[ $UPSTREAM_PROXY ]]; then
 fi
 
 # Get the latest location database from server.
-if /usr/bin/location update; then
+if /usr/bin/location update --cron=$UPDATE_INTERVAL; then
 	# Call location and export all countries in xt_geoip compatible format.
 	if /usr/bin/location export --directory=/usr/share/xt_geoip --family=ipv4 --format=xt_geoip; then
 

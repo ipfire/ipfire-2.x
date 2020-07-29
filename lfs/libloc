@@ -80,6 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Apply upstream patches
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.3-country-terminate-buffer-when-reading-from-database.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.3-location-provide-return-code.patch
 
 	# Add patch for i586 to disable strong stack protector.
 ifeq "$(BUILD_ARCH)" "i586"
