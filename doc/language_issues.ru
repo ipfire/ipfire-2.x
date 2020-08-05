@@ -1149,6 +1149,7 @@ WARNING: untranslated string: ipsec settings = IPsec Settings
 WARNING: untranslated string: itlb multihit = iTLB MultiHit
 WARNING: untranslated string: last = Last
 WARNING: untranslated string: least preferred = least preferred
+WARNING: untranslated string: legacy architecture warning = You are running IPFire on a legacy architecture and it is recommended to upgrade
 WARNING: untranslated string: lifetime = Lifetime:
 WARNING: untranslated string: local ip address = Local IP Address
 WARNING: untranslated string: location = Location

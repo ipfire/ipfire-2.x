@@ -1573,6 +1573,7 @@
 'lateprompting' => 'Lateprompting',
 'lease expires' => 'Lease expires',
 'least preferred' => 'least preferred',
+'legacy architecture warning' => 'You are running IPFire on a legacy architecture and it is recommended to upgrade',
 'legend' => 'Legend',
 'length' => 'Length',
 'lifetime' => 'Lifetime:',

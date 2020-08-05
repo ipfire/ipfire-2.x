@@ -545,6 +545,12 @@ if ( ! -e "/var/ipfire/main/send_profile") {
 	$warnmessage .= "<li><a style='color: white;' href='fireinfo.cgi'>$Lang::tr{'fireinfo please enable'}</a></li>";
 }
 
+# Legacy architecture
+my ($sysname, $nodename, $release, $version, $machine) = &POSIX::uname();
+if ($machine =~ m/^i?86$/) {
+	$warnmessage .= "<li>$Lang::tr{'legacy architecture warning'}</li>";
+}
+
 # Memory usage warning
 my @free = `/usr/bin/free`;
 $free[1] =~ m/(\d+)/;

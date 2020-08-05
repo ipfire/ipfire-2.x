@@ -1549,6 +1549,7 @@
 'lateprompting' => 'Late prompting',
 'lease expires' => 'Zuordnung verfällt',
 'least preferred' => 'weniger präferiert',
+'legacy architecture warning' => 'Sie betreiben IPFire auf einer überholten Architektur und ein Update ist empfohlen',
 'legend' => 'Legende',
 'length' => 'Länge',
 'lifetime' => 'Lebensdauer:',

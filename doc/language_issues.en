@@ -1182,6 +1182,7 @@ WARNING: untranslated string: last = Last
 WARNING: untranslated string: last activity = Last Activity
 WARNING: untranslated string: lease expires = Lease expires
 WARNING: untranslated string: least preferred = least preferred
+WARNING: untranslated string: legacy architecture warning = You are running IPFire on a legacy architecture and it is recommended to upgrade
 WARNING: untranslated string: legend = Legend
 WARNING: untranslated string: lifetime = Lifetime:
 WARNING: untranslated string: linkq = Link Quality
