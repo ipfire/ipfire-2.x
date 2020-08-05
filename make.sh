@@ -804,7 +804,7 @@ qemu_is_required() {
 	fi
 
 	case "${HOST_ARCH},${build_arch}" in
-		x86_64,arm*|i?86,arm*|i?86,x86_64)
+		x86_64,arm*|x86_64,aarch64|i?86,arm*|i?86,aarch64|i?86,x86_64)
 			return 0
 			;;
 		*)
@@ -864,6 +864,9 @@ qemu_find_build_helper_name() {
 	case "${build_arch}" in
 		arm*)
 			magic="7f454c4601010100000000000000000002002800"
+			;;
+		aarch64)
+			magic="7f454c460201010000000000000000000200b700"
 			;;
 		x86_64)
 			magic="7f454c4602010100000000000000000002003e00"
