@@ -551,7 +551,6 @@ WARNING: untranslated string: delete pc = Delete workstation
 WARNING: untranslated string: delete share = Delete share
 WARNING: untranslated string: delete user = Delete user
 WARNING: untranslated string: demon login script = Demon login script
-WARNING: untranslated string: deprecated fs warn = Deprecated filesystem! Newer kernel drop the support. Backup and reformat!
 WARNING: untranslated string: dest ip and port = Dest. IP: Port
 WARNING: untranslated string: destination = Destination
 WARNING: untranslated string: destination ip = Destination IP

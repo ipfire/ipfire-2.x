@@ -593,13 +593,6 @@ foreach my $file (@files) {
 	}
 }
 
-# Reiser4 warning
-my @files = `mount | grep " reiser4 (" 2>/dev/null`;
-foreach my $disk (@files) {
-	chomp ($disk);
-	$warnmessage .= "<li>$disk - $Lang::tr{'deprecated fs warn'}</li>";
-}
-
 if ($warnmessage) {
 	&Header::openbox('100%','center', );
 	print "<table class='tbl' style='width:80%;'>";

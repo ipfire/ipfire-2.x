@@ -804,7 +804,6 @@ WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: dead peer detection = Dead Peer Detection
 WARNING: untranslated string: default = Default
 WARNING: untranslated string: default IP address = Default IP Address
-WARNING: untranslated string: deprecated fs warn = Deprecated filesystem! Newer kernel drop the support. Backup and reformat!
 WARNING: untranslated string: details = Details
 WARNING: untranslated string: dh = Diffie-Hellman parameters
 WARNING: untranslated string: dh key move failed = Diffie-Hellman parameters move failed.
