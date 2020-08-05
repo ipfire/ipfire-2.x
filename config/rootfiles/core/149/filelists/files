@@ -1,0 +1,8 @@
+etc/system-release
+etc/issue
+srv/web/ipfire/cgi-bin/credits.cgi
+var/ipfire/langs
+etc/rc.d/helper/oci-setup
+etc/rc.d/init.d/cloud-init
+etc/rc.d/init.d/functions
+etc/rc.d/init.d/smt
