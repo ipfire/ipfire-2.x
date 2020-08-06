@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.31
+VER        = 2.32
 
 THISAPP    = glibc-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -74,15 +74,12 @@ endif
 
 # Add some general configuration flags
 EXTRA_CONFIG += \
-	--enable-obsolete-rpc \
 	--disable-profile \
-	--enable-kernel=3.2 \
+	--enable-kernel=4.14.0 \
 	--enable-add-ons \
 	--without-selinux \
 	--enable-experimental-malloc \
 	--enable-bind-now \
-	--enable-obsolete-rpc \
-	--enable-obsolete-nsl \
 	--disable-nss-crypt
 
 ###############################################################################
@@ -93,7 +90,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 78a720f17412f3c3282be5a6f3363ec6
+$(DL_FILE)_MD5 = 720c7992861c57cf97d66a2f36d8d1fa
 
 install : $(TARGET)
 
