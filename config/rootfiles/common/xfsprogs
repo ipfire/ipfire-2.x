@@ -3,8 +3,6 @@ lib/libhandle.so.1.0.3
 sbin/fsck.xfs
 sbin/mkfs.xfs
 sbin/xfs_repair
-sbin/xfs_scrub
-sbin/xfs_scrub_all
 #usr/include/xfs
 #usr/include/xfs/handle.h
 #usr/include/xfs/jdm.h
@@ -39,6 +37,8 @@ usr/sbin/xfs_mkfile
 usr/sbin/xfs_ncheck
 usr/sbin/xfs_quota
 usr/sbin/xfs_rtcp
+usr/sbin/xfs_scrub
+usr/sbin/xfs_scrub_all
 usr/sbin/xfs_spaceman
 #usr/share/doc/xfsprogs
 #usr/share/doc/xfsprogs/CHANGES.gz
@@ -46,6 +46,17 @@ usr/sbin/xfs_spaceman
 #usr/share/doc/xfsprogs/README
 #usr/share/locale/de/LC_MESSAGES/xfsprogs.mo
 #usr/share/locale/pl/LC_MESSAGES/xfsprogs.mo
+#usr/share/man/man2/ioctl_xfs_ag_geometry.2
+#usr/share/man/man2/ioctl_xfs_bulkstat.2
+#usr/share/man/man2/ioctl_xfs_fsbulkstat.2
+#usr/share/man/man2/ioctl_xfs_fscounts.2
+#usr/share/man/man2/ioctl_xfs_fsgetxattr.2
+#usr/share/man/man2/ioctl_xfs_fsinumbers.2
+#usr/share/man/man2/ioctl_xfs_fsop_geometry.2
+#usr/share/man/man2/ioctl_xfs_getbmapx.2
+#usr/share/man/man2/ioctl_xfs_getresblks.2
+#usr/share/man/man2/ioctl_xfs_goingdown.2
+#usr/share/man/man2/ioctl_xfs_inumbers.2
 #usr/share/man/man2/ioctl_xfs_scrub_metadata.2
 #usr/share/man/man3/attr_list_by_handle.3
 #usr/share/man/man3/attr_multi_by_handle.3
