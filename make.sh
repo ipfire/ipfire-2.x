@@ -1300,6 +1300,7 @@ buildipfire() {
   lfsmake2 sdparm
   lfsmake2 mtools
   lfsmake2 whatmask
+  lfsmake2 libtirpc
   lfsmake2 conntrack-tools
   lfsmake2 libupnp
   lfsmake2 ipaddr
@@ -1433,7 +1434,6 @@ buildipfire() {
   lfsmake2 libmpeg2
   lfsmake2 gnump3d
   lfsmake2 rsync
-  lfsmake2 libtirpc
   lfsmake2 rpcbind
   lfsmake2 keyutils
   lfsmake2 rpcsvc-proto
