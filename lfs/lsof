@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 4.78
+VER        = 4.91
 
-THISAPP    = lsof-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = lsof_$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0f8aac305454e8cd8e0ac534c6daccea
+$(DL_FILE)_MD5 = 10e1353aa4bf2fd5bbed65db9ef6fd47
 
 install : $(TARGET)
 
@@ -69,9 +69,10 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./Configure linux -n
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && install -m 4750 -o root -g nobody lsof /usr/bin
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && tar axf lsof_$(VER)_src.tar
+	cd $(DIR_APP)/lsof_$(VER)_src && ./Configure linux -n
+	cd $(DIR_APP)/lsof_$(VER)_src && make $(MAKETUNING) CC="cc $(CFLAGS) $(LDFLAGS)"
+	cd $(DIR_APP)/lsof_$(VER)_src && install -m 755 -o root -g root lsof /usr/bin
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
