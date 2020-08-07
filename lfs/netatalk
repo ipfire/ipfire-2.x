@@ -36,7 +36,7 @@ PAK_VER    = 2
 
 DEPS       = avahi dbus krb5
 
-CFLAGS    += -Wno-unused-result
+CFLAGS    += -fcommon -Wno-unused-result
 
 ###############################################################################
 # Top-level Rules
