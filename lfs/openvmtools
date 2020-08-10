@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 11.0.0-14549434
+VER        = 11.1.0-16036546
 
 THISAPP    = open-vm-tools-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -33,9 +33,11 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = x86_64 i586
 PROG       = openvmtools
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
+
+CFLAGS    += -Wno-error=array-bounds
 
 ###############################################################################
 # Top-level Rules
@@ -45,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d3d4e23b143c921f1afc90e5331d3a70
+$(DL_FILE)_MD5 = 349fc0eba5e37788750c5895d74ef855
 
 install : $(TARGET)
 
