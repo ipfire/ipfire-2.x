@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.4
+VER        = 2.7.1
 
 THISAPP    = minicom-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,9 +32,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = minicom
-PAK_VER    = 0
+PAK_VER    = 1
 
 DEPS       =
+
+CFLAGS    += -fcommon
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 700976a3c2dcc8bbd50ab9bb1c08837b
+$(DL_FILE)_MD5 = 9021cb8c5445f6e6e74b2acc39962d62
 
 install : $(TARGET)
 
