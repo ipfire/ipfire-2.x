@@ -34,6 +34,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = xinetd
 PAK_VER    = 1
 
+CFLAGS    += -fcommon -I/usr/include/tirpc -Wl,-ltirpc
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
