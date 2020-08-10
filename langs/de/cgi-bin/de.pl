@@ -1457,7 +1457,7 @@
 'invalid input for keepalive 1:2' => 'Ungültige Eingabe für Keepalive (mindestens ein Verhältnis von 1:2)',
 'invalid input for keepalive 2' => 'Ungültige Eingabe für Keepalive ping-restart',
 'invalid input for local ip address' => 'Ungültige Eingabe für die lokale IP-Adresse',
-'invalid input for max clients' => 'Ungültige Eingabe für Max Clients',
+'invalid input for max clients' => 'Ungültige Eingabe für Max Clients. Das Maximum von 1024 Clients wurde überschritten',
 'invalid input for mode' => 'Ungültige Eingabe des Modus',
 'invalid input for name' => 'Ungültige Eingabe für vollen Namen des Benutzers oder des System Hostnamens',
 'invalid input for oink code' => 'Ungültige Eingabe für Oink Code',

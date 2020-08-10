@@ -1415,7 +1415,7 @@
 'invalid input for keepalive 1' => 'Ping komutunu canlı tutma için geçersiz giriş.',
 'invalid input for keepalive 1:2' => '1:2 oranında, en az bir oranı canlı tutma kullanım için geçersiz giriş',
 'invalid input for keepalive 2' => 'Ping komutunu yeniden başlatmada canlı tutmak için geçersiz giriş.',
-'invalid input for max clients' => 'En fazla istemci için geçersiz giriş.',
+'invalid input for max clients' => 'En fazla istemci için geçersiz giriş. Maksimum 1024 müşteri aşıldı.',
 'invalid input for name' => 'Kullanıcının tam adı veya sistem ana bilgisayar adı için geçersiz giriş',
 'invalid input for oink code' => 'Oink kodu için geçersiz giriş.',
 'invalid input for organization' => 'Kuruluş için geçersiz giriş.',

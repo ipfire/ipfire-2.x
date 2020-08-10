@@ -1277,7 +1277,7 @@
 'invalid input for keepalive 1' => ' Ongeldige invoer voor keepalive ping',
 'invalid input for keepalive 1:2' => ' Ongeldige invoer voor keepalive gebruik tenminste een ratio van 1:2',
 'invalid input for keepalive 2' => ' Ongeldige invoer voor keepalive ping-herstart',
-'invalid input for max clients' => ' Ongeldige invoer voor max. clients',
+'invalid input for max clients' => ' Ongeldige invoer voor max. clients. Het maximum van 1024 clients is overschreden.',
 'invalid input for name' => ' Ongeldige invoer voor gebruikersnaam of systeemhostnaam',
 'invalid input for oink code' => ' Ongeldige invoer voor Oink code',
 'invalid input for organization' => ' Ongeldige invoer voor organisatie',

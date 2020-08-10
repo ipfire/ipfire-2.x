@@ -982,7 +982,7 @@
 'invalid input for keepalive 1' => 'Неверно указан Keepalive ping.',
 'invalid input for keepalive 1:2' => 'Invalid input for Keepalive use at least a ratio of 1:2.',
 'invalid input for keepalive 2' => 'Неверно указан Keepalive ping-restart.',
-'invalid input for max clients' => 'Неверно указано максимальное число клиентов.',
+'invalid input for max clients' => 'Неверно указано максимальное число клиентов. Превышено максимально 1024 клиентов.',
 'invalid input for name' => 'Неверно указано полное имя пользователя или системное имя хоста.',
 'invalid input for oink code' => 'Неверно указан Oink code',
 'invalid input for organization' => 'Неверно указана организация',

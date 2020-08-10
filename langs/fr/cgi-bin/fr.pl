@@ -1487,7 +1487,7 @@
 'invalid input for keepalive 1:2' => 'Keepalive non valide, utilisez au minimum un ratio de 1:2',
 'invalid input for keepalive 2' => 'Redémarrage ping keepalive non valide',
 'invalid input for local ip address' => 'Entrée non valide pour l\'adresse IP locale',
-'invalid input for max clients' => 'Nombre de clients maximum non valide',
+'invalid input for max clients' => 'Nombre de clients maximum non valide. Le maximum de 1024 clients a été dépassé.',
 'invalid input for mode' => 'Entrée non valide pour le mode',
 'invalid input for name' => 'Mauvaise saisie pour le nom d\'utilisateur ou le nom d\'hôte du système',
 'invalid input for oink code' => 'Oink code non valide',
