@@ -13,7 +13,7 @@ usr/bin/curl
 #usr/lib/libcurl.la
 #usr/lib/libcurl.so
 usr/lib/libcurl.so.4
-usr/lib/libcurl.so.4.5.0
+usr/lib/libcurl.so.4.6.0
 #usr/lib/pkgconfig/libcurl.pc
 #usr/share/aclocal/libcurl.m4
 #usr/share/man/man1/curl-config.1
@@ -60,6 +60,7 @@ usr/lib/libcurl.so.4.5.0
 #usr/share/man/man3/CURLINFO_REDIRECT_URL.3
 #usr/share/man/man3/CURLINFO_REQUEST_SIZE.3
 #usr/share/man/man3/CURLINFO_RESPONSE_CODE.3
+#usr/share/man/man3/CURLINFO_RETRY_AFTER.3
 #usr/share/man/man3/CURLINFO_RTSP_CLIENT_CSEQ.3
 #usr/share/man/man3/CURLINFO_RTSP_CSEQ_RECV.3
 #usr/share/man/man3/CURLINFO_RTSP_SERVER_CSEQ.3
@@ -84,6 +85,7 @@ usr/lib/libcurl.so.4.5.0
 #usr/share/man/man3/CURLMOPT_CHUNK_LENGTH_PENALTY_SIZE.3
 #usr/share/man/man3/CURLMOPT_CONTENT_LENGTH_PENALTY_SIZE.3
 #usr/share/man/man3/CURLMOPT_MAXCONNECTS.3
+#usr/share/man/man3/CURLMOPT_MAX_CONCURRENT_STREAMS.3
 #usr/share/man/man3/CURLMOPT_MAX_HOST_CONNECTIONS.3
 #usr/share/man/man3/CURLMOPT_MAX_PIPELINE_LENGTH.3
 #usr/share/man/man3/CURLMOPT_MAX_TOTAL_CONNECTIONS.3
@@ -100,6 +102,8 @@ usr/lib/libcurl.so.4.5.0
 #usr/share/man/man3/CURLOPT_ACCEPTTIMEOUT_MS.3
 #usr/share/man/man3/CURLOPT_ACCEPT_ENCODING.3
 #usr/share/man/man3/CURLOPT_ADDRESS_SCOPE.3
+#usr/share/man/man3/CURLOPT_ALTSVC.3
+#usr/share/man/man3/CURLOPT_ALTSVC_CTRL.3
 #usr/share/man/man3/CURLOPT_APPEND.3
 #usr/share/man/man3/CURLOPT_AUTOREFERER.3
 #usr/share/man/man3/CURLOPT_BUFFERSIZE.3
@@ -190,6 +194,7 @@ usr/lib/libcurl.so.4.5.0
 #usr/share/man/man3/CURLOPT_IOCTLFUNCTION.3
 #usr/share/man/man3/CURLOPT_IPRESOLVE.3
 #usr/share/man/man3/CURLOPT_ISSUERCERT.3
+#usr/share/man/man3/CURLOPT_ISSUERCERT_BLOB.3
 #usr/share/man/man3/CURLOPT_KEEP_SENDING_ON_ERROR.3
 #usr/share/man/man3/CURLOPT_KEYPASSWD.3
 #usr/share/man/man3/CURLOPT_KRBLEVEL.3
@@ -201,6 +206,8 @@ usr/lib/libcurl.so.4.5.0
 #usr/share/man/man3/CURLOPT_MAIL_AUTH.3
 #usr/share/man/man3/CURLOPT_MAIL_FROM.3
 #usr/share/man/man3/CURLOPT_MAIL_RCPT.3
+#usr/share/man/man3/CURLOPT_MAIL_RCPT_ALLLOWFAILS.3
+#usr/share/man/man3/CURLOPT_MAXAGE_CONN.3
 #usr/share/man/man3/CURLOPT_MAXCONNECTS.3
 #usr/share/man/man3/CURLOPT_MAXFILESIZE.3
 #usr/share/man/man3/CURLOPT_MAXFILESIZE_LARGE.3
@@ -246,13 +253,17 @@ usr/lib/libcurl.so.4.5.0
 #usr/share/man/man3/CURLOPT_PROXY_CAINFO.3
 #usr/share/man/man3/CURLOPT_PROXY_CAPATH.3
 #usr/share/man/man3/CURLOPT_PROXY_CRLFILE.3
+#usr/share/man/man3/CURLOPT_PROXY_ISSUERCERT.3
+#usr/share/man/man3/CURLOPT_PROXY_ISSUERCERT_BLOB.3
 #usr/share/man/man3/CURLOPT_PROXY_KEYPASSWD.3
 #usr/share/man/man3/CURLOPT_PROXY_PINNEDPUBLICKEY.3
 #usr/share/man/man3/CURLOPT_PROXY_SERVICE_NAME.3
 #usr/share/man/man3/CURLOPT_PROXY_SSLCERT.3
 #usr/share/man/man3/CURLOPT_PROXY_SSLCERTTYPE.3
+#usr/share/man/man3/CURLOPT_PROXY_SSLCERT_BLOB.3
 #usr/share/man/man3/CURLOPT_PROXY_SSLKEY.3
 #usr/share/man/man3/CURLOPT_PROXY_SSLKEYTYPE.3
+#usr/share/man/man3/CURLOPT_PROXY_SSLKEY_BLOB.3
 #usr/share/man/man3/CURLOPT_PROXY_SSLVERSION.3
 #usr/share/man/man3/CURLOPT_PROXY_SSL_CIPHER_LIST.3
 #usr/share/man/man3/CURLOPT_PROXY_SSL_OPTIONS.3
@@ -283,6 +294,7 @@ usr/lib/libcurl.so.4.5.0
 #usr/share/man/man3/CURLOPT_RTSP_SESSION_ID.3
 #usr/share/man/man3/CURLOPT_RTSP_STREAM_URI.3
 #usr/share/man/man3/CURLOPT_RTSP_TRANSPORT.3
+#usr/share/man/man3/CURLOPT_SASL_AUTHZID.3
 #usr/share/man/man3/CURLOPT_SASL_IR.3
 #usr/share/man/man3/CURLOPT_SEEKDATA.3
 #usr/share/man/man3/CURLOPT_SEEKFUNCTION.3
@@ -303,10 +315,12 @@ usr/lib/libcurl.so.4.5.0
 #usr/share/man/man3/CURLOPT_SSH_PUBLIC_KEYFILE.3
 #usr/share/man/man3/CURLOPT_SSLCERT.3
 #usr/share/man/man3/CURLOPT_SSLCERTTYPE.3
+#usr/share/man/man3/CURLOPT_SSLCERT_BLOB.3
 #usr/share/man/man3/CURLOPT_SSLENGINE.3
 #usr/share/man/man3/CURLOPT_SSLENGINE_DEFAULT.3
 #usr/share/man/man3/CURLOPT_SSLKEY.3
 #usr/share/man/man3/CURLOPT_SSLKEYTYPE.3
+#usr/share/man/man3/CURLOPT_SSLKEY_BLOB.3
 #usr/share/man/man3/CURLOPT_SSLVERSION.3
 #usr/share/man/man3/CURLOPT_SSL_CIPHER_LIST.3
 #usr/share/man/man3/CURLOPT_SSL_CTX_DATA.3
@@ -407,6 +421,7 @@ usr/lib/libcurl.so.4.5.0
 #usr/share/man/man3/curl_multi_info_read.3
 #usr/share/man/man3/curl_multi_init.3
 #usr/share/man/man3/curl_multi_perform.3
+#usr/share/man/man3/curl_multi_poll.3
 #usr/share/man/man3/curl_multi_remove_handle.3
 #usr/share/man/man3/curl_multi_setopt.3
 #usr/share/man/man3/curl_multi_socket.3
@@ -415,6 +430,7 @@ usr/lib/libcurl.so.4.5.0
 #usr/share/man/man3/curl_multi_strerror.3
 #usr/share/man/man3/curl_multi_timeout.3
 #usr/share/man/man3/curl_multi_wait.3
+#usr/share/man/man3/curl_multi_wakeup.3
 #usr/share/man/man3/curl_share_cleanup.3
 #usr/share/man/man3/curl_share_init.3
 #usr/share/man/man3/curl_share_setopt.3
