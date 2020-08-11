@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 1.12
+VER        = 2.2.0
 
 THISAPP    = kbd-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -35,16 +35,14 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 ###############################################################################
 # Top-level Rules
 ###############################################################################
-objects = $(DL_FILE) $(THISAPP)-more-programs-1.patch \
+objects = $(DL_FILE) \
 	kbd-latarcyrheb-16-fixed.tar.bz2 kbd-latsun-fonts.tar.bz2
 
 $(DL_FILE)                            = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-more-programs-1.patch      = $(DL_FROM)/kbd-$(VER)-more-programs-1.patch
 kbd-latarcyrheb-16-fixed.tar.bz2      = $(DL_FROM)/kbd-latarcyrheb-16-fixed.tar.bz2
 kbd-latsun-fonts.tar.bz2              = $(DL_FROM)/kbd-latsun-fonts.tar.bz2
 
-$(DL_FILE)_MD5                        = 069d1175b4891343b107a8ac2b4a39f6
-$(THISAPP)-more-programs-1.patch_MD5  = dc70180a6bc0afa2b741cd38e3cc2e18
+$(DL_FILE)_MD5                        = d1d7ae0b5fb875dc082731e09cd0c8bc
 kbd-latarcyrheb-16-fixed.tar.bz2_MD5  = 884fdbb0b952b2e3e8389a0c40a3e301
 kbd-latsun-fonts.tar.bz2_MD5          = e22ee88353968df8d4a4b1bf1fa8fc31
 
@@ -75,18 +73,19 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-more-programs-1.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-backspace-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-gcc4_fixes-1.patch
 
 	# Extract our own fonts
 	cd $(DIR_APP) && tar xvfa $(DIR_DL)/kbd-latarcyrheb-16-fixed.tar.bz2
 	cd $(DIR_APP) && tar xvfa $(DIR_DL)/kbd-latsun-fonts.tar.bz2
 
-	cd $(DIR_APP) && ./configure --datadir=/lib/kbd --disable-nls
+	cd $(DIR_APP) && ./configure --prefix=/usr --datadir=/lib/kbd --disable-vlock
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	mv -v /usr/bin/{kbd_mode,openvt,setfont} /bin
+
+	# Move some tools to /bin
+	mv -v /usr/bin/{loadkeys,kbd_mode,openvt,setfont} /bin
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
