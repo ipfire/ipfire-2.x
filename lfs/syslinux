@@ -77,6 +77,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Apply patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/syslinux-6.03-sysmacros.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/syslinux-6.04_replace-builtin-strlen-that-appears-to-get-optimized.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/syslinux-6.04_pre1-fcommon.patch
 
 	# Build
 	cd $(DIR_APP) && make bios $(MAKETUNING)
