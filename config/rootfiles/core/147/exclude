@@ -20,6 +20,8 @@ srv/web/ipfire/html/proxy.pac
 var/ipfire/dma
 var/ipfire/time
 var/ipfire/ovpn
+var/ipfire/urlfilter/blacklist
+var/ipfire/urlfilter/settings
 var/lib/alternatives
 var/log/cache
 var/log/dhcpcd.log
