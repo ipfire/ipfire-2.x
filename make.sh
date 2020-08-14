@@ -146,14 +146,14 @@ configure_build() {
 			BUILDTARGET="${build_arch}-unknown-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-m64 -mtune=generic -fstack-clash-protection"
+			CFLAGS_ARCH="-m64 -mtune=generic -fstack-clash-protection -fcf-protection"
 			;;
 
 		i586)
 			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-march=i586 -mtune=generic -fomit-frame-pointer"
+			CFLAGS_ARCH="-march=i586 -mtune=generic -fomit-frame-pointer -fcf-protection"
 			;;
 
 		aarch64)
