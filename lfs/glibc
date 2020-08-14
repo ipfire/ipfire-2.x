@@ -49,6 +49,8 @@ else
 	--with-headers=$(TOOLS_DIR)/include \
 	libc_cv_forced_unwind=yes \
 	libc_cv_c_cleanup=yes
+
+  CFLAGS += -Wno-error=maybe-uninitialized
 endif
 
 # Disable hardware FP for armv5tel
