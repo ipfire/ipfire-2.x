@@ -146,7 +146,7 @@ configure_build() {
 			BUILDTARGET="${build_arch}-unknown-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-m64 -mtune=generic"
+			CFLAGS_ARCH="-m64 -mtune=generic -fstack-clash-protection"
 			;;
 
 		i586)
@@ -160,7 +160,7 @@ configure_build() {
 			BUILDTARGET="${build_arch}-unknown-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="arm"
-			CFLAGS_ARCH=""
+			CFLAGS_ARCH="-fstack-clash-protection"
 			;;
 
 		armv7hl)
