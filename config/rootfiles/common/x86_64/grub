@@ -4,7 +4,7 @@ boot/grub/splash.png
 #etc/bash_completion.d
 #etc/bash_completion.d/grub
 etc/default/grub
-etc/grub.d
+#etc/grub.d
 etc/grub.d/00_header
 etc/grub.d/10_linux
 etc/grub.d/20_linux_xen
@@ -30,7 +30,7 @@ usr/bin/grub-render-label
 usr/bin/grub-script-check
 usr/bin/grub-syslinux2cfg
 #usr/lib/grub
-usr/lib/grub/i386-pc
+#usr/lib/grub/i386-pc
 usr/lib/grub/i386-pc/acpi.mod
 usr/lib/grub/i386-pc/acpi.module
 usr/lib/grub/i386-pc/adler32.mod
@@ -162,8 +162,11 @@ usr/lib/grub/i386-pc/ext2.mod
 usr/lib/grub/i386-pc/ext2.module
 usr/lib/grub/i386-pc/extcmd.mod
 usr/lib/grub/i386-pc/extcmd.module
+usr/lib/grub/i386-pc/f2fs.mod
+usr/lib/grub/i386-pc/f2fs.module
 usr/lib/grub/i386-pc/fat.mod
 usr/lib/grub/i386-pc/fat.module
+usr/lib/grub/i386-pc/fdt.lst
 usr/lib/grub/i386-pc/file.mod
 usr/lib/grub/i386-pc/file.module
 usr/lib/grub/i386-pc/font.mod
@@ -415,6 +418,8 @@ usr/lib/grub/i386-pc/pci.mod
 usr/lib/grub/i386-pc/pci.module
 usr/lib/grub/i386-pc/pcidump.mod
 usr/lib/grub/i386-pc/pcidump.module
+usr/lib/grub/i386-pc/pgp.mod
+usr/lib/grub/i386-pc/pgp.module
 usr/lib/grub/i386-pc/plan9.mod
 usr/lib/grub/i386-pc/plan9.module
 usr/lib/grub/i386-pc/play.mod
@@ -441,6 +446,8 @@ usr/lib/grub/i386-pc/raid6rec.mod
 usr/lib/grub/i386-pc/raid6rec.module
 usr/lib/grub/i386-pc/random.mod
 usr/lib/grub/i386-pc/random.module
+usr/lib/grub/i386-pc/rdmsr.mod
+usr/lib/grub/i386-pc/rdmsr.module
 usr/lib/grub/i386-pc/read.mod
 usr/lib/grub/i386-pc/read.module
 usr/lib/grub/i386-pc/reboot.mod
@@ -487,6 +494,8 @@ usr/lib/grub/i386-pc/spkmodem.mod
 usr/lib/grub/i386-pc/spkmodem.module
 usr/lib/grub/i386-pc/squash4.mod
 usr/lib/grub/i386-pc/squash4.module
+usr/lib/grub/i386-pc/strtoull_test.mod
+usr/lib/grub/i386-pc/strtoull_test.module
 usr/lib/grub/i386-pc/syslinuxcfg.mod
 usr/lib/grub/i386-pc/syslinuxcfg.module
 usr/lib/grub/i386-pc/tar.mod
@@ -546,8 +555,8 @@ usr/lib/grub/i386-pc/usbtest.mod
 usr/lib/grub/i386-pc/usbtest.module
 usr/lib/grub/i386-pc/vbe.mod
 usr/lib/grub/i386-pc/vbe.module
-usr/lib/grub/i386-pc/verify.mod
-usr/lib/grub/i386-pc/verify.module
+usr/lib/grub/i386-pc/verifiers.mod
+usr/lib/grub/i386-pc/verifiers.module
 usr/lib/grub/i386-pc/vga.mod
 usr/lib/grub/i386-pc/vga.module
 usr/lib/grub/i386-pc/vga_text.mod
@@ -569,6 +578,8 @@ usr/lib/grub/i386-pc/videotest.mod
 usr/lib/grub/i386-pc/videotest.module
 usr/lib/grub/i386-pc/videotest_checksum.mod
 usr/lib/grub/i386-pc/videotest_checksum.module
+usr/lib/grub/i386-pc/wrmsr.mod
+usr/lib/grub/i386-pc/wrmsr.module
 usr/lib/grub/i386-pc/xfs.mod
 usr/lib/grub/i386-pc/xfs.module
 usr/lib/grub/i386-pc/xnu.mod
@@ -585,7 +596,9 @@ usr/lib/grub/i386-pc/zfscrypt.mod
 usr/lib/grub/i386-pc/zfscrypt.module
 usr/lib/grub/i386-pc/zfsinfo.mod
 usr/lib/grub/i386-pc/zfsinfo.module
-usr/lib/grub/x86_64-efi
+usr/lib/grub/i386-pc/zstd.mod
+usr/lib/grub/i386-pc/zstd.module
+#usr/lib/grub/x86_64-efi
 usr/lib/grub/x86_64-efi/acpi.mod
 usr/lib/grub/x86_64-efi/acpi.module
 usr/lib/grub/x86_64-efi/adler32.mod
@@ -709,8 +722,11 @@ usr/lib/grub/x86_64-efi/ext2.mod
 usr/lib/grub/x86_64-efi/ext2.module
 usr/lib/grub/x86_64-efi/extcmd.mod
 usr/lib/grub/x86_64-efi/extcmd.module
+usr/lib/grub/x86_64-efi/f2fs.mod
+usr/lib/grub/x86_64-efi/f2fs.module
 usr/lib/grub/x86_64-efi/fat.mod
 usr/lib/grub/x86_64-efi/fat.module
+usr/lib/grub/x86_64-efi/fdt.lst
 usr/lib/grub/x86_64-efi/file.mod
 usr/lib/grub/x86_64-efi/file.module
 usr/lib/grub/x86_64-efi/fixvideo.mod
@@ -958,6 +974,8 @@ usr/lib/grub/x86_64-efi/pbkdf2_test.mod
 usr/lib/grub/x86_64-efi/pbkdf2_test.module
 usr/lib/grub/x86_64-efi/pcidump.mod
 usr/lib/grub/x86_64-efi/pcidump.module
+usr/lib/grub/x86_64-efi/pgp.mod
+usr/lib/grub/x86_64-efi/pgp.module
 usr/lib/grub/x86_64-efi/play.mod
 usr/lib/grub/x86_64-efi/play.module
 usr/lib/grub/x86_64-efi/png.mod
@@ -976,6 +994,8 @@ usr/lib/grub/x86_64-efi/raid6rec.mod
 usr/lib/grub/x86_64-efi/raid6rec.module
 usr/lib/grub/x86_64-efi/random.mod
 usr/lib/grub/x86_64-efi/random.module
+usr/lib/grub/x86_64-efi/rdmsr.mod
+usr/lib/grub/x86_64-efi/rdmsr.module
 usr/lib/grub/x86_64-efi/read.mod
 usr/lib/grub/x86_64-efi/read.module
 usr/lib/grub/x86_64-efi/reboot.mod
@@ -1010,6 +1030,8 @@ usr/lib/grub/x86_64-efi/sfs.mod
 usr/lib/grub/x86_64-efi/sfs.module
 usr/lib/grub/x86_64-efi/shift_test.mod
 usr/lib/grub/x86_64-efi/shift_test.module
+usr/lib/grub/x86_64-efi/shim_lock.mod
+usr/lib/grub/x86_64-efi/shim_lock.module
 usr/lib/grub/x86_64-efi/signature_test.mod
 usr/lib/grub/x86_64-efi/signature_test.module
 usr/lib/grub/x86_64-efi/sleep.mod
@@ -1020,6 +1042,8 @@ usr/lib/grub/x86_64-efi/spkmodem.mod
 usr/lib/grub/x86_64-efi/spkmodem.module
 usr/lib/grub/x86_64-efi/squash4.mod
 usr/lib/grub/x86_64-efi/squash4.module
+usr/lib/grub/x86_64-efi/strtoull_test.mod
+usr/lib/grub/x86_64-efi/strtoull_test.module
 usr/lib/grub/x86_64-efi/syslinuxcfg.mod
 usr/lib/grub/x86_64-efi/syslinuxcfg.module
 usr/lib/grub/x86_64-efi/tar.mod
@@ -1043,6 +1067,8 @@ usr/lib/grub/x86_64-efi/tga.mod
 usr/lib/grub/x86_64-efi/tga.module
 usr/lib/grub/x86_64-efi/time.mod
 usr/lib/grub/x86_64-efi/time.module
+usr/lib/grub/x86_64-efi/tpm.mod
+usr/lib/grub/x86_64-efi/tpm.module
 usr/lib/grub/x86_64-efi/tr.mod
 usr/lib/grub/x86_64-efi/tr.module
 usr/lib/grub/x86_64-efi/trig.mod
@@ -1075,8 +1101,8 @@ usr/lib/grub/x86_64-efi/usbserial_usbdebug.mod
 usr/lib/grub/x86_64-efi/usbserial_usbdebug.module
 usr/lib/grub/x86_64-efi/usbtest.mod
 usr/lib/grub/x86_64-efi/usbtest.module
-usr/lib/grub/x86_64-efi/verify.mod
-usr/lib/grub/x86_64-efi/verify.module
+usr/lib/grub/x86_64-efi/verifiers.mod
+usr/lib/grub/x86_64-efi/verifiers.module
 usr/lib/grub/x86_64-efi/video.lst
 usr/lib/grub/x86_64-efi/video.mod
 usr/lib/grub/x86_64-efi/video.module
@@ -1094,6 +1120,8 @@ usr/lib/grub/x86_64-efi/videotest.mod
 usr/lib/grub/x86_64-efi/videotest.module
 usr/lib/grub/x86_64-efi/videotest_checksum.mod
 usr/lib/grub/x86_64-efi/videotest_checksum.module
+usr/lib/grub/x86_64-efi/wrmsr.mod
+usr/lib/grub/x86_64-efi/wrmsr.module
 usr/lib/grub/x86_64-efi/xfs.mod
 usr/lib/grub/x86_64-efi/xfs.module
 usr/lib/grub/x86_64-efi/xnu.mod
@@ -1110,6 +1138,8 @@ usr/lib/grub/x86_64-efi/zfscrypt.mod
 usr/lib/grub/x86_64-efi/zfscrypt.module
 usr/lib/grub/x86_64-efi/zfsinfo.mod
 usr/lib/grub/x86_64-efi/zfsinfo.module
+usr/lib/grub/x86_64-efi/zstd.mod
+usr/lib/grub/x86_64-efi/zstd.module
 usr/sbin/grub-bios-setup
 usr/sbin/grub-install
 usr/sbin/grub-macbless
@@ -1172,7 +1202,9 @@ usr/share/grub/unicode.pf2
 #usr/share/locale/pa/LC_MESSAGES
 #usr/share/locale/pa/LC_MESSAGES/grub.mo
 #usr/share/locale/pl/LC_MESSAGES/grub.mo
+#usr/share/locale/pt/LC_MESSAGES/grub.mo
 #usr/share/locale/pt_BR/LC_MESSAGES/grub.mo
+#usr/share/locale/ro/LC_MESSAGES/grub.mo
 #usr/share/locale/ru/LC_MESSAGES/grub.mo
 #usr/share/locale/sl/LC_MESSAGES/grub.mo
 #usr/share/locale/sr/LC_MESSAGES/grub.mo
