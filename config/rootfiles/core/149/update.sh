@@ -57,6 +57,11 @@ sed -i /var/spool/cron/root.orig \
 	-e "s/GeoIP/location/"
 fcrontab -z
 
+# Install updated grub
+if [ -e /boot/grub/grub.cfg ]; then
+	/usr/bin/install-bootloader
+fi
+
 # This update needs a reboot...
 #touch /var/run/need_reboot
 
