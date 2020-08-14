@@ -51,21 +51,6 @@ else
 	libc_cv_c_cleanup=yes
 endif
 
-# Enable some extra optimization for the glibc code
-CFLAGS = -O3 -DNDEBUG -fasynchronous-unwind-tables -fPIC -DPIC
-
-ifeq "$(BUILD_ARCH)" "armv7hl"
-	CFLAGS += -march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard
-endif
-
-ifeq "$(BUILD_ARCH)" "i586"
-	CFLAGS += -march=i586 -mtune=generic -mindirect-branch=thunk -mfunction-return=thunk -mno-tls-direct-seg-refs
-endif
-
-ifeq "$(BUILD_ARCH)" "x86_64"
-	CFLAGS += -mindirect-branch=thunk -mfunction-return=thunk
-endif
-
 # Disable hardware FP for armv5tel
 ifeq "$(BUILD_ARCH)" "armv5tel"
 	EXTRA_CONFIG += \
