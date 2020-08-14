@@ -90,6 +90,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -p1 < $(DIR_SRC)/src/patches/make-4.2.1-glob-build-fix.patch
 	cd $(DIR_APP) && patch -p1 < $(DIR_SRC)/src/patches/make-4.2.1-glob-SEGV.patch
+	cd $(DIR_APP) && autoreconf -vfi
 	cd $(DIR_APP) && ./configure --prefix=$(PREFIX) --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
