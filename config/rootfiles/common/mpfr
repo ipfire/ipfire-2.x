@@ -4,7 +4,7 @@
 #usr/lib/libmpfr.la
 #usr/lib/libmpfr.so
 usr/lib/libmpfr.so.6
-usr/lib/libmpfr.so.6.0.2
+usr/lib/libmpfr.so.6.1.0
 #usr/lib/pkgconfig/mpfr.pc
 #usr/share/doc/mpfr
 #usr/share/doc/mpfr/AUTHORS
@@ -20,5 +20,6 @@ usr/lib/libmpfr.so.6.0.2
 #usr/share/doc/mpfr/examples/divworst.c
 #usr/share/doc/mpfr/examples/rndo-add.c
 #usr/share/doc/mpfr/examples/sample.c
+#usr/share/doc/mpfr/examples/threads.c
 #usr/share/doc/mpfr/examples/version.c
 #usr/share/info/mpfr.info
