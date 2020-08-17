@@ -80,7 +80,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/p7zip-16.02-consolidated_fixes-1.patch
-	cd $(DIR_APP) && make 7z $(MAKETUNING)
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && make all3 $(MAKETUNING)
+	cd $(DIR_APP) && make DEST_HOME=/usr DEST_MAN=/usr/share/man \
+		DEST_SHARE_DOC=/usr/share/doc/p7zip-$(VER) install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
