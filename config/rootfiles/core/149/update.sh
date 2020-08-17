@@ -49,6 +49,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/apache2 restart
 
 # Update crontab
 sed -i /var/spool/cron/root.orig \
@@ -63,7 +64,7 @@ if [ -e /boot/grub/grub.cfg ]; then
 fi
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
