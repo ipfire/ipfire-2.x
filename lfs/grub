@@ -100,6 +100,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-2.04-BootHole.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub-2.02_disable_vga_fallback.patch
+	cd $(DIR_APP) && autoreconf -vfi
 
 	# Install unifont
 	cp -v $(DIR_DL)/unifont-7.0.03.pcf.gz $(DIR_APP)/unifont.pcf.gz
