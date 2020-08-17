@@ -50,6 +50,7 @@ ldconfig
 
 # Start services
 /etc/init.d/apache2 restart
+/etc/init.d/unbound restart
 
 # Update crontab
 sed -i /var/spool/cron/root.orig \
