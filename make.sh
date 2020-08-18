@@ -1383,6 +1383,7 @@ buildipfire() {
   lfsmake2 spandsp
   lfsmake2 lz4
   lfsmake2 lzo
+  lfsmake2 zstd
   lfsmake2 openvpn
   lfsmake2 mpage
   lfsmake2 dbus
@@ -1433,7 +1434,6 @@ buildipfire() {
   lfsmake2 xvid
   lfsmake2 libmpeg2
   lfsmake2 gnump3d
-  lfsmake2 zstd
   lfsmake2 rsync
   lfsmake2 rpcbind
   lfsmake2 keyutils

@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = rsync
 PAK_VER    = 12
 
-DEPS       = zstd
+DEPS       =
 
 ###############################################################################
 # Top-level Rules
