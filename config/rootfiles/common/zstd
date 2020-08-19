@@ -9,7 +9,7 @@ usr/bin/zstdmt
 #usr/include/zstd.h
 #usr/include/zstd_errors.h
 #usr/lib/libzstd.a
-usr/lib/libzstd.so
+#usr/lib/libzstd.so
 usr/lib/libzstd.so.1
 usr/lib/libzstd.so.1.4.5
 #usr/lib/pkgconfig/libzstd.pc
