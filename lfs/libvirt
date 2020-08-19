@@ -33,9 +33,9 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = i586 x86_64
 PROG       = libvirt
-PAK_VER    = 22
+PAK_VER    = 23
 
-DEPS       = libpciaccess libyajl ncat qemu
+DEPS       = ebtables libpciaccess libyajl ncat qemu
 
 ###############################################################################
 # Top-level Rules
