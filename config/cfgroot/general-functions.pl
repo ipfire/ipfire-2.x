@@ -529,7 +529,7 @@ sub checksubnets
 	if($ownnet ne 'ipsec'){
 		&General::readhasharray("${General::swroot}/vpn/config", \%ipsecconf);
 		foreach my $key (keys %ipsecconf){
-			if ($ipsecconf{$key}[11] ne ''){
+			if ($ipsecconf{$key}[11] ne '' && $ipsecconf{$key}[36] eq ""){
 				foreach my $ipsecsubitem (split(/\|/, $ipsecconf{$key}[11])) {
 					my ($ipsecip,$ipsecsub) = split (/\//, $ipsecconf{$key}[11]);
 					$ipsecsub=&iporsubtodec($ipsecsub);
