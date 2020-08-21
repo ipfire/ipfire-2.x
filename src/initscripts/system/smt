@@ -21,7 +21,7 @@ case "${1}" in
 		fi 2>/dev/null
 
 		# Do not disable SMT inside virtual machines
-		if [ -d "/sys/hypervisor" ]; then
+		if running_on_hypervisor; then
 			exit 0
 		fi
 

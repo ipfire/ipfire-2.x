@@ -784,6 +784,11 @@ umount_ramdisk() {
 	rm -rf "${path_tmpfs}"
 }
 
+# Returns true when this system running in a virtual environment
+running_on_hypervisor() {
+	grep -qE "^flags\s+:.*hypervisor" /proc/cpuinfo
+}
+
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/identify_ec2_instances.html
 running_on_ec2() {
 	local uuid
