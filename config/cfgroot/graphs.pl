@@ -1160,3 +1160,31 @@ sub updateentropygraph {
 
 	print "Error in RRD::graph for entropy: ".$ERROR."\n" if $ERROR;
 }
+
+sub updateconntrackgraph {
+	my $period = $_[0];
+	my @command = (
+		@GRAPH_ARGS,
+		"-",
+		"--start",
+		"-1" . $period,
+		"-r",
+		"--lower-limit","0",
+		"-t $Lang::tr{'connection tracking'}",
+		"-v $Lang::tr{'open connections'}",
+		"DEF:conntrack=$mainsettings{'RRDLOG'}/collectd/localhost/conntrack/conntrack.rrd:entropy:AVERAGE",
+		"LINE3:conntrack#ff0000:" . sprintf("%-15s", $Lang::tr{'open connections'}),
+		"VDEF:ctmin=conntrack,MINIMUM",
+		"VDEF:ctmax=conntrack,MAXIMUM",
+		"VDEF:ctavg=conntrack,AVERAGE",
+		"GPRINT:ctmax:" . sprintf("%15s\\: %%5.0lf", $Lang::tr{'maximum'}),
+		"GPRINT:ctmin:" . sprintf("%15s\\: %%5.0lf", $Lang::tr{'minimum'}),
+		"GPRINT:ctavg:" . sprintf("%15s\\: %%5.0lf", $Lang::tr{'average'}) . "\\n",
+		"--color=BACK" . $color{"color21"},
+	);
+
+	RRDs::graph(@command);
+	$ERROR = RRDs::error;
+
+	print STDERR "Error in RRD::Graph for conntrack: " . $ERROR . "\n" if $ERROR;
+}

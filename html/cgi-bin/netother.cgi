@@ -41,7 +41,11 @@ my @querry = split(/\?/,$ENV{'QUERY_STRING'});
 $querry[0] = '' unless defined $querry[0];
 $querry[1] = 'hour' unless defined $querry[1];
 
-if ( $querry[0] =~ "fwhits"){
+if ( $querry[0] eq "conntrack") {
+	print "Content-Type: image/png\n\n";
+	binmode(STDOUT);
+	&Graphs::updateconntrackgraph($querry[1]);
+} elsif ( $querry[0] =~ "fwhits"){
 	print "Content-type: image/png\n\n";
 	binmode(STDOUT);
 	&Graphs::updatefwhitsgraph($querry[1]);
@@ -66,6 +70,10 @@ if ( $querry[0] =~ "fwhits"){
 		&Graphs::makegraphbox("netother.cgi",$_,"day");
 		&Header::closebox();
 	}
+
+	&Header::openbox('100%', 'center', $Lang::tr{'connnection tracking'});
+	&Graphs::makegraphbox("netother.cgi", "conntrack", "day");
+	&Header::closebox();
 
 	&Header::openbox('100%', 'center', "$Lang::tr{'firewallhits'} $Lang::tr{'graph'}");
 	&Graphs::makegraphbox("netother.cgi","fwhits","day");

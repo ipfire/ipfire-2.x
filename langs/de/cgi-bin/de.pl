@@ -1833,6 +1833,7 @@
 'only digits allowed in max retries field' => 'Im Feld &quot;Maximale Wiederholversuche&quot; sind nur Ziffern erlaubt.',
 'only digits allowed in the idle timeout' => 'Im Feld &quot;Leerlauf-Wartezeit&quot; sind nur Ziffern erlaubt.',
 'only red' => 'Nur ROT',
+'open connections' => 'Offene Verbindungen',
 'open to all' => 'Überschreibe externen Zugang zu ALL',
 'openssl produced an error' => 'OpenSSL hat einen Fehler verursacht',
 'openvpn client' => 'OpenVPN-Client',
