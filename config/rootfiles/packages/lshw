@@ -1,0 +1,10 @@
+usr/sbin/lshw
+#usr/share/locale/fr/LC_MESSAGES/lshw.mo
+#usr/share/lshw
+#usr/share/lshw/manuf.txt
+#usr/share/lshw/oui.txt
+#usr/share/lshw/pci.ids
+#usr/share/lshw/pnp.ids
+#usr/share/lshw/pnpid.txt
+#usr/share/lshw/usb.ids
+#usr/share/man/man1/lshw.1
