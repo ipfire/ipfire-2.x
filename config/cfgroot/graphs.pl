@@ -1143,7 +1143,7 @@ sub updateentropygraph {
 		"-1".$period,
 		"-r",
 		"--lower-limit","0",
-		"-t $Lang::tr{'entropy'}",
+		"-t ".$Lang::tr{'entropy'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v $Lang::tr{'bit'}",
 		"DEF:entropy=$mainsettings{'RRDLOG'}/collectd/localhost/entropy/entropy.rrd:entropy:AVERAGE",
 		"LINE3:entropy#ff0000:" . sprintf("%-15s", $Lang::tr{'entropy'}),
