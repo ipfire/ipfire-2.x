@@ -656,7 +656,7 @@
 'disabled' => 'wyłączony',
 'disconnect' => 'OVPN Zatrz./Rozłączenie',
 'disconnects' => 'Rozłączeń',
-'disk access per' => 'Dostepow do dysku na',
+'disk access' => 'Dostepow do dysku',
 'disk usage' => 'Wykorzystanie dysku',
 'display' => 'Wyświetl',
 'display charset' => 'Display Charset',

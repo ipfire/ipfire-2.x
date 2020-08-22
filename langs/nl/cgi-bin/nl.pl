@@ -723,7 +723,7 @@
 'disabled' => 'uitgeschakeld',
 'disconnect' => 'OVPN Stop / Verbreek',
 'disconnects' => 'Verbreekt',
-'disk access per' => 'Schijftoegang per',
+'disk access' => 'Schijftoegang',
 'disk usage' => 'Schijfgebruik',
 'display' => 'Scherm',
 'display charset' => 'Scherm tekenset',

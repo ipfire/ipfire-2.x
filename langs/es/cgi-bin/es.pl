@@ -655,7 +655,7 @@
 'disabled' => 'desactivado',
 'disconnect' => 'Parar / Desconectar OVPN',
 'disconnects' => 'Desconecta',
-'disk access per' => 'Acceso a disco por',
+'disk access' => 'Acceso a disco',
 'disk usage' => 'Uso de disco',
 'display' => 'Mostrar',
 'display charset' => 'Juego de caracteres a mostrar',

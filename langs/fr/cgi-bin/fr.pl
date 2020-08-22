@@ -829,7 +829,7 @@
 'disconnect' => 'OVPN stoppé / déconnecté',
 'disconnected' => 'Déconnecté',
 'disconnects' => 'Déconnexion',
-'disk access per' => 'Accès disque par',
+'disk access' => 'Accès disque',
 'disk usage' => 'Utilisation disque',
 'display' => 'Réglages',
 'display charset' => 'Afficher jeu de car.',

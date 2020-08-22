@@ -733,7 +733,7 @@
 'disabled' => 'disabled',
 'disconnect' => 'OVPN Stop / Disconnect',
 'disconnects' => 'Disconnects',
-'disk access per' => 'Accessi al disco per',
+'disk access' => 'Accessi al disco',
 'disk usage' => 'utilizzo del disco',
 'display' => 'Display',
 'display charset' => 'Display Charset',

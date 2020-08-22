@@ -804,7 +804,7 @@
 'disconnect' => 'OpenVPN Stop / Trennen',
 'disconnected' => 'Getrennt',
 'disconnects' => 'Abbrüche',
-'disk access per' => 'Festplattenzugriff je',
+'disk access' => 'Festplattenzugriff',
 'disk usage' => 'Festplattenbelegung',
 'display' => 'Anzeige',
 'display charset' => 'Display Charset',

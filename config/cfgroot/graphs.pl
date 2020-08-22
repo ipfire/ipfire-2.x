@@ -486,7 +486,7 @@ sub updatediskgraph {
 		"--start",
 		"-1".$period,
 		"-r",
-		"-t ".$disk." ".$Lang::tr{'disk access per'}." ".$Lang::tr{$period."-graph"},
+		"-t ".$disk." ".$Lang::tr{'disk access'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v ".$Lang::tr{'bytes per second'},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},

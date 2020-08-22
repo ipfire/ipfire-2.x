@@ -824,7 +824,7 @@
 'disconnect' => 'OVPN Stop / Disconnect',
 'disconnected' => 'Disconnected',
 'disconnects' => 'Disconnects',
-'disk access per' => 'Disk Access per',
+'disk access' => 'Disk Access',
 'disk usage' => 'Disk usage',
 'display' => 'Display',
 'display charset' => 'Display Charset',
