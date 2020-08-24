@@ -51,6 +51,7 @@ ldconfig
 # Start services
 /etc/init.d/apache restart
 /etc/init.d/unbound restart
+/etc/init.d/squid restart
 
 # Update crontab
 sed -i /var/spool/cron/root.orig \
