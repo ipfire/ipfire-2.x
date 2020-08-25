@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.0.0
+VER        = 10.0.1
 
 THISAPP    = qpdf-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e014bd3ecf1c4d1a520bbc14d84ac20e
+$(DL_FILE)_MD5 = eb7fb7c6cd5d3036bf4f7a5e3f44d995
 
 install : $(TARGET)
 
@@ -70,7 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && ./configure --prefix=/usr --disable-static
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
