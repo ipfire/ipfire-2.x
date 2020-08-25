@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.7.1
+VER        = 2.10.2
 
 THISAPP    = freetype-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 78701bee8d249578d83bb9a2f3aa3616
+$(DL_FILE)_MD5 = 7c0d5a39f232d7eb9f9d7da76bf08074
 
 install : $(TARGET)
 
@@ -70,7 +70,13 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && sed -ri "s:.*(AUX_MODULES.*valid):\1:" modules.cfg
+	cd $(DIR_APP) && sed -r "s:.*(#.*SUBPIXEL_RENDERING) .*:\1:" \
+		-i include/freetype/config/ftoption.h
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--enable-freetype-config \
+		--disable-static
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
