@@ -1253,6 +1253,7 @@ buildipfire() {
   lfsmake2 cmake
   lfsmake2 libjpeg
   lfsmake2 libjpeg-compat
+  lfsmake2 openjpeg
   lfsmake2 libexif
   lfsmake2 libpng
   lfsmake2 libtiff
