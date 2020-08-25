@@ -1396,6 +1396,7 @@ buildipfire() {
   lfsmake2 ghostscript
   lfsmake2 qpdf
   lfsmake2 poppler
+  lfsmake2 poppler-data
   lfsmake2 cups-filters
   lfsmake2 epson-inkjet-printer-escpr
   lfsmake2 foomatic
