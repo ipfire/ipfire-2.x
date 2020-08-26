@@ -19,7 +19,11 @@ etc/udev/rules.d/30-persistent-network.rules
 srv/web/ipfire/html/proxy.pac
 var/ipfire/dma
 var/ipfire/time
+var/ipfire/firewall/locationblock
+var/ipfire/fwhosts/customlocationgrp
 var/ipfire/ovpn
+var/ipfire/urlfilter/blacklist
+var/ipfire/urlfilter/settings
 var/lib/alternatives
 var/log/cache
 var/log/dhcpcd.log
