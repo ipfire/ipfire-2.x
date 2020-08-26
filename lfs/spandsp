@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 0.0.6pre12
+VER        = 0.0.6
 
 THISAPP    = spandsp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/spandsp-0.0.6
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = spandsp
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = libtiff
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 497e04c890ee864c629908a169507238
+$(DL_FILE)_MD5 = 897d839516a6d4edb20397d4757a7ca3
 
 install : $(TARGET)
 

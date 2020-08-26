@@ -36,7 +36,7 @@ PROG       = collectd
 
 DEPS       =
 
-CFLAGS    += -Wno-error=deprecated-declarations
+CFLAGS    += -fcommon -Wno-error=deprecated-declarations
 
 ###############################################################################
 # Top-level Rules

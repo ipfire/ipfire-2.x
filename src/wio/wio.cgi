@@ -21,7 +21,7 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2020/06/01 13:29:23
+# Version: 2020/08/04 21:12:23
 #
 # This wio.cgi is based on the code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
@@ -1152,7 +1152,7 @@ close (FILE);
 
 	foreach (@ddns) {
 		chomp;
-		
+
 		@temp = split (/\,/, $_);
 
 		if ( $temp[7] eq "on" ) {
@@ -1161,7 +1161,7 @@ close (FILE);
 		else {
 			$bgcolor = "blue";
 		}
-		
+
 		print"<font color='$bgcolor'>$temp[1].$temp[2]</font>";
 		if ( $iddyndns++ ne (@ddns-1) ) { print"<br />\n"; }
 	}
@@ -1334,7 +1334,7 @@ foreach $key (keys %ovpnconfighash) {
 			if (-e "/var/run/$ovpnconfighash{$key}[1]n2n.pid") {
 				my ( @output, @tustate ) = '';
 				my $tport = $ovpnconfighash{$key}[22];
-				my $tnet = new Net::Telnet ( Timeout=>5, Errmode=>'return', Port=>$tport); 
+				my $tnet = new Net::Telnet ( Timeout=>5, Errmode=>'return', Port=>$tport);
 				if ($tport ne '') {
 					$tnet->open('127.0.0.1');
 					@output = $tnet->cmd(String => 'state', Prompt => '/(END.*\n|ERROR:.*\n)/');
@@ -1535,7 +1535,6 @@ my $dotip = length($ipaddresses[$a]) - rindex($ipaddresses[$a],'.');
 						}
 						else {
 							print"<td align='center' height='20'><img src='$imgstatic/$devs_img[$in]' alt='$Lang::tr{$devs_alt[$in]}' title='$Lang::tr{$devs_alt[$in]}' /></td>";
-						
 						}
 					last SWITCH;
 					}

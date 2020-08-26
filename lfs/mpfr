@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.0.2
+VER        = 4.1.0
 
 THISAPP    = mpfr-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 320fbc4463d4c8cb1e566929d8adc4f8
+$(DL_FILE)_MD5 = bdd3d5efba9c17da8d83a35ec552baef
 
 install : $(TARGET)
 
@@ -72,7 +72,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && $(CONFIGURE_ARGS) ./configure --prefix=/usr \
 		--enable-thread-safe
-
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

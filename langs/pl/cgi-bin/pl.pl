@@ -989,7 +989,7 @@
 'invalid input for keepalive 1' => 'Niepoprawna wartość w polu Keepalive ping',
 'invalid input for keepalive 1:2' => 'Niepoprawna wartość w polu Keepalive. Używaj min. współczynnika 1:2',
 'invalid input for keepalive 2' => 'Niepoprawna wartość w polu Keepalive ping-restart',
-'invalid input for max clients' => 'Niepoprawna wartość w polu Max Klientów',
+'invalid input for max clients' => 'Niepoprawna wartość w polu Max Klientów. Przekroczono maksymalną liczbę 1024 klientów.',
 'invalid input for name' => 'Niepoprawna wartość w polu pełna nazwa użytkownika lub nazwa hosta systemu',
 'invalid input for oink code' => 'Niepoprawny OINKCODE',
 'invalid input for organization' => 'Niepoprawna wartość w polu organizacja',

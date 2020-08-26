@@ -11,11 +11,13 @@ usr/bin/qemu-img
 usr/bin/qemu-io
 usr/bin/qemu-nbd
 usr/bin/qemu-pr-helper
+usr/bin/qemu-storage-daemon
 usr/bin/qemu-system-arm
 usr/bin/qemu-system-i386
 usr/bin/qemu-system-x86_64
 usr/bin/qemu-x86_64
 usr/libexec/qemu-bridge-helper
+usr/libexec/virtiofsd
 #usr/share/applications/qemu.desktop
 #usr/share/icons
 #usr/share/icons/hicolor
@@ -52,6 +54,7 @@ usr/libexec/qemu-bridge-helper
 #usr/share/qemu/QEMU,tcx.bin
 #usr/share/qemu/bamboo.dtb
 usr/share/qemu/bios-256k.bin
+usr/share/qemu/bios-microvm.bin
 usr/share/qemu/bios.bin
 #usr/share/qemu/canyonlands.dtb
 #usr/share/qemu/edk2-aarch64-code.fd
@@ -121,13 +124,13 @@ usr/share/qemu/multiboot.bin
 #usr/share/qemu/openbios-ppc
 #usr/share/qemu/openbios-sparc32
 #usr/share/qemu/openbios-sparc64
+#usr/share/qemu/opensbi-riscv32-sifive_u-fw_jump.bin
 #usr/share/qemu/opensbi-riscv32-virt-fw_jump.bin
 #usr/share/qemu/opensbi-riscv64-sifive_u-fw_jump.bin
 #usr/share/qemu/opensbi-riscv64-virt-fw_jump.bin
 #usr/share/qemu/palcode-clipper
 #usr/share/qemu/petalogix-ml605.dtb
 #usr/share/qemu/petalogix-s3adsp1800.dtb
-#usr/share/qemu/ppc_rom.bin
 usr/share/qemu/pvh.bin
 usr/share/qemu/pxe-e1000.rom
 usr/share/qemu/pxe-eepro100.rom
@@ -142,7 +145,6 @@ usr/share/qemu/qemu_vga.ndrv
 usr/share/qemu/sgabios.bin
 #usr/share/qemu/skiboot.lid
 #usr/share/qemu/slof.bin
-#usr/share/qemu/spapr-rtas.bin
 usr/share/qemu/trace-events-all
 usr/share/qemu/u-boot-sam460-20100605.bin
 usr/share/qemu/u-boot.e500
@@ -155,3 +157,5 @@ usr/share/qemu/vgabios-stdvga.bin
 usr/share/qemu/vgabios-virtio.bin
 usr/share/qemu/vgabios-vmware.bin
 usr/share/qemu/vgabios.bin
+usr/share/qemu/vhost-user
+usr/share/qemu/vhost-user/50-qemu-virtiofsd.json

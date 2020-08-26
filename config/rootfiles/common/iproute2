@@ -63,6 +63,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/ip-macsec.8
 #usr/share/man/man8/ip-maddress.8
 #usr/share/man/man8/ip-monitor.8
+#usr/share/man/man8/ip-mptcp.8
 #usr/share/man/man8/ip-mroute.8
 #usr/share/man/man8/ip-neighbour.8
 #usr/share/man/man8/ip-netconf.8
@@ -118,6 +119,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/tc-fq_codel.8
 #usr/share/man/man8/tc-fq_pie.8
 #usr/share/man/man8/tc-fw.8
+#usr/share/man/man8/tc-gate.8
 #usr/share/man/man8/tc-hfsc.8
 #usr/share/man/man8/tc-htb.8
 #usr/share/man/man8/tc-ife.8
@@ -160,4 +162,3 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/tipc-socket.8
 #usr/share/man/man8/tipc.8
 #var/lib/arpd
-

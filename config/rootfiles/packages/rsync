@@ -1,3 +1,5 @@
 usr/bin/rsync
+usr/bin/rsync-ssl
+#usr/share/man/man1/rsync-ssl.1
 #usr/share/man/man1/rsync.1
 #usr/share/man/man5/rsyncd.conf.5

@@ -1,0 +1,466 @@
+Submitted By:            Bruce Dubbs <bdubbs@linuxfromscratch.org>
+Date:                    2020-05-12
+Initial Package Version: 16.02
+Upstream Status:         Unknown.
+Origin:                  Arch and Fedora
+Description:             Updates for CVE-2016-9296, CVE-2017-17969, CVE-2018-5996,
+                         CVE-2018-10115 and GCC10.
+
+diff -Naur p7zip_16.02.orig/CPP/7zip/Archive/7z/7zIn.cpp p7zip_16.02/CPP/7zip/Archive/7z/7zIn.cpp
+--- p7zip_16.02.orig/CPP/7zip/Archive/7z/7zIn.cpp	2016-05-20 03:20:03.000000000 -0500
++++ p7zip_16.02/CPP/7zip/Archive/7z/7zIn.cpp	2020-05-12 15:34:34.513287566 -0500
+@@ -1097,7 +1097,8 @@
+       if (CrcCalc(data, unpackSize) != folders.FolderCRCs.Vals[i])
+         ThrowIncorrect();
+   }
+-  HeadersSize += folders.PackPositions[folders.NumPackStreams];
++  if (folders.PackPositions)
++      HeadersSize += folders.PackPositions[folders.NumPackStreams];
+   return S_OK;
+ }
+ 
+diff -Naur p7zip_16.02.orig/CPP/7zip/Compress/Rar1Decoder.cpp p7zip_16.02/CPP/7zip/Compress/Rar1Decoder.cpp
+--- p7zip_16.02.orig/CPP/7zip/Compress/Rar1Decoder.cpp	2015-09-01 13:04:52.000000000 -0500
++++ p7zip_16.02/CPP/7zip/Compress/Rar1Decoder.cpp	2020-05-12 15:35:00.897548643 -0500
+@@ -29,7 +29,7 @@
+ };
+ */
+ 
+-CDecoder::CDecoder(): m_IsSolid(false) { }
++CDecoder::CDecoder(): _isSolid(false), _solidAllowed(false), _errorMode(false) { }
+ 
+ void CDecoder::InitStructures()
+ {
+@@ -345,7 +345,7 @@
+ 
+ void CDecoder::InitData()
+ {
+-  if (!m_IsSolid)
++  if (!_isSolid)
+   {
+     AvrPlcB = AvrLn1 = AvrLn2 = AvrLn3 = NumHuf = Buf60 = 0;
+     AvrPlc = 0x3500;
+@@ -391,6 +391,11 @@
+   if (inSize == NULL || outSize == NULL)
+     return E_INVALIDARG;
+ 
++  if (_isSolid && !_solidAllowed)
++    return S_FALSE;
++
++  _solidAllowed = false;
++
+   if (!m_OutWindowStream.Create(kHistorySize))
+     return E_OUTOFMEMORY;
+   if (!m_InBitStream.Create(1 << 20))
+@@ -398,17 +403,22 @@
+ 
+   m_UnpackSize = (Int64)*outSize;
+   m_OutWindowStream.SetStream(outStream);
+-  m_OutWindowStream.Init(m_IsSolid);
++  m_OutWindowStream.Init(_isSolid);
+   m_InBitStream.SetStream(inStream);
+   m_InBitStream.Init();
+ 
+   // CCoderReleaser coderReleaser(this);
+   InitData();
+-  if (!m_IsSolid)
++  if (!_isSolid)
+   {
++    _errorMode = false;
+     InitStructures();
+     InitHuff();
+   }
++
++  if (_errorMode)
++    return S_FALSE;
++
+   if (m_UnpackSize > 0)
+   {
+     GetFlagsBuf();
+@@ -470,6 +480,7 @@
+   }
+   if (m_UnpackSize < 0)
+     return S_FALSE;
++  _solidAllowed = true;
+   return m_OutWindowStream.Flush();
+ }
+ 
+@@ -477,16 +488,16 @@
+     const UInt64 *inSize, const UInt64 *outSize, ICompressProgressInfo *progress)
+ {
+   try { return CodeReal(inStream, outStream, inSize, outSize, progress); }
+-  catch(const CInBufferException &e) { return e.ErrorCode; }
+-  catch(const CLzOutWindowException &e) { return e.ErrorCode; }
+-  catch(...) { return S_FALSE; }
++  catch(const CInBufferException &e) { _errorMode = true; return e.ErrorCode; }
++  catch(const CLzOutWindowException &e) { _errorMode = true; return e.ErrorCode; }
++  catch(...) { _errorMode = true; return S_FALSE; }
+ }
+ 
+ STDMETHODIMP CDecoder::SetDecoderProperties2(const Byte *data, UInt32 size)
+ {
+   if (size < 1)
+     return E_INVALIDARG;
+-  m_IsSolid = ((data[0] & 1) != 0);
++  _isSolid = ((data[0] & 1) != 0);
+   return S_OK;
+ }
+ 
+diff -Naur p7zip_16.02.orig/CPP/7zip/Compress/Rar1Decoder.h p7zip_16.02/CPP/7zip/Compress/Rar1Decoder.h
+--- p7zip_16.02.orig/CPP/7zip/Compress/Rar1Decoder.h	2014-12-21 06:44:00.000000000 -0600
++++ p7zip_16.02/CPP/7zip/Compress/Rar1Decoder.h	2020-05-12 15:35:00.897548643 -0500
+@@ -38,7 +38,9 @@
+   UInt32 LastLength;
+ 
+   Int64 m_UnpackSize;
+-  bool m_IsSolid;
++  bool _isSolid;
++  bool _solidAllowed;
++  bool _errorMode;
+ 
+   UInt32 ReadBits(int numBits);
+   HRESULT CopyBlock(UInt32 distance, UInt32 len);
+diff -Naur p7zip_16.02.orig/CPP/7zip/Compress/Rar2Decoder.cpp p7zip_16.02/CPP/7zip/Compress/Rar2Decoder.cpp
+--- p7zip_16.02.orig/CPP/7zip/Compress/Rar2Decoder.cpp	2015-10-03 03:49:14.000000000 -0500
++++ p7zip_16.02/CPP/7zip/Compress/Rar2Decoder.cpp	2020-05-12 15:35:00.897548643 -0500
+@@ -80,7 +80,9 @@
+ static const UInt32 kWindowReservSize = (1 << 22) + 256;
+ 
+ CDecoder::CDecoder():
+-  m_IsSolid(false)
++  _isSolid(false),
++  _solidAllowed(false),
++  m_TablesOK(false)
+ {
+ }
+ 
+@@ -100,6 +102,8 @@
+ 
+ bool CDecoder::ReadTables(void)
+ {
++  m_TablesOK = false;
++
+   Byte levelLevels[kLevelTableSize];
+   Byte newLevels[kMaxTableSize];
+   m_AudioMode = (ReadBits(1) == 1);
+@@ -170,6 +174,8 @@
+   }
+   
+   memcpy(m_LastLevels, newLevels, kMaxTableSize);
++  m_TablesOK = true;
++
+   return true;
+ }
+ 
+@@ -315,6 +321,10 @@
+   if (inSize == NULL || outSize == NULL)
+     return E_INVALIDARG;
+ 
++  if (_isSolid && !_solidAllowed)
++    return S_FALSE;
++  _solidAllowed = false;
++
+   if (!m_OutWindowStream.Create(kHistorySize))
+     return E_OUTOFMEMORY;
+   if (!m_InBitStream.Create(1 << 20))
+@@ -325,12 +335,12 @@
+   UInt64 pos = 0, unPackSize = *outSize;
+   
+   m_OutWindowStream.SetStream(outStream);
+-  m_OutWindowStream.Init(m_IsSolid);
++  m_OutWindowStream.Init(_isSolid);
+   m_InBitStream.SetStream(inStream);
+   m_InBitStream.Init();
+ 
+   // CCoderReleaser coderReleaser(this);
+-  if (!m_IsSolid)
++  if (!_isSolid)
+   {
+     InitStructures();
+     if (unPackSize == 0)
+@@ -338,12 +348,16 @@
+       if (m_InBitStream.GetProcessedSize() + 2 <= m_PackSize) // test it: probably incorrect;
+         if (!ReadTables())
+           return S_FALSE;
++      _solidAllowed = true;
+       return S_OK;
+     }
+     if (!ReadTables())
+       return S_FALSE;
+   }
+ 
++  if (!m_TablesOK)
++    return S_FALSE;
++
+   UInt64 startPos = m_OutWindowStream.GetProcessedSize();
+   while (pos < unPackSize)
+   {
+@@ -378,6 +392,9 @@
+ 
+   if (!ReadLastTables())
+     return S_FALSE;
++
++  _solidAllowed = true;
++
+   return m_OutWindowStream.Flush();
+ }
+ 
+@@ -394,7 +411,7 @@
+ {
+   if (size < 1)
+     return E_INVALIDARG;
+-  m_IsSolid = ((data[0] & 1) != 0);
++  _isSolid = ((data[0] & 1) != 0);
+   return S_OK;
+ }
+ 
+diff -Naur p7zip_16.02.orig/CPP/7zip/Compress/Rar2Decoder.h p7zip_16.02/CPP/7zip/Compress/Rar2Decoder.h
+--- p7zip_16.02.orig/CPP/7zip/Compress/Rar2Decoder.h	2015-06-19 05:52:06.000000000 -0500
++++ p7zip_16.02/CPP/7zip/Compress/Rar2Decoder.h	2020-05-12 15:35:00.898548653 -0500
+@@ -138,7 +138,9 @@
+   Byte m_LastLevels[kMaxTableSize];
+ 
+   UInt64 m_PackSize;
+-  bool m_IsSolid;
++  bool _isSolid;
++  bool _solidAllowed;
++  bool m_TablesOK;
+ 
+   void InitStructures();
+   UInt32 ReadBits(unsigned numBits);
+diff -Naur p7zip_16.02.orig/CPP/7zip/Compress/Rar3Decoder.cpp p7zip_16.02/CPP/7zip/Compress/Rar3Decoder.cpp
+--- p7zip_16.02.orig/CPP/7zip/Compress/Rar3Decoder.cpp	2016-05-20 03:20:03.000000000 -0500
++++ p7zip_16.02/CPP/7zip/Compress/Rar3Decoder.cpp	2020-05-12 15:35:00.898548653 -0500
+@@ -92,7 +92,9 @@
+   _writtenFileSize(0),
+   _vmData(0),
+   _vmCode(0),
+-  m_IsSolid(false)
++  _isSolid(false),
++  _solidAllowed(false),
++  _errorMode(false)
+ {
+   Ppmd7_Construct(&_ppmd);
+ }
+@@ -545,6 +547,9 @@
+     return InitPPM();
+   }
+ 
++  TablesRead = false;
++  TablesOK = false;
++
+   _lzMode = true;
+   PrevAlignBits = 0;
+   PrevAlignCount = 0;
+@@ -606,6 +611,9 @@
+       }
+     }
+   }
++  if (InputEofError())
++    return S_FALSE;
++
+   TablesRead = true;
+ 
+   // original code has check here:
+@@ -623,6 +631,9 @@
+   RIF(m_LenDecoder.Build(&newLevels[kMainTableSize + kDistTableSize + kAlignTableSize]));
+ 
+   memcpy(m_LastLevels, newLevels, kTablesSizesSum);
++
++  TablesOK = true;
++
+   return S_OK;
+ }
+ 
+@@ -811,7 +822,7 @@
+ {
+   _writtenFileSize = 0;
+   _unsupportedFilter = false;
+-  if (!m_IsSolid)
++  if (!_isSolid)
+   {
+     _lzSize = 0;
+     _winPos = 0;
+@@ -824,13 +835,21 @@
+     PpmEscChar = 2;
+     PpmError = true;
+     InitFilters();
++    _errorMode = false;
+   }
+-  if (!m_IsSolid || !TablesRead)
++
++  if (_errorMode)
++    return S_FALSE;
++
++  if (!_isSolid || !TablesRead)
+   {
+     bool keepDecompressing;
+     RINOK(ReadTables(keepDecompressing));
+     if (!keepDecompressing)
++    {
++      _solidAllowed = true;
+       return S_OK;
++    }
+   }
+ 
+   for (;;)
+@@ -838,6 +857,8 @@
+     bool keepDecompressing;
+     if (_lzMode)
+     {
++      if (!TablesOK)
++        return S_FALSE;
+       RINOK(DecodeLZ(keepDecompressing))
+     }
+     else
+@@ -853,6 +874,9 @@
+     if (!keepDecompressing)
+       break;
+   }
++
++  _solidAllowed = true;
++
+   RINOK(WriteBuf());
+   UInt64 packSize = m_InBitStream.BitDecoder.GetProcessedSize();
+   RINOK(progress->SetRatioInfo(&packSize, &_writtenFileSize));
+@@ -873,6 +897,10 @@
+     if (!inSize)
+       return E_INVALIDARG;
+ 
++    if (_isSolid && !_solidAllowed)
++      return S_FALSE;
++    _solidAllowed = false;
++
+     if (!_vmData)
+     {
+       _vmData = (Byte *)::MidAlloc(kVmDataSizeMax + kVmCodeSizeMax);
+@@ -901,8 +929,8 @@
+     _unpackSize = outSize ? *outSize : (UInt64)(Int64)-1;
+     return CodeReal(progress);
+   }
+-  catch(const CInBufferException &e)  { return e.ErrorCode; }
+-  catch(...) { return S_FALSE; }
++  catch(const CInBufferException &e)  { _errorMode = true; return e.ErrorCode; }
++  catch(...) { _errorMode = true; return S_FALSE; }
+   // CNewException is possible here. But probably CNewException is caused
+   // by error in data stream.
+ }
+@@ -911,7 +939,7 @@
+ {
+   if (size < 1)
+     return E_INVALIDARG;
+-  m_IsSolid = ((data[0] & 1) != 0);
++  _isSolid = ((data[0] & 1) != 0);
+   return S_OK;
+ }
+ 
+diff -Naur p7zip_16.02.orig/CPP/7zip/Compress/Rar3Decoder.h p7zip_16.02/CPP/7zip/Compress/Rar3Decoder.h
+--- p7zip_16.02.orig/CPP/7zip/Compress/Rar3Decoder.h	2015-10-03 03:49:12.000000000 -0500
++++ p7zip_16.02/CPP/7zip/Compress/Rar3Decoder.h	2020-05-12 15:35:00.898548653 -0500
+@@ -191,7 +191,9 @@
+   CRecordVector<CTempFilter *>  _tempFilters;
+   UInt32 _lastFilter;
+ 
+-  bool m_IsSolid;
++  bool _isSolid;
++  bool _solidAllowed;
++  bool _errorMode;
+ 
+   bool _lzMode;
+   bool _unsupportedFilter;
+@@ -200,6 +202,7 @@
+   UInt32 PrevAlignCount;
+ 
+   bool TablesRead;
++  bool TablesOK;
+ 
+   CPpmd7 _ppmd;
+   int PpmEscChar;
+diff -Naur p7zip_16.02.orig/CPP/7zip/Compress/Rar5Decoder.cpp p7zip_16.02/CPP/7zip/Compress/Rar5Decoder.cpp
+--- p7zip_16.02.orig/CPP/7zip/Compress/Rar5Decoder.cpp	2016-05-20 03:20:04.000000000 -0500
++++ p7zip_16.02/CPP/7zip/Compress/Rar5Decoder.cpp	2020-05-12 15:35:00.899548663 -0500
+@@ -72,6 +72,7 @@
+     _writtenFileSize(0),
+     _dictSizeLog(0),
+     _isSolid(false),
++    _solidAllowed(false),
+     _wasInit(false),
+     _inputBuf(NULL)
+ {
+@@ -801,7 +802,10 @@
+   */
+ 
+   if (res == S_OK)
++  {
++    _solidAllowed = true;
+     res = res2;
++  }
+      
+   if (res == S_OK && _unpackSize_Defined && _writtenFileSize != _unpackSize)
+     return S_FALSE;
+@@ -821,6 +825,10 @@
+ {
+   try
+   {
++    if (_isSolid && !_solidAllowed)
++      return S_FALSE;
++    _solidAllowed = false;
++
+     if (_dictSizeLog >= sizeof(size_t) * 8)
+       return E_NOTIMPL;
+ 
+diff -Naur p7zip_16.02.orig/CPP/7zip/Compress/Rar5Decoder.h p7zip_16.02/CPP/7zip/Compress/Rar5Decoder.h
+--- p7zip_16.02.orig/CPP/7zip/Compress/Rar5Decoder.h	2015-09-01 13:04:50.000000000 -0500
++++ p7zip_16.02/CPP/7zip/Compress/Rar5Decoder.h	2020-05-12 15:35:00.899548663 -0500
+@@ -271,6 +271,7 @@
+   Byte _dictSizeLog;
+   bool _tableWasFilled;
+   bool _isSolid;
++  bool _solidAllowed;
+   bool _wasInit;
+ 
+   UInt32 _reps[kNumReps];
+diff -Naur p7zip_16.02.orig/CPP/7zip/Compress/ShrinkDecoder.cpp p7zip_16.02/CPP/7zip/Compress/ShrinkDecoder.cpp
+--- p7zip_16.02.orig/CPP/7zip/Compress/ShrinkDecoder.cpp	2016-05-18 12:31:02.000000000 -0500
++++ p7zip_16.02/CPP/7zip/Compress/ShrinkDecoder.cpp	2020-05-12 15:34:45.120392530 -0500
+@@ -121,7 +121,12 @@
+     {
+       _stack[i++] = _suffixes[cur];
+       cur = _parents[cur];
++	  if (cur >= kNumItems || i >= kNumItems)
++	  	break;
+     }
++	
++	if (cur >= kNumItems || i >= kNumItems)
++		break;
+     
+     _stack[i++] = (Byte)cur;
+     lastChar2 = (Byte)cur;
+diff -Naur p7zip_16.02.orig/CPP/Windows/ErrorMsg.cpp p7zip_16.02/CPP/Windows/ErrorMsg.cpp
+--- p7zip_16.02.orig/CPP/Windows/ErrorMsg.cpp	2015-01-18 12:20:28.000000000 -0600
++++ p7zip_16.02/CPP/Windows/ErrorMsg.cpp	2020-05-12 15:37:52.688247586 -0500
+@@ -14,15 +14,15 @@
+   AString msg;
+ 
+   switch(errorCode) {
+-    case ERROR_NO_MORE_FILES   : txt = "No more files"; break ;
+-    case E_NOTIMPL             : txt = "E_NOTIMPL"; break ;
+-    case E_NOINTERFACE         : txt = "E_NOINTERFACE"; break ;
+-    case E_ABORT               : txt = "E_ABORT"; break ;
+-    case E_FAIL                : txt = "E_FAIL"; break ;
+-    case STG_E_INVALIDFUNCTION : txt = "STG_E_INVALIDFUNCTION"; break ;
+-    case E_OUTOFMEMORY         : txt = "E_OUTOFMEMORY"; break ;
+-    case E_INVALIDARG          : txt = "E_INVALIDARG"; break ;
+-    case ERROR_DIRECTORY          : txt = "Error Directory"; break ;
++    case unsigned (ERROR_NO_MORE_FILES)   : txt = "No more files"; break ;
++    case unsigned (E_NOTIMPL)             : txt = "E_NOTIMPL"; break ;
++    case unsigned (E_NOINTERFACE)         : txt = "E_NOINTERFACE"; break ;
++    case unsigned (E_ABORT)               : txt = "E_ABORT"; break ;
++    case unsigned (E_FAIL)                : txt = "E_FAIL"; break ;
++    case unsigned (STG_E_INVALIDFUNCTION) : txt = "STG_E_INVALIDFUNCTION"; break ;
++    case unsigned (E_OUTOFMEMORY)         : txt = "E_OUTOFMEMORY"; break ;
++    case unsigned (E_INVALIDARG)          : txt = "E_INVALIDARG"; break ;
++    case ERROR_DIRECTORY                  : txt = "Error Directory"; break ;
+     default:
+       txt = strerror(errorCode);
+   }

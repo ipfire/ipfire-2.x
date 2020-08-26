@@ -980,7 +980,7 @@
 'invalid input for keepalive 1' => 'Entrada no válida para ping Keepalive',
 'invalid input for keepalive 1:2' => 'Entrada no válida para Keepalive, use por lo menos una relación 1:2',
 'invalid input for keepalive 2' => 'Entrada no válida para reinicio de ping Keepalive',
-'invalid input for max clients' => 'Entrada no válida para Máximo número de Clientes',
+'invalid input for max clients' => 'Entrada no válida para Máximo número de Clientes. Se superó el máximo de 1024 clientes.',
 'invalid input for name' => 'Entrada no válida para nombre completo de usuario o nombre de host del sistema',
 'invalid input for oink code' => 'Entrada no válida para código Oink',
 'invalid input for organization' => 'Entrada no válida para organización',

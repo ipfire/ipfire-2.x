@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 9.3.0
+VER        = 10.2.0
 
-GMP_VER    = 6.1.2
-MPFR_VER   = 4.0.2
+GMP_VER    = 6.2.0
+MPFR_VER   = 4.1.0
 MPC_VER    = 1.1.0
 
 THISAPP    = gcc-$(VER)
@@ -149,6 +149,11 @@ endif
 endif
 endif
 
+ifeq "$(BUILD_ARCH)" "aarch64"
+	EXTRA_CONFIG += \
+		--enable-standard-branch-protection
+endif
+
 ifeq "$(BUILD_ARCH)" "armv7hl"
 	EXTRA_CONFIG += \
 		--with-float=hard
@@ -189,9 +194,9 @@ gmp-$(GMP_VER).tar.xz = $(DL_FROM)/gmp-$(GMP_VER).tar.xz
 mpfr-$(MPFR_VER).tar.xz = $(DL_FROM)/mpfr-$(MPFR_VER).tar.xz
 mpc-$(MPC_VER).tar.gz = $(DL_FROM)/mpc-$(MPC_VER).tar.gz
 
-$(DL_FILE)_MD5			= d00a144b771ddeb021b61aa205b7e345
-gmp-$(GMP_VER).tar.xz_MD5	= f58fa8001d60c4c77595fbbb62b63c1d
-mpfr-$(MPFR_VER).tar.xz_MD5	= 320fbc4463d4c8cb1e566929d8adc4f8
+$(DL_FILE)_MD5			= e9fd9b1789155ad09bcf3ae747596b50
+gmp-$(GMP_VER).tar.xz_MD5	= a325e3f09e6d91e62101e59f9bda3ec1
+mpfr-$(MPFR_VER).tar.xz_MD5	= bdd3d5efba9c17da8d83a35ec552baef
 mpc-$(MPC_VER).tar.gz_MD5	= 4125404e41e482ec68282a2e687f6c73
 
 install : $(TARGET)

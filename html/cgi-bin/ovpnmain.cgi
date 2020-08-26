@@ -333,6 +333,8 @@ sub writeserverconf {
     print CONF "ncp-disable\n";
     print CONF "cipher $sovpnsettings{DCIPHER}\n";
 	print CONF "auth $sovpnsettings{'DAUTH'}\n";
+    # Set TLSv2 as minimum
+    print CONF "tls-version-min 1.2\n";
 
     if ($sovpnsettings{'TLSAUTH'} eq 'on') {
 	print CONF "tls-auth ${General::swroot}/ovpn/certs/ta.key\n";
@@ -890,7 +892,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
 	undef $vpnsettings{'ROUTES_PUSH'};
 	&write_routepushfile;
     }
-    if ((length($cgiparams{'MAX_CLIENTS'}) == 0) || (($cgiparams{'MAX_CLIENTS'}) < 1 ) || (($cgiparams{'MAX_CLIENTS'}) > 255 )) {
+    if ((length($cgiparams{'MAX_CLIENTS'}) == 0) || (($cgiparams{'MAX_CLIENTS'}) < 1 ) || (($cgiparams{'MAX_CLIENTS'}) > 1024 )) {
         $errormessage = $Lang::tr{'invalid input for max clients'};
         goto ADV_ERROR;
     }
@@ -996,6 +998,9 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
     print SERVERCONF "auth $cgiparams{'DAUTH'}\n";
   }
 
+  # Set TLSv1.2 as minimum
+  print SERVERCONF "tls-version-min 1.2\n";
+
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print SERVERCONF "# Enable Compression\n";
    print SERVERCONF "comp-lzo\n";
@@ -1097,6 +1102,9 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
     print CLIENTCONF "# HMAC algorithm\n";
     print CLIENTCONF "auth $cgiparams{'DAUTH'}\n";
   }
+
+  # Set TLSv1.2 as minimum
+  print CLIENTCONF "tls-version-min 1.2\n";
 
   if ($cgiparams{'COMPLZO'} eq 'on') {
    print CLIENTCONF "# Enable Compression\n";

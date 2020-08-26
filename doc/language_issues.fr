@@ -203,6 +203,7 @@ WARNING: translation string unused: default networks
 WARNING: translation string unused: default services
 WARNING: translation string unused: defaultwarning
 WARNING: translation string unused: delete cron
+WARNING: translation string unused: deprecated fs warn
 WARNING: translation string unused: description
 WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
@@ -837,6 +838,7 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
+WARNING: untranslated string: legacy architecture warning = You are running IPFire on a legacy architecture and it is recommended to upgrade
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string

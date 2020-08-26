@@ -177,6 +177,7 @@ WARNING: translation string unused: default networks
 WARNING: translation string unused: default services
 WARNING: translation string unused: defaultwarning
 WARNING: translation string unused: delete cron
+WARNING: translation string unused: deprecated fs warn
 WARNING: translation string unused: description
 WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
@@ -991,6 +992,7 @@ WARNING: untranslated string: ipsec mode tunnel = Tunnel
 WARNING: untranslated string: ipsec routing table entries = IPsec Routing Table Entries
 WARNING: untranslated string: ipsec settings = IPsec Settings
 WARNING: untranslated string: itlb multihit = iTLB MultiHit
+WARNING: untranslated string: legacy architecture warning = You are running IPFire on a legacy architecture and it is recommended to upgrade
 WARNING: untranslated string: local ip address = Local IP Address
 WARNING: untranslated string: location = Location
 WARNING: untranslated string: locationblock = Location Block

@@ -33,6 +33,8 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-$(MKIMAGE)
 SUP_ARCH   = armv5tel aarch64
 
+CFLAGS    += -fcommon
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################

@@ -545,6 +545,12 @@ if ( ! -e "/var/ipfire/main/send_profile") {
 	$warnmessage .= "<li><a style='color: white;' href='fireinfo.cgi'>$Lang::tr{'fireinfo please enable'}</a></li>";
 }
 
+# Legacy architecture
+my ($sysname, $nodename, $release, $version, $machine) = &POSIX::uname();
+if ($machine =~ m/^i?86$/) {
+	$warnmessage .= "<li>$Lang::tr{'legacy architecture warning'}</li>";
+}
+
 # Memory usage warning
 my @free = `/usr/bin/free`;
 $free[1] =~ m/(\d+)/;
@@ -591,13 +597,6 @@ foreach my $file (@files) {
 	if (`/bin/grep "SAVE ALL DATA" $file`) {
 		$warnmessage .= "<li>$Lang::tr{'smartwarn1'} /dev/$disk $Lang::tr{'smartwarn2'} !</li>";
 	}
-}
-
-# Reiser4 warning
-my @files = `mount | grep " reiser4 (" 2>/dev/null`;
-foreach my $disk (@files) {
-	chomp ($disk);
-	$warnmessage .= "<li>$disk - $Lang::tr{'deprecated fs warn'}</li>";
 }
 
 if ($warnmessage) {

@@ -5,6 +5,7 @@ etc/rc.d/helper/aws-setup
 etc/rc.d/helper/azure-setup
 etc/rc.d/helper/gcp-setup
 etc/rc.d/helper/getdnsfromdhcpc.pl
+etc/rc.d/helper/oci-setup
 #etc/rc.d/init.d
 etc/rc.d/init.d/acpid
 etc/rc.d/init.d/apache

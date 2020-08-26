@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.25"							# Version number
-CORE="148"							# Core Level (Filename)
+CORE="149"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 NICE=10								# Nice level
@@ -39,7 +39,7 @@ GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"			# Git Branch
 GIT_TAG="$(git tag | tail -1)"					# Git Tag
 GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
-TOOLCHAINVER=20200324
+TOOLCHAINVER=20200814
 
 ###############################################################################
 #
@@ -146,21 +146,21 @@ configure_build() {
 			BUILDTARGET="${build_arch}-unknown-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-m64 -mindirect-branch=thunk -mfunction-return=thunk -mtune=generic"
+			CFLAGS_ARCH="-m64 -mtune=generic -fstack-clash-protection -fcf-protection"
 			;;
 
 		i586)
 			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-march=i586 -mindirect-branch=thunk -mfunction-return=thunk -mtune=generic -fomit-frame-pointer"
+			CFLAGS_ARCH="-march=i586 -mtune=generic -fomit-frame-pointer -fcf-protection"
 			;;
 
 		aarch64)
 			BUILDTARGET="${build_arch}-unknown-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="arm"
-			CFLAGS_ARCH=""
+			CFLAGS_ARCH="-fstack-clash-protection"
 			;;
 
 		armv7hl)
@@ -476,7 +476,7 @@ prepareenv() {
 
 	if [ "${ENABLE_RAMDISK}" = "on" ]; then
 		mkdir -p $BASEDIR/build/usr/src
-		mount -t tmpfs tmpfs -o size=4G,nr_inodes=1M,mode=1777 $BASEDIR/build/usr/src
+		mount -t tmpfs tmpfs -o size=8G,nr_inodes=1M,mode=1777 $BASEDIR/build/usr/src
 
 		mkdir -p ${BASEDIR}/build/tmp
 		mount -t tmpfs tmpfs -o size=4G,nr_inodes=1M,mode=1777 ${BASEDIR}/build/tmp
@@ -804,7 +804,7 @@ qemu_is_required() {
 	fi
 
 	case "${HOST_ARCH},${build_arch}" in
-		x86_64,arm*|i?86,arm*|i?86,x86_64)
+		x86_64,arm*|x86_64,aarch64|i?86,arm*|i?86,aarch64|i?86,x86_64)
 			return 0
 			;;
 		*)
@@ -862,6 +862,9 @@ qemu_find_build_helper_name() {
 
 	local magic
 	case "${build_arch}" in
+		aarch64)
+			magic="7f454c460201010000000000000000000200b700"
+			;;
 		arm*)
 			magic="7f454c4601010100000000000000000002002800"
 			;;
@@ -1297,6 +1300,7 @@ buildipfire() {
   lfsmake2 sdparm
   lfsmake2 mtools
   lfsmake2 whatmask
+  lfsmake2 libtirpc
   lfsmake2 conntrack-tools
   lfsmake2 libupnp
   lfsmake2 ipaddr
@@ -1379,6 +1383,7 @@ buildipfire() {
   lfsmake2 spandsp
   lfsmake2 lz4
   lfsmake2 lzo
+  lfsmake2 zstd
   lfsmake2 openvpn
   lfsmake2 mpage
   lfsmake2 dbus
@@ -1430,9 +1435,10 @@ buildipfire() {
   lfsmake2 libmpeg2
   lfsmake2 gnump3d
   lfsmake2 rsync
-  lfsmake2 libtirpc
   lfsmake2 rpcbind
   lfsmake2 keyutils
+  lfsmake2 rpcsvc-proto
+  lfsmake2 libnfsidmap
   lfsmake2 nfs
   lfsmake2 gnu-netcat
   lfsmake2 ncat

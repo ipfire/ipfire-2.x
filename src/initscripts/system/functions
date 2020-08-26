@@ -784,6 +784,11 @@ umount_ramdisk() {
 	rm -rf "${path_tmpfs}"
 }
 
+# Returns true when this system running in a virtual environment
+running_on_hypervisor() {
+	grep -qE "^flags\s+:.*hypervisor" /proc/cpuinfo
+}
+
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/identify_ec2_instances.html
 running_on_ec2() {
 	local uuid
@@ -831,6 +836,17 @@ running_on_gcp() {
 	fi
 
 	# We are not running on GCP
+	return 1
+}
+
+running_on_oci() {
+	if [ -r "/sys/devices/virtual/dmi/id/chassis_asset_tag" ]; then
+		local asset_tag="$(</sys/devices/virtual/dmi/id/chassis_asset_tag)"
+
+		[ "${asset_tag}" = "OracleCloud.com" ] && return 0
+	fi
+
+	# We are not running on OCI
 	return 1
 }
 

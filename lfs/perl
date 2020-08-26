@@ -80,15 +80,15 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && sed -i -e 's|-fstack-protector|-fno-stack-protector|g' Configure
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/perl-5.30.0-fix-build-failure-against-gcc-10.patch
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && ./configure.gnu --prefix=/usr -Dman1dir=/usr/share/man/man1 \
 		-Dman3dir=/usr/share/man/man3 -Dpager="/usr/bin/less -isR" -Dusethreads
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 else
-	cd $(DIR_APP) && ./Configure -des -Dprefix=$(TOOLS_DIR)
-	cd $(DIR_APP) && make
+	cd $(DIR_APP) && ./Configure -des -Dprefix=$(TOOLS_DIR) -Dlibs="-lpthread -lm" -Uloclibpth -Ulocincpth
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && cp -v perl cpan/podlators/scripts/pod2man $(TOOLS_DIR)/bin
 	cd $(DIR_APP) && mkdir -pv $(TOOLS_DIR)/lib/perl5/$(VER)
 	cd $(DIR_APP) && cp -Rv lib/* $(TOOLS_DIR)/lib/perl5/$(VER)

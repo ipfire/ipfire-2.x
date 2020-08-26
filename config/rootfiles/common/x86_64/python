@@ -1977,7 +1977,6 @@ usr/lib/python2.7/lib-dynload/itertools.so
 #usr/lib/python2.7/lib-dynload/linuxaudiodev.so
 usr/lib/python2.7/lib-dynload/math.so
 usr/lib/python2.7/lib-dynload/mmap.so
-usr/lib/python2.7/lib-dynload/nis.so
 usr/lib/python2.7/lib-dynload/operator.so
 #usr/lib/python2.7/lib-dynload/ossaudiodev.so
 usr/lib/python2.7/lib-dynload/parser.so

@@ -10,7 +10,7 @@ etc/grub.d/20_linux_xen
 etc/grub.d/30_os-prober
 etc/grub.d/40_custom
 etc/grub.d/41_custom
-etc/grub.d/README
+#etc/grub.d/README
 usr/bin/grub-editenv
 usr/bin/grub-file
 usr/bin/grub-fstest
@@ -123,8 +123,11 @@ usr/lib/grub/arm64-efi/ext2.mod
 usr/lib/grub/arm64-efi/ext2.module
 usr/lib/grub/arm64-efi/extcmd.mod
 usr/lib/grub/arm64-efi/extcmd.module
+usr/lib/grub/arm64-efi/f2fs.mod
+usr/lib/grub/arm64-efi/f2fs.module
 usr/lib/grub/arm64-efi/fat.mod
 usr/lib/grub/arm64-efi/fat.module
+usr/lib/grub/arm64-efi/fdt.lst
 usr/lib/grub/arm64-efi/fdt.mod
 usr/lib/grub/arm64-efi/fdt.module
 usr/lib/grub/arm64-efi/file.mod
@@ -342,6 +345,8 @@ usr/lib/grub/arm64-efi/pbkdf2.mod
 usr/lib/grub/arm64-efi/pbkdf2.module
 usr/lib/grub/arm64-efi/pbkdf2_test.mod
 usr/lib/grub/arm64-efi/pbkdf2_test.module
+usr/lib/grub/arm64-efi/pgp.mod
+usr/lib/grub/arm64-efi/pgp.module
 usr/lib/grub/arm64-efi/png.mod
 usr/lib/grub/arm64-efi/png.module
 usr/lib/grub/arm64-efi/priority_queue.mod
@@ -394,6 +399,8 @@ usr/lib/grub/arm64-efi/sleep_test.mod
 usr/lib/grub/arm64-efi/sleep_test.module
 usr/lib/grub/arm64-efi/squash4.mod
 usr/lib/grub/arm64-efi/squash4.module
+usr/lib/grub/arm64-efi/strtoull_test.mod
+usr/lib/grub/arm64-efi/strtoull_test.module
 usr/lib/grub/arm64-efi/syslinuxcfg.mod
 usr/lib/grub/arm64-efi/syslinuxcfg.module
 usr/lib/grub/arm64-efi/tar.mod
@@ -431,8 +438,8 @@ usr/lib/grub/arm64-efi/ufs1_be.mod
 usr/lib/grub/arm64-efi/ufs1_be.module
 usr/lib/grub/arm64-efi/ufs2.mod
 usr/lib/grub/arm64-efi/ufs2.module
-usr/lib/grub/arm64-efi/verify.mod
-usr/lib/grub/arm64-efi/verify.module
+usr/lib/grub/arm64-efi/verifiers.mod
+usr/lib/grub/arm64-efi/verifiers.module
 usr/lib/grub/arm64-efi/video.lst
 usr/lib/grub/arm64-efi/video.mod
 usr/lib/grub/arm64-efi/video.module
@@ -462,6 +469,8 @@ usr/lib/grub/arm64-efi/zfscrypt.mod
 usr/lib/grub/arm64-efi/zfscrypt.module
 usr/lib/grub/arm64-efi/zfsinfo.mod
 usr/lib/grub/arm64-efi/zfsinfo.module
+usr/lib/grub/arm64-efi/zstd.mod
+usr/lib/grub/arm64-efi/zstd.module
 usr/sbin/grub-bios-setup
 usr/sbin/grub-install
 usr/sbin/grub-macbless
@@ -524,7 +533,9 @@ usr/share/grub/unicode.pf2
 #usr/share/locale/pa/LC_MESSAGES
 #usr/share/locale/pa/LC_MESSAGES/grub.mo
 #usr/share/locale/pl/LC_MESSAGES/grub.mo
+#usr/share/locale/pt/LC_MESSAGES/grub.mo
 #usr/share/locale/pt_BR/LC_MESSAGES/grub.mo
+#usr/share/locale/ro/LC_MESSAGES/grub.mo
 #usr/share/locale/ru/LC_MESSAGES/grub.mo
 #usr/share/locale/sl/LC_MESSAGES/grub.mo
 #usr/share/locale/sr/LC_MESSAGES/grub.mo

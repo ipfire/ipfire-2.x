@@ -16,8 +16,8 @@ Maintainer / advanced commands
 
 
 Options:
-    --target=[armv5tel|i586] : Cross-compile for this target architecture.
-                               Uses the QEMU emulator if needed to virtualise
-                               the desired target architecture.
-                               Can be permanently set with TARGET_ARCH= in
-                               .config.
+    --target=[aarch64|armv5tel|i586] : Cross-compile for this target architecture.
+                                       Uses the QEMU emulator if needed to virtualise
+                                       the desired target architecture.
+                                       Can be permanently set with TARGET_ARCH= in
+                                       .config.

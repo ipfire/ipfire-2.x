@@ -21,7 +21,6 @@ usr/lib/squid/basic_fake_auth
 usr/lib/squid/basic_getpwnam_auth
 usr/lib/squid/basic_ldap_auth
 usr/lib/squid/basic_ncsa_auth
-usr/lib/squid/basic_nis_auth
 usr/lib/squid/basic_pam_auth
 usr/lib/squid/basic_pop3_auth
 usr/lib/squid/basic_radius_auth

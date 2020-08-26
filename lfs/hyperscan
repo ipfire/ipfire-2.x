@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.2.1
+VER        = 5.3.0
 
 THISAPP    = hyperscan-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e722ec217282d38b1457cc751f0a4bb6
+$(DL_FILE)_MD5 = 6acab4b242dd81b3cede211d4a9e7101
 
 install : $(TARGET)
 

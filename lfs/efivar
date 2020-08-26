@@ -74,6 +74,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/efivar-37-compile-fixes-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/efivar-37-compile-fixes-2.patch
+
+	# -Werror, not even once
+	cd $(DIR_APP) && sed -e "s/-Werror//g" -i gcc.specs
+
 	cd $(DIR_APP) && make CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

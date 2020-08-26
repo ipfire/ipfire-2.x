@@ -6,12 +6,12 @@
 #usr/lib/libusbredirhost.la
 usr/lib/libusbredirhost.so
 usr/lib/libusbredirhost.so.1
-usr/lib/libusbredirhost.so.1.0.0
+usr/lib/libusbredirhost.so.1.0.1
 #usr/lib/libusbredirparser.a
 #usr/lib/libusbredirparser.la
 usr/lib/libusbredirparser.so
 usr/lib/libusbredirparser.so.1
-usr/lib/libusbredirparser.so.1.0.0
+usr/lib/libusbredirparser.so.1.0.1
 #usr/lib/pkgconfig/libusbredirhost.pc
 #usr/lib/pkgconfig/libusbredirparser-0.5.pc
 #usr/sbin/usbredirserver

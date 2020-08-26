@@ -1298,7 +1298,7 @@
 'invalid input for keepalive 1' => 'Invalid input for Keepalive ping',
 'invalid input for keepalive 1:2' => 'Invalid input for Keepalive use at least a ratio of 1:2',
 'invalid input for keepalive 2' => 'Invalid input for Keepalive ping-restart',
-'invalid input for max clients' => 'Invalid input for Max Clients',
+'invalid input for max clients' => 'Invalid input for Max Clients. È stato superato il massimo di 1024 client.',
 'invalid input for name' => 'Invalid input for user\'s full name or system hostname',
 'invalid input for oink code' => 'Invalid input for Oink code',
 'invalid input for organization' => 'Invalid input for organization',

@@ -39,6 +39,8 @@ PAK_VER    = 4
 
 DEPS       = cups ghostscript libtiff hplip
 
+CFLAGS    += -fcommon
+
 export LIB_CUPS=/usr/lib/cups
 export CUPS_BACKENDS=/usr/lib/cups/backends
 export CUPS_FILTERS=/usr/lib/cups/filters

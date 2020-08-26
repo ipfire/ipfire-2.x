@@ -79,6 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && tar axf $(DIR_DL)/ipxe-$(PXE_VER).tar.gz
 	cd $(DIR_APP)/ipxe-$(PXE_VER) && patch -Np1 < $(DIR_SRC)/src/patches/ipxe-fix-stringop-truncation-warning-with-gcc-8-x.patch
 	cd $(DIR_APP)/ipxe-$(PXE_VER) && patch -Np1 < $(DIR_SRC)/src/patches/ipxe-handle-R_X86_64_PLT32.patch
+	cd $(DIR_APP)/ipxe-$(PXE_VER) && patch -Np1 < $(DIR_SRC)/src/patches/ipxe-1b67a05-be-explicit-about-fcommon-compiler-directive.patch
 	cd $(DIR_APP) && rm -rfv ipxe && ln -s ipxe-$(PXE_VER) ipxe
 	cd $(DIR_APP) && make $(MAKETUNING) bin/ipxe.lkrn
 ifeq "$(BUILD_ARCH)" "x86_64"
