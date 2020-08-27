@@ -24,6 +24,7 @@ usr/share/nano/css.nanorc
 usr/share/nano/debian.nanorc
 usr/share/nano/default.nanorc
 usr/share/nano/elisp.nanorc
+#usr/share/nano/email.nanorc
 usr/share/nano/fortran.nanorc
 usr/share/nano/gentoo.nanorc
 #usr/share/nano/go.nanorc
@@ -36,6 +37,7 @@ usr/share/nano/java.nanorc
 #usr/share/nano/lua.nanorc
 usr/share/nano/makefile.nanorc
 usr/share/nano/man.nanorc
+#usr/share/nano/markdown.nanorc
 usr/share/nano/mgp.nanorc
 usr/share/nano/mutt.nanorc
 usr/share/nano/nanohelp.nanorc
@@ -54,7 +56,16 @@ usr/share/nano/ruby.nanorc
 usr/share/nano/rust.nanorc
 usr/share/nano/sh.nanorc
 usr/share/nano/spec.nanorc
+#usr/share/nano/sql.nanorc
 usr/share/nano/tcl.nanorc
 usr/share/nano/tex.nanorc
 usr/share/nano/texinfo.nanorc
 usr/share/nano/xml.nanorc
+#usr/share/nano/extra
+#usr/share/nano/extra/ada.nanorc
+#usr/share/nano/extra/debian.nanorc
+#usr/share/nano/extra/fortran.nanorc
+#usr/share/nano/extra/gentoo.nanorc
+#usr/share/nano/extra/haskell.nanorc
+#usr/share/nano/extra/povray.nanorc
+#usr/share/nano/extra/spec.nanorc
