@@ -1,0 +1,14 @@
+source: https://github.com/vim/vim/issues/5581
+
+diff -Naur vim82.org/src/structs.h vim82/src/structs.h
+--- vim82.org/src/structs.h	2020-08-29 13:21:25.511583763 +0200
++++ vim82/src/structs.h	2020-08-29 13:44:00.110575350 +0200
+@@ -1412,7 +1412,7 @@
+ {
+     typval_T	di_tv;		// type and value of the variable
+     char_u	di_flags;	// flags (only used for variable)
+-    char_u	di_key[1];	// key (actually longer!)
++    char_u	di_key[];	// key (actually longer!)
+ };
+ typedef struct dictitem_S dictitem_T;
+ 
