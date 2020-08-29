@@ -32,7 +32,8 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Remove files
-#rm -vf \
+rm -rvf \
+	/usr/share/vim/vim81
 
 # Stop services
 
