@@ -1,0 +1,14 @@
+Source: https://github.com/vim/vim/issues/5580
+
+diff -Naur vim82.org/src/configure.ac vim82/src/configure.ac
+--- vim82.org/src/configure.ac	2020-08-29 13:21:13.367288796 +0200
++++ vim82/src/configure.ac	2020-08-29 13:22:53.837729453 +0200
+@@ -4447,7 +4447,7 @@
+ DEPEND_CFLAGS_FILTER=
+ if test "$GCC" = yes; then
+   AC_MSG_CHECKING(for GCC 3 or later)
+-  gccmajor=`echo "$gccversion" | sed -e 's/^\([[1-9]]\)\..*$/\1/g'`
++  gccmajor=`echo "$gccversion" | sed -e 's/^\([[0-9]]\+\)\..*$/\1/g'`
+   if test "$gccmajor" -gt "2"; then
+     DEPEND_CFLAGS_FILTER="| sed 's+-I */+-isystem /+g'"
+     AC_MSG_RESULT(yes)

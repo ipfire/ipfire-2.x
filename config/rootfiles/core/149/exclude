@@ -22,6 +22,8 @@ var/ipfire/time
 var/ipfire/firewall/locationblock
 var/ipfire/fwhosts/customlocationgrp
 var/ipfire/ovpn
+var/ipfire/urlfilter/blacklist
+var/ipfire/urlfilter/settings
 var/lib/alternatives
 var/log/cache
 var/log/dhcpcd.log
