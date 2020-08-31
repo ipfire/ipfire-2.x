@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 4.14.184-ipfire Kernel Configuration
+# Linux/arm64 4.14.195-ipfire Kernel Configuration
 #
 CONFIG_ARM64=y
 CONFIG_64BIT=y
@@ -1936,10 +1936,7 @@ CONFIG_DM_SWITCH=m
 #
 # IEEE 1394 (FireWire) support
 #
-CONFIG_FIREWIRE=m
-CONFIG_FIREWIRE_OHCI=m
-CONFIG_FIREWIRE_SBP2=m
-# CONFIG_FIREWIRE_NET is not set
+# CONFIG_FIREWIRE is not set
 # CONFIG_FIREWIRE_NOSY is not set
 CONFIG_NETDEVICES=y
 CONFIG_MII=m
@@ -3899,11 +3896,6 @@ CONFIG_VIDEO_SH_VEU=m
 # Supported MMC/SDIO adapters
 #
 # CONFIG_SMS_SDIO_DRV is not set
-
-#
-# Supported FireWire (IEEE 1394) Adapters
-#
-# CONFIG_DVB_FIREDTV is not set
 CONFIG_MEDIA_COMMON_OPTIONS=y
 
 #
@@ -4550,7 +4542,6 @@ CONFIG_SND_BCD2000=m
 # CONFIG_SND_USB_PODHD is not set
 # CONFIG_SND_USB_TONEPORT is not set
 # CONFIG_SND_USB_VARIAX is not set
-# CONFIG_SND_FIREWIRE is not set
 CONFIG_SND_SOC=m
 CONFIG_SND_SOC_GENERIC_DMAENGINE_PCM=y
 # CONFIG_SND_SOC_AMD_ACP is not set
@@ -5471,7 +5462,6 @@ CONFIG_STAGING=y
 #
 # CONFIG_STAGING_BOARD is not set
 CONFIG_LTE_GDM724X=m
-# CONFIG_FIREWIRE_SERIAL is not set
 # CONFIG_LNET is not set
 # CONFIG_DGNC is not set
 # CONFIG_GS_FPGABOOT is not set

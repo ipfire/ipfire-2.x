@@ -7160,9 +7160,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/dvb/dynamic
 #lib/modules/KVER-ipfire/build/include/config/dvb/dynamic/minors.h
 #lib/modules/KVER-ipfire/build/include/config/dvb/ec100.h
-#lib/modules/KVER-ipfire/build/include/config/dvb/firedtv
-#lib/modules/KVER-ipfire/build/include/config/dvb/firedtv.h
-#lib/modules/KVER-ipfire/build/include/config/dvb/firedtv/input.h
 #lib/modules/KVER-ipfire/build/include/config/dvb/gp8psk
 #lib/modules/KVER-ipfire/build/include/config/dvb/gp8psk/fe.h
 #lib/modules/KVER-ipfire/build/include/config/dvb/hopper.h
@@ -7546,10 +7543,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/fib/rules.h
 #lib/modules/KVER-ipfire/build/include/config/file
 #lib/modules/KVER-ipfire/build/include/config/file/locking.h
-#lib/modules/KVER-ipfire/build/include/config/firewire
-#lib/modules/KVER-ipfire/build/include/config/firewire.h
-#lib/modules/KVER-ipfire/build/include/config/firewire/ohci.h
-#lib/modules/KVER-ipfire/build/include/config/firewire/sbp2.h
 #lib/modules/KVER-ipfire/build/include/config/firmware
 #lib/modules/KVER-ipfire/build/include/config/firmware/edid.h
 #lib/modules/KVER-ipfire/build/include/config/firmware/memmap.h
@@ -10865,7 +10858,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/snd/azt2320.h
 #lib/modules/KVER-ipfire/build/include/config/snd/azt3328.h
 #lib/modules/KVER-ipfire/build/include/config/snd/bcd2000.h
-#lib/modules/KVER-ipfire/build/include/config/snd/bebob.h
 #lib/modules/KVER-ipfire/build/include/config/snd/bt87x.h
 #lib/modules/KVER-ipfire/build/include/config/snd/ca0106.h
 #lib/modules/KVER-ipfire/build/include/config/snd/cmi8328.h
@@ -10884,7 +10876,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/snd/darla20.h
 #lib/modules/KVER-ipfire/build/include/config/snd/darla24.h
 #lib/modules/KVER-ipfire/build/include/config/snd/debug.h
-#lib/modules/KVER-ipfire/build/include/config/snd/dice.h
 #lib/modules/KVER-ipfire/build/include/config/snd/dma
 #lib/modules/KVER-ipfire/build/include/config/snd/dma/sgbuf.h
 #lib/modules/KVER-ipfire/build/include/config/snd/drivers.h
@@ -10904,12 +10895,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/snd/es1968
 #lib/modules/KVER-ipfire/build/include/config/snd/es1968.h
 #lib/modules/KVER-ipfire/build/include/config/snd/es1968/input.h
-#lib/modules/KVER-ipfire/build/include/config/snd/firewire
-#lib/modules/KVER-ipfire/build/include/config/snd/firewire.h
-#lib/modules/KVER-ipfire/build/include/config/snd/firewire/digi00x.h
-#lib/modules/KVER-ipfire/build/include/config/snd/firewire/lib.h
-#lib/modules/KVER-ipfire/build/include/config/snd/firewire/tascam.h
-#lib/modules/KVER-ipfire/build/include/config/snd/fireworks.h
 #lib/modules/KVER-ipfire/build/include/config/snd/fm801.h
 #lib/modules/KVER-ipfire/build/include/config/snd/gina20.h
 #lib/modules/KVER-ipfire/build/include/config/snd/gina24.h
@@ -11006,7 +10991,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/snd/opti92x/cs4231.h
 #lib/modules/KVER-ipfire/build/include/config/snd/opti93x.h
 #lib/modules/KVER-ipfire/build/include/config/snd/ossemul.h
-#lib/modules/KVER-ipfire/build/include/config/snd/oxfw.h
 #lib/modules/KVER-ipfire/build/include/config/snd/oxygen
 #lib/modules/KVER-ipfire/build/include/config/snd/oxygen.h
 #lib/modules/KVER-ipfire/build/include/config/snd/oxygen/lib.h
@@ -14494,6 +14478,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/linux/pps-gpio.h
 #lib/modules/KVER-ipfire/build/include/linux/pps_kernel.h
 #lib/modules/KVER-ipfire/build/include/linux/pr.h
+#lib/modules/KVER-ipfire/build/include/linux/prandom.h
 #lib/modules/KVER-ipfire/build/include/linux/preempt.h
 #lib/modules/KVER-ipfire/build/include/linux/prefetch.h
 #lib/modules/KVER-ipfire/build/include/linux/prime_numbers.h
@@ -18718,10 +18703,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/extcon
 #lib/modules/KVER-ipfire/kernel/drivers/extcon/extcon-intel-cht-wc.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/extcon/extcon-intel-int3496.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/firewire
-#lib/modules/KVER-ipfire/kernel/drivers/firewire/firewire-core.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/firewire/firewire-ohci.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/firewire/firewire-sbp2.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/firmware
 #lib/modules/KVER-ipfire/kernel/drivers/firmware/dcdbas.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/firmware/dell_rbu.ko.xz
@@ -19271,8 +19252,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/media/dvb-frontends/zl10036.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/dvb-frontends/zl10039.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/dvb-frontends/zl10353.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/media/firewire
-#lib/modules/KVER-ipfire/kernel/drivers/media/firewire/firedtv.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/i2c
 #lib/modules/KVER-ipfire/kernel/drivers/media/i2c/adv7170.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/i2c/adv7175.ko.xz
@@ -21649,20 +21628,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/sound/drivers/snd-virmidi.ko.xz
 #lib/modules/KVER-ipfire/kernel/sound/drivers/vx
 #lib/modules/KVER-ipfire/kernel/sound/drivers/vx/snd-vx-lib.ko.xz
-#lib/modules/KVER-ipfire/kernel/sound/firewire
-#lib/modules/KVER-ipfire/kernel/sound/firewire/bebob
-#lib/modules/KVER-ipfire/kernel/sound/firewire/bebob/snd-bebob.ko.xz
-#lib/modules/KVER-ipfire/kernel/sound/firewire/dice
-#lib/modules/KVER-ipfire/kernel/sound/firewire/dice/snd-dice.ko.xz
-#lib/modules/KVER-ipfire/kernel/sound/firewire/digi00x
-#lib/modules/KVER-ipfire/kernel/sound/firewire/digi00x/snd-firewire-digi00x.ko.xz
-#lib/modules/KVER-ipfire/kernel/sound/firewire/fireworks
-#lib/modules/KVER-ipfire/kernel/sound/firewire/fireworks/snd-fireworks.ko.xz
-#lib/modules/KVER-ipfire/kernel/sound/firewire/oxfw
-#lib/modules/KVER-ipfire/kernel/sound/firewire/oxfw/snd-oxfw.ko.xz
-#lib/modules/KVER-ipfire/kernel/sound/firewire/snd-firewire-lib.ko.xz
-#lib/modules/KVER-ipfire/kernel/sound/firewire/tascam
-#lib/modules/KVER-ipfire/kernel/sound/firewire/tascam/snd-firewire-tascam.ko.xz
 #lib/modules/KVER-ipfire/kernel/sound/hda
 #lib/modules/KVER-ipfire/kernel/sound/hda/snd-hda-core.ko.xz
 #lib/modules/KVER-ipfire/kernel/sound/i2c

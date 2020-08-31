@@ -7150,10 +7150,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/fib/rules.h
 #lib/modules/KVER-ipfire/build/include/config/file
 #lib/modules/KVER-ipfire/build/include/config/file/locking.h
-#lib/modules/KVER-ipfire/build/include/config/firewire
-#lib/modules/KVER-ipfire/build/include/config/firewire.h
-#lib/modules/KVER-ipfire/build/include/config/firewire/ohci.h
-#lib/modules/KVER-ipfire/build/include/config/firewire/sbp2.h
 #lib/modules/KVER-ipfire/build/include/config/firmware
 #lib/modules/KVER-ipfire/build/include/config/firmware/edid.h
 #lib/modules/KVER-ipfire/build/include/config/firmware/in
@@ -13233,6 +13229,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/linux/pps-gpio.h
 #lib/modules/KVER-ipfire/build/include/linux/pps_kernel.h
 #lib/modules/KVER-ipfire/build/include/linux/pr.h
+#lib/modules/KVER-ipfire/build/include/linux/prandom.h
 #lib/modules/KVER-ipfire/build/include/linux/preempt.h
 #lib/modules/KVER-ipfire/build/include/linux/prefetch.h
 #lib/modules/KVER-ipfire/build/include/linux/prime_numbers.h
@@ -17285,10 +17282,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/dma/dw
 #lib/modules/KVER-ipfire/kernel/drivers/dma/dw/dw_dmac_core.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/dma/dw/dw_dmac_pci.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/firewire
-#lib/modules/KVER-ipfire/kernel/drivers/firewire/firewire-core.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/firewire/firewire-ohci.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/firewire/firewire-sbp2.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/firmware
 #lib/modules/KVER-ipfire/kernel/drivers/firmware/efi
 #lib/modules/KVER-ipfire/kernel/drivers/firmware/efi/efibc.ko.xz
