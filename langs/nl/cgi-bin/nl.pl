@@ -571,7 +571,7 @@
 'connection closed' => 'Niet verbonden...',
 'connection debugging' => 'Connectie debugging',
 'connection status and controlc' => 'Verbindingsstatus en controle:',
-'connection tracking' => 'iptables verbindingen volgen',
+'connection tracking' => 'Verbinding volgen',
 'connection type' => 'Verbindingstype',
 'connection type is invalid' => 'Verbindingstype is ongeldig.',
 'connections' => 'Verbindingen',

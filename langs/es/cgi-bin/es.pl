@@ -511,7 +511,7 @@
 'connection closed' => 'No conectado…',
 'connection debugging' => 'Depurado de conexión',
 'connection status and controlc' => 'Control y Status de conexión:',
-'connection tracking' => 'Rastreo de conexión iptables',
+'connection tracking' => 'Seguimiento de conexión',
 'connection type' => 'Tipo de conexión',
 'connection type is invalid' => 'Tipo de conexión no es válido',
 'connections' => 'Conexiones',

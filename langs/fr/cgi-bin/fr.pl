@@ -658,7 +658,7 @@
 'connection closed' => 'Non connecté...',
 'connection debugging' => 'Déboggage de la connexion ',
 'connection status and controlc' => 'Etat et contrôle de connexion :',
-'connection tracking' => 'Surveillance des connexions tables IP',
+'connection tracking' => 'Suivi de connexion',
 'connection type' => 'Type de connexion',
 'connection type is invalid' => 'Le type de connexion est non valide.',
 'connections' => 'Connexions',

@@ -638,7 +638,7 @@
 'connection closed' => 'Nicht Verbunden...',
 'connection debugging' => 'Debugmeldungen dieser Verbindung protokollieren',
 'connection status and controlc' => 'Verbindungsstatus und -kontrolle',
-'connection tracking' => 'iptables-Verbindungsverfolgung',
+'connection tracking' => 'Verbindungsverfolgung',
 'connection type' => 'Verbindungstyp',
 'connection type is invalid' => 'Verbindungstyp ist ungültig',
 'connections' => 'Verbindungen',

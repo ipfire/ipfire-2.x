@@ -574,7 +574,7 @@
 'connection closed' => 'Non connesso...',
 'connection debugging' => 'Connection debugging',
 'connection status and controlc' => 'Stato della connessione e controllo',
-'connection tracking' => 'Monitoraggio connessioni iptables',
+'connection tracking' => 'Monitoraggio della connessione',
 'connection type' => 'Connection Type',
 'connection type is invalid' => 'Connection type is invalid.',
 'connections' => 'Connessioni',

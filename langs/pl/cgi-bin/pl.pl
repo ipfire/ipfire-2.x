@@ -512,7 +512,7 @@
 'connection closed' => 'Brak połączenia...',
 'connection debugging' => 'Debugowanie połączenia',
 'connection status and controlc' => 'Stan i kontrola połączenia:',
-'connection tracking' => 'Śledzenie połączeń iptables',
+'connection tracking' => 'Śledzenie połączeń',
 'connection type' => 'Rodzaj połączenia',
 'connection type is invalid' => 'Nieprawidłowy rodzaj połączenia.',
 'connections' => 'Połączenia',

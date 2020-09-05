@@ -510,7 +510,7 @@
 'connection closed' => 'Не подключён...',
 'connection debugging' => 'Connection debugging',
 'connection status and controlc' => 'Статус и управление подключениями:',
-'connection tracking' => 'Просмотр соединений через iptables',
+'connection tracking' => 'Отслеживание подключений',
 'connection type' => 'Connection Type',
 'connection type is invalid' => 'Connection type is invalid.',
 'connections' => 'Соединения',

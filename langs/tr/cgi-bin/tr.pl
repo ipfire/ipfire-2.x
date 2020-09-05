@@ -640,7 +640,7 @@
 'connection closed' => 'Bağlı değil...',
 'connection debugging' => 'Hata ayıklama bağlantısı',
 'connection status and controlc' => 'Bağlantı durumu ve kontrol:',
-'connection tracking' => 'IPTablo bağlantı takibi',
+'connection tracking' => 'Bağlantı izleme',
 'connection type' => 'Bağlantı türü',
 'connection type is invalid' => 'Geçersiz bağlantı türü.',
 'connections' => 'Bağlantılar',
