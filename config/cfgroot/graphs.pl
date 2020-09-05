@@ -1088,7 +1088,7 @@ sub updatethermaltempgraph {
 		"--start",
 		"-1".$period,
 		"-r",
-		"-t "."ACPI Thermal-Zone Temperature"." - ".$Lang::tr{$period."-graph"},
+		"-t ".$Lang::tr{'acpitemp'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v Grad Celsius",
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},

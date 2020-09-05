@@ -133,6 +133,7 @@
 'accounting' => 'Accounting',
 'accounting user nonpdc' => 'Accounting - none PDC Mode',
 'accounting user pdc' => 'Accounting - PDC Mode',
+'acpitemp' => 'ACPI - Temperatures',
 'action' => 'Action',
 'activate' => 'Activate',
 'activate user' => 'Activate user',

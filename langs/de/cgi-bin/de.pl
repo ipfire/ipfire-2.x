@@ -135,6 +135,7 @@
 'accounting' => 'Benutzerverwaltung',
 'accounting user nonpdc' => 'Benutzerverwaltung - kein PDC Modus',
 'accounting user pdc' => 'Benutzerverwaltung - PDC Modus',
+'acpitemp' => 'ACPI - Temperaturen',
 'action' => 'Aktion',
 'activate' => 'aktivieren',
 'activate user' => 'Benutzer aktivieren',
