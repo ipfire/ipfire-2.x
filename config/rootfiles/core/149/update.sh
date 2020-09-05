@@ -43,6 +43,9 @@ extract_files
 # update linker config
 ldconfig
 
+# Restart init to allow clean unmout at reboot
+telinit u
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
