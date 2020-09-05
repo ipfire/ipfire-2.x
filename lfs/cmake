@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.17.0
+VER        = 3.18.1
 
 THISAPP    = cmake-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 78d3cc30cebaa206fb60ae6c5fe6766e
+$(DL_FILE)_MD5 = bc0d668dba6ec081c664ae95b75540d6
 
 install : $(TARGET)
 
