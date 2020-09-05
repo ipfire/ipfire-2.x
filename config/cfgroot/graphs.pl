@@ -810,15 +810,15 @@ sub updatehddgraph {
 		"DEF:standby=".$mainsettings{'RRDLOG'}."/hddshutdown-$disk.rrd:standby:AVERAGE",
 		"CDEF:st=standby,INF,*",
 		"AREA:st".$color{"color20"}."A0:standby",
-		"LINE3:temperature".$color{"color11"}."A0:$Lang::tr{'hdd temperature in'} C\\j",
+		"LINE3:temperature".$color{"color11"}."A0:$Lang::tr{'hdd temperature in'} °C\\j",
 		"COMMENT:$Lang::tr{'maximal'}",
 		"COMMENT:$Lang::tr{'average'}",
 		"COMMENT:$Lang::tr{'minimal'}",
 		"COMMENT:$Lang::tr{'current'}\\j",
-		"GPRINT:temperature:MAX:%3.0lf Grad C",
-		"GPRINT:temperature:AVERAGE:%3.0lf Grad C",
-		"GPRINT:temperature:MIN:%3.0lf Grad C",
-		"GPRINT:temperature:LAST:%3.0lf Grad C\\j",
+		"GPRINT:temperature:MAX:%3.0lf °C",
+		"GPRINT:temperature:AVERAGE:%3.0lf °C",
+		"GPRINT:temperature:MIN:%3.0lf °C",
+		"GPRINT:temperature:LAST:%3.0lf °C\\j",
 		);
 		$ERROR = RRDs::error;
 		print "Error in RRD::graph for hdd-".$disk.": ".$ERROR."\n" if $ERROR;
@@ -836,6 +836,7 @@ sub updatehwtempgraph {
 		"-1".$period,
 		"-r",
 		"-t ".$Lang::tr{'mbmon temp'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
+		"-v Celsius",
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
@@ -862,7 +863,7 @@ sub updatehwtempgraph {
 				$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
 				my $label = $2.$3;$label=~ s/-//g;
 				if ( $sensorsettings{'LINE-'.$label} eq "off" ){next;}
-				push(@command,"LINE3:".$sensorsettings{'LABEL-'.$label}.random_hex_color(6)."A0:".sprintf("%-25s",$sensorsettings{'LABEL-'.$label}),"GPRINT:".$sensorsettings{'LABEL-'.$label}.":MAX:%3.2lf C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":AVERAGE:%3.2lf C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":MIN:%3.2lf C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":LAST:%3.2lf C\\j",);
+				push(@command,"LINE3:".$sensorsettings{'LABEL-'.$label}.random_hex_color(6)."A0:".sprintf("%-25s",$sensorsettings{'LABEL-'.$label}),"GPRINT:".$sensorsettings{'LABEL-'.$label}.":MAX:%3.2lf °C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":AVERAGE:%3.2lf °C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":MIN:%3.2lf °C","GPRINT:".$sensorsettings{'LABEL-'.$label}.":LAST:%3.2lf °C\\j",);
 			}
 		}
 
@@ -1089,7 +1090,7 @@ sub updatethermaltempgraph {
 		"-1".$period,
 		"-r",
 		"-t ".$Lang::tr{'acpitemp'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
-		"-v Grad Celsius",
+		"-v Celsius",
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
@@ -1105,10 +1106,10 @@ sub updatethermaltempgraph {
 		push(@command,"DEF:temp".$i."_=".$mainsettings{'RRDLOG'}."/collectd/localhost/thermal-thermal_zone".$i."/temperature-temperature.rrd:value:AVERAGE"
 				,"CDEF:temp".$i."=temp".$i."_,1,/"
 				,"LINE3:temp".$i.$color{"color1$j"}."A0:Temp ".$i." "
-				,"GPRINT:temp".$i.":MAX:%3.0lf Grad C"
-				,"GPRINT:temp".$i.":AVERAGE:%3.0lf Grad C"
-				,"GPRINT:temp".$i.":MIN:%3.0lf Grad C"
-				,"GPRINT:temp".$i.":LAST:%3.0lf Grad C\\j");
+				,"GPRINT:temp".$i.":MAX:%3.0lf °C"
+				,"GPRINT:temp".$i.":AVERAGE:%3.0lf °C"
+				,"GPRINT:temp".$i.":MIN:%3.0lf °C"
+				,"GPRINT:temp".$i.":LAST:%3.0lf °C\\j");
 	}
 
 	RRDs::graph (@command);
