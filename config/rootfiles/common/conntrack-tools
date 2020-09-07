@@ -11,6 +11,8 @@ usr/lib/conntrack-tools/ct_helper_mdns.so
 usr/lib/conntrack-tools/ct_helper_rpc.so
 #usr/lib/conntrack-tools/ct_helper_sane.la
 usr/lib/conntrack-tools/ct_helper_sane.so
+#usr/lib/conntrack-tools/ct_helper_slp.la
+usr/lib/conntrack-tools/ct_helper_slp.so
 #usr/lib/conntrack-tools/ct_helper_ssdp.la
 usr/lib/conntrack-tools/ct_helper_ssdp.so
 #usr/lib/conntrack-tools/ct_helper_tftp.la

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.4.5
+VER        = 1.4.6
 
 THISAPP    = conntrack-tools-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9356a0cd4df81a597ac26d87ccfebac4
+$(DL_FILE)_MD5 = a9dc7567921213007def78ad72313109
 
 install : $(TARGET)
 
