@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nagios_nrpe
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = nagios-plugins
 
@@ -82,6 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--prefix=/usr \
 		--libexecdir=/usr/lib/nagios \
 		--sysconfdir=/etc/nagios \
+		--with-piddir=/var/run \
 		--with-init-type=sysv \
 		--with-nrpe-user=nobody \
 		--with-nrpe-group=nobody \
