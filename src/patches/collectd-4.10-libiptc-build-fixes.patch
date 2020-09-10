@@ -1,0 +1,11 @@
+--- collectd-4.10.9/src/Makefile.am~	2020-09-10 19:45:41.936847854 +0000
++++ collectd-4.10.9/src/Makefile.am	2020-09-10 19:45:50.416713658 +0000
+@@ -418,7 +418,7 @@
+ iptables_la_LIBADD  = owniptc/libiptc.la
+ iptables_la_DEPENDENCIES = owniptc/libiptc.la
+ else
+-iptables_la_LIBADD = -liptc
++iptables_la_LIBADD = -lip4tc
+ endif
+ collectd_LDADD += "-dlopen" iptables.la
+ collectd_DEPENDENCIES += iptables.la
