@@ -147,10 +147,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Patch CVE-2020-14386
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-cve-2020-14386_net_packet_fix_overflow_in_tpacket_rcv.patch
 
-ifeq "$(KCFG)" "-kirkwood"
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.40-kirkwood-dtb.patch
-endif
-
 ifeq "$(KCFG)" "-multi"
 	# Apply Arm-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).patch.xz | patch -Np1
