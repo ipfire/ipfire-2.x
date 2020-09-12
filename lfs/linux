@@ -144,6 +144,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-random_try_to_actively_add_entropy.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.x-add_timer_setup_on_stack.patch
 
+	# Patch CVE-2020-14386
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14_cve-2020-14386_net_packet_fix_overflow_in_tpacket_rcv.patch
+
 ifeq "$(KCFG)" "-multi"
 	# Apply Arm-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).patch.xz | patch -Np1
