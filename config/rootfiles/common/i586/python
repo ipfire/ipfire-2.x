@@ -1927,7 +1927,7 @@ usr/lib/python2.7/json/tool.pyc
 usr/lib/python2.7/keyword.pyc
 #usr/lib/python2.7/keyword.pyo
 #usr/lib/python2.7/lib-dynload
-#usr/lib/python2.7/lib-dynload/Python-2.7.17-py2.7.egg-info
+#usr/lib/python2.7/lib-dynload/Python-2.7.18-py2.7.egg-info
 usr/lib/python2.7/lib-dynload/_bisect.so
 usr/lib/python2.7/lib-dynload/_bsddb.so
 usr/lib/python2.7/lib-dynload/_codecs_cn.so
@@ -2105,9 +2105,9 @@ usr/lib/python2.7/lib-dynload/zlib.so
 #usr/lib/python2.7/lib-tk/turtle.pyo
 #usr/lib/python2.7/lib2to3
 #usr/lib/python2.7/lib2to3/Grammar.txt
-#usr/lib/python2.7/lib2to3/Grammar2.7.17.final.0.pickle
+#usr/lib/python2.7/lib2to3/Grammar2.7.18.final.0.pickle
 #usr/lib/python2.7/lib2to3/PatternGrammar.txt
-#usr/lib/python2.7/lib2to3/PatternGrammar2.7.17.final.0.pickle
+#usr/lib/python2.7/lib2to3/PatternGrammar2.7.18.final.0.pickle
 #usr/lib/python2.7/lib2to3/__init__.py
 #usr/lib/python2.7/lib2to3/__init__.pyc
 #usr/lib/python2.7/lib2to3/__init__.pyo
