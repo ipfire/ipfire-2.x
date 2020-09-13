@@ -2,7 +2,6 @@
 %tr,
 
 'guardian' => 'Gardien',
-'guardian alertfile' => 'Fichier d\'alerte',
 'guardian block a host' => 'Bloquer l\'hôte ',
 'guardian block httpd brute-force' => 'Détection force brute httpd',
 'guardian block owncloud brute-force' => 'Détection force brute Owncloud',
@@ -13,13 +12,11 @@
 'guardian blocktime' => 'Temps de blocage (secondes) ',
 'guardian common settings' => 'Paramètres communs',
 'guardian configuration' => 'Configuration du gardien',
-'guardian daemon' => 'Service',
+'guardian daemon' => 'Statut :',
 'guardian empty input' => 'Saisie vide : Veuillez saisir une adresse d\'hôte ou un sous-réseau valide.',
-'guardian enabled' => 'Activer le gardien ',
+'guardian enabled' => 'Activer le service ',
 'guardian firewallaction' => 'Action du pare-feu ',
 'guardian ignored hosts' => 'Hôtes ignorés',
-'guardian ignorefile' => 'Fichier d\'ignorés',
-'guardian interface' => 'Interface',
 'guardian invalid address or subnet' => 'Adresse hôte ou sous-réseau invalide.',
 'guardian invalid blockcount' => 'Nombre de blocages non valide : Veuillez proposer un nombre plus grand que zéro.',
 'guardian invalid blocktime' => 'Temps de blocage invalide : Veuillez proposer un nombre plus grand que zéro.',
@@ -40,9 +37,6 @@
 'guardian priolevel_low' => '3 - Bas',
 'guardian priolevel_very_low' => '4 - Très bas',
 'guardian service' => 'Service Gardien',
-'guardian priority level' => 'Niveau de priorité (Snort) ',
-'guardian timelimit' => 'Délai maximum',
-'guardian watch snort alertfile' => 'Surveiller le fichier d\'alerte Snort',
 
 );
 
