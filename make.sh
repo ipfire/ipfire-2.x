@@ -1634,6 +1634,7 @@ buildipfire() {
   lfsmake2 dehydrated
   lfsmake2 shairport-sync
   lfsmake2 borgbackup
+  lfsmake2 lmdb
   lfsmake2 knot
   lfsmake2 spectre-meltdown-checker
   lfsmake2 zabbix_agentd
