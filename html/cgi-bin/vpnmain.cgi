@@ -689,12 +689,12 @@ END
 			my $test = `/usr/bin/openssl verify -CAfile ${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem ${General::swroot}/certs/$confighash{$key}[1]cert.pem`;
 			if ($test =~ /: OK/) {
 				# Delete connection
-				system('/usr/local/bin/ipsecctrl', 'D', $key) if (&vpnenabled);
 				unlink ("${General::swroot}/certs/$confighash{$key}[1]cert.pem");
 				unlink ("${General::swroot}/certs/$confighash{$key}[1].p12");
 				delete $confighash{$key};
 				&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 				&writeipsecfiles();
+				system('/usr/local/bin/ipsecctrl', 'D', $key) if (&vpnenabled);
 			}
 		}
 		unlink ("${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
@@ -1227,10 +1227,10 @@ END
 			&writeipsecfiles();
 			system('/usr/local/bin/ipsecctrl', 'S', $cgiparams{'KEY'}) if (&vpnenabled);
 		} else {
-			system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'}) if (&vpnenabled);
 			$confighash{$cgiparams{'KEY'}}[0] = 'off';
 			&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 			&writeipsecfiles();
+			system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'}) if (&vpnenabled);
 		}
 		sleep $sleepDelay;
 	} else {
@@ -1261,12 +1261,12 @@ END
 	&General::readhasharray("${General::swroot}/vpn/config", \%confighash);
 
 	if ($confighash{$cgiparams{'KEY'}}) {
-		system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'}) if (&vpnenabled);
 		unlink ("${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
 		unlink ("${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
 		delete $confighash{$cgiparams{'KEY'}};
 		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 		&writeipsecfiles();
+		system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'}) if (&vpnenabled);
 	} else {
 		$errormessage = $Lang::tr{'invalid key'};
 	}
