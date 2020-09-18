@@ -172,7 +172,7 @@ sub updatecpugraph {
 	}
 	
 	for(my $i = 2; $i < $cpucount; $i++) {
-		$addstring .= "+,";
+		$addstring .= "ADDNAN,";
 	}
 
 	if ( $cpucount > 1){
@@ -190,7 +190,7 @@ sub updatecpugraph {
 		push(@command,$nice,$interrupt,$steal,$user,$system,$idle,$iowait,$irq);
 	}
 
-	push(@command,"CDEF:total=user,system,idle,iowait,irq,nice,interrupt,steal,+,+,+,+,+,+,+"
+	push(@command,"CDEF:total=user,system,idle,iowait,irq,nice,interrupt,steal,ADDNAN,ADDNAN,ADDNAN,ADDNAN,ADDNAN,ADDNAN,ADDNAN"
 			,"CDEF:userpct=100,user,total,/,*"
 			,"CDEF:nicepct=100,nice,total,/,*"
 			,"CDEF:interruptpct=100,interrupt,total,/,*"
