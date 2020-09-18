@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 4.14.195-ipfire Kernel Configuration
+# Linux/arm64 4.14.198-ipfire Kernel Configuration
 #
 CONFIG_ARM64=y
 CONFIG_64BIT=y
@@ -6095,6 +6095,7 @@ CONFIG_EFI_BOOTLOADER_CONTROL=m
 # CONFIG_EFI_CAPSULE_LOADER is not set
 # CONFIG_EFI_TEST is not set
 # CONFIG_RESET_ATTACK_MITIGATION is not set
+# CONFIG_EFI_CUSTOM_SSDT_OVERLAYS is not set
 CONFIG_UEFI_CPER=y
 # CONFIG_EFI_DEV_PATH_PARSER is not set
 CONFIG_MESON_SM=y
