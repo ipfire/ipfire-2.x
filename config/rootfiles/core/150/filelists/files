@@ -5,4 +5,4 @@ var/ipfire/langs
 etc/collectd.conf
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/netother.cgi
-var/ipfire/graphsh.pl
+var/ipfire/graphs.pl
