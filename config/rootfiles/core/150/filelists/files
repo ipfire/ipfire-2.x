@@ -3,3 +3,5 @@ etc/issue
 srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
 srv/web/ipfire/cgi-bin/index.cgi
+var/ipfire/graphsh.pl
+
