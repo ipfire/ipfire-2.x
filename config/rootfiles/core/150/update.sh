@@ -89,6 +89,7 @@ rm -rf /lib/modules
 # Remove files
 
 # Stop services
+/etc/init.d/collectd stop
 
 # Extract files
 extract_files
@@ -103,6 +104,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/collectd start
 
 # remove lm_sensor config after collectd was started
 # to reserch sensors at next boot with updated kernel
