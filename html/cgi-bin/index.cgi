@@ -547,7 +547,7 @@ if ( ! -e "/var/ipfire/main/send_profile") {
 
 # Legacy architecture
 my ($sysname, $nodename, $release, $version, $machine) = &POSIX::uname();
-if ($machine =~ m/^i?86$/) {
+if ($machine =~ m/^i.86$/) {
 	$warnmessage .= "<li>$Lang::tr{'legacy architecture warning'}</li>";
 }
 
