@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.25"							# Version number
-CORE="150"							# Core Level (Filename)
+CORE="151"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 NICE=10								# Nice level
