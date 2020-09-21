@@ -1643,6 +1643,7 @@ buildipfire() {
   lfsmake2 amazon-ssm-agent
   lfsmake2 libloc
   lfsmake2 ncdu
+  lfsmake2 lshw
 }
 
 buildinstaller() {
