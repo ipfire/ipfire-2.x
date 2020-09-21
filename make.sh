@@ -1642,6 +1642,7 @@ buildipfire() {
   lfsmake2 rfkill
   lfsmake2 amazon-ssm-agent
   lfsmake2 libloc
+  lfsmake2 ncdu
 }
 
 buildinstaller() {
