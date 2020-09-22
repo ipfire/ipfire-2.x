@@ -20,7 +20,6 @@
 ###############################################################################
 
 use strict;
-use Locale::Codes::Country;
 use Guardian::Socket;
 
 # enable only the following on debugging purpose
