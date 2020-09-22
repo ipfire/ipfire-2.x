@@ -24,8 +24,8 @@
 
 include Config
 
-VER        = 0.9.3
-DB_DATE    = 2020-07-10
+VER        = 0.9.4
+DB_DATE    = 2020-09-21
 
 THISAPP    = libloc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,8 +43,8 @@ objects = $(DL_FILE) \
 $(DL_FILE)                    = https://source.ipfire.org/releases/libloc//$(DL_FILE)
 location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE).db.xz
 
-$(DL_FILE)_MD5                = 61f1d543f67baf665b0140d3676fdade
-location-$(DB_DATE).db.xz_MD5 = 3f68f631e94c29b953c4e60454567540
+$(DL_FILE)_MD5                = 82770e9eba20f636c96e6fa42ff234b5
+location-$(DB_DATE).db.xz_MD5 = fa3069bf31170629d638317e283913c0
 
 install : $(TARGET)
 
@@ -77,10 +77,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvf $(DIR_DL)/$(DL_FILE)
-
-	# Apply upstream patches
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.3-country-terminate-buffer-when-reading-from-database.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.3-location-provide-return-code.patch
 
 	# Add patch for i586 to disable strong stack protector.
 ifeq "$(BUILD_ARCH)" "i586"
