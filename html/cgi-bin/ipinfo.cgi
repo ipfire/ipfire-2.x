@@ -64,6 +64,7 @@ if (&General::validip($addr)) {
 	# enumerate location information for IP address...
 	my $db_handle = &Location::Functions::init();
 	my $ccode = &Location::Functions::lookup_country_code($db_handle, $addr);
+	my $network_flag = &Location::Functions::address_has_flag($addr);
 
 	# Try to get the continent of the country code.
 	my $continent = &Location::get_continent_code($db_handle, $ccode);
@@ -108,6 +109,17 @@ if (&General::validip($addr)) {
 	}
 
 	&Header::openbox('100%', 'left', $addr . " <a href='country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode' title='$ccode' /></a> (" . $hostname . ') : '.$whois_server);
+
+	# Check if the address has a flag.
+	if ($network_flag) {
+		# Get
+		my $network_flag_name = &Location::Functions::get_full_country_name($network_flag);
+
+		# Display notice.
+		print "<h3>This address is marked as $network_flag_name.</h3>\n";
+		print "<br>\n";
+	}
+
 	print "<pre>\n";
 	foreach my $line (@lines) {
 		print &Header::cleanhtml($line,"y");
