@@ -33,6 +33,13 @@ my %not_iso_3166_location = (
 	"A3" => "Worldwide Anycast Instance",
 );
 
+# Hash which contains possible network flags and their mapped location codes.
+my %network_flags = (
+	"LOC_NETWORK_FLAG_ANONYMOUS_PROXY" => "A1",
+	"LOC_NETWORK_FLAG_SATELLITE_PROVIDER" => "A2",
+	"LOC_NETWORK_FLAG_ANYCAST" => "A3",
+);
+
 # Array which contains special country codes.
 my @special_locations = ( "A1", "A2", "A3" );
 
@@ -181,6 +188,28 @@ sub get_locations() {
 
 	# Return the array..
 	return @sorted_locations;
+}
+
+# Function to check if a given address has a special flag.
+sub address_has_flag($) {
+	my ($address) = @_;
+
+	# Init libloc database handle.
+	my $db_handle = &init();
+
+	# Loop through the hash of possible network flags.
+	foreach my $flag (keys(%network_flags)) {
+		# Check if the address has the current flag.
+		if (&Location::lookup_network_has_flag($db_handle, $address, $flag)) {
+			# The given address has the requested flag.
+			#
+			# Grab the mapped location code for this flag.
+			$mapped_code = $network_flags{$flag};
+
+			# Return the code.
+			return $mapped_code;
+		}
+	}
 }
 
 1;
