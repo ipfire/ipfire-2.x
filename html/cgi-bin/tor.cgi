@@ -20,7 +20,6 @@
 ###############################################################################
 
 use strict;
-use Locale::Codes::Country;
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -30,6 +29,9 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+
+# Init libloc database connection.
+my $db_handle = &Location::Functions::init();
 
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::colouryellow} );
@@ -321,10 +323,14 @@ END
 						<option value=''>- $Lang::tr{'tor exit country any'} -</option>
 END
 
-		my @country_names = Locale::Codes::Country::all_country_names();
-		foreach my $country_name (sort @country_names) {
-			my $country_code = Locale::Codes::Country::country2code($country_name);
+		my @country_codes = &Location::database_countries();
+		foreach my $country_code (@country_codes) {
+			# Convert country code into upper case format.
 			$country_code = uc($country_code);
+
+			# Get country name.
+			my $country_name = &Location::Functions::get_country_name($country_code);
+
 			print "<option value='$country_code'";
 
 			if ($settings{'TOR_EXIT_COUNTRY'} eq $country_code) {
