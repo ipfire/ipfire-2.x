@@ -64,7 +64,7 @@ if (&General::validip($addr)) {
 	# enumerate location information for IP address...
 	my $db_handle = &Location::Functions::init();
 	my $ccode = &Location::Functions::lookup_country_code($db_handle, $addr);
-	my $network_flag = &Location::Functions::address_has_flag($addr);
+	my @network_flags = &Location::Functions::address_has_flags($addr);
 
 	# Try to get the continent of the country code.
 	my $continent = &Location::get_continent_code($db_handle, $ccode);
@@ -111,12 +111,48 @@ if (&General::validip($addr)) {
 	&Header::openbox('100%', 'left', $addr . " <a href='country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode' title='$ccode' /></a> (" . $hostname . ') : '.$whois_server);
 
 	# Check if the address has a flag.
-	if ($network_flag) {
-		# Get
-		my $network_flag_name = &Location::Functions::get_full_country_name($network_flag);
+	if (@network_flags) {
+		# Get amount of flags for this network.
+		my $flags_amount = @network_flags;
+		my $processed_flags;
 
-		# Display notice.
-		print "<h3>This address is marked as $network_flag_name.</h3>\n";
+		# The message string which will be displayed.
+		my $message_string = "This address is marked as";
+
+		# Loop through the array of network_flags.
+		foreach my $network_flag (@network_flags) {
+			# Increment value of processed flags.
+			$processed_flags++;
+
+			# Get the network flag name.
+			my $network_flag_name = &Location::Functions::get_full_country_name($network_flag);
+
+			# Add the flag name to the message string.
+			$message_string = "$message_string" . " $network_flag_name";
+
+			# Check if multiple flags are set for this network.
+			if ($flags_amount gt "1") {
+				# Check if the the current flag is the next-to-last one.
+				if ($processed_flags eq $flags_amount - 1) {
+					$message_string = "$message_string" . " and ";
+
+				# Check if the current flag it the last one.
+				} elsif ($processed_flags eq $flags_amount) {
+					# The message is finished add a dot for ending the sentence.
+					$message_string = "$message_string" . ".";
+
+				# Otherwise add a simple comma to the message string.
+				} else {
+					$message_string = "$message_string" . ", ";
+				}
+			} else {
+				# Nothing special to do, simple add a dot to finish the sentence.
+				$message_string = "$message_string" . ".";
+			}
+		}
+
+		# Display the generated notice.
+		print "<h3>$message_string</h3>\n";
 		print "<br>\n";
 	}
 

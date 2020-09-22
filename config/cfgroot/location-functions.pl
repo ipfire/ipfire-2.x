@@ -190,9 +190,12 @@ sub get_locations() {
 	return @sorted_locations;
 }
 
-# Function to check if a given address has a special flag.
-sub address_has_flag($) {
+# Function to check if a given address has one ore more special flags.
+sub address_has_flags($) {
 	my ($address) = @_;
+
+	# Array to store the flags of the address.
+	my @flags;
 
 	# Init libloc database handle.
 	my $db_handle = &init();
@@ -206,10 +209,16 @@ sub address_has_flag($) {
 			# Grab the mapped location code for this flag.
 			$mapped_code = $network_flags{$flag};
 
-			# Return the code.
-			return $mapped_code;
+			# Add the mapped code to the array of flags.
+			push(@flags, $mapped_code);
 		}
 	}
+
+	# Sort the array of flags.
+	@flags = sort(@flags);
+
+	# Return the array of flags.
+	return @flags;
 }
 
 1;
