@@ -1337,7 +1337,6 @@ buildipfire() {
   lfsmake2 Archive-Tar
   lfsmake2 Archive-Zip
   lfsmake2 Text-Tabs+Wrap
-  lfsmake2 Locale-Country
   lfsmake2 XML-Parser
   lfsmake2 Crypt-PasswdMD5
   lfsmake2 Net-Telnet
