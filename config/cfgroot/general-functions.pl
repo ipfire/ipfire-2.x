@@ -17,7 +17,6 @@ package General;
 use strict;
 use Socket;
 use IO::Socket;
-use Locale::Codes::Country;
 use Net::SSLeay;
 use Net::IPv4Addr qw(:all);
 $|=1; # line buffering
