@@ -24,18 +24,13 @@
 package Location::Functions;
 
 use Location;
-use Locale::Codes::Country;
 
 # Hash which contains country codes and their names which are special or not
 # part of ISO 3166-1.
 my %not_iso_3166_location = (
-	"a1" => "Anonymous Proxy",
-	"a2" => "Satellite Provider",
-	"a3" => "Worldwide Anycast Instance",
-	"an" => "Netherlands Antilles",
-	"ap" => "Asia/Pacific Region",
-	"eu" => "Europe",
-	"fx" => "France, Metropolitan"
+	"A1" => "Anonymous Proxy",
+	"A2" => "Satellite Provider",
+	"A3" => "Worldwide Anycast Instance",
 );
 
 # Array which contains special country codes.
@@ -152,17 +147,19 @@ sub get_full_country_name($) {
 	# Remove whitespaces.
 	chomp($input);
 
+	# Convert input into upper case format.
+	my $code = uc($input);
 
-	# Convert input into lower case format.
-	my $code = lc($input);
-
-	# Handle country codes which are not in the list.
+	# Handle country codes which are special or not part of the list.
 	if ($not_iso_3166_location{$code}) {
 		# Grab location name from hash.
 		$name = $not_iso_3166_location{$code};
 	} else {
-		# Use perl built-in module to get the country code.
-		$name = &Locale::Codes::Country::code2country($code);
+		# Init libloc database connection.
+		my $db_handle = &init();
+
+		# Get the country name by using the location module.
+		$name = &Location::get_country_name($db_handle, $code);
 	}
 
 	return $name;
