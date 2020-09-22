@@ -38,6 +38,9 @@ my %not_iso_3166_location = (
 	"fx" => "France, Metropolitan"
 );
 
+# Array which contains special country codes.
+my @special_locations = ( "A1", "A2", "A3" );
+
 # Directory where the libloc database and keyfile lives.
 our $location_dir = "/var/lib/location/";
 
@@ -167,29 +170,14 @@ sub get_full_country_name($) {
 
 # Function to get all available locations.
 sub get_locations() {
-	my @locations = ();
+	# Create libloc database handle.
+	my $db_handle = &init();
 
-	# Get listed country codes from ISO 3166-1.
-	my @locations_lc = &Locale::Codes::Country::all_country_codes();
+	# Get locations which are stored in the location database.
+	my @database_locations = &Location::database_countries($db_handle);
 
-	# The Codes::Country module provides the country codes only in lower case.
-	# So we have to loop over the array and convert them into upper case format.
-	foreach my $ccode (@locations_lc) {
-		# Convert the country code to uppercase.
-		my $ccode_uc = uc($ccode);
-
-		# Add the converted ccode to the locations array.
-		push(@locations, $ccode_uc);
-	}
-
-	# Add locations from not_iso_3166_locations.
-	foreach my $location (keys %not_iso_3166_location) {
-		# Convert the location into uppercase.
-		my $location_uc = uc($location);
-
-		# Add the location to the locations array.
-		push(@locations, $location_uc);
-	}
+	# Merge special locations array and the database locations array.
+	my @locations = (@special_locations, @database_locations);
 
 	# Sort locations array in alphabetical order.
 	my @sorted_locations = sort(@locations);
