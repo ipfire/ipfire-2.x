@@ -59,7 +59,7 @@ HOME=/
 00 3 * 3 0          /usr/local/bin/timezone-transition /usr/local/bin/firewallctrl
 00 2 * 10-11 0      /usr/local/bin/timezone-transition /usr/local/bin/firewallctrl
 
-# Update location database once a month
+# Update location database
 %hourly,random * [ -f "/var/ipfire/red/active" ] && /usr/local/bin/update-location-database >/dev/null 2>&1
 
 # Retry sending spooled mails regularly
