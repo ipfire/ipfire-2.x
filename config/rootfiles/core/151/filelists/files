@@ -2,6 +2,7 @@ etc/system-release
 etc/issue
 srv/web/ipfire/cgi-bin/country.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/ipinfo.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/local/bin/ipsecctrl
