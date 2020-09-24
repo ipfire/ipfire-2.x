@@ -32,6 +32,8 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Remove files
+rm -rfv \
+	/usr/lib/perl5/site_perl/5.30.0/Locale
 
 # Stop services
 /etc/init.d/ipsec stop
