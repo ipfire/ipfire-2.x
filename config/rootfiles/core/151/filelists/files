@@ -5,3 +5,4 @@ srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/local/bin/ipsecctrl
 var/ipfire/langs
+var/ipfire/location-functions.pl
