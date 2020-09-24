@@ -32,7 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = xinetd
-PAK_VER    = 1
+PAK_VER    = 2
+
+DEPS       = libtirpc
 
 CFLAGS    += -fcommon -I/usr/include/tirpc -Wl,-ltirpc
 
