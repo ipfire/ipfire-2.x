@@ -56,11 +56,6 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 fi
 /etc/init.d/collectd restart
 
-# Fix invalid cronjob syntax
-sed -e "s/^%hourly,random \* \* \*/%hourly,random */g" \
-	-i /var/spool/cron/root.orig
-fcrontab -z
-
 # This update needs a reboot...
 #touch /var/run/need_reboot
 
