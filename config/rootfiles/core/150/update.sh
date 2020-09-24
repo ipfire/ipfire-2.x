@@ -103,6 +103,11 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Fix invalid cronjob syntax
+sed -e "s/^%hourly,random \* \* \*/%hourly,random */g" \
+	-i /var/spool/cron/root.orig
+fcrontab -z
+
 # Start services
 /etc/init.d/collectd start
 
