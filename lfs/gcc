@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -44,6 +44,8 @@ CFLAGS    := $(filter-out -fexceptions,$(CFLAGS))
 ifeq "$(PASS)" "1"
 CFLAGS    := $(patsubst -mindirect-branch=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mfunction-return=%,,$(CFLAGS))
+CFLAGS    := $(patsubst -fstack-clash-protection,,$(CFLAGS))
+CFLAGS    := $(patsubst -fcf-protection,,$(CFLAGS))
 endif
 
 CXXFLAGS  := $(CFLAGS)

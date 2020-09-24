@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,10 +34,13 @@ TARGET     = $(DIR_INFO)/$(THISAPP)-pass$(PASS)
 
 ifeq "$(PASS)" "1"
 	CFLAGS := $(patsubst -march=%,,$(CFLAGS))
+	CFLAGS := $(patsubst -mtune=%,,$(CFLAGS))
 	CFLAGS := $(patsubst -mfpu=%,,$(CFLAGS))
 	CFLAGS := $(patsubst -mfloat-abi=%,,$(CFLAGS))
 	CFLAGS := $(patsubst -mindirect-branch=%,,$(CFLAGS))
 	CFLAGS := $(patsubst -mfunction-return=%,,$(CFLAGS))
+	CFLAGS := $(patsubst -fstack-clash-protection,,$(CFLAGS))
+	CFLAGS := $(patsubst -fcf-protection,,$(CFLAGS))
 endif
 
 ###############################################################################
