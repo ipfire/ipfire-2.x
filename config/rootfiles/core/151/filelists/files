@@ -5,5 +5,6 @@ srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/local/bin/ipsecctrl
+var/ipfire/general-functions.pl
 var/ipfire/langs
 var/ipfire/location-functions.pl
