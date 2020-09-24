@@ -51,6 +51,8 @@ ifeq "$(PASS)" "1"
   CFLAGS := $(patsubst -mfloat-abi=%,,$(CFLAGS))
   CFLAGS := $(patsubst -mindirect-branch=%,,$(CFLAGS))
   CFLAGS := $(patsubst -mfunction-return=%,,$(CFLAGS))
+  CFLAGS := $(patsubst -fstack-clash-protection,,$(CFLAGS))
+  CFLAGS := $(patsubst -fcf-protection,,$(CFLAGS))
 
   TARGET = $(DIR_INFO)/$(THISAPP)-tools1
   EXTRA_CONFIG = \
