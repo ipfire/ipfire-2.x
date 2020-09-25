@@ -827,6 +827,17 @@ running_on_azure() {
 	return 1
 }
 
+running_on_exoscale() {
+	if [ -r "/sys/devices/virtual/dmi/id/sys_vendor" ]; then
+		local sys_vendor="$(</sys/devices/virtual/dmi/id/sys_vendor)"
+
+		[ "${sys_vendor}" = "Exoscale" ] && return 0
+	fi
+
+	# We are not running on Exoscale
+	return 1
+}
+
 running_on_gcp() {
 	# Check if the BIOS vendor is "Google"
 	if [ -r "/sys/devices/virtual/dmi/id/bios_vendor" ]; then
