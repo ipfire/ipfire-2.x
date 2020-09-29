@@ -794,7 +794,6 @@ WARNING: untranslated string: ccd routes = Routing:
 WARNING: untranslated string: ccd subnet = Subnet
 WARNING: untranslated string: ccd used = Used addresses
 WARNING: untranslated string: check all = Check all
-WARNING: untranslated string: connnection tracking = unknown string
 WARNING: untranslated string: count = Count
 WARNING: untranslated string: countries = Countries
 WARNING: untranslated string: country codes and flags = Country Codes and Flags:

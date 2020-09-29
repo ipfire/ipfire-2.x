@@ -816,7 +816,6 @@ WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Pro
 WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: broken = Broken
 WARNING: untranslated string: bytes = unknown string
-WARNING: untranslated string: connnection tracking = unknown string
 WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning

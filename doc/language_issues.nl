@@ -827,7 +827,6 @@ WARNING: untranslated string: broken = Broken
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: capabilities = Capabilities
 WARNING: untranslated string: check all = Check all
-WARNING: untranslated string: connnection tracking = unknown string
 WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
