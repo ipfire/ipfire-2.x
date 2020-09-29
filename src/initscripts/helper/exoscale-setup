@@ -49,22 +49,17 @@ import_exoscale_configuration() {
 		usermod -p "x" setup
 	fi
 
-	# Import SSH keys for setup user
-	local line
-	for line in $(get "meta-data/public-keys/"); do
-		local key_no="${line%=*}"
+	# Import SSH key for setup user
+	local key=$(get "meta-data/public-keys")
+	if [ -n "${key}" ] && ! grep -q "^${key}$" "/home/setup/.ssh/authorized_keys" 2>/dev/null; then
+		mkdir -p "/home/setup/.ssh"
+		chmod 700 "/home/setup/.ssh"
+		chown setup.nobody "/home/setup/.ssh"
 
-		local key="$(get meta-data/public-keys/${key_no}/openssh-key)"
-		if [ -n "${key}" ] && ! grep -q "^${key}$" "/home/setup/.ssh/authorized_keys" 2>/dev/null; then
-			mkdir -p "/home/setup/.ssh"
-			chmod 700 "/home/setup/.ssh"
-			chown setup.nobody "/home/setup/.ssh"
-
-			echo "${key}" >> "/home/setup/.ssh/authorized_keys"
-			chmod 600 "/home/setup/.ssh/authorized_keys"
-			chown setup.nobody "/home/setup/.ssh/authorized_keys"
-		fi
-	done
+		echo "${key}" >> "/home/setup/.ssh/authorized_keys"
+		chmod 600 "/home/setup/.ssh/authorized_keys"
+		chown setup.nobody "/home/setup/.ssh/authorized_keys"
+	fi
 
 	# Download the user-data script only on the first boot
 	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
