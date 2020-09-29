@@ -33,10 +33,13 @@ import_exoscale_configuration() {
 
 	# Set domainname
 	if ! grep -q "^DOMAINNAME=" /var/ipfire/main/settings; then
-		local domainname="${hostname#*.}"
+		local domainname="localdomain"
 
-		# Fall back to localdomain
-		[ -z "${domainname}" ] && domainname="localdomain"
+		# If the hostname contains a dot we strip the last
+		# part and use it as our domain name
+		if [[ ${hostname} =~ "\." ]]; then
+			domainname="${hostname#*.}"
+		fi
 
 		echo "DOMAINNAME=${domainname}" >> /var/ipfire/main/settings
 	fi
