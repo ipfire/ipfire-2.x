@@ -1,0 +1,12 @@
+/var/log/iptraf-ng/*.log {
+    daily
+    rotate 5
+    compress
+    delaycompress
+    missingok
+    notifempty
+    create 0640 root root
+    sharedscripts
+    postrotate
+    endscript
+}

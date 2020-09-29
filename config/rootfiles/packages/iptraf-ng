@@ -1,5 +1,4 @@
+etc/logrotate.d/iptraf-ng
 usr/sbin/iptraf-ng
-usr/sbin/rvnamed-ng
-var/lib/iptraf-ng
-var/lock/iptraf-ng
+#usr/share/man/man8/iptraf-ng.8
 var/log/iptraf-ng

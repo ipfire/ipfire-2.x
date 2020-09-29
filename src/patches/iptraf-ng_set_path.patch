@@ -1,0 +1,12 @@
+diff -Nur iptraf-ng-1.2.1.orig/Makefile iptraf-ng-1.2.1/Makefile
+--- iptraf-ng-1.2.1.orig/Makefile	2020-09-15 14:44:55.118508574 +0000
++++ iptraf-ng-1.2.1/Makefile	2020-09-15 14:45:22.828358457 +0000
+@@ -25,7 +25,7 @@
+ ALL_LDFLAGS = $(LDFLAGS)
+ STRIP ?= strip
+ 
+-prefix = $(HOME)
++prefix = /usr
+ sbindir_relative = sbin
+ sbindir = $(prefix)/$(sbindir_relative)
+ mandir = $(prefix)/share/man
