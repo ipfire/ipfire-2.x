@@ -1,0 +1,247 @@
+#!/bin/bash
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+# Set PATH to find our own executables
+export PATH=/usr/local/sbin:/usr/local/bin:${PATH}
+
+# Exoscale only supports a MTU of 1500
+DEFAULT_MTU=1500
+
+get() {
+	local file="${1}"
+
+	wget -qO - "http://metadata.exoscale.com/latest/${file}"
+}
+
+import_exoscale_configuration() {
+	local instance_id="$(get meta-data/instance-id)"
+
+	boot_mesg "Importing Exoscale configuration for instance ${instance_id}..."
+
+	# Store instance ID
+	echo "${instance_id}" > /var/run/exoscale-instance-id
+
+	# Initialise system settings
+	local hostname=$(get meta-data/local-hostname)
+
+	# Set hostname
+	if ! grep -q "^HOSTNAME=" /var/ipfire/main/settings; then
+		echo "HOSTNAME=${hostname%%.*}" >> /var/ipfire/main/settings
+	fi
+
+	# Set domainname
+	if ! grep -q "^DOMAINNAME=" /var/ipfire/main/settings; then
+		local domainname="${hostname#*.}"
+
+		# Fall back to localdomain
+		[ -z "${domainname}" ] && domainname="localdomain"
+
+		echo "DOMAINNAME=${domainname}" >> /var/ipfire/main/settings
+	fi
+
+	# Create setup user
+	if ! getent passwd setup &>/dev/null; then
+		useradd setup -s /usr/bin/run-setup -g nobody -m
+
+		# Unlock the account
+		usermod -p "x" setup
+	fi
+
+	# Import SSH key for setup user
+	local key=$(get "meta-data/public-keys")
+	if [ -n "${key}" ] && ! grep -q "^${key}$" "/home/setup/.ssh/authorized_keys" 2>/dev/null; then
+		mkdir -p "/home/setup/.ssh"
+		chmod 700 "/home/setup/.ssh"
+		chown setup.nobody "/home/setup/.ssh"
+
+		echo "${key}" >> "/home/setup/.ssh/authorized_keys"
+		chmod 600 "/home/setup/.ssh/authorized_keys"
+		chown setup.nobody "/home/setup/.ssh/authorized_keys"
+	fi
+
+	# Download the user-data script only on the first boot
+	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
+		# Download user-data
+		local user_data="$(get user-data)"
+
+		# Save user-data script to be executed later
+		if [ "${user_data:0:2}" = "#!" ]; then
+			echo "${user_data}" > /tmp/user-data.script
+			chmod 700 /tmp/user-data.script
+
+			# Run the user-data script
+			local now="$(date -u +"%s")"
+			/tmp/user-data.script &>/var/log/user-data.log.${now}
+
+			# Delete the script right away
+			rm /tmp/user-data.script
+		fi
+	fi
+
+	# Import any previous settings for the local interfaces
+	 eval $(/usr/local/bin/readhash <(grep -E "^(GREEN|ORANGE)_.*=" /var/ipfire/ethernet/settings 2>/dev/null))
+
+	# Import network configuration
+	# After this, no network connectivity will be available from this script due to the
+	# renaming of the network interfaces for which they have to be shut down
+	local config_type=1
+	: > /var/ipfire/ethernet/settings
+
+	local device
+	for device in /sys/class/net/*; do
+		# Fetch the interface index
+		local ifindex="$(<${device}/ifindex)"
+		local address="$(<${device}/address)"
+
+		case "${ifindex}" in
+			# loopback
+			1)
+				continue
+				;;
+
+			# The first interface will always be the public-facing one (i.e. RED)
+			2)
+				(
+					echo "RED_TYPE=DHCP"
+					echo "RED_DEV=red0"
+					echo "RED_MACADDR=${address}"
+					echo "RED_DESCRIPTION='${ifindex}'"
+					echo "RED_MTU=1500"
+				) >> /var/ipfire/ethernet/settings
+				;;
+
+			# GREEN
+			3)
+				# Set some sensible defaults for GREEN
+				if [ -z "${GREEN_ADDRESS}" ]; then
+					GREEN_ADDRESS="10.0.0.1"
+					GREEN_NETMASK="255.255.255.0"
+					GREEN_NETADDRESS="10.0.0.0"
+					GREEN_BROADCAST="10.0.0.255"
+				fi
+
+				(
+					echo "GREEN_DEV=green0"
+					echo "GREEN_MACADDR=${address}"
+					echo "GREEN_DESCRIPTION='${ifindex}'"
+					echo "GREEN_ADDRESS=${GREEN_ADDRESS}"
+					echo "GREEN_NETMASK=${GREEN_NETMASK}"
+					echo "GREEN_NETADDRESS=${GREEN_NETADDRESS}"
+					echo "GREEN_BROADCAST=${GREEN_BROADCAST}"
+					echo "GREEN_MTU=${DEFAULT_MTU}"
+				) >> /var/ipfire/ethernet/settings
+				;;
+
+			# ORANGE
+			4)
+				config_type=2
+
+				# Set some sensible defaults for ORANGE
+				if [ -z "${ORANGE_ADDRESS}" ]; then
+					ORANGE_ADDRESS="10.0.1.1"
+					ORANGE_NETMASK="255.255.255.0"
+					ORANGE_NETADDRESS="10.0.1.0"
+					ORANGE_BROADCAST="10.0.1.255"
+				fi
+
+				(
+					echo "ORANGE_DEV=orange0"
+					echo "ORANGE_MACADDR=${address}"
+					echo "ORANGE_DESCRIPTION='${ifindex}'"
+					echo "ORANGE_ADDRESS=${ORANGE_ADDRESS}"
+					echo "ORANGE_NETMASK=${ORANGE_NETMASK}"
+					echo "ORANGE_NETADDRESS=${ORANGE_NETADDRESS}"
+					echo "ORANGE_BROADCAST=${ORANGE_BROADCAST}"
+					echo "ORANGE_MTU=${DEFAULT_MTU}"
+				) >> /var/ipfire/ethernet/settings
+				;;
+		esac
+	done
+
+	# Save CONFIG_TYPE
+	echo "CONFIG_TYPE=${config_type}" >> /var/ipfire/ethernet/settings
+
+	# Actions performed only on the very first start
+	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
+		# Disable using ISP nameservers
+		sed -e "s/^USE_ISP_NAMESERVERS=.*/USE_ISP_NAMESERVERS=off/" -i /var/ipfire/dns/settings
+
+		# Enable SSH
+		sed -e "s/ENABLE_SSH=.*/ENABLE_SSH=on/g" -i /var/ipfire/remote/settings
+
+		# Disable SSH password authentication
+		sed -e "s/^ENABLE_SSH_PASSWORDS=.*/ENABLE_SSH_PASSWORDS=off/" -i /var/ipfire/remote/settings
+
+		# Enable SSH key authentication
+		sed -e "s/^ENABLE_SSH_KEYS=.*/ENABLE_SSH_KEYS=on/" -i /var/ipfire/remote/settings
+
+		# Apply SSH settings
+		/usr/local/bin/sshctrl
+
+		# Mark SSH to start immediately (but not right now)
+		touch /var/ipfire/remote/enablessh
+		chown nobody:nobody /var/ipfire/remote/enablessh
+
+		# Firewall rules for SSH and WEBIF
+		(
+			echo "1,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,cust_srv,SSH,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
+			echo "2,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,TGT_PORT,444,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
+		) >> /var/ipfire/firewall/input
+
+		# This script has now completed the first steps of setup
+		touch /var/ipfire/main/firstsetup_ok
+	fi
+
+	# All done
+	echo_ok
+}
+
+case "${reason}" in
+	PREINIT)
+		# Bring up the interface
+		ip link set "${interface}" up
+		;;
+
+	BOUND|RENEW|REBIND|REBOOT)
+		# Remove any previous IP addresses
+		ip addr flush dev "${interface}"
+
+		# Add (or re-add) the new IP address
+		ip addr add "${new_ip_address}/${new_subnet_mask}" dev "${interface}"
+
+		# Add the default route
+		ip route add default via "${new_routers}"
+
+		# Setup DNS
+		for domain_name_server in ${new_domain_name_servers}; do
+			echo "nameserver ${domain_name_server}"
+		done > /etc/resolv.conf
+
+		# The system is online now
+		touch /var/ipfire/red/active
+
+		# Import Exoscale configuration
+		import_exoscale_configuration
+		;;
+
+	EXPIRE|FAIL|RELEASE|STOP)
+		# The system is no longer online
+		rm -f /var/ipfire/red/active
+
+		# Remove all IP addresses
+		ip addr flush dev "${interface}"
+
+		# Shut down the interface
+		ip link set "${interface}" down
+		;;
+
+	*)
+		echo "Unhandled reason: ${reason}" >&2
+		exit 2
+		;;
+esac
+
+# Terminate
+exit 0

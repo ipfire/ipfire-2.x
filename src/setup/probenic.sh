@@ -84,7 +84,4 @@ for card in `ls /sys/class/net`; do
 	fi
 done
 
-# Revert Accesspoint marking at mac address
-sed -i 's|hwaddr: 06:|hwaddr: 00:|g' /var/ipfire/ethernet/scanned_nics
-
 exit 0
