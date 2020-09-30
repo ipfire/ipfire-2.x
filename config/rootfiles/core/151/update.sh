@@ -57,6 +57,9 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 fi
 /etc/init.d/collectd restart
 
+# Reload sysctl.conf
+sysctl -p
+
 # This update needs a reboot...
 #touch /var/run/need_reboot
 
