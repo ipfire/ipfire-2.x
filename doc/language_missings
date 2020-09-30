@@ -919,14 +919,11 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
-< acpitemp
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
 < g.dtm
 < g.lite
-< legacy architecture warning
-< open connections
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
