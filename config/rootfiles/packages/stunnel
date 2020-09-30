@@ -36,5 +36,5 @@ usr/lib/stunnel/libstunnel.so
 #usr/share/man/man8/stunnel.8
 #usr/share/man/man8/stunnel.pl.8
 var/ipfire/backup/addons/includes/stunnel
-#var/lib/stunnel
-var/lib/stunnel/run
+var/lib/stunnel
+#var/lib/stunnel/run
