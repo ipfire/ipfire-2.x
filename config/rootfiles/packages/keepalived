@@ -5,8 +5,10 @@ etc/keepalived/samples
 #etc/keepalived/samples/dh1024.pem
 #etc/keepalived/samples/keepalived.conf.HTTP_GET.port
 #etc/keepalived/samples/keepalived.conf.IPv6
+#etc/keepalived/samples/keepalived.conf.PING_CHECK
 #etc/keepalived/samples/keepalived.conf.SMTP_CHECK
 #etc/keepalived/samples/keepalived.conf.SSL_GET
+#etc/keepalived/samples/keepalived.conf.UDP_CHECK
 #etc/keepalived/samples/keepalived.conf.conditional_conf
 #etc/keepalived/samples/keepalived.conf.fwmark
 #etc/keepalived/samples/keepalived.conf.inhibit
