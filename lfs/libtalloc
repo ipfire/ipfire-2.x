@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,21 +24,17 @@
 
 include Config
 
-VER        = 3.0.21
+VER        = 2.3.1
 
-THISAPP    = freeradius-server-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = talloc-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = freeradius
-PAK_VER    = 12
+PROG       = libtalloc
+PAK_VER    = 1
 
-DEPS       = libtalloc
-
-ifeq "$(BUILD_ARCH)" "armv5tel"
-	LDFLAGS += -latomic
-endif
+DEPS       =
 
 ###############################################################################
 # Top-level Rules
@@ -48,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8b7f794f2ac0d686d9aecfa083a63614
+$(DL_FILE)_MD5 = ce40593428c0de6b85946189dcc37b5e
 
 install : $(TARGET)
 
@@ -59,7 +55,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist: 
-	@$(PAK)
+	$(PAK)
 
 ###############################################################################
 # Downloading, checking, md5sum
@@ -80,74 +76,9 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/freeradius-no-buildtime-cert-gen.patch
-	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && \
-		./configure \
-			--prefix=/usr \
-			--sysconfdir=/etc \
-			--libdir=/usr/lib/freeradius \
-			--localstatedir=/var \
-			--with-system-libtool \
-			--with-threads \
-			--with-thread-pool \
-			--disable-ltdl-install \
-			--disable-openssl-version-check \
-			--without-rlm_eap_ikev2 \
-			--without-rlm_sql_iodbc \
-			--without-rlm_sql_firebird \
-			--without-rlm_sql_db2 \
-			--without-rlm_sql_oracle \
-			--without-rlm_sql_sqlite \
-			--without-rlm_sql_mysql \
-			LDFLAGS="$(LDFLAGS)"
-
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-
-	sed -i /etc/raddb/radiusd.conf \
-		-e "s/^#user =.*$$/user = nobody/" \
-		-e "s/^#group =.*$$/group = nobody/"
-
-	rm -rvf \
-		/root/.rnd \
-		/var/run/radiusd \
-		/etc/raddb/certs/*.crt \
-		/etc/raddb/certs/*.csr \
-		/etc/raddb/certs/*.der \
-		/etc/raddb/certs/*.key \
-		/etc/raddb/certs/*.pem \
-		/etc/raddb/certs/*.p12 \
-		/etc/raddb/certs/index.* \
-		/etc/raddb/certs/serial* \
-		/etc/raddb/certs/dh \
-		/etc/raddb/certs/random \
-		/usr/sbin/rc.radiusd \
-		/usr/bin/rbmonkey \
-		/etc/raddb/mods-config/sql/main/mssql \
-		/etc/raddb/mods-config/sql/ippool/oracle \
-		/etc/raddb/mods-config/sql/ippool-dhcp/oracle \
-		/etc/raddb/mods-config/sql/main/oracle \
-		/etc/raddb/mods-available/unbound \
-		/etc/raddb/mods-config/unbound/default.conf \
-		/etc/raddb/mods-available/couchbase \
-		/etc/raddb/mods-available/abfab* \
-		/etc/raddb/policy.d/abfab* \
-		/etc/raddb/sites-available/abfab* \
-		/usr/lib/freeradius/rlm_test.so \
-		/etc/raddb/experimental.conf
-
-	install -v -m 644 $(DIR_SRC)/config/backup/includes/freeradius \
-		/var/ipfire/backup/addons/includes/freeradius
-
-	# Logrotate
-	-mkdir -pv /etc/logrotate.d
-	install -v -m 644 $(DIR_SRC)/config/freeradius/logrotate \
-		/etc/logrotate.d/freeradius
-
-	#install initscripts
-	$(call INSTALL_INITSCRIPT,freeradius)
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

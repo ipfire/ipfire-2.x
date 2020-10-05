@@ -1,0 +1,14 @@
+#usr/local/include/pytalloc.h
+#usr/local/include/talloc.h
+#usr/local/lib/libpytalloc-util.cpython-38-aarch64-linux-gnu.so
+#usr/local/lib/libpytalloc-util.cpython-38-aarch64-linux-gnu.so.2
+#usr/local/lib/libpytalloc-util.cpython-38-aarch64-linux-gnu.so.2.3.1
+usr/local/lib/libtalloc.so
+usr/local/lib/libtalloc.so.2
+usr/local/lib/libtalloc.so.2.3.1
+#usr/local/lib/pkgconfig
+#usr/local/lib/pkgconfig/pytalloc-util.cpython-38-aarch64-linux-gnu.pc
+#usr/local/lib/pkgconfig/talloc.pc
+#usr/local/lib/python3.8
+#usr/local/lib/python3.8/site-packages
+#usr/local/lib/python3.8/site-packages/talloc.cpython-38-aarch64-linux-gnu.so
