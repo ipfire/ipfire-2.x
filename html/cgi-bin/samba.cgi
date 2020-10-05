@@ -78,7 +78,7 @@ $sambasettings{'WORKGRP'} = 'homeip.net';
 $sambasettings{'NETBIOSNAME'} = 'IPFire';
 $sambasettings{'SRVSTRING'} = 'Samba running on IPFire 2.x';
 $sambasettings{'INTERFACES'} = '';
-$sambasettings{'SECURITY'} = 'share';
+$sambasettings{'SECURITY'} = 'user';
 $sambasettings{'OSLEVEL'} = '33';
 $sambasettings{'GREEN'} = 'on';
 $sambasettings{'BLUE'} = 'off';
@@ -150,7 +150,7 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'NETBIOSNAME'} = 'IPFire';
 	$sambasettings{'SRVSTRING'} = 'Samba running on IPFire 2.x';
 	$sambasettings{'INTERFACES'} = '';
-	$sambasettings{'SECURITY'} = 'share';
+	$sambasettings{'SECURITY'} = 'user';
 	$sambasettings{'OSLEVEL'} = '65';
 	$sambasettings{'GREEN'} = 'on';
 	$sambasettings{'BLUE'} = 'off';
@@ -535,7 +535,6 @@ print <<END
 <tr><td align='left'><br /></td><td></td></tr>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'security options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'security'}</td><td align='left'><select name='SECURITY' style="width: 165px">
-																				<option value='share' $selected{'SECURITY'}{'share'}>Share</option>
 																				<option value='user' $selected{'SECURITY'}{'user'}>User</option>
 																				<option value='domain' $selected{'SECURITY'}{'domain'}>Domain</option>
 																				<option value='ADS' $selected{'SECURITY'}{'ADS'}>ADS</option>
