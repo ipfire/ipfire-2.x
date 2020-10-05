@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.6.25
+VER        = 4.13.0
 
 THISAPP    = samba-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 68
+PAK_VER    = 69
 
-DEPS       = cups krb5
+DEPS       = cups libtirpc krb5 perl-Parse-Yapp
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 76da2fa64edd94a0188531e7ecb27c4e
+$(DL_FILE)_MD5 = a7f5cccac09d638b3bd11204003b7e7b
 
 install : $(TARGET)
 
@@ -77,117 +77,26 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	$(UPDATE_AUTOMAKE)
-
-	# Apply patches from RHEL6
-	# Upstream patches
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_nbt_query_with_many_components.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_group_expansion_with_nss_templates.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_group_expansion_in_service_path.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_memleak_in_printer_list.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_lookups_with_one_way_trusts.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_setup_domain_child_logic.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_force_user_with_security_ads.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-add_timeout_option_to_smbclient.patch
-	# Additional Red Hat patches
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.2.0pre1-pipedir.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.2.0pre1-grouppwd.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.2.5-inotify.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.5.11-idmapdebug.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.5.11-docs.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.5.11-nss_info_doc.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.5.11-wbinfo_manpage.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.5.12-dns.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.5.12-pam_radio_type.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.18-fix_net_ads_join_segfault.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.19-valid_users_doc.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.23-gecos.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.23-glusterfs.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.23-libsmbclient.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.23-fix_libads_krb5_ipv6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.26-smb2_case_sensitive.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_gecos_interactive.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_dropbox_share.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-add_spoolss_os_version.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-nt_printer_publish_guid.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_keytab_null_termination.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_printcap_cpu_utilization.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_smbclient_ntlmv2_auth.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_smb_conf_doc.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-bug-1117059.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-bug-1192211.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_usergroup_cache_lookup.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_force_user_winbind_default_domain.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_rpcclient_timeout_command.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_force_group.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_pam_winbind_parsing_segfault.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_mangling_hash_segfault.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-doc_netbios_name_length_limit.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_map_to_guest_bad_uid.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_security_server_share_access.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_stale_printer_entries_on_rename.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2015-5299-v3-6-bso11529.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2015-5296-v3-6-bso11536.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2015-5252-v3-6-bso11395.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2015-5330-v3-6-bso11599.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-net_ads_join_no_dns_updates.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-asserted_identity_sid-S-1-18-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2015-7560-v3-6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_symlink_verification.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-preparation-v3-6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2110-v3-6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2111-v3-6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2112-v3-6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2115-v3-6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2118-v3-6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2015-5370-v3-6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_winbind_cache_memory_leak.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_memleak_winbind_cached_creds.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-idmap_ad_memleak.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-libsmb_fix_dfs_connections.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-2110-ntlmssp-session-setup-nas.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_rpc_query_user_list.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-nt_printer_unpublish_fix.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2126-v3.6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2016-2125-v3.6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_member_auth_after_changed_secret.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-fix_dirsort_ea-support.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2017-7494-v3-6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/samba-3.6.99-winbind_fix_trusted_domain_handling.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2017-2619.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2017-12150-v3-6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2017-12163.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/CVE-2017-15275.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba/doc-update.patch
-
-	cd $(DIR_APP)/source3 && ./autogen.sh
-	cd $(DIR_APP)/source3 && ./configure \
+	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--libdir=/usr/lib/ \
 		--sysconfdir=/var/ipfire \
 		--localstatedir=/var \
+		--without-ad-dc \
 		--with-cachedir=/var/lib/samba \
 		--with-lockdir=/var/lib/samba \
 		--with-piddir=/var/run \
 		--with-ads \
 		--with-acl-support \
-		--with-libsmbclient \
-		--with-libsmbsharemodes \
 		--with-sendfile-support \
-		--with-fhs \
 		--with-winbind \
-		--disable-swat \
+		--enable-fhs \
 		--enable-cups \
 		--disable-avahi \
 		--with-syslog
-	cd $(DIR_APP)/source3 && make $(MAKETUNING) idl_full
-	cd $(DIR_APP)/source3 && make $(MAKETUNING) proto && make all $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP)/source3 && make install
-	cd $(DIR_APP)/source3 && chmod -v 644 /usr/include/libsmbclient.h
-	#cd $(DIR_APP)/source3 && install -v -m755 nsswitch/libnss_wins.so /lib
-	#cd $(DIR_APP)/source3 && install -v -m755 nsswitch/libnss_winbind.so /lib
-	#cd $(DIR_APP)/source3 && ln -v -sf libnss_winbind.so /lib/libnss_winbind.so.2
-	#cd $(DIR_APP)/source3 && ln -v -sf libnss_wins.so /lib/libnss_wins.so.2
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make install
+
 	-mkdir -p /var/ipfire/samba
 	cd $(DIR_APP)/source3 && install -v -m644 ../examples/smb.conf.default /var/ipfire/samba
 	cp -vrf $(DIR_SRC)/config/samba/* /var/ipfire/samba/
@@ -198,6 +107,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -vfp /var/ipfire/samba/default.shares /var/ipfire/samba/shares
 	cp -vfp /var/ipfire/samba/default.printer /var/ipfire/samba/printer
 	cat /var/ipfire/samba/global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf
+	rm -rf /var/lib/samba/private
+	ln -s /var/ipfire/samba/private /var/lib/samba/private
 	-mkdir -p /var/log/samba
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/samba /var/ipfire/backup/addons/includes/samba
 
