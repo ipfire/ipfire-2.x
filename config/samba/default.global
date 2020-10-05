@@ -11,7 +11,7 @@ os level = 33
 fstype = NTFS
 
 kernel oplocks = false
-map to guest = false
+map to guest = bad user
 smb ports = 445 139
 unix charset = CP850
 
