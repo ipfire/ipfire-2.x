@@ -97,7 +97,6 @@ $sambasettings{'SYSLOGLEVEL'} = '1';
 $sambasettings{'SYSLOGONLY'} = 'on';
 $sambasettings{'DOSCHARSET'} = 'CP850';
 $sambasettings{'UNIXCHARSET'} = 'UTF8';
-$sambasettings{'DISPLAYCHARSET'} = 'CP850';
 $sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=819200 SO_SNDBUF=819200 SO_KEEPALIVE';
 $sambasettings{'WIDELINKS'} = 'on';
 $sambasettings{'UNIXEXTENSION'} = 'off';
@@ -169,7 +168,6 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'SYSLOGONLY'} = 'on';
 	$sambasettings{'DOSCHARSET'} = 'CP850';
 	$sambasettings{'UNIXCHARSET'} = 'UTF8';
-	$sambasettings{'DISPLAYCHARSET'} = 'CP850';
 ### Samba CUPS Variablen
 	$sambasettings{'LOADPRINTERS'} = 'Yes';
 	$sambasettings{'PRINTING'} = 'cups';
@@ -301,7 +299,6 @@ map to guest = $sambasettings{'MAPTOGUEST'}
 smb ports = 445 139
 dos charset = $sambasettings{'DOSCHARSET'}
 unix charset = $sambasettings{'UNIXCHARSET'}
-display charset = $sambasettings{'DISPLAYCHARSET'}
 
 security = $sambasettings{'SECURITY'}
 encrypt passwords = yes
@@ -488,7 +485,6 @@ print <<END
 <tr><td align='left' width='40%'>$Lang::tr{'netbios name'}</td><td align='left'><input type='text' name='NETBIOSNAME' value='$sambasettings{'NETBIOSNAME'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'dos charset'}</td><td align='left'><input type='text' name='DOSCHARSET' value='$sambasettings{'DOSCHARSET'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'unix charset'}</td><td align='left'><input type='text' name='UNIXCHARSET' value='$sambasettings{'UNIXCHARSET'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'display charset'}</td><td align='left'><input type='text' name='DISPLAYCHARSET' value='$sambasettings{'DISPLAYCHARSET'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'server string'}</td><td align='left'><input type='text' name='SRVSTRING' value='$sambasettings{'SRVSTRING'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'log level'}</td><td align='left'><input type='text' name='LOGLEVEL' value='$sambasettings{'LOGLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>Sys$Lang::tr{'log level'}</td><td align='left'><input type='text' name='SYSLOGLEVEL' value='$sambasettings{'SYSLOGLEVEL'}' size="30" /></td></tr>
