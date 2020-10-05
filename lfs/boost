@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1_64_0
+VER        = 1_71_0
 
 THISAPP    = boost_$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -46,7 +46,6 @@ CONFIGURE_OPTIONS = \
 	--without-chrono \
 	--without-context \
 	--without-coroutine \
-	--without-coroutine2 \
 	--without-date_time \
 	--without-fiber \
 	--without-graph_parallel \
@@ -68,7 +67,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 319c6ffbbeccc366f14bb68767a6db79
+$(DL_FILE)_MD5 = 5f521b41b79bf8616582c4a8a2c10177
 
 install : $(TARGET)
 

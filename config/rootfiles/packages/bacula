@@ -21,13 +21,13 @@ etc/rc.d/init.d/bacula
 #opt/bacula
 #opt/bacula/log
 #usr/lib/bpipe-fd.so
-usr/lib/libbac-9.6.5.so
+usr/lib/libbac-9.6.6.so
 #usr/lib/libbac.la
 usr/lib/libbac.so
-usr/lib/libbaccfg-9.6.5.so
+usr/lib/libbaccfg-9.6.6.so
 #usr/lib/libbaccfg.la
 usr/lib/libbaccfg.so
-usr/lib/libbacfind-9.6.5.so
+usr/lib/libbacfind-9.6.6.so
 #usr/lib/libbacfind.la
 usr/lib/libbacfind.so
 #usr/sbin/bacula

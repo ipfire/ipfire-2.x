@@ -1094,6 +1094,7 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/EC_KEY_check_key.html
 #usr/share/doc/openssl/html/man3/EC_KEY_clear_flags.html
 #usr/share/doc/openssl/html/man3/EC_KEY_copy.html
+#usr/share/doc/openssl/html/man3/EC_KEY_decoded_from_explicit_params.html
 #usr/share/doc/openssl/html/man3/EC_KEY_dup.html
 #usr/share/doc/openssl/html/man3/EC_KEY_free.html
 #usr/share/doc/openssl/html/man3/EC_KEY_generate_key.html
@@ -3249,6 +3250,7 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/X509V3_add1_i2d.html
 #usr/share/doc/openssl/html/man3/X509V3_get_d2i.html
 #usr/share/doc/openssl/html/man3/X509_ALGOR_cmp.html
+#usr/share/doc/openssl/html/man3/X509_ALGOR_copy.html
 #usr/share/doc/openssl/html/man3/X509_ALGOR_dup.html
 #usr/share/doc/openssl/html/man3/X509_ALGOR_free.html
 #usr/share/doc/openssl/html/man3/X509_ALGOR_get0.html
@@ -3407,6 +3409,8 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/X509_REQ_get_subject_name.html
 #usr/share/doc/openssl/html/man3/X509_REQ_get_version.html
 #usr/share/doc/openssl/html/man3/X509_REQ_new.html
+#usr/share/doc/openssl/html/man3/X509_REQ_set0_signature.html
+#usr/share/doc/openssl/html/man3/X509_REQ_set1_signature_algo.html
 #usr/share/doc/openssl/html/man3/X509_REQ_set_pubkey.html
 #usr/share/doc/openssl/html/man3/X509_REQ_set_subject_name.html
 #usr/share/doc/openssl/html/man3/X509_REQ_set_version.html
@@ -5059,6 +5063,7 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/EC_KEY_check_key.3
 #usr/share/man/man3/EC_KEY_clear_flags.3
 #usr/share/man/man3/EC_KEY_copy.3
+#usr/share/man/man3/EC_KEY_decoded_from_explicit_params.3
 #usr/share/man/man3/EC_KEY_dup.3
 #usr/share/man/man3/EC_KEY_free.3
 #usr/share/man/man3/EC_KEY_generate_key.3
@@ -7214,6 +7219,7 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/X509V3_add1_i2d.3
 #usr/share/man/man3/X509V3_get_d2i.3
 #usr/share/man/man3/X509_ALGOR_cmp.3
+#usr/share/man/man3/X509_ALGOR_copy.3
 #usr/share/man/man3/X509_ALGOR_dup.3
 #usr/share/man/man3/X509_ALGOR_free.3
 #usr/share/man/man3/X509_ALGOR_get0.3
@@ -7372,6 +7378,8 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/X509_REQ_get_subject_name.3
 #usr/share/man/man3/X509_REQ_get_version.3
 #usr/share/man/man3/X509_REQ_new.3
+#usr/share/man/man3/X509_REQ_set0_signature.3
+#usr/share/man/man3/X509_REQ_set1_signature_algo.3
 #usr/share/man/man3/X509_REQ_set_pubkey.3
 #usr/share/man/man3/X509_REQ_set_subject_name.3
 #usr/share/man/man3/X509_REQ_set_version.3

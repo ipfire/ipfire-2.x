@@ -96,7 +96,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--libdir=/usr/lib \
 		--sysconfdir="/etc"
 
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make #$(MAKETUNING)
 	cd $(DIR_APP) && make install
 	install -v -m 644 $(DIR_SRC)/config/netsnmpd/snmpd.conf /etc/snmpd.conf
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/netsnmpd \

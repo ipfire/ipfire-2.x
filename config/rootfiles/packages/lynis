@@ -3,13 +3,17 @@ var/ipfire/lynis
 #var/ipfire/lynis/CODE_OF_CONDUCT.md
 #var/ipfire/lynis/CONTRIBUTING.md
 #var/ipfire/lynis/CONTRIBUTORS.md
+#var/ipfire/lynis/HAPPY_USERS.md
+#var/ipfire/lynis/SECURITY.md
 #var/ipfire/lynis/db
 var/ipfire/lynis/db/fileperms.db
 var/ipfire/lynis/db/hints.db
 var/ipfire/lynis/db/integrity.db
-var/ipfire/lynis/db/languages
+#var/ipfire/lynis/db/languages
+var/ipfire/lynis/db/languages/az
 var/ipfire/lynis/db/languages/br
 var/ipfire/lynis/db/languages/cn
+var/ipfire/lynis/db/languages/da
 var/ipfire/lynis/db/languages/de
 var/ipfire/lynis/db/languages/en
 var/ipfire/lynis/db/languages/en-GB
@@ -22,6 +26,7 @@ var/ipfire/lynis/db/languages/he
 var/ipfire/lynis/db/languages/hu
 var/ipfire/lynis/db/languages/it
 var/ipfire/lynis/db/languages/ja
+var/ipfire/lynis/db/languages/ko
 var/ipfire/lynis/db/languages/nb-NO
 var/ipfire/lynis/db/languages/nl
 var/ipfire/lynis/db/languages/nl-BE
@@ -30,10 +35,12 @@ var/ipfire/lynis/db/languages/pl
 var/ipfire/lynis/db/languages/pt
 var/ipfire/lynis/db/languages/ru
 var/ipfire/lynis/db/languages/se
+var/ipfire/lynis/db/languages/sk
 var/ipfire/lynis/db/languages/tr
 var/ipfire/lynis/db/malware-susp.db
 var/ipfire/lynis/db/malware.db
 var/ipfire/lynis/db/sbl.db
+var/ipfire/lynis/db/software-eol.db
 var/ipfire/lynis/db/tests.db
 var/ipfire/lynis/default.prf
 var/ipfire/lynis/developer.prf
@@ -59,6 +66,7 @@ var/ipfire/lynis/include/data_upload
 var/ipfire/lynis/include/functions
 var/ipfire/lynis/include/helper_audit_dockerfile
 var/ipfire/lynis/include/helper_configure
+var/ipfire/lynis/include/helper_generate
 var/ipfire/lynis/include/helper_show
 var/ipfire/lynis/include/helper_system_remote_scan
 var/ipfire/lynis/include/helper_update
@@ -94,7 +102,7 @@ var/ipfire/lynis/include/tests_nameservices
 var/ipfire/lynis/include/tests_networking
 var/ipfire/lynis/include/tests_php
 var/ipfire/lynis/include/tests_ports_packages
-var/ipfire/lynis/include/tests_printers_spools
+var/ipfire/lynis/include/tests_printers_spoolers
 var/ipfire/lynis/include/tests_scheduling
 var/ipfire/lynis/include/tests_shells
 var/ipfire/lynis/include/tests_snmp

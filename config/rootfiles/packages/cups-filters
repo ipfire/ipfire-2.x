@@ -1,5 +1,4 @@
-etc/fonts/conf.d/99pdftoopvp.conf
-#etc/rc.d/init.d/cups-browsed
+etc/rc.d/init.d/cups-browsed
 #etc/rc0.d/K35cups-browsed
 #etc/rc2.d/K35cups-browsed
 #etc/rc2.d/S82cups-browsed
@@ -15,6 +14,8 @@ usr/bin/ttfread
 #usr/include/cupsfilters/colormanager.h
 #usr/include/cupsfilters/driver.h
 #usr/include/cupsfilters/image.h
+#usr/include/cupsfilters/ipp.h
+#usr/include/cupsfilters/pdftoippprinter.h
 #usr/include/cupsfilters/ppdgenerator.h
 #usr/include/cupsfilters/raster.h
 #usr/include/fontembed
@@ -24,6 +25,7 @@ usr/bin/ttfread
 #usr/include/fontembed/iofn.h
 #usr/include/fontembed/sfnt.h
 usr/lib/cups/backend/beh
+usr/lib/cups/backend/cups-brf
 usr/lib/cups/backend/driverless
 usr/lib/cups/backend/implicitclass
 usr/lib/cups/backend/parallel
@@ -31,8 +33,12 @@ usr/lib/cups/backend/serial
 usr/lib/cups/driver/driverless
 usr/lib/cups/filter/bannertopdf
 usr/lib/cups/filter/brftoembosser
+usr/lib/cups/filter/brftopagedbrf
+usr/lib/cups/filter/cgmtopdf
+usr/lib/cups/filter/cmxtopdf
 usr/lib/cups/filter/commandtoescpx
 usr/lib/cups/filter/commandtopclx
+usr/lib/cups/filter/emftopdf
 usr/lib/cups/filter/foomatic-rip
 usr/lib/cups/filter/gstopdf
 usr/lib/cups/filter/gstopxl
@@ -44,14 +50,16 @@ usr/lib/cups/filter/imagetoraster
 usr/lib/cups/filter/imagetoubrl
 usr/lib/cups/filter/imageubrltoindexv3
 usr/lib/cups/filter/imageubrltoindexv4
-usr/lib/cups/filter/pdftoopvp
+usr/lib/cups/filter/musicxmltobrf
 usr/lib/cups/filter/pdftopdf
 usr/lib/cups/filter/pdftops
 usr/lib/cups/filter/pdftoraster
 usr/lib/cups/filter/rastertoescpx
+usr/lib/cups/filter/rastertopclm
 usr/lib/cups/filter/rastertopclx
 usr/lib/cups/filter/rastertopdf
 usr/lib/cups/filter/rastertops
+usr/lib/cups/filter/svgtopdf
 usr/lib/cups/filter/sys5ippprinter
 usr/lib/cups/filter/textbrftoindexv3
 usr/lib/cups/filter/textbrftoindexv4
@@ -59,6 +67,11 @@ usr/lib/cups/filter/texttobrf
 usr/lib/cups/filter/texttopdf
 usr/lib/cups/filter/texttops
 usr/lib/cups/filter/texttotext
+usr/lib/cups/filter/vectortobrf
+usr/lib/cups/filter/vectortopdf
+usr/lib/cups/filter/vectortoubrl
+usr/lib/cups/filter/wmftopdf
+usr/lib/cups/filter/xfigtopdf
 #usr/lib/libcupsfilters.a
 #usr/lib/libcupsfilters.la
 #usr/lib/libcupsfilters.so
@@ -71,7 +84,7 @@ usr/lib/libfontembed.so.1
 usr/lib/libfontembed.so.1.0.0
 #usr/lib/pkgconfig/libcupsfilters.pc
 #usr/lib/pkgconfig/libfontembed.pc
-#usr/sbin/cups-browsed
+usr/sbin/cups-browsed
 usr/share/cups/banners/classified
 usr/share/cups/banners/confidential
 usr/share/cups/banners/form
@@ -103,6 +116,7 @@ usr/share/cups/data/topsecret.pdf
 usr/share/cups/data/unclassified.pdf
 usr/share/cups/drv/cupsfilters.drv
 usr/share/cups/drv/generic-brf.drv
+usr/share/cups/drv/generic-ubrl.drv
 usr/share/cups/drv/indexv3.drv
 usr/share/cups/drv/indexv4.drv
 usr/share/cups/mime/braille.convs
@@ -124,6 +138,7 @@ usr/share/cups/ppdc/liblouis4.defs
 usr/share/cups/ppdc/media-braille.defs
 usr/share/cups/ppdc/pcl.h
 #usr/share/doc/cups-filters
+#usr/share/doc/cups-filters/ABOUT-NLS
 #usr/share/doc/cups-filters/AUTHORS
 #usr/share/doc/cups-filters/COPYING
 #usr/share/doc/cups-filters/INSTALL
@@ -141,4 +156,4 @@ usr/share/ppd/cupsfilters/HP-Color_LaserJet_CM3530_MFP-PDF.ppd
 usr/share/ppd/cupsfilters/Ricoh-PDF_Printer-PDF.ppd
 usr/share/ppd/cupsfilters/pxlcolor.ppd
 usr/share/ppd/cupsfilters/pxlmono.ppd
-#var/ipfire/cups/cups-browsed.conf
+var/ipfire/cups/cups-browsed.conf

@@ -25,7 +25,6 @@
 < Captive invalid coupon
 < Captive please enter a coupon code
 < choose media
-< connnection tracking
 < could not connect to www ipfire org
 < cryptographic settings
 < dhcp server disabled on blue interface
@@ -55,6 +54,7 @@
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
 < 24 hours
+< acpitemp
 < addons
 < administrator password
 < administrator username
@@ -184,7 +184,6 @@
 < ccd subnet
 < ccd used
 < check all
-< connnection tracking
 < ConnSched dial
 < ConnSched hangup
 < ConnSched reboot
@@ -923,16 +922,14 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
-< connnection tracking
 < g.dtm
 < g.lite
-< legacy architecture warning
-< open connections
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
 < 24 hours
+< acpitemp
 < administrator password
 < administrator username
 < adsl settings
@@ -1006,7 +1003,6 @@
 < Captive WiFi coupon
 < Captive wrong ext
 < check all
-< connnection tracking
 < cpu frequency
 < crypto error
 < cryptographic settings
@@ -1288,6 +1284,7 @@
 # Checking cgi-bin translations for language: nl                           #
 ############################################################################
 < 24 hours
+< acpitemp
 < administrator password
 < administrator username
 < adsl settings
@@ -1364,7 +1361,6 @@
 < Captive WiFi coupon
 < Captive wrong ext
 < check all
-< connnection tracking
 < cpu frequency
 < crypto error
 < cryptographic settings
@@ -1700,6 +1696,7 @@
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
 < 24 hours
+< acpitemp
 < addons
 < administrator password
 < administrator username
@@ -1829,7 +1826,6 @@
 < ccd used
 < check all
 < community rules
-< connnection tracking
 < ConnSched dial
 < ConnSched hangup
 < ConnSched reboot
@@ -2552,6 +2548,7 @@
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
 < 24 hours
+< acpitemp
 < Add a route
 < addons
 < administrator password
@@ -2682,7 +2679,6 @@
 < ccd used
 < check all
 < community rules
-< connnection tracking
 < ConnSched dial
 < ConnSched hangup
 < ConnSched reboot
@@ -2717,7 +2713,7 @@
 < dh parameter
 < Disabled
 < disconnected
-< disk access per
+< disk access
 < dl client arch insecure
 < dnat address
 < dns check servers
@@ -3410,6 +3406,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: tr                           #
 ############################################################################
+< acpitemp
 < advproxy errmsg wpad invalid ip or mask
 < advproxy wpad example dst_noproxy_ip
 < advproxy wpad example dst_noproxy_url
@@ -3420,7 +3417,6 @@
 < advproxy wpad view pac
 < broken
 < Captive delete logo
-< connnection tracking
 < cpu frequency
 < crypto error
 < cryptographic settings

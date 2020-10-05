@@ -113,7 +113,7 @@ END
 		}
 		print <<END;
 		</pre>
-		<tr><td colspan='2'>$Lang::tr{'pakfire accept all'}
+		<tr><td colspan='2'>$Lang::tr{'pakfire uninstall all'}
 		<tr><td colspan='2'>&nbsp;
 		<tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='DELPAKS' value='$cgiparams{'DELPAKS'}' />

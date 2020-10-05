@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.2.2
+VER        = 2.2.4
 
 THISAPP    = haproxy-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = haproxy
-PAK_VER    = 16
+PAK_VER    = 17
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = dfef423ff9f191c401d6b29e7eb9d6e2
+$(DL_FILE)_MD5 = c2717fcff503ef8574cd6395e2ca4d24
 
 install : $(TARGET)
 

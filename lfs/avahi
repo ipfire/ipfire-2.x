@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.7
+VER        = 0.8
 
 THISAPP    = avahi-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,11 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET = $(DIR_INFO)/$(THISAPP)
 PROG       = avahi
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = dbus libdaemon
-
-CFLAGS    += -U_FORTIFY_SOURCE
 
 ###############################################################################
 # Top-level Rules
@@ -46,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d76c59d0882ac6c256d70a2a585362a6
+$(DL_FILE)_MD5 = 229c6aa30674fc43c202b22c5f8c2be7
 
 install : $(TARGET)
 
@@ -86,6 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--with-avahi-user=avahi \
 		--disable-qt3 \
 		--disable-qt4 \
+		--disable-qt5 \
 		--disable-gtk \
 		--disable-gtk3 \
 		--disable-pygtk \

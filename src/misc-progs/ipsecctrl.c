@@ -141,13 +141,13 @@ void turn_connection_off (char *name) {
 	 */
         char command[STRING_SIZE];
 
+	// Reload, so the connection is dropped.
+	ipsec_reload();
+
 	// Bring down the connection.
         snprintf(command, STRING_SIZE - 1, 
                 "/usr/sbin/ipsec down %s >/dev/null", name);
         safe_system(command);
-
-	// Reload, so the connection is dropped.
-	ipsec_reload();
 
 	// Reload the IPsec firewall policy
 	safe_system("/usr/lib/firewall/ipsec-policy >/dev/null");

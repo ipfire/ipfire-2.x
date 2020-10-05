@@ -24,19 +24,24 @@
 package Location::Functions;
 
 use Location;
-use Locale::Codes::Country;
 
 # Hash which contains country codes and their names which are special or not
 # part of ISO 3166-1.
 my %not_iso_3166_location = (
-	"a1" => "Anonymous Proxy",
-	"a2" => "Satellite Provider",
-	"a3" => "Worldwide Anycast Instance",
-	"an" => "Netherlands Antilles",
-	"ap" => "Asia/Pacific Region",
-	"eu" => "Europe",
-	"fx" => "France, Metropolitan"
+	"A1" => "Anonymous Proxy",
+	"A2" => "Satellite Provider",
+	"A3" => "Worldwide Anycast Instance",
 );
+
+# Hash which contains possible network flags and their mapped location codes.
+my %network_flags = (
+	"LOC_NETWORK_FLAG_ANONYMOUS_PROXY" => "A1",
+	"LOC_NETWORK_FLAG_SATELLITE_PROVIDER" => "A2",
+	"LOC_NETWORK_FLAG_ANYCAST" => "A3",
+);
+
+# Array which contains special country codes.
+my @special_locations = ( "A1", "A2", "A3" );
 
 # Directory where the libloc database and keyfile lives.
 our $location_dir = "/var/lib/location/";
@@ -149,17 +154,19 @@ sub get_full_country_name($) {
 	# Remove whitespaces.
 	chomp($input);
 
+	# Convert input into upper case format.
+	my $code = uc($input);
 
-	# Convert input into lower case format.
-	my $code = lc($input);
-
-	# Handle country codes which are not in the list.
+	# Handle country codes which are special or not part of the list.
 	if ($not_iso_3166_location{$code}) {
 		# Grab location name from hash.
 		$name = $not_iso_3166_location{$code};
 	} else {
-		# Use perl built-in module to get the country code.
-		$name = &Locale::Codes::Country::code2country($code);
+		# Init libloc database connection.
+		my $db_handle = &init();
+
+		# Get the country name by using the location module.
+		$name = &Location::get_country_name($db_handle, $code);
 	}
 
 	return $name;
@@ -167,35 +174,51 @@ sub get_full_country_name($) {
 
 # Function to get all available locations.
 sub get_locations() {
-	my @locations = ();
+	# Create libloc database handle.
+	my $db_handle = &init();
 
-	# Get listed country codes from ISO 3166-1.
-	my @locations_lc = &Locale::Codes::Country::all_country_codes();
+	# Get locations which are stored in the location database.
+	my @database_locations = &Location::database_countries($db_handle);
 
-	# The Codes::Country module provides the country codes only in lower case.
-	# So we have to loop over the array and convert them into upper case format.
-	foreach my $ccode (@locations_lc) {
-		# Convert the country code to uppercase.
-		my $ccode_uc = uc($ccode);
-
-		# Add the converted ccode to the locations array.
-		push(@locations, $ccode_uc);
-	}
-
-	# Add locations from not_iso_3166_locations.
-	foreach my $location (keys %not_iso_3166_location) {
-		# Convert the location into uppercase.
-		my $location_uc = uc($location);
-
-		# Add the location to the locations array.
-		push(@locations, $location_uc);
-	}
+	# Merge special locations array and the database locations array.
+	my @locations = (@special_locations, @database_locations);
 
 	# Sort locations array in alphabetical order.
 	my @sorted_locations = sort(@locations);
 
 	# Return the array..
 	return @sorted_locations;
+}
+
+# Function to check if a given address has one ore more special flags.
+sub address_has_flags($) {
+	my ($address) = @_;
+
+	# Array to store the flags of the address.
+	my @flags;
+
+	# Init libloc database handle.
+	my $db_handle = &init();
+
+	# Loop through the hash of possible network flags.
+	foreach my $flag (keys(%network_flags)) {
+		# Check if the address has the current flag.
+		if (&Location::lookup_network_has_flag($db_handle, $address, $flag)) {
+			# The given address has the requested flag.
+			#
+			# Grab the mapped location code for this flag.
+			$mapped_code = $network_flags{$flag};
+
+			# Add the mapped code to the array of flags.
+			push(@flags, $mapped_code);
+		}
+	}
+
+	# Sort the array of flags.
+	@flags = sort(@flags);
+
+	# Return the array of flags.
+	return @flags;
 }
 
 1;

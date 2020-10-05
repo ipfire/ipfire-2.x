@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.2.2
+VER        = 2.3.3
 
 THISAPP    = cups-$(VER)
 DL_FILE    = $(THISAPP)-source.tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/cups-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
-PAK_VER    = 20
+PAK_VER    = 21
 
 DEPS       = avahi cups-filters dbus ghostscript krb5 libtiff
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 036f6bda6202ae3e280ac00c710b5ca4
+$(DL_FILE)_MD5 = 412434ceefbdf3ec71bc9188a035f589
 
 install : $(TARGET)
 
@@ -88,7 +88,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--enable-gnutls \
 			--enable-libusb
 
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
 	cd $(DIR_APP) && ln -v -sf /usr/bin/smbspool /usr/lib/cups/backend/smb

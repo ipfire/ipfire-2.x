@@ -158,7 +158,7 @@ usr/bin/strings
 #usr/lib/ldscripts/elf_x86_64.xu
 #usr/lib/ldscripts/elf_x86_64.xw
 #usr/lib/ldscripts/elf_x86_64.xwe
-usr/lib/libbfd-2.34.so
+usr/lib/libbfd-2.35.1.so
 #usr/lib/libbfd.a
 #usr/lib/libbfd.la
 #usr/lib/libbfd.so
@@ -172,7 +172,7 @@ usr/lib/libctf-nobfd.so.0.0.0
 #usr/lib/libctf.so
 usr/lib/libctf.so.0
 usr/lib/libctf.so.0.0.0
-usr/lib/libopcodes-2.34.so
+usr/lib/libopcodes-2.35.1.so
 #usr/lib/libopcodes.a
 #usr/lib/libopcodes.la
 #usr/lib/libopcodes.so
@@ -240,8 +240,6 @@ usr/lib/libopcodes-2.34.so
 #usr/share/locale/ms/LC_MESSAGES/gprof.mo
 #usr/share/locale/nl/LC_MESSAGES/gprof.mo
 #usr/share/locale/nl/LC_MESSAGES/opcodes.mo
-#usr/share/locale/pt
-#usr/share/locale/pt/LC_MESSAGES
 #usr/share/locale/pt/LC_MESSAGES/bfd.mo
 #usr/share/locale/pt/LC_MESSAGES/binutils.mo
 #usr/share/locale/pt_BR/LC_MESSAGES/gprof.mo

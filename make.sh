@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.25"							# Version number
-CORE="150"							# Core Level (Filename)
+CORE="151"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 NICE=10								# Nice level
@@ -1253,6 +1253,7 @@ buildipfire() {
   lfsmake2 cmake
   lfsmake2 libjpeg
   lfsmake2 libjpeg-compat
+  lfsmake2 openjpeg
   lfsmake2 libexif
   lfsmake2 libpng
   lfsmake2 libtiff
@@ -1336,7 +1337,6 @@ buildipfire() {
   lfsmake2 Archive-Tar
   lfsmake2 Archive-Zip
   lfsmake2 Text-Tabs+Wrap
-  lfsmake2 Locale-Country
   lfsmake2 XML-Parser
   lfsmake2 Crypt-PasswdMD5
   lfsmake2 Net-Telnet
@@ -1395,6 +1395,7 @@ buildipfire() {
   lfsmake2 ghostscript
   lfsmake2 qpdf
   lfsmake2 poppler
+  lfsmake2 poppler-data
   lfsmake2 cups-filters
   lfsmake2 epson-inkjet-printer-escpr
   lfsmake2 foomatic
@@ -1632,6 +1633,7 @@ buildipfire() {
   lfsmake2 dehydrated
   lfsmake2 shairport-sync
   lfsmake2 borgbackup
+  lfsmake2 lmdb
   lfsmake2 knot
   lfsmake2 spectre-meltdown-checker
   lfsmake2 zabbix_agentd
@@ -1642,6 +1644,8 @@ buildipfire() {
   lfsmake2 rfkill
   lfsmake2 amazon-ssm-agent
   lfsmake2 libloc
+  lfsmake2 ncdu
+  lfsmake2 lshw
 }
 
 buildinstaller() {

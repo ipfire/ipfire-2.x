@@ -1,0 +1,16 @@
+etc/system-release
+etc/issue
+etc/rc.d/helper/exoscale-setup
+etc/rc.d/init.d/cloud-init
+etc/rc.d/init.d/functions
+etc/sysctl.conf
+srv/web/ipfire/cgi-bin/country.cgi
+srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/ipinfo.cgi
+srv/web/ipfire/cgi-bin/pakfire.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
+usr/bin/probenic.sh
+usr/local/bin/ipsecctrl
+var/ipfire/general-functions.pl
+var/ipfire/langs
+var/ipfire/location-functions.pl

@@ -11,12 +11,8 @@ usr/bin/foomatic-ppd-options
 usr/bin/foomatic-ppd-to-xml
 usr/bin/foomatic-ppdfile
 usr/bin/foomatic-printjob
-usr/bin/foomatic-rip
 usr/bin/foomatic-searchprinter
-usr/lib/cups/backend/beh
 usr/lib/cups/driver/foomatic
-usr/lib/cups/filter/foomatic-ppdfile
-usr/lib/cups/filter/foomatic-rip
 #usr/lib/perl5/site_perl/5.30.0/Foomatic
 usr/lib/perl5/site_perl/5.30.0/Foomatic/DB.pm
 usr/lib/perl5/site_perl/5.30.0/Foomatic/Defaults.pm
@@ -8009,7 +8005,6 @@ usr/share/foomatic/xmlschema/types.xsd
 #usr/share/man/man1/foomatic-ppd-options.1
 #usr/share/man/man1/foomatic-ppdfile.1
 #usr/share/man/man1/foomatic-printjob.1
-#usr/share/man/man1/foomatic-rip.1
 #usr/share/man/man8/foomatic-addpjloptions.8
 #usr/share/man/man8/foomatic-getpjloptions.8
 #usr/share/man/man8/foomatic-kitload.8

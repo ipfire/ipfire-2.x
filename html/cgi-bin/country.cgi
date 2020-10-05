@@ -21,8 +21,6 @@
 
 use strict;
 
-use Locale::Codes::Country;
-
 my $col;
 my $lines = '1';
 my $lines2 = '';
@@ -31,6 +29,8 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+
+require "${General::swroot}/location-functions.pl";
 
 &Header::showhttpheaders();
 
@@ -52,8 +52,11 @@ print<<END;
 	</tr>
 END
 
+# Init libloc database connection.
+my $db_handle = &Location::Functions::init();
+
 # Get a list of all supported country codes.
-my @countries = Locale::Codes::Country::all_country_codes();
+my @countries = &Location::database_countries($db_handle);
 
 # Loop through whole country list.
 foreach my $country (@countries) {

@@ -2007,6 +2007,7 @@
 'pakfire tree stable' => 'Stable',
 'pakfire tree testing' => 'Testing',
 'pakfire tree unstable' => 'Unstable',
+'pakfire uninstall all' => 'Do you want to uninstall the following packages?',
 'pakfire uninstall description' => 'Please choose one or more items from the list below and <br /> click the minus to uninstall.',
 'pakfire uninstall package' => 'You want to uninstall the following packages: ',
 'pakfire update daily' => 'Search for updates daily:',

@@ -59,6 +59,7 @@ etc/raddb
 #etc/raddb/mods-available/perl
 #etc/raddb/mods-available/preprocess
 #etc/raddb/mods-available/python
+#etc/raddb/mods-available/python3
 #etc/raddb/mods-available/radutmp
 #etc/raddb/mods-available/realm
 #etc/raddb/mods-available/redis
@@ -133,7 +134,14 @@ etc/raddb
 #etc/raddb/mods-config/sql/ippool-dhcp/sqlite
 #etc/raddb/mods-config/sql/ippool-dhcp/sqlite/queries.conf
 #etc/raddb/mods-config/sql/ippool-dhcp/sqlite/schema.sql
+#etc/raddb/mods-config/sql/ippool/mongo
+#etc/raddb/mods-config/sql/ippool/mongo/queries.conf
+#etc/raddb/mods-config/sql/ippool/mssql
+#etc/raddb/mods-config/sql/ippool/mssql/procedure.sql
+#etc/raddb/mods-config/sql/ippool/mssql/queries.conf
+#etc/raddb/mods-config/sql/ippool/mssql/schema.sql
 #etc/raddb/mods-config/sql/ippool/mysql
+#etc/raddb/mods-config/sql/ippool/mysql/procedure.sql
 #etc/raddb/mods-config/sql/ippool/mysql/queries.conf
 #etc/raddb/mods-config/sql/ippool/mysql/schema.sql
 #etc/raddb/mods-config/sql/ippool/postgresql
@@ -144,11 +152,14 @@ etc/raddb
 #etc/raddb/mods-config/sql/ippool/sqlite/queries.conf
 #etc/raddb/mods-config/sql/ippool/sqlite/schema.sql
 #etc/raddb/mods-config/sql/main
+#etc/raddb/mods-config/sql/main/mongo
+#etc/raddb/mods-config/sql/main/mongo/queries.conf
 #etc/raddb/mods-config/sql/main/mysql
 #etc/raddb/mods-config/sql/main/mysql/extras
 #etc/raddb/mods-config/sql/main/mysql/extras/wimax
 #etc/raddb/mods-config/sql/main/mysql/extras/wimax/queries.conf
 #etc/raddb/mods-config/sql/main/mysql/extras/wimax/schema.sql
+#etc/raddb/mods-config/sql/main/mysql/process-radacct.sql
 #etc/raddb/mods-config/sql/main/mysql/queries.conf
 #etc/raddb/mods-config/sql/main/mysql/schema.sql
 #etc/raddb/mods-config/sql/main/mysql/setup.sql
@@ -160,10 +171,13 @@ etc/raddb
 #etc/raddb/mods-config/sql/main/postgresql/extras
 #etc/raddb/mods-config/sql/main/postgresql/extras/cisco_h323_db_schema.sql
 #etc/raddb/mods-config/sql/main/postgresql/extras/voip-postpaid.conf
+#etc/raddb/mods-config/sql/main/postgresql/process-radacct.sql
 #etc/raddb/mods-config/sql/main/postgresql/queries.conf
 #etc/raddb/mods-config/sql/main/postgresql/schema.sql
 #etc/raddb/mods-config/sql/main/postgresql/setup.sql
 #etc/raddb/mods-config/sql/main/sqlite
+#etc/raddb/mods-config/sql/main/sqlite/process-radacct-refresh.sh
+#etc/raddb/mods-config/sql/main/sqlite/process-radacct-schema.sql
 #etc/raddb/mods-config/sql/main/sqlite/queries.conf
 #etc/raddb/mods-config/sql/main/sqlite/schema.sql
 #etc/raddb/mods-config/sql/moonshot-targeted-ids
@@ -230,6 +244,7 @@ etc/raddb
 #etc/raddb/sites-available/channel_bindings
 #etc/raddb/sites-available/check-eap-tls
 #etc/raddb/sites-available/coa
+#etc/raddb/sites-available/coa-relay
 #etc/raddb/sites-available/control-socket
 #etc/raddb/sites-available/copy-acct-to-home-server
 #etc/raddb/sites-available/decoupled-accounting
@@ -762,6 +777,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.extreme
 #usr/share/freeradius/dictionary.f5
 #usr/share/freeradius/dictionary.fdxtended
+#usr/share/freeradius/dictionary.force10
 #usr/share/freeradius/dictionary.fortinet
 #usr/share/freeradius/dictionary.foundry
 #usr/share/freeradius/dictionary.freedhcp
@@ -804,6 +820,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.motorola.illegal
 #usr/share/freeradius/dictionary.motorola.wimax
 #usr/share/freeradius/dictionary.navini
+#usr/share/freeradius/dictionary.net
 #usr/share/freeradius/dictionary.netscreen
 #usr/share/freeradius/dictionary.networkphysics
 #usr/share/freeradius/dictionary.nexans
@@ -818,12 +835,14 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.patton
 #usr/share/freeradius/dictionary.perle
 #usr/share/freeradius/dictionary.pfsense
+#usr/share/freeradius/dictionary.pica8
 #usr/share/freeradius/dictionary.propel
 #usr/share/freeradius/dictionary.prosoft
 #usr/share/freeradius/dictionary.proxim
 #usr/share/freeradius/dictionary.purewave
 #usr/share/freeradius/dictionary.quiconnect
 #usr/share/freeradius/dictionary.quintum
+#usr/share/freeradius/dictionary.rcntec
 #usr/share/freeradius/dictionary.redcreek
 #usr/share/freeradius/dictionary.rfc2865
 #usr/share/freeradius/dictionary.rfc2866
@@ -884,6 +903,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.terena
 #usr/share/freeradius/dictionary.trapeze
 #usr/share/freeradius/dictionary.travelping
+#usr/share/freeradius/dictionary.tripplite
 #usr/share/freeradius/dictionary.tropos
 #usr/share/freeradius/dictionary.ukerna
 #usr/share/freeradius/dictionary.unix
@@ -891,6 +911,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.usr.illegal
 #usr/share/freeradius/dictionary.utstarcom
 #usr/share/freeradius/dictionary.valemount
+#usr/share/freeradius/dictionary.vasexperts
 #usr/share/freeradius/dictionary.verizon
 #usr/share/freeradius/dictionary.versanet
 #usr/share/freeradius/dictionary.vqp

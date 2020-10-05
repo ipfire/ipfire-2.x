@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.52.0
+VER        = 0.89.0
 
 THISAPP    = poppler-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = dfdd55d5df39685bbb82b0c08fa4ef66
+$(DL_FILE)_MD5 = 92ac57f60ae8c3a1f8bfe01c9530b7b5
 
 install : $(TARGET)
 
@@ -70,16 +70,17 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && \
-		./configure \
-			--prefix=/usr \
-			--enable-cairo-output \
-			--enable-cms=lcms2 \
-			--enable-libjpeg \
-			--enable-libpng \
-			--enable-xpdf-headers
+	cd $(DIR_APP) && mkdir -pv build
+	cd $(DIR_APP)/build && cmake \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DTESTDATADIR=$PWD/testfiles \
+		-DENABLE_UNSTABLE_API_ABI_HEADERS=ON \
+		-ENABLE_QT5=OFF \
+		..
 
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP)/build && make $(MAKETUNING)
+	cd $(DIR_APP)/build && make install
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

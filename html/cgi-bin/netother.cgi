@@ -71,7 +71,7 @@ if ( $querry[0] eq "conntrack") {
 		&Header::closebox();
 	}
 
-	&Header::openbox('100%', 'center', "$Lang::tr{'connnection tracking'}");
+	&Header::openbox('100%', 'center', "$Lang::tr{'connection tracking'}");
 	&Graphs::makegraphbox("netother.cgi", "conntrack", "day");
 	&Header::closebox();
 

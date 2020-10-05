@@ -11,6 +11,8 @@ case "${1}" in
 		# Check if we are running in the cloud
 		if running_on_ec2; then
 			scriptname="/etc/rc.d/helper/aws-setup"
+		elif running_on_exoscale; then
+			scriptname="/etc/rc.d/helper/exoscale-setup"
 		elif running_on_azure; then
 			scriptname="/etc/rc.d/helper/azure-setup"
 		elif running_on_gcp; then
@@ -60,6 +62,11 @@ case "${1}" in
 		# Check Amazon
 		if running_on_ec2; then
 			echo "This system is running on AWS EC2"
+			exit 0
+
+		# Check Exoscale
+		elif running_on_exoscale; then
+			echo "This system is running on Exoscale"
 			exit 0
 
 		# Check Microsoft

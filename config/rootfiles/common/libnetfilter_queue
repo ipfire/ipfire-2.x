@@ -1,4 +1,3 @@
-#usr/include/internal.h
 #usr/include/libnetfilter_queue
 #usr/include/libnetfilter_queue/libnetfilter_queue.h
 #usr/include/libnetfilter_queue/libnetfilter_queue_ipv4.h
@@ -10,5 +9,5 @@
 #usr/lib/libnetfilter_queue.la
 #usr/lib/libnetfilter_queue.so
 usr/lib/libnetfilter_queue.so.1
-usr/lib/libnetfilter_queue.so.1.4.0
+usr/lib/libnetfilter_queue.so.1.5.0
 #usr/lib/pkgconfig/libnetfilter_queue.pc

@@ -1,0 +1,10 @@
+#usr/bin/mdb_copy
+#usr/bin/mdb_dump
+#usr/bin/mdb_load
+#usr/bin/mdb_stat
+#usr/include/lmdb.h
+usr/lib/liblmdb.so
+#usr/share/man/man1/mdb_copy.1
+#usr/share/man/man1/mdb_dump.1
+#usr/share/man/man1/mdb_load.1
+#usr/share/man/man1/mdb_stat.1

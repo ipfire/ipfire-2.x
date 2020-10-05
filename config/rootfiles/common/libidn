@@ -9,8 +9,8 @@ usr/bin/idn
 #usr/lib/libidn.a
 #usr/lib/libidn.la
 usr/lib/libidn.so
-usr/lib/libidn.so.11
-usr/lib/libidn.so.11.6.18
+usr/lib/libidn.so.12
+usr/lib/libidn.so.12.6.1
 #usr/lib/pkgconfig/libidn.pc
 #usr/share/emacs
 #usr/share/emacs/site-lisp

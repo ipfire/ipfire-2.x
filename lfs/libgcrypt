@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.8.5
+VER        = 1.8.6
 
 THISAPP    = libgcrypt-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 348cc4601ca34307fc6cd6c945467743
+$(DL_FILE)_MD5 = e9dfc1e789a2a42f36917c543fcd7862
 
 install : $(TARGET)
 
