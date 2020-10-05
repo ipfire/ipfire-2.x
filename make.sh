@@ -1403,6 +1403,7 @@ buildipfire() {
   lfsmake2 hplip
   lfsmake2 cifs-utils
   lfsmake2 krb5
+  lfsmake2 rpcsvc-proto
   lfsmake2 samba
   lfsmake2 netatalk
   lfsmake2 sudo
@@ -1439,7 +1440,6 @@ buildipfire() {
   lfsmake2 rsync
   lfsmake2 rpcbind
   lfsmake2 keyutils
-  lfsmake2 rpcsvc-proto
   lfsmake2 libnfsidmap
   lfsmake2 nfs
   lfsmake2 gnu-netcat
