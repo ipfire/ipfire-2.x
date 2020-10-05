@@ -9,9 +9,10 @@
 
 function fix_permissions() {
 	local lockdir="/var/lib/samba/winbindd_privileged"
-
 	chmod 750 "${lockdir}"
 	chgrp wbpriv "${lockdir}"
+
+	mkdir -p /var/run/samba/{nmbd,ncalrpc,winbindd}
 }
 
 case "$1" in
