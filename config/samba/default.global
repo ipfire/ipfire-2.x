@@ -23,7 +23,7 @@ null passwords = yes
 
 bind interfaces only = true
 interfaces =  green0 127.0.0.1
-socket options = TCP_NODELAY SO_RCVBUF=8192 SO_SNDBUF=8192 SO_KEEPALIVE
+socket options = TCP_NODELAY SO_KEEPALIVE
 
 username level = 1
 wins support = true

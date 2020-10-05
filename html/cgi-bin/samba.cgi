@@ -97,7 +97,7 @@ $sambasettings{'SYSLOGLEVEL'} = '1';
 $sambasettings{'SYSLOGONLY'} = 'on';
 $sambasettings{'DOSCHARSET'} = 'CP850';
 $sambasettings{'UNIXCHARSET'} = 'UTF8';
-$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=819200 SO_SNDBUF=819200 SO_KEEPALIVE';
+$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_KEEPALIVE';
 $sambasettings{'WIDELINKS'} = 'on';
 $sambasettings{'UNIXEXTENSION'} = 'off';
 $sambasettings{'SMB2'} = 'on';
@@ -180,7 +180,7 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'LOCALMASTER'} = 'off';
 	$sambasettings{'DOMAINMASTER'} = 'off';
 	$sambasettings{'PREFERREDMASTER'} = 'off';
-	$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_RCVBUF=819200 SO_SNDBUF=819200 SO_KEEPALIVE';
+	$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_KEEPALIVE';
 	$sambasettings{'WIDELINKS'} = 'on';
 	$sambasettings{'UNIXEXTENSION'} = 'off';
 	$sambasettings{'SMB2'} = 'on';
