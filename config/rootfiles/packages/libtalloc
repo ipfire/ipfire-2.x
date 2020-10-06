@@ -1,0 +1,5 @@
+#usr/include/talloc.h
+#usr/lib/libtalloc.so
+usr/lib/libtalloc.so.2
+usr/lib/libtalloc.so.2.3.1
+#usr/lib/pkgconfig/talloc.pc
