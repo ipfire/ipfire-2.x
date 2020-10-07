@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 69
+PAK_VER    = 70
 
-DEPS       = cups libtirpc krb5 perl-Parse-Yapp
+DEPS       = avahi cups libtirpc krb5 perl-Parse-Yapp
 
 ###############################################################################
 # Top-level Rules
@@ -90,9 +90,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--with-acl-support \
 		--with-sendfile-support \
 		--with-winbind \
-		--enable-fhs \
+		--enable-avahi \
 		--enable-cups \
-		--disable-avahi \
+		--enable-fhs \
 		--with-syslog
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
