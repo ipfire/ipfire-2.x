@@ -160,12 +160,10 @@ import_azure_configuration() {
 		local ipv4_address_num="$(to_integer "${ipv4_address}")"
 		local prefix="$(get "network/interface/${device_number}/ipv4/subnet/0/prefix")"
 		local netmask="$(prefix2netmask "${prefix}")"
-		local netmask_num="$(to_integer "${netmask}")"
 
-		# Calculate the network and broadcast addresses
+		# Get the network address
 		local netaddress="$(get "network/interface/${device_number}/ipv4/subnet/0/address")"
 		local netaddress_num="$(to_integer "${netaddress}")"
-		local broadcast="$(to_address $(( ipv4_address_num | (0xffffffff ^ netmask_num) )))"
 
 		case "${device_number}" in
 			# RED
@@ -183,7 +181,6 @@ import_azure_configuration() {
 					echo "RED_ADDRESS=${ipv4_address}"
 					echo "RED_NETMASK=${netmask}"
 					echo "RED_NETADDRESS=${netaddress}"
-					echo "RED_BROADCAST=${broadcast}"
 					echo "DEFAULT_GATEWAY=${gateway}"
 				) >> /var/ipfire/ethernet/settings
 
@@ -213,7 +210,6 @@ import_azure_configuration() {
 					echo "GREEN_ADDRESS=${ipv4_address}"
 					echo "GREEN_NETMASK=${netmask}"
 					echo "GREEN_NETADDRESS=${netaddress}"
-					echo "GREEN_BROADCAST=${broadcast}"
 				) >> /var/ipfire/ethernet/settings
 				;;
 
@@ -229,7 +225,6 @@ import_azure_configuration() {
 					echo "ORANGE_ADDRESS=${ipv4_address}"
 					echo "ORANGE_NETMASK=${netmask}"
 					echo "ORANGE_NETADDRESS=${netaddress}"
-					echo "ORANGE_BROADCAST=${broadcast}"
 				) >> /var/ipfire/ethernet/settings
 				;;
 		esac

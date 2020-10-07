@@ -39,7 +39,6 @@ int main(void)
 	char s[STRING_SIZE];
 	char command[STRING_SIZE];
 	char red_netmask[STRING_SIZE];
-	char red_broadcast[STRING_SIZE];
 	char red_dev[STRING_SIZE];
 	char default_gateway[STRING_SIZE];
 	char *aliasip;
@@ -94,7 +93,7 @@ int main(void)
 		exit(0);
 
 	/* Get the RED interface details */
-	if((!findkey(kv, "RED_NETMASK", red_netmask)) || (!findkey(kv, "RED_BROADCAST", red_broadcast)) || 
+	if((!findkey(kv, "RED_NETMASK", red_netmask)) ||
 		(!findkey(kv, "RED_DEV", red_dev)) || (!findkey(kv, "DEFAULT_GATEWAY", default_gateway)))
 	{
 		fprintf(stderr, "Cannot read RED settings\n");
@@ -110,12 +109,6 @@ int main(void)
 	if (!VALID_IP(red_netmask))
 	{
 		fprintf(stderr, "Bad red_netmask : %s\n", red_netmask);
-		exit(1);
-	}
-
-	if (!VALID_IP(red_broadcast))
-	{
-		fprintf(stderr, "Bad red_broadcast : %s\n", red_broadcast);
 		exit(1);
 	}
 
@@ -184,8 +177,8 @@ int main(void)
 
 		memset(command, 0, STRING_SIZE);
 		snprintf(command, STRING_SIZE-1,
-				"/sbin/ifconfig %s:%d %s netmask %s broadcast %s up",
-			     red_dev, alias, aliasip, red_netmask, red_broadcast);
+				"/sbin/ifconfig %s:%d %s netmask %s up",
+			     red_dev, alias, aliasip, red_netmask);
 		safe_system(command);
 		memset(command, 0, STRING_SIZE);
 		snprintf(command, STRING_SIZE-1,

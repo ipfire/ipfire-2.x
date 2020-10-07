@@ -51,13 +51,11 @@ fi
 if [ "${TYPE}" == "STATIC" ]; then
 	if [ "${DEVICE}" != "${GREEN_DEV}" ]; then
 		ADDRESS="${RED_ADDRESS}"
-		BROADCAST="${RED_BROADCAST}"
 		NETADDRESS="${RED_NETADDRESS}"
 		NETMASK="${RED_NETMASK}"
 		MTU="${RED_MTU}"
 	else
 		ADDRESS="${GREEN_ADDRESS}"
-		BROADCAST="${GREEN_BROADCAST}"
 		NETADDRESS="${GREEN_NETADDRESS}"
 		NETMASK="${GREEN_NETMASK}"
 		MTU="${GREEN_MTU}"
@@ -66,14 +64,9 @@ if [ "${TYPE}" == "STATIC" ]; then
 	# DNS1
 	# DNS2
 
-	if [ -z "${BROADCAST}" ]; then
-		boot_mesg "BROADCAST variable missing, cannot continue." ${FAILURE}
-		echo_failure
-		exit 1
-	fi
 	if [ -n "${ADDRESS}" -a -n "${NETMASK}" ]; then
 		PREFIX=`whatmask ${NETMASK} | grep -e ^CIDR | awk -F': ' '{ print $2 }' | cut -c 2-`
-		args="${args} ${ADDRESS}/${PREFIX} broadcast ${BROADCAST}"
+		args="${args} ${ADDRESS}/${PREFIX}"
 	else
 		boot_mesg "ADDRESS and/or NETMASK variable missing from input, cannot continue." ${FAILURE}
 		echo_failure
