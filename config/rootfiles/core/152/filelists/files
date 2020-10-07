@@ -1,10 +1,10 @@
 etc/system-release
 etc/issue
-etc/rc.d/helpers/aws-setup
-etc/rc.d/helpers/azure-setup
-etc/rc.d/helpers/exoscale-setup
-etc/rc.d/helpers/gcp-setup
-etc/rc.d/helpers/oci-setup
+etc/rc.d/helper/aws-setup
+etc/rc.d/helper/azure-setup
+etc/rc.d/helper/exoscale-setup
+etc/rc.d/helper/gcp-setup
+etc/rc.d/helper/oci-setup
 etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/red
 srv/web/ipfire/cgi-bin/credits.cgi
