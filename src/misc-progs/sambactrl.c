@@ -56,10 +56,6 @@ int main(int argc, char *argv[]) {
 		safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/default.shares > /var/ipfire/samba/smb.conf");
 		safe_system("/bin/cat /var/ipfire/samba/default.shares > /var/ipfire/samba/shares");
 
-	} else if (strcmp(argv[1], "smbprinterreset") == 0) {
-		safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/shares /var/default.printer > /var/ipfire/samba/smb.conf");
-		safe_system("/bin/cat /var/ipfire/samba/default.printer > /var/ipfire/samba/printer");
-
 	} else if (strcmp(argv[1], "smbstop") == 0) {
 		safe_system("/etc/rc.d/init.d/samba stop >/dev/null");
 		safe_system("/usr/local/bin/sambactrl disable");
