@@ -85,6 +85,7 @@ $sambasettings{'GUESTACCOUNT'} = 'samba';
 $sambasettings{'MAPTOGUEST'} = 'Bad User';
 $sambasettings{'WIDELINKS'} = 'on';
 $sambasettings{'UNIXEXTENSION'} = 'off';
+$sambasettings{'ENCRYPTION'} = 'optional';
 ### Values that have to be initialized
 $sambasettings{'ACTION'} = '';
 my $LOGLINES = '50';
@@ -198,14 +199,20 @@ logging = syslog
 preferred master = $sambasettings{'PREFERREDMASTER'}
 domain master = $sambasettings{'DOMAINMASTER'}
 local master = $sambasettings{'LOCALMASTER'}
+END
+;
 
+if ($sambasettings{'ENCRYPTION'} =~ m/(desired|required)/) {
+	print FILE "smb encrypt = $1\n";
+}
+
+print FILE <<END;
 # Export all printers
 [printers]
 path = /var/spool/samba/
 printable = yes
 
 END
-;
 close FILE;
 
 if ($sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' )
@@ -283,6 +290,10 @@ $checked{'ORANGE'}{$sambasettings{'ORANGE'}} = "checked='checked'";
 $checked{'VPN'}{'off'} = '';
 $checked{'VPN'}{'on'} = '';
 $checked{'VPN'}{$sambasettings{'VPN'}} = "checked='checked'";
+$selected{'ENCRYPTION'}{'optional'} = '';
+$selected{'ENCRYPTION'}{'desired'} = '';
+$selected{'ENCRYPTION'}{'required'} = '';
+$selected{'ENCRYPTION'}{$sambasettings{'ENCRYPTION'}} = "selected='selected'";
 
 if ( $sambasettings{'MAPTOGUEST'} eq "Never" ) {
 	$sambasettings{'MAPTOGUEST'}="Bad User";
@@ -368,6 +379,11 @@ print <<END
 																				<option value='domain' $selected{'SECURITY'}{'domain'}>Domain</option>
 																				<option value='ADS' $selected{'SECURITY'}{'ADS'}>ADS</option>
 																				<option value='server' $selected{'SECURITY'}{'server'}>Server</option>
+																				</select></td></tr>
+<tr><td align='left' width='40%'>$Lang::tr{'encryption'}</td><td align='left'><select name='ENCRYPTION' style="width: 165px">
+																				<option value='optional' $selected{'ENCRYPTION'}{'optional'}>$Lang::tr{'optional'}</option>
+																				<option value='desired' $selected{'ENCRYPTION'}{'desired'}>$Lang::tr{'desired'}</option>
+																				<option value='required' $selected{'ENCRYPTION'}{'required'}>$Lang::tr{'required'}</option>
 																				</select></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'map to guest'}</td><td align='left'><select name='MAPTOGUEST' style="width: 165px">
 																						<option value='Bad User' $selected{'MAPTOGUEST'}{'Bad User'}>Bad User</option>

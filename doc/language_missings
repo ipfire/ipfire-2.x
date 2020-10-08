@@ -27,6 +27,7 @@
 < choose media
 < could not connect to www ipfire org
 < cryptographic settings
+< desired
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
 < dh name is invalid
@@ -39,7 +40,9 @@
 < no entries
 < notes
 < okay
+< optional
 < quick control
+< required
 < shaping add options
 < show areas
 < show lines
@@ -203,6 +206,7 @@
 < default ip
 < default IP address
 < deprecated fs warn
+< desired
 < details
 < dh
 < dhcp dns enable update
@@ -639,6 +643,7 @@
 < openvpn prefix openvpn subnet
 < openvpn prefix remote subnet
 < openvpn subnet is used
+< optional
 < other
 < our donors
 < outgoing compression in bytes per second
@@ -711,6 +716,7 @@
 < rdns
 < received
 < red1
+< required
 < required field
 < runmode
 < samba join a domain
@@ -922,8 +928,11 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< desired
 < g.dtm
 < g.lite
+< optional
+< required
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -1010,6 +1019,7 @@
 < Daily
 < dangerous
 < default IP address
+< desired
 < dhcp dns enable update
 < dhcp dns key name
 < dhcp dns update
@@ -1166,6 +1176,7 @@
 < one week
 < one year
 < open connections
+< optional
 < outgoing compression in bytes per second
 < outgoing overhead in bytes per second
 < ovpn add conf
@@ -1188,6 +1199,7 @@
 < ptr
 < rdns
 < received
+< required
 < required field
 < runmode
 < samba join a domain
@@ -1369,6 +1381,7 @@
 < dangerous
 < default
 < default IP address
+< desired
 < dh
 < dhcp dns enable update
 < dhcp dns key name
@@ -1560,6 +1573,7 @@
 < one week
 < one year
 < open connections
+< optional
 < outgoing compression in bytes per second
 < outgoing overhead in bytes per second
 < ovpn add conf
@@ -1592,6 +1606,7 @@
 < random number generator daemon
 < rdns
 < received
+< required
 < required field
 < runmode
 < samba join a domain
@@ -1845,6 +1860,7 @@
 < default ip
 < default IP address
 < deprecated fs warn
+< desired
 < details
 < dh
 < dhcp dns enable update
@@ -2283,6 +2299,7 @@
 < openvpn prefix openvpn subnet
 < openvpn prefix remote subnet
 < openvpn subnet is used
+< optional
 < other
 < our donors
 < outgoing compression in bytes per second
@@ -2341,6 +2358,7 @@
 < rdns
 < received
 < red1
+< required
 < required field
 < runmode
 < samba join a domain
@@ -2699,6 +2717,7 @@
 < default ip
 < default IP address
 < deprecated fs warn
+< desired
 < details
 < dh
 < dhcp dns enable update
@@ -3143,6 +3162,7 @@
 < openvpn prefix openvpn subnet
 < openvpn prefix remote subnet
 < openvpn subnet is used
+< optional
 < other
 < our donors
 < outgoing compression in bytes per second
@@ -3198,6 +3218,7 @@
 < rdns
 < received
 < red1
+< required
 < required field
 < runmode
 < samba join a domain
@@ -3424,6 +3445,7 @@
 < Daily
 < dangerous
 < default IP address
+< desired
 < Disabled
 < disconnected
 < dns check servers
@@ -3500,6 +3522,7 @@
 < not validating
 < okay
 < open connections
+< optional
 < ovpn connection name
 < ovpn error dh
 < ovpn error md5
@@ -3515,6 +3538,7 @@
 < processor vulnerability mitigations
 < ptr
 < received
+< required
 < runmode
 < sent
 < smt disabled
