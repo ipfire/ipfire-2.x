@@ -95,7 +95,6 @@ $sambasettings{'MAPTOGUEST'} = 'Bad User';
 $sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
 $sambasettings{'DOSCHARSET'} = 'CP850';
 $sambasettings{'UNIXCHARSET'} = 'UTF8';
-$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_KEEPALIVE';
 $sambasettings{'WIDELINKS'} = 'on';
 $sambasettings{'UNIXEXTENSION'} = 'off';
 $sambasettings{'SMB2'} = 'on';
@@ -176,7 +175,6 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'LOCALMASTER'} = 'off';
 	$sambasettings{'DOMAINMASTER'} = 'off';
 	$sambasettings{'PREFERREDMASTER'} = 'off';
-	$sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_KEEPALIVE';
 	$sambasettings{'WIDELINKS'} = 'on';
 	$sambasettings{'UNIXEXTENSION'} = 'off';
 	$sambasettings{'SMB2'} = 'on';
@@ -303,7 +301,6 @@ null passwords = yes
 
 bind interfaces only = true
 interfaces = $sambasettings{'INTERFACES'}
-socket options = $sambasettings{'SOCKETOPTIONS'}
 remote announce = $sambasettings{'REMOTEANNOUNCE'}
 remote browse sync = $sambasettings{'REMOTESYNC'}
 
@@ -535,7 +532,6 @@ print <<END
 <tr><td align='left'><br /></td><td /></tr>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'network options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'os level'}</td><td align='left'><input type='text' name='OSLEVEL' value='$sambasettings{'OSLEVEL'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'socket options'}</td><td align='left'><input type='text' name='SOCKETOPTIONS' value='$sambasettings{'SOCKETOPTIONS'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'remote announce'}</td><td align='left'><input type='text' name='REMOTEANNOUNCE' value='$sambasettings{'REMOTEANNOUNCE'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'remote browse sync'}</td><td align='left'><input type='text' name='REMOTESYNC' value='$sambasettings{'REMOTESYNC'}' size="30" /></td></tr>
 END
