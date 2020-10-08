@@ -82,8 +82,6 @@ $sambasettings{'GREEN'} = 'on';
 $sambasettings{'BLUE'} = 'off';
 $sambasettings{'ORANGE'} = 'off';
 $sambasettings{'VPN'} = 'off';
-$sambasettings{'WINSSRV'} = '';
-$sambasettings{'WINSSUPPORT'} = 'on';
 $sambasettings{'REMOTEANNOUNCE'} = '';
 $sambasettings{'REMOTESYNC'} = '';
 $sambasettings{'PASSWORDSYNC'} = 'off';
@@ -145,8 +143,6 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'BLUE'} = 'off';
 	$sambasettings{'ORANGE'} = 'off';
 	$sambasettings{'VPN'} = 'off';
-	$sambasettings{'WINSSRV'} = '';
-	$sambasettings{'WINSSUPPORT'} = 'on';
 	$sambasettings{'REMOTEANNOUNCE'} = '';
 	$sambasettings{'REMOTESYNC'} = '';
 	$sambasettings{'PASSWORDSYNC'} = 'off';
@@ -240,7 +236,6 @@ delete $sambasettings{'__CGI__'};delete $sambasettings{'x'};delete $sambasetting
 &General::writehash("${General::swroot}/samba/settings", \%sambasettings);
 
 if ($sambasettings{'PASSWORDSYNC'} eq 'on'){ $sambasettings{'PASSWORDSYNC'} = "true";} else { $sambasettings{'PASSWORDSYNC'} = "false";}
-if ($sambasettings{'WINSSUPPORT'} eq 'on'){ $sambasettings{'WINSSUPPORT'} = "true";$sambasettings{'WINSSRV'} = "";} else { $sambasettings{'WINSSUPPORT'} = "false";}
 if ($sambasettings{'LOCALMASTER'} eq 'on'){ $sambasettings{'LOCALMASTER'} = "true";} else { $sambasettings{'LOCALMASTER'} = "false";}
 if ($sambasettings{'DOMAINMASTER'} eq 'on'){ $sambasettings{'DOMAINMASTER'} = "true";} else { $sambasettings{'DOMAINMASTER'} = "false";}
 if ($sambasettings{'PREFERREDMASTER'} eq 'on'){ $sambasettings{'PREFERREDMASTER'} = "true";} else { $sambasettings{'PREFERREDMASTER'} = "false";}
@@ -277,9 +272,6 @@ bind interfaces only = true
 interfaces = $sambasettings{'INTERFACES'}
 remote announce = $sambasettings{'REMOTEANNOUNCE'}
 remote browse sync = $sambasettings{'REMOTESYNC'}
-
-wins support = $sambasettings{'WINSSUPPORT'}
-wins server = $sambasettings{'WINSSRV'}
 
 winbind separator = +
 winbind uid = 10000-20000
@@ -363,9 +355,6 @@ if ($message) {
 ############################################################################################################################
 ########################################## Aktivieren von Checkboxen und Dropdowns #########################################
 
-$checked{'WINSSUPPORT'}{'off'} = '';
-$checked{'WINSSUPPORT'}{'on'} = '';
-$checked{'WINSSUPPORT'}{$sambasettings{'WINSSUPPORT'}} = "checked='checked'";
 $checked{'PASSWORDSYNC'}{'off'} = '';
 $checked{'PASSWORDSYNC'}{'on'} = '';
 $checked{'PASSWORDSYNC'}{$sambasettings{'PASSWORDSYNC'}} = "checked='checked'";
@@ -497,12 +486,6 @@ print <<END
 <tr><td align='left' width='40%'>$Lang::tr{'os level'}</td><td align='left'><input type='text' name='OSLEVEL' value='$sambasettings{'OSLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'remote announce'}</td><td align='left'><input type='text' name='REMOTEANNOUNCE' value='$sambasettings{'REMOTEANNOUNCE'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'remote browse sync'}</td><td align='left'><input type='text' name='REMOTESYNC' value='$sambasettings{'REMOTESYNC'}' size="30" /></td></tr>
-END
-;
-if ($sambasettings{'WINSSUPPORT'} eq 'off') {print"<tr><td align='left' width='40%'>$Lang::tr{'wins server'}</td><td align='left'><input type='text' name='WINSSRV' value='$sambasettings{'WINSSRV'}' size='30' /></td></tr>";}
-	print <<END
-<tr><td align='left' width='40%'>$Lang::tr{'wins support'}</td><td align='left'>on <input type='radio' name='WINSSUPPORT' value='on' $checked{'WINSSUPPORT'}{'on'} />/
-																								<input type='radio' name='WINSSUPPORT' value='off' $checked{'WINSSUPPORT'}{'off'} /> off</td></tr>
 END
 ;
 
