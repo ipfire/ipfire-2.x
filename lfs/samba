@@ -109,7 +109,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cat /var/ipfire/samba/global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf
 	rm -rf /var/lib/samba/private
 	ln -s /var/ipfire/samba/private /var/lib/samba/private
-	-mkdir -p /var/log/samba
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/samba /var/ipfire/backup/addons/includes/samba
 
 	-mkdir -p /var/lib/samba/winbindd_privileged

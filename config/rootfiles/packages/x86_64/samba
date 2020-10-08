@@ -812,7 +812,6 @@ var/lib/samba
 var/lib/samba/bind-dns
 var/lib/samba/private
 var/lib/samba/winbindd_privileged
-var/log/samba
 var/nmbd
 srv/web/ipfire/cgi-bin/samba.cgi
 srv/web/ipfire/cgi-bin/sambahlp.cgi

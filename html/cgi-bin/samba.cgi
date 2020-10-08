@@ -38,9 +38,6 @@ my %mainsettings = ();
 my $message = "";
 my $errormessage = "";
 
-my @Logs = qx(ls /var/log/samba/);
-my $Log =$Lang::tr{'no log selected'};
-
 my $Status = qx(/usr/local/bin/sambactrl smbstatus);
 $Status = &Header::cleanhtml($Status);
 
@@ -88,7 +85,6 @@ $sambasettings{'PASSWORDSYNC'} = 'off';
 $sambasettings{'OTHERINTERFACES'} = '127.0.0.1';
 $sambasettings{'GUESTACCOUNT'} = 'samba';
 $sambasettings{'MAPTOGUEST'} = 'Bad User';
-$sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
 $sambasettings{'WIDELINKS'} = 'on';
 $sambasettings{'UNIXEXTENSION'} = 'off';
 ### Values that have to be initialized
@@ -149,7 +145,6 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'OTHERINTERFACES'} = '127.0.0.1';
 	$sambasettings{'GUESTACCOUNT'} = 'samba';
 	$sambasettings{'MAPTOGUEST'} = 'Bad User';
-	$sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
 ### Samba CUPS Variablen
 	$sambasettings{'LOADPRINTERS'} = 'Yes';
 	$sambasettings{'PRINTING'} = 'cups';
@@ -278,8 +273,8 @@ winbind uid = 10000-20000
 winbind gid = 10000-20000
 winbind use default domain = yes
 
-log file  = /var/log/samba/samba-log.%m
-log level = $sambasettings{'LOGLEVEL'}
+# Log to syslog
+logging = syslog
 
 preferred master = $sambasettings{'PREFERREDMASTER'}
 domain master = $sambasettings{'DOMAINMASTER'}
@@ -427,7 +422,6 @@ print <<END
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'workgroup'}</td><td align='left'><input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'log level'}</td><td align='left'><input type='text' name='LOGLEVEL' value='$sambasettings{'LOGLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'interfaces'}</td><td align='left'>on <input type='radio' name='VPN' value='on' $checked{'VPN'}{'on'} />/
 																						<input type='radio' name='VPN' value='off' $checked{'VPN'}{'off'} /> off |
 																						<font size='2' color='$Header::colourovpn'><b>   OpenVpn  -  $ovpnip[0].$ovpnip[1].$ovpnip[2].$ovpnip[3]/$ovpnnetwork[1]</b></font></td></tr>
@@ -1147,42 +1141,6 @@ END
 ;
 &Header::closebox();
 
-############################################################################################################################
-############################################### Anzeige der Sambalogs ######################################################
-
-
-if ($sambasettings{'ACTION'} eq 'showlog')
-{
-$Log = qx(tail -n $sambasettings{'LOGLINES'} /var/log/samba/$sambasettings{'LOG'});
-$Log=~s/\n/<br \/>/g;
-}
-
-&Header::openbox('100%', 'center', $Lang::tr{'log'});
-
-print <<END
-<a name="$Lang::tr{'log view'}"></a>
-<br />
-<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'log view'}'>
-<table width='95%' cellspacing='0'>
-<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'log view'}</b></td></tr>
-<tr><td colspan='3'  align='left'><br /></td></tr>
-<tr><td  align='left'><select name='LOG' style="width: 200px">
-END
-;
-foreach my $log (@Logs) {chomp $log;print"<option value='$log'>$log</option>";}
-print <<END
-
-</select></td><td  align='left'>$Lang::tr{'show last x lines'}<input type='text' name='LOGLINES' value='$LOGLINES' size="3" /></td>
-			<td  align='left'><input type='hidden' name='ACTION' value='showlog' /><input type='image' alt='view Log' title='view Log' src='/images/format-justify-fill.png' /></td></tr>
-<tr><td colspan='3'  align='left'><br /></td></tr>
-<tr><td colspan='3'  align='left'><font size=2>$Log</font></td></tr>
-<tr><td colspan='3'  align='left'><br /></td></tr>
-<tr><td colspan='3'  align='center'>$sambasettings{'LOG'}</td></tr>
-</table>
-</form>
-END
-;
-&Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
 
