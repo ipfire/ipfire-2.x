@@ -89,10 +89,6 @@ $sambasettings{'WIDELINKS'} = 'on';
 $sambasettings{'UNIXEXTENSION'} = 'off';
 ### Values that have to be initialized
 $sambasettings{'ACTION'} = '';
-### Samba CUPS Variablen
-$sambasettings{'LOADPRINTERS'} = 'Yes';
-$sambasettings{'PRINTING'} = 'cups';
-$sambasettings{'PRINTCAPNAME'} = 'cups';
 my $LOGLINES = '50';
 
 ################################################## Samba PDC Variablen #####################################################
@@ -204,25 +200,11 @@ logging = syslog
 preferred master = $sambasettings{'PREFERREDMASTER'}
 domain master = $sambasettings{'DOMAINMASTER'}
 local master = $sambasettings{'LOCALMASTER'}
-
 END
 ;
 close FILE;
 
-	if (-e "${General::swroot}/cups/enable"){
-	open (FILE, ">>${General::swroot}/samba/global") or die "Can't save the global cups settings: $!";
-	flock (FILE, 2);
-	print FILE <<END
-load printers = $sambasettings{'LOADPRINTERS'}
-printing = $sambasettings{'PRINTING'}
-printcap name = $sambasettings{'PRINTCAPNAME'}
-
-END
-;
-close FILE;
-	}
-
-	if ($sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' )
+if ($sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' )
 	{
 	open (FILE, ">${General::swroot}/samba/pdc") or die "Can't save the pdc settings: $!";
 	flock (FILE, 2);
@@ -239,16 +221,8 @@ END
 	close FILE;
 	}
 
-if ( -e "/var/ipfire/cups/enable")
-	{
-	if ( $sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdccups");refreshpage();}
-	else {system("/usr/local/bin/sambactrl smbsafeconfcups");}
-	}
-else
-	{
 	if ( $sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");refreshpage();}
 	else{system("/usr/local/bin/sambactrl smbsafeconf");}
-	}
 
 system("/usr/local/bin/sambactrl smbreload");refreshpage();
 }
@@ -432,18 +406,6 @@ END
 ;
 	}
 	
-	if ( -e "/var/ipfire/cups/enable")
-	{
-	print <<END
-	<tr><td align='left'><br /></td><td></td></tr>
-	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'printing options'}</b></td></tr>
-	<tr><td align='left' width='40%'>$Lang::tr{'load printer'}</td><td align='left'><input type='text' name='LOADPRINTERS' value='$sambasettings{'LOADPRINTERS'}' size="30" /></td></tr>
-	<tr><td align='left' width='40%'>$Lang::tr{'printing'}</td><td align='left'><input type='text' name='PRINTING' value='$sambasettings{'PRINTING'}' size="30" /></td></tr>
-	<tr><td align='left' width='40%'>$Lang::tr{'printcap name'}</td><td align='left'><input type='text' name='PRINTCAPNAME' value='$sambasettings{'PRINTCAPNAME'}' size="30" /></td></tr>
-END
-;
-	}
-
 print <<END
 </table>
 <br />
@@ -916,8 +878,6 @@ if ($sambasettings{'ACTION'} eq 'smbsharechange')
 
 my %printer =  config("${General::swroot}/samba/printer");
 
-if ( -e "/var/ipfire/cups/enable")
-{
 &Header::openbox('100%', 'center', $Lang::tr{'printer'});
 
 my @Printers = keys(%printer);
@@ -1026,7 +986,6 @@ if ($sambasettings{'ACTION'} eq 'smbprinterchange')
 	}
 
 &Header::closebox();
-}
 
 ############################################################################################################################
 ############################################### Anzeige des Sambastatus ####################################################
@@ -1098,16 +1057,8 @@ if ( $smb eq 'shares')
 
 close FILE;
 
-if ( -e "/var/ipfire/cups/enable")
-	{
-	if ( $sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdccups");}
-	else {system("/usr/local/bin/sambactrl smbsafeconfcups");}
-	}
-else
-	{
-	if ( $sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");}
+if ( $sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");}
 	else{system("/usr/local/bin/sambactrl smbsafeconf");}
-	}
 
 system("/usr/local/bin/sambactrl smbreload");
 refreshpage();
