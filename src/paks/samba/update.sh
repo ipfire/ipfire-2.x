@@ -33,5 +33,10 @@ fi
 
 extract_files
 restore_backup ${NAME}
-echo "passdb backend = smbpasswd" >> /var/ipfire/samba/smb.conf
+
+# Migrate configuration from Samba 3.6 to 4.x
+sed -i /var/ipfire/samba/smb.conf \
+	-e "/^display charset =/d" \
+	-e "s/^security = share$/security = user/"
+
 /usr/local/bin/sambactrl smbstart
