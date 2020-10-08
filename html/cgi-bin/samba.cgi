@@ -128,84 +128,9 @@ if ($sambasettings{'ACTION'} eq 'smbrestart'){system("/usr/local/bin/sambactrl s
 if ($sambasettings{'ACTION'} eq 'smbstart'){system("/usr/local/bin/sambactrl smbstart");refreshpage();}
 if ($sambasettings{'ACTION'} eq 'smbstop'){system("/usr/local/bin/sambactrl smbstop");refreshpage();}
 if ($sambasettings{'ACTION'} eq 'smbreload'){system("/usr/local/bin/sambactrl smbreload");refreshpage();}
-if ($sambasettings{'ACTION'} eq 'globalresetyes')
-	{
-	system("/usr/local/bin/sambactrl smbglobalreset");
-	$sambasettings{'WORKGRP'} = 'homeip.net';
-	$sambasettings{'INTERFACES'} = '';
-	$sambasettings{'SECURITY'} = 'user';
-	$sambasettings{'OSLEVEL'} = '65';
-	$sambasettings{'GREEN'} = 'on';
-	$sambasettings{'BLUE'} = 'off';
-	$sambasettings{'ORANGE'} = 'off';
-	$sambasettings{'VPN'} = 'off';
-	$sambasettings{'REMOTEANNOUNCE'} = '';
-	$sambasettings{'REMOTESYNC'} = '';
-	$sambasettings{'PASSWORDSYNC'} = 'off';
-	$sambasettings{'OTHERINTERFACES'} = '127.0.0.1';
-	$sambasettings{'GUESTACCOUNT'} = 'samba';
-	$sambasettings{'MAPTOGUEST'} = 'Bad User';
-### Samba CUPS Variablen
-	$sambasettings{'LOADPRINTERS'} = 'Yes';
-	$sambasettings{'PRINTING'} = 'cups';
-	$sambasettings{'PRINTCAPNAME'} = 'cups';
-	$sambasettings{'PRINTERNAME'} = 'Printer';
-### Values that have to be initialized
-	$sambasettings{'WIDELINKS'} = 'on';
-	$sambasettings{'UNIXEXTENSION'} = 'off';
-	$sambasettings{'ACTION'} = '';
-	$sambasettings{'LOCALMASTER'} = 'off';
-	$sambasettings{'DOMAINMASTER'} = 'off';
-	$sambasettings{'PREFERREDMASTER'} = 'off';
-	$sambasettings{'WIDELINKS'} = 'on';
-	$sambasettings{'UNIXEXTENSION'} = 'off';
-	$PDCOPTIONS = `cat ${General::swroot}/samba/pdc`;
-	system("/usr/local/bin/sambactrl smbreload");
-	refreshpage();
-	}
-
 if ($sambasettings{'ACTION'} eq 'join') {
 	$message .= &joindomain($sambasettings{'USERNAME'}, $sambasettings{'PASSWORD'});
 }
-
-############################################################################################################################
-################################################ Sicherheitsabfrage für den Reset ##########################################
-
-if ($sambasettings{'ACTION'} eq 'globalreset')
-	{
-	print <<END
-	<br />
-	<table width='95%' cellspacing='0'>
-	<tr><td bgcolor='$color{'color20'}' colspan='3' align='center'><b>$Lang::tr{'resetglobals'}</b>
-	<tr><td align='right' width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' title='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
-					<input type='hidden' name='ACTION' value='globalresetyes' /></form></td>
-			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'no'}' title='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
-					<input type='hidden' name='ACTION' value='cancel' /></form></td>
-	</tr>
-	</table>
-END
-;
-}
-
-if ($sambasettings{'ACTION'} eq 'sharesreset')
-	{
-	print <<END
-	<br />
-	<table width='95%' cellspacing='0'>
-	<tr><td bgcolor='$color{'color20'}' colspan='3' align='center'><b>$Lang::tr{'resetshares'}</b>
-	<tr><td align='right'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					 $Lang::tr{'yes'} <input type='image' alt='$Lang::tr{'yes'}' title='$Lang::tr{'yes'}' src='/images/edit-redo.png' />
-					<input type='hidden' name='ACTION' value='sharesresetyes' /></form></td>
-			<td align='left'  width='50%'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<input type='image' alt='$Lang::tr{'no'}' title='$Lang::tr{'no'}' src='/images/dialog-error.png' /> $Lang::tr{'no'} 
-					<input type='hidden' name='ACTION' value='cancel' /></form></td>
-	</tr>
-	</table>
-END
-;
-	}
 
 ############################################################################################################################
 ########################################### Samba Benutzer oder PC l�chen #################################################
@@ -526,9 +451,6 @@ print <<END
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 												<input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
 												<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></form></td>
-<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-										<input type='hidden' name='ACTION' value='globalreset' />
-										<input type='image' alt='$Lang::tr{'reset'}' title='$Lang::tr{'reset'}' src='/images/reload.gif' /></form></td>
 <td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 										<input type='hidden' name='ACTION' value='globalcaption' />
 										<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
@@ -907,10 +829,6 @@ print <<END
 												<input type='image' alt='$Lang::tr{'add share'}' title='$Lang::tr{'add share'}' src='/images/list-add.png' />
 												</form></td>
 		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
-												<input type='hidden' name='ACTION' value='sharesreset' />
-												<input type='image' alt='$Lang::tr{'reset'}' title='$Lang::tr{'reset'}' src='/images/reload.gif' />
-												</form></td>
-		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
 												<input type='hidden' name='ACTION' value='sharecaption' />
 												<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' />
 												</form></td>
@@ -928,7 +846,6 @@ if ($sambasettings{'ACTION'} eq 'sharecaption')
 	<tr><td align='right' width='33%'><img src='/images/list-add.png' /></td><td align='left'>$Lang::tr{'add share'}</td></tr>
 	<tr><td align='right' width='33%'><img src='/images/edit.gif' /></td><td align='left'>$Lang::tr{'edit share'}</td></tr>
 	<tr><td align='right' width='33%'><img src='/images/media-floppy.png' /></td><td align='left'>$Lang::tr{'save config'}</td></tr>
-	<tr><td align='right' width='33%'><img src='/images/reload.gif' /></td><td align='left'>$Lang::tr{'reset shares'}</td></tr>
 	<tr><td align='right' width='33%'><img src='/images/user-trash.png' /></td><td align='left'>$Lang::tr{'delete share'}</td></tr>
 	</table>
 END
@@ -976,12 +893,6 @@ END
 ;
 	}
 
-if ($sambasettings{'ACTION'} eq 'sharesresetyes')
-	{
-	system('/usr/local/bin/sambactrl smbsharesreset');
-	my $shares = config("${General::swroot}/samba/shares");
-	system("/usr/local/bin/sambactrl smbreload");
-	}
 if ($sambasettings{'ACTION'} eq 'smbshareadd')
 	{
 	$shares{'xvx'}= "$sambasettings{'SHAREOPTION'}";
@@ -1046,10 +957,6 @@ print <<END
 <tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'>
 												<input type='hidden' name='ACTION' value='printeradd' />
 												<input type='image' alt='$Lang::tr{'add printer'}' title='$Lang::tr{'add printer'}' src='/images/list-add.png' />
-												</form></td>
-		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'>
-												<input type='hidden' name='ACTION' value='printereset' />
-												<input type='image' alt='$Lang::tr{'reset'}' title='$Lang::tr{'reset'}' src='/images/reload.gif' />
 												</form></td>
 		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'>
 												<input type='hidden' name='ACTION' value='printercaption' />

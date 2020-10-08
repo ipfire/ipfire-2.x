@@ -46,16 +46,6 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(argv[1], "smbsafeconfpdccups") == 0) {
 		safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/pdc /var/ipfire/samba/shares /var/ipfire/samba/printer > /var/ipfire/samba/smb.conf");
 
-	} else if (strcmp(argv[1], "smbglobalreset") == 0) {
-		safe_system("/bin/cat /var/ipfire/samba/default.global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf");
-		safe_system("/bin/cat /var/ipfire/samba/default.settings > /var/ipfire/samba/settings");
-		safe_system("/bin/cat /var/ipfire/samba/default.global > /var/ipfire/samba/global");
-		safe_system("/bin/cat /var/ipfire/samba/default.pdc > /var/ipfire/samba/pdc");
-
-	} else if (strcmp(argv[1], "smbsharesreset") == 0) {
-		safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/default.shares > /var/ipfire/samba/smb.conf");
-		safe_system("/bin/cat /var/ipfire/samba/default.shares > /var/ipfire/samba/shares");
-
 	} else if (strcmp(argv[1], "smbstop") == 0) {
 		safe_system("/etc/rc.d/init.d/samba stop >/dev/null");
 		safe_system("/usr/local/bin/sambactrl disable");

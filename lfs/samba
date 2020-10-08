@@ -101,11 +101,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/source3 && install -v -m644 ../examples/smb.conf.default /var/ipfire/samba
 	cp -vrf $(DIR_SRC)/config/samba/* /var/ipfire/samba/
 	chown nobody:nobody -R /var/ipfire/samba/
-	cp -vfp /var/ipfire/samba/default.global /var/ipfire/samba/global
-	cp -vfp /var/ipfire/samba/default.pdc /var/ipfire/samba/pdc
-	cp -vfp /var/ipfire/samba/default.settings /var/ipfire/samba/settings
-	cp -vfp /var/ipfire/samba/default.shares /var/ipfire/samba/shares
-	cp -vfp /var/ipfire/samba/default.printer /var/ipfire/samba/printer
 	cat /var/ipfire/samba/global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf
 	rm -rf /var/lib/samba/private
 	ln -s /var/ipfire/samba/private /var/lib/samba/private

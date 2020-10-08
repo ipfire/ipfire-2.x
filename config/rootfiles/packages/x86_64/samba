@@ -793,11 +793,6 @@ usr/sbin/smbd
 usr/sbin/winbindd
 var/ipfire/backup/addons/includes/samba
 #var/ipfire/samba
-var/ipfire/samba/default.global
-var/ipfire/samba/default.pdc
-var/ipfire/samba/default.printer
-var/ipfire/samba/default.settings
-var/ipfire/samba/default.shares
 var/ipfire/samba/global
 var/ipfire/samba/pdc
 var/ipfire/samba/printer
