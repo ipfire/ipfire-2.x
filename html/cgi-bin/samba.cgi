@@ -76,7 +76,6 @@ my %servicenames = ('SMB Daemon' => 'smbd', 'NetBIOS Nameserver' => 'nmbd', 'Win
 
 $sambasettings{'WORKGRP'} = 'homeip.net';
 $sambasettings{'NETBIOSNAME'} = 'IPFire';
-$sambasettings{'SRVSTRING'} = 'Samba running on IPFire 2.x';
 $sambasettings{'INTERFACES'} = '';
 $sambasettings{'SECURITY'} = 'user';
 $sambasettings{'OSLEVEL'} = '33';
@@ -142,7 +141,6 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	system("/usr/local/bin/sambactrl smbglobalreset");
 	$sambasettings{'WORKGRP'} = 'homeip.net';
 	$sambasettings{'NETBIOSNAME'} = 'IPFire';
-	$sambasettings{'SRVSTRING'} = 'Samba running on IPFire 2.x';
 	$sambasettings{'INTERFACES'} = '';
 	$sambasettings{'SECURITY'} = 'user';
 	$sambasettings{'OSLEVEL'} = '65';
@@ -263,8 +261,9 @@ print FILE <<END
 # global.settings by IPFire Project
 
 [global]
+server string = Samba on IPFire
+
 netbios name = $sambasettings{'NETBIOSNAME'}
-server string = $sambasettings{'SRVSTRING'}
 workgroup = $sambasettings{'WORKGRP'}
 realm = $mainsettings{'DOMAINNAME'}
 passdb backend = smbpasswd
@@ -456,7 +455,6 @@ print <<END
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'workgroup'}</td><td align='left'><input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'netbios name'}</td><td align='left'><input type='text' name='NETBIOSNAME' value='$sambasettings{'NETBIOSNAME'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'server string'}</td><td align='left'><input type='text' name='SRVSTRING' value='$sambasettings{'SRVSTRING'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'log level'}</td><td align='left'><input type='text' name='LOGLEVEL' value='$sambasettings{'LOGLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'interfaces'}</td><td align='left'>on <input type='radio' name='VPN' value='on' $checked{'VPN'}{'on'} />/
 																						<input type='radio' name='VPN' value='off' $checked{'VPN'}{'off'} /> off |
