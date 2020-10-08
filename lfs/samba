@@ -110,6 +110,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 750 /var/lib/samba/winbindd_privileged
 	chgrp wbpriv /var/lib/samba/winbindd_privileged
 
+	# Create spool directory for print jobs
+	mkdir -p /var/spool/samba
+	chmod -v 1777 /var/spool/samba/
+
 	#install initscripts
 	$(call INSTALL_INITSCRIPT,samba)
 

@@ -198,6 +198,12 @@ logging = syslog
 preferred master = $sambasettings{'PREFERREDMASTER'}
 domain master = $sambasettings{'DOMAINMASTER'}
 local master = $sambasettings{'LOCALMASTER'}
+
+# Export all printers
+[printers]
+path = /var/spool/samba/
+printable = yes
+
 END
 ;
 close FILE;
