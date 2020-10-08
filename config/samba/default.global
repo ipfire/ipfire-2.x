@@ -6,14 +6,9 @@ server string = Samba
 workgroup = homeip.net
 passdb backend = smbpasswd
 
-keep alive = 30
 os level = 33
-fstype = NTFS
 
-kernel oplocks = false
 map to guest = bad user
-smb ports = 445 139
-unix charset = CP850
 
 security = user
 guest account = samba
@@ -21,16 +16,6 @@ unix password sync = false
 
 bind interfaces only = true
 interfaces =  green0 127.0.0.1
-socket options = TCP_NODELAY SO_KEEPALIVE
 
-username level = 1
-wins support = true
-
-log file       = /var/log/samba/samba-log.%m
-lock directory = /var/lock/samba
-pid directory = /var/run/
+log file  = /var/log/samba/samba-log.%m
 log level = 3 passdb:5 auth:5 winbind:2
-
-preferred master = false
-domain master = false
-local master = false

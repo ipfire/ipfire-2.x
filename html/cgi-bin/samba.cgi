@@ -283,13 +283,9 @@ if ($sambasettings{'SMB2'} eq 'on'){
 }
 
 print FILE <<END
-keep alive = 30
 os level = $sambasettings{'OSLEVEL'}
-fstype = NTFS
 
-kernel oplocks = false
 map to guest = $sambasettings{'MAPTOGUEST'}
-smb ports = 445 139
 dos charset = $sambasettings{'DOSCHARSET'}
 unix charset = $sambasettings{'UNIXCHARSET'}
 
@@ -302,7 +298,6 @@ interfaces = $sambasettings{'INTERFACES'}
 remote announce = $sambasettings{'REMOTEANNOUNCE'}
 remote browse sync = $sambasettings{'REMOTESYNC'}
 
-username level = 1
 wins support = $sambasettings{'WINSSUPPORT'}
 wins server = $sambasettings{'WINSSRV'}
 
@@ -311,8 +306,7 @@ winbind uid = 10000-20000
 winbind gid = 10000-20000
 winbind use default domain = yes
 
-log file       = /var/log/samba/samba-log.%m
-pid directory  = /var/run/
+log file  = /var/log/samba/samba-log.%m
 log level = $sambasettings{'LOGLEVEL'}
 
 preferred master = $sambasettings{'PREFERREDMASTER'}
