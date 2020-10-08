@@ -294,10 +294,8 @@ dos charset = $sambasettings{'DOSCHARSET'}
 unix charset = $sambasettings{'UNIXCHARSET'}
 
 security = $sambasettings{'SECURITY'}
-encrypt passwords = yes
 guest account = $sambasettings{'GUESTACCOUNT'}
 unix password sync = $sambasettings{'PASSWORDSYNC'}
-null passwords = yes
 
 bind interfaces only = true
 interfaces = $sambasettings{'INTERFACES'}

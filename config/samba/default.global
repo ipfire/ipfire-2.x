@@ -16,10 +16,8 @@ smb ports = 445 139
 unix charset = CP850
 
 security = user
-encrypt passwords = yes
 guest account = samba
 unix password sync = false
-null passwords = yes
 
 bind interfaces only = true
 interfaces =  green0 127.0.0.1
