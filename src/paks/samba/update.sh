@@ -17,26 +17,11 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2010 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2007-2020 IPFire-Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+extract_backup_includes
 ./uninstall.sh
-
-# If the wbpriv group does not exist yet, then create it and put squid
-# into it.
-if ! getent group wbpriv >/dev/null; then
-	groupadd -g 88 wbpriv
-	usermod -a -G wbpriv squid
-fi
-
-extract_files
-restore_backup ${NAME}
-
-# Migrate configuration from Samba 3.6 to 4.x
-sed -i /var/ipfire/samba/smb.conf \
-	-e "/^display charset =/d" \
-	-e "s/^security = share$/security = user/"
-
-/usr/local/bin/sambactrl smbstart
+./install.sh
