@@ -36,6 +36,7 @@ restore_backup ${NAME}
 # Migrate configuration from Samba 3.6 to 4.x
 sed -i /var/ipfire/samba/smb.conf \
 	-e "/^display charset =/d" \
+	-e "/^syslog/d" \
 	-e "s/^security = share$/security = user/"
 
 # Start the service

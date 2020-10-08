@@ -93,8 +93,6 @@ $sambasettings{'OTHERINTERFACES'} = '127.0.0.1';
 $sambasettings{'GUESTACCOUNT'} = 'samba';
 $sambasettings{'MAPTOGUEST'} = 'Bad User';
 $sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
-$sambasettings{'SYSLOGLEVEL'} = '1';
-$sambasettings{'SYSLOGONLY'} = 'on';
 $sambasettings{'DOSCHARSET'} = 'CP850';
 $sambasettings{'UNIXCHARSET'} = 'UTF8';
 $sambasettings{'SOCKETOPTIONS'} = 'TCP_NODELAY SO_KEEPALIVE';
@@ -164,8 +162,6 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'GUESTACCOUNT'} = 'samba';
 	$sambasettings{'MAPTOGUEST'} = 'Bad User';
 	$sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
-	$sambasettings{'SYSLOGLEVEL'} = '1';
-	$sambasettings{'SYSLOGONLY'} = 'on';
 	$sambasettings{'DOSCHARSET'} = 'CP850';
 	$sambasettings{'UNIXCHARSET'} = 'UTF8';
 ### Samba CUPS Variablen
@@ -260,7 +256,6 @@ if ($sambasettings{'WINSSUPPORT'} eq 'on'){ $sambasettings{'WINSSUPPORT'} = "tru
 if ($sambasettings{'LOCALMASTER'} eq 'on'){ $sambasettings{'LOCALMASTER'} = "true";} else { $sambasettings{'LOCALMASTER'} = "false";}
 if ($sambasettings{'DOMAINMASTER'} eq 'on'){ $sambasettings{'DOMAINMASTER'} = "true";} else { $sambasettings{'DOMAINMASTER'} = "false";}
 if ($sambasettings{'PREFERREDMASTER'} eq 'on'){ $sambasettings{'PREFERREDMASTER'} = "true";} else { $sambasettings{'PREFERREDMASTER'} = "false";}
-if ($sambasettings{'SYSLOGONLY'} eq 'on'){ $sambasettings{'SYSLOGONLY'} = "yes";} else { $sambasettings{'SYSLOGONLY'} = "no";}
 if ($sambasettings{'WIDELINKS'} eq 'on'){ $sambasettings{'WIDELINKS'} = "yes";} else { $sambasettings{'WIDELINKS'} = "no";}
 if ($sambasettings{'UNIXEXTENSION'} eq 'on'){ $sambasettings{'UNIXEXTENSION'} = "yes";} else { $sambasettings{'UNIXEXTENSION'} = "no";}
 
@@ -324,8 +319,6 @@ winbind use default domain = yes
 log file       = /var/log/samba/samba-log.%m
 pid directory  = /var/run/
 log level = $sambasettings{'LOGLEVEL'}
-syslog = $sambasettings{'SYSLOGLEVEL'}
-syslog only = $sambasettings{'SYSLOGONLY'}
 
 preferred master = $sambasettings{'PREFERREDMASTER'}
 domain master = $sambasettings{'DOMAINMASTER'}
@@ -401,9 +394,6 @@ if ($message) {
 ############################################################################################################################
 ########################################## Aktivieren von Checkboxen und Dropdowns #########################################
 
-$checked{'SYSLOGONLY'}{'off'} = '';
-$checked{'SYSLOGONLY'}{'on'} = '';
-$checked{'SYSLOGONLY'}{$sambasettings{'SYSLOGONLY'}} = "checked='checked'";
 $checked{'WINSSUPPORT'}{'off'} = '';
 $checked{'WINSSUPPORT'}{'on'} = '';
 $checked{'WINSSUPPORT'}{$sambasettings{'WINSSUPPORT'}} = "checked='checked'";
@@ -487,9 +477,6 @@ print <<END
 <tr><td align='left' width='40%'>$Lang::tr{'unix charset'}</td><td align='left'><input type='text' name='UNIXCHARSET' value='$sambasettings{'UNIXCHARSET'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'server string'}</td><td align='left'><input type='text' name='SRVSTRING' value='$sambasettings{'SRVSTRING'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'log level'}</td><td align='left'><input type='text' name='LOGLEVEL' value='$sambasettings{'LOGLEVEL'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>Sys$Lang::tr{'log level'}</td><td align='left'><input type='text' name='SYSLOGLEVEL' value='$sambasettings{'SYSLOGLEVEL'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>Syslog only</td><td align='left'>on <input type='radio' name='SYSLOGONLY' value='on' $checked{'SYSLOGONLY'}{'on'} />/
-																							<input type='radio' name='SYSLOGONLY' value='off' $checked{'SYSLOGONLY'}{'off'} /> off</td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'interfaces'}</td><td align='left'>on <input type='radio' name='VPN' value='on' $checked{'VPN'}{'on'} />/
 																						<input type='radio' name='VPN' value='off' $checked{'VPN'}{'off'} /> off |
 																						<font size='2' color='$Header::colourovpn'><b>   OpenVpn  -  $ovpnip[0].$ovpnip[1].$ovpnip[2].$ovpnip[3]/$ovpnnetwork[1]</b></font></td></tr>
