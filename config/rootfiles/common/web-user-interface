@@ -75,7 +75,6 @@ srv/web/ipfire/cgi-bin/qos.cgi
 srv/web/ipfire/cgi-bin/remote.cgi
 srv/web/ipfire/cgi-bin/routing.cgi
 #srv/web/ipfire/cgi-bin/samba.cgi
-#srv/web/ipfire/cgi-bin/sambahlp.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/shutdown.cgi
 srv/web/ipfire/cgi-bin/speed.cgi

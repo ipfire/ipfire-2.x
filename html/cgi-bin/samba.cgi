@@ -859,8 +859,6 @@ if ($sambasettings{'ACTION'} eq 'shareadd' || $sambasettings{'ACTION'} eq 'optio
 	<table width='95%' cellspacing='0'>
 	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'add share'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
-	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}
- <a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
 	<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'><tr><td colspan='2' align='center'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$defaultoption</textarea></td></tr>
 	</table>
 	<br />
@@ -880,7 +878,6 @@ if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'op
 	<table width='95%' cellspacing='0'>
 	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'edit share'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
-	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}<a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
 	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$shareoption</textarea></td></tr>
 	</table>
 	<br />
@@ -975,7 +972,6 @@ if ($sambasettings{'ACTION'} eq 'printeradd' || $sambasettings{'ACTION'} eq 'pri
 	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'add printer'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
 	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}
- <a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
 	<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'><tr><td colspan='2' align='center'><textarea name="PRINTEROPTION" cols="50" rows="15" Wrap="off">$defaultprinter</textarea></td></tr>
 	</table>
 	<br />
@@ -996,7 +992,6 @@ if ($sambasettings{'ACTION'} eq 'printerchange' || $sambasettings{'ACTION'} eq '
 	<table width='95%' cellspacing='0'>
 	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'edit printer'}</b></td></tr>
 	<tr><td colspan='2' align='center'></td></tr>
-	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}<a href="sambahlp.cgi" target="popup" onClick="window.open ('', 'popup', 'width=580,height=600,scrollbars=yes, toolbar=no,status=no, resizable=yes,menubar=no,location=no,directories=no,top=10,left=10')"><img border="0" src="/images/help-browser.png"></a></td></tr>
 	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'><textarea name="PRINTEROPTION" cols="50" rows="15" Wrap="off">$printeroption</textarea></td></tr>
 	</table>
 	<br />

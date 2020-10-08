@@ -809,6 +809,5 @@ var/lib/samba/private
 var/lib/samba/winbindd_privileged
 var/nmbd
 srv/web/ipfire/cgi-bin/samba.cgi
-srv/web/ipfire/cgi-bin/sambahlp.cgi
 var/ipfire/menu.d/EX-samba.menu
 usr/local/bin/sambactrl
