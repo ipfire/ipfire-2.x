@@ -1195,7 +1195,7 @@ print <<END
 <br />
 <table width='95%' cellspacing='0'>
 <tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'samba status'}</b></td></tr>
-<tr><td  align='left'>$Status</td></tr>
+<tr><td  align='left'><small><pre>$Status</pre></small></td></tr>
 </table>
 END
 ;
