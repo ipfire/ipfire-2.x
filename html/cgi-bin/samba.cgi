@@ -42,7 +42,7 @@ my @Logs = qx(ls /var/log/samba/);
 my $Log =$Lang::tr{'no log selected'};
 
 my $Status = qx(/usr/local/bin/sambactrl smbstatus);
-$Status=~s/\n/<br \/>/g;
+$Status = &Header::cleanhtml($Status);
 
 my $userentry = "";
 my @user = ();
