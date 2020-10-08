@@ -48,8 +48,6 @@ my $userfile = "${General::swroot}/samba/private/smbpasswd";
 my %selected= () ;
 
 my $defaultoption= "[Share]\npath = /var/ipfire/samba/share1\ncomment = Share - Public Access\nbrowseable = yes\nwriteable = yes\ncreate mask = 0777\ndirectory mask = 0777\npublic = yes\nforce user = samba";
-my $defaultprinter= "[Printer]\ncomment = Printer public\npath = /var/spool/cups\nprinting = sysvn\nprintcap = lpstat\npublic = yes\nwritable = no\nprintable = yes";
-my %printer = ();
 my %shares = ();
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
@@ -874,120 +872,6 @@ if ($sambasettings{'ACTION'} eq 'smbsharechange')
 &Header::closebox();
 
 ############################################################################################################################
-################################################ Verwalten von Druckern ####################################################
-
-my %printer =  config("${General::swroot}/samba/printer");
-
-&Header::openbox('100%', 'center', $Lang::tr{'printer'});
-
-my @Printers = keys(%printer);
-print <<END
-<a name="$Lang::tr{'manage printers'}"></a>
-<br />
-<table width='95%' cellspacing='0'>
-<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'manage printers'}</b>
-<tr><td align='left'><u>$Lang::tr{'printername'}</u></td><td colspan='2' width="5%" align='center'><u>$Lang::tr{'options'}</u></td></tr>
-END
-;
-foreach my $printerentry (sort @Printers)
-	{
-	chomp $printerentry;
-	print <<END
-	<tr><td align='left'>$printerentry</td>
-	<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'>
-			<input type='hidden' name='NAME' value='$printerentry' />
-			<input type='hidden' name='ACTION' value='printerchange' />
-			<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
-	</form></td>
-	<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'>
-			<input type='hidden' name='NAME' value='$printerentry' />
-			<input type='hidden' name='ACTION' value='smbprinterdel' />
-			<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
-	</form></td></tr>
-END
-;
-	}
-print <<END
-</table>
-<br />
-<table width='10%' cellspacing='0'>
-<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'>
-												<input type='hidden' name='ACTION' value='printeradd' />
-												<input type='image' alt='$Lang::tr{'add printer'}' title='$Lang::tr{'add printer'}' src='/images/list-add.png' />
-												</form></td>
-		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'>
-												<input type='hidden' name='ACTION' value='printercaption' />
-												<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' />
-												</form></td>
-</tr>
-</table>
-END
-;
-
-if ($sambasettings{'ACTION'} eq 'printeradd' || $sambasettings{'ACTION'} eq 'printercaption' )
-	{
-	print <<END
-	<br />
-	<table width='95%' cellspacing='0'>
-	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'add printer'}</b></td></tr>
-	<tr><td colspan='2' align='center'></td></tr>
-	<tr><td colspan='2' align='center'>$Lang::tr{'show share options'}
-	<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'><tr><td colspan='2' align='center'><textarea name="PRINTEROPTION" cols="50" rows="15" Wrap="off">$defaultprinter</textarea></td></tr>
-	</table>
-	<br />
-	<table width='10%' cellspacing='0'>
-	<tr><td align='center'><input type='hidden' name='ACTION' value='smbprinteradd' />
-													<input type='image' alt='$Lang::tr{'add share'}' title='$Lang::tr{'add share'}' src='/images/media-floppy.png' /></td></tr>
-	</table>
-	</form>
-END
-;
-	}
-	
-if ($sambasettings{'ACTION'} eq 'printerchange' || $sambasettings{'ACTION'} eq 'printercaption2' )
-	{
-	my $printeroption = $printer{$sambasettings{'NAME'}};
-	print <<END
-	<br />
-	<table width='95%' cellspacing='0'>
-	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'edit printer'}</b></td></tr>
-	<tr><td colspan='2' align='center'></td></tr>
-	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage printers'}'><textarea name="PRINTEROPTION" cols="50" rows="15" Wrap="off">$printeroption</textarea></td></tr>
-	</table>
-	<br />
-	<table width='10%' cellspacing='0'>
-	<tr><td align='center'><input type='hidden' name='NAME' value='$sambasettings{'NAME'}' />
-													<input type='image' alt='$Lang::tr{'change share'}' title='$Lang::tr{'change share'}' src='/images/media-floppy.png' />
-													<input type='hidden' name='ACTION' value='smbprinterchange' /></form></td></tr>
-	</table>
-END
-;
-	}
-
-if ($sambasettings{'ACTION'} eq 'smbprinteradd')
-	{
-	$printer{'xvx'}= "$sambasettings{'PRINTEROPTION'}";
-	save("printer");
-	my %printer = config("${General::swroot}/samba/printer");
-	}
-
-if ($sambasettings{'ACTION'} eq 'smbprinterdel')
-	{
-	delete $printer{$sambasettings{'NAME'}};
-	save("printer");
-	my %printer = config("${General::swroot}/samba/printer");
-	}
-
-if ($sambasettings{'ACTION'} eq 'smbprinterchange')
-	{
-	$printer{$sambasettings{'NAME'}} = $sambasettings{'PRINTEROPTION'};
-	save("printer");
-	my %printer = config("${General::swroot}/samba/printer");
-	}
-
-&Header::closebox();
-
-############################################################################################################################
 ############################################### Anzeige des Sambastatus ####################################################
 
 &Header::openbox('100%', 'center', 'Status');
@@ -1048,9 +932,6 @@ sub save
 my $smb = shift;
 open (FILE, ">${General::swroot}/samba/$smb") or die "Can't $smb settings $!";
 flock (FILE, 2);
-
-if ( $smb eq 'printer')
-	{while (my ($name, $option) = each %printer){chomp $option;$option =~ s/\r\n/\n/gi;$option =~ s/^\n//gi;$option =~ s/^\r//gi;$option =~ s/^.\n//gi;$option =~ s/^.\r//gi;print FILE "$option\n";}}
 
 if ( $smb eq 'shares')
 	{while (my ($name, $option) = each %shares){chomp $option;$option =~ s/\r\n/\n/gi;$option =~ s/^\n//gi;$option =~ s/^\r//gi;$option =~ s/^.\n//gi;$option =~ s/^.\r//gi;print FILE "$option\n";}	}
