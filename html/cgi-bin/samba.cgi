@@ -75,7 +75,6 @@ my %servicenames = ('SMB Daemon' => 'smbd', 'NetBIOS Nameserver' => 'nmbd', 'Win
 #################################### Initialisierung von Samba Variablen fr global Settings ###############################
 
 $sambasettings{'WORKGRP'} = 'homeip.net';
-$sambasettings{'NETBIOSNAME'} = 'IPFire';
 $sambasettings{'INTERFACES'} = '';
 $sambasettings{'SECURITY'} = 'user';
 $sambasettings{'OSLEVEL'} = '33';
@@ -140,7 +139,6 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	{
 	system("/usr/local/bin/sambactrl smbglobalreset");
 	$sambasettings{'WORKGRP'} = 'homeip.net';
-	$sambasettings{'NETBIOSNAME'} = 'IPFire';
 	$sambasettings{'INTERFACES'} = '';
 	$sambasettings{'SECURITY'} = 'user';
 	$sambasettings{'OSLEVEL'} = '65';
@@ -263,7 +261,6 @@ print FILE <<END
 [global]
 server string = Samba on IPFire
 
-netbios name = $sambasettings{'NETBIOSNAME'}
 workgroup = $sambasettings{'WORKGRP'}
 realm = $mainsettings{'DOMAINNAME'}
 passdb backend = smbpasswd
@@ -454,7 +451,6 @@ print <<END
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'workgroup'}</td><td align='left'><input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'netbios name'}</td><td align='left'><input type='text' name='NETBIOSNAME' value='$sambasettings{'NETBIOSNAME'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'log level'}</td><td align='left'><input type='text' name='LOGLEVEL' value='$sambasettings{'LOGLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'interfaces'}</td><td align='left'>on <input type='radio' name='VPN' value='on' $checked{'VPN'}{'on'} />/
 																						<input type='radio' name='VPN' value='off' $checked{'VPN'}{'off'} /> off |
