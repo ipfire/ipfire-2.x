@@ -93,8 +93,6 @@ $sambasettings{'OTHERINTERFACES'} = '127.0.0.1';
 $sambasettings{'GUESTACCOUNT'} = 'samba';
 $sambasettings{'MAPTOGUEST'} = 'Bad User';
 $sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
-$sambasettings{'DOSCHARSET'} = 'CP850';
-$sambasettings{'UNIXCHARSET'} = 'UTF8';
 $sambasettings{'WIDELINKS'} = 'on';
 $sambasettings{'UNIXEXTENSION'} = 'off';
 $sambasettings{'SMB2'} = 'on';
@@ -161,8 +159,6 @@ if ($sambasettings{'ACTION'} eq 'globalresetyes')
 	$sambasettings{'GUESTACCOUNT'} = 'samba';
 	$sambasettings{'MAPTOGUEST'} = 'Bad User';
 	$sambasettings{'LOGLEVEL'} = '3 passdb:5 auth:5 winbind:2';
-	$sambasettings{'DOSCHARSET'} = 'CP850';
-	$sambasettings{'UNIXCHARSET'} = 'UTF8';
 ### Samba CUPS Variablen
 	$sambasettings{'LOADPRINTERS'} = 'Yes';
 	$sambasettings{'PRINTING'} = 'cups';
@@ -286,8 +282,6 @@ print FILE <<END
 os level = $sambasettings{'OSLEVEL'}
 
 map to guest = $sambasettings{'MAPTOGUEST'}
-dos charset = $sambasettings{'DOSCHARSET'}
-unix charset = $sambasettings{'UNIXCHARSET'}
 
 security = $sambasettings{'SECURITY'}
 guest account = $sambasettings{'GUESTACCOUNT'}
@@ -462,8 +456,6 @@ print <<END
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'workgroup'}</td><td align='left'><input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'netbios name'}</td><td align='left'><input type='text' name='NETBIOSNAME' value='$sambasettings{'NETBIOSNAME'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'dos charset'}</td><td align='left'><input type='text' name='DOSCHARSET' value='$sambasettings{'DOSCHARSET'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'unix charset'}</td><td align='left'><input type='text' name='UNIXCHARSET' value='$sambasettings{'UNIXCHARSET'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'server string'}</td><td align='left'><input type='text' name='SRVSTRING' value='$sambasettings{'SRVSTRING'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'log level'}</td><td align='left'><input type='text' name='LOGLEVEL' value='$sambasettings{'LOGLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'interfaces'}</td><td align='left'>on <input type='radio' name='VPN' value='on' $checked{'VPN'}{'on'} />/
