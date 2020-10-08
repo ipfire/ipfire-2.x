@@ -40,5 +40,8 @@ sed -i /var/ipfire/samba/smb.conf \
 	-e "/^syslog/d" \
 	-e "s/^security = share$/security = user/"
 
+sed -i /var/ipfire/samba/settings \
+	-e "s/^SECURITY=share/SECURITY=user/"
+
 # Start the service
 /usr/local/bin/sambactrl smbstart
