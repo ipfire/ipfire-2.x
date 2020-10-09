@@ -249,14 +249,34 @@ END
 
 print <<END
 	</table>
-<br />
-<table class="tbl" width='95%' cellspacing='0'>
-<tr><td align='left' width='40%' />
-<td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbstart' /><input type='image' alt='$Lang::tr{'smbstart'}' title='$Lang::tr{'smbstart'}' src='/images/go-up.png' /></form></td>
-<td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbstop' /><input type='image' alt='$Lang::tr{'smbstop'}' title='$Lang::tr{'smbstop'}' src='/images/go-down.png' /></form></td>
-<td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbrestart' /><input type='image' alt='$Lang::tr{'smbrestart'}' title='$Lang::tr{'smbrestart'}' src='/images/view-refresh.png' /></form></td></tr>
-</table>
-<br />
+
+	<br>
+
+	<table width="95%">
+		<td width="33%" align="center">
+			<form method="POST" action="$ENV{'SCRIPT_NAME'}">
+				<input type="hidden" name="ACTION" value="smbstart">
+				<input type="submit" value="$Lang::tr{'enable'}">
+			</form>
+		</td>
+
+		<td width="33%" align="center">
+			<form method="POST" action="$ENV{'SCRIPT_NAME'}">
+				<input type="hidden" name="ACTION" value="smbstop">
+				<input type="submit" value="$Lang::tr{'disable'}">
+			</form>
+		</td>
+
+		<td width="33%" align="center">
+			<form method="POST" action="$ENV{'SCRIPT_NAME'}">
+				<input type="hidden" name="ACTION" value="smbrestart">
+				<input type="submit" value="$Lang::tr{'restart'}">
+			</form>
+		</td>
+	</table>
+
+	<br>
+
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <table class="tbl" width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>

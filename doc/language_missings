@@ -31,8 +31,10 @@
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
 < dh name is invalid
+< disable
 < dns could not add server
 < done
+< enable
 < error the to date has to be later than the from date
 < g.dtm
 < g.lite
@@ -222,6 +224,7 @@
 < dh key warn1
 < dh name is invalid
 < dh parameter
+< disable
 < Disabled
 < disconnected
 < dl client arch insecure
@@ -291,6 +294,7 @@
 < email usemail
 < emerging pro rules
 < emerging rules
+< enable
 < enable smt
 < encryption
 < entropy
@@ -935,6 +939,8 @@
 < bewan adsl pci st
 < bewan adsl usb
 < desired
+< disable
+< enable
 < g.dtm
 < g.lite
 < netbios nameserver daemon
@@ -1034,6 +1040,7 @@
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< disable
 < Disabled
 < disconnected
 < dl client arch insecure
@@ -1080,6 +1087,7 @@
 < email tls implicit
 < email usemail
 < emerging pro rules
+< enable
 < enable smt
 < error
 < error the to date has to be later than the from date
@@ -1405,6 +1413,7 @@
 < dh key warn1
 < dh name is invalid
 < dh parameter
+< disable
 < Disabled
 < disconnected
 < dl client arch insecure
@@ -1459,6 +1468,7 @@
 < email tls implicit
 < email usemail
 < emerging pro rules
+< enable
 < enable smt
 < error
 < error the to date has to be later than the from date
@@ -1888,6 +1898,7 @@
 < dh key warn1
 < dh name is invalid
 < dh parameter
+< disable
 < Disabled
 < disconnected
 < dl client arch insecure
@@ -1957,6 +1968,7 @@
 < email usemail
 < emerging pro rules
 < emerging rules
+< enable
 < enable smt
 < encryption
 < entropy
@@ -2748,6 +2760,7 @@
 < dh key warn1
 < dh name is invalid
 < dh parameter
+< disable
 < Disabled
 < disconnected
 < disk access
@@ -2819,6 +2832,7 @@
 < email usemail
 < emerging pro rules
 < emerging rules
+< enable
 < enable smt
 < encryption
 < entropy
@@ -3467,6 +3481,7 @@
 < dangerous
 < default IP address
 < desired
+< disable
 < Disabled
 < disconnected
 < dns check servers
@@ -3490,6 +3505,7 @@
 < email tls explicit
 < email tls implicit
 < emerging pro rules
+< enable
 < enable smt
 < error
 < error the to date has to be later than the from date

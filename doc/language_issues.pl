@@ -585,6 +585,9 @@ WARNING: translation string unused: shutdown2
 WARNING: translation string unused: sitekey
 WARNING: translation string unused: sitekeyfile
 WARNING: translation string unused: smbreload
+WARNING: translation string unused: smbrestart
+WARNING: translation string unused: smbstart
+WARNING: translation string unused: smbstop
 WARNING: translation string unused: smtphost
 WARNING: translation string unused: smtpport
 WARNING: translation string unused: snort hits
@@ -869,6 +872,7 @@ WARNING: untranslated string: dhcp dns key name = Key Name
 WARNING: untranslated string: dhcp dns update = DNS Update
 WARNING: untranslated string: dhcp dns update algo = Algorithm
 WARNING: untranslated string: dhcp dns update secret = Secret
+WARNING: untranslated string: disable = Disable
 WARNING: untranslated string: disconnected = Disconnected
 WARNING: untranslated string: dl client arch insecure = Download insecure Client Package (zip)
 WARNING: untranslated string: dnat address = Firewall Interface
@@ -930,6 +934,7 @@ WARNING: untranslated string: email tls implicit = implicit (TLS)
 WARNING: untranslated string: email usemail = Activate Mail Service
 WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
 WARNING: untranslated string: emerging rules = Emergingthreats.net Community Rules
+WARNING: untranslated string: enable = Enable
 WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
 WARNING: untranslated string: encryption = Encryption:
 WARNING: untranslated string: entropy = Entropy

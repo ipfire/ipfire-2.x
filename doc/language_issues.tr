@@ -694,6 +694,9 @@ WARNING: translation string unused: shutdown2
 WARNING: translation string unused: sitekey
 WARNING: translation string unused: sitekeyfile
 WARNING: translation string unused: smbreload
+WARNING: translation string unused: smbrestart
+WARNING: translation string unused: smbstart
+WARNING: translation string unused: smbstop
 WARNING: translation string unused: smtphost
 WARNING: translation string unused: smtpport
 WARNING: translation string unused: snort hits
@@ -874,6 +877,7 @@ WARNING: untranslated string: crypto warning = Cryptographic warning
 WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: default IP address = Default IP Address
 WARNING: untranslated string: desired = Desired
+WARNING: untranslated string: disable = Disable
 WARNING: untranslated string: disconnected = Disconnected
 WARNING: untranslated string: dns = unknown string
 WARNING: untranslated string: dns check servers = Check DNS Servers
@@ -896,6 +900,7 @@ WARNING: untranslated string: duration = Duration
 WARNING: untranslated string: email tls explicit = explicit (STARTTLS)
 WARNING: untranslated string: email tls implicit = implicit (TLS)
 WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
+WARNING: untranslated string: enable = Enable
 WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
 WARNING: untranslated string: error = Error
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
