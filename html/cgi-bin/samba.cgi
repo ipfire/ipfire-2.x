@@ -227,7 +227,7 @@ my %servicenames = (
 );
 
 print <<END;
-	<table class="tbl" width='95%' cellspacing='0'>
+	<table class="tbl" width='100%' cellspacing='0'>
 		<tr bgcolor='$color{'color20'}'>
 			<td colspan='2' align='left'><b>$Lang::tr{'all services'}</b></td>
 		</tr>
@@ -249,7 +249,7 @@ print <<END
 
 	<br>
 
-	<table width="95%">
+	<table width="100%">
 		<td width="33%" align="center">
 			<form method="POST" action="$ENV{'SCRIPT_NAME'}">
 				<input type="hidden" name="ACTION" value="smbstart">
@@ -275,7 +275,7 @@ print <<END
 	<br>
 
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table class="tbl" width='95%' cellspacing='0'>
+		<table class="tbl" width='100%' cellspacing='0'>
 			<tr bgcolor='$color{'color20'}'>
 				<td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td>
 			</tr>
@@ -385,7 +385,7 @@ if ($sambasettings{'SECURITY'} eq 'user')
 	&Header::openbox('100%', 'center', $Lang::tr{'user management'});
 	print <<END
 	<br />
-	<table class="tbl" width='95%' cellspacing='0'>
+	<table class="tbl" width='100%' cellspacing='0'>
 	<tr><td colspan='6' align='left'></td></tr>
 	<tr><td bgcolor='$color{'color20'}' colspan='7' align='left'><b>$Lang::tr{'accounting'}</b></td></tr>
 	<tr><td align='left'><u>$Lang::tr{'username'}</u></td><td align='left'><u>$Lang::tr{'password'}</u></td>
@@ -488,7 +488,7 @@ END
 		print <<END
 		<br />
 		<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-		<table width='95%' cellspacing='0'>
+		<table width='100%' cellspacing='0'>
 		<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'change passwords'}</b></td></tr>
 		<tr><td align='left'>$Lang::tr{'username'}</td><td><input type='text' name='USERNAME' value='$username' size='30' readonly='readonly' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'password'}</td><td><input type='password' name='PASSWORD' value='$password' size='30' /></td></tr>
@@ -511,7 +511,7 @@ END
 		print <<END
 		<br />
 		<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-		<table width='95%' cellspacing='0'>
+		<table width='100%' cellspacing='0'>
 		<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'add user'}</b></td></tr>
 		<tr><td align='left'>$Lang::tr{'username'}</td><td><input type='text' name='USERNAME' value='$username' size='30' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'password'}</td><td><input type='password' name='PASSWORD' value='$password' size='30' /></td></tr>
@@ -533,7 +533,7 @@ END
 		print <<END
 		<br />
 		<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-		<table width='95%' cellspacing='0'>
+		<table width='100%' cellspacing='0'>
 		<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'pc add'}</b></td></tr>
 		<tr><td align='left'>$Lang::tr{'client'}</td><td><input type='text' name='PCNAME' value='$pcname' size='30' /></td></tr>
 		<tr><td align='left'>$Lang::tr{'unix group'}</td><td><input type='text' name='GROUP' value='sambawks' size='30' /></td></tr>
@@ -558,7 +558,7 @@ if ($sambasettings{'SECURITY'} eq "ADS") {
 	<form method="POST" action="$ENV{'SCRIPT_NAME'}">
 		<input type="hidden" name="ACTION" value="join">
 
-		<table class="tbl" width="95%">
+		<table class="tbl" width="100%">
 			<tbody>
 				<tr>
 					<td width="40%">
@@ -606,7 +606,7 @@ END
 my %shares =  config("${General::swroot}/samba/shares");
 
 print <<END;
-	<table class="tbl" width='95%' cellspacing='0'>
+	<table class="tbl" width='100%' cellspacing='0'>
 		<tr>
 			<th align='left'>$Lang::tr{'sharename'}</th>
 			<th colspan='2' width="5%" align='center'></th>
@@ -670,7 +670,7 @@ if ($sambasettings{'ACTION'} eq 'shareadd') {
 		<br />
 
 		<form method='POST' action='$ENV{'SCRIPT_NAME'}'>
-			<table width='95%' cellspacing='0'>
+			<table width='100%' cellspacing='0'>
 				<tr bgcolor='$color{'color20'}'>
 					<td align='left'><b>$Lang::tr{'add share'}</b></td>
 				</tr>
@@ -699,7 +699,7 @@ if ($sambasettings{'ACTION'} eq 'sharechange') {
 		<form method='POST' action='$ENV{'SCRIPT_NAME'}'>
 			<input type='hidden' name='NAME' value='$sambasettings{'NAME'}'>
 
-			<table width='95%' cellspacing='0'>
+			<table width='100%' cellspacing='0'>
 				<tr bgcolor='$color{'color20'}'>
 					<td align='left'><b>$Lang::tr{'edit share'}</b></td>
 				</tr>
