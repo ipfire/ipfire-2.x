@@ -480,36 +480,10 @@ END
 	<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 													<input type='hidden' name='ACTION' value='useradd' />
 													<input type='image' alt='$Lang::tr{'add user'}' title='$Lang::tr{'add user'}' src='/images/user-option-add.png' /></form></td>
-END
-;
-
-	print <<END
-	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-											<input type='hidden' name='ACTION' value='usercaption' />
-											<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form>
-	</td></tr>
+	</tr>
 	</table>
 END
 ;
-
-	if ($sambasettings{'ACTION'} eq 'usercaption')
-		{
-		print <<END
-		<br />
-		<table width='95%' cellspacing='0'>
-		<tr><td align='center' colspan='2'><b>$Lang::tr{'caption'}</b></td></tr>
-		<tr><td align='right' width='33%'><img src='/images/user-option-add.png' /></td><td align='left'>$Lang::tr{'add user'}</td></tr>
-		<tr><td align='right' width='33%'><img src='/images/network.png' /></td><td align='left'>$Lang::tr{'pc add'}</td></tr>
-		<tr><td align='right' width='33%'><img src='/images/user-option-remove.png' /></td><td align='left'>$Lang::tr{'delete user'}</td></tr>
-		<tr><td align='right' width='33%'><img src='/images/network-error.png' /></td><td align='left'>$Lang::tr{'delete pc'}</td></tr>
-		<tr><td align='right' width='33%'><img src='/images/off.gif' /></td><td align='left'>$Lang::tr{'activate user'}</td></tr>
-		<tr><td align='right' width='33%'><img src='/images/on.gif' /></td><td align='left'>$Lang::tr{'deactivate user'}</td></tr>
-		<tr><td align='right' width='33%'><img src='/images/edit.gif' /></td><td align='left'>$Lang::tr{'change passwords'}</td></tr>
-		<tr><td align='right' width='33%'><img src='/images/media-floppy.png' /></td><td align='left'>$Lang::tr{'save config'}</td></tr>
-		</table>
-END
-;
-		}
 
 	if ($sambasettings{'ACTION'} eq 'userchangepw')
 		{
@@ -683,31 +657,12 @@ print <<END
 												<input type='hidden' name='ACTION' value='shareadd' />
 												<input type='image' alt='$Lang::tr{'add share'}' title='$Lang::tr{'add share'}' src='/images/list-add.png' />
 												</form></td>
-		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
-												<input type='hidden' name='ACTION' value='sharecaption' />
-												<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' />
-												</form></td>
 </tr>
 </table>
 END
 ;
 
-if ($sambasettings{'ACTION'} eq 'sharecaption')
-	{
-	print <<END
-	<br />
-	<table width='95%' cellspacing='0'>
-	<tr><td align='center' colspan='2'><b>$Lang::tr{'caption'}</b></td></tr>
-	<tr><td align='right' width='33%'><img src='/images/list-add.png' /></td><td align='left'>$Lang::tr{'add share'}</td></tr>
-	<tr><td align='right' width='33%'><img src='/images/edit.gif' /></td><td align='left'>$Lang::tr{'edit share'}</td></tr>
-	<tr><td align='right' width='33%'><img src='/images/media-floppy.png' /></td><td align='left'>$Lang::tr{'save config'}</td></tr>
-	<tr><td align='right' width='33%'><img src='/images/user-trash.png' /></td><td align='left'>$Lang::tr{'delete share'}</td></tr>
-	</table>
-END
-;
-	}
-
-if ($sambasettings{'ACTION'} eq 'shareadd' || $sambasettings{'ACTION'} eq 'optioncaption' )
+if ($sambasettings{'ACTION'} eq 'shareadd')
 	{
 	print <<END
 	<br />
@@ -725,7 +680,7 @@ END
 ;
 	}
 
-if ($sambasettings{'ACTION'} eq 'sharechange' || $sambasettings{'ACTION'} eq 'optioncaption2' )
+if ($sambasettings{'ACTION'} eq 'sharechange')
 	{
 	my $shareoption = $shares{$sambasettings{'NAME'}};
 	print <<END
