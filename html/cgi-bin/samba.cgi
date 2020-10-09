@@ -277,45 +277,110 @@ print <<END
 
 	<br>
 
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<table class="tbl" width='95%' cellspacing='0'>
-<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'workgroup'}</td><td align='left'><input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" /></td></tr>
-<tr><td align='left'><br /></td><td></td></tr>
-<tr><td align='left' width='40%'>Wide links</td><td align='left'>on <input type='radio' name='WIDELINKS' value='on' $checked{'WIDELINKS'}{'on'} />/
-																							<input type='radio' name='WIDELINKS' value='off' $checked{'WIDELINKS'}{'off'} /> off</td></tr>
-<tr><td align='left' width='40%'>Unix extension</td><td align='left'>on <input type='radio' name='UNIXEXTENSION' value='on' $checked{'UNIXEXTENSION'}{'on'} />/
-																							<input type='radio' name='UNIXEXTENSION' value='off' $checked{'UNIXEXTENSION'}{'off'} /> off</td></tr>
-<tr><td align='left'><br /></td><td></td></tr>
-<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'security options'}</b></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'security'}</td><td align='left'><select name='SECURITY' style="width: 165px">
-																				<option value='user' $selected{'SECURITY'}{'user'}>User</option>
-																				<option value='ADS' $selected{'SECURITY'}{'ADS'}>ADS</option>
-																				<option value='server' $selected{'SECURITY'}{'server'}>Server</option>
-																				</select></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'encryption'}</td><td align='left'><select name='ENCRYPTION' style="width: 165px">
-																				<option value='optional' $selected{'ENCRYPTION'}{'optional'}>$Lang::tr{'optional'}</option>
-																				<option value='desired' $selected{'ENCRYPTION'}{'desired'}>$Lang::tr{'desired'}</option>
-																				<option value='required' $selected{'ENCRYPTION'}{'required'}>$Lang::tr{'required'}</option>
-																				</select></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'map to guest'}</td><td align='left'><select name='MAPTOGUEST' style="width: 165px">
-																						<option value='Bad User' $selected{'MAPTOGUEST'}{'Bad User'}>Bad User</option>
-																						<option value='Bad Password' $selected{'MAPTOGUEST'}{'Bad Password'}>Bad Password</option>
-																						</select></td></tr>
-<tr><td align='left'><br /></td><td /></tr>
-<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'network options'}</b></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'remote announce'}</td><td align='left'><input type='text' name='REMOTEANNOUNCE' value='$sambasettings{'REMOTEANNOUNCE'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'remote browse sync'}</td><td align='left'><input type='text' name='REMOTESYNC' value='$sambasettings{'REMOTESYNC'}' size="30" /></td></tr>
-</table>
-<br />
-<table width='10%' cellspacing='0'>
-<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-												<input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
-												<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></form></td>
-<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-										<input type='hidden' name='ACTION' value='globalcaption' />
-										<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' /></form></td></tr>
-</table>
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<table class="tbl" width='95%' cellspacing='0'>
+			<tr bgcolor='$color{'color20'}'>
+				<td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td>
+			</tr>
+			<tr>
+				<td align='left' width='40%'>$Lang::tr{'workgroup'}</td>
+				<td align='left'>
+					<input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" />
+				</td>
+			</tr>
+			<tr>
+				<td align='left'><br /></td>
+				<td></td>
+			</tr>
+			<tr>
+				<td align='left' width='40%'>Wide links</td>
+				<td align='left'>
+					on <input type='radio' name='WIDELINKS' value='on' $checked{'WIDELINKS'}{'on'} /> /
+					<input type='radio' name='WIDELINKS' value='off' $checked{'WIDELINKS'}{'off'} /> off
+				</td>
+			</tr>
+			<tr>
+				<td align='left' width='40%'>Unix extension</td>
+				<td align='left'>
+					on <input type='radio' name='UNIXEXTENSION' value='on' $checked{'UNIXEXTENSION'}{'on'} /> /
+					<input type='radio' name='UNIXEXTENSION' value='off' $checked{'UNIXEXTENSION'}{'off'} /> off
+				</td>
+			</tr>
+			<tr>
+				<td align='left'><br /></td>
+				<td></td>
+			</tr>
+			<tr bgcolor='$color{'color20'}'>
+				<td colspan='2' align='left'><b>$Lang::tr{'security options'}</b></td>
+			</tr>
+			<tr>
+				<td align='left' width='40%'>$Lang::tr{'security'}</td>
+				<td align='left'>
+					<select name='SECURITY' style="width: 165px">
+						<option value='user' $selected{'SECURITY'}{'user'}>User</option>
+						<option value='ADS' $selected{'SECURITY'}{'ADS'}>ADS</option>
+						<option value='server' $selected{'SECURITY'}{'server'}>Server</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td align='left' width='40%'>$Lang::tr{'encryption'}</td>
+				<td align='left'>
+					<select name='ENCRYPTION' style="width: 165px">
+						<option value='optional' $selected{'ENCRYPTION'}{'optional'}>$Lang::tr{'optional'}</option>
+						<option value='desired' $selected{'ENCRYPTION'}{'desired'}>$Lang::tr{'desired'}</option>
+						<option value='required' $selected{'ENCRYPTION'}{'required'}>$Lang::tr{'required'}</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td align='left' width='40%'>$Lang::tr{'map to guest'}</td>
+				<td align='left'>
+					<select name='MAPTOGUEST' style="width: 165px">
+						<option value='Bad User' $selected{'MAPTOGUEST'}{'Bad User'}>Bad User</option>
+						<option value='Bad Password' $selected{'MAPTOGUEST'}{'Bad Password'}>Bad Password</option>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td align='left'><br /></td>
+				<td></td>
+			</tr>
+			<tr bgcolor='$color{'color20'}'>
+				<td colspan='2' align='left'><b>$Lang::tr{'network options'}</b></td>
+			</tr>
+			<tr>
+				<td align='left' width='40%'>$Lang::tr{'remote announce'}</td>
+				<td align='left'>
+					<input type='text' name='REMOTEANNOUNCE' value='$sambasettings{'REMOTEANNOUNCE'}' size="30" />
+				</td>
+			</tr>
+			<tr>
+				<td align='left' width='40%'>$Lang::tr{'remote browse sync'}</td>
+				<td align='left'>
+					<input type='text' name='REMOTESYNC' value='$sambasettings{'REMOTESYNC'}' size="30" />
+				</td>
+			</tr>
+		</table>
+
+		<br>
+
+		<table width='10%' cellspacing='0'>
+			<tr>
+				<td align='center'>
+					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
+						<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' />
+					</form>
+				</td>
+				<td align='center'>
+					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='ACTION' value='globalcaption' />
+						<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' />
+					</form>
+				</td>
+			</tr>
+		</table>
 END
 ;
 
