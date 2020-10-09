@@ -14,6 +14,8 @@ WARNING: translation string unused: TOS Bits
 WARNING: translation string unused: Verbose
 WARNING: translation string unused: access allowed
 WARNING: translation string unused: access refused with this oinkcode
+WARNING: translation string unused: accounting user nonpdc
+WARNING: translation string unused: accounting user pdc
 WARNING: translation string unused: add a new rule
 WARNING: translation string unused: add cron
 WARNING: translation string unused: add network
@@ -216,6 +218,7 @@ WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
 WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
+WARNING: translation string unused: domain master
 WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
@@ -330,6 +333,7 @@ WARNING: translation string unused: insert removable device
 WARNING: translation string unused: install new update
 WARNING: translation string unused: installed
 WARNING: translation string unused: installed updates
+WARNING: translation string unused: interfaces
 WARNING: translation string unused: intrusion detection system log viewer
 WARNING: translation string unused: intrusion detection system2
 WARNING: translation string unused: invalid cache size
@@ -363,6 +367,7 @@ WARNING: translation string unused: line
 WARNING: translation string unused: load printer
 WARNING: translation string unused: loaded modules
 WARNING: translation string unused: local hard disk
+WARNING: translation string unused: local master
 WARNING: translation string unused: localkey
 WARNING: translation string unused: localkeyfile
 WARNING: translation string unused: locationblock country code
@@ -418,6 +423,7 @@ WARNING: translation string unused: monthly traffic bad
 WARNING: translation string unused: monthly volume
 WARNING: translation string unused: monthly volume start day
 WARNING: translation string unused: monthly volume start day short
+WARNING: translation string unused: more
 WARNING: translation string unused: mount
 WARNING: translation string unused: mtu QoS
 WARNING: translation string unused: my new share
@@ -459,6 +465,7 @@ WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
 WARNING: translation string unused: original
+WARNING: translation string unused: os level
 WARNING: translation string unused: out
 WARNING: translation string unused: outgoing firewall
 WARNING: translation string unused: outgoing firewall mode0
@@ -499,6 +506,8 @@ WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key
 WARNING: translation string unused: passwords must be at least 6 characters in length
 WARNING: translation string unused: path to directory
+WARNING: translation string unused: pc
+WARNING: translation string unused: pdc options
 WARNING: translation string unused: phase1 group
 WARNING: translation string unused: phonebook entry
 WARNING: translation string unused: ping disabled
@@ -507,6 +516,7 @@ WARNING: translation string unused: port forwarding configuration
 WARNING: translation string unused: ports
 WARNING: translation string unused: pots
 WARNING: translation string unused: pppoe
+WARNING: translation string unused: prefered master
 WARNING: translation string unused: present
 WARNING: translation string unused: printcap name
 WARNING: translation string unused: printer
@@ -660,6 +670,7 @@ WARNING: translation string unused: umount
 WARNING: translation string unused: umount removable media before to unplug
 WARNING: translation string unused: unencrypted
 WARNING: translation string unused: unix charset
+WARNING: translation string unused: unix password sync
 WARNING: translation string unused: update transcript
 WARNING: translation string unused: updatedatabase
 WARNING: translation string unused: updates
@@ -1231,6 +1242,7 @@ WARNING: untranslated string: monitor interface = Monitor Interface
 WARNING: untranslated string: most preferred = most preferred
 WARNING: untranslated string: mtu = MTU
 WARNING: untranslated string: nameserver = Nameserver
+WARNING: untranslated string: netbios nameserver daemon = NetBIOS Nameserver Daemon
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: none = none
@@ -1316,6 +1328,7 @@ WARNING: untranslated string: sent = Sent
 WARNING: untranslated string: server restart = You are not able to save any changes while the OpenVPN server is running.
 WARNING: untranslated string: show dh = Show Diffie-Hellman parameters
 WARNING: untranslated string: show tls-auth key = Show tls-auth key
+WARNING: untranslated string: smb daemon = SMB Daemon
 WARNING: untranslated string: smt disabled = Simultaneous Multi-Threading (SMT) is disabled
 WARNING: untranslated string: smt enabled = Simultaneous Multi-Threading (SMT) is enabled
 WARNING: untranslated string: smt not supported = Simultaneous Multi-Threading (SMT) is not supported
@@ -1407,6 +1420,7 @@ WARNING: untranslated string: uplink bit rate = Uplink Bit Rate
 WARNING: untranslated string: upload dh key = Upload Diffie-Hellman parameters
 WARNING: untranslated string: uptime load average = Load average
 WARNING: untranslated string: urlfilter redirect template = Redirect page template
+WARNING: untranslated string: user management = unknown string
 WARNING: untranslated string: vendor = Vendor
 WARNING: untranslated string: visit us at = Visit us at
 WARNING: untranslated string: vpn broken = Broken
@@ -1427,6 +1441,7 @@ WARNING: untranslated string: vpn wait = WAITING
 WARNING: untranslated string: vpn weak = Weak
 WARNING: untranslated string: vulnerability = Vulnerability
 WARNING: untranslated string: vulnerable = Vulnerable
+WARNING: untranslated string: winbind daemon = Winbind Daemon
 WARNING: untranslated string: wireless network = WiFi Network
 WARNING: untranslated string: wlan client = Wireless client
 WARNING: untranslated string: wlan client advanced settings = Advanced settings

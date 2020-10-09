@@ -56,8 +56,6 @@ my %shares = ();
 ############################################################################################################################
 ############################################# Samba Dienste fr Statusberprfung ##########################################
 
-my %servicenames = ('SMB Daemon' => 'smbd', 'NetBIOS Nameserver' => 'nmbd', 'Winbind Daemon' => 'winbindd');
-
 &Header::showhttpheaders();
 
 ############################################################################################################################
@@ -227,25 +225,33 @@ $selected{'SECURITY'}{$sambasettings{'SECURITY'}} = "selected='selected'";
 ################################### Aufbau der HTML Seite fr globale Sambaeinstellungen ###################################
 
 &Header::openbox('100%', 'center', $Lang::tr{'samba'});
-print <<END
-<br />
-<table width='95%' cellspacing='0'>
-<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'all services'}</b></td></tr>
-</table><table width='95%' cellspacing='0'>
+
+my %servicenames = (
+	"nmbd"     => $Lang::tr{'netbios nameserver daemon'},
+	"smbd"     => $Lang::tr{'smb daemon'},
+	"winbindd" => $Lang::tr{'winbind daemon'},
+);
+
+print <<END;
+	<table width='95%' cellspacing='0'>
+		<tr bgcolor='$color{'color20'}'>
+			<td colspan='2' align='left'><b>$Lang::tr{'all services'}</b></td>
+		</tr>
 END
-;
 
-my $key = '';
-foreach $key (sort keys %servicenames)
-	{
-	print "<tr><td align='left' width='40%'>$key</td>";
-	my $shortname = $servicenames{$key};
-	my $status = &isrunning($shortname);
-	print "$status</tr>";
-	}
+foreach my $service (sort keys %servicenames) {
+	my $status = &isrunning($service);
+
+	print <<END;
+		<tr>
+			<td align='left' width='40%'>$servicenames{$service}</td>
+			$status
+		</tr>
+END
+}
 
 print <<END
-</table>
+	</table>
 <br />
 <table width='95%' cellspacing='0'>
 <tr><td align='left' width='40%' />
