@@ -72,7 +72,6 @@ my %servicenames = ('SMB Daemon' => 'smbd', 'NetBIOS Nameserver' => 'nmbd', 'Win
 $sambasettings{'WORKGRP'} = 'homeip.net';
 $sambasettings{'INTERFACES'} = '';
 $sambasettings{'SECURITY'} = 'user';
-$sambasettings{'OSLEVEL'} = '33';
 $sambasettings{'GREEN'} = 'on';
 $sambasettings{'BLUE'} = 'off';
 $sambasettings{'ORANGE'} = 'off';
@@ -164,7 +163,6 @@ passdb backend = smbpasswd
 
 wide links = $sambasettings{'WIDELINKS'}
 unix extensions = $sambasettings{'UNIXEXTENSION'}
-os level = $sambasettings{'OSLEVEL'}
 
 map to guest = $sambasettings{'MAPTOGUEST'}
 
@@ -323,7 +321,6 @@ END
 print <<END
 <tr><td align='left'><br /></td><td /></tr>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'network options'}</b></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'os level'}</td><td align='left'><input type='text' name='OSLEVEL' value='$sambasettings{'OSLEVEL'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'remote announce'}</td><td align='left'><input type='text' name='REMOTEANNOUNCE' value='$sambasettings{'REMOTEANNOUNCE'}' size="30" /></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'remote browse sync'}</td><td align='left'><input type='text' name='REMOTESYNC' value='$sambasettings{'REMOTESYNC'}' size="30" /></td></tr>
 </table>
