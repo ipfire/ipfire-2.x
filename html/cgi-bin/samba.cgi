@@ -32,7 +32,6 @@ my %sambasettings = ();
 my %cgisettings = ();
 my %checked = ();
 my %netsettings = ();
-my %ovpnsettings = ();
 my %color = ();
 my %mainsettings = ();
 my $message = "";
@@ -51,13 +50,8 @@ my $defaultoption= "[Share]\npath = /var/ipfire/samba/share1\ncomment = Share - 
 my %shares = ();
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
-&General::readhash("${General::swroot}/ovpn/settings", \%ovpnsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
-
-my @ovpnnetwork = split(/\//,$ovpnsettings{'DOVPN_SUBNET'});
-my @ovpnip      = split(/\./,$ovpnnetwork[0]);
-$ovpnip[3]=$ovpnip[3]+1;
 
 ############################################################################################################################
 ############################################# Samba Dienste fr Statusberprfung ##########################################
@@ -72,14 +66,9 @@ my %servicenames = ('SMB Daemon' => 'smbd', 'NetBIOS Nameserver' => 'nmbd', 'Win
 $sambasettings{'WORKGRP'} = 'homeip.net';
 $sambasettings{'INTERFACES'} = '';
 $sambasettings{'SECURITY'} = 'user';
-$sambasettings{'GREEN'} = 'on';
-$sambasettings{'BLUE'} = 'off';
-$sambasettings{'ORANGE'} = 'off';
-$sambasettings{'VPN'} = 'off';
 $sambasettings{'REMOTEANNOUNCE'} = '';
 $sambasettings{'REMOTESYNC'} = '';
 $sambasettings{'PASSWORDSYNC'} = 'off';
-$sambasettings{'OTHERINTERFACES'} = '127.0.0.1';
 $sambasettings{'GUESTACCOUNT'} = 'samba';
 $sambasettings{'MAPTOGUEST'} = 'Bad User';
 $sambasettings{'WIDELINKS'} = 'on';
@@ -128,13 +117,6 @@ if ($sambasettings{'ACTION'} eq 'userdelete'){system("/usr/local/bin/sambactrl s
 
 if ($sambasettings{'ACTION'} eq $Lang::tr{'save'})
 {
-$sambasettings{'INTERFACES'} = '';
-if ($sambasettings{'GREEN'} eq 'on'){ $sambasettings{'INTERFACES'} .= " $netsettings{'GREEN_DEV'}";}
-if ($sambasettings{'BLUE'} eq 'on'){ $sambasettings{'INTERFACES'} .= " $netsettings{'BLUE_DEV'}";}
-if ($sambasettings{'ORANGE'} eq 'on'){ $sambasettings{'INTERFACES'} .= " $netsettings{'ORANGE_DEV'}";}
-if ($sambasettings{'VPN'} eq 'on'){$sambasettings{'INTERFACES'} .= " ";}
-if ($sambasettings{'OTHERINTERFACES'} ne ''){ $sambasettings{'INTERFACES'} .= " $sambasettings{'OTHERINTERFACES'}";}
-
 ############################################################################################################################
 ##################################### Schreiben settings und bersetzen fr smb.conf #######################################
 
@@ -235,18 +217,6 @@ $checked{'WIDELINKS'}{$sambasettings{'WIDELINKS'}} = "checked='checked'";
 $checked{'UNIXEXTENSION'}{'off'} = '';
 $checked{'UNIXEXTENSION'}{'on'} = '';
 $checked{'UNIXEXTENSION'}{$sambasettings{'UNIXEXTENSION'}} = "checked='checked'";
-$checked{'GREEN'}{'off'} = '';
-$checked{'GREEN'}{'on'} = '';
-$checked{'GREEN'}{$sambasettings{'GREEN'}} = "checked='checked'";
-$checked{'BLUE'}{'off'} = '';
-$checked{'BLUE'}{'on'} = '';
-$checked{'BLUE'}{$sambasettings{'BLUE'}} = "checked='checked'";
-$checked{'ORANGE'}{'off'} = '';
-$checked{'ORANGE'}{'on'} = '';
-$checked{'ORANGE'}{$sambasettings{'ORANGE'}} = "checked='checked'";
-$checked{'VPN'}{'off'} = '';
-$checked{'VPN'}{'on'} = '';
-$checked{'VPN'}{$sambasettings{'VPN'}} = "checked='checked'";
 $selected{'ENCRYPTION'}{'optional'} = '';
 $selected{'ENCRYPTION'}{'desired'} = '';
 $selected{'ENCRYPTION'}{'required'} = '';
