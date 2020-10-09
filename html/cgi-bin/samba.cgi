@@ -80,8 +80,6 @@ my $LOGLINES = '50';
 &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
 &Header::getcgihash(\%sambasettings);
 
-sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
-
 if (($sambasettings{'WIDELINKS'} eq 'on') & ($sambasettings{'UNIXEXTENSION'} eq 'on'))
   {$errormessage = "$errormessage<br />Don't enable 'Wide links' and 'Unix extension' at the same time"; }
 
@@ -91,15 +89,15 @@ if (($sambasettings{'WIDELINKS'} eq 'on') & ($sambasettings{'UNIXEXTENSION'} eq 
 ############################################################################################################################
 ############################################# Samba Rootskript aufrufe fr SU-Actions #######################################
 
-if ($sambasettings{'ACTION'} eq 'smbuserdisable'){system("/usr/local/bin/sambactrl smbuserdisable $sambasettings{'NAME'}");refreshpage();}
-if ($sambasettings{'ACTION'} eq 'smbuserenable'){system("/usr/local/bin/sambactrl smbuserenable $sambasettings{'NAME'}");refreshpage();}
-if ($sambasettings{'ACTION'} eq 'smbuseradd'){system("/usr/local/bin/sambactrl smbuseradd $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'} $sambasettings{'GROUP'} $sambasettings{'SHELL'}");refreshpage();}
-if ($sambasettings{'ACTION'} eq 'smbpcadd'){system("/usr/local/bin/sambactrl smbpcadd $sambasettings{'PCNAME'} $sambasettings{'GROUP'} $sambasettings{'SHELL'}");refreshpage();}
-if ($sambasettings{'ACTION'} eq 'smbchangepw'){system("/usr/local/bin/sambactrl smbchangepw $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'}");refreshpage();}
-if ($sambasettings{'ACTION'} eq 'smbrestart'){system("/usr/local/bin/sambactrl smbrestart");refreshpage();}
-if ($sambasettings{'ACTION'} eq 'smbstart'){system("/usr/local/bin/sambactrl smbstart");refreshpage();}
-if ($sambasettings{'ACTION'} eq 'smbstop'){system("/usr/local/bin/sambactrl smbstop");refreshpage();}
-if ($sambasettings{'ACTION'} eq 'smbreload'){system("/usr/local/bin/sambactrl smbreload");refreshpage();}
+if ($sambasettings{'ACTION'} eq 'smbuserdisable'){system("/usr/local/bin/sambactrl smbuserdisable $sambasettings{'NAME'}");}
+if ($sambasettings{'ACTION'} eq 'smbuserenable'){system("/usr/local/bin/sambactrl smbuserenable $sambasettings{'NAME'}");}
+if ($sambasettings{'ACTION'} eq 'smbuseradd'){system("/usr/local/bin/sambactrl smbuseradd $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'} $sambasettings{'GROUP'} $sambasettings{'SHELL'}");}
+if ($sambasettings{'ACTION'} eq 'smbpcadd'){system("/usr/local/bin/sambactrl smbpcadd $sambasettings{'PCNAME'} $sambasettings{'GROUP'} $sambasettings{'SHELL'}");}
+if ($sambasettings{'ACTION'} eq 'smbchangepw'){system("/usr/local/bin/sambactrl smbchangepw $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'}");}
+if ($sambasettings{'ACTION'} eq 'smbrestart'){system("/usr/local/bin/sambactrl smbrestart");}
+if ($sambasettings{'ACTION'} eq 'smbstart'){system("/usr/local/bin/sambactrl smbstart");}
+if ($sambasettings{'ACTION'} eq 'smbstop'){system("/usr/local/bin/sambactrl smbstop");}
+if ($sambasettings{'ACTION'} eq 'smbreload'){system("/usr/local/bin/sambactrl smbreload");}
 if ($sambasettings{'ACTION'} eq 'join') {
 	$message .= &joindomain($sambasettings{'USERNAME'}, $sambasettings{'PASSWORD'});
 }
@@ -107,7 +105,7 @@ if ($sambasettings{'ACTION'} eq 'join') {
 ############################################################################################################################
 ########################################### Samba Benutzer oder PC l�chen #################################################
 
-if ($sambasettings{'ACTION'} eq 'userdelete'){system("/usr/local/bin/sambactrl smbuserdelete $sambasettings{'NAME'}");refreshpage();}
+if ($sambasettings{'ACTION'} eq 'userdelete'){system("/usr/local/bin/sambactrl smbuserdelete $sambasettings{'NAME'}");}
 
 ############################################################################################################################
 ##################################### Umsetzen der Werte von Checkboxen und Dropdowns ######################################
@@ -179,7 +177,6 @@ close FILE;
 
 system("/usr/local/bin/sambactrl smbsafeconf");
 system("/usr/local/bin/sambactrl smbreload");
-refreshpage();
 }
   &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
   
@@ -772,7 +769,6 @@ close FILE;
 
 system("/usr/local/bin/sambactrl smbsafeconf");
 system("/usr/local/bin/sambactrl smbreload");
-refreshpage();
 }
 
 sub isrunning
