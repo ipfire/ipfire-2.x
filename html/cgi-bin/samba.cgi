@@ -37,9 +37,6 @@ my %mainsettings = ();
 my $message = "";
 my $errormessage = "";
 
-my $Status = qx(/usr/local/bin/sambactrl smbstatus);
-$Status = &Header::cleanhtml($Status);
-
 my $userentry = "";
 my @user = ();
 my @userline = ();
@@ -746,16 +743,17 @@ if ($sambasettings{'ACTION'} eq 'smbsharechange')
 ############################################################################################################################
 ############################################### Anzeige des Sambastatus ####################################################
 
-&Header::openbox('100%', 'center', 'Status');
+&Header::openbox('100%', 'left', $Lang::tr{'status'});
 
-print <<END
-<br />
-<table class="tbl" width='95%' cellspacing='0'>
-<tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'samba status'}</b></td></tr>
-<tr><td  align='left'><small><pre>$Status</pre></small></td></tr>
-</table>
+my $status = qx(/usr/local/bin/sambactrl smbstatus);
+$status = &Header::cleanhtml($status);
+
+print <<END;
+	<small>
+		<pre>$status</pre>
+	</small>
 END
-;
+
 &Header::closebox();
 
 &Header::closebigbox();
