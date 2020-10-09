@@ -92,7 +92,6 @@ my $LOGLINES = '50';
 
 ################################################## Samba PDC Variablen #####################################################
 
-$sambasettings{'LOCALMASTER'} = 'off';
 $sambasettings{'PREFERREDMASTER'} = 'off';
 my $PDCOPTIONS = `cat ${General::swroot}/samba/pdc`;
 
@@ -150,7 +149,6 @@ delete $sambasettings{'__CGI__'};delete $sambasettings{'x'};delete $sambasetting
 &General::writehash("${General::swroot}/samba/settings", \%sambasettings);
 
 if ($sambasettings{'PASSWORDSYNC'} eq 'on'){ $sambasettings{'PASSWORDSYNC'} = "true";} else { $sambasettings{'PASSWORDSYNC'} = "false";}
-if ($sambasettings{'LOCALMASTER'} eq 'on'){ $sambasettings{'LOCALMASTER'} = "true";} else { $sambasettings{'LOCALMASTER'} = "false";}
 if ($sambasettings{'PREFERREDMASTER'} eq 'on'){ $sambasettings{'PREFERREDMASTER'} = "true";} else { $sambasettings{'PREFERREDMASTER'} = "false";}
 if ($sambasettings{'WIDELINKS'} eq 'on'){ $sambasettings{'WIDELINKS'} = "yes";} else { $sambasettings{'WIDELINKS'} = "no";}
 if ($sambasettings{'UNIXEXTENSION'} eq 'on'){ $sambasettings{'UNIXEXTENSION'} = "yes";} else { $sambasettings{'UNIXEXTENSION'} = "no";}
@@ -195,7 +193,6 @@ winbind use default domain = yes
 logging = syslog
 
 preferred master = $sambasettings{'PREFERREDMASTER'}
-local master = $sambasettings{'LOCALMASTER'}
 END
 ;
 
@@ -242,9 +239,6 @@ if ($message) {
 $checked{'PASSWORDSYNC'}{'off'} = '';
 $checked{'PASSWORDSYNC'}{'on'} = '';
 $checked{'PASSWORDSYNC'}{$sambasettings{'PASSWORDSYNC'}} = "checked='checked'";
-$checked{'LOCALMASTER'}{'off'} = '';
-$checked{'LOCALMASTER'}{'on'} = '';
-$checked{'LOCALMASTER'}{$sambasettings{'LOCALMASTER'}} = "checked='checked'";
 $checked{'PREFERREDMASTER'}{'off'} = '';
 $checked{'PREFERREDMASTER'}{'on'} = '';
 $checked{'PREFERREDMASTER'}{$sambasettings{'PREFERREDMASTER'}} = "checked='checked'";
@@ -349,8 +343,6 @@ END
 if ($sambasettings{'SECURITY'} eq 'user')
 	{
 	print <<END
-<tr><td align='left' width='40%'>$Lang::tr{'local master'}</td><td align='left'>on <input type='radio' name='LOCALMASTER' value='on' $checked{'LOCALMASTER'}{'on'} />/
-																							<input type='radio' name='LOCALMASTER' value='off' $checked{'LOCALMASTER'}{'off'} /> off</td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'prefered master'}</td><td align='left'>on <input type='radio' name='PREFERREDMASTER' value='on' $checked{'PREFERREDMASTER'}{'on'} />/
 																									<input type='radio' name='PREFERREDMASTER' value='off' $checked{'PREFERREDMASTER'}{'off'} /> off</td></tr>
 END
