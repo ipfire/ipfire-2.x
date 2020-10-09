@@ -608,94 +608,119 @@ END
 
 my %shares =  config("${General::swroot}/samba/shares");
 
-print <<END
-<br />
-<table class="tbl" width='95%' cellspacing='0' class='tbl'>
-<tr><th bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'manage shares'}</b></th></tr>
-<tr><th align='left'><u>$Lang::tr{'sharename'}</u></th><th colspan='2' width="5%" align='center'><u>$Lang::tr{'options'}</u></th></tr>
+print <<END;
+	<table class="tbl" width='95%' cellspacing='0'>
+		<tr>
+			<th align='left'>$Lang::tr{'sharename'}</th>
+			<th colspan='2' width="5%" align='center'></th>
+		</tr>
 END
-;
 
-my @Shares = keys(%shares);
+my @shares = keys(%shares);
 my $lines = 0;
 my $col="";
-foreach my $shareentry (sort @Shares)
-	{
+foreach my $shareentry (sort @shares) {
 	chomp $shareentry;
+
 	if ($lines % 2) {
-		print "<tr>";
-		$col="bgcolor='$color{'color20'}'";
+		$col = "bgcolor='$color{'color20'}'";
 	} else {
-		print "<tr>";
-		$col="bgcolor='$color{'color22'}'";
-	}
-	print <<END
-	<td align='left' $col>$shareentry</td>
-	<td $col><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
-			<input type='hidden' name='NAME' value='$shareentry' />
-			<input type='hidden' name='ACTION' value='sharechange' />
-			<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
-	</form></td>
-	<td $col><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
-			<input type='hidden' name='NAME' value='$shareentry' />
-			<input type='hidden' name='ACTION' value='smbsharedel' />
-			<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
-	</form></td></tr>
-END
-;
-  $lines++;
+		$col = "bgcolor='$color{'color22'}'";
 	}
 
-print <<END
-</table>
-<br />
-<table width='10%' cellspacing='0'>
-<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
-												<input type='hidden' name='ACTION' value='shareadd' />
-												<input type='image' alt='$Lang::tr{'add share'}' title='$Lang::tr{'add share'}' src='/images/list-add.png' />
-												</form></td>
-</tr>
-</table>
+	print <<END;
+		<tr>
+			<td align='left' $col>$shareentry</td>
+			<td $col>
+				<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
+					<input type='hidden' name='NAME' value='$shareentry' />
+					<input type='hidden' name='ACTION' value='sharechange' />
+					<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
+				</form>
+			</td>
+			<td $col>
+				<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
+					<input type='hidden' name='NAME' value='$shareentry' />
+					<input type='hidden' name='ACTION' value='smbsharedel' />
+					<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
+				</form>
+			</td>
+		</tr>
 END
 ;
+	$lines++;
+}
 
-if ($sambasettings{'ACTION'} eq 'shareadd')
-	{
-	print <<END
-	<br />
-	<table width='95%' cellspacing='0'>
-	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'add share'}</b></td></tr>
-	<tr><td colspan='2' align='center'></td></tr>
-	<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'><tr><td colspan='2' align='center'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$defaultoption</textarea></td></tr>
+print <<END;
 	</table>
-	<br />
-	<table width='10%' cellspacing='0'>
-	<tr><td align='center'><input type='hidden' name='ACTION' value='smbshareadd' />
-													<input type='image' alt='$Lang::tr{'add share'}' title='$Lang::tr{'add share'}' src='/images/media-floppy.png' /></td></tr></form>
+
+	<br>
+
+	<table width='100%' cellspacing='0'>
+		<tr>
+			<td align='center'>
+				<form method='POST' action='$ENV{'SCRIPT_NAME'}'>
+					<input type='hidden' name='ACTION' value='shareadd'>
+					<input type='submit' value='$Lang::tr{'add share'}'>
+				</form>
+			</td>
+		</tr>
 	</table>
 END
-;
-	}
 
-if ($sambasettings{'ACTION'} eq 'sharechange')
-	{
+if ($sambasettings{'ACTION'} eq 'shareadd') {
+	print <<END;
+		<br />
+
+		<form method='POST' action='$ENV{'SCRIPT_NAME'}'>
+			<table width='95%' cellspacing='0'>
+				<tr bgcolor='$color{'color20'}'>
+					<td align='left'><b>$Lang::tr{'add share'}</b></td>
+				</tr>
+				<tr>
+					<td align='center'>
+						<textarea name="SHAREOPTION" cols="121" rows="15">$defaultoption</textarea>
+					</td>
+				</tr>
+				<tr>
+					<td align='center'>
+						<input type='hidden' name='ACTION' value='smbshareadd'>
+						<input type='submit' value='$Lang::tr{'save'}'>
+					</td>
+				</tr>
+			</table>
+		</form>
+END
+}
+
+if ($sambasettings{'ACTION'} eq 'sharechange') {
 	my $shareoption = $shares{$sambasettings{'NAME'}};
-	print <<END
-	<br />
-	<table width='95%' cellspacing='0'>
-	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'edit share'}</b></td></tr>
-	<tr><td colspan='2' align='center'></td></tr>
-	<tr><td colspan='2' align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'><textarea name="SHAREOPTION" cols="50" rows="15" Wrap="off">$shareoption</textarea></td></tr>
-	</table>
-	<br />
-	<table width='10%' cellspacing='0'>
-	<tr><td align='center'><input type='hidden' name='NAME' value='$sambasettings{'NAME'}' />
-													<input type='image' alt='$Lang::tr{'change share'}' title='$Lang::tr{'change share'}' src='/images/media-floppy.png' />
-													<input type='hidden' name='ACTION' value='smbsharechange' /></form></td></tr>
-	</table>
+
+	print <<END;
+		<br />
+
+		<form method='POST' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='hidden' name='NAME' value='$sambasettings{'NAME'}'>
+
+			<table width='95%' cellspacing='0'>
+				<tr bgcolor='$color{'color20'}'>
+					<td align='left'><b>$Lang::tr{'edit share'}</b></td>
+				</tr>
+				<tr>
+					<td align='center'>
+						<textarea name="SHAREOPTION" cols="121" rows="15">$shareoption</textarea>
+					</td>
+				</tr>
+				<tr>
+					<td align='center'>
+						<input type='hidden' name='ACTION' value='smbsharechange'>
+						<input type='submit' value='$Lang::tr{'save'}'>
+					</td>
+				</tr>
+			</table>
+		</form>
 END
-;
-	}
+}
 
 if ($sambasettings{'ACTION'} eq 'smbshareadd')
 	{
