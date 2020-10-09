@@ -65,8 +65,6 @@ $sambasettings{'REMOTEANNOUNCE'} = '';
 $sambasettings{'REMOTESYNC'} = '';
 $sambasettings{'GUESTACCOUNT'} = 'samba';
 $sambasettings{'MAPTOGUEST'} = 'Bad User';
-$sambasettings{'WIDELINKS'} = 'on';
-$sambasettings{'UNIXEXTENSION'} = 'off';
 $sambasettings{'ENCRYPTION'} = 'optional';
 ### Values that have to be initialized
 $sambasettings{'ACTION'} = '';
@@ -76,9 +74,6 @@ my $LOGLINES = '50';
 
 &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
 &Header::getcgihash(\%sambasettings);
-
-if (($sambasettings{'WIDELINKS'} eq 'on') & ($sambasettings{'UNIXEXTENSION'} eq 'on'))
-  {$errormessage = "$errormessage<br />Don't enable 'Wide links' and 'Unix extension' at the same time"; }
 
 &Header::openpage('Samba', 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
@@ -115,9 +110,6 @@ if ($sambasettings{'ACTION'} eq $Lang::tr{'save'})
 delete $sambasettings{'__CGI__'};delete $sambasettings{'x'};delete $sambasettings{'y'};
 &General::writehash("${General::swroot}/samba/settings", \%sambasettings);
 
-if ($sambasettings{'WIDELINKS'} eq 'on'){ $sambasettings{'WIDELINKS'} = "yes";} else { $sambasettings{'WIDELINKS'} = "no";}
-if ($sambasettings{'UNIXEXTENSION'} eq 'on'){ $sambasettings{'UNIXEXTENSION'} = "yes";} else { $sambasettings{'UNIXEXTENSION'} = "no";}
-
 ############################################################################################################################
 ############################################# Schreiben der Samba globals ##################################################
 
@@ -133,9 +125,6 @@ server string = Samba on IPFire
 workgroup = $sambasettings{'WORKGRP'}
 realm = $mainsettings{'DOMAINNAME'}
 passdb backend = smbpasswd
-
-wide links = $sambasettings{'WIDELINKS'}
-unix extensions = $sambasettings{'UNIXEXTENSION'}
 
 map to guest = $sambasettings{'MAPTOGUEST'}
 
@@ -158,6 +147,9 @@ logging = syslog
 
 # Enable support for Apple
 vfs objects = catia fruit streams_xattr
+
+# Enable following symlinks
+wide links = yes
 
 END
 ;
@@ -201,12 +193,6 @@ if ($message) {
 ############################################################################################################################
 ########################################## Aktivieren von Checkboxen und Dropdowns #########################################
 
-$checked{'WIDELINKS'}{'off'} = '';
-$checked{'WIDELINKS'}{'on'} = '';
-$checked{'WIDELINKS'}{$sambasettings{'WIDELINKS'}} = "checked='checked'";
-$checked{'UNIXEXTENSION'}{'off'} = '';
-$checked{'UNIXEXTENSION'}{'on'} = '';
-$checked{'UNIXEXTENSION'}{$sambasettings{'UNIXEXTENSION'}} = "checked='checked'";
 $selected{'ENCRYPTION'}{'optional'} = '';
 $selected{'ENCRYPTION'}{'desired'} = '';
 $selected{'ENCRYPTION'}{'required'} = '';
@@ -286,24 +272,6 @@ print <<END
 				<td align='left' width='40%'>$Lang::tr{'workgroup'}</td>
 				<td align='left'>
 					<input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" />
-				</td>
-			</tr>
-			<tr>
-				<td align='left'><br /></td>
-				<td></td>
-			</tr>
-			<tr>
-				<td align='left' width='40%'>Wide links</td>
-				<td align='left'>
-					on <input type='radio' name='WIDELINKS' value='on' $checked{'WIDELINKS'}{'on'} /> /
-					<input type='radio' name='WIDELINKS' value='off' $checked{'WIDELINKS'}{'off'} /> off
-				</td>
-			</tr>
-			<tr>
-				<td align='left' width='40%'>Unix extension</td>
-				<td align='left'>
-					on <input type='radio' name='UNIXEXTENSION' value='on' $checked{'UNIXEXTENSION'}{'on'} /> /
-					<input type='radio' name='UNIXEXTENSION' value='off' $checked{'UNIXEXTENSION'}{'off'} /> off
 				</td>
 			</tr>
 			<tr>
