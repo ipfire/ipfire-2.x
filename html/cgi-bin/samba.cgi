@@ -90,11 +90,6 @@ $sambasettings{'ENCRYPTION'} = 'optional';
 $sambasettings{'ACTION'} = '';
 my $LOGLINES = '50';
 
-################################################## Samba PDC Variablen #####################################################
-
-my $PDCOPTIONS = `cat ${General::swroot}/samba/pdc`;
-
-
 ############################################################################################################################
 
 &General::readhash("${General::swroot}/samba/settings", \%sambasettings);

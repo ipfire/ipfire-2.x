@@ -794,7 +794,6 @@ usr/sbin/winbindd
 var/ipfire/backup/addons/includes/samba
 #var/ipfire/samba
 var/ipfire/samba/global
-var/ipfire/samba/pdc
 #var/ipfire/samba/private
 var/ipfire/samba/private/secrets.tdb
 var/ipfire/samba/private/smbpasswd
