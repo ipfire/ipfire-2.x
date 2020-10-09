@@ -146,7 +146,7 @@ winbind use default domain = yes
 logging = syslog
 
 # Enable support for Apple
-vfs objects = catia fruit streams_xattr
+vfs objects = catia fruit streams_xattr recycle
 
 # Enable following symlinks
 wide links = yes
