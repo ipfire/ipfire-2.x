@@ -365,37 +365,18 @@ print <<END
 
 		<br>
 
-		<table width='10%' cellspacing='0'>
+		<table width='100%' cellspacing='0'>
 			<tr>
 				<td align='center'>
-					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
-						<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' />
-					</form>
-				</td>
-				<td align='center'>
-					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='ACTION' value='globalcaption' />
-						<input type='image' alt='$Lang::tr{'caption'}' title='$Lang::tr{'caption'}' src='/images/help-browser.png' />
+					<form method='POST' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='ACTION' value="$Lang::tr{'save'}">
+						<input type='submit' value="$Lang::tr{'save'}">
 					</form>
 				</td>
 			</tr>
 		</table>
 END
 ;
-
-if ($sambasettings{'ACTION'} eq 'globalcaption')
-	{
-	print <<END
-	<br />
-	<table width='95%' cellspacing='0'>
-	<tr><td align='center' colspan='2'><b>$Lang::tr{'caption'}</b></td></tr>
-	<tr><td align='right' width='33%'><img src='/images/media-floppy.png' /></td><td align='left'>$Lang::tr{'save settings'}</td></tr>
-	<tr><td align='right' width='33%'><img src='/images/reload.gif' /></td><td align='left'>$Lang::tr{'restore settings'}</td></tr>
-	</table>
-END
-;
-	}
 
 &Header::closebox();
 
