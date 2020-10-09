@@ -68,7 +68,6 @@ $sambasettings{'INTERFACES'} = '';
 $sambasettings{'SECURITY'} = 'user';
 $sambasettings{'REMOTEANNOUNCE'} = '';
 $sambasettings{'REMOTESYNC'} = '';
-$sambasettings{'PASSWORDSYNC'} = 'off';
 $sambasettings{'GUESTACCOUNT'} = 'samba';
 $sambasettings{'MAPTOGUEST'} = 'Bad User';
 $sambasettings{'WIDELINKS'} = 'on';
@@ -123,7 +122,6 @@ if ($sambasettings{'ACTION'} eq $Lang::tr{'save'})
 delete $sambasettings{'__CGI__'};delete $sambasettings{'x'};delete $sambasettings{'y'};
 &General::writehash("${General::swroot}/samba/settings", \%sambasettings);
 
-if ($sambasettings{'PASSWORDSYNC'} eq 'on'){ $sambasettings{'PASSWORDSYNC'} = "true";} else { $sambasettings{'PASSWORDSYNC'} = "false";}
 if ($sambasettings{'WIDELINKS'} eq 'on'){ $sambasettings{'WIDELINKS'} = "yes";} else { $sambasettings{'WIDELINKS'} = "no";}
 if ($sambasettings{'UNIXEXTENSION'} eq 'on'){ $sambasettings{'UNIXEXTENSION'} = "yes";} else { $sambasettings{'UNIXEXTENSION'} = "no";}
 
@@ -150,7 +148,7 @@ map to guest = $sambasettings{'MAPTOGUEST'}
 
 security = $sambasettings{'SECURITY'}
 guest account = $sambasettings{'GUESTACCOUNT'}
-unix password sync = $sambasettings{'PASSWORDSYNC'}
+unix password sync = no
 
 bind interfaces only = true
 interfaces = green0 blue0 127.0.0.0/8
@@ -208,9 +206,6 @@ if ($message) {
 ############################################################################################################################
 ########################################## Aktivieren von Checkboxen und Dropdowns #########################################
 
-$checked{'PASSWORDSYNC'}{'off'} = '';
-$checked{'PASSWORDSYNC'}{'on'} = '';
-$checked{'PASSWORDSYNC'}{$sambasettings{'PASSWORDSYNC'}} = "checked='checked'";
 $checked{'WIDELINKS'}{'off'} = '';
 $checked{'WIDELINKS'}{'on'} = '';
 $checked{'WIDELINKS'}{$sambasettings{'WIDELINKS'}} = "checked='checked'";
@@ -284,11 +279,6 @@ print <<END
 																						<option value='Bad User' $selected{'MAPTOGUEST'}{'Bad User'}>Bad User</option>
 																						<option value='Bad Password' $selected{'MAPTOGUEST'}{'Bad Password'}>Bad Password</option>
 																						</select></td></tr>
-END
-;
-#<tr><td align='left' width='40%'>$Lang::tr{'unix password sync'}</td><td align='left'>on <input type='radio' name='PASSWORDSYNC' value='on' $checked{'PASSWORDSYNC'}{'on'} />/
-#																										<input type='radio' name='PASSWORDSYNC' value='off' $checked{'PASSWORDSYNC'}{'off'} /> off</td></tr>
-print <<END
 <tr><td align='left'><br /></td><td /></tr>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'network options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'remote announce'}</td><td align='left'><input type='text' name='REMOTEANNOUNCE' value='$sambasettings{'REMOTEANNOUNCE'}' size="30" /></td></tr>
