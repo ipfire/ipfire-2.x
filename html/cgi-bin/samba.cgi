@@ -93,7 +93,6 @@ my $LOGLINES = '50';
 ################################################## Samba PDC Variablen #####################################################
 
 $sambasettings{'LOCALMASTER'} = 'off';
-$sambasettings{'DOMAINMASTER'} = 'off';
 $sambasettings{'PREFERREDMASTER'} = 'off';
 my $PDCOPTIONS = `cat ${General::swroot}/samba/pdc`;
 
@@ -152,7 +151,6 @@ delete $sambasettings{'__CGI__'};delete $sambasettings{'x'};delete $sambasetting
 
 if ($sambasettings{'PASSWORDSYNC'} eq 'on'){ $sambasettings{'PASSWORDSYNC'} = "true";} else { $sambasettings{'PASSWORDSYNC'} = "false";}
 if ($sambasettings{'LOCALMASTER'} eq 'on'){ $sambasettings{'LOCALMASTER'} = "true";} else { $sambasettings{'LOCALMASTER'} = "false";}
-if ($sambasettings{'DOMAINMASTER'} eq 'on'){ $sambasettings{'DOMAINMASTER'} = "true";} else { $sambasettings{'DOMAINMASTER'} = "false";}
 if ($sambasettings{'PREFERREDMASTER'} eq 'on'){ $sambasettings{'PREFERREDMASTER'} = "true";} else { $sambasettings{'PREFERREDMASTER'} = "false";}
 if ($sambasettings{'WIDELINKS'} eq 'on'){ $sambasettings{'WIDELINKS'} = "yes";} else { $sambasettings{'WIDELINKS'} = "no";}
 if ($sambasettings{'UNIXEXTENSION'} eq 'on'){ $sambasettings{'UNIXEXTENSION'} = "yes";} else { $sambasettings{'UNIXEXTENSION'} = "no";}
@@ -197,7 +195,6 @@ winbind use default domain = yes
 logging = syslog
 
 preferred master = $sambasettings{'PREFERREDMASTER'}
-domain master = $sambasettings{'DOMAINMASTER'}
 local master = $sambasettings{'LOCALMASTER'}
 END
 ;
@@ -215,27 +212,9 @@ printable = yes
 END
 close FILE;
 
-if ($sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' )
-	{
-	open (FILE, ">${General::swroot}/samba/pdc") or die "Can't save the pdc settings: $!";
-	flock (FILE, 2);
-	chomp $sambasettings{'PDCOPTIONS'};
-	$sambasettings{'PDCOPTIONS'} =~ s/\r\n/\n/gi;
-	$sambasettings{'PDCOPTIONS'} =~ s/^\n//gi;
-	$sambasettings{'PDCOPTIONS'} =~ s/^\r//gi;
-	$sambasettings{'PDCOPTIONS'} =~ s/^.\n//gi;
-	$sambasettings{'PDCOPTIONS'} =~ s/^.\r//gi;
-	print FILE <<END
-$sambasettings{'PDCOPTIONS'}
-END
-;
-	close FILE;
-	}
-
-	if ( $sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");refreshpage();}
-	else{system("/usr/local/bin/sambactrl smbsafeconf");}
-
-system("/usr/local/bin/sambactrl smbreload");refreshpage();
+system("/usr/local/bin/sambactrl smbsafeconf");
+system("/usr/local/bin/sambactrl smbreload");
+refreshpage();
 }
   &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
   
@@ -266,9 +245,6 @@ $checked{'PASSWORDSYNC'}{$sambasettings{'PASSWORDSYNC'}} = "checked='checked'";
 $checked{'LOCALMASTER'}{'off'} = '';
 $checked{'LOCALMASTER'}{'on'} = '';
 $checked{'LOCALMASTER'}{$sambasettings{'LOCALMASTER'}} = "checked='checked'";
-$checked{'DOMAINMASTER'}{'off'} = '';
-$checked{'DOMAINMASTER'}{'on'} = '';
-$checked{'DOMAINMASTER'}{$sambasettings{'DOMAINMASTER'}} = "checked='checked'";
 $checked{'PREFERREDMASTER'}{'off'} = '';
 $checked{'PREFERREDMASTER'}{'on'} = '';
 $checked{'PREFERREDMASTER'}{$sambasettings{'PREFERREDMASTER'}} = "checked='checked'";
@@ -336,7 +312,6 @@ print <<END
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'workgroup'}</td><td align='left'><input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" /></td></tr>
-print <<END
 <tr><td align='left'><br /></td><td></td></tr>
 <tr><td align='left' width='40%'>Wide links</td><td align='left'>on <input type='radio' name='WIDELINKS' value='on' $checked{'WIDELINKS'}{'on'} />/
 																							<input type='radio' name='WIDELINKS' value='off' $checked{'WIDELINKS'}{'off'} /> off</td></tr>
@@ -346,7 +321,6 @@ print <<END
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'security options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'security'}</td><td align='left'><select name='SECURITY' style="width: 165px">
 																				<option value='user' $selected{'SECURITY'}{'user'}>User</option>
-																				<option value='domain' $selected{'SECURITY'}{'domain'}>Domain</option>
 																				<option value='ADS' $selected{'SECURITY'}{'ADS'}>ADS</option>
 																				<option value='server' $selected{'SECURITY'}{'server'}>Server</option>
 																				</select></td></tr>
@@ -377,25 +351,12 @@ if ($sambasettings{'SECURITY'} eq 'user')
 	print <<END
 <tr><td align='left' width='40%'>$Lang::tr{'local master'}</td><td align='left'>on <input type='radio' name='LOCALMASTER' value='on' $checked{'LOCALMASTER'}{'on'} />/
 																							<input type='radio' name='LOCALMASTER' value='off' $checked{'LOCALMASTER'}{'off'} /> off</td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'domain master'}</td><td align='left'>on <input type='radio' name='DOMAINMASTER' value='on' $checked{'DOMAINMASTER'}{'on'} />/
-																								<input type='radio' name='DOMAINMASTER' value='off' $checked{'DOMAINMASTER'}{'off'} /> off</td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'prefered master'}</td><td align='left'>on <input type='radio' name='PREFERREDMASTER' value='on' $checked{'PREFERREDMASTER'}{'on'} />/
 																									<input type='radio' name='PREFERREDMASTER' value='off' $checked{'PREFERREDMASTER'}{'off'} /> off</td></tr>
 END
 ;
 	}
 
-if ($sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'on')
-	{
-	print <<END
-	<tr><td align='left'><br /></td><td></td></tr>
-	<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'pdc options'}</b></td></tr>
-	<tr><td align='left'><br /></td><td></td></tr>
-	<tr><td colspan='2' align='center'><textarea name="PDCOPTIONS" cols="50" rows="15" Wrap="off">$PDCOPTIONS</textarea></td></tr>
-END
-;
-	}
-	
 print <<END
 </table>
 <br />
@@ -430,14 +391,7 @@ END
 
 if ($sambasettings{'SECURITY'} eq 'user')
 	{
-	if ($sambasettings{'DOMAINMASTER'} eq 'off')
-		{
-		&Header::openbox('100%', 'center', $Lang::tr{'accounting user nonpdc'});
-		}
-	else
-		{
-		&Header::openbox('100%', 'center', $Lang::tr{'accounting user pdc'});
-		}
+	&Header::openbox('100%', 'center', $Lang::tr{'user management'});
 	print <<END
 	<a name="$Lang::tr{'accounting'}"></a>
 	<br />
@@ -448,15 +402,7 @@ if ($sambasettings{'SECURITY'} eq 'user')
 END
 ;
 
-	if ($sambasettings{'DOMAINMASTER'} eq 'off')
-		{
-		print "<td></td>";
-		}
-	else
-		{
-		print "<td align='left'><u>$Lang::tr{'type'}</u></td>";
-		}
-
+	print "<td></td>";
 	print "<td align='left'><u>$Lang::tr{'status'}</u></td><td colspan='3' width='5%' align='center'><u>$Lang::tr{'options'}</u></td></tr>";
 	system('/usr/local/bin/sambactrl readsmbpasswd');
 	open(FILE, "<${General::swroot}/samba/private/smbpasswd") or die "Can't read user file: $!";
@@ -480,21 +426,7 @@ END
 			print "$Lang::tr{'set'}</td><td align='left'>";
 			}
 
-		if ($sambasettings{'DOMAINMASTER'} eq 'off')
-			{
-			print "</td><td align='left'>";
-			}
-		else
-			{
-			if ($userline[0] =~ /\$/)
-				{
-				print "$Lang::tr{'pc'}</td><td align='left'>";
-				}
-			else
-				{
-				print "$Lang::tr{'user'}</td><td align='left'>";
-				}
-			}
+		print "</td><td align='left'>";
 
 		if ($userline[4] =~ /D/)
 			{
@@ -537,28 +469,14 @@ END
 ;
 			}
 
-			if ($sambasettings{'DOMAINMASTER'} eq 'on' && $userline[0] =~ /\$/)
-				{
-				print <<END
-				<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-						<input type='hidden' name='NAME' value='$userline[0]' />
-						<input type='hidden' name='ACTION' value='userdelete' />
-						<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/network-error.png' />
-						</form></td></tr>
+			print <<END
+			<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
+					<input type='hidden' name='NAME' value='$userline[0]' />
+					<input type='hidden' name='ACTION' value='userdelete' />
+					<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-option-remove.png' />
+			</form></td></tr>
 END
 ;
-				}
-			else
-				{
-				print <<END
-				<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-						<input type='hidden' name='NAME' value='$userline[0]' />
-						<input type='hidden' name='ACTION' value='userdelete' />
-						<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-option-remove.png' />
-				</form></td></tr>
-END
-;
-				}
 		$lines++;
 		}
 	print <<END
@@ -571,15 +489,6 @@ END
 END
 ;
 
-	if ($sambasettings{'DOMAINMASTER'} eq 'on')
-		{
-		print <<END
-		<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-												<input type='hidden' name='ACTION' value='pcadd' />
-												<input type='image' alt='$Lang::tr{'pc add'}' title='$Lang::tr{'pc add'}' src='/images/network.png' /></form>
-END
-;
-		}
 	print <<END
 	<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
 											<input type='hidden' name='ACTION' value='usercaption' />
@@ -930,9 +839,7 @@ if ( $smb eq 'shares')
 
 close FILE;
 
-if ( $sambasettings{'SECURITY'} eq 'user' && $sambasettings{'DOMAINMASTER'} eq 'true' ){system("/usr/local/bin/sambactrl smbsafeconfpdc");}
-	else{system("/usr/local/bin/sambactrl smbsafeconf");}
-
+system("/usr/local/bin/sambactrl smbsafeconf");
 system("/usr/local/bin/sambactrl smbreload");
 refreshpage();
 }
