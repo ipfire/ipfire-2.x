@@ -322,14 +322,13 @@ END
 					<select name='TOR_EXIT_COUNTRY'>
 						<option value=''>- $Lang::tr{'tor exit country any'} -</option>
 END
-
-		my @country_codes = &Location::database_countries();
+		my @country_codes = &Location::database_countries($db_handle);
 		foreach my $country_code (@country_codes) {
 			# Convert country code into upper case format.
 			$country_code = uc($country_code);
 
 			# Get country name.
-			my $country_name = &Location::Functions::get_country_name($country_code);
+			my $country_name = &Location::Functions::get_full_country_name($country_code);
 
 			print "<option value='$country_code'";
 
