@@ -184,7 +184,7 @@ guest account = $sambasettings{'GUESTACCOUNT'}
 unix password sync = $sambasettings{'PASSWORDSYNC'}
 
 bind interfaces only = true
-interfaces = $sambasettings{'INTERFACES'}
+interfaces = green0 blue0 127.0.0.0/8
 remote announce = $sambasettings{'REMOTEANNOUNCE'}
 remote browse sync = $sambasettings{'REMOTESYNC'}
 
@@ -336,37 +336,7 @@ print <<END
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'workgroup'}</td><td align='left'><input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" /></td></tr>
-<tr><td align='left' width='40%'>$Lang::tr{'interfaces'}</td><td align='left'>on <input type='radio' name='VPN' value='on' $checked{'VPN'}{'on'} />/
-																						<input type='radio' name='VPN' value='off' $checked{'VPN'}{'off'} /> off |
-																						<font size='2' color='$Header::colourovpn'><b>   OpenVpn  -  $ovpnip[0].$ovpnip[1].$ovpnip[2].$ovpnip[3]/$ovpnnetwork[1]</b></font></td></tr>
-<tr><td align='left' width='40%'></td><td align='left'>on <input type='radio' name='GREEN' value='on' $checked{'GREEN'}{'on'} />/
-																	<input type='radio' name='GREEN' value='off' $checked{'GREEN'}{'off'} /> off |
-																	<font size='2' color='$Header::colourgreen'><b>   $Lang::tr{'green'}  -  $netsettings{'GREEN_DEV'}</b></font></td></tr>
-END
-;
-
-if (&Header::blue_used())
-	{
-	print <<END
-	<tr><td align='left' width='40%'></td><td align='left'>on <input type='radio' name='BLUE' value='on' $checked{'BLUE'}{'on'} />/
-																		<input type='radio' name='BLUE' value='off' $checked{'BLUE'}{'off'} /> off |
-																		<font size='2' color='$Header::colourblue'><b>   $Lang::tr{'wireless'}  -  $netsettings{'BLUE_DEV'}</b></font></td></tr>
-END
-;
-	}
-
-if (&Header::orange_used())
-	{
-	print <<END
-	<tr><td align='left' width='40%'></td><td align='left'>on <input type='radio' name='ORANGE' value='on' $checked{'ORANGE'}{'on'} />/
-																		<input type='radio' name='ORANGE' value='off' $checked{'ORANGE'}{'off'} /> off |
-																		<font size='2' color='$Header::colourorange'><b>   $Lang::tr{'dmz'}  -  $netsettings{'ORANGE_DEV'}</b></font></td></tr>
-END
-;
-	}
-
 print <<END
-<tr><td align='center' width='40%'>$Lang::tr{'more'}</td><td align='left'><input type='text' name='OTHERINTERFACES' value='$sambasettings{'OTHERINTERFACES'}' size="30" /></td></tr>
 <tr><td align='left'><br /></td><td></td></tr>
 <tr><td align='left' width='40%'>Wide links</td><td align='left'>on <input type='radio' name='WIDELINKS' value='on' $checked{'WIDELINKS'}{'on'} />/
 																							<input type='radio' name='WIDELINKS' value='off' $checked{'WIDELINKS'}{'off'} /> off</td></tr>
