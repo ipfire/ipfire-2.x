@@ -230,7 +230,7 @@ my %servicenames = (
 );
 
 print <<END;
-	<table width='95%' cellspacing='0'>
+	<table class="tbl" width='95%' cellspacing='0'>
 		<tr bgcolor='$color{'color20'}'>
 			<td colspan='2' align='left'><b>$Lang::tr{'all services'}</b></td>
 		</tr>
@@ -250,7 +250,7 @@ END
 print <<END
 	</table>
 <br />
-<table width='95%' cellspacing='0'>
+<table class="tbl" width='95%' cellspacing='0'>
 <tr><td align='left' width='40%' />
 <td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbstart' /><input type='image' alt='$Lang::tr{'smbstart'}' title='$Lang::tr{'smbstart'}' src='/images/go-up.png' /></form></td>
 <td align='center' ><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='smbstop' /><input type='image' alt='$Lang::tr{'smbstop'}' title='$Lang::tr{'smbstop'}' src='/images/go-down.png' /></form></td>
@@ -258,7 +258,7 @@ print <<END
 </table>
 <br />
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<table width='95%' cellspacing='0'>
+<table class="tbl" width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'basic options'}</b></td></tr>
 <tr><td align='left' width='40%'>$Lang::tr{'workgroup'}</td><td align='left'><input type='text' name='WORKGRP' value='$sambasettings{'WORKGRP'}' size="30" /></td></tr>
 <tr><td align='left'><br /></td><td></td></tr>
@@ -323,7 +323,7 @@ if ($sambasettings{'SECURITY'} eq 'user')
 	print <<END
 	<a name="$Lang::tr{'accounting'}"></a>
 	<br />
-	<table width='95%' cellspacing='0'>
+	<table class="tbl" width='95%' cellspacing='0'>
 	<tr><td colspan='6' align='left'></td></tr>
 	<tr><td bgcolor='$color{'color20'}' colspan='7' align='left'><b>$Lang::tr{'accounting'}</b></td></tr>
 	<tr><td align='left'><u>$Lang::tr{'username'}</u></td><td align='left'><u>$Lang::tr{'password'}</u></td>
@@ -522,7 +522,7 @@ if ($sambasettings{'SECURITY'} eq "ADS") {
 	<form method="POST" action="$ENV{'SCRIPT_NAME'}">
 		<input type="hidden" name="ACTION" value="join">
 
-		<table width="95%">
+		<table class="tbl" width="95%">
 			<tbody>
 				<tr>
 					<td width="40%">
@@ -573,7 +573,7 @@ my %shares =  config("${General::swroot}/samba/shares");
 print <<END
 <a name="$Lang::tr{'manage shares'}"></a>
 <br />
-<table width='95%' cellspacing='0' class='tbl'>
+<table class="tbl" width='95%' cellspacing='0' class='tbl'>
 <tr><th bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'manage shares'}</b></th></tr>
 <tr><th align='left'><u>$Lang::tr{'sharename'}</u></th><th colspan='2' width="5%" align='center'><u>$Lang::tr{'options'}</u></th></tr>
 END
@@ -707,7 +707,7 @@ if ($sambasettings{'ACTION'} eq 'smbsharechange')
 
 print <<END
 <br />
-<table width='95%' cellspacing='0'>
+<table class="tbl" width='95%' cellspacing='0'>
 <tr><td bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'samba status'}</b></td></tr>
 <tr><td  align='left'><small><pre>$Status</pre></small></td></tr>
 </table>
