@@ -387,7 +387,6 @@ if ($sambasettings{'SECURITY'} eq 'user')
 	{
 	&Header::openbox('100%', 'center', $Lang::tr{'user management'});
 	print <<END
-	<a name="$Lang::tr{'accounting'}"></a>
 	<br />
 	<table class="tbl" width='95%' cellspacing='0'>
 	<tr><td colspan='6' align='left'></td></tr>
@@ -609,9 +608,7 @@ END
 
 my %shares =  config("${General::swroot}/samba/shares");
 
-
 print <<END
-<a name="$Lang::tr{'manage shares'}"></a>
 <br />
 <table class="tbl" width='95%' cellspacing='0' class='tbl'>
 <tr><th bgcolor='$color{'color20'}' colspan='3' align='left'><b>$Lang::tr{'manage shares'}</b></th></tr>
