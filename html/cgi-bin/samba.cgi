@@ -156,6 +156,9 @@ winbind use default domain = yes
 # Log to syslog
 logging = syslog
 
+# Enable support for Apple
+vfs objects = catia fruit streams_xattr
+
 END
 ;
 
