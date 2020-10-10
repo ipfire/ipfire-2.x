@@ -1,5 +1,6 @@
 etc/system-release
 etc/issue
+etc/os-release
 etc/rc.d/helper/aws-setup
 etc/rc.d/helper/azure-setup
 etc/rc.d/helper/exoscale-setup
