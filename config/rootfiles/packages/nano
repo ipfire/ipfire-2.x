@@ -21,12 +21,9 @@ usr/share/nano/c.nanorc
 #usr/share/nano/changelog.nanorc
 usr/share/nano/cmake.nanorc
 usr/share/nano/css.nanorc
-usr/share/nano/debian.nanorc
 usr/share/nano/default.nanorc
 usr/share/nano/elisp.nanorc
 #usr/share/nano/email.nanorc
-usr/share/nano/fortran.nanorc
-usr/share/nano/gentoo.nanorc
 #usr/share/nano/go.nanorc
 usr/share/nano/groff.nanorc
 usr/share/nano/guile.nanorc
@@ -38,8 +35,6 @@ usr/share/nano/java.nanorc
 usr/share/nano/makefile.nanorc
 usr/share/nano/man.nanorc
 #usr/share/nano/markdown.nanorc
-usr/share/nano/mgp.nanorc
-usr/share/nano/mutt.nanorc
 usr/share/nano/nanohelp.nanorc
 usr/share/nano/nanorc.nanorc
 usr/share/nano/nftables.nanorc
@@ -49,13 +44,10 @@ usr/share/nano/patch.nanorc
 usr/share/nano/perl.nanorc
 usr/share/nano/php.nanorc
 usr/share/nano/po.nanorc
-usr/share/nano/postgresql.nanorc
-usr/share/nano/pov.nanorc
 usr/share/nano/python.nanorc
 usr/share/nano/ruby.nanorc
 usr/share/nano/rust.nanorc
 usr/share/nano/sh.nanorc
-usr/share/nano/spec.nanorc
 #usr/share/nano/sql.nanorc
 usr/share/nano/tcl.nanorc
 usr/share/nano/tex.nanorc
