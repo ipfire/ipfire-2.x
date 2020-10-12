@@ -10,3 +10,4 @@ etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/red
 srv/web/ipfire/cgi-bin/credits.cgi
 usr/local/bin/setaliases
+var/ipfire/graphs.pl
