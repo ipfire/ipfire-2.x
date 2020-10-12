@@ -33,10 +33,8 @@ done
 
 # Remove files
 rm -rfv \
-	/usr/lib/perl5/site_perl/5.30.0/Locale
-rm -rfv \
-	/usr/lib/perl5/site_perl/5.30.0/*/Net/DNS
-rm -fv \
+	/usr/lib/perl5/site_perl/5.30.0/Locale \
+	/usr/lib/perl5/site_perl/5.30.0/*/Net/DNS \
 	/usr/lib/perl5/site_perl/5.30.0/*/Net/DNS.pm
 
 # Stop services
