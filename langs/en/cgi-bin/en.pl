@@ -2041,7 +2041,7 @@
 'port' => 'Port',
 'port forwarding configuration' => 'Port forwarding configuration',
 'ports' => 'Ports',
-'portscans' => 'portscancs',
+'portscans' => 'Port Scans',
 'pots' => 'Analog classic line',
 'ppp setup' => 'PPP setup',
 'pppoe' => 'PPPoE',
