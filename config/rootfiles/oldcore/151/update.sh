@@ -33,7 +33,9 @@ done
 
 # Remove files
 rm -rfv \
-	/usr/lib/perl5/site_perl/5.30.0/Locale
+	/usr/lib/perl5/site_perl/5.30.0/Locale \
+	/usr/lib/perl5/site_perl/5.30.0/*/Net/DNS \
+	/usr/lib/perl5/site_perl/5.30.0/*/Net/DNS.pm
 
 # Stop services
 /etc/init.d/ipsec stop
