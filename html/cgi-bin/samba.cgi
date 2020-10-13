@@ -43,7 +43,7 @@ my @userline = ();
 my $userfile = "${General::swroot}/samba/private/smbpasswd";
 my %selected= () ;
 
-my $defaultoption= "[Share]\npath = /var/ipfire/samba/share1\ncomment = Share - Public Access\nbrowseable = yes\nwriteable = yes\ncreate mask = 0777\ndirectory mask = 0777\npublic = yes\nforce user = samba";
+my $defaultoption= "[My Share]\npath = \ncomment = Share - Public Access\nbrowseable = yes\nwriteable = yes\ncreate mask = 0644\ndirectory mask = 0755\npublic = yes\nforce user = samba";
 my %shares = ();
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
