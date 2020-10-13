@@ -59,7 +59,6 @@ my %shares = ();
 #################################### Initialisierung von Samba Variablen fr global Settings ###############################
 
 $sambasettings{'WORKGRP'} = uc($mainsettings{'DOMAINNAME'});
-$sambasettings{'INTERFACES'} = '';
 $sambasettings{'ROLE'} = 'standalone';
 $sambasettings{'REMOTEANNOUNCE'} = '';
 $sambasettings{'REMOTESYNC'} = '';
