@@ -33,21 +33,15 @@ fi
 extract_files
 restore_backup ${NAME}
 
-# Migrate configuration from Samba 3.6 to 4.x
-sed -i /var/ipfire/samba/smb.conf \
-	-e "/^display charset =/d" \
-	-e "/^encrypt passwords =/d" \
-	-e "/^null passwords =/d" \
-	-e "/^socket options =/d" \
-	-e "/^syslog/d" \
-	-e "s/^security = share$/security = user/"
-
 # Migrate SECURITY to ROLE
 sed -i /var/ipfire/samba/settings \
 	-e "s/^SECURITY=ADS/ROLE=member/" \
 	-e "s/^SECURITY=server/ROLE=standalone/" \
 	-e "s/^SECURITY=share/ROLE=standalone/" \
 	-e "s/^SECURITY=user/ROLE=standalone/"
+
+# Rewrite configuration files
+sudo -u nobody /srv/web/ipfire/cgi-bin/samba.cgi
 
 # Start the service
 /usr/local/bin/sambactrl smbstart

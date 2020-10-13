@@ -51,11 +51,6 @@ my %shares = ();
 &General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
 
 ############################################################################################################################
-############################################# Samba Dienste fr Statusberprfung ##########################################
-
-&Header::showhttpheaders();
-
-############################################################################################################################
 #################################### Initialisierung von Samba Variablen fr global Settings ###############################
 
 $sambasettings{'WORKGRP'} = uc($mainsettings{'DOMAINNAME'});
@@ -72,7 +67,17 @@ my $LOGLINES = '50';
 ############################################################################################################################
 
 &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
+
+# Hook to regenerate the configuration files.
+if ($ENV{"REMOTE_ADDR"} eq "") {
+	&writeconfiguration();
+	exit(0);
+}
+
+&Header::showhttpheaders();
+
 &Header::getcgihash(\%sambasettings);
+delete $sambasettings{'__CGI__'};delete $sambasettings{'x'};delete $sambasettings{'y'};
 
 &Header::openpage('Samba', 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
@@ -100,81 +105,19 @@ if ($sambasettings{'ACTION'} eq 'userdelete'){system("/usr/local/bin/sambactrl s
 ############################################################################################################################
 ##################################### Umsetzen der Werte von Checkboxen und Dropdowns ######################################
 
-if ($sambasettings{'ACTION'} eq $Lang::tr{'save'})
-{
 ############################################################################################################################
 ##################################### Schreiben settings und bersetzen fr smb.conf #######################################
 
-delete $sambasettings{'__CGI__'};delete $sambasettings{'x'};delete $sambasettings{'y'};
-&General::writehash("${General::swroot}/samba/settings", \%sambasettings);
+if ($sambasettings{'ACTION'} eq $Lang::tr{'save'}) {
+	&General::writehash("${General::swroot}/samba/settings", \%sambasettings);
 
-############################################################################################################################
-############################################# Schreiben der Samba globals ##################################################
+	# Write configuration to file
+	&writeconfiguration();
 
-	open (FILE, ">${General::swroot}/samba/global") or die "Can't save the global settings: $!";
-	flock (FILE, 2);
-	
-print FILE <<END
-# global.settings by IPFire Project
-
-[global]
-server string = Samba on IPFire
-
-workgroup = $sambasettings{'WORKGRP'}
-realm = $mainsettings{'DOMAINNAME'}
-passdb backend = smbpasswd
-
-map to guest = $sambasettings{'MAPTOGUEST'}
-
-guest account = $sambasettings{'GUESTACCOUNT'}
-unix password sync = no
-
-bind interfaces only = true
-interfaces = green0 blue0 127.0.0.0/8
-remote announce = $sambasettings{'REMOTEANNOUNCE'}
-remote browse sync = $sambasettings{'REMOTESYNC'}
-
-winbind separator = +
-winbind uid = 10000-20000
-winbind gid = 10000-20000
-winbind use default domain = yes
-
-# Log to syslog
-logging = syslog
-
-# Enable support for Apple
-vfs objects = catia fruit streams_xattr recycle
-
-# Enable following symlinks
-wide links = yes
-
-END
-;
-
-# Server Role
-if ($sambasettings{'ROLE'} eq "standalone") {
-	print FILE "server role = standalone\n";
-} elsif ($sambasettings{'ROLE'} eq "member") {
-	print FILE "server role = member server\n";
+	system("/usr/local/bin/sambactrl smbreload");
 }
 
-if ($sambasettings{'ENCRYPTION'} =~ m/(desired|required)/) {
-	print FILE "smb encrypt = $1\n";
-}
-
-print FILE <<END;
-# Export all printers
-[printers]
-path = /var/spool/samba/
-printable = yes
-
-END
-close FILE;
-
-system("/usr/local/bin/sambactrl smbsafeconf");
-system("/usr/local/bin/sambactrl smbreload");
-}
-  &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
+&General::readhash("${General::swroot}/samba/settings", \%sambasettings);
   
 
 if ($errormessage)
@@ -837,6 +780,69 @@ sub isrunning
 		}
 	return $status;
 	}
+
+sub writeconfiguration() {
+	open (FILE, ">${General::swroot}/samba/global") or die "Can't save the global settings: $!";
+	flock (FILE, 2);
+	
+	print FILE <<END;
+# global.settings by IPFire Project
+
+[global]
+server string = Samba on IPFire
+
+workgroup = $sambasettings{'WORKGRP'}
+realm = $mainsettings{'DOMAINNAME'}
+passdb backend = smbpasswd
+
+map to guest = $sambasettings{'MAPTOGUEST'}
+
+guest account = $sambasettings{'GUESTACCOUNT'}
+unix password sync = no
+
+bind interfaces only = true
+interfaces = green0 blue0 127.0.0.0/8
+remote announce = $sambasettings{'REMOTEANNOUNCE'}
+remote browse sync = $sambasettings{'REMOTESYNC'}
+
+winbind separator = +
+winbind uid = 10000-20000
+winbind gid = 10000-20000
+winbind use default domain = yes
+
+# Log to syslog
+logging = syslog
+
+# Enable support for Apple
+vfs objects = catia fruit streams_xattr recycle
+
+# Enable following symlinks
+wide links = yes
+
+END
+
+# Server Role
+if ($sambasettings{'ROLE'} eq "standalone") {
+	print FILE "server role = standalone\n";
+} elsif ($sambasettings{'ROLE'} eq "member") {
+	print FILE "server role = member server\n";
+}
+
+if ($sambasettings{'ENCRYPTION'} =~ m/(desired|required)/) {
+	print FILE "smb encrypt = $1\n";
+}
+
+print FILE <<END;
+# Export all printers
+[printers]
+path = /var/spool/samba/
+printable = yes
+
+END
+close FILE;
+
+	system("/usr/local/bin/sambactrl smbsafeconf");
+}
 
 sub joindomain {
 	my $username = shift;
