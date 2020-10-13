@@ -42,8 +42,12 @@ sed -i /var/ipfire/samba/smb.conf \
 	-e "/^syslog/d" \
 	-e "s/^security = share$/security = user/"
 
+# Migrate SECURITY to ROLE
 sed -i /var/ipfire/samba/settings \
-	-e "s/^SECURITY=share/SECURITY=user/"
+	-e "s/^SECURITY=ADS/ROLE=member/" \
+	-e "s/^SECURITY=server/ROLE=standalone/" \
+	-e "s/^SECURITY=share/ROLE=standalone/" \
+	-e "s/^SECURITY=user/ROLE=standalone/"
 
 # Start the service
 /usr/local/bin/sambactrl smbstart
