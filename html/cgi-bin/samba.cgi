@@ -535,7 +535,7 @@ if ($sambasettings{'ROLE'} eq "member") {
 	<form method="POST" action="$ENV{'SCRIPT_NAME'}">
 		<input type="hidden" name="ACTION" value="join">
 
-		<table class="tbl" width="100%">
+		<table width="100%">
 			<tbody>
 				<tr>
 					<td width="40%">
