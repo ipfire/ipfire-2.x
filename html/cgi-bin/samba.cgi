@@ -429,7 +429,7 @@ END
 				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<input type='hidden' name='NAME' value='$userline[0]' />
 					<input type='hidden' name='ACTION' value='userdelete' />
-					<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-option-remove.png' />
+					<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/delete.gif' />
 				</form>
 			</td>
 		</tr>
@@ -632,7 +632,7 @@ foreach my $shareentry (sort @shares) {
 				<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'manage shares'}'>
 					<input type='hidden' name='NAME' value='$shareentry' />
 					<input type='hidden' name='ACTION' value='smbsharedel' />
-					<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' />
+					<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/delete.gif' />
 				</form>
 			</td>
 		</tr>
