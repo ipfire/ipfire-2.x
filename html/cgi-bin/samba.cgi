@@ -84,7 +84,6 @@ my $LOGLINES = '50';
 if ($sambasettings{'ACTION'} eq 'smbuserdisable'){system("/usr/local/bin/sambactrl smbuserdisable $sambasettings{'NAME'}");}
 if ($sambasettings{'ACTION'} eq 'smbuserenable'){system("/usr/local/bin/sambactrl smbuserenable $sambasettings{'NAME'}");}
 if ($sambasettings{'ACTION'} eq 'smbuseradd'){system("/usr/local/bin/sambactrl smbuseradd $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'} $sambasettings{'GROUP'} $sambasettings{'SHELL'}");}
-if ($sambasettings{'ACTION'} eq 'smbpcadd'){system("/usr/local/bin/sambactrl smbpcadd $sambasettings{'PCNAME'} $sambasettings{'GROUP'} $sambasettings{'SHELL'}");}
 if ($sambasettings{'ACTION'} eq 'smbchangepw'){system("/usr/local/bin/sambactrl smbchangepw $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'}");}
 if ($sambasettings{'ACTION'} eq 'smbrestart'){system("/usr/local/bin/sambactrl smbrestart");}
 if ($sambasettings{'ACTION'} eq 'smbstart'){system("/usr/local/bin/sambactrl smbstart");}
@@ -360,170 +359,187 @@ END
 
 if ($sambasettings{'ROLE'} eq 'standalone') {
 	&Header::openbox('100%', 'center', $Lang::tr{'user management'});
-	print <<END
-	<br />
-	<table class="tbl" width='100%' cellspacing='0'>
-	<tr><td colspan='6' align='left'></td></tr>
-	<tr><td bgcolor='$color{'color20'}' colspan='7' align='left'><b>$Lang::tr{'accounting'}</b></td></tr>
-	<tr><td align='left'><u>$Lang::tr{'username'}</u></td><td align='left'><u>$Lang::tr{'password'}</u></td>
-END
-;
 
-	print "<td></td>";
-	print "<td align='left'><u>$Lang::tr{'status'}</u></td><td colspan='3' width='5%' align='center'><u>$Lang::tr{'options'}</u></td></tr>";
+	print <<END;
+		<table class="tbl" width='100%' cellspacing='0'>
+			<tr>
+				<th align='left'>$Lang::tr{'user'}</th>
+				<th colspan='3' width='5%'></th>
+			</tr>
+END
+
 	system('/usr/local/bin/sambactrl readsmbpasswd');
 	open(FILE, "<${General::swroot}/samba/private/smbpasswd") or die "Can't read user file: $!";
-	@user = <FILE>;
+	my @users = <FILE>;
 	close(FILE);
 	system('/usr/local/bin/sambactrl locksmbpasswd');
-	
+
 	my $lines = 0;
-	
-	foreach $userentry (sort @user)
-		{
-		@userline = split( /\:/, $userentry );
-    if ($lines % 2) {print "<tr bgcolor='$color{'color20'}'>";} else {print "<tr bgcolor='$color{'color22'}'>";}
-		print "<td align='left'>$userline[0]</td><td align='left'>";
-		if ($userline[4] =~ /N/)
-			{
-			print "$Lang::tr{'not set'}</td><td align='left'>";
-			}
-		else
-			{
-			print "$Lang::tr{'set'}</td><td align='left'>";
-			}
+	foreach $userentry (sort @users) {
+		@userline = split( /\:/, $userentry);
 
-		print "</td><td align='left'>";
+		if ($lines % 2) {
+			print "<tr bgcolor='$color{'color20'}'>";
+		} else {
+			print "<tr bgcolor='$color{'color22'}'>";
+		}
 
-		if ($userline[4] =~ /D/)
-			{
-			print <<END
-			$Lang::tr{'inactive'}</td>
-			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-					<input type='hidden' name='NAME' value='$userline[0]' />
-					<input type='hidden' name='ACTION' value='smbuserenable' />
-					<input type='image' alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' />
-			</form></td>
+		# Print username
+		print "<td align='left'>$userline[0]</td>";
+
+		if ($userline[4] =~ /D/) {
+			print <<END;
+				<td align='center'>
+					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='NAME' value='$userline[0]' />
+						<input type='hidden' name='ACTION' value='smbuserenable' />
+						<input type='image' alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' />
+					</form>
+				</td>
 END
-;
-			}
-		else
-			{
-			print <<END
-			$Lang::tr{'active'}</td>
-			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-					<input type='hidden' name='NAME' value='$userline[0]' />
-					<input type='hidden' name='ACTION' value='smbuserdisable' />
-					<input type='image' alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' />
-			</form></td>
+		} else {
+			print <<END;
+				<td align='center'>
+					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='NAME' value='$userline[0]' />
+						<input type='hidden' name='ACTION' value='smbuserdisable' />
+						<input type='image' alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' />
+					</form>
+				</td>
 END
-;
-			}
+		}
 
-		if ($userline[0] =~ /\$/)
-			{
+		# Machine accounts can't be edited
+		if ($userline[0] =~ /\$/) {
 			print "<td></td>";
-			}
-		else
-			{
-			print <<END
-			<td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-					<input type='hidden' name='NAME' value='$userline[0]' />
-					<input type='hidden' name='ACTION' value='userchangepw' />
-					<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
-			</form></td>
+		} else {
+			print <<END;
+				<td align='center'>
+					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='NAME' value='$userline[0]' />
+						<input type='hidden' name='ACTION' value='userchangepw' />
+						<input type='image' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' src='/images/edit.gif' />
+					</form>
+				</td>
 END
-;
-			}
+		}
 
-			print <<END
-			<td><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
+		print <<END;
+			<td align='center'>
+				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<input type='hidden' name='NAME' value='$userline[0]' />
 					<input type='hidden' name='ACTION' value='userdelete' />
 					<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-option-remove.png' />
-			</form></td></tr>
+				</form>
+			</td>
+		</tr>
 END
-;
 		$lines++;
-		}
-	print <<END
-	</table>
-	<br />
-	<table width='10%' cellspacing='0'>
-	<tr><td align='center'><form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-													<input type='hidden' name='ACTION' value='useradd' />
-													<input type='image' alt='$Lang::tr{'add user'}' title='$Lang::tr{'add user'}' src='/images/user-option-add.png' /></form></td>
-	</tr>
-	</table>
-END
-;
+	}
 
-	if ($sambasettings{'ACTION'} eq 'userchangepw')
-		{
-		my $username = "$sambasettings{'NAME'}";
-		my $password = 'samba';
-		print <<END
-		<br />
-		<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-		<table width='100%' cellspacing='0'>
-		<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'change passwords'}</b></td></tr>
-		<tr><td align='left'>$Lang::tr{'username'}</td><td><input type='text' name='USERNAME' value='$username' size='30' readonly='readonly' /></td></tr>
-		<tr><td align='left'>$Lang::tr{'password'}</td><td><input type='password' name='PASSWORD' value='$password' size='30' /></td></tr>
-		<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbchangepw' />
-			<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></td></tr>
+	print <<END;
 		</table>
-		</form>
-END
-;
-		}
 
-	if ($sambasettings{'ACTION'} eq 'useradd')
-		{
+		<br>
+
+		<table width='10%' cellspacing='0'>
+			<tr>
+				<td align='center'>
+					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+						<input type='hidden' name='ACTION' value='useradd'>
+						<input type='submit' value='$Lang::tr{'add user'}'>
+					</form>
+				</td>
+			</tr>
+		</table>
+END
+
+	if ($sambasettings{'ACTION'} eq 'userchangepw') {
+		my $username = $sambasettings{'NAME'};
+		my $password = 'samba';
+
+		print <<END
+			<br>
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<table width='100%' cellspacing='0'>
+					<tr bgcolor='$color{'color20'}'>
+						<td colspan='2' align='left'><b>$Lang::tr{'change passwords'}</b></td>
+					</tr>
+					<tr>
+						<td align='left'>$Lang::tr{'username'}</td>
+						<td>
+							<input type='text' name='USERNAME' value='$username' size='30' readonly='readonly' />
+						</td>
+					</tr>
+					<tr>
+						<td align='left'>$Lang::tr{'password'}</td>
+						<td>
+							<input type='password' name='PASSWORD' value='$password' size='30' />
+						</td>
+					</tr>
+					<tr>
+						<td colspan='2' align='center'>
+							<input type='hidden' name='ACTION' value='smbchangepw'>
+							<input type='submit' value='$Lang::tr{'save'}'>
+						</td>
+					</tr>
+				</table>
+			</form>
+END
+	}
+
+	if ($sambasettings{'ACTION'} eq 'useradd') {
 		my $username = "user";
 		my $password = "samba";
 		chomp $username;
 		$username=~s/\s//g;
 		chomp $password;
 		$password=~s/\s//g;
-		print <<END
-		<br />
-		<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-		<table width='100%' cellspacing='0'>
-		<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'add user'}</b></td></tr>
-		<tr><td align='left'>$Lang::tr{'username'}</td><td><input type='text' name='USERNAME' value='$username' size='30' /></td></tr>
-		<tr><td align='left'>$Lang::tr{'password'}</td><td><input type='password' name='PASSWORD' value='$password' size='30' /></td></tr>
-		<tr><td align='left'>$Lang::tr{'unix group'}</td><td><input type='text' name='GROUP' value='sambauser' size='30' /></td></tr>
-		<tr><td align='left'>$Lang::tr{'unix shell'}</td><td><input type='text' name='SHELL' value='/bin/false' size='30' /></td></tr>
-		<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbuseradd' />
-			<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></td></tr>
-		</table>
-		</form>
-END
-;
-		}
 
-	if ($sambasettings{'ACTION'} eq 'pcadd')
-		{
-		my $pcname = "client\$";
-		chomp $pcname;
-		$pcname=~s/\s//g;
-		print <<END
-		<br />
-		<form method='post' action='$ENV{'SCRIPT_NAME'}#$Lang::tr{'accounting'}'>
-		<table width='100%' cellspacing='0'>
-		<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'pc add'}</b></td></tr>
-		<tr><td align='left'>$Lang::tr{'client'}</td><td><input type='text' name='PCNAME' value='$pcname' size='30' /></td></tr>
-		<tr><td align='left'>$Lang::tr{'unix group'}</td><td><input type='text' name='GROUP' value='sambawks' size='30' /></td></tr>
-		<tr><td align='left'>$Lang::tr{'unix shell'}</td><td><input type='text' name='SHELL' value='/bin/false' size='30' /></td></tr>
-		<tr><td colspan='2' align='center'><input type='hidden' name='ACTION' value='smbpcadd' />
-			<input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></td></tr>
-		</table>
-		</form>
-END
-;
-		}
+		print <<END;
+			<br>
 
-&Header::closebox();
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<table width='100%' cellspacing='0'>
+					<tr bgcolor='$color{'color20'}'>
+						<td colspan='2' align='left'><b>$Lang::tr{'add user'}</b></td>
+					</tr>
+					<tr>
+						<td align='left'>$Lang::tr{'username'}</td>
+						<td>
+							<input type='text' name='USERNAME' value='$username' size='30' />
+						</td>
+					</tr>
+					<tr>
+						<td align='left'>$Lang::tr{'password'}</td>
+						<td>
+							<input type='password' name='PASSWORD' value='$password' size='30' />
+						</td>
+					</tr>
+					<tr>
+						<td align='left'>$Lang::tr{'unix group'}</td>
+						<td>
+							<input type='text' name='GROUP' value='sambauser' size='30' />
+						</td>
+					</tr>
+					<tr>
+						<td align='left'>$Lang::tr{'unix shell'}</td>
+						<td>
+							<input type='text' name='SHELL' value='/bin/false' size='30' />
+						</td>
+					</tr>
+					<tr>
+						<td colspan='2' align='center'>
+							<input type='hidden' name='ACTION' value='smbuseradd'>
+							<input type='submit' value='$Lang::tr{'save'}'>
+						</td>
+					</tr>
+				</table>
+			</form>
+END
+	}
+
+	&Header::closebox();
 }
 
 if ($sambasettings{'ROLE'} eq "member") {

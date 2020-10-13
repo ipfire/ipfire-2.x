@@ -15,9 +15,11 @@ WARNING: translation string unused: TOS Bits
 WARNING: translation string unused: Verbose
 WARNING: translation string unused: access allowed
 WARNING: translation string unused: access refused with this oinkcode
+WARNING: translation string unused: accounting
 WARNING: translation string unused: accounting user nonpdc
 WARNING: translation string unused: accounting user pdc
 WARNING: translation string unused: activate user
+WARNING: translation string unused: active
 WARNING: translation string unused: add a new rule
 WARNING: translation string unused: add cron
 WARNING: translation string unused: add network
@@ -138,6 +140,7 @@ WARNING: translation string unused: choose config
 WARNING: translation string unused: choose media
 WARNING: translation string unused: class in use
 WARNING: translation string unused: clear cache
+WARNING: translation string unused: client
 WARNING: translation string unused: comment
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
@@ -328,6 +331,7 @@ WARNING: translation string unused: ike lifetime
 WARNING: translation string unused: import
 WARNING: translation string unused: importkey
 WARNING: translation string unused: in
+WARNING: translation string unused: inactive
 WARNING: translation string unused: incorrect password
 WARNING: translation string unused: info
 WARNING: translation string unused: insert floppy
@@ -452,6 +456,7 @@ WARNING: translation string unused: no modem selected
 WARNING: translation string unused: no set selected
 WARNING: translation string unused: nonetworkname
 WARNING: translation string unused: noservicename
+WARNING: translation string unused: not set
 WARNING: translation string unused: notes
 WARNING: translation string unused: o-no
 WARNING: translation string unused: o-yes
@@ -516,6 +521,7 @@ WARNING: translation string unused: password crypting key
 WARNING: translation string unused: passwords must be at least 6 characters in length
 WARNING: translation string unused: path to directory
 WARNING: translation string unused: pc
+WARNING: translation string unused: pc add
 WARNING: translation string unused: pdc options
 WARNING: translation string unused: phase1 group
 WARNING: translation string unused: phonebook entry
@@ -586,6 +592,7 @@ WARNING: translation string unused: service removed
 WARNING: translation string unused: service updated
 WARNING: translation string unused: servicename
 WARNING: translation string unused: services settings
+WARNING: translation string unused: set
 WARNING: translation string unused: shaping add options
 WARNING: translation string unused: shaping list options
 WARNING: translation string unused: show areas
@@ -1432,7 +1439,7 @@ WARNING: untranslated string: uplink bit rate = Uplink Bit Rate
 WARNING: untranslated string: upload dh key = Upload Diffie-Hellman parameters
 WARNING: untranslated string: uptime load average = Load average
 WARNING: untranslated string: urlfilter redirect template = Redirect page template
-WARNING: untranslated string: user management = unknown string
+WARNING: untranslated string: user management = User Management
 WARNING: untranslated string: vendor = Vendor
 WARNING: untranslated string: visit us at = Visit us at
 WARNING: untranslated string: vpn broken = Broken

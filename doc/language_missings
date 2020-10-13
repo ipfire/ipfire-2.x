@@ -58,6 +58,7 @@
 < tor errmsg invalid node id
 < updxlrtr used by
 < upload fcdsl.o
+< user management
 < vpn configuration main
 < winbind daemon
 ############################################################################
@@ -844,6 +845,7 @@
 < uptime
 < uptime load average
 < urlfilter redirect template
+< user management
 < vendor
 < visit us at
 < vpn broken
@@ -954,6 +956,7 @@
 < samba server role standalone
 < smb daemon
 < upload fcdsl.o
+< user management
 < winbind daemon
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -1263,6 +1266,7 @@
 < unlimited
 < update ruleset
 < uplink bit rate
+< user management
 < vpn broken
 < vpn connecting
 < vpn force mobike
@@ -1684,6 +1688,7 @@
 < update ruleset
 < uplink bit rate
 < upload dh key
+< user management
 < vendor
 < vpn broken
 < vpn connecting
@@ -2512,6 +2517,7 @@
 < uptime
 < uptime load average
 < urlfilter redirect template
+< user management
 < vendor
 < visit us at
 < vpn broken
@@ -3379,6 +3385,7 @@
 < uptime
 < uptime load average
 < urlfilter redirect template
+< user management
 < vendor
 < visit us at
 < vpn broken
@@ -3615,6 +3622,7 @@
 < taa zombieload2
 < transport mode does not support vti
 < update ruleset
+< user management
 < vpn start action add
 < vpn subjectaltname missing
 < vpn wait

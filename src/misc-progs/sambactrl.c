@@ -71,16 +71,6 @@ int main(int argc, char *argv[]) {
 		snprintf(command, BUFFER_SIZE-1, "/usr/bin/printf '%s\n%s\n' | /usr/bin/smbpasswd -as %s >/dev/null", argv[3], argv[3], argv[2]);
 		safe_system(command);
 
-	} else if (strcmp(argv[1], "smbpcadd") == 0) {
-		snprintf(command, BUFFER_SIZE-1, "/usr/sbin/groupadd sambawks >/dev/null");
-		safe_system(command);
-
-		snprintf(command, BUFFER_SIZE-1, "/usr/sbin/useradd -c 'Samba Workstation' -g %s -s %s %s >/dev/null", argv[3], argv[4], argv[2]);
-		safe_system(command);
-
-		snprintf(command, BUFFER_SIZE-1, "/usr/bin/smbpasswd -a -m %s >/dev/null", argv[2]);
-		safe_system(command);
-
 	} else if (strcmp(argv[1], "smbchangepw") == 0) {
 		snprintf(command, BUFFER_SIZE-1, "echo %s:%s | chpasswd", argv[2], argv[3]);
 		safe_system(command);

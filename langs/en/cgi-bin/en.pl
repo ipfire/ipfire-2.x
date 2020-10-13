@@ -2834,6 +2834,7 @@
 'used swap' => 'Used Swap',
 'user' => 'User',
 'user log' => 'user log',
+'user management' => 'User Management',
 'user proxy logs' => 'user proxy log',
 'username' => 'Username:',
 'username not set' => 'Username not set.',
