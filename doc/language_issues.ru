@@ -17,6 +17,7 @@ WARNING: translation string unused: access allowed
 WARNING: translation string unused: access refused with this oinkcode
 WARNING: translation string unused: accounting user nonpdc
 WARNING: translation string unused: accounting user pdc
+WARNING: translation string unused: activate user
 WARNING: translation string unused: add a new rule
 WARNING: translation string unused: add cron
 WARNING: translation string unused: add network
@@ -131,6 +132,7 @@ WARNING: translation string unused: cannot enable both nat traversal and compres
 WARNING: translation string unused: cant enable xtaccess
 WARNING: translation string unused: capsinactive
 WARNING: translation string unused: cfg restart
+WARNING: translation string unused: change share
 WARNING: translation string unused: check for net traffic update
 WARNING: translation string unused: choose config
 WARNING: translation string unused: choose media
@@ -169,12 +171,16 @@ WARNING: translation string unused: ddns help freedns
 WARNING: translation string unused: ddns help plus
 WARNING: translation string unused: ddns minimize updates
 WARNING: translation string unused: ddns noip prefix
+WARNING: translation string unused: deactivate user
 WARNING: translation string unused: debugme
 WARNING: translation string unused: deep scan directories
 WARNING: translation string unused: default networks
 WARNING: translation string unused: default services
 WARNING: translation string unused: defaultwarning
 WARNING: translation string unused: delete cron
+WARNING: translation string unused: delete pc
+WARNING: translation string unused: delete share
+WARNING: translation string unused: delete user
 WARNING: translation string unused: description
 WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
@@ -553,6 +559,7 @@ WARNING: translation string unused: resetglobals
 WARNING: translation string unused: resetpolicy
 WARNING: translation string unused: resetshares
 WARNING: translation string unused: restore hardware settings
+WARNING: translation string unused: restore settings
 WARNING: translation string unused: root
 WARNING: translation string unused: root path
 WARNING: translation string unused: root user password
@@ -562,7 +569,10 @@ WARNING: translation string unused: rsvd dst port overlap
 WARNING: translation string unused: rsvd src port overlap
 WARNING: translation string unused: rules already up to date
 WARNING: translation string unused: safe removal of umounted device
+WARNING: translation string unused: samba status
+WARNING: translation string unused: save config
 WARNING: translation string unused: save error
+WARNING: translation string unused: save settings
 WARNING: translation string unused: select dest net
 WARNING: translation string unused: select media
 WARNING: translation string unused: select source net
@@ -1324,6 +1334,8 @@ WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
 WARNING: untranslated string: samba join a domain = Join a domain
 WARNING: untranslated string: samba join domain = Join domain
+WARNING: untranslated string: samba server role member = Domain Member
+WARNING: untranslated string: samba server role standalone = Standalone
 WARNING: untranslated string: search = Search
 WARNING: untranslated string: sent = Sent
 WARNING: untranslated string: server restart = You are not able to save any changes while the OpenVPN server is running.

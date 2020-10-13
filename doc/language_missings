@@ -46,6 +46,8 @@
 < optional
 < quick control
 < required
+< samba server role member
+< samba server role standalone
 < shaping add options
 < show areas
 < show lines
@@ -729,6 +731,8 @@
 < runmode
 < samba join a domain
 < samba join domain
+< samba server role member
+< samba server role standalone
 < search
 < sent
 < server restart
@@ -946,6 +950,8 @@
 < netbios nameserver daemon
 < optional
 < required
+< samba server role member
+< samba server role standalone
 < smb daemon
 < upload fcdsl.o
 < winbind daemon
@@ -1222,6 +1228,8 @@
 < runmode
 < samba join a domain
 < samba join domain
+< samba server role member
+< samba server role standalone
 < search
 < sent
 < smb daemon
@@ -1634,6 +1642,8 @@
 < runmode
 < samba join a domain
 < samba join domain
+< samba server role member
+< samba server role standalone
 < search
 < sent
 < show dh
@@ -2391,6 +2401,8 @@
 < runmode
 < samba join a domain
 < samba join domain
+< samba server role member
+< samba server role standalone
 < search
 < sent
 < server restart
@@ -3256,6 +3268,8 @@
 < runmode
 < samba join a domain
 < samba join domain
+< samba server role member
+< samba server role standalone
 < search
 < sent
 < server restart
@@ -3578,6 +3592,8 @@
 < received
 < required
 < runmode
+< samba server role member
+< samba server role standalone
 < sent
 < smb daemon
 < smt disabled

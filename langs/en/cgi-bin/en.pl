@@ -2183,6 +2183,8 @@
 'samba' => 'Samba',
 'samba join a domain' => 'Join a domain',
 'samba join domain' => 'Join domain',
+'samba server role member' => 'Domain Member',
+'samba server role standalone' => 'Standalone',
 'samba status' => 'Samba Status',
 'saturday' => 'Saturday',
 'save' => 'Save',

@@ -60,7 +60,7 @@ my %shares = ();
 
 $sambasettings{'WORKGRP'} = 'homeip.net';
 $sambasettings{'INTERFACES'} = '';
-$sambasettings{'SECURITY'} = 'user';
+$sambasettings{'ROLE'} = 'standalone';
 $sambasettings{'REMOTEANNOUNCE'} = '';
 $sambasettings{'REMOTESYNC'} = '';
 $sambasettings{'GUESTACCOUNT'} = 'samba';
@@ -128,7 +128,6 @@ passdb backend = smbpasswd
 
 map to guest = $sambasettings{'MAPTOGUEST'}
 
-security = $sambasettings{'SECURITY'}
 guest account = $sambasettings{'GUESTACCOUNT'}
 unix password sync = no
 
@@ -153,6 +152,13 @@ wide links = yes
 
 END
 ;
+
+# Server Role
+if ($sambasettings{'ROLE'} eq "standalone") {
+	print FILE "server role = standalone\n";
+} elsif ($sambasettings{'ROLE'} eq "member") {
+	print FILE "server role = member server\n";
+}
 
 if ($sambasettings{'ENCRYPTION'} =~ m/(desired|required)/) {
 	print FILE "smb encrypt = $1\n";
@@ -197,12 +203,14 @@ $selected{'ENCRYPTION'}{'optional'} = '';
 $selected{'ENCRYPTION'}{'desired'} = '';
 $selected{'ENCRYPTION'}{'required'} = '';
 $selected{'ENCRYPTION'}{$sambasettings{'ENCRYPTION'}} = "selected='selected'";
+$selected{'ROLE'}{'standalone'} = '';
+$selected{'ROLE'}{'member'} = '';
+$selected{'ROLE'}{$sambasettings{'ROLE'}} = "selected='selected'";
 
 if ( $sambasettings{'MAPTOGUEST'} eq "Never" ) {
 	$sambasettings{'MAPTOGUEST'}="Bad User";
 }
 $selected{'MAPTOGUEST'}{$sambasettings{'MAPTOGUEST'}} = "selected='selected'";
-$selected{'SECURITY'}{$sambasettings{'SECURITY'}} = "selected='selected'";
 
 ############################################################################################################################
 ################################### Aufbau der HTML Seite fr globale Sambaeinstellungen ###################################
@@ -284,10 +292,9 @@ print <<END
 			<tr>
 				<td align='left' width='40%'>$Lang::tr{'security'}</td>
 				<td align='left'>
-					<select name='SECURITY' style="width: 165px">
-						<option value='user' $selected{'SECURITY'}{'user'}>User</option>
-						<option value='ADS' $selected{'SECURITY'}{'ADS'}>ADS</option>
-						<option value='server' $selected{'SECURITY'}{'server'}>Server</option>
+					<select name='ROLE' style="width: 165px">
+						<option value='standalone' $selected{'ROLE'}{'standalone'}>$Lang::tr{'samba server role standalone'}</option>
+						<option value='member' $selected{'ROLE'}{'member'}>$Lang::tr{'samba server role member'}</option>
 					</select>
 				</td>
 			</tr>
@@ -351,8 +358,7 @@ END
 ############################################################################################################################
 ########################################## Benutzerverwaltung fr Usersecurity #############################################
 
-if ($sambasettings{'SECURITY'} eq 'user')
-	{
+if ($sambasettings{'ROLE'} eq 'standalone') {
 	&Header::openbox('100%', 'center', $Lang::tr{'user management'});
 	print <<END
 	<br />
@@ -520,7 +526,7 @@ END
 &Header::closebox();
 }
 
-if ($sambasettings{'SECURITY'} eq "ADS") {
+if ($sambasettings{'ROLE'} eq "member") {
 	&Header::openbox('100%', 'center', $Lang::tr{'samba join a domain'});
 
 	my $AD_DOMAINNAME = uc($mainsettings{'DOMAINNAME'});
