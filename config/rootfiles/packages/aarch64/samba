@@ -805,7 +805,7 @@ var/lib/samba
 var/lib/samba/bind-dns
 var/lib/samba/private
 var/lib/samba/winbindd_privileged
-var/nmbd
+var/log/samba
 var/spool/samba
 srv/web/ipfire/cgi-bin/samba.cgi
 var/ipfire/menu.d/EX-samba.menu
