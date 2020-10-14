@@ -10,6 +10,7 @@ srv/web/ipfire/cgi-bin/ipinfo.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 usr/bin/probenic.sh
+usr/lib/firewall/rules.pl
 usr/local/bin/ipsecctrl
 var/ipfire/general-functions.pl
 var/ipfire/langs
