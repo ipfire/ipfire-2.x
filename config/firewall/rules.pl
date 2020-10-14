@@ -48,6 +48,13 @@ my @PROTOCOLS_WITH_PORTS = ("tcp", "udp");
 
 my @VALID_TARGETS = ("ACCEPT", "DROP", "REJECT");
 
+my @PRIVATE_NETWORKS = (
+	"10.0.0.0/8",
+	"172.16.0.0/12",
+	"192.168.0.0/16",
+	"100.64.0.0/10",
+);
+
 my %fwdfwsettings=();
 my %fwoptions = ();
 my %defaultNetworks=();
@@ -619,6 +626,16 @@ sub locationblock {
 	if ($locationsettings{'LOCATIONBLOCK_ENABLED'} ne "on") {
 		# Exit submodule. Process remaining script.
 		return;
+	}
+
+	# Only check the RED interface
+	if ($defaultNetworks{'RED_DEV'} ne "") {
+		run("$IPTABLES -A LOCATIONBLOCK ! -i $defaultNetworks{'RED_DEV'} -j RETURN");
+	}
+
+	# Do not check any private address space
+	foreach my $network (@PRIVATE_NETWORKS) {
+		run("$IPTABLES -A LOCATIONBLOCK -s $network -j RETURN");
 	}
 
 	# Loop through all supported locations and
