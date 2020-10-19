@@ -130,7 +130,7 @@ if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'wlanap del interface'}" ){
 
 if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'save'}" ){
 	# verify WPA Passphrase - only with enabled enc
-	if (($wlanapsettings{'ENC'} eq "wpa1") || ($wlanapsettings{'ENC'} eq "wpa2") || ($wlanapsettings{'ENC'} eq "wpa1+2")){
+	if ($wlanapsettings{'ENC'} ne "none") {
 		# must be 8 .. 63 characters
 		if ( (length($wlanapsettings{'PWD'}) < 8) || (length($wlanapsettings{'PWD'}) > 63)){
 			$errormessage .= "$Lang::tr{'wlanap invalid wpa'}<br />";
@@ -442,7 +442,9 @@ print<<END
 		<option value='none' $selected{'ENC'}{'none'}>$Lang::tr{'wlanap none'}</option>
 		<option value='wpa1' $selected{'ENC'}{'wpa1'}>WPA1</option>
 		<option value='wpa2' $selected{'ENC'}{'wpa2'}>WPA2</option>
+		<option value='wpa3' $selected{'ENC'}{'wpa3'}>WPA3</option>
 		<option value='wpa1+2' $selected{'ENC'}{'wpa1+2'}>WPA1+2</option>
+		<option value='wpa2+3' $selected{'ENC'}{'wpa2+3'}>WPA2+3</option>
 	</select>
 </td></tr>
 <tr><td width='25%' class='base'>Passphrase:&nbsp;</td><td class='base' colspan='3'><input type='text' name='PWD' size='30' value='$wlanapsettings{'PWD'}' /></td></tr>
@@ -708,6 +710,16 @@ wpa_key_mgmt=WPA-PSK
 rsn_pairwise=CCMP
 END
 ;
+ }elsif ( $wlanapsettings{'ENC'} eq 'wpa3'){
+	print CONFIGFILE <<END
+######################### wpa hostapd configuration ############################
+#
+wpa=2
+wpa_passphrase=$wlanapsettings{'PWD'}
+wpa_key_mgmt=SAE
+rsn_pairwise=CCMP
+END
+;
  } elsif ( $wlanapsettings{'ENC'} eq 'wpa1+2'){
 	print CONFIGFILE <<END
 ######################### wpa hostapd configuration ############################
@@ -716,6 +728,16 @@ wpa=3
 wpa_passphrase=$wlanapsettings{'PWD'}
 wpa_key_mgmt=WPA-PSK
 wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+END
+;
+ }elsif ( $wlanapsettings{'ENC'} eq 'wpa2+3'){
+	print CONFIGFILE <<END
+######################### wpa hostapd configuration ############################
+#
+wpa=2
+wpa_passphrase=$wlanapsettings{'PWD'}
+wpa_key_mgmt=WPA-PSK SAE
 rsn_pairwise=CCMP
 END
 ;
