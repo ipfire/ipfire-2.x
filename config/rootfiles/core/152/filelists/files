@@ -10,5 +10,6 @@ etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/red
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
+srv/web/ipfire/cgi-bin/proxy.cgi
 usr/local/bin/setaliases
 var/ipfire/graphs.pl
