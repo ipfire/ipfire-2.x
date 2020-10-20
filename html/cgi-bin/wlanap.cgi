@@ -258,9 +258,10 @@ $checked{'CLIENTISOLATION'}{'off'} = '';
 $checked{'CLIENTISOLATION'}{'on'} = '';
 $checked{'CLIENTISOLATION'}{$wlanapsettings{'CLIENTISOLATION'}} = "checked='checked'";
 
-$checked{'IEEE80211W'}{'off'} = '';
-$checked{'IEEE80211W'}{'on'} = '';
-$checked{'IEEE80211W'}{$wlanapsettings{'IEEE80211W'}} = "checked='checked'";
+$selected{'IEEE80211W'}{'off'} = '';
+$selected{'IEEE80211W'}{'optional'} = '';
+$selected{'IEEE80211W'}{'on'} = '';
+$selected{'IEEE80211W'}{$wlanapsettings{'IEEE80211W'}} = "selected";
 
 $selected{'ENC'}{$wlanapsettings{'ENC'}} = "selected='selected'";
 $selected{'CHANNEL'}{$wlanapsettings{'CHANNEL'}} = "selected='selected'";
@@ -451,12 +452,11 @@ print<<END
 <tr>
 	<td width='25%' class='base'>$Lang::tr{'wlanap management frame protection'}:&nbsp;</td>
 	<td class='base' colspan="3">
-		<label>
-			$Lang::tr{'on'} <input type='radio' name='IEEE80211W' value='on' $checked{'IEEE80211W'}{'on'} />
-		</label> |
-		<label>
-			<input type='radio' name='IEEE80211W' value='off' $checked{'IEEE80211W'}{'off'} /> $Lang::tr{'off'}
-		</label>
+		<select name="IEEE80211W">
+			<option value="off" $selected{'IEEE80211W'}{'off'}>$Lang::tr{'wlanap 802.11w disabled'}</option>
+			<option value="optional" $selected{'IEEE80211W'}{'optional'}>$Lang::tr{'wlanap 802.11w optional'}</option>
+			<option value="on" $selected{'IEEE80211W'}{'on'}>$Lang::tr{'wlanap 802.11w enforced'}</option>
+		</select>
 	</td>
 </tr>
 <tr><td colspan='4'><br></td></tr>
@@ -686,6 +686,8 @@ END
  # Management Frame Protection (802.11w)
  if ($wlanapsettings{'IEEE80211W'} eq "on") {
 	print CONFIGFILE "ieee80211w=2\n";
+ } elsif ($wlanapsettings{'IEEE80211W'} eq "optional") {
+	print CONFIGFILE "ieee80211w=1\n";
  } else {
 	print CONFIGFILE "ieee80211w=0\n";
  }

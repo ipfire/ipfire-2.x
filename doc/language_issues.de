@@ -888,3 +888,6 @@ WARNING: untranslated string: show tls-auth key = Show tls-auth key
 WARNING: untranslated string: smb daemon = SMB Daemon
 WARNING: untranslated string: user management = User Management
 WARNING: untranslated string: winbind daemon = Winbind Daemon
+WARNING: untranslated string: wlanap 802.11w disabled = Disabled
+WARNING: untranslated string: wlanap 802.11w enforced = Enforced
+WARNING: untranslated string: wlanap 802.11w optional = Optional

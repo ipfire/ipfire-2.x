@@ -61,6 +61,9 @@
 < user management
 < vpn configuration main
 < winbind daemon
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
@@ -869,6 +872,9 @@
 < winbind daemon
 < wireless network
 < wlanap
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 < wlanap auto
 < wlanap broadcast ssid
 < wlanap client isolation
@@ -958,6 +964,9 @@
 < upload fcdsl.o
 < user management
 < winbind daemon
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -1287,6 +1296,9 @@
 < winbind daemon
 < wireless network
 < wlanap
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 < wlanap auto
 < wlanap broadcast ssid
 < wlanap client isolation
@@ -1710,6 +1722,9 @@
 < winbind daemon
 < wireless network
 < wlanap
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 < wlanap auto
 < wlanap broadcast ssid
 < wlanap client isolation
@@ -2541,6 +2556,9 @@
 < winbind daemon
 < wireless network
 < wlanap
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 < wlanap auto
 < wlanap broadcast ssid
 < wlanap client isolation
@@ -3410,6 +3428,9 @@
 < winbind daemon
 < wireless network
 < wlanap
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 < wlanap auto
 < wlanap broadcast ssid
 < wlanap client isolation
@@ -3630,6 +3651,9 @@
 < vulnerable
 < Weekly
 < winbind daemon
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 < wlanap auto
 < wlanap broadcast ssid
 < wlanap client isolation
