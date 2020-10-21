@@ -3,6 +3,7 @@ etc/suricata/suricata.yaml
 #root/.cargo
 #root/.cargo/.package-cache
 usr/bin/suricata
+#usr/include/suricata-plugin.h
 #usr/share/doc/suricata
 #usr/share/doc/suricata/AUTHORS
 #usr/share/doc/suricata/Basic_Setup.txt

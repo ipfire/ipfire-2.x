@@ -271,14 +271,16 @@ outputs:
 
         #- dnp3
         - ftp
-        #- rdp
+        - rdp
         - nfs
         - smb
         - tftp
         - ikev2
+        - dcerpc
         - krb5
         - snmp
-        #- sip
+        - rfb
+        - sip
         - dhcp:
             enabled: yes
             # When extended mode is on, all DHCP messages are logged
@@ -287,6 +289,12 @@ outputs:
             # to an IP address is logged.
             extended: no
         - ssh
+        - mqtt:
+            # passwords: yes           # enable output of passwords
+        # HTTP2 logging. HTTP2 support is currently experimental and
+        # disabled by default. To enable, uncomment the following line
+        # and be sure to enable http2 in the app-layer section.
+        #- http2
         - stats:
             totals: yes       # stats for all threads merged together
             threads: no       # per thread stats
@@ -358,6 +366,14 @@ nfq:
 # "detection-only" enables protocol detection only (parser disabled).
 app-layer:
   protocols:
+    rfb:
+      enabled: yes
+      detection-ports:
+        dp: 5900, 5901, 5902, 5903, 5904, 5905, 5906, 5907, 5908, 5909
+    # MQTT, disabled by default.
+    mqtt:
+      # enabled: no
+      # max-msg-length: 1mb
     krb5:
       enabled: yes
     snmp:
@@ -388,6 +404,10 @@ app-layer:
       enabled: yes
     ssh:
       enabled: yes
+      #hassh: yes
+    # HTTP2: Experimental HTTP 2 support. Disabled by default.
+    http2:
+      enabled: no
     smtp:
       enabled: yes
       # Configure SMTP-MIME Decoder
