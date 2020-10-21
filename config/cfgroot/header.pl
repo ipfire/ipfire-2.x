@@ -418,6 +418,8 @@ END
 			$ip = $temp[1];
 			#All field are not necessarily read. Clear everything
 			$endtime = 0;
+			$endtime_print = "";
+			$expired = 0;
 			$ether = "";
 			$hostname = "";
 		}
@@ -425,6 +427,9 @@ END
 		if ($line =~ /^\s*ends/) {
 			$line =~ /(\d+)\/(\d+)\/(\d+) (\d+):(\d+):(\d+)/;
 			$endtime = timegm($6, $5, $4, $3, $2 - 1, $1 - 1900);
+			($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $dst) = localtime($endtime);
+			$endtime_print = sprintf ("%02d/%02d/%d %02d:%02d:%02d",$mday,$mon+1,$year+1900,$hour,$min,$sec);
+			$expired = $endtime < time();
 		}
 
 		if ($line =~ /^\s*hardware ethernet/) {
@@ -434,12 +439,11 @@ END
 
 		if ($line =~ /^\s*client-hostname/) {
 			$hostname = "$temp[1] $temp[2] $temp[3]";
-			$hostname =~ s/;//g;
-			$hostname =~ s/\"//g;
+			$hostname =~ s/\"|[;\s]+?$//g; # remove quotes, trim semicolon and white space
 		}
 
 		if ($line eq "}") {
-			@record = ('IPADDR',$ip,'ENDTIME',$endtime,'ETHER',$ether,'HOSTNAME',$hostname);
+			@record = ('IPADDR',$ip,'ENDTIME',$endtime,'ETHER',$ether,'HOSTNAME',$hostname,'endtime_print',$endtime_print,'expired',$expired);
 			$record = {};								# create a reference to empty hash
 			%{$record} = @record;						# populate that hash with @record
 			$entries{$record->{'IPADDR'}} = $record;	# add this to a hash of hashes
@@ -449,37 +453,53 @@ END
 
     my $id = 0;
     my $col = "";
+	my $divider_printed = 0;
     foreach my $key (sort leasesort keys %entries) {
-		print "<form method='post' action='/cgi-bin/dhcp.cgi'>\n";
 		my $hostname = &cleanhtml($entries{$key}->{HOSTNAME},"y");
-
+		my $hostname_print = $hostname;
+		if($hostname_print eq "") { #print blank space if no hostname is found
+			$hostname_print = "&nbsp;&nbsp;&nbsp;";
+		}
+		
+		# separate active and expired leases with a horizontal line
+		if(($entries{$key}->{expired}) && ($divider_printed == 0)) {
+			$divider_printed = 1;
+			if ($id % 2) {
+				print "<tr><td colspan='5' bgcolor='$table1colour'><hr size='1'></td></tr>\n";
+			} else {
+				print "<tr><td colspan='5' bgcolor='$table2colour'><hr size='1'></td></tr>\n";
+			}
+			$id++;
+		}
+		
+		print "<form method='post' action='/cgi-bin/dhcp.cgi'><tr>\n";
 		if ($id % 2) {
-			print "<tr>";
 			$col="bgcolor='$table1colour'";
 		} else {
-			print "<tr>";
 			$col="bgcolor='$table2colour'";
 		}
-
-		print <<END
-<td align='center' $col><input type='hidden' name='FIX_ADDR' value='$entries{$key}->{IPADDR}' />$entries{$key}->{IPADDR}</td>
-<td align='center' $col><input type='hidden' name='FIX_MAC' value='$entries{$key}->{ETHER}' />$entries{$key}->{ETHER}</td>
-<td align='center' $col><input type='hidden' name='FIX_REMARK' value='$hostname' />&nbsp;$hostname</td>
-<td align='center' $col><input type='hidden' name='FIX_ENABLED' value='on' />
+		
+		if($entries{$key}->{expired}) {
+			print <<END
+<td align='center' $col><input type='hidden' name='FIX_ADDR' value='$entries{$key}->{IPADDR}' /><strike><i>$entries{$key}->{IPADDR}</i></strike></td>
+<td align='center' $col><input type='hidden' name='FIX_MAC' value='$entries{$key}->{ETHER}' /><strike><i>$entries{$key}->{ETHER}</i></strike></td>
+<td align='center' $col><input type='hidden' name='FIX_REMARK' value='$hostname' /><strike><i>$hostname_print<i><strike></td>
+<td align='center' $col><input type='hidden' name='FIX_ENABLED' value='on' /><strike><i>$entries{$key}->{endtime_print}</i></strike></td>
 END
 ;
-
-		($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $dst) = localtime ($entries{$key}->{ENDTIME});
-		$enddate = sprintf ("%02d/%02d/%d %02d:%02d:%02d",$mday,$mon+1,$year+1900,$hour,$min,$sec);
-
-		if ($entries{$key}->{ENDTIME} < time() ){
-			print "<strike>$enddate</strike>";
 		} else {
-			print "$enddate";
+			print <<END
+<td align='center' $col><input type='hidden' name='FIX_ADDR' value='$entries{$key}->{IPADDR}' />$entries{$key}->{IPADDR}</td>
+<td align='center' $col><input type='hidden' name='FIX_MAC' value='$entries{$key}->{ETHER}' />$entries{$key}->{ETHER}</td>
+<td align='center' $col><input type='hidden' name='FIX_REMARK' value='$hostname' />$hostname_print</td>
+<td align='center' $col><input type='hidden' name='FIX_ENABLED' value='on' />$entries{$key}->{endtime_print}</td>
+END
+;
 		}
+
 		print <<END
-</td><td $col><input type='hidden' name='ACTION' value='$Lang::tr{'add'}2' /><input type='submit' name='SUBMIT' value='$Lang::tr{'add'}' />
-</td></tr></form>
+<td $col><input type='hidden' name='ACTION' value='$Lang::tr{'add'}2' /><input type='submit' name='SUBMIT' value='$Lang::tr{'add'}' /></td>
+</tr></form>
 END
 ;
 		$id++;
@@ -498,11 +518,13 @@ sub leasesort {
 		if ($qs eq 'IPADDR') {
 			@a = split(/\./,$entries{$a}->{$qs});
 			@b = split(/\./,$entries{$b}->{$qs});
+			$entries{$a}->{'expired'} <=> $entries{$b}->{'expired'} || # always sort by expiration first
 			($b[0]<=>$a[0]) ||
 			($b[1]<=>$a[1]) ||
 			($b[2]<=>$a[2]) ||
 			($b[3]<=>$a[3]);
 		} else {
+			$entries{$a}->{'expired'} <=> $entries{$b}->{'expired'} ||
 			$entries{$b}->{$qs} cmp $entries{$a}->{$qs};
 		}
 	}
@@ -512,11 +534,13 @@ sub leasesort {
 		if ($qs eq 'IPADDR') {
 			@a = split(/\./,$entries{$a}->{$qs});
 			@b = split(/\./,$entries{$b}->{$qs});
+			$entries{$a}->{'expired'} <=> $entries{$b}->{'expired'} ||
 			($a[0]<=>$b[0]) ||
 			($a[1]<=>$b[1]) ||
 			($a[2]<=>$b[2]) ||
 			($a[3]<=>$b[3]);
 		} else {
+			$entries{$a}->{'expired'} <=> $entries{$b}->{'expired'} ||
 			$entries{$a}->{$qs} cmp $entries{$b}->{$qs};
 		}
 	}
