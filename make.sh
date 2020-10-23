@@ -1417,9 +1417,6 @@ buildipfire() {
   lfsmake2 fetchmail
   lfsmake2 clamav
   lfsmake2 perl-NetAddr-IP
-  lfsmake2 spamassassin
-  lfsmake2 perl-Net-LibIDN
-  lfsmake2 amavisd
   lfsmake2 dma
   lfsmake2 alsa
   lfsmake2 mpfire
