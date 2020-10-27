@@ -1,8 +1,8 @@
 # Ruleset for registered sourcefire users.
-registered = https://www.snort.org/rules/snortrules-snapshot-29151.tar.gz?oinkcode=<oinkcode>
+registered = https://www.snort.org/rules/snortrules-snapshot-29161.tar.gz?oinkcode=<oinkcode>
 
 # Ruleset for registered sourcefire users with valid subscription.
-subscripted = https://www.snort.org/rules/snortrules-snapshot-29151.tar.gz?oinkcode=<oinkcode>
+subscripted = https://www.snort.org/rules/snortrules-snapshot-29161.tar.gz?oinkcode=<oinkcode>
 
 # Community rules from sourcefire.
 community = https://www.snort.org/rules/community
