@@ -387,9 +387,7 @@ app-layer:
 
       # Generate JA3 fingerprint from client hello. If not specified it
       # will be disabled by default, but enabled if rules require it.
-      #ja3-fingerprints: auto
-      # Generate JA3 fingerprint from client hello
-      ja3-fingerprints: no
+      ja3-fingerprints: auto
 
       # Completely stop processing TLS/SSL session after the handshake
       # completed. If bypass is enabled this will also trigger flow
