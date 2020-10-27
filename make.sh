@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.25"							# Version number
-CORE="151"							# Core Level (Filename)
+CORE="152"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 NICE=10								# Nice level
@@ -1296,6 +1296,7 @@ buildipfire() {
   lfsmake2 perl-Device-SerialPort
   lfsmake2 perl-Device-Modem
   lfsmake2 perl-Apache-Htpasswd
+  lfsmake2 perl-Parse-Yapp
   lfsmake2 gnupg
   lfsmake2 hdparm
   lfsmake2 sdparm
@@ -1402,6 +1403,7 @@ buildipfire() {
   lfsmake2 hplip
   lfsmake2 cifs-utils
   lfsmake2 krb5
+  lfsmake2 rpcsvc-proto
   lfsmake2 samba
   lfsmake2 netatalk
   lfsmake2 sudo
@@ -1438,7 +1440,6 @@ buildipfire() {
   lfsmake2 rsync
   lfsmake2 rpcbind
   lfsmake2 keyutils
-  lfsmake2 rpcsvc-proto
   lfsmake2 libnfsidmap
   lfsmake2 nfs
   lfsmake2 gnu-netcat
@@ -1621,6 +1622,7 @@ buildipfire() {
   lfsmake2 libpciaccess
   lfsmake2 libyajl
   lfsmake2 libvirt
+  lfsmake2 libtalloc
   lfsmake2 freeradius
   lfsmake2 perl-common-sense
   lfsmake2 perl-inotify2

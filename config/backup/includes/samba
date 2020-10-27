@@ -1,6 +1,5 @@
 /var/ipfire/samba/global
 /var/ipfire/samba/pdc
-/var/ipfire/samba/printer
 /var/ipfire/samba/private/
 /var/ipfire/samba/settings
 /var/ipfire/samba/shares

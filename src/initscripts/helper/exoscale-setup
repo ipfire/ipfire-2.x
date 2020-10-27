@@ -122,7 +122,6 @@ import_exoscale_configuration() {
 					GREEN_ADDRESS="10.0.0.1"
 					GREEN_NETMASK="255.255.255.0"
 					GREEN_NETADDRESS="10.0.0.0"
-					GREEN_BROADCAST="10.0.0.255"
 				fi
 
 				(
@@ -132,7 +131,6 @@ import_exoscale_configuration() {
 					echo "GREEN_ADDRESS=${GREEN_ADDRESS}"
 					echo "GREEN_NETMASK=${GREEN_NETMASK}"
 					echo "GREEN_NETADDRESS=${GREEN_NETADDRESS}"
-					echo "GREEN_BROADCAST=${GREEN_BROADCAST}"
 					echo "GREEN_MTU=${DEFAULT_MTU}"
 				) >> /var/ipfire/ethernet/settings
 				;;
@@ -146,7 +144,6 @@ import_exoscale_configuration() {
 					ORANGE_ADDRESS="10.0.1.1"
 					ORANGE_NETMASK="255.255.255.0"
 					ORANGE_NETADDRESS="10.0.1.0"
-					ORANGE_BROADCAST="10.0.1.255"
 				fi
 
 				(
@@ -156,7 +153,6 @@ import_exoscale_configuration() {
 					echo "ORANGE_ADDRESS=${ORANGE_ADDRESS}"
 					echo "ORANGE_NETMASK=${ORANGE_NETMASK}"
 					echo "ORANGE_NETADDRESS=${ORANGE_NETADDRESS}"
-					echo "ORANGE_BROADCAST=${ORANGE_BROADCAST}"
 					echo "ORANGE_MTU=${DEFAULT_MTU}"
 				) >> /var/ipfire/ethernet/settings
 				;;

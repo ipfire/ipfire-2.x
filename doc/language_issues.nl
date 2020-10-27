@@ -15,15 +15,22 @@ WARNING: translation string unused: TOS Bits
 WARNING: translation string unused: Verbose
 WARNING: translation string unused: access allowed
 WARNING: translation string unused: access refused with this oinkcode
+WARNING: translation string unused: accounting
+WARNING: translation string unused: accounting user nonpdc
+WARNING: translation string unused: accounting user pdc
+WARNING: translation string unused: activate user
+WARNING: translation string unused: active
 WARNING: translation string unused: add a new rule
 WARNING: translation string unused: add cron
 WARNING: translation string unused: add network
 WARNING: translation string unused: add new ovpn
+WARNING: translation string unused: add printer
 WARNING: translation string unused: add service
 WARNING: translation string unused: add subclass
 WARNING: translation string unused: add xtaccess
 WARNING: translation string unused: add-route
 WARNING: translation string unused: admin user password has been changed
+WARNING: translation string unused: admin users
 WARNING: translation string unused: administrator user password
 WARNING: translation string unused: advproxy LDAP auth
 WARNING: translation string unused: advproxy NTLM BDC hostname
@@ -133,11 +140,14 @@ WARNING: translation string unused: capsinactive
 WARNING: translation string unused: ccd err iroute
 WARNING: translation string unused: ccd err netadr
 WARNING: translation string unused: cfg restart
+WARNING: translation string unused: change share
 WARNING: translation string unused: check for net traffic update
 WARNING: translation string unused: choose config
 WARNING: translation string unused: choose media
 WARNING: translation string unused: class in use
 WARNING: translation string unused: clear cache
+WARNING: translation string unused: client
+WARNING: translation string unused: comment
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
 WARNING: translation string unused: connect the modem
@@ -154,6 +164,7 @@ WARNING: translation string unused: could not open available updates file
 WARNING: translation string unused: could not open installed updates file
 WARNING: translation string unused: could not open update information file
 WARNING: translation string unused: create
+WARNING: translation string unused: create mask
 WARNING: translation string unused: create new backup
 WARNING: translation string unused: current dynamic leases
 WARNING: translation string unused: current media
@@ -170,6 +181,7 @@ WARNING: translation string unused: ddns help freedns
 WARNING: translation string unused: ddns help plus
 WARNING: translation string unused: ddns minimize updates
 WARNING: translation string unused: ddns noip prefix
+WARNING: translation string unused: deactivate user
 WARNING: translation string unused: debugme
 WARNING: translation string unused: deep scan directories
 WARNING: translation string unused: default ip
@@ -177,6 +189,9 @@ WARNING: translation string unused: default networks
 WARNING: translation string unused: default services
 WARNING: translation string unused: defaultwarning
 WARNING: translation string unused: delete cron
+WARNING: translation string unused: delete pc
+WARNING: translation string unused: delete share
+WARNING: translation string unused: delete user
 WARNING: translation string unused: deprecated fs warn
 WARNING: translation string unused: description
 WARNING: translation string unused: destination ip bad
@@ -193,8 +208,11 @@ WARNING: translation string unused: dhcp server enabled on blue interface
 WARNING: translation string unused: dial user password
 WARNING: translation string unused: dial user password has been changed
 WARNING: translation string unused: dialup settings
+WARNING: translation string unused: directory mask
+WARNING: translation string unused: directory writeable
 WARNING: translation string unused: disconnect
 WARNING: translation string unused: disconnects
+WARNING: translation string unused: display charset
 WARNING: translation string unused: display traffic at home
 WARNING: translation string unused: display webinterface effects
 WARNING: translation string unused: dmz pinhole configuration
@@ -219,9 +237,11 @@ WARNING: translation string unused: dns saved txt
 WARNING: translation string unused: dns server
 WARNING: translation string unused: dnsforward forward_server
 WARNING: translation string unused: do not log this port list
+WARNING: translation string unused: domain master
 WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
+WARNING: translation string unused: dos charset
 WARNING: translation string unused: download new ruleset
 WARNING: translation string unused: driver
 WARNING: translation string unused: drop output
@@ -232,6 +252,7 @@ WARNING: translation string unused: eciadsl help
 WARNING: translation string unused: eciadsl upload
 WARNING: translation string unused: edit a rule
 WARNING: translation string unused: edit network
+WARNING: translation string unused: edit printer
 WARNING: translation string unused: edit service
 WARNING: translation string unused: editor
 WARNING: translation string unused: eg
@@ -257,6 +278,7 @@ WARNING: translation string unused: esp encryption
 WARNING: translation string unused: esp grouptype
 WARNING: translation string unused: esp integrity
 WARNING: translation string unused: esp keylife
+WARNING: translation string unused: exampel
 WARNING: translation string unused: expected
 WARNING: translation string unused: expertoptions
 WARNING: translation string unused: exportkey
@@ -274,6 +296,7 @@ WARNING: translation string unused: firewall log viewer
 WARNING: translation string unused: firmware
 WARNING: translation string unused: firmware upload
 WARNING: translation string unused: force update
+WARNING: translation string unused: force user
 WARNING: translation string unused: forward firewall
 WARNING: translation string unused: forwarding rule added
 WARNING: translation string unused: forwarding rule removed
@@ -338,11 +361,14 @@ WARNING: translation string unused: generatepolicy
 WARNING: translation string unused: generatereport
 WARNING: translation string unused: genkey
 WARNING: translation string unused: green interface
+WARNING: translation string unused: guest ok
 WARNING: translation string unused: gz with key
 WARNING: translation string unused: harddisk temperature graphs
 WARNING: translation string unused: hint
 WARNING: translation string unused: host
+WARNING: translation string unused: host allow
 WARNING: translation string unused: host configuration
+WARNING: translation string unused: host deny
 WARNING: translation string unused: hostname and domain already in use
 WARNING: translation string unused: hour-graph
 WARNING: translation string unused: hours2
@@ -362,6 +388,7 @@ WARNING: translation string unused: ike lifetime
 WARNING: translation string unused: import
 WARNING: translation string unused: importkey
 WARNING: translation string unused: in
+WARNING: translation string unused: inactive
 WARNING: translation string unused: incorrect password
 WARNING: translation string unused: info
 WARNING: translation string unused: insert floppy
@@ -369,6 +396,7 @@ WARNING: translation string unused: insert removable device
 WARNING: translation string unused: install new update
 WARNING: translation string unused: installed
 WARNING: translation string unused: installed updates
+WARNING: translation string unused: interfaces
 WARNING: translation string unused: intrusion detection system log viewer
 WARNING: translation string unused: intrusion detection system2
 WARNING: translation string unused: invalid cache size
@@ -380,6 +408,7 @@ WARNING: translation string unused: invalid port list
 WARNING: translation string unused: invalid time entered
 WARNING: translation string unused: invalid uplink speed
 WARNING: translation string unused: invalid upstream proxy username or password setting
+WARNING: translation string unused: invalid users
 WARNING: translation string unused: invert
 WARNING: translation string unused: ip address in use
 WARNING: translation string unused: ipfire side
@@ -399,12 +428,16 @@ WARNING: translation string unused: lang
 WARNING: translation string unused: lateprompting
 WARNING: translation string unused: length
 WARNING: translation string unused: line
+WARNING: translation string unused: load printer
 WARNING: translation string unused: loaded modules
 WARNING: translation string unused: local hard disk
+WARNING: translation string unused: local master
 WARNING: translation string unused: localkey
 WARNING: translation string unused: localkeyfile
 WARNING: translation string unused: log enabled
+WARNING: translation string unused: log level
 WARNING: translation string unused: log var messages
+WARNING: translation string unused: log view
 WARNING: translation string unused: log viewer
 WARNING: translation string unused: logging
 WARNING: translation string unused: loosedirectorychecking
@@ -422,6 +455,7 @@ WARNING: translation string unused: mac address error not 00
 WARNING: translation string unused: mailmethod
 WARNING: translation string unused: mailprogramm
 WARNING: translation string unused: manage ovpn
+WARNING: translation string unused: manage printers
 WARNING: translation string unused: manual
 WARNING: translation string unused: manual control and status
 WARNING: translation string unused: marked
@@ -432,6 +466,7 @@ WARNING: translation string unused: mbmon fan in
 WARNING: translation string unused: mbmon graphs
 WARNING: translation string unused: mbmon temp in
 WARNING: translation string unused: mbmon value
+WARNING: translation string unused: meaning
 WARNING: translation string unused: messages logging
 WARNING: translation string unused: min size
 WARNING: translation string unused: missing dat
@@ -449,8 +484,10 @@ WARNING: translation string unused: monthly traffic bad
 WARNING: translation string unused: monthly volume
 WARNING: translation string unused: monthly volume start day
 WARNING: translation string unused: monthly volume start day short
+WARNING: translation string unused: more
 WARNING: translation string unused: mount
 WARNING: translation string unused: mtu QoS
+WARNING: translation string unused: my new share
 WARNING: translation string unused: nat-traversal
 WARNING: translation string unused: net
 WARNING: translation string unused: net address
@@ -458,6 +495,7 @@ WARNING: translation string unused: net config type
 WARNING: translation string unused: net config type help
 WARNING: translation string unused: net traffic newversion
 WARNING: translation string unused: net-traffic configuration
+WARNING: translation string unused: netbios name
 WARNING: translation string unused: network added
 WARNING: translation string unused: network configuration
 WARNING: translation string unused: network removed
@@ -473,10 +511,12 @@ WARNING: translation string unused: no eciadsl synch.bin file
 WARNING: translation string unused: no fritzdsl driver
 WARNING: translation string unused: no hardware random number generator
 WARNING: translation string unused: no information available
+WARNING: translation string unused: no log selected
 WARNING: translation string unused: no modem selected
 WARNING: translation string unused: no set selected
 WARNING: translation string unused: nonetworkname
 WARNING: translation string unused: noservicename
+WARNING: translation string unused: not set
 WARNING: translation string unused: notes
 WARNING: translation string unused: o-no
 WARNING: translation string unused: o-yes
@@ -490,6 +530,7 @@ WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
 WARNING: translation string unused: original
+WARNING: translation string unused: os level
 WARNING: translation string unused: other
 WARNING: translation string unused: our donors
 WARNING: translation string unused: out
@@ -549,6 +590,10 @@ WARNING: translation string unused: pakfire updates
 WARNING: translation string unused: password contains illegal characters
 WARNING: translation string unused: password crypting key
 WARNING: translation string unused: passwords must be at least 6 characters in length
+WARNING: translation string unused: path to directory
+WARNING: translation string unused: pc
+WARNING: translation string unused: pc add
+WARNING: translation string unused: pdc options
 WARNING: translation string unused: phase1 group
 WARNING: translation string unused: phonebook entry
 WARNING: translation string unused: ping disabled
@@ -557,7 +602,13 @@ WARNING: translation string unused: port forwarding configuration
 WARNING: translation string unused: ports
 WARNING: translation string unused: pots
 WARNING: translation string unused: pppoe
+WARNING: translation string unused: prefered master
 WARNING: translation string unused: present
+WARNING: translation string unused: printcap name
+WARNING: translation string unused: printer
+WARNING: translation string unused: printername
+WARNING: translation string unused: printing
+WARNING: translation string unused: printing options
 WARNING: translation string unused: profiles
 WARNING: translation string unused: proxy
 WARNING: translation string unused: proxy access graphs
@@ -567,6 +618,7 @@ WARNING: translation string unused: proxy port
 WARNING: translation string unused: psk
 WARNING: translation string unused: qos add subclass
 WARNING: translation string unused: quick control
+WARNING: translation string unused: read list
 WARNING: translation string unused: reboot ask
 WARNING: translation string unused: reboot question
 WARNING: translation string unused: reboot schedule
@@ -579,8 +631,12 @@ WARNING: translation string unused: reportlevel
 WARNING: translation string unused: requested data
 WARNING: translation string unused: reserved dst port
 WARNING: translation string unused: reserved src port
+WARNING: translation string unused: reset shares
+WARNING: translation string unused: resetglobals
 WARNING: translation string unused: resetpolicy
+WARNING: translation string unused: resetshares
 WARNING: translation string unused: restore hardware settings
+WARNING: translation string unused: restore settings
 WARNING: translation string unused: root
 WARNING: translation string unused: root path
 WARNING: translation string unused: root user password
@@ -590,7 +646,10 @@ WARNING: translation string unused: rsvd dst port overlap
 WARNING: translation string unused: rsvd src port overlap
 WARNING: translation string unused: rules already up to date
 WARNING: translation string unused: safe removal of umounted device
+WARNING: translation string unused: samba status
+WARNING: translation string unused: save config
 WARNING: translation string unused: save error
+WARNING: translation string unused: save settings
 WARNING: translation string unused: select dest net
 WARNING: translation string unused: select media
 WARNING: translation string unused: select source net
@@ -598,25 +657,33 @@ WARNING: translation string unused: selecttraffic
 WARNING: translation string unused: send email notification
 WARNING: translation string unused: send test mail
 WARNING: translation string unused: server reserved
+WARNING: translation string unused: server string
 WARNING: translation string unused: service added
 WARNING: translation string unused: service removed
 WARNING: translation string unused: service updated
 WARNING: translation string unused: servicename
 WARNING: translation string unused: services settings
+WARNING: translation string unused: set
 WARNING: translation string unused: shaping add options
 WARNING: translation string unused: shaping list options
 WARNING: translation string unused: show areas
+WARNING: translation string unused: show last x lines
 WARNING: translation string unused: show lines
+WARNING: translation string unused: show share options
 WARNING: translation string unused: shutdown ask
 WARNING: translation string unused: shutdown sure
 WARNING: translation string unused: shutdown2
 WARNING: translation string unused: sitekey
 WARNING: translation string unused: sitekeyfile
 WARNING: translation string unused: smbreload
+WARNING: translation string unused: smbrestart
+WARNING: translation string unused: smbstart
+WARNING: translation string unused: smbstop
 WARNING: translation string unused: smtphost
 WARNING: translation string unused: smtpport
 WARNING: translation string unused: snort hits
 WARNING: translation string unused: snort working
+WARNING: translation string unused: socket options
 WARNING: translation string unused: source ip bad
 WARNING: translation string unused: source ip in use
 WARNING: translation string unused: source ip or net
@@ -704,6 +771,8 @@ WARNING: translation string unused: tripwirewarningpolicy
 WARNING: translation string unused: umount
 WARNING: translation string unused: umount removable media before to unplug
 WARNING: translation string unused: unencrypted
+WARNING: translation string unused: unix charset
+WARNING: translation string unused: unix password sync
 WARNING: translation string unused: update transcript
 WARNING: translation string unused: updatedatabase
 WARNING: translation string unused: updates
@@ -742,6 +811,7 @@ WARNING: translation string unused: use
 WARNING: translation string unused: use dov
 WARNING: translation string unused: use ibod
 WARNING: translation string unused: view log
+WARNING: translation string unused: visible in browselist
 WARNING: translation string unused: vpn aggrmode
 WARNING: translation string unused: vpn configuration main
 WARNING: translation string unused: vpn delayed start
@@ -758,6 +828,8 @@ WARNING: translation string unused: web proxy configuration
 WARNING: translation string unused: week-graph
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: wildcards
+WARNING: translation string unused: wins server
+WARNING: translation string unused: wins support
 WARNING: translation string unused: wlanap access point
 WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
@@ -833,6 +905,7 @@ WARNING: untranslated string: crypto warning = Cryptographic warning
 WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: default = Default
 WARNING: untranslated string: default IP address = Default IP Address
+WARNING: untranslated string: desired = Desired
 WARNING: untranslated string: dh = Diffie-Hellman parameters
 WARNING: untranslated string: dh key move failed = Diffie-Hellman parameters move failed.
 WARNING: untranslated string: dh key warn = Creating DH-parameters with a length of 2048 bits takes up to several minutes. Lengths of 3072 or 4096 bits might needs several hours. Please be patient.
@@ -843,6 +916,7 @@ WARNING: untranslated string: dhcp dns key name = Key Name
 WARNING: untranslated string: dhcp dns update = DNS Update
 WARNING: untranslated string: dhcp dns update algo = Algorithm
 WARNING: untranslated string: dhcp dns update secret = Secret
+WARNING: untranslated string: disable = Disable
 WARNING: untranslated string: disconnected = Disconnected
 WARNING: untranslated string: dl client arch insecure = Download insecure Client Package (zip)
 WARNING: untranslated string: dns = unknown string
@@ -889,6 +963,7 @@ WARNING: untranslated string: email tls explicit = explicit (STARTTLS)
 WARNING: untranslated string: email tls implicit = implicit (TLS)
 WARNING: untranslated string: email usemail = Activate Mail Service
 WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
+WARNING: untranslated string: enable = Enable
 WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
 WARNING: untranslated string: error = Error
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
@@ -1028,6 +1103,7 @@ WARNING: untranslated string: modem status = Modem Status
 WARNING: untranslated string: monitor interface = Monitor Interface
 WARNING: untranslated string: mtu = MTU
 WARNING: untranslated string: nameserver = Nameserver
+WARNING: untranslated string: netbios nameserver daemon = NetBIOS Nameserver Daemon
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: none = none
@@ -1039,6 +1115,7 @@ WARNING: untranslated string: one month = One Month
 WARNING: untranslated string: one week = One Week
 WARNING: untranslated string: one year = One Year
 WARNING: untranslated string: open connections = Open Connections
+WARNING: untranslated string: optional = Optional
 WARNING: untranslated string: outgoing compression in bytes per second = Outgoing compression
 WARNING: untranslated string: outgoing overhead in bytes per second = Outgoing Overhead
 WARNING: untranslated string: ovpn add conf = Additional configuration
@@ -1069,6 +1146,7 @@ WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: random number generator daemon = Random Number Generator Daemon
 WARNING: untranslated string: rdns = rDNS
 WARNING: untranslated string: received = Received
+WARNING: untranslated string: required = Required
 WARNING: untranslated string: required field = Required field
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
@@ -1076,10 +1154,13 @@ WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
 WARNING: untranslated string: samba join a domain = Join a domain
 WARNING: untranslated string: samba join domain = Join domain
+WARNING: untranslated string: samba server role member = Domain Member
+WARNING: untranslated string: samba server role standalone = Standalone
 WARNING: untranslated string: search = Search
 WARNING: untranslated string: sent = Sent
 WARNING: untranslated string: show dh = Show Diffie-Hellman parameters
 WARNING: untranslated string: show tls-auth key = Show tls-auth key
+WARNING: untranslated string: smb daemon = SMB Daemon
 WARNING: untranslated string: smt disabled = Simultaneous Multi-Threading (SMT) is disabled
 WARNING: untranslated string: smt enabled = Simultaneous Multi-Threading (SMT) is enabled
 WARNING: untranslated string: smt not supported = Simultaneous Multi-Threading (SMT) is not supported
@@ -1114,6 +1195,7 @@ WARNING: untranslated string: unlimited = Unlimited
 WARNING: untranslated string: update ruleset = Update ruleset
 WARNING: untranslated string: uplink bit rate = Uplink Bit Rate
 WARNING: untranslated string: upload dh key = Upload Diffie-Hellman parameters
+WARNING: untranslated string: user management = User Management
 WARNING: untranslated string: vendor = Vendor
 WARNING: untranslated string: vpn broken = Broken
 WARNING: untranslated string: vpn connecting = CONNECTING
@@ -1132,6 +1214,7 @@ WARNING: untranslated string: vpn wait = WAITING
 WARNING: untranslated string: vpn weak = Weak
 WARNING: untranslated string: vulnerability = Vulnerability
 WARNING: untranslated string: vulnerable = Vulnerable
+WARNING: untranslated string: winbind daemon = Winbind Daemon
 WARNING: untranslated string: wireless network = WiFi Network
 WARNING: untranslated string: wlan client anonymous identity = Anonymous Identity
 WARNING: untranslated string: wlan client auth auto = Auto

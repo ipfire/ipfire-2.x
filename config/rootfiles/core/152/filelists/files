@@ -1,0 +1,15 @@
+etc/system-release
+etc/issue
+etc/os-release
+etc/rc.d/helper/aws-setup
+etc/rc.d/helper/azure-setup
+etc/rc.d/helper/exoscale-setup
+etc/rc.d/helper/gcp-setup
+etc/rc.d/helper/oci-setup
+etc/rc.d/init.d/networking/any
+etc/rc.d/init.d/networking/red
+srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
+srv/web/ipfire/cgi-bin/proxy.cgi
+usr/local/bin/setaliases
+var/ipfire/graphs.pl

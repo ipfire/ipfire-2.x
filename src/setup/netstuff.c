@@ -265,28 +265,23 @@ int gettype(char *type)
 	return 0;
 }
 
-/* 0.9.9: calculates broadcast too. */
 int setnetaddress(struct keyvalue *kv, char *colour)
 {
 	char addressfield[STRING_SIZE];
 	char netaddressfield[STRING_SIZE];		
 	char netmaskfield[STRING_SIZE];
-	char broadcastfield[STRING_SIZE];
 	char address[STRING_SIZE];
 	char netmask[STRING_SIZE];
 	unsigned long int intaddress;
 	unsigned long int intnetaddress;
 	unsigned long int intnetmask;
-	unsigned long int intbroadcast;
 	struct in_addr temp;
 	char *netaddress;
-	char *broadcast;
-		
+
 	/* Build some key strings. */
 	sprintf(addressfield, "%s_ADDRESS", colour);
 	sprintf(netaddressfield, "%s_NETADDRESS", colour);
 	sprintf(netmaskfield, "%s_NETMASK", colour);
-	sprintf(broadcastfield, "%s_BROADCAST", colour);
 
 	strcpy(address, ""); findkey(kv, addressfield, address);	
 	strcpy(netmask, ""); findkey(kv, netmaskfield, netmask);		
@@ -300,12 +295,6 @@ int setnetaddress(struct keyvalue *kv, char *colour)
 	netaddress = inet_ntoa(temp);
 	
 	replacekeyvalue(kv, netaddressfield, netaddress);
-	
-	intbroadcast = intnetaddress | ~intnetmask;
-	temp.s_addr = intbroadcast;
-	broadcast = inet_ntoa(temp);	
-	
-	replacekeyvalue(kv, broadcastfield, broadcast);
 	
 	return 1;
 }	

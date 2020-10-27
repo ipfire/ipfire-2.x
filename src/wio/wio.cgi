@@ -179,7 +179,9 @@ if ( -e $wiofile ) { goto WIOSCAN; }
 foreach (@devs_color) {
 	if ( $netsettings{"${_}_DEV"} ne '' ) {
 		$wiosettings{"${_}_IPLOW"} = &Network::find_next_ip_address($netsettings{"${_}_NETADDRESS"}, 1);
-		$wiosettings{"${_}_IPHIGH"} = &Network::find_next_ip_address($netsettings{"${_}_BROADCAST"}, -1);
+
+		my $broadcast = &Network::get_broadcast($netsettings{"${_}_NETADDRESS"} . "/" . $netsettings{"${_}_NETMASK"});
+		$wiosettings{"${_}_IPHIGH"} = &Network::find_next_ip_address($broadcast, -1);
 	}
 }
 

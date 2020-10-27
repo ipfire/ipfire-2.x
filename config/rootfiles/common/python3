@@ -841,9 +841,9 @@ usr/lib/python3.8/lib-dynload/xxlimited.cpython-38-xxxMACHINExxx-linux-gnu.so
 usr/lib/python3.8/lib-dynload/zlib.cpython-38-xxxMACHINExxx-linux-gnu.so
 #usr/lib/python3.8/lib2to3
 usr/lib/python3.8/lib2to3/Grammar.txt
-usr/lib/python3.8/lib2to3/Grammar3.8.1.final.0.pickle
+usr/lib/python3.8/lib2to3/Grammar3.8.2.final.0.pickle
 usr/lib/python3.8/lib2to3/PatternGrammar.txt
-usr/lib/python3.8/lib2to3/PatternGrammar3.8.1.final.0.pickle
+usr/lib/python3.8/lib2to3/PatternGrammar3.8.2.final.0.pickle
 usr/lib/python3.8/lib2to3/__init__.py
 usr/lib/python3.8/lib2to3/__main__.py
 usr/lib/python3.8/lib2to3/btm_matcher.py

@@ -1,0 +1,21 @@
+# global.settings by IPFire Project
+
+[global]
+netbios name = ipfire
+server string = Samba
+workgroup = homeip.net
+passdb backend = smbpasswd
+
+os level = 33
+
+map to guest = bad user
+
+security = user
+guest account = samba
+unix password sync = false
+
+bind interfaces only = true
+interfaces =  green0 127.0.0.1
+
+log file  = /var/log/samba/samba-log.%m
+log level = 3 passdb:5 auth:5 winbind:2

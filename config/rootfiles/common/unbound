@@ -11,7 +11,7 @@ etc/unbound/unbound.conf
 #usr/lib/libunbound.la
 #usr/lib/libunbound.so
 usr/lib/libunbound.so.8
-usr/lib/libunbound.so.8.1.9
+usr/lib/libunbound.so.8.1.10
 #usr/lib/pkgconfig/libunbound.pc
 usr/sbin/unbound
 usr/sbin/unbound-anchor

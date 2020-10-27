@@ -146,12 +146,10 @@ import_aws_configuration() {
 
 		local prefix="${subnet#*/}"
 		local netmask="$(prefix2netmask "${prefix}")"
-		local netmask_num="$(to_integer "${netmask}")"
 
 		# Calculate the network and broadcast addresses
 		local netaddress="${subnet%/*}"
 		local netaddress_num="$(to_integer "${netaddress}")"
-		local broadcast="$(to_address $(( ipv4_address_num | (0xffffffff ^ netmask_num) )))"
 
 		case "${device_number}" in
 			# RED
@@ -169,7 +167,6 @@ import_aws_configuration() {
 					echo "RED_ADDRESS=${ipv4_address}"
 					echo "RED_NETMASK=${netmask}"
 					echo "RED_NETADDRESS=${netaddress}"
-					echo "RED_BROADCAST=${broadcast}"
 					echo "RED_MTU=1500"
 					echo "DEFAULT_GATEWAY=${gateway}"
 				) >> /var/ipfire/ethernet/settings
@@ -191,7 +188,6 @@ import_aws_configuration() {
 					echo "GREEN_ADDRESS=${ipv4_address}"
 					echo "GREEN_NETMASK=${netmask}"
 					echo "GREEN_NETADDRESS=${netaddress}"
-					echo "GREEN_BROADCAST=${broadcast}"
 					echo "GREEN_MTU=${DEFAULT_MTU}"
 				) >> /var/ipfire/ethernet/settings
 				;;
@@ -208,7 +204,6 @@ import_aws_configuration() {
 					echo "ORANGE_ADDRESS=${ipv4_address}"
 					echo "ORANGE_NETMASK=${netmask}"
 					echo "ORANGE_NETADDRESS=${netaddress}"
-					echo "ORANGE_BROADCAST=${broadcast}"
 					echo "ORANGE_MTU=${DEFAULT_MTU}"
 				) >> /var/ipfire/ethernet/settings
 				;;

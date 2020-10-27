@@ -3004,7 +3004,8 @@ END
 					)
 				{
 					chomp $temp[1];
-					print FILE " ||\n     (isInNet(myIpAddress(), \"$temp[0]\", \"$temp[1]\"))";
+					my $tempmask = &Network::convert_prefix2netmask($temp[1]);
+					print FILE " ||\n     (isInNet(myIpAddress(), \"$temp[0]\", \"$tempmask\"))";
 				}
 			}
 

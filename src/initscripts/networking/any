@@ -22,7 +22,6 @@ eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 if [ "$(basename $0)" == "green" ]; then
 	DEVICE="${GREEN_DEV}"
 	ADDRESS="${GREEN_ADDRESS}"
-	BROADCAST="${GREEN_BROADCAST}"
 	NETADDRESS="${GREEN_NETADDRESS}"
 	NETMASK="${GREEN_NETMASK}"
 	DEVICE="${GREEN_DEV}"
@@ -30,7 +29,6 @@ if [ "$(basename $0)" == "green" ]; then
 elif [ "$(basename $0)" == "blue" ]; then
 	DEVICE="${BLUE_DEV}"
 	ADDRESS="${BLUE_ADDRESS}"
-	BROADCAST="${BLUE_BROADCAST}"
 	NETADDRESS="${BLUE_NETADDRESS}"
 	NETMASK="${BLUE_NETMASK}"
 	DEVICE="${BLUE_DEV}"
@@ -38,22 +36,15 @@ elif [ "$(basename $0)" == "blue" ]; then
 elif [ "$(basename $0)" == "orange" ]; then
 	DEVICE="${ORANGE_DEV}"
 	ADDRESS="${ORANGE_ADDRESS}"
-	BROADCAST="${ORANGE_BROADCAST}"
 	NETADDRESS="${ORANGE_NETADDRESS}"
 	NETMASK="${ORANGE_NETMASK}"
 	DEVICE="${ORANGE_DEV}"
 	MTU="${ORANGE_MTU}"
 fi
 
-if [ -z "${BROADCAST}" ]; then
-	boot_mesg "BROADCAST variable missing from input, cannot continue." ${FAILURE}
-	echo_failure
-	exit 1
-fi
-		
 if [ -n "${ADDRESS}" -a -n "${NETMASK}" ]; then
 	PREFIX=`whatmask ${NETMASK} | grep -e ^CIDR | awk -F': ' '{ print $2 }' | cut -c 2-`
-	args="${args} ${ADDRESS}/${PREFIX} broadcast ${BROADCAST}"
+	args="${args} ${ADDRESS}/${PREFIX}"
 else
 	boot_mesg "ADDRESS and/or NETMASK variable missing from input, cannot continue." ${FAILURE}
 	echo_failure

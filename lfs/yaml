@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.2.1
+VER        = 0.2.5
 
 THISAPP    = yaml-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 72724b9736923c517e5a8fc6757ef03d
+$(DL_FILE)_MD5 = bb15429d8fb787e7d3f1c83ae129a999
 
 install : $(TARGET)
 

@@ -37,28 +37,8 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(argv[1], "smbsafeconf") == 0) {
 		safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf");
 
-	} else if (strcmp(argv[1], "smbsafeconfcups") == 0) {
-		safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/shares /var/ipfire/samba/printer > /var/ipfire/samba/smb.conf");
-
 	} else if (strcmp(argv[1], "smbsafeconfpdc") == 0) {
 		safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/pdc /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf");
-
-	} else if (strcmp(argv[1], "smbsafeconfpdccups") == 0) {
-		safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/pdc /var/ipfire/samba/shares /var/ipfire/samba/printer > /var/ipfire/samba/smb.conf");
-
-	} else if (strcmp(argv[1], "smbglobalreset") == 0) {
-		safe_system("/bin/cat /var/ipfire/samba/default.global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf");
-		safe_system("/bin/cat /var/ipfire/samba/default.settings > /var/ipfire/samba/settings");
-		safe_system("/bin/cat /var/ipfire/samba/default.global > /var/ipfire/samba/global");
-		safe_system("/bin/cat /var/ipfire/samba/default.pdc > /var/ipfire/samba/pdc");
-
-	} else if (strcmp(argv[1], "smbsharesreset") == 0) {
-		safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/default.shares > /var/ipfire/samba/smb.conf");
-		safe_system("/bin/cat /var/ipfire/samba/default.shares > /var/ipfire/samba/shares");
-
-	} else if (strcmp(argv[1], "smbprinterreset") == 0) {
-		safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/shares /var/default.printer > /var/ipfire/samba/smb.conf");
-		safe_system("/bin/cat /var/ipfire/samba/default.printer > /var/ipfire/samba/printer");
 
 	} else if (strcmp(argv[1], "smbstop") == 0) {
 		safe_system("/etc/rc.d/init.d/samba stop >/dev/null");
@@ -89,16 +69,6 @@ int main(int argc, char *argv[]) {
 		safe_system(command);
 
 		snprintf(command, BUFFER_SIZE-1, "/usr/bin/printf '%s\n%s\n' | /usr/bin/smbpasswd -as %s >/dev/null", argv[3], argv[3], argv[2]);
-		safe_system(command);
-
-	} else if (strcmp(argv[1], "smbpcadd") == 0) {
-		snprintf(command, BUFFER_SIZE-1, "/usr/sbin/groupadd sambawks >/dev/null");
-		safe_system(command);
-
-		snprintf(command, BUFFER_SIZE-1, "/usr/sbin/useradd -c 'Samba Workstation' -g %s -s %s %s >/dev/null", argv[3], argv[4], argv[2]);
-		safe_system(command);
-
-		snprintf(command, BUFFER_SIZE-1, "/usr/bin/smbpasswd -a -m %s >/dev/null", argv[2]);
 		safe_system(command);
 
 	} else if (strcmp(argv[1], "smbchangepw") == 0) {

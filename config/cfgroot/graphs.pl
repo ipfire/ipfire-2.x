@@ -700,13 +700,13 @@ sub updatefwhitsgraph {
 		"GPRINT:input:LAST:%8.1lf %sBps\\j",
 		"STACK:newnotsyn".$color{"color14"}."A0:".sprintf("%-25s","NewNotSYN"),
 		"GPRINT:newnotsyn:MAX:%8.1lf %sBps",
-		"GPRINT:newnotsyn:MIN:%8.1lf %sBps",
 		"GPRINT:newnotsyn:AVERAGE:%8.1lf %sBps",
+		"GPRINT:newnotsyn:MIN:%8.1lf %sBps",
 		"GPRINT:newnotsyn:LAST:%8.1lf %sBps\\j",
 		"STACK:portscan".$color{"color16"}."A0:".sprintf("%-25s",$Lang::tr{'portscans'}),
 		"GPRINT:portscan:MAX:%8.1lf %sBps",
-		"GPRINT:portscan:MIN:%8.1lf %sBps",
 		"GPRINT:portscan:AVERAGE:%8.1lf %sBps",
+		"GPRINT:portscan:MIN:%8.1lf %sBps",
 		"GPRINT:portscan:LAST:%8.1lf %sBps\\j",
 		);
 		$ERROR = RRDs::error;

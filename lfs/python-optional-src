@@ -24,12 +24,12 @@
 
 include Config
 
-VER	   = 2.7.17
+VER	   = 2.7.18
 
 include python
 
 PROG	   = python-optional-src
-PAK_VER    = 6
+PAK_VER    = 7
 DEPS       =
 
 dist: 
