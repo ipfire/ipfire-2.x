@@ -44,7 +44,7 @@ my $userfile = "${General::swroot}/samba/private/smbpasswd";
 my %selected= () ;
 
 my $defaultoption= "[My Share]\npath = \ncomment = Share - Public Access\nbrowseable = yes\nwriteable = yes\ncreate mask = 0644\ndirectory mask = 0755\npublic = yes\nforce user = samba";
-my %shares = ();
+my %shares = &config("${General::swroot}/samba/shares");
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -95,6 +95,30 @@ if ($sambasettings{'ACTION'} eq 'smbstop'){system("/usr/local/bin/sambactrl smbs
 if ($sambasettings{'ACTION'} eq 'smbreload'){system("/usr/local/bin/sambactrl smbreload");}
 if ($sambasettings{'ACTION'} eq 'join') {
 	$message .= &joindomain($sambasettings{'USERNAME'}, $sambasettings{'PASSWORD'});
+}
+
+if ($sambasettings{'ACTION'} eq 'smbshareadd') {
+	$shares{'xvx'} = $sambasettings{'SHAREOPTION'};
+	&save("shares");
+
+	# Reload configuration
+	%shares = config("${General::swroot}/samba/shares");
+}
+
+if ($sambasettings{'ACTION'} eq 'smbsharedel') {
+	delete $shares{$sambasettings{'NAME'}};
+	&save("shares");
+
+	# Reload configuration
+	%shares = config("${General::swroot}/samba/shares");
+}
+
+if ($sambasettings{'ACTION'} eq 'smbsharechange') {
+	$shares{$sambasettings{'NAME'}} = $sambasettings{'SHAREOPTION'};
+	&save("shares");
+
+	# Reload configuration
+	%shares = config("${General::swroot}/samba/shares");
 }
 
 ############################################################################################################################
@@ -538,8 +562,6 @@ END
 
 &Header::openbox('100%', 'center', $Lang::tr{'shares'});
 
-my %shares =  config("${General::swroot}/samba/shares");
-
 print <<END;
 	<table class="tbl" width='100%' cellspacing='0'>
 		<tr>
@@ -653,25 +675,6 @@ if ($sambasettings{'ACTION'} eq 'sharechange') {
 		</form>
 END
 }
-
-if ($sambasettings{'ACTION'} eq 'smbshareadd')
-	{
-	$shares{'xvx'}= "$sambasettings{'SHAREOPTION'}";
-	save("shares");
-	my $shares = config("${General::swroot}/samba/shares");
-	}
-if ($sambasettings{'ACTION'} eq 'smbsharedel')
-	{
-	delete $shares{$sambasettings{'NAME'}};
-	save("shares");
-	my %shares = config("${General::swroot}/samba/shares");
-	}
-if ($sambasettings{'ACTION'} eq 'smbsharechange')
-	{
-	$shares{$sambasettings{'NAME'}} = $sambasettings{'SHAREOPTION'};
-	save("shares");
-	my %shares = config("${General::swroot}/samba/shares");
-	}
 
 &Header::closebox();
 
