@@ -14,3 +14,4 @@ srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/proxy.cgi
 usr/local/bin/setaliases
 var/ipfire/graphs.pl
+var/ipfire/langs
