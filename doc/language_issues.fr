@@ -879,9 +879,6 @@ WARNING: translation string unused: zoneconf val ppp assignment error
 WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val zoneslave amount error
-WARNING: untranslated string: desired = Desired
-WARNING: untranslated string: disable = Disable
-WARNING: untranslated string: enable = Enable
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
@@ -913,18 +910,7 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: netbios nameserver daemon = NetBIOS Nameserver Daemon
-WARNING: untranslated string: optional = Optional
 WARNING: untranslated string: pakfire ago = ago.
-WARNING: untranslated string: required = Required
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
-WARNING: untranslated string: samba server role member = Domain Member
-WARNING: untranslated string: samba server role standalone = Standalone
-WARNING: untranslated string: smb daemon = SMB Daemon
-WARNING: untranslated string: user management = User Management
-WARNING: untranslated string: winbind daemon = Winbind Daemon
-WARNING: untranslated string: wlanap 802.11w disabled = Disabled
-WARNING: untranslated string: wlanap 802.11w enforced = Enforced
-WARNING: untranslated string: wlanap 802.11w optional = Optional
