@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.13.0
+VER        = 4.13.1
 
 THISAPP    = samba-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 72
+PAK_VER    = 73
 
 DEPS       = avahi cups libtirpc krb5 perl-Parse-Yapp
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a7f5cccac09d638b3bd11204003b7e7b
+$(DL_FILE)_MD5 = d9243ab374897ba91aa3eb7354e83553
 
 install : $(TARGET)
 
