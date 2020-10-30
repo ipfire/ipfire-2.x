@@ -1,4 +1,5 @@
 etc/issue
+etc/ntp.conf
 etc/os-release
 etc/system-release
 srv/web/ipfire/cgi-bin/credits.cgi

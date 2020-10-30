@@ -41,6 +41,9 @@ extract_files
 # update linker config
 ldconfig
 
+# Update permissions
+chown -vR root:root /etc/ntp
+
 # Update Language cache
 #/usr/local/bin/update-lang-cache
 
