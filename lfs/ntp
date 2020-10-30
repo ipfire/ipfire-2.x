@@ -83,11 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	-mkdir /etc/ntp
 	chown -R ntp:ntp /etc/ntp
-	echo "disable monitor" > /etc/ntp.conf
-	echo "restrict default nomodify noquery" >>  /etc/ntp.conf
-	echo "server  127.127.1.0 prefer"	>> /etc/ntp.conf
-	echo "fudge   127.127.1.0 stratum 10"	>> /etc/ntp.conf
-	echo "driftfile /etc/ntp/drift"		>> /etc/ntp.conf
+	install -v -m 644 $(DIR_SRC)/config/ntp/ntp.conf /etc/ntp.conf
 
 	#Enable it by default...
 	cp -vf $(DIR_SRC)/config/time/* /var/ipfire/time/
