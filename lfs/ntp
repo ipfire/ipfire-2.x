@@ -82,7 +82,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 	-mkdir /etc/ntp
-	chown -R ntp:ntp /etc/ntp
 	install -v -m 644 $(DIR_SRC)/config/ntp/ntp.conf /etc/ntp.conf
 
 	#Enable it by default...
