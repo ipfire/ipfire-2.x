@@ -31,13 +31,13 @@ case "$1" in
 
 	stop)
 		boot_mesg "Stopping smbd..."
-		killproc -p /var/run/smbd.pid /usr/sbin/smbd
+		killproc /usr/sbin/smbd
 
 		boot_mesg "Stopping nmbd..."
-		killproc -p /var/run/nmbd.pid /usr/sbin/nmbd
+		killproc /usr/sbin/nmbd
 
 		boot_mesg "Stopping winbind..."
-		killproc -p /var/run/winbindd.pid /usr/sbin/winbindd
+		killproc /usr/sbin/winbindd
                 ;;
 
 	reload)
