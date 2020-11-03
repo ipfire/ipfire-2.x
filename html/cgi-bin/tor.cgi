@@ -912,7 +912,7 @@ sub TorNodeDescription() {
 			$node->{'address'} = $3;
 			$node->{'port'}    = $4;
 
-			my $country_code = &TorGetInfo($tor, "ip-to-country/$node->{'address'}");
+			my $country_code = &Location::Functions::lookup_country_code($db_handle, $node->{'address'});
 			$node->{'country_code'} = $country_code;
 
 		# Flags
