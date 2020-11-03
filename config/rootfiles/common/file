@@ -1,10 +1,10 @@
 usr/bin/file
 #usr/include/magic.h
-#usr/lib/libmagic.a
 #usr/lib/libmagic.la
 #usr/lib/libmagic.so
 usr/lib/libmagic.so.1
 usr/lib/libmagic.so.1.0.0
+#usr/lib/pkgconfig/libmagic.pc
 #usr/share/man/man1/file.1
 #usr/share/man/man3/libmagic.3
 #usr/share/man/man4/magic.4
