@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -628,8 +628,11 @@ sub locationblock {
 		return;
 	}
 
-	# Only check the RED interface
-	if ($defaultNetworks{'RED_DEV'} ne "") {
+	# Only check the RED interface, which is ppp0 in case of RED_TYPE being
+	# set to "PPPOE", and red0 in case of RED_TYPE not being empty otherwise.
+	if ($defaultNetworks{'RED_TYPE'} eq "PPPOE") {
+		run("$IPTABLES -A LOCATIONBLOCK ! -i ppp0 -j RETURN");
+	} elsif ($defaultNetworks{'RED_DEV'} ne "") {
 		run("$IPTABLES -A LOCATIONBLOCK ! -i $defaultNetworks{'RED_DEV'} -j RETURN");
 	}
 
