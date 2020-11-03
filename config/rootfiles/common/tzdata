@@ -181,6 +181,7 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/America/North_Dakota/Beulah
 #usr/share/zoneinfo/America/North_Dakota/Center
 #usr/share/zoneinfo/America/North_Dakota/New_Salem
+#usr/share/zoneinfo/America/Nuuk
 #usr/share/zoneinfo/America/Ojinaga
 #usr/share/zoneinfo/America/Panama
 #usr/share/zoneinfo/America/Pangnirtung
@@ -503,6 +504,7 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/Europe/Zagreb
 #usr/share/zoneinfo/Europe/Zaporozhye
 #usr/share/zoneinfo/Europe/Zurich
+#usr/share/zoneinfo/Factory
 #usr/share/zoneinfo/GB
 #usr/share/zoneinfo/GB-Eire
 #usr/share/zoneinfo/GMT
@@ -606,7 +608,6 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/US/Michigan
 #usr/share/zoneinfo/US/Mountain
 #usr/share/zoneinfo/US/Pacific
-#usr/share/zoneinfo/US/Pacific-New
 #usr/share/zoneinfo/US/Samoa
 #usr/share/zoneinfo/UTC
 #usr/share/zoneinfo/Universal
@@ -796,6 +797,7 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/posix/America/North_Dakota/Beulah
 #usr/share/zoneinfo/posix/America/North_Dakota/Center
 #usr/share/zoneinfo/posix/America/North_Dakota/New_Salem
+#usr/share/zoneinfo/posix/America/Nuuk
 #usr/share/zoneinfo/posix/America/Ojinaga
 #usr/share/zoneinfo/posix/America/Panama
 #usr/share/zoneinfo/posix/America/Pangnirtung
@@ -1118,6 +1120,7 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/posix/Europe/Zagreb
 #usr/share/zoneinfo/posix/Europe/Zaporozhye
 #usr/share/zoneinfo/posix/Europe/Zurich
+#usr/share/zoneinfo/posix/Factory
 #usr/share/zoneinfo/posix/GB
 #usr/share/zoneinfo/posix/GB-Eire
 #usr/share/zoneinfo/posix/GMT
@@ -1221,7 +1224,6 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/posix/US/Michigan
 #usr/share/zoneinfo/posix/US/Mountain
 #usr/share/zoneinfo/posix/US/Pacific
-#usr/share/zoneinfo/posix/US/Pacific-New
 #usr/share/zoneinfo/posix/US/Samoa
 #usr/share/zoneinfo/posix/UTC
 #usr/share/zoneinfo/posix/Universal
@@ -1411,6 +1413,7 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/right/America/North_Dakota/Beulah
 #usr/share/zoneinfo/right/America/North_Dakota/Center
 #usr/share/zoneinfo/right/America/North_Dakota/New_Salem
+#usr/share/zoneinfo/right/America/Nuuk
 #usr/share/zoneinfo/right/America/Ojinaga
 #usr/share/zoneinfo/right/America/Panama
 #usr/share/zoneinfo/right/America/Pangnirtung
@@ -1733,6 +1736,7 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/right/Europe/Zagreb
 #usr/share/zoneinfo/right/Europe/Zaporozhye
 #usr/share/zoneinfo/right/Europe/Zurich
+#usr/share/zoneinfo/right/Factory
 #usr/share/zoneinfo/right/GB
 #usr/share/zoneinfo/right/GB-Eire
 #usr/share/zoneinfo/right/GMT
@@ -1836,7 +1840,6 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/right/US/Michigan
 #usr/share/zoneinfo/right/US/Mountain
 #usr/share/zoneinfo/right/US/Pacific
-#usr/share/zoneinfo/right/US/Pacific-New
 #usr/share/zoneinfo/right/US/Samoa
 #usr/share/zoneinfo/right/UTC
 #usr/share/zoneinfo/right/Universal
