@@ -53,6 +53,9 @@ chown -vR root:root /etc/ntp
 # Start services
 /etc/init.d/suricata restart
 
+# Reload sysctl.conf
+sysctl -p
+
 # This update needs a reboot...
 #touch /var/run/need_reboot
 
