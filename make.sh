@@ -1645,6 +1645,7 @@ buildipfire() {
   lfsmake2 libloc
   lfsmake2 ncdu
   lfsmake2 lshw
+  lfsmake2 socat
 }
 
 buildinstaller() {
