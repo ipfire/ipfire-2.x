@@ -4,5 +4,6 @@ etc/os-release
 etc/system-release
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/index.cgi
+srv/web/ipfire/cgi-bin/location-block.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/langs
