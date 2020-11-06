@@ -686,7 +686,7 @@
 'dns proxy server' => 'Serwer Proxy DNS',
 'dns saved' => 'Zapisano poprawnie!',
 'dns saved txt' => 'Podane adresy serwerów DNS zostały poprawnie zapisane. <br />Należy wykonać restart lub wykonać ponowne łączenie, aby zmiany zostały zastosowane!',
-'dns server' => 'Serwer DNS',
+'dns servers' => 'Serwer DNS',
 'dns title' => 'Domain Name System',
 'do not log this port list' => 'Odrzucaj tą listę portów zanim zostaną zapisane do logu (zmniejsza rozmiar logów)',
 'dod' => 'Łącz na żądanie',

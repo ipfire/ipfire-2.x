@@ -836,7 +836,6 @@
 'dns proxy server' => 'DNS Vekil Sunucusu',
 'dns saved' => 'Başarıyla kaydedildi!',
 'dns saved txt' => 'Girilen iki DNS sunucu adresi başarılı bir şekilde kaydedildi.<br />Değişikliklerin aktifleştirielebilmesi için yeniden başlatın!',
-'dns server' => 'DNS Sunucusu',
 'dns servers' => 'DNS sunucuları',
 'dns title' => 'Etki Alanı Ad Sistemi',
 'dnsforward' => 'DNS Yönlendirmesi',

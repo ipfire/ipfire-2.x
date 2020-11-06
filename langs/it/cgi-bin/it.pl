@@ -764,7 +764,6 @@
 'dns proxy server' => 'DNS Proxy Server',
 'dns saved' => 'Successfully saved!',
 'dns saved txt' => 'The two entered DNS server addresses have been saved successfully.<br />You have to reboot or reconnect that the changes have effect!',
-'dns server' => 'DNS Server',
 'dns servers' => 'DNS Servers',
 'dns title' => 'Domain Name System',
 'dnsforward' => 'Inoltro DNS',

@@ -682,7 +682,7 @@
 'dns proxy server' => 'DNS Proxy Сервер',
 'dns saved' => 'Successfully saved!',
 'dns saved txt' => 'The two entered DNS server addresses have been saved successfully.<br />You have to reboot or reconnect that the changes have effect!',
-'dns server' => 'DNS Сервер',
+'dns servers' => 'DNS Сервер',
 'dns title' => 'Domain Name System',
 'do not log this port list' => 'Drop this port list just before they are logged (reduces log size)',
 'dod' => 'Dial on Demand',

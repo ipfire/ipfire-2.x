@@ -754,7 +754,7 @@
 'dns proxy server' => 'DNS Proxy Server',
 'dns saved' => 'Succesvol opgeslagen!',
 'dns saved txt' => 'De twee ingevoerde DNS serveradressen zijn succesvol opgeslagen.<br />U moet herstarten of opnieuw verbinden om de wijzigingen actief te laten worden!',
-'dns server' => 'DNS Server',
+'dns servers' => 'DNS Server',
 'dns title' => 'Domein Naam Systeem',
 'dnsforward' => 'DNS Forwarding',
 'dnsforward add a new entry' => 'Voeg een nieuwe regel toe',

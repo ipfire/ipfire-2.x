@@ -272,7 +272,7 @@ my %dns_servers = ();
 # Libloc database handle
 my $libloc_db_handle = &Location::Functions::init();
 
-&Header::openpage($Lang::tr{'dns'}, 1, '');
+&Header::openpage($Lang::tr{'dns title'}, 1, '');
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
@@ -419,7 +419,7 @@ END
 # Section to display the configured and used DNS servers.
 #
 sub show_nameservers () {
-	&Header::openbox('100%', 'center', "$Lang::tr{'dns title'}");
+	&Header::openbox('100%', 'center', "$Lang::tr{'dns servers'}");
 
 	# Determine if we are running in recursor mode
 	my $recursor = 0;
