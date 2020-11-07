@@ -55,6 +55,9 @@ our $keyfile = "$location_dir/signing-key.pem";
 # Directory which contains the exported databases.
 our $xt_geoip_db_directory = "/usr/share/xt_geoip/";
 
+# Create libloc database handle.
+my $db_handle = &init();
+
 #
 ## Tiny function to init the location database.
 #
@@ -86,7 +89,7 @@ sub verify ($) {
 ## Function to the the country code of a given address.
 #
 sub lookup_country_code($$) {
-	my ($db_handle, $address) = @_;
+	my ($address) = @_;
 
 	# Lookup the given address.
 	my $country_code = &Location::lookup_country_code($db_handle, $address);
@@ -174,9 +177,6 @@ sub get_full_country_name($) {
 
 # Function to get all available locations.
 sub get_locations() {
-	# Create libloc database handle.
-	my $db_handle = &init();
-
 	# Get locations which are stored in the location database.
 	my @database_locations = &Location::database_countries($db_handle);
 
@@ -196,9 +196,6 @@ sub address_has_flags($) {
 
 	# Array to store the flags of the address.
 	my @flags;
-
-	# Init libloc database handle.
-	my $db_handle = &init();
 
 	# Loop through the hash of possible network flags.
 	foreach my $flag (keys(%network_flags)) {
