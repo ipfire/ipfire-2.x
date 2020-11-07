@@ -1446,7 +1446,6 @@
 < dnssec information
 < dnssec not supported
 < dnssec validating
-< dns servers
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
@@ -1944,7 +1943,6 @@
 < dnssec information
 < dnssec not supported
 < dnssec validating
-< dns servers
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
@@ -2813,7 +2811,6 @@
 < dnssec information
 < dnssec not supported
 < dnssec validating
-< dns servers
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries

@@ -235,8 +235,6 @@ WARNING: translation string unused: dns new 0
 WARNING: translation string unused: dns new 1
 WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
-WARNING: translation string unused: dns server
-WARNING: translation string unused: dns servers
 WARNING: translation string unused: dnssec information
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master

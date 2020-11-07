@@ -234,7 +234,6 @@ WARNING: translation string unused: dns new 0
 WARNING: translation string unused: dns new 1
 WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
-WARNING: translation string unused: dns server
 WARNING: translation string unused: dnsforward forward_server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master
@@ -919,7 +918,6 @@ WARNING: untranslated string: dhcp dns update secret = Secret
 WARNING: untranslated string: disable = Disable
 WARNING: untranslated string: disconnected = Disconnected
 WARNING: untranslated string: dl client arch insecure = Download insecure Client Package (zip)
-WARNING: untranslated string: dns = unknown string
 WARNING: untranslated string: dns check servers = Check DNS Servers
 WARNING: untranslated string: dns configuration = DNS Configuration
 WARNING: untranslated string: dns enable safe-search = Enable Safe Search
