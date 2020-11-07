@@ -177,16 +177,24 @@ sub get_full_country_name($) {
 
 # Function to get all available locations.
 sub get_locations() {
-	# Get locations which are stored in the location database.
-	my @database_locations = &Location::database_countries($db_handle);
+	my ($mode) = @_;
 
-	# Merge special locations array and the database locations array.
-	my @locations = (@special_locations, @database_locations);
+	# Set default mode to add_special_locations.
+	$mode = $mode ? $mode : "add_special_locations";
+
+	# Get locations which are stored in the location database.
+	my @locations = &Location::database_countries($db_handle);
+
+	# Check if the special locations should be added.
+	if ($mode ne "no_special_locations") {
+		# Merge special locations array and the database locations array.
+		@locations = (@special_locations, @locations);
+	}
 
 	# Sort locations array in alphabetical order.
 	my @sorted_locations = sort(@locations);
 
-	# Return the array..
+	# Return the array.
 	return @sorted_locations;
 }
 
