@@ -269,9 +269,6 @@ my %dns_servers = ();
 # Read-in config file.
 &General::readhasharray("$servers_file", \%dns_servers);
 
-# Libloc database handle
-my $libloc_db_handle = &Location::Functions::init();
-
 &Header::openpage($Lang::tr{'dns title'}, 1, '');
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
@@ -598,7 +595,7 @@ END
 				}
 
 				# collect more information about name server (rDNS, country code)
-				my $ccode = &Location::Functions::lookup_country_code($libloc_db_handle, $nameserver);
+				my $ccode = &Location::Functions::lookup_country_code($nameserver);
 				my $flag_icon = &Location::Functions::get_flag_icon($ccode);
 
 				my $rdns;

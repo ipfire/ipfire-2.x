@@ -277,10 +277,6 @@ sub printactivelogins()
 		print "<tr bgcolor='$table_colour'><td colspan='5'>$Lang::tr{'ssh no active logins'}</td></tr>\n";
 	} else {
 		# list active logins...
-
-		# Libloc database handle.
-		my $libloc_db_handle = &Location::Functions::init();
-
 		foreach my $line (@output)
 		{
 			my @arry = split(/\ +/, $line);
@@ -291,7 +287,7 @@ sub printactivelogins()
 			$remoteip =~ s/[()]//g;
 
 			# display more information about that IP adress...
-			my $ccode = &Location::Functions::lookup_country_code($libloc_db_handle, $remoteip);
+			my $ccode = &Location::Functions::lookup_country_code($remoteip);
 			my $flag_icon = &Location::Functions::get_flag_icon($ccode);
 
 			# get rDNS...

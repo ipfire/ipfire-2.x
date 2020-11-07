@@ -30,9 +30,6 @@ require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
-# Init libloc database connection.
-my $db_handle = &Location::Functions::init();
-
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::colouryellow} );
 undef (@dummy);
@@ -322,7 +319,7 @@ END
 					<select name='TOR_EXIT_COUNTRY'>
 						<option value=''>- $Lang::tr{'tor exit country any'} -</option>
 END
-		my @country_codes = &Location::database_countries($db_handle);
+		my @country_codes = &Location::Functions::get_locations("no_special_locations");
 		foreach my $country_code (@country_codes) {
 			# Convert country code into upper case format.
 			$country_code = uc($country_code);
@@ -912,7 +909,7 @@ sub TorNodeDescription() {
 			$node->{'address'} = $3;
 			$node->{'port'}    = $4;
 
-			my $country_code = &Location::Functions::lookup_country_code($db_handle, $node->{'address'});
+			my $country_code = &Location::Functions::lookup_country_code($node->{'address'});
 			$node->{'country_code'} = $country_code;
 
 		# Flags

@@ -52,11 +52,8 @@ print<<END;
 	</tr>
 END
 
-# Init libloc database connection.
-my $db_handle = &Location::Functions::init();
-
 # Get a list of all supported country codes.
-my @countries = &Location::database_countries($db_handle);
+my @countries = &Location::database_countries();
 
 # Loop through whole country list.
 foreach my $country (@countries) {

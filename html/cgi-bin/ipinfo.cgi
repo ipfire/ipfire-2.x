@@ -62,12 +62,11 @@ if (&General::validip($addr)) {
 	if (!$hostname) { $hostname = $Lang::tr{'lookup failed'}; }
 
 	# enumerate location information for IP address...
-	my $db_handle = &Location::Functions::init();
-	my $ccode = &Location::Functions::lookup_country_code($db_handle, $addr);
+	my $ccode = &Location::Functions::lookup_country_code($addr);
 	my @network_flags = &Location::Functions::address_has_flags($addr);
 
 	# Try to get the continent of the country code.
-	my $continent = &Location::get_continent_code($db_handle, $ccode);
+	my $continent = &Location::Functions::get_continent_code($ccode);
 
 	# Check if a whois server for the continent is known.
 	if($whois_servers_by_continent{$continent}) {
