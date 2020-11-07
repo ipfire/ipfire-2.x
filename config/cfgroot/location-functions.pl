@@ -218,4 +218,14 @@ sub address_has_flags($) {
 	return @flags;
 }
 
+# Custom END declaration which will be executed when perl
+# ends, to release the database handle to libloc.
+END {
+	# Check if a database handle exists.
+	if ($db_handle) {
+		# Destroy libloc database handle.
+		&Location::DESTROY($db_handle);
+	}
+}
+
 1;
