@@ -896,6 +896,7 @@ WARNING: untranslated string: dnat address = Firewall Interface
 WARNING: untranslated string: dns check servers = Check DNS Servers
 WARNING: untranslated string: dns configuration = DNS Configuration
 WARNING: untranslated string: dns enable safe-search = Enable Safe Search
+WARNING: untranslated string: dns enable safe-search youtube = Include YouTube in Safe Search
 WARNING: untranslated string: dns forward disable dnssec = Disable DNSSEC (dangerous)
 WARNING: untranslated string: dns forwarding dnssec disabled notice = (DNSSEC disabled)
 WARNING: untranslated string: dns isp assigned nameserver = ISP-assigned DNS server

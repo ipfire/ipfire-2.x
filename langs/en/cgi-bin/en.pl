@@ -851,6 +851,7 @@
 'dns could not add server' => 'Could not add server - Reason:',
 'dns desc' => 'If the red0 interface gets the IP address information via DHCP from the provider, the DNS server addresses will be set automatically. Now here you are able to change these DNS server IP addresses with your own ones.',
 'dns enable safe-search' => 'Enable Safe Search',
+'dns enable safe-search youtube' => 'Include YouTube in Safe Search',
 'dns error 0' => 'The IP address of the <strong>primary</strong> DNS server is not valid, please check your entries!<br />The entered <strong>secondary</strong> DNS server address is valid.',
 'dns error 01' => 'The entered IP address of the <strong>primary</strong> and <strong>secondary</strong> DNS server are not valid, please check your entries!',
 'dns error 1' => 'The IP address of the <strong>secondary</strong> DNS server is not valid, please check your entries!<br />The entered <strong>primary</strong> DNS server address is valid.',

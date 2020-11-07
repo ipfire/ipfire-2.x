@@ -828,6 +828,7 @@
 'dns configuration' => 'DNS-Konfiguration',
 'dns desc' => 'Wenn auf Schnittstelle red0 die IP-Adressinformationen über DHCP vom Provider kommen, werden automatisch die DNS-Server-Adressen des Providers gesetzt. Hier können Sie nun diese mit den eigenen DNS-Server-IP-Adressen überschreiben.',
 'dns enable safe-search' => 'Safe Search via DNS aktivieren',
+'dns enable safe-search youtube' => 'YouTube in Safe Search einbeziehen',
 'dns error 0' => 'Die IP Adresse vom <strong>primären</strong> DNS Server ist nicht gültig, bitte überprüfen Sie Ihre Eingabe!<br />Die eingegebene <strong>sekundären</strong> DNS Server Adresse ist jedoch gültig.<br />',
 'dns error 01' => 'Die eingegebene IP Adresse des <strong>primären</strong> wie auch des <strong>sekundären</strong> DNS-Servers sind nicht gültig, bitte überprüfen Sie Ihre Eingaben!',
 'dns error 1' => 'Die IP Adresse vom <strong>sekundären</strong> DNS Server ist nicht gültig, bitte überprüfen Sie Ihre Eingabe!<br />Die eingegebene <strong>primäre</strong> DNS Server Adresse ist jedoch gültig.',

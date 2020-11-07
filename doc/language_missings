@@ -239,6 +239,7 @@
 < dns configuration
 < dns could not add server
 < dns enable safe-search
+< dns enable safe-search youtube
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
@@ -950,6 +951,7 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< dns enable safe-search youtube
 < g.dtm
 < g.lite
 < upload fcdsl.o
@@ -1052,6 +1054,7 @@
 < dns configuration
 < dns could not add server
 < dns enable safe-search
+< dns enable safe-search youtube
 < dns forward disable dnssec
 < dnsforward dnssec disabled
 < dnsforward forward_servers
@@ -1431,6 +1434,7 @@
 < dns configuration
 < dns could not add server
 < dns enable safe-search
+< dns enable safe-search youtube
 < dns forward disable dnssec
 < dnsforward dnssec disabled
 < dnsforward forward_servers
@@ -1922,6 +1926,7 @@
 < dns configuration
 < dns could not add server
 < dns enable safe-search
+< dns enable safe-search youtube
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
@@ -2790,6 +2795,7 @@
 < dns configuration
 < dns could not add server
 < dns enable safe-search
+< dns enable safe-search youtube
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
@@ -3513,6 +3519,7 @@
 < dns configuration
 < dns could not add server
 < dns enable safe-search
+< dns enable safe-search youtube
 < dns forward disable dnssec
 < dnsforward dnssec disabled
 < dnsforward forward_servers

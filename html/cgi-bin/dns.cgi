@@ -87,6 +87,10 @@ if ($cgiparams{'GENERAL'} eq $Lang::tr{'save'}) {
 		$cgiparams{'ENABLE_SAFE_SEARCH'} = "off";
 	}
 
+	if ($cgiparams{'ENABLE_SAFE_SEARCH_YOUTUBE'} ne "on") {
+		$cgiparams{'ENABLE_SAFE_SEARCH_YOUTUBE'} = "off";
+	}
+
 	# Check if using ISP nameservers and TLS is enabled at the same time.
 	if (($cgiparams{'USE_ISP_NAMESERVERS'} eq "on") && ($cgiparams{'PROTO'} eq "TLS")) {
 		$errormessage = $Lang::tr{'dns isp nameservers and tls not allowed'}
@@ -259,6 +263,7 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 
 # Hash to store the generic DNS settings.
 my %settings = ();
+$settings{"ENABLE_SAFE_SEARCH_YOUTUBE"} = "on";
 
 # Read-in general DNS settings.
 &General::readhash("$settings_file", \%settings);
@@ -309,6 +314,10 @@ $checked{'USE_ISP_NAMESERVERS'}{$settings{'USE_ISP_NAMESERVERS'}} = "checked='ch
 $checked{'ENABLE_SAFE_SEARCH'}{'off'} = '';
 $checked{'ENABLE_SAFE_SEARCH'}{'on'} = '';
 $checked{'ENABLE_SAFE_SEARCH'}{$settings{'ENABLE_SAFE_SEARCH'}} = "checked='checked'";
+
+$checked{'ENABLE_SAFE_SEARCH_YOUTUBE'}{'off'} = '';
+$checked{'ENABLE_SAFE_SEARCH_YOUTUBE'}{'on'} = '';
+$checked{'ENABLE_SAFE_SEARCH_YOUTUBE'}{$settings{'ENABLE_SAFE_SEARCH_YOUTUBE'}} = "checked='checked'";
 
 $selected{'PROTO'}{'UDP'} = '';
 $selected{'PROTO'}{'TLS'} = '';
@@ -378,6 +387,16 @@ sub show_general_dns_configuration () {
 
 				<td>
 					<input type="checkbox" name="ENABLE_SAFE_SEARCH" $checked{'ENABLE_SAFE_SEARCH'}{'on'}>
+				</td>
+			</tr>
+
+			<tr>
+				<td width="33%">
+					&raquo; $Lang::tr{'dns enable safe-search youtube'}
+				</td>
+
+				<td>
+					<input type="checkbox" name="ENABLE_SAFE_SEARCH_YOUTUBE" $checked{'ENABLE_SAFE_SEARCH_YOUTUBE'}{'on'}>
 				</td>
 			</tr>
 
