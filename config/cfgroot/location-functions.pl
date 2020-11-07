@@ -190,6 +190,16 @@ sub get_locations() {
 	return @sorted_locations;
 }
 
+# Function to get the continent code of a given country code.
+sub get_continent_code($) {
+	my ($country_code) = @_;
+
+	# Use location module to grab the continent code.
+	my $continent_code = &Location::get_continent_code($db_handle, $country_code);
+
+	return $continent_code;
+}
+
 # Function to check if a given address has one ore more special flags.
 sub address_has_flags($) {
 	my ($address) = @_;
