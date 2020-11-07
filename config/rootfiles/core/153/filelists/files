@@ -4,6 +4,7 @@ etc/os-release
 etc/system-release
 etc/sysctl.conf
 srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/dns.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/location-block.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
