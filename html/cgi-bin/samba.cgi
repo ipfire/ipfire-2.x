@@ -835,6 +835,18 @@ if ($sambasettings{'ENCRYPTION'} =~ m/(desired|required)/) {
 	print FILE "smb encrypt = $1\n";
 }
 
+# Include smb.conf.local
+if (-e "${General::swroot}/samba/smb.conf.local") {
+	open(LOCAL, "<${General::swroot}/samba/smb.conf.local");
+
+	# Copy content line by line
+	while (<LOCAL>) {
+		print FILE $_;
+	}
+
+	close(LOCAL);
+}
+
 print FILE <<END;
 # Export all printers
 [printers]
