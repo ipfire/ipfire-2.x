@@ -953,6 +953,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print SERVERCONF "ifconfig $ovsubnet.1 $ovsubnet.2\n"; 
   print SERVERCONF "# Client Gateway Network\n"; 
   print SERVERCONF "route $remsubnet[0] $remsubnet[1]\n";
+  print SERVERCONF "# Call up script for static routes\n";
   print SERVERCONF "up \"/etc/init.d/static-routes start\"\n";
   print SERVERCONF "# tun Device\n"; 
   print SERVERCONF "dev tun\n"; 
@@ -1052,7 +1053,6 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print CLIENTCONF "ifconfig $ovsubnet.2 $ovsubnet.1\n"; 
   print CLIENTCONF "# Server Gateway Network\n"; 
   print CLIENTCONF "route $remsubnet[0] $remsubnet[1]\n"; 
-  print CLIENTCONF "up \"/etc/init.d/static-routes start\"\n";
   print CLIENTCONF "# tun Device\n"; 
   print CLIENTCONF "dev tun\n"; 
   print CLIENTCONF "#Logfile for statistics\n";
@@ -3331,6 +3331,12 @@ END
 	print FILE "# Logfile\n";
 	print FILE "status-version 1\n";
 	print FILE "status /var/run/openvpn/$n2nname[0]-n2n 10\n";
+	close FILE;
+
+	# Add static route command to client configuration
+	open(FILE, ">> $tempdir/$uplconffilename") or die 'Unable to open config file.';
+	print FILE "# Call up script for static routes\n";
+	print FILE "up \"/etc/init.d/static-routes start\"\n";
 	close FILE;
 
 	move("$tempdir/$uplconffilename", "${General::swroot}/ovpn/n2nconf/$n2nname[0]/$uplconffilename2");
