@@ -57,7 +57,7 @@ chown -vR root:root /etc/ntp
 sysctl -p
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
@@ -69,6 +69,12 @@ if [ -e /boot/grub/grub.cfg ]; then
 fi
 
 sync
+
+# Reload microcode
+modprobe microcode
+if [ -w "/sys/devices/system/cpu/microcode/reload" ]; then
+	echo 1 > /sys/devices/system/cpu/microcode/reload
+fi
 
 # Don't report the exitcode last command
 exit 0
