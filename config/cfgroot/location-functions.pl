@@ -1,25 +1,23 @@
 #!/usr/bin/perl -w
-############################################################################
-#                                                                          #
-# This file is part of the IPFire Firewall.                                #
-#                                                                          #
-# IPFire is free software; you can redistribute it and/or modify           #
-# it under the terms of the GNU General Public License as published by     #
-# the Free Software Foundation; either version 2 of the License, or        #
-# (at your option) any later version.                                      #
-#                                                                          #
-# IPFire is distributed in the hope that it will be useful,                #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of           #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
-# GNU General Public License for more details.                             #
-#                                                                          #
-# You should have received a copy of the GNU General Public License        #
-# along with IPFire; if not, write to the Free Software                    #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
-#                                                                          #
-# Copyright (C) 2015 - 2020 IPFire Team <info@ipfire.org>.                 #
-#                                                                          #
-############################################################################
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
 package Location::Functions;
 
@@ -86,7 +84,7 @@ sub verify ($) {
 }
 
 #
-## Function to the the country code of a given address.
+## Function to get the country code of a given address.
 #
 sub lookup_country_code($$) {
 	my ($address) = @_;
@@ -234,6 +232,32 @@ sub address_has_flags($) {
 
 	# Return the array of flags.
 	return @flags;
+}
+
+#
+## Function to get the Autonomous System Number of a given address.
+#
+sub lookup_asn($) {
+	my ($address) = @_;
+
+	# Lookup the given address.
+	my $asn = &Location::lookup_asn($db_handle, $address);
+
+	# Return the number of the Autonomous System
+	return $asn;
+}
+
+#
+## Function to get the name of an Autonomous System.
+#
+sub get_as_name($) {
+	my ($asn) = @_;
+
+	# Fetch the name of this AS...
+	my $as_name = &Location::get_as_name($db_handle, $asn);
+
+	# Return the name of the Autonomous System
+	return $as_name;
 }
 
 # Custom END declaration which will be executed when perl
