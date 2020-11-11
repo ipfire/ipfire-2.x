@@ -97,9 +97,11 @@
 < age sminute
 < age ssecond
 < application layer gateways
+< asn lookup failed
 < Async logging enabled
 < atm device
 < attention
+< autonomous system
 < bit
 < block
 < broken
@@ -580,6 +582,7 @@
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ip basic info
 < ipsec
 < ipsec connection
 < ipsec interface mode gre
@@ -870,6 +873,7 @@
 < vulnerability
 < vulnerable
 < Weekly
+< whois results from
 < winbind daemon
 < wireless network
 < wlanap
@@ -949,12 +953,16 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < ansi t1.483
+< asn lookup failed
+< autonomous system
 < bewan adsl pci st
 < bewan adsl usb
 < dns enable safe-search youtube
 < g.dtm
 < g.lite
+< ip basic info
 < upload fcdsl.o
+< whois results from
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -976,6 +984,8 @@
 < advproxy wpad title
 < advproxy wpad view pac
 < application layer gateways
+< asn lookup failed
+< autonomous system
 < block
 < broken
 < Captive
@@ -1156,6 +1166,7 @@
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ip basic info
 < ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
@@ -1282,6 +1293,7 @@
 < vulnerability
 < vulnerable
 < Weekly
+< whois results from
 < winbind daemon
 < wireless network
 < wlanap
@@ -1347,7 +1359,9 @@
 < advproxy wpad title
 < advproxy wpad view pac
 < application layer gateways
+< asn lookup failed
 < atm device
+< autonomous system
 < block
 < broken
 < capabilities
@@ -1547,6 +1561,7 @@
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ip basic info
 < ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
@@ -1708,6 +1723,7 @@
 < vulnerability
 < vulnerable
 < Weekly
+< whois results from
 < winbind daemon
 < wireless network
 < wlanap
@@ -1784,8 +1800,10 @@
 < age sminute
 < age ssecond
 < application layer gateways
+< asn lookup failed
 < atm device
 < attention
+< autonomous system
 < bit
 < block
 < broken
@@ -2258,6 +2276,7 @@
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ip basic info
 < ipsec
 < ipsec connection
 < ipsec interface mode gre
@@ -2542,6 +2561,7 @@
 < vulnerability
 < vulnerable
 < Weekly
+< whois results from
 < winbind daemon
 < wireless network
 < wlanap
@@ -2651,8 +2671,10 @@
 < age sminute
 < age ssecond
 < application layer gateways
+< asn lookup failed
 < atm device
 < attention
+< autonomous system
 < bit
 < block
 < broken
@@ -3131,6 +3153,7 @@
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ip basic info
 < ipsec
 < ipsec connection
 < ipsec interface mode gre
@@ -3414,6 +3437,7 @@
 < vulnerable
 < week-graph
 < Weekly
+< whois results from
 < winbind daemon
 < wireless network
 < wlanap
@@ -3502,6 +3526,8 @@
 < advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
+< asn lookup failed
+< autonomous system
 < broken
 < Captive delete logo
 < cpu frequency
@@ -3572,6 +3598,7 @@
 < invalid input for local ip address
 < invalid input for mode
 < invalid ip or hostname
+< ip basic info
 < ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
@@ -3640,6 +3667,7 @@
 < vulnerability
 < vulnerable
 < Weekly
+< whois results from
 < winbind daemon
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced

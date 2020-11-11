@@ -877,6 +877,8 @@ WARNING: translation string unused: zoneconf val ppp assignment error
 WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: asn lookup failed = AS lookup failed
+WARNING: untranslated string: autonomous system = Autonomous System
 WARNING: untranslated string: dns enable safe-search youtube = Include YouTube in Safe Search
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
@@ -909,7 +911,10 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
+WARNING: untranslated string: ip basic info = Basic IP information
+WARNING: untranslated string: ip info for = unknown string
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
+WARNING: untranslated string: whois results from = WHOIS results from
