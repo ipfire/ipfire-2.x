@@ -45,7 +45,7 @@ ldconfig
 chown -vR root:root /etc/ntp
 
 # Update Language cache
-#/usr/local/bin/update-lang-cache
+/usr/local/bin/update-lang-cache
 
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
