@@ -1,6 +1,7 @@
 etc/issue
 etc/ntp.conf
 etc/os-release
+etc/rc.d/init.d/unbound
 etc/system-release
 etc/sysctl.conf
 srv/web/ipfire/cgi-bin/connections.cgi
