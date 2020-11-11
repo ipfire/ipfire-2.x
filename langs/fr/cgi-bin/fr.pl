@@ -1627,7 +1627,7 @@
 'logging server' => 'Serveur de connexion',
 'loginlogout' => 'Connexion/Quitter',
 'logs' => 'Journaux',
-'lookup failed' => 'La recherche inversée a échouée',
+'ptr lookup failed' => 'La recherche inversée a échouée',
 'loosedirectorychecking' => 'Echec de la vérification du répertoire',
 'low' => 'Bas',
 'ls_dhcpd' => 'Serveur DHCP :',

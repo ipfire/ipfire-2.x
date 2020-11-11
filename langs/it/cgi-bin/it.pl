@@ -1409,7 +1409,7 @@
 'logging server' => 'Logging Server',
 'loginlogout' => 'Login/Logout',
 'logs' => 'Gestione Log',
-'lookup failed' => 'Reverse lookup failed',
+'ptr lookup failed' => 'Reverse lookup failed',
 'loosedirectorychecking' => 'Loosedirectorychecking',
 'low' => 'Basso',
 'ls_dhcpd' => 'DHCP Server:',

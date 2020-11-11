@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -293,7 +293,7 @@ sub printactivelogins()
 			# get rDNS...
 			my $iaddr = inet_aton($remoteip);
 			my $rdns = gethostbyaddr($iaddr, AF_INET);
-			if (!$rdns) { $rdns = $Lang::tr{'lookup failed'}; };
+			if (!$rdns) { $rdns = $Lang::tr{'ptr lookup failed'}; };
 
 			my $table_colour = ($id++ % 2) ? $color{'color22'} : $color{'color20'};
 

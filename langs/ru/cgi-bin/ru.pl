@@ -1088,7 +1088,7 @@
 'logging server' => 'Сервер Логов',
 'loginlogout' => 'Login/Logout',
 'logs' => 'Логи',
-'lookup failed' => 'Reverse lookup failed',
+'ptr lookup failed' => 'Reverse lookup failed',
 'loosedirectorychecking' => 'Loosedirectorychecking',
 'low' => 'Low',
 'ls_dhcpd' => 'DHCP сервер:',

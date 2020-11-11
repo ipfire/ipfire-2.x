@@ -1539,7 +1539,7 @@
 'logging server' => 'Günlük Sunucusu',
 'loginlogout' => 'Giriş/Çıkış',
 'logs' => 'Günlükler',
-'lookup failed' => 'Ters arama başarısız',
+'ptr lookup failed' => 'Ters arama başarısız',
 'loosedirectorychecking' => 'Serbest Dizin Denetimi',
 'low' => 'Düşük',
 'ls_dhcpd' => 'DHCP Sunucusu:',

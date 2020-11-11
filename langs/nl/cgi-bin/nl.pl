@@ -1389,7 +1389,7 @@
 'logging server' => 'Loggingserver',
 'loginlogout' => 'Login/Logout',
 'logs' => 'logs',
-'lookup failed' => 'Reverse lookup mislukt',
+'ptr lookup failed' => 'Reverse lookup mislukt',
 'loosedirectorychecking' => 'Loosedirectorychecking',
 'low' => 'Laag',
 'ls_dhcpd' => 'DHCP Server:',

@@ -1096,7 +1096,7 @@
 'logging server' => 'Servidor de conexión',
 'loginlogout' => 'Login/Logout',
 'logs' => 'registros',
-'lookup failed' => 'Falló la búsqueda reversiva',
+'ptr lookup failed' => 'Falló la búsqueda reversiva',
 'loosedirectorychecking' => 'Chequeo de loosedirectory',
 'low' => 'Bajo',
 'ls_dhcpd' => 'Servidor DHCP:',

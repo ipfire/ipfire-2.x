@@ -625,7 +625,7 @@ END
 					$rdns = gethostbyaddr($iaddr, AF_INET);
 				}
 
-				if (!$rdns) { $rdns = $Lang::tr{'lookup failed'}; }
+				if (!$rdns) { $rdns = $Lang::tr{'ptr lookup failed'}; }
 
 				# Mark ISP name servers as disabled
 				if ($id <= 2 && $enabled eq "disabled") {

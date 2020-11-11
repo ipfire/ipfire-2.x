@@ -1095,7 +1095,7 @@
 'logging server' => 'Serwer logowania',
 'loginlogout' => 'Zalogowanie/wylogowanie',
 'logs' => 'logi',
-'lookup failed' => 'Reverse lookup failed',
+'ptr lookup failed' => 'Reverse lookup failed',
 'loosedirectorychecking' => 'Loosedirectorychecking',
 'low' => 'Niski',
 'ls_dhcpd' => 'Serwer DHCP:',
