@@ -26,10 +26,65 @@
 
 core=153
 
+exit_with_error() {
+	# Set last succesfull installed core.
+	echo $(($core-1)) > /opt/pakfire/db/core/mine
+	# force fsck at next boot, this may fix free space on xfs
+	touch /forcefsck
+	# don't start pakfire again at error
+	killall -KILL pak_update
+	/usr/bin/logger -p syslog.emerg -t ipfire \
+		"core-update-${core}: $1"
+	exit $2
+}
+
 # Remove old core updates from pakfire cache to save space...
 for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
+
+KVER="xxxKVERxxx"
+
+# Backup uEnv.txt if exist
+if [ -e /boot/uEnv.txt ]; then
+	cp -vf /boot/uEnv.txt /boot/uEnv.txt.org
+fi
+
+# Do some sanity checks.
+case $(uname -r) in
+	*-ipfire-kirkwood)
+		exit_with_error "ERROR cannot update. kirkwood kernel was not supported." 1
+		;;
+	*-ipfire*)
+		# Ok.
+		;;
+	*)
+		exit_with_error "ERROR cannot update. No IPFire Kernel." 1
+		;;
+esac
+if [ -e /boot/grub/grub.conf ]; then
+	exit_with_error "ERROR unsupported GRUB1/pygrub found!" 1
+fi
+
+# Check diskspace on root
+ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
+
+if [ $ROOTSPACE -lt 100000 ]; then
+	exit_with_error "ERROR cannot update because not enough free space on root." 2
+	exit 2
+fi
+
+# Remove the old kernel
+rm -rf /boot/System.map-*
+rm -rf /boot/config-*
+rm -rf /boot/ipfirerd-*
+rm -rf /boot/initramfs-*
+rm -rf /boot/vmlinuz-*
+rm -rf /boot/uImage-*-ipfire-*
+rm -rf /boot/zImage-*-ipfire-*
+rm -rf /boot/uInit-*-ipfire-*
+rm -rf /boot/dtb-*-ipfire-*
+rm -rf /lib/modules
 
 # Remove files
 
@@ -50,11 +105,30 @@ chown -vR root:root /etc/ntp
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Fix invalid cronjob syntax
+sed -e "s/^%hourly,random \* \* \*/%hourly,random */g" \
+	-i /var/spool/cron/root.orig
+fcrontab -z
+
 # Start services
 /etc/init.d/suricata restart
 
 # Reload sysctl.conf
 sysctl -p
+
+# remove lm_sensor config after collectd was started
+# to reserch sensors at next boot with updated kernel
+rm -f  /etc/sysconfig/lm_sensors
+
+# Upadate Kernel version uEnv.txt
+if [ -e /boot/uEnv.txt ]; then
+	sed -i -e "s/KVER=.*/KVER=${KVER}/g" /boot/uEnv.txt
+fi
+
+# call user update script (needed for some arm boards)
+if [ -e /boot/pakfire-kernel-update ]; then
+	/boot/pakfire-kernel-update ${KVER}
+fi
 
 # This update needs a reboot...
 touch /var/run/need_reboot

@@ -7072,6 +7072,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/dw
 #lib/modules/KVER-ipfire/build/include/config/dw/apb
 #lib/modules/KVER-ipfire/build/include/config/dw/apb/ictl.h
+#lib/modules/KVER-ipfire/build/include/config/dw/apb/timer
+#lib/modules/KVER-ipfire/build/include/config/dw/apb/timer.h
+#lib/modules/KVER-ipfire/build/include/config/dw/apb/timer/of.h
 #lib/modules/KVER-ipfire/build/include/config/dw/dmac
 #lib/modules/KVER-ipfire/build/include/config/dw/dmac/core.h
 #lib/modules/KVER-ipfire/build/include/config/dw/dmac/pci.h

@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 4.14.198
-ARM_PATCHES = 4.14.198-ipfire0
+VER         = 4.14.206
+ARM_PATCHES = 4.14.206-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -79,8 +79,8 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= 9bf8f170f93283549cba55df5247b7b8
-arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 84b7afe9148e02568777ae0338da3844
+$(DL_FILE)_MD5					= c08bf53b35b816089d04b99036e0304a
+arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 2b0e8e3ebe9827b2bfed7397b043dbc5
 
 install : $(TARGET)
 
@@ -143,9 +143,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Active try to add entropy if the kernel wait for it
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-random_try_to_actively_add_entropy.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.x-add_timer_setup_on_stack.patch
-
-	# Patch CVE-2020-14386
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14_cve-2020-14386_net_packet_fix_overflow_in_tpacket_rcv.patch
 
 ifeq "$(KCFG)" "-multi"
 	# Apply Arm-multiarch kernel patches.
