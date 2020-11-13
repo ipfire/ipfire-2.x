@@ -17,6 +17,7 @@ etc/sysconfig/firewall.local
 etc/sysconfig/rc.local
 etc/udev/rules.d/30-persistent-network.rules
 srv/web/ipfire/html/proxy.pac
+usr/share/xt_geoip
 var/ipfire/dma
 var/ipfire/time
 var/ipfire/firewall/locationblock
@@ -25,6 +26,7 @@ var/ipfire/ovpn
 var/ipfire/urlfilter/blacklist
 var/ipfire/urlfilter/settings
 var/lib/alternatives
+var/lib/location/database.db
 var/log/cache
 var/log/dhcpcd.log
 var/log/messages

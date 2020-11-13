@@ -4,3 +4,4 @@
 /var/ipfire/samba/settings
 /var/ipfire/samba/shares
 /var/ipfire/samba/smb.conf
+/var/ipfire/samba/smb.conf.local

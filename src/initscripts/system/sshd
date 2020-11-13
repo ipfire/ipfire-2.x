@@ -25,7 +25,7 @@ case "$1" in
 
         [ -e "/var/ipfire/remote/enablessh" ] || exit 0 # SSH is not enabled
         boot_mesg "Starting SSH Server..."
-        loadproc /usr/sbin/sshd 
+        loadproc -f /usr/sbin/sshd
 
         # Also prevent ssh from being killed by out of memory conditions
 	(
@@ -37,7 +37,7 @@ case "$1" in
 
     stop)
         boot_mesg "Stopping SSH Server..."
-        killproc /usr/sbin/sshd
+        killproc -p "/var/run/sshd.pid" /usr/sbin/sshd
         ;;
 
     reload)
