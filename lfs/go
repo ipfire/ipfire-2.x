@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.14.2
+VER        = 1.15.4
 
 THISAPP    = go-$(VER)
 DL_FILE    = go$(VER).$(GOOS)-$(GOARCH).tar.gz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 856d248e3ea8a287d13e5f6afd086282
+$(DL_FILE)_MD5 = 8e9d11a16f03372c82c5134278a0bd7d
 
 install : $(TARGET)
 
