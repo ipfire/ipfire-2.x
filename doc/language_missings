@@ -583,6 +583,7 @@
 < invalid ip or hostname
 < invalid logserver protocol
 < ip basic info
+< ip info for
 < ipsec
 < ipsec connection
 < ipsec interface mode gre
@@ -961,6 +962,7 @@
 < g.dtm
 < g.lite
 < ip basic info
+< ip info for
 < upload fcdsl.o
 < whois results from
 ############################################################################
@@ -1167,6 +1169,7 @@
 < invalid ip or hostname
 < invalid logserver protocol
 < ip basic info
+< ip info for
 < ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
@@ -1562,6 +1565,7 @@
 < invalid ip or hostname
 < invalid logserver protocol
 < ip basic info
+< ip info for
 < ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
@@ -2277,6 +2281,7 @@
 < invalid ip or hostname
 < invalid logserver protocol
 < ip basic info
+< ip info for
 < ipsec
 < ipsec connection
 < ipsec interface mode gre
@@ -3154,6 +3159,7 @@
 < invalid ip or hostname
 < invalid logserver protocol
 < ip basic info
+< ip info for
 < ipsec
 < ipsec connection
 < ipsec interface mode gre
@@ -3599,6 +3605,7 @@
 < invalid input for mode
 < invalid ip or hostname
 < ip basic info
+< ip info for
 < ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
