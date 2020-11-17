@@ -38,10 +38,6 @@ my $css = <<END
 		height: 4em;
 	}
 
-	tr.thin {
-		height: 3em;
-	}
-
 	td.narrow {
 		width: 11em;
 	}
@@ -83,10 +79,6 @@ my $css = <<END
 		background-color: white;
 		border-top-style: none;
 		border-left-style: none;
-	}
-
-	td.disabled {
-		background-color: #cccccc;
 	}
 
 	td.textcenter {
@@ -312,8 +304,8 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 print <<END
 <form method='post' enctype='multipart/form-data'>
 	<table>
-		<tr>
-		<td class="h narrow topleft" /td>
+	<tr>
+		<td class="h narrow topleft"></td>
 END
 ;
 
@@ -332,7 +324,7 @@ foreach (@zones) {
 		my $red_restricted = ($uc eq "RED" && ! ($red_type eq "STATIC" || $red_type eq "DHCP"));
 
 		if ($red_restricted) {
-			print "<td class='h textcenter $_'>$uc ($red_type)</td>";
+			print "\t\t<td class='h textcenter $_'>$uc ($red_type)</td>\n";
 
 			next; # We're done here
 		}
@@ -350,7 +342,7 @@ foreach (@zones) {
 	}
 
 	print <<END
-		<td class='h textcenter $_'>$uc</br>
+		<td class='h textcenter $_'>$uc<br>
 			<select name="MODE $uc">
 				<option value="DEFAULT" $mode_selected{"DEFAULT"}>$Lang::tr{"zoneconf nicmode default"}</option>
 				<option value="BRIDGE" $mode_selected{"BRIDGE"}>$Lang::tr{"zoneconf nicmode bridge"}</option>
@@ -361,7 +353,7 @@ END
 ;
 }
 
-print "</tr>";
+print "\t</tr>\n";
 
 my $slightlygrey = "";
 
@@ -370,7 +362,8 @@ foreach (@nics) {
 	my $nic = $_->[1];
 	my $wlan = $_->[2];
 
-	print "<tr><td class='h narrow textcenter'>$nic<br>$mac</td>";
+	print "\t<tr>\n";
+	print "\t\t<td class='h narrow textcenter'>$nic<br>$mac</td>\n";
 
 	# Iterate through all zones and check if the current NIC is assigned to it
 	foreach (@zones) {
@@ -393,7 +386,12 @@ foreach (@nics) {
 					$checked = "checked";
 				}
 
-				print "<td class='textcenter $slightlygrey'><input type='radio' id='PPPACCESS $mac' name='PPPACCESS' value='$mac' $checked></td>";
+				print <<END
+		<td class="textcenter $slightlygrey">
+			<input type="radio" id="PPPACCESS $mac" name="PPPACCESS" value="$mac" $checked>
+		</td>
+END
+;
 				next; # We're done here
 			}
 		}
@@ -432,19 +430,19 @@ foreach (@nics) {
 		my $vlan_disabled = ($wlan) ? "disabled" : "";
 
 		print <<END
-			<td class="textcenter $slightlygrey">
-				<select name="ACCESS $uc $mac" onchange="document.getElementById('TAG $uc $mac').disabled = (this.value === 'VLAN' ? false : true)">
-					<option value="NONE" $access_selected{"NONE"}>- $Lang::tr{"zoneconf access none"} -</option>
-					<option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
-					<option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
-				</select>
-				<input type="number" class="vlanid" id="TAG $uc $mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" $field_disabled>
-			</td>
+		<td class="textcenter $slightlygrey">
+			<select name="ACCESS $uc $mac" onchange="document.getElementById('TAG $uc $mac').disabled = (this.value === 'VLAN' ? false : true)">
+				<option value="NONE" $access_selected{"NONE"}>- $Lang::tr{"zoneconf access none"} -</option>
+				<option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
+				<option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
+			</select>
+			<input type="number" class="vlanid" id="TAG $uc $mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" $field_disabled>
+		</td>
 END
 ;
 	}
 
-	print "</tr>";
+	print "\t</tr>\n";
 
 	if ($slightlygrey) {
 		$slightlygrey = "";
