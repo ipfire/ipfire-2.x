@@ -67,9 +67,17 @@ case "${DO}" in
 		/usr/local/bin/ipsec-interfaces
 
 		/etc/rc.d/init.d/static-routes start
+
+		boot_mesg "Mounting network file systems..."
+		mount -a -O _netdev
+		evaluate_retval
 		;;
 
 	stop)
+		boot_mesg "Umounting network file systems..."
+		umount -a -O _netdev
+		evaluate_retval
+
 		# Stopping interfaces...
 		# GREEN
 		[ "$green" == "1" ] && /etc/rc.d/init.d/networking/green stop
