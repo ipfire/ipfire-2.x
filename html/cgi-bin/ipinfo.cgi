@@ -107,7 +107,7 @@ if (&General::validip($addr)) {
 			<table class="tbl" width='100%'>
 				<tr>
 					<td bgcolor='$color{'color22'}'><strong>$Lang::tr{'country'}</strong></td>
-					<td bgcolor='$color{'color22'}'>$cname <a href='country.cgi#$ccode'><img src="$flag_icon" border="0" alt="$cname" title="$cname" /></td>
+					<td bgcolor='$color{'color22'}'>$cname <a href='country.cgi#$ccode'><img src="$flag_icon" border="0" align="absmiddle" alt="$cname" title="$cname" /></td>
 				</tr>
 				<tr>
 					<td bgcolor='$color{'color20'}'><strong>$Lang::tr{'ptr'}</strong></td>
