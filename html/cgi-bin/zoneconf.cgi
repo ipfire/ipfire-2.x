@@ -26,7 +26,7 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
-my $css = <<END
+my $extraHead = <<END
 <style>
 	table#zoneconf {
 		width: 100%;
@@ -101,6 +101,8 @@ my $css = <<END
 		margin-left: auto;
 	}
 </style>
+
+<script src="/include/zoneconf.js"></script>
 END
 ;
 
@@ -151,7 +153,7 @@ foreach (@nics) {
 	}
 }
 
-&Header::openpage($Lang::tr{"zoneconf title"}, 1, $css);
+&Header::openpage($Lang::tr{"zoneconf title"}, 1, $extraHead);
 &Header::openbigbox('100%', 'center');
 
 ### Evaluate POST parameters ###
@@ -364,6 +366,7 @@ foreach (@nics) {
 	foreach (@zones) {
 		my $uc = uc $_;
 		my $dev_name = $ethsettings{"${uc}_DEV"};
+		my $highlight = "";
 
 		if ($dev_name eq "") { # Again, skip the zone if it is not activated
 			next;
@@ -379,11 +382,12 @@ foreach (@nics) {
 
 				if ($mac eq $ethsettings{"${uc}_MACADDR"}) {
 					$checked = "checked";
+					$highlight = $_;
 				}
 
 				print <<END
-		<td class="">
-			<input type="radio" name="PPPACCESS" value="$mac" $checked>
+		<td class="$highlight">
+			<input type="radio" name="PPPACCESS" value="$mac" data-zone="RED" data-mac="$mac" onchange="highlightAccess(this)" $checked>
 		</td>
 END
 ;
@@ -424,9 +428,14 @@ END
 		$access_selected{"NONE"} = ($access_selected{"NATIVE"} eq "") && ($access_selected{"VLAN"} eq "") ? "selected" : "";
 		my $vlan_disabled = ($wlan) ? "disabled" : "";
 
+		# If the interface is assigned, hightlight table cell
+		if ($access_selected{"NONE"} eq "") {
+			$highlight = $_;
+		}
+
 		print <<END
-		<td class="">
-			<select name="ACCESS $uc $mac" onchange="document.getElementById('TAG-$uc-$mac').disabled = (this.value === 'VLAN' ? false : true)">
+		<td class="$highlight">
+			<select name="ACCESS $uc $mac" data-zone="$uc" data-mac="$mac" onchange="highlightAccess(this)">
 				<option value="NONE" $access_selected{"NONE"}>- $Lang::tr{"zoneconf access none"} -</option>
 				<option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
 				<option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
