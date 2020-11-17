@@ -28,61 +28,62 @@ require "${General::swroot}/header.pl";
 
 my $css = <<END
 <style>
-	table {
+	table#zoneconf {
 		width: 100%;
 		border-collapse: collapse;
 		table-layout: fixed;
 	}
 
-	tr {
+	#zoneconf tr {
 		height: 4em;
 	}
 
-	td.narrow {
+	#zoneconf td {
+		padding: 5px 10px;
+		border: 0.5px solid black;
+		text-align: center;
+	}
+
+	/* dark grey header cells */
+	#zoneconf td.heading {
+		background-color: grey;
+		color: white;
+	}	
+	#zoneconf td.heading::first-line {
+		font-weight: bold;
+		line-height: 1.6;
+	}
+
+	/* narrow left column */
+	#zoneconf tr > td:first-child {
 		width: 11em;
 	}
 
-	td {
-		padding: 5px;
-		padding-left: 10px;
-		padding-right: 10px;
-		border: 0.5px solid black;
-	}
-
-	td.slightlygrey {
+	/* alternating row background color */
+	#zoneconf tr:nth-child(2n+3) {
 		background-color: #F0F0F0;
 	}
 
-	td.h {
-		background-color: grey;
-		color: white;
-		font-weight: 800;
-	}
-
-	td.green {
+	#zoneconf td.green {
 		background-color: $Header::colourgreen;
 	}
 
-	td.red {
+	#zoneconf td.red {
 		background-color: $Header::colourred;
 	}
 
-	td.blue {
+	#zoneconf td.blue {
 		background-color: $Header::colourblue;
 	}
 
-	td.orange {
+	#zoneconf td.orange {
 		background-color: $Header::colourorange;
 	}
 
-	td.topleft {
-		background-color: white;
+	#zoneconf td.topleft {
+		background-color: $Header::pagecolour;
 		border-top-style: none;
 		border-left-style: none;
-	}
-
-	td.textcenter {
-		text-align: center;
 	}
 
 	input.vlanid {
@@ -299,9 +300,9 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 
 print <<END
 <form method='post' enctype='multipart/form-data'>
-	<table>
+	<table id="zoneconf">
 	<tr>
-		<td class="h narrow topleft"></td>
+		<td class="topleft"></td>
 END
 ;
 
@@ -320,7 +321,7 @@ foreach (@zones) {
 		my $red_restricted = ($uc eq "RED" && ! ($red_type eq "STATIC" || $red_type eq "DHCP"));
 
 		if ($red_restricted) {
-			print "\t\t<td class='h textcenter $_'>$uc ($red_type)</td>\n";
+			print "\t\t<td class='heading $_'>$uc ($red_type)</td>\n";
 
 			next; # We're done here
 		}
@@ -338,7 +339,7 @@ foreach (@zones) {
 	}
 
 	print <<END
-		<td class='h textcenter $_'>$uc<br>
+		<td class='heading $_'>$uc<br>
 			<select name="MODE $uc">
 				<option value="DEFAULT" $mode_selected{"DEFAULT"}>$Lang::tr{"zoneconf nicmode default"}</option>
 				<option value="BRIDGE" $mode_selected{"BRIDGE"}>$Lang::tr{"zoneconf nicmode bridge"}</option>
@@ -351,15 +352,13 @@ END
 
 print "\t</tr>\n";
 
-my $slightlygrey = "";
-
 foreach (@nics) {
 	my $mac = $_->[0];
 	my $nic = $_->[1];
 	my $wlan = $_->[2];
 
 	print "\t<tr>\n";
-	print "\t\t<td class='h narrow textcenter'>$nic<br>$mac</td>\n";
+	print "\t\t<td class='heading'>$nic<br>$mac</td>\n";
 
 	# Iterate through all zones and check if the current NIC is assigned to it
 	foreach (@zones) {
@@ -383,7 +382,7 @@ foreach (@nics) {
 				}
 
 				print <<END
-		<td class="textcenter $slightlygrey">
+		<td class="">
 			<input type="radio" name="PPPACCESS" value="$mac" $checked>
 		</td>
 END
@@ -426,7 +425,7 @@ END
 		my $vlan_disabled = ($wlan) ? "disabled" : "";
 
 		print <<END
-		<td class="textcenter $slightlygrey">
+		<td class="">
 			<select name="ACCESS $uc $mac" onchange="document.getElementById('TAG-$uc-$mac').disabled = (this.value === 'VLAN' ? false : true)">
 				<option value="NONE" $access_selected{"NONE"}>- $Lang::tr{"zoneconf access none"} -</option>
 				<option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
@@ -439,12 +438,6 @@ END
 	}
 
 	print "\t</tr>\n";
-
-	if ($slightlygrey) {
-		$slightlygrey = "";
-	} else {
-		$slightlygrey = "slightlygrey";
-	}
 }
 
 print <<END
