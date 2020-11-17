@@ -99,10 +99,6 @@ my $css = <<END
 	#submit-container.input {
 		margin-left: auto;
 	}
-
-	button {
-		margin-top: 1em;
-	}
 </style>
 END
 ;
@@ -282,7 +278,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 	if ($VALIDATE_error) {
 		&Header::openbox('100%', 'left', $Lang::tr{"error"});
 
-		print "$VALIDATE_error<br><a href='/cgi-bin/zoneconf.cgi'><button>$Lang::tr{'ok'}</button></a>";
+		print "$VALIDATE_error<br><br><a href='$ENV{'SCRIPT_NAME'}'>$Lang::tr{'back'}</a>\n";
 
 		&Header::closebox();
 		&Header::closebigbox();
@@ -388,7 +384,7 @@ foreach (@nics) {
 
 				print <<END
 		<td class="textcenter $slightlygrey">
-			<input type="radio" id="PPPACCESS $mac" name="PPPACCESS" value="$mac" $checked>
+			<input type="radio" name="PPPACCESS" value="$mac" $checked>
 		</td>
 END
 ;
@@ -431,12 +427,12 @@ END
 
 		print <<END
 		<td class="textcenter $slightlygrey">
-			<select name="ACCESS $uc $mac" onchange="document.getElementById('TAG $uc $mac').disabled = (this.value === 'VLAN' ? false : true)">
+			<select name="ACCESS $uc $mac" onchange="document.getElementById('TAG-$uc-$mac').disabled = (this.value === 'VLAN' ? false : true)">
 				<option value="NONE" $access_selected{"NONE"}>- $Lang::tr{"zoneconf access none"} -</option>
 				<option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
 				<option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
 			</select>
-			<input type="number" class="vlanid" id="TAG $uc $mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" $field_disabled>
+			<input type="number" class="vlanid" id="TAG-$uc-$mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" $field_disabled>
 		</td>
 END
 ;
