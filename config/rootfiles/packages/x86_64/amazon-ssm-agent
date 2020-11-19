@@ -4,6 +4,7 @@ etc/amazon/ssm/amazon-ssm-agent.json
 etc/amazon/ssm/seelog.xml
 etc/rc.d/init.d/amazon-ssm-agent
 usr/bin/amazon-ssm-agent
+usr/bin/ssm-agent-worker
 usr/bin/ssm-cli
 usr/bin/ssm-document-worker
 usr/bin/ssm-session-logger
