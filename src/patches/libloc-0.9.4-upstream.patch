@@ -1,7 +1,7 @@
 From ee6ea3986dc80183157f67275dc9f28231b5d5b2 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 24 Sep 2020 10:17:58 +0000
-Subject: [PATCH 01/70] Revert "importer: Purge any redundant entries"
+Subject: [PATCH 01/77] Revert "importer: Purge any redundant entries"
 
 This reverts commit c2cc55d5a6875c3838f060032eaed89dcfb92ef6.
 
@@ -53,7 +53,7 @@ index 1467923..e3a07a0 100644
 From 92f6abf4e272672bb0a71cfe991261b95ebe2fef Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 24 Sep 2020 10:18:58 +0000
-Subject: [PATCH 02/70] Revert "importer: Import raw sources for inetnum's
+Subject: [PATCH 02/77] Revert "importer: Import raw sources for inetnum's
  again"
 
 This reverts commit 64e95fa903edec8b4e4e59830b395e2e4a411853.
@@ -199,7 +199,7 @@ index e3a07a0..77952f2 100644
 From f532841e9197ce2f40aad8c086d786b2cb783a54 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Mon, 12 Oct 2020 20:53:31 +0000
-Subject: [PATCH 03/70] Revert "Revert "importer: Import raw sources for
+Subject: [PATCH 03/77] Revert "Revert "importer: Import raw sources for
  inetnum's again""
 
 This reverts commit 92f6abf4e272672bb0a71cfe991261b95ebe2fef.
@@ -345,7 +345,7 @@ index 77952f2..e3a07a0 100644
 From a36bc686865fc87ea386fd90b389338bdcb80cbc Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Mon, 12 Oct 2020 20:53:32 +0000
-Subject: [PATCH 04/70] location-importer.in: only import relevant data from
+Subject: [PATCH 04/77] location-importer.in: only import relevant data from
  AFRINIC, APNIC and RIPE
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -500,7 +500,7 @@ index e3a07a0..093f325 100644
 From 2373de384f10f5573bbd7570f5522545df70c0e3 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 16 Oct 2020 12:24:58 +0000
-Subject: [PATCH 05/70] location-importer: Include all overridden networks
+Subject: [PATCH 05/77] location-importer: Include all overridden networks
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -526,7 +526,7 @@ index 093f325..d249a35 100644
 From 13f67f285856e8eabfeff2daf1be3aeaa36a82cc Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 16 Oct 2020 12:26:38 +0000
-Subject: [PATCH 06/70] Revert "location-importer.in: only import relevant data
+Subject: [PATCH 06/77] Revert "location-importer.in: only import relevant data
  from AFRINIC, APNIC and RIPE"
 
 This reverts commit a36bc686865fc87ea386fd90b389338bdcb80cbc.
@@ -672,7 +672,7 @@ index d249a35..b220eaf 100644
 From 44341478233115b26bb27fdb24da5b0a1eedb173 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 16 Oct 2020 12:26:43 +0000
-Subject: [PATCH 07/70] Revert "Revert "Revert "importer: Import raw sources
+Subject: [PATCH 07/77] Revert "Revert "Revert "importer: Import raw sources
  for inetnum's again"""
 
 This reverts commit f532841e9197ce2f40aad8c086d786b2cb783a54.
@@ -818,7 +818,7 @@ index b220eaf..e87d378 100644
 From a7d3a7a0565a0e09d3442e5829a0f30f016993b9 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 20 Oct 2020 20:44:43 +0000
-Subject: [PATCH 08/70] as: Fix dereferencing NULL pointer when setting AS name
+Subject: [PATCH 08/77] as: Fix dereferencing NULL pointer when setting AS name
 
 Reported-by: Gisle Vanem <gisle.vanem@gmail.com>
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
@@ -851,7 +851,7 @@ index e1fbb01..8421ac8 100644
 From ddb326ad38a7c7202315dd2c6f938313db04ee22 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 09:18:08 +0000
-Subject: [PATCH 09/70] as: Do not attempt to match name when it wasn't set
+Subject: [PATCH 09/77] as: Do not attempt to match name when it wasn't set
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -879,7 +879,7 @@ index 8421ac8..757bf3d 100644
 From d226ad2d97cbcd42ce807d9308569b1b9c5d4e2f Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 09:28:39 +0000
-Subject: [PATCH 10/70] writer: Free array with pointer to ASes, too
+Subject: [PATCH 10/77] writer: Free array with pointer to ASes, too
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -910,7 +910,7 @@ index 5939cff..160650f 100644
 From d89a7d62772048ae1bd18d03f69df46b7e1a3d3c Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 09:31:29 +0000
-Subject: [PATCH 11/70] writer: Free countries when the writer is being
+Subject: [PATCH 11/77] writer: Free countries when the writer is being
  destroyed
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
@@ -943,7 +943,7 @@ index 160650f..2f09b56 100644
 From 0f1aedbc68e3945770c93e0ebd83eed0f555d6f0 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 13:19:44 +0000
-Subject: [PATCH 12/70] tests: Try adding an invalid network
+Subject: [PATCH 12/77] tests: Try adding an invalid network
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -975,7 +975,7 @@ index d38f13d..e908b57 100644
 From 13ad6e695f9ffc7847b3afe3e9cbcea8fb3a443f Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 13:36:35 +0000
-Subject: [PATCH 13/70] networks: Improve parsing IP addresses
+Subject: [PATCH 13/77] networks: Improve parsing IP addresses
 
 loc_network_new_from_string() seem to have had some unexpected
 behaviour for invalid inputs.
@@ -1092,7 +1092,7 @@ index e908b57..85eca00 100644
 From 6a467e9345bb5a3d37911c9aaac30019eaa4492b Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 13:43:21 +0000
-Subject: [PATCH 14/70] networks: Test if we can add localhost (IPv6)
+Subject: [PATCH 14/77] networks: Test if we can add localhost (IPv6)
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -1123,7 +1123,7 @@ index 85eca00..8c7e898 100644
 From fc1190aa11e3ff3d2dbf5f4d408c298e7916f46f Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 13:44:50 +0000
-Subject: [PATCH 15/70] networks: Remove accidentially committed debug line
+Subject: [PATCH 15/77] networks: Remove accidentially committed debug line
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -1149,7 +1149,7 @@ index c112a41..be88d75 100644
 From a1707d8983898b6878cdd5c68744bcc444e278ed Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 13:53:36 +0000
-Subject: [PATCH 16/70] importer: Add search index to announcements table
+Subject: [PATCH 16/77] importer: Add search index to announcements table
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -1174,7 +1174,7 @@ index e87d378..d0fe5a6 100644
 From 991baf530d47adb2ed7a15b65dc4565d07fa6d07 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 13:54:45 +0000
-Subject: [PATCH 17/70] importer: Add search index to network_overrides table
+Subject: [PATCH 17/77] importer: Add search index to network_overrides table
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -1200,7 +1200,7 @@ index d0fe5a6..fe21d73 100644
 From bbea93a74651df10e2ffdbd09eb434dc6a0471bc Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 16:01:57 +0000
-Subject: [PATCH 18/70] importer: Restructure SQL query to be executed in
+Subject: [PATCH 18/77] importer: Restructure SQL query to be executed in
  parallel
 
 There are no functional changes, this just runs quicker now.
@@ -1343,7 +1343,7 @@ index fe21d73..3c1e5e2 100644
 From 26ab419b68d166f932db1f97c38cb9d793d04187 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 22 Oct 2020 12:24:34 +0000
-Subject: [PATCH 19/70] network: Allow adding single IP addresses and
+Subject: [PATCH 19/77] network: Allow adding single IP addresses and
  automatically add the prefix
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
@@ -1431,7 +1431,7 @@ index 8c7e898..b6776b4 100644
 From aadac4c569e921be1d28dd3b2377ac7f3732213e Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:36 +0000
-Subject: [PATCH 20/70] Revert "Revert "Revert "Revert "importer: Import raw
+Subject: [PATCH 20/77] Revert "Revert "Revert "Revert "importer: Import raw
  sources for inetnum's again""""
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -1581,7 +1581,7 @@ index 3c1e5e2..e8a4fc5 100644
 From 002deb6b42ac0b3624c07e3352cebd72dc0685a2 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:37 +0000
-Subject: [PATCH 21/70] Revert "Revert "location-importer.in: only import
+Subject: [PATCH 21/77] Revert "Revert "location-importer.in: only import
  relevant data from AFRINIC, APNIC and RIPE""
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -1731,7 +1731,7 @@ index e8a4fc5..5656c41 100644
 From 28c73fa3f4257e0a41e52af8a9643da414a6cb6f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:38 +0000
-Subject: [PATCH 22/70] export.py: fix exporting IP networks for crappy
+Subject: [PATCH 22/77] export.py: fix exporting IP networks for crappy
  xt_geoip module
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -1910,7 +1910,7 @@ index d15c6f0..5eaf43f 100644
 From bd341642fc6bbcc050e9b4ec5124585c83cab84d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:39 +0000
-Subject: [PATCH 23/70] location-importer.in: filter bogus IP networks for both
+Subject: [PATCH 23/77] location-importer.in: filter bogus IP networks for both
  Whois and extended sources
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -2043,7 +2043,7 @@ index 5656c41..f24d357 100644
 From eee65490a10e0fe89b3834b8be176fc900084fa0 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:40 +0000
-Subject: [PATCH 24/70] importer.py: fetch LACNIC data via HTTPS
+Subject: [PATCH 24/77] importer.py: fetch LACNIC data via HTTPS
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -2073,7 +2073,7 @@ index f19db4b..5f46bc3 100644
 From 84187ab5436eb158529d6f5e2a38890b4af3ddb4 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:41 +0000
-Subject: [PATCH 25/70] location-importer.in: omit historic/orphaned RIR data
+Subject: [PATCH 25/77] location-importer.in: omit historic/orphaned RIR data
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -2206,7 +2206,7 @@ index f24d357..a869256 100644
 From ebb087cfa30ec5ca0c96dcce66a91245c1ffc271 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:43 +0000
-Subject: [PATCH 26/70] location-importer.in: avoid log spam for too small
+Subject: [PATCH 26/77] location-importer.in: avoid log spam for too small
  networks
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -2246,7 +2246,7 @@ index a869256..864eab1 100644
 From bbed1fd2330e8efa6b413dc152a1a6ef2d771aac Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 27 Oct 2020 17:14:30 +0000
-Subject: [PATCH 27/70] export: Flatten the tree before exporting it
+Subject: [PATCH 27/77] export: Flatten the tree before exporting it
 
 This patch removes the possibility that any IP address ranges
 might show up in multiple exported files.
@@ -2474,7 +2474,7 @@ index 5eaf43f..dd44332 100644
 From e99a72265c1ba2194b61663eda7e9f14e0083016 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 28 Oct 2020 09:52:36 +0000
-Subject: [PATCH 28/70] location: Fix Python syntax error in verify()
+Subject: [PATCH 28/77] location: Fix Python syntax error in verify()
 
 The database is now being opened before the requested
 method is called and handle_verify() wasn't updated.
@@ -2509,7 +2509,7 @@ index 44ad726..b5e5758 100644
 From 0c74f6b1a3bdce5ebdc2ee452b9baf3e421dd3d1 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Thu, 29 Oct 2020 07:25:53 -0700
-Subject: [PATCH 29/70] location update: Remove double conversion of timestamps
+Subject: [PATCH 29/77] location update: Remove double conversion of timestamps
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -2545,7 +2545,7 @@ index b5e5758..070640c 100644
 From 60c1ac0307312614bd6980d30b44bb59b5a6ab6e Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Thu, 29 Oct 2020 07:36:46 -0700
-Subject: [PATCH 30/70] location.in: do not confuse UTC with local time zones
+Subject: [PATCH 30/77] location.in: do not confuse UTC with local time zones
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -2593,7 +2593,7 @@ index 070640c..0d09210 100644
 From e7d612e5219ef9ba612ed404e4e2c174110d3dd7 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Tue, 3 Nov 2020 15:31:08 +0000
-Subject: [PATCH 31/70] location-importer.in: always convert organisation
+Subject: [PATCH 31/77] location-importer.in: always convert organisation
  handles into upper cases
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -2637,7 +2637,7 @@ index 864eab1..2dec89e 100644
 From e96704f43acca1a8f56d9a680cce281f5e587ec5 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 11 Nov 2020 21:16:45 +0000
-Subject: [PATCH 32/70] test: Add tests for database enumerator
+Subject: [PATCH 32/77] test: Add tests for database enumerator
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -2728,7 +2728,7 @@ index b4a75c4..4aef94e 100644
 From ecce288da39a2c0eb60076050ca21e9619f61844 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 11 Nov 2020 23:01:19 +0000
-Subject: [PATCH 33/70] networks: Add list to manage groups of networks
+Subject: [PATCH 33/77] networks: Add list to manage groups of networks
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -2892,7 +2892,7 @@ index d7b1645..c9e7979 100644
 From 8b2205272b7872a1458ad87811abf58609f38ad4 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 13:57:35 +0000
-Subject: [PATCH 34/70] networks: Add function to dump lists
+Subject: [PATCH 34/77] networks: Add function to dump lists
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -2956,7 +2956,7 @@ index c9e7979..0977406 100644
 From 850e75167e8e03fe8b951992c9f7bc2ccb9fb711 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 14:18:40 +0000
-Subject: [PATCH 35/70] network: Add functions to break network into subnets
+Subject: [PATCH 35/77] network: Add functions to break network into subnets
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3427,7 +3427,7 @@ index b6776b4..af1b2e6 100644
 From 6159d384c4a98fe45ec52522e2950719e4982d80 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 14:24:58 +0000
-Subject: [PATCH 36/70] networks: Add function to check if two networks overlap
+Subject: [PATCH 36/77] networks: Add function to check if two networks overlap
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3493,7 +3493,7 @@ index 6c08070..d826511 100644
 From e52ba21761f27e592040a2793b2a26bbeeeecc05 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 14:28:15 +0000
-Subject: [PATCH 37/70] networks: Add function to check if network is part of a
+Subject: [PATCH 37/77] networks: Add function to check if network is part of a
  list
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
@@ -3553,7 +3553,7 @@ index d826511..fcbdc59 100644
 From f802f3a4decf4827ecc8bcabe269ae9f94f7f32d Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 14:33:22 +0000
-Subject: [PATCH 38/70] networks: Add function to merge two lists
+Subject: [PATCH 38/77] networks: Add function to merge two lists
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3613,7 +3613,7 @@ index fcbdc59..541286d 100644
 From 6d22a179dffd08fcf2a44aafb361725ab22486d4 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 14:35:43 +0000
-Subject: [PATCH 39/70] network: Make lists unique
+Subject: [PATCH 39/77] network: Make lists unique
 
 Networks that are in the list won't be added again
 
@@ -3643,7 +3643,7 @@ index 541286d..44571b3 100644
 From 681ff05cb7cdf230d38abf09a330a31498e265a4 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 19:21:13 +0000
-Subject: [PATCH 40/70] database: Pass flag to enumerator to flatten output
+Subject: [PATCH 40/77] database: Pass flag to enumerator to flatten output
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3804,7 +3804,7 @@ index 1013a58..7f8c2c2 100644
 From f5e50a47e37e9b29d0d2ee9e5a41e5a5fe5aea7f Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 19:21:58 +0000
-Subject: [PATCH 41/70] network: Reduce debugging output
+Subject: [PATCH 41/77] network: Reduce debugging output
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3871,7 +3871,7 @@ index 44571b3..f7071a6 100644
 From 037c65d3a07ec6d37ff063f0645adda6b483b407 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 19:36:38 +0000
-Subject: [PATCH 42/70] python: Export networks exclude function
+Subject: [PATCH 42/77] python: Export networks exclude function
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3948,7 +3948,7 @@ index 5496d1e..11f672b 100644
 From 9a7732c8679e805d4d2d55ea4750c5d70ca4bd2c Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 19:59:22 +0000
-Subject: [PATCH 43/70] network: Add more debugging output to stacks
+Subject: [PATCH 43/77] network: Add more debugging output to stacks
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3998,7 +3998,7 @@ index f7071a6..d41e873 100644
 From 33a051e0435f6e78cc936f26f3b9ee16b7851025 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 20:00:09 +0000
-Subject: [PATCH 44/70] network: Add new subnet function
+Subject: [PATCH 44/77] network: Add new subnet function
 
 The old one is too difficult to use in terms of order
 of input parameters and return value.
@@ -4066,7 +4066,7 @@ index d41e873..5719111 100644
 From add5bb652ba1dad1127f79cb6a0db2d363a6d5e5 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 20:01:17 +0000
-Subject: [PATCH 45/70] network: Add function to exclude multiple networks at
+Subject: [PATCH 45/77] network: Add function to exclude multiple networks at
  once
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
@@ -4203,7 +4203,7 @@ index 5719111..751e8e5 100644
 From d87fd7a3d277b4b03222c7d1680e51b3e45e525b Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 20:02:03 +0000
-Subject: [PATCH 46/70] database: Add option to return networks flattened
+Subject: [PATCH 46/77] database: Add option to return networks flattened
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -4457,7 +4457,7 @@ index 9baab33..7a3d1a7 100644
 From d3ae93c27dcd7f6984fdc29cc141621e277f2e2a Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 20:09:20 +0000
-Subject: [PATCH 47/70] test: Update API
+Subject: [PATCH 47/77] test: Update API
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -4497,7 +4497,7 @@ index 4aef94e..da4b11c 100644
 From 594ca328c6e124d0f1eb543e9c8d9bbfe8a7b628 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 20:09:37 +0000
-Subject: [PATCH 48/70] networks: Copy all attributes when splitting networks
+Subject: [PATCH 48/77] networks: Copy all attributes when splitting networks
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -4535,7 +4535,7 @@ index 751e8e5..d67f116 100644
 From 69248038292e9ea1a4ee8912cdfc8700456753ad Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 13 Nov 2020 11:23:33 +0000
-Subject: [PATCH 49/70] database: Move network filtering into a separate
+Subject: [PATCH 49/77] database: Move network filtering into a separate
  function
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
@@ -4623,7 +4623,7 @@ index 7a3d1a7..72bc8eb 100644
 From 2113e71bf7b997c82670c5c22cf91aa6442fe6f3 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 13 Nov 2020 11:29:02 +0000
-Subject: [PATCH 50/70] database: Filter results coming from stack
+Subject: [PATCH 50/77] database: Filter results coming from stack
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -4666,7 +4666,7 @@ index 72bc8eb..0f3cdc2 100644
 From d33753688138c9938743dafbbdddf220dd2afd14 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 13 Nov 2020 11:29:15 +0000
-Subject: [PATCH 51/70] network: Sort result of excluded lists
+Subject: [PATCH 51/77] network: Sort result of excluded lists
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -4708,7 +4708,7 @@ index d67f116..9d02bf8 100644
 From 8d777f12f7ffa4df1b28d197563888296803b727 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 13 Nov 2020 11:38:15 +0000
-Subject: [PATCH 52/70] network: Add function to pop first element from stack
+Subject: [PATCH 52/77] network: Add function to pop first element from stack
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -4800,7 +4800,7 @@ index 9d02bf8..e7dc97e 100644
 From 7933f5bfb4dd7603cb646e192840762bf6394292 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 13 Nov 2020 11:43:53 +0000
-Subject: [PATCH 53/70] network: Unexport all tree functions
+Subject: [PATCH 53/77] network: Unexport all tree functions
 
 These should not be exported
 
@@ -4997,7 +4997,7 @@ index af1b2e6..7c90224 100644
 From c242f7325bd6fc4ba26047ac24196d1c161c6e01 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 13 Nov 2020 12:09:03 +0000
-Subject: [PATCH 54/70] python: Move tree flattening into C
+Subject: [PATCH 54/77] python: Move tree flattening into C
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -5222,7 +5222,7 @@ index dd44332..be4a68e 100644
 From e0b9ff5f38beb0d560b16db881647e5a75127df1 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Sun, 15 Nov 2020 15:02:28 +0000
-Subject: [PATCH 55/70] Move network lists into an own file
+Subject: [PATCH 55/77] Move network lists into an own file
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -5834,7 +5834,7 @@ index 11f672b..ed91d65 100644
 From e646a8f35ec7eff009414b3fd107c9af5cf39a86 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Mon, 16 Nov 2020 15:13:28 +0000
-Subject: [PATCH 56/70] Implement filtering for multiple countries in the
+Subject: [PATCH 56/77] Implement filtering for multiple countries in the
  enumerator
 
 This will allow us to speed up the export of the database
@@ -6321,7 +6321,7 @@ index d169547..e6f6f37 100644
 From 7af51f8a579c79714992a3e175036fb511139310 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Mon, 16 Nov 2020 15:20:50 +0000
-Subject: [PATCH 57/70] python: Only return country codes we want
+Subject: [PATCH 57/77] python: Only return country codes we want
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -6354,7 +6354,7 @@ index be4a68e..5e7fe53 100644
 From bd1dc6bf6fe4ce40bf12e7426e283b31afd274e1 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Mon, 16 Nov 2020 15:25:15 +0000
-Subject: [PATCH 58/70] database: Filter flags in C
+Subject: [PATCH 58/77] database: Filter flags in C
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -6414,7 +6414,7 @@ index 5e7fe53..739742f 100644
 From 84a2f0c2d9cbf8ae4225802c29ccba86561c77ed Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 16:46:48 +0000
-Subject: [PATCH 59/70] as: Add list for easier processing
+Subject: [PATCH 59/77] as: Add list for easier processing
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -6876,7 +6876,7 @@ index 739742f..f675eb3 100644
 From 50120b991fc2fa4b7813096de87b42d700faf3e6 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 16:56:43 +0000
-Subject: [PATCH 60/70] database: Simplify network matching code
+Subject: [PATCH 60/77] database: Simplify network matching code
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -6923,7 +6923,7 @@ index 51cb5cd..1a354f6 100644
 From c1a36c943181da5cd2aef589a972d5027e529eb8 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 16:58:55 +0000
-Subject: [PATCH 61/70] database: Simplify AS matching code
+Subject: [PATCH 61/77] database: Simplify AS matching code
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -6970,7 +6970,7 @@ index 1a354f6..be93e00 100644
 From d5205091f9cc1ff987e483325d48696459df08d8 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 17:50:17 +0000
-Subject: [PATCH 62/70] countries: Make list grow dynamically
+Subject: [PATCH 62/77] countries: Make list grow dynamically
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7074,7 +7074,7 @@ index ae0d71a..1ce2d06 100644
 From 3b44e4211371d2103f89ba8f056b15edb7778fac Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 17:55:51 +0000
-Subject: [PATCH 63/70] networks: Make list grow dynamically
+Subject: [PATCH 63/77] networks: Make list grow dynamically
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7253,7 +7253,7 @@ index 1f6e80e..4912c02 100644
 From 1a415f8c555f4fe9a68eb2a897c4a1fc0d33db25 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 17:57:55 +0000
-Subject: [PATCH 64/70] as: Make lists grow dynamically
+Subject: [PATCH 64/77] as: Make lists grow dynamically
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7357,7 +7357,7 @@ index 7c69eb0..17de23e 100644
 From e6592434ee7836507c1f436ec3b0db3bc81a81b9 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 18:13:49 +0000
-Subject: [PATCH 65/70] export: Change back to use Network objects
+Subject: [PATCH 65/77] export: Change back to use Network objects
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7385,7 +7385,7 @@ index f675eb3..67e437f 100644
 From 248f5e0419f2349253b8ea96e477c15649fe2173 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 18:14:15 +0000
-Subject: [PATCH 66/70] Actually clear all lists
+Subject: [PATCH 66/77] Actually clear all lists
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7462,7 +7462,7 @@ index 4912c02..9cb4547 100644
 From c98ebf8aae2aa141193db52cd9429b1ded5b09c4 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 18:34:51 +0000
-Subject: [PATCH 67/70] database: Do not clean up python list
+Subject: [PATCH 67/77] database: Do not clean up python list
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7496,7 +7496,7 @@ index 38a804c..ed22275 100644
 From 5470d06cb59027f4e04b6d576763dbf7f1093fde Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 19:01:04 +0000
-Subject: [PATCH 68/70] database: Free filter lists in enumerator
+Subject: [PATCH 68/77] database: Free filter lists in enumerator
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7526,7 +7526,7 @@ index be93e00..ca35fe1 100644
 From e0e96878d3df51c4a265d51d088005dedf9335e3 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 18 Nov 2020 13:18:52 +0000
-Subject: [PATCH 69/70] database: Add debug output to filtering
+Subject: [PATCH 69/77] database: Add debug output to filtering
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7593,7 +7593,7 @@ index ca35fe1..83dd752 100644
 From bce0c9295ff8ff9488f24babe01ce851228d0b1e Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 18 Nov 2020 13:19:04 +0000
-Subject: [PATCH 70/70] export: Remove filtering for flags
+Subject: [PATCH 70/77] export: Remove filtering for flags
 
 The filter is an AND filter and if we set the flags from
 the special country codes, we won't get back much.
@@ -7624,6 +7624,562 @@ index 67e437f..4219957 100644
  
  			# Walk through all networks
  			for network in networks:
+-- 
+2.20.1
+
+From 627bf1daaae1510cfd4016297ed16b82df209aae Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 18 Nov 2020 13:33:45 +0000
+Subject: [PATCH 71/77] python: Remove unnecessary db object from writers
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/python/export.py | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/src/python/export.py b/src/python/export.py
+index 4219957..5bc9f30 100644
+--- a/src/python/export.py
++++ b/src/python/export.py
+@@ -39,8 +39,8 @@ class OutputWriter(object):
+ 	suffix = "networks"
+ 	mode = "w"
+ 
+-	def __init__(self, db, f, prefix=None, flatten=True):
+-		self.db, self.f, self.prefix, self.flatten = db, f, prefix, flatten
++	def __init__(self, f, prefix=None, flatten=True):
++		self.f, self.prefix, self.flatten = f, prefix, flatten
+ 
+ 		# The previously written network
+ 		self._last_network = None
+@@ -49,13 +49,13 @@ class OutputWriter(object):
+ 		self._write_header()
+ 
+ 	@classmethod
+-	def open(cls, db, filename, **kwargs):
++	def open(cls, filename, **kwargs):
+ 		"""
+ 			Convenience function to open a file
+ 		"""
+ 		f = open(filename, cls.mode)
+ 
+-		return cls(db, f, **kwargs)
++		return cls(f, **kwargs)
+ 
+ 	def __repr__(self):
+ 		return "<%s f=%s>" % (self.__class__.__name__, self.f)
+@@ -172,7 +172,7 @@ class Exporter(object):
+ 					directory, prefix=country_code, suffix=self.writer.suffix, family=family,
+ 				)
+ 
+-				writers[country_code] = self.writer.open(self.db, filename, prefix="CC_%s" % country_code)
++				writers[country_code] = self.writer.open(filename, prefix="CC_%s" % country_code)
+ 
+ 			# Create writers for ASNs
+ 			for asn in asns:
+@@ -180,7 +180,7 @@ class Exporter(object):
+ 					directory, "AS%s" % asn, suffix=self.writer.suffix, family=family,
+ 				)
+ 
+-				writers[asn] = self.writer.open(self.db, filename, prefix="AS%s" % asn)
++				writers[asn] = self.writer.open(filename, prefix="AS%s" % asn)
+ 
+ 			# Filter countries from special country codes
+ 			country_codes = [
+-- 
+2.20.1
+
+From 9cb56ac9adafafa6e452009c2fa2d42e94474e11 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 18 Nov 2020 13:34:50 +0000
+Subject: [PATCH 72/77] location: End lookup after an invalid IP address was
+ passed
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/python/location.in | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/python/location.in b/src/python/location.in
+index 0d09210..6885ea0 100644
+--- a/src/python/location.in
++++ b/src/python/location.in
+@@ -253,6 +253,7 @@ class CLI(object):
+ 				network = db.lookup(address)
+ 			except ValueError:
+ 				print(_("Invalid IP address: %s") % address, file=sys.stderr)
++				return 2
+ 
+ 			args = {
+ 				"address" : address,
+-- 
+2.20.1
+
+From 2a550d12208f8bc8002e05ac08613312df26b20e Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Thu, 19 Nov 2020 12:03:33 +0000
+Subject: [PATCH 73/77] python: Fix download of database
+
+This was all messed up in 0c74f6b1a3bdce5ebdc2ee452b9baf3e421dd3d1
+when the change of type for the timestamp wasn't changed everywhere
+else.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/python/downloader.py | 6 +++---
+ src/python/location.in   | 2 +-
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/src/python/downloader.py b/src/python/downloader.py
+index 87bbb68..05f7872 100644
+--- a/src/python/downloader.py
++++ b/src/python/downloader.py
+@@ -119,8 +119,8 @@ class Downloader(object):
+ 
+ 		headers = {}
+ 		if timestamp:
+-			headers["If-Modified-Since"] = timestamp.strftime(
+-				"%a, %d %b %Y %H:%M:%S GMT",
++			headers["If-Modified-Since"] = time.strftime(
++				"%a, %d %b %Y %H:%M:%S GMT", time.gmtime(timestamp),
+ 			)
+ 
+ 		t = tempfile.NamedTemporaryFile(dir=tmpdir, delete=False)
+@@ -195,7 +195,7 @@ class Downloader(object):
+ 		db = Database(f.name)
+ 
+ 		# Database is not recent
+-		if timestamp and db.created_at < timestamp.timestamp():
++		if timestamp and db.created_at < timestamp:
+ 			return False
+ 
+ 		log.info("Downloaded new database from %s" % (time.strftime(
+diff --git a/src/python/location.in b/src/python/location.in
+index 6885ea0..b30beae 100644
+--- a/src/python/location.in
++++ b/src/python/location.in
+@@ -433,7 +433,7 @@ class CLI(object):
+ 
+ 		# Try downloading a new database
+ 		try:
+-			t = d.download(public_key=ns.public_key, timestamp=timestamp, tmpdir=tmpdir)
++			t = d.download(public_key=ns.public_key, timestamp=t, tmpdir=tmpdir)
+ 
+ 		# If no file could be downloaded, log a message
+ 		except FileNotFoundError as e:
+-- 
+2.20.1
+
+From a1a00053300cff3c0f690d52377c76c83c2a08b2 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Thu, 19 Nov 2020 12:34:11 +0000
+Subject: [PATCH 74/77] python: Add property to return IP addresses as bytes
+
+This avoids calling inet_pton to parse IP addresses from string
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/libloc.sym        |  2 ++
+ src/loc/network.h     |  2 ++
+ src/network.c         |  8 ++++++++
+ src/python/database.c |  2 +-
+ src/python/export.py  |  7 ++-----
+ src/python/network.c  | 40 ++++++++++++++++++++++++++++++++++++++++
+ 6 files changed, 55 insertions(+), 6 deletions(-)
+
+diff --git a/src/libloc.sym b/src/libloc.sym
+index 53273cd..406dd15 100644
+--- a/src/libloc.sym
++++ b/src/libloc.sym
+@@ -113,6 +113,8 @@ global:
+ 	loc_network_format_last_address;
+ 	loc_network_get_asn;
+ 	loc_network_get_country_code;
++	loc_network_get_first_address;
++	loc_network_get_last_address;
+ 	loc_network_gt;
+ 	loc_network_has_flag;
+ 	loc_network_is_subnet;
+diff --git a/src/loc/network.h b/src/loc/network.h
+index d86b685..4b7410c 100644
+--- a/src/loc/network.h
++++ b/src/loc/network.h
+@@ -39,7 +39,9 @@ struct loc_network* loc_network_unref(struct loc_network* network);
+ char* loc_network_str(struct loc_network* network);
+ int loc_network_address_family(struct loc_network* network);
+ 
++const struct in6_addr* loc_network_get_first_address(struct loc_network* network);
+ char* loc_network_format_first_address(struct loc_network* network);
++const struct in6_addr* loc_network_get_last_address(struct loc_network* network);
+ char* loc_network_format_last_address(struct loc_network* network);
+ int loc_network_match_address(struct loc_network* network, const struct in6_addr* address);
+ 
+diff --git a/src/network.c b/src/network.c
+index 28ca2df..4c8787a 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -343,10 +343,18 @@ static char* loc_network_format_address(struct loc_network* network, const struc
+ 	return string;
+ }
+ 
++LOC_EXPORT const struct in6_addr* loc_network_get_first_address(struct loc_network* network) {
++	return &network->first_address;
++}
++
+ LOC_EXPORT char* loc_network_format_first_address(struct loc_network* network) {
+ 	return loc_network_format_address(network, &network->first_address);
+ }
+ 
++LOC_EXPORT const struct in6_addr* loc_network_get_last_address(struct loc_network* network) {
++	return &network->last_address;
++}
++
+ LOC_EXPORT char* loc_network_format_last_address(struct loc_network* network) {
+ 	return loc_network_format_address(network, &network->last_address);
+ }
+diff --git a/src/python/database.c b/src/python/database.c
+index ed22275..f385c61 100644
+--- a/src/python/database.c
++++ b/src/python/database.c
+@@ -329,7 +329,7 @@ static PyObject* Database_search_networks(DatabaseObject* self, PyObject* args,
+ 		if (r) {
+ 			PyErr_SetFromErrno(PyExc_SystemError);
+ 
+-			loc_as_list_unref(countries);
++			loc_country_list_unref(countries);
+ 			return NULL;
+ 		}
+ 
+diff --git a/src/python/export.py b/src/python/export.py
+index 5bc9f30..6b39878 100644
+--- a/src/python/export.py
++++ b/src/python/export.py
+@@ -142,11 +142,8 @@ class XTGeoIPOutputWriter(OutputWriter):
+ 	mode = "wb"
+ 
+ 	def _write_network(self, network):
+-		for address in (network.first_address, network.last_address):
+-			# Convert this into a string of bits
+-			bytes = socket.inet_pton(network.family, address)
+-
+-			self.f.write(bytes)
++		for address in (network._first_address, network._last_address):
++			self.f.write(address)
+ 
+ 
+ formats = {
+diff --git a/src/python/network.c b/src/python/network.c
+index ed91d65..742b472 100644
+--- a/src/python/network.c
++++ b/src/python/network.c
+@@ -215,6 +215,26 @@ static PyObject* Network_get_first_address(NetworkObject* self) {
+ 	return obj;
+ }
+ 
++static PyObject* PyBytes_FromAddress(const struct in6_addr* address6) {
++	struct in_addr address4;
++
++	// Convert IPv4 addresses to struct in_addr
++	if (IN6_IS_ADDR_V4MAPPED(address6)) {
++		address4.s_addr = address6->s6_addr32[3];
++
++		return PyBytes_FromStringAndSize((const char*)&address4, sizeof(address4));
++	}
++
++	// Return IPv6 addresses as they are
++	return PyBytes_FromStringAndSize((const char*)address6, sizeof(*address6));
++}
++
++static PyObject* Network_get__first_address(NetworkObject* self) {
++	const struct in6_addr* address = loc_network_get_first_address(self->network);
++
++	return PyBytes_FromAddress(address);
++}
++
+ static PyObject* Network_get_last_address(NetworkObject* self) {
+ 	char* address = loc_network_format_last_address(self->network);
+ 
+@@ -224,6 +244,12 @@ static PyObject* Network_get_last_address(NetworkObject* self) {
+ 	return obj;
+ }
+ 
++static PyObject* Network_get__last_address(NetworkObject* self) {
++	const struct in6_addr* address = loc_network_get_last_address(self->network);
++
++	return PyBytes_FromAddress(address);
++}
++
+ static struct PyMethodDef Network_methods[] = {
+ 	{
+ 		"exclude",
+@@ -281,6 +307,13 @@ static struct PyGetSetDef Network_getsetters[] = {
+ 		NULL,
+ 		NULL,
+ 	},
++	{
++		"_first_address",
++		(getter)Network_get__first_address,
++		NULL,
++		NULL,
++		NULL,
++	},
+ 	{
+ 		"last_address",
+ 		(getter)Network_get_last_address,
+@@ -288,6 +321,13 @@ static struct PyGetSetDef Network_getsetters[] = {
+ 		NULL,
+ 		NULL,
+ 	},
++	{
++		"_last_address",
++		(getter)Network_get__last_address,
++		NULL,
++		NULL,
++		NULL,
++	},
+ 	{ NULL },
+ };
+ 
+-- 
+2.20.1
+
+From 90d2194a876c223f9124ce9e27bdee6a6b49ff6a Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Thu, 19 Nov 2020 12:40:01 +0000
+Subject: [PATCH 75/77] export: Remove old flattening feature
+
+The database enumerator now only returns networks that will
+never overlap.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/python/export.py | 34 ++++++----------------------------
+ 1 file changed, 6 insertions(+), 28 deletions(-)
+
+diff --git a/src/python/export.py b/src/python/export.py
+index 6b39878..4702bcf 100644
+--- a/src/python/export.py
++++ b/src/python/export.py
+@@ -39,11 +39,8 @@ class OutputWriter(object):
+ 	suffix = "networks"
+ 	mode = "w"
+ 
+-	def __init__(self, f, prefix=None, flatten=True):
+-		self.f, self.prefix, self.flatten = f, prefix, flatten
+-
+-		# The previously written network
+-		self._last_network = None
++	def __init__(self, f, prefix=None):
++		self.f, self.prefix = f, prefix
+ 
+ 		# Immediately write the header
+ 		self._write_header()
+@@ -60,18 +57,6 @@ class OutputWriter(object):
+ 	def __repr__(self):
+ 		return "<%s f=%s>" % (self.__class__.__name__, self.f)
+ 
+-	def _flatten(self, network):
+-		"""
+-			Checks if the given network needs to be written to file,
+-			or if it is a subnet of the previously written network.
+-		"""
+-		if self._last_network and network.is_subnet_of(self._last_network):
+-			return True
+-
+-		# Remember this network for the next call
+-		self._last_network = network
+-		return False
+-
+ 	def _write_header(self):
+ 		"""
+ 			The header of the file
+@@ -84,15 +69,8 @@ class OutputWriter(object):
+ 		"""
+ 		pass
+ 
+-	def _write_network(self, network):
+-		self.f.write("%s\n" % network)
+-
+ 	def write(self, network):
+-		if self.flatten and self._flatten(network):
+-			log.debug("Skipping writing network %s (last one was %s)" % (network, self._last_network))
+-			return
+-
+-		return self._write_network(network)
++		self.f.write("%s\n" % network)
+ 
+ 	def finish(self):
+ 		"""
+@@ -113,7 +91,7 @@ class IpsetOutputWriter(OutputWriter):
+ 	def _write_header(self):
+ 		self.f.write("create %s hash:net family inet hashsize 1024 maxelem 65536\n" % self.prefix)
+ 
+-	def _write_network(self, network):
++	def write(self, network):
+ 		self.f.write("add %s %s\n" % (self.prefix, network))
+ 
+ 
+@@ -129,7 +107,7 @@ class NftablesOutputWriter(OutputWriter):
+ 	def _write_footer(self):
+ 		self.f.write("}\n")
+ 
+-	def _write_network(self, network):
++	def write(self, network):
+ 		self.f.write("	%s,\n" % network)
+ 
+ 
+@@ -141,7 +119,7 @@ class XTGeoIPOutputWriter(OutputWriter):
+ 	suffix = "iv"
+ 	mode = "wb"
+ 
+-	def _write_network(self, network):
++	def write(self, network):
+ 		for address in (network._first_address, network._last_address):
+ 			self.f.write(address)
+ 
+-- 
+2.20.1
+
+From 90188dad86223380b0854b523b63ec024117c5f2 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Thu, 19 Nov 2020 12:41:19 +0000
+Subject: [PATCH 76/77] export: Speed-up export in xt_geoip format
+
+Removing the loop avoids creating a tuple and then iterating over it
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/python/export.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/python/export.py b/src/python/export.py
+index 4702bcf..f0eae26 100644
+--- a/src/python/export.py
++++ b/src/python/export.py
+@@ -120,8 +120,8 @@ class XTGeoIPOutputWriter(OutputWriter):
+ 	mode = "wb"
+ 
+ 	def write(self, network):
+-		for address in (network._first_address, network._last_address):
+-			self.f.write(address)
++		self.f.write(network._first_address)
++		self.f.write(network._last_address)
+ 
+ 
+ formats = {
+-- 
+2.20.1
+
+From 6661692f3bc8f788af8b75ae25561f4cc4a2acb5 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Thu, 19 Nov 2020 12:48:46 +0000
+Subject: [PATCH 77/77] database: Disable some useless code when not running in
+ debug mode
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/database.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/src/database.c b/src/database.c
+index 83dd752..ef4f505 100644
+--- a/src/database.c
++++ b/src/database.c
+@@ -619,7 +619,7 @@ LOC_EXPORT int loc_database_verify(struct loc_database* db, FILE* f) {
+ 	}
+ 
+ 	clock_t end = clock();
+-	DEBUG(db->ctx, "Signature checked in %.4fms\n",
++	INFO(db->ctx, "Signature checked in %.4fms\n",
+ 		(double)(end - start) / CLOCKS_PER_SEC * 1000);
+ 
+ CLEANUP:
+@@ -679,8 +679,10 @@ LOC_EXPORT int loc_database_get_as(struct loc_database* db, struct loc_as** as,
+ 	off_t lo = 0;
+ 	off_t hi = db->as_count - 1;
+ 
++#ifdef ENABLE_DEBUG
+ 	// Save start time
+ 	clock_t start = clock();
++#endif
+ 
+ 	while (lo <= hi) {
+ 		off_t i = (lo + hi) / 2;
+@@ -693,11 +695,13 @@ LOC_EXPORT int loc_database_get_as(struct loc_database* db, struct loc_as** as,
+ 		// Check if this is a match
+ 		uint32_t as_number = loc_as_get_number(*as);
+ 		if (as_number == number) {
++#ifdef ENABLE_DEBUG
+ 			clock_t end = clock();
+ 
+ 			// Log how fast this has been
+ 			DEBUG(db->ctx, "Found AS%u in %.4fms\n", as_number,
+ 				(double)(end - start) / CLOCKS_PER_SEC * 1000);
++#endif
+ 
+ 			return 0;
+ 		}
+@@ -741,11 +745,13 @@ static int loc_database_fetch_network(struct loc_database* db, struct loc_networ
+ 			return -1;
+ 	}
+ 
++#ifdef ENABLE_DEBUG
+ 	if (r == 0) {
+ 		char* string = loc_network_str(*network);
+ 		DEBUG(db->ctx, "Got network %s\n", string);
+ 		free(string);
+ 	}
++#endif
+ 
+ 	return r;
+ }
+@@ -840,17 +846,21 @@ LOC_EXPORT int loc_database_lookup(struct loc_database* db,
+ 
+ 	*network = NULL;
+ 
++#ifdef ENABLE_DEBUG
+ 	// Save start time
+ 	clock_t start = clock();
++#endif
+ 
+ 	int r = __loc_database_lookup(db, address, network, &network_address,
+ 		db->network_nodes_v1, 0);
+ 
++#ifdef ENABLE_DEBUG
+ 	clock_t end = clock();
+ 
+ 	// Log how fast this has been
+ 	DEBUG(db->ctx, "Executed network search in %.4fms\n",
+ 		(double)(end - start) / CLOCKS_PER_SEC * 1000);
++#endif
+ 
+ 	return r;
+ }
+@@ -897,8 +907,10 @@ LOC_EXPORT int loc_database_get_country(struct loc_database* db,
+ 	off_t lo = 0;
+ 	off_t hi = db->countries_count - 1;
+ 
++#ifdef ENABLE_DEBUG
+ 	// Save start time
+ 	clock_t start = clock();
++#endif
+ 
+ 	while (lo <= hi) {
+ 		off_t i = (lo + hi) / 2;
+@@ -913,11 +925,13 @@ LOC_EXPORT int loc_database_get_country(struct loc_database* db,
+ 		int result = strcmp(code, cc);
+ 
+ 		if (result == 0) {
++#ifdef ENABLE_DEBUG
+ 			clock_t end = clock();
+ 
+ 			// Log how fast this has been
+ 			DEBUG(db->ctx, "Found country %s in %.4fms\n", cc,
+ 				(double)(end - start) / CLOCKS_PER_SEC * 1000);
++#endif
+ 
+ 			return 0;
+ 		}
 -- 
 2.20.1
 
