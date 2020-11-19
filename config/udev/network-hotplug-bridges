@@ -81,6 +81,7 @@ MODE="$(get_value "${ZONE}_MODE")"
 
 # The name of the virtual bridge
 BRIDGE="$(get_value "${ZONE}_DEV")"
+STP="$(get_value "${ZONE}_STP")"
 
 case "${MODE}" in
 	bridge)
@@ -89,7 +90,8 @@ case "${MODE}" in
 
 		# We need to create the bridge if it doesn't exist, yet
 		if [ ! -d "/sys/class/net/${BRIDGE}" ]; then
-			ip link add "${BRIDGE}" address "${ADDRESS}" type bridge
+			ip link add "${BRIDGE}" address "${ADDRESS}" type bridge \
+				$([ "${STP}" = "on" ] && echo "stp_state 1")
 			#ip link set "${BRIDGE}" up
 		fi
 
