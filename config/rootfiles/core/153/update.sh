@@ -144,11 +144,5 @@ fi
 
 sync
 
-# Reload microcode
-modprobe microcode
-if [ -w "/sys/devices/system/cpu/microcode/reload" ]; then
-	echo 1 > /sys/devices/system/cpu/microcode/reload
-fi
-
 # Don't report the exitcode last command
 exit 0
