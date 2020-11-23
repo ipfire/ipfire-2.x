@@ -5,10 +5,10 @@ etc/sysconfig/vdr-plugins.d/quickepgsearch.conf
 etc/vdr/plugins/epgsearch
 etc/vdr/plugins/epgsearch/conf.d
 usr/bin/createcats
-usr/lib/vdr/libvdr-conflictcheckonly.so.2.4.1
-usr/lib/vdr/libvdr-epgsearch.so.2.4.1
-usr/lib/vdr/libvdr-epgsearchonly.so.2.4.1
-usr/lib/vdr/libvdr-quickepgsearch.so.2.4.1
+usr/lib/vdr/libvdr-conflictcheckonly.so.2.4.4
+usr/lib/vdr/libvdr-epgsearch.so.2.4.4
+usr/lib/vdr/libvdr-epgsearchonly.so.2.4.4
+usr/lib/vdr/libvdr-quickepgsearch.so.2.4.4
 #var/lib/vdr
 #var/lib/vdr/data
 var/lib/vdr/data/epgsearch
