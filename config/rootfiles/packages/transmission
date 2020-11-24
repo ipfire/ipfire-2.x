@@ -31,7 +31,9 @@ usr/share/transmission
 #usr/share/transmission/web/javascript/jquery/jquery.transmenu.min.js
 #usr/share/transmission/web/javascript/jquery/jquery.ui-contextmenu.min.js
 #usr/share/transmission/web/javascript/jquery/json2.min.js
+#usr/share/transmission/web/javascript/main.js
 #usr/share/transmission/web/javascript/notifications.js
+#usr/share/transmission/web/javascript/polyfill.js
 #usr/share/transmission/web/javascript/prefs-dialog.js
 #usr/share/transmission/web/javascript/remote.js
 #usr/share/transmission/web/javascript/torrent-row.js
