@@ -89,6 +89,7 @@ rm -rf /lib/modules
 # Remove files
 
 # Stop services
+/etc/init.d/ipsec stop
 
 # Extract files
 extract_files
@@ -111,6 +112,9 @@ sed -e "s/^%hourly,random \* \* \*/%hourly,random */g" \
 fcrontab -z
 
 # Start services
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+    /etc/init.d/ipsec start
+fi
 /etc/init.d/suricata restart
 
 # Reload sysctl.conf
