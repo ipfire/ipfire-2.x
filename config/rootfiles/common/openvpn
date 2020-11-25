@@ -19,7 +19,6 @@ usr/sbin/openvpn
 #usr/share/doc/openvpn/README.down-root
 #usr/share/doc/openvpn/README.mbedtls
 #usr/share/doc/openvpn/management-notes.txt
-#usr/share/man/man8/openvpn.8
 var/ipfire/ovpn/ca
 var/ipfire/ovpn/caconfig
 var/ipfire/ovpn/ccd
