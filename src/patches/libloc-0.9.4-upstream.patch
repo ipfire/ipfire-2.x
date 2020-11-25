@@ -1,7 +1,7 @@
 From ee6ea3986dc80183157f67275dc9f28231b5d5b2 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 24 Sep 2020 10:17:58 +0000
-Subject: [PATCH 01/77] Revert "importer: Purge any redundant entries"
+Subject: [PATCH 001/111] Revert "importer: Purge any redundant entries"
 
 This reverts commit c2cc55d5a6875c3838f060032eaed89dcfb92ef6.
 
@@ -53,7 +53,7 @@ index 1467923..e3a07a0 100644
 From 92f6abf4e272672bb0a71cfe991261b95ebe2fef Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 24 Sep 2020 10:18:58 +0000
-Subject: [PATCH 02/77] Revert "importer: Import raw sources for inetnum's
+Subject: [PATCH 002/111] Revert "importer: Import raw sources for inetnum's
  again"
 
 This reverts commit 64e95fa903edec8b4e4e59830b395e2e4a411853.
@@ -199,7 +199,7 @@ index e3a07a0..77952f2 100644
 From f532841e9197ce2f40aad8c086d786b2cb783a54 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Mon, 12 Oct 2020 20:53:31 +0000
-Subject: [PATCH 03/77] Revert "Revert "importer: Import raw sources for
+Subject: [PATCH 003/111] Revert "Revert "importer: Import raw sources for
  inetnum's again""
 
 This reverts commit 92f6abf4e272672bb0a71cfe991261b95ebe2fef.
@@ -345,7 +345,7 @@ index 77952f2..e3a07a0 100644
 From a36bc686865fc87ea386fd90b389338bdcb80cbc Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Mon, 12 Oct 2020 20:53:32 +0000
-Subject: [PATCH 04/77] location-importer.in: only import relevant data from
+Subject: [PATCH 004/111] location-importer.in: only import relevant data from
  AFRINIC, APNIC and RIPE
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -500,7 +500,7 @@ index e3a07a0..093f325 100644
 From 2373de384f10f5573bbd7570f5522545df70c0e3 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 16 Oct 2020 12:24:58 +0000
-Subject: [PATCH 05/77] location-importer: Include all overridden networks
+Subject: [PATCH 005/111] location-importer: Include all overridden networks
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -526,8 +526,8 @@ index 093f325..d249a35 100644
 From 13f67f285856e8eabfeff2daf1be3aeaa36a82cc Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 16 Oct 2020 12:26:38 +0000
-Subject: [PATCH 06/77] Revert "location-importer.in: only import relevant data
- from AFRINIC, APNIC and RIPE"
+Subject: [PATCH 006/111] Revert "location-importer.in: only import relevant
+ data from AFRINIC, APNIC and RIPE"
 
 This reverts commit a36bc686865fc87ea386fd90b389338bdcb80cbc.
 
@@ -672,7 +672,7 @@ index d249a35..b220eaf 100644
 From 44341478233115b26bb27fdb24da5b0a1eedb173 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 16 Oct 2020 12:26:43 +0000
-Subject: [PATCH 07/77] Revert "Revert "Revert "importer: Import raw sources
+Subject: [PATCH 007/111] Revert "Revert "Revert "importer: Import raw sources
  for inetnum's again"""
 
 This reverts commit f532841e9197ce2f40aad8c086d786b2cb783a54.
@@ -818,7 +818,8 @@ index b220eaf..e87d378 100644
 From a7d3a7a0565a0e09d3442e5829a0f30f016993b9 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 20 Oct 2020 20:44:43 +0000
-Subject: [PATCH 08/77] as: Fix dereferencing NULL pointer when setting AS name
+Subject: [PATCH 008/111] as: Fix dereferencing NULL pointer when setting AS
+ name
 
 Reported-by: Gisle Vanem <gisle.vanem@gmail.com>
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
@@ -851,7 +852,7 @@ index e1fbb01..8421ac8 100644
 From ddb326ad38a7c7202315dd2c6f938313db04ee22 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 09:18:08 +0000
-Subject: [PATCH 09/77] as: Do not attempt to match name when it wasn't set
+Subject: [PATCH 009/111] as: Do not attempt to match name when it wasn't set
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -879,7 +880,7 @@ index 8421ac8..757bf3d 100644
 From d226ad2d97cbcd42ce807d9308569b1b9c5d4e2f Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 09:28:39 +0000
-Subject: [PATCH 10/77] writer: Free array with pointer to ASes, too
+Subject: [PATCH 010/111] writer: Free array with pointer to ASes, too
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -910,7 +911,7 @@ index 5939cff..160650f 100644
 From d89a7d62772048ae1bd18d03f69df46b7e1a3d3c Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 09:31:29 +0000
-Subject: [PATCH 11/77] writer: Free countries when the writer is being
+Subject: [PATCH 011/111] writer: Free countries when the writer is being
  destroyed
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
@@ -943,7 +944,7 @@ index 160650f..2f09b56 100644
 From 0f1aedbc68e3945770c93e0ebd83eed0f555d6f0 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 13:19:44 +0000
-Subject: [PATCH 12/77] tests: Try adding an invalid network
+Subject: [PATCH 012/111] tests: Try adding an invalid network
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -975,7 +976,7 @@ index d38f13d..e908b57 100644
 From 13ad6e695f9ffc7847b3afe3e9cbcea8fb3a443f Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 13:36:35 +0000
-Subject: [PATCH 13/77] networks: Improve parsing IP addresses
+Subject: [PATCH 013/111] networks: Improve parsing IP addresses
 
 loc_network_new_from_string() seem to have had some unexpected
 behaviour for invalid inputs.
@@ -1092,7 +1093,7 @@ index e908b57..85eca00 100644
 From 6a467e9345bb5a3d37911c9aaac30019eaa4492b Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 13:43:21 +0000
-Subject: [PATCH 14/77] networks: Test if we can add localhost (IPv6)
+Subject: [PATCH 014/111] networks: Test if we can add localhost (IPv6)
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -1123,7 +1124,7 @@ index 85eca00..8c7e898 100644
 From fc1190aa11e3ff3d2dbf5f4d408c298e7916f46f Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 13:44:50 +0000
-Subject: [PATCH 15/77] networks: Remove accidentially committed debug line
+Subject: [PATCH 015/111] networks: Remove accidentially committed debug line
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -1149,7 +1150,7 @@ index c112a41..be88d75 100644
 From a1707d8983898b6878cdd5c68744bcc444e278ed Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 13:53:36 +0000
-Subject: [PATCH 16/77] importer: Add search index to announcements table
+Subject: [PATCH 016/111] importer: Add search index to announcements table
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -1174,7 +1175,7 @@ index e87d378..d0fe5a6 100644
 From 991baf530d47adb2ed7a15b65dc4565d07fa6d07 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 13:54:45 +0000
-Subject: [PATCH 17/77] importer: Add search index to network_overrides table
+Subject: [PATCH 017/111] importer: Add search index to network_overrides table
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -1200,7 +1201,7 @@ index d0fe5a6..fe21d73 100644
 From bbea93a74651df10e2ffdbd09eb434dc6a0471bc Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 21 Oct 2020 16:01:57 +0000
-Subject: [PATCH 18/77] importer: Restructure SQL query to be executed in
+Subject: [PATCH 018/111] importer: Restructure SQL query to be executed in
  parallel
 
 There are no functional changes, this just runs quicker now.
@@ -1343,7 +1344,7 @@ index fe21d73..3c1e5e2 100644
 From 26ab419b68d166f932db1f97c38cb9d793d04187 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 22 Oct 2020 12:24:34 +0000
-Subject: [PATCH 19/77] network: Allow adding single IP addresses and
+Subject: [PATCH 019/111] network: Allow adding single IP addresses and
  automatically add the prefix
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
@@ -1431,7 +1432,7 @@ index 8c7e898..b6776b4 100644
 From aadac4c569e921be1d28dd3b2377ac7f3732213e Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:36 +0000
-Subject: [PATCH 20/77] Revert "Revert "Revert "Revert "importer: Import raw
+Subject: [PATCH 020/111] Revert "Revert "Revert "Revert "importer: Import raw
  sources for inetnum's again""""
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -1581,7 +1582,7 @@ index 3c1e5e2..e8a4fc5 100644
 From 002deb6b42ac0b3624c07e3352cebd72dc0685a2 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:37 +0000
-Subject: [PATCH 21/77] Revert "Revert "location-importer.in: only import
+Subject: [PATCH 021/111] Revert "Revert "location-importer.in: only import
  relevant data from AFRINIC, APNIC and RIPE""
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -1731,7 +1732,7 @@ index e8a4fc5..5656c41 100644
 From 28c73fa3f4257e0a41e52af8a9643da414a6cb6f Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:38 +0000
-Subject: [PATCH 22/77] export.py: fix exporting IP networks for crappy
+Subject: [PATCH 022/111] export.py: fix exporting IP networks for crappy
  xt_geoip module
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -1910,8 +1911,8 @@ index d15c6f0..5eaf43f 100644
 From bd341642fc6bbcc050e9b4ec5124585c83cab84d Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:39 +0000
-Subject: [PATCH 23/77] location-importer.in: filter bogus IP networks for both
- Whois and extended sources
+Subject: [PATCH 023/111] location-importer.in: filter bogus IP networks for
+ both Whois and extended sources
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -2043,7 +2044,7 @@ index 5656c41..f24d357 100644
 From eee65490a10e0fe89b3834b8be176fc900084fa0 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:40 +0000
-Subject: [PATCH 24/77] importer.py: fetch LACNIC data via HTTPS
+Subject: [PATCH 024/111] importer.py: fetch LACNIC data via HTTPS
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -2073,7 +2074,7 @@ index f19db4b..5f46bc3 100644
 From 84187ab5436eb158529d6f5e2a38890b4af3ddb4 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:41 +0000
-Subject: [PATCH 25/77] location-importer.in: omit historic/orphaned RIR data
+Subject: [PATCH 025/111] location-importer.in: omit historic/orphaned RIR data
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -2206,7 +2207,7 @@ index f24d357..a869256 100644
 From ebb087cfa30ec5ca0c96dcce66a91245c1ffc271 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Wed, 21 Oct 2020 14:47:43 +0000
-Subject: [PATCH 26/77] location-importer.in: avoid log spam for too small
+Subject: [PATCH 026/111] location-importer.in: avoid log spam for too small
  networks
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -2246,7 +2247,7 @@ index a869256..864eab1 100644
 From bbed1fd2330e8efa6b413dc152a1a6ef2d771aac Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 27 Oct 2020 17:14:30 +0000
-Subject: [PATCH 27/77] export: Flatten the tree before exporting it
+Subject: [PATCH 027/111] export: Flatten the tree before exporting it
 
 This patch removes the possibility that any IP address ranges
 might show up in multiple exported files.
@@ -2474,7 +2475,7 @@ index 5eaf43f..dd44332 100644
 From e99a72265c1ba2194b61663eda7e9f14e0083016 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 28 Oct 2020 09:52:36 +0000
-Subject: [PATCH 28/77] location: Fix Python syntax error in verify()
+Subject: [PATCH 028/111] location: Fix Python syntax error in verify()
 
 The database is now being opened before the requested
 method is called and handle_verify() wasn't updated.
@@ -2509,7 +2510,8 @@ index 44ad726..b5e5758 100644
 From 0c74f6b1a3bdce5ebdc2ee452b9baf3e421dd3d1 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Thu, 29 Oct 2020 07:25:53 -0700
-Subject: [PATCH 29/77] location update: Remove double conversion of timestamps
+Subject: [PATCH 029/111] location update: Remove double conversion of
+ timestamps
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -2545,7 +2547,7 @@ index b5e5758..070640c 100644
 From 60c1ac0307312614bd6980d30b44bb59b5a6ab6e Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Thu, 29 Oct 2020 07:36:46 -0700
-Subject: [PATCH 30/77] location.in: do not confuse UTC with local time zones
+Subject: [PATCH 030/111] location.in: do not confuse UTC with local time zones
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -2593,7 +2595,7 @@ index 070640c..0d09210 100644
 From e7d612e5219ef9ba612ed404e4e2c174110d3dd7 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Peter=20M=C3=BCller?= <peter.mueller@ipfire.org>
 Date: Tue, 3 Nov 2020 15:31:08 +0000
-Subject: [PATCH 31/77] location-importer.in: always convert organisation
+Subject: [PATCH 031/111] location-importer.in: always convert organisation
  handles into upper cases
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
@@ -2637,7 +2639,7 @@ index 864eab1..2dec89e 100644
 From e96704f43acca1a8f56d9a680cce281f5e587ec5 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 11 Nov 2020 21:16:45 +0000
-Subject: [PATCH 32/77] test: Add tests for database enumerator
+Subject: [PATCH 032/111] test: Add tests for database enumerator
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -2728,7 +2730,7 @@ index b4a75c4..4aef94e 100644
 From ecce288da39a2c0eb60076050ca21e9619f61844 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 11 Nov 2020 23:01:19 +0000
-Subject: [PATCH 33/77] networks: Add list to manage groups of networks
+Subject: [PATCH 033/111] networks: Add list to manage groups of networks
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -2892,7 +2894,7 @@ index d7b1645..c9e7979 100644
 From 8b2205272b7872a1458ad87811abf58609f38ad4 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 13:57:35 +0000
-Subject: [PATCH 34/77] networks: Add function to dump lists
+Subject: [PATCH 034/111] networks: Add function to dump lists
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -2956,7 +2958,7 @@ index c9e7979..0977406 100644
 From 850e75167e8e03fe8b951992c9f7bc2ccb9fb711 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 14:18:40 +0000
-Subject: [PATCH 35/77] network: Add functions to break network into subnets
+Subject: [PATCH 035/111] network: Add functions to break network into subnets
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3427,7 +3429,8 @@ index b6776b4..af1b2e6 100644
 From 6159d384c4a98fe45ec52522e2950719e4982d80 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 14:24:58 +0000
-Subject: [PATCH 36/77] networks: Add function to check if two networks overlap
+Subject: [PATCH 036/111] networks: Add function to check if two networks
+ overlap
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3493,8 +3496,8 @@ index 6c08070..d826511 100644
 From e52ba21761f27e592040a2793b2a26bbeeeecc05 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 14:28:15 +0000
-Subject: [PATCH 37/77] networks: Add function to check if network is part of a
- list
+Subject: [PATCH 037/111] networks: Add function to check if network is part of
+ a list
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3553,7 +3556,7 @@ index d826511..fcbdc59 100644
 From f802f3a4decf4827ecc8bcabe269ae9f94f7f32d Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 14:33:22 +0000
-Subject: [PATCH 38/77] networks: Add function to merge two lists
+Subject: [PATCH 038/111] networks: Add function to merge two lists
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3613,7 +3616,7 @@ index fcbdc59..541286d 100644
 From 6d22a179dffd08fcf2a44aafb361725ab22486d4 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 14:35:43 +0000
-Subject: [PATCH 39/77] network: Make lists unique
+Subject: [PATCH 039/111] network: Make lists unique
 
 Networks that are in the list won't be added again
 
@@ -3643,7 +3646,7 @@ index 541286d..44571b3 100644
 From 681ff05cb7cdf230d38abf09a330a31498e265a4 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 19:21:13 +0000
-Subject: [PATCH 40/77] database: Pass flag to enumerator to flatten output
+Subject: [PATCH 040/111] database: Pass flag to enumerator to flatten output
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3804,7 +3807,7 @@ index 1013a58..7f8c2c2 100644
 From f5e50a47e37e9b29d0d2ee9e5a41e5a5fe5aea7f Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 19:21:58 +0000
-Subject: [PATCH 41/77] network: Reduce debugging output
+Subject: [PATCH 041/111] network: Reduce debugging output
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3871,7 +3874,7 @@ index 44571b3..f7071a6 100644
 From 037c65d3a07ec6d37ff063f0645adda6b483b407 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 19:36:38 +0000
-Subject: [PATCH 42/77] python: Export networks exclude function
+Subject: [PATCH 042/111] python: Export networks exclude function
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3948,7 +3951,7 @@ index 5496d1e..11f672b 100644
 From 9a7732c8679e805d4d2d55ea4750c5d70ca4bd2c Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 19:59:22 +0000
-Subject: [PATCH 43/77] network: Add more debugging output to stacks
+Subject: [PATCH 043/111] network: Add more debugging output to stacks
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -3998,7 +4001,7 @@ index f7071a6..d41e873 100644
 From 33a051e0435f6e78cc936f26f3b9ee16b7851025 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 20:00:09 +0000
-Subject: [PATCH 44/77] network: Add new subnet function
+Subject: [PATCH 044/111] network: Add new subnet function
 
 The old one is too difficult to use in terms of order
 of input parameters and return value.
@@ -4066,7 +4069,7 @@ index d41e873..5719111 100644
 From add5bb652ba1dad1127f79cb6a0db2d363a6d5e5 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 20:01:17 +0000
-Subject: [PATCH 45/77] network: Add function to exclude multiple networks at
+Subject: [PATCH 045/111] network: Add function to exclude multiple networks at
  once
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
@@ -4203,7 +4206,7 @@ index 5719111..751e8e5 100644
 From d87fd7a3d277b4b03222c7d1680e51b3e45e525b Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 20:02:03 +0000
-Subject: [PATCH 46/77] database: Add option to return networks flattened
+Subject: [PATCH 046/111] database: Add option to return networks flattened
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -4457,7 +4460,7 @@ index 9baab33..7a3d1a7 100644
 From d3ae93c27dcd7f6984fdc29cc141621e277f2e2a Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 20:09:20 +0000
-Subject: [PATCH 47/77] test: Update API
+Subject: [PATCH 047/111] test: Update API
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -4497,7 +4500,7 @@ index 4aef94e..da4b11c 100644
 From 594ca328c6e124d0f1eb543e9c8d9bbfe8a7b628 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 12 Nov 2020 20:09:37 +0000
-Subject: [PATCH 48/77] networks: Copy all attributes when splitting networks
+Subject: [PATCH 048/111] networks: Copy all attributes when splitting networks
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -4535,7 +4538,7 @@ index 751e8e5..d67f116 100644
 From 69248038292e9ea1a4ee8912cdfc8700456753ad Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 13 Nov 2020 11:23:33 +0000
-Subject: [PATCH 49/77] database: Move network filtering into a separate
+Subject: [PATCH 049/111] database: Move network filtering into a separate
  function
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
@@ -4623,7 +4626,7 @@ index 7a3d1a7..72bc8eb 100644
 From 2113e71bf7b997c82670c5c22cf91aa6442fe6f3 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 13 Nov 2020 11:29:02 +0000
-Subject: [PATCH 50/77] database: Filter results coming from stack
+Subject: [PATCH 050/111] database: Filter results coming from stack
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -4666,7 +4669,7 @@ index 72bc8eb..0f3cdc2 100644
 From d33753688138c9938743dafbbdddf220dd2afd14 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 13 Nov 2020 11:29:15 +0000
-Subject: [PATCH 51/77] network: Sort result of excluded lists
+Subject: [PATCH 051/111] network: Sort result of excluded lists
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -4708,7 +4711,7 @@ index d67f116..9d02bf8 100644
 From 8d777f12f7ffa4df1b28d197563888296803b727 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 13 Nov 2020 11:38:15 +0000
-Subject: [PATCH 52/77] network: Add function to pop first element from stack
+Subject: [PATCH 052/111] network: Add function to pop first element from stack
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -4800,7 +4803,7 @@ index 9d02bf8..e7dc97e 100644
 From 7933f5bfb4dd7603cb646e192840762bf6394292 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 13 Nov 2020 11:43:53 +0000
-Subject: [PATCH 53/77] network: Unexport all tree functions
+Subject: [PATCH 053/111] network: Unexport all tree functions
 
 These should not be exported
 
@@ -4997,7 +5000,7 @@ index af1b2e6..7c90224 100644
 From c242f7325bd6fc4ba26047ac24196d1c161c6e01 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Fri, 13 Nov 2020 12:09:03 +0000
-Subject: [PATCH 54/77] python: Move tree flattening into C
+Subject: [PATCH 054/111] python: Move tree flattening into C
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -5222,7 +5225,7 @@ index dd44332..be4a68e 100644
 From e0b9ff5f38beb0d560b16db881647e5a75127df1 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Sun, 15 Nov 2020 15:02:28 +0000
-Subject: [PATCH 55/77] Move network lists into an own file
+Subject: [PATCH 055/111] Move network lists into an own file
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -5834,7 +5837,7 @@ index 11f672b..ed91d65 100644
 From e646a8f35ec7eff009414b3fd107c9af5cf39a86 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Mon, 16 Nov 2020 15:13:28 +0000
-Subject: [PATCH 56/77] Implement filtering for multiple countries in the
+Subject: [PATCH 056/111] Implement filtering for multiple countries in the
  enumerator
 
 This will allow us to speed up the export of the database
@@ -6321,7 +6324,7 @@ index d169547..e6f6f37 100644
 From 7af51f8a579c79714992a3e175036fb511139310 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Mon, 16 Nov 2020 15:20:50 +0000
-Subject: [PATCH 57/77] python: Only return country codes we want
+Subject: [PATCH 057/111] python: Only return country codes we want
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -6354,7 +6357,7 @@ index be4a68e..5e7fe53 100644
 From bd1dc6bf6fe4ce40bf12e7426e283b31afd274e1 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Mon, 16 Nov 2020 15:25:15 +0000
-Subject: [PATCH 58/77] database: Filter flags in C
+Subject: [PATCH 058/111] database: Filter flags in C
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -6414,7 +6417,7 @@ index 5e7fe53..739742f 100644
 From 84a2f0c2d9cbf8ae4225802c29ccba86561c77ed Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 16:46:48 +0000
-Subject: [PATCH 59/77] as: Add list for easier processing
+Subject: [PATCH 059/111] as: Add list for easier processing
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -6876,7 +6879,7 @@ index 739742f..f675eb3 100644
 From 50120b991fc2fa4b7813096de87b42d700faf3e6 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 16:56:43 +0000
-Subject: [PATCH 60/77] database: Simplify network matching code
+Subject: [PATCH 060/111] database: Simplify network matching code
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -6923,7 +6926,7 @@ index 51cb5cd..1a354f6 100644
 From c1a36c943181da5cd2aef589a972d5027e529eb8 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 16:58:55 +0000
-Subject: [PATCH 61/77] database: Simplify AS matching code
+Subject: [PATCH 061/111] database: Simplify AS matching code
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -6970,7 +6973,7 @@ index 1a354f6..be93e00 100644
 From d5205091f9cc1ff987e483325d48696459df08d8 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 17:50:17 +0000
-Subject: [PATCH 62/77] countries: Make list grow dynamically
+Subject: [PATCH 062/111] countries: Make list grow dynamically
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7074,7 +7077,7 @@ index ae0d71a..1ce2d06 100644
 From 3b44e4211371d2103f89ba8f056b15edb7778fac Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 17:55:51 +0000
-Subject: [PATCH 63/77] networks: Make list grow dynamically
+Subject: [PATCH 063/111] networks: Make list grow dynamically
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7253,7 +7256,7 @@ index 1f6e80e..4912c02 100644
 From 1a415f8c555f4fe9a68eb2a897c4a1fc0d33db25 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 17:57:55 +0000
-Subject: [PATCH 64/77] as: Make lists grow dynamically
+Subject: [PATCH 064/111] as: Make lists grow dynamically
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7357,7 +7360,7 @@ index 7c69eb0..17de23e 100644
 From e6592434ee7836507c1f436ec3b0db3bc81a81b9 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 18:13:49 +0000
-Subject: [PATCH 65/77] export: Change back to use Network objects
+Subject: [PATCH 065/111] export: Change back to use Network objects
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7385,7 +7388,7 @@ index f675eb3..67e437f 100644
 From 248f5e0419f2349253b8ea96e477c15649fe2173 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 18:14:15 +0000
-Subject: [PATCH 66/77] Actually clear all lists
+Subject: [PATCH 066/111] Actually clear all lists
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7462,7 +7465,7 @@ index 4912c02..9cb4547 100644
 From c98ebf8aae2aa141193db52cd9429b1ded5b09c4 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 18:34:51 +0000
-Subject: [PATCH 67/77] database: Do not clean up python list
+Subject: [PATCH 067/111] database: Do not clean up python list
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7496,7 +7499,7 @@ index 38a804c..ed22275 100644
 From 5470d06cb59027f4e04b6d576763dbf7f1093fde Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Tue, 17 Nov 2020 19:01:04 +0000
-Subject: [PATCH 68/77] database: Free filter lists in enumerator
+Subject: [PATCH 068/111] database: Free filter lists in enumerator
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7526,7 +7529,7 @@ index be93e00..ca35fe1 100644
 From e0e96878d3df51c4a265d51d088005dedf9335e3 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 18 Nov 2020 13:18:52 +0000
-Subject: [PATCH 69/77] database: Add debug output to filtering
+Subject: [PATCH 069/111] database: Add debug output to filtering
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7593,7 +7596,7 @@ index ca35fe1..83dd752 100644
 From bce0c9295ff8ff9488f24babe01ce851228d0b1e Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 18 Nov 2020 13:19:04 +0000
-Subject: [PATCH 70/77] export: Remove filtering for flags
+Subject: [PATCH 070/111] export: Remove filtering for flags
 
 The filter is an AND filter and if we set the flags from
 the special country codes, we won't get back much.
@@ -7630,7 +7633,7 @@ index 67e437f..4219957 100644
 From 627bf1daaae1510cfd4016297ed16b82df209aae Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 18 Nov 2020 13:33:45 +0000
-Subject: [PATCH 71/77] python: Remove unnecessary db object from writers
+Subject: [PATCH 071/111] python: Remove unnecessary db object from writers
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -7692,7 +7695,7 @@ index 4219957..5bc9f30 100644
 From 9cb56ac9adafafa6e452009c2fa2d42e94474e11 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Wed, 18 Nov 2020 13:34:50 +0000
-Subject: [PATCH 72/77] location: End lookup after an invalid IP address was
+Subject: [PATCH 072/111] location: End lookup after an invalid IP address was
  passed
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
@@ -7718,7 +7721,7 @@ index 0d09210..6885ea0 100644
 From 2a550d12208f8bc8002e05ac08613312df26b20e Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 19 Nov 2020 12:03:33 +0000
-Subject: [PATCH 73/77] python: Fix download of database
+Subject: [PATCH 073/111] python: Fix download of database
 
 This was all messed up in 0c74f6b1a3bdce5ebdc2ee452b9baf3e421dd3d1
 when the change of type for the timestamp wasn't changed everywhere
@@ -7773,7 +7776,7 @@ index 6885ea0..b30beae 100644
 From a1a00053300cff3c0f690d52377c76c83c2a08b2 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 19 Nov 2020 12:34:11 +0000
-Subject: [PATCH 74/77] python: Add property to return IP addresses as bytes
+Subject: [PATCH 074/111] python: Add property to return IP addresses as bytes
 
 This avoids calling inet_pton to parse IP addresses from string
 
@@ -7946,7 +7949,7 @@ index ed91d65..742b472 100644
 From 90d2194a876c223f9124ce9e27bdee6a6b49ff6a Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 19 Nov 2020 12:40:01 +0000
-Subject: [PATCH 75/77] export: Remove old flattening feature
+Subject: [PATCH 075/111] export: Remove old flattening feature
 
 The database enumerator now only returns networks that will
 never overlap.
@@ -8043,7 +8046,7 @@ index 6b39878..4702bcf 100644
 From 90188dad86223380b0854b523b63ec024117c5f2 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 19 Nov 2020 12:41:19 +0000
-Subject: [PATCH 76/77] export: Speed-up export in xt_geoip format
+Subject: [PATCH 076/111] export: Speed-up export in xt_geoip format
 
 Removing the loop avoids creating a tuple and then iterating over it
 
@@ -8073,8 +8076,8 @@ index 4702bcf..f0eae26 100644
 From 6661692f3bc8f788af8b75ae25561f4cc4a2acb5 Mon Sep 17 00:00:00 2001
 From: Michael Tremer <michael.tremer@ipfire.org>
 Date: Thu, 19 Nov 2020 12:48:46 +0000
-Subject: [PATCH 77/77] database: Disable some useless code when not running in
- debug mode
+Subject: [PATCH 077/111] database: Disable some useless code when not running
+ in debug mode
 
 Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
 ---
@@ -8180,6 +8183,2556 @@ index 83dd752..ef4f505 100644
  
  			return 0;
  		}
+-- 
+2.20.1
+
+From a17c353bce55a9f38f67b4b7d2425194cfa208e7 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Fri, 20 Nov 2020 14:43:31 +0000
+Subject: [PATCH 078/111] test: Add tests to network-lists
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ Makefile.am             |  10 ++++
+ src/.gitignore          |   1 +
+ src/test-network-list.c | 126 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 137 insertions(+)
+ create mode 100644 src/test-network-list.c
+
+diff --git a/Makefile.am b/Makefile.am
+index d0cc793..ebd7e17 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -318,6 +318,7 @@ check_PROGRAMS = \
+ 	src/test-database \
+ 	src/test-as \
+ 	src/test-network \
++	src/test-network-list \
+ 	src/test-country \
+ 	src/test-signature
+ 
+@@ -357,6 +358,15 @@ src_test_network_CFLAGS = \
+ src_test_network_LDADD = \
+ 	src/libloc.la
+ 
++src_test_network_list_SOURCES = \
++	src/test-network-list.c
++
++src_test_network_list_CFLAGS = \
++	$(TESTS_CFLAGS)
++
++src_test_network_list_LDADD = \
++	src/libloc.la
++
+ src_test_stringpool_SOURCES = \
+ 	src/test-stringpool.c
+ 
+diff --git a/src/.gitignore b/src/.gitignore
+index caf80b5..3ccbdb8 100644
+--- a/src/.gitignore
++++ b/src/.gitignore
+@@ -10,5 +10,6 @@ test-libloc
+ test-database
+ test-country
+ test-network
++test-network-list
+ test-signature
+ test-stringpool
+diff --git a/src/test-network-list.c b/src/test-network-list.c
+new file mode 100644
+index 0000000..3061d63
+--- /dev/null
++++ b/src/test-network-list.c
+@@ -0,0 +1,126 @@
++/*
++	libloc - A library to determine the location of someone on the Internet
++
++	Copyright (C) 2017 IPFire Development Team <info@ipfire.org>
++
++	This program is free software; you can redistribute it and/or modify
++	it under the terms of the GNU General Public License as published by
++	the Free Software Foundation; either version 2 of the License, or
++	(at your option) any later version.
++
++	This program is distributed in the hope that it will be useful,
++	but WITHOUT ANY WARRANTY; without even the implied warranty of
++	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++	GNU General Public License for more details.
++*/
++
++#include <errno.h>
++#include <stdio.h>
++#include <stddef.h>
++#include <stdlib.h>
++#include <string.h>
++#include <syslog.h>
++
++#include <loc/libloc.h>
++#include <loc/network.h>
++#include <loc/network-list.h>
++
++int main(int argc, char** argv) {
++	int err;
++
++	struct loc_ctx* ctx;
++	err = loc_new(&ctx);
++	if (err < 0)
++		exit(EXIT_FAILURE);
++
++	// Enable debug logging
++	loc_set_log_priority(ctx, LOG_DEBUG);
++
++	// Create a network
++	struct loc_network* network1;
++	err = loc_network_new_from_string(ctx, &network1, "2001:db8::/32");
++	if (err) {
++		fprintf(stderr, "Could not create the network1\n");
++		exit(EXIT_FAILURE);
++	}
++
++	struct loc_network* subnet1;
++	err = loc_network_new_from_string(ctx, &subnet1, "2001:db8:a::/48");
++	if (err) {
++		fprintf(stderr, "Could not create the subnet1\n");
++		exit(EXIT_FAILURE);
++	}
++
++	struct loc_network* subnet2;
++	err = loc_network_new_from_string(ctx, &subnet2, "2001:db8:b::/48");
++	if (err) {
++		fprintf(stderr, "Could not create the subnet2\n");
++		exit(EXIT_FAILURE);
++	}
++
++	// Make a list with both subnets
++	struct loc_network_list* subnets;
++	err = loc_network_list_new(ctx, &subnets);
++	if (err) {
++		fprintf(stderr, "Could not create subnets list\n");
++		exit(EXIT_FAILURE);
++	}
++
++	size_t size = loc_network_list_size(subnets);
++	if (size > 0) {
++		fprintf(stderr, "The list is not empty: %zu\n", size);
++		exit(EXIT_FAILURE);
++	}
++
++	err = loc_network_list_push(subnets, subnet1);
++	if (err) {
++		fprintf(stderr, "Could not add subnet1 to subnets list\n");
++		exit(EXIT_FAILURE);
++	}
++
++	if (loc_network_list_empty(subnets)) {
++		fprintf(stderr, "The subnets list reports that it is empty\n");
++		exit(EXIT_FAILURE);
++	}
++
++	err = loc_network_list_push(subnets, subnet2);
++	if (err) {
++		fprintf(stderr, "Could not add subnet2 to subnets list\n");
++		exit(EXIT_FAILURE);
++	}
++
++	size = loc_network_list_size(subnets);
++	if (size != 2) {
++		fprintf(stderr, "Network list is reporting an incorrect size: %zu\n", size);
++		exit(EXIT_FAILURE);
++	}
++
++	// Exclude subnet1 from network1
++	struct loc_network_list* excluded = loc_network_exclude(network1, subnet1);
++	if (!excluded) {
++		fprintf(stderr, "Received an empty result from loc_network_exclude() for subnet1\n");
++		exit(EXIT_FAILURE);
++	}
++
++	loc_network_list_dump(excluded);
++
++	// Exclude all subnets from network1
++	excluded = loc_network_exclude_list(network1, subnets);
++	if (!excluded) {
++		fprintf(stderr, "Received an empty result from loc_network_exclude() for subnets\n");
++		exit(EXIT_FAILURE);
++	}
++
++	loc_network_list_dump(excluded);
++
++	if (excluded)
++		loc_network_list_unref(excluded);
++
++	loc_network_list_unref(subnets);
++	loc_network_unref(network1);
++	loc_network_unref(subnet1);
++	loc_network_unref(subnet2);
++	loc_unref(ctx);
++
++	return EXIT_SUCCESS;
++}
+-- 
+2.20.1
+
+From 1209ff0cd4be6b2f52a5e82168db8a8ac68e628a Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Fri, 20 Nov 2020 16:24:40 +0000
+Subject: [PATCH 079/111] network: Fix loc_network_is_subnet()
+
+This function always returned false.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network.c | 16 +++-------------
+ 1 file changed, 3 insertions(+), 13 deletions(-)
+
+diff --git a/src/network.c b/src/network.c
+index 4c8787a..b440d76 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -491,12 +491,12 @@ LOC_EXPORT int loc_network_overlaps(struct loc_network* self, struct loc_network
+ LOC_EXPORT int loc_network_is_subnet(struct loc_network* self, struct loc_network* other) {
+ 	// If the start address of the other network is smaller than this network,
+ 	// it cannot be a subnet.
+-	if (in6_addr_cmp(&self->first_address, &other->first_address) < 0)
++	if (in6_addr_cmp(&self->first_address, &other->first_address) > 0)
+ 		return 0;
+ 
+ 	// If the end address of the other network is greater than this network,
+ 	// it cannot be a subnet.
+-	if (in6_addr_cmp(&self->last_address, &other->last_address) > 0)
++	if (in6_addr_cmp(&self->last_address, &other->last_address) < 0)
+ 		return 0;
+ 
+ 	return 1;
+@@ -504,17 +504,7 @@ LOC_EXPORT int loc_network_is_subnet(struct loc_network* self, struct loc_networ
+ 
+ // XXX DEPRECATED - I find this too difficult to use
+ LOC_EXPORT int loc_network_is_subnet_of(struct loc_network* self, struct loc_network* other) {
+-	// If the start address of the other network is smaller than this network,
+-	// it cannot be a subnet.
+-	if (in6_addr_cmp(&self->first_address, &other->first_address) < 0)
+-		return 0;
+-
+-	// If the end address of the other network is greater than this network,
+-	// it cannot be a subnet.
+-	if (in6_addr_cmp(&self->last_address, &other->last_address) > 0)
+-		return 0;
+-
+-	return 1;
++	return loc_network_is_subnet(other, self);
+ }
+ 
+ LOC_EXPORT struct loc_network_list* loc_network_subnets(struct loc_network* network) {
+-- 
+2.20.1
+
+From 92349c14876f8e4711739c82d1a389a53bcb27a5 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Fri, 20 Nov 2020 16:25:27 +0000
+Subject: [PATCH 080/111] network: Remove debugging output
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network.c | 4 ----
+ 1 file changed, 4 deletions(-)
+
+diff --git a/src/network.c b/src/network.c
+index b440d76..3271272 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -670,10 +670,6 @@ LOC_EXPORT struct loc_network_list* loc_network_exclude(
+ 		loc_network_unref(subnet2);
+ 	}
+ 
+-#ifdef ENABLE_DEBUG
+-	loc_network_list_dump(list);
+-#endif
+-
+ 	// Return the result
+ 	return list;
+ 
+-- 
+2.20.1
+
+From ed0f53df0f3ebb915faf25138cc09df7555415a3 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Fri, 20 Nov 2020 16:25:56 +0000
+Subject: [PATCH 081/111] database: Flatten out code due to compiler errors
+
+It looks like GCC could not follow the code as it was
+written. Therefore I clean up more often now instead
+of having a GOTO block where I do that in.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/database.c | 59 ++++++++++++++++++++++++++++++++++----------------
+ 1 file changed, 40 insertions(+), 19 deletions(-)
+
+diff --git a/src/database.c b/src/database.c
+index ef4f505..c21b957 100644
+--- a/src/database.c
++++ b/src/database.c
+@@ -1305,8 +1305,12 @@ static int __loc_database_enumerator_next_network_flattened(
+ 	while (1) {
+ 		// Fetch the next network in line
+ 		r = __loc_database_enumerator_next_network(enumerator, &subnet, 0);
+-		if (r)
+-			goto END;
++		if (r) {
++			loc_network_unref(subnet);
++			loc_network_list_unref(subnets);
++
++			return r;
++		}
+ 
+ 		// End if we did not receive another subnet
+ 		if (!subnet)
+@@ -1315,8 +1319,12 @@ static int __loc_database_enumerator_next_network_flattened(
+ 		// Collect all subnets in a list
+ 		if (loc_network_is_subnet(*network, subnet)) {
+ 			r = loc_network_list_push(subnets, subnet);
+-			if (r)
+-				goto END;
++			if (r) {
++				loc_network_unref(subnet);
++				loc_network_list_unref(subnets);
++
++				return r;
++			}
+ 
+ 			loc_network_unref(subnet);
+ 			continue;
+@@ -1324,8 +1332,12 @@ static int __loc_database_enumerator_next_network_flattened(
+ 
+ 		// If this is not a subnet, we push it back onto the stack and break
+ 		r = loc_network_list_push(enumerator->stack, subnet);
+-		if (r)
+-			goto END;
++		if (r) {
++			loc_network_unref(subnet);
++			loc_network_list_unref(subnets);
++
++			return r;
++		}
+ 
+ 		loc_network_unref(subnet);
+ 		break;
+@@ -1343,29 +1355,38 @@ static int __loc_database_enumerator_next_network_flattened(
+ 	// If the network has any subnets, we will break it into smaller parts
+ 	// without the subnets.
+ 	struct loc_network_list* excluded = loc_network_exclude_list(*network, subnets);
+-	if (!excluded || loc_network_list_empty(excluded)) {
+-		r = 1;
+-		goto END;
++	if (!excluded) {
++		loc_network_list_unref(subnets);
++		return -1;
++	}
++
++	// Merge excluded list with subnets
++	r = loc_network_list_merge(subnets, excluded);
++	if (r) {
++		loc_network_list_unref(subnets);
++		loc_network_list_unref(excluded);
++
++		return r;
+ 	}
+ 
++	// We no longer need the excluded list
++	loc_network_list_unref(excluded);
++
++	// Sort all subnets
++	loc_network_list_sort(subnets);
++
+ 	// Replace network with the first one
+ 	loc_network_unref(*network);
+ 
+-	*network = loc_network_list_pop_first(excluded);
++	*network = loc_network_list_pop_first(subnets);
+ 
+ 	// Push the rest onto the stack
+-	loc_network_list_reverse(excluded);
+-	loc_network_list_merge(enumerator->stack, excluded);
+-
+-	loc_network_list_unref(excluded);
+-
+-END:
+-	if (subnet)
+-		loc_network_unref(subnet);
++	loc_network_list_reverse(subnets);
++	loc_network_list_merge(enumerator->stack, subnets);
+ 
+ 	loc_network_list_unref(subnets);
+ 
+-	return r;
++	return 0;
+ }
+ 
+ LOC_EXPORT int loc_database_enumerator_next_network(
+-- 
+2.20.1
+
+From a1024390795d60fab9f697fa230c9901ebd7d221 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Fri, 20 Nov 2020 16:42:55 +0000
+Subject: [PATCH 082/111] network-list: Implement merging in reverse in one
+ step
+
+This will save us some time because we do not need to
+change the list in place first and then merge it.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/database.c         |  3 +--
+ src/libloc.sym         |  1 +
+ src/loc/network-list.h |  1 +
+ src/network-list.c     | 13 +++++++++++++
+ 4 files changed, 16 insertions(+), 2 deletions(-)
+
+diff --git a/src/database.c b/src/database.c
+index c21b957..ba4f98a 100644
+--- a/src/database.c
++++ b/src/database.c
+@@ -1381,8 +1381,7 @@ static int __loc_database_enumerator_next_network_flattened(
+ 	*network = loc_network_list_pop_first(subnets);
+ 
+ 	// Push the rest onto the stack
+-	loc_network_list_reverse(subnets);
+-	loc_network_list_merge(enumerator->stack, subnets);
++	loc_network_list_merge_reverse(enumerator->stack, subnets);
+ 
+ 	loc_network_list_unref(subnets);
+ 
+diff --git a/src/libloc.sym b/src/libloc.sym
+index 406dd15..56cada8 100644
+--- a/src/libloc.sym
++++ b/src/libloc.sym
+@@ -140,6 +140,7 @@ global:
+ 	loc_network_list_empty;
+ 	loc_network_list_get;
+ 	loc_network_list_merge;
++	loc_network_list_merge_reverse;
+ 	loc_network_list_new;
+ 	loc_network_list_pop;
+ 	loc_network_list_pop_first;
+diff --git a/src/loc/network-list.h b/src/loc/network-list.h
+index af3b28d..89776a6 100644
+--- a/src/loc/network-list.h
++++ b/src/loc/network-list.h
+@@ -33,5 +33,6 @@ int loc_network_list_contains(struct loc_network_list* list, struct loc_network*
+ void loc_network_list_sort(struct loc_network_list* list);
+ void loc_network_list_reverse(struct loc_network_list* list);
+ int loc_network_list_merge(struct loc_network_list* self, struct loc_network_list* other);
++int loc_network_list_merge_reverse(struct loc_network_list* self, struct loc_network_list* other);
+ 
+ #endif
+diff --git a/src/network-list.c b/src/network-list.c
+index 9cb4547..b455caf 100644
+--- a/src/network-list.c
++++ b/src/network-list.c
+@@ -242,3 +242,16 @@ LOC_EXPORT int loc_network_list_merge(
+ 
+ 	return 0;
+ }
++
++LOC_EXPORT int loc_network_list_merge_reverse(
++		struct loc_network_list* self, struct loc_network_list* other) {
++	int r;
++
++	for (int i = other->size - 1; i >= 0; i--) {
++		r = loc_network_list_push(self, other->elements[i]);
++		if (r)
++			return r;
++	}
++
++	return 0;
++}
+-- 
+2.20.1
+
+From a5967330d530504db401540d4bcd5474fe00e421 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Fri, 20 Nov 2020 18:36:48 +0000
+Subject: [PATCH 083/111] network: Optimise _subnet function
+
+This function used to create a network list which always
+had exactly two elements. Since splitting a network in half
+always returns two parts, we can simply return them as a
+pointer.
+
+This improves returning the network tree by about 17%.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/loc/network.h  |   2 +-
+ src/network.c      | 158 ++++++++++++++++++---------------------------
+ src/test-network.c |  51 ++++++++-------
+ 3 files changed, 91 insertions(+), 120 deletions(-)
+
+diff --git a/src/loc/network.h b/src/loc/network.h
+index 4b7410c..d67ec54 100644
+--- a/src/loc/network.h
++++ b/src/loc/network.h
+@@ -62,7 +62,7 @@ int loc_network_gt(struct loc_network* self, struct loc_network* other);
+ int loc_network_overlaps(struct loc_network* self, struct loc_network* other);
+ int loc_network_is_subnet(struct loc_network* self, struct loc_network* other);
+ int loc_network_is_subnet_of(struct loc_network* self, struct loc_network* other);
+-struct loc_network_list* loc_network_subnets(struct loc_network* network);
++int loc_network_subnets(struct loc_network* network, struct loc_network** subnet1, struct loc_network** subnet2);
+ struct loc_network_list* loc_network_exclude(
+ 		struct loc_network* self, struct loc_network* other);
+ struct loc_network_list* loc_network_exclude_list(
+diff --git a/src/network.c b/src/network.c
+index 3271272..ff9c1eb 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -507,66 +507,91 @@ LOC_EXPORT int loc_network_is_subnet_of(struct loc_network* self, struct loc_net
+ 	return loc_network_is_subnet(other, self);
+ }
+ 
+-LOC_EXPORT struct loc_network_list* loc_network_subnets(struct loc_network* network) {
+-	struct loc_network_list* list;
++LOC_EXPORT int loc_network_subnets(struct loc_network* network,
++		struct loc_network** subnet1, struct loc_network** subnet2) {
++	int r;
++	*subnet1 = NULL;
++	*subnet2 = NULL;
+ 
+ 	// New prefix length
+ 	unsigned int prefix = network->prefix + 1;
+ 
+ 	// Check if the new prefix is valid
+ 	if (valid_prefix(&network->first_address, prefix))
+-		return NULL;
+-
+-	// Create a new list with the result
+-	int r = loc_network_list_new(network->ctx, &list);
+-	if (r) {
+-		ERROR(network->ctx, "Could not create network list: %d\n", r);
+-		return NULL;
+-	}
+-
+-	struct loc_network* subnet1 = NULL;
+-	struct loc_network* subnet2 = NULL;
++		return -1;
+ 
+ 	// Create the first half of the network
+-	r = loc_network_new(network->ctx, &subnet1, &network->first_address, prefix);
++	r = loc_network_new(network->ctx, subnet1, &network->first_address, prefix);
+ 	if (r)
+-		goto ERROR;
++		return r;
+ 
+ 	// The next subnet starts after the first one
+-	struct in6_addr first_address = address_increment(&subnet1->last_address);
++	struct in6_addr first_address = address_increment(&(*subnet1)->last_address);
+ 
+ 	// Create the second half of the network
+-	r = loc_network_new(network->ctx, &subnet2, &first_address, prefix);
+-	if (r)
+-		goto ERROR;
+-
+-	// Push the both onto the stack (in reverse order)
+-	r = loc_network_list_push(list, subnet2);
++	r = loc_network_new(network->ctx, subnet2, &first_address, prefix);
+ 	if (r)
+-		goto ERROR;
+-
+-	r = loc_network_list_push(list, subnet1);
+-	if (r)
+-		goto ERROR;
++		return r;
+ 
+ 	// Copy country code
+ 	const char* country_code = loc_network_get_country_code(network);
+ 	if (country_code) {
+-		loc_network_set_country_code(subnet1, country_code);
+-		loc_network_set_country_code(subnet2, country_code);
++		loc_network_set_country_code(*subnet1, country_code);
++		loc_network_set_country_code(*subnet2, country_code);
+ 	}
+ 
+ 	// Copy ASN
+ 	uint32_t asn = loc_network_get_asn(network);
+ 	if (asn) {
+-		loc_network_set_asn(subnet1, asn);
+-		loc_network_set_asn(subnet2, asn);
++		loc_network_set_asn(*subnet1, asn);
++		loc_network_set_asn(*subnet2, asn);
+ 	}
+ 
+-	loc_network_unref(subnet1);
+-	loc_network_unref(subnet2);
++	return 0;
++}
+ 
+-	return list;
++static int __loc_network_exclude(struct loc_network* network,
++		struct loc_network* other, struct loc_network_list* list) {
++	struct loc_network* subnet1 = NULL;
++	struct loc_network* subnet2 = NULL;
++
++	int r = loc_network_subnets(network, &subnet1, &subnet2);
++	if (r)
++		goto ERROR;
++
++	if (loc_network_eq(other, subnet1)) {
++		r = loc_network_list_push(list, subnet2);
++		if (r)
++			goto ERROR;
++
++	} else if (loc_network_eq(other, subnet2)) {
++		r = loc_network_list_push(list, subnet1);
++		if (r)
++			goto ERROR;
++
++	} else  if (loc_network_is_subnet_of(other, subnet1)) {
++		r = loc_network_list_push(list, subnet2);
++		if (r)
++			goto ERROR;
++
++		r = __loc_network_exclude(subnet1, other, list);
++		if (r)
++			goto ERROR;
++
++	} else if (loc_network_is_subnet_of(other, subnet2)) {
++		r = loc_network_list_push(list, subnet1);
++		if (r)
++			goto ERROR;
++
++		r = __loc_network_exclude(subnet2, other, list);
++		if (r)
++			goto ERROR;
++
++	} else {
++		ERROR(network->ctx, "We should never get here\n");
++		r = 1;
++		goto ERROR;
++	}
+ 
+ ERROR:
+ 	if (subnet1)
+@@ -575,10 +600,7 @@ ERROR:
+ 	if (subnet2)
+ 		loc_network_unref(subnet2);
+ 
+-	if (list)
+-		loc_network_list_unref(list);
+-
+-	return NULL;
++	return r;
+ }
+ 
+ LOC_EXPORT struct loc_network_list* loc_network_exclude(
+@@ -623,67 +645,15 @@ LOC_EXPORT struct loc_network_list* loc_network_exclude(
+ 		return NULL;
+ 	}
+ 
+-	struct loc_network_list* subnets = loc_network_subnets(self);
+-
+-	struct loc_network* subnet1 = NULL;
+-	struct loc_network* subnet2 = NULL;
+-
+-	while (subnets) {
+-		// Fetch both subnets
+-		subnet1 = loc_network_list_get(subnets, 0);
+-		subnet2 = loc_network_list_get(subnets, 1);
+-
+-		// Free list
+-		loc_network_list_unref(subnets);
+-		subnets = NULL;
+-
+-		if (loc_network_eq(other, subnet1)) {
+-			r = loc_network_list_push(list, subnet2);
+-			if (r)
+-				goto ERROR;
+-
+-		} else if (loc_network_eq(other, subnet2)) {
+-			r = loc_network_list_push(list, subnet1);
+-			if (r)
+-				goto ERROR;
+-
+-		} else  if (loc_network_is_subnet_of(other, subnet1)) {
+-			r = loc_network_list_push(list, subnet2);
+-			if (r)
+-				goto ERROR;
+-
+-			subnets = loc_network_subnets(subnet1);
+-
+-		} else if (loc_network_is_subnet_of(other, subnet2)) {
+-			r = loc_network_list_push(list, subnet1);
+-			if (r)
+-				goto ERROR;
+-
+-			subnets = loc_network_subnets(subnet2);
+-
+-		} else {
+-			ERROR(self->ctx, "We should never get here\n");
+-			goto ERROR;
+-		}
++	r = __loc_network_exclude(self, other, list);
++	if (r) {
++		loc_network_list_unref(list);
+ 
+-		loc_network_unref(subnet1);
+-		loc_network_unref(subnet2);
++		return NULL;
+ 	}
+ 
+ 	// Return the result
+ 	return list;
+-
+-ERROR:
+-	if (subnet1)
+-		loc_network_unref(subnet1);
+-
+-	if (subnet2)
+-		loc_network_unref(subnet2);
+-
+-	if (list)
+-		loc_network_list_unref(list);
+-
+-	return NULL;
+ }
+ 
+ LOC_EXPORT struct loc_network_list* loc_network_exclude_list(
+diff --git a/src/test-network.c b/src/test-network.c
+index 7c90224..79c2967 100644
+--- a/src/test-network.c
++++ b/src/test-network.c
+@@ -138,47 +138,48 @@ int main(int argc, char** argv) {
+ 	}
+ 
+ 	// Check subnet function
+-	err = loc_network_is_subnet_of(network1, network2);
+-	if (err != 0) {
++	err = loc_network_is_subnet(network1, network2);
++	if (!err) {
+ 		fprintf(stderr, "Subnet check 1 failed: %d\n", err);
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+-	err = loc_network_is_subnet_of(network2, network1);
+-	if (err != 1) {
++	err = loc_network_is_subnet(network2, network1);
++	if (err) {
+ 		fprintf(stderr, "Subnet check 2 failed: %d\n", err);
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+-	// Make list of subnets
+-	struct loc_network_list* subnets = loc_network_subnets(network1);
+-	if (!subnets) {
+-		fprintf(stderr, "Could not find subnets of network\n");
++	// Make subnets
++	struct loc_network* subnet1 = NULL;
++	struct loc_network* subnet2 = NULL;
++
++	err  = loc_network_subnets(network1, &subnet1, &subnet2);
++	if (err || !subnet1 || !subnet2) {
++		fprintf(stderr, "Could not find subnets of network: %d\n", err);
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+-	loc_network_list_dump(subnets);
+-
+-	while (!loc_network_list_empty(subnets)) {
+-		struct loc_network* subnet = loc_network_list_pop(subnets);
+-		if (!subnet) {
+-			fprintf(stderr, "Received an empty subnet\n");
+-			exit(EXIT_FAILURE);
+-		}
++	char* s = loc_network_str(subnet1);
++	printf("Received subnet1 = %s\n", s);
++	free(s);
+ 
+-		char* s = loc_network_str(subnet);
+-		printf("Received subnet %s\n", s);
+-		free(s);
++	s = loc_network_str(subnet2);
++	printf("Received subnet2 = %s\n", s);
++	free(s);
+ 
+-		if (!loc_network_is_subnet_of(subnet, network1)) {
+-			fprintf(stderr, "Not a subnet\n");
+-			exit(EXIT_FAILURE);
+-		}
++	if (!loc_network_is_subnet(network1, subnet1)) {
++		fprintf(stderr, "Subnet1 is not a subnet\n");
++		exit(EXIT_FAILURE);
++	}
+ 
+-		loc_network_unref(subnet);
++	if (!loc_network_is_subnet(network1, subnet2)) {
++		fprintf(stderr, "Subnet2 is not a subnet\n");
++		exit(EXIT_FAILURE);
+ 	}
+ 
+-	loc_network_list_unref(subnets);
++	loc_network_unref(subnet1);
++	loc_network_unref(subnet2);
+ 
+ 	struct loc_network_list* excluded = loc_network_exclude(network1, network2);
+ 	if (!excluded) {
+-- 
+2.20.1
+
+From 7fe6a21845edf6692d239f228117bc95620d0419 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Fri, 20 Nov 2020 18:38:47 +0000
+Subject: [PATCH 084/111] network: Add function to return the prefix
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/libloc.sym    |  1 +
+ src/loc/network.h |  1 +
+ src/network.c     | 12 ++++++++++++
+ 3 files changed, 14 insertions(+)
+
+diff --git a/src/libloc.sym b/src/libloc.sym
+index 56cada8..9f41c89 100644
+--- a/src/libloc.sym
++++ b/src/libloc.sym
+@@ -125,6 +125,7 @@ global:
+ 	loc_network_new;
+ 	loc_network_new_from_string;
+ 	loc_network_overlaps;
++	loc_network_prefix;
+ 	loc_network_ref;
+ 	loc_network_set_asn;
+ 	loc_network_set_country_code;
+diff --git a/src/loc/network.h b/src/loc/network.h
+index d67ec54..7b2ae4c 100644
+--- a/src/loc/network.h
++++ b/src/loc/network.h
+@@ -38,6 +38,7 @@ struct loc_network* loc_network_ref(struct loc_network* network);
+ struct loc_network* loc_network_unref(struct loc_network* network);
+ char* loc_network_str(struct loc_network* network);
+ int loc_network_address_family(struct loc_network* network);
++unsigned int loc_network_prefix(struct loc_network* network);
+ 
+ const struct in6_addr* loc_network_get_first_address(struct loc_network* network);
+ char* loc_network_format_first_address(struct loc_network* network);
+diff --git a/src/network.c b/src/network.c
+index ff9c1eb..4720503 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -310,6 +310,18 @@ LOC_EXPORT int loc_network_address_family(struct loc_network* network) {
+ 	return network->family;
+ }
+ 
++LOC_EXPORT unsigned int loc_network_prefix(struct loc_network* network) {
++	switch (network->family) {
++		case AF_INET6:
++			return network->prefix;
++
++		case AF_INET:
++			return network->prefix - 96;
++	}
++
++	return 0;
++}
++
+ static char* loc_network_format_address(struct loc_network* network, const struct in6_addr* address) {
+ 	const size_t length = INET6_ADDRSTRLEN;
+ 
+-- 
+2.20.1
+
+From cf8d3c6454843943e3bc81eb85522779d1c11f9b Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Fri, 20 Nov 2020 18:39:13 +0000
+Subject: [PATCH 085/111] network: Speed up subnet check
+
+There is no point in checking different address families
+with each other and we do not need to compare addresses
+when the prefix of the subnet does not fit into the
+network to check.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/src/network.c b/src/network.c
+index 4720503..e52b58c 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -501,6 +501,14 @@ LOC_EXPORT int loc_network_overlaps(struct loc_network* self, struct loc_network
+ }
+ 
+ LOC_EXPORT int loc_network_is_subnet(struct loc_network* self, struct loc_network* other) {
++	// Check family
++	if (self->family != other->family)
++		return 0;
++
++	// The prefix must be smaller (this avoids the more complex comparisons later)
++	if (self->prefix > other->prefix)
++		return 0;
++
+ 	// If the start address of the other network is smaller than this network,
+ 	// it cannot be a subnet.
+ 	if (in6_addr_cmp(&self->first_address, &other->first_address) > 0)
+-- 
+2.20.1
+
+From d6a5092f969bb3bd50d130d4ba64b4e4be2e61f6 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Fri, 20 Nov 2020 18:44:42 +0000
+Subject: [PATCH 086/111] network: Remove deprecated loc_network_is_subnet_of
+ function
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/libloc.sym       |  1 -
+ src/loc/network.h    |  1 -
+ src/network.c        | 13 ++++---------
+ src/python/network.c |  2 +-
+ 4 files changed, 5 insertions(+), 12 deletions(-)
+
+diff --git a/src/libloc.sym b/src/libloc.sym
+index 9f41c89..b2d8a31 100644
+--- a/src/libloc.sym
++++ b/src/libloc.sym
+@@ -118,7 +118,6 @@ global:
+ 	loc_network_gt;
+ 	loc_network_has_flag;
+ 	loc_network_is_subnet;
+-	loc_network_is_subnet_of;
+ 	loc_network_match_asn;
+ 	loc_network_match_country_code;
+ 	loc_network_match_flag;
+diff --git a/src/loc/network.h b/src/loc/network.h
+index 7b2ae4c..b31c8a2 100644
+--- a/src/loc/network.h
++++ b/src/loc/network.h
+@@ -62,7 +62,6 @@ int loc_network_eq(struct loc_network* self, struct loc_network* other);
+ int loc_network_gt(struct loc_network* self, struct loc_network* other);
+ int loc_network_overlaps(struct loc_network* self, struct loc_network* other);
+ int loc_network_is_subnet(struct loc_network* self, struct loc_network* other);
+-int loc_network_is_subnet_of(struct loc_network* self, struct loc_network* other);
+ int loc_network_subnets(struct loc_network* network, struct loc_network** subnet1, struct loc_network** subnet2);
+ struct loc_network_list* loc_network_exclude(
+ 		struct loc_network* self, struct loc_network* other);
+diff --git a/src/network.c b/src/network.c
+index e52b58c..72b77e6 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -522,11 +522,6 @@ LOC_EXPORT int loc_network_is_subnet(struct loc_network* self, struct loc_networ
+ 	return 1;
+ }
+ 
+-// XXX DEPRECATED - I find this too difficult to use
+-LOC_EXPORT int loc_network_is_subnet_of(struct loc_network* self, struct loc_network* other) {
+-	return loc_network_is_subnet(other, self);
+-}
+-
+ LOC_EXPORT int loc_network_subnets(struct loc_network* network,
+ 		struct loc_network** subnet1, struct loc_network** subnet2) {
+ 	int r;
+@@ -589,7 +584,7 @@ static int __loc_network_exclude(struct loc_network* network,
+ 		if (r)
+ 			goto ERROR;
+ 
+-	} else  if (loc_network_is_subnet_of(other, subnet1)) {
++	} else  if (loc_network_is_subnet(subnet1, other)) {
+ 		r = loc_network_list_push(list, subnet2);
+ 		if (r)
+ 			goto ERROR;
+@@ -598,7 +593,7 @@ static int __loc_network_exclude(struct loc_network* network,
+ 		if (r)
+ 			goto ERROR;
+ 
+-	} else if (loc_network_is_subnet_of(other, subnet2)) {
++	} else if (loc_network_is_subnet(subnet2, other)) {
+ 		r = loc_network_list_push(list, subnet1);
+ 		if (r)
+ 			goto ERROR;
+@@ -645,7 +640,7 @@ LOC_EXPORT struct loc_network_list* loc_network_exclude(
+ 	}
+ 
+ 	// Other must be a subnet of self
+-	if (!loc_network_is_subnet_of(other, self)) {
++	if (!loc_network_is_subnet(self, other)) {
+ 		DEBUG(self->ctx, "Network %p is not contained in network %p\n", other, self);
+ 
+ 		return NULL;
+@@ -726,7 +721,7 @@ LOC_EXPORT struct loc_network_list* loc_network_exclude_list(
+ 			}
+ 
+ 			// Drop this subnet if is a subnet of another subnet
+-			if (loc_network_is_subnet_of(subnet, subnet_to_check)) {
++			if (loc_network_is_subnet(subnet_to_check, subnet)) {
+ 				passed = 0;
+ 				loc_network_unref(subnet);
+ 				break;
+diff --git a/src/python/network.c b/src/python/network.c
+index 742b472..b6e92fb 100644
+--- a/src/python/network.c
++++ b/src/python/network.c
+@@ -194,7 +194,7 @@ static PyObject* Network_is_subnet_of(NetworkObject* self, PyObject* args) {
+ 	if (!PyArg_ParseTuple(args, "O!", &NetworkType, &other))
+ 		return NULL;
+ 
+-	if (loc_network_is_subnet_of(self->network, other->network))
++	if (loc_network_is_subnet(other->network, self->network))
+ 		Py_RETURN_TRUE;
+ 
+ 	Py_RETURN_FALSE;
+-- 
+2.20.1
+
+From af4689bf5c56ad79e9e90396b41be460e49ef384 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Tue, 24 Nov 2020 14:55:08 +0000
+Subject: [PATCH 087/111] network-list: Make this a sorted list
+
+The list is now organised so that it is always ordered.
+
+This allows us to find if a network is on the list a lot
+quicker using binary search as well as inserting a new
+network at the right place.
+
+This will benefit loc_network_exclude with very large networks.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/libloc.sym     |  1 +
+ src/loc/network.h  |  1 +
+ src/network-list.c | 84 +++++++++++++++++++++++++++++++++++++++++-----
+ src/network.c      | 22 ++++++++++++
+ 4 files changed, 99 insertions(+), 9 deletions(-)
+
+diff --git a/src/libloc.sym b/src/libloc.sym
+index b2d8a31..28cc8e8 100644
+--- a/src/libloc.sym
++++ b/src/libloc.sym
+@@ -106,6 +106,7 @@ global:
+ 
+ 	# Network
+ 	loc_network_address_family;
++	loc_network_cmp;
+ 	loc_network_eq;
+ 	loc_network_exclude;
+ 	loc_network_exclude_list;
+diff --git a/src/loc/network.h b/src/loc/network.h
+index b31c8a2..8ab1562 100644
+--- a/src/loc/network.h
++++ b/src/loc/network.h
+@@ -58,6 +58,7 @@ int loc_network_has_flag(struct loc_network* network, uint32_t flag);
+ int loc_network_set_flag(struct loc_network* network, uint32_t flag);
+ int loc_network_match_flag(struct loc_network* network, uint32_t flag);
+ 
++int loc_network_cmp(struct loc_network* self, struct loc_network* other);
+ int loc_network_eq(struct loc_network* self, struct loc_network* other);
+ int loc_network_gt(struct loc_network* self, struct loc_network* other);
+ int loc_network_overlaps(struct loc_network* self, struct loc_network* other);
+diff --git a/src/network-list.c b/src/network-list.c
+index b455caf..6e9cd37 100644
+--- a/src/network-list.c
++++ b/src/network-list.c
+@@ -16,6 +16,7 @@
+ 
+ #include <errno.h>
+ #include <stdlib.h>
++#include <time.h>
+ 
+ #include <loc/libloc.h>
+ #include <loc/network.h>
+@@ -130,11 +131,71 @@ LOC_EXPORT struct loc_network* loc_network_list_get(struct loc_network_list* lis
+ 	return loc_network_ref(list->elements[index]);
+ }
+ 
++//MOVE FUNCTION GOES HERE
++
++static off_t loc_network_list_find(struct loc_network_list* list,
++		struct loc_network* network, int* found) {
++	off_t lo = 0;
++	off_t hi = list->size - 1;
++
++	*found = 0;
++
++#ifdef ENABLE_DEBUG
++	// Save start time
++	clock_t start = clock();
++#endif
++
++	off_t i = 0;
++
++	while (lo <= hi) {
++		i = (lo + hi) / 2;
++
++		// Check if this is a match
++		int result = loc_network_cmp(network, list->elements[i]);
++
++		if (result == 0) {
++			*found = 1;
++
++#ifdef ENABLE_DEBUG
++			clock_t end = clock();
++
++			// Log how fast this has been
++			DEBUG(list->ctx, "Found network in %.4fms at %jd\n",
++				(double)(end - start) / CLOCKS_PER_SEC * 1000, (intmax_t)i);
++#endif
++
++			return i;
++		}
++
++		if (result > 0)
++			lo = i + 1;
++		else
++			hi = i - 1;
++	}
++
++#ifdef ENABLE_DEBUG
++	clock_t end = clock();
++
++	// Log how fast this has been
++	DEBUG(list->ctx, "Did not find network in %.4fms (last i = %jd)\n",
++		(double)(end - start) / CLOCKS_PER_SEC * 1000, (intmax_t)i);
++#endif
++
++	return i;
++}
++
+ LOC_EXPORT int loc_network_list_push(struct loc_network_list* list, struct loc_network* network) {
+-	// Do not add networks that are already on the list
+-	if (loc_network_list_contains(list, network))
++	int found = 0;
++
++	off_t index = loc_network_list_find(list, network, &found);
++
++	// The network has been found on the list. Nothing to do.
++	if (found)
+ 		return 0;
+ 
++	DEBUG(list->ctx, "%p: Inserting network %p at index %jd\n",
++		list, network, (intmax_t)index);
++
+ 	// Check if we have space left
+ 	if (list->size >= list->elements_size) {
+ 		int r = loc_network_list_grow(list, 64);
+@@ -142,9 +203,15 @@ LOC_EXPORT int loc_network_list_push(struct loc_network_list* list, struct loc_n
+ 			return r;
+ 	}
+ 
+-	DEBUG(list->ctx, "%p: Pushing network %p onto stack\n", list, network);
++	// The list is now larger
++	list->size++;
++
++	// Move all elements out of the way
++	for (unsigned int i = list->size - 1; i > index; i--)
++		list->elements[i] = list->elements[i - 1];
+ 
+-	list->elements[list->size++] = loc_network_ref(network);
++	// Add the new element at the right place
++	list->elements[index] = loc_network_ref(network);
+ 
+ 	return 0;
+ }
+@@ -183,12 +250,11 @@ LOC_EXPORT struct loc_network* loc_network_list_pop_first(struct loc_network_lis
+ }
+ 
+ LOC_EXPORT int loc_network_list_contains(struct loc_network_list* list, struct loc_network* network) {
+-	for (unsigned int i = 0; i < list->size; i++) {
+-		if (loc_network_eq(list->elements[i], network))
+-			return 1;
+-	}
++	int found = 0;
+ 
+-	return 0;
++	loc_network_list_find(list, network, &found);
++
++	return found;
+ }
+ 
+ static void loc_network_list_swap(struct loc_network_list* list, unsigned int i1, unsigned int i2) {
+diff --git a/src/network.c b/src/network.c
+index 72b77e6..38d557a 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -441,6 +441,28 @@ LOC_EXPORT int loc_network_match_flag(struct loc_network* network, uint32_t flag
+ 	return loc_network_has_flag(network, flag);
+ }
+ 
++LOC_EXPORT int loc_network_cmp(struct loc_network* self, struct loc_network* other) {
++	// Compare family
++	if (self->family > other->family)
++		return 1;
++	else if (self->family < other->family)
++		return -1;
++
++	// Compare address
++	int r = in6_addr_cmp(&self->first_address, &other->first_address);
++	if (r)
++		return r;
++
++	// Compare prefix
++	if (self->prefix > other->prefix)
++		return 1;
++	else if (self->prefix < other->prefix)
++		return -1;
++
++	// Both networks are equal
++	return 0;
++}
++
+ LOC_EXPORT int loc_network_eq(struct loc_network* self, struct loc_network* other) {
+ 	// Family must be the same
+ 	if (self->family != other->family)
+-- 
+2.20.1
+
+From 39cbbc63aee362d82f69a9b4722b59153ce799a0 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Tue, 24 Nov 2020 15:04:03 +0000
+Subject: [PATCH 088/111] network-list: Drop sorting functions
+
+Since the list is always sorted, there is no point in
+sorting it again...
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/database.c         |  6 +----
+ src/libloc.sym         |  3 ---
+ src/loc/network-list.h |  3 ---
+ src/network-list.c     | 52 ------------------------------------------
+ src/test-network.c     |  9 --------
+ 5 files changed, 1 insertion(+), 72 deletions(-)
+
+diff --git a/src/database.c b/src/database.c
+index ba4f98a..5546091 100644
+--- a/src/database.c
++++ b/src/database.c
+@@ -1372,17 +1372,13 @@ static int __loc_database_enumerator_next_network_flattened(
+ 	// We no longer need the excluded list
+ 	loc_network_list_unref(excluded);
+ 
+-	// Sort all subnets
+-	loc_network_list_sort(subnets);
+-
+ 	// Replace network with the first one
+ 	loc_network_unref(*network);
+ 
+ 	*network = loc_network_list_pop_first(subnets);
+ 
+ 	// Push the rest onto the stack
+-	loc_network_list_merge_reverse(enumerator->stack, subnets);
+-
++	loc_network_list_merge(enumerator->stack, subnets);
+ 	loc_network_list_unref(subnets);
+ 
+ 	return 0;
+diff --git a/src/libloc.sym b/src/libloc.sym
+index 28cc8e8..4b0ce45 100644
+--- a/src/libloc.sym
++++ b/src/libloc.sym
+@@ -141,15 +141,12 @@ global:
+ 	loc_network_list_empty;
+ 	loc_network_list_get;
+ 	loc_network_list_merge;
+-	loc_network_list_merge_reverse;
+ 	loc_network_list_new;
+ 	loc_network_list_pop;
+ 	loc_network_list_pop_first;
+ 	loc_network_list_push;
+ 	loc_network_list_ref;
+-	loc_network_list_reverse;
+ 	loc_network_list_size;
+-	loc_network_list_sort;
+ 	loc_network_list_unref;
+ 
+ 	# Writer
+diff --git a/src/loc/network-list.h b/src/loc/network-list.h
+index 89776a6..21c7402 100644
+--- a/src/loc/network-list.h
++++ b/src/loc/network-list.h
+@@ -30,9 +30,6 @@ int loc_network_list_push(struct loc_network_list* list, struct loc_network* net
+ struct loc_network* loc_network_list_pop(struct loc_network_list* list);
+ struct loc_network* loc_network_list_pop_first(struct loc_network_list* list);
+ int loc_network_list_contains(struct loc_network_list* list, struct loc_network* network);
+-void loc_network_list_sort(struct loc_network_list* list);
+-void loc_network_list_reverse(struct loc_network_list* list);
+ int loc_network_list_merge(struct loc_network_list* self, struct loc_network_list* other);
+-int loc_network_list_merge_reverse(struct loc_network_list* self, struct loc_network_list* other);
+ 
+ #endif
+diff --git a/src/network-list.c b/src/network-list.c
+index 6e9cd37..7e8b5f3 100644
+--- a/src/network-list.c
++++ b/src/network-list.c
+@@ -257,45 +257,6 @@ LOC_EXPORT int loc_network_list_contains(struct loc_network_list* list, struct l
+ 	return found;
+ }
+ 
+-static void loc_network_list_swap(struct loc_network_list* list, unsigned int i1, unsigned int i2) {
+-	// Do nothing for invalid indices
+-	if (i1 >= list->size || i2 >= list->size)
+-		return;
+-
+-	struct loc_network* network1 = list->elements[i1];
+-	struct loc_network* network2 = list->elements[i2];
+-
+-	list->elements[i1] = network2;
+-	list->elements[i2] = network1;
+-}
+-
+-LOC_EXPORT void loc_network_list_reverse(struct loc_network_list* list) {
+-	unsigned int i = 0;
+-	unsigned int j = list->size - 1;
+-
+-	while (i < j) {
+-		loc_network_list_swap(list, i++, j--);
+-	}
+-}
+-
+-LOC_EXPORT void loc_network_list_sort(struct loc_network_list* list) {
+-	unsigned int n = list->size;
+-	int swapped;
+-
+-	do {
+-		swapped = 0;
+-
+-		for (unsigned int i = 1; i < n; i++) {
+-			if (loc_network_gt(list->elements[i-1], list->elements[i]) > 0) {
+-				loc_network_list_swap(list, i-1, i);
+-				swapped = 1;
+-			}
+-		}
+-
+-		n--;
+-	} while (swapped);
+-}
+-
+ LOC_EXPORT int loc_network_list_merge(
+ 		struct loc_network_list* self, struct loc_network_list* other) {
+ 	int r;
+@@ -308,16 +269,3 @@ LOC_EXPORT int loc_network_list_merge(
+ 
+ 	return 0;
+ }
+-
+-LOC_EXPORT int loc_network_list_merge_reverse(
+-		struct loc_network_list* self, struct loc_network_list* other) {
+-	int r;
+-
+-	for (int i = other->size - 1; i >= 0; i--) {
+-		r = loc_network_list_push(self, other->elements[i]);
+-		if (r)
+-			return r;
+-	}
+-
+-	return 0;
+-}
+diff --git a/src/test-network.c b/src/test-network.c
+index 79c2967..8a6763c 100644
+--- a/src/test-network.c
++++ b/src/test-network.c
+@@ -188,15 +188,6 @@ int main(int argc, char** argv) {
+ 	}
+ 
+ 	loc_network_list_dump(excluded);
+-
+-	// Reverse it
+-	loc_network_list_reverse(excluded);
+-	loc_network_list_dump(excluded);
+-
+-	// Sort them and dump them again
+-	loc_network_list_sort(excluded);
+-	loc_network_list_dump(excluded);
+-
+ 	loc_network_list_unref(excluded);
+ 
+ 	// Create a database
+-- 
+2.20.1
+
+From 5dacb45afceac2d05ea597755c1ca5a1b62cc0fd Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Tue, 24 Nov 2020 15:15:59 +0000
+Subject: [PATCH 089/111] database: Avoid merging the same data twice
+
+When finish splitting networks into many parts, we have
+a list of subnets with the excluded subnets and merge them
+together first and put them on the stack again.
+
+This is slower than pushing it all onto the stack first
+and then popping the first element.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/database.c | 24 ++++++++++++++----------
+ 1 file changed, 14 insertions(+), 10 deletions(-)
+
+diff --git a/src/database.c b/src/database.c
+index 5546091..f1f6ae0 100644
+--- a/src/database.c
++++ b/src/database.c
+@@ -1360,8 +1360,8 @@ static int __loc_database_enumerator_next_network_flattened(
+ 		return -1;
+ 	}
+ 
+-	// Merge excluded list with subnets
+-	r = loc_network_list_merge(subnets, excluded);
++	// Merge subnets onto the stack
++	r = loc_network_list_merge(enumerator->stack, subnets);
+ 	if (r) {
+ 		loc_network_list_unref(subnets);
+ 		loc_network_list_unref(excluded);
+@@ -1369,17 +1369,21 @@ static int __loc_database_enumerator_next_network_flattened(
+ 		return r;
+ 	}
+ 
+-	// We no longer need the excluded list
+-	loc_network_list_unref(excluded);
+-
+-	// Replace network with the first one
+-	loc_network_unref(*network);
++	// Push excluded list onto the stack
++	r = loc_network_list_merge(enumerator->stack, excluded);
++	if (r) {
++		loc_network_list_unref(subnets);
++		loc_network_list_unref(excluded);
+ 
+-	*network = loc_network_list_pop_first(subnets);
++		return r;
++	}
+ 
+-	// Push the rest onto the stack
+-	loc_network_list_merge(enumerator->stack, subnets);
+ 	loc_network_list_unref(subnets);
++	loc_network_list_unref(excluded);
++
++	// Replace network with the first one from the stack
++	loc_network_unref(*network);
++	*network = loc_network_list_pop_first(enumerator->stack);
+ 
+ 	return 0;
+ }
+-- 
+2.20.1
+
+From 04cbd2bfa892fc7374ad506ec7ba81727c5a4b96 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Tue, 24 Nov 2020 15:22:02 +0000
+Subject: [PATCH 090/111] database: Read the first element from the list
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/database.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/database.c b/src/database.c
+index f1f6ae0..914ed3e 100644
+--- a/src/database.c
++++ b/src/database.c
+@@ -1191,7 +1191,7 @@ static int __loc_database_enumerator_next_network(
+ 		struct loc_database_enumerator* enumerator, struct loc_network** network, int filter) {
+ 	// Return top element from the stack
+ 	while (1) {
+-		*network = loc_network_list_pop(enumerator->stack);
++		*network = loc_network_list_pop_first(enumerator->stack);
+ 
+ 		// Stack is empty
+ 		if (!*network)
+-- 
+2.20.1
+
+From c650008e2dd9af5fd1eadba6354aa0b615047f84 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Tue, 24 Nov 2020 15:41:53 +0000
+Subject: [PATCH 091/111] network: Add excluded networks to to_check list
+
+This is now being done immediately instead of creating a new
+list which is being merged later.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network.c | 55 ++++++++++++++++++++++++++++++---------------------
+ 1 file changed, 32 insertions(+), 23 deletions(-)
+
+diff --git a/src/network.c b/src/network.c
+index 38d557a..7ab22f8 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -640,49 +640,55 @@ ERROR:
+ 	return r;
+ }
+ 
+-LOC_EXPORT struct loc_network_list* loc_network_exclude(
+-		struct loc_network* self, struct loc_network* other) {
+-	struct loc_network_list* list;
+-
+-#ifdef ENABLE_DEBUG
+-	char* n1 = loc_network_str(self);
+-	char* n2 = loc_network_str(other);
+-
+-	DEBUG(self->ctx, "Returning %s excluding %s...\n", n1, n2);
+-
+-	free(n1);
+-	free(n2);
+-#endif
+-
++static int __loc_network_exclude_to_list(struct loc_network* self,
++		struct loc_network* other, struct loc_network_list* list) {
+ 	// Family must match
+ 	if (self->family != other->family) {
+ 		DEBUG(self->ctx, "Family mismatch\n");
+ 
+-		return NULL;
++		return 1;
+ 	}
+ 
+ 	// Other must be a subnet of self
+ 	if (!loc_network_is_subnet(self, other)) {
+ 		DEBUG(self->ctx, "Network %p is not contained in network %p\n", other, self);
+ 
+-		return NULL;
++		return 1;
+ 	}
+ 
+ 	// We cannot perform this operation if both networks equal
+ 	if (loc_network_eq(self, other)) {
+ 		DEBUG(self->ctx, "Networks %p and %p are equal\n", self, other);
+ 
+-		return NULL;
++		return 1;
+ 	}
+ 
++	return __loc_network_exclude(self, other, list);
++}
++
++LOC_EXPORT struct loc_network_list* loc_network_exclude(
++		struct loc_network* self, struct loc_network* other) {
++	struct loc_network_list* list;
++
++#ifdef ENABLE_DEBUG
++	char* n1 = loc_network_str(self);
++	char* n2 = loc_network_str(other);
++
++	DEBUG(self->ctx, "Returning %s excluding %s...\n", n1, n2);
++
++	free(n1);
++	free(n2);
++#endif
++
+ 	// Create a new list with the result
+ 	int r = loc_network_list_new(self->ctx, &list);
+ 	if (r) {
+ 		ERROR(self->ctx, "Could not create network list: %d\n", r);
++
+ 		return NULL;
+ 	}
+ 
+-	r = __loc_network_exclude(self, other, list);
++	r = __loc_network_exclude_to_list(self, other, list);
+ 	if (r) {
+ 		loc_network_list_unref(list);
+ 
+@@ -709,11 +715,14 @@ LOC_EXPORT struct loc_network_list* loc_network_exclude_list(
+ 		subnet = loc_network_list_get(list, i);
+ 
+ 		// Find all excluded networks
+-		struct loc_network_list* excluded = loc_network_exclude(network, subnet);
+-		if (excluded) {
+-			// Add them all to the "to check" list
+-			loc_network_list_merge(to_check, excluded);
+-			loc_network_list_unref(excluded);
++		if (!loc_network_list_contains(to_check, subnet)) {
++			r = __loc_network_exclude_to_list(network, subnet, to_check);
++			if (r) {
++				loc_network_list_unref(to_check);
++				loc_network_unref(subnet);
++
++				return NULL;
++			}
+ 		}
+ 
+ 		// Cleanup
+-- 
+2.20.1
+
+From 7c6983ad52724d395446bdbd24d36b2ce22aecfd Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Tue, 24 Nov 2020 15:42:54 +0000
+Subject: [PATCH 092/111] test: Add more networks to list to see the algorithm
+ work
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/test-network-list.c | 32 +++++++++++++++++++++++++++++++-
+ 1 file changed, 31 insertions(+), 1 deletion(-)
+
+diff --git a/src/test-network-list.c b/src/test-network-list.c
+index 3061d63..8253fc7 100644
+--- a/src/test-network-list.c
++++ b/src/test-network-list.c
+@@ -58,6 +58,20 @@ int main(int argc, char** argv) {
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
++	struct loc_network* subnet3;
++	err = loc_network_new_from_string(ctx, &subnet3, "2001:db8:c::/48");
++	if (err) {
++		fprintf(stderr, "Could not create the subnet3\n");
++		exit(EXIT_FAILURE);
++	}
++
++	struct loc_network* subnet4;
++	err = loc_network_new_from_string(ctx, &subnet4, "2001:db8:d::/48");
++	if (err) {
++		fprintf(stderr, "Could not create the subnet4\n");
++		exit(EXIT_FAILURE);
++	}
++
+ 	// Make a list with both subnets
+ 	struct loc_network_list* subnets;
+ 	err = loc_network_list_new(ctx, &subnets);
+@@ -89,8 +103,24 @@ int main(int argc, char** argv) {
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
++	// Add the fourth one next
++	err = loc_network_list_push(subnets, subnet4);
++	if (err) {
++		fprintf(stderr, "Could not add subnet4 to subnets list\n");
++		exit(EXIT_FAILURE);
++	}
++
++	// Add the third one
++	err = loc_network_list_push(subnets, subnet3);
++	if (err) {
++		fprintf(stderr, "Could not add subnet3 to subnets list\n");
++		exit(EXIT_FAILURE);
++	}
++
++	loc_network_list_dump(subnets);
++
+ 	size = loc_network_list_size(subnets);
+-	if (size != 2) {
++	if (size != 4) {
+ 		fprintf(stderr, "Network list is reporting an incorrect size: %zu\n", size);
+ 		exit(EXIT_FAILURE);
+ 	}
+-- 
+2.20.1
+
+From da101d55e66ebaeeed8b0b16829a2022a1af0678 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Tue, 24 Nov 2020 15:48:55 +0000
+Subject: [PATCH 093/111] Drop loc_network_eq in favour of loc_network_cmp
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/libloc.sym     |  1 -
+ src/loc/network.h  |  1 -
+ src/network.c      | 24 ++++--------------------
+ src/test-network.c |  8 ++++----
+ 4 files changed, 8 insertions(+), 26 deletions(-)
+
+diff --git a/src/libloc.sym b/src/libloc.sym
+index 4b0ce45..d8e8f14 100644
+--- a/src/libloc.sym
++++ b/src/libloc.sym
+@@ -107,7 +107,6 @@ global:
+ 	# Network
+ 	loc_network_address_family;
+ 	loc_network_cmp;
+-	loc_network_eq;
+ 	loc_network_exclude;
+ 	loc_network_exclude_list;
+ 	loc_network_format_first_address;
+diff --git a/src/loc/network.h b/src/loc/network.h
+index 8ab1562..d5d0ccd 100644
+--- a/src/loc/network.h
++++ b/src/loc/network.h
+@@ -59,7 +59,6 @@ int loc_network_set_flag(struct loc_network* network, uint32_t flag);
+ int loc_network_match_flag(struct loc_network* network, uint32_t flag);
+ 
+ int loc_network_cmp(struct loc_network* self, struct loc_network* other);
+-int loc_network_eq(struct loc_network* self, struct loc_network* other);
+ int loc_network_gt(struct loc_network* self, struct loc_network* other);
+ int loc_network_overlaps(struct loc_network* self, struct loc_network* other);
+ int loc_network_is_subnet(struct loc_network* self, struct loc_network* other);
+diff --git a/src/network.c b/src/network.c
+index 7ab22f8..503bf3d 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -463,22 +463,6 @@ LOC_EXPORT int loc_network_cmp(struct loc_network* self, struct loc_network* oth
+ 	return 0;
+ }
+ 
+-LOC_EXPORT int loc_network_eq(struct loc_network* self, struct loc_network* other) {
+-	// Family must be the same
+-	if (self->family != other->family)
+-		return 0;
+-
+-	// The start address must be the same
+-	if (in6_addr_cmp(&self->first_address, &other->first_address) != 0)
+-		return 0;
+-
+-	// The prefix length must be the same
+-	if (self->prefix != other->prefix)
+-		return 0;
+-
+-	return 1;
+-}
+-
+ LOC_EXPORT int loc_network_gt(struct loc_network* self, struct loc_network* other) {
+ 	// Families must match
+ 	if (self->family != other->family)
+@@ -596,12 +580,12 @@ static int __loc_network_exclude(struct loc_network* network,
+ 	if (r)
+ 		goto ERROR;
+ 
+-	if (loc_network_eq(other, subnet1)) {
++	if (loc_network_cmp(other, subnet1) == 0) {
+ 		r = loc_network_list_push(list, subnet2);
+ 		if (r)
+ 			goto ERROR;
+ 
+-	} else if (loc_network_eq(other, subnet2)) {
++	} else if (loc_network_cmp(other, subnet2) == 0) {
+ 		r = loc_network_list_push(list, subnet1);
+ 		if (r)
+ 			goto ERROR;
+@@ -657,7 +641,7 @@ static int __loc_network_exclude_to_list(struct loc_network* self,
+ 	}
+ 
+ 	// We cannot perform this operation if both networks equal
+-	if (loc_network_eq(self, other)) {
++	if (loc_network_cmp(self, other) == 0) {
+ 		DEBUG(self->ctx, "Networks %p and %p are equal\n", self, other);
+ 
+ 		return 1;
+@@ -745,7 +729,7 @@ LOC_EXPORT struct loc_network_list* loc_network_exclude_list(
+ 			subnet = loc_network_list_get(list, i);
+ 
+ 			// Drop this subnet if is is already in list
+-			if (loc_network_eq(subnet_to_check, subnet)) {
++			if (loc_network_cmp(subnet_to_check, subnet) == 0) {
+ 				passed = 0;
+ 				loc_network_unref(subnet);
+ 				break;
+diff --git a/src/test-network.c b/src/test-network.c
+index 8a6763c..f4cf97b 100644
+--- a/src/test-network.c
++++ b/src/test-network.c
+@@ -125,14 +125,14 @@ int main(int argc, char** argv) {
+ #endif
+ 
+ 	// Check equals function
+-	err = loc_network_eq(network1, network1);
+-	if (!err) {
++	err = loc_network_cmp(network1, network1);
++	if (err) {
+ 		fprintf(stderr, "Network is not equal with itself\n");
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
+-	err = loc_network_eq(network1, network2);
+-	if (err) {
++	err = loc_network_cmp(network1, network2);
++	if (!err) {
+ 		fprintf(stderr, "Networks equal unexpectedly\n");
+ 		exit(EXIT_FAILURE);
+ 	}
+-- 
+2.20.1
+
+From 61a6f6e4bf4493236d796e94f3d721bcf5ba68aa Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Tue, 24 Nov 2020 15:50:39 +0000
+Subject: [PATCH 094/111] Drop loc_network_gt which is now unused
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/libloc.sym    |  1 -
+ src/loc/network.h |  1 -
+ src/network.c     | 27 ---------------------------
+ 3 files changed, 29 deletions(-)
+
+diff --git a/src/libloc.sym b/src/libloc.sym
+index d8e8f14..cb5e8ef 100644
+--- a/src/libloc.sym
++++ b/src/libloc.sym
+@@ -115,7 +115,6 @@ global:
+ 	loc_network_get_country_code;
+ 	loc_network_get_first_address;
+ 	loc_network_get_last_address;
+-	loc_network_gt;
+ 	loc_network_has_flag;
+ 	loc_network_is_subnet;
+ 	loc_network_match_asn;
+diff --git a/src/loc/network.h b/src/loc/network.h
+index d5d0ccd..af3dafd 100644
+--- a/src/loc/network.h
++++ b/src/loc/network.h
+@@ -59,7 +59,6 @@ int loc_network_set_flag(struct loc_network* network, uint32_t flag);
+ int loc_network_match_flag(struct loc_network* network, uint32_t flag);
+ 
+ int loc_network_cmp(struct loc_network* self, struct loc_network* other);
+-int loc_network_gt(struct loc_network* self, struct loc_network* other);
+ int loc_network_overlaps(struct loc_network* self, struct loc_network* other);
+ int loc_network_is_subnet(struct loc_network* self, struct loc_network* other);
+ int loc_network_subnets(struct loc_network* network, struct loc_network** subnet1, struct loc_network** subnet2);
+diff --git a/src/network.c b/src/network.c
+index 503bf3d..ac478d5 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -463,33 +463,6 @@ LOC_EXPORT int loc_network_cmp(struct loc_network* self, struct loc_network* oth
+ 	return 0;
+ }
+ 
+-LOC_EXPORT int loc_network_gt(struct loc_network* self, struct loc_network* other) {
+-	// Families must match
+-	if (self->family != other->family)
+-		return -1;
+-
+-	int r = in6_addr_cmp(&self->first_address, &other->first_address);
+-
+-	switch (r) {
+-		// Smaller
+-		case -1:
+-			return 0;
+-
+-		// Larger
+-		case 1:
+-			return 1;
+-
+-		default:
+-			break;
+-	}
+-
+-	if (self->prefix > other->prefix)
+-		return 1;
+-
+-	// Dunno
+-	return 0;
+-}
+-
+ LOC_EXPORT int loc_network_overlaps(struct loc_network* self, struct loc_network* other) {
+ 	if (loc_network_match_address(self, &other->first_address) == 0)
+ 		return 1;
+-- 
+2.20.1
+
+From fc692a58d9f4ca958f88cfa202250c572a0af6ea Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Tue, 24 Nov 2020 16:50:17 +0000
+Subject: [PATCH 095/111] network: Adjust return codes of
+ loc_network_match_address and add test
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/database.c     |  3 +--
+ src/libloc.sym     |  1 +
+ src/network.c      | 16 +++++++++-------
+ src/test-network.c | 14 ++++++++++++++
+ 4 files changed, 25 insertions(+), 9 deletions(-)
+
+diff --git a/src/database.c b/src/database.c
+index 914ed3e..1871b74 100644
+--- a/src/database.c
++++ b/src/database.c
+@@ -776,8 +776,7 @@ static int __loc_database_lookup_handle_leaf(struct loc_database* db, const stru
+ 	}
+ 
+ 	// Check if the given IP address is inside the network
+-	r = loc_network_match_address(*network, address);
+-	if (r) {
++	if (!loc_network_match_address(*network, address)) {
+ 		DEBUG(db->ctx, "Searched address is not part of the network\n");
+ 
+ 		loc_network_unref(*network);
+diff --git a/src/libloc.sym b/src/libloc.sym
+index cb5e8ef..ee333f1 100644
+--- a/src/libloc.sym
++++ b/src/libloc.sym
+@@ -117,6 +117,7 @@ global:
+ 	loc_network_get_last_address;
+ 	loc_network_has_flag;
+ 	loc_network_is_subnet;
++	loc_network_match_address;
+ 	loc_network_match_asn;
+ 	loc_network_match_country_code;
+ 	loc_network_match_flag;
+diff --git a/src/network.c b/src/network.c
+index ac478d5..febab95 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -374,14 +374,14 @@ LOC_EXPORT char* loc_network_format_last_address(struct loc_network* network) {
+ LOC_EXPORT int loc_network_match_address(struct loc_network* network, const struct in6_addr* address) {
+ 	// Address must be larger than the start address
+ 	if (in6_addr_cmp(&network->first_address, address) > 0)
+-		return 1;
++		return 0;
+ 
+ 	// Address must be smaller than the last address
+ 	if (in6_addr_cmp(&network->last_address, address) < 0)
+-		return 1;
++		return 0;
+ 
+ 	// The address is inside this network
+-	return 0;
++	return 1;
+ }
+ 
+ LOC_EXPORT const char* loc_network_get_country_code(struct loc_network* network) {
+@@ -464,16 +464,18 @@ LOC_EXPORT int loc_network_cmp(struct loc_network* self, struct loc_network* oth
+ }
+ 
+ LOC_EXPORT int loc_network_overlaps(struct loc_network* self, struct loc_network* other) {
+-	if (loc_network_match_address(self, &other->first_address) == 0)
++	// Either of the start addresses must be in the other subnet
++	if (loc_network_match_address(self, &other->first_address))
+ 		return 1;
+ 
+-	if (loc_network_match_address(self, &other->last_address) == 0)
++	if (loc_network_match_address(other, &self->first_address))
+ 		return 1;
+ 
+-	if (loc_network_match_address(other, &self->first_address) == 0)
++	// Or either of the end addresses is in the other subnet
++	if (loc_network_match_address(self, &other->last_address))
+ 		return 1;
+ 
+-	if (loc_network_match_address(other, &self->last_address) == 0)
++	if (loc_network_match_address(other, &self->last_address))
+ 		return 1;
+ 
+ 	return 0;
+diff --git a/src/test-network.c b/src/test-network.c
+index f4cf97b..339743d 100644
+--- a/src/test-network.c
++++ b/src/test-network.c
+@@ -14,6 +14,7 @@
+ 	GNU General Public License for more details.
+ */
+ 
++#include <arpa/inet.h>
+ #include <errno.h>
+ #include <stdio.h>
+ #include <stddef.h>
+@@ -46,6 +47,13 @@ int main(int argc, char** argv) {
+ 	}
+ #endif
+ 
++	struct in6_addr address;
++	err = inet_pton(AF_INET6, "2001:db8::1", &address);
++	if (err != 1) {
++		fprintf(stderr, "Could not parse IP address\n");
++		exit(EXIT_FAILURE);
++	}
++
+ 	// Create a network
+ 	struct loc_network* network1;
+ 	err = loc_network_new_from_string(ctx, &network1, "2001:db8::1/32");
+@@ -92,6 +100,12 @@ int main(int argc, char** argv) {
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
++	err = loc_network_match_address(network1, &address);
++	if (!err) {
++		fprintf(stderr, "Network1 does not match address\n");
++		exit(EXIT_FAILURE);
++	}
++
+ 	struct loc_network* network2;
+ 	err = loc_network_new_from_string(ctx, &network2, "2001:db8:ffff::/48");
+ 	if (err) {
+-- 
+2.20.1
+
+From 06177d8c6004bf8b54322d92926152a7656f9c2a Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Tue, 24 Nov 2020 16:57:28 +0000
+Subject: [PATCH 096/111] network-list: Use binary search to find if a network
+ is a subnet
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/src/network.c b/src/network.c
+index febab95..394bafc 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -697,19 +697,18 @@ LOC_EXPORT struct loc_network_list* loc_network_exclude_list(
+ 	while (!loc_network_list_empty(to_check)) {
+ 		struct loc_network* subnet_to_check = loc_network_list_pop(to_check);
+ 
++		// Check whether the subnet to check is part of the input list
++		if (loc_network_list_contains(list, subnet_to_check)) {
++			loc_network_unref(subnet_to_check);
++			continue;
++		}
++
+ 		// Marks whether this subnet passed all checks
+ 		int passed = 1;
+ 
+ 		for (unsigned int i = 0; i < loc_network_list_size(list); i++) {
+ 			subnet = loc_network_list_get(list, i);
+ 
+-			// Drop this subnet if is is already in list
+-			if (loc_network_cmp(subnet_to_check, subnet) == 0) {
+-				passed = 0;
+-				loc_network_unref(subnet);
+-				break;
+-			}
+-
+ 			// Drop this subnet if is a subnet of another subnet
+ 			if (loc_network_is_subnet(subnet_to_check, subnet)) {
+ 				passed = 0;
+-- 
+2.20.1
+
+From 77e6d5379ea0de3264be5b8918d620d16e6bcbd3 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Tue, 24 Nov 2020 19:39:35 +0000
+Subject: [PATCH 097/111] network-list: Check last element before doing binary
+ search
+
+This is helpful because very often we walk through a list in
+order and are most interested in the last element.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network-list.c | 24 ++++++++++++++++++++++--
+ 1 file changed, 22 insertions(+), 2 deletions(-)
+
+diff --git a/src/network-list.c b/src/network-list.c
+index 7e8b5f3..c86ad07 100644
+--- a/src/network-list.c
++++ b/src/network-list.c
+@@ -137,8 +137,26 @@ static off_t loc_network_list_find(struct loc_network_list* list,
+ 		struct loc_network* network, int* found) {
+ 	off_t lo = 0;
+ 	off_t hi = list->size - 1;
++	int result;
+ 
+-	*found = 0;
++	// Since we are working on an ordered list, there is often a good chance that
++	// the network we are looking for is at the end or has to go to the end.
++	if (hi >= 0) {
++		result = loc_network_cmp(network, list->elements[hi]);
++
++		// Match, so we are done
++		if (result == 0) {
++			*found = 1;
++
++			return hi;
++
++		// This needs to be added after the last one
++		} else if (result > 0) {
++			*found = 0;
++
++			return hi + 1;
++		}
++	}
+ 
+ #ifdef ENABLE_DEBUG
+ 	// Save start time
+@@ -151,7 +169,7 @@ static off_t loc_network_list_find(struct loc_network_list* list,
+ 		i = (lo + hi) / 2;
+ 
+ 		// Check if this is a match
+-		int result = loc_network_cmp(network, list->elements[i]);
++		result = loc_network_cmp(network, list->elements[i]);
+ 
+ 		if (result == 0) {
+ 			*found = 1;
+@@ -173,6 +191,8 @@ static off_t loc_network_list_find(struct loc_network_list* list,
+ 			hi = i - 1;
+ 	}
+ 
++	*found = 0;
++
+ #ifdef ENABLE_DEBUG
+ 	clock_t end = clock();
+ 
+-- 
+2.20.1
+
+From d42f34ce9b0aa2382ae9b852882c62b34d367cfe Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 14:41:39 +0000
+Subject: [PATCH 098/111] network-list: Set elements pointer to NULL so that we
+ know it is empty
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network-list.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/src/network-list.c b/src/network-list.c
+index c86ad07..2c4edb3 100644
+--- a/src/network-list.c
++++ b/src/network-list.c
+@@ -104,6 +104,7 @@ LOC_EXPORT void loc_network_list_clear(struct loc_network_list* list) {
+ 		loc_network_unref(list->elements[i]);
+ 
+ 	free(list->elements);
++	list->elements = NULL;
+ 	list->elements_size = 0;
+ 
+ 	list->size = 0;
+-- 
+2.20.1
+
+From 673e03f7bfc807248a769cb00ec80f0fa2af7a25 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 14:42:26 +0000
+Subject: [PATCH 099/111] network-list: Do not half list when popping the first
+ element
+
+The list was unfortunately halved in size every time an element
+was taken from it, which was great for performance, but shortened
+the result substantially.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network-list.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/src/network-list.c b/src/network-list.c
+index 2c4edb3..f4a9d05 100644
+--- a/src/network-list.c
++++ b/src/network-list.c
+@@ -261,10 +261,13 @@ LOC_EXPORT struct loc_network* loc_network_list_pop_first(struct loc_network_lis
+ 	struct loc_network* network = list->elements[0];
+ 
+ 	// Move all elements to the top of the stack
+-	for (unsigned int i = 0; i < --list->size; i++) {
++	for (unsigned int i = 0; i < list->size - 1; i++) {
+ 		list->elements[i] = list->elements[i+1];
+ 	}
+ 
++	// The list is shorter now
++	--list->size;
++
+ 	DEBUG(list->ctx, "%p: Popping network %p from stack\n", list, network);
+ 
+ 	return network;
+-- 
+2.20.1
+
+From 9446c7538ab8b27486d74f6dc0dac8bb5c1bbe92 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 14:43:58 +0000
+Subject: [PATCH 100/111] network-list: Show index when listing networks
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network-list.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/network-list.c b/src/network-list.c
+index f4a9d05..cf9459d 100644
+--- a/src/network-list.c
++++ b/src/network-list.c
+@@ -119,7 +119,7 @@ LOC_EXPORT void loc_network_list_dump(struct loc_network_list* list) {
+ 
+ 		s = loc_network_str(network);
+ 
+-		INFO(list->ctx, "%s\n", s);
++		INFO(list->ctx, "%4d: %s\n", i, s);
+ 		free(s);
+ 	}
+ }
+-- 
+2.20.1
+
+From dc31666be416dbb3bd2bc04127104a3f75b42d5c Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 14:44:23 +0000
+Subject: [PATCH 101/111] network-list: Remove useless comment
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network-list.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/src/network-list.c b/src/network-list.c
+index cf9459d..bd3d64e 100644
+--- a/src/network-list.c
++++ b/src/network-list.c
+@@ -132,8 +132,6 @@ LOC_EXPORT struct loc_network* loc_network_list_get(struct loc_network_list* lis
+ 	return loc_network_ref(list->elements[index]);
+ }
+ 
+-//MOVE FUNCTION GOES HERE
+-
+ static off_t loc_network_list_find(struct loc_network_list* list,
+ 		struct loc_network* network, int* found) {
+ 	off_t lo = 0;
+-- 
+2.20.1
+
+From 82fa4c92c88cc172953198637bccc375c4d25d20 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 14:44:56 +0000
+Subject: [PATCH 102/111] networks: Add tests for overlaps function
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/test-network.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/src/test-network.c b/src/test-network.c
+index 339743d..dde13f1 100644
+--- a/src/test-network.c
++++ b/src/test-network.c
+@@ -192,6 +192,16 @@ int main(int argc, char** argv) {
+ 		exit(EXIT_FAILURE);
+ 	}
+ 
++	if (!loc_network_overlaps(network1, subnet1)) {
++		fprintf(stderr, "Network1 does not seem to contain subnet1\n");
++		exit(EXIT_FAILURE);
++	}
++
++	if (!loc_network_overlaps(network1, subnet2)) {
++		fprintf(stderr, "Network1 does not seem to contain subnet2\n");
++		exit(EXIT_FAILURE);
++	}
++
+ 	loc_network_unref(subnet1);
+ 	loc_network_unref(subnet2);
+ 
+-- 
+2.20.1
+
+From 0a39d5499ae0c343a6600ea30de7d95e384ef911 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 15:11:21 +0000
+Subject: [PATCH 103/111] networks: Remove comparing family
+
+Everything is encoded in IPv6 anyways...
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network.c | 17 -----------------
+ 1 file changed, 17 deletions(-)
+
+diff --git a/src/network.c b/src/network.c
+index 394bafc..66b460f 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -442,12 +442,6 @@ LOC_EXPORT int loc_network_match_flag(struct loc_network* network, uint32_t flag
+ }
+ 
+ LOC_EXPORT int loc_network_cmp(struct loc_network* self, struct loc_network* other) {
+-	// Compare family
+-	if (self->family > other->family)
+-		return 1;
+-	else if (self->family < other->family)
+-		return -1;
+-
+ 	// Compare address
+ 	int r = in6_addr_cmp(&self->first_address, &other->first_address);
+ 	if (r)
+@@ -482,10 +476,6 @@ LOC_EXPORT int loc_network_overlaps(struct loc_network* self, struct loc_network
+ }
+ 
+ LOC_EXPORT int loc_network_is_subnet(struct loc_network* self, struct loc_network* other) {
+-	// Check family
+-	if (self->family != other->family)
+-		return 0;
+-
+ 	// The prefix must be smaller (this avoids the more complex comparisons later)
+ 	if (self->prefix > other->prefix)
+ 		return 0;
+@@ -601,13 +591,6 @@ ERROR:
+ 
+ static int __loc_network_exclude_to_list(struct loc_network* self,
+ 		struct loc_network* other, struct loc_network_list* list) {
+-	// Family must match
+-	if (self->family != other->family) {
+-		DEBUG(self->ctx, "Family mismatch\n");
+-
+-		return 1;
+-	}
+-
+ 	// Other must be a subnet of self
+ 	if (!loc_network_is_subnet(self, other)) {
+ 		DEBUG(self->ctx, "Network %p is not contained in network %p\n", other, self);
+-- 
+2.20.1
+
+From abf559267696061a0c9723d8f8e09c9d1aa8fb75 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 15:13:08 +0000
+Subject: [PATCH 104/111] network: Do not execute with an error when the
+ excluded result will be empty
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/network.c b/src/network.c
+index 66b460f..9aa802f 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -595,14 +595,16 @@ static int __loc_network_exclude_to_list(struct loc_network* self,
+ 	if (!loc_network_is_subnet(self, other)) {
+ 		DEBUG(self->ctx, "Network %p is not contained in network %p\n", other, self);
+ 
+-		return 1;
++		// Exit silently
++		return 0;
+ 	}
+ 
+ 	// We cannot perform this operation if both networks equal
+ 	if (loc_network_cmp(self, other) == 0) {
+ 		DEBUG(self->ctx, "Networks %p and %p are equal\n", self, other);
+ 
+-		return 1;
++		// Exit silently
++		return 0;
+ 	}
+ 
+ 	return __loc_network_exclude(self, other, list);
+-- 
+2.20.1
+
+From 4fc034e20fdc36267f6ba18e27776fed747fe983 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 15:14:31 +0000
+Subject: [PATCH 105/111] network: Add more excluded networks straight to the
+ to_check list
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network.c | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
+
+diff --git a/src/network.c b/src/network.c
+index 9aa802f..19c387d 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -705,11 +705,7 @@ LOC_EXPORT struct loc_network_list* loc_network_exclude_list(
+ 			if (loc_network_overlaps(subnet_to_check, subnet)) {
+ 				passed = 0;
+ 
+-				struct loc_network_list* excluded = loc_network_exclude(subnet_to_check, subnet);
+-				if (excluded) {
+-					loc_network_list_merge(to_check, excluded);
+-					loc_network_list_unref(excluded);
+-				}
++				__loc_network_exclude_to_list(subnet_to_check, subnet, to_check);
+ 
+ 				loc_network_unref(subnet);
+ 				break;
+-- 
+2.20.1
+
+From 4de8ff8e5435225d3375a168054490d2a66b1baf Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 15:15:33 +0000
+Subject: [PATCH 106/111] network: Call subnet function with the correct order
+ of arguments
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/network.c b/src/network.c
+index 19c387d..a96ce6d 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -695,14 +695,14 @@ LOC_EXPORT struct loc_network_list* loc_network_exclude_list(
+ 			subnet = loc_network_list_get(list, i);
+ 
+ 			// Drop this subnet if is a subnet of another subnet
+-			if (loc_network_is_subnet(subnet_to_check, subnet)) {
++			if (loc_network_is_subnet(subnet, subnet_to_check)) {
+ 				passed = 0;
+ 				loc_network_unref(subnet);
+ 				break;
+ 			}
+ 
+ 			// Break it down if it overlaps
+-			if (loc_network_overlaps(subnet_to_check, subnet)) {
++			if (loc_network_overlaps(subnet, subnet_to_check)) {
+ 				passed = 0;
+ 
+ 				__loc_network_exclude_to_list(subnet_to_check, subnet, to_check);
+-- 
+2.20.1
+
+From 058e7800e56150bcf0fb8dceaae6fbab1ed239e4 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 15:16:06 +0000
+Subject: [PATCH 107/111] network: Massively improve performance on exclude
+
+When we check the result for any overlaps, we can cut this short
+by walking through both lists from start to end and remember the
+last network that we checked.
+
+The next one will by definition be strictly greater and therefore
+we do not need to check anything before this any more.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network.c | 19 +++++++++++++++++--
+ 1 file changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/src/network.c b/src/network.c
+index a96ce6d..10fa997 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -679,8 +679,10 @@ LOC_EXPORT struct loc_network_list* loc_network_exclude_list(
+ 		return NULL;
+ 	}
+ 
++	off_t smallest_subnet = 0;
++
+ 	while (!loc_network_list_empty(to_check)) {
+-		struct loc_network* subnet_to_check = loc_network_list_pop(to_check);
++		struct loc_network* subnet_to_check = loc_network_list_pop_first(to_check);
+ 
+ 		// Check whether the subnet to check is part of the input list
+ 		if (loc_network_list_contains(list, subnet_to_check)) {
+@@ -691,7 +693,7 @@ LOC_EXPORT struct loc_network_list* loc_network_exclude_list(
+ 		// Marks whether this subnet passed all checks
+ 		int passed = 1;
+ 
+-		for (unsigned int i = 0; i < loc_network_list_size(list); i++) {
++		for (unsigned int i = smallest_subnet; i < loc_network_list_size(list); i++) {
+ 			subnet = loc_network_list_get(list, i);
+ 
+ 			// Drop this subnet if is a subnet of another subnet
+@@ -711,6 +713,19 @@ LOC_EXPORT struct loc_network_list* loc_network_exclude_list(
+ 				break;
+ 			}
+ 
++			// If the subnet is strictly greater, we do not need to continue the search
++			r = loc_network_cmp(subnet, subnet_to_check);
++			if (r > 0) {
++				loc_network_unref(subnet);
++				break;
++
++			// If it is strictly smaller, we can continue the search from here next
++			// time because all networks that are to be checked can only be larger
++			// than this one.
++			} else if (r < 0) {
++				smallest_subnet = i;
++			}
++
+ 			loc_network_unref(subnet);
+ 		}
+ 
+-- 
+2.20.1
+
+From 9caf6cf5f0fd5eb56ad1678910dbc8017f48863c Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 15:17:21 +0000
+Subject: [PATCH 108/111] network: Remove deprecated sort call
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network.c | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/src/network.c b/src/network.c
+index 10fa997..4d7ac79 100644
+--- a/src/network.c
++++ b/src/network.c
+@@ -738,9 +738,6 @@ LOC_EXPORT struct loc_network_list* loc_network_exclude_list(
+ 
+ 	loc_network_list_unref(to_check);
+ 
+-	// Sort the result
+-	loc_network_list_sort(subnets);
+-
+ 	return subnets;
+ }
+ 
+-- 
+2.20.1
+
+From 8ebf1d3912020d5c0ed98bb32a0640952bd6447c Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 15:17:42 +0000
+Subject: [PATCH 109/111] network-list: Include network header
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/loc/network-list.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/loc/network-list.h b/src/loc/network-list.h
+index 21c7402..bee21c4 100644
+--- a/src/loc/network-list.h
++++ b/src/loc/network-list.h
+@@ -17,6 +17,8 @@
+ #ifndef LIBLOC_NETWORK_LIST_H
+ #define LIBLOC_NETWORK_LIST_H
+ 
++#include <loc/network.h>
++
+ struct loc_network_list;
+ int loc_network_list_new(struct loc_ctx* ctx, struct loc_network_list** list);
+ struct loc_network_list* loc_network_list_ref(struct loc_network_list* list);
+-- 
+2.20.1
+
+From fff093b6827a31ff84a6d5150bfede140b696d25 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 15:24:43 +0000
+Subject: [PATCH 110/111] network-list: Use clear function to tidy up
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/network-list.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/network-list.c b/src/network-list.c
+index bd3d64e..f3458b4 100644
+--- a/src/network-list.c
++++ b/src/network-list.c
+@@ -70,8 +70,8 @@ LOC_EXPORT struct loc_network_list* loc_network_list_ref(struct loc_network_list
+ static void loc_network_list_free(struct loc_network_list* list) {
+ 	DEBUG(list->ctx, "Releasing network list at %p\n", list);
+ 
+-	for (unsigned int i = 0; i < list->size; i++)
+-		loc_network_unref(list->elements[i]);
++	// Remove all content
++	loc_network_list_clear(list);
+ 
+ 	loc_unref(list->ctx);
+ 	free(list);
+-- 
+2.20.1
+
+From adbec5c0317a1c007a897fe3f63f0f86ff448124 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Wed, 25 Nov 2020 20:00:46 +0000
+Subject: [PATCH 111/111] configure: Bump version to 0.9.5
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index 2364dfd..012d8ca 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -1,6 +1,6 @@
+ AC_PREREQ(2.60)
+ AC_INIT([libloc],
+-        [0.9.4],
++        [0.9.5],
+         [location@lists.ipfire.org],
+         [libloc],
+         [https://location.ipfire.org/])
 -- 
 2.20.1
 
