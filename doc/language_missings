@@ -816,6 +816,9 @@
 < tor exit country
 < tor exit country any
 < tor exit nodes
+< tor guard country
+< tor guard country any
+< tor guard nodes
 < tor relay address
 < tor relay configuration
 < tor relay enabled
@@ -835,6 +838,7 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< tor use guard nodes
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -963,6 +967,10 @@
 < g.lite
 < ip basic info
 < ip info for
+< tor guard country
+< tor guard country any
+< tor guard nodes
+< tor use guard nodes
 < upload fcdsl.o
 < whois results from
 ############################################################################
@@ -1268,6 +1276,10 @@
 < tcp more reliable
 < ten minutes
 < thirty minutes
+< tor guard country
+< tor guard country any
+< tor guard nodes
+< tor use guard nodes
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -1697,6 +1709,10 @@
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< tor guard country
+< tor guard country any
+< tor guard nodes
+< tor use guard nodes
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -2508,6 +2524,9 @@
 < tor exit country
 < tor exit country any
 < tor exit nodes
+< tor guard country
+< tor guard country any
+< tor guard nodes
 < tor relay address
 < tor relay configuration
 < tor relay enabled
@@ -2527,6 +2546,7 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< tor use guard nodes
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -3384,6 +3404,9 @@
 < tor exit country
 < tor exit country any
 < tor exit nodes
+< tor guard country
+< tor guard country any
+< tor guard nodes
 < tor relay address
 < tor relay configuration
 < tor relay enabled
@@ -3403,6 +3426,7 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< tor use guard nodes
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -3665,6 +3689,10 @@
 < subnet mask
 < system is offline
 < taa zombieload2
+< tor guard country
+< tor guard country any
+< tor guard nodes
+< tor use guard nodes
 < transport mode does not support vti
 < update ruleset
 < user management

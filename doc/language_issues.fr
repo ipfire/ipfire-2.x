@@ -917,4 +917,7 @@ WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
+WARNING: untranslated string: tor guard country any = Any country
+WARNING: untranslated string: tor guard nodes = Guard Nodes
+WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
 WARNING: untranslated string: whois results from = WHOIS results from

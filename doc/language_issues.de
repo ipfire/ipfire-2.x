@@ -733,6 +733,7 @@ WARNING: translation string unused: tor accounting period daily
 WARNING: translation string unused: tor accounting period monthly
 WARNING: translation string unused: tor accounting period weekly
 WARNING: translation string unused: tor exit country
+WARNING: translation string unused: tor guard country
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad
