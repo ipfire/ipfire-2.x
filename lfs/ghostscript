@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 9.26
+VER        = 9.53.3
 
 THISAPP    = ghostscript-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ghostscript
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = cups dbus libtiff
 
@@ -48,7 +48,7 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 ghostscript-fonts-std-8.11.tar.gz = $(URL_IPFIRE)/ghostscript-fonts-std-8.11.tar.gz
 gnu-gs-fonts-other-6.0.tar.gz = $(URL_IPFIRE)/gnu-gs-fonts-other-6.0.tar.gz
 
-$(DL_FILE)_MD5 = 806bc2dedbc7f69b003f536658e08d4a
+$(DL_FILE)_MD5 = bf0b41d6e19fdeb4b050afad309248d2
 ghostscript-fonts-std-8.11.tar.gz_MD5 = 6865682b095f8c4500c54b285ff05ef6
 gnu-gs-fonts-other-6.0.tar.gz_MD5 = 33457d3f37de7ef03d2eea05a9e6aa4f
 
