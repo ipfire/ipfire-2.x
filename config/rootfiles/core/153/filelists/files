@@ -20,6 +20,8 @@ srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromcountry.dat
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/remote.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+srv/web/ipfire/cgi-bin/zoneconf.cgi
+srv/web/ipfire/html/include/zoneconf.js
 usr/lib/firewall/rules.pl
 var/ipfire/location-functions.pl
 var/ipfire/langs
