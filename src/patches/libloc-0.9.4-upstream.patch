@@ -1,5 +1,5 @@
 diff --git a/Makefile.am b/Makefile.am
-index a0431a6..ebd7e17 100644
+index a0431a6..dc594f8 100644
 --- a/Makefile.am
 +++ b/Makefile.am
 @@ -91,11 +91,14 @@ EXTRA_DIST += \
@@ -54,8 +54,17 @@ index a0431a6..ebd7e17 100644
  src_test_stringpool_SOURCES = \
  	src/test-stringpool.c
  
+@@ -390,7 +406,7 @@ MANPAGES_XML  = $(patsubst %.txt,%.xml,$(MANPAGES_TXT))
+ .PHONY: man
+ man: $(MANPAGES) $(MANPAGES_HTML)
+ 
+-if ENABLE_MANPAGES
++if ENABLE_MAN_PAGES
+ man_MANS = \
+ 	$(MANPAGES)
+ endif
 diff --git a/configure.ac b/configure.ac
-index 2364dfd..012d8ca 100644
+index 2364dfd..9eb9012 100644
 --- a/configure.ac
 +++ b/configure.ac
 @@ -1,6 +1,6 @@
@@ -66,6 +75,28 @@ index 2364dfd..012d8ca 100644
          [location@lists.ipfire.org],
          [libloc],
          [https://location.ipfire.org/])
+@@ -43,16 +43,16 @@ AC_PROG_MKDIR_P
+ 
+ # - man ------------------------------------------------------------------------
+ 
+-have_manpages=no
+-AC_ARG_ENABLE(manpages, AS_HELP_STRING([--disable-man-pages],
++have_man_pages=no
++AC_ARG_ENABLE(man_pages, AS_HELP_STRING([--disable-man-pages],
+ 	[do not install man pages]))
+-AS_IF([test "x$enable_manpages" != xno], [have_manpages=yes])
+-AM_CONDITIONAL(ENABLE_MANPAGES, [test "x$have_manpages" = "xyes"])
++AS_IF([test "x$enable_man_pages" != xno], [have_man_pages=yes])
++AM_CONDITIONAL(ENABLE_MAN_PAGES, [test "x$have_man_pages" = "xyes"])
+ 
+ AC_PATH_PROG([XSLTPROC], [xsltproc])
+ 
+ AC_CHECK_PROGS(ASCIIDOC, [asciidoc])
+-if test "${have_manpages}" = "yes" && test -z "${ASCIIDOC}"; then
++if test "${have_man_pages}" = "yes" && test -z "${ASCIIDOC}"; then
+ 	AC_MSG_ERROR([Required program 'asciidoc' not found])
+ fi
+ # - debug ----------------------------------------------------------------------
 diff --git a/src/.gitignore b/src/.gitignore
 index caf80b5..3ccbdb8 100644
 --- a/src/.gitignore
@@ -456,7 +487,7 @@ index 2ba93e6..7aac0db 100644
  	if (!c)
  		return -ENOMEM;
 diff --git a/src/database.c b/src/database.c
-index fa1dad0..1871b74 100644
+index fa1dad0..7100298 100644
 --- a/src/database.c
 +++ b/src/database.c
 @@ -38,8 +38,10 @@
@@ -497,6 +528,20 @@ index fa1dad0..1871b74 100644
  };
  
  static int loc_database_read_magic(struct loc_database* db) {
+@@ -242,11 +250,11 @@ static int loc_database_read_signature(struct loc_database* db,
+ 		char** dst, char* src, size_t length) {
+ 	// Check for a plausible signature length
+ 	if (length > LOC_SIGNATURE_MAX_LENGTH) {
+-		ERROR(db->ctx, "Signature too long: %ld\n", length);
++		ERROR(db->ctx, "Signature too long: %zu\n", length);
+ 		return -EINVAL;
+ 	}
+ 
+-	DEBUG(db->ctx, "Reading signature of %ld bytes\n", length);
++	DEBUG(db->ctx, "Reading signature of %zu bytes\n", length);
+ 
+ 	// Allocate space
+ 	*dst = malloc(length);
 @@ -611,7 +619,7 @@ LOC_EXPORT int loc_database_verify(struct loc_database* db, FILE* f) {
  	}
  
@@ -1336,10 +1381,10 @@ index 70c3803..af3dafd 100644
  
 diff --git a/src/network-list.c b/src/network-list.c
 new file mode 100644
-index 0000000..e2b20f3
+index 0000000..698d3ab
 --- /dev/null
 +++ b/src/network-list.c
-@@ -0,0 +1,295 @@
+@@ -0,0 +1,299 @@
 +/*
 +	libloc - A library to determine the location of someone on the Internet
 +
@@ -1476,6 +1521,10 @@ index 0000000..e2b20f3
 +
 +static off_t loc_network_list_find(struct loc_network_list* list,
 +		struct loc_network* network, int* found) {
++	// Insert at the beginning for an empty list
++	if (loc_network_list_empty(list))
++		return 0;
++
 +	off_t lo = 0;
 +	off_t hi = list->size - 1;
 +	int result;
@@ -2235,7 +2284,7 @@ index dcf3f0d..b7676d2 100644
  		if (err) {
  			croak("Could not create a database enumerator\n");
 diff --git a/src/python/database.c b/src/python/database.c
-index 1013a58..f385c61 100644
+index 1013a58..0aa03cc 100644
 --- a/src/python/database.c
 +++ b/src/python/database.c
 @@ -17,6 +17,8 @@
@@ -2326,7 +2375,7 @@ index 1013a58..f385c61 100644
 +			return NULL;
 +		}
 +
-+		for (unsigned int i = 0; i < PyList_Size(country_codes); i++) {
++		for (int i = 0; i < PyList_Size(country_codes); i++) {
 +			PyObject* item = PyList_GetItem(country_codes, i);
 +
 +			if (!PyUnicode_Check(item)) {
@@ -2385,7 +2434,7 @@ index 1013a58..f385c61 100644
 +			return NULL;
 +		}
 +
-+		for (unsigned int i = 0; i < PyList_Size(asn_list); i++) {
++		for (int i = 0; i < PyList_Size(asn_list); i++) {
 +			PyObject* item = PyList_GetItem(asn_list, i);
 +
 +			if (!PyLong_Check(item)) {
@@ -3125,10 +3174,14 @@ index 44ad726..b30beae 100644
  		with open(ns.public_key, "r") as f:
  			if not db.verify(f):
 diff --git a/src/python/network.c b/src/python/network.c
-index 5496d1e..b6e92fb 100644
+index 5496d1e..5b1369d 100644
 --- a/src/python/network.c
 +++ b/src/python/network.c
-@@ -20,10 +20,29 @@
+@@ -17,13 +17,33 @@
+ #include <Python.h>
+ 
+ #include <errno.h>
++#include <limits.h>
  
  #include <loc/libloc.h>
  #include <loc/network.h>
@@ -3158,7 +3211,27 @@ index 5496d1e..b6e92fb 100644
  PyObject* new_network(PyTypeObject* type, struct loc_network* network) {
  	NetworkObject* self = (NetworkObject*)type->tp_alloc(type, 0);
  	if (self) {
-@@ -154,13 +173,28 @@ static PyObject* Network_set_flag(NetworkObject* self, PyObject* args) {
+@@ -114,10 +134,18 @@ static int Network_set_asn(NetworkObject* self, PyObject* value) {
+ 	long int asn = PyLong_AsLong(value);
+ 
+ 	// Check if the ASN is within the valid range
+-	if (asn <= 0 || asn > UINT32_MAX) {
++	if (asn <= 0) {
++		PyErr_Format(PyExc_ValueError, "Invalid ASN %ld", asn);
++		return -1;
++	}
++
++#if (__WORDSIZE > 32)
++	// Check whether the input was longer than 32 bit
++	if (asn > UINT32_MAX) {
+ 		PyErr_Format(PyExc_ValueError, "Invalid ASN %ld", asn);
+ 		return -1;
+ 	}
++#endif
+ 
+ 	int r = loc_network_set_asn(self->network, asn);
+ 	if (r)
+@@ -154,13 +182,28 @@ static PyObject* Network_set_flag(NetworkObject* self, PyObject* args) {
  	Py_RETURN_NONE;
  }
  
@@ -3188,7 +3261,7 @@ index 5496d1e..b6e92fb 100644
  		Py_RETURN_TRUE;
  
  	Py_RETURN_FALSE;
-@@ -181,6 +215,26 @@ static PyObject* Network_get_first_address(NetworkObject* self) {
+@@ -181,6 +224,26 @@ static PyObject* Network_get_first_address(NetworkObject* self) {
  	return obj;
  }
  
@@ -3215,7 +3288,7 @@ index 5496d1e..b6e92fb 100644
  static PyObject* Network_get_last_address(NetworkObject* self) {
  	char* address = loc_network_format_last_address(self->network);
  
-@@ -190,7 +244,19 @@ static PyObject* Network_get_last_address(NetworkObject* self) {
+@@ -190,7 +253,19 @@ static PyObject* Network_get_last_address(NetworkObject* self) {
  	return obj;
  }
  
@@ -3235,7 +3308,7 @@ index 5496d1e..b6e92fb 100644
  	{
  		"has_flag",
  		(PyCFunction)Network_has_flag,
-@@ -241,6 +307,13 @@ static struct PyGetSetDef Network_getsetters[] = {
+@@ -241,6 +316,13 @@ static struct PyGetSetDef Network_getsetters[] = {
  		NULL,
  		NULL,
  	},
@@ -3249,7 +3322,7 @@ index 5496d1e..b6e92fb 100644
  	{
  		"last_address",
  		(getter)Network_get_last_address,
-@@ -248,6 +321,13 @@ static struct PyGetSetDef Network_getsetters[] = {
+@@ -248,6 +330,13 @@ static struct PyGetSetDef Network_getsetters[] = {
  		NULL,
  		NULL,
  	},
@@ -3743,7 +3816,7 @@ index d38f13d..dde13f1 100644
  	// And open it again from disk
  	struct loc_database* db;
 diff --git a/src/writer.c b/src/writer.c
-index 5939cff..2f09b56 100644
+index 5939cff..c61a6df 100644
 --- a/src/writer.c
 +++ b/src/writer.c
 @@ -147,8 +147,19 @@ static void loc_writer_free(struct loc_writer* writer) {
@@ -3768,3 +3841,12 @@ index 5939cff..2f09b56 100644
  	}
  
  	// Release network tree
+@@ -601,7 +612,7 @@ static int loc_writer_create_signature(struct loc_writer* writer,
+ 		goto END;
+ 	}
+ 
+-	DEBUG(writer->ctx, "Successfully generated signature of %lu bytes\n", *length);
++	DEBUG(writer->ctx, "Successfully generated signature of %zu bytes\n", *length);
+ 	r = 0;
+ 
+ 	// Dump signature
