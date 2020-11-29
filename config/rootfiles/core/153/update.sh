@@ -102,6 +102,9 @@ ldconfig
 # Update permissions
 chown -vR root:root /etc/ntp
 
+# Update owernship of "/var/ipfire/red"
+chown nobody:nobody /var/ipfire/red
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
