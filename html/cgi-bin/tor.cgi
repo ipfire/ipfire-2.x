@@ -340,7 +340,7 @@ END
 			@guard_countries = split(/\|/, $settings{'TOR_GUARD_COUNTRY'});
 		}
 
-		my @country_codes = &Location::database_countries($db_handle);
+		my @country_codes = &Location::Functions::get_locations("no_special_locations");
 		foreach my $country_code (@country_codes) {
 			# Convert country code into upper case format.
 			$country_code = uc($country_code);
