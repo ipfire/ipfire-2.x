@@ -90,6 +90,8 @@ rm -rf /lib/modules
 
 # Stop services
 /etc/init.d/ipsec stop
+/usr/local/bin/openvpnctrl -k
+/usr/local/bin/openvpnctrl -kn2n
 
 # Extract files
 extract_files
@@ -116,6 +118,8 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
     /etc/init.d/ipsec start
 fi
 /etc/init.d/suricata restart
+/usr/local/bin/openvpnctrl -s
+/usr/local/bin/openvpnctrl -sn2n
 
 # Reload sysctl.conf
 sysctl -p
