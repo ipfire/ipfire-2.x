@@ -73,6 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Apply upstream patches.
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-013-dyfi-use-https.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-013-ddnss-fix-unhandled-exeption-on-update-patch
 
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure \
