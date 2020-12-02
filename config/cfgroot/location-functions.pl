@@ -163,9 +163,6 @@ sub get_full_country_name($) {
 		# Grab location name from hash.
 		$name = $not_iso_3166_location{$code};
 	} else {
-		# Init libloc database connection.
-		my $db_handle = &init();
-
 		# Get the country name by using the location module.
 		$name = &Location::get_country_name($db_handle, $code);
 	}
