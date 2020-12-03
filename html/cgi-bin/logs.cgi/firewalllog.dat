@@ -24,9 +24,6 @@ require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
-# Libloc database handle.
-my $libloc_db_handle = &Location::Functions::init();
-
 my %color = ();
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -354,7 +351,8 @@ foreach $_ (@log)
 	$srcport=$1 if $packet =~ /SPT=(\d+)/;
 	$dstport=$1 if $packet =~ /DPT=(\d+)/;
 
-	my $ccode = &Location::Functions::lookup_country_code($libloc_db_handle, $srcaddr);
+	# Get the country code.
+	my $ccode = &Location::Functions::lookup_country_code($srcaddr);
 
 	my $servi = uc(getservbyport($srcport, lc($proto)));
 	if ($servi ne '' && $srcport < 1024) {

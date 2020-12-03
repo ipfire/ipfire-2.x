@@ -457,6 +457,7 @@ END
 						if (($line =~ /\"$vpnconfig{$key}[1]\".*IPsec SA established/) || ($line =~/$vpnconfig{$key}[1]\{.*INSTALLED/ )){
 							$activecolor = $Header::colourgreen;
 							$activestatus = $Lang::tr{'capsopen'};
+							last;
 						} elsif ($line =~ /$vpnconfig{$key}[1]\[.*CONNECTING/) {
 							$activecolor = $Header::colourorange;
 							$activestatus = $Lang::tr{'vpn connecting'};

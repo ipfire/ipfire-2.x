@@ -15,6 +15,7 @@ var/ipfire/lynis/db/languages/br
 var/ipfire/lynis/db/languages/cn
 var/ipfire/lynis/db/languages/da
 var/ipfire/lynis/db/languages/de
+var/ipfire/lynis/db/languages/de-AT
 var/ipfire/lynis/db/languages/en
 var/ipfire/lynis/db/languages/en-GB
 var/ipfire/lynis/db/languages/en-US

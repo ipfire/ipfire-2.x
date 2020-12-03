@@ -258,8 +258,6 @@ WARNING: translation string unused: dns new 0
 WARNING: translation string unused: dns new 1
 WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
-WARNING: translation string unused: dns server
-WARNING: translation string unused: dns servers
 WARNING: translation string unused: dnsforward forward_server
 WARNING: translation string unused: dnssec information
 WARNING: translation string unused: do not log this port list
@@ -886,6 +884,8 @@ WARNING: untranslated string: advproxy wpad label dst_noproxy_url = Excluded URL
 WARNING: untranslated string: advproxy wpad notice = Notice: For WPAD/PAC to work properly, furtcher changes need to be made. Please see the <a href="https://wiki.ipfire.org/configuration/network/proxy/extend/wpad" target="_blank">Wiki</a>.
 WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Protocol (WPAD) / Proxy Auto-Config (PAC)
 WARNING: untranslated string: advproxy wpad view pac = Open PAC File
+WARNING: untranslated string: asn lookup failed = AS lookup failed
+WARNING: untranslated string: autonomous system = Autonomous System
 WARNING: untranslated string: broken = Broken
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: cpu frequency = CPU frequency
@@ -896,10 +896,10 @@ WARNING: untranslated string: default IP address = Default IP Address
 WARNING: untranslated string: desired = Desired
 WARNING: untranslated string: disable = Disable
 WARNING: untranslated string: disconnected = Disconnected
-WARNING: untranslated string: dns = unknown string
 WARNING: untranslated string: dns check servers = Check DNS Servers
 WARNING: untranslated string: dns configuration = DNS Configuration
 WARNING: untranslated string: dns enable safe-search = Enable Safe Search
+WARNING: untranslated string: dns enable safe-search youtube = Include YouTube in Safe Search
 WARNING: untranslated string: dns forward disable dnssec = Disable DNSSEC (dangerous)
 WARNING: untranslated string: dns forwarding dnssec disabled notice = (DNSSEC disabled)
 WARNING: untranslated string: dns isp assigned nameserver = ISP-assigned DNS server
@@ -983,6 +983,8 @@ WARNING: untranslated string: invalid input for interface mtu = Invalid input to
 WARNING: untranslated string: invalid input for local ip address = Invalid input for local IP address
 WARNING: untranslated string: invalid input for mode = Invalid input for mode
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
+WARNING: untranslated string: ip basic info = Basic IP information
+WARNING: untranslated string: ip info for = IP information for
 WARNING: untranslated string: ipsec connection = IPsec Connection
 WARNING: untranslated string: ipsec interface mode gre = GRE
 WARNING: untranslated string: ipsec interface mode none = - None (Default) -
@@ -1045,6 +1047,9 @@ WARNING: untranslated string: strict = Strict
 WARNING: untranslated string: subnet mask = Subnet Mask
 WARNING: untranslated string: system is offline = The system is offline.
 WARNING: untranslated string: taa zombieload2 = TSX Async Abort / ZombieLoad v2
+WARNING: untranslated string: tor guard country any = Any country
+WARNING: untranslated string: tor guard nodes = Guard Nodes
+WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: update ruleset = Update ruleset
 WARNING: untranslated string: user management = User Management
@@ -1054,7 +1059,11 @@ WARNING: untranslated string: vpn subjectaltname missing = SubjectAlternativeNam
 WARNING: untranslated string: vpn wait = WAITING
 WARNING: untranslated string: vulnerability = Vulnerability
 WARNING: untranslated string: vulnerable = Vulnerable
+WARNING: untranslated string: whois results from = WHOIS results from
 WARNING: untranslated string: winbind daemon = Winbind Daemon
+WARNING: untranslated string: wlanap 802.11w disabled = Disabled
+WARNING: untranslated string: wlanap 802.11w enforced = Enforced
+WARNING: untranslated string: wlanap 802.11w optional = Optional
 WARNING: untranslated string: wlanap auto = Automatic Channel Selection
 WARNING: untranslated string: wlanap broadcast ssid = Broadcast SSID
 WARNING: untranslated string: wlanap client isolation = Client Isolation

@@ -86,9 +86,6 @@ if ( $debug ){
 my @dummy = ( ${Header::table1colour} );
 undef (@dummy);
 
-# Init libloc database connection.
-my $libloc_db_handle = &Location::Functions::init();
-
 # check sorting arguments
 if ( $cgiin{'sort_field'} ~~ [ '1','2','3','4','5','6','7','8','9' ] ) {
 	$SORT_FIELD = $cgiin{'sort_field'};
@@ -554,9 +551,9 @@ foreach my $line (@conntrack) {
 	my $bytes_out = format_bytes($bytes[1]);
 
 	# enumerate location information
-	my $srcccode = &Location::Functions::lookup_country_code($libloc_db_handle, $sip_ret);
+	my $srcccode = &Location::Functions::lookup_country_code($sip_ret);
 	my $src_flag_icon = &Location::Functions::get_flag_icon($srcccode);
-	my $dstccode = &Location::Functions::lookup_country_code($libloc_db_handle, $dip_ret);
+	my $dstccode = &Location::Functions::lookup_country_code($dip_ret);
 	my $dst_flag_icon = &Location::Functions::get_flag_icon($dstccode);
 
 	# Format TTL

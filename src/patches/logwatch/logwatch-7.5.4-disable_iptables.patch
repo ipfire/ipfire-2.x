@@ -1,0 +1,14 @@
+diff -U 3 a/conf/logwatch.conf b/conf/logwatch.conf
+--- a/conf/logwatch.conf	Thu Sep 19 01:58:55 2019
++++ b/conf/logwatch.conf	Thu Nov 26 18:46:12 2020
+@@ -94,6 +94,10 @@
+                             # prints useful system configuration info.
+ Service = "-eximstats"      # Prevents execution of eximstats service, which
+                             # is a wrapper for the eximstats program.
++
++# Disabled: 'iptables'
++Service = "-iptables"
++
+ # If you only cared about FTP messages, you could use these 2 lines
+ # instead of the above:
+ #Service = ftpd-messages   # Processes ftpd messages in /var/log/messages

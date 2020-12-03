@@ -262,8 +262,6 @@ WARNING: translation string unused: dns new 0
 WARNING: translation string unused: dns new 1
 WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
-WARNING: translation string unused: dns server
-WARNING: translation string unused: dns servers
 WARNING: translation string unused: dnssec information
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master
@@ -879,9 +877,9 @@ WARNING: translation string unused: zoneconf val ppp assignment error
 WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val zoneslave amount error
-WARNING: untranslated string: desired = Desired
-WARNING: untranslated string: disable = Disable
-WARNING: untranslated string: enable = Enable
+WARNING: untranslated string: asn lookup failed = AS lookup failed
+WARNING: untranslated string: autonomous system = Autonomous System
+WARNING: untranslated string: dns enable safe-search youtube = Include YouTube in Safe Search
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
@@ -913,15 +911,13 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: netbios nameserver daemon = NetBIOS Nameserver Daemon
-WARNING: untranslated string: optional = Optional
+WARNING: untranslated string: ip basic info = Basic IP information
+WARNING: untranslated string: ip info for = IP information for
 WARNING: untranslated string: pakfire ago = ago.
-WARNING: untranslated string: required = Required
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
-WARNING: untranslated string: samba server role member = Domain Member
-WARNING: untranslated string: samba server role standalone = Standalone
-WARNING: untranslated string: smb daemon = SMB Daemon
-WARNING: untranslated string: user management = User Management
-WARNING: untranslated string: winbind daemon = Winbind Daemon
+WARNING: untranslated string: tor guard country any = Any country
+WARNING: untranslated string: tor guard nodes = Guard Nodes
+WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
+WARNING: untranslated string: whois results from = WHOIS results from

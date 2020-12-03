@@ -24,13 +24,17 @@
 
 include Config
 
-VER        = 5.0.4
+VER        = 6.0.0
 
 THISAPP    = suricata-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+
+ifeq "$(BUILD_ARCH)" "armv5tel"
+	LDFLAGS += -latomic
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c08809d5641a790a95a56d4dc7eba2f2
+$(DL_FILE)_MD5 = bbddcf2f209930206ef21977d40120d2
 
 install : $(TARGET)
 
@@ -70,7 +74,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure \
+	cd $(DIR_APP) && LDFLAGS="$(LDFLAGS)" ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
 		--localstatedir=/var \

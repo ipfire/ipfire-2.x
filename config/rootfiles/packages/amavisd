@@ -1,7 +1,0 @@
-etc/amavisd.conf
-etc/rc.d/init.d/amavisd
-usr/bin/amavisd
-var/amavis
-var/amavis/db
-var/amavis/tmp
-var/virusmails

@@ -235,8 +235,6 @@ WARNING: translation string unused: dns new 0
 WARNING: translation string unused: dns new 1
 WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
-WARNING: translation string unused: dns server
-WARNING: translation string unused: dns servers
 WARNING: translation string unused: dnssec information
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master
@@ -735,6 +733,7 @@ WARNING: translation string unused: tor accounting period daily
 WARNING: translation string unused: tor accounting period monthly
 WARNING: translation string unused: tor accounting period weekly
 WARNING: translation string unused: tor exit country
+WARNING: translation string unused: tor guard country
 WARNING: translation string unused: traffic back
 WARNING: translation string unused: traffic calc time
 WARNING: translation string unused: traffic calc time bad
@@ -888,3 +887,6 @@ WARNING: untranslated string: show tls-auth key = Show tls-auth key
 WARNING: untranslated string: smb daemon = SMB Daemon
 WARNING: untranslated string: user management = User Management
 WARNING: untranslated string: winbind daemon = Winbind Daemon
+WARNING: untranslated string: wlanap 802.11w disabled = Disabled
+WARNING: untranslated string: wlanap 802.11w enforced = Enforced
+WARNING: untranslated string: wlanap 802.11w optional = Optional

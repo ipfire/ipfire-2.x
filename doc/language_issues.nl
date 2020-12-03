@@ -234,7 +234,6 @@ WARNING: translation string unused: dns new 0
 WARNING: translation string unused: dns new 1
 WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
-WARNING: translation string unused: dns server
 WARNING: translation string unused: dnsforward forward_server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master
@@ -893,7 +892,9 @@ WARNING: untranslated string: advproxy wpad notice = Notice: For WPAD/PAC to wor
 WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Protocol (WPAD) / Proxy Auto-Config (PAC)
 WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: application layer gateways = Application Layer Gateways
+WARNING: untranslated string: asn lookup failed = AS lookup failed
 WARNING: untranslated string: atm device = Device:
+WARNING: untranslated string: autonomous system = Autonomous System
 WARNING: untranslated string: block = Block
 WARNING: untranslated string: broken = Broken
 WARNING: untranslated string: bytes = unknown string
@@ -919,10 +920,10 @@ WARNING: untranslated string: dhcp dns update secret = Secret
 WARNING: untranslated string: disable = Disable
 WARNING: untranslated string: disconnected = Disconnected
 WARNING: untranslated string: dl client arch insecure = Download insecure Client Package (zip)
-WARNING: untranslated string: dns = unknown string
 WARNING: untranslated string: dns check servers = Check DNS Servers
 WARNING: untranslated string: dns configuration = DNS Configuration
 WARNING: untranslated string: dns enable safe-search = Enable Safe Search
+WARNING: untranslated string: dns enable safe-search youtube = Include YouTube in Safe Search
 WARNING: untranslated string: dns forward disable dnssec = Disable DNSSEC (dangerous)
 WARNING: untranslated string: dns forwarding dnssec disabled notice = (DNSSEC disabled)
 WARNING: untranslated string: dns isp assigned nameserver = ISP-assigned DNS server
@@ -1059,6 +1060,8 @@ WARNING: untranslated string: invalid input for mode = Invalid input for mode
 WARNING: untranslated string: invalid input for valid till days = Invalid input for Valid till (days).
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: invalid logserver protocol = Invalid syslogd server protocol
+WARNING: untranslated string: ip basic info = Basic IP information
+WARNING: untranslated string: ip info for = IP information for
 WARNING: untranslated string: ipsec connection = IPsec Connection
 WARNING: untranslated string: ipsec interface mode gre = GRE
 WARNING: untranslated string: ipsec interface mode none = - None (Default) -
@@ -1184,6 +1187,9 @@ WARNING: untranslated string: taa zombieload2 = TSX Async Abort / ZombieLoad v2
 WARNING: untranslated string: tcp more reliable = TCP (more reliable)
 WARNING: untranslated string: ten minutes = 10 Minutes
 WARNING: untranslated string: thirty minutes = 30 Minutes
+WARNING: untranslated string: tor guard country any = Any country
+WARNING: untranslated string: tor guard nodes = Guard Nodes
+WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: twelve hours = 12 Hours
 WARNING: untranslated string: two weeks = Two Weeks
@@ -1214,6 +1220,7 @@ WARNING: untranslated string: vpn wait = WAITING
 WARNING: untranslated string: vpn weak = Weak
 WARNING: untranslated string: vulnerability = Vulnerability
 WARNING: untranslated string: vulnerable = Vulnerable
+WARNING: untranslated string: whois results from = WHOIS results from
 WARNING: untranslated string: winbind daemon = Winbind Daemon
 WARNING: untranslated string: wireless network = WiFi Network
 WARNING: untranslated string: wlan client anonymous identity = Anonymous Identity
@@ -1231,6 +1238,9 @@ WARNING: untranslated string: wlan client password = Password
 WARNING: untranslated string: wlan client tls cipher = TLS Cipher
 WARNING: untranslated string: wlan client tls version = TLS Version
 WARNING: untranslated string: wlanap = Access Point
+WARNING: untranslated string: wlanap 802.11w disabled = Disabled
+WARNING: untranslated string: wlanap 802.11w enforced = Enforced
+WARNING: untranslated string: wlanap 802.11w optional = Optional
 WARNING: untranslated string: wlanap auto = Automatic Channel Selection
 WARNING: untranslated string: wlanap broadcast ssid = Broadcast SSID
 WARNING: untranslated string: wlanap client isolation = Client Isolation

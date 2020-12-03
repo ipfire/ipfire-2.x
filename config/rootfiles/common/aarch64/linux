@@ -7072,6 +7072,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/dw
 #lib/modules/KVER-ipfire/build/include/config/dw/apb
 #lib/modules/KVER-ipfire/build/include/config/dw/apb/ictl.h
+#lib/modules/KVER-ipfire/build/include/config/dw/apb/timer
+#lib/modules/KVER-ipfire/build/include/config/dw/apb/timer.h
+#lib/modules/KVER-ipfire/build/include/config/dw/apb/timer/of.h
 #lib/modules/KVER-ipfire/build/include/config/dw/dmac
 #lib/modules/KVER-ipfire/build/include/config/dw/dmac/core.h
 #lib/modules/KVER-ipfire/build/include/config/dw/dmac/pci.h
@@ -9617,6 +9620,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/s2io.h
 #lib/modules/KVER-ipfire/build/include/config/sata
 #lib/modules/KVER-ipfire/build/include/config/sata/ahci
+#lib/modules/KVER-ipfire/build/include/config/sata/ahci.h
 #lib/modules/KVER-ipfire/build/include/config/sata/ahci/platform.h
 #lib/modules/KVER-ipfire/build/include/config/sata/dwc.h
 #lib/modules/KVER-ipfire/build/include/config/sata/mv.h
@@ -17306,7 +17310,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/ata/ahci_platform.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/ata/ahci_qoriq.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/ata/ahci_sunxi.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/ata/libahci.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/ata/libahci_platform.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/ata/sata_dwc_460ex.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/ata/sata_mv.ko.xz

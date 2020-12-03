@@ -78,6 +78,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvf $(DIR_DL)/$(DL_FILE)
 
+	# Import changes from upstream
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.4-upstream.patch
+
 	# Add patch for i586 to disable strong stack protector.
 ifeq "$(BUILD_ARCH)" "i586"
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.3-perl-i586-regular-stack-protector.patch
@@ -88,7 +91,7 @@ endif
 		--prefix=/usr \
 		--sysconfdir=/etc \
 		--localstatedir=/var \
-		--disable-manpages
+		--disable-man-pages
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

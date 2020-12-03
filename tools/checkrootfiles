@@ -54,7 +54,7 @@ if [ "${?}" == "0" ]; then
 	echo "Replace by xxxMACHINExxx !"
 fi
 
-grep -r '/aarch64' ./config/rootfiles/ --exclude gcc --exclude-dir oldcore --exclude-dir aarch64 >/dev/null 2>&1
+grep -r '/aarch64' ./config/rootfiles/ --exclude gcc --exclude gdb --exclude-dir oldcore --exclude-dir aarch64 >/dev/null 2>&1
 if [ "${?}" == "0" ]; then
 	echo "Error! '/aarch64' in rootfiles files found!"
 	grep -r '/aarch64' ./config/rootfiles/ --exclude gcc --exclude-dir oldcore --exclude-dir aarch64

@@ -33,3 +33,4 @@ srv/web/ipfire/cgi-bin/upsstats.cgi
 #usr/share/man/man8/apcupsd.8
 etc/rc.d/init.d/apcupsd
 var/ipfire/menu.d/EX-apcupsd.menu
+var/ipfire/backup/addons/includes/apcupsd

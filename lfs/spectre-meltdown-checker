@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.43
+VER        = 0.44
 
 THISAPP    = spectre-meltdown-checker-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = spectre-meltdown-checker
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 05cd2e53edbdcccfc072a66fafa4ea38
+$(DL_FILE)_MD5 = 7bfa5b00ce9dc9400887b9bbb9748a22
 
 install : $(TARGET)
 

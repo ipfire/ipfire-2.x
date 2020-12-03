@@ -6,6 +6,7 @@ usr/bin/curl
 #usr/include/curl/easy.h
 #usr/include/curl/mprintf.h
 #usr/include/curl/multi.h
+#usr/include/curl/options.h
 #usr/include/curl/stdcheaders.h
 #usr/include/curl/system.h
 #usr/include/curl/typecheck-gcc.h
@@ -13,7 +14,7 @@ usr/bin/curl
 #usr/lib/libcurl.la
 #usr/lib/libcurl.so
 usr/lib/libcurl.so.4
-usr/lib/libcurl.so.4.6.0
+usr/lib/libcurl.so.4.7.0
 #usr/lib/pkgconfig/libcurl.pc
 #usr/share/aclocal/libcurl.m4
 #usr/share/man/man1/curl-config.1
@@ -31,6 +32,7 @@ usr/lib/libcurl.so.4.6.0
 #usr/share/man/man3/CURLINFO_CONTENT_LENGTH_UPLOAD_T.3
 #usr/share/man/man3/CURLINFO_CONTENT_TYPE.3
 #usr/share/man/man3/CURLINFO_COOKIELIST.3
+#usr/share/man/man3/CURLINFO_EFFECTIVE_METHOD.3
 #usr/share/man/man3/CURLINFO_EFFECTIVE_URL.3
 #usr/share/man/man3/CURLINFO_FILETIME.3
 #usr/share/man/man3/CURLINFO_FILETIME_T.3
@@ -53,6 +55,7 @@ usr/lib/libcurl.so.4.6.0
 #usr/share/man/man3/CURLINFO_PRIVATE.3
 #usr/share/man/man3/CURLINFO_PROTOCOL.3
 #usr/share/man/man3/CURLINFO_PROXYAUTH_AVAIL.3
+#usr/share/man/man3/CURLINFO_PROXY_ERROR.3
 #usr/share/man/man3/CURLINFO_PROXY_SSL_VERIFYRESULT.3
 #usr/share/man/man3/CURLINFO_REDIRECT_COUNT.3
 #usr/share/man/man3/CURLINFO_REDIRECT_TIME.3
@@ -325,6 +328,7 @@ usr/lib/libcurl.so.4.6.0
 #usr/share/man/man3/CURLOPT_SSL_CIPHER_LIST.3
 #usr/share/man/man3/CURLOPT_SSL_CTX_DATA.3
 #usr/share/man/man3/CURLOPT_SSL_CTX_FUNCTION.3
+#usr/share/man/man3/CURLOPT_SSL_EC_CURVES.3
 #usr/share/man/man3/CURLOPT_SSL_ENABLE_ALPN.3
 #usr/share/man/man3/CURLOPT_SSL_ENABLE_NPN.3
 #usr/share/man/man3/CURLOPT_SSL_FALSESTART.3
@@ -381,6 +385,9 @@ usr/lib/libcurl.so.4.6.0
 #usr/share/man/man3/curl_easy_escape.3
 #usr/share/man/man3/curl_easy_getinfo.3
 #usr/share/man/man3/curl_easy_init.3
+#usr/share/man/man3/curl_easy_option_by_id.3
+#usr/share/man/man3/curl_easy_option_by_name.3
+#usr/share/man/man3/curl_easy_option_next.3
 #usr/share/man/man3/curl_easy_pause.3
 #usr/share/man/man3/curl_easy_perform.3
 #usr/share/man/man3/curl_easy_recv.3

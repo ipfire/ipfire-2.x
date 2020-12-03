@@ -333,9 +333,9 @@ usr/share/perl5/FromCPAN/Error.pm
 usr/share/perl5/Git.pm
 usr/share/perl5/Git/I18N.pm
 usr/share/perl5/Git/IndexInfo.pm
-#usr/share/perl5/Git/LoadCPAN
-#usr/share/perl5/Git/LoadCPAN.pm
-#usr/share/perl5/Git/LoadCPAN/Error.pm
+usr/share/perl5/Git/LoadCPAN
+usr/share/perl5/Git/LoadCPAN.pm
+usr/share/perl5/Git/LoadCPAN/Error.pm
 #usr/share/perl5/Git/LoadCPAN/Mail
 #usr/share/perl5/Git/LoadCPAN/Mail/Address.pm
 #usr/share/perl5/Git/Packet.pm

@@ -24,14 +24,14 @@
 
 include Config
 
-VER        = 4.11.0.6
+VER        = 4.12.0.6
 
 THISAPP    = pcengines-apu-firmware-$(VER)
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = pcengines-apu-firmware
-PAK_VER    = 6
+PAK_VER    = 7
 SUP_ARCH   = i586 x86_64
 
 DEPS       = firmware-update
@@ -45,19 +45,22 @@ objects = \
 	apu2_v$(VER).rom \
 	apu3_v$(VER).rom \
 	apu4_v$(VER).rom \
-	apu5_v$(VER).rom
+	apu5_v$(VER).rom \
+	apu6_v$(VER).rom
 
 apu1_v$(VER).rom = $(DL_FROM)/apu1_v$(VER).rom
 apu2_v$(VER).rom = $(DL_FROM)/apu2_v$(VER).rom
 apu3_v$(VER).rom = $(DL_FROM)/apu3_v$(VER).rom
 apu4_v$(VER).rom = $(DL_FROM)/apu4_v$(VER).rom
 apu5_v$(VER).rom = $(DL_FROM)/apu5_v$(VER).rom
+apu6_v$(VER).rom = $(DL_FROM)/apu6_v$(VER).rom
 
-apu1_v$(VER).rom_MD5 = aa135df1cdbdf488a2c623020c9c94b3
-apu2_v$(VER).rom_MD5 = ba861d29bb90491612e92de8d7db3065
-apu3_v$(VER).rom_MD5 = 52d51b4c0ea1d4a7e05f8b48ec57c0d8
-apu4_v$(VER).rom_MD5 = 22eba7cd14d2be3ddfaa4159f5c169af
-apu5_v$(VER).rom_MD5 = de4da830a5424028b7492876edb41c86
+apu1_v$(VER).rom_MD5 = d2e08bc117683fec306d2f980665a1eb
+apu2_v$(VER).rom_MD5 = d9512a52159d546a34e8d630bfdb383b
+apu3_v$(VER).rom_MD5 = 8cf5bd87f47cfaf7fdcda4bb0fa295fb
+apu4_v$(VER).rom_MD5 = 405bd25c59efda4cf3e94c6e0b153890
+apu5_v$(VER).rom_MD5 = a6ce900704cfecd254be6f4bbd7f1e3b
+apu6_v$(VER).rom_MD5 = 30a1fb088b60b96bb8e17f2eb048b228
 
 install : $(TARGET)
 

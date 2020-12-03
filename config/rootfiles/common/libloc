@@ -1,12 +1,15 @@
 usr/bin/location
 #usr/bin/location-importer
 #usr/include/libloc
+#usr/include/libloc/as-list.h
 #usr/include/libloc/as.h
 #usr/include/libloc/compat.h
+#usr/include/libloc/country-list.h
 #usr/include/libloc/country.h
 #usr/include/libloc/database.h
 #usr/include/libloc/format.h
 #usr/include/libloc/libloc.h
+#usr/include/libloc/network-list.h
 #usr/include/libloc/network.h
 #usr/include/libloc/private.h
 #usr/include/libloc/resolv.h

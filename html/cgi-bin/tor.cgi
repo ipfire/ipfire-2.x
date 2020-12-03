@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2013-2019  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -29,9 +29,6 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
-
-# Init libloc database connection.
-my $db_handle = &Location::Functions::init();
 
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::colouryellow} );
@@ -99,6 +96,8 @@ $settings{'TOR_ENABLED'} = 'off';
 $settings{'TOR_SOCKS_PORT'} = 9050;
 $settings{'TOR_EXIT_COUNTRY'} = '';
 $settings{'TOR_USE_EXIT_NODES'} = '';
+$settings{'TOR_GUARD_COUNTRY'} = '';
+$settings{'TOR_USE_GUARD_NODES'} = '';
 $settings{'TOR_ALLOWED_SUBNETS'} = "$netsettings{'GREEN_NETADDRESS'}\/$netsettings{'GREEN_NETMASK'}";
 if (&Header::blue_used()) {
 	$settings{'TOR_ALLOWED_SUBNETS'} .= ",$netsettings{'BLUE_NETADDRESS'}\/$netsettings{'BLUE_NETMASK'}";
@@ -178,6 +177,15 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		s/^\s+//g; s/\s+$//g;
 		if ($_) {
 			$settings{'TOR_USE_EXIT_NODES'} .= $_.",";
+		}
+	}
+
+	@temp = split(/[\n,]/,$settings{'TOR_USE_GUARD_NODES'});
+	$settings{'TOR_USE_GUARD_NODES'} = "";
+	foreach (@temp) {
+		s/^\s+//g; s/\s+$//g;
+		if ($_) {
+			$settings{'TOR_USE_GUARD_NODES'} .= $_.",";
 		}
 	}
 
@@ -284,6 +292,9 @@ END
 	@temp = split(",", $settings{'TOR_USE_EXIT_NODES'});
 	$settings{'TOR_USE_EXIT_NODES'} = join("\n", @temp);
 
+	@temp = split(",", $settings{'TOR_USE_GUARD_NODES'});
+	$settings{'TOR_USE_GUARD_NODES'} = join("\n", @temp);
+
 	print <<END;
 		<br>
 		<br>
@@ -306,8 +317,57 @@ END
 			</tr>
 		</table>
 
-		<br>
-		<br>
+		<br />
+		<br />
+
+		<table width='95%'>
+			<tr>
+				<td colspan='4' class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'tor guard nodes'}</b></td>
+			</tr>
+			<tr>
+				<td colspan='2' class='base' width='55%'></td>
+				<td colspan='2' class='base' width='45%'>$Lang::tr{'tor use guard nodes'}:</td>
+			</tr>
+			<tr>
+				<td width='50%' colspan='2'>
+					<select name='TOR_GUARD_COUNTRY' multiple='multiple'>
+						<option value=''>- $Lang::tr{'tor guard country any'} -</option>
+END
+
+		# Convert Guard country strings into lists to make comparison easier
+		my @guard_countries;
+		if ($settings{'TOR_GUARD_COUNTRY'} ne '') {
+			@guard_countries = split(/\|/, $settings{'TOR_GUARD_COUNTRY'});
+		}
+
+		my @country_codes = &Location::Functions::get_locations("no_special_locations");
+		foreach my $country_code (@country_codes) {
+			# Convert country code into upper case format.
+			$country_code = uc($country_code);
+
+			# Get country name.
+			my $country_name = &Location::Functions::get_full_country_name($country_code);
+
+			print "<option value='$country_code'";
+
+			if ($settings{'TOR_GUARD_COUNTRY'} ne '') {
+				print " selected" if grep /$country_code/, @guard_countries;
+			}
+
+			print ">$country_name ($country_code)</option>\n";
+		}
+
+	print <<END;
+					</select>
+				</td>
+				<td width='50%' colspan='2'>
+					<textarea name='TOR_USE_GUARD_NODES' cols='32' rows='3' wrap='off'>$settings{'TOR_USE_GUARD_NODES'}</textarea>
+				</td>
+			</tr>
+		</table>
+
+		<br />
+		<br />
 
 		<table width='95%'>
 			<tr>
@@ -319,10 +379,17 @@ END
 			</tr>
 			<tr>
 				<td width='50%' colspan='2'>
-					<select name='TOR_EXIT_COUNTRY'>
+					<select name='TOR_EXIT_COUNTRY' multiple='multiple'>
 						<option value=''>- $Lang::tr{'tor exit country any'} -</option>
 END
-		my @country_codes = &Location::database_countries($db_handle);
+		my @country_codes = &Location::Functions::get_locations("no_special_locations");
+
+		# Convert Exit country strings into lists to make comparison easier
+		my @exit_countries;
+		if ($settings{'TOR_EXIT_COUNTRY'} ne '') {
+			@exit_countries = split(/\|/, $settings{'TOR_EXIT_COUNTRY'});
+		}
+
 		foreach my $country_code (@country_codes) {
 			# Convert country code into upper case format.
 			$country_code = uc($country_code);
@@ -332,8 +399,8 @@ END
 
 			print "<option value='$country_code'";
 
-			if ($settings{'TOR_EXIT_COUNTRY'} eq $country_code) {
-				print " selected";
+			if ($settings{'TOR_EXIT_COUNTRY'} ne '') {
+				print " selected" if grep /$country_code/, @exit_countries;
 			}
 
 			print ">$country_name ($country_code)</option>\n";
@@ -676,10 +743,43 @@ sub BuildConfiguration() {
 		}
 		print FILE "SocksPolicy reject *\n" if (@subnets);
 
-		if ($settings{'TOR_EXIT_COUNTRY'} ne '') {
+		if ($settings{'TOR_GUARD_COUNTRY'} ne '') {
+			$strict_nodes = 1;
+			my $countrylist;
+
+			for my $singlecountry (split(/\|/, $settings{'TOR_GUARD_COUNTRY'})) {
+				if ($countrylist eq '') {
+					$countrylist = "{" . lc $singlecountry . "}";
+				} else {
+					$countrylist = $countrylist . "," . "{" . lc $singlecountry . "}";
+				}
+			}
+
+			print FILE "EntryNodes $countrylist\n";
+		}
+
+		if ($settings{'TOR_USE_GUARD_NODES'} ne '') {
 			$strict_nodes = 1;
 
-			print FILE "ExitNodes {$settings{'TOR_EXIT_COUNTRY'}}\n";
+			my @nodes = split(",", $settings{'TOR_USE_GUARD_NODES'});
+			foreach (@nodes) {
+				print FILE "EntryNode $_\n";
+			}
+		}
+
+		if ($settings{'TOR_EXIT_COUNTRY'} ne '') {
+			$strict_nodes = 1;
+			my $countrylist;
+
+			for my $singlecountry (split(/\|/, $settings{'TOR_EXIT_COUNTRY'})) {
+				if ($countrylist eq '') {
+					$countrylist = "{" . lc $singlecountry . "}";
+				} else {
+					$countrylist = $countrylist . "," . "{" . lc $singlecountry . "}";
+				}
+			}
+
+			print FILE "ExitNodes $countrylist\n";
 		}
 
 		if ($settings{'TOR_USE_EXIT_NODES'} ne '') {
@@ -912,7 +1012,7 @@ sub TorNodeDescription() {
 			$node->{'address'} = $3;
 			$node->{'port'}    = $4;
 
-			my $country_code = &TorGetInfo($tor, "ip-to-country/$node->{'address'}");
+			my $country_code = &Location::Functions::lookup_country_code($node->{'address'});
 			$node->{'country_code'} = $country_code;
 
 		# Flags

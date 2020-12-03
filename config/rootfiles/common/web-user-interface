@@ -308,6 +308,7 @@ srv/web/ipfire/html/images/wakeup.gif
 srv/web/ipfire/html/images/window-new.png
 srv/web/ipfire/html/include
 srv/web/ipfire/html/include/snortupdateutility.js
+srv/web/ipfire/html/include/zoneconf.js
 srv/web/ipfire/html/index.cgi
 srv/web/ipfire/html/redirect-templates
 srv/web/ipfire/html/redirect-templates/legacy

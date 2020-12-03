@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.3.930.0
+VER        = 3.0.356.0
 SUP_ARCH   = x86_64
 
 THISAPP    = amazon-ssm-agent-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = amazon-ssm-agent
-PAK_VER    = 4
+PAK_VER    = 6
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = cf7c50976e2853764d308581f94cbdd1
+$(DL_FILE)_MD5 = 5657c0f4400b1c573ad4e9f1c5845537
 
 install : $(TARGET)
 
@@ -102,6 +102,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -pv /etc/amazon/ssm /usr/bin /var/lib/amazon/ssm
 	cd $(DIR_BUILD) && install -v -m 755 \
 		bin/linux_amd64/amazon-ssm-agent \
+		bin/linux_amd64/ssm-agent-worker \
 		bin/linux_amd64/ssm-cli \
 		bin/linux_amd64/ssm-document-worker \
 		bin/linux_amd64/ssm-session-worker \

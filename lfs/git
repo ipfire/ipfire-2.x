@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = git
-PAK_VER    = 17
+PAK_VER    = 18
 
 DEPS       = perl-Authen-SASL perl-MIME-Base64 perl-Net-SMTP-SSL
 

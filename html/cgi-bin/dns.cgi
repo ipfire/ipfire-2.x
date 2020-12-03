@@ -87,6 +87,10 @@ if ($cgiparams{'GENERAL'} eq $Lang::tr{'save'}) {
 		$cgiparams{'ENABLE_SAFE_SEARCH'} = "off";
 	}
 
+	if ($cgiparams{'ENABLE_SAFE_SEARCH_YOUTUBE'} ne "on") {
+		$cgiparams{'ENABLE_SAFE_SEARCH_YOUTUBE'} = "off";
+	}
+
 	# Check if using ISP nameservers and TLS is enabled at the same time.
 	if (($cgiparams{'USE_ISP_NAMESERVERS'} eq "on") && ($cgiparams{'PROTO'} eq "TLS")) {
 		$errormessage = $Lang::tr{'dns isp nameservers and tls not allowed'}
@@ -259,6 +263,7 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 
 # Hash to store the generic DNS settings.
 my %settings = ();
+$settings{"ENABLE_SAFE_SEARCH_YOUTUBE"} = "on";
 
 # Read-in general DNS settings.
 &General::readhash("$settings_file", \%settings);
@@ -269,10 +274,7 @@ my %dns_servers = ();
 # Read-in config file.
 &General::readhasharray("$servers_file", \%dns_servers);
 
-# Libloc database handle
-my $libloc_db_handle = &Location::Functions::init();
-
-&Header::openpage($Lang::tr{'dns'}, 1, '');
+&Header::openpage($Lang::tr{'dns title'}, 1, '');
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
@@ -312,6 +314,10 @@ $checked{'USE_ISP_NAMESERVERS'}{$settings{'USE_ISP_NAMESERVERS'}} = "checked='ch
 $checked{'ENABLE_SAFE_SEARCH'}{'off'} = '';
 $checked{'ENABLE_SAFE_SEARCH'}{'on'} = '';
 $checked{'ENABLE_SAFE_SEARCH'}{$settings{'ENABLE_SAFE_SEARCH'}} = "checked='checked'";
+
+$checked{'ENABLE_SAFE_SEARCH_YOUTUBE'}{'off'} = '';
+$checked{'ENABLE_SAFE_SEARCH_YOUTUBE'}{'on'} = '';
+$checked{'ENABLE_SAFE_SEARCH_YOUTUBE'}{$settings{'ENABLE_SAFE_SEARCH_YOUTUBE'}} = "checked='checked'";
 
 $selected{'PROTO'}{'UDP'} = '';
 $selected{'PROTO'}{'TLS'} = '';
@@ -385,6 +391,16 @@ sub show_general_dns_configuration () {
 			</tr>
 
 			<tr>
+				<td width="33%">
+					&raquo; $Lang::tr{'dns enable safe-search youtube'}
+				</td>
+
+				<td>
+					<input type="checkbox" name="ENABLE_SAFE_SEARCH_YOUTUBE" $checked{'ENABLE_SAFE_SEARCH_YOUTUBE'}{'on'}>
+				</td>
+			</tr>
+
+			<tr>
 				<td colspan="2">
 					<br>
 				</td>
@@ -419,7 +435,7 @@ END
 # Section to display the configured and used DNS servers.
 #
 sub show_nameservers () {
-	&Header::openbox('100%', 'center', "$Lang::tr{'dns title'}");
+	&Header::openbox('100%', 'center', "$Lang::tr{'dns servers'}");
 
 	# Determine if we are running in recursor mode
 	my $recursor = 0;
@@ -598,7 +614,7 @@ END
 				}
 
 				# collect more information about name server (rDNS, country code)
-				my $ccode = &Location::Functions::lookup_country_code($libloc_db_handle, $nameserver);
+				my $ccode = &Location::Functions::lookup_country_code($nameserver);
 				my $flag_icon = &Location::Functions::get_flag_icon($ccode);
 
 				my $rdns;
@@ -609,7 +625,7 @@ END
 					$rdns = gethostbyaddr($iaddr, AF_INET);
 				}
 
-				if (!$rdns) { $rdns = $Lang::tr{'lookup failed'}; }
+				if (!$rdns) { $rdns = $Lang::tr{'ptr lookup failed'}; }
 
 				# Mark ISP name servers as disabled
 				if ($id <= 2 && $enabled eq "disabled") {

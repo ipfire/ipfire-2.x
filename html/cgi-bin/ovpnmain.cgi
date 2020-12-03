@@ -280,14 +280,7 @@ sub writeserverconf {
     print CONF "server $tempovpnsubnet[0] $tempovpnsubnet[1]\n";
     #print CONF "push \"route $netsettings{'GREEN_NETADDRESS'} $netsettings{'GREEN_NETMASK'}\"\n";
 
-    # Check if we are using mssfix, fragment and set the corretct mtu of 1500.
-    # If we doesn't use one of them, we can use the configured mtu value.
-    if ($sovpnsettings{'MSSFIX'} eq 'on') 
-	{ print CONF "tun-mtu 1500\n"; }
-    elsif ($sovpnsettings{'FRAGMENT'} ne '' && $sovpnsettings{'DPROTOCOL'} ne 'tcp') 
-	{ print CONF "tun-mtu 1500\n"; }
-    else 
-	{ print CONF "tun-mtu $sovpnsettings{'DMTU'}\n"; }
+    print CONF "tun-mtu $sovpnsettings{'DMTU'}\n";
 
     if ($vpnsettings{'ROUTES_PUSH'} ne '') {
 		@temp = split(/\n/,$vpnsettings{'ROUTES_PUSH'});
@@ -320,6 +313,8 @@ sub writeserverconf {
     }
     if ($sovpnsettings{MSSFIX} eq 'on') {
 		print CONF "mssfix\n";
+    } else {
+		print CONF "mssfix 0\n";
     }
     if ($sovpnsettings{FRAGMENT} ne '' && $sovpnsettings{'DPROTOCOL'} ne 'tcp') {
 		print CONF "fragment $sovpnsettings{'FRAGMENT'}\n";
@@ -975,7 +970,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   if ($cgiparams{'MTU'} eq '') {$tunmtu = '1500'} else {$tunmtu = $cgiparams{'MTU'}};
   print SERVERCONF "tun-mtu $tunmtu\n";
   if ($cgiparams{'FRAGMENT'} ne '') {print SERVERCONF "fragment $cgiparams{'FRAGMENT'}\n";} 
-  if ($cgiparams{'MSSFIX'} eq 'on') {print SERVERCONF "mssfix\n"; }; 
+  if ($cgiparams{'MSSFIX'} eq 'on') {print SERVERCONF "mssfix\n"; } else { print SERVERCONF "mssfix 0\n" };
   }
 
   print SERVERCONF "# Auth. Server\n"; 
@@ -1074,7 +1069,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   if ($cgiparams{'MTU'} eq '') {$tunmtu = '1500'} else {$tunmtu = $cgiparams{'MTU'}};
   print CLIENTCONF "tun-mtu $tunmtu\n";
   if ($cgiparams{'FRAGMENT'} ne '') {print CLIENTCONF "fragment $cgiparams{'FRAGMENT'}\n";}
-  if ($cgiparams{'MSSFIX'} eq 'on') {print CLIENTCONF "mssfix\n"; }; 
+  if ($cgiparams{'MSSFIX'} eq 'on') {print CLIENTCONF "mssfix\n"; } else { print CLIENTCONF "mssfix 0\n" };
   }
 
   # Check host certificate if X509 is RFC3280 compliant.
@@ -2204,7 +2199,7 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    if ($confighash{$cgiparams{'KEY'}}[31] eq '') {$tunmtu = '1500'} else {$tunmtu = $confighash{$cgiparams{'KEY'}}[31]};
    print CLIENTCONF "tun-mtu $tunmtu\n";
    if ($confighash{$cgiparams{'KEY'}}[24] ne '') {print CLIENTCONF "fragment $confighash{$cgiparams{'KEY'}}[24]\n";}
-   if ($confighash{$cgiparams{'KEY'}}[23] eq 'on') {print CLIENTCONF "mssfix\n";}
+   if ($confighash{$cgiparams{'KEY'}}[23] eq 'on') {print CLIENTCONF "mssfix\n";} else { print CLIENTCONF "mssfix 0\n"; }
    }
    # Check host certificate if X509 is RFC3280 compliant.
    # If not, old --ns-cert-type directive will be used.
@@ -2285,15 +2280,7 @@ else
     print CLIENTCONF "nobind\r\n";
     print CLIENTCONF "dev tun\r\n";
     print CLIENTCONF "proto $vpnsettings{'DPROTOCOL'}\r\n";
-
-    # Check if we are using fragment, mssfix and set MTU to 1500
-    # or use configured value.
-    if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' )
-	{ print CLIENTCONF "tun-mtu 1500\r\n"; }
-    elsif ($vpnsettings{MSSFIX} eq 'on')
-	{ print CLIENTCONF "tun-mtu 1500\r\n"; }
-    else
-	{ print CLIENTCONF "tun-mtu $vpnsettings{'DMTU'}\r\n"; }
+    print CLIENTCONF "tun-mtu $vpnsettings{'DMTU'}\r\n";
 
     if ( $vpnsettings{'ENABLED'} eq 'on'){
     	print CLIENTCONF "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\r\n";
@@ -2383,6 +2370,8 @@ else
     print CLIENTCONF "verify-x509-name $vpnsettings{ROOTCERT_HOSTNAME} name\r\n";
     if ($vpnsettings{MSSFIX} eq 'on') {
 	print CLIENTCONF "mssfix\r\n";
+    } else {
+	print CLIENTCONF "mssfix 0\r\n";
     }
     if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
 	print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
@@ -3002,9 +2991,6 @@ END
 	&Header::openbigbox('100%', 'LEFT', '', '');
     &Header::openbox('100%', 'LEFT', $Lang::tr{'ovpn con stat'});
 
-    # Libloc database handle.
-    my $libloc_db_handle = &Location::Functions::init();
-
 #
 #	<td><b>$Lang::tr{'protocol'}</b></td>
 # protocol temp removed 
@@ -3055,7 +3041,7 @@ END
 		    $users[$uid]{'Proto'} = $proto;
 
 		    # get country code for "RealAddress"...
-		    my $ccode = &Location::Functions::lookup_country_code($libloc_db_handle, (split ':', $users[$uid]{'RealAddress'})[0]);
+		    my $ccode = &Location::Functions::lookup_country_code((split ':', $users[$uid]{'RealAddress'})[0]);
 		    my $flag_icon = &Location::Functions::get_flag_icon($ccode);
 		    $users[$uid]{'Country'} = "<a href='country.cgi#$ccode'><img src='$flag_icon' border='0' align='absmiddle' alt='$ccode' title='$ccode' /></a>";
 		    $uid++;

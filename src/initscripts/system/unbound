@@ -502,45 +502,44 @@ update_safe_search() {
 		unbound-control local_zone_remove "${domain}"
 	done >/dev/null
 
-	# Nothing to do if safe search is not enabled
-	if [ "${ENABLE_SAFE_SEARCH}" != "on" ]; then
-		return 0
+	if [ "${ENABLE_SAFE_SEARCH}" = "on" ]; then
+		# Bing
+		unbound-control bing.com transparent >/dev/null
+		for address in $(resolve "strict.bing.com"); do
+			unbound-control local_data "www.bing.com ${LOCAL_TTL} IN A ${address}"
+		done >/dev/null
+
+		# DuckDuckGo
+		unbound-control local_zone duckduckgo.com typetransparent >/dev/null
+		for address in $(resolve "safe.duckduckgo.com"); do
+			unbound-control local_data "duckduckgo.com ${LOCAL_TTL} IN A ${address}"
+		done >/dev/null
+
+		# Google
+		local addresses="$(resolve "forcesafesearch.google.com")"
+		for domain in ${google_tlds[@]}; do
+			unbound-control local_zone "${domain}" transparent >/dev/null
+			for address in ${addresses}; do
+				unbound-control local_data "www.${domain} ${LOCAL_TTL} IN A ${address}"
+			done >/dev/null
+		done
+
+		# Yandex
+		for domain in yandex.com yandex.ru; do
+			unbound-control local_zone "${domain}" typetransparent >/dev/null
+			for address in $(resolve "familysearch.${domain}"); do
+				unbound-control local_data "${domain} ${LOCAL_TTL} IN A ${address}"
+			done >/dev/null
+		done
+
+		# YouTube
+		if [ "${ENABLE_SAFE_SEARCH_YOUTUBE}" = "on" ]; then
+			unbound-control local_zone youtube.com transparent >/dev/null
+			for address in $(resolve "restrictmoderate.youtube.com"); do
+				unbound-control local_data "www.youtube.com ${LOCAL_TTL} IN A ${address}"
+			done >/dev/null
+		fi
 	fi
-
-	# Bing
-	unbound-control bing.com transparent >/dev/null
-	for address in $(resolve "strict.bing.com"); do
-		unbound-control local_data "www.bing.com ${LOCAL_TTL} IN A ${address}"
-	done >/dev/null
-
-	# DuckDuckGo
-	unbound-control local_zone duckduckgo.com typetransparent >/dev/null
-	for address in $(resolve "safe.duckduckgo.com"); do
-		unbound-control local_data "duckduckgo.com ${LOCAL_TTL} IN A ${address}"
-	done >/dev/null
-
-	# Google
-	local addresses="$(resolve "forcesafesearch.google.com")"
-	for domain in ${google_tlds[@]}; do
-		unbound-control local_zone "${domain}" transparent >/dev/null
-		for address in ${addresses}; do
-			unbound-control local_data "www.${domain} ${LOCAL_TTL} IN A ${address}"
-		done >/dev/null
-	done
-
-	# Yandex
-	for domain in yandex.com yandex.ru; do
-		unbound-control local_zone "${domain}" typetransparent >/dev/null
-		for address in $(resolve "familysearch.${domain}"); do
-			unbound-control local_data "${domain} ${LOCAL_TTL} IN A ${address}"
-		done >/dev/null
-	done
-
-	# YouTube
-	unbound-control local_zone youtube.com transparent >/dev/null
-	for address in $(resolve "restrictmoderate.youtube.com"); do
-		unbound-control local_data "www.youtube.com ${LOCAL_TTL} IN A ${address}"
-	done >/dev/null
 
 	return 0
 }

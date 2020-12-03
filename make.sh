@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.25"							# Version number
-CORE="152"							# Core Level (Filename)
+CORE="153"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 NICE=10								# Nice level
@@ -1239,6 +1239,7 @@ buildipfire() {
   lfsmake2 libffi
   lfsmake2 python
   lfsmake2 python3
+  lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
   lfsmake2 efibootmgr
@@ -1417,9 +1418,6 @@ buildipfire() {
   lfsmake2 fetchmail
   lfsmake2 clamav
   lfsmake2 perl-NetAddr-IP
-  lfsmake2 spamassassin
-  lfsmake2 perl-Net-LibIDN
-  lfsmake2 amavisd
   lfsmake2 dma
   lfsmake2 alsa
   lfsmake2 mpfire
@@ -1563,6 +1561,7 @@ buildipfire() {
   lfsmake2 python3-s3transfer
   lfsmake2 python3-rsa
   lfsmake2 python3-pyasn1
+  lfsmake2 python3-urllib3
   lfsmake2 python3-botocore
   lfsmake2 python3-llfuse
   lfsmake2 python3-msgpack
@@ -1648,6 +1647,7 @@ buildipfire() {
   lfsmake2 libloc
   lfsmake2 ncdu
   lfsmake2 lshw
+  lfsmake2 socat
 }
 
 buildinstaller() {

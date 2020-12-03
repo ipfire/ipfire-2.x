@@ -130,7 +130,7 @@ if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'wlanap del interface'}" ){
 
 if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'save'}" ){
 	# verify WPA Passphrase - only with enabled enc
-	if (($wlanapsettings{'ENC'} eq "wpa1") || ($wlanapsettings{'ENC'} eq "wpa2") || ($wlanapsettings{'ENC'} eq "wpa1+2")){
+	if ($wlanapsettings{'ENC'} ne "none") {
 		# must be 8 .. 63 characters
 		if ( (length($wlanapsettings{'PWD'}) < 8) || (length($wlanapsettings{'PWD'}) > 63)){
 			$errormessage .= "$Lang::tr{'wlanap invalid wpa'}<br />";
@@ -258,9 +258,10 @@ $checked{'CLIENTISOLATION'}{'off'} = '';
 $checked{'CLIENTISOLATION'}{'on'} = '';
 $checked{'CLIENTISOLATION'}{$wlanapsettings{'CLIENTISOLATION'}} = "checked='checked'";
 
-$checked{'IEEE80211W'}{'off'} = '';
-$checked{'IEEE80211W'}{'on'} = '';
-$checked{'IEEE80211W'}{$wlanapsettings{'IEEE80211W'}} = "checked='checked'";
+$selected{'IEEE80211W'}{'off'} = '';
+$selected{'IEEE80211W'}{'optional'} = '';
+$selected{'IEEE80211W'}{'on'} = '';
+$selected{'IEEE80211W'}{$wlanapsettings{'IEEE80211W'}} = "selected";
 
 $selected{'ENC'}{$wlanapsettings{'ENC'}} = "selected='selected'";
 $selected{'CHANNEL'}{$wlanapsettings{'CHANNEL'}} = "selected='selected'";
@@ -442,19 +443,20 @@ print<<END
 		<option value='none' $selected{'ENC'}{'none'}>$Lang::tr{'wlanap none'}</option>
 		<option value='wpa1' $selected{'ENC'}{'wpa1'}>WPA1</option>
 		<option value='wpa2' $selected{'ENC'}{'wpa2'}>WPA2</option>
+		<option value='wpa3' $selected{'ENC'}{'wpa3'}>WPA3</option>
 		<option value='wpa1+2' $selected{'ENC'}{'wpa1+2'}>WPA1+2</option>
+		<option value='wpa2+3' $selected{'ENC'}{'wpa2+3'}>WPA2+3</option>
 	</select>
 </td></tr>
 <tr><td width='25%' class='base'>Passphrase:&nbsp;</td><td class='base' colspan='3'><input type='text' name='PWD' size='30' value='$wlanapsettings{'PWD'}' /></td></tr>
 <tr>
 	<td width='25%' class='base'>$Lang::tr{'wlanap management frame protection'}:&nbsp;</td>
 	<td class='base' colspan="3">
-		<label>
-			$Lang::tr{'on'} <input type='radio' name='IEEE80211W' value='on' $checked{'IEEE80211W'}{'on'} />
-		</label> |
-		<label>
-			<input type='radio' name='IEEE80211W' value='off' $checked{'IEEE80211W'}{'off'} /> $Lang::tr{'off'}
-		</label>
+		<select name="IEEE80211W">
+			<option value="off" $selected{'IEEE80211W'}{'off'}>$Lang::tr{'wlanap 802.11w disabled'}</option>
+			<option value="optional" $selected{'IEEE80211W'}{'optional'}>$Lang::tr{'wlanap 802.11w optional'}</option>
+			<option value="on" $selected{'IEEE80211W'}{'on'}>$Lang::tr{'wlanap 802.11w enforced'}</option>
+		</select>
 	</td>
 </tr>
 <tr><td colspan='4'><br></td></tr>
@@ -684,6 +686,8 @@ END
  # Management Frame Protection (802.11w)
  if ($wlanapsettings{'IEEE80211W'} eq "on") {
 	print CONFIGFILE "ieee80211w=2\n";
+ } elsif ($wlanapsettings{'IEEE80211W'} eq "optional") {
+	print CONFIGFILE "ieee80211w=1\n";
  } else {
 	print CONFIGFILE "ieee80211w=0\n";
  }
@@ -708,6 +712,16 @@ wpa_key_mgmt=WPA-PSK
 rsn_pairwise=CCMP
 END
 ;
+ }elsif ( $wlanapsettings{'ENC'} eq 'wpa3'){
+	print CONFIGFILE <<END
+######################### wpa hostapd configuration ############################
+#
+wpa=2
+wpa_passphrase=$wlanapsettings{'PWD'}
+wpa_key_mgmt=SAE
+rsn_pairwise=CCMP
+END
+;
  } elsif ( $wlanapsettings{'ENC'} eq 'wpa1+2'){
 	print CONFIGFILE <<END
 ######################### wpa hostapd configuration ############################
@@ -716,6 +730,16 @@ wpa=3
 wpa_passphrase=$wlanapsettings{'PWD'}
 wpa_key_mgmt=WPA-PSK
 wpa_pairwise=TKIP
+rsn_pairwise=CCMP
+END
+;
+ }elsif ( $wlanapsettings{'ENC'} eq 'wpa2+3'){
+	print CONFIGFILE <<END
+######################### wpa hostapd configuration ############################
+#
+wpa=2
+wpa_passphrase=$wlanapsettings{'PWD'}
+wpa_key_mgmt=WPA-PSK SAE
 rsn_pairwise=CCMP
 END
 ;

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2019c
+VER        = 2020d
 TZDATA_VER = $(VER)
 TZCODE_VER = $(VER)
 
@@ -33,8 +33,8 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-FILES      = africa antarctica asia australasia europe \
-	northamerica southamerica pacificnew etcetera backward
+FILES      = africa antarctica asia australasia backward etcetera europe \
+	factory northamerica southamerica
 
 ###############################################################################
 # Top-level Rules
@@ -45,8 +45,8 @@ objects = tzdata$(TZDATA_VER).tar.gz tzcode$(TZCODE_VER).tar.gz
 tzdata$(TZDATA_VER).tar.gz = $(DL_FROM)/tzdata$(TZDATA_VER).tar.gz
 tzcode$(TZCODE_VER).tar.gz = $(DL_FROM)/tzcode$(TZCODE_VER).tar.gz
 
-tzdata$(TZDATA_VER).tar.gz_MD5 = f6987e6dfdb2eb83a1b5076a50b80894
-tzcode$(TZCODE_VER).tar.gz_MD5 = 195a17454c5db05cab96595380650391
+tzdata$(TZDATA_VER).tar.gz_MD5 = 2f58d72e31cf073f5076c2cbf182cba3
+tzcode$(TZCODE_VER).tar.gz_MD5 = b4c46a69e5894aac713e8365a9be9411
 
 install : $(TARGET)
 

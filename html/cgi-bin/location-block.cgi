@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2014 - 2020 IPFire Developemnt Team <info@ipfire.org>         #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -103,7 +103,7 @@ print"<form method='POST' action='$ENV{'SCRIPT_NAME'}'>\n";
 print <<END;
 	<table width='95%'>
 		<tr>
-			<td width='25%' class='base'>$Lang::tr{'locationblock enable feature'}
+			<td width='50%' class='base'>$Lang::tr{'locationblock enable feature'}
 			<td><input type='checkbox' name='LOCATIONBLOCK_ENABLED' $checked></td>
 		</tr>
 		<tr>

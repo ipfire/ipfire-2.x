@@ -3019,6 +3019,7 @@ END
 		($line =~ /$confighash{$key}[1]\{.*INSTALLED/)) {
 			$col1="bgcolor='${Header::colourgreen}'";
 			$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
+			last;
 		} elsif ($line =~ /$confighash{$key}[1]\[.*CONNECTING/) {
 			$col1="bgcolor='${Header::colourorange}'";
 			$active = "<b><font color='#FFFFFF'>$Lang::tr{'vpn connecting'}</font></b>";

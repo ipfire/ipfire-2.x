@@ -1,25 +1,23 @@
 #!/usr/bin/perl -w
-############################################################################
-#                                                                          #
-# This file is part of the IPFire Firewall.                                #
-#                                                                          #
-# IPFire is free software; you can redistribute it and/or modify           #
-# it under the terms of the GNU General Public License as published by     #
-# the Free Software Foundation; either version 2 of the License, or        #
-# (at your option) any later version.                                      #
-#                                                                          #
-# IPFire is distributed in the hope that it will be useful,                #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of           #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
-# GNU General Public License for more details.                             #
-#                                                                          #
-# You should have received a copy of the GNU General Public License        #
-# along with IPFire; if not, write to the Free Software                    #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
-#                                                                          #
-# Copyright (C) 2015 - 2020 IPFire Team <info@ipfire.org>.                 #
-#                                                                          #
-############################################################################
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 2 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
 package Location::Functions;
 
@@ -55,6 +53,9 @@ our $keyfile = "$location_dir/signing-key.pem";
 # Directory which contains the exported databases.
 our $xt_geoip_db_directory = "/usr/share/xt_geoip/";
 
+# Create libloc database handle.
+my $db_handle = &init();
+
 #
 ## Tiny function to init the location database.
 #
@@ -83,10 +84,10 @@ sub verify ($) {
 }
 
 #
-## Function to the the country code of a given address.
+## Function to get the country code of a given address.
 #
 sub lookup_country_code($$) {
-	my ($db_handle, $address) = @_;
+	my ($address) = @_;
 
 	# Lookup the given address.
 	my $country_code = &Location::lookup_country_code($db_handle, $address);
@@ -162,9 +163,6 @@ sub get_full_country_name($) {
 		# Grab location name from hash.
 		$name = $not_iso_3166_location{$code};
 	} else {
-		# Init libloc database connection.
-		my $db_handle = &init();
-
 		# Get the country name by using the location module.
 		$name = &Location::get_country_name($db_handle, $code);
 	}
@@ -174,20 +172,35 @@ sub get_full_country_name($) {
 
 # Function to get all available locations.
 sub get_locations() {
-	# Create libloc database handle.
-	my $db_handle = &init();
+	my ($mode) = @_;
+
+	# Set default mode to add_special_locations.
+	$mode = $mode ? $mode : "add_special_locations";
 
 	# Get locations which are stored in the location database.
-	my @database_locations = &Location::database_countries($db_handle);
+	my @locations = &Location::database_countries($db_handle);
 
-	# Merge special locations array and the database locations array.
-	my @locations = (@special_locations, @database_locations);
+	# Check if the special locations should be added.
+	if ($mode ne "no_special_locations") {
+		# Merge special locations array and the database locations array.
+		@locations = (@special_locations, @locations);
+	}
 
 	# Sort locations array in alphabetical order.
 	my @sorted_locations = sort(@locations);
 
-	# Return the array..
+	# Return the array.
 	return @sorted_locations;
+}
+
+# Function to get the continent code of a given country code.
+sub get_continent_code($) {
+	my ($country_code) = @_;
+
+	# Use location module to grab the continent code.
+	my $continent_code = &Location::get_continent_code($db_handle, $country_code);
+
+	return $continent_code;
 }
 
 # Function to check if a given address has one ore more special flags.
@@ -196,9 +209,6 @@ sub address_has_flags($) {
 
 	# Array to store the flags of the address.
 	my @flags;
-
-	# Init libloc database handle.
-	my $db_handle = &init();
 
 	# Loop through the hash of possible network flags.
 	foreach my $flag (keys(%network_flags)) {
@@ -219,6 +229,42 @@ sub address_has_flags($) {
 
 	# Return the array of flags.
 	return @flags;
+}
+
+#
+## Function to get the Autonomous System Number of a given address.
+#
+sub lookup_asn($) {
+	my ($address) = @_;
+
+	# Lookup the given address.
+	my $asn = &Location::lookup_asn($db_handle, $address);
+
+	# Return the number of the Autonomous System
+	return $asn;
+}
+
+#
+## Function to get the name of an Autonomous System.
+#
+sub get_as_name($) {
+	my ($asn) = @_;
+
+	# Fetch the name of this AS...
+	my $as_name = &Location::get_as_name($db_handle, $asn);
+
+	# Return the name of the Autonomous System
+	return $as_name;
+}
+
+# Custom END declaration which will be executed when perl
+# ends, to release the database handle to libloc.
+END {
+	# Check if a database handle exists.
+	if ($db_handle) {
+		# Destroy libloc database handle.
+		&Location::DESTROY($db_handle);
+	}
 }
 
 1;

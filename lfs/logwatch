@@ -73,6 +73,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -e "s/^TEMPDIR=.*/TEMPDIR=\"\/tmp\"/g" -i install_logwatch.sh
 
 	cd $(DIR_APP)/lib && patch < $(DIR_SRC)/src/patches/logwatch/logwatch-7.3.6-date_manip6.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/logwatch/logwatch-7.5.4-dhcpd_reuse_lease_entries.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/logwatch/logwatch-7.5.4-disable_iptables.patch
 
 	@cd $(DIR_APP) && chmod 755 install_logwatch.sh
 	cd $(DIR_APP) && yes "" | ./install_logwatch.sh

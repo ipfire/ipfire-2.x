@@ -61,6 +61,9 @@
 < user management
 < vpn configuration main
 < winbind daemon
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
@@ -94,9 +97,11 @@
 < age sminute
 < age ssecond
 < application layer gateways
+< asn lookup failed
 < Async logging enabled
 < atm device
 < attention
+< autonomous system
 < bit
 < block
 < broken
@@ -236,6 +241,7 @@
 < dns configuration
 < dns could not add server
 < dns enable safe-search
+< dns enable safe-search youtube
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
@@ -576,6 +582,8 @@
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ip basic info
+< ip info for
 < ipsec
 < ipsec connection
 < ipsec interface mode gre
@@ -808,6 +816,9 @@
 < tor exit country
 < tor exit country any
 < tor exit nodes
+< tor guard country
+< tor guard country any
+< tor guard nodes
 < tor relay address
 < tor relay configuration
 < tor relay enabled
@@ -827,6 +838,7 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< tor use guard nodes
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -866,9 +878,13 @@
 < vulnerability
 < vulnerable
 < Weekly
+< whois results from
 < winbind daemon
 < wireless network
 < wlanap
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 < wlanap auto
 < wlanap broadcast ssid
 < wlanap client isolation
@@ -942,22 +958,21 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < ansi t1.483
+< asn lookup failed
+< autonomous system
 < bewan adsl pci st
 < bewan adsl usb
-< desired
-< disable
-< enable
+< dns enable safe-search youtube
 < g.dtm
 < g.lite
-< netbios nameserver daemon
-< optional
-< required
-< samba server role member
-< samba server role standalone
-< smb daemon
+< ip basic info
+< ip info for
+< tor guard country
+< tor guard country any
+< tor guard nodes
+< tor use guard nodes
 < upload fcdsl.o
-< user management
-< winbind daemon
+< whois results from
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -979,6 +994,8 @@
 < advproxy wpad title
 < advproxy wpad view pac
 < application layer gateways
+< asn lookup failed
+< autonomous system
 < block
 < broken
 < Captive
@@ -1057,6 +1074,7 @@
 < dns configuration
 < dns could not add server
 < dns enable safe-search
+< dns enable safe-search youtube
 < dns forward disable dnssec
 < dnsforward dnssec disabled
 < dnsforward forward_servers
@@ -1158,6 +1176,8 @@
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ip basic info
+< ip info for
 < ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
@@ -1256,6 +1276,10 @@
 < tcp more reliable
 < ten minutes
 < thirty minutes
+< tor guard country
+< tor guard country any
+< tor guard nodes
+< tor use guard nodes
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -1284,9 +1308,13 @@
 < vulnerability
 < vulnerable
 < Weekly
+< whois results from
 < winbind daemon
 < wireless network
 < wlanap
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 < wlanap auto
 < wlanap broadcast ssid
 < wlanap client isolation
@@ -1346,7 +1374,9 @@
 < advproxy wpad title
 < advproxy wpad view pac
 < application layer gateways
+< asn lookup failed
 < atm device
+< autonomous system
 < block
 < broken
 < capabilities
@@ -1433,6 +1463,7 @@
 < dns configuration
 < dns could not add server
 < dns enable safe-search
+< dns enable safe-search youtube
 < dns forward disable dnssec
 < dnsforward dnssec disabled
 < dnsforward forward_servers
@@ -1448,7 +1479,6 @@
 < dnssec information
 < dnssec not supported
 < dnssec validating
-< dns servers
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
@@ -1546,6 +1576,8 @@
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ip basic info
+< ip info for
 < ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
@@ -1677,6 +1709,10 @@
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< tor guard country
+< tor guard country any
+< tor guard nodes
+< tor use guard nodes
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -1707,9 +1743,13 @@
 < vulnerability
 < vulnerable
 < Weekly
+< whois results from
 < winbind daemon
 < wireless network
 < wlanap
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 < wlanap auto
 < wlanap broadcast ssid
 < wlanap client isolation
@@ -1780,8 +1820,10 @@
 < age sminute
 < age ssecond
 < application layer gateways
+< asn lookup failed
 < atm device
 < attention
+< autonomous system
 < bit
 < block
 < broken
@@ -1922,6 +1964,7 @@
 < dns configuration
 < dns could not add server
 < dns enable safe-search
+< dns enable safe-search youtube
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
@@ -1943,7 +1986,6 @@
 < dnssec information
 < dnssec not supported
 < dnssec validating
-< dns servers
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
@@ -2254,6 +2296,8 @@
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ip basic info
+< ip info for
 < ipsec
 < ipsec connection
 < ipsec interface mode gre
@@ -2480,6 +2524,9 @@
 < tor exit country
 < tor exit country any
 < tor exit nodes
+< tor guard country
+< tor guard country any
+< tor guard nodes
 < tor relay address
 < tor relay configuration
 < tor relay enabled
@@ -2499,6 +2546,7 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< tor use guard nodes
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -2538,9 +2586,13 @@
 < vulnerability
 < vulnerable
 < Weekly
+< whois results from
 < winbind daemon
 < wireless network
 < wlanap
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 < wlanap auto
 < wlanap broadcast ssid
 < wlanap client isolation
@@ -2644,8 +2696,10 @@
 < age sminute
 < age ssecond
 < application layer gateways
+< asn lookup failed
 < atm device
 < attention
+< autonomous system
 < bit
 < block
 < broken
@@ -2788,6 +2842,7 @@
 < dns configuration
 < dns could not add server
 < dns enable safe-search
+< dns enable safe-search youtube
 < dnsforward
 < dnsforward add a new entry
 < dnsforward configuration
@@ -2809,7 +2864,6 @@
 < dnssec information
 < dnssec not supported
 < dnssec validating
-< dns servers
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
@@ -3124,6 +3178,8 @@
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
+< ip basic info
+< ip info for
 < ipsec
 < ipsec connection
 < ipsec interface mode gre
@@ -3348,6 +3404,9 @@
 < tor exit country
 < tor exit country any
 < tor exit nodes
+< tor guard country
+< tor guard country any
+< tor guard nodes
 < tor relay address
 < tor relay configuration
 < tor relay enabled
@@ -3367,6 +3426,7 @@
 < tor traffic limit soft
 < tor traffic read written
 < tor use exit nodes
+< tor use guard nodes
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -3407,9 +3467,13 @@
 < vulnerable
 < week-graph
 < Weekly
+< whois results from
 < winbind daemon
 < wireless network
 < wlanap
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 < wlanap auto
 < wlanap broadcast ssid
 < wlanap client isolation
@@ -3492,6 +3556,8 @@
 < advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
+< asn lookup failed
+< autonomous system
 < broken
 < Captive delete logo
 < cpu frequency
@@ -3509,6 +3575,7 @@
 < dns configuration
 < dns could not add server
 < dns enable safe-search
+< dns enable safe-search youtube
 < dns forward disable dnssec
 < dnsforward dnssec disabled
 < dnsforward forward_servers
@@ -3561,6 +3628,8 @@
 < invalid input for local ip address
 < invalid input for mode
 < invalid ip or hostname
+< ip basic info
+< ip info for
 < ipsec connection
 < ipsec interface mode gre
 < ipsec interface mode none
@@ -3620,6 +3689,10 @@
 < subnet mask
 < system is offline
 < taa zombieload2
+< tor guard country
+< tor guard country any
+< tor guard nodes
+< tor use guard nodes
 < transport mode does not support vti
 < update ruleset
 < user management
@@ -3629,7 +3702,11 @@
 < vulnerability
 < vulnerable
 < Weekly
+< whois results from
 < winbind daemon
+< wlanap 802.11w disabled
+< wlanap 802.11w enforced
+< wlanap 802.11w optional
 < wlanap auto
 < wlanap broadcast ssid
 < wlanap client isolation

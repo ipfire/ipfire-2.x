@@ -19,9 +19,6 @@ require "${General::swroot}/location-functions.pl";
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
-# Libloc database handle.
-my $libloc_db_handle = &Location::Functions::init();
-
 use POSIX();
 
 #workaround to suppress a warning when a variable is used only once
@@ -181,7 +178,7 @@ if (!$skip)
 			}
 			elsif($srcaddr ne '') {
 				# or srcaddr matches country code
-				my $ccode = &Location::Functions::lookup_country_code($libloc_db_handle, $srcaddr);
+				my $ccode = &Location::Functions::lookup_country_code($srcaddr);
 				if($ccode eq uc($country)){
 					$log[$lines] = $_;
 					$lines++;
@@ -352,7 +349,7 @@ foreach $_ (@slice)
 	if($iface eq $country || $srcaddr ne '') {
 		my $ccode='';
 		if($iface ne $country) {
-			$ccode = &Location::Functions::lookup_country_code($libloc_db_handle, $srcaddr);
+			$ccode = &Location::Functions::lookup_country_code($srcaddr);
 		}
 		if($iface eq $country || $ccode eq uc($country)) {
 			my $chain = '';

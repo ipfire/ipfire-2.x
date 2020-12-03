@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.0.0
+VER        = 3.0.1
 
 THISAPP    = lynis-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/lynis
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = lynis
-PAK_VER    = 7
+PAK_VER    = 8
 DEPS       =
 
 ###############################################################################
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7f6777843fc4f30ea16e4e2bf393f797
+$(DL_FILE)_MD5 = ac984258e89b88c86e8c1c5395de8a15
 
 install : $(TARGET)
 

@@ -1,0 +1,15 @@
+diff --git a/scripts/services/dhcpd b/scripts/services/dhcpd
+index 87312f7..bb5cd4c 100644
+--- a/scripts/services/dhcpd
++++ b/scripts/services/dhcpd
+@@ -79,7 +79,9 @@ while (my $line = <STDIN>) {
+       ($line =~ /^Solicit message from/) or
+       ($line =~ /^Sending Advertise to/) or
+       ($line =~ /^pool [0-9a-f]+ /) or
+-      ($line =~ /^[^ ]* file: /)
++      ($line =~ /^[^ ]* file: /) or
++      ($line =~ /^reuse_lease: lease age \d+ \(secs\) under \d+\% threshold, reply with unaltered, existing lease for/) or
++      0 # noop, but makes diffs easier when appending ignore statements
+       ) {
+       # Ignore these lines
+    } elsif ($line =~ s/Listening on\s+//) {

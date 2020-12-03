@@ -225,7 +225,6 @@ WARNING: translation string unused: dns new 0
 WARNING: translation string unused: dns new 1
 WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
-WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master
 WARNING: translation string unused: domain not set
@@ -823,8 +822,10 @@ WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Pro
 WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: age second = second
 WARNING: untranslated string: application layer gateways = Application Layer Gateways
+WARNING: untranslated string: asn lookup failed = AS lookup failed
 WARNING: untranslated string: atm device = Device:
 WARNING: untranslated string: attention = ATTENTION
+WARNING: untranslated string: autonomous system = Autonomous System
 WARNING: untranslated string: bit = bit
 WARNING: untranslated string: block = Block
 WARNING: untranslated string: broken = Broken
@@ -897,10 +898,10 @@ WARNING: untranslated string: disconnected = Disconnected
 WARNING: untranslated string: disk access = Disk Access
 WARNING: untranslated string: dl client arch insecure = Download insecure Client Package (zip)
 WARNING: untranslated string: dnat address = Firewall Interface
-WARNING: untranslated string: dns = unknown string
 WARNING: untranslated string: dns check servers = Check DNS Servers
 WARNING: untranslated string: dns configuration = DNS Configuration
 WARNING: untranslated string: dns enable safe-search = Enable Safe Search
+WARNING: untranslated string: dns enable safe-search youtube = Include YouTube in Safe Search
 WARNING: untranslated string: dns forward disable dnssec = Disable DNSSEC (dangerous)
 WARNING: untranslated string: dns forwarding dnssec disabled notice = (DNSSEC disabled)
 WARNING: untranslated string: dns isp assigned nameserver = ISP-assigned DNS server
@@ -1212,6 +1213,8 @@ WARNING: untranslated string: invalid input for mode = Invalid input for mode
 WARNING: untranslated string: invalid input for valid till days = Invalid input for Valid till (days).
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: invalid logserver protocol = Invalid syslogd server protocol
+WARNING: untranslated string: ip basic info = Basic IP information
+WARNING: untranslated string: ip info for = IP information for
 WARNING: untranslated string: ipsec = IPsec
 WARNING: untranslated string: ipsec connection = IPsec Connection
 WARNING: untranslated string: ipsec interface mode gre = GRE
@@ -1406,6 +1409,8 @@ WARNING: untranslated string: tor errmsg invalid relay port = Invalid relay port
 WARNING: untranslated string: tor errmsg invalid socks port = Invalid SOCKS port
 WARNING: untranslated string: tor exit country any = Any country
 WARNING: untranslated string: tor exit nodes = Exit Nodes
+WARNING: untranslated string: tor guard country any = Any country
+WARNING: untranslated string: tor guard nodes = Guard Nodes
 WARNING: untranslated string: tor relay address = Relay address
 WARNING: untranslated string: tor relay configuration = Tor Relay Configuration
 WARNING: untranslated string: tor relay enabled = Enable Tor Relay
@@ -1424,7 +1429,8 @@ WARNING: untranslated string: tor stats = Statistics
 WARNING: untranslated string: tor traffic limit hard = Traffic limit has been reached.
 WARNING: untranslated string: tor traffic limit soft = Traffic limit almost reached. Not accepting any new connections.
 WARNING: untranslated string: tor traffic read written = Total traffic (read/written)
-WARNING: untranslated string: tor use exit nodes = Use only these exit nodes (one per line)
+WARNING: untranslated string: tor use exit nodes = Use only these exit nodes (one fingerprint per line)
+WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: twelve hours = 12 Hours
 WARNING: untranslated string: two weeks = Two Weeks
@@ -1460,6 +1466,7 @@ WARNING: untranslated string: vpn wait = WAITING
 WARNING: untranslated string: vpn weak = Weak
 WARNING: untranslated string: vulnerability = Vulnerability
 WARNING: untranslated string: vulnerable = Vulnerable
+WARNING: untranslated string: whois results from = WHOIS results from
 WARNING: untranslated string: winbind daemon = Winbind Daemon
 WARNING: untranslated string: wireless network = WiFi Network
 WARNING: untranslated string: wlan client = Wireless client
@@ -1508,6 +1515,9 @@ WARNING: untranslated string: wlan client wpa mode ccmp tkip = CCMP-TKIP
 WARNING: untranslated string: wlan client wpa mode tkip tkip = TKIP-TKIP
 WARNING: untranslated string: wlan clients = Wireless clients
 WARNING: untranslated string: wlanap = Access Point
+WARNING: untranslated string: wlanap 802.11w disabled = Disabled
+WARNING: untranslated string: wlanap 802.11w enforced = Enforced
+WARNING: untranslated string: wlanap 802.11w optional = Optional
 WARNING: untranslated string: wlanap auto = Automatic Channel Selection
 WARNING: untranslated string: wlanap broadcast ssid = Broadcast SSID
 WARNING: untranslated string: wlanap client isolation = Client Isolation
