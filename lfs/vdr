@@ -26,9 +26,9 @@ include Config
 
 VER        = 2.4.4
 
-# VDRPLUGVER must match with APIVERSION in config.h
+# VDRPLUGVER must match with APIVERSION! in config.h
 # after change this update also all vdr plugins
-VDRPLUGVER = 2.4.4
+VDRPLUGVER = 2.4.3
 
 THISAPP    = vdr-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
