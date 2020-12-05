@@ -1,0 +1,28 @@
+#!/bin/sh
+# Begin $rc_base/init.d/bacula
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+        start)
+                boot_mesg "Starting bacula-fd daemon..."
+                loadproc /usr/sbin/bacula-fd
+                ;;
+        stop)
+                boot_mesg "Stopping bacula-fd daemon..."
+                killproc /usr/sbin/bacula-fd
+                ;;
+        status)
+                statusproc /usr/sbin/bacula-fd
+                ;;
+        *)
+                echo "Usage: $0 (start|stop|status)"
+                exit 1
+                ;;
+esac
+
+# End $rc_base/init.d/bacula
+

@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = bacula
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       =
 
@@ -89,10 +89,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				--enable-client-only
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-	ln -sf /etc/bacula/bacula-ctl-fd /etc/rc.d/init.d/bacula
+
+	#install initscripts
+	$(call INSTALL_INITSCRIPT,bacula)
+
 	install -v -m 644 ${DIR_SRC}/config/backup/includes/bacula \
 			/var/ipfire/backup/addons/includes/bacula
-	rm -f /root/.rnd
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
 

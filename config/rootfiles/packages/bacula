@@ -1,7 +1,7 @@
 #etc/bacula
 #etc/bacula/bacula
 #etc/bacula/bacula-ctl-dir
-etc/bacula/bacula-ctl-fd
+#etc/bacula/bacula-ctl-fd
 #etc/bacula/bacula-ctl-sd
 etc/bacula/bacula-fd.conf
 #etc/bacula/bacula-tray-monitor.desktop
