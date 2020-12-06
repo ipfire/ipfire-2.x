@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 9.1.4
+VER        = 9.3.4
 
 THISAPP    = dhcpcd-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = dd77711cf3232002bb075f5210269f88
+$(DL_FILE)_MD5 = badb02dfc69fe9bbeec35a02efcdb4db
 
 install : $(TARGET)
 
