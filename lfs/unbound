@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.12.0
+VER        = 1.13.0
 
 THISAPP    = unbound-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = eb03869cea5dd2b65e21ca068e78d6b0
+$(DL_FILE)_MD5 = 5a522f10c65332efe627098d2d24f947
 
 install : $(TARGET)
 
