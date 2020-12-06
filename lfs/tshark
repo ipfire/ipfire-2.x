@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.6
+VER        = 3.4.0
 
 THISAPP    = wireshark-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -32,8 +32,8 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tshark
-DEPS       = krb5
-PAK_VER    = 7
+DEPS       = krb5 c-ares
+PAK_VER    = 8
 
 ###############################################################################
 # Top-level Rules
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f14ef8d73fa5f30b57fec51283e6b73e
+$(DL_FILE)_MD5 = 5c656cd9d6b01dd2ad93ed665ca532e6
 
 install : $(TARGET)
 
