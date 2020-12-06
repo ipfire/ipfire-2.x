@@ -122,6 +122,7 @@ usr/bin/nsupdate
 #usr/include/isc/boolean.h
 #usr/include/isc/buffer.h
 #usr/include/isc/bufferlist.h
+#usr/include/isc/cmocka.h
 #usr/include/isc/commandline.h
 #usr/include/isc/condition.h
 #usr/include/isc/counter.h
@@ -271,12 +272,12 @@ usr/lib/libbind9.so.161
 usr/lib/libbind9.so.161.0.4
 #usr/lib/libdns.la
 #usr/lib/libdns.so
-usr/lib/libdns.so.1110
-usr/lib/libdns.so.1110.0.4
+usr/lib/libdns.so.1112
+usr/lib/libdns.so.1112.0.1
 #usr/lib/libisc.la
 #usr/lib/libisc.so
-usr/lib/libisc.so.1105
-usr/lib/libisc.so.1105.1.1
+usr/lib/libisc.so.1107
+usr/lib/libisc.so.1107.0.3
 #usr/lib/libisccc.la
 #usr/lib/libisccc.so
 usr/lib/libisccc.so.161
