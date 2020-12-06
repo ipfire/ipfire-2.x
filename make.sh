@@ -1233,6 +1233,7 @@ buildipfire() {
   lfsmake2 linux-atm
   lfsmake2 gdbm
   lfsmake2 pam
+  lfsmake2 c-ares
   lfsmake2 curl
   lfsmake2 tcl
   lfsmake2 sqlite
