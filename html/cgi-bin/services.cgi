@@ -161,19 +161,20 @@ END
 	my $lines=0; # Used to count the outputlines to make different bgcolor
 
 	# Generate list of installed addon pak's
-	my @pak = `find /opt/pakfire/db/installed/meta-* 2>/dev/null | cut -d"-" -f2`;
+	opendir (DIR, "/opt/pakfire/db/installed") || die "Cannot opendir /opt/pakfire/db/installed/: $!";
+	my @pak = sort readdir DIR;
 	foreach (@pak){
 		chomp($_);
+		next unless (m/^meta-/);
+		s/^meta-//;
 
 		# Check which of the paks are services
-		my @svc = `find /etc/init.d/$_ 2>/dev/null | cut -d"/" -f4`;
-		foreach (@svc){
+		if (-e "/etc/init.d/$_") {
 			# blacklist some packages
 			#
 			# alsa has trouble with the volume saving and was not really stopped
 			# mdadm should not stopped with webif because this could crash the system
 			#
-			chomp($_);
 			if ( $_ eq 'squid' ) {
 				next;
 			}
