@@ -1,0 +1,18 @@
+Submitted By: linuxfromscratch DOT org
+Date: 2020-11-19 
+Initial Package Version: 1.18.3
+Origin: http://www.linuxfromscratch.org/blfs/view/svn/postlfs/mitkrb.html
+Description: Patch increases the width of the virtual terminal used for some tests to prevent some spurious text in the output which is taken as a failure.
+
+diff --color -Nur krb5-1.18.3.orig/src/tests/dejagnu/config/default.exp krb5-1.18.3/src/tests/dejagnu/config/default.exp
+--- krb5-1.18.3.orig/src/tests/dejagnu/config/default.exp	2020-12-07 04:51:12.997708618 +0100
++++ krb5-1.18.3/src/tests/dejagnu/config/default.exp	2020-12-07 04:56:29.805839425 +0100
+@@ -12,7 +12,7 @@
+ # realm name, defaulting to KRBTEST.COM.
+ 
+ set timeout 100
+-set stty_init {erase \^h kill \^u}
++set stty_init {erase \^h kill \^u cols 300}
+ set env(TERM) dumb
+ 
+ set des3_krbtgt 0
