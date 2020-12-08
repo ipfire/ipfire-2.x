@@ -10,6 +10,7 @@ srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/country.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
 srv/web/ipfire/cgi-bin/dns.cgi
+srv/web/ipfire/cgi-bin/ddns.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ipinfo.cgi
 srv/web/ipfire/cgi-bin/location-block.cgi
