@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.1.1h
+VER        = 1.1.1i
 
 THISAPP    = openssl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -87,7 +87,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 53840c70434793127a3574433494e8d3
+$(DL_FILE)_MD5 = 08987c3cf125202e2b0840035efb392c
 
 install : $(TARGET)
 
