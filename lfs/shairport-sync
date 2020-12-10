@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.3.6
+VER        = 3.3.7
 
 THISAPP    = shairport-sync-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = shairport-sync
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = alac alsa avahi libdaemon soxr
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 769c6d0cc660567e5521467d79ee9939
+$(DL_FILE)_MD5 = 5f4206ac28e323fda3c150575eb64e15
 
 install : $(TARGET)
 
