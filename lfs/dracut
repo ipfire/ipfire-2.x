@@ -71,7 +71,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dracut-038-always-enable-mdraid.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dracut-038_add_sdhci-pci.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dracut-038_add_hyperv-keyboard_and_sdhci-pci.patch
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install sbindir=/sbin sysconfdir=/etc

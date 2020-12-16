@@ -6,7 +6,7 @@ diff -Naur dracut-038.org/modules.d/90kernel-modules/module-setup.sh dracut-038/
              hid-logitech-dj hid-microsoft firewire-ohci \
              pcmcia usb_storage nvme hid-hyperv hv-vmbus \
 -            sdhci_acpi
-+            sdhci_acpi sdhci_pci
++            hyperv-keyboard sdhci_acpi sdhci_pci
  
          if [[ "$(uname -p)" == arm* ]]; then
              # arm specific modules
