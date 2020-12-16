@@ -879,6 +879,8 @@ WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: asn lookup failed = AS lookup failed
 WARNING: untranslated string: autonomous system = Autonomous System
+WARNING: untranslated string: dhcp deny known clients: = Deny known clients:
+WARNING: untranslated string: dhcp valid range required when deny known clients checked = Valid range required when "Deny known clients:" is checked
 WARNING: untranslated string: dns enable safe-search youtube = Include YouTube in Safe Search
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string

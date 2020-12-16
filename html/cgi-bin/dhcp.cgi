@@ -74,6 +74,7 @@ foreach my $itf (@ITFs) {
     $dhcpsettings{"DNS_UPDATE_KEY_NAME_${itf}"} = '';
     $dhcpsettings{"DNS_UPDATE_KEY_SECRET_${itf}"} = '';
     $dhcpsettings{"DNS_UPDATE_KEY_ALGO_${itf}"} = '';
+    $dhcpsettings{"DENY_KNOWN_CLIENTS_${itf}"} = 'off';
 }
 
 $dhcpsettings{'SORT_FLEASELIST'} = 'FIPADDR';
@@ -175,9 +176,16 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'save'}) {
 		}
 	    }
 
+	    if ($dhcpsettings{"DENY_KNOWN_CLIENTS_${itf}"} eq 'on') {
+		if (($dhcpsettings{"START_ADDR_${itf}"}) eq '' && ($dhcpsettings{"END_ADDR_${itf}"}) eq '') {
+			$errormessage = "DHCP on ${itf}: " . $Lang::tr{'dhcp valid range required when deny known clients checked'};
+			goto ERROR;
+	    }
+
 	    if (!($dhcpsettings{"DEFAULT_LEASE_TIME_${itf}"} =~ /^\d+$/)) {
 		$errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid default lease time'} . $dhcpsettings{'DEFAULT_LEASE_TIME_${itf}'};
 		goto ERROR;
+		}
 	    }
 
 	    if (!($dhcpsettings{"MAX_LEASE_TIME_${itf}"} =~ /^\d+$/)) {
@@ -548,6 +556,7 @@ foreach my $itf (@ITFs) {
     my %checked=();
     $checked{'ENABLE'}{'on'} = ( $dhcpsettings{"ENABLE_${itf}"} ne 'on') ? '' : "checked='checked'";
     $checked{'ENABLEBOOTP'}{'on'} = ( $dhcpsettings{"ENABLEBOOTP_${itf}"} ne 'on') ? '' : "checked='checked'";
+    $checked{'DENY_KNOWN_CLIENTS'}{'on'} = ( $dhcpsettings{"DENY_KNOWN_CLIENTS_${itf}"} ne 'on') ? '' : "checked='checked'";
 
     if ($netsettings{"${itf}_DEV"} ne '' ) { # Show only defined interface
 	my $lc_itf=lc($itf);
@@ -563,6 +572,9 @@ print <<END
     <td width='25%'><input type='text' name='START_ADDR_${itf}' value='$dhcpsettings{"START_ADDR_${itf}"}' /></td>
     <td width='25%' class='base'>$Lang::tr{'end address'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td width='25%'><input type='text' name='END_ADDR_${itf}' value='$dhcpsettings{"END_ADDR_${itf}"}' /></td>
+</tr><tr>
+    <td class='base'>$Lang::tr{'dhcp deny known clients:'}</td>
+    <td><input type='checkbox' name='DENY_KNOWN_CLIENTS_${itf}' $checked{'DENY_KNOWN_CLIENTS'}{'on'} /></td>
 </tr><tr>
     <td class='base'>$Lang::tr{'default lease time'}&nbsp;<img src='/blob.gif' alt='*' /></td>
     <td><input type='text' name='DEFAULT_LEASE_TIME_${itf}' value='$dhcpsettings{"DEFAULT_LEASE_TIME_${itf}"}' /></td>
@@ -1264,7 +1276,12 @@ sub buildconf {
 	if ($dhcpsettings{"ENABLE_${itf}"} eq 'on' ){
 	    print FILE "subnet " . $netsettings{"${itf}_NETADDRESS"} . " netmask ". $netsettings{"${itf}_NETMASK"} . " #$itf\n";
 	    print FILE "{\n";
-	    print FILE "\trange " . $dhcpsettings{"START_ADDR_${itf}"} . ' ' . $dhcpsettings{"END_ADDR_${itf}"}.";\n" if ($dhcpsettings{"START_ADDR_${itf}"});
+	    if ($dhcpsettings{"START_ADDR_${itf}"}) {
+		print FILE "pool {\n";
+		print FILE "\trange " . $dhcpsettings{"START_ADDR_${itf}"} . ' ' . $dhcpsettings{"END_ADDR_${itf}"}.";\n";
+		print FILE "\tdeny known-clients;\n" if ($dhcpsettings{"DENY_KNOWN_CLIENTS_${itf}"} eq 'on');
+		print FILE "     }\n"; # pool
+	    }
 	    print FILE "\toption subnet-mask "   . $netsettings{"${itf}_NETMASK"} . ";\n";
 	    print FILE "\toption domain-name \"" . $dhcpsettings{"DOMAIN_NAME_${itf}"} . "\";\n";
 	    print FILE "\toption routers " . $netsettings{"${itf}_ADDRESS"} . ";\n";

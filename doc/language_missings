@@ -222,11 +222,13 @@
 < desired
 < details
 < dh
+< dhcp deny known clients:
 < dhcp dns enable update
 < dhcp dns key name
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< dhcp valid range required when deny known clients checked
 < dh key move failed
 < dh key warn
 < dh key warn1
@@ -962,6 +964,8 @@
 < autonomous system
 < bewan adsl pci st
 < bewan adsl usb
+< dhcp deny known clients:
+< dhcp valid range required when deny known clients checked
 < dns enable safe-search youtube
 < g.dtm
 < g.lite
@@ -1061,11 +1065,13 @@
 < dangerous
 < default IP address
 < desired
+< dhcp deny known clients:
 < dhcp dns enable update
 < dhcp dns key name
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< dhcp valid range required when deny known clients checked
 < disable
 < Disabled
 < disconnected
@@ -1945,11 +1951,13 @@
 < desired
 < details
 < dh
+< dhcp deny known clients:
 < dhcp dns enable update
 < dhcp dns key name
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< dhcp valid range required when deny known clients checked
 < dh key move failed
 < dh key warn
 < dh key warn1
@@ -2822,11 +2830,13 @@
 < desired
 < details
 < dh
+< dhcp deny known clients:
 < dhcp dns enable update
 < dhcp dns key name
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< dhcp valid range required when deny known clients checked
 < dh key move failed
 < dh key warn
 < dh key warn1
@@ -3568,6 +3578,8 @@
 < dangerous
 < default IP address
 < desired
+< dhcp deny known clients:
+< dhcp valid range required when deny known clients checked
 < disable
 < Disabled
 < disconnected
