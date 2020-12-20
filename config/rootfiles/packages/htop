@@ -1,7 +1,11 @@
 usr/bin/htop
-#usr/man/man1/htop.1
 #usr/share/applications
 #usr/share/applications/htop.desktop
+#usr/share/icons
+#usr/share/icons/hicolor
+#usr/share/icons/hicolor/scalable
+#usr/share/icons/hicolor/scalable/apps
+#usr/share/icons/hicolor/scalable/apps/htop.svg
 #usr/share/man/man1/htop.1
 #usr/share/pixmaps
 #usr/share/pixmaps/htop.png
