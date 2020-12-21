@@ -67,10 +67,10 @@ int main(int argc, char *argv[])
 						strlcat(command, "s/^PasswordAuthentication .*$/PasswordAuthentication yes/;", STRING_SIZE - 1 );
 
 				if(findkey(kv, "ENABLE_SSH_PORTFW", buffer) && !strcmp(buffer,"on"))
-						strlcat(command, "s/^AllowTcpForwarding .*$/AllowTcpForwarding yes/;", STRING_SIZE - 1 );
+						strlcat(command, "s/^AllowTcpForwarding .*$/AllowTcpForwarding yes/;"	"s/^PermitOpen .*$/PermitOpen any/;", STRING_SIZE - 1 );
 				else
-						strlcat(command, "s/^AllowTcpForwarding .*$/AllowTcpForwarding no/;", STRING_SIZE - 1 );
-						
+						strlcat(command, "s/^AllowTcpForwarding .*$/AllowTcpForwarding no/;"	"s/^PermitOpen .*$/PermitOpen none/;", STRING_SIZE - 1 );
+
 				if(findkey(kv, "SSH_PORT", buffer) && !strcmp(buffer,"on"))
 						strlcat(command, "s/^Port .*$/Port 22/;", STRING_SIZE - 1 );
 				else
