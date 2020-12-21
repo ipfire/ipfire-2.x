@@ -2,5 +2,6 @@ etc/system-release
 etc/issue
 etc/os-release
 srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 var/ipfire/langs
