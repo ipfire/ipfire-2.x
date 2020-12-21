@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.4.1
+VER        = 3.7.12
 
 THISAPP    = ccache-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -51,7 +51,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 39492aea565c3e6d5affa633672a93bd
+$(DL_FILE)_MD5 = 4c9a09ae499d1d82bb83e67f1068f9bb
 
 install : $(TARGET)
 
