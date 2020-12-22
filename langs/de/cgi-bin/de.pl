@@ -2276,7 +2276,7 @@
 'ssh active sessions' => 'Aktive Benutzeranmeldungen',
 'ssh agent forwarding' => 'Weiterleitung des SSH-Agenten (Agent Forwarding) zulassen',
 'ssh fingerprint' => 'Fingerabdruck',
-'ssh host keys' => 'SSH Host Schlüssel',
+'ssh host keys' => 'SSH-Serverschlüssel',
 'ssh is disabled' => 'Secure Shell ist deaktiviert.  Halte an.',
 'ssh is enabled' => 'Secure Shell ist aktiviert.  Starte neu.',
 'ssh key' => 'Schlüssel',

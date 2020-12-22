@@ -185,7 +185,7 @@ print "</form>\n";
 
 &Header::openbox('100%', 'center', $Lang::tr{'ssh host keys'});
 
-print "<table class='tbl'>\n";
+print "<table class='tbl' width='100%'>\n";
 
 print <<END
 <thead>
@@ -213,7 +213,7 @@ print "</tbody>\n</table>\n";
 &Header::openbox('100%', 'center', $Lang::tr{'ssh active sessions'});
 
 print <<END;
-		<table class="tbl" width='66%'>
+		<table class="tbl" width="100%">
 			<thead>
 				<tr>
 					<th align="center">
@@ -273,7 +273,7 @@ sub printactivelogins()
 	if ( scalar(@output) == 0 )
 	{
 		# no logins appeared
-		my $table_colour = ($id++ % 2) ? $color{'color22'} : $color{'color20'};
+		my $table_colour = ($id++ % 2) ? $color{'color20'} : $color{'color22'};
 		print "<tr bgcolor='$table_colour'><td colspan='5'>$Lang::tr{'ssh no active logins'}</td></tr>\n";
 	} else {
 		# list active logins...
@@ -295,7 +295,7 @@ sub printactivelogins()
 			my $rdns = gethostbyaddr($iaddr, AF_INET);
 			if (!$rdns) { $rdns = $Lang::tr{'ptr lookup failed'}; };
 
-			my $table_colour = ($id++ % 2) ? $color{'color22'} : $color{'color20'};
+			my $table_colour = ($id++ % 2) ? $color{'color20'} : $color{'color22'};
 
 			print <<END;
 			<tr bgcolor='$table_colour'>
