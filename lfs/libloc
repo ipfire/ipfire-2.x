@@ -24,8 +24,8 @@
 
 include Config
 
-VER        = 0.9.4
-DB_DATE    = 2020-09-21
+VER        = 0.9.5
+DB_DATE    = 2020-12-23
 
 THISAPP    = libloc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,11 +40,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 objects = $(DL_FILE) \
 	location-$(DB_DATE).db.xz
 
-$(DL_FILE)                    = https://source.ipfire.org/releases/libloc//$(DL_FILE)
+$(DL_FILE)                    = https://source.ipfire.org/releases/libloc/$(DL_FILE)
 location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE).db.xz
 
-$(DL_FILE)_MD5                = 82770e9eba20f636c96e6fa42ff234b5
-location-$(DB_DATE).db.xz_MD5 = fa3069bf31170629d638317e283913c0
+$(DL_FILE)_MD5                = 41d8dc3fb4e498db958b7696cadd61f5
+location-$(DB_DATE).db.xz_MD5 = 3a71931555623fc3665f280c8e5c292a
 
 install : $(TARGET)
 
@@ -78,8 +78,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvf $(DIR_DL)/$(DL_FILE)
 
-	# Import changes from upstream
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.4-upstream.patch
+	# Import recent patches from upstream
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc-0.9.5-location-Fix-list-networks-by-as.patch
 
 	# Add patch for i586 to disable strong stack protector.
 ifeq "$(BUILD_ARCH)" "i586"
