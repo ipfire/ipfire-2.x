@@ -18,7 +18,6 @@ WARNING: translation string unused: accounting
 WARNING: translation string unused: accounting user nonpdc
 WARNING: translation string unused: accounting user pdc
 WARNING: translation string unused: activate user
-WARNING: translation string unused: active
 WARNING: translation string unused: add a new rule
 WARNING: translation string unused: add cron
 WARNING: translation string unused: add network
@@ -90,7 +89,6 @@ WARNING: translation string unused: ansi t1.483
 WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: attemps
-WARNING: translation string unused: available updates
 WARNING: translation string unused: avoid dod
 WARNING: translation string unused: backup archive
 WARNING: translation string unused: backup clear archive
