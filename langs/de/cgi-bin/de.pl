@@ -453,7 +453,7 @@
 'authentication' => 'Authentifizierung:',
 'automatic' => 'Automatisch',
 'autonomous system' => 'Autonomes System',
-'available updates' => 'Verfügbare Updates:',
+'available updates' => 'Verfügbare Updates',
 'average' => 'Durchschnitt',
 'avoid dod' => 'Benutzen Sie diese Option nicht mit Dial on Demand! Wird hauptsächlich verwendet, wenn Ihr IPFire sich hinter einem Router befindet. Ihre ROTE IP muss sich innerhalb eines der drei reservierten Netzwerkbereiche befinden z.B. 10/8, 172.16/12, 192.168/16.',
 'back' => 'ZURÜCK',

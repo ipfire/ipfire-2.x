@@ -183,7 +183,7 @@ if ($return) {
 	print <<END;
 	<table>
 		<tr><td>
-				<img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' title='$Lang::tr{'aktiv'}' />&nbsp;
+				<img src='/images/indicator.gif' alt='$Lang::tr{'active'}' title='$Lang::tr{'active'}' />&nbsp;
 			<td>
 				$Lang::tr{'pakfire working'}
 		<tr><td colspan='2' align='center'>
@@ -217,7 +217,7 @@ my $packages_update_age = &General::age("/opt/pakfire/db/lists/packages_list.db"
 &Header::openbox("100%", "center", "Pakfire");
 
 print <<END;
-	<table width='95%' cellpadding='5' >
+	<table width='95%' cellpadding='5'>
 END
 if ( -e "/var/run/need_reboot") {
 	print "<tr><td align='center' colspan='2'><font color='red'>$Lang::tr{'needreboot'}!</font></td></tr>";
@@ -225,18 +225,21 @@ if ( -e "/var/run/need_reboot") {
 }
 print <<END;
 		<tr><td width="50%" bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire system state'}:</b>
-				<td width="50%">
+
+			<td width="50%" bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'available updates'}:</b></tr>
+
 		<tr><td align="center">$Lang::tr{'pakfire core update level'}: $core_release<hr />
 					$Lang::tr{'pakfire last update'} $core_update_age $Lang::tr{'pakfire ago'}<br />
 					$Lang::tr{'pakfire last serverlist update'} $server_update_age $Lang::tr{'pakfire ago'}<br />
 					$Lang::tr{'pakfire last core list update'} $corelist_update_age $Lang::tr{'pakfire ago'}<br />
 					$Lang::tr{'pakfire last package update'} $packages_update_age $Lang::tr{'pakfire ago'}
 					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='ACTION' value='update' />
+						<input type='hidden' name='ACTION' value='update' /><br />
 						<input type='submit' value='$Lang::tr{'calamaris refresh list'}' /><br />
 					</form>
+<br />
 				<td align="center">
-				 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<select name="UPDPAKS" size="5" disabled>
 END
 						&Pakfire::dblist("upgrade", "forweb");
@@ -250,7 +253,7 @@ END
 		<tr><td colspan="2"><!-- Just an empty line -->&nbsp;
 		<tr><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire available addons'}</b>
 				<td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire installed addons'}</b>
-		<tr><td align="center">
+		<tr><td style="padding:5px 10px 20px 20px" align="center">
 			<p>$Lang::tr{'pakfire install description'}</p>
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 				<select name="INSPAKS" size="10" multiple>
@@ -264,7 +267,7 @@ print <<END;
 				<input type='image' alt='$Lang::tr{'install'}' title='$Lang::tr{'install'}' src='/images/list-add.png' />
 			</form>
 
-		<td align="center">
+		<td style="padding:5px 10px 20px 20px" align="center">
 			<p>$Lang::tr{'pakfire uninstall description'}</p>
 		 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 			<select name="DELPAKS" size="10" multiple>
