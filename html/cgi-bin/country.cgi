@@ -96,10 +96,17 @@ foreach my $country (@countries) {
 print "</table>";
 &Header::closebox();
 
+print <<END
+<div align='center'>
+<table width='80%'>
+<tr>
+<-><td align='center'><a href='$ENV{'HTTP_REFERER'}'><img src='/images/back.png' alt='$Lang::tr{'back'}' title='$Lang::tr{'back'}' /></a></td>
+</tr>
+</table>
+</div>
+END
+;
+
 &Header::closebigbox();
 
-print "<div style='text-align:center'><a href='$ENV{'HTTP_REFERER'}'>$Lang::tr{'back'}</a></div>\n";
-
 &Header::closepage();
-
-
