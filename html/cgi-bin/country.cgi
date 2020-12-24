@@ -53,7 +53,7 @@ print<<END;
 END
 
 # Get a list of all supported country codes.
-my @countries = &Location::database_countries();
+my @countries = &Location::Functions::get_locations();
 
 # Loop through whole country list.
 foreach my $country (@countries) {
