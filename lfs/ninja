@@ -71,6 +71,14 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
+	# Allow to limit the paralell build processes ninja will do.
+	cd $(DIR_APP) && sed -i '/int Guess/a \
+				int   j = 0;\
+				char* jobs = getenv( "NINJAJOBS" );\
+				if ( jobs != NULL ) j = atoi( jobs );\
+				if ( j > 0 ) return j;\
+			' src/ninja.cc
+
 	# Configure and bootstrap the build environment
 	cd $(DIR_APP) && python3 configure.py --bootstrap --verbose
 
