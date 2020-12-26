@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.8
+VER        = v3.3.16
 
 THISAPP    = procps-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9532714b6846013ca9898984ba4cd7e0
+$(DL_FILE)_MD5 = 2af440d54f94a3b44020bf0ea1bf9de8
 
 install : $(TARGET)
 
@@ -70,9 +70,17 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-fix_unknown_HZ_value.patch
-	cd $(DIR_APP) && make $(MAKETUNING) LIBPROC=proc/libproc-$(VER).so
+	cd $(DIR_APP) && ./autogen.sh
+	cd $(DIR_APP) && ./configure \
+				--prefix=/usr \
+				--libdir=/lib
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	install -m 0644 $(DIR_SRC)/config/etc/sysctl.conf /etc
+
+	# Move some tools to /bin & /sbin
+	mv -v /usr/bin/{kill,ps} /bin
+	mv -v /usr/sbin/sysctl /sbin
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

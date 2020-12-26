@@ -1096,7 +1096,6 @@ buildbase() {
 	lfsmake2 m4
 	lfsmake2 bison
 	lfsmake2 ncurses
-	lfsmake2 procps
 	lfsmake2 libtool
 	lfsmake2 perl
 	lfsmake2 readline
@@ -1124,6 +1123,7 @@ buildbase() {
 	lfsmake2 kbd
 	lfsmake2 less
 	lfsmake2 pkg-config
+	lfsmake2 procps
 	lfsmake2 make
 	lfsmake2 man
 	lfsmake2 net-tools
