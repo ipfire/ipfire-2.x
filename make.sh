@@ -220,6 +220,9 @@ configure_build() {
 	# Use this as default PARALLELISM
 	DEFAULT_PARALLELISM="${parallelism}"
 
+	# Limit lauched ninja build jobs to computed parallel value.
+	NINJAJOBS="${parallelism}"
+
 	# Compression parameters
 	# We use mode 8 for reasonable memory usage when decompressing
 	# but with overall good compression
@@ -465,7 +468,7 @@ prepareenv() {
 	# Setup environment
 	set +h
 	LC_ALL=POSIX
-	export LFS LC_ALL CFLAGS CXXFLAGS DEFAULT_PARALLELISM RUSTFLAGS
+	export LFS LC_ALL CFLAGS CXXFLAGS DEFAULT_PARALLELISM RUSTFLAGS NINJAJOBS
 	unset CC CXX CPP LD_LIBRARY_PATH LD_PRELOAD
 
 	# Make some extra directories
