@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.13
+VER        = 2.0.14a
 
 THISAPP    = iperf-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = iperf
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 31ea1c6d5cbf80b16ff3abe4288dad5e
+$(DL_FILE)_MD5 = 323a68e3668bc3e4afcc90adefeb238f
 
 install : $(TARGET)
 
