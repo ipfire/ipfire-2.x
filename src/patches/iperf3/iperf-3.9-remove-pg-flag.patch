@@ -1,6 +1,6 @@
-diff -Naur iperf-3.7.org/src/Makefile.am iperf-3.7/src/Makefile.am
---- iperf-3.7.org/src/Makefile.am	2019-06-21 03:12:47.000000000 +0200
-+++ iperf-3.7/src/Makefile.am	2019-07-17 12:19:38.133540594 +0200
+diff -Naur iperf-3.9.org/src/Makefile.am iperf-3.9/src/Makefile.am
+--- iperf-3.9.org/src/Makefile.am	2020-08-15 00:08:27.000000000 +0200
++++ iperf-3.9/src/Makefile.am	2020-12-22 22:16:14.488228000 +0100
 @@ -58,9 +58,9 @@
  iperf3_profile_SOURCES  = main.c \
                            $(libiperf_la_SOURCES)
@@ -13,10 +13,10 @@ diff -Naur iperf-3.7.org/src/Makefile.am iperf-3.7/src/Makefile.am
  endif
  
  # Specify the sources and various flags for the test cases
-diff -Naur iperf-3.7.org/src/Makefile.in iperf-3.7/src/Makefile.in
---- iperf-3.7.org/src/Makefile.in	2019-06-21 03:12:47.000000000 +0200
-+++ iperf-3.7/src/Makefile.in	2019-07-17 12:19:53.133496336 +0200
-@@ -670,9 +670,9 @@
+diff -Naur iperf-3.9.org/src/Makefile.in iperf-3.9/src/Makefile.in
+--- iperf-3.9.org/src/Makefile.in	2020-08-15 00:08:27.000000000 +0200
++++ iperf-3.9/src/Makefile.in	2020-12-22 22:16:41.934746000 +0100
+@@ -680,9 +680,9 @@
  @ENABLE_PROFILING_TRUE@iperf3_profile_SOURCES = main.c \
  @ENABLE_PROFILING_TRUE@                          $(libiperf_la_SOURCES)
  
