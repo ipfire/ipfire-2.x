@@ -516,8 +516,7 @@ print <<END
 <table width='80%' cellspacing='0'>
 <tr><td align='center'>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-       <input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
-       <input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/media-floppy.png' /></form></td>
+       <input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></form></td>
 </tr>
 </table>
 END
