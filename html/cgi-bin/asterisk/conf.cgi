@@ -77,7 +77,7 @@ print <<END
 
 	<tr><td align=center>
 	<p><input type=text name=save_path value=$conf_file size=25>
-	<p><input type=submit name=ACTION value=$Lang::tr{'save'}>
+	<p><input type=submit name=ACTION value='$Lang::tr{'save'}'>
 	</table>
 
 END

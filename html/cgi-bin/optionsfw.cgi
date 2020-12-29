@@ -323,7 +323,7 @@ END
 <br />
 <table width='100%' cellspacing='0'>
 <tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-<input type='submit' name='ACTION' value=$Lang::tr{'save'} />
+<input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
 </form></td></tr>
 </table>
 </form>
@@ -345,7 +345,7 @@ print <<END;
 		<tr><td width='15%' align='left'>	<select name='POLICY' style="width: 100px">
 		<option value='MODE1' $selected{'POLICY'}{'MODE1'}>$Lang::tr{'fwdfw pol block'}</option>
 		<option value='MODE2' $selected{'POLICY'}{'MODE2'}>$Lang::tr{'fwdfw pol allow'}</option></select>
-	    <input type='submit' name='ACTION' value=$Lang::tr{'save'} /><input type='hidden' name='defpol' value='1'></td>
+	    <input type='submit' name='ACTION' value='$Lang::tr{'save'}' /><input type='hidden' name='defpol' value='1'></td>
 END
 	print "</tr></table></form>";
 	print"<br><br>";

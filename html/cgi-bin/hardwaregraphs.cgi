@@ -167,7 +167,7 @@ END
 
 	print <<END
 <tr>
-	<td align='center' colspan='2' ><input type='submit' name='ACTION' value=$Lang::tr{'save'} /></td>
+	<td align='center' colspan='2' ><input type='submit' name='ACTION' value='$Lang::tr{'save'}' /></td>
 </tr>
 </table>
 </form>

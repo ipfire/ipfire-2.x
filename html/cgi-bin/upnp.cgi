@@ -163,7 +163,7 @@ print <<END
 <tr><td align='left'>Downstream in KB:</td><td><input type='text' name='DOWNSTREAM' value='$upnpsettings{'DOWNSTREAM'}' size="30" /></td></tr>
 <tr><td align='left'>Upstream in KB:</td><td><input type='text' name='UPSTREAM' value='$upnpsettings{'UPSTREAM'}' size="30" /></td></tr>
 <tr><td align='left' colspan='2'><br /></td></tr>
-<tr><td colspan='2' align='center'>	<input type='hidden' name='ACTION' value=$Lang::tr{'save'} />
+<tr><td colspan='2' align='center'>	<input type='hidden' name='ACTION' value='$Lang::tr{'save'}' />
 <input type='image' alt='$Lang::tr{'save'}' title='$Lang::tr{'save'}' src='/images/floppy.gif' /></td></tr>
 </table></form>
 END

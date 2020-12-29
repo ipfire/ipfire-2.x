@@ -73,7 +73,7 @@ print <<END
 
 <tr><td colspan=2>Von oder zum Anrufer mit der ID/Nummer:<td colspan=2><input type=text name=number size=20 maxlength=100 value="$cgiparams{'number'}">
 
-<tr><td align=center colspan=4><input type=submit name='ACTION' value=$Lang::tr{'update'}>
+<tr><td align=center colspan=4><input type=submit name='ACTION' value='$Lang::tr{'update'}'>
 </table>
 END
 ;
