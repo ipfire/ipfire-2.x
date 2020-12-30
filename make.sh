@@ -1079,6 +1079,7 @@ buildbase() {
 	lfsmake2 tzdata
 	lfsmake2 cleanup-toolchain
 	lfsmake2 zlib
+	lfsmake2 zstd
 	lfsmake2 binutils
 	lfsmake2 gmp
 	lfsmake2 gmp-compat
@@ -1391,7 +1392,6 @@ buildipfire() {
   lfsmake2 spandsp
   lfsmake2 lz4
   lfsmake2 lzo
-  lfsmake2 zstd
   lfsmake2 openvpn
   lfsmake2 mpage
   lfsmake2 dbus
