@@ -30,7 +30,14 @@ THISAPP    = zstd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)
+
+ifeq "$(TOOLCHAIN)" "1"
+  TARGET = $(DIR_INFO)/$(THISAPP)-tools
+  PREFIX = $(TOOLS_DIR)
+else
+  TARGET = $(DIR_INFO)/$(THISAPP)
+  PREFIX = /usr
+endif
 
 ###############################################################################
 # Top-level Rules
@@ -74,6 +81,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make prefix=/usr install
+	cd $(DIR_APP) && make prefix=$(PREFIX) install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
