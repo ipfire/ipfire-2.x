@@ -1036,7 +1036,6 @@ buildtoolchain() {
 	export LOGFILE
 
 	lfsmake1 stage1
-	lfsmake1 ccache			PASS=1
 	lfsmake1 binutils			PASS=1
 	lfsmake1 gcc			PASS=1
 	lfsmake1 linux			KCFG="-headers"
@@ -1047,7 +1046,7 @@ buildtoolchain() {
 	lfsmake1 gcc			PASS=2
 	lfsmake1 zlib
 	lfsmake1 zstd
-	lfsmake1 ccache			PASS=2
+	lfsmake1 ccache
 	lfsmake1 tcl
 	lfsmake1 expect
 	lfsmake1 dejagnu
