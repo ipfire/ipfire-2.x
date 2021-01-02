@@ -635,12 +635,12 @@ sub validhostname
 	# Checks a hostname against RFC1035
         my $hostname = $_[0];
 
-	# Each part should be at least two characters in length
+	# Hostname should be at least one character in length
 	# but no more than 63 characters
 	if (length ($hostname) < 1 || length ($hostname) > 63) {
 		return 0;}
 	# Only valid characters are a-z, A-Z, 0-9 and -
-	if ($hostname !~ /^[a-zA-Z0-9-\s]*$/) {
+	if ($hostname !~ /^[a-zA-Z0-9-]*$/) {
 		return 0;}
 	# First character can only be a letter or a digit
 	if (substr ($hostname, 0, 1) !~ /^[a-zA-Z0-9]*$/) {
@@ -655,46 +655,53 @@ sub validdomainname
 {
 	my $part;
 
-	# Checks a domain name against RFC1035
+	# Checks a domain name against RFC1035 and RFC2181
         my $domainname = $_[0];
-	my @parts = split (/\./, $domainname);	# Split hostname at the '.'
+	my @parts = split (/\./, $domainname);	# Split domain name at the '.'
 
 	foreach $part (@parts) {
-		# Each part should be no more than 63 characters in length
+		# Each part should be at least one character in length
+		# but no more than 63 characters
 		if (length ($part) < 1 || length ($part) > 63) {
 			return 0;}
 		# Only valid characters are a-z, A-Z, 0-9, _ and -
 		if ($part !~ /^[a-zA-Z0-9_-]*$/) {
-			return 0;
-		}
+			return 0;}
 	}
 	return 1;
 }
 
 sub validfqdn
 {
-	my $part;
-
-	# Checks a fully qualified domain name against RFC1035
+	# Checks a fully qualified domain name against RFC1035 and RFC2181
         my $fqdn = $_[0];
-	my @parts = split (/\./, $fqdn);	# Split hostname at the '.'
+	my @parts = split (/\./, $fqdn);	# Split FQDN at the '.'
 	if (scalar(@parts) < 2) {		# At least two parts should
 		return 0;}			# exist in a FQDN
 						# (i.e.hostname.domain)
-	foreach $part (@parts) {
+
+	for (my $index=0; $index < scalar(@parts); $index++) {
 		# Each part should be at least one character in length
 		# but no more than 63 characters
-		if (length ($part) < 1 || length ($part) > 63) {
+		if (length ($parts[$index]) < 1 || length ($parts[$index]) > 63) {
 			return 0;}
-		# Only valid characters are a-z, A-Z, 0-9 and -
-		if ($part !~ /^[a-zA-Z0-9-]*$/) {
-			return 0;}
-		# First character can only be a letter or a digit
-		if (substr ($part, 0, 1) !~ /^[a-zA-Z0-9]*$/) {
-			return 0;}
-		# Last character can only be a letter or a digit
-		if (substr ($part, -1, 1) !~ /^[a-zA-Z0-9]*$/) {
-			return 0;}
+		if ($index eq 0) {		
+			# This is the hostname part
+			# Only valid characters are a-z, A-Z, 0-9 and -
+			if ($parts[$index] !~ /^[a-zA-Z0-9-]*$/) {
+				return 0;}
+			# First character can only be a letter or a digit
+			if (substr ($parts[$index], 0, 1) !~ /^[a-zA-Z0-9]*$/) {
+				return 0;}
+			# Last character can only be a letter or a digit
+			if (substr ($parts[$index], -1, 1) !~ /^[a-zA-Z0-9]*$/) {
+				return 0;}
+		} else{				
+			# This is the domain part
+			# Only valid characters are a-z, A-Z, 0-9, _ and -
+			if ($parts[$index] !~ /^[a-zA-Z0-9_-]*$/) {
+				return 0;}
+		}
 	}
 	return 1;
 }
