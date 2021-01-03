@@ -83,7 +83,6 @@ srv/web/ipfire/cgi-bin/time.cgi
 #srv/web/ipfire/cgi-bin/tor.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
-#srv/web/ipfire/cgi-bin/upnp.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
