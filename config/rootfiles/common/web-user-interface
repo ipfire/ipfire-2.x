@@ -1,10 +1,4 @@
 srv/web/ipfire/cgi-bin/aliases.cgi
-#srv/web/ipfire/cgi-bin/asterisk
-#srv/web/ipfire/cgi-bin/asterisk/calls.cgi
-#srv/web/ipfire/cgi-bin/asterisk/conf
-#srv/web/ipfire/cgi-bin/asterisk/conf.cgi
-#srv/web/ipfire/cgi-bin/asterisk/conf/telbook.conf
-#srv/web/ipfire/cgi-bin/asterisk/status.cgi
 srv/web/ipfire/cgi-bin/atm-status.cgi
 srv/web/ipfire/cgi-bin/backup.cgi
 #srv/web/ipfire/cgi-bin/captive
