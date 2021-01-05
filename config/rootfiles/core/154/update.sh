@@ -33,6 +33,7 @@ done
 
 # Remove files
 rm -vf \
+	/usr/local/bin/launch-ether-wake \
 	/usr/local/bin/upnpctrl
 
 # Stop services

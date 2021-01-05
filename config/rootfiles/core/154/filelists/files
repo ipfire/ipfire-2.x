@@ -19,6 +19,7 @@ srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/remote.cgi
 srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/wakeonlan.cgi
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
 usr/local/bin/ipsec-interfaces
 usr/local/bin/sshctrl

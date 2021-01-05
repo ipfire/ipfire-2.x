@@ -13,7 +13,6 @@ usr/local/bin/getipstat
 #usr/local/bin/iowrap
 usr/local/bin/ipfirereboot
 usr/local/bin/ipsecctrl
-usr/local/bin/launch-ether-wake
 usr/local/bin/logwatch
 #usr/local/bin/mpfirectrl
 usr/local/bin/openvpnctrl

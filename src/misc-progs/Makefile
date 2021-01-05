@@ -27,7 +27,7 @@ SUID_PROGS = squidctrl sshctrl ipfirereboot \
 	ipsecctrl timectrl dhcpctrl suricatactrl \
 	rebuildhosts backupctrl collectdctrl \
 	logwatch wioscan wiohelper openvpnctrl firewallctrl \
-	wirelessctrl getipstat qosctrl launch-ether-wake \
+	wirelessctrl getipstat qosctrl \
 	redctrl syslogdctrl extrahdctrl sambactrl \
 	smartctrl clamavctrl addonctrl pakfire mpfirectrl wlanapctrl \
 	setaliases urlfilterctrl updxlratorctrl fireinfoctrl rebuildroutes \

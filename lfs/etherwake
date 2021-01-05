@@ -72,5 +72,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
+
+	# Allow execution by other users than root
+	setcap cap_net_raw+ep /usr/sbin/etherwake
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
