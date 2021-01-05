@@ -28,7 +28,6 @@ VER = ipfire
 
 THISAPP     = core-updates
 TARGET      = $(DIR_INFO)/$(THISAPP)
-TAR_OPTIONS = --xz
 
 ###############################################################################
 # Top-level Rules
@@ -72,13 +71,13 @@ core/%:
 	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
 
 	#Remove doubled files with tar/untar/tar to save space
-	tar -c --exclude='proc/*' --exclude='tmp/ROOTFILES' --exclude='__pycache__' --exclude='#*' --exclude='dev/pts/*' \
+	tar $(TAR_OPTIONS) -c --exclude='proc/*' --exclude='tmp/ROOTFILES' --exclude='__pycache__' --exclude='#*' --exclude='dev/pts/*' \
 		--exclude-from=$(DIR_SRC)/config/rootfiles/$@/exclude \
 		-C / --files-from=/tmp/ROOTFILES -f /$(SNAME).tar
 	mv -f /tmp/ROOTFILES /install/packages/package/ROOTFILES
-	tar -p --numeric-owner -x  -C /tmp -f /$(SNAME).tar
+	tar $(TAR_OPTIONS) -p --numeric-owner -x  -C /tmp -f /$(SNAME).tar
 	rm -f /$(SNAME).tar
-	cd /tmp && XZ_OPT="$(XZ_OPT)" tar cJf /install/packages/package/files.tar.xz $(TAR_OPTIONS) * && rm -rf *
+	cd /tmp && XZ_OPT="$(XZ_OPT)" tar $(TAR_OPTIONS) -cJf /install/packages/package/files.tar.xz $(TAR_OPTIONS) * && rm -rf *
 	cat /install/packages/package/ROOTFILES | grep -v "#" > /install/packages/package/ROOTFILES.tmp
 	rm /install/packages/package/ROOTFILES
 	mv /install/packages/package/ROOTFILES.tmp /install/packages/package/ROOTFILES

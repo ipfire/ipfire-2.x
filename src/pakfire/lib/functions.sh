@@ -24,7 +24,8 @@
 
 extract_files() {
 	echo "Extracting files..."
-	tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
+	tar --acls --xattrs --xattrs-include='*' \
+		-xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
 	echo "...Finished."
 }
 
