@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.9.7
+VER        = 3.10.1
 
 THISAPP    = fuse-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9bd4ce8184745fd3d000ca2692adacdb
+$(DL_FILE)_MD5 = e973012119e98b048307558271b5b296
 
 install : $(TARGET)
 
@@ -72,12 +72,14 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fuse-2.9.2-namespace-conflict-fix.patch
-	cd $(DIR_APP) && ./configure \
-	--prefix=/usr
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && meson --prefix=/usr builddir && cd builddir && ninja && ninja install
 
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
+	# Move mount.fuse3 to same location as mount.fuse was in previous version
+	mv -v /usr/sbin/mount.fuse3 /sbin
+
+	# Move 99-fuse3 rules to same udev location as in previous version of fuse
+	mv -v /lib/udev/rules.d/99-fuse3.rules /etc/udev/rules.d
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
