@@ -1,2 +1,4 @@
 usr/bin/sshfs
+#usr/sbin/mount.fuse.sshfs
+#usr/sbin/mount.sshfs
 #usr/share/man/man1/sshfs.1
