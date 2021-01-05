@@ -1104,6 +1104,8 @@ buildbase() {
 	lfsmake2 xz
 	lfsmake2 pcre
 	lfsmake2 pcre-compat
+	lfsmake2 attr
+	lfsmake2 acl
 	lfsmake2 bash
 	lfsmake2 diffutils
 	lfsmake2 e2fsprogs
@@ -1269,8 +1271,6 @@ buildipfire() {
   lfsmake2 slang
   lfsmake2 newt
   lfsmake2 libsmooth
-  lfsmake2 attr
-  lfsmake2 acl
   lfsmake2 libcap
   lfsmake2 libcap-ng
   lfsmake2 pciutils
