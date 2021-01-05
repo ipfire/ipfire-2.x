@@ -33,7 +33,6 @@ SUID_PROGS = squidctrl sshctrl ipfirereboot \
 	setaliases urlfilterctrl updxlratorctrl fireinfoctrl rebuildroutes \
 	getconntracktable wirelessclient torctrl ddnsctrl unboundctrl \
 	captivectrl
-SUID_UPDX = updxsetperms
 
 OBJS = $(patsubst %,%.o,$(PROGS) $(SUID_PROGS))
 
