@@ -32,6 +32,8 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Remove files
+rm -vf \
+	/usr/local/bin/upnpctrl
 
 # Stop services
 

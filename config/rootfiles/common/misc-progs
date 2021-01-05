@@ -33,7 +33,6 @@ usr/local/bin/timectrl
 #usr/local/bin/torctrl
 usr/local/bin/unboundctrl
 usr/local/bin/updxlratorctrl
-usr/local/bin/upnpctrl
 usr/local/bin/urlfilterctrl
 #usr/local/bin/wiohelper
 #usr/local/bin/wioscan
