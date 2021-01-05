@@ -44,6 +44,9 @@ extract_files
 # update linker config
 ldconfig
 
+# Manually set capabilities
+setcap cap_net_raw+ep /usr/sbin/etherwake
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
