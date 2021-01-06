@@ -133,6 +133,11 @@ int main(int argc, char *argv[])
 				return 0;
 	}
 	else if (strcmp(argv[1], "tempstart") == 0) {
+		if (!is_valid_argument_num(argv[2])) {
+			fprintf(stderr, "Invalid time '%s'\n", argv[2]);
+			exit(2);
+		}
+
 				safe_system("/usr/local/bin/sshctrl");
 				sleep(5);
 				unlink("/var/ipfire/remote/enablessh");
