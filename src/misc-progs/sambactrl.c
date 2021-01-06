@@ -79,7 +79,7 @@ int main(int argc, char *argv[]) {
 		snprintf(command, BUFFER_SIZE-1, "/usr/sbin/groupadd sambauser >/dev/null");
 		safe_system(command);
 
-		snprintf(command, BUFFER_SIZE-1, "/usr/sbin/useradd -c 'Samba User' -m -g %s -s %s %s >/dev/null", argv[4], argv[5], argv[2]);
+		snprintf(command, BUFFER_SIZE-1, "/usr/sbin/useradd -c 'Samba User' -m -g sambauser -s /bin/false %s >/dev/null", argv[2]);
 		safe_system(command);
 
 		snprintf(command, BUFFER_SIZE-1, "echo %s:%s | chpasswd", argv[2], argv[3]);

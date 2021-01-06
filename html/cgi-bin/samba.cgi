@@ -87,7 +87,7 @@ delete $sambasettings{'__CGI__'};delete $sambasettings{'x'};delete $sambasetting
 
 if ($sambasettings{'ACTION'} eq 'smbuserdisable'){system("/usr/local/bin/sambactrl smbuserdisable $sambasettings{'NAME'}");}
 if ($sambasettings{'ACTION'} eq 'smbuserenable'){system("/usr/local/bin/sambactrl smbuserenable $sambasettings{'NAME'}");}
-if ($sambasettings{'ACTION'} eq 'smbuseradd'){system("/usr/local/bin/sambactrl smbuseradd $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'} $sambasettings{'GROUP'} $sambasettings{'SHELL'}");}
+if ($sambasettings{'ACTION'} eq 'smbuseradd'){system("/usr/local/bin/sambactrl smbuseradd $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'}");}
 if ($sambasettings{'ACTION'} eq 'smbchangepw'){system("/usr/local/bin/sambactrl smbchangepw $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'}");}
 if ($sambasettings{'ACTION'} eq 'smbrestart'){system("/usr/local/bin/sambactrl smbrestart");}
 if ($sambasettings{'ACTION'} eq 'smbstart'){system("/usr/local/bin/sambactrl smbstart");}
@@ -480,18 +480,6 @@ END
 						<td align='left'>$Lang::tr{'password'}</td>
 						<td>
 							<input type='password' name='PASSWORD' value='$password' size='30' />
-						</td>
-					</tr>
-					<tr>
-						<td align='left'>$Lang::tr{'unix group'}</td>
-						<td>
-							<input type='text' name='GROUP' value='sambauser' size='30' />
-						</td>
-					</tr>
-					<tr>
-						<td align='left'>$Lang::tr{'unix shell'}</td>
-						<td>
-							<input type='text' name='SHELL' value='/bin/false' size='30' />
 						</td>
 					</tr>
 					<tr>
