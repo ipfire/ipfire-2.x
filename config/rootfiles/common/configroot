@@ -51,8 +51,8 @@ var/ipfire/ethernet
 #var/ipfire/ethernet/vlans
 #var/ipfire/ethernet/wireless
 var/ipfire/extrahd
-#var/ipfire/extrahd/bin
-#var/ipfire/extrahd/bin/extrahd.pl
+var/ipfire/extrahd/bin
+var/ipfire/extrahd/bin/extrahd.pl
 #var/ipfire/extrahd/devices
 #var/ipfire/extrahd/partitions
 #var/ipfire/extrahd/scan

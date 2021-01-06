@@ -151,6 +151,9 @@ $(TARGET) :
 	# set converters executable
 	chmod 755 /usr/sbin/convert-*
 
+	# Make extrahd.pl executable
+	chmod 755 /var/ipfire/extrahd/bin/extrahd.pl
+
 	# Modify variables in header.pl
 	sed -i -e "s+CONFIG_ROOT+$(CONFIG_ROOT)+g" \
 	    -e "s+VERSION+$(VERSION)+g" \
