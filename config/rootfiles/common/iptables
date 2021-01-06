@@ -133,6 +133,7 @@ sbin/ip6tables-apply
 sbin/ip6tables-restore
 sbin/ip6tables-save
 sbin/iptables
+sbin/iptables-apply
 #sbin/iptables-legacy
 #sbin/iptables-legacy-restore
 #sbin/iptables-legacy-save
