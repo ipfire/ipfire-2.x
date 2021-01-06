@@ -199,3 +199,42 @@ int initsetuid(void) {
 
 	return 1;
 }
+
+/* Checks if a string only contains alphanumerical characters, dash or underscore */
+int is_valid_argument_alnum(const char* arg) {
+	size_t l = strlen(arg);
+
+	for (unsigned int i = 0; i < l; i++) {
+		char c = arg[i];
+
+		// Dash or underscore
+		if (c == '-' || c == '_')
+			continue;
+
+		// Any alphanumerical character
+		if (isalnum(c))
+			continue;
+
+		// Invalid
+		return 0;
+	}
+
+	return 1;
+}
+
+int is_valid_argument_num(const char* arg) {
+	size_t l = strlen(arg);
+
+	for (unsigned int i = 0; i < l; i++) {
+		char c = arg[i];
+
+		// Any digit
+		if (isdigit(c))
+			continue;
+
+		// Invalid
+		return 0;
+	}
+
+	return 1;
+}
