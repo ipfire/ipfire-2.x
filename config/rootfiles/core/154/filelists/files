@@ -4,6 +4,7 @@ etc/os-release
 opt/pakfire/lib/functions.sh
 srv/web/ipfire/cgi-bin/country.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
+srv/web/ipfire/cgi-bin/ddns.cgi
 srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/gpl.cgi
