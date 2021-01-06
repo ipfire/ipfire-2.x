@@ -37,9 +37,6 @@ int main(int argc, char *argv[]) {
 	} else if (strcmp(argv[1], "smbsafeconf") == 0) {
 		safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf");
 
-	} else if (strcmp(argv[1], "smbsafeconfpdc") == 0) {
-		safe_system("/bin/cat /var/ipfire/samba/global /var/ipfire/samba/pdc /var/ipfire/samba/shares > /var/ipfire/samba/smb.conf");
-
 	} else if (strcmp(argv[1], "smbstop") == 0) {
 		safe_system("/etc/rc.d/init.d/samba stop >/dev/null");
 		safe_system("/usr/local/bin/sambactrl disable");
