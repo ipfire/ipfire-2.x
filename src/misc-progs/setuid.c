@@ -20,6 +20,7 @@
  *
  */
 
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
@@ -41,6 +42,8 @@
 #define OPEN_MAX 256
 #endif
 
+#define MAX_ARGUMENTS 128
+
 /* Trusted environment for executing commands */
 char * trusted_env[4] = {
 	"PATH=/usr/bin:/usr/sbin:/sbin:/bin",
@@ -49,37 +52,40 @@ char * trusted_env[4] = {
 	NULL
 };
 
-/* Spawns a child process that uses /bin/sh to interpret a command.
- * This is much the same in use and purpose as system(), yet as it uses execve
- * to pass a trusted environment it's immune to attacks based upon changing
- * IFS, ENV, BASH_ENV and other such variables.
- * Note this does NOT guard against any other attacks, inparticular you MUST
- * validate the command you are passing. If the command is formed from user
- * input be sure to check this input is what you expect. Nasty things can
- * happen if a user can inject ; or `` into your command for example */
-int safe_system(char* command) {
-	return system_core(command, 0, 0, "safe_system");
-}
-
-/* Much like safe_system but lets you specify a non-root uid and gid to run
- * the command as */
-int unpriv_system(char* command, uid_t uid, gid_t gid) {
-	return system_core(command, uid, gid, "unpriv_system");
-}
-
-int system_core(char* command, uid_t uid, gid_t gid, char *error) {
+static int system_core(char* command, char** args, uid_t uid, gid_t gid, char *error) {
 	int pid, status;
+
+	char* argv[MAX_ARGUMENTS + 1];
+	unsigned int argc = 0;
 
 	if(!command)
 		return 1;
+
+#if 0
+	// Add command as first element to argv
+	argv[argc++] = command;
+#endif
+
+	// Add all other arguments
+	if (args) {
+		while (*args) {
+			argv[argc++] = *args++;
+
+			// Break when argv is full
+			if (argc >= MAX_ARGUMENTS) {
+				return 2;
+			}
+		}
+	}
+
+	// Make sure that argv is NULL-terminated
+	argv[argc] = NULL;
 
 	switch(pid = fork()) {
 		case -1:
 			return -1;
 
 		case 0: /* child */ {
-			char *argv[4];
-
 			if (gid && setgid(gid))	{
 				fprintf(stderr, "%s: ", error);
 				perror("Couldn't setgid");
@@ -92,11 +98,8 @@ int system_core(char* command, uid_t uid, gid_t gid, char *error) {
 				exit(127);
 			}
 
-			argv[0] = "sh";
-			argv[1] = "-c";
-			argv[2] = command;
-			argv[3] = NULL;
-			execve("/bin/sh", argv, trusted_env);
+			execve(command, argv, trusted_env);
+
 			fprintf(stderr, "%s: ", error);
 			perror("execve failed");
 			exit(127);
@@ -113,6 +116,35 @@ int system_core(char* command, uid_t uid, gid_t gid, char *error) {
 			} while (1);
 	}
 
+}
+
+int run(char* command, char** argv) {
+	return system_core(command, argv, 0, 0, "run");
+}
+
+/* Spawns a child process that uses /bin/sh to interpret a command.
+ * This is much the same in use and purpose as system(), yet as it uses execve
+ * to pass a trusted environment it's immune to attacks based upon changing
+ * IFS, ENV, BASH_ENV and other such variables.
+ * Note this does NOT guard against any other attacks, inparticular you MUST
+ * validate the command you are passing. If the command is formed from user
+ * input be sure to check this input is what you expect. Nasty things can
+ * happen if a user can inject ; or `` into your command for example */
+int safe_system(char* command) {
+	char* argv[4] = {
+		"/bin/sh",
+		"-c",
+		command,
+		NULL,
+	};
+
+	return system_core(argv[0], argv, 0, 0, "safe_system");
+}
+
+/* Much like safe_system but lets you specify a non-root uid and gid to run
+ * the command as */
+int unpriv_system(char* command, uid_t uid, gid_t gid) {
+	return system_core(command, NULL, uid, gid, "unpriv_system");
 }
 
 /* General routine to initialise a setuid root program, and put the

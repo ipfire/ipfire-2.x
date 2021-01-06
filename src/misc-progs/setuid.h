@@ -28,7 +28,7 @@
 
 extern char * trusted_env[4];
 
-int system_core(char* command, uid_t uid, gid_t gid, char *error);
+int run(char* command, char** argv);
 int safe_system(char* command);
 int unpriv_system(char* command, uid_t uid, gid_t gid);
 int initsetuid(void);
