@@ -20,14 +20,29 @@ int main(int argc, char *argv[]) {
 		return 1;
 
 	} else if (strcmp(argv[1], "smbuserdisable") == 0) {
+		if (!is_valid_argument_alnum(argv[2])) {
+			fprintf(stderr, "Invalid username '%s'\n", argv[2]);
+			exit(2);
+		}
+
 		snprintf(command, BUFFER_SIZE-1, "/usr/bin/smbpasswd -d %s >/dev/null", argv[2]);
 		safe_system(command);
 
 	} else if (strcmp(argv[1], "smbuserenable") == 0) {
+		if (!is_valid_argument_alnum(argv[2])) {
+			fprintf(stderr, "Invalid username '%s'\n", argv[2]);
+			exit(2);
+		}
+
 		snprintf(command, BUFFER_SIZE-1, "/usr/bin/smbpasswd -e %s >/dev/null", argv[2]);
 		safe_system(command);
 
 	} else if (strcmp(argv[1], "smbuserdelete") == 0) {
+		if (!is_valid_argument_alnum(argv[2])) {
+			fprintf(stderr, "Invalid username '%s'\n", argv[2]);
+			exit(2);
+		}
+
 		snprintf(command, BUFFER_SIZE-1, "/usr/bin/smbpasswd -x %s >/dev/null", argv[2]);
 		safe_system(command);
 
@@ -56,6 +71,11 @@ int main(int argc, char *argv[]) {
 		safe_system(command);
 
 	} else if (strcmp(argv[1], "smbuseradd") == 0) {
+		if (!is_valid_argument_alnum(argv[2])) {
+			fprintf(stderr, "Invalid username '%s'\n", argv[2]);
+			exit(2);
+		}
+
 		snprintf(command, BUFFER_SIZE-1, "/usr/sbin/groupadd sambauser >/dev/null");
 		safe_system(command);
 
@@ -69,6 +89,11 @@ int main(int argc, char *argv[]) {
 		safe_system(command);
 
 	} else if (strcmp(argv[1], "smbchangepw") == 0) {
+		if (!is_valid_argument_alnum(argv[2])) {
+			fprintf(stderr, "Invalid username '%s'\n", argv[2]);
+			exit(2);
+		}
+
 		snprintf(command, BUFFER_SIZE-1, "echo %s:%s | chpasswd", argv[2], argv[3]);
 		safe_system(command);
 
