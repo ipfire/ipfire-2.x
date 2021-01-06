@@ -18,6 +18,14 @@
 #define STRING_SIZE 1024
 #endif
 
+#ifndef CONFIG_ROOT
+#define CONFIG_ROOT "/var/ipfire"
+#endif
+
+#ifndef SNAME
+#define SNAME "SNAME to be filled"
+#endif
+
 extern char * trusted_env[4];
 
 int system_core(char* command, uid_t uid, gid_t gid, char *error);
