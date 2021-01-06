@@ -2412,6 +2412,8 @@
 'to warn email bad' => 'To e-mail address is not valid',
 'toggle' => 'pause/resume',
 'toggle enable disable' => 'Enable or disable',
+'token' => 'Token:',
+'token not set' => 'No Token has been given.',
 'tone' => 'Tone',
 'tone dial' => 'Tone dial:',
 'too long 80 char max' => ' is too long, maximum allowed is 80 characters',

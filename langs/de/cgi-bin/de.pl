@@ -2374,6 +2374,8 @@
 'to warn email bad' => 'An E-Mail-Adresse ist nicht gültig',
 'toggle' => 'Pause/Resume',
 'toggle enable disable' => 'Aktivieren oder Deaktivieren',
+'token' => 'Token:',
+'token not set' => 'Kein Token angegeben.',
 'tone' => 'Ton',
 'tone dial' => 'Tonwahl:',
 'too long 80 char max' => ' ist zu lang, es sind maximal 80 Zeichen erlaubt',

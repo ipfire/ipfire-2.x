@@ -59,14 +59,18 @@ $settings{'HOSTNAME'} = '';
 $settings{'DOMAIN'} = '';
 $settings{'LOGIN'} = '';
 $settings{'PASSWORD'} = '';
+$settings{'TOKEN'} = '';
 $settings{'ENABLED'} = '';
 $settings{'PROXY'} = '';
 $settings{'SERVICE'} = '';
 
 $settings{'ACTION'} = '';
 
-# Get supported ddns providers.
-my @providers = &GetProviders();
+# Get all supported ddns providers.
+my @providers = &GetProviders("all");
+
+# Get provider which support a token based authentication mechanism.
+my @token_provider = &GetProviders("token-providers");
 
 # Hook to regenerate the configuration files, if cgi got called from command line.
 if ($ENV{"REMOTE_ADDR"} eq "") {
@@ -178,6 +182,11 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 		$errormessage = $Lang::tr{'password not set'};
 	}
 
+	# Check if a token has been given for provider which support tokens.
+	if (($settings{'SERVICE'} ~~ @token_provider) && ($settings{'TOKEN'} eq '')) {
+		$errormessage = $Lang::tr{'token not set'};
+	}
+
 	# Go furter if there was no error.
 	if (!$errormessage) {
 		# Splitt hostname field into 2 parts for storrage.
@@ -187,6 +196,16 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 		# if the checkbox is not checked nothing is returned in this case we set the value to "off".
 		if ($settings{'ENABLED'} ne 'on') {
 			$settings{'ENABLED'} = 'off';
+		}
+
+		# Handle token provider.
+		if($settings{'SERVICE'} ~~ @token_provider) {
+			# Clear username and password if they contain values.
+			undef($settings{'LOGIN'});
+			undef($settings{'PASSWORD'});
+
+			# Assign the token as a password for saving.
+			$settings{'PASSWORD'} = $settings{'TOKEN'};
 		}
 
 		# Handle adding new accounts.
@@ -234,7 +253,8 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 			# Write out notice to logfile.
 			&General::log($Lang::tr{'ddns hostname modified'});
 		}
-		undef $settings{'ID'};
+		# Clear settings hash.
+		%settings = '';
 
 		# Update ddns config file.
 		&GenerateDDNSConfigFile();
@@ -307,6 +327,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
 			$settings{'WILDCARDS'} = $temp[4];
 			$settings{'LOGIN'} = $temp[5];
 			$settings{'PASSWORD'} = $temp[6];
+			$settings{'TOKEN'} = $temp[6];
 			$settings{'ENABLED'} = $temp[7];
 		}
 
@@ -334,6 +355,58 @@ if (!$settings{'ACTION'}) {
 }
 
 &Header::openpage($Lang::tr{'dynamic dns'}, 1, '');
+
+### Java Script ###
+print"<script>\n";
+
+# Generate Java Script Array which contains the provider that support token.
+my $line = "";
+$line = join("', '", @token_provider);
+
+print "\t// Array which contains the providers that support token.\n";
+print "\ttoken_provider = ['$line']\;\n\n";
+
+print <<END
+	// Java Script function to swap the text input fields for
+	// username and password or token.
+	var update_auth = function() {
+		if(inArray(\$('#SERVICE').val(), token_provider)) {
+			\$('.username').hide();
+			\$('.password').hide();
+			\$('.token').show();
+		} else {
+			\$('.username').show();
+			\$('.password').show();
+			\$('.token').hide();
+		}
+	};
+
+	// Java Script function to check if a given value is part of
+	// an array.
+	function inArray(value,array) {
+		var count=array.length;
+
+		for(var i=0;i<count;i++) {
+			if(array[i]===value){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	// JQuery function to call corresponding function when
+	// the service provider is changed or the page is loaded for showing/hiding
+	// the username/password or token area.
+	\$(document).ready(function() {
+		\$('#SERVICE').change(update_auth);
+			update_auth();
+	});
+
+</script>
+END
+;
+
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 # Read file for general ddns settings.
@@ -414,7 +487,7 @@ print <<END
 END
 ;
 		# Generate dropdown menu for service selection.
-		print"<select size='1' name='SERVICE'>\n";
+		print"<select size='1' name='SERVICE' id='SERVICE'>\n";
 
 		my $selected;
 
@@ -440,11 +513,15 @@ print <<END
 	<tr>
 		<td class='base'>$Lang::tr{'enabled'}</td>
 		<td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
-		<td class='base'>$Lang::tr{'username'}</td>
-		<td><input type='text' name='LOGIN' value='$settings{'LOGIN'}' /></td>
+
+		<td class='username'>$Lang::tr{'username'}</td>
+		<td class='username'><input type='text' name='LOGIN' value='$settings{'LOGIN'}' /></td>
+
+		<td class='token' style='display:none'>$Lang::tr{'token'}</td>
+		<td class='token' style='display:none'><input type='text' name='TOKEN' value='$settings{'TOKEN'}' /></td>
 	</tr>
 
-	<tr>
+	<tr class='password'>
 		<td class='base'></td>
 		<td></td>
 		<td class='base'>$Lang::tr{'password'}</td>
@@ -665,8 +742,8 @@ sub GenerateDDNSConfigFile {
 
 		my $use_token = 0;
 
-		# Check if token based auth is configured.
-		if ($username eq "token") {
+		# Handle token based auth for various providers.
+		if ($provider ~~ @token_provider) {
 			$use_token = 1;
 		}
 
@@ -707,9 +784,20 @@ sub GenerateDDNSConfigFile {
 }
 
 # Function which generates an array (@providers) which contains the supported providers.
-sub GetProviders {
-	# Get supported providers.
-	open(PROVIDERS, "/usr/bin/ddns list-providers |");
+sub GetProviders ($) {
+	my ($type) = @_;
+
+	# Set default type to get all providers
+	$type = $type ? $type : "all";
+
+	# Check if the requested type is "token-providers".
+	if ($type eq "token-providers") {
+		# Call ddns util to only get providers which supports token based auth.
+		open(PROVIDERS, "/usr/bin/ddns list-token-providers |");
+	} else {
+		# Get all supported providers.
+		open(PROVIDERS, "/usr/bin/ddns list-providers |");
+	}
 
 	# Create new array to store the providers.
 	my @providers = ();
