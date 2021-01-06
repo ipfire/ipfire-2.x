@@ -527,6 +527,7 @@ WARNING: translation string unused: open to all
 WARNING: translation string unused: openvpn disabled
 WARNING: translation string unused: openvpn enabled
 WARNING: translation string unused: optional data
+WARNING: translation string unused: options
 WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
@@ -1147,6 +1148,8 @@ WARNING: untranslated string: taa zombieload2 = TSX Async Abort / ZombieLoad v2
 WARNING: untranslated string: tcp more reliable = TCP (more reliable)
 WARNING: untranslated string: ten minutes = 10 Minutes
 WARNING: untranslated string: thirty minutes = 30 Minutes
+WARNING: untranslated string: token = Token:
+WARNING: untranslated string: token not set = No Token has been given.
 WARNING: untranslated string: tor guard country any = Any country
 WARNING: untranslated string: tor guard nodes = Guard Nodes
 WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
@@ -1190,6 +1193,7 @@ WARNING: untranslated string: wlan client eap authentication method = EAP Authen
 WARNING: untranslated string: wlan client eap phase2 method = EAP Phase 2 Method
 WARNING: untranslated string: wlan client eap state = EAP Status
 WARNING: untranslated string: wlan client encryption eap = EAP
+WARNING: untranslated string: wlan client encryption wpa3 = WPA3
 WARNING: untranslated string: wlan client identity = Identity
 WARNING: untranslated string: wlan client method = Method
 WARNING: untranslated string: wlan client password = Password

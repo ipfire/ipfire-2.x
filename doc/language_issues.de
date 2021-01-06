@@ -522,6 +522,7 @@ WARNING: translation string unused: open to all
 WARNING: translation string unused: openvpn disabled
 WARNING: translation string unused: openvpn enabled
 WARNING: translation string unused: optional data
+WARNING: translation string unused: options
 WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
@@ -885,6 +886,7 @@ WARNING: untranslated string: show tls-auth key = Show tls-auth key
 WARNING: untranslated string: smb daemon = SMB Daemon
 WARNING: untranslated string: user management = User Management
 WARNING: untranslated string: winbind daemon = Winbind Daemon
+WARNING: untranslated string: wlan client encryption wpa3 = WPA3
 WARNING: untranslated string: wlanap 802.11w disabled = Disabled
 WARNING: untranslated string: wlanap 802.11w enforced = Enforced
 WARNING: untranslated string: wlanap 802.11w optional = Optional

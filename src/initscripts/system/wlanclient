@@ -86,6 +86,7 @@ function wpa_supplicant_config_line() {
 	local config=${2}
 	shift 2
 
+	local ieee80211w
 	local anonymous_identity
 	local auth_alg
 	local auth_mode
@@ -143,6 +144,11 @@ function wpa_supplicant_config_line() {
 	case "${mode}" in
 		EAP)
 			key_mgmt="WPA-EAP"
+			;;
+		WPA3)
+			key_mgmt="SAE"
+
+			ieee80211w="2"
 			;;
 		WPA2)
 			auth_alg="OPEN"
@@ -209,7 +215,11 @@ function wpa_supplicant_config_line() {
 			echo "	key_mgmt=${key_mgmt}"
 		fi
 		if [ -n "${psk}" ]; then
-			echo "	psk=\"${psk}\""
+			if [ "${key_mgmt}" = "SAE" ]; then
+				echo "	sae_password=\"${psk}\""
+			else
+				echo "	psk=\"${psk}\""
+			fi
 		fi
 		if [ -n "${wep_tx_keyidx}" ]; then
 			echo "	wep_tx_keyidx=${wep_tx_keyidx}"
@@ -226,6 +236,9 @@ function wpa_supplicant_config_line() {
 		fi
 		if [ -n "${priority}" ]; then
 			echo "	priority=${priority}"
+		fi
+		if [ -n "${ieee80211w}" ]; then
+			echo "	ieee80211w=${ieee80211w}"
 		fi
 
 		# EAP

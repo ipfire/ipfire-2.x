@@ -470,6 +470,7 @@ WARNING: translation string unused: online help en
 WARNING: translation string unused: only red
 WARNING: translation string unused: open to all
 WARNING: translation string unused: optional data
+WARNING: translation string unused: options
 WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
@@ -1387,6 +1388,8 @@ WARNING: untranslated string: taa zombieload2 = TSX Async Abort / ZombieLoad v2
 WARNING: untranslated string: tcp more reliable = TCP (more reliable)
 WARNING: untranslated string: ten minutes = 10 Minutes
 WARNING: untranslated string: thirty minutes = 30 Minutes
+WARNING: untranslated string: token = Token:
+WARNING: untranslated string: token not set = No Token has been given.
 WARNING: untranslated string: tor = Tor
 WARNING: untranslated string: tor accounting = Accounting
 WARNING: untranslated string: tor accounting bytes = Traffic (read/written)
@@ -1499,6 +1502,7 @@ WARNING: untranslated string: wlan client encryption none = None
 WARNING: untranslated string: wlan client encryption wep = WEP
 WARNING: untranslated string: wlan client encryption wpa = WPA
 WARNING: untranslated string: wlan client encryption wpa2 = WPA2
+WARNING: untranslated string: wlan client encryption wpa3 = WPA3
 WARNING: untranslated string: wlan client group cipher = Group cipher
 WARNING: untranslated string: wlan client group key algorithm = GKA
 WARNING: untranslated string: wlan client identity = Identity

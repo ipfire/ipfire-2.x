@@ -553,6 +553,7 @@ WARNING: translation string unused: open to all
 WARNING: translation string unused: openvpn disabled
 WARNING: translation string unused: openvpn enabled
 WARNING: translation string unused: optional data
+WARNING: translation string unused: options
 WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
@@ -913,3 +914,6 @@ WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
+WARNING: untranslated string: token = Token:
+WARNING: untranslated string: token not set = No Token has been given.
+WARNING: untranslated string: wlan client encryption wpa3 = WPA3

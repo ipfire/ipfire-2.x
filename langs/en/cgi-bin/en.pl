@@ -2951,6 +2951,7 @@
 'wlan client encryption wep' => 'WEP',
 'wlan client encryption wpa' => 'WPA',
 'wlan client encryption wpa2' => 'WPA2',
+'wlan client encryption wpa3' => 'WPA3',
 'wlan client group cipher' => 'Group cipher',
 'wlan client group key algorithm' => 'GKA',
 'wlan client identity' => 'Identity',

@@ -64,6 +64,7 @@
 < wlanap 802.11w disabled
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
+< wlan client encryption wpa3
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
@@ -782,6 +783,8 @@
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< token
+< token not set
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -919,6 +922,7 @@
 < wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
+< wlan client encryption wpa3
 < wlan client group cipher
 < wlan client group key algorithm
 < wlan client identity
@@ -966,7 +970,10 @@
 < dhcp valid range required when deny known clients checked
 < g.dtm
 < g.lite
+< token
+< token not set
 < upload fcdsl.o
+< wlan client encryption wpa3
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -1272,6 +1279,8 @@
 < tcp more reliable
 < ten minutes
 < thirty minutes
+< token
+< token not set
 < tor guard country
 < tor guard country any
 < tor guard nodes
@@ -1328,6 +1337,7 @@
 < wlan client eap phase2 method
 < wlan client eap state
 < wlan client encryption eap
+< wlan client encryption wpa3
 < wlan client identity
 < wlan client method
 < wlan client password
@@ -1705,6 +1715,8 @@
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< token
+< token not set
 < tor guard country
 < tor guard country any
 < tor guard nodes
@@ -1763,6 +1775,7 @@
 < wlan client eap phase2 method
 < wlan client eap state
 < wlan client encryption eap
+< wlan client encryption wpa3
 < wlan client identity
 < wlan client method
 < wlan client password
@@ -2486,6 +2499,8 @@
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< token
+< token not set
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -2623,6 +2638,7 @@
 < wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
+< wlan client encryption wpa3
 < wlan client group cipher
 < wlan client group key algorithm
 < wlan client identity
@@ -3368,6 +3384,8 @@
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< token
+< token not set
 < tor
 < tor 0 = disabled
 < tor accounting
@@ -3506,6 +3524,7 @@
 < wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
+< wlan client encryption wpa3
 < wlan client group cipher
 < wlan client group key algorithm
 < wlan client identity
@@ -3691,6 +3710,8 @@
 < subnet mask
 < system is offline
 < taa zombieload2
+< token
+< token not set
 < tor guard country
 < tor guard country any
 < tor guard nodes
@@ -3716,6 +3737,7 @@
 < wlanap neighbor scan
 < wlanap neighbor scan warning
 < wlanap ssid
+< wlan client encryption wpa3
 < working
 < zoneconf access native
 < zoneconf access none

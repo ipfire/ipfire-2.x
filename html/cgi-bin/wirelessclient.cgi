@@ -462,6 +462,7 @@ sub showEditBox() {
 	my %selected = ();
 	$selected{'ENCRYPTION'} = ();
 	$selected{'ENCRYPTION'}{'NONE'} = '';
+	$selected{'ENCRYPTION'}{'WPA3'} = '';
 	$selected{'ENCRYPTION'}{'WPA2'} = '';
 	$selected{'ENCRYPTION'}{'WPA'} = '';
 	$selected{'ENCRYPTION'}{'WEP'} = '';
@@ -505,9 +506,10 @@ sub showEditBox() {
 						<select name='ENCRYPTION'>
 							<option value="NONE" $selected{'ENCRYPTION'}{'NONE'}>$Lang::tr{'wlan client encryption none'}</option>
 							<option value="EAP"  $selected{'ENCRYPTION'}{'EAP'}>$Lang::tr{'wlan client encryption eap'}</option>
+							<option value="WPA3" $selected{'ENCRYPTION'}{'WPA3'}>$Lang::tr{'wlan client encryption wpa3'}</option>
 							<option value="WPA2" $selected{'ENCRYPTION'}{'WPA2'}>$Lang::tr{'wlan client encryption wpa2'}</option>
 							<option value="WPA"  $selected{'ENCRYPTION'}{'WPA'}>$Lang::tr{'wlan client encryption wpa'}</option>
-							<option value="WEP"  $selected{'ENCRYPTION'}{'WEP'}>$Lang::tr{'wlan client encryption wep'}</option>							
+							<option value="WEP"  $selected{'ENCRYPTION'}{'WEP'}>$Lang::tr{'wlan client encryption wep'}</option>
 						</select>
 					</td>
 					<td colspan="2" width='40%'></td>
@@ -839,7 +841,6 @@ sub ValidateInput($) {
 	# Check for invalid key length.
 	} elsif (ValidKeyLength($settings{'ENCRYPTION'}, $settings{'PSK'})) {
 		return "$Lang::tr{'wlan client invalid key length'}";
-
 	}
 
 	# Reset WPA mode, if WPA(2) is not selected.

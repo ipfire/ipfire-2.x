@@ -555,6 +555,7 @@ WARNING: translation string unused: open to all
 WARNING: translation string unused: openvpn disabled
 WARNING: translation string unused: openvpn enabled
 WARNING: translation string unused: optional data
+WARNING: translation string unused: options
 WARNING: translation string unused: optionsfw portlist hint
 WARNING: translation string unused: optionsfw warning
 WARNING: translation string unused: or
@@ -1047,6 +1048,8 @@ WARNING: untranslated string: strict = Strict
 WARNING: untranslated string: subnet mask = Subnet Mask
 WARNING: untranslated string: system is offline = The system is offline.
 WARNING: untranslated string: taa zombieload2 = TSX Async Abort / ZombieLoad v2
+WARNING: untranslated string: token = Token:
+WARNING: untranslated string: token not set = No Token has been given.
 WARNING: untranslated string: tor guard country any = Any country
 WARNING: untranslated string: tor guard nodes = Guard Nodes
 WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
@@ -1061,6 +1064,7 @@ WARNING: untranslated string: vulnerability = Vulnerability
 WARNING: untranslated string: vulnerable = Vulnerable
 WARNING: untranslated string: whois results from = WHOIS results from
 WARNING: untranslated string: winbind daemon = Winbind Daemon
+WARNING: untranslated string: wlan client encryption wpa3 = WPA3
 WARNING: untranslated string: wlanap 802.11w disabled = Disabled
 WARNING: untranslated string: wlanap 802.11w enforced = Enforced
 WARNING: untranslated string: wlanap 802.11w optional = Optional
