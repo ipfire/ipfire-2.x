@@ -788,6 +788,7 @@ usr/lib/security/pam_winbind.so
 usr/libexec/samba/smbspool_krb5_wrapper
 usr/sbin/eventlogadm
 usr/sbin/nmbd
+usr/sbin/samba-change-password
 usr/sbin/samba-gpupdate
 usr/sbin/smbd
 usr/sbin/winbindd

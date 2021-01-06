@@ -114,6 +114,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /var/spool/samba
 	chmod -v 1777 /var/spool/samba/
 
+	# Install password change helper script
+	install -m 755 $(DIR_SRC)/config/samba/samba-change-password /usr/sbin/samba-change-password
+
 	#install initscripts
 	$(call INSTALL_INITSCRIPT,samba)
 

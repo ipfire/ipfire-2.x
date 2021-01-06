@@ -82,11 +82,7 @@ int main(int argc, char *argv[]) {
 		snprintf(command, BUFFER_SIZE-1, "/usr/sbin/useradd -c 'Samba User' -m -g sambauser -s /bin/false %s >/dev/null", argv[2]);
 		safe_system(command);
 
-		snprintf(command, BUFFER_SIZE-1, "echo %s:%s | chpasswd", argv[2], argv[3]);
-		safe_system(command);
-
-		snprintf(command, BUFFER_SIZE-1, "/usr/bin/printf '%s\n%s\n' | /usr/bin/smbpasswd -as %s >/dev/null", argv[3], argv[3], argv[2]);
-		safe_system(command);
+		run("/usr/sbin/samba-change-password", argv + 1);
 
 	} else if (strcmp(argv[1], "smbchangepw") == 0) {
 		if (!is_valid_argument_alnum(argv[2])) {
@@ -94,11 +90,7 @@ int main(int argc, char *argv[]) {
 			exit(2);
 		}
 
-		snprintf(command, BUFFER_SIZE-1, "echo %s:%s | chpasswd", argv[2], argv[3]);
-		safe_system(command);
-
-		snprintf(command, BUFFER_SIZE-1, "/usr/bin/printf '%s\n%s\n' | /usr/bin/smbpasswd -as %s >/dev/null", argv[3], argv[3], argv[2]);
-		safe_system(command);
+		run("/usr/sbin/samba-change-password", argv + 1);
 
 	} else if (strcmp(argv[1], "readsmbpasswd") == 0) {
 		safe_system("/bin/chown root:nobody /var/ipfire/samba/private >/dev/null");
