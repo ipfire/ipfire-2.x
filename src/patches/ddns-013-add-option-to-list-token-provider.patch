@@ -1,0 +1,292 @@
+commit 287b2bfe7bf5e0639da9227a8c7893ce40d298ae
+Author: Stefan Schantl <stefan.schantl@ipfire.org>
+Date:   Wed Dec 2 20:31:19 2020 +0100
+
+    Add option to list provider with token support.
+    
+    This option can be used to get a list of all known provider which support
+    a token based authentication method.
+    
+    In order to provide this feature the provider details has been extended
+    to contain the information if a provider supports this authentication
+    method or not.
+    
+    Signed-off-by: Stefan Schantl <stefan.schantl@ipfire.org>
+
+diff --git a/ddns.in b/ddns.in
+old mode 100644
+new mode 100755
+index 0e377e7..538e4b0
+--- a/ddns.in
++++ b/ddns.in
+@@ -49,6 +49,10 @@ def main():
+ 	p_list_providers = subparsers.add_parser("list-providers",
+ 		help=_("List all available providers"))
+ 
++	# list-token-provider
++	p_list_token_provider = subparsers.add_parser("list-token-provider",
++		help=_("List all providers which supports authentication via token"))
++
+ 	# update
+ 	p_update = subparsers.add_parser("update", help=_("Update DNS record"))
+ 	p_update.add_argument("hostname")
+@@ -85,6 +89,10 @@ def main():
+ 		provider_names = d.get_provider_names()
+ 		print("\n".join(provider_names))
+ 
++	elif args.subparsers_name == "list-token-providers":
++		token_provider = d.get_provider_with_token_support()
++		print("\n".join(token_provider))
++
+ 	elif args.subparsers_name == "update":
+ 		d.updateone(hostname=args.hostname, force=args.force)
+ 
+diff --git a/src/ddns/__init__.py b/src/ddns/__init__.py
+index 3e43fa7..ca232bf 100644
+--- a/src/ddns/__init__.py
++++ b/src/ddns/__init__.py
+@@ -86,6 +86,20 @@ class DDNSCore(object):
+ 		"""
+ 		return sorted(self.providers.keys())
+ 
++	def get_provider_with_token_support(self):
++		"""
++			Returns a list with names of all registered providers
++			which support token based authtentication.
++		"""
++
++		token_provider = []
++
++		for handle, provider in sorted(self.providers.items()):
++			if provider.supports_token_auth is True:
++				token_provider.append(handle)
++
++		return sorted(token_provider)
++
+ 	def load_configuration(self, filename):
+ 		logger.debug(_("Loading configuration file %s") % filename)
+ 
+diff --git a/src/ddns/providers.py b/src/ddns/providers.py
+index a1ca3f3..b0066d5 100644
+--- a/src/ddns/providers.py
++++ b/src/ddns/providers.py
+@@ -73,6 +73,10 @@ class DDNSProvider(object):
+ 	# Required to remove AAAA records if IPv6 is absent again.
+ 	can_remove_records = True
+ 
++	# True if the provider supports authentication via a random
++	# generated token instead of username and password.
++	supports_token_auth = True
++
+ 	@staticmethod
+ 	def supported():
+ 		"""
+@@ -352,6 +356,10 @@ class DDNSProtocolDynDNS2(object):
+ 	# The DynDNS protocol version 2 does not allow to remove records
+ 	can_remove_records = False
+ 
++	# The DynDNS protocol version 2 only supports authentication via
++	# username and password.
++	supports_token_auth = False
++
+ 	def prepare_request_data(self, proto):
+ 		data = {
+ 			"hostname" : self.hostname,
+@@ -440,6 +448,7 @@ class DDNSProviderAllInkl(DDNSProvider):
+ 
+ 	url = "http://dyndns.kasserver.com"
+ 	can_remove_records = False
++	supports_token_auth = False
+ 
+ 	def update(self):
+ 		# There is no additional data required so we directly can
+@@ -464,6 +473,8 @@ class DDNSProviderBindNsupdate(DDNSProvider):
+ 
+ 	DEFAULT_TTL = 60
+ 
++	supports_token_auth = False
++
+ 	@staticmethod
+ 	def supported():
+ 		# Search if the nsupdate utility is available
+@@ -550,6 +561,7 @@ class DDNSProviderChangeIP(DDNSProvider):
+ 
+ 	url = "https://nic.changeip.com/nic/update"
+ 	can_remove_records = False
++	supports_token_auth = False
+ 
+ 	def update_protocol(self, proto):
+ 		data = {
+@@ -616,6 +628,7 @@ class DDNSProviderDDNSS(DDNSProvider):
+ 
+ 	url = "http://www.ddnss.de/upd.php"
+ 	can_remove_records = False
++	supports_token_auth = False
+ 
+ 	def update_protocol(self, proto):
+ 		data = {
+@@ -678,6 +691,7 @@ class DDNSProviderDHS(DDNSProvider):
+ 
+ 	url = "http://members.dhs.org/nic/hosts"
+ 	can_remove_records = False
++	supports_token_auth = False
+ 
+ 	def update_protocol(self, proto):
+ 		data = {
+@@ -710,6 +724,7 @@ class DDNSProviderDNSpark(DDNSProvider):
+ 
+ 	url = "https://control.dnspark.com/api/dynamic/update.php"
+ 	can_remove_records = False
++	supports_token_auth = False
+ 
+ 	def update_protocol(self, proto):
+ 		data = {
+@@ -758,6 +773,7 @@ class DDNSProviderDtDNS(DDNSProvider):
+ 
+ 	url = "https://www.dtdns.com/api/autodns.cfm"
+ 	can_remove_records = False
++	supports_token_auth = False
+ 
+ 	def update_protocol(self, proto):
+ 		data = {
+@@ -813,6 +829,7 @@ class DDNSProviderDuckDNS(DDNSProvider):
+ 
+ 	url = "https://www.duckdns.org/update"
+ 	can_remove_records = False
++	supports_token_auth = True
+ 
+ 	def update(self):
+ 		# Raise an error if no auth details are given.
+@@ -914,6 +931,7 @@ class DDNSProviderDynUp(DDNSProvider):
+ 
+ 	url = "https://dynup.de/dyn.php"
+ 	can_remove_records = False
++	supports_token_auth = False
+ 
+ 	def update_protocol(self, proto):
+ 		data = {
+@@ -979,6 +997,8 @@ class DDNSProviderEasyDNS(DDNSProvider):
+ 
+ 	url = "http://api.cp.easydns.com/dyn/tomato.php"
+ 
++	supports_token_auth = False
++
+ 	def update_protocol(self, proto):
+ 		data = {
+ 			"myip"     : self.get_address(proto, "-"),
+@@ -1032,6 +1052,7 @@ class DDNSProviderDynsNet(DDNSProvider):
+ 	website   = "http://www.dyns.net/"
+ 	protocols = ("ipv4",)
+ 	can_remove_records = False
++	supports_token_auth = False
+ 
+ 	# There is very detailed informatio about how to send the update request and
+ 	# the possible response codes. (Currently we are using the v1.1 proto)
+@@ -1083,6 +1104,7 @@ class DDNSProviderEnomCom(DDNSResponseParserXML, DDNSProvider):
+ 
+ 	url = "https://dynamic.name-services.com/interface.asp"
+ 	can_remove_records = False
++	supports_token_auth = False
+ 
+ 	def update_protocol(self, proto):
+ 		data = {
+@@ -1125,6 +1147,7 @@ class DDNSProviderEntryDNS(DDNSProvider):
+ 	# here: https://entrydns.net/help
+ 	url = "https://entrydns.net/records/modify"
+ 	can_remove_records = False
++	supports_token_auth = True
+ 
+ 	def update_protocol(self, proto):
+ 		data = {
+@@ -1165,6 +1188,7 @@ class DDNSProviderFreeDNSAfraidOrg(DDNSProvider):
+ 	# page. All used values have been collected by testing.
+ 	url = "https://freedns.afraid.org/dynamic/update.php"
+ 	can_remove_records = False
++	supports_token_auth = True
+ 
+ 	def update_protocol(self, proto):
+ 		data = {
+@@ -1246,6 +1270,7 @@ class DDNSProviderKEYSYSTEMS(DDNSProvider):
+ 
+ 	url = "https://dynamicdns.key-systems.net/update.php"
+ 	can_remove_records = False
++	supports_token_auth = False
+ 
+ 	def update_protocol(self, proto):
+ 		address = self.get_address(proto)
+@@ -1297,6 +1322,8 @@ class DDNSProviderLightningWireLabs(DDNSProvider):
+ 	# Information about the format of the HTTPS request is to be found
+ 	# https://dns.lightningwirelabs.com/knowledge-base/api/ddns
+ 
++	supports_token_auth = True
++
+ 	url = "https://dns.lightningwirelabs.com/update"
+ 
+ 	def update(self):
+@@ -1365,6 +1392,7 @@ class DDNSProviderNamecheap(DDNSResponseParserXML, DDNSProvider):
+ 
+ 	url = "https://dynamicdns.park-your-domain.com/update"
+ 	can_remove_records = False
++	supports_token_auth = False
+ 
+ 	def update_protocol(self, proto):
+ 		# Namecheap requires the hostname splitted into a host and domain part.
+@@ -1458,6 +1486,8 @@ class DDNSProviderNsupdateINFO(DDNSProtocolDynDNS2, DDNSProvider):
+ 	# has not been implemented here, yet.
+ 	can_remove_records = False
+ 
++	supports_token_auth = True
++
+ 	# After a failed update, there will be no retries
+ 	# https://bugzilla.ipfire.org/show_bug.cgi?id=10603
+ 	holdoff_failure_days = None
+@@ -1534,6 +1564,7 @@ class DDNSProviderRegfish(DDNSProvider):
+ 
+ 	url = "https://dyndns.regfish.de/"
+ 	can_remove_records = False
++	supports_token_auth = True
+ 
+ 	def update(self):
+ 		data = {
+@@ -1630,6 +1661,7 @@ class DDNSProviderServercow(DDNSProvider):
+ 
+ 	url = "https://www.servercow.de/dnsupdate/update.php"
+ 	can_remove_records = False
++	supports_token_auth = False
+ 
+ 	def update_protocol(self, proto):
+ 		data = {
+@@ -1671,6 +1703,8 @@ class DDNSProviderSPDNS(DDNSProtocolDynDNS2, DDNSProvider):
+ 
+ 	url = "https://update.spdyn.de/nic/update"
+ 
++	supports_token_auth = True
++
+ 	@property
+ 	def username(self):
+ 		return self.get("username") or self.hostname
+@@ -1774,6 +1808,8 @@ class DDNSProviderZoneedit(DDNSProvider):
+ 	website   = "http://www.zoneedit.com"
+ 	protocols = ("ipv4",)
+ 
++	supports_token_auth = False
++
+ 	# Detailed information about the request and the response codes can be
+ 	# obtained here:
+ 	# http://www.zoneedit.com/doc/api/other.html
+@@ -1821,6 +1857,7 @@ class DDNSProviderDNSmadeEasy(DDNSProvider):
+ 
+ 	url = "https://cp.dnsmadeeasy.com/servlet/updateip?"
+ 	can_remove_records = False
++	supports_token_auth = False
+ 
+ 	def update_protocol(self, proto):
+ 		data = {
+@@ -1871,6 +1908,7 @@ class DDNSProviderZZZZ(DDNSProvider):
+ 
+ 	url = "https://zzzz.io/api/v1/update"
+ 	can_remove_records = False
++	supports_token_auth = True
+ 
+ 	def update_protocol(self, proto):
+ 		data = {

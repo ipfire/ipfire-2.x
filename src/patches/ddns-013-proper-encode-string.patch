@@ -1,0 +1,24 @@
+commit 27aea61ba3c8e561c4a5921aeb0ea0986d4d234c
+Author: Johannes Schwietzke <johannes.schwietzke@web.de>
+Date:   Tue Dec 29 12:07:19 2020 +0100
+
+    providers.py: Proper encode string.
+    
+    Python 3 memoryview requires an encoded string.
+    
+    Signed-off-by: Johannes Schwietzke <johannes.schwietzke@web.de>
+    Signed-off-by: Stefan Schantl <stefan.schantl@ipfire.org>
+
+diff --git a/src/ddns/providers.py b/src/ddns/providers.py
+index b0066d5..56e6620 100644
+--- a/src/ddns/providers.py
++++ b/src/ddns/providers.py
+@@ -547,7 +547,7 @@ class DDNSProviderBindNsupdate(DDNSProvider):
+ 
+ 			logger.debug("  %s" % line)
+ 
+-		return "\n".join(scriptlet)
++		return "\n".join(scriptlet).encode()
+ 
+ 
+ class DDNSProviderChangeIP(DDNSProvider):
