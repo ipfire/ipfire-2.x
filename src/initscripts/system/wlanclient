@@ -143,7 +143,7 @@ function wpa_supplicant_config_line() {
 
 	case "${mode}" in
 		EAP)
-			key_mgmt="WPA-EAP"
+			key_mgmt="WPA-EAP-SHA256 WPA-EAP"
 			;;
 		WPA3)
 			key_mgmt="SAE"
@@ -153,12 +153,12 @@ function wpa_supplicant_config_line() {
 		WPA2)
 			auth_alg="OPEN"
 			proto="RSN"
-			key_mgmt="WPA-PSK"
+			key_mgmt="WPA-PSK-SHA256 WPA-PSK"
 			;;
 		WPA)
 			auth_alg="OPEN"
 			proto="WPA"
-			key_mgmt="WPA-PSK"
+			key_mgmt="WPA-PSK-SHA256 WPA-PSK"
 			;;
 		WEP)
 			auth_alg="SHARED"
