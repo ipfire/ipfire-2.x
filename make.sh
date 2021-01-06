@@ -1104,6 +1104,7 @@ buildbase() {
 	lfsmake2 xz
 	lfsmake2 pcre
 	lfsmake2 pcre-compat
+	lfsmake2 gettext
 	lfsmake2 attr
 	lfsmake2 acl
 	lfsmake2 bash
@@ -1113,7 +1114,6 @@ buildbase() {
 	lfsmake2 findutils
 	lfsmake2 flex
 	lfsmake2 gawk
-	lfsmake2 gettext
 	lfsmake2 go
 	lfsmake2 grep
 	lfsmake2 groff
