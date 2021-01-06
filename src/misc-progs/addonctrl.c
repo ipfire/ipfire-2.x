@@ -26,48 +26,51 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "\nMissing arguments.\n\naddonctrl addon (start|stop|restart|reload|enable|disable)\n\n");
 		exit(1);
 	}
+
+	const char* name = argv[1];
 	
-	if ( strlen(argv[1])>32 ) {
+	if (strlen(name) > 32) {
 	    fprintf(stderr, "\nString to large.\n\naddonctrl addon (start|stop|restart|reload|enable|disable)\n\n");
 	    exit(1);
 	}
-	
-	if ( strchr(argv[1],'/') || strchr(argv[1],'$') || strchr(argv[1],'[') || strchr(argv[1],'{') ) {
-	    fprintf(stderr, "\nIllegal Char found.\n\naddonctrl addon (start|stop|restart|reload|enable|disable)\n\n");
-	    exit(1);
+
+	// Check if the input argument is valid
+	if (!is_valid_argument_alnum(name)) {
+		fprintf(stderr, "Invalid add-on name: %s\n", name);
+		exit(2);
 	}
-	
-	sprintf(command, "/opt/pakfire/db/installed/meta-%s", argv[1]);
+
+	sprintf(command, "/opt/pakfire/db/installed/meta-%s", name);
 	FILE *fp = fopen(command,"r");
 	if ( fp ) {
 	    fclose(fp);
 	} else {
-	    fprintf(stderr, "\nAddon '%s' not found.\n\naddonctrl addon (start|stop|restart|reload|status|enable|disable)\n\n", argv[1]);
+	    fprintf(stderr, "\nAddon '%s' not found.\n\naddonctrl addon (start|stop|restart|reload|status|enable|disable)\n\n", name);
 	    exit(1);
 	}
 	
 	if (strcmp(argv[2], "start") == 0) {
-		sprintf(command,"/etc/rc.d/init.d/%s start", argv[1]);
+		sprintf(command,"/etc/rc.d/init.d/%s start", name);
 		safe_system(command);
 	} else if (strcmp(argv[2], "stop") == 0) {
-		sprintf(command,"/etc/rc.d/init.d/%s stop", argv[1]);
+		sprintf(command,"/etc/rc.d/init.d/%s stop", name);
 		safe_system(command);
 	} else if (strcmp(argv[2], "restart") == 0) {
-		sprintf(command,"/etc/rc.d/init.d/%s restart", argv[1]);
+		sprintf(command,"/etc/rc.d/init.d/%s restart", name);
 		safe_system(command);
 	} else if (strcmp(argv[2], "reload") == 0) {
-		sprintf(command,"/etc/rc.d/init.d/%s reload", argv[1]);
+		sprintf(command,"/etc/rc.d/init.d/%s reload", name);
 		safe_system(command);
 	} else if (strcmp(argv[2], "status") == 0) {
-		sprintf(command,"/etc/rc.d/init.d/%s status", argv[1]);
+		sprintf(command,"/etc/rc.d/init.d/%s status", name);
 		safe_system(command);
 	} else if (strcmp(argv[2], "enable") == 0) {
-		sprintf(command,"mv -f /etc/rc.d/rc3.d/off/S??%s /etc/rc.d/rc3.d" , argv[1]);
+		sprintf(command,"mv -f /etc/rc.d/rc3.d/off/S??%s /etc/rc.d/rc3.d" , name);
 		safe_system(command);
 	} else if (strcmp(argv[2], "disable") == 0) {
 		sprintf(command,"mkdir -p /etc/rc.d/rc3.d/off");
 		safe_system(command);
-		sprintf(command,"mv -f /etc/rc.d/rc3.d/S??%s /etc/rc.d/rc3.d/off" , argv[1]);
+		sprintf(command,"mv -f /etc/rc.d/rc3.d/S??%s /etc/rc.d/rc3.d/off" , name);
 		safe_system(command);
 	} else {
 		fprintf(stderr, "\nBad argument given.\n\naddonctrl addon (start|stop|restart|reload|enable|disable)\n\n");
