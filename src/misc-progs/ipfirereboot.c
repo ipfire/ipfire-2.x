@@ -31,9 +31,6 @@
 #define OP_REBOOT    	  "boot"
 #define OP_REBOOT_FS 	  "bootfs" // add filesystem check option (not yet in GUI)
 #define OP_SHUTDOWN  	  "down"
-#define OP_SCHEDULE_ADD   "cron+"
-#define OP_SCHEDULE_REM   "cron-"
-#define OP_SCHEDULE_GET   "cron?"
 
 int main(int argc, char**argv)
 {
@@ -63,52 +60,6 @@ int main(int argc, char**argv)
 	if (argc==2 && strcmp(argv[1], OP_REBOOT_FS)==0)
 	{
 	    safe_system("/sbin/shutdown -F -r now");
-	    return 0;
-	}
-
-	// output schedule to stdout
-	if (argc==2 && strcmp(argv[1], OP_SCHEDULE_GET)==0)
-	{
-	    safe_system("/bin/grep /sbin/shutdown /var/spool/cron/root.orig");
-	    return 0;
-	}
-
-	if (argc==2 && strcmp(argv[1], OP_SCHEDULE_REM)==0)
-	{
-	    safe_system("/usr/bin/perl -i -p -e 's/^.*\\/sbin\\/shutdown.*$//s' /var/spool/cron/root.orig");
-	    safe_system("/usr/bin/fcrontab -u root -z");
-	    return 0;
-	}
-
-	if (argc==6 && strcmp(argv[1], OP_SCHEDULE_ADD)==0)
-	{
-	    // check args
-	    if (!(  strlen(argv[2])<3 &&
-		    strspn(argv[2], "0123456789") == strlen (argv[2]) &&
-		    strlen(argv[3])<3 &&
-		    strspn(argv[3], "0123456789") == strlen (argv[3]) &&
-		    strlen(argv[4])<14 &&
-		    strspn(argv[4], "1234567,*") == strlen (argv[4])  &&
-		    ((strcmp(argv[5], "-r")==0) ||	//reboot
-		     (strcmp(argv[5], "-h")==0))  )	//hangup
-	        ) {
-			fprintf (stderr, "Bad cron+ parameters!\n");
-			return 1;
-	    }
-	    
-	    // remove old entry				      
-	    safe_system("/usr/bin/perl -i -p -e 's/^.*\\/sbin\\/shutdown.*$//s' /var/spool/cron/root.orig");
-
-	    // add new entry
-	    FILE *fd = NULL;
-	    if ((fd = fopen("/var/spool/cron/root.orig", "a")))
-	    {
-		fprintf (fd,"%s %s * * %s /sbin/shutdown %s 1\n",argv[2],argv[3],argv[4],argv[5]);
-		fclose (fd);
-	    }
-	    
-	    // inform cron
-	    safe_system("/usr/bin/fcrontab -u root -z");
 	    return 0;
 	}
 
