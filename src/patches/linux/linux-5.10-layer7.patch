@@ -1,22 +1,22 @@
 diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 3172e14..798b8c9 100644
+index a828cf99c521..6d97e4d8623f 100644
 --- a/include/linux/skbuff.h
 +++ b/include/linux/skbuff.h
-@@ -700,6 +700,9 @@ struct sk_buff {
+@@ -757,6 +757,9 @@ struct sk_buff {
+ 
  #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
  	unsigned long		 _nfct;
- #endif
++#endif
 +#if defined(CONFIG_NETFILTER_XT_MATCH_LAYER7) || defined(CONFIG_NETFILTER_XT_MATCH_LAYER7_MODULE)
 +	char			layer7_flags[1];
-+#endif
- #if IS_ENABLED(CONFIG_BRIDGE_NETFILTER)
- 	struct nf_bridge_info	*nf_bridge;
  #endif
+ 	unsigned int		len,
+ 				data_len;
 diff --git a/include/net/netfilter/nf_conntrack.h b/include/net/netfilter/nf_conntrack.h
-index 792c3f6..f24a6ac 100644
+index 439379ca9ffa..9cab502ff226 100644
 --- a/include/net/netfilter/nf_conntrack.h
 +++ b/include/net/netfilter/nf_conntrack.h
-@@ -96,6 +96,23 @@ struct nf_conn {
+@@ -103,6 +103,23 @@ struct nf_conn {
  	/* Extensions */
  	struct nf_ct_ext *ext;
  
@@ -42,7 +42,7 @@ index 792c3f6..f24a6ac 100644
  };
 diff --git a/include/uapi/linux/netfilter/xt_layer7.h b/include/uapi/linux/netfilter/xt_layer7.h
 new file mode 100644
-index 0000000..147cd64
+index 000000000000..147cd6477858
 --- /dev/null
 +++ b/include/uapi/linux/netfilter/xt_layer7.h
 @@ -0,0 +1,13 @@
@@ -60,10 +60,10 @@ index 0000000..147cd64
 +
 +#endif /* _XT_LAYER7_H */
 diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index e4a13cc..0b0f501 100644
+index 52370211e46b..734b4d641469 100644
 --- a/net/netfilter/Kconfig
 +++ b/net/netfilter/Kconfig
-@@ -1282,6 +1282,26 @@ config NETFILTER_XT_MATCH_L2TP
+@@ -1355,6 +1355,26 @@ config NETFILTER_XT_MATCH_L2TP
  
  	To compile it as a module, choose M here. If unsure, say N.
  
@@ -91,10 +91,10 @@ index e4a13cc..0b0f501 100644
  	tristate '"length" match support'
  	depends on NETFILTER_ADVANCED
 diff --git a/net/netfilter/Makefile b/net/netfilter/Makefile
-index f78ed24..268b7e7 100644
+index 0e0ded87e27b..6c383006af4e 100644
 --- a/net/netfilter/Makefile
 +++ b/net/netfilter/Makefile
-@@ -180,6 +180,7 @@ obj-$(CONFIG_NETFILTER_XT_MATCH_RECENT) += xt_recent.o
+@@ -203,6 +203,7 @@ obj-$(CONFIG_NETFILTER_XT_MATCH_RECENT) += xt_recent.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_SCTP) += xt_sctp.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_SOCKET) += xt_socket.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_STATE) += xt_state.o
@@ -103,10 +103,10 @@ index f78ed24..268b7e7 100644
  obj-$(CONFIG_NETFILTER_XT_MATCH_STRING) += xt_string.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_TCPMSS) += xt_tcpmss.o
 diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 06520bf..0109de4 100644
+index 234b7cab37c3..05731ba4f5ff 100644
 --- a/net/netfilter/nf_conntrack_core.c
 +++ b/net/netfilter/nf_conntrack_core.c
-@@ -427,6 +427,11 @@ destroy_conntrack(struct nf_conntrack *nfct)
+@@ -617,6 +617,11 @@ destroy_conntrack(struct nf_conntrack *nfct)
  	 */
  	nf_ct_remove_expectations(ct);
  
@@ -119,10 +119,10 @@ index 06520bf..0109de4 100644
  
  	local_bh_enable();
 diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
-index 5a101ca..88830c7 100644
+index 46c5557c1fec..6ef99967ae05 100644
 --- a/net/netfilter/nf_conntrack_standalone.c
 +++ b/net/netfilter/nf_conntrack_standalone.c
-@@ -353,6 +353,11 @@ static int ct_seq_show(struct seq_file *s, void *v)
+@@ -366,6 +366,11 @@ static int ct_seq_show(struct seq_file *s, void *v)
  	ct_show_zone(s, ct, NF_CT_DEFAULT_ZONE_DIR);
  	ct_show_delta_time(s, ct);
  
@@ -136,7 +136,7 @@ index 5a101ca..88830c7 100644
  	if (seq_has_overflowed(s))
 diff --git a/net/netfilter/regexp/regexp.c b/net/netfilter/regexp/regexp.c
 new file mode 100644
-index 0000000..9006988
+index 000000000000..900698886531
 --- /dev/null
 +++ b/net/netfilter/regexp/regexp.c
 @@ -0,0 +1,1197 @@
@@ -1339,7 +1339,7 @@ index 0000000..9006988
 +
 diff --git a/net/netfilter/regexp/regexp.h b/net/netfilter/regexp/regexp.h
 new file mode 100644
-index 0000000..a72eba7
+index 000000000000..a72eba71fb61
 --- /dev/null
 +++ b/net/netfilter/regexp/regexp.h
 @@ -0,0 +1,41 @@
@@ -1386,7 +1386,7 @@ index 0000000..a72eba7
 +#endif
 diff --git a/net/netfilter/regexp/regmagic.h b/net/netfilter/regexp/regmagic.h
 new file mode 100644
-index 0000000..5acf447
+index 000000000000..5acf4478ff71
 --- /dev/null
 +++ b/net/netfilter/regexp/regmagic.h
 @@ -0,0 +1,5 @@
@@ -1397,7 +1397,7 @@ index 0000000..5acf447
 +#define	MAGIC	0234
 diff --git a/net/netfilter/regexp/regsub.c b/net/netfilter/regexp/regsub.c
 new file mode 100644
-index 0000000..339631f
+index 000000000000..339631f06f00
 --- /dev/null
 +++ b/net/netfilter/regexp/regsub.c
 @@ -0,0 +1,95 @@
@@ -1498,10 +1498,10 @@ index 0000000..339631f
 +}
 diff --git a/net/netfilter/xt_layer7.c b/net/netfilter/xt_layer7.c
 new file mode 100644
-index 0000000..db7d061
+index 000000000000..a7eb760123bf
 --- /dev/null
 +++ b/net/netfilter/xt_layer7.c
-@@ -0,0 +1,665 @@
+@@ -0,0 +1,666 @@
 +/*
 +  Kernel module to match application layer (OSI layer 7) data in connections.
 +
@@ -2068,6 +2068,7 @@ index 0000000..db7d061
 +	return (pattern_result ^ info->invert);
 +}
 +
++/*
 +// load nf_conntrack_ipv4
 +#if LINUX_VERSION_CODE >= KERNEL_VERSION(2, 6, 35)
 +static int
@@ -2112,31 +2113,31 @@ index 0000000..db7d061
 +		nf_ct_l3proto_module_put(match->family);
 +	}
 +#endif
++*/
 +
 +static struct xt_match xt_layer7_match[] __read_mostly = {
 +{
 +	.name		= "layer7",
 +	.family		= NFPROTO_IPV4,
-+	.checkentry	= check,
++//	.checkentry	= check,
 +	.match		= match,
-+	.destroy	= destroy,
++//	.destroy	= destroy,
 +	.matchsize	= sizeof(struct xt_layer7_info),
 +	.me		= THIS_MODULE
 +}
 +};
 +
-+static const struct file_operations layer7_numpackets_proc_fops = {
-+	.owner   = THIS_MODULE,
-+	.open    = layer7_numpackets_proc_open,
-+	.read    = seq_read,
-+	.llseek  = seq_lseek,
-+	.release = single_release,
-+	.write   = layer7_numpackets_write_proc,
++static const struct proc_ops layer7_numpackets_proc_fops = {
++	.proc_open    = layer7_numpackets_proc_open,
++	.proc_read    = seq_read,
++	.proc_lseek   = seq_lseek,
++	.proc_release = single_release,
++	.proc_write   = layer7_numpackets_write_proc,
 +};
 +
 +static int __init xt_layer7_init(void)
 +{
-+	need_conntrack();
++//	need_conntrack();
 +
 +	// Register proc interface
 +	proc_create_data("layer7_numpackets", 0644,
