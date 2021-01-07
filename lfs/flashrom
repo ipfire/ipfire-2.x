@@ -33,6 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = flashrom
 PAK_VER    = 2
+SUP_ARCH   = i586 x86_64
 
 DEPS       =
 
