@@ -1,6 +1,7 @@
 etc/system-release
 etc/issue
 etc/os-release
+etc/rc.d/init.d/unbound
 opt/pakfire/lib/functions.sh
 srv/web/ipfire/cgi-bin/country.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
