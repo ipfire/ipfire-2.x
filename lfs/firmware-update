@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20200107
+VER        = 20210107
 
 THISAPP    = firmware-update-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d05dc661215706ae85efc8568819c6b6
+$(DL_FILE)_MD5 = 581d8b5784c3ebbc335ae034fd70c5a6
 
 install : $(TARGET)
 
