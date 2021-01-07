@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -75,6 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-atm-2.4.1-gcc-4.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-atm-2.4.1-arpd_includes.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux-atm-2.4.1-linux-5.2-SIOCGSTAMP.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
