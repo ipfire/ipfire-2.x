@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.5
+VER        = 5.10
 SUP_ARCHES = x86_64 i586 armv5tel
 
 THISAPP    = strace-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = strace
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = elfutils
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = dbce2e84632b39a4ed86b9fc60447af9
+$(DL_FILE)_MD5 = 5f9f87f9afa282e7512f67a129287d6c
 
 install : $(TARGET)
 
