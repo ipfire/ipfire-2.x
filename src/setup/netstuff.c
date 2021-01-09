@@ -31,6 +31,7 @@ int scanned_nics_read_done = 0;
 newtComponent networkform;
 newtComponent addressentry;
 newtComponent netmaskentry;
+newtComponent gatewayentry;
 newtComponent statictyperadio;
 newtComponent dhcptyperadio;
 newtComponent pppoetyperadio;
@@ -53,12 +54,14 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 {
 	char *addressresult;
 	char *netmaskresult;
+	char *gatewayresult;
 	char *dhcphostnameresult;
 	char *dhcpforcemturesult;
 	struct newtExitStruct es;
 	newtComponent header;
 	newtComponent addresslabel;
 	newtComponent netmasklabel;
+	newtComponent gatewaylabel;
 	newtComponent dhcphostnamelabel;
 	newtComponent dhcpforcemtulabel;
 	newtComponent ok, cancel;	
@@ -66,6 +69,7 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	char temp[STRING_SIZE];
 	char addressfield[STRING_SIZE];
 	char netmaskfield[STRING_SIZE];
+	char gatewayfield[STRING_SIZE];
 	char typefield[STRING_SIZE];
 	char dhcphostnamefield[STRING_SIZE];
 	char dhcpforcemtufield[STRING_SIZE];
@@ -80,12 +84,13 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	/* Build some key strings. */
 	sprintf(addressfield, "%s_ADDRESS", colour);
 	sprintf(netmaskfield, "%s_NETMASK", colour);
+	sprintf(gatewayfield, "DEFAULT_GATEWAY");
 	sprintf(typefield, "%s_TYPE", colour);
 	sprintf(dhcphostnamefield, "%s_DHCP_HOSTNAME", colour);
 	sprintf(dhcpforcemtufield, "%s_DHCP_FORCE_MTU", colour);
 		
 	sprintf(message, _("Interface - %s"), colour);
-	newtCenteredWindow(44, (typeflag ? 18 : 12), message);
+	newtCenteredWindow(44, (typeflag ? 19 : 12), message);
 	
 	networkform = newtForm(NULL, NULL, 0);
 
@@ -129,6 +134,18 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 				newtEntrySetFlags(dhcphostnameentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
 				newtEntrySetFlags(dhcpforcemtuentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
 			}
+		/* Gateway */
+		gatewaylabel = newtTextbox(2, (typeflag ? 11 : 4) + 2, 18, 1, 0);
+		newtTextboxSetText(gatewaylabel, _("Gateway:"));
+		strcpy(temp, "");
+		findkey(kv, gatewayfield, temp);
+		gatewayentry = newtEntry(20, (typeflag ? 11 : 4) + 2, temp, 20, &gatewayresult, 0);
+		newtEntrySetFilter(gatewayentry, ip_input_filter, NULL);
+		if (typeflag == 1 && startstatictype == 0)
+			newtEntrySetFlags(gatewayentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
+		newtFormAddComponent(networkform, gatewaylabel);
+		newtFormAddComponent(networkform, gatewayentry);
+
 	}
 	/* Address */
 	addresslabel = newtTextbox(2, (typeflag ? 11 : 4) + 0, 18, 1, 0);
@@ -154,9 +171,10 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	newtFormAddComponent(networkform, netmasklabel);
 	newtFormAddComponent(networkform, netmaskentry);
 
+
 	/* Buttons. */
-	ok = newtButton(8, (typeflag ? 14 : 7), _("OK"));
-	cancel = newtButton(26, (typeflag ? 14 : 7), _("Cancel"));
+	ok = newtButton(8, (typeflag ? 15 : 7), _("OK"));
+	cancel = newtButton(26, (typeflag ? 15 : 7), _("Cancel"));
 
 	newtFormAddComponents(networkform, ok, cancel, NULL);
 
@@ -191,6 +209,13 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 					strcat(message, "\n");
 					error = 1;
 				}
+				if (typeflag && (inet_addr(gatewayresult) == INADDR_NONE))
+				{
+					strcat(message, _("Gateway"));
+					strcat(message, "\n");
+					error = 1;
+				}
+
 			}
 			if (strcmp(type, "DHCP") == 0)
 			{
@@ -214,13 +239,15 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 					{
 						replacekeyvalue(kv, addressfield, "0.0.0.0");
 						replacekeyvalue(kv, netmaskfield, "0.0.0.0");
+						replacekeyvalue(kv, gatewayfield, "0.0.0.0");
 					}
 					else
 					{
 						replacekeyvalue(kv, addressfield, addressresult);
 						replacekeyvalue(kv, netmaskfield, netmaskresult);
+						replacekeyvalue(kv, gatewayfield, gatewayresult);
 					}
-					replacekeyvalue(kv, typefield, type);					
+					replacekeyvalue(kv, typefield, type);
 				}
 				else
 				{
@@ -311,11 +338,13 @@ void networkdialogcallbacktype(newtComponent cm, void *data)
 	{
 		newtEntrySetFlags(addressentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
 		newtEntrySetFlags(netmaskentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
+		newtEntrySetFlags(gatewayentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
 	}
 	else
 	{
 		newtEntrySetFlags(addressentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_RESET);
 		newtEntrySetFlags(netmaskentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_RESET);
+		newtEntrySetFlags(gatewayentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_RESET);
 	}
 	if (strcmp(type, "DHCP") == 0)
 	{

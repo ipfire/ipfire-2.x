@@ -51,7 +51,6 @@ int drivermenu(void);
 int changedrivers(void);
 int greenaddressmenu(void);
 int addressesmenu(void);
-int gatewaymenu(void);
 
 int handlenetworking(void)
 {
@@ -83,10 +82,6 @@ int handlenetworking(void)
 				addressesmenu();
 				break;
 			
-			case 4:
-				gatewaymenu();
-				break;
-				
 			case 0:
 				if (oktoleave()) done = 1;
 				break;
@@ -215,18 +210,6 @@ int oktoleave(void)
 			return 0;
 		}
 	}
-	
-	strcpy(temp, ""); findkey(kv, "RED_TYPE", temp);
-	if ((configtype == 0) || (strcmp(temp, "STATIC") == 0))
-	{
-		strcpy(temp, ""); findkey(kv, "DEFAULT_GATEWAY", temp);
-		if (!(strlen(temp)))
-		{
-			errorbox(_("Missing Default Gateway."));
-			freekeyvalues(kv);
-			return 0;
-		}
-	}
 	return 1;
 }
 
@@ -238,7 +221,6 @@ int firstmenu(void)
 		_("Network configuration type"),
 		_("Drivers and card assignments"),
 		_("Address settings"),
-		_("Gateway settings"),
 		NULL
 	};
 	int rc;
@@ -695,70 +677,3 @@ int addressesmenu(void)
 	
 	return 0;
 }
-
-/* default gateway.... */
-int gatewaymenu(void)
-{
-	struct keyvalue *kv = initkeyvalues();
-	char message[1000];
-	char temp[STRING_SIZE] = "0";
-	struct newtWinEntry entries[2];
-	char* values[1];         /* pointers for the values. */
-	int error;
-	int configtype;
-	int rc;
-
-	if (!(readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")))
-	{
-		freekeyvalues(kv);
-		errorbox(_("Unable to open settings file"));
-		return 0;
-	}
-
-	entries[0].text = _("Default gateway:");
-	strcpy(temp, ""); findkey(kv, "DEFAULT_GATEWAY", temp);
-	values[0] = strdup(temp);
-	entries[0].value = &values[0];
-	entries[0].flags = 0;
-	
-	entries[1].text = NULL;
-	entries[1].value = NULL;
-	entries[1].flags = 0;
-	
-	do
-	{
-		error = 0;
-		
-		rc = newtWinEntries(_("Gateway settings"),
-			_("Enter the gateway information. "
-			"These settings are used only with Static IP on the RED interface."),
-			50, 5, 5, 18, entries, _("OK"), _("Cancel"), NULL);
-		if (rc == 0 || rc == 1)
-		{
-			if (strlen(values[0]))
-			{
-				if (inet_addr(values[0]) == INADDR_NONE)
-				{
-					strcat(message, _("Default gateway"));
-					strcat(message, "\n");
-					error = 1;
-				}
-			}
-
-			if (error)
-				errorbox(message);
-			else
-			{
-				replacekeyvalue(kv, "DEFAULT_GATEWAY", values[0]);
-				netaddresschange = 1;
-				free(values[0]);
-				writekeyvalues(kv, CONFIG_ROOT "/ethernet/settings");
-			}
-		}
-	}
-	while (error);
-
-	freekeyvalues(kv);
-
-	return 1;
-}			
