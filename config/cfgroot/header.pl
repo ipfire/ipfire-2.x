@@ -311,22 +311,6 @@ sub getcgihash {
 	return;
 }
 
-
-# Test if IP is within a subnet
-# Call: IpInSubnet (Addr, Subnet, Subnet Mask)
-#       Subnet can be an IP of the subnet: 10.0.0.0 or 10.0.0.1
-#       Everything in dottted notation
-# Return: TRUE/FALSE
-sub IpInSubnet
-{
-    $ip = unpack('N', inet_aton(shift));
-    $start = unpack('N', inet_aton(shift));
-    $mask  = unpack('N', inet_aton(shift));
-    $start &= $mask;  # base of subnet...
-    $end   = $start + ~$mask;
-    return (($ip >= $start) && ($ip <= $end));
-}
-
 sub escape($) {
 	my $s = shift;
 	return HTML::Entities::encode_entities($s);
@@ -559,13 +543,13 @@ sub colorize {
 		return "<font color='".${Header::colourovpn}."'>".$string."</font>";
 	} elsif ( $string =~ "lo" or $string =~ "127.0.0.0" ){
 		return "<font color='".${Header::colourfw}."'>".$string."</font>";
-	} elsif ( $string =~ $ethsettings{'GREEN_DEV'} or &IpInSubnet($string2,$ethsettings{'GREEN_NETADDRESS'},$ethsettings{'GREEN_NETMASK'}) ){
+	} elsif ( $string =~ $ethsettings{'GREEN_DEV'} or &General::IpInSubnet($string2,$ethsettings{'GREEN_NETADDRESS'},$ethsettings{'GREEN_NETMASK'}) ){
 		return "<font color='".${Header::colourgreen}."'>".$string."</font>";
 	} elsif (  $string =~ "ppp0" or $string =~ $ethsettings{'RED_DEV'} or $string =~ "0.0.0.0" or $string =~ $ethsettings{'RED_ADDRESS'} ){
 		return "<font color='".${Header::colourred}."'>".$string."</font>";
-	} elsif ( $ethsettings{'CONFIG_TYPE'}>1 and ( $string =~ $ethsettings{'BLUE_DEV'} or &IpInSubnet($string2,$ethsettings{'BLUE_NETADDRESS'},$ethsettings{'BLUE_NETMASK'}) )){
+	} elsif ( $ethsettings{'CONFIG_TYPE'}>1 and ( $string =~ $ethsettings{'BLUE_DEV'} or &General::IpInSubnet($string2,$ethsettings{'BLUE_NETADDRESS'},$ethsettings{'BLUE_NETMASK'}) )){
 		return "<font color='".${Header::colourblue}."'>".$string."</font>";
-	} elsif ( $ethsettings{'CONFIG_TYPE'}>2 and ( $string =~ $ethsettings{'ORANGE_DEV'} or &IpInSubnet($string2,$ethsettings{'ORANGE_NETADDRESS'},$ethsettings{'ORANGE_NETMASK'}) )){
+	} elsif ( $ethsettings{'CONFIG_TYPE'}>2 and ( $string =~ $ethsettings{'ORANGE_DEV'} or &General::IpInSubnet($string2,$ethsettings{'ORANGE_NETADDRESS'},$ethsettings{'ORANGE_NETMASK'}) )){
 		return "<font color='".${Header::colourorange}."'>".$string."</font>";
 	} else {
 		return $string;
