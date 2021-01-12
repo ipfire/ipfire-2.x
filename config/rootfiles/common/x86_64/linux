@@ -20579,14 +20579,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/bus/mhi/core/mhi.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/char
 #lib/modules/KVER-ipfire/kernel/drivers/char/hangcheck-timer.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/char/hw_random
-#lib/modules/KVER-ipfire/kernel/drivers/char/hw_random/amd-rng.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/char/hw_random/ba431-rng.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/char/hw_random/intel-rng.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/char/hw_random/timeriomem-rng.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/char/hw_random/via-rng.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/char/hw_random/virtio-rng.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/char/hw_random/xiphera-trng.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/char/ipmi
 #lib/modules/KVER-ipfire/kernel/drivers/char/ipmi/ipmi_devintf.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/char/ipmi/ipmi_msghandler.ko.xz
