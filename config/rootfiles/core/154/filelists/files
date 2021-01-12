@@ -2,6 +2,7 @@ etc/system-release
 etc/issue
 etc/os-release
 etc/rc.d/init.d/unbound
+etc/rc.d/init.d/wlanclient
 opt/pakfire/lib/functions.sh
 srv/web/ipfire/cgi-bin/country.cgi
 srv/web/ipfire/cgi-bin/credits.cgi
@@ -14,6 +15,7 @@ srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/remote.cgi
 srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/wirelessclient.cgi
 usr/local/bin/sshctrl
 var/ipfire/extrahd/bin/extrahd.pl
 var/ipfire/general-functions.pl
