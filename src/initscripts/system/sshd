@@ -37,7 +37,7 @@ case "$1" in
 
     stop)
         boot_mesg "Stopping SSH Server..."
-        killproc -p "/var/run/sshd.pid" /usr/sbin/sshd
+        killproc -p "/var/run/sshd.pid" /usr/sbin/sshd || true
         ;;
 
     reload)
