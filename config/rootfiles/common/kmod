@@ -9,6 +9,6 @@ sbin/rmmod
 #usr/lib/libkmod.la
 #usr/lib/libkmod.so
 usr/lib/libkmod.so.2
-usr/lib/libkmod.so.2.3.4
+usr/lib/libkmod.so.2.3.6
 #usr/lib/pkgconfig/libkmod.pc
 #usr/share/bash-completion/completions/kmod
