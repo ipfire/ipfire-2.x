@@ -797,6 +797,9 @@ running_on_ec2() {
 	if [ -r "/sys/devices/virtual/dmi/id/product_uuid" ]; then
 		uuid=$(</sys/devices/virtual/dmi/id/product_uuid)
 
+		# Convert the UUID as uppercase
+		uuid="${uuid^^}"
+
 		[ "${uuid:0:3}" = "EC2" ] && return 0
 	fi
 
