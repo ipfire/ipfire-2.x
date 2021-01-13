@@ -2,6 +2,7 @@ etc/system-release
 etc/issue
 etc/os-release
 etc/rc.d/init.d/functions
+etc/rc.d/init.d/sshd
 etc/rc.d/init.d/unbound
 etc/rc.d/init.d/wlanclient
 opt/pakfire/lib/functions.sh
