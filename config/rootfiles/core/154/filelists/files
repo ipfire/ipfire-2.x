@@ -19,4 +19,5 @@ srv/web/ipfire/cgi-bin/wirelessclient.cgi
 usr/local/bin/sshctrl
 var/ipfire/extrahd/bin/extrahd.pl
 var/ipfire/general-functions.pl
+var/ipfire/header.pl
 var/ipfire/langs
