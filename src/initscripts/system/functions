@@ -793,13 +793,6 @@ running_on_hypervisor() {
 running_on_ec2() {
 	local uuid
 
-	# Check if the hypervisor UUID starts with ec2
-	if [ -r "/sys/hypervisor/uuid" ]; then
-		uuid=$(</sys/hypervisor/uuid)
-
-		[ "${uuid:0:3}" = "ec2" ] && return 0
-	fi
-
 	# Check if the DMI product UUID starts with EC2
 	if [ -r "/sys/devices/virtual/dmi/id/product_uuid" ]; then
 		uuid=$(</sys/devices/virtual/dmi/id/product_uuid)
