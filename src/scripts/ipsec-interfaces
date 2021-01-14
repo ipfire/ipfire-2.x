@@ -228,6 +228,11 @@ main() {
 			ip addr flush dev "${intf}"
 			ip addr add "${interface_address}" dev "${intf}"
 
+			# Disable IPsec policy lookup for VTI
+			if [ "${interface_mode}" = "vti" ]; then
+				sysctl -qw "net.ipv4.conf.${intf}.disable_policy=1"
+			fi
+
 			# Set MTU
 			ip link set dev "${intf}" mtu "${interface_mtu}"
 
