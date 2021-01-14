@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.8.10p3
+VER        = 1.9.5p1
 
 THISAPP    = sudo-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = fcd8d0d9f9f0397d076ee901e242ed39
+$(DL_FILE)_MD5 = 145f6e69c116f82cf0377ccf459344eb
 
 install : $(TARGET)
 
