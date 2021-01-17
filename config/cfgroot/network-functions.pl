@@ -27,6 +27,14 @@ require "/var/ipfire/general-functions.pl";
 
 use Socket;
 
+# System ethernet configuration
+our %ethernet_settings = ();
+&General::readhash("${General::swroot}/ethernet/settings", \%ethernet_settings);
+
+# List of all possible network zones that can be configured
+our @known_network_zones = ("red", "green", "orange", "blue");
+
+# IPv4 netmask CIDR to dotted decimal notation conversion table
 my %PREFIX2NETMASK = (
 	32 => "255.255.255.255",
 	31 => "255.255.255.254",
@@ -448,12 +456,8 @@ sub get_mac_by_name($) {
 ## Function to get a list of all available network zones.
 #
 sub get_available_network_zones () {
-	# Get netsettings.
-	my %netsettings = ();
-	&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
-
 	# Obtain the configuration type from the netsettings hash.
-	my $config_type = $netsettings{'CONFIG_TYPE'};
+	my $config_type = $ethernet_settings{'CONFIG_TYPE'};
 
 	# Hash which contains the conversation from the config mode
 	# to the existing network interface names. They are stored like
@@ -478,6 +482,32 @@ sub get_available_network_zones () {
 
 	# Return them.
 	return @network_zones;
+}
+
+#
+## Function to check if a network zone is available in the current configuration
+#
+sub is_zone_available() {
+	my $zone = lc shift;
+	
+	# Make sure the zone is valid
+	die("Unknown network zone '$zone'") unless ($zone ~~ @known_network_zones);
+	
+	# Get available zones and return result
+	my @available_zones = get_available_network_zones();
+	return ($zone ~~ @available_zones);
+}
+
+#
+## Function to determine if the RED zone is in standard IP (or modem, PPP, VDSL, ...) mode
+#
+sub is_red_mode_ip() {
+	# Obtain the settings from the netsettings hash
+	my $config_type = $ethernet_settings{'CONFIG_TYPE'};
+	my $red_type = $ethernet_settings{'RED_TYPE'};
+
+	# RED must be a network device (configuration 1-4) with dynamic or static IP
+	return (($config_type ~~ [1..4]) && ($red_type ~~ ["DHCP", "STATIC"]));
 }
 
 1;
