@@ -23,6 +23,7 @@ use strict;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/ids-functions.pl";
+require "${General::swroot}/network-functions.pl";
 
 # Snort settings file, which contains the settings from the WUI.
 my $snort_settings_file = "${General::swroot}/snort/settings";
@@ -129,7 +130,7 @@ my %rulessettings = (
 );
 
 # Get all available network zones.
-my @network_zones = &IDS::get_available_network_zones();
+my @network_zones = &Network::get_available_network_zones();
 
 # Read-in snort settings file.
 &General::readhash("$snort_settings_file", \%snortsettings);

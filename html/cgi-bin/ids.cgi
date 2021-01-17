@@ -29,6 +29,7 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/ids-functions.pl";
+require "${General::swroot}/network-functions.pl";
 
 my %color = ();
 my %mainsettings = ();
@@ -47,7 +48,7 @@ my %ignored=();
 
 # Get the available network zones, based on the config type of the system and store
 # the list of zones in an array.
-my @network_zones = &IDS::get_available_network_zones();
+my @network_zones = &Network::get_available_network_zones();
 
 # Check if openvpn is started and add it to the array of network zones.
 if ( -e "/var/run/openvpn.pid") {

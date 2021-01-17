@@ -444,6 +444,42 @@ sub get_mac_by_name($) {
 	return $mac;
 }
 
+#
+## Function to get a list of all available network zones.
+#
+sub get_available_network_zones () {
+	# Get netsettings.
+	my %netsettings = ();
+	&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+
+	# Obtain the configuration type from the netsettings hash.
+	my $config_type = $netsettings{'CONFIG_TYPE'};
+
+	# Hash which contains the conversation from the config mode
+	# to the existing network interface names. They are stored like
+	# an array.
+	#
+	# Mode "0" red is a modem and green
+	# Mode "1" red is a netdev and green
+	# Mode "2" red, green and orange
+	# Mode "3" red, green and blue
+	# Mode "4" red, green, blue, orange
+	my %config_type_to_interfaces = (
+		"0" => [ "red", "green" ],
+		"1" => [ "red", "green" ],
+		"2" => [ "red", "green", "orange" ],
+		"3" => [ "red", "green", "blue" ],
+		"4" => [ "red", "green", "blue", "orange" ]
+	);
+
+	# Obtain and dereference the corresponding network interaces based on the read
+	# network config type.
+	my @network_zones = @{ $config_type_to_interfaces{$config_type} };
+
+	# Return them.
+	return @network_zones;
+}
+
 1;
 
 # Remove the next line to enable the testsuite
