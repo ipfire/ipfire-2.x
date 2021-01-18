@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 2.9
+VER        = 581dfcc
 
 THISAPP    = hostapd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/hostap-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = hostapd
-PAK_VER    = 53
+PAK_VER    = 54
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f188fc53a495fe7af3b6d77d3c31dee8
+$(DL_FILE)_MD5 = eed922f2daabe16d74adf2b23455d8bd
 
 install : $(TARGET)
 
@@ -83,7 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP)/hostapd && cp $(DIR_SRC)/config/hostapd/config ./.config
 	cd $(DIR_APP)/hostapd && sed -e "s@/usr/local@/usr@g" -i Makefile
-	cd $(DIR_APP)/hostapd && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP)/hostapd && make $(MAKETUNING)
 	cd $(DIR_APP)/hostapd && make install
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/hostapd /var/ipfire/backup/addons/includes/hostapd
 	# install initscript

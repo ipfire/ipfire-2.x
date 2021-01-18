@@ -44,41 +44,35 @@ CONFIG_LIBNL32=y
 # Driver interface for no driver (e.g., RADIUS server only)
 #CONFIG_DRIVER_NONE=y
 
-# IEEE 802.11F/IAPP
-CONFIG_IAPP=y
-
 # WPA2/IEEE 802.11i RSN pre-authentication
 CONFIG_RSN_PREAUTH=y
-
-# IEEE 802.11w (management frame protection)
-CONFIG_IEEE80211W=y
 
 # Support Operating Channel Validation
 #CONFIG_OCV=y
 
 # Integrated EAP server
-CONFIG_EAP=y
+#CONFIG_EAP=y
 
 # EAP Re-authentication Protocol (ERP) in integrated EAP server
-CONFIG_ERP=y
+#CONFIG_ERP=y
 
 # EAP-MD5 for the integrated EAP server
-CONFIG_EAP_MD5=y
+#CONFIG_EAP_MD5=y
 
 # EAP-TLS for the integrated EAP server
-CONFIG_EAP_TLS=y
+#CONFIG_EAP_TLS=y
 
 # EAP-MSCHAPv2 for the integrated EAP server
-CONFIG_EAP_MSCHAPV2=y
+#CONFIG_EAP_MSCHAPV2=y
 
 # EAP-PEAP for the integrated EAP server
-CONFIG_EAP_PEAP=y
+#CONFIG_EAP_PEAP=y
 
 # EAP-GTC for the integrated EAP server
-CONFIG_EAP_GTC=y
+#CONFIG_EAP_GTC=y
 
 # EAP-TTLS for the integrated EAP server
-CONFIG_EAP_TTLS=y
+#CONFIG_EAP_TTLS=y
 
 # EAP-SIM for the integrated EAP server
 #CONFIG_EAP_SIM=y
@@ -138,7 +132,7 @@ CONFIG_EAP_TTLS=y
 
 # PKCS#12 (PFX) support (used to read private key and certificate file from
 # a file that usually has extension .p12 or .pfx)
-CONFIG_PKCS12=y
+#CONFIG_PKCS12=y
 
 # RADIUS authentication server. This provides access to the integrated EAP
 # server from external hosts using RADIUS.
@@ -154,9 +148,6 @@ CONFIG_PKCS12=y
 # the IEEE 802.11 Management capability (e.g., FreeBSD/net80211)
 #CONFIG_DRIVER_RADIUS_ACL=y
 
-# IEEE 802.11n (High Throughput) support
-CONFIG_IEEE80211N=y
-
 # Wireless Network Management (IEEE Std 802.11v-2011)
 # Note: This is experimental and not complete implementation.
 #CONFIG_WNM=y
@@ -168,7 +159,7 @@ CONFIG_IEEE80211AC=y
 # Note: This is experimental and work in progress. The definitions are still
 # subject to change and this should not be expected to interoperate with the
 # final IEEE 802.11ax version.
-#CONFIG_IEEE80211AX=y
+CONFIG_IEEE80211AX=y
 
 # Remove debugging code that is printing out debug messages to stdout.
 # This can be used to reduce the size of the hostapd considerably if debugging
@@ -189,13 +180,13 @@ CONFIG_IEEE80211AC=y
 #CONFIG_DEBUG_LINUX_TRACING=y
 
 # Remove support for RADIUS accounting
-#CONFIG_NO_ACCOUNTING=y
+CONFIG_NO_ACCOUNTING=y
 
 # Remove support for RADIUS
-#CONFIG_NO_RADIUS=y
+CONFIG_NO_RADIUS=y
 
 # Remove support for VLANs
-#CONFIG_NO_VLAN=y
+CONFIG_NO_VLAN=y
 
 # Enable support for fully dynamic VLANs. This enables hostapd to
 # automatically create bridge and VLAN interfaces if necessary.
@@ -279,7 +270,7 @@ CONFIG_ELOOP_EPOLL=y
 # internal = Internal TLSv1 implementation (experimental)
 # linux = Linux kernel AF_ALG and internal TLSv1 implementation (experimental)
 # none = Empty template
-#CONFIG_TLS=openssl
+CONFIG_TLS=openssl
 
 # TLS-based EAP methods require at least TLS v1.0. Newer version of TLS (v1.1)
 # can be enabled to get a stronger construction of messages when block ciphers
@@ -360,7 +351,7 @@ CONFIG_ELOOP_EPOLL=y
 CONFIG_ACS=y
 
 # Multiband Operation support
-# These extentions facilitate efficient use of multiple frequency bands
+# These extensions facilitate efficient use of multiple frequency bands
 # available to the AP and the devices that may associate with it.
 #CONFIG_MBO=y
 
@@ -377,7 +368,7 @@ CONFIG_TAXONOMY=y
 
 # Include internal line edit mode in hostapd_cli. This can be used to provide
 # limited command line editing and history support.
-#CONFIG_WPA_CLI_EDIT=y
+CONFIG_WPA_CLI_EDIT=y
 
 # Opportunistic Wireless Encryption (OWE)
 # Experimental implementation of draft-harkins-owe-07.txt
@@ -390,5 +381,20 @@ CONFIG_AIRTIME_POLICY=y
 # parameter. See that parameter in hostapd.conf for more details.
 #CFLAGS += -DDEFAULT_WPA_DISABLE_EAPOL_KEY_RETRIES=1
 
-# Custom configuration
-CONFIG_SAE=y
+# Wired equivalent privacy (WEP)
+# WEP is an obsolete cryptographic data confidentiality algorithm that is not
+# considered secure. It should not be used for anything anymore. The
+# functionality needed to use WEP is available in the current hostapd
+# release under this optional build parameter. This functionality is subject to
+# be completely removed in a future release.
+#CONFIG_WEP=y
+
+# Remove all TKIP functionality
+# TKIP is an old cryptographic data confidentiality algorithm that is not
+# considered secure. It should not be used anymore. For now, the default hostapd
+# build includes this to allow mixed mode WPA+WPA2 networks to be enabled, but
+# that functionality is subject to be removed in the future.
+#CONFIG_NO_TKIP=y
+
+# Manually added options
+CONFIG_IEEE80211W=y
