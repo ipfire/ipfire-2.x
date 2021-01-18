@@ -87,8 +87,8 @@ STP_PRIORITY="$(get_value "${ZONE}_STP_PRIORITY")"
 case "${MODE}" in
 	bridge)
 		# We need to check if $STP_PRIORITY has a valid value if not set it
-		if [ -n "${STP_PRIORITY}" ]; then
-			STP_PRIORITY=16384;
+		if [ -z "${STP_PRIORITY}" ]; then
+			STP_PRIORITY=16384
 		fi
 
 		ADDRESS="$(get_value "${ZONE}_MACADDR")"
