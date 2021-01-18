@@ -24,14 +24,13 @@
 
 include Config
 
-VER        = 2.9
+VER        = 581dfcc
 
 THISAPP    = wpa_supplicant-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = hostapd-$(VER).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/hostap-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = wpa_supplicant
 
 ###############################################################################
 # Top-level Rules
@@ -41,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2d2958c782576dc9901092fbfecb4190
+$(DL_FILE)_MD5 = eed922f2daabe16d74adf2b23455d8bd
 
 install : $(TARGET)
 
@@ -74,10 +73,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-
 	cd $(DIR_APP)/wpa_supplicant && cp $(DIR_SRC)/config/wpa_supplicant/config ./.config
 	cd $(DIR_APP)/wpa_supplicant && sed -e "s/wpa_cli\ dynamic_eap_methods/wpa_cli\ #dynamic_eap_methods/" -i Makefile
 	cd $(DIR_APP)/wpa_supplicant && sed -e "s@/usr/local@/usr@g" -i Makefile
-	cd $(DIR_APP)/wpa_supplicant && make && make install
+	cd $(DIR_APP)/wpa_supplicant && make $(MAKETUNING)
+	cd $(DIR_APP)/wpa_supplicant && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
