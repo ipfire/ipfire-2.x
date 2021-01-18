@@ -18,6 +18,7 @@ srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/remote.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
+usr/local/bin/ipsec-interfaces
 usr/local/bin/sshctrl
 var/ipfire/extrahd/bin/extrahd.pl
 var/ipfire/general-functions.pl
