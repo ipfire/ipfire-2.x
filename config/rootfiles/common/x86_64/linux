@@ -8644,7 +8644,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/hypervisor/guest.h
 #lib/modules/KVER-ipfire/build/include/config/hz
 #lib/modules/KVER-ipfire/build/include/config/hz.h
-#lib/modules/KVER-ipfire/build/include/config/hz/300.h
+#lib/modules/KVER-ipfire/build/include/config/hz/100.h
 #lib/modules/KVER-ipfire/build/include/config/i2c
 #lib/modules/KVER-ipfire/build/include/config/i2c.h
 #lib/modules/KVER-ipfire/build/include/config/i2c/algobit.h
@@ -10754,8 +10754,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/pps.h
 #lib/modules/KVER-ipfire/build/include/config/pptp.h
 #lib/modules/KVER-ipfire/build/include/config/preempt
-#lib/modules/KVER-ipfire/build/include/config/preempt/none.h
 #lib/modules/KVER-ipfire/build/include/config/preempt/notifiers.h
+#lib/modules/KVER-ipfire/build/include/config/preempt/voluntary.h
 #lib/modules/KVER-ipfire/build/include/config/prestera
 #lib/modules/KVER-ipfire/build/include/config/prestera.h
 #lib/modules/KVER-ipfire/build/include/config/prestera/pci.h
