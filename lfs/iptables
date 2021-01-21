@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.8.6
+VER        = 1.8.7
 
 THISAPP    = iptables-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -41,7 +41,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 netfilter-layer7-v2.23.tar.gz = $(URL_IPFIRE)/netfilter-layer7-v2.23.tar.gz
 
-$(DL_FILE)_MD5 = bc0f0adccc93c09dc5b7507ccba93148
+$(DL_FILE)_MD5 = 602ba7e937c72fbb7b1c2b71c3b0004b
 netfilter-layer7-v2.23.tar.gz_MD5 = 10910b6173d18e426cb56ae7e1300eeb
 
 install : $(TARGET)

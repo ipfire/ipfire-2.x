@@ -13,7 +13,7 @@ lib/libipq.so.0.0.0
 #lib/libxtables.la
 lib/libxtables.so
 lib/libxtables.so.12
-lib/libxtables.so.12.3.0
+lib/libxtables.so.12.4.0
 #lib/xtables
 lib/xtables/libip6t_DNAT.so
 lib/xtables/libip6t_DNPT.so
