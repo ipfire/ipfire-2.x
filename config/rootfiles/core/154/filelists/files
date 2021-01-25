@@ -14,6 +14,7 @@ srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/gpl.cgi
 srv/web/ipfire/cgi-bin/hardwaregraphs.cgi
+srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/remote.cgi
@@ -21,7 +22,10 @@ srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
 usr/local/bin/ipsec-interfaces
 usr/local/bin/sshctrl
+usr/sbin/convert-snort
 var/ipfire/extrahd/bin/extrahd.pl
 var/ipfire/general-functions.pl
+var/ipfire/ids-functions.pl
+var/ipfire/network-functions.pl
 var/ipfire/header.pl
 var/ipfire/langs
