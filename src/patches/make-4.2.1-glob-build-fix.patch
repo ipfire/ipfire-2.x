@@ -1,0 +1,11 @@
+--- make-4.2.1/configure.ac~	2018-02-08 12:31:17.105922978 +0000
++++ make-4.2.1/configure.ac	2018-02-08 12:31:35.249509647 +0000
+@@ -402,7 +402,7 @@ AC_CACHE_CHECK([if system libc has GNU g
+ #define GLOB_INTERFACE_VERSION 1
+ #if !defined _LIBC && defined __GNU_LIBRARY__ && __GNU_LIBRARY__ > 1
+ # include <gnu-versions.h>
+-# if _GNU_GLOB_INTERFACE_VERSION == GLOB_INTERFACE_VERSION
++# if _GNU_GLOB_INTERFACE_VERSION >= GLOB_INTERFACE_VERSION
+    gnu glob
+ # endif
+ #endif],
