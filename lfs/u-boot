@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2018.03
+VER        = 2021.01
 
 THISAPP    = u-boot-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 02922bdf0ee003fe25bfc32749ffdeab
+$(DL_FILE)_MD5 = a3206df1c1b97df7a4ddcdd17cb97d0c
 
 install : $(TARGET)
 
@@ -90,7 +90,6 @@ ifeq "${BUILD_ARCH}" "armv5tel"
 	cd $(DIR_APP) && install MLO /boot/
 	cd $(DIR_APP) && install u-boot.img /boot/
 	cd $(DIR_APP) && make distclean
-	
 
 	# Wandboard
 	-mkdir -pv /usr/share/u-boot/wandboard
