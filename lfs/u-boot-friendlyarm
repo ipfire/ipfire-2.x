@@ -31,7 +31,8 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/u-boot-$(VER)*
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = armv5tel
+SUP_ARCH   = none
+#armv5tel
 
 CFLAGS    += -fcommon
 
