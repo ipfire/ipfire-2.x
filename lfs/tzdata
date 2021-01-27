@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2020d
+VER        = 2021a
 TZDATA_VER = $(VER)
 TZCODE_VER = $(VER)
 
@@ -45,8 +45,8 @@ objects = tzdata$(TZDATA_VER).tar.gz tzcode$(TZCODE_VER).tar.gz
 tzdata$(TZDATA_VER).tar.gz = $(DL_FROM)/tzdata$(TZDATA_VER).tar.gz
 tzcode$(TZCODE_VER).tar.gz = $(DL_FROM)/tzcode$(TZCODE_VER).tar.gz
 
-tzdata$(TZDATA_VER).tar.gz_MD5 = 2f58d72e31cf073f5076c2cbf182cba3
-tzcode$(TZCODE_VER).tar.gz_MD5 = b4c46a69e5894aac713e8365a9be9411
+tzdata$(TZDATA_VER).tar.gz_MD5 = 20eae7d1da671c6eac56339c8df85bbd
+tzcode$(TZCODE_VER).tar.gz_MD5 = 41a624869eed4cc36b9d163764f972a3
 
 install : $(TARGET)
 
