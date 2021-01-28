@@ -620,10 +620,10 @@ usr/bin/tshark
 #usr/include/wireshark/wsutil/xtea.h
 #usr/lib/libwireshark.so
 usr/lib/libwireshark.so.14
-usr/lib/libwireshark.so.14.0.0
+usr/lib/libwireshark.so.14.0.2
 #usr/lib/libwiretap.so
 usr/lib/libwiretap.so.11
-usr/lib/libwiretap.so.11.0.0
+usr/lib/libwiretap.so.11.0.2
 #usr/lib/libwsutil.so
 usr/lib/libwsutil.so.12
 usr/lib/libwsutil.so.12.0.0
