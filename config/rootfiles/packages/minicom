@@ -17,8 +17,10 @@ usr/bin/xminicom
 #usr/share/locale/ro/LC_MESSAGES/minicom.mo
 #usr/share/locale/ru/LC_MESSAGES/minicom.mo
 #usr/share/locale/rw/LC_MESSAGES/minicom.mo
+#usr/share/locale/sr/LC_MESSAGES/minicom.mo
 #usr/share/locale/sv/LC_MESSAGES/minicom.mo
 #usr/share/locale/vi/LC_MESSAGES/minicom.mo
+#usr/share/locale/zh_CN/LC_MESSAGES/minicom.mo
 #usr/share/locale/zh_TW/LC_MESSAGES/minicom.mo
 #usr/share/man/man1/ascii-xfr.1
 #usr/share/man/man1/minicom.1
