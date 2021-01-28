@@ -21,7 +21,7 @@ etc/ipset
 #usr/lib/libipset.la
 #usr/lib/libipset.so
 usr/lib/libipset.so.13
-usr/lib/libipset.so.13.1.0
+usr/lib/libipset.so.13.2.0
 #usr/lib/pkgconfig/libipset.pc
 usr/sbin/ipset
 #usr/share/man/man3/libipset.3
