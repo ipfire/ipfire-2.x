@@ -798,6 +798,7 @@ var/ipfire/samba/global
 #var/ipfire/samba/private
 var/ipfire/samba/private/secrets.tdb
 var/ipfire/samba/private/smbpasswd
+var/ipfire/samba/samba-change-password
 var/ipfire/samba/settings
 var/ipfire/samba/shares
 var/ipfire/samba/smb.conf
