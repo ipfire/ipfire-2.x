@@ -25,6 +25,7 @@ package Network;
 
 require "/var/ipfire/general-functions.pl";
 
+use experimental 'smartmatch';
 use Socket;
 
 # System ethernet configuration
