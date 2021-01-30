@@ -73,13 +73,13 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure	\
-		--prefix=/usr		\
-		--enable-static=no	\
-		--disable-fastparser	\
-		--disable-daemon	\
-		--disable-modules	\
-		--enable-maxminddb=no	\
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr \
+		--enable-static=no \
+		--disable-fastparser \
+		--disable-daemon \
+		--disable-modules \
+		--enable-maxminddb=no \
 		--disable-documentation
 
 	cd $(DIR_APP)/src && make $(MAKETUNING) kdig
