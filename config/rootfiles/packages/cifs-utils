@@ -1,3 +1,9 @@
 sbin/mount.cifs
+sbin/mount.smb3
+#usr/local/bin/smb2-quota
+#usr/local/bin/smbinfo
 #usr/local/include/cifsidmap.h
+#usr/local/share/man/man1/smb2-quota.1
+#usr/local/share/man/man1/smbinfo.1
 #usr/local/share/man/man8/mount.cifs.8
+#usr/local/share/man/man8/mount.smb3.8
