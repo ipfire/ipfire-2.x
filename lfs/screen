@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.2.1
+VER        = 4.8.0
 
 THISAPP    = screen-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 419a0594e2b25039239af8b90eda7d92
+$(DL_FILE)_MD5 = d276213d3acd10339cd37848b8c4ab1e
 
 install : $(TARGET)
 
@@ -70,8 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/screen-4.2.1-cpation-hardstatus.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/screen-4.2.1-altscreen.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --with-socket-dir=/var/run/screen --with-sys-screenrc=/etc/screenrc
 	cd $(DIR_APP) && sed -i -e "s%/usr/local/etc/screenrc%/etc/screenrc%" {etc,doc}/*
 	cd $(DIR_APP) && make $(MAKETUNING)
