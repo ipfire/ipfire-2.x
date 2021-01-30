@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.5.4
+VER        = 7.5.5
 
 THISAPP    = logwatch-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 47b35a8e5efc415b4a775415255b8d1f
+$(DL_FILE)_MD5 = b658e4db27d905151396ecadcbcb24b1
 
 install : $(TARGET)
 
@@ -73,7 +73,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -e "s/^TEMPDIR=.*/TEMPDIR=\"\/tmp\"/g" -i install_logwatch.sh
 
 	cd $(DIR_APP)/lib && patch < $(DIR_SRC)/src/patches/logwatch/logwatch-7.3.6-date_manip6.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/logwatch/logwatch-7.5.4-dhcpd_reuse_lease_entries.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/logwatch/logwatch-7.5.4-disable_iptables.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/logwatch/logwatch-7.5.4-clamav_fix_unmatch_entries.patch
 
