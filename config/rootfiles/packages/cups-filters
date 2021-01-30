@@ -7,6 +7,7 @@ etc/rc.d/init.d/cups-browsed
 #etc/rc5.d/K35cups-browsed
 #etc/rc5.d/S82cups-browsed
 usr/bin/driverless
+usr/bin/driverless-fax
 usr/bin/foomatic-rip
 usr/bin/ttfread
 #usr/include/cupsfilters
@@ -27,10 +28,12 @@ usr/bin/ttfread
 usr/lib/cups/backend/beh
 usr/lib/cups/backend/cups-brf
 usr/lib/cups/backend/driverless
+usr/lib/cups/backend/driverless-fax
 usr/lib/cups/backend/implicitclass
 usr/lib/cups/backend/parallel
 usr/lib/cups/backend/serial
 usr/lib/cups/driver/driverless
+usr/lib/cups/driver/driverless-fax
 usr/lib/cups/filter/bannertopdf
 usr/lib/cups/filter/brftoembosser
 usr/lib/cups/filter/brftopagedbrf
