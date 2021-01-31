@@ -1481,7 +1481,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/arch/x86/include/asm/linkage.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/asm/livepatch.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/asm/local.h
-#lib/modules/KVER-ipfire/build/arch/x86/include/asm/local64.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/asm/mach_timer.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/asm/mach_traps.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/asm/math_emu.h
@@ -1698,6 +1697,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/arch/x86/include/generated/asm/early_ioremap.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/generated/asm/export.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/generated/asm/irq_regs.h
+#lib/modules/KVER-ipfire/build/arch/x86/include/generated/asm/local64.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/generated/asm/mcs_spinlock.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/generated/asm/mm-arch-hooks.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/generated/asm/mmiowb.h
@@ -7453,7 +7453,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/decompress/xz.h
 #lib/modules/KVER-ipfire/build/include/config/decompress/zstd.h
 #lib/modules/KVER-ipfire/build/include/config/default
-#lib/modules/KVER-ipfire/build/include/config/default/cubic.h
+#lib/modules/KVER-ipfire/build/include/config/default/bbr.h
 #lib/modules/KVER-ipfire/build/include/config/default/fq
 #lib/modules/KVER-ipfire/build/include/config/default/fq/codel.h
 #lib/modules/KVER-ipfire/build/include/config/default/hostname.h
@@ -7863,6 +7863,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/dw/dmac.h
 #lib/modules/KVER-ipfire/build/include/config/dw/dmac/core.h
 #lib/modules/KVER-ipfire/build/include/config/dw/dmac/pci.h
+#lib/modules/KVER-ipfire/build/include/config/dw/edma
+#lib/modules/KVER-ipfire/build/include/config/dw/edma.h
+#lib/modules/KVER-ipfire/build/include/config/dw/edma/pcie.h
 #lib/modules/KVER-ipfire/build/include/config/dw/watchdog.h
 #lib/modules/KVER-ipfire/build/include/config/dwc
 #lib/modules/KVER-ipfire/build/include/config/dwc/xlgmac
@@ -8845,6 +8848,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/intel
 #lib/modules/KVER-ipfire/build/include/config/intel/gtt.h
 #lib/modules/KVER-ipfire/build/include/config/intel/idle.h
+#lib/modules/KVER-ipfire/build/include/config/intel/idma64.h
+#lib/modules/KVER-ipfire/build/include/config/intel/idxd.h
 #lib/modules/KVER-ipfire/build/include/config/intel/int0002
 #lib/modules/KVER-ipfire/build/include/config/intel/int0002/vgpio.h
 #lib/modules/KVER-ipfire/build/include/config/intel/ioatdma.h
@@ -10701,6 +10706,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/pkcs7/message/parser.h
 #lib/modules/KVER-ipfire/build/include/config/pldmfw.h
 #lib/modules/KVER-ipfire/build/include/config/plx
+#lib/modules/KVER-ipfire/build/include/config/plx/dma.h
 #lib/modules/KVER-ipfire/build/include/config/plx/hermes.h
 #lib/modules/KVER-ipfire/build/include/config/pm
 #lib/modules/KVER-ipfire/build/include/config/pm.h
@@ -10806,6 +10812,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/pvpanic.h
 #lib/modules/KVER-ipfire/build/include/config/qcom
 #lib/modules/KVER-ipfire/build/include/config/qcom/emac.h
+#lib/modules/KVER-ipfire/build/include/config/qcom/hidma
+#lib/modules/KVER-ipfire/build/include/config/qcom/hidma.h
+#lib/modules/KVER-ipfire/build/include/config/qcom/hidma/mgmt.h
 #lib/modules/KVER-ipfire/build/include/config/qcom/qmi
 #lib/modules/KVER-ipfire/build/include/config/qcom/qmi/helpers.h
 #lib/modules/KVER-ipfire/build/include/config/qed
@@ -10853,6 +10862,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/raid6/pq
 #lib/modules/KVER-ipfire/build/include/config/raid6/pq.h
 #lib/modules/KVER-ipfire/build/include/config/raid6/pq/benchmark.h
+#lib/modules/KVER-ipfire/build/include/config/random
+#lib/modules/KVER-ipfire/build/include/config/random/trust
+#lib/modules/KVER-ipfire/build/include/config/random/trust/cpu.h
 #lib/modules/KVER-ipfire/build/include/config/randomize
 #lib/modules/KVER-ipfire/build/include/config/randomize/base.h
 #lib/modules/KVER-ipfire/build/include/config/randomize/memory
@@ -11564,6 +11576,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/serio/libps2.h
 #lib/modules/KVER-ipfire/build/include/config/serio/raw.h
 #lib/modules/KVER-ipfire/build/include/config/serio/serport.h
+#lib/modules/KVER-ipfire/build/include/config/sf
+#lib/modules/KVER-ipfire/build/include/config/sf/pdma.h
 #lib/modules/KVER-ipfire/build/include/config/sfc
 #lib/modules/KVER-ipfire/build/include/config/sfc.h
 #lib/modules/KVER-ipfire/build/include/config/sfc/falcon.h
@@ -13005,6 +13019,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/xilinx/ll
 #lib/modules/KVER-ipfire/build/include/config/xilinx/ll/temac.h
 #lib/modules/KVER-ipfire/build/include/config/xilinx/watchdog.h
+#lib/modules/KVER-ipfire/build/include/config/xilinx/zynqmp
+#lib/modules/KVER-ipfire/build/include/config/xilinx/zynqmp/dpdma.h
 #lib/modules/KVER-ipfire/build/include/config/xor
 #lib/modules/KVER-ipfire/build/include/config/xor/blocks.h
 #lib/modules/KVER-ipfire/build/include/config/xps.h
@@ -20638,9 +20654,22 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/dma
 #lib/modules/KVER-ipfire/kernel/drivers/dma/altera-msgdma.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/dma/dw
+#lib/modules/KVER-ipfire/kernel/drivers/dma/dw-edma
+#lib/modules/KVER-ipfire/kernel/drivers/dma/dw-edma/dw-edma-pcie.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/dma/dw/dw_dmac.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/dma/idma64.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/dma/idxd
+#lib/modules/KVER-ipfire/kernel/drivers/dma/idxd/idxd.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/dma/ioat
 #lib/modules/KVER-ipfire/kernel/drivers/dma/ioat/ioatdma.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/dma/plx_dma.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/dma/qcom
+#lib/modules/KVER-ipfire/kernel/drivers/dma/qcom/hdma.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/dma/qcom/hdma_mgmt.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/dma/sf-pdma
+#lib/modules/KVER-ipfire/kernel/drivers/dma/sf-pdma/sf-pdma.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/dma/xilinx
+#lib/modules/KVER-ipfire/kernel/drivers/dma/xilinx/xilinx_dpdma.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/edac
 #lib/modules/KVER-ipfire/kernel/drivers/edac/amd64_edac_mod.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/edac/e752x_edac.ko.xz
@@ -23279,9 +23308,9 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/net/ipv4/netfilter/nft_fib_ipv4.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/ipv4/netfilter/nft_reject_ipv4.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/ipv4/raw_diag.ko.xz
-#lib/modules/KVER-ipfire/kernel/net/ipv4/tcp_bbr.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/ipv4/tcp_bic.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/ipv4/tcp_cdg.ko.xz
+#lib/modules/KVER-ipfire/kernel/net/ipv4/tcp_cubic.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/ipv4/tcp_dctcp.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/ipv4/tcp_diag.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/ipv4/tcp_highspeed.ko.xz
