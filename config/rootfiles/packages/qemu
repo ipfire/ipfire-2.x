@@ -1,7 +1,5 @@
 lib/udev/rules.d/65-kvm.rules
 usr/bin/elf2dmp
-usr/bin/ivshmem-client
-usr/bin/ivshmem-server
 usr/bin/qemu
 usr/bin/qemu-arm
 usr/bin/qemu-edid
@@ -19,8 +17,6 @@ usr/bin/qemu-x86_64
 usr/libexec/qemu-bridge-helper
 usr/libexec/virtiofsd
 #usr/share/applications/qemu.desktop
-#usr/share/icons
-#usr/share/icons/hicolor
 #usr/share/icons/hicolor/128x128
 #usr/share/icons/hicolor/128x128/apps
 #usr/share/icons/hicolor/128x128/apps/qemu.png
@@ -46,8 +42,6 @@ usr/libexec/virtiofsd
 #usr/share/icons/hicolor/64x64
 #usr/share/icons/hicolor/64x64/apps
 #usr/share/icons/hicolor/64x64/apps/qemu.png
-#usr/share/icons/hicolor/scalable
-#usr/share/icons/hicolor/scalable/apps
 #usr/share/icons/hicolor/scalable/apps/qemu.svg
 #usr/share/qemu
 #usr/share/qemu/QEMU,cgthree.bin
@@ -121,13 +115,14 @@ usr/share/qemu/kvmvapic.bin
 usr/share/qemu/linuxboot.bin
 usr/share/qemu/linuxboot_dma.bin
 usr/share/qemu/multiboot.bin
+usr/share/qemu/npcm7xx_bootrom.bin
 #usr/share/qemu/openbios-ppc
 #usr/share/qemu/openbios-sparc32
 #usr/share/qemu/openbios-sparc64
-#usr/share/qemu/opensbi-riscv32-sifive_u-fw_jump.bin
-#usr/share/qemu/opensbi-riscv32-virt-fw_jump.bin
-#usr/share/qemu/opensbi-riscv64-sifive_u-fw_jump.bin
-#usr/share/qemu/opensbi-riscv64-virt-fw_jump.bin
+#usr/share/qemu/opensbi-riscv32-generic-fw_dynamic.bin
+#usr/share/qemu/opensbi-riscv32-generic-fw_dynamic.elf
+#usr/share/qemu/opensbi-riscv64-generic-fw_dynamic.bin
+#usr/share/qemu/opensbi-riscv64-generic-fw_dynamic.elf
 #usr/share/qemu/palcode-clipper
 #usr/share/qemu/petalogix-ml605.dtb
 #usr/share/qemu/petalogix-s3adsp1800.dtb
@@ -138,6 +133,7 @@ usr/share/qemu/pxe-ne2k_pci.rom
 usr/share/qemu/pxe-pcnet.rom
 usr/share/qemu/pxe-rtl8139.rom
 usr/share/qemu/pxe-virtio.rom
+usr/share/qemu/qboot.rom
 usr/share/qemu/qemu-nsis.bmp
 usr/share/qemu/qemu_vga.ndrv
 #usr/share/qemu/s390-ccw.img
