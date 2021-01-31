@@ -5,10 +5,10 @@
 #usr/include/hs/hs_runtime.h
 #usr/lib/libhs.so
 usr/lib/libhs.so.5
-usr/lib/libhs.so.5.3.0
+usr/lib/libhs.so.5.4.0
 usr/lib/libhs_runtime.so
 usr/lib/libhs_runtime.so.5
-usr/lib/libhs_runtime.so.5.3.0
+usr/lib/libhs_runtime.so.5.4.0
 #usr/lib/pkgconfig/libhs.pc
 #usr/share/doc/hyperscan
 #usr/share/doc/hyperscan/examples

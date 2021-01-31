@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.3.0
+VER        = 5.4.0
 
 THISAPP    = hyperscan-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6acab4b242dd81b3cede211d4a9e7101
+$(DL_FILE)_MD5 = 65e08385038c24470a248f6ff2fa379b
 
 install : $(TARGET)
 
@@ -76,6 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+
 	cd $(DIR_APP) && cmake . \
 		-DCMAKE_INSTALL_PREFIX:PATH=/usr \
 		-DBUILD_SHARED_LIBS:BOOL=ON \
