@@ -21766,6 +21766,7 @@ lib/modules/KVER-ipfire/kernel
 lib/modules/KVER-ipfire/modules.alias
 lib/modules/KVER-ipfire/modules.alias.bin
 lib/modules/KVER-ipfire/modules.builtin
+lib/modules/KVER-ipfire/modules.builtin.alias.bin
 lib/modules/KVER-ipfire/modules.builtin.bin
 lib/modules/KVER-ipfire/modules.dep
 lib/modules/KVER-ipfire/modules.dep.bin

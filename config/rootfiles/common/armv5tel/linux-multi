@@ -20900,6 +20900,7 @@ lib/modules/KVER-ipfire-multi/kernel
 lib/modules/KVER-ipfire-multi/modules.alias
 lib/modules/KVER-ipfire-multi/modules.alias.bin
 lib/modules/KVER-ipfire-multi/modules.builtin
+lib/modules/KVER-ipfire-multi/modules.builtin.alias.bin
 lib/modules/KVER-ipfire-multi/modules.builtin.bin
 lib/modules/KVER-ipfire-multi/modules.dep
 lib/modules/KVER-ipfire-multi/modules.dep.bin
