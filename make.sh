@@ -29,7 +29,6 @@ VERSION="2.25"							# Version number
 CORE="154"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
-NICE=10								# Nice level
 MAX_RETRIES=1							# prefetch/check loop
 BUILD_IMAGES=1							# Flash and Xen Downloader
 KVER=`grep --max-count=1 VER lfs/linux | awk '{ print $3 }'`
@@ -434,11 +433,6 @@ prepareenv() {
 
 	# Trap on emergency exit
 	trap "exiterror 'Build process interrupted'" SIGINT SIGTERM SIGKILL SIGSTOP SIGQUIT
-
-	# Resetting our nice level
-	if ! renice ${NICE} $$ >/dev/null; then
-			exiterror "Failed to set nice level to ${NICE}"
-	fi
 
 	# Checking if running as root user
 	if [ $(id -u) -ne 0 ]; then
