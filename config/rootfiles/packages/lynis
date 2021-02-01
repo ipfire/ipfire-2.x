@@ -1,10 +1,4 @@
 var/ipfire/lynis
-#var/ipfire/lynis/CHANGELOG.md
-#var/ipfire/lynis/CODE_OF_CONDUCT.md
-#var/ipfire/lynis/CONTRIBUTING.md
-#var/ipfire/lynis/CONTRIBUTORS.md
-#var/ipfire/lynis/HAPPY_USERS.md
-#var/ipfire/lynis/SECURITY.md
 #var/ipfire/lynis/db
 var/ipfire/lynis/db/fileperms.db
 var/ipfire/lynis/db/hints.db
@@ -119,7 +113,8 @@ var/ipfire/lynis/include/tests_virtualization
 var/ipfire/lynis/include/tests_webservers
 var/ipfire/lynis/include/tool_tips
 var/ipfire/lynis/lynis
-var/ipfire/lynis/lynis.8
 #var/ipfire/lynis/plugins
-var/ipfire/lynis/plugins/README
+#var/ipfire/lynis/plugins/README
 var/ipfire/lynis/plugins/custom_plugin.template
+var/ipfire/lynis/plugins/plugin_pam_phase1
+var/ipfire/lynis/plugins/plugin_systemd_phase1
