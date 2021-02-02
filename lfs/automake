@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.16.2
+VER        = 1.16.3
 
 THISAPP    = automake-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6cb234c86f3f984df29ce758e6d0d1d7
+$(DL_FILE)_MD5 = c27f608a4e1f302ec7ce42f1251c184e
 
 install : $(TARGET)
 
