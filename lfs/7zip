@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 16.02
+VER        = 17.03
 
-THISAPP    = p7zip_$(VER)
-DL_FILE    = $(THISAPP)_src_all.tar.bz2
-DL_FROM    = $(URL_IPFIRE)
+THISAPP    = p7zip-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = https://github.com/jinfeihan57/p7zip/archive/v$(VER)/
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = 7zip
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       =
 
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a0128d661cfe7cc8c121e73519c54fbf
+$(DL_FILE)_MD5 = fd7e6b082db89edfc047c1ce2d810850
 
 install : $(TARGET)
 
@@ -78,8 +78,7 @@ dist:
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/p7zip-16.02-consolidated_fixes-1.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make all3 $(MAKETUNING)
 	cd $(DIR_APP) && make DEST_HOME=/usr DEST_MAN=/usr/share/man \
 		DEST_SHARE_DOC=/usr/share/doc/p7zip-$(VER) install
