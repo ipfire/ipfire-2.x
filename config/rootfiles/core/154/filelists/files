@@ -5,6 +5,7 @@ etc/rc.d/init.d/functions
 etc/rc.d/init.d/sshd
 etc/rc.d/init.d/unbound
 etc/rc.d/init.d/wlanclient
+etc/unbound/unbound.conf
 lib/udev/network-hotplug-bridges
 opt/pakfire/lib/functions.sh
 srv/web/ipfire/cgi-bin/country.cgi
