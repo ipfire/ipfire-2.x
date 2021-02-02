@@ -24,13 +24,13 @@
 
 include Config
 
-VER        = 2.2.52
+VER        = 2.2.53
 
 THISAPP    = acl-$(VER)
-DL_FILE    = $(THISAPP).src.tar.gz
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/acl-2.2.52
-TARGET     = $(DIR_INFO)/acl-2.2.52
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
 # Top-level Rules
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a61415312426e9c2212bd7dc7929abda
+$(DL_FILE)_MD5 = 007aabf1dbb550bcddde52a244cd1070
 
 install : $(TARGET)
 
@@ -73,8 +73,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --prefix=/usr --libexecdir=/usr/lib --disable-static
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && make install-lib
-	cd $(DIR_APP) && make install-dev
 	chmod -v 755 /usr/lib/libacl.so
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
