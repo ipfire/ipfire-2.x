@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.0
+VER        = 3.2.1
 
 THISAPP    = fcron-$(VER)
 DL_FILE    = $(THISAPP).src.tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4b031c2fba32a98fa814d1557158b0e9
+$(DL_FILE)_MD5 = bd4996e941a40327d11efc5e3fd1f839
 
 install : $(TARGET)
 
