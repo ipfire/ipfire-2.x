@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.52.18
+VER        = 0.52.21
 
 THISAPP    = newt-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 685721bee1a318570704b19dcf31d268
+$(DL_FILE)_MD5 = a0a5fd6b53bb167a65e15996b249ebb5
 
 install : $(TARGET)
 
