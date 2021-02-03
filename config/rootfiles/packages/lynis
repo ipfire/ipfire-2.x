@@ -1,4 +1,5 @@
 var/ipfire/lynis
+#var/ipfire/lynis/LICENSE
 #var/ipfire/lynis/db
 var/ipfire/lynis/db/fileperms.db
 var/ipfire/lynis/db/hints.db
