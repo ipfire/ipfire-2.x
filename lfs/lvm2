@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.02.181
+VER        = 2.02.187
 
 THISAPP    = LVM2.$(VER)
 DL_FILE    = $(THISAPP).tgz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7d6380d9a34981fd7b605eaa371295b3
+$(DL_FILE)_MD5 = 7941cbe16126ef334b4aa8fcb5c985b5
 
 install : $(TARGET)
 
