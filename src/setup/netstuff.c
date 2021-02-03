@@ -134,18 +134,6 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 				newtEntrySetFlags(dhcphostnameentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
 				newtEntrySetFlags(dhcpforcemtuentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
 			}
-		/* Gateway */
-		gatewaylabel = newtTextbox(2, (typeflag ? 11 : 4) + 2, 18, 1, 0);
-		newtTextboxSetText(gatewaylabel, _("Gateway:"));
-		strcpy(temp, "");
-		findkey(kv, gatewayfield, temp);
-		gatewayentry = newtEntry(20, (typeflag ? 11 : 4) + 2, temp, 20, &gatewayresult, 0);
-		newtEntrySetFilter(gatewayentry, ip_input_filter, NULL);
-		if (typeflag == 1 && startstatictype == 0)
-			newtEntrySetFlags(gatewayentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
-		newtFormAddComponent(networkform, gatewaylabel);
-		newtFormAddComponent(networkform, gatewayentry);
-
 	}
 	/* Address */
 	addresslabel = newtTextbox(2, (typeflag ? 11 : 4) + 0, 18, 1, 0);
@@ -171,6 +159,20 @@ int changeaddress(struct keyvalue *kv, char *colour, int typeflag,
 	newtFormAddComponent(networkform, netmasklabel);
 	newtFormAddComponent(networkform, netmaskentry);
 
+	if (typeflag)
+	{
+		/* Gateway */
+		gatewaylabel = newtTextbox(2, (typeflag ? 11 : 4) + 2, 18, 1, 0);
+		newtTextboxSetText(gatewaylabel, _("Gateway:"));
+		strcpy(temp, "");
+		findkey(kv, gatewayfield, temp);
+		gatewayentry = newtEntry(20, (typeflag ? 11 : 4) + 2, temp, 20, &gatewayresult, 0);
+		newtEntrySetFilter(gatewayentry, ip_input_filter, NULL);
+		if (typeflag == 1 && startstatictype == 0)
+			newtEntrySetFlags(gatewayentry, NEWT_FLAG_DISABLED, NEWT_FLAGS_SET);
+		newtFormAddComponent(networkform, gatewaylabel);
+		newtFormAddComponent(networkform, gatewayentry);
+	}
 
 	/* Buttons. */
 	ok = newtButton(8, (typeflag ? 15 : 7), _("OK"));
