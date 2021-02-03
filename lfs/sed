@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.4
+VER        = 4.8
 
 THISAPP    = sed-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -53,7 +53,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e0c583d4c380059abd818cd540fe6938
+$(DL_FILE)_MD5 = 6d906edfdb3202304059233f51f9a71d
 
 install : $(TARGET)
 
