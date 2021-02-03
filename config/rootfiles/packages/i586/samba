@@ -268,6 +268,7 @@ usr/lib/python3.8/site-packages/samba/dcerpc/witness.cpython-38-i386-linux-gnu.s
 usr/lib/python3.8/site-packages/samba/dcerpc/wkssvc.cpython-38-i386-linux-gnu.so
 usr/lib/python3.8/site-packages/samba/dcerpc/xattr.cpython-38-i386-linux-gnu.so
 usr/lib/python3.8/site-packages/samba/descriptor.py
+usr/lib/python3.8/site-packages/samba/dnsresolver.py
 usr/lib/python3.8/site-packages/samba/dnsserver.py
 usr/lib/python3.8/site-packages/samba/domain_update.py
 usr/lib/python3.8/site-packages/samba/drs_utils.py
