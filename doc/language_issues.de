@@ -765,7 +765,9 @@ WARNING: translation string unused: umount
 WARNING: translation string unused: umount removable media before to unplug
 WARNING: translation string unused: unencrypted
 WARNING: translation string unused: unix charset
+WARNING: translation string unused: unix group
 WARNING: translation string unused: unix password sync
+WARNING: translation string unused: unix shell
 WARNING: translation string unused: update transcript
 WARNING: translation string unused: updatedatabase
 WARNING: translation string unused: updates
