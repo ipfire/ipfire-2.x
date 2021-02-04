@@ -1097,6 +1097,7 @@ buildbase() {
 	lfsmake2 readline-compat
 	lfsmake2 bzip2
 	lfsmake2 xz
+	lfsmake2 lzip
 	lfsmake2 pcre
 	lfsmake2 pcre-compat
 	lfsmake2 gettext
