@@ -109,6 +109,7 @@ usr/lib/libcurl.so.4.7.0
 #usr/share/man/man3/CURLOPT_ALTSVC_CTRL.3
 #usr/share/man/man3/CURLOPT_APPEND.3
 #usr/share/man/man3/CURLOPT_AUTOREFERER.3
+#usr/share/man/man3/CURLOPT_AWS_SIGV4.3
 #usr/share/man/man3/CURLOPT_BUFFERSIZE.3
 #usr/share/man/man3/CURLOPT_CAINFO.3
 #usr/share/man/man3/CURLOPT_CAPATH.3
@@ -177,6 +178,12 @@ usr/lib/libcurl.so.4.7.0
 #usr/share/man/man3/CURLOPT_HEADERDATA.3
 #usr/share/man/man3/CURLOPT_HEADERFUNCTION.3
 #usr/share/man/man3/CURLOPT_HEADEROPT.3
+#usr/share/man/man3/CURLOPT_HSTS.3
+#usr/share/man/man3/CURLOPT_HSTSREADDATA.3
+#usr/share/man/man3/CURLOPT_HSTSREADFUNCTION.3
+#usr/share/man/man3/CURLOPT_HSTSWRITEDATA.3
+#usr/share/man/man3/CURLOPT_HSTSWRITEFUNCTION.3
+#usr/share/man/man3/CURLOPT_HSTS_CTRL.3
 #usr/share/man/man3/CURLOPT_HTTP09_ALLOWED.3
 #usr/share/man/man3/CURLOPT_HTTP200ALIASES.3
 #usr/share/man/man3/CURLOPT_HTTPAUTH.3
