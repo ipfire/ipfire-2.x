@@ -171,3 +171,5 @@ usr/lib/libverto.so.0.0
 #usr/share/man/man8/krb5kdc.8
 #usr/share/man/man8/sserver.8
 var/lib/krb5kdc
+#var/lib/run
+#var/lib/run/krb5kdc
