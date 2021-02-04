@@ -1,3 +1,5 @@
 usr/bin/ddrescue
+usr/bin/ddrescuelog
 #usr/share/info/ddrescue.info
 #usr/share/man/man1/ddrescue.1
+#usr/share/man/man1/ddrescuelog.1
