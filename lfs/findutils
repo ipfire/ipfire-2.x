@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 4.6.0
+VER        = 4.8.0
 
 THISAPP    = findutils-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9936aa8009438ce185bea2694a997fc1
+$(DL_FILE)_MD5 = eeefe2e6380931a77dfa6d9350b43186
 
 install : $(TARGET)
 
@@ -79,14 +79,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-
-	# Newer C libraries omit this include from sys/types.h.
-	# https://lists.gnu.org/archive/html/bug-gnulib/2016-03/msg00018.html
-	cd $(DIR_APP) && sed -i gl/lib/mountlist.c \
-		-e "/include.*config.h/a#ifdef MAJOR_IN_SYSMACROS\n#include <sys/sysmacros.h>\n#endif\n"
-
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/findutils-4.6.0-glibc2.28.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

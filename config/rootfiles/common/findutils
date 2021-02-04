@@ -5,8 +5,6 @@ usr/bin/locate
 usr/bin/updatedb
 usr/bin/xargs
 #usr/lib/findutils
-usr/lib/findutils/bigram
-usr/lib/findutils/code
 usr/lib/findutils/frcode
 #usr/share/info/find-maint.info
 #usr/share/info/find.info
@@ -17,4 +15,3 @@ usr/lib/findutils/frcode
 #usr/share/man/man1/updatedb.1
 #usr/share/man/man1/xargs.1
 #usr/share/man/man5/locatedb.5
-var/lib/locate
