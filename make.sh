@@ -1505,6 +1505,7 @@ buildipfire() {
   lfsmake2 cpufrequtils
   lfsmake2 gutenprint
   lfsmake2 apcupsd
+  lfsmake2 fireperf
   lfsmake2 iperf
   lfsmake2 iperf3
   lfsmake2 7zip
