@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ghostscript
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       = cups dbus libtiff
 
@@ -83,6 +83,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ghostscript-drop-use-of-FT_CALLBACK_DEF-with-Freetype-2.10.3-and-later.patch
 	cd $(DIR_APP) && rm -rf expat freetype icclib jasper jpeg jpegxr \
 		lcms lcms2 libpng openjpeg zlib cups/libs
 	cd $(DIR_APP) && \
