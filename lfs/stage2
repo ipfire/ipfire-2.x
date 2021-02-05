@@ -69,6 +69,11 @@ ifeq "$(IS_64BIT)" "1"
 	ln -svf lib /usr/lib64
 endif
 
+ifeq "$(BUILD_ARCH)" "riscv64"
+	ln -svf . /lib/lp64d
+	ln -svf . /usr/lib/lp64d
+endif
+
 	# Symlinks
 	# for this reason, stage2 rebuild will broke the iso:perl, grubbatch
 	-ln -sv $(TOOLS_DIR)/bin/{bash,cat,echo,pwd,stty} /bin
