@@ -181,6 +181,7 @@ configure_build() {
 			BUILDTARGET="${build_arch}-unknown-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="riscv"
+			CFLAGS_ARCH="-fstack-clash-protection"
 			;;
 
 		*)
