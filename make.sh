@@ -1031,6 +1031,7 @@ buildtoolchain() {
 	lfsmake1 binutils			PASS=2
 	lfsmake1 gcc			PASS=2
 	lfsmake1 zlib
+	lfsmake1 libxcrypt
 	lfsmake1 ccache			PASS=2
 	lfsmake1 tcl
 	lfsmake1 expect
@@ -1074,16 +1075,18 @@ buildbase() {
 	lfsmake2 cleanup-toolchain
 	lfsmake2 zlib
 	lfsmake2 zstd
+	lfsmake2 autoconf
+	lfsmake2 automake
+	lfsmake2 libtool
 	lfsmake2 binutils
 	lfsmake2 gmp
 	lfsmake2 gmp-compat
 	lfsmake2 mpfr
 	lfsmake2 libmpc
+	lfsmake2 libxcrypt
 	lfsmake2 file
 	lfsmake2 gcc
 	lfsmake2 sed
-	lfsmake2 autoconf
-	lfsmake2 automake
 	lfsmake2 berkeley
 	lfsmake2 berkeley-compat
 	lfsmake2 coreutils
@@ -1091,7 +1094,6 @@ buildbase() {
 	lfsmake2 m4
 	lfsmake2 bison
 	lfsmake2 ncurses
-	lfsmake2 libtool
 	lfsmake2 perl
 	lfsmake2 readline
 	lfsmake2 readline-compat

@@ -69,7 +69,7 @@ EXTRA_CONFIG += \
 	--without-selinux \
 	--enable-experimental-malloc \
 	--enable-bind-now \
-	--disable-nss-crypt
+	--disable-crypt
 
 ###############################################################################
 # Top-level Rules
