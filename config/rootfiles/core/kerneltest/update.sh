@@ -96,7 +96,8 @@ extract_files
 # update linker config
 ldconfig
 
-# Update permissions
+# Update ssh settings
+/usr/local/bin/sshctrl
 
 # Update Language cache
 /usr/local/bin/update-lang-cache
