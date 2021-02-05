@@ -1,0 +1,4 @@
+etc/system-release
+etc/issue
+etc/os-release
+var/ipfire/langs
