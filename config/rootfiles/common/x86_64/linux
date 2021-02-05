@@ -13895,6 +13895,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/dt-bindings/sound/meson-aiu.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/sound/meson-g12a-toacodec.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/sound/meson-g12a-tohdmitx.h
+#lib/modules/KVER-ipfire/build/include/dt-bindings/sound/qcom,lpass.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/sound/qcom,q6afe.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/sound/qcom,q6asm.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/sound/rt5640.h

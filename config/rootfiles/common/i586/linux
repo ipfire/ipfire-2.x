@@ -14005,6 +14005,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/dt-bindings/sound/meson-aiu.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/sound/meson-g12a-toacodec.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/sound/meson-g12a-tohdmitx.h
+#lib/modules/KVER-ipfire/build/include/dt-bindings/sound/qcom,lpass.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/sound/qcom,q6afe.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/sound/qcom,q6asm.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/sound/rt5640.h
@@ -20697,8 +20698,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/bus/mhi/core/mhi.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/char
 #lib/modules/KVER-ipfire/kernel/drivers/char/hangcheck-timer.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/char/hw_random
-#lib/modules/KVER-ipfire/kernel/drivers/char/hw_random/timeriomem-rng.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/char/ipmi
 #lib/modules/KVER-ipfire/kernel/drivers/char/ipmi/ipmi_devintf.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/char/ipmi/ipmi_msghandler.ko.xz
