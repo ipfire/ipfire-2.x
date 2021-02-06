@@ -1,6 +1,8 @@
 boot/config.txt
 boot/grub/grub.cfg
 boot/grub/grubenv
+boot/uEnv.txt
+boot/uboot.env
 etc/alternatives
 etc/collectd.custom
 etc/default/grub
