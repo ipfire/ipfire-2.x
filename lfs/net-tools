@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 1.60
+VER        = 2.10
 
 THISAPP    = net-tools-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -39,7 +39,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)                            = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5                        = 888774accab40217dde927e21979c165
+$(DL_FILE)_MD5                        = 78aae762c95e2d731faf88d482e4cde5
 
 install : $(TARGET)
 
@@ -68,12 +68,8 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/net-tools-1.60-no-hostname.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-gcc34-3.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-kernel_headers-3.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-iphdr-redef.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/$(THISAPP)-mii_ioctl-1.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/net-tools-2.10-no-hostname.patch
 	cd $(DIR_APP) && yes "" | make config
 	cd $(DIR_APP) && sed -i	-e 's|HAVE_IP_TOOLS 0|HAVE_IP_TOOLS 1|g' \
 				-e 's|HAVE_HWSTRIP 1|HAVE_HWSTRIP 0|g' \
@@ -82,6 +78,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				-e 's|HAVE_HWSTRIP 1|HAVE_HWSTRIP 0|g' \
 					-e 's|# HAVE_MII=0|HAVE_MII=1|g' config.make
 	cd $(DIR_APP) && make
-	cd $(DIR_APP) && make update
+	cd $(DIR_APP) && make install
+
+	# Version 2.10 has moved ifconfig and route from sbin to bin
+	# Move these tools back to sbin to align with previous status in case anyone has
+	# scripts using these tools with the full pathname defined.
+	mv -v /bin/{ifconfig,route} /sbin
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
