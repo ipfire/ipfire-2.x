@@ -144,7 +144,14 @@ int safe_system(char* command) {
 /* Much like safe_system but lets you specify a non-root uid and gid to run
  * the command as */
 int unpriv_system(char* command, uid_t uid, gid_t gid) {
-	return system_core(command, NULL, uid, gid, "unpriv_system");
+	char* argv[4] = {
+		"/bin/sh",
+		"-c",
+		command,
+		NULL,
+	};
+
+	return system_core(argv[0], argv, uid, gid, "unpriv_system");
 }
 
 /* General routine to initialise a setuid root program, and put the
