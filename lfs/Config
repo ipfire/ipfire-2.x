@@ -311,7 +311,8 @@ endef
 ifeq "$(BUILD_ARCH)" "$(filter $(BUILD_ARCH),aarch64 riscv64)"
 define UPDATE_AUTOMAKE
 	for i in $$(find $(DIR_APP) -name config.guess -o -name config.sub); do \
-		cp -vf /usr/share/automake*/$$(basename $${i}) $${i}; \
+		cp -vf /usr/share/automake*/$$(basename $${i}) $${i} || \
+			cp -vf $(TOOLS_DIR)/share/automake*/$$(basename $${i}) $${i}; \
 	done
 endef
 endif

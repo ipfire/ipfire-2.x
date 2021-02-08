@@ -69,9 +69,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr
-
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
