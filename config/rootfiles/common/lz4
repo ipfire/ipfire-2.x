@@ -9,7 +9,7 @@ usr/bin/lz4
 #usr/lib/liblz4.a
 #usr/lib/liblz4.so
 usr/lib/liblz4.so.1
-usr/lib/liblz4.so.1.9.2
+usr/lib/liblz4.so.1.9.3
 #usr/lib/pkgconfig/liblz4.pc
 #usr/share/man/man1/lz4.1
 #usr/share/man/man1/lz4c.1
