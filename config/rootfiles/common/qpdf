@@ -41,6 +41,7 @@ usr/bin/qpdf
 #usr/include/qpdf/QPDFPageDocumentHelper.hh
 #usr/include/qpdf/QPDFPageLabelDocumentHelper.hh
 #usr/include/qpdf/QPDFPageObjectHelper.hh
+#usr/include/qpdf/QPDFStreamFilter.hh
 #usr/include/qpdf/QPDFSystemError.hh
 #usr/include/qpdf/QPDFTokenizer.hh
 #usr/include/qpdf/QPDFWriter.hh
@@ -50,11 +51,10 @@ usr/bin/qpdf
 #usr/include/qpdf/RandomDataProvider.hh
 #usr/include/qpdf/Types.h
 #usr/include/qpdf/qpdf-c.h
-#usr/lib/libqpdf.a
 #usr/lib/libqpdf.la
 #usr/lib/libqpdf.so
 usr/lib/libqpdf.so.28
-usr/lib/libqpdf.so.28.0.1
+usr/lib/libqpdf.so.28.1.0
 #usr/lib/pkgconfig/libqpdf.pc
 #usr/share/doc/qpdf
 #usr/share/doc/qpdf/qpdf-manual.html
