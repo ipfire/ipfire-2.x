@@ -16,6 +16,7 @@
 usr/lib/liblzo2.so
 usr/lib/liblzo2.so.2
 usr/lib/liblzo2.so.2.0.0
+#usr/lib/pkgconfig/lzo2.pc
 #usr/share/doc/lzo-2.09
 #usr/share/doc/lzo-2.09/AUTHORS
 #usr/share/doc/lzo-2.09/COPYING
