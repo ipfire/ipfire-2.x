@@ -1027,11 +1027,11 @@ buildtoolchain() {
 	lfsmake1 gcc			PASS=1
 	lfsmake1 linux			KCFG="-headers"
 	lfsmake1 glibc
+	lfsmake1 libxcrypt
 	lfsmake1 gcc			PASS=L
 	lfsmake1 binutils			PASS=2
 	lfsmake1 gcc			PASS=2
 	lfsmake1 zlib
-	lfsmake1 libxcrypt
 	lfsmake1 ccache			PASS=2
 	lfsmake1 tcl
 	lfsmake1 expect
