@@ -1,7 +1,7 @@
-diff -up mpage-2.5.6/Makefile.config mpage-2.5.6/Makefile
---- mpage-2.5.6/Makefile.config	2004-05-30 21:38:31.000000000 +0200
-+++ mpage-2.5.6/Makefile	2009-03-27 11:11:14.652186064 +0100
-@@ -40,7 +40,7 @@ CC=gcc
+diff -aup mpage-2.5.7/Makefile.orig mpage-2.5.7/Makefile
+--- mpage-2.5.7/Makefile.orig	2017-06-28 10:07:41.000000000 +0200
++++ mpage-2.5.7/Makefile	2021-02-08 13:35:23.219223469 +0100
+@@ -48,7 +48,7 @@ CC=gcc
  #  See glob.c for all possibilities
  #
  # PAGESIZE=Letter
@@ -10,7 +10,7 @@ diff -up mpage-2.5.6/Makefile.config mpage-2.5.6/Makefile
  
  #
  # Define your spooler type
-@@ -50,7 +50,7 @@ PAGESIZE=A4
+@@ -58,7 +58,7 @@ PAGESIZE=A4
  SPOOL_TYPE=BSD_SPOOLER
  
  # PREFIX=e:/usr		# OS/2 type
@@ -19,7 +19,7 @@ diff -up mpage-2.5.6/Makefile.config mpage-2.5.6/Makefile
  #PREFIX=/usr
  BINDIR=$(PREFIX)/bin
  LIBDIR=$(PREFIX)/share
-@@ -73,7 +73,7 @@ SHEETMARGIN=18 
+@@ -81,7 +81,7 @@ SHEETMARGIN=18
  #
  DEFAULT_DUPLEX=0
  
@@ -28,7 +28,7 @@ diff -up mpage-2.5.6/Makefile.config mpage-2.5.6/Makefile
  
  
  ############################################################################
-@@ -107,7 +107,7 @@ O = .o
+@@ -115,7 +115,7 @@ O = .o
  # If you are using gcc, you probably don't need to change anything here.
  
  # Linux:
@@ -37,7 +37,7 @@ diff -up mpage-2.5.6/Makefile.config mpage-2.5.6/Makefile
  
  # AIX (xlC on aix 4):
  #CFLAGS = -O2 -s $(DEFS)
-@@ -183,5 +183,4 @@ install:
+@@ -191,5 +191,4 @@ install:
  	if [ ! -d $(MANDIR) ] ; then mkdir -p $(MANDIR) ; fi
  	cp mpage$(E) $(BINDIR)
  	cp mpage.1 $(MANDIR)

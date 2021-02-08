@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.5.6
+VER        = 2.5.7
 
 THISAPP    = mpage-$(VER)
 DL_FILE    = $(THISAPP).tgz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 489663c9246e47915cea931348e5175d
+$(DL_FILE)_MD5 = 8d94338445345a554fd3bc664d48525a
 
 install : $(TARGET)
 
