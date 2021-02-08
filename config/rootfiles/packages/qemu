@@ -9,9 +9,11 @@ usr/bin/qemu-img
 usr/bin/qemu-io
 usr/bin/qemu-nbd
 usr/bin/qemu-pr-helper
+usr/bin/qemu-riscv64
 usr/bin/qemu-storage-daemon
 usr/bin/qemu-system-arm
 usr/bin/qemu-system-i386
+usr/bin/qemu-system-riscv64
 usr/bin/qemu-system-x86_64
 usr/bin/qemu-x86_64
 usr/libexec/qemu-bridge-helper

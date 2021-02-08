@@ -33,9 +33,19 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = i586 x86_64
 PROG       = qemu
-PAK_VER    = 29
+PAK_VER    = 30
 
 DEPS       = libusbredir spice libseccomp
+
+TARGETS    = \
+	i386-linux-user \
+	x86_64-linux-user \
+	arm-linux-user \
+	riscv64-linux-user \
+	i386-softmmu \
+	x86_64-softmmu \
+	arm-softmmu \
+	riscv64-softmmu
 
 ###############################################################################
 # Top-level Rules
@@ -84,7 +94,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--localstatedir=/var \
 		--enable-kvm \
 		--disable-attr \
-		--target-list="i386-linux-user x86_64-linux-user arm-linux-user i386-softmmu x86_64-softmmu arm-softmmu" \
+		--target-list="$(TARGETS)" \
 		--extra-cflags="$(CFLAGS)" \
 		--enable-spice \
 		--enable-usb-redir \
