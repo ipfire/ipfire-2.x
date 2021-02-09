@@ -1102,6 +1102,7 @@ buildbase() {
 	lfsmake2 lzip
 	lfsmake2 pcre
 	lfsmake2 pcre-compat
+	lfsmake2 pcre2
 	lfsmake2 gettext
 	lfsmake2 attr
 	lfsmake2 acl
@@ -1817,9 +1818,9 @@ clean)
 	for i in `mount | grep $BASEDIR | sed 's/^.*loop=\(.*\))/\1/'`; do
 		$LOSETUP -d $i 2>/dev/null
 	done
-	for i in `mount | grep $BASEDIR | cut -d " " -f 1`; do
-		umount $i
-	done
+	#for i in `mount | grep $BASEDIR | cut -d " " -f 1`; do
+	#	umount $i
+	#done
 	stdumount
 	for i in `seq 0 7`; do
 		if ( losetup /dev/loop${i} 2>/dev/null | grep -q "/install/images" ); then
