@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/lcd4linux
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = lcd4linux
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       = dpfhack libmpdclient
 
@@ -78,6 +78,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
+	cd $(DIR_APP) && autoreconf -v -i
+	cd $(DIR_APP) && autoupdate -v configure.in
 	cd $(DIR_APP) && ./configure  --with-plugins=all,!qnaplog,!dbus --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
