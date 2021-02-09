@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.69
+VER        = 2.71
 
 THISAPP    = autoconf-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -39,7 +39,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 50f97f4159805e374639a73e2636f22e
+$(DL_FILE)_MD5 = 12cfa1687ffa2606337efe1a64416106
 
 install : $(TARGET)
 
