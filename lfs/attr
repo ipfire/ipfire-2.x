@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.4.47
+VER        = 2.4.48
 
 THISAPP    = attr-$(VER)
-DL_FILE    = $(THISAPP).src.tar.gz
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 84f58dec00b60f2dc8fd1c9709291cc7
+$(DL_FILE)_MD5 = bc1e5cb5c96d99b24886f1f527d3bb3d
 
 install : $(TARGET)
 
@@ -73,8 +73,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
-	cd $(DIR_APP) && make install-lib
-	cd $(DIR_APP) && make install-dev
 	chmod -v 755 /usr/lib/libattr.so
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
