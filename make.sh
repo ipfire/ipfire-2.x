@@ -1552,7 +1552,6 @@ buildipfire() {
   lfsmake2 python-distutils-extra
   lfsmake2 python-lzma
   lfsmake2 python-progressbar
-  lfsmake2 python-xattr
   lfsmake2 ddns
   lfsmake2 python3-setuptools
   lfsmake2 python3-setuptools-scm
