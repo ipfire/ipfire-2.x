@@ -602,11 +602,11 @@ sub showEditBox() {
 					</td>
 					<td width='40%'>
 						<select name='PRIO'>
-							<option value="0" $selected{'PRIO'}{'0'}>0 ($Lang::tr{'most preferred'})</option>
+							<option value="0" $selected{'PRIO'}{'0'}>0 ($Lang::tr{'least preferred'})</option>
 							<option value="1" $selected{'PRIO'}{'1'}>1</option>
 							<option value="2" $selected{'PRIO'}{'2'}>2</option>
 							<option value="3" $selected{'PRIO'}{'3'}>3</option>
-							<option value="4" $selected{'PRIO'}{'4'}>4 ($Lang::tr{'least preferred'})</option>
+							<option value="4" $selected{'PRIO'}{'4'}>4 ($Lang::tr{'most preferred'})</option>
 						</select>
 					</td>
 					<td colspan="2" width='40%'></td>
