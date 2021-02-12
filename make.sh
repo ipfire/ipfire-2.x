@@ -1101,7 +1101,6 @@ buildbase() {
 	lfsmake2 xz
 	lfsmake2 lzip
 	lfsmake2 pcre
-	lfsmake2 pcre-compat
 	lfsmake2 pcre2
 	lfsmake2 gettext
 	lfsmake2 attr

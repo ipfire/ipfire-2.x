@@ -32,6 +32,9 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Remove files
+rm -vf \
+	/lib/libpcre.so.0 \
+	/lib/libpcre.so.0.0.1
 
 # Stop services
 
