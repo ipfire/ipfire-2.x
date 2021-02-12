@@ -100,7 +100,7 @@ print <<END
 <div align='center'>
 <table width='80%'>
 <tr>
-<-><td align='center'><a href='$ENV{'HTTP_REFERER'}'><img src='/images/back.png' alt='$Lang::tr{'back'}' title='$Lang::tr{'back'}' /></a></td>
+	<td align='center'><a href='$ENV{'HTTP_REFERER'}'><img src='/images/back.png' alt='$Lang::tr{'back'}' title='$Lang::tr{'back'}' /></a></td>
 </tr>
 </table>
 </div>
