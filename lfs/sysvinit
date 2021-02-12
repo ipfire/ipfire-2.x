@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.88dsf
+VER        = 2.98
 
 THISAPP    = sysvinit-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6eda8a97b86e0a6f59dabbf25202aa6f
+$(DL_FILE)_MD5 = e3254f7622ea5cf2322b1b386a98ba59
 
 install : $(TARGET)
 
@@ -72,6 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	# Newer C libraries omit this include from sys/types.h.
 	# https://lists.gnu.org/archive/html/bug-gnulib/2016-03/msg00018.html
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/sysvinit-2.98_build_mountpoint.patch
 	cd $(DIR_APP) && sed -i src/mountpoint.c src/bootlogd.c \
 		-e "/include.*sys\/stat.h/a#include <sys/sysmacros.h>\n"
 	cd $(DIR_APP) && sed -e "s/libcrypt.a/libcrypt.so/g" -i src/Makefile

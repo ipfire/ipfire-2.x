@@ -1,0 +1,12 @@
+diff -aup sysvinit-2.98/src/Makefile.orig sysvinit-2.98/src/Makefile
+--- sysvinit-2.98/src/Makefile.orig	2021-02-12 14:31:56.325112868 +0100
++++ sysvinit-2.98/src/Makefile	2021-02-12 14:31:56.257086870 +0100
+@@ -19,7 +19,7 @@ MANDB	:= s@^\('\\\\\"\)[^\*-]*-\*- codin
+ # Leave empty if the mountpoint(1) command from util-linux 2.20
+ # and above should be used, otherwise set it to yes.
+ #
+-MNTPOINT=
++MNTPOINT=yes
+ 
+ # For some known distributions we do not build all programs, otherwise we do.
+ BIN	=

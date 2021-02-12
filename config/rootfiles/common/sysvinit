@@ -1,5 +1,6 @@
 bin/mountpoint
 bin/pidof
+#etc/inittab.d
 #sbin/bootlogd
 #sbin/fstab-decode
 sbin/halt
@@ -14,6 +15,7 @@ sbin/telinit
 usr/bin/last
 usr/bin/lastb
 usr/bin/mesg
+#usr/bin/readbootlog
 usr/bin/utmpdump
 usr/bin/wall
 #usr/include/initreq.h
@@ -21,8 +23,10 @@ usr/bin/wall
 #usr/share/man/man1/lastb.1
 #usr/share/man/man1/mesg.1
 #usr/share/man/man1/mountpoint.1
+#usr/share/man/man1/readbootlog.1
 #usr/share/man/man1/utmpdump.1
 #usr/share/man/man1/wall.1
+#usr/share/man/man5/initctl.5
 #usr/share/man/man5/initscript.5
 #usr/share/man/man5/inittab.5
 #usr/share/man/man8/bootlogd.8
