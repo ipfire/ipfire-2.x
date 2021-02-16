@@ -275,9 +275,7 @@ function wpa_supplicant_start() {
 	# Build wpa_supplicant command line.
 	local wpa_suppl_cmd="wpa_supplicant -B -qqq -i${device} -c${config}"
 
-	if device_is_wireless ${device}; then
-		wpa_suppl_cmd="${wpa_suppl_cmd} -Dwext"
-	else
+	if ! device_is_wireless ${device}; then
 		wpa_suppl_cmd="${wpa_suppl_cmd} -Dwired"
 	fi
 

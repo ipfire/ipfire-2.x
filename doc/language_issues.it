@@ -1197,6 +1197,7 @@ WARNING: untranslated string: wlan client eap state = EAP Status
 WARNING: untranslated string: wlan client encryption eap = EAP
 WARNING: untranslated string: wlan client encryption wpa3 = WPA3
 WARNING: untranslated string: wlan client identity = Identity
+WARNING: untranslated string: wlan client management frame protection = Management Frame Protection
 WARNING: untranslated string: wlan client method = Method
 WARNING: untranslated string: wlan client password = Password
 WARNING: untranslated string: wlan client tls cipher = TLS Cipher

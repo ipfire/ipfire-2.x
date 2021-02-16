@@ -65,6 +65,7 @@
 < wlanap 802.11w enforced
 < wlanap 802.11w optional
 < wlan client encryption wpa3
+< wlan client management frame protection
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
@@ -927,6 +928,7 @@
 < wlan client group key algorithm
 < wlan client identity
 < wlan client invalid key length
+< wlan client management frame protection
 < wlan client method
 < wlan client new entry
 < wlan client new network
@@ -974,6 +976,7 @@
 < token not set
 < upload fcdsl.o
 < wlan client encryption wpa3
+< wlan client management frame protection
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -1339,6 +1342,7 @@
 < wlan client encryption eap
 < wlan client encryption wpa3
 < wlan client identity
+< wlan client management frame protection
 < wlan client method
 < wlan client password
 < wlan client tls cipher
@@ -1777,6 +1781,7 @@
 < wlan client encryption eap
 < wlan client encryption wpa3
 < wlan client identity
+< wlan client management frame protection
 < wlan client method
 < wlan client password
 < wlan client tls cipher
@@ -2643,6 +2648,7 @@
 < wlan client group key algorithm
 < wlan client identity
 < wlan client invalid key length
+< wlan client management frame protection
 < wlan client method
 < wlan client new entry
 < wlan client new network
@@ -3529,6 +3535,7 @@
 < wlan client group key algorithm
 < wlan client identity
 < wlan client invalid key length
+< wlan client management frame protection
 < wlan client method
 < wlan client new entry
 < wlan client new network
@@ -3738,6 +3745,7 @@
 < wlanap neighbor scan warning
 < wlanap ssid
 < wlan client encryption wpa3
+< wlan client management frame protection
 < working
 < zoneconf access native
 < zoneconf access none
