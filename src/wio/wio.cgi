@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2017-2020 Stephan Feddersen <sfeddersen@ipfire.org>           #
+# Copyright (C) 2017-2021 Stephan Feddersen <sfeddersen@ipfire.org>           #
 # All Rights Reserved.                                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
@@ -21,7 +21,7 @@
 #                                                                             #
 ###############################################################################
 #
-# Version: 2020/08/04 21:12:23
+# Version: 2021/02/16 21:32:23
 #
 # This wio.cgi is based on the code from the IPCop WIO Addon
 # and is extremly adapted to work with IPFire.
@@ -1140,7 +1140,16 @@ print"
 <tr bgcolor='$color{'color22'}' height='20'>
 	<td align='center'>01</td>
 	<td align='center'><font color='$Header::colourred'>$redip</font></td>
-	<td align='center'><img align='middle' src='$imgstatic/red.png' alt='$Lang::tr{'internet'}' title='$Lang::tr{'internet'}' /></td>
+";
+
+if ( $netsettings{"RED_TYPE"} eq 'PPPOE' ) {
+	print"<td align='center'><img align='middle' src='$imgstatic/red.png' alt='$Lang::tr{'internet'}' title='$Lang::tr{'internet'}' /></td>";
+}
+else {
+	print"<td align='center'><img align='middle' src='$imgstatic/red.png' alt='$Lang::tr{'wio_red_lan'}' title='$Lang::tr{'wio_red_lan'}' /></td>";
+}
+
+print"
 	<td align='center'><font color='$Header::colourgreen'>".$mainsettings{'HOSTNAME'}.".".$mainsettings{'DOMAINNAME'}."</font></td>
 	<td align='center'><font color='$Header::colourred'>".( $redip ne '-' ? (gethostbyaddr(pack("C4", split (/\./, $redip)), 2))[0] : '-' )."</font></td>
 	<td align='center'>
@@ -1154,7 +1163,6 @@ close (FILE);
 
 	foreach (@ddns) {
 		chomp;
-
 		@temp = split (/\,/, $_);
 
 		if ( $temp[7] eq "on" ) {
@@ -1336,7 +1344,7 @@ foreach $key (keys %ovpnconfighash) {
 			if (-e "/var/run/$ovpnconfighash{$key}[1]n2n.pid") {
 				my ( @output, @tustate ) = '';
 				my $tport = $ovpnconfighash{$key}[22];
-				my $tnet = new Net::Telnet ( Timeout=>5, Errmode=>'return', Port=>$tport);
+				my $tnet = new Net::Telnet (Timeout=>5, Errmode=>'return', Port=>$tport);
 				if ($tport ne '') {
 					$tnet->open('127.0.0.1');
 					@output = $tnet->cmd(String => 'state', Prompt => '/(END.*\n|ERROR:.*\n)/');
@@ -1589,16 +1597,9 @@ my $dotip = length($ipaddresses[$a]) - rindex($ipaddresses[$a],'.');
 		}
 
 		if ( $netsettings{"RED_TYPE"} eq 'PPPOE' ) {
-			my $redipadr = qx'ip addr | grep red0 | grep inet | awk "{print \$2}"';
-			my @rednet = split ("/", $redipadr);
-			chomp ($rednet[1]);
-			my $red_netmask = General::iporsubtodec($rednet[1]);
-			my $red_netaddress = Network::get_netaddress("$rednet[0]/$red_netmask");
+			print"<td align='center' height='20'><img src='$imgstatic/red.png' alt='$Lang::tr{'internet'}' title='$Lang::tr{'internet'}' /></td>";
+			last SWITCH;
 
-			if ( &General::IpInSubnet($ipaddresses[$a], $red_netaddress, $red_netmask) ) {
-				print"<td align='center' height='20'><img src='$imgstatic/red.png' alt='$Lang::tr{'internet'}' title='$Lang::tr{'internet'}' /></td>";
-				last SWITCH;
-			}
 		}
 		else {
 				print"<td align='center'><img align='middle' src='$imgstatic/white.png' alt='$Lang::tr{'wio_unknown_lan'}' title='$Lang::tr{'wio_unknown_lan'}' /></td>";
@@ -1606,17 +1607,20 @@ my $dotip = length($ipaddresses[$a]) - rindex($ipaddresses[$a],'.');
 		}
 	}
 
-if ( $webinterface[$a] eq 'HTTP' ) {
-	print"<td align='center'><a title=\"$Lang::tr{'wio_webinterface_link'}\" href=\"http://$names[$a]\" target=\"_blank\">$names[$a]</a></td>";
-}
-elsif ( $webinterface[$a] eq 'HTTPS' ) {
-	print"<td align='center'><a title=\"$Lang::tr{'wio_webinterface_link'}\" href=\"https://$names[$a]\" target=\"_blank\">$names[$a]</a></td>";
-}
-else {
-	print"<td align='center'>$names[$a]</td>";
-}
+print"<td align='center'>";
+
+	if ( $webinterface[$a] eq 'HTTP' ) {
+		print"<a title=\"$Lang::tr{'wio_webinterface_link'}\" href=\"http://$names[$a]\" target=\"_blank\">$names[$a]</a>";
+	}
+	elsif ( $webinterface[$a] eq 'HTTPS' ) {
+		print"<a title=\"$Lang::tr{'wio_webinterface_link'}\" href=\"https://$names[$a]\" target=\"_blank\">$names[$a]</a>";
+	}
+	else {
+		print $names[$a];
+	}
 
 print"
+    </td>
 	<td>
 		<table bgcolor='$bgcolor' cellpadding='2' cellspacing='0' width='100%'>
 			<tr height='20'>
@@ -2054,6 +2058,8 @@ if ( $wiosettings{'LOGGING'} eq 'on' ) {
 print"
 	<td width='10%' align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}' enctype='multipart/form-data'><input type='hidden' name='ACTION' value='$Lang::tr{'edit'}1' /><input type='submit' name='SUBMIT' value='$Lang::tr{'wio_edit_set'}' /></form></td>
 </tr>
+<tr><td colspan='4'><b>&nbsp;</b></td></tr>
+<tr><td colspan='4' align='right'><b><font size='1' color='grey'>wio-1.3.2-12</font></b></td></tr>
 </table>
 ";
 }
