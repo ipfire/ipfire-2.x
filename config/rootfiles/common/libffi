@@ -1,12 +1,10 @@
-#usr/lib/libffi-3.2.1
-#usr/lib/libffi-3.2.1/include
-#usr/lib/libffi-3.2.1/include/ffi.h
-#usr/lib/libffi-3.2.1/include/ffitarget.h
+#usr/include/ffi.h
+#usr/include/ffitarget.h
 #usr/lib/libffi.a
 #usr/lib/libffi.la
 #usr/lib/libffi.so
-usr/lib/libffi.so.6
-usr/lib/libffi.so.6.0.4
+usr/lib/libffi.so.7
+usr/lib/libffi.so.7.1.0
 #usr/lib/pkgconfig/libffi.pc
 #usr/share/info/libffi.info
 #usr/share/man/man3/ffi.3
