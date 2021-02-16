@@ -324,6 +324,8 @@ END
 			$encryption_mode = $Lang::tr{'wlan client encryption wpa'};
 		} elsif ($config[3] eq "WPA2") {
 			$encryption_mode = $Lang::tr{'wlan client encryption wpa2'};
+		} elsif ($config[3] eq "WPA3") {
+			$encryption_mode = $Lang::tr{'wlan client encryption wpa3'};
 		} elsif ($config[3] eq "EAP") {
 			$encryption_mode = $Lang::tr{'wlan client encryption eap'};
 		}
