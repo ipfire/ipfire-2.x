@@ -180,12 +180,12 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'save'}) {
 		if (($dhcpsettings{"START_ADDR_${itf}"}) eq '' && ($dhcpsettings{"END_ADDR_${itf}"}) eq '') {
 			$errormessage = "DHCP on ${itf}: " . $Lang::tr{'dhcp valid range required when deny known clients checked'};
 			goto ERROR;
+		}
 	    }
 
 	    if (!($dhcpsettings{"DEFAULT_LEASE_TIME_${itf}"} =~ /^\d+$/)) {
 		$errormessage = "DHCP on ${itf}: " . $Lang::tr{'invalid default lease time'} . $dhcpsettings{'DEFAULT_LEASE_TIME_${itf}'};
 		goto ERROR;
-		}
 	    }
 
 	    if (!($dhcpsettings{"MAX_LEASE_TIME_${itf}"} =~ /^\d+$/)) {
