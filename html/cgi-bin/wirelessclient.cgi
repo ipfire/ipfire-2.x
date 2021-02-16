@@ -738,12 +738,25 @@ END
 		}
 
 		if (($status{'pairwise_cipher'} ne "NONE") || ($status{'group_cipher'} ne "NONE")) {
-			print <<END;
+			if ($status{'key_mgmt'} eq "SAE") {
+				print <<END;
+				<tr>
+					<td colspan='2'>
+						<strong>$Lang::tr{'wlan client encryption wpa3'}</strong>
+					</td>
+				</tr>
+END
+			} else {
+				print <<END;
 				<tr>
 					<td colspan='2'>
 						<strong>$Lang::tr{'wlan client encryption wpa'}</strong>
 					</td>
 				</tr>
+END
+			}
+
+			print <<END;
 				<tr>
 					<td width='20%'>
 						$Lang::tr{'wlan client pairwise cipher'}
