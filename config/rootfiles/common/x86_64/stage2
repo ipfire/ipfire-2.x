@@ -84,7 +84,6 @@ usr/lib/libgcc_s.so.1
 #usr/lib/libstdc++.la
 #usr/lib/libstdc++.so
 usr/lib/libstdc++.so.6
-#usr/lib/sse2
 usr/lib64
 #usr/local
 #usr/local/bin
@@ -112,7 +111,6 @@ usr/local/bin/update-lang-cache
 usr/local/bin/update-location-database
 #usr/local/include
 #usr/local/lib
-#usr/local/lib/sse2
 #usr/local/sbin
 #usr/local/share
 #usr/local/share/doc

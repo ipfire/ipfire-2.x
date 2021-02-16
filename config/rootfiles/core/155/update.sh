@@ -32,7 +32,9 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Remove files
-rm -vf \
+rm -vrf \
+	/usr/lib/sse2 \
+	/usr/local/lib/sse2 \
 	/lib/libpcre.so.0 \
 	/lib/libpcre.so.0.0.1
 

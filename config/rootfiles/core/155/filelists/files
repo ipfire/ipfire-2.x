@@ -1,2 +1,3 @@
 srv/web/ipfire/cgi-bin/country.cgi
 srv/web/ipfire/cgi-bin/wirelessclient.cgi
+usr/local/bin/filesystem-cleanup
