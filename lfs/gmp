@@ -34,12 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ifeq "$(BUILD_ARCH)" "i586"
 	CONFIGURE_ARGS = ABI=32
-	BUILDTARGET_PENTIUM4 = $(patsubst $(BUILD_ARCH)-%,pentium4-%,$(BUILDTARGET))
 endif
-
-CONFIGURE_OPTIONS = \
-	--prefix=/usr \
-	--enable-cxx
 
 ###############################################################################
 # Top-level Rules
@@ -82,26 +77,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && \
 		$(CONFIGURE_ARGS) \
 		./configure \
-			--build=$(BUILDTARGET) \
-			$(CONFIGURE_OPTIONS)
+			--prefix=/usr \
+			--enable-cxx
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-
-ifeq "$(BUILD_ARCH)" "i586"
-	# Build SSE/SSE2 optimised version for x86
-	cd $(DIR_APP) && make clean
-	cd $(DIR_APP) && \
-		$(CONFIGURE_ARGS) \
-		./configure \
-			--build=$(BUILDTARGET_PENTIUM4) \
-			$(CONFIGURE_OPTIONS) \
-			CFLAGS="$(CFLAGS) -march=pentium4" \
-			CXXFLAGS="$(CXXFLAGS) -march=pentium4"
-	cd $(DIR_APP) && make $(MAKETUNING)
-
-	-mkdir -pv /usr/lib/sse2
-	cd $(DIR_APP) && install -v -m 755 .libs/libgmp.so.10.4.0 /usr/lib/sse2
-endif
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
