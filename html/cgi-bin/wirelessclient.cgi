@@ -684,6 +684,19 @@ sub ShowStatus() {
 				</tr>
 END
 
+		if ($status{'pmf'} eq "1") {
+			print <<END;
+				<tr>
+					<td width='20%'>
+						$Lang::tr{'wlan client management frame protection'}
+					</td>
+					<td width='80%'>
+						$Lang::tr{'active'}
+					</td>
+				</tr>
+END
+		}
+
 		if ($status{'EAP state'}) {
 			my $selected_method = $status{'selectedMethod'};
 			$selected_method =~ s/\d+ \((.*)\)/$1/e;

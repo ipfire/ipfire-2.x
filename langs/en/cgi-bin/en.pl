@@ -2956,6 +2956,7 @@
 'wlan client group key algorithm' => 'GKA',
 'wlan client identity' => 'Identity',
 'wlan client invalid key length' => 'Invalid key length.',
+'wlan client management frame protection' => 'Management Frame Protection',
 'wlan client method' => 'Method',
 'wlan client new entry' => 'Create new wireless client configuration',
 'wlan client new network' => 'New network',
