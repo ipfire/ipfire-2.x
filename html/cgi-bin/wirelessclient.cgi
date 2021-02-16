@@ -324,6 +324,8 @@ END
 			$encryption_mode = $Lang::tr{'wlan client encryption wpa'};
 		} elsif ($config[3] eq "WPA2") {
 			$encryption_mode = $Lang::tr{'wlan client encryption wpa2'};
+		} elsif ($config[3] eq "WPA3") {
+			$encryption_mode = $Lang::tr{'wlan client encryption wpa3'};
 		} elsif ($config[3] eq "EAP") {
 			$encryption_mode = $Lang::tr{'wlan client encryption eap'};
 		}
@@ -682,6 +684,19 @@ sub ShowStatus() {
 				</tr>
 END
 
+		if ($status{'pmf'} eq "1") {
+			print <<END;
+				<tr>
+					<td width='20%'>
+						$Lang::tr{'wlan client management frame protection'}
+					</td>
+					<td width='80%'>
+						$Lang::tr{'active'}
+					</td>
+				</tr>
+END
+		}
+
 		if ($status{'EAP state'}) {
 			my $selected_method = $status{'selectedMethod'};
 			$selected_method =~ s/\d+ \((.*)\)/$1/e;
@@ -736,12 +751,25 @@ END
 		}
 
 		if (($status{'pairwise_cipher'} ne "NONE") || ($status{'group_cipher'} ne "NONE")) {
-			print <<END;
+			if ($status{'key_mgmt'} eq "SAE") {
+				print <<END;
+				<tr>
+					<td colspan='2'>
+						<strong>$Lang::tr{'wlan client encryption wpa3'}</strong>
+					</td>
+				</tr>
+END
+			} else {
+				print <<END;
 				<tr>
 					<td colspan='2'>
 						<strong>$Lang::tr{'wlan client encryption wpa'}</strong>
 					</td>
 				</tr>
+END
+			}
+
+			print <<END;
 				<tr>
 					<td width='20%'>
 						$Lang::tr{'wlan client pairwise cipher'}

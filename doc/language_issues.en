@@ -2132,6 +2132,7 @@ WARNING: untranslated string: wlan client group cipher = Group cipher
 WARNING: untranslated string: wlan client group key algorithm = GKA
 WARNING: untranslated string: wlan client identity = Identity
 WARNING: untranslated string: wlan client invalid key length = Invalid key length.
+WARNING: untranslated string: wlan client management frame protection = Management Frame Protection
 WARNING: untranslated string: wlan client method = Method
 WARNING: untranslated string: wlan client new entry = Create new wireless client configuration
 WARNING: untranslated string: wlan client new network = New network

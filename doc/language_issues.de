@@ -889,6 +889,7 @@ WARNING: untranslated string: smb daemon = SMB Daemon
 WARNING: untranslated string: user management = User Management
 WARNING: untranslated string: winbind daemon = Winbind Daemon
 WARNING: untranslated string: wlan client encryption wpa3 = WPA3
+WARNING: untranslated string: wlan client management frame protection = Management Frame Protection
 WARNING: untranslated string: wlanap 802.11w disabled = Disabled
 WARNING: untranslated string: wlanap 802.11w enforced = Enforced
 WARNING: untranslated string: wlanap 802.11w optional = Optional
