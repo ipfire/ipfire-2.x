@@ -35,11 +35,6 @@ TARGET = $(DIR_INFO)/$(THISAPP)$(KCFG)
 
 CFLAGS += -DPURIFY -Wa,--noexecstack
 
-# Enable SSE2 for this build
-ifeq "$(KCFG)" "-sse2"
-  CFLAGS+= -march=i686 -mmmx -msse -msse2 -mfpmath=sse
-endif
-
 export RPM_OPT_FLAGS = $(CFLAGS)
 
 CONFIGURE_OPTIONS = \
@@ -72,11 +67,7 @@ ifeq "$(BUILD_ARCH)" "x86_64"
 endif
 
 ifeq "$(BUILD_ARCH)" "i586"
-	OPENSSL_ARCH = linux-elf
-
-  ifneq "$(KCFG)" "-sse2"
-	OPENSSL_ARCH += no-sse2
-  endif
+	OPENSSL_ARCH = linux-elf no-sse2
 endif
 
 ###############################################################################
@@ -132,15 +123,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make depend
 	cd $(DIR_APP) && make $(MAKETUNING)
 
-ifeq "$(KCFG)" "-sse2"
-	-mkdir -pv /usr/lib/sse2
-	cd $(DIR_APP) && install -m 755 \
-		libcrypto.so.1.1 /usr/lib/sse2
-else
-	# Install everything.
+	# Install everything
 	cd $(DIR_APP) && make install
 	install -m 0644 $(DIR_SRC)/config/ssl/openssl.cnf /etc/ssl
-endif
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
