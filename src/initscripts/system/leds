@@ -30,7 +30,19 @@ setup_netdev_trigger ()
 		modprobe -q ledtrig-netdev 2>&1 > /dev/null
 		echo "netdev" > /sys/class/leds/$1/trigger
 		echo "$2" >     /sys/class/leds/$1/device_name
-		echo "$3 $4" >  /sys/class/leds/$1/mode
+		if [ -e "/sys/class/leds/$1/mode" ]; then
+			echo "$3 $4" >  /sys/class/leds/$1/mode
+		else
+			if [ -f "/sys/class/leds/$1/$3" ]; then
+				echo 1 > /sys/class/leds/$1/$3
+			fi
+			if [ -f "/sys/class/leds/$1/$4" ]; then
+				echo 1 > /sys/class/leds/$1/$4
+			fi
+			if [ -f "/sys/class/leds/$1/$5" ]; then
+				echo 1 > /sys/class/leds/$1/$5
+			fi
+		fi
 	fi
 }
 
