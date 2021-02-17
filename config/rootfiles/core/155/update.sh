@@ -35,6 +35,10 @@ done
 rm -vrf \
 	/usr/lib/sse2 \
 	/usr/local/lib/sse2 \
+	/usr/lib/libdb-4.so \
+	/usr/lib/libdb-4.4.so \
+	/usr/lib/libdb_cxx-4.so \
+	/usr/lib/libdb_cxx-4.4.so \
 	/usr/lib/libgmp.so.3 \
 	/usr/lib/libgmp.so.3.5.2 \
 	/lib/libpcre.so.0 \
