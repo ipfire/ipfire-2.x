@@ -81,6 +81,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && make $(MAKETUNING) DEBUG=-DNDEBUG INSTALL_USER=root INSTALL_GROUP=root \
 		LOCAL_CONFIGURE_OPTIONS="$(CONFIGURE_OPTIONS)"
 	cd $(DIR_APP) && make install install-dev
