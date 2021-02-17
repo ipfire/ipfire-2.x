@@ -673,6 +673,7 @@ print <<END
 			<select name='DNS_UPDATE_KEY_ALGO_${itf}'>
 				<!-- <option value='hmac-sha1' $selected{'DNS_UPDATE_KEY_ALGO_${itf}'}{'hmac-sha1'}>HMAC-SHA1</option> -->
 				<option value='hmac-md5' $selected{'DNS_UPDATE_KEY_ALGO_${itf}'}{'hmac-md5'}>HMAC-MD5</option>
+				<option value='hmac-sha256' $selected{'DNS_UPDATE_KEY_ALGO_${itf}'}{'hmac-sha256'}>HMAC-SHA256</option>
 			</select>
 		</td>
 	</tr>
