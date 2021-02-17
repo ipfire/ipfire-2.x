@@ -111,23 +111,6 @@ case "${1}" in
 		setup_netdev_trigger geos:2 ${RED_DEV} rx
 		setup_netdev_trigger geos:3 ${RED_DEV} tx
 
-		# Dreamplug
-		setup_netdev_trigger dreamplug:green:wifi ${GREEN_DEV} tx rx
-		setup_netdev_trigger dreamplug:green:wifi_ap ${BLUE_DEV} tx rx
-		setup_netdev_trigger dreamplug:blue:bluetooth ${RED_DEV} tx rx
-
-		# Iomega iConnect start
-		setup_heartbeat_trigger iconnect:blue:otb
-		setup_netdev_trigger iconnect:blue:power ${RED_DEV} rx
-		setup_netdev_trigger iconnect:red:power ${RED_DEV} tx
-		setup_netdev_trigger iconnect:blue:usb_2 ${GREEN_DEV} tx rx
-		setup_netdev_trigger iconnect:blue:usb_3 ${BLUE_DEV} tx rx
-		setup_netdev_trigger iconnect:blue:usb_4 ${ORANGE_DEV} tx rx
-
-		# ICY Box LED start
-		setup_netdev_trigger nas6210:red:power ${RED_DEV} tx rx
-		setup_netdev_trigger nas6210:red:usb_copy ${GREEN_DEV} tx rx
-
 		# Mirabox start
 		setup_heartbeat_trigger mirabox:green:pwr
 		setup_netdev_trigger mirabox:green:stat ${GREEN_DEV} tx rx
@@ -159,22 +142,6 @@ case "${1}" in
 		enable_led geos:1
 		disable_led_trigger geos:2
 		disable_led_trigger geos:3
-
-		# Dreamplug
-		disable_led_trigger dreamplug:green:wifi
-		disable_led_trigger dreamplug:green:wifi_ap
-		disable_led_trigger dreamplug:blue:bluetooth
-
-		# Iomega iConnect stop (heartbeat will leave on)
-		disable_led_trigger iconnect:blue:power
-		disable_led_trigger iconnect:red:power
-		disable_led_trigger iconnect:blue:usb_2
-		disable_led_trigger iconnect:blue:usb_3
-		disable_led_trigger iconnect:blue:usb_4
-
-		# ICY Box LED stop
-		disable_led_trigger nas6210:red:power
-		disable_led_trigger nas6210:red:usb_copy
 
 		# Mirabox stop
 		disable_led_trigger mirabox:green:pwr
