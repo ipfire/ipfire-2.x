@@ -125,6 +125,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14_ath_user_regd.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-iwlwifi-noibss_only_on_radar_chan.patch
 
+	# Fix apu1 led detection with newer bios versions
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.10.16-apu1-led-new-bios.patch
+
 	# Fix igb and e1000e crash
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.1-igb-e1000e_fix_lock_at_update_stats.patch
 
