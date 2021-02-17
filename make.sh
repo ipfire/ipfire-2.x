@@ -1094,7 +1094,6 @@ buildbase() {
 	lfsmake2 ncurses
 	lfsmake2 perl
 	lfsmake2 readline
-	lfsmake2 readline-compat
 	lfsmake2 bzip2
 	lfsmake2 xz
 	lfsmake2 lzip

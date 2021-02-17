@@ -33,6 +33,10 @@ done
 
 # Remove files
 rm -vrf \
+	/lib/libhistory.so.6 \
+	/lib/libhistory.so.6.3 \
+	/lib/libreadline.so.6 \
+	/lib/libreadline.so.6.3 \
 	/usr/lib/sse2 \
 	/usr/local/lib/sse2 \
 	/usr/lib/libdb-4.so \
