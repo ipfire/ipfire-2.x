@@ -73,7 +73,9 @@ enable_led ()
 }
 
 #Handle new APU ACPI Leds introduced on APU2 with bios 4.10.0.0
-if [ -e /sys/class/leds/apu1:green:led1 ]; then
+if [ -e /sys/class/leds/apu:green:1 ]; then
+	APULED="apu:green:";
+else if [ -e /sys/class/leds/apu1:green:led1 ]; then
 	APULED="apu1:green:led";
 else if [ -e /sys/class/leds/apu2:green:led1 ]; then
 	APULED="apu2:green:led";
@@ -85,6 +87,7 @@ else if [ -e /sys/class/leds/apu5:green:led1 ]; then
 	APULED="apu5:green:led";
 else
 	APULED="apu:";
+fi
 fi
 fi
 fi
