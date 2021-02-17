@@ -45,6 +45,9 @@ rm -vrf \
 	/usr/lib/libdb_cxx-4.4.so \
 	/usr/lib/libgmp.so.3 \
 	/usr/lib/libgmp.so.3.5.2 \
+	/usr/lib/libjpeg.so.62 \
+	/usr/lib/libjpeg.so.62.1.0 \
+	/usr/lib/libturbojpeg.so.0.0.0 \
 	/lib/libpcre.so.0 \
 	/lib/libpcre.so.0.0.1
 

@@ -1255,7 +1255,6 @@ buildipfire() {
   lfsmake2 ninja
   lfsmake2 meson
   lfsmake2 libjpeg
-  lfsmake2 libjpeg-compat
   lfsmake2 openjpeg
   lfsmake2 libexif
   lfsmake2 libpng
