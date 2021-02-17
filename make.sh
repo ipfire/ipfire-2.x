@@ -1080,7 +1080,6 @@ buildbase() {
 	lfsmake2 libtool
 	lfsmake2 binutils
 	lfsmake2 gmp
-	lfsmake2 gmp-compat
 	lfsmake2 mpfr
 	lfsmake2 libmpc
 	lfsmake2 libxcrypt

@@ -35,6 +35,8 @@ done
 rm -vrf \
 	/usr/lib/sse2 \
 	/usr/local/lib/sse2 \
+	/usr/lib/libgmp.so.3 \
+	/usr/lib/libgmp.so.3.5.2 \
 	/lib/libpcre.so.0 \
 	/lib/libpcre.so.0.0.1
 
