@@ -40,6 +40,13 @@ my $extraHead = <<END
 	#zoneconf tr {
 		height: 4em;
 	}
+	#zoneconf tr.half-height {
+		height: 2em;
+	}
+	#zoneconf tr.half-height > td {
+		padding: 2px 10px;
+	}
+
 	/* section separators */
 	#zoneconf tr.divider-top {
 			border-top: 2px solid $Header::bordercolour;
@@ -75,6 +82,9 @@ my $extraHead = <<END
 	#zoneconf tr.nic-row {
 		border-bottom: 0.5px solid $Header::bordercolour;
 	}
+	#zoneconf tr.option-row > td:first-child {
+			background-color: gray;
+	}
 
 	/* alternating row background color */
 	#zoneconf tr {
@@ -107,6 +117,9 @@ my $extraHead = <<END
 
 	input.vlanid {
 		width: 4em;
+	}
+	input.stp-priority {
+		width: 5em;
 	}
 
 	#submit-container {
@@ -313,6 +326,25 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 		} elsif ($zone_mode eq "MACVTAP") {
 			$ethsettings{"${uc}_MODE"} = "macvtap";
 		}
+
+		# STP options
+		# (this has already been skipped when RED is in PPP mode, so we don't need to check for PPP here)
+		$ethsettings{"${uc}_STP"} = "";
+		my $stp_enabled = $cgiparams{"STP-$uc"} eq "on";
+		my $stp_priority = $cgiparams{"STP-PRIORITY-$uc"};
+
+		if($stp_enabled) {
+			unless($ethsettings{"${uc}_MODE"} eq "bridge") { # STP is only available in bridge mode
+				$VALIDATE_error = $Lang::tr{"zoneconf val stp zone mode error"};
+				last;
+			}
+			unless (looks_like_number($stp_priority) && ($stp_priority >= 1) && ($stp_priority <= 65535)) { # STP bridge priority range: 1..65535
+				$VALIDATE_error = $Lang::tr{"zoneconf val stp priority range error"};
+				last;
+			}
+			$ethsettings{"${uc}_STP"} = "on"; # network-hotplug-bridges expects "on"
+			$ethsettings{"${uc}_STP_PRIORITY"} = $stp_priority;
+		}
 	}
 
 	# validation failed, show error message and exit
@@ -480,6 +512,74 @@ END
 
 	print "\t</tr>\n";
 }
+
+# STP options
+my @stp_html = (); # form fields buffer (two rows)
+
+foreach (@zones) { # load settings and prepare form elements for each zone
+	my $uc = uc $_;
+
+	# skip if zone is not activated
+	next unless is_zone_activated($_);
+
+	# STP is not available if the RED interface is set to PPP, PPPoE, VDSL, ...
+	if ($uc eq "RED") {
+		unless (is_zonetype_ip($ethsettings{"RED_TYPE"})) {
+			push(@stp_html, ["\t\t<td></td>\n", "\t\t<td></td>\n"]); # print empty cell
+			next;
+		}
+	}
+
+	# load configuration
+	my $stp_available = $ethsettings{"${uc}_MODE"} eq "bridge"; # STP is only available in bridge mode
+	my $stp_enabled = $ethsettings{"${uc}_STP"} eq "on";
+	my $stp_priority = $ethsettings{"${uc}_STP_PRIORITY"};
+
+	# form element modifiers
+	my $checked = "";
+	my $disabled = "";
+	$checked = "checked" if ($stp_available && $stp_enabled);
+	$disabled = "disabled" unless $stp_available;
+
+	# enable checkbox HTML
+	my $row_1 = <<END
+		<td>
+			<input type="checkbox" name="STP-$uc" $disabled $checked>
+		</td>
+END
+;
+	$disabled = "disabled" unless $stp_enabled; # STP priority can't be entered if STP is disabled
+
+	# priority input box HTML
+	my $row_2 = <<END
+		<td>
+			<input type="number" class="stp-priority" name="STP-PRIORITY-$uc" min="1" max="65535" value="$stp_priority" $disabled>
+		</td>
+END
+;
+	# add fields to buffer
+	push(@stp_html, [$row_1, $row_2]);
+}
+
+# print two rows of prepared form elements
+print <<END
+	<tr class="half-height divider-top option-row">
+		<td class="heading bold">$Lang::tr{"zoneconf stp enable"}</td>
+END
+;
+foreach (@stp_html) {
+	print $_->[0]; # row 1
+}
+print <<END
+	</tr>
+	<tr class="half-height option-row">
+		<td class="heading">$Lang::tr{"zoneconf stp priority"}</td>
+END
+;
+foreach (@stp_html) {
+	print $_->[1]; # row 2
+}
+print "\t</tr>\n";
 
 # footer and submit button
 print <<END
