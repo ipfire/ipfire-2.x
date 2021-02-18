@@ -32,39 +32,59 @@ my $extraHead = <<END
 	table#zoneconf {
 		width: 100%;
 		border-collapse: collapse;
+		border-style: hidden;
 		table-layout: fixed;
 	}
 
+	/* row height */
 	#zoneconf tr {
 		height: 4em;
 	}
+	/* section separators */
+	#zoneconf tr.divider-top {
+			border-top: 2px solid $Header::bordercolour;
+	}
+	#zoneconf tr.divider-bottom {
+			border-bottom: 2px solid $Header::bordercolour;
+	}
 
+	/* table cells */
 	#zoneconf td {
 		padding: 5px 10px;
-		border: 0.5px solid black;
+		border-left: 0.5px solid $Header::bordercolour;
 		text-align: center;
 	}
 
-	/* dark grey header cells */
+	/* grey header cells */
 	#zoneconf td.heading {
-		background-color: grey;
+		background-color: lightgrey;
 		color: white;
 	}	
-	#zoneconf td.heading::first-line {
+	#zoneconf td.heading.bold::first-line {
 		font-weight: bold;
 		line-height: 1.6;
 	}
 
-	/* narrow left column */
+	/* narrow left column with background color */
 	#zoneconf tr > td:first-child {
 		width: 11em;
 	}
-
-	/* alternating row background color */
-	#zoneconf tr:nth-child(2n+3) {
-		background-color: #F0F0F0;
+	#zoneconf tr.nic-row > td:first-child {
+			background-color: darkgray;
+	}
+	#zoneconf tr.nic-row {
+		border-bottom: 0.5px solid $Header::bordercolour;
 	}
 
+	/* alternating row background color */
+	#zoneconf tr {
+		background-color: $Header::table2colour;
+	}
+	#zoneconf tr:nth-child(2n+3) {
+		background-color: $Header::table1colour;
+	}
+
+	/* special cell colors */
 	#zoneconf td.green {
 		background-color: $Header::colourgreen;
 	}
@@ -83,8 +103,6 @@ my $extraHead = <<END
 
 	#zoneconf td.topleft {
 		background-color: $Header::pagecolour;
-		border-top-style: none;
-		border-left-style: none;
 	}
 
 	input.vlanid {
@@ -324,7 +342,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 print <<END
 <form method='post' enctype='multipart/form-data'>
 	<table id="zoneconf">
-	<tr>
+	<tr class="divider-bottom">
 		<td class="topleft"></td>
 END
 ;
@@ -359,7 +377,7 @@ foreach (@zones) {
 	}
 
 	print <<END
-		<td class='heading $_'>$uc<br>
+		<td class='heading bold $_'>$uc<br>
 			<select name="MODE $uc">
 				<option value="DEFAULT" $mode_selected{"DEFAULT"}>$Lang::tr{"zoneconf nicmode default"}</option>
 				<option value="BRIDGE" $mode_selected{"BRIDGE"}>$Lang::tr{"zoneconf nicmode bridge"}</option>
@@ -378,8 +396,8 @@ foreach (@nics) {
 	my $nic = $_->[1];
 	my $wlan = $_->[2];
 
-	print "\t<tr>\n";
-	print "\t\t<td class='heading'>$nic<br>$mac</td>\n";
+	print "\t<tr class='nic-row'>\n";
+	print "\t\t<td class='heading bold'>$nic<br>$mac</td>\n";
 
 	# Iterate through all zones and check if the current NIC is assigned to it
 	foreach (@zones) {
