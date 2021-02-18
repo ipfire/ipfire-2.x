@@ -410,7 +410,7 @@ foreach (@zones) {
 
 	print <<END
 		<td class='heading bold $_'>$uc<br>
-			<select name="MODE $uc">
+			<select name="MODE $uc" data-zone="$uc" onchange="changeZoneMode(this)">
 				<option value="DEFAULT" $mode_selected{"DEFAULT"}>$Lang::tr{"zoneconf nicmode default"}</option>
 				<option value="BRIDGE" $mode_selected{"BRIDGE"}>$Lang::tr{"zoneconf nicmode bridge"}</option>
 				<option value="MACVTAP" $mode_selected{"MACVTAP"}>$Lang::tr{"zoneconf nicmode macvtap"}</option>
@@ -544,7 +544,7 @@ foreach (@zones) { # load settings and prepare form elements for each zone
 	# enable checkbox HTML
 	my $row_1 = <<END
 		<td>
-			<input type="checkbox" name="STP-$uc" $disabled $checked>
+			<input type="checkbox" id="STP-$uc" name="STP-$uc" data-zone="$uc" onchange="changeEnableSTP(this)" $disabled $checked>
 		</td>
 END
 ;
@@ -553,7 +553,7 @@ END
 	# priority input box HTML
 	my $row_2 = <<END
 		<td>
-			<input type="number" class="stp-priority" name="STP-PRIORITY-$uc" min="1" max="65535" value="$stp_priority" $disabled>
+			<input type="number" class="stp-priority" id="STP-PRIORITY-$uc" name="STP-PRIORITY-$uc" min="1" max="65535" value="$stp_priority" $disabled>
 		</td>
 END
 ;

@@ -54,3 +54,30 @@ function highlightAccess(selectObj) {
 	//if interface is assigned, highlight table cell in zone color
 	colorParentCell(selectObj, zoneColor, (selectObj.value !== 'NONE'));
 }
+
+//update zone mode
+function changeZoneMode(selectObj) {
+	if(!(selectObj && ('zone' in selectObj.dataset))) {
+		return; //required parameters are missing
+	}
+
+	// STP enable checkbox
+	let stpEnable = document.getElementById('STP-' + selectObj.dataset.zone);
+	if(stpEnable) {
+		stpEnable.disabled = (selectObj.value !== 'BRIDGE'); //STP is available if zone is in bridge mode
+		stpEnable.checked = stpEnable.checked && (! stpEnable.disabled); //un-check if disabled
+		stpEnable.dispatchEvent(new Event('change'));
+	}
+}
+
+//STP enable checkbox change toggles priority input
+function changeEnableSTP(inputObj) {
+	if(!(inputObj && ('zone' in inputObj.dataset))) {
+		return; //required parameters are missing
+	}
+
+	let priority = document.getElementById('STP-PRIORITY-' + inputObj.dataset.zone);
+	if(priority) {
+		priority.disabled = inputObj.disabled || (! inputObj.checked);
+	}
+}
