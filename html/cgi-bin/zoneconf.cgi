@@ -25,6 +25,7 @@ use Scalar::Util qw(looks_like_number);
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/network-functions.pl";
 
 ###--- HTML HEAD ---###
 my $extraHead = <<END
@@ -152,8 +153,8 @@ my $restart_notice = "";
 &Header::getcgihash(\%cgiparams);
 &Header::showhttpheaders();
 
-# Define all zones we will check for NIC assignment
-my @zones = ("red", "green", "orange", "blue");
+# Get all network zones that are currently enabled
+my @zones = Network::get_available_network_zones();
 
 # Get all physical NICs present
 opendir(my $dh, "/sys/class/net/");
@@ -187,20 +188,6 @@ foreach (@nics) {
 	}
 }
 
-### Functions ###
-
-# Check if a zone is in IP mode or in PPP, PPPoE, VDSL, ... mode
-sub is_zonetype_ip {
-	my $zone_type = shift;
-	return ($zone_type eq "STATIC" || $zone_type eq "DHCP");
-}
-
-# Check if a zone is activated (device assigned)
-sub is_zone_activated {
-	my $zone = uc shift;
-	return ($ethsettings{"${zone}_DEV"} ne "");
-}
-
 ### START PAGE ###
 &Header::openpage($Lang::tr{"zoneconf title"}, 1, $extraHead);
 &Header::openbigbox('100%', 'center');
@@ -211,7 +198,8 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 	my %VALIDATE_nic_check = ();
 	my $VALIDATE_error = "";
 
-	foreach (@zones) {
+	# Loop trough all known zones to ensure a complete configuration file is created
+	foreach (@Network::known_network_zones) {
 		my $uc = uc $_;
 		my $slave_string = "";
 		my $zone_mode = $cgiparams{"MODE $uc"};
@@ -383,14 +371,11 @@ END
 foreach (@zones) {
 	my $uc = uc $_;
 
-	# If the zone is not activated, don't show it
-	next unless is_zone_activated($_);
-
 	# If the red zone is in PPP mode, don't show a mode dropdown
 	if ($uc eq "RED") {
 		my $red_type = $ethsettings{"RED_TYPE"};
 
-		unless (is_zonetype_ip($red_type)) {
+		unless (Network::is_red_mode_ip()) {
 			print "\t\t<td class='heading bold $_'>$uc ($red_type)</td>\n";
 
 			next; # We're done here
@@ -436,12 +421,9 @@ foreach (@nics) {
 		my $uc = uc $_;
 		my $highlight = "";
 
-		# If the zone is not activated, don't show it
-		next unless is_zone_activated($_);
-
 		if ($uc eq "RED") {
 			# VLANs/Bridging is not possible if the RED interface is set to PPP, PPPoE, VDSL, ...
-			unless (is_zonetype_ip($ethsettings{"RED_TYPE"})) {
+			unless (Network::is_red_mode_ip()) {
 				my $checked = "";
 
 				if ($mac eq $ethsettings{"${uc}_MACADDR"}) {
@@ -519,12 +501,9 @@ my @stp_html = (); # form fields buffer (two rows)
 foreach (@zones) { # load settings and prepare form elements for each zone
 	my $uc = uc $_;
 
-	# skip if zone is not activated
-	next unless is_zone_activated($_);
-
 	# STP is not available if the RED interface is set to PPP, PPPoE, VDSL, ...
 	if ($uc eq "RED") {
-		unless (is_zonetype_ip($ethsettings{"RED_TYPE"})) {
+		unless (Network::is_red_mode_ip()) {
 			push(@stp_html, ["\t\t<td></td>\n", "\t\t<td></td>\n"]); # print empty cell
 			next;
 		}
