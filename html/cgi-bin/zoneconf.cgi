@@ -26,6 +26,7 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+###--- HTML HEAD ---###
 my $extraHead = <<END
 <style>
 	table#zoneconf {
@@ -105,7 +106,9 @@ my $extraHead = <<END
 <script src="/include/zoneconf.js"></script>
 END
 ;
+###--- END HTML HEAD ---###
 
+### Read configuration ###
 my %ethsettings = ();
 my %vlansettings = ();
 my %cgiparams = ();
@@ -119,7 +122,7 @@ my $restart_notice = "";
 &Header::showhttpheaders();
 
 # Define all zones we will check for NIC assignment
-my @zones = ("green", "red", "orange", "blue");
+my @zones = ("red", "green", "orange", "blue");
 
 # Get all physical NICs present
 opendir(my $dh, "/sys/class/net/");
@@ -153,6 +156,21 @@ foreach (@nics) {
 	}
 }
 
+### Functions ###
+
+# Check if a zone is in IP mode or in PPP, PPPoE, VDSL, ... mode
+sub is_zonetype_ip {
+	my $zone_type = shift;
+	return ($zone_type eq "STATIC" || $zone_type eq "DHCP");
+}
+
+# Check if a zone is activated (device assigned)
+sub is_zone_activated {
+	my $zone = uc shift;
+	return ($ethsettings{"${zone}_DEV"} ne "");
+}
+
+### START PAGE ###
 &Header::openpage($Lang::tr{"zoneconf title"}, 1, $extraHead);
 &Header::openbigbox('100%', 'center');
 
@@ -195,6 +213,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 				}
 			}
 
+			# skip NIC/VLAN assignment and additional zone options for RED in PPP mode
 			next;
 		}
 
@@ -278,6 +297,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 		}
 	}
 
+	# validation failed, show error message and exit
 	if ($VALIDATE_error) {
 		&Header::openbox('100%', 'left', $Lang::tr{"error"});
 
@@ -290,15 +310,16 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 		exit 0;
 	}
 
+	# new settings are valid, write configuration files
 	&General::writehash("${General::swroot}/ethernet/settings",\%ethsettings);
 	&General::writehash("${General::swroot}/ethernet/vlans",\%vlansettings);
 
 	$restart_notice = $Lang::tr{'zoneconf notice reboot'};
 }
 
-&Header::openbox('100%', 'left', $Lang::tr{"zoneconf nic assignment"});
-
 ### START OF TABLE ###
+
+&Header::openbox('100%', 'left', $Lang::tr{"zoneconf nic assignment"});
 
 print <<END
 <form method='post' enctype='multipart/form-data'>
@@ -311,19 +332,16 @@ END
 # Fill the table header with all activated zones
 foreach (@zones) {
 	my $uc = uc $_;
-	my $dev_name = $ethsettings{"${uc}_DEV"};
 
-	if ($dev_name eq "") { # If the zone is not activated, don't show it
-		next;
-	}
+	# If the zone is not activated, don't show it
+	next unless is_zone_activated($_);
 
-	# If the zone is in PPP mode, don't show a mode dropdown
+	# If the red zone is in PPP mode, don't show a mode dropdown
 	if ($uc eq "RED") {
 		my $red_type = $ethsettings{"RED_TYPE"};
-		my $red_restricted = ($uc eq "RED" && ! ($red_type eq "STATIC" || $red_type eq "DHCP"));
 
-		if ($red_restricted) {
-			print "\t\t<td class='heading $_'>$uc ($red_type)</td>\n";
+		unless (is_zonetype_ip($red_type)) {
+			print "\t\t<td class='heading bold $_'>$uc ($red_type)</td>\n";
 
 			next; # We're done here
 		}
@@ -354,6 +372,7 @@ END
 
 print "\t</tr>\n";
 
+# NIC assignment matrix
 foreach (@nics) {
 	my $mac = $_->[0];
 	my $nic = $_->[1];
@@ -365,19 +384,14 @@ foreach (@nics) {
 	# Iterate through all zones and check if the current NIC is assigned to it
 	foreach (@zones) {
 		my $uc = uc $_;
-		my $dev_name = $ethsettings{"${uc}_DEV"};
 		my $highlight = "";
 
-		if ($dev_name eq "") { # Again, skip the zone if it is not activated
-			next;
-		}
+		# If the zone is not activated, don't show it
+		next unless is_zone_activated($_);
 
 		if ($uc eq "RED") {
-			my $red_type = $ethsettings{"RED_TYPE"};
-			my $red_restricted = ($uc eq "RED" && ! ($red_type eq "STATIC" || $red_type eq "DHCP"));
-
 			# VLANs/Bridging is not possible if the RED interface is set to PPP, PPPoE, VDSL, ...
-			if ($red_restricted) {
+			unless (is_zonetype_ip($ethsettings{"RED_TYPE"})) {
 				my $checked = "";
 
 				if ($mac eq $ethsettings{"${uc}_MACADDR"}) {
@@ -449,6 +463,7 @@ END
 	print "\t</tr>\n";
 }
 
+# footer and submit button
 print <<END
 	</table>
 
