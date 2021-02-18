@@ -478,7 +478,7 @@ END
 		if ($access_selected{"NONE"} eq "") {
 			$highlight = $_;
 		}
-
+		
 		print <<END
 		<td class="$highlight">
 			<select name="ACCESS $uc $mac" data-zone="$uc" data-mac="$mac" onchange="highlightAccess(this)">
@@ -486,7 +486,7 @@ END
 				<option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
 				<option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
 			</select>
-			<input type="number" class="vlanid" id="TAG-$uc-$mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" $field_disabled>
+			<input type="number" class="vlanid" id="TAG-$uc-$mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" required $field_disabled>
 		</td>
 END
 ;
@@ -513,6 +513,9 @@ foreach (@zones) { # load settings and prepare form elements for each zone
 	my $stp_available = $ethsettings{"${uc}_MODE"} eq "bridge"; # STP is only available in bridge mode
 	my $stp_enabled = $ethsettings{"${uc}_STP"} eq "on";
 	my $stp_priority = $ethsettings{"${uc}_STP_PRIORITY"};
+	
+	# set priority to default value if no numerical value is configured
+	$stp_priority = 32768 unless looks_like_number($stp_priority);
 
 	# form element modifiers
 	my $checked = "";
@@ -532,7 +535,7 @@ END
 	# priority input box HTML
 	my $row_2 = <<END
 		<td>
-			<input type="number" class="stp-priority" id="STP-PRIORITY-$uc" name="STP-PRIORITY-$uc" min="1" max="65535" value="$stp_priority" $disabled>
+			<input type="number" class="stp-priority" id="STP-PRIORITY-$uc" name="STP-PRIORITY-$uc" min="1" max="65535" value="$stp_priority" required $disabled>
 		</td>
 END
 ;
