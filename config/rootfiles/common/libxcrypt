@@ -9,6 +9,7 @@ usr/lib/libcrypt.so.1.1.0
 #usr/lib/libxcrypt.so
 #usr/lib/pkgconfig/libcrypt.pc
 #usr/lib/pkgconfig/libxcrypt.pc
+#usr/share/man/man3/crypt.3
 #usr/share/man/man3/crypt_checksalt.3
 #usr/share/man/man3/crypt_gensalt.3
 #usr/share/man/man3/crypt_gensalt_ra.3
