@@ -1,3 +1,25 @@
+WARNING: translation string unused: Captive 1day
+WARNING: translation string unused: Captive 1month
+WARNING: translation string unused: Captive 1week
+WARNING: translation string unused: Captive activate
+WARNING: translation string unused: Captive auth_lic
+WARNING: translation string unused: Captive auth_vou
+WARNING: translation string unused: Captive err doublevoucher
+WARNING: translation string unused: Captive expire
+WARNING: translation string unused: Captive heading terms
+WARNING: translation string unused: Captive heading voucher
+WARNING: translation string unused: Captive invalid coupon
+WARNING: translation string unused: Captive invalid logosize
+WARNING: translation string unused: Captive invalid_voucher
+WARNING: translation string unused: Captive ip
+WARNING: translation string unused: Captive logo_set
+WARNING: translation string unused: Captive noexpiretime
+WARNING: translation string unused: Captive nr
+WARNING: translation string unused: Captive please enter a coupon code
+WARNING: translation string unused: Captive time
+WARNING: translation string unused: Captive voactive
+WARNING: translation string unused: Captive voucher
+WARNING: translation string unused: Captive vout
 WARNING: translation string unused: Client status and controlc
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
@@ -752,40 +774,8 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: 24 hours = 24 Hours
-WARNING: untranslated string: Captive = Captive Portal
 WARNING: untranslated string: Captive ACTIVATE = unknown string
-WARNING: untranslated string: Captive GAIN ACCESS = GAIN ACCESS
-WARNING: untranslated string: Captive WiFi coupon = WiFi Coupon
-WARNING: untranslated string: Captive activated = Activated
-WARNING: untranslated string: Captive active on = Activated on
-WARNING: untranslated string: Captive agree tac = I agree with the terms & conditions below.
-WARNING: untranslated string: Captive authentication = Type of Access
-WARNING: untranslated string: Captive brand color = Brand Color
-WARNING: untranslated string: Captive branding = Branding
-WARNING: untranslated string: Captive client session expiry time = Session Expiry Time
 WARNING: untranslated string: Captive clients = unknown string
-WARNING: untranslated string: Captive config = Settings
-WARNING: untranslated string: Captive coupon = Coupon
-WARNING: untranslated string: Captive delete logo = Delete Logo
-WARNING: untranslated string: Captive expiry time = Expiry Time
-WARNING: untranslated string: Captive export coupons = Export Coupons
-WARNING: untranslated string: Captive generate coupons = Generate Coupons
-WARNING: untranslated string: Captive generated coupon no = Number of coupons
-WARNING: untranslated string: Captive issued coupons = Issued Coupons
-WARNING: untranslated string: Captive logo uploaded = Logo uploaded
-WARNING: untranslated string: Captive mac = MAC Address
-WARNING: untranslated string: Captive nolimit = unlimited
-WARNING: untranslated string: Captive please accept the terms and conditions = Please accept the terms &amp; conditions
-WARNING: untranslated string: Captive portal = IPFire Captive Portal
-WARNING: untranslated string: Captive portal coupons = Captive Portal Coupons
-WARNING: untranslated string: Captive terms = Terms &amp; Conditions
-WARNING: untranslated string: Captive terms short = T&Cs
-WARNING: untranslated string: Captive title = Title of Login Page
-WARNING: untranslated string: Captive upload logo = Upload Logo
-WARNING: untranslated string: Captive upload logo recommendations = (PNG or JPEG, recommended 1280x720 pixels)
-WARNING: untranslated string: Captive valid for = Valid for
-WARNING: untranslated string: Captive vouchervalid = Allowed time for this coupon
-WARNING: untranslated string: Captive wrong ext = Uploaded file has wrong filetype
 WARNING: untranslated string: ConnSched dial = Connect
 WARNING: untranslated string: ConnSched hangup = Disconnect
 WARNING: untranslated string: ConnSched reboot = Reboot

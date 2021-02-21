@@ -108,60 +108,6 @@
 < block
 < broken
 < capabilities
-< Captive
-< Captive 1day
-< Captive 1month
-< Captive 1week
-< Captive activate
-< Captive activated
-< Captive active on
-< Captive agree tac
-< Captive authentication
-< Captive auth_lic
-< Captive auth_vou
-< Captive brand color
-< Captive branding
-< Captive client session expiry time
-< Captive config
-< Captive coupon
-< Captive delete logo
-< Captive err doublevoucher
-< Captive expire
-< Captive expiry time
-< Captive export coupons
-< Captive GAIN ACCESS
-< Captive generate coupons
-< Captive generated coupon no
-< Captive heading terms
-< Captive heading voucher
-< Captive invalid coupon
-< Captive invalid logosize
-< Captive invalid_voucher
-< Captive ip
-< Captive issued coupons
-< Captive logo_set
-< Captive logo uploaded
-< Captive mac
-< Captive noexpiretime
-< Captive nolimit
-< Captive nr
-< Captive please accept the terms and conditions
-< Captive please enter a coupon code
-< Captive portal
-< Captive portal coupons
-< Captive terms
-< Captive terms short
-< Captive time
-< Captive title
-< Captive upload logo
-< Captive upload logo recommendations
-< Captive valid for
-< Captive voactive
-< Captive voucher
-< Captive vouchervalid
-< Captive vout
-< Captive WiFi coupon
-< Captive wrong ext
 < ccd add
 < ccd choose net
 < ccd clientip
