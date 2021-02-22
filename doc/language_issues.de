@@ -834,8 +834,12 @@ WARNING: translation string unused: zoneconf nic assignment
 WARNING: translation string unused: zoneconf nicmode bridge
 WARNING: translation string unused: zoneconf nicmode default
 WARNING: translation string unused: zoneconf nicmode macvtap
+WARNING: translation string unused: zoneconf stp enable
+WARNING: translation string unused: zoneconf stp priority
 WARNING: translation string unused: zoneconf val native assignment error
 WARNING: translation string unused: zoneconf val ppp assignment error
+WARNING: translation string unused: zoneconf val stp priority range error
+WARNING: translation string unused: zoneconf val stp zone mode error
 WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val zoneslave amount error

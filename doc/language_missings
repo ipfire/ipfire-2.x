@@ -902,9 +902,13 @@
 < zoneconf nicmode default
 < zoneconf nicmode macvtap
 < zoneconf notice reboot
+< zoneconf stp enable
+< zoneconf stp priority
 < zoneconf title
 < zoneconf val native assignment error
 < zoneconf val ppp assignment error
+< zoneconf val stp priority range error
+< zoneconf val stp zone mode error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
 < zoneconf val zoneslave amount error
@@ -923,6 +927,10 @@
 < upload fcdsl.o
 < wlan client encryption wpa3
 < wlan client management frame protection
+< zoneconf stp enable
+< zoneconf stp priority
+< zoneconf val stp priority range error
+< zoneconf val stp zone mode error
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -1302,9 +1310,13 @@
 < zoneconf nicmode default
 < zoneconf nicmode macvtap
 < zoneconf notice reboot
+< zoneconf stp enable
+< zoneconf stp priority
 < zoneconf title
 < zoneconf val native assignment error
 < zoneconf val ppp assignment error
+< zoneconf val stp priority range error
+< zoneconf val stp zone mode error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
 < zoneconf val zoneslave amount error
@@ -1741,9 +1753,13 @@
 < zoneconf nicmode default
 < zoneconf nicmode macvtap
 < zoneconf notice reboot
+< zoneconf stp enable
+< zoneconf stp priority
 < zoneconf title
 < zoneconf val native assignment error
 < zoneconf val ppp assignment error
+< zoneconf val stp priority range error
+< zoneconf val stp zone mode error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
 < zoneconf val zoneslave amount error
@@ -2622,9 +2638,13 @@
 < zoneconf nicmode default
 < zoneconf nicmode macvtap
 < zoneconf notice reboot
+< zoneconf stp enable
+< zoneconf stp priority
 < zoneconf title
 < zoneconf val native assignment error
 < zoneconf val ppp assignment error
+< zoneconf val stp priority range error
+< zoneconf val stp zone mode error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
 < zoneconf val zoneslave amount error
@@ -3510,9 +3530,13 @@
 < zoneconf nicmode default
 < zoneconf nicmode macvtap
 < zoneconf notice reboot
+< zoneconf stp enable
+< zoneconf stp priority
 < zoneconf title
 < zoneconf val native assignment error
 < zoneconf val ppp assignment error
+< zoneconf val stp priority range error
+< zoneconf val stp zone mode error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
 < zoneconf val zoneslave amount error
@@ -3701,9 +3725,13 @@
 < zoneconf nicmode default
 < zoneconf nicmode macvtap
 < zoneconf notice reboot
+< zoneconf stp enable
+< zoneconf stp priority
 < zoneconf title
 < zoneconf val native assignment error
 < zoneconf val ppp assignment error
+< zoneconf val stp priority range error
+< zoneconf val stp zone mode error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
 < zoneconf val zoneslave amount error
