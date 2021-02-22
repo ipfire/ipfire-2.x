@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = haproxy
-PAK_VER    = 17
+PAK_VER    = 18
 
 DEPS       =
 
@@ -83,7 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	cd $(DIR_APP) && make $(MAKETUNING) CPU="generic" TARGET="linux-glibc" \
-		USE_LUA=1 USE_OPENSSL=1 USE_PCRE=1 USE_PCRE_JIT=1 USE_ZLIB=1 USE_REGPARM=1 \
+		USE_LUA=1 USE_OPENSSL=1 USE_PCRE2=1 USE_PCRE2_JIT=1 USE_ZLIB=1 USE_REGPARM=1 \
 		LUA_LIB_NAME="lua" ADDINC="$(CFLAGS)" USE_LINUX_TPROXY=1 ADDLIB="$(LDFLAGS)"
 
 	cd $(DIR_APP) && make install-bin install-man PREFIX=/usr
