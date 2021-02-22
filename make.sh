@@ -1973,7 +1973,7 @@ lang)
 	$BASEDIR/tools/check_strings.pl de > $BASEDIR/doc/language_issues.de
 	$BASEDIR/tools/check_strings.pl fr > $BASEDIR/doc/language_issues.fr
 	$BASEDIR/tools/check_strings.pl es > $BASEDIR/doc/language_issues.es
-	$BASEDIR/tools/check_strings.pl es > $BASEDIR/doc/language_issues.pl
+	$BASEDIR/tools/check_strings.pl pl > $BASEDIR/doc/language_issues.pl
 	$BASEDIR/tools/check_strings.pl ru > $BASEDIR/doc/language_issues.ru
 	$BASEDIR/tools/check_strings.pl nl > $BASEDIR/doc/language_issues.nl
 	$BASEDIR/tools/check_strings.pl tr > $BASEDIR/doc/language_issues.tr

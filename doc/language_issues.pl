@@ -1,25 +1,4 @@
-WARNING: translation string unused: Captive 1day
-WARNING: translation string unused: Captive 1month
-WARNING: translation string unused: Captive 1week
-WARNING: translation string unused: Captive activate
-WARNING: translation string unused: Captive auth_lic
-WARNING: translation string unused: Captive auth_vou
-WARNING: translation string unused: Captive err doublevoucher
-WARNING: translation string unused: Captive expire
-WARNING: translation string unused: Captive heading terms
-WARNING: translation string unused: Captive heading voucher
-WARNING: translation string unused: Captive invalid coupon
-WARNING: translation string unused: Captive invalid logosize
-WARNING: translation string unused: Captive invalid_voucher
-WARNING: translation string unused: Captive ip
-WARNING: translation string unused: Captive logo_set
-WARNING: translation string unused: Captive noexpiretime
-WARNING: translation string unused: Captive nr
-WARNING: translation string unused: Captive please enter a coupon code
-WARNING: translation string unused: Captive time
-WARNING: translation string unused: Captive voactive
-WARNING: translation string unused: Captive voucher
-WARNING: translation string unused: Captive vout
+WARNING: translation string unused: Async logging enabled
 WARNING: translation string unused: Client status and controlc
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
@@ -245,7 +224,6 @@ WARNING: translation string unused: dns new 0
 WARNING: translation string unused: dns new 1
 WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
-WARNING: translation string unused: dns server
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master
 WARNING: translation string unused: domain not set
@@ -298,8 +276,6 @@ WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: external access rule removed
 WARNING: translation string unused: extrahd
-WARNING: translation string unused: extrahd unable to read
-WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
 WARNING: translation string unused: firewall graphs
 WARNING: translation string unused: firewall log viewer
@@ -400,9 +376,6 @@ WARNING: translation string unused: local hard disk
 WARNING: translation string unused: local master
 WARNING: translation string unused: localkey
 WARNING: translation string unused: localkeyfile
-WARNING: translation string unused: locationblock country code
-WARNING: translation string unused: locationblock country name
-WARNING: translation string unused: locationblock flag
 WARNING: translation string unused: log enabled
 WARNING: translation string unused: log level
 WARNING: translation string unused: log var messages
@@ -500,12 +473,23 @@ WARNING: translation string unused: original
 WARNING: translation string unused: os level
 WARNING: translation string unused: out
 WARNING: translation string unused: outgoing firewall
+WARNING: translation string unused: outgoing firewall add ip group
+WARNING: translation string unused: outgoing firewall add mac group
+WARNING: translation string unused: outgoing firewall edit ip group
+WARNING: translation string unused: outgoing firewall edit mac group
+WARNING: translation string unused: outgoing firewall group error
+WARNING: translation string unused: outgoing firewall groups
+WARNING: translation string unused: outgoing firewall ip groups
+WARNING: translation string unused: outgoing firewall mac groups
 WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
 WARNING: translation string unused: outgoing firewall outgoing firewall reserved groupname
-WARNING: translation string unused: outgoing firewall p2p description
+WARNING: translation string unused: outgoing firewall p2p description 1
+WARNING: translation string unused: outgoing firewall p2p description 2
+WARNING: translation string unused: outgoing firewall p2p description 3
 WARNING: translation string unused: outgoing firewall reset
+WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
 WARNING: translation string unused: override mtu
 WARNING: translation string unused: ovpn config
@@ -774,8 +758,40 @@ WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: year-graph
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: 24 hours = 24 Hours
+WARNING: untranslated string: Captive = Captive Portal
 WARNING: untranslated string: Captive ACTIVATE = unknown string
+WARNING: untranslated string: Captive GAIN ACCESS = GAIN ACCESS
+WARNING: untranslated string: Captive WiFi coupon = WiFi Coupon
+WARNING: untranslated string: Captive activated = Activated
+WARNING: untranslated string: Captive active on = Activated on
+WARNING: untranslated string: Captive agree tac = I agree with the terms & conditions below.
+WARNING: untranslated string: Captive authentication = Type of Access
+WARNING: untranslated string: Captive brand color = Brand Color
+WARNING: untranslated string: Captive branding = Branding
+WARNING: untranslated string: Captive client session expiry time = Session Expiry Time
 WARNING: untranslated string: Captive clients = unknown string
+WARNING: untranslated string: Captive config = Settings
+WARNING: untranslated string: Captive coupon = Coupon
+WARNING: untranslated string: Captive delete logo = Delete Logo
+WARNING: untranslated string: Captive expiry time = Expiry Time
+WARNING: untranslated string: Captive export coupons = Export Coupons
+WARNING: untranslated string: Captive generate coupons = Generate Coupons
+WARNING: untranslated string: Captive generated coupon no = Number of coupons
+WARNING: untranslated string: Captive issued coupons = Issued Coupons
+WARNING: untranslated string: Captive logo uploaded = Logo uploaded
+WARNING: untranslated string: Captive mac = MAC Address
+WARNING: untranslated string: Captive nolimit = unlimited
+WARNING: untranslated string: Captive please accept the terms and conditions = Please accept the terms &amp; conditions
+WARNING: untranslated string: Captive portal = IPFire Captive Portal
+WARNING: untranslated string: Captive portal coupons = Captive Portal Coupons
+WARNING: untranslated string: Captive terms = Terms &amp; Conditions
+WARNING: untranslated string: Captive terms short = T&Cs
+WARNING: untranslated string: Captive title = Title of Login Page
+WARNING: untranslated string: Captive upload logo = Upload Logo
+WARNING: untranslated string: Captive upload logo recommendations = (PNG or JPEG, recommended 1280x720 pixels)
+WARNING: untranslated string: Captive valid for = Valid for
+WARNING: untranslated string: Captive vouchervalid = Allowed time for this coupon
+WARNING: untranslated string: Captive wrong ext = Uploaded file has wrong filetype
 WARNING: untranslated string: ConnSched dial = Connect
 WARNING: untranslated string: ConnSched hangup = Disconnect
 WARNING: untranslated string: ConnSched reboot = Reboot
@@ -787,7 +803,6 @@ WARNING: untranslated string: MB written = MB written
 WARNING: untranslated string: MTU settings = MTU settings:
 WARNING: untranslated string: Number of Countries for the pie chart = Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs = unknown string
-WARNING: untranslated string: Set time on boot = Force setting the system clock on boot
 WARNING: untranslated string: Weekly = Weekly
 WARNING: untranslated string: acpitemp = ACPI - Temperatures
 WARNING: untranslated string: addons = Addons
@@ -859,6 +874,7 @@ WARNING: untranslated string: ccd routes = Routing:
 WARNING: untranslated string: ccd subnet = Subnet
 WARNING: untranslated string: ccd used = Used addresses
 WARNING: untranslated string: check all = Check all
+WARNING: untranslated string: community rules = Snort/VRT GPLv2 Community Rules
 WARNING: untranslated string: count = Count
 WARNING: untranslated string: countries = Countries
 WARNING: untranslated string: country codes and flags = Country Codes and Flags:
@@ -900,7 +916,6 @@ WARNING: untranslated string: dns mode for qname minimisation = QNAME Minimisati
 WARNING: untranslated string: dns no address given = No IP Address given.
 WARNING: untranslated string: dns no tls hostname given = No TLS hostname given.
 WARNING: untranslated string: dns recursor mode = Recursor Mode
-WARNING: untranslated string: dns servers = DNS Servers
 WARNING: untranslated string: dns tls hostname = TLS Hostname
 WARNING: untranslated string: dns use isp assigned nameservers = Use ISP-assigned DNS servers
 WARNING: untranslated string: dns use protocol for dns queries = Protocol for DNS queries
@@ -954,25 +969,15 @@ WARNING: untranslated string: entropy = Entropy
 WARNING: untranslated string: entropy graphs = Entropy Graphs
 WARNING: untranslated string: error = Error
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
+WARNING: untranslated string: extrahd because there is already a device mounted = , because there is already a device mounted
+WARNING: untranslated string: extrahd cant umount = Can't umount
+WARNING: untranslated string: extrahd install or load driver = If your device isn't listed here, you need to install or load the driver.<br />If you can see your device but no partitions you have to create them first.
+WARNING: untranslated string: extrahd maybe the device is in use = . Maybe the device is in use
+WARNING: untranslated string: extrahd to = to
+WARNING: untranslated string: extrahd to root = to root
+WARNING: untranslated string: extrahd you cant mount = You can't mount
 WARNING: untranslated string: fallout zombieload ridl = Fallout/ZombieLoad/RIDL
 WARNING: untranslated string: fifteen minutes = 15 Minutes
-WARNING: untranslated string: fireinfo ipfire version = IPFire version
-WARNING: untranslated string: fireinfo is disabled = Fireinfo is disabled
-WARNING: untranslated string: fireinfo is enabled = Fireinfo is enabled
-WARNING: untranslated string: fireinfo is submitted = Your profile is submitted to the fireinfo service.
-WARNING: untranslated string: fireinfo is submitted button = No, I do not want to send my profile anymore
-WARNING: untranslated string: fireinfo kernel version = Kernel version
-WARNING: untranslated string: fireinfo not submitted = Your profile is not submitted to the fireinfo service.
-WARNING: untranslated string: fireinfo not submitted button = Yes, I want to send my profile
-WARNING: untranslated string: fireinfo pakfire version = Pakfire version
-WARNING: untranslated string: fireinfo please enable = Please enable the fireinfo service.
-WARNING: untranslated string: fireinfo settings = Fireinfo settings
-WARNING: untranslated string: fireinfo system version = System versions
-WARNING: untranslated string: fireinfo why descr1 = It is very important for the development of IPFire that you enable this
-WARNING: untranslated string: fireinfo why descr2 = service. 
-WARNING: untranslated string: fireinfo why enable = Why should I enable fireinfo?
-WARNING: untranslated string: fireinfo why read more = Read more about the reasons.
-WARNING: untranslated string: fireinfo your profile id = Your profile ID
 WARNING: untranslated string: firewall graph country = Firewall-Diagram (Country)
 WARNING: untranslated string: firewall graph ip = Firewall-Diagram (IP)
 WARNING: untranslated string: firewall graph port = Firewall-Diagram (Port)
@@ -1231,6 +1236,13 @@ WARNING: untranslated string: least preferred = least preferred
 WARNING: untranslated string: legacy architecture warning = You are running IPFire on a legacy architecture and it is recommended to upgrade
 WARNING: untranslated string: lifetime = Lifetime:
 WARNING: untranslated string: local ip address = Local IP Address
+WARNING: untranslated string: location = Location
+WARNING: untranslated string: locationblock = Location Block
+WARNING: untranslated string: locationblock block countries = Block countries
+WARNING: untranslated string: locationblock configuration = Location Configuration
+WARNING: untranslated string: locationblock country is allowed = Incoming traffic from this country is allowed
+WARNING: untranslated string: locationblock country is blocked = Incoming traffic from this country will be blocked
+WARNING: untranslated string: locationblock enable feature = Enable Location based blocking:
 WARNING: untranslated string: log server protocol = protocol:
 WARNING: untranslated string: mac filter = MAC filter
 WARNING: untranslated string: masquerade blue = Masquerade BLUE
@@ -1287,8 +1299,6 @@ WARNING: untranslated string: openvpn subnet is used = The given subnet is used 
 WARNING: untranslated string: optional = Optional
 WARNING: untranslated string: outgoing compression in bytes per second = Outgoing compression
 WARNING: untranslated string: outgoing firewall access = Outgoing Firewall Access
-WARNING: untranslated string: outgoing firewall p2p allow = Using the P2P protocol is allowed
-WARNING: untranslated string: outgoing firewall p2p deny = Using the P2P protocol is forbidden
 WARNING: untranslated string: outgoing overhead in bytes per second = Outgoing Overhead
 WARNING: untranslated string: ovpn add conf = Additional configuration
 WARNING: untranslated string: ovpn connection name = Connection Name
@@ -1313,7 +1323,6 @@ WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
 WARNING: untranslated string: p2p block = P2P networks
 WARNING: untranslated string: p2p block save notice = Please reload the firewall ruleset in order to apply your changes.
-WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: pakfire invalid tree = Invalid repository selected
 WARNING: untranslated string: pakfire tree = Repository
 WARNING: untranslated string: pakfire tree stable = Stable
@@ -1373,7 +1382,6 @@ WARNING: untranslated string: strict = Strict
 WARNING: untranslated string: subnet mask = Subnet Mask
 WARNING: untranslated string: support donation = Support the IPFire project with your donation
 WARNING: untranslated string: system has rdrand = This system has support for Intel(R) RDRAND.
-WARNING: untranslated string: system information = System Information
 WARNING: untranslated string: system is offline = The system is offline.
 WARNING: untranslated string: ta key = TLS-Authentification-Key
 WARNING: untranslated string: taa zombieload2 = TSX Async Abort / ZombieLoad v2
