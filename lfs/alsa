@@ -88,17 +88,18 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_SRC)/alsa*
 	cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && tar xfj $(DIR_DL)/alsa-utils-$(UVER).tar.bz2
+	cd $(DIR_APP) && tar xfj $(DIR_DL)/alsa-firmware-$(FVER).tar.bz2
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-utils-$(UVER).tar.bz2
-	cd $(DIR_SRC)/alsa-utils-$(UVER) && ./configure --disable-xmlto
-	cd $(DIR_SRC)/alsa-utils-$(UVER) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/alsa-utils-$(UVER) && make install
-	cd $(DIR_SRC) && tar xfj $(DIR_DL)/alsa-firmware-$(FVER).tar.bz2
-	cd $(DIR_SRC)/alsa-firmware-$(FVER) && ./configure
-	cd $(DIR_SRC)/alsa-firmware-$(FVER) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_SRC)/alsa-firmware-$(FVER) && make install
+	cd $(DIR_APP)/alsa-utils-$(UVER) && ./configure --disable-xmlto
+	cd $(DIR_APP)/alsa-utils-$(UVER) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP)/alsa-utils-$(UVER) && make install
+	cd $(DIR_APP)/alsa-firmware-$(FVER) && ./configure
+	cd $(DIR_APP)/alsa-firmware-$(FVER) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP)/alsa-firmware-$(FVER) && make install
 	# install initscript
 	$(call INSTALL_INITSCRIPT,alsa)
 	@rm -rf $(DIR_SRC)/alsa*
