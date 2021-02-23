@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.1.0
+VER        = 0.2.0
 
 THISAPP    = fireperf-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fireperf
-PAK_VER    = 1
+PAK_VER    = 2
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)                    = https://source.ipfire.org/releases/fireperf/$(DL_FILE)
 
-$(DL_FILE)_MD5                = 1388fd154cfeab52608f81816c5bed96
+$(DL_FILE)_MD5                = 25bb110c90f389d5b8e1fc4164a45693
 
 install : $(TARGET)
 
