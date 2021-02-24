@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.39.0
+VER        = 1.50.0
 
 THISAPP    = rust-$(VER)
 DL_FILE    = $(THISAPP)-$(RUST_BOOTSTRAP).tar.gz
@@ -52,10 +52,10 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(THISAPP)-x86_64-unknown-linux-gnu.tar.gz_MD5 =  33926ca331369ab20181ba1c91a5ee4a
-$(THISAPP)-i686-unknown-linux-gnu.tar.gz_MD5 =    4932dd0b7631072a314ba5c1ef750318
-$(THISAPP)-aarch64-unknown-linux-gnu.tar.gz_MD5 = 18b29539aa705dd2404e5839fc7507c1
-$(THISAPP)-arm-unknown-linux-gnueabi.tar.gz_MD5 = d5f82cc615da78076d9fc15cc8f9aac0
+$(THISAPP)-x86_64-unknown-linux-gnu.tar.gz_MD5 =  df740a74cd0887feaf36edc8b36f9b77
+$(THISAPP)-i686-unknown-linux-gnu.tar.gz_MD5 =    62a242568c0a4479c5f0050522fd44f8
+$(THISAPP)-aarch64-unknown-linux-gnu.tar.gz_MD5 = acda9f6336efd24d1d8949a2c470fb91
+$(THISAPP)-arm-unknown-linux-gnueabi.tar.gz_MD5 = fc073998405ea150f699cbf910ba9296
 
 install : $(TARGET)
 
