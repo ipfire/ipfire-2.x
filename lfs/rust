@@ -91,5 +91,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--prefix=/usr \
 		--disable-ldconfig
 
+	# Remove LLVM tools
+	rm -vf /usr/lib/rustlib/$(RUST_BOOTSTRAP)/bin/rust-ll{d,vm-dwp}
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

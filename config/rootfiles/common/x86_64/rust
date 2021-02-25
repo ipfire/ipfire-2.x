@@ -33,8 +33,6 @@
 #usr/lib/rustlib/uninstall.sh
 #usr/lib/rustlib/x86_64-unknown-linux-gnu
 #usr/lib/rustlib/x86_64-unknown-linux-gnu/bin
-#usr/lib/rustlib/x86_64-unknown-linux-gnu/bin/rust-lld
-#usr/lib/rustlib/x86_64-unknown-linux-gnu/bin/rust-llvm-dwp
 #usr/lib/rustlib/x86_64-unknown-linux-gnu/lib
 #usr/lib/rustlib/x86_64-unknown-linux-gnu/lib/libaddr2line-65e4f8df4b8bbd73.rlib
 #usr/lib/rustlib/x86_64-unknown-linux-gnu/lib/libadler-c0e64497deb085aa.rlib

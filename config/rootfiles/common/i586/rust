@@ -25,8 +25,6 @@
 #usr/lib/rustlib/etc/rust_types.py
 #usr/lib/rustlib/i686-unknown-linux-gnu
 #usr/lib/rustlib/i686-unknown-linux-gnu/bin
-#usr/lib/rustlib/i686-unknown-linux-gnu/bin/rust-lld
-#usr/lib/rustlib/i686-unknown-linux-gnu/bin/rust-llvm-dwp
 #usr/lib/rustlib/i686-unknown-linux-gnu/lib
 #usr/lib/rustlib/i686-unknown-linux-gnu/lib/libaddr2line-1110d28274a5a558.rlib
 #usr/lib/rustlib/i686-unknown-linux-gnu/lib/libadler-4b1049af3d913803.rlib
