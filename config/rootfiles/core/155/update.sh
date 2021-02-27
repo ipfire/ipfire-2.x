@@ -39,6 +39,7 @@ rm -vrf \
 	/lib/libreadline.so.6.3 \
 	/usr/lib/sse2 \
 	/usr/local/lib/sse2 \
+	/usr/lib/libboost* \
 	/usr/lib/libdb-4.so \
 	/usr/lib/libdb-4.4.so \
 	/usr/lib/libdb_cxx-4.so \
