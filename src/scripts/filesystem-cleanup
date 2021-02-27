@@ -53,6 +53,13 @@ main() {
 		# Find all files called libsomething.so.N
 		local lib
 		for lib in $(find "${path}" -maxdepth 1 -type l -name "lib*.so.*" | sort); do
+			# Ignore some libraries
+			case "${lib}" in
+				*/libboost*)
+					continue
+					;;
+			esac
+
 			# Read the name of the linked library
 			local link="$(readlink -m "${lib}")"
 
