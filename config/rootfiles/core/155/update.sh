@@ -70,6 +70,7 @@ ldconfig
 /etc/init.d/unbound restart
 /etc/init.d/collectd restart
 /etc/init.d/squid restart
+/etc/init.d/suricata restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
