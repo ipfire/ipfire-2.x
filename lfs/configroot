@@ -139,12 +139,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/suricata/convert-ids-modifysids-file   /usr/sbin/convert-ids-modifysids-file
 
 	# Add conntrack helper default settings
-	for proto in FTP H323 IRC SIP TFTP; do \
-		echo "CONNTRACK_$${proto}=on" >> $(CONFIG_ROOT)/optionsfw/settings; \
-	done
-
-	# Do not enable these by default because these are broken
-	for proto in AMANDA PPTP; do \
+	for proto in AMANDA FTP H323 IRC PPTP SIP TFTP; do \
 		echo "CONNTRACK_$${proto}=off" >> $(CONFIG_ROOT)/optionsfw/settings; \
 	done
 
