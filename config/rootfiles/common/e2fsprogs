@@ -1,6 +1,4 @@
 #etc/mke2fs.conf
-lib/libblkid.so.1
-lib/libblkid.so.1.0
 lib/libcom_err.so.2
 lib/libcom_err.so.2.1
 lib/libe2p.so.2
@@ -9,8 +7,6 @@ lib/libext2fs.so.2
 lib/libext2fs.so.2.4
 lib/libss.so.2
 lib/libss.so.2.0
-lib/libuuid.so.1
-lib/libuuid.so.1.2
 sbin/badblocks
 sbin/blkid
 sbin/debugfs
@@ -63,8 +59,6 @@ usr/bin/uuidgen
 #usr/include/uuid
 #usr/include/uuid/uuid.h
 #usr/lib/e2initrd_helper
-#usr/lib/libblkid.a
-usr/lib/libblkid.so
 #usr/lib/libcom_err.a
 usr/lib/libcom_err.so
 #usr/lib/libe2p.a

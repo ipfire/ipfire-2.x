@@ -76,6 +76,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--prefix=/usr \
 			--with-root-prefix="" \
 			--enable-elf-shlibs \
+			--disable-libblkid \
+			--disable-libuuid \
 			--disable-nls
 
 	cd $(DIR_APP)/build && make $(MAKETUNING)

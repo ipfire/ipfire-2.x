@@ -1104,7 +1104,6 @@ buildbase() {
 	lfsmake2 acl
 	lfsmake2 bash
 	lfsmake2 diffutils
-	lfsmake2 e2fsprogs
 	lfsmake2 ed
 	lfsmake2 findutils
 	lfsmake2 flex
@@ -1133,6 +1132,7 @@ buildbase() {
 	lfsmake2 texinfo
 	lfsmake2 util-linux
 	lfsmake2 vim
+	lfsmake2 e2fsprogs
 }
 
 buildipfire() {
