@@ -60,6 +60,10 @@ extract_files
 # update linker config
 ldconfig
 
+# Disable all connection tracking helper
+sed -E -e "s/^CONNTRACK_(.*?)=on/CONNTRACK_\1=off/g" \
+	-i /var/ipfire/firewall/optionsfw
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
