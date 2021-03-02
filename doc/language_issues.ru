@@ -822,7 +822,6 @@ WARNING: untranslated string: advproxy wpad notice = Notice: For WPAD/PAC to wor
 WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Protocol (WPAD) / Proxy Auto-Config (PAC)
 WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: age second = second
-WARNING: untranslated string: application layer gateways = Application Layer Gateways
 WARNING: untranslated string: asn lookup failed = AS lookup failed
 WARNING: untranslated string: atm device = Device:
 WARNING: untranslated string: attention = ATTENTION

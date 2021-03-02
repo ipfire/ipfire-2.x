@@ -117,6 +117,7 @@ WARNING: translation string unused: alt information
 WARNING: translation string unused: alt ovpn
 WARNING: translation string unused: alt vpn
 WARNING: translation string unused: and
+WARNING: translation string unused: application layer gateways
 WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: attemps
