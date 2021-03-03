@@ -919,5 +919,6 @@ WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: token = Token:
 WARNING: untranslated string: token not set = No Token has been given.
+WARNING: untranslated string: updxlrtr passive mode = Delivery only/no download mode
 WARNING: untranslated string: wlan client encryption wpa3 = WPA3
 WARNING: untranslated string: wlan client management frame protection = Management Frame Protection

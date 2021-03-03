@@ -2229,7 +2229,6 @@
 'updxlrtr not accessed' => 'niet benaderd sinds',
 'updxlrtr not enabled' => 'Updateversneller is niet ingeschakeld op de webproxy pagina',
 'updxlrtr other' => 'Overig',
-'updxlrtr passive mode' => 'Inschakelen passieve modus',
 'updxlrtr pending downloads' => 'Wachtrij downloads',
 'updxlrtr performance options' => 'Performance opties',
 'updxlrtr progress' => 'Voortgang',

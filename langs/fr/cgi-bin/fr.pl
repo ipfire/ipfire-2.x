@@ -2591,7 +2591,6 @@
 'updxlrtr not accessed' => 'utilisés la dernière fois depuis',
 'updxlrtr not enabled' => 'La mise à jour de l\'accélérateur n\'est pas activée sur la page web du proxy',
 'updxlrtr other' => 'Autre',
-'updxlrtr passive mode' => 'Activer le mode passif (bloque l\'ajout de nouveaux fichiers dans le cache) ',
 'updxlrtr pending downloads' => 'Téléchargements en cours',
 'updxlrtr performance options' => 'Options de performance',
 'updxlrtr progress' => 'En cours',

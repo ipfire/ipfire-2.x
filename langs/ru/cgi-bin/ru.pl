@@ -1822,7 +1822,6 @@
 'updxlrtr not accessed' => 'Не обращались с',
 'updxlrtr not enabled' => 'Ускоритель обновлений не активирован на странице настроек web proxy',
 'updxlrtr other' => 'Другой',
-'updxlrtr passive mode' => 'Разрешить пасивный режим',
 'updxlrtr pending downloads' => 'Ожидание загрузки',
 'updxlrtr performance options' => 'Настройки производительности',
 'updxlrtr progress' => 'Прогресс',

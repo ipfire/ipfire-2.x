@@ -1201,6 +1201,7 @@ WARNING: untranslated string: unblock all = Unblock all
 WARNING: untranslated string: uncheck all = Uncheck all
 WARNING: untranslated string: unlimited = Unlimited
 WARNING: untranslated string: update ruleset = Update ruleset
+WARNING: untranslated string: updxlrtr passive mode = Delivery only/no download mode
 WARNING: untranslated string: uplink bit rate = Uplink Bit Rate
 WARNING: untranslated string: upload dh key = Upload Diffie-Hellman parameters
 WARNING: untranslated string: user management = User Management

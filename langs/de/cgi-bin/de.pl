@@ -2545,7 +2545,7 @@
 'updxlrtr not accessed' => 'nicht zugegriffen seit',
 'updxlrtr not enabled' => 'Der Update-Accelerator ist auf der Web-Proxy-Seite nicht aktiviert',
 'updxlrtr other' => 'Sonstige',
-'updxlrtr passive mode' => 'Aktiviere Passiv-Modus',
+'updxlrtr passive mode' => 'Nur Auslieferungs-/kein Download-Modus',
 'updxlrtr pending downloads' => 'Anstehende Downloads',
 'updxlrtr performance options' => 'Leistungsoptionen',
 'updxlrtr progress' => 'Fortschritt',

@@ -1827,7 +1827,6 @@
 'updxlrtr not accessed' => 'bez żądania od',
 'updxlrtr not enabled' => 'Update Accelerator nie jest włączony w zakładce web proxy',
 'updxlrtr other' => 'Inne',
-'updxlrtr passive mode' => 'Włącz tryb pasywny',
 'updxlrtr pending downloads' => 'Aktualnie pobierane',
 'updxlrtr performance options' => 'Opcje wydajności',
 'updxlrtr progress' => 'Postęp',

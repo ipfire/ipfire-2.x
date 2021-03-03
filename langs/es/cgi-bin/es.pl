@@ -1868,7 +1868,6 @@
 'updxlrtr not accessed' => 'no se ha accesado desde',
 'updxlrtr not enabled' => 'El acelerador de actualizaciones no está activado en el proxy de la página',
 'updxlrtr other' => 'Otro',
-'updxlrtr passive mode' => 'Activar modo pasivo',
 'updxlrtr pending downloads' => 'Descargas pendientes',
 'updxlrtr performance options' => 'Opciones de rendimiento',
 'updxlrtr progress' => 'Progreso',

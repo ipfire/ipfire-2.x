@@ -800,6 +800,7 @@
 < uncheck all
 < unlimited
 < update ruleset
+< updxlrtr passive mode
 < updxlrtr sources
 < updxlrtr standard view
 < updxlrtr used by
@@ -924,6 +925,7 @@
 < g.lite
 < token
 < token not set
+< updxlrtr passive mode
 < upload fcdsl.o
 < wlan client encryption wpa3
 < wlan client management frame protection
@@ -1251,6 +1253,7 @@
 < uncheck all
 < unlimited
 < update ruleset
+< updxlrtr passive mode
 < uplink bit rate
 < user management
 < vpn broken
@@ -1692,6 +1695,7 @@
 < uncheck all
 < unlimited
 < update ruleset
+< updxlrtr passive mode
 < uplink bit rate
 < upload dh key
 < user management
@@ -2536,6 +2540,7 @@
 < uncheck all
 < unlimited
 < update ruleset
+< updxlrtr passive mode
 < updxlrtr sources
 < updxlrtr standard view
 < updxlrtr used by
@@ -3426,6 +3431,7 @@
 < uncheck all
 < unlimited
 < update ruleset
+< updxlrtr passive mode
 < updxlrtr sources
 < updxlrtr standard view
 < updxlrtr used by
@@ -3695,6 +3701,7 @@
 < tor use guard nodes
 < transport mode does not support vti
 < update ruleset
+< updxlrtr passive mode
 < user management
 < vpn start action add
 < vpn subjectaltname missing

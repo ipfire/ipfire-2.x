@@ -2443,7 +2443,6 @@
 'updxlrtr not accessed' => 'tarihinden bu yana erişilemez',
 'updxlrtr not enabled' => 'Güncelleme hızlandırıcı web vekil sunucusu sayfasında aktif değil',
 'updxlrtr other' => 'Diğer',
-'updxlrtr passive mode' => 'Pasif yöntemini aktifleştir',
 'updxlrtr pending downloads' => 'Beklemedekileri indirilenler',
 'updxlrtr performance options' => 'Performans seçenekleri',
 'updxlrtr progress' => 'İşlem durumu',
