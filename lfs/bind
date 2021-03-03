@@ -80,6 +80,18 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--with-libtool \
 			--without-python \
 			--disable-static
+
+	# Build everything
+	cd $(DIR_APP) && make -C lib/isc $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/dns $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/isccc $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/isccfg $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/bind9 $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/lwres $(MAKETUNING)
+	cd $(DIR_APP) && make -C bin/dig $(MAKETUNING)
+	cd $(DIR_APP) && make -C bin/nsupdate $(MAKETUNING)
+
+	# Install everything
 	cd $(DIR_APP) && make -C lib/isc install
 	cd $(DIR_APP) && make -C lib/dns install
 	cd $(DIR_APP) && make -C lib/isccc install
