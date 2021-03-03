@@ -58,7 +58,9 @@ usr/libexec/mc/extfs.d/ucab
 usr/libexec/mc/extfs.d/uha
 usr/libexec/mc/extfs.d/ulha
 usr/libexec/mc/extfs.d/ulib
+usr/libexec/mc/extfs.d/unar
 usr/libexec/mc/extfs.d/urar
+usr/libexec/mc/extfs.d/uwim
 usr/libexec/mc/extfs.d/uzip
 usr/libexec/mc/extfs.d/uzoo
 #usr/libexec/mc/fish
@@ -210,6 +212,7 @@ usr/share/mc/syntax/smalltalk.syntax
 usr/share/mc/syntax/spec.syntax
 usr/share/mc/syntax/sql.syntax
 usr/share/mc/syntax/strace.syntax
+usr/share/mc/syntax/swift.syntax
 usr/share/mc/syntax/swig.syntax
 usr/share/mc/syntax/syntax.syntax
 usr/share/mc/syntax/tcl.syntax
