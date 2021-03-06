@@ -71,6 +71,7 @@ sed -E -e "s/^CONNTRACK_(.*?)=on/CONNTRACK_\1=off/g" \
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/sshd restart
 /etc/init.d/dhcp restart
 /etc/init.d/unbound restart
 /etc/init.d/collectd restart
