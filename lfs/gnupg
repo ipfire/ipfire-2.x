@@ -72,6 +72,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 	rm -rf /home/nobody/.gnupg /root/.gnupg
 	cd $(DIR_APP) && ./configure --prefix=/usr --libexecdir=/usr/lib --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)

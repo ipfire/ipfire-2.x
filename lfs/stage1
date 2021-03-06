@@ -54,4 +54,8 @@ ifeq "$(IS_64BIT)" "1"
 	ln -svf lib $(TOOLS_DIR)/lib64
 endif
 
+ifeq "$(BUILD_ARCH)" "riscv64"
+	ln -svf . $(TOOLS_DIR)/lib/lp64d
+endif
+
 	@$(POSTBUILD)

@@ -64,6 +64,10 @@ ifeq "$(BUILD_ARCH)" "i586"
 	IS_32BIT = 1
 endif
 
+ifeq "$(BUILD_ARCH)" "riscv64"
+	IS_64BIT = 1
+endif
+
 ifeq "$(TOOLCHAIN)" "1"
 	PREFIX = $(TOOLS_DIR)
 else
@@ -304,10 +308,11 @@ define INSTALL_INITSCRIPT
 	install -m 754 -v $(DIR_SRC)/src/initscripts/packages/$(1)  /etc/rc.d/init.d/$(1)
 endef
 
-ifeq "$(BUILD_ARCH)" "aarch64"
+ifeq "$(BUILD_ARCH)" "$(filter $(BUILD_ARCH),aarch64 riscv64)"
 define UPDATE_AUTOMAKE
 	for i in $$(find $(DIR_APP) -name config.guess -o -name config.sub); do \
-		cp -vf /usr/share/automake*/$$(basename $${i}) $${i}; \
+		cp -vf /usr/share/automake*/$$(basename $${i}) $${i} || \
+			cp -vf $(TOOLS_DIR)/share/automake*/$$(basename $${i}) $${i}; \
 	done
 endef
 endif

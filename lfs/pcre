@@ -32,6 +32,24 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+CONFIGURE_ARGS = \
+	--prefix=/usr \
+	--disable-static \
+	--enable-utf8 \
+	--enable-pcre16 \
+	--enable-pcre32 \
+	--enable-pcregrep-libz \
+	--enable-pcregrep-libbz2 \
+	--enable-pcretest-libreadline \
+	--enable-unicode-properties \
+	--docdir=/usr/share/doc/pcre-$(THISAPP)
+
+ifeq "$(BUILD_ARCH)" "riscv64"
+	CONFIGURE_ARGS += --disable-jit
+else
+	CONFIGURE_ARGS += --enable-jit
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -70,18 +88,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--disable-static \
-		--enable-utf8 \
-		--enable-jit \
-		--enable-pcre16 \
-		--enable-pcre32 \
-		--enable-pcregrep-libz \
-		--enable-pcregrep-libbz2 \
-		--enable-pcretest-libreadline \
-		--enable-unicode-properties \
-		--docdir=/usr/share/doc/pcre-$(THISAPP)
+	cd $(DIR_APP) && ./configure $(CONFIGURE_ARGS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

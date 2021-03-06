@@ -173,6 +173,12 @@ ifeq "$(BUILD_ARCH)" "i586"
 		--with-tune=generic
 endif
 
+ifeq "$(BUILD_ARCH)" "riscv64"
+	EXTRA_CONFIG += \
+		--with-arch=rv64gc \
+		--with-abi=lp64d
+endif
+
 EXTRA_CONFIG += \
 	--disable-multilib \
 	--with-bugurl=http://bugtracker.ipfire.org \

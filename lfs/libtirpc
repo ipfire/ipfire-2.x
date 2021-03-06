@@ -79,6 +79,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libtirpc-1.0.2-glibc-2.26.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc --disable-gssapi --disable-ipv6
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)

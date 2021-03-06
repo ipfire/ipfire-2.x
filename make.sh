@@ -177,6 +177,13 @@ configure_build() {
 			RUSTFLAGS="-Ccodegen-units=1"
 			;;
 
+		riscv64)
+			BUILDTARGET="${build_arch}-unknown-linux-gnu"
+			CROSSTARGET="${build_arch}-cross-linux-gnu"
+			BUILD_PLATFORM="riscv"
+			CFLAGS_ARCH="-fstack-clash-protection"
+			;;
+
 		*)
 			exiterror "Cannot build for architure ${build_arch}"
 			;;
@@ -262,6 +269,10 @@ configure_build_guess() {
 
 		armv7*|armv6*|armv5*)
 			echo "armv5tel"
+			;;
+
+		riscv64)
+			echo "riscv64"
 			;;
 
 		*)
@@ -801,7 +812,7 @@ qemu_is_required() {
 	fi
 
 	case "${HOST_ARCH},${build_arch}" in
-		x86_64,arm*|x86_64,aarch64|i?86,arm*|i?86,aarch64|i?86,x86_64)
+		x86_64,arm*|x86_64,aarch64|x86_64,riscv64|i?86,arm*|i?86,aarch64|i?86,x86_64)
 			return 0
 			;;
 		*)
@@ -864,6 +875,9 @@ qemu_find_build_helper_name() {
 			;;
 		arm*)
 			magic="7f454c4601010100000000000000000002002800"
+			;;
+		riscv64)
+			magic="7f454c460201010000000000000000000200f300"
 			;;
 		x86_64)
 			magic="7f454c4602010100000000000000000002003e00"

@@ -73,8 +73,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
-	# Help unpacking bundled BIND
-	cd $(DIR_APP) && sed -e "s/gunzip -c/&d/" -i bind/Makefile.in
+	# Extract bundled BIND
+	cd $(DIR_APP)/bind && tar xvfa bind.tar.gz
+
+	$(UPDATE_AUTOMAKE)
 
 	cd $(DIR_APP) && \
 		./configure \

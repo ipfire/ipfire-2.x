@@ -82,6 +82,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && patch -p1 < $(DIR_SRC)/src/patches/flex-2.6.4-fix-build-width-glibc-2.6+.patch
 	cd $(DIR_APP) && HELP2MAN=$(TOOLS_DIR)/bin/true \
 		./configure --prefix=$(PREFIX) --disable-nls
