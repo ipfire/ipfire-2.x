@@ -62,7 +62,7 @@ ldconfig
 
 # Disable all connection tracking helper
 sed -E -e "s/^CONNTRACK_(.*?)=on/CONNTRACK_\1=off/g" \
-	-i /var/ipfire/firewall/optionsfw
+	-i /var/ipfire/optionsfw/settings
 
 # Update Language cache
 /usr/local/bin/update-lang-cache
