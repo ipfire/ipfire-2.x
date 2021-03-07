@@ -989,7 +989,7 @@ sub updateqosgraph {
 
 	my $ERROR="";
 	my $count="1";
-	my $color="#000000";
+	my %colorMap = (); # maps traffic classes to graph colors
 
 	my @command = (
 		@GRAPH_ARGS,
@@ -1013,18 +1013,27 @@ sub updateqosgraph {
 		@classes = <FILE>;
 		close FILE;
 
-		my $colorIndex = 0;
 		foreach $classentry (sort @classes){
 			@classline = split( /\;/, $classentry );
+
+			# create class <-> color mapping
+			my $colorKey = uc $classline[8]; # upper case class name as key
+			if(! exists $colorMap{$colorKey}) {
+				# add missing color to table, use colors 11-25
+				my $colorIndex = 11 + ((scalar keys %colorMap) % 15);
+				$colorMap{$colorKey} = "$color{\"color$colorIndex\"}";
+			}
+
 			if ( $classline[0] eq $qossettings{'DEV'} ){
-				my $colorIndex = 10 + $count % 15;
-				$color="$color{\"color$colorIndex\"}";
 				push(@command, "DEF:$classline[1]=$mainsettings{'RRDLOG'}/class_$qossettings{'CLASSPRFX'}-$classline[1]_$qossettings{'DEV'}.rrd:bytes:AVERAGE");
 
+				# get color to be used for this graph
+				my $graphColor = $colorMap{$colorKey};
+
 				if ($count eq "1") {
-					push(@command, "AREA:$classline[1]$color:$Lang::tr{'Class'} $classline[1] -".sprintf("%15s",$classline[8]));
+					push(@command, "AREA:$classline[1]$graphColor:$Lang::tr{'Class'} $classline[1] -".sprintf("%15s",$classline[8]));
 				} else {
-					push(@command, "STACK:$classline[1]$color:$Lang::tr{'Class'} $classline[1] -".sprintf("%15s",$classline[8]));
+					push(@command, "STACK:$classline[1]$graphColor:$Lang::tr{'Class'} $classline[1] -".sprintf("%15s",$classline[8]));
 				}
 
 				push(@command, "GPRINT:$classline[1]:MAX:%8.1lf %sBps"
