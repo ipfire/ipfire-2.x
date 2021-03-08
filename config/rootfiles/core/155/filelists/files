@@ -4,3 +4,4 @@ srv/web/ipfire/cgi-bin/wirelessclient.cgi
 srv/web/ipfire/cgi-bin/zoneconf.cgi
 srv/web/ipfire/html/include/zoneconf.js
 usr/local/bin/filesystem-cleanup
+var/ipfire/graphs.pl
