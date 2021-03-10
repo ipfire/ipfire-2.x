@@ -50,6 +50,7 @@ usr/lib/nagios/plugins/check_smtp
 usr/lib/nagios/plugins/check_snmp
 usr/lib/nagios/plugins/check_spop
 usr/lib/nagios/plugins/check_ssh
+usr/lib/nagios/plugins/check_ssl_validity
 usr/lib/nagios/plugins/check_ssmtp
 usr/lib/nagios/plugins/check_swap
 usr/lib/nagios/plugins/check_tcp
@@ -60,6 +61,7 @@ usr/lib/nagios/plugins/check_uptime
 usr/lib/nagios/plugins/check_users
 usr/lib/nagios/plugins/check_wave
 usr/lib/nagios/plugins/negate
+usr/lib/nagios/plugins/remove_perfdata
 usr/lib/nagios/plugins/urlize
 usr/lib/nagios/plugins/utils.pm
 usr/lib/nagios/plugins/utils.sh
