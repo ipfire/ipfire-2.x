@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 9.1.4
+VER        = 9.3.4
 
 THISAPP    = dhcpcd-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = dd77711cf3232002bb075f5210269f88
+$(DL_FILE)_MD5 = badb02dfc69fe9bbeec35a02efcdb4db
 
 install : $(TARGET)
 
@@ -70,6 +70,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dhcpcd/01_Fix_Linux_i386_for_SECCOMP_as_it_just_uses_socketcall.patch
+
 	cd $(DIR_APP) && ./configure --prefix="" --sysconfdir=/var/ipfire/dhcpc \
 			--dbdir=/var/ipfire/dhcpc \
 			--libexecdir=/var/ipfire/dhcpc \
