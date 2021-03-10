@@ -1,2 +1,3 @@
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/leds
+etc/rc.d/init.d/networking/functions.network
