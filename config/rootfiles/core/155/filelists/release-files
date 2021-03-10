@@ -1,4 +1,5 @@
 etc/system-release
 etc/issue
 etc/os-release
+srv/web/ipfire/cgi-bin/credits.cgi
 var/ipfire/langs
