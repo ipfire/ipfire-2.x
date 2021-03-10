@@ -41,6 +41,11 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/arpd.8
 #usr/share/man/man8/bridge.8
 #usr/share/man/man8/ctstat.8
+#usr/share/man/man8/dcb-buffer.8
+#usr/share/man/man8/dcb-ets.8
+#usr/share/man/man8/dcb-maxrate.8
+#usr/share/man/man8/dcb-pfc.8
+#usr/share/man/man8/dcb.8
 #usr/share/man/man8/devlink-dev.8
 #usr/share/man/man8/devlink-dpipe.8
 #usr/share/man/man8/devlink-health.8
