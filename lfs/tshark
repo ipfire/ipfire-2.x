@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.4.2
+VER        = 3.4.3
 
 THISAPP    = wireshark-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = cf35d1413e7e3b1429ac7f12c823ccd4
+$(DL_FILE)_MD5 = 7988932a5e3930fa6035b8f8b584f0d8
 
 install : $(TARGET)
 
