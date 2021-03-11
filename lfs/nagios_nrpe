@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nagios_nrpe
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       = nagios-plugins
 
@@ -95,6 +95,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# install initscript
 	$(call INSTALL_INITSCRIPT,nrpe)
+
+	install -v -m 644 ${DIR_SRC}/config/backup/includes/nagios_nrpe \
+		/var/ipfire/backup/addons/includes/nagios_nrpe
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

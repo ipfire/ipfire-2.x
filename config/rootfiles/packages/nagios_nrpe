@@ -6,3 +6,4 @@ etc/rc.d/init.d/nrpe
 usr/bin/nrpe
 #usr/lib/nagios
 usr/lib/nagios/check_nrpe
+var/ipfire/backup/addons/includes/nagios_nrpe
