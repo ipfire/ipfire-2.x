@@ -58,7 +58,6 @@ usr/bin/fallocate
 usr/bin/flock
 usr/bin/getopt
 #usr/bin/hexdump
-#usr/bin/i386
 usr/bin/ionice
 #usr/bin/ipcmk
 #usr/bin/ipcrm
@@ -91,14 +90,20 @@ usr/bin/tailf
 #usr/bin/ul
 #usr/bin/uname26
 #usr/bin/unshare
+usr/bin/uuidgen
 #usr/bin/whereis
+#usr/include/blkid
+#usr/include/blkid/blkid.h
 #usr/include/libfdisk
 #usr/include/libfdisk/libfdisk.h
 #usr/include/libmount
 #usr/include/libmount/libmount.h
 #usr/include/libsmartcols
 #usr/include/libsmartcols/libsmartcols.h
+#usr/include/uuid
+#usr/include/uuid/uuid.h
 #usr/lib/libblkid.la
+#usr/lib/libblkid.so
 #usr/lib/libfdisk.la
 #usr/lib/libfdisk.so
 #usr/lib/libmount.la
@@ -289,7 +294,6 @@ usr/sbin/rtcwake
 #usr/share/man/man8/fsfreeze.8
 #usr/share/man/man8/fstrim.8
 #usr/share/man/man8/hwclock.8
-#usr/share/man/man8/i386.8
 #usr/share/man/man8/isosize.8
 #usr/share/man/man8/ldattach.8
 #usr/share/man/man8/linux32.8

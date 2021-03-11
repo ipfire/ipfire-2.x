@@ -6,6 +6,7 @@ bin/pidof
 sbin/halt
 sbin/init
 sbin/killall5
+sbin/logsave
 sbin/poweroff
 sbin/reboot
 sbin/runlevel
@@ -34,6 +35,7 @@ usr/bin/wall
 #usr/share/man/man8/halt.8
 #usr/share/man/man8/init.8
 #usr/share/man/man8/killall5.8
+#usr/share/man/man8/logsave.8
 #usr/share/man/man8/pidof.8
 #usr/share/man/man8/poweroff.8
 #usr/share/man/man8/reboot.8
