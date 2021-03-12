@@ -3,7 +3,6 @@ etc/suricata/suricata.yaml
 #root/.cargo
 #root/.cargo/.package-cache
 usr/bin/suricata
-#usr/include/suricata-plugin.h
 #usr/share/doc/suricata
 #usr/share/doc/suricata/AUTHORS
 #usr/share/doc/suricata/Basic_Setup.txt
@@ -17,6 +16,9 @@ usr/bin/suricata
 #usr/share/doc/suricata/TODO
 #usr/share/doc/suricata/Third_Party_Installation_Guides.txt
 #usr/share/man/man1/suricata.1
+#usr/share/man/man1/suricatactl-filestore.1
+#usr/share/man/man1/suricatactl.1
+#usr/share/man/man1/suricatasc.1
 var/lib/suricata
 var/lib/suricata/classification.config
 var/lib/suricata/reference.config

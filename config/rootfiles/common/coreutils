@@ -258,7 +258,9 @@ usr/sbin/chroot
 #usr/share/man/man1/csplit.1
 #usr/share/man/man1/cut.1
 #usr/share/man/man1/date.1
+#usr/share/man/man1/dir.1
 #usr/share/man/man1/dirname.1
+#usr/share/man/man1/du.1
 #usr/share/man/man1/echo.1
 #usr/share/man/man1/env.1
 #usr/share/man/man1/expand.1
@@ -273,8 +275,11 @@ usr/sbin/chroot
 #usr/share/man/man1/id.1
 #usr/share/man/man1/join.1
 #usr/share/man/man1/link.1
+#usr/share/man/man1/ln.1
 #usr/share/man/man1/logname.1
 #usr/share/man/man1/md5sum.1
+#usr/share/man/man1/mkdir.1
+#usr/share/man/man1/mknod.1
 #usr/share/man/man1/mktemp.1
 #usr/share/man/man1/nice.1
 #usr/share/man/man1/nl.1
@@ -292,6 +297,7 @@ usr/sbin/chroot
 #usr/share/man/man1/pwd.1
 #usr/share/man/man1/readlink.1
 #usr/share/man/man1/realpath.1
+#usr/share/man/man1/rm.1
 #usr/share/man/man1/runcon.1
 #usr/share/man/man1/seq.1
 #usr/share/man/man1/sha1sum.1
