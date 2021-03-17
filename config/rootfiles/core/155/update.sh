@@ -69,6 +69,9 @@ ln -s /dev/initctl /run/initctl
 sed -E -e "s/^CONNTRACK_(.*?)=on/CONNTRACK_\1=off/g" \
 	-i /var/ipfire/optionsfw/settings
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
