@@ -82,7 +82,7 @@ sed -E -e "s/^CONNTRACK_(.*?)=on/CONNTRACK_\1=off/g" \
 /etc/init.d/suricata restart
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
