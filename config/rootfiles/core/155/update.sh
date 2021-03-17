@@ -60,6 +60,9 @@ extract_files
 # update linker config
 ldconfig
 
+# Create a symlink from /run/initctl to /dev/initctl
+ln -s /dev/initctl /run/initctl
+
 # Disable all connection tracking helper
 sed -E -e "s/^CONNTRACK_(.*?)=on/CONNTRACK_\1=off/g" \
 	-i /var/ipfire/optionsfw/settings
