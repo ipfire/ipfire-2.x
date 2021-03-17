@@ -33,6 +33,8 @@ done
 
 # Remove files
 rm -vrf \
+	/lib/libcrypt.so.1 \
+	/lib/libcrypt-2.32.so \
 	/lib/libhistory.so.6 \
 	/lib/libhistory.so.6.3 \
 	/lib/libreadline.so.6 \
