@@ -33,6 +33,8 @@ done
 
 # Remove files
 rm -vrf \
+	/lib/libcrypt.so.1 \
+	/lib/libcrypt-2.32.so \
 	/lib/libhistory.so.6 \
 	/lib/libhistory.so.6.3 \
 	/lib/libreadline.so.6 \
@@ -60,9 +62,15 @@ extract_files
 # update linker config
 ldconfig
 
+# Create a symlink from /run/initctl to /dev/initctl
+ln -s /dev/initctl /run/initctl
+
 # Disable all connection tracking helper
 sed -E -e "s/^CONNTRACK_(.*?)=on/CONNTRACK_\1=off/g" \
 	-i /var/ipfire/optionsfw/settings
+
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
 
 # Update Language cache
 /usr/local/bin/update-lang-cache
@@ -79,7 +87,7 @@ sed -E -e "s/^CONNTRACK_(.*?)=on/CONNTRACK_\1=off/g" \
 /etc/init.d/suricata restart
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
