@@ -169,10 +169,6 @@ sub downloadruleset {
 		return 1;
 	}
 
-	# Get all available ruleset locations.
-	my %rulesetsources=();
-	&General::readhash($rulesetsourcesfile, \%rulesetsources);
-
 	# Read proxysettings.
 	my %proxysettings=();
 	&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
@@ -205,7 +201,7 @@ sub downloadruleset {
 	}
 
 	# Grab the right url based on the configured vendor.
-	my $url = $rulesetsources{$rulessettings{'RULES'}};
+	my $url = $IDS::Ruleset::Providers{$rulessettings{'RULES'}}{'dl_url'};
 
 	# Check if the vendor requires an oinkcode and add it if needed.
 	$url =~ s/\<oinkcode\>/$rulessettings{'OINKCODE'}/g;
