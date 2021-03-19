@@ -1,15 +1,69 @@
-# Ruleset for registered sourcefire users.
-registered = https://www.snort.org/rules/snortrules-snapshot-29161.tar.gz?oinkcode=<oinkcode>
+package IDS::Ruleset;
 
-# Ruleset for registered sourcefire users with valid subscription.
-subscripted = https://www.snort.org/rules/snortrules-snapshot-29161.tar.gz?oinkcode=<oinkcode>
+# This file contains the supported ruleset providers.
+#
+# Each one is defined as a hash in the main hash.
+# It's name acts as handle/key and the key/value pair acts as data part.
+# So the structure is like the following:
+#
+# handle => {
+# 	summary => A short summary of the service. This also will be shown if no translation string is available for the WUI.
+# 	website => The website of the ruleset provider.
+# 	tr_string => The translation string which is used by the WUI and part of the language files.
+# 	requires_subscription => "True/False" - If some kind of registration code is required in order to download the ruleset.
+# 	dl_url => The download URL to grab the ruleset.
+# 	dl_type => "archive/file" - To specify, if the downloaded file is a packed archive or a plain text file.
+# },
 
-# Community rules from sourcefire.
-community = https://www.snort.org/rules/community
+# Hash which contains the supported ruleset providers.
+our %Providers = (
+	# Ruleset for registered sourcefire users.
+	registered => {
+		summary => "Talos VRT rules for registered users",
+		website => "https://www.snort.org",
+		tr_string => "registered user rules",
+		requires_subscription => "True",
+		dl_url => "https://www.snort.org/rules/snortrules-snapshot-29161.tar.gz?oinkcode=<oinkcode>",
+		dl_type => "archive",
+	},
 
-# Emerging threads community rules.
-emerging = https://rules.emergingthreats.net/open/suricata-5.0/emerging.rules.tar.gz
+	# Ruleset for registered sourcefire users with a valid subsription.
+	subscripted => {
+		summary => "Talos VRT rules with subscription",
+		website => "https://www.snort.org",
+		tr_string => "subscripted user rules",
+		requires_subscription => "True",
+		dl_url => "https://www.snort.org/rules/snortrules-snapshot-29161.tar.gz?oinkcode=<oinkcode>",
+		dl_type => "archive",
+	},
 
-# Emerging threads pro rules.
-emerging_pro = https://rules.emergingthreatspro.com/<oinkcode>/suricata-5.0/etpro.rules.tar.gz
+	# Community rules from sourcefire.
+	community => {
+		summary => "Snort/VRT GPLv2 Community Rules",
+		website => "https://www.snort.ort",
+		tr_string => "community rules",
+		requires_subscription => "False",
+		dl_url => "https://www.snort.org/rules/community",
+		dl_type => "archive",
+	},
 
+	# Emerging threads community rules.
+	emerging => {
+		summary => "Emergingthreats.net Community Rules",
+		website => "https://emergingtreads.net",
+		tr_string => "emerging rules",
+		requires_subscription => "False",
+		dl_url => "https://rules.emergingthreats.net/open/suricata-5.0/emerging.rules.tar.gz",
+		dl_type => "archive",
+	},
+
+	# Emerging threads Pro rules.
+	emerging_pro => {
+		summary => "Emergingthreats.net Pro Rules",
+		website => "https://emergingtreads.net",
+		tr_string => "emerging pro rules",
+		requires_subscription => "True",
+		dl_url => "https://rules.emergingthreatspro.com/<oinkcode>/suricata-5.0/etpro.rules.tar.gz",
+		dl_type => "archive",
+	},
+);
