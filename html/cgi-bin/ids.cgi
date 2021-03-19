@@ -31,6 +31,9 @@ require "${General::swroot}/header.pl";
 require "${General::swroot}/ids-functions.pl";
 require "${General::swroot}/network-functions.pl";
 
+# Import ruleset providers file.
+require "$IDS::rulesetsourcesfile";
+
 my %color = ();
 my %mainsettings = ();
 my %idsrules = ();
@@ -324,17 +327,11 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	# Read-in current (old) IDS settings.
 	&General::readhash("$IDS::rules_settings_file", \%oldsettings);
 
-	# Get all available ruleset locations.
-	&General::readhash("$IDS::rulesetsourcesfile", \%rulesetsources);
-
 	# Prevent form name from been stored in conf file.
 	delete $cgiparams{'RULESET'};
 
-	# Grab the URL based on the choosen vendor.
-	my $url = $rulesetsources{$cgiparams{'RULES'}};
-
 	# Check if the choosen vendor (URL) requires an subscription/oinkcode.
-	if ($url =~ /\<oinkcode\>/ ) {
+	if ($IDS::Ruleset::Providers{$cgiparams{'RULES'}}{'requires_subscription'} eq "True") {
 		# Check if an subscription/oinkcode has been provided.
 		if ($cgiparams{'OINKCODE'}) {
 			# Check if the oinkcode contains unallowed chars.
@@ -689,10 +686,6 @@ $checked{'MONITOR_TRAFFIC_ONLY'}{'off'} = '';
 $checked{'MONITOR_TRAFFIC_ONLY'}{'on'} = '';
 $checked{'MONITOR_TRAFFIC_ONLY'}{$idssettings{'MONITOR_TRAFFIC_ONLY'}} = "checked='checked'";
 $selected{'RULES'}{'nothing'} = '';
-$selected{'RULES'}{'community'} = '';
-$selected{'RULES'}{'emerging'} = '';
-$selected{'RULES'}{'registered'} = '';
-$selected{'RULES'}{'subscripted'} = '';
 $selected{'RULES'}{$rulessettings{'RULES'}} = "selected='selected'";
 $selected{'AUTOUPDATE_INTERVAL'}{'off'} = '';
 $selected{'AUTOUPDATE_INTERVAL'}{'daily'} = '';
@@ -902,11 +895,30 @@ print <<END
 
 		<tr>
 			<td><select name='RULES' id='RULES'>
-				<option value='emerging' $selected{'RULES'}{'emerging'} >$Lang::tr{'emerging rules'}</option>
-				<option value='emerging_pro' $selected{'RULES'}{'emerging_pro'} >$Lang::tr{'emerging pro rules'}</option>
-				<option value='community' $selected{'RULES'}{'community'} >$Lang::tr{'community rules'}</option>
-				<option value='registered' $selected{'RULES'}{'registered'} >$Lang::tr{'registered user rules'}</option>
-				<option value='subscripted' $selected{'RULES'}{'subscripted'} >$Lang::tr{'subscripted user rules'}</option>
+END
+;
+			# Get all available ruleset providers.
+			my @ruleset_providers = &IDS::get_ruleset_providers();
+
+			# Loop throgh the list of providers.
+			foreach my $provider (@ruleset_providers) {
+				my $option_string;
+
+				# Get the translation required string for the current provider.
+				my $tr_string = $IDS::Ruleset::Providers{$provider}{'tr_string'};
+
+				# Check if a translation string is available in the language files.
+				if ($Lang::tr{$tr_string}) {
+					# Use the translated string from the language file.
+					$option_string = $Lang::tr{$tr_string};
+				} else {
+					# Fallback and use the provider summary from the providers file.
+					$option_string = $IDS::Ruleset::Providers{$provider}{'summary'};
+				}
+
+				print "<option value='$provider' $selected{'RULES'}{$provider}>$option_string</option>\n";
+			}
+print <<END;
 			</select>
 			</td>
 
