@@ -113,6 +113,24 @@ sub check_and_create_filelayout() {
 }
 
 #
+## Function to get a list of all available ruleset providers.
+##
+## They will be returned as a sorted array.
+#
+sub get_ruleset_providers() {
+	my @providers;
+
+	# Loop through the hash of providers.
+	foreach my $provider ( keys %IDS::Ruleset::Providers ) {
+		# Add the provider to the array.
+		push(@providers, $provider);
+	}
+
+	# Sort and return the array.
+	return sort(@providers);
+}
+
+#
 ## Function for checking if at least 300MB of free disk space are available
 ## on the "/var" partition.
 #
