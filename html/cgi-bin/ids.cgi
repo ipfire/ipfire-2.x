@@ -39,7 +39,6 @@ my %mainsettings = ();
 my %idsrules = ();
 my %idssettings=();
 my %rulessettings=();
-my %rulesetsources = ();
 my %cgiparams=();
 my %checked=();
 my %selected=();
@@ -322,7 +321,6 @@ if(-f $IDS::used_rulefiles_file) {
 # Save ruleset configuration.
 if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	my %oldsettings;
-	my %rulesetsources;
 
 	# Read-in current (old) IDS settings.
 	&General::readhash("$IDS::rules_settings_file", \%oldsettings);
