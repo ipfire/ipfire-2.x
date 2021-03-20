@@ -1094,6 +1094,16 @@ END
 
 # Only show the section for configuring the ruleset if one is present.
 if (%idsrules) {
+	&show_customize_ruleset();
+}
+
+&Header::closebigbox();
+&Header::closepage();
+
+#
+## Function to show the customize ruleset section.
+#
+sub show_customize_ruleset() {
 	# Load neccessary perl modules for file stat and to format the timestamp.
 	use File::stat;
 	use POSIX qw( strftime );
@@ -1212,9 +1222,6 @@ END
 		&Header::closebox();
 	}
 }
-
-&Header::closebigbox();
-&Header::closepage();
 
 #
 ## A function to display a notice, to lock the webpage and
