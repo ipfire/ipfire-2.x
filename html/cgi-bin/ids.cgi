@@ -900,20 +900,10 @@ END
 
 			# Loop throgh the list of providers.
 			foreach my $provider (@ruleset_providers) {
-				my $option_string;
+				# Call get_provider_name function to obtain the provider name.
+				my $option_string = &get_provider_name($provider);
 
-				# Get the translation required string for the current provider.
-				my $tr_string = $IDS::Ruleset::Providers{$provider}{'tr_string'};
-
-				# Check if a translation string is available in the language files.
-				if ($Lang::tr{$tr_string}) {
-					# Use the translated string from the language file.
-					$option_string = $Lang::tr{$tr_string};
-				} else {
-					# Fallback and use the provider summary from the providers file.
-					$option_string = $IDS::Ruleset::Providers{$provider}{'summary'};
-				}
-
+				# Print option.
 				print "<option value='$provider' $selected{'RULES'}{$provider}>$option_string</option>\n";
 			}
 print <<END;
@@ -1397,6 +1387,29 @@ sub read_enabled_disabled_sids_file($) {
 
 	# Return the hash.
 	return %temphash;
+}
+
+#
+## Function to get the provider name from the language file or providers file for a given handle.
+#
+sub get_provider_name($) {
+	my ($handle) = @_;
+	my $provider_name;
+
+	# Get the required translation string for the given provider handle.
+	my $tr_string = $IDS::Ruleset::Providers{$handle}{'tr_string'};
+
+	# Check if the translation string is available in the language files.
+	if ($Lang::tr{$tr_string}) {
+		# Use the translated string from the language file.
+		$provider_name = $Lang::tr{$tr_string};
+	} else {
+		# Fallback and use the provider summary from the providers file.
+		$provider_name = $IDS::Ruleset::Providers{$handle}{'summary'};
+	}
+
+	# Return the obtained provider name.
+	return $provider_name;
 }
 
 #
