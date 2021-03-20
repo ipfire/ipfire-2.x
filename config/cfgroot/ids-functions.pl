@@ -25,6 +25,7 @@ package IDS;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/network-functions.pl";
+require "${General::swroot}/suricata/ruleset-sources";
 
 # Location where all config and settings files are stored.
 our $settingsdir = "${General::swroot}/suricata";
