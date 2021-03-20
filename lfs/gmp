@@ -77,6 +77,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && \
 		$(CONFIGURE_ARGS) \
 		./configure \
+			--build=${BUILDTARGET} \
 			--prefix=/usr \
 			--enable-cxx
 	cd $(DIR_APP) && make $(MAKETUNING)
