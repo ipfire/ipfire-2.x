@@ -667,299 +667,299 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	}
 }
 
-# Read-in idssettings and rulesetsettings
-&General::readhash("$IDS::ids_settings_file", \%idssettings);
-&General::readhash("$IDS::rules_settings_file", \%rulessettings);
-
-# If no autoupdate intervall has been configured yet, set default value.
-unless(exists($rulessettings{'AUTOUPDATE_INTERVAL'})) {
-	# Set default to "weekly".
-	$rulessettings{'AUTOUPDATE_INTERVAL'} = 'weekly';
-}
-
-# Read-in ignored hosts.
-&General::readhasharray("$IDS::settingsdir/ignored", \%ignored);
-
-$checked{'ENABLE_IDS'}{'off'} = '';
-$checked{'ENABLE_IDS'}{'on'} = '';
-$checked{'ENABLE_IDS'}{$idssettings{'ENABLE_IDS'}} = "checked='checked'";
-$checked{'MONITOR_TRAFFIC_ONLY'}{'off'} = '';
-$checked{'MONITOR_TRAFFIC_ONLY'}{'on'} = '';
-$checked{'MONITOR_TRAFFIC_ONLY'}{$idssettings{'MONITOR_TRAFFIC_ONLY'}} = "checked='checked'";
-$selected{'RULES'}{'nothing'} = '';
-$selected{'RULES'}{$rulessettings{'RULES'}} = "selected='selected'";
-$selected{'AUTOUPDATE_INTERVAL'}{'off'} = '';
-$selected{'AUTOUPDATE_INTERVAL'}{'daily'} = '';
-$selected{'AUTOUPDATE_INTERVAL'}{'weekly'} = '';
-$selected{'AUTOUPDATE_INTERVAL'}{$rulessettings{'AUTOUPDATE_INTERVAL'}} = "selected='selected'";
-
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
-
-### Java Script ###
-print"<script>\n";
-
-# Java script variable declaration for show and hide.
-print"var show = \"$Lang::tr{'ids show'}\"\;\n";
-print"var hide = \"$Lang::tr{'ids hide'}\"\;\n";
-
-print <<END
-	// Java Script function to show/hide the text input field for
-	// Oinkcode/Subscription code.
-	var update_code = function() {
-		if(\$('#RULES').val() == 'registered') {
-			\$('#code').show();
-		} else if(\$('#RULES').val() == 'subscripted') {
-			\$('#code').show();
-		} else if(\$('#RULES').val() == 'emerging_pro') {
-			\$('#code').show();
-		} else {
-			\$('#code').hide();
-		}
-	};
-
-	// JQuery function to call corresponding function when
-	// the ruleset is changed or the page is loaded for showing/hiding
-	// the code area.
-	\$(document).ready(function() {
-		\$('#RULES').change(update_code);
-		update_code();
-	});
-
-	// Tiny java script function to show/hide the rules
-	// of a given category.
-	function showhide(tblname) {
-		\$("#" + tblname).toggle();
-
-		// Get current content of the span element.
-		var content = document.getElementById("span_" + tblname);
-
-		if (content.innerHTML === show) {
-			content.innerHTML = hide;
-		} else {
-			content.innerHTML = show;
-		}
-	}
-</script>
-END
-;
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
-if ($errormessage) {
-	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
-	print "<class name='base'>$errormessage\n";
-	print "&nbsp;</class>\n";
-	&Header::closebox();
-}
+&show_display_error_message();
 
-# Draw current state of the IDS
-&Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system'});
-
-# Check if the IDS is running and obtain the process-id.
-my $pid = &IDS::ids_is_running();
-
-# Display some useful information, if suricata daemon is running.
-if ($pid) {
-	# Gather used memory.
-	my $memory = &get_memory_usage($pid);
-
-	print <<END;
-		<table width='95%' cellspacing='0' class='tbl'>
-			<tr>
-				<th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'intrusion detection'}</strong></th>
-			</tr>
-
-			<tr>
-				<td class='base'>$Lang::tr{'guardian daemon'}</td>
-				<td align='center' colspan='2' width='75%' bgcolor='${Header::colourgreen}'><font color='white'><strong>$Lang::tr{'running'}</strong></font></td>
-			</tr>
-
-			<tr>
-				<td class='base'></td>
-				<td bgcolor='$color{'color20'}' align='center'><strong>PID</strong></td>
-				<td bgcolor='$color{'color20'}' align='center'><strong>$Lang::tr{'memory'}</strong></td>
-			</tr>
-
-			<tr>
-				<td class='base'></td>
-				<td bgcolor='$color{'color22'}' align='center'>$pid</td>
-				<td bgcolor='$color{'color22'}' align='center'>$memory KB</td>
-			</tr>
-		</table>
-END
+if ($cgiparams{'RULESET'} eq "$Lang::tr{'ids customize ruleset'}" ) {
+	&show_customize_ruleset();
 } else {
-	# Otherwise display a hint that the service is not launched.
-	print <<END;
-		<table width='95%' cellspacing='0' class='tbl'>
-			<tr>
-				<th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'intrusion detection'}</strong></th>
-			</tr>
-
-			<tr>
-				<td class='base'>$Lang::tr{'guardian daemon'}</td>
-				<td align='center' width='75%' bgcolor='${Header::colourred}'><font color='white'><strong>$Lang::tr{'stopped'}</strong></font></td>
-			</tr>
-		</table>
-END
+	&show_mainpage();
 }
 
-# Only show this area, if a ruleset is present.
-if (%idsrules) {
+&Header::closebigbox();
+&Header::closepage();
 
-	print <<END
+#
+## Tiny function to show if a error message happened.
+#
+sub show_display_error_message() {
+	if ($errormessage) {
+		&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
+			print "<class name='base'>$errormessage\n";
+			print "&nbsp;</class>\n";
+		&Header::closebox();
+	}
+}
 
-	<br><br><h2>$Lang::tr{'settings'}</h2>
+#
+## Function to display the main IDS page.
+#
+sub show_mainpage() {
+	# Read-in idssettings and rulesetsettings
+	&General::readhash("$IDS::ids_settings_file", \%idssettings);
+	&General::readhash("$IDS::rules_settings_file", \%rulessettings);
 
-	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='100%' border='0'>
-			<tr>
-				<td class='base' colspan='2'>
-					<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>&nbsp;$Lang::tr{'ids enable'}
-				</td>
+	# If no autoupdate intervall has been configured yet, set default value.
+	unless(exists($rulessettings{'AUTOUPDATE_INTERVAL'})) {
+		# Set default to "weekly".
+		$rulessettings{'AUTOUPDATE_INTERVAL'} = 'weekly';
+	}
 
-				<td class='base' colspan='2'>
-					<input type='checkbox' name='MONITOR_TRAFFIC_ONLY' $checked{'MONITOR_TRAFFIC_ONLY'}{'on'}>&nbsp;$Lang::tr{'ids monitor traffic only'}
-			</td>
-			</tr>
+	# Read-in ignored hosts.
+	&General::readhasharray("$IDS::settingsdir/ignored", \%ignored);
 
-			<tr>
-				<td><br><br></td>
-				<td><br><br></td>
-				<td><br><br></td>
-				<td><br><br></td>
-			</tr>
+	$checked{'ENABLE_IDS'}{'off'} = '';
+	$checked{'ENABLE_IDS'}{'on'} = '';
+	$checked{'ENABLE_IDS'}{$idssettings{'ENABLE_IDS'}} = "checked='checked'";
+	$checked{'MONITOR_TRAFFIC_ONLY'}{'off'} = '';
+	$checked{'MONITOR_TRAFFIC_ONLY'}{'on'} = '';
+	$checked{'MONITOR_TRAFFIC_ONLY'}{$idssettings{'MONITOR_TRAFFIC_ONLY'}} = "checked='checked'";
+	$selected{'RULES'}{'nothing'} = '';
+	$selected{'RULES'}{$rulessettings{'RULES'}} = "selected='selected'";
+	$selected{'AUTOUPDATE_INTERVAL'}{'off'} = '';
+	$selected{'AUTOUPDATE_INTERVAL'}{'daily'} = '';
+	$selected{'AUTOUPDATE_INTERVAL'}{'weekly'} = '';
+	$selected{'AUTOUPDATE_INTERVAL'}{$rulessettings{'AUTOUPDATE_INTERVAL'}} = "selected='selected'";
 
-			<tr>
-				<td colspan='4'><b>$Lang::tr{'ids monitored interfaces'}</b><br></td>
-			</tr>
+	### Java Script ###
+	print "<script>\n";
+print <<END
+		// Java Script function to show/hide the text input field for
+		// Oinkcode/Subscription code.
+		var update_code = function() {
+			if(\$('#RULES').val() == 'registered') {
+				\$('#code').show();
+			} else if(\$('#RULES').val() == 'subscripted') {
+				\$('#code').show();
+			} else if(\$('#RULES').val() == 'emerging_pro') {
+				\$('#code').show();
+			} else {
+				\$('#code').hide();
+			}
+		};
 
-			<tr>
+		// JQuery function to call corresponding function when
+		// the ruleset is changed or the page is loaded for showing/hiding
+		// the code area.
+		\$(document).ready(function() {
+			\$('#RULES').change(update_code);
+			update_code();
+		});
+	</script>
 END
 ;
 
-	# Loop through the array of available networks and print config options.
-	foreach my $zone (@network_zones) {
-		my $checked_input;
-		my $checked_forward;
+	# Draw current state of the IDS
+	&Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system'});
 
-		# Convert current zone name to upper case.
-		my $zone_upper = uc($zone);
+	# Check if the IDS is running and obtain the process-id.
+	my $pid = &IDS::ids_is_running();
 
-		# Set zone name.
-		my $zone_name = $zone;
+	# Display some useful information, if suricata daemon is running.
+	if ($pid) {
+		# Gather used memory.
+		my $memory = &get_memory_usage($pid);
 
-		# Dirty hack to get the correct language string for the red zone.
-		if ($zone eq "red") {
-			$zone_name = "red1";
-		}
+		print <<END;
+			<table width='95%' cellspacing='0' class='tbl'>
+				<tr>
+					<th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'intrusion detection'}</strong></th>
+				</tr>
 
-		# Grab checkbox status from settings hash.
-		if ($idssettings{"ENABLE_IDS_$zone_upper"} eq "on") {
-			$checked_input = "checked = 'checked'";
-		}
+				<tr>
+					<td class='base'>$Lang::tr{'guardian daemon'}</td>
+					<td align='center' colspan='2' width='75%' bgcolor='${Header::colourgreen}'><font color='white'><strong>$Lang::tr{'running'}</strong></font></td>
+				</tr>
 
-		print "<td class='base' width='20%'>\n";
-		print "<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>\n";
-		print "&nbsp;$Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>\n";
-		print "</td>\n";
+				<tr>
+					<td class='base'></td>
+					<td bgcolor='$color{'color20'}' align='center'><strong>PID</strong></td>
+					<td bgcolor='$color{'color20'}' align='center'><strong>$Lang::tr{'memory'}</strong></td>
+				</tr>
+
+				<tr>
+					<td class='base'></td>
+					<td bgcolor='$color{'color22'}' align='center'>$pid</td>
+					<td bgcolor='$color{'color22'}' align='center'>$memory KB</td>
+				</tr>
+			</table>
+END
+	} else {
+		# Otherwise display a hint that the service is not launched.
+		print <<END;
+			<table width='95%' cellspacing='0' class='tbl'>
+				<tr>
+					<th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'intrusion detection'}</strong></th>
+				</tr>
+
+				<tr>
+					<td class='base'>$Lang::tr{'guardian daemon'}</td>
+					<td align='center' width='75%' bgcolor='${Header::colourred}'><font color='white'><strong>$Lang::tr{'stopped'}</strong></font></td>
+				</tr>
+			</table>
+END
 	}
 
+	# Only show this area, if a ruleset is present.
+	if (%idsrules) {
+
 print <<END
-			</tr>
-		</table>
 
-		<br><br>
+		<br><br><h2>$Lang::tr{'settings'}</h2>
 
-		<table width='100%'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<table width='100%' border='0'>
+				<tr>
+					<td class='base' colspan='2'>
+						<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>&nbsp;$Lang::tr{'ids enable'}
+					</td>
+
+					<td class='base' colspan='2'>
+						<input type='checkbox' name='MONITOR_TRAFFIC_ONLY' $checked{'MONITOR_TRAFFIC_ONLY'}{'on'}>&nbsp;$Lang::tr{'ids monitor traffic only'}
+				</td>
+				</tr>
+
+				<tr>
+					<td><br><br></td>
+					<td><br><br></td>
+					<td><br><br></td>
+					<td><br><br></td>
+				</tr>
+
+				<tr>
+					<td colspan='4'><b>$Lang::tr{'ids monitored interfaces'}</b><br></td>
+				</tr>
+
+				<tr>
+END
+;
+
+		# Loop through the array of available networks and print config options.
+		foreach my $zone (@network_zones) {
+			my $checked_input;
+			my $checked_forward;
+
+			# Convert current zone name to upper case.
+			my $zone_upper = uc($zone);
+
+			# Set zone name.
+			my $zone_name = $zone;
+
+			# Dirty hack to get the correct language string for the red zone.
+			if ($zone eq "red") {
+				$zone_name = "red1";
+			}
+
+			# Grab checkbox status from settings hash.
+			if ($idssettings{"ENABLE_IDS_$zone_upper"} eq "on") {
+				$checked_input = "checked = 'checked'";
+			}
+
+			print "<td class='base' width='20%'>\n";
+			print "<input type='checkbox' name='ENABLE_IDS_$zone_upper' $checked_input>\n";
+			print "&nbsp;$Lang::tr{'enabled on'}<font color='$colourhash{$zone}'> $Lang::tr{$zone_name}</font>\n";
+			print "</td>\n";
+		}
+
+print <<END
+				</tr>
+			</table>
+
+			<br><br>
+
+			<table width='100%'>
+				<tr>
+					<td align='right'><input type='submit' name='IDS' value='$Lang::tr{'save'}' /></td>
+				</tr>
+			</table>
+		</form>
+END
+;
+
+	}
+
+	&Header::closebox();
+
+	# Draw elements for ruleset configuration.
+	&Header::openbox('100%', 'center', $Lang::tr{'ids ruleset settings'});
+
+print <<END
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<table width='100%' border='0'>
 			<tr>
-				<td align='right'><input type='submit' name='IDS' value='$Lang::tr{'save'}' /></td>
+				<td><b>$Lang::tr{'ids rules update'}</b></td>
+				<td><b>$Lang::tr{'ids automatic rules update'}</b></td>
+			</tr>
+
+			<tr>
+				<td><select name='RULES' id='RULES'>
+END
+;
+				# Get all available ruleset providers.
+				my @ruleset_providers = &IDS::get_ruleset_providers();
+
+				# Loop throgh the list of providers.
+				foreach my $provider (@ruleset_providers) {
+					# Call get_provider_name function to obtain the provider name.
+					my $option_string = &get_provider_name($provider);
+
+					# Print option.
+					print "<option value='$provider' $selected{'RULES'}{$provider}>$option_string</option>\n";
+				}
+print <<END;
+				</select>
+				</td>
+
+				<td>
+					<select name='AUTOUPDATE_INTERVAL'>
+						<option value='off' $selected{'AUTOUPDATE_INTERVAL'}{'off'} >- $Lang::tr{'Disabled'} -</option>
+						<option value='daily' $selected{'AUTOUPDATE_INTERVAL'}{'daily'} >$Lang::tr{'Daily'}</option>
+						<option value='weekly' $selected{'AUTOUPDATE_INTERVAL'}{'weekly'} >$Lang::tr{'Weekly'}</option>
+					</select>
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan='2'><br><br></td>
+			</tr>
+
+			<tr style='display:none' id='code'>
+				<td colspan='2'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$rulessettings{'OINKCODE'}'></td>
+			</tr>
+
+			<tr>
+				<td>&nbsp;</td>
+
+				<td align='right'>
+END
+;
+				# Show the "Update Ruleset"-Button only if a ruleset has been downloaded yet and automatic updates are disabled.
+				if ((%idsrules) && ($rulessettings{'AUTOUPDATE_INTERVAL'} eq "off")) {
+					# Display button to update the ruleset.
+					print"<input type='submit' name='RULESET' value='$Lang::tr{'update ruleset'}'>\n";
+			}
+print <<END;
+					<input type='submit' name='RULESET' value='$Lang::tr{'ids customize ruleset'}'>
+					<input type='submit' name='RULESET' value='$Lang::tr{'save'}'>
+				</td>
+
 			</tr>
 		</table>
 	</form>
 END
 ;
 
-}
+	&Header::closebox();
 
-&Header::closebox();
+	#
+	# Whitelist / Ignorelist
+	#
+	&Header::openbox('100%', 'center', $Lang::tr{'ids ignored hosts'});
 
-# Draw elements for ruleset configuration.
-&Header::openbox('100%', 'center', $Lang::tr{'ids ruleset settings'});
-
-print <<END
-<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-        <table width='100%' border='0'>
-		<tr>
-			<td><b>$Lang::tr{'ids rules update'}</b></td>
-			<td><b>$Lang::tr{'ids automatic rules update'}</b></td>
-		</tr>
-
-		<tr>
-			<td><select name='RULES' id='RULES'>
-END
-;
-			# Get all available ruleset providers.
-			my @ruleset_providers = &IDS::get_ruleset_providers();
-
-			# Loop throgh the list of providers.
-			foreach my $provider (@ruleset_providers) {
-				# Call get_provider_name function to obtain the provider name.
-				my $option_string = &get_provider_name($provider);
-
-				# Print option.
-				print "<option value='$provider' $selected{'RULES'}{$provider}>$option_string</option>\n";
-			}
-print <<END;
-			</select>
-			</td>
-
-			<td>
-				<select name='AUTOUPDATE_INTERVAL'>
-					<option value='off' $selected{'AUTOUPDATE_INTERVAL'}{'off'} >- $Lang::tr{'Disabled'} -</option>
-					<option value='daily' $selected{'AUTOUPDATE_INTERVAL'}{'daily'} >$Lang::tr{'Daily'}</option>
-					<option value='weekly' $selected{'AUTOUPDATE_INTERVAL'}{'weekly'} >$Lang::tr{'Weekly'}</option>
-				</select>
-			</td>
-		</tr>
-
-		<tr>
-			<td colspan='2'><br><br></td>
-		</tr>
-
-		<tr style='display:none' id='code'>
-			<td colspan='2'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$rulessettings{'OINKCODE'}'></td>
-		</tr>
-
-		<tr>
-			<td>&nbsp;</td>
-
-			<td align='right'>
-END
-;
-			# Show the "Update Ruleset"-Button only if a ruleset has been downloaded yet and automatic updates are disabled.
-			if ((%idsrules) && ($rulessettings{'AUTOUPDATE_INTERVAL'} eq "off")) {
-				# Display button to update the ruleset.
-				print"<input type='submit' name='RULESET' value='$Lang::tr{'update ruleset'}'>\n";
-		}
-print <<END;
-				<input type='submit' name='RULESET' value='$Lang::tr{'ids customize ruleset'}'>
-				<input type='submit' name='RULESET' value='$Lang::tr{'save'}'>
-			</td>
-
-		</tr>
-	</table>
-</form>
-END
-;
-
-&Header::closebox();
-
-#
-# Whitelist / Ignorelist
-#
-&Header::openbox('100%', 'center', $Lang::tr{'ids ignored hosts'});
-
-print <<END;
+	print <<END;
 	<table width='100%'>
 		<tr>
 			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'ip address'}</b></td>
@@ -1027,77 +1027,95 @@ print <<END;
 							<input type='hidden' name='ID' value='$key'>
 							<input type='hidden' name='WHITELIST' value='$Lang::tr{'remove'}'>
 						</form>
-					</td>
-				</tr>
+						</td>
+					</tr>
 END
+				}
+			} else {
+				# Print notice that currently no hosts are ignored.
+				print "<tr>\n";
+				print "<td class='base' colspan='2'>$Lang::tr{'guardian no entries'}</td>\n";
+				print "</tr>\n";
 			}
-		} else {
-			# Print notice that currently no hosts are ignored.
-			print "<tr>\n";
-			print "<td class='base' colspan='2'>$Lang::tr{'guardian no entries'}</td>\n";
-			print "</tr>\n";
-		}
 
-	print "</table>\n";
+		print "</table>\n";
 
-	# Section to add new elements or edit existing ones.
+		# Section to add new elements or edit existing ones.
 print <<END;
-	<br>
-	<hr>
-	<br>
-
-	<div align='center'>
-		<table width='100%'>
+		<br>
+		<hr>
+		<br>
+	
+		<div align='center'>
+			<table width='100%'>
 END
 
-	# Assign correct headline and button text.
-	my $buttontext;
-	my $entry_address;
-	my $entry_remark;
+		# Assign correct headline and button text.
+		my $buttontext;
+		my $entry_address;
+		my $entry_remark;
 
-	# Check if an ID (key) has been given, in this case an existing entry should be edited.
-	if ($cgiparams{'ID'} ne '') {
-		$buttontext = $Lang::tr{'update'};
-			print "<tr><td class='boldbase' colspan='3'><b>$Lang::tr{'update'}</b></td></tr>\n";
+		# Check if an ID (key) has been given, in this case an existing entry should be edited.
+		if ($cgiparams{'ID'} ne '') {
+			$buttontext = $Lang::tr{'update'};
+				print "<tr><td class='boldbase' colspan='3'><b>$Lang::tr{'update'}</b></td></tr>\n";
 
-			# Grab address and remark for the given key.
-			$entry_address = $ignored{$cgiparams{'ID'}}[0];
-			$entry_remark = $ignored{$cgiparams{'ID'}}[1];
-		} else {
-			$buttontext = $Lang::tr{'add'};
-			print "<tr><td class='boldbase' colspan='3'><b>$Lang::tr{'dnsforward add a new entry'}</b></td></tr>\n";
-		}
+				# Grab address and remark for the given key.
+				$entry_address = $ignored{$cgiparams{'ID'}}[0];
+				$entry_remark = $ignored{$cgiparams{'ID'}}[1];
+			} else {
+				$buttontext = $Lang::tr{'add'};
+				print "<tr><td class='boldbase' colspan='3'><b>$Lang::tr{'dnsforward add a new entry'}</b></td></tr>\n";
+			}
 
 print <<END;
-			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-			<input type='hidden' name='ID' value='$cgiparams{'ID'}'>
-			<tr>
-				<td width='30%'>$Lang::tr{'ip address'}: </td>
-				<td width='50%'><input type='text' name='IGNORE_ENTRY_ADDRESS' value='$entry_address' size='24' /></td>
+				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<input type='hidden' name='ID' value='$cgiparams{'ID'}'>
+				<tr>
+					<td width='30%'>$Lang::tr{'ip address'}: </td>
+					<td width='50%'><input type='text' name='IGNORE_ENTRY_ADDRESS' value='$entry_address' size='24' /></td>
 
-				<td width='30%'>$Lang::tr{'remark'}: </td>
-				<td wicth='50%'><input type='text' name=IGNORE_ENTRY_REMARK value='$entry_remark' size='24' /></td>
-				<td align='center' width='20%'><input type='submit' name='WHITELIST' value='$buttontext' /></td>
-			</tr>
-			</form>
-		</table>
-	</div>
+					<td width='30%'>$Lang::tr{'remark'}: </td>
+					<td wicth='50%'><input type='text' name=IGNORE_ENTRY_REMARK value='$entry_remark' size='24' /></td>
+					<td align='center' width='20%'><input type='submit' name='WHITELIST' value='$buttontext' /></td>
+				</tr>
+				</form>
+			</table>
+		</div>
 END
 
-&Header::closebox();
-
-# Only show the section for configuring the ruleset if one is present.
-if (%idsrules) {
-	&show_customize_ruleset();
+	&Header::closebox();
 }
-
-&Header::closebigbox();
-&Header::closepage();
 
 #
 ## Function to show the customize ruleset section.
 #
 sub show_customize_ruleset() {
+	### Java Script ###
+	print"<script>\n";
+
+	# Java script variable declaration for show and hide.
+	print"var show = \"$Lang::tr{'ids show'}\"\;\n";
+	print"var hide = \"$Lang::tr{'ids hide'}\"\;\n";
+
+print <<END
+	// Tiny java script function to show/hide the rules
+	// of a given category.
+	function showhide(tblname) {
+		\$("#" + tblname).toggle();
+
+		// Get current content of the span element.
+		var content = document.getElementById("span_" + tblname);
+
+		if (content.innerHTML === show) {
+			content.innerHTML = hide;
+		} else {
+			content.innerHTML = show;
+		}
+	}
+	</script>
+END
+;
 	# Load neccessary perl modules for file stat and to format the timestamp.
 	use File::stat;
 	use POSIX qw( strftime );
