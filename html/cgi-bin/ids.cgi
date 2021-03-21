@@ -250,69 +250,72 @@ if (-e $IDS::storederrorfile) {
         unlink($IDS::storederrorfile);
 }
 
-## Grab all available rules and store them in the idsrules hash.
-#
-# Open rules directory and do a directory listing.
-opendir(DIR, $IDS::rulespath) or die $!;
-	# Loop through the direcory.
-	while (my $file = readdir(DIR)) {
+# Gather ruleset details.
+if ($cgiparams{'RULESET'}) {
+	## Grab all available rules and store them in the idsrules hash.
+	#
+	# Open rules directory and do a directory listing.
+	opendir(DIR, $IDS::rulespath) or die $!;
+		# Loop through the direcory.
+		while (my $file = readdir(DIR)) {
 
-		# We only want files.
-		next unless (-f "$IDS::rulespath/$file");
+			# We only want files.
+			next unless (-f "$IDS::rulespath/$file");
 
-		# Ignore empty files.
-		next if (-z "$IDS::rulespath/$file");
+			# Ignore empty files.
+			next if (-z "$IDS::rulespath/$file");
 
-		# Use a regular expression to find files ending in .rules
-		next unless ($file =~ m/\.rules$/);
+			# Use a regular expression to find files ending in .rules
+			next unless ($file =~ m/\.rules$/);
 
-		# Ignore files which are not read-able.
-		next unless (-R "$IDS::rulespath/$file");
+			# Ignore files which are not read-able.
+			next unless (-R "$IDS::rulespath/$file");
 
-		# Skip whitelist rules file.
-		next if( $file eq "whitelist.rules");
+			# Skip whitelist rules file.
+			next if( $file eq "whitelist.rules");
 
-		# Call subfunction to read-in rulefile and add rules to
-		# the idsrules hash.
-		&readrulesfile("$file");
-	}
+			# Call subfunction to read-in rulefile and add rules to
+			# the idsrules hash.
+			&readrulesfile("$file");
+		}
 
-closedir(DIR);
+	closedir(DIR);
 
-# Gather used rulefiles.
-#
-# Check if the file for activated rulefiles is not empty.
-if(-f $IDS::used_rulefiles_file) {
-	# Open the file for used rulefile and read-in content.
-	open(FILE, $IDS::used_rulefiles_file) or die "Could not open $IDS::used_rulefiles_file. $!\n";
+	# Gather used rulefiles.
+	#
+	# Check if the file for activated rulefiles is not empty.
+	if(-f $IDS::used_rulefiles_file) {
+		# Open the file for used rulefile and read-in content.
+		open(FILE, $IDS::used_rulefiles_file) or die "Could not open $IDS::used_rulefiles_file. $!\n";
 
-	# Read-in content.
-	my @lines = <FILE>;
+		# Read-in content.
+		my @lines = <FILE>;
 
-	# Close file.
-	close(FILE);
+		# Close file.
+		close(FILE);
 
-	# Loop through the array.
-	foreach my $line (@lines) {
-		# Remove newlines.
-		chomp($line);
+		# Loop through the array.
+		foreach my $line (@lines) {
+			# Remove newlines.
+			chomp($line);
 
-		# Skip comments.
-		next if ($line =~ /\#/);
+			# Skip comments.
+			next if ($line =~ /\#/);
 
-		# Skip blank  lines.
-		next if ($line =~ /^\s*$/);
+			# Skip blank  lines.
+			next if ($line =~ /^\s*$/);
 
-		# Gather rule sid and message from the ruleline.
-		if ($line =~ /.*- (.*)/) {
-			my $rulefile = $1;
+			# Gather rule sid and message from the ruleline.
+			if ($line =~ /.*- (.*)/) {
+				my $rulefile = $1;
 
-			# Check if the current rulefile exists in the %idsrules hash.
-			# If not, the file probably does not exist anymore or contains
-			# no rules.
-			if($idsrules{$rulefile}) {
-				# Add the rulefile state to the %idsrules hash.
-				$idsrules{$rulefile}{'Rulefile'}{'State'} = "on";
+				# Check if the current rulefile exists in the %idsrules hash.
+				# If not, the file probably does not exist anymore or contains
+				# no rules.
+				if($idsrules{$rulefile}) {
+					# Add the rulefile state to the %idsrules hash.
+					$idsrules{$rulefile}{'Rulefile'}{'State'} = "on";
+				}
 			}
 		}
 	}
