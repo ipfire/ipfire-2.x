@@ -1404,6 +1404,7 @@
 'ids apply' => 'Apply',
 'ids apply ruleset changes' => 'The ruleset changes are being applied. Please wait until all operations have completed successfully...',
 'ids automatic rules update' => 'Automatic Rule Update',
+'ids customize ruleset' => 'Customize ruleset',
 'ids download new ruleset' => 'Downloading and unpacking new ruleset. Please wait until all operations have completed successfully...',
 'ids enable' => 'Enable Intrusion Prevention System',
 'ids hide' => 'Hide',

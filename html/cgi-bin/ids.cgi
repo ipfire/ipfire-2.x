@@ -939,6 +939,7 @@ END
 				print"<input type='submit' name='RULESET' value='$Lang::tr{'update ruleset'}'>\n";
 		}
 print <<END;
+				<input type='submit' name='RULESET' value='$Lang::tr{'ids customize ruleset'}'>
 				<input type='submit' name='RULESET' value='$Lang::tr{'save'}'>
 			</td>
 

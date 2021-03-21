@@ -1375,6 +1375,7 @@
 'ids apply' => 'Übernehmen',
 'ids apply ruleset changes' => 'Regeländerungen werden übernommen. Bitte warten Sie, bis dieser Vorgang erfolgreich beendet wurde...',
 'ids automatic rules update' => 'Automatische Regelaktualisierung',
+'ids customize ruleset' => 'Regelset anpassen',
 'ids download new ruleset' => 'Das neue Regelsatz wird heruntergeladen und entpackt. Bitte warten Sie, bis dieser Vorgang erfolgreich beendet wurde...',
 'ids enable' => 'Einbruchsverhinderungssystem aktivieren',
 'ids hide' => 'Verstecken',
