@@ -2988,6 +2988,7 @@
 'zoneconf val stp zone mode error' => 'STP kann nur aktiviert werden, wenn sich die Zone im Brückenmodus befindet',
 'zoneconf val vlan amount assignment error' => 'Pro Zone kann nur ein VLAN verwendet werden.',
 'zoneconf val vlan tag assignment error' => 'Pro Netzwerkkarte kann derselbe VLAN-Tag nur einmal verwendet werden.',
+'zoneconf val vlan tag range error' => 'VLAN-Tag muss im Bereich 1-4094 liegen.',
 'zoneconf val zoneslave amount error' => 'Wenn eine Zone nicht im Brückenmodus ist, kann ihr nur eine Netzwerkkarte zugewiesen werden.',
 );
 

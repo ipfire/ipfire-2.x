@@ -279,11 +279,10 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 				}
 
 				$VALIDATE_nic_check{"VLAN $mac $vlan_tag"} = 1;
-
-				if (! looks_like_number($vlan_tag)) {
-					last;
-				}
-				if ($vlan_tag < 1 || $vlan_tag > 4095) {
+				
+				# check VLAN tag range: 1..4094 (0, 4095 are reserved)
+				unless (looks_like_number($vlan_tag) && ($vlan_tag >= 1) && ($vlan_tag <= 4094)) {
+					$VALIDATE_error = $Lang::tr{"zoneconf val vlan tag range error"};
 					last;
 				}
 
@@ -486,7 +485,7 @@ END
 				<option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
 				<option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
 			</select>
-			<input type="number" class="vlanid" id="TAG-$uc-$mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" required $field_disabled>
+			<input type="number" class="vlanid" id="TAG-$uc-$mac" name="TAG $uc $mac" min="1" max="4094" value="$zone_vlan_id" required $field_disabled>
 		</td>
 END
 ;

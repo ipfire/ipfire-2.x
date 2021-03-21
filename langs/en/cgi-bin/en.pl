@@ -3037,6 +3037,7 @@
 'zoneconf val stp zone mode error' => 'STP can only be enabled if the zone is in bridge mode',
 'zoneconf val vlan amount assignment error' => 'A zone cannot have more than one VLAN assigned.',
 'zoneconf val vlan tag assignment error' => 'You cannot use the same VLAN tag more than once per NIC.',
+'zoneconf val vlan tag range error' => 'VLAN tag must be in the range of 1-4094.',
 'zoneconf val zoneslave amount error' => 'A zone that is not in bridge mode can\'t have more than one NIC assigned',
 );
 
