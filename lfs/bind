@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 9.11.28
+VER        = 9.11.29
 
 THISAPP    = bind-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 59aa4d7be438b2c8103811d18f318c82
+$(DL_FILE)_MD5 = 439d5491dfea08be032a1f9ca5a54faa
 
 install : $(TARGET)
 
