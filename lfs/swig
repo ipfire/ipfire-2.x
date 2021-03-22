@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.0.12
+VER        = 4.0.2
 
 THISAPP    = swig-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 82133dfa7bba75ff9ad98a7046be687c
+$(DL_FILE)_MD5 = 7c3e46cb5af2b469722cafa0d91e127b
 
 install : $(TARGET)
 
