@@ -920,20 +920,9 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
-< dhcp deny known clients:
-< dhcp valid range required when deny known clients checked
 < g.dtm
 < g.lite
-< token
-< token not set
-< updxlrtr passive mode
 < upload fcdsl.o
-< wlan client encryption wpa3
-< wlan client management frame protection
-< zoneconf stp enable
-< zoneconf stp priority
-< zoneconf val stp priority range error
-< zoneconf val stp zone mode error
 < zoneconf val vlan tag range error
 ############################################################################
 # Checking cgi-bin translations for language: it                           #

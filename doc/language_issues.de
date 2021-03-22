@@ -843,6 +843,7 @@ WARNING: translation string unused: zoneconf val stp priority range error
 WARNING: translation string unused: zoneconf val stp zone mode error
 WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
+WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: desired = Desired
 WARNING: untranslated string: disable = Disable
