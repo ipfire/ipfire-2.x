@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.15
+VER        = 3.16
 
 THISAPP    = MIME-Base64-$(VER)
 DL_FILE    = ${THISAPP}.tar.gz
@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-MIME-Base64
 DEPS       =
-PAK_VER    = 2
+PAK_VER    = 3
 
 ###############################################################################
 # Top-level Rules
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ef958dc2bf96be5f759391c6ac1debd4
+$(DL_FILE)_MD5 = 58a62a2ddd42999d8446d93c8badc8a2
 
 install : $(TARGET)
 
