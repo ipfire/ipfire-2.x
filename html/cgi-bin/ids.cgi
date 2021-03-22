@@ -1225,7 +1225,10 @@ END
 		print <<END
 <table width='100%'>
 <tr>
-	<td width='100%' align='right'><input type='submit' name='RULESET' value='$Lang::tr{'ids apply'}'></td>
+	<td width='100%' align='right'>
+		<input type='submit' value='$Lang::tr{'fwhost back'}'>
+		<input type='submit' name='RULESET' value='$Lang::tr{'ids apply'}'>
+	</td>
 </tr>
 </table>
 </form>
