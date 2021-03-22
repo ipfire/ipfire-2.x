@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 135
+VER        = 175
 
 THISAPP    = mcelog-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mcelog
-PAK_VER    = 1
+PAK_VER    = 2
 SUP_ARCH   = i586 x86_64
 
 DEPS       =
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7819c74796c1e52e3e56fc065b9fe26a
+$(DL_FILE)_MD5 = 27a68615c5090b38d44679a8ba6f4e3b
 
 install : $(TARGET)
 

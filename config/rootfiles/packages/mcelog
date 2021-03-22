@@ -4,6 +4,9 @@ etc/mcelog/cache-error-trigger
 etc/mcelog/dimm-error-trigger
 etc/mcelog/iomca-error-trigger
 etc/mcelog/mcelog.conf
+etc/mcelog/page-error-counter-replacement-trigger
+etc/mcelog/page-error-post-sync-soft-trigger
+etc/mcelog/page-error-pre-sync-soft-trigger
 etc/mcelog/page-error-trigger
 etc/mcelog/socket-memory-error-trigger
 etc/mcelog/unknown-error-trigger
