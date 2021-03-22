@@ -61,6 +61,7 @@ usr/libexec/git-core/git-fetch-pack
 usr/libexec/git-core/git-filter-branch
 usr/libexec/git-core/git-fmt-merge-msg
 usr/libexec/git-core/git-for-each-ref
+usr/libexec/git-core/git-for-each-repo
 usr/libexec/git-core/git-format-patch
 usr/libexec/git-core/git-fsck
 usr/libexec/git-core/git-fsck-objects
@@ -86,6 +87,7 @@ usr/libexec/git-core/git-ls-remote
 usr/libexec/git-core/git-ls-tree
 usr/libexec/git-core/git-mailinfo
 usr/libexec/git-core/git-mailsplit
+usr/libexec/git-core/git-maintenance
 usr/libexec/git-core/git-merge
 usr/libexec/git-core/git-merge-base
 usr/libexec/git-core/git-merge-file
@@ -109,7 +111,6 @@ usr/libexec/git-core/git-p4
 usr/libexec/git-core/git-pack-objects
 usr/libexec/git-core/git-pack-redundant
 usr/libexec/git-core/git-pack-refs
-usr/libexec/git-core/git-parse-remote
 usr/libexec/git-core/git-patch-id
 usr/libexec/git-core/git-prune
 usr/libexec/git-core/git-prune-packed
@@ -129,7 +130,6 @@ usr/libexec/git-core/git-remote-ftp
 usr/libexec/git-core/git-remote-ftps
 usr/libexec/git-core/git-remote-http
 usr/libexec/git-core/git-remote-https
-usr/libexec/git-core/git-remote-testsvn
 usr/libexec/git-core/git-repack
 usr/libexec/git-core/git-replace
 usr/libexec/git-core/git-request-pull
@@ -180,7 +180,6 @@ usr/libexec/git-core/git-write-tree
 #usr/libexec/git-core/mergetools
 usr/libexec/git-core/mergetools/araxis
 usr/libexec/git-core/mergetools/bc
-usr/libexec/git-core/mergetools/bc3
 usr/libexec/git-core/mergetools/codecompare
 usr/libexec/git-core/mergetools/deltawalker
 usr/libexec/git-core/mergetools/diffmerge
@@ -190,19 +189,16 @@ usr/libexec/git-core/mergetools/emerge
 usr/libexec/git-core/mergetools/examdiff
 usr/libexec/git-core/mergetools/guiffy
 usr/libexec/git-core/mergetools/gvimdiff
-usr/libexec/git-core/mergetools/gvimdiff2
-usr/libexec/git-core/mergetools/gvimdiff3
 usr/libexec/git-core/mergetools/kdiff3
 usr/libexec/git-core/mergetools/kompare
 usr/libexec/git-core/mergetools/meld
+usr/libexec/git-core/mergetools/nvimdiff
 usr/libexec/git-core/mergetools/opendiff
 usr/libexec/git-core/mergetools/p4merge
 usr/libexec/git-core/mergetools/smerge
 usr/libexec/git-core/mergetools/tkdiff
 usr/libexec/git-core/mergetools/tortoisemerge
 usr/libexec/git-core/mergetools/vimdiff
-usr/libexec/git-core/mergetools/vimdiff2
-usr/libexec/git-core/mergetools/vimdiff3
 usr/libexec/git-core/mergetools/winmerge
 usr/libexec/git-core/mergetools/xxdiff
 #usr/share/git-core
@@ -221,6 +217,7 @@ usr/share/git-core/templates/hooks/pre-push.sample
 usr/share/git-core/templates/hooks/pre-rebase.sample
 usr/share/git-core/templates/hooks/pre-receive.sample
 usr/share/git-core/templates/hooks/prepare-commit-msg.sample
+usr/share/git-core/templates/hooks/push-to-checkout.sample
 usr/share/git-core/templates/hooks/update.sample
 #usr/share/git-core/templates/info
 usr/share/git-core/templates/info/exclude
@@ -314,9 +311,11 @@ usr/share/git-core/templates/info/exclude
 #usr/share/locale/el/LC_MESSAGES/git.mo
 #usr/share/locale/es/LC_MESSAGES/git.mo
 #usr/share/locale/fr/LC_MESSAGES/git.mo
+#usr/share/locale/id/LC_MESSAGES/git.mo
 #usr/share/locale/is/LC_MESSAGES/git.mo
 #usr/share/locale/it/LC_MESSAGES/git.mo
 #usr/share/locale/ko/LC_MESSAGES/git.mo
+#usr/share/locale/pl/LC_MESSAGES/git.mo
 #usr/share/locale/pt_PT/LC_MESSAGES/git.mo
 #usr/share/locale/ru/LC_MESSAGES/git.mo
 #usr/share/locale/sv/LC_MESSAGES/git.mo
