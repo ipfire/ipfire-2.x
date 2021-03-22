@@ -9,7 +9,7 @@
 
 include Config
 
-VER        = 0.4.12
+VER        = 1.0.20
 
 THISAPP    = sysbench-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -17,7 +17,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = sysbench
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       =
 
@@ -29,7 +29,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3a6d54fdd3fe002328e4458206392b9d
+$(DL_FILE)_MD5 = 756381c6fc4e16af1e0831b5e6a3dcb3
 
 install : $(TARGET)
 
