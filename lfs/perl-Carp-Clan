@@ -24,7 +24,7 @@
 ###############################################################################
 
 include Config
-VER        = 6.04
+VER        = 6.08
 
 THISAPP    = Carp-Clan-$(VER)
 DL_FILE    = ${THISAPP}.tar.gz
@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-Carp-Clan
 DEPS       =
-PAK_VER    = 4
+PAK_VER    = 5
 
 ###############################################################################
 # Top-level Rules
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b6316bc51bb530d994f2784615939fb2
+$(DL_FILE)_MD5 = 34fe04102374516ef7a105375b95ffde
 
 install : $(TARGET)
 
