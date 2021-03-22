@@ -23,7 +23,7 @@
 # Definitions
 ###############################################################################
 include Config
-VER        = 6.3
+VER        = 6.4
 
 THISAPP    = Date-Calc-$(VER)
 DL_FILE    = ${THISAPP}.tar.gz
@@ -32,7 +32,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-Date-Calc
 DEPS       = perl-Carp-Clan
-PAK_VER    = 4
+PAK_VER    = 5
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9b64555b7051c1beb6b61daead2d01b3
+$(DL_FILE)_MD5 = 69c635070d38c884682bfd4657031a8d
 
 install : $(TARGET)
 
