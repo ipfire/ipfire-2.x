@@ -1,5 +1,5 @@
 etc/rc.d/init.d/rpcbind
-sbin/rpcbind
 sbin/rpcinfo
+usr/sbin/rpcbind
 #usr/share/man/man8/rpcbind.8
 #usr/share/man/man8/rpcinfo.8
