@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.3.1
+VER        = 2.6
 
 THISAPP    = pigz-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e803f8bc0770c7a5e96dccb1d2dd2aab
+$(DL_FILE)_MD5 = a8a23d7dfb58d8c20438f382fb1d97c8
 
 install : $(TARGET)
 
