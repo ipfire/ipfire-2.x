@@ -1116,22 +1116,7 @@ print <<END
 	</script>
 END
 ;
-	# Load neccessary perl modules for file stat and to format the timestamp.
-	use File::stat;
-	use POSIX qw( strftime );
-
-	# Call stat on the rulestarball.
-	my $stat = stat("$IDS::rulestarball");
-
-	if (defined $stat) {
-		# Get timestamp the file creation.
-		my $mtime = $stat->mtime;
-
-		# Convert into human read-able format.
-		my $rulesdate = strftime('%Y-%m-%d %H:%M:%S', localtime($mtime));
-
-		&Header::openbox('100%', 'LEFT', "$Lang::tr{'intrusion detection system rules'} ($rulesdate)" );
-
+	&Header::openbox('100%', 'LEFT', "$Lang::tr{'intrusion detection system rules'}" );
 		print"<form method='POST' action='$ENV{'SCRIPT_NAME'}'>\n";
 
 		# Output display table for rule files
