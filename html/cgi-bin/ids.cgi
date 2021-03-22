@@ -351,12 +351,6 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 		# Store settings into settings file.
 		&General::writehash("$IDS::rules_settings_file", \%cgiparams);
 
-		# Check if the the automatic rule update hass been touched.
-		if($cgiparams{'AUTOUPDATE_INTERVAL'} ne $oldsettings{'AUTOUPDATE_INTERVAL'}) {
-			# Call suricatactrl to set the new interval.
-			&IDS::call_suricatactrl("cron", $cgiparams{'AUTOUPDATE_INTERVAL'});
-		}
-
 		# Check if a ruleset is present - if not or the source has been changed download it.
 		if((! %idsrules) || ($oldsettings{'RULES'} ne $cgiparams{'RULES'})) {
 			# Check if the red device is active.
@@ -618,6 +612,12 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 		&General::writehash("$IDS::ids_settings_file", \%cgiparams);
 	}
 
+	# Check if the the automatic rule update hass been touched.
+	if($cgiparams{'AUTOUPDATE_INTERVAL'} ne $oldidssettings{'AUTOUPDATE_INTERVAL'}) {
+		# Call suricatactrl to set the new interval.
+		&IDS::call_suricatactrl("cron", $cgiparams{'AUTOUPDATE_INTERVAL'});
+	}
+
 	# Generate file to store the home net.
 	&IDS::generate_home_net_file();
 
@@ -703,9 +703,9 @@ sub show_mainpage() {
 	&General::readhash("$IDS::rules_settings_file", \%rulessettings);
 
 	# If no autoupdate intervall has been configured yet, set default value.
-	unless(exists($rulessettings{'AUTOUPDATE_INTERVAL'})) {
+	unless(exists($idssettings{'AUTOUPDATE_INTERVAL'})) {
 		# Set default to "weekly".
-		$rulessettings{'AUTOUPDATE_INTERVAL'} = 'weekly';
+		$idssettings{'AUTOUPDATE_INTERVAL'} = 'weekly';
 	}
 
 	# Read-in ignored hosts.
@@ -865,6 +865,27 @@ END
 		}
 
 print <<END
+				</tr>
+
+				<tr>
+					<td><br><br></td>
+					<td><br><br></td>
+					<td><br><br></td>
+					<td><br><br></td>
+				</tr>
+
+				<tr>
+					<td colspan='4'><b>$Lang::tr{'ids automatic rules update'}</b></td>
+				</tr>
+
+				<tr>
+					<td>
+						<select name='AUTOUPDATE_INTERVAL'>
+							<option value='off' $selected{'AUTOUPDATE_INTERVAL'}{'off'} >- $Lang::tr{'Disabled'} -</option>
+							<option value='daily' $selected{'AUTOUPDATE_INTERVAL'}{'daily'} >$Lang::tr{'Daily'}</option>
+							<option value='weekly' $selected{'AUTOUPDATE_INTERVAL'}{'weekly'} >$Lang::tr{'Weekly'}</option>
+						</select>
+					</td>
 				</tr>
 			</table>
 
