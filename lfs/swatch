@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 3.2.3
+VER        = 3.2.4
 
-THISAPP    = swatch-$(VER)
+THISAPP    = swatchdog-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = swatch
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = perl-File-Tail perl-Date-Calc perl-TimeDate perl-Date-Manip
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 1162f1024cf07fc750ed4960d61ac4e8
+$(DL_FILE)_MD5 = df4c20ff7d3f6a46a2efd72a42078011
 
 install : $(TARGET)
 
