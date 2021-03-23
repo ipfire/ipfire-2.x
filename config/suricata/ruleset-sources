@@ -50,7 +50,7 @@ our %Providers = (
 	# Emerging threads community rules.
 	emerging => {
 		summary => "Emergingthreats.net Community Rules",
-		website => "https://emergingtreads.net",
+		website => "https://emergingthreats.net/",
 		tr_string => "emerging rules",
 		requires_subscription => "False",
 		dl_url => "https://rules.emergingthreats.net/open/suricata-5.0/emerging.rules.tar.gz",
@@ -60,7 +60,7 @@ our %Providers = (
 	# Emerging threads Pro rules.
 	emerging_pro => {
 		summary => "Emergingthreats.net Pro Rules",
-		website => "https://emergingtreads.net",
+		website => "https://emergingthreats.net/",
 		tr_string => "emerging pro rules",
 		requires_subscription => "True",
 		dl_url => "https://rules.emergingthreatspro.com/<oinkcode>/suricata-5.0/etpro.rules.tar.gz",
