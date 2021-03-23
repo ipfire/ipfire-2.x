@@ -52,9 +52,6 @@ my %ignored=();
 # the list of zones in an array.
 my @network_zones = &Network::get_available_network_zones();
 
-# Grab all used ruleset providers.
-&General::readhasharray($IDS::providers_settings_file, \%used_providers);
-
 # Check if openvpn is started and add it to the array of network zones.
 if ( -e "/var/run/openvpn.pid") {
 	push(@network_zones, "ovpn");
@@ -670,6 +667,11 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	}
 
 } elsif (($cgiparams{'PROVIDERS'} eq "$Lang::tr{'add'}") || ($cgiparams{'PROVIDERS'} eq "$Lang::tr{'update'}")) {
+	my %used_providers = ();
+
+	# Read-in providers settings file.
+	&General::readhasharray("$IDS::providers_settings_file", \%used_providers);
+
 	# Assign some nice human-readable values.
 	my $provider = $cgiparams{'PROVIDER'};
 	my $subscription_code = $cgiparams{'SUBSCRIPTION_CODE'};
@@ -781,8 +783,9 @@ sub show_display_error_message() {
 ## Function to display the main IDS page.
 #
 sub show_mainpage() {
-	# Read-in idssettings .
+	# Read-in idssettings and provider settings.
 	&General::readhash("$IDS::ids_settings_file", \%idssettings);
+	&General::readhasharray("$IDS::providers_settings_file", \%used_providers);
 
 	# If no autoupdate intervall has been configured yet, set default value.
 	unless(exists($idssettings{'AUTOUPDATE_INTERVAL'})) {
@@ -1368,7 +1371,11 @@ END
 ## Function to show section for add/edit a provider.
 #
 sub show_add_provider() {
+	my %used_providers = ();
 	my @subscription_providers;
+
+	# Read -in providers settings file.
+	&General::readhasharray("$IDS::providers_settings_file", \%used_providers);
 
 	# Get all supported ruleset providers.
 	my @ruleset_providers = &IDS::get_ruleset_providers();
