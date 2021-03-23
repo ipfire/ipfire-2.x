@@ -38,7 +38,7 @@ my %color = ();
 my %mainsettings = ();
 my %idsrules = ();
 my %idssettings=();
-my %rulessettings=();
+my %used_providers=();
 my %cgiparams=();
 my %checked=();
 my %selected=();
@@ -51,6 +51,9 @@ my %ignored=();
 # Get the available network zones, based on the config type of the system and store
 # the list of zones in an array.
 my @network_zones = &Network::get_available_network_zones();
+
+# Grab all used ruleset providers.
+&General::readhasharray($IDS::providers_settings_file, \%used_providers);
 
 # Check if openvpn is started and add it to the array of network zones.
 if ( -e "/var/run/openvpn.pid") {
@@ -584,7 +587,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	# Check if the IDS should be enabled.
 	if ($cgiparams{'ENABLE_IDS'} eq "on") {
 		# Check if any ruleset is available. Otherwise abort and display an error.
-		unless(%idsrules) {
+		unless(%used_providers) {
 			$errormessage = $Lang::tr{'ids no ruleset available'};
 		}
 
@@ -633,7 +636,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	# Check if "MONITOR_TRAFFIC_ONLY" has been changed.
 	if($cgiparams{'MONITOR_TRAFFIC_ONLY'} ne $oldidssettings{'MONITOR_TRAFFIC_ONLY'}) {
 		# Check if a ruleset exists.
-		if (%idsrules) {
+		if (%used_providers) {
 			# Lock the webpage and print message.
 			&working_notice("$Lang::tr{'ids working'}");
 
@@ -675,6 +678,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 
 if ($cgiparams{'RULESET'} eq "$Lang::tr{'ids customize ruleset'}" ) {
 	&show_customize_ruleset();
+} elsif ($cgiparams{'PROVIDERS'} ne "") {
+	&show_add_provider();
 } else {
 	&show_mainpage();
 }
@@ -698,9 +703,8 @@ sub show_display_error_message() {
 ## Function to display the main IDS page.
 #
 sub show_mainpage() {
-	# Read-in idssettings and rulesetsettings
+	# Read-in idssettings .
 	&General::readhash("$IDS::ids_settings_file", \%idssettings);
-	&General::readhash("$IDS::rules_settings_file", \%rulessettings);
 
 	# If no autoupdate intervall has been configured yet, set default value.
 	unless(exists($idssettings{'AUTOUPDATE_INTERVAL'})) {
@@ -717,40 +721,10 @@ sub show_mainpage() {
 	$checked{'MONITOR_TRAFFIC_ONLY'}{'off'} = '';
 	$checked{'MONITOR_TRAFFIC_ONLY'}{'on'} = '';
 	$checked{'MONITOR_TRAFFIC_ONLY'}{$idssettings{'MONITOR_TRAFFIC_ONLY'}} = "checked='checked'";
-	$selected{'RULES'}{'nothing'} = '';
-	$selected{'RULES'}{$rulessettings{'RULES'}} = "selected='selected'";
 	$selected{'AUTOUPDATE_INTERVAL'}{'off'} = '';
 	$selected{'AUTOUPDATE_INTERVAL'}{'daily'} = '';
 	$selected{'AUTOUPDATE_INTERVAL'}{'weekly'} = '';
-	$selected{'AUTOUPDATE_INTERVAL'}{$rulessettings{'AUTOUPDATE_INTERVAL'}} = "selected='selected'";
-
-	### Java Script ###
-	print "<script>\n";
-print <<END
-		// Java Script function to show/hide the text input field for
-		// Oinkcode/Subscription code.
-		var update_code = function() {
-			if(\$('#RULES').val() == 'registered') {
-				\$('#code').show();
-			} else if(\$('#RULES').val() == 'subscripted') {
-				\$('#code').show();
-			} else if(\$('#RULES').val() == 'emerging_pro') {
-				\$('#code').show();
-			} else {
-				\$('#code').hide();
-			}
-		};
-
-		// JQuery function to call corresponding function when
-		// the ruleset is changed or the page is loaded for showing/hiding
-		// the code area.
-		\$(document).ready(function() {
-			\$('#RULES').change(update_code);
-			update_code();
-		});
-	</script>
-END
-;
+	$selected{'AUTOUPDATE_INTERVAL'}{$idssettings{'AUTOUPDATE_INTERVAL'}} = "selected='selected'";
 
 	# Draw current state of the IDS
 	&Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system'});
@@ -803,8 +777,8 @@ END
 END
 	}
 
-	# Only show this area, if a ruleset is present.
-	if (%idsrules) {
+	# Only show this area, if at least one ruleset provider is configured.
+	if (%used_providers) {
 
 print <<END
 
@@ -904,74 +878,142 @@ END
 
 	&Header::closebox();
 
-	# Draw elements for ruleset configuration.
+	#
+	# Used Ruleset Providers section.
+	#
 	&Header::openbox('100%', 'center', $Lang::tr{'ids ruleset settings'});
 
-print <<END
-	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<table width='100%' border='0'>
-			<tr>
-				<td><b>$Lang::tr{'ids rules update'}</b></td>
-				<td><b>$Lang::tr{'ids automatic rules update'}</b></td>
-			</tr>
-
-			<tr>
-				<td><select name='RULES' id='RULES'>
+print <<END;
+	<table width='100%' border='0'>
+		<tr>
+			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'ids provider'}</b></td>
+			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'date'}</b></td>
+			<td class='base' bgcolor='$color{'color20'}' align='center'><b>$Lang::tr{'ids autoupdates'}</b></td>
+			<td class='base' bgcolor='$color{'color20'}'></td>
+			<td class='base' colspan='3' bgcolor='$color{'color20'}'></td>
+		</tr>
 END
-;
-				# Get all available ruleset providers.
-				my @ruleset_providers = &IDS::get_ruleset_providers();
+		# Check if some providers has been configured.
+		if (keys (%used_providers)) {
+			my $col = "";
 
-				# Loop throgh the list of providers.
-				foreach my $provider (@ruleset_providers) {
-					# Call get_provider_name function to obtain the provider name.
-					my $option_string = &get_provider_name($provider);
+			# Loop through all entries of the hash.
+			#while( (my $id) = each %used_providers)  {
+			foreach my $id (sort keys(%used_providers)) {
+				# Assign data array positions to some nice variable names.
+				my $provider = $used_providers{$id}[0];
+				my $provider_name = &get_provider_name($provider);
 
-					# Print option.
-					print "<option value='$provider' $selected{'RULES'}{$provider}>$option_string</option>\n";
+				#XXX my $rulesdate = &IDS::get_ruleset_date($provider);
+				my $rulesdate;
+
+				my $subscription_code = $used_providers{$id}[1];
+				my $autoupdate_status = $used_providers{$id}[2];
+				my $status  = $used_providers{$id}[3];
+
+				# Check if the item number is even or not.
+				if ($id % 2) {
+					$col="bgcolor='$color{'color22'}'";
+				} else {
+					$col="bgcolor='$color{'color20'}'";
 				}
+
+				# Choose icons for the checkboxes.
+				my $status_gif;
+				my $status_gdesc;
+				my $autoupdate_status_gif;
+				my $autoupdate_status_gdesc;
+
+				# Check if the status is enabled and select the correct image and description.
+				if ($status eq 'enabled' ) {
+					$status_gif = 'on.gif';
+					$status_gdesc = $Lang::tr{'click to disable'};
+				} else {
+					$status_gif = 'off.gif';
+					$status_gdesc = $Lang::tr{'click to enable'};
+				}
+
+				# Check if the autoupdate status is enabled and select the correct image and description.
+				if ($autoupdate_status eq 'enabled') {
+					$autoupdate_status_gif = 'on.gif';
+					$autoupdate_status_gdesc = $Lang::tr{'click to disable'};
+				} else {
+					$autoupdate_status_gif = 'off.gif';
+					$autoupdate_status_gdesc = $Lang::tr{'click to enable'};
+				}
+
 print <<END;
-				</select>
-				</td>
+				<tr>
+					<td width='33%' class='base' $col>$provider_name</td>
+					<td width='30%' class='base' $col>$rulesdate</td>
 
-				<td>
-					<select name='AUTOUPDATE_INTERVAL'>
-						<option value='off' $selected{'AUTOUPDATE_INTERVAL'}{'off'} >- $Lang::tr{'Disabled'} -</option>
-						<option value='daily' $selected{'AUTOUPDATE_INTERVAL'}{'daily'} >$Lang::tr{'Daily'}</option>
-						<option value='weekly' $selected{'AUTOUPDATE_INTERVAL'}{'weekly'} >$Lang::tr{'Weekly'}</option>
-					</select>
-				</td>
-			</tr>
+					<td align='center' $col>
+						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='AUTOUPDATE' value='$Lang::tr{'toggle enable disable'}' />
+							<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$autoupdate_status_gif' alt='$autoupdate_status_gdesc' title='$autoupdate_status_gdesc' />
+							<input type='hidden' name='ID' value='$id' />
+						</form>
+					</td>
 
-			<tr>
-				<td colspan='2'><br><br></td>
-			</tr>
+					<td align='center' $col>
+						<form mehtod='post' action=$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='PROVIDERS' value='$Lang::tr{'toggle enable disable'}'>
+							<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$status_gif' alt='$status_gdesc' title='$status_gdesc'>
+							<input type='hidden' name='ID' value='$id'>
+						</form>
+					</td>
 
-			<tr style='display:none' id='code'>
-				<td colspan='2'>Oinkcode:&nbsp;<input type='text' size='40' name='OINKCODE' value='$rulessettings{'OINKCODE'}'></td>
-			</tr>
+					<td align='center' $col>
+						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='hidden' name='PROVIDERS' value='$Lang::tr{'edit'}'>
+							<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}'>
+							<input type='hidden' name='ID' value='$id'>
+						</form>
+					</td>
 
-			<tr>
-				<td>&nbsp;</td>
-
-				<td align='right'>
+					<td align='center' $col>
+						<form method='post' name='$provider' action='$ENV{'SCRIPT_NAME'}'>
+							<input type='image' name='$Lang::tr{'remove'}' src='/images/delete.gif' title='$Lang::tr{'remove'}' alt='$Lang::tr{'remove'}'>
+							<input type='hidden' name='ID' value='$id'>
+							<input type='hidden' name='PROVIDERS' value='$Lang::tr{'remove'}'>
+						</form>
+					</td>
+				</tr>
 END
-;
-				# Show the "Update Ruleset"-Button only if a ruleset has been downloaded yet and automatic updates are disabled.
-				if ((%idsrules) && ($rulessettings{'AUTOUPDATE_INTERVAL'} eq "off")) {
-					# Display button to update the ruleset.
-					print"<input type='submit' name='RULESET' value='$Lang::tr{'update ruleset'}'>\n";
 			}
-print <<END;
-					<input type='submit' name='RULESET' value='$Lang::tr{'ids customize ruleset'}'>
-					<input type='submit' name='RULESET' value='$Lang::tr{'save'}'>
-				</td>
 
-			</tr>
-		</table>
-	</form>
+		} else {
+			# Print notice that currently no hosts are ignored.
+			print "<tr>\n";
+			print "<td class='base' colspan='2'>$Lang::tr{'guardian no entries'}</td>\n";
+			print "</tr>\n";
+		}
+
+	print "</table>\n";
+
+	# Section to add new elements or edit existing ones.
+print <<END;
+	<br>
+	<hr>
+	<br>
+
+	<div align='right'>
+		<table width='100%'>
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<tr>
 END
-;
+
+					# Only show this button if a ruleset provider is configured.
+					if (%used_providers) {
+						print "<input type='submit' name='RULESET' value='$Lang::tr{'ids customize ruleset'}'>\n";
+					}
+print <<END;
+					<input type='submit' name='PROVIDERS' value='$Lang::tr{'ids add provider'}'>
+				</tr>
+			</form>
+		</table>
+	</div>
+END
 
 	&Header::closebox();
 
@@ -1028,17 +1070,17 @@ print <<END;
 
 					<td align='center' $col>
 						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='WHITELIST' value='$Lang::tr{'toggle enable disable'}' />
-							<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$gdesc' title='$gdesc' />
-							<input type='hidden' name='ID' value='$key' />
+							<input type='hidden' name='WHITELIST' value='$Lang::tr{'toggle enable disable'}'>
+							<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$gif' alt='$gdesc' title='$gdesc'>
+							<input type='hidden' name='ID' value='$key'>
 						</form>
 					</td>
 
 					<td align='center' $col>
 						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='WHITELIST' value='$Lang::tr{'edit'}' />
-							<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}' />
-							<input type='hidden' name='ID' value='$key' />
+							<input type='hidden' name='WHITELIST' value='$Lang::tr{'edit'}'>
+							<input type='image' name='$Lang::tr{'edit'}' src='/images/edit.gif' alt='$Lang::tr{'edit'}' title='$Lang::tr{'edit'}'>
+							<input type='hidden' name='ID' value='$key'>
 						</form>
 					</td>
 
@@ -1242,6 +1284,198 @@ END
 ;
 		&Header::closebox();
 	}
+}
+
+#
+## Function to show section for add/edit a provider.
+#
+sub show_add_provider() {
+	my @subscription_providers;
+
+	# Get all supported ruleset providers.
+	my @ruleset_providers = &IDS::get_ruleset_providers();
+
+	### Java Script ###
+	print "<script>\n";
+
+	# Generate Java Script Object which contains the URL of the providers.
+	print "\t// Object, which contains the webpages of the ruleset providers.\n";
+	print "\tvar url = {\n";
+
+	# Loop through the array of supported providers.
+	foreach my $provider (@ruleset_providers) {
+		# Check if the provider requires a subscription.
+		if ($IDS::Ruleset::Providers{$provider}{'requires_subscription'} eq "True") {
+			# Add the provider to the array of subscription_providers.
+			push(@subscription_providers, $provider);
+		}
+
+		# Grab the URL for the provider.
+		my $url = $IDS::Ruleset::Providers{$provider}{'website'};
+
+		# Print the URL to the Java Script Object.
+		print "\t\t$provider: \"$url\"\,\n";
+	}
+
+	# Close the Java Script Object declaration.
+	print "\t}\;\n\n";
+
+	# Generate Java Script Array which contains the provider that requires a subscription.
+	my $line = "";
+	$line = join("', '", @subscription_providers);
+
+	print "\t// Array which contains the providers that requires a subscription.\n";
+	print "\tsubscription_provider = ['$line']\;\n\n";
+
+print <<END
+	// Java Script function to swap the text input field for
+	// entering a subscription code.
+	var update_provider = function() {
+		if(inArray(\$('#PROVIDER').val(), subscription_provider)) {
+			\$('.subscription_code').show();
+		} else {
+			\$('.subscription_code').hide();
+		}
+
+		// Call function to change the website url.
+		change_url(\$('#PROVIDER').val());
+	};
+
+	// Java Script function to check if a given value is part of
+	// an array.
+	function inArray(value,array) {
+		var count=array.length;
+
+		for(var i=0;i<count;i++) {
+			if(array[i]===value){
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	// Tiny function to change the website url based on the selected element in the "PROVIDERS"
+	// dropdown menu.
+	function change_url(provider) {
+		// Get and change the href to the corresponding url.
+		document.getElementById("website").href = url[provider];
+	}
+
+	// JQuery function to call corresponding function when
+	// the ruleset provider is changed or the page is loaded for showing/hiding
+	// the subscription_code area.
+	\$(document).ready(function() {
+		\$('#PROVIDER').change(update_provider);
+			update_provider();
+	});
+
+	</script>
+END
+;
+
+	&Header::openbox('100%', 'center', $Lang::tr{'ids provider settings'});
+
+	# Check if an existing provider should be edited.
+	if($cgiparams{'PROVIDERS'} eq "$Lang::tr{'edit'}") {
+		# Check if autoupdate is enabled for this provider.
+		if ($used_providers{$cgiparams{'ID'}}[2] eq "on") {
+			# Set the checkbox to be checked.
+			$checked{'ENABLE_AUTOUPDATE'} = "checked='checked'";
+		}
+	} elsif ($cgiparams{'PROVIDERS'} eq "$Lang::tr{'ids add provider'}") {
+		# Set the autoupdate to true as default.
+		$checked{'ENABLE_AUTOUPDATE'} = "checked='checked'";
+	}
+
+print <<END
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<table width='100%' border='0'>
+			<tr>
+				<td colspan='2'><b>$Lang::tr{'ids provider'}</b></td>
+			</tr>
+
+			<tr>
+				<td width='40%'>
+					<input type='hidden' name='ID' value='$cgiparams{'ID'}'>
+					<select name='PROVIDER' id='PROVIDER'>
+END
+;
+						# Loop through the array of ruleset providers.
+						foreach my $provider (@ruleset_providers) {
+							# Get the provider name.
+							my $provider_name = &get_provider_name($provider);
+
+							# Pre-select the provider if one is given.
+							if (($used_providers{$cgiparams{'ID'}}[0] eq "$provider") || ($cgiparams{'PROVIDER'} eq "$provider")) {
+								$selected{$provider} = "selected='selected'";
+							}
+
+							# Add the provider to the dropdown menu.
+							print "<option value='$provider' $selected{$provider}>$provider_name</option>\n";
+						}
+print <<END
+					</select>
+				</td>
+
+				<td width='60%'>
+					<b><a id="website" target="_blank" href="#">$Lang::tr{'ids visit provider website'}</a></b>
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan='2'><br><br></td>
+			</tr>
+
+			<tr class='subscription_code' style='display:none' id='subscription_code'>
+				<td colspan='2'>
+					<table border='0'>
+						<tr>
+							<td>
+								<b>$Lang::tr{'subscription code'}</b>
+							</td>
+						</tr>
+
+						<tr>
+							<td>
+								<input type='text' size='40' name='SUBSCRIPTION_CODE' value='$used_providers{$cgiparams{'ID'}}[1]'>
+							</td>
+						</tr>
+
+						<tr>
+							<td><br><br></td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan='2'>
+					<input type='checkbox' name='ENABLE_AUTOUPDATE' $checked{'ENABLE_AUTOUPDATE'}>&nbsp;$Lang::tr{'ids enable automatic updates'}
+				</td>
+			</tr>
+
+			<tr>
+				<td colspan='2' align='right'>
+					<input type='submit' value='$Lang::tr{'back'}'>
+END
+;
+				# Check if a provider should be added or edited.
+				if ($cgiparams{'PROVIDERS'} eq "$Lang::tr{'edit'}") {
+					# Display button for updating the existing provider.
+					print "<input type='submit' name='PROVIDERS' value='$Lang::tr{'update'}'>\n";
+				} else {
+					# Display button to add the new provider.
+					print "<input type='submit' name='PROVIDERS' value='$Lang::tr{'add'}'>\n";
+				}
+print <<END
+				</td>
+			</tr>
+		</table>
+	</form>
+END
+;
+	&Header::closebox();
 }
 
 #
