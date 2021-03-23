@@ -54,8 +54,11 @@ our $modify_sids_file = "$settingsdir/oinkmaster-modify-sids.conf";
 # File which stores the configured IPS settings.
 our $ids_settings_file = "$settingsdir/settings";
 
-# File which stores the configured rules-settings.
+# DEPRECATED - File which stores the configured rules-settings.
 our $rules_settings_file = "$settingsdir/rules-settings";
+
+# File which stores the used and configured ruleset providers.
+our $providers_settings_file = "$settingsdir/providers-settings";
 
 # File which stores the configured settings for whitelisted addresses.
 our $ignored_file = "$settingsdir/ignored";
@@ -108,7 +111,7 @@ sub check_and_create_filelayout() {
 	unless (-f "$modify_sids_file") { &create_empty_file($modify_sids_file); }
 	unless (-f "$used_rulefiles_file") { &create_empty_file($used_rulefiles_file); }
 	unless (-f "$ids_settings_file") { &create_empty_file($ids_settings_file); }
-	unless (-f "$rules_settings_file") { &create_empty_file($rules_settings_file); }
+	unless (-f "$providers_settings_file") { &create_empty_file($providers_settings_file); }
 	unless (-f "$ignored_file") { &create_empty_file($ignored_file); }
 	unless (-f "$whitelist_file" ) { &create_empty_file($whitelist_file); }
 }
