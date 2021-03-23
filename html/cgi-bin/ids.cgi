@@ -668,6 +668,84 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 		# Perform a reload of the page.
 		&reload();
 	}
+
+} elsif (($cgiparams{'PROVIDERS'} eq "$Lang::tr{'add'}") || ($cgiparams{'PROVIDERS'} eq "$Lang::tr{'update'}")) {
+	# Assign some nice human-readable values.
+	my $provider = $cgiparams{'PROVIDER'};
+	my $subscription_code = $cgiparams{'SUBSCRIPTION_CODE'};
+	my $status_autoupdate = $cgiparams{'ENABLE_AUTOUPDATE'};
+
+	# Check if we are going to add a new provider.
+	if ($cgiparams{'PROVIDERS'} eq "$Lang::tr{'add'}") {
+		# Loop through the hash of used providers.
+		foreach my $id ( keys %used_providers) {
+			# Check if the choosen provider is already in use.
+			if ($used_providers{$id}[0] eq "$provider") {
+				# XXX - add to language file.
+				# Assign error message.
+				$errormessage = "The choosen provider is already in use.";
+			}
+		}
+	}
+
+	# Check if the provider requires a subscription code.
+	if ($IDS::Ruleset::Providers{$provider}{'requires_subscription'} eq "True") {
+		# Check if an subscription code has been provided.
+		if ($subscription_code) {
+			# Check if the code contains unallowed chars.
+			unless ($subscription_code =~ /^[a-z0-9]+$/) {
+				$errormessage = $Lang::tr{'invalid input for subscription code'};
+			}
+		} else {
+			# Print an error message, that an subsription code is required for this
+			# provider.
+			$errormessage = $Lang::tr{'ids subscription code required'};
+		}
+	}
+
+	# Go further if there was no error.
+	if ($errormessage eq '') {
+		my $id;
+		my $status;
+
+		# Check if we should edit an existing entry and got an ID.
+		if (($cgiparams{'PROVIDERS'} eq $Lang::tr{'update'}) && ($cgiparams{'ID'})) {
+			# Assin the provided id.
+			$id = $cgiparams{'ID'};
+
+			# Undef the given ID.
+			undef($cgiparams{'ID'});
+
+			# Grab the configured status of the corresponding entry.
+			$status = $used_providers{$id}[3];
+		} else {
+			# Each newly added entry automatically should be enabled.
+			$status = "enabled";
+
+			# Generate the ID for the new entry.
+			#
+			# Sort the keys by their ID and store them in an array.
+			my @keys = sort { $a <=> $b } keys %used_providers;
+
+			# Reverse the key array.
+			my @reversed = reverse(@keys);
+
+			# Obtain the last used id.
+			my $last_id = @reversed[0];
+
+			# Increase the last id by one and use it as id for the new entry.
+			$id = ++$last_id;
+		}
+
+		# Add/Modify the entry to/in the used providers hash..
+		$used_providers{$id} = ["$provider", "$subscription_code", "$status_autoupdate", "$status"];
+
+		# Write the changed hash to the providers settings file.
+		&General::writehasharray($IDS::providers_settings_file, \%used_providers);
+
+		# Undefine providers flag.
+		undef($cgiparams{'PROVIDERS'});
+	}
 }
 
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
