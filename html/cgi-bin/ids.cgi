@@ -986,7 +986,6 @@ END
 			my $col = "";
 
 			# Loop through all entries of the hash.
-			#while( (my $id) = each %used_providers)  {
 			foreach my $id (sort keys(%used_providers)) {
 				# Assign data array positions to some nice variable names.
 				my $provider = $used_providers{$id}[0];
