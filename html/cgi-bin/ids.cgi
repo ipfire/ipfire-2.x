@@ -675,7 +675,14 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	# Assign some nice human-readable values.
 	my $provider = $cgiparams{'PROVIDER'};
 	my $subscription_code = $cgiparams{'SUBSCRIPTION_CODE'};
-	my $status_autoupdate = $cgiparams{'ENABLE_AUTOUPDATE'};
+	my $status_autoupdate;
+
+	# Handle autoupdate checkbox.
+	if ($cgiparams{'ENABLE_AUTOUPDATE'} eq "on") {
+		$status_autoupdate = "enabled";
+	} else {
+		$status_autoupdate = "disabled";
+	}
 
 	# Check if we are going to add a new provider.
 	if ($cgiparams{'PROVIDERS'} eq "$Lang::tr{'add'}") {
@@ -1464,7 +1471,7 @@ END
 	# Check if an existing provider should be edited.
 	if($cgiparams{'PROVIDERS'} eq "$Lang::tr{'edit'}") {
 		# Check if autoupdate is enabled for this provider.
-		if ($used_providers{$cgiparams{'ID'}}[2] eq "on") {
+		if ($used_providers{$cgiparams{'ID'}}[2] eq "enabled") {
 			# Set the checkbox to be checked.
 			$checked{'ENABLE_AUTOUPDATE'} = "checked='checked'";
 		}
