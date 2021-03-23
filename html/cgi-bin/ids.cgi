@@ -1043,7 +1043,7 @@ print <<END;
 					</td>
 
 					<td align='center' $col>
-						<form mehtod='post' action=$ENV{'SCRIPT_NAME'}'>
+						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='PROVIDERS' value='$Lang::tr{'toggle enable disable'}'>
 							<input type='image' name='$Lang::tr{'toggle enable disable'}' src='/images/$status_gif' alt='$status_gdesc' title='$status_gdesc'>
 							<input type='hidden' name='ID' value='$id'>
