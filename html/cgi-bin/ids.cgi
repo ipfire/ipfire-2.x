@@ -789,6 +789,81 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 		# Undefine providers flag.
 		undef($cgiparams{'PROVIDERS'});
 	}
+
+## Toggle Enabled/Disabled for an existing provider.
+#
+} elsif ($cgiparams{'PROVIDERS'} eq $Lang::tr{'toggle enable disable'}) {
+	my %used_providers = ();
+
+	# Only go further, if an ID has been passed.
+	if ($cgiparams{'ID'}) {
+		# Assign the given ID.
+		my $id = $cgiparams{'ID'};
+
+		# Undef the given ID.
+		undef($cgiparams{'ID'});
+
+		# Read-in file which contains the provider settings.
+		&General::readhasharray($IDS::providers_settings_file, \%used_providers);
+
+		# Grab the configured status of the corresponding entry.
+		my $status = $used_providers{$id}[3];
+
+		# Switch the status.
+		if ($status eq "enabled") {
+			$status = "disabled";
+		} else {
+			$status = "enabled";
+		}
+
+		# Modify the status of the existing entry.
+		$used_providers{$id} = ["$used_providers{$id}[0]", "$used_providers{$id}[1]", "$used_providers{$id}[2]", "$status"];
+
+		# Write the changed hash to the providers settings file.
+		&General::writehasharray($IDS::providers_settings_file, \%used_providers);
+
+		# XXX - The ruleset needs to be regenerated
+		# XXX - Suricata requires a reload or if the last provider
+		#       has been disabled suricata needs to be stopped.
+		# Check if the IDS is running.
+		#if(&IDS::ids_is_running()) {
+		#	# Call suricatactrl to perform a reload.
+		#	&IDS::call_suricatactrl("reload");
+		#}
+
+		# Undefine providers flag.
+		undef($cgiparams{'PROVIDERS'});
+	}
+
+## Remove provider from the list of used providers.
+#
+} elsif ($cgiparams{'PROVIDERS'} eq $Lang::tr{'remove'}) {
+	my %used_providers = ();
+
+	# Read-in provider settings file.
+	&General::readhasharray($IDS::providers_settings_file, \%used_providers);
+
+	# Drop entry from the hash.
+	delete($used_providers{$cgiparams{'ID'}});
+
+	# Undef the given ID.
+	undef($cgiparams{'ID'});
+
+	# Write the changed hash to the provide settings file.
+	&General::writehasharray($IDS::providers_settings_file, \%used_providers);
+
+	# XXX - The ruleset of the provider needs to be dropped.
+	# XXX - The remain rulest of suricata needs to be regenerated.
+	# XXX - Suricata requires a reload or if the last provider has
+	#       been removed it has to be stopped.
+	# Check if the IDS is running.
+	#if(&IDS::ids_is_running()) {
+	# Call suricatactrl to perform a reload.
+	#	&IDS::call_suricatactrl("reload");
+	#}
+	
+	# Undefine providers flag.
+	undef($cgiparams{'PROVIDERS'});
 }
 
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
