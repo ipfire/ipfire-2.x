@@ -666,6 +666,40 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 		&reload();
 	}
 
+# Toggle Enable/Disable autoupdate for a provider
+} elsif ($cgiparams{'AUTOUPDATE'} eq $Lang::tr{'toggle enable disable'}) {
+	my %used_providers = ();
+
+	# Only go further, if an ID has been passed.
+	if ($cgiparams{'ID'}) {
+		# Assign the given ID.
+		my $id = $cgiparams{'ID'};
+
+		# Undef the given ID.
+		undef($cgiparams{'ID'});
+
+		# Read-in providers settings file.
+		&General::readhasharray($IDS::providers_settings_file, \%used_providers);
+
+		# Grab the configured status of the corresponding entry.
+		my $status_autoupdate = $used_providers{$id}[2];
+
+		# Switch the status.
+		if ($status_autoupdate eq "disabled") {
+			$status_autoupdate = "enabled";
+		} else {
+			$status_autoupdate = "disabled";
+		}
+
+		# Modify the status of the existing entry.
+		$used_providers{$id} = ["$used_providers{$id}[0]", "$used_providers{$id}[1]", "$status_autoupdate", "$used_providers{$id}[3]"];
+
+		# Write the changed hash to the providers settings file.
+		&General::writehasharray($IDS::providers_settings_file, \%used_providers);
+	}
+
+# Add/Edit a provider to the list of used providers.
+#
 } elsif (($cgiparams{'PROVIDERS'} eq "$Lang::tr{'add'}") || ($cgiparams{'PROVIDERS'} eq "$Lang::tr{'update'}")) {
 	my %used_providers = ();
 
