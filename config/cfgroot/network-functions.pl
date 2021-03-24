@@ -431,6 +431,18 @@ sub valid_mac($) {
 	return $mac =~ /^([0-9A-Fa-f]{2}[:]){5}([0-9A-Fa-f]{2})$/;
 }
 
+# Compares two MAC addresses and returns true if they are equal
+sub is_mac_equal {
+	my $mac_1 = uc shift; # convert to upper case
+	my $mac_2 = uc shift;
+
+	if(valid_mac($mac_1) && valid_mac($mac_2) && ($mac_1 eq $mac_2)) {
+		return 1;
+	}
+
+	return 0;
+}
+
 sub random_mac {
 	my $address = "02";
 
