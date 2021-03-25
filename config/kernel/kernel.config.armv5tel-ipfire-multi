@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm 5.10.21-ipfire-multi Kernel Configuration
+# Linux/arm 5.10.26-ipfire-multi Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 10.2.0"
 CONFIG_CC_IS_GCC=y
@@ -1735,7 +1735,6 @@ CONFIG_PCIEASPM_DEFAULT=y
 CONFIG_PCIE_PME=y
 # CONFIG_PCIE_DPC is not set
 # CONFIG_PCIE_PTM is not set
-# CONFIG_PCIE_BW is not set
 CONFIG_PCI_MSI=y
 CONFIG_PCI_MSI_IRQ_DOMAIN=y
 CONFIG_PCI_QUIRKS=y
@@ -6584,6 +6583,7 @@ CONFIG_UIO=m
 # CONFIG_UIO_NETX is not set
 # CONFIG_UIO_PRUSS is not set
 # CONFIG_UIO_MF624 is not set
+# CONFIG_VFIO is not set
 CONFIG_VIRT_DRIVERS=y
 CONFIG_VIRTIO_MENU=y
 # CONFIG_VIRTIO_PCI is not set
