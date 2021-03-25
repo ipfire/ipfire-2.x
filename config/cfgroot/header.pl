@@ -170,6 +170,12 @@ sub genmenu {
         $menu->{'02.status'}{'subMenu'}->{'74.modem-status'}{'enabled'} = 1;
     }
 
+	# Disable the Dialup/PPPoE menu item when the RED interface is in IP mode
+	# (the "Network" module is loaded by general-functions.pl)
+	if(&Network::is_red_mode_ip()) {
+		$menu->{'01.system'}{'subMenu'}->{'20.dialup'}{'enabled'} = 0;
+	}
+
     # Disbale unusable things in cloud environments
     if (&General::running_in_cloud()) {
         $menu->{'03.network'}{'subMenu'}->{'30.dhcp'}{'enabled'} = 0;
