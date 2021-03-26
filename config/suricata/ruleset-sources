@@ -12,7 +12,7 @@ package IDS::Ruleset;
 # 	tr_string => The translation string which is used by the WUI and part of the language files.
 # 	requires_subscription => "True/False" - If some kind of registration code is required in order to download the ruleset.
 # 	dl_url => The download URL to grab the ruleset.
-# 	dl_type => "archive/file" - To specify, if the downloaded file is a packed archive or a plain text file.
+# 	dl_type => "archive/plain" - To specify, if the downloaded file is a packed archive or a plain text file.
 # },
 
 # Hash which contains the supported ruleset providers.
