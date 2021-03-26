@@ -23,7 +23,7 @@ our %Providers = (
 		website => "https://www.snort.org",
 		tr_string => "registered user rules",
 		requires_subscription => "True",
-		dl_url => "https://www.snort.org/rules/snortrules-snapshot-29161.tar.gz?oinkcode=<oinkcode>",
+		dl_url => "https://www.snort.org/rules/snortrules-snapshot-29161.tar.gz?oinkcode=<subscription_code>",
 		dl_type => "archive",
 	},
 
@@ -33,7 +33,7 @@ our %Providers = (
 		website => "https://www.snort.org",
 		tr_string => "subscripted user rules",
 		requires_subscription => "True",
-		dl_url => "https://www.snort.org/rules/snortrules-snapshot-29161.tar.gz?oinkcode=<oinkcode>",
+		dl_url => "https://www.snort.org/rules/snortrules-snapshot-29161.tar.gz?oinkcode=<subscription_code>",
 		dl_type => "archive",
 	},
 
@@ -63,7 +63,7 @@ our %Providers = (
 		website => "https://emergingthreats.net/",
 		tr_string => "emerging pro rules",
 		requires_subscription => "True",
-		dl_url => "https://rules.emergingthreatspro.com/<oinkcode>/suricata-5.0/etpro.rules.tar.gz",
+		dl_url => "https://rules.emergingthreatspro.com/<subscription_code>/suricata-5.0/etpro.rules.tar.gz",
 		dl_type => "archive",
 	},
 );
