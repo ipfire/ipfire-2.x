@@ -21,6 +21,8 @@
 #                                                                          #
 ############################################################################
 
+use strict;
+
 package IDS;
 
 require '/var/ipfire/general-functions.pl';
