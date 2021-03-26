@@ -183,23 +183,34 @@ sub checkdiskspace () {
 }
 
 #
-## This function is responsible for downloading the configured IDS ruleset.
+## This function is responsible for downloading the configured IDS rulesets or if no one is specified
+## all configured rulesets will be downloaded.
 ##
-## * At first it obtains from the stored rules settings which ruleset should be downloaded.
-## * The next step is to get the download locations for all available rulesets.
-## * After that, the function will check if an upstream proxy should be used and grab the settings.
-## * The last step will be to generate the final download url, by obtaining the URL for the desired
-##   ruleset, add the settings for the upstream proxy and final grab the rules tarball from the server.
+## * At first it gathers all configured ruleset providers, initialize the downloader and sets an
+##   upstream proxy if configured.
+## * After that, the given ruleset or in case all rulesets should be downloaded, it will determine wether it
+##   is enabled or not.
+## * The next step will be to generate the final download url, by obtaining the URL for the desired
+##   ruleset, add the settings for the upstream proxy.
+## * Finally the function will grab all the rules files or tarballs from the servers.
 #
-sub downloadruleset {
-	# Get rules settings.
-	my %rulessettings=();
-	&General::readhash("$rules_settings_file", \%rulessettings);
+sub downloadruleset ($) {
+	my ($provider) = @_;
+
+	# If no provider is given default to "all".
+	$provider //= 'all';
+
+	# Hash to store the providers and access id's, for which rules should be downloaded.
+	my %sheduled_providers = ();
+
+	# Get used provider settings.
+	my %used_providers = ();
+	&General::readhasharray("$providers_settings_file", \%used_providers);
 
 	# Check if a ruleset has been configured.
-	unless($rulessettings{'RULES'}) {
+	unless(%used_providers) {
 		# Log that no ruleset has been configured and abort.
-		&_log_to_syslog("No ruleset source has been configured.");
+		&_log_to_syslog("No ruleset provider has been configured.");
 
 		# Return "1".
 		return 1;
@@ -236,40 +247,100 @@ sub downloadruleset {
 		$downloader->proxy(['http', 'https'], $proxy_url);
 	}
 
-	# Grab the right url based on the configured vendor.
-	my $url = $IDS::Ruleset::Providers{$rulessettings{'RULES'}}{'dl_url'};
+	# Loop through the hash of configured providers.
+	foreach my $id ( keys %used_providers ) {
+		# Skip providers which are not enabled.
+		next if ($used_providers{$id}[3] ne "enabled");
 
-	# Check if the vendor requires an oinkcode and add it if needed.
-	$url =~ s/\<oinkcode\>/$rulessettings{'OINKCODE'}/g;
+		# Obtain the provider handle.
+		my $provider_handle = $used_providers{$id}[0];
 
-	# Abort if no url could be determined for the vendor.
-	unless ($url) {
-		# Log error and abort.
-		&_log_to_syslog("Unable to gather a download URL for the selected ruleset.");
-		return 1;
+		# Handle update off all providers.
+		if (($provider eq "all") || ($provider_handle eq "$provider")) {
+			# Add provider handle and it's id to the hash of sheduled providers.
+			$sheduled_providers{$provider_handle} = $id);
+		}
 	}
 
-	# Variable to store the filesize of the remote object.
-	my $remote_filesize;
+	# Loop through the hash of sheduled providers.
+	foreach my $provider ( keys %sheduled_providers) {
+		# Grab the download url for the provider.
+		my $url = $IDS::Ruleset::Providers{$provider}{'dl_url'};
 
-	# The sourcfire (snort rules) does not allow to send "HEAD" requests, so skip this check
-	# for this webserver.
-	#
-	# Check if the ruleset source contains "snort.org".
-	unless ($url =~ /\.snort\.org/) {
-		# Pass the requrested url to the downloader.
-		my $request = HTTP::Request->new(HEAD => $url);
+		# Check if the provider requires a subscription.
+		if ($IDS::Ruleset::Providers{$provider}{'requires_subscription'} eq "True") {
+			# Grab the previously stored access id for the provider from hash.
+			my $id = $sheduled_providers{$provider};
 
-		# Accept the html header.
-		$request->header('Accept' => 'text/html');
+			# Grab the subscription code.
+			my $subscription_code = $used_providers{$id}[1];
 
-		# Perform the request and fetch the html header.
-		my $response = $downloader->request($request);
+			# Add the subscription code to the download url.
+			$url =~ s/\<subscription_code\>/$subscription_code/g;
+
+		}
+
+		# Abort if no url could be determined for the provider.
+		unless ($url) {
+			# Log error and abort.
+			&_log_to_syslog("Unable to gather a download URL for the selected ruleset provider.");
+			return 1;
+		}
+
+		# Variable to store the filesize of the remote object.
+		my $remote_filesize;
+
+		# The sourcfire (snort rules) does not allow to send "HEAD" requests, so skip this check
+		# for this webserver.
+		#
+		# Check if the ruleset source contains "snort.org".
+		unless ($url =~ /\.snort\.org/) {
+			# Pass the requrested url to the downloader.
+			my $request = HTTP::Request->new(HEAD => $url);
+
+			# Accept the html header.
+			$request->header('Accept' => 'text/html');
+
+			# Perform the request and fetch the html header.
+			my $response = $downloader->request($request);
+
+			# Check if there was any error.
+			unless ($response->is_success) {
+				# Obtain error.
+				my $error = $response->status_line();
+
+				# Log error message.
+				&_log_to_syslog("Unable to download the ruleset. \($error\)");
+
+				# Return "1" - false.
+				return 1;
+			}
+
+			# Assign the fetched header object.
+			my $header = $response->headers();
+
+			# Grab the remote file size from the object and store it in the
+			# variable.
+			$remote_filesize = $header->content_length;
+		}
+
+		# Load perl module to deal with temporary files.
+		use File::Temp;
+
+		# Generate temporary file name, located in "/var/tmp" and with a suffix of ".tmp".
+		my $tmp = File::Temp->new( SUFFIX => ".tmp", DIR => "/var/tmp/", UNLINK => 0 );
+		my $tmpfile = $tmp->filename();
+
+		# Pass the requested url to the downloader.
+		my $request = HTTP::Request->new(GET => $url);
+
+		# Perform the request and save the output into the tmpfile.
+		my $response = $downloader->request($request, $tmpfile);
 
 		# Check if there was any error.
 		unless ($response->is_success) {
 			# Obtain error.
-			my $error = $response->status_line();
+			my $error = $response->content;
 
 			# Log error message.
 			&_log_to_syslog("Unable to download the ruleset. \($error\)");
@@ -278,69 +349,51 @@ sub downloadruleset {
 			return 1;
 		}
 
-		# Assign the fetched header object.
-		my $header = $response->headers();
+		# Load perl stat module.
+		use File::stat;
 
-		# Grab the remote file size from the object and store it in the
-		# variable.
-		$remote_filesize = $header->content_length;
+		# Perform stat on the tmpfile.
+		my $stat = stat($tmpfile);
+
+		# Grab the local filesize of the downloaded tarball.
+		my $local_filesize = $stat->size;
+
+		# Check if both file sizes match.
+		if (($remote_filesize) && ($remote_filesize ne $local_filesize)) {
+			# Log error message.
+			&_log_to_syslog("Unable to completely download the ruleset. ");
+			&_log_to_syslog("Only got $local_filesize Bytes instead of $remote_filesize Bytes. ");
+
+			# Delete temporary file.
+			unlink("$tmpfile");
+
+			# Return "1" - false.
+			return 1;
+		}
+
+		# Genarate and assign file name and path to store the downloaded rules file.
+		my $dl_rulesfile = &_get_dl_rulesfile($provider);
+
+		# Check if a file name could be obtained.
+		unless ($dl_rulesfile) {
+			# Log error message.
+			&_log_to_syslog("Unable to store the downloaded rules file. ");
+
+			# Delete downloaded temporary file.
+			unlink("$tmpfile");
+
+			# Return "1" - false.
+		}
+
+		# Load file copy module, which contains the move() function.
+		use File::Copy;
+
+		# Overwrite the may existing rulefile or tarball with the downloaded one.
+		move("$tmpfile", "$dl_rulesfile");
+
+		# Set correct ownership for the tarball.
+		set_ownership("$dl_rulesfile");
 	}
-
-	# Load perl module to deal with temporary files.
-	use File::Temp;
-
-	# Generate temporary file name, located in "/var/tmp" and with a suffix of ".tar.gz".
-	my $tmp = File::Temp->new( SUFFIX => ".tar.gz", DIR => "/var/tmp/", UNLINK => 0 );
-	my $tmpfile = $tmp->filename();
-
-	# Pass the requested url to the downloader.
-	my $request = HTTP::Request->new(GET => $url);
-
-	# Perform the request and save the output into the tmpfile.
-	my $response = $downloader->request($request, $tmpfile);
-
-	# Check if there was any error.
-	unless ($response->is_success) {
-		# Obtain error.
-		my $error = $response->content;
-
-		# Log error message.
-		&_log_to_syslog("Unable to download the ruleset. \($error\)");
-
-		# Return "1" - false.
-		return 1;
-	}
-
-	# Load perl stat module.
-	use File::stat;
-
-	# Perform stat on the tmpfile.
-	my $stat = stat($tmpfile);
-
-	# Grab the local filesize of the downloaded tarball.
-	my $local_filesize = $stat->size;
-
-	# Check if both file sizes match.
-	if (($remote_filesize) && ($remote_filesize ne $local_filesize)) {
-		# Log error message.
-		&_log_to_syslog("Unable to completely download the ruleset. ");
-		&_log_to_syslog("Only got $local_filesize Bytes instead of $remote_filesize Bytes. ");
-
-		# Delete temporary file.
-		unlink("$tmpfile");
-
-		# Return "1" - false.
-		return 1;
-	}
-
-	# Load file copy module, which contains the move() function.
-	use File::Copy;
-
-	# Overwrite existing rules tarball with the new downloaded one.
-	move("$tmpfile", "$rulestarball");
-
-	# Set correct ownership for the rulesdir and files.
-	set_ownership("$rulestarball");
 
 	# If we got here, everything worked fine. Return nothing.
 	return;
