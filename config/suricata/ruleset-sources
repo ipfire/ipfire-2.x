@@ -40,7 +40,7 @@ our %Providers = (
 	# Community rules from sourcefire.
 	community => {
 		summary => "Snort/VRT GPLv2 Community Rules",
-		website => "https://www.snort.ort",
+		website => "https://www.snort.org",
 		tr_string => "community rules",
 		requires_subscription => "False",
 		dl_url => "https://www.snort.org/rules/community",
