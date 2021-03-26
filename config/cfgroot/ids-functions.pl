@@ -65,8 +65,11 @@ our $providers_settings_file = "$settingsdir/providers-settings";
 # File which stores the configured settings for whitelisted addresses.
 our $ignored_file = "$settingsdir/ignored";
 
-# Location and name of the tarball which contains the ruleset.
+# DEPRECATED - Location and name of the tarball which contains the ruleset.
 our $rulestarball = "/var/tmp/idsrules.tar.gz";
+
+# Location where the downloaded rulesets are stored.
+our $dl_rules_path = "/var/tmp";
 
 # File to store any errors, which also will be read and displayed by the wui.
 our $storederrorfile = "/tmp/ids_storederror";
@@ -93,6 +96,9 @@ our $idspidfile = "/var/run/suricata.pid";
 # Location of suricatactrl.
 my $suricatactrl = "/usr/local/bin/suricatactrl";
 
+# Prefix for each downloaded ruleset.
+my $dl_rulesfile_prefix = "idsrules";
+
 # Array with allowed commands of suricatactrl.
 my @suricatactrl_cmds = ( 'start', 'stop', 'restart', 'reload', 'fix-rules-dir', 'cron' );
 
@@ -102,6 +108,12 @@ my @cron_intervals = ('off', 'daily', 'weekly' );
 # Array which contains the HTTP ports, which statically will be declared as HTTP_PORTS in the
 # http_ports_file.
 my @http_ports = ('80', '81');
+
+# Hash which allows to convert the download type (dl_type) to a file suffix.
+my %dl_type_to_suffix = (
+	"archive" => ".tar.gz",
+	"plain" => ".rules",
+);
 
 #
 ## Function to check and create all IDS related files, if the does not exist.
@@ -429,6 +441,31 @@ sub _store_error_message ($) {
 
 	# Set correct ownership for the file.
 	&set_ownership("$storederrorfile");
+}
+
+#
+## Private function to get the path and filename for a downloaded ruleset by a given provider.
+#
+sub _get_dl_rulesfile($) {
+	my ($provider) = @_;
+
+	# Gather the download type for the given provider.
+	my $dl_type = $IDS::Ruleset::Providers{$provider}{'dl_type'};
+
+	# Obtain the file suffix for the download file type.
+	my $suffix = $dl_type_to_suffix{$dl_type};
+
+	# Check if a suffix has been found.
+	unless ($suffix) {
+		# Abort return - nothing.
+		return;
+	}
+
+	# Generate the full filename and path for the stored rules file.
+	my $rulesfile = "$dl_rules_path/$dl_rulesfile_prefix-$provider$suffix";
+
+	# Return the generated filename.
+	return $rulesfile;
 }
 
 #
