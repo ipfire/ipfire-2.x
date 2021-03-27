@@ -391,6 +391,9 @@ sub downloadruleset ($) {
 		# Overwrite the may existing rulefile or tarball with the downloaded one.
 		move("$tmpfile", "$dl_rulesfile");
 
+		# Delete temporary file.
+		unlink("$tmpfile");
+
 		# Set correct ownership for the tarball.
 		set_ownership("$dl_rulesfile");
 	}
