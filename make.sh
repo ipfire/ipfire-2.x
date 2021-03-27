@@ -1639,6 +1639,8 @@ buildipfire() {
   lfsmake2 ncdu
   lfsmake2 lshw
   lfsmake2 socat
+  lfsmake2 libcdada
+  lfsmake2 pmacct
 }
 
 buildinstaller() {
