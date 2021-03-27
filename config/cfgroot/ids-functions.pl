@@ -258,7 +258,7 @@ sub downloadruleset ($) {
 		# Handle update off all providers.
 		if (($provider eq "all") || ($provider_handle eq "$provider")) {
 			# Add provider handle and it's id to the hash of sheduled providers.
-			$sheduled_providers{$provider_handle} = $id);
+			$sheduled_providers{$provider_handle} = $id;
 		}
 	}
 
