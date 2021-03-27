@@ -99,6 +99,9 @@ my $suricatactrl = "/usr/local/bin/suricatactrl";
 # Prefix for each downloaded ruleset.
 my $dl_rulesfile_prefix = "idsrules";
 
+# Temporary directory where the rulesets will be extracted.
+my $tmp_directory = "/tmp/ids_tmp";
+
 # Array with allowed commands of suricatactrl.
 my @suricatactrl_cmds = ( 'start', 'stop', 'restart', 'reload', 'fix-rules-dir', 'cron' );
 
@@ -400,6 +403,104 @@ sub downloadruleset ($) {
 
 	# If we got here, everything worked fine. Return nothing.
 	return;
+}
+
+#
+## Function to extract a given ruleset.
+#
+sub extractruleset ($) {
+	my ($provider) = @_;
+
+	# Load perl module to deal with archives.
+	use Archive::Tar;
+
+	# Load perl module to deal with files and path.
+	use File::Basename;
+
+	# Get full path and downloaded rulesfile for the given provider.
+	my $tarball = &_get_dl_rulesfile($provider);
+
+	# Check if the file exists.
+	unless (-f $tarball) {
+		&_log_to_syslog("Could not extract ruleset file: $tarball");
+
+		# Return nothing.
+		return;
+	}
+
+	# Destination directories, where the files will be extracted.
+	my $rules_destdir = "$tmp_directory/rules";
+	my $conf_destdir = "$tmp_directory/conf";
+
+	# Check if the temporary directories exist, otherwise create them.
+	mkdir("$tmp_directory") unless (-d "$tmp_directory");
+	mkdir("$rules_destdir") unless (-d "$rules_destdir");
+	mkdir("$conf_destdir") unless (-d "$conf_destdir");
+
+	# Initialize the tar module.
+	my $tar = Archive::Tar->new($tarball);
+
+	# Get the filelist inside the tarball.
+	my @packed_files = $tar->list_files;
+
+	# Loop through the filelist.
+	foreach my $packed_file (@packed_files) {
+		my $destination;
+
+		# Splitt the packed file into chunks.
+		my $file = fileparse($packed_file);
+
+		# Handle msg-id.map file.
+		if ("$file" eq "sid-msg.map") {
+			# Set extract destination to temporary config_dir.
+			$destination = "$conf_destdir/$provider\-sid-msg.map";
+		# Handle classification.conf
+		} elsif ("$file" eq "classification.config") {
+			# Set extract destination to temporary config_dir.
+			$destination = "$conf_destdir/$provider\-classification.config";
+		# Handle rules files.
+		} elsif ($file =~ m/\.rules$/) {
+			my $rulesfilename;
+
+			# Splitt the filename into chunks.
+			my @filename = split("-", $file);
+
+			# Reverse the array.
+			@filename = reverse(@filename);
+
+			# Get the amount of elements in the array.
+			my $elements = @filename;
+
+			# Remove last element of the hash.
+			# It contains the vendor name, which will be replaced.
+			if ($elements >= 3) {
+				# Remove last element from hash.
+				pop(@filename);
+			}
+
+			# Check if the last element of the filename does not
+			# contain the providers name.
+			if (@filename[-1] ne "$provider") {
+				# Add provider name as last element.
+				push(@filename, $provider);
+			}
+
+			# Reverse the array back.
+			@filename = reverse(@filename);
+
+			# Generate the name for the rulesfile.
+			$rulesfilename = join("-", @filename);
+
+			# Set extract destination to temporaray rules_dir.
+			$destination = "$rules_destdir/$rulesfilename";
+		} else {
+			# Skip all other files.
+			next;
+		}
+
+		# Extract the file to the temporary directory.
+		$tar->extract_file("$packed_file", "$destination");
+	}
 }
 
 #
