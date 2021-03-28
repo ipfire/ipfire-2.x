@@ -483,7 +483,7 @@ sub extractruleset ($) {
 
 			# Check if the last element of the filename does not
 			# contain the providers name.
-			if (@filename[-1] ne "$provider") {
+			if ($filename[-1] ne "$provider") {
 				# Add provider name as last element.
 				push(@filename, $provider);
 			}
