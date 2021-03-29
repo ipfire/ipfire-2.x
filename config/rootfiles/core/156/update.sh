@@ -32,6 +32,8 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Remove files
+rm -vf \
+	/srv/web/ipfire/html/include/snortupdateutility.js
 
 # Stop services
 
