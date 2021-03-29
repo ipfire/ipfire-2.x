@@ -1,6 +1,5 @@
 #bin/ed
 #bin/red
-#usr/info
-#usr/info/ed.info
-#usr/man/man1/ed.1
-#usr/man/man1/red.1
+#usr/share/info/ed.info
+#usr/share/man/man1/ed.1
+#usr/share/man/man1/red.1
