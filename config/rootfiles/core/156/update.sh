@@ -51,6 +51,7 @@ ldconfig
 
 # Start services
 telinit u
+/etc/init.d/suricata restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
