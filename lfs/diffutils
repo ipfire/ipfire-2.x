@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.6
+VER        = 3.7
 
 THISAPP    = diffutils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 07cf286672ced26fba54cd0313bdc071
+$(DL_FILE)_MD5 = 4824adc0e95dbbf11dfbdfaad6a1e461
 
 install : $(TARGET)
 
