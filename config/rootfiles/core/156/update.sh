@@ -33,7 +33,9 @@ done
 
 # Remove files
 rm -vf \
-	/srv/web/ipfire/html/include/snortupdateutility.js
+	/srv/web/ipfire/html/include/snortupdateutility.js \
+	/usr/bin/gawk-4.1.4 \
+	/usr/bin/igawk
 
 # Stop services
 
