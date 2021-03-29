@@ -966,9 +966,6 @@ sub _cleanup_rulesdir() {
 		# We only want files.
 		next unless (-f "$rulespath/$file");
 
-		# Skip element if it has config as file extension.
-		next if ($file =~ m/\.config$/);
-
 		# Skip rules file for whitelisted hosts.
 		next if ("$rulespath/$file" eq $whitelist_file);
 
