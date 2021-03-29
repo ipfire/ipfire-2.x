@@ -108,6 +108,12 @@ my $dl_rulesfile_prefix = "idsrules";
 # Temporary directory where the rulesets will be extracted.
 my $tmp_directory = "/tmp/ids_tmp";
 
+# Temporary directory where the extracted rules files will be stored.
+my $tmp_rules_directory = "$tmp_directory/rules";
+
+# Temporary directory where the extracted additional config files will be stored.
+my $tmp_conf_directory = "$tmp_directory/conf";
+
 # Array with allowed commands of suricatactrl.
 my @suricatactrl_cmds = ( 'start', 'stop', 'restart', 'reload', 'fix-rules-dir', 'cron' );
 
@@ -434,14 +440,10 @@ sub extractruleset ($) {
 		return;
 	}
 
-	# Destination directories, where the files will be extracted.
-	my $rules_destdir = "$tmp_directory/rules";
-	my $conf_destdir = "$tmp_directory/conf";
-
 	# Check if the temporary directories exist, otherwise create them.
 	mkdir("$tmp_directory") unless (-d "$tmp_directory");
-	mkdir("$rules_destdir") unless (-d "$rules_destdir");
-	mkdir("$conf_destdir") unless (-d "$conf_destdir");
+	mkdir("$tmp_rules_directory") unless (-d "$tmp_rules_directory");
+	mkdir("$tmp_conf_directory") unless (-d "$tmp_conf_directory");
 
 	# Initialize the tar module.
 	my $tar = Archive::Tar->new($tarball);
@@ -459,11 +461,11 @@ sub extractruleset ($) {
 		# Handle msg-id.map file.
 		if ("$file" eq "sid-msg.map") {
 			# Set extract destination to temporary config_dir.
-			$destination = "$conf_destdir/$provider\-sid-msg.map";
+			$destination = "$tmp_conf_directory/$provider\-sid-msg.map";
 		# Handle classification.conf
 		} elsif ("$file" eq "classification.config") {
 			# Set extract destination to temporary config_dir.
-			$destination = "$conf_destdir/$provider\-classification.config";
+			$destination = "$tmp_conf_directory/$provider\-classification.config";
 		# Handle rules files.
 		} elsif ($file =~ m/\.rules$/) {
 			my $rulesfilename;
@@ -498,7 +500,7 @@ sub extractruleset ($) {
 			$rulesfilename = join("-", @filename);
 
 			# Set extract destination to temporaray rules_dir.
-			$destination = "$rules_destdir/$rulesfilename";
+			$destination = "$tmp_rules_directory/$rulesfilename";
 		} else {
 			# Skip all other files.
 			next;
@@ -558,7 +560,7 @@ sub merge_classifications(@) {
 	# Loop through the given array of providers.
 	foreach my $provider (@providers) {
 		# Generate full path to classification file.
-		my $classification_file = "$tmp_directory/conf/$provider\-classification.config";
+		my $classification_file = "$tmp_conf_directory/$provider\-classification.config";
 
 		# Skip provider if no classification file exists.
 		next unless (-f "$classification_file");
@@ -622,7 +624,7 @@ sub merge_sid_msg (@) {
 	# Loop through the array of given providers.
 	foreach my $provider (@providers) {
 		# Generate full path and filename.
-		my $sid_msg_file = "$tmp_directory/conf/$provider\-sid-msg.map";
+		my $sid_msg_file = "$tmp_conf_directory/$provider\-sid-msg.map";
 
 		# Skip provider if no sid to msg mapping file for this provider exists.
 		next unless (-f $sid_msg_file);
