@@ -512,14 +512,60 @@ sub extractruleset ($) {
 }
 
 #
-## A tiny wrapper function to call the oinkmaster script.
+## A wrapper function to call the oinkmaster script, setup the rules structues and
+## call the functions to merge the additional config files. (classification, sid-msg, etc.).
 #
 sub oinkmaster () {
+	# Load perl module for file copying.
+	use File::Copy;
+
+	# Hash to store the used providers.
+	my %used_providers = ();
+
+	# Array to store the enabled providers.
+	my @enabled_providers = ();
+
 	# Check if the files in rulesdir have the correct permissions.
 	&_check_rulesdir_permissions();
 
-	# Cleanup the rules directory before filling it with the new rulest.
+	# Cleanup the rules directory before filling it with the new rulests.
 	&_cleanup_rulesdir();
+
+	# Read-in the providers config file.
+	&General::readhasharray("$providers_settings_file", \%used_providers);
+
+	# Loop through the hash of used_providers.
+	foreach my $id (keys %used_providers) {
+		# Skip disabled providers.
+		next unless ($used_providers{$id}[3] eq "enabled");
+
+		# Grab the provider handle.
+		my $provider = "$used_providers{$id}[0]";
+
+		# Add the provider handle to the array of enabled providers.
+		push(@enabled_providers, $provider);
+
+		# Omit the type (dl_type) of the stored ruleset.
+		my $type = $IDS::Ruleset::Providers{$provider}{'dl_type'};
+
+		# Handle the different ruleset types.
+		if ($type eq "archive") {
+			# Call the extractruleset function.
+			&extractruleset($provider);
+		} elsif ($type eq "plain") {
+			# Generate filename and full path for the stored rulesfile.
+			my $dl_rulesfile = &_get_dl_rulesfile($provider);
+
+			# Generate destination filename an full path.
+			my $destination = "$tmp_rules_directory/$provider\-ruleset.rules";
+
+			# Copy the file into the temporary rules directory.
+			copy($dl_rulesfile, $destination);
+		} else {
+			# Skip unknown type.
+			next;
+		}
+	}
 
 	# Load perl module to talk to the kernel syslog.
 	use Sys::Syslog qw(:DEFAULT setlogsock);
@@ -528,7 +574,7 @@ sub oinkmaster () {
 	openlog('oinkmaster', 'cons,pid', 'user');
 
 	# Call oinkmaster to generate ruleset.
-	open(OINKMASTER, "/usr/local/bin/oinkmaster.pl -s -u file://$rulestarball -C $settingsdir/oinkmaster.conf -o $rulespath 2>&1 |") or die "Could not execute oinkmaster $!\n";
+	open(OINKMASTER, "/usr/local/bin/oinkmaster.pl -s -u dir://$tmp_rules_directory -C $settingsdir/oinkmaster.conf -o $rulespath 2>&1 |") or die "Could not execute oinkmaster $!\n";
 
 	# Log output of oinkmaster to syslog.
 	while(<OINKMASTER>) {
@@ -545,6 +591,20 @@ sub oinkmaster () {
 
 	# Close the log handle.
 	closelog();
+
+	use Data::Dumper;
+
+	print Dumper \@enabled_providers;
+
+	# Call function to merge the classification files.
+	&merge_classifications(@enabled_providers);
+
+	# Call function to merge the sid to message mapping files.
+	&merge_sid_msg(@enabled_providers);
+
+	# Cleanup temporary directory.
+	# XXX - not implemented yet.
+	# &cleanup_tmp_directory();
 }
 
 #
