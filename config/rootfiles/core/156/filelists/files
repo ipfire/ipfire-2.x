@@ -1,3 +1,4 @@
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/zoneconf.cgi
+var/ipfire/header.pl
 var/ipfire/network-functions.pl
