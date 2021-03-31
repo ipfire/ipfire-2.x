@@ -1477,6 +1477,48 @@ sub get_red_address() {
 }
 
 #
+## Function to get all used rulesfiles files.
+#
+sub get_used_rulesfiles() {
+	# Array to store the used rulefiles.
+	my @used_rulesfiles = ();
+
+	# Check if the used rulesfile is empty.
+	unless (-z $used_rulesfiles_file) {
+		# Open the file or used rulefiles and read-in content.
+		open(FILE, $used_rulefiles_file) or die "Could not open $used_rulefiles_file. $!\n";
+
+		while (<FILE>) {
+			# Assign the current line to a nice variable.
+			my $line = $_;
+
+			# Remove newlines.
+			chomp($line);
+
+			# Skip comments.
+			next if ($line =~ /\#/);
+
+			# Skip blank  lines.
+			next if ($line =~ /^\s*$/);
+
+			# Gather the rulefile.
+			if ($line =~ /.*- (.*)/) {
+				my $rulefile = $1;
+
+				# Add the rulefile to the array of used rulesfiles.
+				push(@used_rulesfiles, $rulefile);
+			}
+		}
+
+		# Close the file.
+		close(FILE);
+	}
+
+	# Return the array of used rulesfiles.
+	return @used_rulesfiles;
+}
+
+#
 ## Function to write the lock file for locking the WUI, while
 ## the autoupdate script runs.
 #
