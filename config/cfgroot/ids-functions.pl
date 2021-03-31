@@ -603,8 +603,7 @@ sub oinkmaster () {
 	&merge_sid_msg(@enabled_providers);
 
 	# Cleanup temporary directory.
-	# XXX - not implemented yet.
-	# &cleanup_tmp_directory();
+	&cleanup_tmp_directory();
 }
 
 #
@@ -739,6 +738,17 @@ sub merge_sid_msg (@) {
 
 	# Close file handle.
 	close(FILE);
+}
+
+#
+## Function to cleanup the temporary IDS directroy.
+#
+sub cleanup_tmp_directory () {
+	# Load rmtree() function from file path perl module.
+	use File::Path 'rmtree';
+
+	# Delete temporary directory and all containing files.
+	rmtree([ "$tmp_directory" ]);
 }
 
 #
