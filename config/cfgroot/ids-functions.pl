@@ -838,6 +838,22 @@ sub _get_dl_rulesfile($) {
 }
 
 #
+## Tiny function to delete the stored ruleset file or tarball for a given provider.
+#
+sub drop_dl_rulesfile ($) {
+	my ($provider) = @_;
+
+	# Gather the full path and name of the stored rulesfile.
+	my $rulesfile = &_get_dl_rulesfile($provider);
+
+	# Check if the given rulesfile exists.
+	if (-f $rulesfile) {
+		# Delete the stored rulesfile.
+		unlink($rulesfile) or die "Could not delete $rulesfile. $!\n";
+	}
+}
+
+#
 ## Function to check if the IDS is running.
 #
 sub ids_is_running () {
