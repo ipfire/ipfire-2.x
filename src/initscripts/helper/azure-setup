@@ -9,7 +9,7 @@ export PATH=/usr/local/sbin:/usr/local/bin:${PATH}
 get() {
 	local file="${1}"
 
-	wget -qO - --header="Metadata:true" "http://169.254.169.254/metadata/instance/${file}?api-version=2019-06-01&format=text"
+	wget --timeout=3 --tries=3 -qO - --header="Metadata:true" "http://169.254.169.254/metadata/instance/${file}?api-version=2019-06-01&format=text"
 }
 
 format_mac() {
