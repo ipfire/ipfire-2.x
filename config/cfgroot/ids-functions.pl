@@ -1214,12 +1214,7 @@ sub write_used_rulefiles_file(@) {
 sub write_modify_sids_file() {
 	# Get configured settings.
 	my %idssettings=();
-	my %rulessettings=();
 	&General::readhash("$ids_settings_file", \%idssettings);
-	&General::readhash("$rules_settings_file", \%rulessettings);
-
-	# Gather the configured ruleset.
-	my $ruleset = $rulessettings{'RULES'};
 
 	# Open modify sid's file for writing.
 	open(FILE, ">$modify_sids_file") or die "Could not write to $modify_sids_file. $!\n";
@@ -1236,33 +1231,24 @@ sub write_modify_sids_file() {
 		# malware in that file.  Rules which fall into the first category should stay as
 		# alert since not all flows of that type contain malware.
 
-		if($ruleset eq 'registered' or $ruleset eq 'subscripted' or $ruleset eq 'community') {
-			# These types of rulesfiles contain meta-data which gives the action that should
-			# be used when in IPS mode.  Do the following:
-			#
-			# 1. Disable all rules and set the action to 'drop'
-			# 2. Set the action back to 'alert' if the rule contains 'flowbits:noalert;'
-			#    This should give rules not in the policy a reasonable default if the user
-			#    manually enables them.
-			# 3. Enable rules and set actions according to the meta-data strings.
+		# These types of rulesfiles contain meta-data which gives the action that should
+		# be used when in IPS mode.  Do the following:
+		#
+		# 1. Disable all rules and set the action to 'drop'
+		# 2. Set the action back to 'alert' if the rule contains 'flowbits:noalert;'
+		#    This should give rules not in the policy a reasonable default if the user
+		#    manually enables them.
+		# 3. Enable rules and set actions according to the meta-data strings.
 
-			my $policy = 'balanced';  # Placeholder to allow policy to be changed.
+		my $policy = 'balanced';  # Placeholder to allow policy to be changed.
 
 			print FILE <<END;
-modifysid * "^#?(?:alert|drop)" | "#drop"
-modifysid * "^#drop(.+flowbits:noalert;)" | "#alert\${1}"
 modifysid * "^#(?:alert|drop)(.+policy $policy-ips alert)" | "alert\${1}"
 modifysid * "^#(?:alert|drop)(.+policy $policy-ips drop)" | "drop\${1}"
-END
-		} else {
-			# These rulefiles don't have the metadata, so set rules to 'drop' unless they
-			# contain the string 'flowbits:noalert;'.
-			print FILE <<END;
 modifysid * "^(#?)(?:alert|drop)" | "\${1}drop"
 modifysid * "^(#?)drop(.+flowbits:noalert;)" | "\${1}alert\${2}"
 END
 		}
-	}
 
 	# Close file handle.
 	close(FILE);
