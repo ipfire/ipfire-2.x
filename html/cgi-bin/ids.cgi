@@ -761,6 +761,28 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 		# Write the changed hash to the providers settings file.
 		&General::writehasharray($IDS::providers_settings_file, \%used_providers);
 
+		# Check if a new provider will be added.
+		if ($cgiparams{'PROVIDERS'} eq $Lang::tr{'add'}) {
+			# Lock the webpage and print notice about downloading
+			# a new ruleset.
+			&working_notice("$Lang::tr{'ids working'}");
+
+			# Download the ruleset.
+			&IDS::downloadruleset($provider);
+
+			# Extract the ruleset
+			&IDS::extractruleset($provider);
+
+			# Move the ruleset.
+			&IDS::move_tmp_ruleset();
+
+			# Cleanup temporary directory.
+			&IDS::cleanup_tmp_directory();
+
+			# Perform a reload of the page.
+			&reload();
+		}
+
 		# Undefine providers flag.
 		undef($cgiparams{'PROVIDERS'});
 	}
