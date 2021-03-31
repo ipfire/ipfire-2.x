@@ -752,6 +752,27 @@ sub merge_sid_msg (@) {
 }
 
 #
+## A very tiny function to move an extracted ruleset from the temporary directory into
+## the rules directory.
+#
+sub move_tmp_ruleset() {
+	# Load perl module.
+	use File::Copy;
+
+	# Do a directory listing of the temporary directory.
+	opendir  DH, $tmp_rules_directory;
+
+	# Loop over all files.
+	while(my $file = readdir DH) {
+		# Move them to the rules directory.
+		move "$tmp_rules_directory/$file" , "$rulespath/$file";
+	}
+
+	# Close directory handle.
+	closedir DH;
+}
+
+#
 ## Function to cleanup the temporary IDS directroy.
 #
 sub cleanup_tmp_directory () {
