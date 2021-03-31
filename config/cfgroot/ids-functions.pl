@@ -556,7 +556,7 @@ sub oinkmaster () {
 	&_cleanup_rulesdir();
 
 	# Get all enabled providers.
-	my @enabled_provides = &get_enabled_providers();
+	my @enabled_providers = &get_enabled_providers();
 
 	# Loop through the array of enabled providers.
 	foreach my $provider (@enabled_providers) {
