@@ -282,41 +282,16 @@ if ($cgiparams{'RULESET'}) {
 	closedir(DIR);
 
 	# Gather used rulefiles.
-	#
-	# Check if the file for activated rulefiles is not empty.
-	if(-f $IDS::used_rulefiles_file) {
-		# Open the file for used rulefile and read-in content.
-		open(FILE, $IDS::used_rulefiles_file) or die "Could not open $IDS::used_rulefiles_file. $!\n";
+	my @used_rulesfiles = &IDS::get_used_rulesfiles();
 
-		# Read-in content.
-		my @lines = <FILE>;
-
-		# Close file.
-		close(FILE);
-
-		# Loop through the array.
-		foreach my $line (@lines) {
-			# Remove newlines.
-			chomp($line);
-
-			# Skip comments.
-			next if ($line =~ /\#/);
-
-			# Skip blank  lines.
-			next if ($line =~ /^\s*$/);
-
-			# Gather rule sid and message from the ruleline.
-			if ($line =~ /.*- (.*)/) {
-				my $rulefile = $1;
-
-				# Check if the current rulefile exists in the %idsrules hash.
-				# If not, the file probably does not exist anymore or contains
-				# no rules.
-				if($idsrules{$rulefile}) {
-					# Add the rulefile state to the %idsrules hash.
-					$idsrules{$rulefile}{'Rulefile'}{'State'} = "on";
-				}
-			}
+	# Loop through the array of used rulesfiles.
+	foreach my $rulesfile (@used_rulesfiles) {
+		# Check if the current rulefile exists in the %idsrules hash.
+		# If not, the file probably does not exist anymore or contains
+		# no rules.
+		if($idsrules{$rulefile}) {
+			# Add the rulefile state to the %idsrules hash.
+			$idsrules{$rulefile}{'Rulefile'}{'State'} = "on";
 		}
 	}
 }
