@@ -54,6 +54,9 @@ ldconfig
 # Start services
 telinit u
 /etc/init.d/suricata restart
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/init.d/ipsec restart
+fi
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
