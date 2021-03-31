@@ -607,10 +607,6 @@ sub oinkmaster () {
 	# Close the log handle.
 	closelog();
 
-	use Data::Dumper;
-
-	print Dumper \@enabled_providers;
-
 	# Call function to merge the classification files.
 	&merge_classifications(@enabled_providers);
 
