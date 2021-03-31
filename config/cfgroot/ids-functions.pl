@@ -1484,7 +1484,7 @@ sub get_used_rulesfiles() {
 	my @used_rulesfiles = ();
 
 	# Check if the used rulesfile is empty.
-	unless (-z $used_rulesfiles_file) {
+	unless (-z $used_rulefiles_file) {
 		# Open the file or used rulefiles and read-in content.
 		open(FILE, $used_rulefiles_file) or die "Could not open $used_rulefiles_file. $!\n";
 
