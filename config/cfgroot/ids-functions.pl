@@ -549,32 +549,17 @@ sub oinkmaster () {
 	# Load perl module for file copying.
 	use File::Copy;
 
-	# Hash to store the used providers.
-	my %used_providers = ();
-
-	# Array to store the enabled providers.
-	my @enabled_providers = ();
-
 	# Check if the files in rulesdir have the correct permissions.
 	&_check_rulesdir_permissions();
 
 	# Cleanup the rules directory before filling it with the new rulests.
 	&_cleanup_rulesdir();
 
-	# Read-in the providers config file.
-	&General::readhasharray("$providers_settings_file", \%used_providers);
+	# Get all enabled providers.
+	my @enabled_provides = &get_enabled_providers();
 
-	# Loop through the hash of used_providers.
-	foreach my $id (keys %used_providers) {
-		# Skip disabled providers.
-		next unless ($used_providers{$id}[3] eq "enabled");
-
-		# Grab the provider handle.
-		my $provider = "$used_providers{$id}[0]";
-
-		# Add the provider handle to the array of enabled providers.
-		push(@enabled_providers, $provider);
-
+	# Loop through the array of enabled providers.
+	foreach my $provider (@enabled_providers) {
 		# Omit the type (dl_type) of the stored ruleset.
 		my $type = $IDS::Ruleset::Providers{$provider}{'dl_type'};
 
