@@ -254,6 +254,10 @@ if (-e $IDS::storederrorfile) {
 if ($cgiparams{'RULESET'}) {
 	## Grab all available rules and store them in the idsrules hash.
 	#
+
+	# Get enabled providers.
+	my @enabled_providers = &IDS::get_enabled_providers();
+
 	# Open rules directory and do a directory listing.
 	opendir(DIR, $IDS::rulespath) or die $!;
 		# Loop through the direcory.
@@ -274,6 +278,15 @@ if ($cgiparams{'RULESET'}) {
 			# Skip whitelist rules file.
 			next if( $file eq "whitelist.rules");
 
+			# Splitt vendor from filename.
+			my @filename_parts = split(/-/, $file);
+
+			# Assign vendor name for easy processing.
+			my $vendor = @filename_parts[0];
+
+			# Skip rulefile if the provider is disabled.
+			next unless ($vendor ~~ @enabled_providers);
+
 			# Call subfunction to read-in rulefile and add rules to
 			# the idsrules hash.
 			&readrulesfile("$file");
@@ -281,17 +294,20 @@ if ($cgiparams{'RULESET'}) {
 
 	closedir(DIR);
 
-	# Gather used rulefiles.
-	my @used_rulesfiles = &IDS::get_used_rulesfiles();
+	# Loop through the array of used providers.
+	foreach my $provider (@enabled_providers) {
+		# Gather used rulefiles.
+		my @used_rulesfiles = &IDS::read_used_provider_rulesfiles($provider);
 
-	# Loop through the array of used rulesfiles.
-	foreach my $rulesfile (@used_rulesfiles) {
-		# Check if the current rulefile exists in the %idsrules hash.
-		# If not, the file probably does not exist anymore or contains
-		# no rules.
-		if($idsrules{$rulefile}) {
-			# Add the rulefile state to the %idsrules hash.
-			$idsrules{$rulefile}{'Rulefile'}{'State'} = "on";
+		# Loop through the array of used rulesfiles.
+		foreach my $rulefile (@used_rulesfiles) {
+			# Check if the current rulefile exists in the %idsrules hash.
+			# If not, the file probably does not exist anymore or contains
+			# no rules.
+			if($idsrules{$rulefile}) {
+				# Add the rulefile state to the %idsrules hash.
+				$idsrules{$rulefile}{'Rulefile'}{'State'} = "on";
+			}
 		}
 	}
 }
@@ -479,8 +495,40 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	# Close file for disabled_sids after writing.
 	close(DISABLED_FILE);
 
+	# Handle enabled / disabled rulefiles.
+	#
+	# Get enabled providers.
+	my @enabled_providers = &IDS::get_enabled_providers();
+
+	# Loop through the array of enabled providers.
+	foreach my $provider(@enabled_providers) {
+		# Array to store the rulefiles which belong to the current processed provider.
+		my @provider_rulefiles = ();
+
+		# Loop through the array of enabled rulefiles.
+		foreach my $rulesfile (@enabled_rulefiles) {
+			# Split the rulefile name.
+			my @filename_parts = split(/-/, "$rulesfile");
+
+			# Assign vendor name for easy processings.
+			my $vendor = @filename_parts[0];
+
+			# Check if the rulesvendor is our current processed enabled provider.
+			if ("$vendor" eq "$provider") {
+				# Add the rulesfile to the array of provider rulesfiles.
+				push(@provider_rulefiles, $rulesfile);
+			}
+
+			# Check if any rulesfiles have been found for this provider.
+			if (@provider_rulefiles) {
+				# Call function and write the providers used rulesfile file.
+				&IDS::write_used_provider_rulefiles_file($provider, @provider_rulefiles);
+			}
+		}
+	}
+
 	# Call function to generate and write the used rulefiles file.
-	&IDS::write_used_rulefiles_file(@enabled_rulefiles);
+	&IDS::write_main_used_rulefiles_file(@enabled_providers);
 
 	# Lock the webpage and print message.
 	&working_notice("$Lang::tr{'ids apply ruleset changes'}");
@@ -778,6 +826,10 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 
 			# Cleanup temporary directory.
 			&IDS::cleanup_tmp_directory();
+
+			# Create new empty file for used rulefiles
+			# for this provider.
+			&IDS::write_used_provider_rulefiles_file($provider);
 
 			# Perform a reload of the page.
 			&reload();
