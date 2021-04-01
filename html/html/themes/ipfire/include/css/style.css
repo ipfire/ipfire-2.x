@@ -328,7 +328,38 @@ table.fw-nat tbody tr td {
 	height: 2.25em;
 }
 
-iframe.graph {
-	width: 100%;
-	min-height: 300px;
+/* RRD graph images */
+
+div.rrdimage > ul {
+	list-style-type: none;
+	margin: 0;
+	display: flex;
+	justify-content: center;
+}
+.rrdimage li:not(:first-child)::before {
+	content: "-";
+	padding: 0 0.3em;
+}
+
+.rrdimage button {
+	padding: 0.3em;
+	font-weight: 700;
+	color: #d90000; /* link color */
+	border: none;
+	background: none;
+	cursor: pointer;
+	text-decoration: underline;
+}
+.rrdimage button:focus {
+	outline: none;
+	box-shadow: none;
+}
+.rrdimage button.selected {
+	background-color: rgba(135, 203, 0, 0.2);
+}
+
+div.rrdimage > img {
+	box-sizing: border-box;
+	max-width: 100%;
+	min-height: 290px;
 }
