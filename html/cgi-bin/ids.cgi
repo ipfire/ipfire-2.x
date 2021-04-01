@@ -674,9 +674,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		foreach my $id ( keys %used_providers) {
 			# Check if the choosen provider is already in use.
 			if ($used_providers{$id}[0] eq "$provider") {
-				# XXX - add to language file.
 				# Assign error message.
-				$errormessage = "The choosen provider is already in use.";
+				$errormessage = "$Lang::tr{'ids the choosen provider is already in use'}";
 			}
 		}
 	}

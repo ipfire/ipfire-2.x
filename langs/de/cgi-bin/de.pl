@@ -1396,6 +1396,7 @@
 'ids ruleset autoupdate in progress' => 'Der Regelsatz wird gerade aktualisiert. Bitte warten Sie, bis dieser Vorgang erfolgreich beendet wurde...',
 'ids ruleset settings' => 'Regelsatzeinstellungen',
 'ids show' => 'Anzeigen',
+'ids the choosen provider is already in use' => 'Der gewhählte Provider wird bereits verwendet.',
 'ids visit provider website' => 'Anbieter-Webseite besuchen',
 'ids working' => 'Änderungen werden übernommen. Bitte warten Sie, bis dieser Vorgang erfolgreich beendet wurde.',
 'iface' => 'Iface',
