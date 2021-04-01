@@ -1388,7 +1388,7 @@
 'ids monitor traffic only' => 'Netzwerkpakete nur überprüfen (nicht verwerfen)',
 'ids monitored interfaces' => 'Überwachte Netzwerkzonen',
 'ids no network zone' => 'Bitte wählen Sie mindestens eine zu überwachende Netzwerkzone aus',
-'ids no ruleset available' => 'Es ist kein Regelsatz verfügbar. Bitte laden Sie einen Regelsatz herunter.',
+'ids no enabled ruleset provider' => 'Es ist kein aktivierter Provider verfügbar. Bitte aktivieren Sie einen oder fügen Sie einen Provider hinzu.',
 'ids oinkcode required' => 'Für den ausgewählten Regelsatz wird ein Abonnement oder ein Oinkcode benötigt',
 'ids provider' => 'Regelset-Anbieter',
 'ids provider settings' => 'Regelset-Anbieter-Einstellungen',

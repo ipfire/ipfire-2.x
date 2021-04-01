@@ -530,9 +530,12 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 	# Check if the IDS should be enabled.
 	if ($cgiparams{'ENABLE_IDS'} eq "on") {
+		# Get enabled providers.
+		my @enabled_providers = &IDS::get_enabled_providers();
+
 		# Check if any ruleset is available. Otherwise abort and display an error.
-		unless(%used_providers) {
-			$errormessage = $Lang::tr{'ids no ruleset available'};
+		unless(@enabled_providers) {
+			$errormessage = $Lang::tr{'ids no enabled ruleset provider'};
 		}
 
 		# Loop through the array of available interfaces.

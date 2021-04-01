@@ -1418,7 +1418,7 @@
 'ids monitor traffic only' => 'Monitor traffic only',
 'ids monitored interfaces' => 'Monitored Interfaces',
 'ids no network zone' => 'Please select at least one network zone to be monitored',
-'ids no ruleset available' => 'No ruleset is available. Please download one first',
+'ids no enabled ruleset provider' => 'No enabled ruleset is available. Please activate or add one first.',
 'ids subscription code required' => 'The selected ruleset requires a subscription code',
 'ids provider' => 'Provider',
 'ids provider settings' => 'Provider settings',
