@@ -1621,9 +1621,21 @@ print <<END
 			<tr>
 				<td width='40%'>
 					<input type='hidden' name='ID' value='$cgiparams{'ID'}'>
-					<select name='PROVIDER' id='PROVIDER'>
 END
 ;
+					# Value to allow disabling the dropdown menu.
+					my $disabled;
+
+					# Check if we are in edit mode.
+					if ($cgiparams{'PROVIDERS'} eq "$Lang::tr{'edit'}") {
+						$disabled = "disabled";
+
+						# Add hidden input with the provider because the disable select does not provider
+						# this.
+						print "<input type='hidden' name='PROVIDER' value='$used_providers{$cgiparams{'ID'}}[0]'>\n";
+					}
+
+					print "<select name='PROVIDER' id='PROVIDER' $disabled>\n";
 						# Loop through the array of ruleset providers.
 						foreach my $provider (@ruleset_providers) {
 							# Get the provider name.
