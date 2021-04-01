@@ -842,6 +842,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	# Write the changed hash to the provide settings file.
 	&General::writehasharray($IDS::providers_settings_file, \%used_providers);
 
+	# Lock the webpage and print message.
+	&working_notice("$Lang::tr{'ids apply ruleset changes'}");
+
 	# Drop the stored ruleset file.
 	&IDS::drop_dl_rulesfile($provider);
 
@@ -879,6 +882,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	
 	# Undefine providers flag.
 	undef($cgiparams{'PROVIDERS'});
+
+	# Reload page.
+	&reload();
 }
 
 &Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
