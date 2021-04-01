@@ -1122,9 +1122,7 @@ END
 				# Assign data array positions to some nice variable names.
 				my $provider = $used_providers{$id}[0];
 				my $provider_name = &get_provider_name($provider);
-
-				#XXX my $rulesdate = &IDS::get_ruleset_date($provider);
-				my $rulesdate;
+				my $rulesetdate = &IDS::get_ruleset_date($provider);
 
 				my $subscription_code = $used_providers{$id}[1];
 				my $autoupdate_status = $used_providers{$id}[2];
@@ -1164,7 +1162,7 @@ END
 print <<END;
 				<tr>
 					<td width='33%' class='base' $col>$provider_name</td>
-					<td width='30%' class='base' $col>$rulesdate</td>
+					<td width='30%' class='base' $col>$rulesetdate</td>
 
 					<td align='center' $col>
 						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
