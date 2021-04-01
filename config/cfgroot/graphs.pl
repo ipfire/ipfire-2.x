@@ -24,6 +24,7 @@ package Graphs;
 
 use strict;
 use RRDs;
+use experimental 'smartmatch';
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
@@ -99,26 +100,35 @@ foreach (@sensorsdir){
 &General::readhash("${General::swroot}/sensors/settings", \%sensorsettings);
 
 # Generate a nice box for selection of time range in graphs
-# this will generate a nice iframe for the cgi every klick for
-# the graph will be handled inside the iframe
+# this will generate a nice div box for the cgi every klick for
+# the graph will be handled by javascript
 # 0 is the cgi refering to
 # 1 is the graph name
-# 2 is the time range for the graph
-# 3 if given is the height of the iframe default if nothing is given
+# 2 is the time range for the graph (optional)
 
 sub makegraphbox {
-	print "<center>";
-	print "<a href='".$_[0]."?".$_[1]."?hour' target='".$_[1]."box'><b>".$Lang::tr{'hour'}."</b></a>";
-	print " - ";
-	print "<a href='".$_[0]."?".$_[1]."?day' target='".$_[1]."box'><b>".$Lang::tr{'day'}."</b></a>";
-	print " - ";
-	print "<a href='".$_[0]."?".$_[1]."?week' target='".$_[1]."box'><b>".$Lang::tr{'week'}."</b></a>";
-	print " - ";
-	print "<a href='".$_[0]."?".$_[1]."?month' target='".$_[1]."box'><b>".$Lang::tr{'month'}."</b></a>";
-	print " - ";
-	print "<a href='".$_[0]."?".$_[1]."?year' target='".$_[1]."box'><b>".$Lang::tr{'year'}."</b></a>";
-	print "<br></center>";
-	print "<iframe class='graph' src='".$_[0]."?".$_[1]."?".$_[2]."' scrolling='no' frameborder='no' marginheight='0' name='".$_[1]."box'></iframe>";
+	my ($origin, $name, $default_range) = @_;
+	
+	# Optional time range: Default to "day" unless otherwise specified
+	$default_range = "day" unless ($default_range ~~ @time_ranges);
+
+	print <<END;
+<div class="rrdimage" id="rrdimg-$name" data-origin="$origin" data-graph="$name" data-default-range="$default_range">
+	<ul>
+END
+
+	# Print range select buttons
+	foreach my $range (@time_ranges) {
+		print <<END;
+		<li><button data-range="$range" onclick="rrdimage_selectRange(this)">$Lang::tr{$range}</button></li>
+END
+	}
+
+	print <<END;
+	</ul>
+	<img src="/cgi-bin/getrrdimage.cgi?origin=${origin}&graph=${name}&range=${default_range}" alt="$Lang::tr{'graph'} ($name)">
+</div>
+END
 }
 
 # Generate the CPU Graph for the current period of time for values given by
@@ -248,7 +258,7 @@ sub updatecpugraph {
 
 	RRDs::graph (@command);
 	$ERROR = RRDs::error;
-	print "Error in RRD::graph for cpu: ".$ERROR."\n" if $ERROR;
+	return "Error in RRD::graph for cpu: ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the Load Graph for the current period of time for values given by collecd
@@ -280,7 +290,7 @@ sub updateloadgraph {
 		"LINE1:load1".$color{"color18"},
 		);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for load: ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for load: ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the Memory Graph for the current period of time for values given by collecd
@@ -336,7 +346,7 @@ sub updatememorygraph {
 		"GPRINT:freepct:LAST:%3.2lf%%\\j",
 		);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for memory: ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for memory: ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the Swap Graph for the current period of time for values given by collecd
@@ -385,7 +395,7 @@ sub updateswapgraph {
 		"GPRINT:freepct:LAST:%3.2lf%%\\j",
 		);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for memory: ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for memory: ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the Process Cpu Graph for the current period of time for values given by collecd
@@ -432,7 +442,7 @@ sub updateprocessescpugraph {
 
 		RRDs::graph (@command);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for processes: ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for processes: ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the Process Memory Graph for the current period of time for values given by collecd
@@ -478,7 +488,7 @@ sub updateprocessesmemorygraph {
 
 		RRDs::graph (@command);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for processesmemory: ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for processesmemory: ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the Disk Graph for the current period of time for values given by collecd
@@ -522,7 +532,7 @@ sub updatediskgraph {
 		"GPRINT:write:LAST:%8.1lf %sBps\\j",
 		);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for ".$disk.": ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for ".$disk.": ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the Interface Graph for the current period of time for values given by collecd
@@ -561,7 +571,7 @@ sub updateifgraph {
 		"GPRINT:outgoing:LAST:%8.1lf %sBps\\j",
 		);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for ".$interface.": ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for ".$interface.": ".$ERROR."\n" if $ERROR;
 }
 
 sub updatevpngraph {
@@ -598,7 +608,7 @@ sub updatevpngraph {
 		"GPRINT:outgoing:LAST:%8.1lf %sBps\\j",
 		);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for ".$interface.": ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for ".$interface.": ".$ERROR."\n" if $ERROR;
 }
 
 sub updatevpnn2ngraph {
@@ -661,7 +671,7 @@ sub updatevpnn2ngraph {
 		"GPRINT:compression_out:LAST:%8.1lf %sBps\\j",
 		);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for ".$interface.": ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for ".$interface.": ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the Firewall Graph for the current period of time for values given by collecd
@@ -716,7 +726,7 @@ sub updatefwhitsgraph {
 		"GPRINT:portscan:LAST:%8.1lf %sBps\\j",
 		);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for firewallhits: ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for firewallhits: ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the Line Quality Graph for the current period of time for values given by collecd
@@ -758,7 +768,7 @@ sub updatepinggraph {
 		"GPRINT:roundtrip:LAST:%3.2lf ms\\j",
 		);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for link quality: ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for link quality: ".$ERROR."\n" if $ERROR;
 }
 
 sub updatewirelessgraph {
@@ -793,7 +803,7 @@ sub updatewirelessgraph {
 		"GPRINT:power:LAST:%5.1lf %sdBm\\j",
 		);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for wireless: ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for wireless: ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the HDD Temp Graph for the current period of time for values given by collecd and lm_sensors
@@ -827,7 +837,7 @@ sub updatehddgraph {
 		"GPRINT:temperature:LAST:%3.0lf °C\\j",
 		);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for hdd-".$disk.": ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for hdd-".$disk.": ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the Temp Graph for the current period of time for values given by collecd and lm_sensors
@@ -875,7 +885,7 @@ sub updatehwtempgraph {
 
 		RRDs::graph (@command);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for HDD Temp: ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for HDD Temp: ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the Fan Graph for the current period of time for values given by collecd and lm_sensors
@@ -922,7 +932,7 @@ sub updatehwfangraph {
 
 		RRDs::graph (@command);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for Fan Speed: ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for Fan Speed: ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the Voltage Graph for the current period of time for values given by collecd and lm_sensors
@@ -969,7 +979,7 @@ sub updatehwvoltgraph {
 
 		RRDs::graph (@command);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for Voltage: ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for Voltage: ".$ERROR."\n" if $ERROR;
 }
 
 
@@ -1051,7 +1061,7 @@ sub updateqosgraph {
 		}
 		RRDs::graph (@command);
 		$ERROR = RRDs::error;
-		print "Error in RRD::graph for qos device ".$qossettings{'DEV'}.": ".$ERROR."\n" if $ERROR;
+		return "Error in RRD::graph for qos device ".$qossettings{'DEV'}.": ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the CPU Frequency Graph for the current period of time for values given by collectd an lm_sensors
@@ -1090,7 +1100,7 @@ sub updatecpufreqgraph {
 
 	RRDs::graph (@command);
 	$ERROR = RRDs::error;
-	print "Error in RRD::graph for cpu freq: ".$ERROR."\n" if $ERROR;
+	return "Error in RRD::graph for cpu freq: ".$ERROR."\n" if $ERROR;
 }
 
 # Generate the Thermal Zone Temp CPU Graph
@@ -1129,7 +1139,7 @@ sub updatethermaltempgraph {
 
 	RRDs::graph (@command);
 	$ERROR = RRDs::error;
-	print "Error in RRD::graph for thermal temp: ".$ERROR."\n" if $ERROR;
+	return "Error in RRD::graph for thermal temp: ".$ERROR."\n" if $ERROR;
 }
 
 
@@ -1174,7 +1184,7 @@ sub updateentropygraph {
 	RRDs::graph (@command);
 	$ERROR = RRDs::error;
 
-	print "Error in RRD::graph for entropy: ".$ERROR."\n" if $ERROR;
+	return "Error in RRD::graph for entropy: ".$ERROR."\n" if $ERROR;
 }
 
 sub updateconntrackgraph {
@@ -1202,5 +1212,5 @@ sub updateconntrackgraph {
 	RRDs::graph(@command);
 	$ERROR = RRDs::error;
 
-	print STDERR "Error in RRD::Graph for conntrack: " . $ERROR . "\n" if $ERROR;
+	return "Error in RRD::Graph for conntrack: " . $ERROR . "\n" if $ERROR;
 }

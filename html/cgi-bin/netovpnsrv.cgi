@@ -75,7 +75,7 @@ if ( $querry[0] ne ""){
 	if (@vpns || %ipsecgraphs) {
 		foreach my $name (sort keys %ipsecgraphs) {
 			&Header::openbox('100%', 'center', "$Lang::tr{'ipsec connection'}: $name");
-			&Graphs::makegraphbox("netovpnsrv.cgi", $ipsecgraphs{$name}, "day");
+			&Graphs::makegraphbox("netovpnsrv.cgi", "ipsec-$ipsecgraphs{$name}", "day");
 			&Header::closebox();
 		}
 
