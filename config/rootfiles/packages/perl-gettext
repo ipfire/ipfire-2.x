@@ -1,8 +1,8 @@
-#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/Locale
-usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/Locale/gettext.pm
-#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Locale
-#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Locale/gettext
-#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Locale/gettext/.packlist
-#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Locale/gettext/gettext.bs
-usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Locale/gettext/gettext.so
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/Locale
+usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/Locale/gettext.pm
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Locale
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Locale/gettext
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Locale/gettext/.packlist
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Locale/gettext/gettext.bs
+usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Locale/gettext/gettext.so
 #usr/share/man/man3/Locale::gettext.3
