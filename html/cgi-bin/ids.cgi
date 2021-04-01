@@ -312,84 +312,8 @@ if ($cgiparams{'RULESET'}) {
 	}
 }
 
-# Save ruleset configuration.
-if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
-	my %oldsettings;
-
-	# Read-in current (old) IDS settings.
-	&General::readhash("$IDS::rules_settings_file", \%oldsettings);
-
-	# Prevent form name from been stored in conf file.
-	delete $cgiparams{'RULESET'};
-
-	# Check if the choosen vendor (URL) requires an subscription/oinkcode.
-	if ($IDS::Ruleset::Providers{$cgiparams{'RULES'}}{'requires_subscription'} eq "True") {
-		# Check if an subscription/oinkcode has been provided.
-		if ($cgiparams{'OINKCODE'}) {
-			# Check if the oinkcode contains unallowed chars.
-			unless ($cgiparams{'OINKCODE'} =~ /^[a-z0-9]+$/) {
-				$errormessage = $Lang::tr{'invalid input for oink code'};
-			}
-		} else {
-			# Print an error message, that an subsription/oinkcode is required for this
-			# vendor.
-			$errormessage = $Lang::tr{'ids oinkcode required'};
-		}
-	}
-
-	# Go on if there are no error messages.
-	if (!$errormessage) {
-		# Store settings into settings file.
-		&General::writehash("$IDS::rules_settings_file", \%cgiparams);
-
-		# Check if a ruleset is present - if not or the source has been changed download it.
-		if((! %idsrules) || ($oldsettings{'RULES'} ne $cgiparams{'RULES'})) {
-			# Check if the red device is active.
-			unless (-e "${General::swroot}/red/active") {
-				$errormessage = "$Lang::tr{'could not download latest updates'} - $Lang::tr{'system is offline'}";
-			}
-
-			# Check if enough free disk space is availabe.
-			if(&IDS::checkdiskspace()) {
-				$errormessage = "$Lang::tr{'not enough disk space'}";
-			}
-
-			# Check if any errors happend.
-			unless ($errormessage) {
-				# Lock the webpage and print notice about downloading
-				# a new ruleset.
-				&working_notice("$Lang::tr{'ids working'}");
-
-				# Write the modify sid's file and pass the taken ruleaction.
-				&IDS::write_modify_sids_file();
-
-				# Call subfunction to download the ruleset.
-				if(&IDS::downloadruleset()) {
-					$errormessage = $Lang::tr{'could not download latest updates'};
-
-					# Call function to store the errormessage.
-					&IDS::_store_error_message($errormessage);
-				} else {
-					# Call subfunction to launch oinkmaster.
-					&IDS::oinkmaster();
-				}
-
-				# Check if the IDS is running.
-				if(&IDS::ids_is_running()) {
-					# Call suricatactrl to stop the IDS - because of the changed
-					# ruleset - the use has to configure it before suricata can be
-					# used again.
-					&IDS::call_suricatactrl("stop");
-				}
-
-				# Perform a reload of the page.
-				&reload();
-			}
-		}
-	}
-
 # Save ruleset.
-} elsif ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
+if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	# Arrays to store which rulefiles have been enabled and will be used.
 	my @enabled_rulefiles;
 
