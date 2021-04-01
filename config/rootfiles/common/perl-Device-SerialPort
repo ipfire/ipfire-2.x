@@ -1,10 +1,10 @@
 #usr/bin/modemtest
-usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/Device
-usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/Device/SerialPort.pm
-#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Device
-#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Device/SerialPort
-#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Device/SerialPort/.packlist
-#usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Device/SerialPort/SerialPort.bs
-usr/lib/perl5/site_perl/5.30.0/xxxMACHINExxx-linux-thread-multi/auto/Device/SerialPort/SerialPort.so
+usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/Device
+usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/Device/SerialPort.pm
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Device
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Device/SerialPort
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Device/SerialPort/.packlist
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Device/SerialPort/SerialPort.bs
+usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Device/SerialPort/SerialPort.so
 #usr/share/man/man1/modemtest.1
 #usr/share/man/man3/Device::SerialPort.3
