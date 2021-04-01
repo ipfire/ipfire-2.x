@@ -50,11 +50,14 @@ our $dns_servers_file = "$settingsdir/suricata-dns-servers.yaml";
 # File where the HTTP ports definition is stored.
 our $http_ports_file = "$settingsdir/suricata-http-ports.yaml";
 
-# File which contains the enabled sids.
+# DEPRECATED - File which contains the enabled sids.
 our $enabled_sids_file = "$settingsdir/oinkmaster-enabled-sids.conf";
 
-# File which contains the disabled sids.
+# DEPRECATED - File which contains the disabled sids.
 our $disabled_sids_file = "$settingsdir/oinkmaster-disabled-sids.conf";
+
+# File which contains includes for provider specific rule modifications.
+our $oinkmaster_provider_includes_file = "$settingsdir/oinkmaster-provider-includes.conf";
 
 # File which contains wheater the rules should be changed.
 our $modify_sids_file = "$settingsdir/oinkmaster-modify-sids.conf";
@@ -144,8 +147,7 @@ my %dl_type_to_suffix = (
 #
 sub check_and_create_filelayout() {
 	# Check if the files exist and if not, create them.
-	unless (-f "$enabled_sids_file") { &create_empty_file($enabled_sids_file); }
-	unless (-f "$disabled_sids_file") { &create_empty_file($disabled_sids_file); }
+	unless (-f "$oinkmaster_provider_includes_file") { &create_empty_file($oinkmaster_provider_includes_file); }
 	unless (-f "$modify_sids_file") { &create_empty_file($modify_sids_file); }
 	unless (-f "$suricata_used_providers_file") { &create_empty_file($suricata_used_providers_file); }
 	unless (-f "$ids_settings_file") { &create_empty_file($ids_settings_file); }
