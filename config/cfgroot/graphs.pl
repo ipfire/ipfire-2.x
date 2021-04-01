@@ -29,6 +29,12 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+# Graph image size in pixel
+our %image_size = ('width' => 910, 'height' => 300);
+
+# List of all available time ranges
+our @time_ranges = ("hour", "day", "week", "month", "year");
+
 my $ERROR;
 
 my @GRAPH_ARGS = (
@@ -48,8 +54,8 @@ my @GRAPH_ARGS = (
 	"-W www.ipfire.org",
 
 	# Default size
-	"-w 910",
-	"-h 300",
+	"-w $image_size{'width'}",
+	"-h $image_size{'height'}",
 
 	# Use alternative grid
 	"--alt-y-grid",

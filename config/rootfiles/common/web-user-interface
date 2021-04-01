@@ -20,6 +20,7 @@ srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/fireinfo.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
+srv/web/ipfire/cgi-bin/getrrdimage.cgi
 srv/web/ipfire/cgi-bin/gpl.cgi
 #srv/web/ipfire/cgi-bin/guardian.cgi
 srv/web/ipfire/cgi-bin/gui.cgi
@@ -300,6 +301,7 @@ srv/web/ipfire/html/images/view-refresh.png
 srv/web/ipfire/html/images/wakeup.gif
 srv/web/ipfire/html/images/window-new.png
 srv/web/ipfire/html/include
+srv/web/ipfire/html/include/rrdimage.js
 srv/web/ipfire/html/include/zoneconf.js
 srv/web/ipfire/html/index.cgi
 srv/web/ipfire/html/redirect-templates
