@@ -1355,6 +1355,35 @@ END
 }
 
 #
+## Function to get the ruleset date for a given provider.
+##
+## The function simply return the creation date in a human read-able format
+## of the stored providers rulesfile.
+#
+sub get_ruleset_date($) {
+	my ($provider) = @_;
+
+	# Load neccessary perl modules for file stat and to format the timestamp.
+	use File::stat;
+	use POSIX qw( strftime );
+
+	# Get the stored rulesfile for this provider.
+	my $stored_rulesfile = &_get_dl_rulesfile($provider);
+
+	# Call stat on the rulestarball.
+	my $stat = stat("$stored_rulesfile");
+
+	# Get timestamp the file creation.
+	my $mtime = $stat->mtime;
+
+	# Convert into human read-able format.
+	my $date = strftime('%Y-%m-%d %H:%M:%S', localtime($mtime));
+
+	# Return the date.
+	return $date;
+}
+
+#
 ## Function to gather the version of suricata.
 #
 sub get_suricata_version($) {
