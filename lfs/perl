@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.30.0
+VER        = 5.32.1
 
 THISAPP    = perl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)                  = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5              = 9770584cdf9b5631c38097645ce33549
+$(DL_FILE)_MD5              = 40dff18daf18178c7fc4579451be38ef
 
 install : $(TARGET)
 
@@ -80,7 +80,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/perl-5.30.0-fix-build-failure-against-gcc-10.patch
 ifeq "$(ROOT)" ""
 	cd $(DIR_APP) && ./configure.gnu --prefix=/usr -Dman1dir=/usr/share/man/man1 \
 		-Dman3dir=/usr/share/man/man3 -Dpager="/usr/bin/less -isR" -Dusethreads
