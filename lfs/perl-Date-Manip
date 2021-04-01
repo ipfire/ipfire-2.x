@@ -32,7 +32,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-Date-Manip
 DEPS       =
-PAK_VER    = 6
+PAK_VER    = 7
 
 ###############################################################################
 # Top-level Rules
