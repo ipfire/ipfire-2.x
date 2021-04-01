@@ -906,6 +906,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	# Read-in provider settings file.
 	&General::readhasharray($IDS::providers_settings_file, \%used_providers);
 
+	# Grab the provider name bevore deleting it from hash.
+	my $provider = $used_providers{$cgiparams{'ID'}}[0];
+
 	# Drop entry from the hash.
 	delete($used_providers{$cgiparams{'ID'}});
 
@@ -915,15 +918,40 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'save'}) {
 	# Write the changed hash to the provide settings file.
 	&General::writehasharray($IDS::providers_settings_file, \%used_providers);
 
-	# XXX - The ruleset of the provider needs to be dropped.
-	# XXX - The remain rulest of suricata needs to be regenerated.
-	# XXX - Suricata requires a reload or if the last provider has
-	#       been removed it has to be stopped.
+	# Drop the stored ruleset file.
+	&IDS::drop_dl_rulesfile($provider);
+
+	# Get the name of the provider rulessets include file.
+	my $provider_used_rulefile = &get_used_provider_rulesfile_file($provider);
+
+	# Drop the file, it is not longer needed.
+	unlink("$provider_used_rulefile");
+
+	# Regenerate ruleset.
+	&IDS::oinkmaster();
+
+	# Gather all enabled providers.
+	my @enabled_providers = &IDS::get_enabled_providers();
+
+	# Regenerate main providers include file.
+	&IDS::write_main_used_rulefiles_file(@enabled_providers);
+
 	# Check if the IDS is running.
-	#if(&IDS::ids_is_running()) {
-	# Call suricatactrl to perform a reload.
-	#	&IDS::call_suricatactrl("reload");
-	#}
+	if(&IDS::ids_is_running()) {
+		# Get amount of enabled providers.
+		my $amount = @enabled_providers;
+
+		# Check if at least one enabled provider remains.
+		if ($amount >= 1) {
+			# Call suricatactrl to perform a reload.
+			&IDS::call_suricatactrl("restart");
+
+		# Stop suricata if no enabled provider remains.
+		} else {
+			# Call suricatactrel to perform the stop.
+			&IDS::call_suricatactrl("stop");
+		}
+	}
 	
 	# Undefine providers flag.
 	undef($cgiparams{'PROVIDERS'});
