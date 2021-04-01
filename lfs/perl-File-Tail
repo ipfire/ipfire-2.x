@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-File-Tail
 DEPS       =
-PAK_VER    = 5
+PAK_VER    = 6
 
 ###############################################################################
 # Top-level Rules
