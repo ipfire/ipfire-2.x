@@ -789,6 +789,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 #
 } elsif ($cgiparams{'PROVIDERS'} eq $Lang::tr{'toggle enable disable'}) {
 	my %used_providers = ();
+	my $provider_includes_action;
 
 	# Only go further, if an ID has been passed.
 	if ($cgiparams{'ID'}) {
@@ -804,11 +805,20 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		# Grab the configured status of the corresponding entry.
 		my $status = $used_providers{$id}[3];
 
+		# Grab the provider handle.
+		my $provider_handle = $used_providers{$id}[0];
+
 		# Switch the status.
 		if ($status eq "enabled") {
 			$status = "disabled";
+
+			# Set the provider includes action to "remove" for removing the entry.
+			$provider_includes_action = "remove";
 		} else {
 			$status = "enabled";
+
+			# Set the provider includes action to "add".
+			$provider_includes_action = "add";
 		}
 
 		# Modify the status of the existing entry.
@@ -822,6 +832,10 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 		# Write the main providers include file.
 		&IDS::write_main_used_rulefiles_file(@enabled_providers);
+
+		# Call function to alter the oinkmasters provider includes file and
+		# add or remove the provider.
+		&IDS::alter_oinkmaster_provider_includes_file($provider_includes_action, $provider_handle);
 
 		# Check if the IDS is running.
 		if(&IDS::ids_is_running()) {
