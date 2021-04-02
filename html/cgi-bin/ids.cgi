@@ -890,6 +890,19 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	# Drop the file, it is not longer needed.
 	unlink("$provider_used_rulefile");
 
+	# Call function to get the path and name for the given providers
+	# oinkmaster modified sids file.
+	my $provider_modified_sids_file = &IDS::get_oinkmaster_provider_modified_sids_file($provider);
+
+	# Check if the file exists.
+	if (-f $provider_modified_sids_file) {
+		# Remove the file, which is not longer needed.
+		unlink("$provider_modified_sids_file");
+	}
+
+	# Alter the oinkmaster provider includes file and remove the provider.
+	&IDS::alter_oinkmaster_provider_includes_file("remove", $provider);
+
 	# Regenerate ruleset.
 	&IDS::oinkmaster();
 
