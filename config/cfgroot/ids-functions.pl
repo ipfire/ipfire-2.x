@@ -911,6 +911,51 @@ sub get_oinkmaster_provider_modified_sids_file ($) {
 }
 
 #
+## Function to directly altering the oinkmaster provider includes file.
+##
+## Requires tha acition "remove" or "add" and a provider handle.
+#
+sub alter_oinkmaster_provider_includes_file ($$) {
+	my ($action, $provider) = @_;
+
+	# Call function to get the path and name for the given providers
+	# oinkmaster modified sids file.
+	my $provider_modified_sids_file = &get_oinkmaster_provider_modified_sids_file($provider);
+
+	# Open the file for reading..
+	open (FILE, $oinkmaster_provider_includes_file) or die "Could not read $oinkmaster_provider_includes_file. $!\n";
+
+	# Read-in file content.
+	my @lines = <FILE>;
+
+	# Close file after reading.
+	close(FILE);
+
+	# Re-open the file for writing.
+	open(FILE, ">", $oinkmaster_provider_includes_file) or die "Could not write to $oinkmaster_provider_includes_file. $!\n";
+
+	# Loop through the file content.
+	foreach my $line (@lines) {
+		# Remove newlines.
+		chomp($line);
+
+		# Skip line if we found our given provider and the action should be remove.
+		next if (($line =~ /$provider/) && ($action eq "remove"));
+
+		# Write the read-in line back to the file.
+		print FILE "$line\n";
+	}
+
+	# Add the provider to the file if requested.
+	if ($action eq "add") {
+		print FILE "include $provider_modified_sids_file\n";
+	}
+
+	# Close file handle.
+	close(FILE);
+}
+
+#
 ## Function to check if the IDS is running.
 #
 sub ids_is_running () {
