@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2018 IPFire Team  <info@ipfire.org>                           #
+# Copyright (C) 2018-2021 IPFire Team  <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,6 +25,9 @@ use POSIX;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/ids-functions.pl";
 require "${General::swroot}/lang.pl";
+
+# Hash to store the configured providers.
+my %providers = ();
 
 # The user and group name as which this script should be run.
 my $run_as = 'nobody';
@@ -63,20 +66,36 @@ if(&IDS::checkdiskspace()) {
 # Lock the IDS page.
 &IDS::lock_ids_page();
 
-# Call the download function and gather the new ruleset.
-if(&IDS::downloadruleset()) {
-	# Store error message for displaying in the WUI.
-	&IDS::_store_error_message("$Lang::tr{'could not download latest updates'}");
+# Grab the configured providers.
+&General::readhasharray("$IDS::providers_settings_file", \%providers);
 
-	# Unlock the IDS page.
-	&IDS::unlock_ids_page();
+# Loop through the array of available providers.
+foreach my $id (keys %providers) {
+	# Assign some nice variabled.
+	my $provider = $providers{$id}[0];
+	my $autoupdate_status = $providers{$id}[3];
 
-	# Exit.
-	exit 0;
+	# Skip the provider if autoupdate is not enabled.
+	next unless($autoupdate_status eq "enabled");
+
+	# Call the download function and gather the new ruleset for the current processed provider.
+	if(&IDS::downloadruleset($provider)) {
+		# Store error message for displaying in the WUI.
+		&IDS::_store_error_message("$provider: $Lang::tr{'could not download latest updates'}");
+
+		# Unlock the IDS page.
+		&IDS::unlock_ids_page();
+
+		# Exit.
+		exit 0;
+	}
+
+	# Get path and name of the stored rules file or archive.
+	my $stored_file = &IDS::_get_dl_rulesfile($provider);
+
+	# Set correct ownership for the downloaded tarball.
+	&IDS::set_ownership("$stored_file");
 }
-
-# Set correct ownership for the downloaded tarball.
-&IDS::set_ownership("$IDS::rulestarball");
 
 # Call oinkmaster to alter the ruleset.
 &IDS::oinkmaster();
