@@ -353,7 +353,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		my %enabled_disabled_sids;
 
 		# Generate modified sids file name for the current processed provider.
-		my $providers_modified_sids_file = "$IDS::settingsdir/oinkmaster-$provider-modified-sids.conf";
+		my $providers_modified_sids_file = &IDS::get_oinkmaster_provider_modified_sids_file($provider);
 
 		# Check if a modified sids file for this provider exists.
 		if (-f $providers_modified_sids_file) {
