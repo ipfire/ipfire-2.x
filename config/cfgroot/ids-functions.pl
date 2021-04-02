@@ -897,6 +897,20 @@ sub drop_dl_rulesfile ($) {
 }
 
 #
+## Tiny function to get/generate the full path and filename for the providers oinkmaster
+## modified sids file.
+#
+sub get_oinkmaster_provider_modified_sids_file ($) {
+	my ($provider) = @_;
+
+	# Generate the filename.
+	my $filename = "$settingsdir/oinkmaster-$provider-modified-sids.conf";
+
+	# Return the filename.
+	return $filename;
+}
+
+#
 ## Function to check if the IDS is running.
 #
 sub ids_is_running () {
