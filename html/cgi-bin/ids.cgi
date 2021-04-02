@@ -885,7 +885,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	&IDS::drop_dl_rulesfile($provider);
 
 	# Get the name of the provider rulessets include file.
-	my $provider_used_rulefile = &get_used_provider_rulesfile_file($provider);
+	my $provider_used_rulefile = &IDS::get_used_provider_rulesfile_file($provider);
 
 	# Drop the file, it is not longer needed.
 	unlink("$provider_used_rulefile");
