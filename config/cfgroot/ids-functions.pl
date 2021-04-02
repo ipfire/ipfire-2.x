@@ -1694,8 +1694,8 @@ sub read_used_provider_rulesfiles($) {
 	# Get the used rulesefile file for the provider.
 	my $rulesfile_file = &get_used_provider_rulesfile_file($provider);
 
-	# Check if the used rulesfile is empty.
-	unless (-z $rulesfile_file) {
+	# Check if the a used rulesfile exists for this provider.
+	if (-f $rulesfile_file) {
 		# Open the file or used rulefiles and read-in content.
 		open(FILE, $rulesfile_file) or die "Could not open $rulesfile_file. $!\n";
 
