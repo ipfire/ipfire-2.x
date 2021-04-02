@@ -946,8 +946,8 @@ sub alter_oinkmaster_provider_includes_file ($$) {
 		print FILE "$line\n";
 	}
 
-	# Add the provider to the file if requested.
-	if ($action eq "add") {
+	# Check if the file exists and add the provider if requested.
+	if ((-f $provider_modified_sids_file) && ($action eq "add")) {
 		print FILE "include $provider_modified_sids_file\n";
 	}
 
