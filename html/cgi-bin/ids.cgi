@@ -1647,8 +1647,6 @@ print <<END
 END
 ;
 
-	&Header::openbox('100%', 'center', $Lang::tr{'ids provider settings'});
-
 	# Check if an existing provider should be edited.
 	if($cgiparams{'PROVIDERS'} eq "$Lang::tr{'edit'}") {
 		# Check if autoupdate is enabled for this provider.
@@ -1656,10 +1654,16 @@ END
 			# Set the checkbox to be checked.
 			$checked{'ENABLE_AUTOUPDATE'} = "checked='checked'";
 		}
+
+		# Display section to force an rules update and to reset the provider.
+		&show_additional_provider_actions();
+
 	} elsif ($cgiparams{'PROVIDERS'} eq "$Lang::tr{'ids add provider'}") {
 		# Set the autoupdate to true as default.
 		$checked{'ENABLE_AUTOUPDATE'} = "checked='checked'";
 	}
+
+	&Header::openbox('100%', 'center', $Lang::tr{'ids provider settings'});
 
 print <<END
 	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -1758,6 +1762,46 @@ print <<END
 			</tr>
 		</table>
 	</form>
+END
+;
+	&Header::closebox();
+}
+
+#
+## Function to show the area where additional provider actions can be done.
+#
+sub show_additional_provider_actions() {
+	my $disabled;
+	my %used_providers = ();
+
+	# Read-in providers settings file.
+	&General::readhasharray("$IDS::providers_settings_file", \%used_providers);
+
+	# Assign variable for provider handle.
+	my $provider = "$used_providers{$cgiparams{'ID'}}[0]";
+
+	# Call function to get the path and name for the given providers
+	# oinkmaster modified sids file.
+	my $provider_modified_sids_file = &IDS::get_oinkmaster_provider_modified_sids_file($provider);
+
+	# Disable the reset provider button if no provider modified sids file exists.
+	unless (-f $provider_modified_sids_file) {
+		$disabled = "disabled";
+	}
+
+	&Header::openbox('100%', 'center', "");
+	print <<END
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<table width='100%' border="0">
+				<tr>
+					<td align='center'>
+						<input type='hidden' name='PROVIDER' value='$provider'>
+						<input type='submit' name='PROVIDERS' value='$Lang::tr{'ids reset provider'}' $disabled>
+						<input type='submit' name='PROVIDERS' value='$Lang::tr{'ids force ruleset update'}'>
+					</td>
+				</tr>
+			</table>
+		</form>			
 END
 ;
 	&Header::closebox();
