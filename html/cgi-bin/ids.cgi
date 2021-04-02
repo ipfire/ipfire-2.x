@@ -539,6 +539,61 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 			&reload();
 		}
 	}
+
+# Reset a provider to it's defaults.
+} elsif ($cgiparams{'PROVIDERS'} eq "$Lang::tr{'ids reset provider'}") {
+	# Grab provider handle from cgihash.
+	my $provider = $cgiparams{'PROVIDER'};
+
+	# Lock the webpage and print message.
+	&working_notice("$Lang::tr{'ids apply ruleset changes'}");
+
+	# Create new empty file for used rulefiles
+	# for this provider.
+	&IDS::write_used_provider_rulefiles_file($provider);
+
+	# Call function to get the path and name for the given providers
+	# oinkmaster modified sids file.
+	my $provider_modified_sids_file = &IDS::get_oinkmaster_provider_modified_sids_file($provider);
+
+	# Check if the file exists.
+	if (-f $provider_modified_sids_file) {
+		# Remove the file, as requested.
+		unlink("$provider_modified_sids_file");
+	}
+
+	# Alter the oinkmaster provider includes file and remove the provider.
+	&IDS::alter_oinkmaster_provider_includes_file("remove", $provider);
+
+	# Regenerate ruleset.
+	&IDS::oinkmaster();
+
+	# Check if the IDS is running.
+	if(&IDS::ids_is_running()) {
+		# Get enabled providers.
+		my @enabled_providers = &IDS::get_enabled_providers();
+
+		# Get amount of enabled providers.
+		my $amount = @enabled_providers;
+
+		# Check if at least one enabled provider remains.
+		if ($amount >= 1) {
+			# Call suricatactrl to perform a reload.
+			&IDS::call_suricatactrl("restart");
+
+		# Stop suricata if no enabled provider remains.
+		} else {
+			# Call suricatactrel to perform the stop.
+			&IDS::call_suricatactrl("stop");
+		}
+	}
+
+	# Undefine providers flag.
+	undef($cgiparams{'PROVIDERS'});
+
+	# Reload page.
+	&reload();
+
 # Save IDS settings.
 } elsif ($cgiparams{'IDS'} eq $Lang::tr{'save'}) {
 	my %oldidssettings;
