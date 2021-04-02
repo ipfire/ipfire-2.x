@@ -496,7 +496,10 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	&reload();
 
 # Download new ruleset.
-} elsif ($cgiparams{'RULESET'} eq $Lang::tr{'update ruleset'}) {
+} elsif ($cgiparams{'PROVIDERS'} eq $Lang::tr{'ids force ruleset update'}) {
+	# Assign given provider handle.
+	my $provider = $cgiparams{'PROVIDER'};
+
 	# Check if the red device is active.
 	unless (-e "${General::swroot}/red/active") {
 		$errormessage = "$Lang::tr{'could not download latest updates'} - $Lang::tr{'system is offline'}";
@@ -514,7 +517,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		&working_notice("$Lang::tr{'ids download new ruleset'}");
 
 		# Call subfunction to download the ruleset.
-		if(&IDS::downloadruleset()) {
+		if(&IDS::downloadruleset($provider)) {
 			$errormessage = $Lang::tr{'could not download latest updates'};
 
 			# Call function to store the errormessage.
