@@ -1160,6 +1160,8 @@ print <<END;
 			<td class='base' colspan='3' bgcolor='$color{'color20'}'></td>
 		</tr>
 END
+		my $line = 1;
+
 		# Check if some providers has been configured.
 		if (keys (%used_providers)) {
 			my $col = "";
@@ -1176,7 +1178,7 @@ END
 				my $status  = $used_providers{$id}[3];
 
 				# Check if the item number is even or not.
-				if ($id % 2) {
+				if ($line % 2) {
 					$col="bgcolor='$color{'color22'}'";
 				} else {
 					$col="bgcolor='$color{'color20'}'";
@@ -1244,6 +1246,9 @@ print <<END;
 					</td>
 				</tr>
 END
+			# Increment lines value.
+			$line++;
+
 			}
 
 		} else {
