@@ -1378,7 +1378,7 @@
 'ids autoupdates' => 'Automatische Updates',
 'ids automatic rules update' => 'Automatische Regelaktualisierung',
 'ids customize ruleset' => 'Regelset anpassen',
-'ids download new ruleset' => 'Das neue Regelsatz wird heruntergeladen und entpackt. Bitte warten Sie, bis dieser Vorgang erfolgreich beendet wurde...',
+'ids download new ruleset' => 'Das neue Regelset wird heruntergeladen und entpackt. Bitte warten Sie, bis dieser Vorgang erfolgreich beendet wurde...',
 'ids enable' => 'Einbruchsverhinderungssystem aktivieren',
 'ids enable automatic updates' => 'Automatische Updates aktivieren',
 'ids force ruleset update' => 'Regelset jetzt aktualisieren',
