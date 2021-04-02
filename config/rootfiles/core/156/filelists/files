@@ -1,3 +1,4 @@
+etc/rc.d/init.d/suricata
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/zoneconf.cgi
 var/ipfire/header.pl

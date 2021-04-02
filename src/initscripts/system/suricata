@@ -62,9 +62,9 @@ function get_cpu_count {
 # Function to flush the firewall chains.
 function flush_fw_chain {
 	# Call iptables and flush the chains
-	iptables -F "$IPS_INPUT_CHAIN"
-	iptables -F "$IPS_FORWARD_CHAIN"
-	iptables -F "$IPS_OUTPUT_CHAIN"
+	iptables -w -F "$IPS_INPUT_CHAIN"
+	iptables -w -F "$IPS_FORWARD_CHAIN"
+	iptables -w -F "$IPS_OUTPUT_CHAIN"
 }
 
 # Function to create the firewall rules to pass the traffic to suricata.
@@ -137,19 +137,19 @@ function generate_fw_rules {
 		# Loop through the array and create firewall rules.
 		for enabled_ips_zone in "${enabled_ips_zones[@]}"; do
 			# Create rules queue input and output related traffic and pass it to the IPS.
-			iptables -I "$IPS_INPUT_CHAIN" -i "$enabled_ips_zone" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
-			iptables -I "$IPS_OUTPUT_CHAIN" -o "$enabled_ips_zone" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
+			iptables -w -I "$IPS_INPUT_CHAIN" -i "$enabled_ips_zone" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
+			iptables -w -I "$IPS_OUTPUT_CHAIN" -o "$enabled_ips_zone" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
 
 			# Create rules which are required to handle forwarded traffic.
 			for enabled_ips_zone_forward in "${enabled_ips_zones[@]}"; do
-				iptables -I "$IPS_FORWARD_CHAIN" -i "$enabled_ips_zone" -o "$enabled_ips_zone_forward" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
+				iptables -w -I "$IPS_FORWARD_CHAIN" -i "$enabled_ips_zone" -o "$enabled_ips_zone_forward" -m mark ! --mark "$MARK"/"$MASK" -j NFQUEUE $NFQ_OPTIONS
 			done
 		done
 
 		# Clear repeat bit, so that it does not confuse IPsec or QoS
-		iptables -A "${IPS_INPUT_CHAIN}" -j MARK --set-xmark "0x0/${MASK}"
-		iptables -A "${IPS_FORWARD_CHAIN}" -j MARK --set-xmark "0x0/${MASK}"
-		iptables -A "${IPS_OUTPUT_CHAIN}" -j MARK --set-xmark "0x0/${MASK}"
+		iptables -w -A "${IPS_INPUT_CHAIN}" -j MARK --set-xmark "0x0/${MASK}"
+		iptables -w -A "${IPS_FORWARD_CHAIN}" -j MARK --set-xmark "0x0/${MASK}"
+		iptables -w -A "${IPS_OUTPUT_CHAIN}" -j MARK --set-xmark "0x0/${MASK}"
 	fi
 }
 
