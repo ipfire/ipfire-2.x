@@ -460,6 +460,9 @@ sub downloadruleset ($) {
 
 #
 ## Function to extract a given ruleset.
+##
+## In case the ruleset provider offers a plain file, it simply will
+## be copied.
 #
 sub extractruleset ($) {
 	my ($provider) = @_;
@@ -470,12 +473,15 @@ sub extractruleset ($) {
 	# Load perl module to deal with files and path.
 	use File::Basename;
 
+	# Load perl module for file copying.
+	use File::Copy;
+
 	# Get full path and downloaded rulesfile for the given provider.
 	my $tarball = &_get_dl_rulesfile($provider);
 
 	# Check if the file exists.
 	unless (-f $tarball) {
-		&_log_to_syslog("Could not extract ruleset file: $tarball");
+		&_log_to_syslog("Could not find ruleset file: $tarball");
 
 		# Return nothing.
 		return;
@@ -486,69 +492,84 @@ sub extractruleset ($) {
 	mkdir("$tmp_rules_directory") unless (-d "$tmp_rules_directory");
 	mkdir("$tmp_conf_directory") unless (-d "$tmp_conf_directory");
 
-	# Initialize the tar module.
-	my $tar = Archive::Tar->new($tarball);
+	# Omit the type (dl_type) of the stored ruleset.
+	my $type = $IDS::Ruleset::Providers{$provider}{'dl_type'};
 
-	# Get the filelist inside the tarball.
-	my @packed_files = $tar->list_files;
+	# Handle the different ruleset types.
+	if ($type eq "plain") {
+		# Generate destination filename an full path.
+		my $destination = "$tmp_rules_directory/$provider\-ruleset.rules";
 
-	# Loop through the filelist.
-	foreach my $packed_file (@packed_files) {
-		my $destination;
+		# Copy the file into the temporary rules directory.
+		copy($tarball, $destination);
 
-		# Splitt the packed file into chunks.
-		my $file = fileparse($packed_file);
+	} elsif ( $type eq "archive") {
+		# Initialize the tar module.
+		my $tar = Archive::Tar->new($tarball);
 
-		# Handle msg-id.map file.
-		if ("$file" eq "sid-msg.map") {
-			# Set extract destination to temporary config_dir.
-			$destination = "$tmp_conf_directory/$provider\-sid-msg.map";
-		# Handle classification.conf
-		} elsif ("$file" eq "classification.config") {
-			# Set extract destination to temporary config_dir.
-			$destination = "$tmp_conf_directory/$provider\-classification.config";
-		# Handle rules files.
-		} elsif ($file =~ m/\.rules$/) {
-			my $rulesfilename;
+		# Get the filelist inside the tarball.
+		my @packed_files = $tar->list_files;
 
-			# Splitt the filename into chunks.
-			my @filename = split("-", $file);
+		# Loop through the filelist.
+		foreach my $packed_file (@packed_files) {
+			my $destination;
 
-			# Reverse the array.
-			@filename = reverse(@filename);
+			# Splitt the packed file into chunks.
+			my $file = fileparse($packed_file);
 
-			# Get the amount of elements in the array.
-			my $elements = @filename;
+			# Handle msg-id.map file.
+			if ("$file" eq "sid-msg.map") {
+				# Set extract destination to temporary config_dir.
+				$destination = "$tmp_conf_directory/$provider\-sid-msg.map";
 
-			# Remove last element of the hash.
-			# It contains the vendor name, which will be replaced.
-			if ($elements >= 3) {
+			# Handle classification.conf
+			} elsif ("$file" eq "classification.config") {
+				# Set extract destination to temporary config_dir.
+				$destination = "$tmp_conf_directory/$provider\-classification.config";
+
+			# Handle rules files.
+			} elsif ($file =~ m/\.rules$/) {
+				my $rulesfilename;
+
+				# Splitt the filename into chunks.
+				my @filename = split("-", $file);
+
+				# Reverse the array.
+				@filename = reverse(@filename);
+
+				# Get the amount of elements in the array.
+				my $elements = @filename;
+
+				# Remove last element of the hash.
+				# It contains the vendor name, which will be replaced.
+				if ($elements >= 3) {
 				# Remove last element from hash.
-				pop(@filename);
+					pop(@filename);
+				}
+
+				# Check if the last element of the filename does not
+				# contain the providers name.
+				if ($filename[-1] ne "$provider") {
+					# Add provider name as last element.
+					push(@filename, $provider);
+				}
+
+				# Reverse the array back.
+				@filename = reverse(@filename);
+
+				# Generate the name for the rulesfile.
+				$rulesfilename = join("-", @filename);
+
+				# Set extract destination to temporaray rules_dir.
+				$destination = "$tmp_rules_directory/$rulesfilename";
+			} else {
+				# Skip all other files.
+				next;
 			}
 
-			# Check if the last element of the filename does not
-			# contain the providers name.
-			if ($filename[-1] ne "$provider") {
-				# Add provider name as last element.
-				push(@filename, $provider);
-			}
-
-			# Reverse the array back.
-			@filename = reverse(@filename);
-
-			# Generate the name for the rulesfile.
-			$rulesfilename = join("-", @filename);
-
-			# Set extract destination to temporaray rules_dir.
-			$destination = "$tmp_rules_directory/$rulesfilename";
-		} else {
-			# Skip all other files.
-			next;
+			# Extract the file to the temporary directory.
+			$tar->extract_file("$packed_file", "$destination");
 		}
-
-		# Extract the file to the temporary directory.
-		$tar->extract_file("$packed_file", "$destination");
 	}
 }
 
@@ -557,9 +578,6 @@ sub extractruleset ($) {
 ## call the functions to merge the additional config files. (classification, sid-msg, etc.).
 #
 sub oinkmaster () {
-	# Load perl module for file copying.
-	use File::Copy;
-
 	# Check if the files in rulesdir have the correct permissions.
 	&_check_rulesdir_permissions();
 
@@ -571,26 +589,8 @@ sub oinkmaster () {
 
 	# Loop through the array of enabled providers.
 	foreach my $provider (@enabled_providers) {
-		# Omit the type (dl_type) of the stored ruleset.
-		my $type = $IDS::Ruleset::Providers{$provider}{'dl_type'};
-
-		# Handle the different ruleset types.
-		if ($type eq "archive") {
-			# Call the extractruleset function.
-			&extractruleset($provider);
-		} elsif ($type eq "plain") {
-			# Generate filename and full path for the stored rulesfile.
-			my $dl_rulesfile = &_get_dl_rulesfile($provider);
-
-			# Generate destination filename an full path.
-			my $destination = "$tmp_rules_directory/$provider\-ruleset.rules";
-
-			# Copy the file into the temporary rules directory.
-			copy($dl_rulesfile, $destination);
-		} else {
-			# Skip unknown type.
-			next;
-		}
+		# Call the extractruleset function.
+		&extractruleset($provider);
 	}
 
 	# Load perl module to talk to the kernel syslog.
