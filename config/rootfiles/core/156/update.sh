@@ -45,6 +45,9 @@ extract_files
 # update linker config
 ldconfig
 
+# Remove old perl modules
+rm -rfv /usr/lib/perl5/5.30.0
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
