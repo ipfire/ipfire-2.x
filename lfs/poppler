@@ -76,7 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-DCMAKE_INSTALL_PREFIX=/usr \
 		-DTESTDATADIR=$PWD/testfiles \
 		-DENABLE_UNSTABLE_API_ABI_HEADERS=ON \
-		-ENABLE_QT5=OFF \
+		-DENABLE_QT5=OFF \
 		..
 
 	cd $(DIR_APP)/build && make $(MAKETUNING)
