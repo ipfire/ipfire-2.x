@@ -1408,8 +1408,11 @@ sub write_main_used_rulefiles_file (@) {
 		# Call function to get the providers used rulefiles file.
 		my $filename = &get_used_provider_rulesfile_file($provider);
 
-		# Print the provider to the file.
-		print FILE "include\: $filename\n";
+		# Check if the file exists and write it into the used rulefiles file.
+		if (-f $filename) {
+			# Print the provider to the file.
+			print FILE "include\: $filename\n";
+		}
 	}
 
 	# Always include the file which hold the static includes.
