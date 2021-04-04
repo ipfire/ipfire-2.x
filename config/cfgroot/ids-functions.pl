@@ -956,6 +956,57 @@ sub alter_oinkmaster_provider_includes_file ($$) {
 }
 
 #
+## Function to read-in the given enabled or disables sids file.
+#
+sub read_enabled_disabled_sids_file($) {
+	my ($file) = @_;
+
+	# Temporary hash to store the sids and their state. It will be
+	# returned at the end of this function.
+	my %temphash;
+
+	# Open the given filename.
+	open(FILE, "$file") or die "Could not open $file. $!\n";
+
+	# Loop through the file.
+	while(<FILE>) {
+		# Remove newlines.
+		chomp $_;
+
+		# Skip blank lines.
+		next if ($_ =~ /^\s*$/);
+
+		# Skip coments.
+		next if ($_ =~ /^\#/);
+
+		# Splitt line into sid and state part.
+		my ($state, $sid) = split(" ", $_);
+
+		# Skip line if the sid is not numeric.
+		next unless ($sid =~ /\d+/ );
+
+		# Check if the sid was enabled.
+		if ($state eq "enablesid") {
+			# Add the sid and its state as enabled to the temporary hash.
+			$temphash{$sid} = "enabled";
+		# Check if the sid was disabled.
+		} elsif ($state eq "disablesid") {
+			# Add the sid and its state as disabled to the temporary hash.
+			$temphash{$sid} = "disabled";
+		# Invalid state - skip the current sid and state.
+		} else {
+			next;
+		}
+	}
+
+	# Close filehandle.
+	close(FILE);
+
+	# Return the hash.
+	return %temphash;
+}
+
+#
 ## Function to check if the IDS is running.
 #
 sub ids_is_running () {

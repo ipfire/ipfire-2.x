@@ -358,7 +358,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		# Check if a modified sids file for this provider exists.
 		if (-f $providers_modified_sids_file) {
 			# Read-in the file for enabled/disabled sids.
-			%enabled_disabled_sids = &read_enabled_disabled_sids_file($providers_modified_sids_file);
+			%enabled_disabled_sids = &IDS::read_enabled_disabled_sids_file($providers_modified_sids_file);
 		}
 
 		# Loop through the hash of idsrules.
@@ -1988,57 +1988,6 @@ sub get_memory_usage($) {
 
 	# If the file could not be open, return nothing.
 	return;
-}
-
-#
-## Function to read-in the given enabled or disables sids file.
-#
-sub read_enabled_disabled_sids_file($) {
-	my ($file) = @_;
-
-	# Temporary hash to store the sids and their state. It will be
-	# returned at the end of this function.
-	my %temphash;
-
-	# Open the given filename.
-	open(FILE, "$file") or die "Could not open $file. $!\n";
-
-	# Loop through the file.
-	while(<FILE>) {
-		# Remove newlines.
-		chomp $_;
-
-		# Skip blank lines.
-		next if ($_ =~ /^\s*$/);
-
-		# Skip coments.
-		next if ($_ =~ /^\#/);
-
-		# Splitt line into sid and state part.
-		my ($state, $sid) = split(" ", $_);
-
-		# Skip line if the sid is not numeric.
-		next unless ($sid =~ /\d+/ );
-
-		# Check if the sid was enabled.
-		if ($state eq "enablesid") {
-			# Add the sid and its state as enabled to the temporary hash.
-			$temphash{$sid} = "enabled";
-		# Check if the sid was disabled.
-		} elsif ($state eq "disablesid") {
-			# Add the sid and its state as disabled to the temporary hash.
-			$temphash{$sid} = "disabled";
-		# Invalid state - skip the current sid and state.
-		} else {
-			next;
-		}
-	}
-
-	# Close filehandle.
-	close(FILE);
-
-	# Return the hash.
-	return %temphash;
 }
 
 #
