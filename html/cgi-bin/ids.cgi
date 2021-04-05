@@ -1748,10 +1748,23 @@ END
 					}
 
 					print "<select name='PROVIDER' id='PROVIDER' $disabled>\n";
+						# Temporary hash to store the provier names and their handles.
+						my %tmphash = ();
+
 						# Loop through the array of ruleset providers.
-						foreach my $provider (@ruleset_providers) {
+						foreach my $handle (@ruleset_providers) {
 							# Get the provider name.
-							my $provider_name = &get_provider_name($provider);
+							my $name = &get_provider_name($handle);
+
+							# Add the grabbed provider  name and handle to the
+							# temporary hash.
+							$tmphash{$name} = "$handle";
+						}
+
+						# Sort and loop through the temporary hash.
+						foreach my $provider_name ( sort keys %tmphash ) {
+							# Grab the provider handle.
+							my $provider = $tmphash{$provider_name};
 
 							# Pre-select the provider if one is given.
 							if (($used_providers{$cgiparams{'ID'}}[0] eq "$provider") || ($cgiparams{'PROVIDER'} eq "$provider")) {
