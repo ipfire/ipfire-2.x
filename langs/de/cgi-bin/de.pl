@@ -2436,7 +2436,7 @@
 'tor traffic read written' => 'Gesamter Traffic (empfangen/gesendet)',
 'tor use exit nodes' => 'Nur diese Exitknoten benutzen (ein Fingerabdruck pro Zeile)',
 'tor use guard nodes' => 'Nur diese Guardknoten benutzen (ein Fingerabdruck pro Zeile)',
-'total connection time' => 'Gesammte Verbindungszeit',
+'total connection time' => 'Gesamte Verbindungszeit',
 'total hits for log section' => 'Gesamte Treffer für Protokollsektion',
 'traffic back' => 'Zurück',
 'traffic calc time' => 'Berechnungszeitpunkt',
