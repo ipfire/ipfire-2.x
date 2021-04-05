@@ -38,9 +38,6 @@ our $suricata_used_providers_file = "$settingsdir/suricata-used-providers.yaml";
 # File for static ruleset inclusions.
 our $suricata_static_rulefiles_file = "$settingsdir/suricata-static-included-rulefiles.yaml";
 
-# DEPRECATED - File where the used rulefiles are stored.
-our $used_rulefiles_file = "$settingsdir/suricata-used-rulefiles.yaml";
-
 # File where the addresses of the homenet are stored.
 our $homenet_file = "$settingsdir/suricata-homenet.yaml";
 
@@ -49,12 +46,6 @@ our $dns_servers_file = "$settingsdir/suricata-dns-servers.yaml";
 
 # File where the HTTP ports definition is stored.
 our $http_ports_file = "$settingsdir/suricata-http-ports.yaml";
-
-# DEPRECATED - File which contains the enabled sids.
-our $enabled_sids_file = "$settingsdir/oinkmaster-enabled-sids.conf";
-
-# DEPRECATED - File which contains the disabled sids.
-our $disabled_sids_file = "$settingsdir/oinkmaster-disabled-sids.conf";
 
 # File which contains includes for provider specific rule modifications.
 our $oinkmaster_provider_includes_file = "$settingsdir/oinkmaster-provider-includes.conf";
@@ -65,17 +56,11 @@ our $modify_sids_file = "$settingsdir/oinkmaster-modify-sids.conf";
 # File which stores the configured IPS settings.
 our $ids_settings_file = "$settingsdir/settings";
 
-# DEPRECATED - File which stores the configured rules-settings.
-our $rules_settings_file = "$settingsdir/rules-settings";
-
 # File which stores the used and configured ruleset providers.
 our $providers_settings_file = "$settingsdir/providers-settings";
 
 # File which stores the configured settings for whitelisted addresses.
 our $ignored_file = "$settingsdir/ignored";
-
-# DEPRECATED - Location and name of the tarball which contains the ruleset.
-our $rulestarball = "/var/tmp/idsrules.tar.gz";
 
 # Location where the downloaded rulesets are stored.
 our $dl_rules_path = "/var/tmp";
