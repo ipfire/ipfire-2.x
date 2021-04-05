@@ -66,4 +66,104 @@ our %Providers = (
 		dl_url => "https://rules.emergingthreatspro.com/<subscription_code>/suricata-5.0/etpro.rules.tar.gz",
 		dl_type => "archive",
 	},
+
+	# Abuse.ch SSLBL JA3 fingerprint rules.
+	sslbl_ja3 => {
+		summary => "Abuse.ch SSLBL JA3 Rules",
+		website => "https://sslbl.abuse.ch/",
+		tr_string => "sslbl ja3 fingerprint rules",
+		requires_subscription => "False",
+		dl_url => "https://sslbl.abuse.ch/blacklist/ja3_fingerprints.rules",
+		dl_type => "plain",
+	},
+
+	# Abuse.ch SSLBL Blacklist rules.
+	sslbl_blacklist => {
+		summary => "Abuse.ch SSLBL Blacklist Rules",
+		website => "https://sslbl.abuse.ch/",
+		tr_string => "sslbl blacklist rules",
+		requires_subscription => "False",
+		dl_url => "https://sslbl.abuse.ch/blacklist/sslblacklist.rules",
+		dl_type => "plain",
+	},
+
+	# Abuse.ch URLhaus Blacklist rules.
+	urlhaus => {
+		summary => "Abuse.ch URLhaus Blacklist Rules",
+		website => "https://urlhaus.abuse.ch/",
+		tr_string => "urlhaus blacklist rules",
+		requires_subscription => "False",
+		dl_url => "https://urlhaus.abuse.ch/downloads/urlhaus_suricata.tar.gz",
+		dl_type => "archive",
+	},
+
+	# Etnetera Aggressive Blacklist.
+	etnetera_aggresive => {
+		summary => "Etnetera Aggressive Blacklist Rules",
+		website => "https://security.etnetera.cz/",
+		tr_string => "etnetera aggressive blacklist rules",
+		requires_subscription => "False",
+		dl_url => "https://security.etnetera.cz/feeds/etn_aggressive.rules",
+		dl_type => "plain",
+	},
+
+	# OISF Traffic ID rules.
+	oisf_trafficid => {
+		summary => "OISF Traffic ID Rules",
+		website => "https://www.openinfosecfoundation.org/",
+		tr_string => "oisf traffic id rules",
+		requires_subscription => "False",
+		dl_url => "https://openinfosecfoundation.org/rules/trafficid/trafficid.rules",
+		dl_type => "plain",
+	},
+
+	# Positive Technologies Attack Detection Team rules.
+	attack_detection => {
+		summary => "PT Attack Detection Team Rules",
+		website => "https://github.com/ptresearch/AttackDetection",
+		tr_string => "attack detection team rules",
+		requires_subscription => "False",
+		dl_url => "https://raw.githubusercontent.com/ptresearch/AttackDetection/master/pt.rules.tar.gz",
+		dl_type => "archive",
+	},
+
+	# Secureworks Security rules.
+	secureworks_security => {
+		summary => "Secureworks Security Ruleset",
+		website => "https://www.secureworks.com",
+		tr_string => "secureworks security ruleset",
+		requires_subscription => "True",
+		dl_url => "https://ws.secureworks.com/ti/ruleset/<subscription_code>/Suricata_suricata-security_latest.tgz",
+		dl_type => "archive",
+	},
+
+	# Secureworks Malware rules.
+	secureworks_malware => {
+		summary => "Secureworks Malware Ruleset",
+		website => "https://www.secureworks.com",
+		tr_string => "secureworks malware ruleset",
+		requires_subscription => "True",
+		dl_url => "https://ws.secureworks.com/ti/ruleset/<subscription_code>/Suricata_suricata-malware_latest.tgz",
+		dl_type => "archive",
+	},
+
+	# Secureworks Enhanced rules.
+	secureworks_enhanced => {
+		summary => "Secureworks Enhanced Ruleset",
+		website => "https://www.secureworks.com",
+		tr_string => "secureworks enhanced ruleset",
+		requires_subscription => "True",
+		dl_url => "https://ws.secureworks.com/ti/ruleset/<subscription_code>/Suricata_suricata-enhanced_latest.tgz",
+		dl_type => "archive",
+	},
+
+	# Travis B. Green hunting rules.
+	tgreen => {
+		summary => "Travis Green - Hunting rules",
+		website => "https://github.com/travisbgreen/hunting-rules",
+		tr_string => "travis green hunting rules",
+		requires_subscription => "False",
+		dl_url => "https://raw.githubusercontent.com/travisbgreen/hunting-rules/master/hunting.rules",
+		dl_type => "plain",
+	},
 );
