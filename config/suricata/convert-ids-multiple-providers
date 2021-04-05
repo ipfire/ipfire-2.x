@@ -1,0 +1,279 @@
+#!/usr/bin/perl
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2021 IPFire Development Team <info@ipfire.org>                #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+use strict;
+
+require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/ids-functions.pl1";
+
+# Old file declarations
+my $old_rules_settings_file = "$IDS::settingsdir/rules-settings";
+my $old_used_rulefiles_file = "$IDS::settingsdir/suricata-used-rulefiles.yaml";
+my $old_enabled_sids_file = "$IDS::settingsdir/oinkmaster-enabled-sids.conf";
+my $old_disabled_sids_file = "$IDS::settingsdir/oinkmaster-disabled-sids.conf";
+my $old_rules_tarball = "/var/tmp/idsrules.tar.gz";
+
+# Script wide variable to store the used ruleset provider.
+my $ruleset_provider;
+
+# Hashes to store the old and new settings.
+my %old_rules_settings = ();
+my %idssettings = ();
+my %providers_settings = ();
+
+exit unless(-f $IDS::ids_settings_file and -f $old_rules_settings_file);
+
+# Read-in all settings.
+&General::readhash($old_rules_settings_file, \%old_rules_settings);
+&General::readhash($IDS::ids_settings_file, \%idssettings);
+
+#
+## Step 1: Create new file layout
+#
+&IDS::check_and_create_filelayout();
+
+#
+## Step 2: Migrate automatic update interval.
+#
+
+# Get old configured autoupdate interval.
+my $autoupdate_interval = $old_rules_settings{'AUTOUPDATE_INTERVAL'};
+
+# Check for valid intervals.
+if ($autoupdate_interval eq "off" || $autoupdate_interval eq "daily" || $autoupdate_interval eq "weekly") {
+	# Put the setting to the new configuration location.
+	$idssettings{'AUTOUPDATE_INTERVAL'} = $autoupdate_interval;
+} else {
+	# Swith to default which should be weekly.
+	$idssettings{'AUTOUPDATE_INTERVAL'} = "weekly";
+}
+
+# Store the updated idssettings file.
+&General::writehash($IDS::ids_settings_file, \%idssettings);
+
+#
+## Step 3: Migrate the providers settings.
+#
+
+# Try to get the previously configured provider.
+$ruleset_provider = $old_rules_settings{'RULES'};
+
+# Exit the script if no ruleset provider has configured.
+exit unless ($ruleset_provider);
+
+# Defaults.
+my $id = "1";
+my $enabled = "enabled";
+my $autoupdate_status = "enabled";
+
+# Try to get a configured subscription code.
+my $subscription_code = $old_rules_settings{'OINKCODE'};
+
+# Check if the autoupdate should be disabled.
+if ($idssettings{'AUTOUPDATE_INTERVAL'} eq "off") {
+	# Set the autoupdate for the provider to disabled.
+	$autoupdate_status = "disabled";
+}
+
+# Create and assign the provider structure to the providers hash.
+$providers_settings{$id} = [ "$ruleset_provider", "$subscription_code", "$autoupdate_status", "$enabled" ];
+
+# Write the converted provider settings to the new providers-settings file.
+&General::writehasharray($IDS::providers_settings_file, \%providers_settings);
+
+# Set correct ownership.
+&IDS::set_ownership("$IDS::providers_settings_file");
+
+# Remove old rules settings file.
+unlink($old_rules_settings_file);
+
+#
+## Step 4: Rename downloaded rulestarball to new name sheme.
+#
+
+# Check if a rulestarball exists.
+if (-f $old_rules_tarball) {
+	# Load perl module which contains the move command.
+	use File::Copy;
+
+	# Call function to generate the path and filename for the new rules tarball name.
+	my $new_rules_tarball = &IDS::_get_dl_rulesfile($ruleset_provider);
+
+	# Move the rulestarball to the new location.
+	move($old_rules_tarball, $new_rules_tarball);
+
+	# Set correct ownership.
+	&IDS::set_ownership("$new_rules_tarball");
+}
+
+#
+## Step 5: Migrate oinkmaster configuration files for enabled and disabled rules.
+#
+
+# Read-in old enabled / disabled sids files.
+my %enabled_disabled_sids = (
+	&IDS::read_enabled_disabled_sids_file($old_enabled_sids_file),
+	&IDS::read_enabled_disabled_sids_file($old_disabled_sids_file)
+);
+
+# Check if any modifications have been done.
+if (%enabled_disabled_sids) {
+	# Get path and filename for new file.
+	my $oinkmaster_provider_modified_sids_file = &IDS::get_oinkmaster_provider_modified_sids_file($ruleset_provider);
+
+	# Open the new file for writing.
+	open (FILE, $oinkmaster_provider_modified_sids_file) or die "Could not write to $oinkmaster_provider_modified_sids_file. $!\n";
+
+	# Write header to the files.
+	print PROVIDER_MOD_FILE "#Autogenerated file. Any custom changes will be overwritten!\n";
+
+	# Loop through the hash.
+	foreach my $sid (keys %enabled_disabled_sids) {
+		# Check if the sid is enabled.
+		if ($enabled_disabled_sids{$sid} eq "enabled") {
+			# Print the sid as enabled to the file.
+			print FILE "enablesid $sid\n";
+		# Check if the sid is disabled.
+		} elsif ($enabled_disabled_sids{$sid} eq "disabled") {
+			# Print the sid as disabled to the file.
+			print FILE "disablesid $sid\n";
+		# Something strange happende - skip the current sid.
+		} else {
+			next;
+		}
+	}
+
+	# Close the file handle.
+	close(FILE);
+
+	# Add the provider modifications file to the oinkmaster provider includes file.
+	&IDS::alter_oinkmaster_provider_includes_file("add", "$ruleset_provider");
+
+	# Set correct ownerships.
+	&IDS::set_ownership("$IDS::oinkmaster_provider_includes_file");
+	&IDS::set_ownership("$oinkmaster_provider_modified_sids_file");
+
+	# Remove old files.
+	unlink($old_enabled_sids_file);
+	unlink($old_disabled_sids_file);
+}
+
+#
+## Step 6: Call oinkmaster and regenerate the ruleset structures.
+#
+&IDS::oinkmaster();
+
+# Set correct ownerships.
+&IDS::set_ownership("$IDS::rulespath");
+
+#
+## Step 7: Migrate used rulefiles into new format.
+#
+
+# Check if the a used rulesfile exists.
+if (-f $old_used_rulefiles_file) {
+	# Array to collect the used rulefiles.
+	my @used_rulefiles = ();
+
+	# Open the file or used rulefiles and read-in content.
+	open(FILE, $old_used_rulefiles_file) or die "Could not open $old_used_rulefiles_file. $!\n";
+
+	while (<FILE>) {
+		# Assign the current line to a nice variable.
+		my $line = $_;
+
+		# Remove newlines.
+		chomp($line);
+
+		# Skip comments.
+		next if ($line =~ /\#/);
+
+		# Skip blank  lines.
+		next if ($line =~ /^\s*$/);
+
+		# Gather the rulefile.
+		if ($line =~ /.*- (.*)/) {
+			my $rulefile = $1;
+
+			# Skip whitelist.rules and local.rules
+			next if ($rulefile eq "whitelist.rules" || $rulefile eq "local.rules");
+
+			# Splitt the filename into chunks.
+			my @filename = split("-", $rulefile);
+
+			# Reverse the array.
+			@filename = reverse(@filename);
+
+			# Get the amount of elements in the array.
+			my $elements = @filename;
+
+			# Remove last element of the hash.
+			# It contains the vendor name, which will be replaced.
+			if ($elements >= 3) {
+				# Remove last element from hash.
+				pop(@filename);
+			}
+
+			# Check if the last element of the filename does not
+			# contain the providers name.
+			if ($filename[-1] ne "$ruleset_provider") {
+				# Add provider name as last element.
+				push(@filename, $ruleset_provider);
+			}
+
+			# Reverse the array back.
+			@filename = reverse(@filename);
+
+			# Generate the name for the rulesfile.
+			$rulefile = join("-", @filename);
+
+			# Add the rulefile to the array of used rulesfiles.
+			push(@used_rulefiles, $rulefile);
+		}
+	}
+
+	# Close the file.
+	close(FILE);
+
+	# Write the new provider exclusive used rulesfiles file.
+	&IDS::write_used_provider_rulefiles_file($ruleset_provider, @used_rulefiles);
+
+	# Write main used rulefiles file.
+	&IDS::write_main_used_rulefiles_file("$ruleset_provider");
+
+	# Get the provider specific used rulefiles file name.
+	my $provider_used_rulefiles_file = &IDS::get_used_provider_rulesfile_file($ruleset_provider);
+
+	# Set correct ownerships.
+	&IDS::set_ownership("$provider_used_rulefiles_file");
+	&IDS::set_ownership("$IDS::suricata_used_providers_file");
+	&IDS::set_ownership("$IDS::suricata_static_rulefiles_file");
+}
+
+#
+## Step 8: Reload the IDS ruleset if running.
+#
+
+# Check if the IDS is running.
+#if(&IDS::ids_is_running()) {
+#	# Call suricatactrl to restart it.
+#	&IDS::call_suricatactrl("restart");
+#}
