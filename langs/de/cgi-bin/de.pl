@@ -472,7 +472,7 @@
 'backupaddon' => 'Add-On-Sicherung',
 'backupprofile' => 'Falls die Wiederverbindung scheitert, auf dieses Profil umschalten',
 'backups' => 'Sicherungen',
-'backupwarning' => 'Bitte stellen Sie zuerst Ihre Hauptsicherung wieder her und anschließend die der Add-Ons. Achten Sie darauf, dass die Sicherungen ihre originalen Dateinamen behalten.',
+'backupwarning' => 'Spielen Sie zuerst Ihre Hauptsicherung und anschließend die Sicherung(en) der Addon-Konfiguration(en) ein.<br />Es werden lediglich die gesicherten Konfigurationsdatei(en) der Addons, nicht die installierten Addons wiederhergestellt!<br />Achten Sie außerdem darauf, dass die Sicherungen ihre originalen Dateinamen behalten.',
 'bad characters in' => 'Ungültige Zeichen in ',
 'bad characters in script field' => 'Nicht erlaubte Zeichen im Skriptnamen',
 'bad characters in the telephone number field' => 'Nicht erlaubte(s) Zeichen im Feld Telefonnummer.',

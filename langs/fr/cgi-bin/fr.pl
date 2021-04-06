@@ -492,7 +492,7 @@
 'backupaddon' => 'Sauvegarde additionnelle',
 'backupprofile' => 'Dans le cas ou la reconnexion échouerait, changer de profil ',
 'backups' => 'Sauvegardes',
-'backupwarning' => 'Veuillez restaurer votre sauvegarde principale et ensuite vos sauvegardes additionnelles. Veuillez conserver le nom de fichier fourni lors du téléchargement.',
+'backupwarning' => 'Importez d\'abord votre sauvegarde principale, puis la ou les sauvegardes de la ou des configurations des addons.<br />Seuls les fichiers de configuration d\'addons sauvegardés seront restaurés, pas les addons installés!.<br />Assurez-vous également que les sauvegardes conservent leurs noms de fichiers originaux.',
 'bad characters in' => 'Mauvais caractères dans ',
 'bad characters in script field' => 'Mauvais caractères dans le champ de script',
 'bad characters in the telephone number field' => 'Mauvais caractères dans le champ du numéro de téléphone',

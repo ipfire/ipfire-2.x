@@ -472,7 +472,7 @@
 'backupaddon' => 'Eklentiyi yedekle',
 'backupprofile' => 'Yeniden bağlanma başarısız durumda. Profile geçin',
 'backups' => 'Yedekler',
-'backupwarning' => 'Eklenti yedeklemesi için lütfen önce geri yükleme yedeklemesi oluşturun. İndirme zamanı verilen orjinal dosya ile devam edin.',
+'backupwarning' => 'Önce ana yedeğinizi ve ardından eklenti yapılandırmasının yedeklerini içe aktarın.<br />Yalnızca yedeklenen eklenti yapılandırma dosyaları geri yüklenecek, yüklü eklentiler  değil!<br />Ayrıca yedeklerin orijinal dosya adlarını koruduğundan emin olun.',
 'bad characters in' => 'Yablış karakterler ',
 'bad characters in script field' => 'Komut alanındaki yanlış karakterler',
 'bad characters in the telephone number field' => 'Telefon numarası alanındaki yanlış karakterler.',

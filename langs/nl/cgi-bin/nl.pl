@@ -406,7 +406,7 @@
 'backupaddon' => 'Back-up toevoeging',
 'backupprofile' => 'In geval het opnieuw verbinden mislukt, schakel dan over naar profiel',
 'backups' => 'back-ups',
-'backupwarning' => 'Zet a.u.b. eerst uw hoofdback-ups terug en daarna de toevoegde back-ups. Gebruik de originele bestandsnaam die u gebruikt heeft voor de download.',
+'backupwarning' => 'Importeer eerst uw hoofdback-up en dan de back-up(en) van de addon configuratie(s).<br />Alleen de configuratiebestanden van de addons waarvan een backup is gemaakt worden hersteld, niet de geïnstalleerde addons!<br />Zorg er ook voor dat de back-ups hun oorspronkelijke bestandsnamen behouden.',
 'bad characters in' => 'Ongeldige tekens in ',
 'bad characters in script field' => 'Ongeldige tekens in scriptveld',
 'bad characters in the telephone number field' => 'Ongeldige tekens in telefoonnummerveld',

@@ -440,7 +440,7 @@
 'backupaddon' => 'Addon Backup',
 'backupprofile' => 'En caso de fallo en la reconexión, cambie de perfil.',
 'backups' => 'respaldos',
-'backupwarning' => 'Por favor primer restaure su respaldo principal y después de eso el respaldo de los addons. Por favor mantenga el nombre original que recibió al descargarlos.',
+'backupwarning' => 'Importe primero su copia de seguridad principal y luego la(s) copia(s) de seguridad de la(s) configuración(es) de los addon(es).<br />Sólo se restaurarán los archivos de configuración de los addons de los que se ha hecho copia de seguridad, no los addons instalados.<br />Asegúrese también de que las copias de seguridad mantienen sus nombres de archivo originales.',
 'bad characters in' => 'Caracteres equivocados en',
 'bad characters in script field' => 'Caracteres equivocados en el campo script',
 'bad characters in the telephone number field' => 'Caracteres equivocados en el campo número telefónico.',

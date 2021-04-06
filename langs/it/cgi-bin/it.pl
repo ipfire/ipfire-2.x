@@ -408,7 +408,7 @@
 'backupaddon' => 'Addon Backup',
 'backupprofile' => 'In case reconnection fails, switch to profile',
 'backups' => 'Backups',
-'backupwarning' => 'Per favore prima di ripristinare il backup del sistema e/o il backup addon, Si prega di mantenere il nome del file originale di quando &eacute; stato scaricato.',
+'backupwarning' => 'Importa prima il tuo backup principale e poi il/i backup della/e configurazione/i degli addon.<br />Solo i file di configurazione addon di cui è stato fatto il backup saranno ripristinati, non gli addon installati!<br />Assicurati anche che i backup mantengano i nomi originali dei file.',
 'bad characters in' => 'Bad characters in ',
 'bad characters in script field' => 'Bad characters in script field',
 'bad characters in the telephone number field' => 'Bad characters in the telephone number field.',
