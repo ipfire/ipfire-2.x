@@ -1,4 +1,5 @@
 etc/rc.d/init.d/suricata
+etc/sysctl.conf
 srv/web/ipfire/cgi-bin/entropy.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/getrrdimage.cgi

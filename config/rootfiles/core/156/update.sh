@@ -54,6 +54,9 @@ rm -rfv /usr/lib/perl5/5.30.0
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Reload sysctl.conf
+sysctl -p
+
 # Start services
 telinit u
 /etc/init.d/suricata restart
