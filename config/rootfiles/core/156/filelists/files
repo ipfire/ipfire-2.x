@@ -5,6 +5,7 @@ srv/web/ipfire/cgi-bin/logs.cgi/ids.dat
 srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromcountry.dat
 srv/web/ipfire/cgi-bin/zoneconf.cgi
 srv/web/ipfire/html/include/rrdimage.js
+srv/web/ipfire/html/themes/ipfire/include/style.css
 var/ipfire/graphs.pl
 var/ipfire/header.pl
 var/ipfire/network-functions.pl
