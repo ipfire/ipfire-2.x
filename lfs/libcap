@@ -74,7 +74,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i '/install.*STALIBNAME/d' libcap/Makefile
 	cd $(DIR_APP) && make GOLANG=no
 	cd $(DIR_APP) && make install GOLANG=no
-	ln -svf /lib/libcap.so.2.25 /usr/lib/libcap.so
+	rm -vf /lib/libcap.so
+	ln -svf /lib/libcap.so.2.49 /usr/lib/libcap.so
 	chmod +x /lib/libcap.so.*
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
