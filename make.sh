@@ -1511,7 +1511,6 @@ buildipfire() {
   lfsmake2 wpa_supplicant
   lfsmake2 hostapd
   lfsmake2 pycurl
-  lfsmake2 urlgrabber
   lfsmake2 syslinux
   lfsmake2 tftpd
   lfsmake2 cpufrequtils
