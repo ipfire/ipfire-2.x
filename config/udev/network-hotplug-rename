@@ -78,16 +78,6 @@ for zone in ${ZONES}; do
 				(( counter += 1 ))
 			done
 			;;
-
-		macvtap)
-			# MACVTAP mode doesn't work for WiFi devices
-			if [ -d "/sys/class/net/${INTERFACE}/phy80211" ]; then
-				logger -t network "MACVTAP mode is not supported for wireless devices"
-				echo "${!device}"
-			else
-				echo "${!device%0}phys0"
-			fi
-			;;
 	esac
 done
 

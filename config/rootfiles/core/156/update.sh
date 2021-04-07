@@ -62,6 +62,10 @@ rm -rfv \
 # Reload sysctl.conf
 sysctl -p
 
+# Migrate any macvtap interfaces to bridge
+sed -e "s/_MODE=macvtap/_MODE=bridge/g" \
+	-i /var/ipfire/ethernet/settings
+
 # Start services
 telinit u
 /etc/init.d/suricata restart

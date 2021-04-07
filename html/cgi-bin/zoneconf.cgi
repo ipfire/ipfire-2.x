@@ -345,8 +345,6 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 		if ($zone_mode eq "BRIDGE") {
 			$ethsettings{"${uc}_MODE"} = "bridge";
 			$ethsettings{"${uc}_SLAVES"} = $slave_string;
-		} elsif ($zone_mode eq "MACVTAP") {
-			$ethsettings{"${uc}_MODE"} = "macvtap";
 		}
 
 		# STP options
@@ -423,8 +421,6 @@ foreach (@zones) {
 		$mode_selected{"DEFAULT"} = "selected";
 	} elsif ($zone_mode eq "bridge") {
 		$mode_selected{"BRIDGE"} = "selected";
-	} elsif ($zone_mode eq "macvtap") {
-		$mode_selected{"MACVTAP"} = "selected";
 	}
 
 	print <<END
@@ -432,7 +428,6 @@ foreach (@zones) {
 			<select name="MODE $uc" data-zone="$uc" onchange="changeZoneMode(this)">
 				<option value="DEFAULT" $mode_selected{"DEFAULT"}>$Lang::tr{"zoneconf nicmode default"}</option>
 				<option value="BRIDGE" $mode_selected{"BRIDGE"}>$Lang::tr{"zoneconf nicmode bridge"}</option>
-				<option value="MACVTAP" $mode_selected{"MACVTAP"}>$Lang::tr{"zoneconf nicmode macvtap"}</option>
 			</select>
 		</td>
 END

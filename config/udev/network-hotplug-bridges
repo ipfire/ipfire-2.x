@@ -112,15 +112,6 @@ case "${MODE}" in
 		ip link set dev "${INTERFACE}" up
 		;;
 
-	macvtap)
-		ADDRESS="$(</sys/class/net/${INTERFACE}/address)"
-		GENERATED_ADDRESS=$(random_mac_address)
-
-		ip link add link "${INTERFACE}" "${BRIDGE}" address "${ADDRESS}" type macvlan mode bridge
-		ip link set "${INTERFACE}" address "${GENERATED_ADDRESS}"
-		ip link set "${INTERFACE}" up
-		;;
-
 	"")
 		exit 0
 		;;

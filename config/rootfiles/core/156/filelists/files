@@ -1,3 +1,4 @@
+etc/collectd.conf
 etc/rc.d/init.d/suricata
 etc/sysctl.conf
 lib/udev/network-hotplug-bridges
