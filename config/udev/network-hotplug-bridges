@@ -101,7 +101,8 @@ case "${MODE}" in
 			#ip link set "${BRIDGE}" up
 		fi
 
-		if grep -q "INTERFACE=${INTERFACE}" "/var/ipfire/wlanap/settings" 2>/dev/null; then
+		# Try setting wireless interfaces into master mode
+		if [ -d "/sys/class/net/${INTERFACE}/phy80211" ]; then
 			iw dev "${INTERFACE}" set type __ap
 		fi
 
