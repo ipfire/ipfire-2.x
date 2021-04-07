@@ -1588,7 +1588,6 @@ buildipfire() {
   lfsmake2 xinetd
   lfsmake2 gpgme
   lfsmake2 pygpgme
-  lfsmake2 pakfire3
   lfsmake2 stress
   lfsmake2 libstatgrab
   lfsmake2 sarg
