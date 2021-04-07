@@ -1557,7 +1557,6 @@ buildipfire() {
   lfsmake2 crda
   lfsmake2 libsolv
   lfsmake2 python-distutils-extra
-  lfsmake2 python-lzma
   lfsmake2 ddns
   lfsmake2 python3-setuptools-scm
   lfsmake2 python3-six
