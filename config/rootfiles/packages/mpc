@@ -3,9 +3,8 @@ usr/bin/mpc
 #usr/share/doc/mpc/AUTHORS
 #usr/share/doc/mpc/COPYING
 #usr/share/doc/mpc/NEWS
-#usr/share/doc/mpc/README
-#usr/share/doc/mpc/mpc-completion.bash
-#usr/share/doc/mpc/mpd-m3u-handler.sh
-#usr/share/doc/mpc/mpd-pls-handler.sh
-#usr/share/doc/mpc/mppledit
-#usr/share/man/man1/mpc.1
+#usr/share/doc/mpc/README.rst
+#usr/share/doc/mpc/contrib
+#usr/share/doc/mpc/contrib/mpc-completion.bash
+#usr/share/doc/mpc/contrib/mpd-m3u-handler.sh
+#usr/share/doc/mpc/contrib/mpd-pls-handler.sh
