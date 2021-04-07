@@ -170,11 +170,11 @@ if (%enabled_disabled_sids) {
 	# Set correct ownerships.
 	&IDS::set_ownership("$IDS::oinkmaster_provider_includes_file");
 	&IDS::set_ownership("$oinkmaster_provider_modified_sids_file");
+}
 
 	# Remove old files.
 	unlink($old_enabled_sids_file);
 	unlink($old_disabled_sids_file);
-}
 
 #
 ## Step 6: Call oinkmaster and regenerate the ruleset structures.
