@@ -72,8 +72,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	# Prevent a static library from being installed
 	cd $(DIR_APP) && sed -i '/install.*STALIBNAME/d' libcap/Makefile
-	cd $(DIR_APP) && make
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && make GOLANG=no
+	cd $(DIR_APP) && make install GOLANG=no
 	# links for old binaries
 	ln -svf libcap.so.2 /lib/libcap.so.1
 	ln -svf /lib/libcap.so.2.25 /usr/lib/libcap.so
