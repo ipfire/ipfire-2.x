@@ -74,8 +74,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i '/install.*STALIBNAME/d' libcap/Makefile
 	cd $(DIR_APP) && make GOLANG=no
 	cd $(DIR_APP) && make install GOLANG=no
-	# links for old binaries
-	ln -svf libcap.so.2 /lib/libcap.so.1
 	ln -svf /lib/libcap.so.2.25 /usr/lib/libcap.so
 	chmod +x /lib/libcap.so.*
 	@rm -rf $(DIR_APP)

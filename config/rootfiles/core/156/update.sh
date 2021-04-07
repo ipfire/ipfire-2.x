@@ -33,6 +33,7 @@ done
 
 # Remove files
 rm -vf \
+	/lib/libcap.so.1 \
 	/srv/web/ipfire/html/include/snortupdateutility.js \
 	/usr/bin/gawk-4.1.4 \
 	/usr/bin/igawk

@@ -1,6 +1,5 @@
 #lib/libcap.a
 lib/libcap.so
-lib/libcap.so.1
 lib/libcap.so.2
 lib/libcap.so.2.49
 #lib/libpsx.a
