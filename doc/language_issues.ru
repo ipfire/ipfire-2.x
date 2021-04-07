@@ -742,6 +742,7 @@ WARNING: translation string unused: vpn red name
 WARNING: translation string unused: vpn watch
 WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
+WARNING: translation string unused: week
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: wildcards
 WARNING: translation string unused: wins server
