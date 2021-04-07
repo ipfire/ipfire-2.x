@@ -268,6 +268,9 @@ if (-f $old_used_rulefiles_file) {
 	&IDS::set_ownership("$IDS::suricata_static_rulefiles_file");
 }
 
+# Remove old used rulefiles file.
+unlink($old_used_rulefiles_file);
+
 #
 ## Step 8: Reload the IDS ruleset if running.
 #
