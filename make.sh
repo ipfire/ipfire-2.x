@@ -1196,7 +1196,6 @@ buildipfire() {
   case "${BUILD_ARCH}" in
 	x86_64|aarch64)
 		lfsmake2 linux			KCFG=""
-#		lfsmake2 backports			KCFG=""
 #		lfsmake2 e1000e			KCFG=""
 #		lfsmake2 igb				KCFG=""
 #		lfsmake2 ixgbe			KCFG=""
@@ -1206,7 +1205,6 @@ buildipfire() {
 	i586)
 		# x86 kernel build
 		lfsmake2 linux			KCFG=""
-#		lfsmake2 backports			KCFG=""
 #		lfsmake2 e1000e			KCFG=""
 #		lfsmake2 igb				KCFG=""
 #		lfsmake2 ixgbe			KCFG=""
@@ -1217,7 +1215,6 @@ buildipfire() {
 	armv5tel)
 		# arm multi platform (Panda, Wandboard ...) kernel build
 		lfsmake2 linux			KCFG="-multi"
-#		lfsmake2 backports			KCFG="-multi"
 #		lfsmake2 e1000e			KCFG="-multi"
 #		lfsmake2 igb				KCFG="-multi"
 #		lfsmake2 ixgbe			KCFG="-multi"
