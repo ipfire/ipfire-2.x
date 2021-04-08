@@ -1,15 +1,5 @@
 etc/rc.d/init.d/suricata
 etc/sysctl.conf
-srv/web/ipfire/cgi-bin/entropy.cgi
-srv/web/ipfire/cgi-bin/firewall.cgi
-srv/web/ipfire/cgi-bin/getrrdimage.cgi
-srv/web/ipfire/cgi-bin/logs.cgi/ids.dat
-srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromcountry.dat
-srv/web/ipfire/cgi-bin/netovpnsrv.cgi
-srv/web/ipfire/cgi-bin/zoneconf.cgi
-srv/web/ipfire/html/include/rrdimage.js
-srv/web/ipfire/html/themes/ipfire/include/css/style.css
-srv/web/ipfire/html/themes/ipfire/include/functions.pl
 var/ipfire/graphs.pl
 var/ipfire/header.pl
 var/ipfire/network-functions.pl

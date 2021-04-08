@@ -46,8 +46,12 @@ extract_files
 # update linker config
 ldconfig
 
-# Remove old perl modules
-rm -rfv /usr/lib/perl5/5.30.0
+# Remove old perl modules & webUI themes
+rm -rfv \
+	/usr/lib/perl5/5.30.0 \
+	/srv/web/ipfire/html/themes/darkdos \
+	/srv/web/ipfire/html/themes/ipfire-legacy \
+	/srv/web/ipfire/html/themes/maniac
 
 # Update Language cache
 /usr/local/bin/update-lang-cache
