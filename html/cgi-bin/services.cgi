@@ -34,7 +34,7 @@ my %color = ();
 my %mainsettings = ();
 my %netsettings=();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
 #workaround to suppress a warning when a variable is used only once

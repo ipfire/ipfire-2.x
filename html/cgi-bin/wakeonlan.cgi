@@ -51,7 +51,7 @@ our $datafile = "/var/ipfire/wakeonlan/clients.conf";
 my %color = ();
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
 my %netsettings = ();
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);

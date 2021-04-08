@@ -69,7 +69,7 @@ unless (-e $settingsfile)	{ system("touch $settingsfile"); }
 &Header::getcgihash(\%cgiparams);
 
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 &General::readhash("$settingsfile", \%settings) if(-f $settingsfile);
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 

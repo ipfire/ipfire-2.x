@@ -114,10 +114,6 @@ sub openpage {
 		$headline =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}";
 	}
 
-	my @stylesheets = ("style.css");
-	if ($THEME_NAME eq "ipfire-rounded") {
-		push(@stylesheets, "style-rounded.css");
-	}
 
 print <<END;
 <!DOCTYPE html>
@@ -137,9 +133,9 @@ print <<END;
 	</script>
 END
 
-	foreach my $stylesheet (@stylesheets) {
-		print "<link href=\"/themes/ipfire/include/css/$stylesheet\" rel=\"stylesheet\" type=\"text/css\" />\n";
-	}
+
+print "<link href=\"/themes/ipfire/include/css/style.css\" rel=\"stylesheet\" type=\"text/css\" />\n";
+
 
 if ($settings{'SPEED'} ne 'off') {
 print <<END

@@ -91,11 +91,10 @@ if ( -d "/var/ipfire/langs/${language}/" ) {
     };
 };
 
-our $THEME_NAME = $settings{'THEME'};
 
 require "${swroot}/langs/en.pl";
 require "${swroot}/langs/${language}.pl";
-eval `/bin/cat /srv/web/ipfire/html/themes/$THEME_NAME/include/functions.pl`;
+eval `/bin/cat /srv/web/ipfire/html/themes/ipfire/include/functions.pl`;
 
 sub green_used() {
     if ($ethsettings{'GREEN_DEV'} && $ethsettings{'GREEN_DEV'} ne "") {

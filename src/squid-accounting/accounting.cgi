@@ -60,7 +60,7 @@ my $mailfile="${General::swroot}/dma/mail.conf";
 
 &Header::getcgihash(\%cgiparams);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 &General::readhash("$settingsfile", \%settings) if(-f $settingsfile);
 
 if ( -f $mailfile){

@@ -62,14 +62,12 @@ my @GRAPH_ARGS = (
 	"--alt-y-grid",
 );
 
-# Read the global settings files to get the current theme and after this load
-# colors for this theme
 
 my %color = ();
 my %mainsettings = ();
 my %sensorsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
 if ( $mainsettings{'RRDLOG'} eq "" ){
 	$mainsettings{'RRDLOG'}="/var/log/rrd";
