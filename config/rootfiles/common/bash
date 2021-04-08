@@ -62,7 +62,10 @@
 #usr/include/bash/y.tab.h
 #usr/lib/bash
 usr/lib/bash/Makefile.inc
+usr/lib/bash/accept
 usr/lib/bash/basename
+usr/lib/bash/csv
+usr/lib/bash/cut
 usr/lib/bash/dirname
 usr/lib/bash/fdflags
 usr/lib/bash/finfo
@@ -72,12 +75,15 @@ usr/lib/bash/ln
 usr/lib/bash/loadables.h
 usr/lib/bash/logname
 usr/lib/bash/mkdir
+usr/lib/bash/mkfifo
+usr/lib/bash/mktemp
 usr/lib/bash/mypid
 usr/lib/bash/pathchk
 usr/lib/bash/print
 usr/lib/bash/printenv
 usr/lib/bash/push
 usr/lib/bash/realpath
+usr/lib/bash/rm
 usr/lib/bash/rmdir
 usr/lib/bash/seq
 usr/lib/bash/setpgid
@@ -110,11 +116,7 @@ usr/lib/bash/whoami
 #usr/share/locale/da/LC_MESSAGES/bash.mo
 #usr/share/locale/de/LC_MESSAGES/bash.mo
 #usr/share/locale/el/LC_MESSAGES/bash.mo
-#usr/share/locale/en@boldquot
-#usr/share/locale/en@boldquot/LC_MESSAGES
 #usr/share/locale/en@boldquot/LC_MESSAGES/bash.mo
-#usr/share/locale/en@quot
-#usr/share/locale/en@quot/LC_MESSAGES
 #usr/share/locale/en@quot/LC_MESSAGES/bash.mo
 #usr/share/locale/eo/LC_MESSAGES/bash.mo
 #usr/share/locale/es/LC_MESSAGES/bash.mo
@@ -128,6 +130,7 @@ usr/lib/bash/whoami
 #usr/share/locale/id/LC_MESSAGES/bash.mo
 #usr/share/locale/it/LC_MESSAGES/bash.mo
 #usr/share/locale/ja/LC_MESSAGES/bash.mo
+#usr/share/locale/ko/LC_MESSAGES/bash.mo
 #usr/share/locale/lt/LC_MESSAGES/bash.mo
 #usr/share/locale/nb/LC_MESSAGES/bash.mo
 #usr/share/locale/nl/LC_MESSAGES/bash.mo

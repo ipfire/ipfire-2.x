@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.0
+VER        = 5.1
 
 THISAPP    = bash-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -53,7 +53,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)             = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5         = 2b44b47b905be16f45709648f671820b
+$(DL_FILE)_MD5         = bb91a17fd6c9032c26d0b2b78b50aff5
 
 install : $(TARGET)
 
@@ -87,8 +87,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -e "s/filename, RTLD_LAZY/filename, RTLD_NOW/" \
 		-i $(DIR_APP)/builtins/enable.def
 
-	for i in $$(seq 1 18); do \
-		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash/bash50-$$(printf "%03d" "$${i}") || exit 1; \
+	for i in $$(seq 1 4); do \
+		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash/bash51-$$(printf "%03d" "$${i}") || exit 1; \
 	done
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-4.0-paths-1.patch
