@@ -1,6 +1,7 @@
 #usr/include/id3tag.h
 #usr/lib/libid3tag.a
 #usr/lib/libid3tag.la
-usr/lib/libid3tag.so
+#usr/lib/libid3tag.so
 usr/lib/libid3tag.so.0
 usr/lib/libid3tag.so.0.3.0
+usr/lib/pkgconfig/id3tag.pc
