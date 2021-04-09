@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.19.19
+VER        = 0.22.6
 
 THISAPP    = mpd-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/${THISAPP}
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpd
-PAK_VER    = 20
+PAK_VER    = 21
 
 DEPS       = alsa avahi faad2 ffmpeg flac lame libmad libshout libogg libid3tag libvorbis opus soxr
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6e4fca9a9c26dad08b61bac9a91802db
+$(DL_FILE)_MD5 = 774a6250870730f3d55eb1445ab751dd
 
 install : $(TARGET)
 
@@ -78,22 +78,23 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure \
-			--prefix=/usr \
-			--disable-ipv6 \
-			--sysconfdir=/etc \
-			--disable-sqlite \
-			--disable-smbclient \
-			--enable-id3 \
-			--enable-vorbis \
-			--enable-expat \
-			--enable-ffmpeg \
-			--enable-flac \
-			--enable-lame-encoder \
-			--enable-upnp \
-			--disable-icu
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && meson	--prefix=/usr 		\
+				--sysconfdir=/etc	\
+				--libdir=/usr/lib	\
+				-D ipv6=disabled 	\
+				-D sqlite=disabled	\
+				-D smbclient=disabled	\
+				-D id3tag=enabled	\
+				-D vorbis=enabled	\
+				-D expat=enabled	\
+				-D ffmpeg=enabled	\
+				-D flac=enabled		\
+				-D lame=enabled		\
+				-D upnp=enabled		\
+				-D icu=disabled		\
+				builddir/
+	cd $(DIR_APP) && ninja -C builddir/
+	cd $(DIR_APP) && ninja -C builddir/ install
 
 	#install initscripts
 	$(call INSTALL_INITSCRIPT,mpd)
