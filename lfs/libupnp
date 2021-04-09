@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.6.18
+VER        = 1.14.5
 
 THISAPP    = libupnp-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 11c6484fd2e2927bf3b8d8108407ca56
+$(DL_FILE)_MD5 = 813094b1348883d1091199ff516674dd
 
 install : $(TARGET)
 
