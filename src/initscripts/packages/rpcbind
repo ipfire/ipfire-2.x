@@ -18,12 +18,12 @@
 case "$1" in
 	start)
 		boot_mesg "Starting rpcbind"
-		loadproc /sbin/rpcbind
+		loadproc /usr/sbin/rpcbind
 		;;
 
 	stop)
 		boot_mesg "Stopping rpcbind"
-		killproc /sbin/rpcbind
+		killproc /usr/sbin/rpcbind
 		;;
 
 	restart)
@@ -33,7 +33,7 @@ case "$1" in
 		;;
 
 	status)
-		statusproc /sbin/rpcbind
+		statusproc /usr/sbin/rpcbind
 		;;
 
 	*)
