@@ -1346,7 +1346,7 @@ sub write_used_provider_rulefiles_file($@) {
 	my $used_provider_rulesfile_file = &get_used_provider_rulesfile_file($provider);
 
 	# Open file for used rulefiles.
-	open (FILE, ">$used_provider_rulesfile_file") or die "Could not write to $used_provider_rulesfile_file. $!\n";
+	open (FILE, ">", "$used_provider_rulesfile_file") or die "Could not write to $used_provider_rulesfile_file. $!\n";
 
 	# Write yaml header to the file.
 	print FILE "%YAML 1.1\n";
