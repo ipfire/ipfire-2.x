@@ -22,7 +22,7 @@
 use strict;
 
 require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/ids-functions.pl1";
+require "${General::swroot}/ids-functions.pl";
 
 # Old file declarations
 my $old_rules_settings_file = "$IDS::settingsdir/rules-settings";
