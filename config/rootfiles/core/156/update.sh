@@ -60,7 +60,7 @@ rm -rfv \
 /usr/local/bin/filesystem-cleanup
 
 # Reload sysctl.conf
-sysctl -p
+/etc/init.d/sysctl start
 
 # Migrate any macvtap interfaces to bridge
 sed -e "s/_MODE=macvtap/_MODE=bridge/g" \
