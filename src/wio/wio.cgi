@@ -62,7 +62,7 @@ my ( %mainsettings, %mailsettings, %wiosettings, %cgiparams, %netsettings, %ipsh
 &General::readhash('/var/ipfire/ethernet/settings', \%netsettings);
 &General::readhash('/var/ipfire/dma/mail.conf', \%mailsettings);
 &General::readhash('/var/ipfire/wio/wio.conf', \%wiosettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 &General::readhasharray('/var/ipfire/ovpn/ovpnconfig', \%ovpnconfighash);
 &General::readhash('/var/ipfire/ovpn/settings', \%ovpnsettings);
 &General::readhasharray('/var/ipfire/ovpn/ccd.conf', \%ovpnccdconfhash);

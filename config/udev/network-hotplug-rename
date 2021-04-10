@@ -58,36 +58,27 @@ for zone in ${ZONES}; do
 	address="${zone}_MACADDR"
 	device="${zone}_DEV"
 	mode="${zone}_MODE"
+	slaves="${zone}_SLAVES"
 
-	# Skip if address or device is unset
-	[ -n "${!address}" -a -n "${!device}" ] || continue
-
-	# Compare MAC addresses
-	[ "${ADDRESS}" = "${!address,,}" ] || continue
+	# Return DEV when the address matches
+	if [ "${!address,,}" = "${ADDRESS,,}" ]; then
+		echo "${!device}"
+		exit 0
+	fi
 
 	# If a matching interface has been found we will
 	# print the name to which udev will rename it.
 	case "${!mode}" in
 		bridge)
-			echo "${!device%0}phys0"
-			;;
-
-		macvtap)
-			# MACVTAP mode doesn't work for WiFi devices
-			if [ -d "/sys/class/net/${INTERFACE}/phy80211" ]; then
-				logger -t network "MACVTAP mode is not supported for wireless devices"
-				echo "${!device}"
-			else
-				echo "${!device%0}phys0"
-			fi
-			;;
-
-		*)
-			echo "${!device}"
+			counter=0
+			for slave in ${!slaves}; do
+				if [ "${slave,,}" = "${ADDRESS,,}" ]; then
+					echo "${!device}p${counter}"
+				fi
+				(( counter += 1 ))
+			done
 			;;
 	esac
-
-	exit 0
 done
 
 # If we get here we have not found a matching device,

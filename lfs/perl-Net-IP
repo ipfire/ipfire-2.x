@@ -33,7 +33,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = perl-Net-IP
 DEPS       =
-PAK_VER    = 2
+PAK_VER    = 3
 
 ###############################################################################
 # Top-level Rules

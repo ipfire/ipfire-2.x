@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.2.0
+VER        = 6.2.1
 
 THISAPP    = gmp-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a325e3f09e6d91e62101e59f9bda3ec1
+$(DL_FILE)_MD5 = 0b82665c4a92fd2ade7440c13fcaa42b
 
 install : $(TARGET)
 

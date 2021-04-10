@@ -195,17 +195,23 @@ foreach (@nics) {
 ### Evaluate POST parameters ###
 
 if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
-	my %VALIDATE_nic_check = ();
-	my $VALIDATE_error = "";
+	my %VALIDATE_nic_check = (); # array of flags (assigned, restricted/pppoe, vlan, ...) per NIC
+	my $VALIDATE_error = ""; # contains an error message if the config validation failed
 
 	# Loop trough all known zones to ensure a complete configuration file is created
 	foreach (@Network::known_network_zones) {
 		my $uc = uc $_;
-		my $slave_string = "";
+		my $slave_string = ""; # list of interfaces attached to the bridge
 		my $zone_mode = $cgiparams{"MODE $uc"};
 		my $VALIDATE_vlancount = 0;
 		my $VALIDATE_zoneslaves = 0;
 
+		# Each zone can contain up to one bridge and up to one VLAN,
+		# cache their mac addresses to prevent unnecessary changes
+		my $bridge_mac = $ethsettings{"${uc}_MACADDR"};
+		my $vlan_mac = $vlansettings{"${uc}_MAC_ADDRESS"};
+
+		# Clear old configuration
 		$ethsettings{"${uc}_MACADDR"} = "";
 		$ethsettings{"${uc}_MODE"} = "";
 		$ethsettings{"${uc}_SLAVES"} = "";
@@ -236,23 +242,47 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 			next;
 		}
 
+		# Zone in bridge mode: Always assign a MAC to the bridge
+		if($zone_mode eq "BRIDGE") {
+			# Ensure that the bridge's cached MAC does not come from a real NIC
+			# (this could happen if the zone was in default mode before)
+			foreach (@nics) {
+				my $nic_mac = $_->[0];
+				if(Network::is_mac_equal($bridge_mac, $nic_mac)) {
+					$bridge_mac = "";
+					last;
+				}
+			}
+
+			# Generate random MAC if none was configured
+			if(! Network::valid_mac($bridge_mac)) {
+				$bridge_mac = Network::random_mac();
+			}
+
+			# Assign the address to the bridge
+			$ethsettings{"${uc}_MACADDR"} = $bridge_mac;
+		}
+
 		foreach (@nics) {
 			my $mac = $_->[0];
 			my $nic_access = $cgiparams{"ACCESS $uc $mac"};
 
 			next unless ($nic_access);
 
+			# This NIC is to be assigned: check preconditions
 			if ($nic_access ne "NONE") {
 				if ($VALIDATE_nic_check{"RESTRICT $mac"}) { # If this interface is already assigned to RED in PPP mode, throw an error
 					$VALIDATE_error = $Lang::tr{"zoneconf val ppp assignment error"};
 					last;
 				}
 
+				# Enforce bridge mode when you try to assign multiple NICs to a zone
 				if ($zone_mode ne "BRIDGE" && $VALIDATE_zoneslaves > 0 && $nic_access ne "") {
 					$VALIDATE_error = $Lang::tr{"zoneconf val zoneslave amount error"};
 					last;
 				}
 
+				# Mark this NIC as "accessed by zone"
 				$VALIDATE_nic_check{"ACC $mac"} = 1;
 				$VALIDATE_zoneslaves++;
 			}
@@ -265,6 +295,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 
 				$VALIDATE_nic_check{"NATIVE $mac"} = 1;
 
+				# Zone in bridge mode: Add NIC to slave list. Otherwise access NIC directly
 				if ($zone_mode eq "BRIDGE") {
 					$slave_string = "${slave_string}${mac} ";
 				} else {
@@ -279,22 +310,25 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 				}
 
 				$VALIDATE_nic_check{"VLAN $mac $vlan_tag"} = 1;
-
-				if (! looks_like_number($vlan_tag)) {
+				
+				# check VLAN tag range: 1..4094 (0, 4095 are reserved)
+				unless (looks_like_number($vlan_tag) && ($vlan_tag >= 1) && ($vlan_tag <= 4094)) {
+					$VALIDATE_error = $Lang::tr{"zoneconf val vlan tag range error"};
 					last;
 				}
-				if ($vlan_tag < 1 || $vlan_tag > 4095) {
-					last;
-				}
 
-				my $rnd_mac = &Network::random_mac();
+				# Generate random MAC if none was configured
+				if(! Network::valid_mac($vlan_mac)) {
+					$vlan_mac = Network::random_mac();
+				}
 
 				$vlansettings{"${uc}_PARENT_DEV"} = $mac;
 				$vlansettings{"${uc}_VLAN_ID"} = $vlan_tag;
-				$vlansettings{"${uc}_MAC_ADDRESS"} = $rnd_mac;
+				$vlansettings{"${uc}_MAC_ADDRESS"} = $vlan_mac; # Generated MAC
 
+				# Zone in bridge mode: Add VLAN to slave list
 				if ($zone_mode eq "BRIDGE") {
-					$slave_string = "${slave_string}${rnd_mac} ";
+					$slave_string = "${slave_string}${vlan_mac} ";
 				}
 
 				$VALIDATE_vlancount++; # We can't allow more than one VLAN per zone
@@ -311,8 +345,6 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 		if ($zone_mode eq "BRIDGE") {
 			$ethsettings{"${uc}_MODE"} = "bridge";
 			$ethsettings{"${uc}_SLAVES"} = $slave_string;
-		} elsif ($zone_mode eq "MACVTAP") {
-			$ethsettings{"${uc}_MODE"} = "macvtap";
 		}
 
 		# STP options
@@ -389,8 +421,6 @@ foreach (@zones) {
 		$mode_selected{"DEFAULT"} = "selected";
 	} elsif ($zone_mode eq "bridge") {
 		$mode_selected{"BRIDGE"} = "selected";
-	} elsif ($zone_mode eq "macvtap") {
-		$mode_selected{"MACVTAP"} = "selected";
 	}
 
 	print <<END
@@ -398,7 +428,6 @@ foreach (@zones) {
 			<select name="MODE $uc" data-zone="$uc" onchange="changeZoneMode(this)">
 				<option value="DEFAULT" $mode_selected{"DEFAULT"}>$Lang::tr{"zoneconf nicmode default"}</option>
 				<option value="BRIDGE" $mode_selected{"BRIDGE"}>$Lang::tr{"zoneconf nicmode bridge"}</option>
-				<option value="MACVTAP" $mode_selected{"MACVTAP"}>$Lang::tr{"zoneconf nicmode macvtap"}</option>
 			</select>
 		</td>
 END
@@ -486,7 +515,7 @@ END
 				<option value="NATIVE" $access_selected{"NATIVE"}>$Lang::tr{"zoneconf access native"}</option>
 				<option value="VLAN" $access_selected{"VLAN"} $vlan_disabled>$Lang::tr{"zoneconf access vlan"}</option>
 			</select>
-			<input type="number" class="vlanid" id="TAG-$uc-$mac" name="TAG $uc $mac" min="1" max="4095" value="$zone_vlan_id" required $field_disabled>
+			<input type="number" class="vlanid" id="TAG-$uc-$mac" name="TAG $uc $mac" min="1" max="4094" value="$zone_vlan_id" required $field_disabled>
 		</td>
 END
 ;

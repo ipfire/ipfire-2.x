@@ -7,7 +7,7 @@ usr/bin/statgrab
 #usr/lib/libstatgrab.la
 #usr/lib/libstatgrab.so
 usr/lib/libstatgrab.so.10
-usr/lib/libstatgrab.so.10.0.0
+usr/lib/libstatgrab.so.10.0.1
 #usr/lib/pkgconfig/libstatgrab.pc
 #usr/share/doc/libstatgrab
 #usr/share/doc/libstatgrab/AUTHORS

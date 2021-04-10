@@ -21,7 +21,7 @@
 #usr/lib/libpcap.a
 usr/lib/libpcap.so
 usr/lib/libpcap.so.1
-usr/lib/libpcap.so.1.9.1
+usr/lib/libpcap.so.1.10.0
 #usr/lib/pkgconfig/libpcap.pc
 #usr/share/man/man1/pcap-config.1
 #usr/share/man/man3/pcap.3pcap
@@ -58,6 +58,7 @@ usr/lib/libpcap.so.1.9.1
 #usr/share/man/man3/pcap_get_tstamp_precision.3pcap
 #usr/share/man/man3/pcap_geterr.3pcap
 #usr/share/man/man3/pcap_getnonblock.3pcap
+#usr/share/man/man3/pcap_init.3pcap
 #usr/share/man/man3/pcap_inject.3pcap
 #usr/share/man/man3/pcap_is_swapped.3pcap
 #usr/share/man/man3/pcap_lib_version.3pcap

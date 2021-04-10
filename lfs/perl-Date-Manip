@@ -23,7 +23,7 @@
 # Definitions
 ###############################################################################
 include Config
-VER        = 6.40
+VER        = 6.85
 
 THISAPP    = Date-Manip-$(VER)
 DL_FILE    = ${THISAPP}.tar.gz
@@ -32,7 +32,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-Date-Manip
 DEPS       =
-PAK_VER    = 5
+PAK_VER    = 7
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ae57b05e8ec689de2f23c99639e0109d
+$(DL_FILE)_MD5 = ce3447409d83d16e6dd7bea0a18f24b4
 
 install : $(TARGET)
 

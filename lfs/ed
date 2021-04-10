@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 0.2
+VER        = 1.17
 
 THISAPP    = ed-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.lz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -35,13 +35,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 ###############################################################################
 # Top-level Rules
 ###############################################################################
-objects = $(DL_FILE) $(THISAPP)-mkstemp-1.patch
+objects = $(DL_FILE)
 
 $(DL_FILE)                     = $(DL_FROM)/$(DL_FILE)
-$(THISAPP)-mkstemp-1.patch     = $(DL_FROM)/$(THISAPP)-mkstemp-1.patch
 
-$(DL_FILE)_MD5                 = ddd57463774cae9b50e70cd51221281b
-$(THISAPP)-mkstemp-1.patch_MD5 = e7e2248f9baa76de3db8210298e0d79e
+$(DL_FILE)_MD5                 = 894748c9bbf35cb7c599f5317b1a8cdb
 
 install : $(TARGET)
 
@@ -70,8 +68,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_DL)/$(THISAPP)-mkstemp-1.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --exec-prefix="" --disable-nls
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

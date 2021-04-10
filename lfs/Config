@@ -35,7 +35,9 @@ unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN TOOLS_DIR
 unexport XZ_OPT
 
 PARALLELISM = $(shell echo $$( \
-	if [ -n "$(MAX_PARALLELISM)" ] && [ $(MAX_PARALLELISM) -lt $(DEFAULT_PARALLELISM) ]; then \
+	if [ -n "$(MAX_PARALLELISM)" ] && [ $(MAX_PARALLELISM) -lt 1 ]; then \
+		echo 1 ; \
+	elif [ -n "$(MAX_PARALLELISM)" ] && [ $(MAX_PARALLELISM) -lt $(DEFAULT_PARALLELISM) ]; then \
 		echo $(MAX_PARALLELISM); \
 	else \
 		echo $(DEFAULT_PARALLELISM); \

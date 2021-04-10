@@ -91,11 +91,10 @@ if ( -d "/var/ipfire/langs/${language}/" ) {
     };
 };
 
-our $THEME_NAME = $settings{'THEME'};
 
 require "${swroot}/langs/en.pl";
 require "${swroot}/langs/${language}.pl";
-eval `/bin/cat /srv/web/ipfire/html/themes/$THEME_NAME/include/functions.pl`;
+eval `/bin/cat /srv/web/ipfire/html/themes/ipfire/include/functions.pl`;
 
 sub green_used() {
     if ($ethsettings{'GREEN_DEV'} && $ethsettings{'GREEN_DEV'} ne "") {
@@ -169,6 +168,12 @@ sub genmenu {
     if ( $ethsettings{'RED_TYPE'} eq "PPPOE" && $pppsettings{'MONPORT'} ne "" ) {
         $menu->{'02.status'}{'subMenu'}->{'74.modem-status'}{'enabled'} = 1;
     }
+
+	# Disable the Dialup/PPPoE menu item when the RED interface is in IP mode
+	# (the "Network" module is loaded by general-functions.pl)
+	if(&Network::is_red_mode_ip()) {
+		$menu->{'01.system'}{'subMenu'}->{'20.dialup'}{'enabled'} = 0;
+	}
 
     # Disbale unusable things in cloud environments
     if (&General::running_in_cloud()) {

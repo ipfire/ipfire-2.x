@@ -2,7 +2,7 @@ bin/bunzip2
 bin/bzcat
 bin/bzip2
 lib/libbz2.so.1.0
-lib/libbz2.so.1.0.6
+lib/libbz2.so.1.0.8
 usr/bin/bunzip2
 usr/bin/bzcat
 usr/bin/bzcmp

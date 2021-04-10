@@ -388,7 +388,7 @@
 'backupaddon' => 'Kopia dodatków',
 'backupprofile' => 'Jeżeli ponowne połączenie nie powiedzie się przełącz na profil',
 'backups' => 'kopie',
-'backupwarning' => 'Najpierw należy przywrócić kopię podstawową, a następnie kopię dodatków. Proszę nie zmieniać nazwy pobranych plików z kopiami.',
+'backupwarning' => 'Najpierw zaimportuj główną kopię zapasową, a następnie kopie zapasowe konfiguracji dodatków.<br />Tylko kopie zapasowe plików konfiguracyjnych dodatków zostaną przywrócone, a nie zainstalowane dodatki!<br />Upewnij się również, że kopie zapasowe zachowują oryginalne nazwy plików.',
 'bad characters in' => 'Niepoprawny znak w ',
 'bad characters in script field' => 'Niepoprawny znak w polu skryptu',
 'bad characters in the telephone number field' => 'Niepoprawny znak w polu z numerem telefonu.',

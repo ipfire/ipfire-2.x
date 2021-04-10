@@ -43,7 +43,7 @@ my $errormessage='';
 #Read all parameters for site
 &Header::getcgihash(\%cgiparams);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
 #Show Headers
 &Header::showhttpheaders();

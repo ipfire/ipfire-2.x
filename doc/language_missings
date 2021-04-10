@@ -912,6 +912,7 @@
 < zoneconf val stp zone mode error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
+< zoneconf val vlan tag range error
 < zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
@@ -919,20 +920,10 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
-< dhcp deny known clients:
-< dhcp valid range required when deny known clients checked
 < g.dtm
 < g.lite
-< token
-< token not set
-< updxlrtr passive mode
 < upload fcdsl.o
-< wlan client encryption wpa3
-< wlan client management frame protection
-< zoneconf stp enable
-< zoneconf stp priority
-< zoneconf val stp priority range error
-< zoneconf val stp zone mode error
+< zoneconf val vlan tag range error
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
@@ -1322,6 +1313,7 @@
 < zoneconf val stp zone mode error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
+< zoneconf val vlan tag range error
 < zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: nl                           #
@@ -1766,6 +1758,7 @@
 < zoneconf val stp zone mode error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
+< zoneconf val vlan tag range error
 < zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: pl                           #
@@ -2652,6 +2645,7 @@
 < zoneconf val stp zone mode error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
+< zoneconf val vlan tag range error
 < zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: ru                           #
@@ -3545,6 +3539,7 @@
 < zoneconf val stp zone mode error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
+< zoneconf val vlan tag range error
 < zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: tr                           #
@@ -3741,4 +3736,5 @@
 < zoneconf val stp zone mode error
 < zoneconf val vlan amount assignment error
 < zoneconf val vlan tag assignment error
+< zoneconf val vlan tag range error
 < zoneconf val zoneslave amount error

@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tshark
 DEPS       = krb5 c-ares
-PAK_VER    = 9
+PAK_VER    = 10
 
 ###############################################################################
 # Top-level Rules

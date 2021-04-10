@@ -45,7 +45,7 @@ if ( $querry[0] ne~ "") {
 	&Header::openbigbox('100%', 'left');
 
 	&Header::openbox('100%', 'center', $Lang::tr{'entropy'});
-	&Graphs::makegraphbox("entropy.cgi", "day");
+	&Graphs::makegraphbox("entropy.cgi", "entropy", "day");
 	&Header::closebox();
 
 	# Check for hardware support.

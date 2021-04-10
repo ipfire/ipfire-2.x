@@ -45,7 +45,7 @@ require '/var/ipfire/lang.pl';
 my ( %mainsettings, %color ) = ();
 
 &General::readhash('/var/ipfire/main/settings', \%mainsettings);
-&General::readhash('/srv/web/ipfire/html/themes/'.$mainsettings{'THEME'}.'/include/colors.txt', \%color);
+&General::readhash('/srv/web/ipfire/html/themes/ipfire/include/colors.txt', \%color);
 
 sub wiograph {
 	my $hostid = $_[0];

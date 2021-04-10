@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.2.53
+VER        = 2.3.1
 
 THISAPP    = acl-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 007aabf1dbb550bcddde52a244cd1070
+$(DL_FILE)_MD5 = 95ce715fe09acca7c12d3306d0f076b2
 
 install : $(TARGET)
 

@@ -486,7 +486,7 @@
 'backupaddon' => 'Addon Backup',
 'backupprofile' => 'In case reconnection fails, switch to profile',
 'backups' => 'backups',
-'backupwarning' => 'Please first restore your main backup and after this your addon backups. Please keep the original filename, given when you download.',
+'backupwarning' => 'Import your main backup first and then the backup(s) of the addon configuration(s).<br />Only the backed up addon configuration file(s) will be restored, not the installed addons!<br />Also make sure that the backups keep their original file names.',
 'bad characters in' => 'Bad characters in ',
 'bad characters in script field' => 'Bad characters in script field',
 'bad characters in the telephone number field' => 'Bad characters in the telephone number field.',
@@ -3037,6 +3037,7 @@
 'zoneconf val stp zone mode error' => 'STP can only be enabled if the zone is in bridge mode',
 'zoneconf val vlan amount assignment error' => 'A zone cannot have more than one VLAN assigned.',
 'zoneconf val vlan tag assignment error' => 'You cannot use the same VLAN tag more than once per NIC.',
+'zoneconf val vlan tag range error' => 'VLAN tag must be in the range of 1-4094.',
 'zoneconf val zoneslave amount error' => 'A zone that is not in bridge mode can\'t have more than one NIC assigned',
 );
 

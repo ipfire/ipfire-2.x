@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.5.1
+VER        = 2.5.3
 
 THISAPP    = nfs-utils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nfs
-PAK_VER    = 14
+PAK_VER    = 15
 
 DEPS       = libnfsidmap rpcbind
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d14294d5efcd9aada28f4dab871a44a6
+$(DL_FILE)_MD5 = dd8100f51bf838f2a396c86163c9a0e3
 
 install : $(TARGET)
 

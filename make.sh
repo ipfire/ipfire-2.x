@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.25"							# Version number
-CORE="155"							# Core Level (Filename)
+CORE="156"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
@@ -1196,20 +1196,12 @@ buildipfire() {
   case "${BUILD_ARCH}" in
 	x86_64|aarch64)
 		lfsmake2 linux			KCFG=""
-#		lfsmake2 backports			KCFG=""
-#		lfsmake2 e1000e			KCFG=""
-#		lfsmake2 igb				KCFG=""
-#		lfsmake2 ixgbe			KCFG=""
 		lfsmake2 xtables-addons		KCFG=""
 		lfsmake2 linux-initrd			KCFG=""
 		;;
 	i586)
 		# x86 kernel build
 		lfsmake2 linux			KCFG=""
-#		lfsmake2 backports			KCFG=""
-#		lfsmake2 e1000e			KCFG=""
-#		lfsmake2 igb				KCFG=""
-#		lfsmake2 ixgbe			KCFG=""
 		lfsmake2 xtables-addons		KCFG=""
 		lfsmake2 linux-initrd			KCFG=""
 		;;
@@ -1217,10 +1209,6 @@ buildipfire() {
 	armv5tel)
 		# arm multi platform (Panda, Wandboard ...) kernel build
 		lfsmake2 linux			KCFG="-multi"
-#		lfsmake2 backports			KCFG="-multi"
-#		lfsmake2 e1000e			KCFG="-multi"
-#		lfsmake2 igb				KCFG="-multi"
-#		lfsmake2 ixgbe			KCFG="-multi"
 		lfsmake2 xtables-addons		KCFG="-multi"
 		lfsmake2 linux-initrd			KCFG="-multi"
 		;;
@@ -1510,8 +1498,6 @@ buildipfire() {
   lfsmake2 iw
   lfsmake2 wpa_supplicant
   lfsmake2 hostapd
-  lfsmake2 pycurl
-  lfsmake2 urlgrabber
   lfsmake2 syslinux
   lfsmake2 tftpd
   lfsmake2 cpufrequtils
@@ -1559,8 +1545,6 @@ buildipfire() {
   lfsmake2 crda
   lfsmake2 libsolv
   lfsmake2 python-distutils-extra
-  lfsmake2 python-lzma
-  lfsmake2 python-progressbar
   lfsmake2 ddns
   lfsmake2 python3-setuptools-scm
   lfsmake2 python3-six
@@ -1586,9 +1570,6 @@ buildipfire() {
   lfsmake2 fping
   lfsmake2 telnet
   lfsmake2 xinetd
-  lfsmake2 gpgme
-  lfsmake2 pygpgme
-  lfsmake2 pakfire3
   lfsmake2 stress
   lfsmake2 libstatgrab
   lfsmake2 sarg

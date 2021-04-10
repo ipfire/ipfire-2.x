@@ -11,7 +11,7 @@ usr/bin/setfattr
 #usr/lib/libattr.la
 #usr/lib/libattr.so
 usr/lib/libattr.so.1
-usr/lib/libattr.so.1.1.2448
+usr/lib/libattr.so.1.1.2501
 #usr/lib/pkgconfig/libattr.pc
 #usr/share/doc/attr
 #usr/share/doc/attr/CHANGES

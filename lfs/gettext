@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.19.8.1
+VER        = 0.21
 
 THISAPP    = gettext-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -49,7 +49,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = df3f5690eaa30fd228537b00cb7b7590
+$(DL_FILE)_MD5 = 40996bbaf7d1356d3c22e33a8b255b31
 
 install : $(TARGET)
 

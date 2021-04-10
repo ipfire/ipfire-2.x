@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.26
+VER        = 0.27
 
 THISAPP    = libnfsidmap-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libnfsidmap
-PAK_VER    = 1
+PAK_VER    = 2
 
 #CFLAGS    += -I/usr/include/tirpc
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2c0cf0e2b1665d51fa9a783679494888
+$(DL_FILE)_MD5 = 27cfb22f1ee85e51b863b71858a97da0
 
 install : $(TARGET)
 

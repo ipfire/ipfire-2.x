@@ -99,7 +99,7 @@ my $checkorange='';
 my @protocols;
 &General::readhash("${General::swroot}/firewall/settings", \%fwdfwsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 &General::readhash($fwoptions, \%optionsfw); 
 &General::readhash($ifacesettings, \%ifaces);
 &General::readhash("$configovpn", \%ovpnsettings);
@@ -1552,6 +1552,11 @@ sub newrule
 				$fwdfwsettings{'USE_NAT'}				= $hash{$key}[28];
 				$fwdfwsettings{'nat'}					= $hash{$key}[31]; #changed order
 				$fwdfwsettings{$fwdfwsettings{'nat'}}	= $hash{$key}[29];
+				#Fix BUG 12479
+				#When copying a DNAT Rule, the sourceport has to be empty at this point.
+				if($hash{$key}[14] eq 'cust_srv' and $hash{$key}[31] eq 'dnat'){
+					$hash{$key}[30] = '';
+				}
 				$fwdfwsettings{'dnatport'}				= $hash{$key}[30];
 				$fwdfwsettings{'LIMIT_CON_CON'}			= $hash{$key}[32];
 				$fwdfwsettings{'concon'}				= $hash{$key}[33];

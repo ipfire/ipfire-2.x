@@ -30,7 +30,7 @@ THISAPP    = mpfire-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpfire
-PAK_VER    = 12
+PAK_VER    = 13
 
 DEPS       = mpd mpc
 
@@ -70,8 +70,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 664 /var/ipfire/mpfire/playlist.m3u
 	chmod 755 /srv/web/ipfire/html/images/mpfire
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/mpfire /var/ipfire/backup/addons/includes/mpfire
-	-mkdir -p /usr/lib/perl5/site_perl/5.30.0/Audio/
-	cp -vrf $(DIR_SRC)/config/mpfire/perl/Audio/MPD* /usr/lib/perl5/site_perl/5.30.0/Audio/
-	cp -vrf $(DIR_SRC)/config/mpfire/perl/Accessor* /usr/lib/perl5/5.30.0/Class/
-	cp -vrf $(DIR_SRC)/config/mpfire/perl/Readonly.pm /usr/lib/perl5/5.30.0/Readonly.pm
+	-mkdir -p /usr/lib/perl5/site_perl/5.32.1/Audio/
+	cp -vrf $(DIR_SRC)/config/mpfire/perl/Audio/MPD* /usr/lib/perl5/site_perl/5.32.1/Audio/
+	cp -vrf $(DIR_SRC)/config/mpfire/perl/Accessor* /usr/lib/perl5/5.32.1/Class/
+	cp -vrf $(DIR_SRC)/config/mpfire/perl/Readonly.pm /usr/lib/perl5/5.32.1/Readonly.pm
 	@$(POSTBUILD)

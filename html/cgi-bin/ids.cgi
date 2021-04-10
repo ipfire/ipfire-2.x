@@ -44,7 +44,7 @@ my %ignored=();
 
 # Read-in main settings, for language, theme and colors.
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
 # Get the available network zones, based on the config type of the system and store
 # the list of zones in an array.

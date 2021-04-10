@@ -33,7 +33,7 @@ require "${General::swroot}/graphs.pl";
 my %color = ();
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color);
+&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
 my %vpnsettings = ();
 &General::readhasharray("${General::swroot}/vpn/config", \%vpnsettings);
@@ -75,7 +75,7 @@ if ( $querry[0] ne ""){
 	if (@vpns || %ipsecgraphs) {
 		foreach my $name (sort keys %ipsecgraphs) {
 			&Header::openbox('100%', 'center', "$Lang::tr{'ipsec connection'}: $name");
-			&Graphs::makegraphbox("netovpnsrv.cgi", $ipsecgraphs{$name}, "day");
+			&Graphs::makegraphbox("netovpnsrv.cgi", "ipsec-$ipsecgraphs{$name}", "day");
 			&Header::closebox();
 		}
 

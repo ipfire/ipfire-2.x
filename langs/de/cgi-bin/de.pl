@@ -472,7 +472,7 @@
 'backupaddon' => 'Add-On-Sicherung',
 'backupprofile' => 'Falls die Wiederverbindung scheitert, auf dieses Profil umschalten',
 'backups' => 'Sicherungen',
-'backupwarning' => 'Bitte stellen Sie zuerst Ihre Hauptsicherung wieder her und anschließend die der Add-Ons. Achten Sie darauf, dass die Sicherungen ihre originalen Dateinamen behalten.',
+'backupwarning' => 'Spielen Sie zuerst Ihre Hauptsicherung und anschließend die Sicherung(en) der Addon-Konfiguration(en) ein.<br />Es werden lediglich die gesicherten Konfigurationsdatei(en) der Addons, nicht die installierten Addons wiederhergestellt!<br />Achten Sie außerdem darauf, dass die Sicherungen ihre originalen Dateinamen behalten.',
 'bad characters in' => 'Ungültige Zeichen in ',
 'bad characters in script field' => 'Nicht erlaubte Zeichen im Skriptnamen',
 'bad characters in the telephone number field' => 'Nicht erlaubte(s) Zeichen im Feld Telefonnummer.',
@@ -2436,7 +2436,7 @@
 'tor traffic read written' => 'Gesamter Traffic (empfangen/gesendet)',
 'tor use exit nodes' => 'Nur diese Exitknoten benutzen (ein Fingerabdruck pro Zeile)',
 'tor use guard nodes' => 'Nur diese Guardknoten benutzen (ein Fingerabdruck pro Zeile)',
-'total connection time' => 'Gesammte Verbindungszeit',
+'total connection time' => 'Gesamte Verbindungszeit',
 'total hits for log section' => 'Gesamte Treffer für Protokollsektion',
 'traffic back' => 'Zurück',
 'traffic calc time' => 'Berechnungszeitpunkt',
@@ -2988,6 +2988,7 @@
 'zoneconf val stp zone mode error' => 'STP kann nur aktiviert werden, wenn sich die Zone im Brückenmodus befindet',
 'zoneconf val vlan amount assignment error' => 'Pro Zone kann nur ein VLAN verwendet werden.',
 'zoneconf val vlan tag assignment error' => 'Pro Netzwerkkarte kann derselbe VLAN-Tag nur einmal verwendet werden.',
+'zoneconf val vlan tag range error' => 'VLAN-Tag muss im Bereich 1-4094 liegen.',
 'zoneconf val zoneslave amount error' => 'Wenn eine Zone nicht im Brückenmodus ist, kann ihr nur eine Netzwerkkarte zugewiesen werden.',
 );
 

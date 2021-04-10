@@ -121,6 +121,7 @@ WARNING: translation string unused: backup protect key password
 WARNING: translation string unused: backup sets
 WARNING: translation string unused: backup to floppy
 WARNING: translation string unused: bad characters in
+WARNING: translation string unused: bandwidth usage
 WARNING: translation string unused: behind a proxy
 WARNING: translation string unused: bewan adsl pci st
 WARNING: translation string unused: bewan adsl usb
@@ -386,6 +387,7 @@ WARNING: translation string unused: import
 WARNING: translation string unused: importkey
 WARNING: translation string unused: in
 WARNING: translation string unused: inactive
+WARNING: translation string unused: incoming
 WARNING: translation string unused: incorrect password
 WARNING: translation string unused: info
 WARNING: translation string unused: insert floppy
@@ -532,6 +534,7 @@ WARNING: translation string unused: os level
 WARNING: translation string unused: other
 WARNING: translation string unused: our donors
 WARNING: translation string unused: out
+WARNING: translation string unused: outgoing
 WARNING: translation string unused: outgoing firewall
 WARNING: translation string unused: outgoing firewall add ip group
 WARNING: translation string unused: outgoing firewall add mac group
@@ -718,6 +721,7 @@ WARNING: translation string unused: test
 WARNING: translation string unused: test email could not be sent
 WARNING: translation string unused: test email was sent
 WARNING: translation string unused: the following update was successfully installed
+WARNING: translation string unused: theme
 WARNING: translation string unused: there are updates
 WARNING: translation string unused: there are updates available
 WARNING: translation string unused: this feature has been sponsored by
@@ -825,6 +829,7 @@ WARNING: translation string unused: vpn red name
 WARNING: translation string unused: vpn watch
 WARNING: translation string unused: warn when traffic reaches
 WARNING: translation string unused: web proxy configuration
+WARNING: translation string unused: week
 WARNING: translation string unused: week-graph
 WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: wildcards
