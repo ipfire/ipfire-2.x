@@ -43,7 +43,6 @@ etc/profile.d/umask.sh
 etc/resolv.conf
 etc/securetty
 etc/sysctl.conf
-#etc/sysctl-x86_64.conf
 etc/syslog.conf
 etc/system-release
 #home

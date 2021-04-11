@@ -42,8 +42,8 @@ etc/profile.d/term256.sh
 etc/profile.d/umask.sh
 etc/resolv.conf
 etc/securetty
-etc/sysctl-aarch64.conf
 etc/sysctl.conf
+etc/sysctl-armv5tel.conf
 etc/syslog.conf
 etc/system-release
 #home
@@ -52,7 +52,6 @@ home/nobody
 #lib/firmware
 #lib/firmware/brcm
 lib/firmware/brcm/brcmfmac43362-sdio.txt
-lib64
 #media
 media/cdrom
 media/floppy
@@ -68,6 +67,7 @@ root/.bash_logout
 root/.bash_profile
 root/.bashrc
 root/ipfire
+run
 #sbin
 #srv
 #usr/bin
@@ -84,7 +84,6 @@ usr/lib/libgcc_s.so.1
 #usr/lib/libstdc++.la
 #usr/lib/libstdc++.so
 usr/lib/libstdc++.so.6
-usr/lib64
 #usr/local
 #usr/local/bin
 #usr/local/bin/archive.files
@@ -106,8 +105,8 @@ usr/local/bin/scanhd
 usr/local/bin/settime
 usr/local/bin/timecheck
 usr/local/bin/timezone-transition
-usr/local/bin/update-ids-ruleset
 usr/local/bin/update-lang-cache
+usr/local/bin/update-ids-ruleset
 usr/local/bin/update-location-database
 #usr/local/include
 #usr/local/lib
@@ -172,7 +171,6 @@ var/mail
 var/run
 #var/spool
 var/tmp
-run
 dev/console
 dev/null
 tmp
