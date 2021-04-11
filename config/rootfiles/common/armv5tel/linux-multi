@@ -4251,6 +4251,8 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/build/drivers/net/can/cc770
 #lib/modules/KVER-ipfire-multi/build/drivers/net/can/cc770/Kconfig
 #lib/modules/KVER-ipfire-multi/build/drivers/net/can/cc770/Makefile
+#lib/modules/KVER-ipfire-multi/build/drivers/net/can/dev
+#lib/modules/KVER-ipfire-multi/build/drivers/net/can/dev/Makefile
 #lib/modules/KVER-ipfire-multi/build/drivers/net/can/ifi_canfd
 #lib/modules/KVER-ipfire-multi/build/drivers/net/can/ifi_canfd/Kconfig
 #lib/modules/KVER-ipfire-multi/build/drivers/net/can/ifi_canfd/Makefile

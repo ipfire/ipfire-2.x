@@ -3730,6 +3730,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/drivers/net/can/cc770
 #lib/modules/KVER-ipfire/build/drivers/net/can/cc770/Kconfig
 #lib/modules/KVER-ipfire/build/drivers/net/can/cc770/Makefile
+#lib/modules/KVER-ipfire/build/drivers/net/can/dev
+#lib/modules/KVER-ipfire/build/drivers/net/can/dev/Makefile
 #lib/modules/KVER-ipfire/build/drivers/net/can/ifi_canfd
 #lib/modules/KVER-ipfire/build/drivers/net/can/ifi_canfd/Kconfig
 #lib/modules/KVER-ipfire/build/drivers/net/can/ifi_canfd/Makefile
@@ -21395,7 +21397,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/media/rc/keymaps/rc-behold-columbus.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/rc/keymaps/rc-behold.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/rc/keymaps/rc-budget-ci-old.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/media/rc/keymaps/rc-cec.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/rc/keymaps/rc-cinergy-1400.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/rc/keymaps/rc-cinergy.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/rc/keymaps/rc-d680-dmb.ko.xz
