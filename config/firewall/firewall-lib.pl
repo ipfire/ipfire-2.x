@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2013 Alexander Marx <amarx@ipfire.org>                        #
+# Copyright (C) 2021 Alexander Marx <amarx@ipfire.org>                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -315,7 +315,7 @@ sub get_addresses
 		foreach my $grp (sort {$a <=> $b} keys %customgrp) {
 			if ($customgrp{$grp}[0] eq $value) {
 				my @address = &get_address($customgrp{$grp}[3], $customgrp{$grp}[2], $type);
-
+				next if ($address[0][0] eq 'none');
 				if (@address) {
 					push(@addresses, @address);
 				}

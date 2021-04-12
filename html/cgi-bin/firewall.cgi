@@ -643,7 +643,7 @@ sub checktarget
 		&General::readhasharray("$confighost", \%customhost);
 		foreach my $grpkey (sort keys %customgrp){
 			foreach my $hostkey (sort keys %customhost){
-				if ($customgrp{$grpkey}[2] eq $customhost{$hostkey}[0] && $customgrp{$grpkey}[2] eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $customhost{$hostkey}[1] eq 'mac'){
+				if ($customgrp{$grpkey}[2] eq $customhost{$hostkey}[0] && $customgrp{$grpkey}[0] eq $fwdfwsettings{$fwdfwsettings{'grp2'}} && $customhost{$hostkey}[1] eq 'mac'){
 					$hint=$Lang::tr{'fwdfw hint mac'};
 					return $hint;
 				}
