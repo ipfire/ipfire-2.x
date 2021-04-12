@@ -667,7 +667,7 @@ usr/lib/samba/libldb-key-value-samba4.so
 usr/lib/samba/libldb-tdb-err-map-samba4.so
 usr/lib/samba/libldb-tdb-int-samba4.so
 usr/lib/samba/libldb.so.2
-usr/lib/samba/libldb.so.2.2.0
+usr/lib/samba/libldb.so.2.2.1
 usr/lib/samba/libldbsamba-samba4.so
 usr/lib/samba/liblibcli-lsa3-samba4.so
 usr/lib/samba/liblibcli-netlogon3-samba4.so
@@ -688,7 +688,7 @@ usr/lib/samba/libposix-eadb-samba4.so
 usr/lib/samba/libprinter-driver-samba4.so
 usr/lib/samba/libprinting-migrate-samba4.so
 usr/lib/samba/libpyldb-util.cpython-38-i386-linux-gnu.so.2
-usr/lib/samba/libpyldb-util.cpython-38-i386-linux-gnu.so.2.2.0
+usr/lib/samba/libpyldb-util.cpython-38-i386-linux-gnu.so.2.2.1
 usr/lib/samba/libpytalloc-util.cpython-38-i386-linux-gnu.so.2
 usr/lib/samba/libpytalloc-util.cpython-38-i386-linux-gnu.so.2.3.1
 usr/lib/samba/libregistry-samba4.so
@@ -711,7 +711,6 @@ usr/lib/samba/libshares-samba4.so
 usr/lib/samba/libsmb-transport-samba4.so
 usr/lib/samba/libsmbclient-raw-samba4.so
 usr/lib/samba/libsmbd-base-samba4.so
-usr/lib/samba/libsmbd-conn-samba4.so
 usr/lib/samba/libsmbd-shim-samba4.so
 usr/lib/samba/libsmbldaphelper-samba4.so
 usr/lib/samba/libsmbpasswdparser-samba4.so
