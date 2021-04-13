@@ -849,6 +849,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	my %used_providers = ();
 	my $provider_includes_action;
 
+	# Value if oinkmaster has to be executed.
+	my $oinkmaster = "False";
+
 	# Only go further, if an ID has been passed.
 	if ($cgiparams{'ID'}) {
 		# Assign the given ID.
@@ -877,6 +880,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 			# Set the provider includes action to "add".
 			$provider_includes_action = "add";
+
+			# This operation requires to launch oinkmaster.
+			$oinkmaster = "True";
 		}
 
 		# Modify the status of the existing entry.
@@ -894,6 +900,15 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		# Call function to alter the oinkmasters provider includes file and
 		# add or remove the provider.
 		&IDS::alter_oinkmaster_provider_includes_file($provider_includes_action, $provider_handle);
+
+		# Check if oinkmaster has to be executed.
+		if ($oinkmaster eq "True") {
+			# Lock the webpage and print message.
+			&working_notice("$Lang::tr{'ids apply ruleset changes'}");
+
+			# Launch oinkmaster.
+			&IDS::oinkmaster();
+		}
 
 		# Check if the IDS is running.
 		if(&IDS::ids_is_running()) {
@@ -914,6 +929,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 		# Undefine providers flag.
 		undef($cgiparams{'PROVIDERS'});
+
+		# Reload page.
+		&reload();
 	}
 
 ## Remove provider from the list of used providers.
