@@ -603,15 +603,15 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	# Read-in current (old) IDS settings.
 	&General::readhash("$IDS::ids_settings_file", \%oldidssettings);
 
+	# Get enabled providers.
+	my @enabled_providers = &IDS::get_enabled_providers();
+
 	# Prevent form name from been stored in conf file.
 	delete $cgiparams{'IDS'};
 
 	# Check if the IDS should be enabled.
 	if ($cgiparams{'ENABLE_IDS'} eq "on") {
-		# Get enabled providers.
-		my @enabled_providers = &IDS::get_enabled_providers();
-
-		# Check if any ruleset is available. Otherwise abort and display an error.
+		# Check if at least one provider is enabled. Otherwise abort and display an error.
 		unless(@enabled_providers) {
 			$errormessage = $Lang::tr{'ids no enabled ruleset provider'};
 		}
@@ -660,8 +660,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 	# Check if "MONITOR_TRAFFIC_ONLY" has been changed.
 	if($cgiparams{'MONITOR_TRAFFIC_ONLY'} ne $oldidssettings{'MONITOR_TRAFFIC_ONLY'}) {
-		# Check if a ruleset exists.
-		if (%used_providers) {
+		# Check if at least one provider is enabled.
+		if (@enabled_providers) {
 			# Lock the webpage and print message.
 			&working_notice("$Lang::tr{'ids working'}");
 
