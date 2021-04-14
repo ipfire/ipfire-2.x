@@ -1,0 +1,63 @@
+Based on patch from Pavel Rochnyack
+https://git.ipfire.org/?p=thirdparty/collectd.git;a=commitdiff;h=d5a3c020d33cc33ee8049f54c7b4dffcd123bf83
+
+diff -Naur collectd-4.10.9/src/sensors.c.orig collectd-4.10.9/src/sensors.c
+--- collectd-4.10.9/src/sensors.c.orig	2013-04-08 08:26:17.000000000 +0200
++++ collectd-4.10.9/src/sensors.c	2021-04-13 23:17:43.196069346 +0200
+@@ -150,7 +150,7 @@
+ # endif
+ /* #endif SENSORS_API_VERSION < 0x400 */
+ 
+-#elif (SENSORS_API_VERSION >= 0x400) && (SENSORS_API_VERSION < 0x500)
++#elif (SENSORS_API_VERSION >= 0x400)
+ typedef struct featurelist
+ {
+ 	const sensors_chip_name    *chip;
+@@ -162,11 +162,7 @@
+ # ifndef SENSORS_CONF_PATH
+ #  define SENSORS_CONF_PATH "/etc/sensors3.conf"
+ # endif
+-/* #endif (SENSORS_API_VERSION >= 0x400) && (SENSORS_API_VERSION < 0x500) */
+ 
+-#else /* if SENSORS_API_VERSION >= 0x500 */
+-# error "This version of libsensors is not supported yet. Please report this " \
+-	"as bug."
+ #endif
+ 
+ static const char *conffile = SENSORS_CONF_PATH;
+@@ -394,7 +390,7 @@
+ 	} /* while sensors_get_detected_chips */
+ /* #endif SENSORS_API_VERSION < 0x400 */
+ 
+-#elif (SENSORS_API_VERSION >= 0x400) && (SENSORS_API_VERSION < 0x500)
++#elif (SENSORS_API_VERSION >= 0x400)
+ 	chip_num = 0;
+ 	while ((chip = sensors_get_detected_chips (NULL, &chip_num)) != NULL)
+ 	{
+@@ -448,7 +444,7 @@
+ 			} /* while (subfeature) */
+ 		} /* while (feature) */
+ 	} /* while (chip) */
+-#endif /* (SENSORS_API_VERSION >= 0x400) && (SENSORS_API_VERSION < 0x500) */
++#endif /* (SENSORS_API_VERSION >= 0x400) */
+ 
+ 	if (first_feature == NULL)
+ 	{
+@@ -541,7 +537,7 @@
+ 	} /* for fl = first_feature .. NULL */
+ /* #endif SENSORS_API_VERSION < 0x400 */
+ 
+-#elif (SENSORS_API_VERSION >= 0x400) && (SENSORS_API_VERSION < 0x500)
++#elif (SENSORS_API_VERSION >= 0x400)
+ 	for (fl = first_feature; fl != NULL; fl = fl->next)
+ 	{
+ 		double value;
+@@ -576,7 +572,7 @@
+ 
+ 		sensors_submit (plugin_instance, type, type_instance, value);
+ 	} /* for fl = first_feature .. NULL */
+-#endif /* (SENSORS_API_VERSION >= 0x400) && (SENSORS_API_VERSION < 0x500) */
++#endif /* (SENSORS_API_VERSION >= 0x400) */
+ 
+ 	return (0);
+ } /* int sensors_read */
