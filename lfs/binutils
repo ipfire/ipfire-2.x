@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.35.1
+VER        = 2.36.1
 
 THISAPP    = binutils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -96,7 +96,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7126f370ffbd46c08fcc5ce7aee2805d
+$(DL_FILE)_MD5 = 628d490d976d8957279bbbff06cf29d4
 
 install : $(TARGET)
 
