@@ -937,22 +937,17 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 ## Remove provider from the list of used providers.
 #
 } elsif ($cgiparams{'PROVIDERS'} eq $Lang::tr{'remove'}) {
-	my %used_providers = ();
+	# Assign a nice human-readable variable.
+	my $id = $cgiparams{'ID'};
 
-	# Read-in provider settings file.
-	&General::readhasharray($IDS::providers_settings_file, \%used_providers);
+	# Grab the provider name bevore deleting.
+	my $provider = &get_provider_handle($id);
 
-	# Grab the provider name bevore deleting it from hash.
-	my $provider = $used_providers{$cgiparams{'ID'}}[0];
-
-	# Drop entry from the hash.
-	delete($used_providers{$cgiparams{'ID'}});
+	# Remove the provider.
+	&remove_provider($id);
 
 	# Undef the given ID.
 	undef($cgiparams{'ID'});
-
-	# Write the changed hash to the provide settings file.
-	&General::writehasharray($IDS::providers_settings_file, \%used_providers);
 
 	# Lock the webpage and print message.
 	&working_notice("$Lang::tr{'ids apply ruleset changes'}");
