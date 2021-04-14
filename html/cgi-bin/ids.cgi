@@ -2063,6 +2063,24 @@ sub get_provider_name($) {
 }
 
 #
+## Function to remove a provider by a given ID.
+#
+sub remove_provider($) {
+	my ($id) = @_;
+
+	my %used_providers = ();
+
+	# Read-in provider settings file.
+	&General::readhasharray($IDS::providers_settings_file, \%used_providers);
+
+	# Drop entry from the hash.
+	delete($used_providers{$id});
+
+	# Write the changed hash to the provider settings file.
+	&General::writehasharray($IDS::providers_settings_file, \%used_providers);
+}
+
+#
 ## Private function to convert a given rulefile to a category name.
 ## ( No file extension anymore and if the name contained a dot, it
 ## would be replaced by a underline sign.)
