@@ -463,11 +463,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 				push(@provider_rulefiles, $rulesfile);
 			}
 
-			# Check if any rulesfiles have been found for this provider.
-			if (@provider_rulefiles) {
-				# Call function and write the providers used rulesfile file.
-				&IDS::write_used_provider_rulefiles_file($provider, @provider_rulefiles);
-			}
+			# Call function and write the providers used rulesfile file.
+			&IDS::write_used_provider_rulefiles_file($provider, @provider_rulefiles);
 		}
 	}
 
