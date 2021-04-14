@@ -1497,6 +1497,7 @@ END
 #
 sub get_ruleset_date($) {
 	my ($provider) = @_;
+	my $date;
 
 	# Load neccessary perl modules for file stat and to format the timestamp.
 	use File::stat;
@@ -1512,7 +1513,13 @@ sub get_ruleset_date($) {
 	my $mtime = $stat->mtime;
 
 	# Convert into human read-able format.
-	my $date = strftime('%Y-%m-%d %H:%M:%S', localtime($mtime));
+	$date = strftime('%Y-%m-%d %H:%M:%S', localtime($mtime));
+
+	# Check if a date has been obtained.
+	unless ($date) {
+		# Assign N/A for Not available.
+		$date = "N/A";
+	}
 
 	# Return the date.
 	return $date;
