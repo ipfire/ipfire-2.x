@@ -103,6 +103,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/apache restart
 
 # remove lm_sensor config after collectd was started
 # to reserch sensors at next boot with updated kernel
