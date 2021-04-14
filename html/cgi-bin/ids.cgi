@@ -2022,6 +2022,24 @@ sub get_memory_usage($) {
 }
 
 #
+## Function to get the provider handle by a given ID.
+#
+sub get_provider_handle($) {
+	my ($id) = @_;
+
+	my %used_providers = ();
+
+	# Read-in provider settings file.
+	&General::readhasharray($IDS::providers_settings_file, \%used_providers);
+
+	# Obtain the provider handle for the given ID.
+	my $provider_handle = $used_providers{$cgiparams{'ID'}}[0];
+
+	# Return the handle.
+	return $provider_handle;
+}
+
+#
 ## Function to get the provider name from the language file or providers file for a given handle.
 #
 sub get_provider_name($) {
