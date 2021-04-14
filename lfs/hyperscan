@@ -76,7 +76,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/hyperscan-5.4.0-fix-undefined-reference-to.patch
 	cd $(DIR_APP) && cmake . \
 		-DCMAKE_INSTALL_PREFIX:PATH=/usr \
 		-DBUILD_SHARED_LIBS:BOOL=ON \
