@@ -12,102 +12,12 @@ eval $(/usr/local/bin/readhash /var/ipfire/wlanap/settings)
 
 case "${1}" in
 	start)
-		mkdir -p /var/run/hostapd
-
 		boot_mesg "Starting hostapd... "
-
-		# Check Interface configuration
-		if [ ! -d "/sys/class/net/${INTERFACE}" ]; then
-			boot_mesg "Interface $INTERFACE doesn't exist." ${FAILURE}
-			echo_failure
-			exit 0
-		fi
-
-		if [ "$(ip link show $INTERFACE | /bin/grep "ether")" == "" ]; then
-			boot_mesg "Interface $INTERFACE is assigned to wlan master device." ${FAILURE}
-			boot_mesg "Please reboot to fix this." ${FAILURE}
-			echo_failure
-			exit 0
-		fi
-
-		# Check if INTERFACE is an actual wireless device
-		if [ ! -d "/sys/class/net/${INTERFACE}/wireless" ]; then
-			boot_mesg "Interface $INTERFACE is not a wireless device." ${FAILURE}
-			echo_failure
-			exit 0
-		fi
-
-		# Detect driver
-		if [ -e "/sys/class/net/$INTERFACE/phy80211" ]; then
-			DRIVER="NL80211"
-			driver="nl80211"
-		elif [ "$(/bin/grep hostap /sys/class/net/$INTERFACE/uevent)" != "" ]; then
-			DRIVER="HOSTAP"
-			driver="hostap"
-		else
-			boot_mesg "Interface $INTERFACE is a not supported wireless device." ${FAILURE}
-			echo_failure
-			exit 0
-		fi
-
-		echo driver=$driver > /etc/hostapd.conf.tmp
-		grep -v "^driver=" /etc/hostapd.conf >> /etc/hostapd.conf.tmp
-		mv /etc/hostapd.conf.tmp /etc/hostapd.conf
-
-		echo DRIVER=$DRIVER > /var/ipfire/wlanap/settings.tmp
-		grep -v "^DRIVER=" /var/ipfire/wlanap/settings >> /var/ipfire/wlanap/settings.tmp
-		chown nobody:nobody /var/ipfire/wlanap/settings.tmp
-		chmod 644 /var/ipfire/wlanap/settings.tmp
-		mv /var/ipfire/wlanap/settings.tmp /var/ipfire/wlanap/settings
-
-		if [ "$DRIVER" == "HOSTAP" ]; then
-			if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
-				boot_mesg "Setting HOSTAP wlan $INTERFACE to Master mode... "
-				# Set Prism Cards to master mode
-				/usr/bin/iwconfig $INTERFACE mode master > /dev/null
-			fi
-		fi
-
-		# First set to any country then reset to World (00)
-		# and then set new country because the card is only
-		# reprogrammed if the region was changed.
-		/usr/sbin/iw reg set DE
-		/usr/sbin/iw reg set 00
-		/usr/sbin/iw reg set $COUNTRY
-
-		/usr/sbin/iwconfig $INTERFACE channel $CHANNEL 2>/dev/null
-
-		ip link set ${INTERFACE} up 2>/dev/null
-		/usr/sbin/iwconfig $INTERFACE txpower $TXPOWER 2>/dev/null
-
-		/usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf >/dev/null 2>&1 &
-
-		sleep 3
-
-		if [ "$(/usr/sbin/iwconfig $INTERFACE | /bin/grep "Mode:Master")" == "" ]; then
-			killproc /usr/bin/hostapd > /dev/null 2>&1
-			boot_mesg "Try to create additional AP device ..." 
-			ip link set ${INTERFACE} down
-			ip link set ${INTERFACE} name ${INTERFACE}_man
-			iw dev  ${INTERFACE}_man interface add ${INTERFACE} type __ap
-			evaluate_retval;
-			if [ -d /sys/class/net/${INTERFACE} ]; then
-				/usr/bin/hostapd -P /var/run/hostapd /etc/hostapd.conf >/dev/null 2>&1 &
-			else
-				ip link set ${INTERFACE}_man down
-				ip link set ${INTERFACE}_man name ${INTERFACE}
-			fi
-			exit 0;
-		else
-			echo_ok
-		fi
+		loadproc /usr/bin/hostapd -B /etc/hostapd.conf
 		;;
 
 	stop)
 		boot_mesg "Stopping hostapd..."
-		ip link set ${INTERFACE} down > /dev/null 2>&1
-		ip link set ${INTERFACE} down_man > /dev/null 2>&1
-		sleep 1
 		killproc /usr/bin/hostapd
 		evaluate_retval
 		;;
