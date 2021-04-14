@@ -815,33 +815,55 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 		# Check if a new provider will be added.
 		if ($cgiparams{'PROVIDERS'} eq $Lang::tr{'add'}) {
-			# Lock the webpage and print notice about downloading
-			# a new ruleset.
-			&working_notice("$Lang::tr{'ids working'}");
+			# Check if the red device is active.
+			unless (-e "${General::swroot}/red/active") {
+				$errormessage = "$Lang::tr{'ids could not add provider'} - $Lang::tr{'system is offline'}";
+			}
 
-			# Download the ruleset.
-			&IDS::downloadruleset($provider);
+			# Check if enough free disk space is availabe.
+			if(&IDS::checkdiskspace()) {
+				$errormessage = "$Lang::tr{'ids could not add provider'} - $Lang::tr{'not enough disk space'}";
+			}
 
-			# Extract the ruleset
-			&IDS::extractruleset($provider);
+			# Check if any errors happend.
+			unless ($errormessage) {
+				# Lock the webpage and print notice about downloading
+				# a new ruleset.
+				&working_notice("$Lang::tr{'ids working'}");
 
-			# Move the ruleset.
-			&IDS::move_tmp_ruleset();
+				# Download the ruleset.
+				if(&IDS::downloadruleset($provider)) {
+					$errormessage = "$Lang::tr{'ids could not add provider'} - $Lang::tr{'ids unable to download the ruleset'}";
 
-			# Cleanup temporary directory.
-			&IDS::cleanup_tmp_directory();
+					# Call function to store the errormessage.
+					&IDS::_store_error_message($errormessage);
 
-			# Create new empty file for used rulefiles
-			# for this provider.
-			&IDS::write_used_provider_rulefiles_file($provider);
+					# Remove the configured provider again.
+					&remove_provider($id);
+				} else {
+					# Extract the ruleset
+					&IDS::extractruleset($provider);
 
-			# Perform a reload of the page.
-			&reload();
+					# Move the ruleset.
+					&IDS::move_tmp_ruleset();
+
+					# Cleanup temporary directory.
+					&IDS::cleanup_tmp_directory();
+
+					# Create new empty file for used rulefiles
+					# for this provider.
+					&IDS::write_used_provider_rulefiles_file($provider);
+				}
+
+				# Perform a reload of the page.
+				&reload();
+			}
 		}
 
-		# Undefine providers flag.
-		undef($cgiparams{'PROVIDERS'});
 	}
+
+	# Undefine providers flag.
+	undef($cgiparams{'PROVIDERS'});
 
 ## Toggle Enabled/Disabled for an existing provider.
 #
