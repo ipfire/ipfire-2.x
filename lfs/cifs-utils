@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.12
+VER        = 6.13
 
 THISAPP    = cifs-utils-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cifs-utils
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b49b10692bcae7f28669173a472077dd
+$(DL_FILE)_MD5 = 4348921483c530826950e9503b08b033
 
 install : $(TARGET)
 
