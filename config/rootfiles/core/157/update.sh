@@ -104,6 +104,7 @@ ldconfig
 
 # Start services
 /etc/init.d/apache restart
+/etc/init.d/collectd restart
 
 # remove lm_sensor config after collectd was started
 # to reserch sensors at next boot with updated kernel
