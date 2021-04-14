@@ -518,7 +518,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 		# Call subfunction to download the ruleset.
 		if(&IDS::downloadruleset($provider)) {
-			$errormessage = $Lang::tr{'could not download latest updates'};
+			$errormessage = "$provider - $Lang::tr{'could not download latest updates'}";
 
 			# Call function to store the errormessage.
 			&IDS::_store_error_message($errormessage);
