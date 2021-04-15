@@ -40,6 +40,14 @@ GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
 TOOLCHAINVER=20210202
 
+ZSTD_OPT=(
+	# Compress in parallel using all processor cores
+	-T0
+
+	# Compress as best as we can
+	--ultra -22
+)
+
 ###############################################################################
 #
 # Beautifying variables & presentation & input output interface
@@ -1724,7 +1732,7 @@ build)
 	# Clear screen
 	${INTERACTIVE} && clear
 
-	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.xz 2> /dev/null | head -n 1`
+	PACKAGE="$BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst"
 	#only restore on a clean disk
 	if [ ! -e "${BASEDIR}/build${TOOLS_DIR}/.toolchain-successful" ]; then
 		if [ ! -n "$PACKAGE" ]; then
@@ -1732,7 +1740,7 @@ build)
 			prepareenv
 			buildtoolchain
 		else
-			PACKAGENAME=${PACKAGE%.tar.xz}
+			PACKAGENAME=${PACKAGE%.tar.zst}
 			print_build_stage "Packaged toolchain compilation"
 			if [ `md5sum $PACKAGE | awk '{print $1}'` == `cat $PACKAGENAME.md5 | awk '{print $1}'` ]; then
 				tar axf $PACKAGE
@@ -1875,21 +1883,21 @@ toolchain)
 	buildtoolchain
 	echo "`date -u '+%b %e %T'`: Create toolchain image for ${BUILD_ARCH}" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
-	cd $BASEDIR && tar -cf- --exclude='log/_build.*.log' build/${TOOLS_DIR} build/bin/sh log | xz ${XZ_OPT} \
-		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.xz
-	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.xz \
+	cd $BASEDIR && tar -cf- --exclude='log/_build.*.log' build/${TOOLS_DIR} build/bin/sh log \
+		| zstd ${ZSTD_OPT} > cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst
+	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.md5
 	stdumount
 	;;
 gettoolchain)
 	# arbitrary name to be updated in case of new toolchain package upload
 	PACKAGE=$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}
-	if [ ! -f $BASEDIR/cache/toolchains/$PACKAGE.tar.xz ]; then
+	if [ ! -f $BASEDIR/cache/toolchains/$PACKAGE.tar.zst ]; then
 		URL_TOOLCHAIN=`grep URL_TOOLCHAIN lfs/Config | awk '{ print $3 }'`
 		test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
 		echo "`date -u '+%b %e %T'`: Load toolchain image for ${BUILD_ARCH}" | tee -a $LOGFILE
 		cd $BASEDIR/cache/toolchains
-		wget -U "IPFireSourceGrabber/2.x" $URL_TOOLCHAIN/$PACKAGE.tar.xz $URL_TOOLCHAIN/$PACKAGE.md5 >& /dev/null
+		wget -U "IPFireSourceGrabber/2.x" $URL_TOOLCHAIN/$PACKAGE.tar.zst $URL_TOOLCHAIN/$PACKAGE.md5 >& /dev/null
 		if [ $? -ne 0 ]; then
 			echo "`date -u '+%b %e %T'`: error downloading $PACKAGE toolchain for ${BUILD_ARCH} machine" | tee -a $LOGFILE
 		else
