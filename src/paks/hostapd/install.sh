@@ -24,6 +24,17 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 restore_backup ${NAME}
+
+# Convert INTERFACE setting to MAC address
+(
+	eval $(/usr/local/bin/readhash /var/ipfire/wlanap/settings)
+
+	if [ -n "${INTERFACE}" -a -d "/sys/class/net/${INTERFACE}" ]; then
+		sed -i /var/ipfire/wlanap/settings \
+			-e "s/^INTERFACE=.*/INTERFACE=$(</sys/class/net/${INTERFACE}/address)/"
+	fi
+)
+
 ln -s ../init.d/hostapd /etc/rc.d/rc3.d/S18hostapd
 ln -s ../init.d/hostapd /etc/rc.d/rc0.d/K81hostapd
 ln -s ../init.d/hostapd /etc/rc.d/rc6.d/K81hostapd

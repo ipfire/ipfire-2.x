@@ -81,6 +81,9 @@ $wlanapsettings{'IEEE80211W'} = 'off';
 &General::readhash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 &Header::getcgihash(\%wlanapsettings);
 
+# Find the selected interface
+my $INTF = &Network::get_intf_by_address($wlanapsettings{'INTERFACE'});
+
 my @macs = $wlanapsettings{'MACS'};
 
 delete $wlanapsettings{'__CGI__'};
@@ -193,8 +196,11 @@ my $wlan_card_status = 'dummy';
 my $wlan_ap_status = '';
 my $message = "";
 
-$selected{'INTERFACE'}{'green0'} = '';
-$selected{'INTERFACE'}{'blue0'} = '';
+my %INTERFACES = &Network::list_wireless_interfaces();
+
+foreach my $intf (keys %INTERFACES) {
+	$selected{'INTERFACE'}{$intf} = '';
+}
 $selected{'ENC'}{$wlanapsettings{'INTERFACE'}} = "selected='selected'";
 
 if ( ($wlanapsettings{'INTERFACE'} eq '') ){
@@ -206,11 +212,12 @@ $message<br />
 <select name='INTERFACE'>
 END
 ;
-	if ( $netsettings{'BLUE_DEV'} ne ''){
-		print "<option value='blue0' $selected{'INTERFACE'}{'blue0'}>blue0</option>";
+
+	foreach my $intf (sort keys %INTERFACES) {
+		print "<option value='${intf}' $selected{'INTERFACE'}{$intf}>$INTERFACES{$intf}</option>";
 	}
+
 print <<END
-		<option value='green0' $selected{'INTERFACE'}{'green0'}>green0</option>
 </select>
 <br /><br />
 <hr size='1'>
@@ -222,18 +229,18 @@ END
 	&Header::closepage();
 	exit;
 }else{
-	my $cmd_out = `/usr/sbin/iwconfig $wlanapsettings{'INTERFACE'} 2>/dev/null`;
+	my $cmd_out = `/usr/sbin/iwconfig $INTF 2>/dev/null`;
 
 	if ( $cmd_out eq '' ){
 		$message = "$Lang::tr{'wlanap no interface'}";
 		$wlan_card_status = '';
 	}else{
-		$cmd_out = `/sbin/ifconfig | /bin/grep $wlanapsettings{'INTERFACE'}`;
+		$cmd_out = `/sbin/ifconfig $INTF`;
 		if ( $cmd_out eq '' ){
 			$wlan_card_status = 'down';
 		}else{
 			$wlan_card_status = 'up';
-			$cmd_out = `/usr/sbin/iwconfig $wlanapsettings{'INTERFACE'} | /bin/grep "Mode:Master"`;
+			$cmd_out = `/usr/sbin/iwconfig $INTF | /bin/grep "Mode:Master"`;
 			if ( $cmd_out ne '' ){
 				$wlan_ap_status = 'up';
 			}
@@ -270,16 +277,16 @@ $selected{'TXPOWER'}{$wlanapsettings{'TXPOWER'}} = "selected='selected'";
 $selected{'HW_MODE'}{$wlanapsettings{'HW_MODE'}} = "selected='selected'";
 $selected{'MACMODE'}{$wlanapsettings{'MACMODE'}} = "selected='selected'";
 
-my $monwlaninterface = $wlanapsettings{'INTERFACE'};
-if ( -d '/sys/class/net/mon.'.$wlanapsettings{'INTERFACE'} ) {
-	$monwlaninterface =  'mon.'.$wlanapsettings{'INTERFACE'};
+my $monwlaninterface = $INTF;
+if ( -d '/sys/class/net/mon.' . $INTF) {
+	$monwlaninterface =  'mon.' . $INTF;
 }
 
 my @channellist_cmd;
 my @channellist = (0);
 
 if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
-my $wiphy = `iw dev $wlanapsettings{'INTERFACE'} info | grep wiphy | cut -d" " -f2`;
+my $wiphy = `iw dev $INTF info | grep wiphy | cut -d" " -f2`;
 chomp $wiphy;
 
 @channellist_cmd = `iw phy phy$wiphy info | grep " MHz \\\[" | grep -v "(disabled)" | grep -v "no IBSS" | grep -v "no IR" | grep -v "passive scanning" 2>/dev/null`;
@@ -318,7 +325,7 @@ my @countrylist = @temp;
 
 my @txpower_cmd = `iwlist $monwlaninterface txpower 2>/dev/null`;
 if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
-	# There is a bug with NL80211 only all devices can displayed
+	# There is a bug with NL80211 only all devices can displaye
 	@txpower_cmd = `iwlist txpower 2>/dev/null | sed -e "s|unknown transmit-power information.||g"`;
 }
 # get available power
@@ -488,7 +495,7 @@ print <<END
 </table>
 END
 ;
-if ( $wlanapsettings{'INTERFACE'} =~ /green0/ ){
+if ( $INTF =~ /green0/ ){
 	print <<END
 <br />
 <table width='80%' cellspacing='0' class='tbl' border='1'>
@@ -523,7 +530,7 @@ END
 ;
 my @status;
 if ( $wlanapsettings{'DRIVER'} eq 'NL80211' ){
-	 @status =  `iw dev $wlanapsettings{'INTERFACE'} info && iw dev $wlanapsettings{'INTERFACE'} station dump && echo ""`;
+	 @status =  `iw dev $INTF info && iw dev $INTF station dump && echo ""`;
 }
 print <<END
 <br />
@@ -588,7 +595,6 @@ sub WriteConfig_hostapd{
 driver=$wlanapsettings{'DRIVER_HOSTAPD'}
 ######################### basic hostapd configuration ##########################
 #
-interface=$wlanapsettings{'INTERFACE'}
 country_code=$wlanapsettings{'COUNTRY'}
 ieee80211d=1
 ieee80211h=1
