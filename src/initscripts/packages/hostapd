@@ -2,6 +2,20 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+find_interface() {
+	local address="${1}"
+
+	local path
+	for path in /sys/class/net/*; do
+		if [ -s "${path}/address" ] && [ "$(<${path}/address)" = "${address}" ]; then
+			basename "${path}"
+			return 0
+		fi
+	done
+
+	return 1;
+}
+
 CHANNEL="6"
 COUNTRY="00"
 TXPOWER="auto"
@@ -12,8 +26,15 @@ eval $(/usr/local/bin/readhash /var/ipfire/wlanap/settings)
 
 case "${1}" in
 	start)
+		interface="$(find_interface "${INTERFACE}")"
+		if [ -z "${interface}" ]; then
+			boot_mesg "Could not find interface with address ${INTERFACE} for wireless access point"
+			echo_failure
+			exit 1
+		fi
+
 		boot_mesg "Starting hostapd... "
-		loadproc /usr/bin/hostapd -B /etc/hostapd.conf
+		loadproc /usr/bin/hostapd -B /etc/hostapd.conf -i "${interface}"
 		;;
 
 	stop)

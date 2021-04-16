@@ -332,6 +332,28 @@ sub setup_upstream_proxy() {
 	}
 }
 
+sub list_wireless_interfaces() {
+	my %interfaces = ();
+
+	opendir(INTERFACES, "/sys/class/net");
+
+	my $intf;
+	while ($intf = readdir(INTERFACES)) {
+		# Is this a wireless interface?
+		opendir(PHY80211, "/sys/class/net/$intf/phy80211") or next;
+		closedir(PHY80211);
+
+		# Read the MAC address
+		my $address = &get_nic_property($intf, "address");
+
+		$interfaces{$address} = "$address ($intf)";
+	}
+
+	closedir(INTERFACES);
+
+	return %interfaces;
+}
+
 my %wireless_status = ();
 
 sub _get_wireless_status($) {
@@ -416,7 +438,7 @@ sub get_nic_property {
 	my $property = shift;
 	my $result;
 
-	open(FILE, "/sys/class/net/$nicname/$property") or die("Could not read property");
+	open(FILE, "/sys/class/net/$nicname/$property") or die("Could not read property $property for $nicname");
 	$result = <FILE>;
 	close(FILE);
 
@@ -463,6 +485,28 @@ sub get_mac_by_name($) {
 	}
 
 	return $mac;
+}
+
+sub get_intf_by_address($) {
+	my $address = shift;
+
+	opendir(INTERFACES, "/sys/class/net");
+
+	while (my $intf = readdir(INTERFACES)) {
+		next if ($intf eq "." or $intf eq "..");
+
+		my $intf_address = &get_nic_property($intf, "address");
+
+		# Skip interfaces without addresses
+		next if ($intf_address eq "");
+
+		# Return a match
+		return $intf if ($intf_address eq $address);
+	}
+
+	closedir(INTERFACES);
+
+	return undef;
 }
 
 #
