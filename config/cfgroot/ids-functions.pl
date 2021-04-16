@@ -1512,14 +1512,14 @@ sub get_ruleset_date($) {
 	# Get timestamp the file creation.
 	my $mtime = $stat->mtime;
 
+	# Check if the timestamp has not been grabbed.
+	unless ($mtime) {
+		# Return N/A for Not available.
+		return "N/A";
+	}
+
 	# Convert into human read-able format.
 	$date = strftime('%Y-%m-%d %H:%M:%S', localtime($mtime));
-
-	# Check if a date has been obtained.
-	unless ($date) {
-		# Assign N/A for Not available.
-		$date = "N/A";
-	}
 
 	# Return the date.
 	return $date;
