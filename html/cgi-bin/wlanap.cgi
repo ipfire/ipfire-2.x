@@ -571,17 +571,7 @@ for (my $i=0;$i<$#txpower_cmd;$i=$i+2){
 	print "<tr><td $col>@txpower_cmd[$i]</td></tr>";
 	$count++;
 }
-print "</table><br>";
-print <<END
-<br />
-<table width='80%' cellspacing='0' class='tbl' border='0'>
-<tr><td bgcolor='$color{'color20'}' align='left'><strong>$Lang::tr{'wlan clients'}</strong></td></tr>
-<tr><td>&nbsp;<a href="/cgi-bin/wireless.cgi">$Lang::tr{'wlanap link wireless'}</a></td></tr>
-<tr><td>&nbsp;<a href="/cgi-bin/dhcp.cgi">$Lang::tr{'wlanap link dhcp'}</a></td></tr>
-<tr><td><br></td></tr>
-</table>
-END
-;
+print "</table>";
 &Header::closebox();
 print "</form>";
 &Header::closebigbox();
