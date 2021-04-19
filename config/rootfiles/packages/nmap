@@ -123,6 +123,7 @@ usr/share/nmap/nselib/datafiles.lua
 usr/share/nmap/nselib/datetime.lua
 usr/share/nmap/nselib/dhcp.lua
 usr/share/nmap/nselib/dhcp6.lua
+usr/share/nmap/nselib/dicom.lua
 usr/share/nmap/nselib/dns.lua
 usr/share/nmap/nselib/dnsbl.lua
 usr/share/nmap/nselib/dnssd.lua
@@ -181,6 +182,7 @@ usr/share/nmap/nselib/omp2.lua
 usr/share/nmap/nselib/oops.lua
 usr/share/nmap/nselib/openssl.luadoc
 usr/share/nmap/nselib/ospf.lua
+usr/share/nmap/nselib/outlib.lua
 usr/share/nmap/nselib/packet.lua
 usr/share/nmap/nselib/pcre.luadoc
 usr/share/nmap/nselib/pgsql.lua
@@ -325,6 +327,8 @@ usr/share/nmap/scripts/daytime.nse
 usr/share/nmap/scripts/db2-das-info.nse
 usr/share/nmap/scripts/deluge-rpc-brute.nse
 usr/share/nmap/scripts/dhcp-discover.nse
+usr/share/nmap/scripts/dicom-brute.nse
+usr/share/nmap/scripts/dicom-ping.nse
 usr/share/nmap/scripts/dict-info.nse
 usr/share/nmap/scripts/distcc-cve2004-2687.nse
 usr/share/nmap/scripts/dns-blacklist.nse
@@ -815,6 +819,7 @@ usr/share/nmap/scripts/ubiquiti-discovery.nse
 usr/share/nmap/scripts/unittest.nse
 usr/share/nmap/scripts/unusual-port.nse
 usr/share/nmap/scripts/upnp-info.nse
+usr/share/nmap/scripts/uptime-agent-info.nse
 usr/share/nmap/scripts/url-snarf.nse
 usr/share/nmap/scripts/ventrilo-info.nse
 usr/share/nmap/scripts/versant-info.nse
