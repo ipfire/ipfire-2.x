@@ -103,6 +103,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/sshd restart
 /etc/init.d/apache restart
 /etc/init.d/collectd restart
 
