@@ -279,7 +279,8 @@ define PAK
 	rm -rf $(DIR_TMP_PAK)/root && mkdir -p $(DIR_TMP_PAK)/root
 	tar -c --exclude='#*' --exclude='proc/*' --exclude='dev/pts/*' --exclude='tmp/*' \
 		--exclude='__pycache__' \
-		-C / --files-from=$(DIR_TMP_PAK)/ROOTFILES | tar -x -C $(DIR_TMP_PAK)/root
+		-C / --files-from=$(DIR_TMP_PAK)/ROOTFILES | tar -x -C $(DIR_TMP_PAK)/root; \
+		exit $${PIPESTATUS[0]}
 
 	# Compress tarball
 	cd $(DIR_TMP_PAK)/root && tar cf - * | xz $(XZ_OPT) > $(DIR_TMP_PAK)/files.tar.xz
