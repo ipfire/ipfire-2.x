@@ -1335,6 +1335,7 @@ buildipfire() {
   lfsmake2 Mail-Tools
   lfsmake2 MIME-Tools
   lfsmake2 Net-Server
+  lfsmake2 Canary-Stability
   lfsmake2 Convert-TNEF
   lfsmake2 Convert-UUlib
   lfsmake2 Archive-Tar
