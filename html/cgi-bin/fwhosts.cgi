@@ -1974,11 +1974,13 @@ sub getcolor
 		#Check if IP is part of a IPsec N2N network
 		foreach my $key (sort keys %ipsecconf){
 			if ($ipsecconf{$key}[11]){
-				my ($a,$b) = split("/",$ipsecconf{$key}[11]);
-				$b=&General::iporsubtodec($b);
-				if (&General::IpInSubnet($sip,$a,$b)){
-					$tdcolor="<font style='color: $Header::colourvpn;'>$c</font>";
-					return $tdcolor;
+				foreach my $ipsecsubitem (split(/\|/, $ipsecconf{$key}[11])) {
+					my ($a,$b) = split("/",$ipsecsubitem);
+					$b=&General::iporsubtodec($b);
+					if (&General::IpInSubnet($sip,$a,$b)){
+						$tdcolor="<font style='color: $Header::colourvpn;'>$c</font>";
+						return $tdcolor;
+					}
 				}
 			}
 		}
