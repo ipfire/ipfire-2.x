@@ -6647,6 +6647,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/as/has/cfi/negate
 #lib/modules/KVER-ipfire/build/include/config/as/has/cfi/negate/ra
 #lib/modules/KVER-ipfire/build/include/config/as/has/cfi/negate/ra/state.h
+#lib/modules/KVER-ipfire/build/include/config/as/has/lse
+#lib/modules/KVER-ipfire/build/include/config/as/has/lse/atomics.h
 #lib/modules/KVER-ipfire/build/include/config/as/has/pac.h
 #lib/modules/KVER-ipfire/build/include/config/asm
 #lib/modules/KVER-ipfire/build/include/config/asm/modversions.h
