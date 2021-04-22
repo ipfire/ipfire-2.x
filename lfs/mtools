@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.9.10
+VER        = 4.0.27
 
 THISAPP    = mtools-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 19bc1f06e9c5865b8ad20b1ddd976f5f
+$(DL_FILE)_MD5 = 5895493cc71bcdc03308bb564bd2061d
 
 install : $(TARGET)
 
