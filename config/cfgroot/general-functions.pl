@@ -601,7 +601,7 @@ sub checksubnets
 		foreach my $key (keys %ipsecconf){
 			if ($ipsecconf{$key}[11] ne '' && $ipsecconf{$key}[36] eq ""){
 				foreach my $ipsecsubitem (split(/\|/, $ipsecconf{$key}[11])) {
-					my ($ipsecip,$ipsecsub) = split (/\//, $ipsecconf{$key}[11]);
+					my ($ipsecip,$ipsecsub) = split (/\//, $ipsecsubitem);
 					$ipsecsub=&iporsubtodec($ipsecsub);
 					if($ipsecconf{$key}[1] ne $ccdname){
 						if ( &IpInSubnet ($ip,$ipsecip,$ipsecsub) ){
