@@ -5,10 +5,13 @@ usr/bin/luac
 #usr/include/lua.hpp
 #usr/include/luaconf.h
 #usr/include/lualib.h
-usr/lib/liblua-5.3.so
-#usr/lib/liblua.a
-#usr/lib/liblua.la
-usr/lib/liblua.so
+#usr/lib/liblua.so
+usr/lib/liblua.so.5.4
+usr/lib/liblua.so.5.4.3
+#usr/lib/lua
+#usr/lib/lua/5.4
 #usr/lib/pkgconfig/lua.pc
+#usr/share/lua
+#usr/share/lua/5.4
 #usr/share/man/man1/lua.1
 #usr/share/man/man1/luac.1
