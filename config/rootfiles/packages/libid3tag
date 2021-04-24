@@ -4,4 +4,4 @@
 #usr/lib/libid3tag.so
 usr/lib/libid3tag.so.0
 usr/lib/libid3tag.so.0.3.0
-usr/lib/pkgconfig/id3tag.pc
+#usr/lib/pkgconfig/id3tag.pc
