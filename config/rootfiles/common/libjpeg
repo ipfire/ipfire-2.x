@@ -9,6 +9,11 @@
 #usr/include/jmorecfg.h
 #usr/include/jpeglib.h
 #usr/include/turbojpeg.h
+#usr/lib/cmake/libjpeg-turbo
+#usr/lib/cmake/libjpeg-turbo/libjpeg-turboConfig.cmake
+#usr/lib/cmake/libjpeg-turbo/libjpeg-turboConfigVersion.cmake
+#usr/lib/cmake/libjpeg-turbo/libjpeg-turboTargets-release.cmake
+#usr/lib/cmake/libjpeg-turbo/libjpeg-turboTargets.cmake
 #usr/lib/libjpeg.so
 usr/lib/libjpeg.so.8
 usr/lib/libjpeg.so.8.2.2
