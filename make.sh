@@ -1302,7 +1302,6 @@ buildipfire() {
   lfsmake2 gnupg
   lfsmake2 hdparm
   lfsmake2 sdparm
-  lfsmake2 mtools
   lfsmake2 whatmask
   lfsmake2 libtirpc
   lfsmake2 conntrack-tools
