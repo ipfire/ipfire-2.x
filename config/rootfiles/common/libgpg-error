@@ -7,7 +7,7 @@ usr/bin/gpg-error
 #usr/lib/libgpg-error.la
 #usr/lib/libgpg-error.so
 usr/lib/libgpg-error.so.0
-usr/lib/libgpg-error.so.0.31.1
+usr/lib/libgpg-error.so.0.32.0
 #usr/lib/pkgconfig/gpg-error.pc
 #usr/share/aclocal/gpg-error.m4
 #usr/share/aclocal/gpgrt.m4
