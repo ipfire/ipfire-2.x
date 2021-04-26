@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.4.0
+VER        = 3.5.1
 
 THISAPP    = libarchive-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6046396255bd7cf6d0f6603a9bda39ac
+$(DL_FILE)_MD5 = c96040b75a14c8ba73238c284147e87f
 
 install : $(TARGET)
 
