@@ -23,8 +23,13 @@
 #usr/include/dvbpsi/dr_0d.h
 #usr/include/dvbpsi/dr_0e.h
 #usr/include/dvbpsi/dr_0f.h
+#usr/include/dvbpsi/dr_10.h
+#usr/include/dvbpsi/dr_11.h
+#usr/include/dvbpsi/dr_12.h
 #usr/include/dvbpsi/dr_13.h
 #usr/include/dvbpsi/dr_14.h
+#usr/include/dvbpsi/dr_1b.h
+#usr/include/dvbpsi/dr_1c.h
 #usr/include/dvbpsi/dr_40.h
 #usr/include/dvbpsi/dr_41.h
 #usr/include/dvbpsi/dr_42.h
@@ -71,9 +76,11 @@
 #usr/include/dvbpsi/sdt.h
 #usr/include/dvbpsi/sis.h
 #usr/include/dvbpsi/tot.h
+#usr/include/dvbpsi/types
+#usr/include/dvbpsi/types/aac_profile.h
 #usr/lib/libdvbpsi.a
 #usr/lib/libdvbpsi.la
 usr/lib/libdvbpsi.so
-usr/lib/libdvbpsi.so.9
-usr/lib/libdvbpsi.so.9.0.0
+usr/lib/libdvbpsi.so.10
+usr/lib/libdvbpsi.so.10.0.0
 #usr/lib/pkgconfig/libdvbpsi.pc
