@@ -44,8 +44,6 @@ my %cgiparams=();
 
 &Header::getcgihash(\%cgiparams);
 
-system('/usr/local/bin/getipstat');
-
 &Header::showhttpheaders();
 &Header::openpage($Lang::tr{'ipts'}, 1, '');
 &Header::openbigbox('100%', 'LEFT');
@@ -84,11 +82,11 @@ print <<END
 END
 ;
 
-# We´ll open the txt files and extract each line, if the line
+# We´ll get iptables output and examine each line, if the line
 # start with an Chain the the name, start- and endline of the
 # chain is extracted into a hash
 
-	open (FILE, '/var/tmp/iptables.txt');
+	open (FILE, '/usr/local/bin/getipstat | ');
 	while (<FILE>){
 
 		$iplines[$lines] = $_;
@@ -206,11 +204,11 @@ print <<END
 END
 ;
 
-# We´ll open the txt files and extract each line, if the line
+# We´ll get iptables output and examine each line, if the line
 # start with an Chain the the name, start- and endline of the
 # chain is extracted into a hash
 
-	open (FILE, '/var/tmp/iptablesmangle.txt');
+	open (FILE, '/usr/local/bin/getipstat -m | ');
 	while (<FILE>){
 
 		$ipmlines[$manlines] = $_;
@@ -333,11 +331,11 @@ print <<END
 END
 ;
 
-# We´ll open the txt files and extract each line, if the line
+# We´ll get iptables output and examine each line, if the line
 # start with an Chain the the name, start- and endline of the
 # chain is extracted into a hash
 
-	open (FILE, '/var/tmp/iptablesnat.txt');
+	open (FILE, '/usr/local/bin/getipstat -n | ');
 	while (<FILE>){
 
 		$ipnatlines[$natlines] = $_;
@@ -433,7 +431,3 @@ print "</table></div><br />";
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
-
-system("rm -f /var/tmp/iptables.txt");
-system("rm -f /var/tmp/iptablesmangle.txt");
-system("rm -f /var/tmp/iptablesnat.txt");
