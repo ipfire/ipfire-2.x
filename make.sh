@@ -1426,7 +1426,6 @@ buildipfire() {
   lfsmake2 libmad
   lfsmake2 libogg
   lfsmake2 libvorbis
-  lfsmake2 libdvbpsi
   lfsmake2 flac
   lfsmake2 lame
   lfsmake2 sox
