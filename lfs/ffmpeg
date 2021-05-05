@@ -36,6 +36,14 @@ PAK_VER    = 11
 
 DEPS       = sdl lame libvorbis xvid
 
+ifeq "$(BUILD_ARCH)" "armv5tel"
+	LDFLAGS += -latomic
+endif
+
+ifeq "$(BUILD_ARCH)" "riscv64"
+	LDFLAGS += -latomic
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
