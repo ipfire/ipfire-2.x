@@ -44,7 +44,8 @@ ifeq "$(ROOT)" ""
 	--enable-shared \
 	--with-system-expat \
 	--with-system-ffi \
-	--with-ensurepip
+	--with-ensurepip \
+	ax_cv_c_float_words_bigendian=no
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
   CONFIGURE_ARGS = \
