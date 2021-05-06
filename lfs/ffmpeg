@@ -86,7 +86,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
-	cd $(DIR_APP) && ./configure \
+	cd $(DIR_APP) && \
+		CFLAGS="$(CFLAGS)" \
+		LDFLAGS="$(LDFLAGS)" \
+		./configure \
 		--prefix=/usr \
 		--enable-shared \
 		--enable-gpl \
