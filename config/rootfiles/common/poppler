@@ -170,10 +170,10 @@ usr/lib/libpoppler-cpp.so.0
 usr/lib/libpoppler-cpp.so.0.9.0
 #usr/lib/libpoppler-glib.so
 usr/lib/libpoppler-glib.so.8
-usr/lib/libpoppler-glib.so.8.20.0
+usr/lib/libpoppler-glib.so.8.21.0
 #usr/lib/libpoppler.so
-usr/lib/libpoppler.so.109
-usr/lib/libpoppler.so.109.0.0
+usr/lib/libpoppler.so.110
+usr/lib/libpoppler.so.110.0.0
 #usr/lib/pkgconfig/poppler-cpp.pc
 #usr/lib/pkgconfig/poppler-glib.pc
 #usr/lib/pkgconfig/poppler.pc
