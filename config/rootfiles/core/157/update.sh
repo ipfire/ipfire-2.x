@@ -87,6 +87,7 @@ rm -rf /boot/dtb-*-ipfire-*
 rm -rf /lib/modules
 
 # Remove files
+rm -rf /usr/lib/libboost*.so.1.71.0
 
 # Stop services
 
