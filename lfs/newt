@@ -70,8 +70,11 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr \
-		--without-gpm-support --without-tcl
+	cd $(DIR_APP) && ./configure 		\
+			--prefix=/usr 		\
+			--without-gpm-support 	\
+			--without-tcl 		\
+			--with-python=python3.8
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
