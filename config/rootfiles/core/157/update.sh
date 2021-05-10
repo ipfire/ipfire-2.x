@@ -106,6 +106,7 @@ ldconfig
 /etc/init.d/sshd restart
 /etc/init.d/apache restart
 /etc/init.d/collectd restart
+/etc/init.d/squid restart
 
 # remove lm_sensor config after collectd was started
 # to reserch sensors at next boot with updated kernel
