@@ -39,11 +39,6 @@ usr/lib/libxslt.so.1
 usr/lib/libxslt.so.1.1.28
 #usr/lib/pkgconfig/libexslt.pc
 #usr/lib/pkgconfig/libxslt.pc
-usr/lib/python2.7/site-packages/libxml2.pyc
-#usr/lib/python2.7/site-packages/libxslt.py
-#usr/lib/python2.7/site-packages/libxsltmod.a
-#usr/lib/python2.7/site-packages/libxsltmod.la
-usr/lib/python2.7/site-packages/libxsltmod.so
 #usr/lib/xsltConf.sh
 #usr/share/aclocal/libxslt.m4
 #usr/share/doc/libxslt-1.1.28
