@@ -31,6 +31,7 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+SUP_ARCH   = aarch64 x86_64 i586
 
 CFLAGS    += -O3 -fno-strict-aliasing
 CXXFLAGS  += -O3 -fno-strict-aliasing
