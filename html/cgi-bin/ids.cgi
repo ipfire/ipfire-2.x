@@ -1974,7 +1974,7 @@ sub readrulesfile ($) {
 		my $msg;
 
 		# Gather rule sid and message from the ruleline.
-		if ($line =~ m/.*msg:\s*\"(.*?)\"\; .*sid:\s*(.*?); /) {
+		if ($line =~ m/.*msg:\s*\"(.*?)\"\;.*sid:\s*(.*?); /) {
 			$msg = $1;
 			$sid = $2;
 
