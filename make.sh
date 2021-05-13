@@ -1454,7 +1454,6 @@ buildipfire() {
   lfsmake2 igmpproxy
   lfsmake2 fbset
   lfsmake2 opus
-  lfsmake2 python-six
   lfsmake2 python-pyparsing
   lfsmake2 spice-protocol
   lfsmake2 spice
@@ -1543,7 +1542,6 @@ buildipfire() {
   lfsmake2 python-distutils-extra
   lfsmake2 ddns
   lfsmake2 python3-setuptools-scm
-  lfsmake2 python3-six
   lfsmake2 python3-dateutil
   lfsmake2 python3-jmespath
   lfsmake2 python3-colorama
