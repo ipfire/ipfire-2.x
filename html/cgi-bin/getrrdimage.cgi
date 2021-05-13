@@ -50,7 +50,7 @@ my $graph = $query{'graph'};
 my $range = lc $query{'range'}; # lower case
 
 # Check parameters
-unless(($origin =~ /^\w+?\.cgi$/) && ($graph =~ /^[\w-]+?$/) && ($range ~~ @Graphs::time_ranges)) {
+unless(($origin =~ /^\w+?\.cgi$/) && ($graph =~ /^[\w\-.,; ]+?$/) && ($range ~~ @Graphs::time_ranges)) {
 	# Send HTTP headers
 	_start_png_output();
 	
