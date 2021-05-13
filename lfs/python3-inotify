@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.2.7
+VER        = 0.2.10
 
 THISAPP    = inotify-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ced4c0469f9fd64170d9d907e4aec208
+$(DL_FILE)_MD5 = 33c7ee4a7cde60036a2d2a1a55c7c7c8
 
 install : $(TARGET)
 
@@ -70,6 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && python setup.py install --root=/
+	cd $(DIR_APP) && python3 setup.py install --root=/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
