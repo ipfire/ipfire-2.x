@@ -11610,9 +11610,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/usb/sevseg.h
 #lib/modules/KVER-ipfire/build/include/config/usb/sierra
 #lib/modules/KVER-ipfire/build/include/config/usb/sierra/net.h
-#lib/modules/KVER-ipfire/build/include/config/usb/sisusbvga
 #lib/modules/KVER-ipfire/build/include/config/usb/sisusbvga.h
-#lib/modules/KVER-ipfire/build/include/config/usb/sisusbvga/con.h
 #lib/modules/KVER-ipfire/build/include/config/usb/sl811
 #lib/modules/KVER-ipfire/build/include/config/usb/sl811/hcd
 #lib/modules/KVER-ipfire/build/include/config/usb/sl811/hcd.h
@@ -16388,6 +16386,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/uapi/linux/ncp_fs.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/ncp_mount.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/ncp_no.h
+#lib/modules/KVER-ipfire/build/include/uapi/linux/ncsi.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/ndctl.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/neighbour.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/net.h
