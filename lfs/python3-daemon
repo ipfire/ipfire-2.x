@@ -70,6 +70,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && python setup.py install --root=/
+	cd $(DIR_APP) && python3 setup.py install --root=/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

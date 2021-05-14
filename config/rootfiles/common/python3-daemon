@@ -1,0 +1,14 @@
+#usr/lib/python3.8/site-packages/daemon
+usr/lib/python3.8/site-packages/daemon/__init__.py
+usr/lib/python3.8/site-packages/daemon/_metadata.py
+usr/lib/python3.8/site-packages/daemon/daemon.py
+usr/lib/python3.8/site-packages/daemon/pidfile.py
+usr/lib/python3.8/site-packages/daemon/runner.py
+#usr/lib/python3.8/site-packages/python_daemon-2.1.1-py3.8.egg-info
+#usr/lib/python3.8/site-packages/python_daemon-2.1.1-py3.8.egg-info/PKG-INFO
+#usr/lib/python3.8/site-packages/python_daemon-2.1.1-py3.8.egg-info/SOURCES.txt
+#usr/lib/python3.8/site-packages/python_daemon-2.1.1-py3.8.egg-info/dependency_links.txt
+#usr/lib/python3.8/site-packages/python_daemon-2.1.1-py3.8.egg-info/not-zip-safe
+#usr/lib/python3.8/site-packages/python_daemon-2.1.1-py3.8.egg-info/requires.txt
+#usr/lib/python3.8/site-packages/python_daemon-2.1.1-py3.8.egg-info/top_level.txt
+#usr/lib/python3.8/site-packages/python_daemon-2.1.1-py3.8.egg-info/version_info.json
