@@ -633,6 +633,7 @@ boot/dtb-KVER-ipfire-multi
 #boot/dtb-KVER-ipfire-multi/sun8i-h3-nanopi-m1.dtb
 #boot/dtb-KVER-ipfire-multi/sun8i-h3-nanopi-neo-air.dtb
 #boot/dtb-KVER-ipfire-multi/sun8i-h3-nanopi-neo.dtb
+#boot/dtb-KVER-ipfire-multi/sun8i-h3-nanopi-r1.dtb
 #boot/dtb-KVER-ipfire-multi/sun8i-h3-orangepi-2.dtb
 #boot/dtb-KVER-ipfire-multi/sun8i-h3-orangepi-lite.dtb
 #boot/dtb-KVER-ipfire-multi/sun8i-h3-orangepi-one.dtb
@@ -660,7 +661,7 @@ boot/dtb-KVER-ipfire-multi
 #boot/dtb-KVER-ipfire-multi/vexpress-v2p-ca5s.dtb
 #boot/dtb-KVER-ipfire-multi/vexpress-v2p-ca9.dtb
 #boot/dtb-KVER-ipfire-multi/xenvm-4.2.dtb
-#boot/vmlinuz-KVER-ipfire-multi
+boot/vmlinuz-KVER-ipfire-multi
 etc/modprobe.d/framebuffer.conf
 etc/modprobe.d/ipv6.conf
 #lib/modules
