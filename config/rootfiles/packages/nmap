@@ -1,9 +1,5 @@
-usr/bin/ndiff
 usr/bin/nmap
 usr/bin/nping
-#usr/bin/uninstall_ndiff
-usr/lib/python2.7/site-packages/ndiff.py
-#usr/lib/python2.7/site-packages/ndiff.pyc
 #usr/share/man/de/man1/nmap.1
 #usr/share/man/es/man1/nmap.1
 #usr/share/man/fr/man1/nmap.1
@@ -15,7 +11,6 @@ usr/lib/python2.7/site-packages/ndiff.py
 #usr/share/man/hu/man1/nmap.1
 #usr/share/man/it/man1/nmap.1
 #usr/share/man/ja/man1/nmap.1
-#usr/share/man/man1/ndiff.1
 #usr/share/man/man1/nmap.1
 #usr/share/man/man1/nping.1
 #usr/share/man/pl
