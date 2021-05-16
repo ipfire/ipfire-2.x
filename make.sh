@@ -1345,6 +1345,7 @@ buildipfire() {
   lfsmake2 Crypt-PasswdMD5
   lfsmake2 Net-Telnet
   lfsmake2 python-setuptools
+  lfsmake2 python3-setuptools
   lfsmake2 python3-inotify
   lfsmake2 python3-docutils
   lfsmake2 python3-daemon
