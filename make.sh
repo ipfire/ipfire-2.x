@@ -1346,7 +1346,6 @@ buildipfire() {
   lfsmake2 Net-Telnet
   lfsmake2 python-setuptools
   lfsmake2 python3-inotify
-  lfsmake2 python-docutils
   lfsmake2 python3-docutils
   lfsmake2 python3-daemon
   lfsmake2 glib
