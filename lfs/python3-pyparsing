@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 2.2.0
+VER        = 2.4.7
 
 THISAPP    = pyparsing-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = python-pyparsing
-PAK_VER    = 2
+PROG       = python3-pyparsing
+PAK_VER    = 3
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0214e42d63af850256962b6744c948d9
+$(DL_FILE)_MD5 = f0953e47a0112f7a65aec2305ffdf7b4
 
 install : $(TARGET)
 
@@ -77,6 +77,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && python setup.py install
+	cd $(DIR_APP) && python3 setup.py install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

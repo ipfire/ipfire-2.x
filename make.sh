@@ -1453,7 +1453,7 @@ buildipfire() {
   lfsmake2 elinks
   lfsmake2 igmpproxy
   lfsmake2 opus
-  lfsmake2 python-pyparsing
+  lfsmake2 python3-pyparsing
   lfsmake2 spice-protocol
   lfsmake2 spice
   lfsmake2 sdl
