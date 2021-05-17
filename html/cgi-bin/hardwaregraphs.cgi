@@ -38,10 +38,10 @@ my %mainsettings = ();
 my %sensorsettings = ();
 
 my @sensorsgraphs = ();
-my @sensorsdir = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/`;
+my @sensorsdir = &General::system_output("ls", "-dA", "$mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/");
 foreach (@sensorsdir){
 	chomp($_);chop($_);
-	foreach (`ls $_/*`){
+	foreach (&General::system_output("ls", "$_/*") ){
 		chomp($_);
 		push(@sensorsgraphs,$_);
 	}
@@ -97,6 +97,7 @@ if ( $querry[0] =~ "hwtemp"){
 		&General::writehash("${General::swroot}/sensors/settings", \%sensorsettings);
 	}
 
+	# This should be save, because no user given content will be processed.
 	my @disks = `ls -1 /sys/block | grep -E '^sd|^nvme' | sort | uniq`;
 
 	foreach (@disks){
@@ -109,31 +110,31 @@ if ( $querry[0] =~ "hwtemp"){
 		&Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/thermal-thermal_zone* 2>/dev/null` ) {
+	if ( &General::system_output("ls", "$mainsettings{'RRDLOG'}/collectd/localhost/thermal-thermal_zone*") ) {
 		&Header::openbox('100%', 'center', "ACPI Thermal-Zone Temp $Lang::tr{'graph'}");
 		&Graphs::makegraphbox("hardwaregraphs.cgi","thermaltemp","day");
 		&Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/temperature-* 2>/dev/null` ) {
+	if ( &General::system_output("ls", "$mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/temperature-*") ) {
 		&Header::openbox('100%', 'center', "hwtemp $Lang::tr{'graph'}");
 		&Graphs::makegraphbox("hardwaregraphs.cgi","hwtemp","day");
 		Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/fanspeed-* 2>/dev/null` ) {
+	if ( &General::system_output("ls", "$mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/fanspeed-*") ) {
 		&Header::openbox('100%', 'center', "hwfan $Lang::tr{'graph'}");
 		&Graphs::makegraphbox("hardwaregraphs.cgi","hwfan","day");
 		&Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/voltage-* 2>/dev/null` ) {
+	if ( &General::system_output("ls", "$mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/voltage-*") ) {
 		&Header::openbox('100%', 'center', "hwvolt $Lang::tr{'graph'}");
 		&Graphs::makegraphbox("hardwaregraphs.cgi","hwvolt","day");
 		&Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-* 2>/dev/null` ) {
+	if ( &General::system_output("ls", "$mainsettings{'RRDLOG'}/collectd/localhost/sensors-*") ) {
 		sensorsbox();
 	}
 	&Header::closebigbox();
