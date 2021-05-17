@@ -109,8 +109,12 @@ chmod -x \
 	/var/ipfire/fwhosts/icmp-types \
 	/var/ipfire/ovpn/ovpn-leases.db
 
-chown -R root:root /var/ipfire/urlfilter/bin
-chown -R root:root /var/ipfire/updatexlrator/bin
+chown -R root:root \
+	/var/ipfire/updatexlrator/bin \
+	/var/ipfire/urlfilter/bin
+
+chown root:root \
+	/srv/web/ipfire/cgi-bin/cachemgr.cgi
 
 # Delete scrubbed files
 rm -f \
