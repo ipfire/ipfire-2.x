@@ -487,6 +487,6 @@ sub SortDataFile
 # Build the configuration file
 #
 sub BuildConfiguration {
-    system '/usr/local/bin/rebuildhosts';
-    system '/usr/local/bin/unboundctrl reload &>/dev/null';
+    &General::system('/usr/local/bin/rebuildhosts');
+    &General::system('/usr/local/bin/unboundctrl', 'reload');
 }
