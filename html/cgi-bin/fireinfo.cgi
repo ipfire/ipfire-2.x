@@ -49,14 +49,14 @@ if ( -e "$configfile" ) {
 if ("$fireinfosettings{'ACTION'}" eq "trigger") {
 	if ($fireinfosettings{'ENABLE_FIREINFO'} eq 'off') 	{
 		&General::log($Lang::tr{'fireinfo is enabled'});
-		system ('/usr/bin/touch', $configfile);
+		&General::system('/usr/bin/touch', $configfile);
 		$fireinfosettings{'ENABLE_FIREINFO'} = 'on';
 	} else {
 		&General::log($Lang::tr{'fireinfo is disabled'});
 		unlink "$configfile";
 		$fireinfosettings{'ENABLE_FIREINFO'} = 'off';
 	}
-	system("/usr/local/bin/fireinfoctrl &");
+	&General::system_background("/usr/local/bin/fireinfoctrl");
 }
 
 &Header::openpage('Fireinfo', 1, '');
