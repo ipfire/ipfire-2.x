@@ -1,2 +1,3 @@
 usr/sbin/ethtool
+#usr/share/bash-completion/completions/ethtool
 #usr/share/man/man8/ethtool.8
