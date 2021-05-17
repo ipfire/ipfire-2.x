@@ -75,12 +75,12 @@ my $fwoptions 		= "${General::swroot}/optionsfw/settings";
 my $configovpn		= "${General::swroot}/ovpn/settings";
 my $configipsecrw	= "${General::swroot}/vpn/settings";
 
-unless (-e $confignet)    { system("touch $confignet"); }
-unless (-e $confighost)   { system("touch $confighost"); }
-unless (-e $configgrp)    { system("touch $configgrp"); }
-unless (-e $configsrv)    { system("touch $configsrv"); }
-unless (-e $configsrvgrp) { system("touch $configsrvgrp"); }
-unless (-e $configlocationgrp) { system("touch $configlocationgrp"); }
+unless (-e $confignet)    { &General::system("touch", "$confignet"); }
+unless (-e $confighost)   { &General::system("touch", "$confighost"); }
+unless (-e $configgrp)    { &General::system("touch", "$configgrp"); }
+unless (-e $configsrv)    { &General::system("touch", "$configsrv"); }
+unless (-e $configsrvgrp) { &General::system("touch", "$configsrvgrp"); }
+unless (-e $configlocationgrp) { &General::system("touch $configlocationgrp"); }
 
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
