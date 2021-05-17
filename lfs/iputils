@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -71,8 +71,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make ping tracepath
-	cd $(DIR_APP) && install -m 4755 ping /usr/bin
+	cd $(DIR_APP) && install -m 0755 ping /usr/bin
 	cd $(DIR_APP) && install -m 0755 tracepath /usr/bin
+
+	# Allow execution of /usr/bin/ping by other users than "root"
+	setcap cap_net_raw+ep /usr/bin/ping
 
 	# Some scripts expect ping in /bin/ping.
 	ln -svf ../usr/bin/ping /bin/ping
