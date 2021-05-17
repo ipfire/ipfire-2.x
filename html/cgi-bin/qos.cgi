@@ -104,7 +104,7 @@ $qossettings{'TOS'} = '';
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
 &Header::getcgihash(\%qossettings);
 
-$qossettings{'RED_DEV'} = `cat /var/ipfire/red/iface`;
+$qossettings{'RED_DEV'} = &General::get_red_interface();
 
 my %color = ();
 my %mainsettings = ();
@@ -542,8 +542,8 @@ elsif ($qossettings{'ACTION'} eq $Lang::tr{'status'} )
 	&Header::openbox('100%', 'left', 'QoS Status');
 	if ($qossettings{'ENABLED'} eq 'on'){
 		my $output = "";
-		$output = `/usr/local/bin/qosctrl status`;
-		$output = &Header::cleanhtml($output,"y");
+		my @output = &General::system_output("/usr/local/bin/qosctrl", "status");
+		$output = &Header::cleanhtml(@output[0],"y");
 		print "<pre>$output</pre>\n";
 	} else { print "$Lang::tr{'QoS not enabled'}"; }
 	&Header::closebox();
