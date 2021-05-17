@@ -571,12 +571,13 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	# Setup logging
-	if args.verbose == 1:
-		loglevel = logging.INFO
-	elif args.verbose >= 2:
-		loglevel = logging.DEBUG
-	else:
-		loglevel = logging.WARN
+	loglevel = logging.WARN
+
+	if args.verbose:
+		if args.verbose == 1:
+			loglevel = logging.INFO
+		elif args.verbose >= 2:
+			loglevel = logging.DEBUG
 
 	setup_logging(loglevel)
 
