@@ -36,8 +36,8 @@ foreach $field (@fields) {
 	}
 }
 
-my $interface = `cat /var/ipfire/red/iface 2>/dev/null`;
-my @data_now = `ip -s link show $interface 2>/dev/null`;
+my $interface = &General::get_red_interface();
+my @data_now = &General::system_output("ip", "-s", "link", "show", "$interface");
 
 my $lastline;
 my $rxb_now = 0;
