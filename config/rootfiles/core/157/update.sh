@@ -107,7 +107,9 @@ ldconfig
 chmod -s /usr/bin/gpg
 
 # Delete scrubbed files
-rm -f /usr/lib/openssh/ssh-keysign
+rm -f \
+	/usr/lib/dma-mbox-create \
+	/usr/lib/openssh/ssh-keysign
 
 # Start services
 /etc/init.d/sshd restart
