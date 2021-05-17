@@ -254,7 +254,10 @@ sub viewkey
 
   if ( -e $key )
   {
-    my @temp = split(/ /,`/usr/bin/ssh-keygen -l -f $key`);
+    # Use safe system_output function to call ssh-keygen and get the output from the tool.
+    my @ssh_keygen = &General::system_output("/usr/bin/ssh-keygen", "-l", -"-f", "$key");
+
+    my @temp = split(/ /, @ssh_keygen);
     my $keysize = &Header::cleanhtml($temp[0],"y");
     my $fingerprint = &Header::cleanhtml($temp[1],"y");
     print "<tr><td><code>$key</code></td><td align='center'>$name</td><td><code>$fingerprint</code></td><td align='center'>$keysize</td></tr>\n";
@@ -264,8 +267,7 @@ sub viewkey
 sub printactivelogins()
 {
 	# print active SSH logins (grep outpout of "who -s")
-	my $command = "who -s";
-	my @output = `$command`;
+	my @output = &General::system_output("who", "-s");
 	chomp(@output);
 
 	my $id = 0;
