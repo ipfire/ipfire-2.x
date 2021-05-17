@@ -1452,7 +1452,6 @@ buildipfire() {
   lfsmake2 collectd
   lfsmake2 elinks
   lfsmake2 igmpproxy
-  lfsmake2 fbset
   lfsmake2 opus
   lfsmake2 python-pyparsing
   lfsmake2 spice-protocol
@@ -1559,7 +1558,6 @@ buildipfire() {
   lfsmake2 libstatgrab
   lfsmake2 sarg
   lfsmake2 nginx
-  lfsmake2 sendEmail
   lfsmake2 sysbench
   lfsmake2 strace
   lfsmake2 ltrace
