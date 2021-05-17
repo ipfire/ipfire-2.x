@@ -103,6 +103,9 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Fix file permissions changed
+chmod -s /usr/bin/gpg
+
 # Start services
 /etc/init.d/sshd restart
 /etc/init.d/apache restart
