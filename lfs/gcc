@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 10.3.0
+VER        = 11.1.0
 
 GMP_VER    = 6.2.1
 MPFR_VER   = 4.1.0
@@ -203,7 +203,7 @@ gmp-$(GMP_VER).tar.xz = $(DL_FROM)/gmp-$(GMP_VER).tar.xz
 mpfr-$(MPFR_VER).tar.xz = $(DL_FROM)/mpfr-$(MPFR_VER).tar.xz
 mpc-$(MPC_VER).tar.gz = $(DL_FROM)/mpc-$(MPC_VER).tar.gz
 
-$(DL_FILE)_MD5			= 443c15b92614a3ce8f22e3b24ca2226a
+$(DL_FILE)_MD5			= 77f6252be0861ab918042acf42bc10ff
 gmp-$(GMP_VER).tar.xz_MD5	= 0b82665c4a92fd2ade7440c13fcaa42b
 mpfr-$(MPFR_VER).tar.xz_MD5	= bdd3d5efba9c17da8d83a35ec552baef
 mpc-$(MPC_VER).tar.gz_MD5	= 9f16c976c25bb0f76b50be749cd7a3a8
