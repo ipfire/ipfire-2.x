@@ -105,10 +105,12 @@ ldconfig
 
 # Fix file permissions changed
 chmod -s /usr/bin/gpg
-chmod -x /var/ipfire/fwhosts/icmp-types
+chmod -x \
+	/var/ipfire/fwhosts/icmp-types \
+	/var/ipfire/ovpn/ovpn-leases.db
+
 chown -R root:root /var/ipfire/urlfilter/bin
 chown -R root:root /var/ipfire/updatexlrator/bin
-chmod 600 /var/ipfire/ovpn/ovpn-leases.db
 
 # Delete scrubbed files
 rm -f \
