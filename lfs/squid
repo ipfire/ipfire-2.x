@@ -149,7 +149,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown -R squid:squid /var/log/squid /var/log/cache /var/log/updatexlrator
 
 	cp /usr/lib/squid/cachemgr.cgi /srv/web/ipfire/cgi-bin/cachemgr.cgi
-	chown nobody.nobody /srv/web/ipfire/cgi-bin/cachemgr.cgi
+	chown root:root /srv/web/ipfire/cgi-bin/cachemgr.cgi
 
 	cp -f $(DIR_SRC)/config/updxlrator/updxlrator /usr/sbin/updxlrator
 	cp -f $(DIR_SRC)/config/updxlrator/checkup /var/ipfire/updatexlrator/bin/checkup
