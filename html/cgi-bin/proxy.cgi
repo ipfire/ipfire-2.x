@@ -32,7 +32,7 @@ require "${General::swroot}/header.pl";
 
 require "${General::swroot}/ids-functions.pl";
 
-my @squidversion = `/usr/sbin/squid -v`;
+my @squidversion = &General::system_output("/usr/sbin/squid", "-v");
 my $http_port='81';
 my $https_port='444';
 
@@ -385,7 +385,7 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		$errormessage = $Lang::tr{'advproxy errmsg mem cache size'};
 		goto ERROR;
 	}
-	my @free = `/usr/bin/free`;
+	my @free = &General::system_output("/usr/bin/free");
 	$free[1] =~ m/(\d+)/;
 	$cachemem = int $1 / 2048;
 	if ($proxysettings{'CACHE_MEM'} > $cachemem) {
