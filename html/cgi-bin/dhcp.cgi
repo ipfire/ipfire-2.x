@@ -130,6 +130,15 @@ open(FILE, "$filename2") or die 'Unable to open fixed leases file.';
 our @current2 = <FILE>;
 close(FILE);
 
+# Open and read-in file which contains the list of allowed advanced options.
+open(FILE, $filename3) or die "Could not open $filename3. $!\n"
+
+# Grab file content.
+my @advoptions_list = <FILE>;
+
+# Close file handle.
+close(FILE);
+
 # Check Settings1 first because they are needed by &buildconf
 if ($dhcpsettings{'ACTION'} eq $Lang::tr{'save'}) {
     foreach my $itf (@ITFs) {
@@ -338,7 +347,7 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'add'}.'1' &&
 	map ($dhcpsettings{"ADVOPT_SCOPE_$_"} = 'off', @ITFs);	# force global
     } elsif (ValidNewOption ($dhcpsettings{'ADVOPT_NAME'} . ' ' . $dhcpsettings{'ADVOPT_DATA'})) {
 	#was a new option
-    } elsif (! `grep "\$option $dhcpsettings{'ADVOPT_NAME'} " $filename3`) {
+    } elsif (! grep(/option $dhcpsettings{'ADVOPT_NAME'}/, @advoptions_list)) {
 	$errormessage=$Lang::tr{'dhcp advopt unknown'}.': '.$dhcpsettings{'ADVOPT_NAME'};
     }
 
@@ -714,7 +723,11 @@ if ($dhcpsettings{'KEY1'} ne '') {
 }
 
 #search if the 'option' is in the list and print the syntax model
-my $opt = `grep "\$option $dhcpsettings{'ADVOPT_NAME'} " $filename3`;
+my @opt = grep(/option $dhcpsettings{'ADVOPT_NAME'}/, @advoptions_list);
+
+# Assign array element to variable and remove newlines.
+my $opt = chomp(@opt[0]);
+
 if ($opt ne '') {
    $opt =~ s/option $dhcpsettings{'ADVOPT_NAME'}/Syntax:/;  # "option xyz abc" => "syntax: abc"
    $opt =~ s/;//;
