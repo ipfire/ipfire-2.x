@@ -105,6 +105,7 @@ ldconfig
 
 # Fix file permissions changed
 chmod -s /usr/bin/gpg
+chmod -x /var/ipfire/fwhosts/icmp-types
 
 # Delete scrubbed files
 rm -f \
