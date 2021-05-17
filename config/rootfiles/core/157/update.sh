@@ -107,6 +107,7 @@ ldconfig
 chmod -s /usr/bin/gpg
 chmod -x /var/ipfire/fwhosts/icmp-types
 chown -R root:root /var/ipfire/urlfilter/bin
+chown -R root:root /var/ipfire/updatexlrator/bin
 
 # Delete scrubbed files
 rm -f \
