@@ -1518,7 +1518,6 @@ buildipfire() {
   lfsmake2 nut
   lfsmake2 watchdog
   lfsmake2 libpri
-  lfsmake2 libsrtp
   lfsmake2 usb_modeswitch
   lfsmake2 usb_modeswitch_data
   lfsmake2 zerofree
