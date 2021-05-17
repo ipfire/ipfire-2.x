@@ -171,6 +171,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -fs /bin/false /var/ipfire/updatexlrator/autocheck/cron.weekly
 
 	chown -R nobody:nobody /var/ipfire/updatexlrator
+	chown -R root:root /var/ipfire/updatexlrator/bin
 	chown nobody.squid /var/updatecache
 	chown nobody.squid /var/updatecache/download
 	chown nobody.squid /var/updatecache/metadata
@@ -186,7 +187,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown nobody.nobody /srv/web/ipfire/html/proxy.pac
 	ln -sf /srv/web/ipfire/html/proxy.pac /srv/web/ipfire/html/wpad.dat
 
-	#Copy stylesheets for the errorpages
+	# Copy stylesheets for the errorpages
 	cp -f $(DIR_SRC)/config/proxy/errorpage-ipfire.css /var/ipfire/proxy/
 	cp -f /etc/squid/errorpage.css /var/ipfire/proxy/errorpage-squid.css
 
