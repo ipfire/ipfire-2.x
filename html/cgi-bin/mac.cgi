@@ -94,7 +94,7 @@ if ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {
 	}
 }
 if ($macsettings{'ACTION'} eq $Lang::tr{'reconnect'}) {
-	system("/usr/local/bin/redctrl restart >/dev/null 2>&1 &");
+	&General::system_background("/usr/local/bin/redctrl", "restart");
 	&Header::openbox('100%', 'left', $Lang::tr{'mac address recon'} );
 	print "<font class='base'>$Lang::tr{'mac address done'}</font>\n";
 	&Header::closebox();	
@@ -107,7 +107,7 @@ if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
 }
 if ($macsettings{'ACTION'} eq $Lang::tr{'reboot'}) {
 	&General::log($Lang::tr{'rebooting ipfire'});
-	system("/usr/local/bin/ipfirereboot boot");
+	&General::system("/usr/local/bin/ipfirereboot", "boot");
 	&Header::openbox('100%', 'left', $Lang::tr{'rebooting ipfire'} );
 	print "&nbsp;&nbsp;<img src='/images/indicator.gif' /><br /><br />";
 	print "<meta http-equiv='refresh' content='120;'>";
