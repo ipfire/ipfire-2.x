@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2010  IPFire Team                                        #
+# Copyright (C) 2005-2021  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -221,13 +221,13 @@ sub isautorun{
 	my $cmd = $_[0];
 	my $col = $_[1];
 	my $status = "<td align='center' $col></td>";
-	my $init = `find /etc/rc.d/rc3.d/S??${cmd} 2>/dev/null`;
-	chomp ($init);
+	my @init = &General::system_output("find", "/etc/rc.d/rc3.d/S??${cmd}");
+	my $init = chomp(@init[0]);
 	if ($init ne ''){
 		$status = "<td align='center' $col><a href='services.cgi?$_!disable'><img alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' border='0' width='16' height='16' /></a></td>";
 	}
-	$init = `find /etc/rc.d/rc3.d/off/S??${cmd} 2>/dev/null`;
-	chomp ($init);
+	@init = &General::system_output("find", "/etc/rc.d/rc3.d/off/S??${cmd}");
+	my $init = chomp (@init[0]);
 	if ($init ne ''){
 		$status = "<td align='center' $col><a href='services.cgi?$_!enable'><img alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' border='0' width='16' height='16' /></a></td>";
 	}
@@ -297,7 +297,8 @@ sub isrunningaddon{
 	my $exename;
 	my @memory;
 
-	my $testcmd = `/usr/local/bin/addonctrl $_ status 2>/dev/null`;
+	my @testcmd = &General::system_output("/usr/local/bin/addonctrl", "$_", "status");
+	my $testcmd = @testcmd[0];
 
 	if ( $testcmd =~ /is\ running/ && $testcmd !~ /is\ not\ running/){
 		$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
