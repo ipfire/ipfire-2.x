@@ -53,8 +53,8 @@ my $partitionsfile = "/var/ipfire/extrahd/partitions";
 my @dummy = ( ${Header::colourgreen}, ${Header::colourred} );
 undef (@dummy);
 
-system("/usr/local/bin/extrahdctrl scanhd ide >/dev/null");
-system("/usr/local/bin/extrahdctrl scanhd partitions >/dev/null");
+&General::system("/usr/local/bin/extrahdctrl", "scanhd", "ide");
+&General::system("/usr/local/bin/extrahdctrl", "scanhd", "partitions");
 
 &Header::showhttpheaders();
 
@@ -98,7 +98,7 @@ if ($extrahdsettings{'ACTION'} eq $Lang::tr{'add'})
 UUID=$extrahdsettings{'UUID'};$extrahdsettings{'FS'};$extrahdsettings{'PATH'};
 END
 ;
-	system("/usr/local/bin/extrahdctrl mount $extrahdsettings{'PATH'}");
+	&General::system("/usr/local/bin/extrahdctrl", "mount", "$extrahdsettings{'PATH'}");
 	}
 } 
 elsif ($extrahdsettings{'ACTION'} eq $Lang::tr{'delete'}) 
