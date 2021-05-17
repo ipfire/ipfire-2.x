@@ -1461,7 +1461,6 @@ buildipfire() {
   lfsmake2 libusbredir
   lfsmake2 libseccomp
   lfsmake2 qemu
-  lfsmake2 sane
   lfsmake2 netpbm
   lfsmake2 netsnmpd
   lfsmake2 nagios_nrpe
