@@ -106,6 +106,9 @@ ldconfig
 # Fix file permissions changed
 chmod -s /usr/bin/gpg
 
+# Delete scrubbed files
+rm -f /usr/lib/openssh/ssh-keysign
+
 # Start services
 /etc/init.d/sshd restart
 /etc/init.d/apache restart
