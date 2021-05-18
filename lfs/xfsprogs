@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.7.0
+VER        = 5.11.0
 
 THISAPP    = xfsprogs-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4aeba534cf91f24169c64e1073b9ef27
+$(DL_FILE)_MD5 = 803bcddd983803b339acfb76064dfd84
 
 install : $(TARGET)
 

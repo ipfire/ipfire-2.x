@@ -123,7 +123,6 @@ usr/bin/wbinfo
 #usr/include/samba-4.0/util/idtree.h
 #usr/include/samba-4.0/util/idtree_random.h
 #usr/include/samba-4.0/util/signal.h
-#usr/include/samba-4.0/util/string_wrappers.h
 #usr/include/samba-4.0/util/substitute.h
 #usr/include/samba-4.0/util/tevent_ntstatus.h
 #usr/include/samba-4.0/util/tevent_unix.h
@@ -155,7 +154,7 @@ usr/lib/libndr-standard.so.0
 usr/lib/libndr-standard.so.0.0.1
 usr/lib/libndr.so
 usr/lib/libndr.so.1
-usr/lib/libndr.so.1.0.0
+usr/lib/libndr.so.1.0.1
 usr/lib/libnetapi.so
 usr/lib/libnetapi.so.0
 usr/lib/libnss_winbind.so
@@ -163,8 +162,8 @@ usr/lib/libnss_winbind.so.2
 usr/lib/libnss_wins.so
 usr/lib/libnss_wins.so.2
 usr/lib/libsamba-credentials.so
-usr/lib/libsamba-credentials.so.0
-usr/lib/libsamba-credentials.so.0.0.1
+usr/lib/libsamba-credentials.so.1
+usr/lib/libsamba-credentials.so.1.0.0
 usr/lib/libsamba-errors.so
 usr/lib/libsamba-errors.so.1
 usr/lib/libsamba-hostconfig.so
@@ -184,11 +183,12 @@ usr/lib/libsamdb.so.0
 usr/lib/libsamdb.so.0.0.1
 usr/lib/libsmbclient.so
 usr/lib/libsmbclient.so.0
-usr/lib/libsmbclient.so.0.6.0
+usr/lib/libsmbclient.so.0.7.0
 usr/lib/libsmbconf.so
 usr/lib/libsmbconf.so.0
 usr/lib/libsmbldap.so
 usr/lib/libsmbldap.so.2
+usr/lib/libsmbldap.so.2.1.0
 usr/lib/libtevent-util.so
 usr/lib/libtevent-util.so.0
 usr/lib/libtevent-util.so.0.0.1
@@ -221,7 +221,6 @@ usr/lib/python3.8/site-packages/samba/auth.cpython-38-i386-linux-gnu.so
 usr/lib/python3.8/site-packages/samba/auth_util.py
 usr/lib/python3.8/site-packages/samba/colour.py
 usr/lib/python3.8/site-packages/samba/common.py
-usr/lib/python3.8/site-packages/samba/compat.py
 usr/lib/python3.8/site-packages/samba/credentials.cpython-38-i386-linux-gnu.so
 usr/lib/python3.8/site-packages/samba/crypto.cpython-38-i386-linux-gnu.so
 usr/lib/python3.8/site-packages/samba/dbchecker.py
@@ -280,6 +279,7 @@ usr/lib/python3.8/site-packages/samba/forest_update.py
 usr/lib/python3.8/site-packages/samba/gensec.cpython-38-i386-linux-gnu.so
 usr/lib/python3.8/site-packages/samba/getopt.py
 usr/lib/python3.8/site-packages/samba/gp_ext_loader.py
+usr/lib/python3.8/site-packages/samba/gp_msgs_ext.py
 #usr/lib/python3.8/site-packages/samba/gp_parse
 usr/lib/python3.8/site-packages/samba/gp_parse/__init__.py
 usr/lib/python3.8/site-packages/samba/gp_parse/gp_aas.py
@@ -289,6 +289,8 @@ usr/lib/python3.8/site-packages/samba/gp_parse/gp_ini.py
 usr/lib/python3.8/site-packages/samba/gp_parse/gp_pol.py
 usr/lib/python3.8/site-packages/samba/gp_scripts_ext.py
 usr/lib/python3.8/site-packages/samba/gp_sec_ext.py
+usr/lib/python3.8/site-packages/samba/gp_smb_conf_ext.py
+usr/lib/python3.8/site-packages/samba/gp_sudoers_ext.py
 usr/lib/python3.8/site-packages/samba/gpclass.py
 usr/lib/python3.8/site-packages/samba/gpo.cpython-38-i386-linux-gnu.so
 usr/lib/python3.8/site-packages/samba/graph.py
@@ -358,7 +360,8 @@ usr/lib/python3.8/site-packages/samba/registry.cpython-38-i386-linux-gnu.so
 usr/lib/python3.8/site-packages/samba/remove_dc.py
 #usr/lib/python3.8/site-packages/samba/samba3
 usr/lib/python3.8/site-packages/samba/samba3/__init__.py
-usr/lib/python3.8/site-packages/samba/samba3/libsmb_samba_internal.cpython-38-i386-linux-gnu.so
+usr/lib/python3.8/site-packages/samba/samba3/libsmb_samba_cwrapper.cpython-38-i386-linux-gnu.so
+usr/lib/python3.8/site-packages/samba/samba3/libsmb_samba_internal.py
 usr/lib/python3.8/site-packages/samba/samba3/mdscli.cpython-38-i386-linux-gnu.so
 usr/lib/python3.8/site-packages/samba/samba3/param.cpython-38-i386-linux-gnu.so
 usr/lib/python3.8/site-packages/samba/samba3/passdb.cpython-38-i386-linux-gnu.so
@@ -398,6 +401,8 @@ usr/lib/python3.8/site-packages/samba/tdb_util.py
 #usr/lib/python3.8/site-packages/samba/tests/blackbox/samba_dnsupdate.py
 #usr/lib/python3.8/site-packages/samba/tests/blackbox/smbcacls.py
 #usr/lib/python3.8/site-packages/samba/tests/blackbox/smbcacls_basic.py
+#usr/lib/python3.8/site-packages/samba/tests/blackbox/smbcacls_dfs_propagate_inherit.py
+#usr/lib/python3.8/site-packages/samba/tests/blackbox/smbcacls_propagate_inhertance.py
 #usr/lib/python3.8/site-packages/samba/tests/blackbox/smbcontrol.py
 #usr/lib/python3.8/site-packages/samba/tests/blackbox/smbcontrol_process.py
 #usr/lib/python3.8/site-packages/samba/tests/blackbox/traffic_learner.py
@@ -406,11 +411,14 @@ usr/lib/python3.8/site-packages/samba/tdb_util.py
 #usr/lib/python3.8/site-packages/samba/tests/common.py
 #usr/lib/python3.8/site-packages/samba/tests/complex_expressions.py
 #usr/lib/python3.8/site-packages/samba/tests/core.py
+#usr/lib/python3.8/site-packages/samba/tests/cred_opt.py
 #usr/lib/python3.8/site-packages/samba/tests/credentials.py
 #usr/lib/python3.8/site-packages/samba/tests/dcerpc
 #usr/lib/python3.8/site-packages/samba/tests/dcerpc/__init__.py
 #usr/lib/python3.8/site-packages/samba/tests/dcerpc/array.py
 #usr/lib/python3.8/site-packages/samba/tests/dcerpc/bare.py
+#usr/lib/python3.8/site-packages/samba/tests/dcerpc/binding.py
+#usr/lib/python3.8/site-packages/samba/tests/dcerpc/createtrustrelax.py
 #usr/lib/python3.8/site-packages/samba/tests/dcerpc/dnsserver.py
 #usr/lib/python3.8/site-packages/samba/tests/dcerpc/integer.py
 #usr/lib/python3.8/site-packages/samba/tests/dcerpc/mdssvc.py
@@ -421,6 +429,7 @@ usr/lib/python3.8/site-packages/samba/tdb_util.py
 #usr/lib/python3.8/site-packages/samba/tests/dcerpc/rpc_talloc.py
 #usr/lib/python3.8/site-packages/samba/tests/dcerpc/rpcecho.py
 #usr/lib/python3.8/site-packages/samba/tests/dcerpc/sam.py
+#usr/lib/python3.8/site-packages/samba/tests/dcerpc/samr_change_password.py
 #usr/lib/python3.8/site-packages/samba/tests/dcerpc/srvsvc.py
 #usr/lib/python3.8/site-packages/samba/tests/dcerpc/string_tests.py
 #usr/lib/python3.8/site-packages/samba/tests/dcerpc/testrpc.py
@@ -462,8 +471,14 @@ usr/lib/python3.8/site-packages/samba/tdb_util.py
 #usr/lib/python3.8/site-packages/samba/tests/kcc/kcc_utils.py
 #usr/lib/python3.8/site-packages/samba/tests/kcc/ldif_import_export.py
 #usr/lib/python3.8/site-packages/samba/tests/krb5
+#usr/lib/python3.8/site-packages/samba/tests/krb5/as_canonicalization_tests.py
+#usr/lib/python3.8/site-packages/samba/tests/krb5/compatability_tests.py
 #usr/lib/python3.8/site-packages/samba/tests/krb5/kcrypto.py
+#usr/lib/python3.8/site-packages/samba/tests/krb5/kdc_base_test.py
+#usr/lib/python3.8/site-packages/samba/tests/krb5/kdc_tests.py
+#usr/lib/python3.8/site-packages/samba/tests/krb5/kdc_tgs_tests.py
 #usr/lib/python3.8/site-packages/samba/tests/krb5/raw_testcase.py
+#usr/lib/python3.8/site-packages/samba/tests/krb5/rfc4120_constants.py
 #usr/lib/python3.8/site-packages/samba/tests/krb5/rfc4120_pyasn1.py
 #usr/lib/python3.8/site-packages/samba/tests/krb5/s4u_tests.py
 #usr/lib/python3.8/site-packages/samba/tests/krb5/simple_tests.py
@@ -552,6 +567,7 @@ usr/lib/python3.8/site-packages/samba/tdb_util.py
 #usr/lib/python3.8/site-packages/samba/tests/samdb_api.py
 #usr/lib/python3.8/site-packages/samba/tests/security.py
 #usr/lib/python3.8/site-packages/samba/tests/segfault.py
+#usr/lib/python3.8/site-packages/samba/tests/smb-notify.py
 #usr/lib/python3.8/site-packages/samba/tests/smb.py
 #usr/lib/python3.8/site-packages/samba/tests/smbd_base.py
 #usr/lib/python3.8/site-packages/samba/tests/smbd_fuzztest.py
@@ -564,15 +580,11 @@ usr/lib/python3.8/site-packages/samba/tdb_util.py
 #usr/lib/python3.8/site-packages/samba/tests/upgradeprovisionneeddc.py
 #usr/lib/python3.8/site-packages/samba/tests/usage.py
 #usr/lib/python3.8/site-packages/samba/tests/xattr.py
-#usr/lib/python3.8/site-packages/samba/third_party
-usr/lib/python3.8/site-packages/samba/third_party/__init__.py
-usr/lib/python3.8/site-packages/samba/third_party/iso8601
-usr/lib/python3.8/site-packages/samba/third_party/iso8601/__init__.py
-usr/lib/python3.8/site-packages/samba/third_party/iso8601/iso8601.py
-usr/lib/python3.8/site-packages/samba/third_party/iso8601/test_iso8601.py
+#usr/lib/python3.8/site-packages/samba/trust_utils.py
 usr/lib/python3.8/site-packages/samba/upgrade.py
 usr/lib/python3.8/site-packages/samba/upgradehelpers.py
 usr/lib/python3.8/site-packages/samba/uptodateness.py
+usr/lib/python3.8/site-packages/samba/vgp_sudoers_ext.py
 usr/lib/python3.8/site-packages/samba/werror.cpython-38-i386-linux-gnu.so
 usr/lib/python3.8/site-packages/samba/xattr.py
 usr/lib/python3.8/site-packages/samba/xattr_native.cpython-38-i386-linux-gnu.so
@@ -590,6 +602,7 @@ usr/lib/samba/idmap/rid.so
 usr/lib/samba/idmap/script.so
 usr/lib/samba/idmap/tdb2.so
 #usr/lib/samba/krb5
+usr/lib/samba/krb5/async_dns_krb5_locator.so
 usr/lib/samba/krb5/winbind_krb5_locator.so
 #usr/lib/samba/ldb
 usr/lib/samba/ldb/asq.so
@@ -667,7 +680,7 @@ usr/lib/samba/libldb-key-value-samba4.so
 usr/lib/samba/libldb-tdb-err-map-samba4.so
 usr/lib/samba/libldb-tdb-int-samba4.so
 usr/lib/samba/libldb.so.2
-usr/lib/samba/libldb.so.2.2.1
+usr/lib/samba/libldb.so.2.3.0
 usr/lib/samba/libldbsamba-samba4.so
 usr/lib/samba/liblibcli-lsa3-samba4.so
 usr/lib/samba/liblibcli-netlogon3-samba4.so
@@ -688,9 +701,13 @@ usr/lib/samba/libposix-eadb-samba4.so
 usr/lib/samba/libprinter-driver-samba4.so
 usr/lib/samba/libprinting-migrate-samba4.so
 usr/lib/samba/libpyldb-util.cpython-38-i386-linux-gnu.so.2
+<<<<<<< HEAD
 usr/lib/samba/libpyldb-util.cpython-38-i386-linux-gnu.so.2.2.1
+=======
+usr/lib/samba/libpyldb-util.cpython-38-i386-linux-gnu.so.2.3.0
+>>>>>>> next
 usr/lib/samba/libpytalloc-util.cpython-38-i386-linux-gnu.so.2
-usr/lib/samba/libpytalloc-util.cpython-38-i386-linux-gnu.so.2.3.1
+usr/lib/samba/libpytalloc-util.cpython-38-i386-linux-gnu.so.2.3.2
 usr/lib/samba/libregistry-samba4.so
 usr/lib/samba/libreplace-samba4.so
 usr/lib/samba/libroken-samba4.so.19
@@ -719,7 +736,7 @@ usr/lib/samba/libsys-rw-samba4.so
 usr/lib/samba/libtalloc-report-printf-samba4.so
 usr/lib/samba/libtalloc-report-samba4.so
 usr/lib/samba/libtalloc.so.2
-usr/lib/samba/libtalloc.so.2.3.1
+usr/lib/samba/libtalloc.so.2.3.2
 usr/lib/samba/libtdb-wrap-samba4.so
 usr/lib/samba/libtdb.so.1
 usr/lib/samba/libtdb.so.1.4.3

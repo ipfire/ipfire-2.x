@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 3.4.0
+VER        = 3-6-0
 
-THISAPP    = lm_sensors-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = lm-sensors-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c03675ae9d43d60322110c679416901a
+$(DL_FILE)_MD5 = f60e47b5eb50bbeed48a9f43bb08dd5e
 
 install : $(TARGET)
 
@@ -72,7 +72,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make PREFIX=/usr $(MAKETUNING)
 	cd $(DIR_APP) && make PREFIX=/usr install
 	@rm -rf $(DIR_APP)

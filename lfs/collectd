@@ -106,6 +106,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd/silence-openvpn-errors.patch
 	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd-4.10.9-xfs-compile-fix.patch
 	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/collectd-4.10-libiptc-build-fixes.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/collectd-4.10.9-remove-checks-for-SENSORS_API_VERSION-upper-limit.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/collectd-4.10-disk-plugin-fields.patch
 	cd $(DIR_APP) && autoupdate -v configure.in
 	cd $(DIR_APP) && autoreconf -vfi
 	cd $(DIR_APP)/libltdl && autoreconf -vfi

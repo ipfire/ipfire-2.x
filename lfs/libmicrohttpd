@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.9.71
+VER        = 0.9.73
 
 THISAPP    = libmicrohttpd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libmicrohttpd
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c7e230e9b899282b43d9a9faa41e893d
+$(DL_FILE)_MD5 = 2b15949b1633e4fa487e08cdcc97f0e3
 
 install : $(TARGET)
 

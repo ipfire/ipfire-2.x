@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 4.14.206-ipfire Kernel Configuration
+# Linux/x86 4.14.232 Kernel Configuration
 #
 CONFIG_64BIT=y
 CONFIG_X86_64=y
@@ -5021,7 +5021,6 @@ CONFIG_USB_LCD=m
 CONFIG_USB_FTDI_ELAN=m
 # CONFIG_USB_APPLEDISPLAY is not set
 CONFIG_USB_SISUSBVGA=m
-CONFIG_USB_SISUSBVGA_CON=y
 # CONFIG_USB_LD is not set
 # CONFIG_USB_TRANCEVIBRATOR is not set
 CONFIG_USB_IOWARRIOR=m

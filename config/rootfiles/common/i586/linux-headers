@@ -432,6 +432,7 @@
 #usr/include/linux/ncp_fs.h
 #usr/include/linux/ncp_mount.h
 #usr/include/linux/ncp_no.h
+#usr/include/linux/ncsi.h
 #usr/include/linux/ndctl.h
 #usr/include/linux/neighbour.h
 #usr/include/linux/net.h

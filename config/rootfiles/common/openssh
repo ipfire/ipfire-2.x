@@ -19,7 +19,7 @@ usr/bin/ssh-keygen
 usr/bin/ssh-keyscan
 #usr/lib/openssh
 usr/lib/openssh/sftp-server
-usr/lib/openssh/ssh-keysign
+#usr/lib/openssh/ssh-keysign
 usr/lib/openssh/ssh-pkcs11-helper
 usr/lib/openssh/ssh-sk-helper
 usr/sbin/sshd

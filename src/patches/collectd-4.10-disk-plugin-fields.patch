@@ -1,0 +1,13 @@
+diff --git a/src/disk.c b/src/disk.c
+index 4a78f1bd..c6f9e4bd 100644
+--- a/src/disk.c
++++ b/src/disk.c
+@@ -428,7 +428,7 @@ static int disk_read (void)
+ 	IOObjectRelease (disk_list);
+ /* #endif HAVE_IOKIT_IOKITLIB_H */
+ 
+-#elif KERNEL_LINUX
++#elif 0
+ 	FILE *fh;
+ 	char buffer[1024];
+ 	

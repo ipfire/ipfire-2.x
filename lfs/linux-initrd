@@ -57,18 +57,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# rebuild module deps
 	depmod -a $(KVER)-$(VERSUFIX)
 
-	#skip initrd build on pae and rpi kernel.
-ifneq "$(KCFG)" "-rpi"
-ifneq "$(KCFG)" "-pae"
-
 	# Create initramfs images
 	dracut --force --early-microcode --verbose --strip --xz /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
-
-ifeq "$(KCFG)" "-kirkwood"
-#	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(VERSUFIX)
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(KVER)-$(VERSUFIX)
-	cd /boot && rm initramfs-$(KVER)-$(VERSUFIX).img
-endif
 
 ifeq "$(KCFG)" "-multi"
 	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(KVER)-$(VERSUFIX)
@@ -80,6 +70,4 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 	# dont remove initramfs because grub need this to boot.
 endif
 
-endif
-endif
 	@$(POSTBUILD)

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.06
+VER        = 1.8
 
 THISAPP    = Convert-UUlib-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 92514be4d146e8c4ea1941a7f7472dcb
+$(DL_FILE)_MD5 = fd470299600064c283d9a52348cdb4ef
 
 install : $(TARGET)
 

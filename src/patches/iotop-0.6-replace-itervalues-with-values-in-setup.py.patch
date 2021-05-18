@@ -1,0 +1,11 @@
+--- iotop-0.6/setup.py.orig	2013-05-27 00:44:18.000000000 +0200
++++ iotop-0.6/setup.py	2021-05-08 23:20:44.340837716 +0200
+@@ -7,7 +7,7 @@
+ # Dirty hack to make setup.py install the iotop script to sbin/ instead of bin/
+ # while still honoring the choice of installing into local/ or not.
+ if hasattr(distutils_install, 'INSTALL_SCHEMES'):
+-    for d in distutils_install.INSTALL_SCHEMES.itervalues():
++    for d in distutils_install.INSTALL_SCHEMES.values():
+         if d.get('scripts', '').endswith('/bin'):
+             d['scripts'] = d['scripts'][:-len('/bin')] + '/sbin'
+ 

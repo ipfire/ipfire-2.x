@@ -829,12 +829,9 @@ sub GetBlockedHosts() {
 	my @hosts;
 
 	# Launch helper to get chains from iptables.
-	system('/usr/local/bin/getipstat');
+	open (FILE, '/usr/local/bin/getipstat | ');
 
-	# Open temporary file which contains the chains and rules.
-	open (FILE, '/var/tmp/iptables.txt');
-
-	# Loop through the entire file.
+	# Loop through the entire output.
 	while (<FILE>) {
 		my $line = $_;
 
@@ -863,11 +860,6 @@ sub GetBlockedHosts() {
 
 	# Close filehandle.
 	close(FILE);
-
-	# Remove recently created temporary files of the "getipstat" binary.
-	system("rm -f /var/tmp/iptables.txt");
-	system("rm -f /var/tmp/iptablesmangle.txt");
-	system("rm -f /var/tmp/iptablesnat.txt");
 
 	# Convert entries, sort them, write back and store the sorted entries into new array.
 	my @sorted = map  { $_->[0] }

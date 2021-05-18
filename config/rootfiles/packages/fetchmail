@@ -2,9 +2,7 @@ etc/rc.d/init.d/fetchmail
 root/.fetchmailrc
 usr/bin/fetchmail
 #usr/bin/fetchmailconf
-#usr/lib/python2.7/site-packages/fetchmailconf.py
-#usr/lib/python2.7/site-packages/fetchmailconf.pyc
-#usr/lib/python2.7/site-packages/fetchmailconf.pyo
+#usr/lib/python3.8/site-packages/fetchmailconf.py
 #usr/share/man/man1/fetchmail.1
 #usr/share/man/man1/fetchmailconf.1
 var/ipfire/backup/addons/includes/fetchmail

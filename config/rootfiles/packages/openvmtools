@@ -15,14 +15,12 @@ etc/vmware-tools/tools.conf.example
 lib/udev/rules.d/99-vmware-scsi-udev.rules
 sbin/mount.vmhgfs
 usr/bin/vm-support
-usr/bin/vmhgfs-fuse
 usr/bin/vmtoolsd
 usr/bin/vmware-checkvm
 usr/bin/vmware-hgfsclient
 usr/bin/vmware-namespace-cmd
 usr/bin/vmware-rpctool
 usr/bin/vmware-toolbox-cmd
-usr/bin/vmware-vmblock-fuse
 usr/bin/vmware-xferlogs
 #usr/include/vmGuestLib
 #usr/include/vmGuestLib/includeCheck.h

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -89,7 +89,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-mkdir -vp /var/ipfire/ovpn/n2nconf
 	-mkdir -vp /var/ipfire/ovpn/scripts
 	touch /var/ipfire/ovpn/ovpn-leases.db
-	chmod 700 /var/ipfire/ovpn/ovpn-leases.db
+	chmod 600 /var/ipfire/ovpn/ovpn-leases.db
 	chown -R root:root /var/ipfire/ovpn/scripts
 	chown -R nobody:nobody /var/ipfire/ovpn
 	chmod 700 /var/ipfire/ovpn/certs

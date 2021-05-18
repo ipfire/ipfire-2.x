@@ -9,10 +9,10 @@
 #usr/include/readline/tilde.h
 #usr/lib/libhistory.so
 usr/lib/libhistory.so.8
-usr/lib/libhistory.so.8.0
+usr/lib/libhistory.so.8.1
 #usr/lib/libreadline.so
 usr/lib/libreadline.so.8
-usr/lib/libreadline.so.8.0
+usr/lib/libreadline.so.8.1
 #usr/lib/pkgconfig/readline.pc
 #usr/share/doc/readline
 #usr/share/doc/readline/CHANGES

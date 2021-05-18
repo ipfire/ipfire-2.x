@@ -1,0 +1,8 @@
+prefix=/usr
+libdir=${prefix}/lib
+
+Name: ID3TAG
+Description: libid3tag - ID3 tag manipulation library
+Version: 0.15.1b
+Libs: -L${libdir} -lid3tag -lz
+Cflags:

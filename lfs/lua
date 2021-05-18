@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.3.5
+VER        = 5.4.3
 
 THISAPP    = lua-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4f4b4f323fd3514a68e0ab3da8ce3455
+$(DL_FILE)_MD5 = ef63ed2ecfb713646a7fcc583cf5f352
 
 install : $(TARGET)
 
@@ -70,14 +70,15 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && cp -v src/luaconf.h src/luaconf.h.template.in
-
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/lua/lua-5.3.5-autotoolize.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/lua/lua-5.3.5-shared_library-1.patch
-
-	cd $(DIR_APP) && autoreconf -vfi
-	cd $(DIR_APP) && ./configure --prefix=/usr
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/lua-5.4.3-shared_library-1.patch
+	# install lua pkgconfig file
+	install -v -m 644 ${DIR_SRC}/config/lua/lua.pc \
+			/usr/lib/pkgconfig/lua.pc
+	cd $(DIR_APP) && make all $(MAKETUNING)
+	cd $(DIR_APP) && make INSTALL_TOP=/usr                			\
+			      INSTALL_DATA="cp -d"            			\
+			      INSTALL_MAN=/usr/share/man/man1 			\
+			      TO_LIB="liblua.so liblua.so.5.4 liblua.so.5.4.3"  \
+			 install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

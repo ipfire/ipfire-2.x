@@ -1,5 +1,5 @@
 etc/alternatives/sendmail
-usr/lib/dma-mbox-create
+#usr/lib/dma-mbox-create
 usr/sbin/dma
 usr/sbin/dma-cleanup-spool
 usr/sbin/mailq

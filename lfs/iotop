@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = iotop
-PAK_VER    = 1
+PAK_VER    = 2
 DEPS       =
 
 ###############################################################################
@@ -77,6 +77,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && python setup.py install
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iotop-0.6-replace-itervalues-with-values-in-setup.py.patch
+	cd $(DIR_APP) && python3 setup.py install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

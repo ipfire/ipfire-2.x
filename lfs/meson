@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.56.0
+VER        = 0.58.0
 
 THISAPP    = meson-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 67ce2c0c3eab1b8ee9ddaa1c5143e7c0
+$(DL_FILE)_MD5 = 18ac55e3d6a5acb17b5737eb2a15bb5b
 
 install : $(TARGET)
 

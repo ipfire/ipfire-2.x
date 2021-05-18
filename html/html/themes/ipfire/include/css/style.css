@@ -348,14 +348,14 @@ div.rrdimage > ul {
 	border: none;
 	background: none;
 	cursor: pointer;
-	text-decoration: underline;
+	text-decoration: none;
 }
 .rrdimage button:focus {
 	outline: none;
 	box-shadow: none;
 }
 .rrdimage button.selected {
-	background-color: rgba(135, 203, 0, 0.2);
+	text-decoration: underline;
 }
 
 div.rrdimage > img {

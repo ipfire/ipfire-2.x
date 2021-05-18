@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
@@ -178,8 +178,8 @@ class UnboundDHCPLeasesBridge(object):
 
 		# Dump everything in the logs
 		log.debug("Static hosts:")
-		for hostname, addresses in hosts.items():
-			log.debug("  %-20s : %s" % (hostname, ", ".join(addresses)))
+		for name in hosts:
+			log.debug("  %-20s : %s" % (name, ", ".join(hosts[name])))
 
 		return hosts
 
@@ -402,9 +402,9 @@ class Lease(object):
 
 		address = ipaddress.ip_address(self.ipaddr)
 
-		for subnet, domain in subnets.items():
+		for subnet in subnets:
 			if address in subnet:
-				return domain
+				return subnets[subnet]
 
 		# Fall back to localdomain if no match could be found
 		return "localdomain"
@@ -571,12 +571,13 @@ if __name__ == "__main__":
 	args = parser.parse_args()
 
 	# Setup logging
-	if args.verbose == 1:
-		loglevel = logging.INFO
-	elif args.verbose >= 2:
-		loglevel = logging.DEBUG
-	else:
-		loglevel = logging.WARN
+	loglevel = logging.WARN
+
+	if args.verbose:
+		if args.verbose == 1:
+			loglevel = logging.INFO
+		elif args.verbose >= 2:
+			loglevel = logging.DEBUG
 
 	setup_logging(loglevel)
 

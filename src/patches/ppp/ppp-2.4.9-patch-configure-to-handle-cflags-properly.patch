@@ -1,0 +1,15 @@
+--- ppp-2.4.9.orig/configure	2021-03-30 21:38:27.415735914 +0200
++++ ppp-2.4.9/configure	2021-04-01 19:10:48.632314447 +0200
+@@ -121,9 +121,9 @@
+     rm -f $2
+     if [ -f $1 ]; then
+ 	echo "  $2 <= $1"
+-	sed -e "s,@DESTDIR@,$DESTDIR,g" -e "s,@SYSCONF@,$SYSCONF,g" \
+-	    -e "s,@CROSS_COMPILE@,$CROSS_COMPILE,g" -e "s,@CC@,$CC,g" \
+-	    -e "s,@CFLAGS@,$CFLAGS,g" $1 >$2
++	sed -e "s#@DESTDIR@#$DESTDIR#g" -e "s#@SYSCONF@#$SYSCONF#g" \
++	    -e "s#@CROSS_COMPILE@#$CROSS_COMPILE#g" -e "s#@CC@#$CC#g" \
++	    -e "s#@CFLAGS@#$CFLAGS#g" $1 >$2
+     fi
+ }
+ 
