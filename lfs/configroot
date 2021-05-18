@@ -55,7 +55,7 @@ $(TARGET) :
 			menu.d modem optionsfw \
 			ovpn patches pakfire portfw ppp private proxy/advanced/cre \
 			proxy/calamaris/bin qos/bin red remote sensors suricata time \
-			updatexlrator/bin updatexlrator/autocheck urlfilter/autoupdate urlfilter/bin upnp vpn \
+			updatexlrator/bin updatexlrator/autocheck urlfilter/autoupdate urlfilter/bin vpn \
 			wakeonlan wireless ; do \
 	        mkdir -p $(CONFIG_ROOT)/$$i; \
 	done
@@ -69,7 +69,7 @@ $(TARGET) :
 	    isdn/settings mac/settings main/hosts main/routing main/security main/settings optionsfw/settings \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
 	    ppp/settings-5 ppp/settings proxy/settings proxy/squid.conf proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
-	    qos/tosconfig suricata/settings upnp/settings vpn/config vpn/settings vpn/ipsec.conf \
+	    qos/tosconfig suricata/settings vpn/config vpn/settings vpn/ipsec.conf \
 	    vpn/ipsec.secrets vpn/caconfig wakeonlan/clients.conf wireless/config wireless/settings; do \
 	    touch $(CONFIG_ROOT)/$$i; \
 	done

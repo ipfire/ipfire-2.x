@@ -1307,7 +1307,6 @@ buildipfire() {
   lfsmake2 whatmask
   lfsmake2 libtirpc
   lfsmake2 conntrack-tools
-  lfsmake2 libupnp
   lfsmake2 ipaddr
   lfsmake2 iputils
   lfsmake2 l7-protocols
