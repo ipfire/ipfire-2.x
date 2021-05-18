@@ -90,7 +90,6 @@ etc/rc.d/init.d/template
 etc/rc.d/init.d/udev
 etc/rc.d/init.d/udev_retry
 etc/rc.d/init.d/unbound
-etc/rc.d/init.d/upnpd
 etc/rc.d/init.d/vnstat
 etc/rc.d/init.d/waitdrives
 etc/rc.d/init.d/wlanclient

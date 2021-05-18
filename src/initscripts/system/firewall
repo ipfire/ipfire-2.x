@@ -363,12 +363,6 @@ iptables_init() {
 			-m mark --mark 3 -j SNAT --to-source "${ORANGE_ADDRESS}"
 	fi
 
-	# upnp chain for our upnp daemon
-	iptables -t nat -N UPNPFW
-	iptables -t nat -A PREROUTING -j UPNPFW
-	iptables -N UPNPFW
-	iptables -A FORWARD -m conntrack --ctstate NEW -j UPNPFW
-
 	# RED chain, used for the red interface
 	iptables -N REDINPUT
 	iptables -A INPUT -j REDINPUT
