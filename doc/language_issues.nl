@@ -835,7 +835,10 @@ WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: wildcards
 WARNING: translation string unused: wins server
 WARNING: translation string unused: wins support
+WARNING: translation string unused: wlan clients
 WARNING: translation string unused: wlanap access point
+WARNING: translation string unused: wlanap link dhcp
+WARNING: translation string unused: wlanap link wireless
 WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
