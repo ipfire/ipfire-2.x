@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.3.11
+VER        = 2.4.0
 
 THISAPP    = sarg-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = sarg
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8e30d86b16597aec89ad401c72c761bc
+$(DL_FILE)_MD5 = 1b84509c1a0d55d46148bd957744870f
 
 install : $(TARGET)
 
@@ -81,13 +81,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/sarg/sarg-2.3.11-format.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/sarg/sarg-2.3.11-configure.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/sarg/sarg-2.4.0-format.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/sarg/sarg-2.4.0-configure.patch
 
 	cd $(DIR_APP) && autoreconf -vfi
-
-	# Update gettext Makefile
-	cd $(DIR_APP) && cp -vf /usr/share/gettext/po/Makefile.in.in po/Makefile.in.in
 
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
