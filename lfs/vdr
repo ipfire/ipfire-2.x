@@ -41,6 +41,8 @@ PAK_VER    = 12
 
 DEPS       = vdr_streamdev
 
+CXXFLAGS  += -std=c++11
+
 MAKE_OPTIONS = \
 	PREFIX=/usr \
 	BINDIR=/usr/bin \
@@ -98,6 +100,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/vdr-2.4-gcc-11.patch
 
 	# Compile main package.
 	cd $(DIR_APP) && make $(MAKE_OPTIONS) $(MAKETUNING) vdr include-dir

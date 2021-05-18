@@ -1,0 +1,24 @@
+From 46b480c798c2d5f4acb8874f25e5129f2cf7f224 Mon Sep 17 00:00:00 2001
+From: Klaus Schmidinger <vdr@tvdr.de>
+Date: Wed, 16 Sep 2020 13:30:59 +0200
+Subject: [PATCH] Fixed checking the return value of the Open() call in
+ cFileName::SetOffset()
+
+diff --git a/recording.c b/recording.c
+index 810ef80..1fc34cd 100644
+--- a/recording.c
++++ b/recording.c
+@@ -3025,8 +3025,8 @@ cUnbufferedFile *cFileName::SetOffset(int Number, off_t Offset)
+            }
+         // found a non existing file suffix
+         }
+-     if (Open() >= 0) {
+-        if (!record && Offset >= 0 && file && file->Seek(Offset, SEEK_SET) != Offset) {
++     if (Open()) {
++        if (!record && Offset >= 0 && file->Seek(Offset, SEEK_SET) != Offset) {
+            LOG_ERROR_STR(fileName);
+            return NULL;
+            }
+-- 
+2.26.2
+
