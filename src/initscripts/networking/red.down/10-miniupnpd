@@ -1,6 +1,0 @@
-#!/bin/bash
-
-[ -x /etc/init.d/miniupnpd ] && \
-	/etc/init.d/miniupnpd stop &>/dev/null
-
-exit 0
