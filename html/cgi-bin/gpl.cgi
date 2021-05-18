@@ -60,7 +60,19 @@ END
 ;	
 if ( -e "/usr/share/doc/licenses/GPLv3" ) {
 	print '<textarea rows=\'25\' cols=\'75\' readonly=\'readonly\'>';
-	print `cat /usr/share/doc/licenses/GPLv3`;
+
+	# Open and read-in GPL file content.
+	open(FILE, "/usr/share/doc/licenses/GPLv3");
+
+	# Grab license.
+	my @license = <FILE>;
+
+	# Close filehandle.
+	close(FILE);
+
+	# Print license to textarea.
+	print "@license";
+
 	print '</textarea>';
 }
 else {
