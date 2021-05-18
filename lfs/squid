@@ -96,6 +96,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-kqueue \
 		--disable-esi \
 		--disable-arch-native \
+		--disable-strict-error-checking \
 		--enable-poll \
 		--enable-ident-lookups \
 		--enable-storeio=aufs,diskd,ufs \
