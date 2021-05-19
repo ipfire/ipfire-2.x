@@ -535,7 +535,8 @@ if ($dhcpsettings{'ACTION'} eq '' ) { # First launch from GUI
 	}
     }
     $dhcpsettings{'FIX_ENABLED'} = 'on';
-}
+    $dhcpsettings{'ADVOPT_ENABLED'} = 'on';
+    }
 
 &Header::openpage($Lang::tr{'dhcp configuration'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
