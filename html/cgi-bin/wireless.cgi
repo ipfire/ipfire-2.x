@@ -277,7 +277,7 @@ my @curhosts = <HOSTFILE>;
 close (HOSTFILE);
 
 my $connstate = &Header::connectionstatus();
-my @arp = `/sbin/arp -n`;
+my @arp = &General::system_output("/sbin/arp", "-n");
 shift @arp;
 
 foreach my $line (@current)
