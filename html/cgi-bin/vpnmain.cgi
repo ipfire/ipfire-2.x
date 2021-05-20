@@ -1440,17 +1440,11 @@ END
 	print "					<key>ExtendedAuthEnabled</key>\n";
 	print "					<integer>0</integer>\n";
 
-	# Connect the VPN automatically
-	print "					<key>OnDemandEnabled</key>\n";
-	print "					<integer>1</integer>\n";
-	print "					<key>OnDemandRules</key>\n";
-	print "					<array>\n";
-	print "						<dict>\n";
-	print "							<key>Action</key>\n";
-	print "							<string>Connect</string>\n";
-	print "						</dict>\n";
-	print "					</array>\n";
-
+	# These are not needed, but we provide some default to stop iPhone asking for credentials
+	print "					<key>AuthName</key>\n";
+	print "					<string>$confighash{$key}[1]</string>\n";
+	print "					<key>AuthPassword</key>\n";
+	print "					<string></string>\n";
 	print "				</dict>\n";
 	print "			</dict>\n";
 
