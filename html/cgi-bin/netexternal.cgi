@@ -86,8 +86,7 @@ if ( $querry[0] ne~ ""){
 
 			&General::readhash("${General::swroot}/dhcpc/dhcpcd-$netsettings{'RED_DEV'}.info", \%dhcpinfo);
 
-			my $DNS1=`echo $dhcpinfo{'domain_name_servers'} | cut -f 1 -d " "`;
-			my $DNS2=`echo $dhcpinfo{'domain_name_servers'} | cut -f 2 -d " "`;
+			my ($DNS1, $DNS2) = split(/ /, $dhcpinfo{'domain_name_servers'});
 
 			my $lsetme=0;
 			my $leasetime="";
