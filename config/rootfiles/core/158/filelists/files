@@ -1,3 +1,4 @@
 etc/rc.d/init.d/firewall
+srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/images/apple.png
