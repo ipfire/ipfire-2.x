@@ -360,7 +360,7 @@ sub _get_wireless_status($) {
 	my $intf = shift;
 
 	if (!$wireless_status{$intf}) {
-		$wireless_status{$intf} = `iwconfig $intf`;
+		$wireless_status{$intf} = &General::system_output("iwconfig", "$intf");
 	}
 
 	return $wireless_status{$intf};
