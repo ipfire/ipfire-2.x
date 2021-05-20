@@ -20,6 +20,7 @@
 ###############################################################################
 
 use strict;
+use POSIX qw(strftime);
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -180,11 +181,18 @@ if ($timesettings{'VALID'} eq '')
 }
 
 unless ($errormessage) {
-	$timesettings{'SETMONTH'} = `date +'%m %e %Y %H %M'|cut -c 1-2`;
-	$timesettings{'SETDAY'} = `date +'%m %e %Y %H %M'|cut -c 4-5`;
-	$timesettings{'SETYEAR'} = `date +'%m %e %Y %H %M'|cut -c 7-10`;
-	$timesettings{'SETHOUR'} = `date +'%m %e %Y %H %M'|cut -c 12-13`;
-	$timesettings{'SETMINUTES'} = `date +'%m %e %Y %H %M'|cut -c 15-16`;
+	# Get date and time.
+	my $date = strftime("%m %e %Y %H %M", localtime);
+
+	# Split date string into single values.
+	my ($month, $day, $year, $hour, $minute) = split(/ /, $date);
+
+	# Assign values to the hash.
+	$timesettings{'SETMONTH'} = $month;
+	$timesettings{'SETDAY'} = $day;
+	$timesettings{'SETYEAR'} = $year;
+	$timesettings{'SETHOUR'} = $hour;
+	$timesettings{'SETMINUTES'} = $minute;
 	$_=$timesettings{'SETDAY'};
 	$timesettings{'SETDAY'}=~ tr/ /0/;
 }
