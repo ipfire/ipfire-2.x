@@ -19,11 +19,14 @@
 #                                                                             #
 ###############################################################################
 
+use Data::UUID;
+use MIME::Base64;
 use Net::DNS;
 use File::Copy;
 use File::Temp qw/ tempfile tempdir /;
 use strict;
 use Sort::Naturally;
+use Sys::Hostname;
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
@@ -110,6 +113,7 @@ $cgiparams{'ROOTCERT_EMAIL'} = '';
 $cgiparams{'ROOTCERT_OU'} = '';
 $cgiparams{'ROOTCERT_CITY'} = '';
 $cgiparams{'ROOTCERT_STATE'} = '';
+$cgiparams{'RW_ENDPOINT'} = '';
 $cgiparams{'RW_NET'} = '';
 $cgiparams{'DPD_DELAY'} = '30';
 $cgiparams{'DPD_TIMEOUT'} = '120';
@@ -120,7 +124,37 @@ $cgiparams{'MODE'} = "tunnel";
 $cgiparams{'INTERFACE_MODE'} = "";
 $cgiparams{'INTERFACE_ADDRESS'} = "";
 $cgiparams{'INTERFACE_MTU'} = 1500;
+$cgiparams{'DNS_SERVERS'} = "";
 &Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
+
+my %APPLE_CIPHERS = (
+	"aes256gcm128" => "AES-256-GCM",
+	"aes128gcm128" => "AES-128-GCM",
+	"aes256"       => "AES-256",
+	"aes128"       => "AES-128",
+	"3des"         => "3DES",
+);
+
+my %APPLE_INTEGRITIES = (
+	"sha2_512" => "SHA2-512",
+	"sha2_384" => "SHA2-384",
+	"sha2_256" => "SHA2-256",
+	"sha1"     => "SHA1-160",
+);
+
+my %APPLE_DH_GROUPS = (
+	"768" => 1,
+	"1024" => 2,
+	"1536" => 5,
+	"2048" => 14,
+	"3072" => 15,
+	"4096" => 16,
+	"6144" => 17,
+	"8192" => 18,
+	"e256" => 19,
+	"e384" => 20,
+	"e521" => 21,
+);
 
 ###
 ### Useful functions
@@ -316,6 +350,12 @@ sub writeipsecfiles {
 
 		print CONF "\tleftfirewall=yes\n";
 		print CONF "\tlefthostaccess=yes\n";
+
+		# Always send the host certificate
+		if ($lconfighash{$key}[3] eq 'host') {
+			print CONF "\tleftsendcert=always\n";
+		}
+
 		print CONF "\tright=$lconfighash{$key}[10]\n";
 
 		if ($lconfighash{$key}[3] eq 'net') {
@@ -478,6 +518,13 @@ sub writeipsecfiles {
 		# Fragmentation
 		print CONF "\tfragmentation=yes\n";
 
+		# DNS Servers for RW
+		if ($lconfighash{$key}[3] eq 'host') {
+			my @servers = split(/\|/, $lconfighash{$key}[39]);
+
+			print CONF "\trightdns=" . join(",", @servers) . "\n";
+		}
+
 		print CONF "\n";
 	} #foreach key
 
@@ -505,12 +552,18 @@ if ($ENV{"REMOTE_ADDR"} eq "") {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cgiparams{'KEY'} eq '') {
 	&General::readhash("${General::swroot}/vpn/settings", \%vpnsettings);
 
+	if ($cgiparams{'RW_ENDPOINT'} ne '' && !&General::validip($cgiparams{'RW_ENDPOINT'}) && !&General::validfqdn($cgiparams{'RW_ENDPOINT'})) {
+		$errormessage = $Lang::tr{'ipsec invalid ip address or fqdn for rw endpoint'};
+		goto SAVE_ERROR;
+	}
+
 	if ( $cgiparams{'RW_NET'} ne '' and !&General::validipandmask($cgiparams{'RW_NET'}) ) {
 		$errormessage = $Lang::tr{'urlfilter invalid ip or mask error'};
 		goto SAVE_ERROR;
 	}
 
 	$vpnsettings{'ENABLED'} = $cgiparams{'ENABLED'};
+	$vpnsettings{'RW_ENDPOINT'} = $cgiparams{'RW_ENDPOINT'};
 	$vpnsettings{'RW_NET'} = $cgiparams{'RW_NET'};
 	&General::writehash("${General::swroot}/vpn/settings", \%vpnsettings);
 	&writeipsecfiles();
@@ -1007,7 +1060,7 @@ END
 			&General::log("ipsec", "Creating cacert...");
 			if (open(STDIN, "-|")) {
 				my $opt = " req -x509 -sha256 -nodes";
-				$opt .= " -days 999999";
+				$opt .= " -days 3650";
 				$opt .= " -newkey rsa:4096";
 				$opt .= " -keyout ${General::swroot}/private/cakey.pem";
 				$opt .= " -out ${General::swroot}/ca/cacert.pem";
@@ -1065,7 +1118,7 @@ END
 			print $fh "subjectAltName=$cgiparams{'SUBJECTALTNAME'}" if ($cgiparams{'SUBJECTALTNAME'});
 			close ($fh);
 
-			my $opt = " ca -md sha256 -days 999999";
+			my $opt = " ca -md sha256 -days 825";
 			$opt .= " -batch -notext";
 			$opt .= " -in ${General::swroot}/certs/hostreq.pem";
 			$opt .= " -out ${General::swroot}/certs/hostcert.pem";
@@ -1178,6 +1231,277 @@ END
 	print `/bin/cat ${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1].p12`;
 	exit (0);
 
+# Export Apple profile to browser
+} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'download apple profile'}) {
+	# Read global configuration
+	&General::readhash("${General::swroot}/vpn/settings", \%vpnsettings);
+
+	# Read connections
+	&General::readhasharray("${General::swroot}/vpn/config", \%confighash);
+	my $key = $cgiparams{'KEY'};
+
+	# Create a UUID generator
+	my $uuid = Data::UUID->new();
+
+	my $uuid1 = $uuid->create_str();
+	my $uuid2 = $uuid->create_str();
+
+	my $ca = "";
+	my $ca_uuid = $uuid->create_str();
+
+	my $cert = "";
+	my $cert_uuid = $uuid->create_str();
+
+	# Read and encode the CA & certificate
+	if ($confighash{$key}[4] eq "cert") {
+		my $ca_path = "${General::swroot}/ca/cacert.pem";
+		my $cert_path = "${General::swroot}/certs/$confighash{$key}[1].p12";
+
+		# Read the CA and encode it into Base64
+		open(CA, "<${ca_path}");
+		local($/) = undef; # slurp
+		$ca = MIME::Base64::encode_base64(<CA>);
+		close(CA);
+
+		# Read certificate and encode it into Base64
+		open(CERT, "<${cert_path}");
+		local($/) = undef; # slurp
+		$cert = MIME::Base64::encode_base64(<CERT>);
+		close(CERT);
+	}
+
+	print "Content-Type: application/octet-stream\n";
+	print "Content-Disposition: attachment; filename=" . $confighash{$key}[1] . ".mobileconfig\n";
+	print "\n"; # end headers
+
+	# Use our own FQDN if nothing else is configured
+	my $endpoint = ($vpnsettings{'RW_ENDPOINT'} ne "") ? $vpnsettings{'RW_ENDPOINT'} : &hostname();
+
+	print "<!DOCTYPE plist PUBLIC \"-//Apple//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">\n";
+	print "<plist version=\"1.0\">\n";
+	print "	<dict>\n";
+        print "		<key>PayloadDisplayName</key>\n";
+	print "		<string>$confighash{$key}[1]</string>\n";
+	print "		<key>PayloadIdentifier</key>\n";
+	print "		<string>$confighash{$key}[1]</string>\n";
+	print "		<key>PayloadUUID</key>\n";
+	print "		<string>${uuid1}</string>\n";
+	print "		<key>PayloadType</key>\n";
+	print "		<string>Configuration</string>\n";
+	print "		<key>PayloadVersion</key>\n";
+	print "		<integer>1</integer>\n";
+	print "		<key>PayloadContent</key>\n";
+	print "		<array>\n";
+	print "			<dict>\n";
+	print "				<key>PayloadIdentifier</key>\n";
+	print "				<string>org.example.vpn1.conf1</string>\n";
+	print "				<key>PayloadUUID</key>\n";
+	print "				<string>${uuid2}</string>\n";
+	print "				<key>PayloadType</key>\n";
+	print "				<string>com.apple.vpn.managed</string>\n";
+	print "				<key>PayloadVersion</key>\n";
+	print "				<integer>1</integer>\n";
+	print "				<key>UserDefinedName</key>\n";
+	print "				<string>$confighash{$key}[1]</string>\n";
+	print "				<key>VPNType</key>\n";
+	print "				<string>IKEv2</string>\n";
+	print "				<key>IKEv2</key>\n";
+	print "				<dict>\n";
+	print "					<key>RemoteAddress</key>\n";
+	print "					<string>$endpoint</string>\n";
+
+	# PFS
+	my $pfs = $confighash{$key}[28];
+	if ($pfs eq "on") {
+		print "					<key>EnablePFS</key>\n";
+		print "					<true/>\n";
+	}
+
+	# IKE Cipher Suite
+	print "					<key>IKESecurityAssociationParameters</key>\n";
+	print "					<dict>\n";
+
+	# Encryption
+	foreach my $cipher (split(/\|/,$confighash{$key}[18])) {
+		# Skip all unsupported ciphers
+		next unless (exists $APPLE_CIPHERS{$cipher});
+
+		print "						<key>EncryptionAlgorithm</key>\n";
+		print "						<string>$APPLE_CIPHERS{$cipher}</string>\n";
+		last;
+	}
+
+	# Integrity
+	foreach my $integrity (split(/\|/,$confighash{$key}[19])) {
+		# Skip all unsupported algorithms
+		next unless (exists $APPLE_INTEGRITIES{$integrity});
+
+		print "						<key>IntegrityAlgorithm</key>\n";
+		print "						<string>$APPLE_INTEGRITIES{$integrity}</string>\n";
+		last;
+	}
+
+	# Diffie Hellman Groups
+	foreach my $group (split(/\|/,$confighash{$key}[20])) {
+		# Skip all unsupported algorithms
+		next unless (exists $APPLE_DH_GROUPS{$group});
+
+		print "						<key>DiffieHellmanGroup</key>\n";
+		print "						<string>$APPLE_DH_GROUPS{$group}</string>\n";
+		last;
+	}
+
+	# Lifetime
+	my $lifetime = $confighash{$key}[16] * 60;
+	print "						<key>LifeTimeInMinutes</key>\n";
+	print "						<integer>$lifetime</integer>\n";
+	print "					</dict>\n";
+
+	# ESP Cipher Suite
+	print "					<key>ChildSecurityAssociationParameters</key>\n";
+	print "					<dict>\n";
+
+	# Encryption
+	foreach my $cipher (split(/\|/,$confighash{$key}[21])) {
+		# Skip all unsupported ciphers
+		next unless (exists $APPLE_CIPHERS{$cipher});
+
+		print "						<key>EncryptionAlgorithm</key>\n";
+		print "						<string>$APPLE_CIPHERS{$cipher}</string>\n";
+		last;
+	}
+
+	# Integrity
+	foreach my $integrity (split(/\|/,$confighash{$key}[22])) {
+		# Skip all unsupported algorithms
+		next unless (exists $APPLE_INTEGRITIES{$integrity});
+
+		print "						<key>IntegrityAlgorithm</key>\n";
+		print "						<string>$APPLE_INTEGRITIES{$integrity}</string>\n";
+		last;
+	}
+
+	# Diffie Hellman Groups
+	foreach my $group (split(/\|/,$confighash{$key}[23])) {
+		# Skip all unsupported algorithms
+		next unless (exists $APPLE_DH_GROUPS{$group});
+
+		print "						<key>DiffieHellmanGroup</key>\n";
+		print "						<string>$APPLE_DH_GROUPS{$group}</string>\n";
+		last;
+	}
+
+	# Lifetime
+	my $lifetime = $confighash{$key}[17] * 60;
+	print "						<key>LifeTimeInMinutes</key>\n";
+	print "						<integer>$lifetime</integer>\n";
+	print "					</dict>\n";
+
+
+	# Left ID
+	if ($confighash{$key}[9]) {
+		my $leftid = $confighash{$key}[9];
+
+		# Strip leading @ from FQDNs
+		if ($leftid =~ m/^@(.*)$/) {
+			$leftid = $1;
+		}
+
+		print "					<key>LocalIdentifier</key>\n";
+		print "					<string>$leftid</string>\n";
+	}
+
+	# Right ID
+	if ($confighash{$key}[7]) {
+		my $rightid = $confighash{$key}[7];
+
+		# Strip leading @ from FQDNs
+		if ($rightid =~ m/^@(.*)$/) {
+			$rightid = $1;
+		}
+
+		print "					<key>RemoteIdentifier</key>\n";
+		print "					<string>$rightid</string>\n";
+	}
+
+	if ($confighash{$key}[4] eq "cert") {
+		print "					<key>AuthenticationMethod</key>\n";
+		print "					<string>Certificate</string>\n";
+
+		print "					<key>PayloadCertificateUUID</key>\n";
+		print "					<string>${cert_uuid}</string>\n";
+	} else {
+		print "					<key>AuthenticationMethod</key>\n";
+		print "					<string>SharedSecret</string>\n";
+		print "					<key>SharedSecret</key>\n";
+		print "					<string>$confighash{$key}[5]</string>\n";
+	}
+
+	print "					<key>ExtendedAuthEnabled</key>\n";
+	print "					<integer>0</integer>\n";
+
+	# Connect the VPN automatically
+	print "					<key>OnDemandEnabled</key>\n";
+	print "					<integer>1</integer>\n";
+	print "					<key>OnDemandRules</key>\n";
+	print "					<array>\n";
+	print "						<dict>\n";
+	print "							<key>Action</key>\n";
+	print "							<string>Connect</string>\n";
+	print "						</dict>\n";
+	print "					</array>\n";
+
+	print "				</dict>\n";
+	print "			</dict>\n";
+
+	if ($confighash{$key}[4] eq "cert") {
+		print "			<dict>\n";
+		print "				<key>PayloadIdentifier</key>\n";
+		print "				<string>org.example.vpn1.client</string>\n";
+		print "				<key>PayloadDisplayName</key>\n";
+		print "				<string>$confighash{$key}[1]</string>\n";
+		print "				<key>PayloadUUID</key>\n";
+		print "				<string>${cert_uuid}</string>\n";
+		print "				<key>PayloadType</key>\n";
+		print "				<string>com.apple.security.pkcs12</string>\n";
+		print "				<key>PayloadVersion</key>\n";
+		print "				<integer>1</integer>\n";
+		print "				<key>PayloadContent</key>\n";
+		print "				<data>\n";
+
+		foreach (split /\n/,${cert}) {
+			print "					$_\n";
+		}
+
+		print "				</data>\n";
+		print "			</dict>\n";
+
+		print "			<dict>\n";
+		print "				<key>PayloadIdentifier</key>\n";
+		print "				<string>org.example.ca</string>\n";
+		print "				<key>PayloadUUID</key>\n";
+		print "				<string>${ca_uuid}</string>\n";
+		print "				<key>PayloadType</key>\n";
+		print "				<string>com.apple.security.root</string>\n";
+		print "				<key>PayloadVersion</key>\n";
+		print "				<integer>1</integer>\n";
+		print "				<key>PayloadContent</key>\n";
+		print "				<data>\n";
+
+		foreach (split /\n/,${ca}) {
+			print "					$_\n";
+		}
+
+		print "				</data>\n";
+		print "			</dict>\n";
+	}
+
+	print "		</array>\n";
+	print "	</dict>\n";
+	print "</plist>\n";
+
+	# Done
+	exit(0);
 ###
 ### Display certificate
 ###
@@ -1353,6 +1677,7 @@ END
 		$cgiparams{'INTERFACE_MODE'}		= $confighash{$cgiparams{'KEY'}}[36];
 		$cgiparams{'INTERFACE_ADDRESS'}		= $confighash{$cgiparams{'KEY'}}[37];
 		$cgiparams{'INTERFACE_MTU'}		= $confighash{$cgiparams{'KEY'}}[38];
+		$cgiparams{'DNS_SERVERS'}		= $confighash{$cgiparams{'KEY'}}[39];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -1486,6 +1811,16 @@ END
 			}
 		}
 
+		if ($cgiparams{'TYPE'} eq 'host') {
+			my @servers = split(",", $cgiparams{'DNS_SERVERS'});
+			foreach my $server (@servers) {
+				unless (&Network::check_ip_address($server)) {
+					$errormessage = $Lang::tr{'ipsec dns server address is invalid'};
+					goto VPNCONF_ERROR;
+				}
+			}
+		}
+
 		if ($cgiparams{'ENABLED'} !~ /^(on|off)$/) {
 			$errormessage = $Lang::tr{'invalid input'};
 			goto VPNCONF_ERROR;
@@ -1552,7 +1887,7 @@ END
 
 		# Sign the certificate request
 		&General::log("ipsec", "Signing your cert $cgiparams{'NAME'}...");
-		my $opt = " ca -md sha256 -days 999999";
+		my $opt = " ca -md sha256 -days 825";
 		$opt .= " -batch -notext";
 		$opt .= " -in $filename";
 		$opt .= " -out ${General::swroot}/certs/$cgiparams{'NAME'}cert.pem";
@@ -1825,7 +2160,7 @@ END
 		print $fh "subjectAltName=$cgiparams{'SUBJECTALTNAME'}" if ($cgiparams{'SUBJECTALTNAME'});
 		close ($fh);
 
-		my $opt = " ca -md sha256 -days 999999 -batch -notext";
+		my $opt = " ca -md sha256 -days 825 -batch -notext";
 		$opt .= " -in ${General::swroot}/certs/$cgiparams{'NAME'}req.pem";
 		$opt .= " -out ${General::swroot}/certs/$cgiparams{'NAME'}cert.pem";
 		$opt .= " -extfile $v3extname";
@@ -1888,7 +2223,7 @@ END
 	my $key = $cgiparams{'KEY'};
 	if (! $key) {
 		$key = &General::findhasharraykey (\%confighash);
-		foreach my $i (0 .. 38) { $confighash{$key}[$i] = "";}
+		foreach my $i (0 .. 39) { $confighash{$key}[$i] = "";}
 	}
 	$confighash{$key}[0] = $cgiparams{'ENABLED'};
 	$confighash{$key}[1] = $cgiparams{'NAME'};
@@ -1939,6 +2274,7 @@ END
 	$confighash{$key}[36] = $cgiparams{'INTERFACE_MODE'};
 	$confighash{$key}[37] = $cgiparams{'INTERFACE_ADDRESS'};
 	$confighash{$key}[38] = $cgiparams{'INTERFACE_MTU'};
+	$confighash{$key}[39] = join("|", split(",", $cgiparams{'DNS_SERVERS'}));
 
 	# free unused fields!
 	$confighash{$key}[15] = 'off';
@@ -2021,6 +2357,7 @@ END
 	$cgiparams{'INTERFACE_MODE'}        	= "";
 	$cgiparams{'INTERFACE_ADDRESS'}        	= "";
 	$cgiparams{'INTERFACE_MTU'}        	= 1500;
+	$cgiparams{'DNS_SERVERS'}        	= "";
 }
 
 VPNCONF_ERROR:
@@ -2117,11 +2454,8 @@ END
 EOF
 	}
 
-	my $disabled;
-	my $blob;
-	if ($cgiparams{'TYPE'} eq 'host') {
-		$disabled = "disabled='disabled'";
-	} elsif ($cgiparams{'TYPE'} eq 'net') {
+	my $blob = "";
+	if ($cgiparams{'TYPE'} eq 'net') {
 		$blob = "<img src='/blob.gif' alt='*' />";
 	};
 
@@ -2130,6 +2464,9 @@ EOF
 
 	my @remote_subnets = split(/\|/, $cgiparams{'REMOTE_SUBNET'});
 	my $remote_subnets = join(",", @remote_subnets);
+
+	my @dns_servers = split(/\|/, $cgiparams{'DNS_SERVERS'});
+	my $dns_servers = join(",", @dns_servers);
 
 	print <<END;
 	<tr>
@@ -2166,10 +2503,26 @@ END
 		<td width='30%'>
 			<input type='text' name='LOCAL_SUBNET' value='$local_subnets' size="25" />
 		</td>
-		<td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'remote subnet'}&nbsp;$blob</td>
+END
+
+	if ($cgiparams{'TYPE'} eq "net") {
+		print <<END;
+		<td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'remote subnet'}&nbsp;<img src='/blob.gif' alt='*' /></td>
 		<td width='30%'>
-			<input $disabled type='text' name='REMOTE_SUBNET' value='$remote_subnets' size="25" />
+			<input type='text' name='REMOTE_SUBNET' value='$remote_subnets' size="25" />
 		</td>
+END
+
+	} elsif ($cgiparams{'TYPE'} eq "host") {
+		print <<END;
+		<td class='boldbase' nowrap='nowrap' width='20%'>$Lang::tr{'dns servers'}:</td>
+		<td width='30%'>
+			<input type='text' name='DNS_SERVERS' value='$dns_servers' size="25" />
+		</td>
+END
+	}
+
+	print <<END;
 	</tr>
 	<tr>
 		<td class='boldbase' width='20%'>$Lang::tr{'vpn local id'}:</td>
@@ -2505,6 +2858,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		$cgiparams{'INTERFACE_MODE'}		= $confighash{$cgiparams{'KEY'}}[36];
 		$cgiparams{'INTERFACE_ADDRESS'}		= $confighash{$cgiparams{'KEY'}}[37];
 		$cgiparams{'INTERFACE_MTU'}		= $confighash{$cgiparams{'KEY'}}[38];
+		$cgiparams{'DNS_SERVERS'}		= $confighash{$cgiparams{'KEY'}}[39];
 
 		if (!$cgiparams{'DPD_DELAY'}) {
 			$cgiparams{'DPD_DELAY'} = 30;
@@ -2961,6 +3315,10 @@ EOF
 			</td>
 		</tr>
 		<tr>
+			<td class='base' nowrap='nowrap' width="60%">$Lang::tr{'ipsec roadwarrior endpoint'}:</td>
+			<td width="40%"><input type='text' name='RW_ENDPOINT' value='$cgiparams{'RW_ENDPOINT'}' /></td>
+		</tr>
+		<tr>
 			<td class='base' nowrap='nowrap' width="60%">$Lang::tr{'host to net vpn'}:</td>
 			<td width="40%"><input type='text' name='RW_NET' value='$cgiparams{'RW_NET'}' /></td>
 		</tr>
@@ -2982,7 +3340,7 @@ END
 	<th width='23%' class='boldbase' align='center'><b>$Lang::tr{'common name'}</b></th>
 	<th width='30%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
 	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
-	<th class='boldbase' align='center' colspan='6'><b>$Lang::tr{'action'}</b></th>
+	<th class='boldbase' align='center' colspan='7'><b>$Lang::tr{'action'}</b></th>
 	</tr>
 END
 ;
@@ -3083,6 +3441,22 @@ END
 	} else {
 		print "<td width='2%' $col>&nbsp;</td>";
 	}
+
+	# Apple Profile
+	if ($confighash{$key}[3] eq 'host') {
+		print <<END;
+		<td align='center' $col>
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<input type='image' name='$Lang::tr{'download apple profile'}' src='/images/apple.png' alt='$Lang::tr{'download apple profile'}' title='$Lang::tr{'download apple profile'}' />
+			<input type='hidden' name='ACTION' value='$Lang::tr{'download apple profile'}' />
+			<input type='hidden' name='KEY' value='$key' />
+			</form>
+		</td>
+END
+	} else {
+		print "<td width='2%' $col>&nbsp;</td>";
+	}
+
 	print <<END
 	<td align='center' $col>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
