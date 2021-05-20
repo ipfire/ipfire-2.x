@@ -34,7 +34,10 @@ done
 # Remove files
 rm -vrf \
 	/etc/rc.d/init.d/networking/red.down/10-miniupnpd \
-	/etc/rc.d/init.d/networking/red.up/10-miniupnpd
+	/etc/rc.d/init.d/networking/red.up/10-miniupnpd \
+	/usr/lib/libixml.so.* \
+	/usr/lib/libupnp.so.* \
+	/var/ipfire/upnp
 
 # Stop services
 
