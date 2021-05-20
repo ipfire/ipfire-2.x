@@ -46,14 +46,12 @@ etc/rc.d/init.d/networking/orange
 etc/rc.d/init.d/networking/red
 #etc/rc.d/init.d/networking/red.down
 etc/rc.d/init.d/networking/red.down/10-ipsec
-etc/rc.d/init.d/networking/red.down/10-miniupnpd
 etc/rc.d/init.d/networking/red.down/10-ovpn
 etc/rc.d/init.d/networking/red.down/10-static-routes
 etc/rc.d/init.d/networking/red.down/20-firewall
 etc/rc.d/init.d/networking/red.down/99-beep
 #etc/rc.d/init.d/networking/red.up
 etc/rc.d/init.d/networking/red.up/01-conntrack-cleanup
-etc/rc.d/init.d/networking/red.up/10-miniupnpd
 etc/rc.d/init.d/networking/red.up/10-multicast
 etc/rc.d/init.d/networking/red.up/10-static-routes
 etc/rc.d/init.d/networking/red.up/20-firewall

@@ -32,6 +32,9 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Remove files
+rm -vrf \
+	/etc/rc.d/init.d/networking/red.down/10-miniupnpd \
+	/etc/rc.d/init.d/networking/red.up/10-miniupnpd
 
 # Stop services
 
