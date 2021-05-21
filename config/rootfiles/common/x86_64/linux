@@ -17712,6 +17712,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/uapi/linux/ethtool.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/ethtool_netlink.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/eventpoll.h
+#lib/modules/KVER-ipfire/build/include/uapi/linux/f2fs.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/fadvise.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/falloc.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/fanotify.h

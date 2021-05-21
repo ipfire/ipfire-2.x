@@ -238,6 +238,7 @@
 #usr/include/linux/ethtool.h
 #usr/include/linux/ethtool_netlink.h
 #usr/include/linux/eventpoll.h
+#usr/include/linux/f2fs.h
 #usr/include/linux/fadvise.h
 #usr/include/linux/falloc.h
 #usr/include/linux/fanotify.h
