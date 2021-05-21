@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nagios-plugins
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       =
 
@@ -91,5 +91,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Prevent Nagios plugins from being owned (and hence writeable) by "nobody"
 	chown root:root -R /usr/lib/nagios/plugins
+
+	# Unfortunately, some of these plugins need the SUID bit to do their work properly
+	chmod +s \
+		/usr/lib/nagios/plugins/check_dhcp \
+		/usr/lib/nagios/plugins/check_icmp \
+		/usr/lib/nagios/plugins/check_ide_smart \
+		/usr/lib/nagios/plugins/check_ping
 
 	@$(POSTBUILD)
