@@ -124,6 +124,10 @@ rm -f \
 	/usr/lib/dma-mbox-create \
 	/usr/lib/openssh/ssh-keysign
 
+# Delete orphaned pppd 2.4.8 shared object files
+rm -rf \
+	/usr/lib/pppd/2.4.8/
+
 # Start services
 /etc/init.d/sshd restart
 /etc/init.d/apache restart
