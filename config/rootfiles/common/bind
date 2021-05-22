@@ -272,8 +272,8 @@ usr/lib/libbind9.so.161
 usr/lib/libbind9.so.161.0.4
 #usr/lib/libdns.la
 #usr/lib/libdns.so
-usr/lib/libdns.so.1113
-usr/lib/libdns.so.1113.0.2
+usr/lib/libdns.so.1115
+usr/lib/libdns.so.1115.0.0
 #usr/lib/libisc.la
 #usr/lib/libisc.so
 usr/lib/libisc.so.1107
