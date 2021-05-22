@@ -86,7 +86,10 @@ sub display_vnstat
 	if ( $testdata =~ 'enough') {
 		print"No data for $device !<br>";
 	} else {
+	    # Summary
 	    system("/usr/bin/vnstati -c 1 -s -i $device -o /srv/web/ipfire/html/graphs/vnstat-s-$device.png");
+	    # 5-minute graphs
+	    system("/usr/bin/vnstati -c 1 -5 -i $device -o /srv/web/ipfire/html/graphs/vnstat-5-$device.png");
 	    # Hour graph
 	    system("/usr/bin/vnstati -c 1 -h -i $device -o /srv/web/ipfire/html/graphs/vnstat-h-$device.png");
 	    # Day graph
@@ -100,6 +103,7 @@ sub display_vnstat
 print <<END
 <table>
 <tr><td><img src="/graphs/vnstat-s-$device.png"></td></tr>
+<tr><td><img src="/graphs/vnstat-5-$device.png"></td></tr>
 <tr><td><img src="/graphs/vnstat-h-$device.png"></td></tr>
 <tr><td><img src="/graphs/vnstat-d-$device.png"></td></tr>
 <tr><td><img src="/graphs/vnstat-m-$device.png"></td></tr>
