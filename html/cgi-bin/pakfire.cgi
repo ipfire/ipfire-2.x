@@ -54,7 +54,7 @@ sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' cont
 &Header::openpage($Lang::tr{'pakfire configuration'}, 1);
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
-if ($cgiparams{'ACTION'} eq 'install'){
+if (($cgiparams{'ACTION'} eq 'install') && (! -e $Pakfire::lockfile)) {
 	$cgiparams{'INSPAKS'} =~ s/\|/\ /g;
 	if ("$cgiparams{'FORCE'}" eq "on") {
 		my $command = "/usr/local/bin/pakfire install --non-interactive --no-colors $cgiparams{'INSPAKS'} &>/dev/null &";
@@ -93,7 +93,7 @@ END
 		&Header::closepage();
 		exit;
 	}
-} elsif ($cgiparams{'ACTION'} eq 'remove') {
+} elsif (($cgiparams{'ACTION'} eq 'remove') && (! -e $Pakfire::lockfile)) {
 
 	$cgiparams{'DELPAKS'} =~ s/\|/\ /g;
 	if ("$cgiparams{'FORCE'}" eq "on") {
@@ -134,11 +134,11 @@ END
 		exit;
 	}
 
-} elsif ($cgiparams{'ACTION'} eq 'update') {
+} elsif (($cgiparams{'ACTION'} eq 'update') && (! -e $Pakfire::lockfile)) {
 
 	system("/usr/local/bin/pakfire update --force --no-colors &>/dev/null &");
 	system("/bin/sleep 1");
-} elsif ($cgiparams{'ACTION'} eq 'upgrade') {
+} elsif (($cgiparams{'ACTION'} eq 'upgrade') && (!-e $Pakfire::lockfile)) {
 	my $command = "/usr/local/bin/pakfire upgrade -y --no-colors &>/dev/null &";
 	system("$command");
 	system("/bin/sleep 1");
@@ -176,9 +176,7 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
-my $return = `pidof pakfire`;
-chomp($return);
-if ($return) {
+if (-e $Pakfire::lockfile) {
 	&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='10;'>" );
 	print <<END;
 	<table>
