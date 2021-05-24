@@ -73,6 +73,9 @@ my %pakfiresettings = ();
 # Make version
 $Conf::version = &make_version();
 
+# Pakfire lock file.
+our $lockfile = "/tmp/pakfire_lock";
+
 sub message {
 	my $message = shift;
 		

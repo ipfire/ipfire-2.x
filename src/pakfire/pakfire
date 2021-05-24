@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015   IPFire Team   <info@ipfire.org>                   #
+# Copyright (C) 2007-2021   IPFire Team   <info@ipfire.org>                   #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -31,6 +31,7 @@
 	
 	my $interactive = 1;
 	my $force = "noforce";
+	my $locked;
 	
 	&Pakfire::logger("PAKFIRE INFO: IPFire Pakfire $Conf::version started!");
 
@@ -47,6 +48,21 @@
 		&Pakfire::message("PAKFIRE ERROR: You need to be online to run pakfire!");
 		exit 2;
 	}
+
+	# Check if a lockfile already exists.
+	if (-e "$Pakfire::lockfile") {
+		&Pakfire::message("PAKFIRE ERROR: Another instance of pakfire is already running!");
+		exit 1;
+	}
+
+	# Write lockfile.
+	open(LOCK, ">$Pakfire::lockfile");
+
+	# Pakfire has locked in this session set locket to "1".
+	$locked = "1";
+
+	# Close filehandle.
+	close(LOCK);
 	
 	### Check if we are started by another name
 	#
@@ -329,5 +345,13 @@
 	}
 
 	&Pakfire::logger("PAKFIRE INFO: Pakfire has finished. Closing.");
+
+	END {
+		# Check if pakfire has been locked in this session.
+		if ($locked) {
+			# Remove lockfile.
+			unlink($Pakfire::lockfile);
+		}
+	}
 
 	exit 0;
