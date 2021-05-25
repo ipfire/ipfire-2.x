@@ -1,5 +1,8 @@
 etc/rc.d/init.d/firewall
+opt/pakfire/lib/functions.pl
+opt/pakfire/pakfire
 srv/web/ipfire/cgi-bin/dhcp.cgi
+srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/images/apple.png
