@@ -55,6 +55,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/vnstatd restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
