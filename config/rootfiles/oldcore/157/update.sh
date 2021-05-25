@@ -97,6 +97,9 @@ extract_files
 # update linker config
 ldconfig
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
@@ -120,6 +123,10 @@ chown root:root \
 rm -f \
 	/usr/lib/dma-mbox-create \
 	/usr/lib/openssh/ssh-keysign
+
+# Delete orphaned pppd 2.4.8 shared object files
+rm -rf \
+	/usr/lib/pppd/2.4.8/
 
 # Start services
 /etc/init.d/sshd restart
