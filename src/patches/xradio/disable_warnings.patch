@@ -1,0 +1,24 @@
+diff -Naur a/debug.h b/debug.h
+--- a/debug.h	2020-05-02 17:17:06.000000000 +0000
++++ b/debug.h	2021-05-26 06:42:41.347972240 +0000
+@@ -21,13 +21,13 @@
+ #define XRADIO_DBG_DEV    0x40		/* current dev */
+ 
+ /* debug levels, default 0x07 */
+-#define XRADIO_DBG_LEV_AP	0x47	/* ap */
+-#define XRADIO_DBG_LEV_PM	0x47	/* pm */
+-#define XRADIO_DBG_LEV_SCAN	0x47	/* scan */
+-#define XRADIO_DBG_LEV_STA	0x47	/* sta, keys */
+-#define XRADIO_DBG_LEV_TXRX	0x47	/* tx, rx, ht, p2p, queue */
+-#define XRADIO_DBG_LEV_WSM	0x47	/* wsm */
+-#define XRADIO_DBG_LEV_XR	0x47	/* xradio, fwio, sdio, bh */
++#define XRADIO_DBG_LEV_AP	0x03	/* ap */
++#define XRADIO_DBG_LEV_PM	0x03	/* pm */
++#define XRADIO_DBG_LEV_SCAN	0x03	/* scan */
++#define XRADIO_DBG_LEV_STA	0x03	/* sta, keys */
++#define XRADIO_DBG_LEV_TXRX	0x03	/* tx, rx, ht, p2p, queue */
++#define XRADIO_DBG_LEV_WSM	0x03	/* wsm */
++#define XRADIO_DBG_LEV_XR	0x03	/* xradio, fwio, sdio, bh */
+ 
+ #define ap_printk(level, ...)	\
+ 	do {			\

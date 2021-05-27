@@ -1204,6 +1204,7 @@ buildipfire() {
 		# arm multi platform (Panda, Wandboard ...) kernel build
 		lfsmake2 linux			KCFG="-multi"
 		lfsmake2 rtl8189es		KCFG="-multi"
+		lfsmake2 xradio			KCFG="-multi"
 		lfsmake2 xtables-addons		KCFG="-multi"
 		lfsmake2 linux-initrd		KCFG="-multi"
 		;;

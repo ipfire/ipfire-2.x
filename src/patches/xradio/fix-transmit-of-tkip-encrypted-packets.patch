@@ -1,0 +1,17 @@
+diff -Naur a/tx.c b/tx.c
+--- a/tx.c	2020-05-02 19:17:06.000000000 +0200
++++ b/tx.c	2021-05-26 12:33:36.117730336 +0200
+@@ -707,8 +707,11 @@
+ 		memmove(p, &p[offset], t->skb->len - offset);
+ 		skb_trim(t->skb, t->skb->len - offset);
+ 	}
+-	/* ccmp pkt from umac to driver,it has iv room,,so ccmp pkt do not add iv room */
+-	if (t->tx_info->control.hw_key->cipher != WLAN_CIPHER_SUITE_CCMP){
++
++	/* ccmp/tkip pkt from umac to driver,it has iv room,,so ccmp/tkip pkt do not add iv room */
++	if ( (t->tx_info->control.hw_key->cipher != WLAN_CIPHER_SUITE_CCMP) &&
++	     (t->tx_info->control.hw_key->cipher != WLAN_CIPHER_SUITE_TKIP) )
++	{
+ 		u8 *newhdr;
+ 		newhdr = skb_push(t->skb, iv_len);
+ 		memmove(newhdr, newhdr + iv_len, t->hdrlen);
