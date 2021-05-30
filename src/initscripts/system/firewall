@@ -98,73 +98,10 @@ iptables_init() {
 	iptables -t raw -N CONNTRACK
 	iptables -t raw -A PREROUTING -j CONNTRACK
 
-	# Conntrack helpers (https://home.regit.org/netfilter-en/secure-use-of-helpers/)
+	# Conntrack helper (https://home.regit.org/netfilter-en/secure-use-of-helpers/)
 
 	# GRE (always enabled)
 	modprobe nf_conntrack_proto_gre
-
-	# SIP
-	if [ "${CONNTRACK_SIP}" = "on" ]; then
-		modprobe nf_nat_sip
-		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
-			-m helper --helper sip -j ACCEPT
-		for proto in udp tcp; do
-			iptables -t raw -A CONNTRACK -p "${proto}" --dport 5060 -j CT --helper sip
-		done
-	fi
-
-	# H.323
-	if [ "${CONNTRACK_H323}" = "on" ]; then
-		modprobe nf_nat_h323
-		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
-			-m helper --helper h323 -j ACCEPT
-
-		# Gatekeeper RAS
-		iptables -t raw -A CONNTRACK -p udp --dport 1719 -j CT --helper RAS
-
-		# Q.931
-		iptables -t raw -A CONNTRACK -p tcp --dport 1720 -j CT --helper Q.931
-	fi
-
-	# FTP
-	if [ "${CONNTRACK_FTP}" = "on" ]; then
-		modprobe nf_nat_ftp
-		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
-			-m helper --helper ftp -p tcp --dport 1024: -j ACCEPT
-		iptables -t raw -A CONNTRACK -p tcp --dport 21 -j CT --helper ftp
-	fi
-
-	# PPTP
-	if [ "${CONNTRACK_PPTP}" = "on" ]; then
-		modprobe nf_nat_pptp
-		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
-			-m helper --helper pptp -j ACCEPT
-		iptables -t raw -A CONNTRACK -p tcp --dport 1723 -j CT --helper pptp
-	fi
-
-	# TFTP
-	if [ "${CONNTRACK_TFTP}" = "on" ]; then
-		modprobe nf_nat_tftp
-		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
-			-m helper --helper tftp -j ACCEPT
-		iptables -t raw -A CONNTRACK -p udp --dport 69 -j CT --helper tftp
-	fi
-
-	# IRC
-	if [ "${CONNTRACK_IRC}" = "on" ]; then
-		modprobe nf_nat_irc
-		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
-			-m helper --helper irc -j ACCEPT
-		iptables -t raw -A CONNTRACK -p tcp --dport 6667 -j CT --helper irc
-	fi
-
-	# Amanda
-	if [ "${CONNTRACK_AMANDA}" = "on" ]; then
-		modprobe nf_nat_amanda
-		iptables -A CONNTRACK -m conntrack --ctstate RELATED \
-			-m helper --helper amanda -j ACCEPT
-		iptables -t raw -A CONNTRACK -p tcp -j CT --helper amanda
-	fi
 
 	# Fix for braindead ISPs
 	iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
