@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = x86_64
 PROG       = dnsdist
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       =
 
