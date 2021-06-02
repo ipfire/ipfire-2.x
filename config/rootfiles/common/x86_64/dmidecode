@@ -5,6 +5,7 @@ usr/sbin/vpddecode
 #usr/share/doc/dmidecode
 #usr/share/doc/dmidecode/AUTHORS
 #usr/share/doc/dmidecode/CHANGELOG
+#usr/share/doc/dmidecode/NEWS
 #usr/share/doc/dmidecode/README
 #usr/share/man/man8/biosdecode.8
 #usr/share/man/man8/dmidecode.8
