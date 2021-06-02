@@ -1547,7 +1547,6 @@ buildipfire() {
   lfsmake2 aws-cli
   lfsmake2 transmission
   lfsmake2 dpfhack
-  lfsmake2 lcd4linux
   lfsmake2 mtr
   lfsmake2 minidlna
   lfsmake2 acpid
