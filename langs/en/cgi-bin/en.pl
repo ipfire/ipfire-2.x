@@ -436,7 +436,6 @@
 'and' => 'And',
 'ansi t1.483' => 'TO BE REMOVED',
 'apcupsd' => 'APC-UPS status',
-'application layer gateways' => 'Application Layer Gateways',
 'apply' => 'Apply now',
 'april' => 'April',
 'archive not exist' => 'Configuration archive does not exist',

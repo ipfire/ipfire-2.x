@@ -437,7 +437,6 @@
 'alt vpn' => 'VPNs',
 'and' => 'Und',
 'apcupsd' => 'APC-UPS Status',
-'application layer gateways' => 'Application-Layer-Gateways',
 'apply' => 'Jetzt anwenden',
 'april' => 'April',
 'archive not exist' => 'Konfigurationsarchiv existiert nicht',

@@ -442,7 +442,6 @@
 'alt vpn' => 'VPNs',
 'and' => 'Et',
 'apcupsd' => 'Statut UPS-APC',
-'application layer gateways' => 'Passerelles de couche d\'application',
 'apply' => 'Appliquer maintenant',
 'april' => 'Avril',
 'archive not exist' => 'L\'archive de configuration n\'existe pas',

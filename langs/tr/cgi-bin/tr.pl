@@ -424,7 +424,6 @@
 'and' => 've',
 'ansi t1.483' => 'KALDIRILACAK',
 'apcupsd' => 'APC-UPS durumu',
-'application layer gateways' => 'Uygulama Katmanı Ağ Geçitleri',
 'apply' => 'Şimdi uygula',
 'april' => 'Nisan',
 'archive not exist' => 'Yapılandırma arşivi yok',
