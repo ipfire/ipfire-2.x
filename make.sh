@@ -1546,7 +1546,6 @@ buildipfire() {
   lfsmake2 python3-msgpack
   lfsmake2 aws-cli
   lfsmake2 transmission
-  lfsmake2 dpfhack
   lfsmake2 mtr
   lfsmake2 minidlna
   lfsmake2 acpid
