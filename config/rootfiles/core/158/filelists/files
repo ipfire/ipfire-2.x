@@ -8,3 +8,11 @@ srv/web/ipfire/cgi-bin/traffic.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/images/apple.png
 var/ipfire/backup/bin/backup.pl
+var/ipfire/countries.pl
+var/ipfire/general-functions.pl
+var/ipfire/graphs.pl
+var/ipfire/header.pl
+var/ipfire/ids-functions.pl
+var/ipfire/lang.pl
+var/ipfire/location-functions.pl
+var/ipfire/modem-lib.pl
