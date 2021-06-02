@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -91,9 +91,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash/bash51-$$(printf "%03d" "$${i}") || exit 1; \
 	done
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-4.0-paths-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-4.0-profile-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash-3.2-ssh_source_bash.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash/bash-4.0-paths-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash/bash-4.0-profile-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash/bash-3.2-ssh_source_bash.patch
 
 	cd $(DIR_APP) && ./configure --prefix=$(PREFIX) $(CONFIGURE_OPTIONS)
 	cd $(DIR_APP) && make $(MAKETUNING)
