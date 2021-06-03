@@ -14985,6 +14985,7 @@ lib/modules/KVER-ipfire-multi
 #lib/modules/KVER-ipfire-multi/build/include/linux/mlx5/fs_helpers.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/mlx5/mlx5_ifc.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/mlx5/mlx5_ifc_fpga.h
+#lib/modules/KVER-ipfire-multi/build/include/linux/mlx5/mpfs.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/mlx5/port.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/mlx5/qp.h
 #lib/modules/KVER-ipfire-multi/build/include/linux/mlx5/rsc_dump.h
