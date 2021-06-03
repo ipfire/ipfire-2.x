@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.25
+VER        = 3.5.0
 
 THISAPP    = libnl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 03f74d0cd5037cadc8cdfa313bbd195c
+$(DL_FILE)_MD5 = 74ba57b1b1d6f9f92268aa8141d8e8e4
 
 install : $(TARGET)
 
@@ -74,7 +74,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
+	cd $(DIR_APP) && ./configure \
+			--prefix=/usr \
+			--sysconfdir=/etc \
+			--bindir=/usr/sbin \
+			--disable-static
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
