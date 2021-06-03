@@ -32,62 +32,28 @@ case "${1}" in
 				#
 				# Speaker | LAN4 | LAN3 | LAN2 | LAN1 || WAN  | HDMI
 				# SW-Port |  P2  |  P1  |  P0  |  P4  ||  P3  |
-				# VLAN    |  14  |  13  |  12  |  11  || all  |
+				# MAC-Add |  14  |  13  |  12  |  11  ||  10  |
 				#
-				# Switch-Port P8 - ALL(t) boards internal CPU Port
-				#
+				# Switch-Port P8 - internal CPU Port
+
+				# stop udev...
+				killall udevd
 
 				device=`ls /sys/class/net/*/device/driver/1c50000.ethernet/net | head -1`
 				ip link set $device up
 
-				# create bridge
-				ip link add switch0 type bridge
-				ip link set wan master switch0
-				ip link set lan1 master switch0
-				ip link set lan2 master switch0
-				ip link set lan3 master switch0
-				ip link set lan4 master switch0
-
-				# configure vlans
-				bridge vlan add vid 11 dev lan1 pvid untagged
-				bridge vlan add vid 12 dev lan2 pvid untagged
-				bridge vlan add vid 13 dev lan3 pvid untagged
-				bridge vlan add vid 14 dev lan4 pvid untagged
-				bridge vlan add vid 11 dev wan
-				bridge vlan add vid 12 dev wan
-				bridge vlan add vid 13 dev wan
-				bridge vlan add vid 14 dev wan
-
-				# Remove wrong vlan1 from all ports
-				bridge vlan del vid 1 dev lan1
-				bridge vlan del vid 1 dev lan2
-				bridge vlan del vid 1 dev lan3
-				bridge vlan del vid 1 dev lan4
-				bridge vlan del vid 1 dev wan
-
-				# enable all ports
-				ip link set lan1 up
-				ip link set lan2 up
-				ip link set lan3 up
-				ip link set lan4 up
-				ip link set wan up
-
-				# create virtual interfaces for the vlan's
-				modprobe 8021q
-				vconfig add $device 11
-				vconfig add $device 12
-				vconfig add $device 13
-				vconfig add $device 14
 				# set local mac addresses.
-				ip link set dev $device.11 address $SWMAC:11
-				ip link set dev $device.12 address $SWMAC:12
-				ip link set dev $device.13 address $SWMAC:13
-				ip link set dev $device.14 address $SWMAC:14
-				# need to restart udev...
+				ip link set dev wan  address $SWMAC:10
+				ip link set dev lan1 address $SWMAC:11
+				ip link set dev lan2 address $SWMAC:12
+				ip link set dev lan3 address $SWMAC:13
+				ip link set dev lan4 address $SWMAC:14
+
+				# start udev...
 				killall udevd
 				/etc/init.d/udev start
 			;;
-		esac
+		esac 2> /dev/null
 		exit 0
 	;;
 
