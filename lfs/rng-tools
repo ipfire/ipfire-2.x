@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.4
+VER        = 6.12
 
 THISAPP    = rng-tools-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 52a8243858503f94eecd4ae0983a9818
+$(DL_FILE)_MD5 = 17f2815263b6ce6a353625b1fe615346
 
 install : $(TARGET)
 
@@ -72,7 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rng-tools-6-Enable-RDRAND-for-i586-too.patch
 	cd $(DIR_APP) && ./autogen.sh
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && ./configure --prefix=/usr --without-pkcs11
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 	@rm -rf $(DIR_APP)
