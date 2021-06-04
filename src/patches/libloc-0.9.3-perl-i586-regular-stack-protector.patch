@@ -1,0 +1,12 @@
+diff --git a/src/perl/Makefile.PL b/src/perl/Makefile.PL
+index 38d5390..62016ca 100644
+--- a/src/perl/Makefile.PL
++++ b/src/perl/Makefile.PL
+@@ -11,6 +11,7 @@ WriteMakefile(
+     LIBS              => ['-lloc'],
+     DEFINE            => '', # e.g., '-DHAVE_SOMETHING'
+     INC               => '-I. -I../../',
++    CCFLAGS           => '-D_REENTRANT -D_GNU_SOURCE -O2 -pipe -Wall -fexceptions -fPIC -march=i586 -mindirect-branch=thunk -mfunction-return=thunk -mtune=generic -fomit-frame-pointer -Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector -fwrapv -fno-strict-aliasing -I/usr/local/include -D_LARGEFILE_SOURCE -D_FILE_OFFSET_BITS=64',
+ 	# Un-comment this if you add C files to link with later:
+     # OBJECT            => '$(O_FILES)', # link all the C files too
+ );

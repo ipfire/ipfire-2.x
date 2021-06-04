@@ -1,0 +1,19 @@
+diff -Naur linux-3.10.10.org/drivers/crypto/mv_cesa.c linux-3.10.10/drivers/crypto/mv_cesa.c
+--- linux-3.10.10.org/drivers/crypto/mv_cesa.c	2013-08-29 18:47:51.000000000 +0200
++++ linux-3.10.10/drivers/crypto/mv_cesa.c	2013-09-04 13:06:35.000000000 +0200
+@@ -1120,6 +1120,7 @@
+ 	else
+ 		printk(KERN_WARNING MV_CESA "Could not register sha1 driver\n");
+ 
++/*
+ 	ret = crypto_register_ahash(&mv_hmac_sha1_alg);
+ 	if (ret == 0) {
+ 		cpg->has_hmac_sha1 = 1;
+@@ -1127,6 +1128,7 @@
+ 		printk(KERN_WARNING MV_CESA
+ 		       "Could not register hmac-sha1 driver\n");
+ 	}
++*/
+ 
+ 	return 0;
+ err_unreg_ecb:
