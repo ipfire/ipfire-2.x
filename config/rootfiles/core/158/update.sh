@@ -57,6 +57,7 @@ ldconfig
 
 # Start services
 /etc/init.d/vnstatd restart
+/etc/init.d/rngd restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
