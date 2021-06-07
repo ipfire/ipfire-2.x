@@ -56,6 +56,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/apache restart
 /etc/init.d/vnstatd restart
 /etc/init.d/rngd restart
 
