@@ -39,7 +39,11 @@ rm -vrf \
 	/usr/lib/conntrack-tools \
 	/usr/lib/libixml.so.* \
 	/usr/lib/libupnp.so.* \
-	/var/ipfire/upnp
+	/var/ipfire/upnp \
+	/lib/firmware/cxgb4/t4fw-1.24.14.0.bin \
+	/lib/firmware/cxgb4/t5fw-1.24.14.0.bin \
+	/lib/firmware/cxgb4/t6fw-1.24.14.0.bin \
+	/lib/firmware/intel/ice/ddp/ice-1.3.4.0.pkg
 
 # Stop services
 
