@@ -117,9 +117,8 @@ END
 
 # Read pregenerated profile data
 open(FILE, "/var/ipfire/fireinfo/profile");
-my $profile = <FILE>;
+my @profile = <FILE>;
 close(FILE);
-chomp($profile);
 
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
 
@@ -170,7 +169,7 @@ print <<END;
 	</tr>
 	<tr>
 		<td colspan='2'>
-			<textarea rows="25" cols="75" readonly="readonly">$profile</textarea>
+			<textarea rows="25" cols="75" readonly="readonly">@profile</textarea>
 		</td>
 	</tr>
 </table>
