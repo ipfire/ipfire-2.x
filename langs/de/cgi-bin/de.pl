@@ -507,6 +507,7 @@
 'cache management' => 'Cache-Verwaltung',
 'cache size' => 'Cache-Größe (MB):',
 'cached' => 'zwischengespeichert',
+'available' => 'verfügbar',
 'cached memory' => 'Zwischenspeicher ',
 'cached swap' => 'Zwischenspeicher (Swap)',
 'calamaris available reports' => 'Verfügbare Berichte',

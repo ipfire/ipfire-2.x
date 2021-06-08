@@ -522,6 +522,7 @@
 'cache management' => 'Cache management',
 'cache size' => 'Cache size (MB):',
 'cached' => 'cached',
+'available' => 'available',
 'cached memory' => 'Cached Memory  ',
 'cached swap' => 'Cached Swap',
 'calamaris available reports' => 'Available reports',
