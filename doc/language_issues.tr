@@ -114,7 +114,6 @@ WARNING: translation string unused: alt ovpn
 WARNING: translation string unused: alt vpn
 WARNING: translation string unused: and
 WARNING: translation string unused: ansi t1.483
-WARNING: translation string unused: application layer gateways
 WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: attemps
@@ -896,6 +895,7 @@ WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Pro
 WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: asn lookup failed = AS lookup failed
 WARNING: untranslated string: autonomous system = Autonomous System
+WARNING: untranslated string: available = available
 WARNING: untranslated string: broken = Broken
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: cpu frequency = CPU frequency

@@ -903,6 +903,7 @@ WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: asn lookup failed = AS lookup failed
 WARNING: untranslated string: atm device = Device:
 WARNING: untranslated string: autonomous system = Autonomous System
+WARNING: untranslated string: available = available
 WARNING: untranslated string: block = Block
 WARNING: untranslated string: broken = Broken
 WARNING: untranslated string: bytes = unknown string

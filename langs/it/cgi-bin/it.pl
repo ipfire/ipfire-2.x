@@ -888,7 +888,6 @@
 'every' => 'Ogni',
 'exampel' => 'esempio',
 'exclude logfiles' => 'Escludi File di log',
-'excluding buffers and cache' => '-/+ buffers/cache',
 'expected' => 'Expected',
 'expertoptions' => 'Expert options',
 'expires' => 'Scade',

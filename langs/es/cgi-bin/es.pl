@@ -839,7 +839,6 @@
 'every' => 'Cada',
 'exampel' => 'ejemplo',
 'exclude logfiles' => 'Excluir archivos de registro',
-'excluding buffers and cache' => '-/+ buffers/cache',
 'expected' => 'Esperado',
 'expertoptions' => 'Opciones expertas',
 'expires' => 'Expira',

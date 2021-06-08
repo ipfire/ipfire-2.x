@@ -782,7 +782,6 @@
 'every' => 'Каждый',
 'exampel' => 'пример',
 'exclude logfiles' => 'Исключить файлы логов',
-'excluding buffers and cache' => '-/+ buffers/cache',
 'expected' => 'Ожидается',
 'expertoptions' => 'Экспортировать настройки',
 'expires' => 'Истекает',

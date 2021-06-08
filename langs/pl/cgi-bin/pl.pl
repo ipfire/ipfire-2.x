@@ -786,7 +786,6 @@
 'every' => 'Każdy',
 'exampel' => 'przykład',
 'exclude logfiles' => 'Wyklucz pliki z logami',
-'excluding buffers and cache' => '-/+ buffers/cache',
 'expected' => 'Oczekiwano',
 'expertoptions' => 'Opcje zaawans.',
 'expires' => 'Wygasa',

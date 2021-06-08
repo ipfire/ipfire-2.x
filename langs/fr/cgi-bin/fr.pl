@@ -1038,7 +1038,6 @@
 'every' => 'Chaque',
 'exampel' => 'exemple',
 'exclude logfiles' => 'Exclure les fichiers journaux',
-'excluding buffers and cache' => '-/+ buffers/tampon',
 'expected' => 'Attendu',
 'expertoptions' => 'Réglages avancés',
 'expires' => 'Expire',

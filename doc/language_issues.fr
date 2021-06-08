@@ -117,7 +117,6 @@ WARNING: translation string unused: alt information
 WARNING: translation string unused: alt ovpn
 WARNING: translation string unused: alt vpn
 WARNING: translation string unused: and
-WARNING: translation string unused: application layer gateways
 WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: attemps
@@ -892,6 +891,7 @@ WARNING: translation string unused: zoneconf val stp zone mode error
 WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: available = available
 WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string

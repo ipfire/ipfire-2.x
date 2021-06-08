@@ -102,12 +102,12 @@
 < age shour
 < age sminute
 < age ssecond
-< application layer gateways
 < asn lookup failed
 < Async logging enabled
 < atm device
 < attention
 < autonomous system
+< available
 < bit
 < block
 < broken
@@ -926,6 +926,7 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < ansi t1.483
+< available
 < bewan adsl pci st
 < bewan adsl usb
 < download apple profile
@@ -956,9 +957,9 @@
 < advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
-< application layer gateways
 < asn lookup failed
 < autonomous system
+< available
 < block
 < broken
 < Captive
@@ -1352,10 +1353,10 @@
 < advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
-< application layer gateways
 < asn lookup failed
 < atm device
 < autonomous system
+< available
 < block
 < broken
 < capabilities
@@ -1812,11 +1813,11 @@
 < age shour
 < age sminute
 < age ssecond
-< application layer gateways
 < asn lookup failed
 < atm device
 < attention
 < autonomous system
+< available
 < bit
 < block
 < broken
@@ -2704,11 +2705,11 @@
 < age shour
 < age sminute
 < age ssecond
-< application layer gateways
 < asn lookup failed
 < atm device
 < attention
 < autonomous system
+< available
 < bit
 < block
 < broken
@@ -3583,6 +3584,7 @@
 < advproxy wpad view pac
 < asn lookup failed
 < autonomous system
+< available
 < broken
 < Captive delete logo
 < cpu frequency

@@ -981,7 +981,6 @@
 'every' => 'Her',
 'exampel' => 'örnek',
 'exclude logfiles' => 'Günlük dosyaları hariç',
-'excluding buffers and cache' => '-/+ arabellek/önbellek',
 'expected' => 'Beklenen',
 'expertoptions' => 'Uzman seçenekleri',
 'expires' => 'Bitiş tarihi',

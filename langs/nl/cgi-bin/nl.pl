@@ -874,7 +874,6 @@
 'every' => 'Iedere',
 'exampel' => 'voorbeeld',
 'exclude logfiles' => 'Exclusief logbestanden',
-'excluding buffers and cache' => '-/+ buffers/cache',
 'expected' => 'Verwacht',
 'expertoptions' => 'Expertopties',
 'expires' => 'Verloopt',
