@@ -208,10 +208,10 @@ sub newcleanssldatabase {
 		close FILE;
 	}
 	if (! -s ">${General::swroot}/certs/index.txt") {
-		system ("touch ${General::swroot}/certs/index.txt");
+		&General::system("touch", "${General::swroot}/certs/index.txt");
 	}
 	if (! -s ">${General::swroot}/certs/index.txt.attr") {
-		system ("touch ${General::swroot}/certs/index.txt.attr");
+		&General::system("touch", "${General::swroot}/certs/index.txt.attr");
 	}
 	unlink ("${General::swroot}/certs/index.txt.old");
 	unlink ("${General::swroot}/certs/index.txt.attr.old");
@@ -568,9 +568,9 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	&General::writehash("${General::swroot}/vpn/settings", \%vpnsettings);
 	&writeipsecfiles();
 	if (&vpnenabled) {
-		system('/usr/local/bin/ipsecctrl', 'S');
+		&General::system('/usr/local/bin/ipsecctrl', 'S');
 	} else {
-		system('/usr/local/bin/ipsecctrl', 'D');
+		&General::system('/usr/local/bin/ipsecctrl', 'D');
 	}
 	sleep $sleepDelay;
 	SAVE_ERROR:
