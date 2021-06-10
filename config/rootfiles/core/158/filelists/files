@@ -3,6 +3,7 @@ etc/ssh/sshd_config
 opt/pakfire/lib/functions.pl
 opt/pakfire/pakfire
 srv/web/ipfire/cgi-bin/dhcp.cgi
+srv/web/ipfire/cgi-bin/memory.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
