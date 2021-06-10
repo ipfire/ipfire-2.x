@@ -1,9 +1,11 @@
 boot/boot.cmd
 boot/boot.mk
 boot/boot.scr
-boot/kernel8.img
 boot/uEnv.txt
 boot/uboot.env
+boot/u-boot-rpi3.bin
+boot/u-boot-rpi4.bin
 #usr/share/u-boot
-#usr/share/u-boot/rpi3
-usr/share/u-boot/rpi3/kernel8.img
+#usr/share/u-boot/rpi
+usr/share/u-boot/rpi/u-boot-rpi3.bin
+usr/share/u-boot/rpi/u-boot-rpi4.bin
