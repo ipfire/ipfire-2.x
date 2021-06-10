@@ -87,17 +87,17 @@ sub display_vnstat
 		print"No data for $device !<br>";
 	} else {
 	    # Summary
-	    system("/usr/bin/vnstati -c 1 -s -i $device -o /srv/web/ipfire/html/graphs/vnstat-s-$device.png");
+	    &General::system("/usr/bin/vnstati", "-c", "1", "-s", "-i", "$device", "-o", "/srv/web/ipfire/html/graphs/vnstat-s-$device.png");
 	    # 5-minute graphs
-	    system("/usr/bin/vnstati -c 1 -5 -i $device -o /srv/web/ipfire/html/graphs/vnstat-5-$device.png");
+	    &General::system("/usr/bin/vnstati", "-c", "1", "-5", "-i", "$device", "-o", "/srv/web/ipfire/html/graphs/vnstat-5-$device.png");
 	    # Hour graph
-	    system("/usr/bin/vnstati -c 1 -h -i $device -o /srv/web/ipfire/html/graphs/vnstat-h-$device.png");
+	    &General::system("/usr/bin/vnstati", "-c", "1", "-h", "-i", "$device", "-o", "/srv/web/ipfire/html/graphs/vnstat-h-$device.png");
 	    # Day graph
-	    system("/usr/bin/vnstati -c 1 -d -i $device -o /srv/web/ipfire/html/graphs/vnstat-d-$device.png");
+	    &General::system("/usr/bin/vnstati", "-c", "1", "-d", "-i", "$device", "-o", "/srv/web/ipfire/html/graphs/vnstat-d-$device.png");
 	    # Month graph
-	    system("/usr/bin/vnstati -c 1 -m -i $device -o /srv/web/ipfire/html/graphs/vnstat-m-$device.png");
+	    &General::system("/usr/bin/vnstati", "-c", "1", "-m", "-i", "$device", "-o", "/srv/web/ipfire/html/graphs/vnstat-m-$device.png");
 	    # Top10 graph
-	    system("/usr/bin/vnstati -c 1 -t -i $device -o /srv/web/ipfire/html/graphs/vnstat-t-$device.png");
+	    &General::system("/usr/bin/vnstati", "-c", "1", "-t", "-i", "$device", "-o", "/srv/web/ipfire/html/graphs/vnstat-t-$device.png");
 
 # Generate HTML-Table with the graphs
 print <<END
