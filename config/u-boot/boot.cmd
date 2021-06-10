@@ -11,12 +11,6 @@ if test ${boot_part} = ""; then
 	setenv boot_part ${dev_num}:1;
 fi;
 
-if test ${cpu} = "armv8"; then
-	echo ;
-else
-	setenv kernel_type -multi;
-fi;
-
 # Import uEnv txt...
 if fatload ${boot_dev} ${boot_part} ${kernel_addr_r} uEnv.txt; then
 	echo Load uEnv.txt...;

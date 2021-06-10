@@ -60,7 +60,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Create initramfs images
 	dracut --force --early-microcode --verbose --strip --xz /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
 
-ifeq "$(KCFG)" "-multi"
+ifeq "$(BUILD_ARCH)" "armv5tel"
 	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(KVER)-$(VERSUFIX)
 	cd /boot && rm initramfs-$(KVER)-$(VERSUFIX).img
 endif
