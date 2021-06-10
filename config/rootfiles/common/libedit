@@ -4,7 +4,7 @@
 #usr/lib/libedit.la
 #usr/lib/libedit.so
 usr/lib/libedit.so.0
-usr/lib/libedit.so.0.0.65
+usr/lib/libedit.so.0.0.66
 #usr/lib/pkgconfig/libedit.pc
 #usr/share/man/man3/editline.3
 #usr/share/man/man3/el_deletestr.3
