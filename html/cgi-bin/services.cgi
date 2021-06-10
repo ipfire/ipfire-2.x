@@ -141,7 +141,7 @@ END
 	my $paramstr=$ENV{QUERY_STRING};
 	my @param=split(/!/, $paramstr);
 	if ($param[1] ne ''){
-		system("/usr/local/bin/addonctrl @param[0] @param[1] > /dev/null 2>&1");
+		&General::system("/usr/local/bin/addonctrl", "$param[0]", "$param[1]");
 	}
 
 	print <<END
