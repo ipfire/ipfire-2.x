@@ -65,7 +65,7 @@ if ( (($remotesettings{'ACTION'} eq $Lang::tr{'save'}) || ($remotesettings{'ACTI
 		{
 			$errormessage = $Lang::tr{'ssh no auth'};
 		}
-		system ('/usr/bin/touch', "${General::swroot}/remote/enablessh");
+		&General::system('/usr/bin/touch', "${General::swroot}/remote/enablessh");
 	}
 	else
 	{
@@ -85,8 +85,8 @@ if ( (($remotesettings{'ACTION'} eq $Lang::tr{'save'}) || ($remotesettings{'ACTI
 if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} || $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ){
 	if ($remotesettings{'ENABLE_SSH'} eq 'off')
 	{
-			system ('/usr/bin/touch', "${General::swroot}/remote/enablessh");
-			system('/usr/local/bin/sshctrl');
+			&General::system('/usr/bin/touch', "${General::swroot}/remote/enablessh");
+			&General::system('/usr/local/bin/sshctrl');
 	}
   if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} ) { $counter = 900;}
   elsif ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ) { $counter = 1800;}
