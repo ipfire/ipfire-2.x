@@ -6831,6 +6831,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/bcm/net
 #lib/modules/KVER-ipfire/build/include/config/bcm/net/phylib.h
 #lib/modules/KVER-ipfire/build/include/config/bcm/videocore.h
+#lib/modules/KVER-ipfire/build/include/config/bcm2711
+#lib/modules/KVER-ipfire/build/include/config/bcm2711/thermal.h
 #lib/modules/KVER-ipfire/build/include/config/bcm2835
 #lib/modules/KVER-ipfire/build/include/config/bcm2835/mbox.h
 #lib/modules/KVER-ipfire/build/include/config/bcm2835/power.h
@@ -10256,6 +10258,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/pci/syscall.h
 #lib/modules/KVER-ipfire/build/include/config/pcie
 #lib/modules/KVER-ipfire/build/include/config/pcie/al.h
+#lib/modules/KVER-ipfire/build/include/config/pcie/brcmstb.h
 #lib/modules/KVER-ipfire/build/include/config/pcie/bus
 #lib/modules/KVER-ipfire/build/include/config/pcie/bus/default.h
 #lib/modules/KVER-ipfire/build/include/config/pcie/dw
