@@ -962,7 +962,7 @@ sub updatesettings
         unlink("${General::swroot}/ppp/settings");
         link("${General::swroot}/ppp/settings-$pppsettings{'PROFILE'}",
                 "${General::swroot}/ppp/settings");
-        system ("/usr/bin/touch", "${General::swroot}/ppp/updatesettings");
+        &General::system("/usr/bin/touch", "${General::swroot}/ppp/updatesettings");
 }
 
 sub writesecrets
