@@ -34,14 +34,6 @@ if test "${board}" = "sunxi"; then
 	setenv fdtfile ${DTBSUNXI};
 fi;
 
-# Quirk for RPi on aarch64 becuase u-boot cannot use the
-# initrd on aarch64 and without ramdisk no UUID
-if test ${cpu} = "armv8"; then
-	if test ${board} = "rpi"; then
-		setenv root_dev /dev/mmcblk0p3;
-	fi;
-fi;
-
 # Check if serial console is enabled
 if test "${SERIAL-CONSOLE}" = "ON"; then
 	if test ${console} = ""; then
@@ -95,14 +87,6 @@ if fatload ${boot_dev} ${boot_part} ${ramdisk_addr} uInit-${KVER}-ipfire${kernel
 else
 	echo Ramdisk not loaded...;
 	setenv ramdisk_addr -;
-fi;
-
-# Quirk for RPi on aarch64 becuase u-boot cannot use the
-# initrd on aarch64
-if test ${cpu} = "armv8"; then
-	if test ${board} = "rpi"; then
-		setenv ramdisk_addr -;
-	fi;
 fi;
 
 bootz ${kernel_addr_r} ${ramdisk_addr} ${fdt_addr_r};
