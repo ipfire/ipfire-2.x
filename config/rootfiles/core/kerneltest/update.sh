@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
-core=154
+core=157
 
 exit_with_error() {
 	# Set last succesfull installed core.
@@ -82,6 +82,10 @@ fi
 #rm -rf /boot/uInit-*-ipfire-*
 #rm -rf /boot/dtb-*-ipfire-*
 #rm -rf /lib/modules
+
+# remove old/renamed u-boot files
+rm -rf /boot/kernel*
+rm -rf /usr/share/u-boot/rpi*
 
 # Remove files
 
