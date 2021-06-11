@@ -21,7 +21,7 @@
 #usr/lib/libpcap.a
 usr/lib/libpcap.so
 usr/lib/libpcap.so.1
-usr/lib/libpcap.so.1.10.0
+usr/lib/libpcap.so.1.10.1
 #usr/lib/pkgconfig/libpcap.pc
 #usr/share/man/man1/pcap-config.1
 #usr/share/man/man3/pcap.3pcap
