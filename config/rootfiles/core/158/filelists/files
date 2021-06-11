@@ -8,6 +8,7 @@ srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/images/apple.png
+usr/lib/firewall/ipsec-policy
 var/ipfire/backup/bin/backup.pl
 var/ipfire/countries.pl
 var/ipfire/general-functions.pl
