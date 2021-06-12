@@ -88,7 +88,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-qt5 \
 		--disable-gtk \
 		--disable-gtk3 \
-		--disable-pygtk \
 		--disable-python \
 		--disable-pygobject \
 		--disable-python-dbus \

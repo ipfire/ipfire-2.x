@@ -32,9 +32,6 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-CONFIGURE_OPTIONS = \
-	--enable-readline=yes
-
 ifeq "$(BUILD_ARCH)" "armv5tel"
 	CONFIGURE_OPTIONS += \
 		--enable-lto=no

@@ -85,7 +85,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--sysconfdir=/etc \
 			--localstatedir=/var \
 			--with-pdftops=hybrid \
-			--disable-ijs \
 			--disable-mutool \
 			--disable-avahi
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
