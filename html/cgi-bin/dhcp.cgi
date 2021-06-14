@@ -131,7 +131,7 @@ our @current2 = <FILE>;
 close(FILE);
 
 # Open and read-in file which contains the list of allowed advanced options.
-open(FILE, $filename3) or die "Could not open $filename3. $!\n"
+open(FILE, $filename3) or die "Could not open $filename3. $!\n";
 
 # Grab file content.
 my @advoptions_list = <FILE>;
@@ -723,10 +723,19 @@ if ($dhcpsettings{'KEY1'} ne '') {
 }
 
 #search if the 'option' is in the list and print the syntax model
-my @opt = grep(/option $dhcpsettings{'ADVOPT_NAME'}/, @advoptions_list);
+my $opt;
 
-# Assign array element to variable and remove newlines.
-my $opt = chomp(@opt[0]);
+# Check if a advanced option name is set.
+if ($dhcpsettings{'ADVOPT_NAME'}) {
+	# Check if the name is part of the list and grab syntax.
+	my @opt = grep(/option $dhcpsettings{'ADVOPT_NAME'}/, @advoptions_list);
+
+	# Assign array element to variable.
+	$opt = @opt[0];
+
+	# Remove newlines.
+	chomp($opt);
+}
 
 if ($opt ne '') {
    $opt =~ s/option $dhcpsettings{'ADVOPT_NAME'}/Syntax:/;  # "option xyz abc" => "syntax: abc"
