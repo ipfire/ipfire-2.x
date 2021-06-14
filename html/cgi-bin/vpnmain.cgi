@@ -2360,11 +2360,11 @@ END
 	#use default advanced value
 	$cgiparams{'IKE_ENCRYPTION'}	= 'chacha20poly1305|aes256gcm128|aes256gcm96|aes256gcm64|aes256|aes192gcm128|aes192gcm96|aes192gcm64|aes192|aes128gcm128|aes128gcm96|aes128gcm64|aes128'; #[18];
 	$cgiparams{'IKE_INTEGRITY'}		= 'sha2_512|sha2_256'; #[19];
-	$cgiparams{'IKE_GROUPTYPE'}		= 'curve448|curve25519|4096|3072|2048'; #[20];
+	$cgiparams{'IKE_GROUPTYPE'}             = 'curve448|curve448|4096|3072|2048'; #[20];
 	$cgiparams{'IKE_LIFETIME'}		= '3'; #[16];
 	$cgiparams{'ESP_ENCRYPTION'}	= 'chacha20poly1305|aes256gcm128|aes256gcm96|aes256gcm64|aes256|aes192gcm128|aes192gcm96|aes192gcm64|aes192|aes128gcm128|aes128gcm96|aes128gcm64|aes128'; #[21];
 	$cgiparams{'ESP_INTEGRITY'}		= 'sha2_512|sha2_256'; #[22];
-	$cgiparams{'ESP_GROUPTYPE'}		= 'curve448|curve25519|4096|3072|2048'; #[23];
+	$cgiparams{'ESP_GROUPTYPE'}             = 'curve448|curve25519|4096|3072|2048'; #[23];
 	$cgiparams{'ESP_KEYLIFE'}		= '1'; #[17];
 	$cgiparams{'COMPRESSION'}		= 'off'; #[13];
 	$cgiparams{'ONLY_PROPOSED'}		= 'on'; #[24];
