@@ -12,7 +12,7 @@ usr/bin/fusermount3
 #usr/include/fuse3/fuse_opt.h
 #usr/lib/libfuse3.so
 usr/lib/libfuse3.so.3
-usr/lib/libfuse3.so.3.10.3
+usr/lib/libfuse3.so.3.10.4
 #usr/lib/pkgconfig/fuse3.pc
 #usr/share/man/man1/fusermount3.1
 #usr/share/man/man8/mount.fuse3.8
