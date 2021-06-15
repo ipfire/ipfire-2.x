@@ -58,6 +58,7 @@ VERSUFIX=ipfire$(KCFG)
 ifeq "$(TOOLCHAIN)" "1"
 	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)-tools
 	HEADERS_PREFIX = $(TOOLS_DIR)
+	EXTRAMAKE = CROSS_COMPILE=$(CROSSTARGET)-
 else
 	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
 	HEADERS_PREFIX = /usr
@@ -149,7 +150,7 @@ endif
 
 ifeq "$(KCFG)" "-headers"
 	# Install the header files
-	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) headers
+	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) $(EXTRAMAKE) headers
 	-mkdir -pv $(BUILDROOT)/$(HEADERS_PREFIX)/include
 	cd $(DIR_APP) && find usr/include -name '.*' -delete
 	cd $(DIR_APP) && rm usr/include/Makefile
