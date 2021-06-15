@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -226,8 +226,6 @@ $proxysettings{'THROTTLING_GREEN_HOST'} = 'unlimited';
 $proxysettings{'THROTTLING_BLUE_TOTAL'} = 'unlimited';
 $proxysettings{'THROTTLING_BLUE_HOST'} = 'unlimited';
 $proxysettings{'ENABLE_MIME_FILTER'} = 'off';
-$proxysettings{'FAKE_USERAGENT'} = '';
-$proxysettings{'FAKE_REFERER'} = '';
 $proxysettings{'AUTH_METHOD'} = 'none';
 $proxysettings{'AUTH_REALM'} = '';
 $proxysettings{'AUTH_MAX_USERIP'} = '';
@@ -1629,21 +1627,6 @@ END
 print <<END
 </table>
 
-<hr size='1'>
-
-<table width='100%'>
-<tr>
-	<td><b>$Lang::tr{'advproxy privacy'}</b></td>
-</tr>
-<tr>
-	<td class='base'>$Lang::tr{'advproxy fake useragent'}:</td>
-	<td class='base'>$Lang::tr{'advproxy fake referer'}:</td>
-</tr>
-<tr>
-	<td><input type='text' name='FAKE_USERAGENT' value='$proxysettings{'FAKE_USERAGENT'}' size='40%' /></td>
-	<td><input type='text' name='FAKE_REFERER' value='$proxysettings{'FAKE_REFERER'}' size='40%' /></td>
-</tr>
-</table>
 <hr size='1'>
 END
 ;
@@ -3846,8 +3829,7 @@ END
 
 	print FILE "http_access deny  all\n\n";
 
-	if (($proxysettings{'FORWARD_IPADDRESS'} eq 'off') || ($proxysettings{'FORWARD_VIA'} eq 'off') ||
-		(!($proxysettings{'FAKE_USERAGENT'} eq '')) || (!($proxysettings{'FAKE_REFERER'} eq '')))
+	if (($proxysettings{'FORWARD_IPADDRESS'} eq 'off') || ($proxysettings{'FORWARD_VIA'} eq 'off'))
 	{
 		print FILE "#Strip HTTP Header\n";
 
@@ -3861,31 +3843,9 @@ END
 			print FILE "request_header_access Via deny all\n";
 			print FILE "reply_header_access Via deny all\n";
 		}
-		if (!($proxysettings{'FAKE_USERAGENT'} eq ''))
-		{
-			print FILE "request_header_access User-Agent deny all\n";
-			print FILE "reply_header_access User-Agent deny all\n";
-		}
-		if (!($proxysettings{'FAKE_REFERER'} eq ''))
-		{
-			print FILE "request_header_access Referer deny all\n";
-			print FILE "reply_header_access Referer deny all\n";
-		}
 
 		print FILE "\n";
 
-		if ((!($proxysettings{'FAKE_USERAGENT'} eq '')) || (!($proxysettings{'FAKE_REFERER'} eq '')))
-		{
-			if (!($proxysettings{'FAKE_USERAGENT'} eq ''))
-			{
-				print FILE "header_replace User-Agent $proxysettings{'FAKE_USERAGENT'}\n";
-			}
-			if (!($proxysettings{'FAKE_REFERER'} eq ''))
-			{
-				print FILE "header_replace Referer $proxysettings{'FAKE_REFERER'}\n";
-			}
-			print FILE "\n";
-		}
 	}
 
 	if ($proxysettings{'SUPPRESS_VERSION'} eq 'on') { print FILE "httpd_suppress_version_string on\n\n" }
