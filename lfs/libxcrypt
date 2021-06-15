@@ -33,6 +33,8 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
 ifeq "$(TOOLCHAIN)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
+  EXTRACONFIG = --host=$(CROSSTARGET) \
+		--target=$(CROSSTARGET)
 else
   TARGET = $(DIR_INFO)/$(THISAPP)
 endif
@@ -78,6 +80,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && autoreconf -vfi
 	cd $(DIR_APP) && \
 		./configure \
+			$(EXTRACONFIG) \
 			--prefix=$(PREFIX) \
 			--disable-static \
 			--enable-hashes=strong,glibc \
