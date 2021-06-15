@@ -48,7 +48,7 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 	KERNEL_TARGET = Image
 endif
 
-ifeq "$(BUILD_ARCH)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv6l"
 	KERNEL_ARCH  = arm
 	KERNEL_TARGET = zImage
 endif
@@ -138,7 +138,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# fix Boot with enabled usercopy hardening
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.9-crypto_testmgr_allocate_buffers_with____GFP_COMP.patch
 
-ifeq "$(BUILD_ARCH)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv6l"
 	# Apply Arm-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).patch.xz | patch -Np1
 endif

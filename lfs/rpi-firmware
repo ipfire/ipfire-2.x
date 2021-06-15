@@ -30,7 +30,7 @@ DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-SUP_ARCH   = armv5tel aarch64
+SUP_ARCH   = armv6l aarch64
 
 ###############################################################################
 # Top-level Rules
@@ -71,7 +71,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@cd / && tar axf $(DIR_DL)/$(DL_FILE)
 	cp -f $(DIR_SRC)/config/rpi-firmware/config.txt /boot
-ifeq "${BUILD_ARCH}" "armv5tel"
+ifeq "${BUILD_ARCH}" "armv6l"
 	echo arm_64bit=0 >> /boot/config.txt
 else
 	echo arm_64bit=1 >> /boot/config.txt

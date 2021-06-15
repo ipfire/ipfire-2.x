@@ -34,10 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 CXXFLAGS+= -Wno-error=format-truncation
 
-ifeq "$(BUILD_ARCH)" "armv5tel"
-	LDFLAGS += -latomic
-endif
-
 ifeq "$(BUILD_ARCH)" "riscv64"
 	LDFLAGS += -latomic
 endif

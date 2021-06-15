@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -53,12 +53,6 @@ endif
 
 ifeq "$(BUILD_ARCH)" "aarch64"
 	CFLAGS += -Wno-error=maybe-uninitialized
-endif
-
-# Disable hardware FP for armv5tel
-ifeq "$(BUILD_ARCH)" "armv5tel"
-	EXTRA_CONFIG += \
-		--without-fp
 endif
 
 # Add some general configuration flags
@@ -124,7 +118,7 @@ ifneq "$(TOOLCHAIN)" "1"
 		scripts/test-installation.pl
  endif
 
- ifeq "$(BUILD_ARCH)" "armv5tel"
+ ifeq "$(BUILD_ARCH)" "armv6l"
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.3 -o|' \
 		scripts/test-installation.pl
  endif

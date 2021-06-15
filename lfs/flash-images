@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -142,7 +142,7 @@ ifeq "$(EFI)" "1"
 endif
 
 	# Install Pandaboard MLO and uboot first
-ifeq "$(BUILD_ARCH)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv6l"
 	cp -v /boot/MLO $(MNThdd)/boot/
 	cp -v /boot/u-boot.img $(MNThdd)/boot/
 	sync
@@ -255,7 +255,7 @@ endif
 	# not copied to a block device)
 	dd if=/dev/zero bs=1M count=$(PADDING) >> $(IMG)
 
-ifeq "$(BUILD_ARCH)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv6l"
 	# Install u-boot for Orangepi Zero/Nanopi DUO into image 8KB
 	dd if=/usr/share/u-boot/orangepi_zero/u-boot-sunxi-with-spl.bin of=$(IMG) bs=1K seek=8 conv=notrunc
 endif

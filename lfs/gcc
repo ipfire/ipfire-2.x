@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -54,7 +54,7 @@ ifeq "$(BUILD_ARCH)" "armv7hl"
 	FULL_BOOTSTRAP = 1
 endif
 
-ifeq "$(BUILD_ARCH)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv6l"
 	FULL_BOOTSTRAP = 1
 endif
 
@@ -161,10 +161,11 @@ ifeq "$(BUILD_ARCH)" "armv7hl"
 		--with-float=hard
 endif
 
-ifeq "$(BUILD_ARCH)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv6l"
 	EXTRA_CONFIG += \
-		--with-float=soft \
-		--disable-sjlj-exceptions
+		--with-arch=armv6 \
+		--with-float=softfp
+#		--disable-sjlj-exceptions
 endif
 
 ifeq "$(BUILD_ARCH)" "i586"

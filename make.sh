@@ -169,12 +169,12 @@ configure_build() {
 			CFLAGS_ARCH="-march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard"
 			;;
 
-		armv5tel)
+		armv6l)
 			BUILDTARGET="${build_arch}-unknown-linux-gnueabi"
 			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
 			BUILD_PLATFORM="arm"
-			CFLAGS_ARCH="-march=armv5te -mfloat-abi=soft -fomit-frame-pointer"
-			RUSTFLAGS="-Ccodegen-units=1"
+			CFLAGS_ARCH="-march=armv6 -mfpu=vfp -mfloat-abi=softfp -fomit-frame-pointer"
+			#RUSTFLAGS="-Ccodegen-units=1"
 			;;
 
 		riscv64)
@@ -267,8 +267,8 @@ configure_build_guess() {
 			echo "aarch64"
 			;;
 
-		armv7*|armv6*|armv5*)
-			echo "armv5tel"
+		armv7*|armv6*)
+			echo "armv6l"
 			;;
 
 		riscv64)
@@ -1003,10 +1003,10 @@ buildtoolchain() {
 			# These are working.
 			;;
 
-		armv5tel:armv5tel|armv5tel:armv5tejl|armv5tel:armv6l|armv5tel:armv7l|armv5tel:aarch64)
+		armv6l:armv6l|armv6l:armv7l|armv6l:aarch64)
 			# These are working.
 			;;
-		armv5tel:*)
+		armv6l:*)
 			error=true
 			;;
 	esac
@@ -1667,8 +1667,8 @@ buildpackages() {
 
   cd $BASEDIR
 
-  # remove not useable iso on armv5tel (needed to build flash images)
-  [ "${BUILD_ARCH}" = "armv5tel" ] && rm -rf *.iso
+  # remove not useable iso on armv6l (needed to build flash images)
+  [ "${BUILD_ARCH}" = "armv6l" ] && rm -rf *.iso
 
   for i in $(ls *.bz2 *.img.xz *.iso 2>/dev/null); do
 	md5sum $i > $i.md5

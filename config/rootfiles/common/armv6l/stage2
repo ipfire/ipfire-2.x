@@ -43,7 +43,7 @@ etc/profile.d/umask.sh
 etc/resolv.conf
 etc/securetty
 etc/sysctl.conf
-etc/sysctl-armv5tel.conf
+etc/sysctl-armv6l.conf
 etc/syslog.conf
 etc/system-release
 #home

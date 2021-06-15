@@ -28,7 +28,7 @@ case "${1}" in
 		case "${arch}" in
 			i?86 )	arch="i586";
 				;;
-			armv*)	arch="armv5tel":
+			armv*)	arch="armv6l":
 				;;
 		esac
 		if [ -f "/etc/sysctl-${arch}.conf" ]; then

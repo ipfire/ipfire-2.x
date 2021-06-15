@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-$(MKIMAGE)
-SUP_ARCH   = armv5tel aarch64
+SUP_ARCH   = armv6l aarch64
 
 CFLAGS    += -fcommon
 
@@ -78,7 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 ifneq "$(MKIMAGE)" "1"
-ifeq "${BUILD_ARCH}" "armv5tel"
+ifeq "${BUILD_ARCH}" "armv6l"
 	# Pandaboard
 	-mkdir -pv /usr/share/u-boot/pandaboard
 	cd $(DIR_APP) && make CROSS_COMPILE="" omap4_panda_config
@@ -191,7 +191,7 @@ endif
 
 else
 	# mkimage
-ifeq "${BUILD_ARCH}" "armv5tel"
+ifeq "${BUILD_ARCH}" "armv6l"
 	cd $(DIR_APP) && make CROSS_COMPILE="" omap4_panda_config
 else
 	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_3_config
