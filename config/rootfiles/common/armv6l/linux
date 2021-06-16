@@ -665,7 +665,7 @@ boot/vmlinuz-KVER-ipfire
 etc/modprobe.d/framebuffer.conf
 etc/modprobe.d/ipv6.conf
 #lib/modules
-lib/modules/KVER-ipfire
+#lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/build
 #lib/modules/KVER-ipfire/build/.config
 #lib/modules/KVER-ipfire/build/Kconfig
@@ -20189,8 +20189,8 @@ lib/modules/KVER-ipfire
 #lib/modules/KVER-ipfire/build/virt/lib
 #lib/modules/KVER-ipfire/build/virt/lib/Kconfig
 #lib/modules/KVER-ipfire/build/virt/lib/Makefile
-#lib/modules/KVER-ipfire/extra
-#lib/modules/KVER-ipfire/kernel
+lib/modules/KVER-ipfire/extra
+lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/arch
 #lib/modules/KVER-ipfire/kernel/arch/arm
 #lib/modules/KVER-ipfire/kernel/arch/arm/crypto
