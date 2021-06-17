@@ -163,6 +163,8 @@ END
 	# Generate list of installed addon pak's
 	opendir (DIR, "/opt/pakfire/db/installed") || die "Cannot opendir /opt/pakfire/db/installed/: $!";
 	my @pak = sort readdir DIR;
+	closedir(DIR);
+
 	foreach (@pak){
 		chomp($_);
 		next unless (m/^meta-/);
@@ -187,6 +189,7 @@ END
 					print "<tr>";
 					$col="bgcolor='$color{'color20'}'";
 				}
+
 				print "<td align='left' $col width='31%'>$_</td> ";
 				my $status = isautorun($_,$col);
 				print "$status ";
@@ -217,27 +220,54 @@ END
 	&Header::closepage();
 }
 
-sub isautorun{
-	my $cmd = $_[0];
-	my $col = $_[1];
+sub isautorun (@) {
+	my ($cmd, $col) = @_;
+
+	# Init directory.
+	my $initdir = "/etc/rc.d/rc3.d/";
+
 	my $status = "<td align='center' $col></td>";
-	my @init = &General::system_output("find", "/etc/rc.d/rc3.d/S??${cmd}");
-	my $init = chomp(@init[0]);
-	if ($init ne ''){
+
+	# Check if autorun for the given cmd is enabled.
+	if ( &find_init("$cmd", "$initdir") ) {
+		# Adjust status.
 		$status = "<td align='center' $col><a href='services.cgi?$_!disable'><img alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' border='0' width='16' height='16' /></a></td>";
-	}
-	@init = &General::system_output("find", "/etc/rc.d/rc3.d/off/S??${cmd}");
-	my $init = chomp (@init[0]);
-	if ($init ne ''){
+	} else {
+		# Adjust status.
 		$status = "<td align='center' $col><a href='services.cgi?$_!enable'><img alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' border='0' width='16' height='16' /></a></td>";
 	}
 
+	# Return the status.
 	return $status;
 }
 
-sub isrunning{
-	my $cmd = $_[0];
-	my $col = $_[1];
+sub find_init (@) {
+	my ($cmd, $dir) = @_;
+
+	# Open given init directory.
+	opendir (INITDIR, "$dir") || die "Cannot opendir $dir: $!";
+
+	# Read-in init files from directory.
+	my @inits = readdir(INITDIR);
+
+	# Close directory handle.
+	closedir(INITDIR);
+
+	# Loop through the directory.
+	foreach my $init (@inits) {
+		# Check if the current processed file belongs to the given command.
+		if ($init =~ /S\d+\d+$cmd\z/) {
+			# Found, return "1" - True.
+			return "1";
+		}
+        }
+
+	# Nothing found, return nothing.
+	return;
+}
+
+sub isrunning (@) {
+	my ($cmd, $col) = @_;
 	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2' $col></td>";
 	my $pid = '';
 	my $testcmd = '';
@@ -288,16 +318,16 @@ sub isrunning{
 	return $status;
 }
 
-sub isrunningaddon{
-	my $cmd = $_[0];
-	my $col = $_[1];
+sub isrunningaddon (@) {
+	my ($cmd, $col) = @_;
+
 	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2' $col></td>";
 	my $pid = '';
 	my $testcmd = '';
 	my $exename;
 	my @memory;
 
-	my @testcmd = &General::system_output("/usr/local/bin/addonctrl", "$_", "status");
+	my @testcmd = &General::system_output("/usr/local/bin/addonctrl", "$cmd", "status");
 	my $testcmd = @testcmd[0];
 
 	if ( $testcmd =~ /is\ running/ && $testcmd !~ /is\ not\ running/){
