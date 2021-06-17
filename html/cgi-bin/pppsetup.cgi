@@ -39,6 +39,8 @@ my %checked=();
 my @profilenames=();
 my $errormessage = '';
 my $maxprofiles = 5;
+
+# This call is safe, because no user input will be processed.
 my $kernel=`/bin/uname -r | /usr/bin/tr -d '\012'`;
 
 my %color = ();
@@ -177,7 +179,12 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
                 $errormessage = $Lang::tr{'invalid input'};
                 goto ERROR; }
 
-        if( $pppsettings{'RECONNECTION'} eq 'dialondemand' && `/bin/cat ${General::swroot}/ddns/config` =~ /,on$/m ) {
+	# Read-in ddns config file, to check if at least one provider is enabled.
+	open(FILE, "${General::swroot}/ddns/config)";
+	my @ddns_config = <FILE>
+	close(FILE);
+
+        if( $pppsettings{'RECONNECTION'} eq 'dialondemand' && grep(/on/, @ddns_config) ) {
                 $errormessage = $Lang::tr{'dod not compatible with ddns'};
                 goto ERROR; }
 
@@ -520,7 +527,12 @@ print <<END
 END
 ;
 
-my $atmdev=`cat /proc/net/atm/devices 2>/dev/null | grep 0`;
+# Read-in atm devices from proc.
+open(PROC, "/proc/net/atm/devices");
+my @patm_devices = <PROC>;
+close(PROC);
+
+my $atmdev = grep(/0/, @atm_devices);
 chomp ($atmdev);
 if ($atmdev ne '') {
         print <<END
@@ -962,7 +974,10 @@ sub updatesettings
         unlink("${General::swroot}/ppp/settings");
         link("${General::swroot}/ppp/settings-$pppsettings{'PROFILE'}",
                 "${General::swroot}/ppp/settings");
-        system ("/usr/bin/touch", "${General::swroot}/ppp/updatesettings");
+
+	# Write updatesettings file.
+	open(FILE, ">/${General::swroot}/ppp/updatesettings");
+	close(FILE);
 }
 
 sub writesecrets

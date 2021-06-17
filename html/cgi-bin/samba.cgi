@@ -85,14 +85,14 @@ delete $sambasettings{'__CGI__'};delete $sambasettings{'x'};delete $sambasetting
 ############################################################################################################################
 ############################################# Samba Rootskript aufrufe fr SU-Actions #######################################
 
-if ($sambasettings{'ACTION'} eq 'smbuserdisable'){system("/usr/local/bin/sambactrl smbuserdisable $sambasettings{'NAME'}");}
-if ($sambasettings{'ACTION'} eq 'smbuserenable'){system("/usr/local/bin/sambactrl smbuserenable $sambasettings{'NAME'}");}
-if ($sambasettings{'ACTION'} eq 'smbuseradd'){system("/usr/local/bin/sambactrl smbuseradd $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'}");}
-if ($sambasettings{'ACTION'} eq 'smbchangepw'){system("/usr/local/bin/sambactrl smbchangepw $sambasettings{'USERNAME'} $sambasettings{'PASSWORD'}");}
-if ($sambasettings{'ACTION'} eq 'smbrestart'){system("/usr/local/bin/sambactrl smbrestart");}
-if ($sambasettings{'ACTION'} eq 'smbstart'){system("/usr/local/bin/sambactrl smbstart");}
-if ($sambasettings{'ACTION'} eq 'smbstop'){system("/usr/local/bin/sambactrl smbstop");}
-if ($sambasettings{'ACTION'} eq 'smbreload'){system("/usr/local/bin/sambactrl smbreload");}
+if ($sambasettings{'ACTION'} eq 'smbuserdisable'){&General::system("/usr/local/bin/sambactrl", "smbuserdisable", "$sambasettings{'NAME'}");}
+if ($sambasettings{'ACTION'} eq 'smbuserenable'){&General::system("/usr/local/bin/sambactrl", "smbuserenable", "$sambasettings{'NAME'}");}
+if ($sambasettings{'ACTION'} eq 'smbuseradd'){&General::system("/usr/local/bin/sambactrl", "smbuseradd", "$sambasettings{'USERNAME'}", "$sambasettings{'PASSWORD'}");}
+if ($sambasettings{'ACTION'} eq 'smbchangepw'){&General::system("/usr/local/bin/sambactrl", "smbchangepw", "$sambasettings{'USERNAME'}", "$sambasettings{'PASSWORD'}");}
+if ($sambasettings{'ACTION'} eq 'smbrestart'){&General::system("/usr/local/bin/sambactrl", "smbrestart");}
+if ($sambasettings{'ACTION'} eq 'smbstart'){&General::system("/usr/local/bin/sambactrl", "smbstart");}
+if ($sambasettings{'ACTION'} eq 'smbstop'){&General::system("/usr/local/bin/sambactrl", "smbstop");}
+if ($sambasettings{'ACTION'} eq 'smbreload'){&General::system("/usr/local/bin/sambactrl", "smbreload");}
 if ($sambasettings{'ACTION'} eq 'join') {
 	$message .= &joindomain($sambasettings{'USERNAME'}, $sambasettings{'PASSWORD'});
 }
@@ -124,7 +124,7 @@ if ($sambasettings{'ACTION'} eq 'smbsharechange') {
 ############################################################################################################################
 ########################################### Samba Benutzer oder PC l�chen #################################################
 
-if ($sambasettings{'ACTION'} eq 'userdelete'){system("/usr/local/bin/sambactrl smbuserdelete $sambasettings{'NAME'}");}
+if ($sambasettings{'ACTION'} eq 'userdelete'){&General::system("/usr/local/bin/sambactrl", "smbuserdelete", "$sambasettings{'NAME'}");}
 
 ############################################################################################################################
 ##################################### Umsetzen der Werte von Checkboxen und Dropdowns ######################################
@@ -138,7 +138,7 @@ if ($sambasettings{'ACTION'} eq $Lang::tr{'save'}) {
 	# Write configuration to file
 	&writeconfiguration();
 
-	system("/usr/local/bin/sambactrl smbreload");
+	&General::system("/usr/local/bin/sambactrl", "smbreload");
 }
 
 &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
@@ -334,11 +334,11 @@ if ($sambasettings{'ROLE'} eq 'standalone') {
 			</tr>
 END
 
-	system('/usr/local/bin/sambactrl readsmbpasswd');
+	&General::system("/usr/local/bin/sambactrl", "readsmbpasswd");
 	open(FILE, "<${General::swroot}/samba/private/smbpasswd") or die "Can't read user file: $!";
 	my @users = <FILE>;
 	close(FILE);
-	system('/usr/local/bin/sambactrl locksmbpasswd');
+	&General::system("/usr/local/bin/sambactrl", "locksmbpasswd");
 
 	my $lines = 0;
 	foreach $userentry (sort @users) {
@@ -734,8 +734,8 @@ if ( $smb eq 'shares')
 
 close FILE;
 
-system("/usr/local/bin/sambactrl smbsafeconf");
-system("/usr/local/bin/sambactrl smbreload");
+&General::system("/usr/local/bin/sambactrl", "smbsafeconf");
+&General::system("/usr/local/bin/sambactrl", "smbreload");
 }
 
 sub isrunning
@@ -844,7 +844,7 @@ printable = yes
 END
 close FILE;
 
-	system("/usr/local/bin/sambactrl smbsafeconf");
+	&General::system("/usr/local/bin/sambactrl", "smbsafeconf");
 }
 
 sub joindomain {

@@ -20,6 +20,7 @@
 ###############################################################################
 
 use strict;
+use POSIX qw(strftime);
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -125,8 +126,8 @@ ERROR:
 
 	if ($timesettings{'ENABLENTP'} eq 'on' && $timesettings{'VALID'} eq 'yes')
 	{
-		system ('/usr/bin/touch', "${General::swroot}/time/enable");
-		system ('/usr/local/bin/timectrl enable >/dev/null 2>&1');
+		&General::system('/usr/bin/touch', "${General::swroot}/time/enable");
+		&General::system('/usr/local/bin/timectrl', 'enable');
 		&General::log($Lang::tr{'ntp syncro enabled'});
 		unlink "/var/lock/time/counter";
 		if ($timesettings{'UPDATE_METHOD'} eq 'periodically')
@@ -138,7 +139,7 @@ ERROR:
 		}
 		if ($timesettings{'ENABLECLNTP'} eq 'on') # DPC added to 1.3.1
 		{
-			system ('/usr/bin/touch', "${General::swroot}/time/allowclients"); # DPC added to 1.3.1
+			&General::system('/usr/bin/touch', "${General::swroot}/time/allowclients"); # DPC added to 1.3.1
 			&General::log($Lang::tr{'ntpd restarted'}); # DPC added to 1.3.1
 		} else {
 			unlink "${General::swroot}/time/allowclients";
@@ -150,11 +151,11 @@ ERROR:
 		unlink "${General::swroot}/time/enable";
 		unlink "/var/lock/time/settimenow";
 		unlink "${General::swroot}/time/allowclients"; # DPC added to 1.3.1
-		system ('/usr/local/bin/timectrl disable >/dev/null 2>&1');
+		&General::system('/usr/local/bin/timectrl', 'disable');
 		&General::log($Lang::tr{'ntp syncro disabled'})
 	}
 	if (! $errormessage) {
-		system ('/usr/local/bin/timectrl restart >/dev/null 2>&1'); # DPC added to 1.3.1
+		&General::system('/usr/local/bin/timectrl', 'restart'); # DPC added to 1.3.1
 	}
 }
 
@@ -163,7 +164,7 @@ ERROR:
 $timesettings{'ACTION'} = &Header::cleanhtml ($timesettings{'ACTION'});
 if ($timesettings{'ACTION'} eq $Lang::tr{'set time now'} && $timesettings{'ENABLENTP'} eq 'on')
 {
-	system ('/usr/bin/touch', "/var/lock/time/settimenow");
+	&General::system('/usr/bin/touch', "/var/lock/time/settimenow");
 }
 
 &General::readhash("${General::swroot}/time/settings", \%timesettings);
@@ -180,11 +181,18 @@ if ($timesettings{'VALID'} eq '')
 }
 
 unless ($errormessage) {
-	$timesettings{'SETMONTH'} = `date +'%m %e %Y %H %M'|cut -c 1-2`;
-	$timesettings{'SETDAY'} = `date +'%m %e %Y %H %M'|cut -c 4-5`;
-	$timesettings{'SETYEAR'} = `date +'%m %e %Y %H %M'|cut -c 7-10`;
-	$timesettings{'SETHOUR'} = `date +'%m %e %Y %H %M'|cut -c 12-13`;
-	$timesettings{'SETMINUTES'} = `date +'%m %e %Y %H %M'|cut -c 15-16`;
+	# Get date and time.
+	my $date = strftime("%m %e %Y %H %M", localtime);
+
+	# Split date string into single values.
+	my ($month, $day, $year, $hour, $minute) = split(/ /, $date);
+
+	# Assign values to the hash.
+	$timesettings{'SETMONTH'} = $month;
+	$timesettings{'SETDAY'} = $day;
+	$timesettings{'SETYEAR'} = $year;
+	$timesettings{'SETHOUR'} = $hour;
+	$timesettings{'SETMINUTES'} = $minute;
 	$_=$timesettings{'SETDAY'};
 	$timesettings{'SETDAY'}=~ tr/ /0/;
 }

@@ -104,7 +104,7 @@ $qossettings{'TOS'} = '';
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
 &Header::getcgihash(\%qossettings);
 
-$qossettings{'RED_DEV'} = `cat /var/ipfire/red/iface`;
+$qossettings{'RED_DEV'} = &General::get_red_interface();
 
 my %color = ();
 my %mainsettings = ();
@@ -232,7 +232,7 @@ END
 	open( FILE, "< $level7file" ) or die "Unable to read $level7file";
 	@l7rules = <FILE>;
 	close FILE;
-  system("rm $level7file");
+	&General::system("rm", "$level7file");
   	foreach $l7ruleentry (sort @l7rules)
   	{
   		@l7ruleline = split( /\;/, $l7ruleentry );
@@ -244,13 +244,13 @@ END
 	        close FILE;
         }
 	  }
-	open( FILE, "< $level7file" ) or system("touch $level7file");close FILE;
+	open( FILE, "< $level7file" ) or &General::system("touch", "$level7file");close FILE;
 	} elsif ($qossettings{'DOLEVEL7'} eq $Lang::tr{'edit'})
 {
 	open( FILE, "< $level7file" ) or die "Unable to read $level7file";
 	@l7rules = <FILE>;
 	close FILE;
-	system("rm $level7file");
+	&General::system("rm", "$level7file");
   	foreach $l7ruleentry (sort @l7rules)
   	{
   		@l7ruleline = split( /\;/, $l7ruleentry );
@@ -263,7 +263,7 @@ END
       }
     }
   &level7rule;
-  open( FILE, "< $level7file" ) or system("touch $level7file");close FILE;
+  open( FILE, "< $level7file" ) or &General::system("touch", "$level7file");close FILE;
  }
 
 ############################################################################################################################
@@ -323,7 +323,7 @@ END
 	open( FILE, "< $portfile" ) or die "Unable to read $portfile";
 	@portrules = <FILE>;
 	close FILE;
-	system("rm $portfile");
+	&General::system("rm", "$portfile");
   	foreach $portruleentry (sort @portrules)
   	{
   		@portruleline = split( /\;/, $portruleentry );
@@ -336,7 +336,7 @@ END
       }
     }
    &portrule;
-  open( FILE, "< $portfile" ) or system("touch $portfile");close FILE;
+  open( FILE, "< $portfile" ) or &General::system("touch", "$portfile");close FILE;
  }
 
 ############################################################################################################################
@@ -408,25 +408,25 @@ if ($qossettings{'ACTION'} eq $Lang::tr{'start'})
 {
 	$qossettings{'ENABLED'} = 'on';
 	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
-	system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
-	system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
-	system("logger -t ipfire 'QoS started'");
+	&General::system("/usr/local/bin/qosctrl", "generate");
+	&General::system("/usr/local/bin/qosctrl", "start");
+	&General::system("logger", "-t", "ipfire", "QoS started");
 }
 elsif ($qossettings{'ACTION'} eq $Lang::tr{'stop'})
 {
 	$qossettings{'ENABLED'} = 'off';
 	&General::writehash("${General::swroot}/qos/settings", \%qossettings);
-	system("/usr/local/bin/qosctrl stop >/dev/null 2>&1");
-	system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
-	system("logger -t ipfire 'QoS stopped'");
+	&General::system("/usr/local/bin/qosctrl", "stop");
+	&General::system("/usr/local/bin/qosctrl", "generate");
+	&General::system("logger", "-t", "ipfire", "QoS stopped");
 }
 elsif ($qossettings{'ACTION'} eq $Lang::tr{'restart'})
 {
 	if ($qossettings{'ENABLED'} eq 'on'){
-		system("/usr/local/bin/qosctrl stop >/dev/null 2>&1");
-		system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
-		system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
-		system("logger -t ipfire 'QoS restarted'");
+		&General::system("/usr/local/bin/qosctrl", "stop");
+		&General::system("/usr/local/bin/qosctrl", "generate");
+		&General::system("/usr/local/bin/qosctrl", "start");
+		&General::system("logger", "-t", "ipfire", "QoS restarted");
 	}
 }
 elsif ($qossettings{'ACTION'} eq $Lang::tr{'save'})
@@ -530,9 +530,9 @@ END
 		$qossettings{'ACK'} ="101";
 		$qossettings{'ENABLED'} = 'on';
 		&General::writehash("${General::swroot}/qos/settings", \%qossettings);
-		system("/usr/local/bin/qosctrl generate >/dev/null 2>&1");
-		system("/usr/local/bin/qosctrl start >/dev/null 2>&1");
-		system("logger -t ipfire 'QoS started'");
+		&General::system("/usr/local/bin/qosctrl", "generate");
+		&General::system("/usr/local/bin/qosctrl", "start");
+		&General::system("logger", "-t", "ipfire", "QoS started");
 	} else {
 		$message = $Lang::tr{'qos enter bandwidths'};
 	}
@@ -542,8 +542,8 @@ elsif ($qossettings{'ACTION'} eq $Lang::tr{'status'} )
 	&Header::openbox('100%', 'left', 'QoS Status');
 	if ($qossettings{'ENABLED'} eq 'on'){
 		my $output = "";
-		$output = `/usr/local/bin/qosctrl status`;
-		$output = &Header::cleanhtml($output,"y");
+		my @output = &General::system_output("/usr/local/bin/qosctrl", "status");
+		$output = &Header::cleanhtml(@output[0],"y");
 		print "<pre>$output</pre>\n";
 	} else { print "$Lang::tr{'QoS not enabled'}"; }
 	&Header::closebox();

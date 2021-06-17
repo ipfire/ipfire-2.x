@@ -208,10 +208,12 @@ sub newcleanssldatabase {
 		close FILE;
 	}
 	if (! -s ">${General::swroot}/certs/index.txt") {
-		system ("touch ${General::swroot}/certs/index.txt");
+		open(FILE, ">${General::swroot}/certs/index.txt");
+		close(FILE);
 	}
 	if (! -s ">${General::swroot}/certs/index.txt.attr") {
-		system ("touch ${General::swroot}/certs/index.txt.attr");
+		open(FILE, ">${General::swroot}/certs/index.txt.attr");
+		close(FILE);
 	}
 	unlink ("${General::swroot}/certs/index.txt.old");
 	unlink ("${General::swroot}/certs/index.txt.attr.old");
@@ -224,9 +226,13 @@ sub newcleanssldatabase {
 ###
 sub callssl ($) {
 	my $opt = shift;
-	my $retssl = `/usr/bin/openssl $opt 2>&1`; #redirect stderr
+
+	# Split the given argument string into single pieces and assign them to an array.
+	my @opts = split(/ /, $opt);
+
+	my @retssl = &General::system_output("/usr/bin/openssl", @opts); #redirect stderr
 	my $ret = '';
-	foreach my $line (split (/\n/, $retssl)) {
+	foreach my $line (split (/\n/, @retssl)) {
 		&General::log("ipsec", "$line") if (0); # 1 for verbose logging
 		$ret .= '<br>'.$line if ( $line =~ /error|unknown/ );
 	}
@@ -240,13 +246,21 @@ sub callssl ($) {
 ###
 sub getCNfromcert ($) {
 	#&General::log("ipsec", "Extracting name from $_[0]...");
-	my $temp = `/usr/bin/openssl x509 -text -in $_[0]`;
-	$temp =~ /Subject:.*CN = (.*)[\n]/;
-	$temp = $1;
-	$temp =~ s+/Email+, E+;
-	$temp =~ s/ ST = / S = /;
-	$temp =~ s/,//g;
-	$temp =~ s/\'//g;
+	my @temp = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "$_[0]");
+	my $temp;
+
+	foreach my $line (@temp) {
+		if ($line =~ /Subject:.*CN = (.*)[\n]/) {
+			$temp = $1;
+			$temp =~ s+/Email+, E+;
+			$temp =~ s/ ST = / S = /;
+			$temp =~ s/,//g;
+			$temp =~ s/\'//g;
+
+			last;
+		}
+	}
+
 	return $temp;
 }
 ###
@@ -254,11 +268,19 @@ sub getCNfromcert ($) {
 ###
 sub getsubjectfromcert ($) {
 	#&General::log("ipsec", "Extracting subject from $_[0]...");
-	my $temp = `/usr/bin/openssl x509 -text -in $_[0]`;
-	$temp =~ /Subject: (.*)[\n]/;
-	$temp = $1;
-	$temp =~ s+/Email+, E+;
-	$temp =~ s/ ST = / S = /;
+	my @temp = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "$_[0]");
+	my $temp;
+
+	foreach my $line (@temp) {
+		if($line =~ /Subject: (.*)[\n]/) {
+			$temp = $1;
+			$temp =~ s+/Email+, E+;
+			$temp =~ s/ ST = / S = /;
+
+			last;
+		}
+	}
+
 	return $temp;
 }
 ###
@@ -568,9 +590,9 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	&General::writehash("${General::swroot}/vpn/settings", \%vpnsettings);
 	&writeipsecfiles();
 	if (&vpnenabled) {
-		system('/usr/local/bin/ipsecctrl', 'S');
+		&General::system('/usr/local/bin/ipsecctrl', 'S');
 	} else {
-		system('/usr/local/bin/ipsecctrl', 'D');
+		&General::system('/usr/local/bin/ipsecctrl', 'D');
 	}
 	sleep $sleepDelay;
 	SAVE_ERROR:
@@ -595,7 +617,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	}
 	&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 	&writeipsecfiles();
-	system('/usr/local/bin/ipsecctrl', 'R');
+	&General::system('/usr/local/bin/ipsecctrl', 'R');
 	sleep $sleepDelay;
 
 ###
@@ -667,8 +689,8 @@ END
 		$errormessage = $!;
 		goto UPLOADCA_ERROR;
 	}
-	my $temp = `/usr/bin/openssl x509 -text -in $filename`;
-	if ($temp !~ /CA:TRUE/i) {
+	my @temp = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "$filename");
+	if (! grep(/CA:TRUE/, @temp)) {
 		$errormessage = $Lang::tr{'not a valid ca certificate'};
 		unlink ($filename);
 		goto UPLOADCA_ERROR;
@@ -686,7 +708,7 @@ END
 	$cahash{$key}[1] = &Header::cleanhtml(getsubjectfromcert ("${General::swroot}/ca/$cgiparams{'CA_NAME'}cert.pem"));
 	&General::writehasharray("${General::swroot}/vpn/caconfig", \%cahash);
 
-	system('/usr/local/bin/ipsecctrl', 'R');
+	&General::system('/usr/local/bin/ipsecctrl', 'R');
 	sleep $sleepDelay;
 
 	UPLOADCA_ERROR:
@@ -702,9 +724,9 @@ END
 		&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 		&Header::openbigbox('100%', 'left', '', '');
 		&Header::openbox('100%', 'left', "$Lang::tr{'ca certificate'}:");
-		my $output = `/usr/bin/openssl x509 -text -in ${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem`;
-		$output = &Header::cleanhtml($output,"y");
-		print "<pre>$output</pre>\n";
+		my @output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
+		@output = &Header::cleanhtml(@output,"y");
+		print "<pre>@output</pre>\n";
 		&Header::closebox();
 		print "<div align='center'><a href='/cgi-bin/vpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 		&Header::closebigbox();
@@ -724,7 +746,9 @@ END
 		print "Content-Type: application/force-download\n";
 		print "Content-Type: application/octet-stream\r\n";
 		print "Content-Disposition: attachment; filename=$cahash{$cgiparams{'KEY'}}[0]cert.pem\r\n\r\n";
-		print `/usr/bin/openssl x509 -in ${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem`;
+
+		my @cert = &General::system_output("/usr/bin/openssl", "x509", "-in", "${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
+		print "@cert";
 		exit(0);
 	} else {
 		$errormessage = $Lang::tr{'invalid key'};
@@ -739,21 +763,21 @@ END
 
 	if ( -f "${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem" ) {
 		foreach my $key (keys %confighash) {
-			my $test = `/usr/bin/openssl verify -CAfile ${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem ${General::swroot}/certs/$confighash{$key}[1]cert.pem`;
-			if ($test =~ /: OK/) {
+			my @test = &General::system_output("/usr/bin/openssl", "verify", "-CAfile", "${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem", "${General::swroot}/certs/$confighash{$key}[1]cert.pem");
+			if (grep(/: OK/, @test)) {
 				# Delete connection
 				unlink ("${General::swroot}/certs/$confighash{$key}[1]cert.pem");
 				unlink ("${General::swroot}/certs/$confighash{$key}[1].p12");
 				delete $confighash{$key};
 				&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 				&writeipsecfiles();
-				system('/usr/local/bin/ipsecctrl', 'D', $key) if (&vpnenabled);
+				&General::system('/usr/local/bin/ipsecctrl', 'D', $key) if (&vpnenabled);
 			}
 		}
 		unlink ("${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
 		delete $cahash{$cgiparams{'KEY'}};
 		&General::writehasharray("${General::swroot}/vpn/caconfig", \%cahash);
-		system('/usr/local/bin/ipsecctrl', 'R');
+		&General::system('/usr/local/bin/ipsecctrl', 'R');
 		sleep $sleepDelay;
 	} else {
 		$errormessage = $Lang::tr{'invalid key'};
@@ -768,8 +792,8 @@ END
 	my $assignedcerts = 0;
 	if ( -f "${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem" ) {
 		foreach my $key (keys %confighash) {
-			my $test = `/usr/bin/openssl verify -CAfile ${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem ${General::swroot}/certs/$confighash{$key}[1]cert.pem`;
-			if ($test =~ /: OK/) {
+			my @test = &General::system_output("/usr/bin/openssl", "verify", "-CAfile", "${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem", "${General::swroot}/certs/$confighash{$key}[1]cert.pem");
+			if (grep(/: OK/, @test)) {
 				$assignedcerts++;
 			}
 		}
@@ -805,7 +829,7 @@ END
 			unlink ("${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
 			delete $cahash{$cgiparams{'KEY'}};
 			&General::writehasharray("${General::swroot}/vpn/caconfig", \%cahash);
-			system('/usr/local/bin/ipsecctrl', 'R');
+			&General::system('/usr/local/bin/ipsecctrl', 'R');
 			sleep $sleepDelay;
 		}
 	} else {
@@ -817,19 +841,19 @@ END
 ###
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'show root certificate'} ||
 	$cgiparams{'ACTION'} eq $Lang::tr{'show host certificate'}) {
-	my $output;
+	my @output;
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', '');
 	if ($cgiparams{'ACTION'} eq $Lang::tr{'show root certificate'}) {
 		&Header::openbox('100%', 'left', "$Lang::tr{'root certificate'}:");
-		$output = `/usr/bin/openssl x509 -text -in ${General::swroot}/ca/cacert.pem`;
+		@output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ca/cacert.pem");
 	} else {
 		&Header::openbox('100%', 'left', "$Lang::tr{'host certificate'}:");
-		$output = `/usr/bin/openssl x509 -text -in ${General::swroot}/certs/hostcert.pem`;
+		@output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/certs/hostcert.pem");
 	}
-	$output = &Header::cleanhtml($output,"y");
-	print "<pre>$output</pre>\n";
+	@output = &Header::cleanhtml(@output,"y");
+	print "<pre>@output</pre>\n";
 	&Header::closebox();
 	print "<div align='center'><a href='/cgi-bin/vpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 	&Header::closebigbox();
@@ -843,7 +867,9 @@ END
 	if ( -f "${General::swroot}/ca/cacert.pem" ) {
 		print "Content-Type: application/force-download\n";
 		print "Content-Disposition: attachment; filename=cacert.pem\r\n\r\n";
-		print `/usr/bin/openssl x509 -in ${General::swroot}/ca/cacert.pem`;
+
+		my @cert = &General::system_output("/usr/bin/openssl", "x509", "-in", "${General::swroot}/ca/cacert.pem");
+		print "@cert";
 		exit(0);
 	}
 ###
@@ -853,7 +879,9 @@ END
 	if ( -f "${General::swroot}/certs/hostcert.pem" ) {
 		print "Content-Type: application/force-download\n";
 		print "Content-Disposition: attachment; filename=hostcert.pem\r\n\r\n";
-		print `/usr/bin/openssl x509 -in ${General::swroot}/certs/hostcert.pem`;
+
+		my @cert = &General::system_output("/usr/bin/openssl", "x509", "-in", "${General::swroot}/certs/hostcert.pem");
+		print "@cert";
 		exit(0);
 	}
 ###
@@ -1216,7 +1244,7 @@ END
 
 	ROOTCERT_SUCCESS:
 	if (&vpnenabled) {
-		system('/usr/local/bin/ipsecctrl', 'S');
+		&General::system('/usr/local/bin/ipsecctrl', 'S');
 		sleep $sleepDelay;
 	}
 	ROOTCERT_SKIP:
@@ -1228,7 +1256,12 @@ END
 	print "Content-Type: application/force-download\n";
 	print "Content-Disposition: attachment; filename=" . $confighash{$cgiparams{'KEY'}}[1] . ".p12\r\n";
 	print "Content-Type: application/octet-stream\r\n\r\n";
-	print `/bin/cat ${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1].p12`;
+
+	open(FILE, "${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
+	my @p12 = <FILE>;
+	close(FILE);
+	print "@file";
+
 	exit (0);
 
 # Export Apple profile to browser
@@ -1507,9 +1540,9 @@ END
 		&Header::openpage($Lang::tr{'ipsec'}, 1, '');
 		&Header::openbigbox('100%', 'left', '', '');
 		&Header::openbox('100%', 'left', "$Lang::tr{'cert'}:");
-		my $output = `/usr/bin/openssl x509 -text -in ${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem`;
-		$output = &Header::cleanhtml($output,"y");
-		print "<pre>$output</pre>\n";
+		my @output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
+		@output = &Header::cleanhtml(@output,"y");
+		print "<pre>@output</pre>\n";
 		&Header::closebox();
 		print "<div align='center'><a href='/cgi-bin/vpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 		&Header::closebigbox();
@@ -1526,7 +1559,12 @@ END
 	if ( -f "${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem") {
 		print "Content-Type: application/force-download\n";
 		print "Content-Disposition: attachment; filename=" . $confighash{$cgiparams{'KEY'}}[1] . "cert.pem\n\n";
-		print `/bin/cat ${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem`;
+
+		open(FILE, "${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
+		my @pem = <FILE>;
+		close(FILE);
+		print "@pem";
+
 		exit (0);
 	}
 
@@ -1543,12 +1581,12 @@ END
 			$confighash{$cgiparams{'KEY'}}[0] = 'on';
 			&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 			&writeipsecfiles();
-			system('/usr/local/bin/ipsecctrl', 'S', $cgiparams{'KEY'}) if (&vpnenabled);
+			&General::system('/usr/local/bin/ipsecctrl', 'S', $cgiparams{'KEY'}) if (&vpnenabled);
 		} else {
 			$confighash{$cgiparams{'KEY'}}[0] = 'off';
 			&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 			&writeipsecfiles();
-			system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'}) if (&vpnenabled);
+			&General::system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'}) if (&vpnenabled);
 		}
 		sleep $sleepDelay;
 	} else {
@@ -1564,7 +1602,7 @@ END
 
 	if ($confighash{$cgiparams{'KEY'}}) {
 		if (&vpnenabled) {
-			system('/usr/local/bin/ipsecctrl', 'S', $cgiparams{'KEY'});
+			&General::system('/usr/local/bin/ipsecctrl', 'S', $cgiparams{'KEY'});
 			sleep $sleepDelay;
 		}
 	} else {
@@ -1584,7 +1622,7 @@ END
 		delete $confighash{$cgiparams{'KEY'}};
 		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 		&writeipsecfiles();
-		system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'}) if (&vpnenabled);
+		&General::system('/usr/local/bin/ipsecctrl', 'D', $cgiparams{'KEY'}) if (&vpnenabled);
 	} else {
 		$errormessage = $Lang::tr{'invalid key'};
 	}
@@ -1952,8 +1990,8 @@ END
 				unshift (@names,$cahash{$x}[0]);
 			}
 			if ($casubject) { # a new one!
-				my $temp = `/usr/bin/openssl x509 -text -in /tmp/newcacert`;
-				if ($temp !~ /CA:TRUE/i) {
+				my @temp = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "/tmp/newcacert");
+				if (! grep(/CA:TRUE/, @temp)) {
 					$errormessage = $Lang::tr{'not a valid ca certificate'};
 				} else {
 					#compute a name for it
@@ -1968,7 +2006,7 @@ END
 						$cahash{$key}[0] = $cgiparams{'CA_NAME'};
 						$cahash{$key}[1] = $casubject;
 						&General::writehasharray("${General::swroot}/vpn/caconfig", \%cahash);
-						system('/usr/local/bin/ipsecctrl', 'R');
+						&General::system('/usr/local/bin/ipsecctrl', 'R');
 					}
 				}
 			}
@@ -2008,12 +2046,12 @@ END
 		# Verify the certificate has a valid CA and move it
 		&General::log("ipsec", "Validating imported cert against our known CA...");
 		my $validca = 1; #assume ok
-		my $test = `/usr/bin/openssl verify -CAfile ${General::swroot}/ca/cacert.pem $filename`;
-		if ($test !~ /: OK/) {
+		my @test = &General::system_output("/usr/bin/openssl", "verify", "-CAfile", "${General::swroot}/ca/cacert.pem", "$filename");
+		if (! grep(/: OK/, @test)) {
 			my $validca = 0;
 			foreach my $key (keys %cahash) {
-				$test = `/usr/bin/openssl verify -CAfile ${General::swroot}/ca/$cahash{$key}[0]cert.pem $filename`;
-				if ($test =~ /: OK/) {
+				@test = &General::system_output("/usr/bin/openssl", "verify", "-CAfile", "${General::swroot}/ca/$cahash{$key}[0]cert.pem", "$filename");
+				if (grep(/: OK/, @test)) {
 					$validca = 1;
 					last;
 				}
@@ -2276,7 +2314,7 @@ END
 	&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 	&writeipsecfiles();
 	if (&vpnenabled) {
-		system('/usr/local/bin/ipsecctrl', 'S', $key);
+		&General::system('/usr/local/bin/ipsecctrl', 'S', $key);
 		sleep $sleepDelay;
 	}
 	if ($cgiparams{'EDIT_ADVANCED'} eq 'on') {
@@ -2822,7 +2860,7 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 		&General::writehasharray("${General::swroot}/vpn/config", \%confighash);
 		&writeipsecfiles();
 		if (&vpnenabled) {
-			system('/usr/local/bin/ipsecctrl', 'S', $cgiparams{'KEY'});
+			&General::system('/usr/local/bin/ipsecctrl', 'S', $cgiparams{'KEY'});
 			sleep $sleepDelay;
 		}
 		goto ADVANCED_END;
@@ -3271,7 +3309,7 @@ EOF
 	&General::readhasharray("${General::swroot}/vpn/config", \%confighash);
 	$cgiparams{'CA_NAME'} = '';
 
-	my @status = `/usr/local/bin/ipsecctrl I 2>/dev/null`;
+	my @status = &General::system_output("/usr/local/bin/ipsecctrl", "I");
 
 	$checked{'ENABLED'} = $cgiparams{'ENABLED'} eq 'on' ? "checked='checked'" : '';
 

@@ -130,6 +130,15 @@ open(FILE, "$filename2") or die 'Unable to open fixed leases file.';
 our @current2 = <FILE>;
 close(FILE);
 
+# Open and read-in file which contains the list of allowed advanced options.
+open(FILE, $filename3) or die "Could not open $filename3. $!\n";
+
+# Grab file content.
+my @advoptions_list = <FILE>;
+
+# Close file handle.
+close(FILE);
+
 # Check Settings1 first because they are needed by &buildconf
 if ($dhcpsettings{'ACTION'} eq $Lang::tr{'save'}) {
     foreach my $itf (@ITFs) {
@@ -338,7 +347,7 @@ if ($dhcpsettings{'ACTION'} eq $Lang::tr{'add'}.'1' &&
 	map ($dhcpsettings{"ADVOPT_SCOPE_$_"} = 'off', @ITFs);	# force global
     } elsif (ValidNewOption ($dhcpsettings{'ADVOPT_NAME'} . ' ' . $dhcpsettings{'ADVOPT_DATA'})) {
 	#was a new option
-    } elsif (! `grep "\$option $dhcpsettings{'ADVOPT_NAME'} " $filename3`) {
+    } elsif (! grep(/option $dhcpsettings{'ADVOPT_NAME'}/, @advoptions_list)) {
 	$errormessage=$Lang::tr{'dhcp advopt unknown'}.': '.$dhcpsettings{'ADVOPT_NAME'};
     }
 
@@ -714,7 +723,20 @@ if ($dhcpsettings{'KEY1'} ne '') {
 }
 
 #search if the 'option' is in the list and print the syntax model
-my $opt = `grep "\$option $dhcpsettings{'ADVOPT_NAME'} " $filename3`;
+my $opt;
+
+# Check if a advanced option name is set.
+if ($dhcpsettings{'ADVOPT_NAME'}) {
+	# Check if the name is part of the list and grab syntax.
+	my @opt = grep(/option $dhcpsettings{'ADVOPT_NAME'}/, @advoptions_list);
+
+	# Assign array element to variable.
+	$opt = @opt[0];
+
+	# Remove newlines.
+	chomp($opt);
+}
+
 if ($opt ne '') {
    $opt =~ s/option $dhcpsettings{'ADVOPT_NAME'}/Syntax:/;  # "option xyz abc" => "syntax: abc"
    $opt =~ s/;//;
@@ -1330,7 +1352,7 @@ sub buildconf {
 		print FILE "}\n\n";
 	    }
 
-	    system ('/usr/bin/touch', "${General::swroot}/dhcp/enable_${lc_itf}");
+	    &General::system('/usr/bin/touch', "${General::swroot}/dhcp/enable_${lc_itf}");
 	    &General::log("DHCP on ${itf}: " . $Lang::tr{'dhcp server enabled'})
 	} else {
 	    unlink "${General::swroot}/dhcp/enable_${lc_itf}";
@@ -1357,9 +1379,9 @@ sub buildconf {
     }
     print FILE "include \"${General::swroot}/dhcp/dhcpd.conf.local\";\n";
     close FILE;
-    if ( $dhcpsettings{"ENABLE_GREEN"} eq 'on' || $dhcpsettings{"ENABLE_BLUE"} eq 'on' ) {system '/usr/local/bin/dhcpctrl enable >/dev/null 2>&1';}
-    else {system '/usr/local/bin/dhcpctrl disable >/dev/null 2>&1';}
-    system '/usr/local/bin/dhcpctrl restart >/dev/null 2>&1 &';
+    if ( $dhcpsettings{"ENABLE_GREEN"} eq 'on' || $dhcpsettings{"ENABLE_BLUE"} eq 'on' ) {&General::system('/usr/local/bin/dhcpctrl', 'enable');}
+    else {&General::system('/usr/local/bin/dhcpctrl', 'disable');}
+    &General::system_background('/usr/local/bin/dhcpctrl', 'restart');
 }
 
 #

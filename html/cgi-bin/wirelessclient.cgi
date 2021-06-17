@@ -796,7 +796,7 @@ END
 }
 
 sub BuildConfiguration() {
-	system("/usr/local/bin/wirelessclient restart");
+	&General::system("/usr/local/bin/wirelessclient", "restart");
 }
 
 sub NextID() {

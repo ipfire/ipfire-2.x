@@ -95,9 +95,9 @@ my $ldesc='';
 my $gdesc='';
 
 if (! -d $dbdir) { mkdir("$dbdir"); }
-if (! -e $tcfile) { system("touch $tcfile"); }
-if (! -e $uqfile) { system("touch $uqfile"); }
-if (! -e $sourceurlfile) { system("touch $sourceurlfile"); }
+if (! -e $tcfile) { &General::system("touch", "$tcfile"); }
+if (! -e $uqfile) { &General::system("touch", "$uqfile"); }
+if (! -e $sourceurlfile) { &General::system("touch", "$sourceurlfile"); }
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -226,7 +226,7 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 
 		if (!(-d "${General::swroot}/urlfilter/update")) { mkdir("${General::swroot}/urlfilter/update"); }
 
-		my $exitcode = system("/bin/tar --no-same-owner -xzf ${General::swroot}/urlfilter/blacklists.tar.gz -C ${General::swroot}/urlfilter/update");
+		my $exitcode = &General::system("/bin/tar", "--no-same-owner", "-xzf", "${General::swroot}/urlfilter/blacklists.tar.gz", "-C", "${General::swroot}/urlfilter/update");
 
 		if ($exitcode > 0)
 		{
@@ -235,18 +235,19 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 
 			if (-d "${General::swroot}/urlfilter/update/BL")
 			{
-				system("mv ${General::swroot}/urlfilter/update/BL ${General::swroot}/urlfilter/update/blacklists");
+				&General::system("mv", "${General::swroot}/urlfilter/update/BL", "${General::swroot}/urlfilter/update/blacklists");
 			}
 
 			if (-d "${General::swroot}/urlfilter/update/category")
 			{
-				system("mv ${General::swroot}/urlfilter/update/category ${General::swroot}/urlfilter/update/blacklists");
+				&General::system("mv", "${General::swroot}/urlfilter/update/category", "${General::swroot}/urlfilter/update/blacklists");
 			}
 
 			if (!(-d "${General::swroot}/urlfilter/update/blacklists"))
 			{
 				$errormessage = $Lang::tr{'urlfilter invalid content'};
 			} else {
+				# XXX Uses globbing
 				system("cp -r ${General::swroot}/urlfilter/update/blacklists/* $dbdir");
 
 				&readblockcategories;
@@ -255,11 +256,11 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 				&writeconfigfile;
 
 				$updatemessage = $Lang::tr{'urlfilter upload success'};
-				system("${General::swroot}/urlfilter/bin/prebuild.pl &");
-				system("logger -t installpackage[urlfilter] \"URL filter blacklist - Blacklist update from local source completed\"");
+				&General::system_background("${General::swroot}/urlfilter/bin/prebuild.pl");
+				&General::system("logger", "-t", "installpackage[urlfilter]", "URL filter blacklist - Blacklist update from local source completed");
 			}
 		}
-		if (-d "${General::swroot}/urlfilter/update") { system("rm -rf ${General::swroot}/urlfilter/update"); }
+		if (-d "${General::swroot}/urlfilter/update") { &General::system("rm", "-rf", "${General::swroot}/urlfilter/update"); }
 		if (-e "${General::swroot}/urlfilter/blacklists.tar.gz") { unlink("${General::swroot}/urlfilter/blacklists.tar.gz"); }
 		if ($errormessage) { goto ERROR; }
 	}
@@ -267,7 +268,7 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 	if ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter backup'})
 	{
 		$blistbackup = ($filtersettings{'ENABLE_FULLBACKUP'} eq 'on') ? "blacklists" : "blacklists/custom";
-		if (system("/bin/tar -C ${General::swroot}/urlfilter -czf ${General::swroot}/urlfilter/backup.tar.gz settings timeconst userquota autoupdate $blistbackup"))
+		if (&General::system("/bin/tar", "-C", "${General::swroot}/urlfilter", "-czf", "${General::swroot}/urlfilter/backup.tar.gz", "settings", "timeconst", "userquota", "autoupdate", "$blistbackup"))
 		{
 			$errormessage = $Lang::tr{'urlfilter backup error'};
 			goto ERROR;
@@ -306,7 +307,7 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 			$errormessage = $!;
 		}
 
-		my $exitcode = system("/bin/tar --no-same-owner --preserve-permissions -xzf ${General::swroot}/urlfilter/backup.tar.gz -C ${General::swroot}/urlfilter/restore");
+		my $exitcode = &General::system("/bin/tar", "--no-same-owner", "--preserve-permissions", "-xzf", "${General::swroot}/urlfilter/backup.tar.gz", "-C", "${General::swroot}/urlfilter/restore");
 		if ($exitcode > 0)
 		{
 			$errormessage = $Lang::tr{'urlfilter tar error'};
@@ -315,6 +316,7 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 			{
 				$errormessage = $Lang::tr{'urlfilter invalid restore file'};
 			} else {
+				# XXX uses globbing
 				system("cp -rp ${General::swroot}/urlfilter/restore/* ${General::swroot}/urlfilter/");
 				&readblockcategories;
 				&readcustomlists;
@@ -325,7 +327,7 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
 		}
 
 		if (-e "${General::swroot}/urlfilter/backup.tar.gz") { unlink("${General::swroot}/urlfilter/backup.tar.gz"); }
-		if (-d "${General::swroot}/urlfilter/restore") { system("rm -rf ${General::swroot}/urlfilter/restore"); }
+		if (-d "${General::swroot}/urlfilter/restore") { &General::system("rm", "-rf", "${General::swroot}/urlfilter/restore"); }
 		if ($errormessage) { goto ERROR; }
 	}
 
@@ -351,7 +353,7 @@ if (($filtersettings{'ACTION'} eq $Lang::tr{'save'}) ||
               	$filtersettings{'VALID'} = 'yes';
 		&savesettings;
 
-		system('/usr/local/bin/squidctrl restart >/dev/null 2>&1');
+		&General::system('/usr/local/bin/squidctrl', 'restart');
 	}
 }
 
@@ -485,7 +487,7 @@ if (($tcsettings{'MODE'} eq 'TIMECONSTRAINT') && ($tcsettings{'ACTION'} eq $Lang
 		$errormessage = $Lang::tr{'urlfilter web proxy service required'};
 	}
 
-	if (!$errormessage) { system('/usr/local/bin/squidctrl restart >/dev/null 2>&1'); }
+	if (!$errormessage) { &General::system('/usr/local/bin/squidctrl', 'restart'); }
 	$tcsettings{'TCMODE'}='on';
 }
 
@@ -688,7 +690,7 @@ if (($uqsettings{'MODE'} eq 'USERQUOTA') && ($uqsettings{'ACTION'} eq $Lang::tr{
 		$errormessage = $Lang::tr{'urlfilter web proxy service required'};
 	}
 
-	if (!$errormessage) { system('/usr/local/bin/squidctrl restart >/dev/null 2>&1'); }
+	if (!$errormessage) { &General::system('/usr/local/bin/squidctrl', 'restart'); }
 	$uqsettings{'UQMODE'}='on';
 }
 
@@ -772,7 +774,7 @@ if (($besettings{'ACTION'} eq $Lang::tr{'urlfilter import blacklist'}) && ($bese
 			$errormessage = $!;
 		} else {
 
-			my $exitcode = system("/bin/tar --no-same-owner --preserve-permissions -xzf $editdir/blacklist.tar.gz -C $editdir");
+			my $exitcode = &General::system("/bin/tar", "--no-same-owner", "--preserve-permissions", "-xzf", "$editdir/blacklist.tar.gz", "-C", "$editdir");
 			if ($exitcode > 0)
 			{
 				$errormessage = $Lang::tr{'urlfilter tar error'};
@@ -819,7 +821,7 @@ if (($besettings{'ACTION'} eq $Lang::tr{'urlfilter import blacklist'}) && ($bese
 				}
 			}
 
-		if (-d $editdir) { system("rm -rf $editdir"); }
+		if (-d $editdir) { &General::system("rm", "-rf", "$editdir"); }
 
 		}
 	}
@@ -853,7 +855,7 @@ if (($besettings{'ACTION'} eq $Lang::tr{'urlfilter export blacklist'}) && ($bese
 		print FILE "$besettings{'BE_EXPRESSIONS'}\n";
 		close FILE;
 
-		if (system("/bin/tar -C $editdir -czf $editdir/$besettings{'BE_NAME'}.tar.gz blacklists"))
+		if (&General::system("/bin/tar", "-C", "$editdir", "-czf", "$editdir/$besettings{'BE_NAME'}.tar.gz", "blacklists"))
 		{
 			$errormessage = $Lang::tr{'urlfilter export error'};
 		}
@@ -869,7 +871,7 @@ if (($besettings{'ACTION'} eq $Lang::tr{'urlfilter export blacklist'}) && ($bese
 			while (<FILE>) { print; }
 			close (FILE);
 
-			if (-d $editdir) { system("rm -rf $editdir"); }
+			if (-d $editdir) { &General::system("rm", "-rf", "$editdir"); }
 			exit;
 		}
 	} else {
@@ -933,8 +935,10 @@ if (($besettings{'ACTION'} eq $Lang::tr{'urlfilter install blacklist'}) && ($bes
 		print FILE "}\n";
 		close FILE;
 
+		# XXX uses globbing
 		system("rm -f $dbdir/$besettings{'BE_NAME'}/*.db");
-		system("/usr/bin/squidGuard -c $editdir/install.conf -C all");
+		&General::system("/usr/bin/squidGuard", "-c", "$editdir/install.conf", "-C", "all");
+		# XXX uses globbing
 		system("chmod a+w $dbdir/$besettings{'BE_NAME'}/*.db");
 
 		&readblockcategories;
@@ -942,9 +946,9 @@ if (($besettings{'ACTION'} eq $Lang::tr{'urlfilter install blacklist'}) && ($bes
 
 		&writeconfigfile;
 
-		system('/usr/local/bin/squidctrl restart >/dev/null 2>&1') unless ($besettings{'NORESTART'} eq 'on');
+		&General::system('/usr/local/bin/squidctrl', 'restart') unless ($besettings{'NORESTART'} eq 'on');
 
-		if (-d $editdir) { system("rm -rf $editdir"); }
+		if (-d $editdir) { &General::system("rm", "-rf", "$editdir"); }
 	} else {
 		$errormessage = $Lang::tr{'urlfilter category data error'};
 	}
@@ -966,17 +970,17 @@ if ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter save schedule'})
 
 		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') && ($filtersettings{'UPDATE_SCHEDULE'} eq 'daily'))
 		{
-			system('/usr/local/bin/urlfilterctrl cron daily >/dev/null 2>&1');
+			&General::system('/usr/local/bin/urlfilterctrl', 'cron', 'daily');
 		}
 
 		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') && ($filtersettings{'UPDATE_SCHEDULE'} eq 'weekly'))
 		{
-			system('/usr/local/bin/urlfilterctrl cron weekly >/dev/null 2>&1');
+			&General::system('/usr/local/bin/urlfilterctrl', 'cron', 'weekly');
 		}
 
 		if (($filtersettings{'ENABLE_AUTOUPDATE'} eq 'on') && ($filtersettings{'UPDATE_SCHEDULE'} eq 'monthly'))
 		{
-			system('/usr/local/bin/urlfilterctrl cron monthly >/dev/null 2>&1');
+			&General::system('/usr/local/bin/urlfilterctrl', 'cron', 'monthly');
 		}
 	}
 }
@@ -989,10 +993,10 @@ if ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter update now'})
 		{
 			$errormessage = $Lang::tr{'urlfilter custom url required'};
 		} else {
-			system("${General::swroot}/urlfilter/bin/autoupdate.pl $filtersettings{'CUSTOM_UPDATE_URL'} &");
+			&General::system_background("${General::swroot}/urlfilter/bin/autoupdate.pl", "$filtersettings{'CUSTOM_UPDATE_URL'}");
 		}
 	} else {
-		system("${General::swroot}/urlfilter/bin/autoupdate.pl $filtersettings{'UPDATE_SOURCE'} &");
+		&General::system_background("${General::swroot}/urlfilter/bin/autoupdate.pl", "$filtersettings{'UPDATE_SOURCE'}");
 	}
 }
 
@@ -2533,11 +2537,11 @@ sub savesettings
 	delete $filtersettings{'BACKGROUND'};
 	delete $filtersettings{'UPDATEFILE'};
 
-	system("chown -R nobody.nobody $dbdir");
-	system('/usr/bin/squidGuard -C custom/allowed/domains >/dev/null 2>&1');
-	system('/usr/bin/squidGuard -C custom/allowed/urls >/dev/null 2>&1');
-	system('/usr/bin/squidGuard -C custom/blocked/domains >/dev/null 2>&1');
-	system('/usr/bin/squidGuard -C custom/blocked/urls >/dev/null 2>&1 ');
+	&General::system("chown", "-R", "nobody.nobody", "$dbdir");
+	&General::system('/usr/bin/squidGuard', '-C', 'custom/allowed/domains');
+	&General::system('/usr/bin/squidGuard', '-C', 'custom/allowed/urls');
+	&General::system('/usr/bin/squidGuard', '-C', 'custom/blocked/domains');
+	&General::system('/usr/bin/squidGuard', '-C', 'custom/blocked/urls');
 	&setpermissions ($dbdir);
 
 	&General::writehash("${General::swroot}/urlfilter/settings", \%filtersettings);
@@ -2694,12 +2698,13 @@ sub setpermissions
 	foreach $category (<$bldir/*>)
 	{
         	 if (-d $category){
-			system("chmod 755 $category &> /dev/null");
+			&General::system("chmod", "755", "$category");
 			foreach $blacklist (<$category/*>)
 			{
-         			if (-f $blacklist) { system("chmod 644 $blacklist &> /dev/null"); }
-         			if (-d $blacklist) { system("chmod 755 $blacklist &> /dev/null"); }
+         			if (-f $blacklist) { &General::system("chmod", "644", "$blacklist"); }
+         			if (-d $blacklist) { &General::system("chmod", "755", "$blacklist"); }
 			}
+			# XXX uses globbing
         	 	system("chmod 666 $category/*.db &> /dev/null");
 			&setpermissions ($category);
 		}

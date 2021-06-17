@@ -118,7 +118,7 @@ sub check_and_create_filelayout() {
 #
 sub checkdiskspace () {
 	# Call diskfree to gather the free disk space of /var.
-	my @df = `/bin/df -B M /var`;
+	my @df = &General::system_output("/bin/df", "-B", "M", "/var");
 
 	# Loop through the output.
 	foreach my $line (@df) {
@@ -463,7 +463,7 @@ sub call_suricatactrl ($) {
 
 					# Call the suricatactrl binary and pass the "cron" command
 					# with the requrested interval.
-					system("$suricatactrl $option $interval &>/dev/null");
+					&General::system("$suricatactrl", "$option", "$interval");
 
 					# Return "1" - True.
 					return 1;
@@ -475,7 +475,7 @@ sub call_suricatactrl ($) {
 		} else {
 			# Call the suricatactrl binary and pass the requrested
 			# option to it.
-			system("$suricatactrl $option &>/dev/null");
+			&General::system("$suricatactrl", "$option");
 
 			# Return "1" - True.
 			return 1;

@@ -231,7 +231,7 @@ if ( $mpfiresettings{'ACTION'} eq "scan" ){
 	$mpd->updatedb();
 	refreshpage();
 }elsif ( $mpfiresettings{'ACTION'} eq "playweb" ){
-	$message=system("/usr/local/bin/mpfirectrl","playweb","\"$mpfiresettings{'FILE'}\"","2>/dev/null");
+	$message= &General::system_output("/usr/local/bin/mpfirectrl","playweb","\"$mpfiresettings{'FILE'}\"");
 }elsif ( $mpfiresettings{'ACTION'} eq "playlist" ){
 	$mpd->play();
 }elsif ( $mpfiresettings{'ACTION'} eq "emptyplaylist" ){

@@ -148,16 +148,16 @@ if ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'save'}" ){
 		&General::writehash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 		&WriteConfig_hostapd();
 
-		system("/usr/local/bin/wlanapctrl restart >/dev/null 2>&1");
+		&General::system("/usr/local/bin/wlanapctrl", "restart");
 		pid();
 	}
 }elsif ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'wlanap interface'}" ){
 	&General::writehash("/var/ipfire/wlanap/settings", \%wlanapsettings);
 }elsif ( ($wlanapsettings{'ACTION'} eq "$Lang::tr{'start'}") && ($memory == 0) ){
-	system("/usr/local/bin/wlanapctrl start >/dev/null 2>&1");
+	&General::system("/usr/local/bin/wlanapctrl", "start");
 	pid();
 }elsif ( $wlanapsettings{'ACTION'} eq "$Lang::tr{'stop'}" ){
-	system("/usr/local/bin/wlanapctrl stop >/dev/null 2>&1");
+	&General::system("/usr/local/bin/wlanapctrl", "stop");
 	$memory=0;
 }
 

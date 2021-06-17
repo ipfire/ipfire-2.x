@@ -28,6 +28,77 @@ $General::adminmanualurl = 'http://wiki.ipfire.org';
 
 require "${General::swroot}/network-functions.pl";
 
+# This function executes a shell command without forking a shell or do any other
+# Perl-voodoo before it. It deprecates the "system" command and is the only way
+# to call shell commands.
+sub safe_system($) {
+	my @command = @_;
+
+	system { ${command[0]} } @command;
+
+	# Return exit code
+	return $? >> 8;
+}
+
+# Calls a process in the background and returns nothing
+sub system_background($) {
+	my $pid = fork();
+
+	unless ($pid) {
+		my $rc = &system(@_);
+		exit($rc);
+	}
+
+	return 0;
+}
+
+# Returns the output of a shell command
+sub system_output($) {
+	my @command = @_;
+	my $pid;
+	my @output = ();
+
+	unless ($pid = open(OUTPUT, "-|")) {
+		open(STDERR, ">&STDOUT");
+		exec { ${command[0]} } @command;
+		die "Could not execute @command: $!";
+	}
+
+	waitpid($pid, 0);
+
+	while (<OUTPUT>) {
+		push(@output, $_);
+	}
+	close(OUTPUT);
+
+	return @output;
+}
+
+# Calls a shell command and throws away the output
+sub system($) {
+	my @command = @_;
+
+	open(SAVEOUT, ">&STDOUT");
+	open(SAVEERR, ">&STDERR");
+
+	open(STDOUT, ">/dev/null");
+	open(STDERR, ">&STDOUT");
+
+	select(STDERR); $|=1;
+	select(STDOUT); $|=1;
+
+	my $rc = &safe_system(@command);
+
+	close(STDOUT);
+	close(STDERR);
+
+	# Restore
+	open(STDOUT, ">&SAVEOUT");
+	open(STDERR, ">&SAVEERR");
+
+	return $rc;
+}
+
 # Function to remove duplicates from an array
 sub uniq { my %seen; grep !$seen{$_}++, @_ }
 

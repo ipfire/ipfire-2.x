@@ -32,7 +32,7 @@ require "${General::swroot}/header.pl";
 
 require "${General::swroot}/ids-functions.pl";
 
-my @squidversion = `/usr/sbin/squid -v`;
+my @squidversion = &General::system_output("/usr/sbin/squid", "-v");
 my $http_port='81';
 my $https_port='444';
 
@@ -131,35 +131,35 @@ unless (-d "$raddir")   { mkdir("$raddir"); }
 unless (-d "$identdir") { mkdir("$identdir"); }
 unless (-d "$credir")   { mkdir("$credir"); }
 
-unless (-e $cre_groups)  { system("touch $cre_groups"); }
-unless (-e $cre_svhosts) { system("touch $cre_svhosts"); }
+unless (-e $cre_groups)  { &General::system("touch", "$cre_groups"); }
+unless (-e $cre_svhosts) { &General::system("touch $cre_svhosts"); }
 
-unless (-e $userdb) { system("touch $userdb"); }
-unless (-e $stdgrp) { system("touch $stdgrp"); }
-unless (-e $extgrp) { system("touch $extgrp"); }
-unless (-e $disgrp) { system("touch $disgrp"); }
+unless (-e $userdb) { &General::system("touch", "$userdb"); }
+unless (-e $stdgrp) { &General::system("touch", "$stdgrp"); }
+unless (-e $extgrp) { &General::system("touch", "$extgrp"); }
+unless (-e $disgrp) { &General::system("touch", "$disgrp"); }
 
-unless (-e $acl_src_subnets)    { system("touch $acl_src_subnets"); }
-unless (-e $acl_src_banned_ip)  { system("touch $acl_src_banned_ip"); }
-unless (-e $acl_src_banned_mac) { system("touch $acl_src_banned_mac"); }
-unless (-e $acl_src_unrestricted_ip)  { system("touch $acl_src_unrestricted_ip"); }
-unless (-e $acl_src_unrestricted_mac) { system("touch $acl_src_unrestricted_mac"); }
-unless (-e $acl_src_noaccess_ip)  { system("touch $acl_src_noaccess_ip"); }
-unless (-e $acl_src_noaccess_mac) { system("touch $acl_src_noaccess_mac"); }
-unless (-e $acl_dst_noauth)     { system("touch $acl_dst_noauth"); }
-unless (-e $acl_dst_noauth_dom) { system("touch $acl_dst_noauth_dom"); }
-unless (-e $acl_dst_noauth_net) { system("touch $acl_dst_noauth_net"); }
-unless (-e $acl_dst_noauth_url) { system("touch $acl_dst_noauth_url"); }
-unless (-e $acl_dst_nocache)     { system("touch $acl_dst_nocache"); }
-unless (-e $acl_dst_nocache_dom) { system("touch $acl_dst_nocache_dom"); }
-unless (-e $acl_dst_nocache_net) { system("touch $acl_dst_nocache_net"); }
-unless (-e $acl_dst_nocache_url) { system("touch $acl_dst_nocache_url"); }
-unless (-e $acl_dst_throttle)  { system("touch $acl_dst_throttle"); }
-unless (-e $acl_ports_safe) { system("touch $acl_ports_safe"); }
-unless (-e $acl_ports_ssl)  { system("touch $acl_ports_ssl"); }
-unless (-e $acl_include) { system("touch $acl_include"); }
+unless (-e $acl_src_subnets)    { &General::system("touch", "$acl_src_subnets"); }
+unless (-e $acl_src_banned_ip)  { &General::system("touch", "$acl_src_banned_ip"); }
+unless (-e $acl_src_banned_mac) { &General::system("touch", "$acl_src_banned_mac"); }
+unless (-e $acl_src_unrestricted_ip)  { &General::system("touch", "$acl_src_unrestricted_ip"); }
+unless (-e $acl_src_unrestricted_mac) { &General::system("touch", "$acl_src_unrestricted_mac"); }
+unless (-e $acl_src_noaccess_ip)  { &General::system("touch", "$acl_src_noaccess_ip"); }
+unless (-e $acl_src_noaccess_mac) { &General::system("touch", "$acl_src_noaccess_mac"); }
+unless (-e $acl_dst_noauth)     { &General::system("touch", "$acl_dst_noauth"); }
+unless (-e $acl_dst_noauth_dom) { &General::system("touch", "$acl_dst_noauth_dom"); }
+unless (-e $acl_dst_noauth_net) { &General::system("touch", "$acl_dst_noauth_net"); }
+unless (-e $acl_dst_noauth_url) { &General::system("touch", "$acl_dst_noauth_url"); }
+unless (-e $acl_dst_nocache)     { &General::system("touch", "$acl_dst_nocache"); }
+unless (-e $acl_dst_nocache_dom) { &General::system("touch", "$acl_dst_nocache_dom"); }
+unless (-e $acl_dst_nocache_net) { &General::system("touch", "$acl_dst_nocache_net"); }
+unless (-e $acl_dst_nocache_url) { &General::system("touch", "$acl_dst_nocache_url"); }
+unless (-e $acl_dst_throttle)  { &General::system("touch", "$acl_dst_throttle"); }
+unless (-e $acl_ports_safe) { &General::system("touch", "$acl_ports_safe"); }
+unless (-e $acl_ports_ssl)  { &General::system("touch", "$acl_ports_ssl"); }
+unless (-e $acl_include) { &General::system("touch", "$acl_include"); }
 
-unless (-e $mimetypes) { system("touch $mimetypes"); }
+unless (-e $mimetypes) { &General::system("touch", "$mimetypes"); }
 
 my $HAVE_NTLM_AUTH = (-e "/usr/bin/ntlm_auth");
 
@@ -383,7 +383,7 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		$errormessage = $Lang::tr{'advproxy errmsg mem cache size'};
 		goto ERROR;
 	}
-	my @free = `/usr/bin/free`;
+	my @free = &General::system_output("/usr/bin/free");
 	$free[1] =~ m/(\d+)/;
 	$cachemem = int $1 / 2048;
 	if ($proxysettings{'CACHE_MEM'} > $cachemem) {
@@ -630,25 +630,25 @@ ERROR:
 
 		if ($proxysettings{'CACHEMGR'} eq 'on'){&writecachemgr;}
 
-		system ('/usr/local/bin/squidctrl', 'disable');
+		&General::system ('/usr/local/bin/squidctrl', 'disable');
 		unlink "${General::swroot}/proxy/enable";
 		unlink "${General::swroot}/proxy/transparent";
 		unlink "${General::swroot}/proxy/enable_blue";
 		unlink "${General::swroot}/proxy/transparent_blue";
 
 		if ($proxysettings{'ENABLE'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/proxy/enable");
-			system ('/usr/local/bin/squidctrl', 'enable'); }
+			&General::system('/usr/bin/touch', "${General::swroot}/proxy/enable");
+			&General::system('/usr/local/bin/squidctrl', 'enable'); }
 		if ($proxysettings{'TRANSPARENT'} eq 'on' && $proxysettings{'ENABLE'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/proxy/transparent"); }
+			&General::system('/usr/bin/touch', "${General::swroot}/proxy/transparent"); }
 		if ($proxysettings{'ENABLE_BLUE'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/proxy/enable_blue");
-			system ('/usr/local/bin/squidctrl', 'enable'); }
+			&General::system('/usr/bin/touch', "${General::swroot}/proxy/enable_blue");
+			&General::system('/usr/local/bin/squidctrl', 'enable'); }
 		if ($proxysettings{'TRANSPARENT_BLUE'} eq 'on' && $proxysettings{'ENABLE_BLUE'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/proxy/transparent_blue"); }
+			&General::system('/usr/bin/touch', "${General::swroot}/proxy/transparent_blue"); }
 
-		if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}) { system('/usr/local/bin/squidctrl restart >/dev/null 2>&1'); }
-		if ($proxysettings{'ACTION'} eq $Lang::tr{'proxy reconfigure'}) { system('/usr/local/bin/squidctrl reconfigure >/dev/null 2>&1'); }
+		if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}) { &General::system('/usr/local/bin/squidctrl', 'restart'); }
+		if ($proxysettings{'ACTION'} eq $Lang::tr{'proxy reconfigure'}) { &General::system('/usr/local/bin/squidctrl', 'reconfigure'); }
 
 		# Check if the suricata_proxy_ports_changed flag has been set.
 		if ($suricata_proxy_ports_changed) {
@@ -663,7 +663,7 @@ ERROR:
 
 if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy clear cache'})
 {
-	system('/usr/local/bin/squidctrl flush >/dev/null 2>&1');
+	&General::system('/usr/local/bin/squidctrl', 'flush');
 }
 
 if (!$errormessage)
