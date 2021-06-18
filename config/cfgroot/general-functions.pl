@@ -113,7 +113,7 @@ sub log
 	my $logmessage = $_[0];
 	$logmessage =~ /([\w\W]*)/;
 	$logmessage = $1;
-	system('logger', '-t', $tag, $logmessage);
+	&system('logger', '-t', $tag, $logmessage);
 }
 sub setup_default_networks
 {
@@ -1223,7 +1223,7 @@ sub firewall_needs_reload() {
 }
 
 sub firewall_reload() {
-	system("/usr/local/bin/firewallctrl");
+	&system("/usr/local/bin/firewallctrl");
 }
 
 # Function which will return the used interface for the red network zone (red0, ppp0, etc).
