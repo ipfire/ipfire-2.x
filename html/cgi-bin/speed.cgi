@@ -19,6 +19,8 @@
 #                                                                             #
 ###############################################################################
 
+require '/var/ipfire/general-functions.pl';
+
 my $data_last = $ENV{'QUERY_STRING'};
 my $rxb_last = 0;
 my $txb_last = 0;
