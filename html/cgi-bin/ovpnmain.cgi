@@ -221,13 +221,22 @@ sub pkiconfigcheck
 	# Warning if DH parameter is 1024 bit
 	if (-f "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}") {
 		my @dhparameter = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}");
+		my $dhbit;
 
+		# Loop through the output and search for the DH bit lenght.
 		foreach my $line (@dhparameter) {
-			my @dhbit = ($line =~ /(\d+)/);
-			if ($1 < 2048) {
-				$cryptoerror = "$Lang::tr{'ovpn error dh'}";
-				goto CRYPTO_ERROR;
+			if ($line =~ (/(\d+)/)) {
+				# Assign match to dhbit value.
+				$dhbit = $1;
+
+				last;
 			}
+		}
+
+		# Check if the used key lenght is at least 2048 bit.
+		if ($dhbit < 2048) {
+			$cryptoerror = "$Lang::tr{'ovpn error dh'}";
+			goto CRYPTO_ERROR;
 		}
 	}
 
