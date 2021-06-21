@@ -180,8 +180,8 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
                 goto ERROR; }
 
 	# Read-in ddns config file, to check if at least one provider is enabled.
-	open(FILE, "${General::swroot}/ddns/config)";
-	my @ddns_config = <FILE>
+	open(FILE, "${General::swroot}/ddns/config");
+	my @ddns_config = <FILE>;
 	close(FILE);
 
         if( $pppsettings{'RECONNECTION'} eq 'dialondemand' && grep(/on/, @ddns_config) ) {
@@ -529,7 +529,7 @@ END
 
 # Read-in atm devices from proc.
 open(PROC, "/proc/net/atm/devices");
-my @patm_devices = <PROC>;
+my @atm_devices = <PROC>;
 close(PROC);
 
 my $atmdev = grep(/0/, @atm_devices);
