@@ -87,7 +87,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--without-pam \
 		--without-gtk2 \
 		--without-gtkmm \
-		--without-procps \
 		--without-icu \
 		--without-x \
 		--with-linuxdir=/usr/src/linux \

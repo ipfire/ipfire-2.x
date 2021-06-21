@@ -1,0 +1,26 @@
+From 1d70d3cbf7e1fe1e1f0760e9a79e520e416519fe Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Tue, 18 May 2021 13:40:51 +0000
+Subject: [PATCH] python: Fix linking against Python 3.8
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ configure.ac | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/configure.ac b/configure.ac
+index ede2cb6..6efe73c 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -91,7 +91,7 @@ AC_SUBST([OUR_LDFLAGS], $with_ldflags)
+ 
+ # Python
+ AM_PATH_PYTHON([3.7])
+-PKG_CHECK_MODULES([PYTHON_DEVEL], [python-${PYTHON_VERSION}])
++PKG_CHECK_MODULES([PYTHON_DEVEL], [python-${PYTHON_VERSION}-embed python-${PYTHON_VERSION}])
+ 
+ AC_CONFIG_FILES([
+ 	Makefile
+-- 
+2.20.1
+

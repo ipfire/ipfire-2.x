@@ -34,6 +34,11 @@ block_subnet() {
 	local subnet="${1}"
 	local action="${2}"
 
+	# Nothing to be done if no action is requested
+	if [ "${action}" = "none" ]; then
+		return 0
+	fi
+
 	# Don't block a wildcard subnet
 	if [ "${subnet}" = "0.0.0.0/0" ] || [ "${subnet}" = "0.0.0.0/0.0.0.0" ]; then
 		return 0
@@ -108,7 +113,7 @@ install_policy() {
 
 		case "${route}" in
 			route)
-				action="drop"
+				action="none"
 				;;
 			*)
 				action="reject"

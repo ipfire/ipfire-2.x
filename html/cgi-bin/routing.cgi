@@ -474,5 +474,5 @@ sub SortDataFile
 # Build the configuration file
 #
 sub BuildConfiguration {
-    system '/usr/local/bin/rebuildroutes';
+    &General::system('/usr/local/bin/rebuildroutes');
 }

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.28.8
+VER        = 1.28.9
 
 THISAPP    = cups-filters-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups-filters
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = cups ghostscript
 
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 914fb53d31ff8500dc25d2e2c68ca5c1
+$(DL_FILE)_MD5 = 1ea8d0311463d4026f0f631a4843dec2
 
 install : $(TARGET)
 
@@ -85,7 +85,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--sysconfdir=/etc \
 			--localstatedir=/var \
 			--with-pdftops=hybrid \
-			--disable-ijs \
 			--disable-mutool \
 			--disable-avahi
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)

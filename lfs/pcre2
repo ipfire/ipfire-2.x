@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 10.36
+VER        = 10.37
 
 THISAPP    = pcre2-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -54,7 +54,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a5d9aa7d18b61b0226696510e60c9582
+$(DL_FILE)_MD5 = a0b59d89828f62d2e1caac04f7c51e0b
 
 install : $(TARGET)
 

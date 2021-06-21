@@ -74,7 +74,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure --libdir=/usr/lib \
 		--sbindir=/lib/security \
 		--enable-securedir=/lib/security \
-		--enable-docdir=/usr/share/doc/Linux-PAM-$(VER) \
 		--enable-read-both-confs \
 		--disable-nls
 

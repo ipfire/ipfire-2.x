@@ -5,6 +5,7 @@ usr/lib/perl5/site_perl/5.32.1/Date/Language/Afar.pm
 usr/lib/perl5/site_perl/5.32.1/Date/Language/Amharic.pm
 usr/lib/perl5/site_perl/5.32.1/Date/Language/Austrian.pm
 usr/lib/perl5/site_perl/5.32.1/Date/Language/Brazilian.pm
+usr/lib/perl5/site_perl/5.32.1/Date/Language/Bulgarian.pm
 usr/lib/perl5/site_perl/5.32.1/Date/Language/Chinese.pm
 usr/lib/perl5/site_perl/5.32.1/Date/Language/Chinese_GB.pm
 usr/lib/perl5/site_perl/5.32.1/Date/Language/Czech.pm
@@ -20,6 +21,7 @@ usr/lib/perl5/site_perl/5.32.1/Date/Language/Hungarian.pm
 usr/lib/perl5/site_perl/5.32.1/Date/Language/Icelandic.pm
 usr/lib/perl5/site_perl/5.32.1/Date/Language/Italian.pm
 usr/lib/perl5/site_perl/5.32.1/Date/Language/Norwegian.pm
+usr/lib/perl5/site_perl/5.32.1/Date/Language/Occitan.pm
 usr/lib/perl5/site_perl/5.32.1/Date/Language/Oromo.pm
 usr/lib/perl5/site_perl/5.32.1/Date/Language/Romanian.pm
 usr/lib/perl5/site_perl/5.32.1/Date/Language/Russian.pm
@@ -36,10 +38,13 @@ usr/lib/perl5/site_perl/5.32.1/Date/Language/Turkish.pm
 usr/lib/perl5/site_perl/5.32.1/Date/Parse.pm
 #usr/lib/perl5/site_perl/5.32.1/Time
 usr/lib/perl5/site_perl/5.32.1/Time/Zone.pm
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/TimeDate
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/TimeDate/.packlist
+usr/lib/perl5/site_perl/5.32.1/TimeDate.pm
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Date/Parse
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Date/Parse/.packlist
 #usr/share/man/man3/Date::Format.3
 #usr/share/man/man3/Date::Language.3
+#usr/share/man/man3/Date::Language::Bulgarian.3
 #usr/share/man/man3/Date::Language::Hungarian.3
 #usr/share/man/man3/Date::Parse.3
 #usr/share/man/man3/Time::Zone.3
+#usr/share/man/man3/TimeDate.3

@@ -38,11 +38,11 @@ require "${General::swroot}/header.pl";
 require "${General::swroot}/location-functions.pl";
 require "/usr/lib/firewall/firewall-lib.pl";
 
-unless (-d "${General::swroot}/firewall")			{ system("mkdir ${General::swroot}/firewall"); }
-unless (-e "${General::swroot}/firewall/settings")	{ system("touch ${General::swroot}/firewall/settings"); }
-unless (-e "${General::swroot}/firewall/config")	{ system("touch ${General::swroot}/firewall/config"); }
-unless (-e "${General::swroot}/firewall/input")		{ system("touch ${General::swroot}/firewall/input"); }
-unless (-e "${General::swroot}/firewall/outgoing")	{ system("touch ${General::swroot}/firewall/outgoing"); }
+unless (-d "${General::swroot}/firewall")			{ &General::system("mkdir", "${General::swroot}/firewall"); }
+unless (-e "${General::swroot}/firewall/settings")	{ &General::system("touch", "${General::swroot}/firewall/settings"); }
+unless (-e "${General::swroot}/firewall/config")	{ &General::system("touch", "${General::swroot}/firewall/config"); }
+unless (-e "${General::swroot}/firewall/input")		{ &General::system("touch", "${General::swroot}/firewall/input"); }
+unless (-e "${General::swroot}/firewall/outgoing")	{ &General::system("touch", "${General::swroot}/firewall/outgoing"); }
 
 my %fwdfwsettings=();
 my %selected=() ;

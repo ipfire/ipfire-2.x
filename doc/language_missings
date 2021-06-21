@@ -34,11 +34,15 @@
 < disable
 < dns could not add server
 < done
+< download apple profile
 < enable
 < error the to date has to be later than the from date
 < g.dtm
 < g.lite
 < insert removable device
+< ipsec dns server address is invalid
+< ipsec invalid ip address or fqdn for rw endpoint
+< ipsec roadwarrior endpoint
 < netbios nameserver daemon
 < no entries
 < notes
@@ -98,12 +102,12 @@
 < age shour
 < age sminute
 < age ssecond
-< application layer gateways
 < asn lookup failed
 < Async logging enabled
 < atm device
 < attention
 < autonomous system
+< available
 < bit
 < block
 < broken
@@ -218,6 +222,7 @@
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
 < downlink
+< download apple profile
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -536,13 +541,16 @@
 < ip info for
 < ipsec
 < ipsec connection
+< ipsec dns server address is invalid
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
+< ipsec invalid ip address or fqdn for rw endpoint
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit
@@ -918,10 +926,15 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < ansi t1.483
+< available
 < bewan adsl pci st
 < bewan adsl usb
+< download apple profile
 < g.dtm
 < g.lite
+< ipsec dns server address is invalid
+< ipsec invalid ip address or fqdn for rw endpoint
+< ipsec roadwarrior endpoint
 < upload fcdsl.o
 < zoneconf val vlan tag range error
 ############################################################################
@@ -944,9 +957,9 @@
 < advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
-< application layer gateways
 < asn lookup failed
 < autonomous system
+< available
 < block
 < broken
 < Captive
@@ -1042,6 +1055,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< download apple profile
 < duration
 < eight hours
 < email config
@@ -1132,11 +1146,14 @@
 < ip basic info
 < ip info for
 < ipsec connection
+< ipsec dns server address is invalid
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
+< ipsec invalid ip address or fqdn for rw endpoint
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit
@@ -1336,10 +1353,10 @@
 < advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
-< application layer gateways
 < asn lookup failed
 < atm device
 < autonomous system
+< available
 < block
 < broken
 < capabilities
@@ -1445,6 +1462,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< download apple profile
 < download dh parameter
 < download tls-auth key
 < drop outgoing
@@ -1542,11 +1560,14 @@
 < ip basic info
 < ip info for
 < ipsec connection
+< ipsec dns server address is invalid
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
+< ipsec invalid ip address or fqdn for rw endpoint
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit
@@ -1792,11 +1813,11 @@
 < age shour
 < age sminute
 < age ssecond
-< application layer gateways
 < asn lookup failed
 < atm device
 < attention
 < autonomous system
+< available
 < bit
 < block
 < broken
@@ -1965,6 +1986,7 @@
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
 < downlink
+< download apple profile
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -2275,13 +2297,16 @@
 < ip info for
 < ipsec
 < ipsec connection
+< ipsec dns server address is invalid
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
+< ipsec invalid ip address or fqdn for rw endpoint
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit
@@ -2680,11 +2705,11 @@
 < age shour
 < age sminute
 < age ssecond
-< application layer gateways
 < asn lookup failed
 < atm device
 < attention
 < autonomous system
+< available
 < bit
 < block
 < broken
@@ -2855,6 +2880,7 @@
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
 < downlink
+< download apple profile
 < download dh parameter
 < download tls-auth key
 < dpd delay
@@ -3169,13 +3195,16 @@
 < ip info for
 < ipsec
 < ipsec connection
+< ipsec dns server address is invalid
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
+< ipsec invalid ip address or fqdn for rw endpoint
 < ipsec mode transport
 < ipsec mode tunnel
 < ipsec network
 < ipsec no connections
+< ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit
@@ -3555,6 +3584,7 @@
 < advproxy wpad view pac
 < asn lookup failed
 < autonomous system
+< available
 < broken
 < Captive delete logo
 < cpu frequency
@@ -3588,6 +3618,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< download apple profile
 < duration
 < email tls explicit
 < email tls implicit
@@ -3630,11 +3661,14 @@
 < ip basic info
 < ip info for
 < ipsec connection
+< ipsec dns server address is invalid
 < ipsec interface mode gre
 < ipsec interface mode none
 < ipsec interface mode vti
+< ipsec invalid ip address or fqdn for rw endpoint
 < ipsec mode transport
 < ipsec mode tunnel
+< ipsec roadwarrior endpoint
 < ipsec routing table entries
 < ipsec settings
 < itlb multihit

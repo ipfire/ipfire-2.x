@@ -567,7 +567,7 @@ sub SortDataFile
 #
 sub BuildConfiguration {
     # Restart service associated with this
-    system '/usr/local/bin/setaliases';
+    &General::system('/usr/local/bin/setaliases');
 }
 
 #

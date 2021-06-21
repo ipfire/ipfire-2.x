@@ -6,7 +6,7 @@
 #usr/lib/libogg.la
 #usr/lib/libogg.so
 usr/lib/libogg.so.0
-usr/lib/libogg.so.0.8.4
+usr/lib/libogg.so.0.8.5
 #usr/lib/pkgconfig/ogg.pc
 #usr/share/aclocal/ogg.m4
 #usr/share/doc/libogg
@@ -94,4 +94,3 @@ usr/lib/libogg.so.0.8.4
 #usr/share/doc/libogg/vorbisword2.png
 #usr/share/doc/libogg/white-ogg.png
 #usr/share/doc/libogg/white-xifish.png
-

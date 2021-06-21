@@ -873,9 +873,9 @@ sub BuildConfiguration() {
 
 	# Restart the service.
 	if (($settings{'TOR_ENABLED'} eq 'on') || ($settings{'TOR_RELAY_ENABLED'} eq 'on')) {
-		system("/usr/local/bin/torctrl restart &>/dev/null");
+		&General::system("/usr/local/bin/torctrl", "restart");
 	} else {
-		system("/usr/local/bin/torctrl stop &>/dev/null");
+		&General::system("/usr/local/bin/torctrl", "stop");
 	}
 	# Update pid and memory
 	daemonstats();

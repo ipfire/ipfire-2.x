@@ -49,14 +49,18 @@ if ( -e "$configfile" ) {
 if ("$fireinfosettings{'ACTION'}" eq "trigger") {
 	if ($fireinfosettings{'ENABLE_FIREINFO'} eq 'off') 	{
 		&General::log($Lang::tr{'fireinfo is enabled'});
-		system ('/usr/bin/touch', $configfile);
+
+		# Write empty configfile.
+		open(FILE, ">$configfile");
+		close(FILE);
+
 		$fireinfosettings{'ENABLE_FIREINFO'} = 'on';
 	} else {
 		&General::log($Lang::tr{'fireinfo is disabled'});
 		unlink "$configfile";
 		$fireinfosettings{'ENABLE_FIREINFO'} = 'off';
 	}
-	system("/usr/local/bin/fireinfoctrl &");
+	&General::system_background("/usr/local/bin/fireinfoctrl");
 }
 
 &Header::openpage('Fireinfo', 1, '');
@@ -84,9 +88,13 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
-my $ipfire_version = `cat /etc/system-release`;
+# Get IPFire version string.
+open(FILE, "/etc/system-release");
+my $ipfire_version = <FILE>;
+close(FILE);
+
 my $pakfire_version = &Pakfire::make_version();
-my $kernel_version = `uname -a`;
+my $kernel_version = &General::system_output("uname", "-a");
 
 &Header::openbox('100%', 'left', $Lang::tr{'fireinfo system version'});
 print <<END;
@@ -108,12 +116,16 @@ END
 &Header::closebox();
 
 # Read pregenerated profile data
-my $profile = `cat /var/ipfire/fireinfo/profile`;
+open(FILE, "/var/ipfire/fireinfo/profile");
+my @profile = <FILE>;
+close(FILE);
 
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
 
 # Read profile ID from file
-my $profile_id = `cat /var/ipfire/fireinfo/public_id`;
+open(FILE, "/var/ipfire/fireinfo/public_id");
+my $profile_id = <FILE>;
+close(FILE);
 chomp($profile_id);
 
 &Header::openbox('100%', 'left', $Lang::tr{'fireinfo settings'});
@@ -157,7 +169,7 @@ print <<END;
 	</tr>
 	<tr>
 		<td colspan='2'>
-			<textarea rows="25" cols="75" readonly="readonly">$profile</textarea>
+			<textarea rows="25" cols="75" readonly="readonly">@profile</textarea>
 		</td>
 	</tr>
 </table>

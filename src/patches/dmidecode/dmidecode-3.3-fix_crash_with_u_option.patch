@@ -1,0 +1,34 @@
+From 11e134e54d15e67a64c39a623f492a28df922517 Mon Sep 17 00:00:00 2001
+From: Jean Delvare <jdelvare@suse.de>
+Date: Tue, 19 Jan 2021 16:26:01 +0100
+Subject: dmidecode: Fix crash with -u option
+
+A segmentation fault was reported with option -u. Turns out to be a
+stupid thinko where the buffer offset was reset at the wrong loop
+depth.
+
+Reported-by: Jerry Hoemann <jerry.hoemann@hpe.com>
+Fixes: da06888d08b9 ("dmidecode: Use the print helpers in dump mode too")
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+---
+ dmidecode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dmidecode.c b/dmidecode.c
+index 572cb1a..69ea0e8 100644
+--- a/dmidecode.c
++++ b/dmidecode.c
+@@ -248,9 +248,9 @@ static void dmi_dump(const struct dmi_header *h)
+ 			{
+ 				int j, l = strlen(s) + 1;
+ 
+-				off = 0;
+ 				for (row = 0; row < ((l - 1) >> 4) + 1; row++)
+ 				{
++					off = 0;
+ 					for (j = 0; j < 16 && j < l - (row << 4); j++)
+ 						off += sprintf(raw_data + off,
+ 						       j ? " %02X" : "%02X",
+-- 
+cgit v1.2.1
+

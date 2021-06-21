@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.3.0
+VER        = 2.4.1
 
 THISAPP    = expat-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 54ea624caca3f9003cebcab4f0a75c8f
+$(DL_FILE)_MD5 = 476cdf4b5e40280316fff36b2086a390
 
 install : $(TARGET)
 

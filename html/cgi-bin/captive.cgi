@@ -64,7 +64,7 @@ my $errormessage='';
 my $clients="${General::swroot}/captive/clients";
 my %clientshash=();
 my $settingsfile="${General::swroot}/captive/settings";
-unless (-e $settingsfile)	{ system("touch $settingsfile"); }
+unless (-e $settingsfile)	{ &General::system("touch $settingsfile"); }
 
 &Header::getcgihash(\%cgiparams);
 

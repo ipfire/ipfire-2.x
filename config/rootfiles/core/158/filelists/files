@@ -1,0 +1,14 @@
+etc/rc.d/init.d/firewall
+etc/ssh/sshd_config
+opt/pakfire/lib/functions.pl
+opt/pakfire/pakfire
+usr/lib/firewall/ipsec-policy
+var/ipfire/backup/bin/backup.pl
+var/ipfire/countries.pl
+var/ipfire/general-functions.pl
+var/ipfire/graphs.pl
+var/ipfire/header.pl
+var/ipfire/ids-functions.pl
+var/ipfire/lang.pl
+var/ipfire/location-functions.pl
+var/ipfire/modem-lib.pl

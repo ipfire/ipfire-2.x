@@ -23,7 +23,7 @@
 # Definitions
 ###############################################################################
 include Config
-VER        = 1.20
+VER        = 2.33
 
 THISAPP    = TimeDate-$(VER)
 DL_FILE    = ${THISAPP}.tar.gz
@@ -32,7 +32,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-TimeDate
 DEPS       =
-PAK_VER    = 5
+PAK_VER    = 6
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7da7452bce4c684e4238e6d09b390200
+$(DL_FILE)_MD5 = 5e5afe22c8d417417283d1f7f4572a57
 
 install : $(TARGET)
 

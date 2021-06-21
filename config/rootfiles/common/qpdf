@@ -58,7 +58,7 @@ usr/bin/qpdf
 #usr/lib/libqpdf.la
 #usr/lib/libqpdf.so
 usr/lib/libqpdf.so.28
-usr/lib/libqpdf.so.28.3.0
+usr/lib/libqpdf.so.28.3.2
 #usr/lib/pkgconfig/libqpdf.pc
 #usr/share/doc/qpdf
 #usr/share/doc/qpdf/qpdf-manual.html

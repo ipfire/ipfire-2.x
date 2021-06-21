@@ -57,11 +57,20 @@ make_backup() {
 		make_addon_backup "${addon}"
 	done
 
-	tar cvzf "${filename}" \
+	# Backup using global exclude/include definitions
+	tar cvf "${filename}" \
 		--exclude-from="/var/ipfire/backup/exclude" \
-		--exclude-from="/var/ipfire/backup/exclude.user" \
-		$(process_includes "/var/ipfire/backup/include" "/var/ipfire/backup/include.user") \
+		$(process_includes "/var/ipfire/backup/include") \
 		"$@"
+
+	# Backup using user exclude/include definitions and append to global backup
+	tar rvf "${filename}" \
+		--exclude-from="/var/ipfire/backup/exclude.user" \
+		$(process_includes "/var/ipfire/backup/include.user") \
+		"$@"
+
+	# gzip the combined global/user backup and use .ipf suffix
+	gzip --suffix .ipf "${filename}"
 
 	return 0
 }
@@ -206,7 +215,7 @@ main() {
 			local filename="${1}"
 
 			if [ -z "${filename}" ]; then
-				filename="/var/ipfire/backup/${NOW}.ipf"
+				filename="/var/ipfire/backup/${NOW}"
 			fi
 
 			make_backup "${filename}" $(find_logfiles)
@@ -216,7 +225,7 @@ main() {
 			local filename="${1}"
 
 			if [ -z "${filename}" ]; then
-				filename="/var/ipfire/backup/${NOW}.ipf"
+				filename="/var/ipfire/backup/${NOW}"
 			fi
 
 			make_backup "${filename}"

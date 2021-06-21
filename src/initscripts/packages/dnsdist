@@ -11,8 +11,22 @@
 
 [ -r "/etc/sysconfig/dnsdist" ] && . /etc/sysconfig/dnsdist
 
+check_config() {
+	if ! /usr/bin/dnsdist --check-config >/dev/null; then
+		boot_mesg "dnsdist configuration file contains errors" "${FAILURE}"
+		echo_failure
+		return 1
+	fi
+
+	return 0
+}
+
 case "${1}" in
 	start)
+		if ! check_config; then
+			exit 1
+		fi
+
 		boot_mesg "Starting dnsdist..."
 
 		# Increasing maximum number of open files
@@ -29,11 +43,19 @@ case "${1}" in
 		;;
 
 	reload)
+		if ! check_config; then
+			exit 1
+		fi
+
 		boot_mesg "Reloading dnsdist..."
 		reloadproc /usr/bin/dnsdist
 		;;
 
 	restart)
+		if ! check_config; then
+			exit 1
+		fi
+
 		${0} stop
 		sleep 1
 		${0} start

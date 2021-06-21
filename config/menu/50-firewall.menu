@@ -39,13 +39,7 @@
 				'title' => "$Lang::tr{'blue access'}",
 				'enabled' => 1,
 				 };			 
-    $subfirewall->{'80.upnp'} = {
-				'caption' => 'UPnP',
-				'uri' => '/cgi-bin/upnp.cgi',
-				'title' => "Universal Plug and Play",
-				'enabled' => 0,
-				};
-	$subfirewall->{'90.iptables'} = {
+    $subfirewall->{'90.iptables'} = {
 				'caption' => $Lang::tr{'ipts'},
 				'uri' => '/cgi-bin/iptables.cgi',
 				'title' => "$Lang::tr{'ipts'}",

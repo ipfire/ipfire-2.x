@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.49
+VER        = 2.50
 
 THISAPP    = libcap-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b43ae3690fe4d2cb32e4d25c0983ecd3
+$(DL_FILE)_MD5 = 66a561afa81666236ff973544ff4e864
 
 install : $(TARGET)
 
@@ -70,12 +70,13 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libcap-2.50-install_capsh_again.patch
 	# Prevent a static library from being installed
 	cd $(DIR_APP) && sed -i '/install.*STALIBNAME/d' libcap/Makefile
 	cd $(DIR_APP) && make GOLANG=no
 	cd $(DIR_APP) && make install GOLANG=no
 	rm -vf /lib/libcap.so
-	ln -svf /lib/libcap.so.2.49 /usr/lib/libcap.so
+	ln -svf /lib/libcap.so.2.50 /usr/lib/libcap.so
 	chmod +x /lib/libcap.so.*
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

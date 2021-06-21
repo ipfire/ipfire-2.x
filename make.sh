@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.25"							# Version number
-CORE="157"							# Core Level (Filename)
+CORE="158"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
@@ -1300,13 +1300,13 @@ buildipfire() {
   lfsmake2 perl-Device-Modem
   lfsmake2 perl-Apache-Htpasswd
   lfsmake2 perl-Parse-Yapp
+  lfsmake2 perl-Data-UUID
   lfsmake2 gnupg
   lfsmake2 hdparm
   lfsmake2 sdparm
   lfsmake2 whatmask
   lfsmake2 libtirpc
   lfsmake2 conntrack-tools
-  lfsmake2 libupnp
   lfsmake2 ipaddr
   lfsmake2 iputils
   lfsmake2 l7-protocols
@@ -1345,6 +1345,7 @@ buildipfire() {
   lfsmake2 Crypt-PasswdMD5
   lfsmake2 Net-Telnet
   lfsmake2 python-setuptools
+  lfsmake2 python3-setuptools
   lfsmake2 python3-inotify
   lfsmake2 python3-docutils
   lfsmake2 python3-daemon
@@ -1451,16 +1452,14 @@ buildipfire() {
   lfsmake2 collectd
   lfsmake2 elinks
   lfsmake2 igmpproxy
-  lfsmake2 fbset
   lfsmake2 opus
-  lfsmake2 python-pyparsing
+  lfsmake2 python3-pyparsing
   lfsmake2 spice-protocol
   lfsmake2 spice
   lfsmake2 sdl
   lfsmake2 libusbredir
   lfsmake2 libseccomp
   lfsmake2 qemu
-  lfsmake2 sane
   lfsmake2 netpbm
   lfsmake2 netsnmpd
   lfsmake2 nagios_nrpe
@@ -1512,21 +1511,16 @@ buildipfire() {
   lfsmake2 perl-DBD-SQLite
   lfsmake2 perl-File-ReadBackwards
   lfsmake2 openvmtools
-  lfsmake2 libmicrohttpd
-  lfsmake2 motion
   lfsmake2 joe
   lfsmake2 monit
   lfsmake2 nut
   lfsmake2 watchdog
   lfsmake2 libpri
-  lfsmake2 libsrtp
-  lfsmake2 asterisk
   lfsmake2 usb_modeswitch
   lfsmake2 usb_modeswitch_data
   lfsmake2 zerofree
   lfsmake2 minicom
   lfsmake2 ddrescue
-  lfsmake2 miniupnpd
   lfsmake2 client175
   lfsmake2 powertop
   lfsmake2 parted
@@ -1552,8 +1546,6 @@ buildipfire() {
   lfsmake2 python3-msgpack
   lfsmake2 aws-cli
   lfsmake2 transmission
-  lfsmake2 dpfhack
-  lfsmake2 lcd4linux
   lfsmake2 mtr
   lfsmake2 minidlna
   lfsmake2 acpid
@@ -1564,7 +1556,6 @@ buildipfire() {
   lfsmake2 libstatgrab
   lfsmake2 sarg
   lfsmake2 nginx
-  lfsmake2 sendEmail
   lfsmake2 sysbench
   lfsmake2 strace
   lfsmake2 ltrace

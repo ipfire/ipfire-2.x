@@ -184,8 +184,6 @@ var/ipfire/time
 var/ipfire/updatexlrator
 var/ipfire/updatexlrator/autocheck
 var/ipfire/updatexlrator/bin
-var/ipfire/upnp
-#var/ipfire/upnp/settings
 var/ipfire/urlfilter
 #var/ipfire/urlfilter/autoupdate
 #var/ipfire/urlfilter/bin

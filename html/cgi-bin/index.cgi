@@ -118,10 +118,10 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'dial profile'})
 }
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'dial'}) {
-	system('/usr/local/bin/redctrl start > /dev/null') == 0
+	&General::system('/usr/local/bin/redctrl', 'start') == 0
 	or &General::log("Dial failed: $?"); sleep 1;
 }elsif ($cgiparams{'ACTION'} eq $Lang::tr{'hangup'}) {
-	system('/usr/local/bin/redctrl stop > /dev/null') == 0
+	&General::system('/usr/local/bin/redctrl', 'stop') == 0
 	or &General::log("Hangup failed: $?"); sleep 1;
 }
 

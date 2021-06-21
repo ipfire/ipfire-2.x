@@ -49,7 +49,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 	if ($settings{'defpol'} ne '1'){
 		$errormessage .= $Lang::tr{'new optionsfw later'};
 		&General::writehash($filename, \%settings);             # Save good settings
-		system("/usr/local/bin/firewallctrl");
+		&General::system("/usr/local/bin/firewallctrl");
 	}else{
 		if ($settings{'POLICY'} ne ''){
 			$fwdfwsettings{'POLICY'} = $settings{'POLICY'};
@@ -64,7 +64,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
 		$fwdfwsettings{'POLICY1'} = "$MODE1";
 		&General::writehash("${General::swroot}/firewall/settings", \%fwdfwsettings);
 		&General::readhash("${General::swroot}/firewall/settings", \%fwdfwsettings);
-		system("/usr/local/bin/firewallctrl");
+		&General::system("/usr/local/bin/firewallctrl");
 	}
 	&General::readhash($filename, \%settings);             # Load good settings
 }
