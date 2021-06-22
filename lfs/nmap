@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.80
+VER        = 7.91
 
 THISAPP    = nmap-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nmap
-PAK_VER    = 11
+PAK_VER    = 13
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d37b75b06d1d40f27b76d60db420a1f5
+$(DL_FILE)_MD5 = 239cef725863ab454590a1bb8793b72b
 
 install : $(TARGET)
 
@@ -78,11 +78,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--without-nmapfe \
-		--without-zenmap \
-		--without-ncat
+	cd $(DIR_APP) && PYTHON=python3 	\
+			./configure 		\
+			--prefix=/usr 		\
+			--without-nmapfe 	\
+			--without-zenmap 	\
+			--without-ncat		\
+			--without-ndiff
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

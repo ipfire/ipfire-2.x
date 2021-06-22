@@ -773,6 +773,8 @@ WARNING: translation string unused: wildcards
 WARNING: translation string unused: wins server
 WARNING: translation string unused: wins support
 WARNING: translation string unused: wlanap access point
+WARNING: translation string unused: wlanap link dhcp
+WARNING: translation string unused: wlanap link wireless
 WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
@@ -820,6 +822,7 @@ WARNING: untranslated string: asn lookup failed = AS lookup failed
 WARNING: untranslated string: atm device = Device:
 WARNING: untranslated string: attention = ATTENTION
 WARNING: untranslated string: autonomous system = Autonomous System
+WARNING: untranslated string: available = available
 WARNING: untranslated string: bit = bit
 WARNING: untranslated string: block = Block
 WARNING: untranslated string: broken = Broken
@@ -921,6 +924,7 @@ WARNING: untranslated string: dnssec disabled warning = WARNING: DNSSEC has been
 WARNING: untranslated string: dnssec not supported = DNSSEC Not supported
 WARNING: untranslated string: dnssec validating = DNSSEC Validating
 WARNING: untranslated string: downlink = Downlink
+WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
 WARNING: untranslated string: download tls-auth key = Download tls-auth key
 WARNING: untranslated string: dpd delay = Delay
 WARNING: untranslated string: dpd timeout = Timeout
@@ -1221,12 +1225,15 @@ WARNING: untranslated string: ip basic info = Basic IP information
 WARNING: untranslated string: ip info for = IP information for
 WARNING: untranslated string: ipsec = IPsec
 WARNING: untranslated string: ipsec connection = IPsec Connection
+WARNING: untranslated string: ipsec dns server address is invalid = Invalid DNS server IP address(es)
 WARNING: untranslated string: ipsec interface mode gre = GRE
 WARNING: untranslated string: ipsec interface mode none = - None (Default) -
 WARNING: untranslated string: ipsec interface mode vti = VTI
+WARNING: untranslated string: ipsec invalid ip address or fqdn for rw endpoint = Invalid IP address or FQDN for Host-to-Net Endpoint
 WARNING: untranslated string: ipsec mode transport = Transport
 WARNING: untranslated string: ipsec mode tunnel = Tunnel
 WARNING: untranslated string: ipsec network = IPsec network
+WARNING: untranslated string: ipsec roadwarrior endpoint = Host-to-Net Endpoint
 WARNING: untranslated string: ipsec routing table entries = IPsec Routing Table Entries
 WARNING: untranslated string: ipsec settings = IPsec Settings
 WARNING: untranslated string: itlb multihit = iTLB MultiHit
@@ -1522,7 +1529,6 @@ WARNING: untranslated string: wlan client wpa mode all = Auto
 WARNING: untranslated string: wlan client wpa mode ccmp ccmp = CCMP-CCMP
 WARNING: untranslated string: wlan client wpa mode ccmp tkip = CCMP-TKIP
 WARNING: untranslated string: wlan client wpa mode tkip tkip = TKIP-TKIP
-WARNING: untranslated string: wlan clients = Wireless clients
 WARNING: untranslated string: wlanap = Access Point
 WARNING: untranslated string: wlanap 802.11w disabled = Disabled
 WARNING: untranslated string: wlanap 802.11w enforced = Enforced

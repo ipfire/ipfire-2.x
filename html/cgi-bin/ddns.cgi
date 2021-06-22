@@ -342,7 +342,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
 # Handle forced updates.
 #
 if ($settings{'ACTION'} eq $Lang::tr{'instant update'}) {
-    system(@ddnsprog) == 0 or die "@ddnsprog failed: $?\n";
+    &General::system(@ddnsprog) == 0 or die "@ddnsprog failed: $?\n";
 }
 
 #

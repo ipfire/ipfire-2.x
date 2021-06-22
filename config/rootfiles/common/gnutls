@@ -33,7 +33,7 @@ usr/lib/libgnutls-dane.so.0.4.1
 #usr/lib/libgnutls.la
 #usr/lib/libgnutls.so
 usr/lib/libgnutls.so.30
-usr/lib/libgnutls.so.30.28.0
+usr/lib/libgnutls.so.30.28.2
 #usr/lib/libgnutlsxx.la
 #usr/lib/libgnutlsxx.so
 usr/lib/libgnutlsxx.so.28

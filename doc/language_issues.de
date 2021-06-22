@@ -112,7 +112,6 @@ WARNING: translation string unused: alt information
 WARNING: translation string unused: alt ovpn
 WARNING: translation string unused: alt vpn
 WARNING: translation string unused: and
-WARNING: translation string unused: application layer gateways
 WARNING: translation string unused: apply
 WARNING: translation string unused: archive not exist
 WARNING: translation string unused: attemps
@@ -828,6 +827,9 @@ WARNING: translation string unused: weekly firewallhits
 WARNING: translation string unused: wildcards
 WARNING: translation string unused: wins server
 WARNING: translation string unused: wins support
+WARNING: translation string unused: wlan clients
+WARNING: translation string unused: wlanap link dhcp
+WARNING: translation string unused: wlanap link wireless
 WARNING: translation string unused: wlanap wlan services
 WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
@@ -852,6 +854,7 @@ WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: desired = Desired
 WARNING: untranslated string: disable = Disable
+WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
 WARNING: untranslated string: enable = Enable
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
@@ -885,6 +888,9 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
+WARNING: untranslated string: ipsec dns server address is invalid = Invalid DNS server IP address(es)
+WARNING: untranslated string: ipsec invalid ip address or fqdn for rw endpoint = Invalid IP address or FQDN for Host-to-Net Endpoint
+WARNING: untranslated string: ipsec roadwarrior endpoint = Host-to-Net Endpoint
 WARNING: untranslated string: netbios nameserver daemon = NetBIOS Nameserver Daemon
 WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: optional = Optional

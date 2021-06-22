@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.25"							# Version number
-CORE="156"							# Core Level (Filename)
+CORE="158"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
@@ -1283,6 +1283,7 @@ buildipfire() {
   lfsmake2 arping
   lfsmake2 beep
   lfsmake2 libssh
+  lfsmake2 libinih
   lfsmake2 cdrkit
   lfsmake2 dosfstools
   lfsmake2 reiserfsprogs
@@ -1299,14 +1300,13 @@ buildipfire() {
   lfsmake2 perl-Device-Modem
   lfsmake2 perl-Apache-Htpasswd
   lfsmake2 perl-Parse-Yapp
+  lfsmake2 perl-Data-UUID
   lfsmake2 gnupg
   lfsmake2 hdparm
   lfsmake2 sdparm
-  lfsmake2 mtools
   lfsmake2 whatmask
   lfsmake2 libtirpc
   lfsmake2 conntrack-tools
-  lfsmake2 libupnp
   lfsmake2 ipaddr
   lfsmake2 iputils
   lfsmake2 l7-protocols
@@ -1335,6 +1335,7 @@ buildipfire() {
   lfsmake2 Mail-Tools
   lfsmake2 MIME-Tools
   lfsmake2 Net-Server
+  lfsmake2 Canary-Stability
   lfsmake2 Convert-TNEF
   lfsmake2 Convert-UUlib
   lfsmake2 Archive-Tar
@@ -1344,14 +1345,10 @@ buildipfire() {
   lfsmake2 Crypt-PasswdMD5
   lfsmake2 Net-Telnet
   lfsmake2 python-setuptools
-  lfsmake2 python-clientform
-  lfsmake2 python-mechanize
-  lfsmake2 python-feedparser
-  lfsmake2 python-rssdler
-  lfsmake2 python-inotify
-  lfsmake2 python-docutils
-  lfsmake2 python-daemon
-  lfsmake2 python-ipaddress
+  lfsmake2 python3-setuptools
+  lfsmake2 python3-inotify
+  lfsmake2 python3-docutils
+  lfsmake2 python3-daemon
   lfsmake2 glib
   lfsmake2 ntp
   lfsmake2 openssh
@@ -1426,7 +1423,6 @@ buildipfire() {
   lfsmake2 libmad
   lfsmake2 libogg
   lfsmake2 libvorbis
-  lfsmake2 libdvbpsi
   lfsmake2 flac
   lfsmake2 lame
   lfsmake2 sox
@@ -1456,17 +1452,14 @@ buildipfire() {
   lfsmake2 collectd
   lfsmake2 elinks
   lfsmake2 igmpproxy
-  lfsmake2 fbset
   lfsmake2 opus
-  lfsmake2 python-six
-  lfsmake2 python-pyparsing
+  lfsmake2 python3-pyparsing
   lfsmake2 spice-protocol
   lfsmake2 spice
   lfsmake2 sdl
   lfsmake2 libusbredir
   lfsmake2 libseccomp
   lfsmake2 qemu
-  lfsmake2 sane
   lfsmake2 netpbm
   lfsmake2 netsnmpd
   lfsmake2 nagios_nrpe
@@ -1518,21 +1511,16 @@ buildipfire() {
   lfsmake2 perl-DBD-SQLite
   lfsmake2 perl-File-ReadBackwards
   lfsmake2 openvmtools
-  lfsmake2 libmicrohttpd
-  lfsmake2 motion
   lfsmake2 joe
   lfsmake2 monit
   lfsmake2 nut
   lfsmake2 watchdog
   lfsmake2 libpri
-  lfsmake2 libsrtp
-  lfsmake2 asterisk
   lfsmake2 usb_modeswitch
   lfsmake2 usb_modeswitch_data
   lfsmake2 zerofree
   lfsmake2 minicom
   lfsmake2 ddrescue
-  lfsmake2 miniupnpd
   lfsmake2 client175
   lfsmake2 powertop
   lfsmake2 parted
@@ -1544,26 +1532,20 @@ buildipfire() {
   lfsmake2 wireless-regdb
   lfsmake2 crda
   lfsmake2 libsolv
-  lfsmake2 python-distutils-extra
   lfsmake2 ddns
   lfsmake2 python3-setuptools-scm
-  lfsmake2 python3-six
   lfsmake2 python3-dateutil
   lfsmake2 python3-jmespath
   lfsmake2 python3-colorama
-  lfsmake2 python3-docutils
   lfsmake2 python3-yaml
   lfsmake2 python3-s3transfer
   lfsmake2 python3-rsa
   lfsmake2 python3-pyasn1
   lfsmake2 python3-urllib3
   lfsmake2 python3-botocore
-  lfsmake2 python3-llfuse
   lfsmake2 python3-msgpack
   lfsmake2 aws-cli
   lfsmake2 transmission
-  lfsmake2 dpfhack
-  lfsmake2 lcd4linux
   lfsmake2 mtr
   lfsmake2 minidlna
   lfsmake2 acpid
@@ -1574,7 +1556,6 @@ buildipfire() {
   lfsmake2 libstatgrab
   lfsmake2 sarg
   lfsmake2 nginx
-  lfsmake2 sendEmail
   lfsmake2 sysbench
   lfsmake2 strace
   lfsmake2 ltrace
@@ -1640,6 +1621,8 @@ buildipfire() {
   lfsmake2 ncdu
   lfsmake2 lshw
   lfsmake2 socat
+  lfsmake2 libcdada
+  lfsmake2 pmacct
 }
 
 buildinstaller() {

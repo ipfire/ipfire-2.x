@@ -422,6 +422,7 @@ srv/web/ipfire/html/captive
 #srv/web/ipfire/manual/getting-started.html
 #srv/web/ipfire/manual/getting-started.html.en
 #srv/web/ipfire/manual/getting-started.html.fr.utf8
+#srv/web/ipfire/manual/getting-started.html.ru.utf8
 #srv/web/ipfire/manual/glossary.html
 #srv/web/ipfire/manual/glossary.html.de
 #srv/web/ipfire/manual/glossary.html.en
@@ -545,6 +546,7 @@ srv/web/ipfire/html/captive
 #srv/web/ipfire/manual/index.html.ja.utf8
 #srv/web/ipfire/manual/index.html.ko.euc-kr
 #srv/web/ipfire/manual/index.html.pt-br
+#srv/web/ipfire/manual/index.html.ru.utf8
 #srv/web/ipfire/manual/index.html.tr.utf8
 #srv/web/ipfire/manual/index.html.zh-cn.utf8
 #srv/web/ipfire/manual/install.html
@@ -1174,7 +1176,6 @@ srv/web/ipfire/html/captive
 #srv/web/ipfire/manual/new_features_2_0.html.ja.utf8
 #srv/web/ipfire/manual/new_features_2_0.html.ko.euc-kr
 #srv/web/ipfire/manual/new_features_2_0.html.pt-br
-#srv/web/ipfire/manual/new_features_2_0.html.ru.koi8-r
 #srv/web/ipfire/manual/new_features_2_0.html.tr.utf8
 #srv/web/ipfire/manual/new_features_2_2.html
 #srv/web/ipfire/manual/new_features_2_2.html.en
@@ -1515,6 +1516,7 @@ usr/bin/htpasswd
 #usr/include/apache/http_main.h
 #usr/include/apache/http_protocol.h
 #usr/include/apache/http_request.h
+#usr/include/apache/http_ssl.h
 #usr/include/apache/http_vhost.h
 #usr/include/apache/httpd.h
 #usr/include/apache/mod_auth.h

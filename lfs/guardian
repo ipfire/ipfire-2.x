@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = guardian
-PAK_VER    = 22
+PAK_VER    = 24
 
 DEPS       = perl-inotify2 perl-Net-IP
 

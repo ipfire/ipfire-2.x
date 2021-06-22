@@ -41,7 +41,9 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/arpd.8
 #usr/share/man/man8/bridge.8
 #usr/share/man/man8/ctstat.8
+#usr/share/man/man8/dcb-app.8
 #usr/share/man/man8/dcb-buffer.8
+#usr/share/man/man8/dcb-dcbx.8
 #usr/share/man/man8/dcb-ets.8
 #usr/share/man/man8/dcb-maxrate.8
 #usr/share/man/man8/dcb-pfc.8
@@ -166,4 +168,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/tipc-peer.8
 #usr/share/man/man8/tipc-socket.8
 #usr/share/man/man8/tipc.8
+#usr/share/man/man8/vdpa-dev.8
+#usr/share/man/man8/vdpa-mgmtdev.8
+#usr/share/man/man8/vdpa.8
 #var/lib/arpd

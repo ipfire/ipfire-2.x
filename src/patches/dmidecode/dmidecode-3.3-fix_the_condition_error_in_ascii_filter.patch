@@ -1,0 +1,30 @@
+From 1117390ccd9cea139638db6f460bb6de70e28f94 Mon Sep 17 00:00:00 2001
+From: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Date: Tue, 5 Jan 2021 10:36:29 +0100
+Subject: dmidecode: Fix the condition error in ascii_filter
+
+The normal printable ASCII range is 32 to 127 (not included),
+so fix the error in this if condition.
+
+Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
+Signed-off-by: Jean Delvare <jdelvare@suse.de>
+---
+ dmidecode.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/dmidecode.c b/dmidecode.c
+index 27d5494..864a193 100644
+--- a/dmidecode.c
++++ b/dmidecode.c
+@@ -116,7 +116,7 @@ static void ascii_filter(char *bp, size_t len)
+ 	size_t i;
+ 
+ 	for (i = 0; i < len; i++)
+-		if (bp[i] < 32 || bp[i] == 127)
++		if (bp[i] < 32 || bp[i] >= 127)
+ 			bp[i] = '.';
+ }
+ 
+-- 
+cgit v1.2.1
+

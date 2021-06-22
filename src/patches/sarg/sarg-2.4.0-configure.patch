@@ -1,0 +1,34 @@
+--- sarg-2.4.0/configure.ac.orig	2020-01-16 12:24:11.000000000 +0100
++++ sarg-2.4.0/configure.ac	2021-04-24 14:16:03.677756214 +0200
+@@ -38,31 +38,6 @@
+ # Report more warnings to improve code quality.
+ CFLAGS="${CFLAGS} -Wall"
+ 
+-dnl Check for supported compiler options
+-
+-AC_MSG_CHECKING([for extra warnings flag in $CC])
+-saved_CFLAGS="${CFLAGS}"
+-CFLAGS="${CFLAGS} -Wextra -Wno-unused-parameter"
+-AC_COMPILE_IFELSE([AC_LANG_SOURCE([])],[have_extra_warnings="yes"],[have_extra_warnings="no"])
+-AC_MSG_RESULT($have_extra_warnings)
+-AS_IF([test "$have_extra_warnings" = "no"],[CFLAGS="${saved_CFLAGS}"])
+-
+-# Don't compare signs as it is a mess
+-CFLAGS="${CFLAGS} -Wno-sign-compare"
+-
+-AC_MSG_CHECKING([for implicit-function-declaration error flag in $CC])
+-saved_CFLAGS="${CFLAGS}"
+-CFLAGS="${CFLAGS} -Werror=implicit-function-declaration"
+-AC_COMPILE_IFELSE([AC_LANG_SOURCE([])],[have_implicit_function_declaration="yes"],[have_implicit_function_declaration="no"])
+-AC_MSG_RESULT($have_implicit_function_declaration)
+-AS_IF([test "$have_implicit_function_declaration" = "no"],[CFLAGS="${saved_CFLAGS}"])
+-
+-AC_MSG_CHECKING([for format error flag in $CC])
+-saved_CFLAGS="${CFLAGS}"
+-CFLAGS="${CFLAGS} -Werror=format"
+-AC_COMPILE_IFELSE([AC_LANG_SOURCE([])],[have_error_format="yes"],[have_error_format="no"])
+-AC_MSG_RESULT($have_error_format)
+-AS_IF([test "$have_error_format" = "no"],[CFLAGS="${saved_CFLAGS}"])
+ 
+ case "$host" in
+    *-solaris*)

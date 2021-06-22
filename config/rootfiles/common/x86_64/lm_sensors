@@ -7,8 +7,8 @@ usr/bin/sensors-conf-convert
 #usr/include/sensors/sensors.h
 #usr/lib/libsensors.a
 usr/lib/libsensors.so
-usr/lib/libsensors.so.4
-usr/lib/libsensors.so.4.4.0
+usr/lib/libsensors.so.5
+usr/lib/libsensors.so.5.0.0
 #usr/man/man1/sensors.1
 #usr/man/man3/libsensors.3
 #usr/man/man5/sensors.conf.5

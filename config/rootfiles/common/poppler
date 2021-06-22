@@ -44,6 +44,7 @@ usr/bin/pdfunite
 #usr/include/poppler/JArithmeticDecoder.h
 #usr/include/poppler/JBIG2Stream.h
 #usr/include/poppler/JPEG2000Stream.h
+#usr/include/poppler/JSInfo.h
 #usr/include/poppler/Lexer.h
 #usr/include/poppler/Linearization.h
 #usr/include/poppler/Link.h
@@ -103,6 +104,7 @@ usr/bin/pdfunite
 #usr/include/poppler/cpp/poppler-rectangle.h
 #usr/include/poppler/cpp/poppler-toc.h
 #usr/include/poppler/cpp/poppler-version.h
+#usr/include/poppler/cpp/poppler_cpp_export.h
 #usr/include/poppler/fofi
 #usr/include/poppler/fofi/FoFiBase.h
 #usr/include/poppler/fofi/FoFiEncodings.h
@@ -141,6 +143,7 @@ usr/bin/pdfunite
 #usr/include/poppler/goo/grandom.h
 #usr/include/poppler/goo/gstrtod.h
 #usr/include/poppler/poppler-config.h
+#usr/include/poppler/poppler_private_export.h
 #usr/include/poppler/splash
 #usr/include/poppler/splash/Splash.h
 #usr/include/poppler/splash/SplashBitmap.h
@@ -167,14 +170,12 @@ usr/lib/libpoppler-cpp.so.0
 usr/lib/libpoppler-cpp.so.0.9.0
 #usr/lib/libpoppler-glib.so
 usr/lib/libpoppler-glib.so.8
-usr/lib/libpoppler-glib.so.8.17.0
+usr/lib/libpoppler-glib.so.8.21.0
 #usr/lib/libpoppler.so
-usr/lib/libpoppler.so.100
-usr/lib/libpoppler.so.100.0.0
-#usr/lib/pkgconfig/poppler-cairo.pc
+usr/lib/libpoppler.so.110
+usr/lib/libpoppler.so.110.0.0
 #usr/lib/pkgconfig/poppler-cpp.pc
 #usr/lib/pkgconfig/poppler-glib.pc
-#usr/lib/pkgconfig/poppler-splash.pc
 #usr/lib/pkgconfig/poppler.pc
 #usr/share/man/man1/pdfattach.1
 #usr/share/man/man1/pdfdetach.1

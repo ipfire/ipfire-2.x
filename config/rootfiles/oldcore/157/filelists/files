@@ -1,0 +1,6 @@
+srv/web/ipfire/cgi-bin/getrrdimage.cgi
+srv/web/ipfire/cgi-bin/iptables.cgi
+srv/web/ipfire/html/themes/ipfire/include/css/style.css
+usr/local/bin/getipstat
+usr/sbin/unbound-dhcp-leases-bridge
+var/ipfire/network-functions.pl

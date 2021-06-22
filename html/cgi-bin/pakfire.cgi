@@ -54,15 +54,13 @@ sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' cont
 &Header::openpage($Lang::tr{'pakfire configuration'}, 1);
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
-if ($cgiparams{'ACTION'} eq 'install'){
+if (($cgiparams{'ACTION'} eq 'install') && (! -e $Pakfire::lockfile)) {
 	$cgiparams{'INSPAKS'} =~ s/\|/\ /g;
 	if ("$cgiparams{'FORCE'}" eq "on") {
-		my $command = "/usr/local/bin/pakfire install --non-interactive --no-colors $cgiparams{'INSPAKS'} &>/dev/null &";
-		system("$command");
-		system("/bin/sleep 1");
+		&General::system_background("/usr/local/bin/pakfire", "install", "--non-interactive", "--no-colors", $cgiparams{'INSPAKS'});
 	} else {
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
-		my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $cgiparams{'INSPAKS'}`;
+		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", $cgiparams{'INSPAKS'});
 		print <<END;
 		<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'}.$cgiparams{'INSPAKS'}.$Lang::tr{'pakfire possible dependency'}
 		<pre>
@@ -93,16 +91,14 @@ END
 		&Header::closepage();
 		exit;
 	}
-} elsif ($cgiparams{'ACTION'} eq 'remove') {
+} elsif (($cgiparams{'ACTION'} eq 'remove') && (! -e $Pakfire::lockfile)) {
 
 	$cgiparams{'DELPAKS'} =~ s/\|/\ /g;
 	if ("$cgiparams{'FORCE'}" eq "on") {
-		my $command = "/usr/local/bin/pakfire remove --non-interactive --no-colors $cgiparams{'DELPAKS'} &>/dev/null &";
-		system("$command");
-		system("/bin/sleep 1");
+		&General::system_background("/usr/local/bin/pakfire", "remove", "--non-interactive", "--no-colors", $cgiparams{'DELPAKS'});
 	} else {
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
-		my @output = `/usr/local/bin/pakfire resolvedeps --no-colors $cgiparams{'DELPAKS'}`;
+		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", $cgiparams{'DELPAKS'});
 		print <<END;
 		<table><tr><td colspan='2'>$Lang::tr{'pakfire uninstall package'}.$cgiparams{'DELPAKS'}.$Lang::tr{'pakfire possible dependency'}
 		<pre>
@@ -134,14 +130,10 @@ END
 		exit;
 	}
 
-} elsif ($cgiparams{'ACTION'} eq 'update') {
-
-	system("/usr/local/bin/pakfire update --force --no-colors &>/dev/null &");
-	system("/bin/sleep 1");
-} elsif ($cgiparams{'ACTION'} eq 'upgrade') {
-	my $command = "/usr/local/bin/pakfire upgrade -y --no-colors &>/dev/null &";
-	system("$command");
-	system("/bin/sleep 1");
+} elsif (($cgiparams{'ACTION'} eq 'update') && (! -e $Pakfire::lockfile)) {
+	&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
+} elsif (($cgiparams{'ACTION'} eq 'upgrade') && (!-e $Pakfire::lockfile)) {
+	&General::system_background("/usr/local/bin/pakfire", "upgrade", "-y", "--no-colors");
 } elsif ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
 	$pakfiresettings{"TREE"} = $cgiparams{"TREE"};
 
@@ -154,7 +146,7 @@ END
 		&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
 
 		# Update lists
-		system("/usr/local/bin/pakfire update --force --no-colors &>/dev/null &");
+		&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
 	}
 }
 
@@ -176,9 +168,7 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
-my $return = `pidof pakfire`;
-chomp($return);
-if ($return) {
+if (-e $Pakfire::lockfile) {
 	&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='10;'>" );
 	print <<END;
 	<table>

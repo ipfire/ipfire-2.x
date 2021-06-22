@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nagios_nrpe
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       = nagios-plugins
 
@@ -98,6 +98,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	install -v -m 644 ${DIR_SRC}/config/backup/includes/nagios_nrpe \
 		/var/ipfire/backup/addons/includes/nagios_nrpe
+
+	# Prevent NRPE binary from being owned by "nobody"
+	chown root:root /usr/lib/nagios/check_nrpe
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -133,7 +133,7 @@ ADDERROR:
 		close(FILE);
 		undef %cgiparams;
 		&General::log($Lang::tr{'wireless config added'});
-		system('/usr/local/bin/wirelessctrl');
+		&General::system('/usr/local/bin/wirelessctrl');
 	}
 ADDEXIT:
 }
@@ -157,7 +157,7 @@ if ($cgiparams{'ACTION'} eq 'edit')
 		}
 	}
 	&General::log($Lang::tr{'wireless config changed'});
-	system('/usr/local/bin/wirelessctrl');
+	&General::system('/usr/local/bin/wirelessctrl');
 }
 
 if ($cgiparams{'ACTION'} eq 'remove' || $cgiparams{'ACTION'} eq 'toggle')
@@ -178,7 +178,7 @@ if ($cgiparams{'ACTION'} eq 'remove' || $cgiparams{'ACTION'} eq 'toggle')
 	}
 	close(FILE);
 	&General::log($Lang::tr{'wireless config changed'});
-	system('/usr/local/bin/wirelessctrl');
+	&General::system('/usr/local/bin/wirelessctrl');
 }
 
 
@@ -277,7 +277,7 @@ my @curhosts = <HOSTFILE>;
 close (HOSTFILE);
 
 my $connstate = &Header::connectionstatus();
-my @arp = `/sbin/arp -n`;
+my @arp = &General::system_output("/sbin/arp", "-n");
 shift @arp;
 
 foreach my $line (@current)

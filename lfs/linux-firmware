@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20200519
+VER        = 20210511
 
 THISAPP    = linux-firmware-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7ea1c59732569a01ec8b0e6a412a314c
+$(DL_FILE)_MD5 = 3c024cca702aa71fe24fc374c53581fa
 
 install : $(TARGET)
 
@@ -72,10 +72,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	mkdir -p /lib/firmware
 	cd $(DIR_APP) && make install
-	# Remove Space from Filenames
-	mv "/lib/firmware/brcm/brcmfmac43430a0-sdio.ONDA-V80 PLUS.txt" \
-	   "/lib/firmware/brcm/brcmfmac43430a0-sdio.ONDA-V80_PLUS.txt"
-	mv "/lib/firmware/brcm/brcmfmac43455-sdio.MINIX-NEO Z83-4.txt" \
-	   "/lib/firmware/brcm/brcmfmac43455-sdio.MINIX-NEO_Z83-4.txt"
+
+	# Remove any spaces in filenames
+	while read -r file; do \
+		mv "$${file}" "$${file// /_}" || exit 1; \
+	done < <(find /lib/firmware -name "* *")
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

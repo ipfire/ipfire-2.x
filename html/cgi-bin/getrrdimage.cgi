@@ -50,7 +50,7 @@ my $graph = $query{'graph'};
 my $range = lc $query{'range'}; # lower case
 
 # Check parameters
-unless(($origin =~ /^\w+?\.cgi$/) && ($graph =~ /^[\w-]+?$/) && ($range ~~ @Graphs::time_ranges)) {
+unless(($origin =~ /^\w+?\.cgi$/) && ($graph =~ /^[\w\-.,; ]+?$/) && ($range ~~ @Graphs::time_ranges)) {
 	# Send HTTP headers
 	_start_png_output();
 	
@@ -60,7 +60,7 @@ unless(($origin =~ /^\w+?\.cgi$/) && ($graph =~ /^[\w-]+?$/) && ($range ~~ @Grap
 
 # Unsupported graph origin: Redirect request to the CGI specified in the "origin" parameter
 # This enables backwards compatibility with addons that use Graphs::makegraphbox to ouput their own graphs
-unless($origin ~~ @supported_origins) {
+unless(($origin ~~ @supported_origins) || ($origin eq "getrrdimage.cgi")) {
 	# Rewrite to old URL format: /[graph origin cgi]?[graph name]?[time range]
 	my $location = "https://$ENV{'SERVER_NAME'}:$ENV{'SERVER_PORT'}/cgi-bin/${origin}?${graph}?${range}";
 	
@@ -195,6 +195,10 @@ if($origin eq "entropy.cgi") {				## entropy.cgi
 # Add request parameters for debugging
 if($graphstatus) {
 	$graphstatus = "$graphstatus\n($origin, $graph, $range)";
+
+	# Save message in system log for further inspection
+	General::log($graphstatus);
+
 	_print_error($graphstatus);
 }
 

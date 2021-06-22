@@ -1,9 +1,0 @@
-/var/log/asterisk/messages /var/log/asterisk/full /var/log/asterisk/security /var/log/asterisk/*_log {
-        weekly
-        missingok
-        rotate 4
-        sharedscripts
-        postrotate
-                /usr/sbin/asterisk -rx 'logger reload' > /dev/null 2> /dev/null
-        endscript
-}

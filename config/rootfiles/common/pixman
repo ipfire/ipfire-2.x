@@ -5,5 +5,5 @@
 #usr/lib/libpixman-1.la
 usr/lib/libpixman-1.so
 usr/lib/libpixman-1.so.0
-usr/lib/libpixman-1.so.0.34.0
+usr/lib/libpixman-1.so.0.40.0
 #usr/lib/pkgconfig/pixman-1.pc

@@ -192,10 +192,10 @@ sub newcleanssldatabase
 	close FILE;
     }
     if (! -s ">${General::swroot}/ovpn/certs/index.txt") {
-	system ("touch ${General::swroot}/ovpn/certs/index.txt");
+	&General::system("touch", "${General::swroot}/ovpn/certs/index.txt");
     }
     if (! -s ">${General::swroot}/ovpn/certs/index.txt.attr") {
-      system ("touch ${General::swroot}/ovpn/certs/index.txt.attr");
+	&General::system("touch", "${General::swroot}/ovpn/certs/index.txt.attr");
     }
     unlink ("${General::swroot}/ovpn/certs/index.txt.old");
     unlink ("${General::swroot}/ovpn/certs/index.txt.attr.old");
@@ -220,9 +220,21 @@ sub pkiconfigcheck
 {
 	# Warning if DH parameter is 1024 bit
 	if (-f "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}") {
-		my $dhparameter = `/usr/bin/openssl dhparam -text -in ${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}`;
-		my @dhbit = ($dhparameter =~ /(\d+)/);
-		if ($1 < 2048) {
+		my @dhparameter = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}");
+		my $dhbit;
+
+		# Loop through the output and search for the DH bit lenght.
+		foreach my $line (@dhparameter) {
+			if ($line =~ (/(\d+)/)) {
+				# Assign match to dhbit value.
+				$dhbit = $1;
+
+				last;
+			}
+		}
+
+		# Check if the used key lenght is at least 2048 bit.
+		if ($dhbit < 2048) {
 			$cryptoerror = "$Lang::tr{'ovpn error dh'}";
 			goto CRYPTO_ERROR;
 		}
@@ -230,8 +242,8 @@ sub pkiconfigcheck
 
 	# Warning if md5 is in usage
 	if (-f "${General::swroot}/ovpn/certs/servercert.pem") {
-		my $signature = `/usr/bin/openssl x509 -noout -text -in ${General::swroot}/ovpn/certs/servercert.pem`;
-		if ($signature =~ /md5WithRSAEncryption/) {
+		my @signature = &General::system_output("/usr/bin/openssl", "x509", "-noout", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
+		if (grep(/md5WithRSAEncryption/, @signature) ) {
 			$cryptoerror = "$Lang::tr{'ovpn error md5'}";
 			goto CRYPTO_ERROR;
 		}
@@ -241,8 +253,8 @@ sub pkiconfigcheck
 
 	# Warning if certificate is not compliant to RFC3280 TLS rules
 	if (-f "${General::swroot}/ovpn/certs/servercert.pem") {
-		my $extendkeyusage = `/usr/bin/openssl x509 -noout -text -in ${General::swroot}/ovpn/certs/servercert.pem`;
-		if ($extendkeyusage !~ /TLS Web Server Authentication/) {
+		my @extendkeyusage = &General::system_output("/usr/bin/openssl", "x509", "-noout", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
+		if ( ! grep(/TLS Web Server Authentication/, @extendkeyusage)) {
 			$cryptowarning = "$Lang::tr{'ovpn warning rfc3280'}";
 			goto CRYPTO_WARNING;
 		}
@@ -734,7 +746,7 @@ sub writecollectdconf {
 	close(COLLECTDVPN);
 
 	# Reload collectd afterwards
-	system("/usr/local/bin/collectdctrl restart &>/dev/null");
+	&General::system("/usr/local/bin/collectdctrl", "restart");
 }
 
 #hier die refresh page
@@ -764,11 +776,11 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'} ||
     #start openvpn server
     if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'}){
     	&emptyserverlog();
-	system('/usr/local/bin/openvpnctrl', '-s');
+	&General::system("/usr/local/bin/openvpnctrl", "-s");
     }   
     #stop openvpn server
     if ($cgiparams{'ACTION'} eq $Lang::tr{'stop ovpn server'}){
-    	system('/usr/local/bin/openvpnctrl', '-k');
+	&General::system("/usr/local/bin/openvpnctrl", "-k");
 	&emptyserverlog();	
     }   
 #    #restart openvpn server
@@ -1075,8 +1087,8 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   # Check host certificate if X509 is RFC3280 compliant.
   # If not, old --ns-cert-type directive will be used.
   # If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
-  my $hostcert = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/servercert.pem`;
-  if ($hostcert !~ /TLS Web Server Authentication/) {
+  my @hostcert = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
+  if ( ! grep(/TLS Web Server Authentication/, @hostcert)) {
        print CLIENTCONF "ns-cert-type server\n";
   } else {
        print CLIENTCONF "remote-cert-tls server\n";
@@ -1196,7 +1208,8 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	# Create ta.key for tls-auth if not presant
 	if ($cgiparams{'TLSAUTH'} eq 'on') {
 		if ( ! -e "${General::swroot}/ovpn/certs/ta.key") {
-			system('/usr/sbin/openvpn', '--genkey', '--secret', "${General::swroot}/ovpn/certs/ta.key");
+			# This system call is safe, because all arguements are passed as an array.
+			system("/usr/sbin/openvpn", "--genkey", "--secret", "${General::swroot}/ovpn/certs/ta.key");
 			if ($?) {
 				$errormessage = "$Lang::tr{'openssl produced an error'}: $?";
 				goto SETTINGS_ERROR;
@@ -1219,9 +1232,24 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'TLSAUTH'} = $cgiparams{'TLSAUTH'};
 #wrtie enable
 
-  if ( $vpnsettings{'ENABLED_BLUE'} eq 'on' ) {system("touch ${General::swroot}/ovpn/enable_blue 2>/dev/null");}else{system("unlink ${General::swroot}/ovpn/enable_blue 2>/dev/null");}
-  if ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' ) {system("touch ${General::swroot}/ovpn/enable_orange 2>/dev/null");}else{system("unlink ${General::swroot}/ovpn/enable_orange 2>/dev/null");}
-  if ( $vpnsettings{'ENABLED'} eq 'on' ) {system("touch ${General::swroot}/ovpn/enable 2>/dev/null");}else{system("unlink ${General::swroot}/ovpn/enable 2>/dev/null");}
+  if ( $vpnsettings{'ENABLED_BLUE'} eq 'on' ) {
+	  &General::system("touch", "${General::swroot}/ovpn/enable_blue");
+  } else {
+	  unlink(${General::swroot}/ovpn/enable_blue);
+  }
+
+  if ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' ) {
+	  &General::system("touch", "${General::swroot}/ovpn/enable_orange");
+  } else {
+	  unlink("${General::swroot}/ovpn/enable_orange");
+  }
+
+  if ( $vpnsettings{'ENABLED'} eq 'on' ) {
+	  &General::system("touch", "${General::swroot}/ovpn/enable");
+  } else {
+	  unlink("${General::swroot}/ovpn/enable");
+  }
+
 #new settings for daemon    
     &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
     &writeserverconf();#hier ok
@@ -1234,7 +1262,7 @@ SETTINGS_ERROR:
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
     # Kill all N2N connections
-    system("/usr/local/bin/openvpnctrl -kn2n &>/dev/null");
+    &General::system("/usr/local/bin/openvpnctrl", "-kn2n");
 
     foreach my $key (keys %confighash) {
 	my $name = $confighash{$cgiparams{'$key'}}[1];
@@ -1243,7 +1271,7 @@ SETTINGS_ERROR:
 	    delete $confighash{$cgiparams{'$key'}};
 	}
 
-	system ("/usr/local/bin/openvpnctrl -drrd $name &>/dev/null");
+	&General::system("/usr/local/bin/openvpnctrl", "-drrd", "$name");
     }
     while ($file = glob("${General::swroot}/ovpn/ca/*")) {
 	unlink $file;
@@ -1282,7 +1310,7 @@ SETTINGS_ERROR:
 	close FILE;
     }
     while ($file = glob("${General::swroot}/ovpn/n2nconf/*")) {
-	system ("rm -rf $file");
+	unlink($file);
     }
 
     # Remove everything from the collectd configuration
@@ -1328,7 +1356,8 @@ END
         unlink "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}";
 	}
 	# Create Diffie Hellmann Parameter
-	system('/usr/bin/openssl', 'dhparam', '-out', "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
+	# The system call is safe, because all arguments are passed as an array.
+	system("/usr/bin/openssl", "dhparam", "-out", "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
 	if ($?) {
 		$errormessage = "$Lang::tr{'openssl produced an error'}: $?";
 		unlink ("${General::swroot}/ovpn/ca/dh1024.pem");
@@ -1397,8 +1426,8 @@ END
         $errormessage = $!;
 	goto UPLOADCA_ERROR;
     }
-    my $temp = `/usr/bin/openssl dhparam -text -in $filename`;
-    if ($temp !~ /DH Parameters: \((2048|3072|4096) bit\)/) {
+    my @temp = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "$filename");
+    if ( ! grep(/DH Parameters: \((2048|3072|4096) bit\)/, @temp)) {
         $errormessage = $Lang::tr{'not a valid dh key'};
         unlink ($filename);
         goto UPLOADCA_ERROR;
@@ -1454,8 +1483,8 @@ END
 	$errormessage = $!;
 	goto UPLOADCA_ERROR;
     }
-    my $temp = `/usr/bin/openssl x509 -text -in $filename`;
-    if ($temp !~ /CA:TRUE/i) {
+    my @temp = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "$filename");
+    if ( ! grep(/CA:TRUE/i, @temp )) {
 	$errormessage = $Lang::tr{'not a valid ca certificate'};
 	unlink ($filename);
 	goto UPLOADCA_ERROR;
@@ -1468,11 +1497,19 @@ END
 	}
     }
 
-    my $casubject = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/ca/$cgiparams{'CA_NAME'}cert.pem`;
-    $casubject    =~ /Subject: (.*)[\n]/;
-    $casubject    = $1;
-    $casubject    =~ s+/Email+, E+;
-    $casubject    =~ s/ ST=/ S=/;
+    @casubject = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/ca/$cgiparams{'CA_NAME'}cert.pem");
+    my $casubject;
+
+    foreach my $line (@casubject) {
+	if ($line =~ /Subject: (.*)[\n]/) {
+		$casubject    = $1;
+		$casubject    =~ s+/Email+, E+;
+		$casubject    =~ s/ ST=/ S=/;
+
+		last;
+	}
+    }
+
     $casubject    = &Header::cleanhtml($casubject);
 
     my $key = &General::findhasharraykey (\%cahash);
@@ -1494,9 +1531,9 @@ END
 	&Header::openpage($Lang::tr{'ovpn'}, 1, '');
 	&Header::openbigbox('100%', 'LEFT', '', $errormessage);
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'ca certificate'}:");
-	my $output = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem`;
-	$output = &Header::cleanhtml($output,"y");
-	print "<pre>$output</pre>\n";
+	my @output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
+	@output = &Header::cleanhtml(@output,"y");
+	print "<pre>@output</pre>\n";
 	&Header::closebox();
 	print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 	&Header::closebigbox();
@@ -1515,7 +1552,10 @@ END
     if ( -f "${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem" ) {
 	print "Content-Type: application/octet-stream\r\n";
 	print "Content-Disposition: filename=$cahash{$cgiparams{'KEY'}}[0]cert.pem\r\n\r\n";
-	print `/usr/bin/openssl x509 -in ${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem`;
+
+	my @tmp =  &General::system_output("/usr/bin/openssl", "x509", "-in", "${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
+	print "@tmp";
+
 	exit(0);
     } else {
 	$errormessage = $Lang::tr{'invalid key'};
@@ -1530,8 +1570,8 @@ END
 
     if ( -f "${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem" ) {
 	foreach my $key (keys %confighash) {
-	    my $test = `/usr/bin/openssl verify -CAfile ${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem ${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem`;
-	    if ($test =~ /: OK/) {
+	    my @test = &General::system_output("/usr/bin/openssl", "verify", "-CAfile", "${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem", "${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem");
+	    if (grep(/: OK/, @test)) {
 		# Delete connection
 #		if ($vpnsettings{'ENABLED'} eq 'on' ||
 #		    $vpnsettings{'ENABLED_BLUE'} eq 'on') {
@@ -1561,8 +1601,8 @@ END
     my $assignedcerts = 0;
     if ( -f "${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem" ) {
 	foreach my $key (keys %confighash) {
-	    my $test = `/usr/bin/openssl verify -CAfile ${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem ${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem`;
-	    if ($test =~ /: OK/) {
+	    my @test = &General::system_output("/usr/bin/openssl", "verify", "-CAfile", "${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem", "${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem");
+	    if (grep(/: OK/, @test)) {
 		$assignedcerts++;
 	    }
 	}
@@ -1601,19 +1641,19 @@ END
 ###
 }elsif ($cgiparams{'ACTION'} eq $Lang::tr{'show root certificate'} ||
     $cgiparams{'ACTION'} eq $Lang::tr{'show host certificate'}) {
-    my $output;
+    my @output;
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'ovpn'}, 1, '');
     &Header::openbigbox('100%', 'LEFT', '', '');
     if ($cgiparams{'ACTION'} eq $Lang::tr{'show root certificate'}) {
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'root certificate'}:");
-	$output = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/ca/cacert.pem`;
+	@output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/ca/cacert.pem");
     } else {
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'host certificate'}:");
-	$output = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/servercert.pem`;
+	@output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
     }
-    $output = &Header::cleanhtml($output,"y");
-    print "<pre>$output</pre>\n";
+    @output = &Header::cleanhtml(@output,"y");
+    print "<pre>@output</pre>\n";
     &Header::closebox();
     print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
     &Header::closebigbox();
@@ -1627,7 +1667,10 @@ END
     if ( -f "${General::swroot}/ovpn/ca/cacert.pem" ) {
 	print "Content-Type: application/octet-stream\r\n";
 	print "Content-Disposition: filename=cacert.pem\r\n\r\n";
-	print `/usr/bin/openssl x509 -in ${General::swroot}/ovpn/ca/cacert.pem`;
+
+	my @tmp = &General::system_output("/usr/bin/openssl", "x509", "-in", "${General::swroot}/ovpn/ca/cacert.pem");
+	print "@tmp";
+
 	exit(0);
     }
     
@@ -1638,7 +1681,10 @@ END
     if ( -f "${General::swroot}/ovpn/certs/servercert.pem" ) {
 	print "Content-Type: application/octet-stream\r\n";
 	print "Content-Disposition: filename=servercert.pem\r\n\r\n";
-	print `/usr/bin/openssl x509 -in ${General::swroot}/ovpn/certs/servercert.pem`;
+
+	my @tmp = &General::system_output("/usr/bin/openssl", "x509", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
+	print "@tmp";
+
 	exit(0);
     }
 
@@ -1649,7 +1695,13 @@ END
     if ( -f "${General::swroot}/ovpn/certs/ta.key" ) {
 	print "Content-Type: application/octet-stream\r\n";
 	print "Content-Disposition: filename=ta.key\r\n\r\n";
-	print `/bin/cat ${General::swroot}/ovpn/certs/ta.key`;
+
+	open(FILE, "${General::swroot}/ovpn/certs/ta.key");
+	my @tmp = <FILE>;
+	close(FILE);
+
+	print "@tmp";
+
 	exit(0);
     }
 
@@ -1926,6 +1978,7 @@ END
 	}
 	
 	# Sign the host certificate request
+	# This system call is safe, because all argeuments are passed as an array.
 	system('/usr/bin/openssl', 'ca', '-days', '999999',
 		'-batch', '-notext',
 		'-in',  "${General::swroot}/ovpn/certs/serverreq.pem",
@@ -1947,6 +2000,7 @@ END
 	}
 
 	# Create an empty CRL
+	# System call is safe, because all arguments are passed as array.
 	system('/usr/bin/openssl', 'ca', '-gencrl',
 		'-out', "${General::swroot}/ovpn/crls/cacrl.pem",
 		'-config', "${General::swroot}/ovpn/openssl/ovpn.cnf" );
@@ -1962,6 +2016,7 @@ END
 #	    &cleanssldatabase();
 	}
 	# Create ta.key for tls-auth
+	# This system call is safe, because all arguments are passed as an array.
 	system('/usr/sbin/openvpn', '--genkey', '--secret', "${General::swroot}/ovpn/certs/ta.key");
 	if ($?) {
 	    $errormessage = "$Lang::tr{'openssl produced an error'}: $?";
@@ -1969,6 +2024,7 @@ END
 	    goto ROOTCERT_ERROR;
 	}
 	# Create Diffie Hellmann Parameter
+	# The system call is safe, because all arguments are passed as an array.
 	system('/usr/bin/openssl', 'dhparam', '-out', "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
 	if ($?) {
 	    $errormessage = "$Lang::tr{'openssl produced an error'}: $?";
@@ -2083,7 +2139,7 @@ END
     }
 
     ROOTCERT_SUCCESS:
-    system ("chmod 600 ${General::swroot}/ovpn/certs/serverkey.pem");
+    &General::system("chmod", "600", "${General::swroot}/ovpn/certs/serverkey.pem");
 #    if ($vpnsettings{'ENABLED'} eq 'on' ||
 #	$vpnsettings{'ENABLE_BLUE'} eq 'on') {
 #	system('/usr/local/bin/ipsecctrl', 'S');
@@ -2101,8 +2157,12 @@ END
     
     &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-#    my $n2nactive = '';
-    my $n2nactive = `/bin/ps ax|grep $confighash{$cgiparams{'KEY'}}[1]|grep -v grep|awk \'{print \$1}\'`;
+    my $n2nactive = '';
+    my @ps = &General::system_output("/bin/ps", "ax");
+
+    if(grep(/$confighash{$cgiparams{'KEY'}}[1]/, @ps)) {
+	$n2nactive = "1";
+    }
     
     if ($confighash{$cgiparams{'KEY'}}) {
 		if ($confighash{$cgiparams{'KEY'}}[0] eq 'off') {
@@ -2110,7 +2170,7 @@ END
 			&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
 			if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
-				system('/usr/local/bin/openvpnctrl', '-sn2n', $confighash{$cgiparams{'KEY'}}[1]);
+				&General::system("/usr/local/bin/openvpnctrl", "-sn2n", "$confighash{$cgiparams{'KEY'}}[1]");
 				&writecollectdconf();
 			}
 		} else {
@@ -2120,7 +2180,7 @@ END
 
 			if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
 				if ($n2nactive ne '') {
-					system('/usr/local/bin/openvpnctrl', '-kn2n', $confighash{$cgiparams{'KEY'}}[1]);
+					&General::system("/usr/local/bin/openvpnctrl", "-kn2n", "$confighash{$cgiparams{'KEY'}}[1]");
 					&writecollectdconf();
 				}
  
@@ -2204,8 +2264,8 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    # Check host certificate if X509 is RFC3280 compliant.
    # If not, old --ns-cert-type directive will be used.
    # If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
-   my $hostcert = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/servercert.pem`;
-   if ($hostcert !~ /TLS Web Server Authentication/) {
+   my @hostcert = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
+   if (! grep(/TLS Web Server Authentication/, @hostcert)) {
                print CLIENTCONF "ns-cert-type server\n";
    } else {
                print CLIENTCONF "remote-cert-tls server\n";
@@ -2315,6 +2375,7 @@ else
 		$zip->addFile("${General::swroot}/ovpn/ca/cacert.pem", "cacert.pem")  or die "Can't add file cacert.pem\n";
 
 		# Extract the certificate
+		# This system call is safe, because all arguments are passed as an array.
 		system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
 			'-clcerts', '-nokeys', '-nodes', '-out', "$file_crt" , '-passin', 'pass:');
 		if ($?) {
@@ -2325,6 +2386,7 @@ else
 		print CLIENTCONF ";cert $confighash{$cgiparams{'KEY'}}[1].pem\r\n";
 
 		# Extract the key
+		# This system call is safe, because all arguments are passed as an array.
 		system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
 			'-nocerts', '-nodes', '-out', "$file_key", '-passin', 'pass:');
 		if ($?) {
@@ -2361,8 +2423,8 @@ else
 	# Check host certificate if X509 is RFC3280 compliant.
 	# If not, old --ns-cert-type directive will be used.
 	# If appropriate key usage extension exists, new --remote-cert-tls directive will be used.
-	my $hostcert = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/servercert.pem`;
-	if ($hostcert !~ /TLS Web Server Authentication/) {
+	my @hostcert = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
+	if (! grep(/TLS Web Server Authentication/, @hostcert)) {
 		print CLIENTCONF "ns-cert-type server\r\n";
 	} else {
 		print CLIENTCONF "remote-cert-tls server\r\n";
@@ -2464,8 +2526,8 @@ else
 
 	if ($confighash{$cgiparams{'KEY'}}) {
 		# Revoke certificate if certificate was deleted and rewrite the CRL
-		my $temp = `/usr/bin/openssl ca -revoke ${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
-		my $tempA = `/usr/bin/openssl ca -gencrl -out ${General::swroot}/ovpn/crls/cacrl.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
+		&General::system("/usr/bin/openssl", "ca", "-revoke", "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem", "-config", "${General::swroot}/ovpn/openssl/ovpn.cnf)";
+		&General::system("/usr/bin/openssl", "ca", "-gencrl", "-out", "${General::swroot}/ovpn/crls/cacrl.pem", "-config", "${General::swroot}/ovpn/openssl/ovpn.cnf");
 
 ###
 # m.a.d net2net
@@ -2473,7 +2535,7 @@ else
 
 		if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 			# Stop the N2N connection before it is removed
-			system('/usr/local/bin/openvpnctrl', '-kn2n', $confighash{$cgiparams{'KEY'}}[1]);
+			&General::system("/usr/local/bin/openvpnctrl", "-kn2n", "$confighash{$cgiparams{'KEY'}}[1]");
 
 			my $conffile = glob("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]/$confighash{$cgiparams{'KEY'}}[1].conf");
 			my $certfile = glob("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
@@ -2515,10 +2577,10 @@ else
 # CCD end
 		# Update collectd configuration and delete all RRD files of the removed connection
 		&writecollectdconf();
-		system ('/usr/local/bin/openvpnctrl', '-drrd', $confighash{$cgiparams{'KEY'}}[1]);
+		&General::system("/usr/local/bin/openvpnctrl", "-drrd", "$confighash{$cgiparams{'KEY'}}[1]");
 
 		delete $confighash{$cgiparams{'KEY'}};
-		my $temp2 = `/usr/bin/openssl ca -gencrl -out ${General::swroot}/ovpn/crls/cacrl.pem -config ${General::swroot}/ovpn/openssl/ovpn.cnf`;
+		&General::system("/usr/bin/openssl", "ca", "-gencrl", "-out", "${General::swroot}/ovpn/crls/cacrl.pem", "-config", "${General::swroot}/ovpn/openssl/ovpn.cnf");
 		&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
 	} else {
@@ -2534,7 +2596,12 @@ else
 
     print "Content-Disposition: filename=" . $confighash{$cgiparams{'KEY'}}[1] . ".p12\r\n";
     print "Content-Type: application/octet-stream\r\n\r\n";
-    print `/bin/cat ${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12`;
+
+    open(FILE, "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
+    my @tmp = <FILE>;
+    close(FILE);
+
+    print "@tmp";
     exit (0);
 
 ###
@@ -2548,9 +2615,9 @@ else
 	&Header::openpage($Lang::tr{'ovpn'}, 1, '');
 	&Header::openbigbox('100%', 'LEFT', '', '');
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'certificate'}:");
-	my $output = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem`;
-	$output = &Header::cleanhtml($output,"y");
-	print "<pre>$output</pre>\n";
+	my @output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
+	@output = &Header::cleanhtml(@output,"y");
+	print "<pre>@output</pre>\n";
 	&Header::closebox();
 	print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 	&Header::closebigbox();
@@ -2570,9 +2637,9 @@ else
 		&Header::openpage($Lang::tr{'ovpn'}, 1, '');
 		&Header::openbigbox('100%', 'LEFT', '', '');
 		&Header::openbox('100%', 'LEFT', "$Lang::tr{'dh'}:");
-		my $output = `/usr/bin/openssl dhparam -text -in ${General::swroot}/ovpn/ca/dh1024.pem`;
-		$output = &Header::cleanhtml($output,"y");
-		print "<pre>$output</pre>\n";
+		my @output = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "${General::swroot}/ovpn/ca/dh1024.pem");
+		@output = &Header::cleanhtml(@output,"y");
+		print "<pre>@output</pre>\n";
 		&Header::closebox();
 		print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 		&Header::closebigbox();
@@ -2592,9 +2659,13 @@ else
 		&Header::openpage($Lang::tr{'ovpn'}, 1, '');
 		&Header::openbigbox('100%', 'LEFT', '', '');
 		&Header::openbox('100%', 'LEFT', "$Lang::tr{'ta key'}:");
-		my $output = `/bin/cat ${General::swroot}/ovpn/certs/ta.key`;
-		$output = &Header::cleanhtml($output,"y");
-		print "<pre>$output</pre>\n";
+
+		open(FILE, "${General::swroot}/ovpn/certs/ta.key");
+		my @output = <FILE>;
+		close(FILE);
+
+		@output = &Header::cleanhtml(@output,"y");
+		print "<pre>@output</pre>\n";
 		&Header::closebox();
 		print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 		&Header::closebigbox();
@@ -2615,9 +2686,9 @@ else
 	&Header::openpage($Lang::tr{'ovpn'}, 1, '');
 	&Header::openbigbox('100%', 'LEFT', '', '');
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'crl'}:");
-	my $output = `/usr/bin/openssl crl -text -noout -in ${General::swroot}/ovpn/crls/cacrl.pem`;
-	$output = &Header::cleanhtml($output,"y");
-	print "<pre>$output</pre>\n";
+	my @output = &General::system_output("/usr/bin/openssl", "crl", "-text", "-noout", "-in", "${General::swroot}/ovpn/crls/cacrl.pem");
+	@output = &Header::cleanhtml(@output,"y");
+	print "<pre>@output</pre>\n";
 	&Header::closebox();
 	print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 	&Header::closebigbox();
@@ -3105,7 +3176,12 @@ END
     if ( -f "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem") {
 	print "Content-Disposition: filename=" . $confighash{$cgiparams{'KEY'}}[1] . "cert.pem\r\n";
 	print "Content-Type: application/octet-stream\r\n\r\n";
-	print `/bin/cat ${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem`;
+
+	open(FILE, "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
+	my @tmp = <FILE>;
+	close(FILE);
+
+	print "@tmp";
 	exit (0);
     }
 
@@ -4031,6 +4107,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 
 	    # Sign the certificate request and move it
 	    # Sign the host certificate request
+	    # The system call is safe, because all arguments are passed as an array.
 	    system('/usr/bin/openssl', 'ca', '-days', "$cgiparams{'DAYS_VALID'}",
 		'-batch', '-notext',
 		'-in', $filename,
@@ -4047,11 +4124,19 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		&deletebackupcert();
 	    }
 
-	    my $temp = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
-	    $temp =~ /Subject:.*CN\s?=\s?(.*)[\n]/;
-	    $temp = $1;
-	    $temp =~ s+/Email+, E+;
-	    $temp =~ s/ ST=/ S=/;
+	    my @temp = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem");
+	    my $temp;
+
+	    foreach my $line (@temp) {
+		if ($line =~ /Subject:.*CN\s?=\s?(.*)[\n]/) {
+			$temp = $1;
+			$temp =~ s+/Email+, E+;
+			$temp =~ s/ ST=/ S=/;
+
+			last;
+		}
+	    }
+		
 	    $cgiparams{'CERT_NAME'} = $temp;
 	    $cgiparams{'CERT_NAME'} =~ s/,//g;
 	    $cgiparams{'CERT_NAME'} =~ s/\'//g;
@@ -4077,13 +4162,13 @@ if ($cgiparams{'TYPE'} eq 'net') {
 
 	    # Verify the certificate has a valid CA and move it
 	    my $validca = 0;
-	    my $test = `/usr/bin/openssl verify -CAfile ${General::swroot}/ovpn/ca/cacert.pem $filename`;
-	    if ($test =~ /: OK/) {
+	    my @test = &General::system_output("/usr/bin/openssl", "verify", "-CAfile", "${General::swroot}/ovpn/ca/cacert.pem", "$filename");
+	    if (grep(/: OK/, @test)) {
 		$validca = 1;
 	    } else {
 		foreach my $key (keys %cahash) {
-		    $test = `/usr/bin/openssl verify -CAfile ${General::swroot}/ovpn/ca/$cahash{$key}[0]cert.pem $filename`;
-		    if ($test =~ /: OK/) {
+		    @test = &General::system_output("/usr/bin/openssl", "verify", "-CAfile", "${General::swroot}/ovpn/ca/$cahash{$key}[0]cert.pem", "$filename");
+		    if (grep(/: OK/, @test)) {
 			$validca = 1;
 		    }
 		}
@@ -4101,11 +4186,19 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		}
 	    }
 
-	    my $temp = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem`;
-	    $temp =~ /Subject:.*CN\s?=\s?(.*)[\n]/;
-	    $temp = $1;
-	    $temp =~ s+/Email+, E+;
-	    $temp =~ s/ ST=/ S=/;
+	    my @temp = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem");
+	    my $temp;
+
+	    foreach my $line (@temp) {
+		if ($line =~ /Subject:.*CN\s?=\s?(.*)[\n]/) {
+			$temp = $1;
+			$temp =~ s+/Email+, E+;
+			$temp =~ s/ ST=/ S=/;
+
+			last;
+		}
+	    }
+
 	    $cgiparams{'CERT_NAME'} = $temp;
 	    $cgiparams{'CERT_NAME'} =~ s/,//g;
 	    $cgiparams{'CERT_NAME'} =~ s/\'//g;
@@ -4232,6 +4325,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    }
 	
 	    # Sign the host certificate request
+	    # The system call is safe, because all arguments are passed as an array.
 	    system('/usr/bin/openssl', 'ca', '-days', "$cgiparams{'DAYS_VALID'}",
 		'-batch', '-notext',
 		'-in',  "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}req.pem",
@@ -4250,6 +4344,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    }
 
 	    # Create the pkcs12 file
+	    # The system call is safe, because all arguments are passed as an array.
 	    system('/usr/bin/openssl', 'pkcs12', '-export', 
 		'-inkey', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}key.pem",
 		'-in', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem",
@@ -4415,21 +4510,24 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	
 	if ($cgiparams{'TYPE'} eq 'net') {
 	
-	if (-e "/var/run/$confighash{$key}[1]n2n.pid") {
-  system('/usr/local/bin/openvpnctrl', '-kn2n', $confighash{$cgiparams{'KEY'}}[1]);
+		if (-e "/var/run/$confighash{$key}[1]n2n.pid") {
+			&General::system("/usr/local/bin/openvpnctrl", "-kn2n", "$confighash{$cgiparams{'KEY'}}[1]");
 	
-  &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
-	my $key = $cgiparams{'KEY'};
-	if (! $key) {
-	    $key = &General::findhasharraykey (\%confighash);
-	    foreach my $i (0 .. 31) { $confighash{$key}[$i] = "";}
-	    }
-  $confighash{$key}[0] = 'on';
-  &General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+			&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+			my $key = $cgiparams{'KEY'};
+			if (! $key) {
+			    $key = &General::findhasharraykey (\%confighash);
+			    foreach my $i (0 .. 31) {
+				    $confighash{$key}[$i] = "";
+			    }
+			}
+
+			$confighash{$key}[0] = 'on';
+			&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
   
-  system('/usr/local/bin/openvpnctrl', '-sn2n', $confighash{$cgiparams{'KEY'}}[1]);
-	 }          
-  }
+			&General::system("/usr/local/bin/openvpnctrl", "-sn2n", "$confighash{$cgiparams{'KEY'}}[1]");
+		}
+	}
 
 ###
 # m.a.d n2n end
@@ -5046,7 +5144,9 @@ END
     &General::readhasharray("${General::swroot}/ovpn/caconfig", \%cahash);
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-    my @status = `/bin/cat /var/run/ovpnserver.log`;
+    open(FILE, "/var/run/ovpnserver.log");
+    my @status = <FILE>;
+    close(FILE);
 
     if ($cgiparams{'VPN_IP'} eq '' && -e "${General::swroot}/red/active") {
 		if (open(IPADDR, "${General::swroot}/red/local-ipaddress")) {
@@ -5358,9 +5458,17 @@ END
 	#} else {
 	    #print "<td align='left'>&nbsp;</td>";
 	#}
-	my $cavalid = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem`;
-	$cavalid    =~ /Not After : (.*)[\n]/;
-	$cavalid    = $1;
+	my @cavalid = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem");
+	my $cavalid;
+
+	foreach my $line (@cavalid) {
+		if ($line =~ /Not After : (.*)[\n]/) {
+			$cavalid    = $1;
+
+			last;
+		}
+	}
+
 	print "<td align='center' $col>$confighash{$key}[25]</td>";
 	$col1="bgcolor='${Header::colourred}'";
 	my $active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
@@ -5571,11 +5679,19 @@ END
     my $col4="bgcolor='$color{'color20'}'";
 
     if (-f "${General::swroot}/ovpn/ca/cacert.pem") {
-		my $casubject = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/ca/cacert.pem`;
-		$casubject    =~ /Subject: (.*)[\n]/;
-		$casubject    = $1;
-		$casubject    =~ s+/Email+, E+;
-		$casubject    =~ s/ ST=/ S=/;
+		my @casubject = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/ca/cacert.pem");
+		my $casubject;
+
+		foreach my $line (@casubject) {
+			if ($line =~ /Subject: (.*)[\n]/) {
+				$casubject    = $1;
+				$casubject    =~ s+/Email+, E+;
+				$casubject    =~ s/ ST=/ S=/;
+
+				last;
+			}
+		}
+
 		print <<END;
 		<tr>
 			<td class='base' $col1>$Lang::tr{'root certificate'}</td>
@@ -5605,11 +5721,18 @@ END
     }
 
     if (-f "${General::swroot}/ovpn/certs/servercert.pem") {
-		my $hostsubject = `/usr/bin/openssl x509 -text -in ${General::swroot}/ovpn/certs/servercert.pem`;
-		$hostsubject    =~ /Subject: (.*)[\n]/;
-		$hostsubject    = $1;
-		$hostsubject    =~ s+/Email+, E+;
-		$hostsubject    =~ s/ ST=/ S=/;
+		my @hostsubject = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
+		my $hostsubject;
+
+		foreach my $line (@hostsubject) {
+			if ($line =~ /Subject: (.*)[\n]/) {
+				$hostsubject    = $1;
+				$hostsubject    =~ s+/Email+, E+;
+				$hostsubject    =~ s/ ST=/ S=/;
+
+				last;
+			}
+		}
 
 		print <<END;
 		<tr>
@@ -5641,10 +5764,16 @@ END
 
     # Adding DH parameter to chart
     if (-f "${General::swroot}/ovpn/ca/dh1024.pem") {
-		my $dhsubject = `/usr/bin/openssl dhparam -text -in ${General::swroot}/ovpn/ca/dh1024.pem`;
-		$dhsubject    =~ /    (.*)[\n]/;
-		$dhsubject    = $1;
+		my @dhsubject = &System_output("/usr/bin/openssl", "dhparam", "-text", "-in", "${General::swroot}/ovpn/ca/dh1024.pem");
+		my $dhsubject;
 
+		foreach my $line (@dhsubject) {
+			if ($line =~ /    (.*)[\n]/) {
+				$dhsubject = $1;
+
+				last;
+			}
+		}
 
 	print <<END;
 		<tr>
@@ -5674,9 +5803,19 @@ END
 
     # Adding ta.key to chart
     if (-f "${General::swroot}/ovpn/certs/ta.key") {
-		my $tasubject = `/bin/cat ${General::swroot}/ovpn/certs/ta.key`;
-		$tasubject    =~ /# (.*)[\n]/;
-		$tasubject    = $1;
+		open(FILE, "${General::swroot}/ovpn/certs/ta.key");
+		my @tasubject = <FILE>;
+		close(FILE);
+
+		my $tasubject;
+		foreach my $line (@tasubject) {
+			if($line =~ /# (.*)[\n]/) {
+				$tasubject    = $1;
+
+				last;
+			}
+		}
+
 		print <<END;
 
 		<tr>

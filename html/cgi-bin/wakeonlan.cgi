@@ -171,7 +171,7 @@ if ( $cgiparams{'ACTION'} eq 'wakeup' )
 
   undef %cgiparams;
 
-  system("/usr/sbin/etherwake -i $iface $mac");
+  &General::system("/usr/sbin/etherwake", "-i", "$iface", "$mac");
 
   # make a box with info, 'refresh' to normal screen after 5 seconds
   if ( $refresh eq 'yes' )

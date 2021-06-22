@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.3.111
+VER        = 0.3.112
 
 THISAPP    = libaio-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = abb8f46d64b9bd3d0c6097e3a36639be
+$(DL_FILE)_MD5 = 1ba264947d05bd8e0f9dc9a9ed80cf3e
 
 install : $(TARGET)
 

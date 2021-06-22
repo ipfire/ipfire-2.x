@@ -38,12 +38,55 @@ my %mainsettings = ();
 my %sensorsettings = ();
 
 my @sensorsgraphs = ();
-my @sensorsdir = `ls -dA $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/`;
-foreach (@sensorsdir){
-	chomp($_);chop($_);
-	foreach (`ls $_/*`){
-		chomp($_);
-		push(@sensorsgraphs,$_);
+
+# Main directory where rrdlog puts the sensor data.
+my $sensorsdir = "$mainsettings{'RRDLOG'}/collectd/localhost";
+
+# Open sensors directory.
+opendir(SENSORS, "$sensorsdir") or die "Could not opendir $sensorsdir: $!\n";
+
+# Read-in all sensors.
+my @sensor_dirs = readdir(SENSORS);
+
+# Close directory handle.
+closedir(SENSORS);
+
+# Loop through the grabbed sensors.
+foreach my $sensor_dir (@sensor_dirs) {
+	# Skip everything which does not start with "sensors-".
+	next unless $sensor_dir =~ /^sensors-/;
+
+	# Check if the omitet element is a directory.
+	next unless (-d "$sensorsdir/$sensor_dir");
+
+	# Open sensor directory and lookup for sensors.
+	opendir(SENSOR_DIR, "$sensorsdir/$sensor_dir") or die "Could not opendir $sensorsdir/$sensor_dir: $!\n";
+
+	# Grab single sensors from the directory.
+	my @sensors = readdir(SENSOR_DIR);
+
+	# Close directory handle.
+	closedir(SENSOR_DIR);
+
+	# Loop through the omited sensors.
+	foreach my $sensor (@sensors) {
+		# Skip everything which is not a regular file.
+		next unless (-f "$sensorsdir/$sensor_dir/$sensor");
+
+		# Add sensor to the array of sensorsgrapghs.
+		push(@sensorsgraphs, "$sensorsdir/$sensor_dir/$sensor");
+	}
+}
+
+# Look for ACPI Thermal Zone sensors.
+my @thermal_zone_sensors = grep(/thermal-thermal_zone/, @sensor_dirs);
+
+# If a thermal zone sensor has been found add it to the sensorsgraphs array.
+if (@thermal_zone_sensors) {
+	# Loop through the array of thermal zone sensors.
+	foreach my $thermal_zone_sensor (@thermal_zone_sensors) {
+		# Add the sensor to the array.
+		push(@sensorsgraphs, "$sensorsdir/$thermal_zone_sensor");
 	}
 }
 
@@ -97,7 +140,9 @@ if ( $querry[0] =~ "hwtemp"){
 		&General::writehash("${General::swroot}/sensors/settings", \%sensorsettings);
 	}
 
-	my @disks = `ls -1 /sys/block | grep -E '^sd|^nvme' | sort | uniq`;
+	# This should be save, because no user given content will be processed.
+	#my @disks = `ls -1 /sys/block | grep -E '^sd|^nvme' | sort | uniq`;
+	my @disks = &get_disks();
 
 	foreach (@disks){
 		my $disk = $_;
@@ -109,31 +154,31 @@ if ( $querry[0] =~ "hwtemp"){
 		&Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/thermal-thermal_zone* 2>/dev/null` ) {
+	if ( grep(/thermal-thermal_zone/, @sensorsgraphs) ) {
 		&Header::openbox('100%', 'center', "ACPI Thermal-Zone Temp $Lang::tr{'graph'}");
 		&Graphs::makegraphbox("hardwaregraphs.cgi","thermaltemp","day");
 		&Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/temperature-* 2>/dev/null` ) {
+	if ( grep(/temperature-/, @sensorsgraphs) ) {
 		&Header::openbox('100%', 'center', "hwtemp $Lang::tr{'graph'}");
 		&Graphs::makegraphbox("hardwaregraphs.cgi","hwtemp","day");
 		Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/fanspeed-* 2>/dev/null` ) {
+	if ( grep(/fanspeed-/, @sensorsgraphs) ) {
 		&Header::openbox('100%', 'center', "hwfan $Lang::tr{'graph'}");
 		&Graphs::makegraphbox("hardwaregraphs.cgi","hwfan","day");
 		&Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-*/voltage-* 2>/dev/null` ) {
+	if ( grep(/voltage-/, @sensorsgraphs) ) {
 		&Header::openbox('100%', 'center', "hwvolt $Lang::tr{'graph'}");
 		&Graphs::makegraphbox("hardwaregraphs.cgi","hwvolt","day");
 		&Header::closebox();
 	}
 
-	if ( `ls $mainsettings{'RRDLOG'}/collectd/localhost/sensors-* 2>/dev/null` ) {
+	if ( @sensorsgraphs ) {
 		sensorsbox();
 	}
 	&Header::closebigbox();
@@ -174,4 +219,41 @@ END
 END
 ;
 	&Header::closebox();
+}
+
+sub get_disks () {
+	my @disks;
+
+	# Open virtal sys FS and grab block devices.
+	opendir(SYS, "/sys/block") or die "Could not opendir /sys/block/: $!\n";
+
+	# Grab all available block devices.
+	my @blockdevs = readdir(SYS);
+
+	# Close directory handle.
+	closedir(SYS);
+
+	# Loop through the array of blockdevs.
+	foreach my $dev (@blockdevs) {
+		# Skip all devices which does not start with "sd" or "nvme".
+		next unless (( $dev =~ /^sd/) || ($dev =~ /^nvme/));
+
+		# Add the device to the array of disks.
+		push(@disks, $dev);
+	}
+
+	# Remove duplicates.
+	my @disks = &uniq(@disks);
+
+	# Sort the array.
+	my @disks = sort(@disks);
+
+	# Return the array.
+	return @disks;
+}
+
+# Tiny code snipped to get a uniq() like function.
+sub uniq {
+	my %seen;
+	return grep { !$seen{$_}++ } @_;
 }

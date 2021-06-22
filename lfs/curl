@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.75.0
+VER        = 7.77.0
 
 THISAPP    = curl-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9730df8636d67b4e256ebc49daf27246
+$(DL_FILE)_MD5 = 3cf78c539cae019cf96ba38571706e06
 
 install : $(TARGET)
 
@@ -75,7 +75,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-ipv6 \
 		--disable-static \
 		--enable-threaded-resolver \
-		--with-ca-bundle=/etc/ssl/certs/ca-bundle.crt
+		--with-ca-bundle=/etc/ssl/certs/ca-bundle.crt \
+		--with-openssl
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.1.12
+VER        = 2.2.0
 
 THISAPP    = fireinfo-v$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 40ada8f4eceeb69661d09e43308e5a6a
+$(DL_FILE)_MD5 = 34cd6041bf9b9882c2a356a47ad1e000
 
 install : $(TARGET)
 
@@ -70,15 +70,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo-Don-t-crash-when-proc-cpuinfo-doesn-t-have-any-infor.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo-Ignore-any-systems-with-ID-Default-string.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo-support-upstream-proxy-with-authentication.patch
-
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo-2.2.0-python-3.8.patch
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -32,7 +32,7 @@ require "${General::swroot}/header.pl";
 
 require "${General::swroot}/ids-functions.pl";
 
-my @squidversion = `/usr/sbin/squid -v`;
+my @squidversion = &General::system_output("/usr/sbin/squid", "-v");
 my $http_port='81';
 my $https_port='444';
 
@@ -131,35 +131,35 @@ unless (-d "$raddir")   { mkdir("$raddir"); }
 unless (-d "$identdir") { mkdir("$identdir"); }
 unless (-d "$credir")   { mkdir("$credir"); }
 
-unless (-e $cre_groups)  { system("touch $cre_groups"); }
-unless (-e $cre_svhosts) { system("touch $cre_svhosts"); }
+unless (-e $cre_groups)  { &General::system("touch", "$cre_groups"); }
+unless (-e $cre_svhosts) { &General::system("touch $cre_svhosts"); }
 
-unless (-e $userdb) { system("touch $userdb"); }
-unless (-e $stdgrp) { system("touch $stdgrp"); }
-unless (-e $extgrp) { system("touch $extgrp"); }
-unless (-e $disgrp) { system("touch $disgrp"); }
+unless (-e $userdb) { &General::system("touch", "$userdb"); }
+unless (-e $stdgrp) { &General::system("touch", "$stdgrp"); }
+unless (-e $extgrp) { &General::system("touch", "$extgrp"); }
+unless (-e $disgrp) { &General::system("touch", "$disgrp"); }
 
-unless (-e $acl_src_subnets)    { system("touch $acl_src_subnets"); }
-unless (-e $acl_src_banned_ip)  { system("touch $acl_src_banned_ip"); }
-unless (-e $acl_src_banned_mac) { system("touch $acl_src_banned_mac"); }
-unless (-e $acl_src_unrestricted_ip)  { system("touch $acl_src_unrestricted_ip"); }
-unless (-e $acl_src_unrestricted_mac) { system("touch $acl_src_unrestricted_mac"); }
-unless (-e $acl_src_noaccess_ip)  { system("touch $acl_src_noaccess_ip"); }
-unless (-e $acl_src_noaccess_mac) { system("touch $acl_src_noaccess_mac"); }
-unless (-e $acl_dst_noauth)     { system("touch $acl_dst_noauth"); }
-unless (-e $acl_dst_noauth_dom) { system("touch $acl_dst_noauth_dom"); }
-unless (-e $acl_dst_noauth_net) { system("touch $acl_dst_noauth_net"); }
-unless (-e $acl_dst_noauth_url) { system("touch $acl_dst_noauth_url"); }
-unless (-e $acl_dst_nocache)     { system("touch $acl_dst_nocache"); }
-unless (-e $acl_dst_nocache_dom) { system("touch $acl_dst_nocache_dom"); }
-unless (-e $acl_dst_nocache_net) { system("touch $acl_dst_nocache_net"); }
-unless (-e $acl_dst_nocache_url) { system("touch $acl_dst_nocache_url"); }
-unless (-e $acl_dst_throttle)  { system("touch $acl_dst_throttle"); }
-unless (-e $acl_ports_safe) { system("touch $acl_ports_safe"); }
-unless (-e $acl_ports_ssl)  { system("touch $acl_ports_ssl"); }
-unless (-e $acl_include) { system("touch $acl_include"); }
+unless (-e $acl_src_subnets)    { &General::system("touch", "$acl_src_subnets"); }
+unless (-e $acl_src_banned_ip)  { &General::system("touch", "$acl_src_banned_ip"); }
+unless (-e $acl_src_banned_mac) { &General::system("touch", "$acl_src_banned_mac"); }
+unless (-e $acl_src_unrestricted_ip)  { &General::system("touch", "$acl_src_unrestricted_ip"); }
+unless (-e $acl_src_unrestricted_mac) { &General::system("touch", "$acl_src_unrestricted_mac"); }
+unless (-e $acl_src_noaccess_ip)  { &General::system("touch", "$acl_src_noaccess_ip"); }
+unless (-e $acl_src_noaccess_mac) { &General::system("touch", "$acl_src_noaccess_mac"); }
+unless (-e $acl_dst_noauth)     { &General::system("touch", "$acl_dst_noauth"); }
+unless (-e $acl_dst_noauth_dom) { &General::system("touch", "$acl_dst_noauth_dom"); }
+unless (-e $acl_dst_noauth_net) { &General::system("touch", "$acl_dst_noauth_net"); }
+unless (-e $acl_dst_noauth_url) { &General::system("touch", "$acl_dst_noauth_url"); }
+unless (-e $acl_dst_nocache)     { &General::system("touch", "$acl_dst_nocache"); }
+unless (-e $acl_dst_nocache_dom) { &General::system("touch", "$acl_dst_nocache_dom"); }
+unless (-e $acl_dst_nocache_net) { &General::system("touch", "$acl_dst_nocache_net"); }
+unless (-e $acl_dst_nocache_url) { &General::system("touch", "$acl_dst_nocache_url"); }
+unless (-e $acl_dst_throttle)  { &General::system("touch", "$acl_dst_throttle"); }
+unless (-e $acl_ports_safe) { &General::system("touch", "$acl_ports_safe"); }
+unless (-e $acl_ports_ssl)  { &General::system("touch", "$acl_ports_ssl"); }
+unless (-e $acl_include) { &General::system("touch", "$acl_include"); }
 
-unless (-e $mimetypes) { system("touch $mimetypes"); }
+unless (-e $mimetypes) { &General::system("touch", "$mimetypes"); }
 
 my $HAVE_NTLM_AUTH = (-e "/usr/bin/ntlm_auth");
 
@@ -188,7 +188,7 @@ $proxysettings{'ADMIN_MAIL_ADDRESS'} = '';
 $proxysettings{'ADMIN_PASSWORD'} = '';
 $proxysettings{'ERR_LANGUAGE'} = 'en';
 $proxysettings{'ERR_DESIGN'} = 'ipfire';
-$proxysettings{'SUPPRESS_VERSION'} = 'off';
+$proxysettings{'SUPPRESS_VERSION'} = 'on';
 $proxysettings{'FORWARD_VIA'} = 'off';
 $proxysettings{'FORWARD_IPADDRESS'} = 'off';
 $proxysettings{'FORWARD_USERNAME'} = 'off';
@@ -226,8 +226,6 @@ $proxysettings{'THROTTLING_GREEN_HOST'} = 'unlimited';
 $proxysettings{'THROTTLING_BLUE_TOTAL'} = 'unlimited';
 $proxysettings{'THROTTLING_BLUE_HOST'} = 'unlimited';
 $proxysettings{'ENABLE_MIME_FILTER'} = 'off';
-$proxysettings{'FAKE_USERAGENT'} = '';
-$proxysettings{'FAKE_REFERER'} = '';
 $proxysettings{'AUTH_METHOD'} = 'none';
 $proxysettings{'AUTH_REALM'} = '';
 $proxysettings{'AUTH_MAX_USERIP'} = '';
@@ -385,7 +383,7 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 		$errormessage = $Lang::tr{'advproxy errmsg mem cache size'};
 		goto ERROR;
 	}
-	my @free = `/usr/bin/free`;
+	my @free = &General::system_output("/usr/bin/free");
 	$free[1] =~ m/(\d+)/;
 	$cachemem = int $1 / 2048;
 	if ($proxysettings{'CACHE_MEM'} > $cachemem) {
@@ -632,25 +630,25 @@ ERROR:
 
 		if ($proxysettings{'CACHEMGR'} eq 'on'){&writecachemgr;}
 
-		system ('/usr/local/bin/squidctrl', 'disable');
+		&General::system ('/usr/local/bin/squidctrl', 'disable');
 		unlink "${General::swroot}/proxy/enable";
 		unlink "${General::swroot}/proxy/transparent";
 		unlink "${General::swroot}/proxy/enable_blue";
 		unlink "${General::swroot}/proxy/transparent_blue";
 
 		if ($proxysettings{'ENABLE'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/proxy/enable");
-			system ('/usr/local/bin/squidctrl', 'enable'); }
+			&General::system('/usr/bin/touch', "${General::swroot}/proxy/enable");
+			&General::system('/usr/local/bin/squidctrl', 'enable'); }
 		if ($proxysettings{'TRANSPARENT'} eq 'on' && $proxysettings{'ENABLE'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/proxy/transparent"); }
+			&General::system('/usr/bin/touch', "${General::swroot}/proxy/transparent"); }
 		if ($proxysettings{'ENABLE_BLUE'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/proxy/enable_blue");
-			system ('/usr/local/bin/squidctrl', 'enable'); }
+			&General::system('/usr/bin/touch', "${General::swroot}/proxy/enable_blue");
+			&General::system('/usr/local/bin/squidctrl', 'enable'); }
 		if ($proxysettings{'TRANSPARENT_BLUE'} eq 'on' && $proxysettings{'ENABLE_BLUE'} eq 'on') {
-			system ('/usr/bin/touch', "${General::swroot}/proxy/transparent_blue"); }
+			&General::system('/usr/bin/touch', "${General::swroot}/proxy/transparent_blue"); }
 
-		if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}) { system('/usr/local/bin/squidctrl restart >/dev/null 2>&1'); }
-		if ($proxysettings{'ACTION'} eq $Lang::tr{'proxy reconfigure'}) { system('/usr/local/bin/squidctrl reconfigure >/dev/null 2>&1'); }
+		if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy save and restart'}) { &General::system('/usr/local/bin/squidctrl', 'restart'); }
+		if ($proxysettings{'ACTION'} eq $Lang::tr{'proxy reconfigure'}) { &General::system('/usr/local/bin/squidctrl', 'reconfigure'); }
 
 		# Check if the suricata_proxy_ports_changed flag has been set.
 		if ($suricata_proxy_ports_changed) {
@@ -665,7 +663,7 @@ ERROR:
 
 if ($proxysettings{'ACTION'} eq $Lang::tr{'advproxy clear cache'})
 {
-	system('/usr/local/bin/squidctrl flush >/dev/null 2>&1');
+	&General::system('/usr/local/bin/squidctrl', 'flush');
 }
 
 if (!$errormessage)
@@ -1629,21 +1627,6 @@ END
 print <<END
 </table>
 
-<hr size='1'>
-
-<table width='100%'>
-<tr>
-	<td><b>$Lang::tr{'advproxy privacy'}</b></td>
-</tr>
-<tr>
-	<td class='base'>$Lang::tr{'advproxy fake useragent'}:</td>
-	<td class='base'>$Lang::tr{'advproxy fake referer'}:</td>
-</tr>
-<tr>
-	<td><input type='text' name='FAKE_USERAGENT' value='$proxysettings{'FAKE_USERAGENT'}' size='40%' /></td>
-	<td><input type='text' name='FAKE_REFERER' value='$proxysettings{'FAKE_REFERER'}' size='40%' /></td>
-</tr>
-</table>
 <hr size='1'>
 END
 ;
@@ -3846,8 +3829,7 @@ END
 
 	print FILE "http_access deny  all\n\n";
 
-	if (($proxysettings{'FORWARD_IPADDRESS'} eq 'off') || ($proxysettings{'FORWARD_VIA'} eq 'off') ||
-		(!($proxysettings{'FAKE_USERAGENT'} eq '')) || (!($proxysettings{'FAKE_REFERER'} eq '')))
+	if (($proxysettings{'FORWARD_IPADDRESS'} eq 'off') || ($proxysettings{'FORWARD_VIA'} eq 'off'))
 	{
 		print FILE "#Strip HTTP Header\n";
 
@@ -3861,31 +3843,9 @@ END
 			print FILE "request_header_access Via deny all\n";
 			print FILE "reply_header_access Via deny all\n";
 		}
-		if (!($proxysettings{'FAKE_USERAGENT'} eq ''))
-		{
-			print FILE "request_header_access User-Agent deny all\n";
-			print FILE "reply_header_access User-Agent deny all\n";
-		}
-		if (!($proxysettings{'FAKE_REFERER'} eq ''))
-		{
-			print FILE "request_header_access Referer deny all\n";
-			print FILE "reply_header_access Referer deny all\n";
-		}
 
 		print FILE "\n";
 
-		if ((!($proxysettings{'FAKE_USERAGENT'} eq '')) || (!($proxysettings{'FAKE_REFERER'} eq '')))
-		{
-			if (!($proxysettings{'FAKE_USERAGENT'} eq ''))
-			{
-				print FILE "header_replace User-Agent $proxysettings{'FAKE_USERAGENT'}\n";
-			}
-			if (!($proxysettings{'FAKE_REFERER'} eq ''))
-			{
-				print FILE "header_replace Referer $proxysettings{'FAKE_REFERER'}\n";
-			}
-			print FILE "\n";
-		}
 	}
 
 	if ($proxysettings{'SUPPRESS_VERSION'} eq 'on') { print FILE "httpd_suppress_version_string on\n\n" }

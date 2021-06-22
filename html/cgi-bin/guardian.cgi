@@ -67,8 +67,8 @@ my $settingsfile = "${General::swroot}/guardian/settings";
 my $ignoredfile = "${General::swroot}/guardian/ignored";
 
 # Create empty settings and ignoredfile if they do not exist yet.
-unless (-e "$settingsfile") { system("touch $settingsfile"); }
-unless (-e "$ignoredfile") { system("touch $ignoredfile"); }
+unless (-e "$settingsfile") { &General::system("touch", "$settingsfile"); }
+unless (-e "$ignoredfile") { &General::system("touch", "$ignoredfile"); }
 
 our %settings = ();
 our %ignored  = ();
@@ -829,12 +829,9 @@ sub GetBlockedHosts() {
 	my @hosts;
 
 	# Launch helper to get chains from iptables.
-	system('/usr/local/bin/getipstat');
+	open (FILE, '/usr/local/bin/getipstat | ');
 
-	# Open temporary file which contains the chains and rules.
-	open (FILE, '/var/tmp/iptables.txt');
-
-	# Loop through the entire file.
+	# Loop through the entire output.
 	while (<FILE>) {
 		my $line = $_;
 
@@ -864,11 +861,6 @@ sub GetBlockedHosts() {
 	# Close filehandle.
 	close(FILE);
 
-	# Remove recently created temporary files of the "getipstat" binary.
-	system("rm -f /var/tmp/iptables.txt");
-	system("rm -f /var/tmp/iptablesmangle.txt");
-	system("rm -f /var/tmp/iptablesnat.txt");
-
 	# Convert entries, sort them, write back and store the sorted entries into new array.
 	my @sorted = map  { $_->[0] }
              sort { $a->[1] <=> $b->[1] }
@@ -886,7 +878,7 @@ sub BuildConfiguration() {
 	my $configfile = "${General::swroot}/guardian/guardian.conf";
 
 	# Create the configfile if none exists yet.
-	unless (-e "$configfile") { system("touch $configfile"); }
+	unless (-e "$configfile") { &General::system("touch", "$configfile"); }
 
 	# Open configfile for writing.
 	open(FILE, ">$configfile");
@@ -948,11 +940,11 @@ sub BuildConfiguration() {
 			&Guardian::Socket::Client("reload");
 		} else {
 			# Launch guardian.
-			system("/usr/local/bin/addonctrl guardian start &>/dev/null");
+			&General::system("/usr/local/bin/addonctrl", "guardian", "start");
 		}
 	} else {
 		# Stop the daemon.
-		system("/usr/local/bin/addonctrl guardian stop &>/dev/null");
+		&General::system("/usr/local/bin/addonctrl", "guardian", "stop");
 	}
 }
 
@@ -963,7 +955,7 @@ sub GenerateIgnoreFile() {
 	&General::readhasharray($ignoredfile, \%ignored);
 
 	# Create the guardian.ignore file if not exist yet.
-	unless (-e "$ignorefile") { system("touch $ignorefile"); }
+	unless (-e "$ignorefile") { &General::system("touch", "$ignorefile"); }
 
 	# Open ignorefile for writing.
 	open(FILE, ">$ignorefile");

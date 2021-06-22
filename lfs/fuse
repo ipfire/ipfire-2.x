@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.10.1
+VER        = 3.10.4
 
 THISAPP    = fuse-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e973012119e98b048307558271b5b296
+$(DL_FILE)_MD5 = 55b87e9ed691c2fa698e491241985b4a
 
 install : $(TARGET)
 
@@ -73,7 +73,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && meson --prefix=/usr builddir && cd builddir && ninja && ninja install
+	cd $(DIR_APP) && meson --prefix=/usr builddir/
+	cd $(DIR_APP) && ninja -C builddir/
+	cd $(DIR_APP) && ninja -C builddir/ install
 
 	# Move mount.fuse3 to same location as mount.fuse was in previous version
 	mv -v /usr/sbin/mount.fuse3 /sbin

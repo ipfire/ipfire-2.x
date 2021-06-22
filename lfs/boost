@@ -24,13 +24,14 @@
 
 include Config
 
-VER        = 1_71_0
+VER        = 1_76_0
 
 THISAPP    = boost_$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+SUP_ARCH   = aarch64 x86_64 i586
 
 CFLAGS    += -O3 -fno-strict-aliasing
 CXXFLAGS  += -O3 -fno-strict-aliasing
@@ -56,6 +57,7 @@ CONFIGURE_OPTIONS = \
 	threading=single,multi \
 	debug-symbols=off \
 	pch=off \
+	link=shared \
 	cflags="$(CFLAGS)" \
 	cxxflags="$(CXXFLAGS)"
 
@@ -67,7 +69,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 5f521b41b79bf8616582c4a8a2c10177
+$(DL_FILE)_MD5 = e425bf1f1d8c36a3cd464884e74f007a
 
 install : $(TARGET)
 
@@ -98,7 +100,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
-	cd $(DIR_APP) && ./bootstrap.sh --with-toolset=gcc
+	cd $(DIR_APP) && ./bootstrap.sh --with-toolset=gcc --with-python=python3
 	cd $(DIR_APP) && ./b2 -d+2 -q $(MAKETUNING) $(CONFIGURE_OPTIONS) stage
 	cd $(DIR_APP) && ./b2 $(CONFIGURE_OPTIONS) install
 

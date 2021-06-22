@@ -53,8 +53,8 @@ my $partitionsfile = "/var/ipfire/extrahd/partitions";
 my @dummy = ( ${Header::colourgreen}, ${Header::colourred} );
 undef (@dummy);
 
-system("/usr/local/bin/extrahdctrl scanhd ide >/dev/null");
-system("/usr/local/bin/extrahdctrl scanhd partitions >/dev/null");
+&General::system("/usr/local/bin/extrahdctrl", "scanhd", "ide");
+&General::system("/usr/local/bin/extrahdctrl", "scanhd", "partitions");
 
 &Header::showhttpheaders();
 
@@ -98,12 +98,12 @@ if ($extrahdsettings{'ACTION'} eq $Lang::tr{'add'})
 UUID=$extrahdsettings{'UUID'};$extrahdsettings{'FS'};$extrahdsettings{'PATH'};
 END
 ;
-	system("/usr/local/bin/extrahdctrl mount $extrahdsettings{'PATH'}");
+	&General::system("/usr/local/bin/extrahdctrl", "mount", "$extrahdsettings{'PATH'}");
 	}
 } 
 elsif ($extrahdsettings{'ACTION'} eq $Lang::tr{'delete'}) 
 {
-	if ( `/usr/local/bin/extrahdctrl umount $extrahdsettings{'PATH'}` ) {
+	if ( &General::system("/usr/local/bin/extrahdctrl", "umount", "$extrahdsettings{'PATH'}")) {
 		open( FILE, "< $devicefile" ) or die "Unable to read $devicefile";
 		@tmp = <FILE>;
 		close FILE;
@@ -143,7 +143,11 @@ END
 	{
 		@deviceline = split( /\;/, $deviceentry );
 		my $color="$Header::colourred";
-		if ( ! `/bin/mountpoint $deviceline[2] | grep " not "`  ) {
+
+		# Use safe system_output to get mountpoint details.
+		my @mountpoint = &General::system_output("/bin/mountpoint", "$deviceline[2]");
+
+		if ( ! grep(/not/, @mountpoint)) {
 			$color=$Header::colourgreen;
 		}
 		print <<END

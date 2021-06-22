@@ -25,7 +25,7 @@ usr/bin/icinga
 usr/bin/icingastats
 #usr/lib/icinga
 usr/lib/icinga/p1.pl
-usr/lib/nagios/plugins/eventhandlers
+#usr/lib/nagios/plugins/eventhandlers
 #usr/lib/nagios/plugins/eventhandlers/disable_active_service_checks
 #usr/lib/nagios/plugins/eventhandlers/disable_notifications
 #usr/lib/nagios/plugins/eventhandlers/distributed-monitoring

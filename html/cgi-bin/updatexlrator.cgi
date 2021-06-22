@@ -192,33 +192,33 @@ if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr purge'})
 
 			if (($xlratorsettings{'REMOVE_NOSOURCE'} eq 'on') && ($status == $sfNoSource))
 			{
-				if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+				if (-e "$repository/$vendorid/$uuid/$updatefile") { &General::system("rm", "-r", "$repository/$vendorid/$uuid"); }
 			}
 			if (($xlratorsettings{'REMOVE_OUTDATED'} eq 'on') && ($status == $sfOutdated))
 			{
-				if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+				if (-e "$repository/$vendorid/$uuid/$updatefile") { &General::system("rm", "-r", "$repository/$vendorid/$uuid"); }
 			}
 			if ($xlratorsettings{'REMOVE_OBSOLETE'} eq 'on')
 			{
 				if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'week') && ($lastaccess < (time - 604800)))
 				{
-					if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+					if (-e "$repository/$vendorid/$uuid/$updatefile") { &General::system("rm", "-r", "$repository/$vendorid/$uuid"); }
 				}
 				if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'month1') && ($lastaccess < (time - 2505600)))
 				{
-					if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+					if (-e "$repository/$vendorid/$uuid/$updatefile") { &General::system("rm", "-r", "$repository/$vendorid/$uuid"); }
 				}
 				if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'month3') && ($lastaccess < (time - 7516800)))
 				{
-					if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+					if (-e "$repository/$vendorid/$uuid/$updatefile") { &General::system("rm", "-r", "$repository/$vendorid/$uuid"); }
 				}
 				if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'month6') && ($lastaccess < (time - 15033600)))
 				{
-					if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+					if (-e "$repository/$vendorid/$uuid/$updatefile") { &General::system("rm", "-r", "$repository/$vendorid/$uuid"); }
 				}
 				if (($xlratorsettings{'NOT_ACCESSED_LAST'} eq 'year') && ($lastaccess < (time - 31536000)))
 				{
-					if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+					if (-e "$repository/$vendorid/$uuid/$updatefile") { &General::system("rm", "-r", "$repository/$vendorid/$uuid"); }
 				}
 			}
 		}
@@ -266,7 +266,7 @@ if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr save and restart'})
 
 	&savesettings;
 
-	system('/usr/local/bin/squidctrl restart >/dev/null 2>&1');
+	&General::system('/usr/local/bin/squidctrl', 'restart');
 }
 
 if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr remove file'})
@@ -278,7 +278,7 @@ if ($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr remove file'})
 	unless ($updatefile =~ /^download\//)
 	{
 		($vendorid,$uuid,$updatefile) = split('/',$updatefile);
-		if (-e "$repository/$vendorid/$uuid/$updatefile") { system("rm -r $repository/$vendorid/$uuid"); }
+		if (-e "$repository/$vendorid/$uuid/$updatefile") { &General::system("rm", "-r", "$repository/$vendorid/$uuid"); }
 	}
 }
 
@@ -295,16 +295,16 @@ if (($xlratorsettings{'ACTION'} eq $Lang::tr{'updxlrtr cancel download'}) || ($x
 			&General::readhash("$repository/download/$vendorid/$updatefile.info", \%dlinfo);
 
 			$id = &getPID("\\s${General::swroot}/updatexlrator/bin/download\\s.*\\s".quotemeta($dlinfo{'SRCURL'})."\\s\\d\\s\\d\$");
-			if ($id) { system("/bin/kill -9 $id"); }
+			if ($id) { &General::system("/bin/kill", "-9", "$id"); }
 			$id = &getPID("\\s/usr/bin/wget\\s.*\\s".quotemeta($dlinfo{'SRCURL'})."\$");
-			if ($id) { system("/bin/kill -9 $id"); }
+			if ($id) { &General::system("/bin/kill", "-9", "$id"); }
 
-			system("rm $repository/download/$vendorid/$updatefile.info");
+			&General::system("rm", "$repository/download/$vendorid/$updatefile.info");
 		}
 
 		if (-e "$repository/download/$vendorid/$updatefile")
 		{
-			system("rm $repository/download/$vendorid/$updatefile");
+			&General::system("rm", "$repository/download/$vendorid/$updatefile");
 		}
 	}
 
@@ -1478,15 +1478,15 @@ sub savesettings
 
 	if (($xlratorsettings{'ENABLE_AUTOCHECK'} eq 'on') && ($xlratorsettings{'AUTOCHECK_SCHEDULE'} eq 'daily'))
 	{
-		system('/usr/local/bin/updxlratorctrl cron daily >/dev/null 2>&1');
+		&General::system('/usr/local/bin/updxlratorctrl', 'cron', 'daily');
 	}
 	if (($xlratorsettings{'ENABLE_AUTOCHECK'} eq 'on') && ($xlratorsettings{'AUTOCHECK_SCHEDULE'} eq 'weekly'))
 	{
-		system('/usr/local/bin/updxlratorctrl cron weekly >/dev/null 2>&1');
+		&General::system('/usr/local/bin/updxlratorctrl', 'cron', 'weekly');
 	}
 	if (($xlratorsettings{'ENABLE_AUTOCHECK'} eq 'on') && ($xlratorsettings{'AUTOCHECK_SCHEDULE'} eq 'monthly'))
 	{
-		system('/usr/local/bin/updxlratorctrl cron monthly >/dev/null 2>&1');
+		&General::system('/usr/local/bin/updxlratorctrl', 'cron', 'monthly');
 	}
 
 	# don't save those variable to the settings file,

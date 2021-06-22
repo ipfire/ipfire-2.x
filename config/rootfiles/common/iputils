@@ -1,3 +1,15 @@
 bin/ping
+#etc/rc.d/init.d/ninfod.sh
+#usr/bin/arping
+#usr/bin/clockdiff
 usr/bin/ping
 usr/bin/tracepath
+#usr/sbin/ninfod
+#usr/sbin/rdisc
+#usr/share/locale/de/LC_MESSAGES/iputils.mo
+#usr/share/locale/fr/LC_MESSAGES/iputils.mo
+#usr/share/locale/ja/LC_MESSAGES/iputils.mo
+#usr/share/locale/pt_BR/LC_MESSAGES/iputils.mo
+#usr/share/locale/tr/LC_MESSAGES/iputils.mo
+#usr/share/locale/uk/LC_MESSAGES/iputils.mo
+#usr/share/locale/zh_CN/LC_MESSAGES/iputils.mo

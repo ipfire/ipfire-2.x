@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = s20160308
+VER        = 20210202
 
 THISAPP    = iputils-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a3ff521e21a383f562c2f06472c5bca0
+$(DL_FILE)_MD5 = ba8f64ba70ac4717a1ae6746d452b3da
 
 install : $(TARGET)
 
@@ -70,9 +70,12 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make ping tracepath
-	cd $(DIR_APP) && install -m 4755 ping /usr/bin
-	cd $(DIR_APP) && install -m 0755 tracepath /usr/bin
+	cd $(DIR_APP) && meson builddir -Dprefix=/usr
+	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make install
+
+	# Allow execution of /usr/bin/ping by other users than "root"
+	setcap cap_net_raw+ep /usr/bin/ping
 
 	# Some scripts expect ping in /bin/ping.
 	ln -svf ../usr/bin/ping /bin/ping

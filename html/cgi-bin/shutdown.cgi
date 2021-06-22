@@ -29,11 +29,11 @@ $cgiparams{'ACTION'} = '';
 if ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown'}) {
 	$death = 1;
 	&General::log($Lang::tr{'shutting down ipfire'});
-	system '/usr/local/bin/ipfirereboot down';
+	&General::system('/usr/local/bin/ipfirereboot', 'down');
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'reboot'}) {
 	$rebirth = 1;
 	&General::log($Lang::tr{'rebooting ipfire'});
-	system '/usr/local/bin/ipfirereboot boot';
+	&General::system('/usr/local/bin/ipfirereboot', 'boot');
 }
 if ($death == 0 && $rebirth == 0) {
 

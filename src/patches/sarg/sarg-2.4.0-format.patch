@@ -1,0 +1,33 @@
+diff -Naur sarg-2.4.0.orig/index.c sarg-2.4.0/index.c
+--- sarg-2.4.0.orig/index.c	2019-12-24 12:04:00.000000000 +0100
++++ sarg-2.4.0/index.c	2021-04-24 14:09:57.779097194 +0200
+@@ -325,7 +325,7 @@
+ 		d1=(day >> 5) & 0x1F;
+ 		if ((day & 0x1F) != 0) {
+ 			d2=day & 0x1F;
+-			snprintf(daynum,sizeof(daynum),"%02d-%02d",d1,d2);
++			snprintf(daynum,sizeof(daynum),"%02u-%02u",(unsigned int)d1,(unsigned int)d2);
+ 		} else {
+ 			snprintf(daynum,sizeof(daynum),"%02d",d1);
+ 		}
+@@ -485,7 +485,7 @@
+ 		m1=(month >> 4) & 0x0F;
+ 		if ((month & 0x0F) != 0) {
+ 			m2=month & 0x0F;
+-			snprintf(monthnum,sizeof(monthnum),"%02d-%02d",m1,m2);
++			snprintf(monthnum,sizeof(monthnum),"%02u-%02u",(unsigned int)m1,(unsigned int)m2);
+ 			name_month(m1,monthname1,sizeof(monthname1));
+ 			name_month(m2,monthname2,sizeof(monthname2));
+ 			snprintf(nmonth,sizeof(nmonth),"%s-%s",monthname1,monthname2);
+diff -Naur sarg-2.4.0.orig/userinfo.c sarg-2.4.0/userinfo.c
+--- sarg-2.4.0.orig/userinfo.c	2019-12-24 12:04:00.000000000 +0100
++++ sarg-2.4.0/userinfo.c	2021-04-24 14:11:31.965734470 +0200
+@@ -78,7 +78,7 @@
+ 	int skip;
+ 	int flen;
+ 	int count, clen;
+-	char cstr[9];
++	char cstr[11];
+ 	char filename[MAX_USER_FNAME_LEN];
+ 
+ 	if (!UserStrings) {

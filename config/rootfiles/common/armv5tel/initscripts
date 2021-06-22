@@ -46,14 +46,12 @@ etc/rc.d/init.d/networking/orange
 etc/rc.d/init.d/networking/red
 #etc/rc.d/init.d/networking/red.down
 etc/rc.d/init.d/networking/red.down/10-ipsec
-etc/rc.d/init.d/networking/red.down/10-miniupnpd
 etc/rc.d/init.d/networking/red.down/10-ovpn
 etc/rc.d/init.d/networking/red.down/10-static-routes
 etc/rc.d/init.d/networking/red.down/20-firewall
 etc/rc.d/init.d/networking/red.down/99-beep
 #etc/rc.d/init.d/networking/red.up
 etc/rc.d/init.d/networking/red.up/01-conntrack-cleanup
-etc/rc.d/init.d/networking/red.up/10-miniupnpd
 etc/rc.d/init.d/networking/red.up/10-multicast
 etc/rc.d/init.d/networking/red.up/10-static-routes
 etc/rc.d/init.d/networking/red.up/20-firewall
@@ -93,7 +91,6 @@ etc/rc.d/init.d/template
 etc/rc.d/init.d/udev
 etc/rc.d/init.d/udev_retry
 etc/rc.d/init.d/unbound
-etc/rc.d/init.d/upnpd
 etc/rc.d/init.d/vnstat
 etc/rc.d/init.d/waitdrives
 etc/rc.d/init.d/wlanclient
@@ -114,7 +111,6 @@ etc/rc.d/rc0.d/K78suricata
 etc/rc.d/rc0.d/K79leds
 etc/rc.d/rc0.d/K80network
 etc/rc.d/rc0.d/K82wlanclient
-#etc/rc.d/rc0.d/K84bluetooth
 #etc/rc.d/rc0.d/K85messagebus
 etc/rc.d/rc0.d/K86unbound
 etc/rc.d/rc0.d/K87acpid
@@ -131,7 +127,6 @@ etc/rc.d/rc3.d/S11unbound
 etc/rc.d/rc3.d/S12acpid
 etc/rc.d/rc3.d/S15fireinfo
 #etc/rc.d/rc3.d/S15messagebus
-#etc/rc.d/rc3.d/S16bluetooth
 #etc/rc.d/rc3.d/S18cpufreq
 etc/rc.d/rc3.d/S19smartenabler
 etc/rc.d/rc3.d/S19wlanclient
@@ -165,7 +160,6 @@ etc/rc.d/rc6.d/K78suricata
 etc/rc.d/rc6.d/K79leds
 etc/rc.d/rc6.d/K80network
 etc/rc.d/rc6.d/K82wlanclient
-#etc/rc.d/rc6.d/K84bluetooth
 #etc/rc.d/rc6.d/K85messagebus
 etc/rc.d/rc6.d/K86unbound
 etc/rc.d/rc6.d/K87acpid

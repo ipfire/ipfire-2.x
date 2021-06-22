@@ -24,16 +24,13 @@
 
 include Config
 
-VER        = 5.7.0
+VER        = 5.12.0
 
 THISAPP    = xfsprogs-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-
-CONFIGURE_OPTIONS = \
-	--enable-readline=yes
 
 ifeq "$(BUILD_ARCH)" "armv5tel"
 	CONFIGURE_OPTIONS += \
@@ -48,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4aeba534cf91f24169c64e1073b9ef27
+$(DL_FILE)_MD5 = b401d76ccd66e4fdf3d123193e5e1b91
 
 install : $(TARGET)
 

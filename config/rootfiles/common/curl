@@ -61,6 +61,7 @@ usr/lib/libcurl.so.4.7.0
 #usr/share/man/man3/CURLINFO_REDIRECT_TIME.3
 #usr/share/man/man3/CURLINFO_REDIRECT_TIME_T.3
 #usr/share/man/man3/CURLINFO_REDIRECT_URL.3
+#usr/share/man/man3/CURLINFO_REFERER.3
 #usr/share/man/man3/CURLINFO_REQUEST_SIZE.3
 #usr/share/man/man3/CURLINFO_RESPONSE_CODE.3
 #usr/share/man/man3/CURLINFO_RETRY_AFTER.3
@@ -112,6 +113,7 @@ usr/lib/libcurl.so.4.7.0
 #usr/share/man/man3/CURLOPT_AWS_SIGV4.3
 #usr/share/man/man3/CURLOPT_BUFFERSIZE.3
 #usr/share/man/man3/CURLOPT_CAINFO.3
+#usr/share/man/man3/CURLOPT_CAINFO_BLOB.3
 #usr/share/man/man3/CURLOPT_CAPATH.3
 #usr/share/man/man3/CURLOPT_CERTINFO.3
 #usr/share/man/man3/CURLOPT_CHUNK_BGN_FUNCTION.3
@@ -148,6 +150,9 @@ usr/lib/libcurl.so.4.7.0
 #usr/share/man/man3/CURLOPT_DNS_SERVERS.3
 #usr/share/man/man3/CURLOPT_DNS_SHUFFLE_ADDRESSES.3
 #usr/share/man/man3/CURLOPT_DNS_USE_GLOBAL_CACHE.3
+#usr/share/man/man3/CURLOPT_DOH_SSL_VERIFYHOST.3
+#usr/share/man/man3/CURLOPT_DOH_SSL_VERIFYPEER.3
+#usr/share/man/man3/CURLOPT_DOH_SSL_VERIFYSTATUS.3
 #usr/share/man/man3/CURLOPT_DOH_URL.3
 #usr/share/man/man3/CURLOPT_EGDSOCKET.3
 #usr/share/man/man3/CURLOPT_ERRORBUFFER.3
@@ -261,6 +266,7 @@ usr/lib/libcurl.so.4.7.0
 #usr/share/man/man3/CURLOPT_PROXYUSERNAME.3
 #usr/share/man/man3/CURLOPT_PROXYUSERPWD.3
 #usr/share/man/man3/CURLOPT_PROXY_CAINFO.3
+#usr/share/man/man3/CURLOPT_PROXY_CAINFO_BLOB.3
 #usr/share/man/man3/CURLOPT_PROXY_CAPATH.3
 #usr/share/man/man3/CURLOPT_PROXY_CRLFILE.3
 #usr/share/man/man3/CURLOPT_PROXY_ISSUERCERT.3

@@ -5,6 +5,7 @@
 #usr/include/gdb
 #usr/include/gdb/jit-reader.h
 #usr/lib/libinproctrace.so
+#usr/share/gdb
 #usr/share/gdb/python
 #usr/share/gdb/python/gdb
 #usr/share/gdb/python/gdb/FrameDecorator.py

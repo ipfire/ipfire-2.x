@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.34
+VER        = 2.46
 
 THISAPP    = XML-Parser-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 84d9e0001fe01c14867256c3fe115899
+$(DL_FILE)_MD5 = 80bb18a8e6240fcf7ec2f7b57601c170
 
 install : $(TARGET)
 

@@ -48,8 +48,8 @@ my $settings_file = "${General::swroot}/dns/settings";
 my $servers_file = "${General::swroot}/dns/servers";
 
 # Create files if the does not exist.
-unless (-f $settings_file) { system("touch $settings_file") };
-unless (-f $servers_file) { system("touch $servers_file") };
+unless (-f $settings_file) { &General::system("touch", "$settings_file") };
+unless (-f $servers_file) { &General::system("touch", "$servers_file") };
 
 # File which stores the ISP assigned DNS servers.
 my @ISP_nameserver_files = ( "/var/run/dns1", "/var/run/dns2" );
@@ -844,7 +844,7 @@ sub _handle_unbound_and_more () {
 		&IDS::call_suricatactrl("restart");
 	}
 	# Restart unbound
-	system('/usr/local/bin/unboundctrl reload >/dev/null');
+	&General::system('/usr/local/bin/unboundctrl', 'reload');
 }
 
 # Check if the system is online (RED is connected).

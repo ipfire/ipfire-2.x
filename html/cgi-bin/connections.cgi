@@ -146,6 +146,9 @@ if ($netsettings{'RED_DEV'}) {
 	}
 }
 
+# Call safe system_output function to get all available routes.
+my @all_routes = &General::system_output("/sbin/route", "-n");
+
 # Add Green Firewall Interface
 push(@network, $netsettings{'GREEN_ADDRESS'});
 push(@masklen, "255.255.255.255" );
@@ -157,7 +160,7 @@ push(@masklen, $netsettings{'GREEN_NETMASK'} );
 push(@colour, ${Header::colourgreen} );
 
 # Add Green Routes to Array
-my @routes = `/sbin/route -n | /bin/grep $netsettings{'GREEN_DEV'}`;
+my @routes = grep (/$netsettings{'GREEN_DEV'}/, @all_routes);
 foreach my $route (@routes) {
 	chomp($route);
 	my @temp = split(/[\t ]+/, $route);
@@ -178,7 +181,7 @@ if ($netsettings{'BLUE_DEV'}) {
 	push(@colour, ${Header::colourblue} );
 
 	# Add Blue Routes to Array
-	@routes = `/sbin/route -n | /bin/grep $netsettings{'BLUE_DEV'}`;
+	@routes = grep(/$netsettings{'BLUE_DEV'}/, @all_routes);
 	foreach my $route (@routes) {
 		chomp($route);
 		my @temp = split(/[\t ]+/, $route);
@@ -199,7 +202,7 @@ if ($netsettings{'ORANGE_DEV'}) {
 	push(@masklen, $netsettings{'ORANGE_NETMASK'} );
 	push(@colour, ${Header::colourorange} );
 	# Add Orange Routes to Array
-	@routes = `/sbin/route -n | /bin/grep $netsettings{'ORANGE_DEV'}`;
+	@routes = grep(/$netsettings{'ORANGE_DEV'}/, @all_routes);
 	foreach my $route (@routes) {
 		chomp($route);
 		my @temp = split(/[\t ]+/, $route);

@@ -1,0 +1,33 @@
+#!/bin/sh
+# Begin $rc_base/init.d/pmacct
+
+# Based on sysklogd script from LFS-3.1 and earlier.
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+        start)
+                boot_mesg "Starting the pmacctd daemon..."
+                loadproc /usr/sbin/pmacctd -f /etc/pmacct/pmacct.conf
+                ;;
+        stop)
+                boot_mesg "Stopping the pmacctd daemon..."
+                killproc /usr/sbin/pmacctd
+                ;;
+        restart)
+                ${0} stop
+                sleep 1
+                ${0} start
+                ;;
+        status)
+                statusproc /usr/sbin/pmacctd
+                ;;
+        *)
+                echo "Usage: $0 (start|stop|restart|status)"
+                exit 1
+                ;;
+esac
+
+# End $rc_base/init.d/pmacct
+

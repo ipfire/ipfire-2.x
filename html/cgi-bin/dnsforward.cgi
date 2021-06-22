@@ -124,7 +124,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'add'})
 		}
 	}
 	# Restart unbound
-	system('/usr/local/bin/unboundctrl reload >/dev/null');
+	&General::system('/usr/local/bin/unboundctrl', 'reload');
 }
 
 ###
@@ -142,7 +142,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'remove'})
 	}
 	close(FILE);
 	# Restart unbound.
-	system('/usr/local/bin/unboundctrl reload >/dev/null');
+	&General::system('/usr/local/bin/unboundctrl', 'reload');
 }
 
 ###
@@ -169,7 +169,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'toggle enable disable'})
 	}
 	close(FILE);
 	# Restart unbound.
-	system('/usr/local/bin/unboundctrl reload >/dev/null');
+	&General::system('/usr/local/bin/unboundctrl', 'reload');
 }
 
 ###

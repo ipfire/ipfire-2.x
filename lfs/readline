@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.0
+VER        = 8.1
 
 THISAPP    = readline-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 7e6c1f16aee3244a69aba6e438295ca3
+$(DL_FILE)_MD5 = e9557dd5b1409f5d7b37ef717c64518e
 
 install : $(TARGET)
 
@@ -71,9 +71,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
-	for i in $$(seq 1 1); do \
-		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/readline/readline80-$$(printf "%03d" "$${i}") || exit 1; \
-	done
+#	for i in $$(seq 1 1); do \
+#		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/readline/readline81-$$(printf "%03d" "$${i}") || exit 1; \
+#	done
 
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-static
 	cd $(DIR_APP) && make $(MAKETUNING) SHLIB_LIBS=-lncurses

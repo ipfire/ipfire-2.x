@@ -54,7 +54,7 @@ $cgiparams{'BACKUPLOGS'} = '';
 ############################################################################################################################
 ################################################ Workaround for Directories ################################################
 
-system("/usr/local/bin/backupctrl makedirs >/dev/null 2>&1 ") unless ( -e '/var/ipfire/backup/addons/backup') ;
+&General::system("/usr/local/bin/backupctrl", "makedirs") unless ( -e '/var/ipfire/backup/addons/backup') ;
 
 ############################################################################################################################
 ############################################## System calls ohne Http Header ###############################################
@@ -85,7 +85,7 @@ if ($cgiparams{'ACTION'} eq "download") {
 		print UPLOADFILE;
 		}
 		close UPLOADFILE;
-		system("/usr/local/bin/backupctrl restore >/dev/null 2>&1");
+		&General::system("/usr/local/bin/backupctrl", "restore");
 }
 elsif ( $cgiparams{'ACTION'} eq "restoreaddon" )
 {
@@ -99,7 +99,7 @@ elsif ( $cgiparams{'ACTION'} eq "restoreaddon" )
 		print UPLOADFILE;
 		}
 		close UPLOADFILE;
-		system("/usr/local/bin/backupctrl restoreaddon ".$temp[$#temp]." >/dev/null 2>&1");
+		&General::system("/usr/local/bin/backupctrl", "restoreaddon", $temp[$#temp]);
 }
 
 &Header::showhttpheaders();
@@ -115,11 +115,11 @@ sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' cont
 if ( $cgiparams{'ACTION'} eq "backup" )
 {
 	if ( $cgiparams{'BACKUPLOGS'} eq "include" ) {
-		system("/usr/local/bin/backupctrl include >/dev/null 2>&1");
+		&General::system("/usr/local/bin/backupctrl", "include");
 	} elsif ( $cgiparams{'BACKUPLOGS'} eq "exclude" ) {
-		system("/usr/local/bin/backupctrl exclude >/dev/null 2>&1");
+		&General::system("/usr/local/bin/backupctrl", "exclude");
 	} elsif ( $cgiparams{'BACKUPLOGS'} eq "iso" ) {
-		system("/usr/local/bin/backupctrl iso >/dev/null 2>&1");
+		&General::system("/usr/local/bin/backupctrl", "iso");
 	}
 }
 if ( $cgiparams{'ACTION'} eq "addonbackup" )
@@ -130,14 +130,14 @@ if ( $cgiparams{'ACTION'} eq "addonbackup" )
 	# Check if the addon exists
 	exit(1) unless (-e "/var/ipfire/backup/addons/includes/$cgiparams{'ADDON'}");
 
-	system("/usr/local/bin/backupctrl addonbackup $cgiparams{'ADDON'} >/dev/null 2>&1");
+	&General::system("/usr/local/bin/backupctrl", "addonbackup", "$cgiparams{'ADDON'}");
 }
 elsif ( $cgiparams{'ACTION'} eq "delete" )
 {
 	my $file = &sanitise_file($cgiparams{'FILE'});
 	exit(1) unless defined($file);
 
-	system("/usr/local/bin/backupctrl $file >/dev/null 2>&1");
+	&General::system("/usr/local/bin/backupctrl", "$file");
 }
 
 ############################################################################################################################
