@@ -1235,7 +1235,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
   if ( $vpnsettings{'ENABLED_BLUE'} eq 'on' ) {
 	  &General::system("touch", "${General::swroot}/ovpn/enable_blue");
   } else {
-	  unlink(${General::swroot}/ovpn/enable_blue);
+	  unlink("${General::swroot}/ovpn/enable_blue");
   }
 
   if ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' ) {
@@ -1497,7 +1497,7 @@ END
 	}
     }
 
-    @casubject = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/ca/$cgiparams{'CA_NAME'}cert.pem");
+    my @casubject = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/ca/$cgiparams{'CA_NAME'}cert.pem");
     my $casubject;
 
     foreach my $line (@casubject) {
@@ -2526,7 +2526,7 @@ else
 
 	if ($confighash{$cgiparams{'KEY'}}) {
 		# Revoke certificate if certificate was deleted and rewrite the CRL
-		&General::system("/usr/bin/openssl", "ca", "-revoke", "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem", "-config", "${General::swroot}/ovpn/openssl/ovpn.cnf)";
+		&General::system("/usr/bin/openssl", "ca", "-revoke", "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem", "-config", "${General::swroot}/ovpn/openssl/ovpn.cnf");
 		&General::system("/usr/bin/openssl", "ca", "-gencrl", "-out", "${General::swroot}/ovpn/crls/cacrl.pem", "-config", "${General::swroot}/ovpn/openssl/ovpn.cnf");
 
 ###
