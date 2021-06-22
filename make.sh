@@ -38,15 +38,10 @@ GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"			# Git Branch
 GIT_TAG="$(git tag | tail -1)"					# Git Tag
 GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
-TOOLCHAINVER=20210202
+TOOLCHAINVER=20210622
 
-ZSTD_OPT=(
-	# Compress in parallel using all processor cores
-	-T0
-
-	# Compress as best as we can
-	--ultra -22
-)
+# use multicore and max compression
+ZSTD_OPT="-T0 --ultra -22"
 
 ###############################################################################
 #
