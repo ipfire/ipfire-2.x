@@ -5764,7 +5764,7 @@ END
 
     # Adding DH parameter to chart
     if (-f "${General::swroot}/ovpn/ca/dh1024.pem") {
-		my @dhsubject = &System_output("/usr/bin/openssl", "dhparam", "-text", "-in", "${General::swroot}/ovpn/ca/dh1024.pem");
+		my @dhsubject = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "${General::swroot}/ovpn/ca/dh1024.pem");
 		my $dhsubject;
 
 		foreach my $line (@dhsubject) {
