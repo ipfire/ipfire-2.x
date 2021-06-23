@@ -2,11 +2,6 @@ usr/bin/lsusb
 usr/bin/lsusb.py
 usr/bin/usb-devices
 usr/bin/usbhid-dump
-usr/sbin/update-usbids.sh
-#usr/share/hwdata
-#usr/share/hwdata/usb.ids
 #usr/share/man/man1/usb-devices.1
 #usr/share/man/man8/lsusb.8
 #usr/share/man/man8/usbhid-dump.8
-#usr/share/pkgconfig
-#usr/share/pkgconfig/usbutils.pc
