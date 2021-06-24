@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015   IPFire Team   <info@ipfire.org>                   #
+# Copyright (C) 2007-2021   IPFire Team   <info@ipfire.org>                   #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -388,11 +388,10 @@ sub dbgetlist {
 	}
 
 	# Update the meta database if new packages was in the package list
-	my @meta;
 	my $file;
 	my $line;
 	my $prog;
-	my ($name, $version, $release);
+	my %metadata;
 	my @templine;
 
 	open(FILE, "<$Conf::dbdir/lists/packages_list.db");
@@ -407,28 +406,14 @@ sub dbgetlist {
 		next if ( $file eq ".." );
 		next if ( $file eq "meta-" );
 		next if ( $file =~ /^old/ );
-		open(FILE, "<$Conf::dbdir/meta/$file");
-		@meta = <FILE>;
-		close(FILE);
-		foreach $line (@meta) {
-			@templine = split(/\: /,$line);
-			if ("$templine[0]" eq "Name") {
-				$name = $templine[1];
-				chomp($name);
-			} elsif ("$templine[0]" eq "ProgVersion") {
-				$version = $templine[1];
-				chomp($version);
-			} elsif ("$templine[0]" eq "Release") {
-				$release = $templine[1];
-				chomp($release);
-			}
-		}
+		%metadata = parsemetafile("$Conf::dbdir/meta/$file");
+
 		foreach $prog (@db) {
 			@templine = split(/\;/,$prog);
-			if (("$name" eq "$templine[0]") && ("$release" ne "$templine[2]")) {
-				move("$Conf::dbdir/meta/meta-$name","$Conf::dbdir/meta/old_meta-$name");
-				fetchfile("meta/meta-$name", "");
-				move("$Conf::cachedir/meta-$name", "$Conf::dbdir/meta/meta-$name");
+			if (("$metadata{'Name'}" eq "$templine[0]") && ("$metadata{'Release'}" ne "$templine[2]")) {
+				move("$Conf::dbdir/meta/meta-$metadata{'Name'}","$Conf::dbdir/meta/old_meta-$metadata{'Name'}");
+				fetchfile("meta/meta-$metadata{'Name'}", "");
+				move("$Conf::cachedir/meta-$metadata{'Name'}", "$Conf::dbdir/meta/meta-$metadata{'Name'}");
 			}
 		}
 	}
@@ -441,12 +426,11 @@ sub dblist {
 	#   filter may be: all, notinstalled, installed
 	my $filter = shift;
 	my $forweb = shift;
-	my @meta;
 	my @updatepaks;
 	my $file;
 	my $line;
 	my $prog;
-	my ($name, $version, $release);
+	my %metadata;
 	my @templine;
 	
 	### Make sure that the list is not outdated. 
@@ -482,30 +466,16 @@ sub dblist {
 			next if ( $file eq "." );
 			next if ( $file eq ".." );
 			next if ( $file =~ /^old/ );
-			open(FILE, "<$Conf::dbdir/installed/$file");
-			@meta = <FILE>;
-			close(FILE);
-			foreach $line (@meta) {
-				@templine = split(/\: /,$line);
-				if ("$templine[0]" eq "Name") {
-					$name = $templine[1];
-					chomp($name);
-				} elsif ("$templine[0]" eq "ProgVersion") {
-					$version = $templine[1];
-					chomp($version);
-				} elsif ("$templine[0]" eq "Release") {
-					$release = $templine[1];
-					chomp($release);
-				}
-			}
+			%metadata = parsemetafile("$Conf::dbdir/installed/$file");
+
 			foreach $prog (@db) {
 				@templine = split(/\;/,$prog);
-				if (("$name" eq "$templine[0]") && ("$release" < "$templine[2]" && "$forweb" ne "notice")) {
-					push(@updatepaks,$name);
+				if (("$metadata{'Name'}" eq "$templine[0]") && ("$metadata{'Release'}" < "$templine[2]" && "$forweb" ne "notice")) {
+					push(@updatepaks,$metadata{'Name'});
 					if ("$forweb" eq "forweb") {
-						print "<option value=\"$name\">Update: $name -- Version: $version -> $templine[1] -- Release: $release -> $templine[2]</option>\n";
+						print "<option value=\"$metadata{'Name'}\">Update: $metadata{'Name'} -- Version: $metadata{'ProgVersion'} -> $templine[1] -- Release: $metadata{'Release'} -> $templine[2]</option>\n";
 					} else {
-						my $command = "Update: $name\nVersion: $version -> $templine[1]\nRelease: $release -> $templine[2]\n";
+						my $command = "Update: $metadata{'Name'}\nVersion: $metadata{'ProgVersion'} -> $templine[1]\nRelease: $metadata{'Release'} -> $templine[2]\n";
 						if ("$Pakfire::enable_colors" eq "1") {
 							print "$color{'lila'}$command$color{'normal'}\n";
 						} else {
@@ -560,18 +530,9 @@ sub resolvedeps_one {
 	
 	message("PAKFIRE RESV: $pak: Resolving dependencies...");
 	
-	open(FILE, "<$Conf::dbdir/meta/meta-$pak");
-	my @file = <FILE>;
-	close(FILE);
-	
-	my $line;
-	my (@templine, @deps, @all);
-	foreach $line (@file) {
-		@templine = split(/\: /,$line);
-		if ("$templine[0]" eq "Dependencies") {
-			@deps = split(/ /, $templine[1]);
-		}
-	}
+	my %metadata = parsemetafile("$Conf::dbdir/meta/meta-$pak");
+	my @all;
+	my @deps = split(/ /, $metadata{'Dependencies'});
 	chomp (@deps);
 	foreach (@deps) {
 		if ($_) {
@@ -691,20 +652,40 @@ sub getsize {
 	
 	getmetafile("$pak");
 	
-	open(FILE, "<$Conf::dbdir/meta/meta-$pak");
-	my @file = <FILE>;
-	close(FILE);
-	
-	my $line;
-	my @templine;
-	foreach $line (@file) {
-		@templine = split(/\: /,$line);
-		if ("$templine[0]" eq "Size") {
-			chomp($templine[1]);
-			return $templine[1];
-		}
+	if (my %metadata = parsemetafile("$Conf::dbdir/meta/meta-$pak")) {
+		return $metadata{'Size'};
 	}
 	return 0;
+}
+
+sub parsemetafile {
+	### This subroutine returns a hash with the contents of a meta- file
+	#   Pass path to metafile as argument: Pakfire::parsemetafile("$Conf::dbdir/meta/meta-$pak")
+	#   Usage is always with an argument.
+	my $metafile = shift;
+
+	my %metadata = ();
+
+	my @templine;
+	my @file;
+
+	if (! -e $metafile ) {
+		return 0;
+	}
+
+	open(FILE, "<$metafile");
+	@file = <FILE>;
+	close(FILE);
+	
+	foreach (@file) {
+		@templine = split(/\: /,$_);
+		if ($templine[1]) {
+			chomp($templine[1]);
+			$metadata{"$templine[0]"} = $templine[1];
+		}
+	}
+
+	return %metadata;
 }
 
 sub decryptpak {
@@ -727,20 +708,8 @@ sub getpak {
 
 	getmetafile("$pak");
 	
-	open(FILE, "<$Conf::dbdir/meta/meta-$pak");
-	my @file = <FILE>;
-	close(FILE);
-	
-	my $line;
-	my $file;
-	my @templine;
-	foreach $line (@file) {
-		@templine = split(/\: /,$line);
-		if ("$templine[0]" eq "File") {
-			chomp($templine[1]);
-			$file = $templine[1];
-		}
-	}
+	my %metadata = parsemetafile("$Conf::dbdir/meta/meta-$pak");
+	my $file = $metadata{'File'};
 	
 	unless ($file) {
 		message("No filename given in meta-file.");
