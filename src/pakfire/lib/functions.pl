@@ -524,13 +524,13 @@ sub dblist {
 		foreach $line (sort @db) {
 			next unless ($line =~ /.*;.*;.*;/ );
 			$use_color = "";
-			$count++;
 			@templine = split(/\;/,$line);
 			if ("$filter" eq "notinstalled") {
 				next if ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
 			} elsif ("$filter" eq "installed") {
 				next unless ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
 			}
+			$count++;
 			if ("$forweb" eq "forweb")
 			 {
 				if ("$filter" eq "notinstalled") {
