@@ -1566,7 +1566,6 @@ buildipfire() {
   lfsmake2 frr
   lfsmake2 dmidecode
   lfsmake2 mcelog
-  lfsmake2 util-macros
   lfsmake2 libpciaccess
   lfsmake2 libyajl
   lfsmake2 libvirt
