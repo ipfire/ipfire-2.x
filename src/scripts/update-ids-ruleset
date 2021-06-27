@@ -42,6 +42,17 @@ if ( $> == 0 ) {
 	POSIX::setuid( $uid );
 }
 
+# Check if the IDS lock file exists.
+# In this case the WUI or another instance currently is altering the
+# ruleset.
+if (-f "$IDS::ids_page_lock_file") {
+	# Store notice to the syslog.
+	&IDS::_log_to_syslog("Another process currently is altering the IDS ruleset.");
+
+	# Exit.
+	exit 0;
+}
+
 # Check if the red device is active.
 unless (-e "${General::swroot}/red/active") {
 	# Store notice in the syslog.
