@@ -48,7 +48,7 @@ rm -vrf \
 # Stop services
 
 # Remove dropped packages
-for package in asterisk libsrtp monit libmicrohttpd sane fbset miniupnpd \
+for package in asterisk libsrtp motion libmicrohttpd sane fbset miniupnpd \
 		sendEmail libupnp lcd4linux dpfhack; do
         if [ -e "/opt/pakfire/db/installed/meta-${package}" ]; then
 		stop_service "${package}"
