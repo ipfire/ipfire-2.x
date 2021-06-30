@@ -47,6 +47,20 @@ rm -vrf \
 
 # Stop services
 
+# Remove dropped packages
+for package in asterisk libsrtp motion libmicrohttpd sane fbset miniupnpd \
+		sendEmail libupnp lcd4linux dpfhack; do
+        if [ -e "/opt/pakfire/db/installed/meta-${package}" ]; then
+		stop_service "${package}"
+		for i in $(</opt/pakfire/db/rootfiles/${package}); do
+			rm -rfv "/${i}"
+		done
+        fi
+        rm -f "/opt/pakfire/db/installed/meta-${package}"
+        rm -f "/opt/pakfire/db/meta/meta-${package}"
+        rm -f "/opt/pakfire/db/rootfiles/${package}"
+done
+
 # Extract files
 extract_files
 

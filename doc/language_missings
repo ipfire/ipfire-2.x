@@ -926,17 +926,11 @@
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
 < ansi t1.483
-< available
 < bewan adsl pci st
 < bewan adsl usb
-< download apple profile
 < g.dtm
 < g.lite
-< ipsec dns server address is invalid
-< ipsec invalid ip address or fqdn for rw endpoint
-< ipsec roadwarrior endpoint
 < upload fcdsl.o
-< zoneconf val vlan tag range error
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################

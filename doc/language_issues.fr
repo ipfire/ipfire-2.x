@@ -890,9 +890,8 @@ WARNING: translation string unused: zoneconf val stp priority range error
 WARNING: translation string unused: zoneconf val stp zone mode error
 WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
+WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
-WARNING: untranslated string: available = available
-WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
@@ -924,9 +923,6 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: ipsec dns server address is invalid = Invalid DNS server IP address(es)
-WARNING: untranslated string: ipsec invalid ip address or fqdn for rw endpoint = Invalid IP address or FQDN for Host-to-Net Endpoint
-WARNING: untranslated string: ipsec roadwarrior endpoint = Host-to-Net Endpoint
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string

@@ -84,7 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 	# install custom OpenSSH server configuration
-	install -v -m 600 $(DIR_SRC)/config/ssh/sshd_config \
+	install -v -m 644 $(DIR_SRC)/config/ssh/sshd_config \
 		/etc/ssh/sshd_config
 
 	# install custom OpenSSH client configuration
