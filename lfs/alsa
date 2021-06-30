@@ -25,9 +25,9 @@
 include Config
 
 
-VER        = 1.0.27.1
-UVER       = 1.0.27.1
-FVER       = 1.0.27
+VER        = 1.2.5.1
+UVER       = 1.2.5.1
+FVER       = 1.2.4
 
 VERSUFIX   = ipfire$(KCFG)
 
@@ -36,7 +36,7 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = alsa
-PAK_VER    = 12
+PAK_VER    = 13
 
 DEPS       =
 
@@ -52,9 +52,9 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 alsa-utils-$(UVER).tar.bz2 = $(DL_FROM)/alsa-utils-$(UVER).tar.bz2
 alsa-firmware-$(FVER).tar.bz2 = $(DL_FROM)/alsa-firmware-$(FVER).tar.bz2
 
-$(DL_FILE)_MD5 = 17102aaab10e9d4b19f6b02937bab015
-alsa-utils-$(UVER).tar.bz2_MD5 = 3d81357b997744a139881ef72bc6921a
-alsa-firmware-$(FVER).tar.bz2_MD5 = b373b350d5151dd7d64db2fc12936b04
+$(DL_FILE)_MD5 = c8335793e7828803311edc48fb71662e
+alsa-utils-$(UVER).tar.bz2_MD5 = 8f142bebff84ff05438b46a0e896f53a
+alsa-firmware-$(FVER).tar.bz2_MD5 = ee6c1d24a1a4ac1d86992b408ed710a2
 
 install : $(TARGET)
 
