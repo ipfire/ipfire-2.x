@@ -1,0 +1,27 @@
+diff -Naur linux-5.10.45.org/scripts/gcc-plugins/Makefile linux-5.10.45/scripts/gcc-plugins/Makefile
+--- linux-5.10.45.org/scripts/gcc-plugins/Makefile	2021-06-18 10:00:06.000000000 +0200
++++ linux-5.10.45/scripts/gcc-plugins/Makefile	2021-06-22 13:36:30.108527243 +0200
+@@ -22,9 +22,9 @@
+ GCC_PLUGINS_DIR = $(shell $(CC) -print-file-name=plugin)
+ 
+ plugin_cxxflags	= -Wp,-MMD,$(depfile) $(KBUILD_HOSTCXXFLAGS) -fPIC \
+-		   -I $(GCC_PLUGINS_DIR)/include -I $(obj) -std=gnu++98 \
++		   -I $(GCC_PLUGINS_DIR)/include -I $(obj) -std=gnu++11 \
+ 		   -fno-rtti -fno-exceptions -fasynchronous-unwind-tables \
+-		   -ggdb -Wno-narrowing -Wno-unused-variable -Wno-c++11-compat \
++		   -ggdb -Wno-narrowing -Wno-unused-variable \
+ 		   -Wno-format-diag
+ 
+ plugin_ldflags	= -shared
+diff -Naur linux-5.10.45.org/scripts/gcc-plugin.sh linux-5.10.45/scripts/gcc-plugin.sh
+--- linux-5.10.45.org/scripts/gcc-plugin.sh	2021-06-18 10:00:06.000000000 +0200
++++ linux-5.10.45/scripts/gcc-plugin.sh	2021-06-22 17:24:20.138602697 +0200
+@@ -8,7 +8,7 @@
+ gccplugins_dir=$($* -print-file-name=plugin)
+ 
+ # we need a c++ compiler that supports the designated initializer GNU extension
+-$HOSTCC -c -x c++ -std=gnu++98 - -fsyntax-only -I $srctree/gcc-plugins -I $gccplugins_dir/include 2>/dev/null <<EOF
++$HOSTCC -c -x c++ -std=gnu++11 - -fsyntax-only -I $srctree/gcc-plugins -I $gccplugins_dir/include 2>/dev/null <<EOF
+ #include "gcc-common.h"
+ class test {
+ public:
