@@ -449,16 +449,28 @@ sub buildrules {
 								my @nat_protocol_options = &get_protocol_options($hash, $key, $protocol, 1);
 								push(@nat_options, @nat_protocol_options);
 							}
+
+							# Add time options.
 							push(@nat_options, @time_options);
 
+							# Determine if a REDIRECT rule should be created.
+							my $use_redirect = ($destination_is_firewall && !$destination && $protocol_has_ports);
+
 							# Make port-forwardings useable from the internal networks.
-							my @internal_addresses = &fwlib::get_internal_firewall_ip_addresses(1);
-							unless ($nat_address ~~ @internal_addresses) {
-								&add_dnat_mangle_rules($nat_address, $source_intf, @nat_options);
+							if (!$use_redirect) {
+								my @internal_addresses = &fwlib::get_internal_firewall_ip_addresses(1);
+								unless ($nat_address ~~ @internal_addresses) {
+									&add_dnat_mangle_rules($nat_address, $source_intf, @nat_options);
+								}
 							}
 
+							# Add source options.
 							push(@nat_options, @source_options);
-							push(@nat_options, ("-d", $nat_address));
+
+							# Add NAT address.
+							if (!$use_redirect) {
+								push(@nat_options, ("-d", $nat_address));
+							}
 
 							my $dnat_port;
 							if ($protocol_has_ports) {
@@ -468,9 +480,13 @@ sub buildrules {
 							my @nat_action_options = ();
 
 							# Use iptables REDIRECT
-							my $use_redirect = ($destination_is_firewall && !$destination && $protocol_has_ports && $dnat_port);
 							if ($use_redirect) {
-								push(@nat_action_options, ("-j", "REDIRECT", "--to-ports", $dnat_port));
+								push(@nat_action_options, ("-j", "REDIRECT"));
+
+								# Redirect to specified port if one has given.
+								if ($dnat_port) {
+									push(@nat_action_options, ("--to-ports", $dnat_port));
+								}
 
 							# Use iptables DNAT
 							} else {
