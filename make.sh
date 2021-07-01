@@ -176,7 +176,7 @@ configure_build() {
 			BUILDTARGET="${build_arch}-unknown-linux-gnueabi"
 			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
 			BUILD_PLATFORM="arm"
-			CFLAGS_ARCH="-march=armv6 -mfpu=vfp -mfloat-abi=softfp -fomit-frame-pointer"
+			CFLAGS_ARCH="-march=armv6zk+fp -mfpu=vfp -mfloat-abi=softfp -fomit-frame-pointer"
 			#RUSTFLAGS="-Ccodegen-units=1"
 			;;
 

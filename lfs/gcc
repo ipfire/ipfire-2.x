@@ -163,7 +163,7 @@ endif
 
 ifeq "$(BUILD_ARCH)" "armv6l"
 	EXTRA_CONFIG += \
-		--with-arch=armv6 \
+		--with-arch=armv6zk+fp \
 		--with-float=softfp
 #		--disable-sjlj-exceptions
 endif
