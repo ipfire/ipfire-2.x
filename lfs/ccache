@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.2.1
+VER        = 4.3
 
 THISAPP    = ccache-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0f95a4b491a4dcd904c8235ee7c660cd
+$(DL_FILE)_MD5 = 10be8f17a25331e42d9dbab4f6c846ab
 
 install : $(TARGET)
 
@@ -70,6 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ccache/ccache-4.3-fix_armv6_bus_error.patch
 	cd $(DIR_APP) && mkdir -pv build
 	cd $(DIR_APP)/build && cmake \
 		-DCMAKE_INSTALL_PREFIX=$(TOOLS_DIR) \
