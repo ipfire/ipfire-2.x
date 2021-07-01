@@ -74,9 +74,12 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
-/etc/init.d/apache restart
 /etc/init.d/vnstat restart
 /etc/init.d/rngd restart
+
+# Restart apache
+/etc/init.d/apache stop
+/etc/init.d/apache start
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
