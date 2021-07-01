@@ -1534,6 +1534,7 @@ buildipfire() {
   lfsmake2 libsolv
   lfsmake2 ddns
   lfsmake2 python3-setuptools-scm
+  lfsmake2 python3-six
   lfsmake2 python3-dateutil
   lfsmake2 python3-jmespath
   lfsmake2 python3-colorama
