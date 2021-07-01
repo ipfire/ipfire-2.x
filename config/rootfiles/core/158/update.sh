@@ -75,7 +75,7 @@ ldconfig
 
 # Start services
 /etc/init.d/apache restart
-/etc/init.d/vnstatd restart
+/etc/init.d/vnstat restart
 /etc/init.d/rngd restart
 
 # This update needs a reboot...
