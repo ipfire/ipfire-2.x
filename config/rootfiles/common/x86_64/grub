@@ -9,6 +9,7 @@ etc/grub.d/00_header
 etc/grub.d/10_linux
 etc/grub.d/20_linux_xen
 etc/grub.d/30_os-prober
+etc/grub.d/30_uefi-firmware
 etc/grub.d/40_custom
 etc/grub.d/41_custom
 #etc/grub.d/README
@@ -39,6 +40,8 @@ usr/lib/grub/i386-pc/affs.mod
 usr/lib/grub/i386-pc/affs.module
 usr/lib/grub/i386-pc/afs.mod
 usr/lib/grub/i386-pc/afs.module
+usr/lib/grub/i386-pc/afsplitter.mod
+usr/lib/grub/i386-pc/afsplitter.module
 usr/lib/grub/i386-pc/ahci.mod
 usr/lib/grub/i386-pc/ahci.module
 usr/lib/grub/i386-pc/all_video.mod
@@ -270,6 +273,8 @@ usr/lib/grub/i386-pc/jfs.mod
 usr/lib/grub/i386-pc/jfs.module
 usr/lib/grub/i386-pc/jpeg.mod
 usr/lib/grub/i386-pc/jpeg.module
+usr/lib/grub/i386-pc/json.mod
+usr/lib/grub/i386-pc/json.module
 usr/lib/grub/i386-pc/kernel.exec
 usr/lib/grub/i386-pc/kernel.img
 usr/lib/grub/i386-pc/keylayouts.mod
@@ -304,6 +309,8 @@ usr/lib/grub/i386-pc/lspci.mod
 usr/lib/grub/i386-pc/lspci.module
 usr/lib/grub/i386-pc/luks.mod
 usr/lib/grub/i386-pc/luks.module
+usr/lib/grub/i386-pc/luks2.mod
+usr/lib/grub/i386-pc/luks2.module
 usr/lib/grub/i386-pc/lvm.mod
 usr/lib/grub/i386-pc/lvm.module
 usr/lib/grub/i386-pc/lzma_decompress.image
@@ -490,6 +497,8 @@ usr/lib/grub/i386-pc/sleep.mod
 usr/lib/grub/i386-pc/sleep.module
 usr/lib/grub/i386-pc/sleep_test.mod
 usr/lib/grub/i386-pc/sleep_test.module
+usr/lib/grub/i386-pc/smbios.mod
+usr/lib/grub/i386-pc/smbios.module
 usr/lib/grub/i386-pc/spkmodem.mod
 usr/lib/grub/i386-pc/spkmodem.module
 usr/lib/grub/i386-pc/squash4.mod
@@ -555,8 +564,6 @@ usr/lib/grub/i386-pc/usbtest.mod
 usr/lib/grub/i386-pc/usbtest.module
 usr/lib/grub/i386-pc/vbe.mod
 usr/lib/grub/i386-pc/vbe.module
-usr/lib/grub/i386-pc/verifiers.mod
-usr/lib/grub/i386-pc/verifiers.module
 usr/lib/grub/i386-pc/vga.mod
 usr/lib/grub/i386-pc/vga.module
 usr/lib/grub/i386-pc/vga_text.mod
@@ -607,6 +614,8 @@ usr/lib/grub/x86_64-efi/affs.mod
 usr/lib/grub/x86_64-efi/affs.module
 usr/lib/grub/x86_64-efi/afs.mod
 usr/lib/grub/x86_64-efi/afs.module
+usr/lib/grub/x86_64-efi/afsplitter.mod
+usr/lib/grub/x86_64-efi/afsplitter.module
 usr/lib/grub/x86_64-efi/ahci.mod
 usr/lib/grub/x86_64-efi/ahci.module
 usr/lib/grub/x86_64-efi/all_video.mod
@@ -828,6 +837,8 @@ usr/lib/grub/x86_64-efi/jfs.mod
 usr/lib/grub/x86_64-efi/jfs.module
 usr/lib/grub/x86_64-efi/jpeg.mod
 usr/lib/grub/x86_64-efi/jpeg.module
+usr/lib/grub/x86_64-efi/json.mod
+usr/lib/grub/x86_64-efi/json.module
 usr/lib/grub/x86_64-efi/kernel.exec
 usr/lib/grub/x86_64-efi/kernel.img
 usr/lib/grub/x86_64-efi/keylayouts.mod
@@ -868,6 +879,8 @@ usr/lib/grub/x86_64-efi/lssal.mod
 usr/lib/grub/x86_64-efi/lssal.module
 usr/lib/grub/x86_64-efi/luks.mod
 usr/lib/grub/x86_64-efi/luks.module
+usr/lib/grub/x86_64-efi/luks2.mod
+usr/lib/grub/x86_64-efi/luks2.module
 usr/lib/grub/x86_64-efi/lvm.mod
 usr/lib/grub/x86_64-efi/lvm.module
 usr/lib/grub/x86_64-efi/lzopio.mod
@@ -1030,14 +1043,14 @@ usr/lib/grub/x86_64-efi/sfs.mod
 usr/lib/grub/x86_64-efi/sfs.module
 usr/lib/grub/x86_64-efi/shift_test.mod
 usr/lib/grub/x86_64-efi/shift_test.module
-usr/lib/grub/x86_64-efi/shim_lock.mod
-usr/lib/grub/x86_64-efi/shim_lock.module
 usr/lib/grub/x86_64-efi/signature_test.mod
 usr/lib/grub/x86_64-efi/signature_test.module
 usr/lib/grub/x86_64-efi/sleep.mod
 usr/lib/grub/x86_64-efi/sleep.module
 usr/lib/grub/x86_64-efi/sleep_test.mod
 usr/lib/grub/x86_64-efi/sleep_test.module
+usr/lib/grub/x86_64-efi/smbios.mod
+usr/lib/grub/x86_64-efi/smbios.module
 usr/lib/grub/x86_64-efi/spkmodem.mod
 usr/lib/grub/x86_64-efi/spkmodem.module
 usr/lib/grub/x86_64-efi/squash4.mod
@@ -1101,8 +1114,6 @@ usr/lib/grub/x86_64-efi/usbserial_usbdebug.mod
 usr/lib/grub/x86_64-efi/usbserial_usbdebug.module
 usr/lib/grub/x86_64-efi/usbtest.mod
 usr/lib/grub/x86_64-efi/usbtest.module
-usr/lib/grub/x86_64-efi/verifiers.mod
-usr/lib/grub/x86_64-efi/verifiers.module
 usr/lib/grub/x86_64-efi/video.lst
 usr/lib/grub/x86_64-efi/video.mod
 usr/lib/grub/x86_64-efi/video.module
@@ -1158,6 +1169,8 @@ usr/share/grub/unicode.pf2
 #usr/share/grub/widthspec.h
 #usr/share/info/grub-dev.info
 #usr/share/info/grub.info
+#usr/share/info/grub.info-1
+#usr/share/info/grub.info-2
 #usr/share/locale/ast/LC_MESSAGES/grub.mo
 #usr/share/locale/ca/LC_MESSAGES/grub.mo
 #usr/share/locale/da/LC_MESSAGES/grub.mo
@@ -1195,6 +1208,7 @@ usr/share/grub/unicode.pf2
 #usr/share/locale/it/LC_MESSAGES/grub.mo
 #usr/share/locale/ja/LC_MESSAGES/grub.mo
 #usr/share/locale/ko/LC_MESSAGES/grub.mo
+#usr/share/locale/lg/LC_MESSAGES/grub.mo
 #usr/share/locale/lt/LC_MESSAGES/grub.mo
 #usr/share/locale/nb/LC_MESSAGES/grub.mo
 #usr/share/locale/nl/LC_MESSAGES/grub.mo

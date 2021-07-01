@@ -138,6 +138,9 @@ touch /var/run/need_reboot
 /etc/init.d/fireinfo start
 sendprofile
 
+# Install updated grub
+/usr/bin/install-bootloader
+
 # Update grub config to display new core version
 if [ -e /boot/grub/grub.cfg ]; then
 	grub-mkconfig -o /boot/grub/grub.cfg
