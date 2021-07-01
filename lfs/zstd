@@ -34,9 +34,11 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 ifeq "$(TOOLCHAIN)" "1"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
   PREFIX = $(TOOLS_DIR)
+  CC = $(CROSSTARGET)-gcc
 else
   TARGET = $(DIR_INFO)/$(THISAPP)
   PREFIX = /usr
+  CC = gcc
 endif
 
 ###############################################################################
@@ -80,7 +82,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make $(MAKETUNING)
+	cd $(DIR_APP) && make CC=$(CC) $(MAKETUNING)
 	cd $(DIR_APP) && make prefix=$(PREFIX) install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
