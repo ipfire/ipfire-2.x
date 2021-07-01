@@ -35,13 +35,13 @@ DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
+ifeq "$(PASS)" "1"
 CFLAGS    := $(patsubst -march=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mfpu=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mtune=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mfloat-abi=%,,$(CFLAGS))
 CFLAGS    := $(filter-out -fexceptions,$(CFLAGS))
 
-ifeq "$(PASS)" "1"
 CFLAGS    := $(patsubst -mindirect-branch=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mfunction-return=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -fstack-clash-protection,,$(CFLAGS))
