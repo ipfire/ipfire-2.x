@@ -6968,7 +6968,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/cc/can/link/static.h
 #lib/modules/KVER-ipfire/build/include/config/cc/has
 #lib/modules/KVER-ipfire/build/include/config/cc/has/asm
+#lib/modules/KVER-ipfire/build/include/config/cc/has/asm/goto
 #lib/modules/KVER-ipfire/build/include/config/cc/has/asm/goto.h
+#lib/modules/KVER-ipfire/build/include/config/cc/has/asm/goto/output.h
 #lib/modules/KVER-ipfire/build/include/config/cc/has/asm/inline.h
 #lib/modules/KVER-ipfire/build/include/config/cc/has/int128.h
 #lib/modules/KVER-ipfire/build/include/config/cc/has/kasan
@@ -8420,6 +8422,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/have/irq
 #lib/modules/KVER-ipfire/build/include/config/have/irq/time
 #lib/modules/KVER-ipfire/build/include/config/have/irq/time/accounting.h
+#lib/modules/KVER-ipfire/build/include/config/have/kcsan
+#lib/modules/KVER-ipfire/build/include/config/have/kcsan/compiler.h
 #lib/modules/KVER-ipfire/build/include/config/have/kernel
 #lib/modules/KVER-ipfire/build/include/config/have/kernel/bzip2.h
 #lib/modules/KVER-ipfire/build/include/config/have/kernel/gzip.h
