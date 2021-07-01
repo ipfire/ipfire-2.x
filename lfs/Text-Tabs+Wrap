@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2005.0824
+VER        = 2013.0523
 
 THISAPP    = Text-Tabs+Wrap-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 99c061630027de809beca99d0b71f689
+$(DL_FILE)_MD5 = 3e421ed3810803512af8d13bad548993
 
 install : $(TARGET)
 
