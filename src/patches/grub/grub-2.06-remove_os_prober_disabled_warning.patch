@@ -1,0 +1,11 @@
+diff -Naur grub-2.06/util/grub.d/30_os-prober.in grub-2.06.new/util/grub.d/30_os-prober.in
+--- grub-2.06/util/grub.d/30_os-prober.in	2021-04-12 16:39:21.000000000 +0200
++++ grub-2.06.new/util/grub.d/30_os-prober.in	2021-06-19 09:25:08.973408717 +0200
+@@ -27,7 +27,6 @@
+ . "$pkgdatadir/grub-mkconfig_lib"
+ 
+ if [ "x${GRUB_DISABLE_OS_PROBER}" = "xtrue" ]; then
+-  grub_warn "$(gettext_printf "os-prober will not be executed to detect other bootable partitions.\nSystems on them will not be added to the GRUB boot configuration.\nCheck GRUB_DISABLE_OS_PROBER documentation entry.")"
+   exit 0
+ fi
+ 
