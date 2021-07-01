@@ -100,6 +100,9 @@ extract_files
 # update linker config
 ldconfig
 
+# restart init (glibc update)
+telinit u
+
 # Update ssh settings
 /usr/local/bin/sshctrl
 
