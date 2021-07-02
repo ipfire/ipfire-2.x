@@ -857,7 +857,7 @@
 #usr/include/c++/11.1.0/version
 #usr/lib/gcc
 #usr/lib/gcc/i586-pc-linux-gnu
-+usr/lib/gcc/i586-pc-linux-gnu/11.1.0
+#usr/lib/gcc/i586-pc-linux-gnu/11.1.0
 #usr/lib/gcc/i586-pc-linux-gnu/11.1.0/cc1
 #usr/lib/gcc/i586-pc-linux-gnu/11.1.0/cc1plus
 #usr/lib/gcc/i586-pc-linux-gnu/11.1.0/collect2
