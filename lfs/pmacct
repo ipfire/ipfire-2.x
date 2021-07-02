@@ -34,6 +34,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = pmacct
 PAK_VER    = 1
 
+SUP_ARCH   = none
+
 DEPS       = libcdada
 
 ###############################################################################
