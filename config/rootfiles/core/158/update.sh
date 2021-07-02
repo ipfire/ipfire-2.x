@@ -39,6 +39,7 @@ rm -vrf \
 	/usr/lib/conntrack-tools \
 	/usr/lib/libixml.so.* \
 	/usr/lib/libupnp.so.* \
+	/usr/lib/pppd/2.4.9/ \
 	/var/ipfire/upnp \
 	/lib/firmware/cxgb4/t4fw-1.24.14.0.bin \
 	/lib/firmware/cxgb4/t5fw-1.24.14.0.bin \
