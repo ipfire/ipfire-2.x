@@ -1893,7 +1893,7 @@ gettoolchain)
 		if [ $? -ne 0 ]; then
 			echo "`date -u '+%b %e %T'`: error downloading $PACKAGE toolchain for ${BUILD_ARCH} machine" | tee -a $LOGFILE
 		else
-			if [ "`md5sum $PACKAGE.tar.xz | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
+			if [ "`md5sum $PACKAGE.tar.zst | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
 				echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
 			else
 				exiterror "$PACKAGE.md5 did not match, check downloaded package"
