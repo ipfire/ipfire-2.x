@@ -25,6 +25,8 @@ usr/bin/strings
 #usr/include/libiberty.h
 #usr/include/plugin-api.h
 #usr/include/symcat.h
+#usr/lib/bfd-plugins
+usr/lib/bfd-plugins/libdep.so
 #usr/lib/ldscripts
 #usr/lib/ldscripts/armelf_linux_eabi.x
 #usr/lib/ldscripts/armelf_linux_eabi.xbn
@@ -70,7 +72,7 @@ usr/bin/strings
 #usr/lib/ldscripts/armelfb_linux_eabi.xu
 #usr/lib/ldscripts/armelfb_linux_eabi.xw
 #usr/lib/ldscripts/armelfb_linux_eabi.xwe
-usr/lib/libbfd-2.35.1.so
+usr/lib/libbfd-2.36.1.so
 #usr/lib/libbfd.a
 #usr/lib/libbfd.la
 #usr/lib/libbfd.so
@@ -84,7 +86,7 @@ usr/lib/libctf-nobfd.so.0.0.0
 #usr/lib/libctf.so
 usr/lib/libctf.so.0
 usr/lib/libctf.so.0.0.0
-usr/lib/libopcodes-2.35.1.so
+usr/lib/libopcodes-2.36.1.so
 #usr/lib/libopcodes.a
 #usr/lib/libopcodes.la
 #usr/lib/libopcodes.so
@@ -173,8 +175,6 @@ usr/lib/libopcodes-2.35.1.so
 #usr/share/locale/rw/LC_MESSAGES/gas.mo
 #usr/share/locale/rw/LC_MESSAGES/gprof.mo
 #usr/share/locale/sk/LC_MESSAGES/binutils.mo
-#usr/share/locale/sr
-#usr/share/locale/sr/LC_MESSAGES
 #usr/share/locale/sr/LC_MESSAGES/bfd.mo
 #usr/share/locale/sr/LC_MESSAGES/binutils.mo
 #usr/share/locale/sr/LC_MESSAGES/gprof.mo
