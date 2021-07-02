@@ -62,6 +62,11 @@ esac
 if [ -e /boot/grub/grub.conf ]; then
 	exit_with_error "ERROR unsupported GRUB1/pygrub found!" 1
 fi
+case $(uname -m) in
+	armv5tel)
+		exit_with_error "ERROR cannot update. armv5tel is EOL." 1
+		;;
+esac
 
 # Check diskspace on root
 ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
