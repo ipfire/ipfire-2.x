@@ -1,7 +1,7 @@
-diff --git a/pppd/plugins/pppoe/pppoe.h b/pppd/plugins/pppoe/pppoe.h
+diff --git a/pppd/plugins/rp-pppoe/pppoe.h b/pppd/plugins/rp-pppoe/pppoe.h
 index 9ab2eee..86762bd 100644
---- a/pppd/plugins/pppoe/pppoe.h
-+++ b/pppd/plugins/pppoe/pppoe.h
+--- a/pppd/plugins/rp-pppoe/pppoe.h
++++ b/pppd/plugins/rp-pppoe/pppoe.h
 @@ -148,7 +148,7 @@ extern UINT16_t Eth_PPPOE_Session;
  #define STATE_TERMINATED    4
  
