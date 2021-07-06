@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,17 +24,17 @@
 
 include Config
 
-VER        = 1.18.188
+VER        = 1.14.0
 
-THISAPP    = awscli-$(VER)
+THISAPP    = six-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = aws-cli
-PAK_VER    = 4
+PROG       = python3-six
+PAK_VER    = 3
 
-DEPS       = python3-botocore python3-colorama python3-docutils python3-pyasn1 python3-rsa python3-s3transfer python3-six python3-yaml
+DEPS       =
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d0e6edde94f5bd17bf6024fd6534dc61
+$(DL_FILE)_MD5 = 21674588a57e649d1a6d977ec3122140
 
 install : $(TARGET)
 

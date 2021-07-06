@@ -39,6 +39,7 @@ rm -vrf \
 	/usr/lib/conntrack-tools \
 	/usr/lib/libixml.so.* \
 	/usr/lib/libupnp.so.* \
+	/usr/lib/pppd/2.4.9/ \
 	/var/ipfire/upnp \
 	/lib/firmware/cxgb4/t4fw-1.24.14.0.bin \
 	/lib/firmware/cxgb4/t5fw-1.24.14.0.bin \
@@ -74,9 +75,12 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
-/etc/init.d/apache restart
-/etc/init.d/vnstatd restart
+/etc/init.d/vnstat restart
 /etc/init.d/rngd restart
+
+# Restart apache
+/etc/init.d/apache stop
+/etc/init.d/apache start
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
