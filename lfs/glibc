@@ -55,6 +55,10 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 	CFLAGS += -Wno-error=maybe-uninitialized
 endif
 
+ifeq "$(BUILD_ARCH)" "i586"
+	EXTRA_CONFIG += libc_cv_include_x86_isa_level=no
+endif
+
 # Add some general configuration flags
 EXTRA_CONFIG += \
 	--disable-profile \
