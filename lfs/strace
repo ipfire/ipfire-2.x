@@ -25,7 +25,7 @@
 include Config
 
 VER        = 5.11
-SUP_ARCHES = x86_64 i586 armv6l
+SUP_ARCHES = x86_64 i586 armv6l aarch64
 
 THISAPP    = strace-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
