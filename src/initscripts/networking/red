@@ -410,7 +410,7 @@ case "${1}" in
 			### Standard PPP options we always use
 			#
 			PPP_STD_OPTIONS="$PLUGOPTS usepeerdns defaultroute noipdefault noauth"
-			PPP_STD_OPTIONS+=" default-asyncmap hide-password nodetach"
+			PPP_STD_OPTIONS+=" default-asyncmap hide-password nodetach noipv6"
 			PPP_STD_OPTIONS+=" noaccomp nodeflate nopcomp novj novjccomp"
 			PPP_STD_OPTIONS+=" nobsdcomp user ${USERNAME} lcp-echo-interval 20"
 			PPP_STD_OPTIONS+=" lcp-echo-failure 5 ${AUTH}"
