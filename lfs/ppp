@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,12 +24,12 @@
 
 include Config
 
-VER        = 2.4.8
+VER        = 2.4.9
 
 THISAPP    = ppp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/ppp-$(THISAPP)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 CFLAGS    += -fno-strict-aliasing
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = fa325e90e43975a1bd7e1012c8676123
+$(DL_FILE)_MD5 = f605d021b586fc26e35c6a54fd84b65f
 
 install : $(TARGET)
 
@@ -73,16 +73,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && rm -f include/pcap-int.h include/linux/if_pppol2tp.h
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/0003-build-sys-utilize-compiler-flags-handed-to-us-by-rpm.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/0012-pppd-we-don-t-want-to-accidentally-leak-fds.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/0013-everywhere-O_CLOEXEC-harder.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/0014-everywhere-use-SOCK_CLOEXEC-when-creating-socket.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/ppp-2.4.6-increase-max-padi-attempts.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/ppp-2.4.7-headers_4.9.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/ppp-2.4.8-pppd-fix-bounds-check-in-eap-code.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/ppp-2.4.9-patch-configure-to-handle-cflags-properly.patch
 	cd $(DIR_APP) && sed -i -e "s+/etc/ppp/connect-errors+/var/log/connect-errors+" pppd/pathnames.h
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
-	cd $(DIR_APP) && make $(MAKETUNING) CC="gcc" RPM_OPT_FLAGS="$(CFLAGS)"
+	cd $(DIR_APP) && ./configure --prefix=/usr --cc="gcc" --cflags="$(CFLAGS)" --disable-nls
+	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && make install-etcppp
 	touch /var/log/connect-errors
