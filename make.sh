@@ -1437,6 +1437,7 @@ buildipfire() {
   lfsmake2 br2684ctl
   lfsmake2 pcmciautils
   lfsmake2 lm_sensors
+  lfsmake2 libstatgrab
   lfsmake2 liboping
   lfsmake2 collectd
   lfsmake2 elinks
@@ -1543,7 +1544,6 @@ buildipfire() {
   lfsmake2 telnet
   lfsmake2 xinetd
   lfsmake2 stress
-  lfsmake2 libstatgrab
   lfsmake2 sarg
   lfsmake2 nginx
   lfsmake2 sysbench
