@@ -93,6 +93,8 @@ rm -rf /boot/kernel*
 rm -rf /usr/share/u-boot/rpi*
 
 # Remove files
+rm -rf /opt/pakfire/db/meta/meta-libstatgrab
+rm -rf /opt/pakfire/db/installed/meta-libstatgrab
 
 # Stop services
 /etc/init.d/ipsec stop
