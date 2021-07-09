@@ -27,6 +27,7 @@ TAR_OPTIONS=(
 	--xattrs
 	--xattrs-include='*'
 	--no-overwrite-dir
+	--no-delay-directory-restore
 	--preserve-permissions
 	--numeric-owner
 )
