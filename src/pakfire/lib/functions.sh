@@ -22,16 +22,24 @@
 . /etc/sysconfig/rc
 . $rc_functions
 
+TAR_OPTIONS=(
+	--acls
+	--xattrs
+	--xattrs-include='*'
+	--no-overwrite-dir
+	--preserve-permissions
+	--numeric-owner
+)
+
 extract_files() {
 	echo "Extracting files..."
-	tar --acls --xattrs --xattrs-include='*' \
-		-xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C /
+	tar -xavf /opt/pakfire/tmp/files* "${TAR_OPTIONS[@]}" -C /
 	echo "...Finished."
 }
 
 extract_backup_includes() {
 	echo "Extracting backup includes..."
-	tar xavf /opt/pakfire/tmp/files* --no-overwrite-dir -p --numeric-owner -C / \
+	tar xavf /opt/pakfire/tmp/files* "${TAR_OPTIONS[@]}" -C / \
 		var/ipfire/backup/addons/includes
 	echo "...Finished."
 }
