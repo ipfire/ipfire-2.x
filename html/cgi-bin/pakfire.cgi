@@ -62,7 +62,7 @@ if (($cgiparams{'ACTION'} eq 'install') && (! -e $Pakfire::lockfile)) {
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
 		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
 		print <<END;
-		<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'}.@pkgs.$Lang::tr{'pakfire possible dependency'}
+		<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'} @pkgs $Lang::tr{'pakfire possible dependency'}
 		<pre>
 END
 		foreach (@output) {
@@ -99,7 +99,7 @@ END
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
 		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
 		print <<END;
-		<table><tr><td colspan='2'>$Lang::tr{'pakfire uninstall package'}.@pkgs.$Lang::tr{'pakfire possible dependency'}
+		<table><tr><td colspan='2'>$Lang::tr{'pakfire uninstall package'} @pkgs $Lang::tr{'pakfire possible dependency'}
 		<pre>
 END
 		foreach (@output) {
