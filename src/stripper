@@ -27,6 +27,10 @@ function _strip() {
 		fi
 	done
 
+	# Fetch any capabilities
+	local capabilities="$(getfattr --no-dereference --name="security.capability" \
+		--absolute-names --dump "${file}")"
+
 	local cmd=( "${strip}" )
 
 	case "$(file -bi ${file})" in
@@ -40,6 +44,11 @@ function _strip() {
 
 	echo "Stripping ${file}..."
 	${cmd[*]} ${file}
+
+	# Restore capabilities
+	if [ -n "${capabilities}" ]; then
+		setfattr --no-dereference --restore=<(echo "${capabilities}")
+	fi
 }
 
 for dir in ${dirs}; do

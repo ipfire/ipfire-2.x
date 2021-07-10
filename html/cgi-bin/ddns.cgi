@@ -171,20 +171,28 @@ if (($settings{'ACTION'} eq $Lang::tr{'add'}) || ($settings{'ACTION'} eq $Lang::
 		$errormessage = $Lang::tr{'invalid domain name'};
 	}
 
-	# Check if a username has been sent.
-	if ($settings{'LOGIN'} eq '') {
-		$errormessage = $Lang::tr{'username not set'};
-	}
+	# Check if the choosen provider supports token based authentication.
+	if ($settings{'SERVICE'} ~~ @token_provider) {
+		# Check if a token has been given.
+		unless ($settings{'TOKEN'}) {
+			$errormessage = $Lang::tr{'token not set'};
+		}
 
-	# Check if a password has been typed in.
-	# freedns.afraid.org does not require this field.
-	if (($settings{'PASSWORD'} eq '') && ($settings{'SERVICE'} ne 'freedns.afraid.org') && ($settings{'SERVICE'} ne 'regfish.com')) {
-		$errormessage = $Lang::tr{'password not set'};
-	}
+		# Automatically set the username to token.
+		$settings{'LOGIN'} = "token";
 
-	# Check if a token has been given for provider which support tokens.
-	if (($settings{'SERVICE'} ~~ @token_provider) && ($settings{'TOKEN'} eq '')) {
-		$errormessage = $Lang::tr{'token not set'};
+	# A provider without token support has been choosen.
+	} else {
+		# Check if a username has been sent.
+		if ($settings{'LOGIN'} eq '') {
+			$errormessage = $Lang::tr{'username not set'};
+		}
+
+		# Check if a password has been typed in.
+		# freedns.afraid.org does not require this field.
+		if (($settings{'PASSWORD'} eq '') && ($settings{'SERVICE'} ne 'freedns.afraid.org') && ($settings{'SERVICE'} ne 'regfish.com')) {
+			$errormessage = $Lang::tr{'password not set'};
+		}
 	}
 
 	# Go furter if there was no error.

@@ -94,7 +94,7 @@ my $ipfire_version = <FILE>;
 close(FILE);
 
 my $pakfire_version = &Pakfire::make_version();
-my $kernel_version = &General::system_output("uname", "-a");
+my @kernel_version = &General::system_output("uname", "-a");
 
 &Header::openbox('100%', 'left', $Lang::tr{'fireinfo system version'});
 print <<END;
@@ -109,7 +109,7 @@ print <<END;
 		</tr>
 		<tr>
 			<td align='center' bgcolor='#F0F0F0' width='15%'>$Lang::tr{'fireinfo kernel version'}</td>
-			<td bgcolor='#F0F0F0'><code>$kernel_version</code></td>
+			<td bgcolor='#F0F0F0'><code>@kernel_version</code></td>
 		</tr>
 	</table>
 END
