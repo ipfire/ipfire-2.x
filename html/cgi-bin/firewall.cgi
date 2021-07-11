@@ -1005,6 +1005,10 @@ sub gen_dd_block
 	my $grp=shift;
 	my $helper='';
 	my $show='';
+
+	my %checked = ();
+	my %selected = ();
+
 	$checked{'grp1'}{$fwdfwsettings{'grp1'}} 				= 'CHECKED';
 	$checked{'grp2'}{$fwdfwsettings{'grp2'}} 				= 'CHECKED';
 	$checked{'grp3'}{$fwdfwsettings{'grp3'}} 				= 'CHECKED';
@@ -1482,7 +1486,10 @@ sub newrule
 	&General::readhasharray("$configlocationgrp", \%customlocationgrp);
 	&General::readhasharray("$configipsec", \%ipsecconf);
 	&General::get_aliases(\%aliases);
-	my %checked=();
+
+	my %checked = ();
+	my %selected = ();
+
 	my $helper;
 	my $sum=0;
 	if($fwdfwsettings{'config'} eq ''){$fwdfwsettings{'config'}=$configfwdfw;}
