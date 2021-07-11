@@ -359,7 +359,7 @@ div.rrdimage > ul {
 }
 
 div.rrdimage > img {
-	box-sizing: border-box;
+	padding: 0;
 	max-width: 100%;
 	min-height: 290px;
 }
