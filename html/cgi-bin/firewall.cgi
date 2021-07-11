@@ -1032,7 +1032,12 @@ END
 		{
 			next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
 			print "<option value='$defaultNetworks{$network}{'NAME'}'";
-			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $defaultNetworks{$network}{'NAME'});
+
+			# Check if the the key handles a standard network.
+			if ( grep(/std_net_/, $fwdfwsettings{$grp}) ) {
+				print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $defaultNetworks{$network}{'NAME'});
+			}
+
 			my $defnet="$defaultNetworks{$network}{'NAME'}_NETADDRESS";
 			my $defsub="$defaultNetworks{$network}{'NAME'}_NETMASK";
 			my $defsub1=&General::subtocidr($ifaces{$defsub});
@@ -1510,8 +1515,8 @@ sub newrule
 	$checked{'USE_NAT'}{$fwdfwsettings{'USE_NAT'}} 			= 'CHECKED';
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
-	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
-	$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
+	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} = 'selected' if ($fwdfwsettings{'grp2'} eq "ipfire");
+	$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} = 'selected' if ($fwdfwsettings{'grp1'} eq "ipfire_src");
 	#check if update and get values
 	if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on' && !$errormessage){
 		&General::readhasharray("$config", \%hash);
@@ -1582,8 +1587,8 @@ sub newrule
 				$checked{'RATE_LIMIT'}{$fwdfwsettings{'RATE_LIMIT'}}	= 'CHECKED';
 				$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 				$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
-				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
-				$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
+				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} = 'selected' if ($fwdfwsettings{'grp2'} eq "ipfire");
+				$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} = 'selected' if ($fwdfwsettings{'grp1'} eq "ipfire_src");
 				$selected{'dnat'}{$fwdfwsettings{'dnat'}}				='selected';
 				$selected{'snat'}{$fwdfwsettings{'snat'}}				='selected';
 				$selected{'RATETIME'}{$fwdfwsettings{'RATETIME'}}		='selected';
