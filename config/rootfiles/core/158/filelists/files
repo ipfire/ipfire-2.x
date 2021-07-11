@@ -1,6 +1,7 @@
 etc/rc.d/init.d/firewall
 etc/ssh/sshd_config
 opt/pakfire/lib/functions.pl
+opt/pakfire/lib/functions.sh
 opt/pakfire/pakfire
 usr/lib/firewall/ipsec-policy
 var/ipfire/backup/bin/backup.pl

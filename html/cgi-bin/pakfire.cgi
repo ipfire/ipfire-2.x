@@ -55,14 +55,15 @@ sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' cont
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 if (($cgiparams{'ACTION'} eq 'install') && (! -e $Pakfire::lockfile)) {
-	$cgiparams{'INSPAKS'} =~ s/\|/\ /g;
+	my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
 	if ("$cgiparams{'FORCE'}" eq "on") {
-		&General::system_background("/usr/local/bin/pakfire", "install", "--non-interactive", "--no-colors", $cgiparams{'INSPAKS'});
+		&General::system_background("/usr/local/bin/pakfire", "install", "--non-interactive", "--no-colors", @pkgs);
+		sleep(2);
 	} else {
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
-		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", $cgiparams{'INSPAKS'});
+		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
 		print <<END;
-		<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'}.$cgiparams{'INSPAKS'}.$Lang::tr{'pakfire possible dependency'}
+		<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'} @pkgs $Lang::tr{'pakfire possible dependency'}
 		<pre>
 END
 		foreach (@output) {
@@ -92,15 +93,15 @@ END
 		exit;
 	}
 } elsif (($cgiparams{'ACTION'} eq 'remove') && (! -e $Pakfire::lockfile)) {
-
-	$cgiparams{'DELPAKS'} =~ s/\|/\ /g;
+	my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
 	if ("$cgiparams{'FORCE'}" eq "on") {
-		&General::system_background("/usr/local/bin/pakfire", "remove", "--non-interactive", "--no-colors", $cgiparams{'DELPAKS'});
+		&General::system_background("/usr/local/bin/pakfire", "remove", "--non-interactive", "--no-colors", @pkgs);
+		sleep(2);
 	} else {
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
-		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", $cgiparams{'DELPAKS'});
+		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
 		print <<END;
-		<table><tr><td colspan='2'>$Lang::tr{'pakfire uninstall package'}.$cgiparams{'DELPAKS'}.$Lang::tr{'pakfire possible dependency'}
+		<table><tr><td colspan='2'>$Lang::tr{'pakfire uninstall package'} @pkgs $Lang::tr{'pakfire possible dependency'}
 		<pre>
 END
 		foreach (@output) {
