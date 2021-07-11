@@ -1735,7 +1735,7 @@ build)
 			PACKAGENAME=${PACKAGE%.tar.zst}
 			print_build_stage "Packaged toolchain compilation"
 			if [ `md5sum $PACKAGE | awk '{print $1}'` == `cat $PACKAGENAME.md5 | awk '{print $1}'` ]; then
-				tar axf $PACKAGE
+				zstd -d < "${PACKAGE}" | tar x
 				prepareenv
 			else
 				exiterror "$PACKAGENAME md5 did not match, check downloaded package"
