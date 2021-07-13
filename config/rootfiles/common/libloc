@@ -91,6 +91,7 @@ usr/share/xt_geoip/CM.iv4
 usr/share/xt_geoip/CN.iv4
 usr/share/xt_geoip/CO.iv4
 usr/share/xt_geoip/CR.iv4
+usr/share/xt_geoip/CS.iv4
 usr/share/xt_geoip/CU.iv4
 usr/share/xt_geoip/CV.iv4
 usr/share/xt_geoip/CW.iv4
@@ -287,6 +288,7 @@ usr/share/xt_geoip/VN.iv4
 usr/share/xt_geoip/VU.iv4
 usr/share/xt_geoip/WF.iv4
 usr/share/xt_geoip/WS.iv4
+usr/share/xt_geoip/XD.iv4
 usr/share/xt_geoip/YE.iv4
 usr/share/xt_geoip/YT.iv4
 usr/share/xt_geoip/ZA.iv4
