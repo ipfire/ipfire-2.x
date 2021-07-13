@@ -691,6 +691,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < rdns
+< reboot fsck
+< rebooting ipfire fsck
 < received
 < red1
 < required
@@ -930,6 +932,8 @@
 < bewan adsl usb
 < g.dtm
 < g.lite
+< reboot fsck
+< rebooting ipfire fsck
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -1209,6 +1213,8 @@
 < processor vulnerability mitigations
 < ptr
 < rdns
+< reboot fsck
+< rebooting ipfire fsck
 < received
 < required
 < required field
@@ -1650,6 +1656,8 @@
 < ptr
 < random number generator daemon
 < rdns
+< reboot fsck
+< rebooting ipfire fsck
 < received
 < required
 < required field
@@ -2437,6 +2445,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < rdns
+< reboot fsck
+< rebooting ipfire fsck
 < received
 < red1
 < required
@@ -3333,6 +3343,8 @@
 < qos enter bandwidths
 < random number generator daemon
 < rdns
+< reboot fsck
+< rebooting ipfire fsck
 < received
 < red1
 < required
@@ -3692,6 +3704,8 @@
 < please reboot to apply your changes
 < processor vulnerability mitigations
 < ptr
+< reboot fsck
+< rebooting ipfire fsck
 < received
 < required
 < runmode
