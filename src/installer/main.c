@@ -290,18 +290,23 @@ static struct config {
 	.language = DEFAULT_LANG,
 };
 
-static void parse_command_line(struct config* c) {
+static void parse_command_line(FILE* flog, struct config* c) {
 	char buffer[STRING_SIZE];
 	char cmdline[STRING_SIZE];
 
 	FILE* f = fopen("/proc/cmdline", "r");
-	if (!f)
+	if (!f) {
+		fprintf(flog, "Could not open /proc/cmdline: %m");
 		return;
+	}
 
 	int r = fread(&cmdline, 1, sizeof(cmdline) - 1, f);
 	if (r > 0) {
-		char* token = strtok(cmdline, " ");
+		// Remove the trailing newline
+		if (cmdline[r-1] == '\n')
+			cmdline[r-1] = '\0';
 
+		char* token = strtok(cmdline, " ");
 		while (token) {
 			strncpy(buffer, token, sizeof(buffer));
 			char* val = buffer;
@@ -403,7 +408,7 @@ int main(int argc, char *argv[]) {
 	snprintf(title, sizeof(title), "%s - %s", DISTRO_NAME, DISTRO_SLOGAN);
 
 	// Parse parameters from the kernel command line
-	parse_command_line(&config);
+	parse_command_line(flog, &config);
 
 	if (config.unattended) {
 		splashWindow(title, _("Warning: Unattended installation will start in 10 seconds..."), 10);
