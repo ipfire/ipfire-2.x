@@ -1,11 +1,23 @@
 #!/usr/bin/perl
-#
-# SmoothWall CGIs
-#
-# This code is distributed under the terms of the GPL
-#
-# (c) The SmoothWall Team
-#
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2021  IPFire Development Team                                 #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
 use strict;
 
@@ -17,6 +29,27 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
+###--- HTML HEAD ---###
+my $extraHead = <<END
+<style>
+	table#controls {
+		width: 100%;
+		border: none;
+		table-layout: fixed;
+	}
+	#controls td {
+		text-align: center;
+	}
+	#controls button {
+		font-weight: bold;
+		padding: 0.7em;
+		min-width: 65%;
+	}
+</style>
+END
+;
+###--- END HTML HEAD ---###
+
 my %cgiparams=();
 my $death = 0;
 my $rebirth = 0;
@@ -26,33 +59,39 @@ my $rebirth = 0;
 $cgiparams{'ACTION'} = '';
 &Header::getcgihash(\%cgiparams);
 
-if ($cgiparams{'ACTION'} eq $Lang::tr{'shutdown'}) {
+if ($cgiparams{'ACTION'} eq "SHUTDOWN") {
 	$death = 1;
 	&General::log($Lang::tr{'shutting down ipfire'});
 	&General::system('/usr/local/bin/ipfirereboot', 'down');
-} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'reboot'}) {
+} elsif ($cgiparams{'ACTION'} eq "REBOOT") {
 	$rebirth = 1;
 	&General::log($Lang::tr{'rebooting ipfire'});
 	&General::system('/usr/local/bin/ipfirereboot', 'boot');
+} elsif ($cgiparams{'ACTION'} eq "REBOOT_FSCK") {
+	$rebirth = 1;
+	&General::log($Lang::tr{'rebooting ipfire fsck'});
+	&General::system('/usr/local/bin/ipfirereboot', 'bootfs');
 }
+
 if ($death == 0 && $rebirth == 0) {
 
-	&Header::openpage($Lang::tr{'shutdown control'}, 1, '');
+	&Header::openpage($Lang::tr{'shutdown control'}, 1, $extraHead);
 
 	&Header::openbigbox('100%', 'left');
+	&Header::openbox('100%', 'left');
 
-	print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
-
-	&Header::openbox('100%', 'left', );
 	print <<END
-<table width='100%'>
-<tr>
-	<td width='50%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'reboot'}' /></td>
-	<td width='50%' align='center'><input type='submit' name='ACTION' value='$Lang::tr{'shutdown'}' /></td>
-</tr>
-</table>
+<form method="post" action="$ENV{'SCRIPT_NAME'}">
+	<table id="controls">
+	<tr>
+		<td><button type="submit" name="ACTION" value="SHUTDOWN">$Lang::tr{'shutdown'}</button></td>
+		<td><button type="submit" name="ACTION" value="REBOOT">$Lang::tr{'reboot'}</button></td>
+		<td><button type="submit" name="ACTION" value="REBOOT_FSCK">$Lang::tr{'reboot fsck'}</button></td>
+	</tr>
+	</table>
+</form>
 END
-	;
+;
 	&Header::closebox();
 
 } else {
