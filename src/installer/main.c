@@ -786,7 +786,7 @@ int main(int argc, char *argv[]) {
 
 	// Extract files...
 	snprintf(commandstring, STRING_SIZE,
-		"/bin/tar --acls --xattrs --xattrs-include='*' -C /harddisk -xvf /cdrom/distro.img --xz 2>/dev/null");
+		"/bin/tar --acls --xattrs --xattrs-include='*' -C /harddisk -xvf /cdrom/distro.img --zstd 2>/dev/null");
 
 	if (runcommandwithprogress(60, 4, title, commandstring, INST_FILECOUNT,
 			_("Installing the system..."), logfile)) {

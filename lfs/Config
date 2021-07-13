@@ -81,6 +81,11 @@ TAR_OPTIONS = \
 	--acls \
 	--xattrs --xattrs-include='*'
 
+ZSTD_OPTIONS = \
+	-T$(PARALLELISM) \
+	-19 \
+	--long
+
 # URLs that are common sources of downloads.  If you're having trouble with
 # a site you should change its URL to that of a suitable mirror site.
 #

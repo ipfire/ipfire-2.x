@@ -165,7 +165,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-C / --files-from=$(DIR_TMP)/ROOTFILES | tar $(TAR_OPTIONS) -x -C $(DIR_TMP)/root
 	rm -f $(DIR_TMP)/ROOTFILES
 	mkdir $(DIR_TMP)/root/sys
-	cd $(DIR_TMP)/root && tar $(TAR_OPTIONS) -cf - * | xz $(XZ_OPT) > $(DIR_TMP)/cdrom/distro.img
+	cd $(DIR_TMP)/root && tar $(TAR_OPTIONS) -cf - * | zstd $(ZSTD_OPTIONS) > $(DIR_TMP)/cdrom/distro.img
 	rm -rf $(DIR_TMP)/root
 
 	# Other files
