@@ -29,7 +29,7 @@ function _strip() {
 
 	# Fetch any capabilities
 	local capabilities="$(getfattr --no-dereference --name="security.capability" \
-		--absolute-names --dump "${file}")"
+		--absolute-names --dump "${file}" 2>/dev/null)"
 
 	local cmd=( "${strip}" )
 

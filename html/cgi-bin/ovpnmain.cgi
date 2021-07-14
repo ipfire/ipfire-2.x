@@ -1532,8 +1532,8 @@ END
 	&Header::openbigbox('100%', 'LEFT', '', $errormessage);
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'ca certificate'}:");
 	my @output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
-	@output = &Header::cleanhtml(@output,"y");
-	print "<pre>@output</pre>\n";
+	my $output = &Header::cleanhtml(join("", @output),"y");
+	print "<pre>$output</pre>\n";
 	&Header::closebox();
 	print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 	&Header::closebigbox();
@@ -1652,8 +1652,8 @@ END
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'host certificate'}:");
 	@output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
     }
-    @output = &Header::cleanhtml(@output,"y");
-    print "<pre>@output</pre>\n";
+    my $output = &Header::cleanhtml(join("", @output), "y");
+    print "<pre>$output</pre>\n";
     &Header::closebox();
     print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
     &Header::closebigbox();
@@ -2616,8 +2616,8 @@ else
 	&Header::openbigbox('100%', 'LEFT', '', '');
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'certificate'}:");
 	my @output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
-	@output = &Header::cleanhtml(@output,"y");
-	print "<pre>@output</pre>\n";
+	my $output = &Header::cleanhtml(join("", @output), "y");
+	print "<pre>$output</pre>\n";
 	&Header::closebox();
 	print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 	&Header::closebigbox();
@@ -2638,8 +2638,8 @@ else
 		&Header::openbigbox('100%', 'LEFT', '', '');
 		&Header::openbox('100%', 'LEFT', "$Lang::tr{'dh'}:");
 		my @output = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "${General::swroot}/ovpn/ca/dh1024.pem");
-		@output = &Header::cleanhtml(@output,"y");
-		print "<pre>@output</pre>\n";
+		my $output = &Header::cleanhtml(join("", @output) ,"y");
+		print "<pre>$output</pre>\n";
 		&Header::closebox();
 		print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 		&Header::closebigbox();
@@ -2664,8 +2664,8 @@ else
 		my @output = <FILE>;
 		close(FILE);
 
-		@output = &Header::cleanhtml(@output,"y");
-		print "<pre>@output</pre>\n";
+		my $output = &Header::cleanhtml(join("", @output),"y");
+		print "<pre>$output</pre>\n";
 		&Header::closebox();
 		print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 		&Header::closebigbox();
@@ -2687,8 +2687,8 @@ else
 	&Header::openbigbox('100%', 'LEFT', '', '');
 	&Header::openbox('100%', 'LEFT', "$Lang::tr{'crl'}:");
 	my @output = &General::system_output("/usr/bin/openssl", "crl", "-text", "-noout", "-in", "${General::swroot}/ovpn/crls/cacrl.pem");
-	@output = &Header::cleanhtml(@output,"y");
-	print "<pre>@output</pre>\n";
+	my $output = &Header::cleanhtml(join("", @output), "y");
+	print "<pre>$output</pre>\n";
 	&Header::closebox();
 	print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 	&Header::closebigbox();

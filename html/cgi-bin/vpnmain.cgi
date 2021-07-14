@@ -226,13 +226,9 @@ sub newcleanssldatabase {
 ###
 sub callssl ($) {
 	my $opt = shift;
-
-	# Split the given argument string into single pieces and assign them to an array.
-	my @opts = split(/ /, $opt);
-
-	my @retssl = &General::system_output("/usr/bin/openssl", @opts); #redirect stderr
+	my $retssl = `/usr/bin/openssl $opt 2>&1`; #redirect stderr
 	my $ret = '';
-	foreach my $line (split (/\n/, @retssl)) {
+	foreach my $line (split (/\n/, $retssl)) {
 		&General::log("ipsec", "$line") if (0); # 1 for verbose logging
 		$ret .= '<br>'.$line if ( $line =~ /error|unknown/ );
 	}
@@ -246,21 +242,13 @@ sub callssl ($) {
 ###
 sub getCNfromcert ($) {
 	#&General::log("ipsec", "Extracting name from $_[0]...");
-	my @temp = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "$_[0]");
-	my $temp;
-
-	foreach my $line (@temp) {
-		if ($line =~ /Subject:.*CN = (.*)[\n]/) {
-			$temp = $1;
-			$temp =~ s+/Email+, E+;
-			$temp =~ s/ ST = / S = /;
-			$temp =~ s/,//g;
-			$temp =~ s/\'//g;
-
-			last;
-		}
-	}
-
+	my $temp = `/usr/bin/openssl x509 -text -in $_[0]`;
+	$temp =~ /Subject:.*CN = (.*)[\n]/;
+	$temp = $1;
+	$temp =~ s+/Email+, E+;
+	$temp =~ s/ ST = / S = /;
+	$temp =~ s/,//g;
+	$temp =~ s/\'//g;
 	return $temp;
 }
 ###
@@ -268,19 +256,11 @@ sub getCNfromcert ($) {
 ###
 sub getsubjectfromcert ($) {
 	#&General::log("ipsec", "Extracting subject from $_[0]...");
-	my @temp = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "$_[0]");
-	my $temp;
-
-	foreach my $line (@temp) {
-		if($line =~ /Subject: (.*)[\n]/) {
-			$temp = $1;
-			$temp =~ s+/Email+, E+;
-			$temp =~ s/ ST = / S = /;
-
-			last;
-		}
-	}
-
+	my $temp = `/usr/bin/openssl x509 -text -in $_[0]`;
+	$temp =~ /Subject: (.*)[\n]/;
+	$temp = $1;
+	$temp =~ s+/Email+, E+;
+	$temp =~ s/ ST = / S = /;
 	return $temp;
 }
 ###
@@ -689,8 +669,8 @@ END
 		$errormessage = $!;
 		goto UPLOADCA_ERROR;
 	}
-	my @temp = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "$filename");
-	if (! grep(/CA:TRUE/, @temp)) {
+	my $temp = `/usr/bin/openssl x509 -text -in $filename`;
+	if ($temp !~ /CA:TRUE/i) {
 		$errormessage = $Lang::tr{'not a valid ca certificate'};
 		unlink ($filename);
 		goto UPLOADCA_ERROR;
@@ -725,8 +705,8 @@ END
 		&Header::openbigbox('100%', 'left', '', '');
 		&Header::openbox('100%', 'left', "$Lang::tr{'ca certificate'}:");
 		my @output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
-		@output = &Header::cleanhtml(@output,"y");
-		print "<pre>@output</pre>\n";
+		my $output = &Header::cleanhtml(join("", @output) ,"y");
+		print "<pre>$output</pre>\n";
 		&Header::closebox();
 		print "<div align='center'><a href='/cgi-bin/vpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 		&Header::closebigbox();
@@ -852,8 +832,8 @@ END
 		&Header::openbox('100%', 'left', "$Lang::tr{'host certificate'}:");
 		@output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/certs/hostcert.pem");
 	}
-	@output = &Header::cleanhtml(@output,"y");
-	print "<pre>@output</pre>\n";
+	my $output = &Header::cleanhtml(join("", @output) ,"y");
+	print "<pre>$output</pre>\n";
 	&Header::closebox();
 	print "<div align='center'><a href='/cgi-bin/vpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 	&Header::closebigbox();
@@ -1541,8 +1521,8 @@ END
 		&Header::openbigbox('100%', 'left', '', '');
 		&Header::openbox('100%', 'left', "$Lang::tr{'cert'}:");
 		my @output = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
-		@output = &Header::cleanhtml(@output,"y");
-		print "<pre>@output</pre>\n";
+		my $output = &Header::cleanhtml(join("", @output) ,"y");
+		print "<pre>$output</pre>\n";
 		&Header::closebox();
 		print "<div align='center'><a href='/cgi-bin/vpnmain.cgi'>$Lang::tr{'back'}</a></div>";
 		&Header::closebigbox();
