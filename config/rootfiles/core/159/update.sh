@@ -127,6 +127,11 @@ fi
 /usr/local/bin/openvpnctrl -s
 /usr/local/bin/openvpnctrl -sn2n
 
+# Update hddshutdown cronjob
+sed -e "s|^.*/usr/local/bin/hddshutdown.*$|2,32 * * * * \t/usr/local/bin/hddshutdown >/dev/null|g" \
+    -i /var/spool/cron/root.orig
+fcrontab -z
+
 # remove lm_sensor config after collectd was started
 # to reserch sensors at next boot with updated kernel
 rm -f  /etc/sysconfig/lm_sensors
