@@ -1363,6 +1363,42 @@ sub formatBytes {
 	return sprintf("%.2f %s", $bytes, $unit);
 }
 
+# Function to collect and generate a hash for translating protocol numbers into
+# their names.
+sub generateProtoTransHash () {
+	# File which contains the protocol definitions.
+	my $protocols_file = "/etc/protocols";
+
+	my %protocols = ();
+
+	# Open protocols file.
+	open(FILE, "$protocols_file") or die "Could not open $protocols_file. $!\n";
+
+	# Loop through the file.
+	while (my $line = <FILE>) {
+		# Skip comments.
+		next if ($line =~ /^\#/);
+
+		# Skip blank  lines.
+		next if ($line =~ /^\s*$/);
+
+		# Remove any newlines.
+		chomp($line);
+
+		# Split line content.
+		my ($protocol_lc, $number, $protocol_uc, $comment) = split(' ', $line);
+
+		# Add proto details to the hash of protocols.
+		$protocols{$number} = $protocol_uc;
+	}
+
+	# Close file handle.
+	close(FILE);
+
+	# Return the hash.
+	return %protocols;
+}
+
 # Cloud Stuff
 
 sub running_in_cloud() {
