@@ -818,10 +818,28 @@ if ($fwhostsettings{'ACTION'} eq 'saveservicegrp')
 			}
 		}
 	}
-	if ($tcpcounter > 14){
+
+	# Loop through the hash of configured services.
+	foreach my $key (keys %customservice) {
+		# Assign nice human-readable values.
+		my $service_name = $customservice{$key}[0];
+		my $service_port = $customservice{$key}[1];
+		my $service_proto = $customservice{$key}[2];
+
+		# Skip services unless the processed one has found.
+		next unless $service_name eq $fwhostsettings{'CUST_SRV'};
+
+		# Increase the counters.
+		$tcpcounter++ if $service_proto eq 'TCP';
+		$tcpcounter++ if $service_proto eq 'TCP' && $service_port =~ m/:/i;
+		$udpcounter++ if $service_proto eq 'UDP';
+		$udpcounter++ if $service_proto eq 'UDP' && $service_port =~ m/:/i;
+	}
+
+	if ($tcpcounter > 15) {
 		$errormessage=$Lang::tr{'fwhost err maxservicetcp'};
 	}
-	if ($udpcounter > 14){
+	if ($udpcounter > 15) {
 		$errormessage=$Lang::tr{'fwhost err maxserviceudp'};
 	}
 	$tcpcounter=0;
