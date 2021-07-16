@@ -35,19 +35,6 @@ my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'hour' unless defined $querry[1];
-
-if ( $querry[0] =~ "memory"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatememorygraph($querry[1]);
-}elsif ( $querry[0] =~ "swap"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updateswapgraph($querry[1]);
-}else{
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'memory information'}, 1, '');
 	&Header::openbigbox('100%', 'left');
@@ -139,7 +126,6 @@ END
 
 	&Header::closebigbox();
 	&Header::closepage();
-}
 
 sub percentbar{
 	my $percent = $_[0];

@@ -43,16 +43,6 @@ my %netsettings=();
 my @graphs=();
 my %dhcpinfo=();
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'hour' unless defined $querry[1];
-
-if ( $querry[0] ne~ ""){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updateifgraph($querry[0],$querry[1]);
-}else{
-
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'network traffic graphs external'}, 1, '');
 	&Header::openbigbox('100%', 'left');
@@ -163,4 +153,3 @@ END
 
 	&Header::closebigbox();
 	&Header::closepage();
-}

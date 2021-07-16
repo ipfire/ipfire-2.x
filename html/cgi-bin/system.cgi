@@ -35,23 +35,6 @@ my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'hour' unless defined $querry[1];
-
-if ( $querry[0] =~ "cpufreq"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatecpufreqgraph($querry[1]);
-}elsif ( $querry[0] =~ "cpu"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatecpugraph($querry[1]);
-}elsif ( $querry[0] =~ "load"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updateloadgraph($querry[1]);
-}else{
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'status information'}, 1, '');
 	&Header::openbigbox('100%', 'left');
@@ -72,4 +55,3 @@ if ( $querry[0] =~ "cpufreq"){
 
 	&Header::closebigbox();
 	&Header::closepage();
-}

@@ -37,15 +37,6 @@ my %mainsettings = ();
 
 my @vpns=();
 
-my @querry = split(/\?/,uri_unescape($ENV{'QUERY_STRING'}));
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'week' unless defined $querry[1];
-
-if ( $querry[0] ne "" && $querry[0] ne "UNDEF"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatevpngraph($querry[0],$querry[1]);
-}else{
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'vpn statistic rw'}, 1, '');
 	&Header::openbigbox('100%', 'left');
@@ -69,4 +60,3 @@ if ( $querry[0] ne "" && $querry[0] ne "UNDEF"){
 
 	&Header::closebigbox();
 	&Header::closepage();
-}

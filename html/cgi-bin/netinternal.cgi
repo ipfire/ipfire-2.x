@@ -40,22 +40,6 @@ my %netsettings=();
 my @graphs=();
 my @wireless=();
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'hour' unless defined $querry[1];
-$querry[2] = '' unless defined $querry[2];
-
-if ( $querry[0] =~ /wireless/ ){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	$querry[0] =~ s/wireless//g;
-	&Graphs::updatewirelessgraph($querry[0],$querry[1]);
-}elsif ( $querry[0] ne "" ){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updateifgraph($querry[0],$querry[1]);
-}else{
-
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'network traffic graphs internal'}, 1, '');
 	&Header::openbigbox('100%', 'left');
@@ -84,4 +68,3 @@ if ( $querry[0] =~ /wireless/ ){
 
 	&Header::closebigbox();
 	&Header::closepage();
-}	

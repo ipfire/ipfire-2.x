@@ -90,35 +90,6 @@ if (@thermal_zone_sensors) {
 	}
 }
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'hour' unless defined $querry[1];
-
-if ( $querry[0] =~ "hwtemp"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatehwtempgraph($querry[1]);
-}elsif ( $querry[0] =~ "hwfan"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatehwfangraph($querry[1]);
-}elsif ( $querry[0] =~ "hwvolt"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatehwvoltgraph($querry[1]);
-}elsif ( $querry[0] =~ "thermaltemp"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatethermaltempgraph($querry[1]);
-}elsif ( $querry[0] =~ "sd?" ){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatehddgraph($querry[0],$querry[1]);
-}elsif ( $querry[0] =~ "nvme?" ){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatehddgraph($querry[0],$querry[1]);
-}else{
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'hardware graphs'}, 1, '');
 	&Header::openbigbox('100%', 'left');
@@ -183,9 +154,6 @@ if ( $querry[0] =~ "hwtemp"){
 	}
 	&Header::closebigbox();
 	&Header::closepage();
-
-}
-
 
 sub sensorsbox {
 	&Header::openbox('100%', 'center', "$Lang::tr{'mbmon settings'}");

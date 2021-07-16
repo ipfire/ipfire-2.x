@@ -41,18 +41,8 @@ undef (@dummy);
 
 my %cgiparams=();
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'hour' unless defined $querry[1];
-
 my @devices = `ls -1 /sys/block | grep -E '^sd|^mmcblk|^nvme|^xvd|^vd|^md' | sort | uniq`;
 
-if ( $querry[0] =~ "sd?" || $querry[0] =~ "mmcblk?" || $querry[0] =~ "nvme?n?" || $querry[0] =~ "xvd??" || $querry[0] =~ "vd?" || $querry[0] =~ "md*" ){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	
-	&Graphs::updatediskgraph($querry[0],$querry[1]);
-}else{
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'media information'}, 1, '');
 	&Header::openbigbox('100%', 'left');
@@ -162,7 +152,6 @@ END
 
 	&Header::closebigbox();
 	&Header::closepage();
-}
 
 sub percentbar
 {

@@ -111,15 +111,6 @@ my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'hour' unless defined $querry[1];
-
-if ( $querry[0] ne ""){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updateqosgraph($querry[0],$querry[1]);
-}else{
 	&Header::showhttpheaders();
 
 	&Header::openpage('QoS', 1, '');
@@ -720,8 +711,6 @@ if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq ''
 
 &Header::closebigbox();
 &Header::closepage();
-
-}
 
 ############################################################################################################################
 ############################################################################################################################

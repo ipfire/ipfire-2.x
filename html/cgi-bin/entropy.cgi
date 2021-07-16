@@ -30,16 +30,6 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/graphs.pl";
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'hour' unless defined $querry[1];
-
-if ( $querry[0] ne~ "") {
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updateentropygraph($querry[1]);
-
-} else {
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'entropy'}, 1, '');
 	&Header::openbigbox('100%', 'left');
@@ -86,7 +76,6 @@ EOF
 
 	&Header::closebigbox();
 	&Header::closepage();
-}
 
 sub has_rdrand() {
 	open(FILE, "/proc/cpuinfo") or return 0;

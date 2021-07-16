@@ -49,19 +49,6 @@ foreach my $key (sort {$vpnsettings{$a}[1] <=> $vpnsettings{$b}[1]} keys %vpnset
 	$ipsecgraphs{$vpnsettings{$key}[1]} = "${interface_mode}${key}";
 }
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'week' unless defined $querry[1];
-
-if ( $querry[0] ne ""){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	if (grep { $_ eq $querry[0] } values %ipsecgraphs) {
-		&Graphs::updateifgraph($querry[0],$querry[1]);
-	} else {
-		&Graphs::updatevpnn2ngraph($querry[0],$querry[1]);
-	}
-}else{
 	&Header::showhttpheaders();
 	&Header::openpage($Lang::tr{'vpn statistic n2n'}, 1, '');
 	&Header::openbigbox('100%', 'left');
@@ -91,4 +78,3 @@ if ( $querry[0] ne ""){
 
 	&Header::closebigbox();
 	&Header::closepage();
-}
