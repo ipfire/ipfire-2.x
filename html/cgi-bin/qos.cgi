@@ -351,7 +351,7 @@ END
 ;
 	close FILE;
 }
-elsif ($qossettings{'DOTOS'} eq 'Loeschen')
+elsif ($qossettings{'DOTOS'} eq $Lang::tr{'delete'})
 {
 	open( FILE, "< $tosfile" ) or die "Unable to read $tosfile";
 	@tosrules = <FILE>;
