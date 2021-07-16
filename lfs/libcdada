@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.3.4
+VER        = 0.3.5
 
 THISAPP    = libcdada-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,9 +32,8 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libcdada
-PAK_VER    = 1
+PAK_VER    = 2
 
-SUP_ARCH   = none
 
 DEPS       = 
 
@@ -46,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f5067835014e02d221af9754df8b140b
+$(DL_FILE)_MD5 = adbd5fef042d34b9fff01ceedb81b5ee
 
 install : $(TARGET)
 
@@ -79,11 +78,14 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libcdada-0.3.4-use-shared-library-for-tests-and-examples-build.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libcdada-0.3.5-Werror.patch
 	cd $(DIR_APP) && ./autogen.sh
-	cd $(DIR_APP)/build && ../configure			\
-					--prefix=/usr		\
-					--disable-static
+	cd $(DIR_APP) && autoupdate
+	cd $(DIR_APP)/build && ../configure		\
+				--prefix=/usr		\
+				--disable-static	\
+				--without-tests		\
+				--without-examples
 	cd $(DIR_APP)/build && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
