@@ -247,7 +247,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		$errormessage=$Lang::tr{'fwdfw err same'};
 	}
 	# INPUT part
-	if ($fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ORANGE'){
+	if ($fwdfwsettings{'grp2'} eq 'ipfire') {
 		$fwdfwsettings{'config'}=$configinput;
 		$fwdfwsettings{'chain'} = 'INPUTFW';
 		$maxkey=&General::findhasharraykey(\%configinputfw);
