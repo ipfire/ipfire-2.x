@@ -213,6 +213,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	&General::readhasharray("$configfwdfw", \%configfwdfw);
 	&General::readhasharray("$configinput", \%configinputfw);
 	&General::readhasharray("$configoutgoing", \%configoutgoingfw);
+	&General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
 	my $maxkey;
 	#Set Variables according to the JQuery code in protocol section
 	if ($fwdfwsettings{'PROT'} eq 'TCP' || $fwdfwsettings{'PROT'} eq 'UDP')
@@ -231,6 +232,38 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	{
 		$fwdfwsettings{'USESRV'} = 'ON';
 	}
+
+	# Check if a manual target IP is one of the IPFire's addresses.
+	if ($fwdfwsettings{'grp2'} eq 'tgt_addr') {
+		# Grab all available network zones.
+		my @network_zones = &Network::get_available_network_zones();
+
+		# Loop through the array of network zones.
+		foreach my $zone (@network_zones) {
+			# Skip red network zone.
+			next if $zone eq "red";
+
+			# Convert current zone name into upper case.
+			$zone = uc($zone);
+
+			# Generate key to access the required data from the netsettings hash.
+			my $key = $zone . "_ADDRESS";
+
+			# Obtain the configured address for the current zone from the netsettings hash.
+			my $zone_address = $netsettings{$key};
+
+			# Check if the given address and the current processed zone address are the same.
+			if ($fwdfwsettings{$fwdfwsettings{'grp2'}} eq $zone_address) {
+				# Map the type and target.
+				$fwdfwsettings{'grp2'} = 'ipfire';
+				$fwdfwsettings{$fwdfwsettings{'grp2'}} = $zone;
+
+				# End loop.
+				last;
+			}
+		}
+	}
+
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
