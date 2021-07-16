@@ -1,0 +1,38 @@
+--- pmacct-1.7.6/configure.ac.orig	2021-02-05 02:07:36.000000000 +0100
++++ pmacct-1.7.6/configure.ac	2021-07-15 19:58:37.247916727 +0200
+@@ -1153,9 +1153,9 @@ AC_ARG_ENABLE(debug,
+ 			AC_MSG_RESULT(yes)
+ 			tmp_CFLAGS=`echo $CFLAGS | sed 's/O2/O0/g'`
+ 			CFLAGS="$tmp_CFLAGS"
+-			CFLAGS="$CFLAGS -g -Wall -Werror"
++			CFLAGS="$CFLAGS -g -Wall"
+ 		else
+-			CFLAGS="$CFLAGS -Wall -Werror"
++			CFLAGS="$CFLAGS -Wall"
+ 			AC_MSG_RESULT(no)
+ 		fi
+ 	],
+
+
+--- pmacct-1.7.6/src/external_libs/libcdada/configure.ac.orig	2021-02-07 16:29:15.000000000 +0100
++++ pmacct-1.7.6/src/external_libs/libcdada/configure.ac	2021-07-16 09:04:30.858749121 +0200
+@@ -4,7 +4,7 @@ AC_INIT(LIBCDADA, m4_esyscmd_s(cat VERSI
+ AC_CONFIG_AUX_DIR([build-aux])
+ AC_CONFIG_MACRO_DIR([m4])
+ 
+-AM_INIT_AUTOMAKE([-Wall -Werror foreign subdir-objects])
++AM_INIT_AUTOMAKE([-Wall foreign subdir-objects])
+ 
+ AC_GNU_SOURCE
+ 
+@@ -24,8 +24,8 @@ LT_INIT
+ AC_ENABLE_STATIC
+ 
+ # Some useful default flags
+-CFLAGS="-std=gnu89 -Werror -Wall $CFLAGS"
+-CXXFLAGS="-Werror -Wall $CXXFLAGS"
++CFLAGS="-std=gnu89 -Wall $CFLAGS"
++CXXFLAGS="-Wall $CXXFLAGS"
+ AC_DEFINE([__STDC_FORMAT_MACROS], [], [Description])
+ 
+ # Check for Python3
