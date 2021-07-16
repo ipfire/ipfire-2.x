@@ -569,6 +569,24 @@ sub checktarget
 	#check DNAT settings (has to be single Host and single Port or portrange)
 	if ($fwdfwsettings{'USE_NAT'} eq 'ON' && $fwdfwsettings{'nat'} eq 'dnat'){
 		if($fwdfwsettings{'grp2'} eq 'tgt_addr' || $fwdfwsettings{'grp2'} eq 'cust_host_tgt' || $fwdfwsettings{'grp2'} eq 'ovpn_host_tgt'){
+			# Check if a manual entered IP is a single Host (if set)
+			if ($fwdfwsettings{'grp2'} eq 'tgt_addr') {
+				# Split input into address and prefix (if provided).
+				my ($address, $subnet) = split ('/', $fwdfwsettings{$fwdfwsettings{'grp2'}});
+
+				# Check if a subnet is given.
+				if ($subnet) {
+					# Check if the prefix or subnetmask is for a single host.
+					unless ($subnet eq "32" || $subnet eq "255.255.255.255") {
+						# Set error message.
+						$errormessage=$Lang::tr{'fwdfw dnat error'}."<br>";
+
+						# Return the error.
+						return $errormessage;
+					}
+				}
+			}
+
 			#check if Port is a single Port or portrange
 			if ($fwdfwsettings{'nat'} eq 'dnat' &&  $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
 				if(($fwdfwsettings{'PROT'} ne 'TCP'|| $fwdfwsettings{'PROT'} ne 'UDP') && $fwdfwsettings{'TGT_PORT'} eq ''){
