@@ -34,6 +34,11 @@ case "${1}" in
 			mount -n -t tmpfs -o nosuid,nodev,mode=755,size=8M /run /run || failed=1
 		fi
 
+		if ! mountpoint /sys/fs/cgroup &> /dev/null; then
+			boot_mesg -n " /sys/fs/cgroup" ${NORMAL}
+			mount -t cgroup2 none /sys/fs/cgroup || failed=1
+		fi
+
 		# create folder for dhcpcd changeroot
 		mkdir -p /run/dhcpcd/chroot
 		chown dhcpcd:dhcpcd /run/dhcpcd/chroot
