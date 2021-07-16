@@ -111,10 +111,10 @@ my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
-	&Header::showhttpheaders();
+&Header::showhttpheaders();
 
-	&Header::openpage('QoS', 1, '');
-	&Header::openbigbox('100%', 'left', '', $errormessage);
+&Header::openpage('QoS', 1, '');
+&Header::openbigbox('100%', 'left', '', $errormessage);
 
 ############################################################################################################################
 ############################################################################################################################
@@ -699,12 +699,12 @@ if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq ''
 	exit
 }
 
-	&Header::openbox('100%', 'center', "$qossettings{'RED_DEV'} $Lang::tr{'graph'}, $Lang::tr{'uplink'}");
-	&Graphs::makegraphbox("qos.cgi",$qossettings{'RED_DEV'},"hour");
-	&Header::closebox();
-	&Header::openbox('100%', 'center', "$qossettings{'IMQ_DEV'} $Lang::tr{'graph'}, $Lang::tr{'downlink'}");
-	&Graphs::makegraphbox("qos.cgi",$qossettings{'IMQ_DEV'},"hour");
-	&Header::closebox();
+&Header::openbox('100%', 'center', "$qossettings{'RED_DEV'} $Lang::tr{'graph'}, $Lang::tr{'uplink'}");
+&Graphs::makegraphbox("qos.cgi",$qossettings{'RED_DEV'},"hour");
+&Header::closebox();
+&Header::openbox('100%', 'center', "$qossettings{'IMQ_DEV'} $Lang::tr{'graph'}, $Lang::tr{'downlink'}");
+&Graphs::makegraphbox("qos.cgi",$qossettings{'IMQ_DEV'},"hour");
+&Header::closebox();
 
 &showclasses($qossettings{'RED_DEV'});
 &showclasses($qossettings{'IMQ_DEV'});

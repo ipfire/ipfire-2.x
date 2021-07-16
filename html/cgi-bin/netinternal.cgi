@@ -40,31 +40,31 @@ my %netsettings=();
 my @graphs=();
 my @wireless=();
 
-	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'network traffic graphs internal'}, 1, '');
-	&Header::openbigbox('100%', 'left');
+&Header::showhttpheaders();
+&Header::openpage($Lang::tr{'network traffic graphs internal'}, 1, '');
+&Header::openbigbox('100%', 'left');
 
-	push (@graphs, ($netsettings{'GREEN_DEV'}));
-	if (&Header::blue_used() && $netsettings{'BLUE_DEV'}) {push (@graphs, ($netsettings{'BLUE_DEV'})); }
-	if (&Header::orange_used() && $netsettings{'ORANGE_DEV'}) {push (@graphs, ($netsettings{'ORANGE_DEV'})); }
+push (@graphs, ($netsettings{'GREEN_DEV'}));
+if (&Header::blue_used() && $netsettings{'BLUE_DEV'}) {push (@graphs, ($netsettings{'BLUE_DEV'})); }
+if (&Header::orange_used() && $netsettings{'ORANGE_DEV'}) {push (@graphs, ($netsettings{'ORANGE_DEV'})); }
 
-	my @wirelessgraphs = `ls -dA /var/log/rrd/collectd/localhost/wireless* 2>/dev/null`;
-	foreach (@wirelessgraphs){
-		$_ =~ /(.*)\/wireless-(.*)/;
-		push(@wireless,$2);
-	}
+my @wirelessgraphs = `ls -dA /var/log/rrd/collectd/localhost/wireless* 2>/dev/null`;
+foreach (@wirelessgraphs){
+	$_ =~ /(.*)\/wireless-(.*)/;
+	push(@wireless,$2);
+}
 
-	foreach (@graphs) {
-		&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("netinternal.cgi",$_,"day");
-		&Header::closebox();
-	}
+foreach (@graphs) {
+	&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("netinternal.cgi",$_,"day");
+	&Header::closebox();
+}
 
-	foreach (@wireless) {
-		&Header::openbox('100%', 'center', "Wireless $_ $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("netinternal.cgi","wireless".$_,"day");
-		&Header::closebox();
-	}
+foreach (@wireless) {
+	&Header::openbox('100%', 'center', "Wireless $_ $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("netinternal.cgi","wireless".$_,"day");
+	&Header::closebox();
+}
 
-	&Header::closebigbox();
-	&Header::closepage();
+&Header::closebigbox();
+&Header::closepage();

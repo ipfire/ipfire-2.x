@@ -37,51 +37,51 @@ my %mainsettings = ();
 
 my @pings=();
 
-	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'network traffic graphs others'}, 1, '');
-	&Header::openbigbox('100%', 'left');
-	
-	my @pinggraphs = `ls -dA /var/log/rrd/collectd/localhost/ping/ping-*`;
-	foreach (@pinggraphs){
-		$_ =~ /(.*)\/ping\/ping-(.*)\.rrd/;
-		push(@pings,$2);
-	}
+&Header::showhttpheaders();
+&Header::openpage($Lang::tr{'network traffic graphs others'}, 1, '');
+&Header::openbigbox('100%', 'left');
 
-	foreach (@pings) {
-		&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("netother.cgi",$_,"day");
-		&Header::closebox();
-	}
+my @pinggraphs = `ls -dA /var/log/rrd/collectd/localhost/ping/ping-*`;
+foreach (@pinggraphs){
+	$_ =~ /(.*)\/ping\/ping-(.*)\.rrd/;
+	push(@pings,$2);
+}
 
-	&Header::openbox('100%', 'center', "$Lang::tr{'connection tracking'}");
-	&Graphs::makegraphbox("netother.cgi", "conntrack", "day");
+foreach (@pings) {
+	&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("netother.cgi",$_,"day");
 	&Header::closebox();
+}
 
-	&Header::openbox('100%', 'center', "$Lang::tr{'firewallhits'} $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("netother.cgi","fwhits","day");
-	&Header::closebox();
+&Header::openbox('100%', 'center', "$Lang::tr{'connection tracking'}");
+&Graphs::makegraphbox("netother.cgi", "conntrack", "day");
+&Header::closebox();
 
-	my $output = '';
-	
-	&Header::openbox('100%', 'left', $Lang::tr{'routing table entries'});
-	$output = `/sbin/ip route show`;
+&Header::openbox('100%', 'center', "$Lang::tr{'firewallhits'} $Lang::tr{'graph'}");
+&Graphs::makegraphbox("netother.cgi","fwhits","day");
+&Header::closebox();
+
+my $output = '';
+
+&Header::openbox('100%', 'left', $Lang::tr{'routing table entries'});
+$output = `/sbin/ip route show`;
+$output = &Header::cleanhtml($output,"y");
+print "<pre>$output</pre>\n";
+&Header::closebox();
+
+$output = `/sbin/ip route list table 220`;
+if ( $output ) {
+	&Header::openbox('100%', 'left', $Lang::tr{'ipsec routing table entries'});
 	$output = &Header::cleanhtml($output,"y");
 	print "<pre>$output</pre>\n";
-	&Header::closebox();
+	&Header::closebox()
+}
 
-	$output = `/sbin/ip route list table 220`;
-	if ( $output ) {
-		&Header::openbox('100%', 'left', $Lang::tr{'ipsec routing table entries'});
-		$output = &Header::cleanhtml($output,"y");
-		print "<pre>$output</pre>\n";
-		&Header::closebox()
-	}
+&Header::openbox('100%', 'left', $Lang::tr{'arp table entries'});
+$output = `/sbin/ip neigh show`;
+$output = &Header::cleanhtml($output,"y");
+print "<pre>$output</pre>\n";
+&Header::closebox();
 
-	&Header::openbox('100%', 'left', $Lang::tr{'arp table entries'});
-	$output = `/sbin/ip neigh show`;
-	$output = &Header::cleanhtml($output,"y");
-	print "<pre>$output</pre>\n";
-	&Header::closebox();
-
-	&Header::closebigbox();
-	&Header::closepage();
+&Header::closebigbox();
+&Header::closepage();

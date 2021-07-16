@@ -30,52 +30,52 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/graphs.pl";
 
-	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'entropy'}, 1, '');
-	&Header::openbigbox('100%', 'left');
+&Header::showhttpheaders();
+&Header::openpage($Lang::tr{'entropy'}, 1, '');
+&Header::openbigbox('100%', 'left');
 
-	&Header::openbox('100%', 'center', $Lang::tr{'entropy'});
-	&Graphs::makegraphbox("entropy.cgi", "entropy", "day");
-	&Header::closebox();
+&Header::openbox('100%', 'center', $Lang::tr{'entropy'});
+&Graphs::makegraphbox("entropy.cgi", "entropy", "day");
+&Header::closebox();
 
-	# Check for hardware support.
-	my $message;
-	my $message_colour = $Header::colourred;
-	if (&has_rdrand()) {
-		$message = $Lang::tr{'system has rdrand'};
-		$message_colour = $Header::colourgreen;
-	}
+# Check for hardware support.
+my $message;
+my $message_colour = $Header::colourred;
+if (&has_rdrand()) {
+	$message = $Lang::tr{'system has rdrand'};
+	$message_colour = $Header::colourgreen;
+}
 
-	my $rngd_status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td>";
-	if (&rngd_is_running()) {
-		$rngd_status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
-	}
+my $rngd_status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td>";
+if (&rngd_is_running()) {
+	$rngd_status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
+}
 
-	&Header::openbox('100%', 'center', $Lang::tr{'hardware support'});
-	if ($message) {
-		print <<EOF;
-			<p style="color: $message_colour; text-align: center;">$message</p>
-EOF
-	}
-
+&Header::openbox('100%', 'center', $Lang::tr{'hardware support'});
+if ($message) {
 	print <<EOF;
-		<table width='80%' cellspacing='1' class='tbl'>
-			<tr>
-				<th align='center'><b>$Lang::tr{'service'}</b></th>
-				<th align='center'><b>$Lang::tr{'status'}</b></th>
-			</tr>
-			<tr>
-				<td align='center'>
-					$Lang::tr{'random number generator daemon'}
-				</td>
-				$rngd_status
-			</tr>
-		</table>
+	<p style="color: $message_colour; text-align: center;">$message</p>
 EOF
-	&Header::closebox();
+}
 
-	&Header::closebigbox();
-	&Header::closepage();
+print <<EOF;
+	<table width='80%' cellspacing='1' class='tbl'>
+		<tr>
+			<th align='center'><b>$Lang::tr{'service'}</b></th>
+			<th align='center'><b>$Lang::tr{'status'}</b></th>
+		</tr>
+		<tr>
+			<td align='center'>
+				$Lang::tr{'random number generator daemon'}
+			</td>
+			$rngd_status
+		</tr>
+	</table>
+EOF
+&Header::closebox();
+
+&Header::closebigbox();
+&Header::closepage();
 
 sub has_rdrand() {
 	open(FILE, "/proc/cpuinfo") or return 0;

@@ -43,113 +43,113 @@ my %netsettings=();
 my @graphs=();
 my %dhcpinfo=();
 
-	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'network traffic graphs external'}, 1, '');
-	&Header::openbigbox('100%', 'left');
+&Header::showhttpheaders();
+&Header::openpage($Lang::tr{'network traffic graphs external'}, 1, '');
+&Header::openbigbox('100%', 'left');
 
-	if ($netsettings{'RED_TYPE'} ne 'PPPOE'){
-		if ($netsettings{'RED_DEV'} ne $netsettings{'GREEN_DEV'}){
-			push (@graphs, ($netsettings{'RED_DEV'}));
+if ($netsettings{'RED_TYPE'} ne 'PPPOE'){
+	if ($netsettings{'RED_DEV'} ne $netsettings{'GREEN_DEV'}){
+		push (@graphs, ($netsettings{'RED_DEV'}));
+	}
+}else{
+	push (@graphs, "ppp0");
+}
+
+if (-e "/var/log/rrd/collectd/localhost/interface/if_octets-ipsec0.rrd"){
+	push (@graphs, ("ipsec0"));
+}
+
+if (-e "/var/log/rrd/collectd/localhost/interface/if_octets-tun0.rrd"){
+	push (@graphs, ("tun0"));
+}
+
+foreach (@graphs) {
+	&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("netexternal.cgi",$_,"day");
+	&Header::closebox();
+}
+
+if ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/  && $netsettings{'RED_TYPE'} eq "DHCP"){
+
+	&Header::openbox('100%', 'left', "RED $Lang::tr{'dhcp configuration'}");
+	if (-s "${General::swroot}/dhcpc/dhcpcd-$netsettings{'RED_DEV'}.info") {
+
+		&General::readhash("${General::swroot}/dhcpc/dhcpcd-$netsettings{'RED_DEV'}.info", \%dhcpinfo);
+
+		my ($DNS1, $DNS2) = split(/ /, $dhcpinfo{'domain_name_servers'});
+
+		my $lsetme=0;
+		my $leasetime="";
+		if ($dhcpinfo{'dhcp_lease_time'} ne "") {
+			$lsetme=$dhcpinfo{'dhcp_lease_time'};
+			$lsetme=($lsetme/60);
+			
+			if ($lsetme > 59) {
+				$lsetme=($lsetme/60); $leasetime=$lsetme." Hour";
+			}else{
+				$leasetime=$lsetme." Minute";
+			}
+			
+			if ($lsetme > 1) {
+				$leasetime=$leasetime."s";
+			}
 		}
-	}else{
-		push (@graphs, "ppp0");
-	}
-	
-	if (-e "/var/log/rrd/collectd/localhost/interface/if_octets-ipsec0.rrd"){
-		push (@graphs, ("ipsec0"));
-	}
 
-	if (-e "/var/log/rrd/collectd/localhost/interface/if_octets-tun0.rrd"){
-		push (@graphs, ("tun0"));
-	}
+		my $rentme=0;
+		my $rnwltime="";
 
-	foreach (@graphs) {
-		&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("netexternal.cgi",$_,"day");
-		&Header::closebox();
-	}
+		if ($dhcpinfo{'dhcp_renewal_time'} ne "") {
+			$rentme=$dhcpinfo{'dhcp_renewal_time'};
+			$rentme=($rentme/60);
+			
+			if ($rentme > 59){
+				$rentme=($rentme/60); $rnwltime=$rentme." Hour";
+			}else{
+				$rnwltime=$rentme." Minute";
+			}
+			
+			if ($rentme > 1){
+				$rnwltime=$rnwltime."s";
+			}
+		}
 
-	if ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/  && $netsettings{'RED_TYPE'} eq "DHCP"){
+		my $maxtme=0;
+		my $maxtime="";
 
-		&Header::openbox('100%', 'left', "RED $Lang::tr{'dhcp configuration'}");
-		if (-s "${General::swroot}/dhcpc/dhcpcd-$netsettings{'RED_DEV'}.info") {
+		if ($dhcpinfo{'dhcp_rebinding_time'} ne "") {
+			$maxtme=$dhcpinfo{'dhcp_rebinding_time'};
+			$maxtme=($maxtme/60);
 
-			&General::readhash("${General::swroot}/dhcpc/dhcpcd-$netsettings{'RED_DEV'}.info", \%dhcpinfo);
-
-			my ($DNS1, $DNS2) = split(/ /, $dhcpinfo{'domain_name_servers'});
-
-			my $lsetme=0;
-			my $leasetime="";
-			if ($dhcpinfo{'dhcp_lease_time'} ne "") {
-				$lsetme=$dhcpinfo{'dhcp_lease_time'};
-				$lsetme=($lsetme/60);
-				
-				if ($lsetme > 59) {
-					$lsetme=($lsetme/60); $leasetime=$lsetme." Hour";
-				}else{
-					$leasetime=$lsetme." Minute";
-				}
-				
-				if ($lsetme > 1) {
-					$leasetime=$leasetime."s";
-				}
+			if ($maxtme > 59){
+				$maxtme=($maxtme/60); $maxtime=$maxtme." Hour";
+			} else {
+				$maxtime=$maxtme." Minute";
 			}
 
-			my $rentme=0;
-			my $rnwltime="";
-
-			if ($dhcpinfo{'dhcp_renewal_time'} ne "") {
-				$rentme=$dhcpinfo{'dhcp_renewal_time'};
-				$rentme=($rentme/60);
-				
-				if ($rentme > 59){
-					$rentme=($rentme/60); $rnwltime=$rentme." Hour";
-				}else{
-					$rnwltime=$rentme." Minute";
-				}
-				
-				if ($rentme > 1){
-					$rnwltime=$rnwltime."s";
-				}
+			if ($maxtme > 1) {
+				$maxtime=$maxtime."s";
 			}
-
-			my $maxtme=0;
-			my $maxtime="";
-
-			if ($dhcpinfo{'dhcp_rebinding_time'} ne "") {
-				$maxtme=$dhcpinfo{'dhcp_rebinding_time'};
-				$maxtme=($maxtme/60);
-
-				if ($maxtme > 59){
-					$maxtme=($maxtme/60); $maxtime=$maxtme." Hour";
-				} else {
-					$maxtime=$maxtme." Minute";
-				}
-
-				if ($maxtme > 1) {
-					$maxtime=$maxtime."s";
-				}
-			}
+		}
 
 
-			print <<END
+		print <<END
 <table width='100%'>
-<tr><td width='30%'>$Lang::tr{'domain'}</td><td>$dhcpinfo{'domain_name'}</td></tr>
-<tr><td>$Lang::tr{'gateway'}</td><td>$dhcpinfo{'routers'}</td></tr>
-<tr><td>$Lang::tr{'primary dns'}</td><td>$DNS1</td></tr>
-<tr><td>$Lang::tr{'secondary dns'}</td><td>$DNS2</td></tr>
-<tr><td>$Lang::tr{'dhcp server'}</td><td>$dhcpinfo{'dhcp_server_identifier'}</td></tr>
-<tr><td>$Lang::tr{'def lease time'}</td><td>$leasetime</td></tr>
-<tr><td>$Lang::tr{'default renewal time'}</td><td>$rnwltime</td></tr>
-<tr><td>$Lang::tr{'max renewal time'}</td><td>$maxtime</td></tr>
+	<tr><td width='30%'>$Lang::tr{'domain'}</td><td>$dhcpinfo{'domain_name'}</td></tr>
+	<tr><td>$Lang::tr{'gateway'}</td><td>$dhcpinfo{'routers'}</td></tr>
+	<tr><td>$Lang::tr{'primary dns'}</td><td>$DNS1</td></tr>
+	<tr><td>$Lang::tr{'secondary dns'}</td><td>$DNS2</td></tr>
+	<tr><td>$Lang::tr{'dhcp server'}</td><td>$dhcpinfo{'dhcp_server_identifier'}</td></tr>
+	<tr><td>$Lang::tr{'def lease time'}</td><td>$leasetime</td></tr>
+	<tr><td>$Lang::tr{'default renewal time'}</td><td>$rnwltime</td></tr>
+	<tr><td>$Lang::tr{'max renewal time'}</td><td>$maxtime</td></tr>
 </table>
 END
 ;
-		}else{
-			print "$Lang::tr{'no dhcp lease'}";
-		}
-		&Header::closebox();
+	}else{
+		print "$Lang::tr{'no dhcp lease'}";
 	}
+	&Header::closebox();
+}
 
-	&Header::closebigbox();
-	&Header::closepage();
+&Header::closebigbox();
+&Header::closepage();
