@@ -1,5 +1,6 @@
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/leds
+etc/rc.d/init.d/mountkernfs
 etc/rc.d/init.d/networking/functions.network
 etc/rc.d/init.d/sysctl
 usr/local/bin/makegraphs
