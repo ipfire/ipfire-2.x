@@ -34,4 +34,8 @@ ln -svf  ../init.d/avahi /etc/rc.d/rc3.d/S65avahi
 ln -svf  ../init.d/avahi /etc/rc.d/rc0.d/K35avahi
 ln -svf  ../init.d/avahi /etc/rc.d/rc6.d/K35avahi
 restore_backup ${NAME}
+
+# Reload dbus to load avahi configuration
+/etc/init.d/messagebus reload
+
 start_service --background ${NAME}
