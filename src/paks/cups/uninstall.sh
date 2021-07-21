@@ -25,3 +25,4 @@
 stop_service ${NAME}
 remove_files
 rm -rf /etc/rc.d/rc*.d/*cups
+/etc/init.d/messagebus reload
