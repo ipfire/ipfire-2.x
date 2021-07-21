@@ -65,6 +65,15 @@ done
 # Extract files
 extract_files
 
+# Fix permissions just in case they broke again
+chmod -v 755 \
+	/usr \
+	/usr/bin \
+	/usr/lib \
+	/usr/sbin \
+	/var \
+	/var/ipfire
+
 # update linker config
 ldconfig
 
