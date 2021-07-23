@@ -403,7 +403,11 @@ sub wifi_get_link_quality($) {
 
 	my ($cur, $max) = $status =~ /Link Quality=(\d+)\/(\d+)/;
 
-	return $cur * 100 / $max;
+	if($max > 0) {
+		return sprintf('%.0f', ($cur * 100) / $max);
+	}
+
+	return 0;
 }
 
 sub wifi_get_signal_level($) {
