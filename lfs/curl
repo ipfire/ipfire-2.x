@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.77.0
+VER        = 7.78.0
 
 THISAPP    = curl-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3cf78c539cae019cf96ba38571706e06
+$(DL_FILE)_MD5 = 419c2461366cf404160a820f7a902b7e
 
 install : $(TARGET)
 
