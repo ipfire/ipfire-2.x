@@ -6,11 +6,10 @@ usr/bin/idn
 #usr/include/punycode.h
 #usr/include/stringprep.h
 #usr/include/tld.h
-#usr/lib/libidn.a
 #usr/lib/libidn.la
-usr/lib/libidn.so
+#usr/lib/libidn.so
 usr/lib/libidn.so.12
-usr/lib/libidn.so.12.6.1
+usr/lib/libidn.so.12.6.3
 #usr/lib/pkgconfig/libidn.pc
 #usr/share/emacs
 #usr/share/emacs/site-lisp
