@@ -11,6 +11,10 @@ fi
 
 . "${pkgdatadir}/grub-mkconfig_lib"
 
+if [ -z "${KERNEL_RELEASE}" ]; then
+	KERNEL_RELEASE="$(uname -r)"
+fi
+
 if [ -z "${boot_device_id}" ]; then
 	boot_device_id="$(grub_get_device_id "${GRUB_DEVICE}")"
 fi
@@ -21,6 +25,6 @@ smbios --type 1 --get-string 4 --set system_manufacturer
 
 # Are we on Amazon EC2?
 if [ "\$system_manufacturer" = "Amazon EC2" ]; then
-	next_entry=gnulinux-serial-${boot_device_id}
+	next_entry=gnulinux-${KERNEL_RELEASE}-serial-${boot_device_id}
 fi
 EOF
