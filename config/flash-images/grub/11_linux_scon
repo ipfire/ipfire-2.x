@@ -227,7 +227,7 @@ while [ "x$list" != "x" ] ; do
   fi
 
   if [ "x$is_first_entry" = xtrue ]; then
-    linux_entry "Serial Console: ${OS}" "${version}" simple \
+    linux_entry "Serial Console: ${OS}" "${version}" serial \
     "${GRUB_CMDLINE_LINUX} ${GRUB_CMDLINE_LINUX_DEFAULT} console=ttyS0,115200n8"
 
     submenu_indentation="\t"
