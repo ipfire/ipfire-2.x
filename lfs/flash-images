@@ -188,7 +188,8 @@ ifeq "$(BOOTLOADER)" "grub"
 
 	# Create configuration
 	mkdir -pv $(MNThdd)/boot/grub
-	chroot $(MNThdd) grub-mkconfig -o /boot/grub/grub.cfg
+	GRUB_FIRST_BOOT=true chroot $(MNThdd) \
+		grub-mkconfig -o /boot/grub/grub.cfg
 
 	# Boot the first kernel by default
 	chroot $(MNThdd) grub-set-default 0
