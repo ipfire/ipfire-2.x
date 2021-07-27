@@ -436,6 +436,7 @@ getpids()
 #*******************************************************************************
 loadproc()
 {
+	local background=""
 	local pidfile=""
 	local forcestart=""
 	local nicelevel=""
@@ -448,6 +449,10 @@ loadproc()
   while true
 	do
 		case "${1}" in
+			-b)
+				background="1"
+				shift 1
+				;;
 			-f)
 				forcestart="1"
 				shift 1
@@ -506,8 +511,16 @@ loadproc()
 		cmd="nice -n "${nicelevel}" ${cmd}"
 	fi
 
-	${cmd}
-	evaluate_retval # This is "Probably" not LSB compliant, but required to be compatible with older bootscripts
+	if [ -n "${background}" ]; then
+		(
+			${cmd} &>/dev/null
+		) &
+		evaluate_retval
+	else
+		${cmd}
+		evaluate_retval # This is "Probably" not LSB compliant, but required to be compatible with older bootscripts
+	fi
+
 	return 0
 }
 
