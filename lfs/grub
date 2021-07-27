@@ -125,6 +125,10 @@ ifeq "$(BUILD_PC)" "1"
 	touch /boot/grub/grub.cfg
 endif
 
+	# Install our own helpers
+	install -v -m 644 $(DIR_SRC)/config/grub2/00_cloud \
+		/etc/grub.cfg
+
 	# Install background image
 	-mkdir -pv /boot/grub
 	install -m 644 $(DIR_SRC)/config/grub2/splash.png /boot/grub/splash.png

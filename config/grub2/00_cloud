@@ -1,0 +1,26 @@
+#!/bin/sh
+# This is an IPFire helper script for GRUB to enable the serial console
+# on AWS instances at the time of the first boost
+
+set -e
+
+# Do nothing if first boot isn't enabled
+if [ "${GRUB_FIRST_BOOT}" != "true" ]; then
+	exit 0
+fi
+
+. "${pkgdatadir}/grub-mkconfig_lib"
+
+if [ -z "${boot_device_id}" ]; then
+	boot_device_id="$(grub_get_device_id "${GRUB_DEVICE}")"
+fi
+
+cat <<EOF
+# Read the system manufacturer string from the BIOS
+smbios --type 1 --get-string 4 --set system_manufacturer
+
+# Are we on Amazon EC2?
+if [ "\$system_manufacturer" = "Amazon EC2" ]; then
+	next_entry=gnulinux-serial-${boot_device_id}
+fi
+EOF

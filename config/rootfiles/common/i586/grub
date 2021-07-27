@@ -5,6 +5,7 @@ boot/grub/splash.png
 #etc/bash_completion.d/grub
 etc/default/grub
 #etc/grub.d
+etc/grub.d/00_cloud
 etc/grub.d/00_header
 etc/grub.d/10_linux
 etc/grub.d/20_linux_xen
