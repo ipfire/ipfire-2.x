@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.28.0
+VER        = 5.28.1
 
 THISAPP    = monit-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = monit
-PAK_VER    = 14
+PAK_VER    = 15
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 778ac383dea002a5cf2330dffcc65660
+$(DL_FILE)_MD5 = 832783145cbd523bd6bc2c36e0e5c052
 
 install : $(TARGET)
 
