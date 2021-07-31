@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.2.1
+VER        = 0.3
 
 THISAPP    = igmpproxy-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = igmpproxy
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3a9c2cb42c1f5ee0cb769a4884545641
+$(DL_FILE)_MD5 = 5565874d9631103109a72452cecb5ce7
 
 install : $(TARGET)
 
