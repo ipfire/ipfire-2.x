@@ -5,5 +5,5 @@ etc/udev/rules.d/23-usb.rules
 #usr/lib/libusb-1.0.la
 #usr/lib/libusb-1.0.so
 usr/lib/libusb-1.0.so.0
-usr/lib/libusb-1.0.so.0.3.0
+usr/lib/libusb-1.0.so.0.2.0
 #usr/lib/pkgconfig/libusb-1.0.pc
