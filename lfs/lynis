@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.0.3
+VER        = 3.0.6
 
 THISAPP    = lynis-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -33,7 +33,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = lynis
-PAK_VER    = 9
+PAK_VER    = 10
 DEPS       =
 
 ###############################################################################
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d5c7cdbab15029449fe5ef4b59ee941d
+$(DL_FILE)_MD5 = 23cc369984d564e4a8232473b1ace137
 
 install : $(TARGET)
 
@@ -76,8 +76,8 @@ dist:
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && rm -rf .git* .travis.yml *.md FAQ INSTALL LICENCE lynis.8 README
-	cp -vrf $(DIR_APP) /var/ipfire/lynis
-	@rm -rf $(DIR_APP)
+	@rm -rf $(DIR_SRC)/$(PROG) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_SRC)/$(PROG) && rm -rf *.md FAQ INSTALL LICENSE lynis.8 README
+	cp -vrf $(DIR_SRC)/$(PROG) /var/ipfire/lynis
+	@rm -rf $(DIR_SRC)/$(PROG)
 	@$(POSTBUILD)

@@ -1,5 +1,4 @@
 var/ipfire/lynis
-#var/ipfire/lynis/LICENSE
 #var/ipfire/lynis/db
 var/ipfire/lynis/db/fileperms.db
 var/ipfire/lynis/db/hints.db
@@ -117,5 +116,3 @@ var/ipfire/lynis/lynis
 #var/ipfire/lynis/plugins
 #var/ipfire/lynis/plugins/README
 var/ipfire/lynis/plugins/custom_plugin.template
-var/ipfire/lynis/plugins/plugin_pam_phase1
-var/ipfire/lynis/plugins/plugin_systemd_phase1
