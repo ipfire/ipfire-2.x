@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.7.14
+VER        = 0.7.19
 
 THISAPP    = libsolv-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = libsolv
 DEPS       =
-PAK_VER    = 3
+PAK_VER    = 4
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a7a991fa70c310c31fabedc5b12453af
+$(DL_FILE)_MD5 = 05adaf6abe6b65a330272642baad82e1
 
 install : $(TARGET)
 
