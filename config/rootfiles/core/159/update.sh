@@ -95,6 +95,7 @@ rm -rf /usr/share/u-boot/rpi*
 # Remove files
 rm -rf /opt/pakfire/db/meta/meta-libstatgrab
 rm -rf /opt/pakfire/db/installed/meta-libstatgrab
+rm -rf /usr/lib/libusb-1.0.so.0.3.0
 
 # Stop services
 /etc/init.d/ipsec stop
