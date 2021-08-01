@@ -127,7 +127,7 @@ endif
 
 	# Install our own helpers
 	install -v -m 644 $(DIR_SRC)/config/grub2/00_cloud \
-		/etc/grub.cfg
+		/etc/grub.d
 
 	# Install background image
 	-mkdir -pv /boot/grub
