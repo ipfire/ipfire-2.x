@@ -40,7 +40,7 @@ my $ERROR;
 
 my @GRAPH_ARGS = (
 	# Output format
-	"--imgformat", "PNG",
+	"--imgformat", "SVG",
 
 	# No border
 	"--border", "0",
