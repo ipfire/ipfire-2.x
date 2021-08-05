@@ -312,8 +312,11 @@ if ( $channel =~ /\d+/ ){push(@temp,$channel + 0);}
 push(@channellist, @temp);
 }
 
-my @countrylist_cmd = `regdbdump /usr/lib/crda/regulatory.bin 2>/dev/null`;
 # get available country codes
+open(FILE, “</lib/firmware/regulatorydb.txt”);
+my @countrylist_cmd = <FILE>;
+close(FILE);
+
 
 my @temp = "00";
 foreach (@countrylist_cmd){
