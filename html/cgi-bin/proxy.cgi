@@ -166,7 +166,11 @@ my $HAVE_NTLM_AUTH = (-e "/usr/bin/ntlm_auth");
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 
-my $green_cidr = &General::ipcidr("$netsettings{'GREEN_NETADDRESS'}\/$netsettings{'GREEN_NETMASK'}");
+my $green_cidr = "";
+if (&Header::green_used() && $netsettings{'GREEN_DEV'}) {
+	$green_cidr = &General::ipcidr("$netsettings{'GREEN_NETADDRESS'}\/$netsettings{'GREEN_NETMASK'}");
+}
+
 my $blue_cidr = "";
 if (&Header::blue_used() && $netsettings{'BLUE_DEV'}) {
 	$blue_cidr = &General::ipcidr("$netsettings{'BLUE_NETADDRESS'}\/$netsettings{'BLUE_NETMASK'}");
@@ -1191,9 +1195,11 @@ END
 
 if (!$proxysettings{'SRC_SUBNETS'})
 {
-	print "$green_cidr\n";
-	if ($netsettings{'BLUE_DEV'})
-	{
+	if (&Header::green_used()) {
+		print "$green_cidr\n";
+	}
+
+	if (&Header::blue_used()) {
 		print "$blue_cidr\n";
 	}
 } else { print $proxysettings{'SRC_SUBNETS'}; }
@@ -1798,8 +1804,11 @@ print <<END
 END
 ;
 if (!$proxysettings{'IDENT_HOSTS'}) {
-	print "$green_cidr\n";
-	if ($netsettings{'BLUE_DEV'}) {
+	if (&Header::green_used()) {
+		print "$green_cidr\n";
+	}
+
+	if (&Header::blue_used()) {
 		print "$blue_cidr\n";
 	}
 } else {
@@ -2670,9 +2679,11 @@ sub write_acls
 	flock(FILE, 2);
 	if (!$proxysettings{'SRC_SUBNETS'})
 	{
-		print FILE "$green_cidr\n";
-		if ($netsettings{'BLUE_DEV'})
-		{
+		if (&Header::green_used()) {
+			print FILE "$green_cidr\n";
+		}
+
+		if (&Header::blue_used()) {
 			print FILE "$blue_cidr\n";
 		}
 	} else { print FILE $proxysettings{'SRC_SUBNETS'}; }
@@ -3068,11 +3079,15 @@ END
 		print FILE "include /etc/squid/squid.conf.pre.local\n\n";
 	}
 
-	print FILE "http_port $netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}";
+	if (&Header::green_used()) {
+		print FILE "http_port $netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}";
+	} else {
+		print FILE "http_port 0.0.0.0:$proxysettings{'PROXY_PORT'}";
+	}
 	if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }
 	print FILE "\n";
 
-	if ($proxysettings{'TRANSPARENT'} eq 'on') {
+	if (&Header::green_used() && $proxysettings{'TRANSPARENT'} eq 'on') {
 		print FILE "http_port $netsettings{'GREEN_ADDRESS'}:$proxysettings{'TRANSPARENT_PORT'} intercept";
 		if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }
 		print FILE "\n";
@@ -3156,17 +3171,20 @@ END
 		}
 	}
 
-	print FILE <<END
-
+	print FILE <<END;
+acl IPFire_ips dst 127.0.0.1
 acl IPFire_http  port $http_port
 acl IPFire_https port $https_port
-acl IPFire_ips              dst $netsettings{'GREEN_ADDRESS'}
 acl IPFire_networks         src "$acl_src_subnets"
 acl IPFire_servers          dst "$acl_src_subnets"
+END
+	if (&Header::green_used()) {
+		print FILE <<END;
+acl IPFire_ips              dst $netsettings{'GREEN_ADDRESS'}
 acl IPFire_green_network    src $green_cidr
 acl IPFire_green_servers    dst $green_cidr
 END
-	;
+	}
 	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_network     src $blue_cidr\n"; }
 	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_servers     dst $blue_cidr\n"; }
 	if (!-z $acl_src_banned_ip) { print FILE "acl IPFire_banned_ips       src \"$acl_src_banned_ip\"\n"; }
@@ -3585,9 +3603,11 @@ if ($delaypools) {
 
 	if ($netsettings{'BLUE_DEV'})
 	{
-		print FILE "delay_access 1 allow IPFire_green_network";
-		if (!-z $acl_dst_throttle) { print FILE " for_throttled_urls"; }
-		print FILE "\n";
+		if (&Header::green_used()) {
+			print FILE "delay_access 1 allow IPFire_green_network";
+			if (!-z $acl_dst_throttle) { print FILE " for_throttled_urls"; }
+			print FILE "\n";
+		}
 		print FILE "delay_access 1 deny  all\n";
 	} else {
 		print FILE "delay_access 1 allow all";
@@ -3611,7 +3631,7 @@ if ($delaypools) {
 	print FILE "\n";
 }
 
-if ($proxysettings{'NO_PROXY_LOCAL'} eq 'on')
+if (&Header::green_used() && $proxysettings{'NO_PROXY_LOCAL'} eq 'on')
 {
 	print FILE "#Prevent internal proxy access to Green except IPFire itself\n";
 	print FILE "http_access deny IPFire_green_servers !IPFire_ips !IPFire_green_network\n\n";
@@ -4004,7 +4024,9 @@ sub writecachemgr
 {
 	open(FILE, ">${General::swroot}/proxy/cachemgr.conf");
 	flock(FILE, 2);
-	print FILE "$netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}\n";
+	if (&Header::green_used()) {
+		print FILE "$netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}\n";
+	}
 	print FILE "localhost";
 	close(FILE);
   return;
