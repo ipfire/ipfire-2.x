@@ -1296,7 +1296,6 @@ buildipfire() {
   lfsmake2 whatmask
   lfsmake2 libtirpc
   lfsmake2 conntrack-tools
-  lfsmake2 ipaddr
   lfsmake2 iputils
   lfsmake2 l7-protocols
   lfsmake2 hwdata
@@ -1333,7 +1332,6 @@ buildipfire() {
   lfsmake2 XML-Parser
   lfsmake2 Crypt-PasswdMD5
   lfsmake2 Net-Telnet
-  lfsmake2 python-setuptools
   lfsmake2 python3-setuptools
   lfsmake2 python3-inotify
   lfsmake2 python3-docutils
@@ -1517,10 +1515,7 @@ buildipfire() {
   lfsmake2 swig
   lfsmake2 u-boot
   lfsmake2 u-boot-friendlyarm
-  lfsmake2 python-typing
-  lfsmake2 python-m2crypto
   lfsmake2 wireless-regdb
-  lfsmake2 crda
   lfsmake2 libsolv
   lfsmake2 ddns
   lfsmake2 python3-setuptools-scm
