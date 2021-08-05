@@ -1,0 +1,4923 @@
+diff -Naur client175_0.7-original/BeautifulSoup.py client175_0.7/BeautifulSoup.py
+--- client175_0.7-original/BeautifulSoup.py	2010-05-14 12:57:39.000000000 +0200
++++ client175_0.7/BeautifulSoup.py	2021-08-03 14:39:30.213509172 +0200
+@@ -76,7 +76,7 @@
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE, DAMMIT.
+ 
+ """
+-from __future__ import generators
++
+ 
+ __author__ = "Leonard Richardson (leonardr@segfault.org)"
+ __version__ = "3.0.8.1"
+@@ -85,12 +85,12 @@
+ 
+ from sgmllib import SGMLParser, SGMLParseError
+ import codecs
+-import markupbase
++import _markupbase
+ import types
+ import re
+ import sgmllib
+ try:
+-  from htmlentitydefs import name2codepoint
++  from html.entities import name2codepoint
+ except ImportError:
+   name2codepoint = {}
+ try:
+@@ -100,7 +100,7 @@
+ 
+ #These hacks make Beautiful Soup able to parse XML with namespaces
+ sgmllib.tagfind = re.compile('[a-zA-Z][-_.:a-zA-Z0-9]*')
+-markupbase._declname_match = re.compile(r'[a-zA-Z][-_.:a-zA-Z0-9]*\s*').match
++_markupbase._declname_match = re.compile(r'[a-zA-Z][-_.:a-zA-Z0-9]*\s*').match
+ 
+ DEFAULT_OUTPUT_ENCODING = "utf-8"
+ 
+@@ -162,7 +162,7 @@
+         #this element (and any children) hadn't been parsed. Connect
+         #the two.
+         lastChild = self._lastRecursiveChild()
+-        nextElement = lastChild.next
++        nextElement = lastChild.__next__
+ 
+         if self.previous:
+             self.previous.next = nextElement
+@@ -187,7 +187,7 @@
+         return lastChild
+ 
+     def insert(self, position, newChild):
+-        if isinstance(newChild, basestring) \
++        if isinstance(newChild, str) \
+             and not isinstance(newChild, NavigableString):
+             newChild = NavigableString(newChild)
+ 
+@@ -241,7 +241,7 @@
+                 newChild.nextSibling.previousSibling = newChild
+             newChildsLastElement.next = nextChild
+ 
+-        if newChildsLastElement.next:
++        if newChildsLastElement.__next__:
+             newChildsLastElement.next.previous = newChildsLastElement
+         self.contents.insert(position, newChild)
+ 
+@@ -342,7 +342,7 @@
+                 return [element for element in generator()
+                         if isinstance(element, Tag)]
+             # findAll*('tag-name')
+-            elif isinstance(name, basestring):
++            elif isinstance(name, str):
+                 return [element for element in generator()
+                         if isinstance(element, Tag) and
+                         element.name == name]
+@@ -355,7 +355,7 @@
+         g = generator()
+         while True:
+             try:
+-                i = g.next()
++                i = next(g)
+             except StopIteration:
+                 break
+             if i:
+@@ -371,7 +371,7 @@
+     def nextGenerator(self):
+         i = self
+         while i is not None:
+-            i = i.next
++            i = i.__next__
+             yield i
+ 
+     def nextSiblingGenerator(self):
+@@ -406,22 +406,22 @@
+     def toEncoding(self, s, encoding=None):
+         """Encodes an object to a string in some encoding, or to Unicode.
+         ."""
+-        if isinstance(s, unicode):
++        if isinstance(s, str):
+             if encoding:
+                 s = s.encode(encoding)
+         elif isinstance(s, str):
+             if encoding:
+                 s = s.encode(encoding)
+             else:
+-                s = unicode(s)
++                s = str(s)
+         else:
+             if encoding:
+                 s  = self.toEncoding(str(s), encoding)
+             else:
+-                s = unicode(s)
++                s = str(s)
+         return s
+ 
+-class NavigableString(unicode, PageElement):
++class NavigableString(str, PageElement):
+ 
+     def __new__(cls, value):
+         """Create a new NavigableString.
+@@ -431,9 +431,9 @@
+         passed in to the superclass's __new__ or the superclass won't know
+         how to handle non-ASCII characters.
+         """
+-        if isinstance(value, unicode):
+-            return unicode.__new__(cls, value)
+-        return unicode.__new__(cls, value, DEFAULT_OUTPUT_ENCODING)
++        if isinstance(value, str):
++            return str.__new__(cls, value)
++        return str.__new__(cls, value, DEFAULT_OUTPUT_ENCODING)
+ 
+     def __getnewargs__(self):
+         return (NavigableString.__str__(self),)
+@@ -445,7 +445,7 @@
+         if attr == 'string':
+             return self
+         else:
+-            raise AttributeError, "'%s' object has no attribute '%s'" % (self.__class__.__name__, attr)
++            raise AttributeError("'%s' object has no attribute '%s'" % (self.__class__.__name__, attr))
+ 
+     def __unicode__(self):
+         return str(self).decode(DEFAULT_OUTPUT_ENCODING)
+@@ -483,7 +483,7 @@
+     def _invert(h):
+         "Cheap function to invert a hash."
+         i = {}
+-        for k,v in h.items():
++        for k,v in list(h.items()):
+             i[v] = k
+         return i
+ 
+@@ -502,23 +502,23 @@
+         escaped."""
+         x = match.group(1)
+         if self.convertHTMLEntities and x in name2codepoint:
+-            return unichr(name2codepoint[x])
++            return chr(name2codepoint[x])
+         elif x in self.XML_ENTITIES_TO_SPECIAL_CHARS:
+             if self.convertXMLEntities:
+                 return self.XML_ENTITIES_TO_SPECIAL_CHARS[x]
+             else:
+-                return u'&%s;' % x
++                return '&%s;' % x
+         elif len(x) > 0 and x[0] == '#':
+             # Handle numeric entities
+             if len(x) > 1 and x[1] == 'x':
+-                return unichr(int(x[2:], 16))
++                return chr(int(x[2:], 16))
+             else:
+-                return unichr(int(x[1:]))
++                return chr(int(x[1:]))
+ 
+         elif self.escapeUnrecognizedEntities:
+-            return u'&amp;%s;' % x
++            return '&amp;%s;' % x
+         else:
+-            return u'&%s;' % x
++            return '&%s;' % x
+ 
+     def __init__(self, parser, name, attrs=None, parent=None,
+                  previous=None):
+@@ -541,11 +541,11 @@
+         self.escapeUnrecognizedEntities = parser.escapeUnrecognizedEntities
+ 
+         # Convert any HTML, XML, or numeric entities in the attribute values.
+-        convert = lambda(k, val): (k,
++        convert = lambda k_val: (k_val[0],
+                                    re.sub("&(#\d+|#x[0-9a-fA-F]+|\w+);",
+                                           self._convertEntities,
+-                                          val))
+-        self.attrs = map(convert, self.attrs)
++                                          k_val[1]))
++        self.attrs = list(map(convert, self.attrs))
+ 
+     def getString(self):
+         if (len(self.contents) == 1
+@@ -559,16 +559,16 @@
+ 
+     string = property(getString, setString)
+ 
+-    def getText(self, separator=u""):
++    def getText(self, separator=""):
+         if not len(self.contents):
+-            return u""
+-        stopNode = self._lastRecursiveChild().next
++            return ""
++        stopNode = self._lastRecursiveChild().__next__
+         strings = []
+         current = self.contents[0]
+         while current is not stopNode:
+             if isinstance(current, NavigableString):
+                 strings.append(current.strip())
+-            current = current.next
++            current = current.__next__
+         return separator.join(strings)
+ 
+     text = property(getText)
+@@ -591,7 +591,7 @@
+         raise ValueError("Tag.index: element not in tag")
+ 
+     def has_key(self, key):
+-        return self._getAttrMap().has_key(key)
++        return key in self._getAttrMap()
+ 
+     def __getitem__(self, key):
+         """tag[key] returns the value of the 'key' attribute for the tag,
+@@ -609,7 +609,7 @@
+     def __contains__(self, x):
+         return x in self.contents
+ 
+-    def __nonzero__(self):
++    def __bool__(self):
+         "A tag is non-None even if it has no contents."
+         return True
+ 
+@@ -635,14 +635,14 @@
+                 #We don't break because bad HTML can define the same
+                 #attribute multiple times.
+             self._getAttrMap()
+-            if self.attrMap.has_key(key):
++            if key in self.attrMap:
+                 del self.attrMap[key]
+ 
+     def __call__(self, *args, **kwargs):
+         """Calling a tag like a function is the same as calling its
+         findAll() method. Eg. tag('a') returns a list of all the A tags
+         found within this tag."""
+-        return apply(self.findAll, args, kwargs)
++        return self.findAll(*args, **kwargs)
+ 
+     def __getattr__(self, tag):
+         #print "Getattr %s.%s" % (self.__class__, tag)
+@@ -650,7 +650,7 @@
+             return self.find(tag[:-3])
+         elif tag.find('__') != 0:
+             return self.find(tag)
+-        raise AttributeError, "'%s' object has no attribute '%s'" % (self.__class__, tag)
++        raise AttributeError("'%s' object has no attribute '%s'" % (self.__class__, tag))
+ 
+     def __eq__(self, other):
+         """Returns true iff this tag has the same name, the same attributes,
+@@ -703,7 +703,7 @@
+         if self.attrs:
+             for key, val in self.attrs:
+                 fmt = '%s="%s"'
+-                if isinstance(val, basestring):
++                if isinstance(val, str):
+                     if self.containsSubstitutions and '%SOUP-ENCODING%' in val:
+                         val = self.substituteEncoding(val, encoding)
+ 
+@@ -780,7 +780,7 @@
+             return
+         current = self.contents[0]
+         while current is not None:
+-            next = current.next
++            next = current.__next__
+             if isinstance(current, Tag):
+                 del current.contents[:]
+             current.parent = None
+@@ -873,11 +873,11 @@
+     def recursiveChildGenerator(self):
+         if not len(self.contents):
+             raise StopIteration
+-        stopNode = self._lastRecursiveChild().next
++        stopNode = self._lastRecursiveChild().__next__
+         current = self.contents[0]
+         while current is not stopNode:
+             yield current
+-            current = current.next
++            current = current.__next__
+ 
+ 
+ # Next, a couple classes to represent queries and their results.
+@@ -887,7 +887,7 @@
+ 
+     def __init__(self, name=None, attrs={}, text=None, **kwargs):
+         self.name = name
+-        if isinstance(attrs, basestring):
++        if isinstance(attrs, str):
+             kwargs['class'] = _match_css_class(attrs)
+             attrs = None
+         if kwargs:
+@@ -923,7 +923,7 @@
+             else:
+                 match = True
+                 markupAttrMap = None
+-                for attr, matchAgainst in self.attrs.items():
++                for attr, matchAgainst in list(self.attrs.items()):
+                     if not markupAttrMap:
+                          if hasattr(markupAttrs, 'get'):
+                             markupAttrMap = markupAttrs
+@@ -961,12 +961,12 @@
+                 found = self.searchTag(markup)
+         # If it's text, make sure the text matches.
+         elif isinstance(markup, NavigableString) or \
+-                 isinstance(markup, basestring):
++                 isinstance(markup, str):
+             if self._matches(markup, self.text):
+                 found = markup
+         else:
+-            raise Exception, "I don't know how to match against a %s" \
+-                  % markup.__class__
++            raise Exception("I don't know how to match against a %s" \
++                  % markup.__class__)
+         return found
+ 
+     def _matches(self, markup, matchAgainst):
+@@ -981,8 +981,8 @@
+             #other ways of matching match the tag name as a string.
+             if isinstance(markup, Tag):
+                 markup = markup.name
+-            if markup and not isinstance(markup, basestring):
+-                markup = unicode(markup)
++            if markup and not isinstance(markup, str):
++                markup = str(markup)
+             #Now we know that chunk is either a string, or None.
+             if hasattr(matchAgainst, 'match'):
+                 # It's a regexp object.
+@@ -990,10 +990,10 @@
+             elif hasattr(matchAgainst, '__iter__'): # list-like
+                 result = markup in matchAgainst
+             elif hasattr(matchAgainst, 'items'):
+-                result = markup.has_key(matchAgainst)
+-            elif matchAgainst and isinstance(markup, basestring):
+-                if isinstance(markup, unicode):
+-                    matchAgainst = unicode(matchAgainst)
++                result = matchAgainst in markup
++            elif matchAgainst and isinstance(markup, str):
++                if isinstance(markup, str):
++                    matchAgainst = str(matchAgainst)
+                 else:
+                     matchAgainst = str(matchAgainst)
+ 
+@@ -1018,7 +1018,7 @@
+     for portion in args:
+         if hasattr(portion, 'items'):
+             #It's a map. Merge it.
+-            for k,v in portion.items():
++            for k,v in list(portion.items()):
+                 built[k] = v
+         elif hasattr(portion, '__iter__'): # is a list
+             #It's a list. Map each item to the default.
+@@ -1061,7 +1061,7 @@
+                        lambda x: '<!' + x.group(1) + '>')
+                       ]
+ 
+-    ROOT_TAG_NAME = u'[document]'
++    ROOT_TAG_NAME = '[document]'
+ 
+     HTML_ENTITIES = "html"
+     XML_ENTITIES = "xml"
+@@ -1157,14 +1157,14 @@
+     def _feed(self, inDocumentEncoding=None, isHTML=False):
+         # Convert the document to Unicode.
+         markup = self.markup
+-        if isinstance(markup, unicode):
++        if isinstance(markup, str):
+             if not hasattr(self, 'originalEncoding'):
+                 self.originalEncoding = None
+         else:
+             dammit = UnicodeDammit\
+                      (markup, [self.fromEncoding, inDocumentEncoding],
+                       smartQuotesTo=self.smartQuotesTo, isHTML=isHTML)
+-            markup = dammit.unicode
++            markup = dammit.str
+             self.originalEncoding = dammit.originalEncoding
+             self.declaredHTMLEncoding = dammit.declaredHTMLEncoding
+         if markup:
+@@ -1203,8 +1203,8 @@
+     def isSelfClosingTag(self, name):
+         """Returns true iff the given string is the name of a
+         self-closing tag according to this parser."""
+-        return self.SELF_CLOSING_TAGS.has_key(name) \
+-               or self.instanceSelfClosingTags.has_key(name)
++        return name in self.SELF_CLOSING_TAGS \
++               or name in self.instanceSelfClosingTags
+ 
+     def reset(self):
+         Tag.__init__(self, self, self.ROOT_TAG_NAME)
+@@ -1233,7 +1233,7 @@
+ 
+     def endData(self, containerClass=NavigableString):
+         if self.currentData:
+-            currentData = u''.join(self.currentData)
++            currentData = ''.join(self.currentData)
+             if (currentData.translate(self.STRIP_ASCII_SPACES) == '' and
+                 not set([tag.name for tag in self.tagStack]).intersection(
+                     self.PRESERVE_WHITESPACE_TAGS)):
+@@ -1296,7 +1296,7 @@
+ 
+         nestingResetTriggers = self.NESTABLE_TAGS.get(name)
+         isNestable = nestingResetTriggers != None
+-        isResetNesting = self.RESET_NESTING_TAGS.has_key(name)
++        isResetNesting = name in self.RESET_NESTING_TAGS
+         popTo = None
+         inclusive = True
+         for i in range(len(self.tagStack)-1, 0, -1):
+@@ -1309,7 +1309,7 @@
+             if (nestingResetTriggers is not None
+                 and p.name in nestingResetTriggers) \
+                 or (nestingResetTriggers is None and isResetNesting
+-                    and self.RESET_NESTING_TAGS.has_key(p.name)):
++                    and p.name in self.RESET_NESTING_TAGS):
+ 
+                 #If we encounter one of the nesting reset triggers
+                 #peculiar to this tag, or we encounter another tag
+@@ -1380,7 +1380,7 @@
+         object, possibly one with a %SOUP-ENCODING% slot into which an
+         encoding will be plugged later."""
+         if text[:3] == "xml":
+-            text = u"xml version='1.0' encoding='%SOUP-ENCODING%'"
++            text = "xml version='1.0' encoding='%SOUP-ENCODING%'"
+         self._toStringSubclass(text, ProcessingInstruction)
+ 
+     def handle_comment(self, text):
+@@ -1390,7 +1390,7 @@
+     def handle_charref(self, ref):
+         "Handle character references as data."
+         if self.convertEntities:
+-            data = unichr(int(ref))
++            data = chr(int(ref))
+         else:
+             data = '&#%s;' % ref
+         self.handle_data(data)
+@@ -1402,7 +1402,7 @@
+         data = None
+         if self.convertHTMLEntities:
+             try:
+-                data = unichr(name2codepoint[ref])
++                data = chr(name2codepoint[ref])
+             except KeyError:
+                 pass
+ 
+@@ -1511,7 +1511,7 @@
+     BeautifulStoneSoup before writing your own subclass."""
+ 
+     def __init__(self, *args, **kwargs):
+-        if not kwargs.has_key('smartQuotesTo'):
++        if 'smartQuotesTo' not in kwargs:
+             kwargs['smartQuotesTo'] = self.HTML_ENTITIES
+         kwargs['isHTML'] = True
+         BeautifulStoneSoup.__init__(self, *args, **kwargs)
+@@ -1694,7 +1694,7 @@
+             parent._getAttrMap()
+             if (isinstance(tag, Tag) and len(tag.contents) == 1 and
+                 isinstance(tag.contents[0], NavigableString) and
+-                not parent.attrMap.has_key(tag.name)):
++                tag.name not in parent.attrMap):
+                 parent[tag.name] = tag.contents[0]
+         BeautifulStoneSoup.popTag(self)
+ 
+@@ -1768,9 +1768,9 @@
+                      self._detectEncoding(markup, isHTML)
+         self.smartQuotesTo = smartQuotesTo
+         self.triedEncodings = []
+-        if markup == '' or isinstance(markup, unicode):
++        if markup == '' or isinstance(markup, str):
+             self.originalEncoding = None
+-            self.unicode = unicode(markup)
++            self.str = str(markup)
+             return
+ 
+         u = None
+@@ -1783,7 +1783,7 @@
+                 if u: break
+ 
+         # If no luck and we have auto-detection library, try that:
+-        if not u and chardet and not isinstance(self.markup, unicode):
++        if not u and chardet and not isinstance(self.markup, str):
+             u = self._convertFrom(chardet.detect(self.markup)['encoding'])
+ 
+         # As a last resort, try utf-8 and windows-1252:
+@@ -1792,7 +1792,7 @@
+                 u = self._convertFrom(proposed_encoding)
+                 if u: break
+ 
+-        self.unicode = u
++        self.str = u
+         if not u: self.originalEncoding = None
+ 
+     def _subMSChar(self, orig):
+@@ -1819,7 +1819,7 @@
+                                                       "iso-8859-1",
+                                                       "iso-8859-2"):
+             markup = re.compile("([\x80-\x9f])").sub \
+-                     (lambda(x): self._subMSChar(x.group(1)),
++                     (lambda x: self._subMSChar(x.group(1)),
+                       markup)
+ 
+         try:
+@@ -1827,7 +1827,7 @@
+             u = self._toUnicode(markup, proposed)
+             self.markup = u
+             self.originalEncoding = proposed
+-        except Exception, e:
++        except Exception as e:
+             # print "That didn't work!"
+             # print e
+             return None
+@@ -1856,7 +1856,7 @@
+         elif data[:4] == '\xff\xfe\x00\x00':
+             encoding = 'utf-32le'
+             data = data[4:]
+-        newdata = unicode(data, encoding)
++        newdata = str(data, encoding)
+         return newdata
+ 
+     def _detectEncoding(self, xml_data, isHTML=False):
+@@ -1869,41 +1869,41 @@
+             elif xml_data[:4] == '\x00\x3c\x00\x3f':
+                 # UTF-16BE
+                 sniffed_xml_encoding = 'utf-16be'
+-                xml_data = unicode(xml_data, 'utf-16be').encode('utf-8')
++                xml_data = str(xml_data, 'utf-16be').encode('utf-8')
+             elif (len(xml_data) >= 4) and (xml_data[:2] == '\xfe\xff') \
+                      and (xml_data[2:4] != '\x00\x00'):
+                 # UTF-16BE with BOM
+                 sniffed_xml_encoding = 'utf-16be'
+-                xml_data = unicode(xml_data[2:], 'utf-16be').encode('utf-8')
++                xml_data = str(xml_data[2:], 'utf-16be').encode('utf-8')
+             elif xml_data[:4] == '\x3c\x00\x3f\x00':
+                 # UTF-16LE
+                 sniffed_xml_encoding = 'utf-16le'
+-                xml_data = unicode(xml_data, 'utf-16le').encode('utf-8')
++                xml_data = str(xml_data, 'utf-16le').encode('utf-8')
+             elif (len(xml_data) >= 4) and (xml_data[:2] == '\xff\xfe') and \
+                      (xml_data[2:4] != '\x00\x00'):
+                 # UTF-16LE with BOM
+                 sniffed_xml_encoding = 'utf-16le'
+-                xml_data = unicode(xml_data[2:], 'utf-16le').encode('utf-8')
++                xml_data = str(xml_data[2:], 'utf-16le').encode('utf-8')
+             elif xml_data[:4] == '\x00\x00\x00\x3c':
+                 # UTF-32BE
+                 sniffed_xml_encoding = 'utf-32be'
+-                xml_data = unicode(xml_data, 'utf-32be').encode('utf-8')
++                xml_data = str(xml_data, 'utf-32be').encode('utf-8')
+             elif xml_data[:4] == '\x3c\x00\x00\x00':
+                 # UTF-32LE
+                 sniffed_xml_encoding = 'utf-32le'
+-                xml_data = unicode(xml_data, 'utf-32le').encode('utf-8')
++                xml_data = str(xml_data, 'utf-32le').encode('utf-8')
+             elif xml_data[:4] == '\x00\x00\xfe\xff':
+                 # UTF-32BE with BOM
+                 sniffed_xml_encoding = 'utf-32be'
+-                xml_data = unicode(xml_data[4:], 'utf-32be').encode('utf-8')
++                xml_data = str(xml_data[4:], 'utf-32be').encode('utf-8')
+             elif xml_data[:4] == '\xff\xfe\x00\x00':
+                 # UTF-32LE with BOM
+                 sniffed_xml_encoding = 'utf-32le'
+-                xml_data = unicode(xml_data[4:], 'utf-32le').encode('utf-8')
++                xml_data = str(xml_data[4:], 'utf-32le').encode('utf-8')
+             elif xml_data[:3] == '\xef\xbb\xbf':
+                 # UTF-8 with BOM
+                 sniffed_xml_encoding = 'utf-8'
+-                xml_data = unicode(xml_data[3:], 'utf-8').encode('utf-8')
++                xml_data = str(xml_data[3:], 'utf-8').encode('utf-8')
+             else:
+                 sniffed_xml_encoding = 'ascii'
+                 pass
+@@ -1966,7 +1966,7 @@
+                     250,251,252,253,254,255)
+             import string
+             c.EBCDIC_TO_ASCII_MAP = string.maketrans( \
+-            ''.join(map(chr, range(256))), ''.join(map(chr, emap)))
++            ''.join(map(chr, list(range(256)))), ''.join(map(chr, emap)))
+         return s.translate(c.EBCDIC_TO_ASCII_MAP)
+ 
+     MS_CHARS = { '\x80' : ('euro', '20AC'),
+@@ -2009,4 +2009,4 @@
+ if __name__ == '__main__':
+     import sys
+     soup = BeautifulSoup(sys.stdin)
+-    print soup.prettify()
++    print(soup.prettify())
+diff -Naur client175_0.7-original/cherrypy/cherryd client175_0.7/cherrypy/cherryd
+--- client175_0.7-original/cherrypy/cherryd	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/cherryd	2021-08-03 15:37:40.098963967 +0200
+@@ -12,7 +12,7 @@
+     """Subscribe all engine plugins and start the engine."""
+     sys.path = [''] + sys.path
+     for i in imports or []:
+-        exec "import %s" % i
++        exec("import %s" % i)
+     
+     for c in configfiles or []:
+         cherrypy.config.update(c)
+diff -Naur client175_0.7-original/cherrypy/_cpcgifs.py client175_0.7/cherrypy/_cpcgifs.py
+--- client175_0.7-original/cherrypy/_cpcgifs.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/_cpcgifs.py	2021-08-03 14:41:19.199896214 +0200
+@@ -6,7 +6,7 @@
+     def __init__(self, *args, **kwds):
+         try:
+             cgi.FieldStorage.__init__(self, *args, **kwds)
+-        except ValueError, ex:
++        except ValueError as ex:
+             if str(ex) == 'Maximum content length exceeded':
+                 raise cherrypy.HTTPError(status=413)
+             else:
+diff -Naur client175_0.7-original/cherrypy/_cpchecker.py client175_0.7/cherrypy/_cpchecker.py
+--- client175_0.7-original/cherrypy/_cpchecker.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/_cpchecker.py	2021-08-03 14:41:30.971721551 +0200
+@@ -47,7 +47,7 @@
+     global_config_contained_paths = False
+     
+     def check_skipped_app_config(self):
+-        for sn, app in cherrypy.tree.apps.iteritems():
++        for sn, app in cherrypy.tree.apps.items():
+             if not isinstance(app, cherrypy.Application):
+                 continue
+             if not app.config:
+@@ -64,7 +64,7 @@
+     def check_static_paths(self):
+         # Use the dummy Request object in the main thread.
+         request = cherrypy.request
+-        for sn, app in cherrypy.tree.apps.iteritems():
++        for sn, app in cherrypy.tree.apps.items():
+             if not isinstance(app, cherrypy.Application):
+                 continue
+             request.app = app
+@@ -130,9 +130,9 @@
+     
+     def _compat(self, config):
+         """Process config and warn on each obsolete or deprecated entry."""
+-        for section, conf in config.iteritems():
++        for section, conf in config.items():
+             if isinstance(conf, dict):
+-                for k, v in conf.iteritems():
++                for k, v in conf.items():
+                     if k in self.obsolete:
+                         warnings.warn("%r is obsolete. Use %r instead.\n"
+                                       "section: [%s]" %
+@@ -152,7 +152,7 @@
+     def check_compatibility(self):
+         """Process config and warn on each obsolete or deprecated entry."""
+         self._compat(cherrypy.config)
+-        for sn, app in cherrypy.tree.apps.iteritems():
++        for sn, app in cherrypy.tree.apps.items():
+             if not isinstance(app, cherrypy.Application):
+                 continue
+             self._compat(app.config)
+@@ -164,16 +164,16 @@
+     
+     def _known_ns(self, app):
+         ns = ["wsgi"]
+-        ns.extend(app.toolboxes.keys())
+-        ns.extend(app.namespaces.keys())
+-        ns.extend(app.request_class.namespaces.keys())
+-        ns.extend(cherrypy.config.namespaces.keys())
++        ns.extend(list(app.toolboxes.keys()))
++        ns.extend(list(app.namespaces.keys()))
++        ns.extend(list(app.request_class.namespaces.keys()))
++        ns.extend(list(cherrypy.config.namespaces.keys()))
+         ns += self.extra_config_namespaces
+         
+-        for section, conf in app.config.iteritems():
++        for section, conf in app.config.items():
+             is_path_section = section.startswith("/")
+             if is_path_section and isinstance(conf, dict):
+-                for k, v in conf.iteritems():
++                for k, v in conf.items():
+                     atoms = k.split(".")
+                     if len(atoms) > 1:
+                         if atoms[0] not in ns:
+@@ -197,7 +197,7 @@
+     
+     def check_config_namespaces(self):
+         """Process config and warn on each unknown config namespace."""
+-        for sn, app in cherrypy.tree.apps.iteritems():
++        for sn, app in cherrypy.tree.apps.items():
+             if not isinstance(app, cherrypy.Application):
+                 continue
+             self._known_ns(app)
+@@ -210,8 +210,8 @@
+     known_config_types = {}
+     
+     def _populate_known_types(self):
+-        import __builtin__
+-        builtins = [x for x in vars(__builtin__).values()
++        import builtins
++        builtins = [x for x in list(vars(__builtin__).values())
+                     if type(x) is type(str)]
+         
+         def traverse(obj, namespace):
+@@ -230,9 +230,9 @@
+         msg = ("The config entry %r in section %r is of type %r, "
+                "which does not match the expected type %r.")
+         
+-        for section, conf in config.iteritems():
++        for section, conf in config.items():
+             if isinstance(conf, dict):
+-                for k, v in conf.iteritems():
++                for k, v in conf.items():
+                     if v is not None:
+                         expected_type = self.known_config_types.get(k, None)
+                         vtype = type(v)
+@@ -251,7 +251,7 @@
+     def check_config_types(self):
+         """Assert that config values are of the same type as default values."""
+         self._known_types(cherrypy.config)
+-        for sn, app in cherrypy.tree.apps.iteritems():
++        for sn, app in cherrypy.tree.apps.items():
+             if not isinstance(app, cherrypy.Application):
+                 continue
+             self._known_types(app.config)
+@@ -261,7 +261,7 @@
+     
+     def check_localhost(self):
+         """Warn if any socket_host is 'localhost'. See #711."""
+-        for k, v in cherrypy.config.iteritems():
++        for k, v in cherrypy.config.items():
+             if k == 'server.socket_host' and v == 'localhost':
+                 warnings.warn("The use of 'localhost' as a socket host can "
+                     "cause problems on newer systems, since 'localhost' can "
+diff -Naur client175_0.7-original/cherrypy/_cpconfig.py client175_0.7/cherrypy/_cpconfig.py
+--- client175_0.7-original/cherrypy/_cpconfig.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/_cpconfig.py	2021-08-03 14:41:39.459596077 +0200
+@@ -93,7 +93,7 @@
+ style) context manager.
+ """
+ 
+-import ConfigParser
++import configparser
+ try:
+     set
+ except NameError:
+@@ -138,7 +138,7 @@
+ 
+ def as_dict(config):
+     """Return a dict from 'config' whether it is a dict, file, or filename."""
+-    if isinstance(config, basestring):
++    if isinstance(config, str):
+         config = _Parser().dict_from_file(config)
+     elif hasattr(config, 'read'):
+         config = _Parser().dict_from_file(config)
+@@ -150,11 +150,11 @@
+     If the given config is a filename, it will be appended to
+     the list of files to monitor for "autoreload" changes.
+     """
+-    if isinstance(other, basestring):
++    if isinstance(other, str):
+         cherrypy.engine.autoreload.files.add(other)
+     
+     # Load other into base
+-    for section, value_map in as_dict(other).iteritems():
++    for section, value_map in as_dict(other).items():
+         base.setdefault(section, {}).update(value_map)
+ 
+ 
+@@ -196,14 +196,14 @@
+         #     with handler as callable:
+         #         for k, v in ns_confs.get(ns, {}).iteritems():
+         #             callable(k, v)
+-        for ns, handler in self.iteritems():
++        for ns, handler in self.items():
+             exit = getattr(handler, "__exit__", None)
+             if exit:
+                 callable = handler.__enter__()
+                 no_exc = True
+                 try:
+                     try:
+-                        for k, v in ns_confs.get(ns, {}).iteritems():
++                        for k, v in ns_confs.get(ns, {}).items():
+                             callable(k, v)
+                     except:
+                         # The exceptional case is handled here
+@@ -218,7 +218,7 @@
+                     if no_exc and exit:
+                         exit(None, None, None)
+             else:
+-                for k, v in ns_confs.get(ns, {}).iteritems():
++                for k, v in ns_confs.get(ns, {}).items():
+                     handler(k, v)
+     
+     def __repr__(self):
+@@ -257,7 +257,7 @@
+     
+     def update(self, config):
+         """Update self from a dict, file or filename."""
+-        if isinstance(config, basestring):
++        if isinstance(config, str):
+             # Filename
+             cherrypy.engine.autoreload.files.add(config)
+             config = _Parser().dict_from_file(config)
+@@ -333,7 +333,7 @@
+ Config.namespaces["tree"] = _tree_namespace_handler
+ 
+ 
+-class _Parser(ConfigParser.ConfigParser):
++class _Parser(configparser.ConfigParser):
+     """Sub-class of ConfigParser that keeps the case of options and that raises
+     an exception if the file cannot be read.
+     """
+@@ -342,7 +342,7 @@
+         return optionstr
+     
+     def read(self, filenames):
+-        if isinstance(filenames, basestring):
++        if isinstance(filenames, str):
+             filenames = [filenames]
+         for filename in filenames:
+             # try:
+@@ -367,7 +367,7 @@
+                 value = self.get(section, option, raw, vars)
+                 try:
+                     value = unrepr(value)
+-                except Exception, x:
++                except Exception as x:
+                     msg = ("Config error in section: %r, option: %r, "
+                            "value: %r. Config values must be valid Python." %
+                            (section, option, value))
+diff -Naur client175_0.7-original/cherrypy/_cpdispatch.py client175_0.7/cherrypy/_cpdispatch.py
+--- client175_0.7-original/cherrypy/_cpdispatch.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/_cpdispatch.py	2021-08-03 14:41:48.627460479 +0200
+@@ -23,7 +23,7 @@
+     def __call__(self):
+         try:
+             return self.callable(*self.args, **self.kwargs)
+-        except TypeError, x:
++        except TypeError as x:
+             test_callable_spec(self.callable, self.args, self.kwargs)
+             raise
+ 
+@@ -62,7 +62,7 @@
+         except IndexError:
+             vararg_usage += 1
+ 
+-    for key in callable_kwargs.keys():
++    for key in list(callable_kwargs.keys()):
+         try:
+             arg_usage[key] += 1
+         except KeyError:
+@@ -76,7 +76,7 @@
+ 
+     missing_args = []
+     multiple_args = []
+-    for key, usage in arg_usage.iteritems():
++    for key, usage in arg_usage.items():
+         if usage == 0:
+             missing_args.append(key)
+         elif usage > 1:
+@@ -258,7 +258,7 @@
+         
+         # Try successive objects (reverse order)
+         num_candidates = len(object_trail) - 1
+-        for i in xrange(num_candidates, -1, -1):
++        for i in range(num_candidates, -1, -1):
+             
+             name, candidate, nodeconf, curpath = object_trail[i]
+             if candidate is None:
+diff -Naur client175_0.7-original/cherrypy/_cperror.py client175_0.7/cherrypy/_cperror.py
+--- client175_0.7-original/cherrypy/_cperror.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/_cperror.py	2021-08-03 14:41:56.939337474 +0200
+@@ -3,7 +3,7 @@
+ from cgi import escape as _escape
+ from sys import exc_info as _exc_info
+ from traceback import format_exception as _format_exception
+-from urlparse import urljoin as _urljoin
++from urllib.parse import urljoin as _urljoin
+ from cherrypy.lib import http as _http
+ 
+ 
+@@ -57,7 +57,7 @@
+         import cherrypy
+         request = cherrypy.request
+         
+-        if isinstance(urls, basestring):
++        if isinstance(urls, str):
+             urls = [urls]
+         
+         abs_urls = []
+@@ -161,7 +161,7 @@
+     for key in ["Accept-Ranges", "Age", "ETag", "Location", "Retry-After",
+                 "Vary", "Content-Encoding", "Content-Length", "Expires",
+                 "Content-Location", "Content-MD5", "Last-Modified"]:
+-        if respheaders.has_key(key):
++        if key in respheaders:
+             del respheaders[key]
+     
+     if status != 416:
+@@ -171,7 +171,7 @@
+         # specifies the current length of the selected resource.
+         # A response with status code 206 (Partial Content) MUST NOT
+         # include a Content-Range field with a byte-range- resp-spec of "*".
+-        if respheaders.has_key("Content-Range"):
++        if "Content-Range" in respheaders:
+             del respheaders["Content-Range"]
+ 
+ 
+@@ -277,7 +277,7 @@
+     
+     try:
+         code, reason, message = _http.valid_status(status)
+-    except ValueError, x:
++    except ValueError as x:
+         raise cherrypy.HTTPError(500, x.args[0])
+     
+     # We can't use setdefault here, because some
+@@ -291,7 +291,7 @@
+     if kwargs.get('version') is None:
+         kwargs['version'] = cherrypy.__version__
+     
+-    for k, v in kwargs.iteritems():
++    for k, v in kwargs.items():
+         if v is None:
+             kwargs[k] = ""
+         else:
+diff -Naur client175_0.7-original/cherrypy/_cplogging.py client175_0.7/cherrypy/_cplogging.py
+--- client175_0.7-original/cherrypy/_cplogging.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/_cplogging.py	2021-08-03 14:42:04.739222052 +0200
+@@ -88,8 +88,8 @@
+                  'f': inheaders.get('Referer', ''),
+                  'a': inheaders.get('User-Agent', ''),
+                  }
+-        for k, v in atoms.items():
+-            if isinstance(v, unicode):
++        for k, v in list(atoms.items()):
++            if isinstance(v, str):
+                 v = v.encode('utf8')
+             elif not isinstance(v, str):
+                 v = str(v)
+diff -Naur client175_0.7-original/cherrypy/_cpmodpy.py client175_0.7/cherrypy/_cpmodpy.py
+--- client175_0.7-original/cherrypy/_cpmodpy.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/_cpmodpy.py	2021-08-03 14:42:11.807117510 +0200
+@@ -56,7 +56,7 @@
+ """
+ 
+ import logging
+-import StringIO
++import io
+ 
+ import cherrypy
+ from cherrypy._cperror import format_exc, bare_error
+@@ -183,7 +183,7 @@
+             path = req.uri
+             qs = req.args or ""
+             reqproto = req.protocol
+-            headers = req.headers_in.items()
++            headers = list(req.headers_in.items())
+             rfile = _ReadOnlyRequest(req)
+             prev = None
+             
+@@ -202,7 +202,7 @@
+                     try:
+                         request.run(method, path, qs, reqproto, headers, rfile)
+                         break
+-                    except cherrypy.InternalRedirect, ir:
++                    except cherrypy.InternalRedirect as ir:
+                         app.release_serving()
+                         prev = request
+                         
+@@ -220,7 +220,7 @@
+                         method = "GET"
+                         path = ir.path
+                         qs = ir.query_string
+-                        rfile = StringIO.StringIO()
++                        rfile = io.StringIO()
+                 
+                 send_response(req, response.status, response.header_list,
+                               response.body, response.stream)
+@@ -251,7 +251,7 @@
+         req.flush()
+     
+     # Set response body
+-    if isinstance(body, basestring):
++    if isinstance(body, str):
+         req.write(body)
+     else:
+         for seg in body:
+diff -Naur client175_0.7-original/cherrypy/_cprequest.py client175_0.7/cherrypy/_cprequest.py
+--- client175_0.7-original/cherrypy/_cprequest.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/_cprequest.py	2021-08-03 14:42:19.091009678 +0200
+@@ -1,5 +1,5 @@
+ 
+-import Cookie
++import http.cookies
+ import os
+ import sys
+ import time
+@@ -11,11 +11,9 @@
+ from cherrypy.lib import http, file_generator
+ 
+ 
+-class Hook(object):
++class Hook(object, metaclass=cherrypy._AttributeDocstrings):
+     """A callback and its metadata: failsafe, priority, and kwargs."""
+     
+-    __metaclass__ = cherrypy._AttributeDocstrings
+-    
+     callback = None
+     callback__doc = """
+     The bare callable that this Hook object is wrapping, which will
+@@ -63,7 +61,7 @@
+                 % (cls.__module__, cls.__name__, self.callback,
+                    self.failsafe, self.priority,
+                    ", ".join(['%s=%r' % (k, v)
+-                              for k, v in self.kwargs.iteritems()])))
++                              for k, v in self.kwargs.items()])))
+ 
+ 
+ class HookMap(dict):
+@@ -111,14 +109,14 @@
+         newmap = self.__class__()
+         # We can't just use 'update' because we want copies of the
+         # mutable values (each is a list) as well.
+-        for k, v in self.iteritems():
++        for k, v in self.items():
+             newmap[k] = v[:]
+         return newmap
+     copy = __copy__
+     
+     def __repr__(self):
+         cls = self.__class__
+-        return "%s.%s(points=%r)" % (cls.__module__, cls.__name__, self.keys())
++        return "%s.%s(points=%r)" % (cls.__module__, cls.__name__, list(self.keys()))
+ 
+ 
+ # Config namespace handlers
+@@ -129,7 +127,7 @@
+     # hookpoint per path (e.g. "hooks.before_handler.1").
+     # Little-known fact you only get from reading source ;)
+     hookpoint = k.split(".", 1)[0]
+-    if isinstance(v, basestring):
++    if isinstance(v, str):
+         v = cherrypy.lib.attributes(v)
+     if not isinstance(v, Hook):
+         v = Hook(v)
+@@ -156,7 +154,7 @@
+               'before_error_response', 'after_error_response']
+ 
+ 
+-class Request(object):
++class Request(object, metaclass=cherrypy._AttributeDocstrings):
+     """An HTTP request.
+     
+     This object represents the metadata of an HTTP request message;
+@@ -169,8 +167,6 @@
+     the given URL, and the execution plan for generating a response.
+     """
+     
+-    __metaclass__ = cherrypy._AttributeDocstrings
+-    
+     prev = None
+     prev__doc = """
+     The previous Request object (if any). This should be None
+@@ -251,7 +247,7 @@
+     values (decoded according to RFC 2047 if necessary). See also:
+     http.HeaderMap, http.HeaderElement."""
+     
+-    cookie = Cookie.SimpleCookie()
++    cookie = http.cookies.SimpleCookie()
+     cookie__doc = """See help(Cookie)."""
+     
+     rfile = None
+@@ -529,7 +525,7 @@
+             self.header_list = list(headers)
+             self.rfile = rfile
+             self.headers = http.HeaderMap()
+-            self.cookie = Cookie.SimpleCookie()
++            self.cookie = http.cookies.SimpleCookie()
+             self.handler = None
+             
+             # path_info should be the path from the
+@@ -608,7 +604,7 @@
+                     self.stage = 'before_finalize'
+                     self.hooks.run('before_finalize')
+                     cherrypy.response.finalize()
+-                except (cherrypy.HTTPRedirect, cherrypy.HTTPError), inst:
++                except (cherrypy.HTTPRedirect, cherrypy.HTTPError) as inst:
+                     inst.set_response()
+                     self.stage = 'before_finalize (HTTPError)'
+                     self.hooks.run('before_finalize')
+@@ -648,7 +644,7 @@
+             if name == 'Cookie':
+                 try:
+                     self.cookie.load(value)
+-                except Cookie.CookieError:
++                except http.cookies.CookieError:
+                     msg = "Illegal cookie name %s" % value.split('=')[0]
+                     raise cherrypy.HTTPError(400, msg)
+         
+@@ -709,7 +705,7 @@
+         # won't parse the request body for params if the client
+         # didn't provide a "Content-Type" header.
+         if 'Content-Type' not in self.headers:
+-            h = http.HeaderMap(self.headers.items())
++            h = http.HeaderMap(list(self.headers.items()))
+             h['Content-Type'] = ''
+         else:
+             h = self.headers
+@@ -720,7 +716,7 @@
+                                           # FieldStorage only recognizes POST.
+                                           environ={'REQUEST_METHOD': "POST"},
+                                           keep_blank_values=1)
+-        except Exception, e:
++        except Exception as e:
+             if e.__class__.__name__ == 'MaxSizeExceeded':
+                 # Post data is too big
+                 raise cherrypy.HTTPError(413)
+@@ -746,7 +742,7 @@
+                 self.error_response()
+             self.hooks.run("after_error_response")
+             cherrypy.response.finalize()
+-        except cherrypy.HTTPRedirect, inst:
++        except cherrypy.HTTPRedirect as inst:
+             inst.set_response()
+             cherrypy.response.finalize()
+ 
+@@ -763,7 +759,7 @@
+     
+     def __set__(self, obj, value):
+         # Convert the given value to an iterable object.
+-        if isinstance(value, basestring):
++        if isinstance(value, str):
+             # strings get wrapped in a list because iterating over a single
+             # item list is much faster than iterating over every character
+             # in a long string.
+@@ -779,7 +775,7 @@
+         obj._body = value
+ 
+ 
+-class Response(object):
++class Response(object, metaclass=cherrypy._AttributeDocstrings):
+     """An HTTP Response, including status, headers, and body.
+     
+     Application developers should use Response.headers (a dict) to
+@@ -788,8 +784,6 @@
+     (key, value) tuples.
+     """
+     
+-    __metaclass__ = cherrypy._AttributeDocstrings
+-    
+     # Class attributes for dev-time introspection.
+     status = ""
+     status__doc = """The HTTP Status-Code and Reason-Phrase."""
+@@ -808,7 +802,7 @@
+     values (decoded according to RFC 2047 if necessary). See also:
+     http.HeaderMap, http.HeaderElement."""
+     
+-    cookie = Cookie.SimpleCookie()
++    cookie = http.cookies.SimpleCookie()
+     cookie__doc = """See help(Cookie)."""
+     
+     body = Body()
+@@ -842,7 +836,7 @@
+             "Server": "CherryPy/" + cherrypy.__version__,
+             "Date": http.HTTPDate(self.time),
+         })
+-        self.cookie = Cookie.SimpleCookie()
++        self.cookie = http.cookies.SimpleCookie()
+     
+     def collapse_body(self):
+         """Collapse self.body to a single string; replace it and return it."""
+@@ -854,7 +848,7 @@
+         """Transform headers (and cookies) into self.header_list. (Core)"""
+         try:
+             code, reason, _ = http.valid_status(self.status)
+-        except ValueError, x:
++        except ValueError as x:
+             raise cherrypy.HTTPError(500, x.args[0])
+         
+         self.status = "%s %s" % (code, reason)
+diff -Naur client175_0.7-original/cherrypy/_cpserver.py client175_0.7/cherrypy/_cpserver.py
+--- client175_0.7-original/cherrypy/_cpserver.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/_cpserver.py	2021-08-03 14:42:27.582884114 +0200
+@@ -73,7 +73,7 @@
+         if httpserver is None:
+             from cherrypy import _cpwsgi_server
+             httpserver = _cpwsgi_server.CPWSGIServer()
+-        if isinstance(httpserver, basestring):
++        if isinstance(httpserver, str):
+             httpserver = attributes(httpserver)()
+         
+         if self.socket_file:
+diff -Naur client175_0.7-original/cherrypy/_cptools.py client175_0.7/cherrypy/_cptools.py
+--- client175_0.7-original/cherrypy/_cptools.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/_cptools.py	2021-08-03 14:43:38.721831788 +0200
+@@ -30,8 +30,8 @@
+     # Use this instead of importing inspect for less mem overhead.
+     import types
+     if isinstance(func, types.MethodType):
+-        func = func.im_func
+-    co = func.func_code
++        func = func.__func__
++    co = func.__code__
+     return co.co_varnames[:co.co_argcount]
+ 
+ 
+@@ -105,7 +105,7 @@
+                 f._cp_config = {}
+             subspace = self.namespace + "." + self._name + "."
+             f._cp_config[subspace + "on"] = True
+-            for k, v in kwargs.iteritems():
++            for k, v in kwargs.items():
+                 f._cp_config[subspace + k] = v
+             return f
+         return tool_decorator
+@@ -286,7 +286,7 @@
+         sess.regenerate()
+         
+         # Grab cookie-relevant tool args
+-        conf = dict([(k, v) for k, v in self._merged_args().iteritems()
++        conf = dict([(k, v) for k, v in self._merged_args().items()
+                      if k in ('path', 'path_header', 'name', 'timeout',
+                               'domain', 'secure')])
+         _sessions.set_response_cookie(**conf)
+@@ -346,7 +346,7 @@
+             # if a method is not found, an xmlrpclib.Fault should be returned
+             # raising an exception here will do that; see
+             # cherrypy.lib.xmlrpc.on_error
+-            raise Exception, 'method "%s" is not supported' % attr
++            raise Exception('method "%s" is not supported' % attr)
+         
+         conf = cherrypy.request.toolmaps['tools'].get("xmlrpc", {})
+         _xmlrpc.respond(body,
+@@ -399,7 +399,7 @@
+             cherrypy._cache = kwargs.pop("cache_class", _caching.MemoryCache)()
+             
+             # Take all remaining kwargs and set them on the Cache object.
+-            for k, v in kwargs.iteritems():
++            for k, v in kwargs.items():
+                 setattr(cherrypy._cache, k, v)
+         
+         if _caching.get(invalid_methods=invalid_methods):
+@@ -452,7 +452,7 @@
+         """Run tool._setup() for each tool in our toolmap."""
+         map = cherrypy.request.toolmaps.get(self.namespace)
+         if map:
+-            for name, settings in map.items():
++            for name, settings in list(map.items()):
+                 if settings.get("on", False):
+                     tool = getattr(self, name)
+                     tool._setup()
+diff -Naur client175_0.7-original/cherrypy/_cptree.py client175_0.7/cherrypy/_cptree.py
+--- client175_0.7-original/cherrypy/_cptree.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/_cptree.py	2021-08-03 14:43:50.457658068 +0200
+@@ -6,7 +6,7 @@
+ from cherrypy.lib import http as _http
+ 
+ 
+-class Application(object):
++class Application(object, metaclass=cherrypy._AttributeDocstrings):
+     """A CherryPy Application.
+     
+     Servers and gateways should not instantiate Request objects directly.
+@@ -16,8 +16,6 @@
+     (WSGI application object) for itself.
+     """
+     
+-    __metaclass__ = cherrypy._AttributeDocstrings
+-    
+     root = None
+     root__doc = """
+     The top-most container of page handlers for this app. Handlers should
+@@ -103,7 +101,7 @@
+         req = self.request_class(local, remote, scheme, sproto)
+         req.app = self
+         
+-        for name, toolbox in self.toolboxes.iteritems():
++        for name, toolbox in self.toolboxes.items():
+             req.namespaces[name] = toolbox
+         
+         resp = self.response_class()
+@@ -171,7 +169,7 @@
+         if isinstance(root, Application):
+             app = root
+             if script_name != "" and script_name != app.script_name:
+-                raise ValueError, "Cannot specify a different script name and pass an Application instance to cherrypy.mount"
++                raise ValueError("Cannot specify a different script name and pass an Application instance to cherrypy.mount")
+             script_name = app.script_name
+         else:
+             app = Application(root, script_name)
+diff -Naur client175_0.7-original/cherrypy/_cpwsgi.py client175_0.7/cherrypy/_cpwsgi.py
+--- client175_0.7-original/cherrypy/_cpwsgi.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/_cpwsgi.py	2021-08-03 14:44:08.117396886 +0200
+@@ -1,6 +1,6 @@
+ """WSGI interface (see PEP 333)."""
+ 
+-import StringIO as _StringIO
++import io as _StringIO
+ import sys as _sys
+ 
+ import cherrypy as _cherrypy
+@@ -82,7 +82,7 @@
+         except self.throws:
+             self.close()
+             raise
+-        except _cherrypy.InternalRedirect, ir:
++        except _cherrypy.InternalRedirect as ir:
+             self.environ['cherrypy.previous_request'] = _cherrypy.serving.request
+             self.close()
+             self.iredirect(ir.path, ir.query_string)
+@@ -158,9 +158,9 @@
+     def __iter__(self):
+         return self
+     
+-    def next(self):
++    def __next__(self):
+         try:
+-            chunk = self.iter_response.next()
++            chunk = next(self.iter_response)
+             # WSGI requires all data to be of type "str". This coercion should
+             # not take any time at all if chunk is already of type "str".
+             # If it's unicode, it could be a big performance hit (x ~500).
+@@ -170,7 +170,7 @@
+         except self.throws:
+             self.close()
+             raise
+-        except _cherrypy.InternalRedirect, ir:
++        except _cherrypy.InternalRedirect as ir:
+             self.environ['cherrypy.previous_request'] = _cherrypy.serving.request
+             self.close()
+             self.iredirect(ir.path, ir.query_string)
+diff -Naur client175_0.7-original/cherrypy/__init__.py client175_0.7/cherrypy/__init__.py
+--- client175_0.7-original/cherrypy/__init__.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/__init__.py	2021-08-03 14:44:38.280950778 +0200
+@@ -59,7 +59,7 @@
+ 
+ __version__ = "3.1.2"
+ 
+-from urlparse import urljoin as _urljoin
++from urllib.parse import urljoin as _urljoin
+ 
+ 
+ class _AttributeDocstrings(type):
+@@ -126,7 +126,7 @@
+         
+         newdoc = [cls.__doc__ or ""]
+         
+-        dctnames = dct.keys()
++        dctnames = list(dct.keys())
+         dctnames.sort()
+         
+         for name in dctnames:
+@@ -254,7 +254,7 @@
+ except ImportError:
+     from cherrypy._cpthreadinglocal import local as _local
+ 
+-class _Serving(_local):
++class _Serving(_local, metaclass=_AttributeDocstrings):
+     """An interface for registering request and response objects.
+     
+     Rather than have a separate "thread local" object for the request and
+@@ -265,8 +265,6 @@
+     thread-safe way.
+     """
+     
+-    __metaclass__ = _AttributeDocstrings
+-    
+     request = _cprequest.Request(_http.Host("127.0.0.1", 80),
+                                  _http.Host("127.0.0.1", 1111))
+     request__doc = """
+@@ -338,7 +336,7 @@
+         child = getattr(serving, self.__attrname__)
+         return len(child)
+     
+-    def __nonzero__(self):
++    def __bool__(self):
+         child = getattr(serving, self.__attrname__)
+         return bool(child)
+ 
+@@ -410,7 +408,7 @@
+     def expose_(func):
+         func.exposed = True
+         if alias is not None:
+-            if isinstance(alias, basestring):
++            if isinstance(alias, str):
+                 parents[alias.replace(".", "_")] = func
+             else:
+                 for a in alias:
+diff -Naur client175_0.7-original/cherrypy/lib/auth.py client175_0.7/cherrypy/lib/auth.py
+--- client175_0.7-original/cherrypy/lib/auth.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/auth.py	2021-08-03 14:45:01.296612330 +0200
+@@ -19,7 +19,7 @@
+                 users = users() # expect it to return a dictionary
+ 
+                 if not isinstance(users, dict):
+-                    raise ValueError, "Authentication users must be a dictionary"
++                    raise ValueError("Authentication users must be a dictionary")
+                 
+                 # fetch the user password
+                 password = users.get(ah["username"], None)
+@@ -28,7 +28,7 @@
+                 password = users(ah["username"])
+         else:
+             if not isinstance(users, dict):
+-                raise ValueError, "Authentication users must be a dictionary"
++                raise ValueError("Authentication users must be a dictionary")
+             
+             # fetch the user password
+             password = users.get(ah["username"], None)
+diff -Naur client175_0.7-original/cherrypy/lib/caching.py client175_0.7/cherrypy/lib/caching.py
+--- client175_0.7-original/cherrypy/lib/caching.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/caching.py	2021-08-03 14:45:08.464504417 +0200
+@@ -45,7 +45,7 @@
+         # See tickets #99 and #180 for more information.
+         while time:
+             now = time.time()
+-            for expiration_time, objects in self.expirations.items():
++            for expiration_time, objects in list(self.expirations.items()):
+                 if expiration_time <= now:
+                     for obj_size, obj_key in objects:
+                         try:
+@@ -161,7 +161,7 @@
+             # this was put into the cached copy, and should have been
+             # resurrected just above (response.headers = cache_data[1]).
+             cptools.validate_since()
+-        except cherrypy.HTTPRedirect, x:
++        except cherrypy.HTTPRedirect as x:
+             if x.status == 304:
+                 cherrypy._cache.tot_non_modified += 1
+             raise
+@@ -188,7 +188,7 @@
+                     cherrypy.response.headers.elements('Vary')]
+             if vary:
+                 sel_headers = dict([(k, v) for k, v
+-                                    in cherrypy.request.headers.iteritems()
++                                    in cherrypy.request.headers.items()
+                                     if k in vary])
+             else:
+                 sel_headers = {}
+diff -Naur client175_0.7-original/cherrypy/lib/covercp.py client175_0.7/cherrypy/lib/covercp.py
+--- client175_0.7-original/cherrypy/lib/covercp.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/covercp.py	2021-08-03 14:45:14.876409627 +0200
+@@ -21,14 +21,14 @@
+ import re
+ import sys
+ import cgi
+-import urllib
++import urllib.request, urllib.parse, urllib.error
+ import os, os.path
+ localFile = os.path.join(os.path.dirname(__file__), "coverage.cache")
+ 
+ try:
+-    import cStringIO as StringIO
++    import io as StringIO
+ except ImportError:
+-    import StringIO
++    import io
+ 
+ try:
+     from coverage import the_coverage as coverage
+@@ -190,7 +190,7 @@
+ def _show_branch(root, base, path, pct=0, showpct=False, exclude=""):
+     
+     # Show the directory name and any of our children
+-    dirs = [k for k, v in root.iteritems() if v]
++    dirs = [k for k, v in root.items() if v]
+     dirs.sort()
+     for name in dirs:
+         newpath = os.path.join(path, name)
+@@ -199,7 +199,7 @@
+             relpath = newpath[len(base):]
+             yield "| " * relpath.count(os.sep)
+             yield "<a class='directory' href='menu?base=%s&exclude=%s'>%s</a>\n" % \
+-                   (newpath, urllib.quote_plus(exclude), name)
++                   (newpath, urllib.parse.quote_plus(exclude), name)
+         
+         for chunk in _show_branch(root[name], base, newpath, pct, showpct, exclude):
+             yield chunk
+@@ -207,7 +207,7 @@
+     # Now list the files
+     if path.lower().startswith(base):
+         relpath = path[len(base):]
+-        files = [k for k, v in root.iteritems() if not v]
++        files = [k for k, v in root.items() if not v]
+         files.sort()
+         for name in files:
+             newpath = os.path.join(path, name)
+@@ -257,7 +257,7 @@
+     """Return covered module names as a nested dict."""
+     tree = {}
+     coverage.get_ready()
+-    runs = coverage.cexecuted.keys()
++    runs = list(coverage.cexecuted.keys())
+     if runs:
+         for path in runs:
+             if not _skip_file(path, exclude) and not os.path.isdir(path):
+@@ -287,7 +287,7 @@
+         for atom in atoms:
+             path += atom + os.sep
+             yield ("<a href='menu?base=%s&exclude=%s'>%s</a> %s"
+-                   % (path, urllib.quote_plus(exclude), atom, os.sep))
++                   % (path, urllib.parse.quote_plus(exclude), atom, os.sep))
+         yield "</div>"
+         
+         yield "<div id='tree'>"
+diff -Naur client175_0.7-original/cherrypy/lib/cptools.py client175_0.7/cherrypy/lib/cptools.py
+--- client175_0.7-original/cherrypy/lib/cptools.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/cptools.py	2021-08-03 14:45:22.384298594 +0200
+@@ -236,7 +236,7 @@
+         if error_msg:
+             body = self.login_screen(from_page, username, error_msg)
+             cherrypy.response.body = body
+-            if cherrypy.response.headers.has_key("Content-Length"):
++            if "Content-Length" in cherrypy.response.headers:
+                 # Delete Content-Length header so finalize() recalcs it.
+                 del cherrypy.response.headers["Content-Length"]
+             return True
+@@ -265,7 +265,7 @@
+             sess[self.session_key] = username = self.anonymous()
+         if not username:
+             cherrypy.response.body = self.login_screen(cherrypy.url(qs=request.query_string))
+-            if cherrypy.response.headers.has_key("Content-Length"):
++            if "Content-Length" in cherrypy.response.headers:
+                 # Delete Content-Length header so finalize() recalcs it.
+                 del cherrypy.response.headers["Content-Length"]
+             return True
+@@ -287,7 +287,7 @@
+ 
+ def session_auth(**kwargs):
+     sa = SessionAuth()
+-    for k, v in kwargs.iteritems():
++    for k, v in kwargs.items():
+         setattr(sa, k, v)
+     return sa.run()
+ session_auth.__doc__ = """Session authentication hook.
+@@ -314,7 +314,7 @@
+     # Sort by the standard points if possible.
+     from cherrypy import _cprequest
+     points = _cprequest.hookpoints
+-    for k in cherrypy.request.hooks.keys():
++    for k in list(cherrypy.request.hooks.keys()):
+         if k not in points:
+             points.append(k)
+     
+@@ -395,7 +395,7 @@
+     """
+     if not media:
+         return
+-    if isinstance(media, basestring):
++    if isinstance(media, str):
+         media = [media]
+     
+     # Parse the Accept request header, and try to match one
+diff -Naur client175_0.7-original/cherrypy/lib/encoding.py client175_0.7/cherrypy/lib/encoding.py
+--- client175_0.7-original/cherrypy/lib/encoding.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/encoding.py	2021-08-03 14:45:29.700190398 +0200
+@@ -33,7 +33,7 @@
+ 
+ def decode_params(encoding):
+     decoded_params = {}
+-    for key, value in cherrypy.request.params.items():
++    for key, value in list(cherrypy.request.params.items()):
+         if not hasattr(value, 'file'):
+             # Skip the value if it is an uploaded file
+             if isinstance(value, list):
+@@ -73,7 +73,7 @@
+     """
+     def encoder(body):
+         for chunk in body:
+-            if isinstance(chunk, unicode):
++            if isinstance(chunk, str):
+                 chunk = chunk.encode(encoding, errors)
+             yield chunk
+     cherrypy.response.body = encoder(cherrypy.response.body)
+@@ -84,7 +84,7 @@
+     try:
+         body = []
+         for chunk in cherrypy.response.body:
+-            if isinstance(chunk, unicode):
++            if isinstance(chunk, str):
+                 chunk = chunk.encode(encoding, errors)
+             body.append(chunk)
+         cherrypy.response.body = body
+@@ -101,7 +101,7 @@
+     else:
+         response.collapse_body()
+         encoder = encode_string
+-        if response.headers.has_key("Content-Length"):
++        if "Content-Length" in response.headers:
+             # Delete Content-Length header so finalize() recalcs it.
+             # Encoded strings may be of different lengths from their
+             # unicode equivalents, and even from each other. For example:
+@@ -179,7 +179,7 @@
+     yield '\037\213'      # magic header
+     yield '\010'         # compression method
+     yield '\0'
+-    yield struct.pack("<L", long(time.time()))
++    yield struct.pack("<L", int(time.time()))
+     yield '\002'
+     yield '\377'
+     
+@@ -194,12 +194,12 @@
+         yield zobj.compress(line)
+     yield zobj.flush()
+     yield struct.pack("<l", crc)
+-    yield struct.pack("<L", size & 0xFFFFFFFFL)
++    yield struct.pack("<L", size & 0xFFFFFFFF)
+ 
+ def decompress(body):
+-    import gzip, StringIO
++    import gzip, io
+     
+-    zbuf = StringIO.StringIO()
++    zbuf = io.StringIO()
+     zbuf.write(body)
+     zbuf.seek(0)
+     zfile = gzip.GzipFile(mode='rb', fileobj=zbuf)
+@@ -258,7 +258,7 @@
+                 
+                 response.headers['Content-Encoding'] = 'gzip'
+                 response.body = compress(response.body, compress_level)
+-                if response.headers.has_key("Content-Length"):
++                if "Content-Length" in response.headers:
+                     # Delete Content-Length header so finalize() recalcs it.
+                     del response.headers["Content-Length"]
+             return
+diff -Naur client175_0.7-original/cherrypy/lib/httpauth.py client175_0.7/cherrypy/lib/httpauth.py
+--- client175_0.7-original/cherrypy/lib/httpauth.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/httpauth.py	2021-08-03 14:45:46.595938962 +0200
+@@ -68,7 +68,7 @@
+ 
+ import time
+ import base64
+-import urllib2
++import urllib.request, urllib.error, urllib.parse
+ 
+ MD5 = "MD5"
+ MD5_SESS = "MD5-sess"
+@@ -144,17 +144,17 @@
+     # Check for required parameters
+     required = ["username", "realm", "nonce", "uri", "response"]
+     for k in required:
+-        if not params.has_key(k):
++        if k not in params:
+             return None
+ 
+     # If qop is sent then cnonce and nc MUST be present
+-    if params.has_key("qop") and not (params.has_key("cnonce") \
+-                                      and params.has_key("nc")):
++    if "qop" in params and not ("cnonce" in params \
++                                      and "nc" in params):
+         return None
+ 
+     # If qop is not sent, neither cnonce nor nc can be present
+-    if (params.has_key("cnonce") or params.has_key("nc")) and \
+-       not params.has_key("qop"):
++    if ("cnonce" in params or "nc" in params) and \
++       "qop" not in params:
+         return None
+ 
+     return params
+diff -Naur client175_0.7-original/cherrypy/lib/http.py client175_0.7/cherrypy/lib/http.py
+--- client175_0.7-original/cherrypy/lib/http.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/http.py	2021-08-03 14:45:40.288033948 +0200
+@@ -6,7 +6,7 @@
+ # FuManChu will personally hang you up by your thumbs and submit you
+ # to a public caning.
+ 
+-from BaseHTTPServer import BaseHTTPRequestHandler
++from http.server import BaseHTTPRequestHandler
+ response_codes = BaseHTTPRequestHandler.responses.copy()
+ 
+ # From http://www.cherrypy.org/ticket/361
+@@ -61,7 +61,7 @@
+         if start:
+             if not stop:
+                 stop = content_length - 1
+-            start, stop = map(int, (start, stop))
++            start, stop = list(map(int, (start, stop)))
+             if start >= content_length:
+                 # From rfc 2616 sec 14.16:
+                 # "If the server receives a request (other than one
+@@ -101,8 +101,8 @@
+         self.params = params
+     
+     def __unicode__(self):
+-        p = [";%s=%s" % (k, v) for k, v in self.params.iteritems()]
+-        return u"%s%s" % (self.value, "".join(p))
++        p = [";%s=%s" % (k, v) for k, v in self.params.items()]
++        return "%s%s" % (self.value, "".join(p))
+     
+     def __str__(self):
+         return str(self.__unicode__())
+@@ -264,14 +264,14 @@
+         pm = {'x': int(pm[0]), 'y': int(pm[1])}
+     else:
+         pm = cgi.parse_qs(query_string, keep_blank_values)
+-        for key, val in pm.items():
++        for key, val in list(pm.items()):
+             if len(val) == 1:
+                 pm[key] = val[0]
+     return pm
+ 
+ def params_from_CGI_form(form):
+     params = {}
+-    for key in form.keys():
++    for key in list(form.keys()):
+         value_list = form[key]
+         if isinstance(value_list, list):
+             params[key] = []
+@@ -315,7 +315,7 @@
+         return dict.has_key(self, str(key).title())
+     
+     def update(self, E):
+-        for k in E.keys():
++        for k in list(E.keys()):
+             self[str(k).title()] = E[k]
+     
+     def fromkeys(cls, seq, value=None):
+@@ -357,8 +357,8 @@
+     def output(self, protocol=(1, 1)):
+         """Transform self into a list of (name, value) tuples."""
+         header_list = []
+-        for key, v in self.iteritems():
+-            if isinstance(v, unicode):
++        for key, v in self.items():
++            if isinstance(v, str):
+                 # HTTP/1.0 says, "Words of *TEXT may contain octets
+                 # from character sets other than US-ASCII." and
+                 # "Recipients of header field TEXT containing octets
+diff -Naur client175_0.7-original/cherrypy/lib/__init__.py client175_0.7/cherrypy/lib/__init__.py
+--- client175_0.7-original/cherrypy/lib/__init__.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/__init__.py	2021-08-03 14:46:02.407667654 +0200
+@@ -18,7 +18,7 @@
+     """Load a module and retrieve an attribute of that module."""
+     
+     # Parse out the path, module, and attribute
+-    last_dot = full_attribute_name.rfind(u".")
++    last_dot = full_attribute_name.rfind(".")
+     attr_name = full_attribute_name[last_dot + 1:]
+     mod_path = full_attribute_name[:last_dot]
+     
+@@ -52,7 +52,7 @@
+         return expr[subs]
+     
+     def build_CallFunc(self, o):
+-        children = map(self.build, o.getChildren())
++        children = list(map(self.build, o.getChildren()))
+         callee = children.pop(0)
+         kwargs = children.pop() or {}
+         starargs = children.pop() or ()
+@@ -60,7 +60,7 @@
+         return callee(*args, **kwargs)
+     
+     def build_List(self, o):
+-        return map(self.build, o.getChildren())
++        return list(map(self.build, o.getChildren()))
+     
+     def build_Const(self, o):
+         return o.value
+@@ -69,7 +69,7 @@
+         d = {}
+         i = iter(map(self.build, o.getChildren()))
+         for el in i:
+-            d[el] = i.next()
++            d[el] = next(i)
+         return d
+     
+     def build_Tuple(self, o):
+@@ -91,7 +91,7 @@
+         
+         # See if the Name is in __builtin__.
+         try:
+-            import __builtin__
++            import builtins
+             return getattr(__builtin__, o.name)
+         except AttributeError:
+             pass
+@@ -99,7 +99,7 @@
+         raise TypeError("unrepr could not resolve the name %s" % repr(o.name))
+     
+     def build_Add(self, o):
+-        left, right = map(self.build, o.getChildren())
++        left, right = list(map(self.build, o.getChildren()))
+         return left + right
+     
+     def build_Getattr(self, o):
+diff -Naur client175_0.7-original/cherrypy/lib/profiler.py client175_0.7/cherrypy/lib/profiler.py
+--- client175_0.7-original/cherrypy/lib/profiler.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/profiler.py	2021-08-03 14:46:29.643218230 +0200
+@@ -61,9 +61,9 @@
+ import sys
+ 
+ try:
+-    import cStringIO as StringIO
++    import io as StringIO
+ except ImportError:
+-    import StringIO
++    import io
+ 
+ 
+ _count = 0
+@@ -94,7 +94,7 @@
+     
+     def stats(self, filename, sortby='cumulative'):
+         """stats(index) -> output of print_stats() for the given profile."""
+-        sio = StringIO.StringIO()
++        sio = io.StringIO()
+         if sys.version_info >= (2, 5):
+             s = pstats.Stats(os.path.join(self.path, filename), stream=sio)
+             s.strip_dirs()
+diff -Naur client175_0.7-original/cherrypy/lib/safemime.py client175_0.7/cherrypy/lib/safemime.py
+--- client175_0.7-original/cherrypy/lib/safemime.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/safemime.py	2021-08-03 14:46:40.883037698 +0200
+@@ -95,13 +95,13 @@
+     def __iter__(self):
+         return self.rfile
+     
+-    def next(self):
++    def __next__(self):
+         if self.clen:
+             # Return '' if we've read all the data.
+             if self.bytes_read >= self.clen:
+                 return ''
+         
+-        data = self.rfile.next()
++        data = next(self.rfile)
+         self.bytes_read += len(data)
+         return data
+ 
+diff -Naur client175_0.7-original/cherrypy/lib/sessions.py client175_0.7/cherrypy/lib/sessions.py
+--- client175_0.7-original/cherrypy/lib/sessions.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/sessions.py	2021-08-03 14:46:48.498916658 +0200
+@@ -9,7 +9,7 @@
+ import datetime
+ import os
+ try:
+-    import cPickle as pickle
++    import pickle as pickle
+ except ImportError:
+     import pickle
+ import random
+@@ -31,11 +31,9 @@
+ 
+ missing = object()
+ 
+-class Session(object):
++class Session(object, metaclass=cherrypy._AttributeDocstrings):
+     """A CherryPy dict-like Session object (one per request)."""
+     
+-    __metaclass__ = cherrypy._AttributeDocstrings
+-    
+     _id = None
+     id_observers = None
+     id_observers__doc = "A list of callbacks to which to pass new id's."
+@@ -72,7 +70,7 @@
+         self.id_observers = []
+         self._data = {}
+         
+-        for k, v in kwargs.iteritems():
++        for k, v in kwargs.items():
+             setattr(self, k, v)
+         
+         if id is None:
+@@ -192,7 +190,7 @@
+     def has_key(self, key):
+         """D.has_key(k) -> True if D has a key k, else False."""
+         if not self.loaded: self.load()
+-        return self._data.has_key(key)
++        return key in self._data
+     
+     def get(self, key, default=None):
+         """D.get(k[,d]) -> D[k] if k in D, else d.  d defaults to None."""
+@@ -217,17 +215,17 @@
+     def keys(self):
+         """D.keys() -> list of D's keys."""
+         if not self.loaded: self.load()
+-        return self._data.keys()
++        return list(self._data.keys())
+     
+     def items(self):
+         """D.items() -> list of D's (key, value) pairs, as 2-tuples."""
+         if not self.loaded: self.load()
+-        return self._data.items()
++        return list(self._data.items())
+     
+     def values(self):
+         """D.values() -> list of D's values."""
+         if not self.loaded: self.load()
+-        return self._data.values()
++        return list(self._data.values())
+ 
+ 
+ class RamSession(Session):
+@@ -239,7 +237,7 @@
+     def clean_up(self):
+         """Clean up expired sessions."""
+         now = datetime.datetime.now()
+-        for id, (data, expiration_time) in self.cache.items():
++        for id, (data, expiration_time) in list(self.cache.items()):
+             if expiration_time < now:
+                 try:
+                     del self.cache[id]
+@@ -302,7 +300,7 @@
+         # The 'storage_path' arg is required for file-based sessions.
+         kwargs['storage_path'] = os.path.abspath(kwargs['storage_path'])
+         
+-        for k, v in kwargs.iteritems():
++        for k, v in kwargs.items():
+             setattr(cls, k, v)
+         
+         # Warn if any lock files exist at startup.
+@@ -426,7 +424,7 @@
+         This should only be called once per process; this will be done
+         automatically when using sessions.init (as the built-in Tool does).
+         """
+-        for k, v in kwargs.iteritems():
++        for k, v in kwargs.items():
+             setattr(cls, k, v)
+         
+         self.db = self.get_db()
+@@ -502,7 +500,7 @@
+         This should only be called once per process; this will be done
+         automatically when using sessions.init (as the built-in Tool does).
+         """
+-        for k, v in kwargs.iteritems():
++        for k, v in kwargs.items():
+             setattr(cls, k, v)
+         
+         import memcache
+diff -Naur client175_0.7-original/cherrypy/lib/static.py client175_0.7/cherrypy/lib/static.py
+--- client175_0.7-original/cherrypy/lib/static.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/static.py	2021-08-03 14:46:56.870784689 +0200
+@@ -7,7 +7,7 @@
+ import re
+ import stat
+ import time
+-import urllib
++import urllib.request, urllib.parse, urllib.error
+ 
+ import cherrypy
+ from cherrypy.lib import cptools, http, file_generator_limited
+@@ -99,7 +99,7 @@
+                 boundary = mimetools.choose_boundary()
+                 ct = "multipart/byteranges; boundary=%s" % boundary
+                 response.headers['Content-Type'] = ct
+-                if response.headers.has_key("Content-Length"):
++                if "Content-Length" in response.headers:
+                     # Delete Content-Length header so finalize() recalcs it.
+                     del response.headers["Content-Length"]
+                 
+@@ -189,7 +189,7 @@
+         section = "/"
+     section = section.rstrip(r"\/")
+     branch = cherrypy.request.path_info[len(section) + 1:]
+-    branch = urllib.unquote(branch.lstrip(r"\/"))
++    branch = urllib.parse.unquote(branch.lstrip(r"\/"))
+     
+     # If branch is "", filename will end in a slash
+     filename = os.path.join(dir, branch)
+diff -Naur client175_0.7-original/cherrypy/lib/tidy.py client175_0.7/cherrypy/lib/tidy.py
+--- client175_0.7-original/cherrypy/lib/tidy.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/tidy.py	2021-08-03 14:47:04.222669487 +0200
+@@ -2,7 +2,7 @@
+ 
+ import cgi
+ import os
+-import StringIO
++import io
+ import traceback
+ 
+ import cherrypy
+@@ -79,7 +79,7 @@
+         
+         if new_errs:
+             response.body = wrong_content('<br />'.join(new_errs), orig_body)
+-            if response.headers.has_key("Content-Length"):
++            if "Content-Length" in response.headers:
+                 # Delete Content-Length header so finalize() recalcs it.
+                 del response.headers["Content-Length"]
+             return
+@@ -95,23 +95,23 @@
+                 enctag = '<?xml version="1.0" encoding="%s"?>' % encoding
+                 orig_body = enctag + orig_body
+             
+-            f = StringIO.StringIO(orig_body)
++            f = io.StringIO(orig_body)
+             try:
+                 tree = parse(f)
+             except:
+                 # Wrong XML
+-                body_file = StringIO.StringIO()
++                body_file = io.StringIO()
+                 traceback.print_exc(file = body_file)
+                 body_file = '<br />'.join(body_file.getvalue())
+                 response.body = wrong_content(body_file, orig_body, "XML")
+-                if response.headers.has_key("Content-Length"):
++                if "Content-Length" in response.headers:
+                     # Delete Content-Length header so finalize() recalcs it.
+                     del response.headers["Content-Length"]
+                 return
+         
+         if use_output:
+             response.body = [output]
+-            if response.headers.has_key("Content-Length"):
++            if "Content-Length" in response.headers:
+                 # Delete Content-Length header so finalize() recalcs it.
+                 del response.headers["Content-Length"]
+ 
+@@ -178,7 +178,7 @@
+         
+         if new_errs:
+             response.body = wrong_content('<br />'.join(new_errs), orig_body)
+-            if response.headers.has_key("Content-Length"):
++            if "Content-Length" in response.headers:
+                 # Delete Content-Length header so finalize() recalcs it.
+                 del response.headers["Content-Length"]
+ 
+diff -Naur client175_0.7-original/cherrypy/lib/wsgiapp.py client175_0.7/cherrypy/lib/wsgiapp.py
+--- client175_0.7-original/cherrypy/lib/wsgiapp.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/wsgiapp.py	2021-08-03 14:47:15.738490577 +0200
+@@ -43,7 +43,7 @@
+     headers = request.headers
+     environ["CONTENT_TYPE"] = headers.get("Content-type", "")
+     environ["CONTENT_LENGTH"] = headers.get("Content-length", "")
+-    for (k, v) in headers.iteritems():
++    for (k, v) in headers.items():
+         envname = "HTTP_" + k.upper().replace("-","_")
+         environ[envname] = v
+     return environ
+diff -Naur client175_0.7-original/cherrypy/lib/xmlrpc.py client175_0.7/cherrypy/lib/xmlrpc.py
+--- client175_0.7-original/cherrypy/lib/xmlrpc.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/lib/xmlrpc.py	2021-08-03 14:47:22.378387654 +0200
+@@ -6,8 +6,8 @@
+ def process_body():
+     """Return (params, method) from request body."""
+     try:
+-        import xmlrpclib
+-        return xmlrpclib.loads(cherrypy.request.body.read())
++        import xmlrpc.client
++        return xmlrpc.client.loads(cherrypy.request.body.read())
+     except Exception:
+         return ('ERROR PARAMS', ), 'ERRORMETHOD'
+ 
+@@ -35,15 +35,15 @@
+ 
+ 
+ def respond(body, encoding='utf-8', allow_none=0):
+-    import xmlrpclib
+-    if not isinstance(body, xmlrpclib.Fault):
++    import xmlrpc.client
++    if not isinstance(body, xmlrpc.client.Fault):
+         body = (body,)
+-    _set_response(xmlrpclib.dumps(body, methodresponse=1,
++    _set_response(xmlrpc.client.dumps(body, methodresponse=1,
+                                   encoding=encoding,
+                                   allow_none=allow_none))
+ 
+ def on_error(*args, **kwargs):
+     body = str(sys.exc_info()[1])
+-    import xmlrpclib
+-    _set_response(xmlrpclib.dumps(xmlrpclib.Fault(1, body)))
++    import xmlrpc.client
++    _set_response(xmlrpc.client.dumps(xmlrpc.client.Fault(1, body)))
+ 
+diff -Naur client175_0.7-original/cherrypy/process/plugins.py client175_0.7/cherrypy/process/plugins.py
+--- client175_0.7-original/cherrypy/process/plugins.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/process/plugins.py	2021-08-03 14:48:07.409700439 +0200
+@@ -49,7 +49,7 @@
+     
+     # Map from signal numbers to names
+     signals = {}
+-    for k, v in vars(_signal).items():
++    for k, v in list(vars(_signal).items()):
+         if k.startswith('SIG') and not k.startswith('SIG_'):
+             signals[v] = k
+     del k, v
+@@ -65,14 +65,14 @@
+         self._previous_handlers = {}
+     
+     def subscribe(self):
+-        for sig, func in self.handlers.iteritems():
++        for sig, func in self.handlers.items():
+             try:
+                 self.set_handler(sig, func)
+             except ValueError:
+                 pass
+     
+     def unsubscribe(self):
+-        for signum, handler in self._previous_handlers.iteritems():
++        for signum, handler in self._previous_handlers.items():
+             signame = self.signals[signum]
+             
+             if handler is None:
+@@ -100,7 +100,7 @@
+         If the given signal name or number is not available on the current
+         platform, ValueError is raised.
+         """
+-        if isinstance(signal, basestring):
++        if isinstance(signal, str):
+             signum = getattr(_signal, signal, None)
+             if signum is None:
+                 raise ValueError("No such signal: %r" % signal)
+@@ -162,7 +162,7 @@
+                 self.bus.log("pwd module not available; ignoring uid.",
+                              level=30)
+                 val = None
+-            elif isinstance(val, basestring):
++            elif isinstance(val, str):
+                 val = pwd.getpwnam(val)[2]
+         self._uid = val
+     uid = property(_get_uid, _set_uid, doc="The uid under which to run.")
+@@ -175,7 +175,7 @@
+                 self.bus.log("grp module not available; ignoring gid.",
+                              level=30)
+                 val = None
+-            elif isinstance(val, basestring):
++            elif isinstance(val, str):
+                 val = grp.getgrnam(val)[2]
+         self._gid = val
+     gid = property(_get_gid, _set_gid, doc="The gid under which to run.")
+@@ -296,7 +296,7 @@
+                 # This is the first parent. Exit, now that we've forked.
+                 self.bus.log('Forking once.')
+                 os._exit(0)
+-        except OSError, exc:
++        except OSError as exc:
+             # Python raises OSError rather than returning negative numbers.
+             sys.exit("%s: fork #1 failed: (%d) %s\n"
+                      % (sys.argv[0], exc.errno, exc.strerror))
+@@ -309,7 +309,7 @@
+             if pid > 0:
+                 self.bus.log('Forking twice.')
+                 os._exit(0) # Exit second parent
+-        except OSError, exc:
++        except OSError as exc:
+             sys.exit("%s: fork #2 failed: (%d) %s\n"
+                      % (sys.argv[0], exc.errno, exc.strerror))
+         
+@@ -440,7 +440,7 @@
+     def run(self):
+         """Reload the process if registered files have been modified."""
+         sysfiles = set()
+-        for k, m in sys.modules.items():
++        for k, m in list(sys.modules.items()):
+             if re.match(self.match, k):
+                 if hasattr(m, '__loader__'):
+                     if hasattr(m.__loader__, 'archive'):
+@@ -522,7 +522,7 @@
+     
+     def stop(self):
+         """Release all threads and run all 'stop_thread' listeners."""
+-        for thread_ident, i in self.threads.iteritems():
++        for thread_ident, i in self.threads.items():
+             self.bus.publish('stop_thread', i)
+         self.threads.clear()
+     graceful = stop
+diff -Naur client175_0.7-original/cherrypy/process/servers.py client175_0.7/cherrypy/process/servers.py
+--- client175_0.7-original/cherrypy/process/servers.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/process/servers.py	2021-08-03 14:48:16.165568167 +0200
+@@ -71,11 +71,11 @@
+         """
+         try:
+             self.httpserver.start()
+-        except KeyboardInterrupt, exc:
++        except KeyboardInterrupt as exc:
+             self.bus.log("<Ctrl-C> hit: shutting down HTTP server")
+             self.interrupt = exc
+             self.bus.exit()
+-        except SystemExit, exc:
++        except SystemExit as exc:
+             self.bus.log("SystemExit raised: shutting down HTTP server")
+             self.interrupt = exc
+             self.bus.exit()
+@@ -238,7 +238,7 @@
+     if not host:
+         raise ValueError("Host values of '' or None are not allowed.")
+     
+-    for trial in xrange(50):
++    for trial in range(50):
+         try:
+             # we are expecting a free port, so reduce the timeout
+             check_port(host, port, timeout=0.1)
+@@ -255,7 +255,7 @@
+     if not host:
+         raise ValueError("Host values of '' or None are not allowed.")
+     
+-    for trial in xrange(50):
++    for trial in range(50):
+         try:
+             check_port(host, port)
+         except IOError:
+diff -Naur client175_0.7-original/cherrypy/process/win32.py client175_0.7/cherrypy/process/win32.py
+--- client175_0.7-original/cherrypy/process/win32.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/process/win32.py	2021-08-03 14:48:22.801468164 +0200
+@@ -1,7 +1,7 @@
+ """Windows service. Requires pywin32."""
+ 
+ import os
+-import thread
++import _thread
+ import win32api
+ import win32con
+ import win32event
+@@ -84,7 +84,7 @@
+             return self.events[state]
+         except KeyError:
+             event = win32event.CreateEvent(None, 0, 0,
+-                                           u"WSPBus %s Event (pid=%r)" %
++                                           "WSPBus %s Event (pid=%r)" %
+                                            (state.name, os.getpid()))
+             self.events[state] = event
+             return event
+@@ -128,7 +128,7 @@
+     
+     def key_for(self, obj):
+         """For the given value, return its corresponding key."""
+-        for key, val in self.iteritems():
++        for key, val in self.items():
+             if val is obj:
+                 return key
+         raise ValueError("The given object could not be found: %r" % obj)
+diff -Naur client175_0.7-original/cherrypy/process/wspbus.py client175_0.7/cherrypy/process/wspbus.py
+--- client175_0.7-original/cherrypy/process/wspbus.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/process/wspbus.py	2021-08-03 14:48:29.181372091 +0200
+@@ -147,7 +147,7 @@
+                 output.append(listener(*args, **kwargs))
+             except KeyboardInterrupt:
+                 raise
+-            except SystemExit, e:
++            except SystemExit as e:
+                 # If we have previous errors ensure the exit code is non-zero
+                 if exc and e.code == 0:
+                     e.code = 1
+@@ -195,7 +195,7 @@
+             except:
+                 # Any stop/exit errors will be logged inside publish().
+                 pass
+-            raise e_info[0], e_info[1], e_info[2]
++            raise e_info[0](e_info[1]).with_traceback(e_info[2])
+     
+     def exit(self):
+         """Stop all services and prepare to exit the process."""
+diff -Naur client175_0.7-original/cherrypy/wsgiserver/__init__.py client175_0.7/cherrypy/wsgiserver/__init__.py
+--- client175_0.7-original/cherrypy/wsgiserver/__init__.py	2010-04-20 13:10:10.000000000 +0200
++++ client175_0.7/cherrypy/wsgiserver/__init__.py	2021-08-03 14:49:05.556826062 +0200
+@@ -79,24 +79,24 @@
+ 
+ import base64
+ import os
+-import Queue
++import queue
+ import re
+ quoted_slash = re.compile("(?i)%2F")
+ import rfc822
+ import socket
+ try:
+-    import cStringIO as StringIO
++    import io as StringIO
+ except ImportError:
+-    import StringIO
++    import io
+ 
+-_fileobject_uses_str_type = isinstance(socket._fileobject(None)._rbuf, basestring)
++_fileobject_uses_str_type = isinstance(socket._fileobject(None)._rbuf, str)
+ 
+ import sys
+ import threading
+ import time
+ import traceback
+-from urllib import unquote
+-from urlparse import urlparse
++from urllib.parse import unquote
++from urllib.parse import urlparse
+ import warnings
+ 
+ try:
+@@ -117,7 +117,7 @@
+     errno_names = dir(errno)
+     nums = [getattr(errno, k) for k in errnames if k in errno_names]
+     # de-dupe the list
+-    return dict.fromkeys(nums).keys()
++    return list(dict.fromkeys(nums).keys())
+ 
+ socket_error_eintr = plat_specific_errors("EINTR", "WSAEINTR")
+ 
+@@ -153,7 +153,7 @@
+     
+     def __init__(self, apps):
+         try:
+-            apps = apps.items()
++            apps = list(apps.items())
+         except AttributeError:
+             pass
+         
+@@ -239,8 +239,8 @@
+     def __iter__(self):
+         return self
+     
+-    def next(self):
+-        data = self.rfile.next()
++    def __next__(self):
++        data = next(self.rfile)
+         self.bytes_read += len(data)
+         self._check_length()
+         return data
+@@ -401,7 +401,7 @@
+         # then all the http headers
+         try:
+             self.read_headers()
+-        except ValueError, ex:
++        except ValueError as ex:
+             self.simple_response("400 Bad Request", repr(ex.args))
+             return
+         
+@@ -500,7 +500,7 @@
+     def decode_chunked(self):
+         """Decode the 'chunked' transfer coding."""
+         cl = 0
+-        data = StringIO.StringIO()
++        data = io.StringIO()
+         while True:
+             line = self.rfile.readline().strip().split(";", 1)
+             chunk_size = int(line.pop(0), 16)
+@@ -592,7 +592,7 @@
+         
+         try:
+             self.wfile.sendall("".join(buf))
+-        except socket.error, x:
++        except socket.error as x:
+             if x.args[0] not in socket_errors_to_ignore:
+                 raise
+     
+@@ -609,7 +609,7 @@
+         # exc_info tuple."
+         if self.sent_headers:
+             try:
+-                raise exc_info[0], exc_info[1], exc_info[2]
++                raise exc_info[0](exc_info[1]).with_traceback(exc_info[2])
+             finally:
+                 exc_info = None
+         
+@@ -728,7 +728,7 @@
+                 try:
+                     bytes_sent = self.send(data)
+                     data = data[bytes_sent:]
+-                except socket.error, e:
++                except socket.error as e:
+                     if e.args[0] not in socket_errors_nonblocking:
+                         raise
+ 
+@@ -745,7 +745,7 @@
+             while True:
+                 try:
+                     return self._sock.recv(size)
+-                except socket.error, e:
++                except socket.error as e:
+                     if (e.args[0] not in socket_errors_nonblocking
+                         and e.args[0] not in socket_error_eintr):
+                         raise
+@@ -762,7 +762,7 @@
+             buf.seek(0, 2)  # seek end
+             if size < 0:
+                 # Read until EOF
+-                self._rbuf = StringIO.StringIO()  # reset _rbuf.  we consume it via buf.
++                self._rbuf = io.StringIO()  # reset _rbuf.  we consume it via buf.
+                 while True:
+                     data = self.recv(rbufsize)
+                     if not data:
+@@ -776,11 +776,11 @@
+                     # Already have size bytes in our buffer?  Extract and return.
+                     buf.seek(0)
+                     rv = buf.read(size)
+-                    self._rbuf = StringIO.StringIO()
++                    self._rbuf = io.StringIO()
+                     self._rbuf.write(buf.read())
+                     return rv
+ 
+-                self._rbuf = StringIO.StringIO()  # reset _rbuf.  we consume it via buf.
++                self._rbuf = io.StringIO()  # reset _rbuf.  we consume it via buf.
+                 while True:
+                     left = size - buf_len
+                     # recv() will malloc the amount of memory given as its
+@@ -818,7 +818,7 @@
+                 buf.seek(0)
+                 bline = buf.readline(size)
+                 if bline.endswith('\n') or len(bline) == size:
+-                    self._rbuf = StringIO.StringIO()
++                    self._rbuf = io.StringIO()
+                     self._rbuf.write(buf.read())
+                     return bline
+                 del bline
+@@ -828,7 +828,7 @@
+                     # Speed up unbuffered case
+                     buf.seek(0)
+                     buffers = [buf.read()]
+-                    self._rbuf = StringIO.StringIO()  # reset _rbuf.  we consume it via buf.
++                    self._rbuf = io.StringIO()  # reset _rbuf.  we consume it via buf.
+                     data = None
+                     recv = self.recv
+                     while data != "\n":
+@@ -839,7 +839,7 @@
+                     return "".join(buffers)
+ 
+                 buf.seek(0, 2)  # seek end
+-                self._rbuf = StringIO.StringIO()  # reset _rbuf.  we consume it via buf.
++                self._rbuf = io.StringIO()  # reset _rbuf.  we consume it via buf.
+                 while True:
+                     data = self.recv(self._rbufsize)
+                     if not data:
+@@ -860,10 +860,10 @@
+                 if buf_len >= size:
+                     buf.seek(0)
+                     rv = buf.read(size)
+-                    self._rbuf = StringIO.StringIO()
++                    self._rbuf = io.StringIO()
+                     self._rbuf.write(buf.read())
+                     return rv
+-                self._rbuf = StringIO.StringIO()  # reset _rbuf.  we consume it via buf.
++                self._rbuf = io.StringIO()  # reset _rbuf.  we consume it via buf.
+                 while True:
+                     data = self.recv(self._rbufsize)
+                     if not data:
+@@ -906,7 +906,7 @@
+                 try:
+                     bytes_sent = self.send(data)
+                     data = data[bytes_sent:]
+-                except socket.error, e:
++                except socket.error as e:
+                     if e.args[0] not in socket_errors_nonblocking:
+                         raise
+ 
+@@ -923,7 +923,7 @@
+             while True:
+                 try:
+                     return self._sock.recv(size)
+-                except socket.error, e:
++                except socket.error as e:
+                     if (e.args[0] not in socket_errors_nonblocking
+                         and e.args[0] not in socket_error_eintr):
+                         raise
+@@ -1065,7 +1065,7 @@
+                 time.sleep(self.ssl_retry)
+             except SSL.WantWriteError:
+                 time.sleep(self.ssl_retry)
+-            except SSL.SysCallError, e:
++            except SSL.SysCallError as e:
+                 if is_reader and e.args == (-1, 'Unexpected EOF'):
+                     return ""
+                 
+@@ -1073,7 +1073,7 @@
+                 if is_reader and errnum in socket_errors_to_ignore:
+                     return ""
+                 raise socket.error(errnum)
+-            except SSL.Error, e:
++            except SSL.Error as e:
+                 if is_reader and e.args == (-1, 'Unexpected EOF'):
+                     return ""
+                 
+@@ -1175,7 +1175,7 @@
+                 if req.close_connection:
+                     return
+         
+-        except socket.error, e:
++        except socket.error as e:
+             errnum = e.args[0]
+             if errnum == 'timed out':
+                 if req and not req.sent_headers:
+@@ -1187,7 +1187,7 @@
+             return
+         except (KeyboardInterrupt, SystemExit):
+             raise
+-        except FatalSSLAlert, e:
++        except FatalSSLAlert as e:
+             # Close the connection.
+             return
+         except NoSSLError:
+@@ -1198,7 +1198,7 @@
+                     "The client sent a plain HTTP request, but "
+                     "this server only speaks HTTPS on this port.")
+                 self.linger = True
+-        except Exception, e:
++        except Exception as e:
+             if req and not req.sent_headers:
+                 req.simple_response("500 Internal Server Error", format_exc())
+     
+@@ -1272,7 +1272,7 @@
+                 finally:
+                     conn.close()
+                     self.conn = None
+-        except (KeyboardInterrupt, SystemExit), exc:
++        except (KeyboardInterrupt, SystemExit) as exc:
+             self.server.interrupt = exc
+ 
+ 
+@@ -1288,12 +1288,12 @@
+         self.min = min
+         self.max = max
+         self._threads = []
+-        self._queue = Queue.Queue()
++        self._queue = queue.Queue()
+         self.get = self._queue.get
+     
+     def start(self):
+         """Start the pool of threads."""
+-        for i in xrange(self.min):
++        for i in range(self.min):
+             self._threads.append(WorkerThread(self.server))
+         for worker in self._threads:
+             worker.setName("CP WSGIServer " + worker.getName())
+@@ -1314,7 +1314,7 @@
+     
+     def grow(self, amount):
+         """Spawn new worker threads (not above self.max)."""
+-        for i in xrange(amount):
++        for i in range(amount):
+             if self.max > 0 and len(self._threads) >= self.max:
+                 break
+             worker = WorkerThread(self.server)
+@@ -1332,7 +1332,7 @@
+                 amount -= 1
+         
+         if amount > 0:
+-            for i in xrange(min(amount, len(self._threads) - self.min)):
++            for i in range(min(amount, len(self._threads) - self.min)):
+                 # Put a number of shutdown requests on the queue equal
+                 # to 'amount'. Once each of those is processed by a worker,
+                 # that worker will terminate and be culled from our list
+@@ -1369,7 +1369,7 @@
+                 except (AssertionError,
+                         # Ignore repeated Ctrl-C.
+                         # See http://www.cherrypy.org/ticket/691.
+-                        KeyboardInterrupt), exc1:
++                        KeyboardInterrupt) as exc1:
+                     pass
+ 
+ 
+@@ -1392,13 +1392,13 @@
+               'sock_shutdown', 'get_peer_certificate', 'want_read',
+               'want_write', 'set_connect_state', 'set_accept_state',
+               'connect_ex', 'sendall', 'settimeout'):
+-        exec """def %s(self, *args):
++        exec("""def %s(self, *args):
+         self._lock.acquire()
+         try:
+             return self._ssl_conn.%s(*args)
+         finally:
+             self._lock.release()
+-""" % (f, f)
++""" % (f, f))
+ 
+ 
+ try:
+@@ -1557,7 +1557,7 @@
+         self._interrupt = None
+         
+         # Select the appropriate socket
+-        if isinstance(self.bind_addr, basestring):
++        if isinstance(self.bind_addr, str):
+             # AF_UNIX socket
+             
+             # So we can reuse the socket...
+@@ -1565,7 +1565,7 @@
+             except: pass
+             
+             # So everyone can access the socket...
+-            try: os.chmod(self.bind_addr, 0777)
++            try: os.chmod(self.bind_addr, 0o777)
+             except: pass
+             
+             info = [(socket.AF_UNIX, socket.SOCK_STREAM, 0, "", self.bind_addr)]
+@@ -1586,14 +1586,14 @@
+             af, socktype, proto, canonname, sa = res
+             try:
+                 self.bind(af, socktype, proto)
+-            except socket.error, msg:
++            except socket.error as msg:
+                 if self.socket:
+                     self.socket.close()
+                 self.socket = None
+                 continue
+             break
+         if not self.socket:
+-            raise socket.error, msg
++            raise socket.error(msg)
+         
+         # Timeout so KeyboardInterrupt can be caught on Win32
+         self.socket.settimeout(1)
+@@ -1632,7 +1632,7 @@
+             
+             # If listening on the IPV6 any address ('::' = IN6ADDR_ANY),
+             # activate dual-stack. See http://www.cherrypy.org/ticket/871.
+-            if (not isinstance(self.bind_addr, basestring)
++            if (not isinstance(self.bind_addr, str)
+                 and self.bind_addr[0] == '::' and family == socket.AF_INET6):
+                 try:
+                     self.socket.setsockopt(socket.IPPROTO_IPV6, socket.IPV6_V6ONLY, 0)
+@@ -1664,7 +1664,7 @@
+             environ["ACTUAL_SERVER_PROTOCOL"] = self.protocol
+             environ["SERVER_NAME"] = self.server_name
+             
+-            if isinstance(self.bind_addr, basestring):
++            if isinstance(self.bind_addr, str):
+                 # AF_UNIX. This isn't really allowed by WSGI, which doesn't
+                 # address unix domain sockets. But it's better than nothing.
+                 environ["SERVER_PORT"] = ""
+@@ -1682,7 +1682,7 @@
+             # notice keyboard interrupts on Win32, which don't interrupt
+             # accept() by default
+             return
+-        except socket.error, x:
++        except socket.error as x:
+             if x.args[0] in socket_error_eintr:
+                 # I *think* this is right. EINTR should occur when a signal
+                 # is received during the accept() call; all docs say retry
+@@ -1715,11 +1715,11 @@
+         
+         sock = getattr(self, "socket", None)
+         if sock:
+-            if not isinstance(self.bind_addr, basestring):
++            if not isinstance(self.bind_addr, str):
+                 # Touch our own socket to make accept() return immediately.
+                 try:
+                     host, port = sock.getsockname()[:2]
+-                except socket.error, x:
++                except socket.error as x:
+                     if x.args[0] not in socket_errors_to_ignore:
+                         raise
+                 else:
+diff -Naur client175_0.7-original/covers.py client175_0.7/covers.py
+--- client175_0.7-original/covers.py	2011-04-02 03:51:24.000000000 +0200
++++ client175_0.7/covers.py	2021-08-03 14:39:46.713265947 +0200
+@@ -23,7 +23,7 @@
+ #       Exaile (http://www.exaile.org/).
+ 
+ 
+-import hashlib, re, urllib, os, time, shutil, threading
++import hashlib, re, urllib.request, urllib.parse, urllib.error, os, time, shutil, threading
+ from xml.etree import ElementTree as ET
+ from datetime import datetime, timedelta
+ 
+@@ -76,7 +76,7 @@
+ 
+     def _findMusicBrainz(self, vars):
+         self._delay('last_MB_lookup')
+-        data = urllib.urlopen(self.urlMB % vars).read()
++        data = urllib.request.urlopen(self.urlMB % vars).read()
+         m = self.regexMB.search(data)
+         if not m:
+             return False
+@@ -85,7 +85,7 @@
+             url = "http://images.amazon.com/images/P/%s.01.%sZZZZZZZ.jpg"
+             for sz in ['L', 'M']:
+                 image = url % (asin, sz)
+-                h = urllib.urlopen(image)
++                h = urllib.request.urlopen(image)
+                 data = h.read()
+                 h.close()
+                 if len(data) > 1000:
+@@ -95,21 +95,21 @@
+ 
+     def _findLastFM_album(self, vars):
+         self._delay('last_FM_lookup')
+-        data = urllib.urlopen(self.urlFM % vars).read()
++        data = urllib.request.urlopen(self.urlFM % vars).read()
+         x = ET.XML(data)
+         if len(x) == 0:
+-            print 'LASTFM SEARCH: ERROR PARSING LASTFM DATA!'
++            print('LASTFM SEARCH: ERROR PARSING LASTFM DATA!')
+             return False
+ 
+         c = x.find('coverart')
+         if len(c) == 0:
+-            print 'LASTFM SEARCH: NO COVERART NODE IN LASTFM DATA!'
++            print('LASTFM SEARCH: NO COVERART NODE IN LASTFM DATA!')
+             return False
+ 
+         for sz in ['large', 'medium', 'small']:
+             image = c.findtext(sz, '')
+             if image > '' and not image.lower().endswith('.gif'):
+-                h = urllib.urlopen(image)
++                h = urllib.request.urlopen(image)
+                 data = h.read()
+                 h.close()
+                 if hashlib.sha1(data).hexdigest() != "57b2c37343f711c94e83a37bd91bc4d18d2ed9d5":
+@@ -120,13 +120,13 @@
+ 
+     def _findLastFM_artist(self, vars):
+         self._delay('last_FM_lookup')
+-        data = urllib.urlopen(self.urlFM_artist % vars['artist']).read()
++        data = urllib.request.urlopen(self.urlFM_artist % vars['artist']).read()
+         m = self.regexFM_artist.search(data)
+         if m:
+             image = m.group(1)
+             if image.lower().endswith('.gif'):
+                 return False
+-            h = urllib.urlopen(image)
++            h = urllib.request.urlopen(image)
+             data = h.read()
+             h.close()
+             if hashlib.sha1(data).hexdigest() != "57b2c37343f711c94e83a37bd91bc4d18d2ed9d5":
+@@ -147,8 +147,8 @@
+                     try:
+                         shutil.copy2(coverpath, cover_destination)
+                     except IOError:
+-                        print "Could not save cover to: " + cover_destination
+-                        print "For best performance, please ensure that the directory exists and is writable."
++                        print("Could not save cover to: " + cover_destination)
++                        print("For best performance, please ensure that the directory exists and is writable.")
+                         h = open(coverpath, 'r')
+                         data = h.read()
+                         h.close()
+@@ -175,8 +175,8 @@
+             return covername, None
+ 
+         vars = {
+-            'album': urllib.quote_plus(album.encode("utf-8")),
+-            'artist': urllib.quote_plus(artist.encode("utf-8"))
++            'album': urllib.parse.quote_plus(album.encode("utf-8")),
++            'artist': urllib.parse.quote_plus(artist.encode("utf-8"))
+         }
+ 
+         for fn in lookups:
+@@ -188,8 +188,8 @@
+                         h.write(data)
+                         h.close()
+                     except:
+-                        print "Could not save cover to: " + coverpath
+-                        print "For best performance, please ensure that the directory exists and is writable."
++                        print("Could not save cover to: " + coverpath)
++                        print("For best performance, please ensure that the directory exists and is writable.")
+                         covername = ""
+                     return covername, data
+             except:
+diff -Naur client175_0.7-original/lyricwiki.py client175_0.7/lyricwiki.py
+--- client175_0.7-original/lyricwiki.py	2010-11-20 18:43:24.000000000 +0100
++++ client175_0.7/lyricwiki.py	2021-08-03 14:40:00.301064572 +0200
+@@ -18,7 +18,7 @@
+ #       Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
+ #       MA 02110-1301, USA.
+ 
+-import json, urllib, os, hashlib, time
++import json, urllib.request, urllib.parse, urllib.error, os, hashlib, time
+ 
+ def _download(args):
+     """
+@@ -31,9 +31,9 @@
+     for key in args:
+         str_args[key] = args[key].encode("utf-8")
+     
+-    args = urllib.urlencode(str_args)
++    args = urllib.parse.urlencode(str_args)
+     
+-    return urllib.urlopen(base + args).read()
++    return urllib.request.urlopen(base + args).read()
+ 
+ def _get_page_titles(artist, title):
+     """
+diff -Naur client175_0.7-original/metadata/_base.py client175_0.7/metadata/_base.py
+--- client175_0.7-original/metadata/_base.py	2010-05-01 21:15:15.000000000 +0200
++++ client175_0.7/metadata/_base.py	2021-08-03 14:51:24.062763658 +0200
+@@ -66,7 +66,7 @@
+         self.mutagen = None
+         self.load()
+         self._reverse_mapping = dict((
+-            (v,k) for k,v in self.tag_mapping.iteritems() ))
++            (v,k) for k,v in self.tag_mapping.items() ))
+ 
+     def load(self):
+         """
+@@ -99,7 +99,7 @@
+ 
+     def _get_keys(self):
+         keys = []
+-        for k in self._get_raw().keys():
++        for k in list(self._get_raw().keys()):
+             if k in self._reverse_mapping:
+                 keys.append(self._reverse_mapping[k])
+             else:
+@@ -149,11 +149,11 @@
+             if t == None and tag in self.tag_mapping:
+                 try:
+                     t = self._get_tag(raw, self.tag_mapping[tag])
+-                    if type(t) in [str, unicode]:
++                    if type(t) in [str, str]:
+                         t = [t]
+                     else:
+                         try:
+-                            t = [unicode(u) for u in list(t)]
++                            t = [str(u) for u in list(t)]
+                         except UnicodeDecodeError:
+                             t = t
+                 except (KeyError, TypeError):
+@@ -161,10 +161,10 @@
+             if t == None and self.others:
+                 try:
+                     t = self._get_tag(raw, tag)
+-                    if type(t) in [str, unicode]:
++                    if type(t) in [str, str]:
+                         t = [t]
+                     else:
+-                        t = [unicode(u) for u in list(t)]
++                        t = [str(u) for u in list(t)]
+                 except (KeyError, TypeError):
+                     pass
+ 
+@@ -207,7 +207,7 @@
+                     pass
+ 
+             # tags starting with __ are internal and should not be written
+-            for tag in tagdict.keys():
++            for tag in list(tagdict.keys()):
+                 if tag.startswith("__"):
+                     try:
+                         del tagdict[tag]
+diff -Naur client175_0.7-original/metadata/_id3.py client175_0.7/metadata/_id3.py
+--- client175_0.7-original/metadata/_id3.py	2010-05-04 23:50:41.000000000 +0200
++++ client175_0.7/metadata/_id3.py	2021-08-03 14:51:42.866483930 +0200
+@@ -70,7 +70,7 @@
+ 
+     def _get_tag(self, raw, t):
+         if not raw.tags: return []
+-        if t not in self.tag_mapping.itervalues():
++        if t not in iter(self.tag_mapping.values()):
+             t = "TXXX:" + t
+         field = raw.tags.getall(t)
+         if len(field) <= 0:
+@@ -78,27 +78,27 @@
+         ret = []
+         if t == 'TDRC' or t == 'TDOR': # values are ID3TimeStamps
+             for value in field:
+-                ret.extend([unicode(x) for x in value.text])
++                ret.extend([str(x) for x in value.text])
+         elif t == 'USLT': # Lyrics are stored in plain old strings
+             for value in field:
+-                ret.append(unicode(value.text))
++                ret.append(str(value.text))
+         elif t == 'WOAR': # URLS are stored in url not text
+             for value in field:
+-                ret.extend([unicode(x.replace('\n','').replace('\r','')) \
++                ret.extend([str(x.replace('\n','').replace('\r','')) \
+                         for x in value.url])
+         elif t == 'APIC':
+             ret = [x.data for x in field]
+         else:
+             for value in field:
+                 try:
+-                    ret.extend([unicode(x.replace('\n','').replace('\r','')) \
++                    ret.extend([str(x.replace('\n','').replace('\r','')) \
+                         for x in value.text])
+                 except:
+                     pass
+         return ret
+ 
+     def _set_tag(self, raw, tag, data):
+-        if tag not in self.tag_mapping.itervalues():
++        if tag not in iter(self.tag_mapping.values()):
+             tag = "TXXX:" + tag
+         if raw.tags is not None:
+             raw.tags.delall(tag)
+@@ -107,7 +107,7 @@
+             raw.tags.add(frame)
+ 
+     def _del_tag(self, raw, tag):
+-        if tag not in self.tag_mapping.itervalues():
++        if tag not in iter(self.tag_mapping.values()):
+             tag = "TXXX:" + tag
+         if raw.tags is not None:
+             raw.tags.delall(tag)
+diff -Naur client175_0.7-original/metadata/__init__.py client175_0.7/metadata/__init__.py
+--- client175_0.7-original/metadata/__init__.py	2010-05-01 21:15:15.000000000 +0200
++++ client175_0.7/metadata/__init__.py	2021-08-03 14:50:50.391263894 +0200
+@@ -30,7 +30,7 @@
+ import os
+ 
+ from metadata._base import BaseFormat, NotWritable, NotReadable
+-import urlparse
++import urllib.parse
+ 
+ from metadata import (ape, asf, flac, mod, mp3, mp4, mpc, ogg, sid, speex,
+         tta, wav, wv)
+diff -Naur client175_0.7-original/metadata/mp4.py client175_0.7/metadata/mp4.py
+--- client175_0.7-original/metadata/mp4.py	2010-05-01 21:15:15.000000000 +0200
++++ client175_0.7/metadata/mp4.py	2021-08-03 14:52:08.706100110 +0200
+@@ -45,7 +45,7 @@
+     writable = True
+ 
+     def _get_tag(self, f, name):
+-        if not f.has_key(name):
++        if name not in f:
+             return []
+         elif name in ['trkn', 'disk']:
+             ret = []
+@@ -60,7 +60,7 @@
+             try:
+                 f[name] = []
+                 for val in value:
+-                    tmp = map(int, val.split('/'))
++                    tmp = list(map(int, val.split('/')))
+                     f[name].append(tuple(tmp))
+             except TypeError:
+                 pass
+diff -Naur client175_0.7-original/mpd.py client175_0.7/mpd.py
+--- client175_0.7-original/mpd.py	2010-08-27 00:38:39.000000000 +0200
++++ client175_0.7/mpd.py	2021-08-03 14:40:15.808834774 +0200
+@@ -64,7 +64,7 @@
+     
+         
+ def extend_database(item):
+-    keys = item.keys()
++    keys = list(item.keys())
+     if 'file' in keys:
+         item = extend_file(item)
+     elif 'directory' in keys:
+@@ -192,8 +192,8 @@
+         self.lock.acquire()
+         try:
+             return self._execute(command, args, retval)
+-        except (ConnectionError, socket.error), e:
+-            print "%s\n    reconnecting..." % e
++        except (ConnectionError, socket.error) as e:
++            print("%s\n    reconnecting..." % e)
+             try:
+                 self.disconnect()
+             except:
+@@ -343,13 +343,13 @@
+         raise StopIteration
+ 
+     def _fetch_songs(self):
+-        return map(extend_file, self._read_songs())
++        return list(map(extend_file, self._read_songs()))
+ 
+     def _fetch_playlists(self):
+         return self._fetch_objects(["playlist"])
+ 
+     def _fetch_database(self):
+-        return map(extend_database, self._read_objects(["file", "directory", "playlist"]))
++        return list(map(extend_database, self._read_objects(["file", "directory", "playlist"])))
+ 
+     def _fetch_outputs(self):
+         return self._fetch_objects(["outputid"])
+@@ -397,7 +397,7 @@
+             try:
+                 sock = socket.socket(af, socktype, proto)
+                 sock.connect(sa)
+-            except socket.error, msg:
++            except socket.error as msg:
+                 if sock:
+                     sock.close()
+                 sock = None
+@@ -425,8 +425,8 @@
+                 self.password(_password)
+             self._TAGS = self.tagtypes()
+             self._TAGS.extend(['Pos', 'Time', 'Id'])
+-            self._TAGS_LOWER = map(str.lower, self._TAGS)
+-            self._TAGMAP = dict(zip(self._TAGS, self._TAGS_LOWER))
++            self._TAGS_LOWER = list(map(str.lower, self._TAGS))
++            self._TAGMAP = dict(list(zip(self._TAGS, self._TAGS_LOWER)))
+         except:
+             self.disconnect()
+             raise
+diff -Naur client175_0.7-original/mutagen/apev2.py client175_0.7/mutagen/apev2.py
+--- client175_0.7-original/mutagen/apev2.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/apev2.py	2021-08-03 14:53:33.292843836 +0200
+@@ -33,7 +33,7 @@
+ __all__ = ["APEv2", "APEv2File", "Open", "delete"]
+ 
+ import struct
+-from cStringIO import StringIO
++from io import StringIO
+ 
+ def is_valid_apev2_key(key):
+     return (2 <= len(key) <= 255 and min(key) >= ' ' and max(key) <= '~' and
+@@ -44,11 +44,11 @@
+ #  1: Item contains binary information
+ #  2: Item is a locator of external stored information [e.g. URL]
+ #  3: reserved"
+-TEXT, BINARY, EXTERNAL = range(3)
++TEXT, BINARY, EXTERNAL = list(range(3))
+ 
+-HAS_HEADER = 1L << 31
+-HAS_NO_FOOTER = 1L << 30
+-IS_HEADER  = 1L << 29
++HAS_HEADER = 1 << 31
++HAS_NO_FOOTER = 1 << 30
++IS_HEADER  = 1 << 29
+ 
+ class error(IOError): pass
+ class APENoHeaderError(error, ValueError): pass
+@@ -199,7 +199,7 @@
+ 
+     def pprint(self):
+         """Return tag key=value pairs in a human-readable format."""
+-        items = self.items()
++        items = list(self.items())
+         items.sort()
+         return "\n".join(["%s=%s" % (k, v.pprint()) for k, v in items])
+ 
+@@ -271,7 +271,7 @@
+ 
+         if not isinstance(value, _APEValue):
+             # let's guess at the content if we're not already a value...
+-            if isinstance(value, unicode):
++            if isinstance(value, str):
+                 # unicode? we've got to be text.
+                 value = APEValue(utf8(value), TEXT)
+             elif isinstance(value, list):
+@@ -289,7 +289,7 @@
+         self.__dict[key.lower()] = value
+ 
+     def keys(self):
+-        return [self.__casemap.get(key, key) for key in self.__dict.keys()]
++        return [self.__casemap.get(key, key) for key in list(self.__dict.keys())]
+ 
+     def save(self, filename=None):
+         """Save changes to a file.
+@@ -318,7 +318,7 @@
+         # "APE tags items should be sorted ascending by size... This is
+         # not a MUST, but STRONGLY recommended. Actually the items should
+         # be sorted by importance/byte, but this is not feasible."
+-        tags = [v._internal(k) for k, v in self.items()]
++        tags = [v._internal(k) for k, v in list(self.items())]
+         tags.sort(lambda a, b: cmp(len(a), len(b)))
+         num_tags = len(tags)
+         tags = "".join(tags)
+@@ -401,20 +401,20 @@
+     strings (with a null seperating the values), or arrays of strings."""
+ 
+     def __unicode__(self):
+-        return unicode(str(self), "utf-8")
++        return str(str(self), "utf-8")
+ 
+     def __iter__(self):
+         """Iterate over the strings of the value (not the characters)"""
+-        return iter(unicode(self).split("\0"))
++        return iter(str(self).split("\0"))
+ 
+     def __getitem__(self, index):
+-        return unicode(self).split("\0")[index]
++        return str(self).split("\0")[index]
+ 
+     def __len__(self):
+         return self.value.count("\0") + 1
+ 
+     def __cmp__(self, other):
+-        return cmp(unicode(self), other)
++        return cmp(str(self), other)
+ 
+     def __setitem__(self, index, value):
+         values = list(self)
+@@ -434,7 +434,7 @@
+ 
+     External values are usually URI or IRI strings.
+     """
+-    def pprint(self): return "[External] %s" % unicode(self)
++    def pprint(self): return "[External] %s" % str(self)
+ 
+ class APEv2File(FileType):
+     class _Info(object):
+diff -Naur client175_0.7-original/mutagen/asf.py client175_0.7/mutagen/asf.py
+--- client175_0.7-original/mutagen/asf.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/asf.py	2021-08-03 14:53:40.512736644 +0200
+@@ -49,14 +49,14 @@
+ 
+         """
+         values = [value for (k, value) in self if k == key]
+-        if not values: raise KeyError, key
++        if not values: raise KeyError(key)
+         else: return values
+ 
+     def __delitem__(self, key):
+         """Delete all values associated with the key."""
+-        to_delete = filter(lambda x: x[0] == key, self)
+-        if not to_delete: raise KeyError, key
+-        else: map(self.remove, to_delete)
++        to_delete = [x for x in self if x[0] == key]
++        if not to_delete: raise KeyError(key)
++        else: list(map(self.remove, to_delete))
+ 
+     def __contains__(self, key):
+         """Return true if the key has any values."""
+@@ -78,15 +78,15 @@
+         except KeyError: pass
+         for value in values:
+             if key in _standard_attribute_names:
+-                value = unicode(value)
++                value = str(value)
+             elif not isinstance(value, ASFBaseAttribute):
+-                if isinstance(value, basestring):
++                if isinstance(value, str):
+                     value = ASFUnicodeAttribute(value)
+                 elif isinstance(value, bool):
+                     value = ASFBoolAttribute(value)
+                 elif isinstance(value, int):
+                     value = ASFDWordAttribute(value)
+-                elif isinstance(value, long):
++                elif isinstance(value, int):
+                     value = ASFQWordAttribute(value)
+             self.append((key, value))
+ 
+@@ -162,7 +162,7 @@
+         return self.value
+ 
+     def __cmp__(self, other):
+-        return cmp(unicode(self), other)
++        return cmp(str(self), other)
+ 
+ 
+ class ASFByteArrayAttribute(ASFBaseAttribute):
+@@ -294,7 +294,7 @@
+ GUID = ASFGUIDAttribute.TYPE
+ 
+ def ASFValue(value, kind, **kwargs):
+-    for t, c in _attribute_types.items():
++    for t, c in list(_attribute_types.items()):
+         if kind == t:
+             return c(value=value, **kwargs)
+     raise ValueError("Unknown value type")
+@@ -362,12 +362,12 @@
+                 texts.append(None)
+             pos = end
+         title, author, copyright, desc, rating = texts
+-        for key, value in dict(
++        for key, value in list(dict(
+             Title=title,
+             Author=author,
+             Copyright=copyright,
+             Description=desc,
+-            Rating=rating).items():
++            Rating=rating).items()):
+             if value is not None:
+                 asf.tags[key] = value
+ 
+@@ -378,8 +378,8 @@
+                 return value[0].encode("utf-16-le") + "\x00\x00"
+             else:
+                 return ""
+-        texts = map(render_text, _standard_attribute_names)
+-        data = struct.pack("<HHHHH", *map(len, texts)) + "".join(texts)
++        texts = list(map(render_text, _standard_attribute_names))
++        data = struct.pack("<HHHHH", *list(map(len, texts))) + "".join(texts)
+         return self.GUID + struct.pack("<Q", 24 + len(data)) + data
+ 
+ 
+@@ -405,7 +405,7 @@
+             asf.tags.append((name, attr))
+ 
+     def render(self, asf):
+-        attrs = asf.to_extended_content_description.items()
++        attrs = list(asf.to_extended_content_description.items())
+         data = "".join([attr.render(name) for (name, attr) in attrs])
+         data = struct.pack("<QH", 26 + len(data), len(attrs)) + data
+         return self.GUID + data
+@@ -485,7 +485,7 @@
+             asf.tags.append((name, attr))
+ 
+     def render(self, asf):
+-        attrs = asf.to_metadata.items()
++        attrs = list(asf.to_metadata.items())
+         data = "".join([attr.render_m(name) for (name, attr) in attrs])
+         return (self.GUID + struct.pack("<QH", 26 + len(data), len(attrs)) +
+                 data)
+@@ -614,7 +614,7 @@
+     def __read_file(self, fileobj):
+         header = fileobj.read(30)
+         if len(header) != 30 or header[:16] != HeaderObject.GUID:
+-            raise ASFHeaderError, "Not an ASF file."
++            raise ASFHeaderError("Not an ASF file.")
+ 
+         self.extended_content_description_obj = None
+         self.content_description_obj = None
+diff -Naur client175_0.7-original/mutagen/_constants.py client175_0.7/mutagen/_constants.py
+--- client175_0.7-original/mutagen/_constants.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/_constants.py	2021-08-03 14:54:27.292044501 +0200
+@@ -1,153 +1,153 @@
+ """Constants used by Mutagen."""
+ 
+ GENRES = [
+-    u"Blues",
+-    u"Classic Rock",
+-    u"Country",
+-    u"Dance",
+-    u"Disco",
+-    u"Funk",
+-    u"Grunge",
+-    u"Hip-Hop",
+-    u"Jazz",
+-    u"Metal",
+-    u"New Age",
+-    u"Oldies",
+-    u"Other",
+-    u"Pop",
+-    u"R&B",
+-    u"Rap",
+-    u"Reggae",
+-    u"Rock",
+-    u"Techno",
+-    u"Industrial",
+-    u"Alternative",
+-    u"Ska",
+-    u"Death Metal",
+-    u"Pranks",
+-    u"Soundtrack",
+-    u"Euro-Techno",
+-    u"Ambient",
+-    u"Trip-Hop",
+-    u"Vocal",
+-    u"Jazz+Funk",
+-    u"Fusion",
+-    u"Trance",
+-    u"Classical",
+-    u"Instrumental",
+-    u"Acid",
+-    u"House",
+-    u"Game",
+-    u"Sound Clip",
+-    u"Gospel",
+-    u"Noise",
+-    u"Alt. Rock",
+-    u"Bass",
+-    u"Soul",
+-    u"Punk",
+-    u"Space",
+-    u"Meditative",
+-    u"Instrumental Pop",
+-    u"Instrumental Rock",
+-    u"Ethnic",
+-    u"Gothic",
+-    u"Darkwave",
+-    u"Techno-Industrial",
+-    u"Electronic",
+-    u"Pop-Folk",
+-    u"Eurodance",
+-    u"Dream",
+-    u"Southern Rock",
+-    u"Comedy",
+-    u"Cult",
+-    u"Gangsta",
+-    u"Top 40",
+-    u"Christian Rap",
+-    u"Pop/Funk",
+-    u"Jungle",
+-    u"Native American",
+-    u"Cabaret",
+-    u"New Wave",
+-    u"Psychadelic",
+-    u"Rave",
+-    u"Showtunes",
+-    u"Trailer",
+-    u"Lo-Fi",
+-    u"Tribal",
+-    u"Acid Punk",
+-    u"Acid Jazz",
+-    u"Polka",
+-    u"Retro",
+-    u"Musical",
+-    u"Rock & Roll",
+-    u"Hard Rock",
+-    u"Folk",
+-    u"Folk/Rock",
+-    u"National Folk",
+-    u"Swing",
+-    u"Fusion",
+-    u"Bebob",
+-    u"Latin",
+-    u"Revival",
+-    u"Celtic",
+-    u"Bluegrass",
+-    u"Avantgarde",
+-    u"Gothic Rock",
+-    u"Progressive Rock",
+-    u"Psychadelic Rock",
+-    u"Symphonic Rock",
+-    u"Slow Rock",
+-    u"Big Band",
+-    u"Chorus",
+-    u"Easy Listening",
+-    u"Acoustic",
+-    u"Humour",
+-    u"Speech",
+-    u"Chanson",
+-    u"Opera",
+-    u"Chamber Music",
+-    u"Sonata",
+-    u"Symphony",
+-    u"Booty Bass",
+-    u"Primus",
+-    u"Porn Groove",
+-    u"Satire",
+-    u"Slow Jam",
+-    u"Club",
+-    u"Tango",
+-    u"Samba",
+-    u"Folklore",
+-    u"Ballad",
+-    u"Power Ballad",
+-    u"Rhythmic Soul",
+-    u"Freestyle",
+-    u"Duet",
+-    u"Punk Rock",
+-    u"Drum Solo",
+-    u"A Capella",
+-    u"Euro-House",
+-    u"Dance Hall",
+-    u"Goa",
+-    u"Drum & Bass",
+-    u"Club-House",
+-    u"Hardcore",
+-    u"Terror",
+-    u"Indie",
+-    u"BritPop",
+-    u"Negerpunk",
+-    u"Polsk Punk",
+-    u"Beat",
+-    u"Christian Gangsta Rap",
+-    u"Heavy Metal",
+-    u"Black Metal",
+-    u"Crossover",
+-    u"Contemporary Christian",
+-    u"Christian Rock",
+-    u"Merengue",
+-    u"Salsa",
+-    u"Thrash Metal",
+-    u"Anime",
+-    u"Jpop",
+-    u"Synthpop"
++    "Blues",
++    "Classic Rock",
++    "Country",
++    "Dance",
++    "Disco",
++    "Funk",
++    "Grunge",
++    "Hip-Hop",
++    "Jazz",
++    "Metal",
++    "New Age",
++    "Oldies",
++    "Other",
++    "Pop",
++    "R&B",
++    "Rap",
++    "Reggae",
++    "Rock",
++    "Techno",
++    "Industrial",
++    "Alternative",
++    "Ska",
++    "Death Metal",
++    "Pranks",
++    "Soundtrack",
++    "Euro-Techno",
++    "Ambient",
++    "Trip-Hop",
++    "Vocal",
++    "Jazz+Funk",
++    "Fusion",
++    "Trance",
++    "Classical",
++    "Instrumental",
++    "Acid",
++    "House",
++    "Game",
++    "Sound Clip",
++    "Gospel",
++    "Noise",
++    "Alt. Rock",
++    "Bass",
++    "Soul",
++    "Punk",
++    "Space",
++    "Meditative",
++    "Instrumental Pop",
++    "Instrumental Rock",
++    "Ethnic",
++    "Gothic",
++    "Darkwave",
++    "Techno-Industrial",
++    "Electronic",
++    "Pop-Folk",
++    "Eurodance",
++    "Dream",
++    "Southern Rock",
++    "Comedy",
++    "Cult",
++    "Gangsta",
++    "Top 40",
++    "Christian Rap",
++    "Pop/Funk",
++    "Jungle",
++    "Native American",
++    "Cabaret",
++    "New Wave",
++    "Psychadelic",
++    "Rave",
++    "Showtunes",
++    "Trailer",
++    "Lo-Fi",
++    "Tribal",
++    "Acid Punk",
++    "Acid Jazz",
++    "Polka",
++    "Retro",
++    "Musical",
++    "Rock & Roll",
++    "Hard Rock",
++    "Folk",
++    "Folk/Rock",
++    "National Folk",
++    "Swing",
++    "Fusion",
++    "Bebob",
++    "Latin",
++    "Revival",
++    "Celtic",
++    "Bluegrass",
++    "Avantgarde",
++    "Gothic Rock",
++    "Progressive Rock",
++    "Psychadelic Rock",
++    "Symphonic Rock",
++    "Slow Rock",
++    "Big Band",
++    "Chorus",
++    "Easy Listening",
++    "Acoustic",
++    "Humour",
++    "Speech",
++    "Chanson",
++    "Opera",
++    "Chamber Music",
++    "Sonata",
++    "Symphony",
++    "Booty Bass",
++    "Primus",
++    "Porn Groove",
++    "Satire",
++    "Slow Jam",
++    "Club",
++    "Tango",
++    "Samba",
++    "Folklore",
++    "Ballad",
++    "Power Ballad",
++    "Rhythmic Soul",
++    "Freestyle",
++    "Duet",
++    "Punk Rock",
++    "Drum Solo",
++    "A Capella",
++    "Euro-House",
++    "Dance Hall",
++    "Goa",
++    "Drum & Bass",
++    "Club-House",
++    "Hardcore",
++    "Terror",
++    "Indie",
++    "BritPop",
++    "Negerpunk",
++    "Polsk Punk",
++    "Beat",
++    "Christian Gangsta Rap",
++    "Heavy Metal",
++    "Black Metal",
++    "Crossover",
++    "Contemporary Christian",
++    "Christian Rock",
++    "Merengue",
++    "Salsa",
++    "Thrash Metal",
++    "Anime",
++    "Jpop",
++    "Synthpop"
+     ]
+ """The ID3v1 genre list."""
+diff -Naur client175_0.7-original/mutagen/easyid3.py client175_0.7/mutagen/easyid3.py
+--- client175_0.7-original/mutagen/easyid3.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/easyid3.py	2021-08-03 14:54:43.607811287 +0200
+@@ -146,7 +146,7 @@
+                 enc = 0
+                 # Store 8859-1 if we can, per MusicBrainz spec.
+                 for v in value:
+-                    if max(v) > u'\x7f':
++                    if max(v) > '\x7f':
+                         enc = 3
+                 id3.add(mutagen.id3.TXXX(encoding=enc, text=value, desc=desc))
+             else:
+@@ -182,7 +182,7 @@
+ 
+     def __setitem__(self, key, value):
+         key = key.lower()
+-        if isinstance(value, basestring):
++        if isinstance(value, str):
+             value = [value]
+         func = dict_match(self.Set, key, self.SetFallback)
+         if func is not None:
+@@ -200,7 +200,7 @@
+ 
+     def keys(self):
+         keys = []
+-        for key in self.Get.keys():
++        for key in list(self.Get.keys()):
+             if key in self.List:
+                 keys.extend(self.List[key](self.__id3, key))
+             elif key in self:
+@@ -332,7 +332,7 @@
+     except KeyError:
+         raise EasyID3KeyError(key)
+     else:
+-        return [u"%+f dB" % frame.gain]
++        return ["%+f dB" % frame.gain]
+ 
+ def gain_set(id3, key, value):
+     if len(value) != 1:
+@@ -362,7 +362,7 @@
+     except KeyError:
+         raise EasyID3KeyError(key)
+     else:
+-        return [u"%f" % frame.peak]
++        return ["%f" % frame.peak]
+ 
+ def peak_set(id3, key, value):
+     if len(value) != 1:
+@@ -423,7 +423,7 @@
+     "TSOT": "titlesort",
+     "TSRC": "isrc",
+     "TSST": "discsubtitle",
+-    }.iteritems():
++    }.items():
+     EasyID3.RegisterTextKey(key, frameid)
+ 
+ EasyID3.RegisterKey("genre", genre_get, genre_set, genre_delete)
+@@ -444,20 +444,20 @@
+ # http://bugs.musicbrainz.org/ticket/1383
+ # http://musicbrainz.org/doc/MusicBrainzTag
+ for desc, key in {
+-    u"MusicBrainz Artist Id": "musicbrainz_artistid",
+-    u"MusicBrainz Album Id": "musicbrainz_albumid",
+-    u"MusicBrainz Album Artist Id": "musicbrainz_albumartistid",
+-    u"MusicBrainz TRM Id": "musicbrainz_trmid",
+-    u"MusicIP PUID": "musicip_puid",
+-    u"MusicMagic Fingerprint": "musicip_fingerprint",
+-    u"MusicBrainz Album Status": "musicbrainz_albumstatus",
+-    u"MusicBrainz Album Type": "musicbrainz_albumtype",
+-    u"MusicBrainz Album Release Country": "releasecountry",
+-    u"MusicBrainz Disc Id": "musicbrainz_discid",
+-    u"ASIN": "asin",
+-    u"ALBUMARTISTSORT": "albumartistsort",
+-    u"BARCODE": "barcode",
+-    }.iteritems():
++    "MusicBrainz Artist Id": "musicbrainz_artistid",
++    "MusicBrainz Album Id": "musicbrainz_albumid",
++    "MusicBrainz Album Artist Id": "musicbrainz_albumartistid",
++    "MusicBrainz TRM Id": "musicbrainz_trmid",
++    "MusicIP PUID": "musicip_puid",
++    "MusicMagic Fingerprint": "musicip_fingerprint",
++    "MusicBrainz Album Status": "musicbrainz_albumstatus",
++    "MusicBrainz Album Type": "musicbrainz_albumtype",
++    "MusicBrainz Album Release Country": "releasecountry",
++    "MusicBrainz Disc Id": "musicbrainz_discid",
++    "ASIN": "asin",
++    "ALBUMARTISTSORT": "albumartistsort",
++    "BARCODE": "barcode",
++    }.items():
+     EasyID3.RegisterTXXXKey(key, desc)
+ 
+ class EasyID3FileType(ID3FileType):
+diff -Naur client175_0.7-original/mutagen/easymp4.py client175_0.7/mutagen/easymp4.py
+--- client175_0.7-original/mutagen/easymp4.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/easymp4.py	2021-08-03 14:54:50.039718986 +0200
+@@ -86,11 +86,11 @@
+         """
+ 
+         def getter(tags, key):
+-            return map(unicode, tags[atomid])
++            return list(map(str, tags[atomid]))
+ 
+         def setter(tags, key, value):
+             clamp = lambda x: int(min(max(min_value, x), max_value))
+-            tags[atomid] = map(clamp, map(int, value))
++            tags[atomid] = list(map(clamp, list(map(int, value))))
+ 
+         def deleter(tags, key):
+             del(tags[atomid])
+@@ -103,9 +103,9 @@
+             ret = []
+             for (track, total) in tags[atomid]:
+                 if total:
+-                    ret.append(u"%d/%d" % (track, total))
++                    ret.append("%d/%d" % (track, total))
+                 else:
+-                    ret.append(unicode(track))
++                    ret.append(str(track))
+             return ret
+ 
+         def setter(tags, key, value):
+@@ -143,7 +143,7 @@
+             return [s.decode("utf-8", "replace") for s in tags[atomid]]
+ 
+         def setter(tags, key, value):
+-            tags[atomid] = map(utf8, value)
++            tags[atomid] = list(map(utf8, value))
+ 
+         def deleter(tags, key):
+             del(tags[atomid])
+@@ -161,7 +161,7 @@
+ 
+     def __setitem__(self, key, value):
+         key = key.lower()
+-        if isinstance(value, basestring):
++        if isinstance(value, str):
+             value = [value]
+         func = dict_match(self.Set, key)
+         if func is not None:
+@@ -179,7 +179,7 @@
+ 
+     def keys(self):
+         keys = []
+-        for key in self.Get.keys():
++        for key in list(self.Get.keys()):
+             if key in self.List:
+                 keys.extend(self.List[key](self.__mp4, key))
+             elif key in self:
+@@ -195,7 +195,7 @@
+                 strings.append("%s=%s" % (key, value))
+         return "\n".join(strings)
+ 
+-for atomid, key in {
++for atomid, key in list({
+     '\xa9nam': 'title',
+     '\xa9alb': 'album',
+     '\xa9ART': 'artist',
+@@ -211,10 +211,10 @@
+     'soar': 'artistsort',
+     'sonm': 'titlesort',
+     'soco': 'composersort',
+-    }.items():
++    }.items()):
+     EasyMP4Tags.RegisterTextKey(key, atomid)
+ 
+-for name, key in {
++for name, key in list({
+     'MusicBrainz Artist Id': 'musicbrainz_artistid',
+     'MusicBrainz Track Id': 'musicbrainz_trackid',
+     'MusicBrainz Album Id': 'musicbrainz_albumid',
+@@ -223,18 +223,18 @@
+     'MusicBrainz Album Status': 'musicbrainz_albumstatus',
+     'MusicBrainz Album Type': 'musicbrainz_albumtype',
+     'MusicBrainz Release Country': 'releasecountry',
+-    }.items():
++    }.items()):
+     EasyMP4Tags.RegisterFreeformKey(key, name)
+ 
+-for name, key in {
++for name, key in list({
+     "tmpo": "bpm",
+-    }.items():
++    }.items()):
+     EasyMP4Tags.RegisterIntKey(key, name)
+ 
+-for name, key in {
++for name, key in list({
+     "trkn": "tracknumber",
+     "disk": "discnumber",
+-    }.items():
++    }.items()):
+     EasyMP4Tags.RegisterIntPairKey(key, name)
+ 
+ class EasyMP4(MP4):
+diff -Naur client175_0.7-original/mutagen/flac.py client175_0.7/mutagen/flac.py
+--- client175_0.7-original/mutagen/flac.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/flac.py	2021-08-03 14:54:56.799621843 +0200
+@@ -22,11 +22,12 @@
+ __all__ = ["FLAC", "Open", "delete"]
+ 
+ import struct
+-from cStringIO import StringIO
+-from _vorbis import VCommentDict
++from io import StringIO
++from ._vorbis import VCommentDict
+ from mutagen import FileType
+ from mutagen._util import insert_bytes
+ from mutagen.id3 import BitPaddedInt
++from functools import reduce
+ 
+ class error(IOError): pass
+ class FLACNoHeaderError(error): pass
+@@ -35,7 +36,7 @@
+ def to_int_be(string):
+     """Convert an arbitrarily-long string to a long using big-endian
+     byte order."""
+-    return reduce(lambda a, b: (a << 8) + ord(b), string, 0L)
++    return reduce(lambda a, b: (a << 8) + ord(b), string, 0)
+ 
+ class MetadataBlock(object):
+     """A generic block of FLAC metadata.
+@@ -79,8 +80,8 @@
+ 
+         The overall size of the rendered blocks does not change, so
+         this adds several bytes of padding for each merged block."""
+-        paddings = filter(lambda x: isinstance(x, Padding), blocks)
+-        map(blocks.remove, paddings)
++        paddings = [x for x in blocks if isinstance(x, Padding)]
++        list(map(blocks.remove, paddings))
+         padding = Padding()
+         # total padding size is the sum of padding sizes plus 4 bytes
+         # per removed header.
+@@ -137,7 +138,7 @@
+         bps_tail = bps_total >> 36
+         bps_head = (sample_channels_bps & 1) << 4
+         self.bits_per_sample = int(bps_head + bps_tail + 1)
+-        self.total_samples = bps_total & 0xFFFFFFFFFL
++        self.total_samples = bps_total & 0xFFFFFFFFF
+         self.length = self.total_samples / float(self.sample_rate)
+ 
+         self.md5_signature = to_int_be(data.read(16))
+@@ -161,12 +162,12 @@
+         byte += (self.total_samples >> 32) & 0xF
+         f.write(chr(byte))
+         # last 32 of sample count
+-        f.write(struct.pack(">I", self.total_samples & 0xFFFFFFFFL))
++        f.write(struct.pack(">I", self.total_samples & 0xFFFFFFFF))
+         # MD5 signature
+         sig = self.md5_signature
+         f.write(struct.pack(
+-            ">4I", (sig >> 96) & 0xFFFFFFFFL, (sig >> 64) & 0xFFFFFFFFL,
+-            (sig >> 32) & 0xFFFFFFFFL, sig & 0xFFFFFFFFL))
++            ">4I", (sig >> 96) & 0xFFFFFFFF, (sig >> 64) & 0xFFFFFFFF,
++            (sig >> 32) & 0xFFFFFFFF, sig & 0xFFFFFFFF))
+         return f.getvalue()
+ 
+     def pprint(self):
+@@ -425,8 +426,8 @@
+ 
+     def __init__(self, data=None):
+         self.type = 0
+-        self.mime = u''
+-        self.desc = u''
++        self.mime = ''
++        self.desc = ''
+         self.width = 0
+         self.height = 0
+         self.depth = 0
+@@ -601,11 +602,10 @@
+ 
+     def clear_pictures(self):
+         """Delete all pictures from the file."""
+-        self.metadata_blocks = filter(lambda b: b.code != Picture.code,
+-                                      self.metadata_blocks)
++        self.metadata_blocks = [b for b in self.metadata_blocks if b.code != Picture.code]
+ 
+     def __get_pictures(self):
+-        return filter(lambda b: b.code == Picture.code, self.metadata_blocks)
++        return [b for b in self.metadata_blocks if b.code == Picture.code]
+     pictures = property(__get_pictures, doc="List of embedded pictures")
+ 
+     def save(self, filename=None, deleteid3=False):
+diff -Naur client175_0.7-original/mutagen/id3.py client175_0.7/mutagen/id3.py
+--- client175_0.7-original/mutagen/id3.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/id3.py	2021-08-03 14:55:05.431497226 +0200
+@@ -79,7 +79,7 @@
+                 raise ValueError('Requested bytes (%s) less than zero' % size)
+             if size > self.__filesize:
+                 raise EOFError('Requested %#x of %#x (%s)' % 
+-                        (long(size), long(self.__filesize), self.filename))
++                        (int(size), int(self.__filesize), self.filename))
+         except AttributeError: pass
+         data = self.__fileobj.read(size)
+         if len(data) != size: raise EOFError
+@@ -115,18 +115,18 @@
+                 self.size = 0
+                 raise ID3NoHeaderError("%s: too small (%d bytes)" %(
+                     filename, self.__filesize))
+-            except (ID3NoHeaderError, ID3UnsupportedVersionError), err:
++            except (ID3NoHeaderError, ID3UnsupportedVersionError) as err:
+                 self.size = 0
+                 import sys
+                 stack = sys.exc_info()[2]
+                 try: self.__fileobj.seek(-128, 2)
+-                except EnvironmentError: raise err, None, stack
++                except EnvironmentError: raise err.with_traceback(stack)
+                 else:
+                     frames = ParseID3v1(self.__fileobj.read(128))
+                     if frames is not None:
+                         self.version = (1, 1)
+-                        map(self.add, frames.values())
+-                    else: raise err, None, stack
++                        list(map(self.add, list(frames.values())))
++                    else: raise err.with_traceback(stack)
+             else:
+                 frames = self.__known_frames
+                 if frames is None:
+@@ -159,14 +159,14 @@
+         if key in self: return [self[key]]
+         else:
+             key = key + ":"
+-            return [v for s,v in self.items() if s.startswith(key)]
++            return [v for s,v in list(self.items()) if s.startswith(key)]
+ 
+     def delall(self, key):
+         """Delete all tags of a given kind; see getall."""
+         if key in self: del(self[key])
+         else:
+             key = key + ":"
+-            for k in filter(lambda s: s.startswith(key), self.keys()):
++            for k in [s for s in list(self.keys()) if s.startswith(key)]:
+                 del(self[k])
+ 
+     def setall(self, key, values):
+@@ -184,7 +184,7 @@
+         However, ID3 frames can have multiple keys:
+             POPM=user@example.org=3 128/255
+         """
+-        return "\n".join(map(Frame.pprint, self.values()))
++        return "\n".join(map(Frame.pprint, list(self.values())))
+ 
+     def loaded_frame(self, tag):
+         """Deprecated; use the add method."""
+@@ -343,9 +343,9 @@
+ 
+         # Sort frames by 'importance'
+         order = ["TIT2", "TPE1", "TRCK", "TALB", "TPOS", "TDRC", "TCON"]
+-        order = dict(zip(order, range(len(order))))
++        order = dict(list(zip(order, list(range(len(order))))))
+         last = len(order)
+-        frames = self.items()
++        frames = list(self.items())
+         frames.sort(lambda a, b: cmp(order.get(a[0][:4], last),
+                                      order.get(b[0][:4], last)))
+ 
+@@ -355,7 +355,7 @@
+         if not framedata:
+             try:
+                 self.delete(filename)
+-            except EnvironmentError, err:
++            except EnvironmentError as err:
+                 from errno import ENOENT
+                 if err.errno != ENOENT: raise
+             return
+@@ -365,7 +365,7 @@
+ 
+         if filename is None: filename = self.filename
+         try: f = open(filename, 'rb+')
+-        except IOError, err:
++        except IOError as err:
+             from errno import ENOENT
+             if err.errno != ENOENT: raise
+             f = open(filename, 'ab') # create, then reopen
+@@ -393,7 +393,7 @@
+ 
+             try:
+                 f.seek(-128, 2)
+-            except IOError, err:
++            except IOError as err:
+                 from errno import EINVAL
+                 if err.errno != EINVAL: raise
+                 f.seek(0, 2) # ensure read won't get "TAG"
+@@ -540,7 +540,7 @@
+     def __new__(cls, value, bits=7, bigendian=True):
+         "Strips 8-bits bits out of every byte"
+         mask = (1<<(bits))-1
+-        if isinstance(value, (int, long)):
++        if isinstance(value, int):
+             bytes = []
+             while value:
+                 bytes.append(value & ((1<<bits)-1))
+@@ -549,10 +549,10 @@
+             bytes = [ord(byte) & mask for byte in value]
+             if bigendian: bytes.reverse()
+         numeric_value = 0
+-        for shift, byte in zip(range(0, len(bytes)*bits, bits), bytes):
++        for shift, byte in zip(list(range(0, len(bytes)*bits, bits)), bytes):
+             numeric_value += byte << shift
+-        if isinstance(numeric_value, long):
+-            self = long.__new__(BitPaddedLong, numeric_value)
++        if isinstance(numeric_value, int):
++            self = int.__new__(BitPaddedLong, numeric_value)
+         else:
+             self = int.__new__(BitPaddedInt, numeric_value)
+         self.bits = bits
+@@ -571,7 +571,7 @@
+         # PCNT and POPM use growing integers of at least 4 bytes as counters.
+         if width == -1: width = max(4, len(bytes))
+         if len(bytes) > width:
+-            raise ValueError, 'Value too wide (%d bytes)' % len(bytes)
++            raise ValueError('Value too wide (%d bytes)' % len(bytes))
+         else: bytes.extend([0] * (width-len(bytes)))
+         if bigendian: bytes.reverse()
+         return ''.join(map(chr, bytes))
+@@ -654,7 +654,7 @@
+     def validate(self, frame, value):
+         if 0 <= value <= 3: return value
+         if value is None: return None
+-        raise ValueError, 'Invalid Encoding: %r' % value
++        raise ValueError('Invalid Encoding: %r' % value)
+ 
+ class StringSpec(Spec):
+     def __init__(self, name, length):
+@@ -666,8 +666,8 @@
+         else: return (str(value) + '\x00' * s.len)[:s.len]
+     def validate(s, frame, value):
+         if value is None: return None
+-        if isinstance(value, basestring) and len(value) == s.len: return value
+-        raise ValueError, 'Invalid StringSpec[%d] data: %r' % (s.len, value)
++        if isinstance(value, str) and len(value) == s.len: return value
++        raise ValueError('Invalid StringSpec[%d] data: %r' % (s.len, value))
+ 
+ class BinaryDataSpec(Spec):
+     def read(self, frame, data): return data, ''
+@@ -696,14 +696,14 @@
+                     data, ret = data[0:offset], data[offset+2:]; break
+             except ValueError: pass
+ 
+-        if len(data) < len(term): return u'', ret
++        if len(data) < len(term): return '', ret
+         return data.decode(enc), ret
+ 
+     def write(self, frame, value):
+         enc, term = self._encodings[frame.encoding]
+         return value.encode(enc) + term
+ 
+-    def validate(self, frame, value): return unicode(value)
++    def validate(self, frame, value): return str(value)
+ 
+ class MultiSpec(Spec):
+     def __init__(self, name, *specs, **kw):
+@@ -735,7 +735,7 @@
+ 
+     def validate(self, frame, value):
+         if value is None: return []
+-        if self.sep and isinstance(value, basestring):
++        if self.sep and isinstance(value, str):
+             value = value.split(self.sep)
+         if isinstance(value, list):
+             if len(self.specs) == 1:
+@@ -744,7 +744,7 @@
+                 return [ 
+                     [s.validate(frame, v) for (v,s) in zip(val, self.specs)]
+                     for val in value ]
+-        raise ValueError, 'Invalid MultiSpec data: %r' % value
++        raise ValueError('Invalid MultiSpec data: %r' % value)
+ 
+ class EncodedNumericTextSpec(EncodedTextSpec): pass
+ class EncodedNumericPartTextSpec(EncodedTextSpec): pass
+@@ -758,7 +758,7 @@
+     def write(self, data, value):
+         return value.encode('latin1') + '\x00'
+ 
+-    def validate(self, frame, value): return unicode(value)
++    def validate(self, frame, value): return str(value)
+ 
+ class ID3TimeStamp(object):
+     """A time stamp in ID3v2 format.
+@@ -782,9 +782,9 @@
+         parts = [self.year, self.month, self.day,
+                 self.hour, self.minute, self.second]
+         pieces = []
+-        for i, part in enumerate(iter(iter(parts).next, None)):
++        for i, part in enumerate(iter(iter(parts).__next__, None)):
+             pieces.append(self.__formats[i]%part + self.__seps[i])
+-        return u''.join(pieces)[:-1]
++        return ''.join(pieces)[:-1]
+ 
+     def set_text(self, text, splitre=re.compile('[-T:/.]|\s+')):
+         year, month, day, hour, minute, second = \
+@@ -812,11 +812,11 @@
+ 
+     def validate(self, frame, value):
+         try: return ID3TimeStamp(value)
+-        except TypeError: raise ValueError, "Invalid ID3TimeStamp: %r" % value
++        except TypeError: raise ValueError("Invalid ID3TimeStamp: %r" % value)
+ 
+ class ChannelSpec(ByteSpec):
+     (OTHER, MASTER, FRONTRIGHT, FRONTLEFT, BACKRIGHT, BACKLEFT, FRONTCENTRE,
+-     BACKCENTRE, SUBWOOFER) = range(9)
++     BACKCENTRE, SUBWOOFER) = list(range(9))
+ 
+ class VolumeAdjustmentSpec(Spec):
+     def read(self, frame, data):
+@@ -900,7 +900,7 @@
+             freq /= 2.0
+             adj /= 512.0
+             adjustments[freq] = adj
+-        adjustments = adjustments.items()
++        adjustments = list(adjustments.items())
+         adjustments.sort()
+         return adjustments, data
+ 
+@@ -1033,21 +1033,21 @@
+                 data = data[4:]
+             if tflags & Frame.FLAG24_UNSYNCH or id3.f_unsynch:
+                 try: data = unsynch.decode(data)
+-                except ValueError, err:
++                except ValueError as err:
+                     if id3.PEDANTIC:
+-                        raise ID3BadUnsynchData, '%s: %r' % (err, data)
++                        raise ID3BadUnsynchData('%s: %r' % (err, data))
+             if tflags & Frame.FLAG24_ENCRYPT:
+                 raise ID3EncryptionUnsupportedError
+             if tflags & Frame.FLAG24_COMPRESS:
+                 try: data = data.decode('zlib')
+-                except zlibError, err:
++                except zlibError as err:
+                     # the initial mutagen that went out with QL 0.12 did not
+                     # write the 4 bytes of uncompressed size. Compensate.
+                     data = datalen_bytes + data
+                     try: data = data.decode('zlib')
+-                    except zlibError, err:
++                    except zlibError as err:
+                         if id3.PEDANTIC:
+-                            raise ID3BadCompressedData, '%s: %r' % (err, data)
++                            raise ID3BadCompressedData('%s: %r' % (err, data))
+ 
+         elif (2,3,0) <= id3.version:
+             if tflags & Frame.FLAG23_COMPRESS:
+@@ -1057,9 +1057,9 @@
+                 raise ID3EncryptionUnsupportedError
+             if tflags & Frame.FLAG23_COMPRESS:
+                 try: data = data.decode('zlib')
+-                except zlibError, err:
++                except zlibError as err:
+                     if id3.PEDANTIC:
+-                        raise ID3BadCompressedData, '%s: %r' % (err, data)
++                        raise ID3BadCompressedData('%s: %r' % (err, data))
+ 
+         frame = cls()
+         frame._rawdata = data
+@@ -1138,12 +1138,12 @@
+     """
+ 
+     _framespec = [ EncodingSpec('encoding'),
+-        MultiSpec('text', EncodedTextSpec('text'), sep=u'\u0000') ]
++        MultiSpec('text', EncodedTextSpec('text'), sep='\u0000') ]
+     def __str__(self): return self.__unicode__().encode('utf-8')
+-    def __unicode__(self): return u'\u0000'.join(self.text)
++    def __unicode__(self): return '\u0000'.join(self.text)
+     def __eq__(self, other):
+         if isinstance(other, str): return str(self) == other
+-        elif isinstance(other, unicode): return unicode(self) == other
++        elif isinstance(other, str): return str(self) == other
+         return self.text == other
+     def __getitem__(self, item): return self.text[item]
+     def __iter__(self): return iter(self.text)
+@@ -1160,7 +1160,7 @@
+     """
+ 
+     _framespec = [ EncodingSpec('encoding'),
+-        MultiSpec('text', EncodedNumericTextSpec('text'), sep=u'\u0000') ]
++        MultiSpec('text', EncodedNumericTextSpec('text'), sep='\u0000') ]
+ 
+     def __pos__(self):
+         """Return the numerical value of the string."""
+@@ -1176,7 +1176,7 @@
+     """
+ 
+     _framespec = [ EncodingSpec('encoding'),
+-        MultiSpec('text', EncodedNumericPartTextSpec('text'), sep=u'\u0000') ]
++        MultiSpec('text', EncodedNumericPartTextSpec('text'), sep='\u0000') ]
+     def __pos__(self):
+         return int(self.text[0].split("/")[0])
+ 
+@@ -1188,7 +1188,7 @@
+     """
+ 
+     _framespec = [ EncodingSpec('encoding'),
+-        MultiSpec('text', TimeStampSpec('stamp'), sep=u',') ]
++        MultiSpec('text', TimeStampSpec('stamp'), sep=',') ]
+     def __str__(self): return self.__unicode__().encode('utf-8')
+     def __unicode__(self): return ','.join([stamp.text for stamp in self.text])
+     def _pprint(self):
+@@ -1235,9 +1235,9 @@
+         for value in self.text:
+             if value.isdigit():
+                 try: genres.append(self.GENRES[int(value)])
+-                except IndexError: genres.append(u"Unknown")
+-            elif value == "CR": genres.append(u"Cover")
+-            elif value == "RX": genres.append(u"Remix")
++                except IndexError: genres.append("Unknown")
++            elif value == "CR": genres.append("Cover")
++            elif value == "RX": genres.append("Remix")
+             elif value:
+                 newgenres = []
+                 genreid, dummy, genrename = genre_re.match(value).groups()
+@@ -1245,11 +1245,11 @@
+                 if genreid:
+                     for gid in genreid[1:-1].split(")("):
+                         if gid.isdigit() and int(gid) < len(self.GENRES):
+-                            gid = unicode(self.GENRES[int(gid)])
++                            gid = str(self.GENRES[int(gid)])
+                             newgenres.append(gid)
+-                        elif gid == "CR": newgenres.append(u"Cover")
+-                        elif gid == "RX": newgenres.append(u"Remix")
+-                        else: newgenres.append(u"Unknown")
++                        elif gid == "CR": newgenres.append("Cover")
++                        elif gid == "RX": newgenres.append("Remix")
++                        else: newgenres.append("Unknown")
+ 
+                 if genrename:
+                     # "Unescaping" the first parenthesis
+@@ -1261,8 +1261,8 @@
+         return genres
+ 
+     def __set_genres(self, genres):
+-        if isinstance(genres, basestring): genres = [genres]
+-        self.text = map(self.__decode, genres)
++        if isinstance(genres, str): genres = [genres]
++        self.text = list(map(self.__decode, genres))
+ 
+     def __decode(self, value):
+         if isinstance(value, str):
+@@ -1333,7 +1333,7 @@
+     the same). Many taggers use this frame to store freeform keys.
+     """
+     _framespec = [ EncodingSpec('encoding'), EncodedTextSpec('desc'),
+-        MultiSpec('text', EncodedTextSpec('text'), sep=u'\u0000') ]
++        MultiSpec('text', EncodedTextSpec('text'), sep='\u0000') ]
+     HashKey = property(lambda s: '%s:%s' % (s.FrameID, s.desc))
+     def _pprint(self): return "%s=%s" % (self.desc, " / ".join(self.text))
+ 
+@@ -1448,7 +1448,7 @@
+     """
+     _framespec = [ EncodingSpec('encoding'), StringSpec('lang', 3),
+         EncodedTextSpec('desc'),
+-        MultiSpec('text', EncodedTextSpec('text'), sep=u'\u0000') ]
++        MultiSpec('text', EncodedTextSpec('text'), sep='\u0000') ]
+     HashKey = property(lambda s: '%s:%s:%r' % (s.FrameID, s.desc, s.lang))
+     def _pprint(self): return "%s=%r=%s" % (
+         self.desc, self.lang, " / ".join(self.text))
+@@ -1545,7 +1545,7 @@
+ 
+     def __eq__(self, other): return self.count == other
+     def __pos__(self): return self.count
+-    def _pprint(self): return unicode(self.count)
++    def _pprint(self): return str(self.count)
+ 
+ class POPM(FrameOpt):
+     """Popularimeter.
+@@ -1774,7 +1774,7 @@
+                    ASPIIndexSpec("Fi") ]
+     def __eq__(self, other): return self.Fi == other
+ 
+-Frames = dict([(k,v) for (k,v) in globals().items()
++Frames = dict([(k,v) for (k,v) in list(globals().items())
+         if len(k)==4 and isinstance(v, type) and issubclass(v, Frame)])
+ """All supported ID3v2 frames, keyed by frame name."""
+ del(k); del(v)
+@@ -1867,7 +1867,7 @@
+     _framespec = [ StringSpec('frameid', 3), Latin1TextSpec('url') ]
+     _optionalspec = [ BinaryDataSpec('data') ]
+ 
+-Frames_2_2 = dict([(k,v) for (k,v) in globals().items()
++Frames_2_2 = dict([(k,v) for (k,v) in list(globals().items())
+         if len(k)==3 and isinstance(v, type) and issubclass(v, Frame)])
+ 
+ # support open(filename) as interface
+@@ -1886,8 +1886,8 @@
+     if tag != "TAG": return None
+     def fix(string):
+         return string.split("\x00")[0].strip().decode('latin1')
+-    title, artist, album, year, comment = map(
+-        fix, [title, artist, album, year, comment])
++    title, artist, album, year, comment = list(map(
++        fix, [title, artist, album, year, comment]))
+ 
+     if title: frames["TIT2"] = TIT2(encoding=0, text=title)
+     if artist: frames["TPE1"] = TPE1(encoding=0, text=[artist])
+@@ -1907,8 +1907,8 @@
+ 
+     v1 = {}
+ 
+-    for v2id, name in {"TIT2": "title", "TPE1": "artist",
+-                       "TALB": "album"}.items():
++    for v2id, name in list({"TIT2": "title", "TPE1": "artist",
++                       "TALB": "album"}.items()):
+         if v2id in id3:
+             text = id3[v2id].text[0].encode('latin1', 'replace')[:30]
+         else:
+diff -Naur client175_0.7-original/mutagen/__init__.py client175_0.7/mutagen/__init__.py
+--- client175_0.7-original/mutagen/__init__.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/__init__.py	2021-08-03 14:55:18.899303101 +0200
+@@ -82,7 +82,7 @@
+ 
+         If the file has no tags at all, a KeyError is raised.
+         """
+-        if self.tags is None: raise KeyError, key
++        if self.tags is None: raise KeyError(key)
+         else: return self.tags[key]
+ 
+     def __setitem__(self, key, value):
+@@ -100,7 +100,7 @@
+ 
+         If the file has no tags at all, a KeyError is raised.
+         """
+-        if self.tags is None: raise KeyError, key
++        if self.tags is None: raise KeyError(key)
+         else: del(self.tags[key])
+ 
+     def keys(self):
+@@ -109,7 +109,7 @@
+         If the file has no tags at all, an empty list is returned.
+         """
+         if self.tags is None: return []
+-        else: return self.tags.keys()
++        else: return list(self.tags.keys())
+ 
+     def delete(self, filename=None):
+         """Remove tags from a file."""
+@@ -210,7 +210,7 @@
+                    for Kind in options]
+     finally:
+         fileobj.close()
+-    results = zip(results, options)
++    results = list(zip(results, options))
+     results.sort()
+     (score, name), Kind = results[-1]
+     if score > 0: return Kind(filename)
+diff -Naur client175_0.7-original/mutagen/m4a.py client175_0.7/mutagen/m4a.py
+--- client175_0.7-original/mutagen/m4a.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/m4a.py	2021-08-03 14:55:39.954998104 +0200
+@@ -25,7 +25,7 @@
+ import struct
+ import sys
+ 
+-from cStringIO import StringIO
++from io import StringIO
+ 
+ from mutagen import FileType, Metadata
+ from mutagen._constants import GENRES
+@@ -119,7 +119,7 @@
+             if child.name == remaining[0]:
+                 return child[remaining[1:]]
+         else:
+-            raise KeyError, "%r not found" % remaining[0]
++            raise KeyError("%r not found" % remaining[0])
+ 
+     def __repr__(self):
+         klass = self.__class__.__name__
+@@ -166,13 +166,13 @@
+         'names' may be a list of atoms (['moov', 'udta']) or a string
+         specifying the complete path ('moov.udta').
+         """
+-        if isinstance(names, basestring):
++        if isinstance(names, str):
+             names = names.split(".")
+         for child in self.atoms:
+             if child.name == names[0]:
+                 return child[names[1:]]
+         else:
+-            raise KeyError, "%s not found" % names[0]
++            raise KeyError("%s not found" % names[0])
+ 
+     def __repr__(self):
+         return "\n".join([repr(child) for child in self.atoms])
+@@ -202,7 +202,7 @@
+ 
+     def load(self, atoms, fileobj):
+         try: ilst = atoms["moov.udta.meta.ilst"]
+-        except KeyError, key:
++        except KeyError as key:
+             raise M4AMetadataError(key)
+         for atom in ilst.children:
+             fileobj.seek(atom.offset + 8)
+@@ -210,14 +210,16 @@
+             parse = self.__atoms.get(atom.name, (M4ATags.__parse_text,))[0]
+             parse(self, atom, data)
+ 
+-    def __key_sort((key1, v1), (key2, v2)):
++    def __key_sort(xxx_todo_changeme, xxx_todo_changeme1):
+         # iTunes always writes the tags in order of "relevance", try
+         # to copy it as closely as possible.
++        (key1, v1) = xxx_todo_changeme
++        (key2, v2) = xxx_todo_changeme1
+         order = ["\xa9nam", "\xa9ART", "\xa9wrt", "\xa9alb",
+                  "\xa9gen", "gnre", "trkn", "disk",
+                  "\xa9day", "cpil", "tmpo", "\xa9too",
+                  "----", "covr", "\xa9lyr"]
+-        order = dict(zip(order, range(len(order))))
++        order = dict(list(zip(order, list(range(len(order))))))
+         last = len(order)
+         # If there's no key-based way to distinguish, order by length.
+         # If there's still no way, go by string comparison on the
+@@ -229,7 +231,7 @@
+     def save(self, filename):
+         """Save the metadata to the given filename."""
+         values = []
+-        items = self.items()
++        items = list(self.items())
+         items.sort(self.__key_sort)
+         for key, value in items:
+             render = self.__atoms.get(
+@@ -411,7 +413,7 @@
+ 
+     def pprint(self):
+         values = []
+-        for key, value in self.iteritems():
++        for key, value in self.items():
+             key = key.decode('latin1')
+             try: values.append("%s=%s" % (key, value))
+             except UnicodeDecodeError:
+@@ -475,13 +477,13 @@
+         try:
+             atoms = Atoms(fileobj)
+             try: self.info = M4AInfo(atoms, fileobj)
+-            except StandardError, err:
+-                raise M4AStreamInfoError, err, sys.exc_info()[2]
++            except Exception as err:
++                raise M4AStreamInfoError(err).with_traceback(sys.exc_info()[2])
+             try: self.tags = M4ATags(atoms, fileobj)
+             except M4AMetadataError:
+                 self.tags = None
+-            except StandardError, err:
+-                raise M4AMetadataError, err, sys.exc_info()[2]
++            except Exception as err:
++                raise M4AMetadataError(err).with_traceback(sys.exc_info()[2])
+         finally:
+             fileobj.close()
+ 
+diff -Naur client175_0.7-original/mutagen/mp3.py client175_0.7/mutagen/mp3.py
+--- client175_0.7-original/mutagen/mp3.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/mp3.py	2021-08-03 14:55:59.774710002 +0200
+@@ -19,7 +19,7 @@
+ class InvalidMPEGHeader(error, IOError): pass
+ 
+ # Mode values.
+-STEREO, JOINTSTEREO, DUALCHANNEL, MONO = range(4)
++STEREO, JOINTSTEREO, DUALCHANNEL, MONO = list(range(4))
+ 
+ class MPEGInfo(object):
+     """MPEG audio stream information
+@@ -46,7 +46,7 @@
+ 
+     # Map (version, layer) tuples to bitrates.
+     __BITRATE = {
+-        (1, 1): range(0, 480, 32),
++        (1, 1): list(range(0, 480, 32)),
+         (1, 2): [0, 32, 48, 56, 64, 80, 96, 112,128,160,192,224,256,320,384],
+         (1, 3): [0, 32, 40, 48, 56, 64, 80, 96, 112,128,160,192,224,256,320],
+         (2, 1): [0, 32, 48, 56, 64, 80, 96, 112,128,144,160,176,192,224,256],
+@@ -95,7 +95,7 @@
+         # and 90% through the file.
+         for i in [offset, 0.3 * size, 0.6 * size, 0.9 * size]:
+             try: self.__try(fileobj, int(i), size - offset)
+-            except error, e: pass
++            except error as e: pass
+             else: break
+         # If we can't find any two consecutive frames, try to find just
+         # one frame back at the original offset given.
+diff -Naur client175_0.7-original/mutagen/mp4.py client175_0.7/mutagen/mp4.py
+--- client175_0.7-original/mutagen/mp4.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/mp4.py	2021-08-03 14:56:05.542625890 +0200
+@@ -121,7 +121,7 @@
+             if child.name == remaining[0]:
+                 return child[remaining[1:]]
+         else:
+-            raise KeyError, "%r not found" % remaining[0]
++            raise KeyError("%r not found" % remaining[0])
+ 
+     def __repr__(self):
+         klass = self.__class__.__name__
+@@ -168,13 +168,13 @@
+         'names' may be a list of atoms (['moov', 'udta']) or a string
+         specifying the complete path ('moov.udta').
+         """
+-        if isinstance(names, basestring):
++        if isinstance(names, str):
+             names = names.split(".")
+         for child in self.atoms:
+             if child.name == names[0]:
+                 return child[names[1:]]
+         else:
+-            raise KeyError, "%s not found" % names[0]
++            raise KeyError("%s not found" % names[0])
+ 
+     def __repr__(self):
+         return "\n".join([repr(child) for child in self.atoms])
+@@ -242,7 +242,7 @@
+ 
+     def load(self, atoms, fileobj):
+         try: ilst = atoms["moov.udta.meta.ilst"]
+-        except KeyError, key:
++        except KeyError as key:
+             raise MP4MetadataError(key)
+         for atom in ilst.children:
+             fileobj.seek(atom.offset + 8)
+@@ -250,14 +250,16 @@
+             info = self.__atoms.get(atom.name, (type(self).__parse_text, None))
+             info[0](self, atom, data, *info[2:])
+ 
+-    def __key_sort((key1, v1), (key2, v2)):
++    def __key_sort(xxx_todo_changeme, xxx_todo_changeme1):
+         # iTunes always writes the tags in order of "relevance", try
+         # to copy it as closely as possible.
++        (key1, v1) = xxx_todo_changeme
++        (key2, v2) = xxx_todo_changeme1
+         order = ["\xa9nam", "\xa9ART", "\xa9wrt", "\xa9alb",
+                  "\xa9gen", "gnre", "trkn", "disk",
+                  "\xa9day", "cpil", "pgap", "pcst", "tmpo",
+                  "\xa9too", "----", "covr", "\xa9lyr"]
+-        order = dict(zip(order, range(len(order))))
++        order = dict(list(zip(order, list(range(len(order))))))
+         last = len(order)
+         # If there's no key-based way to distinguish, order by length.
+         # If there's still no way, go by string comparison on the
+@@ -269,14 +271,14 @@
+     def save(self, filename):
+         """Save the metadata to the given filename."""
+         values = []
+-        items = self.items()
++        items = list(self.items())
+         items.sort(self.__key_sort)
+         for key, value in items:
+             info = self.__atoms.get(key[:4], (None, type(self).__render_text))
+             try:
+                 values.append(info[1](self, key, value, *info[2:]))
+-            except (TypeError, ValueError), s:
+-                raise MP4MetadataValueError, s, sys.exc_info()[2]
++            except (TypeError, ValueError) as s:
++                raise MP4MetadataValueError(s).with_traceback(sys.exc_info()[2])
+         data = Atom.render("ilst", "".join(values))
+ 
+         # Find the old atoms.
+@@ -440,7 +442,7 @@
+         dummy, mean, name = key.split(":", 2)
+         mean = struct.pack(">I4sI", len(mean) + 12, "mean", 0) + mean
+         name = struct.pack(">I4sI", len(name) + 12, "name", 0) + name
+-        if isinstance(value, basestring):
++        if isinstance(value, str):
+             value = [value]
+         return Atom.render("----", mean + name + "".join([
+             struct.pack(">I4s2I", len(data) + 16, "data", 1, 0) + data
+@@ -492,7 +494,7 @@
+             raise MP4MetadataValueError(
+                 "tmpo must be a list of 16 bit integers")
+ 
+-        values = map(cdata.to_ushort_be, value)
++        values = list(map(cdata.to_ushort_be, value))
+         return self.__render_data(key, 0x15, values)
+ 
+     def __parse_bool(self, atom, data):
+@@ -531,10 +533,10 @@
+         if value:
+             self[atom.name] = value
+     def __render_text(self, key, value, flags=1):
+-        if isinstance(value, basestring):
++        if isinstance(value, str):
+             value = [value]
+         return self.__render_data(
+-            key, flags, map(utf8, value))
++            key, flags, list(map(utf8, value)))
+ 
+     def delete(self, filename):
+         self.clear()
+@@ -556,13 +558,13 @@
+ 
+     def pprint(self):
+         values = []
+-        for key, value in self.iteritems():
++        for key, value in self.items():
+             key = key.decode('latin1')
+             if key == "covr":
+                 values.append("%s=%s" % (key, ", ".join(
+                     ["[%d bytes of data]" % len(data) for data in value])))
+             elif isinstance(value, list):
+-                values.append("%s=%s" % (key, " / ".join(map(unicode, value))))
++                values.append("%s=%s" % (key, " / ".join(map(str, value))))
+             else:
+                 values.append("%s=%s" % (key, value))
+         return "\n".join(values)
+@@ -658,13 +660,13 @@
+         try:
+             atoms = Atoms(fileobj)
+             try: self.info = MP4Info(atoms, fileobj)
+-            except StandardError, err:
+-                raise MP4StreamInfoError, err, sys.exc_info()[2]
++            except Exception as err:
++                raise MP4StreamInfoError(err).with_traceback(sys.exc_info()[2])
+             try: self.tags = self.MP4Tags(atoms, fileobj)
+             except MP4MetadataError:
+                 self.tags = None
+-            except StandardError, err:
+-                raise MP4MetadataError, err, sys.exc_info()[2]
++            except Exception as err:
++                raise MP4MetadataError(err).with_traceback(sys.exc_info()[2])
+         finally:
+             fileobj.close()
+ 
+diff -Naur client175_0.7-original/mutagen/oggflac.py client175_0.7/mutagen/oggflac.py
+--- client175_0.7-original/mutagen/oggflac.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/oggflac.py	2021-08-03 14:56:29.786272048 +0200
+@@ -21,7 +21,7 @@
+ 
+ import struct
+ 
+-from cStringIO import StringIO
++from io import StringIO
+ 
+ from mutagen.flac import StreamInfo, VCFLACDict
+ from mutagen.ogg import OggPage, OggFileType, error as OggError
+diff -Naur client175_0.7-original/mutagen/ogg.py client175_0.7/mutagen/ogg.py
+--- client175_0.7-original/mutagen/ogg.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/ogg.py	2021-08-03 14:56:22.722375298 +0200
+@@ -20,7 +20,7 @@
+ import sys
+ import zlib
+ 
+-from cStringIO import StringIO
++from io import StringIO
+ 
+ from mutagen import FileType
+ from mutagen._util import cdata, insert_bytes, delete_bytes
+@@ -57,7 +57,7 @@
+ 
+     version = 0
+     __type_flags = 0
+-    position = 0L
++    position = 0
+     serial = 0
+     sequence = 0
+     offset = None
+@@ -103,8 +103,8 @@
+             lacings.append(total)
+             self.complete = False
+ 
+-        self.packets = map(fileobj.read, lacings)
+-        if map(len, self.packets) != lacings:
++        self.packets = list(map(fileobj.read, lacings))
++        if list(map(len, self.packets)) != lacings:
+             raise error("unable to read full data")
+ 
+     def __eq__(self, other):
+@@ -301,7 +301,7 @@
+                     if page.packets[-1]:
+                         page.complete = False
+                         if len(page.packets) == 1:
+-                            page.position = -1L
++                            page.position = -1
+                     else:
+                         page.packets.pop(-1)
+                     pages.append(page)
+@@ -334,7 +334,7 @@
+ 
+         # Number the new pages starting from the first old page.
+         first = old_pages[0].sequence
+-        for page, seq in zip(new_pages, range(first, first + len(new_pages))):
++        for page, seq in zip(new_pages, list(range(first, first + len(new_pages)))):
+             page.sequence = seq
+             page.serial = old_pages[0].serial
+ 
+@@ -346,7 +346,7 @@
+         new_pages[-1].last = old_pages[-1].last
+         new_pages[-1].complete = old_pages[-1].complete
+         if not new_pages[-1].complete and len(new_pages[-1].packets) == 1:
+-            new_pages[-1].position = -1L
++            new_pages[-1].position = -1
+ 
+         new_data = "".join(map(klass.write, new_pages))
+ 
+@@ -454,10 +454,10 @@
+                     denom = self.info.fps
+                 self.info.length = samples / float(denom)
+ 
+-            except error, e:
+-                raise self._Error, e, sys.exc_info()[2]
++            except error as e:
++                raise self._Error(e).with_traceback(sys.exc_info()[2])
+             except EOFError:
+-                raise self._Error, "no appropriate stream found"
++                raise self._Error("no appropriate stream found")
+         finally:
+             fileobj.close()
+ 
+@@ -473,10 +473,10 @@
+         fileobj = file(filename, "rb+")
+         try:
+             try: self.tags._inject(fileobj)
+-            except error, e:
+-                raise self._Error, e, sys.exc_info()[2]
++            except error as e:
++                raise self._Error(e).with_traceback(sys.exc_info()[2])
+             except EOFError:
+-                raise self._Error, "no appropriate stream found"
++                raise self._Error("no appropriate stream found")
+         finally:
+             fileobj.close()
+ 
+@@ -490,9 +490,9 @@
+         fileobj = file(filename, "rb+")
+         try:
+             try: self.tags._inject(fileobj)
+-            except error, e:
+-                raise self._Error, e, sys.exc_info()[2]
++            except error as e:
++                raise self._Error(e).with_traceback(sys.exc_info()[2])
+             except EOFError:
+-                raise self._Error, "no appropriate stream found"
++                raise self._Error("no appropriate stream found")
+         finally:
+             fileobj.close()
+diff -Naur client175_0.7-original/mutagen/_util.py client175_0.7/mutagen/_util.py
+--- client175_0.7-original/mutagen/_util.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/_util.py	2021-08-03 14:57:18.085567569 +0200
+@@ -32,7 +32,7 @@
+     """
+ 
+     def __iter__(self):
+-        return iter(self.keys())
++        return iter(list(self.keys()))
+ 
+     def has_key(self, key):
+         try: self[key]
+@@ -40,18 +40,18 @@
+         else: return True
+     __contains__ = has_key
+ 
+-    iterkeys = lambda self: iter(self.keys())
++    iterkeys = lambda self: iter(list(self.keys()))
+ 
+     def values(self):
+-        return map(self.__getitem__, self.keys())
+-    itervalues = lambda self: iter(self.values())
++        return list(map(self.__getitem__, list(self.keys())))
++    itervalues = lambda self: iter(list(self.values()))
+ 
+     def items(self):
+-        return zip(self.keys(), self.values())
+-    iteritems = lambda s: iter(s.items())
++        return list(zip(list(self.keys()), list(self.values())))
++    iteritems = lambda s: iter(list(s.items()))
+ 
+     def clear(self):
+-        map(self.__delitem__, self.keys())
++        list(map(self.__delitem__, list(self.keys())))
+ 
+     def pop(self, key, *args):
+         if len(args) > 1:
+@@ -65,7 +65,7 @@
+ 
+     def popitem(self):
+         try:
+-            key = self.keys()[0]
++            key = list(self.keys())[0]
+             return key, self.pop(key)
+         except IndexError: raise KeyError("dictionary is empty")
+ 
+@@ -74,7 +74,7 @@
+             self.update(kwargs)
+             other = {}
+ 
+-        try: map(self.__setitem__, other.keys(), other.values())
++        try: list(map(self.__setitem__, list(other.keys()), list(other.values())))
+         except AttributeError:
+             for key, value in other:
+                 self[key] = value
+@@ -90,14 +90,14 @@
+         except KeyError: return default
+ 
+     def __repr__(self):
+-        return repr(dict(self.items()))
++        return repr(dict(list(self.items())))
+ 
+     def __cmp__(self, other):
+         if other is None: return 1
+-        else: return cmp(dict(self.items()), other)
++        else: return cmp(dict(list(self.items())), other)
+ 
+     def __len__(self):
+-        return len(self.keys())
++        return len(list(self.keys()))
+ 
+ class DictProxy(DictMixin):
+     def __init__(self, *args, **kwargs):
+@@ -114,7 +114,7 @@
+         del(self.__dict[key])
+ 
+     def keys(self):
+-        return self.__dict.keys()
++        return list(self.__dict.keys())
+ 
+ class cdata(object):
+     """C character buffer to Python numeric type conversions."""
+@@ -300,7 +300,7 @@
+     """Convert a basestring to a valid UTF-8 str."""
+     if isinstance(data, str):
+         return data.decode("utf-8", "replace").encode("utf-8")
+-    elif isinstance(data, unicode):
++    elif isinstance(data, str):
+         return data.encode("utf-8")
+     else: raise TypeError("only unicode/str types can be converted to UTF-8")
+ 
+@@ -308,7 +308,7 @@
+     try:
+         return d[key]
+     except KeyError:
+-        for pattern, value in d.iteritems():
++        for pattern, value in d.items():
+             if fnmatchcase(key, pattern):
+                 return value
+     return default
+diff -Naur client175_0.7-original/mutagen/_vorbis.py client175_0.7/mutagen/_vorbis.py
+--- client175_0.7-original/mutagen/_vorbis.py	2010-05-15 00:42:14.000000000 +0200
++++ client175_0.7/mutagen/_vorbis.py	2021-08-03 14:57:26.321443147 +0200
+@@ -16,7 +16,7 @@
+ 
+ import sys
+ 
+-from cStringIO import StringIO
++from io import StringIO
+ 
+ import mutagen
+ from mutagen._util import DictMixin, cdata
+@@ -54,7 +54,7 @@
+     vendor -- the stream 'vendor' (i.e. writer); default 'Mutagen'
+     """
+ 
+-    vendor = u"Mutagen " + mutagen.version_string
++    vendor = "Mutagen " + mutagen.version_string
+ 
+     def __init__(self, data=None, *args, **kwargs):
+         # Collect the args to pass to load, this lets child classes
+@@ -90,16 +90,16 @@
+                 except (OverflowError, MemoryError):
+                     raise error("cannot read %d bytes, too large" % length)
+                 try: tag, value = string.split('=', 1)
+-                except ValueError, err:
++                except ValueError as err:
+                     if errors == "ignore":
+                         continue
+                     elif errors == "replace":
+-                        tag, value = u"unknown%d" % i, string
++                        tag, value = "unknown%d" % i, string
+                     else:
+-                        raise VorbisEncodingError, str(err), sys.exc_info()[2]
++                        raise VorbisEncodingError(str(err)).with_traceback(sys.exc_info()[2])
+                 try: tag = tag.encode('ascii', errors)
+                 except UnicodeEncodeError:
+-                    raise VorbisEncodingError, "invalid tag name %r" % tag
++                    raise VorbisEncodingError("invalid tag name %r" % tag)
+                 else:
+                     if is_valid_key(tag): self.append((tag, value))
+             if framing and not ord(fileobj.read(1)) & 0x01:
+@@ -115,7 +115,7 @@
+         any invalid keys or values are found, a ValueError is raised.
+         """
+ 
+-        if not isinstance(self.vendor, unicode):
++        if not isinstance(self.vendor, str):
+             try: self.vendor.decode('utf-8')
+             except UnicodeDecodeError: raise ValueError
+ 
+@@ -123,7 +123,7 @@
+             try:
+                 if not is_valid_key(key): raise ValueError
+             except: raise ValueError("%r is not a valid key" % key)
+-            if not isinstance(value, unicode):
++            if not isinstance(value, str):
+                 try: value.encode("utf-8")
+                 except: raise ValueError("%r is not a valid value" % value)
+         else: return True
+@@ -181,15 +181,15 @@
+         """
+         key = key.lower().encode('ascii')
+         values = [value for (k, value) in self if k.lower() == key]
+-        if not values: raise KeyError, key
++        if not values: raise KeyError(key)
+         else: return values
+ 
+     def __delitem__(self, key):
+         """Delete all values associated with the key."""
+         key = key.lower().encode('ascii')
+-        to_delete = filter(lambda x: x[0].lower() == key, self)
+-        if not to_delete:raise KeyError, key
+-        else: map(self.remove, to_delete)
++        to_delete = [x for x in self if x[0].lower() == key]
++        if not to_delete:raise KeyError(key)
++        else: list(map(self.remove, to_delete))
+ 
+     def __contains__(self, key):
+         """Return true if the key has any values."""
+@@ -220,4 +220,4 @@
+ 
+     def as_dict(self):
+         """Return a copy of the comment data in a real dict."""
+-        return dict((key, self[key]) for key in self.keys())
++        return dict((key, self[key]) for key in list(self.keys()))
+diff -Naur client175_0.7-original/server.py client175_0.7/server.py
+--- client175_0.7-original/server.py	2011-04-06 13:18:04.000000000 +0200
++++ client175_0.7/server.py	2021-08-03 14:40:26.132681859 +0200
+@@ -20,7 +20,7 @@
+ #       MA 02110-1301, USA.
+ 
+ 
+-import cherrypy, json, os, pwd, urllib, urllib2, sys
++import cherrypy, json, os, pwd, urllib.request, urllib.parse, urllib.error, urllib.request, urllib.error, urllib.parse, sys
+ from BeautifulSoup import BeautifulSoup
+ from time import sleep
+ from datetime import datetime, timedelta
+@@ -55,7 +55,7 @@
+ PASSWORD = None
+ RUN_AS = pwd.getpwuid(os.getuid())[0]
+ 
+-if os.environ.has_key("MPD_HOST"):
++if "MPD_HOST" in os.environ:
+     mpd_host = str(os.environ["MPD_HOST"])
+     if "@" in mpd_host:
+         mpd_host = mpd_host.split("@")
+@@ -64,7 +64,7 @@
+     else:
+         HOST = mpd_host
+ 
+-if os.environ.has_key("MPD_PORT"):
++if "MPD_PORT" in os.environ:
+     PORT = int(os.environ["MPD_PORT"])
+ 
+ HOST = cherrypy.config.get('mpd_host', HOST)
+@@ -124,7 +124,7 @@
+ 
+     def add(self, *args, **kwargs):
+         if len(kwargs) > 0:
+-            args = list(args) + kwargs.values()
++            args = list(args) + list(kwargs.values())
+         if len(args) == 2:
+             if args[0] in ('file', 'directory'):
+                 d = args[1]
+@@ -146,7 +146,7 @@
+                 if ext in ['mp3', 'pgg', 'wav', 'flac', 'aac', 'mod', 'wma']:
+                     mpd.add(d)
+                 else:
+-                    sock = urllib2.urlopen(d)
++                    sock = urllib.request.urlopen(d)
+                     data = sock.read()
+                     info = sock.info()
+                     mime = info.gettype()
+@@ -201,13 +201,13 @@
+         """
+ 
+         if len(kwargs) > 0:
+-            args = list(args) + kwargs.values()
++            args = list(args) + list(kwargs.values())
+         try:
+             if len(args) == 1:
+                 args = args[0]
+-            print args
++            print(args)
+             result = mpd.execute(args)
+-        except MPDError, e:
++        except MPDError as e:
+             raise cherrypy.HTTPError(501, message=str(e))
+         return json.dumps(result)
+     default.exposed = True
+@@ -231,7 +231,7 @@
+             return "WAV editing not supported."
+ 
+         tags = {}
+-        for tag, val in kwargs.items():
++        for tag, val in list(kwargs.items()):
+             tag = tag.lower()
+             if tag == 'track':
+                 tags['tracknumber'] = val
+@@ -239,7 +239,7 @@
+                 tags['discnumber'] = val
+             else:
+                 tags[tag] = val
+-            print '%s[%s] = "%s"' % (id, tag, val)
++            print('%s[%s] = "%s"' % (id, tag, val))
+ 
+         f = metadata.get_format(loc)
+         f.write_tags(tags)
+@@ -249,7 +249,7 @@
+             try:
+                 mpd.update(id)
+                 updating = True
+-            except MPDError, e:
++            except MPDError as e:
+                 if str(e) == "[54@0] {update} already updating":
+                     sleep(0.01)
+                 else:
+@@ -327,7 +327,7 @@
+         d = []
+         skip = ('type', 'time', 'ptime', 'songs')
+         for item in data:
+-            for key, val in item.items():
++            for key, val in list(item.items()):
+                 if key not in skip:
+                     if filter in str(val).lower():
+                         d.append(item)
+@@ -444,7 +444,7 @@
+         """
+         try:
+             return mpd.raw(cmd)
+-        except MPDError, e:
++        except MPDError as e:
+             raise cherrypy.HTTPError(501, message=str(e))
+     protocol.exposed = True
+ 
+@@ -514,9 +514,9 @@
+             return json.dumps(s)
+         n = 0
+         while n < 50:
+-            if mpd.state.get('uptime', '') <> client_uptime:
++            if mpd.state.get('uptime', '') != client_uptime:
+                 return json.dumps(mpd.state)
+-            if mpd.state.get('updating_db', '') <> client_updating_db:
++            if mpd.state.get('updating_db', '') != client_updating_db:
+                 return json.dumps(mpd.state)
+             sleep(0.1)
+             n += 1
+@@ -649,11 +649,11 @@
+     if sport is None:
+         sport = "8080"
+ 
+-    print ""
+-    print "=" * 60
+-    print "Server Ready."
+-    print "Client175 is available at:  http://%s%s:%s" % (shost, sport, SERVER_ROOT)
+-    print "=" * 60
+-    print ""
++    print("")
++    print("=" * 60)
++    print("Server Ready.")
++    print("Client175 is available at:  http://%s%s:%s" % (shost, sport, SERVER_ROOT))
++    print("=" * 60)
++    print("")
+ 
+     serve()
