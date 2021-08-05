@@ -2483,7 +2483,7 @@ sub check_acls
 		s/^\s+//g; s/\s+$//g;
 		if ($_)
 		{
-			unless (&General::validipandmask($_)) { $errormessage = $Lang::tr{'advproxy errmsg invalid ip or mask'}; }
+			unless (&Network::check_subnet($_)) { $errormessage = $Lang::tr{'advproxy errmsg invalid ip or mask'} . ": $_"; }
 			$proxysettings{'SRC_SUBNETS'} .= $_."\n";
 		}
 	}
