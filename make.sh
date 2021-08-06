@@ -1128,7 +1128,7 @@ buildbase() {
 	lfsmake2 gperf
 	lfsmake2 gzip
 	lfsmake2 hostname
-	lfsmake2 jwhois
+	lfsmake2 whois
 	lfsmake2 kbd
 	lfsmake2 less
 	lfsmake2 pkg-config
