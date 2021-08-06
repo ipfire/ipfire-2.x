@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 4.14.232
-ARM_PATCHES = 4.14.232-ipfire0
+VER         = 5.10.55
+ARM_PATCHES = 5.10.55-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -48,7 +48,7 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 	KERNEL_TARGET = Image
 endif
 
-ifeq "$(BUILD_ARCH)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv6l"
 	KERNEL_ARCH  = arm
 	KERNEL_TARGET = zImage
 endif
@@ -58,15 +58,13 @@ VERSUFIX=ipfire$(KCFG)
 ifeq "$(TOOLCHAIN)" "1"
 	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)-tools
 	HEADERS_PREFIX = $(TOOLS_DIR)
+	EXTRAMAKE = CROSS_COMPILE=$(CROSSTARGET)-
 else
 	TARGET = $(DIR_INFO)/linux-$(VER)-$(VERSUFIX)
 	HEADERS_PREFIX = /usr
 endif
 
 ifeq "$(KCFG)" ""
-LASTKERNEL=1
-endif
-ifeq "$(KCFG)" "-multi"
 LASTKERNEL=1
 endif
 
@@ -79,8 +77,8 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= f9dbc2f2656f30aef8394ac9d4ee88b3
-arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= a04b842733999abb818cabb0388572b8
+$(DL_FILE)_MD5					= 10d3f47caac28cf126e6d98ad977b2bb
+arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 8344fdeb190912cf32482dc6d51fba31
 
 install : $(TARGET)
 
@@ -116,7 +114,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14-layer7.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.10-layer7.patch
 
 	# DVB Patches
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
@@ -125,8 +123,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14_ath_user_regd.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-iwlwifi-noibss_only_on_radar_chan.patch
 
-	# Add LED trigger
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.16-ledtrig_netdev.patch
+	# Fix apu1 led detection with newer bios versions
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.10.16-apu1-led-new-bios.patch
 
 	# Fix igb and e1000e crash
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.1-igb-e1000e_fix_lock_at_update_stats.patch
@@ -134,17 +132,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# cs5535audio spams syslog if no ac97 was present (geos router)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8_cs5535audio_fix_logspam_on_geos.patch
 
-	# Add PC Engines APU led support
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14-apu_leds.patch
-
 	# Fix uevent PHYSDEVDRIVER
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-2.6.32.27_mcs7830-fix-driver-name.patch
 
-	# Active try to add entropy if the kernel wait for it
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-random_try_to_actively_add_entropy.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.x-add_timer_setup_on_stack.patch
+	# fix Boot with enabled usercopy hardening
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.9-crypto_testmgr_allocate_buffers_with____GFP_COMP.patch
 
-ifeq "$(KCFG)" "-multi"
+	# fix gcc plugins with gcc11
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.10.45-fix_gcc_plugins_with_gcc11.patch
+
+ifeq "$(BUILD_ARCH)" "armv6l"
 	# Apply Arm-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).patch.xz | patch -Np1
 endif
@@ -156,10 +153,11 @@ endif
 
 ifeq "$(KCFG)" "-headers"
 	# Install the header files
-	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) INSTALL_HDR_PATH=dest headers_install
+	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) $(EXTRAMAKE) headers
 	-mkdir -pv $(BUILDROOT)/$(HEADERS_PREFIX)/include
-	cd $(DIR_APP) && find dest/include \( -name .install -o -name ..install.cmd \) -delete
-	cd $(DIR_APP) && cp -rv dest/include/* $(BUILDROOT)/$(HEADERS_PREFIX)/include
+	cd $(DIR_APP) && find usr/include -name '.*' -delete
+	cd $(DIR_APP) && rm usr/include/Makefile
+	cd $(DIR_APP) && cp -rv usr/include/* $(BUILDROOT)/$(HEADERS_PREFIX)/include
 else
 
 	# Install ipfire logo

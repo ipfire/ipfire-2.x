@@ -1,0 +1,24 @@
+diff --git a/src/acl/ConnMark.cc b/src/acl/ConnMark.cc
+index 1fdae0c..213cf39 100644
+--- a/src/acl/ConnMark.cc
++++ b/src/acl/ConnMark.cc
+@@ -15,6 +15,7 @@
+ #include "Debug.h"
+ #include "http/Stream.h"
+ #include "sbuf/Stream.h"
++#include <limits>
+ 
+ bool
+ Acl::ConnMark::empty() const
+diff --git a/src/security/ServerOptions.cc b/src/security/ServerOptions.cc
+index 5cd81ab..3f73892 100644
+--- a/src/security/ServerOptions.cc
++++ b/src/security/ServerOptions.cc
+@@ -6,6 +6,7 @@
+  * Please see the COPYING and CONTRIBUTORS files for details.
+  */
+ 
++#include <limits>
+ #include "squid.h"
+ #include "anyp/PortCfg.h"
+ #include "base/Packable.h"

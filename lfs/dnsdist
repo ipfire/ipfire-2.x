@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -31,13 +31,14 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = x86_64
 PROG       = dnsdist
 PAK_VER    = 9
 
+SUP_ARCH   = x86_64
+
 DEPS       =
 
-MAX_PARALLELISM = $(shell echo $$(( $(SYSTEM_MEMORY) / 2048)))
+MAX_PARALLELISM = $(shell echo $$(( $(SYSTEM_MEMORY) / 2048 )))
 
 ###############################################################################
 # Top-level Rules
@@ -80,6 +81,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/dnsdist-1.6.0-missing-mutex-header.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \

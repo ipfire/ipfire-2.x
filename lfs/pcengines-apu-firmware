@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,14 +24,14 @@
 
 include Config
 
-VER        = 4.12.0.6
+VER        = 4.14.0.2
 
 THISAPP    = pcengines-apu-firmware-$(VER)
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = pcengines-apu-firmware
-PAK_VER    = 7
+PAK_VER    = 8
 SUP_ARCH   = i586 x86_64
 
 DEPS       = firmware-update
@@ -55,12 +55,12 @@ apu4_v$(VER).rom = $(DL_FROM)/apu4_v$(VER).rom
 apu5_v$(VER).rom = $(DL_FROM)/apu5_v$(VER).rom
 apu6_v$(VER).rom = $(DL_FROM)/apu6_v$(VER).rom
 
-apu1_v$(VER).rom_MD5 = d2e08bc117683fec306d2f980665a1eb
-apu2_v$(VER).rom_MD5 = d9512a52159d546a34e8d630bfdb383b
-apu3_v$(VER).rom_MD5 = 8cf5bd87f47cfaf7fdcda4bb0fa295fb
-apu4_v$(VER).rom_MD5 = 405bd25c59efda4cf3e94c6e0b153890
-apu5_v$(VER).rom_MD5 = a6ce900704cfecd254be6f4bbd7f1e3b
-apu6_v$(VER).rom_MD5 = 30a1fb088b60b96bb8e17f2eb048b228
+apu1_v$(VER).rom_MD5 = e4d9ae35c2be9bf00c18426be5939eea
+apu2_v$(VER).rom_MD5 = 03441c9c73b19e7f7dac609900ce5ea1
+apu3_v$(VER).rom_MD5 = ad98d3f992ca7bfc8ceb5e3f64f8d7ac
+apu4_v$(VER).rom_MD5 = 1257cc73fe96e131da9d21207f6793ce
+apu5_v$(VER).rom_MD5 = 442c34e47402fbe9c2f9c597f9e88bea
+apu6_v$(VER).rom_MD5 = 958de4c34fecedd38fc95e602f28c627
 
 install : $(TARGET)
 

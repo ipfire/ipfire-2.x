@@ -73,9 +73,9 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && meson --prefix=/usr builddir/
-	cd $(DIR_APP) && ninja -C builddir/
-	cd $(DIR_APP) && ninja -C builddir/ install
+	cd $(DIR_APP) && meson --prefix=/usr -Dexamples=false builddir
+	cd $(DIR_APP)/builddir && ninja $(MAKETUNING)
+	cd $(DIR_APP)/builddir && ninja install
 
 	# Move mount.fuse3 to same location as mount.fuse was in previous version
 	mv -v /usr/sbin/mount.fuse3 /sbin

@@ -4,4 +4,4 @@ etc/vdr/plugins/streamdev-server
 etc/vdr/plugins/streamdev-server/streamdevhosts.conf
 #usr/lib/vdr/bin
 usr/lib/vdr/bin/externremux.sh
-usr/lib/vdr/libvdr-streamdev-server.so.2.4.3
+usr/lib/vdr/libvdr-streamdev-server.so.2.4.7

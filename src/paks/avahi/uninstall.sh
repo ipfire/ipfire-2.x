@@ -26,3 +26,4 @@ stop_service ${NAME}
 make_backup ${NAME}
 remove_files
 rm -rf /etc/rc.d/rc*.d/*avahi
+/etc/init.d/messagebus reload

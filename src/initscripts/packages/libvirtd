@@ -20,9 +20,14 @@ case $1 in
 		boot_mesg "Load required kernel modules for Libvirt"
 		modprobe tun vhost_net
 		evaluate_retval
+
+		# Enable required cgroup controllers
+		if [ -d "/sys/fs/cgroup" ]; then
+			echo "+cpu +io" > /sys/fs/cgroup/cgroup.subtree_control
+		fi
+
 		boot_mesg "Starting Libvirt Daemon..."
 		loadproc /usr/sbin/libvirtd -d
-
 		;;
 
 	stop)

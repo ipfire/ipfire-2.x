@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,11 +24,11 @@
 
 include Config
 
-VER        = 2.4.4
+VER        = 2.4.7
 
 # VDRPLUGVER must match with APIVERSION! in config.h
 # after change this update also all vdr plugins
-VDRPLUGVER = 2.4.3
+VDRPLUGVER = 2.4.7
 
 THISAPP    = vdr-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -37,9 +37,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr
-PAK_VER    = 12
+PAK_VER    = 13
 
 DEPS       = vdr_streamdev
+
+CXXFLAGS  += -std=c++11
 
 MAKE_OPTIONS = \
 	PREFIX=/usr \
@@ -65,7 +67,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ccf724c157740b2b153ca41ad38f1217
+$(DL_FILE)_MD5 = 24ff672a7c73118a912bd8c6cdd0aae4
 
 install : $(TARGET)
 

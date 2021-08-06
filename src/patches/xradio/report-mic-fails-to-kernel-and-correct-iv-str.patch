@@ -1,0 +1,41 @@
+From dd2f835ae8a634794c4bf6b7fce1f778ae925e25 Mon Sep 17 00:00:00 2001
+From: Arne Fitzenreiter <arne_f@ipfire.org>
+Date: Sun, 18 Mar 2018 10:55:00 +0100
+Subject: [PATCH 120/144] xradio: report mic fails to kernel and correct iv
+ stripping.
+
+Signed-off-by: Arne Fitzenreiter <arne_f@ipfire.org>
+---
+ drivers/net/wireless/xradio/rx.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/rx.c b/rx.c
+index 271632c96baa..5a2466edf534 100644
+--- a/rx.c
++++ b/rx.c
+@@ -269,7 +269,8 @@ void xradio_rx_cb(struct xradio_vif *priv,
+ 		/* Firmware strips ICV in case of MIC failure. */
+ 		if (arg->status == WSM_STATUS_MICFAILURE) {
+ 			icv_len = 0;
+-			hdr->flag |= RX_FLAG_IV_STRIPPED;
++			hdr->flag |= RX_FLAG_IV_STRIPPED |
++				     RX_FLAG_MMIC_ERROR;
+ 		}
+ 
+ 		if (skb->len < hdrlen + iv_len + icv_len) {
+@@ -285,10 +286,8 @@ void xradio_rx_cb(struct xradio_vif *priv,
+ 			        skb->data + skb->len-icv_len+8, 4);
+ 			skb_trim(skb, skb->len - 8);
+ 			hdr->flag |= RX_FLAG_MMIC_STRIPPED;
+-		} else if (unlikely(WSM_RX_STATUS_ENCRYPTION(arg->flags) ==
+-		           WSM_RX_STATUS_WAPI)) {
+-			/* Protocols not defined in mac80211 should be
+-			   stripped/crypted in driver/firmware */
++		} 
++		if (hdr->flag & RX_FLAG_IV_STRIPPED) {
+ 			/* Remove IV, ICV and MIC */
+ 			skb_trim(skb, skb->len - icv_len);
+ 			memmove(skb->data + iv_len, skb->data, hdrlen);
+-- 
+2.31.0
+

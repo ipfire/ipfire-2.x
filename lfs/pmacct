@@ -32,7 +32,8 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = pmacct
-PAK_VER    = 1
+PAK_VER    = 2
+
 
 DEPS       = libcdada
 
@@ -77,13 +78,15 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && rm configure
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/pmacct-1.7.6-Werror.patch
 	cd $(DIR_APP) && ./autogen.sh
-	cd $(DIR_APP) && ./configure 			\
-		--prefix=/usr 				\
-		--sysconfdir=/etc/pmacct 		\
-		--enable-sqlite3 			\
-		--enable-l2				\
-		--enable-jansson
+	cd $(DIR_APP) && ./configure 		    \
+		        --prefix=/usr 			    \
+		        --sysconfdir=/etc/pmacct 	\
+		        --enable-sqlite3 		    \
+		        --enable-l2			        \
+		        --enable-jansson
 	# Add directory for plugins and pipes
 	-mkdir -v /var/spool/pmacct
 	# Add configuration folder and copy conf file to it

@@ -1,0 +1,22 @@
+--- vdr-plugin-epgsearch/epgsearchext.c.bak	2021-05-18 09:16:41.627381361 +0000
++++ vdr-plugin-epgsearch/epgsearchext.c	2021-05-18 09:16:51.650963022 +0000
+@@ -1424,7 +1424,7 @@
+             int line = 0;
+             char buffer[MAXPARSEBUFFER];
+             result = true;
+-            while (fgets(buffer, sizeof(buffer), f) > 0) {
++            while (fgets(buffer, sizeof(buffer), f)) {
+                 line++;
+                 char *p = strchr(buffer, '#');
+                 if (p == buffer) *p = 0;
+--- vdr-plugin-epgsearch/createcats.c.bak	2021-05-18 09:19:49.987519874 +0000
++++ vdr-plugin-epgsearch/createcats.c	2021-05-18 09:19:58.591160769 +0000
+@@ -68,7 +68,7 @@
+ 
+ char *cReadLine::Read(FILE *f)
+ {
+-    if (fgets(buffer, sizeof(buffer), f) > 0) {
++    if (fgets(buffer, sizeof(buffer), f)) {
+         int l = strlen(buffer) - 1;
+         if (l >= 0 && buffer[l] == '\n')
+             buffer[l] = 0;

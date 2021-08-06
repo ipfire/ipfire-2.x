@@ -138,6 +138,8 @@ dhcpcd_stop() {
 	# Wait until dhcpd has stopped.
 	while [ -d "/proc/${pid}" ]; do
 		sleep 1
+		# repeat stop if dhcp was still running
+		/sbin/dhcpcd ${dhcp_stop} ${device} &> /dev/null
 	done
 
 	# Display console message, depended on the exit code

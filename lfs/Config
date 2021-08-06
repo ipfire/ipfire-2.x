@@ -13,7 +13,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -54,7 +54,7 @@ ifeq "$(BUILD_ARCH)" "armv7hl"
 	IS_32BIT = 1
 endif
 
-ifeq "$(BUILD_ARCH)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv6l"
 	IS_32BIT = 1
 endif
 
@@ -80,6 +80,11 @@ TAR_OPTIONS = \
 	--format=pax \
 	--acls \
 	--xattrs --xattrs-include='*'
+
+ZSTD_OPTIONS = \
+	-T$(PARALLELISM) \
+	-19 \
+	--long
 
 # URLs that are common sources of downloads.  If you're having trouble with
 # a site you should change its URL to that of a suitable mirror site.

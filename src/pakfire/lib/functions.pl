@@ -962,9 +962,9 @@ sub get_arch() {
 	# Append architecture
 	my ($sysname, $nodename, $release, $version, $machine) = POSIX::uname();
 
-	# We only support armv5tel for all 32 bit arches
-	if ($machine =~ m/armv[567]/) {
-		return "armv5tel";
+	# We only support armv6l for 32 bit arm
+	if ($machine =~ m/armv[67]/) {
+		return "armv6l";
 
 	# We only support i586 for 32 bit x86
 	} elsif ($machine =~ m/i[0-9]86/) {

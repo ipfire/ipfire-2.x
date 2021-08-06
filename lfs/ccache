@@ -24,24 +24,13 @@
 
 include Config
 
-VER        = 3.7.12
+VER        = 4.3
 
 THISAPP    = ccache-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET     = $(DIR_INFO)/$(THISAPP)-pass$(PASS)
-
-ifeq "$(PASS)" "1"
-	CFLAGS := $(patsubst -march=%,,$(CFLAGS))
-	CFLAGS := $(patsubst -mtune=%,,$(CFLAGS))
-	CFLAGS := $(patsubst -mfpu=%,,$(CFLAGS))
-	CFLAGS := $(patsubst -mfloat-abi=%,,$(CFLAGS))
-	CFLAGS := $(patsubst -mindirect-branch=%,,$(CFLAGS))
-	CFLAGS := $(patsubst -mfunction-return=%,,$(CFLAGS))
-	CFLAGS := $(patsubst -fstack-clash-protection,,$(CFLAGS))
-	CFLAGS := $(patsubst -fcf-protection,,$(CFLAGS))
-endif
+TARGET     = $(DIR_INFO)/$(THISAPP)-tools
 
 ###############################################################################
 # Top-level Rules
@@ -51,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 4c9a09ae499d1d82bb83e67f1068f9bb
+$(DL_FILE)_MD5 = 10be8f17a25331e42d9dbab4f6c846ab
 
 install : $(TARGET)
 
@@ -81,30 +70,25 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=$(TOOLS_DIR)
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ccache/ccache-4.3-fix_armv6_bus_error.patch
+	cd $(DIR_APP) && mkdir -pv build
+	cd $(DIR_APP)/build && cmake \
+		-DCMAKE_INSTALL_PREFIX=$(TOOLS_DIR) \
+		-DCMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES=$(TOOLS_DIR)/include \
+		..
+	cd $(DIR_APP)/build && make $(MAKETUNING) VERBOSE=1
+	cd $(DIR_APP)/build && make install
 
-ifeq "$(TOOLCHAIN)" "1"
- ifeq "$(PASS)" "1"
+	# Install symlinks
 	mkdir -pv $(TOOLS_DIR)/ccache/bin
 	ln -svf ../../bin/ccache $(TOOLS_DIR)/ccache/bin/gcc
 	ln -svf ../../bin/ccache $(TOOLS_DIR)/ccache/bin/g++
 	ln -svf ../../bin/ccache $(TOOLS_DIR)/ccache/bin/cc
 	ln -svf ../../bin/ccache $(TOOLS_DIR)/ccache/bin/c++
-	ln -svf ../../bin/ccache $(TOOLS_DIR)/ccache/bin/$(CROSSTARGET)-gcc
-	ln -svf ../../bin/ccache $(TOOLS_DIR)/ccache/bin/$(CROSSTARGET)-g++
-	ln -svf ../../bin/ccache $(TOOLS_DIR)/ccache/bin/$(CROSSTARGET)-cc
-	ln -svf ../../bin/ccache $(TOOLS_DIR)/ccache/bin/$(CROSSTARGET)-c++
- endif
-
- ifeq "$(PASS)" "2"
 	ln -svf ../../bin/ccache $(TOOLS_DIR)/ccache/bin/$(BUILDTARGET)-gcc
 	ln -svf ../../bin/ccache $(TOOLS_DIR)/ccache/bin/$(BUILDTARGET)-g++
 	ln -svf ../../bin/ccache $(TOOLS_DIR)/ccache/bin/$(BUILDTARGET)-cc
 	ln -svf ../../bin/ccache $(TOOLS_DIR)/ccache/bin/$(BUILDTARGET)-c++
- endif
-endif
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

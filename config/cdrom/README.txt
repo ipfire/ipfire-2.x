@@ -5,9 +5,10 @@ Installation
 ------------
 
 Please read the IPFire Installation manual before installing the firewall.
-This document is located on our wiki (http://wiki.ipfire.org/en/installation/start)
+This document is located on our wiki (https://wiki.ipfire.org/installation)
 It will guide you through the installation process and will help 
 you make the necessary decisions during the installation process.
+
 
 License
 -------

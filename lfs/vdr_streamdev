@@ -34,15 +34,15 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr_streamdev
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       =
 
-VDRPLUGVER = 2.4.3
+VDRPLUGVER = 2.4.7
 
 EXTRA_FLAGS= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
 CFLAGS    += $(EXTRA_FLAGS)
-CXXFLAGS  += $(EXTRA_FLAGS)
+CXXFLAGS  += $(EXTRA_FLAGS) -std=c++11
 
 ###############################################################################
 # Top-level Rules

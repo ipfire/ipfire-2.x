@@ -34,10 +34,6 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 CXXFLAGS+= -Wno-error=format-truncation
 
-ifeq "$(BUILD_ARCH)" "armv5tel"
-	LDFLAGS += -latomic
-endif
-
 ifeq "$(BUILD_ARCH)" "riscv64"
 	LDFLAGS += -latomic
 endif
@@ -81,6 +77,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xaf $(DIR_DL)/$(DL_FILE)
 
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/squid-gcc11.patch
 	cd $(DIR_APP) && autoreconf -vfi
 	cd $(DIR_APP)/libltdl && autoreconf -vfi
 
@@ -99,6 +96,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-kqueue \
 		--disable-esi \
 		--disable-arch-native \
+		--disable-strict-error-checking \
 		--enable-poll \
 		--enable-ident-lookups \
 		--enable-storeio=aufs,diskd,ufs \

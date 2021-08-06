@@ -24,16 +24,14 @@
 
 include Config
 
-VER        = 1ee53f5
+VER        = 5e8607b
 
 THISAPP    = u-boot-friendlyarm-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/u-boot-$(VER)*
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = armv5tel
-
-CFLAGS    += -fcommon
+SUP_ARCH   = armv6l
 
 ###############################################################################
 # Top-level Rules
@@ -43,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a329359aa0e9211f02526548eb6a6208
+$(DL_FILE)_MD5 = fa7bb610b17df6b884f6c88f19ce258e
 
 install : $(TARGET)
 
@@ -77,7 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
-ifeq "${BUILD_ARCH}" "armv5tel"
+ifeq "${BUILD_ARCH}" "armv6l"
 	# Nanopi-R1 eMMC
 	-mkdir -pv /usr/share/u-boot/nanopi-r1
 	cd $(DIR_APP) && cp arch/arm/dts/sun8i-h3-nanopi-m1-plus.dts arch/arm/dts/sun8i-h3-nanopi-r1.dts

@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP)-$(RUST_BOOTSTRAP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)-$(RUST_BOOTSTRAP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = x86_64 i586 aarch64 armv5tel
+SUP_ARCH   = x86_64 i586 aarch64 armv6l
 
 ifeq "$(BUILD_ARCH)" "i586"
 	RUST_ARCH = i686
@@ -39,7 +39,7 @@ else
 	RUST_ARCH = $(BUILD_ARCH)
 endif
 
-ifeq "$(BUILD_ARCH)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv6l"
 	RUST_BOOTSTRAP = arm-unknown-linux-gnueabi
 else
 	RUST_BOOTSTRAP = $(RUST_ARCH)-unknown-linux-gnu

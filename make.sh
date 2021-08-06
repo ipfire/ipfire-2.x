@@ -25,8 +25,8 @@
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
-VERSION="2.25"							# Version number
-CORE="158"							# Core Level (Filename)
+VERSION="2.27"							# Version number
+CORE="159"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
@@ -38,7 +38,10 @@ GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"			# Git Branch
 GIT_TAG="$(git tag | tail -1)"					# Git Tag
 GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
-TOOLCHAINVER=20200924
+TOOLCHAINVER=20210701
+
+# use multicore and max compression
+ZSTD_OPT="-T0 --ultra -22"
 
 ###############################################################################
 #
@@ -169,12 +172,12 @@ configure_build() {
 			CFLAGS_ARCH="-march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard"
 			;;
 
-		armv5tel)
+		armv6l)
 			BUILDTARGET="${build_arch}-unknown-linux-gnueabi"
 			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
 			BUILD_PLATFORM="arm"
-			CFLAGS_ARCH="-march=armv5te -mfloat-abi=soft -fomit-frame-pointer"
-			RUSTFLAGS="-Ccodegen-units=1"
+			CFLAGS_ARCH="-march=armv6zk+fp -mfpu=vfp -mfloat-abi=softfp -fomit-frame-pointer"
+			#RUSTFLAGS="-Ccodegen-units=1"
 			;;
 
 		riscv64)
@@ -214,7 +217,7 @@ configure_build() {
 	# 128MB of memory. Therefore we find out how
 	# many processes fit into memory.
 	local mem_max=$(( ${SYSTEM_MEMORY} / 128 ))
-	local cpu_max=$(( ${SYSTEM_PROCESSORS} + 1 ))
+	local cpu_max=$(( ${SYSTEM_PROCESSORS} ))
 
 	local parallelism
 	if [ ${mem_max} -lt ${cpu_max} ]; then
@@ -267,8 +270,8 @@ configure_build_guess() {
 			echo "aarch64"
 			;;
 
-		armv7*|armv6*|armv5*)
-			echo "armv5tel"
+		armv7*|armv6*)
+			echo "armv6l"
 			;;
 
 		riscv64)
@@ -480,7 +483,7 @@ prepareenv() {
 	mkdir -p "${BASEDIR}/build${TOOLS_DIR}" 2>/dev/null
 	mkdir -p $BASEDIR/build/{etc,usr/src} 2>/dev/null
 	mkdir -p $BASEDIR/build/{dev/{shm,pts},proc,sys}
-	mkdir -p $BASEDIR/{cache,ccache/${BUILD_ARCH}} 2>/dev/null
+	mkdir -p $BASEDIR/{cache,ccache/${BUILD_ARCH}/${TOOLCHAINVER}} 2>/dev/null
 
 	if [ "${ENABLE_RAMDISK}" = "on" ]; then
 		mkdir -p $BASEDIR/build/usr/src
@@ -502,7 +505,7 @@ prepareenv() {
 	mount --bind /proc           $BASEDIR/build/proc
 	mount --bind /sys            $BASEDIR/build/sys
 	mount --bind $BASEDIR/cache  $BASEDIR/build/usr/src/cache
-	mount --bind $BASEDIR/ccache/${BUILD_ARCH} $BASEDIR/build/usr/src/ccache
+	mount --bind $BASEDIR/ccache/${BUILD_ARCH}/${TOOLCHAINVER} $BASEDIR/build/usr/src/ccache
 	mount --bind $BASEDIR/config $BASEDIR/build/usr/src/config
 	mount --bind $BASEDIR/doc    $BASEDIR/build/usr/src/doc
 	mount --bind $BASEDIR/html   $BASEDIR/build/usr/src/html
@@ -514,7 +517,6 @@ prepareenv() {
 	# Run LFS static binary creation scripts one by one
 	export CCACHE_DIR=$BASEDIR/ccache
 	export CCACHE_TEMPDIR="/tmp"
-	export CCACHE_COMPRESS=1
 	export CCACHE_COMPILERCHECK="string:toolchain-${TOOLCHAINVER} ${BUILD_ARCH}"
 
 	# Remove pre-install list of installed files in case user erase some files before rebuild
@@ -586,7 +588,6 @@ enterchroot() {
 		BUILD_PLATFORM="${BUILD_PLATFORM}" \
 		CCACHE_DIR=/usr/src/ccache \
 		CCACHE_TEMPDIR="${CCACHE_TEMPDIR}" \
-		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
 		GOCACHE="/usr/src/ccache/go" \
 		KVER="${KVER}" \
@@ -668,9 +669,8 @@ lfsmake1() {
 
 	cd $BASEDIR/lfs && env -i \
 		PATH="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/bin:$PATH" \
-		CCACHE_DIR="${CCACHE_DIR}" \
+		CCACHE_DIR="${CCACHE_DIR}"/${BUILD_ARCH}/${TOOLCHAINVER} \
 		CCACHE_TEMPDIR="${CCACHE_TEMPDIR}" \
-		CCACHE_COMPRESS="${CCACHE_COMPRESS}" \
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
 		CFLAGS="${CFLAGS}" \
 		CXXFLAGS="${CXXFLAGS}" \
@@ -1003,10 +1003,10 @@ buildtoolchain() {
 			# These are working.
 			;;
 
-		armv5tel:armv5tel|armv5tel:armv5tejl|armv5tel:armv6l|armv5tel:armv7l|armv5tel:aarch64)
+		armv6l:armv6l|armv6l:armv7l|armv6l:aarch64)
 			# These are working.
 			;;
-		armv5tel:*)
+		armv6l:*)
 			error=true
 			;;
 	esac
@@ -1036,17 +1036,17 @@ buildtoolchain() {
 	export LOGFILE
 
 	lfsmake1 stage1
-	lfsmake1 ccache			PASS=1
 	lfsmake1 binutils			PASS=1
 	lfsmake1 gcc			PASS=1
 	lfsmake1 linux			KCFG="-headers"
 	lfsmake1 glibc
 	lfsmake1 libxcrypt
 	lfsmake1 gcc			PASS=L
+	lfsmake1 zlib
+	lfsmake1 zstd
 	lfsmake1 binutils			PASS=2
 	lfsmake1 gcc			PASS=2
-	lfsmake1 zlib
-	lfsmake1 ccache			PASS=2
+	lfsmake1 ccache
 	lfsmake1 tcl
 	lfsmake1 expect
 	lfsmake1 dejagnu
@@ -1193,27 +1193,16 @@ buildipfire() {
   lfsmake2 screen
   lfsmake2 elfutils
 
-  case "${BUILD_ARCH}" in
-	x86_64|aarch64)
-		lfsmake2 linux			KCFG=""
-		lfsmake2 xtables-addons		KCFG=""
-		lfsmake2 linux-initrd			KCFG=""
-		;;
-	i586)
-		# x86 kernel build
-		lfsmake2 linux			KCFG=""
-		lfsmake2 xtables-addons		KCFG=""
-		lfsmake2 linux-initrd			KCFG=""
-		;;
+  # Kernelbuild ... current we have no platform that need
+  # multi kernel builds so KCFG is empty
+  lfsmake2 linux		KCFG=""
+  lfsmake2 rtl8189es		KCFG=""
+  lfsmake2 rtl8812au		KCFG=""
+  lfsmake2 xradio		KCFG=""
+  lfsmake2 xtables-addons	KCFG=""
+  lfsmake2 linux-initrd		KCFG=""
 
-	armv5tel)
-		# arm multi platform (Panda, Wandboard ...) kernel build
-		lfsmake2 linux			KCFG="-multi"
-		lfsmake2 xtables-addons		KCFG="-multi"
-		lfsmake2 linux-initrd			KCFG="-multi"
-		;;
-  esac
-  lfsmake2 xtables-addons			USPACE="1"
+  lfsmake2 xtables-addons	USPACE="1"
   lfsmake2 libgpg-error
   lfsmake2 libgcrypt
   lfsmake2 libassuan
@@ -1448,6 +1437,7 @@ buildipfire() {
   lfsmake2 br2684ctl
   lfsmake2 pcmciautils
   lfsmake2 lm_sensors
+  lfsmake2 libstatgrab
   lfsmake2 liboping
   lfsmake2 collectd
   lfsmake2 elinks
@@ -1554,7 +1544,6 @@ buildipfire() {
   lfsmake2 telnet
   lfsmake2 xinetd
   lfsmake2 stress
-  lfsmake2 libstatgrab
   lfsmake2 sarg
   lfsmake2 nginx
   lfsmake2 sysbench
@@ -1678,8 +1667,8 @@ buildpackages() {
 
   cd $BASEDIR
 
-  # remove not useable iso on armv5tel (needed to build flash images)
-  [ "${BUILD_ARCH}" = "armv5tel" ] && rm -rf *.iso
+  # remove not useable iso on armv6l (needed to build flash images)
+  [ "${BUILD_ARCH}" = "armv6l" ] && rm -rf *.iso
 
   for i in $(ls *.bz2 *.img.xz *.iso 2>/dev/null); do
 	md5sum $i > $i.md5
@@ -1735,7 +1724,7 @@ build)
 	# Clear screen
 	${INTERACTIVE} && clear
 
-	PACKAGE=`ls -v -r $BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.xz 2> /dev/null | head -n 1`
+	PACKAGE="$BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst"
 	#only restore on a clean disk
 	if [ ! -e "${BASEDIR}/build${TOOLS_DIR}/.toolchain-successful" ]; then
 		if [ ! -n "$PACKAGE" ]; then
@@ -1743,10 +1732,10 @@ build)
 			prepareenv
 			buildtoolchain
 		else
-			PACKAGENAME=${PACKAGE%.tar.xz}
+			PACKAGENAME=${PACKAGE%.tar.zst}
 			print_build_stage "Packaged toolchain compilation"
 			if [ `md5sum $PACKAGE | awk '{print $1}'` == `cat $PACKAGENAME.md5 | awk '{print $1}'` ]; then
-				tar axf $PACKAGE
+				zstd -d < "${PACKAGE}" | tar x
 				prepareenv
 			else
 				exiterror "$PACKAGENAME md5 did not match, check downloaded package"
@@ -1886,25 +1875,25 @@ toolchain)
 	buildtoolchain
 	echo "`date -u '+%b %e %T'`: Create toolchain image for ${BUILD_ARCH}" | tee -a $LOGFILE
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
-	cd $BASEDIR && tar -cf- --exclude='log/_build.*.log' build/${TOOLS_DIR} build/bin/sh log | xz ${XZ_OPT} \
-		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.xz
-	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.xz \
+	cd $BASEDIR && tar -cf- --exclude='log/_build.*.log' build/${TOOLS_DIR} build/bin/sh log \
+		| zstd ${ZSTD_OPT} > cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst
+	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst \
 		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.md5
 	stdumount
 	;;
 gettoolchain)
 	# arbitrary name to be updated in case of new toolchain package upload
 	PACKAGE=$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}
-	if [ ! -f $BASEDIR/cache/toolchains/$PACKAGE.tar.xz ]; then
+	if [ ! -f $BASEDIR/cache/toolchains/$PACKAGE.tar.zst ]; then
 		URL_TOOLCHAIN=`grep URL_TOOLCHAIN lfs/Config | awk '{ print $3 }'`
 		test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
 		echo "`date -u '+%b %e %T'`: Load toolchain image for ${BUILD_ARCH}" | tee -a $LOGFILE
 		cd $BASEDIR/cache/toolchains
-		wget -U "IPFireSourceGrabber/2.x" $URL_TOOLCHAIN/$PACKAGE.tar.xz $URL_TOOLCHAIN/$PACKAGE.md5 >& /dev/null
+		wget -U "IPFireSourceGrabber/2.x" $URL_TOOLCHAIN/$PACKAGE.tar.zst $URL_TOOLCHAIN/$PACKAGE.md5 >& /dev/null
 		if [ $? -ne 0 ]; then
 			echo "`date -u '+%b %e %T'`: error downloading $PACKAGE toolchain for ${BUILD_ARCH} machine" | tee -a $LOGFILE
 		else
-			if [ "`md5sum $PACKAGE.tar.xz | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
+			if [ "`md5sum $PACKAGE.tar.zst | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
 				echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
 			else
 				exiterror "$PACKAGE.md5 did not match, check downloaded package"

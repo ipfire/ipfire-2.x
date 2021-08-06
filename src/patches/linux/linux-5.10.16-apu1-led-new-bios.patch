@@ -1,0 +1,27 @@
+diff -Naur linux-5.10.16.org/drivers/leds/leds-apu.c linux-5.10.16/drivers/leds/leds-apu.c
+--- linux-5.10.16.org/drivers/leds/leds-apu.c	2021-02-13 13:55:19.000000000 +0100
++++ linux-5.10.16/drivers/leds/leds-apu.c	2021-02-17 09:32:19.154531597 +0100
+@@ -90,6 +90,13 @@
+ 			DMI_MATCH(DMI_PRODUCT_NAME, "APU")
+ 		}
+ 	},
++	{
++		.ident = "apu",
++		.matches = {
++			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
++			DMI_MATCH(DMI_PRODUCT_NAME, "apu1")
++		}
++	},
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(dmi, apu_led_dmi_table);
+@@ -173,7 +180,8 @@
+ 	int err;
+ 
+ 	if (!(dmi_match(DMI_SYS_VENDOR, "PC Engines") &&
+-	      dmi_match(DMI_PRODUCT_NAME, "APU"))) {
++	      dmi_match(DMI_PRODUCT_NAME, "APU")||
++	      dmi_match(DMI_PRODUCT_NAME, "apu1"))) {
+ 		pr_err("No PC Engines APUv1 board detected. For APUv2,3 support, enable CONFIG_PCENGINES_APU2\n");
+ 		return -ENODEV;
+ 	}

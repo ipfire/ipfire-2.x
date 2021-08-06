@@ -30,7 +30,19 @@ setup_netdev_trigger ()
 		modprobe -q ledtrig-netdev 2>&1 > /dev/null
 		echo "netdev" > /sys/class/leds/$1/trigger
 		echo "$2" >     /sys/class/leds/$1/device_name
-		echo "$3 $4" >  /sys/class/leds/$1/mode
+		if [ -e "/sys/class/leds/$1/mode" ]; then
+			echo "$3 $4" >  /sys/class/leds/$1/mode
+		else
+			if [ -f "/sys/class/leds/$1/$3" ]; then
+				echo 1 > /sys/class/leds/$1/$3
+			fi
+			if [ -f "/sys/class/leds/$1/$4" ]; then
+				echo 1 > /sys/class/leds/$1/$4
+			fi
+			if [ -f "/sys/class/leds/$1/$5" ]; then
+				echo 1 > /sys/class/leds/$1/$5
+			fi
+		fi
 	fi
 }
 
@@ -61,7 +73,9 @@ enable_led ()
 }
 
 #Handle new APU ACPI Leds introduced on APU2 with bios 4.10.0.0
-if [ -e /sys/class/leds/apu1:green:led1 ]; then
+if [ -e /sys/class/leds/apu:green:1 ]; then
+	APULED="apu:green:";
+else if [ -e /sys/class/leds/apu1:green:led1 ]; then
 	APULED="apu1:green:led";
 else if [ -e /sys/class/leds/apu2:green:led1 ]; then
 	APULED="apu2:green:led";
@@ -73,6 +87,7 @@ else if [ -e /sys/class/leds/apu5:green:led1 ]; then
 	APULED="apu5:green:led";
 else
 	APULED="apu:";
+fi
 fi
 fi
 fi
@@ -95,23 +110,6 @@ case "${1}" in
 		setup_heartbeat_trigger geos:1
 		setup_netdev_trigger geos:2 ${RED_DEV} rx
 		setup_netdev_trigger geos:3 ${RED_DEV} tx
-
-		# Dreamplug
-		setup_netdev_trigger dreamplug:green:wifi ${GREEN_DEV} tx rx
-		setup_netdev_trigger dreamplug:green:wifi_ap ${BLUE_DEV} tx rx
-		setup_netdev_trigger dreamplug:blue:bluetooth ${RED_DEV} tx rx
-
-		# Iomega iConnect start
-		setup_heartbeat_trigger iconnect:blue:otb
-		setup_netdev_trigger iconnect:blue:power ${RED_DEV} rx
-		setup_netdev_trigger iconnect:red:power ${RED_DEV} tx
-		setup_netdev_trigger iconnect:blue:usb_2 ${GREEN_DEV} tx rx
-		setup_netdev_trigger iconnect:blue:usb_3 ${BLUE_DEV} tx rx
-		setup_netdev_trigger iconnect:blue:usb_4 ${ORANGE_DEV} tx rx
-
-		# ICY Box LED start
-		setup_netdev_trigger nas6210:red:power ${RED_DEV} tx rx
-		setup_netdev_trigger nas6210:red:usb_copy ${GREEN_DEV} tx rx
 
 		# Mirabox start
 		setup_heartbeat_trigger mirabox:green:pwr
@@ -144,22 +142,6 @@ case "${1}" in
 		enable_led geos:1
 		disable_led_trigger geos:2
 		disable_led_trigger geos:3
-
-		# Dreamplug
-		disable_led_trigger dreamplug:green:wifi
-		disable_led_trigger dreamplug:green:wifi_ap
-		disable_led_trigger dreamplug:blue:bluetooth
-
-		# Iomega iConnect stop (heartbeat will leave on)
-		disable_led_trigger iconnect:blue:power
-		disable_led_trigger iconnect:red:power
-		disable_led_trigger iconnect:blue:usb_2
-		disable_led_trigger iconnect:blue:usb_3
-		disable_led_trigger iconnect:blue:usb_4
-
-		# ICY Box LED stop
-		disable_led_trigger nas6210:red:power
-		disable_led_trigger nas6210:red:usb_copy
 
 		# Mirabox stop
 		disable_led_trigger mirabox:green:pwr

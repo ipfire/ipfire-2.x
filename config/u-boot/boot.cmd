@@ -11,12 +11,6 @@ if test ${boot_part} = ""; then
 	setenv boot_part ${dev_num}:1;
 fi;
 
-if test ${cpu} = "armv8"; then
-	echo ;
-else
-	setenv kernel_type -multi;
-fi;
-
 # Import uEnv txt...
 if fatload ${boot_dev} ${boot_part} ${kernel_addr_r} uEnv.txt; then
 	echo Load uEnv.txt...;
@@ -32,14 +26,6 @@ fi;
 # for compatiblity reasons set DTBSUNXI if we run on sunxi
 if test "${board}" = "sunxi"; then
 	setenv fdtfile ${DTBSUNXI};
-fi;
-
-# Quirk for RPi on aarch64 becuase u-boot cannot use the
-# initrd on aarch64 and without ramdisk no UUID
-if test ${cpu} = "armv8"; then
-	if test ${board} = "rpi"; then
-		setenv root_dev /dev/mmcblk0p3;
-	fi;
 fi;
 
 # Check if serial console is enabled
@@ -95,14 +81,6 @@ if fatload ${boot_dev} ${boot_part} ${ramdisk_addr} uInit-${KVER}-ipfire${kernel
 else
 	echo Ramdisk not loaded...;
 	setenv ramdisk_addr -;
-fi;
-
-# Quirk for RPi on aarch64 becuase u-boot cannot use the
-# initrd on aarch64
-if test ${cpu} = "armv8"; then
-	if test ${board} = "rpi"; then
-		setenv ramdisk_addr -;
-	fi;
 fi;
 
 bootz ${kernel_addr_r} ${ramdisk_addr} ${fdt_addr_r};

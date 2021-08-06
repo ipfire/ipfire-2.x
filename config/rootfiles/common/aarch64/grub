@@ -4,10 +4,12 @@ boot/grub/splash.png
 #etc/bash_completion.d/grub
 etc/default/grub
 #etc/grub.d
+etc/grub.d/00_cloud
 etc/grub.d/00_header
 etc/grub.d/10_linux
 etc/grub.d/20_linux_xen
 etc/grub.d/30_os-prober
+etc/grub.d/30_uefi-firmware
 etc/grub.d/40_custom
 etc/grub.d/41_custom
 #etc/grub.d/README
@@ -38,6 +40,8 @@ usr/lib/grub/arm64-efi/affs.mod
 usr/lib/grub/arm64-efi/affs.module
 usr/lib/grub/arm64-efi/afs.mod
 usr/lib/grub/arm64-efi/afs.module
+usr/lib/grub/arm64-efi/afsplitter.mod
+usr/lib/grub/arm64-efi/afsplitter.module
 usr/lib/grub/arm64-efi/all_video.mod
 usr/lib/grub/arm64-efi/all_video.module
 usr/lib/grub/arm64-efi/archelp.mod
@@ -225,6 +229,8 @@ usr/lib/grub/arm64-efi/jfs.mod
 usr/lib/grub/arm64-efi/jfs.module
 usr/lib/grub/arm64-efi/jpeg.mod
 usr/lib/grub/arm64-efi/jpeg.module
+usr/lib/grub/arm64-efi/json.mod
+usr/lib/grub/arm64-efi/json.module
 usr/lib/grub/arm64-efi/kernel.exec
 usr/lib/grub/arm64-efi/kernel.img
 usr/lib/grub/arm64-efi/keystatus.mod
@@ -253,6 +259,8 @@ usr/lib/grub/arm64-efi/lssal.mod
 usr/lib/grub/arm64-efi/lssal.module
 usr/lib/grub/arm64-efi/luks.mod
 usr/lib/grub/arm64-efi/luks.module
+usr/lib/grub/arm64-efi/luks2.mod
+usr/lib/grub/arm64-efi/luks2.module
 usr/lib/grub/arm64-efi/lvm.mod
 usr/lib/grub/arm64-efi/lvm.module
 usr/lib/grub/arm64-efi/lzopio.mod
@@ -397,6 +405,8 @@ usr/lib/grub/arm64-efi/sleep.mod
 usr/lib/grub/arm64-efi/sleep.module
 usr/lib/grub/arm64-efi/sleep_test.mod
 usr/lib/grub/arm64-efi/sleep_test.module
+usr/lib/grub/arm64-efi/smbios.mod
+usr/lib/grub/arm64-efi/smbios.module
 usr/lib/grub/arm64-efi/squash4.mod
 usr/lib/grub/arm64-efi/squash4.module
 usr/lib/grub/arm64-efi/strtoull_test.mod
@@ -424,6 +434,8 @@ usr/lib/grub/arm64-efi/tga.mod
 usr/lib/grub/arm64-efi/tga.module
 usr/lib/grub/arm64-efi/time.mod
 usr/lib/grub/arm64-efi/time.module
+usr/lib/grub/arm64-efi/tpm.mod
+usr/lib/grub/arm64-efi/tpm.module
 usr/lib/grub/arm64-efi/tr.mod
 usr/lib/grub/arm64-efi/tr.module
 usr/lib/grub/arm64-efi/trig.mod
@@ -438,8 +450,6 @@ usr/lib/grub/arm64-efi/ufs1_be.mod
 usr/lib/grub/arm64-efi/ufs1_be.module
 usr/lib/grub/arm64-efi/ufs2.mod
 usr/lib/grub/arm64-efi/ufs2.module
-usr/lib/grub/arm64-efi/verifiers.mod
-usr/lib/grub/arm64-efi/verifiers.module
 usr/lib/grub/arm64-efi/video.lst
 usr/lib/grub/arm64-efi/video.mod
 usr/lib/grub/arm64-efi/video.module
@@ -489,6 +499,8 @@ usr/share/grub/unicode.pf2
 #usr/share/grub/widthspec.h
 #usr/share/info/grub-dev.info
 #usr/share/info/grub.info
+#usr/share/info/grub.info-1
+#usr/share/info/grub.info-2
 #usr/share/locale/ast/LC_MESSAGES/grub.mo
 #usr/share/locale/ca/LC_MESSAGES/grub.mo
 #usr/share/locale/da/LC_MESSAGES/grub.mo
@@ -526,6 +538,7 @@ usr/share/grub/unicode.pf2
 #usr/share/locale/it/LC_MESSAGES/grub.mo
 #usr/share/locale/ja/LC_MESSAGES/grub.mo
 #usr/share/locale/ko/LC_MESSAGES/grub.mo
+#usr/share/locale/lg/LC_MESSAGES/grub.mo
 #usr/share/locale/lt/LC_MESSAGES/grub.mo
 #usr/share/locale/nb/LC_MESSAGES/grub.mo
 #usr/share/locale/nl/LC_MESSAGES/grub.mo

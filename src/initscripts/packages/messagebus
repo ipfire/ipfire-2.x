@@ -32,7 +32,12 @@ case "$1" in
                 $0 start
                 ;;
 
-        status)
+	reload)
+		boot_mesg "Reloading the D-Bus Messagebus Daemon..."
+		reloadproc /usr/bin/dbus-daemon
+		;;
+
+	status)
                 statusproc -p $pidfile /usr/bin/dbus-daemon
                 ;;
 

@@ -80,16 +80,19 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-ifeq "$(ROOT)" ""
+
 	cd $(DIR_APP) && ./configure $(EXTRA_CONFIG)
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
+
+ifeq "$(TOOLCHAIN)" "1"
+	install -v -m 755 \
+		$(DIR_APP)/gettext-tools/src/msgfmt \
+		$(DIR_APP)/gettext-tools/src/msgmerge \
+		$(DIR_APP)/gettext-tools/src/xgettext \
+		$(TOOLS_DIR)/bin
 else
-	cd $(DIR_APP)/gettext-tools && ./configure $(EXTRA_CONFIG)
-	cd $(DIR_APP)/gettext-tools && make $(MAKETUNING) -C gnulib-lib
-	cd $(DIR_APP)/gettext-tools && make $(MAKETUNING) -C intl pluralx.c
-	cd $(DIR_APP)/gettext-tools && make $(MAKETUNING) -C src msgfmt
-	cd $(DIR_APP)/gettext-tools && cp -v src/msgfmt $(TOOLS_DIR)/bin
+	cd $(DIR_APP) && make install
 endif
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

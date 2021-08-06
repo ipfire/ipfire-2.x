@@ -137,4 +137,13 @@ foreach (@disks){
 	close(DATEI);
 
 	updatehdddata($disk);
+
+	if ( $diskstats eq $newdiskstats ) {
+		# update diskstat because read temp change the status
+		my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
+		chomp $newdiskstats;
+		open(DATEI, ">/var/run/hddstats-$array[$#array]") || die "Datei nicht gefunden";
+		print DATEI $newdiskstats;
+		close(DATEI);
+	}
 }

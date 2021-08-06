@@ -1,3 +1,4 @@
+etc/pam.d/vmtoolsd
 etc/rc.d/init.d/openvmtools
 etc/rc.d/rc0.d/K01openvmtools
 etc/rc.d/rc3.d/S60openvmtools
@@ -27,6 +28,11 @@ usr/bin/vmware-xferlogs
 #usr/include/vmGuestLib/vmGuestLib.h
 #usr/include/vmGuestLib/vmSessionId.h
 #usr/include/vmGuestLib/vm_basic_types.h
+#usr/lib/libguestStoreClient.a
+#usr/lib/libguestStoreClient.la
+#usr/lib/libguestStoreClient.so
+usr/lib/libguestStoreClient.so.0
+usr/lib/libguestStoreClient.so.0.0.0
 #usr/lib/libguestlib.a
 #usr/lib/libguestlib.la
 #usr/lib/libguestlib.so
@@ -51,7 +57,9 @@ usr/lib/open-vm-tools/plugins/common/libhgfsServer.so
 usr/lib/open-vm-tools/plugins/common/libvix.so
 usr/lib/open-vm-tools/plugins/vmsvc
 usr/lib/open-vm-tools/plugins/vmsvc/libappInfo.so
+usr/lib/open-vm-tools/plugins/vmsvc/libgdp.so
 usr/lib/open-vm-tools/plugins/vmsvc/libguestInfo.so
+usr/lib/open-vm-tools/plugins/vmsvc/libguestStore.so
 usr/lib/open-vm-tools/plugins/vmsvc/libpowerOps.so
 usr/lib/open-vm-tools/plugins/vmsvc/libresolutionKMS.so
 usr/lib/open-vm-tools/plugins/vmsvc/libtimeSync.so

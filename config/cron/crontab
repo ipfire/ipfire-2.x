@@ -36,7 +36,7 @@ HOME=/
 		find /var/log/logwatch/ -ctime +${LOGWATCH_KEEP=56} -exec rm -f '{}' ';'
 
 # hddshutdown
-*/30 * * * * 	/usr/local/bin/hddshutdown >/dev/null
+2,32 * * * * 	/usr/local/bin/hddshutdown >/dev/null
 
 # connection-scheduler
 */5 * * * *	/usr/local/bin/connscheduler timer > /dev/null

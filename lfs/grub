@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.04
+VER        = 2.06
 
 THISAPP    = grub-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -66,7 +66,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 unifont-7.0.03.pcf.gz = $(DL_FROM)/unifont-7.0.03.pcf.gz
 
-$(DL_FILE)_MD5 = 5aaca6713b47ca2456d8324a58755ac7
+$(DL_FILE)_MD5 = cf0fd928b1e5479c8108ee52cb114363
 unifont-7.0.03.pcf.gz_MD5 = f6903ac8c1caeeb30c1e9a2975028401
 
 install : $(TARGET)
@@ -98,7 +98,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_APP_EFI) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-2.04-BootHole.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-2.06-remove_os_prober_disabled_warning.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-2.02_disable_vga_fallback.patch
 	cd $(DIR_APP) && autoreconf -vfi
 
@@ -124,6 +124,10 @@ ifeq "$(BUILD_PC)" "1"
 	-mkdir -pv /boot/grub
 	touch /boot/grub/grub.cfg
 endif
+
+	# Install our own helpers
+	install -v -m 755 $(DIR_SRC)/config/grub2/00_cloud \
+		/etc/grub.d
 
 	# Install background image
 	-mkdir -pv /boot/grub

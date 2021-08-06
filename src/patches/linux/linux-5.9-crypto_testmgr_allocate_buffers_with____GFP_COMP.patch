@@ -1,0 +1,43 @@
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org, Herbert Xu <herbert@gondor.apana.org.au>
+Cc: Kees Cook <keescook@chromium.org>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-security-module <linux-security-module@vger.kernel.org>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Laura Abbott <labbott@redhat.com>,
+	Rik van Riel <riel@surriel.com>
+Subject: [PATCH] crypto: testmgr - allocate buffers with __GFP_COMP
+Date: Thu, 11 Apr 2019 12:28:27 -0700
+Message-ID: <20190411192827.72551-1-ebiggers@kernel.org> (raw)
+In-Reply-To: <20190411192607.GD225654@gmail.com>
+
+From: Eric Biggers <ebiggers@google.com>
+
+This is needed so that CONFIG_HARDENED_USERCOPY_PAGESPAN=y doesn't
+incorrectly report a buffer overflow when the destination of
+copy_from_iter() spans the page boundary in the 2-page buffer.
+
+Fixes: 3f47a03df6e8 ("crypto: testmgr - add testvec_config struct and helper functions")
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
+ crypto/testmgr.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/crypto/testmgr.c b/crypto/testmgr.c
+index 0f6bfb6ce6a46..3522c0bed2492 100644
+--- a/crypto/testmgr.c
++++ b/crypto/testmgr.c
+@@ -156,7 +156,8 @@ static int __testmgr_alloc_buf(char *buf[XBUFSIZE], int order)
+ 	int i;
+ 
+ 	for (i = 0; i < XBUFSIZE; i++) {
+-		buf[i] = (char *)__get_free_pages(GFP_KERNEL, order);
++		buf[i] = (char *)__get_free_pages(GFP_KERNEL | __GFP_COMP,
++						  order);
+ 		if (!buf[i])
+ 			goto err_free_buf;
+ 	}
+-- 
+2.21.0.392.gf8f6787159e-goog

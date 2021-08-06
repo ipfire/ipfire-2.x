@@ -98,11 +98,6 @@ iptables_init() {
 	iptables -t raw -N CONNTRACK
 	iptables -t raw -A PREROUTING -j CONNTRACK
 
-	# Conntrack helper (https://home.regit.org/netfilter-en/secure-use-of-helpers/)
-
-	# GRE (always enabled)
-	modprobe nf_conntrack_proto_gre
-
 	# Fix for braindead ISPs
 	iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 

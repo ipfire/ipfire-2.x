@@ -33,7 +33,7 @@ install() {
     instmods ext4 iso9660 reiserfs vfat xfs
 
     # Extraction
-    inst_multiple tar gzip lzma xz
+    inst_multiple tar gzip zstd
 
     # Networking
     inst_multiple dhcpcd ethtool hostname ip ping sort wget

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,24 +24,24 @@
 
 include Config
 
-VER        = 10.2.0
+VER        = 11.1.0
 
-GMP_VER    = 6.2.0
+GMP_VER    = 6.2.1
 MPFR_VER   = 4.1.0
-MPC_VER    = 1.1.0
+MPC_VER    = 1.2.1
 
 THISAPP    = gcc-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
+ifeq "$(PASS)" "1"
 CFLAGS    := $(patsubst -march=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mfpu=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mtune=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mfloat-abi=%,,$(CFLAGS))
 CFLAGS    := $(filter-out -fexceptions,$(CFLAGS))
 
-ifeq "$(PASS)" "1"
 CFLAGS    := $(patsubst -mindirect-branch=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mfunction-return=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -fstack-clash-protection,,$(CFLAGS))
@@ -54,7 +54,7 @@ ifeq "$(BUILD_ARCH)" "armv7hl"
 	FULL_BOOTSTRAP = 1
 endif
 
-ifeq "$(BUILD_ARCH)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv6l"
 	FULL_BOOTSTRAP = 1
 endif
 
@@ -161,10 +161,11 @@ ifeq "$(BUILD_ARCH)" "armv7hl"
 		--with-float=hard
 endif
 
-ifeq "$(BUILD_ARCH)" "armv5tel"
+ifeq "$(BUILD_ARCH)" "armv6l"
 	EXTRA_CONFIG += \
-		--with-float=soft \
-		--disable-sjlj-exceptions
+		--with-arch=armv6zk+fp \
+		--with-float=softfp
+#		--disable-sjlj-exceptions
 endif
 
 ifeq "$(BUILD_ARCH)" "i586"
@@ -202,10 +203,10 @@ gmp-$(GMP_VER).tar.xz = $(DL_FROM)/gmp-$(GMP_VER).tar.xz
 mpfr-$(MPFR_VER).tar.xz = $(DL_FROM)/mpfr-$(MPFR_VER).tar.xz
 mpc-$(MPC_VER).tar.gz = $(DL_FROM)/mpc-$(MPC_VER).tar.gz
 
-$(DL_FILE)_MD5			= e9fd9b1789155ad09bcf3ae747596b50
-gmp-$(GMP_VER).tar.xz_MD5	= a325e3f09e6d91e62101e59f9bda3ec1
+$(DL_FILE)_MD5			= 77f6252be0861ab918042acf42bc10ff
+gmp-$(GMP_VER).tar.xz_MD5	= 0b82665c4a92fd2ade7440c13fcaa42b
 mpfr-$(MPFR_VER).tar.xz_MD5	= bdd3d5efba9c17da8d83a35ec552baef
-mpc-$(MPC_VER).tar.gz_MD5	= 4125404e41e482ec68282a2e687f6c73
+mpc-$(MPC_VER).tar.gz_MD5	= 9f16c976c25bb0f76b50be749cd7a3a8
 
 install : $(TARGET)
 

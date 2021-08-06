@@ -5,10 +5,12 @@ boot/grub/splash.png
 #etc/bash_completion.d/grub
 etc/default/grub
 #etc/grub.d
+etc/grub.d/00_cloud
 etc/grub.d/00_header
 etc/grub.d/10_linux
 etc/grub.d/20_linux_xen
 etc/grub.d/30_os-prober
+etc/grub.d/30_uefi-firmware
 etc/grub.d/40_custom
 etc/grub.d/41_custom
 #etc/grub.d/README
@@ -39,6 +41,8 @@ usr/lib/grub/i386-pc/affs.mod
 usr/lib/grub/i386-pc/affs.module
 usr/lib/grub/i386-pc/afs.mod
 usr/lib/grub/i386-pc/afs.module
+usr/lib/grub/i386-pc/afsplitter.mod
+usr/lib/grub/i386-pc/afsplitter.module
 usr/lib/grub/i386-pc/ahci.mod
 usr/lib/grub/i386-pc/ahci.module
 usr/lib/grub/i386-pc/all_video.mod
@@ -270,6 +274,8 @@ usr/lib/grub/i386-pc/jfs.mod
 usr/lib/grub/i386-pc/jfs.module
 usr/lib/grub/i386-pc/jpeg.mod
 usr/lib/grub/i386-pc/jpeg.module
+usr/lib/grub/i386-pc/json.mod
+usr/lib/grub/i386-pc/json.module
 usr/lib/grub/i386-pc/kernel.exec
 usr/lib/grub/i386-pc/kernel.img
 usr/lib/grub/i386-pc/keylayouts.mod
@@ -304,6 +310,8 @@ usr/lib/grub/i386-pc/lspci.mod
 usr/lib/grub/i386-pc/lspci.module
 usr/lib/grub/i386-pc/luks.mod
 usr/lib/grub/i386-pc/luks.module
+usr/lib/grub/i386-pc/luks2.mod
+usr/lib/grub/i386-pc/luks2.module
 usr/lib/grub/i386-pc/lvm.mod
 usr/lib/grub/i386-pc/lvm.module
 usr/lib/grub/i386-pc/lzma_decompress.image
@@ -490,6 +498,8 @@ usr/lib/grub/i386-pc/sleep.mod
 usr/lib/grub/i386-pc/sleep.module
 usr/lib/grub/i386-pc/sleep_test.mod
 usr/lib/grub/i386-pc/sleep_test.module
+usr/lib/grub/i386-pc/smbios.mod
+usr/lib/grub/i386-pc/smbios.module
 usr/lib/grub/i386-pc/spkmodem.mod
 usr/lib/grub/i386-pc/spkmodem.module
 usr/lib/grub/i386-pc/squash4.mod
@@ -555,8 +565,6 @@ usr/lib/grub/i386-pc/usbtest.mod
 usr/lib/grub/i386-pc/usbtest.module
 usr/lib/grub/i386-pc/vbe.mod
 usr/lib/grub/i386-pc/vbe.module
-usr/lib/grub/i386-pc/verifiers.mod
-usr/lib/grub/i386-pc/verifiers.module
 usr/lib/grub/i386-pc/vga.mod
 usr/lib/grub/i386-pc/vga.module
 usr/lib/grub/i386-pc/vga_text.mod
@@ -616,6 +624,8 @@ usr/share/grub/unicode.pf2
 #usr/share/grub/widthspec.h
 #usr/share/info/grub-dev.info
 #usr/share/info/grub.info
+#usr/share/info/grub.info-1
+#usr/share/info/grub.info-2
 #usr/share/locale/ast/LC_MESSAGES/grub.mo
 #usr/share/locale/ca/LC_MESSAGES/grub.mo
 #usr/share/locale/da/LC_MESSAGES/grub.mo
@@ -653,6 +663,7 @@ usr/share/grub/unicode.pf2
 #usr/share/locale/it/LC_MESSAGES/grub.mo
 #usr/share/locale/ja/LC_MESSAGES/grub.mo
 #usr/share/locale/ko/LC_MESSAGES/grub.mo
+#usr/share/locale/lg/LC_MESSAGES/grub.mo
 #usr/share/locale/lt/LC_MESSAGES/grub.mo
 #usr/share/locale/nb/LC_MESSAGES/grub.mo
 #usr/share/locale/nl/LC_MESSAGES/grub.mo

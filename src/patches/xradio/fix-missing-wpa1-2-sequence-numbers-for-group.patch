@@ -1,0 +1,76 @@
+From 70307b17ea3bd388d608bf77d0d0dd2058d05d3f Mon Sep 17 00:00:00 2001
+From: Arne Fitzenreiter <arne_f@ipfire.org>
+Date: Wed, 7 Mar 2018 23:23:39 +0100
+Subject: [PATCH 116/144] xradio: fix missing wpa1/2 sequence numbers for group
+ rekeying
+
+Signed-off-by: Arne Fitzenreiter <arne_f@ipfire.org>
+---
+ drivers/net/wireless/xradio/keys.c | 26 ++++++++++++++++++++++----
+ 1 file changed, 22 insertions(+), 4 deletions(-)
+
+diff --git a/keys.c b/keys.c
+index 20050e1e75c2..1d95410932e1 100644
+--- a/keys.c
++++ b/keys.c
+@@ -56,6 +56,7 @@ int xradio_set_key(struct ieee80211_hw *dev, enum set_key_cmd cmd,
+ 	int ret = -EOPNOTSUPP;
+ 	struct xradio_common *hw_priv = dev->priv;
+ 	struct xradio_vif *priv = xrwl_get_vif_from_ieee80211(vif);
++	struct ieee80211_key_seq seq;
+ 
+ 	wiphy_dbg(dev->wiphy, "vif %d: set_key cmd %d\n", priv->if_id, (int) cmd);
+ 	
+@@ -103,6 +104,7 @@ int xradio_set_key(struct ieee80211_hw *dev, enum set_key_cmd cmd,
+ 			}
+ 			break;
+ 		case WLAN_CIPHER_SUITE_TKIP:
++			ieee80211_get_key_rx_seq(key, 0, &seq);
+ 			if (pairwise) {
+ 				wsm_key->type = WSM_KEY_TYPE_TKIP_PAIRWISE;
+ 				memcpy(wsm_key->tkipPairwiseKey.peerAddress, peer_addr, ETH_ALEN);
+@@ -115,12 +117,20 @@ int xradio_set_key(struct ieee80211_hw *dev, enum set_key_cmd cmd,
+ 				memcpy(wsm_key->tkipGroupKey.tkipKeyData,&key->key[0],  16);
+ 				memcpy(wsm_key->tkipGroupKey.rxMicKey, &key->key[mic_offset], 8);
+ 
+-				/* TODO: Where can I find TKIP SEQ? */
+-				memset(wsm_key->tkipGroupKey.rxSeqCounter, 0, 8);
++				wsm_key->tkipGroupKey.rxSeqCounter[0] =  seq.tkip.iv16      & 0xff;
++				wsm_key->tkipGroupKey.rxSeqCounter[1] = (seq.tkip.iv16>>8)  & 0xff;
++				wsm_key->tkipGroupKey.rxSeqCounter[2] =  seq.tkip.iv32      & 0xff;
++				wsm_key->tkipGroupKey.rxSeqCounter[3] = (seq.tkip.iv32>> 8) & 0xff;
++				wsm_key->tkipGroupKey.rxSeqCounter[4] = (seq.tkip.iv32>>16) & 0xff;
++				wsm_key->tkipGroupKey.rxSeqCounter[5] = (seq.tkip.iv32>>24) & 0xff;
++				wsm_key->tkipGroupKey.rxSeqCounter[6] = 0;
++				wsm_key->tkipGroupKey.rxSeqCounter[7] = 0;
++
+ 				wsm_key->tkipGroupKey.keyId = key->keyidx;
+ 			}
+ 			break;
+ 		case WLAN_CIPHER_SUITE_CCMP:
++			ieee80211_get_key_rx_seq(key, 0, &seq);
+ 			if (pairwise) {
+ 				wsm_key->type = WSM_KEY_TYPE_AES_PAIRWISE;
+ 				memcpy(wsm_key->aesPairwiseKey.peerAddress, peer_addr, ETH_ALEN);
+@@ -130,8 +140,16 @@ int xradio_set_key(struct ieee80211_hw *dev, enum set_key_cmd cmd,
+ 			} else {
+ 				wsm_key->type = WSM_KEY_TYPE_AES_GROUP;
+ 				memcpy(wsm_key->aesGroupKey.aesKeyData, &key->key[0], 16);
+-				/* TODO: Where can I find AES SEQ? */
+-				memset(wsm_key->aesGroupKey.rxSeqCounter, 0, 8);
++
++				wsm_key->aesGroupKey.rxSeqCounter[0] = seq.ccmp.pn[5];
++				wsm_key->aesGroupKey.rxSeqCounter[1] = seq.ccmp.pn[4];
++				wsm_key->aesGroupKey.rxSeqCounter[2] = seq.ccmp.pn[3];
++				wsm_key->aesGroupKey.rxSeqCounter[3] = seq.ccmp.pn[2];
++				wsm_key->aesGroupKey.rxSeqCounter[4] = seq.ccmp.pn[1];
++				wsm_key->aesGroupKey.rxSeqCounter[5] = seq.ccmp.pn[0];
++				wsm_key->aesGroupKey.rxSeqCounter[6] = 0;
++				wsm_key->aesGroupKey.rxSeqCounter[7] = 0;
++
+ 				wsm_key->aesGroupKey.keyId = key->keyidx;
+ 			}
+ 			break;
+-- 
+2.31.0
+

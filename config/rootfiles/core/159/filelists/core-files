@@ -1,0 +1,5 @@
+etc/issue
+etc/os-release
+etc/system-release
+srv/web/ipfire/cgi-bin/credits.cgi
+var/ipfire/langs
