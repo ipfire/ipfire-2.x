@@ -36,8 +36,8 @@ require "${General::swroot}/graphs.pl";
 # List of graph origins that getrrdimage.cgi can process directly
 # (unknown origins are forwarded to ensure compatibility)
 my @supported_origins = ("entropy.cgi", "hardwaregraphs.cgi", "media.cgi",
-	"memory.cgi","netexternal.cgi", "netinternal.cgi", "netother.cgi",
-	"netovpnrw.cgi", "netovpnsrv.cgi", "qos.cgi", "system.cgi");
+	"memory.cgi", "netexternal.cgi", "netinternal.cgi", "netother.cgi",
+	"netovpnrw.cgi", "netovpnsrv.cgi", "qos.cgi", "services.cgi", "system.cgi");
 
 ### Process GET parameters ###
 # URL format: /?origin=[graph origin cgi]&graph=[graph name]&range=[time range]
