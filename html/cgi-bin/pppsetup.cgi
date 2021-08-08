@@ -931,7 +931,7 @@ END
 if ($pppsettings{'TYPE'} eq 'modem') {
 print <<END
                 <option value='standard-login-script' $selected{'AUTH'}{'standard-login-script'}>$Lang::tr{'standard login script'}</option>
-                <option value='demon-login-script' $selected{'AUTH'}{'demon-login-script'}>$Lang::tr{'demon login script'}</option>
+                <option value='demon-login-script' $selected{'AUTH'}{'demon-login-script'}>$Lang::tr{'daemon login script'}</option>
                 <option value='other-login-script' $selected{'AUTH'}{'other-login-script'}>$Lang::tr{'other login script'}</option>
 END
 ;

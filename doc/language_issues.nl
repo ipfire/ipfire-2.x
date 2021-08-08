@@ -191,6 +191,7 @@ WARNING: translation string unused: delete cron
 WARNING: translation string unused: delete pc
 WARNING: translation string unused: delete share
 WARNING: translation string unused: delete user
+WARNING: translation string unused: demon login script
 WARNING: translation string unused: deprecated fs warn
 WARNING: translation string unused: description
 WARNING: translation string unused: destination ip bad
@@ -912,6 +913,7 @@ WARNING: untranslated string: check all = Check all
 WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
+WARNING: untranslated string: daemon login script = Daemon login script
 WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: default = Default
 WARNING: untranslated string: default IP address = Default IP Address

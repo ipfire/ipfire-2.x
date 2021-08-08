@@ -1419,6 +1419,7 @@
 < crypto error
 < cryptographic settings
 < crypto warning
+< daemon login script
 < Daily
 < dangerous
 < default
