@@ -1,1 +1,2 @@
+srv/web/ipfire/cgi-bin/fwhosts.cgi
 var/ipfire/general-functions.pl
