@@ -398,7 +398,7 @@ print <<END
 	<td class='base'>$Lang::tr{'updxlrtr passive mode'}:</td>
 	<td class='base'><input type='checkbox' name='PASSIVE_MODE' $checked{'PASSIVE_MODE'}{'on'} /></td>
 	<td class='base'>$Lang::tr{'updxlrtr max disk usage'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td class='base'><input type='text' name='MAX_DISK_USAGE' value='$xlratorsettings{'MAX_DISK_USAGE'}' size='1' /> %</td>
+	<td class='base'><input type='text' name='MAX_DISK_USAGE' value='$xlratorsettings{'MAX_DISK_USAGE'}' size='3' /> %</td>
 </tr>
 </table>
 <hr size='1'>
