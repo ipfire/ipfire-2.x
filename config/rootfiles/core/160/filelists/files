@@ -1,2 +1,3 @@
+usr/lib/firewall/rules.pl
 srv/web/ipfire/cgi-bin/fwhosts.cgi
 var/ipfire/general-functions.pl
