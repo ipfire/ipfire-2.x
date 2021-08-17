@@ -173,6 +173,7 @@ usr/share/mc/syntax/idl.syntax
 usr/share/mc/syntax/ini.syntax
 usr/share/mc/syntax/j.syntax
 usr/share/mc/syntax/jal.syntax
+usr/share/mc/syntax/json.syntax
 usr/share/mc/syntax/java.syntax
 usr/share/mc/syntax/js.syntax
 usr/share/mc/syntax/kotlin.syntax
