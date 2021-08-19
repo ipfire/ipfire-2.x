@@ -109,6 +109,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/glibc-build
 
+	# Security Fixes
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.33-use-__pthread_attr_copy-in-mq_notify-bug-27896.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.33-librt-fix-null-pointer-dereference-bug-28213.patch
+
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-localedef-no-archive.patch
 
 ifneq "$(TOOLCHAIN)" "1"
