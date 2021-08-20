@@ -1,4 +1,7 @@
+#etc/pki
+#etc/pki/ca-trust
+#etc/pki/ca-trust/source
+etc/pki/ca-trust/source/ca-bundle.trust.p11-kit
 etc/ssl/cert.pem
-#etc/ssl/certs
 etc/ssl/certs/ca-bundle.crt
 etc/ssl/certs/ca-bundle.trust.crt
