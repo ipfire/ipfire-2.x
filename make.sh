@@ -1234,6 +1234,8 @@ buildipfire() {
   lfsmake2 grub
   lfsmake2 efivar
   lfsmake2 efibootmgr
+  lfsmake2 libtasn1
+  lfsmake2 p11-kit
   lfsmake2 ca-certificates
   lfsmake2 fireinfo
   lfsmake2 libnet
