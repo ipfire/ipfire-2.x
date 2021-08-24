@@ -849,7 +849,7 @@ END
 		print "Content-Disposition: attachment; filename=cacert.pem\r\n\r\n";
 
 		my @cert = &General::system_output("/usr/bin/openssl", "x509", "-in", "${General::swroot}/ca/cacert.pem");
-		print "@cert";
+		print join("", @cert);
 		exit(0);
 	}
 ###
@@ -861,7 +861,7 @@ END
 		print "Content-Disposition: attachment; filename=hostcert.pem\r\n\r\n";
 
 		my @cert = &General::system_output("/usr/bin/openssl", "x509", "-in", "${General::swroot}/certs/hostcert.pem");
-		print "@cert";
+		print join("", @cert);
 		exit(0);
 	}
 ###
