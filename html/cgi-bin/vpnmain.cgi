@@ -675,8 +675,7 @@ END
 		unlink ($filename);
 		goto UPLOADCA_ERROR;
 	} else {
-		move($filename, "${General::swroot}/ca/$cgiparams{'CA_NAME'}cert.pem");
-		if ($? ne 0) {
+		unless(move($filename, "${General::swroot}/ca/$cgiparams{'CA_NAME'}cert.pem")) {
 			$errormessage = "$Lang::tr{'certificate file move failed'}: $!";
 			unlink ($filename);
 			goto UPLOADCA_ERROR;
@@ -947,20 +946,23 @@ END
 
 		if (!$errormessage) {
 			&General::log("ipsec", "Moving cacert...");
-			move("/tmp/newcacert", "${General::swroot}/ca/cacert.pem");
-			$errormessage = "$Lang::tr{'certificate file move failed'}: $!" if ($? ne 0);
+			unless(move("/tmp/newcacert", "${General::swroot}/ca/cacert.pem")) {
+				$errormessage = "$Lang::tr{'certificate file move failed'}: $!";
+			}
 		}
 
 		if (!$errormessage) {
 			&General::log("ipsec", "Moving host cert...");
-			move("/tmp/newhostcert", "${General::swroot}/certs/hostcert.pem");
-			$errormessage = "$Lang::tr{'certificate file move failed'}: $!" if ($? ne 0);
+			unless(move("/tmp/newhostcert", "${General::swroot}/certs/hostcert.pem")) {
+				$errormessage = "$Lang::tr{'certificate file move failed'}: $!";
+			}
 		}
 
 		if (!$errormessage) {
 			&General::log("ipsec", "Moving private key...");
-			move("/tmp/newhostkey", "${General::swroot}/certs/hostkey.pem");
-			$errormessage = "$Lang::tr{'certificate file move failed'}: $!" if ($? ne 0);
+			unless(move("/tmp/newhostkey", "${General::swroot}/certs/hostkey.pem")) {
+				$errormessage = "$Lang::tr{'certificate file move failed'}: $!";
+			}
 		}
 
 		#cleanup temp files
@@ -1979,8 +1981,11 @@ END
 					while (grep(/Imported-$idx/, @names) ) {$idx++};
 					$cgiparams{'CA_NAME'}="Imported-$idx";
 					$cgiparams{'CERT_NAME'}=&Header::cleanhtml(getCNfromcert ('/tmp/newhostcert'));
-					move("/tmp/newcacert", "${General::swroot}/ca/$cgiparams{'CA_NAME'}cert.pem");
-					$errormessage = "$Lang::tr{'certificate file move failed'}: $!" if ($? ne 0);
+
+					unless(move("/tmp/newcacert", "${General::swroot}/ca/$cgiparams{'CA_NAME'}cert.pem")) {
+						$errormessage = "$Lang::tr{'certificate file move failed'}: $!";
+					}
+
 					if (!$errormessage) {
 						my $key = &General::findhasharraykey (\%cahash);
 						$cahash{$key}[0] = $cgiparams{'CA_NAME'};
@@ -1993,8 +1998,9 @@ END
 		}
 		if (!$errormessage) {
 			&General::log("ipsec", "Moving host cert...");
-			move("/tmp/newhostcert", "${General::swroot}/certs/$cgiparams{'NAME'}cert.pem");
-			$errormessage = "$Lang::tr{'certificate file move failed'}: $!" if ($? ne 0);
+			unless(move("/tmp/newhostcert", "${General::swroot}/certs/$cgiparams{'NAME'}cert.pem")) {
+				$errormessage = "$Lang::tr{'certificate file move failed'}: $!";
+			}
 		}
 
 		#cleanup temp files
