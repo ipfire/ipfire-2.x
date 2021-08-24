@@ -1229,7 +1229,6 @@ buildipfire() {
   lfsmake2 tcl
   lfsmake2 sqlite
   lfsmake2 libffi
-  lfsmake2 python
   lfsmake2 python3
   lfsmake2 gdb
   lfsmake2 grub
