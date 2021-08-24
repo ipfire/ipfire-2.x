@@ -1444,7 +1444,7 @@ buildipfire() {
   lfsmake2 python3-pyparsing
   lfsmake2 spice-protocol
   lfsmake2 spice
-  lfsmake2 sdl
+  lfsmake2 sdl2
   lfsmake2 libusbredir
   lfsmake2 libseccomp
   lfsmake2 qemu

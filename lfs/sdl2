@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 1.2.15
+VER        = 2.0.16
 
-THISAPP    = SDL-$(VER)
+THISAPP    = SDL2-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = sdl
-PAK_VER    = 3
+PROG       = sdl2
+PAK_VER    = 4
 
 DEPS       = alsa
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 9d96df8417572a2afb781a7c4c811a85
+$(DL_FILE)_MD5 = 98b8a1535a757ea1d03ae44e2fb20247
 
 install : $(TARGET)
 
@@ -78,7 +78,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && ./configure \
+	                --prefix=/usr \
+	                --disable-static
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
