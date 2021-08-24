@@ -2042,9 +2042,8 @@ END
 			unlink ($filename);
 			goto VPNCONF_ERROR;
 		} else {
-			move($filename, "${General::swroot}/certs/$cgiparams{'NAME'}cert.pem");
-			if ($? ne 0) {
-				$errormessage = "$Lang::tr{'certificate file move failed'}: $!";
+			unless (move($filename, "${General::swroot}/certs/$cgiparams{'NAME'}cert.pem")) {
+				$errormessage = "$Lang::tr{'certificate file move failed'} ($filename): $!";
 				unlink ($filename);
 				goto VPNCONF_ERROR;
 			}
