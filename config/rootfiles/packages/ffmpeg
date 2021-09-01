@@ -1,4 +1,5 @@
 usr/bin/ffmpeg
+usr/bin/ffplay
 usr/bin/ffprobe
 #usr/include/libavcodec
 #usr/include/libavcodec/ac3_parser.h
@@ -188,6 +189,8 @@ usr/lib/libswscale.so.5.9.100
 #usr/share/doc/ffmpeg/ffmpeg-scaler.html
 #usr/share/doc/ffmpeg/ffmpeg-utils.html
 #usr/share/doc/ffmpeg/ffmpeg.html
+#usr/share/doc/ffmpeg/ffplay-all.html
+#usr/share/doc/ffmpeg/ffplay.html
 #usr/share/doc/ffmpeg/ffprobe-all.html
 #usr/share/doc/ffmpeg/ffprobe.html
 #usr/share/doc/ffmpeg/general.html
@@ -246,6 +249,8 @@ usr/lib/libswscale.so.5.9.100
 #usr/share/man/man1/ffmpeg-scaler.1
 #usr/share/man/man1/ffmpeg-utils.1
 #usr/share/man/man1/ffmpeg.1
+#usr/share/man/man1/ffplay-all.1
+#usr/share/man/man1/ffplay.1
 #usr/share/man/man1/ffprobe-all.1
 #usr/share/man/man1/ffprobe.1
 #usr/share/man/man3/libavcodec.3

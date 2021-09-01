@@ -32,9 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ffmpeg
-PAK_VER    = 12
+PAK_VER    = 13
 
-DEPS       = sdl lame libvorbis xvid
+DEPS       = sdl2 lame libvorbis xvid
 
 ifeq "$(BUILD_ARCH)" "armv6l"
 	LDFLAGS += -latomic
