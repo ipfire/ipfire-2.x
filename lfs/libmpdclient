@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libmpdclient
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && meson	--prefix=/usr builddir/
-	cd $(DIR_APP) && ninja -C builddir/
+	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING)
 	cd $(DIR_APP) && ninja -C builddir/ install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
