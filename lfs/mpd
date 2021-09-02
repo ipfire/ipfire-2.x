@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/${THISAPP}
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpd
-PAK_VER    = 23
+PAK_VER    = 24
 SUP_ARCH   = aarch64 armv6l x86_64 i586
 
 DEPS       = alsa avahi faad2 ffmpeg flac lame libmad libshout libogg libid3tag libvorbis opus soxr
@@ -94,7 +94,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				-D upnp=disabled	\
 				-D icu=disabled		\
 				builddir/
-	cd $(DIR_APP) && ninja -C builddir/
+	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING)
 	cd $(DIR_APP) && ninja -C builddir/ install
 
 	#install initscripts
