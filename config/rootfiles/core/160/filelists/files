@@ -16,3 +16,4 @@ srv/web/ipfire/cgi-bin/shutdown.cgi
 srv/web/ipfire/cgi-bin/system.cgi
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
 var/ipfire/general-functions.pl
+var/ipfire/network-functions.pl
