@@ -9,7 +9,6 @@ etc/rc.d/init.d/cups-browsed
 usr/bin/driverless
 usr/bin/driverless-fax
 usr/bin/foomatic-rip
-usr/bin/ttfread
 #usr/include/cupsfilters
 #usr/include/cupsfilters/colord.h
 #usr/include/cupsfilters/colormanager.h
