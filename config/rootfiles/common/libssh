@@ -2,6 +2,7 @@
 #usr/include/libssh/callbacks.h
 #usr/include/libssh/legacy.h
 #usr/include/libssh/libssh.h
+#usr/include/libssh/libssh_version.h
 #usr/include/libssh/libsshpp.hpp
 #usr/include/libssh/server.h
 #usr/include/libssh/sftp.h
@@ -12,5 +13,5 @@
 #usr/lib/cmake/libssh/libssh-config.cmake
 #usr/lib/libssh.so
 usr/lib/libssh.so.4
-usr/lib/libssh.so.4.8.4
+usr/lib/libssh.so.4.8.7
 #usr/lib/pkgconfig/libssh.pc

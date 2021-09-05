@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.9.3
+VER        = 0.9.6
 
 THISAPP    = libssh-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f35e9ad384f29375718682a88a3885da
+$(DL_FILE)_MD5 = 0174df377361221a31a9576afbaba330
 
 install : $(TARGET)
 
