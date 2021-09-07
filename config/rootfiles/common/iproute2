@@ -53,6 +53,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/devlink-health.8
 #usr/share/man/man8/devlink-monitor.8
 #usr/share/man/man8/devlink-port.8
+#usr/share/man/man8/devlink-rate.8
 #usr/share/man/man8/devlink-region.8
 #usr/share/man/man8/devlink-resource.8
 #usr/share/man/man8/devlink-sb.8
