@@ -32,6 +32,7 @@
 #usr/include/freetype2/freetype/ftincrem.h
 #usr/include/freetype2/freetype/ftlcdfil.h
 #usr/include/freetype2/freetype/ftlist.h
+#usr/include/freetype2/freetype/ftlogging.h
 #usr/include/freetype2/freetype/ftlzw.h
 #usr/include/freetype2/freetype/ftmac.h
 #usr/include/freetype2/freetype/ftmm.h
@@ -58,7 +59,7 @@
 #usr/lib/libfreetype.la
 #usr/lib/libfreetype.so
 usr/lib/libfreetype.so.6
-usr/lib/libfreetype.so.6.17.4
+usr/lib/libfreetype.so.6.18.0
 #usr/lib/pkgconfig/freetype2.pc
 #usr/share/aclocal/freetype2.m4
 #usr/share/man/man1/freetype-config.1
