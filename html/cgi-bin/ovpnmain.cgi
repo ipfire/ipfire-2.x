@@ -2183,9 +2183,6 @@ END
 					&General::system("/usr/local/bin/openvpnctrl", "-kn2n", "$confighash{$cgiparams{'KEY'}}[1]");
 					&writecollectdconf();
 				}
- 
-			} else {
-				$errormessage = $Lang::tr{'invalid key'};
 			}
 		}
   }
