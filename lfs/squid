@@ -127,7 +127,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--enable-icap-client \
 		--enable-zph-qos \
 		--with-dl \
-		--with-filedescriptors=$$(( 16384 * 64 )) \
 		--with-large-files \
 		--without-gnutls \
 		--without-netfilter-conntrack
