@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.0.9
+VER        = 4.2
 
 THISAPP    = dosfstools-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = bd273cf8aa6341c0b52cbac72050bcf4
+$(DL_FILE)_MD5 = 49c8e457327dc61efab5b115a27b087a
 
 install : $(TARGET)
 
@@ -70,7 +70,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && sed -i -e "s|PREFIX = /usr/local||g" Makefile
+	cd $(DIR_APP) && ./configure \
+					--prefix=/usr \
+					--sbindir=/sbin \
+					--enable-compat-symlinks
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
