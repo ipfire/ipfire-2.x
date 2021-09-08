@@ -48,6 +48,7 @@ transparent() {
 
 case "$1" in
 	start)
+		ulimit -n 32768
 		getpids "squid"
 
 		if [ -n "${pidlist}" ]; then
