@@ -1277,6 +1277,7 @@ buildipfire() {
   lfsmake2 libinih
   lfsmake2 cdrkit
   lfsmake2 dosfstools
+  lfsmake2 exfatprogs
   lfsmake2 reiserfsprogs
   lfsmake2 xfsprogs
   lfsmake2 sysfsutils
