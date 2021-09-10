@@ -17,14 +17,14 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2020 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2021 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
-core=151
+core=160
 
 # Remove old core updates from pakfire cache to save space...
 for (( i=1; i<=$core; i++ )); do
@@ -32,19 +32,22 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Remove files
-rm -rfv \
-	/usr/lib/perl5/site_perl/5.30.0/Locale \
-	/usr/lib/perl5/site_perl/5.30.0/*/Net/DNS \
-	/usr/lib/perl5/site_perl/5.30.0/*/Net/DNS.pm
+rm -vf /lib/udev/rules.d/85-regulatory.rules
+rm -vf /sbin/crda
+rm -vf /sbin/regdbdump
+rm -vf /usr/lib/libreg.so
 
 # Stop services
-/etc/init.d/ipsec stop
+/etc/init.d/ipsec start
 
 # Extract files
 extract_files
 
 # update linker config
 ldconfig
+
+# restart init (glibc update)
+telinit u
 
 # Update Language cache
 /usr/local/bin/update-lang-cache
@@ -60,10 +63,6 @@ ldconfig
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec start
 fi
-/etc/init.d/collectd restart
-
-# Reload sysctl.conf
-sysctl -p
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
