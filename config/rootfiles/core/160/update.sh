@@ -32,6 +32,10 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Remove files
+rm -vf /lib/udev/rules.d/85-regulatory.rules
+rm -vf /sbin/crda
+rm -vf /sbin/regdbdump
+rm -vf /usr/lib/libreg.so
 
 # Stop services
 
