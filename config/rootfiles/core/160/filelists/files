@@ -16,6 +16,7 @@ srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
 srv/web/ipfire/cgi-bin/shutdown.cgi
 srv/web/ipfire/cgi-bin/system.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
 var/ipfire/general-functions.pl
 var/ipfire/graphs.pl
