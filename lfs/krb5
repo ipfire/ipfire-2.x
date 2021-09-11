@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.19.1
+VER        = 1.19.2
 
 THISAPP    = krb5-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)/src
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = krb5
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 81257292f8243f735654d4fd5d1fef6a
+$(DL_FILE)_MD5 = eb51b7724111e1a458a8c9a261d45a31
 
 install : $(TARGET)
 
