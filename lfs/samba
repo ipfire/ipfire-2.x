@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 81
+PAK_VER    = 82
 
 DEPS       = avahi cups libtirpc krb5 perl-Parse-Yapp
 
