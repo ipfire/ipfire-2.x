@@ -24,15 +24,15 @@
 
 include Config
 
-VER        = 17.03
+VER        = 17.04
 
 THISAPP    = p7zip-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = https://github.com/jinfeihan57/p7zip/archive/v$(VER)/
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = 7zip
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       =
 
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = fd7e6b082db89edfc047c1ce2d810850
+$(DL_FILE)_MD5 = 00acfd6be87848231722d2d53f89e4a5
 
 install : $(TARGET)
 
