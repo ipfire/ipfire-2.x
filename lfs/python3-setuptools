@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 56.2.0
+VER        = 58.0.4
 
 THISAPP    = setuptools-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-setuptools
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = e8caf0f129f585a887bb3cbb528149d1
+$(DL_FILE)_MD5 = 17245af34e1a7d54976bca8c1bf092b7
 
 install : $(TARGET)
 
