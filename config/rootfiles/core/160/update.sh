@@ -38,6 +38,7 @@ rm -vf /sbin/regdbdump
 rm -vf /usr/lib/libreg.so
 
 # Stop services
+/etc/init.d/ipsec stop
 
 # Extract files
 extract_files
@@ -54,10 +55,17 @@ telinit u
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Start services
+/etc/init.d/sshd restart
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/init.d/ipsec start
+fi
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
