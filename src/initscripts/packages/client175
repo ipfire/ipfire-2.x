@@ -26,7 +26,7 @@ case "$1" in
 			fi
 		fi
 		boot_mesg "Starting Client175 MPD WebIF..."
-		sudo -u nobody python3 /srv/client175/server.py > /var/log/client175 2>&1 &
+		sudo -u nobody python /srv/client175/server.py > /var/log/client175 2>&1 &
 		echo $! > /var/run/client175.pid
 		evaluate_retval
 		;;
