@@ -12,6 +12,7 @@ srv/web/ipfire/cgi-bin/netinternal.cgi
 srv/web/ipfire/cgi-bin/netother.cgi
 srv/web/ipfire/cgi-bin/netovpnrw.cgi
 srv/web/ipfire/cgi-bin/netovpnsrv.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
 srv/web/ipfire/cgi-bin/shutdown.cgi
