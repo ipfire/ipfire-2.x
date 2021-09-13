@@ -1574,6 +1574,7 @@ buildipfire() {
   lfsmake2 ipset
   lfsmake2 dnsdist
   lfsmake2 bird
+  lfsmake2 libyang
   lfsmake2 frr
   lfsmake2 dmidecode
   lfsmake2 mcelog
