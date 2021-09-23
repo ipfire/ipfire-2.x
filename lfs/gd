@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.0.33
+VER        = 2.3.3
 
-THISAPP    = gd-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+THISAPP    = libgd-$(VER)
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = be0a6d326cd8567e736fbc75df0a5c45
+$(DL_FILE)_MD5 = 7a58b54d375eda236414201252a0ee3c
 
 install : $(TARGET)
 
@@ -69,9 +69,12 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-nls
+	cd $(DIR_APP) && ./configure \
+			--prefix=/usr \
+			--disable-static \
+			--without-tiff
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
