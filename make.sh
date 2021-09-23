@@ -1285,6 +1285,7 @@ buildipfire() {
   lfsmake2 ntfs-3g
   lfsmake2 ethtool
   lfsmake2 fcron
+  lfsmake2 ExtUtils-PkgConfig
   lfsmake2 perl-GD
   lfsmake2 GD-Graph
   lfsmake2 GD-TextUtil
