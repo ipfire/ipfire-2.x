@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -313,7 +313,7 @@ push(@channellist, @temp);
 }
 
 # get available country codes
-open(FILE, “</lib/firmware/regulatorydb.txt”);
+open(FILE, "</lib/firmware/regulatorydb.txt");
 my @countrylist_cmd = <FILE>;
 close(FILE);
 
