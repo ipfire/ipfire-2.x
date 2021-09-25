@@ -731,6 +731,7 @@ sub BuildConfiguration() {
 
 	# Global settings.
 	print FILE "Sandbox 1\n";
+	print FILE "HardwareAccel 1\n";
 	print FILE "ControlPort $TOR_CONTROL_PORT\n";
 
 	if ($settings{'TOR_ENABLED'} eq 'on') {
