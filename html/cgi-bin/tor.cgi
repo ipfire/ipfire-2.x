@@ -802,10 +802,10 @@ sub BuildConfiguration() {
 		# Reject access to private networks.
 		print FILE "ExitPolicyRejectPrivate 1\n";
 
-		print FILE "ORPort $settings{'TOR_RELAY_PORT'}\n";
+		print FILE "ORPort $settings{'TOR_RELAY_PORT'} IPv4Only\n";
 
 		if ($settings{'TOR_RELAY_DIRPORT'} ne '0') {
-			print FILE "DirPort $settings{'TOR_RELAY_DIRPORT'}\n";
+			print FILE "DirPort $settings{'TOR_RELAY_DIRPORT'} IPv4Only\n";
 		}
 
 		if ($settings{'TOR_RELAY_ADDRESS'} ne '') {
