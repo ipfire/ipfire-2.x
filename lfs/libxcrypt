@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 4.4.23
+VER        = 4.4.26
 
 THISAPP    = libxcrypt-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 405116b5cc90b72216afccc54025afbc
+$(DL_FILE)_MD5 = 34954869627f62f9992808b6cff0d0a9
 
 install : $(TARGET)
 
