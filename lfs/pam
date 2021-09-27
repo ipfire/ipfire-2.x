@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.5.1
+VER        = 1.5.2
 
 THISAPP    = Linux-PAM-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 155f2a31d07077b2c63a1f135876c31b
+$(DL_FILE)_MD5 = 895e8adfa14af334f679bbeb28503f66
 
 install : $(TARGET)
 
