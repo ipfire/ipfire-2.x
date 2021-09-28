@@ -1961,8 +1961,18 @@ find-dependencies)
 	shift
 	exec "${BASEDIR}/tools/find-dependencies" "${BASEDIR}/build" "$@"
 	;;
+check-manualpages)
+	echo "Checking the manual pages for broken links..."
+	
+	chmod 755 $BASEDIR/tools/check_manualpages.pl
+	if $BASEDIR/tools/check_manualpages.pl; then
+		print_status DONE
+	else
+		print_status FAIL
+	fi
+	;;
 *)
-	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain|update-contributors|find-dependencies}"
+	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain|update-contributors|find-dependencies|check-manualpages}"
 	cat doc/make.sh-usage
 	;;
 esac
