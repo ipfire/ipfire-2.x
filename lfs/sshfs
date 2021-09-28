@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.7.1
+VER        = 3.7.2
 
 THISAPP    = sshfs-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 22ac23d05ca7c56fb568627f086374d0
+$(DL_FILE)_MD5 = 86dcc81a1381c3e6863c97e684501bb6
 
 install : $(TARGET)
 
