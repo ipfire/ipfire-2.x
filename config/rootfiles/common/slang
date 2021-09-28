@@ -4,7 +4,7 @@
 #usr/include/slcurses.h
 #usr/lib/libslang.so
 usr/lib/libslang.so.2
-usr/lib/libslang.so.2.3.0
+usr/lib/libslang.so.2.3.2
 #usr/lib/pkgconfig/slang.pc
 #usr/lib/slang
 #usr/lib/slang/v2
@@ -158,6 +158,10 @@ usr/lib/slang/v2/modules/zlib-module.so
 #usr/share/slsh/slsmg.sl
 #usr/share/slsh/socket.sl
 #usr/share/slsh/stats.sl
+#usr/share/slsh/statslib
+#usr/share/slsh/statslib/ad_test.sl
+#usr/share/slsh/statslib/ks_test.sl
+#usr/share/slsh/statslib/kuiper.sl
 #usr/share/slsh/stkcheck.sl
 #usr/share/slsh/structfuns.sl
 #usr/share/slsh/sysconf.sl
