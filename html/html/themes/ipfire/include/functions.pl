@@ -170,7 +170,22 @@ END
 print <<END
 	<div class="bigbox fixed">
 		<div id="main_inner" class="fixed">
-			<h1>$title</h1>
+			<div id="main_header">
+				<h1>$title</h1>
+END
+;
+
+# Print user manual link
+my $manual_url = &Header::get_manualpage_url($scriptName);
+if($manual_url) {
+	print <<END
+				<span><a href="$manual_url" title="$Lang::tr{'online help en'}" target="_blank"><img src="/images/help-browser.png" alt="$Lang::tr{'online help en'}"></a></span>
+END
+;
+}
+
+print <<END
+			</div>
 END
 ;
 }

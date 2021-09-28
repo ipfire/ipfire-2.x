@@ -91,7 +91,11 @@ if ( -d "/var/ipfire/langs/${language}/" ) {
     };
 };
 
+### Initialize user manual
+my %manualpages = ();
+&General::readhash("${General::swroot}/main/manualpages", \%manualpages);
 
+### Load selected language and theme functions
 require "${swroot}/langs/en.pl";
 require "${swroot}/langs/${language}.pl";
 eval `/bin/cat /srv/web/ipfire/html/themes/ipfire/include/functions.pl`;
@@ -552,4 +556,20 @@ sub colorize {
 	} else {
 		return $string;
 	}
+}
+
+# Get user manual URL for the specified configuration page, returns empty if no entry is configured
+sub get_manualpage_url() {
+	my ($cgi_page) = @_;
+
+	# Ensure base url is configured
+	return unless($manualpages{'BASE_URL'});
+
+	# Return URL
+	if($cgi_page && defined($manualpages{$cgi_page})) {
+		return "$manualpages{'BASE_URL'}/$manualpages{$cgi_page}";
+	}
+
+	# No manual page configured, return nothing
+	return;
 }
