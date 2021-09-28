@@ -1876,7 +1876,7 @@
 'one month' => 'Un mois',
 'one week' => 'Une semaine',
 'one year' => 'Un an',
-'online help en' => 'Aide en ligne (en français)',
+'online help en' => 'Aide en ligne (en anglais)',
 'only digits allowed in holdoff field' => 'Seuls les chiffres sont autorisés dans le champ holdoff',
 'only digits allowed in max retries field' => 'Seuls les chiffres sont autorisés dans le champ nombre d\'essais maximum.',
 'only digits allowed in the idle timeout' => 'Seuls les chiffres sont autorisés pour le délai d\'inactivité.',

@@ -1835,7 +1835,7 @@
 'one month' => 'Ein Monat',
 'one week' => 'Eine Woche',
 'one year' => 'Ein Jahr',
-'online help en' => 'Online-Hilfe (auf Deutsch)',
+'online help en' => 'Online-Hilfe (auf Englisch)',
 'only digits allowed in holdoff field' => 'Im Holdoff-Feld sind nur Ziffern erlaubt',
 'only digits allowed in max retries field' => 'Im Feld &quot;Maximale Wiederholversuche&quot; sind nur Ziffern erlaubt.',
 'only digits allowed in the idle timeout' => 'Im Feld &quot;Leerlauf-Wartezeit&quot; sind nur Ziffern erlaubt.',
