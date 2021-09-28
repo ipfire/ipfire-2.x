@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.7a
+VER        = 1.22c
 
 THISAPP    = sslh-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = sslh
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ee124654412198a5e11fe28acf10634d
+$(DL_FILE)_MD5 = ddfebd2436e4f5e53d1810285d75f1b8
 
 install : $(TARGET)
 
@@ -78,7 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make CFLAGS="$(CFLAGS)" $(MAKETUNING) USELIBWRAP=
-	cd $(DIR_APP) && install -v -m 755 sslh /usr/sbin
+	cd $(DIR_APP) && make install
 
 	#install initscripts
 	$(call INSTALL_INITSCRIPT,sslh)

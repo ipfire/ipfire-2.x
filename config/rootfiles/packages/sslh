@@ -1,2 +1,3 @@
 etc/rc.d/init.d/sslh
 usr/sbin/sslh
+#usr/share/man/man8/sslh.8.gz
