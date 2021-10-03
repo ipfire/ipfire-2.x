@@ -1515,6 +1515,7 @@ buildipfire() {
   lfsmake2 powertop
   lfsmake2 parted
   lfsmake2 swig
+  lfsmake2 dtc
   lfsmake2 u-boot
   lfsmake2 u-boot-friendlyarm
   lfsmake2 wireless-regdb
