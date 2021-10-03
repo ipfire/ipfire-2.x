@@ -5,7 +5,6 @@ boot/uEnv.txt
 boot/uboot.env
 boot/u-boot-rpi3.bin
 boot/u-boot-rpi4.bin
-#usr/share/u-boot
-#usr/share/u-boot/rpi
+usr/share/u-boot/nanopi_r2s/u-boot-rockchip.bin
 usr/share/u-boot/rpi/u-boot-rpi3.bin
 usr/share/u-boot/rpi/u-boot-rpi4.bin
