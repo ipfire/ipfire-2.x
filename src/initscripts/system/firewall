@@ -14,6 +14,9 @@ fi
 
 NAT_MASK="0x0f000000"
 
+IPSEC_MARK="0x00800000"
+IPSEC_MASK="${IPSEC_MARK}"
+
 function iptables() {
 	/sbin/iptables --wait "$@"
 }
@@ -376,8 +379,8 @@ iptables_red_up() {
 			iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
 		fi
 
-		# Outgoing masquerading (don't masqerade IPsec (mark 50))
-		iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
+		# Outgoing masquerading (don't masqerade IPsec)
+		iptables -t nat -A REDNAT -m mark --mark "${IPSEC_MARK}/${IPSEC_MASK}" -o "${IFACE}" -j RETURN
 
 		if [ "${IFACE}" = "${GREEN_DEV}" ]; then
 			iptables -t nat -A REDNAT -i "${GREEN_DEV}" -o "${IFACE}" -j RETURN

@@ -61,6 +61,9 @@ my $QOS_INC_MASK = 0x0000ff00;
 my $QOS_INC_SHIFT = 8;
 my $QOS_OUT_MASK = 0x000000ff;
 my $QOS_OUT_SHIFT = 0;
+my $IPSEC_MASK = 0x00800000;
+my $QOS_INC_SKIP_MASK = $QOS_INC_MASK | $IPSEC_MASK;
+my $QOS_OUT_SKIP_MASK = $QOS_OUT_MASK | $IPSEC_MASK;
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
@@ -220,10 +223,7 @@ print <<END
 	iptables -t mangle -A POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
 
 	# If the packet is already marked, then skip the processing
-	iptables -t mangle -A QOS-OUT -m mark ! --mark 0/$QOS_OUT_MASK -j RETURN
-
-	### Don't change mark on traffic for the ipsec tunnel
-	iptables -t mangle -A QOS-OUT -m mark --mark 50 -j RETURN
+	iptables -t mangle -A QOS-OUT -m mark ! --mark 0/$QOS_OUT_SKIP_MASK -j RETURN
 
 	### SET TOS
 END
@@ -393,7 +393,7 @@ print <<END
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
 
 	# If the packet is already marked, then skip the processing
-	iptables -t mangle -A QOS-INC -m mark ! --mark 0/$QOS_INC_MASK -j RETURN
+	iptables -t mangle -A QOS-INC -m mark ! --mark 0/$QOS_INC_SKIP_MASK -j RETURN
 
 	### SET TOS
 END

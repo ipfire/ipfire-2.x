@@ -42,7 +42,7 @@
 +	iptables --wait -I IPSECOUTPUT 1 -o $PLUTO_INTERFACE -p $PLUTO_PEER_PROTOCOL \
  	    -s $PLUTO_ME $S_MY_PORT $IPSEC_POLICY_OUT \
 -	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j ACCEPT
-+	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j MARK --set-mark 50
++	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j MARK --set-xmark 0x00800000/0x00800000
  	#
  	# allow IPIP traffic because of the implicit SA created by the kernel if
  	# IPComp is used (for small inbound packets that are not compressed)
@@ -71,7 +71,7 @@
 +	iptables --wait -D IPSECOUTPUT -o $PLUTO_INTERFACE -p $PLUTO_PEER_PROTOCOL \
  	    -s $PLUTO_ME $S_MY_PORT $IPSEC_POLICY_OUT \
 -	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j ACCEPT
-+	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j MARK --set-mark 50
++	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j MARK --set-xmark 0x00800000/0x00800000
  	#
  	# IPIP exception teardown
  	if [ -n "$PLUTO_IPCOMP" ]
@@ -97,7 +97,7 @@
  	      -s $PLUTO_MY_CLIENT $S_MY_PORT \
 -	      -d $PLUTO_PEER_CLIENT $D_PEER_PORT $IPSEC_POLICY_OUT -j ACCEPT
 -	  iptables -I FORWARD 1 -i $PLUTO_INTERFACE -p $PLUTO_MY_PROTOCOL \
-+	      -d $PLUTO_PEER_CLIENT $D_PEER_PORT $IPSEC_POLICY_OUT -j MARK --set-mark 50
++	      -d $PLUTO_PEER_CLIENT $D_PEER_PORT $IPSEC_POLICY_OUT -j MARK --set-xmark 0x00800000/0x00800000
 +	  iptables --wait -I IPSECFORWARD 1 -i $PLUTO_INTERFACE -p $PLUTO_MY_PROTOCOL \
  	      -s $PLUTO_PEER_CLIENT $S_PEER_PORT \
 -	      -d $PLUTO_MY_CLIENT $D_MY_PORT $IPSEC_POLICY_IN -j ACCEPT
@@ -117,7 +117,7 @@
 +	  iptables --wait -I IPSECOUTPUT 1 -o $PLUTO_INTERFACE -p $PLUTO_PEER_PROTOCOL \
  	      -s $PLUTO_MY_CLIENT $S_MY_PORT \
 -	      -d $PLUTO_PEER_CLIENT $D_PEER_PORT $IPSEC_POLICY_OUT -j ACCEPT
-+	      -d $PLUTO_PEER_CLIENT $D_PEER_PORT $IPSEC_POLICY_OUT -j MARK --set-mark 50
++	      -d $PLUTO_PEER_CLIENT $D_PEER_PORT $IPSEC_POLICY_OUT -j MARK --set-xmark 0x00800000/0x00800000
  	fi
  	#
  	# allow IPIP traffic because of the implicit SA created by the kernel if
@@ -194,7 +194,7 @@
  	      -d $PLUTO_PEER_CLIENT $D_PEER_PORT \
 -	         $IPSEC_POLICY_OUT -j ACCEPT
 -	  iptables -D FORWARD -i $PLUTO_INTERFACE -p $PLUTO_MY_PROTOCOL \
-+	         $IPSEC_POLICY_OUT -j MARK --set-mark 50
++	         $IPSEC_POLICY_OUT -j MARK --set-xmark 0x00800000/0x00800000
 +	  iptables --wait -D IPSECFORWARD -i $PLUTO_INTERFACE -p $PLUTO_MY_PROTOCOL \
  	      -s $PLUTO_PEER_CLIENT $S_PEER_PORT \
  	      -d $PLUTO_MY_CLIENT $D_MY_PORT \
@@ -217,7 +217,7 @@
  	      -s $PLUTO_MY_CLIENT $S_MY_PORT \
  	      -d $PLUTO_PEER_CLIENT $D_PEER_PORT \
 -	         $IPSEC_POLICY_OUT -j ACCEPT
-+	         $IPSEC_POLICY_OUT -j MARK --set-mark 50
++	         $IPSEC_POLICY_OUT -j MARK --set-xmark 0x00800000/0x00800000
  	fi
  	#
  	# IPIP exception teardown
