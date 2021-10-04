@@ -188,12 +188,13 @@ else
 	cd $(DIR_APP)/arm-trusted-firmware-2.5 && make PLAT=rk3328 ARCH=aarch64 DEBUG=0 bl31
 	cd $(DIR_APP) && cp arm-trusted-firmware-2.5/build/rk3328/release/bl31/bl31.elf bl31.elf
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-2.5
-	-mkdir -pv /usr/share/u-boot/nanoi_r2s
+	-mkdir -pv /usr/share/u-boot/nanopi_r2s
 	cd $(DIR_APP) && make CROSS_COMPILE="" nanopi-r2s-rk3328_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi R2S - IPFire.org"!' .config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200"!' .config
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
-		/usr/share/u-boot/nanoi_r2s/u-boot-rockchip.bin
+		/usr/share/u-boot/nanopi_r2s/u-boot-rockchip.bin
 	cd $(DIR_APP) && make distclean
 
 endif
