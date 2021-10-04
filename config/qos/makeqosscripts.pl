@@ -72,7 +72,6 @@ $qossettings{'DEF_OUT_SPD'} = '';
 $qossettings{'DEF_INC_SPD'} = '';
 $qossettings{'DEFCLASS_INC'} = '';
 $qossettings{'DEFCLASS_OUT'} = '';
-$qossettings{'ACK'} = '';
 $qossettings{'RED_DEV'} = `cat /var/ipfire/red/iface`;
 $qossettings{'IMQ_DEV'} = 'imq0';
 $qossettings{'TOS'} = '';
@@ -80,7 +79,6 @@ $qossettings{'VALID'} = 'yes';
 
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
 
-my $ACK_MARK = ($qossettings{'ACK'} << $QOS_OUT_SHIFT) . "/$QOS_OUT_MASK";
 my $DEF_OUT_MARK = ($qossettings{'DEFCLASS_OUT'} << $QOS_OUT_SHIFT) . "/$QOS_OUT_MASK";
 my $DEF_INC_MARK = ($qossettings{'DEFCLASS_INC'} << $QOS_INC_SHIFT) . "/$QOS_INC_MASK";
 
@@ -223,31 +221,6 @@ print <<END
 
 	### Don't change mark on traffic for the ipsec tunnel
 	iptables -t mangle -A QOS-OUT -m mark --mark 50 -j RETURN
-
-	### MARK ACKs
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j MARK --set-xmark $ACK_MARK
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p icmp -m length --length 40:100 -j MARK --set-xmark $ACK_MARK
-	iptables -t mangle -A QOS-OUT -p icmp -m length --length 40:100 -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p tcp --syn -m length --length 40:68 -j MARK --set-xmark $ACK_MARK
-	iptables -t mangle -A QOS-OUT -p tcp --syn -m length --length 40:68 -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL SYN,ACK -m length --length 40:68 -j MARK --set-xmark $ACK_MARK
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL SYN,ACK -m length --length 40:68 -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK -m length --length 40:100 -j MARK --set-xmark $ACK_MARK
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK -m length --length 40:100 -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL RST -j MARK --set-xmark $ACK_MARK
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL RST -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,RST -j MARK --set-xmark $ACK_MARK
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,RST -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,FIN -j MARK --set-xmark $ACK_MARK
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,FIN -j RETURN
 
 	### SET TOS
 END
