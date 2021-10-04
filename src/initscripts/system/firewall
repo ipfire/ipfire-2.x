@@ -12,6 +12,8 @@ if [ -f /var/ipfire/red/device ]; then
 	DEVICE=`/bin/cat /var/ipfire/red/device 2> /dev/null | /usr/bin/tr -d '\012'`
 fi
 
+NAT_MASK="0x0f000000"
+
 function iptables() {
 	/sbin/iptables --wait "$@"
 }
@@ -282,17 +284,17 @@ iptables_init() {
 
 	if [ -n "${GREEN_ADDRESS}" ]; then
 		iptables -t nat -A NAT_DESTINATION_FIX \
-			-m mark --mark 1 -j SNAT --to-source "${GREEN_ADDRESS}"
+			-m mark --mark "0x01000000/${NAT_MASK}" -j SNAT --to-source "${GREEN_ADDRESS}"
 	fi
 
 	if [ -n "${BLUE_ADDRESS}" ]; then
 		iptables -t nat -A NAT_DESTINATION_FIX \
-			-m mark --mark 2 -j SNAT --to-source "${BLUE_ADDRESS}"
+			-m mark --mark "0x02000000/${NAT_MASK}" -j SNAT --to-source "${BLUE_ADDRESS}"
 	fi
 
 	if [ -n "${ORANGE_ADDRESS}" ]; then
 		iptables -t nat -A NAT_DESTINATION_FIX \
-			-m mark --mark 3 -j SNAT --to-source "${ORANGE_ADDRESS}"
+			-m mark --mark "0x04000000/${NAT_MASK}" -j SNAT --to-source "${ORANGE_ADDRESS}"
 	fi
 
 	# RED chain, used for the red interface

@@ -55,6 +55,9 @@ my @PRIVATE_NETWORKS = (
 	"100.64.0.0/10",
 );
 
+# MARK masks
+my $NAT_MASK = 0x0f000000;
+
 my %fwdfwsettings=();
 my %fwoptions = ();
 my %defaultNetworks=();
@@ -829,10 +832,8 @@ sub add_dnat_mangle_rules {
 	my $interface = shift;
 	my @options = @_;
 
-	my $mark = 0;
+	my $mark = 0x01000000;
 	foreach my $zone ("GREEN", "BLUE", "ORANGE") {
-		$mark++;
-
 		# Skip rule if not all required information exists.
 		next unless (exists $defaultNetworks{$zone . "_NETADDRESS"});
 		next unless (exists $defaultNetworks{$zone . "_NETMASK"});
@@ -845,9 +846,11 @@ sub add_dnat_mangle_rules {
 		$netaddress .= "/" . $defaultNetworks{$zone . "_NETMASK"};
 
 		push(@mangle_options, ("-s", $netaddress, "-d", $nat_address));
-		push(@mangle_options, ("-j", "MARK", "--set-mark", $mark));
+		push(@mangle_options, ("-j", "MARK", "--set-xmark", "$mark/$NAT_MASK"));
 
 		run("$IPTABLES -t mangle -A $CHAIN_MANGLE_NAT_DESTINATION_FIX @mangle_options");
+
+		$mark <<= 1;
 	}
 }
 
