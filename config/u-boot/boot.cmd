@@ -4,7 +4,10 @@ if test ${boot_dev} = ""; then
 fi;
 
 if test ${dev_num} = ""; then
-	setenv dev_num 0;
+	setenv dev_num ${devnum}
+	if test ${dev_num} = ""; then
+		setenv dev_num 0;
+	fi;
 fi;
 
 if test ${boot_part} = ""; then
