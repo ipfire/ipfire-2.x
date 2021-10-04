@@ -370,7 +370,6 @@ print <<END
 	ip link set $qossettings{'IMQ_DEV'} up
 
 	tc filter add dev $qossettings{'RED_DEV'} parent ffff: protocol all u32 match u32 0 0 \\
-		action connmark \\
 		action mirred egress redirect dev $qossettings{'IMQ_DEV'}
 
 	### ADD HTB QDISC FOR $qossettings{'IMQ_DEV'}
