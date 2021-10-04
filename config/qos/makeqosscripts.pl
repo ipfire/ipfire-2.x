@@ -217,7 +217,10 @@ print <<END
 
 	### ADD QOS-OUT CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-OUT
-	iptables -t mangle -I POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
+	iptables -t mangle -A POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
+
+	# If the packet is already marked, then skip the processing
+	iptables -t mangle -A QOS-OUT -m mark ! --mark 0/$QOS_OUT_MASK -j RETURN
 
 	### Don't change mark on traffic for the ipsec tunnel
 	iptables -t mangle -A QOS-OUT -m mark --mark 50 -j RETURN
@@ -250,7 +253,7 @@ print "\n\t### SET PORT-RULES\n";
 			$qossettings{'QPORT'} = $portruleline[4];
 			$qossettings{'DIP'} = $portruleline[5];
 			$qossettings{'DPORT'} = $portruleline[6];
-			print "\tiptables -t mangle -A QOS-OUT ";
+			print "\tiptables -t mangle -A QOS-OUT -m mark --mark 0/$QOS_OUT_MASK ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -268,24 +271,6 @@ print "\n\t### SET PORT-RULES\n";
 				print "--dport $qossettings{'DPORT'} ";
 			}
 			print "-j MARK --set-xmark " . ($qossettings{'CLASS'} << $QOS_OUT_SHIFT) . "/$QOS_OUT_MASK\n";
-			print "\tiptables -t mangle -A QOS-OUT ";
-			if ($qossettings{'QIP'} ne ''){
-				print "-s $qossettings{'QIP'} ";
-			}
-			if ($qossettings{'DIP'} ne ''){
-				print "-d $qossettings{'DIP'} ";
-			}
-			print "-p $qossettings{'PPROT'} ";
-#			if (($qossettings{'QPORT'} ne '') || ($qossettings{'DPORT'} ne '')){
-#				print "-m multiport ";
-#			}
-			if ($qossettings{'QPORT'} ne ''){
-				print "--sport $qossettings{'QPORT'} ";
-			}
-			if ($qossettings{'DPORT'} ne ''){
-				print "--dport $qossettings{'DPORT'} ";
-			}
-			print "-j RETURN\n\n";
 		}
 	}
 
@@ -327,6 +312,9 @@ print <<END
 
 	### REDUNDANT: SET ALL NONMARKED PACKETS TO DEFAULT CLASS
 	iptables -t mangle -A QOS-OUT -m mark --mark 0/$QOS_OUT_MASK -j MARK --set-xmark $DEF_OUT_MARK
+
+	# Save mark in connection tracking
+	iptables -t mangle -A QOS-OUT -m mark ! --mark 0/$QOS_OUT_MASK -j CONNMARK --save-mark
 
 	###
 	### $qossettings{'IMQ_DEV'}
@@ -487,7 +475,7 @@ print <<END
 	iptables -t mangle -A QOS-INC -m mark --mark 0/$QOS_INC_MASK -m layer7 ! --l7proto unset -j MARK --set-xmark $DEF_INC_MARK
 
 	# Save mark in connection tracking
-	iptables -t mangle -A QOS-INC -m mark --mark 0/$QOS_INC_MASK -j CONNMARK --save-mark
+	iptables -t mangle -A QOS-INC -m mark ! --mark 0/$QOS_INC_MASK -j CONNMARK --save-mark
 
 	## STARTING COLLECTOR
 	/usr/local/bin/qosd $qossettings{'RED_DEV'} >/dev/null 2>&1
