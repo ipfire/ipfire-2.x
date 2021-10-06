@@ -1,0 +1,2 @@
+# The following commands need to be executed by logwatch in case there's an MD Raid
+logwatch ALL=(root) NOPASSWD: /sbin/mdadm --misc --detail /dev/md*, /sbin/mdadm --detail --scan
