@@ -36,7 +36,7 @@ foreach (@devices){
     my @array = split(/\//,$_);
     $diskstats = `cat /var/run/hddstats-$array[$#array] 2>/dev/null`;
     chomp $diskstats;
-    $newdiskstats = `iostat -d -t $_ | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
+    $newdiskstats = `iostat -d -t $_ | tail -3 | head -1 | awk '{ print \$6","\$7}'`;
     chomp $newdiskstats;
     $status = `hdparm -C /dev/$_ | tail -1 | cut -d: -f2`;
     chomp $status;
