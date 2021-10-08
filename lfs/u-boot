@@ -183,6 +183,7 @@ else
 	cd $(DIR_APP) && make distclean
 
 	# Nanopi R2S
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/rockchip/generate-2-ethaddr.diff
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-2.5
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-2.5.tar.gz
 	cd $(DIR_APP)/arm-trusted-firmware-2.5 && make PLAT=rk3328 ARCH=aarch64 DEBUG=0 bl31
@@ -191,6 +192,7 @@ else
 	-mkdir -pv /usr/share/u-boot/nanopi_r2s
 	cd $(DIR_APP) && make CROSS_COMPILE="" nanopi-r2s-rk3328_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi R2S - IPFire.org"!' .config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200"!' .config
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
