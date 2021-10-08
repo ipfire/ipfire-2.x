@@ -120,7 +120,7 @@ foreach (@disks){
 
 	$diskstats = `cat /var/run/hddstats-$array[$#array] 2>/dev/null`;
 	chomp $diskstats;
-	my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
+	my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -3 | head -1 | awk '{ print \$6","\$7}'`;
 	chomp $newdiskstats;
 	my $status = `hdparm -C /dev/$disk | tail -1 | cut -d: -f2`;
 	chomp $status;
@@ -140,7 +140,7 @@ foreach (@disks){
 
 	if ( $diskstats eq $newdiskstats ) {
 		# update diskstat because read temp change the status
-		my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -2 | head -1 | awk '{ print \$5","\$6}'`;
+		my $newdiskstats = `/usr/bin/iostat -d -t $disk | tail -3 | head -1 | awk '{ print \$6","\$7}'`;
 		chomp $newdiskstats;
 		open(DATEI, ">/var/run/hddstats-$array[$#array]") || die "Datei nicht gefunden";
 		print DATEI $newdiskstats;
