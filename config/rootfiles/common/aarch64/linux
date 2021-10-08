@@ -6532,6 +6532,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/arm/pmu/acpi.h
 #lib/modules/KVER-ipfire/build/include/config/arm/psci
 #lib/modules/KVER-ipfire/build/include/config/arm/psci/fw.h
+#lib/modules/KVER-ipfire/build/include/config/arm/rk3399
+#lib/modules/KVER-ipfire/build/include/config/arm/rk3399/dmc
+#lib/modules/KVER-ipfire/build/include/config/arm/rk3399/dmc/devfreq.h
 #lib/modules/KVER-ipfire/build/include/config/arm/scmi
 #lib/modules/KVER-ipfire/build/include/config/arm/scmi/power
 #lib/modules/KVER-ipfire/build/include/config/arm/scmi/power/domain.h
@@ -7495,6 +7498,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/dev
 #lib/modules/KVER-ipfire/build/include/config/dev/coredump.h
 #lib/modules/KVER-ipfire/build/include/config/devfreq
+#lib/modules/KVER-ipfire/build/include/config/devfreq/event
+#lib/modules/KVER-ipfire/build/include/config/devfreq/event/rockchip
+#lib/modules/KVER-ipfire/build/include/config/devfreq/event/rockchip/dfi.h
 #lib/modules/KVER-ipfire/build/include/config/devfreq/gov
 #lib/modules/KVER-ipfire/build/include/config/devfreq/gov/simple
 #lib/modules/KVER-ipfire/build/include/config/devfreq/gov/simple/ondemand.h
@@ -9402,6 +9408,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/mmc/dw/rockchip.h
 #lib/modules/KVER-ipfire/build/include/config/mmc/meson
 #lib/modules/KVER-ipfire/build/include/config/mmc/meson/gx.h
+#lib/modules/KVER-ipfire/build/include/config/mmc/realtek
+#lib/modules/KVER-ipfire/build/include/config/mmc/realtek/pci.h
+#lib/modules/KVER-ipfire/build/include/config/mmc/realtek/usb.h
 #lib/modules/KVER-ipfire/build/include/config/mmc/sdhci
 #lib/modules/KVER-ipfire/build/include/config/mmc/sdhci.h
 #lib/modules/KVER-ipfire/build/include/config/mmc/sdhci/io
@@ -10412,7 +10421,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/pm
 #lib/modules/KVER-ipfire/build/include/config/pm.h
 #lib/modules/KVER-ipfire/build/include/config/pm/clk.h
+#lib/modules/KVER-ipfire/build/include/config/pm/devfreq
 #lib/modules/KVER-ipfire/build/include/config/pm/devfreq.h
+#lib/modules/KVER-ipfire/build/include/config/pm/devfreq/event.h
 #lib/modules/KVER-ipfire/build/include/config/pm/generic
 #lib/modules/KVER-ipfire/build/include/config/pm/generic/domains
 #lib/modules/KVER-ipfire/build/include/config/pm/generic/domains.h
@@ -10618,6 +10629,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/regulator/gpio.h
 #lib/modules/KVER-ipfire/build/include/config/regulator/lp8755.h
 #lib/modules/KVER-ipfire/build/include/config/regulator/pfuze100.h
+#lib/modules/KVER-ipfire/build/include/config/regulator/pwm.h
 #lib/modules/KVER-ipfire/build/include/config/regulator/rk808.h
 #lib/modules/KVER-ipfire/build/include/config/regulator/twl4030.h
 #lib/modules/KVER-ipfire/build/include/config/regulator/vexpress.h
@@ -19823,7 +19835,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/char/tpm/tpm_vtpm_proxy.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/char/virtio_console.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/clk
-#lib/modules/KVER-ipfire/kernel/drivers/clk/clk-rk808.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/clk/clk-si5351.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/clk/clk-si570.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/clk/clk-twl6040.ko.xz
@@ -20057,7 +20068,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/i2c/busses/i2c-parport.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/i2c/busses/i2c-pca-platform.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/i2c/busses/i2c-pxa.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/i2c/busses/i2c-rk3x.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/i2c/busses/i2c-robotfuzz-osif.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/i2c/busses/i2c-simtec.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/i2c/busses/i2c-tiny-usb.ko.xz
@@ -20739,7 +20749,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/mfd/lm3533-ctrlbank.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/mfd/mt6360-core.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/mfd/retu-mfd.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/mfd/rk808.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/mfd/sm501.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/mfd/stmfx.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/mfd/viperboard.ko.xz
@@ -20769,9 +20778,8 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/mmc/host/cqhci.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/mmc/host/dw_mmc-exynos.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/mmc/host/dw_mmc-k3.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/mmc/host/dw_mmc-pltfm.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/mmc/host/dw_mmc-rockchip.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/mmc/host/dw_mmc.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/mmc/host/rtsx_pci_sdmmc.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/mmc/host/rtsx_usb_sdmmc.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/mmc/host/sdhci-of-arasan.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/mmc/host/sdhci-pxav3.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/mmc/host/ushc.ko.xz
@@ -21453,10 +21461,7 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/phy/rockchip/phy-rockchip-emmc.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/phy/rockchip/phy-rockchip-inno-dsidphy.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/phy/rockchip/phy-rockchip-inno-hdmi.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/phy/rockchip/phy-rockchip-inno-usb2.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/phy/rockchip/phy-rockchip-pcie.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/phy/rockchip/phy-rockchip-typec.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/phy/rockchip/phy-rockchip-usb.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/pinctrl
 #lib/modules/KVER-ipfire/kernel/drivers/pinctrl/freescale
 #lib/modules/KVER-ipfire/kernel/drivers/pinctrl/freescale/pinctrl-imx.ko.xz
@@ -21465,7 +21470,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/pinctrl/freescale/pinctrl-imx8mp.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/pinctrl/freescale/pinctrl-imx8mq.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/pinctrl/pinctrl-axp209.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/pinctrl/pinctrl-rk805.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/pinctrl/pinctrl-stmfx.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/power
 #lib/modules/KVER-ipfire/kernel/drivers/power/reset
@@ -21482,13 +21486,11 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/ptp/ptp_clockmatrix.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/ptp/ptp_idt82p33.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/pwm
-#lib/modules/KVER-ipfire/kernel/drivers/pwm/pwm-rockchip.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/pwm/pwm-sun4i.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/pwm/pwm-twl-led.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/pwm/pwm-twl.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/regulator
 #lib/modules/KVER-ipfire/kernel/drivers/regulator/axp20x-regulator.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/regulator/rk808-regulator.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/reset
 #lib/modules/KVER-ipfire/kernel/drivers/reset/reset-scmi.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/rtc
@@ -21523,7 +21525,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-pcf8583.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-pl030.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-pl031.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-rk808.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-rp5c01.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-rs5c372.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-rv3029c2.ko.xz
@@ -21575,7 +21576,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/thermal/armada_thermal.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/thermal/imx8mm_thermal.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/thermal/imx_thermal.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/thermal/rockchip_thermal.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty
 #lib/modules/KVER-ipfire/kernel/drivers/tty/n_gsm.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/tty/n_hdlc.ko.xz
