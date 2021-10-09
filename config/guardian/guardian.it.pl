@@ -1,7 +1,7 @@
 %tr = ( 
 %tr,
 
-'guaranteed bandwith' => 'Guaranteed bandwith',
+'guaranteed bandwidth' => 'Guaranteed bandwidth',
 'guardian alertfile' => 'Alertfile',
 'guardian configuration' => 'Guardian Configuration',
 'guardian ignorefile' => 'Ignorefile',

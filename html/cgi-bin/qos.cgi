@@ -748,9 +748,9 @@ END
 }
 
 sub changebandwidth {
-	&Header::openbox('100%', 'center', $Lang::tr{'bandwithsettings'});
+	&Header::openbox('100%', 'center', $Lang::tr{'bandwidthsettings'});
 	if ($qossettings{'ENABLED'} eq 'on') {
-		print "$Lang::tr{'bandwitherror'}";
+		print "$Lang::tr{'bandwidtherror'}";
 		print "<a href='/cgi-bin/qos.cgi'>$Lang::tr{'back'}</a>";
 	} else {
 		print <<END
@@ -842,10 +842,10 @@ END
 		print <<END
 		</select>
 		<td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>$Lang::tr{'guaranteed bandwith'}:
+		<tr><td width='33%' align='right'>$Lang::tr{'guaranteed bandwidth'}:
 		    <td width='33%' align='left'><input type='text' size='20' name='MINBWDTH' maxlength='8' required='1' value="$qossettings{'MINBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>$Lang::tr{'max bandwith'}&nbsp;<img src='/blob.gif' alt='*' />:
+		<tr><td width='33%' align='right'>$Lang::tr{'max bandwidth'}&nbsp;<img src='/blob.gif' alt='*' />:
 		    <td width='33%' align='left'><input type='text' size='20' name='MAXBWDTH' maxlength='8' required='1' value="$qossettings{'MAXBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Burst:
@@ -1007,8 +1007,8 @@ sub showclasses {
 				<tr><td bgcolor='$color{'color20'}' width='10%' align='center'><b>$Lang::tr{'interface'}</b>
 				    <td bgcolor='$color{'color20'}' width='10%' align='center'><b>$Lang::tr{'Class'}</b>
 				    <td bgcolor='$color{'color20'}' width='10%' align='center'>$Lang::tr{'priority'}
-				    <td bgcolor='$color{'color20'}' width='10%' align='center'>$Lang::tr{'guaranteed bandwith'}
-				    <td bgcolor='$color{'color20'}' width='10%' align='center'>$Lang::tr{'max bandwith'}
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'>$Lang::tr{'guaranteed bandwidth'}
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'>$Lang::tr{'max bandwidth'}
 				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Burst
 				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Ceil Burst
 				    <td bgcolor='$color{'color20'}' width='10%' align='center'>TOS
@@ -1219,7 +1219,7 @@ sub validminbwdth {
 		}
 		unless ( ( $qossettings{'MINBWDTH'} >= 1 ) && ( $qossettings{'MINBWDTH'} <= $qossettings{'SPD'} ) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "$Lang::tr{'false min bandwith'}";
+			$message = "$Lang::tr{'false min bandwidth'}";
 		}
 		$qossettings{'SPD'} = '';
 	}
@@ -1234,7 +1234,7 @@ sub validmaxbwdth {
 		}
 		unless ( ( $qossettings{'MAXBDWTH'} >= 0 ) && ($qossettings{'MAXBDWTH'} >= $qossettings{'MINBDWTH'}) &&( $qossettings{'MAXBDWTH'} <= $qossettings{'SPD'} ) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "$Lang::tr{'false max bandwith'}";
+			$message = "$Lang::tr{'false max bandwidth'}";
 		}
 		$qossettings{'SPD'} = '';
 	}
