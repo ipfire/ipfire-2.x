@@ -1612,6 +1612,7 @@ buildipfire() {
   lfsmake2 socat
   lfsmake2 libcdada
   lfsmake2 pmacct
+  lfsmake2 squid-asnbl
 }
 
 buildinstaller() {
