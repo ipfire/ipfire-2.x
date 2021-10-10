@@ -22034,7 +22034,8 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/mellanox/mlxsw/mlxsw_switchx2.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/micrel
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/micrel/ks8842.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/micrel/ks8851_mll.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/micrel/ks8851_common.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/micrel/ks8851_par.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/micrel/ksz884x.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/microchip
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/microchip/lan743x.ko.xz
