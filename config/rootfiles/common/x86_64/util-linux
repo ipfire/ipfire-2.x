@@ -57,7 +57,7 @@ usr/bin/eject
 usr/bin/fallocate
 usr/bin/flock
 usr/bin/getopt
-#usr/bin/hexdump
+usr/bin/hexdump
 #usr/bin/i386
 usr/bin/ionice
 #usr/bin/ipcmk
