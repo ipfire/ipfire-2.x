@@ -21,6 +21,7 @@
 
 use strict;
 use Apache::Htpasswd;
+use Scalar::Util qw(looks_like_number);
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -229,6 +230,9 @@ $proxysettings{'THROTTLING_GREEN_TOTAL'} = 'unlimited';
 $proxysettings{'THROTTLING_GREEN_HOST'} = 'unlimited';
 $proxysettings{'THROTTLING_BLUE_TOTAL'} = 'unlimited';
 $proxysettings{'THROTTLING_BLUE_HOST'} = 'unlimited';
+$proxysettings{'ASNBL_FASTFLUX_DETECTION'} = 'off';
+$proxysettings{'ASNBL_FASTFLUX_THRESHOLD'} = '5';
+$proxysettings{'ASNBL_SELECANN_DETECTION'} = 'off';
 $proxysettings{'ENABLE_MIME_FILTER'} = 'off';
 $proxysettings{'AUTH_METHOD'} = 'none';
 $proxysettings{'AUTH_REALM'} = '';
@@ -417,6 +421,21 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 	{
 		$errormessage = $Lang::tr{'invalid maximum incoming size'};
 		goto ERROR;
+	}
+	if (($proxysettings{'ASNBL_FASTFLUX_DETECTION'} eq 'on') || ($proxysettings{'ASNBL_SELECANN_DETECTION'} eq 'on'))
+	{
+		if (-z $proxysettings{'ASNBL_FASTFLUX_THRESHOLD'}) {
+			$errormessage = $Lang::tr{'advproxy fastflux no threshold given'};
+			goto ERROR;
+		}
+		if (! looks_like_number($proxysettings{'ASNBL_FASTFLUX_THRESHOLD'})) {
+			$errormessage = $Lang::tr{'advproxy fastflux threshold invalid'};
+			goto ERROR;
+		}
+		if (($proxysettings{'ASNBL_FASTFLUX_THRESHOLD'} < 2) || ($proxysettings{'ASNBL_FASTFLUX_THRESHOLD'} > 10)) {
+			$errormessage = $Lang::tr{'advproxy fastflux threshold out of bounds'};
+			goto ERROR;
+		}
 	}
 	if (!($proxysettings{'AUTH_METHOD'} eq 'none'))
 	{
@@ -800,6 +819,14 @@ $selected{'THROTTLING_GREEN_TOTAL'}{$proxysettings{'THROTTLING_GREEN_TOTAL'}} = 
 $selected{'THROTTLING_GREEN_HOST'}{$proxysettings{'THROTTLING_GREEN_HOST'}} = "selected='selected'";
 $selected{'THROTTLING_BLUE_TOTAL'}{$proxysettings{'THROTTLING_BLUE_TOTAL'}} = "selected='selected'";
 $selected{'THROTTLING_BLUE_HOST'}{$proxysettings{'THROTTLING_BLUE_HOST'}} = "selected='selected'";
+
+$checked{'ASNBL_FASTFLUX_DETECTION'}{'off'} = '';
+$checked{'ASNBL_FASTFLUX_DETECTION'}{'on'} = '';
+$checked{'ASNBL_FASTFLUX_DETECTION'}{$proxysettings{'ASNBL_FASTFLUX_DETECTION'}} = "checked='checked'";
+
+$checked{'ASNBL_SELECANN_DETECTION'}{'off'} = '';
+$checked{'ASNBL_SELECANN_DETECTION'}{'on'} = '';
+$checked{'ASNBL_SELECANN_DETECTION'}{$proxysettings{'ASNBL_SELECANN_DETECTION'}} = "checked='checked'";
 
 $checked{'ENABLE_MIME_FILTER'}{'off'} = '';
 $checked{'ENABLE_MIME_FILTER'}{'on'} = '';
@@ -1631,6 +1658,24 @@ END
 ;
 }
 print <<END
+</table>
+
+<hr size='1'>
+
+<table width='100%'>
+<tr>
+       <td><b>$Lang::tr{'advproxy asbased anomaly detection'}</b></td>
+</tr>
+<tr>
+       <td class='base'>$Lang::tr{'advproxy fastflux detection'}:</td>
+       <td><input type='checkbox' name='ASNBL_FASTFLUX_DETECTION' $checked{'ASNBL_FASTFLUX_DETECTION'}{'on'} /></td>
+       <td class='base'>$Lang::tr{'advproxy fastflux detection threshold'}:</td>
+       <td><input type='text' name='ASNBL_FASTFLUX_THRESHOLD' value='$proxysettings{'ASNBL_FASTFLUX_THRESHOLD'}' size=2 /></td>
+</tr>
+<tr>
+       <td class='base'>$Lang::tr{'advproxy selectively announcements detection'}:</td>
+       <td colspan='3'><input type='checkbox' name='ASNBL_SELECANN_DETECTION' $checked{'ASNBL_SELECANN_DETECTION'}{'on'} /></td>
+</tr>
 </table>
 
 <hr size='1'>
@@ -3524,6 +3569,59 @@ if (@safe_ports) {
 if (@ssl_ports) {
 	print FILE "http_access deny  CONNECT !SSL_ports\n";
 }
+
+	if ((($proxysettings{'ASNBL_FASTFLUX_DETECTION'} eq 'on') && (!-z $proxysettings{'ASNBL_FASTFLUX_THRESHOLD'})) || ($proxysettings{'ASNBL_SELECANN_DETECTION'} eq 'on')) {
+		print FILE "external_acl_type asnblhelper children-max=10 children-startup=2 ttl=86400 %DST /usr/bin/asnbl-helper.py ${General::swroot}/proxy/asnbl-helper.conf\n";
+		print FILE "acl asnbl external asnblhelper\n";
+
+		# Use the user-defined URL filter whitelist (if present and populated) for the ASNBL helper as well
+		# Necessary for destinations such as fedoraproject.org, but we do not want to maintain a dedicated
+		# or hardcoded list for such FQDNs.
+		if ((-e "${General::swroot}/urlfilter/blacklists/custom/allowed/domains") && (!-z "${General::swroot}/urlfilter/blacklists/custom/allowed/domains")) {
+			print FILE "acl asnbl_whitelisted_destinations dstdomain \"${General::swroot}/urlfilter/blacklists/custom/allowed/domains\"\n";
+			print FILE "http_access deny asnbl !asnbl_whitelisted_destinations\n\n";
+		} else {
+			print FILE "http_access deny asnbl\n\n";
+		}
+
+		# Write ASNBL helper configuration file...
+		open(ASNBLFILE, ">${General::swroot}/proxy/asnbl-helper.conf");
+		flock(ASNBLFILE, 2);
+
+		print ASNBLFILE<<END
+#
+# This file has been automatically generated. Manual changes will be overwritten.
+#
+
+[GENERAL]
+LOGLEVEL = INFO
+ASNDB_PATH = /var/lib/location/database.db
+USE_REPLYMAP = no
+END
+;
+
+		print ASNBLFILE "AS_DIVERSITY_THRESHOLD = $proxysettings{'ASNBL_FASTFLUX_THRESHOLD'}\n";
+
+		if ($proxysettings{'ASNBL_SELECANN_DETECTION'} eq 'on') {
+			print ASNBLFILE "BLOCK_SUSPECTED_SELECTIVE_ANNOUNCEMENTS = yes\n";
+		} else {
+			print ASNBLFILE "BLOCK_SUSPECTED_SELECTIVE_ANNOUNCEMENTS = no\n";
+		}
+
+		if ($proxysettings{'ASNBL_FASTFLUX_DETECTION'} eq 'on') {
+			print ASNBLFILE "BLOCK_DIVERSITY_EXCEEDING_DESTINATIONS = yes\n";
+		} else {
+			print ASNBLFILE "BLOCK_DIVERSITY_EXCEEDING_DESTINATIONS = no\n";
+		}
+
+		print ASNBLFILE<<END
+TESTDATA = (10.0.0.1, 0) (127.0.0.1, 0) (fe80::1, 0)
+ACTIVE_ASNBLS = 
+END
+;
+
+		close ASNBLFILE;
+    }
 
 if ($proxysettings{'AUTH_METHOD'} eq 'ident')
 {
