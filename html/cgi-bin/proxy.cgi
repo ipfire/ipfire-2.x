@@ -193,7 +193,6 @@ $proxysettings{'ADMIN_MAIL_ADDRESS'} = '';
 $proxysettings{'ADMIN_PASSWORD'} = '';
 $proxysettings{'ERR_LANGUAGE'} = 'en';
 $proxysettings{'ERR_DESIGN'} = 'ipfire';
-$proxysettings{'SUPPRESS_VERSION'} = 'on';
 $proxysettings{'FORWARD_VIA'} = 'off';
 $proxysettings{'FORWARD_IPADDRESS'} = 'off';
 $proxysettings{'FORWARD_USERNAME'} = 'off';
@@ -725,10 +724,6 @@ $checked{'TRANSPARENT_BLUE'}{'off'} = '';
 $checked{'TRANSPARENT_BLUE'}{'on'} = '';
 $checked{'TRANSPARENT_BLUE'}{$proxysettings{'TRANSPARENT_BLUE'}} = "checked='checked'";
 
-$checked{'SUPPRESS_VERSION'}{'off'} = '';
-$checked{'SUPPRESS_VERSION'}{'on'} = '';
-$checked{'SUPPRESS_VERSION'}{$proxysettings{'SUPPRESS_VERSION'}} = "checked='checked'";
-
 $checked{'FORWARD_IPADDRESS'}{'off'} = '';
 $checked{'FORWARD_IPADDRESS'}{'on'} = '';
 $checked{'FORWARD_IPADDRESS'}{$proxysettings{'FORWARD_IPADDRESS'}} = "checked='checked'";
@@ -989,19 +984,13 @@ print <<END
 	</td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy suppress version'}:</td>
-	<td><input type='checkbox' name='SUPPRESS_VERSION' $checked{'SUPPRESS_VERSION'}{'on'} /></td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
 	<td class='base'>$Lang::tr{'advproxy error design'}:</td>
 	<td class='base'><select name='ERR_DESIGN'>
 		<option value='ipfire' $selected{'ERR_DESIGN'}{'ipfire'}>IPFire</option>
 		<option value='squid' $selected{'ERR_DESIGN'}{'squid'}>$Lang::tr{'advproxy standard'}</option>
 	</select></td>
-</tr>
-<tr>
-	<td class='base'>$Lang::tr{'advproxy squid version'}:</td>
-	<td class='base'>&nbsp;[<font color='$Header::colourred'> $squidversion[0] </font>]</td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
 </tr>
 </table>
 <hr size='1'>
@@ -3115,6 +3104,7 @@ sub writeconfig
 
 shutdown_lifetime 5 seconds
 icp_port 0
+httpd_suppress_version_string on
 
 END
 	;
@@ -3965,8 +3955,6 @@ END
 		print FILE "\n";
 
 	}
-
-	if ($proxysettings{'SUPPRESS_VERSION'} eq 'on') { print FILE "httpd_suppress_version_string on\n\n" }
 
 	if ((!-z $mimetypes) && ($proxysettings{'ENABLE_MIME_FILTER'} eq 'on')) {
 		if (!-z $acl_src_unrestricted_ip)  { print FILE "http_reply_access allow IPFire_unrestricted_ips\n"; }
