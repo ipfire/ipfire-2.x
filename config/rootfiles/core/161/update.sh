@@ -88,6 +88,11 @@ rm -rf /boot/kernel*
 rm -rf /usr/share/u-boot/rpi*
 
 # Remove files
+rm -rf /usr/bin/python
+rm -rf /usr/bin/python2
+rm -rf /usr/bin/python2.7
+rm -rf /usr/lib/libpython2*
+rm -rf /usr/lib/python2*
 
 # Stop services
 
