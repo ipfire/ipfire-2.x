@@ -1,5 +1,6 @@
 etc/rc.d/init.d/firewall
 srv/web/ipfire/cgi-bin/qos.cgi
+usr/bin/hexdump
 usr/lib/firewall/rules.pl
 usr/libexec/ipsec/_updown
 usr/local/bin/hddshutdown
