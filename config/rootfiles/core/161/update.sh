@@ -93,6 +93,7 @@ rm -rf /usr/bin/python2
 rm -rf /usr/bin/python2.7
 rm -rf /usr/lib/libpython2*
 rm -rf /usr/lib/python2*
+rm -rf /usr/lib/collectd/python.so
 
 # Stop services
 
