@@ -30,6 +30,7 @@ use HTTP::Headers;
 use HTTP::Message;
 use HTTP::Request;
 use Net::Ping;
+use URI;
 
 use Switch;
 
@@ -297,6 +298,17 @@ sub valid_signature($) {
 }
 
 sub selectmirror {
+	if (defined ${Conf::mirror}) {
+		my $uri = URI->new("${Conf::mirror}");
+
+		# Only accept HTTPS mirrors
+		if ($uri->scheme eq "https") {
+			return ("HTTPS", $uri->host, $uri->path . "/" . ${Conf::version});
+		} else {
+			message("MIRROR ERROR: Unsupported mirror: " . ${Conf::mirror});
+		}
+	}
+
 	### Check if there is a current server list and read it.
 	#   If there is no list try to get one.
 	my $count = 0;
