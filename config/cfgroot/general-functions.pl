@@ -1238,17 +1238,6 @@ sub get_red_interface() {
 	return $interface;
 }
 
-sub dnssec_status() {
-	my $path = "${General::swroot}/red/dnssec-status";
-
-	open(STATUS, $path) or return 0;
-	my $status = <STATUS>;
-	close(STATUS);
-
-	chomp($status);
-
-	return $status;
-}
 sub number_cpu_cores() {
 	open my $cpuinfo, "/proc/cpuinfo" or die "Can't open cpuinfo: $!\n";
 	my $cores = scalar (map /^processor/, <$cpuinfo>);
