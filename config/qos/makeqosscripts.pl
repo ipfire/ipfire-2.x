@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -296,7 +296,7 @@ END
 			if ($qossettings{'DIP'} ne ''){
 				print "-d $qossettings{'DIP'} ";
 			}
-			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-xmark " . $qossettings{'CLASS'} << $QOS_OUT_SHIFT . "/$QOS_OUT_MASK\n";
+			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-xmark " . ($qossettings{'CLASS'} << $QOS_OUT_SHIFT) . "/$QOS_OUT_MASK\n";
   			print "\tiptables -t mangle -A QOS-OUT ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
