@@ -346,8 +346,8 @@ logging:
 
 nfq:
    mode: repeat
-   repeat-mark: 1879048192
-   repeat-mask: 1879048192
+   repeat-mark: 2147483648
+   repeat-mask: 2147483648
 #   bypass-mark: 1
 #   bypass-mask: 1
 #  route-queue: 2

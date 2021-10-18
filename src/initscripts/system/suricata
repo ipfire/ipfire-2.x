@@ -35,8 +35,8 @@ network_zones=( red green blue orange ovpn )
 enabled_ips_zones=()
 
 # Mark and Mask options.
-MARK="0x70000000"
-MASK="0x70000000"
+MARK="0x80000000"
+MASK="0x80000000"
 
 # PID file of suricata.
 PID_FILE="/var/run/suricata.pid"
