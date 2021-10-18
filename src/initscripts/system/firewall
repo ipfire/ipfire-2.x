@@ -48,8 +48,7 @@ iptables_init() {
 
 	# IPS Bypass Chain which stores the BYPASS bit in connection tracking
 	iptables -N IPSBYPASS
-	iptables -A IPSBYPASS -j MARK --set-xmark "0/$(( IPS_REPEAT_MASK ))"
-	iptables -A IPSBYPASS -j CONNMARK --save-mark
+	iptables -A IPSBYPASS -j CONNMARK --save-mark --mask "$(( ~IPS_REPEAT_MASK & 0xffffffff ))"
 
 	# Jump into bypass chain when the BYPASS bit is set
 	for chain in INPUT FORWARD OUTPUT; do
