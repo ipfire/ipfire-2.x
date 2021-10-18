@@ -139,12 +139,12 @@ function generate_fw_rules {
 		# Loop through the array and create firewall rules.
 		for enabled_ips_zone in "${enabled_ips_zones[@]}"; do
 			# Create rules queue input and output related traffic and pass it to the IPS.
-			iptables -w -I "$IPS_INPUT_CHAIN" -i "$enabled_ips_zone" -m mark ! --mark "${REPEAT_MARK}/${REPEAT_MASK}" -j NFQUEUE $NFQ_OPTIONS
-			iptables -w -I "$IPS_OUTPUT_CHAIN" -o "$enabled_ips_zone" -m mark ! --mark "${REPEAT_MARK}/${REPEAT_MASK}" -j NFQUEUE $NFQ_OPTIONS
+			iptables -w -A "$IPS_INPUT_CHAIN" -i "$enabled_ips_zone" -m mark ! --mark "${REPEAT_MARK}/${REPEAT_MASK}" -j NFQUEUE $NFQ_OPTIONS
+			iptables -w -A "$IPS_OUTPUT_CHAIN" -o "$enabled_ips_zone" -m mark ! --mark "${REPEAT_MARK}/${REPEAT_MASK}" -j NFQUEUE $NFQ_OPTIONS
 
 			# Create rules which are required to handle forwarded traffic.
 			for enabled_ips_zone_forward in "${enabled_ips_zones[@]}"; do
-				iptables -w -I "$IPS_FORWARD_CHAIN" -i "$enabled_ips_zone" -o "$enabled_ips_zone_forward" -m mark ! --mark "${REPEAT_MARK}/${REPEAT_MASK}" -j NFQUEUE $NFQ_OPTIONS
+				iptables -w -A "$IPS_FORWARD_CHAIN" -i "$enabled_ips_zone" -o "$enabled_ips_zone_forward" -m mark ! --mark "${REPEAT_MARK}/${REPEAT_MASK}" -j NFQUEUE $NFQ_OPTIONS
 			done
 		done
 
