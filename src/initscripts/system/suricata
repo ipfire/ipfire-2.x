@@ -154,10 +154,14 @@ function generate_fw_rules {
 			done
 		done
 
-		# Clear repeat bit, so that it does not confuse IPsec or QoS
-		iptables -w -A "${IPS_INPUT_CHAIN}" -j MARK --set-xmark "0x0/${REPEAT_MASK}"
-		iptables -w -A "${IPS_FORWARD_CHAIN}" -j MARK --set-xmark "0x0/${REPEAT_MASK}"
-		iptables -w -A "${IPS_OUTPUT_CHAIN}" -j MARK --set-xmark "0x0/${REPEAT_MASK}"
+		# Add common rules at the end of the chain
+		for chain in "${IPS_INPUT_CHAIN}" "${IPS_FORWARD_CHAIN}" "${IPS_OUTPUT_CHAIN}"; do
+			# Clear repeat bit
+			iptables -w -A "${chain}" -j MARK --set-xmark "0x0/${REPEAT_MASK}"
+
+			# Store bypass bit in CONNMARK
+			iptables -w -A "${chain}" -m mark --mark "${BYPASS_MARK}/${BYPASS_MASK}" -j CONNMARK --save-mark
+		done
 	fi
 }
 
