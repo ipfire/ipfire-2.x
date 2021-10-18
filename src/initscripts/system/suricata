@@ -34,12 +34,6 @@ network_zones=( red green blue orange ovpn )
 # Array to store the network zones weather the IPS is enabled for.
 enabled_ips_zones=()
 
-# Mark and Mask options.
-REPEAT_MARK="0x80000000"
-REPEAT_MASK="0x80000000"
-BYPASS_MARK="0x40000000"
-BYPASS_MASK="0x40000000"
-
 # PID file of suricata.
 PID_FILE="/var/run/suricata.pid"
 
@@ -134,33 +128,18 @@ function generate_fw_rules {
 	# Flush the firewall chains.
 	flush_fw_chain
 
-	# Skip anything that has the bypass bit set
-	local chain
-	for chain in "${IPS_INPUT_CHAIN}" "${IPS_FORWARD_CHAIN}" "${IPS_OUTPUT_CHAIN}"; do
-		iptables -w -A "${chain}" -m mark --mark "${BYPASS_MARK}/${BYPASS_MASK}" -j RETURN
-	done
-
 	# Check if the array of enabled_ips_zones contains any elements.
 	if [[ ${enabled_ips_zones[@]} ]]; then
 		# Loop through the array and create firewall rules.
 		for enabled_ips_zone in "${enabled_ips_zones[@]}"; do
 			# Create rules queue input and output related traffic and pass it to the IPS.
-			iptables -w -A "$IPS_INPUT_CHAIN" -i "$enabled_ips_zone" -m mark ! --mark "${REPEAT_MARK}/${REPEAT_MASK}" -j NFQUEUE $NFQ_OPTIONS
-			iptables -w -A "$IPS_OUTPUT_CHAIN" -o "$enabled_ips_zone" -m mark ! --mark "${REPEAT_MARK}/${REPEAT_MASK}" -j NFQUEUE $NFQ_OPTIONS
+			iptables -w -A "$IPS_INPUT_CHAIN" -i "$enabled_ips_zone" -j NFQUEUE $NFQ_OPTIONS
+			iptables -w -A "$IPS_OUTPUT_CHAIN" -o "$enabled_ips_zone" -j NFQUEUE $NFQ_OPTIONS
 
 			# Create rules which are required to handle forwarded traffic.
 			for enabled_ips_zone_forward in "${enabled_ips_zones[@]}"; do
-				iptables -w -A "$IPS_FORWARD_CHAIN" -i "$enabled_ips_zone" -o "$enabled_ips_zone_forward" -m mark ! --mark "${REPEAT_MARK}/${REPEAT_MASK}" -j NFQUEUE $NFQ_OPTIONS
+				iptables -w -A "$IPS_FORWARD_CHAIN" -i "$enabled_ips_zone" -o "$enabled_ips_zone_forward" -j NFQUEUE $NFQ_OPTIONS
 			done
-		done
-
-		# Add common rules at the end of the chain
-		for chain in "${IPS_INPUT_CHAIN}" "${IPS_FORWARD_CHAIN}" "${IPS_OUTPUT_CHAIN}"; do
-			# Clear repeat bit
-			iptables -w -A "${chain}" -j MARK --set-xmark "0x0/${REPEAT_MASK}"
-
-			# Store bypass bit in CONNMARK
-			iptables -w -A "${chain}" -m mark --mark "${BYPASS_MARK}/${BYPASS_MASK}" -j CONNMARK --save-mark
 		done
 	fi
 }
