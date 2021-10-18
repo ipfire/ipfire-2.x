@@ -37,6 +37,8 @@ enabled_ips_zones=()
 # Mark and Mask options.
 REPEAT_MARK="0x80000000"
 REPEAT_MASK="0x80000000"
+BYPASS_MARK="0x40000000"
+BYPASS_MASK="0x40000000"
 
 # PID file of suricata.
 PID_FILE="/var/run/suricata.pid"

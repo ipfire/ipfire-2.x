@@ -348,8 +348,8 @@ nfq:
    mode: repeat
    repeat-mark: 2147483648
    repeat-mask: 2147483648
-#   bypass-mark: 1
-#   bypass-mask: 1
+   bypass-mark: 1073741824
+   bypass-mask: 1073741824
 #  route-queue: 2
 #  batchcount: 20
    fail-open: yes
