@@ -289,7 +289,7 @@ END
 			$qossettings{'L7PROT'} = $l7ruleline[2];
 			$qossettings{'QIP'} = $l7ruleline[3];
 			$qossettings{'DIP'} = $l7ruleline[4];
-  			print "\tiptables -t mangle -A QOS-OUT ";
+			print "\tiptables -t mangle -A QOS-OUT -m mark --mark 0/$QOS_OUT_MASK ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -297,24 +297,16 @@ END
 				print "-d $qossettings{'DIP'} ";
 			}
 			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-xmark " . ($qossettings{'CLASS'} << $QOS_OUT_SHIFT) . "/$QOS_OUT_MASK\n";
-  			print "\tiptables -t mangle -A QOS-OUT ";
-			if ($qossettings{'QIP'} ne ''){
-				print "-s $qossettings{'QIP'} ";
-			}
-			if ($qossettings{'DIP'} ne ''){
-				print "-d $qossettings{'DIP'} ";
-			}
-			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j RETURN\n";
   		}
   	}
 
 print <<END
 
 	### REDUNDANT: SET ALL NONMARKED PACKETS TO DEFAULT CLASS
-	iptables -t mangle -A QOS-OUT -m mark --mark 0/$QOS_OUT_MASK -j MARK --set-xmark $DEF_OUT_MARK
+	iptables -t mangle -A QOS-OUT -m mark --mark 0/$QOS_OUT_MASK -m layer7 ! --l7proto unset -j MARK --set-xmark $DEF_OUT_MARK
 
 	# Save mark in connection tracking
-	iptables -t mangle -A QOS-OUT -m mark ! --mark 0/$QOS_OUT_MASK -j CONNMARK --save-mark
+	iptables -t mangle -A QOS-OUT -m mark ! --mark 0/$QOS_OUT_MASK -j CONNMARK --save-mark --mask $QOS_OUT_MASK
 
 	###
 	### $qossettings{'IMQ_DEV'}
@@ -330,7 +322,13 @@ print <<END
 
 	ip link set $qossettings{'IMQ_DEV'} up
 
-	tc filter add dev $qossettings{'RED_DEV'} parent ffff: protocol all u32 match u32 0 0 \\
+	### Restore conmark and continue with next filter
+	tc filter add dev $qossettings{'RED_DEV'} parent ffff: prio 1 protocol all u32 \\
+		match u32 0 0 \\
+		action connmark continue
+	### Send all traffic except IPSec to $qossettings{'IMQ_DEV'}
+	tc filter add dev $qossettings{'RED_DEV'} parent ffff: prio 2 protocol all u32 \\
+		match mark 0 $IPSEC_MASK \\
 		action mirred egress redirect dev $qossettings{'IMQ_DEV'}
 
 	### ADD HTB QDISC FOR $qossettings{'IMQ_DEV'}
@@ -475,7 +473,7 @@ print <<END
 	iptables -t mangle -A QOS-INC -m mark --mark 0/$QOS_INC_MASK -m layer7 ! --l7proto unset -j MARK --set-xmark $DEF_INC_MARK
 
 	# Save mark in connection tracking
-	iptables -t mangle -A QOS-INC -m mark ! --mark 0/$QOS_INC_MASK -j CONNMARK --save-mark
+	iptables -t mangle -A QOS-INC -m mark ! --mark 0/$QOS_INC_MASK -j CONNMARK --save-mark --mask $QOS_INC_MASK
 
 	## STARTING COLLECTOR
 	/usr/local/bin/qosd $qossettings{'RED_DEV'} >/dev/null 2>&1
