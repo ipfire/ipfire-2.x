@@ -134,6 +134,12 @@ function generate_fw_rules {
 	# Flush the firewall chains.
 	flush_fw_chain
 
+	# Skip anything that has the bypass bit set
+	local chain
+	for chain in "${IPS_INPUT_CHAIN}" "${IPS_FORWARD_CHAIN}" "${IPS_OUTPUT_CHAIN}"; do
+		iptables -w -A "${chain}" -m mark --mark "${BYPASS_MARK}/${BYPASS_MASK}" -j RETURN
+	done
+
 	# Check if the array of enabled_ips_zones contains any elements.
 	if [[ ${enabled_ips_zones[@]} ]]; then
 		# Loop through the array and create firewall rules.
