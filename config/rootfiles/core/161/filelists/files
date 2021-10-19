@@ -1,4 +1,5 @@
 etc/rc.d/init.d/firewall
+etc/rc.d/init.d/partresize
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
 usr/bin/2to3
