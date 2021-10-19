@@ -14,9 +14,6 @@ fi
 
 NAT_MASK="0x0f000000"
 
-IPSEC_MARK="0x00800000"
-IPSEC_MASK="${IPSEC_MARK}"
-
 IPS_REPEAT_MARK="0x80000000"
 IPS_REPEAT_MASK="0x80000000"
 IPS_BYPASS_MARK="0x40000000"
@@ -396,7 +393,7 @@ iptables_red_up() {
 		fi
 
 		# Outgoing masquerading (don't masqerade IPsec)
-		iptables -t nat -A REDNAT -m mark --mark "${IPSEC_MARK}/${IPSEC_MASK}" -o "${IFACE}" -j RETURN
+		iptables -t nat -A REDNAT -m policy --pol ipsec --dir=out -o "${IFACE}" -j RETURN
 
 		if [ "${IFACE}" = "${GREEN_DEV}" ]; then
 			iptables -t nat -A REDNAT -i "${GREEN_DEV}" -o "${IFACE}" -j RETURN
