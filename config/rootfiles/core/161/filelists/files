@@ -1,5 +1,7 @@
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/partresize
+etc/rc.d/init.d/suricata
+etc/suricata/suricata.yaml
 opt/pakfire/etc/pakfire.conf
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/index.cgi
