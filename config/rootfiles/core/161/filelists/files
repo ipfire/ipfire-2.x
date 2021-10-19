@@ -1,5 +1,6 @@
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/partresize
+srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
 usr/bin/2to3
@@ -8,4 +9,5 @@ usr/lib/firewall/rules.pl
 usr/libexec/ipsec/_updown
 usr/local/bin/hddshutdown
 usr/local/bin/makegraphs
+var/ipfire/general-functions.pl
 var/ipfire/qos/bin/makeqosscripts.pl
