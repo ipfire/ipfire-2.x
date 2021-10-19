@@ -1,5 +1,7 @@
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/partresize
+opt/pakfire/etc/pakfire.conf
+opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
