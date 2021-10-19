@@ -120,6 +120,11 @@ ldconfig
 
 # Start services
 
+# Generate new qos.sh
+qosctrl stop
+qosctrl generate
+qosctrl start
+
 # remove lm_sensor config after collectd was started
 # to reserch sensors at next boot with updated kernel
 rm -f  /etc/sysconfig/lm_sensors
