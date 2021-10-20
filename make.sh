@@ -1904,24 +1904,24 @@ gettoolchain)
 	fi
 	;;
 uploadsrc)
-	PWD=`pwd`
 	if [ -z $IPFIRE_USER ]; then
 		echo -n "You have to setup IPFIRE_USER first. See .config for details."
 		print_status FAIL
 		exit 1
 	fi
 
-	URL_SOURCE=$(grep URL_SOURCE lfs/Config | awk '{ print $3 }')
-	REMOTE_FILES=$(echo "ls -1" | sftp -C ${IPFIRE_USER}@${URL_SOURCE})
+	URL_SOURCE="$(awk '/^URL_SOURCE/ { print $3 }' lfs/Config)"
 
-	for file in ${BASEDIR}/cache/*; do
-		[ -d "${file}" ] && continue
-		grep -q "$(basename ${file})" <<<$REMOTE_FILES && continue
-		NEW_FILES="$NEW_FILES $file"
-	done
-	[ -n "$NEW_FILES" ] && scp -2 $NEW_FILES ${IPFIRE_USER}@${URL_SOURCE}
-	cd $BASEDIR
-	cd $PWD
+	rsync \
+		--recursive \
+		--update \
+		--ignore-existing \
+		--progress \
+		--human-readable \
+		--exclude="toolchains/" \
+		"${BASEDIR}/cache/" \
+		"${IPFIRE_USER}@${URL_SOURCE}"
+
 	exit 0
 	;;
 lang)
