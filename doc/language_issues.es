@@ -493,7 +493,6 @@ WARNING: translation string unused: not set
 WARNING: translation string unused: notes
 WARNING: translation string unused: o-no
 WARNING: translation string unused: o-yes
-WARNING: translation string unused: online help en
 WARNING: translation string unused: only red
 WARNING: translation string unused: open to all
 WARNING: translation string unused: optional data
