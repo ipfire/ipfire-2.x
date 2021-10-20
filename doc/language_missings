@@ -934,20 +934,15 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
-< advproxy asbased anomaly detection
-< advproxy fastflux detection
-< advproxy fastflux detection threshold
-< advproxy fastflux no threshold given
-< advproxy fastflux threshold invalid
-< advproxy fastflux threshold out of bounds
-< advproxy selectively announcements detection
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< false max bandwidth
+< false min bandwidth
 < g.dtm
 < g.lite
-< reboot fsck
-< rebooting ipfire fsck
+< guaranteed bandwidth
+< max bandwidth
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
