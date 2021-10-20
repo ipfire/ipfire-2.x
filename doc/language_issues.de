@@ -92,7 +92,9 @@ WARNING: translation string unused: advproxy errmsg password incorrect
 WARNING: translation string unused: advproxy invalid num of children
 WARNING: translation string unused: advproxy no clients defined
 WARNING: translation string unused: advproxy redirector children
+WARNING: translation string unused: advproxy squid version
 WARNING: translation string unused: advproxy ssadvanced proxy
+WARNING: translation string unused: advproxy suppress version
 WARNING: translation string unused: advproxy throttle binary
 WARNING: translation string unused: advproxy throttle dskimg
 WARNING: translation string unused: advproxy throttle mmedia
@@ -234,6 +236,7 @@ WARNING: translation string unused: dns new 0
 WARNING: translation string unused: dns new 1
 WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
+WARNING: translation string unused: dnssec disabled warning
 WARNING: translation string unused: dnssec information
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master
@@ -264,6 +267,7 @@ WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enable wildcards
 WARNING: translation string unused: enabledtitle
 WARNING: translation string unused: encrypted
+WARNING: translation string unused: enter ack class
 WARNING: translation string unused: err bk 1
 WARNING: translation string unused: err bk 10 password
 WARNING: translation string unused: err bk 2 key

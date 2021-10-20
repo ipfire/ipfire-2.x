@@ -96,7 +96,9 @@ WARNING: translation string unused: advproxy errmsg password incorrect
 WARNING: translation string unused: advproxy invalid num of children
 WARNING: translation string unused: advproxy no clients defined
 WARNING: translation string unused: advproxy redirector children
+WARNING: translation string unused: advproxy squid version
 WARNING: translation string unused: advproxy ssadvanced proxy
+WARNING: translation string unused: advproxy suppress version
 WARNING: translation string unused: advproxy throttle binary
 WARNING: translation string unused: advproxy throttle dskimg
 WARNING: translation string unused: advproxy throttle mmedia
@@ -261,6 +263,7 @@ WARNING: translation string unused: dns new 0
 WARNING: translation string unused: dns new 1
 WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
+WARNING: translation string unused: dnssec disabled warning
 WARNING: translation string unused: dnssec information
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master
@@ -292,6 +295,7 @@ WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enable wildcards
 WARNING: translation string unused: enabledtitle
 WARNING: translation string unused: encrypted
+WARNING: translation string unused: enter ack class
 WARNING: translation string unused: err bk 1
 WARNING: translation string unused: err bk 10 password
 WARNING: translation string unused: err bk 2 key
@@ -892,6 +896,13 @@ WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: advproxy asbased anomaly detection = Anomaly detections based on Autonomous Systems information
+WARNING: untranslated string: advproxy fastflux detection = Deny access to destinations hosted on fast flux setups
+WARNING: untranslated string: advproxy fastflux detection threshold = Threshold
+WARNING: untranslated string: advproxy fastflux no threshold given = No threshold was given for fast flux detection
+WARNING: untranslated string: advproxy fastflux threshold invalid = Supplied fast flux detection threshold is invalid
+WARNING: untranslated string: advproxy fastflux threshold out of bounds = Supplied fast flux detection threshold is out of bounds
+WARNING: untranslated string: advproxy selectively announcements detection = Deny access to destinations hosted on selectively announced networks
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
