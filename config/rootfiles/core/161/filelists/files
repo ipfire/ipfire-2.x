@@ -1,4 +1,5 @@
 etc/rc.d/init.d/firewall
+etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/partresize
 etc/rc.d/init.d/suricata
 etc/suricata/suricata.yaml
