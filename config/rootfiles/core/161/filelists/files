@@ -9,6 +9,7 @@ srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
+srv/web/ipfire/cgi-bin/speed.cgi
 usr/bin/2to3
 usr/bin/hexdump
 usr/lib/firewall/rules.pl
