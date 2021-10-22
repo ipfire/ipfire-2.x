@@ -2,6 +2,7 @@ etc/rc.d/init.d/firewall
 etc/rc.d/init.d/networking/red
 etc/rc.d/init.d/partresize
 etc/rc.d/init.d/suricata
+etc/rc.d/helper/azure-setup
 etc/suricata/suricata.yaml
 opt/pakfire/etc/pakfire.conf
 opt/pakfire/lib/functions.pl
