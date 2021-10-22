@@ -19,7 +19,47 @@
 #                                                                             #
 ###############################################################################
 
-require '/var/ipfire/general-functions.pl';
+###############################################################################
+# functions copied from general-functions.pl for speed improvement because    #
+# loading and initializing the whole general-functions.pl every second create #
+# high system load                                                            #
+###########################################OA##################################
+#
+# Returns the output of a shell command
+sub General__system_output($) {
+    my @command = @_;
+    my $pid;
+    my @output = ();
+
+    unless ($pid = open(OUTPUT, "-|")) {
+            open(STDERR, ">&STDOUT");
+            exec { ${command[0]} } @command;
+            die "Could not execute @command: $!";
+    }
+
+    waitpid($pid, 0);
+
+    while (<OUTPUT>) {
+            push(@output, $_);
+    }
+
+    close(OUTPUT);
+    return @output;
+}
+#
+# Function which will return the used interface for the red network zone (red0, ppp0, etc).
+sub General__get_red_interface() {
+
+     open(IFACE, "/var/ipfire/red/iface") or die "Could not open /var/ipfire/red/iface";
+
+     my $interface = <IFACE>;
+     close(IFACE);
+     chomp $interface;
+
+     return $interface;
+}
+#
+###############################################################################
 
 my $data_last = $ENV{'QUERY_STRING'};
 my $rxb_last = 0;
@@ -38,8 +78,8 @@ foreach $field (@fields) {
 	}
 }
 
-my $interface = &General::get_red_interface();
-my @data_now = &General::system_output("ip", "-s", "link", "show", "$interface");
+my $interface = &General__get_red_interface();
+my @data_now = &General__system_output("ip", "-s", "link", "show", "$interface");
 
 my $lastline;
 my $rxb_now = 0;

@@ -53,6 +53,7 @@ sub system_background($) {
 }
 
 # Returns the output of a shell command
+# if you change this also check speed.cgi that include a local copy for systemload reasons
 sub system_output($) {
 	my @command = @_;
 	my $pid;
@@ -1227,6 +1228,7 @@ sub firewall_reload() {
 }
 
 # Function which will return the used interface for the red network zone (red0, ppp0, etc).
+# if you change this also check speed.cgi that include a local copy for systemload reasons
 sub get_red_interface() {
 
 	open(IFACE, "${General::swroot}/red/iface") or die "Could not open /var/ipfire/red/iface";
