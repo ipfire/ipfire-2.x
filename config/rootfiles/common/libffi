@@ -3,8 +3,8 @@
 #usr/lib/libffi.a
 #usr/lib/libffi.la
 #usr/lib/libffi.so
-usr/lib/libffi.so.7
-usr/lib/libffi.so.7.1.0
+usr/lib/libffi.so.8
+usr/lib/libffi.so.8.1.0
 #usr/lib/pkgconfig/libffi.pc
 #usr/share/info/libffi.info
 #usr/share/man/man3/ffi.3
