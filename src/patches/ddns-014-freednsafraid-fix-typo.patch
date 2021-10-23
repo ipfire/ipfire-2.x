@@ -1,0 +1,21 @@
+commit 3a162595b9b44a4cbf08a3db14a4d2ebfeeb5583
+Author: Stefan Schantl <stefan.schantl@ipfire.org>
+Date:   Sat Oct 23 21:11:27 2021 +0200
+
+    FreeDNSAfraid.org: Fix typo in checking if the IP has been changed.
+    
+    Signed-off-by: Stefan Schantl <stefan.schantl@ipfire.org>
+
+diff --git a/src/ddns/providers.py b/src/ddns/providers.py
+index 4f27af9..5b2a82d 100644
+--- a/src/ddns/providers.py
++++ b/src/ddns/providers.py
+@@ -1204,7 +1204,7 @@ class DDNSProviderFreeDNSAfraidOrg(DDNSProvider):
+ 		output = response.read().decode()
+ 
+ 		# Handle success messages.
+-		if output.startswith("Updated") or output.startswith("No IP changed detected"):
++		if output.startswith("Updated") or output.startswith("No IP change detected"):
+ 			return
+ 
+ 		# Handle error codes.

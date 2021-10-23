@@ -72,7 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	# Apply upstream patches.
-	# No upstream patches at the moment.
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-014-freednsafraid-fix-typo.patch
 
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure \
