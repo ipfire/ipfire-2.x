@@ -1,6 +1,0 @@
-/var/ipfire/lcr/extensions
-/var/ipfire/lcr/directory.list
-/var/ipfire/lcr/interface.conf
-/var/ipfire/lcr/options.conf
-/var/ipfire/lcr/routing.conf
-/var/log/lcr
