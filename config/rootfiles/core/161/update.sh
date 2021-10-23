@@ -120,6 +120,10 @@ ldconfig
 
 # Start services
 
+# Delete orphaned pppd 2.4.8 shared object files
+rm -rf \
+       /usr/lib/pppd/2.4.8/
+
 # Generate new qos.sh
 qosctrl stop
 qosctrl generate
