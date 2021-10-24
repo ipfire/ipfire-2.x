@@ -1128,7 +1128,6 @@ buildbase() {
 	lfsmake2 gperf
 	lfsmake2 gzip
 	lfsmake2 hostname
-	lfsmake2 iproute2
 	lfsmake2 jwhois
 	lfsmake2 kbd
 	lfsmake2 less
@@ -1190,6 +1189,7 @@ buildipfire() {
   lfsmake2 libnetfilter_cthelper
   lfsmake2 libnetfilter_cttimeout
   lfsmake2 iptables
+  lfsmake2 iproute2
   lfsmake2 screen
   lfsmake2 elfutils
 
