@@ -61,9 +61,8 @@ my $QOS_INC_MASK = 0x0000ff00;
 my $QOS_INC_SHIFT = 8;
 my $QOS_OUT_MASK = 0x000000ff;
 my $QOS_OUT_SHIFT = 0;
-my $IPSEC_MASK = 0x00800000;
-my $QOS_INC_SKIP_MASK = $QOS_INC_MASK | $IPSEC_MASK;
-my $QOS_OUT_SKIP_MASK = $QOS_OUT_MASK | $IPSEC_MASK;
+my $QOS_INC_SKIP_MASK = $QOS_INC_MASK;
+my $QOS_OUT_SKIP_MASK = $QOS_OUT_MASK;
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
@@ -322,13 +321,15 @@ print <<END
 
 	ip link set $qossettings{'IMQ_DEV'} up
 
-	### Restore conmark and continue with next filter
-	tc filter add dev $qossettings{'RED_DEV'} parent ffff: prio 1 protocol all u32 \\
-		match u32 0 0 \\
-		action connmark continue
-	### Send all traffic except IPSec to $qossettings{'IMQ_DEV'}
+	### Pass IPSec traffic without redirect
+	tc filter add dev $qossettings{'RED_DEV'} parent ffff: prio 1 protocol all basic \\
+		match "ipt(-m policy --pol ipsec --dir in)" \\
+		action pass
+
+	### Restore connmark and send rest of the traffic to $qossettings{'IMQ_DEV'}
 	tc filter add dev $qossettings{'RED_DEV'} parent ffff: prio 2 protocol all u32 \\
-		match mark 0 $IPSEC_MASK \\
+		match u32 0 0 \\
+		action connmark \\
 		action mirred egress redirect dev $qossettings{'IMQ_DEV'}
 
 	### ADD HTB QDISC FOR $qossettings{'IMQ_DEV'}
