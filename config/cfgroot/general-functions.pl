@@ -53,7 +53,6 @@ sub system_background($) {
 }
 
 # Returns the output of a shell command
-# if you change this also check speed.cgi that include a local copy for systemload reasons
 sub system_output($) {
 	my @command = @_;
 	my $pid;
