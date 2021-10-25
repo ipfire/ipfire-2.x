@@ -96,6 +96,7 @@ rm -rf /usr/lib/python2*
 rm -rf /usr/lib/collectd/python.so
 
 # Stop services
+/etc/init.d/ipsec stop
 
 # Extract files
 extract_files
@@ -119,6 +120,9 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/init.d/ipsec start
+fi
 
 # Delete orphaned pppd 2.4.8 shared object files
 rm -rf \
@@ -162,3 +166,4 @@ sync
 
 # Don't report the exitcode last command
 exit 0
+# Stop services
