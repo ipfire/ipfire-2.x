@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/x86 5.10.75-ipfire Kernel Configuration
+# Linux/x86 5.10.76-ipfire Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 11.1.0"
 CONFIG_CC_IS_GCC=y
@@ -4994,7 +4994,6 @@ CONFIG_DRM_AMD_DC=y
 CONFIG_DRM_AMD_DC_DCN=y
 # CONFIG_DRM_AMD_DC_DCN3_0 is not set
 # CONFIG_DRM_AMD_DC_HDCP is not set
-# CONFIG_DRM_AMD_DC_SI is not set
 # end of Display Engine Configuration
 
 # CONFIG_HSA_AMD is not set
