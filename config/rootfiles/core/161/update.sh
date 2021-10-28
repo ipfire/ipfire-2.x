@@ -129,9 +129,9 @@ rm -rf \
        /usr/lib/pppd/2.4.8/
 
 # Generate new qos.sh
-qosctrl stop
-qosctrl generate
-qosctrl start
+/usr/lical/bin/qosctrl stop
+/usr/lical/bin/qosctrl generate
+/usr/lical/bin/qosctrl start
 
 # remove lm_sensor config after collectd was started
 # to reserch sensors at next boot with updated kernel
