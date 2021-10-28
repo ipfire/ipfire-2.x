@@ -120,6 +120,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/firewall restart
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec start
 fi
