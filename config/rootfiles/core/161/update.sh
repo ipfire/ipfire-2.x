@@ -132,9 +132,17 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec start
 fi
 
-# Delete orphaned pppd 2.4.8 shared object files
+# Delete orphaned shared object files
 rm -rf \
-       /usr/lib/pppd/2.4.8/
+       /usr/lib/pppd/2.4.8 \
+       /usr/lib/itcl4.0.5 \
+       /usr/lib/sqlite3.13.0 \
+       /usr/lib/tcl8.4 \
+       /usr/lib/tdbc1.0.4 \
+       /usr/lib/tdbcmysql1.0.4 \
+       /usr/lib/tdbcodbc1.0.4 \
+       /usr/lib/tdbcpostgres1.0.4 \
+       /usr/lib/thread2.8.0
 
 # Generate new qos.sh
 /usr/local/bin/qosctrl stop
