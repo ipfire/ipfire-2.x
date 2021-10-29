@@ -98,6 +98,11 @@ rm -rf /usr/lib/collectd/python.so
 # Stop services
 /etc/init.d/ipsec stop
 
+# disconnect if red is ppp0
+if [ $(</var/ipfire/red/iface) = "ppp0" ]; then
+	/usr/local/bin/connscheduler hangup
+fi
+
 # Extract files
 extract_files
 
