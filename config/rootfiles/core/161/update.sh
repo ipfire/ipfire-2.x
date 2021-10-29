@@ -119,9 +119,13 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
-# restart firewall and reconnect
+# restart firewall
 /etc/init.d/firewall restart
-/usr/local/bin/connscheduler reconnect
+
+# reconnect if red is ppp0
+if [ $(</var/ipfire/red/iface) = "ppp0" ]; then
+	/usr/local/bin/connscheduler reconnect
+fi
 
 # Start services
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
