@@ -121,7 +121,7 @@ ldconfig
 
 # restart firewall and reconnect
 /etc/init.d/firewall restart
-/usr/lical/bin/connscheduler reconnect
+/usr/local/bin/connscheduler reconnect
 
 # Start services
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
@@ -133,9 +133,9 @@ rm -rf \
        /usr/lib/pppd/2.4.8/
 
 # Generate new qos.sh
-/usr/lical/bin/qosctrl stop
-/usr/lical/bin/qosctrl generate
-/usr/lical/bin/qosctrl start
+/usr/local/bin/qosctrl stop
+/usr/local/bin/qosctrl generate
+/usr/local/bin/qosctrl start
 
 # remove lm_sensor config after collectd was started
 # to reserch sensors at next boot with updated kernel
