@@ -175,3 +175,4 @@ usr/share/dbus-1/interfaces/org.freedesktop.Avahi.ServiceTypeBrowser.xml
 #usr/share/man/man8/avahi-daemon.8
 #usr/share/man/man8/avahi-dnsconfd.8
 #usr/share/man/man8/avahi-dnsconfd.action.8
+var/ipfire/backup/addons/includes/avahi
