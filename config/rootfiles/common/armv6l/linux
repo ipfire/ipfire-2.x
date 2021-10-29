@@ -8735,6 +8735,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/have/function/graph
 #lib/modules/KVER-ipfire/build/include/config/have/function/graph/tracer.h
 #lib/modules/KVER-ipfire/build/include/config/have/function/tracer.h
+#lib/modules/KVER-ipfire/build/include/config/have/futex
+#lib/modules/KVER-ipfire/build/include/config/have/futex/cmpxchg.h
 #lib/modules/KVER-ipfire/build/include/config/have/gcc
 #lib/modules/KVER-ipfire/build/include/config/have/gcc/plugins.h
 #lib/modules/KVER-ipfire/build/include/config/have/generic
