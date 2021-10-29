@@ -119,8 +119,11 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
-# Start services
+# restart firewall and reconnect
 /etc/init.d/firewall restart
+/usr/lical/bin/connscheduler reconnect
+
+# Start services
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec start
 fi
