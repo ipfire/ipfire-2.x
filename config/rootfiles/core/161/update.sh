@@ -87,6 +87,19 @@ rm -rf /lib/modules
 rm -rf /boot/kernel*
 rm -rf /usr/share/u-boot/rpi*
 
+# Remove dropped packages
+for package in client175; do
+        if [ -e "/opt/pakfire/db/installed/meta-${package}" ]; then
+                stop_service "${package}"
+                for i in $(</opt/pakfire/db/rootfiles/${package}); do
+                        rm -rfv "/${i}"
+                done
+        fi
+        rm -f "/opt/pakfire/db/installed/meta-${package}"
+        rm -f "/opt/pakfire/db/meta/meta-${package}"
+        rm -f "/opt/pakfire/db/rootfiles/${package}"
+done
+
 # Remove files
 rm -rf /usr/bin/python
 rm -rf /usr/bin/python2
