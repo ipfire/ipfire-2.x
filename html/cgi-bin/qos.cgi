@@ -68,7 +68,6 @@ $qossettings{'DEF_OUT_SPD'} = '';
 $qossettings{'DEF_INC_SPD'} = '';
 $qossettings{'DEFCLASS_INC'} = '';
 $qossettings{'DEFCLASS_OUT'} = '';
-$qossettings{'ACK'} = '';
 $qossettings{'RED_DEV'} = 'ppp0';
 $qossettings{'IMQ_DEV'} = 'imq0';
 $qossettings{'VALID'} = 'yes';
@@ -518,7 +517,6 @@ END
 		}
 		$qossettings{'DEFCLASS_INC'} = "210";
 		$qossettings{'DEFCLASS_OUT'} = "110";
-		$qossettings{'ACK'} ="101";
 		$qossettings{'ENABLED'} = 'on';
 		&General::writehash("${General::swroot}/qos/settings", \%qossettings);
 		&General::system("/usr/local/bin/qosctrl", "generate");
@@ -660,7 +658,7 @@ END
 END
 ;
 	}
-	if (($qossettings{'DEFCLASS_OUT'} ne '') && ($qossettings{'DEFCLASS_INC'} ne '')&& ($qossettings{'ACK'} ne '')) {
+	if (($qossettings{'DEFCLASS_OUT'} ne '') && ($qossettings{'DEFCLASS_INC'} ne '')) {
 		print <<END
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 		<table width='66%'>
@@ -668,7 +666,6 @@ END
 		<tr><td width='50%' align='right'>$Lang::tr{'downlink std class'}: 	<td width='30%' align='left'>$qossettings{'DEFCLASS_INC'}
 		    <td width='20%' rowspan='3' align='center' valign='middle'><input type='submit' name='ACTIONDEF' value='$Lang::tr{'modify'}' />
 		<tr><td width='50%' align='right'>$Lang::tr{'uplink std class'}: 	<td width='30%' align='left'>$qossettings{'DEFCLASS_OUT'}
-		<tr><td width='50%' align='right'>ACKs:				<td width='30%' align='left'>$qossettings{'ACK'}
 	 	<tr><td colspan='3' width='100%'><hr />
 		<tr><td colspan='3' width='100%' align='center'>
 		</table>
@@ -692,7 +689,7 @@ if ( ($qossettings{'OUT_SPD'} eq '') || ($qossettings{'INC_SPD'} eq '') ) {
 	exit
 }
 
-if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq '') || ($qossettings{'ACK'} eq '') ) {
+if ( ($qossettings{'DEFCLASS_INC'} eq '') || ($qossettings{'DEFCLASS_OUT'} eq '') ) {
 	&changedefclasses();
 	&Header::closebigbox();
 	&Header::closepage();
@@ -742,21 +739,6 @@ END
 			else { print "<option selected value='$c'>$c</option>\n"; }
 		}
 		print <<END
-		</select><td width='33%' align='center'>&nbsp;
-		</table>
-		<hr />
-		<table width='66%'>
-		<tr><td width='100%' colspan='3'>$Lang::tr{'enter ack class'}
-		<tr><td width='33%' align='right'>ACKs:<td width='33%' align='left'><select name='ACK'>
-END
-;
-		for ( $c = 100 ; $c <= 120 ; $c++ )
-		{
-			if ( $qossettings{'ACK'} ne $c )
-			{ print "<option value='$c'>$c</option>\n"; }
-			else {	print "<option selected value='$c'>$c</option>\n"; }
-		}
-		print <<END
 		</select><td width='33%' align='center'><input type='submit' name='ACTION' value="$Lang::tr{'save'}" />
 		</table>
 		</form>
@@ -766,9 +748,9 @@ END
 }
 
 sub changebandwidth {
-	&Header::openbox('100%', 'center', $Lang::tr{'bandwithsettings'});
+	&Header::openbox('100%', 'center', $Lang::tr{'bandwidthsettings'});
 	if ($qossettings{'ENABLED'} eq 'on') {
-		print "$Lang::tr{'bandwitherror'}";
+		print "$Lang::tr{'bandwidtherror'}";
 		print "<a href='/cgi-bin/qos.cgi'>$Lang::tr{'back'}</a>";
 	} else {
 		print <<END
@@ -860,10 +842,10 @@ END
 		print <<END
 		</select>
 		<td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>$Lang::tr{'guaranteed bandwith'}:
+		<tr><td width='33%' align='right'>$Lang::tr{'guaranteed bandwidth'}:
 		    <td width='33%' align='left'><input type='text' size='20' name='MINBWDTH' maxlength='8' required='1' value="$qossettings{'MINBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
-		<tr><td width='33%' align='right'>$Lang::tr{'max bandwith'}&nbsp;<img src='/blob.gif' alt='*' />:
+		<tr><td width='33%' align='right'>$Lang::tr{'max bandwidth'}&nbsp;<img src='/blob.gif' alt='*' />:
 		    <td width='33%' align='left'><input type='text' size='20' name='MAXBWDTH' maxlength='8' required='1' value="$qossettings{'MAXBWDTH'}" />
 		    <td width='33%' align='center'>&nbsp;
 		<tr><td width='33%' align='right'>Burst:
@@ -1025,8 +1007,8 @@ sub showclasses {
 				<tr><td bgcolor='$color{'color20'}' width='10%' align='center'><b>$Lang::tr{'interface'}</b>
 				    <td bgcolor='$color{'color20'}' width='10%' align='center'><b>$Lang::tr{'Class'}</b>
 				    <td bgcolor='$color{'color20'}' width='10%' align='center'>$Lang::tr{'priority'}
-				    <td bgcolor='$color{'color20'}' width='10%' align='center'>$Lang::tr{'guaranteed bandwith'}
-				    <td bgcolor='$color{'color20'}' width='10%' align='center'>$Lang::tr{'max bandwith'}
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'>$Lang::tr{'guaranteed bandwidth'}
+				    <td bgcolor='$color{'color20'}' width='10%' align='center'>$Lang::tr{'max bandwidth'}
 				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Burst
 				    <td bgcolor='$color{'color20'}' width='10%' align='center'>Ceil Burst
 				    <td bgcolor='$color{'color20'}' width='10%' align='center'>TOS
@@ -1237,7 +1219,7 @@ sub validminbwdth {
 		}
 		unless ( ( $qossettings{'MINBWDTH'} >= 1 ) && ( $qossettings{'MINBWDTH'} <= $qossettings{'SPD'} ) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "$Lang::tr{'false min bandwith'}";
+			$message = "$Lang::tr{'false min bandwidth'}";
 		}
 		$qossettings{'SPD'} = '';
 	}
@@ -1252,7 +1234,7 @@ sub validmaxbwdth {
 		}
 		unless ( ( $qossettings{'MAXBDWTH'} >= 0 ) && ($qossettings{'MAXBDWTH'} >= $qossettings{'MINBDWTH'}) &&( $qossettings{'MAXBDWTH'} <= $qossettings{'SPD'} ) ) {
 			$qossettings{'VALID'} = 'no';
-			$message = "$Lang::tr{'false max bandwith'}";
+			$message = "$Lang::tr{'false max bandwidth'}";
 		}
 		$qossettings{'SPD'} = '';
 	}

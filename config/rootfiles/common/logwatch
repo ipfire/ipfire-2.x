@@ -3,6 +3,8 @@ etc/logwatch/conf
 #etc/logwatch/logwatch.cron
 etc/logwatch/scripts
 etc/logwatch/scripts/services
+#etc/sudoers.d
+etc/sudoers.d/logwatch-mdadm
 usr/sbin/logwatch
 #usr/share/logwatch
 #usr/share/logwatch/HOWTO-Customize-LogWatch
@@ -117,7 +119,7 @@ usr/share/logwatch/default.conf/services/kernel.conf
 #usr/share/logwatch/default.conf/services/knockd.conf
 #usr/share/logwatch/default.conf/services/lvm.conf
 #usr/share/logwatch/default.conf/services/mailscanner.conf
-#usr/share/logwatch/default.conf/services/mdadm.conf
+usr/share/logwatch/default.conf/services/mdadm.conf
 #usr/share/logwatch/default.conf/services/mod_security2.conf
 usr/share/logwatch/default.conf/services/modprobe.conf
 #usr/share/logwatch/default.conf/services/mountd.conf
@@ -262,7 +264,7 @@ usr/share/logwatch/scripts/services/kernel
 #usr/share/logwatch/scripts/services/knockd
 #usr/share/logwatch/scripts/services/lvm
 #usr/share/logwatch/scripts/services/mailscanner
-#usr/share/logwatch/scripts/services/mdadm
+usr/share/logwatch/scripts/services/mdadm
 #usr/share/logwatch/scripts/services/mod_security2
 usr/share/logwatch/scripts/services/modprobe
 #usr/share/logwatch/scripts/services/mountd

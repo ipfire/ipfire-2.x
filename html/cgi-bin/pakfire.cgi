@@ -44,6 +44,8 @@ $cgiparams{'VALID'} = '';
 $cgiparams{'INSPAKS'} = '';
 $cgiparams{'DELPAKS'} = '';
 
+my $page_lock;
+
 sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
 
 &Header::getcgihash(\%cgiparams);
@@ -57,8 +59,9 @@ sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' cont
 if (($cgiparams{'ACTION'} eq 'install') && (! -e $Pakfire::lockfile)) {
 	my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
 	if ("$cgiparams{'FORCE'}" eq "on") {
+		# Lock the page.
+		$page_lock = "1";
 		&General::system_background("/usr/local/bin/pakfire", "install", "--non-interactive", "--no-colors", @pkgs);
-		sleep(2);
 	} else {
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
 		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
@@ -95,8 +98,9 @@ END
 } elsif (($cgiparams{'ACTION'} eq 'remove') && (! -e $Pakfire::lockfile)) {
 	my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
 	if ("$cgiparams{'FORCE'}" eq "on") {
+		# Lock the page.
+		$page_lock = "1";
 		&General::system_background("/usr/local/bin/pakfire", "remove", "--non-interactive", "--no-colors", @pkgs);
-		sleep(2);
 	} else {
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
 		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
@@ -132,8 +136,12 @@ END
 	}
 
 } elsif (($cgiparams{'ACTION'} eq 'update') && (! -e $Pakfire::lockfile)) {
+	# Set variable to lock the page.
+	$page_lock = "1";
 	&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
 } elsif (($cgiparams{'ACTION'} eq 'upgrade') && (!-e $Pakfire::lockfile)) {
+	# Lock the page.
+	$page_lock = "1";
 	&General::system_background("/usr/local/bin/pakfire", "upgrade", "-y", "--no-colors");
 } elsif ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
 	$pakfiresettings{"TREE"} = $cgiparams{"TREE"};
@@ -169,6 +177,43 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
+# Check if a page lock is required.
+if ($page_lock) {
+	&Header::openbox('Waiting', 1, ,);
+		print <<END;
+		<table>
+			<tr>
+				<td>
+					<img src='/images/indicator.gif' alt='$Lang::tr{'active'}' title='$Lang::tr{'active'}'>
+				</td>
+
+				<td>
+					$Lang::tr{'pakfire working'}
+				</td>
+			</tr>
+		</table>
+END
+	&Header::closebox();
+
+	# Infinite loop to lock the page until pakfire lockfile is present.
+	while($page_lock) {
+		unless (-e $Pakfire::lockfile) {
+			sleep(1);
+		} else {
+			# Release page lock.
+			undef($page_lock);
+
+			# Break loop.
+			last;
+		}
+	}
+
+	# Perform page reload.
+	print "<meta http-equiv='refresh' content='1;'>\n";
+	exit;
+}
+
+# Check if pakfire is already running. In this case a lockfile is present.
 if (-e $Pakfire::lockfile) {
 	&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='10;'>" );
 	print <<END;

@@ -1,0 +1,18 @@
+diff -Naur u-boot-2021.07.org/arch/arm/mach-rockchip/misc.c u-boot-2021.07/arch/arm/mach-rockchip/misc.c
+--- u-boot-2021.07.org/arch/arm/mach-rockchip/misc.c	2021-07-05 15:11:28.000000000 +0000
++++ u-boot-2021.07/arch/arm/mach-rockchip/misc.c	2021-10-08 10:47:13.704806367 +0000
+@@ -49,9 +49,12 @@
+ 	memcpy(mac_addr, hash, 6);
+ 
+ 	/* Make this a valid MAC address and set it */
+-	mac_addr[0] &= 0xfe;  /* clear multicast bit */
+-	mac_addr[0] |= 0x02;  /* set local assignment bit (IEEE802) */
++	mac_addr[0] = 0x02;  /* set local assignment bit (IEEE802) */
+ 	eth_env_set_enetaddr("ethaddr", mac_addr);
++	if (env_get("eth1addr"))
++		return 0;
++	mac_addr[0] = 0x12;  /* set local assignment bit (IEEE802) */
++	eth_env_set_enetaddr("eth1addr", mac_addr);
+ #endif
+ 	return 0;
+ }

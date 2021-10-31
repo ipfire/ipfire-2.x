@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = minidlna
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       = ffmpeg flac libexif libid3tag libogg
 
@@ -89,6 +89,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	#install initscripts
 	$(call INSTALL_INITSCRIPT,minidlna)
+	
+	#install backup definition
+	install -v -m 644 ${DIR_SRC}/config/backup/includes/minidlna \
+			/var/ipfire/backup/addons/includes/minidlna
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

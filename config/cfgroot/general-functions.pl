@@ -1227,6 +1227,7 @@ sub firewall_reload() {
 }
 
 # Function which will return the used interface for the red network zone (red0, ppp0, etc).
+# if you change this also check speed.cgi that include a local copy for systemload reasons
 sub get_red_interface() {
 
 	open(IFACE, "${General::swroot}/red/iface") or die "Could not open /var/ipfire/red/iface";
@@ -1238,17 +1239,6 @@ sub get_red_interface() {
 	return $interface;
 }
 
-sub dnssec_status() {
-	my $path = "${General::swroot}/red/dnssec-status";
-
-	open(STATUS, $path) or return 0;
-	my $status = <STATUS>;
-	close(STATUS);
-
-	chomp($status);
-
-	return $status;
-}
 sub number_cpu_cores() {
 	open my $cpuinfo, "/proc/cpuinfo" or die "Can't open cpuinfo: $!\n";
 	my $cores = scalar (map /^processor/, <$cpuinfo>);

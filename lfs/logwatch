@@ -74,6 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP)/lib && patch < $(DIR_SRC)/src/patches/logwatch/logwatch-7.3.6-date_manip6.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/logwatch/logwatch-7.5.4-disable_iptables.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/logwatch/logwatch-7.5.5-enable-mdadm-sudo.patch
 
 	@cd $(DIR_APP) && chmod 755 install_logwatch.sh
 	cd $(DIR_APP) && yes "" | ./install_logwatch.sh
@@ -103,6 +104,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod -v 755 /var/log/logwatch
 	-rm -rf /etc/logwatch/conf
 	ln -vsf /usr/share/logwatch/default.conf /etc/logwatch/conf
-	
+
+	-mkdir -p /etc/sudoers.d
+	chmod -v 755 /etc/sudoers.d
+	install -v -m 644 $(DIR_SRC)/config/logwatch/sudoers/logwatch-mdadm \
+                /etc/sudoers.d/logwatch-mdadm
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

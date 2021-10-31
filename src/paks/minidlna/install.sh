@@ -25,6 +25,7 @@
 extract_files
 [ -d /var/mp3 ] ||  ( mkdir /var/mp3 && chown nobody.nobody /var/mp3 )
 
+restore_backup ${NAME}
 start_service ${NAME}
 
 ln -svf ../init.d/minidlna /etc/rc.d/rc0.d/K00minidlna

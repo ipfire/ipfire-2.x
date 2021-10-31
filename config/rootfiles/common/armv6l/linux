@@ -7093,7 +7093,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/async/pq.h
 #lib/modules/KVER-ipfire/build/include/config/async/raid6
 #lib/modules/KVER-ipfire/build/include/config/async/raid6/recov.h
-#lib/modules/KVER-ipfire/build/include/config/async/raid6/test.h
 #lib/modules/KVER-ipfire/build/include/config/async/tx
 #lib/modules/KVER-ipfire/build/include/config/async/tx/dma.h
 #lib/modules/KVER-ipfire/build/include/config/async/tx/enable
@@ -7510,6 +7509,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/cgroup/net/prio.h
 #lib/modules/KVER-ipfire/build/include/config/cgroup/perf.h
 #lib/modules/KVER-ipfire/build/include/config/cgroup/pids.h
+#lib/modules/KVER-ipfire/build/include/config/cgroup/rdma.h
 #lib/modules/KVER-ipfire/build/include/config/cgroup/sched.h
 #lib/modules/KVER-ipfire/build/include/config/cgroup/writeback.h
 #lib/modules/KVER-ipfire/build/include/config/cgroups.h
@@ -7695,7 +7695,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/cpu/pabrt/v7.h
 #lib/modules/KVER-ipfire/build/include/config/cpu/pj4.h
 #lib/modules/KVER-ipfire/build/include/config/cpu/pj4b.h
-#lib/modules/KVER-ipfire/build/include/config/cpu/pm.h
 #lib/modules/KVER-ipfire/build/include/config/cpu/rmap.h
 #lib/modules/KVER-ipfire/build/include/config/cpu/spectre.h
 #lib/modules/KVER-ipfire/build/include/config/cpu/sw
@@ -8389,6 +8388,10 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/event
 #lib/modules/KVER-ipfire/build/include/config/event/tracing.h
 #lib/modules/KVER-ipfire/build/include/config/eventfd.h
+#lib/modules/KVER-ipfire/build/include/config/exfat
+#lib/modules/KVER-ipfire/build/include/config/exfat/default
+#lib/modules/KVER-ipfire/build/include/config/exfat/default/iocharset.h
+#lib/modules/KVER-ipfire/build/include/config/exfat/fs.h
 #lib/modules/KVER-ipfire/build/include/config/expert.h
 #lib/modules/KVER-ipfire/build/include/config/exportfs.h
 #lib/modules/KVER-ipfire/build/include/config/ext4
@@ -8491,6 +8494,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/framebuffer/console/detect/primary.h
 #lib/modules/KVER-ipfire/build/include/config/framebuffer/console/rotation.h
 #lib/modules/KVER-ipfire/build/include/config/freezer.h
+#lib/modules/KVER-ipfire/build/include/config/frontswap.h
 #lib/modules/KVER-ipfire/build/include/config/fs
 #lib/modules/KVER-ipfire/build/include/config/fs/iomap.h
 #lib/modules/KVER-ipfire/build/include/config/fs/mbcache.h
@@ -8530,7 +8534,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/futex.h
 #lib/modules/KVER-ipfire/build/include/config/futex/pi.h
 #lib/modules/KVER-ipfire/build/include/config/fw
-#lib/modules/KVER-ipfire/build/include/config/fw/cache.h
 #lib/modules/KVER-ipfire/build/include/config/fw/loader
 #lib/modules/KVER-ipfire/build/include/config/fw/loader.h
 #lib/modules/KVER-ipfire/build/include/config/fw/loader/paged
@@ -8732,6 +8735,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/have/function/graph
 #lib/modules/KVER-ipfire/build/include/config/have/function/graph/tracer.h
 #lib/modules/KVER-ipfire/build/include/config/have/function/tracer.h
+#lib/modules/KVER-ipfire/build/include/config/have/futex
+#lib/modules/KVER-ipfire/build/include/config/have/futex/cmpxchg.h
 #lib/modules/KVER-ipfire/build/include/config/have/gcc
 #lib/modules/KVER-ipfire/build/include/config/have/gcc/plugins.h
 #lib/modules/KVER-ipfire/build/include/config/have/generic
@@ -8905,6 +8910,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/hw/random/omap3
 #lib/modules/KVER-ipfire/build/include/config/hw/random/omap3/rom.h
 #lib/modules/KVER-ipfire/build/include/config/hw/random/timeriomem.h
+#lib/modules/KVER-ipfire/build/include/config/hw/random/tpm.h
 #lib/modules/KVER-ipfire/build/include/config/hw/random/xiphera.h
 #lib/modules/KVER-ipfire/build/include/config/hwbm.h
 #lib/modules/KVER-ipfire/build/include/config/hwmon
@@ -8915,7 +8921,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/hwspinlock/omap.h
 #lib/modules/KVER-ipfire/build/include/config/hz
 #lib/modules/KVER-ipfire/build/include/config/hz.h
-#lib/modules/KVER-ipfire/build/include/config/hz/100.h
+#lib/modules/KVER-ipfire/build/include/config/hz/1000.h
 #lib/modules/KVER-ipfire/build/include/config/hz/fixed.h
 #lib/modules/KVER-ipfire/build/include/config/i2c
 #lib/modules/KVER-ipfire/build/include/config/i2c.h
@@ -9038,6 +9044,10 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/init/env
 #lib/modules/KVER-ipfire/build/include/config/init/env/arg
 #lib/modules/KVER-ipfire/build/include/config/init/env/arg/limit.h
+#lib/modules/KVER-ipfire/build/include/config/init/on
+#lib/modules/KVER-ipfire/build/include/config/init/on/alloc
+#lib/modules/KVER-ipfire/build/include/config/init/on/alloc/default
+#lib/modules/KVER-ipfire/build/include/config/init/on/alloc/default/on.h
 #lib/modules/KVER-ipfire/build/include/config/initramfs
 #lib/modules/KVER-ipfire/build/include/config/initramfs/source.h
 #lib/modules/KVER-ipfire/build/include/config/inline
@@ -10696,11 +10706,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/omap5/errata
 #lib/modules/KVER-ipfire/build/include/config/omap5/errata/801819.h
 #lib/modules/KVER-ipfire/build/include/config/omap5/thermal.h
-#lib/modules/KVER-ipfire/build/include/config/openvswitch
-#lib/modules/KVER-ipfire/build/include/config/openvswitch.h
-#lib/modules/KVER-ipfire/build/include/config/openvswitch/geneve.h
-#lib/modules/KVER-ipfire/build/include/config/openvswitch/gre.h
-#lib/modules/KVER-ipfire/build/include/config/openvswitch/vxlan.h
 #lib/modules/KVER-ipfire/build/include/config/orinoco
 #lib/modules/KVER-ipfire/build/include/config/orinoco/usb.h
 #lib/modules/KVER-ipfire/build/include/config/orion
@@ -10925,11 +10930,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/pm/generic/domains
 #lib/modules/KVER-ipfire/build/include/config/pm/generic/domains.h
 #lib/modules/KVER-ipfire/build/include/config/pm/generic/domains/of.h
-#lib/modules/KVER-ipfire/build/include/config/pm/generic/domains/sleep.h
 #lib/modules/KVER-ipfire/build/include/config/pm/opp.h
-#lib/modules/KVER-ipfire/build/include/config/pm/sleep
-#lib/modules/KVER-ipfire/build/include/config/pm/sleep.h
-#lib/modules/KVER-ipfire/build/include/config/pm/sleep/smp.h
 #lib/modules/KVER-ipfire/build/include/config/pmbus.h
 #lib/modules/KVER-ipfire/build/include/config/pnfs
 #lib/modules/KVER-ipfire/build/include/config/pnfs/block.h
@@ -11002,6 +11003,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/proc/sysctl.h
 #lib/modules/KVER-ipfire/build/include/config/proc/vmcore.h
 #lib/modules/KVER-ipfire/build/include/config/psample.h
+#lib/modules/KVER-ipfire/build/include/config/psi.h
 #lib/modules/KVER-ipfire/build/include/config/pstore
 #lib/modules/KVER-ipfire/build/include/config/pstore.h
 #lib/modules/KVER-ipfire/build/include/config/pstore/compress
@@ -11079,8 +11081,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/rational.h
 #lib/modules/KVER-ipfire/build/include/config/raw
 #lib/modules/KVER-ipfire/build/include/config/raw/driver.h
-#lib/modules/KVER-ipfire/build/include/config/rbtree
-#lib/modules/KVER-ipfire/build/include/config/rbtree/test.h
 #lib/modules/KVER-ipfire/build/include/config/rcu
 #lib/modules/KVER-ipfire/build/include/config/rcu/cpu
 #lib/modules/KVER-ipfire/build/include/config/rcu/cpu/stall
@@ -11314,9 +11314,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/rtw88/8822ce.h
 #lib/modules/KVER-ipfire/build/include/config/rtw88/core.h
 #lib/modules/KVER-ipfire/build/include/config/rtw88/pci.h
-#lib/modules/KVER-ipfire/build/include/config/runtime
-#lib/modules/KVER-ipfire/build/include/config/runtime/testing
-#lib/modules/KVER-ipfire/build/include/config/runtime/testing/menu.h
 #lib/modules/KVER-ipfire/build/include/config/rwsem
 #lib/modules/KVER-ipfire/build/include/config/rwsem/spin
 #lib/modules/KVER-ipfire/build/include/config/rwsem/spin/on
@@ -11396,9 +11393,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/security.h
 #lib/modules/KVER-ipfire/build/include/config/security/dmesg
 #lib/modules/KVER-ipfire/build/include/config/security/dmesg/restrict.h
-#lib/modules/KVER-ipfire/build/include/config/security/network
-#lib/modules/KVER-ipfire/build/include/config/security/network.h
-#lib/modules/KVER-ipfire/build/include/config/security/network/xfrm.h
 #lib/modules/KVER-ipfire/build/include/config/securityfs.h
 #lib/modules/KVER-ipfire/build/include/config/select
 #lib/modules/KVER-ipfire/build/include/config/select/memory
@@ -11631,7 +11625,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/slub.h
 #lib/modules/KVER-ipfire/build/include/config/slub/cpu
 #lib/modules/KVER-ipfire/build/include/config/slub/cpu/partial.h
-#lib/modules/KVER-ipfire/build/include/config/slub/debug.h
 #lib/modules/KVER-ipfire/build/include/config/smc911x.h
 #lib/modules/KVER-ipfire/build/include/config/smc91x.h
 #lib/modules/KVER-ipfire/build/include/config/smp
@@ -12027,9 +12020,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/sunxi/rsb.h
 #lib/modules/KVER-ipfire/build/include/config/sunxi/sram.h
 #lib/modules/KVER-ipfire/build/include/config/sunxi/watchdog.h
-#lib/modules/KVER-ipfire/build/include/config/suspend
-#lib/modules/KVER-ipfire/build/include/config/suspend.h
-#lib/modules/KVER-ipfire/build/include/config/suspend/freezer.h
 #lib/modules/KVER-ipfire/build/include/config/swap.h
 #lib/modules/KVER-ipfire/build/include/config/swp
 #lib/modules/KVER-ipfire/build/include/config/swp/emulate.h
@@ -12073,6 +12063,20 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/tasks/rude
 #lib/modules/KVER-ipfire/build/include/config/tasks/rude/rcu.h
 #lib/modules/KVER-ipfire/build/include/config/taskstats.h
+#lib/modules/KVER-ipfire/build/include/config/tcg
+#lib/modules/KVER-ipfire/build/include/config/tcg/tis
+#lib/modules/KVER-ipfire/build/include/config/tcg/tis.h
+#lib/modules/KVER-ipfire/build/include/config/tcg/tis/core.h
+#lib/modules/KVER-ipfire/build/include/config/tcg/tis/i2c
+#lib/modules/KVER-ipfire/build/include/config/tcg/tis/i2c/atmel.h
+#lib/modules/KVER-ipfire/build/include/config/tcg/tis/i2c/infineon.h
+#lib/modules/KVER-ipfire/build/include/config/tcg/tis/i2c/nuvoton.h
+#lib/modules/KVER-ipfire/build/include/config/tcg/tis/st33zp24
+#lib/modules/KVER-ipfire/build/include/config/tcg/tis/st33zp24.h
+#lib/modules/KVER-ipfire/build/include/config/tcg/tis/st33zp24/i2c.h
+#lib/modules/KVER-ipfire/build/include/config/tcg/tpm.h
+#lib/modules/KVER-ipfire/build/include/config/tcg/vtpm
+#lib/modules/KVER-ipfire/build/include/config/tcg/vtpm/proxy.h
 #lib/modules/KVER-ipfire/build/include/config/tcp
 #lib/modules/KVER-ipfire/build/include/config/tcp/cong
 #lib/modules/KVER-ipfire/build/include/config/tcp/cong/advanced.h
@@ -12716,9 +12720,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/vsockets/loopback.h
 #lib/modules/KVER-ipfire/build/include/config/vt
 #lib/modules/KVER-ipfire/build/include/config/vt.h
-#lib/modules/KVER-ipfire/build/include/config/vt/console
 #lib/modules/KVER-ipfire/build/include/config/vt/console.h
-#lib/modules/KVER-ipfire/build/include/config/vt/console/sleep.h
 #lib/modules/KVER-ipfire/build/include/config/vt/hw
 #lib/modules/KVER-ipfire/build/include/config/vt/hw/console
 #lib/modules/KVER-ipfire/build/include/config/vt/hw/console/binding.h
@@ -20216,7 +20218,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/crypto/async_tx/async_raid6_recov.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/async_tx/async_tx.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/async_tx/async_xor.ko.xz
-#lib/modules/KVER-ipfire/kernel/crypto/async_tx/raid6test.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/authenc.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/authencesn.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/blake2b_generic.ko.xz
@@ -20314,6 +20315,17 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/char/ipmi/ipmi_watchdog.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/char/lp.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/char/ppdev.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/char/tpm
+#lib/modules/KVER-ipfire/kernel/drivers/char/tpm/st33zp24
+#lib/modules/KVER-ipfire/kernel/drivers/char/tpm/st33zp24/tpm_st33zp24.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/char/tpm/st33zp24/tpm_st33zp24_i2c.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/char/tpm/tpm.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/char/tpm/tpm_i2c_atmel.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/char/tpm/tpm_i2c_infineon.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/char/tpm/tpm_i2c_nuvoton.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/char/tpm/tpm_tis.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/char/tpm/tpm_tis_core.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/char/tpm/tpm_vtpm_proxy.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/clk
 #lib/modules/KVER-ipfire/kernel/drivers/clk/clk-si5351.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/clk/clk-si570.ko.xz
@@ -21304,7 +21316,8 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/mellanox/mlxsw/mlxsw_switchx2.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/micrel
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/micrel/ks8842.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/micrel/ks8851_mll.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/micrel/ks8851_common.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/micrel/ks8851_par.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/micrel/ksz884x.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/microchip
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/microchip/lan743x.ko.xz
@@ -22071,6 +22084,8 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/fs/configfs/configfs.ko.xz
 #lib/modules/KVER-ipfire/kernel/fs/dlm
 #lib/modules/KVER-ipfire/kernel/fs/dlm/dlm.ko.xz
+#lib/modules/KVER-ipfire/kernel/fs/exfat
+#lib/modules/KVER-ipfire/kernel/fs/exfat/exfat.ko.xz
 #lib/modules/KVER-ipfire/kernel/fs/fat
 #lib/modules/KVER-ipfire/kernel/fs/fat/fat.ko.xz
 #lib/modules/KVER-ipfire/kernel/fs/fat/msdos.ko.xz
@@ -22183,7 +22198,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/lib/parman.ko.xz
 #lib/modules/KVER-ipfire/kernel/lib/raid6
 #lib/modules/KVER-ipfire/kernel/lib/raid6/raid6_pq.ko.xz
-#lib/modules/KVER-ipfire/kernel/lib/rbtree_test.ko.xz
 #lib/modules/KVER-ipfire/kernel/lib/ts_bm.ko.xz
 #lib/modules/KVER-ipfire/kernel/lib/ts_fsm.ko.xz
 #lib/modules/KVER-ipfire/kernel/lib/ts_kmp.ko.xz
@@ -22519,11 +22533,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/net/netlink/netlink_diag.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/nsh
 #lib/modules/KVER-ipfire/kernel/net/nsh/nsh.ko.xz
-#lib/modules/KVER-ipfire/kernel/net/openvswitch
-#lib/modules/KVER-ipfire/kernel/net/openvswitch/openvswitch.ko.xz
-#lib/modules/KVER-ipfire/kernel/net/openvswitch/vport-geneve.ko.xz
-#lib/modules/KVER-ipfire/kernel/net/openvswitch/vport-gre.ko.xz
-#lib/modules/KVER-ipfire/kernel/net/openvswitch/vport-vxlan.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/psample
 #lib/modules/KVER-ipfire/kernel/net/psample/psample.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/qrtr

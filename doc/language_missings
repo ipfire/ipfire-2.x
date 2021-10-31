@@ -79,6 +79,7 @@
 < administrator password
 < administrator username
 < adsl settings
+< advproxy asbased anomaly detection
 < advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
 < advproxy basic authentication
@@ -87,9 +88,15 @@
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
 < advproxy errmsg wpad invalid ip or mask
+< advproxy fastflux detection
+< advproxy fastflux detection threshold
+< advproxy fastflux no threshold given
+< advproxy fastflux threshold invalid
+< advproxy fastflux threshold out of bounds
 < advproxy group access control
 < advproxy group required
 < advproxy proxy port transparent
+< advproxy selectively announcements detection
 < advproxy wpad example dst_noproxy_ip
 < advproxy wpad example dst_noproxy_url
 < advproxy wpad label dst_noproxy_ip
@@ -930,10 +937,12 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< false max bandwidth
+< false min bandwidth
 < g.dtm
 < g.lite
-< reboot fsck
-< rebooting ipfire fsck
+< guaranteed bandwidth
+< max bandwidth
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -943,11 +952,18 @@
 < administrator password
 < administrator username
 < adsl settings
+< advproxy asbased anomaly detection
 < advproxy AUTH method ntlm auth
 < advproxy basic authentication
 < advproxy errmsg wpad invalid ip or mask
+< advproxy fastflux detection
+< advproxy fastflux detection threshold
+< advproxy fastflux no threshold given
+< advproxy fastflux threshold invalid
+< advproxy fastflux threshold out of bounds
 < advproxy group access control
 < advproxy group required
+< advproxy selectively announcements detection
 < advproxy wpad example dst_noproxy_ip
 < advproxy wpad example dst_noproxy_url
 < advproxy wpad label dst_noproxy_ip
@@ -1108,7 +1124,7 @@
 < fwhost cust locationlocation
 < fwhost newlocationgrp
 < generate ptr
-< guaranteed bandwith
+< guaranteed bandwidth
 < guardian
 < hardware vulnerabilities
 < ids apply
@@ -1340,12 +1356,19 @@
 < administrator password
 < administrator username
 < adsl settings
+< advproxy asbased anomaly detection
 < advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
 < advproxy basic authentication
 < advproxy errmsg wpad invalid ip or mask
+< advproxy fastflux detection
+< advproxy fastflux detection threshold
+< advproxy fastflux no threshold given
+< advproxy fastflux threshold invalid
+< advproxy fastflux threshold out of bounds
 < advproxy group access control
 < advproxy group required
+< advproxy selectively announcements detection
 < advproxy wpad example dst_noproxy_ip
 < advproxy wpad example dst_noproxy_url
 < advproxy wpad label dst_noproxy_ip
@@ -1793,6 +1816,7 @@
 < administrator password
 < administrator username
 < adsl settings
+< advproxy asbased anomaly detection
 < advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
 < advproxy basic authentication
@@ -1801,9 +1825,15 @@
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
 < advproxy errmsg wpad invalid ip or mask
+< advproxy fastflux detection
+< advproxy fastflux detection threshold
+< advproxy fastflux no threshold given
+< advproxy fastflux threshold invalid
+< advproxy fastflux threshold out of bounds
 < advproxy group access control
 < advproxy group required
 < advproxy proxy port transparent
+< advproxy selectively announcements detection
 < advproxy wpad example dst_noproxy_ip
 < advproxy wpad example dst_noproxy_url
 < advproxy wpad label dst_noproxy_ip
@@ -2687,6 +2717,7 @@
 < administrator password
 < administrator username
 < adsl settings
+< advproxy asbased anomaly detection
 < advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
 < advproxy basic authentication
@@ -2695,9 +2726,15 @@
 < advproxy errmsg invalid upstream proxy
 < advproxy errmsg proxy ports equal
 < advproxy errmsg wpad invalid ip or mask
+< advproxy fastflux detection
+< advproxy fastflux detection threshold
+< advproxy fastflux no threshold given
+< advproxy fastflux threshold invalid
+< advproxy fastflux threshold out of bounds
 < advproxy group access control
 < advproxy group required
 < advproxy proxy port transparent
+< advproxy selectively announcements detection
 < advproxy wpad example dst_noproxy_ip
 < advproxy wpad example dst_noproxy_url
 < advproxy wpad label dst_noproxy_ip
@@ -3581,7 +3618,14 @@
 # Checking cgi-bin translations for language: tr                           #
 ############################################################################
 < acpitemp
+< advproxy asbased anomaly detection
 < advproxy errmsg wpad invalid ip or mask
+< advproxy fastflux detection
+< advproxy fastflux detection threshold
+< advproxy fastflux no threshold given
+< advproxy fastflux threshold invalid
+< advproxy fastflux threshold out of bounds
+< advproxy selectively announcements detection
 < advproxy wpad example dst_noproxy_ip
 < advproxy wpad example dst_noproxy_url
 < advproxy wpad label dst_noproxy_ip

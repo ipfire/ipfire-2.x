@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -730,6 +730,8 @@ sub BuildConfiguration() {
 	open(FILE, ">$torrc");
 
 	# Global settings.
+	print FILE "Sandbox 1\n";
+	print FILE "HardwareAccel 1\n";
 	print FILE "ControlPort $TOR_CONTROL_PORT\n";
 
 	if ($settings{'TOR_ENABLED'} eq 'on') {
@@ -800,10 +802,10 @@ sub BuildConfiguration() {
 		# Reject access to private networks.
 		print FILE "ExitPolicyRejectPrivate 1\n";
 
-		print FILE "ORPort $settings{'TOR_RELAY_PORT'}\n";
+		print FILE "ORPort $settings{'TOR_RELAY_PORT'} IPv4Only\n";
 
 		if ($settings{'TOR_RELAY_DIRPORT'} ne '0') {
-			print FILE "DirPort $settings{'TOR_RELAY_DIRPORT'}\n";
+			print FILE "DirPort $settings{'TOR_RELAY_DIRPORT'} IPv4Only\n";
 		}
 
 		if ($settings{'TOR_RELAY_ADDRESS'} ne '') {

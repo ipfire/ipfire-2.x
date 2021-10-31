@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.4308
+VER        = 1.54
 
 THISAPP    = GDGraph-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = fcdd34d5e09ae917b5d264887734b3b1
+$(DL_FILE)_MD5 = 38c6a188519e6272e9b2b722b315c3d8
 
 install : $(TARGET)
 

@@ -26,6 +26,7 @@ usr/libexec/git-core/git-check-ignore
 usr/libexec/git-core/git-check-mailmap
 usr/libexec/git-core/git-check-ref-format
 usr/libexec/git-core/git-checkout
+usr/libexec/git-core/git-checkout--worker
 usr/libexec/git-core/git-checkout-index
 usr/libexec/git-core/git-cherry
 usr/libexec/git-core/git-cherry-pick

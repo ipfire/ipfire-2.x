@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2020 IPFire Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2021 IPFire Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.27"							# Version number
-CORE="160"							# Core Level (Filename)
+CORE="161"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
@@ -1128,7 +1128,6 @@ buildbase() {
 	lfsmake2 gperf
 	lfsmake2 gzip
 	lfsmake2 hostname
-	lfsmake2 iproute2
 	lfsmake2 jwhois
 	lfsmake2 kbd
 	lfsmake2 less
@@ -1190,6 +1189,7 @@ buildipfire() {
   lfsmake2 libnetfilter_cthelper
   lfsmake2 libnetfilter_cttimeout
   lfsmake2 iptables
+  lfsmake2 iproute2
   lfsmake2 screen
   lfsmake2 elfutils
 
@@ -1198,6 +1198,7 @@ buildipfire() {
   lfsmake2 linux		KCFG=""
   lfsmake2 rtl8189es		KCFG=""
   lfsmake2 rtl8812au		KCFG=""
+  lfsmake2 rtl8822bu		KCFG=""
   lfsmake2 xradio		KCFG=""
   lfsmake2 xtables-addons	KCFG=""
   lfsmake2 linux-initrd		KCFG=""
@@ -1228,7 +1229,6 @@ buildipfire() {
   lfsmake2 tcl
   lfsmake2 sqlite
   lfsmake2 libffi
-  lfsmake2 python
   lfsmake2 python3
   lfsmake2 gdb
   lfsmake2 grub
@@ -1277,6 +1277,7 @@ buildipfire() {
   lfsmake2 libinih
   lfsmake2 cdrkit
   lfsmake2 dosfstools
+  lfsmake2 exfatprogs
   lfsmake2 reiserfsprogs
   lfsmake2 xfsprogs
   lfsmake2 sysfsutils
@@ -1284,6 +1285,7 @@ buildipfire() {
   lfsmake2 ntfs-3g
   lfsmake2 ethtool
   lfsmake2 fcron
+  lfsmake2 ExtUtils-PkgConfig
   lfsmake2 perl-GD
   lfsmake2 GD-Graph
   lfsmake2 GD-TextUtil
@@ -1511,10 +1513,10 @@ buildipfire() {
   lfsmake2 zerofree
   lfsmake2 minicom
   lfsmake2 ddrescue
-  lfsmake2 client175
   lfsmake2 powertop
   lfsmake2 parted
   lfsmake2 swig
+  lfsmake2 dtc
   lfsmake2 u-boot
   lfsmake2 u-boot-friendlyarm
   lfsmake2 wireless-regdb
@@ -1611,6 +1613,7 @@ buildipfire() {
   lfsmake2 socat
   lfsmake2 libcdada
   lfsmake2 pmacct
+  lfsmake2 squid-asnbl
 }
 
 buildinstaller() {
@@ -1902,24 +1905,24 @@ gettoolchain)
 	fi
 	;;
 uploadsrc)
-	PWD=`pwd`
 	if [ -z $IPFIRE_USER ]; then
 		echo -n "You have to setup IPFIRE_USER first. See .config for details."
 		print_status FAIL
 		exit 1
 	fi
 
-	URL_SOURCE=$(grep URL_SOURCE lfs/Config | awk '{ print $3 }')
-	REMOTE_FILES=$(echo "ls -1" | sftp -C ${IPFIRE_USER}@${URL_SOURCE})
+	URL_SOURCE="$(awk '/^URL_SOURCE/ { print $3 }' lfs/Config)"
 
-	for file in ${BASEDIR}/cache/*; do
-		[ -d "${file}" ] && continue
-		grep -q "$(basename ${file})" <<<$REMOTE_FILES && continue
-		NEW_FILES="$NEW_FILES $file"
-	done
-	[ -n "$NEW_FILES" ] && scp -2 $NEW_FILES ${IPFIRE_USER}@${URL_SOURCE}
-	cd $BASEDIR
-	cd $PWD
+	rsync \
+		--recursive \
+		--update \
+		--ignore-existing \
+		--progress \
+		--human-readable \
+		--exclude="toolchains/" \
+		"${BASEDIR}/cache/" \
+		"${IPFIRE_USER}@${URL_SOURCE}"
+
 	exit 0
 	;;
 lang)

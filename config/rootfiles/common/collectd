@@ -3,7 +3,6 @@ etc/collectd.custom
 etc/collectd.precache
 etc/collectd.thermal
 etc/collectd.vpn
-etc/rc.d/init.d/collectd
 etc/rc.d/rc0.d/K50collectd
 etc/rc.d/rc3.d/S29collectd
 etc/rc.d/rc6.d/K50collectd
@@ -139,9 +138,6 @@ usr/lib/collectd/processes.so
 #usr/lib/collectd/protocols.a
 #usr/lib/collectd/protocols.la
 usr/lib/collectd/protocols.so
-#usr/lib/collectd/python.a
-#usr/lib/collectd/python.la
-usr/lib/collectd/python.so
 #usr/lib/collectd/rrdcached.a
 #usr/lib/collectd/rrdcached.la
 usr/lib/collectd/rrdcached.so
@@ -242,5 +238,6 @@ usr/share/collectd/types.db
 #usr/share/man/man5/collectd-unixsock.5
 #usr/share/man/man5/collectd.conf.5
 #usr/share/man/man5/types.db.5
-#var/lib/collectd
 var/ipfire/ovpn/collectd.vpn
+#var/lib/collectd
+etc/rc.d/init.d/collectd
