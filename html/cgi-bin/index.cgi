@@ -536,11 +536,6 @@ END
 &Header::closebox();
 }
 
-my $dnssec_status = &General::dnssec_status();
-if ($dnssec_status eq "off") {
-	$warnmessage .= "<li>$Lang::tr{'dnssec disabled warning'}</li>";
-}
-
 # Fireinfo
 if ( ! -e "/var/ipfire/main/send_profile") {
 	$warnmessage .= "<li><a style='color: white;' href='fireinfo.cgi'>$Lang::tr{'fireinfo please enable'}</a></li>";

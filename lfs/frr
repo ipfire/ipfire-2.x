@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.0
+VER        = 8.0.1
 
 THISAPP    = frr-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = frr
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       =
 
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d725c08e0093f58e5fcac0969c781813
+$(DL_FILE)_MD5 = ef606567993da37ce6f4a8f456f77e24
 
 install : $(TARGET)
 
@@ -101,7 +101,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-pbrd \
 		--disable-pimd \
 		--disable-ripd \
-		--disable-ripngd
+		--disable-ripngd \
+		--disable-static
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

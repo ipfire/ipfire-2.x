@@ -23,5 +23,6 @@
 #
 . /opt/pakfire/lib/functions.sh
 stop_service ${NAME}
+make_backup ${NAME}
 remove_files
 rm -rf /etc/rc.d/rc*.d/*minidlna

@@ -28,7 +28,7 @@ VER        = 2.110
 
 THISAPP    = IO-stringy-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
-DL_FROM    = http://cpan.noris.de/authors/id/D/DS/DSKOLL
+DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 

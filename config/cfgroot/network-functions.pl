@@ -360,7 +360,7 @@ sub _get_wireless_status($) {
 	my $intf = shift;
 
 	if (!$wireless_status{$intf}) {
-		$wireless_status{$intf} = &General::system_output("iwconfig", "$intf");
+		$wireless_status{$intf} = join('\n', &General::system_output("iwconfig", "$intf"));
 	}
 
 	return $wireless_status{$intf};
@@ -403,7 +403,11 @@ sub wifi_get_link_quality($) {
 
 	my ($cur, $max) = $status =~ /Link Quality=(\d+)\/(\d+)/;
 
-	return $cur * 100 / $max;
+	if($max > 0) {
+		return sprintf('%.0f', ($cur * 100) / $max);
+	}
+
+	return 0;
 }
 
 sub wifi_get_signal_level($) {

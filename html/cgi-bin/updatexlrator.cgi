@@ -398,7 +398,7 @@ print <<END
 	<td class='base'>$Lang::tr{'updxlrtr passive mode'}:</td>
 	<td class='base'><input type='checkbox' name='PASSIVE_MODE' $checked{'PASSIVE_MODE'}{'on'} /></td>
 	<td class='base'>$Lang::tr{'updxlrtr max disk usage'}:&nbsp;<img src='/blob.gif' alt='*' /></td>
-	<td class='base'><input type='text' name='MAX_DISK_USAGE' value='$xlratorsettings{'MAX_DISK_USAGE'}' size='1' /> %</td>
+	<td class='base'><input type='text' name='MAX_DISK_USAGE' value='$xlratorsettings{'MAX_DISK_USAGE'}' size='3' /> %</td>
 </tr>
 </table>
 <hr size='1'>
@@ -722,15 +722,18 @@ unless ($numfiles) { print "<i>$Lang::tr{'updxlrtr empty repository'}</i>\n<hr s
 
 print <<END
 <table>
-<tr><td class='boldbase'><b>$Lang::tr{'updxlrtr disk usage'}</b></td></tr>
-</table>
-<table cellpadding='3'>
 <tr>
-<td align='left' class='base'><i>$Lang::tr{'updxlrtr cache dir'}</i></td>
-<td align='center' class='base'><i>$Lang::tr{'size'}</i></td>
-<td align='center' class='base'><i>$Lang::tr{'used'}</i></td>
-<td align='center' class='base'><i>$Lang::tr{'free'}</i></td>
-<td align='left' class='base' colspan='2'><i>$Lang::tr{'percentage'}</i></td>
+<td class='boldbase'><b>$Lang::tr{'updxlrtr disk usage'}</b></td>
+</tr>
+</table>
+<table width='75%' cellspacing='5'>
+<tr>
+<td align='center' class='boldbase'><b>$Lang::tr{'updxlrtr cache dir'}</b></td>
+<td align='center' class='boldbase'><b>$Lang::tr{'size'}</b></td>
+<td align='center' class='boldbase'><b>$Lang::tr{'used'}</b></td>
+<td align='center' class='boldbase'><b>$Lang::tr{'free'}</b></td>
+<td></td>
+<td align='left' class='boldbase' colspan='2'><b>$Lang::tr{'percentage'}</b></td>
 </tr>
 END
 ;
@@ -745,17 +748,17 @@ my ($device,$size,$used,$free,$percent,$mount) = split(' ',$dfstr);
 
 print <<END
 <tr>
-<td>[$repository]</td>
-<td align='right'>$size</td>
-<td align='right'>$used</td>
-<td align='right'>$free</td>
-<td>
+<td align='center'>[$repository]</td>
+<td align='center'>$size</td>
+<td align='center'>$used</td>
+<td align='center'>$free</td>
+<td align='right' colspan='2'>
 END
 ;
 &percentbar($percent);
 print <<END
 </td>
-<td align='right'>$percent</td>
+<td align='center'>$percent</td>
 </tr>
 </table>
 END
@@ -1015,15 +1018,18 @@ unless (@repositoryfiles) { print "<i>$Lang::tr{'updxlrtr empty repository'}</i>
 
 print <<END
 <table>
-<tr><td class='boldbase'><b>$Lang::tr{'updxlrtr disk usage'}</b></td></tr>
-</table>
-<table cellpadding='3'>
 <tr>
-<td align='left' class='base'><i>$Lang::tr{'updxlrtr cache dir'}</i></td>
-<td align='center' class='base'><i>$Lang::tr{'size'}</i></td>
-<td align='center' class='base'><i>$Lang::tr{'used'}</i></td>
-<td align='center' class='base'><i>$Lang::tr{'free'}</i></td>
-<td align='left' class='base' colspan='2'><i>$Lang::tr{'percentage'}</i></td>
+<td class='boldbase'><b>$Lang::tr{'updxlrtr disk usage'}</b></td>
+</tr>
+</table>
+<table width='75%' cellspacing='5'>
+<tr>
+<td align='center' class='boldbase'><b>$Lang::tr{'updxlrtr cache dir'}</b></td>
+<td align='center' class='boldbase'><b>$Lang::tr{'size'}</b></td>
+<td align='center' class='boldbase'><b>$Lang::tr{'used'}</b></td>
+<td align='center' class='boldbase'><b>$Lang::tr{'free'}</b></td>
+<td></td>
+<td align='left' class='boldbase' colspan='2'><b>$Lang::tr{'percentage'}</b></td>
 </tr>
 END
 ;
@@ -1038,17 +1044,17 @@ my ($device,$size,$used,$free,$percent,$mount) = split(' ',$dfstr);
 
 print <<END
 <tr>
-<td>[$repository]</td>
-<td align='right'>$size</td>
-<td align='right'>$used</td>
-<td align='right'>$free</td>
-<td>
+<td align='center'>[$repository]</td>
+<td align='center'>$size</td>
+<td align='center'>$used</td>
+<td align='center'>$free</td>
+<td align='right' colspan='2'>
 END
 ;
 &percentbar($percent);
 print <<END
 </td>
-<td align='right'>$percent</td>
+<td align='center'>$percent</td>
 </tr>
 </table>
 END

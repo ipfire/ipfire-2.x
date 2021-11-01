@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007  Michael Tremer & Christian Schmidt                      #
+# Copyright (C) 2007-2021  IPFire Twan  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -19,7 +19,25 @@
 #                                                                             #
 ###############################################################################
 
-require '/var/ipfire/general-functions.pl';
+###############################################################################
+# functions copied from general-functions.pl for speed improvement because    #
+# loading and initializing the whole general-functions.pl every second create #
+# high system load                                                            #
+###########################################OA##################################
+#
+# Function which will return the used interface for the red network zone (red0, ppp0, etc).
+sub General__get_red_interface() {
+
+     open(IFACE, "/var/ipfire/red/iface") or die "Could not open /var/ipfire/red/iface";
+
+     my $interface = <IFACE>;
+     close(IFACE);
+     chomp $interface;
+
+     return $interface;
+}
+#
+###############################################################################
 
 my $data_last = $ENV{'QUERY_STRING'};
 my $rxb_last = 0;
@@ -38,22 +56,17 @@ foreach $field (@fields) {
 	}
 }
 
-my $interface = &General::get_red_interface();
-my @data_now = &General::system_output("ip", "-s", "link", "show", "$interface");
+my $interface = &General__get_red_interface();
 
-my $lastline;
-my $rxb_now = 0;
-my $txb_now = 0;
-foreach (@data_now) {
-	if ( $lastline =~ /RX/ ) {
-		@fields = split(/ /, $_);
-		$rxb_now = $fields[4];
-	} elsif ( $lastline =~ /TX/ ) {
-		@fields = split(/ /, $_);
-		$txb_now = $fields[4];
-	}
-	$lastline = $_;
-}
+open(RX, "/sys/class/net/$interface/statistics/rx_bytes") or die "Could not open /sys/class/net/$interface/statistics/rx_bytes";
+my $rxb_now = <RX>;
+close(RX);
+chomp $rxb_now;
+
+open(TX, "/sys/class/net/$interface/statistics/tx_bytes") or die "Could not open /sys/class/net/$interface/statistics/tx_bytes";
+my $txb_now = <TX>;
+close(TX);
+chomp $txb_now;
 
 my ($rx_kbs, $tx_kbs);
 my $rxb_diff	= $rxb_now - $rxb_last;

@@ -2,7 +2,6 @@
 #usr/include/spice-server/spice-audio.h
 #usr/include/spice-server/spice-char.h
 #usr/include/spice-server/spice-core.h
-#usr/include/spice-server/spice-experimental.h
 #usr/include/spice-server/spice-input.h
 #usr/include/spice-server/spice-migration.h
 #usr/include/spice-server/spice-qxl.h
@@ -13,5 +12,5 @@
 #usr/lib/libspice-server.la
 #usr/lib/libspice-server.so
 usr/lib/libspice-server.so.1
-usr/lib/libspice-server.so.1.12.4
+usr/lib/libspice-server.so.1.14.1
 #usr/lib/pkgconfig/spice-server.pc

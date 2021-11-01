@@ -35,41 +35,23 @@ my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'hour' unless defined $querry[1];
+&Header::showhttpheaders();
+&Header::openpage($Lang::tr{'status information'}, 1, '');
+&Header::openbigbox('100%', 'left');
 
-if ( $querry[0] =~ "cpufreq"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatecpufreqgraph($querry[1]);
-}elsif ( $querry[0] =~ "cpu"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatecpugraph($querry[1]);
-}elsif ( $querry[0] =~ "load"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updateloadgraph($querry[1]);
-}else{
-	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'status information'}, 1, '');
-	&Header::openbigbox('100%', 'left');
+&Header::openbox('100%', 'center', "CPU $Lang::tr{'graph'}");
+&Graphs::makegraphbox("system.cgi","cpu","day");
+&Header::closebox();
 
-	&Header::openbox('100%', 'center', "CPU $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("system.cgi","cpu","day");
+if ( -e "$mainsettings{'RRDLOG'}/collectd/localhost/cpufreq/cpufreq-0.rrd"){
+	&Header::openbox('100%', 'center', "$Lang::tr{'cpu frequency'} $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("system.cgi","cpufreq","day");
 	&Header::closebox();
-
-	if ( -e "$mainsettings{'RRDLOG'}/collectd/localhost/cpufreq/cpufreq-0.rrd"){
-		&Header::openbox('100%', 'center', "$Lang::tr{'cpu frequency'} $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("system.cgi","cpufreq","day");
-		&Header::closebox();
-	}
-
-	&Header::openbox('100%', 'center', "$Lang::tr{'uptime load average'} $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("system.cgi","load","day");
-	&Header::closebox();
-
-	&Header::closebigbox();
-	&Header::closepage();
 }
+
+&Header::openbox('100%', 'center', "$Lang::tr{'uptime load average'} $Lang::tr{'graph'}");
+&Graphs::makegraphbox("system.cgi","load","day");
+&Header::closebox();
+
+&Header::closebigbox();
+&Header::closepage();

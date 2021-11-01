@@ -24,10 +24,10 @@
 
 include Config
 
-VER      = 1.44.4
+VER      = 1.46.3
 
 THISAPP    = e2fsprogs-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 156e94a6169ca1fa3f0c6749ae5921b9
+$(DL_FILE)_MD5 = ab7e15cafcd34681db907d3fcb395f95
 
 install : $(TARGET)
 
@@ -69,7 +69,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	-mkdir -pv $(DIR_APP)/build
 	cd $(DIR_APP)/build && \
 		$(DIR_APP)/configure \

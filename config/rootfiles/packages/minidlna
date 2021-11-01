@@ -1,5 +1,5 @@
-etc/rc.d/init.d/minidlna
 etc/minidlna.conf
+etc/rc.d/init.d/minidlna
 usr/sbin/minidlnad
 #usr/share/locale/da/LC_MESSAGES/minidlna.mo
 #usr/share/locale/de/LC_MESSAGES/minidlna.mo
@@ -14,3 +14,4 @@ usr/sbin/minidlnad
 #usr/share/locale/ru/LC_MESSAGES/minidlna.mo
 #usr/share/locale/sl/LC_MESSAGES/minidlna.mo
 #usr/share/locale/sv/LC_MESSAGES/minidlna.mo
+var/ipfire/backup/addons/includes/minidlna

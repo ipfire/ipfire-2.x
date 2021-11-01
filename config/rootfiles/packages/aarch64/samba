@@ -1,6 +1,7 @@
 etc/rc.d/init.d/samba
 usr/bin/cifsdd
 usr/bin/dbwrap_tool
+usr/bin/dumpmscat
 usr/bin/findsmb
 usr/bin/gentest
 usr/bin/ldbadd
@@ -687,6 +688,7 @@ usr/lib/samba/liblibcli-netlogon3-samba4.so
 usr/lib/samba/liblibsmb-samba4.so
 usr/lib/samba/libmessages-dgm-samba4.so
 usr/lib/samba/libmessages-util-samba4.so
+usr/lib/samba/libmscat-samba4.so
 usr/lib/samba/libmsghdr-samba4.so
 usr/lib/samba/libmsrpc3-samba4.so
 usr/lib/samba/libndr-samba-samba4.so

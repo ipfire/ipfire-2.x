@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 013
+VER        = 014
 
 THISAPP    = ddns-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a988a808a08c810c41964ac6b0febbeb
+$(DL_FILE)_MD5 = f10f7dfb29bd159db10e7a52c0a91d72
 
 install : $(TARGET)
 
@@ -72,12 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	# Apply upstream patches.
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-013-dyfi-use-https.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-013-ddnss-fix-unhandled-exeption-on-update-patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-013-duckdns-new-api.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-013-add-option-to-list-token-provider.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-013-proper-encode-string.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-013-fix-argparse-list-token-providers.patch
+	# No upstream patches at the moment.
 
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure \

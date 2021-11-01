@@ -21,8 +21,7 @@
 
 use strict;
 use URI;
-use GD;
-use GD::Text::Wrap;
+use Text::Wrap;
 use experimental 'smartmatch';
 
 # debugging
@@ -37,8 +36,8 @@ require "${General::swroot}/graphs.pl";
 # List of graph origins that getrrdimage.cgi can process directly
 # (unknown origins are forwarded to ensure compatibility)
 my @supported_origins = ("entropy.cgi", "hardwaregraphs.cgi", "media.cgi",
-	"memory.cgi","netexternal.cgi", "netinternal.cgi", "netother.cgi",
-	"netovpnrw.cgi", "netovpnsrv.cgi", "qos.cgi", "system.cgi");
+	"memory.cgi", "netexternal.cgi", "netinternal.cgi", "netother.cgi",
+	"netovpnrw.cgi", "netovpnsrv.cgi", "qos.cgi", "services.cgi", "system.cgi");
 
 ### Process GET parameters ###
 # URL format: /?origin=[graph origin cgi]&graph=[graph name]&range=[time range]
@@ -52,7 +51,7 @@ my $range = lc $query{'range'}; # lower case
 # Check parameters
 unless(($origin =~ /^\w+?\.cgi$/) && ($graph =~ /^[\w\-.,; ]+?$/) && ($range ~~ @Graphs::time_ranges)) {
 	# Send HTTP headers
-	_start_png_output();
+	_start_svg_output();
 	
 	_print_error("URL parameters missing or malformed.");	
 	exit;
@@ -76,7 +75,7 @@ unless(($origin ~~ @supported_origins) || ($origin eq "getrrdimage.cgi")) {
 
 ### Create graphs ###
 # Send HTTP headers
-_start_png_output();
+_start_svg_output();
 
 # Graphs are first grouped by their origin.
 # This is because some graph categories require special parameter handling.
@@ -204,46 +203,62 @@ if($graphstatus) {
 
 ###--- Internal functions ---###
 
-# Send HTTP headers and switch to binary output
+# Send HTTP headers
 # (don't print any non-image data to STDOUT afterwards)
-sub _start_png_output {
+sub _start_svg_output {
 	print "Cache-Control: no-cache, no-store\n";
-	print "Content-Type: image/png\n";
+	print "Content-Type: image/svg+xml\n";
 	print "\n"; # End of HTTP headers
-	binmode(STDOUT);
 }
 
-# Print error message to PNG output
+# Print error message to SVG output
 sub _print_error {
 	my ($message) = @_;
-	$message = "- Error -\n \n$message";
 
-	# Create new image with the same size as a graph
-	my $img = GD::Image->new($Graphs::image_size{'width'}, $Graphs::image_size{'height'});
-	$img->interlaced('true');
-
-	# Basic colors
-	my $color_background = $img->colorAllocate(255, 255, 255);
-	my $color_border = $img->colorAllocate(255, 0, 0);
-	my $color_text = $img->colorAllocate(0, 0, 0);
-
-	# Background and border
-	$img->setThickness(2);
-	$img->filledRectangle(0, 0, $img->width, $img->height, $color_background);
-	$img->rectangle(10, 10, $img->width - 10, $img->height - 10, $color_border);
-	
-	# Draw message with line-wrap
-	my $textbox = GD::Text::Wrap->new($img,
-		text => $message,
-		width => ($img->width - 50),
-		color => $color_text,
-		align => 'center',
-		line_space => 5,
-		preserve_nl => 1
+	# Prepare image options
+	my %img = (
+		'width' => $Graphs::image_size{'width'},
+		'height' => $Graphs::image_size{'height'},
+		'text_center' => int($Graphs::image_size{'width'} / 2),
+		'line_height' => 20,
+		'font_family' => "DejaVu Sans, Helvetica, sans-serif" # Matching the IPFire theme
 	);
-	$textbox->set_font(gdLargeFont);
-	$textbox->draw(25, 25);
 
-	# Get PNG output
-	print $img->png;
+	# Line-wrap message to fit image (adjust to font width if necessary)
+	local($Text::Wrap::columns) = int($img{'width'} / 10);
+	$message = wrap('', '', $message);
+
+	# Create new image with fixed background and border
+	print <<END
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="$img{'width'}px" height="$img{'height'}px" viewBox="0 0 $img{'width'} $img{'height'}" version="1.1" xmlns="http://www.w3.org/2000/svg">
+	<!-- Background -->
+	<rect width="100%" height="100%" fill="white"/>
+	<rect width="100%" height="100%" fill="none" stroke="red" stroke-width="2" transform="scale(0.95)" transform-origin="center"/>
+	<!-- Message -->
+	<text x="$img{'text_center'}" y="50" font-size="20" font-family="$img{'font_family'}" text-anchor="middle">- $Lang::tr{'error'} -</text>
+	<text x="$img{'text_center'}" y="90" font-size="14" font-family="$img{'font_family'}" text-anchor="middle">
+END
+;
+
+	# Print message lines
+	my $shift_y = 0; # Shifts text along y-axis
+	foreach my $line (split(/\n/, $message)) {
+		if($line ne "") { # Don't create empty tspan elements
+			print <<END
+		<tspan x="$img{'text_center'}" dy="$shift_y">$line</tspan>
+END
+;
+			$shift_y = $img{'line_height'};
+		} else { # Create blank lines by summing up unused line height
+			$shift_y += $img{'line_height'};
+		}
+	}
+
+	# Finish SVG output
+	print <<END
+	</text>
+</svg>
+END
+;
 }

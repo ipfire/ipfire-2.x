@@ -181,13 +181,6 @@ sub genmenu {
         $menu->{'03.network'}{'subMenu'}->{'80.macadressmenu'}{'enabled'} = 0;
         $menu->{'03.network'}{'subMenu'}->{'90.wakeonlan'}{'enabled'} = 0;
     }
-
-    # Disable proxy when no GREEN is available
-    if (!&green_used()) {
-        $menu->{'03.network'}{'subMenu'}->{'20.proxy'}{'enabled'} = 0;
-        $menu->{'03.network'}{'subMenu'}->{'21.urlfilter'}{'enabled'} = 0;
-        $menu->{'03.network'}{'subMenu'}->{'22.updxlrator'}{'enabled'} = 0;
-    }
   }
 }
 

@@ -72,5 +72,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make install
+	cp -vf $(DIR_APP)/db.txt /lib/firmware/regulatorydb.txt
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

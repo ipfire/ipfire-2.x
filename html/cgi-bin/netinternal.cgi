@@ -40,48 +40,31 @@ my %netsettings=();
 my @graphs=();
 my @wireless=();
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'hour' unless defined $querry[1];
-$querry[2] = '' unless defined $querry[2];
+&Header::showhttpheaders();
+&Header::openpage($Lang::tr{'network traffic graphs internal'}, 1, '');
+&Header::openbigbox('100%', 'left');
 
-if ( $querry[0] =~ /wireless/ ){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	$querry[0] =~ s/wireless//g;
-	&Graphs::updatewirelessgraph($querry[0],$querry[1]);
-}elsif ( $querry[0] ne "" ){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updateifgraph($querry[0],$querry[1]);
-}else{
+push (@graphs, ($netsettings{'GREEN_DEV'}));
+if (&Header::blue_used() && $netsettings{'BLUE_DEV'}) {push (@graphs, ($netsettings{'BLUE_DEV'})); }
+if (&Header::orange_used() && $netsettings{'ORANGE_DEV'}) {push (@graphs, ($netsettings{'ORANGE_DEV'})); }
 
-	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'network traffic graphs internal'}, 1, '');
-	&Header::openbigbox('100%', 'left');
+my @wirelessgraphs = `ls -dA /var/log/rrd/collectd/localhost/wireless* 2>/dev/null`;
+foreach (@wirelessgraphs){
+	$_ =~ /(.*)\/wireless-(.*)/;
+	push(@wireless,$2);
+}
 
-	push (@graphs, ($netsettings{'GREEN_DEV'}));
-	if (&Header::blue_used() && $netsettings{'BLUE_DEV'}) {push (@graphs, ($netsettings{'BLUE_DEV'})); }
-	if (&Header::orange_used() && $netsettings{'ORANGE_DEV'}) {push (@graphs, ($netsettings{'ORANGE_DEV'})); }
+foreach (@graphs) {
+	&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("netinternal.cgi",$_,"day");
+	&Header::closebox();
+}
 
-	my @wirelessgraphs = `ls -dA /var/log/rrd/collectd/localhost/wireless* 2>/dev/null`;
-	foreach (@wirelessgraphs){
-		$_ =~ /(.*)\/wireless-(.*)/;
-		push(@wireless,$2);
-	}
+foreach (@wireless) {
+	&Header::openbox('100%', 'center', "Wireless $_ $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("netinternal.cgi","wireless".$_,"day");
+	&Header::closebox();
+}
 
-	foreach (@graphs) {
-		&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("netinternal.cgi",$_,"day");
-		&Header::closebox();
-	}
-
-	foreach (@wireless) {
-		&Header::openbox('100%', 'center', "Wireless $_ $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("netinternal.cgi","wireless".$_,"day");
-		&Header::closebox();
-	}
-
-	&Header::closebigbox();
-	&Header::closepage();
-}	
+&Header::closebigbox();
+&Header::closepage();

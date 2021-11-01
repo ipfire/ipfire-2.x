@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -56,6 +56,14 @@ my $portfile = "/var/ipfire/qos/portconfig";
 my $tosfile = "/var/ipfire/qos/tosconfig";
 my $fqcodel_options = "limit 10240 quantum 1514";
 
+# Define iptables MARKs
+my $QOS_INC_MASK = 0x0000ff00;
+my $QOS_INC_SHIFT = 8;
+my $QOS_OUT_MASK = 0x000000ff;
+my $QOS_OUT_SHIFT = 0;
+my $QOS_INC_SKIP_MASK = $QOS_INC_MASK;
+my $QOS_OUT_SKIP_MASK = $QOS_OUT_MASK;
+
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
 $qossettings{'ENABLED'} = 'off';
@@ -66,13 +74,15 @@ $qossettings{'DEF_OUT_SPD'} = '';
 $qossettings{'DEF_INC_SPD'} = '';
 $qossettings{'DEFCLASS_INC'} = '';
 $qossettings{'DEFCLASS_OUT'} = '';
-$qossettings{'ACK'} = '';
 $qossettings{'RED_DEV'} = `cat /var/ipfire/red/iface`;
 $qossettings{'IMQ_DEV'} = 'imq0';
 $qossettings{'TOS'} = '';
 $qossettings{'VALID'} = 'yes';
 
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
+
+my $DEF_OUT_MARK = ($qossettings{'DEFCLASS_OUT'} << $QOS_OUT_SHIFT) . "/$QOS_OUT_MASK";
+my $DEF_INC_MARK = ($qossettings{'DEFCLASS_INC'} << $QOS_INC_SHIFT) . "/$QOS_INC_MASK";
 
 open( FILE, "< $classfile" ) or die "Unable to read $classfile";
 @classes = <FILE>;
@@ -200,42 +210,19 @@ foreach $classentry (sort @classes)
 	if ($qossettings{'RED_DEV'} eq $classline[0]) {
 		$qossettings{'DEVICE'} = $classline[0];
 		$qossettings{'CLASS'} = $classline[1];
-		print "\ttc filter add dev $qossettings{'DEVICE'} parent 1:0 prio 0 protocol ip handle $qossettings{'CLASS'} fw flowid 1:$qossettings{'CLASS'}\n";
+		print "\ttc filter add dev $qossettings{'DEVICE'} parent 1:0 prio 0 protocol ip";
+		printf(" u32 match mark 0x%x 0x%x flowid 1:%d\n", ($qossettings{'CLASS'} << $QOS_OUT_SHIFT), $QOS_OUT_MASK, $qossettings{'CLASS'});
 	}
 }
+
 print <<END
 
 	### ADD QOS-OUT CHAIN TO THE MANGLE TABLE IN IPTABLES
 	iptables -t mangle -N QOS-OUT
-	iptables -t mangle -I POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
+	iptables -t mangle -A POSTROUTING -o $qossettings{'RED_DEV'} -j QOS-OUT
 
-	### Don't change mark on traffic for the ipsec tunnel
-	iptables -t mangle -A QOS-OUT -m mark --mark 50 -j RETURN
-
-	### MARK ACKs
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags SYN,RST SYN -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p icmp -m length --length 40:100 -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -p icmp -m length --length 40:100 -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p tcp --syn -m length --length 40:68 -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -p tcp --syn -m length --length 40:68 -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL SYN,ACK -m length --length 40:68 -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL SYN,ACK -m length --length 40:68 -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK -m length --length 40:100 -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK -m length --length 40:100 -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL RST -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL RST -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,RST -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,RST -j RETURN
-
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,FIN -j MARK --set-mark $qossettings{'ACK'}
-	iptables -t mangle -A QOS-OUT -p tcp --tcp-flags ALL ACK,FIN -j RETURN
+	# If the packet is already marked, then skip the processing
+	iptables -t mangle -A QOS-OUT -m mark ! --mark 0/$QOS_OUT_SKIP_MASK -j RETURN
 
 	### SET TOS
 END
@@ -247,7 +234,7 @@ END
 		$qossettings{'TOS'} = abs $tosruleline[2] * 2;
   		if ( $tosruleline[1] eq $qossettings{'RED_DEV'} )
   		{
-			print "\tiptables -t mangle -A QOS-OUT -m tos --tos $qossettings{'TOS'} -j MARK --set-mark $qossettings{'CLASS'}\n";
+			print "\tiptables -t mangle -A QOS-OUT -m tos --tos $qossettings{'TOS'} -j MARK --set-xmark " . ($qossettings{'CLASS'} << $QOS_OUT_SHIFT) . "/$QOS_OUT_MASK\n";
 			print "\tiptables -t mangle -A QOS-OUT -m tos --tos $qossettings{'TOS'} -j RETURN\n";
 		}
 	}
@@ -265,7 +252,7 @@ print "\n\t### SET PORT-RULES\n";
 			$qossettings{'QPORT'} = $portruleline[4];
 			$qossettings{'DIP'} = $portruleline[5];
 			$qossettings{'DPORT'} = $portruleline[6];
-			print "\tiptables -t mangle -A QOS-OUT ";
+			print "\tiptables -t mangle -A QOS-OUT -m mark --mark 0/$QOS_OUT_MASK ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -282,25 +269,7 @@ print "\n\t### SET PORT-RULES\n";
 			if ($qossettings{'DPORT'} ne ''){
 				print "--dport $qossettings{'DPORT'} ";
 			}
-			print "-j MARK --set-mark $qossettings{'CLASS'}\n";
-			print "\tiptables -t mangle -A QOS-OUT ";
-			if ($qossettings{'QIP'} ne ''){
-				print "-s $qossettings{'QIP'} ";
-			}
-			if ($qossettings{'DIP'} ne ''){
-				print "-d $qossettings{'DIP'} ";
-			}
-			print "-p $qossettings{'PPROT'} ";
-#			if (($qossettings{'QPORT'} ne '') || ($qossettings{'DPORT'} ne '')){
-#				print "-m multiport ";
-#			}
-			if ($qossettings{'QPORT'} ne ''){
-				print "--sport $qossettings{'QPORT'} ";
-			}
-			if ($qossettings{'DPORT'} ne ''){
-				print "--dport $qossettings{'DPORT'} ";
-			}
-			print "-j RETURN\n\n";
+			print "-j MARK --set-xmark " . ($qossettings{'CLASS'} << $QOS_OUT_SHIFT) . "/$QOS_OUT_MASK\n";
 		}
 	}
 
@@ -319,29 +288,24 @@ END
 			$qossettings{'L7PROT'} = $l7ruleline[2];
 			$qossettings{'QIP'} = $l7ruleline[3];
 			$qossettings{'DIP'} = $l7ruleline[4];
-  			print "\tiptables -t mangle -A QOS-OUT ";
+			print "\tiptables -t mangle -A QOS-OUT -m mark --mark 0/$QOS_OUT_MASK ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
 			if ($qossettings{'DIP'} ne ''){
 				print "-d $qossettings{'DIP'} ";
 			}
-			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-mark $qossettings{'CLASS'}\n";
-  			print "\tiptables -t mangle -A QOS-OUT ";
-			if ($qossettings{'QIP'} ne ''){
-				print "-s $qossettings{'QIP'} ";
-			}
-			if ($qossettings{'DIP'} ne ''){
-				print "-d $qossettings{'DIP'} ";
-			}
-			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j RETURN\n";
+			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-xmark " . ($qossettings{'CLASS'} << $QOS_OUT_SHIFT) . "/$QOS_OUT_MASK\n";
   		}
   	}
 
 print <<END
 
 	### REDUNDANT: SET ALL NONMARKED PACKETS TO DEFAULT CLASS
-	iptables -t mangle -A QOS-OUT -m mark --mark 0 -j MARK --set-mark $qossettings{'DEFCLASS_OUT'}
+	iptables -t mangle -A QOS-OUT -m mark --mark 0/$QOS_OUT_MASK -m layer7 ! --l7proto unset -j MARK --set-xmark $DEF_OUT_MARK
+
+	# Save mark in connection tracking
+	iptables -t mangle -A QOS-OUT -m mark ! --mark 0/$QOS_OUT_MASK -j CONNMARK --save-mark --mask $QOS_OUT_MASK
 
 	###
 	### $qossettings{'IMQ_DEV'}
@@ -357,7 +321,14 @@ print <<END
 
 	ip link set $qossettings{'IMQ_DEV'} up
 
-	tc filter add dev $qossettings{'RED_DEV'} parent ffff: protocol all u32 match u32 0 0 \\
+	### Pass IPSec traffic without redirect
+	tc filter add dev $qossettings{'RED_DEV'} parent ffff: prio 1 protocol all basic \\
+		match "ipt(-m policy --pol ipsec --dir in)" \\
+		action pass
+
+	### Restore connmark and send rest of the traffic to $qossettings{'IMQ_DEV'}
+	tc filter add dev $qossettings{'RED_DEV'} parent ffff: prio 2 protocol all u32 \\
+		match u32 0 0 \\
 		action connmark \\
 		action mirred egress redirect dev $qossettings{'IMQ_DEV'}
 
@@ -410,7 +381,8 @@ foreach $classentry (sort @classes)
 	if ($qossettings{'IMQ_DEV'} eq $classline[0]) {
 		$qossettings{'DEVICE'} = $classline[0];
 		$qossettings{'CLASS'} = $classline[1];
-		print "\ttc filter add dev $qossettings{'DEVICE'} parent 2:0 prio 0 protocol ip handle $qossettings{'CLASS'} fw flowid 2:$qossettings{'CLASS'}\n";
+		print "\ttc filter add dev $qossettings{'DEVICE'} parent 2:0 prio 0 protocol ip";
+		printf(" u32 match mark 0x%x 0x%x flowid 2:%d\n", ($qossettings{'CLASS'} << $QOS_INC_SHIFT), $QOS_INC_MASK, $qossettings{'CLASS'});
 	}
 }
 print <<END
@@ -420,7 +392,7 @@ print <<END
 	iptables -t mangle -A PREROUTING -i $qossettings{'RED_DEV'} -j QOS-INC
 
 	# If the packet is already marked, then skip the processing
-	iptables -t mangle -A QOS-INC -m mark ! --mark 0 -j RETURN
+	iptables -t mangle -A QOS-INC -m mark ! --mark 0/$QOS_INC_SKIP_MASK -j RETURN
 
 	### SET TOS
 END
@@ -432,7 +404,7 @@ END
 		$qossettings{'TOS'} = abs $tosruleline[2] * 2;
   		if ( $tosruleline[1] eq $qossettings{'IMQ_DEV'} )
   		{
-			print "\tiptables -t mangle -A QOS-INC -m mark --mark 0 -m tos --tos $qossettings{'TOS'} -j MARK --set-mark $qossettings{'CLASS'}\n";
+			print "\tiptables -t mangle -A QOS-INC -m tos --tos $qossettings{'TOS'} -j MARK --set-xmark " . ($qossettings{'CLASS'} << $QOS_INC_SHIFT) . "/$QOS_INC_MASK\n";
 		}
 
 	}
@@ -450,7 +422,7 @@ print "\n\t### SET PORT-RULES\n";
 			$qossettings{'QPORT'} = $portruleline[4];
 			$qossettings{'DIP'} = $portruleline[5];
 			$qossettings{'DPORT'} = $portruleline[6];
-			print "\tiptables -t mangle -A QOS-INC -m mark --mark 0 ";
+			print "\tiptables -t mangle -A QOS-INC -m mark --mark 0/$QOS_INC_MASK ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
@@ -467,7 +439,7 @@ print "\n\t### SET PORT-RULES\n";
 			if ($qossettings{'DPORT'} ne ''){
 				print "--dport $qossettings{'DPORT'} ";
 			}
-			print "-j MARK --set-mark $qossettings{'CLASS'}\n";
+			print "-j MARK --set-xmark " . ($qossettings{'CLASS'} << $QOS_INC_SHIFT) . "/$QOS_INC_MASK\n";
 		}
 	}
 
@@ -486,23 +458,23 @@ END
 			$qossettings{'L7PROT'} = $l7ruleline[2];
 			$qossettings{'QIP'} = $l7ruleline[3];
 			$qossettings{'DIP'} = $l7ruleline[4];
-			print "\tiptables -t mangle -A QOS-INC -m mark --mark 0 ";
+			print "\tiptables -t mangle -A QOS-INC -m mark --mark 0/$QOS_INC_MASK ";
 			if ($qossettings{'QIP'} ne ''){
 				print "-s $qossettings{'QIP'} ";
 			}
 			if ($qossettings{'DIP'} ne ''){
 				print "-d $qossettings{'DIP'} ";
 			}
-			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-mark $qossettings{'CLASS'}\n";
+			print "-m layer7 --l7dir /etc/l7-protocols/protocols --l7proto $qossettings{'L7PROT'} -j MARK --set-xmark " . ($qossettings{'CLASS'} << $QOS_INC_SHIFT) . "/$QOS_INC_MASK\n";
   		}
   	}
 
 print <<END
 	### REDUNDANT: SET ALL NONMARKED PACKETS TO DEFAULT CLASS
-	iptables -t mangle -A QOS-INC -m mark --mark 0 -m layer7 ! --l7proto unset -j MARK --set-mark $qossettings{'DEFCLASS_INC'}
+	iptables -t mangle -A QOS-INC -m mark --mark 0/$QOS_INC_MASK -m layer7 ! --l7proto unset -j MARK --set-xmark $DEF_INC_MARK
 
 	# Save mark in connection tracking
-	iptables -t mangle -A QOS-INC -j CONNMARK --save-mark
+	iptables -t mangle -A QOS-INC -m mark ! --mark 0/$QOS_INC_MASK -j CONNMARK --save-mark --mask $QOS_INC_MASK
 
 	## STARTING COLLECTOR
 	/usr/local/bin/qosd $qossettings{'RED_DEV'} >/dev/null 2>&1

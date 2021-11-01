@@ -23,8 +23,16 @@ cat <<EOF
 # Read the system manufacturer string from the BIOS
 smbios --type 1 --get-string 4 --set system_manufacturer
 
+# Read the chassis asset tag
+smbios --type 3 --get-string 8 --set chassis_asset_tag
+
 # Are we on Amazon EC2?
 if [ "\$system_manufacturer" = "Amazon EC2" ]; then
+	next_entry=gnulinux-${KERNEL_RELEASE}-serial-${boot_device_id}
+fi
+
+# Are we on Oracle Cloud?
+if [ "\$chassis_asset_tag" = "OracleCloud.com" ]; then
 	next_entry=gnulinux-${KERNEL_RELEASE}-serial-${boot_device_id}
 fi
 EOF

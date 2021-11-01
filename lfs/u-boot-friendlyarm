@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,12 +24,15 @@
 
 include Config
 
-VER        = 5e8607b
-
+VER        = 5e8607b-nanopi-r1-binary
+#
+# This older and heavy patched u-boot cannot build without python2 so this
+# copy the binary from core159
+#
 THISAPP    = u-boot-friendlyarm-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/u-boot-$(VER)*
+DIR_APP    = $(DIR_SRC)/u-boot-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = armv6l
 
@@ -41,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = fa7bb610b17df6b884f6c88f19ce258e
+$(DL_FILE)_MD5 = a44237f43822ba13c17fce6541af6f6c
 
 install : $(TARGET)
 
@@ -73,21 +76,5 @@ dist:
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-
-ifeq "${BUILD_ARCH}" "armv6l"
-	# Nanopi-R1 eMMC
-	-mkdir -pv /usr/share/u-boot/nanopi-r1
-	cd $(DIR_APP) && cp arch/arm/dts/sun8i-h3-nanopi-m1-plus.dts arch/arm/dts/sun8i-h3-nanopi-r1.dts
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/sunxi/nanopi-r1-add-mac.diff
-	cd $(DIR_APP) && make CROSS_COMPILE="" nanopi_h3_config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi-R1 eMMC - IPFire.org"!' .config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_DEFAULT_DEVICE_TREE=.*!CONFIG_DEFAULT_DEVICE_TREE="sun8i-h3-nanopi-r1"!' .config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
-	cd $(DIR_APP) && install -v -m 644 u-boot-sunxi-with-spl.bin \
-		/usr/share/u-boot/nanopi-r1
-	cd $(DIR_APP) && make distclean
-endif
-
-	@rm -rf $(DIR_APP)
+	@cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE) -C /usr/share/u-boot/
 	@$(POSTBUILD)

@@ -75,7 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 				--sysconfdir=/etc	\
 				-D internal_pcre=false	\
 				builddir/
-	cd $(DIR_APP) && ninja -C builddir/
+	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING)
 	cd $(DIR_APP) && ninja -C builddir/ install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

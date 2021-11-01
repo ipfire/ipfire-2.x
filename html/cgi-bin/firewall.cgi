@@ -213,6 +213,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	&General::readhasharray("$configfwdfw", \%configfwdfw);
 	&General::readhasharray("$configinput", \%configinputfw);
 	&General::readhasharray("$configoutgoing", \%configoutgoingfw);
+	&General::readhash("/var/ipfire/ethernet/settings", \%netsettings);
 	my $maxkey;
 	#Set Variables according to the JQuery code in protocol section
 	if ($fwdfwsettings{'PROT'} eq 'TCP' || $fwdfwsettings{'PROT'} eq 'UDP')
@@ -231,6 +232,38 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 	{
 		$fwdfwsettings{'USESRV'} = 'ON';
 	}
+
+	# Check if a manual target IP is one of the IPFire's addresses.
+	if ($fwdfwsettings{'grp2'} eq 'tgt_addr') {
+		# Grab all available network zones.
+		my @network_zones = &Network::get_available_network_zones();
+
+		# Loop through the array of network zones.
+		foreach my $zone (@network_zones) {
+			# Skip red network zone.
+			next if $zone eq "red";
+
+			# Convert current zone name into upper case.
+			$zone = uc($zone);
+
+			# Generate key to access the required data from the netsettings hash.
+			my $key = $zone . "_ADDRESS";
+
+			# Obtain the configured address for the current zone from the netsettings hash.
+			my $zone_address = $netsettings{$key};
+
+			# Check if the given address and the current processed zone address are the same.
+			if ($fwdfwsettings{$fwdfwsettings{'grp2'}} eq $zone_address) {
+				# Map the type and target.
+				$fwdfwsettings{'grp2'} = 'ipfire';
+				$fwdfwsettings{$fwdfwsettings{'grp2'}} = $zone;
+
+				# End loop.
+				last;
+			}
+		}
+	}
+
 	$errormessage=&checksource;
 	if(!$errormessage){&checktarget;}
 	if(!$errormessage){&checkrule;}
@@ -247,7 +280,7 @@ if ($fwdfwsettings{'ACTION'} eq 'saverule')
 		$errormessage=$Lang::tr{'fwdfw err same'};
 	}
 	# INPUT part
-	if ($fwdfwsettings{'grp2'} eq 'ipfire' && $fwdfwsettings{$fwdfwsettings{'grp1'}} ne 'ORANGE'){
+	if ($fwdfwsettings{'grp2'} eq 'ipfire') {
 		$fwdfwsettings{'config'}=$configinput;
 		$fwdfwsettings{'chain'} = 'INPUTFW';
 		$maxkey=&General::findhasharraykey(\%configinputfw);
@@ -536,6 +569,24 @@ sub checktarget
 	#check DNAT settings (has to be single Host and single Port or portrange)
 	if ($fwdfwsettings{'USE_NAT'} eq 'ON' && $fwdfwsettings{'nat'} eq 'dnat'){
 		if($fwdfwsettings{'grp2'} eq 'tgt_addr' || $fwdfwsettings{'grp2'} eq 'cust_host_tgt' || $fwdfwsettings{'grp2'} eq 'ovpn_host_tgt'){
+			# Check if a manual entered IP is a single Host (if set)
+			if ($fwdfwsettings{'grp2'} eq 'tgt_addr') {
+				# Split input into address and prefix (if provided).
+				my ($address, $subnet) = split ('/', $fwdfwsettings{$fwdfwsettings{'grp2'}});
+
+				# Check if a subnet is given.
+				if ($subnet) {
+					# Check if the prefix or subnetmask is for a single host.
+					unless ($subnet eq "32" || $subnet eq "255.255.255.255") {
+						# Set error message.
+						$errormessage=$Lang::tr{'fwdfw dnat error'}."<br>";
+
+						# Return the error.
+						return $errormessage;
+					}
+				}
+			}
+
 			#check if Port is a single Port or portrange
 			if ($fwdfwsettings{'nat'} eq 'dnat' &&  $fwdfwsettings{'grp3'} eq 'TGT_PORT'){
 				if(($fwdfwsettings{'PROT'} ne 'TCP'|| $fwdfwsettings{'PROT'} ne 'UDP') && $fwdfwsettings{'TGT_PORT'} eq ''){
@@ -1005,6 +1056,10 @@ sub gen_dd_block
 	my $grp=shift;
 	my $helper='';
 	my $show='';
+
+	my %checked = ();
+	my %selected = ();
+
 	$checked{'grp1'}{$fwdfwsettings{'grp1'}} 				= 'CHECKED';
 	$checked{'grp2'}{$fwdfwsettings{'grp2'}} 				= 'CHECKED';
 	$checked{'grp3'}{$fwdfwsettings{'grp3'}} 				= 'CHECKED';
@@ -1022,8 +1077,6 @@ sub gen_dd_block
 	$checked{'TIME_SUN'}{$fwdfwsettings{'TIME_SUN'}} 		= 'CHECKED';
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
-	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
-	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
 print<<END;
 		<table width='100%' border='0'>
 		<tr><td width='50%' valign='top'>
@@ -1034,7 +1087,12 @@ END
 		{
 			next if($defaultNetworks{$network}{'NAME'} eq "IPFire");
 			print "<option value='$defaultNetworks{$network}{'NAME'}'";
-			print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $defaultNetworks{$network}{'NAME'});
+
+			# Check if the the key handles a standard network.
+			if ( grep(/std_net_/, $fwdfwsettings{$grp}) ) {
+				print " selected='selected'" if ($fwdfwsettings{$fwdfwsettings{$grp}} eq $defaultNetworks{$network}{'NAME'});
+			}
+
 			my $defnet="$defaultNetworks{$network}{'NAME'}_NETADDRESS";
 			my $defsub="$defaultNetworks{$network}{'NAME'}_NETMASK";
 			my $defsub1=&General::subtocidr($ifaces{$defsub});
@@ -1479,7 +1537,10 @@ sub newrule
 	&General::readhasharray("$configlocationgrp", \%customlocationgrp);
 	&General::readhasharray("$configipsec", \%ipsecconf);
 	&General::get_aliases(\%aliases);
-	my %checked=();
+
+	my %checked = ();
+	my %selected = ();
+
 	my $helper;
 	my $sum=0;
 	if($fwdfwsettings{'config'} eq ''){$fwdfwsettings{'config'}=$configfwdfw;}
@@ -1512,8 +1573,8 @@ sub newrule
 	$checked{'USE_NAT'}{$fwdfwsettings{'USE_NAT'}} 			= 'CHECKED';
 	$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 	$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
-	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
-	$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
+	$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} = 'selected' if ($fwdfwsettings{'grp2'} eq "ipfire");
+	$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} = 'selected' if ($fwdfwsettings{'grp1'} eq "ipfire_src");
 	#check if update and get values
 	if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on' && !$errormessage){
 		&General::readhasharray("$config", \%hash);
@@ -1584,8 +1645,8 @@ sub newrule
 				$checked{'RATE_LIMIT'}{$fwdfwsettings{'RATE_LIMIT'}}	= 'CHECKED';
 				$selected{'TIME_FROM'}{$fwdfwsettings{'TIME_FROM'}}		= 'selected';
 				$selected{'TIME_TO'}{$fwdfwsettings{'TIME_TO'}}			= 'selected';
-				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} ='selected';
-				$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} ='selected';
+				$selected{'ipfire'}{$fwdfwsettings{$fwdfwsettings{'grp2'}}} = 'selected' if ($fwdfwsettings{'grp2'} eq "ipfire");
+				$selected{'ipfire_src'}{$fwdfwsettings{$fwdfwsettings{'grp1'}}} = 'selected' if ($fwdfwsettings{'grp1'} eq "ipfire_src");
 				$selected{'dnat'}{$fwdfwsettings{'dnat'}}				='selected';
 				$selected{'snat'}{$fwdfwsettings{'snat'}}				='selected';
 				$selected{'RATETIME'}{$fwdfwsettings{'RATETIME'}}		='selected';

@@ -132,5 +132,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -m 755 $(DIR_SRC)/config/udev/enable_codel \
 		/lib/udev/enable_codel
 
+	# Install offloading rules
+	install -v -m 644 $(DIR_SRC)/config/udev/99-offloading.rules \
+		/lib/udev/rules.d
+	install -m 755 $(DIR_SRC)/config/udev/network-offloading \
+		/lib/udev/network-offloading
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

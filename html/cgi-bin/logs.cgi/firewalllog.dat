@@ -325,6 +325,8 @@ print <<END
 END
 ;
 
+# Generate hash to translate protocol numbers into protocol names.
+my %protocols = &General::generateProtoTransHash();
 
 $lines = 0;
 foreach $_ (@log)
@@ -353,6 +355,12 @@ foreach $_ (@log)
 
 	# Get the country code.
 	my $ccode = &Location::Functions::lookup_country_code($srcaddr);
+
+	# Lookup if the grabbed protocol is part of the protocols hash.
+	if (exists ($protocols{$proto})) {
+		# Translate protocol number into protocol name.
+		$proto = $protocols{$proto};
+	}
 
 	my $servi = uc(getservbyport($srcport, lc($proto)));
 	if ($servi ne '' && $srcport < 1024) {

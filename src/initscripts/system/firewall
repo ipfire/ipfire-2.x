@@ -12,6 +12,13 @@ if [ -f /var/ipfire/red/device ]; then
 	DEVICE=`/bin/cat /var/ipfire/red/device 2> /dev/null | /usr/bin/tr -d '\012'`
 fi
 
+NAT_MASK="0x0f000000"
+
+IPS_REPEAT_MARK="0x80000000"
+IPS_REPEAT_MASK="0x80000000"
+IPS_BYPASS_MARK="0x40000000"
+IPS_BYPASS_MASK="0x40000000"
+
 function iptables() {
 	/sbin/iptables --wait "$@"
 }
@@ -35,6 +42,16 @@ iptables_init() {
 	# Enable TRACE logging to syslog
 	modprobe nf_log_ipv4
 	sysctl -q -w net.netfilter.nf_log.2=nf_log_ipv4
+
+	# IPS Bypass Chain which stores the BYPASS bit in connection tracking
+	iptables -N IPSBYPASS
+	iptables -A IPSBYPASS -j CONNMARK --save-mark --mask "$(( ~IPS_REPEAT_MASK & 0xffffffff ))"
+
+	# Jump into bypass chain when the BYPASS bit is set
+	for chain in INPUT FORWARD OUTPUT; do
+		iptables -A "${chain}" -m mark \
+			--mark "$(( IPS_REPEAT_MARK | IPS_BYPASS_MARK ))/$(( IPS_REPEAT_MASK | IPS_BYPASS_MASK ))" -j IPSBYPASS
+	done
 
 	# Empty LOG_DROP and LOG_REJECT chains
 	iptables -N LOG_DROP
@@ -98,6 +115,9 @@ iptables_init() {
 	iptables -t raw -N CONNTRACK
 	iptables -t raw -A PREROUTING -j CONNTRACK
 
+	# Restore any connection marks
+	iptables -t mangle -A PREROUTING -j CONNMARK --restore-mark
+
 	# Fix for braindead ISPs
 	iptables -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
 
@@ -139,9 +159,10 @@ iptables_init() {
 	iptables -N IPS_INPUT
 	iptables -N IPS_FORWARD
 	iptables -N IPS_OUTPUT
-	iptables -A INPUT -j IPS_INPUT
-	iptables -A FORWARD -j IPS_FORWARD
-	iptables -A OUTPUT -j IPS_OUTPUT
+
+	for chain in INPUT FORWARD OUTPUT; do
+		iptables -A "${chain}" -m mark --mark "0x0/$(( IPS_REPEAT_MASK | IPS_BYPASS_MASK ))" -j "IPS_${chain}"
+	done
 
 	# OpenVPN transfer network translation
 	iptables -t nat -N OVPNNAT
@@ -282,17 +303,17 @@ iptables_init() {
 
 	if [ -n "${GREEN_ADDRESS}" ]; then
 		iptables -t nat -A NAT_DESTINATION_FIX \
-			-m mark --mark 1 -j SNAT --to-source "${GREEN_ADDRESS}"
+			-m mark --mark "0x01000000/${NAT_MASK}" -j SNAT --to-source "${GREEN_ADDRESS}"
 	fi
 
 	if [ -n "${BLUE_ADDRESS}" ]; then
 		iptables -t nat -A NAT_DESTINATION_FIX \
-			-m mark --mark 2 -j SNAT --to-source "${BLUE_ADDRESS}"
+			-m mark --mark "0x02000000/${NAT_MASK}" -j SNAT --to-source "${BLUE_ADDRESS}"
 	fi
 
 	if [ -n "${ORANGE_ADDRESS}" ]; then
 		iptables -t nat -A NAT_DESTINATION_FIX \
-			-m mark --mark 3 -j SNAT --to-source "${ORANGE_ADDRESS}"
+			-m mark --mark "0x04000000/${NAT_MASK}" -j SNAT --to-source "${ORANGE_ADDRESS}"
 	fi
 
 	# RED chain, used for the red interface
@@ -371,8 +392,8 @@ iptables_red_up() {
 			iptables -A REDINPUT -p udp --source-port 67 --destination-port 68 -i $IFACE -j ACCEPT
 		fi
 
-		# Outgoing masquerading (don't masqerade IPsec (mark 50))
-		iptables -t nat -A REDNAT -m mark --mark 50 -o $IFACE -j RETURN
+		# Outgoing masquerading (don't masqerade IPsec)
+		iptables -t nat -A REDNAT -m policy --pol ipsec --dir=out -o "${IFACE}" -j RETURN
 
 		if [ "${IFACE}" = "${GREEN_DEV}" ]; then
 			iptables -t nat -A REDNAT -i "${GREEN_DEV}" -o "${IFACE}" -j RETURN

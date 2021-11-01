@@ -37,6 +37,7 @@ lib/udev/mtd_probe
 lib/udev/network-hotplug-bridges
 lib/udev/network-hotplug-rename
 lib/udev/network-hotplug-vlan
+lib/udev/network-offloading
 lib/udev/rule_generator.functions
 #lib/udev/rules.d
 lib/udev/rules.d/25-alsa.rules
@@ -64,6 +65,7 @@ lib/udev/rules.d/78-sound-card.rules
 lib/udev/rules.d/80-drivers.rules
 lib/udev/rules.d/90-hwrng.rules
 lib/udev/rules.d/99-codel.rules
+lib/udev/rules.d/99-offloading.rules
 lib/udev/scsi_id
 lib/udev/v4l_id
 lib/udev/write_cd_rules

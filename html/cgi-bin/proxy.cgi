@@ -21,6 +21,7 @@
 
 use strict;
 use Apache::Htpasswd;
+use Scalar::Util qw(looks_like_number);
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -166,7 +167,11 @@ my $HAVE_NTLM_AUTH = (-e "/usr/bin/ntlm_auth");
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 
-my $green_cidr = &General::ipcidr("$netsettings{'GREEN_NETADDRESS'}\/$netsettings{'GREEN_NETMASK'}");
+my $green_cidr = "";
+if (&Header::green_used() && $netsettings{'GREEN_DEV'}) {
+	$green_cidr = &General::ipcidr("$netsettings{'GREEN_NETADDRESS'}\/$netsettings{'GREEN_NETMASK'}");
+}
+
 my $blue_cidr = "";
 if (&Header::blue_used() && $netsettings{'BLUE_DEV'}) {
 	$blue_cidr = &General::ipcidr("$netsettings{'BLUE_NETADDRESS'}\/$netsettings{'BLUE_NETMASK'}");
@@ -188,7 +193,6 @@ $proxysettings{'ADMIN_MAIL_ADDRESS'} = '';
 $proxysettings{'ADMIN_PASSWORD'} = '';
 $proxysettings{'ERR_LANGUAGE'} = 'en';
 $proxysettings{'ERR_DESIGN'} = 'ipfire';
-$proxysettings{'SUPPRESS_VERSION'} = 'on';
 $proxysettings{'FORWARD_VIA'} = 'off';
 $proxysettings{'FORWARD_IPADDRESS'} = 'off';
 $proxysettings{'FORWARD_USERNAME'} = 'off';
@@ -225,6 +229,9 @@ $proxysettings{'THROTTLING_GREEN_TOTAL'} = 'unlimited';
 $proxysettings{'THROTTLING_GREEN_HOST'} = 'unlimited';
 $proxysettings{'THROTTLING_BLUE_TOTAL'} = 'unlimited';
 $proxysettings{'THROTTLING_BLUE_HOST'} = 'unlimited';
+$proxysettings{'ASNBL_FASTFLUX_DETECTION'} = 'off';
+$proxysettings{'ASNBL_FASTFLUX_THRESHOLD'} = '5';
+$proxysettings{'ASNBL_SELECANN_DETECTION'} = 'off';
 $proxysettings{'ENABLE_MIME_FILTER'} = 'off';
 $proxysettings{'AUTH_METHOD'} = 'none';
 $proxysettings{'AUTH_REALM'} = '';
@@ -413,6 +420,21 @@ if (($proxysettings{'ACTION'} eq $Lang::tr{'save'}) || ($proxysettings{'ACTION'}
 	{
 		$errormessage = $Lang::tr{'invalid maximum incoming size'};
 		goto ERROR;
+	}
+	if (($proxysettings{'ASNBL_FASTFLUX_DETECTION'} eq 'on') || ($proxysettings{'ASNBL_SELECANN_DETECTION'} eq 'on'))
+	{
+		if (-z $proxysettings{'ASNBL_FASTFLUX_THRESHOLD'}) {
+			$errormessage = $Lang::tr{'advproxy fastflux no threshold given'};
+			goto ERROR;
+		}
+		if (! looks_like_number($proxysettings{'ASNBL_FASTFLUX_THRESHOLD'})) {
+			$errormessage = $Lang::tr{'advproxy fastflux threshold invalid'};
+			goto ERROR;
+		}
+		if (($proxysettings{'ASNBL_FASTFLUX_THRESHOLD'} < 2) || ($proxysettings{'ASNBL_FASTFLUX_THRESHOLD'} > 10)) {
+			$errormessage = $Lang::tr{'advproxy fastflux threshold out of bounds'};
+			goto ERROR;
+		}
 	}
 	if (!($proxysettings{'AUTH_METHOD'} eq 'none'))
 	{
@@ -702,10 +724,6 @@ $checked{'TRANSPARENT_BLUE'}{'off'} = '';
 $checked{'TRANSPARENT_BLUE'}{'on'} = '';
 $checked{'TRANSPARENT_BLUE'}{$proxysettings{'TRANSPARENT_BLUE'}} = "checked='checked'";
 
-$checked{'SUPPRESS_VERSION'}{'off'} = '';
-$checked{'SUPPRESS_VERSION'}{'on'} = '';
-$checked{'SUPPRESS_VERSION'}{$proxysettings{'SUPPRESS_VERSION'}} = "checked='checked'";
-
 $checked{'FORWARD_IPADDRESS'}{'off'} = '';
 $checked{'FORWARD_IPADDRESS'}{'on'} = '';
 $checked{'FORWARD_IPADDRESS'}{$proxysettings{'FORWARD_IPADDRESS'}} = "checked='checked'";
@@ -796,6 +814,14 @@ $selected{'THROTTLING_GREEN_TOTAL'}{$proxysettings{'THROTTLING_GREEN_TOTAL'}} = 
 $selected{'THROTTLING_GREEN_HOST'}{$proxysettings{'THROTTLING_GREEN_HOST'}} = "selected='selected'";
 $selected{'THROTTLING_BLUE_TOTAL'}{$proxysettings{'THROTTLING_BLUE_TOTAL'}} = "selected='selected'";
 $selected{'THROTTLING_BLUE_HOST'}{$proxysettings{'THROTTLING_BLUE_HOST'}} = "selected='selected'";
+
+$checked{'ASNBL_FASTFLUX_DETECTION'}{'off'} = '';
+$checked{'ASNBL_FASTFLUX_DETECTION'}{'on'} = '';
+$checked{'ASNBL_FASTFLUX_DETECTION'}{$proxysettings{'ASNBL_FASTFLUX_DETECTION'}} = "checked='checked'";
+
+$checked{'ASNBL_SELECANN_DETECTION'}{'off'} = '';
+$checked{'ASNBL_SELECANN_DETECTION'}{'on'} = '';
+$checked{'ASNBL_SELECANN_DETECTION'}{$proxysettings{'ASNBL_SELECANN_DETECTION'}} = "checked='checked'";
 
 $checked{'ENABLE_MIME_FILTER'}{'off'} = '';
 $checked{'ENABLE_MIME_FILTER'}{'on'} = '';
@@ -958,19 +984,13 @@ print <<END
 	</td>
 </tr>
 <tr>
-	<td class='base'>$Lang::tr{'advproxy suppress version'}:</td>
-	<td><input type='checkbox' name='SUPPRESS_VERSION' $checked{'SUPPRESS_VERSION'}{'on'} /></td>
+	<td>&nbsp;</td>
+	<td>&nbsp;</td>
 	<td class='base'>$Lang::tr{'advproxy error design'}:</td>
 	<td class='base'><select name='ERR_DESIGN'>
 		<option value='ipfire' $selected{'ERR_DESIGN'}{'ipfire'}>IPFire</option>
 		<option value='squid' $selected{'ERR_DESIGN'}{'squid'}>$Lang::tr{'advproxy standard'}</option>
 	</select></td>
-</tr>
-<tr>
-	<td class='base'>$Lang::tr{'advproxy squid version'}:</td>
-	<td class='base'>&nbsp;[<font color='$Header::colourred'> $squidversion[0] </font>]</td>
-	<td>&nbsp;</td>
-	<td>&nbsp;</td>
 </tr>
 </table>
 <hr size='1'>
@@ -1191,9 +1211,11 @@ END
 
 if (!$proxysettings{'SRC_SUBNETS'})
 {
-	print "$green_cidr\n";
-	if ($netsettings{'BLUE_DEV'})
-	{
+	if (&Header::green_used()) {
+		print "$green_cidr\n";
+	}
+
+	if (&Header::blue_used()) {
 		print "$blue_cidr\n";
 	}
 } else { print $proxysettings{'SRC_SUBNETS'}; }
@@ -1628,6 +1650,24 @@ print <<END
 </table>
 
 <hr size='1'>
+
+<table width='100%'>
+<tr>
+       <td><b>$Lang::tr{'advproxy asbased anomaly detection'}</b></td>
+</tr>
+<tr>
+       <td class='base'>$Lang::tr{'advproxy fastflux detection'}:</td>
+       <td><input type='checkbox' name='ASNBL_FASTFLUX_DETECTION' $checked{'ASNBL_FASTFLUX_DETECTION'}{'on'} /></td>
+       <td class='base'>$Lang::tr{'advproxy fastflux detection threshold'}:</td>
+       <td><input type='text' name='ASNBL_FASTFLUX_THRESHOLD' value='$proxysettings{'ASNBL_FASTFLUX_THRESHOLD'}' size=2 /></td>
+</tr>
+<tr>
+       <td class='base'>$Lang::tr{'advproxy selectively announcements detection'}:</td>
+       <td colspan='3'><input type='checkbox' name='ASNBL_SELECANN_DETECTION' $checked{'ASNBL_SELECANN_DETECTION'}{'on'} /></td>
+</tr>
+</table>
+
+<hr size='1'>
 END
 ;
 
@@ -1798,8 +1838,11 @@ print <<END
 END
 ;
 if (!$proxysettings{'IDENT_HOSTS'}) {
-	print "$green_cidr\n";
-	if ($netsettings{'BLUE_DEV'}) {
+	if (&Header::green_used()) {
+		print "$green_cidr\n";
+	}
+
+	if (&Header::blue_used()) {
 		print "$blue_cidr\n";
 	}
 } else {
@@ -2474,7 +2517,7 @@ sub check_acls
 		s/^\s+//g; s/\s+$//g;
 		if ($_)
 		{
-			unless (&General::validipandmask($_)) { $errormessage = $Lang::tr{'advproxy errmsg invalid ip or mask'}; }
+			unless (&Network::check_subnet($_)) { $errormessage = $Lang::tr{'advproxy errmsg invalid ip or mask'} . ": $_"; }
 			$proxysettings{'SRC_SUBNETS'} .= $_."\n";
 		}
 	}
@@ -2670,9 +2713,11 @@ sub write_acls
 	flock(FILE, 2);
 	if (!$proxysettings{'SRC_SUBNETS'})
 	{
-		print FILE "$green_cidr\n";
-		if ($netsettings{'BLUE_DEV'})
-		{
+		if (&Header::green_used()) {
+			print FILE "$green_cidr\n";
+		}
+
+		if (&Header::blue_used()) {
 			print FILE "$blue_cidr\n";
 		}
 	} else { print FILE $proxysettings{'SRC_SUBNETS'}; }
@@ -3059,6 +3104,7 @@ sub writeconfig
 
 shutdown_lifetime 5 seconds
 icp_port 0
+httpd_suppress_version_string on
 
 END
 	;
@@ -3068,11 +3114,15 @@ END
 		print FILE "include /etc/squid/squid.conf.pre.local\n\n";
 	}
 
-	print FILE "http_port $netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}";
+	if (&Header::green_used()) {
+		print FILE "http_port $netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}";
+	} else {
+		print FILE "http_port 0.0.0.0:$proxysettings{'PROXY_PORT'}";
+	}
 	if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }
 	print FILE "\n";
 
-	if ($proxysettings{'TRANSPARENT'} eq 'on') {
+	if (&Header::green_used() && $proxysettings{'TRANSPARENT'} eq 'on') {
 		print FILE "http_port $netsettings{'GREEN_ADDRESS'}:$proxysettings{'TRANSPARENT_PORT'} intercept";
 		if ($proxysettings{'NO_CONNECTION_AUTH'} eq 'on') { print FILE " no-connection-auth" }
 		print FILE "\n";
@@ -3156,17 +3206,20 @@ END
 		}
 	}
 
-	print FILE <<END
-
+	print FILE <<END;
+acl IPFire_ips dst 127.0.0.1
 acl IPFire_http  port $http_port
 acl IPFire_https port $https_port
-acl IPFire_ips              dst $netsettings{'GREEN_ADDRESS'}
 acl IPFire_networks         src "$acl_src_subnets"
 acl IPFire_servers          dst "$acl_src_subnets"
+END
+	if (&Header::green_used()) {
+		print FILE <<END;
+acl IPFire_ips              dst $netsettings{'GREEN_ADDRESS'}
 acl IPFire_green_network    src $green_cidr
 acl IPFire_green_servers    dst $green_cidr
 END
-	;
+	}
 	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_network     src $blue_cidr\n"; }
 	if ($netsettings{'BLUE_DEV'}) { print FILE "acl IPFire_blue_servers     dst $blue_cidr\n"; }
 	if (!-z $acl_src_banned_ip) { print FILE "acl IPFire_banned_ips       src \"$acl_src_banned_ip\"\n"; }
@@ -3507,6 +3560,59 @@ if (@ssl_ports) {
 	print FILE "http_access deny  CONNECT !SSL_ports\n";
 }
 
+	if ((($proxysettings{'ASNBL_FASTFLUX_DETECTION'} eq 'on') && (!-z $proxysettings{'ASNBL_FASTFLUX_THRESHOLD'})) || ($proxysettings{'ASNBL_SELECANN_DETECTION'} eq 'on')) {
+		print FILE "external_acl_type asnblhelper children-max=10 children-startup=2 ttl=86400 %DST /usr/bin/asnbl-helper.py ${General::swroot}/proxy/asnbl-helper.conf\n";
+		print FILE "acl asnbl external asnblhelper\n";
+
+		# Use the user-defined URL filter whitelist (if present and populated) for the ASNBL helper as well
+		# Necessary for destinations such as fedoraproject.org, but we do not want to maintain a dedicated
+		# or hardcoded list for such FQDNs.
+		if ((-e "${General::swroot}/urlfilter/blacklists/custom/allowed/domains") && (!-z "${General::swroot}/urlfilter/blacklists/custom/allowed/domains")) {
+			print FILE "acl asnbl_whitelisted_destinations dstdomain \"${General::swroot}/urlfilter/blacklists/custom/allowed/domains\"\n";
+			print FILE "http_access deny asnbl !asnbl_whitelisted_destinations\n\n";
+		} else {
+			print FILE "http_access deny asnbl\n\n";
+		}
+
+		# Write ASNBL helper configuration file...
+		open(ASNBLFILE, ">${General::swroot}/proxy/asnbl-helper.conf");
+		flock(ASNBLFILE, 2);
+
+		print ASNBLFILE<<END
+#
+# This file has been automatically generated. Manual changes will be overwritten.
+#
+
+[GENERAL]
+LOGLEVEL = INFO
+ASNDB_PATH = /var/lib/location/database.db
+USE_REPLYMAP = no
+END
+;
+
+		print ASNBLFILE "AS_DIVERSITY_THRESHOLD = $proxysettings{'ASNBL_FASTFLUX_THRESHOLD'}\n";
+
+		if ($proxysettings{'ASNBL_SELECANN_DETECTION'} eq 'on') {
+			print ASNBLFILE "BLOCK_SUSPECTED_SELECTIVE_ANNOUNCEMENTS = yes\n";
+		} else {
+			print ASNBLFILE "BLOCK_SUSPECTED_SELECTIVE_ANNOUNCEMENTS = no\n";
+		}
+
+		if ($proxysettings{'ASNBL_FASTFLUX_DETECTION'} eq 'on') {
+			print ASNBLFILE "BLOCK_DIVERSITY_EXCEEDING_DESTINATIONS = yes\n";
+		} else {
+			print ASNBLFILE "BLOCK_DIVERSITY_EXCEEDING_DESTINATIONS = no\n";
+		}
+
+		print ASNBLFILE<<END
+TESTDATA = (10.0.0.1, 0) (127.0.0.1, 0) (fe80::1, 0)
+ACTIVE_ASNBLS = 
+END
+;
+
+		close ASNBLFILE;
+    }
+
 if ($proxysettings{'AUTH_METHOD'} eq 'ident')
 {
 print FILE "#Set ident ACLs\n";
@@ -3585,9 +3691,11 @@ if ($delaypools) {
 
 	if ($netsettings{'BLUE_DEV'})
 	{
-		print FILE "delay_access 1 allow IPFire_green_network";
-		if (!-z $acl_dst_throttle) { print FILE " for_throttled_urls"; }
-		print FILE "\n";
+		if (&Header::green_used()) {
+			print FILE "delay_access 1 allow IPFire_green_network";
+			if (!-z $acl_dst_throttle) { print FILE " for_throttled_urls"; }
+			print FILE "\n";
+		}
 		print FILE "delay_access 1 deny  all\n";
 	} else {
 		print FILE "delay_access 1 allow all";
@@ -3611,7 +3719,7 @@ if ($delaypools) {
 	print FILE "\n";
 }
 
-if ($proxysettings{'NO_PROXY_LOCAL'} eq 'on')
+if (&Header::green_used() && $proxysettings{'NO_PROXY_LOCAL'} eq 'on')
 {
 	print FILE "#Prevent internal proxy access to Green except IPFire itself\n";
 	print FILE "http_access deny IPFire_green_servers !IPFire_ips !IPFire_green_network\n\n";
@@ -3848,8 +3956,6 @@ END
 
 	}
 
-	if ($proxysettings{'SUPPRESS_VERSION'} eq 'on') { print FILE "httpd_suppress_version_string on\n\n" }
-
 	if ((!-z $mimetypes) && ($proxysettings{'ENABLE_MIME_FILTER'} eq 'on')) {
 		if (!-z $acl_src_unrestricted_ip)  { print FILE "http_reply_access allow IPFire_unrestricted_ips\n"; }
 		if (!-z $acl_src_unrestricted_mac) { print FILE "http_reply_access allow IPFire_unrestricted_mac\n"; }
@@ -4004,7 +4110,9 @@ sub writecachemgr
 {
 	open(FILE, ">${General::swroot}/proxy/cachemgr.conf");
 	flock(FILE, 2);
-	print FILE "$netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}\n";
+	if (&Header::green_used()) {
+		print FILE "$netsettings{'GREEN_ADDRESS'}:$proxysettings{'PROXY_PORT'}\n";
+	}
 	print FILE "localhost";
 	close(FILE);
   return;

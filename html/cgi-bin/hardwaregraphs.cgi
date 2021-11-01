@@ -90,102 +90,70 @@ if (@thermal_zone_sensors) {
 	}
 }
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'hour' unless defined $querry[1];
+&Header::showhttpheaders();
+&Header::openpage($Lang::tr{'hardware graphs'}, 1, '');
+&Header::openbigbox('100%', 'left');
 
-if ( $querry[0] =~ "hwtemp"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatehwtempgraph($querry[1]);
-}elsif ( $querry[0] =~ "hwfan"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatehwfangraph($querry[1]);
-}elsif ( $querry[0] =~ "hwvolt"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatehwvoltgraph($querry[1]);
-}elsif ( $querry[0] =~ "thermaltemp"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatethermaltempgraph($querry[1]);
-}elsif ( $querry[0] =~ "sd?" ){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatehddgraph($querry[0],$querry[1]);
-}elsif ( $querry[0] =~ "nvme?" ){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatehddgraph($querry[0],$querry[1]);
-}else{
-	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'hardware graphs'}, 1, '');
-	&Header::openbigbox('100%', 'left');
+&Header::getcgihash(\%sensorsettings);
 
-	&Header::getcgihash(\%sensorsettings);
-
-	if ( $sensorsettings{'ACTION'} eq $Lang::tr{'save'} ) {
-		foreach(@sensorsgraphs){
-			chomp($_);
-				$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
-				my $label = $2.$3;$label=~ s/-//g;
-				if ( $sensorsettings{'LINE-'.$label} ne "on" ){
-					$sensorsettings{'LINE-'.$label} = 'off';
-				} elsif ($sensorsettings{'LINE-'.$label} eq "on" ){
-					$sensorsettings{'LINE-'.$label} = 'checked';
-				}
-				$sensorsettings{'LABEL-'.$label} =~ s/\W//g;
-		}
-		&General::writehash("${General::swroot}/sensors/settings", \%sensorsettings);
+if ( $sensorsettings{'ACTION'} eq $Lang::tr{'save'} ) {
+	foreach(@sensorsgraphs){
+		chomp($_);
+			$_ =~ /\/(.*)sensors-(.*)\/(.*)\.rrd/;
+			my $label = $2.$3;$label=~ s/-//g;
+			if ( $sensorsettings{'LINE-'.$label} ne "on" ){
+				$sensorsettings{'LINE-'.$label} = 'off';
+			} elsif ($sensorsettings{'LINE-'.$label} eq "on" ){
+				$sensorsettings{'LINE-'.$label} = 'checked';
+			}
+			$sensorsettings{'LABEL-'.$label} =~ s/\W//g;
 	}
-
-	# This should be save, because no user given content will be processed.
-	#my @disks = `ls -1 /sys/block | grep -E '^sd|^nvme' | sort | uniq`;
-	my @disks = &get_disks();
-
-	foreach (@disks){
-		my $disk = $_;
-		chomp $disk;
-		my @array = split(/\//,$disk);
-
-		&Header::openbox('100%', 'center', "$array[$#array] $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("hardwaregraphs.cgi",$array[$#array],"day");
-		&Header::closebox();
-	}
-
-	if ( grep(/thermal-thermal_zone/, @sensorsgraphs) ) {
-		&Header::openbox('100%', 'center', "ACPI Thermal-Zone Temp $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("hardwaregraphs.cgi","thermaltemp","day");
-		&Header::closebox();
-	}
-
-	if ( grep(/temperature-/, @sensorsgraphs) ) {
-		&Header::openbox('100%', 'center', "hwtemp $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("hardwaregraphs.cgi","hwtemp","day");
-		Header::closebox();
-	}
-
-	if ( grep(/fanspeed-/, @sensorsgraphs) ) {
-		&Header::openbox('100%', 'center', "hwfan $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("hardwaregraphs.cgi","hwfan","day");
-		&Header::closebox();
-	}
-
-	if ( grep(/voltage-/, @sensorsgraphs) ) {
-		&Header::openbox('100%', 'center', "hwvolt $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("hardwaregraphs.cgi","hwvolt","day");
-		&Header::closebox();
-	}
-
-	if ( @sensorsgraphs ) {
-		sensorsbox();
-	}
-	&Header::closebigbox();
-	&Header::closepage();
-
+	&General::writehash("${General::swroot}/sensors/settings", \%sensorsettings);
 }
 
+# This should be save, because no user given content will be processed.
+#my @disks = `ls -1 /sys/block | grep -E '^sd|^nvme' | sort | uniq`;
+my @disks = &get_disks();
+
+foreach (@disks){
+	my $disk = $_;
+	chomp $disk;
+	my @array = split(/\//,$disk);
+
+	&Header::openbox('100%', 'center', "$array[$#array] $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("hardwaregraphs.cgi",$array[$#array],"day");
+	&Header::closebox();
+}
+
+if ( grep(/thermal-thermal_zone/, @sensorsgraphs) ) {
+	&Header::openbox('100%', 'center', "ACPI Thermal-Zone Temp $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("hardwaregraphs.cgi","thermaltemp","day");
+	&Header::closebox();
+}
+
+if ( grep(/temperature-/, @sensorsgraphs) ) {
+	&Header::openbox('100%', 'center', "hwtemp $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("hardwaregraphs.cgi","hwtemp","day");
+	Header::closebox();
+}
+
+if ( grep(/fanspeed-/, @sensorsgraphs) ) {
+	&Header::openbox('100%', 'center', "hwfan $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("hardwaregraphs.cgi","hwfan","day");
+	&Header::closebox();
+}
+
+if ( grep(/voltage-/, @sensorsgraphs) ) {
+	&Header::openbox('100%', 'center', "hwvolt $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("hardwaregraphs.cgi","hwvolt","day");
+	&Header::closebox();
+}
+
+if ( @sensorsgraphs ) {
+	sensorsbox();
+}
+&Header::closebigbox();
+&Header::closepage();
 
 sub sensorsbox {
 	&Header::openbox('100%', 'center', "$Lang::tr{'mbmon settings'}");

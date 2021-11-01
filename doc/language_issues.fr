@@ -96,7 +96,9 @@ WARNING: translation string unused: advproxy errmsg password incorrect
 WARNING: translation string unused: advproxy invalid num of children
 WARNING: translation string unused: advproxy no clients defined
 WARNING: translation string unused: advproxy redirector children
+WARNING: translation string unused: advproxy squid version
 WARNING: translation string unused: advproxy ssadvanced proxy
+WARNING: translation string unused: advproxy suppress version
 WARNING: translation string unused: advproxy throttle binary
 WARNING: translation string unused: advproxy throttle dskimg
 WARNING: translation string unused: advproxy throttle mmedia
@@ -261,6 +263,7 @@ WARNING: translation string unused: dns new 0
 WARNING: translation string unused: dns new 1
 WARNING: translation string unused: dns saved
 WARNING: translation string unused: dns saved txt
+WARNING: translation string unused: dnssec disabled warning
 WARNING: translation string unused: dnssec information
 WARNING: translation string unused: do not log this port list
 WARNING: translation string unused: domain master
@@ -292,6 +295,7 @@ WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enable wildcards
 WARNING: translation string unused: enabledtitle
 WARNING: translation string unused: encrypted
+WARNING: translation string unused: enter ack class
 WARNING: translation string unused: err bk 1
 WARNING: translation string unused: err bk 10 password
 WARNING: translation string unused: err bk 2 key
@@ -320,6 +324,8 @@ WARNING: translation string unused: external access rule removed
 WARNING: translation string unused: extrahd
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
+WARNING: translation string unused: false max bandwith
+WARNING: translation string unused: false min bandwith
 WARNING: translation string unused: filename
 WARNING: translation string unused: firmware
 WARNING: translation string unused: firmware upload
@@ -388,6 +394,7 @@ WARNING: translation string unused: generatepolicy
 WARNING: translation string unused: generatereport
 WARNING: translation string unused: genkey
 WARNING: translation string unused: green interface
+WARNING: translation string unused: guaranteed bandwith
 WARNING: translation string unused: guest ok
 WARNING: translation string unused: gz with key
 WARNING: translation string unused: harddisk temperature graphs
@@ -486,6 +493,7 @@ WARNING: translation string unused: manage printers
 WARNING: translation string unused: manual
 WARNING: translation string unused: manual control and status
 WARNING: translation string unused: marked
+WARNING: translation string unused: max bandwith
 WARNING: translation string unused: max incoming size
 WARNING: translation string unused: max outgoing size
 WARNING: translation string unused: max size
@@ -892,8 +900,11 @@ WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: false max bandwidth = Maximum bandwidth is false.
+WARNING: untranslated string: false min bandwidth = Minimum bandwidth is false.
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
+WARNING: untranslated string: guaranteed bandwidth = Guaranteed bandwidth
 WARNING: untranslated string: guardian block a host = unknown string
 WARNING: untranslated string: guardian block httpd brute-force = unknown string
 WARNING: untranslated string: guardian block ssh brute-force = unknown string
@@ -923,6 +934,7 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
+WARNING: untranslated string: max bandwidth = Maximum bandwidth
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string

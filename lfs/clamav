@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.103.3
+VER        = 0.104.0
 
 THISAPP    = clamav-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,13 +32,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = clamav
-PAK_VER    = 56
+PAK_VER    = 57
 
 DEPS       =
-
-ifeq "$(BUILD_PLATFORM)" "arm"
-CONFIGURE_FLAGS = --disable-fanotify
-endif
 
 DATABASE_DIR = /var/lib/clamav
 
@@ -50,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f8dcf678953f6af056ddd5917bcc50c3
+$(DL_FILE)_MD5 = 3f4789c09f5a35e9ea580edd5c3e54b6
 
 install : $(TARGET)
 
@@ -83,19 +79,31 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--disable-clamonacc \
-		--sysconfdir=/var/ipfire/clamav \
-		--with-dbdir=$(DATABASE_DIR) \
-		$(CONFIGURE_FLAGS)
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
+
+	cd $(DIR_APP) && mkdir -pv build
+	cd $(DIR_APP)/build && cmake .. -G Ninja \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_INSTALL_PREFIX=/usr \
+		-DCMAKE_INSTALL_LIBDIR=/usr/lib \
+		-DOPTIMIZE=ON \
+		-DBYTECODE_RUNTIME="interpreter" \
+		-DENABLE_TESTS=OFF \
+		-DENABLE_CLAMONACC=OFF \
+		-DENABLE_MILTER=OFF \
+		-DENABLE_MAN_PAGES=OFF \
+		-DENABLE_EXTERNAL_MSPACK=OFF \
+		-DENABLE_FRESHCLAM_DNS_FIX=ON \
+		-DAPP_CONFIG_DIRECTORY=/var/ipfire/clamav \
+		-DDATABASE_DIRECTORY=$(DATABASE_DIR)
+
+	cd $(DIR_APP)/build && ninja $(MAKETUNING) && ninja install
+
 	mkdir -pv $(DATABASE_DIR)
 	chown clamav.clamav -R $(DATABASE_DIR)
 	rm -rfv $(DATABASE_DIR)/*.cvd
+	mkdir -pv /var/ipfire/clamav
 	cp -rf $(DIR_SRC)/config/clamav/* /var/ipfire/clamav/
-	mkdir -p /var/run/clamav
+	mkdir -pv /var/run/clamav
 	chown clamav:clamav /var/run/clamav
 	#install initscripts
 	$(call INSTALL_INITSCRIPT,clamav)

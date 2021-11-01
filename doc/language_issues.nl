@@ -69,7 +69,9 @@ WARNING: translation string unused: advproxy errmsg password incorrect
 WARNING: translation string unused: advproxy invalid num of children
 WARNING: translation string unused: advproxy no clients defined
 WARNING: translation string unused: advproxy redirector children
+WARNING: translation string unused: advproxy squid version
 WARNING: translation string unused: advproxy ssadvanced proxy
+WARNING: translation string unused: advproxy suppress version
 WARNING: translation string unused: advproxy throttle binary
 WARNING: translation string unused: advproxy throttle dskimg
 WARNING: translation string unused: advproxy throttle mmedia
@@ -191,6 +193,7 @@ WARNING: translation string unused: delete cron
 WARNING: translation string unused: delete pc
 WARNING: translation string unused: delete share
 WARNING: translation string unused: delete user
+WARNING: translation string unused: demon login script
 WARNING: translation string unused: deprecated fs warn
 WARNING: translation string unused: description
 WARNING: translation string unused: destination ip bad
@@ -260,6 +263,7 @@ WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enable wildcards
 WARNING: translation string unused: enabledtitle
 WARNING: translation string unused: encrypted
+WARNING: translation string unused: enter ack class
 WARNING: translation string unused: err bk 1
 WARNING: translation string unused: err bk 10 password
 WARNING: translation string unused: err bk 2 key
@@ -889,10 +893,17 @@ WARNING: untranslated string: acpitemp = ACPI - Temperatures
 WARNING: untranslated string: administrator password = Administrator password
 WARNING: untranslated string: administrator username = Administrator username
 WARNING: untranslated string: advproxy AUTH method ntlm auth = Windows Active Directory
+WARNING: untranslated string: advproxy asbased anomaly detection = Anomaly detections based on Autonomous Systems information
 WARNING: untranslated string: advproxy basic authentication = Allow HTTP Basic authentication
 WARNING: untranslated string: advproxy errmsg wpad invalid ip or mask = WPAD: Invalid IP or subnet for excluded IP subnet
+WARNING: untranslated string: advproxy fastflux detection = Deny access to destinations hosted on fast flux setups
+WARNING: untranslated string: advproxy fastflux detection threshold = Threshold
+WARNING: untranslated string: advproxy fastflux no threshold given = No threshold was given for fast flux detection
+WARNING: untranslated string: advproxy fastflux threshold invalid = Supplied fast flux detection threshold is invalid
+WARNING: untranslated string: advproxy fastflux threshold out of bounds = Supplied fast flux detection threshold is out of bounds
 WARNING: untranslated string: advproxy group access control = Group based access control
 WARNING: untranslated string: advproxy group required = Required group
+WARNING: untranslated string: advproxy selectively announcements detection = Deny access to destinations hosted on selectively announced networks
 WARNING: untranslated string: advproxy wpad example dst_noproxy_ip = e.g. 192.168.2.0/255.255.255.0
 WARNING: untranslated string: advproxy wpad example dst_noproxy_url = e.g. *.ipfire.org*
 WARNING: untranslated string: advproxy wpad label dst_noproxy_ip = Excluded IP Subnets (one per line)
@@ -912,6 +923,7 @@ WARNING: untranslated string: check all = Check all
 WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
+WARNING: untranslated string: daemon login script = Daemon login script
 WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: default = Default
 WARNING: untranslated string: default IP address = Default IP Address
@@ -947,7 +959,6 @@ WARNING: untranslated string: dns use protocol for dns queries = Protocol for DN
 WARNING: untranslated string: dnsforward dnssec disabled = DNSSEC Validation is disabled
 WARNING: untranslated string: dnsforward forward_servers = Nameservers
 WARNING: untranslated string: dnssec aware = DNSSEC Aware
-WARNING: untranslated string: dnssec disabled warning = WARNING: DNSSEC has been disabled
 WARNING: untranslated string: dnssec not supported = DNSSEC Not supported
 WARNING: untranslated string: dnssec validating = DNSSEC Validating
 WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
@@ -1161,6 +1172,8 @@ WARNING: untranslated string: processor vulnerability mitigations = Processor Vu
 WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: random number generator daemon = Random Number Generator Daemon
 WARNING: untranslated string: rdns = rDNS
+WARNING: untranslated string: reboot fsck = Reboot & check filesystem
+WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check
 WARNING: untranslated string: received = Received
 WARNING: untranslated string: required = Required
 WARNING: untranslated string: required field = Required field

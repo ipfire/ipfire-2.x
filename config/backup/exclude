@@ -1,4 +1,5 @@
 /etc/sysconfig/lm_sensors
+/etc/unbound/unbound.conf
 *.tmp
 /var/ipfire/ethernet/settings
 /var/ipfire/firewall/bin/*

@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET = $(DIR_INFO)/$(THISAPP)
 PROG       = avahi
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       = dbus libdaemon
 
@@ -102,6 +102,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install initscript
 	$(call INSTALL_INITSCRIPT,avahi)
-
+	
+	#install backup definition
+	install -v -m 644 ${DIR_SRC}/config/backup/includes/avahi \
+			/var/ipfire/backup/addons/includes/avahi
+			
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

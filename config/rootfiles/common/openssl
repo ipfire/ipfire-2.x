@@ -599,6 +599,7 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/BN_RECP_CTX_free.html
 #usr/share/doc/openssl/html/man3/BN_RECP_CTX_new.html
 #usr/share/doc/openssl/html/man3/BN_RECP_CTX_set.html
+#usr/share/doc/openssl/html/man3/BN_abs_is_word.html
 #usr/share/doc/openssl/html/man3/BN_add.html
 #usr/share/doc/openssl/html/man3/BN_add_word.html
 #usr/share/doc/openssl/html/man3/BN_bin2bn.html
@@ -4570,6 +4571,7 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/BN_RECP_CTX_free.3
 #usr/share/man/man3/BN_RECP_CTX_new.3
 #usr/share/man/man3/BN_RECP_CTX_set.3
+#usr/share/man/man3/BN_abs_is_word.3
 #usr/share/man/man3/BN_add.3
 #usr/share/man/man3/BN_add_word.3
 #usr/share/man/man3/BN_bin2bn.3

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.18
+VER        = 2.1.0
 
 THISAPP    = traceroute-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = traceroute
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b7254149b7f081cce07f4b9e065ba5ef
+$(DL_FILE)_MD5 = 84d329d67abc3fb83fc8cb12aeaddaba
 
 install : $(TARGET)
 

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.6.1
+VER        = 3.6.2
 
 THISAPP    = postfix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = postfix
-PAK_VER    = 31
+PAK_VER    = 32
 
 DEPS       =
 
@@ -66,7 +66,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 85d1c2b06a469ba6cc61946c7042e40e
+$(DL_FILE)_MD5 = 4718b498fa4285cf275f506c169f4746
 
 install : $(TARGET)
 

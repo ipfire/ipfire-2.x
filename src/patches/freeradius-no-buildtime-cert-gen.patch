@@ -1,42 +1,15 @@
-From e6f7c9d4c2af1cda7760ca8155166bb5d4d541d0 Mon Sep 17 00:00:00 2001
-From: Alexander Scheel <ascheel@redhat.com>
-Date: Wed, 8 May 2019 12:58:02 -0400
-Subject: [PATCH] Don't generate certificates in reproducible builds
-
-Signed-off-by: Alexander Scheel <ascheel@redhat.com>
----
- Make.inc.in  | 5 +++++
- configure    | 4 ++++
- configure.ac | 3 +++
- raddb/all.mk | 4 ++++
- 4 files changed, 16 insertions(+)
-
-diff --git a/Make.inc.in b/Make.inc.in
-index 0b2cd74de8..8c623cf95c 100644
---- a/Make.inc.in
-+++ b/Make.inc.in
-@@ -173,3 +173,8 @@ else
- 	TESTBINDIR = ./$(BUILD_DIR)/bin
- 	TESTBIN    = ./$(BUILD_DIR)/bin
- endif
-+
-+#
-+#  With reproducible builds, do not generate certificates during installation
-+#
-+ENABLE_REPRODUCIBLE_BUILDS = @ENABLE_REPRODUCIBLE_BUILDS@
-diff --git a/configure b/configure
-index c2c599c92b..3d4403a844 100755
---- a/configure
-+++ b/configure
-@@ -655,6 +655,7 @@ RUSERS
+diff -Naur a/configure b/configure
+--- a/configure	2021-06-10 16:49:17.000000000 +0200
++++ b/configure	2021-08-19 11:14:56.964232407 +0200
+@@ -654,6 +654,7 @@
+ RUSERS
  SNMPWALK
  SNMPGET
- PERL
 +ENABLE_REPRODUCIBLE_BUILDS
  openssl_version_check_config
  WITH_DHCP
  modconfdir
-@@ -5586,6 +5587,7 @@ else
+@@ -5986,6 +5987,7 @@
  fi
  
  
@@ -44,7 +17,7 @@ index c2c599c92b..3d4403a844 100755
  # Check whether --enable-reproducible-builds was given.
  if test "${enable_reproducible_builds+set}" = set; then :
    enableval=$enable_reproducible_builds;  case "$enableval" in
-@@ -5597,6 +5599,7 @@ $as_echo "#define ENABLE_REPRODUCIBLE_BUILDS 1" >>confdefs.h
+@@ -5997,6 +5999,7 @@
      ;;
    *)
      reproducible_builds=no
@@ -52,19 +25,10 @@ index c2c599c92b..3d4403a844 100755
    esac
  
  fi
-@@ -5604,6 +5607,7 @@ fi
- 
- 
- 
-+
- CHECKRAD=checkrad
- # Extract the first word of "perl", so it can be a program name with args.
- set dummy perl; ac_word=$2
-diff --git a/configure.ac b/configure.ac
-index a7abf0025a..35b013f4af 100644
---- a/configure.ac
-+++ b/configure.ac
-@@ -619,6 +619,7 @@ AC_SUBST([openssl_version_check_config])
+diff -Naur a/configure.ac b/configure.ac
+--- a/configure.ac	2021-06-10 16:49:17.000000000 +0200
++++ b/configure.ac	2021-08-19 11:17:10.786259778 +0200
+@@ -690,6 +690,7 @@
  dnl #
  dnl #  extra argument: --enable-reproducible-builds
  dnl #
@@ -72,7 +36,7 @@ index a7abf0025a..35b013f4af 100644
  AC_ARG_ENABLE(reproducible-builds,
  [AS_HELP_STRING([--enable-reproducible-builds],
                  [ensure the build does not change each time])],
-@@ -630,8 +631,10 @@ AC_ARG_ENABLE(reproducible-builds,
+@@ -701,8 +702,10 @@
      ;;
    *)
      reproducible_builds=no
@@ -83,22 +47,32 @@ index a7abf0025a..35b013f4af 100644
  
  
  dnl #############################################################
-diff --git a/raddb/all.mk b/raddb/all.mk
-index c966edd657..c8e976a499 100644
---- a/raddb/all.mk
-+++ b/raddb/all.mk
-@@ -124,7 +124,11 @@ $(R)$(raddbdir)/users: $(R)$(modconfdir)/files/authorize
+diff -Naur a/Make.inc.in b/Make.inc.in
+--- a/Make.inc.in	2021-06-10 16:49:17.000000000 +0200
++++ b/Make.inc.in	2021-08-19 10:56:52.236404050 +0200
+@@ -174,6 +174,10 @@
+ 	TESTBIN    = ./$(BUILD_DIR)/bin
+ endif
+ 
++#
++#  With reproducible builds, do not generate certificates during installation
++#
++ENABLE_REPRODUCIBLE_BUILDS = @ENABLE_REPRODUCIBLE_BUILDS@
+ 
+ #
+ #  For creating documentation via doc/all.mk
+diff -Naur a/raddb/all.mk b/raddb/all.mk
+--- a/raddb/all.mk	2021-06-10 16:49:17.000000000 +0200
++++ b/raddb/all.mk	2021-08-19 11:18:58.640674802 +0200
+@@ -124,7 +124,11 @@
  ifneq "$(LOCAL_CERT_PRODUCTS)" ""
  $(LOCAL_CERT_PRODUCTS):
  	@echo BOOTSTRAP raddb/certs/
 +ifeq "$(ENABLE_REPRODUCIBLE_BUILDS)" "yes"
 +	@$(MAKE) -C $(R)$(raddbdir)/certs/ passwords.mk
-+else
++else	
  	@$(MAKE) -C $(R)$(raddbdir)/certs/
 +endif
  
  # Bootstrap is special
  $(R)$(raddbdir)/certs/bootstrap: | raddb/certs/bootstrap $(LOCAL_CERT_PRODUCTS)
--- 
-2.21.0
-

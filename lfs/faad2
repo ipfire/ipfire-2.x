@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.8.8
+VER        = 2_10_0
 
 THISAPP    = faad2-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = faad2
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 28f6116efdbe9378269f8a6221767d1f
+$(DL_FILE)_MD5 = f948925a6763e30c53078f5af339d6cc
 
 install : $(TARGET)
 
@@ -79,9 +79,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 
+	cd $(DIR_APP) && autoupdate
+	cd $(DIR_APP) && autoreconf -fvi
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--enable-shared \
+		--disable-static \
 		--with-mpeg4ip
 
 	cd $(DIR_APP) && make $(MAKETUNING)

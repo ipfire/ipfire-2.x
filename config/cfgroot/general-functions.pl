@@ -601,7 +601,7 @@ sub checksubnets
 		foreach my $key (keys %ipsecconf){
 			if ($ipsecconf{$key}[11] ne '' && $ipsecconf{$key}[36] eq ""){
 				foreach my $ipsecsubitem (split(/\|/, $ipsecconf{$key}[11])) {
-					my ($ipsecip,$ipsecsub) = split (/\//, $ipsecconf{$key}[11]);
+					my ($ipsecip,$ipsecsub) = split (/\//, $ipsecsubitem);
 					$ipsecsub=&iporsubtodec($ipsecsub);
 					if($ipsecconf{$key}[1] ne $ccdname){
 						if ( &IpInSubnet ($ip,$ipsecip,$ipsecsub) ){
@@ -1227,6 +1227,7 @@ sub firewall_reload() {
 }
 
 # Function which will return the used interface for the red network zone (red0, ppp0, etc).
+# if you change this also check speed.cgi that include a local copy for systemload reasons
 sub get_red_interface() {
 
 	open(IFACE, "${General::swroot}/red/iface") or die "Could not open /var/ipfire/red/iface";
@@ -1238,17 +1239,6 @@ sub get_red_interface() {
 	return $interface;
 }
 
-sub dnssec_status() {
-	my $path = "${General::swroot}/red/dnssec-status";
-
-	open(STATUS, $path) or return 0;
-	my $status = <STATUS>;
-	close(STATUS);
-
-	chomp($status);
-
-	return $status;
-}
 sub number_cpu_cores() {
 	open my $cpuinfo, "/proc/cpuinfo" or die "Can't open cpuinfo: $!\n";
 	my $cores = scalar (map /^processor/, <$cpuinfo>);
@@ -1361,6 +1351,42 @@ sub formatBytes {
 
 	# Return the divided and rounded bytes count and the unit.
 	return sprintf("%.2f %s", $bytes, $unit);
+}
+
+# Function to collect and generate a hash for translating protocol numbers into
+# their names.
+sub generateProtoTransHash () {
+	# File which contains the protocol definitions.
+	my $protocols_file = "/etc/protocols";
+
+	my %protocols = ();
+
+	# Open protocols file.
+	open(FILE, "$protocols_file") or die "Could not open $protocols_file. $!\n";
+
+	# Loop through the file.
+	while (my $line = <FILE>) {
+		# Skip comments.
+		next if ($line =~ /^\#/);
+
+		# Skip blank  lines.
+		next if ($line =~ /^\s*$/);
+
+		# Remove any newlines.
+		chomp($line);
+
+		# Split line content.
+		my ($protocol_lc, $number, $protocol_uc, $comment) = split(' ', $line);
+
+		# Add proto details to the hash of protocols.
+		$protocols{$number} = $protocol_uc;
+	}
+
+	# Close file handle.
+	close(FILE);
+
+	# Return the hash.
+	return %protocols;
 }
 
 # Cloud Stuff

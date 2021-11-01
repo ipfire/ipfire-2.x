@@ -1,0 +1,10 @@
+usr/sbin/dump.exfat
+usr/sbin/exfatlabel
+usr/sbin/fsck.exfat
+usr/sbin/mkfs.exfat
+usr/sbin/tune.exfat
+#usr/share/man/man8/dump.exfat.8
+#usr/share/man/man8/exfatlabel.8
+#usr/share/man/man8/fsck.exfat.8
+#usr/share/man/man8/mkfs.exfat.8
+#usr/share/man/man8/tune.exfat.8

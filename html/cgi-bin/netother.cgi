@@ -37,70 +37,51 @@ my %mainsettings = ();
 
 my @pings=();
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'hour' unless defined $querry[1];
+&Header::showhttpheaders();
+&Header::openpage($Lang::tr{'network traffic graphs others'}, 1, '');
+&Header::openbigbox('100%', 'left');
 
-if ( $querry[0] eq "conntrack") {
-	print "Content-Type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updateconntrackgraph($querry[1]);
-} elsif ( $querry[0] =~ "fwhits"){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatefwhitsgraph($querry[1]);
-}elsif ( $querry[0] ne ""){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	&Graphs::updatepinggraph($querry[0],$querry[1]);
-}else{
+my @pinggraphs = `ls -dA /var/log/rrd/collectd/localhost/ping/ping-*`;
+foreach (@pinggraphs){
+	$_ =~ /(.*)\/ping\/ping-(.*)\.rrd/;
+	push(@pings,$2);
+}
 
-	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'network traffic graphs others'}, 1, '');
-	&Header::openbigbox('100%', 'left');
-	
-	my @pinggraphs = `ls -dA /var/log/rrd/collectd/localhost/ping/ping-*`;
-	foreach (@pinggraphs){
-		$_ =~ /(.*)\/ping\/ping-(.*)\.rrd/;
-		push(@pings,$2);
-	}
-
-	foreach (@pings) {
-		&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
-		&Graphs::makegraphbox("netother.cgi",$_,"day");
-		&Header::closebox();
-	}
-
-	&Header::openbox('100%', 'center', "$Lang::tr{'connection tracking'}");
-	&Graphs::makegraphbox("netother.cgi", "conntrack", "day");
+foreach (@pings) {
+	&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+	&Graphs::makegraphbox("netother.cgi",$_,"day");
 	&Header::closebox();
+}
 
-	&Header::openbox('100%', 'center', "$Lang::tr{'firewallhits'} $Lang::tr{'graph'}");
-	&Graphs::makegraphbox("netother.cgi","fwhits","day");
-	&Header::closebox();
+&Header::openbox('100%', 'center', "$Lang::tr{'connection tracking'}");
+&Graphs::makegraphbox("netother.cgi", "conntrack", "day");
+&Header::closebox();
 
-	my $output = '';
-	
-	&Header::openbox('100%', 'left', $Lang::tr{'routing table entries'});
-	$output = `/sbin/ip route show`;
+&Header::openbox('100%', 'center', "$Lang::tr{'firewallhits'} $Lang::tr{'graph'}");
+&Graphs::makegraphbox("netother.cgi","fwhits","day");
+&Header::closebox();
+
+my $output = '';
+
+&Header::openbox('100%', 'left', $Lang::tr{'routing table entries'});
+$output = `/sbin/ip route show`;
+$output = &Header::cleanhtml($output,"y");
+print "<pre>$output</pre>\n";
+&Header::closebox();
+
+$output = `/sbin/ip route list table 220`;
+if ( $output ) {
+	&Header::openbox('100%', 'left', $Lang::tr{'ipsec routing table entries'});
 	$output = &Header::cleanhtml($output,"y");
 	print "<pre>$output</pre>\n";
-	&Header::closebox();
+	&Header::closebox()
+}
 
-	$output = `/sbin/ip route list table 220`;
-	if ( $output ) {
-		&Header::openbox('100%', 'left', $Lang::tr{'ipsec routing table entries'});
-		$output = &Header::cleanhtml($output,"y");
-		print "<pre>$output</pre>\n";
-		&Header::closebox()
-	}
+&Header::openbox('100%', 'left', $Lang::tr{'arp table entries'});
+$output = `/sbin/ip neigh show`;
+$output = &Header::cleanhtml($output,"y");
+print "<pre>$output</pre>\n";
+&Header::closebox();
 
-	&Header::openbox('100%', 'left', $Lang::tr{'arp table entries'});
-	$output = `/sbin/ip neigh show`;
-	$output = &Header::cleanhtml($output,"y");
-	print "<pre>$output</pre>\n";
-	&Header::closebox();
-
-	&Header::closebigbox();
-	&Header::closepage();
-}	
+&Header::closebigbox();
+&Header::closepage();

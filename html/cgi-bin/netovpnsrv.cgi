@@ -49,46 +49,32 @@ foreach my $key (sort {$vpnsettings{$a}[1] <=> $vpnsettings{$b}[1]} keys %vpnset
 	$ipsecgraphs{$vpnsettings{$key}[1]} = "${interface_mode}${key}";
 }
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'week' unless defined $querry[1];
+&Header::showhttpheaders();
+&Header::openpage($Lang::tr{'vpn statistic n2n'}, 1, '');
+&Header::openbigbox('100%', 'left');
 
-if ( $querry[0] ne ""){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	if (grep { $_ eq $querry[0] } values %ipsecgraphs) {
-		&Graphs::updateifgraph($querry[0],$querry[1]);
-	} else {
-		&Graphs::updatevpnn2ngraph($querry[0],$querry[1]);
+my @vpngraphs = `find /var/log/rrd/collectd/localhost/openvpn-*-n2n/ -not  -path *openvpn-UNDEF* -name *traffic.rrd 2>/dev/null|sort`;
+foreach (@vpngraphs){
+	if($_ =~ /(.*)\/openvpn-(.*)\/if_octets_derive-traffic.rrd/){
+		push(@vpns,$2);
+	}
+}
+if (@vpns || %ipsecgraphs) {
+	foreach my $name (sort keys %ipsecgraphs) {
+		&Header::openbox('100%', 'center', "$Lang::tr{'ipsec connection'}: $name");
+		&Graphs::makegraphbox("netovpnsrv.cgi", "ipsec-$ipsecgraphs{$name}", "day");
+		&Header::closebox();
+	}
+
+	foreach (@vpns) {
+		&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
+		&Graphs::makegraphbox("netovpnsrv.cgi",$_, "day");
+		&Header::closebox();
 	}
 }else{
-	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'vpn statistic n2n'}, 1, '');
-	&Header::openbigbox('100%', 'left');
-
-	my @vpngraphs = `find /var/log/rrd/collectd/localhost/openvpn-*-n2n/ -not  -path *openvpn-UNDEF* -name *traffic.rrd 2>/dev/null|sort`;
-	foreach (@vpngraphs){
-		if($_ =~ /(.*)\/openvpn-(.*)\/if_octets_derive-traffic.rrd/){
-			push(@vpns,$2);
-		}
-	}
-	if (@vpns || %ipsecgraphs) {
-		foreach my $name (sort keys %ipsecgraphs) {
-			&Header::openbox('100%', 'center', "$Lang::tr{'ipsec connection'}: $name");
-			&Graphs::makegraphbox("netovpnsrv.cgi", "ipsec-$ipsecgraphs{$name}", "day");
-			&Header::closebox();
-		}
-
-		foreach (@vpns) {
-			&Header::openbox('100%', 'center', "$_ $Lang::tr{'graph'}");
-			&Graphs::makegraphbox("netovpnsrv.cgi",$_, "day");
-			&Header::closebox();
-		}
-	}else{
-		print "<center>".$Lang::tr{'no data'}."</center>";
-	}
-	my $output = '';
-
-	&Header::closebigbox();
-	&Header::closepage();
+	print "<center>".$Lang::tr{'no data'}."</center>";
 }
+my $output = '';
+
+&Header::closebigbox();
+&Header::closepage();

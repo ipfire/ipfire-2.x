@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.7
+VER        = 2.0.8
 
 THISAPP    = bird-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = bird
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       =
 
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = dc884bbe5905578e452f28158700527c
+$(DL_FILE)_MD5 = d807bdb34b27fe15ba8b71e83474eb27
 
 install : $(TARGET)
 

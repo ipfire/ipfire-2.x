@@ -67,6 +67,7 @@ ifeq "$(BUILD_PLATFORM)" "arm"
  PART_TYPE = c
 ifeq "$(BUILD_ARCH)" "aarch64"
  BOOTLOADER = grub
+ S_OFFSET = 32768
 endif
 else
  BOOTLOADER = grub
@@ -259,6 +260,10 @@ endif
 ifeq "$(BUILD_ARCH)" "armv6l"
 	# Install u-boot for Orangepi Zero/Nanopi DUO into image 8KB
 	dd if=/usr/share/u-boot/orangepi_zero/u-boot-sunxi-with-spl.bin of=$(IMG) bs=1K seek=8 conv=notrunc
+endif
+ifeq "$(BUILD_ARCH)" "aarch64"
+	# Install u-boot for NanoPi R2S into image 8KB
+	dd if=/usr/share/u-boot/nanopi_r2s/u-boot-rockchip.bin of=$(IMG) bs=1K seek=32 conv=notrunc
 endif
 
 	# Compress Image

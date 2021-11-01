@@ -1,14 +1,13 @@
 usr/bin/faad
 #usr/include/faad.h
 #usr/include/neaacdec.h
-#usr/lib/libfaad.a
 #usr/lib/libfaad.la
 usr/lib/libfaad.so
 usr/lib/libfaad.so.2
 usr/lib/libfaad.so.2.0.0
-#usr/lib/libfaad_drm.a
 #usr/lib/libfaad_drm.la
 usr/lib/libfaad_drm.so
 usr/lib/libfaad_drm.so.2
 usr/lib/libfaad_drm.so.2.0.0
+#usr/lib/pkgconfig/faad2.pc
 #usr/share/man/man1/faad.1

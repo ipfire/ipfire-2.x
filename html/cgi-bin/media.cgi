@@ -41,128 +41,117 @@ undef (@dummy);
 
 my %cgiparams=();
 
-my @querry = split(/\?/,$ENV{'QUERY_STRING'});
-$querry[0] = '' unless defined $querry[0];
-$querry[1] = 'hour' unless defined $querry[1];
-
 my @devices = `ls -1 /sys/block | grep -E '^sd|^mmcblk|^nvme|^xvd|^vd|^md' | sort | uniq`;
 
-if ( $querry[0] =~ "sd?" || $querry[0] =~ "mmcblk?" || $querry[0] =~ "nvme?n?" || $querry[0] =~ "xvd??" || $querry[0] =~ "vd?" || $querry[0] =~ "md*" ){
-	print "Content-type: image/png\n\n";
-	binmode(STDOUT);
-	
-	&Graphs::updatediskgraph($querry[0],$querry[1]);
-}else{
-	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'media information'}, 1, '');
-	&Header::openbigbox('100%', 'left');
+&Header::showhttpheaders();
+&Header::openpage($Lang::tr{'media information'}, 1, '');
+&Header::openbigbox('100%', 'left');
 
-	foreach (@devices) {
-		my $device = $_;
-		chomp($device);
-		my @array = split(/\//,$device);
-		&Header::openbox('100%', 'center', "$array[$#array] $Lang::tr{'graph'}");
-		diskbox($array[$#array]);
-		&Graphs::makegraphbox("media.cgi",$array[$#array],"day");
-		&Header::closebox();
-	}
+foreach (@devices) {
+	my $device = $_;
+	chomp($device);
+	my @array = split(/\//,$device);
+	&Header::openbox('100%', 'center', "$array[$#array] $Lang::tr{'graph'}");
+	diskbox($array[$#array]);
+	&Graphs::makegraphbox("media.cgi",$array[$#array],"day");
+	&Header::closebox();
+}
 
-	
-	&Header::openbox('100%', 'center', $Lang::tr{'disk usage'});
-	print "<table width='95%' cellspacing='5'>\n";
-	open(DF,'/bin/df -P -B M -x rootfs|');
-	while(<DF>){
-		if ($_ =~ m/^Filesystem/ ){
-			print <<END
+
+&Header::openbox('100%', 'center', $Lang::tr{'disk usage'});
+print "<table width='95%' cellspacing='5'>\n";
+open(DF,'/bin/df -P -B M -x rootfs|');
+while(<DF>){
+	if ($_ =~ m/^Filesystem/ ){
+		print <<END
 <tr>
-<td align='center' class='boldbase'><b>$Lang::tr{'device'}</b></td>
-<td align='center' class='boldbase'><b>$Lang::tr{'mounted on'}</b></td>
-<td align='center' class='boldbase'><b>$Lang::tr{'size'}</b></td>
-<td align='center' class='boldbase'><b>$Lang::tr{'used'}</b></td>
-<td align='center' class='boldbase'><b>$Lang::tr{'free'}</b></td>
-<td align='left' class='boldbase' colspan='2'><b>$Lang::tr{'percentage'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'device'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'mounted on'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'size'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'used'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'free'}</b></td>
+	<td align='left' class='boldbase' colspan='2'><b>$Lang::tr{'percentage'}</b></td>
 </tr>
 END
 ;
-		}else{
-			my ($device,$size,$used,$free,$percent,$mount) = split;
-			print <<END
+	}else{
+		my ($device,$size,$used,$free,$percent,$mount) = split;
+		print <<END
 <tr>
-<td align='center'>$device</td>
-<td align='center'>$mount</td>
-<td align='center'>$size</td>
-<td align='center'>$used</td>
-<td align='center'>$free</td>
-<td align='left'>
+	<td align='center'>$device</td>
+	<td align='center'>$mount</td>
+	<td align='center'>$size</td>
+	<td align='center'>$used</td>
+	<td align='center'>$free</td>
+	<td align='left'>
 END
 ;
-		 	&percentbar($percent);
-			 print <<END
+		&percentbar($percent);
+		 print <<END
 </td>
-<td align='left'>$percent</td>
+	<td align='left'>$percent</td>
 </tr>
 END
 ;
-		}
 	}
-	close DF;
-	print "<tr><td colspan='7'>&nbsp;\n<tr><td colspan='7'><h3>Inodes</h3>\n";
+}
+close DF;
+print "<tr><td colspan='7'>&nbsp;\n<tr><td colspan='7'><h3>Inodes</h3>\n";
 
-	open(DF,'/bin/df -P -i -x rootfs|');
-	while(<DF>){
-		if ($_ =~ m/^Filesystem/ ){
-			print <<END
+open(DF,'/bin/df -P -i -x rootfs|');
+while(<DF>){
+	if ($_ =~ m/^Filesystem/ ){
+		print <<END
 <tr>
-<td align='center' class='boldbase'><b>$Lang::tr{'device'}</b></td>
-<td align='center' class='boldbase'><b>$Lang::tr{'mounted on'}</b></td>
-<td align='center' class='boldbase'><b>$Lang::tr{'size'}</b></td>
-<td align='center' class='boldbase'><b>$Lang::tr{'used'}</b></td>
-<td align='center' class='boldbase'><b>$Lang::tr{'free'}</b></td>
-<td align='left' class='boldbase' colspan='2'><b>$Lang::tr{'percentage'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'device'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'mounted on'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'size'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'used'}</b></td>
+	<td align='center' class='boldbase'><b>$Lang::tr{'free'}</b></td>
+	<td align='left' class='boldbase' colspan='2'><b>$Lang::tr{'percentage'}</b></td>
 </tr>
 END
 ;
-		}else{
-			my ($device,$size,$used,$free,$percent,$mount) = split;
-			print <<END
+	}else{
+		my ($device,$size,$used,$free,$percent,$mount) = split;
+		print <<END
 <tr>
-<td align='center'>$device</td>
-<td align='center'>$mount</td>
-<td align='center'>$size</td>
-<td align='center'>$used</td>
-<td align='center'>$free</td>
+	<td align='center'>$device</td>
+	<td align='center'>$mount</td>
+	<td align='center'>$size</td>
+	<td align='center'>$used</td>
+	<td align='center'>$free</td>
 <td>
 END
 ;
-			&percentbar($percent);
-			print <<END
+		&percentbar($percent);
+		print <<END
 </td>
 <td align='left'>$percent</td>
 </tr>
 END
 ;
-		}
 	}
-	close DF;
-	my @iostat1 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$1}');
-	my @iostat2 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$5}');
-	my @iostat3 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$6}');
-	print "<tr><td colspan='3'>&nbsp;\n<tr><td colspan='3'><h3>transfers</h3></td></tr>";
-	my $i=0;
-
-	for(my $i = 1; $i <= $#iostat1; $i++){
-		if ( $i eq '1' ){
-			print "<tr><td align='center' class='boldbase'><b>$Lang::tr{'device'}</b></td><td align='center' class='boldbase'><b>$Lang::tr{'MB read'}</b></td><td align='center' class='boldbase'><b>$Lang::tr{'MB written'}</b></td></tr>";
-		}else{
-			print "<tr><td align='center'>$iostat1[$i]</td><td align='center'>$iostat2[$i]</td><td align='center'>$iostat3[$i]</td></tr>";
-		}
-	}
-	print "</table>\n";
-	&Header::closebox();
-
-	&Header::closebigbox();
-	&Header::closepage();
 }
+close DF;
+my @iostat1 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$1}');
+my @iostat2 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$6}');
+my @iostat3 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$7}');
+print "<tr><td colspan='3'>&nbsp;\n<tr><td colspan='3'><h3>transfers</h3></td></tr>";
+my $i=0;
+
+for(my $i = 1; $i <= $#iostat1; $i++){
+	if ( $i eq '1' ){
+		print "<tr><td align='center' class='boldbase'><b>$Lang::tr{'device'}</b></td><td align='center' class='boldbase'><b>$Lang::tr{'MB read'}</b></td><td align='center' class='boldbase'><b>$Lang::tr{'MB written'}</b></td></tr>";
+	}else{
+		print "<tr><td align='center'>$iostat1[$i]</td><td align='center'>$iostat2[$i]</td><td align='center'>$iostat3[$i]</td></tr>";
+	}
+}
+print "</table>\n";
+&Header::closebox();
+
+&Header::closebigbox();
+&Header::closepage();
 
 sub percentbar
 {

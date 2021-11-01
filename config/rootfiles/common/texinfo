@@ -76,9 +76,14 @@
 #usr/share/texinfo/init
 #usr/share/texinfo/init/book.pm
 #usr/share/texinfo/init/chm.pm
+#usr/share/texinfo/init/highlight_syntax.pm
 #usr/share/texinfo/init/html32.pm
 #usr/share/texinfo/init/latex2html.pm
 #usr/share/texinfo/init/tex4ht.pm
+#usr/share/texinfo/js
+#usr/share/texinfo/js/info.css
+#usr/share/texinfo/js/info.js
+#usr/share/texinfo/js/modernizr.js
 #usr/share/texinfo/lib
 #usr/share/texinfo/lib/Text-Unidecode
 #usr/share/texinfo/lib/Text-Unidecode/lib
@@ -419,6 +424,7 @@
 #usr/share/texinfo/lib/libintl-perl/lib/Locale/RecodeData/_Encode.pm
 #usr/share/texinfo/lib/libintl-perl/lib/Locale/TextDomain.pm
 #usr/share/texinfo/lib/libintl-perl/lib/Locale/Util.pm
+#usr/share/texinfo/lib/libintl-perl/lib/Locale/gettext_dumb.pm
 #usr/share/texinfo/lib/libintl-perl/lib/Locale/gettext_pp.pm
 #usr/share/texinfo/texindex.awk
 #usr/share/texinfo/texinfo.dtd
