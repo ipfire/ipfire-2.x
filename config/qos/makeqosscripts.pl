@@ -510,8 +510,6 @@ print <<END
 	iptables -t mangle --flush  QOS-INC >/dev/null 2>&1
 	iptables -t mangle --delete-chain QOS-INC >/dev/null 2>&1
 
-	rmmod sch_htb >/dev/null 2>&1
-
 	for i in \$(ls \$RRDLOG/class_*.rrd); do
 		rrdtool update \$i \$(date +%s):
 	done
