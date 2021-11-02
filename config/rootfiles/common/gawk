@@ -1,6 +1,6 @@
 usr/bin/awk
 usr/bin/gawk
-usr/bin/gawk-5.1.0
+usr/bin/gawk-5.1.1
 usr/etc/profile.d
 usr/etc/profile.d/gawk.csh
 usr/etc/profile.d/gawk.sh
@@ -33,6 +33,7 @@ usr/lib/gawk/time.so
 #usr/share/awk/have_mpfr.awk
 #usr/share/awk/inplace.awk
 #usr/share/awk/intdiv0.awk
+#usr/share/awk/isnumeric.awk
 #usr/share/awk/join.awk
 #usr/share/awk/libintl.awk
 #usr/share/awk/noassign.awk
