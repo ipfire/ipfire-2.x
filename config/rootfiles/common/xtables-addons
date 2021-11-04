@@ -22,8 +22,7 @@ lib/xtables/libxt_lscan.so
 lib/xtables/libxt_pknock.so
 lib/xtables/libxt_psd.so
 lib/xtables/libxt_quota2.so
-#usr/bin/xt_geoip_fetch
-#usr/bin/xt_geoip_fetch_maxmind
++usr/bin/xt_geoip_query
 #usr/lib/libxt_ACCOUNT_cl.la
 #usr/lib/libxt_ACCOUNT_cl.so
 usr/lib/libxt_ACCOUNT_cl.so.0
@@ -36,9 +35,10 @@ usr/lib/libxt_ACCOUNT_cl.so.0.0.0
 usr/sbin/iptaccount
 usr/sbin/pknlusr
 #usr/share/man/man1/xt_geoip_build.1
+#usr/share/man/man1/xt_geoip_build_maxmind.1
 #usr/share/man/man1/xt_geoip_dl.1
-#usr/share/man/man1/xt_geoip_fetch.1
+#usr/share/man/man1/xt_geoip_dl_maxmind.1
+#usr/share/man/man1/xt_geoip_query.1
 #usr/share/man/man8/iptaccount.8
 #usr/share/man/man8/pknlusr.8
 #usr/share/man/man8/xtables-addons.8
-usr/share/xt_geoip
