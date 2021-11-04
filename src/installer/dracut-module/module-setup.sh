@@ -23,6 +23,7 @@ install() {
 
     # Kernel drivers
     instmods =drivers/hid
+    instmods efivarfs
 
     # Network drivers
     instmods =drivers/net/ethernet =drivers/net/usb

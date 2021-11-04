@@ -8,6 +8,11 @@ if grep -q "installer.unattended" /proc/cmdline; then
 	unattended=1
 fi
 
+# Mount efivarfs on EFI systems
+if [ -d "/sys/firmware/efi" ]; then
+	mount -t efivarfs efivarfs /sys/firmware/efi/efivars
+fi
+
 # Enable Unicode
 echo -en '\033%G' && kbd_mode -u
 
