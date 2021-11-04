@@ -1,8 +1,8 @@
 diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index a828cf99c521..6d97e4d8623f 100644
+index 841e2f0f5240..636e5abedb08 100644
 --- a/include/linux/skbuff.h
 +++ b/include/linux/skbuff.h
-@@ -757,6 +757,9 @@ struct sk_buff {
+@@ -768,6 +768,9 @@ struct sk_buff {
  
  #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
  	unsigned long		 _nfct;
@@ -13,10 +13,10 @@ index a828cf99c521..6d97e4d8623f 100644
  	unsigned int		len,
  				data_len;
 diff --git a/include/net/netfilter/nf_conntrack.h b/include/net/netfilter/nf_conntrack.h
-index 439379ca9ffa..9cab502ff226 100644
+index cc663c68ddc4..55655f5ee4f2 100644
 --- a/include/net/netfilter/nf_conntrack.h
 +++ b/include/net/netfilter/nf_conntrack.h
-@@ -103,6 +103,23 @@ struct nf_conn {
+@@ -117,6 +117,23 @@ struct nf_conn {
  	/* Extensions */
  	struct nf_ct_ext *ext;
  
@@ -60,10 +60,10 @@ index 000000000000..147cd6477858
 +
 +#endif /* _XT_LAYER7_H */
 diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index 52370211e46b..734b4d641469 100644
+index 92a747896f80..0152bdbc338e 100644
 --- a/net/netfilter/Kconfig
 +++ b/net/netfilter/Kconfig
-@@ -1355,6 +1355,26 @@ config NETFILTER_XT_MATCH_L2TP
+@@ -1389,6 +1389,26 @@ config NETFILTER_XT_MATCH_L2TP
  
  	To compile it as a module, choose M here. If unsure, say N.
  
@@ -91,10 +91,10 @@ index 52370211e46b..734b4d641469 100644
  	tristate '"length" match support'
  	depends on NETFILTER_ADVANCED
 diff --git a/net/netfilter/Makefile b/net/netfilter/Makefile
-index 0e0ded87e27b..6c383006af4e 100644
+index aab20e575ecd..0dfd2c3df9e1 100644
 --- a/net/netfilter/Makefile
 +++ b/net/netfilter/Makefile
-@@ -203,6 +203,7 @@ obj-$(CONFIG_NETFILTER_XT_MATCH_RECENT) += xt_recent.o
+@@ -201,6 +201,7 @@ obj-$(CONFIG_NETFILTER_XT_MATCH_RECENT) += xt_recent.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_SCTP) += xt_sctp.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_SOCKET) += xt_socket.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_STATE) += xt_state.o
@@ -103,10 +103,10 @@ index 0e0ded87e27b..6c383006af4e 100644
  obj-$(CONFIG_NETFILTER_XT_MATCH_STRING) += xt_string.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_TCPMSS) += xt_tcpmss.o
 diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 234b7cab37c3..05731ba4f5ff 100644
+index 770a63103c7a..5951aedc010a 100644
 --- a/net/netfilter/nf_conntrack_core.c
 +++ b/net/netfilter/nf_conntrack_core.c
-@@ -617,6 +617,11 @@ destroy_conntrack(struct nf_conntrack *nfct)
+@@ -636,6 +636,11 @@ destroy_conntrack(struct nf_conntrack *nfct)
  	 */
  	nf_ct_remove_expectations(ct);
  
@@ -119,10 +119,10 @@ index 234b7cab37c3..05731ba4f5ff 100644
  
  	local_bh_enable();
 diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
-index 46c5557c1fec..6ef99967ae05 100644
+index 80f675d884b2..3e7c0a85bdcf 100644
 --- a/net/netfilter/nf_conntrack_standalone.c
 +++ b/net/netfilter/nf_conntrack_standalone.c
-@@ -366,6 +366,11 @@ static int ct_seq_show(struct seq_file *s, void *v)
+@@ -370,6 +370,11 @@ static int ct_seq_show(struct seq_file *s, void *v)
  	ct_show_zone(s, ct, NF_CT_DEFAULT_ZONE_DIR);
  	ct_show_delta_time(s, ct);
  
