@@ -108,7 +108,7 @@ struct hw* hw_init();
 void hw_free(struct hw* hw);
 
 int hw_mount(const char* source, const char* target, const char* fs, int flags);
-int hw_umount(const char* target);
+int hw_umount(const char* source, const char* prefix);
 
 char* hw_find_source_medium(struct hw* hw);
 
