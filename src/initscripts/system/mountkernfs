@@ -39,6 +39,11 @@ case "${1}" in
 			mount -t cgroup2 none /sys/fs/cgroup || failed=1
 		fi
 
+		if ! mountpoint /sys/firmware/efi/efivars &>/dev/null && [ -d "/sys/firmware/efi" ]; then
+			boot_mesg -n " /sys/firmware/efi/efivars" ${NORMAL}
+			mount -t efivarfs efivarfs /sys/firmware/efi/efivars || failed=1
+		fi
+
 		# create folder for dhcpcd changeroot
 		mkdir -p /run/dhcpcd/chroot
 		chown dhcpcd:dhcpcd /run/dhcpcd/chroot
