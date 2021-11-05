@@ -22,7 +22,7 @@ lib/xtables/libxt_lscan.so
 lib/xtables/libxt_pknock.so
 lib/xtables/libxt_psd.so
 lib/xtables/libxt_quota2.so
-+usr/bin/xt_geoip_query
+usr/bin/xt_geoip_query
 #usr/lib/libxt_ACCOUNT_cl.la
 #usr/lib/libxt_ACCOUNT_cl.so
 usr/lib/libxt_ACCOUNT_cl.so.0
