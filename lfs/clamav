@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.104.0
+VER        = 0.104.1
 
 THISAPP    = clamav-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = clamav
-PAK_VER    = 57
+PAK_VER    = 58
 
 DEPS       =
 
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3f4789c09f5a35e9ea580edd5c3e54b6
+$(DL_FILE)_MD5 = 49b9bb94d5b2cafc761f8fbe660d3bfa
 
 install : $(TARGET)
 
@@ -94,6 +94,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		-DENABLE_EXTERNAL_MSPACK=OFF \
 		-DENABLE_FRESHCLAM_DNS_FIX=ON \
 		-DAPP_CONFIG_DIRECTORY=/var/ipfire/clamav \
+		-DCURSES_LIBRARY=/usr/lib/libncurses.so \
 		-DDATABASE_DIRECTORY=$(DATABASE_DIR)
 
 	cd $(DIR_APP)/build && ninja $(MAKETUNING) && ninja install
