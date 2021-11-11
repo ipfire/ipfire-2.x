@@ -25,10 +25,10 @@
 
 include Config
 
-VER        = 9.11.32
+VER        = 9.16.22
 
 THISAPP    = bind-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0d029dd06ca60c6739c3189c999ef757
+$(DL_FILE)_MD5 = 6a45478b33c04c830d4263635d8cd137
 
 install : $(TARGET)
 
@@ -72,7 +72,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && STD_CDEFINES="$(CPPFLAGS)" \
 		./configure \
@@ -80,25 +80,28 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--enable-threads \
 			--with-libtool \
 			--without-python \
+			--disable-linux-caps \
 			--disable-static
 
-	# Build everything
+	# Build required libraries
 	cd $(DIR_APP) && make -C lib/isc $(MAKETUNING)
-	cd $(DIR_APP) && make -C lib/dns $(MAKETUNING)
 	cd $(DIR_APP) && make -C lib/isccc $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/dns $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/ns $(MAKETUNING)
 	cd $(DIR_APP) && make -C lib/isccfg $(MAKETUNING)
 	cd $(DIR_APP) && make -C lib/bind9 $(MAKETUNING)
-	cd $(DIR_APP) && make -C lib/lwres $(MAKETUNING)
+	cd $(DIR_APP) && make -C lib/irs $(MAKETUNING)
 	cd $(DIR_APP) && make -C bin/dig $(MAKETUNING)
 	cd $(DIR_APP) && make -C bin/nsupdate $(MAKETUNING)
 
-	# Install everything
+	# Install utility programs
 	cd $(DIR_APP) && make -C lib/isc install
-	cd $(DIR_APP) && make -C lib/dns install
 	cd $(DIR_APP) && make -C lib/isccc install
+	cd $(DIR_APP) && make -C lib/dns install
+	cd $(DIR_APP) && make -C lib/ns install
 	cd $(DIR_APP) && make -C lib/isccfg install
 	cd $(DIR_APP) && make -C lib/bind9 install
-	cd $(DIR_APP) && make -C lib/lwres install
+	cd $(DIR_APP) && make -C lib/irs install
 	cd $(DIR_APP) && make -C bin/dig install
 	cd $(DIR_APP) && make -C bin/nsupdate install
 
