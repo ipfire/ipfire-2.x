@@ -1217,6 +1217,7 @@ buildipfire() {
   lfsmake2 aprutil
   lfsmake2 unbound
   lfsmake2 gnutls
+  lfsmake2 libuv
   lfsmake2 bind
   lfsmake2 dhcp
   lfsmake2 dhcpcd
