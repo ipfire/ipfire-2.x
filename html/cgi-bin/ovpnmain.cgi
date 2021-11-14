@@ -1209,7 +1209,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 	if ($cgiparams{'TLSAUTH'} eq 'on') {
 		if ( ! -e "${General::swroot}/ovpn/certs/ta.key") {
 			# This system call is safe, because all arguements are passed as an array.
-			system("/usr/sbin/openvpn", "--genkey", "--secret", "${General::swroot}/ovpn/certs/ta.key");
+			system("/usr/sbin/openvpn", "--genkey", "secret", "${General::swroot}/ovpn/certs/ta.key");
 			if ($?) {
 				$errormessage = "$Lang::tr{'openssl produced an error'}: $?";
 				goto SETTINGS_ERROR;
@@ -2012,7 +2012,7 @@ END
 	}
 	# Create ta.key for tls-auth
 	# This system call is safe, because all arguments are passed as an array.
-	system('/usr/sbin/openvpn', '--genkey', '--secret', "${General::swroot}/ovpn/certs/ta.key");
+	system('/usr/sbin/openvpn', '--genkey', 'secret', "${General::swroot}/ovpn/certs/ta.key");
 	if ($?) {
 	    $errormessage = "$Lang::tr{'openssl produced an error'}: $?";
 	    &cleanssldatabase();
