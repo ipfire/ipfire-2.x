@@ -1432,18 +1432,17 @@ END
         unlink ($filename);
         goto UPLOADCA_ERROR;
     } else {
-    # Delete if old key exists
-    if (-f "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}") {
-        unlink "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}";
+	# Delete if old key exists
+	if (-f "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}") {
+		unlink "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}";
 	}
-    move($filename, "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}");
-	if ($? ne 0) {
+
+ 	unless(move($filename, "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}")) {
 		$errormessage = "$Lang::tr{'dh key move failed'}: $!";
 		unlink ($filename);
 		goto UPLOADCA_ERROR;
-	}
+    	}
     }
-
 ###
 ### Upload CA Certificate
 ###
@@ -1489,8 +1488,7 @@ END
 	unlink ($filename);
 	goto UPLOADCA_ERROR;
     } else {
-	move($filename, "${General::swroot}/ovpn/ca/$cgiparams{'CA_NAME'}cert.pem");
-	if ($? ne 0) {
+	unless(move($filename, "${General::swroot}/ovpn/ca/$cgiparams{'CA_NAME'}cert.pem")) {
 	    $errormessage = "$Lang::tr{'certificate file move failed'}: $!";
 	    unlink ($filename);
 	    goto UPLOADCA_ERROR;
@@ -1814,8 +1812,7 @@ END
 	    }
 	}
 
-	move("$tempdir/cacert.pem", "${General::swroot}/ovpn/ca/cacert.pem");
-	if ($? ne 0) {
+	unless(move("$tempdir/cacert.pem", "${General::swroot}/ovpn/ca/cacert.pem")) {
 	    $errormessage = "$Lang::tr{'certificate file move failed'}: $!";
 	    unlink ($filename);
 	    unlink ("${General::swroot}/ovpn/ca/cacert.pem");
@@ -1824,8 +1821,7 @@ END
 	    goto ROOTCERT_ERROR;
         }
 
-	move("$tempdir/hostcert.pem", "${General::swroot}/ovpn/certs/servercert.pem");
-	if ($? ne 0) {
+	unless(move("$tempdir/hostcert.pem", "${General::swroot}/ovpn/certs/servercert.pem")) {
 	    $errormessage = "$Lang::tr{'certificate file move failed'}: $!";
 	    unlink ($filename);
 	    unlink ("${General::swroot}/ovpn/ca/cacert.pem");
@@ -1834,8 +1830,7 @@ END
 	    goto ROOTCERT_ERROR;
         }
 
-	move("$tempdir/serverkey.pem", "${General::swroot}/ovpn/certs/serverkey.pem");
-	if ($? ne 0) {
+	unless(move("$tempdir/serverkey.pem", "${General::swroot}/ovpn/certs/serverkey.pem")) {
 	    $errormessage = "$Lang::tr{'certificate file move failed'}: $!";
 	    unlink ($filename);
 	    unlink ("${General::swroot}/ovpn/ca/cacert.pem");
@@ -3395,22 +3390,19 @@ END
 	print FILE "status /var/run/openvpn/$n2nname[0]-n2n 10\n";
 	close FILE;
 
-	move("$tempdir/$uplconffilename", "${General::swroot}/ovpn/n2nconf/$n2nname[0]/$uplconffilename2");
-
-	if ($? ne 0) {
+	unless(move("$tempdir/$uplconffilename", "${General::swroot}/ovpn/n2nconf/$n2nname[0]/$uplconffilename2")) {
 	    $errormessage = "*.conf move failed: $!";
 	    unlink ($filename);
 	    goto N2N_ERROR;
 	}
 	
-	move("$tempdir/$uplp12name", "${General::swroot}/ovpn/certs/$uplp12name2");
-	chmod 0600, "${General::swroot}/ovpn/certs/$uplp12name";
-	
-	if ($? ne 0) {
+	unless(move("$tempdir/$uplp12name", "${General::swroot}/ovpn/certs/$uplp12name2")) {
 	    $errormessage = "$Lang::tr{'certificate file move failed'}: $!";
 	    unlink ($filename);
 	    goto N2N_ERROR;
-	}	
+	}
+
+	chmod 0600, "${General::swroot}/ovpn/certs/$uplp12name";
 	
 my $complzoactive;
 my $mssfixactive;
@@ -4175,8 +4167,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		unlink ($filename);
 		goto VPNCONF_ERROR;
 	    } else {
-		move($filename, "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem");
-		if ($? ne 0) {
+		unless(move($filename, "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem")) {
 		    $errormessage = "$Lang::tr{'certificate file move failed'}: $!";
 		    unlink ($filename);
 		    goto VPNCONF_ERROR;
