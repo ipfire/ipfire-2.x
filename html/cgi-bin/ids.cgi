@@ -1091,13 +1091,14 @@ if (%idsrules) {
 	# Call stat on the rulestarball.
 	my $stat = stat("$IDS::rulestarball");
 
-	# Get timestamp the file creation.
-	my $mtime = $stat->mtime;
+	if (defined $stat) {
+		# Get timestamp the file creation.
+		my $mtime = $stat->mtime;
 
-	# Convert into human read-able format.
-	my $rulesdate = strftime('%Y-%m-%d %H:%M:%S', localtime($mtime));
+		# Convert into human read-able format.
+		my $rulesdate = strftime('%Y-%m-%d %H:%M:%S', localtime($mtime));
 
-	&Header::openbox('100%', 'LEFT', "$Lang::tr{'intrusion detection system rules'} ($rulesdate)" );
+		&Header::openbox('100%', 'LEFT', "$Lang::tr{'intrusion detection system rules'} ($rulesdate)" );
 
 		print"<form method='POST' action='$ENV{'SCRIPT_NAME'}'>\n";
 
@@ -1189,7 +1190,7 @@ if (%idsrules) {
 		# Close display table
 		print "</table>";
 
-print <<END
+		print <<END
 <table width='100%'>
 <tr>
 	<td width='100%' align='right'><input type='submit' name='RULESET' value='$Lang::tr{'ids apply'}'></td>
@@ -1198,7 +1199,8 @@ print <<END
 </form>
 END
 ;
-	&Header::closebox();
+		&Header::closebox();
+	}
 }
 
 &Header::closebigbox();
