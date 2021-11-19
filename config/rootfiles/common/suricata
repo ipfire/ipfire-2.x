@@ -1,7 +1,5 @@
 etc/suricata
 etc/suricata/suricata.yaml
-#root/.cargo
-#root/.cargo/.package-cache
 usr/bin/suricata
 #usr/share/doc/suricata
 #usr/share/doc/suricata/AUTHORS

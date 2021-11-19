@@ -143,6 +143,9 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 	GOARCH = arm64
 endif
 
+# Rust
+export CARGOPATH = $(HOME)/.cargo
+
 ###############################################################################
 # Common Macro Definitions
 ###############################################################################
@@ -184,7 +187,7 @@ define POSTBUILD
 	@echo "Updating linker cache..."
 	@type -p ldconfig >/dev/null && ldconfig || :
 	@echo "Install done; saving file list to $(TARGET) ..."
-	@rm -rf $(GOPATH)
+	@rm -rf $(GOPATH) $(CARGOPATH)
 	@$(FIND_FILES) > $(DIR_SRC)/lsalrnew
 	@diff $(DIR_SRC)/lsalr $(DIR_SRC)/lsalrnew | grep '^> ' | sed 's/^> //' > $(TARGET)_diff
 	@cp -f $(DIR_SRC)/lsalrnew $(DIR_SRC)/lsalr
