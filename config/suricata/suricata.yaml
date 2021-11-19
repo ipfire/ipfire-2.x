@@ -52,10 +52,9 @@ rule-files:
     # Include default rules.
     include: /var/ipfire/suricata/suricata-default-rules.yaml
 
-classification-file: /var/lib/suricata/classification.config
-reference-config-file: /var/lib/suricata/reference.config
-threshold-file: /var/lib/suricata/threshold.config
-
+classification-file: /usr/share/suricata/classification.config
+reference-config-file: /usr/share/suricata/reference.config
+threshold-file: /usr/share/suricata/threshold.config
 
 ##
 ## Logging options.

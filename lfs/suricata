@@ -105,10 +105,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Move config files for references, threshold and classification
 	# to the rules directory.
-	mv /etc/suricata/*.config /var/lib/suricata
-
-	# Set correct permissions for the files.
-	chmod 644 /var/lib/suricata/*.config
+	rm -rfv /etc/suricata/*.config
 
 	# Set correct ownership for /var/lib/suricata and the
 	# contained files
