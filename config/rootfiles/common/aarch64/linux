@@ -6653,6 +6653,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ATH10K_USB
 #lib/modules/KVER-ipfire/build/include/config/ATH11K
 #lib/modules/KVER-ipfire/build/include/config/ATH11K_PCI
+#lib/modules/KVER-ipfire/build/include/config/ATH5K
+#lib/modules/KVER-ipfire/build/include/config/ATH5K_PCI
 #lib/modules/KVER-ipfire/build/include/config/ATH9K
 #lib/modules/KVER-ipfire/build/include/config/ATH9K_AHB
 #lib/modules/KVER-ipfire/build/include/config/ATH9K_BTCOEX_SUPPORT
@@ -11846,6 +11848,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/linux/can/skb.h
 #lib/modules/KVER-ipfire/build/include/linux/capability.h
 #lib/modules/KVER-ipfire/build/include/linux/cb710.h
+#lib/modules/KVER-ipfire/build/include/linux/cc_platform.h
 #lib/modules/KVER-ipfire/build/include/linux/cciss_ioctl.h
 #lib/modules/KVER-ipfire/build/include/linux/ccp.h
 #lib/modules/KVER-ipfire/build/include/linux/cdev.h
@@ -19816,6 +19819,8 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/net/wireless/ath/ath11k
 #lib/modules/KVER-ipfire/kernel/drivers/net/wireless/ath/ath11k/ath11k.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/wireless/ath/ath11k/ath11k_pci.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/net/wireless/ath/ath5k
+#lib/modules/KVER-ipfire/kernel/drivers/net/wireless/ath/ath5k/ath5k.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/wireless/ath/ath9k
 #lib/modules/KVER-ipfire/kernel/drivers/net/wireless/ath/ath9k/ath9k.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/wireless/ath/ath9k/ath9k_common.ko.xz
