@@ -12385,6 +12385,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/linux/can/skb.h
 #lib/modules/KVER-ipfire/build/include/linux/capability.h
 #lib/modules/KVER-ipfire/build/include/linux/cb710.h
+#lib/modules/KVER-ipfire/build/include/linux/cc_platform.h
 #lib/modules/KVER-ipfire/build/include/linux/cciss_ioctl.h
 #lib/modules/KVER-ipfire/build/include/linux/ccp.h
 #lib/modules/KVER-ipfire/build/include/linux/cdev.h
