@@ -90,6 +90,8 @@ rm -rf \
 	/usr/bin/whois
 
 # Stop services
+/usr/local/bin/openvpnctrl -k
+/usr/local/bin/openvpnctrl -kn2n
 
 # Extract files
 extract_files
@@ -116,6 +118,8 @@ ldconfig
 /usr/local/bin/sshctrl
 
 # Start services
+/usr/local/bin/openvpnctrl -s
+/usr/local/bin/openvpnctrl -sn2n
 /etc/init.d/sshd restart
 /etc/init.d/suricata restart
 /etc/init.d/unbound restart
