@@ -83,6 +83,12 @@ rm -rf /boot/uInit-*-ipfire-*
 rm -rf /boot/dtb-*-ipfire-*
 rm -rf /lib/modules
 
+# Remove files
+rm -rf \
+	/etc/jwhois.conf \
+	/usr/bin/jwhois \
+	/usr/bin/whois
+
 # Stop services
 
 # Extract files
