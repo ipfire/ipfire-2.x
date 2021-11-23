@@ -111,6 +111,8 @@ ldconfig
 
 # Start services
 /etc/init.d/sshd restart
+/etc/init.d/suricata restart
+/etc/init.d/unbound restart
 
 # remove lm_sensor config after collectd was started
 # to reserch sensors at next boot with updated kernel
