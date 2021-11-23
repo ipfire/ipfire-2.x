@@ -69,7 +69,6 @@
 #usr/include/asm/termbits.h
 #usr/include/asm/termios.h
 #usr/include/asm/types.h
-#usr/include/asm/unistd-common.h
 #usr/include/asm/unistd-eabi.h
 #usr/include/asm/unistd-oabi.h
 #usr/include/asm/unistd.h
@@ -104,6 +103,7 @@
 #usr/include/drm/vmwgfx_drm.h
 #usr/include/linux
 #usr/include/linux/acct.h
+#usr/include/linux/acrn.h
 #usr/include/linux/adb.h
 #usr/include/linux/adfs_fs.h
 #usr/include/linux/affs_hardblocks.h
@@ -183,13 +183,16 @@
 #usr/include/linux/capi.h
 #usr/include/linux/cciss_defs.h
 #usr/include/linux/cciss_ioctl.h
+#usr/include/linux/ccs.h
 #usr/include/linux/cdrom.h
 #usr/include/linux/cec-funcs.h
 #usr/include/linux/cec.h
+#usr/include/linux/cfm_bridge.h
 #usr/include/linux/cgroupstats.h
 #usr/include/linux/chio.h
 #usr/include/linux/cifs
 #usr/include/linux/cifs/cifs_mount.h
+#usr/include/linux/cifs/cifs_netlink.h
 #usr/include/linux/close_range.h
 #usr/include/linux/cm4000_cs.h
 #usr/include/linux/cn_proc.h
@@ -201,7 +204,7 @@
 #usr/include/linux/cramfs_fs.h
 #usr/include/linux/cryptouser.h
 #usr/include/linux/cuda.h
-#usr/include/linux/cyclades.h
+#usr/include/linux/cxl_mem.h
 #usr/include/linux/cycx_cfm.h
 #usr/include/linux/dcbnl.h
 #usr/include/linux/dccp.h
@@ -257,6 +260,7 @@
 #usr/include/linux/fscrypt.h
 #usr/include/linux/fsi.h
 #usr/include/linux/fsl_hypervisor.h
+#usr/include/linux/fsl_mc.h
 #usr/include/linux/fsmap.h
 #usr/include/linux/fsverity.h
 #usr/include/linux/fuse.h
@@ -306,7 +310,6 @@
 #usr/include/linux/if_ether.h
 #usr/include/linux/if_fc.h
 #usr/include/linux/if_fddi.h
-#usr/include/linux/if_frad.h
 #usr/include/linux/if_hippi.h
 #usr/include/linux/if_infiniband.h
 #usr/include/linux/if_link.h
@@ -328,6 +331,7 @@
 #usr/include/linux/ife.h
 #usr/include/linux/igmp.h
 #usr/include/linux/iio
+#usr/include/linux/iio/buffer.h
 #usr/include/linux/iio/events.h
 #usr/include/linux/iio/types.h
 #usr/include/linux/ila.h
@@ -339,8 +343,12 @@
 #usr/include/linux/input-event-codes.h
 #usr/include/linux/input.h
 #usr/include/linux/io_uring.h
+#usr/include/linux/ioam6.h
+#usr/include/linux/ioam6_genl.h
+#usr/include/linux/ioam6_iptunnel.h
 #usr/include/linux/ioctl.h
 #usr/include/linux/iommu.h
+#usr/include/linux/ioprio.h
 #usr/include/linux/ip.h
 #usr/include/linux/ip6_tunnel.h
 #usr/include/linux/ip_vs.h
@@ -351,7 +359,6 @@
 #usr/include/linux/ipsec.h
 #usr/include/linux/ipv6.h
 #usr/include/linux/ipv6_route.h
-#usr/include/linux/ipx.h
 #usr/include/linux/irqnr.h
 #usr/include/linux/isdn
 #usr/include/linux/isdn/capicmd.h
@@ -375,8 +382,8 @@
 #usr/include/linux/kfd_ioctl.h
 #usr/include/linux/kvm_para.h
 #usr/include/linux/l2tp.h
+#usr/include/linux/landlock.h
 #usr/include/linux/libc-compat.h
-#usr/include/linux/lightnvm.h
 #usr/include/linux/limits.h
 #usr/include/linux/lirc.h
 #usr/include/linux/llc.h
@@ -388,6 +395,7 @@
 #usr/include/linux/map_to_7segment.h
 #usr/include/linux/matroxfb.h
 #usr/include/linux/max2175.h
+#usr/include/linux/mctp.h
 #usr/include/linux/mdio.h
 #usr/include/linux/media-bus-format.h
 #usr/include/linux/media.h
@@ -398,6 +406,8 @@
 #usr/include/linux/meye.h
 #usr/include/linux/mii.h
 #usr/include/linux/minix_fs.h
+#usr/include/linux/misc
+#usr/include/linux/misc/bcm_vk.h
 #usr/include/linux/mman.h
 #usr/include/linux/mmc
 #usr/include/linux/mmc/ioctl.h
@@ -414,7 +424,6 @@
 #usr/include/linux/msdos_fs.h
 #usr/include/linux/msg.h
 #usr/include/linux/mtio.h
-#usr/include/linux/n_r3964.h
 #usr/include/linux/nbd-netlink.h
 #usr/include/linux/nbd.h
 #usr/include/linux/ncsi.h
@@ -449,6 +458,7 @@
 #usr/include/linux/netfilter/nfnetlink_conntrack.h
 #usr/include/linux/netfilter/nfnetlink_cthelper.h
 #usr/include/linux/netfilter/nfnetlink_cttimeout.h
+#usr/include/linux/netfilter/nfnetlink_hook.h
 #usr/include/linux/netfilter/nfnetlink_log.h
 #usr/include/linux/netfilter/nfnetlink_osf.h
 #usr/include/linux/netfilter/nfnetlink_queue.h
@@ -596,6 +606,7 @@
 #usr/include/linux/nilfs2_api.h
 #usr/include/linux/nilfs2_ondisk.h
 #usr/include/linux/nitro_enclaves.h
+#usr/include/linux/nl80211-vnd-intel.h
 #usr/include/linux/nl80211.h
 #usr/include/linux/nsfs.h
 #usr/include/linux/nubus.h
@@ -650,7 +661,6 @@
 #usr/include/linux/raid/md_p.h
 #usr/include/linux/raid/md_u.h
 #usr/include/linux/random.h
-#usr/include/linux/raw.h
 #usr/include/linux/rds.h
 #usr/include/linux/reboot.h
 #usr/include/linux/reiserfs_fs.h
@@ -660,12 +670,14 @@
 #usr/include/linux/rfkill.h
 #usr/include/linux/rio_cm_cdev.h
 #usr/include/linux/rio_mport_cdev.h
+#usr/include/linux/rkisp1-config.h
 #usr/include/linux/romfs_fs.h
 #usr/include/linux/rose.h
 #usr/include/linux/route.h
 #usr/include/linux/rpl.h
 #usr/include/linux/rpl_iptunnel.h
 #usr/include/linux/rpmsg.h
+#usr/include/linux/rpmsg_types.h
 #usr/include/linux/rseq.h
 #usr/include/linux/rtc.h
 #usr/include/linux/rtnetlink.h
@@ -677,7 +689,6 @@
 #usr/include/linux/scif_ioctl.h
 #usr/include/linux/screen_info.h
 #usr/include/linux/sctp.h
-#usr/include/linux/sdla.h
 #usr/include/linux/seccomp.h
 #usr/include/linux/securebits.h
 #usr/include/linux/sed-opal.h
@@ -707,6 +718,7 @@
 #usr/include/linux/sound.h
 #usr/include/linux/soundcard.h
 #usr/include/linux/spi
+#usr/include/linux/spi/spi.h
 #usr/include/linux/spi/spidev.h
 #usr/include/linux/stat.h
 #usr/include/linux/stddef.h
@@ -714,6 +726,9 @@
 #usr/include/linux/string.h
 #usr/include/linux/sunrpc
 #usr/include/linux/sunrpc/debug.h
+#usr/include/linux/surface_aggregator
+#usr/include/linux/surface_aggregator/cdev.h
+#usr/include/linux/surface_aggregator/dtx.h
 #usr/include/linux/suspend_ioctls.h
 #usr/include/linux/swab.h
 #usr/include/linux/switchtec_ioctl.h
@@ -812,6 +827,8 @@
 #usr/include/linux/vbox_err.h
 #usr/include/linux/vbox_vmmdev_types.h
 #usr/include/linux/vboxguest.h
+#usr/include/linux/vdpa.h
+#usr/include/linux/vduse.h
 #usr/include/linux/version.h
 #usr/include/linux/veth.h
 #usr/include/linux/vfio.h
@@ -823,11 +840,14 @@
 #usr/include/linux/virtio_9p.h
 #usr/include/linux/virtio_balloon.h
 #usr/include/linux/virtio_blk.h
+#usr/include/linux/virtio_bt.h
 #usr/include/linux/virtio_config.h
 #usr/include/linux/virtio_console.h
 #usr/include/linux/virtio_crypto.h
 #usr/include/linux/virtio_fs.h
+#usr/include/linux/virtio_gpio.h
 #usr/include/linux/virtio_gpu.h
+#usr/include/linux/virtio_i2c.h
 #usr/include/linux/virtio_ids.h
 #usr/include/linux/virtio_input.h
 #usr/include/linux/virtio_iommu.h
@@ -835,10 +855,13 @@
 #usr/include/linux/virtio_mmio.h
 #usr/include/linux/virtio_net.h
 #usr/include/linux/virtio_pci.h
+#usr/include/linux/virtio_pcidev.h
 #usr/include/linux/virtio_pmem.h
 #usr/include/linux/virtio_ring.h
 #usr/include/linux/virtio_rng.h
+#usr/include/linux/virtio_scmi.h
 #usr/include/linux/virtio_scsi.h
+#usr/include/linux/virtio_snd.h
 #usr/include/linux/virtio_types.h
 #usr/include/linux/virtio_vsock.h
 #usr/include/linux/vm_sockets.h
@@ -850,12 +873,10 @@
 #usr/include/linux/wait.h
 #usr/include/linux/watch_queue.h
 #usr/include/linux/watchdog.h
-#usr/include/linux/wimax
-#usr/include/linux/wimax.h
-#usr/include/linux/wimax/i2400m.h
 #usr/include/linux/wireguard.h
 #usr/include/linux/wireless.h
 #usr/include/linux/wmi.h
+#usr/include/linux/wwan.h
 #usr/include/linux/x25.h
 #usr/include/linux/xattr.h
 #usr/include/linux/xdp_diag.h
@@ -887,12 +908,12 @@
 #usr/include/rdma/hfi/hfi1_ioctl.h
 #usr/include/rdma/hfi/hfi1_user.h
 #usr/include/rdma/hns-abi.h
-#usr/include/rdma/i40iw-abi.h
 #usr/include/rdma/ib_user_ioctl_cmds.h
 #usr/include/rdma/ib_user_ioctl_verbs.h
 #usr/include/rdma/ib_user_mad.h
 #usr/include/rdma/ib_user_sa.h
 #usr/include/rdma/ib_user_verbs.h
+#usr/include/rdma/irdma-abi.h
 #usr/include/rdma/mlx4-abi.h
 #usr/include/rdma/mlx5-abi.h
 #usr/include/rdma/mlx5_user_ioctl_cmds.h

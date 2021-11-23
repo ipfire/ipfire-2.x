@@ -39,7 +39,6 @@ sbin/mkfs
 sbin/mkfs.minix
 sbin/mkswap
 #sbin/pivot_root
-sbin/raw
 sbin/sfdisk
 sbin/swaplabel
 sbin/swapoff

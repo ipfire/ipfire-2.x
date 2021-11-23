@@ -27,7 +27,7 @@ include Config
 VERSUFIX = ipfire$(KCFG)
 MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/extra/
 
-VER        = 3.13
+VER        = 3.18
 
 THISAPP    = xtables-addons-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 011f339ee2b3f13297c45b02f3aec2ef
+$(DL_FILE)_MD5 = 755471b1dc6808f274f914fa11552698
 
 install : $(TARGET)
 
@@ -83,8 +83,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	# Only build the specified modules.
-	cp -avf $(DIR_SRC)/config/xtables-addons/mconfig \
-		$(DIR_APP)/mconfig
+#	cp -avf $(DIR_SRC)/config/xtables-addons/mconfig \
+#		$(DIR_APP)/mconfig
 
 # Check if we build the modules for a kernel or the userspace parts.
 ifeq "$(USPACE)" "1"

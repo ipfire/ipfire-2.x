@@ -82,6 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/xradio/fix-transmit-of-tkip-encrypted-packets.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/xradio/fix-missing-wpa1-2-sequence-numbers-for-group.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/xradio/report-mic-fails-to-kernel-and-correct-iv-str.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/xradio/eth_platform_get_mac_address.patch
 
 	cd $(DIR_APP) && CONFIG_WLAN_VENDOR_XRADIO=m \
 		make $(MAKETUNING) -C /lib/modules/$(KVER)-$(VERSUFIX)/build/ M=$(DIR_APP)/ modules

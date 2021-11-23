@@ -34,6 +34,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = keepalived
 PAK_VER    = 9
 
+SUP_ARCH   = none
+
 DEPS       =
 
 ###############################################################################

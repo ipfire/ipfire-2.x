@@ -236,6 +236,10 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/gcc-build && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gcc/gcc.git-745dae5-remove_cyclades.patch
+
+
 	@mkdir $(DIR_SRC)/gcc-build
 
 	cd $(DIR_APP) && sed -i 's/install_to_$$(INSTALL_DEST) //' libiberty/Makefile.in

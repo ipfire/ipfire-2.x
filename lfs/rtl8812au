@@ -77,6 +77,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rtl8812au/enable_usbmodeswitch.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rtl8812au/remove-ipx.patch
 	cd $(DIR_APP) && CONFIG_88XXAU=m make $(MAKETUNING) \
 		-C /lib/modules/$(KVER)-$(VERSUFIX)/build/ M=$(DIR_APP)/ modules
 
