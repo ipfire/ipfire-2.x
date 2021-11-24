@@ -1,3 +1,4 @@
+/etc/rc.d/init.d/unbound
 /etc/rc.d/init.d/mountkernfs
 /srv/web/ipfire/cgi-bin/fwhosts.cgi
 /srv/web/ipfire/cgi-bin/logs.cgi/log.dat
