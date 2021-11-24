@@ -4,7 +4,7 @@ usr/bin/scmp_sys_resolver
 #usr/lib/libseccomp.la
 #usr/lib/libseccomp.so
 usr/lib/libseccomp.so.2
-usr/lib/libseccomp.so.2.5.1
+usr/lib/libseccomp.so.2.5.3
 #usr/lib/pkgconfig/libseccomp.pc
 #usr/share/man/man1/scmp_sys_resolver.1
 #usr/share/man/man3/seccomp_api_get.3
