@@ -72,17 +72,16 @@ if [ $ROOTSPACE -lt 100000 ]; then
 fi
 
 # Remove the old kernel
-#rm -rf /boot/System.map-*
-#rm -rf /boot/config-*
-#rm -rf /boot/ipfirerd-*
-#rm -rf /boot/initramfs-*
-#rm -rf /boot/vmlinuz-*
-#rm -rf /boot/uImage-*-ipfire-*
-#rm -rf /boot/zImage-*-ipfire-*
-#rm -rf /boot/uInit-*-ipfire-*
-#rm -rf /boot/dtb-*-ipfire-*
-#rm -rf /lib/modules
-
+rm -rf /boot/System.map-*
+rm -rf /boot/config-*
+rm -rf /boot/ipfirerd-*
+rm -rf /boot/initramfs-*
+rm -rf /boot/vmlinuz-*
+rm -rf /boot/uImage-*-ipfire-*
+rm -rf /boot/zImage-*-ipfire-*
+rm -rf /boot/uInit-*-ipfire-*
+rm -rf /boot/dtb-*-ipfire-*
+rm -rf /lib/modules
 
 # Stop services
 
