@@ -17,7 +17,7 @@ usr/bin/suricata
 #usr/share/man/man1/suricatactl-filestore.1
 #usr/share/man/man1/suricatactl.1
 #usr/share/man/man1/suricatasc.1
-usr/share/suricata/
+usr/share/suricata
 #usr/share/suricata/classification.config
 #usr/share/suricata/reference.config
 #usr/share/suricata/rules
@@ -27,12 +27,10 @@ usr/share/suricata/
 #usr/share/suricata/rules/dnp3-events.rules
 #usr/share/suricata/rules/dns-events.rules
 #usr/share/suricata/rules/files.rules
-#usr/share/suricata/rules/http2-events.rules
 #usr/share/suricata/rules/http-events.rules
 #usr/share/suricata/rules/ipsec-events.rules
 #usr/share/suricata/rules/kerberos-events.rules
 #usr/share/suricata/rules/modbus-events.rules
-#usr/share/suricata/rules/mqtt-events.rules
 #usr/share/suricata/rules/nfs-events.rules
 #usr/share/suricata/rules/ntp-events.rules
 #usr/share/suricata/rules/smb-events.rules
