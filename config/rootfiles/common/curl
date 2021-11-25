@@ -226,6 +226,7 @@ usr/lib/libcurl.so.4.7.0
 #usr/share/man/man3/CURLOPT_MAXCONNECTS.3
 #usr/share/man/man3/CURLOPT_MAXFILESIZE.3
 #usr/share/man/man3/CURLOPT_MAXFILESIZE_LARGE.3
+#usr/share/man/man3/CURLOPT_MAXLIFETIME_CONN.3
 #usr/share/man/man3/CURLOPT_MAXREDIRS.3
 #usr/share/man/man3/CURLOPT_MAX_RECV_SPEED_LARGE.3
 #usr/share/man/man3/CURLOPT_MAX_SEND_SPEED_LARGE.3
@@ -252,6 +253,8 @@ usr/lib/libcurl.so.4.7.0
 #usr/share/man/man3/CURLOPT_POSTQUOTE.3
 #usr/share/man/man3/CURLOPT_POSTREDIR.3
 #usr/share/man/man3/CURLOPT_PREQUOTE.3
+#usr/share/man/man3/CURLOPT_PREREQDATA.3
+#usr/share/man/man3/CURLOPT_PREREQFUNCTION.3
 #usr/share/man/man3/CURLOPT_PRE_PROXY.3
 #usr/share/man/man3/CURLOPT_PRIVATE.3
 #usr/share/man/man3/CURLOPT_PROGRESSDATA.3
@@ -324,6 +327,7 @@ usr/lib/libcurl.so.4.7.0
 #usr/share/man/man3/CURLOPT_SSH_AUTH_TYPES.3
 #usr/share/man/man3/CURLOPT_SSH_COMPRESSION.3
 #usr/share/man/man3/CURLOPT_SSH_HOST_PUBLIC_KEY_MD5.3
+#usr/share/man/man3/CURLOPT_SSH_HOST_PUBLIC_KEY_SHA256.3
 #usr/share/man/man3/CURLOPT_SSH_KEYDATA.3
 #usr/share/man/man3/CURLOPT_SSH_KEYFUNCTION.3
 #usr/share/man/man3/CURLOPT_SSH_KNOWNHOSTS.3
@@ -465,6 +469,7 @@ usr/lib/libcurl.so.4.7.0
 #usr/share/man/man3/curl_url_dup.3
 #usr/share/man/man3/curl_url_get.3
 #usr/share/man/man3/curl_url_set.3
+#usr/share/man/man3/curl_url_strerror.3
 #usr/share/man/man3/curl_version.3
 #usr/share/man/man3/curl_version_info.3
 #usr/share/man/man3/libcurl-easy.3
