@@ -1280,6 +1280,7 @@ buildipfire() {
   lfsmake2 dosfstools
   lfsmake2 exfatprogs
   lfsmake2 reiserfsprogs
+  lfsmake2 liburcu
   lfsmake2 xfsprogs
   lfsmake2 sysfsutils
   lfsmake2 fuse
