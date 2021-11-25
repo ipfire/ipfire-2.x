@@ -95,6 +95,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/proxy-acl			$(CONFIG_ROOT)/proxy/acl-1.4
 	cp $(DIR_SRC)/config/qos/*						$(CONFIG_ROOT)/qos/bin/
 	cp $(DIR_SRC)/config/cfgroot/main-settings		$(CONFIG_ROOT)/main/settings
+	cp $(DIR_SRC)/config/cfgroot/manualpages		$(CONFIG_ROOT)/main/
 	cp $(DIR_SRC)/config/cfgroot/ssh-settings		$(CONFIG_ROOT)/remote/settings
 	cp $(DIR_SRC)/config/cfgroot/time-settings		$(CONFIG_ROOT)/time/settings
 	cp $(DIR_SRC)/config/cfgroot/logging-settings	$(CONFIG_ROOT)/logging/settings

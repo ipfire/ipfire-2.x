@@ -105,6 +105,7 @@ var/ipfire/main
 #var/ipfire/main/routing
 #var/ipfire/main/security
 #var/ipfire/main/settings
+#var/ipfire/main/manualpages
 #var/ipfire/menu.d
 var/ipfire/menu.d/00-menu.main
 var/ipfire/menu.d/10-system.menu

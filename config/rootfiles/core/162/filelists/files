@@ -12,4 +12,5 @@ srv/web/ipfire/html/themes/ipfire/include/functions.pl
 var/ipfire/general-functions.pl
 var/ipfire/header.pl
 var/ipfire/location-functions.pl
+var/ipfire/main/manualpages
 var/ipfire/qos/bin/makeqosscripts.pl
