@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.6.11
+VER        = 8.6.12
 
 THISAPP    = tcl$(VER)
 DL_FILE    = $(THISAPP)-src.tar.gz
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8a4c004f48984a03a7747e9ba06e4da4
+$(DL_FILE)_MD5 = 87ea890821d2221f2ab5157bc5eb885f
 
 install : $(TARGET)
 
