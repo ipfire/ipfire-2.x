@@ -71,6 +71,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/ip-addrlabel.8
 #usr/share/man/man8/ip-fou.8
 #usr/share/man/man8/ip-gue.8
+#usr/share/man/man8/ip-ioam.8
 #usr/share/man/man8/ip-l2tp.8
 #usr/share/man/man8/ip-link.8
 #usr/share/man/man8/ip-macsec.8
