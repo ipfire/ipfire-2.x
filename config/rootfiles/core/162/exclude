@@ -1,3 +1,4 @@
+boot/config.txt
 boot/grub/grub.cfg
 boot/grub/grubenv
 boot/uEnv.txt
