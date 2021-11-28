@@ -989,6 +989,7 @@
 'enter data' => 'Geben Sie die Daten ein <br /> und klicken Sie danach auf <i>Speichern</i>.',
 'entropy' => 'Entropie',
 'entropy graphs' => 'Entropiegraphen',
+'eol architecture warning' => 'Sie betreiben ein IPFire System auf einer Architektur, welche nicht mehr unterstützt wird. Sie werden keine Updates mehr erhalten. Das ist ein Sicherheitsrisiko.',
 'err bk 1' => 'Fehler beim Erzeugen des Archivs',
 'err bk 10 password' => 'Fehler beim Datensicherungs-Passwort',
 'err bk 2 key' => 'Fehler beim Erzeugen der Schlüsseldatei',

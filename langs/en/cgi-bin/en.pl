@@ -1015,6 +1015,7 @@
 'enter data' => 'Enter your settings <br /> and then press <i>Save</i>.',
 'entropy' => 'Entropy',
 'entropy graphs' => 'Entropy Graphs',
+'eol architecture warning' => 'You are running an architecture of IPFire which reached its end of life. You will not receive updates anymore. This is a security risk.',
 'err bk 1' => 'Error creating archive',
 'err bk 10 password' => 'Error with backup password',
 'err bk 2 key' => 'Error creating key file',
