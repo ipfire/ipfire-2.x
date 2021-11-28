@@ -69,7 +69,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@cd / && tar axf $(DIR_DL)/$(DL_FILE)
+	@cd / && tar axf $(DIR_DL)/$(DL_FILE) --no-same-owner
 	cp -f $(DIR_SRC)/config/rpi-firmware/config.txt /boot
 ifeq "${BUILD_ARCH}" "armv6l"
 	echo arm_64bit=0 >> /boot/config.txt
