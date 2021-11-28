@@ -5,7 +5,7 @@
 #usr/lib/libtasn1.la
 #usr/lib/libtasn1.so
 usr/lib/libtasn1.so.6
-usr/lib/libtasn1.so.6.6.1
+usr/lib/libtasn1.so.6.6.2
 #usr/lib/pkgconfig/libtasn1.pc
 #usr/share/info/libtasn1.info
 #usr/share/man/man1/asn1Coding.1
