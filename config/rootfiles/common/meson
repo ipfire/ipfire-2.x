@@ -1,11 +1,11 @@
 #usr/bin/meson
-#usr/lib/python3.8/site-packages/meson-0.59.2-py3.8.egg-info
-#usr/lib/python3.8/site-packages/meson-0.59.2-py3.8.egg-info/PKG-INFO
-#usr/lib/python3.8/site-packages/meson-0.59.2-py3.8.egg-info/SOURCES.txt
-#usr/lib/python3.8/site-packages/meson-0.59.2-py3.8.egg-info/dependency_links.txt
-#usr/lib/python3.8/site-packages/meson-0.59.2-py3.8.egg-info/entry_points.txt
-#usr/lib/python3.8/site-packages/meson-0.59.2-py3.8.egg-info/requires.txt
-#usr/lib/python3.8/site-packages/meson-0.59.2-py3.8.egg-info/top_level.txt
+#usr/lib/python3.8/site-packages/meson-0.60.1-py3.8.egg-info
+#usr/lib/python3.8/site-packages/meson-0.60.1-py3.8.egg-info/PKG-INFO
+#usr/lib/python3.8/site-packages/meson-0.60.1-py3.8.egg-info/SOURCES.txt
+#usr/lib/python3.8/site-packages/meson-0.60.1-py3.8.egg-info/dependency_links.txt
+#usr/lib/python3.8/site-packages/meson-0.60.1-py3.8.egg-info/entry_points.txt
+#usr/lib/python3.8/site-packages/meson-0.60.1-py3.8.egg-info/requires.txt
+#usr/lib/python3.8/site-packages/meson-0.60.1-py3.8.egg-info/top_level.txt
 #usr/lib/python3.8/site-packages/mesonbuild
 #usr/lib/python3.8/site-packages/mesonbuild/__init__.py
 #usr/lib/python3.8/site-packages/mesonbuild/_pathlib.py
@@ -107,6 +107,15 @@
 #usr/lib/python3.8/site-packages/mesonbuild/interpreter/interpreterobjects.py
 #usr/lib/python3.8/site-packages/mesonbuild/interpreter/kwargs.py
 #usr/lib/python3.8/site-packages/mesonbuild/interpreter/mesonmain.py
+#usr/lib/python3.8/site-packages/mesonbuild/interpreter/primitives
+#usr/lib/python3.8/site-packages/mesonbuild/interpreter/primitives/__init__.py
+#usr/lib/python3.8/site-packages/mesonbuild/interpreter/primitives/array.py
+#usr/lib/python3.8/site-packages/mesonbuild/interpreter/primitives/boolean.py
+#usr/lib/python3.8/site-packages/mesonbuild/interpreter/primitives/dict.py
+#usr/lib/python3.8/site-packages/mesonbuild/interpreter/primitives/integer.py
+#usr/lib/python3.8/site-packages/mesonbuild/interpreter/primitives/range.py
+#usr/lib/python3.8/site-packages/mesonbuild/interpreter/primitives/string.py
+#usr/lib/python3.8/site-packages/mesonbuild/interpreter/type_checking.py
 #usr/lib/python3.8/site-packages/mesonbuild/interpreterbase
 #usr/lib/python3.8/site-packages/mesonbuild/interpreterbase/__init__.py
 #usr/lib/python3.8/site-packages/mesonbuild/interpreterbase/_unholder.py
@@ -116,6 +125,7 @@
 #usr/lib/python3.8/site-packages/mesonbuild/interpreterbase/exceptions.py
 #usr/lib/python3.8/site-packages/mesonbuild/interpreterbase/helpers.py
 #usr/lib/python3.8/site-packages/mesonbuild/interpreterbase/interpreterbase.py
+#usr/lib/python3.8/site-packages/mesonbuild/interpreterbase/operator.py
 #usr/lib/python3.8/site-packages/mesonbuild/linkers
 #usr/lib/python3.8/site-packages/mesonbuild/linkers/__init__.py
 #usr/lib/python3.8/site-packages/mesonbuild/linkers/detect.py
@@ -130,6 +140,7 @@
 #usr/lib/python3.8/site-packages/mesonbuild/mesonlib/platform.py
 #usr/lib/python3.8/site-packages/mesonbuild/mesonlib/posix.py
 #usr/lib/python3.8/site-packages/mesonbuild/mesonlib/universal.py
+#usr/lib/python3.8/site-packages/mesonbuild/mesonlib/vsenv.py
 #usr/lib/python3.8/site-packages/mesonbuild/mesonlib/win32.py
 #usr/lib/python3.8/site-packages/mesonbuild/mesonmain.py
 #usr/lib/python3.8/site-packages/mesonbuild/minit.py
@@ -144,6 +155,7 @@
 #usr/lib/python3.8/site-packages/mesonbuild/modules/gnome.py
 #usr/lib/python3.8/site-packages/mesonbuild/modules/hotdoc.py
 #usr/lib/python3.8/site-packages/mesonbuild/modules/i18n.py
+#usr/lib/python3.8/site-packages/mesonbuild/modules/java.py
 #usr/lib/python3.8/site-packages/mesonbuild/modules/keyval.py
 #usr/lib/python3.8/site-packages/mesonbuild/modules/modtest.py
 #usr/lib/python3.8/site-packages/mesonbuild/modules/pkgconfig.py
@@ -175,6 +187,7 @@
 #usr/lib/python3.8/site-packages/mesonbuild/scripts/clangtidy.py
 #usr/lib/python3.8/site-packages/mesonbuild/scripts/cleantrees.py
 #usr/lib/python3.8/site-packages/mesonbuild/scripts/cmake_run_ctgt.py
+#usr/lib/python3.8/site-packages/mesonbuild/scripts/cmd_or_ps.ps1
 #usr/lib/python3.8/site-packages/mesonbuild/scripts/coverage.py
 #usr/lib/python3.8/site-packages/mesonbuild/scripts/delwithsuffix.py
 #usr/lib/python3.8/site-packages/mesonbuild/scripts/depfixer.py
