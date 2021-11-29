@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.69.0
+VER        = 2.70.1
 
 THISAPP    = glib-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 1235b943e4f9c36e2f046ffe43dcad03
+$(DL_FILE)_MD5 = fb613d21fabce3d3d8520f37d12bd473
 
 install : $(TARGET)
 
@@ -73,7 +73,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && meson	--prefix=/usr 		\
 				--sysconfdir=/etc	\
-				-D internal_pcre=false	\
 				builddir/
 	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING)
 	cd $(DIR_APP) && ninja -C builddir/ install
