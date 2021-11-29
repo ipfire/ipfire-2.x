@@ -8613,6 +8613,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/KEYBOARD_TWL4030
 #lib/modules/KVER-ipfire/build/include/config/KEYS
 #lib/modules/KVER-ipfire/build/include/config/KMAP_LOCAL
+#lib/modules/KVER-ipfire/build/include/config/KMAP_LOCAL_NON_LINEAR_PTE_ARRAY
 #lib/modules/KVER-ipfire/build/include/config/KS8842
 #lib/modules/KVER-ipfire/build/include/config/KS8851_MLL
 #lib/modules/KVER-ipfire/build/include/config/KSM
