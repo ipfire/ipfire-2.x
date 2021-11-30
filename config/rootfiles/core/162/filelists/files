@@ -3,6 +3,7 @@ etc/rc.d/init.d/mountkernfs
 etc/rc.d/init.d/unbound
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
+srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
