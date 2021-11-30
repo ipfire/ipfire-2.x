@@ -1,6 +1,7 @@
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/mountkernfs
 etc/rc.d/init.d/unbound
+etc/sysctl.conf
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
 srv/web/ipfire/cgi-bin/index.cgi
