@@ -27,10 +27,10 @@ include Config
 VERSUFIX = ipfire$(KCFG)
 MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/extra/wlan
 
-VER        = 0b87ed921a8682856aed5a3e68344b0087f3c93c
+VER        = 307d694076b056588c652c2bdaa543a89eb255d9
 
 THISAPP    = rtl8812au-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = bb7a0c4a9c60ff1bcbaf1071feecf503
+$(DL_FILE)_MD5 = 6492b071bcf3a8c04c4dd69012fdf92d
 
 install : $(TARGET)
 
@@ -77,7 +77,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rtl8812au/enable_usbmodeswitch.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rtl8812au/remove-ipx.patch
 	cd $(DIR_APP) && CONFIG_88XXAU=m make $(MAKETUNING) \
 		-C /lib/modules/$(KVER)-$(VERSUFIX)/build/ M=$(DIR_APP)/ modules
 
