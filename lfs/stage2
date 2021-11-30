@@ -91,6 +91,7 @@ endif
 	echo "$(NAME) v$(VERSION) - $(SLOGAN)" >  /etc/issue
 	echo "===============================" >> /etc/issue
 	echo "\n running on \s \r \m"          >> /etc/issue
+	-cat /etc/motd >> /etc/issue
 
 	# Bash startup files
 	install --directory --mode=0755 --owner=root --group=root /etc/profile.d

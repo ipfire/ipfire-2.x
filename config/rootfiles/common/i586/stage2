@@ -19,6 +19,7 @@ etc/issue
 etc/ld.so.conf
 etc/logrotate.conf
 etc/mime.types
+etc/motd
 etc/modprobe.d
 etc/modprobe.d/btmrvl_sdio.conf
 etc/modprobe.d/cfg80211.conf
