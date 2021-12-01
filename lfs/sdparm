@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.10
+VER        = 1.12
 
 THISAPP    = sdparm-$(VER)
 DL_FILE    = $(THISAPP).tgz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = bdae64375376ce8fe4bf9521c1db858f
+$(DL_FILE)_MD5 = 2902fd29e6834fd62c16bb5d1ac53c7e
 
 install : $(TARGET)
 
