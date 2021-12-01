@@ -544,7 +544,7 @@ if ( ! -e "/var/ipfire/main/send_profile") {
 # EOL architecture
 my ($sysname, $nodename, $release, $version, $machine) = &POSIX::uname();
 if ($machine =~ m/^i.86$/) {
-	$warnmessage .= "<li href='https://wiki.ipfire.org/hardware/requirements'>$Lang::tr{'eol architecture warning'}</li>";
+	$warnmessage .= "<li><a href='https://wiki.ipfire.org/hardware/requirements'>$Lang::tr{'eol architecture warning'}</a></li>";
 }
 
 # Memory usage warning
