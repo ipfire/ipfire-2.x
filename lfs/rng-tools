@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.12
+VER        = 6.14
 
 THISAPP    = rng-tools-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 17f2815263b6ce6a353625b1fe615346
+$(DL_FILE)_MD5 = 917d21dd2b06816b0484e220dfb5ba4b
 
 install : $(TARGET)
 
@@ -71,7 +71,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./autogen.sh
-	cd $(DIR_APP) && ./configure --prefix=/usr --without-pkcs11
+	cd $(DIR_APP) && ./configure \
+	                --prefix=/usr \
+	                --without-pkcs11 \
+	                --without-rtlsdr
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
 	@rm -rf $(DIR_APP)
