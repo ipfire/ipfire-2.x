@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 1.7.3.4
+VER        = 1.7.4.2
 
 THISAPP    = socat-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	   = socat
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS	   = 
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c9e71d0136c88a01d6fd30a13a3936ed
+$(DL_FILE)_MD5 = 7f139e6caa1234640dfb4ef13f4c1417
 
 install : $(TARGET)
 
