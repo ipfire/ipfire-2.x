@@ -1504,6 +1504,7 @@ END
 sub get_ruleset_date($) {
 	my ($provider) = @_;
 	my $date;
+	my $mtime;
 
 	# Load neccessary perl modules for file stat and to format the timestamp.
 	use File::stat;
@@ -1512,11 +1513,14 @@ sub get_ruleset_date($) {
 	# Get the stored rulesfile for this provider.
 	my $stored_rulesfile = &_get_dl_rulesfile($provider);
 
-	# Call stat on the rulestarball.
-	my $stat = stat("$stored_rulesfile");
+	# Check if we got a file.
+	if ($stored_rulesfile) {
+		# Call stat on the rulestarball.
+		my $stat = stat("$stored_rulesfile");
 
-	# Get timestamp the file creation.
-	my $mtime = $stat->mtime;
+		# Get timestamp the file creation.
+		$mtime = $stat->mtime;
+	}
 
 	# Check if the timestamp has not been grabbed.
 	unless ($mtime) {
