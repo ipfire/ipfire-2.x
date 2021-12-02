@@ -119,7 +119,7 @@ if ( $cgiparams{'ACTION'} eq "backup" )
 	} elsif ( $cgiparams{'BACKUPLOGS'} eq "exclude" ) {
 		&General::system("/usr/local/bin/backupctrl", "exclude");
 	} elsif ( $cgiparams{'BACKUPLOGS'} eq "iso" ) {
-		&General::system("/usr/local/bin/backupctrl", "iso");
+		&General::system_background("/usr/local/bin/backupctrl", "iso");
 	}
 }
 if ( $cgiparams{'ACTION'} eq "addonbackup" )

@@ -247,7 +247,7 @@ main() {
 			local filename="/var/ipfire/backup/${NOW}.ipf"
 
 			if make_backup "${filename}"; then
-				/usr/local/bin/backupiso "${NOW}" &
+				/usr/local/bin/backupiso "${NOW}"
 			fi
 			;;
 
