@@ -238,7 +238,7 @@ main() {
 				filename="/tmp/restore.ipf"
 			fi
 
-			restore_backup "/tmp/restore.ipf"
+			restore_backup "${filename}"
 			;;
 
 		addonbackup)
