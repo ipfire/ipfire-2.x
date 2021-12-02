@@ -425,6 +425,7 @@ WARNING: translation string unused: keyreset
 WARNING: translation string unused: keys
 WARNING: translation string unused: lang
 WARNING: translation string unused: lateprompting
+WARNING: translation string unused: legacy architecture warning
 WARNING: translation string unused: length
 WARNING: translation string unused: line
 WARNING: translation string unused: load printer

@@ -457,6 +457,7 @@ WARNING: translation string unused: keyreset
 WARNING: translation string unused: keys
 WARNING: translation string unused: lang
 WARNING: translation string unused: lateprompting
+WARNING: translation string unused: legacy architecture warning
 WARNING: translation string unused: length
 WARNING: translation string unused: line
 WARNING: translation string unused: load printer
@@ -899,6 +900,7 @@ WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: eol architecture warning = You are running an architecture of IPFire which reached its end of life. You will not receive updates anymore. This is a security risk.
 WARNING: untranslated string: false max bandwidth = Maximum bandwidth is false.
 WARNING: untranslated string: false min bandwidth = Minimum bandwidth is false.
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
