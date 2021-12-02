@@ -127,10 +127,10 @@ my $extraHead = <<END
 	// Translations
 	pakfire.i18n.load({
 		'working': '$Lang::tr{'pakfire working'}',
-		'finished': 'Pakfire is finished! Please check the log output.',
+		'finished': '$Lang::tr{'pakfire finished'}',
 		'since': '$Lang::tr{'since'} ', //(space is intentional)
 
-		'link_return': '<a href="$ENV{'SCRIPT_NAME'}">Return to Pakfire</a>',
+		'link_return': '<a href="$ENV{'SCRIPT_NAME'}">$Lang::tr{'pakfire return'}</a>',
 		'link_reboot': '<a href="/cgi-bin/shutdown.cgi">$Lang::tr{'needreboot'}</a>'
 	});
 	
