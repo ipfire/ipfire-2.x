@@ -54,7 +54,10 @@ my $classfile = "/var/ipfire/qos/classes";
 my $level7file = "/var/ipfire/qos/level7config";
 my $portfile = "/var/ipfire/qos/portconfig";
 my $tosfile = "/var/ipfire/qos/tosconfig";
-my @cake_options = ();
+my @cake_options = (
+	# RED is by default connected to the Internet
+	"internet"
+);
 
 # Define iptables MARKs
 my $QOS_INC_MASK = 0x0000ff00;
@@ -80,6 +83,12 @@ $qossettings{'TOS'} = '';
 $qossettings{'VALID'} = 'yes';
 
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
+
+# Default to "conservative
+unless (defined $qossettings{'CAKE_PROFILE'}) {
+	$qossettings{'CAKE_PROFILE'} = "conservative";
+}
+push(@cake_options, $qossettings{'CAKE_PROFILE'});
 
 my $DEF_OUT_MARK = ($qossettings{'DEFCLASS_OUT'} << $QOS_OUT_SHIFT) . "/$QOS_OUT_MASK";
 my $DEF_INC_MARK = ($qossettings{'DEFCLASS_INC'} << $QOS_INC_SHIFT) . "/$QOS_INC_MASK";
