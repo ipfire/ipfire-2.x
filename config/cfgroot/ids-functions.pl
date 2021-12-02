@@ -861,6 +861,12 @@ sub _get_dl_rulesfile($) {
 	# Generate the full filename and path for the stored rules file.
 	my $rulesfile = "$dl_rules_path/$dl_rulesfile_prefix-$provider$suffix";
 
+	# Check if the file exists.
+	unless (-f "$rulesfile") {
+		# Abort return - nothing.
+		return;
+	}
+
 	# Return the generated filename.
 	return $rulesfile;
 }
