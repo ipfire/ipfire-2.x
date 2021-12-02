@@ -44,8 +44,6 @@ $cgiparams{'VALID'} = '';
 $cgiparams{'INSPAKS'} = '';
 $cgiparams{'DELPAKS'} = '';
 
-sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='1;'>" );print "<center><img src='/images/clock.gif' alt='' /><br/><font color='red'>$Lang::tr{'pagerefresh'}</font></center>";&Header::closebox();}
-
 &Header::getcgihash(\%cgiparams);
 
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
@@ -54,7 +52,7 @@ sub refreshpage{&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' cont
 &Header::openpage($Lang::tr{'pakfire configuration'}, 1);
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
-if (($cgiparams{'ACTION'} eq 'install') && (! -e $Pakfire::lockfile)) {
+if (($cgiparams{'ACTION'} eq 'install') && (! &_is_pakfire_busy())) {
 	my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
 	if ("$cgiparams{'FORCE'}" eq "on") {
 		&General::system_background("/usr/local/bin/pakfire", "install", "--non-interactive", "--no-colors", @pkgs);
@@ -92,7 +90,7 @@ END
 		&Header::closepage();
 		exit;
 	}
-} elsif (($cgiparams{'ACTION'} eq 'remove') && (! -e $Pakfire::lockfile)) {
+} elsif (($cgiparams{'ACTION'} eq 'remove') && (! &_is_pakfire_busy())) {
 	my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
 	if ("$cgiparams{'FORCE'}" eq "on") {
 		&General::system_background("/usr/local/bin/pakfire", "remove", "--non-interactive", "--no-colors", @pkgs);
@@ -131,10 +129,10 @@ END
 		exit;
 	}
 
-} elsif (($cgiparams{'ACTION'} eq 'update') && (! -e $Pakfire::lockfile)) {
+} elsif (($cgiparams{'ACTION'} eq 'update') && (! &_is_pakfire_busy())) {
 	&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
 	sleep(1);
-} elsif (($cgiparams{'ACTION'} eq 'upgrade') && (!-e $Pakfire::lockfile)) {
+} elsif (($cgiparams{'ACTION'} eq 'upgrade') && (! &_is_pakfire_busy())) {
 	&General::system_background("/usr/local/bin/pakfire", "upgrade", "-y", "--no-colors");
 	sleep(1);
 } elsif ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
@@ -173,11 +171,7 @@ if ($errormessage) {
 }
 
 # Check if pakfire is already running.
-#
-# The system backpipe command is safe, because no user input is computed.
-my $pid = `pidof pakfire`;
-
-if ($pid) {
+if (&_is_pakfire_busy()) {
 	&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='10;'>" );
 	print <<END;
 	<table>
@@ -203,7 +197,6 @@ END
 	&Header::closebigbox();
 	&Header::closepage();
 	exit;
-	refreshpage();
 }
 
 my $core_release = `cat /opt/pakfire/db/core/mine 2>/dev/null`;
@@ -314,3 +307,16 @@ END
 &Header::closebox();
 &Header::closebigbox();
 &Header::closepage();
+
+###--- Internal functions ---###
+
+# Check if pakfire is already running (extend test here if necessary)
+sub _is_pakfire_busy {
+	# Get PID of a running pakfire instance
+	# (The system backpipe command is safe, because no user input is computed.)
+	my $pakfire_pid = `pidof -s /usr/local/bin/pakfire`;
+	chomp($pakfire_pid);
+
+	# Test presence of PID or lockfile
+	return (($pakfire_pid) || (-e "$Pakfire::lockfile"));
+}
