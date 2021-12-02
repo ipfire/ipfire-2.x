@@ -149,7 +149,6 @@ if (($cgiparams{'ACTION'} eq 'install') && (! &_is_pakfire_busy())) {
 	my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
 	if ("$cgiparams{'FORCE'}" eq "on") {
 		&General::system_background("/usr/local/bin/pakfire", "install", "--non-interactive", "--no-colors", @pkgs);
-		sleep(1);
 	} else {
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
 		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
@@ -187,7 +186,6 @@ END
 	my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
 	if ("$cgiparams{'FORCE'}" eq "on") {
 		&General::system_background("/usr/local/bin/pakfire", "remove", "--non-interactive", "--no-colors", @pkgs);
-		sleep(1);
 	} else {
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
 		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
@@ -224,10 +222,8 @@ END
 
 } elsif (($cgiparams{'ACTION'} eq 'update') && (! &_is_pakfire_busy())) {
 	&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
-	sleep(1);
 } elsif (($cgiparams{'ACTION'} eq 'upgrade') && (! &_is_pakfire_busy())) {
 	&General::system_background("/usr/local/bin/pakfire", "upgrade", "-y", "--no-colors");
-	sleep(1);
 } elsif ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
 	$pakfiresettings{"TREE"} = $cgiparams{"TREE"};
 
@@ -241,7 +237,6 @@ END
 
 		# Update lists
 		&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
-		sleep(1);
 	}
 }
 
