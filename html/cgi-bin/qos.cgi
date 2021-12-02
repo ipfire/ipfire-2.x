@@ -749,26 +749,43 @@ END
 
 sub changebandwidth {
 	&Header::openbox('100%', 'center', $Lang::tr{'bandwidthsettings'});
+
 	if ($qossettings{'ENABLED'} eq 'on') {
 		print "$Lang::tr{'bandwidtherror'}";
 		print "<a href='/cgi-bin/qos.cgi'>$Lang::tr{'back'}</a>";
 	} else {
-		print <<END
-		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<input type='hidden' name='DEF_OUT_SPD' value='' /><input type='hidden' name='DEF_INC_SPD' value='' />
-		<table width='66%'>
-		<tr><td width='100%' colspan='3'>$Lang::tr{'down and up speed'}</td></tr>
-		<tr><td width='50%' align='right'>$Lang::tr{'downlink speed'}:</td>
-				<td width='30%' align='left'><input type='text' name='INC_SPD' maxlength='8' value="$qossettings{'INC_SPD'}" /></td>
-				<td width='20%' align='center' rowspan='2'><input type='submit' name='ACTION' value="$Lang::tr{'template'}" /><br /><input type='submit' name='ACTION' value="$Lang::tr{'save'}" /><br /><input type='reset' name='ACTION' value="$Lang::tr{'reset'}" /></td></tr>
-		<tr><td width='50%' align='right'>$Lang::tr{'uplink speed'}:</td>
-				<td width='30%' align='left'><input type='text' name='OUT_SPD' maxlength='8' value="$qossettings{'OUT_SPD'}" /></td></tr>
-		</table>
-		</form>
-		<font color='red'>$Lang::tr{'template warning'}</font>
+		print <<END;
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<input type='hidden' name='DEF_OUT_SPD' value='' /><input type='hidden' name='DEF_INC_SPD' value='' />
+				<table width='66%'>
+					<tr>
+						<td width='100%' colspan='3'>$Lang::tr{'down and up speed'}</td>
+					</tr>
+					<tr>
+						<td width='50%' align='right'>$Lang::tr{'downlink speed'}:</td>
+						<td width='30%' align='left'>
+							<input type='text' name='INC_SPD' maxlength='8' value="$qossettings{'INC_SPD'}" />
+						</td>
+						<td width='20%' align='center' rowspan='2'>
+							<input type='submit' name='ACTION' value="$Lang::tr{'template'}" />
+							<br />
+							<input type='submit' name='ACTION' value="$Lang::tr{'save'}" />
+							<br />
+							<input type='reset' name='ACTION' value="$Lang::tr{'reset'}" />
+						</td>
+					</tr>
+					<tr>
+						<td width='50%' align='right'>$Lang::tr{'uplink speed'}:</td>
+						<td width='30%' align='left'>
+							<input type='text' name='OUT_SPD' maxlength='8' value="$qossettings{'OUT_SPD'}" />
+						</td>
+					</tr>
+				</table>
+			</form>
+			<font color='red'>$Lang::tr{'template warning'}</font>
 END
-;
 	}
+
 	&Header::closebox();
 }
 
