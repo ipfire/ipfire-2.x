@@ -65,9 +65,9 @@ case "${ACTION}" in
 				exit 0
 				;;
 
-			# Handle RED PPPoE (default to VDSL2)
+			# Handle dial-up connections on RED
 			ppp*,512)
-				args+=( "cake" "internet" "pppoe-ptm" "ack-filter" )
+				args+=( "cake" "internet" "conservative" "ack-filter" )
 				;;
 
 			# Treat any other interfaces as "Ethernet"
