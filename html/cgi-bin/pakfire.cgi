@@ -36,8 +36,11 @@ my %color = ();
 my %pakfiresettings = ();
 my %mainsettings = ();
 
-&Header::showhttpheaders();
+# Load general settings
+&General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
+# Get CGI request data
 $cgiparams{'ACTION'} = '';
 $cgiparams{'VALID'} = '';
 
@@ -46,12 +49,102 @@ $cgiparams{'DELPAKS'} = '';
 
 &Header::getcgihash(\%cgiparams);
 
-&General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
+### Process AJAX/JSON request ###
+if($cgiparams{'ACTION'} eq 'json-getstatus') {
+	# Send HTTP headers
+	_start_json_output();
 
-&Header::openpage($Lang::tr{'pakfire configuration'}, 1);
+	# Collect Pakfire status and log messages
+	my %status = (
+		'running' => &_is_pakfire_busy() || "0",
+		'running_since' => &General::age("$Pakfire::lockfile") || "0s",
+		'reboot' => (-e "/var/run/need_reboot") || "0"
+	);
+	my @messages = `tac /var/log/messages | sed -n '/pakfire:/{p;/Pakfire.*started/q}'`;
+
+	# Start JSON file
+	print "{\n";
+
+	foreach my $key (keys %status) {
+		my $value = $status{$key};
+		print qq{\t"$key": "$value",\n};
+	}
+
+	# Print sanitized messages in reverse order to undo previous "tac"
+	print qq{\t"messages": [\n};
+	for my $index (reverse (0 .. $#messages)) {
+		my $line = $messages[$index];
+		$line =~ s/[[:cntrl:]<>&\\]+//g;
+
+		print qq{\t\t"$line"};
+		print ",\n" unless $index < 1;
+	}
+	print "\n\t]\n";
+
+	# Finalize JSON file & stop
+	print "}";
+	exit;
+}
+
+### Start pakfire page ###
+&Header::showhttpheaders();
+
+###--- HTML HEAD ---###
+my $extraHead = <<END
+<style>
+	/* Pakfire log viewer */
+	section#pflog-header {
+		width: 100%;
+		display: flex;
+		text-align: left;
+		align-items: center;
+		column-gap: 20px;
+	}
+	#pflog-header > div:last-child {
+		margin-left: auto;
+		margin-right: 20px;
+	}
+	#pflog-header span {
+		line-height: 1.3em;
+	}
+	#pflog-header span:empty::before {
+		content: "\\200b"; /* zero width space */
+	}
+
+	pre#pflog-messages {
+		margin-top: 0.7em;
+		padding-top: 0.7em;
+		border-top: 0.5px solid $Header::bordercolour;
+
+		text-align: left;
+		min-height: 15em;
+		overflow-x: auto;
+	}
+</style>
+
+<script src="/include/pakfire.js"></script>
+<script>
+	// Translations
+	pakfire.i18n.load({
+		'working': '$Lang::tr{'pakfire working'}',
+		'finished': 'Pakfire is finished! Please check the log output.',
+		'since': '$Lang::tr{'since'} ', //(space is intentional)
+
+		'link_return': '<a href="$ENV{'SCRIPT_NAME'}">Return to Pakfire</a>',
+		'link_reboot': '<a href="/cgi-bin/shutdown.cgi">$Lang::tr{'needreboot'}</a>'
+	});
+	
+	// AJAX auto refresh interval
+	pakfire.refreshInterval = 1000;
+</script>
+END
+;
+###--- END HTML HEAD ---###
+
+&Header::openpage($Lang::tr{'pakfire configuration'}, 1, $extraHead);
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
+# Process Pakfire commands
 if (($cgiparams{'ACTION'} eq 'install') && (! &_is_pakfire_busy())) {
 	my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
 	if ("$cgiparams{'FORCE'}" eq "on") {
@@ -170,29 +263,30 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
-# Check if pakfire is already running.
-if (&_is_pakfire_busy()) {
-	&Header::openbox( 'Waiting', 1, "<meta http-equiv='refresh' content='10;'>" );
-	print <<END;
-	<table>
-		<tr><td>
-				<img src='/images/indicator.gif' alt='$Lang::tr{'active'}' title='$Lang::tr{'active'}' />&nbsp;
-			<td>
-				$Lang::tr{'pakfire working'}
-		<tr><td colspan='2' align='center'>
-			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<input type='image' alt='$Lang::tr{'reload'}' title='$Lang::tr{'reload'}' src='/images/view-refresh.png' />
-			</form>
-		<tr><td colspan='2' align='left'><code>
+# Show log output while Pakfire is running
+if(&_is_pakfire_busy()) {
+	&Header::openbox("100%", "center", "Pakfire");
+
+	print <<END
+<section id="pflog-header">
+	<div><img src="/images/indicator.gif" alt="$Lang::tr{'active'}" title="$Lang::tr{'pagerefresh'}"></div>
+	<div>
+		<span id="pflog-status">$Lang::tr{'pakfire working'}</span><br>
+		<span id="pflog-time"></span><br>
+		<span id="pflog-action"></span>
+	</div>
+	<div><a href="$ENV{'SCRIPT_NAME'}"><img src="/images/view-refresh.png" alt="$Lang::tr{'refresh'}" title="$Lang::tr{'refresh'}"></a></div>
+</section>
+
+<!-- Pakfire log messages -->
+<pre id="pflog-messages"></pre>
+<script>
+	pakfire.running = true;
+</script>
+
 END
-	my @output = `grep pakfire /var/log/messages | tail -20`;
-	foreach (@output) {
-		print "$_<br>";
-	}
-	print <<END;
-			</code>
-		</table>
-END
+;
+
 	&Header::closebox();
 	&Header::closebigbox();
 	&Header::closepage();
@@ -319,4 +413,11 @@ sub _is_pakfire_busy {
 
 	# Test presence of PID or lockfile
 	return (($pakfire_pid) || (-e "$Pakfire::lockfile"));
+}
+
+# Send HTTP headers
+sub _start_json_output {
+	print "Cache-Control: no-cache, no-store\n";
+	print "Content-Type: application/json\n";
+	print "\n"; # End of HTTP headers
 }
