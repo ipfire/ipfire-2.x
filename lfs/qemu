@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = i586 x86_64
+SUP_ARCH   = x86_64
 PROG       = qemu
 PAK_VER    = 30
 

@@ -151,13 +151,6 @@ configure_build() {
 			CFLAGS_ARCH="-m64 -mtune=generic -fstack-clash-protection -fcf-protection"
 			;;
 
-		i586)
-			BUILDTARGET="${build_arch}-pc-linux-gnu"
-			CROSSTARGET="${build_arch}-cross-linux-gnu"
-			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-march=i586 -mtune=generic -fomit-frame-pointer"
-			;;
-
 		aarch64)
 			BUILDTARGET="${build_arch}-unknown-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
@@ -247,7 +240,7 @@ configure_build() {
 
 	# XZ memory cannot be larger than 2GB on 32 bit systems
 	case "${build_arch}" in
-		i*86|armv*)
+		armv*)
 			if [ ${xz_memory} -gt 2048 ]; then
 				xz_memory=2048
 			fi
@@ -261,9 +254,6 @@ configure_build_guess() {
 	case "${HOST_ARCH}" in
 		x86_64)
 			echo "x86_64"
-			;;
-		i?86)
-			echo "i586"
 			;;
 
 		aarch64)
@@ -989,14 +979,6 @@ buildtoolchain() {
 		x86_64:x86_64)
 			 # This is working.
 			 ;;
-
-		# x86
-		i586:i586|i586:i686|i586:x86_64)
-			# These are working.
-			;;
-		i586:*)
-			error=true
-			;;
 
 		# ARM
 		arvm7hl:armv7hl|armv7hl:armv7l)

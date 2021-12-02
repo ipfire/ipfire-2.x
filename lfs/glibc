@@ -55,10 +55,6 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 	CFLAGS += -Wno-error=maybe-uninitialized
 endif
 
-ifeq "$(BUILD_ARCH)" "i586"
-	EXTRA_CONFIG += libc_cv_include_x86_isa_level=no
-endif
-
 # Add some general configuration flags
 EXTRA_CONFIG += \
 	--disable-profile \
@@ -118,11 +114,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 ifneq "$(TOOLCHAIN)" "1"
  ifeq "$(BUILD_ARCH)" "x86_64"
 	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib64 -Wl,-dynamic-linker=/lib64/ld-linux-x86-64.so.2 -o|' \
-		scripts/test-installation.pl
- endif
-
- ifeq "$(BUILD_ARCH)" "i586"
-	cd $(DIR_APP) && sed -i 's|libs -o|libs -L/usr/lib -Wl,-dynamic-linker=/lib/ld-linux.so.2 -o|' \
 		scripts/test-installation.pl
  endif
 

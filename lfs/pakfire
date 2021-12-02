@@ -30,11 +30,7 @@ THISAPP    = pakfire
 DIR_APP    = /opt/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-ifeq "$(BUILD_ARCH)" "i586"
-	PAKFIRE_VERSION = $(VERSION)
-else
-	PAKFIRE_VERSION = $(VERSION)-$(BUILD_ARCH)
-endif
+PAKFIRE_VERSION = $(VERSION)-$(BUILD_ARCH)
 
 ###############################################################################
 # Top-level Rules

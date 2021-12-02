@@ -31,13 +31,9 @@ DL_FILE    = $(THISAPP)-$(RUST_BOOTSTRAP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)-$(RUST_BOOTSTRAP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = x86_64 i586 aarch64 armv6l
+SUP_ARCH   = x86_64 aarch64 armv6l
 
-ifeq "$(BUILD_ARCH)" "i586"
-	RUST_ARCH = i686
-else
-	RUST_ARCH = $(BUILD_ARCH)
-endif
+RUST_ARCH  = $(BUILD_ARCH)
 
 ifeq "$(BUILD_ARCH)" "armv6l"
 	RUST_BOOTSTRAP = arm-unknown-linux-gnueabi
@@ -54,7 +50,6 @@ objects = $(DL_FILE)
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
 $(THISAPP)-x86_64-unknown-linux-gnu.tar.gz_MD5 =  efc4d147e25918e60678a69fcaf67b55
-$(THISAPP)-i686-unknown-linux-gnu.tar.gz_MD5 =    666d7a99abf2834b2cb4bb8e6c571c76
 $(THISAPP)-aarch64-unknown-linux-gnu.tar.gz_MD5 = e85e1758b9770bae16c253825e2ecf9c
 $(THISAPP)-arm-unknown-linux-gnueabi.tar.gz_MD5 = da4fa1b2bd21dc6d2d7e791d8faaa3eb
 

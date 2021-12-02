@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = i586 x86_64
+SUP_ARCH   = x86_64
 
 ###############################################################################
 # Top-level Rules
@@ -73,20 +73,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	-mkdir -p /usr/lib/memtest86+
 
-# gcc-4.9.3 produce a corrupted version of memtest
-# we use the precomp version at the moment
-
-#ifeq "$(BUILD_ARCH)" "i586"
-#	# Enable SMP as default
-#	cd $(DIR_APP) && sed -i -e "s|CONSERVATIVE_SMP 1|CONSERVATIVE_SMP 0|g" config.h
-#	cd $(DIR_APP) && sed -i -e "s|scp |echo |g" Makefile
-#	cd $(DIR_APP) && make $(EXTRA_MAKE)
-#	cd $(DIR_APP) && cp -f memtest.bin /usr/lib/memtest86+
-#else
 	# 64bit only systems cannot link mentest without 32bit gcc libs
 	# so we use the precompiled binary from memtest author
 	cd $(DIR_APP) && cp -f precomp.bin /usr/lib/memtest86+/memtest.bin
-#endif
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

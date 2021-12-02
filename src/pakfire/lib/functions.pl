@@ -977,10 +977,6 @@ sub get_arch() {
 	# We only support armv6l for 32 bit arm
 	if ($machine =~ m/armv[67]/) {
 		return "armv6l";
-
-	# We only support i586 for 32 bit x86
-	} elsif ($machine =~ m/i[0-9]86/) {
-		return "i586";
 	}
 
 	return $machine;
@@ -1015,10 +1011,7 @@ sub make_version() {
 	}
 
 	# Append architecture
-	my $arch = &get_arch();
-	if ($arch ne "i586") {
-		$version .= "-${arch}";
-	}
+	$version .= "-" . &get_arch();
 
 	return $version;
 }

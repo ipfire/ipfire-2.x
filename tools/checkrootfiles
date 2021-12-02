@@ -33,13 +33,6 @@ if [ "${?}" == "0" ]; then
 	echo "Comment this and create it at initskript if needed !"
 fi
 
-grep -r '/i586' ./config/rootfiles/ --exclude gcc --exclude-dir oldcore --exclude-dir i586 >/dev/null 2>&1
-if [ "${?}" == "0" ]; then
-	echo "Error! '/i586' in rootfiles files found!"
-	grep -r '/i586' ./config/rootfiles/ --exclude gcc --exclude-dir oldcore --exclude-dir i586
-	echo "Replace by xxxMACHINExxx !"
-fi
-
 grep -r '/x86_64' ./config/rootfiles/ --exclude gcc --exclude *linux* --exclude-dir oldcore --exclude-dir x86_64 >/dev/null 2>&1
 if [ "${?}" == "0" ]; then
 	echo "Error! '/x86_64' in rootfiles files found!"

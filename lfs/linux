@@ -38,10 +38,6 @@ HEADERS_ARCH  = $(BUILD_PLATFORM)
 KERNEL_ARCH   = $(BUILD_ARCH)
 KERNEL_TARGET = bzImage
 
-ifeq "$(BUILD_ARCH)" "i586"
-	KERNEL_ARCH = i386
-endif
-
 ifeq "$(BUILD_ARCH)" "aarch64"
 	HEADERS_ARCH = arm64
 	KERNEL_ARCH  = arm64
