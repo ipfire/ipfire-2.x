@@ -126,11 +126,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_SRC)/config/udev/90-hwrng.rules \
 		/lib/udev/rules.d
 
-	# Install codel rules.
-	install -v -m 644 $(DIR_SRC)/config/udev/99-codel.rules \
+	# Install AQM rules
+	install -v -m 644 $(DIR_SRC)/config/udev/99-aqm.rules \
 		/lib/udev/rules.d
-	install -m 755 $(DIR_SRC)/config/udev/enable_codel \
-		/lib/udev/enable_codel
+	install -m 755 $(DIR_SRC)/config/udev/network-aqm \
+		/lib/udev/network-aqm
 
 	# Install offloading rules
 	install -v -m 644 $(DIR_SRC)/config/udev/99-offloading.rules \
