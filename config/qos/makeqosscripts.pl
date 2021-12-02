@@ -54,7 +54,7 @@ my $classfile = "/var/ipfire/qos/classes";
 my $level7file = "/var/ipfire/qos/level7config";
 my $portfile = "/var/ipfire/qos/portconfig";
 my $tosfile = "/var/ipfire/qos/tosconfig";
-my $fqcodel_options = "limit 10240 quantum 1514";
+my @cake_options = ();
 
 # Define iptables MARKs
 my $QOS_INC_MASK = 0x0000ff00;
@@ -200,7 +200,7 @@ foreach $classentry (sort @classes)
 	if ($qossettings{'RED_DEV'} eq $classline[0]) {
 		$qossettings{'DEVICE'} = $classline[0];
 		$qossettings{'CLASS'} = $classline[1];
-		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 1:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: fq_codel $fqcodel_options\n";
+		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 1:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: cake @cake_options\n";
 	}
 }
 print "\n\t### FILTER TRAFFIC INTO CLASSES\n";
@@ -371,7 +371,7 @@ foreach $classentry (sort @classes)
 	if ($qossettings{'IMQ_DEV'} eq $classline[0]) {
 		$qossettings{'DEVICE'} = $classline[0];
 		$qossettings{'CLASS'} = $classline[1];
-		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 2:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: fq_codel $fqcodel_options\n";
+		print "\ttc qdisc add dev $qossettings{'DEVICE'} parent 2:$qossettings{'CLASS'} handle $qossettings{'CLASS'}: cake @cake_options\n";
 	}
 }
 print "\n\t### FILTER TRAFFIC INTO CLASSES\n";
@@ -494,10 +494,7 @@ print <<END
 	# DELETE QDISCS
 	tc qdisc del dev $qossettings{'RED_DEV'} root >/dev/null 2>&1
 	tc qdisc del dev $qossettings{'RED_DEV'} ingress >/dev/null 2>&1
-	tc qdisc add root dev $qossettings{'RED_DEV'} fq_codel >/dev/null 2>&1
-	tc qdisc del dev $qossettings{'IMQ_DEV'} root >/dev/null 2>&1
-	tc qdisc del dev $qossettings{'IMQ_DEV'} ingress >/dev/null 2>&1
-	tc qdisc add root dev $qossettings{'IMQ_DEV'} fq_codel >/dev/null 2>&1
+	INTERFACE="$qossettings{'RED_DEV'}" ACTION="add" /lib/udev/network-aqm &>/dev/null
 	# STOP IMQ-DEVICE
 	ip link set $qossettings{'IMQ_DEV'} down >/dev/null 2>&1
 	ip link del $qossettings{'IMQ_DEV'} >/dev/null 2>&1
