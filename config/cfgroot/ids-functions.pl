@@ -74,8 +74,11 @@ our $ids_page_lock_file = "/tmp/ids_page_locked";
 # Location where the rulefiles are stored.
 our $rulespath = "/var/lib/suricata";
 
+# Location where the addition config files are stored.
+our $configspath = "/usr/share/suricata";
+
 # Location of the classification file.
-our $classification_file = "$rulespath/classification.config";
+our $classification_file = "$configspath/classification.config";
 
 # Location of the sid to msg mappings file.
 our $sid_msg_file = "$rulespath/sid-msg.map";
