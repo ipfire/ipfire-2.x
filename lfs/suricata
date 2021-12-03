@@ -107,6 +107,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# to the rules directory.
 	rm -rfv /etc/suricata/*.config
 
+	# Set correct ownership for the classifiction config file.
+	# (File has to be writeable for the nobody user)
+	chown nobody:nobody /usr/share/suricata/classification.config
+
 	# Set correct ownership for /var/lib/suricata and the
 	# contained files
 	chown -R nobody:nobody /var/lib/suricata
