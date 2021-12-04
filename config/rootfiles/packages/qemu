@@ -16,7 +16,6 @@ usr/bin/qemu-system-i386
 usr/bin/qemu-system-riscv64
 usr/bin/qemu-system-x86_64
 usr/bin/qemu-x86_64
-usr/include/qemu-plugin.h
 usr/libexec/qemu-bridge-helper
 usr/libexec/virtiofsd
 #usr/share/applications/qemu.desktop
