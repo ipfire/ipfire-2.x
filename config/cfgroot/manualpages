@@ -1,7 +1,82 @@
-# User manual base URL (without trailing slash)
-BASE_URL=https://wiki.ipfire.org
+# Assign manual page URL path to CGI file ([cgi basename]=[path/to/page]) 
 
-# Assign manual page URL path to CGI file ([cgi basename]=[path/to/page])
+# Base URL (without trailing slash)
+BASE_URL=https://wiki.ipfire.org
 index=configuration/system/startpage
-pppsetup=configuration/system/dial
+
+#	System menu
+index=configuration/system/startpage
+mail=configuration/system/mail_service
+remote=configuration/system/ssh
+backup=configuration/system/backup
+gui=configuration/system/userinterface
+fireinfo=fireinfo
+vulnerabilities=configuration/system/vulnerabilities
+shutdown=configuration/system/shutdown
+credits=configuration/system/credits
+
+#	Status menu
+system=configuration/status/system
+memory=configuration/status/memory
+services=configuration/status/services
+media=configuration/status/drives
+netexternal=configuration/status/network_ext
+netinternal=configuration/status/network_int
+netother=configuration/status/network_int
+netovpnrw=configuration/status/network_ovpnrw
+#netovpnsrv=
+hardwaregraphs=configuration/status/hardware_diagrams
+entropy=configuration/status/entropy
+connections=configuration/status/connections
+traffic=configuration/status/nettraffic
+#mdstat=
+
+#	Network menu
+zoneconf=configuration/network/zoneconf
+dns=dns
+proxy=configuration/network/proxy
+urlfilter=configuration/network/proxy/url-filter
+#updatexlrator=configuration/network/proxy/update_accelerator
+dhcp=configuration/network/dhcp
+captive=configuration/network/captive
+connscheduler=configuration/network/connectionscheduler
+hosts=configuration/network/hosts
+dnsforward=configuration/network/dnsforward
+routing=configuration/network/static
+mac=configuration/network/mac-address
+wakeonlan=configuration/network/wake-on-lan
+
+#	Services menu
+vpnmain=configuration/services/ipsec
+ovpnmain=configuration/services/openvpn
+ddns=configuration/services/dyndns
+time=configuration/services/ntp
 qos=configuration/services/qos
+extrahd=configuration/services/extrahd
+
+#	Firewall menu
+firewall=configuration/firewall
+fwhosts=configuration/firewall/fwgroups
+optionsfw=configuration/firewall/options
+ids=configuration/firewall/ips
+p2p-block=configuration/firewall/p2p-block
+location-block=configuration/firewall/geoip-block
+wireless=configuration/firewall/accesstoblue
+iptables=configuration/firewall/iptables
+
+#	IPfire menu
+pakfire=configuration/ipfire/pakfire
+
+#	Logs menu
+summary=configuration/logs/summary
+config=configuration/logs/logsettings
+proxylog=configuration/logs/proxy
+calamaris=configuration/logs/proxyreports
+firewalllog=configuration/logs/firewall
+firewalllogip=configuration/logs/firewall-ip
+firewalllogport=configuration/logs/firewall-port
+firewalllogcountry=configuration/logs/firewall-country
+ids=configuration/logs/ips
+#ovpnclients=
+urlfilter=configuration/logs/url-filter
+log=configuration/logs/system
