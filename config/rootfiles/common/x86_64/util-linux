@@ -190,7 +190,6 @@ usr/sbin/rtcwake
 #usr/share/bash-completion/completions/pg
 #usr/share/bash-completion/completions/pivot_root
 #usr/share/bash-completion/completions/prlimit
-#usr/share/bash-completion/completions/raw
 #usr/share/bash-completion/completions/readprofile
 #usr/share/bash-completion/completions/rename
 #usr/share/bash-completion/completions/renice
@@ -312,9 +311,9 @@ usr/sbin/rtcwake
 #usr/share/man/man8/mkfs.minix.8
 #usr/share/man/man8/mkswap.8
 #usr/share/man/man8/mount.8
+#usr/share/man/man8/nologin.8
 #usr/share/man/man8/partx.8
 #usr/share/man/man8/pivot_root.8
-#usr/share/man/man8/raw.8
 #usr/share/man/man8/readprofile.8
 #usr/share/man/man8/resizepart.8
 #usr/share/man/man8/rtcwake.8
