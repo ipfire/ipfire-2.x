@@ -2,6 +2,7 @@
 boot/grub/splash.png
 #etc/bash_completion.d
 #etc/bash_completion.d/grub
+#etc/default
 etc/default/grub
 #etc/grub.d
 etc/grub.d/00_cloud
