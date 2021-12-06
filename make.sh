@@ -1333,6 +1333,8 @@ buildipfire() {
   lfsmake2 freefont
   lfsmake2 pixman
   lfsmake2 cairo
+  lfsmake2 harfbuzz
+  lfsmake2 fribidi
   lfsmake2 pango
   lfsmake2 rrdtool
   lfsmake2 setup
