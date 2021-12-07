@@ -17,6 +17,7 @@
 #usr/include/SDL2/SDL_gamecontroller.h
 #usr/include/SDL2/SDL_gesture.h
 #usr/include/SDL2/SDL_haptic.h
+#usr/include/SDL2/SDL_hidapi.h
 #usr/include/SDL2/SDL_hints.h
 #usr/include/SDL2/SDL_joystick.h
 #usr/include/SDL2/SDL_keyboard.h
@@ -80,7 +81,7 @@
 #usr/lib/cmake/SDL2/sdl2-config-version.cmake
 #usr/lib/cmake/SDL2/sdl2-config.cmake
 usr/lib/libSDL2-2.0.so.0
-usr/lib/libSDL2-2.0.so.0.16.0
+usr/lib/libSDL2-2.0.so.0.18.0
 #usr/lib/libSDL2.la
 usr/lib/libSDL2.so
 #usr/lib/libSDL2_test.a
