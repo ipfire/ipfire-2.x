@@ -121,7 +121,6 @@ usr/libexec/git-core/git-quiltimport
 usr/libexec/git-core/git-range-diff
 usr/libexec/git-core/git-read-tree
 usr/libexec/git-core/git-rebase
-usr/libexec/git-core/git-rebase--preserve-merges
 usr/libexec/git-core/git-receive-pack
 usr/libexec/git-core/git-reflog
 usr/libexec/git-core/git-remote
