@@ -1,0 +1,22 @@
+%YAML 1.1
+---
+
+# Default rules which helps
+ - /usr/share/suricata/rules/app-layer-events.rules
+ - /usr/share/suricata/rules/decoder-events.rules
+ - /usr/share/suricata/rules/dhcp-events.rules
+ - /usr/share/suricata/rules/dnp3-events.rules
+ - /usr/share/suricata/rules/dns-events.rules
+ - /usr/share/suricata/rules/files.rules
+ - /usr/share/suricata/rules/http2-events.rules
+ - /usr/share/suricata/rules/http-events.rules
+ - /usr/share/suricata/rules/ipsec-events.rules
+ - /usr/share/suricata/rules/kerberos-events.rules
+ - /usr/share/suricata/rules/modbus-events.rules
+ - /usr/share/suricata/rules/mqtt-events.rules
+ - /usr/share/suricata/rules/nfs-events.rules
+ - /usr/share/suricata/rules/ntp-events.rules
+ - /usr/share/suricata/rules/smb-events.rules
+ - /usr/share/suricata/rules/smtp-events.rules
+ - /usr/share/suricata/rules/stream-events.rules
+ - /usr/share/suricata/rules/tls-events.rules

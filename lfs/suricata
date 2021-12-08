@@ -96,6 +96,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Install IPFire related config file.
 	install -m 0644 $(DIR_SRC)/config/suricata/suricata.yaml /etc/suricata
 
+	# Install yaml file for loading default rules.
+	install -m 0664 $(DIR_SRC)/config/suricata/suricata-default-rules.yaml /var/ipfire/suricata
+
 	# Create emtpy rules directory.
 	-mkdir -p /var/lib/suricata
 
