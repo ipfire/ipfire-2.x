@@ -1,0 +1,12 @@
+#usr/include/uv
+#usr/include/uv.h
+#usr/include/uv/errno.h
+#usr/include/uv/linux.h
+#usr/include/uv/threadpool.h
+#usr/include/uv/unix.h
+#usr/include/uv/version.h
+#usr/lib/libuv.la
+#usr/lib/libuv.so
+usr/lib/libuv.so.1
+usr/lib/libuv.so.1.0.0
+#usr/lib/pkgconfig/libuv.pc

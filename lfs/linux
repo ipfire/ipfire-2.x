@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 5.10.76
-ARM_PATCHES = 5.10.76-ipfire1
+VER         = 5.15.6
+ARM_PATCHES = 5.15-ipfire2
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -77,8 +77,8 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= 6d9d29908d48ffee0daab4f6f8d98a65
-arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 02a75302a5b4a157e3d67ae62af6b178
+$(DL_FILE)_MD5					= b4e333919e9fddfdd46308cc38ceda1d
+arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 9cab549a71b19b07e0c5c103ccf3c321
 
 install : $(TARGET)
 
@@ -114,7 +114,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.10-layer7.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15-layer7.patch
 
 	# DVB Patches
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
@@ -122,9 +122,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Wlan Patches
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14_ath_user_regd.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.9.8-iwlwifi-noibss_only_on_radar_chan.patch
-
-	# Fix apu1 led detection with newer bios versions
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.10.16-apu1-led-new-bios.patch
 
 	# Fix igb and e1000e crash
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-4.14.1-igb-e1000e_fix_lock_at_update_stats.patch
@@ -137,9 +134,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# fix Boot with enabled usercopy hardening
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.9-crypto_testmgr_allocate_buffers_with____GFP_COMP.patch
-
-	# fix gcc plugins with gcc11
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.10.45-fix_gcc_plugins_with_gcc11.patch
 
 ifeq "$(BUILD_ARCH)" "armv6l"
 	# Apply Arm-multiarch kernel patches.

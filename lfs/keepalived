@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.1.5
+VER        = 2.2.4
 
 THISAPP    = keepalived-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = keepalived
-PAK_VER    = 9
+PAK_VER    = 10
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 27e1cfff5b8dd95062ad415957e663e5
+$(DL_FILE)_MD5 = 7097ba70a7c6c46c9e478d16af390a19
 
 install : $(TARGET)
 

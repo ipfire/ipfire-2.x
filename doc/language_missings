@@ -270,6 +270,7 @@
 < encryption
 < entropy
 < entropy graphs
+< eol architecture warning
 < error
 < error the to date has to be later than the from date
 < fallout zombieload ridl
@@ -937,6 +938,7 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< eol architecture warning
 < false max bandwidth
 < false min bandwidth
 < g.dtm
@@ -1097,6 +1099,7 @@
 < emerging pro rules
 < enable
 < enable smt
+< eol architecture warning
 < error
 < error the to date has to be later than the from date
 < fallout zombieload ridl
@@ -1517,6 +1520,7 @@
 < emerging pro rules
 < enable
 < enable smt
+< eol architecture warning
 < error
 < error the to date has to be later than the from date
 < fallout zombieload ridl
@@ -2060,6 +2064,7 @@
 < encryption
 < entropy
 < entropy graphs
+< eol architecture warning
 < error
 < error the to date has to be later than the from date
 < extrahd because there is already a device mounted
@@ -2964,6 +2969,7 @@
 < encryption
 < entropy
 < entropy graphs
+< eol architecture warning
 < error
 < error the to date has to be later than the from date
 < extrahd because there is already a device mounted
@@ -3676,6 +3682,7 @@
 < emerging pro rules
 < enable
 < enable smt
+< eol architecture warning
 < error
 < error the to date has to be later than the from date
 < fallout zombieload ridl

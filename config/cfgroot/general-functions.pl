@@ -24,7 +24,6 @@ $|=1; # line buffering
 $General::version = 'VERSION';
 $General::swroot = 'CONFIG_ROOT';
 $General::noipprefix = 'noipg-';
-$General::adminmanualurl = 'http://wiki.ipfire.org';
 
 require "${General::swroot}/network-functions.pl";
 

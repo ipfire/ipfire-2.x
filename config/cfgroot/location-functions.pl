@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -29,6 +29,7 @@ my %not_iso_3166_location = (
 	"A1" => "Anonymous Proxy",
 	"A2" => "Satellite Provider",
 	"A3" => "Worldwide Anycast Instance",
+	"XD" => "Hostile networks safe to drop",
 );
 
 # Hash which contains possible network flags and their mapped location codes.
@@ -36,10 +37,11 @@ my %network_flags = (
 	"LOC_NETWORK_FLAG_ANONYMOUS_PROXY" => "A1",
 	"LOC_NETWORK_FLAG_SATELLITE_PROVIDER" => "A2",
 	"LOC_NETWORK_FLAG_ANYCAST" => "A3",
+	"LOC_NETWORK_FLAG_DROP" => "XD",
 );
 
 # Array which contains special country codes.
-my @special_locations = ( "A1", "A2", "A3" );
+my @special_locations = ( "A1", "A2", "A3", "XD" );
 
 # Directory where the libloc database and keyfile lives.
 our $location_dir = "/var/lib/location/";

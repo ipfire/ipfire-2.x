@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20210606
+VER        = 20211127
 THISAPP    = rpi-firmware-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 5e9cccb9df460ea870134578e6caab26
+$(DL_FILE)_MD5 = d2cfb86cc19638683cd6ae042cc1eec5
 
 install : $(TARGET)
 
@@ -69,7 +69,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@cd / && tar axf $(DIR_DL)/$(DL_FILE)
+	@cd / && tar axf $(DIR_DL)/$(DL_FILE) --no-same-owner
 	cp -f $(DIR_SRC)/config/rpi-firmware/config.txt /boot
 ifeq "${BUILD_ARCH}" "armv6l"
 	echo arm_64bit=0 >> /boot/config.txt

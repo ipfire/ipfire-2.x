@@ -541,10 +541,10 @@ if ( ! -e "/var/ipfire/main/send_profile") {
 	$warnmessage .= "<li><a style='color: white;' href='fireinfo.cgi'>$Lang::tr{'fireinfo please enable'}</a></li>";
 }
 
-# Legacy architecture
+# EOL architecture
 my ($sysname, $nodename, $release, $version, $machine) = &POSIX::uname();
 if ($machine =~ m/^i.86$/) {
-	$warnmessage .= "<li>$Lang::tr{'legacy architecture warning'}</li>";
+	$warnmessage .= "<li><a href='https://wiki.ipfire.org/hardware/requirements' style='color:white;'>$Lang::tr{'eol architecture warning'}</a></li>";
 }
 
 # Memory usage warning

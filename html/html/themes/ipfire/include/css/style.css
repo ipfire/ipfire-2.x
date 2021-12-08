@@ -169,6 +169,19 @@ iframe {
 	margin-bottom: 1em;
 }
 
+#main_header > * {
+	display: inline-block;
+	vertical-align: baseline;
+}
+
+#main_header > span {
+	margin-left: 0.8em;
+}
+
+#main_header img {
+	padding: 0;
+}
+
 #footer {
 	height: 2.5em;
 	margin-bottom: 1em;

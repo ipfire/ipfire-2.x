@@ -4,5 +4,5 @@
 #usr/lib/libjansson.la
 #usr/lib/libjansson.so
 usr/lib/libjansson.so.4
-usr/lib/libjansson.so.4.11.1
+usr/lib/libjansson.so.4.14.0
 #usr/lib/pkgconfig/jansson.pc

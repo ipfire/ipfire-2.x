@@ -909,7 +909,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Umount source drive and eject
-	hw_umount(SOURCE_MOUNT_PATH);
+	hw_umount(SOURCE_MOUNT_PATH, NULL);
 
 	// Free downloaded ISO image
 	if (strcmp(sourcedrive, SOURCE_TEMPFILE) == 0) {

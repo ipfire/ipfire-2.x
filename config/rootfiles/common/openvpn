@@ -18,7 +18,12 @@ usr/sbin/openvpn
 #usr/share/doc/openvpn/README.auth-pam
 #usr/share/doc/openvpn/README.down-root
 #usr/share/doc/openvpn/README.mbedtls
+#usr/share/doc/openvpn/gui-notes.txt
 #usr/share/doc/openvpn/management-notes.txt
+#usr/share/doc/openvpn/openvpn-examples.5.html
+#usr/share/doc/openvpn/openvpn.8.html
+#usr/share/man/man5/openvpn-examples.5
+#usr/share/man/man8/openvpn.8
 var/ipfire/ovpn/ca
 var/ipfire/ovpn/caconfig
 var/ipfire/ovpn/ccd

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.32
+VER        = 9.0
 
 THISAPP    = coreutils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -63,7 +63,7 @@ objects =$(DL_FILE)
 
 $(DL_FILE)= $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 022042695b7d5bcf1a93559a9735e668
+$(DL_FILE)_MD5 = 0d79ae8a6124546e3b94171375e5e5d0
 
 install : $(TARGET)
 
@@ -94,9 +94,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils/coreutils-8.27-uname-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils/coreutils-8.32-i18n-1.patch
-	# this is upstream and also fix the aarch64 build
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils/ls-restore-8.31-behavior-on-removed-directories.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/coreutils/coreutils-9.0-i18n-1.patch
 	cd $(DIR_APP) && FORCE_UNSAFE_CONFIGURE=1 && ./configure $(CONFIGURE_OPTIONS)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

@@ -23,9 +23,10 @@ install() {
 
     # Kernel drivers
     instmods =drivers/hid
+    instmods efivarfs
 
     # Network drivers
-    instmods =drivers/net/ethernet =drivers/net/usb
+    instmods =drivers/net/ethernet =drivers/net/phy =drivers/net/usb
     instmods virtio_net hv_netvsc vmxnet3
 
     # Filesystem support

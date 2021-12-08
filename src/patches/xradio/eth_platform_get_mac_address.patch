@@ -1,0 +1,41 @@
+diff -Naur xradio-354e8c32e7948d46a63796d0ca266b1f702999b0.org/main.c xradio-354e8c32e7948d46a63796d0ca266b1f702999b0/main.c
+--- xradio-354e8c32e7948d46a63796d0ca266b1f702999b0.org/main.c	2020-05-02 17:17:06.000000000 +0000
++++ xradio-354e8c32e7948d46a63796d0ca266b1f702999b0/main.c	2021-11-07 10:30:26.153851399 +0000
+@@ -12,7 +12,7 @@
+ 
+ #include <linux/firmware.h>
+ #include <net/cfg80211.h>
+-#include <linux/of_net.h>
++#include <linux/etherdevice.h>
+ #include <linux/mmc/sdio_func.h>
+ 
+ #include "xradio.h"
+@@ -501,9 +501,8 @@
+ 	u8 b;		/* MRK 5.5a */
+ 	struct ieee80211_hw *dev;
+ 	struct xradio_common *hw_priv;
+-	unsigned char randomaddr[ETH_ALEN];
+-	const unsigned char *addr = NULL;
+-
++	unsigned char addr[ETH_ALEN];
++	int ret;
+ 	//init xradio_common
+ 	dev = xradio_init_common(sizeof(struct xradio_common));
+ 	if (!dev) {
+@@ -517,12 +516,12 @@
+ 
+ 	// fill in mac addresses
+ 	if (hw_priv->pdev->of_node) {
+-		addr = of_get_mac_address(hw_priv->pdev->of_node);
++		ret = eth_platform_get_mac_address(hw_priv->pdev, addr);
+ 	}
+-	if (!addr) {
++
++	if (ret<0) {
+ 		dev_warn(hw_priv->pdev, "no mac address provided, using random\n");
+-		eth_random_addr(randomaddr);
+-		addr = randomaddr;
++		eth_random_addr(addr);
+ 	}
+ 	for (b = 0; b < XRWL_MAX_VIFS; b++) {				/* MRK 5.5a */
+ 		memcpy(hw_priv->addresses[b].addr, addr, ETH_ALEN);

@@ -9,7 +9,6 @@
 #usr/share/bison/m4sugar/foreach.m4
 #usr/share/bison/m4sugar/m4sugar.m4
 #usr/share/bison/skeletons
-#usr/share/bison/skeletons/README-D.txt
 #usr/share/bison/skeletons/bison.m4
 #usr/share/bison/skeletons/c++-skel.m4
 #usr/share/bison/skeletons/c++.m4
@@ -20,6 +19,7 @@
 #usr/share/bison/skeletons/d.m4
 #usr/share/bison/skeletons/glr.c
 #usr/share/bison/skeletons/glr.cc
+#usr/share/bison/skeletons/glr2.cc
 #usr/share/bison/skeletons/java-skel.m4
 #usr/share/bison/skeletons/java.m4
 #usr/share/bison/skeletons/lalr1.cc
@@ -68,6 +68,10 @@
 #usr/share/doc/bison/examples/c/calc/Makefile
 #usr/share/doc/bison/examples/c/calc/README.md
 #usr/share/doc/bison/examples/c/calc/calc.y
+#usr/share/doc/bison/examples/c/glr
+#usr/share/doc/bison/examples/c/glr/Makefile
+#usr/share/doc/bison/examples/c/glr/README.md
+#usr/share/doc/bison/examples/c/glr/c++-types.y
 #usr/share/doc/bison/examples/c/lexcalc
 #usr/share/doc/bison/examples/c/lexcalc/Makefile
 #usr/share/doc/bison/examples/c/lexcalc/README.md
@@ -90,9 +94,13 @@
 #usr/share/doc/bison/examples/c/rpcalc/Makefile
 #usr/share/doc/bison/examples/c/rpcalc/rpcalc.y
 #usr/share/doc/bison/examples/d
-#usr/share/doc/bison/examples/d/Makefile
 #usr/share/doc/bison/examples/d/README.md
-#usr/share/doc/bison/examples/d/calc.y
+#usr/share/doc/bison/examples/d/calc
+#usr/share/doc/bison/examples/d/calc/Makefile
+#usr/share/doc/bison/examples/d/calc/calc.y
+#usr/share/doc/bison/examples/d/simple
+#usr/share/doc/bison/examples/d/simple/Makefile
+#usr/share/doc/bison/examples/d/simple/calc.y
 #usr/share/doc/bison/examples/java
 #usr/share/doc/bison/examples/java/README.md
 #usr/share/doc/bison/examples/java/calc

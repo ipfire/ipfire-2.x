@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.11
+VER        = 5.14
 SUP_ARCHES = x86_64 i586 armv6l aarch64
 
 THISAPP    = strace-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = strace
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = elfutils
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f5a317fd535465cf9130d0547661f5c4
+$(DL_FILE)_MD5 = 36c1c17f31855617b7898d2fd5abb9e2
 
 install : $(TARGET)
 

@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.27"							# Version number
-CORE="161"							# Core Level (Filename)
+CORE="162"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
@@ -1128,7 +1128,7 @@ buildbase() {
 	lfsmake2 gperf
 	lfsmake2 gzip
 	lfsmake2 hostname
-	lfsmake2 jwhois
+	lfsmake2 whois
 	lfsmake2 kbd
 	lfsmake2 less
 	lfsmake2 pkg-config
@@ -1217,6 +1217,7 @@ buildipfire() {
   lfsmake2 aprutil
   lfsmake2 unbound
   lfsmake2 gnutls
+  lfsmake2 libuv
   lfsmake2 bind
   lfsmake2 dhcp
   lfsmake2 dhcpcd
@@ -1961,8 +1962,18 @@ find-dependencies)
 	shift
 	exec "${BASEDIR}/tools/find-dependencies" "${BASEDIR}/build" "$@"
 	;;
+check-manualpages)
+	echo "Checking the manual pages for broken links..."
+	
+	chmod 755 $BASEDIR/tools/check_manualpages.pl
+	if $BASEDIR/tools/check_manualpages.pl; then
+		print_status DONE
+	else
+		print_status FAIL
+	fi
+	;;
 *)
-	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain|update-contributors|find-dependencies}"
+	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain|update-contributors|find-dependencies|check-manualpages}"
 	cat doc/make.sh-usage
 	;;
 esac

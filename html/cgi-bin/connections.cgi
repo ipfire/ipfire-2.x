@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2012  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -154,19 +154,21 @@ push(@network, $netsettings{'GREEN_ADDRESS'});
 push(@masklen, "255.255.255.255" );
 push(@colour, ${Header::colourfw} );
 
-# Add Green Network to Array
-push(@network, $netsettings{'GREEN_NETADDRESS'});
-push(@masklen, $netsettings{'GREEN_NETMASK'} );
-push(@colour, ${Header::colourgreen} );
-
-# Add Green Routes to Array
-my @routes = grep (/$netsettings{'GREEN_DEV'}/, @all_routes);
-foreach my $route (@routes) {
-	chomp($route);
-	my @temp = split(/[\t ]+/, $route);
-	push(@network, $temp[0]);
-	push(@masklen, $temp[2]);
+if ($netsettings{'GREEN_DEV'}) {
+	# Add Green Network to Array
+	push(@network, $netsettings{'GREEN_NETADDRESS'});
+	push(@masklen, $netsettings{'GREEN_NETMASK'} );
 	push(@colour, ${Header::colourgreen} );
+
+	# Add Green Routes to Array
+	my @routes = grep (/$netsettings{'GREEN_DEV'}/, @all_routes);
+	foreach my $route (@routes) {
+		chomp($route);
+		my @temp = split(/[\t ]+/, $route);
+		push(@network, $temp[0]);
+		push(@masklen, $temp[2]);
+		push(@colour, ${Header::colourgreen} );
+	}
 }
 
 # Add Blue Firewall Interface
@@ -181,7 +183,7 @@ if ($netsettings{'BLUE_DEV'}) {
 	push(@colour, ${Header::colourblue} );
 
 	# Add Blue Routes to Array
-	@routes = grep(/$netsettings{'BLUE_DEV'}/, @all_routes);
+	my @routes = grep(/$netsettings{'BLUE_DEV'}/, @all_routes);
 	foreach my $route (@routes) {
 		chomp($route);
 		my @temp = split(/[\t ]+/, $route);
@@ -202,7 +204,7 @@ if ($netsettings{'ORANGE_DEV'}) {
 	push(@masklen, $netsettings{'ORANGE_NETMASK'} );
 	push(@colour, ${Header::colourorange} );
 	# Add Orange Routes to Array
-	@routes = grep(/$netsettings{'ORANGE_DEV'}/, @all_routes);
+	my @routes = grep(/$netsettings{'ORANGE_DEV'}/, @all_routes);
 	foreach my $route (@routes) {
 		chomp($route);
 		my @temp = split(/[\t ]+/, $route);

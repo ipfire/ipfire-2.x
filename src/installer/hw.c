@@ -46,13 +46,6 @@
 
 #include "hw.h"
 
-const char* other_filesystems[] = {
-	"/dev",
-	"/proc",
-	"/sys",
-	NULL
-};
-
 static int system_chroot(const char* output, const char* path, const char* cmd) {
 	char chroot_cmd[STRING_SIZE];
 
@@ -149,14 +142,53 @@ int hw_mount(const char* source, const char* target, const char* fs, int flags) 
 	return mount(source, target, fs, flags, NULL);
 }
 
-int hw_umount(const char* target) {
-	int r = umount2(target, 0);
+static int hw_bind_mount(const char* source, const char* prefix) {
+	if (!source || !prefix) {
+		errno = EINVAL;
+		return 1;
+	}
 
-	if (r && errno == EBUSY) {
-		// Give it a moment to settle
-		sleep(1);
+	char target[PATH_MAX];
+	int r;
 
-		r = umount2(target, MNT_FORCE);
+	// Format target
+	r = snprintf(target, sizeof(target) - 1, "%s/%s", prefix, source);
+	if (r < 0)
+		return 1;
+
+	// Ensure target exists
+	mkdir(target, S_IRWXU|S_IRWXG|S_IRWXO);
+
+	return hw_mount(source, target, NULL, MS_BIND);
+}
+
+int hw_umount(const char* source, const char* prefix) {
+	char target[PATH_MAX];
+	int r;
+
+	if (prefix)
+		r = snprintf(target, sizeof(target) - 1, "%s/%s", prefix, source);
+	else
+		r = snprintf(target, sizeof(target) - 1, "%s", source);
+	if (r < 0)
+		return r;
+
+	// Perform umount
+	r = umount2(target, 0);
+	if (r) {
+		switch (errno) {
+			// Try again with force if umount wasn't successful
+			case EBUSY:
+				sleep(1);
+
+				r = umount2(target, MNT_FORCE);
+				break;
+
+			// target wasn't a mountpoint. Ignore.
+			case EINVAL:
+				r = 0;
+				break;
+		}
 	}
 
 	return r;
@@ -174,7 +206,7 @@ static int hw_test_source_medium(const char* path) {
 	ret = access(SOURCE_TEST_FILE, R_OK);
 
 	// Umount the test device.
-	hw_umount(SOURCE_MOUNT_PATH);
+	hw_umount(SOURCE_MOUNT_PATH, NULL);
 
 	return ret;
 }
@@ -881,20 +913,21 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 	}
 
 	// bind-mount misc filesystems
-	char** otherfs = other_filesystems;
-	while (*otherfs) {
-		snprintf(target, sizeof(target), "%s%s", prefix, *otherfs);
+	r = hw_bind_mount("/dev", prefix);
+	if (r)
+		return r;
 
-		mkdir(target, S_IRWXU|S_IRWXG|S_IRWXO);
-		r = hw_mount(*otherfs, target, NULL, MS_BIND);
-		if (r) {
-			hw_umount_filesystems(dest, prefix);
+	r = hw_bind_mount("/proc", prefix);
+	if (r)
+		return r;
 
-			return r;
-		}
+	r = hw_bind_mount("/sys", prefix);
+	if (r)
+		return r;
 
-		otherfs++;
-	}
+	r = hw_bind_mount("/sys/firmware/efi/efivars", prefix);
+	if (r && errno != ENOENT)
+		return r;
 
 	return 0;
 }
@@ -908,16 +941,14 @@ int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
 
 	// ESP
 	if (*dest->part_boot_efi) {
-		snprintf(target, sizeof(target), "%s%s", prefix, HW_PATH_BOOT_EFI);
-		r = hw_umount(target);
+		r = hw_umount(HW_PATH_BOOT_EFI, prefix);
 		if (r)
 			return -1;
 	}
 
 	// boot
 	if (*dest->part_boot) {
-		snprintf(target, sizeof(target), "%s%s", prefix, HW_PATH_BOOT);
-		r = hw_umount(target);
+		r = hw_umount(HW_PATH_BOOT, prefix);
 		if (r)
 			return -1;
 	}
@@ -928,16 +959,24 @@ int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
 	}
 
 	// misc filesystems
-	char** otherfs = other_filesystems;
-	while (*otherfs) {
-		snprintf(target, sizeof(target), "%s%s", prefix, *otherfs++);
-		r = hw_umount(target);
-		if (r)
-			return -1;
-	}
+	r = hw_umount("/sys/firmware/efi/efivars", prefix);
+	if (r)
+		return -1;
+
+	r = hw_umount("/sys", prefix);
+	if (r)
+		return -1;
+
+	r = hw_umount("/proc", prefix);
+	if (r)
+		return -1;
+
+	r = hw_umount("/dev", prefix);
+	if (r)
+		return -1;
 
 	// root
-	r = hw_umount(prefix);
+	r = hw_umount(prefix, NULL);
 	if (r)
 		return -1;
 

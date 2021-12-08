@@ -3,6 +3,7 @@
 # Raspberry Pi - Videocore configuration file
 #
 ###############################################################################
+enable_uart=1
 
 ###############################################################################
 #
@@ -21,6 +22,7 @@ gpu_mem=16
 #
 # hdmi_drive: 0 auto, 1 DVI (no Sound), 2 HDMI (Sound)
 #hdmi_drive=1
+hdmi_safe=1
 #
 # sdtv_mode: 0 NTSC, 1 NTSC (JP), 3 PAL, 4 PAL (Brazil)
 #sdtv_mode=2

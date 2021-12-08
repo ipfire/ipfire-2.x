@@ -1,0 +1,7 @@
+# User manual base URL (without trailing slash)
+BASE_URL=https://wiki.ipfire.org
+
+# Assign manual page URL path to CGI file ([cgi basename]=[path/to/page])
+index=configuration/system/startpage
+pppsetup=configuration/system/dial
+qos=configuration/services/qos

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.7.6
+VER        = 3.8.2
 
 THISAPP    = bison-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -45,7 +45,7 @@ objects =$(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d61aa92e3562cb7292b004ce96173cf7
+$(DL_FILE)_MD5 = c28f119f405a2304ff0a7ccdcc629713
 
 install : $(TARGET)
 

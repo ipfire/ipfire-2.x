@@ -1,0 +1,4 @@
+etc/whois.conf
+usr/bin/whois
+#usr/share/man/man1/whois.1
+#usr/share/man/man5/whois.conf.5

@@ -523,7 +523,6 @@ WARNING: translation string unused: not set
 WARNING: translation string unused: notes
 WARNING: translation string unused: o-no
 WARNING: translation string unused: o-yes
-WARNING: translation string unused: online help en
 WARNING: translation string unused: only red
 WARNING: translation string unused: open to all
 WARNING: translation string unused: openvpn disabled
@@ -987,6 +986,7 @@ WARNING: untranslated string: email usemail = Activate Mail Service
 WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
 WARNING: untranslated string: enable = Enable
 WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
+WARNING: untranslated string: eol architecture warning = You are running an architecture of IPFire which reached its end of life. You will not receive updates anymore. This is a security risk.
 WARNING: untranslated string: error = Error
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
 WARNING: untranslated string: fallout zombieload ridl = Fallout/ZombieLoad/RIDL
@@ -1095,7 +1095,6 @@ WARNING: untranslated string: ipsec roadwarrior endpoint = Host-to-Net Endpoint
 WARNING: untranslated string: ipsec routing table entries = IPsec Routing Table Entries
 WARNING: untranslated string: ipsec settings = IPsec Settings
 WARNING: untranslated string: itlb multihit = iTLB MultiHit
-WARNING: untranslated string: legacy architecture warning = You are running IPFire on a legacy architecture and it is recommended to upgrade
 WARNING: untranslated string: local ip address = Local IP Address
 WARNING: untranslated string: location = Location
 WARNING: untranslated string: locationblock = Location Block
