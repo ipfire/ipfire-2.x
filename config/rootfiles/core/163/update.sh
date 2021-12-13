@@ -69,6 +69,7 @@ ldconfig
 
 # Start services
 telinit u
+/etc/init.d/unbound restart
 /etc/init.d/squid restart
 
 # This update needs a reboot...
