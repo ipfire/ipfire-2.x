@@ -37,6 +37,7 @@ usr/share/suricata
 #usr/share/suricata/rules/smtp-events.rules
 #usr/share/suricata/rules/stream-events.rules
 #usr/share/suricata/rules/tls-events.rules
+var/ipfire/suricata/suricata-default-rules.yaml
 var/lib/suricata
 var/lib/suricata/classification.config
 var/lib/suricata/reference.config

@@ -71,6 +71,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/suricata-5.0-stream-tcp-Handle-retransmitted-SYN-with-TSval.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/suricata-disable-sid-2210059.patch
 	cd $(DIR_APP) && LDFLAGS="$(LDFLAGS)" ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
@@ -95,6 +96,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install IPFire related config file.
 	install -m 0644 $(DIR_SRC)/config/suricata/suricata.yaml /etc/suricata
+
+	# Install yaml file for loading default rules.
+	install -m 0664 $(DIR_SRC)/config/suricata/suricata-default-rules.yaml /var/ipfire/suricata
 
 	# Create emtpy rules directory.
 	-mkdir -p /var/lib/suricata
