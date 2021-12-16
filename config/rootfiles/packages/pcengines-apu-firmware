@@ -1,8 +1,8 @@
 #lib/firmware/pcengines
 #lib/firmware/pcengines/apu
-lib/firmware/pcengines/apu/apu1_v4.14.0.4.rom
-lib/firmware/pcengines/apu/apu2_v4.14.0.4.rom
-lib/firmware/pcengines/apu/apu3_v4.14.0.4.rom
-lib/firmware/pcengines/apu/apu4_v4.14.0.4.rom
-lib/firmware/pcengines/apu/apu5_v4.14.0.4.rom
-lib/firmware/pcengines/apu/apu6_v4.14.0.4.rom
+lib/firmware/pcengines/apu/apu1_v4.15.0.1.rom
+lib/firmware/pcengines/apu/apu2_v4.15.0.1.rom
+lib/firmware/pcengines/apu/apu3_v4.15.0.1.rom
+lib/firmware/pcengines/apu/apu4_v4.15.0.1.rom
+lib/firmware/pcengines/apu/apu5_v4.15.0.1.rom
+lib/firmware/pcengines/apu/apu6_v4.15.0.1.rom
