@@ -374,6 +374,17 @@ iptables_red_up() {
 	iptables -F REDFORWARD
 	iptables -t nat -F REDNAT
 
+	# Prohibit spoofing our own IP address on RED
+	if [ -f /var/ipfire/red/active ]; then
+		REDIP="$( cat /var/ipfire/red/local-ipaddress )";
+
+		if [ "$IFACE" != "" ]; then
+			iptables -A REDINPUT -s $REDIP -i $IFACE -j SPOOFED_MARTIAN
+		elif [ "$DEVICE" != "" ]; then
+			iptables -A REDINPUT -s $REDIP -i $DEVICE -j SPOOFED_MARTIAN
+		fi
+	fi
+
 	# PPPoE / PPTP Device
 	if [ "$IFACE" != "" ]; then
 		# PPPoE / PPTP
