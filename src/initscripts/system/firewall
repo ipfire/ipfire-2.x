@@ -227,6 +227,10 @@ iptables_init() {
 		iptables -A OUTPUT -o "${BLUE_DEV}" -j DHCPBLUEOUTPUT
 	fi
 
+	# Tor (inbound)
+	iptables -N TOR_INPUT
+	iptables -A INPUT -j TOR_INPUT
+
 	# Location Block
 	iptables -N LOCATIONBLOCK
 	iptables -A INPUT -j LOCATIONBLOCK
@@ -260,9 +264,7 @@ iptables_init() {
 	iptables -N OVPNINPUT
 	iptables -A INPUT -j OVPNINPUT
 
-	# Tor (inbound and outbound)
-	iptables -N TOR_INPUT
-	iptables -A INPUT -j TOR_INPUT
+	# Tor (outbound)
 	iptables -N TOR_OUTPUT
 	iptables -A OUTPUT -j TOR_OUTPUT
 
