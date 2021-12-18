@@ -110,7 +110,7 @@ iptables_init() {
 	# Connection tracking chains
 	iptables -N CONNTRACK
 	iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED -j ACCEPT
-	iptables -A CONNTRACK -m conntrack --ctstate INVALID -j DROP
+	iptables -A CONNTRACK -m conntrack --ctstate INVALID -j LOG_DROP
 	iptables -A CONNTRACK -p icmp -m conntrack --ctstate RELATED -j ACCEPT
 
 	# Restore any connection marks
@@ -136,7 +136,7 @@ iptables_init() {
 	iptables -A INPUT -j P2PBLOCK
 	iptables -A FORWARD -j P2PBLOCK
 	iptables -A OUTPUT -j P2PBLOCK
-	
+
 	# IPS (Guardian) chains
 	iptables -N GUARDIAN
 	iptables -A INPUT -j GUARDIAN
@@ -265,7 +265,7 @@ iptables_init() {
 	iptables -A INPUT -j TOR_INPUT
 	iptables -N TOR_OUTPUT
 	iptables -A OUTPUT -j TOR_OUTPUT
-	
+
 	# Jump into the actual firewall ruleset.
 	iptables -N INPUTFW
 	iptables -A INPUT -j INPUTFW
