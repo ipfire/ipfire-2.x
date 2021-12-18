@@ -80,6 +80,14 @@ iptables_init() {
 	fi
 	iptables -A NEWNOTSYN  -j DROP -m comment --comment "DROP_NEWNOTSYN"
 
+	# Log and subsequently drop spoofed packets or "martians", arriving from sources
+	# on interfaces where we don't expect them
+	iptables -N SPOOFED_MARTIAN
+	if [ "$DROPSPOOFEDMARTIAN" == "on" ]; then
+		iptables -A SPOOFED_MARTIAN  -m limit --limit 10/second -j LOG  --log-prefix "DROP_SPOOFED_MARTIAN "
+	fi
+	iptables -A SPOOFED_MARTIAN -j DROP -m comment --comment "DROP_SPOOFED_MARTIAN"
+
 	# Chain to contain all the rules relating to bad TCP flags
 	iptables -N BADTCP
 
@@ -177,14 +185,18 @@ iptables_init() {
 	iptables -A INPUT -j ICMPINPUT
 	iptables -A ICMPINPUT -p icmp --icmp-type 8 -j ACCEPT
 
-	# Accept everything on loopback
+	# Accept everything on loopback if source/destination is loopback space...
 	iptables -N LOOPBACK
-	iptables -A LOOPBACK -i lo -j ACCEPT
-	iptables -A LOOPBACK -o lo -j ACCEPT
+	iptables -A LOOPBACK -i lo -s 127.0.0.0/8 -j ACCEPT
+	iptables -A LOOPBACK -o lo -d 127.0.0.0/8 -j ACCEPT
 
-	# Filter all packets with loopback addresses on non-loopback interfaces.
-	iptables -A LOOPBACK -s 127.0.0.0/8 -j DROP
-	iptables -A LOOPBACK -d 127.0.0.0/8 -j DROP
+	# ... and drop everything else on the loopback interface, since no other traffic should appear there
+	iptables -A LOOPBACK -i lo -j SPOOFED_MARTIAN
+	iptables -A LOOPBACK -o lo -j SPOOFED_MARTIAN
+
+	# Filter all packets with loopback addresses on non-loopback interfaces (spoofed)
+	iptables -A LOOPBACK -s 127.0.0.0/8 -j SPOOFED_MARTIAN
+	iptables -A LOOPBACK -d 127.0.0.0/8 -j SPOOFED_MARTIAN
 
 	for i in INPUT FORWARD OUTPUT; do
 		iptables -A ${i} -j LOOPBACK
