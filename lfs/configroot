@@ -114,7 +114,7 @@ $(TARGET) :
 	echo  "ENABLED=off"		> $(CONFIG_ROOT)/vpn/settings
 	echo  "01"			> $(CONFIG_ROOT)/certs/serial
 	echo  "nameserver    1.2.3.4"	> $(CONFIG_ROOT)/ppp/fake-resolv.conf
-	echo  "DROPNEWNOTSYN=on"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "DROPNEWNOTSYN=on"	>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPINPUT=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPFORWARD=on"		>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "FWPOLICY=DROP"		>> $(CONFIG_ROOT)/optionsfw/settings
@@ -130,6 +130,7 @@ $(TARGET) :
 	echo  "SHOWDROPDOWN=off"	>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPWIRELESSINPUT=on"	>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPWIRELESSFORWARD=on"	>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "DROPSPOOFEDMARTIAN=on"	>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "POLICY=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 	echo  "POLICY1=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 	echo  "USE_ISP_NAMESERVERS=on"  >> $(CONFIG_ROOT)/dns/settings
