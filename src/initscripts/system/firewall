@@ -139,6 +139,20 @@ iptables_init() {
 	iptables -t nat -N CUSTOMPOSTROUTING
 	iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
 
+	# Log and drop any traffic from and to networks known as being hostile, posing
+	# a technical threat to our users (i. e. listed at Spamhaus DROP et al.)
+	if [ "$DROPHOSTILE" == "on" ]; then
+		iptables -N DROP_HOSTILE
+		iptables -A DROP_HOSTILE  -m limit --limit 10/second -j LOG  --log-prefix "DROP_HOSTILE "
+
+		iptables -A INPUT   -i $IFACE -m geoip --src-cc XD -j DROP_HOSTILE
+		iptables -A FORWARD -i $IFACE -m geoip --src-cc XD -j DROP_HOSTILE
+		iptables -A FORWARD -o $IFACE -m geoip --dst-cc XD -j DROP_HOSTILE
+		iptables -A OUTPUT  -o $IFACE -m geoip --src-cc XD -j DROP_HOSTILE
+
+		iptables -A DROP_HOSTILE -j DROP -m comment --comment "DROP_HOSTILE"
+	fi
+
 	# P2PBLOCK
 	iptables -N P2PBLOCK
 	iptables -A INPUT -j P2PBLOCK
