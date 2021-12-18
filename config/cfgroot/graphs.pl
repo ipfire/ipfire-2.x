@@ -3,7 +3,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2005-2010  IPFire Team                                        #
+# Copyright (C) 2005-2021  IPFire Team                                        #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -106,7 +106,7 @@ foreach (@sensorsdir){
 
 sub makegraphbox {
 	my ($origin, $name, $default_range) = @_;
-	
+
 	# Optional time range: Default to "day" unless otherwise specified
 	$default_range = "day" unless ($default_range ~~ @time_ranges);
 
@@ -154,7 +154,7 @@ sub updatecpugraph {
 		"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j"
 	);
-	
+
 	my $nice = "CDEF:nice=";
 	my $interrupt = "CDEF:interrupt=";
 	my $steal = "CDEF:steal=";
@@ -164,7 +164,7 @@ sub updatecpugraph {
 	my $iowait = "CDEF:iowait=";
 	my $irq = "CDEF:irq=";
 	my $addstring = "";
-	
+
 	for(my $i = 0; $i < $cpucount; $i++) {
 		push(@command,"DEF:iowait".$i."=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpu-".$i."/cpu-wait.rrd:value:AVERAGE"
 				,"DEF:nice".$i."=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpu-".$i."/cpu-nice.rrd:value:AVERAGE"
@@ -184,7 +184,7 @@ sub updatecpugraph {
 		$iowait .= "iowait".$i.",";
 		$irq .= "irq".$i.",";
 	}
-	
+
 	for(my $i = 2; $i < $cpucount; $i++) {
 		$addstring .= "ADDNAN,";
 	}
@@ -692,6 +692,8 @@ sub updatefwhitsgraph {
 		"DEF:forward=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-POLICYFWD/ipt_bytes-DROP_FORWARD.rrd:value:AVERAGE",
 		"DEF:newnotsyn=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-NEWNOTSYN/ipt_bytes-DROP_NEWNOTSYN.rrd:value:AVERAGE",
 		"DEF:portscan=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-PSCAN/ipt_bytes-DROP_PScan.rrd:value:AVERAGE",
+		"DEF:spoofedmartian=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-SPOOFED_MARTIAN/ipt_bytes-DROP_SPOOFED_MARTIAN.rrd:value:AVERAGE",
+		"DEF:hostile=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-HOSTILE/ipt_bytes-DROP_HOSTILE.rrd:value:AVERAGE",
 		"COMMENT:".sprintf("%-26s",$Lang::tr{'caption'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
@@ -722,6 +724,16 @@ sub updatefwhitsgraph {
 		"GPRINT:portscan:AVERAGE:%8.1lf %sBps",
 		"GPRINT:portscan:MIN:%8.1lf %sBps",
 		"GPRINT:portscan:LAST:%8.1lf %sBps\\j",
+		"STACK:spoofedmartian".$color{"color12"}."A0:".sprintf("%-25s",$Lang::tr{'spoofed or martians'}),
+		"GPRINT:spoofedmartian:MAX:%8.1lf %sBps",
+		"GPRINT:spoofedmartian:AVERAGE:%8.1lf %sBps",
+		"GPRINT:spoofedmartian:MIN:%8.1lf %sBps",
+		"GPRINT:spoofedmartian:LAST:%8.1lf %sBps\\j",
+		"STACK:hostile".$color{"color13"}."A0:".sprintf("%-25s",$Lang::tr{'hostile networks'}),
+		"GPRINT:hostile:MAX:%8.1lf %sBps",
+		"GPRINT:hostile:AVERAGE:%8.1lf %sBps",
+		"GPRINT:hostile:MIN:%8.1lf %sBps",
+		"GPRINT:hostile:LAST:%8.1lf %sBps\\j",
 		);
 		$ERROR = RRDs::error;
 		return "Error in RRD::graph for firewallhits: ".$ERROR."\n" if $ERROR;
