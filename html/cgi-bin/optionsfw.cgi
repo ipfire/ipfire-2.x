@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2014-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2014-2021  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -110,6 +110,12 @@ $checked{'DROPWIRELESSINPUT'}{$settings{'DROPWIRELESSINPUT'}} = "checked='checke
 $checked{'DROPWIRELESSFORWARD'}{'off'} = '';
 $checked{'DROPWIRELESSFORWARD'}{'on'} = '';
 $checked{'DROPWIRELESSFORWARD'}{$settings{'DROPWIRELESSFORWARD'}} = "checked='checked'";
+$checked{'DROPSPOOFEDMARTIAN'}{'off'} = '';
+$checked{'DROPSPOOFEDMARTIAN'}{'on'} = '';
+$checked{'DROPSPOOFEDMARTIAN'}{$settings{'DROPSPOOFEDMARTIAN'}} = "checked='checked'";
+$checked{'DROPHOSTILE'}{'off'} = '';
+$checked{'DROPHOSTILE'}{'on'} = '';
+$checked{'DROPHOSTILE'}{$settings{'DROPHOSTILE'}} = "checked='checked'";
 $checked{'DROPPROXY'}{'off'} = '';
 $checked{'DROPPROXY'}{'on'} = '';
 $checked{'DROPPROXY'}{$settings{'DROPPROXY'}} = "checked='checked'";
@@ -195,23 +201,81 @@ END
 	<br>
 
 <table width='95%' cellspacing='0'>
-<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw logging'}</b></td></tr>
-<tr><td align='left' width='60%'>$Lang::tr{'drop newnotsyn'}</td><td align='left'>$Lang::tr{'on'} <input type='radio' name='DROPNEWNOTSYN' value='on' $checked{'DROPNEWNOTSYN'}{'on'} />/
-																						<input type='radio' name='DROPNEWNOTSYN' value='off' $checked{'DROPNEWNOTSYN'}{'off'} /> $Lang::tr{'off'}</td></tr>
-<tr><td align='left' width='60%'>$Lang::tr{'drop input'}</td><td align='left'>$Lang::tr{'on'} <input type='radio' name='DROPINPUT' value='on' $checked{'DROPINPUT'}{'on'} />/
-																						<input type='radio' name='DROPINPUT' value='off' $checked{'DROPINPUT'}{'off'} /> $Lang::tr{'off'}</td></tr>
-<tr><td align='left' width='60%'>$Lang::tr{'drop forward'}</td><td align='left'>$Lang::tr{'on'} <input type='radio' name='DROPFORWARD' value='on' $checked{'DROPFORWARD'}{'on'} />/
-																						<input type='radio' name='DROPFORWARD' value='off' $checked{'DROPFORWARD'}{'off'} /> $Lang::tr{'off'}</td></tr>
-<tr><td align='left' width='60%'>$Lang::tr{'drop outgoing'}</td><td align='left'>$Lang::tr{'on'} <input type='radio' name='DROPOUTGOING' value='on' $checked{'DROPOUTGOING'}{'on'} />/
-																						<input type='radio' name='DROPOUTGOING' value='off' $checked{'DROPOUTGOING'}{'off'} /> $Lang::tr{'off'}</td></tr>
-<tr><td align='left' width='60%'>$Lang::tr{'drop portscan'}</td><td align='left'>$Lang::tr{'on'} <input type='radio' name='DROPPORTSCAN' value='on' $checked{'DROPPORTSCAN'}{'on'} />/
-																						<input type='radio' name='DROPPORTSCAN' value='off' $checked{'DROPPORTSCAN'}{'off'} /> $Lang::tr{'off'}</td></tr>
-<tr><td align='left' width='60%'>$Lang::tr{'drop wirelessinput'}</td><td align='left'>$Lang::tr{'on'} <input type='radio' name='DROPWIRELESSINPUT' value='on' $checked{'DROPWIRELESSINPUT'}{'on'} />/
-																						<input type='radio' name='DROPWIRELESSINPUT' value='off' $checked{'DROPWIRELESSINPUT'}{'off'} /> $Lang::tr{'off'}</td></tr>
-<tr><td align='left' width='60%'>$Lang::tr{'drop wirelessforward'}</td><td align='left'>$Lang::tr{'on'} <input type='radio' name='DROPWIRELESSFORWARD' value='on' $checked{'DROPWIRELESSFORWARD'}{'on'} />/
-																						<input type='radio' name='DROPWIRELESSFORWARD' value='off' $checked{'DROPWIRELESSFORWARD'}{'off'} /> $Lang::tr{'off'}</td></tr>
+	<tr bgcolor='$color{'color20'}'>
+		<td colspan='2' align='left'><b>$Lang::tr{'fw logging'}</b></td>
+	</tr>
+	<tr>
+		<td align='left' width='60%'>$Lang::tr{'drop newnotsyn'}</td>
+		<td align='left'>
+			$Lang::tr{'on'} <input type='radio' name='DROPNEWNOTSYN' value='on' $checked{'DROPNEWNOTSYN'}{'on'} />/
+			<input type='radio' name='DROPNEWNOTSYN' value='off' $checked{'DROPNEWNOTSYN'}{'off'} /> $Lang::tr{'off'}
+		</td>
+	</tr>
+	<tr>
+		<td align='left' width='60%'>$Lang::tr{'drop input'}</td>
+		<td align='left'>
+			$Lang::tr{'on'} <input type='radio' name='DROPINPUT' value='on' $checked{'DROPINPUT'}{'on'} />/
+			<input type='radio' name='DROPINPUT' value='off' $checked{'DROPINPUT'}{'off'} /> $Lang::tr{'off'}
+		</td>
+	</tr>
+	<tr>
+		<td align='left' width='60%'>$Lang::tr{'drop forward'}</td>
+		<td align='left'>
+			$Lang::tr{'on'} <input type='radio' name='DROPFORWARD' value='on' $checked{'DROPFORWARD'}{'on'} />/
+			<input type='radio' name='DROPFORWARD' value='off' $checked{'DROPFORWARD'}{'off'} /> $Lang::tr{'off'}
+		</td>
+	</tr>
+	<tr>
+		<td align='left' width='60%'>$Lang::tr{'drop outgoing'}</td>
+		<td align='left'>
+			$Lang::tr{'on'} <input type='radio' name='DROPOUTGOING' value='on' $checked{'DROPOUTGOING'}{'on'} />/
+			<input type='radio' name='DROPOUTGOING' value='off' $checked{'DROPOUTGOING'}{'off'} /> $Lang::tr{'off'}
+		</td>
+	</tr>
+	<tr>
+		<td align='left' width='60%'>$Lang::tr{'drop portscan'}</td>
+		<td align='left'>
+			$Lang::tr{'on'} <input type='radio' name='DROPPORTSCAN' value='on' $checked{'DROPPORTSCAN'}{'on'} />/
+			<input type='radio' name='DROPPORTSCAN' value='off' $checked{'DROPPORTSCAN'}{'off'} /> $Lang::tr{'off'}
+		</td>
+	</tr>
+	<tr>
+		<td align='left' width='60%'>$Lang::tr{'drop wirelessinput'}</td>
+		<td align='left'>
+			$Lang::tr{'on'} <input type='radio' name='DROPWIRELESSINPUT' value='on' $checked{'DROPWIRELESSINPUT'}{'on'} />/
+			<input type='radio' name='DROPWIRELESSINPUT' value='off' $checked{'DROPWIRELESSINPUT'}{'off'} /> $Lang::tr{'off'}
+		</td>
+	</tr>
+	<tr>
+		<td align='left' width='60%'>$Lang::tr{'drop wirelessforward'}</td>
+		<td align='left'>
+			$Lang::tr{'on'} <input type='radio' name='DROPWIRELESSFORWARD' value='on' $checked{'DROPWIRELESSFORWARD'}{'on'} />/
+			<input type='radio' name='DROPWIRELESSFORWARD' value='off' $checked{'DROPWIRELESSFORWARD'}{'off'} /> $Lang::tr{'off'}
+		</td>
+	</tr>
+	<tr>
+		<td align='left' width='60%'>$Lang::tr{'drop spoofed martians'}</td>
+		<td align='left'>
+			$Lang::tr{'on'} <input type='radio' name='DROPSPOOFEDMARTIAN' value='on' $checked{'DROPSPOOFEDMARTIAN'}{'on'} />/
+			<input type='radio' name='DROPSPOOFEDMARTIAN' value='off' $checked{'DROPSPOOFEDMARTIAN'}{'off'} /> $Lang::tr{'off'}
+		</td>
+	</tr>
 </table>
 <br/>
+
+<table width='95%' cellspacing='0'>
+	<tr bgcolor='$color{'color20'}'>
+		<td colspan='2' align='left'><b>$Lang::tr{'fw red'}</b></td>
+	</tr>
+	<tr>
+		<td align='left' width='60%'>$Lang::tr{'drop hostile'}</td>
+		<td align='left'>
+			$Lang::tr{'on'} <input type='radio' name='DROPHOSTILE' value='on' $checked{'DROPHOSTILE'}{'on'} />/
+			<input type='radio' name='DROPHOSTILE' value='off' $checked{'DROPHOSTILE'}{'off'} /> $Lang::tr{'off'}
+		</td>
+	</tr>
+</table>
+<br>
 
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw blue'}</b></td></tr>
