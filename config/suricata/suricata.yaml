@@ -317,7 +317,7 @@ logging:
   # compiled with the --enable-debug configure option.
   #
   # This value is overriden by the SC_LOG_LEVEL env var.
-  default-log-level: notice
+  default-log-level: Info
 
   # A regex to filter output.  Can be overridden in an output section.
   # Defaults to empty (no filter).
