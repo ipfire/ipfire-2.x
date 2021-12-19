@@ -122,7 +122,10 @@ my @cron_intervals = ('off', 'daily', 'weekly' );
 my @http_ports = ('80', '81');
 
 # Array which contains a list of rulefiles which always will be included if they exist.
-my @static_included_rulefiles = ('local.rules', 'whitelist.rules' );
+my @static_included_rulefiles = ('local.rules', 'whitelist.rules');
+
+# Array which contains a list of allways enabled application layer protocols.
+my @static_enabled_app_layer_protos = ('app-layer', 'decoder', 'files', 'stream');
 
 # Hash which allows to convert the download type (dl_type) to a file suffix.
 my %dl_type_to_suffix = (
@@ -1570,6 +1573,48 @@ sub get_suricata_version($) {
 		# Return the full version string.
 		return "$major_ver.$minor_ver.$patchlevel";
 	}
+}
+
+#
+## Function to get the enabled application layer protocols.
+#
+sub get_suricata_enabled_app_layer_protos() {
+	# Array to store and return the enabled app layer protos.
+	my @enabled_app_layer_protos = ();
+
+	# Execute piped suricata command and return the list of
+	# enabled application layer protocols.
+	open(SURICATA, "suricata --list-app-layer-protos |") or die "Could not execute program: $!";
+
+	# Grab and store the list of enabled application layer protocols.
+	my @output = <SURICATA>;
+
+	# Close pipe.
+	close(SURICATA);
+
+	# Merge allways enabled static application layers protocols array.
+	@enabled_app_layer_protos = @static_enabled_app_layer_protos;
+
+	# Loop through the array which contains the output of suricata.
+	foreach my $line (@output) {
+		# Skip header line which starts with "===".
+		next if ($line =~ /^\s*=/);
+
+		# Skip info or warning lines.
+		next if ($line =~ /\s*--/);
+
+		# Remove newlines.
+		chomp($line);
+
+		# Add enabled app layer proto to the array.
+		push(@enabled_app_layer_protos, $line);
+	}
+
+	# Sort the array.
+	@enabled_app_layer_protos = sort(@enabled_app_layer_protos);
+
+	# Return the array.
+	return @enabled_app_layer_protos;
 }
 
 #
