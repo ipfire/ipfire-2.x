@@ -1692,7 +1692,7 @@ sub generate_ignore_file() {
 				# Check if the address/network is valid.
 				if ((&General::validip($address)) || (&General::validipandmask($address))) {
 					# Write rule line to the file to pass any traffic from this IP
-					print FILE "pass ip $address any -> any any (msg:\"pass all traffic from/to $address\"\; sid:$sid\;)\n";
+					print FILE "pass ip $address any -> any any (msg:\"pass all traffic from/to $address\"\; bypass; sid:$sid\;)\n";
 
 					# Increment sid.
 					$sid++;
