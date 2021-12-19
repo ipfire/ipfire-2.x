@@ -36,7 +36,7 @@ our $settingsdir = "${General::swroot}/suricata";
 our $suricata_used_providers_file = "$settingsdir/suricata-used-providers.yaml";
 
 # File for static ruleset inclusions.
-our $suricata_static_rulefiles_file = "$settingsdir/suricata-static-included-rulefiles.yaml";
+our $suricata_default_rulefiles_file = "$settingsdir/suricata-default-rules.yaml";
 
 # File where the addresses of the homenet are stored.
 our $homenet_file = "$settingsdir/suricata-homenet.yaml";
@@ -73,6 +73,9 @@ our $ids_page_lock_file = "/tmp/ids_page_locked";
 
 # Location where the rulefiles are stored.
 our $rulespath = "/var/lib/suricata";
+
+# Location where the default rulefils are stored.
+our $default_rulespath = "/usr/share/suricata/rules";
 
 # Location where the addition config files are stored.
 our $configspath = "/usr/share/suricata";
@@ -131,6 +134,12 @@ my @static_enabled_app_layer_protos = ('app-layer', 'decoder', 'files', 'stream'
 my %dl_type_to_suffix = (
 	"archive" => ".tar.gz",
 	"plain" => ".rules",
+);
+
+# Hash to translate an application layer protocol to the application name.
+my %tr_app_layer_proto = (
+	"ikev2" => "ipsec",
+	"krb5" => "kerberos",
 );
 
 #
@@ -1385,7 +1394,7 @@ sub write_main_used_rulefiles_file (@) {
 	my (@providers) = @_;
 
 	# Call function to write the static rulefiles file.
-	&_write_static_rulefiles_file();
+	&_write_default_rulefiles_file();
 
 	# Open file for used rulefils inclusion.
 	open (FILE, ">", "$suricata_used_providers_file") or die "Could not write to $suricata_used_providers_file. $!\n";
@@ -1409,16 +1418,16 @@ sub write_main_used_rulefiles_file (@) {
 		}
 	}
 
-	# Always include the file which hold the static includes.
-	print FILE "include\: $suricata_static_rulefiles_file\n";
-
 	# Close the filehandle after writing.
 	close(FILE);
 }
 
-sub _write_static_rulefiles_file () {
+sub _write_default_rulefiles_file () {
+	# Get enabled application layer protocols.
+	my @enabled_app_layer_protos = &get_suricata_enabled_app_layer_protos();
+
 	# Open file.
-	open (FILE, ">", $suricata_static_rulefiles_file) or die "Could not write to $suricata_static_rulefiles_file. $!\n";
+	open (FILE, ">", $suricata_default_rulefiles_file) or die "Could not write to $suricata_default_rulefiles_file. $!\n";
 
 	# Write yaml header to the file.
 	print FILE "%YAML 1.1\n";
@@ -1432,7 +1441,37 @@ sub _write_static_rulefiles_file () {
 		# Check if the file exists.
 		if (-f "$rulespath/$file") {
 			# Write the rulesfile name to the file.
-			print FILE " - $file\n";
+			print FILE " - $rulespath/$file\n";
+		}
+	}
+
+	print FILE "\n#Default rules for used application layer protocols.\n";
+	foreach my $enabled_app_layer_proto (@enabled_app_layer_protos) {
+		# Check if the current processed app layer proto needs to be translated
+		# into an application name.
+		if (exists($tr_app_layer_proto{$enabled_app_layer_proto})) {
+			print "$enabled_app_layer_proto\n";
+
+			# Obtain the translated application name for this protocol.
+			$enabled_app_layer_proto = $tr_app_layer_proto{$enabled_app_layer_proto};
+		}
+
+		# Generate filename.
+		my $rulesfile = "$default_rulespath/$enabled_app_layer_proto\.rules";
+
+		# Check if such a file exists.
+		if (-f "$rulesfile") {
+			# Write the rulesfile name to the file.
+			print FILE " - $rulesfile\n";
+		}
+
+		# Generate filename with "events" in filename.
+		$rulesfile = "$default_rulespath/$enabled_app_layer_proto\-events.rules";
+
+		# Check if this file exists.
+		if (-f "$rulesfile" ) {
+			# Write the rulesfile name to the file.
+			print FILE " - $rulesfile\n";
 		}
 	}
 
