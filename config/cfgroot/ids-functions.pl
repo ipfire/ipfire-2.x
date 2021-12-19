@@ -1450,8 +1450,6 @@ sub _write_default_rulefiles_file () {
 		# Check if the current processed app layer proto needs to be translated
 		# into an application name.
 		if (exists($tr_app_layer_proto{$enabled_app_layer_proto})) {
-			print "$enabled_app_layer_proto\n";
-
 			# Obtain the translated application name for this protocol.
 			$enabled_app_layer_proto = $tr_app_layer_proto{$enabled_app_layer_proto};
 		}
