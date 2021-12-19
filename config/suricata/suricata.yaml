@@ -63,7 +63,7 @@ default-log-dir: /var/log/suricata/
 
 # global stats configuration
 stats:
-  enabled: yes
+  enabled: no
   # The interval field (in seconds) controls at what interval
   # the loggers are invoked.
   interval: 8
