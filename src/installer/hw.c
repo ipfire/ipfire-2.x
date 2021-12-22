@@ -188,6 +188,11 @@ int hw_umount(const char* source, const char* prefix) {
 			case EINVAL:
 				r = 0;
 				break;
+
+			// target doesn't exist
+			case ENOENT:
+				r = 0;
+				break;
 		}
 	}
 
