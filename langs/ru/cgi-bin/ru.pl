@@ -513,7 +513,7 @@
 'connections' => 'Соединения',
 'connections are associated with this ca.  deleting the ca will delete these connections as well.' => 'connections are associated with this CA. Deleting the CA will delete these connections as well.',
 'connscheduler' => 'Расписание подключений',
-'core notice 1' => '<strong>Notice:</strong> There is an core-update from',
+'core notice 1' => '<strong>Notice:</strong> There is a core-update from',
 'core notice 2' => 'to',
 'core notice 3' => 'available.',
 'could not be opened' => 'не может быть открыт.',
