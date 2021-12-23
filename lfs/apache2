@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 2.4.51
+VER        = 2.4.52
 
 THISAPP    = httpd-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d2793fc1c8cb8ba355cee877d1f2d46d
+$(DL_FILE)_MD5 = a94ae42b84309d5ef6e613ae825b92fa
 
 install : $(TARGET)
 
