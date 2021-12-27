@@ -20,6 +20,7 @@
 ###############################################################################
 
 use strict;
+use List::Util qw(any);
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -54,13 +55,20 @@ if($cgiparams{'ACTION'} eq 'json-getstatus') {
 	# Send HTTP headers
 	_start_json_output();
 
-	# Collect Pakfire status and log messages
+	# Read /var/log/messages backwards until a "Pakfire started" header is found,
+	# to capture all messages of the last (i.e. current) Pakfire run
+	my @messages = `tac /var/log/messages | sed -n '/pakfire:/{p;/Pakfire.*started/q}'`;
+
+	# Test if the log contains an error message (fastest implementation, stops at first match)
+	my $failure = any{ index($_, 'ERROR') != -1 } @messages;
+
+	# Collect Pakfire status
 	my %status = (
 		'running' => &_is_pakfire_busy() || "0",
 		'running_since' => &General::age("$Pakfire::lockfile") || "0s",
-		'reboot' => (-e "/var/run/need_reboot") || "0"
+		'reboot' => (-e "/var/run/need_reboot") || "0",
+		'failure' => $failure || "0"
 	);
-	my @messages = `tac /var/log/messages | sed -n '/pakfire:/{p;/Pakfire.*started/q}'`;
 
 	# Start JSON file
 	print "{\n";
@@ -128,14 +136,18 @@ my $extraHead = <<END
 	pakfire.i18n.load({
 		'working': '$Lang::tr{'pakfire working'}',
 		'finished': '$Lang::tr{'pakfire finished'}',
-		'since': '$Lang::tr{'since'} ', //(space is intentional)
+		'finished error': '$Lang::tr{'pakfire finished error'}',
+		'since': '$Lang::tr{'since'}',
 
 		'link_return': '<a href="$ENV{'SCRIPT_NAME'}">$Lang::tr{'pakfire return'}</a>',
 		'link_reboot': '<a href="/cgi-bin/shutdown.cgi">$Lang::tr{'needreboot'}</a>'
 	});
-	
-	// AJAX auto refresh interval
-	pakfire.refreshInterval = 1000;
+
+	// AJAX auto refresh interval (in ms, default: 1000)
+	//pakfire.refreshInterval = 1000;
+
+	// Enable returning to main screen (delay in ms)
+	pakfire.setupPageReload(true, 3000);
 </script>
 END
 ;
@@ -276,6 +288,7 @@ if(&_is_pakfire_busy()) {
 <!-- Pakfire log messages -->
 <pre id="pflog-messages"></pre>
 <script>
+	// Start automatic log refresh
 	pakfire.running = true;
 </script>
 
@@ -401,13 +414,22 @@ END
 
 # Check if pakfire is already running (extend test here if necessary)
 sub _is_pakfire_busy {
-	# Get PID of a running pakfire instance
+	# Return immediately if lockfile is present
+	if(-e "$Pakfire::lockfile") {
+		return 1;
+	}
+
+	# Check if a PID of a running pakfire instance is found
 	# (The system backpipe command is safe, because no user input is computed.)
 	my $pakfire_pid = `pidof -s /usr/local/bin/pakfire`;
 	chomp($pakfire_pid);
 
-	# Test presence of PID or lockfile
-	return (($pakfire_pid) || (-e "$Pakfire::lockfile"));
+	if($pakfire_pid) {
+		return 1;
+	}
+
+	# Pakfire isn't running
+	return 0;
 }
 
 # Send HTTP headers

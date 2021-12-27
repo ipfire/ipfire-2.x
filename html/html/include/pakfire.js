@@ -32,12 +32,13 @@ class PakfireJS {
 		this._states = Object.create(null);
 		this._states.running = false;
 		this._states.reboot = false;
+		this._states.failure = false;
 
 		// Status refresh helper
 		this._autoRefresh = {
-			delay: 1000, //Delay between requests (default: 1s)
+			delay: 1000, //Delay between requests (minimum: 500, default: 1s)
 			jsonAction: 'getstatus', //CGI POST action parameter
-			timeout: 5000, //XHR timeout (5s)
+			timeout: 5000, //XHR timeout (0 to disable, default: 5s)
 
 			delayTimer: null, //setTimeout reference
 			jqXHR: undefined, //jQuery.ajax promise reference
@@ -51,9 +52,31 @@ class PakfireJS {
 				return (this.runningDelay || this.runningXHR);
 			}
 		};
+
+		// Return to main screen helper
+		this._pageReload = {
+			delay: 1000, //Delay before page reload (default: 1s)
+			enabled: false, //Reload disabled by default
+
+			delayTimer: null, //setTimeout reference
+			get isTriggered() { //Reload timer started
+				return (this.delayTimer !== null);
+			}
+		};
 	}
 
 	//### Public properties ###
+
+	// Note on using the status flags
+	// running: Pakfire is performing a task.
+	//    Writing "true" activates the periodic AJAX/JSON status polling, writing "false" stops polling.
+	//    When the task has been completed, status polling stops and this returns to "false".
+	//    The page can then be reloaded to go back to the main screen. Writing "false" does not trigger a reload.
+	//    "refreshInterval" and "setupPageReload" can be used to adjust the respective behaviour.
+	// reboot: An update requires a reboot.
+	//    If set to "true", a link to the reboot menu is shown after the task is completed.
+	// failure: An error has occured.
+	//    To display the error log, the page does not return to the main screen.
 
 	// Pakfire is running (true/false)
 	set running(state) {
@@ -77,6 +100,17 @@ class PakfireJS {
 		return this._states.reboot;
 	}
 
+	// Error encountered (true/false)
+	set failure(state) {
+		if(this._states.failure !== state) {
+			this._states.failure = state;
+			this._states_onChange('failure');
+		}
+	}
+	get failure() {
+		return this._states.failure;
+	}
+
 	// Status refresh interval in ms
 	set refreshInterval(delay) {
 		if(delay < 500) {
@@ -88,12 +122,28 @@ class PakfireJS {
 		return this._autoRefresh.delay;
 	}
 
+	// Configure page reload after successful task (returns to main screen)
+	// delay: In ms
+	setupPageReload(enabled, delay) {
+		if(delay < 0) {
+			delay = 0;
+		}
+		this._pageReload.delay = delay;
+		this._pageReload.enabled = enabled;
+	}
+
 	// Document loaded (call once from jQuery.ready)
 	documentReady() {
 		// Status refresh late start
 		if(this.running && (! this._autoRefresh.isRunning)) {
 			this._autoRefresh_runNow();
 		}
+	}
+
+	// Reload entire CGI page (clears POST/GET data from history)
+	documentReload() {
+		let url = window.location.origin + window.location.pathname;
+		window.location.replace(url);
 	}
 
 	//### Private properties ###
@@ -106,9 +156,13 @@ class PakfireJS {
 			$('#pflog-status').text(this.i18n.get('working'));
 			$('#pflog-action').empty();
 		} else {
-			$('#pflog-status').text(this.i18n.get('finished'));
+			if(this.failure) {
+				$('#pflog-status').text(this.i18n.get('finished error'));
+			} else {
+				$('#pflog-status').text(this.i18n.get('finished'));
+			}
 			if(this.reboot) { //Enable return or reboot links in UI
-				$('#pflog-action').html(this.i18n.get('link_reboot'));
+				$('#pflog-action').html(this.i18n.get('link_return') + " &bull; " + this.i18n.get('link_reboot'));
 			} else {
 				$('#pflog-action').html(this.i18n.get('link_return'));
 			}
@@ -120,6 +174,13 @@ class PakfireJS {
 				this._autoRefresh_runNow();
 			} else {
 				this._autoRefresh_clearSchedule();
+			}
+		}
+
+		// Always stay in the log viewer if Pakfire failed
+		if(property === 'failure') {
+			if(this.failure) {
+				this._pageReload_cancel();
 			}
 		}
 	}
@@ -164,6 +225,25 @@ class PakfireJS {
 		}
 	}
 
+	// Start delayed page reload to return to main screen
+	_pageReload_trigger() {
+		if((! this._pageReload.enabled) || this._pageReload.isTriggered) {
+			return; // Disabled or already started
+		}
+		this._pageReload.delayTimer = window.setTimeout(function() {
+			this._pageReload.delayTimer = null;
+			this.documentReload();
+		}.bind(this), this._pageReload.delay);
+	}
+
+	// Stop scheduled reload
+	_pageReload_cancel() {
+		if(this._pageReload.isTriggered) {
+			window.clearTimeout(this._pageReload.delayTimer);
+			this._pageReload.delayTimer = null;
+		}
+	}
+
 	//--- JSON request & data handling ---
 
 	// Load JSON data from Pakfire CGI, using a POST request
@@ -192,10 +272,11 @@ class PakfireJS {
 			// Update status flags
 			this.running = (data['running'] != '0');
 			this.reboot = (data['reboot'] != '0');
+			this.failure = (data['failure'] != '0');
 
 			// Update timer display
 			if(this.running && data['running_since']) {
-				$('#pflog-time').text(this.i18n.get('since') + data['running_since']);
+				$('#pflog-time').text(this.i18n.get('since') + " " + data['running_since']);
 			} else {
 				$('#pflog-time').empty();
 			}
@@ -206,6 +287,11 @@ class PakfireJS {
 				messages += `${line}\n`;
 			});
 			$('#pflog-messages').text(messages);
+
+			// Pakfire finished without errors, return to main screen
+			if((! this.running) && (! this.failure)) {
+				this._pageReload_trigger();
+			}
 		}
 	}
 }
