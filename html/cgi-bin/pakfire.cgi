@@ -100,6 +100,32 @@ if($cgiparams{'ACTION'} eq 'json-getstatus') {
 ###--- HTML HEAD ---###
 my $extraHead = <<END
 <style>
+	/* Main screen */
+	table#pfmain {
+		width: 100%;
+		border-style: hidden;
+		table-layout: fixed;
+	}
+
+	#pfmain td {
+		padding: 5px 20px 0;
+		text-align: center;
+	}
+	#pfmain tr:not(:last-child) > td {
+		padding-bottom: 1.5em;
+	}
+	#pfmain tr > td.heading {
+		padding: 0;
+		font-weight: bold;
+		background-color: $color{'color20'};
+	}
+
+	.pflist {
+		width: 100%;
+		text-align: left;
+		margin-bottom: 0.8em;
+	}
+
 	/* Pakfire log viewer */
 	section#pflog-header {
 		width: 100%;
@@ -173,20 +199,23 @@ END
 			print "$_\n";
 		}
 		print <<END;
-		</pre>
-		<tr><td colspan='2'>$Lang::tr{'pakfire accept all'}
-		<tr><td colspan='2'>&nbsp;
+		</pre></td></tr>
+		<tr><td colspan='2'>$Lang::tr{'pakfire accept all'}</td></tr>
+		<tr><td colspan='2'>&nbsp;</td></tr>
 		<tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='INSPAKS' value='$cgiparams{'INSPAKS'}' />
 							<input type='hidden' name='FORCE' value='on' />
 							<input type='hidden' name='ACTION' value='install' />
 							<input type='image' alt='$Lang::tr{'install'}' title='$Lang::tr{'install'}' src='/images/go-next.png' />
 						</form>
+				</td>
 				<td align='left'>
 						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='ACTION' value='' />
 							<input type='image' alt='$Lang::tr{'abort'}' title='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
 						</form>
+				</td>
+			</tr>
 		</table>
 END
 		&Header::closebox();
@@ -210,20 +239,23 @@ END
 			print "$_\n";
 		}
 		print <<END;
-		</pre>
-		<tr><td colspan='2'>$Lang::tr{'pakfire uninstall all'}
-		<tr><td colspan='2'>&nbsp;
+		</pre></td></tr>
+		<tr><td colspan='2'>$Lang::tr{'pakfire uninstall all'}</td></tr>
+		<tr><td colspan='2'>&nbsp;</td></tr>
 		<tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='DELPAKS' value='$cgiparams{'DELPAKS'}' />
 							<input type='hidden' name='FORCE' value='on' />
 							<input type='hidden' name='ACTION' value='remove' />
 							<input type='image' alt='$Lang::tr{'uninstall'}' title='$Lang::tr{'uninstall'}' src='/images/go-next.png' />
 						</form>
+				</td>
 				<td align='left'>
 						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 							<input type='hidden' name='ACTION' value='' />
 							<input type='image' alt='$Lang::tr{'abort'}' title='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
 						</form>
+				</td>
+			</tr>
 		</table>
 END
 		&Header::closebox();
@@ -311,70 +343,69 @@ my $packages_update_age = &General::age("/opt/pakfire/db/lists/packages_list.db"
 &Header::openbox("100%", "center", "Pakfire");
 
 print <<END;
-	<table width='95%' cellpadding='5'>
+	<table id="pfmain">
 END
 if ( -e "/var/run/need_reboot") {
-	print "<tr><td align='center' colspan='2'><font color='red'>$Lang::tr{'needreboot'}!</font></td></tr>";
-	print "<tr><td colspan='2'>&nbsp;</font></td></tr>"
+	print "\t\t<tr><td colspan='2'><a href='/cgi-bin/shutdown.cgi'>$Lang::tr{'needreboot'}!</a></td></tr>\n";
 }
 print <<END;
-		<tr><td width="50%" bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire system state'}:</b>
+		<tr><td class="heading">$Lang::tr{'pakfire system state'}:</td>
+			<td class="heading">$Lang::tr{'available updates'}:</td></tr>
 
-			<td width="50%" bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'available updates'}:</b></tr>
-
-		<tr><td align="center">$Lang::tr{'pakfire core update level'}: $core_release<hr />
-					$Lang::tr{'pakfire last update'} $core_update_age $Lang::tr{'pakfire ago'}<br />
-					$Lang::tr{'pakfire last serverlist update'} $server_update_age $Lang::tr{'pakfire ago'}<br />
-					$Lang::tr{'pakfire last core list update'} $corelist_update_age $Lang::tr{'pakfire ago'}<br />
+		<tr><td><strong>$Lang::tr{'pakfire core update level'}: $core_release</strong>
+				<hr>
+				<div class="pflist">
+					$Lang::tr{'pakfire last update'} $core_update_age $Lang::tr{'pakfire ago'}<br>
+					$Lang::tr{'pakfire last serverlist update'} $server_update_age $Lang::tr{'pakfire ago'}<br>
+					$Lang::tr{'pakfire last core list update'} $corelist_update_age $Lang::tr{'pakfire ago'}<br>
 					$Lang::tr{'pakfire last package update'} $packages_update_age $Lang::tr{'pakfire ago'}
-					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='ACTION' value='update' /><br />
-						<input type='submit' value='$Lang::tr{'calamaris refresh list'}' /><br />
-					</form>
-<br />
-				<td align="center">
+				</div>
 				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-					<select name="UPDPAKS" size="5" disabled>
+					<input type='hidden' name='ACTION' value='update' />
+					<input type='submit' value='$Lang::tr{'calamaris refresh list'}' />
+				</form>
+			</td>
+			<td>
+				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+					<select name="UPDPAKS" class="pflist" size="5" disabled>
 END
-						&Pakfire::dblist("upgrade", "forweb");
+
+	&Pakfire::dblist("upgrade", "forweb");
 	print <<END;
 					</select>
-					<br />
 					<input type='hidden' name='ACTION' value='upgrade' />
 					<input type='image' alt='$Lang::tr{'upgrade'}' title='$Lang::tr{'upgrade'}' src='/images/document-save.png' />
 				 </form>
+			</td>
+		</tr>
+		<tr><td class="heading">$Lang::tr{'pakfire available addons'}</td>
+			<td class="heading">$Lang::tr{'pakfire installed addons'}</td></tr>
 
-		<tr><td colspan="2"><!-- Just an empty line -->&nbsp;
-		<tr><td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire available addons'}</b>
-				<td bgcolor='$color{'color20'}' align="center"><b>$Lang::tr{'pakfire installed addons'}</b>
-		<tr><td style="padding:5px 10px 20px 20px" align="center">
-			<p>$Lang::tr{'pakfire install description'}</p>
-			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<select name="INSPAKS" size="10" multiple>
-END
-			&Pakfire::dblist("notinstalled", "forweb");
-
-print <<END;
-				</select>
-				<br />
-				<input type='hidden' name='ACTION' value='install' />
-				<input type='image' alt='$Lang::tr{'install'}' title='$Lang::tr{'install'}' src='/images/list-add.png' />
-			</form>
-
-		<td style="padding:5px 10px 20px 20px" align="center">
-			<p>$Lang::tr{'pakfire uninstall description'}</p>
-		 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-			<select name="DELPAKS" size="10" multiple>
+		<tr><td><p>$Lang::tr{'pakfire install description'}</p>
+				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+					<select name="INSPAKS" class="pflist" size="10" multiple>
 END
 
-			&Pakfire::dblist("installed", "forweb");
+	&Pakfire::dblist("notinstalled", "forweb");
+	print <<END;
+					</select>
+					<input type='hidden' name='ACTION' value='install' />
+					<input type='image' alt='$Lang::tr{'install'}' title='$Lang::tr{'install'}' src='/images/list-add.png' />
+				</form>
+			</td>
+			<td><p>$Lang::tr{'pakfire uninstall description'}</p>
+				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+					<select name="DELPAKS" class="pflist" size="10" multiple>
+END
 
-print <<END;
-			</select>
-			<br />
-			<input type='hidden' name='ACTION' value='remove' />
-			<input type='image' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' src='/images/list-remove.png' />
-		</form>
+	&Pakfire::dblist("installed", "forweb");
+	print <<END;
+					</select>
+					<input type='hidden' name='ACTION' value='remove' />
+					<input type='image' alt='$Lang::tr{'remove'}' title='$Lang::tr{'remove'}' src='/images/list-remove.png' />
+				</form>
+			</td>
+		</tr>
 	</table>
 END
 
