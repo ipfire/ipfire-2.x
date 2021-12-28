@@ -69,6 +69,7 @@ ldconfig
 
 # Start services
 telinit u
+/etc/init.d/apache restart
 /etc/init.d/unbound restart
 /etc/init.d/squid restart
 
