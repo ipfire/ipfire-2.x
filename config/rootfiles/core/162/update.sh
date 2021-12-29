@@ -77,10 +77,10 @@ rm -rf /boot/config-*
 rm -rf /boot/ipfirerd-*
 rm -rf /boot/initramfs-*
 rm -rf /boot/vmlinuz-*
-rm -rf /boot/uImage-*-ipfire-*
-rm -rf /boot/zImage-*-ipfire-*
-rm -rf /boot/uInit-*-ipfire-*
-rm -rf /boot/dtb-*-ipfire-*
+rm -rf /boot/uImage-*
+rm -rf /boot/zImage-*
+rm -rf /boot/uInit-*
+rm -rf /boot/dtb-*
 rm -rf /lib/modules
 
 # Remove files
