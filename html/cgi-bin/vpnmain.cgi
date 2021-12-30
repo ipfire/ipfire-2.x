@@ -1242,7 +1242,7 @@ END
 	open(FILE, "${General::swroot}/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
 	my @p12 = <FILE>;
 	close(FILE);
-	print "@p12";
+	print join("", @p12);
 
 	exit (0);
 
