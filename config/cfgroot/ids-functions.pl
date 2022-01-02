@@ -439,6 +439,7 @@ sub downloadruleset ($) {
 			unlink("$tmpfile");
 
 			# Return "1" - false.
+			return 1;
 		}
 
 		# Load file copy module, which contains the move() function.
