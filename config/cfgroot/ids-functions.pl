@@ -320,6 +320,9 @@ sub downloadruleset ($) {
 
 	# Loop through the hash of sheduled providers.
 	foreach my $provider ( keys %sheduled_providers) {
+		# Log download/update of the ruleset.
+		&_log_to_syslog("Downloading ruleset for provider: $provider.");
+
 		# Grab the download url for the provider.
 		my $url = $IDS::Ruleset::Providers{$provider}{'dl_url'};
 
