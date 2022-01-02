@@ -1555,7 +1555,7 @@ sub get_ruleset_date($) {
 	my $stored_rulesfile = &_get_dl_rulesfile($provider);
 
 	# Check if we got a file.
-	if ($stored_rulesfile) {
+	if (-f $stored_rulesfile) {
 		# Call stat on the rulestarball.
 		my $stat = stat("$stored_rulesfile");
 
