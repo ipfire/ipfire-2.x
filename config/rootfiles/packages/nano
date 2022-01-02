@@ -53,6 +53,7 @@ usr/share/nano/tcl.nanorc
 usr/share/nano/tex.nanorc
 usr/share/nano/texinfo.nanorc
 usr/share/nano/xml.nanorc
+usr/share/nano/yaml.nanorc
 #usr/share/nano/extra
 #usr/share/nano/extra/ada.nanorc
 #usr/share/nano/extra/debian.nanorc
