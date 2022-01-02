@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.30.1
+VER        = 1.50.0
 
 THISAPP    = pango-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ec3c1f236ee9bd4a982a5f46fcaff7b9
+$(DL_FILE)_MD5 = 726a7c7b6faf34006d2b5aa0dd8dc1d5
 
 install : $(TARGET)
 
@@ -71,8 +71,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && meson --prefix=/usr --sysconfdir=/etc builddir/
+	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING)
+	cd $(DIR_APP) && ninja -C builddir/ install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

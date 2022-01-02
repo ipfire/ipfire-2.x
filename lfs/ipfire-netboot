@@ -32,7 +32,7 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = https://source.ipfire.org/releases/ipfire-netboot/
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = x86_64 i586
+SUP_ARCH   = x86_64
 
 ###############################################################################
 # Top-level Rules

@@ -126,6 +126,9 @@ usr/lib/libpam_misc.so.0.82.1
 #usr/lib/libpamc.so
 usr/lib/libpamc.so.0
 usr/lib/libpamc.so.0.82.1
+#usr/lib/pkgconfig/pam.pc
+#usr/lib/pkgconfig/pam_misc.pc
+#usr/lib/pkgconfig/pamc.pc
 #usr/lib/systemd
 #usr/lib/systemd/system
 #usr/lib/systemd/system/pam_namespace.service

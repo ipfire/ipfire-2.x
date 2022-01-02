@@ -18,6 +18,8 @@ usr/lib/sudo/group_file.so
 usr/lib/sudo/libsudo_util.so.0.0.0
 #usr/lib/sudo/sample_approval.la
 usr/lib/sudo/sample_approval.so
+#usr/lib/sudo/sudo_intercept.la
+usr/lib/sudo/sudo_intercept.so
 #usr/lib/sudo/sudo_noexec.la
 usr/lib/sudo/sudo_noexec.so
 #usr/lib/sudo/sudoers.la

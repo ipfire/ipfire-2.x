@@ -27,15 +27,15 @@ usr/bin/eu-unstrip
 #usr/include/gelf.h
 #usr/include/libelf.h
 #usr/include/nlist.h
-usr/lib/libasm-0.185.so
+usr/lib/libasm-0.186.so
 #usr/lib/libasm.a
 #usr/lib/libasm.so
 usr/lib/libasm.so.1
-usr/lib/libdw-0.185.so
+usr/lib/libdw-0.186.so
 #usr/lib/libdw.a
 #usr/lib/libdw.so
 usr/lib/libdw.so.1
-usr/lib/libelf-0.185.so
+usr/lib/libelf-0.186.so
 #usr/lib/libelf.a
 #usr/lib/libelf.so
 usr/lib/libelf.so.1
@@ -54,3 +54,4 @@ usr/lib/libelf.so.1
 #usr/share/man/man3/elf_clone.3
 #usr/share/man/man3/elf_getdata.3
 #usr/share/man/man3/elf_update.3
+

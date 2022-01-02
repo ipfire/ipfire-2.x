@@ -132,7 +132,7 @@ endif
 
 	# Create /var dirs and files
 	-mkdir -v /var/{lock,log,mail,spool,empty}
-	-mkdir -pv /var/{opt,cache,lib/{misc,locate},local}
+	-mkdir -pv /var/{opt,cache,lib/{misc},local}
 	-mkdir -pv /var/log/{counter,calamaris}
 	chown nobody.nobody /var/log/calamaris
 	touch /var/log/{btmp,lastlog,wtmp}

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.185
+VER        = 0.186
 
 THISAPP    = elfutils-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = elfutils
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2b6e94c2eebc1f2194173e31bca9396e
+$(DL_FILE)_MD5 = 2c095e31e35d6be7b3718477b6d52702
 
 install : $(TARGET)
 

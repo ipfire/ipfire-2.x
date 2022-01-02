@@ -157,7 +157,6 @@ usr/share/doc/licenses/GPLv3
 #var/cache
 var/empty
 #var/lib
-#var/lib/locate
 #var/lib/misc
 #var/local
 var/lock

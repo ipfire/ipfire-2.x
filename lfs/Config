@@ -62,10 +62,6 @@ ifeq "$(BUILD_ARCH)" "x86_64"
 	IS_64BIT = 1
 endif
 
-ifeq "$(BUILD_ARCH)" "i586"
-	IS_32BIT = 1
-endif
-
 ifeq "$(BUILD_ARCH)" "riscv64"
 	IS_64BIT = 1
 endif

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.13
+VER        = 5.15
 
 THISAPP    = ethtool-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 940bd6c330b9ebafaf40b3b428e56754
+$(DL_FILE)_MD5 = 967f92926a453d3eb9bf41f73223f173
 
 install : $(TARGET)
 

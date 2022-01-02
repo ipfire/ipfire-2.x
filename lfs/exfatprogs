@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.1.2
+VER        = 1.1.3
 
 THISAPP    = exfatprogs-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 20c6caa98a0ad7d073c045628807a884
+$(DL_FILE)_MD5 = 3defa9fd5949b934c1f68cba7e767193
 
 install : $(TARGET)
 

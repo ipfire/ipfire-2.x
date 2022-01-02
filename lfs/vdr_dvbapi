@@ -44,9 +44,7 @@ CFLAGS    += $(EXTRA_FLAGS)
 CXXFLAGS  += $(EXTRA_FLAGS)
 
 CSAFLAGS     =  -O3 -fexpensive-optimizations -funroll-loops
-CSAFLAGS-sse = $(CSAFLAGS) -mmmx -msse -msse2 -msse3
 PARALLEL     = PARALLEL_64_LONG
-PARALLEL-sse = PARALLEL_128_SSE2
 
 define BUILD
 	cp -a $(DIR_APP) $(DIR_APP)-build$(1)
@@ -102,11 +100,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP)* && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-
-ifeq "$(BUILD_ARCH)" "i586"
-	# Build an SSE enabled version.
-	$(call BUILD,-sse)
-endif
 
 	# Build normal version.
 	$(call BUILD)

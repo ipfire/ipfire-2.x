@@ -309,6 +309,7 @@ usr/sbin/rtcwake
 #usr/share/man/man8/mkfs.minix.8
 #usr/share/man/man8/mkswap.8
 #usr/share/man/man8/mount.8
+#usr/share/man/man8/nologin.8
 #usr/share/man/man8/partx.8
 #usr/share/man/man8/pivot_root.8
 #usr/share/man/man8/raw.8

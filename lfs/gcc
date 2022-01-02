@@ -168,12 +168,6 @@ ifeq "$(BUILD_ARCH)" "armv6l"
 #		--disable-sjlj-exceptions
 endif
 
-ifeq "$(BUILD_ARCH)" "i586"
-	EXTRA_CONFIG += \
-		--with-arch=i586 \
-		--with-tune=generic
-endif
-
 ifeq "$(BUILD_ARCH)" "riscv64"
 	EXTRA_CONFIG += \
 		--with-arch=rv64gc \

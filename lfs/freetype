@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.10.4
+VER        = 2.11.0
 
 THISAPP    = freetype-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0e6c0e9b218be3ba3e26e1d23b1c80dd
+$(DL_FILE)_MD5 = f931582653774e310ed3a7e49b7167a3
 
 install : $(TARGET)
 

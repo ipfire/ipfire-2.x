@@ -72,12 +72,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make -f unix/Makefile clean
 	cd $(DIR_APP)/unix && ./configure
-ifeq "$(BUILD_ARCH)" "i586"
-	cd $(DIR_APP) && make -f unix/Makefile LOCAL_UNZIP=-D_FILE_OFFSET_BITS=64 generic
-else
 	# ARM/x86_64 cannot use the x86 32 bit assembly code.
 	cd $(DIR_APP) && make -f unix/Makefile LOCAL_UNZIP=-D_FILE_OFFSET_BITS=64 linux_noasm
-endif
 	cd $(DIR_APP) && make prefix=/usr MANDIR=/usr/share/man/man1 -f unix/Makefile install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

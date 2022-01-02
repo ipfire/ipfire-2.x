@@ -9,9 +9,6 @@ arch=$(uname -m)
 case "${arch}" in
 	aarch64|x86_64)
 		;;
-	i?86)
-		arch="i586"
-		;;
 	*)
 		echo "Arch is not supported" >&2
 		exit 1

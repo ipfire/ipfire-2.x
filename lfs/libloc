@@ -24,8 +24,8 @@
 
 include Config
 
-VER        = 0.9.8
-DB_DATE    = 2021-09-25
+VER        = 0.9.9
+DB_DATE    = 2021-12-13
 
 THISAPP    = libloc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,8 +43,8 @@ objects = $(DL_FILE) \
 $(DL_FILE)                    = https://source.ipfire.org/releases/libloc/$(DL_FILE)
 location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE).db.xz
 
-$(DL_FILE)_MD5                = 9598c08b157305f8c38fc672f5037884
-location-$(DB_DATE).db.xz_MD5 = d2a3c63202ba73f9650beba461b41db4
+$(DL_FILE)_MD5                = 0d14fcad39b19accc001ed5f17a09471
+location-$(DB_DATE).db.xz_MD5 = 7239646f05ac92e76ae2700e7aa14ab8
 
 install : $(TARGET)
 
@@ -77,12 +77,6 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvf $(DIR_DL)/$(DL_FILE)
-
-	# Add patch for i586 to disable strong stack protector.
-ifeq "$(BUILD_ARCH)" "i586"
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libloc/libloc-0.9.3-perl-i586-regular-stack-protector.patch
-endif
-
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \

@@ -1080,6 +1080,8 @@ srv/web/ipfire/html/captive
 #srv/web/ipfire/manual/mod/mod_systemd.html
 #srv/web/ipfire/manual/mod/mod_systemd.html.en
 #srv/web/ipfire/manual/mod/mod_systemd.html.fr.utf8
+#srv/web/ipfire/manual/mod/mod_tls.html
+#srv/web/ipfire/manual/mod/mod_tls.html.en
 #srv/web/ipfire/manual/mod/mod_unique_id.html
 #srv/web/ipfire/manual/mod/mod_unique_id.html.en
 #srv/web/ipfire/manual/mod/mod_unique_id.html.fr.utf8

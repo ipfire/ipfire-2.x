@@ -120,12 +120,12 @@ print <<END;
 <html>
 	<head>
 	<title>$headline - $title</title>
-	$extrahead
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<link rel="shortcut icon" href="/favicon.ico" />
 	<script type="text/javascript" src="/include/jquery.js"></script>
 	<script src="/include/rrdimage.js"></script>
 
+	$extrahead
 	<script type="text/javascript">
 		function swapVisibility(id) {
 			\$('#' + id).toggle();

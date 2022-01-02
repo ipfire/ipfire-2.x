@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.10
+VER        = 1.11
 
 THISAPP    = gzip-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -54,7 +54,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 691b1221694c3394f1c537df4eee39d3
+$(DL_FILE)_MD5 = d1e93996dba00cab0caa7903cd01d454
 
 install : $(TARGET)
 

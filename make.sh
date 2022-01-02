@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.27"							# Version number
-CORE="162"							# Core Level (Filename)
+CORE="163"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
@@ -151,13 +151,6 @@ configure_build() {
 			CFLAGS_ARCH="-m64 -mtune=generic -fstack-clash-protection -fcf-protection"
 			;;
 
-		i586)
-			BUILDTARGET="${build_arch}-pc-linux-gnu"
-			CROSSTARGET="${build_arch}-cross-linux-gnu"
-			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-march=i586 -mtune=generic -fomit-frame-pointer"
-			;;
-
 		aarch64)
 			BUILDTARGET="${build_arch}-unknown-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
@@ -247,7 +240,7 @@ configure_build() {
 
 	# XZ memory cannot be larger than 2GB on 32 bit systems
 	case "${build_arch}" in
-		i*86|armv*)
+		armv*)
 			if [ ${xz_memory} -gt 2048 ]; then
 				xz_memory=2048
 			fi
@@ -261,9 +254,6 @@ configure_build_guess() {
 	case "${HOST_ARCH}" in
 		x86_64)
 			echo "x86_64"
-			;;
-		i?86)
-			echo "i586"
 			;;
 
 		aarch64)
@@ -990,14 +980,6 @@ buildtoolchain() {
 			 # This is working.
 			 ;;
 
-		# x86
-		i586:i586|i586:i686|i586:x86_64)
-			# These are working.
-			;;
-		i586:*)
-			error=true
-			;;
-
 		# ARM
 		arvm7hl:armv7hl|armv7hl:armv7l)
 			# These are working.
@@ -1280,6 +1262,7 @@ buildipfire() {
   lfsmake2 dosfstools
   lfsmake2 exfatprogs
   lfsmake2 reiserfsprogs
+  lfsmake2 liburcu
   lfsmake2 xfsprogs
   lfsmake2 sysfsutils
   lfsmake2 fuse
@@ -1350,6 +1333,8 @@ buildipfire() {
   lfsmake2 freefont
   lfsmake2 pixman
   lfsmake2 cairo
+  lfsmake2 harfbuzz
+  lfsmake2 fribidi
   lfsmake2 pango
   lfsmake2 rrdtool
   lfsmake2 setup
