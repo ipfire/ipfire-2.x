@@ -10,7 +10,7 @@ usr/bin/zstdmt
 #usr/lib/libzstd.a
 #usr/lib/libzstd.so
 usr/lib/libzstd.so.1
-usr/lib/libzstd.so.1.5.0
+usr/lib/libzstd.so.1.5.1
 #usr/lib/pkgconfig/libzstd.pc
 #usr/share/man/man1/unzstd.1
 #usr/share/man/man1/zstd.1
