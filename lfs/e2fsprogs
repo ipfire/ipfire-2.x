@@ -24,7 +24,7 @@
 
 include Config
 
-VER      = 1.46.3
+VER      = 1.46.5
 
 THISAPP    = e2fsprogs-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ab7e15cafcd34681db907d3fcb395f95
+$(DL_FILE)_MD5 = bb7d0c212dd99affa5fc512a3c7a949b
 
 install : $(TARGET)
 
