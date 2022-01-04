@@ -1,4 +1,5 @@
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 var/ipfire/backup/bin/backup.pl
 var/ipfire/dhcp/advoptions-list
