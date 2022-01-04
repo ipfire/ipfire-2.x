@@ -52,6 +52,11 @@ if [ $ROOTSPACE -lt 100000 ]; then
 fi
 
 # Remove files
+rm -vrf \
+	/lib/firmware/cxgb4/t4fw-1.25.4.0.bin \
+	/lib/firmware/cxgb4/t5fw-1.25.4.0.bin \
+	/lib/firmware/cxgb4/t6fw-1.25.4.0.bin \
+	/lib/firmware/intel/ice/ddp/ice-1.3.16.0.pkg
 
 # Stop services
 
