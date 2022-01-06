@@ -193,7 +193,6 @@
 /lib/firmware/amdgpu/yellow_carp_toc.bin
 /lib/firmware/amdgpu/yellow_carp_vcn.bin
 /lib/firmware/amd-ucode/microcode_amd_fam19h.bin
-/lib/firmware/amd-ucode/microcode_amd_fam19h.bin.asc
 /lib/firmware/ath10k/QCA6174/hw3.0/board-2.bin
 /lib/firmware/atmel/wilc1000_wifi_firmware-1.bin
 /lib/firmware/bnx2x/bnx2x-e1-7.13.21.0.fw
