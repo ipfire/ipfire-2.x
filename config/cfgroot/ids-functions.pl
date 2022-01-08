@@ -150,6 +150,7 @@ sub check_and_create_filelayout() {
 	unless (-f "$oinkmaster_provider_includes_file") { &create_empty_file($oinkmaster_provider_includes_file); }
 	unless (-f "$modify_sids_file") { &create_empty_file($modify_sids_file); }
 	unless (-f "$suricata_used_providers_file") { &create_empty_file($suricata_used_providers_file); }
+	unless (-f "$suricata_default_rulefiles_file") { &create_empty_file($suricata_default_rulefiles_file); }
 	unless (-f "$ids_settings_file") { &create_empty_file($ids_settings_file); }
 	unless (-f "$providers_settings_file") { &create_empty_file($providers_settings_file); }
 	unless (-f "$ignored_file") { &create_empty_file($ignored_file); }
