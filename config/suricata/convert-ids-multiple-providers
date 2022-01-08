@@ -267,6 +267,7 @@ if (-f $old_used_rulefiles_file) {
 	# Set correct ownerships.
 	&IDS::set_ownership("$provider_used_rulefiles_file");
 	&IDS::set_ownership("$IDS::suricata_used_providers_file");
+	&IDS::set_ownership("$IDS::suricata_default_rulefiles_file");
 }
 
 # Remove old used rulefiles file.
