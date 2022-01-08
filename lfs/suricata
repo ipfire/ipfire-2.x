@@ -100,6 +100,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Install yaml file for loading default rules.
 	install -m 0664 $(DIR_SRC)/config/suricata/suricata-default-rules.yaml /var/ipfire/suricata
 
+	# Set correct ownership for the default rules file.
+	chown nobody:nobody /var/ipfire/suricata/suricata-default-rules.yaml
+
 	# Create emtpy rules directory.
 	-mkdir -p /var/lib/suricata
 
