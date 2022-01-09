@@ -1957,7 +1957,7 @@ check-manualpages)
 	fi
 	;;
 *)
-	echo "Usage: $0 {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain|update-contributors|find-dependencies|check-manualpages}"
+	echo "Usage: $0 [OPTIONS] {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain|update-contributors|find-dependencies|check-manualpages}"
 	cat doc/make.sh-usage
 	;;
 esac
