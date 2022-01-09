@@ -1702,6 +1702,7 @@ buildipfire() {
   lfsmake2 pmacct
   lfsmake2 squid-asnbl
   lfsmake2 qemu-ga
+	lfsmake2 gptfdisk
 }
 
 buildinstaller() {
@@ -1719,7 +1720,7 @@ buildpackages() {
   export LOGFILE
   echo "... see detailed log in _build.*.log files" >> $LOGFILE
 
-  
+
   # Generating list of packages used
   print_line "Generating packages list from logs"
   rm -f $BASEDIR/doc/packages-list
@@ -1734,7 +1735,7 @@ buildpackages() {
   rm -f $BASEDIR/doc/packages-list
   # packages-list.txt is ready to be displayed for wiki page
   print_status DONE
-  
+
   # Update changelog
   cd $BASEDIR
   [ -z $GIT_TAG ]  || LAST_TAG=$GIT_TAG
@@ -1806,7 +1807,7 @@ while [ $# -gt 0 ]; do
 done
 
 # See what we're supposed to do
-case "$1" in 
+case "$1" in
 build)
 	START_TIME=$(now)
 
@@ -1845,7 +1846,7 @@ build)
 
 	print_build_stage "Building packages"
 	buildpackages
-	
+
 	print_build_stage "Checking Logfiles for new Files"
 
 	cd $BASEDIR
@@ -1910,7 +1911,7 @@ downloadsrc)
 	FINISHED=0
 	cd $BASEDIR/lfs
 	for c in `seq $MAX_RETRIES`; do
-		if (( FINISHED==1 )); then 
+		if (( FINISHED==1 )); then
 			break
 		fi
 		FINISHED=1
@@ -2051,7 +2052,7 @@ find-dependencies)
 	;;
 check-manualpages)
 	echo "Checking the manual pages for broken links..."
-	
+
 	chmod 755 $BASEDIR/tools/check_manualpages.pl
 	if $BASEDIR/tools/check_manualpages.pl; then
 		print_status DONE
@@ -2064,4 +2065,3 @@ check-manualpages)
 	cat doc/make.sh-usage
 	;;
 esac
-
