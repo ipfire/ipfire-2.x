@@ -1,30 +1,15 @@
-From a50fa0195e36773d57593006152828ce2c0523fd Mon Sep 17 00:00:00 2001
-From: Jonatan Schlag <jonatan.schlag@ipfire.org>
-Date: Fri, 6 May 2016 11:38:08 +0200
-Subject: [PATCH] Change default behavior of libvirt-guests.sh for IPFire
-
-Signed-off-by: Jonatan Schlag <jonatan.schlag@ipfire.org>
----
- tools/libvirt-guests.sh.in | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/tools/libvirt-guests.sh.in b/tools/libvirt-guests.sh.in
-index 7f74b85..87aceb7 100644
---- a/tools/libvirt-guests.sh.in
-+++ b/tools/libvirt-guests.sh.in
-@@ -30,9 +30,9 @@ test ! -r "$sysconfdir"/rc.d/init.d/functions ||
+--- libvirt-7.10.0/tools/libvirt-guests.sh.in.orig	2021-12-01 10:51:11.942943000 +0100
++++ libvirt-7.10.0/tools/libvirt-guests.sh.in	2022-01-11 12:32:37.765715377 +0100
+@@ -30,9 +30,9 @@
  
  export TEXTDOMAIN="@PACKAGE@" TEXTDOMAINDIR="@localedir@"
  
--URIS=default
--ON_BOOT=start
--ON_SHUTDOWN=suspend
-+URIS=qemu:///system
-+ON_BOOT=ignore
-+ON_SHUTDOWN=shutdown
+-URIS="default"
+-ON_BOOT="start"
+-ON_SHUTDOWN="suspend"
++URIS="qemu:///system"
++ON_BOOT="ignore"
++ON_SHUTDOWN="shutdown"
  SHUTDOWN_TIMEOUT=300
  PARALLEL_SHUTDOWN=0
  START_DELAY=0
--- 
-2.1.4
-
