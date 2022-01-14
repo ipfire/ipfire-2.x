@@ -5,7 +5,7 @@ etc/suricata/suricata.yaml
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
-srv/web/ipfire/html/pakfire.js
+srv/web/ipfire/html/include/pakfire.js
 usr/sbin/convert-ids-multiple-providers
 usr/sbin/convert-snort
 var/ipfire/backup/bin/backup.pl
