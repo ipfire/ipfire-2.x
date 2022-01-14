@@ -1,10 +1,13 @@
 etc/collectd.conf
+etc/rc.d/init.d/firewall
 etc/rc.d/init.d/squid
 etc/suricata/suricata.yaml
 srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/optionsfw.cgi
 usr/sbin/convert-ids-multiple-providers
 usr/sbin/convert-snort
 var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/include
+var/ipfire/graphs.pl
 var/ipfire/ids-functions.pl
 var/ipfire/urlfilter/autoupdate/autoupdate.urls

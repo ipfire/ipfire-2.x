@@ -54,6 +54,7 @@ fi
 # Remove files
 
 # Stop services
+/etc/init.d/collectd stop
 /etc/init.d/suricata stop
 
 # Extract files
@@ -71,7 +72,13 @@ ldconfig
 # Run convert script for IDS multiple providers
 /usr/sbin/convert-ids-multiple-providers
 
+# Add missing configuration settings to optionsfw configuration
+echo "DROPHOSTILE=off" > /var/ipfire/optionsfw/settings
+echo "DROPSPOOFEDMARTIAN=on" > /var/ipfire/optionsfw/settings
+
 # Start services
+/etc/init.d/firewall restart
+/etc/init.d/collectd start
 /etc/init.d/squid restart
 /etc/init.d/suricata start
 
