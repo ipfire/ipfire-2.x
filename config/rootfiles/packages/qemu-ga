@@ -1,0 +1,2 @@
+usr/bin/qemu-ga
+etc/rc.d/init.d/qemu-ga

@@ -1,0 +1,38 @@
+#!/bin/sh
+# Begin $rc_base/init.d/qemu-guest-agent
+
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+case "$1" in
+	start)
+		boot_mesg "Starting QEMU Guest Agent..."
+		/usr/bin/qemu-ga -m virtio-serial -p /dev/virtio-ports/org.qemu.guest_agent.0 -f /run/qemu-ga.pid -d
+		evaluate_retval
+		;;
+
+	stop)
+		boot_mesg "Stopping QEMU Guest Agent..."
+		killproc /usr/bin/qemu-ga
+		;;
+
+	restart)
+		$0 stop
+		sleep 3
+		$0 start
+		;;
+
+	status)
+		statusproc /usr/bin/qemu-ga
+		;;
+
+
+	*)
+		echo "Usage: $0 {start|stop|restart|status}"
+		exit 1
+		;;
+esac
+
+
+# End $rc_base/init.d/qemu-guest-agent
