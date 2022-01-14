@@ -159,6 +159,12 @@ restore_backup() {
 		rm -rf "/var/ipfire/snort"
 	fi
 
+	# IDS multiple providers converter.
+	if [ -e "/var/ipfire/suricata/rules-settings" ]; then
+		# Run the converter
+		convert-ids-multiple-providers
+	fi
+
 	# Convert DNS settings
 	convert-dns-settings
 

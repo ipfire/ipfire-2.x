@@ -100,15 +100,19 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Install yaml file for loading default rules.
 	install -m 0664 $(DIR_SRC)/config/suricata/suricata-default-rules.yaml /var/ipfire/suricata
 
+	# Set correct ownership for the default rules file.
+	chown nobody:nobody /var/ipfire/suricata/suricata-default-rules.yaml
+
 	# Create emtpy rules directory.
 	-mkdir -p /var/lib/suricata
 
 	# Move config files for references, threshold and classification
 	# to the rules directory.
-	mv /etc/suricata/*.config /var/lib/suricata
+	rm -rfv /etc/suricata/*.config
 
-	# Set correct permissions for the files.
-	chmod 644 /var/lib/suricata/*.config
+	# Set correct ownership for the classifiction config file.
+	# (File has to be writeable for the nobody user)
+	chown nobody:nobody /usr/share/suricata/classification.config
 
 	# Set correct ownership for /var/lib/suricata and the
 	# contained files

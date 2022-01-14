@@ -21,16 +21,22 @@
 #                                                                          #
 ############################################################################
 
+use strict;
+
 package IDS;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/network-functions.pl";
+require "${General::swroot}/suricata/ruleset-sources";
 
 # Location where all config and settings files are stored.
 our $settingsdir = "${General::swroot}/suricata";
 
-# File where the used rulefiles are stored.
-our $used_rulefiles_file = "$settingsdir/suricata-used-rulefiles.yaml";
+# File where the main file for providers ruleset inclusion exists.
+our $suricata_used_providers_file = "$settingsdir/suricata-used-providers.yaml";
+
+# File for static ruleset inclusions.
+our $suricata_default_rulefiles_file = "$settingsdir/suricata-default-rules.yaml";
 
 # File where the addresses of the homenet are stored.
 our $homenet_file = "$settingsdir/suricata-homenet.yaml";
@@ -41,11 +47,8 @@ our $dns_servers_file = "$settingsdir/suricata-dns-servers.yaml";
 # File where the HTTP ports definition is stored.
 our $http_ports_file = "$settingsdir/suricata-http-ports.yaml";
 
-# File which contains the enabled sids.
-our $enabled_sids_file = "$settingsdir/oinkmaster-enabled-sids.conf";
-
-# File which contains the disabled sids.
-our $disabled_sids_file = "$settingsdir/oinkmaster-disabled-sids.conf";
+# File which contains includes for provider specific rule modifications.
+our $oinkmaster_provider_includes_file = "$settingsdir/oinkmaster-provider-includes.conf";
 
 # File which contains wheater the rules should be changed.
 our $modify_sids_file = "$settingsdir/oinkmaster-modify-sids.conf";
@@ -53,14 +56,14 @@ our $modify_sids_file = "$settingsdir/oinkmaster-modify-sids.conf";
 # File which stores the configured IPS settings.
 our $ids_settings_file = "$settingsdir/settings";
 
-# File which stores the configured rules-settings.
-our $rules_settings_file = "$settingsdir/rules-settings";
+# File which stores the used and configured ruleset providers.
+our $providers_settings_file = "$settingsdir/providers-settings";
 
 # File which stores the configured settings for whitelisted addresses.
 our $ignored_file = "$settingsdir/ignored";
 
-# Location and name of the tarball which contains the ruleset.
-our $rulestarball = "/var/tmp/idsrules.tar.gz";
+# Location where the downloaded rulesets are stored.
+our $dl_rules_path = "/var/tmp";
 
 # File to store any errors, which also will be read and displayed by the wui.
 our $storederrorfile = "/tmp/ids_storederror";
@@ -70,6 +73,18 @@ our $ids_page_lock_file = "/tmp/ids_page_locked";
 
 # Location where the rulefiles are stored.
 our $rulespath = "/var/lib/suricata";
+
+# Location where the default rulefils are stored.
+our $default_rulespath = "/usr/share/suricata/rules";
+
+# Location where the addition config files are stored.
+our $configspath = "/usr/share/suricata";
+
+# Location of the classification file.
+our $classification_file = "$configspath/classification.config";
+
+# Location of the sid to msg mappings file.
+our $sid_msg_file = "$rulespath/sid-msg.map";
 
 # Location to store local rules. This file will not be touched.
 our $local_rules_file = "$rulespath/local.rules";
@@ -87,6 +102,18 @@ our $idspidfile = "/var/run/suricata.pid";
 # Location of suricatactrl.
 my $suricatactrl = "/usr/local/bin/suricatactrl";
 
+# Prefix for each downloaded ruleset.
+my $dl_rulesfile_prefix = "idsrules";
+
+# Temporary directory where the rulesets will be extracted.
+my $tmp_directory = "/tmp/ids_tmp";
+
+# Temporary directory where the extracted rules files will be stored.
+my $tmp_rules_directory = "$tmp_directory/rules";
+
+# Temporary directory where the extracted additional config files will be stored.
+my $tmp_conf_directory = "$tmp_directory/conf";
+
 # Array with allowed commands of suricatactrl.
 my @suricatactrl_cmds = ( 'start', 'stop', 'restart', 'reload', 'fix-rules-dir', 'cron' );
 
@@ -97,19 +124,85 @@ my @cron_intervals = ('off', 'daily', 'weekly' );
 # http_ports_file.
 my @http_ports = ('80', '81');
 
+# Array which contains a list of rulefiles which always will be included if they exist.
+my @static_included_rulefiles = ('local.rules', 'whitelist.rules');
+
+# Array which contains a list of allways enabled application layer protocols.
+my @static_enabled_app_layer_protos = ('app-layer', 'decoder', 'files', 'stream');
+
+# Hash which allows to convert the download type (dl_type) to a file suffix.
+my %dl_type_to_suffix = (
+	"archive" => ".tar.gz",
+	"plain" => ".rules",
+);
+
+# Hash to translate an application layer protocol to the application name.
+my %tr_app_layer_proto = (
+	"ikev2" => "ipsec",
+	"krb5" => "kerberos",
+);
+
 #
 ## Function to check and create all IDS related files, if the does not exist.
 #
 sub check_and_create_filelayout() {
 	# Check if the files exist and if not, create them.
-	unless (-f "$enabled_sids_file") { &create_empty_file($enabled_sids_file); }
-	unless (-f "$disabled_sids_file") { &create_empty_file($disabled_sids_file); }
+	unless (-f "$oinkmaster_provider_includes_file") { &create_empty_file($oinkmaster_provider_includes_file); }
 	unless (-f "$modify_sids_file") { &create_empty_file($modify_sids_file); }
-	unless (-f "$used_rulefiles_file") { &create_empty_file($used_rulefiles_file); }
+	unless (-f "$suricata_used_providers_file") { &create_empty_file($suricata_used_providers_file); }
+	unless (-f "$suricata_default_rulefiles_file") { &create_empty_file($suricata_default_rulefiles_file); }
 	unless (-f "$ids_settings_file") { &create_empty_file($ids_settings_file); }
-	unless (-f "$rules_settings_file") { &create_empty_file($rules_settings_file); }
+	unless (-f "$providers_settings_file") { &create_empty_file($providers_settings_file); }
 	unless (-f "$ignored_file") { &create_empty_file($ignored_file); }
 	unless (-f "$whitelist_file" ) { &create_empty_file($whitelist_file); }
+}
+
+#
+## Function to get a list of all available ruleset providers.
+##
+## They will be returned as a sorted array.
+#
+sub get_ruleset_providers() {
+	my @providers;
+
+	# Loop through the hash of providers.
+	foreach my $provider ( keys %IDS::Ruleset::Providers ) {
+		# Add the provider to the array.
+		push(@providers, $provider);
+	}
+
+	# Sort and return the array.
+	return sort(@providers);
+}
+
+#
+## Function to get a list of all enabled ruleset providers.
+##
+## They will be returned as an array.
+#
+sub get_enabled_providers () {
+	my %used_providers = ();
+
+	# Array to store the enabled providers.
+	my @enabled_providers = ();
+
+	# Read-in the providers config file.
+	&General::readhasharray("$providers_settings_file", \%used_providers);
+
+	# Loop through the hash of used_providers.
+	foreach my $id (keys %used_providers) {
+		# Skip disabled providers.
+		next unless ($used_providers{$id}[3] eq "enabled");
+
+		# Grab the provider handle.
+		my $provider = "$used_providers{$id}[0]";
+
+		# Add the provider to the array of enabled providers.
+		push(@enabled_providers, $provider);
+	}
+
+	# Return the array.
+	return @enabled_providers;
 }
 
 #
@@ -147,31 +240,38 @@ sub checkdiskspace () {
 }
 
 #
-## This function is responsible for downloading the configured IDS ruleset.
+## This function is responsible for downloading the configured IDS rulesets or if no one is specified
+## all configured rulesets will be downloaded.
 ##
-## * At first it obtains from the stored rules settings which ruleset should be downloaded.
-## * The next step is to get the download locations for all available rulesets.
-## * After that, the function will check if an upstream proxy should be used and grab the settings.
-## * The last step will be to generate the final download url, by obtaining the URL for the desired
-##   ruleset, add the settings for the upstream proxy and final grab the rules tarball from the server.
+## * At first it gathers all configured ruleset providers, initialize the downloader and sets an
+##   upstream proxy if configured.
+## * After that, the given ruleset or in case all rulesets should be downloaded, it will determine wether it
+##   is enabled or not.
+## * The next step will be to generate the final download url, by obtaining the URL for the desired
+##   ruleset, add the settings for the upstream proxy.
+## * Finally the function will grab all the rules files or tarballs from the servers.
 #
-sub downloadruleset {
-	# Get rules settings.
-	my %rulessettings=();
-	&General::readhash("$rules_settings_file", \%rulessettings);
+sub downloadruleset ($) {
+	my ($provider) = @_;
+
+	# If no provider is given default to "all".
+	$provider //= 'all';
+
+	# Hash to store the providers and access id's, for which rules should be downloaded.
+	my %sheduled_providers = ();
+
+	# Get used provider settings.
+	my %used_providers = ();
+	&General::readhasharray("$providers_settings_file", \%used_providers);
 
 	# Check if a ruleset has been configured.
-	unless($rulessettings{'RULES'}) {
+	unless(%used_providers) {
 		# Log that no ruleset has been configured and abort.
-		&_log_to_syslog("No ruleset source has been configured.");
+		&_log_to_syslog("No ruleset provider has been configured.");
 
 		# Return "1".
 		return 1;
 	}
-
-	# Get all available ruleset locations.
-	my %rulesetsources=();
-	&General::readhash($rulesetsourcesfile, \%rulesetsources);
 
 	# Read proxysettings.
 	my %proxysettings=();
@@ -204,40 +304,103 @@ sub downloadruleset {
 		$downloader->proxy(['http', 'https'], $proxy_url);
 	}
 
-	# Grab the right url based on the configured vendor.
-	my $url = $rulesetsources{$rulessettings{'RULES'}};
+	# Loop through the hash of configured providers.
+	foreach my $id ( keys %used_providers ) {
+		# Skip providers which are not enabled.
+		next if ($used_providers{$id}[3] ne "enabled");
 
-	# Check if the vendor requires an oinkcode and add it if needed.
-	$url =~ s/\<oinkcode\>/$rulessettings{'OINKCODE'}/g;
+		# Obtain the provider handle.
+		my $provider_handle = $used_providers{$id}[0];
 
-	# Abort if no url could be determined for the vendor.
-	unless ($url) {
-		# Log error and abort.
-		&_log_to_syslog("Unable to gather a download URL for the selected ruleset.");
-		return 1;
+		# Handle update off all providers.
+		if (($provider eq "all") || ($provider_handle eq "$provider")) {
+			# Add provider handle and it's id to the hash of sheduled providers.
+			$sheduled_providers{$provider_handle} = $id;
+		}
 	}
 
-	# Variable to store the filesize of the remote object.
-	my $remote_filesize;
+	# Loop through the hash of sheduled providers.
+	foreach my $provider ( keys %sheduled_providers) {
+		# Log download/update of the ruleset.
+		&_log_to_syslog("Downloading ruleset for provider: $provider.");
 
-	# The sourcfire (snort rules) does not allow to send "HEAD" requests, so skip this check
-	# for this webserver.
-	#
-	# Check if the ruleset source contains "snort.org".
-	unless ($url =~ /\.snort\.org/) {
-		# Pass the requrested url to the downloader.
-		my $request = HTTP::Request->new(HEAD => $url);
+		# Grab the download url for the provider.
+		my $url = $IDS::Ruleset::Providers{$provider}{'dl_url'};
 
-		# Accept the html header.
-		$request->header('Accept' => 'text/html');
+		# Check if the provider requires a subscription.
+		if ($IDS::Ruleset::Providers{$provider}{'requires_subscription'} eq "True") {
+			# Grab the previously stored access id for the provider from hash.
+			my $id = $sheduled_providers{$provider};
 
-		# Perform the request and fetch the html header.
-		my $response = $downloader->request($request);
+			# Grab the subscription code.
+			my $subscription_code = $used_providers{$id}[1];
+
+			# Add the subscription code to the download url.
+			$url =~ s/\<subscription_code\>/$subscription_code/g;
+
+		}
+
+		# Abort if no url could be determined for the provider.
+		unless ($url) {
+			# Log error and abort.
+			&_log_to_syslog("Unable to gather a download URL for the selected ruleset provider.");
+			return 1;
+		}
+
+		# Variable to store the filesize of the remote object.
+		my $remote_filesize;
+
+		# The sourcfire (snort rules) does not allow to send "HEAD" requests, so skip this check
+		# for this webserver.
+		#
+		# Check if the ruleset source contains "snort.org".
+		unless ($url =~ /\.snort\.org/) {
+			# Pass the requrested url to the downloader.
+			my $request = HTTP::Request->new(HEAD => $url);
+
+			# Accept the html header.
+			$request->header('Accept' => 'text/html');
+
+			# Perform the request and fetch the html header.
+			my $response = $downloader->request($request);
+
+			# Check if there was any error.
+			unless ($response->is_success) {
+				# Obtain error.
+				my $error = $response->status_line();
+
+				# Log error message.
+				&_log_to_syslog("Unable to download the ruleset. \($error\)");
+
+				# Return "1" - false.
+				return 1;
+			}
+
+			# Assign the fetched header object.
+			my $header = $response->headers();
+
+			# Grab the remote file size from the object and store it in the
+			# variable.
+			$remote_filesize = $header->content_length;
+		}
+
+		# Load perl module to deal with temporary files.
+		use File::Temp;
+
+		# Generate temporary file name, located in "/var/tmp" and with a suffix of ".tmp".
+		my $tmp = File::Temp->new( SUFFIX => ".tmp", DIR => "/var/tmp/", UNLINK => 0 );
+		my $tmpfile = $tmp->filename();
+
+		# Pass the requested url to the downloader.
+		my $request = HTTP::Request->new(GET => $url);
+
+		# Perform the request and save the output into the tmpfile.
+		my $response = $downloader->request($request, $tmpfile);
 
 		# Check if there was any error.
 		unless ($response->is_success) {
 			# Obtain error.
-			my $error = $response->status_line();
+			my $error = $response->content;
 
 			# Log error message.
 			&_log_to_syslog("Unable to download the ruleset. \($error\)");
@@ -246,83 +409,194 @@ sub downloadruleset {
 			return 1;
 		}
 
-		# Assign the fetched header object.
-		my $header = $response->headers();
+		# Load perl stat module.
+		use File::stat;
 
-		# Grab the remote file size from the object and store it in the
-		# variable.
-		$remote_filesize = $header->content_length;
-	}
+		# Perform stat on the tmpfile.
+		my $stat = stat($tmpfile);
 
-	# Load perl module to deal with temporary files.
-	use File::Temp;
+		# Grab the local filesize of the downloaded tarball.
+		my $local_filesize = $stat->size;
 
-	# Generate temporary file name, located in "/var/tmp" and with a suffix of ".tar.gz".
-	my $tmp = File::Temp->new( SUFFIX => ".tar.gz", DIR => "/var/tmp/", UNLINK => 0 );
-	my $tmpfile = $tmp->filename();
+		# Check if both file sizes match.
+		if (($remote_filesize) && ($remote_filesize ne $local_filesize)) {
+			# Log error message.
+			&_log_to_syslog("Unable to completely download the ruleset. ");
+			&_log_to_syslog("Only got $local_filesize Bytes instead of $remote_filesize Bytes. ");
 
-	# Pass the requested url to the downloader.
-	my $request = HTTP::Request->new(GET => $url);
+			# Delete temporary file.
+			unlink("$tmpfile");
 
-	# Perform the request and save the output into the tmpfile.
-	my $response = $downloader->request($request, $tmpfile);
+			# Return "1" - false.
+			return 1;
+		}
 
-	# Check if there was any error.
-	unless ($response->is_success) {
-		# Obtain error.
-		my $error = $response->content;
+		# Genarate and assign file name and path to store the downloaded rules file.
+		my $dl_rulesfile = &_get_dl_rulesfile($provider);
 
-		# Log error message.
-		&_log_to_syslog("Unable to download the ruleset. \($error\)");
+		# Check if a file name could be obtained.
+		unless ($dl_rulesfile) {
+			# Log error message.
+			&_log_to_syslog("Unable to store the downloaded rules file. ");
 
-		# Return "1" - false.
-		return 1;
-	}
+			# Delete downloaded temporary file.
+			unlink("$tmpfile");
 
-	# Load perl stat module.
-	use File::stat;
+			# Return "1" - false.
+			return 1;
+		}
 
-	# Perform stat on the tmpfile.
-	my $stat = stat($tmpfile);
+		# Load file copy module, which contains the move() function.
+		use File::Copy;
 
-	# Grab the local filesize of the downloaded tarball.
-	my $local_filesize = $stat->size;
-
-	# Check if both file sizes match.
-	if (($remote_filesize) && ($remote_filesize ne $local_filesize)) {
-		# Log error message.
-		&_log_to_syslog("Unable to completely download the ruleset. ");
-		&_log_to_syslog("Only got $local_filesize Bytes instead of $remote_filesize Bytes. ");
+		# Overwrite the may existing rulefile or tarball with the downloaded one.
+		move("$tmpfile", "$dl_rulesfile");
 
 		# Delete temporary file.
 		unlink("$tmpfile");
 
-		# Return "1" - false.
-		return 1;
+		# Set correct ownership for the tarball.
+		set_ownership("$dl_rulesfile");
 	}
-
-	# Load file copy module, which contains the move() function.
-	use File::Copy;
-
-	# Overwrite existing rules tarball with the new downloaded one.
-	move("$tmpfile", "$rulestarball");
-
-	# Set correct ownership for the rulesdir and files.
-	set_ownership("$rulestarball");
 
 	# If we got here, everything worked fine. Return nothing.
 	return;
 }
 
 #
-## A tiny wrapper function to call the oinkmaster script.
+## Function to extract a given ruleset.
+##
+## In case the ruleset provider offers a plain file, it simply will
+## be copied.
+#
+sub extractruleset ($) {
+	my ($provider) = @_;
+
+	# Load perl module to deal with archives.
+	use Archive::Tar;
+
+	# Load perl module to deal with files and path.
+	use File::Basename;
+
+	# Load perl module for file copying.
+	use File::Copy;
+
+	# Get full path and downloaded rulesfile for the given provider.
+	my $tarball = &_get_dl_rulesfile($provider);
+
+	# Check if the file exists.
+	unless (-f $tarball) {
+		&_log_to_syslog("Could not find ruleset file: $tarball");
+
+		# Return nothing.
+		return;
+	}
+
+	# Check if the temporary directories exist, otherwise create them.
+	mkdir("$tmp_directory") unless (-d "$tmp_directory");
+	mkdir("$tmp_rules_directory") unless (-d "$tmp_rules_directory");
+	mkdir("$tmp_conf_directory") unless (-d "$tmp_conf_directory");
+
+	# Omit the type (dl_type) of the stored ruleset.
+	my $type = $IDS::Ruleset::Providers{$provider}{'dl_type'};
+
+	# Handle the different ruleset types.
+	if ($type eq "plain") {
+		# Generate destination filename an full path.
+		my $destination = "$tmp_rules_directory/$provider\-ruleset.rules";
+
+		# Copy the file into the temporary rules directory.
+		copy($tarball, $destination);
+
+	} elsif ( $type eq "archive") {
+		# Initialize the tar module.
+		my $tar = Archive::Tar->new($tarball);
+
+		# Get the filelist inside the tarball.
+		my @packed_files = $tar->list_files;
+
+		# Loop through the filelist.
+		foreach my $packed_file (@packed_files) {
+			my $destination;
+
+			# Splitt the packed file into chunks.
+			my $file = fileparse($packed_file);
+
+			# Handle msg-id.map file.
+			if ("$file" eq "sid-msg.map") {
+				# Set extract destination to temporary config_dir.
+				$destination = "$tmp_conf_directory/$provider\-sid-msg.map";
+
+			# Handle classification.conf
+			} elsif ("$file" eq "classification.config") {
+				# Set extract destination to temporary config_dir.
+				$destination = "$tmp_conf_directory/$provider\-classification.config";
+
+			# Handle rules files.
+			} elsif ($file =~ m/\.rules$/) {
+				my $rulesfilename;
+
+				# Splitt the filename into chunks.
+				my @filename = split("-", $file);
+
+				# Reverse the array.
+				@filename = reverse(@filename);
+
+				# Get the amount of elements in the array.
+				my $elements = @filename;
+
+				# Remove last element of the hash.
+				# It contains the vendor name, which will be replaced.
+				if ($elements >= 3) {
+				# Remove last element from hash.
+					pop(@filename);
+				}
+
+				# Check if the last element of the filename does not
+				# contain the providers name.
+				if ($filename[-1] ne "$provider") {
+					# Add provider name as last element.
+					push(@filename, $provider);
+				}
+
+				# Reverse the array back.
+				@filename = reverse(@filename);
+
+				# Generate the name for the rulesfile.
+				$rulesfilename = join("-", @filename);
+
+				# Set extract destination to temporaray rules_dir.
+				$destination = "$tmp_rules_directory/$rulesfilename";
+			} else {
+				# Skip all other files.
+				next;
+			}
+
+			# Extract the file to the temporary directory.
+			$tar->extract_file("$packed_file", "$destination");
+		}
+	}
+}
+
+#
+## A wrapper function to call the oinkmaster script, setup the rules structues and
+## call the functions to merge the additional config files. (classification, sid-msg, etc.).
 #
 sub oinkmaster () {
 	# Check if the files in rulesdir have the correct permissions.
 	&_check_rulesdir_permissions();
 
-	# Cleanup the rules directory before filling it with the new rulest.
+	# Cleanup the rules directory before filling it with the new rulests.
 	&_cleanup_rulesdir();
+
+	# Get all enabled providers.
+	my @enabled_providers = &get_enabled_providers();
+
+	# Loop through the array of enabled providers.
+	foreach my $provider (@enabled_providers) {
+		# Call the extractruleset function.
+		&extractruleset($provider);
+	}
 
 	# Load perl module to talk to the kernel syslog.
 	use Sys::Syslog qw(:DEFAULT setlogsock);
@@ -331,7 +605,7 @@ sub oinkmaster () {
 	openlog('oinkmaster', 'cons,pid', 'user');
 
 	# Call oinkmaster to generate ruleset.
-	open(OINKMASTER, "/usr/local/bin/oinkmaster.pl -s -u file://$rulestarball -C $settingsdir/oinkmaster.conf -o $rulespath 2>&1 |") or die "Could not execute oinkmaster $!\n";
+	open(OINKMASTER, "/usr/local/bin/oinkmaster.pl -s -u dir://$tmp_rules_directory -C $settingsdir/oinkmaster.conf -o $rulespath 2>&1 |") or die "Could not execute oinkmaster $!\n";
 
 	# Log output of oinkmaster to syslog.
 	while(<OINKMASTER>) {
@@ -348,6 +622,181 @@ sub oinkmaster () {
 
 	# Close the log handle.
 	closelog();
+
+	# Call function to merge the classification files.
+	&merge_classifications(@enabled_providers);
+
+	# Call function to merge the sid to message mapping files.
+	&merge_sid_msg(@enabled_providers);
+
+	# Cleanup temporary directory.
+	&cleanup_tmp_directory();
+}
+
+#
+## Function to merge the classifications for a given amount of providers and write them
+## to the classifications file.
+#
+sub merge_classifications(@) {
+	my @providers = @_;
+
+	# Hash to store all collected classifications.
+	my %classifications = ();
+
+	# Loop through the given array of providers.
+	foreach my $provider (@providers) {
+		# Generate full path to classification file.
+		my $classification_file = "$tmp_conf_directory/$provider\-classification.config";
+
+		# Skip provider if no classification file exists.
+		next unless (-f "$classification_file");
+
+		# Open the classification file.
+		open(CLASSIFICATION, $classification_file) or die "Could not open file $classification_file. $!\n";
+
+		# Loop through the file content.
+		while(<CLASSIFICATION>) {
+			# Parse the file and grab the classification details.
+			if ($_ =~/.*config classification\: (.*)/) {
+				# Split the grabbed details.
+				my ($short_name, $short_desc, $priority) = split("\,", $1);
+
+				# Check if the grabbed classification is allready known and the priority value is greater
+				# than the stored one (which causes less priority in the IDS).
+				if (($classifications{$short_name}) && ($classifications{$short_name}[1] >= $priority)) {
+					#Change the priority value to the stricter one.
+					$classifications{$short_name} = [ "$classifications{$short_name}[0]", "$priority" ];
+				} else {
+					# Add the classification to the hash.
+					$classifications{$short_name} = [ "$short_desc", "$priority" ];
+				}
+			}
+		}
+
+		# Close the file.
+		close(CLASSIFICATION);
+	}
+
+	# Open classification file for writing.
+	open(FILE, ">", "$classification_file") or die "Could not write to $classification_file. $!\n";
+
+	# Print notice about autogenerated file.
+	print FILE "#Autogenerated file. Any custom changes will be overwritten!\n\n";
+
+	# Sort and loop through the hash of classifications.
+	foreach my $key (sort keys %classifications) {
+		# Assign some nice variable names for the items.
+		my $short_name = $key;
+		my $short_desc = $classifications{$key}[0];
+		my $priority = $classifications{$key}[1];
+
+		# Write the classification to the file.
+		print FILE "config classification: $short_name,$short_desc,$priority\n";
+	}
+
+	# Close file handle.
+	close(FILE);
+}
+
+#
+## Function to merge the "sid to message mapping" files of various given providers.
+#
+sub merge_sid_msg (@) {
+	my @providers = @_;
+
+	# Hash which contains all the sid to message mappings.
+	my %mappings = ();
+
+	# Loop through the array of given providers.
+	foreach my $provider (@providers) {
+		# Generate full path and filename.
+		my $sid_msg_file = "$tmp_conf_directory/$provider\-sid-msg.map";
+
+		# Skip provider if no sid to msg mapping file for this provider exists.
+		next unless (-f $sid_msg_file);
+
+		# Open the file.
+		open(MAPPING, $sid_msg_file) or die "Could not open $sid_msg_file. $!\n";
+
+		# Loop through the file content.
+		while (<MAPPING>) {
+			# Remove newlines.
+			chomp($_);
+
+			# Skip lines which do not start with a number,
+			next unless ($_ =~ /^\d+/);
+
+			# Split line content and assign it to an array.
+			my @line = split(/ \|\| /, $_);
+
+			# Grab the first element (and remove it) from the line array.
+			# It contains the sid.
+			my $sid = shift(@line);
+
+			# Store the grabbed sid and the remain array as hash value.
+			# It still contains the messages, references etc.
+			$mappings{$sid} = [@line];
+		}
+
+		# Close file handle.
+		close(MAPPING);
+	}
+
+	# Open mappings file for writing.
+	open(FILE, ">", $sid_msg_file) or die "Could not write $sid_msg_file. $!\n";
+
+	# Write notice about autogenerated file.
+	print FILE "#Autogenerated file. Any custom changes will be overwritten!\n\n";
+
+	# Loop through the hash of mappings.
+	foreach my $sid ( sort keys %mappings) {
+		# Grab data for the sid.
+		my @data = @{$mappings{$sid}};
+
+		# Add the sid to the data array.
+		unshift(@data, $sid);
+
+		# Generate line.
+		my $line = join(" \|\| ", @data);
+
+		print FILE "$line\n";
+
+	}
+
+	# Close file handle.
+	close(FILE);
+}
+
+#
+## A very tiny function to move an extracted ruleset from the temporary directory into
+## the rules directory.
+#
+sub move_tmp_ruleset() {
+	# Load perl module.
+	use File::Copy;
+
+	# Do a directory listing of the temporary directory.
+	opendir  DH, $tmp_rules_directory;
+
+	# Loop over all files.
+	while(my $file = readdir DH) {
+		# Move them to the rules directory.
+		move "$tmp_rules_directory/$file" , "$rulespath/$file";
+	}
+
+	# Close directory handle.
+	closedir DH;
+}
+
+#
+## Function to cleanup the temporary IDS directroy.
+#
+sub cleanup_tmp_directory () {
+	# Load rmtree() function from file path perl module.
+	use File::Path 'rmtree';
+
+	# Delete temporary directory and all containing files.
+	rmtree([ "$tmp_directory" ]);
 }
 
 #
@@ -409,6 +858,157 @@ sub _store_error_message ($) {
 
 	# Set correct ownership for the file.
 	&set_ownership("$storederrorfile");
+}
+
+#
+## Private function to get the path and filename for a downloaded ruleset by a given provider.
+#
+sub _get_dl_rulesfile($) {
+	my ($provider) = @_;
+
+	# Gather the download type for the given provider.
+	my $dl_type = $IDS::Ruleset::Providers{$provider}{'dl_type'};
+
+	# Obtain the file suffix for the download file type.
+	my $suffix = $dl_type_to_suffix{$dl_type};
+
+	# Check if a suffix has been found.
+	unless ($suffix) {
+		# Abort return - nothing.
+		return;
+	}
+
+	# Generate the full filename and path for the stored rules file.
+	my $rulesfile = "$dl_rules_path/$dl_rulesfile_prefix-$provider$suffix";
+
+	# Return the generated filename.
+	return $rulesfile;
+}
+
+#
+## Tiny function to delete the stored ruleset file or tarball for a given provider.
+#
+sub drop_dl_rulesfile ($) {
+	my ($provider) = @_;
+
+	# Gather the full path and name of the stored rulesfile.
+	my $rulesfile = &_get_dl_rulesfile($provider);
+
+	# Check if the given rulesfile exists.
+	if (-f $rulesfile) {
+		# Delete the stored rulesfile.
+		unlink($rulesfile) or die "Could not delete $rulesfile. $!\n";
+	}
+}
+
+#
+## Tiny function to get/generate the full path and filename for the providers oinkmaster
+## modified sids file.
+#
+sub get_oinkmaster_provider_modified_sids_file ($) {
+	my ($provider) = @_;
+
+	# Generate the filename.
+	my $filename = "$settingsdir/oinkmaster-$provider-modified-sids.conf";
+
+	# Return the filename.
+	return $filename;
+}
+
+#
+## Function to directly altering the oinkmaster provider includes file.
+##
+## Requires tha acition "remove" or "add" and a provider handle.
+#
+sub alter_oinkmaster_provider_includes_file ($$) {
+	my ($action, $provider) = @_;
+
+	# Call function to get the path and name for the given providers
+	# oinkmaster modified sids file.
+	my $provider_modified_sids_file = &get_oinkmaster_provider_modified_sids_file($provider);
+
+	# Open the file for reading..
+	open (FILE, $oinkmaster_provider_includes_file) or die "Could not read $oinkmaster_provider_includes_file. $!\n";
+
+	# Read-in file content.
+	my @lines = <FILE>;
+
+	# Close file after reading.
+	close(FILE);
+
+	# Re-open the file for writing.
+	open(FILE, ">", $oinkmaster_provider_includes_file) or die "Could not write to $oinkmaster_provider_includes_file. $!\n";
+
+	# Loop through the file content.
+	foreach my $line (@lines) {
+		# Remove newlines.
+		chomp($line);
+
+		# Skip line if we found our given provider and the action should be remove.
+		next if (($line =~ /$provider/) && ($action eq "remove"));
+
+		# Write the read-in line back to the file.
+		print FILE "$line\n";
+	}
+
+	# Check if the file exists and add the provider if requested.
+	if ((-f $provider_modified_sids_file) && ($action eq "add")) {
+		print FILE "include $provider_modified_sids_file\n";
+	}
+
+	# Close file handle.
+	close(FILE);
+}
+
+#
+## Function to read-in the given enabled or disables sids file.
+#
+sub read_enabled_disabled_sids_file($) {
+	my ($file) = @_;
+
+	# Temporary hash to store the sids and their state. It will be
+	# returned at the end of this function.
+	my %temphash;
+
+	# Open the given filename.
+	open(FILE, "$file") or die "Could not open $file. $!\n";
+
+	# Loop through the file.
+	while(<FILE>) {
+		# Remove newlines.
+		chomp $_;
+
+		# Skip blank lines.
+		next if ($_ =~ /^\s*$/);
+
+		# Skip coments.
+		next if ($_ =~ /^\#/);
+
+		# Splitt line into sid and state part.
+		my ($state, $sid) = split(" ", $_);
+
+		# Skip line if the sid is not numeric.
+		next unless ($sid =~ /\d+/ );
+
+		# Check if the sid was enabled.
+		if ($state eq "enablesid") {
+			# Add the sid and its state as enabled to the temporary hash.
+			$temphash{$sid} = "enabled";
+		# Check if the sid was disabled.
+		} elsif ($state eq "disablesid") {
+			# Add the sid and its state as disabled to the temporary hash.
+			$temphash{$sid} = "disabled";
+		# Invalid state - skip the current sid and state.
+		} else {
+			next;
+		}
+	}
+
+	# Close filehandle.
+	close(FILE);
+
+	# Return the hash.
+	return %temphash;
 }
 
 #
@@ -549,9 +1149,6 @@ sub _cleanup_rulesdir() {
 	while (my $file = readdir(DIR)) {
 		# We only want files.
 		next unless (-f "$rulespath/$file");
-
-		# Skip element if it has config as file extension.
-		next if ($file =~ m/\.config$/);
 
 		# Skip rules file for whitelisted hosts.
 		next if ("$rulespath/$file" eq $whitelist_file);
@@ -755,13 +1352,18 @@ sub generate_http_ports_file() {
 }
 
 #
-## Function to generate and write the file for used rulefiles.
+## Function to generate and write the file for used rulefiles file for a given provider.
+##
+## The function requires as first argument a provider handle, and as second an array with files.
 #
-sub write_used_rulefiles_file(@) {
-	my @files = @_;
+sub write_used_provider_rulefiles_file($@) {
+	my ($provider, @files) = @_;
+
+	# Get the path and file for the provider specific used rulefiles file.
+	my $used_provider_rulesfile_file = &get_used_provider_rulesfile_file($provider);
 
 	# Open file for used rulefiles.
-	open (FILE, ">$used_rulefiles_file") or die "Could not write to $used_rulefiles_file. $!\n";
+	open (FILE, ">", "$used_provider_rulesfile_file") or die "Could not write to $used_provider_rulesfile_file. $!\n";
 
 	# Write yaml header to the file.
 	print FILE "%YAML 1.1\n";
@@ -769,9 +1371,6 @@ sub write_used_rulefiles_file(@) {
 
 	# Write header to file.
 	print FILE "#Autogenerated file. Any custom changes will be overwritten!\n";
-
-	# Allways use the whitelist.
-	print FILE " - whitelist.rules\n";
 
 	# Loop through the array of given files.
 	foreach my $file (@files) {
@@ -786,17 +1385,116 @@ sub write_used_rulefiles_file(@) {
 }
 
 #
+## Function to write the main file for provider rulesfiles inclusions.
+##
+## This function requires an array of provider handles.
+#
+sub write_main_used_rulefiles_file (@) {
+	my (@providers) = @_;
+
+	# Call function to write the static rulefiles file.
+	&_write_default_rulefiles_file();
+
+	# Open file for used rulefils inclusion.
+	open (FILE, ">", "$suricata_used_providers_file") or die "Could not write to $suricata_used_providers_file. $!\n";
+
+	# Write yaml header to the file.
+	print FILE "%YAML 1.1\n";
+	print FILE "---\n\n";
+
+	# Write header to file.
+	print FILE "#Autogenerated file. Any custom changes will be overwritten!\n";
+
+	# Loop through the list of given providers.
+	foreach my $provider (@providers) {
+		# Call function to get the providers used rulefiles file.
+		my $filename = &get_used_provider_rulesfile_file($provider);
+
+		# Check if the file exists and write it into the used rulefiles file.
+		if (-f $filename) {
+			# Print the provider to the file.
+			print FILE "include\: $filename\n";
+		}
+	}
+
+	# Close the filehandle after writing.
+	close(FILE);
+}
+
+sub _write_default_rulefiles_file () {
+	# Get enabled application layer protocols.
+	my @enabled_app_layer_protos = &get_suricata_enabled_app_layer_protos();
+
+	# Open file.
+	open (FILE, ">", $suricata_default_rulefiles_file) or die "Could not write to $suricata_default_rulefiles_file. $!\n";
+
+	# Write yaml header to the file.
+	print FILE "%YAML 1.1\n";
+	print FILE "---\n\n";
+
+	# Write notice about autogenerated file.
+	print FILE "#Autogenerated file. Any custom changes will be overwritten!\n";
+
+	# Loop through the array of static included rulesfiles.
+	foreach my $file (@static_included_rulefiles) {
+		# Check if the file exists.
+		if (-f "$rulespath/$file") {
+			# Write the rulesfile name to the file.
+			print FILE " - $rulespath/$file\n";
+		}
+	}
+
+	print FILE "\n#Default rules for used application layer protocols.\n";
+	foreach my $enabled_app_layer_proto (@enabled_app_layer_protos) {
+		# Check if the current processed app layer proto needs to be translated
+		# into an application name.
+		if (exists($tr_app_layer_proto{$enabled_app_layer_proto})) {
+			# Obtain the translated application name for this protocol.
+			$enabled_app_layer_proto = $tr_app_layer_proto{$enabled_app_layer_proto};
+		}
+
+		# Generate filename.
+		my $rulesfile = "$default_rulespath/$enabled_app_layer_proto\.rules";
+
+		# Check if such a file exists.
+		if (-f "$rulesfile") {
+			# Write the rulesfile name to the file.
+			print FILE " - $rulesfile\n";
+		}
+
+		# Generate filename with "events" in filename.
+		$rulesfile = "$default_rulespath/$enabled_app_layer_proto\-events.rules";
+
+		# Check if this file exists.
+		if (-f "$rulesfile" ) {
+			# Write the rulesfile name to the file.
+			print FILE " - $rulesfile\n";
+		}
+	}
+
+	# Close the file handle
+	close(FILE);
+}
+
+#
+## Tiny function to generate the full path and name for the used_provider_rulesfile file of a given provider.
+#
+sub get_used_provider_rulesfile_file ($) {
+	my ($provider) = @_;
+
+	my $filename = "$settingsdir/suricata\-$provider\-used\-rulefiles.yaml";
+
+	# Return the gernerated file.
+	return $filename;
+}
+
+#
 ## Function to generate and write the file for modify the ruleset.
 #
 sub write_modify_sids_file() {
 	# Get configured settings.
 	my %idssettings=();
-	my %rulessettings=();
 	&General::readhash("$ids_settings_file", \%idssettings);
-	&General::readhash("$rules_settings_file", \%rulessettings);
-
-	# Gather the configured ruleset.
-	my $ruleset = $rulessettings{'RULES'};
 
 	# Open modify sid's file for writing.
 	open(FILE, ">$modify_sids_file") or die "Could not write to $modify_sids_file. $!\n";
@@ -813,36 +1511,67 @@ sub write_modify_sids_file() {
 		# malware in that file.  Rules which fall into the first category should stay as
 		# alert since not all flows of that type contain malware.
 
-		if($ruleset eq 'registered' or $ruleset eq 'subscripted' or $ruleset eq 'community') {
-			# These types of rulesfiles contain meta-data which gives the action that should
-			# be used when in IPS mode.  Do the following:
-			#
-			# 1. Disable all rules and set the action to 'drop'
-			# 2. Set the action back to 'alert' if the rule contains 'flowbits:noalert;'
-			#    This should give rules not in the policy a reasonable default if the user
-			#    manually enables them.
-			# 3. Enable rules and set actions according to the meta-data strings.
+		# These types of rulesfiles contain meta-data which gives the action that should
+		# be used when in IPS mode.  Do the following:
+		#
+		# 1. Disable all rules and set the action to 'drop'
+		# 2. Set the action back to 'alert' if the rule contains 'flowbits:noalert;'
+		#    This should give rules not in the policy a reasonable default if the user
+		#    manually enables them.
+		# 3. Enable rules and set actions according to the meta-data strings.
 
-			my $policy = 'balanced';  # Placeholder to allow policy to be changed.
+		my $policy = 'balanced';  # Placeholder to allow policy to be changed.
 
 			print FILE <<END;
-modifysid * "^#?(?:alert|drop)" | "#drop"
-modifysid * "^#drop(.+flowbits:noalert;)" | "#alert\${1}"
 modifysid * "^#(?:alert|drop)(.+policy $policy-ips alert)" | "alert\${1}"
 modifysid * "^#(?:alert|drop)(.+policy $policy-ips drop)" | "drop\${1}"
-END
-		} else {
-			# These rulefiles don't have the metadata, so set rules to 'drop' unless they
-			# contain the string 'flowbits:noalert;'.
-			print FILE <<END;
 modifysid * "^(#?)(?:alert|drop)" | "\${1}drop"
 modifysid * "^(#?)drop(.+flowbits:noalert;)" | "\${1}alert\${2}"
 END
 		}
-	}
 
 	# Close file handle.
 	close(FILE);
+}
+
+#
+## Function to get the ruleset date for a given provider.
+##
+## The function simply return the creation date in a human read-able format
+## of the stored providers rulesfile.
+#
+sub get_ruleset_date($) {
+	my ($provider) = @_;
+	my $date;
+	my $mtime;
+
+	# Load neccessary perl modules for file stat and to format the timestamp.
+	use File::stat;
+	use POSIX qw( strftime );
+
+	# Get the stored rulesfile for this provider.
+	my $stored_rulesfile = &_get_dl_rulesfile($provider);
+
+	# Check if we got a file.
+	if (-f $stored_rulesfile) {
+		# Call stat on the rulestarball.
+		my $stat = stat("$stored_rulesfile");
+
+		# Get timestamp the file creation.
+		$mtime = $stat->mtime;
+	}
+
+	# Check if the timestamp has not been grabbed.
+	unless ($mtime) {
+		# Return N/A for Not available.
+		return "N/A";
+	}
+
+	# Convert into human read-able format.
+	$date = strftime('%Y-%m-%d %H:%M:%S', localtime($mtime));
+
+	# Return the date.
+	return $date;
 }
 
 #
@@ -883,6 +1612,48 @@ sub get_suricata_version($) {
 }
 
 #
+## Function to get the enabled application layer protocols.
+#
+sub get_suricata_enabled_app_layer_protos() {
+	# Array to store and return the enabled app layer protos.
+	my @enabled_app_layer_protos = ();
+
+	# Execute piped suricata command and return the list of
+	# enabled application layer protocols.
+	open(SURICATA, "suricata --list-app-layer-protos |") or die "Could not execute program: $!";
+
+	# Grab and store the list of enabled application layer protocols.
+	my @output = <SURICATA>;
+
+	# Close pipe.
+	close(SURICATA);
+
+	# Merge allways enabled static application layers protocols array.
+	@enabled_app_layer_protos = @static_enabled_app_layer_protos;
+
+	# Loop through the array which contains the output of suricata.
+	foreach my $line (@output) {
+		# Skip header line which starts with "===".
+		next if ($line =~ /^\s*=/);
+
+		# Skip info or warning lines.
+		next if ($line =~ /\s*--/);
+
+		# Remove newlines.
+		chomp($line);
+
+		# Add enabled app layer proto to the array.
+		push(@enabled_app_layer_protos, $line);
+	}
+
+	# Sort the array.
+	@enabled_app_layer_protos = sort(@enabled_app_layer_protos);
+
+	# Return the array.
+	return @enabled_app_layer_protos;
+}
+
+#
 ## Function to generate the rules file with whitelisted addresses.
 #
 sub generate_ignore_file() {
@@ -918,7 +1689,7 @@ sub generate_ignore_file() {
 				# Check if the address/network is valid.
 				if ((&General::validip($address)) || (&General::validipandmask($address))) {
 					# Write rule line to the file to pass any traffic from this IP
-					print FILE "pass ip $address any -> any any (msg:\"pass all traffic from/to $address\"\; sid:$sid\;)\n";
+					print FILE "pass ip $address any -> any any (msg:\"pass all traffic from/to $address\"\; bypass; sid:$sid\;)\n";
 
 					# Increment sid.
 					$sid++;
@@ -1049,6 +1820,53 @@ sub get_red_address() {
 
 	# Return nothing.
 	return;
+}
+
+#
+## Function to get the used rules files of a given provider.
+#
+sub read_used_provider_rulesfiles($) {
+	my ($provider) = @_;
+
+	# Array to store the used rulefiles.
+	my @used_rulesfiles = ();
+
+	# Get the used rulesefile file for the provider.
+	my $rulesfile_file = &get_used_provider_rulesfile_file($provider);
+
+	# Check if the a used rulesfile exists for this provider.
+	if (-f $rulesfile_file) {
+		# Open the file or used rulefiles and read-in content.
+		open(FILE, $rulesfile_file) or die "Could not open $rulesfile_file. $!\n";
+
+		while (<FILE>) {
+			# Assign the current line to a nice variable.
+			my $line = $_;
+
+			# Remove newlines.
+			chomp($line);
+
+			# Skip comments.
+			next if ($line =~ /\#/);
+
+			# Skip blank  lines.
+			next if ($line =~ /^\s*$/);
+
+			# Gather the rulefile.
+			if ($line =~ /.*- (.*)/) {
+				my $rulefile = $1;
+
+				# Add the rulefile to the array of used rulesfiles.
+				push(@used_rulesfiles, $rulefile);
+			}
+		}
+
+		# Close the file.
+		close(FILE);
+	}
+
+	# Return the array of used rulesfiles.
+	return @used_rulesfiles;
 }
 
 #

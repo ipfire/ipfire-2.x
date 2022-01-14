@@ -138,6 +138,7 @@ $(TARGET) :
 	# Install snort to suricata converter.
 	cp $(DIR_SRC)/config/suricata/convert-snort	/usr/sbin/convert-snort
 	cp $(DIR_SRC)/config/suricata/convert-ids-modifysids-file   /usr/sbin/convert-ids-modifysids-file
+	cp $(DIR_SRC)/config/suricata/convert-ids-multiple-providers /usr/sbin/convert-ids-multiple-providers
 
 	# set converters executable
 	chmod 755 /usr/sbin/convert-*

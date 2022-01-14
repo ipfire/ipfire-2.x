@@ -49,7 +49,7 @@
 /var/ipfire/qos/bin/qos.sh
 /var/ipfire/suricata/*.conf
 /var/ipfire/suricata/*.yaml
-/var/ipfire/suricata/rules-settings
+/var/ipfire/suricata/providers-settings
 /var/ipfire/*/settings
 /var/ipfire/time/
 /var/ipfire/urlfilter
@@ -59,4 +59,5 @@
 /var/log/rrd/*
 /var/log/rrd/collectd
 /var/log/vnstat
-/var/tmp/idsrules.tar.gz
+/var/tmp/idsrules-*.tar.gz
+/var/tmp/idsrules-*.rules

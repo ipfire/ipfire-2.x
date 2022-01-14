@@ -46,16 +46,15 @@ vars:
 ##
 default-rule-path: /var/lib/suricata
 rule-files:
-    # Include enabled ruleset files from external file
-    include: /var/ipfire/suricata/suricata-used-rulefiles.yaml
+    # Include enabled ruleset files from external file.
+    include: /var/ipfire/suricata/suricata-used-providers.yaml
 
     # Include default rules.
     include: /var/ipfire/suricata/suricata-default-rules.yaml
 
-classification-file: /var/lib/suricata/classification.config
-reference-config-file: /var/lib/suricata/reference.config
-threshold-file: /var/lib/suricata/threshold.config
-
+classification-file: /usr/share/suricata/classification.config
+reference-config-file: /usr/share/suricata/reference.config
+threshold-file: /usr/share/suricata/threshold.config
 
 ##
 ## Logging options.
@@ -64,7 +63,7 @@ default-log-dir: /var/log/suricata/
 
 # global stats configuration
 stats:
-  enabled: yes
+  enabled: no
   # The interval field (in seconds) controls at what interval
   # the loggers are invoked.
   interval: 8
@@ -318,7 +317,7 @@ logging:
   # compiled with the --enable-debug configure option.
   #
   # This value is overriden by the SC_LOG_LEVEL env var.
-  default-log-level: notice
+  default-log-level: Info
 
   # A regex to filter output.  Can be overridden in an output section.
   # Defaults to empty (no filter).
@@ -521,6 +520,41 @@ app-layer:
            # decoding
            double-decode-path: no
            double-decode-query: no
+
+    # Note: Modbus probe parser is minimalist due to the poor significant field
+    # Only Modbus message length (greater than Modbus header length)
+    # And Protocol ID (equal to 0) are checked in probing parser
+    # It is important to enable detection port and define Modbus port
+    # to avoid false positive
+    modbus:
+      # How many unreplied Modbus requests are considered a flood.
+      # If the limit is reached, app-layer-event:modbus.flooded; will match.
+      #request-flood: 500
+
+      enabled: no
+      detection-ports:
+        dp: 502
+      # According to MODBUS Messaging on TCP/IP Implementation Guide V1.0b, it
+      # is recommended to keep the TCP connection opened with a remote device
+      # and not to open and close it for each MODBUS/TCP transaction. In that
+      # case, it is important to set the depth of the stream reassembling as
+      # unlimited (stream.reassembly.depth: 0)
+
+      # Stream reassembly size for modbus. By default track it completely.
+      stream-depth: 0
+
+    # DNP3
+    dnp3:
+      enabled: no
+      detection-ports:
+        dp: 20000
+
+    # SCADA EtherNet/IP and CIP protocol support
+    enip:
+      enabled: no
+      detection-ports:
+        dp: 44818
+        sp: 44818
 
     ntp:
       enabled: yes

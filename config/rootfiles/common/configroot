@@ -4,6 +4,7 @@ usr/sbin/convert-portfw
 usr/sbin/convert-snort
 usr/sbin/convert-xtaccess
 usr/sbin/convert-ids-modifysids-file
+usr/sbin/convert-ids-multiple-providers
 usr/sbin/firewall-policy
 #var/ipfire
 var/ipfire/addon-lang

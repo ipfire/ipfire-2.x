@@ -118,14 +118,10 @@ my %snortsettings;
 #
 # Add default value for MONITOR_TRAFFIC_ONLY which will be "on"
 # when migrating from snort to the new IDS.
-my %idssettings = (
-	"MONITOR_TRAFFIC_ONLY" => "on",
-);
-
-# Hash which contains the RULES settings.
 #
 # Set default value for UPDATE_INTERVAL to weekly.
-my %rulessettings = (
+my %idssettings = (
+	"MONITOR_TRAFFIC_ONLY" => "on",
 	"AUTOUPDATE_INTERVAL" => "weekly",
 );
 
@@ -159,16 +155,26 @@ foreach my $zone (@network_zones) {
 	}
 }
 
-# Grab the choosen ruleset from snort settings hash and store it in the rules
-# settings hash.
-$rulessettings{"RULES"} = $snortsettings{"RULES"};
+# Hash to store the provider settings.
+my %providersettings = ();
+
+# Default ID.
+$id = "1";
+
+# Grab the choosen ruleset from snort settings hash.
+my $provider = $snortsettings{"RULES"};
+my $subscription_code;
 
 # Check if an oinkcode has been provided.
 if($snortsettings{"OINKCODE"}) {
-	# Take the oinkcode from snort settings hash and store it in the rules
-	# settings hash.
-	$rulessettings{"OINKCODE"} = $snortsettings{"OINKCODE"};
+	# Take the oinkcode from snort settings hash.
+	$subscription_code = $snortsettings{"OINKCODE"};
 }
+
+# Generate providers config line and add it to the provider settings hash.
+#
+# Enabled automatic ruleste updates and the usage of the provider.
+$providersettings{$id} = [ "$provider", "$subscription_code", "enabled", "enabled" ];
 
 #
 ## Step 4: Import guardian settings and whitelist if the addon is installed.
@@ -225,8 +231,8 @@ if (-f $guardian_meta) {
 # Write IDS settings.
 &General::writehash("$IDS::ids_settings_file", \%idssettings);
 
-# Write rules settings.
-&General::writehash("$IDS::rules_settings_file", \%rulessettings);
+# Write provider settings.
+&General::writehash("$IDS::providers_settings_file", \%providersettings);
 
 #
 ## Step 6: Generate and write the file to modify the ruleset.
@@ -242,16 +248,19 @@ if (-f $guardian_meta) {
 ## Step 7: Move rulestarball to its new location.
 #
 
+# Grab file and path to store the provider rules tarball.
+my $rulestarball = &IDS::_get_dl_rulesfile($provider);
+
 # Check if a rulestarball has been downloaded yet.
 if (-f $snort_rules_tarball) {
 	# Load perl module which contains the move command.
 	use File::Copy;
 
 	# Move the rulestarball to the new location.
-	move($snort_rules_tarball, $IDS::rulestarball);
+	move($snort_rules_tarball, $rulestarball);
 
 	# Set correct ownership.
-	&IDS::set_ownership("$IDS::rulestarball");
+	&IDS::set_ownership("$rulestarball");
 
 # In case no tarball is present, try to download the ruleset.
 } else {
@@ -270,7 +279,7 @@ if (-f $snort_rules_tarball) {
 #
 
 # Check if a rulestarball is present.
-if (-f $IDS::rulestarball) {
+if (-f $rulestarball) {
 	# Launch oinkmaster by calling the subfunction.
 	&IDS::oinkmaster();
 
@@ -312,10 +321,10 @@ if (-f $IDS::rulestarball) {
 ## Step 12: Setup automatic ruleset updates.
 #
 
-# Check if a ruleset is configured.
-if($rulessettings{"RULES"}) {
+# Check if a provider is configured.
+if(%providersettings) {
 	# Call suricatactrl and setup the periodic update mechanism.
-	&IDS::call_suricatactrl("cron", $rulessettings{'AUTOUPDATE_INTERVAL'});
+	&IDS::call_suricatactrl("cron", $idssettings{'AUTOUPDATE_INTERVAL'});
 }
 
 #
@@ -362,7 +371,16 @@ while (my $line = <SNORTCONF>) {
 close(SNORTCONF);
 
 # Pass the array of enabled rule files to the subfunction and write the file.
-&IDS::write_used_rulefiles_file(@enabled_rule_files);
+&IDS::write_used_provider_rulefiles_file("$provider", @enabled_rule_files);
+&IDS::write_main_used_rulefiles_file("$provider");
+
+# Grab the used provider rulesfile file path and name.
+my $used_provider_rulesfile_file = &IDS::get_used_provider_rulesfile_file("$provider");
+
+# Set correct ownership for new files.
+&IDS::set_ownership("$suricata_used_providers_file");
+&IDS::set_ownership("$suricata_static_rulefiles_file");
+&IDS::set_ownership("$used_provider_rulesfile_file");
 
 #
 ## Step 14: Start the IDS if enabled.
