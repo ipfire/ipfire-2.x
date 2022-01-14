@@ -54,6 +54,7 @@ fi
 # Remove files
 
 # Stop services
+/etc/init.d/suricata stop
 
 # Extract files
 extract_files
@@ -67,8 +68,12 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Run convert script for IDS multiple providers
+/usr/sbin/convert-ids-multiple-providers
+
 # Start services
 /etc/init.d/squid restart
+/etc/init.d/suricata start
 
 # This update needs a reboot...
 touch /var/run/need_reboot
