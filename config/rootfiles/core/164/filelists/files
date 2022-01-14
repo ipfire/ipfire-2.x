@@ -1,1 +1,2 @@
 etc/collectd.conf
+var/ipfire/urlfilter/autoupdate/autoupdate.urls
