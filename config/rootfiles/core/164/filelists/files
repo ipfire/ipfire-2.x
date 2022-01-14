@@ -1,2 +1,3 @@
 etc/collectd.conf
+etc/rc.d/init.d/squid
 var/ipfire/urlfilter/autoupdate/autoupdate.urls
