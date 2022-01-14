@@ -2188,7 +2188,6 @@ usr/lib/squid/ext_file_userip_acl
 usr/lib/squid/ext_ldap_group_acl
 usr/lib/squid/ext_session_acl
 usr/lib/squid/ext_sql_session_acl
-usr/lib/squid/ext_time_quota_acl
 usr/lib/squid/ext_unix_group_acl
 usr/lib/squid/ext_wbinfo_group_acl
 usr/lib/squid/helper-mux
