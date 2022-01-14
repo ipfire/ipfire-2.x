@@ -68,6 +68,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/squid restart
 
 # This update needs a reboot...
 touch /var/run/need_reboot
