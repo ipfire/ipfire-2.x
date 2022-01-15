@@ -303,6 +303,7 @@ usr/lib/thread2.8.7/libthread2.8.7.so
 usr/lib/thread2.8.7/pkgIndex.tcl
 usr/lib/thread2.8.7/ttrace.tcl
 #usr/man/man1/tclsh.1
+#usr/man/man3
 #usr/man/man3/DString.3
 #usr/man/man3/Notifier.3
 #usr/man/man3/RegExp.3
