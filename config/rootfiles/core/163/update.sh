@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2021 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2022 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -56,9 +56,12 @@ rm -vrf \
 	/lib/firmware/cxgb4/t4fw-1.25.4.0.bin \
 	/lib/firmware/cxgb4/t5fw-1.25.4.0.bin \
 	/lib/firmware/cxgb4/t6fw-1.25.4.0.bin \
-	/lib/firmware/intel/ice/ddp/ice-1.3.16.0.pkg
+	/lib/firmware/intel/ice/ddp/ice-1.3.16.0.pkg \
+	/lib/udev/enable_codel \
+	/lib/udev/rules.d/99-codel.rules
 
 # Stop services
+/usr/local/bin/qosctrl stop
 
 # Extract files
 extract_files
@@ -77,6 +80,8 @@ telinit u
 /etc/init.d/apache restart
 /etc/init.d/unbound restart
 /etc/init.d/squid restart
+/usr/local/bin/qosctrl generate
+/usr/local/bin/qosctrl start
 
 # rebuild initrd
 dracut --force --early-microcode --strip --verbose --xz

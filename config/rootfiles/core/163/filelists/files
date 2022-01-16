@@ -1,6 +1,11 @@
 etc/dracut.conf
+lib/udev/network-aqm
+lib/udev/network-hotplug-bridges
+lib/udev/rules.d/99-aqm.rules
+srv/web/ipfire/cgi-bin/qos.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 var/ipfire/backup/bin/backup.pl
 var/ipfire/dhcp/advoptions-list
+var/ipfire/qos/bin/makeqosscripts.pl
