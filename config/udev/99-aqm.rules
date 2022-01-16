@@ -1,0 +1,2 @@
+# Call the AQM script
+SUBSYSTEM=="net", RUN+="/lib/udev/network-aqm"

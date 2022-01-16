@@ -1,2 +1,0 @@
-# Call the enable codel script.
-SUBSYSTEM=="net", RUN+="/lib/udev/enable_codel"

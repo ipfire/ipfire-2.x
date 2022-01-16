@@ -20,6 +20,21 @@
 < backup protect key password
 < bewan adsl pci st
 < bewan adsl usb
+< cake profile bridged-llcsnap 32
+< cake profile bridged-ptm 19
+< cake profile bridged-vcmux 24
+< cake profile conservative 48
+< cake profile docsis 18
+< cake profile ethernet 38
+< cake profile ethernet vlan 42
+< cake profile ipoa-llcsnap 16
+< cake profile ipoa-vcmux 8
+< cake profile pppoa-llc 14
+< cake profile pppoa-vcmux 10
+< cake profile pppoe-llcsnap 40
+< cake profile pppoe-ptm 27
+< cake profile pppoe-vcmux 32
+< cake profile raw 0
 < Captive heading terms
 < Captive heading voucher
 < Captive invalid coupon
@@ -43,6 +58,7 @@
 < ipsec dns server address is invalid
 < ipsec invalid ip address or fqdn for rw endpoint
 < ipsec roadwarrior endpoint
+< link-layer encapsulation
 < netbios nameserver daemon
 < no entries
 < notes
@@ -118,6 +134,21 @@
 < bit
 < block
 < broken
+< cake profile bridged-llcsnap 32
+< cake profile bridged-ptm 19
+< cake profile bridged-vcmux 24
+< cake profile conservative 48
+< cake profile docsis 18
+< cake profile ethernet 38
+< cake profile ethernet vlan 42
+< cake profile ipoa-llcsnap 16
+< cake profile ipoa-vcmux 8
+< cake profile pppoa-llc 14
+< cake profile pppoa-vcmux 10
+< cake profile pppoe-llcsnap 40
+< cake profile pppoe-ptm 27
+< cake profile pppoe-vcmux 32
+< cake profile raw 0
 < capabilities
 < ccd add
 < ccd choose net
@@ -566,6 +597,7 @@
 < least preferred
 < legacy architecture warning
 < lifetime
+< link-layer encapsulation
 < local ip address
 < log server protocol
 < mac filter
@@ -938,12 +970,28 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< cake profile bridged-llcsnap 32
+< cake profile bridged-ptm 19
+< cake profile bridged-vcmux 24
+< cake profile conservative 48
+< cake profile docsis 18
+< cake profile ethernet 38
+< cake profile ethernet vlan 42
+< cake profile ipoa-llcsnap 16
+< cake profile ipoa-vcmux 8
+< cake profile pppoa-llc 14
+< cake profile pppoa-vcmux 10
+< cake profile pppoe-llcsnap 40
+< cake profile pppoe-ptm 27
+< cake profile pppoe-vcmux 32
+< cake profile raw 0
 < eol architecture warning
 < false max bandwidth
 < false min bandwidth
 < g.dtm
 < g.lite
 < guaranteed bandwidth
+< link-layer encapsulation
 < max bandwidth
 < upload fcdsl.o
 ############################################################################
@@ -978,6 +1026,21 @@
 < available
 < block
 < broken
+< cake profile bridged-llcsnap 32
+< cake profile bridged-ptm 19
+< cake profile bridged-vcmux 24
+< cake profile conservative 48
+< cake profile docsis 18
+< cake profile ethernet 38
+< cake profile ethernet vlan 42
+< cake profile ipoa-llcsnap 16
+< cake profile ipoa-vcmux 8
+< cake profile pppoa-llc 14
+< cake profile pppoa-vcmux 10
+< cake profile pppoe-llcsnap 40
+< cake profile pppoe-ptm 27
+< cake profile pppoe-vcmux 32
+< cake profile raw 0
 < Captive
 < Captive 1day
 < Captive 1month
@@ -1175,6 +1238,7 @@
 < ipsec settings
 < itlb multihit
 < legacy architecture warning
+< link-layer encapsulation
 < local ip address
 < location
 < locationblock
@@ -1385,6 +1449,21 @@
 < available
 < block
 < broken
+< cake profile bridged-llcsnap 32
+< cake profile bridged-ptm 19
+< cake profile bridged-vcmux 24
+< cake profile conservative 48
+< cake profile docsis 18
+< cake profile ethernet 38
+< cake profile ethernet vlan 42
+< cake profile ipoa-llcsnap 16
+< cake profile ipoa-vcmux 8
+< cake profile pppoa-llc 14
+< cake profile pppoa-vcmux 10
+< cake profile pppoe-llcsnap 40
+< cake profile pppoe-ptm 27
+< cake profile pppoe-vcmux 32
+< cake profile raw 0
 < capabilities
 < Captive
 < Captive 1day
@@ -1600,6 +1679,7 @@
 < ipsec settings
 < itlb multihit
 < legacy architecture warning
+< link-layer encapsulation
 < local ip address
 < location
 < locationblock
@@ -1858,6 +1938,21 @@
 < bit
 < block
 < broken
+< cake profile bridged-llcsnap 32
+< cake profile bridged-ptm 19
+< cake profile bridged-vcmux 24
+< cake profile conservative 48
+< cake profile docsis 18
+< cake profile ethernet 38
+< cake profile ethernet vlan 42
+< cake profile ipoa-llcsnap 16
+< cake profile ipoa-vcmux 8
+< cake profile pppoa-llc 14
+< cake profile pppoa-vcmux 10
+< cake profile pppoe-llcsnap 40
+< cake profile pppoe-ptm 27
+< cake profile pppoe-vcmux 32
+< cake profile raw 0
 < capabilities
 < Captive
 < Captive 1day
@@ -2352,6 +2447,7 @@
 < least preferred
 < legacy architecture warning
 < lifetime
+< link-layer encapsulation
 < local ip address
 < location
 < locationblock
@@ -2760,6 +2856,21 @@
 < bit
 < block
 < broken
+< cake profile bridged-llcsnap 32
+< cake profile bridged-ptm 19
+< cake profile bridged-vcmux 24
+< cake profile conservative 48
+< cake profile docsis 18
+< cake profile ethernet 38
+< cake profile ethernet vlan 42
+< cake profile ipoa-llcsnap 16
+< cake profile ipoa-vcmux 8
+< cake profile pppoa-llc 14
+< cake profile pppoa-vcmux 10
+< cake profile pppoe-llcsnap 40
+< cake profile pppoe-ptm 27
+< cake profile pppoe-vcmux 32
+< cake profile raw 0
 < capabilities
 < Captive
 < Captive 1day
@@ -3260,6 +3371,7 @@
 < least preferred
 < legacy architecture warning
 < lifetime
+< link-layer encapsulation
 < local ip address
 < location
 < locationblock
@@ -3643,6 +3755,21 @@
 < autonomous system
 < available
 < broken
+< cake profile bridged-llcsnap 32
+< cake profile bridged-ptm 19
+< cake profile bridged-vcmux 24
+< cake profile conservative 48
+< cake profile docsis 18
+< cake profile ethernet 38
+< cake profile ethernet vlan 42
+< cake profile ipoa-llcsnap 16
+< cake profile ipoa-vcmux 8
+< cake profile pppoa-llc 14
+< cake profile pppoa-vcmux 10
+< cake profile pppoe-llcsnap 40
+< cake profile pppoe-ptm 27
+< cake profile pppoe-vcmux 32
+< cake profile raw 0
 < Captive delete logo
 < cpu frequency
 < crypto error
@@ -3731,6 +3858,7 @@
 < ipsec settings
 < itlb multihit
 < legacy architecture warning
+< link-layer encapsulation
 < local ip address
 < meltdown
 < mitigated

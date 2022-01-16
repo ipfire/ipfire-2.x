@@ -21,9 +21,9 @@
 #                                                                          #
 ############################################################################
 
-LOG_FACILITY="codel"
+LOG_FACILITY="aqm"
 
-function log() {
+log() {
 	logger -t "${LOG_FACILITY}" $@
 }
 
@@ -32,19 +32,58 @@ if [ -z "${INTERFACE}" ]; then
 	exit 1
 fi
 
-# Do nothing for the loopback device.
-[ "${INTERFACE}" = "lo" ] && exit 0
-
 case "${ACTION}" in
 	add|register)
-		# Change root qdisc to use fq_codel.
-		/sbin/tc qdisc add root dev ${INTERFACE} fq_codel
-		ret=$?
+		TYPE="$(</sys/class/net/${INTERFACE}/type)"
 
-		if [ ${ret} -eq 0 ]; then
-			log "Codel AQM has been enabled on '${INTERFACE}'."
-		else
-			log "Codel AQM could not be enabled on '${INTERFACE}'. Error code: ${ret}"
+		# Detect bridges
+		if [ -d "/sys/class/net/${INTERFACE}/bridge" ]; then
+			TYPE="bridge"
+		fi
+
+		args=()
+
+		# Configure some useful defaults depending on the interface
+		case "${INTERFACE},${TYPE}" in
+			# Ignore loopback
+			lo,*)
+				exit 0
+				;;
+
+			# Ignore tun
+			tun*)
+				exit 0
+				;;
+
+			# Ignore GRE/VTI
+			*,778|*,768)
+				exit 0
+				;;
+
+			# Ignore bridges
+			*,bridge)
+				exit 0
+				;;
+
+			# Handle dial-up connections on RED
+			ppp*,512)
+				args+=( "cake" "internet" "conservative" "ack-filter" )
+				;;
+
+			# Treat any other interfaces as "Ethernet"
+			red*,*)
+				args+=( "cake" "internet" "ethernet" )
+				;;
+
+			# All other interfaces are locally connected
+			*)
+				args+=( "cake" "ethernet" "metro" )
+				;;
+		esac
+
+		# Change root qdisc to use cake
+		if ! tc qdisc replace root dev "${INTERFACE}" "${args[@]}"; then
+			log "Could not configure qdisc on ${INTERFACE} with parameters ${args[@]}"
 			exit ${ret}
 		fi
 		;;
