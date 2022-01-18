@@ -98,7 +98,25 @@ $qossettings{'CLASS'} = '';
 $qossettings{'CLASSPRFX'} = '';
 $qossettings{'DEV'} = '';
 $qossettings{'TOS'} = '';
+$qossettings{'CAKE_PROFILE'} = 'conservative';
 
+my %CAKE_PROFILES = (
+	"ethernet" => $Lang::tr{'cake profile ethernet 38'},
+	"ethernet ether-vlan" => $Lang::tr{'cake profile ethernet vlan 42'},
+	"raw" => $Lang::tr{'cake profile raw 0'},
+	"conservative" => $Lang::tr{'cake profile conservative 48'},
+	"docsis" => $Lang::tr{'cake profile docsis 18'},
+	"bridged-ptm" => $Lang::tr{'cake profile bridged-ptm 19'},
+	"pppoe-ptm" => $Lang::tr{'cake profile pppoe-ptm 27'},
+	"pppoe-llcsnap" => $Lang::tr{'cake profile pppoe-llcsnap 40'},
+	"pppoe-vcmux" => $Lang::tr{'cake profile pppoe-vcmux 32'},
+	"pppoa-llc" => $Lang::tr{'cake profile pppoa-llc 14'},
+	"pppoa-vcmux" => $Lang::tr{'cake profile pppoa-vcmux 10'},
+	"bridged-llcsnap" => $Lang::tr{'cake profile bridged-llcsnap 32'},
+	"bridged-vcmux" => $Lang::tr{'cake profile bridged-vcmux 24'},
+	"ipoa-llcsnap" => $Lang::tr{'cake profile ipoa-llcsnap 16'},
+	"ipoa-vcmux" => $Lang::tr{'cake profile ipoa-vcmux 8'},
+);
 
 &General::readhash("${General::swroot}/qos/settings", \%qossettings);
 &Header::getcgihash(\%qossettings);
@@ -109,6 +127,12 @@ my %color = ();
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
+
+$selected{'CAKE_PROFILE'} = ();
+foreach my $key (keys %CAKE_PROFILES) {
+	$selected{'CAKE_PROFILE'}{$key} = '';
+}
+$selected{'CAKE_PROFILE'}{$qossettings{'CAKE_PROFILE'}} = 'selected';
 
 &Header::showhttpheaders();
 
@@ -749,26 +773,69 @@ END
 
 sub changebandwidth {
 	&Header::openbox('100%', 'center', $Lang::tr{'bandwidthsettings'});
+
 	if ($qossettings{'ENABLED'} eq 'on') {
 		print "$Lang::tr{'bandwidtherror'}";
 		print "<a href='/cgi-bin/qos.cgi'>$Lang::tr{'back'}</a>";
 	} else {
-		print <<END
-		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-		<input type='hidden' name='DEF_OUT_SPD' value='' /><input type='hidden' name='DEF_INC_SPD' value='' />
-		<table width='66%'>
-		<tr><td width='100%' colspan='3'>$Lang::tr{'down and up speed'}</td></tr>
-		<tr><td width='50%' align='right'>$Lang::tr{'downlink speed'}:</td>
-				<td width='30%' align='left'><input type='text' name='INC_SPD' maxlength='8' value="$qossettings{'INC_SPD'}" /></td>
-				<td width='20%' align='center' rowspan='2'><input type='submit' name='ACTION' value="$Lang::tr{'template'}" /><br /><input type='submit' name='ACTION' value="$Lang::tr{'save'}" /><br /><input type='reset' name='ACTION' value="$Lang::tr{'reset'}" /></td></tr>
-		<tr><td width='50%' align='right'>$Lang::tr{'uplink speed'}:</td>
-				<td width='30%' align='left'><input type='text' name='OUT_SPD' maxlength='8' value="$qossettings{'OUT_SPD'}" /></td></tr>
-		</table>
-		</form>
-		<font color='red'>$Lang::tr{'template warning'}</font>
+		print <<END;
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<input type='hidden' name='DEF_OUT_SPD' value='' /><input type='hidden' name='DEF_INC_SPD' value='' />
+				<table width='66%'>
+					<tr>
+						<td width='100%' colspan='2'>$Lang::tr{'down and up speed'}</td>
+					</tr>
+					<tr>
+						<td width='50%' align='right'>$Lang::tr{'downlink speed'}:</td>
+						<td width='50%' align='left'>
+							<input type='text' name='INC_SPD' maxlength='8' value="$qossettings{'INC_SPD'}" />
+						</td>
+					</tr>
+					<tr>
+						<td width='50%' align='right'>$Lang::tr{'uplink speed'}:</td>
+						<td width='50%' align='left'>
+							<input type='text' name='OUT_SPD' maxlength='8' value="$qossettings{'OUT_SPD'}" />
+						</td>
+					</tr>
+
+					<tr>
+						<td colspan="2">&nbsp;</td>
+					</tr>
+
+					<tr>
+						<td width='50%' align='right'>$Lang::tr{'link-layer encapsulation'}:</td>
+						<td width='50%' align='left'>
+							<select name="CAKE_PROFILE">
 END
-;
+
+		foreach my $key (sort { $CAKE_PROFILES{$a} cmp $CAKE_PROFILES{$b} } keys %CAKE_PROFILES) {
+			print <<END;
+								<option value="$key" $selected{'CAKE_PROFILE'}{$key}>$CAKE_PROFILES{$key}</option>
+END
+		}
+
+		print <<END;
+							</select>
+						</td>
+					</tr>
+
+					<tr>
+						<td colspan="2">&nbsp;</td>
+					</tr>
+
+					<tr>
+						<td width='100%' align='center' colspan="2">
+							<input type='submit' name='ACTION' value="$Lang::tr{'template'}" />
+							<input type='submit' name='ACTION' value="$Lang::tr{'save'}" />
+							<input type='reset' name='ACTION' value="$Lang::tr{'reset'}" />
+						</td>
+					</tr>
+				</table>
+			</form>
+			<font color='red'>$Lang::tr{'template warning'}</font>
+END
 	}
+
 	&Header::closebox();
 }
 

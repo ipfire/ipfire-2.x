@@ -202,6 +202,15 @@ int hw_umount(const char* source, const char* prefix) {
 static int hw_test_source_medium(const char* path) {
 	int ret = hw_mount(path, SOURCE_MOUNT_PATH, "iso9660", MS_RDONLY);
 
+	if (ret != 0) {
+		// 2nd try, ntfs for a rufus converted usb key
+		ret = hw_mount(path, SOURCE_MOUNT_PATH, "ntfs3", MS_RDONLY);
+	}
+	if (ret != 0) {
+		// 3rd try, vfat for a rufus converted usb key
+		ret = hw_mount(path, SOURCE_MOUNT_PATH, "vfat", MS_RDONLY);
+	}
+
 	// If the source could not be mounted we
 	// cannot proceed.
 	if (ret != 0)
@@ -275,6 +284,20 @@ struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive) {
 	struct hw_disk** ret = hw_create_disks();
 	struct hw_disk** disks = ret;
 
+	// Determine the disk device of source if it is a partition
+	char* sourcedisk = NULL;
+	char syssource[PATH_MAX];
+	(void)snprintf(syssource, sizeof(syssource) - 1, "/sys/class/block/%s", sourcedrive + 5);
+	struct udev_device* s_dev = udev_device_new_from_syspath(hw->udev, syssource);
+	const char* s_devtype = udev_device_get_property_value(s_dev, "DEVTYPE");
+	if (s_devtype && (strcmp(s_devtype, "partition") == 0)) {
+		struct udev_device* p_dev = udev_device_get_parent_with_subsystem_devtype(s_dev,"block","disk");
+		if (p_dev) {
+			sourcedisk = udev_device_get_devnode(p_dev);
+		}
+	}
+	if (!sourcedisk) sourcedisk = sourcedrive;
+
 	struct udev_enumerate* enumerate = udev_enumerate_new(hw->udev);
 
 	udev_enumerate_add_match_subsystem(enumerate, "block");
@@ -298,8 +321,8 @@ struct hw_disk** hw_find_disks(struct hw* hw, const char* sourcedrive) {
 			continue;
 		}
 
-		// Skip sourcedrive if we need to
-		if (sourcedrive && (strcmp(dev_path, sourcedrive) == 0)) {
+		// Skip sourcedisk if we need to
+		if (sourcedisk && (strcmp(dev_path, sourcedisk) == 0)) {
 			udev_device_unref(dev);
 			continue;
 		}

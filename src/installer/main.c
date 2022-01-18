@@ -415,7 +415,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	// Load common modules
-	mysystem(logfile, "/sbin/modprobe vfat"); // USB key
+	mysystem(logfile, "/sbin/modprobe vfat");  // USB key
+	mysystem(logfile, "/sbin/modprobe ntfs3"); // USB key
 	hw_stop_all_raid_arrays(logfile);
 
 	if (!config.unattended) {
@@ -555,7 +556,10 @@ int main(int argc, char *argv[]) {
 	assert(sourcedrive);
 
 	int r = hw_mount(sourcedrive, SOURCE_MOUNT_PATH, "iso9660", MS_RDONLY);
-	if (r) {
+	if (r) r = hw_mount(sourcedrive, SOURCE_MOUNT_PATH, "ntfs3", MS_RDONLY);
+	if (r) r = hw_mount(sourcedrive, SOURCE_MOUNT_PATH, "vfat", MS_RDONLY);
+	if (r)
+		{
 		snprintf(message, sizeof(message), _("Could not mount %s to %s:\n  %s\n"),
 			sourcedrive, SOURCE_MOUNT_PATH, strerror(errno));
 		errorbox(message);
