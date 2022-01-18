@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.6.1
+VER        = 1.7.0
 
 THISAPP    = dnsdist-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = dnsdist
-PAK_VER    = 10
+PAK_VER    = 11
 
 SUP_ARCH   = x86_64 aarch64
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = fc314583a33d1256fecb41dac64a77e3
+$(DL_FILE)_MD5 = 51cca04895eb04278ba01491a5f24984
 
 install : $(TARGET)
 
