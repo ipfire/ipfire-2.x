@@ -76,6 +76,9 @@ ldconfig
 echo "DROPHOSTILE=off" > /var/ipfire/optionsfw/settings
 echo "DROPSPOOFEDMARTIAN=on" > /var/ipfire/optionsfw/settings
 
+# Apply sysctl changes
+/etc/init.d/sysctl start
+
 # Start services
 /etc/init.d/firewall restart
 /etc/init.d/collectd start
