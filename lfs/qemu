@@ -24,6 +24,7 @@
 
 include Config
 
+# If you update the version also qemu-ga !!!
 VER        = 6.1.0
 
 THISAPP    = qemu-$(VER)

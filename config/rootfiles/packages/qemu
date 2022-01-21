@@ -3,7 +3,7 @@ usr/bin/elf2dmp
 usr/bin/qemu
 usr/bin/qemu-arm
 usr/bin/qemu-edid
-usr/bin/qemu-ga
+#usr/bin/qemu-ga
 usr/bin/qemu-i386
 usr/bin/qemu-img
 usr/bin/qemu-io
