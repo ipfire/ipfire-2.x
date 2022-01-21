@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER         = 5.15.6
+VER         = 5.15.16
 ARM_PATCHES = 5.15-ipfire2
 
 THISAPP    = linux-$(VER)
@@ -73,7 +73,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= b4e333919e9fddfdd46308cc38ceda1d
+$(DL_FILE)_MD5					= be0a904c58655c74c0986ad62500bcca
 arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 9cab549a71b19b07e0c5c103ccf3c321
 
 install : $(TARGET)
