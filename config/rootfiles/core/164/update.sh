@@ -43,6 +43,23 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+KVER="xxxKVERxxx"
+
+# Backup uEnv.txt if exist
+if [ -e /boot/uEnv.txt ]; then
+	cp -vf /boot/uEnv.txt /boot/uEnv.txt.org
+fi
+
+# Do some sanity checks.
+case $(uname -r) in
+	*-ipfire*)
+		# Ok.
+		;;
+	*)
+		exit_with_error "ERROR cannot update. No IPFire Kernel." 1
+		;;
+esac
+
 # Check diskspace on root
 ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
 
@@ -52,6 +69,17 @@ if [ $ROOTSPACE -lt 100000 ]; then
 fi
 
 # Remove files
+# Remove the old kernel
+rm -rf /boot/System.map-*
+rm -rf /boot/config-*
+rm -rf /boot/ipfirerd-*
+rm -rf /boot/initramfs-*
+rm -rf /boot/vmlinuz-*
+rm -rf /boot/uImage-*
+rm -rf /boot/zImage-*
+rm -rf /boot/uInit-*
+rm -rf /boot/dtb-*
+rm -rf /lib/modules
 
 # Stop services
 /etc/init.d/collectd stop
@@ -84,6 +112,20 @@ echo "DROPSPOOFEDMARTIAN=on" > /var/ipfire/optionsfw/settings
 /etc/init.d/collectd start
 /etc/init.d/squid restart
 /etc/init.d/suricata start
+
+# remove lm_sensor config after collectd was started
+# to reserch sensors at next boot with updated kernel
+rm -f  /etc/sysconfig/lm_sensors
+
+# Upadate Kernel version uEnv.txt
+if [ -e /boot/uEnv.txt ]; then
+	sed -i -e "s/KVER=.*/KVER=${KVER}/g" /boot/uEnv.txt
+fi
+
+# call user update script (needed for some arm boards)
+if [ -e /boot/pakfire-kernel-update ]; then
+	/boot/pakfire-kernel-update ${KVER}
+fi
 
 # This update needs a reboot...
 touch /var/run/need_reboot
