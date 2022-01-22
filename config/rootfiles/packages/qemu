@@ -1,6 +1,7 @@
 lib/udev/rules.d/65-kvm.rules
 usr/bin/elf2dmp
 usr/bin/qemu
+usr/bin/qemu-aarch64
 usr/bin/qemu-arm
 usr/bin/qemu-edid
 #usr/bin/qemu-ga
@@ -11,6 +12,7 @@ usr/bin/qemu-nbd
 usr/bin/qemu-pr-helper
 usr/bin/qemu-riscv64
 usr/bin/qemu-storage-daemon
+usr/bin/qemu-system-aarch64
 usr/bin/qemu-system-arm
 usr/bin/qemu-system-i386
 usr/bin/qemu-system-riscv64
@@ -54,7 +56,7 @@ usr/share/qemu/bios-256k.bin
 usr/share/qemu/bios-microvm.bin
 usr/share/qemu/bios.bin
 #usr/share/qemu/canyonlands.dtb
-#usr/share/qemu/edk2-aarch64-code.fd
+usr/share/qemu/edk2-aarch64-code.fd
 usr/share/qemu/edk2-arm-code.fd
 usr/share/qemu/edk2-arm-vars.fd
 usr/share/qemu/edk2-i386-code.fd
@@ -74,7 +76,7 @@ usr/share/qemu/efi-vmxnet3.rom
 usr/share/qemu/firmware
 usr/share/qemu/firmware/50-edk2-i386-secure.json
 usr/share/qemu/firmware/50-edk2-x86_64-secure.json
-#usr/share/qemu/firmware/60-edk2-aarch64.json
+usr/share/qemu/firmware/60-edk2-aarch64.json
 usr/share/qemu/firmware/60-edk2-arm.json
 usr/share/qemu/firmware/60-edk2-i386.json
 usr/share/qemu/firmware/60-edk2-x86_64.json
@@ -124,8 +126,8 @@ usr/share/qemu/npcm7xx_bootrom.bin
 #usr/share/qemu/openbios-sparc64
 #usr/share/qemu/opensbi-riscv32-generic-fw_dynamic.bin
 #usr/share/qemu/opensbi-riscv32-generic-fw_dynamic.elf
-#usr/share/qemu/opensbi-riscv64-generic-fw_dynamic.bin
-#usr/share/qemu/opensbi-riscv64-generic-fw_dynamic.elf
+usr/share/qemu/opensbi-riscv64-generic-fw_dynamic.bin
+usr/share/qemu/opensbi-riscv64-generic-fw_dynamic.elf
 #usr/share/qemu/palcode-clipper
 #usr/share/qemu/petalogix-ml605.dtb
 #usr/share/qemu/petalogix-s3adsp1800.dtb

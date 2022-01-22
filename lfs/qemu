@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -32,9 +32,8 @@ DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = x86_64
 PROG       = qemu
-PAK_VER    = 31
+PAK_VER    = 32
 
 DEPS       = libusbredir spice libseccomp
 
@@ -42,10 +41,12 @@ TARGETS    = \
 	i386-linux-user \
 	x86_64-linux-user \
 	arm-linux-user \
+	aarch64-linux-user \
 	riscv64-linux-user \
 	i386-softmmu \
 	x86_64-softmmu \
 	arm-softmmu \
+	aarch64-softmmu \
 	riscv64-softmmu
 
 ###############################################################################

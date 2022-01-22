@@ -27,7 +27,6 @@ include Config
 VER        = 6.1.0
 THISAPP    = qemu-ga-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = x86_64
 PROG       = qemu-ga
 PAK_VER    = 1
 
