@@ -24,8 +24,8 @@
 #usr/include/libyang/tree_schema.h
 #usr/include/libyang/version.h
 #usr/lib/libyang.so
-#usr/lib/libyang.so.2
-#usr/lib/libyang.so.2.1.4
+usr/lib/libyang.so.2
+usr/lib/libyang.so.2.1.4
 #usr/lib/pkgconfig
 #usr/lib/pkgconfig/libyang.pc
 #usr/share/man/man1/yanglint.1
