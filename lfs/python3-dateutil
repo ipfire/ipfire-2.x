@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.8.1
+VER        = 2.8.2
 
 THISAPP    = python-dateutil-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-dateutil
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = 
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f2a1d4b680b297b367a974664ca3a4f6
+$(DL_FILE)_MD5 = 5970010bb72452344df3d76a10281b65
 
 install : $(TARGET)
 
