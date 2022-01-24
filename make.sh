@@ -1609,7 +1609,11 @@ buildipfire() {
   lfsmake2 wireless-regdb
   lfsmake2 libsolv
   lfsmake2 ddns
+  lfsmake2 python3-toml
+  lfsmake2 python3-pyproject2setuppy
+  lfsmake2 python3-tomli
   lfsmake2 python3-setuptools-scm
+  lfsmake2 python3-packaging
   lfsmake2 python3-six
   lfsmake2 python3-dateutil
   lfsmake2 python3-jmespath
@@ -1620,7 +1624,6 @@ buildipfire() {
   lfsmake2 python3-pyasn1
   lfsmake2 python3-urllib3
   lfsmake2 python3-botocore
-  lfsmake2 python3-msgpack
   lfsmake2 aws-cli
   lfsmake2 transmission
   lfsmake2 mtr
