@@ -65,6 +65,11 @@ case "${ACTION}" in
 				exit 0
 				;;
 
+			# Ignore IMQ/IFB
+			imq*,*|ifb*,*)
+				exit 0
+				;;
+
 			# Handle dial-up connections on RED
 			ppp*,512)
 				args+=( "cake" "internet" "conservative" "ack-filter" )
