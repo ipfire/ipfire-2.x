@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 58.0.4
+VER        = 59.5.0
 
 THISAPP    = setuptools-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 17245af34e1a7d54976bca8c1bf092b7
+$(DL_FILE)_MD5 = 53964c1b60bc9a8b077983d276fe08c7
 
 install : $(TARGET)
 
@@ -54,7 +54,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
