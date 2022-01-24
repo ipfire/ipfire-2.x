@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.13
+VER        = 6.0
 
 THISAPP    = PyYAML-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-yaml
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = b78b96636d68ac581c0e2f38158c224f
+$(DL_FILE)_MD5 = 1d19c798f25e58e3e582f0f8c977dbb8
 
 install : $(TARGET)
 
