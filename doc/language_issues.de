@@ -153,6 +153,7 @@ WARNING: translation string unused: class in use
 WARNING: translation string unused: clear cache
 WARNING: translation string unused: client
 WARNING: translation string unused: comment
+WARNING: translation string unused: community rules
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
 WARNING: translation string unused: connect the modem
@@ -263,6 +264,8 @@ WARNING: translation string unused: email subject
 WARNING: translation string unused: email success
 WARNING: translation string unused: email text
 WARNING: translation string unused: emailreportlevel
+WARNING: translation string unused: emerging pro rules
+WARNING: translation string unused: emerging rules
 WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enable wildcards
 WARNING: translation string unused: enabledtitle
@@ -379,6 +382,8 @@ WARNING: translation string unused: ibod for dual isdn only
 WARNING: translation string unused: icmp selected but no type
 WARNING: translation string unused: icmp type
 WARNING: translation string unused: id
+WARNING: translation string unused: ids oinkcode required
+WARNING: translation string unused: ids rules update
 WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
@@ -401,6 +406,7 @@ WARNING: translation string unused: intrusion prevention system
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
 WARNING: translation string unused: invalid downlink speed
+WARNING: translation string unused: invalid input for oink code
 WARNING: translation string unused: invalid loaded file
 WARNING: translation string unused: invalid md5sum
 WARNING: translation string unused: invalid port list
@@ -629,7 +635,9 @@ WARNING: translation string unused: reboot question
 WARNING: translation string unused: reboot schedule
 WARNING: translation string unused: reboot sure
 WARNING: translation string unused: refresh update list
+WARNING: translation string unused: registered user rules
 WARNING: translation string unused: released
+WARNING: translation string unused: reload
 WARNING: translation string unused: removable device advice
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: reportlevel
@@ -712,6 +720,7 @@ WARNING: translation string unused: subject test
 WARNING: translation string unused: subject warn
 WARNING: translation string unused: subnet
 WARNING: translation string unused: subnet is invalid
+WARNING: translation string unused: subscripted user rules
 WARNING: translation string unused: successfully refreshed updates list
 WARNING: translation string unused: system graphs
 WARNING: translation string unused: system has hwrng
@@ -776,6 +785,7 @@ WARNING: translation string unused: unix charset
 WARNING: translation string unused: unix group
 WARNING: translation string unused: unix password sync
 WARNING: translation string unused: unix shell
+WARNING: translation string unused: update ruleset
 WARNING: translation string unused: update transcript
 WARNING: translation string unused: updatedatabase
 WARNING: translation string unused: updates
@@ -907,6 +917,8 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
+WARNING: untranslated string: ids subscription code required = The selected ruleset requires a subscription code
+WARNING: untranslated string: invalid input for subscription code = Invalid input for subscription code
 WARNING: untranslated string: ipsec dns server address is invalid = Invalid DNS server IP address(es)
 WARNING: untranslated string: ipsec invalid ip address or fqdn for rw endpoint = Invalid IP address or FQDN for Host-to-Net Endpoint
 WARNING: untranslated string: ipsec roadwarrior endpoint = Host-to-Net Endpoint
@@ -923,6 +935,7 @@ WARNING: untranslated string: samba server role member = Domain Member
 WARNING: untranslated string: samba server role standalone = Standalone
 WARNING: untranslated string: show tls-auth key = Show tls-auth key
 WARNING: untranslated string: smb daemon = SMB Daemon
+WARNING: untranslated string: subscription code = Subscription code
 WARNING: untranslated string: user management = User Management
 WARNING: untranslated string: winbind daemon = Winbind Daemon
 WARNING: untranslated string: wlan client encryption wpa3 = WPA3

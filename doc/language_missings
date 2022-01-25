@@ -54,7 +54,9 @@
 < error the to date has to be later than the from date
 < g.dtm
 < g.lite
+< ids subscription code required
 < insert removable device
+< invalid input for subscription code
 < ipsec dns server address is invalid
 < ipsec invalid ip address or fqdn for rw endpoint
 < ipsec roadwarrior endpoint
@@ -73,6 +75,7 @@
 < show lines
 < show tls-auth key
 < smb daemon
+< subscription code
 < teovpn_fragment
 < tor bridge enabled
 < tor errmsg invalid node id
@@ -269,7 +272,9 @@
 < drop action1
 < drop action2
 < drop forward
+< drop hostile
 < drop outgoing
+< drop spoofed martians
 < duration
 < eight hours
 < email config
@@ -528,6 +533,7 @@
 < fwhost used
 < fwhost welcome
 < fwhost wo subnet
+< fw red
 < fw settings
 < fw settings color
 < fw settings dropdown
@@ -540,22 +546,35 @@
 < guardian
 < hardware support
 < hardware vulnerabilities
+< hostile networks
+< ids add provider
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
+< ids autoupdates
+< ids could not add provider
+< ids customize ruleset
 < ids download new ruleset
 < ids enable
+< ids enable automatic updates
+< ids force ruleset update
 < ids hide
 < ids ignored hosts
 < ids log hits
 < ids monitored interfaces
 < ids monitor traffic only
+< ids no enabled ruleset provider
 < ids no network zone
-< ids no ruleset available
-< ids oinkcode required
+< ids provider
+< ids provider settings
+< ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset settings
 < ids show
+< ids subscription code required
+< ids the choosen provider is already in use
+< ids unable to download the ruleset
+< ids visit provider website
 < ids working
 < imei
 < imsi
@@ -573,6 +592,7 @@
 < invalid input for interface mtu
 < invalid input for local ip address
 < invalid input for mode
+< invalid input for subscription code
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
@@ -712,7 +732,10 @@
 < ovpn warning rfc3280
 < p2p block
 < p2p block save notice
+< pakfire finished
+< pakfire finished error
 < pakfire invalid tree
+< pakfire return
 < pakfire tree
 < pakfire tree stable
 < pakfire tree testing
@@ -758,6 +781,7 @@
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
+< spoofed or martians
 < srbds
 < ssh
 < ssh active sessions
@@ -769,6 +793,7 @@
 < static routes
 < strict
 < subnet mask
+< subscription code
 < support donation
 < system has hwrng
 < system has rdrand
@@ -985,14 +1010,38 @@
 < cake profile pppoe-ptm 27
 < cake profile pppoe-vcmux 32
 < cake profile raw 0
+< drop hostile
+< drop spoofed martians
 < eol architecture warning
 < false max bandwidth
 < false min bandwidth
+< fw red
 < g.dtm
 < g.lite
 < guaranteed bandwidth
+< hostile networks
+< ids add provider
+< ids autoupdates
+< ids could not add provider
+< ids customize ruleset
+< ids enable automatic updates
+< ids force ruleset update
+< ids no enabled ruleset provider
+< ids provider
+< ids provider settings
+< ids reset provider
+< ids subscription code required
+< ids the choosen provider is already in use
+< ids unable to download the ruleset
+< ids visit provider website
+< invalid input for subscription code
 < link-layer encapsulation
 < max bandwidth
+< pakfire finished
+< pakfire finished error
+< pakfire return
+< spoofed or martians
+< subscription code
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -1135,6 +1184,8 @@
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
 < download apple profile
+< drop hostile
+< drop spoofed martians
 < duration
 < eight hours
 < email config
@@ -1189,26 +1240,40 @@
 < fwhost cust locationgroup
 < fwhost cust locationlocation
 < fwhost newlocationgrp
+< fw red
 < generate ptr
 < guaranteed bandwidth
 < guardian
 < hardware vulnerabilities
+< hostile networks
+< ids add provider
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
+< ids autoupdates
+< ids could not add provider
+< ids customize ruleset
 < ids download new ruleset
 < ids enable
+< ids enable automatic updates
+< ids force ruleset update
 < ids hide
 < ids ignored hosts
 < ids log hits
 < ids monitored interfaces
 < ids monitor traffic only
+< ids no enabled ruleset provider
 < ids no network zone
-< ids no ruleset available
-< ids oinkcode required
+< ids provider
+< ids provider settings
+< ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset settings
 < ids show
+< ids subscription code required
+< ids the choosen provider is already in use
+< ids unable to download the ruleset
+< ids visit provider website
 < ids working
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
@@ -1220,6 +1285,7 @@
 < invalid input for interface mtu
 < invalid input for local ip address
 < invalid input for mode
+< invalid input for subscription code
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
@@ -1284,7 +1350,10 @@
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
+< pakfire finished
+< pakfire finished error
 < pakfire invalid tree
+< pakfire return
 < pakfire tree
 < pakfire tree stable
 < pakfire tree testing
@@ -1315,6 +1384,7 @@
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
+< spoofed or martians
 < srbds
 < ssh active sessions
 < ssh agent forwarding
@@ -1324,6 +1394,7 @@
 < standard
 < strict
 < subnet mask
+< subscription code
 < system is offline
 < taa zombieload2
 < tcp more reliable
@@ -1571,7 +1642,9 @@
 < download apple profile
 < download dh parameter
 < download tls-auth key
+< drop hostile
 < drop outgoing
+< drop spoofed martians
 < duration
 < eight hours
 < email config
@@ -1627,27 +1700,41 @@
 < fwhost cust locationgroup
 < fwhost cust locationlocation
 < fwhost newlocationgrp
+< fw red
 < gen dh
 < generate dh key
 < generate ptr
 < guardian
 < hardware vulnerabilities
+< hostile networks
+< ids add provider
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
+< ids autoupdates
+< ids could not add provider
+< ids customize ruleset
 < ids download new ruleset
 < ids enable
+< ids enable automatic updates
+< ids force ruleset update
 < ids hide
 < ids ignored hosts
 < ids log hits
 < ids monitored interfaces
 < ids monitor traffic only
+< ids no enabled ruleset provider
 < ids no network zone
-< ids no ruleset available
-< ids oinkcode required
+< ids provider
+< ids provider settings
+< ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset settings
 < ids show
+< ids subscription code required
+< ids the choosen provider is already in use
+< ids unable to download the ruleset
+< ids visit provider website
 < ids working
 < imei
 < imsi
@@ -1661,6 +1748,7 @@
 < invalid input for interface mtu
 < invalid input for local ip address
 < invalid input for mode
+< invalid input for subscription code
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
@@ -1751,7 +1839,10 @@
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
+< pakfire finished
+< pakfire finished error
 < pakfire invalid tree
+< pakfire return
 < pakfire tree
 < pakfire tree stable
 < pakfire tree testing
@@ -1787,6 +1878,7 @@
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
+< spoofed or martians
 < srbds
 < ssh active sessions
 < ssh agent forwarding
@@ -1796,6 +1888,7 @@
 < standard
 < strict
 < subnet mask
+< subscription code
 < system is offline
 < taa zombieload2
 < ta key
@@ -2127,7 +2220,9 @@
 < drop action1
 < drop action2
 < drop forward
+< drop hostile
 < drop outgoing
+< drop spoofed martians
 < duration
 < eight hours
 < email config
@@ -2378,6 +2473,7 @@
 < fwhost used
 < fwhost welcome
 < fwhost wo subnet
+< fw red
 < fw settings
 < fw settings color
 < fw settings dropdown
@@ -2390,22 +2486,35 @@
 < guardian
 < hardware support
 < hardware vulnerabilities
+< hostile networks
+< ids add provider
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
+< ids autoupdates
+< ids could not add provider
+< ids customize ruleset
 < ids download new ruleset
 < ids enable
+< ids enable automatic updates
+< ids force ruleset update
 < ids hide
 < ids ignored hosts
 < ids log hits
 < ids monitored interfaces
 < ids monitor traffic only
+< ids no enabled ruleset provider
 < ids no network zone
-< ids no ruleset available
-< ids oinkcode required
+< ids provider
+< ids provider settings
+< ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset settings
 < ids show
+< ids subscription code required
+< ids the choosen provider is already in use
+< ids unable to download the ruleset
+< ids visit provider website
 < ids working
 < imei
 < imsi
@@ -2423,6 +2532,7 @@
 < invalid input for interface mtu
 < invalid input for local ip address
 < invalid input for mode
+< invalid input for subscription code
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
@@ -2558,7 +2668,10 @@
 < ovpn warning rfc3280
 < p2p block
 < p2p block save notice
+< pakfire finished
+< pakfire finished error
 < pakfire invalid tree
+< pakfire return
 < pakfire tree
 < pakfire tree stable
 < pakfire tree testing
@@ -2603,6 +2716,7 @@
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
+< spoofed or martians
 < srbds
 < ssh
 < ssh active sessions
@@ -2614,6 +2728,7 @@
 < static routes
 < strict
 < subnet mask
+< subscription code
 < support donation
 < system has hwrng
 < system has rdrand
@@ -3047,7 +3162,9 @@
 < drop action1
 < drop action2
 < drop forward
+< drop hostile
 < drop outgoing
+< drop spoofed martians
 < duration
 < Edit an existing route
 < eight hours
@@ -3300,6 +3417,7 @@
 < fwhost used
 < fwhost welcome
 < fwhost wo subnet
+< fw red
 < fw settings
 < fw settings color
 < fw settings dropdown
@@ -3312,23 +3430,36 @@
 < guardian
 < hardware support
 < hardware vulnerabilities
+< hostile networks
 < hour-graph
+< ids add provider
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
+< ids autoupdates
+< ids could not add provider
+< ids customize ruleset
 < ids download new ruleset
 < ids enable
+< ids enable automatic updates
+< ids force ruleset update
 < ids hide
 < ids ignored hosts
 < ids log hits
 < ids monitored interfaces
 < ids monitor traffic only
+< ids no enabled ruleset provider
 < ids no network zone
-< ids no ruleset available
-< ids oinkcode required
+< ids provider
+< ids provider settings
+< ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset settings
 < ids show
+< ids subscription code required
+< ids the choosen provider is already in use
+< ids unable to download the ruleset
+< ids visit provider website
 < ids working
 < imei
 < imsi
@@ -3347,6 +3478,7 @@
 < invalid input for interface mtu
 < invalid input for local ip address
 < invalid input for mode
+< invalid input for subscription code
 < invalid input for valid till days
 < invalid ip or hostname
 < invalid logserver protocol
@@ -3480,7 +3612,10 @@
 < ovpn warning rfc3280
 < p2p block
 < p2p block save notice
+< pakfire finished
+< pakfire finished error
 < pakfire invalid tree
+< pakfire return
 < pakfire tree
 < pakfire tree stable
 < pakfire tree testing
@@ -3525,6 +3660,7 @@
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
+< spoofed or martians
 < srbds
 < ssh
 < ssh active sessions
@@ -3536,6 +3672,7 @@
 < static routes
 < strict
 < subnet mask
+< subscription code
 < support donation
 < system has hwrng
 < system has rdrand
@@ -3803,6 +3940,8 @@
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
 < download apple profile
+< drop hostile
+< drop spoofed martians
 < duration
 < email tls explicit
 < email tls implicit
@@ -3816,24 +3955,38 @@
 < force enable
 < foreshadow
 < fwdfw all subnets
+< fw red
 < generate ptr
 < hardware vulnerabilities
+< hostile networks
+< ids add provider
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
+< ids autoupdates
+< ids could not add provider
+< ids customize ruleset
 < ids download new ruleset
 < ids enable
+< ids enable automatic updates
+< ids force ruleset update
 < ids hide
 < ids ignored hosts
 < ids log hits
 < ids monitored interfaces
 < ids monitor traffic only
+< ids no enabled ruleset provider
 < ids no network zone
-< ids no ruleset available
-< ids oinkcode required
+< ids provider
+< ids provider settings
+< ids reset provider
 < ids ruleset autoupdate in progress
 < ids ruleset settings
 < ids show
+< ids subscription code required
+< ids the choosen provider is already in use
+< ids unable to download the ruleset
+< ids visit provider website
 < ids working
 < interface mode
 < intrusion prevention system
@@ -3842,6 +3995,7 @@
 < invalid input for interface mtu
 < invalid input for local ip address
 < invalid input for mode
+< invalid input for subscription code
 < invalid ip or hostname
 < ip basic info
 < ip info for
@@ -3876,7 +4030,10 @@
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
+< pakfire finished
+< pakfire finished error
 < pakfire invalid tree
+< pakfire return
 < pakfire tree
 < pakfire tree stable
 < pakfire tree testing
@@ -3899,6 +4056,7 @@
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
+< spoofed or martians
 < srbds
 < ssh active sessions
 < ssh agent forwarding
@@ -3908,6 +4066,7 @@
 < standard
 < strict
 < subnet mask
+< subscription code
 < system is offline
 < taa zombieload2
 < token
