@@ -4,6 +4,7 @@ etc/rc.d/init.d/squid
 etc/suricata/suricata.yaml
 etc/sysctl.conf
 srv/web/ipfire/cgi-bin/ids.cgi
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/html/include/pakfire.js
