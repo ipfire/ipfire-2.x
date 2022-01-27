@@ -1129,6 +1129,7 @@ buildbase() {
 	lfsmake2 util-linux
 	lfsmake2 vim
 	lfsmake2 e2fsprogs
+	lfsmake2 jq
 }
 
 buildipfire() {

@@ -1,0 +1,14 @@
+usr/bin/jq
+#usr/include/jq.h
+#usr/include/jv.h
+#usr/lib/libjq.a
+#usr/lib/libjq.la
+#usr/lib/libjq.so
+usr/lib/libjq.so.1
+usr/lib/libjq.so.1.0.4
+#usr/share/doc/jq
+#usr/share/doc/jq/AUTHORS
+#usr/share/doc/jq/COPYING
+#usr/share/doc/jq/README
+#usr/share/doc/jq/README.md
+#usr/share/man/man1/jq.1
