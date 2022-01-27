@@ -170,7 +170,6 @@ configure_build() {
 			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
 			BUILD_PLATFORM="arm"
 			CFLAGS_ARCH="-march=armv6zk+fp -mfpu=vfp -mfloat-abi=softfp -fomit-frame-pointer"
-			#RUSTFLAGS="-Ccodegen-units=1"
 			;;
 
 		riscv64)
@@ -204,6 +203,8 @@ configure_build() {
 
 	CFLAGS="-O2 -pipe -Wall -fexceptions -fPIC ${CFLAGS_ARCH}"
 	CXXFLAGS="${CFLAGS}"
+
+	RUSTFLAGS="-Copt-level=3 -Clink-arg=-Wl,-z,relro,-z,now -Ccodegen-units=1 --cap-lints=warn ${RUSTFLAGS_ARCH}"
 
 	# Determine parallelism
 	# We assume that each process consumes about
