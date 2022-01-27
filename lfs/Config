@@ -34,6 +34,18 @@
 unexport BUILD_ARCH BUILD_PLATFORM BUILDTARGET CROSSTARGET TOOLCHAIN TOOLS_DIR
 unexport XZ_OPT
 
+# Basic Variables
+EMPTY :=
+COMMA := ,
+SPACE := $(EMPTY) $(EMPTY)
+define NEWLINE
+
+
+endef
+
+# Basic Functions
+join-with	= $(subst $(SPACE),$(1),$(strip $(2)))
+
 PARALLELISM = $(shell echo $$( \
 	if [ -n "$(MAX_PARALLELISM)" ] && [ $(MAX_PARALLELISM) -lt 1 ]; then \
 		echo 1 ; \
@@ -140,7 +152,71 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 endif
 
 # Rust
-export CARGOPATH = $(HOME)/.cargo
+CARGO_PATH     = $(DIR_APP)/.cargo
+CARGO_REGISTRY = /usr/share/cargo/registry
+
+CRATE_NAME = $(patsubst rust-%,%,$(firstword $(MAKEFILE_LIST)))
+CRATE_VER  = $(VER)
+CRATE_PATH = $(CARGO_REGISTRY)/$(CRATE_NAME)-$(CRATE_VER)
+
+define CARGO_CONFIG
+[build]
+rustflags = [$(call join-with,$(COMMA)$(SPACE),$(foreach flag,$(RUSTFLAGS),"$(flag)"))]
+
+[env]
+CFLAGS = "$(CFLAGS)"
+CXXFLAGS = "$(CXXFLAGS)"
+LDFLAGS = "$(LDFLAGS)"
+
+[term]
+verbose = true
+
+[source]
+
+[source.local-registry]
+directory = "$(CARGO_REGISTRY)"
+
+[source.crates-io]
+registry = "https://crates.io"
+replace-with = "local-registry"
+endef
+export CARGO_CONFIG
+
+CARGO = \
+	CARGOPATH=$(CARGO_PATH) \
+	cargo
+
+define CARGO_PREPARE
+	mkdir -p $(CARGO_PATH) && \
+	echo "$${CARGO_CONFIG}" > $(CARGO_PATH)/config && \
+	rm -f Cargo.lock
+endef
+
+CARGO_BUILD = \
+	$(CARGO) \
+	build \
+	$(MAKETUNING) \
+	--release
+
+# Checks whether this crate has a right taregt
+CARGO_TARGET_CHECK = cargo metadata --format-version 1 | \
+	jq -e ".packages[].targets[].kind | any(. == \"$(1)\")" | grep -q "true"
+
+define CARGO_INSTALL
+	mkdir -pv "$(CRATE_PATH)" && \
+	if $(call CARGO_TARGET_CHECK,lib); then \
+		awk \
+			'/^\\\[((.+\\\.)?((dev|build)-)?dependencies|features)/{f=1;next} /^\\\[/{f=0}; !f' \
+			< Cargo.toml > Cargo.toml.deps && \
+		$(CARGO) package -l | grep -wEv "Cargo.(lock|toml.orig)" \
+			| xargs -d "\n" cp --parents -a -t $(CRATE_PATH) && \
+		install -v -m 644 Cargo.toml.deps $(CRATE_PATH)/Cargo.toml && \
+		echo "{\"files\":{},\"package\":\"\"}" > $(CRATE_PATH)/.cargo-checksum.json; \
+	fi && \
+	if $(call CARGO_TARGET_CHECK,bin); then \
+		$(CARGO) install --no-track --path .; \
+	fi
+endef
 
 ###############################################################################
 # Common Macro Definitions
@@ -183,7 +259,7 @@ define POSTBUILD
 	@echo "Updating linker cache..."
 	@type -p ldconfig >/dev/null && ldconfig || :
 	@echo "Install done; saving file list to $(TARGET) ..."
-	@rm -rf $(GOPATH) $(CARGOPATH)
+	@rm -rf $(GOPATH)
 	@$(FIND_FILES) > $(DIR_SRC)/lsalrnew
 	@diff $(DIR_SRC)/lsalr $(DIR_SRC)/lsalrnew | grep '^> ' | sed 's/^> //' > $(TARGET)_diff
 	@cp -f $(DIR_SRC)/lsalrnew $(DIR_SRC)/lsalr

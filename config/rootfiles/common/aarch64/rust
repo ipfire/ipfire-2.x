@@ -64,6 +64,7 @@
 #usr/lib/rustlib/rust-installer-version
 #usr/lib/rustlib/uninstall.sh
 #usr/libexec/cargo-credential-1password
+#usr/share/cargo/registry
 #usr/share/doc/cargo
 #usr/share/doc/cargo/LICENSE-APACHE
 #usr/share/doc/cargo/LICENSE-MIT

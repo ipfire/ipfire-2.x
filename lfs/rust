@@ -90,5 +90,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Remove LLVM tools
 	rm -vf /usr/lib/rustlib/$(RUST_BOOTSTRAP)/bin/rust-ll{d,vm-dwp}
 
+	# Create local registry
+	mkdir -pv $(CARGO_REGISTRY)
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

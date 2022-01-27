@@ -62,6 +62,7 @@
 #usr/lib/rustlib/x86_64-unknown-linux-gnu/lib/libunicode_width-ca628c5eca5e5caf.rlib
 #usr/lib/rustlib/x86_64-unknown-linux-gnu/lib/libunwind-5c4d6c9d7595f844.rlib
 #usr/libexec/cargo-credential-1password
+#usr/share/cargo/registry
 #usr/share/doc/cargo
 #usr/share/doc/cargo/LICENSE-APACHE
 #usr/share/doc/cargo/LICENSE-MIT
