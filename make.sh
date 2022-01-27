@@ -1216,6 +1216,7 @@ buildipfire() {
   lfsmake2 libffi
   lfsmake2 python3
   lfsmake2 rust
+  lfsmake2 rust-dissimilar
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
