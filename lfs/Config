@@ -184,7 +184,13 @@ export CARGO_CONFIG
 
 CARGO = \
 	CARGOPATH=$(CARGO_PATH) \
-	cargo
+	RUSTC_BOOTSTRAP=1 \
+	cargo \
+	--offline
+
+CARGO_OPTIONS = \
+	$(MAKETUNING) \
+	-Z avoid-dev-deps
 
 define CARGO_PREPARE
 	mkdir -p $(CARGO_PATH) && \
@@ -195,11 +201,11 @@ endef
 CARGO_BUILD = \
 	$(CARGO) \
 	build \
-	$(MAKETUNING) \
-	--release
+	--release \
+	$(CARGO_OPTIONS)
 
 # Checks whether this crate has a right taregt
-CARGO_TARGET_CHECK = cargo metadata --format-version 1 | \
+CARGO_TARGET_CHECK = $(CARGO) metadata --format-version 1 --no-deps | \
 	jq -e ".packages[].targets[].kind | any(. == \"$(1)\")" | grep -q "true"
 
 define CARGO_INSTALL
@@ -214,7 +220,7 @@ define CARGO_INSTALL
 		echo "{\"files\":{},\"package\":\"\"}" > $(CRATE_PATH)/.cargo-checksum.json; \
 	fi && \
 	if $(call CARGO_TARGET_CHECK,bin); then \
-		$(CARGO) install --no-track --path .; \
+		$(CARGO) install $(CARGO_OPTIONS) --no-track --path .; \
 	fi
 endef
 
