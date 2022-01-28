@@ -8061,6 +8061,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/FUTEX_PI
 #lib/modules/KVER-ipfire/build/include/config/FWNODE_MDIO
 #lib/modules/KVER-ipfire/build/include/config/FW_LOADER
+#lib/modules/KVER-ipfire/build/include/config/FW_LOADER_COMPRESS
 #lib/modules/KVER-ipfire/build/include/config/FW_LOADER_PAGED_BUF
 #lib/modules/KVER-ipfire/build/include/config/FW_LOADER_USER_HELPER
 #lib/modules/KVER-ipfire/build/include/config/GACT_PROB
