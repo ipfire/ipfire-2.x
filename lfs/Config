@@ -213,7 +213,7 @@ CARGO_TARGET_CHECK = $(CARGO) metadata --format-version 1 --no-deps | \
 
 define CARGO_INSTALL
 	mkdir -pv "$(CRATE_PATH)" && \
-	if $(call CARGO_TARGET_CHECK,lib); then \
+	if $(call CARGO_TARGET_CHECK,lib) || $(call CARGO_TARGET_CHECK,rlib) || $(call CARGO_TARGET_CHECK,proc-macro); then \
 		awk \
 			'/^\\\[((.+\\\.)?((dev|build)-)?dependencies|features)/{f=1;next} /^\\\[/{f=0}; !f' \
 			< Cargo.toml > Cargo.toml.deps && \
