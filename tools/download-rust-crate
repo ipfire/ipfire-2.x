@@ -1,0 +1,82 @@
+#!/bin/bash
+
+set -o pipefail
+
+RUST_TEMPLATE="lfs/rust-rand"
+
+fetch_latest_version() {
+	local name="${1}"
+
+	if ! curl --silent "https://crates.io/api/v1/crates/${name}" | \
+			jq --raw-output .crate.max_stable_version; then
+		echo "${0}: Could not find the latest stable version of ${name}" >&2
+		return 1
+	fi
+}
+
+main() {
+	local name="${1}"
+	local version="${2}"
+
+	if [ -z "${name}" ]; then
+		echo "${0}: You need to pass a name of a crate" >&2
+		return 2
+	fi
+
+	if [ -z "${version}" ]; then
+		version="$(fetch_latest_version "${name}")"
+		if [ -z "${version}" ]; then
+			# error message has already been printed
+			return 1
+		fi
+	fi
+
+	# Compose download URL
+	local url="https://crates.io/api/v1/crates/${name}/${version}/download"
+	local download="$(mktemp)"
+
+	# Perform download
+	if ! curl -L "${url}" -o "${download}"; then
+		echo "${0}: Could not download ${name}-${version}" >&2
+		unlink "${download}"
+		return 1
+	fi
+
+	# Check if download is an orderly tar file
+	if ! tar tvf "${download}" &>/dev/null; then
+		echo "${0}: Download is not a tar file" >&2
+		unlink "${download}"
+		return 1
+	fi
+
+	# Hash the downloaded file
+	local md5sum="$(md5sum "${download}" | awk '{ print $1 }')"
+	if [ -z "${md5sum}" ]; then
+		echo "${0}: Could not hash download" >&2
+		unlink "${download}"
+		return 1
+	fi
+
+	local filename="cache/${name}-${version}.tar.gz"
+
+	# Move to final destination
+	if ! install -m 644 "${download}" "${filename}"; then
+		echo "${0}: Could not move downloaded file to ${filename}" >&2
+		unlink "${download}"
+		return 1
+	fi
+
+	# Remove download
+	unlink "${download}"
+
+	# Create a new LFS file
+	sed < "${RUST_TEMPLATE}" > "lfs/rust-${name}" \
+		-e "s/^VER.*/VER        = ${version}/" \
+		-e "s/^THISAPP.*/THISAPP    = ${name}-\$(VER)/" \
+		-e "s/^\$(DL_FILE)_MD5.*/\$(DL_FILE)_MD5 = ${md5sum}/"
+
+	echo "Done"
+	return 0
+}
+
+main "$@" || exit $?
