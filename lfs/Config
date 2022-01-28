@@ -182,6 +182,9 @@ replace-with = "local-registry"
 endef
 export CARGO_CONFIG
 
+# Set to false if you want to skip the binary install step
+CARGO_HAS_BIN = true
+
 CARGO = \
 	CARGOPATH=$(CARGO_PATH) \
 	RUSTC_BOOTSTRAP=1 \
@@ -219,7 +222,7 @@ define CARGO_INSTALL
 		install -v -m 644 Cargo.toml.deps $(CRATE_PATH)/Cargo.toml && \
 		echo "{\"files\":{},\"package\":\"\"}" > $(CRATE_PATH)/.cargo-checksum.json; \
 	fi && \
-	if $(call CARGO_TARGET_CHECK,bin); then \
+	if $(CARGO_HAS_BIN) && $(call CARGO_TARGET_CHECK,bin); then \
 		$(CARGO) install $(CARGO_OPTIONS) --no-track --path .; \
 	fi
 endef
