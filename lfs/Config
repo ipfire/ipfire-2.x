@@ -152,6 +152,14 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 endif
 
 # Rust
+RUST_ARCH  = $(BUILD_ARCH)
+
+ifeq "$(BUILD_ARCH)" "armv6l"
+	RUST_PLATFORM = arm-unknown-linux-gnueabi
+else
+	RUST_PLATFORM = $(RUST_ARCH)-unknown-linux-gnu
+endif
+
 CARGO_PATH     = $(DIR_APP)/.cargo
 CARGO_REGISTRY = /usr/share/cargo/registry
 

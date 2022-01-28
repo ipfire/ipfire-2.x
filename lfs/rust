@@ -24,22 +24,16 @@
 
 include Config
 
-VER        = 1.51.0
+VER        = 2022-01-27
 
-THISAPP    = rust-$(VER)
-DL_FILE    = $(THISAPP)-$(RUST_BOOTSTRAP).tar.gz
+# From https://static.rust-lang.org/dist/2022-01-27/
+
+THISAPP    = rust-nightly-$(VER)
+DL_FILE    = $(THISAPP)-$(RUST_PLATFORM).tar.xz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)-$(RUST_BOOTSTRAP)
+DIR_APP    = $(DIR_SRC)/rust-nightly-$(RUST_PLATFORM)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = x86_64 aarch64 armv6l
-
-RUST_ARCH  = $(BUILD_ARCH)
-
-ifeq "$(BUILD_ARCH)" "armv6l"
-	RUST_BOOTSTRAP = arm-unknown-linux-gnueabi
-else
-	RUST_BOOTSTRAP = $(RUST_ARCH)-unknown-linux-gnu
-endif
 
 ###############################################################################
 # Top-level Rules
@@ -49,9 +43,9 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(THISAPP)-x86_64-unknown-linux-gnu.tar.gz_MD5 =  efc4d147e25918e60678a69fcaf67b55
-$(THISAPP)-aarch64-unknown-linux-gnu.tar.gz_MD5 = e85e1758b9770bae16c253825e2ecf9c
-$(THISAPP)-arm-unknown-linux-gnueabi.tar.gz_MD5 = da4fa1b2bd21dc6d2d7e791d8faaa3eb
+$(THISAPP)-x86_64-unknown-linux-gnu.tar.xz_MD5 =  42ae351e32e3d570c2c1612c9a9037ee
+$(THISAPP)-aarch64-unknown-linux-gnu.tar.xz_MD5 = 70504d2ad8ec793672d54c64e5c74593
+$(THISAPP)-arm-unknown-linux-gnueabi.tar.xz_MD5 = a6dfbd26b7057260ee07c15afa325b9f
 
 install : $(TARGET)
 
@@ -80,15 +74,15 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	cd $(DIR_APP) && ./install.sh \
-		--components=cargo,rustc,rust-std-$(RUST_BOOTSTRAP) \
+		--components=cargo,rustc,rust-std-$(RUST_PLATFORM) \
 		--prefix=/usr \
 		--disable-ldconfig
 
 	# Remove LLVM tools
-	rm -vf /usr/lib/rustlib/$(RUST_BOOTSTRAP)/bin/rust-ll{d,vm-dwp}
+	rm -vf /usr/lib/rustlib/$(RUST_PLATFORM)/bin/rust-ll{d,vm-dwp}
 
 	# Create local registry
 	mkdir -pv $(CARGO_REGISTRY)
