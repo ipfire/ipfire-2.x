@@ -209,7 +209,7 @@ define CARGO_INSTALL
 			'/^\\\[((.+\\\.)?((dev|build)-)?dependencies|features)/{f=1;next} /^\\\[/{f=0}; !f' \
 			< Cargo.toml > Cargo.toml.deps && \
 		$(CARGO) package -l | grep -wEv "Cargo.(lock|toml.orig)" \
-			| xargs -d "\n" cp --parents -a -t $(CRATE_PATH) && \
+			| xargs -d "\n" cp -v --parents -a -t $(CRATE_PATH) && \
 		install -v -m 644 Cargo.toml.deps $(CRATE_PATH)/Cargo.toml && \
 		echo "{\"files\":{},\"package\":\"\"}" > $(CRATE_PATH)/.cargo-checksum.json; \
 	fi && \
