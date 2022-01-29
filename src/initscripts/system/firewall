@@ -141,8 +141,8 @@ iptables_init() {
 
 	# Log and drop any traffic from and to networks known as being hostile, posing
 	# a technical threat to our users (i. e. listed at Spamhaus DROP et al.)
+	iptables -N DROP_HOSTILE
 	if [ "$DROPHOSTILE" == "on" ]; then
-		iptables -N DROP_HOSTILE
 		iptables -A DROP_HOSTILE  -m limit --limit 10/second -j LOG  --log-prefix "DROP_HOSTILE "
 
 		iptables -A INPUT   -i $IFACE -m geoip --src-cc XD -j DROP_HOSTILE
