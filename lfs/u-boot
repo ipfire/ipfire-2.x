@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -35,17 +35,21 @@ SUP_ARCH   = armv6l aarch64
 
 CFLAGS    := $(patsubst -fstack-protector-strong,,$(CFLAGS))
 
+ATF_VER    = 2.6
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) arm-trusted-firmware-2.5.tar.gz
+objects = $(DL_FILE) arm-trusted-firmware-$(ATF_VER).tar.gz arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-arm-trusted-firmware-2.5.tar.gz = $(DL_FROM)/arm-trusted-firmware-2.5.tar.gz
+arm-trusted-firmware-$(ATF_VER).tar.gz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER).tar.gz
+arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz
 
 $(DL_FILE)_MD5 = 7afbe0ef070dc0e8e970c57a08e3f336
-arm-trusted-firmware-2.5.tar.gz_MD5 = a3c01d2a73d5171e3f1c0737ff5321d9
+arm-trusted-firmware-$(ATF_VER).tar.gz_MD5 = 2622f7077e30436b2310bea0232c7cec
+arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz_MD5 = b81fc982c982f06c439043385a5ba8ea
 
 install : $(TARGET)
 
@@ -183,20 +187,35 @@ else
 	cd $(DIR_APP) && make distclean
 
 	# Nanopi R2S
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/rockchip/generate-2-ethaddr.diff
-	cd $(DIR_APP) && rm -rf arm-trusted-firmware-2.5
-	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-2.5.tar.gz
-	cd $(DIR_APP)/arm-trusted-firmware-2.5 && make PLAT=rk3328 ARCH=aarch64 DEBUG=0 bl31
-	cd $(DIR_APP) && cp arm-trusted-firmware-2.5/build/rk3328/release/bl31/bl31.elf bl31.elf
-	cd $(DIR_APP) && rm -rf arm-trusted-firmware-2.5
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/rockchip/generate-2-ethaddr.diff
+	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
+	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 DEBUG=0 bl31
+	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/rk3328/release/bl31/bl31.elf bl31.elf
+	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	-mkdir -pv /usr/share/u-boot/nanopi_r2s
 	cd $(DIR_APP) && make CROSS_COMPILE="" nanopi-r2s-rk3328_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi R2S - IPFire.org"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200"!' .config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
+	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_MISC_INIT_R.*!# CONFIG_MISC_INIT_R is not set!' .config
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
 		/usr/share/u-boot/nanopi_r2s/u-boot-rockchip.bin
+	cd $(DIR_APP) && make distclean
+
+	# Nanopi R4S
+	# arm trusted firmware for rk3399 cannot build without cortex m0 gcc crosscompiler
+	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz
+	-mkdir -pv /usr/share/u-boot/nanopi_r4s
+	cd $(DIR_APP) && make CROSS_COMPILE="" nanopi-r4s-rk3399_config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi R4S - IPFire.org"!' .config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
+#	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_MISC_INIT_R.*!CONFIG_MISC_INIT_R=y!' .config
+	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
+		/usr/share/u-boot/nanopi_r4s/u-boot-rockchip.bin
 	cd $(DIR_APP) && make distclean
 
 endif
