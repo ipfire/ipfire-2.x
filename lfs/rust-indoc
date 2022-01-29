@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.3.6
+VER        = 1.0.3
 
 THISAPP    = indoc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2c56a546f0522e89a14f361e364d8921
+$(DL_FILE)_MD5 = c7af902de34516e8672b8d857b638136
 
 install : $(TARGET)
 
