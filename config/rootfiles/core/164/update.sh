@@ -69,32 +69,6 @@ if [ $ROOTSPACE -lt 100000 ]; then
 fi
 
 # Remove files
-rm -rvf \
-	/usr/lib/perl5/site_perl/5.32.1/Bundle/LWP.pm \
-	/usr/lib/perl5/site_perl/5.32.1/File/Listing.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTML/Form.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Cookies.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Cookies/Microsoft.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Cookies/Netscape.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Daemon.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Date.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Headers.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Headers/Auth.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Headers/ETag.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Headers/Util.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Message.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Negotiate.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Request.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Request/Common.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Response.pm \
-	/usr/lib/perl5/site_perl/5.32.1/HTTP/Status.pm \
-	/usr/lib/perl5/site_perl/5.32.1/Net/HTTP.pm \
-	/usr/lib/perl5/site_perl/5.32.1/Net/HTTP/Methods.pm \
-	/usr/lib/perl5/site_perl/5.32.1/Net/HTTP/NB.pm \
-	/usr/lib/perl5/site_perl/5.32.1/Net/HTTPS.pm \
-	/usr/lib/perl5/site_perl/5.32.1/WWW/RobotRules.pm \
-	/usr/lib/perl5/site_perl/5.32.1/WWW/RobotRules/AnyDBM_File.pm
-
 # Remove the old kernel
 rm -rf /boot/System.map-*
 rm -rf /boot/config-*
