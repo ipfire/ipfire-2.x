@@ -121,10 +121,15 @@ case "${1}" in
 		setup_netdev_trigger nanopi-r1:green:wan ${RED_DEV} tx rx
 		setup_netdev_trigger nanopi-r1:green:lan ${GREEN_DEV} tx rx
 
-		# Nanopi R1 start
+		# Nanopi R2S start
 		setup_heartbeat_trigger nanopi-r2s:red:sys
 		setup_netdev_trigger nanopi-r2s:green:wan ${RED_DEV} tx rx
 		setup_netdev_trigger nanopi-r2s:green:lan ${GREEN_DEV} tx rx
+
+		# Nanopi R4S start
+		setup_heartbeat_trigger nanopi-r4s:green:sys
+		setup_netdev_trigger nanopi-r4s:green:wan ${RED_DEV} tx rx
+		setup_netdev_trigger nanopi-r4s:green:lan ${GREEN_DEV} tx rx
 
 		exit 0
 	;;
@@ -165,6 +170,12 @@ case "${1}" in
 		enable_led nanopi-r2s:red:sys
 		disable_led_trigger nanopi-r2s:green:wan
 		disable_led_trigger nanopi-r2s:green:lan
+
+		# Nanopi R4S stop
+		disable_led_trigger nanopi-r4s:green:sys
+		enable_led nanopi-r4s:red:sys
+		disable_led_trigger nanopi-r4s:green:wan
+		disable_led_trigger nanopi-r4s:green:lan
 
 		exit 0
 	;;
