@@ -6550,6 +6550,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_826319
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_827319
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_832075
+#lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_834220
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_843419
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_845719
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_858921
@@ -7613,6 +7614,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/FUTEX_PI
 #lib/modules/KVER-ipfire/build/include/config/FWNODE_MDIO
 #lib/modules/KVER-ipfire/build/include/config/FW_LOADER
+#lib/modules/KVER-ipfire/build/include/config/FW_LOADER_COMPRESS
 #lib/modules/KVER-ipfire/build/include/config/FW_LOADER_PAGED_BUF
 #lib/modules/KVER-ipfire/build/include/config/FW_LOADER_USER_HELPER
 #lib/modules/KVER-ipfire/build/include/config/GACT_PROB
@@ -7755,6 +7757,15 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/HAVE_KCSAN_COMPILER
 #lib/modules/KVER-ipfire/build/include/config/HAVE_KPROBES
 #lib/modules/KVER-ipfire/build/include/config/HAVE_KRETPROBES
+#lib/modules/KVER-ipfire/build/include/config/HAVE_KVM_ARCH_TLB_FLUSH_ALL
+#lib/modules/KVER-ipfire/build/include/config/HAVE_KVM_CPU_RELAX_INTERCEPT
+#lib/modules/KVER-ipfire/build/include/config/HAVE_KVM_EVENTFD
+#lib/modules/KVER-ipfire/build/include/config/HAVE_KVM_IRQCHIP
+#lib/modules/KVER-ipfire/build/include/config/HAVE_KVM_IRQFD
+#lib/modules/KVER-ipfire/build/include/config/HAVE_KVM_IRQ_BYPASS
+#lib/modules/KVER-ipfire/build/include/config/HAVE_KVM_IRQ_ROUTING
+#lib/modules/KVER-ipfire/build/include/config/HAVE_KVM_MSI
+#lib/modules/KVER-ipfire/build/include/config/HAVE_KVM_VCPU_RUN_PID_CHANGE
 #lib/modules/KVER-ipfire/build/include/config/HAVE_MOD_ARCH_SPECIFIC
 #lib/modules/KVER-ipfire/build/include/config/HAVE_MOVE_PMD
 #lib/modules/KVER-ipfire/build/include/config/HAVE_MOVE_PUD
@@ -7998,6 +8009,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/INPUT_YEALINK
 #lib/modules/KVER-ipfire/build/include/config/INTEGRITY
 #lib/modules/KVER-ipfire/build/include/config/INTEL_XWAY_PHY
+#lib/modules/KVER-ipfire/build/include/config/INTERVAL_TREE
 #lib/modules/KVER-ipfire/build/include/config/IOMMU_API
 #lib/modules/KVER-ipfire/build/include/config/IOMMU_DEFAULT_DMA_STRICT
 #lib/modules/KVER-ipfire/build/include/config/IOMMU_DMA
@@ -8145,6 +8157,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/IP_VS_WLC
 #lib/modules/KVER-ipfire/build/include/config/IP_VS_WRR
 #lib/modules/KVER-ipfire/build/include/config/IRQCHIP
+#lib/modules/KVER-ipfire/build/include/config/IRQ_BYPASS_MANAGER
 #lib/modules/KVER-ipfire/build/include/config/IRQ_DOMAIN
 #lib/modules/KVER-ipfire/build/include/config/IRQ_DOMAIN_HIERARCHY
 #lib/modules/KVER-ipfire/build/include/config/IRQ_FASTEOI_HIERARCHY_HANDLERS
@@ -8215,6 +8228,11 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/KSM
 #lib/modules/KVER-ipfire/build/include/config/KSZ884X_PCI
 #lib/modules/KVER-ipfire/build/include/config/KUSER_HELPERS
+#lib/modules/KVER-ipfire/build/include/config/KVM
+#lib/modules/KVER-ipfire/build/include/config/KVM_GENERIC_DIRTYLOG_READ_PROTECT
+#lib/modules/KVER-ipfire/build/include/config/KVM_MMIO
+#lib/modules/KVER-ipfire/build/include/config/KVM_VFIO
+#lib/modules/KVER-ipfire/build/include/config/KVM_XFER_TO_GUEST_WORK
 #lib/modules/KVER-ipfire/build/include/config/L2TP
 #lib/modules/KVER-ipfire/build/include/config/L2TP_ETH
 #lib/modules/KVER-ipfire/build/include/config/L2TP_IP
@@ -8503,6 +8521,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/MMU
 #lib/modules/KVER-ipfire/build/include/config/MMU_GATHER_RCU_TABLE_FREE
 #lib/modules/KVER-ipfire/build/include/config/MMU_GATHER_TABLE_FREE
+#lib/modules/KVER-ipfire/build/include/config/MMU_NOTIFIER
 #lib/modules/KVER-ipfire/build/include/config/MODPROBE_PATH
 #lib/modules/KVER-ipfire/build/include/config/MODULES
 #lib/modules/KVER-ipfire/build/include/config/MODULES_TREE_LOOKUP
@@ -9312,6 +9331,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/PPP_SYNC_TTY
 #lib/modules/KVER-ipfire/build/include/config/PPS
 #lib/modules/KVER-ipfire/build/include/config/PPTP
+#lib/modules/KVER-ipfire/build/include/config/PREEMPT_NOTIFIERS
 #lib/modules/KVER-ipfire/build/include/config/PREEMPT_VOLUNTARY
 #lib/modules/KVER-ipfire/build/include/config/PRESTERA
 #lib/modules/KVER-ipfire/build/include/config/PRESTERA_PCI
