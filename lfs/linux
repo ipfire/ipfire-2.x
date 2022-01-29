@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 5.15.16
-ARM_PATCHES = 5.15-ipfire2
+VER         = 5.15.17
+ARM_PATCHES = 5.15-ipfire3
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -73,8 +73,8 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_MD5					= be0a904c58655c74c0986ad62500bcca
-arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= 9cab549a71b19b07e0c5c103ccf3c321
+$(DL_FILE)_MD5					= 494b21b74acf5d32d7cb80497fbff429
+arm-multi-patches-$(ARM_PATCHES).patch.xz_MD5	= f3161c7ae52eb60e76d64ae483fe1120
 
 install : $(TARGET)
 
@@ -110,7 +110,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15-layer7.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15.17-layer7.patch
 
 	# DVB Patches
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch

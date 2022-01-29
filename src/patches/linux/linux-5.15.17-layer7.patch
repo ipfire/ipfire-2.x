@@ -1,22 +1,20 @@
-diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 841e2f0f5240..636e5abedb08 100644
---- a/include/linux/skbuff.h
-+++ b/include/linux/skbuff.h
-@@ -768,6 +768,9 @@ struct sk_buff {
- 
+diff -Naur a/include/linux/skbuff.h b/include/linux/skbuff.h
+--- a/include/linux/skbuff.h	2022-01-27 10:05:44.000000000 +0000
++++ b/include/linux/skbuff.h	2022-01-29 08:04:32.984637671 +0000
+@@ -772,6 +772,9 @@
  #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
  	unsigned long		 _nfct;
-+#endif
+ #endif
 +#if defined(CONFIG_NETFILTER_XT_MATCH_LAYER7) || defined(CONFIG_NETFILTER_XT_MATCH_LAYER7_MODULE)
 +	char			layer7_flags[1];
- #endif
++#endif
  	unsigned int		len,
  				data_len;
-diff --git a/include/net/netfilter/nf_conntrack.h b/include/net/netfilter/nf_conntrack.h
-index cc663c68ddc4..55655f5ee4f2 100644
---- a/include/net/netfilter/nf_conntrack.h
-+++ b/include/net/netfilter/nf_conntrack.h
-@@ -117,6 +117,23 @@ struct nf_conn {
+ 	__u16			mac_len,
+diff -Naur a/include/net/netfilter/nf_conntrack.h b/include/net/netfilter/nf_conntrack.h
+--- a/include/net/netfilter/nf_conntrack.h	2022-01-27 10:05:44.000000000 +0000
++++ b/include/net/netfilter/nf_conntrack.h	2022-01-29 08:04:32.984637671 +0000
+@@ -117,6 +117,23 @@
  	/* Extensions */
  	struct nf_ct_ext *ext;
  
@@ -40,11 +38,9 @@ index cc663c68ddc4..55655f5ee4f2 100644
  	/* Storage reserved for other modules, must be the last member */
  	union nf_conntrack_proto proto;
  };
-diff --git a/include/uapi/linux/netfilter/xt_layer7.h b/include/uapi/linux/netfilter/xt_layer7.h
-new file mode 100644
-index 000000000000..147cd6477858
---- /dev/null
-+++ b/include/uapi/linux/netfilter/xt_layer7.h
+diff -Naur a/include/uapi/linux/netfilter/xt_layer7.h b/include/uapi/linux/netfilter/xt_layer7.h
+--- a/include/uapi/linux/netfilter/xt_layer7.h	1970-01-01 00:00:00.000000000 +0000
++++ b/include/uapi/linux/netfilter/xt_layer7.h	2022-01-29 08:04:32.984637671 +0000
 @@ -0,0 +1,13 @@
 +#ifndef _XT_LAYER7_H
 +#define _XT_LAYER7_H
@@ -59,11 +55,10 @@ index 000000000000..147cd6477858
 +};
 +
 +#endif /* _XT_LAYER7_H */
-diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index 92a747896f80..0152bdbc338e 100644
---- a/net/netfilter/Kconfig
-+++ b/net/netfilter/Kconfig
-@@ -1389,6 +1389,26 @@ config NETFILTER_XT_MATCH_L2TP
+diff -Naur a/net/netfilter/Kconfig b/net/netfilter/Kconfig
+--- a/net/netfilter/Kconfig	2022-01-27 10:05:44.000000000 +0000
++++ b/net/netfilter/Kconfig	2022-01-29 08:04:32.988637605 +0000
+@@ -1389,6 +1389,26 @@
  
  	To compile it as a module, choose M here. If unsure, say N.
  
@@ -90,11 +85,10 @@ index 92a747896f80..0152bdbc338e 100644
  config NETFILTER_XT_MATCH_LENGTH
  	tristate '"length" match support'
  	depends on NETFILTER_ADVANCED
-diff --git a/net/netfilter/Makefile b/net/netfilter/Makefile
-index aab20e575ecd..0dfd2c3df9e1 100644
---- a/net/netfilter/Makefile
-+++ b/net/netfilter/Makefile
-@@ -201,6 +201,7 @@ obj-$(CONFIG_NETFILTER_XT_MATCH_RECENT) += xt_recent.o
+diff -Naur a/net/netfilter/Makefile b/net/netfilter/Makefile
+--- a/net/netfilter/Makefile	2022-01-27 10:05:44.000000000 +0000
++++ b/net/netfilter/Makefile	2022-01-29 08:04:32.988637605 +0000
+@@ -201,6 +201,7 @@
  obj-$(CONFIG_NETFILTER_XT_MATCH_SCTP) += xt_sctp.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_SOCKET) += xt_socket.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_STATE) += xt_state.o
@@ -102,11 +96,10 @@ index aab20e575ecd..0dfd2c3df9e1 100644
  obj-$(CONFIG_NETFILTER_XT_MATCH_STATISTIC) += xt_statistic.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_STRING) += xt_string.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_TCPMSS) += xt_tcpmss.o
-diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 770a63103c7a..5951aedc010a 100644
---- a/net/netfilter/nf_conntrack_core.c
-+++ b/net/netfilter/nf_conntrack_core.c
-@@ -636,6 +636,11 @@ destroy_conntrack(struct nf_conntrack *nfct)
+diff -Naur a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
+--- a/net/netfilter/nf_conntrack_core.c	2022-01-27 10:05:44.000000000 +0000
++++ b/net/netfilter/nf_conntrack_core.c	2022-01-29 08:04:32.992637539 +0000
+@@ -636,6 +636,11 @@
  	 */
  	nf_ct_remove_expectations(ct);
  
@@ -118,11 +111,10 @@ index 770a63103c7a..5951aedc010a 100644
  	nf_ct_del_from_dying_or_unconfirmed_list(ct);
  
  	local_bh_enable();
-diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
-index 80f675d884b2..3e7c0a85bdcf 100644
---- a/net/netfilter/nf_conntrack_standalone.c
-+++ b/net/netfilter/nf_conntrack_standalone.c
-@@ -370,6 +370,11 @@ static int ct_seq_show(struct seq_file *s, void *v)
+diff -Naur a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
+--- a/net/netfilter/nf_conntrack_standalone.c	2022-01-27 10:05:44.000000000 +0000
++++ b/net/netfilter/nf_conntrack_standalone.c	2022-01-29 08:04:32.992637539 +0000
+@@ -370,6 +370,11 @@
  	ct_show_zone(s, ct, NF_CT_DEFAULT_ZONE_DIR);
  	ct_show_delta_time(s, ct);
  
@@ -134,11 +126,9 @@ index 80f675d884b2..3e7c0a85bdcf 100644
  	seq_printf(s, "use=%u\n", atomic_read(&ct->ct_general.use));
  
  	if (seq_has_overflowed(s))
-diff --git a/net/netfilter/regexp/regexp.c b/net/netfilter/regexp/regexp.c
-new file mode 100644
-index 000000000000..900698886531
---- /dev/null
-+++ b/net/netfilter/regexp/regexp.c
+diff -Naur a/net/netfilter/regexp/regexp.c b/net/netfilter/regexp/regexp.c
+--- a/net/netfilter/regexp/regexp.c	1970-01-01 00:00:00.000000000 +0000
++++ b/net/netfilter/regexp/regexp.c	2022-01-29 08:04:32.992637539 +0000
 @@ -0,0 +1,1197 @@
 +/*
 + * regcomp and regexec -- regsub and regerror are elsewhere
@@ -1337,11 +1327,9 @@ index 000000000000..900698886531
 +#endif
 +
 +
-diff --git a/net/netfilter/regexp/regexp.h b/net/netfilter/regexp/regexp.h
-new file mode 100644
-index 000000000000..a72eba71fb61
---- /dev/null
-+++ b/net/netfilter/regexp/regexp.h
+diff -Naur a/net/netfilter/regexp/regexp.h b/net/netfilter/regexp/regexp.h
+--- a/net/netfilter/regexp/regexp.h	1970-01-01 00:00:00.000000000 +0000
++++ b/net/netfilter/regexp/regexp.h	2022-01-29 08:04:32.992637539 +0000
 @@ -0,0 +1,41 @@
 +/*
 + * Definitions etc. for regexp(3) routines.
@@ -1384,22 +1372,18 @@ index 000000000000..a72eba71fb61
 +void regerror(char *s);
 +
 +#endif
-diff --git a/net/netfilter/regexp/regmagic.h b/net/netfilter/regexp/regmagic.h
-new file mode 100644
-index 000000000000..5acf4478ff71
---- /dev/null
-+++ b/net/netfilter/regexp/regmagic.h
+diff -Naur a/net/netfilter/regexp/regmagic.h b/net/netfilter/regexp/regmagic.h
+--- a/net/netfilter/regexp/regmagic.h	1970-01-01 00:00:00.000000000 +0000
++++ b/net/netfilter/regexp/regmagic.h	2022-01-29 08:04:32.992637539 +0000
 @@ -0,0 +1,5 @@
 +/*
 + * The first byte of the regexp internal "program" is actually this magic
 + * number; the start node begins in the second byte.
 + */
 +#define	MAGIC	0234
-diff --git a/net/netfilter/regexp/regsub.c b/net/netfilter/regexp/regsub.c
-new file mode 100644
-index 000000000000..339631f06f00
---- /dev/null
-+++ b/net/netfilter/regexp/regsub.c
+diff -Naur a/net/netfilter/regexp/regsub.c b/net/netfilter/regexp/regsub.c
+--- a/net/netfilter/regexp/regsub.c	1970-01-01 00:00:00.000000000 +0000
++++ b/net/netfilter/regexp/regsub.c	2022-01-29 08:04:32.992637539 +0000
 @@ -0,0 +1,95 @@
 +/*
 + * regsub
@@ -1496,11 +1480,9 @@ index 000000000000..339631f06f00
 +	}
 +	*dst++ = '\0';
 +}
-diff --git a/net/netfilter/xt_layer7.c b/net/netfilter/xt_layer7.c
-new file mode 100644
-index 000000000000..a7eb760123bf
---- /dev/null
-+++ b/net/netfilter/xt_layer7.c
+diff -Naur a/net/netfilter/xt_layer7.c b/net/netfilter/xt_layer7.c
+--- a/net/netfilter/xt_layer7.c	1970-01-01 00:00:00.000000000 +0000
++++ b/net/netfilter/xt_layer7.c	2022-01-29 08:04:32.992637539 +0000
 @@ -0,0 +1,666 @@
 +/*
 +  Kernel module to match application layer (OSI layer 7) data in connections.
