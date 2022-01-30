@@ -1218,6 +1218,7 @@ buildipfire() {
   lfsmake2 rust
   lfsmake2 rust-dissimilar
   lfsmake2 rust-cfg-if
+  lfsmake2 rust-libc
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
