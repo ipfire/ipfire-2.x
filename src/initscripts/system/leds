@@ -173,7 +173,7 @@ case "${1}" in
 
 		# Nanopi R4S stop
 		disable_led_trigger nanopi-r4s:green:sys
-		enable_led nanopi-r4s:red:sys
+		enable_led nanopi-r4s:green:sys
 		disable_led_trigger nanopi-r4s:green:wan
 		disable_led_trigger nanopi-r4s:green:lan
 
