@@ -1215,6 +1215,7 @@ buildipfire() {
   lfsmake2 sqlite
   lfsmake2 libffi
   lfsmake2 python3
+  lfsmake2 rust
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
@@ -1341,7 +1342,6 @@ buildipfire() {
   lfsmake2 rrdtool
   lfsmake2 setup
   lfsmake2 libdnet
-  lfsmake2 rust
   lfsmake2 jansson
   lfsmake2 yaml
   lfsmake2 libhtp
