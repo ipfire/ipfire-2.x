@@ -1220,6 +1220,7 @@ buildipfire() {
   lfsmake2 rust-cfg-if
   lfsmake2 rust-libc
   lfsmake2 rust-getrandom
+  lfsmake2 rust-typenum
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
