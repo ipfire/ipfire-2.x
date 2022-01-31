@@ -1,0 +1,14 @@
+#usr/share/cargo/registry/memoffset-0.6.5
+#usr/share/cargo/registry/memoffset-0.6.5/.cargo-checksum.json
+#usr/share/cargo/registry/memoffset-0.6.5/Cargo.toml
+#usr/share/cargo/registry/memoffset-0.6.5/Cargo.toml.deps
+#usr/share/cargo/registry/memoffset-0.6.5/LICENSE
+#usr/share/cargo/registry/memoffset-0.6.5/README.md
+#usr/share/cargo/registry/memoffset-0.6.5/build.rs
+#usr/share/cargo/registry/memoffset-0.6.5/ci
+#usr/share/cargo/registry/memoffset-0.6.5/ci/miri.sh
+#usr/share/cargo/registry/memoffset-0.6.5/src
+#usr/share/cargo/registry/memoffset-0.6.5/src/lib.rs
+#usr/share/cargo/registry/memoffset-0.6.5/src/offset_of.rs
+#usr/share/cargo/registry/memoffset-0.6.5/src/raw_field.rs
+#usr/share/cargo/registry/memoffset-0.6.5/src/span_of.rs
