@@ -1,0 +1,17 @@
+--- walkdir-2.3.2/Cargo.toml.orig	2022-01-28 10:48:41.943483058 +0000
++++ walkdir-2.3.2/Cargo.toml	2022-01-28 10:48:54.391464719 +0000
+@@ -28,14 +28,6 @@
+ version = "1.0.1"
+ [dev-dependencies.doc-comment]
+ version = "0.3"
+-[target."cfg(windows)".dependencies.winapi]
+-version = "0.3"
+-features = ["std", "winnt"]
+-
+-[target."cfg(windows)".dependencies.winapi-util]
+-version = "0.1.1"
+-[badges.appveyor]
+-repository = "BurntSushi/walkdir"
+ 
+ [badges.travis-ci]
+ repository = "BurntSushi/walkdir"

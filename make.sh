@@ -1240,6 +1240,7 @@ buildipfire() {
   lfsmake2 rust-semver-parser
   lfsmake2 rust-semver
   lfsmake2 rust-same-file
+  lfsmake2 rust-walkdir
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
