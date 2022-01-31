@@ -1241,6 +1241,7 @@ buildipfire() {
   lfsmake2 rust-semver
   lfsmake2 rust-same-file
   lfsmake2 rust-walkdir
+  lfsmake2 rust-dirs
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
