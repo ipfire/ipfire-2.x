@@ -1,0 +1,18 @@
+--- rand-0.4.6/Cargo.toml.orig	2022-01-28 14:06:03.486357507 +0000
++++ rand-0.4.6/Cargo.toml	2022-01-28 14:06:19.606044332 +0000
+@@ -25,15 +25,5 @@
+ [target.'cfg(unix)'.dependencies]
+ libc = { version = "0.2", optional = true }
+ 
+-[target.'cfg(windows)'.dependencies]
+-winapi = { version = "0.3", features = ["minwindef", "ntsecapi", "profileapi", "winnt"] }
+-
+ [workspace]
+ members = ["rand-derive"]
+-
+-[target.'cfg(target_os = "fuchsia")'.dependencies]
+-fuchsia-cprng = "0.1.0"
+-
+-[target.'cfg(target_env = "sgx")'.dependencies]
+-rdrand = "0.4.0"
+-rand_core = { version = "0.3", default-features = false }
