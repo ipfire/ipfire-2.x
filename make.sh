@@ -1256,6 +1256,7 @@ buildipfire() {
   lfsmake2 rust-rand_core-0.4.2
   lfsmake2 rust-rand_core-0.3.1
   lfsmake2 rust-rand_chacha
+  lfsmake2 rust-rand_hc
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
