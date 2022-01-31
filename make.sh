@@ -1265,6 +1265,7 @@ buildipfire() {
   lfsmake2 rust-crossbeam-utils
   lfsmake2 rust-autocfg
   lfsmake2 rust-memoffset
+  lfsmake2 rust-scopeguard
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
