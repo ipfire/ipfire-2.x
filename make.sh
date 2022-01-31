@@ -1286,6 +1286,7 @@ buildipfire() {
   lfsmake2 rust-indoc
   lfsmake2 rust-instant
   lfsmake2 rust-lock_api
+  lfsmake2 rust-smallvec
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
