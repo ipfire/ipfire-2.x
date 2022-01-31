@@ -1273,6 +1273,7 @@ buildipfire() {
   lfsmake2 rust-rayon-core
   lfsmake2 rust-rayon
   lfsmake2 rust-remove_dir_all
+  lfsmake2 rust-tempdir
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
