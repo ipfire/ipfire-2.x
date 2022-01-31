@@ -1238,6 +1238,7 @@ buildipfire() {
   lfsmake2 rust-ucd-trie
   lfsmake2 rust-pest
   lfsmake2 rust-semver-parser
+  lfsmake2 rust-semver
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar

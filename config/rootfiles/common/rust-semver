@@ -1,0 +1,15 @@
+#usr/share/cargo/registry/semver-0.9.0
+#usr/share/cargo/registry/semver-0.9.0/.cargo-checksum.json
+#usr/share/cargo/registry/semver-0.9.0/Cargo.toml
+#usr/share/cargo/registry/semver-0.9.0/Cargo.toml.deps
+#usr/share/cargo/registry/semver-0.9.0/LICENSE-APACHE
+#usr/share/cargo/registry/semver-0.9.0/LICENSE-MIT
+#usr/share/cargo/registry/semver-0.9.0/README.md
+#usr/share/cargo/registry/semver-0.9.0/src
+#usr/share/cargo/registry/semver-0.9.0/src/lib.rs
+#usr/share/cargo/registry/semver-0.9.0/src/version.rs
+#usr/share/cargo/registry/semver-0.9.0/src/version_req.rs
+#usr/share/cargo/registry/semver-0.9.0/tests
+#usr/share/cargo/registry/semver-0.9.0/tests/deprecation.rs
+#usr/share/cargo/registry/semver-0.9.0/tests/regression.rs
+#usr/share/cargo/registry/semver-0.9.0/tests/serde.rs
