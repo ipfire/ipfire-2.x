@@ -24,7 +24,10 @@
 
 include Config
 
+SUMMARY    = A client program for the telnet remote login protocol
+
 VER        = 0.17
+
 THISAPP    = netkit-telnet-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
@@ -34,6 +37,8 @@ PROG       = telnet
 PAK_VER    = 1
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

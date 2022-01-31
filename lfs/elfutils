@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Higher-level library to access ELF files 
+
 VER        = 0.186
 
 THISAPP    = elfutils-$(VER)
@@ -35,6 +37,8 @@ PROG       = elfutils
 PAK_VER    = 7
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

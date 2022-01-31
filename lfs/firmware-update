@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = IPFire Firmware Update Tool
+
 VER        = 20210107
 
 THISAPP    = firmware-update-$(VER)
@@ -35,6 +37,8 @@ PROG       = firmware-update
 PAK_VER    = 2
 
 DEPS       = flashrom
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

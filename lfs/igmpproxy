@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Multicast router utilizing IGMP forwarding
+
 VER        = 0.3
 
 THISAPP    = igmpproxy-$(VER)
@@ -35,6 +37,8 @@ PROG       = igmpproxy
 PAK_VER    = 6
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

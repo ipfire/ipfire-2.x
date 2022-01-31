@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = SSL/SSH multiplexer
+
 VER        = 1.22c
 
 THISAPP    = sslh-$(VER)
@@ -35,6 +37,8 @@ PROG       = sslh
 PAK_VER    = 6
 
 DEPS       =
+
+SERVICES   = sslh
 
 ###############################################################################
 # Top-level Rules
@@ -81,7 +85,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,sslh)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

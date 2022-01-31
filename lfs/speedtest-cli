@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Command line interface for testing internet bandwidth
+
 VER        = 2.1.3
 
 THISAPP    = speedtest-cli-$(VER)
@@ -35,6 +37,8 @@ PROG       = speedtest-cli
 PAK_VER    = 5
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

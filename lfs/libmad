@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = An MPEG audio decoder library
+
 VER        = 0.15.1b
 
 THISAPP    = libmad-$(VER)
@@ -35,6 +37,8 @@ PROG       = libmad
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 CFLAGS    += -Wa,--noexecstack
 

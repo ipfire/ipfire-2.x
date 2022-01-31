@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A BitTorrent client with multiple UIs
+
 VER        = 3.00
 
 THISAPP    = transmission-$(VER)
@@ -35,6 +37,8 @@ PROG       = transmission
 PAK_VER    = 17
 
 DEPS       =
+
+SERVICES   = transmission
 
 CXXFLAGS  += -fno-exceptions
 
@@ -89,7 +93,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown -Rv nobody.nobody /etc/transmission
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,transmission)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	# Install backup include
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/transmission \

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Ping and Traceroute Network Diagnostic Tool
+
 VER        = 0.94
 
 THISAPP    = mtr-$(VER)
@@ -35,6 +37,8 @@ PROG       = mtr
 PAK_VER    = 5
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

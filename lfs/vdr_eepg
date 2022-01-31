@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Extended EPG (EEPG) plugin for VDR
+
 GIT_VER    = 32b4e669bf8bc6e3336073616c121f10b8518fe8
 VER        = master
 
@@ -39,6 +41,8 @@ PROG       = vdr_eepg
 PAK_VER    = 5
 
 DEPS       =
+
+SERVICES   =
 
 VDRPLUGVER = 2.4.7
 

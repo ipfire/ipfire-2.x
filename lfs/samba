@@ -25,6 +25,7 @@
 include Config
 
 VER        = 4.15.5
+SUMMARY    = A SMB/CIFS File, Print, and Authentication Server
 
 THISAPP    = samba-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -35,6 +36,8 @@ PROG       = samba
 PAK_VER    = 83
 
 DEPS       = avahi cups libtirpc krb5 perl-Parse-Yapp
+
+SERVICES   = samba
 
 ###############################################################################
 # Top-level Rules
@@ -118,7 +121,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -m 755 $(DIR_SRC)/config/samba/samba-change-password /usr/sbin/samba-change-password
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,samba)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

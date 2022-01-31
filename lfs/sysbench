@@ -9,6 +9,8 @@
 
 include Config
 
+SUMMARY    = A MySQL benchmarking tool
+
 VER        = 1.0.20
 
 THISAPP    = sysbench-$(VER)
@@ -21,6 +23,8 @@ PROG       = sysbench
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

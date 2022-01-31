@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Support Utilities for Kernel nfsd
+
 VER        = 2.5.3
 
 THISAPP    = nfs-utils-$(VER)
@@ -35,6 +37,8 @@ PROG       = nfs
 PAK_VER    = 16
 
 DEPS       = rpcbind
+
+SERVICES   = nfs-server
 
 ###############################################################################
 # Top-level Rules
@@ -88,7 +92,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 	# Install initscript
-	$(call INSTALL_INITSCRIPT,nfs-server)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	# Install configuration
 	mkdir -pv $(CONFIG_ROOT)/nfs

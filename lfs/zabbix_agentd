@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Zabbix Agent
+
 VER        = 4.2.6
 
 THISAPP    = zabbix-$(VER)
@@ -34,6 +36,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = zabbix_agentd
 PAK_VER    = 4
 DEPS       =
+
+SERVICES   = zabbix_agentd
 
 ###############################################################################
 # Top-level Rules
@@ -106,7 +110,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown zabbix.zabbix /var/run/zabbix
 
 	# Install initscripts
-	$(call INSTALL_INITSCRIPT,zabbix_agentd)
+	@$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	# Install sudoers include file
 	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/sudoers \

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A Network Benchmarking Tool
+
 VER        = 0.2.0
 
 THISAPP    = fireperf-$(VER)
@@ -33,6 +35,10 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fireperf
 PAK_VER    = 2
+
+DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

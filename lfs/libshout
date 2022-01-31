@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Library for communcating with Icecast servers
+
 VER        = 2.4.3
 
 THISAPP    = libshout-$(VER)
@@ -35,6 +37,8 @@ PROG       = libshout
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

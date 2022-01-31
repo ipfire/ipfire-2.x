@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = GNU MP3 Streaming Server
+
 VER        = 3.0
 
 THISAPP    = gnump3d-$(VER)
@@ -35,6 +37,8 @@ PROG       = gnump3d
 PAK_VER    = 7
 
 DEPS       =
+
+SERVICES   = gnump3d
 
 ###############################################################################
 # Top-level Rules
@@ -93,7 +97,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -sf /usr/bin/gnump3d-index /etc/fcron.daily/gnump3d-index
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,gnump3d)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

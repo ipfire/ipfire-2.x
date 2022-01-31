@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = OpenPrinting CUPS filters, backends, and cups-browsed
+
 VER        = 1.28.10
 
 THISAPP    = cups-filters-$(VER)
@@ -35,6 +37,8 @@ PROG       = cups-filters
 PAK_VER    = 7
 
 DEPS       = cups ghostscript
+
+SERVICES   =
 
 CFLAGS    += -fcommon
 

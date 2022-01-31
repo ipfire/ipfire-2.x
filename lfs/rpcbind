@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Transport independent RPC portmapper 
+
 VER        = 1.2.6
 
 THISAPP    = rpcbind-$(VER)
@@ -35,6 +37,8 @@ PROG       = rpcbind
 PAK_VER    = 5
 
 DEPS       = libtirpc
+
+SERVICES   = rpcbind
 
 ###############################################################################
 # Top-level Rules
@@ -87,6 +91,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,rpcbind)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

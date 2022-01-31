@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY	   = Library for working with various multimedia formats
+
 VER        = 4.4
 
 THISAPP    = ffmpeg-$(VER)
@@ -35,6 +37,8 @@ PROG       = ffmpeg
 PAK_VER    = 13
 
 DEPS       = sdl2 lame libvorbis xvid
+
+SERVICES   =
 
 ifeq "$(BUILD_ARCH)" "armv6l"
 	LDFLAGS += -latomic

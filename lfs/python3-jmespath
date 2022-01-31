@@ -25,6 +25,7 @@
 include Config
 
 VER        = 0.10.0
+SUMMARY    = Python module for declarative JSON document element extraction
 
 THISAPP    = jmespath-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -35,6 +36,8 @@ PROG       = python3-jmespath
 PAK_VER    = 4
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

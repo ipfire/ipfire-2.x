@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Realtime Bandwidth Monitor
+
 VER        = 0.6.1-f54b3fa
 
 THISAPP    = bwm-ng-$(VER)
@@ -35,6 +37,8 @@ PROG       = bwm-ng
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

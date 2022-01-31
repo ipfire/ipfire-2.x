@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = The LAME MP3 encoder
+
 VER        = 3.100
 
 THISAPP    = lame-$(VER)
@@ -35,6 +37,8 @@ PROG       = lame
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Transport Independent RPC Library
+
 VER        = 1.3.1
 
 THISAPP    = libtirpc-$(VER)
@@ -35,6 +37,8 @@ PROG       = libtirpc
 PAK_VER    = 3
 
 DEPS       =
+
+SERVICES   =
 
 CFLAGS    += -fcommon
 

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Watchdog Timer Interfaces For The Linux Operating System
+
 VER        = 5.16
 
 THISAPP    = watchdog-$(VER)
@@ -35,6 +37,8 @@ PROG       = watchdog
 PAK_VER    = 5
 
 DEPS       =
+
+SERVICES   = watchdog
 
 ###############################################################################
 # Top-level Rules
@@ -81,7 +85,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,watchdog)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/watchdog \
 			 /var/ipfire/backup/addons/includes/watchdog 
 	@rm -rf $(DIR_APP)

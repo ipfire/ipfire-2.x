@@ -25,6 +25,7 @@
 include Config
 
 VER        = 2.35.1
+SUMMARY    = Fast, scalable, distributed revision control system
 
 THISAPP    = git-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -35,6 +36,8 @@ PROG       = git
 PAK_VER    = 22
 
 DEPS       = perl-Authen-SASL perl-MIME-Base64 perl-Net-SMTP-SSL
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

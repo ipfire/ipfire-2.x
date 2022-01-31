@@ -24,6 +24,7 @@
 
 include Config
 
+SUMMARY    = Tool for scanning DVB transponders
 
 VER        = 20170107
 
@@ -36,6 +37,8 @@ PROG       = w_scan
 PAK_VER    = 7
 
 DEPS       =
+
+SERVICES   =
 
 CFLAGS    += -fcommon
 

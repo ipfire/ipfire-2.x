@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Network UPS Tools Core (Uninterruptible Power Supply Monitoring)
+
 VER        = 2.7.4
 
 THISAPP    = nut-$(VER)
@@ -35,6 +37,8 @@ PROG       = nut
 PAK_VER    = 7
 
 DEPS       =
+
+SERVICES   = nut
 
 CXXFLAGS  += -std=c++11
 
@@ -89,7 +93,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /var/state/ups
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,nut)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/nut \
 			 /var/ipfire/backup/addons/includes/nut

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Pico editor clone with enhancements
+
 VER        = 6.0
 
 THISAPP    = nano-$(VER)
@@ -35,6 +37,8 @@ PROG       = nano
 PAK_VER    = 40
 
 DEPS       = ""
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

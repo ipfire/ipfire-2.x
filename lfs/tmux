@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Terminal multiplexer
+
 VER        = 3.2a
 
 THISAPP    = tmux-$(VER)
@@ -35,6 +37,8 @@ PROG       = tmux
 PAK_VER    = 9
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

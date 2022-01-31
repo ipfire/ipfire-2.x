@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY	   = 7-zip file compression program
+
 VER        = 17.04
 
 THISAPP    = p7zip-$(VER)
@@ -35,6 +37,8 @@ PROG       = 7zip
 PAK_VER    = 9
 
 DEPS       =
+
+SERVICES   =
 
 CFLAGS    += -fcommon
 

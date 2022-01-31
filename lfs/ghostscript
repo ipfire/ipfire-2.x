@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = The Ghostscript interpreter for PostScript and PDF
+
 VER        = 9.55.0
 
 THISAPP    = ghostscript-$(VER)
@@ -35,6 +37,8 @@ PROG       = ghostscript
 PAK_VER    = 9
 
 DEPS       = cups dbus libtiff
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

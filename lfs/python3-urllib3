@@ -25,6 +25,7 @@
 include Config
 
 VER        = 1.26.7
+SUMMARY   = HTTP library with thread-safe connection pooling, file post, and more
 
 THISAPP    = urllib3-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -33,6 +34,10 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-urllib3
 PAK_VER    = 2
+
+DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -52,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

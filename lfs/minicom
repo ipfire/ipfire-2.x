@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A Terminal Program
+
 VER        = 2.8
 
 THISAPP    = minicom-$(VER)
@@ -35,6 +37,8 @@ PROG       = minicom
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 CFLAGS    += -fcommon
 

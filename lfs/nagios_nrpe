@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Nagios Remote Plug-In Executor
+
 VER        = 4.0.3
 
 THISAPP    = nrpe-$(VER)
@@ -35,6 +37,8 @@ PROG       = nagios_nrpe
 PAK_VER    = 9
 
 DEPS       = nagios-plugins
+
+SERVICES   = nrpe
 
 ###############################################################################
 # Top-level Rules
@@ -94,7 +98,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install-config
 
 	# install initscript
-	$(call INSTALL_INITSCRIPT,nrpe)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	install -v -m 644 ${DIR_SRC}/config/backup/includes/nagios_nrpe \
 		/var/ipfire/backup/addons/includes/nagios_nrpe

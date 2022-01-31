@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A remote display system built for virtual environments
+
 VER        = 0.15.0
 
 THISAPP    = spice-$(VER)
@@ -35,6 +37,8 @@ PROG       = spice
 PAK_VER    = 6
 
 DEPS       = opus
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

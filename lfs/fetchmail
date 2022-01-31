@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Full-Featured POP and IMAP Mail Retrieval Daemon
+
 VER        = 6.4.19
 
 THISAPP    = fetchmail-$(VER)
@@ -35,6 +37,8 @@ PROG       = fetchmail
 PAK_VER    = 11
 
 DEPS       =
+
+SERVICES   = fetchmail
 
 ###############################################################################
 # Top-level Rules
@@ -99,7 +103,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/var/ipfire/backup/addons/includes/fetchmail
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,fetchmail)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 
 	@rm -rf $(DIR_APP)

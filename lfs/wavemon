@@ -9,6 +9,8 @@
 
 include Config
 
+SUMMARY    = An ncurses monitoring application for wireless network devices
+
 VER        = 0.7.5
 
 THISAPP    = wavemon-$(VER)
@@ -20,6 +22,8 @@ PROG       = wavemon
 PAK_VER    = 1
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

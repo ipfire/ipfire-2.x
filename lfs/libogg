@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Ogg Bitstream Library
+
 VER        = 1.3.5
 
 THISAPP    = libogg-$(VER)
@@ -35,6 +37,8 @@ PROG       = libogg
 PAK_VER    = 5
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

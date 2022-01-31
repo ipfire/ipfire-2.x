@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Guest agent for QEMU
+
 VER        = 6.1.0
 THISAPP    = qemu-ga-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -31,6 +33,8 @@ PROG       = qemu-ga
 PAK_VER    = 1
 
 DEPS       = 
+
+SERVICES   = qemu-ga
 
 ###############################################################################
 # Top-level Rules
@@ -53,7 +57,7 @@ $(TARGET) :
 	@$(PREBUILD)
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,qemu-ga)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

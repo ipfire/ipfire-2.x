@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = D-Bus Service for Zeroconf and Bonjour
+
 VER        = 0.8
 
 THISAPP    = avahi-$(VER)
@@ -35,6 +37,8 @@ PROG       = avahi
 PAK_VER    = 9
 
 DEPS       = dbus libdaemon
+
+SERVICES   = avahi
 
 ###############################################################################
 # Top-level Rules
@@ -101,7 +105,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -avf $(DIR_SRC)/config/avahi/smb.service /etc/avahi/services/smb.service
 
 	# Install initscript
-	$(call INSTALL_INITSCRIPT,avahi)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 	
 	#install backup definition
 	install -v -m 644 ${DIR_SRC}/config/backup/includes/avahi \

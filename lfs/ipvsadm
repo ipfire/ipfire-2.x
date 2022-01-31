@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A Utility for Administering the Linux Virtual Server
+
 VER        = 1.29
 
 THISAPP    = ipvsadm-$(VER)
@@ -35,6 +37,8 @@ PROG       = ipvsadm
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

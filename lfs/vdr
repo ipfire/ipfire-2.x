@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Video Disk Recorder
+
 VER        = 2.4.7
 
 # VDRPLUGVER must match with APIVERSION! in config.h
@@ -40,6 +42,8 @@ PROG       = vdr
 PAK_VER    = 13
 
 DEPS       = vdr_streamdev
+
+SERVICES   = vdr
 
 CXXFLAGS  += -std=c++11
 
@@ -134,7 +138,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf ../../include/vdr/device.h /usr/lib/vdr/device.h
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,vdr)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	# Install start links and backup include file.
 	ln -sf ../init.d/vdr /etc/rc.d/rc3.d/S60vdr

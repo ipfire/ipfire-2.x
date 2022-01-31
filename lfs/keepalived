@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A keepalive facility for Linux
+
 VER        = 2.2.4
 
 THISAPP    = keepalived-$(VER)
@@ -35,6 +37,8 @@ PROG       = keepalived
 PAK_VER    = 10
 
 DEPS       =
+
+SERVICES   = keepalived
 
 ###############################################################################
 # Top-level Rules
@@ -86,7 +90,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/var/ipfire/backup/addons/includes/keepalived
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,keepalived)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

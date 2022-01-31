@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = An AirPlay audio player
+
 VER        = 3.3.8
 
 THISAPP    = shairport-sync-$(VER)
@@ -35,6 +37,8 @@ PROG       = shairport-sync
 PAK_VER    = 6
 
 DEPS       = alac alsa avahi libdaemon soxr
+
+SERVICES   = shairport-sync
 
 ###############################################################################
 # Top-level Rules
@@ -95,7 +99,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/var/ipfire/backup/addons/includes/shairport-sync
 
 	# Initscript
-	$(call INSTALL_INITSCRIPT,shairport-sync)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

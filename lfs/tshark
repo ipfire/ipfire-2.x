@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A Network Traffic Analyser
+
 VER        = 3.4.7
 
 THISAPP    = wireshark-$(VER)
@@ -34,6 +36,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tshark
 DEPS       = krb5 c-ares
 PAK_VER    = 11
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

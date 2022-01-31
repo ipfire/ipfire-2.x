@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Sound Conversion Tools
+
 VER        = 14.4.2
 
 THISAPP    = sox-$(VER)
@@ -35,6 +37,8 @@ PROG       = sox
 PAK_VER    = 2
 
 DEPS       = libvorbis
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

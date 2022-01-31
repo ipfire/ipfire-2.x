@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Lightweight C library That Eases the Writing of UNIX Daemons
+
 VER        = 0.14
 
 THISAPP    = libdaemon-$(VER)
@@ -33,6 +35,10 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET = $(DIR_INFO)/$(THISAPP)
 PROG       = libdaemon
 PAK_VER    = 1
+
+DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

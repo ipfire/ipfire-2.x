@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A program to ping multiple hosts
+
 VER        = 5.0
 
 THISAPP    = fping-$(VER)
@@ -35,6 +37,8 @@ PROG       = fping
 PAK_VER    = 6
 
 DEPS       = ""
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

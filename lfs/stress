@@ -9,6 +9,8 @@
 
 include Config
 
+SUMMARY    = Tool to load and stress a computer
+
 VER        = 1.0.4
 
 THISAPP    = stress-$(VER)
@@ -20,6 +22,8 @@ PROG       = stress
 PAK_VER    = 1
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

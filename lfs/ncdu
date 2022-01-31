@@ -25,6 +25,8 @@
 
 include Config
 
+SUMMARY    = NCurses Disk Usage
+
 VER        = 1.16
 
 THISAPP    = ncdu-$(VER)
@@ -32,10 +34,12 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG	    = ncdu
+PROG       = ncdu
 PAK_VER    = 2
 
 DEPS	    = 
+
+SERVICES    =
 
 ###############################################################################
 # Top-level Rules

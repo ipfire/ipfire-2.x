@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Epson ESC/P-R Inkjet Printer Driver
+
 VER        = 1.6.12
 LSB        = 1lsb3.2
 
@@ -36,6 +38,8 @@ PROG       = epson-inkjet-printer-escpr
 PAK_VER    = 2
 
 DEPS       = cups
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = The Reliable, High Performance TCP/HTTP Load Balancer 
+
 VER        = 2.2.4
 
 THISAPP    = haproxy-$(VER)
@@ -36,6 +38,7 @@ PAK_VER    = 19
 
 DEPS       =
 
+SERVICES   = haproxy
 
 ifeq "$(BUILD_ARCH)" "riscv64"
 	LDFLAGS += -latomic
@@ -97,7 +100,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/var/ipfire/backup/addons/includes/haproxy
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,haproxy)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	# Logrotate
 	-mkdir -pv /etc/logrotate.d

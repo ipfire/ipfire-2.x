@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Utility for monitoring services on a Unix system
+
 VER        = 5.30.0
 
 THISAPP    = monit-$(VER)
@@ -35,6 +37,8 @@ PROG       = monit
 PAK_VER    = 17
 
 DEPS       =
+
+SERVICES   = monit
 
 ###############################################################################
 # Top-level Rules
@@ -94,7 +98,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 600 $(DIR_SRC)/config/monit/monitrc /etc
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,monit)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	# Install start links and backup include file.
 	ln -sf ../init.d/monit /etc/rc.d/rc3.d/S60monit

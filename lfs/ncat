@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Network tool to concatenate and redirect sockets
+
 VER        = 7.91
 
 THISAPP    = ncat-$(VER)
@@ -35,6 +37,8 @@ PROG       = ncat
 PAK_VER    = 7
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

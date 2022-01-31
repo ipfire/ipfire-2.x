@@ -9,6 +9,8 @@
 
 include Config
 
+SUMMARY    = Who Is Online? IPFire extension
+
 VER        = 1.3.2
 
 THISAPP    = wio-$(VER)
@@ -16,6 +18,10 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = wio
 PAK_VER    = 14
+
+DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

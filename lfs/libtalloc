@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Samba talloc Library
+
 VER        = 2.3.1
 
 THISAPP    = talloc-$(VER)
@@ -35,6 +37,8 @@ PROG       = libtalloc
 PAK_VER    = 1
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

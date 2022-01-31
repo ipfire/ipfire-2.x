@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Universal TLS Tunnel
+
 VER        = 5.58
 
 THISAPP    = stunnel-$(VER)
@@ -35,6 +37,8 @@ PROG       = stunnel
 PAK_VER    = 7
 
 DEPS       =
+
+SERVICES   = stunnel
 
 ###############################################################################
 # Top-level Rules
@@ -89,7 +93,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown -v stunnel:stunnel /var/lib/stunnel
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,stunnel)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 
 	# Install default configuration

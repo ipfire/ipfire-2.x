@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Machine emulator and virtualizer
+
 # If you update the version also qemu-ga !!!
 VER        = 6.1.0
 
@@ -36,6 +38,8 @@ PROG       = qemu
 PAK_VER    = 32
 
 DEPS       = libusbredir spice libseccomp
+
+SERVICES   =
 
 TARGETS    = \
 	i386-linux-user \

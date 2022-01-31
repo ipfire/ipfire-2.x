@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A mDNS repeater
+
 VER        = 1.10
 
 THISAPP    = mdns-repeater-$(VER)
@@ -35,6 +37,8 @@ PROG       = mdns-repeater
 PAK_VER    = 1
 
 DEPS       =
+
+SERVICES   = mdns-repeater
 
 CFLAGS    += -DHGVERSION='\"$(VER)\"'
 
@@ -83,7 +87,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && install -v -m 755 mdns-repeater /usr/bin
 
 	# install initscripts
-	$(call INSTALL_INITSCRIPT,mdns-repeater)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

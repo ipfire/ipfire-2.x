@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = RADIUS Server
+
 VER        = 3.0.23
 
 THISAPP    = freeradius-server-$(VER)
@@ -35,6 +37,8 @@ PROG       = freeradius
 PAK_VER    = 14
 
 DEPS       = libtalloc samba
+
+SERVICES   = freeradius
 
 ###############################################################################
 # Top-level Rules
@@ -144,7 +148,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/etc/logrotate.d/freeradius
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,freeradius)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

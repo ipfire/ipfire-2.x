@@ -25,6 +25,7 @@
 include Config
 
 VER        = 6.3.2
+SUMMARY    = Python setuptools handler for SCM tags
 
 THISAPP    = setuptools_scm-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -35,6 +36,8 @@ PROG       = python3-setuptools-scm
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = The Nagios Plug-Ins
+
 VER        = 2.3.3
 
 THISAPP    = nagios-plugins-$(VER)
@@ -35,6 +37,8 @@ PROG       = nagios-plugins
 PAK_VER    = 6
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

@@ -25,6 +25,8 @@
 
 include Config
 
+SUMMARY    = VDRAdmin-AM, a web user interface for VDR
+
 VER        = 3.6.10
 
 THISAPP    = vdradmin-am-$(VER)
@@ -36,6 +38,8 @@ PROG       = vdradmin
 PAK_VER    = 6
 
 DEPS       = perl-gettext vdr vdr_epgsearch
+
+SERVICES   = vdradmin
 
 ###############################################################################
 # Top-level Rules
@@ -83,7 +87,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./install-ipfire.sh
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,vdradmin)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	install -v -m 644 $(DIR_SRC)/config/vdradmin/vdradmind.conf \
 		 /etc/vdradmin/vdradmind.conf

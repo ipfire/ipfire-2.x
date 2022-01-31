@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = The Simple WATCHdog
+
 VER        = 3.2.4
 
 THISAPP    = swatchdog-$(VER)
@@ -35,6 +37,8 @@ PROG       = swatch
 PAK_VER    = 5
 
 DEPS       = perl-File-Tail perl-Date-Calc perl-TimeDate perl-Date-Manip
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

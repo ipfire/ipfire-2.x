@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Utilities for doing and managing mounts of the Linux CIFS filesystem
+
 VER        = 6.13
 
 THISAPP    = cifs-utils-$(VER)
@@ -35,6 +37,8 @@ PROG       = cifs-utils
 PAK_VER    = 3
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

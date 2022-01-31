@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Searchtimer and replacement of the VDR program menu
+
 VER        = 2.4.0+git20191101
 
 THISAPP    = vdr-plugin-epgsearch_$(VER).orig
@@ -36,6 +38,8 @@ PROG       = vdr_epgsearch
 PAK_VER    = 11
 
 DEPS       =
+
+SERVICES   =
 
 VDRPLUGVER = 2.4.7
 

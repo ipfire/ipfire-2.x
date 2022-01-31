@@ -25,6 +25,7 @@
 include Config
 
 VER        = 59.5.0
+SUMMARY    = Enhancements to distutils for building and distributing Python packages
 
 THISAPP    = setuptools-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -35,6 +36,8 @@ PROG       = python3-setuptools
 PAK_VER    = 4
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

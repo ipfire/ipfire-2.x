@@ -24,6 +24,9 @@
 ###############################################################################
 
 include Config
+
+SUMMARY    = Perl extension for reading from continously updated files
+
 VER        = 1.3
 
 THISAPP    = File-Tail-$(VER)
@@ -34,6 +37,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-File-Tail
 DEPS       =
 PAK_VER    = 6
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

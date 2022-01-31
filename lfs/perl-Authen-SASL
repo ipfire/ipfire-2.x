@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Perl extension adding a SASL Authentication framework
+
 VER        = 2.16
 
 THISAPP    = Authen-SASL-$(VER)
@@ -34,6 +36,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-Authen-SASL
 DEPS       =
 PAK_VER    = 3
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

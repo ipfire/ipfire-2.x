@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = C library and frontend for decoding MPEG2/4 AAC
+
 VER        = 2_10_0
 
 THISAPP    = faad2-$(VER)
@@ -35,6 +37,8 @@ PROG       = faad2
 PAK_VER    = 3
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

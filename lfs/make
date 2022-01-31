@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = GNU make
+
 VER        = 4.3
 
 THISAPP    = make-$(VER)
@@ -34,6 +36,8 @@ PROG       = make
 PAK_VER    = 5
 
 DEPS       =
+
+SERVICES   =
 
 # Normal build or $(TOOLS_DIR) build.
 #

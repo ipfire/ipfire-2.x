@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = An EXIF Tag Parsing Library for Digital Cameras
+
 VER        = 0.6.22
 
 THISAPP    = libexif-$(VER)
@@ -35,6 +37,8 @@ PROG       = libexif
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

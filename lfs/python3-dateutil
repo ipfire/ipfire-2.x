@@ -25,6 +25,7 @@
 include Config
 
 VER        = 2.8.2
+SUMMARY    = Python library for working with date and datetime objects
 
 THISAPP    = python-dateutil-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +35,9 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-dateutil
 PAK_VER    = 5
 
-DEPS       = 
+DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

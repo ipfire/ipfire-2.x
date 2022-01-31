@@ -25,6 +25,8 @@
 
 include Config
 
+SUMMARY    = Perl extension adding message handling functions
+
 VER        = 1.05
 
 THISAPP    = perl-gettext-$(VER)
@@ -35,6 +37,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-gettext
 DEPS       =
 PAK_VER    = 5
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

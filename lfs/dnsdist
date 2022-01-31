@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A highly DNS-, DoS- and abuse-aware loadbalancer
+
 VER        = 1.7.0
 
 THISAPP    = dnsdist-$(VER)
@@ -37,6 +39,8 @@ PAK_VER    = 11
 SUP_ARCH   = x86_64 aarch64
 
 DEPS       =
+
+SERVICES   = dnsdist
 
 MAX_PARALLELISM = $(shell echo $$(( $(SYSTEM_MEMORY) / 3072 )))
 
@@ -94,7 +98,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,dnsdist)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/dnsdist \
 		 /var/ipfire/backup/addons/includes/dnsdist

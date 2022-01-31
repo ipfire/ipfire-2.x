@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Observium agent
+
 VER        = 18.9.1
 
 THISAPP    = observium-community-$(VER)
@@ -35,6 +37,8 @@ PROG       = observium-agent
 PAK_VER    = 1
 
 DEPS       = xinetd
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

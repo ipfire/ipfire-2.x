@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = IPFire integration for the Music Player Daemon
+
 VER        = ipfire
 
 THISAPP    = mpfire-$(VER)
@@ -33,6 +35,8 @@ PROG       = mpfire
 PAK_VER    = 14
 
 DEPS       = mpd mpc
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

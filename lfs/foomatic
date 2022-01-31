@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY     = Tools for using the foomatic database of printers and printer drivers
+
 VER         = 4.0.9
 VER_DB      = 4.0-$(DATE)
 VER_FILTERS = 4.0.17
@@ -38,6 +40,8 @@ PROG       = foomatic
 PAK_VER    = 6
 
 DEPS       = cups ghostscript libtiff hplip
+
+SERVICES   =
 
 CFLAGS    += -fcommon
 

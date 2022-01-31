@@ -9,6 +9,8 @@
 
 include Config
 
+SUMMARY    = SQUID Accounting IPFire extension
+
 VER        = 1.0.4
 
 THISAPP    = squid-accounting-$(VER)
@@ -18,6 +20,8 @@ PROG       = squid-accounting
 PAK_VER    = 13
 
 DEPS       = perl-File-ReadBackwards
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

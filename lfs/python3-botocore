@@ -25,6 +25,7 @@
 include Config
 
 VER        = 1.23.21
+SUMMARY    = Python interface for AWS
 
 THISAPP    = botocore-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -35,6 +36,8 @@ PROG       = python3-botocore
 PAK_VER    = 4
 
 DEPS       = python3-dateutil python3-jmespath python3-urllib3
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

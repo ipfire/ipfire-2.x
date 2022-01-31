@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A Text Editor
+
 VER        = 4.6
 
 THISAPP    = joe-$(VER)
@@ -35,6 +37,8 @@ PROG       = joe
 PAK_VER    = 3
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

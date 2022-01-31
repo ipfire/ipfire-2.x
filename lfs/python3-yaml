@@ -25,6 +25,7 @@
 include Config
 
 VER        = 6.0
+SUMMARY    = YAML parser and emitter for Python
 
 THISAPP    = PyYAML-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -35,6 +36,8 @@ PROG       = python3-yaml
 PAK_VER    = 3
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

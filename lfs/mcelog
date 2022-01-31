@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Log Machine Check Events
+
 VER        = 175
 
 THISAPP    = mcelog-$(VER)
@@ -36,6 +38,8 @@ PAK_VER    = 2
 SUP_ARCH   = x86_64
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

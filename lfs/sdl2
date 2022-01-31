@@ -25,6 +25,7 @@
 include Config
 
 VER        = 2.0.20
+SUMMARY    = Simple DirectMedia Layer Library
 
 THISAPP    = SDL2-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -35,6 +36,8 @@ PROG       = sdl2
 PAK_VER    = 6
 
 DEPS       = alsa
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -67,7 +70,7 @@ $(patsubst %,$(DIR_DL)/%,$(objects)) :
 $(subst %,%_MD5,$(objects)) :
 	@$(MD5)
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

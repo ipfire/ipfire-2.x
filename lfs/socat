@@ -25,6 +25,8 @@
 
 include Config
 
+SUMMARY    = Multipurpose relay for bidirectional data transfer
+
 VER        = 1.7.4.2
 
 THISAPP    = socat-$(VER)
@@ -36,6 +38,8 @@ PROG	   = socat
 PAK_VER    = 2
 
 DEPS	   = 
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

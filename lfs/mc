@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Midnight Commander
+
 VER        = 4.8.27
 
 THISAPP    = mc-$(VER)
@@ -35,6 +37,8 @@ PROG       = mc
 PAK_VER    = 22
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

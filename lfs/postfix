@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A fast, secure, and flexible mailer
+
 VER        = 3.6.3
 
 THISAPP    = postfix-$(VER)
@@ -35,6 +37,8 @@ PROG       = postfix
 PAK_VER    = 33
 
 DEPS       =
+
+SERVICES   = postfix
 
 CCARGS     = `getconf LFS_CFLAGS` \
 	-DDEF_DAEMON_DIR="'\"/usr/lib/postfix\"'" \
@@ -114,7 +118,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mv /usr/sbin/sendmail /usr/sbin/sendmail.postfix
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,postfix)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

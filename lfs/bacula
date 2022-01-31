@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Enterprise-ready Network Backup Software
+
 VER        = 9.6.7
 
 THISAPP    = bacula-$(VER)
@@ -35,6 +37,8 @@ PROG       = bacula
 PAK_VER    = 9
 
 DEPS       =
+
+SERVICES   = bacula
 
 # For GCC 10
 CFLAGS    += -Wno-error=narrowing
@@ -91,7 +95,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,bacula)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	install -v -m 644 ${DIR_SRC}/config/backup/includes/bacula \
 			/var/ipfire/backup/addons/includes/bacula

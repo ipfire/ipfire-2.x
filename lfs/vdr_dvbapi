@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = DVBAPI plugin for VDR
+
 VER        = 2.2.5
 
 THISAPP    = vdr-plugin-dvbapi-$(VER)
@@ -36,6 +38,8 @@ PROG       = vdr_dvbapi
 PAK_VER    = 5
 
 DEPS       =
+
+SERVICES   =
 
 VDRPLUGVER = 2.4.7
 

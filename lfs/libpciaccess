@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Generic PCI access library
+
 VER        = 0.16
 
 THISAPP    = libpciaccess-$(VER)
@@ -35,6 +37,8 @@ PROG       = libpciaccess
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
