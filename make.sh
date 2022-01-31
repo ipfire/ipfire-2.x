@@ -1244,6 +1244,7 @@ buildipfire() {
   lfsmake2 rust-dirs
   lfsmake2 rust-toolchain_find
   lfsmake2 rust-serde
+  lfsmake2 rust-itoa
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
