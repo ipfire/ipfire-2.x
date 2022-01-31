@@ -1,0 +1,16 @@
+#usr/share/cargo/registry/crossbeam-deque-0.8.1
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/.cargo-checksum.json
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/CHANGELOG.md
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/Cargo.toml
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/Cargo.toml.deps
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/LICENSE-APACHE
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/LICENSE-MIT
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/README.md
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/src
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/src/deque.rs
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/src/lib.rs
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/tests
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/tests/fifo.rs
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/tests/injector.rs
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/tests/lifo.rs
+#usr/share/cargo/registry/crossbeam-deque-0.8.1/tests/steal.rs
