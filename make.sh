@@ -1249,6 +1249,7 @@ buildipfire() {
   lfsmake2 rust-serde_json
   lfsmake2 rust-synstructure
   lfsmake2 rust-block-buffer
+  lfsmake2 rust-crypto-common
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
