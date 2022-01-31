@@ -1235,6 +1235,7 @@ buildipfire() {
   lfsmake2 rust-aho-corasick
   lfsmake2 rust-regex-syntax
   lfsmake2 rust-regex
+  lfsmake2 rust-ucd-trie
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
