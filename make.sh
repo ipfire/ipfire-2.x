@@ -1231,6 +1231,7 @@ buildipfire() {
   lfsmake2 rust-syn
   lfsmake2 rust-home
   lfsmake2 rust-lazy-static
+  lfsmake2 rust-memchr
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
