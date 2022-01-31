@@ -1282,6 +1282,7 @@ buildipfire() {
   lfsmake2 rust-trybuild
   lfsmake2 rust-unindent
   lfsmake2 rust-proc-macro-hack
+  lfsmake2 rust-indoc-impl
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
