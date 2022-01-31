@@ -1279,6 +1279,7 @@ buildipfire() {
   lfsmake2 rust-termcolor
   lfsmake2 rust-toml
   lfsmake2 rust-serde_derive
+  lfsmake2 rust-trybuild
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
