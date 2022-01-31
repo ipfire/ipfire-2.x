@@ -1,0 +1,14 @@
+--- home-0.5.3/Cargo.toml.orig	2022-01-28 09:48:10.902178349 +0000
++++ home-0.5.3/Cargo.toml	2022-01-28 09:48:19.413558260 +0000
+@@ -15,11 +15,3 @@
+ readme = "README.md"
+ repository = "https://github.com/brson/home"
+ description = "Shared definitions of home directories"
+-
+-[target."cfg(windows)".dependencies.winapi]
+-version = "0.3"
+-features = [
+-    "shlobj",
+-    "std",
+-    "winerror",
+-]
