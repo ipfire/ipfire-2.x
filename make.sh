@@ -1270,6 +1270,7 @@ buildipfire() {
   lfsmake2 rust-crossbeam-deque
   lfsmake2 rust-either
   lfsmake2 rust-crossbeam-channel
+  lfsmake2 rust-rayon-core
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
