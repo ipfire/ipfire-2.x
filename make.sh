@@ -1298,6 +1298,7 @@ buildipfire() {
   lfsmake2 rust-pyo3-build-config
   lfsmake2 rust-pyo3-macros-backend
   lfsmake2 rust-pyo3-macros
+  lfsmake2 rust-pyo3
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
