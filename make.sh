@@ -1228,6 +1228,7 @@ buildipfire() {
   lfsmake2 rust-unicode-xid
   lfsmake2 rust-proc-macro2
   lfsmake2 rust-quote
+  lfsmake2 rust-syn
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
