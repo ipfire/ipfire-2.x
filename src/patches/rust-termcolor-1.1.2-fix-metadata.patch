@@ -1,0 +1,10 @@
+--- termcolor-1.1.2/Cargo.toml.orig	2022-01-28 14:51:30.895317372 +0000
++++ termcolor-1.1.2/Cargo.toml	2022-01-28 14:51:36.466706492 +0000
+@@ -27,7 +27,3 @@
+ [lib]
+ name = "termcolor"
+ bench = false
+-
+-[dev-dependencies]
+-[target."cfg(windows)".dependencies.winapi-util]
+-version = "0.1.3"
