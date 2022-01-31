@@ -1224,6 +1224,7 @@ buildipfire() {
   lfsmake2 rust-version-check
   lfsmake2 rust-generic-array
   lfsmake2 rust-cipher
+  lfsmake2 rust-hex
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
