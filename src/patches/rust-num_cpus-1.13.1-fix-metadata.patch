@@ -1,0 +1,10 @@
+--- num_cpus-1.13.1/Cargo.toml.orig	2022-01-28 14:11:47.332191720 +0000
++++ num_cpus-1.13.1/Cargo.toml	2022-01-28 14:11:52.848099901 +0000
+@@ -20,7 +20,5 @@
+ categories = ["hardware-support"]
+ license = "MIT OR Apache-2.0"
+ repository = "https://github.com/seanmonstar/num_cpus"
+-[target."cfg(all(any(target_arch = \"x86_64\", target_arch = \"aarch64\"), target_os = \"hermit\"))".dependencies.hermit-abi]
+-version = "0.1.3"
+ [target."cfg(not(windows))".dependencies.libc]
+ version = "0.2.26"
