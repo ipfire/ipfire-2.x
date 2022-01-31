@@ -1,0 +1,13 @@
+--- dirs-1.0.5/Cargo.toml.orig	2022-01-28 11:09:27.494645462 +0000
++++ dirs-1.0.5/Cargo.toml	2022-01-28 11:09:36.902405967 +0000
+@@ -19,10 +19,5 @@
+ keywords = ["xdg", "basedir", "app_dirs", "path", "folder"]
+ license = "MIT OR Apache-2.0"
+ repository = "https://github.com/soc/dirs-rs"
+-[target."cfg(target_os = \"redox\")".dependencies.redox_users]
+-version = "0.3.0"
+ [target."cfg(unix)".dependencies.libc]
+ version = "0.2"
+-[target."cfg(windows)".dependencies.winapi]
+-version = "0.3"
+-features = ["knownfolders", "objbase", "shlobj", "winbase", "winerror"]
