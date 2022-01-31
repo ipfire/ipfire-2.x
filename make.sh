@@ -1295,6 +1295,7 @@ buildipfire() {
   lfsmake2 rust-ghost
   lfsmake2 rust-inventory-impl
   lfsmake2 rust-inventory
+  lfsmake2 rust-pyo3-build-config
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
