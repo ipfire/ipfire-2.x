@@ -1291,6 +1291,7 @@ buildipfire() {
   lfsmake2 rust-parking_lot
   lfsmake2 rust-paste-impl
   lfsmake2 rust-paste
+  lfsmake2 rust-ctor
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
