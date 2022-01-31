@@ -1263,6 +1263,7 @@ buildipfire() {
   lfsmake2 rust-log
   lfsmake2 rust-num_cpus
   lfsmake2 rust-crossbeam-utils
+  lfsmake2 rust-autocfg
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
