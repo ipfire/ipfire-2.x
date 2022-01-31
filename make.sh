@@ -1253,6 +1253,7 @@ buildipfire() {
   lfsmake2 rust-digest
   lfsmake2 rust-ppv-lite86
   lfsmake2 rust-rand_core
+  lfsmake2 rust-rand_core-0.4.2
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
