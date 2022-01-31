@@ -1,0 +1,9 @@
+--- remove_dir_all-0.5.3/Cargo.toml.orig	2022-01-28 14:45:52.179136723 +0000
++++ remove_dir_all-0.5.3/Cargo.toml	2022-01-28 14:46:03.559249000 +0000
+@@ -23,6 +23,4 @@
+ repository = "https://github.com/XAMPPRocky/remove_dir_all.git"
+ [dev-dependencies.doc-comment]
+ version = "0.3"
+-[target."cfg(windows)".dependencies.winapi]
+-version = "0.3"
+ features = ["std", "errhandlingapi", "winerror", "fileapi", "winbase"]
