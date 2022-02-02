@@ -141,17 +141,15 @@ iptables_init() {
 
 	# Log and drop any traffic from and to networks known as being hostile, posing
 	# a technical threat to our users (i. e. listed at Spamhaus DROP et al.)
+	iptables -N HOSTILE
 	if [ "$DROPHOSTILE" == "on" ]; then
-		iptables -N DROP_HOSTILE
-		iptables -A DROP_HOSTILE  -m limit --limit 10/second -j LOG  --log-prefix "DROP_HOSTILE "
-
-		iptables -A INPUT   -i $IFACE -m geoip --src-cc XD -j DROP_HOSTILE
-		iptables -A FORWARD -i $IFACE -m geoip --src-cc XD -j DROP_HOSTILE
-		iptables -A FORWARD -o $IFACE -m geoip --dst-cc XD -j DROP_HOSTILE
-		iptables -A OUTPUT  -o $IFACE -m geoip --src-cc XD -j DROP_HOSTILE
-
-		iptables -A DROP_HOSTILE -j DROP -m comment --comment "DROP_HOSTILE"
+		iptables -A HOSTILE -m limit --limit 10/second -j LOG  --log-prefix "DROP_HOSTILE "
+		iptables -A INPUT   -i $IFACE -m geoip --src-cc XD -j HOSTILE
+		iptables -A FORWARD -i $IFACE -m geoip --src-cc XD -j HOSTILE
+		iptables -A FORWARD -o $IFACE -m geoip --dst-cc XD -j HOSTILE
+		iptables -A OUTPUT  -o $IFACE -m geoip --src-cc XD -j HOSTILE
 	fi
+	iptables -A HOSTILE -j DROP -m comment --comment "DROP_HOSTILE"
 
 	# P2PBLOCK
 	iptables -N P2PBLOCK
