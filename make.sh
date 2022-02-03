@@ -1404,6 +1404,7 @@ buildipfire() {
   lfsmake2 Digest-HMAC
   lfsmake2 libwww-perl
   lfsmake2 perl-LWP-Protocol-https
+  lfsmake2 perl-Net-HTTP
   lfsmake2 Net-DNS
   lfsmake2 Net-IPv4Addr
   lfsmake2 Net_SSLeay
