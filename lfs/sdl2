@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.18
+VER        = 2.0.20
 
 THISAPP    = SDL2-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = sdl2
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = alsa
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c1dd33299db5b7091f37d989c68d5212
+$(DL_FILE)_MD5 = a53acc02e1cca98c4123229069b67c9e
 
 install : $(TARGET)
 
