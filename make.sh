@@ -1377,6 +1377,7 @@ buildipfire() {
   lfsmake2 perl-Parse-Yapp
   lfsmake2 perl-Data-UUID
   lfsmake2 perl-Try-Tiny
+  lfsmake2 perl-HTTP-Message
   lfsmake2 gnupg
   lfsmake2 hdparm
   lfsmake2 sdparm
