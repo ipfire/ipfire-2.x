@@ -155,7 +155,14 @@ sub fetchfile {
 		
 		logger("DOWNLOAD INFO: Host: $host ($proto) - File: $file");
 
-		my $ua = LWP::UserAgent->new;
+		# Init LWP::UserAgent, request SSL hostname verification
+		# and specify CA file.
+		my $ua = LWP::UserAgent->new(
+			ssl_opts => {
+				SSL_ca_file     => '/etc/ssl/cert.pem',
+				verify_hostname => 1,
+			}
+		);
 		$ua->agent("Pakfire/$Conf::version");
 		$ua->timeout(20);
 		
