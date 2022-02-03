@@ -281,7 +281,15 @@ sub downloadruleset ($) {
 	use LWP::UserAgent;
 
 	# Init the download module.
-	my $downloader = LWP::UserAgent->new;
+	#
+	# Request SSL hostname verification and specify path
+	# to the CA file.
+	my $downloader = LWP::UserAgent->new(
+		ssl_opts => {
+			SSL_ca_file     => '/etc/ssl/cert.pem',
+			verify_hostname => 1,
+		}
+	);
 
 	# Set timeout to 10 seconds.
 	$downloader->timeout(10);
