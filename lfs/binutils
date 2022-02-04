@@ -59,7 +59,8 @@ ifeq "$(PASS)" "1"
 	--target=$(CROSSTARGET) \
 	--prefix=$(TOOLS_DIR) \
 	--with-sysroot=$(ROOT) \
-	--with-lib-path=$(TOOLS_DIR)/lib
+	--with-lib-path=$(TOOLS_DIR)/lib \
+	--disable-nls
   EXTRA_MAKE =
   EXTRA_INSTALL = 
 else
@@ -69,10 +70,10 @@ else
 	AR="$(CROSSTARGET)-ar" \
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
-	--host=$(BUILDTARGET) \
-	--build=$(BUILDTARGET) \
 	--prefix=$(TOOLS_DIR) \
-	--with-lib-path=$(TOOLS_DIR)/lib
+	--with-lib-path=$(TOOLS_DIR)/lib \
+	--with-sysroot \
+	--disable-nls
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
 endif

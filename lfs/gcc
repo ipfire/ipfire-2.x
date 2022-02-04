@@ -83,8 +83,10 @@ ifeq "$(PASS)" "1"
 	--with-sysroot=$(ROOT) \
 	--with-local-prefix=$(TOOLS_DIR) \
 	--with-native-system-header-dir=$(TOOLS_DIR)/include \
+	--with-glibc-version=2.11 \
 	--disable-nls \
 	--disable-shared \
+	--disable-multilib \
 	--disable-decimal-float \
 	--disable-threads \
 	--disable-libatomic \
@@ -114,13 +116,12 @@ ifeq "$(PASS)" "2"
 	AR="$(CROSSTARGET)-ar" \
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
-	--build=$(BUILDTARGET) \
 	--prefix=$(TOOLS_DIR) \
-	--with-sysroot=$(ROOT) \
 	--with-local-prefix=$(TOOLS_DIR) \
 	--with-native-system-header-dir=$(TOOLS_DIR)/include \
 	--enable-languages=c,c++ \
 	--disable-libstdcxx-pch \
+	--disable-multilib \
 	--disable-libgomp
   EXTRA_MAKE = 
   EXTRA_INSTALL = 
