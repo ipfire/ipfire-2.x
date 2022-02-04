@@ -61,7 +61,7 @@ function _strip() {
 }
 
 for path in ${paths[@]}; do
-	for file in $(find / -xdev "${excludes[@]}" -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) 2>/dev/null); do
+	for file in $(find "${path}" -xdev "${excludes[@]}" -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) 2>/dev/null); do
 		_strip "${file}" || exit $?
 	done
 done
