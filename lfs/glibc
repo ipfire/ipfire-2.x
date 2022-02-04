@@ -69,6 +69,10 @@ ifeq "$(BUILD_ARCH)" "x86_64"
 	EXTRA_CONFIG += --enable-cet
 endif
 
+ifeq "$(BUILD_ARCH)" "aarch64"
+	EXTRA_CONFIG += --enable-memory-tagging
+endif
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
