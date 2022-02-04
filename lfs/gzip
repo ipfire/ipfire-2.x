@@ -41,11 +41,6 @@ else
   EXTRA_CONFIG = --prefix=$(TOOLS_DIR)
 endif
 
-# Build with 32 bit time_t on 32 bit architectures
-ifeq "$(IS_32BIT)" "1"
-	export TIME_T_32_BIT_OK=yes
-endif
-
 ###############################################################################
 # Top-level Rules
 ###############################################################################
