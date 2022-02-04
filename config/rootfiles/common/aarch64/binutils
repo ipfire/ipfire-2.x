@@ -16,7 +16,6 @@ usr/bin/strings
 #usr/bin/strip
 #usr/include/ansidecl.h
 #usr/include/bfd.h
-#usr/include/bfd_stdint.h
 #usr/include/bfdlink.h
 #usr/include/ctf-api.h
 #usr/include/ctf.h
@@ -292,7 +291,7 @@ usr/lib/bfd-plugins/libdep.so
 #usr/lib/ldscripts/armelfb_linux_eabi.xu
 #usr/lib/ldscripts/armelfb_linux_eabi.xw
 #usr/lib/ldscripts/armelfb_linux_eabi.xwe
-usr/lib/libbfd-2.36.1.so
+usr/lib/libbfd-2.37.so
 #usr/lib/libbfd.a
 #usr/lib/libbfd.la
 #usr/lib/libbfd.so
@@ -306,7 +305,7 @@ usr/lib/libctf-nobfd.so.0.0.0
 #usr/lib/libctf.so
 usr/lib/libctf.so.0
 usr/lib/libctf.so.0.0.0
-usr/lib/libopcodes-2.36.1.so
+usr/lib/libopcodes-2.37.so
 #usr/lib/libopcodes.a
 #usr/lib/libopcodes.la
 #usr/lib/libopcodes.so
