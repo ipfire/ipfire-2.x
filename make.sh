@@ -1026,9 +1026,9 @@ buildtoolchain() {
 	lfsmake1 libxcrypt
 	lfsmake1 gcc			PASS=L
 	lfsmake1 zlib
-	lfsmake1 zstd
 	lfsmake1 binutils			PASS=2
 	lfsmake1 gcc			PASS=2
+	lfsmake1 zstd
 	lfsmake1 ccache
 	lfsmake1 tcl
 	lfsmake1 expect
