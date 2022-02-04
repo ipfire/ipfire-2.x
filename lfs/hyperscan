@@ -80,7 +80,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && cmake . \
 		-DCMAKE_INSTALL_PREFIX:PATH=/usr \
 		-DBUILD_SHARED_LIBS:BOOL=ON \
-		-DBUILD_STATIC_AND_SHARED:BOOL=OFF
+		-DBUILD_STATIC_AND_SHARED:BOOL=OFF \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DBUILD_EXAMPLES=OFF
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
