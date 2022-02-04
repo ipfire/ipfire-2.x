@@ -145,35 +145,35 @@ configure_build() {
 
 	case "${build_arch}" in
 		x86_64)
-			BUILDTARGET="${build_arch}-unknown-linux-gnu"
+			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
 			CFLAGS_ARCH="-m64 -mtune=generic -fstack-clash-protection -fcf-protection"
 			;;
 
 		aarch64)
-			BUILDTARGET="${build_arch}-unknown-linux-gnu"
+			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="arm"
 			CFLAGS_ARCH="-fstack-clash-protection"
 			;;
 
 		armv7hl)
-			BUILDTARGET="${build_arch}-unknown-linux-gnueabi"
+			BUILDTARGET="${build_arch}-pc-linux-gnueabi"
 			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
 			BUILD_PLATFORM="arm"
 			CFLAGS_ARCH="-march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard"
 			;;
 
 		armv6l)
-			BUILDTARGET="${build_arch}-unknown-linux-gnueabi"
+			BUILDTARGET="${build_arch}-pc-linux-gnueabi"
 			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
 			BUILD_PLATFORM="arm"
 			CFLAGS_ARCH="-march=armv6zk+fp -mfpu=vfp -mfloat-abi=softfp -fomit-frame-pointer"
 			;;
 
 		riscv64)
-			BUILDTARGET="${build_arch}-unknown-linux-gnu"
+			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="riscv"
 			CFLAGS_ARCH="-fstack-clash-protection"
