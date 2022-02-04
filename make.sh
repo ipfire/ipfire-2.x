@@ -663,8 +663,11 @@ lfsmake1() {
 	lfsmakecommoncheck $*
 	[ $? == 1 ] && return 0
 
+	# Set PATH to use the toolchain tools first and then whatever the host has set
+	local PATH="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin:${PATH}"
+
 	if [ -n "${CUSTOM_PATH}" ]; then
-		local PATH="${CUSTOM_PATH}:${PATH}"
+		PATH="${CUSTOM_PATH}:${PATH}"
 	fi
 
 	cd $BASEDIR/lfs && env -i \
