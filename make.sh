@@ -663,8 +663,12 @@ lfsmake1() {
 	lfsmakecommoncheck $*
 	[ $? == 1 ] && return 0
 
+	if [ -n "${CUSTOM_PATH}" ]; then
+		local PATH="${CUSTOM_PATH}:${PATH}"
+	fi
+
 	cd $BASEDIR/lfs && env -i \
-		PATH="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin:${PATH}" \
+		PATH="${PATH}" \
 		CCACHE_DIR="${CCACHE_DIR}"/${BUILD_ARCH}/${TOOLCHAINVER} \
 		CCACHE_TEMPDIR="${CCACHE_TEMPDIR}" \
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
@@ -1062,7 +1066,7 @@ buildtoolchain() {
 	lfsmake1 bison
 	lfsmake1 flex
 	lfsmake1 fake-environ
-	lfsmake1 strip
+	CUSTOM_PATH="${PATH}" lfsmake1 strip
 	lfsmake1 cleanup-toolchain
 }
 
