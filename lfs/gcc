@@ -116,6 +116,7 @@ ifeq "$(PASS)" "2"
   EXTRA_CONFIG = \
 	--build=$(BUILDTARGET) \
 	--prefix=$(TOOLS_DIR) \
+	--with-sysroot=$(ROOT) \
 	--with-local-prefix=$(TOOLS_DIR) \
 	--with-native-system-header-dir=$(TOOLS_DIR)/include \
 	--enable-languages=c,c++ \
