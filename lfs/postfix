@@ -99,6 +99,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/postfix-3.6.2-glibc-234-build-fix.patch
 	cd $(DIR_APP) && make -f Makefile.init makefiles \
 		DEBUG="" OPT="$(CFLAGS) -fno-strict-aliasing" CCARGS="$(CCARGS)" AUXLIBS="$(AUXLIBS)"
 	cd $(DIR_APP) && make $(MAKETUNING)
