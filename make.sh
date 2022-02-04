@@ -1496,7 +1496,6 @@ buildipfire() {
   lfsmake2 rsync
   lfsmake2 rpcbind
   lfsmake2 keyutils
-  lfsmake2 libnfsidmap
   lfsmake2 nfs
   lfsmake2 gnu-netcat
   lfsmake2 ncat
