@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.33
+VER        = 2.34
 
 THISAPP    = glibc-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -73,7 +73,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 390bbd889c7e8e8a7041564cb6b27cca
+$(DL_FILE)_MD5 = 31998b53fb39cb946e96abc310af1c89
 
 install : $(TARGET)
 
@@ -104,10 +104,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/glibc-build
-
-	# Security Fixes
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.33-use-__pthread_attr_copy-in-mq_notify-bug-27896.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.33-librt-fix-null-pointer-dereference-bug-28213.patch
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-localedef-no-archive.patch
 
