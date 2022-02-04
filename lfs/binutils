@@ -70,6 +70,8 @@ else
 	AR="$(CROSSTARGET)-ar" \
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
+	--build=$(BUILDTARGET) \
+	--host=$(BUILDTARGET) \
 	--prefix=$(TOOLS_DIR) \
 	--with-lib-path=$(TOOLS_DIR)/lib \
 	--with-sysroot \

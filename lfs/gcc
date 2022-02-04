@@ -116,6 +116,8 @@ ifeq "$(PASS)" "2"
 	AR="$(CROSSTARGET)-ar" \
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
+	--build=$(BUILDTARGET) \
+	--host=$(BUILDTARGET) \
 	--prefix=$(TOOLS_DIR) \
 	--with-local-prefix=$(TOOLS_DIR) \
 	--with-native-system-header-dir=$(TOOLS_DIR)/include \
