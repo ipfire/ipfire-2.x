@@ -29,16 +29,6 @@ VER = ipfire
 THISAPP    = strip
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
-ifeq "$(TOOLCHAIN)" "1"
-	SHELL = /bin/bash
-	STRIP = /usr/bin/strip
-	ROOT = $(TOOLS_DIR)
-else
-	SHELL = $(TOOLS_DIR)/bin/bash
-	STRIP = $(TOOLS_DIR)/bin/strip
-	ROOT = /
-endif
-
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -56,18 +46,19 @@ md5 :
 ###############################################################################
 
 $(TARGET) :
+ifeq "$(TOOLCHAIN)" "1"
+	# Strip everything in the toolchain
+	$(DIR_SRC)/src/stripper $(TOOLS_DIR)
+else
 	# Don't strip VDR binaries, because they use a weird plugin system
 	# which does not work when unneeded symbols get stripped from
 	# /usr/sbin/vdr.
-	STRIP=$(STRIP) $(SHELL) $(DIR_SRC)/src/stripper \
-		$(ROOT) \
+	$(DIR_SRC)/src/stripper / \
 		--exclude=$(TOOLS_DIR) \
-		--exclude=/dev \
-		--exclude=/proc \
-		--exclude=/sys \
 		--exclude=/tmp \
 		--exclude=/usr/src \
 		--exclude=/usr/lib/vdr \
 		--exclude=/usr/sbin/vdr \
 		--exclude=/var/tmp \
 		--exclude=/usr/lib/go
+endif

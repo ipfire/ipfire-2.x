@@ -1,49 +1,58 @@
 #!/usr/bin/env bash
 
-dirs=""
-excludes="/dev /proc /sys /run"
+paths=()
+excludes=()
 
 while [ $# -gt 0 ]; do
 	case "${1}" in
 		--exclude=*)
-			excludes="${excludes} ${1#*=}"
+			excludes+=( "!" "-path" "${1#*=}/*" )
 			;;
 		*)
-			dirs="${dirs} ${1}"
+			paths+=( "${1}" )
 			;;
 	esac
 	shift
 done
 
 function _strip() {
-	local file=${1}
-	local strip="${STRIP-strip}"
+	local file="${1}"
+	local args=()
 
-	local exclude l
-	for exclude in ${excludes}; do
-		l=${#exclude}
-		if [ "${file:0:${l}}" = "${exclude}" ]; then
+	# Fetch the filetype
+	local type="$(readelf -h "${file}" 2>/dev/null)"
+
+	case "${type}" in
+		# Libraries and Relocatable binaries
+		*Type:*"DYN (Shared object file)"*)
+			args+=( "--strip-all" )
+			;;
+
+		# Binaries
+		*Type:*"EXEC (Executable file)"*)
+			args+=( "--strip-all" )
+			;;
+
+		# Static libraries
+		*Type:*"REL (Relocatable file)"*)
+			args+=( "--strip-debug" "--remove-section=.comment" "--remove-section=.note" )
+			;;
+
+		# Skip any unrecognised files
+		*)
 			return 0
-		fi
-	done
+			;;
+	esac
 
 	# Fetch any capabilities
 	local capabilities="$(getfattr --no-dereference --name="security.capability" \
 		--absolute-names --dump "${file}" 2>/dev/null)"
 
-	local cmd=( "${strip}" )
-
-	case "$(file -bi ${file})" in
-		application/x-archive*)
-			cmd+=( "--strip-debug" "--remove-section=.comment" "--remove-section=.note" )
-			;;
-		*)
-			cmd+=( "--strip-all" )
-			;;
-	esac
-
 	echo "Stripping ${file}..."
-	${cmd[*]} ${file}
+	if ! strip "${args[@]}" "${file}"; then
+		return 1
+	fi
+
 
 	# Restore capabilities
 	if [ -n "${capabilities}" ]; then
@@ -51,18 +60,8 @@ function _strip() {
 	fi
 }
 
-for dir in ${dirs}; do
-	# Strip shared objects.
-	find ${dir} -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) \
-		| file -N -f - | sed -n -e 's/^\(.*\):[   ]*.*ELF.*, not stripped.*/\1/p' |
-		while read file; do
-			_strip ${file} || exit $?
-		done || exit $?
-
-	# Strip static archives.
-	find ${dir} -name \*.a -a -exec file {} \; \
-		| grep 'current ar archive' | sed -n -e 's/^\(.*\):[ 	]*current ar archive/\1/p' |
-		while read file; do
-			_strip ${file} || exit $?
-		done || exit $?
+for path in ${paths[@]}; do
+	for file in $(find / -xdev "${excludes[@]}" -type f \( -perm -0100 -or -perm -0010 -or -perm -0001 \) 2>/dev/null); do
+		_strip "${file}" || exit $?
+	done
 done

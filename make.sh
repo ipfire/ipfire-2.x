@@ -556,6 +556,11 @@ enterchroot() {
 
 	local PATH="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/bin"
 
+	# Prepend any custom changes to PATH
+	if [ -n "${CUSTOM_PATH}" ]; then
+		PATH="${CUSTOM_PATH}:${PATH}"
+	fi
+
 	PATH="${PATH}" chroot ${LFS} env -i \
 		HOME="/root" \
 		TERM="${TERM}" \
@@ -695,7 +700,7 @@ lfsmake2() {
 	local PS1='\u:\w$ '
 
 	enterchroot \
-		${EXTRA_PATH}bash -x -c "cd /usr/src/lfs && \
+		bash -x -c "cd /usr/src/lfs && \
 			make -f $* \
 			LFS_BASEDIR=/usr/src install" \
 		>> ${LOGFILE} 2>&1 &
@@ -1693,7 +1698,7 @@ buildinstaller() {
   lfsmake2 memtest
   lfsmake2 installer
   # use toolchain bash for chroot to strip
-  EXTRA_PATH=${TOOLS_DIR}/bin/ lfsmake2 strip
+  CUSTOM_PATH="${TOOLS_DIR}/bin" lfsmake2 strip
 }
 
 buildpackages() {
