@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.34
+VER        = 2.35
 
 THISAPP    = glibc-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -46,9 +46,7 @@ else
 	--host=$(CROSSTARGET) \
 	--build=$(BUILDTARGET) \
 	--prefix=$(TOOLS_DIR) \
-	--with-headers=$(TOOLS_DIR)/include \
-	libc_cv_forced_unwind=yes \
-	libc_cv_c_cleanup=yes
+	--with-headers=$(TOOLS_DIR)/include
 endif
 
 ifeq "$(BUILD_ARCH)" "aarch64"
@@ -81,7 +79,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 31998b53fb39cb946e96abc310af1c89
+$(DL_FILE)_MD5 = dd571c67d85d89d7f60b854a4e207423
 
 install : $(TARGET)
 
