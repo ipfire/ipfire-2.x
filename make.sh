@@ -554,7 +554,7 @@ enterchroot() {
 	# Install QEMU helper, if needed
 	qemu_install_helper
 
-	local PATH="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/bin"
+	local PATH="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin"
 
 	# Prepend any custom changes to PATH
 	if [ -n "${CUSTOM_PATH}" ]; then
@@ -664,7 +664,7 @@ lfsmake1() {
 	[ $? == 1 ] && return 0
 
 	cd $BASEDIR/lfs && env -i \
-		PATH="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/bin:$PATH" \
+		PATH="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin:${PATH}" \
 		CCACHE_DIR="${CCACHE_DIR}"/${BUILD_ARCH}/${TOOLCHAINVER} \
 		CCACHE_TEMPDIR="${CCACHE_TEMPDIR}" \
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
