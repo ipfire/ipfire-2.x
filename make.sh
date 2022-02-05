@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2021 IPFire Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2022 IPFire Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.27"							# Version number
-CORE="164"							# Core Level (Filename)
+CORE="165"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
