@@ -33,23 +33,30 @@ if [ "${?}" == "0" ]; then
 	echo "Comment this and create it at initskript if needed !"
 fi
 
-grep -r '/x86_64' ./config/rootfiles/ --exclude gcc --exclude *linux* --exclude-dir oldcore --exclude-dir x86_64 >/dev/null 2>&1
+grep -r '/x86_64' ./config/rootfiles/ --exclude gcc --exclude rust-libc \
+    --exclude rust-ppv-lite86 --exclude rust-memchr --exclude *linux* \
+    --exclude-dir oldcore --exclude-dir x86_64 >/dev/null 2>&1
 if [ "${?}" == "0" ]; then
 	echo "Error! '/x86_64' in rootfiles files found!"
-	grep -r '/x86_64' ./config/rootfiles/ --exclude gcc --exclude *linux* --exclude-dir oldcore --exclude-dir x86_64
+	grep -r '/x86_64' ./config/rootfiles/ --exclude gcc --exclude rust-libc \
+    --exclude rust-ppv-lite86 --exclude rust-memchr --exclude *linux* \
+    --exclude-dir oldcore --exclude-dir x86_64
 	echo "Replace by xxxMACHINExxx !"
 fi
 
-grep -r '/armv5tel' ./config/rootfiles/ --exclude gcc --exclude-dir oldcore --exclude-dir armv5tel >/dev/null 2>&1
+grep -r '/armv6l' ./config/rootfiles/ --exclude gcc --exclude rust-libc \
+    --exclude-dir oldcore --exclude-dir armv5tel >/dev/null 2>&1
 if [ "${?}" == "0" ]; then
-	echo "Error! '/armv5tel' in rootfiles files found!"
-	grep -r '/armv5tel' ./config/rootfiles/ --exclude gcc --exclude-dir oldcore --exclude-dir armv5tel
+	echo "Error! '/armv6l' in rootfiles files found!"
+	grep -r '/armv6l' ./config/rootfiles/ --exclude gcc \
+    --exclude-dir oldcore --exclude-dir armv5tel
 	echo "Replace by xxxMACHINExxx !"
 fi
 
-grep -r '/aarch64' ./config/rootfiles/ --exclude gcc --exclude gdb --exclude liburcu --exclude gdb --exclude-dir oldcore --exclude-dir aarch64 >/dev/null 2>&1
+grep -r '/aarch64' ./config/rootfiles/ --exclude gcc --exclude rust-libc --exclude gdb --exclude liburcu --exclude gdb --exclude-dir oldcore --exclude-dir aarch64 >/dev/null 2>&1
 if [ "${?}" == "0" ]; then
 	echo "Error! '/aarch64' in rootfiles files found!"
-	grep -r '/aarch64' ./config/rootfiles/ --exclude gcc --exclude-dir oldcore --exclude-dir aarch64
+	grep -r '/aarch64' ./config/rootfiles/ --exclude gcc --exclude rust-libc \
+    --exclude-dir oldcore --exclude-dir aarch64
 	echo "Replace by xxxMACHINExxx !"
 fi
