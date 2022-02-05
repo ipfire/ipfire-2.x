@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.34.1
+VER        = 2.35.1
 
 THISAPP    = git-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = git
-PAK_VER    = 21
+PAK_VER    = 22
 
 DEPS       = perl-Authen-SASL perl-MIME-Base64 perl-Net-SMTP-SSL
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f442dade3c73ea39473f6700b3e04dcd
+$(DL_FILE)_MD5 = 3aae077280b6be861e3c1c637491853a
 
 install : $(TARGET)
 
