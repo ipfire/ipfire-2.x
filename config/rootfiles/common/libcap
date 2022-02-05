@@ -1,10 +1,10 @@
 #lib/libcap.a
 lib/libcap.so.2
-lib/libcap.so.2.61
+lib/libcap.so.2.63
 #lib/libpsx.a
 #lib/libpsx.so
 #lib/libpsx.so.2
-#lib/libpsx.so.2.61
+#lib/libpsx.so.2.63
 #lib/pkgconfig/libcap.pc
 #lib/pkgconfig/libpsx.pc
 lib/security/pam_cap.so
@@ -57,6 +57,7 @@ usr/lib/libcap.so
 #usr/share/man/man3/cap_launcher_set_mode.3
 #usr/share/man/man3/cap_launcher_setgroups.3
 #usr/share/man/man3/cap_launcher_setuid.3
+#usr/share/man/man3/cap_max_bits.3
 #usr/share/man/man3/cap_mode.3
 #usr/share/man/man3/cap_mode_name.3
 #usr/share/man/man3/cap_new_launcher.3
@@ -75,6 +76,7 @@ usr/lib/libcap.so
 #usr/share/man/man3/capsetp.3
 #usr/share/man/man3/libcap.3
 #usr/share/man/man3/libpsx.3
+#usr/share/man/man3/psx_set_sensitivity.3
 #usr/share/man/man3/psx_syscall.3
 #usr/share/man/man3/psx_syscall3.3
 #usr/share/man/man3/psx_syscall6.3
