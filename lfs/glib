@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.70.1
+VER        = 2.71.1
 
 THISAPP    = glib-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = fb613d21fabce3d3d8520f37d12bd473
+$(DL_FILE)_MD5 = 49c95e1b98f829f94bce36f7a8183004
 
 install : $(TARGET)
 
