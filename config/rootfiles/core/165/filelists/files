@@ -1,2 +1,4 @@
+opt/pakfire/etc/pakfire.conf
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
+usr/sbin/setup
 var/ipfire/main/manualpages
