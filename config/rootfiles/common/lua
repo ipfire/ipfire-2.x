@@ -7,7 +7,7 @@ usr/bin/luac
 #usr/include/lualib.h
 #usr/lib/liblua.so
 usr/lib/liblua.so.5.4
-usr/lib/liblua.so.5.4.3
+usr/lib/liblua.so.5.4.4
 #usr/lib/lua
 #usr/lib/lua/5.4
 #usr/lib/pkgconfig/lua.pc
