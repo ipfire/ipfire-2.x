@@ -13,17 +13,14 @@ sbin/ctstat
 sbin/dcb
 sbin/devlink
 sbin/genl
-sbin/ifcfg
 sbin/ifstat
 sbin/ip
 sbin/lnstat
 sbin/nstat
 sbin/rdma
-sbin/routef
 sbin/routel
 sbin/rtacct
 sbin/rtmon
-sbin/rtpr
 sbin/rtstat
 sbin/ss
 sbin/tc
@@ -65,7 +62,6 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/devlink-trap.8
 #usr/share/man/man8/devlink.8
 #usr/share/man/man8/genl.8
-#usr/share/man/man8/ifcfg.8
 #usr/share/man/man8/ifstat.8
 #usr/share/man/man8/ip-address.8
 #usr/share/man/man8/ip-addrlabel.8
@@ -101,11 +97,9 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/rdma-statistic.8
 #usr/share/man/man8/rdma-system.8
 #usr/share/man/man8/rdma.8
-#usr/share/man/man8/routef.8
 #usr/share/man/man8/routel.8
 #usr/share/man/man8/rtacct.8
 #usr/share/man/man8/rtmon.8
-#usr/share/man/man8/rtpr.8
 #usr/share/man/man8/rtstat.8
 #usr/share/man/man8/ss.8
 #usr/share/man/man8/tc-actions.8
