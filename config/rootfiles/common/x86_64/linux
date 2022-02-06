@@ -11058,7 +11058,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/X86_PKG_TEMP_THERMAL
 #lib/modules/KVER-ipfire/build/include/config/X86_PLATFORM_DEVICES
 #lib/modules/KVER-ipfire/build/include/config/X86_PLATFORM_DRIVERS_DELL
-#lib/modules/KVER-ipfire/build/include/config/X86_PLATFORM_DRIVERS_INTEL
 #lib/modules/KVER-ipfire/build/include/config/X86_PMEM_LEGACY
 #lib/modules/KVER-ipfire/build/include/config/X86_PMEM_LEGACY_DEVICE
 #lib/modules/KVER-ipfire/build/include/config/X86_PM_TIMER
@@ -15949,6 +15948,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/uapi/linux/cryptouser.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/cuda.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/cxl_mem.h
+#lib/modules/KVER-ipfire/build/include/uapi/linux/cyclades.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/cycx_cfm.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/dcbnl.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/dccp.h

@@ -15961,6 +15961,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/uapi/linux/cryptouser.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/cuda.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/cxl_mem.h
+#lib/modules/KVER-ipfire/build/include/uapi/linux/cyclades.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/cycx_cfm.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/dcbnl.h
 #lib/modules/KVER-ipfire/build/include/uapi/linux/dccp.h
