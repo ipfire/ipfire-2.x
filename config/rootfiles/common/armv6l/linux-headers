@@ -205,6 +205,7 @@
 #usr/include/linux/cryptouser.h
 #usr/include/linux/cuda.h
 #usr/include/linux/cxl_mem.h
+#usr/include/linux/cyclades.h
 #usr/include/linux/cycx_cfm.h
 #usr/include/linux/dcbnl.h
 #usr/include/linux/dccp.h
