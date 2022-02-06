@@ -87,7 +87,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	sed -e "s/filename, RTLD_LAZY/filename, RTLD_NOW/" \
 		-i $(DIR_APP)/builtins/enable.def
 
-	for i in $$(seq 9 12); do \
+	for i in $$(seq 9 16); do \
 		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash/bash51-$$(printf "%03d" "$${i}") || exit 1; \
 	done
 
