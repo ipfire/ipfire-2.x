@@ -137,7 +137,7 @@ close DF;
 my @iostat1 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$1}');
 my @iostat2 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$6}');
 my @iostat3 = qx(/usr/bin/iostat -dm -p | grep -v "Linux" | awk '{print \$7}');
-print "<tr><td colspan='3'>&nbsp;\n<tr><td colspan='3'><h3>transfers</h3></td></tr>";
+print "<tr><td colspan='3'>&nbsp;\n<tr><td colspan='3'><h3>$Lang::tr{'transfers'}</h3></td></tr>";
 my $i=0;
 
 for(my $i = 1; $i <= $#iostat1; $i++){

@@ -2485,6 +2485,7 @@
 'trafficsum' => 'Total',
 'trafficto' => 'Nach',
 'transfer limits' => 'Transferbeschränkungen',
+'transfers' => 'Datenübertragungen',
 'transparent on' => 'Transparent auf',
 'transport mode does not support vti' => 'VTI wird im Transport-Modus nicht unterstützt',
 'tripwire' => 'Tripwire',
