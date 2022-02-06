@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.3.3op2
+VER        = 2.4.1
 
 THISAPP    = cups-$(VER)
 DL_FILE    = $(THISAPP)-source.tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/cups-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
-PAK_VER    = 23
+PAK_VER    = 24
 
 DEPS       = avahi cups-filters dbus ghostscript krb5 libtiff
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 524266752cf243c968921547b18ee594
+$(DL_FILE)_MD5 = c2e5143d06f21e19ea2b73913185656f
 
 install : $(TARGET)
 
