@@ -30,6 +30,8 @@ srv/web/ipfire/html/images/wio/white.png
 usr/lib/wio
 usr/lib/wio/wio-graphs.pl
 usr/lib/wio/wio-lib.pl
+usr/local/bin/wiohelper
+usr/local/bin/wioscan
 var/ipfire/addon-lang/wio.de.pl
 var/ipfire/addon-lang/wio.en.pl
 var/ipfire/addon-lang/wio.es.pl
@@ -44,5 +46,3 @@ var/ipfire/wio/wiovpn.pl
 var/log/rrd/wio
 var/log/wio
 var/log/wio/wioips
--usr/local/bin/wiohelper
--usr/local/bin/wioscan
