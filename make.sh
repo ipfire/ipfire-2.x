@@ -1342,7 +1342,7 @@ buildipfire() {
   lfsmake2 usbutils
   lfsmake2 libxml2
   lfsmake2 libxslt
-  lfsmake2 BerkeleyDB
+  lfsmake2 perl-BerkeleyDB
   lfsmake2 cyrus-sasl
   lfsmake2 openldap
   lfsmake2 apache2
@@ -1365,10 +1365,10 @@ buildipfire() {
   lfsmake2 ntfs-3g
   lfsmake2 ethtool
   lfsmake2 fcron
-  lfsmake2 ExtUtils-PkgConfig
+  lfsmake2 perl-ExtUtils-PkgConfig
   lfsmake2 perl-GD
-  lfsmake2 GD-Graph
-  lfsmake2 GD-TextUtil
+  lfsmake2 perl-GD-Graph
+  lfsmake2 perl-GD-TextUtil
   lfsmake2 perl-Device-SerialPort
   lfsmake2 perl-Device-Modem
   lfsmake2 perl-Apache-Htpasswd
@@ -1390,37 +1390,37 @@ buildipfire() {
   lfsmake2 logwatch
   lfsmake2 misc-progs
   lfsmake2 nano
-  lfsmake2 URI
+  lfsmake2 perl-URI
   lfsmake2 perl-CGI
   lfsmake2 perl-Switch
-  lfsmake2 HTML-Tagset
-  lfsmake2 HTML-Parser
-  lfsmake2 HTML-Template
-  lfsmake2 Compress-Zlib
-  lfsmake2 Digest
-  lfsmake2 Digest-SHA1
-  lfsmake2 Digest-HMAC
-  lfsmake2 libwww-perl
-  lfsmake2 perl-LWP-Protocol-https
+  lfsmake2 perl-HTML-Tagset
+  lfsmake2 perl-HTML-Parser
+  lfsmake2 perl-HTML-Template
+  lfsmake2 perl-Compress-Zlib
+  lfsmake2 perl-Digest
+  lfsmake2 perl-Digest-SHA1
+  lfsmake2 perl-Digest-HMAC
+  lfsmake2 perl-libwww
+	lfsmake2 perl-LWP-Protocol-https
   lfsmake2 perl-Net-HTTP
-  lfsmake2 Net-DNS
-  lfsmake2 Net-IPv4Addr
-  lfsmake2 Net_SSLeay
-  lfsmake2 IO-Stringy
-  lfsmake2 IO-Socket-SSL
-  lfsmake2 Unix-Syslog
-  lfsmake2 Mail-Tools
-  lfsmake2 MIME-Tools
-  lfsmake2 Net-Server
-  lfsmake2 Canary-Stability
-  lfsmake2 Convert-TNEF
-  lfsmake2 Convert-UUlib
-  lfsmake2 Archive-Tar
-  lfsmake2 Archive-Zip
-  lfsmake2 Text-Tabs+Wrap
-  lfsmake2 XML-Parser
-  lfsmake2 Crypt-PasswdMD5
-  lfsmake2 Net-Telnet
+  lfsmake2 perl-Net-DNS
+  lfsmake2 perl-Net-IPv4Addr
+  lfsmake2 perl-Net_SSLeay
+  lfsmake2 perl-IO-Stringy
+  lfsmake2 perl-IO-Socket-SSL
+  lfsmake2 perl-Unix-Syslog
+  lfsmake2 perl-Mail-Tools
+  lfsmake2 perl-MIME-Tools
+  lfsmake2 perl-Net-Server
+  lfsmake2 perl-Canary-Stability
+  lfsmake2 perl-Convert-TNEF
+  lfsmake2 perl-Convert-UUlib
+  lfsmake2 perl-Archive-Tar
+  lfsmake2 perl-Archive-Zip
+  lfsmake2 perl-Text-Tabs+Wrap
+  lfsmake2 perl-XML-Parser
+  lfsmake2 perl-Crypt-PasswdMD5
+  lfsmake2 perl-Net-Telnet
   lfsmake2 python3-setuptools
   lfsmake2 python3-inotify
   lfsmake2 python3-docutils
