@@ -6,4 +6,5 @@ srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
 usr/lib/firewall/firewall-lib.pl
 usr/sbin/setup
+var/ipfire/ids-functions.pl
 var/ipfire/main/manualpages
