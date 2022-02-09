@@ -8,7 +8,7 @@
 #usr/lib/liblcms2.la
 #usr/lib/liblcms2.so
 usr/lib/liblcms2.so.2
-usr/lib/liblcms2.so.2.0.12
+usr/lib/liblcms2.so.2.0.13
 #usr/lib/pkgconfig/lcms2.pc
 #usr/share/man/man1/jpgicc.1
 #usr/share/man/man1/linkicc.1

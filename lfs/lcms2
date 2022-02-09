@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.12
+VER        = 2.13.1
 
 THISAPP    = lcms2-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 8cb583c8447461896320b43ea9a688e0
+$(DL_FILE)_MD5 = 47a99e781b89c958a773e2012e81ae8c
 
 install : $(TARGET)
 
