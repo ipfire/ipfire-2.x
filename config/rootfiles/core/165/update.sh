@@ -52,6 +52,17 @@ if [ $ROOTSPACE -lt 100000 ]; then
 fi
 
 # Remove files
+rm -rvf \
+	/usr/bin/2to3-3.8 \
+	/usr/bin/easy_install-3.8 \
+	/usr/bin/idle3.8 \
+	/usr/bin/pip3.8 \
+	/usr/bin/pydoc3.8 \
+	/usr/bin/python3.8 \
+	/usr/bin/python3.8-config \
+	/usr/lib/libpython3.8.so \
+	/usr/lib/libpython3.8.so.1.0 \
+	/usr/lib/python3.8/
 
 # Stop services
 
