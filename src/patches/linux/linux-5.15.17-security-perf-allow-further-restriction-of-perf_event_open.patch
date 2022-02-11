@@ -1,0 +1,75 @@
+From: Jeff Vander Stoep <jeffv@google.com>
+Date: Wed, 27 Jul 2016 07:45:46 -0700
+Message-Id: <1469630746-32279-1-git-send-email-jeffv@google.com>
+Subject: [kernel-hardening] [PATCH 1/2] security,
+	perf: allow further restriction of perf_event_open
+
+When kernel.perf_event_paranoid is set to 3 (or greater), disallow
+all access to performance events by users without CAP_SYS_ADMIN.
+
+This new level of restriction is intended to reduce the attack
+surface of the kernel. Perf is a valuable tool for developers but
+is generally unnecessary and unused on production systems. Perf may
+open up an attack vector to vulnerable device-specific drivers as
+recently demonstrated in CVE-2016-0805, CVE-2016-0819,
+CVE-2016-0843, CVE-2016-3768, and CVE-2016-3843. This new level of
+restriction allows for a safe default to be set on production systems
+while leaving a simple means for developers to grant access [1].
+
+This feature is derived from CONFIG_GRKERNSEC_PERF_HARDEN by Brad
+Spengler. It is based on a patch by Ben Hutchings [2]. Ben's patches
+have been modified and split up to address on-list feedback.
+
+kernel.perf_event_paranoid=3 is the default on both Debian [2] and
+Android [3].
+
+[1] Making perf available to developers on Android:
+https://android-review.googlesource.com/#/c/234400/
+[2] Original patch by Ben Hutchings:
+https://lkml.org/lkml/2016/1/11/587
+[3] https://android-review.googlesource.com/#/c/234743/
+
+Signed-off-by: Jeff Vander Stoep <jeffv@google.com>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+---
+ Documentation/sysctl/kernel.txt | 1 +
+ include/linux/perf_event.h      | 5 +++++
+ kernel/events/core.c            | 4 ++++
+ 3 files changed, 10 insertions(+)
+
+diff -Naur linux-5.15.22.orig/include/linux/perf_event.h linux-5.15.22/include/linux/perf_event.h
+--- linux-5.15.22.orig/include/linux/perf_event.h	2022-02-11 15:39:26.163576222 +0000
++++ linux-5.15.22/include/linux/perf_event.h	2022-02-11 15:42:16.719697397 +0000
+@@ -1346,6 +1346,11 @@
+ 	return security_perf_event_open(attr, PERF_SECURITY_TRACEPOINT);
+ }
+ 
++static inline bool perf_paranoid_any(void)
++{
++	return sysctl_perf_event_paranoid > 2;
++}
++
+ extern void perf_event_init(void);
+ extern void perf_tp_event(u16 event_type, u64 count, void *record,
+ 			  int entry_size, struct pt_regs *regs,
+diff -Naur linux-5.15.22.orig/kernel/events/core.c linux-5.15.22/kernel/events/core.c
+--- linux-5.15.22.orig/kernel/events/core.c	2022-02-11 15:39:27.667683028 +0000
++++ linux-5.15.22/kernel/events/core.c	2022-02-11 15:42:16.723697680 +0000
+@@ -414,6 +414,7 @@
+  *   0 - disallow raw tracepoint access for unpriv
+  *   1 - disallow cpu events for unpriv
+  *   2 - disallow kernel profiling for unpriv
++ *   3 - disallow all unpriv perf event use
+  */
+ int sysctl_perf_event_paranoid __read_mostly = 2;
+ 
+@@ -12090,6 +12091,9 @@
+ 	if (err)
+ 		return err;
+ 
++	if (perf_paranoid_any() && !capable(CAP_SYS_ADMIN))
++				return -EACCES;
++
+ 	err = perf_copy_attr(attr_uptr, &attr);
+ 	if (err)
+ 		return err;
