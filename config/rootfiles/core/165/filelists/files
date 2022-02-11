@@ -3,6 +3,7 @@ opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/media.cgi
+srv/web/ipfire/cgi-bin/qos.cgi
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
 usr/lib/firewall/firewall-lib.pl
 usr/sbin/setup
