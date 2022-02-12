@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.2
+VER        = 5.4.1
 
 THISAPP    = squid-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 102984f3ea382a1fa5bd917c2ee155ec
+$(DL_FILE)_MD5 = a6d55b34ee8d32052026db1db98f4d0d
 
 install : $(TARGET)
 
@@ -77,7 +77,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xaf $(DIR_DL)/$(DL_FILE)
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/squid-gcc11.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/squid/01_squid-gcc11.patch
+
 	cd $(DIR_APP) && autoreconf -vfi
 	cd $(DIR_APP)/libltdl && autoreconf -vfi
 
