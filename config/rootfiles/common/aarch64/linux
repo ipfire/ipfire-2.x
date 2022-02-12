@@ -189,6 +189,7 @@ boot/dtb-KVER-ipfire
 #boot/dtb-KVER-ipfire/rockchip/rk3326-odroid-go2.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-a1.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-evb.dtb
+#boot/dtb-KVER-ipfire/rockchip/rk3328-nanopi-r2s-oc.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-nanopi-r2s.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-roc-cc.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-rock-pi-e.dtb
@@ -216,6 +217,7 @@ boot/dtb-KVER-ipfire
 #boot/dtb-KVER-ipfire/rockchip/rk3399-nanopi-m4.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3399-nanopi-m4b.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3399-nanopi-neo4.dtb
+#boot/dtb-KVER-ipfire/rockchip/rk3399-nanopi-r4s-oc.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3399-nanopi-r4s.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3399-orangepi.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3399-pinebook-pro.dtb
