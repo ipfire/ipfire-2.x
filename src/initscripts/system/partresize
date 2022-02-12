@@ -53,20 +53,20 @@ case "${1}" in
 
 			mount /boot > /dev/null
 			case "$(< /proc/device-tree/model )" in
-				"FriendlyElec NanoPi-R1" )
+				FriendlyElec\ NanoPi?R1* )
 					# Install AP6112 wlan config on NanoPi R1
 					cp -f   /lib/firmware/brcm/brcmfmac43430-sdio.AP6212.txt \
 						/lib/firmware/brcm/brcmfmac43430-sdio.txt
 					cp -f   /lib/firmware/brcm/brcmfmac43430a0-sdio.ONDA-V80_PLUS.txt \
 						/lib/firmware/brcm/brcmfmac43430a0-sdio.txt
 				;;
-				"FriendlyElec NanoPi R2*" )
+				FriendlyElec\ NanoPi?R2* )
 					# Generate MAC address at first boot
 					SWMAC=`printf "%1x2:%02x:%02x:%02x:%02x" $[RANDOM%16] $[RANDOM%256] $[RANDOM%256] $[RANDOM%256] $[RANDOM%256]`
 					echo ethaddr=$SWMAC:00 >> /boot/uEnv.txt
 					echo eth1addr=$SWMAC:01 >> /boot/uEnv.txt
 				;;
-				"FriendlyElec NanoPi R4S" )
+				FriendlyElec\ NanoPi?R4* )
 					# Generate MAC address at first boot
 					SWMAC=`printf "%1x2:%02x:%02x:%02x:%02x" $[RANDOM%16] $[RANDOM%256] $[RANDOM%256] $[RANDOM%256] $[RANDOM%256]`
 					echo ethaddr=$SWMAC:00 >> /boot/uEnv.txt
