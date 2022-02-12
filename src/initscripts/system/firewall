@@ -7,6 +7,9 @@ eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/optionsfw/settings)
 IFACE=`/bin/cat /var/ipfire/red/iface 2> /dev/null | /usr/bin/tr -d '\012'`
+if [ -z $IFACE]; then
+	IFACE="red0"
+fi
 
 if [ -f /var/ipfire/red/device ]; then
 	DEVICE=`/bin/cat /var/ipfire/red/device 2> /dev/null | /usr/bin/tr -d '\012'`
@@ -38,9 +41,6 @@ iptables_init() {
 	iptables -P INPUT DROP
 	iptables -P FORWARD DROP
 	iptables -P OUTPUT ACCEPT
-
-	# Ensure the xt_geoip module is always loaded (#12767)
-	modprobe xt_geoip
 
 	# Enable TRACE logging to syslog
 	modprobe nf_log_ipv4
