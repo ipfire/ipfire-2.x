@@ -109,6 +109,10 @@ my $POLICY_INPUT_ACTION    = $fwoptions{"FWPOLICY2"};
 my $POLICY_FORWARD_ACTION  = $fwoptions{"FWPOLICY"};
 my $POLICY_OUTPUT_ACTION   = $fwoptions{"FWPOLICY1"};
 
+#workaround to suppress a warning when a variable is used only once
+my @dummy = ( $Location::Functions::ipset_db_directory );
+undef (@dummy);
+
 # MAIN
 &main();
 
