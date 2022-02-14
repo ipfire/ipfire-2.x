@@ -186,6 +186,9 @@ sub flush {
 	run("$IPTABLES -t nat -F $CHAIN_NAT_SOURCE");
 	run("$IPTABLES -t nat -F $CHAIN_NAT_DESTINATION");
 	run("$IPTABLES -t mangle -F $CHAIN_MANGLE_NAT_DESTINATION_FIX");
+
+	# Flush LOCATIONBLOCK chain.
+	run("$IPTABLES -F LOCATIONBLOCK");
 }
 
 sub buildrules {
@@ -638,8 +641,7 @@ sub p2pblock {
 }
 
 sub locationblock {
-	# Flush iptables chain.
-	run("$IPTABLES -F LOCATIONBLOCK");
+	# The LOCATIONBLOCK chain now gets flushed by the flush() function.
 
 	# If location blocking is not enabled, we are finished here.
 	if ($locationsettings{'LOCATIONBLOCK_ENABLED'} ne "on") {
