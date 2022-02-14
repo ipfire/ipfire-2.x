@@ -70,6 +70,7 @@ my %confignatfw=();
 my %locationsettings = (
 	"LOCATIONBLOCK_ENABLED" => "off"
 );
+my %loaded_ipset_lists=();
 
 my @p2ps=();
 
@@ -405,8 +406,14 @@ sub buildrules {
 						# Grab location code from hash.
 						my $loc_src = $$hash{$key}[4];
 
-						# Call function to load the networks list for this country.
-						&ipset_restore($loc_src);
+						# Check if the network list for this country already has been loaded.
+						unless($loaded_ipset_lists{$loc_src}) {
+							# Call function to load the networks list for this country.
+							&ipset_restore($loc_src);
+
+							# Store to the hash that this list has been loaded.
+							$loaded_ipset_lists{$loc_src} = "1";
+						}
 
 						push(@source_options, $source);
 					} elsif($source) {
@@ -419,8 +426,14 @@ sub buildrules {
 						# Grab location code from hash.
 						my $loc_dst = $$hash{$key}[6];
 
-						# Call function to load the networks list for this country.
-						&ipset_restore($loc_dst);
+						# Check if the network list for this country already has been loaded.
+						unless($loaded_ipset_lists{$loc_dst}) {
+							# Call function to load the networks list for this country.
+							&ipset_restore($loc_dst);
+
+							# Store to the hash that this list has been loaded.
+							$loaded_ipset_lists{$loc_dst} = "1";
+						}
 
 						push(@destination_options,  $destination);
 					} elsif ($destination) {
@@ -683,8 +696,14 @@ sub locationblock {
 	# is enabled.
 	foreach my $location (@locations) {
 		if(exists $locationsettings{$location} && $locationsettings{$location} eq "on") {
-			# Call function to load the networks list for this country.
-			&ipset_restore($location);
+			# Check if the network list for this country already has been loaded.
+			unless($loaded_ipset_lists{$location}) {
+				# Call function to load the networks list for this country.
+				&ipset_restore($location);
+
+				# Store to the hash that this list has been loaded.
+				$loaded_ipset_lists{$location} = "1";
+			}
 
 			# Call iptables and create rule to use the loaded ipset list.
 			run("$IPTABLES -A LOCATIONBLOCK -m set --match-set CC_$location src -j DROP");
