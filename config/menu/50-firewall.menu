@@ -21,12 +21,6 @@
                                 'title' => "$Lang::tr{'intrusion detection system'}",
 				'enabled' => 1,
                                 };
-	$subfirewall->{'50.p2p'} = {
-				'caption' => $Lang::tr{'p2p block'},
-				'uri' => '/cgi-bin/p2p-block.cgi',
-				'title' => "P2P-Block",
-				'enabled' => 1,
-				};
     $subfirewall->{'60.locationblock'} = {
 				'caption' => $Lang::tr{'locationblock'},
 				'uri' => '/cgi-bin/location-block.cgi',
