@@ -888,3 +888,10 @@ sub firewall_is_in_subnet {
 
 	return 0;
 }
+
+sub ipset_restore ($) {
+	my ($ccode) = @_;
+
+	# Run ipset and restore the list of the given country code.
+	run("$IPSET restore < $Location::Functions::ipset_db_directory/$ccode.ipset4");
+}
