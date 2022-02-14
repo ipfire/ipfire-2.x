@@ -154,12 +154,6 @@ iptables_init() {
 	fi
 	iptables -A HOSTILE -j DROP -m comment --comment "DROP_HOSTILE"
 
-	# P2PBLOCK
-	iptables -N P2PBLOCK
-	iptables -A INPUT -j P2PBLOCK
-	iptables -A FORWARD -j P2PBLOCK
-	iptables -A OUTPUT -j P2PBLOCK
-
 	# IPS (Guardian) chains
 	iptables -N GUARDIAN
 	iptables -A INPUT -j GUARDIAN
