@@ -42,8 +42,8 @@ fi
 
 # Get the latest location database from server.
 if /usr/bin/location update --cron=$UPDATE_INTERVAL; then
-	# Call location and export all countries in xt_geoip compatible format.
-	if /usr/bin/location export --directory=/usr/share/xt_geoip --family=ipv4 --format=xt_geoip; then
+	# Call location and export all countries in an ipset compatible format.
+	if /usr/bin/location export --directory=/var/lib/location/ipset --family=ipv4 --format=ipset; then
 
 		# Call initscript to reload the firewall.
 		/etc/init.d/firewall reload
