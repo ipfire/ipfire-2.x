@@ -927,6 +927,12 @@ sub firewall_is_in_subnet {
 sub ipset_restore ($) {
 	my ($ccode) = @_;
 
-	# Run ipset and restore the list of the given country code.
-	run("$IPSET restore < $Location::Functions::ipset_db_directory/$ccode.ipset4");
+	my $file_prefix = "ipset4";
+	my $db_file = "$Location::Functions::ipset_db_directory/$ccode.$file_prefix";
+
+	# Check if the generated file exists.
+	if (-f $db_file) {
+		# Run ipset and restore the list of the given country code.
+		run("$IPSET restore < $db_file");
+	}
 }
