@@ -1196,10 +1196,8 @@ buildipfire() {
   lfsmake2 rtl8812au		KCFG=""
   lfsmake2 rtl8822bu		KCFG=""
   lfsmake2 xradio		KCFG=""
-  lfsmake2 xtables-addons	KCFG=""
   lfsmake2 linux-initrd		KCFG=""
 
-  lfsmake2 xtables-addons	USPACE="1"
   lfsmake2 libgpg-error
   lfsmake2 libgcrypt
   lfsmake2 libassuan
