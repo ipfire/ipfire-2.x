@@ -31,6 +31,7 @@ require "${General::swroot}/location-functions.pl";
 my $DEBUG = 0;
 
 my $IPTABLES = "iptables --wait";
+my $IPSET = "ipset";
 
 # iptables chains
 my $CHAIN_INPUT           = "INPUTFW";
@@ -113,6 +114,9 @@ my $POLICY_OUTPUT_ACTION   = $fwoptions{"FWPOLICY1"};
 sub main {
 	# Flush all chains.
 	&flush();
+
+	# Destroy all existing ipsets.
+	run("$IPSET destroy");
 
 	# Prepare firewall rules.
 	if (! -z  "${General::swroot}/firewall/input"){
