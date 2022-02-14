@@ -93,14 +93,17 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && rm -f /var/lib/location/database.db
 	cd $(DIR_APP) && xz -d /var/lib/location/database.db.xz
 
-	# Launch location util and export all locations in xt_geoip format.
+	# Create directory for ipset databases.
+	cd $(DIR_APP) && mkdir -pv /var/lib/location/ipset
+
+	# Launch location util and export all locations in ipset compatible format.
 	cd $(DIR_APP) && /usr/bin/location export \
-		--directory=/usr/share/xt_geoip \
+		--directory=/var/lib/location/ipset \
 		--family=ipv4 \
-		--format=xt_geoip
+		--format=ipset
 
 	# Remove exported IPv6 zones.
-	cd $(DIR_APP) && rm -rvf /usr/share/xt_geoip/*.iv6
+	cd $(DIR_APP) && rm -rvf /var/lib/location/ipset/*.ipset6
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
