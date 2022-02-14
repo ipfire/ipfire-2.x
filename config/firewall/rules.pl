@@ -72,12 +72,9 @@ my %locationsettings = (
 );
 my %loaded_ipset_lists=();
 
-my @p2ps=();
-
 my $configfwdfw		= "${General::swroot}/firewall/config";
 my $configinput	    = "${General::swroot}/firewall/input";
 my $configoutgoing  = "${General::swroot}/firewall/outgoing";
-my $p2pfile			= "${General::swroot}/firewall/p2protocols";
 my $locationfile		= "${General::swroot}/firewall/locationblock";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $netsettings		= "${General::swroot}/ethernet/settings";
@@ -133,9 +130,6 @@ sub main {
 	if (! -z  "${General::swroot}/firewall/config"){
 		&buildrules(\%configfwdfw);
 	}
-
-	# Load P2P block rules.
-	&p2pblock();
 
 	# Load Location block rules.
 	&locationblock();
@@ -654,23 +648,6 @@ sub time_convert_to_minutes {
 	my ($hrs, $min) = split(":", shift);
 
 	return ($hrs * 60) + $min;
-}
-
-sub p2pblock {
-	open(FILE, "<$p2pfile") or die "Unable to read $p2pfile";
-	my @protocols = ();
-	foreach my $p2pentry (<FILE>) {
-		my @p2pline = split(/\;/, $p2pentry);
-		next unless ($p2pline[2] eq "off");
-
-		push(@protocols, "--$p2pline[1]");
-	}
-	close(FILE);
-
-	run("$IPTABLES -F P2PBLOCK");
-	if (@protocols) {
-		run("$IPTABLES -A P2PBLOCK -m ipp2p @protocols -j DROP");
-	}
 }
 
 sub locationblock {
