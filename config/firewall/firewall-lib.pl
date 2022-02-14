@@ -466,7 +466,7 @@ sub get_address
 			# Get external interface.
 			my $external_interface = &get_external_interface();
 
-			push(@ret, ["-m geoip --src-cc $value", "$external_interface"]);
+			push(@ret, ["-m set --match-set CC_$value src", "$external_interface"]);
 		}
 
 	# Handle rule options with a location as target.
@@ -476,7 +476,7 @@ sub get_address
 			# Get external interface.
 			my $external_interface = &get_external_interface();
 
-			push(@ret, ["-m geoip --dst-cc $value", "$external_interface"]);
+			push(@ret, ["-m set --match-set CC_$value dst", "$external_interface"]);
 		}
 
 	# If nothing was selected, we assume "any".

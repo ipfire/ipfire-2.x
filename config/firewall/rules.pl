@@ -401,7 +401,13 @@ sub buildrules {
 					my @source_options = ();
 					if ($source =~ /mac/) {
 						push(@source_options, $source);
-					} elsif ($source =~ /-m geoip/) {
+					} elsif ($source =~ /-m set/) {
+						# Grab location code from hash.
+						my $loc_src = $$hash{$key}[4];
+
+						# Call function to load the networks list for this country.
+						&ipset_restore($loc_src);
+
 						push(@source_options, $source);
 					} elsif($source) {
 						push(@source_options, ("-s", $source));
@@ -409,7 +415,13 @@ sub buildrules {
 
 					# Prepare destination options.
 					my @destination_options = ();
-					if ($destination =~ /-m geoip/) {
+					if ($destination =~ /-m set/) {
+						# Grab location code from hash.
+						my $loc_dst = $$hash{$key}[6];
+
+						# Call function to load the networks list for this country.
+						&ipset_restore($loc_dst);
+
 						push(@destination_options,  $destination);
 					} elsif ($destination) {
 						push(@destination_options, ("-d", $destination));
