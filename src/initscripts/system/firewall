@@ -200,14 +200,10 @@ iptables_init() {
 	iptables -A INPUT -j ICMPINPUT
 	iptables -A ICMPINPUT -p icmp --icmp-type 8 -j ACCEPT
 
-	# Accept everything on loopback if source/destination is loopback space...
+	# Accept everything on loopback
 	iptables -N LOOPBACK
-	iptables -A LOOPBACK -i lo -s 127.0.0.0/8 -j ACCEPT
-	iptables -A LOOPBACK -o lo -d 127.0.0.0/8 -j ACCEPT
-
-	# ... and drop everything else on the loopback interface, since no other traffic should appear there
-	iptables -A LOOPBACK -i lo -j SPOOFED_MARTIAN
-	iptables -A LOOPBACK -o lo -j SPOOFED_MARTIAN
+	iptables -A LOOPBACK -i lo -j ACCEPT
+	iptables -A LOOPBACK -o lo -j ACCEPT
 
 	# Filter all packets with loopback addresses on non-loopback interfaces (spoofed)
 	iptables -A LOOPBACK -s 127.0.0.0/8 -j SPOOFED_MARTIAN
