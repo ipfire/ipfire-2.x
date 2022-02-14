@@ -44,7 +44,7 @@ my %network_flags = (
 my @special_locations = ( "A1", "A2", "A3", "XD" );
 
 # Directory where the libloc database and keyfile lives.
-our $location_dir = "/var/lib/location/";
+our $location_dir = "/var/lib/location";
 
 # Libloc database file.
 our $database = "$location_dir/database.db";
