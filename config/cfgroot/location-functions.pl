@@ -53,7 +53,7 @@ our $database = "$location_dir/database.db";
 our $keyfile = "$location_dir/signing-key.pem";
 
 # Directory which contains the exported databases.
-our $xt_geoip_db_directory = "/usr/share/xt_geoip/";
+our $ipset_db_directory = "$location_dir/ipset";
 
 # Create libloc database handle.
 my $db_handle = &init();
