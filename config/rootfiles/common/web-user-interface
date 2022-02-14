@@ -62,7 +62,6 @@ srv/web/ipfire/cgi-bin/netovpnrw.cgi
 srv/web/ipfire/cgi-bin/netovpnsrv.cgi
 srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
-srv/web/ipfire/cgi-bin/p2p-block.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
