@@ -671,7 +671,11 @@ sub locationblock {
 	# is enabled.
 	foreach my $location (@locations) {
 		if(exists $locationsettings{$location} && $locationsettings{$location} eq "on") {
-			run("$IPTABLES -A LOCATIONBLOCK -m geoip --src-cc $location -j DROP");
+			# Call function to load the networks list for this country.
+			&ipset_restore($location);
+
+			# Call iptables and create rule to use the loaded ipset list.
+			run("$IPTABLES -A LOCATIONBLOCK -m set --match-set CC_$location src -j DROP");
 		}
 	}
 }
