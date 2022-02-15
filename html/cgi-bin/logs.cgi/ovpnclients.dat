@@ -115,16 +115,16 @@ my $database_query = qq(
         common_name, SUM(
                 STRFTIME('%s', (
                         CASE
-                                WHEN DATETIME(COALESCE(disconnected_at, CURRENT_TIMESTAMP), 'localtime') < DATETIME('$to_datestring', 'localtime', 'start of day', '+86399 seconds')
+                                WHEN DATETIME(COALESCE(disconnected_at, CURRENT_TIMESTAMP), 'localtime') < DATETIME('$to_datestring', 'start of day', '+86399 seconds')
                                         THEN DATETIME(COALESCE(disconnected_at, CURRENT_TIMESTAMP), 'localtime')
-                                        ELSE DATETIME('$to_datestring', 'localtime', 'start of day', '+86399 seconds')
+                                        ELSE DATETIME('$to_datestring', 'start of day', '+86399 seconds')
                         END
                 ), 'utc') -
                 STRFTIME('%s', (
                         CASE
-                                WHEN DATETIME(connected_at, 'localtime') > DATETIME('$from_datestring', 'localtime', 'start of day')
+                                WHEN DATETIME(connected_at, 'localtime') > DATETIME('$from_datestring', 'start of day')
                                         THEN DATETIME(connected_at, 'localtime')
-                                        ELSE DATETIME('$from_datestring', 'localtime', 'start of day')
+                                        ELSE DATETIME('$from_datestring', 'start of day')
                         END
                 ), 'utc')
         ) AS duration
@@ -133,10 +133,10 @@ my $database_query = qq(
                 (
 			disconnected_at IS NULL
 	                OR
-	                DATETIME(disconnected_at, 'localtime') > DATETIME('$from_datestring', 'localtime', 'start of day')
+	                DATETIME(disconnected_at, 'localtime') > DATETIME('$from_datestring', 'start of day')
 		)
                 AND
-                DATETIME(connected_at, 'localtime') < DATETIME('$to_datestring', 'localtime', 'start of day', '+86399 seconds')
+                DATETIME(connected_at, 'localtime') < DATETIME('$to_datestring', 'start of day', '+86399 seconds')
         GROUP BY common_name
         ORDER BY common_name, duration DESC;
 );
@@ -148,9 +148,9 @@ if ($cgiparams{'CONNECTION_NAME'}) {
 		WHERE
 			common_name = '$cgiparams{"CONNECTION_NAME"}'
 			AND (
-				DATETIME(disconnected_at, 'localtime') > DATETIME('$from_datestring', 'localtime', 'start of day')
+				DATETIME(disconnected_at, 'localtime') > DATETIME('$from_datestring', 'start of day')
 				AND
-				DATETIME(connected_at, 'localtime') < DATETIME('$to_datestring', 'localtime', 'start of day', '+86399 seconds')
+				DATETIME(connected_at, 'localtime') < DATETIME('$to_datestring', 'start of day', '+86399 seconds')
 			)
 		ORDER BY connected_at;
 	);
