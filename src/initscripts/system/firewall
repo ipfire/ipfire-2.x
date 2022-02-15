@@ -147,10 +147,10 @@ iptables_init() {
 	iptables -N HOSTILE
 	if [ "$DROPHOSTILE" == "on" ]; then
 		iptables -A HOSTILE -m limit --limit 10/second -j LOG  --log-prefix "DROP_HOSTILE "
-		iptables -A INPUT   -i $IFACE -m geoip --src-cc XD -j HOSTILE
-		iptables -A FORWARD -i $IFACE -m geoip --src-cc XD -j HOSTILE
-		iptables -A FORWARD -o $IFACE -m geoip --dst-cc XD -j HOSTILE
-		iptables -A OUTPUT  -o $IFACE -m geoip --src-cc XD -j HOSTILE
+		iptables -A INPUT   -i $IFACE -m set --match-set CC_XD src -j HOSTILE
+		iptables -A FORWARD -i $IFACE -m set --match-set CC_XD src -j HOSTILE
+		iptables -A FORWARD -o $IFACE -m set --match-set CC_XD dst -j HOSTILE
+		iptables -A OUTPUT  -o $IFACE -m set --match-set CC_XD src -j HOSTILE
 	fi
 	iptables -A HOSTILE -j DROP -m comment --comment "DROP_HOSTILE"
 
