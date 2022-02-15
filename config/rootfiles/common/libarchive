@@ -6,7 +6,7 @@
 #usr/lib/libarchive.la
 #usr/lib/libarchive.so
 usr/lib/libarchive.so.13
-usr/lib/libarchive.so.13.5.2
+usr/lib/libarchive.so.13.6.0
 #usr/lib/pkgconfig/libarchive.pc
 #usr/share/man/man1/bsdcat.1
 #usr/share/man/man1/bsdcpio.1
