@@ -65,7 +65,35 @@ rm -rvf \
 	/usr/lib/python3.8/ \
 	/usr/share/xt_geoip/ \
 	/var/ipfire/firewall/p2protocols \
-	/srv/web/ipfire/cgi-bin/p2p-block.cgi
+	/srv/web/ipfire/cgi-bin/p2p-block.cgi \
+	/usr/sbin/iptaccount \
+	/usr/sbin/pknlusr \
+	/usr/lib/libxt_ACCOUNT_cl.so* \
+	/usr/bin/xt_geoip_query \
+	/lib/xtables/libxt_ACCOUNT.so \
+	/lib/xtables/libxt_CHAOS.so \
+	/lib/xtables/libxt_DELUDE.so \
+	/lib/xtables/libxt_DHCPMAC.so \
+	/lib/xtables/libxt_DNETMAP.so \
+	/lib/xtables/libxt_ECHO.so \
+	/lib/xtables/libxt_IPMARK.so \
+	/lib/xtables/libxt_LOGMARK.so \
+	/lib/xtables/libxt_PROTO.so \
+	/lib/xtables/libxt_SYSRQ.so \
+	/lib/xtables/libxt_TARPIT.so \
+	/lib/xtables/libxt_condition.so \
+	/lib/xtables/libxt_dhcpmac.so \
+	/lib/xtables/libxt_fuzzy.so \
+	/lib/xtables/libxt_geoip.so \
+	/lib/xtables/libxt_gradm.so \
+	/lib/xtables/libxt_iface.so \
+	/lib/xtables/libxt_ipp2p.so \
+	/lib/xtables/libxt_ipv4options.so \
+	/lib/xtables/libxt_length2.so \
+	/lib/xtables/libxt_lscan.so \
+	/lib/xtables/libxt_pknock.so \
+	/lib/xtables/libxt_psd.so \
+	/lib/xtables/libxt_quota2.so
 
 # Stop services
 
