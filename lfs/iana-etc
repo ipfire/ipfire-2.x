@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.30
+VER        = 20220207
 
 THISAPP    = iana-etc-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3ba3afb1d1b261383d247f46cb135ee8
+$(DL_FILE)_MD5 = 81d865ce7fe4240d5abed48c3ca5fa9f
 
 install : $(TARGET)
 
@@ -69,8 +69,7 @@ $(subst %,%_MD5,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cp -avf $(DIR_APP)/{services,protocols} /etc/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
