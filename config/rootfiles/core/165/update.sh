@@ -62,7 +62,8 @@ rm -rvf \
 	/usr/bin/python3.8-config \
 	/usr/lib/libpython3.8.so \
 	/usr/lib/libpython3.8.so.1.0 \
-	/usr/lib/python3.8/
+	/usr/lib/python3.8/ \
+	/usr/share/xt_geoip/
 
 # Stop services
 
@@ -80,6 +81,7 @@ ldconfig
 
 # Start services
 telinit u
+/etc/rc.d/init.d/firewall restart
 
 # This update needs a reboot...
 touch /var/run/need_reboot
