@@ -63,7 +63,9 @@ rm -rvf \
 	/usr/lib/libpython3.8.so \
 	/usr/lib/libpython3.8.so.1.0 \
 	/usr/lib/python3.8/ \
-	/usr/share/xt_geoip/
+	/usr/share/xt_geoip/ \
+	/var/ipfire/firewall/p2protocols \
+	/srv/web/ipfire/cgi-bin/p2p-block.cgi
 
 # Stop services
 

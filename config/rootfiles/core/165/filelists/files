@@ -1,3 +1,4 @@
+etc/rc.d/init.d/firewall
 opt/pakfire/etc/pakfire.conf
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/backup.cgi
@@ -14,3 +15,4 @@ usr/sbin/setup
 var/ipfire/ids-functions.pl
 var/ipfire/location-functions.pl
 var/ipfire/main/manualpages
+var/ipfire/menu.d/50-firewall.menu
