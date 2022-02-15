@@ -2,6 +2,7 @@ opt/pakfire/etc/pakfire.conf
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi
+srv/web/ipfire/cgi-bin/logs.cgi/ovpnclients.dat
 srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
