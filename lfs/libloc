@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,8 +24,8 @@
 
 include Config
 
-VER        = 0.9.9
-DB_DATE    = 2021-12-13
+VER        = 0.9.10
+DB_DATE    = 2022-02-16
 
 THISAPP    = libloc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,8 +43,8 @@ objects = $(DL_FILE) \
 $(DL_FILE)                    = https://source.ipfire.org/releases/libloc/$(DL_FILE)
 location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE).db.xz
 
-$(DL_FILE)_MD5                = 0d14fcad39b19accc001ed5f17a09471
-location-$(DB_DATE).db.xz_MD5 = 7239646f05ac92e76ae2700e7aa14ab8
+$(DL_FILE)_MD5                = 3f67e15022c142c0731cbb3746351330
+location-$(DB_DATE).db.xz_MD5 = c1ad9c544bab917035eb0cd13b66c453
 
 install : $(TARGET)
 
