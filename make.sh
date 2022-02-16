@@ -437,7 +437,7 @@ prepareenv() {
 	fi
 
 	# Trap on emergency exit
-	trap "exiterror 'Build process interrupted'" SIGINT SIGTERM SIGKILL SIGSTOP SIGQUIT
+	trap "exiterror 'Build process interrupted'" SIGINT SIGTERM SIGQUIT
 
 	# Checking if running as root user
 	if [ $(id -u) -ne 0 ]; then
