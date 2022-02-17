@@ -61,7 +61,6 @@ firewall=configuration/firewall
 fwhosts=configuration/firewall/fwgroups
 optionsfw=configuration/firewall/options
 ids=configuration/firewall/ips
-p2p-block=configuration/firewall/p2p-block
 location-block=configuration/firewall/geoip-block
 wireless=configuration/firewall/accesstoblue
 iptables=configuration/firewall/iptables
