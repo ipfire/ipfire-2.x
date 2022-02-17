@@ -404,14 +404,8 @@ sub buildrules {
 						# Grab location code from hash.
 						my $loc_src = $$hash{$key}[4];
 
-						# Check if the network list for this country already has been loaded.
-						unless($loaded_ipset_lists{$loc_src}) {
-							# Call function to load the networks list for this country.
-							&ipset_restore($loc_src);
-
-							# Store to the hash that this list has been loaded.
-							$loaded_ipset_lists{$loc_src} = "1";
-						}
+						# Call function to load the networks list for this country.
+						&ipset_restore($loc_src);
 
 						push(@source_options, $source);
 					} elsif($source) {
@@ -424,14 +418,8 @@ sub buildrules {
 						# Grab location code from hash.
 						my $loc_dst = $$hash{$key}[6];
 
-						# Check if the network list for this country already has been loaded.
-						unless($loaded_ipset_lists{$loc_dst}) {
-							# Call function to load the networks list for this country.
-							&ipset_restore($loc_dst);
-
-							# Store to the hash that this list has been loaded.
-							$loaded_ipset_lists{$loc_dst} = "1";
-						}
+						# Call function to load the networks list for this country.
+						&ipset_restore($loc_dst);
 
 						push(@destination_options,  $destination);
 					} elsif ($destination) {
@@ -677,14 +665,8 @@ sub locationblock {
 	# is enabled.
 	foreach my $location (@locations) {
 		if(exists $locationsettings{$location} && $locationsettings{$location} eq "on") {
-			# Check if the network list for this country already has been loaded.
-			unless($loaded_ipset_lists{$location}) {
-				# Call function to load the networks list for this country.
-				&ipset_restore($location);
-
-				# Store to the hash that this list has been loaded.
-				$loaded_ipset_lists{$location} = "1";
-			}
+			# Call function to load the networks list for this country.
+			&ipset_restore($location);
 
 			# Call iptables and create rule to use the loaded ipset list.
 			run("$IPTABLES -A LOCATIONBLOCK -m set --match-set CC_$location src -j DROP");
@@ -906,14 +888,23 @@ sub firewall_is_in_subnet {
 }
 
 sub ipset_restore ($) {
-	my ($ccode) = @_;
+	my ($list) = @_;
 
 	my $file_prefix = "ipset4";
-	my $db_file = "$Location::Functions::ipset_db_directory/$ccode.$file_prefix";
+	my $db_file = "$Location::Functions::ipset_db_directory/$list.$file_prefix";
+
+	# Check if the network list already has been loaded.
+	if($loaded_ipset_lists{$list}) {
+		# It already has been loaded - so there is nothing to do.
+		return;
+	}
 
 	# Check if the generated file exists.
 	if (-f $db_file) {
 		# Run ipset and restore the list of the given country code.
 		run("$IPSET restore < $db_file");
+
+		# Store the restored list name to the hash to prevent from loading it again.
+		$loaded_ipset_lists{$list} = "1";
 	}
 }
