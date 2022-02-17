@@ -119,9 +119,13 @@ iptables_init() {
 	iptables -A FORWARD -p tcp -j BADTCP
 
 	# Connection tracking chains
+	iptables -N CTINVALID
+	iptables -A CTINVALID  -m limit --limit 10/second -j LOG  --log-prefix "DROP_CTINVALID "
+	iptables -A CTINVALID  -j DROP -m comment --comment "DROP_CTINVALID"
+
 	iptables -N CONNTRACK
 	iptables -A CONNTRACK -m conntrack --ctstate ESTABLISHED -j ACCEPT
-	iptables -A CONNTRACK -m conntrack --ctstate INVALID -j LOG_DROP
+	iptables -A CONNTRACK -m conntrack --ctstate INVALID -j CTINVALID
 	iptables -A CONNTRACK -p icmp -m conntrack --ctstate RELATED -j ACCEPT
 
 	# Restore any connection marks
