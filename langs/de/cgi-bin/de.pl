@@ -1603,6 +1603,7 @@
 'locationblock enable feature' => 'Location-basierte Filterung aktivieren:',
 'locationblock flag' => 'Flagge',
 'log' => 'Protokoll',
+'log dropped conntrack invalids' => 'Verworfene, von der Verbindungsverfolgung als INVALID eingestufte Pakete protokollieren',
 'log enabled' => 'Protokoll aktiviert',
 'log level' => 'Protokollierungsniveau',
 'log lines per page' => 'Zeilen pro Seite',

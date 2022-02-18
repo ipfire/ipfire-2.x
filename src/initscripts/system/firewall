@@ -120,7 +120,9 @@ iptables_init() {
 
 	# Connection tracking chains
 	iptables -N CTINVALID
-	iptables -A CTINVALID  -m limit --limit 10/second -j LOG  --log-prefix "DROP_CTINVALID "
+	if [ "$LOGDROPCTINVALID" == "on" ]; then
+		iptables -A CTINVALID  -m limit --limit 10/second -j LOG  --log-prefix "DROP_CTINVALID "
+	fi
 	iptables -A CTINVALID  -j DROP -m comment --comment "DROP_CTINVALID"
 
 	iptables -N CONNTRACK

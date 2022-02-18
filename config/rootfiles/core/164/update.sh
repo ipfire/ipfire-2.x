@@ -107,6 +107,9 @@ fi
 if [ "$(grep "^DROPSPOOFEDMARTIAN" /var/ipfire/optionsfw/settings)" == "" ]; then
 	echo "DROPSPOOFEDMARTIAN=on" >> /var/ipfire/optionsfw/settings
 fi
+if [ "$(grep "^LOGDROPCTINVALID" /var/ipfire/optionsfw/settings)" == "" ]; then
+	echo "LOGDROPCTINVALID=on" >> /var/ipfire/optionsfw/settings
+fi
 
 # Apply sysctl changes
 /etc/init.d/sysctl start

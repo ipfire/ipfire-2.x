@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2014-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -116,6 +116,9 @@ $checked{'DROPSPOOFEDMARTIAN'}{$settings{'DROPSPOOFEDMARTIAN'}} = "checked='chec
 $checked{'DROPHOSTILE'}{'off'} = '';
 $checked{'DROPHOSTILE'}{'on'} = '';
 $checked{'DROPHOSTILE'}{$settings{'DROPHOSTILE'}} = "checked='checked'";
+$checked{'LOGDROPCTINVALID'}{'off'} = '';
+$checked{'LOGDROPCTINVALID'}{'on'} = '';
+$checked{'LOGDROPCTINVALID'}{$settings{'LOGDROPCTINVALID'}} = "checked='checked'";
 $checked{'DROPPROXY'}{'off'} = '';
 $checked{'DROPPROXY'}{'on'} = '';
 $checked{'DROPPROXY'}{$settings{'DROPPROXY'}} = "checked='checked'";
@@ -209,6 +212,13 @@ END
 		<td align='left'>
 			$Lang::tr{'on'} <input type='radio' name='DROPNEWNOTSYN' value='on' $checked{'DROPNEWNOTSYN'}{'on'} />/
 			<input type='radio' name='DROPNEWNOTSYN' value='off' $checked{'DROPNEWNOTSYN'}{'off'} /> $Lang::tr{'off'}
+		</td>
+	</tr>
+	<tr>
+		<td align='left' width='60%'>$Lang::tr{'log dropped conntrack invalids'}</td>
+		<td align='left'>
+			$Lang::tr{'on'} <input type='radio' name='LOGDROPCTINVALID' value='on' $checked{'LOGDROPCTINVALID'}{'on'} />/
+			<input type='radio' name='LOGDROPCTINVALID' value='off' $checked{'LOGDROPCTINVALID'}{'off'} /> $Lang::tr{'off'}
 		</td>
 	</tr>
 	<tr>
