@@ -109,6 +109,12 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Export location DB in new format.
+/usr/bin/location export \
+	--directory=/var/lib/location/ipset \
+	--family=ipv4 \
+	--format=ipset
+
 # Start services
 telinit u
 /etc/rc.d/init.d/firewall restart
