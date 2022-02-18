@@ -11,6 +11,6 @@ var/ipfire/addon-lang/acct.de.pl
 var/ipfire/addon-lang/acct.en.pl
 var/ipfire/addon-lang/acct.fr.pl
 var/ipfire/addon-lang/acct.tr.pl
-var/ipfire/backup/addons/includes/squid-accounting
+var/ipfire/backup/addons/includes/proxy-accounting
 var/ipfire/menu.d/EX-squid-accounting.menu
 var/log/accounting.log

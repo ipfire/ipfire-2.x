@@ -13,11 +13,11 @@ SUMMARY    = SQUID Accounting IPFire extension
 
 VER        = 1.0.4
 
-THISAPP    = squid-accounting-$(VER)
+THISAPP    = proxy-accounting-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = squid-accounting
-PAK_VER    = 13
+PROG       = proxy-accounting
+PAK_VER    = 14
 
 DEPS       = perl-File-ReadBackwards
 
@@ -65,7 +65,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_APP)/squid-accounting/EX-squid-accounting.menu /var/ipfire/menu.d/
 	install -v -m 755 $(DIR_APP)/squid-accounting/dbinstall.pl /var/ipfire/accounting/
 	install -v -m 644 $(DIR_APP)/squid-accounting/config/backup/includes/squid-accounting  \
-			/var/ipfire/backup/addons/includes/squid-accounting
+			/var/ipfire/backup/addons/includes/proxy-accounting
 
 #activate hourly logging of proxy logfile
 	ln -sf /usr/local/bin/acct.pl /etc/fcron.hourly/squid-accounting
