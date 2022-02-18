@@ -289,7 +289,7 @@ sub sendbill {
 		my $msg = MIME::Lite->new(
 			From	=> $mail{'SENDER'},
 			To		=> $mail{'RECIPIENT'},
-			Subject	=> "ERROR Squid Accounting",
+			Subject	=> "ERROR Proxy Accounting",
 			Type	=> 'multipart/mixed'
 		);
 
