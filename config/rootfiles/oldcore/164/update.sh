@@ -100,9 +100,13 @@ ldconfig
 # Run convert script for IDS multiple providers
 /usr/sbin/convert-ids-multiple-providers
 
-# Add missing configuration settings to optionsfw configuration
-echo "DROPHOSTILE=off" > /var/ipfire/optionsfw/settings
-echo "DROPSPOOFEDMARTIAN=on" > /var/ipfire/optionsfw/settings
+# Add configuration settings to optionsfw if they are missing
+if [ "$(grep "^DROPHOSTILE" /var/ipfire/optionsfw/settings)" == "" ]; then
+	echo "DROPHOSTILE=off" >> /var/ipfire/optionsfw/settings
+fi
+if [ "$(grep "^DROPSPOOFEDMARTIAN" /var/ipfire/optionsfw/settings)" == "" ]; then
+	echo "DROPSPOOFEDMARTIAN=on" >> /var/ipfire/optionsfw/settings
+fi
 
 # Apply sysctl changes
 /etc/init.d/sysctl start
