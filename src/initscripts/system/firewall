@@ -22,6 +22,8 @@ IPS_REPEAT_MASK="0x80000000"
 IPS_BYPASS_MARK="0x40000000"
 IPS_BYPASS_MASK="0x40000000"
 
+IPSET_DB_DIR="/var/lib/location/ipset"
+
 function iptables() {
 	/sbin/iptables --wait "$@"
 }
@@ -146,6 +148,9 @@ iptables_init() {
 	# a technical threat to our users (i. e. listed at Spamhaus DROP et al.)
 	iptables -N HOSTILE
 	if [ "$DROPHOSTILE" == "on" ]; then
+		# Call ipset and load the list which contains the hostile networks.
+		ipset restore < $IPSET_DB_DIR/CC_XD.ipset4
+
 		iptables -A HOSTILE -m limit --limit 10/second -j LOG  --log-prefix "DROP_HOSTILE "
 		iptables -A INPUT   -i $IFACE -m set --match-set CC_XD src -j HOSTILE
 		iptables -A FORWARD -i $IFACE -m set --match-set CC_XD src -j HOSTILE
