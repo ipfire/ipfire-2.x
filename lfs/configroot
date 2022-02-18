@@ -131,6 +131,7 @@ $(TARGET) :
 	echo  "DROPWIRELESSFORWARD=on"	>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPSPOOFEDMARTIAN=on"	>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "DROPHOSTILE=on"		>> $(CONFIG_ROOT)/optionsfw/settings
+	echo  "LOGDROPCTINVALID=on"	>> $(CONFIG_ROOT)/optionsfw/settings
 	echo  "POLICY=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 	echo  "POLICY1=MODE2"		>> $(CONFIG_ROOT)/firewall/settings
 	echo  "USE_ISP_NAMESERVERS=on"  >> $(CONFIG_ROOT)/dns/settings
