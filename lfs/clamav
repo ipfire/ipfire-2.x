@@ -24,7 +24,7 @@
 
 include Config
 
-SUMMARY    = Antivirus Toolkit 
+SUMMARY    = Antivirus Toolkit
 
 VER        = 0.104.2
 
@@ -60,7 +60,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	$(PAK)
 
 ###############################################################################

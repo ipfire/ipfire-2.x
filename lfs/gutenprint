@@ -24,7 +24,7 @@
 
 include Config
 
-SUMMARY    = Printer drivers for CUPS from the Gutenprint project 
+SUMMARY    = Printer drivers for CUPS from the Gutenprint project
 
 VER        = 5.2.9
 
@@ -58,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

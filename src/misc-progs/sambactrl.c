@@ -8,7 +8,7 @@
 
 #define BUFFER_SIZE 1024
 
-char command[BUFFER_SIZE]; 
+char command[BUFFER_SIZE];
 
 int main(int argc, char *argv[]) {
 	if (!(initsetuid()))

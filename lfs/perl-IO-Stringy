@@ -50,7 +50,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-#dist: 
+#dist:
 #	make-packages.sh IO-Stringy $(THISAPP)-ipfire-beta-1
 
 ###############################################################################

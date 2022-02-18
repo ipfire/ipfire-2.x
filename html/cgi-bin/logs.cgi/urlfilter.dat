@@ -107,8 +107,8 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} ne $Lang::tr{'update'})
 	@temp = split(',',$ ENV{'QUERY_STRING'});
  	$start = $temp[0];
  	$cgiparams{'MONTH'} = $temp[1];
- 	$cgiparams{'DAY'} = $temp[2];  
- 	$cgiparams{'LOGTYPE'} = $temp[3];  
+ 	$cgiparams{'DAY'} = $temp[2];
+ 	$cgiparams{'LOGTYPE'} = $temp[3];
 }
 
 if (!($cgiparams{'MONTH'} =~ /^(0|1|2|3|4|5|6|7|8|9|10|11)$/) ||
@@ -153,7 +153,7 @@ if (($cgiparams{'DAY'} ne $now[3]) || ($cgiparams{'MONTH'} ne $now[4]))
 		@then = localtime(POSIX::mktime( 0, 0, 0, $cgiparams{'DAY'}, $cgiparams{'MONTH'}, $year - 1900 ));
 	}
 	$tdoy = $then[7];
-	$lastleap=($year-1)%4; 
+	$lastleap=($year-1)%4;
         if ($tdoy>$doy) {
 		if ($lastleap == 0 && $tdoy < 60) {
 			$doy=$tdoy+366;
@@ -180,7 +180,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 	print "Content-type: text/plain\n\n";
 	print "IPCop URL filter log\r\n";
 	print "Section: $cgiparams{'LOGTYPE'}\r\n";
-	print "Date: $daystr $longmonthstr\r\n"; 
+	print "Date: $daystr $longmonthstr\r\n";
 	print "\r\n";
 
 	if ($logsettings{'LOGVIEW_REVERSE'} eq 'on') { @log = reverse @log; }
@@ -258,7 +258,7 @@ print <<END
 	<select name='DAY'>
 END
 ;
-for ($day = 1; $day <= 31; $day++) 
+for ($day = 1; $day <= 31; $day++)
 {
 	print "\t<option ";
 	if ($day == $cgiparams{'DAY'}) {
@@ -434,7 +434,7 @@ sub processevent
 				close(LOG);
 			}
 		}
-		@log = sort { substr($a,11,8) cmp substr($b,11,8) } @log; 
+		@log = sort { substr($a,11,8) cmp substr($b,11,8) } @log;
 
 	}
 }

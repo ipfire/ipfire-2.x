@@ -17,7 +17,7 @@ int main(int argc, char *argv[]){
 
 	if (strcmp(argv[1], "cron") == 0){
 		safe_system("rm /etc/fcron.*/updxlrator 2&>/dev/null");
-	
+
 		if (strcmp(argv[2], "daily") == 0){
 			safe_system("ln -s /var/ipfire/updatexlrator/bin/checkup /etc/fcron.daily/updxlrator");
 		} else if (strcmp(argv[2], "weekly") == 0){

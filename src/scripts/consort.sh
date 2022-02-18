@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2013  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -20,7 +20,7 @@
 ###############################################################################
 
 # sort conntrack table entries based on ip addresses
-# @parm sort field 
+# @parm sort field
 do_ip_sort() {
 	sed \
 		-r \
@@ -34,7 +34,7 @@ do_ip_sort() {
 }
 
 # sort conntrack table entries based on port addresses
-# @parm sort field 
+# @parm sort field
 do_port_sort() {
 	sed \
 		-r \
@@ -140,7 +140,7 @@ if [ $# == 3 ]; then
 fi
 
 if [[ '1 2' =~ $1 ]]; then
-	do_ip_sort $1 
+	do_ip_sort $1
 elif [[ '3 4' =~ $1 ]]; then
 	do_port_sort $(($1-2))
 elif [[ '5' =~ $1 ]]; then

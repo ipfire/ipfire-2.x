@@ -24,7 +24,7 @@
 
 include Config
 
-SUMMARY    = The Reliable, High Performance TCP/HTTP Load Balancer 
+SUMMARY    = The Reliable, High Performance TCP/HTTP Load Balancer
 
 VER        = 2.2.4
 

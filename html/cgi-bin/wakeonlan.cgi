@@ -86,7 +86,7 @@ if ( $cgiparams{'ACTION'} eq 'add' )
 
   unless( &General::validmac($cgiparams{'CLIENT_MAC'}) )
   {
-    $errormessage = $Lang::tr{'invalid mac address'}; 
+    $errormessage = $Lang::tr{'invalid mac address'};
     goto ADDEXIT;
   }
 
@@ -122,7 +122,7 @@ if ( $cgiparams{'ACTION'} eq 'update' )
 
   unless( &General::validmac($cgiparams{'CLIENT_MAC'}) )
   {
-    $errormessage = $Lang::tr{'invalid mac address'}; 
+    $errormessage = $Lang::tr{'invalid mac address'};
     goto UPDATEEXIT;
   }
 
@@ -241,11 +241,11 @@ END
 ;
 
 print "<option value='green' $selected{'CLIENT_IFACE'}{'green'}>$Lang::tr{'green'}</option>";
-if (&haveBlueNet()) 
+if (&haveBlueNet())
 {
   print "<option value='blue' $selected{'CLIENT_IFACE'}{'blue'}>$Lang::tr{'blue'}</option>";
 }
-if (&haveOrangeNet()) 
+if (&haveOrangeNet())
 {
   print "<option value='orange' $selected{'CLIENT_IFACE'}{'orange'}>$Lang::tr{'orange'}</option>";
 }
@@ -269,7 +269,7 @@ print <<END
 END
 ;
 
-if ( ($cgiparams{'ACTION'} eq 'edit') || ($cgiparams{'ACTION'} eq 'update') ) 
+if ( ($cgiparams{'ACTION'} eq 'edit') || ($cgiparams{'ACTION'} eq 'update') )
 {
   print "<input type='hidden' name='ID' value='$cgiparams{'ID'}' />\n";
   print "<input type='hidden' name='ACTION' value='update' />";
@@ -309,12 +309,12 @@ for $i ( 0 .. $#wol_devices )
   my $wol_iface = $wol_devices[$i]{'IFace'};
   my $wol_txt = &Header::cleanhtml($wol_devices[$i]{'Comment'});
 
-  if ( (($cgiparams{'ACTION'} eq 'edit') || ($cgiparams{'ACTION'} eq 'update')) && ($i == $cgiparams{'ID'}) ) 
+  if ( (($cgiparams{'ACTION'} eq 'edit') || ($cgiparams{'ACTION'} eq 'update')) && ($i == $cgiparams{'ID'}) )
   {
     print "<tr>";
     $col="bgcolor='${Header::colouryellow}'";
   }
-  elsif ( $i % 2) 
+  elsif ( $i % 2)
   {
     print "<tr>";
     $col="bgcolor='$color{'color20'}'";
@@ -332,7 +332,7 @@ for $i ( 0 .. $#wol_devices )
 <td align='center' $col>
 END
 ;
-  if ( (($wol_iface eq 'blue') && ! &haveBlueNet()) 
+  if ( (($wol_iface eq 'blue') && ! &haveBlueNet())
     || (($wol_iface eq 'orange') && ! &haveOrangeNet()) )
   {
     # configured IFace (momentarily) not available -> now wakeup button/image
@@ -384,7 +384,7 @@ sub ReadConfig
 {
   # datafileformat:
   #   ID,MAC,IFACE,,Comment
-  # 
+  #
   my @tmpfile = ();
   if ( open(FILE, "$datafile") )
   {
@@ -421,14 +421,14 @@ sub WriteConfig
     unless(&General::validmac($wol_devices[$i]{'MAC'})) { next; }
     unshift (@tmp_clients, uc($wol_devices[$i]{'MAC'}).",$wol_devices[$i]{'IFace'},,$wol_devices[$i]{'Comment'}");
   }
-  
+
   # sort tmp_clients on MAC
   @tmp_clients = sort ( @tmp_clients );
 
   open(FILE, ">$datafile") or die 'hosts datafile error';
 
   my $count = 0;
-  foreach $line (@tmp_clients) 
+  foreach $line (@tmp_clients)
   {
     print FILE "$count,$line\n";
     $count++;

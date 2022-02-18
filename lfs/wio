@@ -29,13 +29,13 @@ SERVICES   =
 
 install : $(TARGET)
 
-check : 
+check :
 
 download :
 
-md5 : 
+md5 :
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

@@ -1,11 +1,23 @@
 #!/usr/bin/perl
-#
-# IPFire Connection Scheduler (F)Cron Job
-#
-# This code is distributed under the terms of the GPL
-# The original code is taken from weizen_42.
-# See /home/httpd/cgi-bin/connscheduler.cgi
-#
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
 use strict;
 
@@ -79,11 +91,11 @@ sub hangup
     return;
   }
 
-  # now wait for active triggerfile and ppp daemon to disappear 
+  # now wait for active triggerfile and ppp daemon to disappear
   # wait maximum 60 seconds
   my $counter = 60;
   sleep 1;
-  while ( -e "${General::swroot}/red/active" || -e '/var/run/ppp-ipfire.pid' || $counter == 0 ) 
+  while ( -e "${General::swroot}/red/active" || -e '/var/run/ppp-ipfire.pid' || $counter == 0 )
   {
     sleep 1;
     $counter--;
@@ -123,7 +135,7 @@ sub reconnect
   # wait maximum 60 seconds
   my $counter = 60;
   sleep 1;
-  while ( -e "${General::swroot}/red/active" || -e '/var/run/ppp-ipfire.pid' || $counter == 0 ) 
+  while ( -e "${General::swroot}/red/active" || -e '/var/run/ppp-ipfire.pid' || $counter == 0 )
   {
     sleep 1;
     $counter--;
@@ -168,7 +180,7 @@ sub profile
     ## FIXME: do we need to do this ?
     sleep($sleep_after_profile);
     &dial();
-  }  
+  }
 }
 
 
@@ -200,7 +212,7 @@ sub timer
     }
 
 
-    if ( $CONNSCHED::config[$i]{'ACTION'} eq 'reconnect' )    
+    if ( $CONNSCHED::config[$i]{'ACTION'} eq 'reconnect' )
     {
       &reconnect()
     }

@@ -32,7 +32,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = qemu-ga
 PAK_VER    = 1
 
-DEPS       = 
+DEPS       =
 
 SERVICES   = qemu-ga
 
@@ -42,18 +42,18 @@ SERVICES   = qemu-ga
 
 install : $(TARGET)
 
-download : 
+download :
 
-md5 : 
+md5 :
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
 # Installation Details
 ###############################################################################
 
-$(TARGET) : 
+$(TARGET) :
 	@$(PREBUILD)
 
 	#install initscripts

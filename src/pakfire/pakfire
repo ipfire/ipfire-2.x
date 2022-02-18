@@ -28,11 +28,11 @@
 	$ENV{"GNUPGHOME"} = "/opt/pakfire/etc/.gnupg";
 
 	require "/opt/pakfire/lib/functions.pl";
-	
+
 	my $interactive = 1;
 	my $force = "noforce";
 	my $locked;
-	
+
 	&Pakfire::logger("PAKFIRE INFO: IPFire Pakfire $Conf::version started!");
 
 	### Check if we are running as root
@@ -43,7 +43,7 @@
 	  &Pakfire::message("PAKFIRE ERROR: You must run pakfire as user root!");
 	  exit 1;
 	}
-	
+
 	unless ( -e "/var/ipfire/red/active" ) {
 		&Pakfire::message("PAKFIRE ERROR: You need to be online to run pakfire!");
 		exit 2;
@@ -63,7 +63,7 @@
 
 	# Close filehandle.
 	close(LOCK);
-	
+
 	### Check if we are started by another name
 	#
 	if ( $0 =~ /pakfire-update$/ ) {
@@ -81,20 +81,20 @@
 		$ARGV[0] = "upgrade";
 		$interactive = 0;
 	}
-	
+
 	unless (@ARGV) {
 		&Pakfire::usage;
 	}
-	
+
 	foreach (@ARGV) {
 		if ("$_" =~ "^-") {
 			# Turn off interactive mode
 			$interactive = 0 if ("$_" eq "--non-interactive");
 			$interactive = 0 if ("$_" eq "-y");
-			
+
 			# Turn off shell colors - Bad for displaying in webinterface
 			$Pakfire::enable_colors = 0 if ("$_" eq "--no-colors");
-			
+
 			# Turn on force mode
 			$force = "force" if ("$_" eq "-f" );
 			$force = "force" if ("$_" eq "--force" );
@@ -103,14 +103,14 @@
 
 	if ("$ARGV[0]" eq "install") {
 		shift;
-		
-		### Make sure that the list is not outdated. 
+
+		### Make sure that the list is not outdated.
 		&Pakfire::dbgetlist("noforce");
 
 		open(FILE, "<$Conf::dbdir/lists/packages_list.db");
 		my @db = <FILE>;
 		close(FILE);
-		
+
 		my $dep;
 		my @deps;
 		my $pak;
@@ -125,7 +125,7 @@
 				$return = &Pakfire::isinstalled($pak);
 				if ($return eq 0) {
 					&Pakfire::message("PAKFIRE INFO: $pak is already installed");
-					next; 
+					next;
 				}
 				$found = 0;
 				foreach (@db) {
@@ -148,7 +148,7 @@
 				}
 			}
 		}
-		
+
 		unless (@paks) {
 			&Pakfire::message("PAKFIRE ERROR: No packages to install. Exiting...");
 			exit 1;
@@ -174,7 +174,7 @@
 			$size = &Pakfire::beautifysize($size);
 		  &Pakfire::message("PAKFIRE INFO: $pak \t - $size");
 		}
-		
+
 		my $totalsize;
 		foreach $pak (@all) {
 			$totalsize = ($totalsize + &Pakfire::getsize("$pak"));
@@ -183,7 +183,7 @@
 		&Pakfire::message("");
 		&Pakfire::message("PAKFIRE INFO: Total size: \t ~ $totalsize");
 		&Pakfire::message("");
-		
+
 		if ($interactive) {
 		  &Pakfire::message("PAKFIRE INFO: Is this okay? [y/N]");
 			my $ret = <STDIN>;
@@ -196,7 +196,7 @@
 		} else {
 			&Pakfire::logger("PAKFIRE INFO: Interaction skipped.");
 		}
-		
+
 #		my %sort = map{ $_, 1 } @all;
 #		@all = sort keys %sort;
 
@@ -210,16 +210,16 @@
 		foreach $pak (@deps) {
 			&Pakfire::setuppak("$pak") if ($pak ne "");
 		}
-		
+
 
 		foreach $pak (@paks) {
 			&Pakfire::setuppak("$pak") if ($pak ne "");
 		}
-		
+
 
 	} elsif ("$ARGV[0]" eq "remove") {
 		shift;
-		
+
 		my @paks;
 		my $pak;
 		foreach $pak (@ARGV) {
@@ -232,12 +232,12 @@
 				push(@paks, $pak);
 			}
 		}
-		
+
 		unless (@paks) {
 			&Pakfire::message("PAKFIRE ERROR: No packages to remove. Exiting...");
 			exit 1;
 		}
-		
+
 		&Pakfire::message("");
 		&Pakfire::message("");
 		&Pakfire::message("PAKFIRE INFO: Packages to remove:");
@@ -246,7 +246,7 @@
 			$size = &Pakfire::beautifysize($size);
 		  &Pakfire::message("PAKFIRE INFO: $pak \t - $size");
 		}
-		
+
 		if ($interactive) {
 		  &Pakfire::message("PAKFIRE INFO: Is this okay? [y/N]");
 			my $ret = <STDIN>;
@@ -257,12 +257,12 @@
 			  exit 1;
 			}
 		}
-		
+
 		foreach $pak (@paks) {
 			&Pakfire::removepak("$pak");
 		}
-	
-	
+
+
 	} elsif ("$ARGV[0]" eq "update") {
 		&Pakfire::makeuuid();
 		&Pakfire::getmirrors("$force");
@@ -291,7 +291,7 @@
 				}
 			}
 		}
-		
+
 		# Download packages
 		foreach $pak (@upgradepaks) {
 			&Pakfire::getpak("$pak", "");
@@ -311,15 +311,15 @@
 		foreach $pak (@upgradepaks) {
 			&Pakfire::upgradepak("$pak");
 		}
-		
+
 	} elsif ("$ARGV[0]" eq "list") {
 		if ("$ARGV[1]" =~ /installed|notinstalled/) {
 			&Pakfire::dblist("$ARGV[1]", "noweb");
 		} else {
-			&Pakfire::message("PAKFIRE WARN: Not a known option $ARGV[1]") if ($ARGV[1]); 
+			&Pakfire::message("PAKFIRE WARN: Not a known option $ARGV[1]") if ($ARGV[1]);
 			&Pakfire::dblist("all", "noweb");
 		}
-		
+
 	} elsif ("$ARGV[0]" eq "resolvedeps") {
 		foreach (@ARGV) {
 			next if ("$_" eq "resolvedeps");

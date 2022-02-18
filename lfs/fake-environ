@@ -36,11 +36,11 @@ TARGET     = $(DIR_INFO)/$(THISAPP)-tools
 
 install : $(TARGET)
 
-check : 
+check :
 
-download : 
+download :
 
-md5 : 
+md5 :
 
 ###############################################################################
 # Installation Details

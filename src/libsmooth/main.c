@@ -6,7 +6,7 @@
  * (c) Lawrence Manning, 2001
  * Contains library functions.
  */
- 
+
 #include "libsmooth.h"
 
 #include <libintl.h>
@@ -134,10 +134,10 @@ int runcommandwithprogress(int width, int height, const char *title, const char 
 	free(buf);
 
 	newtFormAddComponent(f, t);
-	
+
 	s = newtScale(1, 3, width - 2, lines);
 	newtScaleSet(s, progress);
-	
+
 	newtFormAddComponent(f, s);
 
 	newtDrawForm(f);
@@ -149,18 +149,18 @@ int runcommandwithprogress(int width, int height, const char *title, const char 
 		goto EXIT;
 	}
 	setvbuf(p, NULL, _IOLBF, 255);
-	
+
 	while (fgets(buffer, STRING_SIZE, p)) {
 		newtScaleSet(s, ++progress);
-		newtRefresh();	
+		newtRefresh();
 	}
 
 	rc = pclose(p);
-	
+
 EXIT:
 	newtFormDestroy(f);
 	newtPopWindow();
-		
+
 	return rc;
 }
 
@@ -174,7 +174,7 @@ int checkformodule(const char *module) {
 		fprintf(stderr, "Unable to open /proc/modules in checkformodule()\n");
 		return 0;
 	}
-	
+
 	while (fgets(buffer, STRING_SIZE, file))
 	{
 		if (strncmp(buffer, module, strlen(module)) == 0)
@@ -186,13 +186,13 @@ int checkformodule(const char *module) {
 			}
 		}
 	}
-	
+
 EXIT:
 	fclose(file);
-	
+
 	return result;
-}	
-		
+}
+
 int _replace_string(char string[], char *from, char *to)
 {
 	int fromlen = strlen(from);
@@ -244,12 +244,12 @@ int replace(char filename1[], char *from, char *to) {
 		if (strlen(to) > 0) {
 			/* Replace string */
 			ret = _replace_string (temp, from, to);
-		
+
 			/* Write string to new file */
 			fputs(temp, file2);
 		} else {
 			/* Remove string when to is NULL */
-			if (!strstr(temp, from)) 
+			if (!strstr(temp, from))
 				fputs(temp, file2);
 		}
 	}
@@ -260,7 +260,7 @@ int replace(char filename1[], char *from, char *to) {
 
 	/* Move the file */
 	rename (filename2, filename1);
-	
+
 	return (ret);
 }
 

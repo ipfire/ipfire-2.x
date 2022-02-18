@@ -100,7 +100,7 @@ END
 			}
 
 			$chainname = $chainstring[1];
-			$chains{$chainname."start"} = $lines; 
+			$chains{$chainname."start"} = $lines;
 		}
 
 		$lines++;
@@ -222,11 +222,11 @@ END
 			}
 
 			$chainname = $chainstring[1];
-			$chainsman{$chainname."start"} = $manlines; 
+			$chainsman{$chainname."start"} = $manlines;
 		}
 
 		$manlines++;
-	   
+
 	}
 	$chainsman{$chainname."end"} = $manlines-1;
 	close (FILE);
@@ -349,11 +349,11 @@ END
 			}
 
 			$chainname = $chainstring[1];
-			$chainsnat{$chainname."start"} = $natlines; 
+			$chainsnat{$chainname."start"} = $natlines;
 		}
 
 		$natlines++;
-	   
+
 	}
 	$chainsnat{$chainname."end"} = $natlines-1;
 	close (FILE);

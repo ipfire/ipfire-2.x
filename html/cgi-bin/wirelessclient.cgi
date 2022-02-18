@@ -303,7 +303,7 @@ END
 			$gdesc = $Lang::tr{'click to disable'};
 		} else {
 			$gif = 'off.gif';
-			$gdesc = $Lang::tr{'click to enable'}; 
+			$gdesc = $Lang::tr{'click to enable'};
 		}
 
 		# Colorize each line
@@ -576,7 +576,7 @@ sub showEditBox() {
 			<br>
 			<hr>
 
-			
+
 			<strong>
 				$Lang::tr{'wlan client advanced settings'}:
 			</strong>

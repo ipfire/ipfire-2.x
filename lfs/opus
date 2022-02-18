@@ -57,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	$(PAK)
 
 ###############################################################################
@@ -69,7 +69,7 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
- 
+
 $(subst %,%_MD5,$(objects)) :
 	@$(MD5)
 

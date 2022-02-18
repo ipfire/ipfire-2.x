@@ -58,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -106,10 +106,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install initscript
 	$(call INSTALL_INITSCRIPTS,$(SERVICES))
-	
+
 	#install backup definition
 	install -v -m 644 ${DIR_SRC}/config/backup/includes/avahi \
 			/var/ipfire/backup/addons/includes/avahi
-			
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

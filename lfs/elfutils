@@ -24,7 +24,7 @@
 
 include Config
 
-SUMMARY    = Higher-level library to access ELF files 
+SUMMARY    = Higher-level library to access ELF files
 
 VER        = 0.186
 

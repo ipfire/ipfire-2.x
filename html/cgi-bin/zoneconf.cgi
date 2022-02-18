@@ -67,7 +67,7 @@ my $extraHead = <<END
 	#zoneconf td.heading {
 		background-color: lightgrey;
 		color: white;
-	}	
+	}
 	#zoneconf td.heading.bold::first-line {
 		font-weight: bold;
 		line-height: 1.6;
@@ -310,7 +310,7 @@ if ($cgiparams{"ACTION"} eq $Lang::tr{"save"}) {
 				}
 
 				$VALIDATE_nic_check{"VLAN $mac $vlan_tag"} = 1;
-				
+
 				# check VLAN tag range: 1..4094 (0, 4095 are reserved)
 				unless (looks_like_number($vlan_tag) && ($vlan_tag >= 1) && ($vlan_tag <= 4094)) {
 					$VALIDATE_error = $Lang::tr{"zoneconf val vlan tag range error"};
@@ -507,7 +507,7 @@ END
 		if ($access_selected{"NONE"} eq "") {
 			$highlight = $_;
 		}
-		
+
 		print <<END
 		<td class="$highlight">
 			<select name="ACCESS $uc $mac" data-zone="$uc" data-mac="$mac" onchange="highlightAccess(this)">
@@ -542,7 +542,7 @@ foreach (@zones) { # load settings and prepare form elements for each zone
 	my $stp_available = $ethsettings{"${uc}_MODE"} eq "bridge"; # STP is only available in bridge mode
 	my $stp_enabled = $ethsettings{"${uc}_STP"} eq "on";
 	my $stp_priority = $ethsettings{"${uc}_STP_PRIORITY"};
-	
+
 	# set priority to default value if no numerical value is configured
 	$stp_priority = 32768 unless looks_like_number($stp_priority);
 

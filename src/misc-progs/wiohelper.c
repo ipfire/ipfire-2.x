@@ -6,7 +6,7 @@
  * Licence.  See the file COPYING for details.
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- * 
+ *
  * IPFire.org - A linux based firewall
  * Copyright (C) 2017-2018 Stephan Feddersen <sfeddersen@ipfire.org>
  *

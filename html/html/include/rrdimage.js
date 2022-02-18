@@ -27,8 +27,8 @@ function rrdimage_selectRange(buttonObj) {
 
 	// Get selected time range from button
 	const range = buttonObj.dataset.range;
-	
-	// Get surrounding div box and select new range 
+
+	// Get surrounding div box and select new range
 	let graphBox = $(buttonObj).closest('div');
 	_rrdimg_setRange(graphBox, range);
 }
@@ -60,7 +60,7 @@ function _rrdimg_setRange(graphBox, range, initMode = false) {
 	// Check if the time range is changed
 	if((graphBox.data('range') !== range) || initMode) {
 		graphBox.data('range', range); //Store new range
-		
+
 		// Update button highlighting
 		graphBox.find('button').removeClass('selected');
 		graphBox.find(`button[data-range="${range}"]`).addClass('selected');
@@ -105,7 +105,7 @@ function _rrdimg_setRange(graphBox, range, initMode = false) {
 // graphBox: jQuery object (graph element must be valid)
 function _rrdimg_reload(graphBox) {
 	const origin = graphBox.data('origin');
-	const graph = graphBox.data('graph');	
+	const graph = graphBox.data('graph');
 	const timestamp = Date.now();
 
 	// Get user selected range or fall back to default

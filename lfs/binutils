@@ -62,7 +62,7 @@ ifeq "$(PASS)" "1"
 	--with-lib-path=$(TOOLS_DIR)/lib \
 	--disable-nls
   EXTRA_MAKE =
-  EXTRA_INSTALL = 
+  EXTRA_INSTALL =
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
   EXTRA_ENV = \
@@ -76,8 +76,8 @@ else
 	--with-lib-path=$(TOOLS_DIR)/lib \
 	--with-sysroot \
 	--disable-nls
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
 endif
 endif
 

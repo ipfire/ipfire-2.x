@@ -24,7 +24,7 @@
 
 include Config
 
-SUMMARY    = Tools to Determine and Set CPUfreq Settings 
+SUMMARY    = Tools to Determine and Set CPUfreq Settings
 
 VER        = 008
 
@@ -58,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

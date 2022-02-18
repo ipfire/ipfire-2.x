@@ -7,7 +7,7 @@
  *
  * $Id$
  *
- * Edited by the IPFire Team to change var log messages 
+ * Edited by the IPFire Team to change var log messages
  */
 
 #include <stdio.h>
@@ -141,7 +141,7 @@ int main(void)
       exit(ERR_CONFIG);
    }
    close(config_fd);
-   
+
    if (rename("/etc/syslog.conf.new", "/etc/syslog.conf") == -1)
    {
       perror("Unable to replace old config file");

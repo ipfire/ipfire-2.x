@@ -58,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -87,6 +87,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	#install initscripts
 	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/watchdog \
-			 /var/ipfire/backup/addons/includes/watchdog 
+			 /var/ipfire/backup/addons/includes/watchdog
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

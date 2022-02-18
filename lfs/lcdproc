@@ -36,7 +36,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = lcdproc
 PAK_VER    = 2
 
-DEPS       = 
+DEPS       =
 
 SERVICES   = lcdproc
 
@@ -60,7 +60,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	$(PAK)
 
 ###############################################################################

@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 	}
 
 	const char* name = argv[1];
-	
+
 	if (strlen(name) > 32) {
 	    fprintf(stderr, "\nString to large.\n\naddonctrl addon (start|stop|restart|reload|enable|disable)\n\n");
 	    exit(1);

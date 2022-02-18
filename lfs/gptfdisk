@@ -35,7 +35,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	    = gptfdisk
 PAK_VER    = 1
 
-DEPS	    = 
+DEPS	    =
 
 ###############################################################################
 # Top-level Rules
@@ -55,7 +55,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

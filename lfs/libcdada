@@ -37,7 +37,7 @@ PROG       = libcdada
 PAK_VER    = 2
 
 
-DEPS       = 
+DEPS       =
 
 SERVICES   =
 
@@ -59,7 +59,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

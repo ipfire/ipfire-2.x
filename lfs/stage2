@@ -116,7 +116,7 @@ endif
 	mv -vf /usr/local/bin/ovpn-ccd-convert /usr/sbin/
 	mv -vf /usr/local/bin/ovpn-collectd-convert /usr/sbin/
 	mv -vf /usr/local/bin/captive-cleanup /usr/bin/
-	
+
 	# Install firewall scripts.
 	mkdir -pv /usr/lib/firewall
 	install -m 755 $(DIR_SRC)/config/firewall/rules.pl \
@@ -142,7 +142,7 @@ endif
 
 	# Permissions
 	chmod 0711 /var/empty
-	
+
 	# A small hack to include /root to the iso but not all of it's files.
 	touch /root/ipfire
 

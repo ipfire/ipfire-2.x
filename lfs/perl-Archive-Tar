@@ -51,7 +51,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-#dist: 
+#dist:
 #	make-packages.sh Archive-Tar $(THISAPP)-ipfire-beta-1
 
 ###############################################################################

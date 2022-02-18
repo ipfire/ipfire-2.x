@@ -100,8 +100,8 @@ END
 ;
 	&General::system("/usr/local/bin/extrahdctrl", "mount", "$extrahdsettings{'PATH'}");
 	}
-} 
-elsif ($extrahdsettings{'ACTION'} eq $Lang::tr{'delete'}) 
+}
+elsif ($extrahdsettings{'ACTION'} eq $Lang::tr{'delete'})
 {
 	if ( &General::system("/usr/local/bin/extrahdctrl", "umount", "$extrahdsettings{'PATH'}")) {
 		open( FILE, "< $devicefile" ) or die "Unable to read $devicefile";

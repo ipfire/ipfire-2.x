@@ -100,7 +100,7 @@ my @protocols;
 &General::readhash("${General::swroot}/firewall/settings", \%fwdfwsettings);
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
-&General::readhash($fwoptions, \%optionsfw); 
+&General::readhash($fwoptions, \%optionsfw);
 &General::readhash($ifacesettings, \%ifaces);
 &General::readhash("$configovpn", \%ovpnsettings);
 &General::readhash("$configipsecrw", \%ipsecsettings);
@@ -554,7 +554,7 @@ sub checksource
 				if (&General::validport($_)){
 					push (@values,$_);
 				}else{
-					
+
 				}
 			}
 		}
@@ -836,7 +836,7 @@ sub checkrule
 							if (&General::validport($_)){
 								push (@values,$_);
 							}else{
-								
+
 							}
 						}
 					}
@@ -974,16 +974,16 @@ sub checkvpn
 	# A Test if manual ip is part of dynamic openvpn subnet is made in getcolor
 	# because if one creates a custom host with the ip, we need to check the color there!
 	# It does not make sense to check this here
-	
+
 	# Test if manual IP is part of an OpenVPN N2N subnet does also not make sense here
 	# Is also checked in getcolor
-	
+
 	# Test if manual ip is part of an IPsec Network is also checked in getcolor
 	return 1;
 }
 sub checkvpncolor
 {
-	
+
 }
 sub deleterule
 {
@@ -1247,7 +1247,7 @@ END
 		print"<tr><td valign='top'><input type='radio' name='$grp' id='ipsec_net_$srctgt' value='ipsec_net_$srctgt' $checked{$grp}{'ipsec_net_'.$srctgt}></td><td >$Lang::tr{'fwhost ipsec net'}</td><td align='right'><select name='ipsec_net_$srctgt' style='width:200px;'><select></td></tr>";
 	}
 	if ($show eq '1'){$show='';print"</select></td></tr>";}
-	
+
 	print"</table>";
 	print"</td></tr></table><br>";
 }
@@ -1585,10 +1585,10 @@ sub newrule
 				$fwdfwsettings{'RULE_ACTION'}			= $hash{$key}[0];
 				$fwdfwsettings{'chain'}					= $hash{$key}[1];
 				$fwdfwsettings{'ACTIVE'}				= $hash{$key}[2];
-				$fwdfwsettings{'grp1'}					= $hash{$key}[3];   
-				$fwdfwsettings{$fwdfwsettings{'grp1'}}	= $hash{$key}[4];   
-				$fwdfwsettings{'grp2'}					= $hash{$key}[5];   
-				$fwdfwsettings{$fwdfwsettings{'grp2'}}	= $hash{$key}[6];   
+				$fwdfwsettings{'grp1'}					= $hash{$key}[3];
+				$fwdfwsettings{$fwdfwsettings{'grp1'}}	= $hash{$key}[4];
+				$fwdfwsettings{'grp2'}					= $hash{$key}[5];
+				$fwdfwsettings{$fwdfwsettings{'grp2'}}	= $hash{$key}[6];
 				$fwdfwsettings{'USE_SRC_PORT'}			= $hash{$key}[7];
 				$fwdfwsettings{'PROT'}					= $hash{$key}[8];
 			    $fwdfwsettings{'ICMP_TYPES'}			= $hash{$key}[9];
@@ -1695,7 +1695,7 @@ sub newrule
 			if ( &General::IpInSubnet($sip,$netsettings{'ORANGE_ADDRESS'},$netsettings{'ORANGE_NETMASK'})){
 				$fwdfwsettings{'oldorange'} ='on';
 			}
-		}	
+		}
 	}
 	# Split manual source and target address and delete the subnet
 	my ($sip,$scidr) = split("/",$fwdfwsettings{$fwdfwsettings{'grp1'}});
@@ -1811,7 +1811,7 @@ END
 		#---TARGET------------------------------------------------------
 		&Header::openbox('100%', 'left', $Lang::tr{'fwdfw target'});
 		print<<END;
-		<table width='100%' border='0'>	
+		<table width='100%' border='0'>
 		<tr><td width='1%'><input type='radio' name='grp2' value='tgt_addr'  checked></td><td width='60%' nowrap='nowrap'>$Lang::tr{'fwdfw targetip'}<input type='TEXT' name='tgt_addr' value='$fwdfwsettings{'tgt_addr'}' size='16' maxlength='18'><td width='1%'><input type='radio' name='grp2' id='ipfire' value='ipfire'  $checked{'grp2'}{'ipfire'}></td><td><b>Firewall</b></td>
 END
 		print"<td align='right'><select name='ipfire' style='width:200px;'>";
@@ -2031,7 +2031,7 @@ END
 		print"<tr><td width='12%'>$Lang::tr{'remark'}:</td><td width='88%' align='left'><input type='text' name='ruleremark' maxlength='255' value='$fwdfwsettings{'ruleremark'}' style='width:99%;'></td></tr>";
 		if($fwdfwsettings{'updatefwrule'} eq 'on' || $fwdfwsettings{'copyfwrule'} eq 'on'){
 			print "<tr><td width='12%'>$Lang::tr{'fwdfw rulepos'}:</td><td><select name='rulepos' >";
-			for (my $count =1; $count <= $sum; $count++){ 
+			for (my $count =1; $count <= $sum; $count++){
 				print"<option value='$count' ";
 				print"selected='selected'" if($fwdfwsettings{'oldrulenumber'} eq $count);
 				print">$count</option>";
@@ -2110,7 +2110,7 @@ END
 				print "<option $selected{'TIME_FROM'}{$time}>$i:$j</option>\n";
 			}
 		}
-		print<<END;	
+		print<<END;
 								</select> &dash;
 								<select name='TIME_TO'>
 END
@@ -2590,7 +2590,7 @@ END
 				$color="$color{'color14'}";
 				$coloryellow='';
 			}elsif($coloryellow eq ''){
-				if ($count % 2){ 
+				if ($count % 2){
 					$color="$color{'color22'}";
 				}
 				else{

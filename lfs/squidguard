@@ -38,7 +38,7 @@ CFLAGS    += -fcommon
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) 
+objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
@@ -104,7 +104,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cp -f  $(DIR_CONF)/urlfilter/autoupdate.pl /var/ipfire/urlfilter/bin/autoupdate.pl
 	chmod 755 /var/ipfire/urlfilter/bin/autoupdate.pl
 	echo "1.5-beta" > /var/ipfire/urlfilter/version
-	
+
 	# Wrapper
 	cp -f  $(DIR_CONF)/urlfilter/redirect_wrapper /usr/sbin
 	chmod 755 /usr/sbin/redirect_wrapper

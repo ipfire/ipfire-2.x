@@ -105,8 +105,8 @@ ifeq "$(PASS)" "1"
 	--without-ppl \
 	--without-cloog \
 	--enable-languages=c,c++
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
 else
 ifeq "$(PASS)" "2"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
@@ -125,8 +125,8 @@ ifeq "$(PASS)" "2"
 	--disable-libstdcxx-pch \
 	--disable-multilib \
 	--disable-libgomp
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
 
   ifeq "$(FULL_BOOTSTRAP)" "1"
 	EXTRA_CONFIG += --enable-bootstrap
@@ -149,8 +149,8 @@ else
 	--disable-libstdcxx-threads \
 	--disable-libstdcxx-pch \
 	--with-gxx-include-dir=$(TOOLS_DIR)/$(CROSSTARGET)/include/c++/$(VER)
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
 endif
 endif
 endif

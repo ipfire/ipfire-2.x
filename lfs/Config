@@ -244,7 +244,7 @@ endef
 # Common Macro Definitions
 ###############################################################################
 
-# For each package we create a list of files that it installed under 
+# For each package we create a list of files that it installed under
 # log/<TARGET> name. Modified files are not identified
 #
 define FIND_FILES

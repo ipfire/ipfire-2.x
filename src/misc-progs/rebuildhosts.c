@@ -4,7 +4,7 @@
  * Licence.  See the file COPYING for details.
  *
  * (c) Alan Hourihane, 2003
- * 
+ *
  *
  * $Id: rebuildhosts.c,v 1.3.2.6 2005/07/11 10:56:47 franck78 Exp $
  *
@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "Couldn't read main settings\n");
 		exit(1);
 	}
-	strcpy(hostname, SNAME ); 
+	strcpy(hostname, SNAME );
 	findkey(kv, "HOSTNAME", hostname);
 	findkey(kv, "DOMAINNAME", domainname);
 	freekeyvalues(kv);

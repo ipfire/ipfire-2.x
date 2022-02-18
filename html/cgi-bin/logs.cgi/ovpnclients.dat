@@ -329,7 +329,7 @@ unless ($errormessage) {
 }
 
 # If nothing has been fetched, the amount of lines is still zero.
-# In this case display a hint about no data.	
+# In this case display a hint about no data.
 unless ($lines) {
 	print "<tr><td bgcolor='$color{'color22'}' colspan='6' align='center'>$Lang::tr{'no entries'}</td></tr>\n";
 }

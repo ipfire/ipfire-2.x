@@ -1,21 +1,25 @@
 #!/bin/sh
-########################################################################
-# Begin
-#
-# Description : RED Device Script
-#
-# Authors     : Michael Tremer - mitch@ipfire.org
-#               Maniacikarus - maniacikarus@ipfire.org
-# Inspired by : Nathan Coulson - nathan@linuxfromscratch.org
-#               Kevin P. Fleming - kpfleming@linuxfromscratch.org
-#
-# Version     : 01.00
-#
-# Notes       : 
-#
-########################################################################
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
-. /etc/sysconfig/rc 
+. /etc/sysconfig/rc
 . ${rc_functions}
 . /etc/init.d/networking/functions.network
 
@@ -47,7 +51,7 @@ if [ "$TYPE" == "STATIC" ] || [ "$TYPE" == "DHCP" ]; then
 		[ "${1}" == "start" ] && exit 0
 	fi
 fi
-	
+
 if [ "${TYPE}" == "STATIC" ]; then
 	if [ "${DEVICE}" != "${GREEN_DEV}" ]; then
 		ADDRESS="${RED_ADDRESS}"
@@ -85,7 +89,7 @@ case "${1}" in
 				if [ -n "${link_status}" ]; then
 					if ! echo "${link_status}" | grep -q UP; then
 						if [ -n "$MAC" ]; then
-							boot_mesg "Setting mac address on ${DEVICE} to ${MAC}"	
+							boot_mesg "Setting mac address on ${DEVICE} to ${MAC}"
 							ip link set dev ${DEVICE} address ${MAC}
 							evaluate_retval
 						fi
@@ -101,7 +105,7 @@ case "${1}" in
 
 		## Create & Enable vnstat
 		/usr/bin/vnstat -u -i ${DEVICE} -r --enable --force > /dev/null 2>&1
-		
+
 		if [ "${TYPE}" == "STATIC" ]; then
 			# Set the MTU
 			if [ -n "${MTU}" ]; then
@@ -123,14 +127,14 @@ case "${1}" in
 			echo "$GATEWAY	gateway"  >> /tmp/hosts
 			mv /tmp/hosts /etc/hosts
 			touch /var/ipfire/red/active
-			
+
 			# Create route to default gateway
 			ip route add ${GATEWAY} dev ${DEVICE}
 
 			boot_mesg "Setting up default gateway ${GATEWAY}..."
 			ip route add default via ${GATEWAY} dev ${DEVICE}
 			evaluate_retval
-			
+
 			if [ -d "/sys/class/net/${DEVICE}" ]; then
 				# has carrier ?
 				if [ ! "$(</sys/class/net/${DEVICE}/carrier)" = "1" ]; then
@@ -182,16 +186,15 @@ case "${1}" in
 			    echo_failure
 			    exit 1
 			fi
-			
+
 			eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
-			
+
 			[ -c "/dev/ppp" ] || mknod /dev/ppp c 108 0
 
 			# We force the plugin method, anyway.
 			METHOD="PPPOE_PLUGIN"
 
 			PPP_NIC=${DEVICE}
-
 
 			if [ "$TYPE" == "pppoeatm" ] || [ "$TYPE" == "pptpatm" ]; then
 				PPP_NIC=nas${ATM_DEV}
@@ -245,7 +248,7 @@ case "${1}" in
 					modprobe 8021q
 					vconfig add ${DEVICE} ${IPTV_VLAN}
 					if [ -n "$MAC2" ]; then
-						boot_mesg "Setting mac address on ${DEVICE}.${IPTV_VLAN} to ${MAC2}"	
+						boot_mesg "Setting mac address on ${DEVICE}.${IPTV_VLAN} to ${MAC2}"
 						ip link set dev ${DEVICE}.${IPTV_VLAN} address ${MAC2}
 						evaluate_retval
 					fi
@@ -335,13 +338,13 @@ case "${1}" in
 			else
 				boot_mesg "Bringing up the PPP via ${TYPE} on ${COMPORT}..."
 			fi
-			
+
 			###                      ###
 			### Configuring the pppd ###
 			###                      ###
-			
+
 			### Plugin Options
-			#			
+			#
 			if [ "$TYPE" == "pppoe" ]; then
 				[ "${METHOD}" == "PPPOE_PLUGIN" ] && \
 					PLUGOPTS="plugin rp-pppoe.so"
@@ -351,7 +354,7 @@ case "${1}" in
 			#
 			#PPPOE_SYNC=-s
 			#PPPD_SYNC=sync
-	
+
 			### Access Concentrator Name
 			#
 			if [ -n "${CONCENTRATORNAME}" ]; then
@@ -378,7 +381,7 @@ case "${1}" in
 				AUTH=""
 			fi
 
-			### Dial On Demand		
+			### Dial On Demand
 			#
 			if [ "${RECONNECTION}" != "persistent" ]; then
 				if [ "${TIMEOUT}" != "0" ] && [ "${TIMEOUT}" != "" ]; then
@@ -392,13 +395,13 @@ case "${1}" in
 					DEMAND+=" ipcp-accept-remote ipcp-accept-local noipdefault ktune"
 				fi
 			fi
-			
+
 			if [ "$TYPE" == "pppoe" ]; then
 				### When using pppoe-plugin the device has to be the last option
 				#
 				[ "${METHOD}" == "PPPOE_PLUGIN" ] && PLUGOPTS+=" $PPP_NIC"
 			fi
-			
+
 			if [ "$TYPE" == "modem" ]; then
 				PLUGOPTS=" /dev/${COMPORT} ${DTERATE} connect /etc/ppp/dialer lock modem crtscts"
 				METHOD="PPPOE_PLUGIN"
@@ -406,7 +409,7 @@ case "${1}" in
 				PLUGOPTS=" /dev/${COMPORT} ${DTERATE} connect /bin/true lock modem crtscts"
 				METHOD="PPPOE_PLUGIN"
 			fi
-		
+
 			### Standard PPP options we always use
 			#
 			PPP_STD_OPTIONS="$PLUGOPTS usepeerdns defaultroute noipdefault noauth"
@@ -422,7 +425,7 @@ case "${1}" in
 			if [ -n "${MRU}" ]; then
 				PPP_STD_OPTIONS="${PPP_STD_OPTIONS} mru ${MRU}"
 			fi
-				
+
 			### Debugging
 			#
 			if [ "${DEBUG}" == "on" ]; then
@@ -430,7 +433,7 @@ case "${1}" in
 			else
 				DEBUG=""
 			fi
-			
+
 			### PPPoE invocation
 			#
 			if [ "$TYPE" == "pppoe" ]; then
@@ -444,7 +447,7 @@ case "${1}" in
 				PPPOE_CMD="pptp $PPTP_PEER --nolaunchpppd"
 				METHOD=""
 			fi
-			
+
 			### Run everything
 			#
 			if [ "$METHOD" == "PPPOE_PLUGIN" ]; then
@@ -536,5 +539,3 @@ case "${1}" in
 		exit 0;
 		;;
 esac
-
-# End

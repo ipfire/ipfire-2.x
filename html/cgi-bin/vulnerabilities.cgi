@@ -239,7 +239,7 @@ sub check_status($) {
 
 	if ($status =~ /^(Vulnerable|Mitigation): (.*)$/) {
 		return ($1, $2);
-	} 
+	}
 
 	return $status;
 }

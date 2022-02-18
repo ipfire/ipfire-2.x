@@ -24,7 +24,7 @@
 
 include Config
 
-SUMMARY    = Transport independent RPC portmapper 
+SUMMARY    = Transport independent RPC portmapper
 
 VER        = 1.2.6
 

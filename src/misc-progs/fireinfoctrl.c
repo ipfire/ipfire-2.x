@@ -6,9 +6,9 @@
  * (c) IPFire Team, 2011
  *
  * Simple program that calls "sendprofile" as the root user.
- * 
+ *
  */
-         
+
 #include <stdlib.h>
 #include "setuid.h"
 
@@ -16,8 +16,8 @@ int main(void)
 {
 	if (!(initsetuid()))
 		exit(1);
-			
+
 	safe_system("/usr/bin/sendprofile");
-	
+
 	return 0;
 }

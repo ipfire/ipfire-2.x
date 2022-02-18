@@ -66,7 +66,7 @@ core/%:
 	#remove excluded files from ROOTFILES
 	grep -f $(DIR_SRC)/config/rootfiles/$@/exclude -v /tmp/ROOTFILES.tmp > /tmp/ROOTFILES
 	rm -rf /tmp/ROOTFILES.tmp
-	
+
 	#Change KVER to Kernelversion
 	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
 

@@ -78,7 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	@cd $(DIR_APP) && chmod 755 install_logwatch.sh
 	cd $(DIR_APP) && yes "" | ./install_logwatch.sh
-	
+
 	#sed -i 's/^Print = .*$$/Print = Yes/' /etc/log.d/conf/logwatch.conf
 	# comment out line with unused example
 	#sed -i '/-zz-network/s/Service/#Service/' /etc/log.d/conf/logwatch.conf
@@ -97,7 +97,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	#  done
 	cp -f $(DIR_SRC)/config/logwatch/dialup /usr/share/logwatch/scripts/services/dialup
 	cp -f $(DIR_SRC)/config/logwatch/dialup.conf /usr/share/logwatch/dist.conf/services/dialup.conf
-	
+
 	-mkdir -p /var/cache/logwatch
 	chmod -v 777 /var/cache/logwatch
 	-mkdir -p /var/log/logwatch

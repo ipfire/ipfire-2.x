@@ -1,12 +1,12 @@
 /* IPFire helper program - IPStat
  *
  * Get the list from IPTABLES -L
- * 
+ *
  * Optional commandline parameters:
- *  -x 
+ *  -x
  *   instruct iptables to expand numbers
- *  -f 
- *   display filter table 
+ *  -f
+ *   display filter table
  *  -n
  *   display nat table
  *  -m
@@ -33,7 +33,7 @@ int main(int argc, char** argv)
 	unsigned int table_set = 0;
 
 	int opt;
-	
+
 	if (!(initsetuid()))
 		exit(1);
 

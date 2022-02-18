@@ -39,7 +39,7 @@ my $hintcolour='#FFFFCC';
 
 my $commandline='';
 
-my %monthidx = (qw(Jan 0 Feb 1 Mar 2 Apr 3 May 4 Jun 5 Jul 6 Aug 7 Sep 8 Oct 9 Nov 10 Dec 11)); 
+my %monthidx = (qw(Jan 0 Feb 1 Mar 2 Apr 3 May 4 Jun 5 Jul 6 Aug 7 Sep 8 Oct 9 Nov 10 Dec 11));
 
 my @longmonths = ( $Lang::tr{'january'}, $Lang::tr{'february'}, $Lang::tr{'march'},
 	$Lang::tr{'april'}, $Lang::tr{'may'}, $Lang::tr{'june'}, $Lang::tr{'july'},
@@ -350,7 +350,7 @@ print <<END
 	<select name='DAY_BEGIN'>
 END
 ;
-for ($day_begin = 1; $day_begin <= 31; $day_begin++) 
+for ($day_begin = 1; $day_begin <= 31; $day_begin++)
 {
 	print "\t<option ";
 	if ($day_begin == $reportsettings{'DAY_BEGIN'}) {
@@ -364,7 +364,7 @@ print <<END
 	<select name='YEAR_BEGIN'>
 END
 ;
-for ($year_begin = $year-2; $year_begin <= $year+1; $year_begin++) 
+for ($year_begin = $year-2; $year_begin <= $year+1; $year_begin++)
 {
 	print "\t<option ";
 	if ($year_begin == $reportsettings{'YEAR_BEGIN'}) {
@@ -393,7 +393,7 @@ print <<END
 	<select name='DAY_END'>
 END
 ;
-for ($day_end = 1; $day_end <= 31; $day_end++) 
+for ($day_end = 1; $day_end <= 31; $day_end++)
 {
 	print "\t<option ";
 	if ($day_end == $reportsettings{'DAY_END'}) {
@@ -407,7 +407,7 @@ print <<END
 	<select name='YEAR_END'>
 END
 ;
-for ($year_end = $year-2; $year_end <= $year+1; $year_end++) 
+for ($year_end = $year-2; $year_end <= $year+1; $year_end++)
 {
 	print "\t<option ";
 	if ($year_end == $reportsettings{'YEAR_END'}) {
