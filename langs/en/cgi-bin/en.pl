@@ -1651,6 +1651,7 @@
 'locationblock enable feature' => 'Enable Location based blocking:',
 'locationblock flag' => 'Flag',
 'log' => 'Log',
+'log dropped conntrack invalids' => 'Log dropped packets classified as INVALID by connection tracking',
 'log enabled' => 'Log Enabled',
 'log level' => 'Log Level',
 'log lines per page' => 'Lines per page',
