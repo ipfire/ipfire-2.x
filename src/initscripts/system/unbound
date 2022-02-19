@@ -267,7 +267,8 @@ get_memory_amount() {
 
 fix_time_if_dns_fails() {
 	# If DNS is working, everything is fine
-	if resolve "ipfire.pool.ntp.org" &>/dev/null; then
+	if resolve "0.ipfire.pool.ntp.org" &>/dev/null || \
+	   resolve "1.ipfire.pool.ntp.org" &>/dev/null ; then
 		return 0
 	fi
 
