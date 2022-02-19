@@ -91,6 +91,7 @@ rm -rvf \
 	/usr/lib/libxt_ACCOUNT_cl.so* \
 	/usr/lib/python3.8/ \
 	/usr/sbin/iptaccount \
+	/usr/sbin/ovpn-collectd-convert \
 	/usr/sbin/pknlusr \
 	/usr/share/xt_geoip/ \
 	/var/ipfire/firewall/p2protocols
