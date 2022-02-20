@@ -1,4 +1,4 @@
-%tr = ( 
+%tr = (
 %tr,
 
 '24 hours' => '24 Stunden',
@@ -2932,7 +2932,6 @@
 'wlan client encryption' => 'Verschlüsselung',
 'wlan client encryption eap' => 'EAP',
 'wlan client encryption none' => 'Keine',
-'wlan client encryption wep' => 'WEP',
 'wlan client encryption wpa' => 'WPA',
 'wlan client encryption wpa2' => 'WPA2',
 'wlan client group cipher' => 'Gruppenchiffre',

@@ -1560,7 +1560,6 @@ WARNING: untranslated string: wlan client edit entry = Edit wireless client conf
 WARNING: untranslated string: wlan client encryption = Encryption
 WARNING: untranslated string: wlan client encryption eap = EAP
 WARNING: untranslated string: wlan client encryption none = None
-WARNING: untranslated string: wlan client encryption wep = WEP
 WARNING: untranslated string: wlan client encryption wpa = WPA
 WARNING: untranslated string: wlan client encryption wpa2 = WPA2
 WARNING: untranslated string: wlan client encryption wpa3 = WPA3

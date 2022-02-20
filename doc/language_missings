@@ -942,7 +942,6 @@
 < wlan client encryption
 < wlan client encryption eap
 < wlan client encryption none
-< wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
 < wlan client encryption wpa3
@@ -2876,7 +2875,6 @@
 < wlan client encryption
 < wlan client encryption eap
 < wlan client encryption none
-< wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
 < wlan client encryption wpa3
@@ -3821,7 +3819,6 @@
 < wlan client encryption
 < wlan client encryption eap
 < wlan client encryption none
-< wlan client encryption wep
 < wlan client encryption wpa
 < wlan client encryption wpa2
 < wlan client encryption wpa3
