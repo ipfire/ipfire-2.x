@@ -36,6 +36,8 @@ PAK_VER    = 1
 
 DEPS       = python3-cffi
 
+export CARGOPATH = $(CARGO_PATH)
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -77,6 +79,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && $(CARGO_PREPARE)
+	cd $(DIR_APP) && rm -vf src/rust/Cargo.lock
 	cd $(DIR_APP) && python3 setup.py build
 	cd $(DIR_APP) && python3 setup.py install --root=/
 	@rm -rf $(DIR_APP)
