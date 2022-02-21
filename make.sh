@@ -1610,6 +1610,7 @@ buildipfire() {
   lfsmake2 ddns
   lfsmake2 python3-charset-normalizer
   lfsmake2 python3-certifi
+  lfsmake2 python3-idna
   lfsmake2 python3-requests
   lfsmake2 python3-toml
   lfsmake2 python3-pyproject2setuppy
