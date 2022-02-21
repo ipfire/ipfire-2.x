@@ -1623,6 +1623,7 @@ buildipfire() {
   lfsmake2 python3-urllib3
   lfsmake2 python3-botocore
   lfsmake2 aws-cli
+  lfsmake2 oci-cli
   lfsmake2 transmission
   lfsmake2 mtr
   lfsmake2 minidlna
