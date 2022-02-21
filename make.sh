@@ -1619,10 +1619,11 @@ buildipfire() {
   lfsmake2 python3-pep517
   lfsmake2 python3-build
   lfsmake2 python3-install
+  lfsmake2 python3-urllib3
   lfsmake2 python3-flit
+  lfsmake2 python3-packaging
   lfsmake2 python3-typing-extensions
   lfsmake2 python3-semantic-version
-  lfsmake2 python3-packaging
   lfsmake2 python3-setuptools-scm
   lfsmake2 python3-setuptools-rust
   lfsmake2 python3-six
@@ -1633,7 +1634,6 @@ buildipfire() {
   lfsmake2 python3-s3transfer
   lfsmake2 python3-rsa
   lfsmake2 python3-pyasn1
-  lfsmake2 python3-urllib3
   lfsmake2 python3-botocore
   lfsmake2 python3-cffi
   lfsmake2 python3-cryptography
