@@ -1608,6 +1608,7 @@ buildipfire() {
   lfsmake2 wireless-regdb
   lfsmake2 libsolv
   lfsmake2 ddns
+  lfsmake2 python3-pycparser
   lfsmake2 python3-charset-normalizer
   lfsmake2 python3-certifi
   lfsmake2 python3-idna
