@@ -1,0 +1,86 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 0.0.3
+
+THISAPP    = python-install-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE) \
+	installer-0.4.0.tar.gz
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+installer-0.4.0.tar.gz = $(DL_FROM)/installer-0.4.0.tar.gz
+
+$(DL_FILE)_MD5 = 90741b41be4afb0ae3c1b5e9c4afeb67
+installer-0.4.0.tar.gz_MD5 = 0b24293a3a110160717b56509bcf7ec2
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+md5 : $(subst %,%_MD5,$(objects))
+
+dist: 
+	@$(PAK)
+
+###############################################################################
+# Downloading, checking, md5sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_MD5,$(objects)) :
+	@$(MD5)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && tar zxf $(DIR_DL)/installer-0.4.0.tar.gz
+	cd $(DIR_APP) && rm -rfv install/_vendor/installer
+	cd $(DIR_APP) && ln -svf --relative \
+		installer-0.4.0 install/_vendor/installer
+	cd $(DIR_APP) && python3 setup.py build
+	cd $(DIR_APP) && python3 setup.py install --root=/
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)
