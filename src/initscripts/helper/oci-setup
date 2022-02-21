@@ -34,6 +34,24 @@ get() {
 	wget -qO - "http://169.254.169.254/opc/v1/${file}"
 }
 
+try_base64_decode() {
+	local input="${1}"
+
+	local tmp="$(mktemp)"
+
+	# Try to decode this and return output if successful
+	if base64 -d <<< "${input}" > "${tmp}" 2>/dev/null; then
+		echo "$(<${tmp})"
+
+	# Otherwise just return the input
+	else
+		echo "${input}"
+	fi
+
+	# Cleanup
+	unlink "${tmp}"
+}
+
 to_address() {
 	local n="${1}"
 
@@ -133,6 +151,9 @@ import_oci_configuration() {
 	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
 		# Download a startup script
 		local script="$(get instance/metadata/user_data)"
+
+		# Try to decode this
+		script="$(try_base64_decode "${script}")"
 
 		# Execute the script
 		if [ "${script:0:2}" = "#!" ]; then
