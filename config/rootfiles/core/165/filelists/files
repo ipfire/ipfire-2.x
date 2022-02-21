@@ -1,4 +1,5 @@
 etc/rc.d/init.d/firewall
+etc/rc.d/helper/oci-setup
 opt/pakfire/etc/pakfire.conf
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/backup.cgi
