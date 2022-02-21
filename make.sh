@@ -1612,6 +1612,7 @@ buildipfire() {
   lfsmake2 python3-pyproject2setuppy
   lfsmake2 python3-tomli
   lfsmake2 python3-setuptools-scm
+  lfsmake2 python3-setuptools-rust
   lfsmake2 python3-packaging
   lfsmake2 python3-six
   lfsmake2 python3-dateutil
