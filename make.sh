@@ -1615,6 +1615,7 @@ buildipfire() {
   lfsmake2 python3-toml
   lfsmake2 python3-pyproject2setuppy
   lfsmake2 python3-tomli
+  lfsmake2 python3-build
   lfsmake2 python3-flit
   lfsmake2 python3-typing-extensions
   lfsmake2 python3-semantic-version
