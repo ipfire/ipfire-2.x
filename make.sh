@@ -1150,6 +1150,7 @@ buildipfire() {
   lfsmake2 configroot
   lfsmake2 initscripts
   lfsmake2 backup
+  lfsmake2 rust
   lfsmake2 openssl
   lfsmake2 kmod
   lfsmake2 udev
