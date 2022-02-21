@@ -34,7 +34,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = oci-cli
 PAK_VER    = 1
 
-DEPS       = oci-python-sdk python3-arrow python3-six python3-terminaltables
+DEPS       = oci-python-sdk python3-arrow python3-jmespath python3-six \
+	python3-terminaltables
 
 ###############################################################################
 # Top-level Rules
