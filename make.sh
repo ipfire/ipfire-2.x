@@ -1626,6 +1626,7 @@ buildipfire() {
   lfsmake2 python3-pyasn1
   lfsmake2 python3-urllib3
   lfsmake2 python3-botocore
+  lfsmake2 python3-cffi
   lfsmake2 aws-cli
   lfsmake2 oci-python-sdk
   lfsmake2 oci-cli
