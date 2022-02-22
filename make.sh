@@ -795,6 +795,11 @@ qemu_environ() {
 
 			env="${env} QEMU_CPU=${QEMU_CPU}"
 			;;
+		riscv64)
+			QEMU_CPU="${QEMU_CPU:-sifive-u54}"
+
+			env="${env} QEMU_CPU=${QEMU_CPU}"
+			;;
 	esac
 
 	# Enable QEMU strace
