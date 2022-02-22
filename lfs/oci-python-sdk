@@ -34,8 +34,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = oci-python-sdk
 PAK_VER    = 1
 
-DEPS       = python3-click python3-circuitbreaker python3-cryptography \
-	python3-dateutil python3-pytz python3-six
+DEPS       = python3-certifi python3-click python3-circuitbreaker \
+	python3-cryptography python3-dateutil python3-pytz python3-six
 
 ###############################################################################
 # Top-level Rules
