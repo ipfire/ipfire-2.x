@@ -547,7 +547,7 @@ prepareenv() {
 	esac
 
 	# Setup ccache cache size
-	enterchroot ccache --max-size="${CCACHE_CACHE_SIZE}" >/dev/null
+	enterchroot ccache --max-size="${CCACHE_CACHE_SIZE}"
 }
 
 enterchroot() {
