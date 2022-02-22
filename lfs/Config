@@ -209,8 +209,14 @@ CARGO = \
 	--offline
 
 CARGO_OPTIONS = \
-	$(MAKETUNING) \
 	-Z avoid-dev-deps
+
+# Cargo dealocks on riscv64 when building on multiple cores at the same time
+ifeq "$(BUILD_ARCH)" "riscv64"
+	CARGO_OPTIONS += -j1
+else
+	CARGO_OPTIONS += $(MAKETUNING)
+endif
 
 define CARGO_PREPARE
 	mkdir -p $(CARGO_PATH) && \
