@@ -11,7 +11,9 @@ while [ $# -gt 0 ]; do
 			strip="${1#*=}"
 			;;
 		--exclude=*)
-			excludes+=( "!" "-path" "${1#*=}/*" )
+			if [ -n "${1#*=}" ]; then
+				excludes+=( "!" "-path" "${1#*=}" "!" "-path" "${1#*=}/*" )
+			fi
 			;;
 		--ignore-errors)
 			break_on_error="0"

@@ -58,6 +58,7 @@ else
 	# /usr/sbin/vdr.
 	$(DIR_SRC)/src/stripper / \
 		--exclude=$(TOOLS_DIR) \
+		--exclude=$(QEMU_TARGET_HELPER) \
 		--exclude=/tmp \
 		--exclude=/usr/src \
 		--exclude=/usr/lib/vdr \

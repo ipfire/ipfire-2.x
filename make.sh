@@ -781,7 +781,7 @@ fake_environ() {
 }
 
 qemu_environ() {
-	local env
+	local env="QEMU_TARGET_HELPER=${QEMU_TARGET_HELPER}"
 
 	# Don't add anything if qemu is not used.
 	if ! qemu_is_required; then
