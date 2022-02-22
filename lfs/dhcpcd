@@ -90,7 +90,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -f $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks/50-ypbind
 
 	install -m 644 $(DIR_SRC)/config/dhcpc/dhcpcd.conf $(CONFIG_ROOT)/dhcpc/
-	install -m 444 $(DIR_SRC)/config/dhcpc/dhcpcd-hooks/10-mtu $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks
 
 	chown root:root $(CONFIG_ROOT)/dhcpc/dhcpcd.conf
 
