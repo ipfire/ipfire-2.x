@@ -295,10 +295,6 @@ stdumount() {
 	umount $BASEDIR/build/tmp		2>/dev/null;
 }
 
-now() {
-	date -u "+%s"
-}
-
 format_runtime() {
 	local seconds=${1}
 
@@ -741,7 +737,7 @@ ipfiredist() {
 wait_until_finished() {
 	local pid=${1}
 
-	local start_time=$(now)
+	local start_time="${SECONDS}"
 
 	# Show progress
 	if ${INTERACTIVE}; then
@@ -751,7 +747,7 @@ wait_until_finished() {
 
 		local runtime
 		while kill -0 ${pid} 2>/dev/null; do
-			print_runtime $(( $(now) - ${start_time} ))
+			print_runtime $(( SECONDS - start_time ))
 
 			# Wait a little
 			sleep 1
@@ -763,7 +759,7 @@ wait_until_finished() {
 	local ret=$?
 
 	if ! ${INTERACTIVE}; then
-		print_runtime $(( $(now) - ${start_time} ))
+		print_runtime $(( SECONDS - start_time ))
 	fi
 
 	return ${ret}
@@ -1831,7 +1827,7 @@ done
 # See what we're supposed to do
 case "$1" in
 build)
-	START_TIME=$(now)
+	START_TIME="${SECONDS}"
 
 	# Clear screen
 	${INTERACTIVE} && clear
@@ -1876,7 +1872,7 @@ build)
 	tools/checkrootfiles
 	cd $PWD
 
-	print_build_summary $(( $(now) - ${START_TIME} ))
+	print_build_summary $(( SECONDS - START_TIME ))
 	;;
 shell)
 	# enter a shell inside LFS chroot
