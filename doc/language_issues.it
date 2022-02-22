@@ -558,6 +558,8 @@ WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
 WARNING: translation string unused: outgoing firewall outgoing firewall reserved groupname
+WARNING: translation string unused: outgoing firewall p2p allow
+WARNING: translation string unused: outgoing firewall p2p deny
 WARNING: translation string unused: outgoing firewall p2p description 1
 WARNING: translation string unused: outgoing firewall p2p description 2
 WARNING: translation string unused: outgoing firewall p2p description 3
@@ -594,6 +596,7 @@ WARNING: translation string unused: ovpn_processprioVD
 WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
+WARNING: translation string unused: p2p block
 WARNING: translation string unused: package failed to install
 WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire health check
@@ -1131,6 +1134,7 @@ WARNING: untranslated string: locationblock configuration = Location Configurati
 WARNING: untranslated string: locationblock country is allowed = Incoming traffic from this country is allowed
 WARNING: untranslated string: locationblock country is blocked = Incoming traffic from this country will be blocked
 WARNING: untranslated string: locationblock enable feature = Enable Location based blocking:
+WARNING: untranslated string: log dropped conntrack invalids = Log dropped packets classified as INVALID by connection tracking
 WARNING: untranslated string: log server protocol = protocol:
 WARNING: untranslated string: masquerade blue = Masquerade BLUE
 WARNING: untranslated string: masquerade green = Masquerade GREEN
@@ -1221,6 +1225,7 @@ WARNING: untranslated string: token not set = No Token has been given.
 WARNING: untranslated string: tor guard country any = Any country
 WARNING: untranslated string: tor guard nodes = Guard Nodes
 WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
+WARNING: untranslated string: transfers = Transfers
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: twelve hours = 12 Hours
 WARNING: untranslated string: two weeks = Two Weeks

@@ -619,6 +619,7 @@
 < lifetime
 < link-layer encapsulation
 < local ip address
+< log dropped conntrack invalids
 < log server protocol
 < mac filter
 < masquerade blue
@@ -866,6 +867,7 @@
 < tor traffic read written
 < tor use exit nodes
 < tor use guard nodes
+< transfers
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -1009,38 +1011,16 @@
 < cake profile pppoe-ptm 27
 < cake profile pppoe-vcmux 32
 < cake profile raw 0
-< drop hostile
-< drop spoofed martians
 < eol architecture warning
 < false max bandwidth
 < false min bandwidth
-< fw red
 < g.dtm
 < g.lite
 < guaranteed bandwidth
-< hostile networks
-< ids add provider
-< ids autoupdates
-< ids could not add provider
-< ids customize ruleset
-< ids enable automatic updates
-< ids force ruleset update
-< ids no enabled ruleset provider
-< ids provider
-< ids provider settings
-< ids reset provider
-< ids subscription code required
-< ids the choosen provider is already in use
-< ids unable to download the ruleset
-< ids visit provider website
 < invalid input for subscription code
 < link-layer encapsulation
+< log dropped conntrack invalids
 < max bandwidth
-< pakfire finished
-< pakfire finished error
-< pakfire return
-< spoofed or martians
-< subscription code
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -1315,6 +1295,7 @@
 < locationblock country name
 < locationblock enable feature
 < locationblock flag
+< log dropped conntrack invalids
 < log server protocol
 < masquerade blue
 < masquerade green
@@ -1405,6 +1386,7 @@
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< transfers
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -1778,6 +1760,7 @@
 < locationblock country name
 < locationblock enable feature
 < locationblock flag
+< log dropped conntrack invalids
 < log server protocol
 < masquerade blue
 < masquerade green
@@ -1901,6 +1884,7 @@
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< transfers
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -2568,6 +2552,7 @@
 < locationblock country name
 < locationblock enable feature
 < locationblock flag
+< log dropped conntrack invalids
 < log server protocol
 < mac filter
 < masquerade blue
@@ -2799,6 +2784,7 @@
 < tor traffic read written
 < tor use exit nodes
 < tor use guard nodes
+< transfers
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -3513,6 +3499,7 @@
 < locationblock country name
 < locationblock enable feature
 < locationblock flag
+< log dropped conntrack invalids
 < log server protocol
 < mac filter
 < masquerade blue
@@ -3742,6 +3729,7 @@
 < tor traffic read written
 < tor use exit nodes
 < tor use guard nodes
+< transfers
 < transport mode does not support vti
 < twelve hours
 < two weeks
@@ -4011,6 +3999,7 @@
 < legacy architecture warning
 < link-layer encapsulation
 < local ip address
+< log dropped conntrack invalids
 < meltdown
 < mitigated
 < mtu
@@ -4072,6 +4061,7 @@
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< transfers
 < transport mode does not support vti
 < update ruleset
 < updxlrtr passive mode

@@ -587,6 +587,8 @@ WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
 WARNING: translation string unused: outgoing firewall outgoing firewall reserved groupname
+WARNING: translation string unused: outgoing firewall p2p allow
+WARNING: translation string unused: outgoing firewall p2p deny
 WARNING: translation string unused: outgoing firewall p2p description 1
 WARNING: translation string unused: outgoing firewall p2p description 2
 WARNING: translation string unused: outgoing firewall p2p description 3
@@ -623,6 +625,7 @@ WARNING: translation string unused: ovpn_processprioVD
 WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
+WARNING: translation string unused: p2p block
 WARNING: translation string unused: package failed to install
 WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire health check
@@ -1061,6 +1064,7 @@ WARNING: untranslated string: ipsec settings = IPsec Settings
 WARNING: untranslated string: itlb multihit = iTLB MultiHit
 WARNING: untranslated string: link-layer encapsulation = Link-Layer Encapsulation
 WARNING: untranslated string: local ip address = Local IP Address
+WARNING: untranslated string: log dropped conntrack invalids = Log dropped packets classified as INVALID by connection tracking
 WARNING: untranslated string: meltdown = Meltdown
 WARNING: untranslated string: mitigated = Mitigated
 WARNING: untranslated string: mtu = MTU
@@ -1124,6 +1128,7 @@ WARNING: untranslated string: token not set = No Token has been given.
 WARNING: untranslated string: tor guard country any = Any country
 WARNING: untranslated string: tor guard nodes = Guard Nodes
 WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
+WARNING: untranslated string: transfers = Transfers
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: updxlrtr passive mode = Delivery only/no download mode
 WARNING: untranslated string: user management = User Management

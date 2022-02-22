@@ -413,7 +413,6 @@ WARNING: translation string unused: ibod for dual isdn only
 WARNING: translation string unused: icmp selected but no type
 WARNING: translation string unused: icmp type
 WARNING: translation string unused: id
-WARNING: translation string unused: ids no ruleset available
 WARNING: translation string unused: ids oinkcode required
 WARNING: translation string unused: ids rules update
 WARNING: translation string unused: ike encryption
@@ -593,6 +592,8 @@ WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
 WARNING: translation string unused: outgoing firewall outgoing firewall reserved groupname
+WARNING: translation string unused: outgoing firewall p2p allow
+WARNING: translation string unused: outgoing firewall p2p deny
 WARNING: translation string unused: outgoing firewall p2p description 1
 WARNING: translation string unused: outgoing firewall p2p description 2
 WARNING: translation string unused: outgoing firewall p2p description 3
@@ -629,6 +630,7 @@ WARNING: translation string unused: ovpn_processprioVD
 WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
+WARNING: translation string unused: p2p block
 WARNING: translation string unused: package failed to install
 WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire health check
@@ -926,12 +928,9 @@ WARNING: untranslated string: cake profile pppoe-llcsnap 40 = PPPoE LLC SNAP (40
 WARNING: untranslated string: cake profile pppoe-ptm 27 = PPPoE PTM (27 bytes)
 WARNING: untranslated string: cake profile pppoe-vcmux 32 = PPPoE VC-MUX (32 bytes)
 WARNING: untranslated string: cake profile raw 0 = Raw (no overhead compensation)
-WARNING: untranslated string: drop hostile = Drop packets from and to hostile networks (listed at Spamhaus DROP, etc.)
-WARNING: untranslated string: drop spoofed martians = Log dropped spoofed packets and marsians
 WARNING: untranslated string: eol architecture warning = You are running an architecture of IPFire which reached its end of life. You will not receive updates anymore. This is a security risk.
 WARNING: untranslated string: false max bandwidth = Maximum bandwidth is false.
 WARNING: untranslated string: false min bandwidth = Minimum bandwidth is false.
-WARNING: untranslated string: fw red = Firewall options for RED interface
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guaranteed bandwidth = Guaranteed bandwidth
@@ -964,30 +963,11 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: hostile networks = Hostile networks
-WARNING: untranslated string: ids add provider = Add provider
-WARNING: untranslated string: ids autoupdates = Automatic updates
-WARNING: untranslated string: ids could not add provider = Could not add provider
-WARNING: untranslated string: ids customize ruleset = Customize ruleset
-WARNING: untranslated string: ids enable automatic updates = Enable automatic updates
-WARNING: untranslated string: ids force ruleset update = Force ruleset update
-WARNING: untranslated string: ids no enabled ruleset provider = No enabled ruleset is available. Please activate or add one first.
-WARNING: untranslated string: ids provider = Provider
-WARNING: untranslated string: ids provider settings = Provider settings
-WARNING: untranslated string: ids reset provider = Reset provider
-WARNING: untranslated string: ids subscription code required = The selected ruleset requires a subscription code
-WARNING: untranslated string: ids the choosen provider is already in use = The choosen provider is already in use.
-WARNING: untranslated string: ids unable to download the ruleset = Unable to download the ruleset
-WARNING: untranslated string: ids visit provider website = Visit provider website
 WARNING: untranslated string: invalid input for subscription code = Invalid input for subscription code
 WARNING: untranslated string: link-layer encapsulation = Link-Layer Encapsulation
+WARNING: untranslated string: log dropped conntrack invalids = Log dropped packets classified as INVALID by connection tracking
 WARNING: untranslated string: max bandwidth = Maximum bandwidth
 WARNING: untranslated string: pakfire ago = ago.
-WARNING: untranslated string: pakfire finished = Pakfire has finished! Returning...
-WARNING: untranslated string: pakfire finished error = Pakfire has finished! Errors occurred, please check the log output before proceeding.
-WARNING: untranslated string: pakfire return = Return to Pakfire
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
-WARNING: untranslated string: spoofed or martians = Spoofed/Martians
-WARNING: untranslated string: subscription code = Subscription code

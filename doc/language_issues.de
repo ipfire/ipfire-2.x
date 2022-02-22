@@ -557,6 +557,8 @@ WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
 WARNING: translation string unused: outgoing firewall outgoing firewall reserved groupname
+WARNING: translation string unused: outgoing firewall p2p allow
+WARNING: translation string unused: outgoing firewall p2p deny
 WARNING: translation string unused: outgoing firewall p2p description 1
 WARNING: translation string unused: outgoing firewall p2p description 2
 WARNING: translation string unused: outgoing firewall p2p description 3
@@ -593,6 +595,7 @@ WARNING: translation string unused: ovpn_processprioVD
 WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
+WARNING: translation string unused: p2p block
 WARNING: translation string unused: package failed to install
 WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire health check

@@ -492,6 +492,8 @@ WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
 WARNING: translation string unused: outgoing firewall outgoing firewall reserved groupname
+WARNING: translation string unused: outgoing firewall p2p allow
+WARNING: translation string unused: outgoing firewall p2p deny
 WARNING: translation string unused: outgoing firewall p2p description 1
 WARNING: translation string unused: outgoing firewall p2p description 2
 WARNING: translation string unused: outgoing firewall p2p description 3
@@ -1297,6 +1299,7 @@ WARNING: untranslated string: locationblock configuration = Location Configurati
 WARNING: untranslated string: locationblock country is allowed = Incoming traffic from this country is allowed
 WARNING: untranslated string: locationblock country is blocked = Incoming traffic from this country will be blocked
 WARNING: untranslated string: locationblock enable feature = Enable Location based blocking:
+WARNING: untranslated string: log dropped conntrack invalids = Log dropped packets classified as INVALID by connection tracking
 WARNING: untranslated string: log server protocol = protocol:
 WARNING: untranslated string: mac filter = MAC filter
 WARNING: untranslated string: masquerade blue = Masquerade BLUE
@@ -1375,7 +1378,6 @@ WARNING: untranslated string: ovpn routes push options = Route push options
 WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
-WARNING: untranslated string: p2p block = P2P networks
 WARNING: untranslated string: p2p block save notice = Please reload the firewall ruleset in order to apply your changes.
 WARNING: untranslated string: pakfire finished = Pakfire has finished! Returning...
 WARNING: untranslated string: pakfire finished error = Pakfire has finished! Errors occurred, please check the log output before proceeding.
@@ -1502,6 +1504,7 @@ WARNING: untranslated string: tor traffic limit soft = Traffic limit almost reac
 WARNING: untranslated string: tor traffic read written = Total traffic (read/written)
 WARNING: untranslated string: tor use exit nodes = Use only these exit nodes (one fingerprint per line)
 WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
+WARNING: untranslated string: transfers = Transfers
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: twelve hours = 12 Hours
 WARNING: untranslated string: two weeks = Two Weeks
