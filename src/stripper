@@ -2,11 +2,19 @@
 
 paths=()
 excludes=()
+strip="strip"
+break_on_error="1"
 
 while [ $# -gt 0 ]; do
 	case "${1}" in
+		--strip=*)
+			strip="${1#*=}"
+			;;
 		--exclude=*)
 			excludes+=( "!" "-path" "${1#*=}/*" )
+			;;
+		--ignore-errors)
+			break_on_error="0"
 			;;
 		*)
 			paths+=( "${1}" )
@@ -49,10 +57,9 @@ function _strip() {
 		--absolute-names --dump "${file}" 2>/dev/null)"
 
 	echo "Stripping ${file}..."
-	if ! strip "${args[@]}" "${file}"; then
-		return 1
+	if ! "${strip}" "${args[@]}" "${file}"; then
+		return ${break_on_error}
 	fi
-
 
 	# Restore capabilities
 	if [ -n "${capabilities}" ]; then

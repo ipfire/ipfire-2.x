@@ -48,7 +48,10 @@ md5 :
 $(TARGET) :
 ifeq "$(TOOLCHAIN)" "1"
 	# Strip everything in the toolchain
-	$(DIR_SRC)/src/stripper $(TOOLS_DIR)
+	$(DIR_SRC)/src/stripper $(TOOLS_DIR) \
+		--strip="$(TOOLS_DIR)/$(CROSSTARGET)/bin/strip" \
+		--ignore-errors \
+		--exclude=$(TOOLS_DIR)/$(CROSSTARGET)
 else
 	# Don't strip VDR binaries, because they use a weird plugin system
 	# which does not work when unneeded symbols get stripped from
