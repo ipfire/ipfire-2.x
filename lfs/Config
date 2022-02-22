@@ -157,7 +157,11 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 endif
 
 # Rust
-RUST_ARCH  = $(BUILD_ARCH)
+ifeq "$(BUILD_ARCH)" "riscv64"
+	RUST_ARCH = riscv64gc
+else
+	RUST_ARCH = $(BUILD_ARCH)
+endif
 
 ifeq "$(BUILD_ARCH)" "armv6l"
 	RUST_PLATFORM = arm-unknown-linux-gnueabi
