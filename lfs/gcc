@@ -182,8 +182,7 @@ EXTRA_CONFIG += \
 	--disable-multilib \
 	--with-bugurl=https://bugzilla.ipfire.org \
 	--disable-libunwind-exceptions \
-	--enable-gnu-unique-object \
-	--without-zstd
+	--enable-gnu-unique-object
 
 export XCFLAGS = $(CFLAGS)
 export TCFLAGS = $(CFLAGS)

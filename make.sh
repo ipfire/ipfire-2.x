@@ -1084,6 +1084,7 @@ buildbase() {
 	lfsmake2 tzdata
 	lfsmake2 cleanup-toolchain
 	lfsmake2 zlib
+	lfsmake2 zstd
 	lfsmake2 autoconf
 	lfsmake2 automake
 	lfsmake2 libtool
@@ -1094,7 +1095,6 @@ buildbase() {
 	lfsmake2 libxcrypt
 	lfsmake2 file
 	lfsmake2 gcc
-	lfsmake2 zstd
 	lfsmake2 sed
 	lfsmake2 berkeley
 	lfsmake2 coreutils
