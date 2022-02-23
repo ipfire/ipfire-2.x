@@ -94,6 +94,7 @@ rm -rvf \
 	/usr/sbin/ovpn-collectd-convert \
 	/usr/sbin/pknlusr \
 	/usr/share/xt_geoip/ \
+	/var/ipfire/dhcpc/dhcpcd-hooks/10-mtu \
 	/var/ipfire/firewall/p2protocols
 
 # Stop services
