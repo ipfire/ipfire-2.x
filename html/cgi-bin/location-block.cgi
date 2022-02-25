@@ -136,6 +136,15 @@ print <<END;
 	}
 </script>
 
+<table width='95%'>
+	<tr>
+		<td align='right'>
+			<a href="javascript:check_all()">$Lang::tr{'check all'}</a> /
+			<a href="javascript:uncheck_all()">$Lang::tr{'uncheck all'}</a>
+		</td>
+	</tr>
+</table>
+
 <table width='95%' class='tbl' id="countries">
 	<tr>
 		<td width='5%' align='center' bgcolor='$color{'color20'}'></td>
