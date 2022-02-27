@@ -186,8 +186,22 @@ else
 	cd $(DIR_APP) && install u-boot.bin /boot/u-boot-rpi4.bin
 	cd $(DIR_APP) && make distclean
 
+	# OrangePi Zero Plus
+	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
+	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=sun50i_a64 DEBUG=0 bl31
+	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/sun50i_a64/release/bl31.bin bl31.bin
+	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
+	-mkdir -pv /usr/share/u-boot/orangepi_zero_plus
+	cd $(DIR_APP) && make CROSS_COMPILE="" orangepi_zero_plus_config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING="  OrangePi Zero+  - IPFire.org"!' .config
+	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && install -v -m 644 u-boot-sunxi-with-spl.bin \
+		/usr/share/u-boot/orangepi_zero_plus
+	cd $(DIR_APP) && make distclean
+	cd $(DIR_APP) && rm -f bl31.bin
+
 	# Nanopi R2S
-#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/rockchip/generate-2-ethaddr.diff
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
 	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 DEBUG=0 bl31
@@ -212,7 +226,6 @@ else
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi R4S - IPFire.org"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
-#	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_MISC_INIT_R.*!CONFIG_MISC_INIT_R=y!' .config
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
 		/usr/share/u-boot/nanopi_r4s/u-boot-rockchip.bin
