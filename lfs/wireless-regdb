@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2020.11.20
+VER        = 2022.02.18
 
 THISAPP    = wireless-regdb-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 6d29837f3a1ed671e37d5139de25c5b8
+$(DL_FILE)_MD5 = 3cf08660e5946f3628232b5c1ba57e4f
 
 install : $(TARGET)
 
