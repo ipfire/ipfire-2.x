@@ -169,21 +169,6 @@ iptables_init() {
 	iptables -t nat -N CUSTOMPOSTROUTING
 	iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
 
-	# Log and drop any traffic from and to networks known as being hostile, posing
-	# a technical threat to our users (i. e. listed at Spamhaus DROP et al.)
-	iptables -N HOSTILE
-	if [ "$DROPHOSTILE" == "on" ]; then
-		# Call ipset and load the list which contains the hostile networks.
-		ipset restore < $IPSET_DB_DIR/CC_XD.ipset4
-
-		iptables -A HOSTILE -m limit --limit 10/second -j LOG  --log-prefix "DROP_HOSTILE "
-		iptables -A INPUT   -i $IFACE -m set --match-set CC_XD src -j HOSTILE
-		iptables -A FORWARD -i $IFACE -m set --match-set CC_XD src -j HOSTILE
-		iptables -A FORWARD -o $IFACE -m set --match-set CC_XD dst -j HOSTILE
-		iptables -A OUTPUT  -o $IFACE -m set --match-set CC_XD src -j HOSTILE
-	fi
-	iptables -A HOSTILE -j DROP -m comment --comment "DROP_HOSTILE"
-
 	# IPS (Guardian) chains
 	iptables -N GUARDIAN
 	iptables -A INPUT -j GUARDIAN
@@ -273,6 +258,14 @@ iptables_init() {
 		iptables -A INPUT  -i "${BLUE_DEV}" -j DHCPBLUEINPUT
 		iptables -A OUTPUT -o "${BLUE_DEV}" -j DHCPBLUEOUTPUT
 	fi
+
+	# Chains for networks known as being hostile, posing a technical threat to our users
+	# (i. e. listed at Spamhaus DROP et al.)
+	iptables -N HOSTILE
+	iptables -A INPUT -i $IFACE -j HOSTILE
+	iptables -A FORWARD -i $IFACE -j HOSTILE
+	iptables -A FORWARD -o $IFACE -j HOSTILE
+	iptables -A OUTPUT -o $IFACE -j HOSTILE
 
 	# Tor (inbound)
 	iptables -N TOR_INPUT

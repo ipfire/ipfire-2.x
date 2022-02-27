@@ -59,6 +59,9 @@ my @PRIVATE_NETWORKS = (
 # MARK masks
 my $NAT_MASK = 0x0f000000;
 
+# Country code, which is used to mark hostile networks.
+my $HOSTILE_CCODE = "XD";
+
 my %fwdfwsettings=();
 my %fwoptions = ();
 my %defaultNetworks=();
@@ -97,6 +100,9 @@ if (-e "$locationfile") {
 # Get all available locations.
 my @locations = &Location::Functions::get_locations();
 
+# Name or the RED interface.
+my $RED_DEV = &General::get_red_interface();
+
 my @log_limit_options = &make_log_limit_options();
 
 my $POLICY_INPUT_ALLOWED   = 0;
@@ -134,6 +140,9 @@ sub main {
 
 	# Load Location block rules.
 	&locationblock();
+
+	# Load rules to block hostile networks.
+	&drop_hostile_networks();
 
 	# Reload firewall policy.
 	run("/usr/sbin/firewall-policy");
@@ -674,6 +683,30 @@ sub locationblock {
 			run("$IPTABLES -A LOCATIONBLOCK -m set --match-set $location src -j DROP");
 		}
 	}
+}
+
+sub drop_hostile_networks () {
+	# Flush the HOSTILE firewall chain.
+	run("$IPTABLES -F HOSTILE");
+
+	# If dropping hostile networks is not enabled, we are finished here.
+	if ($fwoptions{'DROPHOSTILE'} ne "on") {
+		# Exit function.
+		return;
+	}
+
+	# Call function to load the network list of hostile networks.
+	&ipset_restore($HOSTILE_CCODE);
+
+	# Setup rules to pass traffic which does not belong to a hostile network.
+	run("$IPTABLES -A HOSTILE -i $RED_DEV -m set ! --match-set $HOSTILE_CCODE src -j RETURN");
+	run("$IPTABLES -A HOSTILE -o $RED_DEV -m set ! --match-set $HOSTILE_CCODE dst -j RETURN");
+
+	# Setup logging.
+	run("$IPTABLES -A HOSTILE -m limit --limit 10/second -j LOG  --log-prefix \"DROP_HOSTILE \"");
+
+	# Drop traffic from/to hostile network.
+        run("$IPTABLES -A HOSTILE -j DROP -m comment --comment \"DROP_HOSTILE\"");
 }
 
 sub get_protocols {
