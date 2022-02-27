@@ -70,7 +70,8 @@ my %confignatfw=();
 my %locationsettings = (
 	"LOCATIONBLOCK_ENABLED" => "off"
 );
-my %loaded_ipset_lists=();
+my %ipset_loaded_sets = ();
+my @ipset_used_sets = ();
 
 my $configfwdfw		= "${General::swroot}/firewall/config";
 my $configinput	    = "${General::swroot}/firewall/input";
@@ -114,11 +115,11 @@ undef (@dummy);
 &main();
 
 sub main {
+	# Get currently used ipset sets.
+	&ipset_get_sets();
+
 	# Flush all chains.
 	&flush();
-
-	# Destroy all existing ipsets.
-	run("$IPSET destroy");
 
 	# Prepare firewall rules.
 	if (! -z  "${General::swroot}/firewall/input"){
@@ -136,6 +137,9 @@ sub main {
 
 	# Reload firewall policy.
 	run("/usr/sbin/firewall-policy");
+
+	# Cleanup not longer needed ipset sets.
+	&ipset_cleanup();
 
 	#Reload firewall.local if present
 	if ( -f '/etc/sysconfig/firewall.local'){
@@ -189,9 +193,6 @@ sub flush {
 	run("$IPTABLES -t nat -F $CHAIN_NAT_SOURCE");
 	run("$IPTABLES -t nat -F $CHAIN_NAT_DESTINATION");
 	run("$IPTABLES -t mangle -F $CHAIN_MANGLE_NAT_DESTINATION_FIX");
-
-	# Flush LOCATIONBLOCK chain.
-	run("$IPTABLES -F LOCATIONBLOCK");
 }
 
 sub buildrules {
@@ -639,7 +640,8 @@ sub time_convert_to_minutes {
 }
 
 sub locationblock {
-	# The LOCATIONBLOCK chain now gets flushed by the flush() function.
+	# Flush LOCATIONBLOCK chain.
+	run("$IPTABLES -F LOCATIONBLOCK");
 
 	# If location blocking is not enabled, we are finished here.
 	if ($locationsettings{'LOCATIONBLOCK_ENABLED'} ne "on") {
@@ -669,7 +671,7 @@ sub locationblock {
 			&ipset_restore($location);
 
 			# Call iptables and create rule to use the loaded ipset list.
-			run("$IPTABLES -A LOCATIONBLOCK -m set --match-set CC_$location src -j DROP");
+			run("$IPTABLES -A LOCATIONBLOCK -m set --match-set $location src -j DROP");
 		}
 	}
 }
@@ -887,24 +889,58 @@ sub firewall_is_in_subnet {
 	return 0;
 }
 
+sub ipset_get_sets () {
+	# Get all currently used ipset lists and store them in an array.
+	my @output = `$IPSET -n list`;
+
+	# Loop through the temporary array.
+	foreach my $set (@output) {
+		# Remove any newlines.
+		chomp($set);
+
+		# Add the set the array of used sets.
+		push(@ipset_used_sets, $set);
+	}
+
+	# Display used sets in debug mode.
+	if($DEBUG) {
+		print "Used ipset sets:\n";
+		print "@ipset_used_sets\n\n";
+	}
+}
+
 sub ipset_restore ($) {
-	my ($list) = @_;
+	my ($set) = @_;
 
 	my $file_prefix = "ipset4";
-	my $db_file = "$Location::Functions::ipset_db_directory/$list.$file_prefix";
+	my $db_file = "$Location::Functions::ipset_db_directory/$set.$file_prefix";
 
-	# Check if the network list already has been loaded.
-	if($loaded_ipset_lists{$list}) {
+	# Check if the set already has been loaded.
+	if($ipset_loaded_sets{$set}) {
 		# It already has been loaded - so there is nothing to do.
 		return;
 	}
 
 	# Check if the generated file exists.
 	if (-f $db_file) {
-		# Run ipset and restore the list of the given country code.
+		# Run ipset and restore the given set.
 		run("$IPSET restore < $db_file");
 
-		# Store the restored list name to the hash to prevent from loading it again.
-		$loaded_ipset_lists{$list} = "1";
+		# Store the restored set to the hash to prevent from loading it again.
+		$ipset_loaded_sets{$set} = "1";
+	}
+}
+
+sub ipset_cleanup () {
+	# Loop through the array of used sets.
+	foreach my $set (@ipset_used_sets) {
+		# Check if this set is still in use.
+		#
+		# In this case an entry in the loaded sets hash exists.
+		unless($ipset_loaded_sets{$set}) {
+			# Entry does not exist, so this set is not longer
+			# used and can be destroyed.
+			run("$IPSET destroy $set");
+		}
 	}
 }
