@@ -1195,6 +1195,7 @@ buildipfire() {
   # multi kernel builds so KCFG is empty
   lfsmake2 linux		KCFG=""
   lfsmake2 rtl8189es		KCFG=""
+  lfsmake2 rtl8189fs		KCFG=""
   lfsmake2 rtl8812au		KCFG=""
   lfsmake2 rtl8822bu		KCFG=""
   lfsmake2 xradio		KCFG=""

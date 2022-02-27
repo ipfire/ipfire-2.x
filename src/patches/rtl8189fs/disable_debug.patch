@@ -1,0 +1,11 @@
+diff -Naur rtl8189FS_linux-3129a665f835ce0342f9a85a0ce14a556e656b8c.org/include/autoconf.h rtl8189FS_linux-3129a665f835ce0342f9a85a0ce14a556e656b8c/include/autoconf.h
+--- rtl8189FS_linux-3129a665f835ce0342f9a85a0ce14a556e656b8c.org/include/autoconf.h	2021-10-01 14:51:56.000000000 +0000
++++ rtl8189FS_linux-3129a665f835ce0342f9a85a0ce14a556e656b8c/include/autoconf.h	2022-02-26 12:00:09.188965578 +0000
+@@ -224,7 +224,6 @@
+ /*
+  * Debug Related Config
+  */
+-#define CONFIG_DEBUG /* DBG_871X, etc... */
+ 
+ #ifdef CONFIG_DEBUG
+ #define DBG	1	// for ODM & BTCOEX debug
