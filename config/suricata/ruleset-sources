@@ -67,16 +67,6 @@ our %Providers = (
 		dl_type => "archive",
 	},
 
-	# Abuse.ch SSLBL JA3 fingerprint rules.
-	sslbl_ja3 => {
-		summary => "Abuse.ch SSLBL JA3 Rules",
-		website => "https://sslbl.abuse.ch/",
-		tr_string => "sslbl ja3 fingerprint rules",
-		requires_subscription => "False",
-		dl_url => "https://sslbl.abuse.ch/blacklist/ja3_fingerprints.rules",
-		dl_type => "plain",
-	},
-
 	# Abuse.ch SSLBL Blacklist rules.
 	sslbl_blacklist => {
 		summary => "Abuse.ch SSLBL Blacklist Rules",
@@ -85,16 +75,6 @@ our %Providers = (
 		requires_subscription => "False",
 		dl_url => "https://sslbl.abuse.ch/blacklist/sslblacklist.rules",
 		dl_type => "plain",
-	},
-
-	# Abuse.ch URLhaus Blacklist rules.
-	urlhaus => {
-		summary => "Abuse.ch URLhaus Blacklist Rules",
-		website => "https://urlhaus.abuse.ch/",
-		tr_string => "urlhaus blacklist rules",
-		requires_subscription => "False",
-		dl_url => "https://urlhaus.abuse.ch/downloads/urlhaus_suricata.tar.gz",
-		dl_type => "archive",
 	},
 
 	# Etnetera Aggressive Blacklist.
