@@ -23,6 +23,12 @@ package IPblocklist;
 
 require '/var/ipfire/ipblocklist/sources';
 
+# Location where the blocklists in ipset compatible format are stored.
+our $blocklist_dir = "/var/lib/ipblocklist";
+
+# File extension of the blocklist files.
+our $blocklist_file_extension = ".conf";
+
 #
 ## Function to get all available blocklists.
 #
@@ -37,6 +43,19 @@ sub get_blocklists () {
 
 	# Sort and return the array.
 	return sort(@blocklists);
+}
+
+#
+## Tiny function to get the full path and name of a given blocklist.
+#
+sub get_ipset_db_file($) {
+	my ($set) = @_;
+
+	# Generate the
+	my $file = "$blocklist_dir/$set$blocklist_file_extension";
+
+	# Return the file name.
+	return $file;
 }
 
 1;
