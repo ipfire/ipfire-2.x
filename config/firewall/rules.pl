@@ -26,6 +26,7 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "/usr/lib/firewall/firewall-lib.pl";
 require "${General::swroot}/location-functions.pl";
+require "${General::swroot}/ipblocklist-functions.pl";
 
 # Set to one to enable debugging mode.
 my $DEBUG = 0;
@@ -73,6 +74,10 @@ my %confignatfw=();
 my %locationsettings = (
 	"LOCATIONBLOCK_ENABLED" => "off"
 );
+my %blocklistsettings= (
+	"ENABLE" => "off",
+);
+
 my %ipset_loaded_sets = ();
 my @ipset_used_sets = ();
 
@@ -82,6 +87,7 @@ my $configoutgoing  = "${General::swroot}/firewall/outgoing";
 my $locationfile		= "${General::swroot}/firewall/locationblock";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $netsettings		= "${General::swroot}/ethernet/settings";
+my $blocklistfile   = "${General::swroot}/ipblocklist/settings";
 
 &General::readhash("${General::swroot}/firewall/settings", \%fwdfwsettings);
 &General::readhash("${General::swroot}/optionsfw/settings", \%fwoptions);
@@ -97,8 +103,17 @@ if (-e "$locationfile") {
 	&General::readhash("$locationfile", \%locationsettings);
 }
 
+# Check if the ipblocklist settings file exits.
+if (-e "$blocklistfile") {
+	# Read-in settings file.
+	&General::readhash("$blocklistfile", \%blocklistsettings);
+}
+
 # Get all available locations.
 my @locations = &Location::Functions::get_locations();
+
+# Get all supported blocklists.
+my @blocklists = &IPblocklist::get_blocklists();
 
 # Name or the RED interface.
 my $RED_DEV = &General::get_red_interface();
@@ -143,6 +158,9 @@ sub main {
 
 	# Load rules to block hostile networks.
 	&drop_hostile_networks();
+
+	# Handle ipblocklist.
+	&ipblocklist();
 
 	# Reload firewall policy.
 	run("/usr/sbin/firewall-policy");
@@ -708,6 +726,43 @@ sub drop_hostile_networks () {
 	run("$IPTABLES -A HOSTILE -o $RED_DEV -m set --match-set $HOSTILE_CCODE dst -j HOSTILE_DROP");
 }
 
+sub ipblocklist () {
+	# Flush the ipblocklist chains.
+	run("$IPTABLES -F BLOCKLISTIN");
+	run("$IPTABLES -F BLOCKLISTOUT");
+
+	# If the blocklist feature is disabled we are finished here.
+	if($blocklistsettings{'ENABLE'} ne "on") {
+		# Bye.
+		return;
+	}
+
+	# Loop through the array of blocklists.
+	foreach my $blocklist (@blocklists) {
+		# Skip disabled blocklists.
+		next unless($blocklistsettings{$blocklist} eq "on");
+
+		# Call function to load the blocklist.
+		&ipset_restore($blocklist);
+
+		# Create iptables chain.
+		run("$IPTABLES -N ${blocklist}_DROP");
+
+		# Check if logging is enables.
+		if($blocklistsettings{'LOGGING'} eq "on") {
+			# Create logging rule.
+			run("$IPTABLES -A ${blocklist}_DROP -j LOG -m limit --limit 10/second --log-prefix \"BLKLST_$blocklist\"");
+		}
+
+		# Create Drop rule.
+		run("$IPTABLES A ${blocklist}_DROP -j DROP");
+
+		# Add the rules to check against the set
+		run("$IPTABLES -A BLOCKLISTIN -p ALL -i $RED_DEV -m set --match-set $blocklist src -j ${blocklist}_DROP");
+		run("$IPTABLES -A BLOCKLISTOUT -p ALL -o $RED_DEV -m set --match-set $blocklist dst -j ${blocklist}_DROP");
+	}
+}
+
 sub get_protocols {
 	my $hash = shift;
 	my $key = shift;
@@ -986,6 +1041,14 @@ sub ipset_restore ($) {
 			# If the set is not loaded, we have to rename it to proper use it.
 			run("$IPSET rename $loc_set $set");
 		}
+
+	# Check if the given set name is a blocklist.
+	} elsif ($set ~~ @blocklists) {
+		# Get the database file for the given blocklist.
+		my $db_file = &IPblocklist::get_ipset_db_file($set);
+
+		# Call function to restore/load the set.
+		&ipset_call_restore($db_file);
 	}
 
 	# Store the restored set to the hash to prevent from loading it again.
