@@ -1,0 +1,140 @@
+############################################################################
+#                                                                          #
+# IP Address blocklists for IPFire                                         #
+#                                                                          #
+# This file contains a list of blocklist sources that will replace the one #
+# internal to the updated if it is found at /var/ipfire/blocklist/sources. #
+# The intention is to provide a common source of information for both the  #
+# updater and WUI.                                                         #
+#                                                                          #
+# The chains created in the packet filter will be named by the top level   #
+# key and this will also be used in the log message to identify the reason #
+# for the dropped packet.                                                  #
+#                                                                          #
+# The fields are:                                                          #
+#                                                                          #
+# name     The blocklist's full name                                       #
+# url      URL of the file containing the list                             #
+# info     URL giving information about the source                         #
+# parser   The parser function used to extract IP addresses from the       #
+#          downloaded list                                                 #
+# rate     Minimum period between checks for updates. Can be specified in  #
+#          days (d), hours (h) or minutes (m)                              #
+# category Used for documentation on the WUI.  Can be one of the following #
+#          'application'  Potentially unwanted applications                #
+#          'attacker'     Generic source of malicious packets              #
+#          'c and c'      Malware Command and Control source               #
+#          'composite'    Composite of other lists                         #
+#          'invalid'      Invalid addresses on the public internet         #
+#          'scanner'      Port scanner that is not initself malicious      #
+# disable  Name of another list to disable if this one is enabled.  Used   #
+#          when the other list is a subset of this one.                    #
+#                                                                          #
+# The info and category fields are purely for documentation.               #
+#                                                                          #
+############################################################################
+
+package IPblocklist::List;
+
+our %sources = ( 'EMERGING_FWRULE' => { 'name'     => 'Emerging Threats Blocklist',
+                                    'url'      => 'https://rules.emergingthreats.net/fwrules/emerging-Block-IPs.txt',
+                                    'info'     => 'https://doc.emergingthreats.net/bin/view/Main/EmergingFirewallRules',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '1h',
+                                    'category' => 'composite',
+                                    'disable'  => ['FEODO_RECOMMENDED', 'FEODO_IP', 'FEODO_AGGRESIVE', 'SPAMHAUS_DROP', 'DSHIELD'] },
+             'EMERGING_COMPROMISED' => { 'name' => 'Emerging Threats Compromised IPs',
+                                    'url'      => 'https://rules.emergingthreats.net/blockrules/compromised-ips.txt',
+                                    'info'     => 'https://doc.emergingthreats.net/bin/view/Main/CompromisedHost',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '1h',
+                                    'category' => 'attacker' },
+             'SPAMHAUS_DROP'   => { 'name'     => "Spamhaus Don't Route or Peer List",
+                                    'url'      => 'https://www.spamhaus.org/drop/drop.txt',
+                                    'info'     => 'https://www.spamhaus.org/drop/',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '12h',
+                                    'category' => 'reputation' },
+             'SPAMHAUS_EDROP'  => { 'name'     => "Spamhaus Extended Don't Route or Peer List",
+                                    'url'      => 'https://www.spamhaus.org/drop/edrop.txt',
+                                    'info'     => 'https://www.spamhaus.org/drop/',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '1h',
+                                    'category' => 'reputation' },
+             'DSHIELD'         => { 'name'     => 'Dshield.org Recommended Block List',
+                                    'url'      => 'https://www.dshield.org/block.txt',
+                                    'info'     => 'https://dshield.org/',
+                                    'parser'   => 'dshield',
+                                    'rate'     => '1h',
+                                    'category' => 'attacker' },
+             'FEODO_RECOMMENDED'=> {'name'     => 'Feodo Trojan IP Blocklist (Recommended)',
+                                    'url'      => 'https://feodotracker.abuse.ch/downloads/ipblocklist_recommended.txt',
+                                    'info'     => 'https://feodotracker.abuse.ch/blocklist',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '5m',
+                                    'category' => 'c and c' },
+             'FEODO_IP'        => { 'name'     => 'Feodo Trojan IP Blocklist',
+                                    'url'      => 'https://feodotracker.abuse.ch/downloads/ipblocklist.txt',
+                                    'info'     => 'https://feodotracker.abuse.ch/blocklist',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '5m',
+                                    'category' => 'c and c',
+                                    'disable'  => 'FEODO_RECOMMENDED' },
+             'FEODO_AGGRESIVE' => { 'name'     => 'Feodo Trojan IP Blocklist (Aggresive)',
+                                    'url'      => 'https://feodotracker.abuse.ch/downloads/ipblocklist_aggressive.txt',
+                                    'info'     => 'https://feodotracker.abuse.ch/blocklist',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '5m',
+                                    'category' => 'c and c',
+                                    'disable'  => ['FEODO_IP', 'FEODO_RECOMMENDED'] },
+             'CIARMY'          => { 'name'     => 'The CINS Army List',
+                                    'url'      => 'https://cinsscore.com/list/ci-badguys.txt',
+                                    'info'     => 'https://cinsscore.com/#list',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '15m',
+                                    'category' => 'reputation' },
+             'TOR_ALL'         => { 'name'     => 'Known TOR Nodes',
+                                    'url'      => 'https://www.dan.me.uk/torlist',
+                                    'info'     => 'https://www.dan.me.uk/tornodes',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '1h',
+                                    'category' => 'application',
+                                    'disable'  => 'TOR_EXIT' },
+             'TOR_EXIT'        => { 'name'     => 'Known TOR Exit Nodes',
+                                    'url'      => 'https://www.dan.me.uk/torlist/?exit',
+                                    'info'     => 'https://www.dan.me.uk/tornodes',
+                                    'parser'   => 'ip-or-net-list',,
+                                    'rate'     => '1h',
+                                    'category' => 'application' },
+             'ALIENVAULT'      => { 'name'     => 'AlienVault IP Reputation database',
+                                    'url'      => 'https://reputation.alienvault.com/reputation.generic',
+                                    'info'     => 'https://www.alienvault.com/resource-center/videos/what-is-ip-domain-reputation',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '1h',
+                                    'category' => 'reputation' },
+             'BOGON'           => { 'name'     => 'Bogus address list (Martian)',
+                                    'url'      => 'https://www.team-cymru.org/Services/Bogons/bogon-bn-agg.txt',
+                                    'info'     => 'https://www.team-cymru.com/bogon-reference.html',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '1d',
+                                    'category' => 'invalid' },
+             'BOGON_FULL'      => { 'name'     => 'Full Bogus Address List',
+                                    'url'      => 'https://www.team-cymru.org/Services/Bogons/fullbogons-ipv4.txt',
+                                    'info'     => 'https://www.team-cymru.com/bogon-reference.html',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '4h',
+                                    'category' => 'invalid',
+                                    'disable'  => 'BOGON' },
+             'SHODAN'          => { 'name'     => 'ISC Shodan scanner blocklist',
+                                    'url'      => 'https://isc.sans.edu/api/threatlist/shodan?tab',
+                                    'info'     => 'https://isc.sans.edu',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '1d',
+                                    'category' => 'scanner' },
+             'BLOCKLIST_DE'    => { 'name'     => 'Blocklist.de all attacks list',
+                                    'url'      => 'https://lists.blocklist.de/lists/all.txt',
+                                    'info'     => 'https://www.blocklist.de',
+                                    'parser'   => 'ip-or-net-list',
+                                    'rate'     => '30m',
+                                    'category' => 'attacker' }
+           );
