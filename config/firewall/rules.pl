@@ -945,13 +945,23 @@ sub ipset_get_sets () {
 sub ipset_restore ($) {
 	my ($set) = @_;
 
-	my $file_prefix = "ipset4";
-	my $db_file = "$Location::Functions::ipset_db_directory/$set.$file_prefix";
+	# Empty variable to store the db file, which should be
+	# restored by ipset.
+	my $db_file;
 
 	# Check if the set already has been loaded.
 	if($ipset_loaded_sets{$set}) {
 		# It already has been loaded - so there is nothing to do.
 		return;
+	}
+
+	# Check if the given set name is a country code.
+	if($set ~~ @locations) {
+		# Libloc adds "ipset4" as prefix to all exported IPv4 data.
+		my $file_prefix = "ipset4";
+
+		# Generate full path and filename for the ipset db file to restore.
+		$db_file = "$Location::Functions::ipset_db_directory/$set.$file_prefix";
 	}
 
 	# Check if the generated file exists.
