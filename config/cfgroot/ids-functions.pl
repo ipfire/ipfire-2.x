@@ -483,6 +483,9 @@ sub extractruleset ($) {
 	# Load perl module to deal with archives.
 	use Archive::Tar;
 
+	# Disable chown functionality when uncompressing files.
+	$Archive::Tar::CHOWN = "0";
+
 	# Load perl module to deal with files and path.
 	use File::Basename;
 
