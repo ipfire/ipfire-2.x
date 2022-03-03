@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.53
+VER        = 4.54
 
 THISAPP    = CGI-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = a0fe86a038de743ac45a0933daa2804f
+$(DL_FILE)_MD5 = d12ddcd7d3db6410e9316ed9b9b5c80f
 
 install : $(TARGET)
 
