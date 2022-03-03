@@ -26,6 +26,9 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/ids-functions.pl";
 require "${General::swroot}/lang.pl";
 
+# Variable to store if the process has written a lockfile.
+my $locked;
+
 # Hash to store the configured providers.
 my %providers = ();
 
@@ -77,6 +80,9 @@ if(&IDS::checkdiskspace()) {
 # Lock the IDS page.
 &IDS::lock_ids_page();
 
+# The script has requested a lock, so set locket to "1".
+$locked = "1";
+
 # Grab the configured providers.
 &General::readhasharray("$IDS::providers_settings_file", \%providers);
 
@@ -114,13 +120,20 @@ foreach my $id (keys %providers) {
 # Set correct ownership for the rulesdir and files.
 &IDS::set_ownership("$IDS::rulespath");
 
-# Unlock the IDS page.
-&IDS::unlock_ids_page();
-
 # Check if the IDS is running.
 if(&IDS::ids_is_running()) {
 	# Call suricatactrl to perform a reload.
 	&IDS::call_suricatactrl("reload");
+}
+
+# Custom END declaration to release a IDS page lock
+# when the script has created one.
+END {
+	# Check if a lock has been requested.
+	if ($locked) {
+		# Unlock the IDS page.
+		&IDS::unlock_ids_page();
+	}
 }
 
 1;
