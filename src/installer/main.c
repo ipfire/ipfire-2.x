@@ -720,7 +720,6 @@ int main(int argc, char *argv[]) {
 			{ HW_FS_EXT4,            _("ext4 Filesystem") },
 			{ HW_FS_EXT4_WO_JOURNAL, _("ext4 Filesystem without journal") },
 			{ HW_FS_XFS,             _("XFS Filesystem") },
-			{ HW_FS_REISERFS,        _("ReiserFS Filesystem") },
 			{ 0, NULL },
 		};
 		unsigned int num_filesystems = sizeof(filesystems) / sizeof(*filesystems);
@@ -735,7 +734,7 @@ int main(int argc, char *argv[]) {
 		}
 
 		rc = newtWinMenu(_("Filesystem Selection"), _("Please choose your filesystem:"),
-			50, 5, 5, 6, fs_names, &fs_choice, _("OK"), _("Cancel"), NULL);
+			50, 5, 5, 5, fs_names, &fs_choice, _("OK"), _("Cancel"), NULL);
 
 		if (rc == 2)
 			goto EXIT;
