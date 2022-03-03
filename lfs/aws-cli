@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Amazon Web Services Command Line Interface
 
-VER        = 1.18.188
+VER        = 1.22.64
 
 THISAPP    = awscli-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = aws-cli
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = python3-botocore python3-colorama python3-docutils python3-pyasn1 python3-rsa python3-s3transfer python3-six python3-yaml
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d0e6edde94f5bd17bf6024fd6534dc61
+$(DL_FILE)_MD5 = 834220f0a799569c43a58dcd0493c894
 
 install : $(TARGET)
 
