@@ -71,7 +71,11 @@ make_backup() {
 restore_backup() {
 	local filename="${1}"
 
-	tar xvzpf "${filename}" -C /
+	# Extract backup
+	if ! tar xvzpf "${filename}" -C /; then
+		echo "Could not extract backup" >&2
+		return 1
+	fi
 
 	# Restart syslogd, httpd and suricata in case we've just loaded old logs
 	apachectl -k graceful
@@ -202,7 +206,11 @@ restore_addon_backup() {
 		mv "/tmp/${name}.ipf" "/var/ipfire/backup/addons/backup/${name}.ipf"
 	fi
 
-	tar xvzpf "/var/ipfire/backup/addons/backup/${name}.ipf" -C /
+	# Extract backup
+	if ! tar xvzpf "/var/ipfire/backup/addons/backup/${name}.ipf" -C /; then
+		echo "Could not extract backup" >&2
+		return 1
+	fi
 }
 
 main() {
