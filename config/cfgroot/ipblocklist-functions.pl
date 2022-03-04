@@ -278,4 +278,40 @@ sub parse_ip_or_net_list( $ ) {
 	# Return the grabbed address.
 	return $1;
 }
+
+#
+## sub parse_dshield( line )
+##
+## Parses an input line removing comments.
+##
+## The format is:
+## Start Addrs   End Addrs   Netmask   Nb Attacks   Network Name   Country   email
+## We're only interested in the start address and netmask.
+##
+## Parameters:
+##   line  The line to parse
+##
+## Returns:
+##   Either and IP Address or a null string
+#
+sub parse_dshield( $ ) {
+	my ($line) = @_;
+
+	# Skip coments.
+	return "" if ($line =~ m/^\s*#/);
+
+	$line =~ s/#.*$//;
+
+	#          |Start addrs                |   |End Addrs                |   |Mask
+	$line =~ m|(\d+\.\d+\.\d+\.\d+(?:/\d+)?)\s+\d+\.\d+\.\d+\.\d+(?:/\d+)?\s+(\d+)|;
+
+	# Return nothing if no start address could be grabbed.
+	return unless ($1);
+
+	# Add /32 as prefix for single addresses and return it.
+	return "$1/32" unless ($2);
+
+	# Return the obtained network.
+	return "$1/$2";
+}
 1;
