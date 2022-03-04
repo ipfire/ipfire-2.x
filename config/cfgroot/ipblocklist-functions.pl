@@ -257,4 +257,25 @@ sub download_and_create_blocklist($) {
 	return;
 }
 
+#
+## sub parse_ip_or_net_list( line )
+##
+## Parses an input line, looking for lines starting with an IP Address or
+### Network specification.
+##
+## Parameters:
+##   line  The line to parse
+##
+## Returns:
+##   Either an IP Address or a null string
+#
+sub parse_ip_or_net_list( $ ) {
+	my ($line) = @_;
+
+	# Grab the IP address or network.
+	$line =~ m|^(\d+\.\d+\.\d+\.\d+(?:/\d+)?)|;
+
+	# Return the grabbed address.
+	return $1;
+}
 1;
