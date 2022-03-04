@@ -72,7 +72,9 @@ restore_backup() {
 	local filename="${1}"
 
 	# Extract backup
-	if ! tar xvzpf "${filename}" -C /; then
+	if ! tar xvzpf "${filename}" -C / \
+			--exclude-from="/var/ipfire/backup/exclude" \
+			--exclude-from="/var/ipfire/backup/exclude.user"; then
 		echo "Could not extract backup" >&2
 		return 1
 	fi

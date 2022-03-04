@@ -1204,7 +1204,9 @@ char* hw_find_backup_file(const char* output, const char* search_path) {
 int hw_restore_backup(const char* output, const char* backup_path, const char* destination) {
 	char command[STRING_SIZE];
 
-	snprintf(command, sizeof(command), "/bin/tar xzpf %s -C %s", backup_path, destination);
+	snprintf(command, sizeof(command), "/bin/tar xzpf %s -C %s "
+		"--exclude-from=%s/var/ipfire/backup/exclude --exclude-from=%s/var/ipfire/backup/exclude.user",
+		backup_path, destination, destination, destination);
 	int rc = mysystem(output, command);
 
 	if (rc)
