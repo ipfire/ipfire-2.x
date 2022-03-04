@@ -39,7 +39,7 @@ process_includes() {
 		local file
 		while read -r file; do
 			for file in ${file}; do
-				if [ -e "${file}" ]; then
+				if [ -e "/${file}" ]; then
 					echo "${file}"
 				fi
 			done
@@ -58,7 +58,7 @@ make_backup() {
 	done
 
 	# Backup using global exclude/include definitions
-	tar cvfz "${filename}" \
+	tar cvfz "${filename}" -C / \
 		--exclude-from="/var/ipfire/backup/exclude" \
 		--exclude-from="/var/ipfire/backup/exclude.user" \
 		$(process_includes "/var/ipfire/backup/include") \
