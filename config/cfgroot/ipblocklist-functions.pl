@@ -314,4 +314,18 @@ sub parse_dshield( $ ) {
 	# Return the obtained network.
 	return "$1/$2";
 }
+
+#
+## Helper function to proper calculate the hashsize.
+#
+sub _calculate_hashsize($) {
+	my ($list_entries) = @_;
+
+	my $hashsize = 1;
+	$hashsize  <<= 1 while ($hashsize < $list_entries);
+
+	# Return the calculated hashsize.
+	return $hashsize;
+}
+
 1;
