@@ -153,7 +153,6 @@ sub check_and_create_filelayout() {
 	unless (-f "$suricata_default_rulefiles_file") { &create_empty_file($suricata_default_rulefiles_file); }
 	unless (-f "$ids_settings_file") { &create_empty_file($ids_settings_file); }
 	unless (-f "$providers_settings_file") { &create_empty_file($providers_settings_file); }
-	unless (-f "$ignored_file") { &create_empty_file($ignored_file); }
 	unless (-f "$whitelist_file" ) { &create_empty_file($whitelist_file); }
 }
 
