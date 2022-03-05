@@ -91,6 +91,8 @@ sub get_ipset_db_file($) {
 ##   nothing - On success
 ##   not_modified - In case the servers responds with "Not modified" (304)
 ##   dl_error - If the requested blocklist could not be downloaded.
+##   empty_list - The downloaded blocklist is empty, or the parser was not able to parse
+##                it correctly.
 #
 sub download_and_create_blocklist($) {
 	my ($list) = @_;
@@ -216,6 +218,13 @@ sub download_and_create_blocklist($) {
 
 		# Push the address/network to the blocklist array.
 		push(@blocklist, $address);
+	}
+
+	# Check if the content could be parsed correctly and the blocklist
+	# contains at least one item.
+	unless(@blocklist) {
+		# No entries - exit and return "empty_list".
+		return "empty_list";
 	}
 
 	# Get amount of entries in the blocklist array.
