@@ -97,6 +97,14 @@ rm -rvf \
 	/var/ipfire/dhcpc/dhcpcd-hooks/10-mtu \
 	/var/ipfire/firewall/p2protocols
 
+# Rename squid-accounting add-on to proxy-accounting, if installed
+# (see: https://lists.ipfire.org/pipermail/development/2022-February/012482.html)
+if [ -e "/opt/pakfire/db/installed/meta-squid-accounting" ] && [ -e "/opt/pakfire/db/meta/meta-squid-accounting" ]; then
+	mv -v /opt/pakfire/db/installed/meta-squid-accounting /opt/pakfire/db/installed/meta-proxy-accounting
+	mv -v /opt/pakfire/db/meta/meta-squid-accounting /opt/pakfire/db/meta/meta-proxy-accounting
+	mv -v /opt/pakfire/db/rootfiles/squid-accounting /opt/pakfire/db/rootfiles/proxy-accounting
+fi
+
 # Stop services
 
 # Extract files
