@@ -88,6 +88,15 @@ if (!$settings{'MASQUERADE_ORANGE'}) {
 if (!$settings{'MASQUERADE_BLUE'}) {
 	$settings{'MASQUERADE_BLUE'} = 'on';
 }
+if (!$settings{'DROPSPOOFEDMARTIAN'}) {
+	$settings{'DROPSPOOFEDMARTIAN'} = 'on';
+}
+if (!$settings{'DROPHOSTILE'}) {
+	$settings{'DROPHOSTILE'} = 'off';
+}
+if (!$settings{'LOGDROPCTINVALID'}) {
+	$settings{'LOGDROPCTINVALID'} = 'on';
+}
 
 $checked{'DROPNEWNOTSYN'}{'off'} = '';
 $checked{'DROPNEWNOTSYN'}{'on'} = '';
