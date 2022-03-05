@@ -572,8 +572,38 @@ sub extractruleset ($) {
 				next;
 			}
 
-			# Extract the file to the temporary directory.
-			$tar->extract_file("$packed_file", "$destination");
+			# Check if the destination file exists.
+			unless(-e "$destination") {
+				# Extract the file to the temporary directory.
+				$tar->extract_file("$packed_file", "$destination");
+			} else {
+				# Load perl module to deal with temporary files.
+				use File::Temp;
+
+				# Generate temporary file name, located in the temporary rules directory and a suffix of ".tmp".
+				my $tmp = File::Temp->new( SUFFIX => ".tmp", DIR => "$tmp_rules_directory", UNLINK => 0 );
+				my $tmpfile = $tmp->filename();
+
+				# Extract the file to the new temporary file name.
+				$tar->extract_file("$packed_file", "$tmpfile");
+
+				# Open the the existing file.
+				open(DESTFILE, ">>", "$destination") or die "Could not open $destination. $!\n";
+				open(TMPFILE, "<", "$tmpfile") or die "Could not open $tmpfile. $!\n";
+
+				# Loop through the content of the temporary file.
+				while (<TMPFILE>) {
+					# Append the content line by line to the destination file.
+					print DESTFILE "$_";
+				}
+
+				# Close the file handles.
+				close(TMPFILE);
+				close(DESTFILE);
+
+				# Remove the temporary file.
+				unlink("$tmpfile");
+			}
 		}
 	}
 }
