@@ -12,6 +12,7 @@ srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/html/include/pakfire.js
+usr/local/bin/update-ids-ruleset
 usr/sbin/convert-ids-multiple-providers
 usr/sbin/convert-snort
 var/ipfire/backup/bin/backup.pl
