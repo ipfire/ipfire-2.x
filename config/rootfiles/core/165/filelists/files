@@ -15,7 +15,6 @@ srv/web/ipfire/html/themes/ipfire/include/css/style.css
 usr/lib/firewall/firewall-lib.pl
 usr/lib/firewall/rules.pl
 usr/local/bin/update-location-database
-usr/local/bin/update-ids-ruleset
 usr/sbin/setup
 var/ipfire/ids-functions.pl
 var/ipfire/location-functions.pl
