@@ -161,8 +161,8 @@ my $blaoklist = $cgiparams{blocklist};
 if (!$skip)
 {
 	while (<FILE>) {
-		if (/^${monthstr} ${daystr} ..:..:.. [\w\-]+ kernel:.*BLKLST_(\w+)IN=.*/) {
-			if($1 eq $blocklist){
+		if (/^${monthstr} ${daystr} ..:..:.. [\w\-]+ kernel:.*BLKLST_(\w+)\s?IN=.*/) {
+			if($1 eq $blacklist){
 				$log[$lines] = $_;
 				$lines++;
 			}
@@ -186,8 +186,8 @@ if ($multifile) {
 	}
 	if (!$skip) {
 		while (<FILE>) {
-			if (/^${monthstr} ${daystr} ..:..:.. [\w\-]+ kernel:.*BLKLST_(\w+)IN=.*/) {
-				if($1 eq $blocklist){
+			if (/^${monthstr} ${daystr} ..:..:.. [\w\-]+ kernel:.*BLKLST_(\w+)\s?IN=.*/) {
+				if($1 eq $blacklist){
 					$log[$lines] = $_;
 					$lines++;
 				}
@@ -308,9 +308,8 @@ $lines = 0;
 foreach $_ (@slice) {
 	$a = $_;
 	# Check whether valid ipv4 or ipv6 address
-	if (($_ =~ /BLKLST_(\w+)IN=/)) {
-		if($1 eq $blocklist) {
-
+	if (($_ =~ /BLKLST_(\w+)\s?IN=/)) {
+		if($1 eq $blacklist) {
 			my $in = '-'; my $out = '-';
 			my $srcaddr = ''; my $dstaddr = '';
 			my $protostr = '';
