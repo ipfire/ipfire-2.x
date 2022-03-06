@@ -22,27 +22,24 @@
 ###############################################################################
 
 use strict;
-use CGI qw/:standard/;
+
 # enable the following only for debugging purposes
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
-use Sort::Naturally;
-use Socket;
 
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
+require "${General::swroot}/ipblocklist-functions.pl";
+
+# Import blockist sources and settings file.
+require "${General::swroot}/ipblocklist/sources";
 
 ###############################################################################
 # Configuration variables
 ###############################################################################
 
-my $settings      = "${General::swroot}/ipblacklist/settings";
-my $sources       = "${General::swroot}/ipblacklist/sources";
-my $getipstat     = '/usr/local/bin/getipstat';
-my $getipsetstat  = '/usr/local/bin/getipsetstat';
-my $control       = '/usr/local/bin/ipblacklistctrl';
-my $lockfile      = '/var/run/ipblacklist.pid';
+my $settings      = "${General::swroot}/ipblocklist/settings";
 my %cgiparams     = ('ACTION' => '');
 
 ###############################################################################
@@ -53,143 +50,95 @@ my $errormessage  = '';
 my $updating      = 0;
 my %mainsettings;
 my %color;
-my %sources;
-my %stats;
 
 # Default settings - normally overwritten by settings file
-
-my %settings = ( 'DEBUG'           => 0,
-                 'LOGGING'         => 'on',
-                 'ENABLE'          => 'off' );
+my %settings = (
+	'DEBUG'           => 0,
+	'LOGGING'         => 'on',
+	'ENABLE'          => 'off'
+);
 
 # Read all parameters
+&Header::getcgihash( \%cgiparams);
+&General::readhash( "${General::swroot}/main/settings", \%mainsettings );
+&General::readhash( "/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color );
 
-Header::getcgihash( \%cgiparams);
-General::readhash( "${General::swroot}/main/settings", \%mainsettings );
-General::readhash( "/srv/web/ipfire/html/themes/".$mainsettings{'THEME'}."/include/colors.txt", \%color );
-General::readhash( $settings, \%settings ) if (-r $settings);
-eval qx|/bin/cat $sources|                 if (-r $sources);
+# Get list of supported blocklists.
+my @blocklists = &IPblocklist::get_blocklists();
 
 # Show Headers
-
-Header::showhttpheaders();
+&Header::showhttpheaders();
 
 # Process actions
+if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
+	# Array to store if blocklists are missing on the system
+	# and needs to be downloaded first.
+	my @missing_blocklists = ();
 
-if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}")
-{
-  # Save Button
+	# Loop through the array of supported blocklists.
+	foreach my $blocklist (@blocklists) {
+		# Skip the blocklist if it is not enabled.
+		next if($cgiparams{$blocklist} ne "on");
 
-  my %new_settings = ( 'ENABLE'          => 'off',
-                       'LOGGING'         => 'off',
-                       'DEBUG'           => 0 );
+		# Get the file name which keeps the converted blocklist.
+		my $ipset_db_file = &IPblocklist::get_ipset_db_file($blocklist);
 
-  foreach my $item ('LOGGING', 'ENABLE', keys %sources)
-  {
-    $new_settings{$item} = (exists $cgiparams{$item}) ? 'on' : 'off';
+		# Check if the blocklist already has been downloaded.
+		if(-f "$ipset_db_file") {
+			# Blocklist already exits, we can skip it.
+			next;
+		} else {
+			# Blocklist not present, store in array to download it.
+			push(@missing_blocklists, $blocklist);
+		}
+	}
 
-    $updating = 1 if (not exists $settings{$item} or $new_settings{$item} ne $settings{$item});
-  }
+	# Check if the red device is not active and blocklists are missing.
+	if ((not -e "${General::swroot}/red/active") && (@missing_blocklists)) {
+		# The system is offline, cannot download the missing blocklists.
+		# Store an error message.
+		$errormessage = "$Lang::tr{'system is offline'}";
+	} else {
+		# Loop over the array of missing blocklists.
+		foreach my $missing_blocklist (@missing_blocklists) {
+			# Call the download and convert function to get the missing blocklist.
+			my $status = &IPblocklist::download_and_create_blocklist($missing_blocklist);
 
-  # Check for redundant blacklists being enabled
+			# Check if there was an error during download.
+			# XXX - fill with messages.
+			if ($status eq "dl_error") {
+				$errormessage = "XXX - dl_error";
+			} elsif ($status eq "empty_list") {
+				$errormessage = "XXX - empty";
+			}
+		}
+	}
 
-  foreach my $list (keys %sources)
-  {
-    if (exists $new_settings{$list} and
-        $new_settings{$list} eq 'on' and
-        exists $sources{$list}{'disable'})
-    {
-      my @disable;
+	# Check if there was an error.
+	unless($errormessage) {
+		# Write configuration hash.
+		&General::writehash($settings, \%cgiparams);
 
-      if ('ARRAY' eq ref $sources{$list}{'disable'})
-      {
-        @disable = @{ $sources{$list}{'disable'} };
-      }
-      else
-      {
-        @disable = ( $sources{$list}{'disable'} );
-      }
-
-      foreach my $disable (@disable)
-      {
-        if ($new_settings{$disable} eq 'on')
-        {
-          $new_settings{$disable} = 'off';
-
-          $updating      = 1;
-          $errormessage .= "$Lang::tr{'ipblacklist disable pre'} $disable " .
-                            "$Lang::tr{'ipblacklist disable mid'} $list $Lang::tr{'ipblacklist disable post'}<br>\n";
-        }
-      }
-    }
-  }
-
-  if ($settings{'LOGGING'} ne $new_settings{'LOGGING'})
-  {
-    if ($new_settings{'LOGGING'} eq 'on')
-    {
-      system( "$control log-on" );
-    }
-    else
-    {
-      system( "$control log-off" );
-    }
-  }
-
-  if ($settings{'ENABLE'} ne $new_settings{'ENABLE'})
-  {
-    if ($new_settings{'ENABLE'} eq 'on')
-    {
-      system( "$control enable" );
-    }
-    else
-    {
-      system( "$control disable" );
-    }
-
-    $updating = 1;
-  }
-
-  %settings = %new_settings;
-
-  if ($errormessage)
-  {
-    $updating = 0;
-  }
-  else
-  {
-    General::writehash($settings, \%new_settings);
-
-    if ($updating)
-    {
-      system( "$control update &" );
-      show_running();
-      exit 0;
-    }
-  }
-}
-
-if (is_running())
-{
-  show_running();
-  exit 0;
+		# XXX display firewall reload stuff
+	}
 }
 
 # Show site
+&Header::openpage($Lang::tr{'ipblocklist'}, 1, '');
+&Header::openbigbox('100%', 'left');
 
-Header::openpage($Lang::tr{'ipblacklist'}, 1, '');
-Header::openbigbox('100%', 'left');
+# Display error message if there was one.
+&error() if ($errormessage);
 
-error() if ($errormessage);
+# Read-in ipblocklist settings.
+&General::readhash( $settings, \%settings ) if (-r $settings);
 
-configsite();
+# Display configuration section.
+&configsite();
 
 # End of page
-
-Header::closebigbox();
-Header::closepage();
-
-exit 0;
+&Header::closebigbox();
+&Header::closepage();
 
 
 #------------------------------------------------------------------------------
@@ -198,233 +147,99 @@ exit 0;
 # Displays configuration
 #------------------------------------------------------------------------------
 
-sub configsite
-{
-  # Find preselections
+sub configsite {
+	# Find preselections
+	my $enable = 'checked';
 
-  my $enable = 'checked';
-  Header::openbox('100%', 'left', $Lang::tr{'settings'});
+	&Header::openbox('100%', 'left', $Lang::tr{'settings'});
 
-  #### JAVA SCRIPT ####
+	# Enable checkbox
+	$enable = ($settings{'ENABLE'} eq 'on') ? ' checked' : '';
 
-  print<<END;
-<script>
-  \$(document).ready(function()
-  {
-    // Show/Hide elements when ENABLE checkbox is checked.
-    if (\$("#ENABLE").attr("checked"))
-    {
-      \$(".sources").show();
-    }
-    else
-    {
-      \$(".sources").hide();
-    }
-
-    // Toggle Source list elements when "ENABLE" checkbox is clicked
-    \$("#ENABLE").change(function()
-    {
-      \$(".sources").toggle();
-    });
-  });
-</script>
+print<<END;
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<table style='width:100%' border='0'>
+			<tr>
+				<td style='width:24em'>$Lang::tr{'ipblocklist use ipblocklists'}</td>
+				<td><input type='checkbox' name='ENABLE' id='ENABLE'$enable></td>
+			</tr>
+		</table><br>
 END
 
-  ##### JAVA SCRIPT END ####
+	# The following are only displayed if the blacklists are enabled
+	$enable = ($settings{'LOGGING'} eq 'on') ? ' checked' : '';
 
-  # Enable checkbox
+print <<END;
+		<div class='sources'>
+			<table style='width:100%' border='0'>
+				<tr>
+					<td style='width:24em'>$Lang::tr{'ipblocklist log'}</td>
+					<td><input type='checkbox' name="LOGGING" id="LOGGING"$enable></td>
+				</tr>
+			</table>
 
-  $enable = ($settings{'ENABLE'} eq 'on') ? ' checked' : '';
+			<br><br>
+			<h2>$Lang::tr{'ipblocklist blocklist settings'}</h2>
 
-  print<<END;
-  <form method='post' action='$ENV{'SCRIPT_NAME'}'>
-  <table style='width:100%' border='0'>
-  <tr>
-    <td style='width:24em'>$Lang::tr{'ipblacklist use ipblacklists'}</td>
-    <td><input type='checkbox' name='ENABLE' id='ENABLE'$enable></td>
-  </tr>
-  </table><br>
-
+			<table width='100%' cellspacing='1' class='tbl'>
+				<tr>
+					<th align='left'>$Lang::tr{'ipblocklist id'}</th>
+					<th align='left'>$Lang::tr{'ipblocklist name'}</th>
+					<th align='left'>$Lang::tr{'ipblocklist category'}</th>
+					<th align='center'>$Lang::tr{'ipblocklist enable'}</th>
+				</tr>
 END
 
-  # The following are only displayed if the blacklists are enabled
+	# Iterate through the list of sources
+	my $lines = 0;
 
-  $enable = ($settings{'LOGGING'} eq 'on') ? ' checked' : '';
+	foreach my $blocklist (@blocklists) {
+		# Display blocklist name or provide a link to the website if available.
+		my $website = "$blocklist";
+		if ($IPblocklist::List::sources{$blocklist}{info}) {
+			$website ="<a href='$IPblocklist::List::sources{$blocklist}{info}' target='_blank'>$blocklist</a>";
+		}
 
-  print <<END;
-<div class='sources'>
-  <table style='width:100%' border='0'>
-  <tr>
-    <td style='width:24em'>$Lang::tr{'ipblacklist log'}</td>
-    <td><input type='checkbox' name="LOGGING" id="LOGGING"$enable></td>
-  </tr>
-  </table>
-  <br><br>
-  <h2>$Lang::tr{'ipblacklist blacklist settings'}</h2>
-  <table width='100%' cellspacing='1' class='tbl'>
-  <tr>
-    <th align='left'>$Lang::tr{'ipblacklist id'}</th>
-    <th align='left'>$Lang::tr{'ipblacklist name'}</th>
-    <th align='left'>$Lang::tr{'ipblacklist category'}</th>
-    <th align='center'>$Lang::tr{'ipblacklist enable'}</th>
-  </tr>
+		# Get the full name for the blocklist.
+		my $name = &CGI::escapeHTML( $IPblocklist::List::sources{$blocklist}{'name'} );
+
+		# Get category for this blocklist.
+		my $category = $Lang::tr{"ipblocklist category $IPblocklist::List::sources{$blocklist}{'category'}"};
+
+		# Determine if the blocklist is enabled.
+		my $enable = '';
+		$enable = 'checked' if ($settings{$blocklist} eq 'on');
+
+		# Set colour for the table columns.
+		my $col = ($lines++ % 2) ? "bgcolor='$color{'color20'}'" : "bgcolor='$color{'color22'}'";
+
+
+print <<END;
+				<tr $col>
+					<td>$website</td>
+					<td>$name</td>
+					<td>$category</td>
+					<td align='center'><input type='checkbox' name="$blocklist" id="$blocklist"$enable></td>
+				</tr>
+END
+	}
+
+# The save button at the bottom of the table
+print <<END;
+			</table>
+
+		</div>
+
+		<table style='width:100%;'>
+			<tr>
+				<td colspan='3' display:inline align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}'></td>
+			</tr>
+		</table>
+	</form>
 END
 
-  # Iterate through the list of sources
-
-  my $lines = 0;
-
-  foreach my $list (sort keys %sources)
-  {
-    my $name     = escapeHTML( $sources{$list}{'name'} );
-    my $category = $Lang::tr{"ipblacklist category $sources{$list}{'category'}"};
-    $enable      = '';
-    my $col      = ($lines++ % 2) ? "bgcolor='$color{'color20'}'" : "bgcolor='$color{'color22'}'";
-
-    $enable = ' checked' if (exists $settings{$list} and $settings{$list} eq 'on');
-
-    print <<END;
-    <tr $col>
-    <td>
-END
-
-    if ($sources{$list}{info})
-    {
-      print "<a href='$sources{$list}{info}' target='_blank'>$list</a>\n";
-    }
-    else
-    {
-      print "$list\n";
-    }
-
-    print <<END;
-    </td>
-    <td>$name</td>
-    <td>$category</td>
-    <td align='center'><input type='checkbox' name="$list" id="$list"$enable></td>
-    </tr>\n
-END
-  }
-
-    # The save button at the bottom of the table
-
-    print <<END;
-    </table>
-  </div>
-    <table style='width:100%;'>
-    <tr>
-        <td colspan='3' display:inline align='right'><input type='submit' name='ACTION' value='$Lang::tr{'save'}'></td>
-    </tr>
-    </table>
-END
-
-  Header::closebox();
+	&Header::closebox();
 }
-
-
-#------------------------------------------------------------------------------
-# sub get_ipset_stats()
-#
-# Gets the number of entries in each IPSet.
-#------------------------------------------------------------------------------
-
-sub get_ipset_stats
-{
-  my $name;
-
-  system( $getipsetstat );
-
-  if (-r '/var/tmp/ipsets.txt')
-  {
-    open STATS, '<', '/var/tmp/ipsets.txt' or die "Can't open IP Sets stats file: $!";
-
-    foreach my $line (<STATS>)
-    {
-      if ($line =~ m/Name: (\w+)/)
-      {
-        $name = $1;
-        next;
-      }
-
-      if ($line =~ m/Number of entries: (\d+)/)
-      {
-        $stats{$name}{'size'} = $1;
-      }
-    }
-
-    close STATS;
-
-    unlink( '/var/tmp/ipsets.txt' );
-  }
-}
-
-
-#------------------------------------------------------------------------------
-# sub is_running()
-#
-# Checks to see if the main script is running
-#------------------------------------------------------------------------------
-
-sub is_running
-{
-  return 0 unless (-r $lockfile);
-
-  open LOCKFILE, '<', $lockfile or die "Can't open lockfile";
-  my $pid = <LOCKFILE>;
-  close LOCKFILE;
-
-  chomp $pid;
-
-  return (-e "/proc/$pid");
-}
-
-
-#------------------------------------------------------------------------------
-# sub show_running
-#
-# Displayed when update is running.
-# Shows a 'working' message plus some information about the IPSets.
-#------------------------------------------------------------------------------
-
-sub show_running
-{
-  # Open site
-
-  Header::openpage( $Lang::tr{'ipblacklist'}, 1, '<meta http-equiv="refresh" content="1;url=/cgi-bin/ipblacklist.cgi">' );
-  Header::openbigbox( '100%', 'center' );
-  error();
-  Header::openbox( 'Working', 'center', "$Lang::tr{'ipblacklist working'}" );
-
-  print <<END;
-  <table width='100%'>
-    <tr>
-      <td align='center'>
-        <img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}'>&nbsp;
-      <td>
-    </tr>
-    </table>
-    <br>
-    <table cellspacing='1' align='center'>
-    <tr><th>$Lang::tr{'ipblacklist id'}</th><th>$Lang::tr{'ipblacklist entries'}</th></tr>
-END
-
-  get_ipset_stats();
-
-  foreach my $name (sort keys %stats)
-  {
-    print "<tr><td>$name</td><td align='right'>$stats{$name}{'size'}</td></tr>\n" if (exists $stats{$name}{'size'});
-  }
-
-  print <<END;
-    </table>
-END
-
-  Header::closebox();
-
-  Header::closebigbox();
-  Header::closepage();
-}
-
 
 #------------------------------------------------------------------------------
 # sub error()
@@ -432,32 +247,9 @@ END
 # Shows error messages
 #------------------------------------------------------------------------------
 
-sub error
-{
-  Header::openbox('100%', 'left', $Lang::tr{'error messages'});
-  print "<class name='base'>$errormessage\n";
-  print "&nbsp;</class>\n";
-  Header::closebox();
-}
-
-
-#------------------------------------------------------------------------------
-# sub format_time( seconds )
-#
-# Converts time in seconds to HH:MM:SS
-#------------------------------------------------------------------------------
-
-sub format_time($) {
-	my $time = shift;
-
-	my $seconds = $time % 60;
-	my $minutes = $time / 60;
-
-	my $hours = 0;
-	if ($minutes >= 60) {
-		$hours = $minutes / 60;
-		$minutes %= 60;
-	}
-
-	return sprintf("%3d:%02d:%02d", $hours, $minutes, $seconds);
+sub error {
+	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
+		print "<class name='base'>$errormessage\n";
+		print "&nbsp;</class>\n";
+	&Header::closebox();
 }
