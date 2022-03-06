@@ -105,11 +105,10 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
 			my $status = &IPblocklist::download_and_create_blocklist($missing_blocklist);
 
 			# Check if there was an error during download.
-			# XXX - fill with messages.
 			if ($status eq "dl_error") {
-				$errormessage = "XXX - dl_error";
+				$errormessage = "$Lang::tr{'ipblocklist could not download blocklist'} - $Lang::tr{'ipblocklist download error'}";
 			} elsif ($status eq "empty_list") {
-				$errormessage = "XXX - empty";
+				$errormessage = "$Lang::tr{'ipblocklist could not download blocklist'} - $Lang::tr{'ipblocklist empty blocklist received'}";
 			}
 		}
 	}
