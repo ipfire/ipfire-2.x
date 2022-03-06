@@ -31,10 +31,10 @@ our $settings_dir = "/var/ipfire/ipblocklist";
 our $settings_file = "$settings_dir/settings";
 
 # The file which keeps the time, when a blocklist last has been modified.
-my $modified_file = "$settings_dir/modified";
+our $modified_file = "$settings_dir/modified";
 
 # Location where the blocklists in ipset compatible format are stored.
-my $blocklist_dir = "/var/lib/ipblocklist";
+our $blocklist_dir = "/var/lib/ipblocklist";
 
 # File extension of the blocklist files.
 my $blocklist_file_extension = ".conf";
