@@ -21,6 +21,11 @@
                                 'title' => "$Lang::tr{'intrusion detection system'}",
 				'enabled' => 1,
                                 };
+	$subfirewall->{'50.ipblocklist'} = {'caption' => $Lang::tr{'ipblocklist'},
+				'uri' => '/cgi-bin/ipblocklist.cgi',
+				'title' => "$Lang::tr{'ipblocklist'}",
+				'enabled' => 1,
+				};
     $subfirewall->{'60.locationblock'} = {
 				'caption' => $Lang::tr{'locationblock'},
 				'uri' => '/cgi-bin/location-block.cgi',
