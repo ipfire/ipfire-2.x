@@ -188,7 +188,11 @@ sub download_and_create_blocklist($) {
 	}
 
 	# Update the timestamp for the new or modified list.
-	$modified{$list} = $response->last_modified;
+	if($response->last_modified) {
+		$modified{$list} = $response->last_modified;
+	} else {
+		$modified{$list} = time();
+	}
 
 	# Write-back the modified timestamps.
 	&General::writehash($modified_file, \%modified);
