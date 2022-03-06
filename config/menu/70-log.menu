@@ -43,6 +43,11 @@
 				'title' => "$Lang::tr{'ids logs'}",
 				'enabled' => 1
 				};
+    $sublogs->{'53.ipblocklist'} = {'caption' => $Lang::tr{'ipblocklist logs'},
+				'uri' => '/cgi-bin/logs.cgi/ipblocklists.dat',
+				'title' => "$Lang::tr{'ipblocklist logs'}",
+				'enabled' => 1
+				};
     $sublogs->{'55.ovpnclients'} = {
 				'caption' => $Lang::tr{'ovpn rw connection log'},
 				'uri' => '/cgi-bin/logs.cgi/ovpnclients.dat',
