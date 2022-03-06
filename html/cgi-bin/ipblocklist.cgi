@@ -118,7 +118,11 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
 		# Write configuration hash.
 		&General::writehash($settings, \%cgiparams);
 
-		# XXX display firewall reload stuff
+		# Call function to mark a required reload of the firewall.
+		&General::firewall_config_changed();
+
+		# Display notice about a required reload of the firewall.
+		$errormessage = "$Lang::tr{'p2p block save notice'}";
 	}
 }
 
