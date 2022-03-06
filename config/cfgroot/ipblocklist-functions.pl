@@ -337,4 +337,43 @@ sub _calculate_hashsize($) {
 	return $hashsize;
 }
 
+#
+## sub get_holdoff_rate(list)
+##
+## This function is used to get the holdoff rate in seconds for a desired provider,
+## based on the configured rate limit in minutes (m), hours (h) or days (d) in the
+## blacklist sources settings file.
+##
+#
+sub get_holdoff_rate($) {
+	my ($list) = @_;
+
+	# Grab the configured lookup rate for the given list.
+	my $rate = $IPblocklist::List::sources{$list}{'rate'};
+
+	# Split the grabbed rate into value and unit.
+	my ($value, $unit) = (uc $rate) =~ m/(\d+)([DHM]?)/;
+
+	# Days
+	if ($unit eq 'D') {
+		$value *= 60 * 60 * 24;
+
+	# Minutes
+	} elsif ($unit eq 'M') {
+		$value *= 60;
+
+	# Everything else - assume hours.
+	} else {
+		$value *= 60 * 60;
+	}
+
+	# Sanity check - limit to range 5 min .. 1 week
+
+	#        d    h    m    s
+	$value =           5 * 60 if ($value < 5 * 60);
+	$value = 7 * 24 * 60 * 60 if ($value > 7 * 24 * 60 * 60);
+
+	return $value;
+}
+
 1;
