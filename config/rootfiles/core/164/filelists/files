@@ -15,6 +15,7 @@ srv/web/ipfire/html/include/pakfire.js
 usr/sbin/convert-ids-multiple-providers
 usr/sbin/convert-snort
 var/ipfire/backup/bin/backup.pl
+var/ipfire/backup/exclude
 var/ipfire/backup/include
 var/ipfire/graphs.pl
 var/ipfire/ids-functions.pl
