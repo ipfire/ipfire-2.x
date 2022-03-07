@@ -7,6 +7,7 @@ srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/ovpnclients.dat
 srv/web/ipfire/cgi-bin/media.cgi
+srv/web/ipfire/cgi-bin/optionsfw.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/qos.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
