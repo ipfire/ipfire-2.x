@@ -103,7 +103,7 @@ if (($cgiparams{'WHITELIST'} eq $Lang::tr{'add'}) || ($cgiparams{'WHITELIST'} eq
 		my $new_entry_remark = $cgiparams{'IGNORE_ENTRY_REMARK'};
 
 		# Read-in ignoredfile.
-		&General::readhasharray($IDS::ignored_file, \%ignored);
+		&General::readhasharray($IDS::ignored_file, \%ignored) if (-e $IDS::ignored_file);
 
 		# Check if we should edit an existing entry and got an ID.
 		if (($cgiparams{'WHITELIST'} eq $Lang::tr{'update'}) && ($cgiparams{'ID'})) {
@@ -165,7 +165,7 @@ if (($cgiparams{'WHITELIST'} eq $Lang::tr{'add'}) || ($cgiparams{'WHITELIST'} eq
 		undef($cgiparams{'ID'});
 
 		# Read-in ignoredfile.
-		&General::readhasharray($IDS::ignored_file, \%ignored);
+		&General::readhasharray($IDS::ignored_file, \%ignored) if (-e $IDS::ignored_file);
 
 		# Grab the configured status of the corresponding entry.
 		my $status = $ignored{$id}[2];
@@ -199,7 +199,7 @@ if (($cgiparams{'WHITELIST'} eq $Lang::tr{'add'}) || ($cgiparams{'WHITELIST'} eq
 	my %ignored = ();
 
 	# Read-in ignoredfile.
-	&General::readhasharray($IDS::ignored_file, \%ignored);
+	&General::readhasharray($IDS::ignored_file, \%ignored) if (-e $IDS::ignored_file);
 
 	# Drop entry from the hash.
 	delete($ignored{$cgiparams{'ID'}});
@@ -1071,7 +1071,7 @@ sub show_mainpage() {
 	}
 
 	# Read-in ignored hosts.
-	&General::readhasharray("$IDS::settingsdir/ignored", \%ignored);
+	&General::readhasharray("$IDS::ignored_file", \%ignored) if (-e $IDS::ignored_file);
 
 	$checked{'ENABLE_IDS'}{'off'} = '';
 	$checked{'ENABLE_IDS'}{'on'} = '';
