@@ -146,6 +146,9 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-3.14.79-amba-fix.patch
 
+	# Fix for CVE-2022-0847 aka Dirty Pipe
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kernel-5.15-CVE-2022-0847.patch
+
 ifeq "$(KCFG)" "-headers"
 	# Install the header files
 	cd $(DIR_APP) && make ARCH=$(HEADERS_ARCH) $(EXTRAMAKE) headers
