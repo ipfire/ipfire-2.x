@@ -695,6 +695,9 @@ sub drop_hostile_networks () {
 		return;
 	}
 
+	# Exit if there is no red interface.
+	return unless($RED_DEV);
+
 	# Call function to load the network list of hostile networks.
 	&ipset_restore($HOSTILE_CCODE);
 
