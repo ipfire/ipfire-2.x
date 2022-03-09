@@ -957,20 +957,44 @@ sub ipset_restore ($) {
 
 	# Check if the given set name is a country code.
 	if($set ~~ @locations) {
-		# Libloc adds "ipset4" as prefix to all exported IPv4 data.
-		my $file_prefix = "ipset4";
+		# Libloc adds the IP type (v4 or v6) as part of the set and file name.
+		my $loc_set = "$set" . "v4";
 
-		# Generate full path and filename for the ipset db file to restore.
-		$db_file = "$Location::Functions::ipset_db_directory/$set.$file_prefix";
+		# The bare filename equals the set name.
+		my $filename = $loc_set;
+
+		# Libloc uses "ipset" as file extension.
+		my $file_extension = "ipset";
+
+		# Generate full path and filename for the ipset db file.
+		my $db_file = "$Location::Functions::ipset_db_directory/$filename.$file_extension";
+
+		# Call function to restore/load the set.
+		&ipset_call_restore($db_file);
+
+		# Check if the set is already loaded (has been used before).
+		if ($set ~~ @ipset_used_sets) {
+			# The sets contains the IP type (v4 or v6) as part of the name.
+			# The firewall rules matches against sets without that extension. So we safely
+			# can swap or rename the sets to use the new ones.
+			run("$IPSET swap $loc_set $set");
+		} else {
+			# If the set is not loaded, we have to rename it to proper use it.
+			run("$IPSET rename $loc_set $set");
+		}
 	}
 
-	# Check if the generated file exists.
-	if (-f $db_file) {
-		# Run ipset and restore the given set.
-		run("$IPSET restore < $db_file");
+	# Store the restored set to the hash to prevent from loading it again.
+	$ipset_loaded_sets{$set} = "1";
+}
 
-		# Store the restored set to the hash to prevent from loading it again.
-		$ipset_loaded_sets{$set} = "1";
+sub ipset_call_restore ($) {
+	my ($file) = @_;
+
+	# Check if the requested file exists.
+	if (-f $file) {
+		# Run ipset and restore the given set.
+		run("$IPSET restore -f $file");
 	}
 }
 
