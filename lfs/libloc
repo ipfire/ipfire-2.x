@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.9.10
+VER        = 0.9.11
 DB_DATE    = 2022-02-16
 
 THISAPP    = libloc-$(VER)
@@ -43,7 +43,7 @@ objects = $(DL_FILE) \
 $(DL_FILE)                    = https://source.ipfire.org/releases/libloc/$(DL_FILE)
 location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE).db.xz
 
-$(DL_FILE)_MD5                = 3f67e15022c142c0731cbb3746351330
+$(DL_FILE)_MD5                = 724ce9081a025307528021e6398c9335
 location-$(DB_DATE).db.xz_MD5 = c1ad9c544bab917035eb0cd13b66c453
 
 install : $(TARGET)
