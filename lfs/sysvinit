@@ -76,7 +76,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -i src/mountpoint.c src/bootlogd.c \
 		-e "/include.*sys\/stat.h/a#include <sys/sysmacros.h>\n"
 	cd $(DIR_APP) && sed -e "s/libcrypt.a/libcrypt.so/g" -i src/Makefile
-	cd $(DIR_APP) && make $(MAKETUNING) -C src 
+	cd $(DIR_APP) && make $(MAKETUNING) -C src
 	cd $(DIR_APP) && make -C src install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

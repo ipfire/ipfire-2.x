@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.8.7
+VER        = 3.10.1
 
 THISAPP    = Python-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -61,7 +61,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 60fe018fffc7f33818e6c340d29e2db9
+$(DL_FILE)_MD5 = 789210934745a65247a3ebf5da9adb64
 
 install : $(TARGET)
 
@@ -107,9 +107,9 @@ endif
 
 	# Remove precompiled pycache at toolchain and tests
 ifneq "$(ROOT)" ""
-	cd $(TOOLS_DIR)/lib/python3.8 && find . | grep -E "(/__pycache__|/test/)" | xargs rm -rf
+	cd $(TOOLS_DIR)/lib/python3.10 && find . | grep -E "(/__pycache__|/test/)" | xargs rm -rf
 else
-	cd /usr/lib/python3.8 && find . | grep -E "(/test/)" | xargs rm -rf
+	cd /usr/lib/python3.10 && find . | grep -E "(/test/)" | xargs rm -rf
 endif
 
 	@rm -rf $(DIR_APP)

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.8.0
+VER        = 4.9.0
 
 THISAPP    = findutils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = eeefe2e6380931a77dfa6d9350b43186
+$(DL_FILE)_MD5 = 4a4a547e888a944b2f3af31d789a1137
 
 install : $(TARGET)
 

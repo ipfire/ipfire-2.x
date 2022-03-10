@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A tool to measure network performance
+
 VER        = 3.10.1
 
 THISAPP    = iperf-$(VER)
@@ -35,6 +37,8 @@ PROG       = iperf3
 PAK_VER    = 4
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

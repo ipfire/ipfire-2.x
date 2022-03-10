@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = VDR implementation of the VTP (Video Transfer Protocol)
+
 VER        = 0.6.1
 GIT_VER    = e2a9b979d3fb92967c7a6a8221e674eb7e55c813
 
@@ -37,6 +39,8 @@ PROG       = vdr_streamdev
 PAK_VER    = 6
 
 DEPS       =
+
+SERVICES   =
 
 VDRPLUGVER = 2.4.7
 
@@ -62,7 +66,7 @@ download : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

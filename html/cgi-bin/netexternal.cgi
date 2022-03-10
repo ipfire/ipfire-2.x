@@ -83,13 +83,13 @@ if ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/  && $netsettings{'RED_TYPE'} e
 		if ($dhcpinfo{'dhcp_lease_time'} ne "") {
 			$lsetme=$dhcpinfo{'dhcp_lease_time'};
 			$lsetme=($lsetme/60);
-			
+
 			if ($lsetme > 59) {
 				$lsetme=($lsetme/60); $leasetime=$lsetme." Hour";
 			}else{
 				$leasetime=$lsetme." Minute";
 			}
-			
+
 			if ($lsetme > 1) {
 				$leasetime=$leasetime."s";
 			}
@@ -101,13 +101,13 @@ if ( $netsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/  && $netsettings{'RED_TYPE'} e
 		if ($dhcpinfo{'dhcp_renewal_time'} ne "") {
 			$rentme=$dhcpinfo{'dhcp_renewal_time'};
 			$rentme=($rentme/60);
-			
+
 			if ($rentme > 59){
 				$rentme=($rentme/60); $rnwltime=$rentme." Hour";
 			}else{
 				$rnwltime=$rentme." Minute";
 			}
-			
+
 			if ($rentme > 1){
 				$rnwltime=$rnwltime."s";
 			}

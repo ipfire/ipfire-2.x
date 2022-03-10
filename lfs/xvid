@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Xvid is a high quality MPEG-4 ASP video codec
+
 VER        = 1.3.7
 
 THISAPP    = xvidcore-$(VER)
@@ -35,6 +37,8 @@ PROG       = xvid
 PAK_VER    = 3
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

@@ -52,8 +52,8 @@ my $range = lc $query{'range'}; # lower case
 unless(($origin =~ /^\w+?\.cgi$/) && ($graph =~ /^[\w\-.,; ]+?$/) && ($range ~~ @Graphs::time_ranges)) {
 	# Send HTTP headers
 	_start_svg_output();
-	
-	_print_error("URL parameters missing or malformed.");	
+
+	_print_error("URL parameters missing or malformed.");
 	exit;
 }
 
@@ -62,13 +62,13 @@ unless(($origin =~ /^\w+?\.cgi$/) && ($graph =~ /^[\w\-.,; ]+?$/) && ($range ~~ 
 unless(($origin ~~ @supported_origins) || ($origin eq "getrrdimage.cgi")) {
 	# Rewrite to old URL format: /[graph origin cgi]?[graph name]?[time range]
 	my $location = "https://$ENV{'SERVER_NAME'}:$ENV{'SERVER_PORT'}/cgi-bin/${origin}?${graph}?${range}";
-	
+
 	# Send HTTP redirect
 	print "Status: 302 Found\n";
 	print "Location: $location\n";
 	print "Content-type: text/html; charset=UTF-8\n";
 	print "\n"; # End of HTTP headers
-	
+
 	print "Unsupported origin, request redirected to '$location'";
 	exit;
 }

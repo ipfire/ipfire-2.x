@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 21.11.0
+VER        = 22.02.0
 
 THISAPP    = poppler-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c1139795bc24a02b8a694f77233b8d22
+$(DL_FILE)_MD5 = 5f167d859b0ec3f416dbd929892c3c4d
 
 install : $(TARGET)
 

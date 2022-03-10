@@ -1,0 +1,4 @@
+usr/sbin/cgdisk
+usr/sbin/fixparts
+usr/sbin/gdisk
+usr/sbin/sgdisk

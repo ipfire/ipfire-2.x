@@ -1,0 +1,16 @@
+etc/fcron.hourly/squid-accounting
+srv/web/ipfire/cgi-bin/accounting.cgi
+#srv/web/ipfire/html/accounting
+srv/web/ipfire/html/accounting/logo
+usr/local/bin/acct.pl
+var/ipfire/accounting
+var/ipfire/accounting/acct-lib.pl
+var/ipfire/accounting/bill
+var/ipfire/accounting/dbinstall.pl
+var/ipfire/addon-lang/acct.de.pl
+var/ipfire/addon-lang/acct.en.pl
+var/ipfire/addon-lang/acct.fr.pl
+var/ipfire/addon-lang/acct.tr.pl
+var/ipfire/backup/addons/includes/proxy-accounting
+var/ipfire/menu.d/EX-squid-accounting.menu
+var/log/accounting.log

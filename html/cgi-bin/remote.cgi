@@ -72,7 +72,7 @@ if ( (($remotesettings{'ACTION'} eq $Lang::tr{'save'}) || ($remotesettings{'ACTI
 		&General::log($Lang::tr{'ssh is disabled'});
 		unlink "${General::swroot}/remote/enablessh";
 	}
-	
+
 	if ($remotesettings{'SSH_PORT'} eq 'on')
 	{
 		&General::log("SSH Port 22");
@@ -81,7 +81,7 @@ if ( (($remotesettings{'ACTION'} eq $Lang::tr{'save'}) || ($remotesettings{'ACTI
 	{
 		&General::log("SSH Port 222");
 	}
-	
+
 if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} || $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ){
 	if ($remotesettings{'ENABLE_SSH'} eq 'off')
 	{
@@ -90,7 +90,7 @@ if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} || $remotesetting
 	}
   if ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart15'} ) { $counter = 900;}
   elsif ( $remotesettings{'ACTION'} eq $Lang::tr{'ssh tempstart30'} ) { $counter = 1800;}
- 
+
   system("/usr/local/bin/sshctrl tempstart $counter >/dev/null");
  }
 else {

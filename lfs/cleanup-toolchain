@@ -40,11 +40,11 @@ GCC_VER    = 4.1.2
 # Top-level Rules
 ###############################################################################
 
-objects = 
+objects =
 
 install : $(TARGET)
 
-check : 
+check :
 
 download :
 

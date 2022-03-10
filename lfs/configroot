@@ -105,7 +105,6 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/firewall/convert-outgoingfw	/usr/sbin/convert-outgoingfw
 	cp $(DIR_SRC)/config/firewall/convert-dmz	/usr/sbin/convert-dmz
 	cp $(DIR_SRC)/config/firewall/convert-portfw	/usr/sbin/convert-portfw
-	cp $(DIR_SRC)/config/firewall/p2protocols		$(CONFIG_ROOT)/firewall/p2protocols
 	cp $(DIR_SRC)/config/firewall/firewall-policy	/usr/sbin/firewall-policy
 	cp $(DIR_SRC)/config/fwhosts/icmp-types			$(CONFIG_ROOT)/fwhosts/icmp-types
 	cp $(DIR_SRC)/config/fwhosts/customservices		$(CONFIG_ROOT)/fwhosts/customservices

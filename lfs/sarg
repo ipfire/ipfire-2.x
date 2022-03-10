@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Squid Analysis Report Generator
+
 VER        = 2.4.0
 
 THISAPP    = sarg-$(VER)
@@ -35,6 +37,8 @@ PROG       = sarg
 PAK_VER    = 5
 
 DEPS       =
+
+SERVICES   =
 
 CFLAGS    += -fcommon
 
@@ -56,7 +60,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

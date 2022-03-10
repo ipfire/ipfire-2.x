@@ -240,7 +240,7 @@ sub readhash
 			{
 				$val =~ s/^\'//g;
 				$val =~ s/\'$//g;
-	
+
 				# Untaint variables read from hash
 				$var =~ /([A-Za-z0-9_-]*)/;        $var = $1;
 				$val =~ /([\w\W]*)/; $val = $1;

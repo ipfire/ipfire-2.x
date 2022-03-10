@@ -1,48 +1,25 @@
 #!/usr/bin/perl -w
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
 use strict;
-
-##########################################
-##
-## DESCRIPTION
-##
-##   The tc-graph daemon script: "tc-collector"
-##   Which is part of the ADSL-optimizer.
-##
-##   The script will become a daemon and periodically collect data
-##   from the Linux traffic control system.  The collected data is
-##   stored in some RRD-data files, which is created automatically by
-##   the script if they don't exist.
-##
-## GRAPHs
-##
-##   How the RRD-data is displayed as graphs is not part of the
-##   tc-collector tool.  But we recommend using the RRD-frontend 'ddraw'.
-##   We have included some 'ddraw' examples (which is hardcoded to use
-##   files from '/var/spool/rrdqueues').
-##
-##      drraw:  http://web.taranis.org/drraw/
-##
-##
-## REQUIRES
-##
-##   RRDtools Perl interface RRDs
-##   The "tc" command.
-##
-##
-## AUTHOR
-##   Jesper Dangaard Brouer <hawk@diku.dk>, d.16/4-2004
-##
-## CHANGELOG
-##   2004-04-16:  Initial version.
-##   2004-05-27:  Daemon version.
-##
-## $Id: tc-collector.pl,v 1.12 2005/03/19 19:31:08 hawk Exp $
-##########################################
-
-# TODO:
-#  * Calc time used to parse, use to make time steps more precise
-#  * Device list support
-#  * Detecting the correct devices
 
 # Configuration options:
 #

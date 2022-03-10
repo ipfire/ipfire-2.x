@@ -40,7 +40,7 @@ int main(int argc, char**argv)
 
 	// Check what command is asked
 	if (argc==1)
-	{	    
+	{
 	    fprintf (stderr, "Missing reboot command!\n");
 	    return 1;
 	}

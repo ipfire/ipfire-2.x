@@ -142,7 +142,7 @@ if ($sambasettings{'ACTION'} eq $Lang::tr{'save'}) {
 }
 
 &General::readhash("${General::swroot}/samba/settings", \%sambasettings);
-  
+
 
 if ($errormessage)
 	{
@@ -759,7 +759,7 @@ sub isrunning
 				{
 				if (/^Name:\W+(.*)/)
 					{
-					$testcmd = $1; 
+					$testcmd = $1;
 					}
 				}
 			close FILE;
@@ -775,7 +775,7 @@ sub isrunning
 sub writeconfiguration() {
 	open (FILE, ">${General::swroot}/samba/global") or die "Can't save the global settings: $!";
 	flock (FILE, 2);
-	
+
 	print FILE <<END;
 # global.settings by IPFire Project
 

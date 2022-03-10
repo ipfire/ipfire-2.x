@@ -40,13 +40,13 @@ $modemsettings{'VALID'} = '';
 &Header::getcgihash(\%modemsettings);
 
 if ($modemsettings{'ACTION'} eq $Lang::tr{'save'})
-{ 
+{
         if (!($modemsettings{'TIMEOUT'} =~ /^\d+$/))
         {
       	 	$errormessage = $Lang::tr{'timeout must be a number'};
 	 	goto ERROR;
         }
-ERROR:   
+ERROR:
         if ($errormessage) {
                 $modemsettings{'VALID'} = 'no'; }
         else {

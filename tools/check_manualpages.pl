@@ -56,9 +56,9 @@ if ($baseurl =~ /\/\s*$/) {
 # Loop trough configured manual pages
 foreach my $page (keys %manualpages) {
 	# Build absolute path and URL
-	my $cgifile = "${basedir}/html/cgi-bin/${page}.cgi";	
+	my $cgifile = "${basedir}/html/cgi-bin/${page}.cgi";
 	my $url = "${baseurl}/$manualpages{$page}";
-	
+
 	print "${page}.cgi -> '$url'\n";
 
 	# Check CGI file exists
@@ -76,7 +76,7 @@ foreach my $page (keys %manualpages) {
 	if($status != 200) {
 		die("ERROR: Received unexpected HTTP '$status'!\n");
 	}
-	
+
 	print "SUCCESS: Received HTTP '$status'.\n";
 }
 

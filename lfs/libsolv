@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Package dependency solver using a satisfiability algorithm
+
 VER        = 0.7.19
 
 THISAPP    = libsolv-$(VER)
@@ -35,6 +37,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libsolv
 DEPS       =
 PAK_VER    = 4
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist : 
+dist :
 	@$(PAK)
 
 ###############################################################################

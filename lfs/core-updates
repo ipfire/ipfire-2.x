@@ -66,7 +66,7 @@ core/%:
 	#remove excluded files from ROOTFILES
 	grep -f $(DIR_SRC)/config/rootfiles/$@/exclude -v /tmp/ROOTFILES.tmp > /tmp/ROOTFILES
 	rm -rf /tmp/ROOTFILES.tmp
-	
+
 	#Change KVER to Kernelversion
 	sed -e "s/KVER/$(KVER)/g" -i /tmp/ROOTFILES
 
@@ -92,8 +92,10 @@ core/%:
 		update.sh files.tar.xz ROOTFILES
 	rm -rf /install/packages/package
 	sed -e "s/NAME/core-upgrade/g" \
+	    -e "s/SUMMARY/IPFire Core Update/g" \
 		-e "s/VER/$(VERSION)/g" \
 		-e "s/RELEASE/$$(basename $@)/g" \
 		-e "s/DEPS/$(DEPS)/g" \
 		-e "s/SIZE/`ls -l \/install\/packages\/core-upgrade-$(VERSION)-$$(basename $@).ipfire | awk '{ print $$5 }'`/g" \
+		-e "s/SERVICES//g" \
 		< /usr/src/src/pakfire/meta > /install/packages/meta-core-upgrade-$$(basename $@)

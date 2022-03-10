@@ -3846,6 +3846,8 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/d2i_X509_REVOKED.html
 #usr/share/doc/openssl/html/man3/d2i_X509_SIG.html
 #usr/share/doc/openssl/html/man3/d2i_X509_VAL.html
+#usr/share/doc/openssl/html/man3/d2i_X509_bio.html
+#usr/share/doc/openssl/html/man3/d2i_X509_fp.html
 #usr/share/doc/openssl/html/man3/i2d_ACCESS_DESCRIPTION.html
 #usr/share/doc/openssl/html/man3/i2d_ADMISSIONS.html
 #usr/share/doc/openssl/html/man3/i2d_ADMISSION_SYNTAX.html
@@ -4040,6 +4042,8 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/i2d_X509_REVOKED.html
 #usr/share/doc/openssl/html/man3/i2d_X509_SIG.html
 #usr/share/doc/openssl/html/man3/i2d_X509_VAL.html
+#usr/share/doc/openssl/html/man3/i2d_X509_bio.html
+#usr/share/doc/openssl/html/man3/i2d_X509_fp.html
 #usr/share/doc/openssl/html/man3/i2d_re_X509_CRL_tbs.html
 #usr/share/doc/openssl/html/man3/i2d_re_X509_REQ_tbs.html
 #usr/share/doc/openssl/html/man3/i2d_re_X509_tbs.html
@@ -7819,6 +7823,8 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/d2i_X509_REVOKED.3
 #usr/share/man/man3/d2i_X509_SIG.3
 #usr/share/man/man3/d2i_X509_VAL.3
+#usr/share/man/man3/d2i_X509_bio.3
+#usr/share/man/man3/d2i_X509_fp.3
 #usr/share/man/man3/i2d_ACCESS_DESCRIPTION.3
 #usr/share/man/man3/i2d_ADMISSIONS.3
 #usr/share/man/man3/i2d_ADMISSION_SYNTAX.3
@@ -8013,6 +8019,8 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/i2d_X509_REVOKED.3
 #usr/share/man/man3/i2d_X509_SIG.3
 #usr/share/man/man3/i2d_X509_VAL.3
+#usr/share/man/man3/i2d_X509_bio.3
+#usr/share/man/man3/i2d_X509_fp.3
 #usr/share/man/man3/i2d_re_X509_CRL_tbs.3
 #usr/share/man/man3/i2d_re_X509_REQ_tbs.3
 #usr/share/man/man3/i2d_re_X509_tbs.3

@@ -25,12 +25,15 @@
 include Config
 
 VER        = 0.2.10
+SUMMARY    = MessagePack (de)serializer
 
 THISAPP    = inotify-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

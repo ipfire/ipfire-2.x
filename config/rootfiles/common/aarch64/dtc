@@ -13,8 +13,8 @@
 #lib/libfdt.a
 #lib/libfdt.so
 #lib/libfdt.so.1
-#lib/python3.8
-#lib/python3.8/site-packages
-#lib/python3.8/site-packages/_libfdt.cpython-38-aarch64-linux-gnu.so
-#lib/python3.8/site-packages/libfdt-1.6.1-py3.8.egg-info
-#lib/python3.8/site-packages/libfdt.py
+#lib/python3.10
+#lib/python3.10/site-packages
+#lib/python3.10/site-packages/_libfdt.cpython-310-aarch64-linux-gnu.so
+#lib/python3.10/site-packages/libfdt-1.6.1-py3.10.egg-info
+#lib/python3.10/site-packages/libfdt.py

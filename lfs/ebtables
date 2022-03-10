@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Ethernet Bridge Tables
+
 VER        = 2.0.10-4
 
 THISAPP    = ebtables-v$(VER)
@@ -35,6 +37,8 @@ PROG       = ebtables
 PAK_VER    = 3
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

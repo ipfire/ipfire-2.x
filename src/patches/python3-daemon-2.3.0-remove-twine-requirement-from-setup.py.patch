@@ -1,0 +1,10 @@
+--- python-daemon-2.3.0/setup.py_orig	2021-02-21 06:45:31.000000000 +0100
++++ python-daemon-2.3.0/setup.py	2022-01-07 14:38:01.612173070 +0100
+@@ -66,7 +66,6 @@
+         zip_safe=False,
+         setup_requires=[
+             "docutils",
+-            "twine",
+             ],
+         test_suite="setup.test_suite",
+         tests_require=test_requirements,

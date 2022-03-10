@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Network tool to concatenate and redirect sockets
+
 VER        = 7.91
 
 THISAPP    = ncat-$(VER)
@@ -35,6 +37,8 @@ PROG       = ncat
 PAK_VER    = 7
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -77,7 +81,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ncat-7.91-fix-a-unix-domain-socket-crash.patch	
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ncat-7.91-fix-a-unix-domain-socket-crash.patch
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && mkdir -p build
 	cd $(DIR_APP) && ./configure	\

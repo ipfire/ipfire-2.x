@@ -2954,10 +2954,10 @@ sub writeconfigfile
 	foreach $category (@categories) {
 		$blacklist = $category;
 		$category =~ s/\//_/g;
-		
+
 		if ( $filtersettings{"FILTER_".uc($category)} ne "on" ){
 			my $constraintrule = "false";
-			
+
 			foreach (@tclist){
 				chomp;
 				@tc = split(/\,/);
@@ -2966,12 +2966,12 @@ sub writeconfigfile
 					$constraintrule = "true";
 				}
 			}
-			
+
 			if ( $constraintrule eq "false"){
 				next;
 			}
 		}
-		
+
 		print FILE "dest $category {\n";
 		if (-e "$dbdir/$blacklist/domains") {
 			print FILE "    domainlist     $blacklist\/domains\n";

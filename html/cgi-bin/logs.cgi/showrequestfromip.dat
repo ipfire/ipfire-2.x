@@ -3,7 +3,7 @@
 #
 # This code is distributed under the terms of the GPL
 #
-# JC HERITIER 
+# JC HERITIER
 # page inspired from the initial firewalllog.dat
 #
 # Modified for IPFire by Christian Schmidt (www.ipfire.org)
@@ -162,7 +162,7 @@ if (!$skip)
 			}
 		}
 	}
-	close (FILE);	
+	close (FILE);
 }
 
 $skip=0;
@@ -230,7 +230,7 @@ print <<END
 	<select name='DAY'>
 END
 ;
-for ($day = 1; $day <= 31; $day++) 
+for ($day = 1; $day <= 31; $day++)
 {
 	print "\t<option ";
 	if ($day == $cgiparams{'DAY'}) {
@@ -256,7 +256,7 @@ END
 print "<p><b>$Lang::tr{'firewall hits'} $longmonthstr $daystr: $lines</b></p>";
 
 if ($start == -1) {
-	$start = $lines - ${Header::viewsize}; 
+	$start = $lines - ${Header::viewsize};
 }
 if ($start >= $lines - ${Header::viewsize}) { $start = $lines - ${Header::viewsize}; };
 if ($start < 0) { $start = 0; }
@@ -320,10 +320,10 @@ foreach $_ (@slice) {
 			if ($a =~  /DPT\=([\d\.]+)/){ $dstport = $1; }
 
 			if ($lines % 2) {
-				print "<tr bgcolor='${Header::table1colour}'>\n"; 
+				print "<tr bgcolor='${Header::table1colour}'>\n";
 			}
 			else {
-				print "<tr bgcolor='${Header::table2colour}'>\n"; 
+				print "<tr bgcolor='${Header::table2colour}'>\n";
 			}
 			print <<END
 			<td align='center'>$time</td>
@@ -375,19 +375,19 @@ END
 
 	print "<td align='center' width='50%'>";
 	if ($prev != -1) {
-		print "<a href='/cgi-bin/logs.cgi/showrequestfromip.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{ip}'>$Lang::tr{'older'}</a>"; 
+		print "<a href='/cgi-bin/logs.cgi/showrequestfromip.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{ip}'>$Lang::tr{'older'}</a>";
 	}
 	else {
-		print "$Lang::tr{'older'}"; 
+		print "$Lang::tr{'older'}";
 	}
 	print "</td>\n";
 
 	print "<td align='center' width='50%'>";
 	if ($next != -1) {
-		print "<a href='/cgi-bin/logs.cgi/showrequestfromip.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{ip}'>$Lang::tr{'newer'}</a>"; 
+		print "<a href='/cgi-bin/logs.cgi/showrequestfromip.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{ip}'>$Lang::tr{'newer'}</a>";
 	}
 	else {
-		print "$Lang::tr{'newer'}"; 
+		print "$Lang::tr{'newer'}";
 	}
 	print "</td>\n";
 

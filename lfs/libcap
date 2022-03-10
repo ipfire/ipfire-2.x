@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.61
+VER        = 2.63
 
 THISAPP    = libcap-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 3bf105e47a8671035a0ce0812185c5e4
+$(DL_FILE)_MD5 = 18410cec436f827e698ee9ea16ada9b7
 
 install : $(TARGET)
 

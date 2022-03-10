@@ -3,7 +3,7 @@
 #
 # This code is distributed under the terms of the GPL
 #
-# JC HERITIER 
+# JC HERITIER
 # page inspired from the initial firewalllog.dat
 #
 # Modified for IPFire by Christian Schmidt (www.ipfire.org)
@@ -168,7 +168,7 @@ if (!$skip)
 			if ($packet =~ /PHYSIN=(\w+)/) { $iface = $1; } elsif ($packet =~ /IN=(\w+)/) { $iface = $1; }
 			# Extract ipv4 and ipv6 addresses
 			if (($packet =~ /SRC\=(([\d]{1,3})(\.([\d]{1,3})){3})/) or ($packet =~ /SRC\=(([0-9a-fA-F]{0,4})(\:([0-9a-fA-F]{0,4})){2,7})/)) {
-				$srcaddr = $1; 
+				$srcaddr = $1;
 			}
 
 			if($iface eq $country) {
@@ -186,7 +186,7 @@ if (!$skip)
 			}
 		}
 	}
-	close (FILE);	
+	close (FILE);
 }
 
 $skip=0;
@@ -257,7 +257,7 @@ for ($month = 0; $month < 12; $month++)
 {
 	print "\t<option ";
 	if ($month == $cgiparams{'MONTH'}) {
-		print "selected='selected' "; 
+		print "selected='selected' ";
 	}
 	print "value='$month'>$longmonths[$month]</option>\n";
 }
@@ -269,7 +269,7 @@ print <<END
 	<select name='DAY'>
 END
 ;
-for ($day = 1; $day <= 31; $day++) 
+for ($day = 1; $day <= 31; $day++)
 {
 	print "\t<option ";
 	if ($day == $cgiparams{'DAY'}) {
@@ -295,7 +295,7 @@ END
 print "<p><b>$Lang::tr{'firewall hits'} $longmonthstr $daystr: $lines</b></p>";
 
 if ($start == -1) {
-	$start = $lines - ${Header::viewsize}; 
+	$start = $lines - ${Header::viewsize};
 }
 if ($start >= $lines - ${Header::viewsize}) { $start = $lines - ${Header::viewsize}; };
 if ($start < 0) { $start = 0; }
@@ -336,9 +336,9 @@ foreach $_ (@slice)
 	if    (/^... (..) (..:..:..) [\w\-]+ kernel:(.*)(PHYSIN=.*)$/) {}
 	elsif (/^... (..) (..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/) {};
 	my $packet = $4;
-	my $iface = ''; 
+	my $iface = '';
 	# If ipv6 uses bridge, use PHYSIN otherwise use IN
-	if ($packet =~ /PHYSIN=(\w+)/) { $iface = $1; } elsif ($packet =~ /IN=(\w+)/) { $iface = $1; }	
+	if ($packet =~ /PHYSIN=(\w+)/) { $iface = $1; } elsif ($packet =~ /IN=(\w+)/) { $iface = $1; }
 	if ( $1 =~ /2./ ){ $iface=""; }
 	my $srcaddr = '';
 	# Extract ipv4 and ipv6 addresses
@@ -377,10 +377,10 @@ foreach $_ (@slice)
 			if ($a =~ /DPT\=([\d\.]+)/){ $dstport = $1; }
 
 			if ($lines % 2) {
-				print "<tr bgcolor='${Header::table1colour}'>\n"; 
+				print "<tr bgcolor='${Header::table1colour}'>\n";
 			}
 			else {
-				print "<tr bgcolor='${Header::table2colour}'>\n"; 
+				print "<tr bgcolor='${Header::table2colour}'>\n";
 			}
 			print <<END
 			<td align='center'>$time</td>
@@ -432,19 +432,19 @@ END
 
 	print "<td align='center' width='50%'>";
 	if ($prev != -1) {
-		print "<a href='/cgi-bin/logs.cgi/showrequestfromcountry.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{country}'>$Lang::tr{'older'}</a>"; 
+		print "<a href='/cgi-bin/logs.cgi/showrequestfromcountry.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{country}'>$Lang::tr{'older'}</a>";
 	}
 	else {
-		print "$Lang::tr{'older'}"; 
+		print "$Lang::tr{'older'}";
 	}
 	print "</td>\n";
 
 	print "<td align='center' width='50%'>";
 	if ($next != -1) {
-		print "<a href='/cgi-bin/logs.cgi/showrequestfromcountry.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{country}'>$Lang::tr{'newer'}</a>"; 
+		print "<a href='/cgi-bin/logs.cgi/showrequestfromcountry.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'},$cgiparams{country}'>$Lang::tr{'newer'}</a>";
 	}
 	else {
-		print "$Lang::tr{'newer'}"; 
+		print "$Lang::tr{'newer'}";
 	}
 
 	print "</td>\n";

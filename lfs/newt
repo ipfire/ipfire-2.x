@@ -74,7 +74,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--prefix=/usr 		\
 			--without-gpm-support 	\
 			--without-tcl 		\
-			--with-python=python3.8
+			--with-python=python3.10
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)

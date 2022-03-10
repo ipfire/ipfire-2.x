@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Amazon Web Services Command Line Interface
+
 VER        = 1.18.188
 
 THISAPP    = awscli-$(VER)
@@ -32,9 +34,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = aws-cli
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       = python3-botocore python3-colorama python3-docutils python3-pyasn1 python3-rsa python3-s3transfer python3-six python3-yaml
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

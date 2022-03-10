@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007-2021 IPFire Team <info@ipfire.org>.                   #
+# Copyright (C) 2007-2022 IPFire Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -26,7 +26,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.27"							# Version number
-CORE="164"							# Core Level (Filename)
+CORE="165"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
@@ -38,7 +38,7 @@ GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"			# Git Branch
 GIT_TAG="$(git tag | tail -1)"					# Git Tag
 GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
-TOOLCHAINVER=20210701
+TOOLCHAINVER=20220203
 
 # use multicore and max compression
 ZSTD_OPT="-T0 --ultra -22"
@@ -145,35 +145,35 @@ configure_build() {
 
 	case "${build_arch}" in
 		x86_64)
-			BUILDTARGET="${build_arch}-unknown-linux-gnu"
+			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
 			CFLAGS_ARCH="-m64 -mtune=generic -fstack-clash-protection -fcf-protection"
 			;;
 
 		aarch64)
-			BUILDTARGET="${build_arch}-unknown-linux-gnu"
+			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="arm"
 			CFLAGS_ARCH="-fstack-clash-protection"
 			;;
 
 		armv7hl)
-			BUILDTARGET="${build_arch}-unknown-linux-gnueabi"
+			BUILDTARGET="${build_arch}-pc-linux-gnueabi"
 			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
 			BUILD_PLATFORM="arm"
 			CFLAGS_ARCH="-march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard"
 			;;
 
 		armv6l)
-			BUILDTARGET="${build_arch}-unknown-linux-gnueabi"
+			BUILDTARGET="${build_arch}-pc-linux-gnueabi"
 			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
 			BUILD_PLATFORM="arm"
 			CFLAGS_ARCH="-march=armv6zk+fp -mfpu=vfp -mfloat-abi=softfp -fomit-frame-pointer"
 			;;
 
 		riscv64)
-			BUILDTARGET="${build_arch}-unknown-linux-gnu"
+			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="riscv"
 			CFLAGS_ARCH="-fstack-clash-protection"
@@ -293,10 +293,6 @@ stdumount() {
 	umount $BASEDIR/build/usr/src/src		2>/dev/null;
 	umount $BASEDIR/build/usr/src		2>/dev/null;
 	umount $BASEDIR/build/tmp		2>/dev/null;
-}
-
-now() {
-	date -u "+%s"
 }
 
 format_runtime() {
@@ -437,7 +433,7 @@ prepareenv() {
 	fi
 
 	# Trap on emergency exit
-	trap "exiterror 'Build process interrupted'" SIGINT SIGTERM SIGKILL SIGSTOP SIGQUIT
+	trap "exiterror 'Build process interrupted'" SIGINT SIGTERM SIGQUIT
 
 	# Checking if running as root user
 	if [ $(id -u) -ne 0 ]; then
@@ -547,14 +543,19 @@ prepareenv() {
 	esac
 
 	# Setup ccache cache size
-	enterchroot ccache --max-size="${CCACHE_CACHE_SIZE}" >/dev/null
+	enterchroot ccache --max-size="${CCACHE_CACHE_SIZE}"
 }
 
 enterchroot() {
 	# Install QEMU helper, if needed
 	qemu_install_helper
 
-	local PATH="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/bin"
+	local PATH="${TOOLS_DIR}/ccache/bin:/bin:/usr/bin:/sbin:/usr/sbin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin"
+
+	# Prepend any custom changes to PATH
+	if [ -n "${CUSTOM_PATH}" ]; then
+		PATH="${CUSTOM_PATH}:${PATH}"
+	fi
 
 	PATH="${PATH}" chroot ${LFS} env -i \
 		HOME="/root" \
@@ -658,8 +659,15 @@ lfsmake1() {
 	lfsmakecommoncheck $*
 	[ $? == 1 ] && return 0
 
+	# Set PATH to use the toolchain tools first and then whatever the host has set
+	local PATH="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/sbin:${TOOLS_DIR}/bin:${PATH}"
+
+	if [ -n "${CUSTOM_PATH}" ]; then
+		PATH="${CUSTOM_PATH}:${PATH}"
+	fi
+
 	cd $BASEDIR/lfs && env -i \
-		PATH="${TOOLS_DIR}/ccache/bin:${TOOLS_DIR}/bin:$PATH" \
+		PATH="${PATH}" \
 		CCACHE_DIR="${CCACHE_DIR}"/${BUILD_ARCH}/${TOOLCHAINVER} \
 		CCACHE_TEMPDIR="${CCACHE_TEMPDIR}" \
 		CCACHE_COMPILERCHECK="${CCACHE_COMPILERCHECK}" \
@@ -695,7 +703,7 @@ lfsmake2() {
 	local PS1='\u:\w$ '
 
 	enterchroot \
-		${EXTRA_PATH}bash -x -c "cd /usr/src/lfs && \
+		bash -x -c "cd /usr/src/lfs && \
 			make -f $* \
 			LFS_BASEDIR=/usr/src install" \
 		>> ${LOGFILE} 2>&1 &
@@ -729,7 +737,7 @@ ipfiredist() {
 wait_until_finished() {
 	local pid=${1}
 
-	local start_time=$(now)
+	local start_time="${SECONDS}"
 
 	# Show progress
 	if ${INTERACTIVE}; then
@@ -739,7 +747,7 @@ wait_until_finished() {
 
 		local runtime
 		while kill -0 ${pid} 2>/dev/null; do
-			print_runtime $(( $(now) - ${start_time} ))
+			print_runtime $(( SECONDS - start_time ))
 
 			# Wait a little
 			sleep 1
@@ -751,7 +759,7 @@ wait_until_finished() {
 	local ret=$?
 
 	if ! ${INTERACTIVE}; then
-		print_runtime $(( $(now) - ${start_time} ))
+		print_runtime $(( SECONDS - start_time ))
 	fi
 
 	return ${ret}
@@ -773,7 +781,7 @@ fake_environ() {
 }
 
 qemu_environ() {
-	local env
+	local env="QEMU_TARGET_HELPER=${QEMU_TARGET_HELPER}"
 
 	# Don't add anything if qemu is not used.
 	if ! qemu_is_required; then
@@ -784,6 +792,11 @@ qemu_environ() {
 	case "${BUILD_ARCH}" in
 		arm*)
 			QEMU_CPU="${QEMU_CPU:-cortex-a9}"
+
+			env="${env} QEMU_CPU=${QEMU_CPU}"
+			;;
+		riscv64)
+			QEMU_CPU="${QEMU_CPU:-sifive-u54}"
 
 			env="${env} QEMU_CPU=${QEMU_CPU}"
 			;;
@@ -900,7 +913,7 @@ qemu_find_build_helper_name() {
 file_is_static() {
 	local file="${1}"
 
-	file ${file} 2>/dev/null | grep -q "statically linked"
+	file -L "${file}" 2>/dev/null | grep -q "statically linked"
 }
 
 update_language_list() {
@@ -1026,9 +1039,9 @@ buildtoolchain() {
 	lfsmake1 libxcrypt
 	lfsmake1 gcc			PASS=L
 	lfsmake1 zlib
-	lfsmake1 zstd
 	lfsmake1 binutils			PASS=2
 	lfsmake1 gcc			PASS=2
+	lfsmake1 zstd
 	lfsmake1 ccache
 	lfsmake1 tcl
 	lfsmake1 expect
@@ -1057,7 +1070,7 @@ buildtoolchain() {
 	lfsmake1 bison
 	lfsmake1 flex
 	lfsmake1 fake-environ
-	lfsmake1 strip
+	CUSTOM_PATH="${PATH}" lfsmake1 strip
 	lfsmake1 cleanup-toolchain
 }
 
@@ -1138,6 +1151,7 @@ buildipfire() {
   lfsmake2 configroot
   lfsmake2 initscripts
   lfsmake2 backup
+  lfsmake2 rust
   lfsmake2 openssl
   lfsmake2 kmod
   lfsmake2 udev
@@ -1185,10 +1199,8 @@ buildipfire() {
   lfsmake2 rtl8812au		KCFG=""
   lfsmake2 rtl8822bu		KCFG=""
   lfsmake2 xradio		KCFG=""
-  lfsmake2 xtables-addons	KCFG=""
   lfsmake2 linux-initrd		KCFG=""
 
-  lfsmake2 xtables-addons	USPACE="1"
   lfsmake2 libgpg-error
   lfsmake2 libgcrypt
   lfsmake2 libassuan
@@ -1333,7 +1345,7 @@ buildipfire() {
   lfsmake2 usbutils
   lfsmake2 libxml2
   lfsmake2 libxslt
-  lfsmake2 BerkeleyDB
+  lfsmake2 perl-BerkeleyDB
   lfsmake2 cyrus-sasl
   lfsmake2 openldap
   lfsmake2 apache2
@@ -1356,15 +1368,18 @@ buildipfire() {
   lfsmake2 ntfs-3g
   lfsmake2 ethtool
   lfsmake2 fcron
-  lfsmake2 ExtUtils-PkgConfig
+  lfsmake2 perl-ExtUtils-PkgConfig
   lfsmake2 perl-GD
-  lfsmake2 GD-Graph
-  lfsmake2 GD-TextUtil
+  lfsmake2 perl-GD-Graph
+  lfsmake2 perl-GD-TextUtil
   lfsmake2 perl-Device-SerialPort
   lfsmake2 perl-Device-Modem
   lfsmake2 perl-Apache-Htpasswd
   lfsmake2 perl-Parse-Yapp
   lfsmake2 perl-Data-UUID
+  lfsmake2 perl-Try-Tiny
+  lfsmake2 perl-HTTP-Message
+  lfsmake2 perl-HTTP-Date
   lfsmake2 gnupg
   lfsmake2 hdparm
   lfsmake2 sdparm
@@ -1378,35 +1393,37 @@ buildipfire() {
   lfsmake2 logwatch
   lfsmake2 misc-progs
   lfsmake2 nano
-  lfsmake2 URI
+  lfsmake2 perl-URI
   lfsmake2 perl-CGI
   lfsmake2 perl-Switch
-  lfsmake2 HTML-Tagset
-  lfsmake2 HTML-Parser
-  lfsmake2 HTML-Template
-  lfsmake2 Compress-Zlib
-  lfsmake2 Digest
-  lfsmake2 Digest-SHA1
-  lfsmake2 Digest-HMAC
-  lfsmake2 libwww-perl
-  lfsmake2 Net-DNS
-  lfsmake2 Net-IPv4Addr
-  lfsmake2 Net_SSLeay
-  lfsmake2 IO-Stringy
-  lfsmake2 IO-Socket-SSL
-  lfsmake2 Unix-Syslog
-  lfsmake2 Mail-Tools
-  lfsmake2 MIME-Tools
-  lfsmake2 Net-Server
-  lfsmake2 Canary-Stability
-  lfsmake2 Convert-TNEF
-  lfsmake2 Convert-UUlib
-  lfsmake2 Archive-Tar
-  lfsmake2 Archive-Zip
-  lfsmake2 Text-Tabs+Wrap
-  lfsmake2 XML-Parser
-  lfsmake2 Crypt-PasswdMD5
-  lfsmake2 Net-Telnet
+  lfsmake2 perl-HTML-Tagset
+  lfsmake2 perl-HTML-Parser
+  lfsmake2 perl-HTML-Template
+  lfsmake2 perl-Compress-Zlib
+  lfsmake2 perl-Digest
+  lfsmake2 perl-Digest-SHA1
+  lfsmake2 perl-Digest-HMAC
+  lfsmake2 perl-libwww
+	lfsmake2 perl-LWP-Protocol-https
+  lfsmake2 perl-Net-HTTP
+  lfsmake2 perl-Net-DNS
+  lfsmake2 perl-Net-IPv4Addr
+  lfsmake2 perl-Net_SSLeay
+  lfsmake2 perl-IO-Stringy
+  lfsmake2 perl-IO-Socket-SSL
+  lfsmake2 perl-Unix-Syslog
+  lfsmake2 perl-Mail-Tools
+  lfsmake2 perl-MIME-Tools
+  lfsmake2 perl-Net-Server
+  lfsmake2 perl-Canary-Stability
+  lfsmake2 perl-Convert-TNEF
+  lfsmake2 perl-Convert-UUlib
+  lfsmake2 perl-Archive-Tar
+  lfsmake2 perl-Archive-Zip
+  lfsmake2 perl-Text-Tabs+Wrap
+  lfsmake2 perl-XML-Parser
+  lfsmake2 perl-Crypt-PasswdMD5
+  lfsmake2 perl-Net-Telnet
   lfsmake2 python3-setuptools
   lfsmake2 python3-inotify
   lfsmake2 python3-docutils
@@ -1497,7 +1514,6 @@ buildipfire() {
   lfsmake2 rsync
   lfsmake2 rpcbind
   lfsmake2 keyutils
-  lfsmake2 libnfsidmap
   lfsmake2 nfs
   lfsmake2 gnu-netcat
   lfsmake2 ncat
@@ -1594,7 +1610,24 @@ buildipfire() {
   lfsmake2 wireless-regdb
   lfsmake2 libsolv
   lfsmake2 ddns
+  lfsmake2 python3-pycparser
+  lfsmake2 python3-charset-normalizer
+  lfsmake2 python3-certifi
+  lfsmake2 python3-idna
+  lfsmake2 python3-requests
+  lfsmake2 python3-toml
+  lfsmake2 python3-pyproject2setuppy
+  lfsmake2 python3-tomli
+  lfsmake2 python3-pep517
+  lfsmake2 python3-build
+  lfsmake2 python3-install
+  lfsmake2 python3-urllib3
+  lfsmake2 python3-flit
+  lfsmake2 python3-packaging
+  lfsmake2 python3-typing-extensions
+  lfsmake2 python3-semantic-version
   lfsmake2 python3-setuptools-scm
+  lfsmake2 python3-setuptools-rust
   lfsmake2 python3-six
   lfsmake2 python3-dateutil
   lfsmake2 python3-jmespath
@@ -1603,10 +1636,17 @@ buildipfire() {
   lfsmake2 python3-s3transfer
   lfsmake2 python3-rsa
   lfsmake2 python3-pyasn1
-  lfsmake2 python3-urllib3
   lfsmake2 python3-botocore
-  lfsmake2 python3-msgpack
+  lfsmake2 python3-cffi
+  lfsmake2 python3-cryptography
+  lfsmake2 python3-circuitbreaker
+  lfsmake2 python3-pytz
+  lfsmake2 python3-click
+  lfsmake2 python3-arrow
+  lfsmake2 python3-terminaltables
   lfsmake2 aws-cli
+  lfsmake2 oci-python-sdk
+  lfsmake2 oci-cli
   lfsmake2 transmission
   lfsmake2 mtr
   lfsmake2 minidlna
@@ -1639,7 +1679,7 @@ buildipfire() {
   lfsmake2 perl-Font-TTF
   lfsmake2 perl-IO-String
   lfsmake2 perl-PDF-API2
-  lfsmake2 squid-accounting
+  lfsmake2 proxy-accounting
   lfsmake2 pigz
   lfsmake2 tmux
   lfsmake2 perl-Text-CSV_XS
@@ -1686,6 +1726,7 @@ buildipfire() {
   lfsmake2 pmacct
   lfsmake2 squid-asnbl
   lfsmake2 qemu-ga
+	lfsmake2 gptfdisk
 }
 
 buildinstaller() {
@@ -1695,7 +1736,7 @@ buildinstaller() {
   lfsmake2 memtest
   lfsmake2 installer
   # use toolchain bash for chroot to strip
-  EXTRA_PATH=${TOOLS_DIR}/bin/ lfsmake2 strip
+  CUSTOM_PATH="${TOOLS_DIR}/bin" lfsmake2 strip
 }
 
 buildpackages() {
@@ -1703,7 +1744,7 @@ buildpackages() {
   export LOGFILE
   echo "... see detailed log in _build.*.log files" >> $LOGFILE
 
-  
+
   # Generating list of packages used
   print_line "Generating packages list from logs"
   rm -f $BASEDIR/doc/packages-list
@@ -1718,7 +1759,7 @@ buildpackages() {
   rm -f $BASEDIR/doc/packages-list
   # packages-list.txt is ready to be displayed for wiki page
   print_status DONE
-  
+
   # Update changelog
   cd $BASEDIR
   [ -z $GIT_TAG ]  || LAST_TAG=$GIT_TAG
@@ -1790,9 +1831,9 @@ while [ $# -gt 0 ]; do
 done
 
 # See what we're supposed to do
-case "$1" in 
+case "$1" in
 build)
-	START_TIME=$(now)
+	START_TIME="${SECONDS}"
 
 	# Clear screen
 	${INTERACTIVE} && clear
@@ -1829,7 +1870,7 @@ build)
 
 	print_build_stage "Building packages"
 	buildpackages
-	
+
 	print_build_stage "Checking Logfiles for new Files"
 
 	cd $BASEDIR
@@ -1837,7 +1878,7 @@ build)
 	tools/checkrootfiles
 	cd $PWD
 
-	print_build_summary $(( $(now) - ${START_TIME} ))
+	print_build_summary $(( SECONDS - START_TIME ))
 	;;
 shell)
 	# enter a shell inside LFS chroot
@@ -1894,7 +1935,7 @@ downloadsrc)
 	FINISHED=0
 	cd $BASEDIR/lfs
 	for c in `seq $MAX_RETRIES`; do
-		if (( FINISHED==1 )); then 
+		if (( FINISHED==1 )); then
 			break
 		fi
 		FINISHED=1
@@ -2035,7 +2076,7 @@ find-dependencies)
 	;;
 check-manualpages)
 	echo "Checking the manual pages for broken links..."
-	
+
 	chmod 755 $BASEDIR/tools/check_manualpages.pl
 	if $BASEDIR/tools/check_manualpages.pl; then
 		print_status DONE
@@ -2048,4 +2089,3 @@ check-manualpages)
 	cat doc/make.sh-usage
 	;;
 esac
-

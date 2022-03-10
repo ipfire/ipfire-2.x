@@ -24,7 +24,10 @@
 
 include Config
 
+SUMMARY    = Data Copying in the Presence of I/O Errors
+
 VER        = 1.25
+
 THISAPP    = ddrescue-$(VER)
 DL_FILE    = $(THISAPP).tar.lz
 DL_FROM    = $(URL_IPFIRE)
@@ -34,6 +37,8 @@ PROG       = ddrescue
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +59,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A utility to trace the system calls of a program
+
 VER        = 5.14
 SUP_ARCHES = x86_64 armv6l aarch64
 
@@ -36,6 +38,8 @@ PROG       = strace
 PAK_VER    = 6
 
 DEPS       = elfutils
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

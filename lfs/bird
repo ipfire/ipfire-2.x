@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = The BIRD Internet Routing Daemon
+
 VER        = 2.0.8
 
 THISAPP    = bird-$(VER)
@@ -35,6 +37,8 @@ PROG       = bird
 PAK_VER    = 8
 
 DEPS       =
+
+SERVICES   = bird
 
 CFLAGS    += -fcommon
 
@@ -56,7 +60,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -93,7 +97,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		 /var/ipfire/backup/addons/includes/bird
 
 	# Install initscript
-	$(call INSTALL_INITSCRIPT,bird)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -50,7 +50,7 @@ my $doy = $now[7];	# day of year (0..364)
 my $tdoy = $now[7];
 my $year = $now[5]+1900;
 
-$cgiparams{'DAY'} = $now[3]; 
+$cgiparams{'DAY'} = $now[3];
 $cgiparams{'MONTH'} = $now[4];
 $cgiparams{'SOURCE_IP'} = 'ALL';
 $cgiparams{'FILTER'} = "[.](gif|jpeg|jpg|png|css|js)\$";
@@ -70,7 +70,7 @@ if ($cgiparams{'ACTION'} eq '')
 if ($cgiparams{'ACTION'} eq $Lang::tr{'restore defaults'})
 {
 	$cgiparams{'FILTER'} = "[.](gif|jpeg|jpg|png|css|js)\$";
-	$cgiparams{'ENABLE_FILTER'} = 'off'; 
+	$cgiparams{'ENABLE_FILTER'} = 'off';
 }
 
 {
@@ -88,7 +88,7 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} ne $Lang::tr{'update'})
 	my @temp = split(',',$ENV{'QUERY_STRING'});
  	$start = $temp[0];
  	$cgiparams{'MONTH'} = $temp[1];
- 	$cgiparams{'DAY'} = $temp[2];  
+ 	$cgiparams{'DAY'} = $temp[2];
 	$cgiparams{'SOURCE_IP'} = $temp[3];
 	$cgiparams{'USERNAME'} = &Header::escape($temp[4]);
 }
@@ -151,7 +151,7 @@ my $daystr = $cgiparams{'DAY'} == 0 ? '' :$cgiparams{'DAY'} <= 9 ? "0$cgiparams{
 
     # Calculate time. If future date, calculate for past year !!!
     if (( $cgiparams{'MONTH'} eq $now[4]) && ($cgiparams{'DAY'} > $now[3]) ||
-	( $cgiparams{'MONTH'}  > $now[4] ) ) {  
+	( $cgiparams{'MONTH'}  > $now[4] ) ) {
 	$xday = POSIX::mktime( 0, 0, 0, $cgiparams{'DAY'}, $cgiparams{'MONTH'}, $year - 1901 );
 	$daystr = "$longmonths[$cgiparams{'MONTH'}] $daystr, ". int($year-1);
     } else {
@@ -210,14 +210,14 @@ if ($@ ne '')
 
     	    $temp_now[2] = $temp_now[1] = $temp_now[0] = 0; # start at 00:00:00
 	    $temp_now[3] = 1 if ($cgiparams{'DAY'}==0); # All days selected, start at '1'
-            my $mintime = POSIX::mktime(@temp_now); 
+            my $mintime = POSIX::mktime(@temp_now);
 	    my $maxtime;
 	    if ($cgiparams{'DAY'}==0) {			# full month
 	        if ($temp_now[4]++ == 12){
 		    $temp_now[4] = 0;
 		    $temp_now[5]++;
 		};
-        	$maxtime = POSIX::mktime(@temp_now); 
+        	$maxtime = POSIX::mktime(@temp_now);
 	    } else {
 		$maxtime = $mintime + 86400;		# full day
 	    }
@@ -248,7 +248,7 @@ if ($@ ne '')
 			#    $datetime = $maxtime; # we have read viewsize lines, stop main loop
 			#    last READ;		  # exit read file
 			}
-		    }	
+		    }
 		}
 
 		# finish loop when date of lines are past maxtime
@@ -278,7 +278,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 {
 	print "Content-type: text/plain\n\n";
 	print "IPFire proxy log\r\n";
-	print "$Lang::tr{'date'}: $daystr\r\n"; 
+	print "$Lang::tr{'date'}: $daystr\r\n";
 	print "Source IP: $cgiparams{'SOURCE_IP'}\r\n";
 	print "Username: $cgiparams{'USERNAME'}\r\n";
 	if ($cgiparams{'ENABLE_FILTER'} eq 'on') {
@@ -350,7 +350,7 @@ print <<END
 END
 ;
 print "<option value='0'>$Lang::tr{'all'}</option>";
-for (my $day = 1; $day <= 31; $day++) 
+for (my $day = 1; $day <= 31; $day++)
 {
 	print "\t<option ";
 	if ($day == $cgiparams{'DAY'}) {
@@ -464,7 +464,7 @@ foreach $_ (@log)
 
 	$url =~ /(^.{0,60})/;
 	my $part = $1;
-	unless (length($part) < 60) { $part = "${part}..."; }  
+	unless (length($part) < 60) { $part = "${part}..."; }
 	$url = &Header::cleanhtml($url,"y");
 	$part = &Header::cleanhtml($part,"y");
 	if ($cgiparams{'DAY'}==0) {			# full month

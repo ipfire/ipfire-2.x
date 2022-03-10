@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A Graphics Conversion Package
+
 VER        = 10.73.31
 
 THISAPP    = netpbm-$(VER)
@@ -35,6 +37,8 @@ PROG       = netpbm
 PAK_VER    = 3
 
 DEPS       =
+
+SERVICES   =
 
 CFLAGS    += -flax-vector-conversions
 
@@ -56,7 +60,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

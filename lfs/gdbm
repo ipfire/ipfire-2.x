@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.20
+VER        = 1.23
 
 THISAPP    = gdbm-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 006c19b8b60828fd6916a16f3496bd3c
+$(DL_FILE)_MD5 = 8551961e36bf8c70b7500d255d3658ec
 
 install : $(TARGET)
 

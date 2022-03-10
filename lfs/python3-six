@@ -24,7 +24,8 @@
 
 include Config
 
-VER        = 1.14.0
+VER        = 1.16.0
+SUMMARY    = Python 2 and 3 compatibility utilities
 
 THISAPP    = six-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,9 +33,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-six
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 21674588a57e649d1a6d977ec3122140
+$(DL_FILE)_MD5 = a7c927740e4964dd29b72cebfc1429bb
 
 install : $(TARGET)
 
@@ -54,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

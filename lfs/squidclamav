@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Antivirus redirector for Squid based on ClamAv
+
 VER        = 5.11
 
 THISAPP    = squidclamav-$(VER)
@@ -35,6 +37,8 @@ PROG       = squidclamav
 PAK_VER    = 21
 
 DEPS       = clamav
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

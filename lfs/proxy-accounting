@@ -1,0 +1,75 @@
+###############################################################################
+# IPFire.org    - An Open Source Firewall Solution                            #
+# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+SUMMARY    = SQUID Accounting IPFire extension
+
+VER        = 1.0.4
+
+THISAPP    = proxy-accounting-$(VER)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = proxy-accounting
+PAK_VER    = 14
+
+DEPS       = perl-File-ReadBackwards
+
+SERVICES   =
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+install : $(TARGET)
+
+check :
+
+download :
+
+md5 :
+
+dist:
+	@$(PAK)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/squid-accounting/ $(DIR_APP)
+	cd $(DIR_APP)
+	mkdir -p /var/ipfire/accounting/bill
+	mkdir -p /srv/web/ipfire/html/accounting/logo
+
+#Touch Logfile
+	touch /var/log/accounting.log
+	chmod 777 /var/log/accounting.log
+#Set permissions for logo and graphs
+	chmod -R 777 /srv/web/ipfire/html/accounting
+
+	install -v -m 755 $(DIR_APP)/squid-accounting/accounting.cgi /srv/web/ipfire/cgi-bin/
+	install -v -m 755 $(DIR_APP)/squid-accounting/acct.pl /usr/local/bin/
+	install -v -m 644 $(DIR_APP)/squid-accounting/acct-lib.pl /var/ipfire/accounting/
+	install -v -m 644 $(DIR_APP)/squid-accounting/acct.de.pl /var/ipfire/addon-lang/
+	install -v -m 644 $(DIR_APP)/squid-accounting/acct.en.pl /var/ipfire/addon-lang/
+	install -v -m 644 $(DIR_APP)/squid-accounting/acct.fr.pl /var/ipfire/addon-lang/
+	install -v -m 644 $(DIR_APP)/squid-accounting/acct.tr.pl /var/ipfire/addon-lang/
+	install -v -m 644 $(DIR_APP)/squid-accounting/EX-squid-accounting.menu /var/ipfire/menu.d/
+	install -v -m 755 $(DIR_APP)/squid-accounting/dbinstall.pl /var/ipfire/accounting/
+	install -v -m 644 $(DIR_APP)/squid-accounting/config/backup/includes/squid-accounting  \
+			/var/ipfire/backup/addons/includes/proxy-accounting
+
+#activate hourly logging of proxy logfile
+	ln -sf /usr/local/bin/acct.pl /etc/fcron.hourly/squid-accounting
+	chown -R nobody.nobody /var/ipfire/accounting
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)
+

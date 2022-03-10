@@ -17,7 +17,7 @@
   Modified feb 2001 by Stephen Aaskov (saa@lasat.com)
   - Added daemonization code
   - Added syslog
-  
+
   TODO: Delete interfaces after exit?
 */
 
@@ -39,7 +39,7 @@ void fatal(const char *str, int i)
 
 void exitFunc(void)
 {
-  syslog (LOG_PID,"Daemon terminated\n");	
+  syslog (LOG_PID,"Daemon terminated\n");
 }
 
 
@@ -62,7 +62,7 @@ int create_pidfile(int num)
 int create_br(char *nstr)
 {
   int num, err;
-  
+
   if(lastsock<0) {
     lastsock = socket(PF_ATMPVC, SOCK_DGRAM, ATM_AAL5);
   }
@@ -78,7 +78,7 @@ int create_br(char *nstr)
       ni.mtu = 1500;
       sprintf(ni.ifname, "nas%d", num);
       err=ioctl (lastsock, ATM_NEWBACKENDIF, &ni);
-  
+
       if (err == 0)
 	syslog(LOG_INFO, "Interface \"%s\" created sucessfully\n",ni.ifname);
       else
@@ -105,7 +105,7 @@ int assign_vcc(char *astr, int encap, int bufsize, struct atm_qos qos)
     err=text2atm(astr,(struct sockaddr *)(&addr), sizeof(addr), T2A_PVC);
     if (err!=0)
       syslog(LOG_ERR,"Could not parse ATM parameters (error=%d)\n",err);
-    
+
 #if 0
     addr.sap_family = AF_ATMPVC;
     addr.sap_addr.itf = itf;
@@ -116,10 +116,10 @@ int assign_vcc(char *astr, int encap, int bufsize, struct atm_qos qos)
 	   addr.sap_addr.vpi,
 	   addr.sap_addr.vci,
 	   encap?"VC mux":"LLC");
-    
+
     if ((fd = socket(PF_ATMPVC, SOCK_DGRAM, ATM_AAL5)) < 0)
       syslog(LOG_ERR,"failed to create socket %d, reason: %s", errno,strerror(errno));
-    
+
     if (qos.aal == 0) {
       qos.aal                     = ATM_AAL5;
       qos.txtp.traffic_class      = ATM_UBR;
@@ -130,17 +130,17 @@ int assign_vcc(char *astr, int encap, int bufsize, struct atm_qos qos)
 
     if ( (err=setsockopt(fd,SOL_SOCKET,SO_SNDBUF, &bufsize ,sizeof(bufsize))) )
       syslog(LOG_ERR,"setsockopt SO_SNDBUF: (%d) %s\n",err, strerror(err));
-    
+
     if (setsockopt(fd, SOL_ATM, SO_ATMQOS, &qos, sizeof(qos)) < 0)
       syslog(LOG_ERR,"setsockopt SO_ATMQOS %d", errno);
 
     err = connect(fd, (struct sockaddr*)&addr, sizeof(struct sockaddr_atmpvc));
-    
+
     if (err < 0)
       fatal("failed to connect on socket", err);
-    
+
     /* attach the vcc to device: */
-    
+
     be.backend_num = ATM_BACKEND_BR2684;
     be.ifspec.method = BR2684_FIND_BYIFNAME;
     sprintf(be.ifspec.spec.ifname, "nas%d", lastitf);
@@ -177,7 +177,7 @@ int main (int argc, char **argv)
   int itfnum;
   lastsock=-1;
   lastitf=0;
-  
+
   /* st qos to 0 */
   memset(&reqqos, 0, sizeof(reqqos));
 
@@ -187,7 +187,7 @@ int main (int argc, char **argv)
       switch (c) {
       case 'q':
 	printf ("optarg : %s",optarg);
-	if (text2qos(optarg,&reqqos,0)) fprintf(stderr,"QOS parameter invalid\n"); 
+	if (text2qos(optarg,&reqqos,0)) fprintf(stderr,"QOS parameter invalid\n");
 	break;
       case 'a':
 	assign_vcc(optarg, encap, sndbuf, reqqos);
@@ -222,25 +222,25 @@ int main (int argc, char **argv)
     usage(argv[0]);
 
   if (argc != optind) usage(argv[0]);
-  
+
   if(lastsock>=0) close(lastsock);
-  
+
   if (background) {
     pid_t pid;
-    
+
     pid=fork();
     if (pid < 0) {
       fprintf(stderr,"Error detaching\n");
       exit(2);
-    } else if (pid) 
+    } else if (pid)
       exit(0); // This is the parent
-    
+
     // Become a process group and session group leader
     if (setsid()<0) {
       fprintf (stderr,"Could not set process group\n");
       exit(2);
     }
-    
+
     // Fork again to let process group leader exit
     pid = fork();
     if (pid < 0) {
@@ -248,23 +248,23 @@ int main (int argc, char **argv)
       exit(2);
     } else if (pid)
       exit(0); // This is the parent
-    
+
     // Now we're ready for buisness
     chdir("/");            // Don't keep directories in use
     close(0); close(1); close(2);  // Close stdin, -out and -error
     /*
-      Note that this implementation does not keep an open 
+      Note that this implementation does not keep an open
       stdout/err.
       If we need them they can be opened now
     */
-    
+
   }
-  
+
   create_pidfile(itfnum);
 
-  syslog (LOG_INFO, "RFC 1483/2684 bridge daemon started\n");	
+  syslog (LOG_INFO, "RFC 1483/2684 bridge daemon started\n");
   atexit (exitFunc);
-  
+
   while (1) sleep(30);	/* to keep the sockets... */
   return 0;
 }

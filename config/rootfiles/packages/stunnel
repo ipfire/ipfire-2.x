@@ -7,6 +7,7 @@ usr/bin/stunnel
 #usr/lib/stunnel
 #usr/lib/stunnel/libstunnel.la
 usr/lib/stunnel/libstunnel.so
+#usr/share/bash-completion/completions/stunnel.bash
 #usr/share/doc/stunnel
 #usr/share/doc/stunnel/AUTHORS.md
 #usr/share/doc/stunnel/BUGS.md

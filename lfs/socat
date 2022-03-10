@@ -25,6 +25,8 @@
 
 include Config
 
+SUMMARY    = Multipurpose relay for bidirectional data transfer
+
 VER        = 1.7.4.2
 
 THISAPP    = socat-$(VER)
@@ -35,7 +37,9 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	   = socat
 PAK_VER    = 2
 
-DEPS	   = 
+DEPS	   =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -55,7 +59,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

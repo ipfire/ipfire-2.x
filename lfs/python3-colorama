@@ -24,7 +24,8 @@
 
 include Config
 
-VER        = 0.4.3
+VER        = 0.4.4
+SUMMARY    = Cross-platform colored terminal text
 
 THISAPP    = colorama-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,9 +33,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-colorama
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 02daee502863d24112a8c05a5d69a612
+$(DL_FILE)_MD5 = 57b22f2597f63df051b69906fbf310cc
 
 install : $(TARGET)
 
@@ -54,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

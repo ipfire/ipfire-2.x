@@ -5,8 +5,8 @@ usr/bin/whiptail
 usr/lib/libnewt.so.0.52
 usr/lib/libnewt.so.0.52.21
 #usr/lib/pkgconfig/libnewt.pc
-#usr/lib/python3.8/site-packages/_snack.so
-#usr/lib/python3.8/site-packages/snack.py
+#usr/lib/python3.10/site-packages/_snack.so
+#usr/lib/python3.10/site-packages/snack.py
 #usr/share/locale/ar
 #usr/share/locale/ar/LC_MESSAGES
 #usr/share/locale/ar/LC_MESSAGES/newt.mo

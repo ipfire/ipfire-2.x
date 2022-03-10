@@ -24,7 +24,8 @@
 
 include Config
 
-VER        = 2.3.3op2
+VER        = 2.4.1
+SUMMARY    = The Common UNIX Printing System
 
 THISAPP    = cups-$(VER)
 DL_FILE    = $(THISAPP)-source.tar.gz
@@ -32,9 +33,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/cups-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
-PAK_VER    = 23
+PAK_VER    = 24
 
 DEPS       = avahi cups-filters dbus ghostscript krb5 libtiff
+
+SERVICES   = cups
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 524266752cf243c968921547b18ee594
+$(DL_FILE)_MD5 = c2e5143d06f21e19ea2b73913185656f
 
 install : $(TARGET)
 
@@ -54,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	$(PAK)
 
 ###############################################################################
@@ -95,7 +98,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ln -v -sf /usr/bin/smbspool /usr/lib/cups/backend/smb
 
 	# install initscript
-	$(call INSTALL_INITSCRIPT,cups)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 	cp -fv $(DIR_SRC)/config/cups/cupsd.conf /var/ipfire/cups/
 
 	@rm -rf $(DIR_APP)

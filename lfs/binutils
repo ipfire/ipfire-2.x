@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.36.1
+VER        = 2.37
 
 THISAPP    = binutils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -59,9 +59,10 @@ ifeq "$(PASS)" "1"
 	--target=$(CROSSTARGET) \
 	--prefix=$(TOOLS_DIR) \
 	--with-sysroot=$(ROOT) \
-	--with-lib-path=$(TOOLS_DIR)/lib
+	--with-lib-path=$(TOOLS_DIR)/lib \
+	--disable-nls
   EXTRA_MAKE =
-  EXTRA_INSTALL = 
+  EXTRA_INSTALL =
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
   EXTRA_ENV = \
@@ -69,12 +70,14 @@ else
 	AR="$(CROSSTARGET)-ar" \
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
-	--host=$(BUILDTARGET) \
 	--build=$(BUILDTARGET) \
+	--host=$(BUILDTARGET) \
 	--prefix=$(TOOLS_DIR) \
-	--with-lib-path=$(TOOLS_DIR)/lib
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
+	--with-lib-path=$(TOOLS_DIR)/lib \
+	--with-sysroot \
+	--disable-nls
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
 endif
 endif
 
@@ -96,7 +99,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 628d490d976d8957279bbbff06cf29d4
+$(DL_FILE)_MD5 = e78d9ff2976b745a348f4c1f27c77cb1
 
 install : $(TARGET)
 

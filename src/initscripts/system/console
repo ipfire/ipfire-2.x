@@ -1,17 +1,23 @@
 #!/bin/sh
-########################################################################
-# Begin $rc_base/init.d/console
-#
-# Description : Sets keymap and screen font
-#
-# Authors     : Gerard Beekmans - gerard@linuxfromscratch.org
-#		Alexander E. Patrakov
-#
-# Version     : 00.03
-#
-# Notes       :
-#
-########################################################################
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
 . /etc/sysconfig/rc
 . ${rc_functions}
@@ -33,19 +39,19 @@ case "${1}" in
 	start)
 		boot_mesg "Setting up Linux console..."
 		# There should be no bogus failures below this line!
-		
+
 		# Figure out if a framebuffer console is used
 		[ -d /sys/class/graphics/fb0 ] && USE_FB=1 || USE_FB=0
-		
+
 		# Figure out the command to set the console into the
 		# desired mode
 		is_true "${UNICODE}" &&
 			MODE_COMMAND="echo -en '\033%G' && kbd_mode -u" ||
 			MODE_COMMAND="echo -en '\033%@\033(K' && kbd_mode -a"
-		
+
 		# On framebuffer consoles, font has to be set for each vt in
 		# UTF-8 mode. This doesn't hurt in non-UTF-8 mode also.
-		
+
 		! is_true "${USE_FB}" || [ -z "${FONT}" ] ||
 			MODE_COMMAND="${MODE_COMMAND} && setfont ${FONT}"
 
@@ -56,7 +62,7 @@ case "${1}" in
 		# used.
 		# FIXME: Fedora Core also initializes two spare consoles
 		# - do we want that?
-		
+
 		for TTY in `grep '^[^#].*respawn:/sbin/agetty' /etc/inittab |
 			grep -o '\btty[[:digit:]]*\b'`
 		do
@@ -81,7 +87,7 @@ case "${1}" in
 		[ -n "$BROKEN_COMPOSE" ] || BROKEN_COMPOSE="$UNICODE"
 		! is_true "$BROKEN_COMPOSE" ||
 			echo "" | loadkeys -c &>/dev/null
-		
+
 		# Convert the keymap from $LEGACY_CHARSET to UTF-8
 		[ -z "$LEGACY_CHARSET" ] ||
 			dumpkeys -c "$LEGACY_CHARSET" | loadkeys -u &>/dev/null
@@ -96,5 +102,3 @@ case "${1}" in
 		exit 1
 		;;
 esac
-
-# End $rc_base/init.d/console

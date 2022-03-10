@@ -57,7 +57,7 @@ print <<END;
 	$Lang::tr{'gpl please read carefully the general public license and accept it below'}.
 	<br /><br />
 END
-;	
+;
 if ( -e "/usr/share/doc/licenses/GPLv3" ) {
 	print '<textarea rows=\'25\' cols=\'75\' readonly=\'readonly\'>';
 

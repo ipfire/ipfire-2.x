@@ -24,6 +24,7 @@
 
 include Config
 
+SUMMARY    = Advanced Linux Sound Architecture
 
 VER        = 1.2.5.1
 UVER       = 1.2.5.1
@@ -39,6 +40,8 @@ PROG       = alsa
 PAK_VER    = 13
 
 DEPS       =
+
+SERVICES   = alsa
 
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -64,7 +67,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -101,6 +104,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/alsa-firmware-$(FVER) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/alsa-firmware-$(FVER) && make install
 	# install initscript
-	$(call INSTALL_INITSCRIPT,alsa)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 	@rm -rf $(DIR_SRC)/alsa*
 	@$(POSTBUILD)

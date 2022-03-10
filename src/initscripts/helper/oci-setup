@@ -1,4 +1,23 @@
 #!/bin/bash
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
 . /etc/sysconfig/rc
 . ${rc_functions}
@@ -13,6 +32,24 @@ get() {
 	local file="${1}"
 
 	wget -qO - "http://169.254.169.254/opc/v1/${file}"
+}
+
+try_base64_decode() {
+	local input="${1}"
+
+	local tmp="$(mktemp)"
+
+	# Try to decode this and return output if successful
+	if base64 -d <<< "${input}" > "${tmp}" 2>/dev/null; then
+		echo "$(<${tmp})"
+
+	# Otherwise just return the input
+	else
+		echo "${input}"
+	fi
+
+	# Cleanup
+	unlink "${tmp}"
 }
 
 to_address() {
@@ -114,6 +151,9 @@ import_oci_configuration() {
 	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
 		# Download a startup script
 		local script="$(get instance/metadata/user_data)"
+
+		# Try to decode this
+		script="$(try_base64_decode "${script}")"
 
 		# Execute the script
 		if [ "${script:0:2}" = "#!" ]; then

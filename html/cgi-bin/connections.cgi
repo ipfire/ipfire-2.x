@@ -57,7 +57,7 @@ if (length ($ENV{'QUERY_STRING'}) > 0){
 		($name, $value) = split(/=/, $pair);
 		$value =~ s/%([a-fA-F0-9][a-fA-F0-9])/pack("C", hex($1))/eg; # e.g. "%20" => " "
 		$value =~ s/[^a-zA-Z0-9]*//g; # a-Z 0-9 will pass
-		$cgiin{$name} = $value; 
+		$cgiin{$name} = $value;
 	}
 }
 
@@ -96,8 +96,8 @@ if ( $cgiin{'sort_field'} ~~ [ '1','2','3','4','5','6','7','8','9' ] ) {
 }
 
 # Read and sort the connection tracking table
-# do sorting 
-if ($SORT_FIELD and $SORT_ORDER) { 
+# do sorting
+if ($SORT_FIELD and $SORT_ORDER) {
 	# field sorting when sorting arguments are sane
 	open(CONNTRACK, "/usr/local/bin/getconntracktable | /usr/local/bin/consort.sh $SORT_FIELD $SORT_ORDER |") or die "Unable to read conntrack table";
 } else {
@@ -247,13 +247,13 @@ if (-e "${General::swroot}/ovpn/settings") {
 
 # Add OpenVPN net for custom OVPNs
 if (-e "${General::swroot}/ovpn/ccd.conf") {
-	open(OVPNSUB, "${General::swroot}/ovpn/ccd.conf");	
+	open(OVPNSUB, "${General::swroot}/ovpn/ccd.conf");
 	my @ovpnsub = <OVPNSUB>;
 	close(OVPNSUB);
 
 	foreach (@ovpnsub) {
 		my ($network, $mask) = split '/', (split ',', $_)[2];
-		
+
 		$mask = ipv4_cidr2msk($mask) unless &General::validip($mask);
 
 		push(@network, $network);

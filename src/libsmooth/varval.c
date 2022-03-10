@@ -5,13 +5,13 @@
  *
  * (c) Lawrence Manning, 2001
  * Contains functions for manipulation files full of VAR=VAL pairs.
- * 
+ *
  * 2003-07-27 Robert Kerr - Added cooperative file locking to prevent any
  * clashes between setuid programs reading configuration and cgi scripts
  * trying to write it
- * 
+ *
  */
- 
+
 #include "libsmooth.h"
 
 /* Sets up the list.  First entry is a dummy one to avoid having to special
@@ -19,11 +19,11 @@
 struct keyvalue *initkeyvalues(void)
 {
  	struct keyvalue *head = malloc(sizeof(struct keyvalue));
-	
+
 	strcpy(head->key, "KEY");
 	strcpy(head->value, "VALUE");
 	head->next = NULL;
-	
+
 	return head;
 }
 
@@ -32,7 +32,7 @@ void freekeyvalues(struct keyvalue *head)
 {
 	struct keyvalue *cur = head->next;
 	struct keyvalue *next;
-	
+
 	while (cur)
 	{
 		next = cur->next;
@@ -49,16 +49,16 @@ int readkeyvalues(struct keyvalue *head, char *filename)
 	char buffer[STRING_SIZE];
 	char *temp;
 	char *key, *value;
-	
+
 	if (!(file = fopen(filename, "r")))
 		return 0;
-		
+
 	if (flock(fileno(file), LOCK_SH))
 	{
 		fclose(file);
 		return 0;
 	}
-	
+
 	while (fgets(buffer, STRING_SIZE, file))
 	{
 		temp = buffer;
@@ -94,7 +94,7 @@ int readkeyvalues(struct keyvalue *head, char *filename)
 		if (strlen(key))
 			appendkeyvalue(head, key, value);
 	}
-	
+
 	flock(fileno(file), LOCK_UN);
 	fclose(file);
 
@@ -106,17 +106,17 @@ int writekeyvalues(struct keyvalue *head, char *filename)
 {
 	FILE *file;
 	struct keyvalue *cur = head->next;
-	
+
 	if (!(file = fopen(filename, "w")))
 		return 0;
-		
+
 	if (flock(fileno(file), LOCK_EX))
 	{
 		fclose(file);
 		return 0;
 	}
-	
-		
+
+
 	while (cur)
 	{
 		/* No space in value?  If there is, we need to quote the value
@@ -129,7 +129,7 @@ int writekeyvalues(struct keyvalue *head, char *filename)
 	}
 	flock(fileno(file), LOCK_UN);
 	fclose(file);
-	
+
 	return 1;
 }
 

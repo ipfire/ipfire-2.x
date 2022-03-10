@@ -254,7 +254,7 @@ void ovpnInit(void) {
 		fprintf(stderr, "Cannot read ethernet settings\n");
 		exit(1);
 	}
-	
+
 	if (strcmp(enableblue, "on") == 0) {
 		if (!findkey(kv, "BLUE_DEV", blueif)) {
 			exit(1);
@@ -394,7 +394,7 @@ void setFirewallRules(void) {
 		exit(1);
 	}
 
-	/* we got one device, so lets proceed further	*/	
+	/* we got one device, so lets proceed further	*/
 	if (!findkey(kv, "DDEST_PORT", dport)){
 		fprintf(stderr, "Cannot read DDEST_PORT\n");
 		exit(1);
@@ -474,7 +474,7 @@ void stopDaemon(void) {
 
 void startDaemon(void) {
 	char command[STRING_SIZE];
-	
+
 	if (!((strcmp(enablered, "on") == 0) || (strcmp(enableblue, "on") == 0) || (strcmp(enableorange, "on") == 0))) {
 		fprintf(stderr, "OpenVPN is not enabled on any interface\n");
 		exit(1);
@@ -712,7 +712,7 @@ int main(int argc, char *argv[]) {
 		}
 		else {
 			ovpnInit();
-			
+
 			if( (strcmp(argv[1], "-s") == 0) || (strcmp(argv[1], "--start") == 0) ) {
 				setFirewallRules();
 				startDaemon();

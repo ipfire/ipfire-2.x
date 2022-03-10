@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = An advanced and well-established feature-rich text mode web browser
+
 VER        = 0.12pre6
 
 THISAPP    = elinks-$(VER)
@@ -35,6 +37,8 @@ PROG       = elinks
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -67,7 +71,7 @@ $(patsubst %,$(DIR_DL)/%,$(objects)) :
 $(subst %,%_MD5,$(objects)) :
 	@$(MD5)
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

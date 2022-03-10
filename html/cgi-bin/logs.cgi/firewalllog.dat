@@ -122,7 +122,7 @@ my $date = $cgiparams{'DAY'} == 0 ? '' :  $cgiparams{'DAY'} <= 9 ? "0$cgiparams{
 
 {
 	my $xday;
-	
+
 	# Calculate time. If future date, calculate for past year !!!
 	if (( $cgiparams{'MONTH'} eq $now[4]) && ($cgiparams{'DAY'} > $now[3]) ||
 	( $cgiparams{'MONTH'}  > $now[4] ) ) {
@@ -216,7 +216,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 		$day =~ tr / /0/;
 		my $time = $cgiparams{'DAY'} ? "$2" : "$day/$2" ;
 		print "$time $3\r\n";
-		
+
 	}
 	exit 0;
 }
@@ -248,7 +248,7 @@ for (my $month = 0; $month < 12; $month++)
 {
 	print "\t<option ";
 	if ($month == $cgiparams{'MONTH'}) {
-		print "selected='selected' "; 
+		print "selected='selected' ";
 	}
 	print "value='$month'>$longmonths[$month]</option>\n";
 }
@@ -261,11 +261,11 @@ print <<END
 END
 ;
 print "<option value='0'>$Lang::tr{'all'}</option>\n";
-for (my $day = 1; $day <= 31; $day++) 
+for (my $day = 1; $day <= 31; $day++)
 {
 	print "\t<option ";
 	if ($day == $cgiparams{'DAY'}) {
-		print "selected='selected' "; 
+		print "selected='selected' ";
 	}
 	print "value='$day'>$day</option>\n";
 }
@@ -298,7 +298,7 @@ if ($start == 0) {
 	$prev = $start - ${Header::viewsize};
 	$prev = 0 if ( $prev < 0);
 }
-					
+
 my $next;
 if ($start == $lastPageIndex) {
 	$next = -1;
@@ -339,7 +339,7 @@ foreach $_ (@log)
 	my $day =  $1;
 	$day =~ tr / /0/;
 	my $time = $cgiparams{'DAY'} ? "$2" : "$day/$2" ;
-	my $chain = $3; 
+	my $chain = $3;
 
 	my ($iface, $srcaddr, $dstaddr, $macaddr, $proto, $srcport, $dstport);
 	if ($packet =~ /PHYSIN=(\w+)/) { $iface=$1; } elsif ($packet =~ /IN=(\w+)/) { $iface = $1; }
@@ -364,7 +364,7 @@ foreach $_ (@log)
 
 	my $servi = uc(getservbyport($srcport, lc($proto)));
 	if ($servi ne '' && $srcport < 1024) {
-		$srcport = "$srcport($servi)"; 
+		$srcport = "$srcport($servi)";
 	}
 	$servi = uc(getservbyport($dstport, lc($proto)));
 	if ($servi ne '' && $dstport < 1024) {
@@ -375,11 +375,11 @@ foreach $_ (@log)
 	my $col="";
 	if ($lines % 2) {
 		print "<tr>";
-		$col="bgcolor='$color{'color20'}'"; 
+		$col="bgcolor='$color{'color20'}'";
 	}
 	else {
 		print "<tr>";
-		$col="bgcolor='$color{'color22'}'"; 
+		$col="bgcolor='$color{'color22'}'";
 	}
 	print <<END
 
@@ -428,21 +428,21 @@ END
 
 	print "<td align='center' width='50%'>";
 	if ($prev != -1) {
-		print "<a href='/cgi-bin/logs.cgi/firewalllog.dat?0,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>$Lang::tr{'first'}</a> "; 
-		print "<a href='/cgi-bin/logs.cgi/firewalllog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>$Lang::tr{'older'}</a>"; 
+		print "<a href='/cgi-bin/logs.cgi/firewalllog.dat?0,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>$Lang::tr{'first'}</a> ";
+		print "<a href='/cgi-bin/logs.cgi/firewalllog.dat?$prev,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>$Lang::tr{'older'}</a>";
 	}
 	else {
-		print "$Lang::tr{'first'} $Lang::tr{'older'}"; 
+		print "$Lang::tr{'first'} $Lang::tr{'older'}";
 	}
 	print "</td>\n";
 
 	print "<td align='center' width='50%'>";
 	if ($next >= 0) {
 		print "<a href='/cgi-bin/logs.cgi/firewalllog.dat?$next,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>$Lang::tr{'newer'}</a> ";
-		print "<a href='/cgi-bin/logs.cgi/firewalllog.dat?$lastPageIndex,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>$Lang::tr{'last'}</a>"; 
+		print "<a href='/cgi-bin/logs.cgi/firewalllog.dat?$lastPageIndex,$cgiparams{'MONTH'},$cgiparams{'DAY'}'>$Lang::tr{'last'}</a>";
 	}
 	else {
-		print "$Lang::tr{'newer'} $Lang::tr{'last'} "; 
+		print "$Lang::tr{'newer'} $Lang::tr{'last'} ";
 	}
 	print "</td>\n";
 

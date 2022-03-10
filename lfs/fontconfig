@@ -25,6 +25,7 @@
 include Config
 
 VER        = 2.13.1
+SUMMARY    = NFSv4 User and Group ID Mapping Library
 
 THISAPP    = fontconfig-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2

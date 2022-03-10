@@ -1,9 +1,9 @@
 usr/bin/speedtest
 usr/bin/speedtest-cli
-usr/lib/python3.8/site-packages/speedtest.py
-usr/lib/python3.8/site-packages/speedtest_cli-2.1.3-py3.8.egg-info
-usr/lib/python3.8/site-packages/speedtest_cli-2.1.3-py3.8.egg-info/PKG-INFO
-usr/lib/python3.8/site-packages/speedtest_cli-2.1.3-py3.8.egg-info/SOURCES.txt
-usr/lib/python3.8/site-packages/speedtest_cli-2.1.3-py3.8.egg-info/dependency_links.txt
-usr/lib/python3.8/site-packages/speedtest_cli-2.1.3-py3.8.egg-info/entry_points.txt
-usr/lib/python3.8/site-packages/speedtest_cli-2.1.3-py3.8.egg-info/top_level.txt
+usr/lib/python3.10/site-packages/speedtest.py
+usr/lib/python3.10/site-packages/speedtest_cli-2.1.3-py3.10.egg-info
+usr/lib/python3.10/site-packages/speedtest_cli-2.1.3-py3.10.egg-info/PKG-INFO
+usr/lib/python3.10/site-packages/speedtest_cli-2.1.3-py3.10.egg-info/SOURCES.txt
+usr/lib/python3.10/site-packages/speedtest_cli-2.1.3-py3.10.egg-info/dependency_links.txt
+usr/lib/python3.10/site-packages/speedtest_cli-2.1.3-py3.10.egg-info/entry_points.txt
+usr/lib/python3.10/site-packages/speedtest_cli-2.1.3-py3.10.egg-info/top_level.txt

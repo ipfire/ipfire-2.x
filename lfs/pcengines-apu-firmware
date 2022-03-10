@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Firmware files for PC Engines apu system boards
+
 VER        = 4.15.0.1
 
 THISAPP    = pcengines-apu-firmware-$(VER)
@@ -35,6 +37,8 @@ PAK_VER    = 10
 SUP_ARCH   = x86_64
 
 DEPS       = firmware-update
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

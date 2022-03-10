@@ -24,7 +24,8 @@
 
 include Config
 
-VER        = 0.16
+VER        = 0.18.1
+SUMMARY    = Python Documentation Utilities
 
 THISAPP    = docutils-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,9 +33,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-docutils
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 44952782107930ddfcd37ae48eee0857
+$(DL_FILE)_MD5 = ca5827e2432fd58f4c8d74a6591135de
 
 install : $(TARGET)
 
@@ -54,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

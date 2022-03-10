@@ -53,18 +53,18 @@ foreach (@modems){
 		my $value= `cat /sys/class/atm/$modem/parameters/$param`;
 		chomp($param);
 		chomp($value);
-		if (!($param =~"uevent") 
+		if (!($param =~"uevent")
 		  && !($param =~"resource")
 		  && !($param eq "")
  		) {
-				
+
 			$lines++;
 			if ($lines % 2){
 		    		print "<tr bgcolor='$color{'color22'}'>";
 			}else{
 				print "<tr bgcolor='$color{'color20'}'>";
 			}
-			print "<td align='left'>$param</td><td align='left'>$value</td> ";		
+			print "<td align='left'>$param</td><td align='left'>$value</td> ";
 		}
 	}
 	my @pfile = `grep . /sys/class/atm/$modem/device/* 2>/dev/null`;
@@ -74,8 +74,8 @@ foreach (@modems){
 		my $value= `cat /sys/class/atm/$modem/device/$param`;
 		chomp($param);
 		chomp($value);
-		if (!($param =~"uevent") 
-		  && !($param =~"modalias") 
+		if (!($param =~"uevent")
+		  && !($param =~"modalias")
 		  && !($param =~"bInterface")
 		  && !($param =~"bAlternateSetting")
 		  && !($param =~"bNumEndpoints")
@@ -83,14 +83,14 @@ foreach (@modems){
 		  && !($param =~"resource")
 		  && !($param eq "")
  		) {
-				
+
 			$lines++;
 			if ($lines % 2){
 		    		print "<tr bgcolor='$color{'color22'}'>";
 			}else{
 				print "<tr bgcolor='$color{'color20'}'>";
 			}
-			print "<td align='left'>$param</td><td align='left'>$value</td> ";		
+			print "<td align='left'>$param</td><td align='left'>$value</td> ";
 		}
 	}
 	print "</table><br>\n";

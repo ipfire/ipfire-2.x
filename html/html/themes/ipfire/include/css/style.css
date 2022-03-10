@@ -258,6 +258,7 @@ input.text {
 #cssmenu .has-sub ul {
 	display: none;
 	position: absolute;
+	z-index: 1;
 }
 
 #cssmenu .has-sub ul li a {

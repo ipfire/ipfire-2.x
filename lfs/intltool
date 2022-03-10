@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Internationalization Tool Collection
+
 VER        = 0.51.0
 
 THISAPP    = intltool-$(VER)
@@ -35,6 +37,8 @@ PROG       = intltool
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -68,7 +72,7 @@ $(patsubst %,$(DIR_DL)/%,$(objects)) :
 $(subst %,%_MD5,$(objects)) :
 	@$(MD5)
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

@@ -1,29 +1,23 @@
 #!/bin/sh
-########################################################################
-# Begin $rc_base/init.d/checkfs
-#
-# Description : File System Check
-#
-# Authors     : Gerard Beekmans - gerard@linuxfromscratch.org
-#		A. Luebke - luebke@users.sourceforge.net
-#
-# Version     : 00.00
-#
-# Notes       :
-#
-# Based on checkfs script from LFS-3.1 and earlier.
-#
-# From man fsck
-# 0    - No errors
-# 1    - File system errors corrected
-# 2    - System should be rebooted
-# 4    - File system errors left uncorrected
-# 8    - Operational error
-# 16   - Usage or syntax error
-# 32   - Fsck canceled by user request
-# 128  - Shared library error
-#
-#########################################################################
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
 . /etc/sysconfig/rc
 . ${rc_functions}
@@ -125,5 +119,3 @@ case "${1}" in
 		exit 1
 		;;
 esac
-
-# End $rc_base/init.d/checkfs

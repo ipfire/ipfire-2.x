@@ -24,6 +24,8 @@
 ###############################################################################
 
 include Config
+SUMMARY    = Perl extension for generating and using LALR parsers
+
 VER        = 1.21
 
 THISAPP    = Parse-Yapp-$(VER)
@@ -34,6 +36,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-Parse-Yapp
 DEPS       =
 PAK_VER    = 2
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -53,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

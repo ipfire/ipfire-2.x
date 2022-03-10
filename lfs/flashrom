@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A universal flash programming utility
+
 VER        = 1.2
 
 THISAPP    = flashrom-v$(VER)
@@ -36,6 +38,8 @@ PAK_VER    = 2
 SUP_ARCH   = x86_64
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -55,7 +59,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

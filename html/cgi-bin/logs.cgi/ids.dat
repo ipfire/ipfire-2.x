@@ -71,7 +71,7 @@ if ($ENV{'QUERY_STRING'} && $cgiparams{'ACTION'} ne $Lang::tr{'update'})
 	my @temp = split(',',$ ENV{'QUERY_STRING'});
  	$start = $temp[0];
  	$cgiparams{'MONTH'} = $temp[1];
- 	$cgiparams{'DAY'} = $temp[2];  
+ 	$cgiparams{'DAY'} = $temp[2];
 }
 
 if (!($cgiparams{'MONTH'} =~ /^(0|1|2|3|4|5|6|7|8|9|10|11)$/) ||
@@ -116,7 +116,7 @@ if (($cgiparams{'DAY'} ne $now[3]) || ($cgiparams{'MONTH'} ne $now[4]))
 		@then = localtime(POSIX::mktime( 0, 0, 0, $cgiparams{'DAY'}, $cgiparams{'MONTH'}, $year - 1900 ));
 	}
 	$tdoy = $then[7];
-	my $lastleap=($year-1)%4; 
+	my $lastleap=($year-1)%4;
         if ($tdoy>$doy) {
 		if ($lastleap == 0 && $tdoy < 60) {
 			$doy=$doy+366;
@@ -158,7 +158,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 {
 	print "Content-type: text/plain\n\n";
 	print "IPFire IPS log\r\n";
-	print "Date: $cgiparams{'DAY'} $longmonths[$cgiparams{'MONTH'}]\r\n"; 
+	print "Date: $cgiparams{'DAY'} $longmonths[$cgiparams{'MONTH'}]\r\n";
 	print "\r\n";
 
 	if ($logsettings{'LOGVIEW_REVERSE'} eq 'on') { @log = reverse @log; }
@@ -231,7 +231,7 @@ print <<END
 	<select name='DAY'>
 END
 ;
-for (my $day = 1; $day <= 31; $day++) 
+for (my $day = 1; $day <= 31; $day++)
 {
 	print "\t<option ";
 	if ($day == $cgiparams{'DAY'}) {

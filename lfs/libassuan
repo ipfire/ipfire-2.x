@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = IPC library used by GnuPG version 2
+
 VER        = 2.5.4
 
 THISAPP    = libassuan-$(VER)
@@ -35,6 +37,8 @@ PROG       = libassuan
 PAK_VER    = 6
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

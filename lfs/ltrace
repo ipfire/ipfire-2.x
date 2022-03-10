@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Library and system call tracer for programs
+
 VER        = 0.7.3
 SUP_ARCHES = x86_64 armv6l
 
@@ -36,6 +38,8 @@ PROG       = ltrace
 PAK_VER    = 2
 
 DEPS       = elfutils
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

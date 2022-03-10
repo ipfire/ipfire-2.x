@@ -38,11 +38,11 @@ PAKFIRE_VERSION = $(VERSION)-$(BUILD_ARCH)
 
 install : $(TARGET)
 
-check : 
+check :
 
-download : 
+download :
 
-md5 : 
+md5 :
 
 ###############################################################################
 # Installation Details

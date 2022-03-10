@@ -80,7 +80,7 @@ my @vendors=();
 my %vendorstats=();
 
 my $repository = "/var/updatecache/";
-my $webhome = "/srv/web/ipfire/html"; 
+my $webhome = "/srv/web/ipfire/html";
 my $hintcolour = '#FFFFCC';
 my $colourgray = '#808080';
 

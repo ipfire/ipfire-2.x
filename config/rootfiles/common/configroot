@@ -63,7 +63,6 @@ var/ipfire/firewall
 #var/ipfire/firewall/input
 #var/ipfire/firewall/locationblock
 #var/ipfire/firewall/outgoing
-#var/ipfire/firewall/p2protocols
 #var/ipfire/firewall/settings
 var/ipfire/fwhosts
 #var/ipfire/fwhosts/customgroups

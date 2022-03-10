@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = HP's Printing, Scanning, and Faxing Software
+
 VER        = 3.21.6
 
 THISAPP    = hplip-$(VER)
@@ -35,6 +37,8 @@ PROG       = hplip
 PAK_VER    = 6
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	$(PAK)
 
 ###############################################################################

@@ -149,6 +149,7 @@ WARNING: translation string unused: class in use
 WARNING: translation string unused: clear cache
 WARNING: translation string unused: client
 WARNING: translation string unused: comment
+WARNING: translation string unused: community rules
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
 WARNING: translation string unused: connect the modem
@@ -259,6 +260,7 @@ WARNING: translation string unused: editor
 WARNING: translation string unused: eg
 WARNING: translation string unused: email server can not be empty
 WARNING: translation string unused: emailreportlevel
+WARNING: translation string unused: emerging rules
 WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enable wildcards
 WARNING: translation string unused: enabledtitle
@@ -383,6 +385,7 @@ WARNING: translation string unused: ids rules license
 WARNING: translation string unused: ids rules license1
 WARNING: translation string unused: ids rules license2
 WARNING: translation string unused: ids rules license3
+WARNING: translation string unused: ids rules update
 WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
@@ -405,6 +408,7 @@ WARNING: translation string unused: intrusion detection system2
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
 WARNING: translation string unused: invalid downlink speed
+WARNING: translation string unused: invalid input for oink code
 WARNING: translation string unused: invalid loaded file
 WARNING: translation string unused: invalid md5sum
 WARNING: translation string unused: invalid port list
@@ -551,6 +555,8 @@ WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
 WARNING: translation string unused: outgoing firewall outgoing firewall reserved groupname
+WARNING: translation string unused: outgoing firewall p2p allow
+WARNING: translation string unused: outgoing firewall p2p deny
 WARNING: translation string unused: outgoing firewall p2p description 1
 WARNING: translation string unused: outgoing firewall p2p description 2
 WARNING: translation string unused: outgoing firewall p2p description 3
@@ -585,6 +591,7 @@ WARNING: translation string unused: ovpn_processprioVD
 WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
+WARNING: translation string unused: p2p block
 WARNING: translation string unused: package failed to install
 WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire health check
@@ -628,7 +635,9 @@ WARNING: translation string unused: reboot question
 WARNING: translation string unused: reboot schedule
 WARNING: translation string unused: reboot sure
 WARNING: translation string unused: refresh update list
+WARNING: translation string unused: registered user rules
 WARNING: translation string unused: released
+WARNING: translation string unused: reload
 WARNING: translation string unused: removable device advice
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: reportlevel
@@ -715,6 +724,7 @@ WARNING: translation string unused: subject test
 WARNING: translation string unused: subject warn
 WARNING: translation string unused: subnet
 WARNING: translation string unused: subnet is invalid
+WARNING: translation string unused: subscripted user rules
 WARNING: translation string unused: successfully refreshed updates list
 WARNING: translation string unused: system graphs
 WARNING: translation string unused: system has hwrng
@@ -977,7 +987,9 @@ WARNING: untranslated string: dnssec not supported = DNSSEC Not supported
 WARNING: untranslated string: dnssec validating = DNSSEC Validating
 WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
 WARNING: untranslated string: download tls-auth key = Download tls-auth key
+WARNING: untranslated string: drop hostile = Drop packets from and to hostile networks (listed at Spamhaus DROP, etc.)
 WARNING: untranslated string: drop outgoing = Log dropped outgoing packets
+WARNING: untranslated string: drop spoofed martians = Log dropped spoofed packets and marsians
 WARNING: untranslated string: duration = Duration
 WARNING: untranslated string: eight hours = 8 Hours
 WARNING: untranslated string: email config = Configuration
@@ -998,7 +1010,6 @@ WARNING: untranslated string: email tls = TLS mode
 WARNING: untranslated string: email tls explicit = explicit (STARTTLS)
 WARNING: untranslated string: email tls implicit = implicit (TLS)
 WARNING: untranslated string: email usemail = Activate Mail Service
-WARNING: untranslated string: emerging pro rules = Emergingthreats.net Pro Rules
 WARNING: untranslated string: enable = Enable
 WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
 WARNING: untranslated string: eol architecture warning = You are running an architecture of IPFire which reached its end of life. You will not receive updates anymore. This is a security risk.
@@ -1017,6 +1028,7 @@ WARNING: untranslated string: five minutes = 5 Minutes
 WARNING: untranslated string: force enable = Forced
 WARNING: untranslated string: foreshadow = Foreshadow
 WARNING: untranslated string: four hours = 4 Hours
+WARNING: untranslated string: fw red = Firewall options for RED interface
 WARNING: untranslated string: fwdfw all subnets = All subnets
 WARNING: untranslated string: fwdfw err concon = Invalid number for concurrent connections
 WARNING: untranslated string: fwdfw err ratecon = Invalid value for connections in Rate-limit
@@ -1064,22 +1076,35 @@ WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: hardware vulnerabilities = Hardware Vulnerabilities
+WARNING: untranslated string: hostile networks = Hostile networks
+WARNING: untranslated string: ids add provider = Add provider
 WARNING: untranslated string: ids apply = Apply
 WARNING: untranslated string: ids apply ruleset changes = The ruleset changes are being applied. Please wait until all operations have completed successfully...
 WARNING: untranslated string: ids automatic rules update = Automatic Rule Update
+WARNING: untranslated string: ids autoupdates = Automatic updates
+WARNING: untranslated string: ids could not add provider = Could not add provider
+WARNING: untranslated string: ids customize ruleset = Customize ruleset
 WARNING: untranslated string: ids download new ruleset = Downloading and unpacking new ruleset. Please wait until all operations have completed successfully...
 WARNING: untranslated string: ids enable = Enable Intrusion Prevention System
+WARNING: untranslated string: ids enable automatic updates = Enable automatic updates
+WARNING: untranslated string: ids force ruleset update = Force ruleset update
 WARNING: untranslated string: ids hide = Hide
 WARNING: untranslated string: ids ignored hosts = Whitelisted Hosts
 WARNING: untranslated string: ids log hits = Total of number of activated rules for
 WARNING: untranslated string: ids monitor traffic only = Monitor traffic only
 WARNING: untranslated string: ids monitored interfaces = Monitored Interfaces
+WARNING: untranslated string: ids no enabled ruleset provider = No enabled ruleset is available. Please activate or add one first.
 WARNING: untranslated string: ids no network zone = Please select at least one network zone to be monitored
-WARNING: untranslated string: ids no ruleset available = No ruleset is available. Please download one first
-WARNING: untranslated string: ids oinkcode required = The selected ruleset requires a subscription or an Oinkcode
+WARNING: untranslated string: ids provider = Provider
+WARNING: untranslated string: ids provider settings = Provider settings
+WARNING: untranslated string: ids reset provider = Reset provider
 WARNING: untranslated string: ids ruleset autoupdate in progress = Ruleset update in progress. Please wait until all operations have completed successfully...
 WARNING: untranslated string: ids ruleset settings = Ruleset Settings
 WARNING: untranslated string: ids show = Show
+WARNING: untranslated string: ids subscription code required = The selected ruleset requires a subscription code
+WARNING: untranslated string: ids the choosen provider is already in use = The choosen provider is already in use.
+WARNING: untranslated string: ids unable to download the ruleset = Unable to download the ruleset
+WARNING: untranslated string: ids visit provider website = Visit provider website
 WARNING: untranslated string: ids working = Changes are being applied. Please wait until all operations have completed successfully...
 WARNING: untranslated string: imei = IMEI
 WARNING: untranslated string: imsi = IMSI
@@ -1093,6 +1118,7 @@ WARNING: untranslated string: invalid input for interface mode = Invalid input f
 WARNING: untranslated string: invalid input for interface mtu = Invalid input to interface MTU
 WARNING: untranslated string: invalid input for local ip address = Invalid input for local IP address
 WARNING: untranslated string: invalid input for mode = Invalid input for mode
+WARNING: untranslated string: invalid input for subscription code = Invalid input for subscription code
 WARNING: untranslated string: invalid input for valid till days = Invalid input for Valid till (days).
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: invalid logserver protocol = Invalid syslogd server protocol
@@ -1119,6 +1145,7 @@ WARNING: untranslated string: locationblock configuration = Location Configurati
 WARNING: untranslated string: locationblock country is allowed = Incoming traffic from this country is allowed
 WARNING: untranslated string: locationblock country is blocked = Incoming traffic from this country will be blocked
 WARNING: untranslated string: locationblock enable feature = Enable Location based blocking:
+WARNING: untranslated string: log dropped conntrack invalids = Log dropped packets classified as INVALID by connection tracking
 WARNING: untranslated string: log server protocol = protocol:
 WARNING: untranslated string: masquerade blue = Masquerade BLUE
 WARNING: untranslated string: masquerade green = Masquerade GREEN
@@ -1174,7 +1201,10 @@ WARNING: untranslated string: ovpn ha = Hash algorithm
 WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: pakfire finished = Pakfire has finished! Returning...
+WARNING: untranslated string: pakfire finished error = Pakfire has finished! Errors occurred, please check the log output before proceeding.
 WARNING: untranslated string: pakfire invalid tree = Invalid repository selected
+WARNING: untranslated string: pakfire return = Return to Pakfire
 WARNING: untranslated string: pakfire tree = Repository
 WARNING: untranslated string: pakfire tree stable = Stable
 WARNING: untranslated string: pakfire tree testing = Testing
@@ -1213,6 +1243,7 @@ WARNING: untranslated string: source ip country = Source IP Country
 WARNING: untranslated string: spectre variant 1 = Spectre Variant 1
 WARNING: untranslated string: spectre variant 2 = Spectre Variant 2
 WARNING: untranslated string: spectre variant 4 = Spectre Variant 4
+WARNING: untranslated string: spoofed or martians = Spoofed/Martians
 WARNING: untranslated string: srbds = Special register buffer data sampling
 WARNING: untranslated string: ssh active sessions = Active logins
 WARNING: untranslated string: ssh agent forwarding = Allow SSH Agent Forwarding
@@ -1222,6 +1253,7 @@ WARNING: untranslated string: ssh username = Username
 WARNING: untranslated string: standard = Standard
 WARNING: untranslated string: strict = Strict
 WARNING: untranslated string: subnet mask = Subnet Mask
+WARNING: untranslated string: subscription code = Subscription code
 WARNING: untranslated string: system is offline = The system is offline.
 WARNING: untranslated string: ta key = TLS-Authentification-Key
 WARNING: untranslated string: taa zombieload2 = TSX Async Abort / ZombieLoad v2
@@ -1233,6 +1265,7 @@ WARNING: untranslated string: token not set = No Token has been given.
 WARNING: untranslated string: tor guard country any = Any country
 WARNING: untranslated string: tor guard nodes = Guard Nodes
 WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
+WARNING: untranslated string: transfers = Transfers
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: twelve hours = 12 Hours
 WARNING: untranslated string: two weeks = Two Weeks
@@ -1241,7 +1274,6 @@ WARNING: untranslated string: unblock = Unblock
 WARNING: untranslated string: unblock all = Unblock all
 WARNING: untranslated string: uncheck all = Uncheck all
 WARNING: untranslated string: unlimited = Unlimited
-WARNING: untranslated string: update ruleset = Update ruleset
 WARNING: untranslated string: updxlrtr passive mode = Delivery only/no download mode
 WARNING: untranslated string: uplink bit rate = Uplink Bit Rate
 WARNING: untranslated string: upload dh key = Upload Diffie-Hellman parameters

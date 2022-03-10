@@ -1,6 +1,8 @@
 Name: NAME
+Summary: SUMMARY
 ProgVersion: VER
 Release: RELEASE
 Size: SIZE
 Dependencies: DEPS
 File: NAME-VER-RELEASE.ipfire
+Services: SERVICES

@@ -4,7 +4,7 @@
 #
 # This code is distributed under the terms of the GPL
 #
-# JC HERITIER 
+# JC HERITIER
 # page inspired from the initial firewalllog.dat
 #
 # Modified for IPFire by Christian Schmidt
@@ -181,7 +181,7 @@ if (!$skip)
 			$lines++;
 		}
 	}
-	close (FILE);   
+	close (FILE);
 }
 
 $skip=0;
@@ -237,7 +237,7 @@ for ($month = 0; $month < 12; $month++)
 {
 	print "\t<option ";
 	if ($month == $cgiparams{'MONTH'}) {
-		print "selected='selected' "; 
+		print "selected='selected' ";
 	}
 	print "value='$month'>$longmonths[$month]</option>\n";
 }
@@ -249,11 +249,11 @@ print <<END
 	<select name='DAY'>
 END
 ;
-for ($day = 1; $day <= 31; $day++) 
+for ($day = 1; $day <= 31; $day++)
 {
 	print "\t<option ";
 	if ($day == $cgiparams{'DAY'}) {
-		print "selected='selected' "; 
+		print "selected='selected' ";
 	}
 	print "value='$day'>$day</option>\n";
 }
@@ -359,7 +359,7 @@ my @numb;
 my $o;
 
 if($cgiparams{'otherspie'} == 2 ){}
-else{ 
+else{
 	my $numothers;
 	for($o=0;$o<$pienumber;$o++){
 		$numothers = $numothers + $numb[$o];
@@ -437,7 +437,7 @@ for($s=0;$s<$lines;$s++)
 
 	# Get country code.
 	my $ccode = &Location::Functions::lookup_country_code($key[$s]);
-  
+
 	$color++;
 	print "<td align='center' $col><form method='post' action='showrequestfromip.dat'><input type='hidden' name='MONTH' value='$cgiparams{'MONTH'}'> <input type='hidden' name='DAY' value='$cgiparams{'DAY'}'> <input type='hidden' name='ip' value='$key[$s]'> <input type='submit' value='$Lang::tr{'details'}'></form></td>";
 	print "<td align='center' $col><a href='/cgi-bin/ipinfo.cgi?ip=$key[$s]'>$key[$s]</a></td>";

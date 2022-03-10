@@ -54,7 +54,7 @@ $settings{'HOST'} = '';
 $settings{'DOM'} = '';
 $settings{'PTR'} = '';
 my @nosaved=('EN','IP','HOST','DOM','PTR');	# List here ALL setting2 fields. Mandatory
-    
+
 $settings{'ACTION'} = '';		# add/edit/remove
 $settings{'KEY1'} = '';			# point record for ACTION
 
@@ -101,14 +101,14 @@ if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
     $temp[0] = $temp[0] ne '' ? '' : 'on';		# Toggle the field
     @current[$settings{'KEY1'}] = join (',',@temp)."\n";
     $settings{'KEY1'} = ''; 				# End edit mode
-    
+
     &General::log($Lang::tr{'hosts config changed'});
 
     #Save current
     open(FILE, ">$datafile") or die 'hosts datafile error';
     print FILE @current;
     close(FILE);
-	
+
     # Rebuild configuration file
     &BuildConfiguration;
 }
@@ -140,7 +140,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
         # Write changes to config file.
         &SortDataFile;				# sort newly added/modified entry
         &BuildConfiguration;			# then re-build new host
-	
+
 	#map ($settings{$_}='' ,@nosaved);	# Clear fields
     }
 }
@@ -162,7 +162,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
 }
 
 if ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
-    splice (@current,$settings{'KEY1'},1);		# Delete line 
+    splice (@current,$settings{'KEY1'},1);		# Delete line
     open(FILE, ">$datafile") or die 'hosts datafile error';
     print FILE @current;
     close(FILE);
@@ -331,7 +331,7 @@ foreach my $line (@current) {
 	$gdesc = $Lang::tr{'click to disable'};
     } else {
 	$gif = 'off.gif';
-	$gdesc = $Lang::tr{'click to enable'}; 
+	$gdesc = $Lang::tr{'click to enable'};
     }
 
    if ($temp[4] eq '' || $temp[4] eq 'on') {
@@ -418,7 +418,7 @@ END
 sub SortDataFile
 {
     our %entries = ();
-    
+
     # Sort pair of record received in $a $b special vars.
     # When IP is specified use numeric sort else alpha.
     # If sortname ends with 'Rev', do reverse sort.
@@ -462,13 +462,13 @@ sub SortDataFile
 	# Build a pair 'Field Name',value for each of the data dataline.
 	# Each SORTABLE field must have is pair.
 	# Other data fields (non sortable) can be grouped in one
-	
+
 	my @record = ('KEY',$key++,'EN',$temp[0],'IP',$temp[1],'HOST',$temp[2],'DOM',$temp[3],'PTR',$temp[4]);
 	my $record = {};                        	# create a reference to empty hash
 	%{$record} = @record;                		# populate that hash with @record
 	$entries{$record->{KEY}} = $record; 		# add this to a hash of hashes
     }
-    
+
     open(FILE, ">$datafile") or die 'hosts datafile error';
 
     # Each field value is printed , with the newline ! Don't forget separator and order of them.

@@ -126,8 +126,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mv /etc/collectd.vpn /var/ipfire/ovpn/collectd.vpn
 	chown nobody.nobody /var/ipfire/ovpn/collectd.vpn
 	ln -f -s ../var/ipfire/ovpn/collectd.vpn /etc/collectd.vpn
-	ln -f -s ../init.d/collectd /etc/rc.d/rc0.d/K50collectd 
+	ln -f -s ../init.d/collectd /etc/rc.d/rc0.d/K50collectd
 	ln -f -s ../init.d/collectd /etc/rc.d/rc3.d/S29collectd
-	ln -f -s ../init.d/collectd /etc/rc.d/rc6.d/K50collectd 
+	ln -f -s ../init.d/collectd /etc/rc.d/rc6.d/K50collectd
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

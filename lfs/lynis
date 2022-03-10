@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Security and System auditing tool
+
 VER        = 3.0.6
 
 THISAPP    = lynis-$(VER)
@@ -34,7 +36,10 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = lynis
 PAK_VER    = 10
+
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

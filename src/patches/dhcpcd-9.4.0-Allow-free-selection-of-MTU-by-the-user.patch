@@ -1,0 +1,44 @@
+From 1acff721a3874a74efc9921a1e07bd48bd7efab0 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Tue, 22 Feb 2022 12:07:15 +0000
+Subject: [PATCH] Allow free selection of MTU by the user
+
+Various ISPs (or equipment?) seem to hand out an MTU of only 576 bytes.
+Hwoever, this does not seem to be intentional which is why we would like
+to manually overwrite this in the configuration.
+
+dhcpcd only allows setting a maximum MTU of 1472 bytes which does not
+seem to have any rationale (any more). Although Ethernet might limit any
+MTU to less, IPv6 and IPv4 support MTUs of up to 64KiB.
+
+This patch allows the user to configure the MTU freely with providing
+some sanity check.
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/dhcp-common.h | 9 +++++----
+ 1 file changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/src/dhcp-common.h b/src/dhcp-common.h
+index a82fcd4c..d6620822 100644
+--- a/src/dhcp-common.h
++++ b/src/dhcp-common.h
+@@ -46,10 +46,11 @@
+ #define NS_MAXLABEL MAXLABEL
+ #endif
+ 
+-/* Max MTU - defines dhcp option length */
+-#define	IP_UDP_SIZE		  28
+-#define	MTU_MAX			1500 - IP_UDP_SIZE
+-#define	MTU_MIN			 576 + IP_UDP_SIZE
++/* Max/Min MTU */
++#define	MTU_MAX			65536
++#define	MTU_MIN			  576
++
++#define	IP_UDP_SIZE		   28
+ 
+ #define	OT_REQUEST		(1 << 0)
+ #define	OT_UINT8		(1 << 1)
+-- 
+2.30.2
+

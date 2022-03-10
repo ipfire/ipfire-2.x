@@ -19,13 +19,13 @@
 
 /*
     This module is responsible for start stop of the vpn system.
-    
+
     1) it allows AH & ESP to get in from interface where a vpn is mounted
         The NAT traversal is used on the udp 4500 port.
 
     2) it starts the ipsec daemon
         The RED interface is a problem because it can be up or down a startup.
-        Then, the state change and it must not affect other VPN mounted on 
+        Then, the state change and it must not affect other VPN mounted on
         other interface.
         Unfortunatly, openswan 1 cannot do that correctly. It cannot use an
         interface without restarting everything.
@@ -55,7 +55,7 @@ static void ipsec_reload() {
 /*
  return values from the vpn config file or false if not 'on'
 */
-int decode_line (char *s, 
+int decode_line (char *s,
                 char **key,
                 char **name,
                 char **type
@@ -85,7 +85,7 @@ int decode_line (char *s,
         // check other syntax
         if (! *name)
             return 0;
-                        
+
         if (strspn(*name, LETTERS_NUMBERS) != strlen(*name)) {
                 fprintf(stderr, "Bad connection name: %s\n", *name);
                 return 0;
@@ -112,7 +112,7 @@ void turn_connection_on(char *name, char *type) {
         char command[STRING_SIZE];
 
 	// Bring down the connection (if established).
-        snprintf(command, STRING_SIZE - 1, 
+        snprintf(command, STRING_SIZE - 1,
                 "/usr/sbin/ipsec down %s >/dev/null", name);
         safe_system(command);
 
@@ -145,7 +145,7 @@ void turn_connection_off (char *name) {
 	ipsec_reload();
 
 	// Bring down the connection.
-        snprintf(command, STRING_SIZE - 1, 
+        snprintf(command, STRING_SIZE - 1,
                 "/usr/sbin/ipsec down %s >/dev/null", name);
         safe_system(command);
 
@@ -158,7 +158,7 @@ void turn_connection_off (char *name) {
 
 int main(int argc, char *argv[]) {
         struct keyvalue *kv = NULL;
-                        
+
         if (argc < 2) {
                 usage();
                 exit(1);
