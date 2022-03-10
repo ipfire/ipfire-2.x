@@ -113,7 +113,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'dial profile'})
 	chmod 0600, "${General::swroot}/ppp/secrets";
 	close FILE;
 
-	&General::log("$Lang::tr{'profile made current'} $tempcgiparams{'PROFILENAME'}"); 
+	&General::log("$Lang::tr{'profile made current'} $tempcgiparams{'PROFILENAME'}");
 	$cgiparams{'ACTION'} = "$Lang::tr{'dial'}";
 }
 
@@ -138,7 +138,7 @@ for ($c = 1; $c <= $maxprofiles; $c++)
 }
 my %selected;
 for ($c = 1; $c <= $maxprofiles; $c++) {
-	$selected{'PROFILE'}{$c} = ''; 
+	$selected{'PROFILE'}{$c} = '';
 }
 $selected{'PROFILE'}{$pppsettings{'PROFILE'}} = "selected='selected'";
 my $dialButtonDisabled = "disabled='disabled'";
@@ -572,7 +572,7 @@ foreach my $line (@df) {
 			# and root size should not vary during time
 			$warnmessage .= "<li>$Lang::tr{'filesystem full'}: $temp[0] <b>$Lang::tr{'free'}=$1M</b> !</li>";
 		}
-		
+
 	} else {
 		# $line =~ m/^.* (\d+)m.*$/;
 		$line =~ m/^.* (\d+)\%.*$/;

@@ -24,7 +24,10 @@
 
 include Config
 
+SUMMARY    = A client program for the telnet remote login protocol
+
 VER        = 0.17
+
 THISAPP    = netkit-telnet-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
@@ -34,6 +37,8 @@ PROG       = telnet
 PAK_VER    = 1
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -56,7 +61,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -97,7 +102,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/telnet-0.17-errno_test_sys_bsd.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/netkit-telnet-0.17-reallynodns.patch
 	cd $(DIR_APP) && ./configure --prefix=/usr
-	cd $(DIR_APP) && make 
+	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	rm -f /usr/sbin/telnetd
 	rm -f /usr/man/man8/in.telnetd.8

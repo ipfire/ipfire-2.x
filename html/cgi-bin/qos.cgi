@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -776,7 +776,7 @@ sub changebandwidth {
 
 	if ($qossettings{'ENABLED'} eq 'on') {
 		print "$Lang::tr{'bandwidtherror'}";
-		print "<a href='/cgi-bin/qos.cgi'>$Lang::tr{'back'}</a>";
+		print "<table width='100%'><tr><td align='center'><a href='/cgi-bin/qos.cgi'><img src='/images/back.png' alt='$Lang::tr{'back'}' title='$Lang::tr{'back'}' /></a></td></tr></table>";
 	} else {
 		print <<END;
 			<form method='post' action='$ENV{'SCRIPT_NAME'}'>

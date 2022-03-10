@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.4.3
+VER        = 5.4.4
 
 THISAPP    = lua-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = ef63ed2ecfb713646a7fcc583cf5f352
+$(DL_FILE)_MD5 = bd8ce7069ff99a400efd14cf339a727b
 
 install : $(TARGET)
 
@@ -78,7 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make INSTALL_TOP=/usr                			\
 			      INSTALL_DATA="cp -d"            			\
 			      INSTALL_MAN=/usr/share/man/man1 			\
-			      TO_LIB="liblua.so liblua.so.5.4 liblua.so.5.4.3"  \
+			      TO_LIB="liblua.so liblua.so.5.4 liblua.so.5.4.4"  \
 			 install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

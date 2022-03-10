@@ -31,6 +31,8 @@ usr/bin/pdfunite
 #usr/include/poppler/Dict.h
 #usr/include/poppler/Error.h
 #usr/include/poppler/ErrorCodes.h
+#usr/include/poppler/FDPDFDocBuilder.h
+#usr/include/poppler/FILECacheLoader.h
 #usr/include/poppler/FileSpec.h
 #usr/include/poppler/FontEncodingTables.h
 #usr/include/poppler/FontInfo.h
@@ -74,8 +76,6 @@ usr/bin/pdfunite
 #usr/include/poppler/SecurityHandler.h
 #usr/include/poppler/Sound.h
 #usr/include/poppler/SplashOutputDev.h
-#usr/include/poppler/StdinCachedFile.h
-#usr/include/poppler/StdinPDFDocBuilder.h
 #usr/include/poppler/Stream-CCITT.h
 #usr/include/poppler/Stream.h
 #usr/include/poppler/StructElement.h
@@ -171,10 +171,10 @@ usr/lib/libpoppler-cpp.so.0
 usr/lib/libpoppler-cpp.so.0.9.0
 #usr/lib/libpoppler-glib.so
 usr/lib/libpoppler-glib.so.8
-usr/lib/libpoppler-glib.so.8.21.0
+usr/lib/libpoppler-glib.so.8.23.0
 #usr/lib/libpoppler.so
-usr/lib/libpoppler.so.115
-usr/lib/libpoppler.so.115.0.0
+usr/lib/libpoppler.so.118
+usr/lib/libpoppler.so.118.0.0
 #usr/lib/pkgconfig/poppler-cpp.pc
 #usr/lib/pkgconfig/poppler-glib.pc
 #usr/lib/pkgconfig/poppler.pc

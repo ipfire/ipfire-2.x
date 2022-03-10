@@ -1,4 +1,23 @@
 #!/bin/sh
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
 . /etc/sysconfig/rc
 . ${rc_functions}
@@ -21,6 +40,8 @@ IPS_REPEAT_MARK="0x80000000"
 IPS_REPEAT_MASK="0x80000000"
 IPS_BYPASS_MARK="0x40000000"
 IPS_BYPASS_MASK="0x40000000"
+
+IPSET_DB_DIR="/var/lib/location/ipset"
 
 function iptables() {
 	/sbin/iptables --wait "$@"
@@ -148,24 +169,6 @@ iptables_init() {
 	iptables -t nat -N CUSTOMPOSTROUTING
 	iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
 
-	# Log and drop any traffic from and to networks known as being hostile, posing
-	# a technical threat to our users (i. e. listed at Spamhaus DROP et al.)
-	iptables -N HOSTILE
-	if [ "$DROPHOSTILE" == "on" ]; then
-		iptables -A HOSTILE -m limit --limit 10/second -j LOG  --log-prefix "DROP_HOSTILE "
-		iptables -A INPUT   -i $IFACE -m geoip --src-cc XD -j HOSTILE
-		iptables -A FORWARD -i $IFACE -m geoip --src-cc XD -j HOSTILE
-		iptables -A FORWARD -o $IFACE -m geoip --dst-cc XD -j HOSTILE
-		iptables -A OUTPUT  -o $IFACE -m geoip --src-cc XD -j HOSTILE
-	fi
-	iptables -A HOSTILE -j DROP -m comment --comment "DROP_HOSTILE"
-
-	# P2PBLOCK
-	iptables -N P2PBLOCK
-	iptables -A INPUT -j P2PBLOCK
-	iptables -A FORWARD -j P2PBLOCK
-	iptables -A OUTPUT -j P2PBLOCK
-
 	# IPS (Guardian) chains
 	iptables -N GUARDIAN
 	iptables -A INPUT -j GUARDIAN
@@ -255,6 +258,14 @@ iptables_init() {
 		iptables -A INPUT  -i "${BLUE_DEV}" -j DHCPBLUEINPUT
 		iptables -A OUTPUT -o "${BLUE_DEV}" -j DHCPBLUEOUTPUT
 	fi
+
+	# Chains for networks known as being hostile, posing a technical threat to our users
+	# (i. e. listed at Spamhaus DROP et al.)
+	iptables -N HOSTILE
+	iptables -A INPUT -i $IFACE -j HOSTILE
+	iptables -A FORWARD -i $IFACE -j HOSTILE
+	iptables -A FORWARD -o $IFACE -j HOSTILE
+	iptables -A OUTPUT -o $IFACE -j HOSTILE
 
 	# Tor (inbound)
 	iptables -N TOR_INPUT

@@ -80,11 +80,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install headers.
 	mkdir -pv /usr/include/pci
-	cd $(DIR_APP) && install -p lib/pci.h /usr/include/pci
-	cd $(DIR_APP) && install -p lib/header.h /usr/include/pci
-	cd $(DIR_APP) && install -p lib/config.h /usr/include/pci
-	cd $(DIR_APP) && install -p lib/types.h /usr/include/pci
-	cd $(DIR_APP) && install -p lib/libpci.pc /usr/lib/pkgconfig
+	cd $(DIR_APP) && install -m 644 lib/pci.h /usr/include/pci
+	cd $(DIR_APP) && install -m 644 lib/header.h /usr/include/pci
+	cd $(DIR_APP) && install -m 644 lib/config.h /usr/include/pci
+	cd $(DIR_APP) && install -m 644 lib/types.h /usr/include/pci
+	cd $(DIR_APP) && install -m 644 lib/libpci.pc /usr/lib/pkgconfig
 	chmod -v 755 /usr/lib/libpci.so
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

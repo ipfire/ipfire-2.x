@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = IPFire backup extension
+
 VER        = ipfire
 
 THISAPP    = backup-$(VER)
@@ -34,19 +36,21 @@ PAK_VER    = 2
 
 DEPS       =
 
+SERVICES   =
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
 
 install : $(TARGET)
 
-check : 
+check :
 
 download :
 
-md5 : 
+md5 :
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

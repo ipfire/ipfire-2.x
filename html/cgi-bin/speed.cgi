@@ -43,7 +43,7 @@ my $data_last = $ENV{'QUERY_STRING'};
 my $rxb_last = 0;
 my $txb_last = 0;
 
-my (@fields, $field, $name, $value); 
+my (@fields, $field, $name, $value);
 @fields = split(/&/, $data_last);
 foreach $field (@fields) {
   ($name, $value) = split(/=/, $field);

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Antivirus Toolkit
+
 VER        = 0.104.2
 
 THISAPP    = clamav-$(VER)
@@ -35,6 +37,8 @@ PROG       = clamav
 PAK_VER    = 59
 
 DEPS       =
+
+SERVICES   = clamav
 
 DATABASE_DIR = /var/lib/clamav
 
@@ -56,7 +60,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	$(PAK)
 
 ###############################################################################
@@ -107,6 +111,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -pv /var/run/clamav
 	chown clamav:clamav /var/run/clamav
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,clamav)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = FRRouting Routing daemon
+
 VER        = 8.0.1
 
 THISAPP    = frr-$(VER)
@@ -35,6 +37,8 @@ PROG       = frr
 PAK_VER    = 3
 
 DEPS       = elfutils
+
+SERVICES   = frr
 
 CFLAGS    += -fcommon
 
@@ -56,7 +60,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -111,7 +115,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		 /var/ipfire/backup/addons/includes/frr
 
 	# Install initscript
-	$(call INSTALL_INITSCRIPT,frr)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Helper programs for PC-Cards
+
 VER        = 014
 
 THISAPP    = pcmciautils-$(VER)
@@ -33,7 +35,10 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = pcmciautils
 PAK_VER    = 1
+
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -55,7 +60,7 @@ md5 : $(subst %,%_MD5,$(objects))
 
 dist :
 	@$(PAK)
-	
+
 ###############################################################################
 # Downloading, checking, md5sum
 ###############################################################################

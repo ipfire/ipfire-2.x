@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  Michael Tremer & Christian Schmidt                 #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -381,7 +381,7 @@ END
 		<tr><td class="heading">$Lang::tr{'pakfire available addons'}</td>
 			<td class="heading">$Lang::tr{'pakfire installed addons'}</td></tr>
 
-		<tr><td><p>$Lang::tr{'pakfire install description'}</p>
+		<tr><td style="padding:5px 10px 20px 20px" align="center"><p>$Lang::tr{'pakfire install description'}</p>
 				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<select name="INSPAKS" class="pflist" size="10" multiple>
 END
@@ -393,7 +393,7 @@ END
 					<input type='image' alt='$Lang::tr{'install'}' title='$Lang::tr{'install'}' src='/images/list-add.png' />
 				</form>
 			</td>
-			<td><p>$Lang::tr{'pakfire uninstall description'}</p>
+			<td style="padding:5px 10px 20px 20px" align="center"><p>$Lang::tr{'pakfire uninstall description'}</p>
 				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<select name="DELPAKS" class="pflist" size="10" multiple>
 END

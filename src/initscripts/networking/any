@@ -1,21 +1,25 @@
 #!/bin/sh
-########################################################################
-# Begin
-#
-# Description : ANY Device Script
-#
-# Authors     : Nathan Coulson - nathan@linuxfromscratch.org
-#               Kevin P. Fleming - kpfleming@linuxfromscratch.org
-#               Michael Tremer - mitch@ipfire.org
-#               Maniacikarus - maniacikarus@ipfire.org
-#
-# Version     : 01.00
-#
-# Notes       : 
-#
-########################################################################
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
-. /etc/sysconfig/rc 
+. /etc/sysconfig/rc
 . ${rc_functions}
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
@@ -56,7 +60,7 @@ case "${1}" in
 	start)
 		boot_mesg "Bringing up the ${DEVICE} interface..."
 		boot_mesg_flush
-		
+
 		# Check if an interface is there...
 		if ip link show ${DEVICE} > /dev/null 2>&1; then
 			link_status=`ip link show ${DEVICE} 2> /dev/null`
@@ -81,7 +85,7 @@ case "${1}" in
 
 		# Create & Enable vnstat data collection
 		/usr/bin/vnstat -u -i ${DEVICE} -r --enable --force > /dev/null 2>&1
-		
+
 		if [ ! "${ADDRESS}" == "1.1.1.1" ]; then
 			boot_mesg "Adding IPv4 address ${ADDRESS} to the ${DEVICE} interface..."
 			ip addr add ${args} dev ${DEVICE}
@@ -101,4 +105,3 @@ case "${1}" in
 		exit 0;
 		;;
 esac
-# End

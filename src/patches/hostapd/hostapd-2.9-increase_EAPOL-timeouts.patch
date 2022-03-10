@@ -1,8 +1,8 @@
 diff U3 src/ap/wpa_auth.c src/ap/wpa_auth.c
 --- a/src/ap/wpa_auth.c	Wed Aug  7 15:25:25 2019
 +++ b/src/ap/wpa_auth.c	Fri Sep 20 17:35:23 2019
-@@ -65,9 +65,9 @@
- 			  struct wpa_group *group);
+@@ -68,9 +68,9 @@
+ static int ieee80211w_kde_len(struct wpa_state_machine *sm);
  static u8 * ieee80211w_kde_add(struct wpa_state_machine *sm, u8 *pos);
  
 -static const u32 eapol_key_timeout_first = 100; /* ms */

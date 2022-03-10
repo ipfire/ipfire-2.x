@@ -33,7 +33,7 @@ require "${basedir}/langs/$lang/cgi-bin/$lang.pl";
 open(FILE,">${basedir}/langs/$lang/cgi-bin/$lang.pl");
 
 print FILE <<EOF;
-\%tr = ( 
+\%tr = (
 \%tr,
 
 EOF

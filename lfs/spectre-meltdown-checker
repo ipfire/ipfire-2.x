@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Spectre & Meltdown Vulnerability Checker
+
 VER        = 0.44
 
 THISAPP    = spectre-meltdown-checker-$(VER)
@@ -35,6 +37,8 @@ PROG       = spectre-meltdown-checker
 PAK_VER    = 5
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

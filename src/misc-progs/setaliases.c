@@ -87,9 +87,9 @@ int main(void)
 		fprintf(stderr, "Cannot read RED_TYPE\n");
 		exit(1);
 	}
-	
+
 	/* Make sure it's the right type */
-	if (!(strcmp(s, "STATIC")==0)) 
+	if (!(strcmp(s, "STATIC")==0))
 		exit(0);
 
 	/* Get the RED interface details */
@@ -99,7 +99,7 @@ int main(void)
 		fprintf(stderr, "Cannot read RED settings\n");
 		exit(1);
 	}
-		
+
 	if (!VALID_DEVICE(red_dev))
 	{
 		fprintf(stderr, "Bad red_dev: %s\n", red_dev);

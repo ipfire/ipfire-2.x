@@ -174,6 +174,7 @@ WARNING: translation string unused: class in use
 WARNING: translation string unused: clear cache
 WARNING: translation string unused: client
 WARNING: translation string unused: comment
+WARNING: translation string unused: community rules
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
 WARNING: translation string unused: connect the modem
@@ -291,6 +292,8 @@ WARNING: translation string unused: email subject
 WARNING: translation string unused: email success
 WARNING: translation string unused: email text
 WARNING: translation string unused: emailreportlevel
+WARNING: translation string unused: emerging pro rules
+WARNING: translation string unused: emerging rules
 WARNING: translation string unused: enable javascript
 WARNING: translation string unused: enable wildcards
 WARNING: translation string unused: enabledtitle
@@ -410,6 +413,8 @@ WARNING: translation string unused: ibod for dual isdn only
 WARNING: translation string unused: icmp selected but no type
 WARNING: translation string unused: icmp type
 WARNING: translation string unused: id
+WARNING: translation string unused: ids oinkcode required
+WARNING: translation string unused: ids rules update
 WARNING: translation string unused: ike encryption
 WARNING: translation string unused: ike grouptype
 WARNING: translation string unused: ike integrity
@@ -433,6 +438,7 @@ WARNING: translation string unused: intrusion prevention system
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
 WARNING: translation string unused: invalid downlink speed
+WARNING: translation string unused: invalid input for oink code
 WARNING: translation string unused: invalid loaded file
 WARNING: translation string unused: invalid md5sum
 WARNING: translation string unused: invalid port list
@@ -586,6 +592,8 @@ WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
 WARNING: translation string unused: outgoing firewall outgoing firewall reserved groupname
+WARNING: translation string unused: outgoing firewall p2p allow
+WARNING: translation string unused: outgoing firewall p2p deny
 WARNING: translation string unused: outgoing firewall p2p description 1
 WARNING: translation string unused: outgoing firewall p2p description 2
 WARNING: translation string unused: outgoing firewall p2p description 3
@@ -622,6 +630,7 @@ WARNING: translation string unused: ovpn_processprioVD
 WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
+WARNING: translation string unused: p2p block
 WARNING: translation string unused: package failed to install
 WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire health check
@@ -665,7 +674,9 @@ WARNING: translation string unused: reboot question
 WARNING: translation string unused: reboot schedule
 WARNING: translation string unused: reboot sure
 WARNING: translation string unused: refresh update list
+WARNING: translation string unused: registered user rules
 WARNING: translation string unused: released
+WARNING: translation string unused: reload
 WARNING: translation string unused: removable device advice
 WARNING: translation string unused: reportfile
 WARNING: translation string unused: reportlevel
@@ -751,6 +762,7 @@ WARNING: translation string unused: subject test
 WARNING: translation string unused: subject warn
 WARNING: translation string unused: subnet
 WARNING: translation string unused: subnet is invalid
+WARNING: translation string unused: subscripted user rules
 WARNING: translation string unused: successfully refreshed updates list
 WARNING: translation string unused: system graphs
 WARNING: translation string unused: system has hwrng
@@ -818,6 +830,7 @@ WARNING: translation string unused: unix charset
 WARNING: translation string unused: unix group
 WARNING: translation string unused: unix password sync
 WARNING: translation string unused: unix shell
+WARNING: translation string unused: update ruleset
 WARNING: translation string unused: update transcript
 WARNING: translation string unused: updatedatabase
 WARNING: translation string unused: updates
@@ -950,7 +963,9 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
+WARNING: untranslated string: invalid input for subscription code = Invalid input for subscription code
 WARNING: untranslated string: link-layer encapsulation = Link-Layer Encapsulation
+WARNING: untranslated string: log dropped conntrack invalids = Log dropped packets classified as INVALID by connection tracking
 WARNING: untranslated string: max bandwidth = Maximum bandwidth
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: route config changed = unknown string

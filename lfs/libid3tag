@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = ID3 Tag Manipulation Library
+
 VER        = 0.15.1b
 
 THISAPP    = libid3tag-$(VER)
@@ -35,6 +37,8 @@ PROG       = libid3tag
 PAK_VER    = 3
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

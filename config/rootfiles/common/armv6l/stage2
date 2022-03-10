@@ -132,7 +132,6 @@ usr/local/bin/update-location-database
 #usr/sbin
 usr/sbin/openvpn-metrics
 usr/sbin/ovpn-ccd-convert
-usr/sbin/ovpn-collectd-convert
 #usr/share
 #usr/share/doc
 #usr/share/doc/licenses

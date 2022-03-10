@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = SPICE-protocol definitions
+
 VER        = 0.14.3
 
 THISAPP    = spice-protocol-$(VER)
@@ -35,6 +37,8 @@ PROG       = spice-protocol
 PAK_VER    = 4
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

@@ -96,7 +96,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	#Create Placeholder files
 	echo "Place scripts run minutely here ..." > /etc/fcron.minutely/info.txt
-	echo "Place scripts run cyclic here ..." > /etc/fcron.cyclic/info.txt 
+	echo "Place scripts run cyclic here ..." > /etc/fcron.cyclic/info.txt
 	echo "Place scripts run hourly here ..." > /etc/fcron.hourly/info.txt
 	echo "Place scripts run daily here ..." > /etc/fcron.daily/info.txt
 	echo "Place scripts run weekly here ..." > /etc/fcron.weekly/info.txt

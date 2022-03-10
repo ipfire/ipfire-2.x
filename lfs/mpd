@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Music Player Daemon
+
 VER        = 0.22.6
 
 THISAPP    = mpd-$(VER)
@@ -36,6 +38,8 @@ PAK_VER    = 24
 SUP_ARCH   = aarch64 armv6l x86_64
 
 DEPS       = alsa avahi faad2 ffmpeg flac lame libmad libshout libogg libid3tag libvorbis opus soxr
+
+SERVICES   = mpd
 
 ###############################################################################
 # Top-level Rules
@@ -55,7 +59,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -98,7 +102,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ninja -C builddir/ install
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,mpd)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	touch /var/log/mpd.error.log

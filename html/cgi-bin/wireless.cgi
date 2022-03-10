@@ -39,7 +39,7 @@ my %checked=();
 my $errormessage = '';
 my $filename = "${General::swroot}/wireless/config";
 my $hostsfile = "${General::swroot}/main/hosts";
-our %dhcpsettings=(); 
+our %dhcpsettings=();
 our %netsettings=();
 
 $cgiparams{'ENABLED'} = 'off';
@@ -92,9 +92,9 @@ if ($cgiparams{'ACTION'} eq 'add')
 	{
 		$cgiparams{'SOURCE_IP'} = 'NONE';
 	} else {
-		unless(&General::validipormask($cgiparams{'SOURCE_IP'})) 
+		unless(&General::validipormask($cgiparams{'SOURCE_IP'}))
 		{
-			$errormessage = $Lang::tr{'invalid fixed ip address'}; 
+			$errormessage = $Lang::tr{'invalid fixed ip address'};
 			goto ADDERROR;
 		}
 	}
@@ -102,9 +102,9 @@ if ($cgiparams{'ACTION'} eq 'add')
 	{
 		$cgiparams{'SOURCE_MAC'} = 'NONE';
 	} else {
-		unless(&General::validmac($cgiparams{'SOURCE_MAC'})) 
-		{ 
-			$errormessage = $Lang::tr{'invalid fixed mac address'}; 
+		unless(&General::validmac($cgiparams{'SOURCE_MAC'}))
+		{
+			$errormessage = $Lang::tr{'invalid fixed mac address'};
 		}
 	}
 
@@ -323,7 +323,7 @@ foreach my $line (@current)
 		}
 		if ( $hname eq "" ) {
 			my ($aliases, $addrtype, $length, @addrs);
-			($hname, $aliases, $addrtype, $length, @addrs) = 
+			($hname, $aliases, $addrtype, $length, @addrs) =
 				gethostbyaddr(pack("C4", split(/\./,  $sourceip)), 2);
 		}
 	}

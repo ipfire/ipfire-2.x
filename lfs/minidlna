@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = DLNA compatible server
+
 VER        = 1.3.0
 
 THISAPP    = minidlna-$(VER)
@@ -35,6 +37,8 @@ PROG       = minidlna
 PAK_VER    = 8
 
 DEPS       = ffmpeg flac libexif libid3tag libogg
+
+SERVICES   = minidlna
 
 CFLAGS    += -fcommon
 
@@ -56,7 +60,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -88,8 +92,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -m 644 $(DIR_SRC)/config/minidlna/minidlna.conf /etc
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,minidlna)
-	
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
+
 	#install backup definition
 	install -v -m 644 ${DIR_SRC}/config/backup/includes/minidlna \
 			/var/ipfire/backup/addons/includes/minidlna

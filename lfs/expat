@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.4.2
+VER        = 2.4.6
 
 THISAPP    = expat-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 58780ad6944d02f6cf6ba332838694b2
+$(DL_FILE)_MD5 = eb735f87dac7d50007259929b0674aa6
 
 install : $(TARGET)
 
@@ -72,10 +72,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure \
-		--prefix=/usr
+		              --prefix=/usr \
+		              --disable-static
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	cd $(DIR_APP) && install -v -m755 -d /usr/share/doc/$(THISAPP)
-	cd $(DIR_APP) && install -v -m644 doc/*.{html,png,css} /usr/share/doc/$(THISAPP)
+	cd $(DIR_APP) && install -v -m644 doc/*.{html,css} /usr/share/doc/$(THISAPP)
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

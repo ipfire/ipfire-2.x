@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A conglomerate of a number of versions of the BSD TFTP code
+
 VER        = 5.2
 
 THISAPP    = tftp-hpa-$(VER)
@@ -35,6 +37,8 @@ PROG       = tftpd
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   = tftpd
 
 CFLAGS    += -fcommon
 
@@ -56,7 +60,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -84,6 +88,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	mv -fv /usr/sbin/in.tftpd /usr/sbin/tftpd
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,tftpd)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

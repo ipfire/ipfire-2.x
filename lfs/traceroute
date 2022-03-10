@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Packet route path tracing utility
+
 VER        = 2.1.0
 
 THISAPP    = traceroute-$(VER)
@@ -35,6 +37,8 @@ PROG       = traceroute
 PAK_VER    = 4
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -78,7 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-ipfire.patch
-	cd $(DIR_APP) && make 
+	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install prefix=/usr bindir=/usr/sbin
 	chmod u-s /usr/sbin/traceroute
 	@rm -rf $(DIR_APP)

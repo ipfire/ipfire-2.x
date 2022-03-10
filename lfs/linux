@@ -49,6 +49,11 @@ ifeq "$(BUILD_ARCH)" "armv6l"
 	KERNEL_TARGET = zImage
 endif
 
+ifeq "$(BUILD_ARCH)" "riscv64"
+	KERNEL_ARCH   = riscv
+	KERNEL_TARGET = Image.gz
+endif
+
 VERSUFIX=ipfire$(KCFG)
 
 ifeq "$(TOOLCHAIN)" "1"
@@ -244,7 +249,7 @@ ifeq "$(LASTKERNEL)" "1"
 	# Blacklist new drm framebuffer modules
 	for f in $$(find /lib/modules/$(VER)-$(VERSUFIX)/kernel/drivers/gpu/drm -name *.ko.xz); do \
 		echo "blacklist $$(basename $$f)" >> /etc/modprobe.d/framebuffer.conf ; \
-	done	
+	done
 	sed -i -e "s|.ko.xz||g" /etc/modprobe.d/framebuffer.conf
 
 	# Disable ipv6 at runtime

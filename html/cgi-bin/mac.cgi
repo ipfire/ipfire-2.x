@@ -45,11 +45,11 @@ my $errormessage = '';
 if ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {
 	$macsettings{'MAC'} =~ s/\-/:/g;
 	my @mac = split(/:/,$macsettings{"MAC"});
-	if ($#mac == 5) { 
+	if ($#mac == 5) {
 		foreach (@mac) {
 			unless ($_ =~ /^[a-fA-F0-9]{1,2}$/) {
 					$errormessage = $Lang::tr{'mac address error not valid'};
-					last;			
+					last;
 			}
 		}
 	} else {
@@ -58,11 +58,11 @@ if ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {
 	$macsettings{'MAC1'} =~ s/\-/:/g;
 	if ( not ($macsettings{'MAC1'} eq "" )) {
 		my @mac = split(/:/,$macsettings{"MAC1"});
-		if ($#mac == 5) { 
+		if ($#mac == 5) {
 			foreach (@mac) {
 				unless ($_ =~ /^[a-fA-F0-9]{1,2}$/) {
 						$errormessage = $Lang::tr{'mac address error not valid'};
-						last;			
+						last;
 				}
 			}
 		} else {
@@ -72,11 +72,11 @@ if ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {
 	$macsettings{'MAC2'} =~ s/\-/:/g;
 	if ( not ($macsettings{'MAC2'} eq "" )) {
 		my @mac = split(/:/,$macsettings{"MAC2"});
-		if ($#mac == 5) { 
+		if ($#mac == 5) {
 			foreach (@mac) {
 				unless ($_ =~ /^[a-fA-F0-9]{1,2}$/) {
 						$errormessage = $Lang::tr{'mac address error not valid'};
-						last;			
+						last;
 				}
 			}
 		} else {
@@ -87,8 +87,8 @@ if ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {
 		$macsettings{'MAC'} =~ s/\:/-/g;
 		$macsettings{'MAC1'} =~ s/\:/-/g;
 		$macsettings{'MAC2'} =~ s/\:/-/g;
-		&General::writehash("${General::swroot}/mac/settings", \%macsettings);	
-		&Header::openbox('100%', 'left', $Lang::tr{'mac address saved'});								
+		&General::writehash("${General::swroot}/mac/settings", \%macsettings);
+		&Header::openbox('100%', 'left', $Lang::tr{'mac address saved'});
 		print "<font class='base'>$Lang::tr{'mac address saved txt'}</font>\n";
 		&Header::closebox();
 	}
@@ -97,13 +97,13 @@ if ($macsettings{'ACTION'} eq $Lang::tr{'reconnect'}) {
 	&General::system_background("/usr/local/bin/redctrl", "restart");
 	&Header::openbox('100%', 'left', $Lang::tr{'mac address recon'} );
 	print "<font class='base'>$Lang::tr{'mac address done'}</font>\n";
-	&Header::closebox();	
+	&Header::closebox();
 }
 if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
 	system("cat /dev/null > ${General::swroot}/mac/settings &");
 	&Header::openbox('100%', 'left', $Lang::tr{'mac address deleted'} );
 	print "<font class='base'>$Lang::tr{'mac address deleted txt'}</font>\n";
-	&Header::closebox();	
+	&Header::closebox();
 }
 if ($macsettings{'ACTION'} eq $Lang::tr{'reboot'}) {
 	&General::log($Lang::tr{'rebooting ipfire'});
@@ -138,17 +138,17 @@ print <<END
 END
 ;
 if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
-print <<END 
+print <<END
       <input type="text" name="MAC" maxlength="17" value=''/></td>
 END
 ;
-} else {   
+} else {
 print <<END
       <input type="text" name="MAC" maxlength="17" value='$macsettings{"MAC"}'/></td>
 END
-;  
-} 
-print <<END    
+;
+}
+print <<END
   </tr>
     <tr>
     <td>&nbsp;</td>
@@ -158,17 +158,17 @@ print <<END
 END
 ;
 if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
-print <<END 
+print <<END
       <input type="text" name="MAC1" maxlength="17" value=''/></td>
 END
 ;
-} else {   
+} else {
 print <<END
       <input type="text" name="MAC1" maxlength="17" value='$macsettings{"MAC1"}'/></td>
 END
-;  
-} 
-print <<END    
+;
+}
+print <<END
   </tr>
     <tr>
     <td>&nbsp;</td>
@@ -178,18 +178,18 @@ print <<END
 END
 ;
 if ($macsettings{'ACTION'} eq $Lang::tr{'delete'} ) {
-print <<END 
+print <<END
       <input type="text" name="MAC2" maxlength="17" value=''/></td>
 END
 ;
-} else {   
+} else {
 print <<END
       <input type="text" name="MAC2" maxlength="17" value='$macsettings{"MAC2"}'/></td>
 END
-;  
-} 
+;
+}
 
-print <<END    
+print <<END
   </tr>
     <tr>
     <td colspan="2"><br><hr /></td>
@@ -208,7 +208,7 @@ print <<END
       <input type='submit' name='ACTION' value='$Lang::tr{'reboot'}' />
 END
 ;
-} elsif ($macsettings{'ACTION'} eq $Lang::tr{'save'} && $errormessage eq "") {	
+} elsif ($macsettings{'ACTION'} eq $Lang::tr{'save'} && $errormessage eq "") {
 print <<END
       <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
       &nbsp;&nbsp;&nbsp;&nbsp;
@@ -217,12 +217,12 @@ print <<END
       <input type='submit' name='ACTION' value='$Lang::tr{'reconnect'}' />
 END
 ;
-} elsif ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {	
+} elsif ($macsettings{'ACTION'} eq $Lang::tr{'save'}) {
 print <<END
       <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
 END
 ;
-} else {	
+} else {
 print <<END
       <input type='submit' name='ACTION' value='$Lang::tr{'save'}' />
       &nbsp;&nbsp;&nbsp;&nbsp;

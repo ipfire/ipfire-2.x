@@ -25,6 +25,7 @@ netinternal=configuration/status/network_int
 netother=configuration/status/network_int
 netovpnrw=configuration/status/network_ovpnrw
 #netovpnsrv=
+wio=addons/wio
 hardwaregraphs=configuration/status/hardware_diagrams
 entropy=configuration/status/entropy
 connections=configuration/status/connections
@@ -52,6 +53,7 @@ ovpnmain=configuration/services/openvpn
 ddns=configuration/services/dyndns
 time=configuration/services/ntp
 qos=configuration/services/qos
+guardian=addons/guardian
 extrahd=configuration/services/extrahd
 
 #	Firewall menu
@@ -59,19 +61,23 @@ firewall=configuration/firewall
 fwhosts=configuration/firewall/fwgroups
 optionsfw=configuration/firewall/options
 ids=configuration/firewall/ips
-p2p-block=configuration/firewall/p2p-block
 location-block=configuration/firewall/geoip-block
 wireless=configuration/firewall/accesstoblue
 iptables=configuration/firewall/iptables
 
 #	IPfire menu
 pakfire=configuration/ipfire/pakfire
+wlanap=addons/wireless
+tor=addons/tor
+mpfire=addons/mpfire
+samba=addons/samba
 
 #	Logs menu
 summary=configuration/logs/summary
 config=configuration/logs/logsettings
 proxylog=configuration/logs/proxy
 calamaris=configuration/logs/proxyreports
+accounting=addons/squid-accounting
 firewalllog=configuration/logs/firewall
 firewalllogip=configuration/logs/firewall-ip
 firewalllogport=configuration/logs/firewall-port

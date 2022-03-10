@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Kerberos
+
 VER        = 1.19.2
 
 THISAPP    = krb5-$(VER)
@@ -35,6 +37,8 @@ PROG       = krb5
 PAK_VER    = 7
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

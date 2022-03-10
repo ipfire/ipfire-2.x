@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Top Like UI to Show Per-Process I/O Going on
+
 VER        = 0.6
 
 THISAPP    = iotop-$(VER)
@@ -33,8 +35,10 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = iotop
-PAK_VER    = 2
+PAK_VER    = 3
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	$(PAK)
 
 ###############################################################################

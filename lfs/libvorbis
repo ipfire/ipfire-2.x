@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = The Vorbis General Audio Compression Codec
+
 VER        = 1.3.6
 
 THISAPP    = libvorbis-$(VER)
@@ -35,6 +37,8 @@ PROG       = libvorbis
 PAK_VER    = 5
 
 DEPS       = libogg
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

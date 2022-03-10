@@ -39,7 +39,7 @@ require "${General::swroot}/lang.pl";
 # @param submenu entries
 sub showsubmenu() {
 	my $submenus = shift;
-	
+
 	print "<ul>";
 	foreach my $item (sort keys %$submenus) {
 		$link = getlink($submenus->{$item});

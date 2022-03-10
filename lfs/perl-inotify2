@@ -25,6 +25,7 @@
 
 include Config
 
+SUMMARY    = Perl extension for Scalable directory/file change notification
 VER        = 1.22
 
 THISAPP    = Linux-Inotify2-$(VER)
@@ -36,6 +37,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-inotify2
 DEPS       = perl-common-sense
 PAK_VER    = 3
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

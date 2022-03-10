@@ -1,0 +1,13 @@
+#usr/lib/perl5/site_perl/5.32.1/Net
+#usr/lib/perl5/site_perl/5.32.1/Net/HTTP
+usr/lib/perl5/site_perl/5.32.1/Net/HTTP.pm
+usr/lib/perl5/site_perl/5.32.1/Net/HTTP/Methods.pm
+usr/lib/perl5/site_perl/5.32.1/Net/HTTP/NB.pm
+usr/lib/perl5/site_perl/5.32.1/Net/HTTPS.pm
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Net
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Net/HTTP
+#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Net/HTTP/.packlist
+#usr/share/man/man3/Net::HTTP.3
+#usr/share/man/man3/Net::HTTP::Methods.3
+#usr/share/man/man3/Net::HTTP::NB.3
+#usr/share/man/man3/Net::HTTPS.3

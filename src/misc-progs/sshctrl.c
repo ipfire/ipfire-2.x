@@ -5,10 +5,10 @@
  *
  * (c) Mark Wormgoor, 2001
  * Simple program intended to be installed setuid(0) that can be used for
- * restarting SSHd. 
- * 
+ * restarting SSHd.
+ *
  * $Id: sshctrl.c,v 1.3 2003/12/11 10:57:34 riddles Exp $
- * 
+ *
  */
 
 #include <stdio.h>
@@ -24,7 +24,7 @@
 
 #define BUFFER_SIZE 1024
 
-char command[BUFFER_SIZE]; 
+char command[BUFFER_SIZE];
 
 int main(int argc, char *argv[])
 {

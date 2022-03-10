@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Perl extension adding SSL support for Net::SMTP
+
 VER        = 1.04
 
 THISAPP    = Net-SMTP-SSL-$(VER)
@@ -34,6 +36,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-Net-SMTP-SSL
 DEPS       =
 PAK_VER    = 4
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -53,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

@@ -18,9 +18,9 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
- 
+
 use MIME::Lite;
- 
+
 #enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
@@ -157,14 +157,14 @@ sub configsite{
 	$selected{'mail_tls'}{'explicit'} = 'selected' if exists $dma{'STARTTLS'};
 	$selected{'mail_tls'}{'implicit'} = 'selected' if (exists $dma{'SECURETRANSFER'}) and (not exists $dma{'STARTTLS'});
 	$selected{'mail_tls'}{'disabled'} = 'selected' if (not exists $dma{'SECURETRANSFER'}) and (not exists $dma{'STARTTLS'});
-	
+
 	#Open site
 	&Header::openpage($Lang::tr{'email settings'}, 1, '');
 	&Header::openbigbox('100%', 'center');
 	&error;
 	&info;
 	&Header::openbox('100%', 'left', $Lang::tr{'email config'});
-	
+
 	#### JAVA SCRIPT ####
 	print<<END;
 <script>
@@ -257,7 +257,7 @@ END
 	</form>
 END
 	&Header::closebox();
-	&Header::closebigbox();	
+	&Header::closebigbox();
 	&Header::closepage();
 	exit 0;
 }

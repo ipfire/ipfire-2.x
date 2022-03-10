@@ -23,6 +23,9 @@
 # Definitions
 ###############################################################################
 include Config
+
+SUMMARY    = Perl extension for manipulating IPv4/IPv6 addresses
+
 VER        = 1.26
 
 THISAPP    = Net-IP-$(VER)
@@ -34,6 +37,8 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-Net-IP
 DEPS       =
 PAK_VER    = 3
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

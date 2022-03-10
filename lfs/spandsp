@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A DSP library for Telephony and SoftFAX
+
 VER        = 0.0.6
 
 THISAPP    = spandsp-$(VER)
@@ -35,6 +37,8 @@ PROG       = spandsp
 PAK_VER    = 5
 
 DEPS       = libtiff
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	$(PAK)
 
 ###############################################################################

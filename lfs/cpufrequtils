@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Tools to Determine and Set CPUfreq Settings
+
 VER        = 008
 
 THISAPP    = cpufrequtils-$(VER)
@@ -35,6 +37,8 @@ PROG       = cpufrequtils
 PAK_VER    = 10
 
 DEPS       =
+
+SERVICES   = cpufreq
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -87,7 +91,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,cpufreq)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -24,6 +24,7 @@
 
 include Config
 
+SUMMARY    = A HTTP server and IMAP/POP3 proxy server
 VER        = 1.19.2
 
 THISAPP    = nginx-$(VER)
@@ -33,6 +34,10 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	   = nginx
 PAK_VER	   = 11
+
+DEPS       =
+
+SERVICES   = nginx
 
 ###############################################################################
 # Top-level Rules

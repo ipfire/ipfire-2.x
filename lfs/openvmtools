@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Open Virtual Machine Tools
+
 VER        = stable-11.3.0
 
 THISAPP    = open-vm-tools-$(VER)
@@ -36,6 +38,8 @@ PROG       = openvmtools
 PAK_VER    = 8
 
 DEPS       = libtirpc
+
+SERVICES   = openvmtools
 
 CFLAGS    += -Wno-error=array-bounds
 
@@ -58,7 +62,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 md5 : $(subst %,%_MD5,$(objects))
 
 dist:
-	@$(PAK) 
+	@$(PAK)
 ###############################################################################
 # Downloading, checking, md5sum
 ###############################################################################
@@ -99,7 +103,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,openvmtools)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 	ln -sf ../init.d/openvmtools /etc/rc.d/rc3.d/S60openvmtools
 	ln -sf ../init.d/openvmtools /etc/rc.d/rc0.d/K01openvmtools
 	ln -sf ../init.d/openvmtools /etc/rc.d/rc6.d/K01openvmtools

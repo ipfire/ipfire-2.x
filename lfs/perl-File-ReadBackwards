@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Perl extension to read a file backwards by lines
+
 VER        = 1.05
 
 THISAPP    = File-ReadBackwards-$(VER)
@@ -35,6 +37,8 @@ PROG       = perl-File-ReadBackwards
 PAK_VER    = 3
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

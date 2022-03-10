@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = The Tiff Library (with JPEG and compression support)
+
 VER        = 4.3.0
 
 THISAPP    = tiff-$(VER)
@@ -35,6 +37,8 @@ PROG       = libtiff
 PAK_VER    = 5
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	$(PAK)
 
 ###############################################################################

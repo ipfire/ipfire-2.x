@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Accounting and aggregation toolsuite for IPv4 and IPv6
+
 VER        = 1.7.6
 
 THISAPP    = pmacct-$(VER)
@@ -36,6 +38,8 @@ PAK_VER    = 2
 
 
 DEPS       = libcdada
+
+SERVICES   = pmacct
 
 ###############################################################################
 # Top-level Rules
@@ -55,7 +59,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -95,7 +99,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,pmacct)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 	# Install backup definition
 	install -v -m 644 ${DIR_SRC}/config/backup/includes/pmacct \
 			/var/ipfire/backup/addons/includes/pmacct

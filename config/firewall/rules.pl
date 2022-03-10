@@ -31,6 +31,7 @@ require "${General::swroot}/location-functions.pl";
 my $DEBUG = 0;
 
 my $IPTABLES = "iptables --wait";
+my $IPSET = "ipset";
 
 # iptables chains
 my $CHAIN_INPUT           = "INPUTFW";
@@ -58,6 +59,9 @@ my @PRIVATE_NETWORKS = (
 # MARK masks
 my $NAT_MASK = 0x0f000000;
 
+# Country code, which is used to mark hostile networks.
+my $HOSTILE_CCODE = "XD";
+
 my %fwdfwsettings=();
 my %fwoptions = ();
 my %defaultNetworks=();
@@ -69,13 +73,12 @@ my %confignatfw=();
 my %locationsettings = (
 	"LOCATIONBLOCK_ENABLED" => "off"
 );
-
-my @p2ps=();
+my %ipset_loaded_sets = ();
+my @ipset_used_sets = ();
 
 my $configfwdfw		= "${General::swroot}/firewall/config";
 my $configinput	    = "${General::swroot}/firewall/input";
 my $configoutgoing  = "${General::swroot}/firewall/outgoing";
-my $p2pfile			= "${General::swroot}/firewall/p2protocols";
 my $locationfile		= "${General::swroot}/firewall/locationblock";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $netsettings		= "${General::swroot}/ethernet/settings";
@@ -97,6 +100,9 @@ if (-e "$locationfile") {
 # Get all available locations.
 my @locations = &Location::Functions::get_locations();
 
+# Name or the RED interface.
+my $RED_DEV = &General::get_red_interface();
+
 my @log_limit_options = &make_log_limit_options();
 
 my $POLICY_INPUT_ALLOWED   = 0;
@@ -107,10 +113,17 @@ my $POLICY_INPUT_ACTION    = $fwoptions{"FWPOLICY2"};
 my $POLICY_FORWARD_ACTION  = $fwoptions{"FWPOLICY"};
 my $POLICY_OUTPUT_ACTION   = $fwoptions{"FWPOLICY1"};
 
+#workaround to suppress a warning when a variable is used only once
+my @dummy = ( $Location::Functions::ipset_db_directory );
+undef (@dummy);
+
 # MAIN
 &main();
 
 sub main {
+	# Get currently used ipset sets.
+	&ipset_get_sets();
+
 	# Flush all chains.
 	&flush();
 
@@ -125,14 +138,17 @@ sub main {
 		&buildrules(\%configfwdfw);
 	}
 
-	# Load P2P block rules.
-	&p2pblock();
-
 	# Load Location block rules.
 	&locationblock();
 
+	# Load rules to block hostile networks.
+	&drop_hostile_networks();
+
 	# Reload firewall policy.
 	run("/usr/sbin/firewall-policy");
+
+	# Cleanup not longer needed ipset sets.
+	&ipset_cleanup();
 
 	#Reload firewall.local if present
 	if ( -f '/etc/sysconfig/firewall.local'){
@@ -394,7 +410,13 @@ sub buildrules {
 					my @source_options = ();
 					if ($source =~ /mac/) {
 						push(@source_options, $source);
-					} elsif ($source =~ /-m geoip/) {
+					} elsif ($source =~ /-m set/) {
+						# Grab location code from hash.
+						my $loc_src = $$hash{$key}[4];
+
+						# Call function to load the networks list for this country.
+						&ipset_restore($loc_src);
+
 						push(@source_options, $source);
 					} elsif($source) {
 						push(@source_options, ("-s", $source));
@@ -402,7 +424,13 @@ sub buildrules {
 
 					# Prepare destination options.
 					my @destination_options = ();
-					if ($destination =~ /-m geoip/) {
+					if ($destination =~ /-m set/) {
+						# Grab location code from hash.
+						my $loc_dst = $$hash{$key}[6];
+
+						# Call function to load the networks list for this country.
+						&ipset_restore($loc_dst);
+
 						push(@destination_options,  $destination);
 					} elsif ($destination) {
 						push(@destination_options, ("-d", $destination));
@@ -620,25 +648,8 @@ sub time_convert_to_minutes {
 	return ($hrs * 60) + $min;
 }
 
-sub p2pblock {
-	open(FILE, "<$p2pfile") or die "Unable to read $p2pfile";
-	my @protocols = ();
-	foreach my $p2pentry (<FILE>) {
-		my @p2pline = split(/\;/, $p2pentry);
-		next unless ($p2pline[2] eq "off");
-
-		push(@protocols, "--$p2pline[1]");
-	}
-	close(FILE);
-
-	run("$IPTABLES -F P2PBLOCK");
-	if (@protocols) {
-		run("$IPTABLES -A P2PBLOCK -m ipp2p @protocols -j DROP");
-	}
-}
-
 sub locationblock {
-	# Flush iptables chain.
+	# Flush LOCATIONBLOCK chain.
 	run("$IPTABLES -F LOCATIONBLOCK");
 
 	# If location blocking is not enabled, we are finished here.
@@ -665,9 +676,40 @@ sub locationblock {
 	# is enabled.
 	foreach my $location (@locations) {
 		if(exists $locationsettings{$location} && $locationsettings{$location} eq "on") {
-			run("$IPTABLES -A LOCATIONBLOCK -m geoip --src-cc $location -j DROP");
+			# Call function to load the networks list for this country.
+			&ipset_restore($location);
+
+			# Call iptables and create rule to use the loaded ipset list.
+			run("$IPTABLES -A LOCATIONBLOCK -m set --match-set $location src -j DROP");
 		}
 	}
+}
+
+sub drop_hostile_networks () {
+	# Flush the HOSTILE firewall chain.
+	run("$IPTABLES -F HOSTILE");
+
+	# If dropping hostile networks is not enabled, we are finished here.
+	if ($fwoptions{'DROPHOSTILE'} ne "on") {
+		# Exit function.
+		return;
+	}
+
+	# Exit if there is no red interface.
+	return unless($RED_DEV);
+
+	# Call function to load the network list of hostile networks.
+	&ipset_restore($HOSTILE_CCODE);
+
+	# Setup rules to pass traffic which does not belong to a hostile network.
+	run("$IPTABLES -A HOSTILE -i $RED_DEV -m set ! --match-set $HOSTILE_CCODE src -j RETURN");
+	run("$IPTABLES -A HOSTILE -o $RED_DEV -m set ! --match-set $HOSTILE_CCODE dst -j RETURN");
+
+	# Setup logging.
+	run("$IPTABLES -A HOSTILE -m limit --limit 10/second -j LOG  --log-prefix \"DROP_HOSTILE \"");
+
+	# Drop traffic from/to hostile network.
+        run("$IPTABLES -A HOSTILE -j DROP -m comment --comment \"DROP_HOSTILE\"");
 }
 
 sub get_protocols {
@@ -881,4 +923,94 @@ sub firewall_is_in_subnet {
 	}
 
 	return 0;
+}
+
+sub ipset_get_sets () {
+	# Get all currently used ipset lists and store them in an array.
+	my @output = `$IPSET -n list`;
+
+	# Loop through the temporary array.
+	foreach my $set (@output) {
+		# Remove any newlines.
+		chomp($set);
+
+		# Add the set the array of used sets.
+		push(@ipset_used_sets, $set);
+	}
+
+	# Display used sets in debug mode.
+	if($DEBUG) {
+		print "Used ipset sets:\n";
+		print "@ipset_used_sets\n\n";
+	}
+}
+
+sub ipset_restore ($) {
+	my ($set) = @_;
+
+	# Empty variable to store the db file, which should be
+	# restored by ipset.
+	my $db_file;
+
+	# Check if the set already has been loaded.
+	if($ipset_loaded_sets{$set}) {
+		# It already has been loaded - so there is nothing to do.
+		return;
+	}
+
+	# Check if the given set name is a country code.
+	if($set ~~ @locations) {
+		# Libloc adds the IP type (v4 or v6) as part of the set and file name.
+		my $loc_set = "$set" . "v4";
+
+		# The bare filename equals the set name.
+		my $filename = $loc_set;
+
+		# Libloc uses "ipset" as file extension.
+		my $file_extension = "ipset";
+
+		# Generate full path and filename for the ipset db file.
+		my $db_file = "$Location::Functions::ipset_db_directory/$filename.$file_extension";
+
+		# Call function to restore/load the set.
+		&ipset_call_restore($db_file);
+
+		# Check if the set is already loaded (has been used before).
+		if ($set ~~ @ipset_used_sets) {
+			# The sets contains the IP type (v4 or v6) as part of the name.
+			# The firewall rules matches against sets without that extension. So we safely
+			# can swap or rename the sets to use the new ones.
+			run("$IPSET swap $loc_set $set");
+		} else {
+			# If the set is not loaded, we have to rename it to proper use it.
+			run("$IPSET rename $loc_set $set");
+		}
+	}
+
+	# Store the restored set to the hash to prevent from loading it again.
+	$ipset_loaded_sets{$set} = "1";
+}
+
+sub ipset_call_restore ($) {
+	my ($file) = @_;
+
+	# Check if the requested file exists.
+	if (-f $file) {
+		# Run ipset and restore the given set.
+		run("$IPSET restore -f $file");
+	}
+}
+
+sub ipset_cleanup () {
+	# Loop through the array of used sets.
+	foreach my $set (@ipset_used_sets) {
+		# Check if this set is still in use.
+		#
+		# In this case an entry in the loaded sets hash exists.
+		unless($ipset_loaded_sets{$set}) {
+			# Entry does not exist, so this set is not longer
+			# used and can be destroyed.
+			run("$IPSET destroy $set");
+		}
+	}
 }

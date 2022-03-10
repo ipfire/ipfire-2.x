@@ -24,7 +24,8 @@
 
 include Config
 
-VER        = 5.30.0
+VER        = 5.31.0
+SUMMARY    = Utility for monitoring services on a Unix system
 
 THISAPP    = monit-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,9 +33,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = monit
-PAK_VER    = 17
+PAK_VER    = 18
 
 DEPS       =
+
+SERVICES   = monit
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = d1a1b2349e8d0f833b3057c7b102b09d
+$(DL_FILE)_MD5 = 7f2efa2175841573a96209086e4a5a26
 
 install : $(TARGET)
 
@@ -54,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -94,7 +97,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 600 $(DIR_SRC)/config/monit/monitrc /etc
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,monit)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	# Install start links and backup include file.
 	ln -sf ../init.d/monit /etc/rc.d/rc3.d/S60monit

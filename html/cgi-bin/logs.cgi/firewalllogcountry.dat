@@ -4,7 +4,7 @@
 #
 # This code is distributed under the terms of the GPL
 #
-# JC HERITIER 
+# JC HERITIER
 # page inspired from the initial firewalllog.dat
 #
 # Modified for IPFire by Christian Schmidt
@@ -150,7 +150,7 @@ my $longmonthstr = $longmonths[$cgiparams{'MONTH'}];
 my $day = $cgiparams{'DAY'};
 my $daystr='';
 if ($day <= 9) {
-	$daystr = " $day"; 
+	$daystr = " $day";
 }
 else {
 	$daystr = $day;
@@ -182,7 +182,7 @@ if (!$skip)
 			$lines++;
 		}
 	}
-	close (FILE);   
+	close (FILE);
 }
 
 $skip=0;
@@ -249,7 +249,7 @@ print <<END
 	<select name='DAY'>
 END
 ;
-for ($day = 1; $day <= 31; $day++) 
+for ($day = 1; $day <= 31; $day++)
 {
 	print "\t<option ";
 	if ($day == $cgiparams{'DAY'}) {
@@ -386,7 +386,7 @@ my @numb;
 my $o;
 
 if($cgiparams{'otherspie'} == 2 ){}
-else{ 
+else{
 	my $numothers;
 	for($o=0;$o<$pienumber;$o++){
 		$numothers = $numothers + $numb[$o];

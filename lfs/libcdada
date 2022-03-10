@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Basic data structures in C (libstdc++ wrapper)
+
 VER        = 0.3.5
 
 THISAPP    = libcdada-$(VER)
@@ -35,7 +37,9 @@ PROG       = libcdada
 PAK_VER    = 2
 
 
-DEPS       = 
+DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -55,7 +59,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

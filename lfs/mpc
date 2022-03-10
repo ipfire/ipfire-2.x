@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Client for the Music Player Daemon
+
 VER        = 0.33
 
 THISAPP    = mpc-$(VER)
@@ -35,6 +37,8 @@ PROG       = mpc
 PAK_VER    = 8
 
 DEPS       = mpd libmpdclient
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

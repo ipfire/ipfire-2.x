@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A perl written Intrusion Prevention System
+
 VER        = 2.0.2
 
 THISAPP    = guardian-$(VER)
@@ -36,6 +38,8 @@ PROG       = guardian
 PAK_VER    = 25
 
 DEPS       = perl-inotify2 perl-Net-IP
+
+SERVICES   = guardian
 
 ###############################################################################
 # Top-level Rules
@@ -97,7 +101,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	touch /var/log/guardian/guardian.log
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,guardian)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	# Create symlinks for runlevel interaction.
 	ln -svf /etc/rc.d/init.d/guardian /etc/rc.d/rc3.d/S45guardian

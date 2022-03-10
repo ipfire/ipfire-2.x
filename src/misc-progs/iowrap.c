@@ -6,9 +6,9 @@
  * (c) Lawrence Manning, 2001
  * Installer helper for redirecting stdout/stderr to a file/terminal.
  * init calls ash through this program to shove it on a tty.
- * 
+ *
  * $Id: iowrap.c,v 1.2 2001/11/27 15:20:50 riddles Exp $
- * 
+ *
  */
 
 #include <stdio.h>
@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
 	if (argc >= 2)
 	{
 		int fd;
-		
+
 		if ((fd = open(argv[1], O_RDWR)) == -1)
 		{
 			printf("Couldn't open device\n");
@@ -34,8 +34,8 @@ int main(int argc, char *argv[])
 		dup2(fd, 2);
 		/* Now its sending/reading on that device. */
 	}
-	
-	if (argc >= 3)	
+
+	if (argc >= 3)
 		execvp(argv[2], &argv[2]);
 	else
 		printf("No command\n");

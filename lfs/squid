@@ -178,7 +178,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chmod 775 /var/updatecache/metadata
 	chmod 755 /var/log/updatexlrator
 	chmod 755 /srv/web/ipfire/html/images/updbooster
-	
+
 	chown squid:squid /var/log/squid
 	ln -sf /usr/lib/squid /usr/lib/squid/auth
 	cp -f $(DIR_SRC)/config/proxy/proxy.pac /srv/web/ipfire/html/proxy.pac

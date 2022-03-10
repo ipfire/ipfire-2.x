@@ -82,7 +82,7 @@ if ((-e $svhosts_file) && (!-z $svhosts_file))
 
 if (($cgiparams{'ACTION'} eq 'submit') && ($is_supervisor))
 {
-	if (	($cgiparams{'PASSWORD'} eq $proxysettings{'SUPERVISOR_PASSWORD'}) && (!($proxysettings{'SUPERVISOR_PASSWORD'} eq '')) || 
+	if (	($cgiparams{'PASSWORD'} eq $proxysettings{'SUPERVISOR_PASSWORD'}) && (!($proxysettings{'SUPERVISOR_PASSWORD'} eq '')) ||
 		((defined($proxysettings{'SUPERVISOR_PASSWORD'})) && ($proxysettings{'SUPERVISOR_PASSWORD'} eq '')))
 	{
 		&write_acl;
@@ -269,7 +269,7 @@ sub readhash
 			{
 				$val =~ s/^\'//g;
 				$val =~ s/\'$//g;
-	
+
 				# Untaint variables read from hash
 				$var =~ /([A-Za-z0-9_-]*)/;        $var = $1;
 				$val =~ /([\w\W]*)/; $val = $1;

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY	   = Server side daemon and supporting files for libvirt
+
 VER        = 7.10.0
 
 THISAPP    = libvirt-$(VER)
@@ -36,6 +38,8 @@ PROG       = libvirt
 PAK_VER    = 28
 
 DEPS       = ebtables libpciaccess libtirpc libyajl ncat qemu
+
+SERVICES   = libvirtd virtlogd
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	$(PAK)
 
 ###############################################################################
@@ -115,8 +119,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ninja -C builddir/ install
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,libvirtd)
-	$(call INSTALL_INITSCRIPT,virtlogd)
+	@$(call INSTALL_INITSCRIPTS,$(SERVICES))
 	mv /usr/libexec/libvirt-guests.sh /etc/rc.d/init.d/libvirt-guests
 
 	# Backup

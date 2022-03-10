@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = GNU variant of universal network utility
+
 VER        = 0.7.1
 
 THISAPP    = netcat-$(VER)
@@ -35,6 +37,8 @@ PROG       = gnu-netcat
 PAK_VER    = 1
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

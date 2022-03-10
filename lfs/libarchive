@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.5.2
+VER        = 3.6.0
 
 THISAPP    = libarchive-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 2ba9f1f8c169aa9caf8e2d34dde323be
+$(DL_FILE)_MD5 = 93f96acdb9e7277278edb154e5d76e49
 
 install : $(TARGET)
 
@@ -51,7 +51,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

@@ -62,7 +62,7 @@ $settings{'IP'} = '';
 $settings{'ENABLED'} = 'off';		# Every check box must be set to off
 $settings{'NAME'} = '';
 my @nosaved=('IP','ENABLED','NAME');	# List here ALL setting2 fields. Mandatory
-    
+
 $settings{'ACTION'} = '';		# add/edit/remove
 $settings{'KEY1'} = '';			# point record for ACTION
 
@@ -94,16 +94,16 @@ if (open(FILE, "$datafile")) {
 # Remove if no Setting1 needed
 #
 if ($settings{'ACTION'} eq $Lang::tr{'save'}) {
-    
+
     #
     #Validate static Settings1 here
     #
     unless ($errormessage) {					# Everything is ok, save settings
-	#map (delete ($settings{$_}) ,(@nosaved,'ACTION','KEY1'));# Must never be saved 
+	#map (delete ($settings{$_}) ,(@nosaved,'ACTION','KEY1'));# Must never be saved
 	#&General::writehash($setting, \%settings);		# Save good settings
 	#$settings{'ACTION'} = $Lang::tr{'save'};		# Recreate  'ACTION'
 	#map ($settings{$_}= '',(@nosaved,'KEY1'));		# and reinit var to empty
-	
+
 	# Rebuild configuration file if needed
 	&BuildConfiguration;
 
@@ -133,14 +133,14 @@ if ($settings{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
     $temp[2] = '' if ( $temp[2] eq '' );
     @current[$settings{'KEY1'}] = join (',',@temp)."\n";
     $settings{'KEY1'} = ''; 				# End edit mode
-    
+
     &General::log($Lang::tr{'ip alias changed'});
-    
+
     #Save current
     open(FILE, ">$datafile") or die 'Unable to open aliases file.';
     print FILE @current;
     close(FILE);
-	
+
     # Rebuild configuration file
     &BuildConfiguration;
 
@@ -230,7 +230,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 
 	# Handle Suricata related actions.
 	&HandleSuricata();
-	
+
 ##
 ## if entering data line is repetitive, choose here to not erase fields between each addition
 ##
@@ -253,7 +253,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
 }
 
 if ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
-    splice (@current,$settings{'KEY1'},1);		# Delete line 
+    splice (@current,$settings{'KEY1'},1);		# Delete line
     open(FILE, ">$datafile") or die 'Unable to open aliases file.';
     print FILE @current;
     close(FILE);
@@ -291,7 +291,7 @@ if ($ENV{'QUERY_STRING'} =~ /$sortstring/ ) {
 if ($settings{'ACTION'} eq '' ) { # First launch from GUI
     $settings{'ENABLED'} ='on';
 }
-    
+
 &Header::openpage($Lang::tr{'external aliases configuration'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 my %checked =();     # Checkbox manipulations
@@ -314,7 +314,7 @@ END
 ;
     &Header::closebox();
 }
-									
+
 #
 # Second check box is for editing the list
 #
@@ -406,7 +406,7 @@ foreach my $line (@current) {
 	$gdesc = $Lang::tr{'click to disable'};
     } else {
 	$gif = 'off.gif';
-	$gdesc = $Lang::tr{'click to enable'}; 
+	$gdesc = $Lang::tr{'click to enable'};
     }
 
     #Colorize each line
@@ -488,7 +488,7 @@ END
 sub SortDataFile
 {
     our %entries = ();
-    
+
     # Sort pair of record received in $a $b special vars.
     # When IP is specified use numeric sort else alpha.
     # If sortname ends with 'Rev', do reverse sort.
@@ -527,27 +527,27 @@ sub SortDataFile
     foreach my $line (@current) {
 	chomp( $line); #remove newline because can be on field 5 or 6 (addition of REMARK)
 	my @temp = split (',',$line);
-	
+
 	# Build a pair 'Field Name',value for each of the data dataline.
 	# Each SORTABLE field must have is pair.
 	# Other data fields (non sortable) can be grouped in one
-	
+
 	# Exemple
 	# F1,F2,F3,F4,F5       only F1 F2 for sorting
 	# my @record = ('KEY',$key++,
 	#		'F1',$temp[0],
 	#		'F2',$temp[1],
 	#		'DATA',join(',',@temp[2..4])	);  #group remainning values, with separator (,)
-	
+
 	# The KEY,key record permits doublons. If removed, then F1 becomes the key without doublon permitted.
-	
-	
+
+
 	my @record = ('KEY',$key++,'IP',$temp[0],'ENABLED',$temp[1],'NAME',$temp[2]);
 	my $record = {};                        	# create a reference to empty hash
 	%{$record} = @record;                		# populate that hash with @record
 	$entries{$record->{KEY}} = $record; 		# add this to a hash of hashes
     }
-    
+
     open(FILE, ">$datafile") or die 'Unable to open aliases file.';
 
     # Each field value is printed , with the newline ! Don't forget separator and order of them.
@@ -562,7 +562,7 @@ sub SortDataFile
     close (FILE);
 }
 
-#						    
+#
 # Build the configuration file for application aliases
 #
 sub BuildConfiguration {

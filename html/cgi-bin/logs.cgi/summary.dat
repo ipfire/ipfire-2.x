@@ -152,7 +152,7 @@ print <<END
 	<select name='DAY'>
 END
 ;
-for (my $day = 1; $day <= 31; $day++) 
+for (my $day = 1; $day <= 31; $day++)
 {
 	print "\t<option ";
 	if ($day == $cgiparams{'DAY'}) {

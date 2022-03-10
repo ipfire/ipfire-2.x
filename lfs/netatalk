@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = AppleShare file server
+
 VER        = 3.1.12
 
 THISAPP    = netatalk-$(VER)
@@ -35,6 +37,8 @@ PROG       = netatalk
 PAK_VER    = 2
 
 DEPS       = avahi dbus krb5
+
+SERVICES   = netatalk
 
 CFLAGS    += -fcommon -Wno-unused-result
 
@@ -56,7 +60,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -93,7 +97,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/var/ipfire/backup/addons/includes/netatalk
 
 	# Install initscript
-	$(call INSTALL_INITSCRIPT,netatalk)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

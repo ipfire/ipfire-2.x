@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = D-Bus Message Bus System
+
 VER        = 1.12.20
 
 THISAPP    = dbus-$(VER)
@@ -35,6 +37,8 @@ PROG       = dbus
 PAK_VER    = 4
 
 DEPS       =
+
+SERVICES   = messagebus
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -84,7 +88,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,messagebus)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_SRC)/dbus*
 	@$(POSTBUILD)

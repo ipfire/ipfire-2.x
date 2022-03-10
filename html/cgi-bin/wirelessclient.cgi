@@ -303,7 +303,7 @@ END
 			$gdesc = $Lang::tr{'click to disable'};
 		} else {
 			$gif = 'off.gif';
-			$gdesc = $Lang::tr{'click to enable'}; 
+			$gdesc = $Lang::tr{'click to enable'};
 		}
 
 		# Colorize each line
@@ -318,8 +318,6 @@ END
 		my $encryption_mode = $Lang::tr{'unknown'};
 		if ($config[3] eq "NONE") {
 			$encryption_mode = $Lang::tr{'wlan client encryption none'};
-		} elsif ($config[3] eq "WEP") {
-			$encryption_mode = $Lang::tr{'wlan client encryption wep'};
 		} elsif ($config[3] eq "WPA") {
 			$encryption_mode = $Lang::tr{'wlan client encryption wpa'};
 		} elsif ($config[3] eq "WPA2") {
@@ -467,7 +465,6 @@ sub showEditBox() {
 	$selected{'ENCRYPTION'}{'WPA3'} = '';
 	$selected{'ENCRYPTION'}{'WPA2'} = '';
 	$selected{'ENCRYPTION'}{'WPA'} = '';
-	$selected{'ENCRYPTION'}{'WEP'} = '';
 	$selected{'ENCRYPTION'}{$settings{'ENCRYPTION'}} = "selected='selected'";
 
 	$selected{'WPA_MODE'} = ();
@@ -511,7 +508,6 @@ sub showEditBox() {
 							<option value="WPA3" $selected{'ENCRYPTION'}{'WPA3'}>$Lang::tr{'wlan client encryption wpa3'}</option>
 							<option value="WPA2" $selected{'ENCRYPTION'}{'WPA2'}>$Lang::tr{'wlan client encryption wpa2'}</option>
 							<option value="WPA"  $selected{'ENCRYPTION'}{'WPA'}>$Lang::tr{'wlan client encryption wpa'}</option>
-							<option value="WEP"  $selected{'ENCRYPTION'}{'WEP'}>$Lang::tr{'wlan client encryption wep'}</option>
 						</select>
 					</td>
 					<td colspan="2" width='40%'></td>
@@ -576,7 +572,7 @@ sub showEditBox() {
 			<br>
 			<hr>
 
-			
+
 			<strong>
 				$Lang::tr{'wlan client advanced settings'}:
 			</strong>
@@ -838,15 +834,7 @@ sub ValidKeyLength($$) {
 
 	my $key_length = length($key);
 
-	if ($algo eq "WEP") {
-		# Key must be 13 or 26 characters.
-		if (($key_length == 13) || ($key_length == 26)) {
-			return 0;
-		}
-
-		return 1;
-
-	} elsif (($algo eq "WPA2") || ($algo eq "WPA")) {
+	if (($algo eq "WPA2") || ($algo eq "WPA")) {
 		# Key must be between 8 and 63 chars.
 		if (($key_length >= 8) && ($key_length <= 63)) {
 			return 0;

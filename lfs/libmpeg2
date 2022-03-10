@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = MPEG-2 Video Stream Decoder
+
 VER        = 0.4.1
 
 THISAPP    = mpeg2dec-$(VER)
@@ -35,6 +37,8 @@ PROG       = libmpeg2
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

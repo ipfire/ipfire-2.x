@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -83,8 +83,10 @@ ifeq "$(PASS)" "1"
 	--with-sysroot=$(ROOT) \
 	--with-local-prefix=$(TOOLS_DIR) \
 	--with-native-system-header-dir=$(TOOLS_DIR)/include \
+	--with-glibc-version=2.11 \
 	--disable-nls \
 	--disable-shared \
+	--disable-multilib \
 	--disable-decimal-float \
 	--disable-threads \
 	--disable-libatomic \
@@ -103,8 +105,8 @@ ifeq "$(PASS)" "1"
 	--without-ppl \
 	--without-cloog \
 	--enable-languages=c,c++
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
 else
 ifeq "$(PASS)" "2"
   TARGET = $(DIR_INFO)/$(THISAPP)-tools2
@@ -115,14 +117,16 @@ ifeq "$(PASS)" "2"
 	RANLIB="$(CROSSTARGET)-ranlib"
   EXTRA_CONFIG = \
 	--build=$(BUILDTARGET) \
+	--host=$(BUILDTARGET) \
 	--prefix=$(TOOLS_DIR) \
 	--with-local-prefix=$(TOOLS_DIR) \
 	--with-native-system-header-dir=$(TOOLS_DIR)/include \
 	--enable-languages=c,c++ \
 	--disable-libstdcxx-pch \
+	--disable-multilib \
 	--disable-libgomp
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
 
   ifeq "$(FULL_BOOTSTRAP)" "1"
 	EXTRA_CONFIG += --enable-bootstrap
@@ -145,8 +149,8 @@ else
 	--disable-libstdcxx-threads \
 	--disable-libstdcxx-pch \
 	--with-gxx-include-dir=$(TOOLS_DIR)/$(CROSSTARGET)/include/c++/$(VER)
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
 endif
 endif
 endif
@@ -176,7 +180,7 @@ endif
 
 EXTRA_CONFIG += \
 	--disable-multilib \
-	--with-bugurl=http://bugtracker.ipfire.org \
+	--with-bugurl=https://bugzilla.ipfire.org \
 	--disable-libunwind-exceptions \
 	--enable-gnu-unique-object
 

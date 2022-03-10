@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Network exploration tool and security scanner
+
 VER        = 7.91
 
 THISAPP    = nmap-$(VER)
@@ -35,6 +37,8 @@ PROG       = nmap
 PAK_VER    = 13
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

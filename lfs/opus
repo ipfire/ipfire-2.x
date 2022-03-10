@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Opus Audio Codec Library
+
 VER        = 1.3.1
 
 THISAPP    = opus-$(VER)
@@ -35,6 +37,8 @@ PROG       = opus
 PAK_VER    = 3
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -53,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	$(PAK)
 
 ###############################################################################
@@ -65,7 +69,7 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
- 
+
 $(subst %,%_MD5,$(objects)) :
 	@$(MD5)
 

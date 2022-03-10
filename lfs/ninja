@@ -83,7 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && python3 configure.py --bootstrap --verbose
 
 	# Build ninja
-	cd $(DIR_APP) && ./ninja -v all 
+	cd $(DIR_APP) && ./ninja -v all
 
 	# Install ninja.
 	cd $(DIR_APP) && install -vm755 ninja /usr/bin/

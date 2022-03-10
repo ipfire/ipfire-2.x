@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,8 @@
 
 include Config
 
-VER        = 5.58
+VER        = 5.62
+SUMMARY    = Universal TLS Tunnel
 
 THISAPP    = stunnel-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,9 +33,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = stunnel
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       =
+
+SERVICES   = stunnel
 
 ###############################################################################
 # Top-level Rules
@@ -44,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = aed41cff61d622ff6c8706e9d75c53b7
+$(DL_FILE)_MD5 = e8cafad72a75252ff85210c0cef77f19
 
 install : $(TARGET)
 
@@ -54,7 +57,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -89,7 +92,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown -v stunnel:stunnel /var/lib/stunnel
 
 	#install initscripts
-	$(call INSTALL_INITSCRIPT,stunnel)
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 
 	# Install default configuration

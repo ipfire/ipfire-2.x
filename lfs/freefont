@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Free UCS scalable fonts
+
 VER        = 20060126
 
 THISAPP    = freefont-$(VER)
@@ -35,6 +37,8 @@ PROG       = freefont
 PAK_VER    = 1
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -54,7 +58,7 @@ download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 md5 : $(subst %,%_MD5,$(objects))
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################

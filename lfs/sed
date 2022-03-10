@@ -41,8 +41,8 @@ ifeq "$(ROOT)" ""
 else
   TARGET = $(DIR_INFO)/$(THISAPP)-tools
   EXTRA_CONFIG = --prefix=$(TOOLS_DIR) --disable-nls
-  EXTRA_MAKE = 
-  EXTRA_INSTALL = 
+  EXTRA_MAKE =
+  EXTRA_INSTALL =
 endif
 
 ###############################################################################

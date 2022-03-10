@@ -72,7 +72,7 @@ $(patsubst %,$(DIR_DL)/%,$(objects)) :
 $(subst %,%_MD5,$(objects)) :
 	@$(MD5)
 
-dist: 
+dist:
 	@$(PAK)
 
 ###############################################################################
@@ -221,7 +221,7 @@ else
 endif
 	# create an empty 128 KB File for the u-boot env
 	dd if=/dev/zero of=/boot/uboot.env bs=1K count=128
-	
+
 	# config (uEnv.txt and boot.*)
 	cp -vf $(DIR_SRC)/config/u-boot/* /boot/
 	# patch real Kernel version to uEnv.txt

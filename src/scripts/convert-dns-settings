@@ -1,8 +1,8 @@
 #!/bin/bash
 ###############################################################################
 #                                                                             #
-# IPFire.org - A Linux-based firewall                                         #
-# Copyright (C) 2020 IPFire Team <info@ipfire.org>                            #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -68,7 +68,7 @@ main() {
 
 	# Remove all old settings from files
 	local file
-	for file in "${FILES[@]}"; do	
+	for file in "${FILES[@]}"; do
 		# Remove DNS, DNS0, DNS1 and DNS2
 		sed -Ei "/^DNS[012]?=/d" "${file}"
 	done
@@ -95,7 +95,7 @@ main() {
 		if [ "${FORCE_TCP}" = "on" ]; then
 			echo "PROTO=TCP" >> /var/ipfire/dns/settings
 		fi
-	
+
 		# Run in recursor mode
 		if [ "${USE_FORWARDERS}" = "0" ]; then
 			# Remove all servers

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = A Seccomp (mode 2) helper library
+
 VER        = 2.5.3
 
 THISAPP    = libseccomp-$(VER)
@@ -35,6 +37,8 @@ PROG       = libseccomp
 PAK_VER    = 6
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

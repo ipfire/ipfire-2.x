@@ -33,7 +33,6 @@ DL_FILE    = $(THISAPP)-$(RUST_PLATFORM).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/rust-nightly-$(RUST_PLATFORM)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = x86_64 aarch64 armv6l
 
 ###############################################################################
 # Top-level Rules
@@ -46,6 +45,7 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 $(THISAPP)-x86_64-unknown-linux-gnu.tar.xz_MD5 =  42ae351e32e3d570c2c1612c9a9037ee
 $(THISAPP)-aarch64-unknown-linux-gnu.tar.xz_MD5 = 70504d2ad8ec793672d54c64e5c74593
 $(THISAPP)-arm-unknown-linux-gnueabi.tar.xz_MD5 = a6dfbd26b7057260ee07c15afa325b9f
+$(THISAPP)-riscv64gc-unknown-linux-gnu.tar.xz_MD5 = 24ca38f4b7c2ca2ba32195aa48912d07
 
 install : $(TARGET)
 

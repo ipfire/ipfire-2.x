@@ -84,6 +84,11 @@ else
 	PREFIX = /usr
 endif
 
+# Permit building with 32 bit time_t on 32 bit architectures
+ifeq "$(IS_32BIT)" "1"
+	export TIME_T_32_BIT_OK = yes
+endif
+
 TAR_OPTIONS = \
 	--format=pax \
 	--acls \
@@ -152,7 +157,11 @@ ifeq "$(BUILD_ARCH)" "aarch64"
 endif
 
 # Rust
-RUST_ARCH  = $(BUILD_ARCH)
+ifeq "$(BUILD_ARCH)" "riscv64"
+	RUST_ARCH = riscv64gc
+else
+	RUST_ARCH = $(BUILD_ARCH)
+endif
 
 ifeq "$(BUILD_ARCH)" "armv6l"
 	RUST_PLATFORM = arm-unknown-linux-gnueabi
@@ -200,8 +209,14 @@ CARGO = \
 	--offline
 
 CARGO_OPTIONS = \
-	$(MAKETUNING) \
 	-Z avoid-dev-deps
+
+# Cargo dealocks on riscv64 when building on multiple cores at the same time
+ifeq "$(BUILD_ARCH)" "riscv64"
+	CARGO_OPTIONS += -j1
+else
+	CARGO_OPTIONS += $(MAKETUNING)
+endif
 
 define CARGO_PREPARE
 	mkdir -p $(CARGO_PATH) && \
@@ -239,7 +254,7 @@ endef
 # Common Macro Definitions
 ###############################################################################
 
-# For each package we create a list of files that it installed under 
+# For each package we create a list of files that it installed under
 # log/<TARGET> name. Modified files are not identified
 #
 define FIND_FILES
@@ -394,18 +409,27 @@ define PAK
 	# Cleanup
 	rm -rf $(DIR_TMP_PAK)
 
-	# Create meta file
+	# Escape SUMMARY variable and create meta file
+	summaryEscaped=$$(sed 's/[&/\]/\\&/g' <<< "$(SUMMARY)"); \
 	sed \
 		-e "s/NAME/$(PROG)/g" \
+		-e "s/SUMMARY/$$summaryEscaped/g" \
 		-e "s/VER/$(VER)/g" \
 		-e "s/RELEASE/$(PAK_VER)/g" \
 		-e "s/DEPS/$(DEPS)/g" \
 		-e "s/SIZE/$$(stat --format=%s /install/packages/$(PROG)-$(VER)-$(PAK_VER).ipfire)/g" \
+		-e "s/SERVICES/$(SERVICES)/g" \
 	  < /usr/src/src/pakfire/meta > /install/packages/meta-$(PROG)
 endef
 
 define INSTALL_INITSCRIPT
 	install -m 754 -v $(DIR_SRC)/src/initscripts/packages/$(1)  /etc/rc.d/init.d/$(1)
+endef
+
+define INSTALL_INITSCRIPTS
+	for initscript in $(1); do \
+		$(call INSTALL_INITSCRIPT,$$initscript) || exit 1; \
+    done
 endef
 
 ifeq "$(BUILD_ARCH)" "$(filter $(BUILD_ARCH),aarch64 riscv64)"

@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2011  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -45,7 +45,7 @@ foreach (@devices){
     if (-e "/var/run/hddshutdown-$array[$#array]" && $status !~/standby/)
     {
 	if ($debug){print "Remove wrong standby marking\n";}
-	if ( -e "/var/run/hddshutdown-$array[$#array]" ) { system("unlink /var/run/hddshutdown-$array[$#array]"); } 
+	if ( -e "/var/run/hddshutdown-$array[$#array]" ) { system("unlink /var/run/hddshutdown-$array[$#array]"); }
     }
 
     if ($debug){print "Device ".$_." has ".$newdiskstats." write and read Requests, was ".$diskstats." at last run.\n";}
@@ -54,8 +54,8 @@ foreach (@devices){
 	if ($debug){print "Setting Device ".$_." to standby ... ";}
 	$status = `hdparm -y /dev/$_ 2>&1`;
 	chomp $status;
-	if ($status !~/Invalid/) 
-	{  
+	if ($status !~/Invalid/)
+	{
     	    if ($debug){print "OK\n";}
 	    system("touch /var/run/hddshutdown-$array[$#array]");
 	}

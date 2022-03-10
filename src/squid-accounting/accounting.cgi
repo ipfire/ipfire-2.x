@@ -1488,7 +1488,7 @@ sub checkaddress{
 	if (! $cgiparams{'txt_plz'}){
 		$errormessage.="$Lang::tr{'acct empty field'} $Lang::tr{'acct plz'}<br>";
 	}else{
-		if(! &validnumfield($cgiparams{'txt_plz'})){
+		if(! &validalphanumfield($cgiparams{'txt_plz'})){
 			$errormessage.="$Lang::tr{'acct invalid'} $Lang::tr{'acct plz'}<br>";
 		}
 	}
@@ -1523,7 +1523,7 @@ sub checkaddress{
 		}
 		if(($cgiparams{'txt_iban'} && $cgiparams{'txt_blz'})||(!$cgiparams{'txt_iban'} && $cgiparams{'txt_blz'})){
 			#Check BLZ
-			if(! &validnumfield($cgiparams{'txt_blz'})){
+			if(! &validalphanumfield($cgiparams{'txt_blz'})){
 				$errormessage.="$Lang::tr{'acct invalid'} $Lang::tr{'acct blz'}<br>";
 			}
 			#Check BANKACCOUNT
@@ -1653,7 +1653,7 @@ sub validphonefield{
 }
 
 sub validalphanumfield{
-	#GET: Input from a numeric field
+	#GET: Input from an alphanumeric field
 	#GIVES: True if valid, false if not valid
 	my $remark = $_[0];
 
@@ -1661,8 +1661,8 @@ sub validalphanumfield{
 	# but no more than 63 characters
 	if (length ($remark) < 1 || length ($remark) > 255) {
 		return 0;}
-	# Only valid characters are a-z, A-Z, 0-9 and -
-	if ($remark !~ /^[0-9a-zA-Z]*$/) {
+	# Only valid characters are a-z, A-Z, 0-9 - and space
+	if ($remark !~ /^[0-9a-zA-Z- ]*$/) {
 		return 0;}
 	# First character can only be a letter or a digit
 	if (substr ($remark, 0, 1) !~ /^[0-9A-Za-z]*$/) {

@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = USB Network Redirection protocol
+
 VER        = 0.8.0
 
 THISAPP    = usbredir-$(VER)
@@ -35,6 +37,8 @@ PROG       = libusbredir
 PAK_VER    = 2
 
 DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules

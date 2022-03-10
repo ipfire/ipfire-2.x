@@ -50,7 +50,7 @@ $timesettings{'ENABLESETONBOOT'} = 'off';
 &Header::getcgihash(\%timesettings);
 
 if ($timesettings{'ACTION'} eq $Lang::tr{'save'})
-{ 
+{
 	if ($timesettings{'ENABLENTP'} eq 'on')
 	{
 		if ( ! ( &General::validfqdn($timesettings{'NTP_ADDR_1'}) ||
@@ -144,7 +144,7 @@ ERROR:
 		} else {
 			unlink "${General::swroot}/time/allowclients";
 		}
-	
+
 	}
 	else
 	{
@@ -222,7 +222,7 @@ $selected{'UPDATE_PERIOD'}{'weekly'} = '';
 $selected{'UPDATE_PERIOD'}{'monthly'} = '';
 $selected{'UPDATE_PERIOD'}{$timesettings{'UPDATE_PERIOD'}} = "selected='selected'";
 
-# added to v0.0.4 to refresh screen if syncro event queued 
+# added to v0.0.4 to refresh screen if syncro event queued
 my $refresh = '';
 if ( -e "/var/lock/time/settimenow") {
 	$refresh = "<meta http-equiv='refresh' content='60;' />";

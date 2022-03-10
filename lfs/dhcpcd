@@ -70,6 +70,7 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcpcd-9.4.0-Allow-free-selection-of-MTU-by-the-user.patch
 	cd $(DIR_APP) && ./configure \
 			--prefix="" \
 			--sysconfdir=/var/ipfire/dhcpc \
@@ -90,7 +91,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	rm -f $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks/50-ypbind
 
 	install -m 644 $(DIR_SRC)/config/dhcpc/dhcpcd.conf $(CONFIG_ROOT)/dhcpc/
-	install -m 444 $(DIR_SRC)/config/dhcpc/dhcpcd-hooks/10-mtu $(CONFIG_ROOT)/dhcpc/dhcpcd-hooks
 
 	chown root:root $(CONFIG_ROOT)/dhcpc/dhcpcd.conf
 

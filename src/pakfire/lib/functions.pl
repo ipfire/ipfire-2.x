@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2015   IPFire Team   <info@ipfire.org>                   #
+# Copyright (C) 2007-2021   IPFire Team   <info@ipfire.org>                   #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -45,7 +45,7 @@ my @VALID_KEY_FINGERPRINTS = (
 
 # A small color-hash :D
 my %color;
-	$color{'normal'}      = "\033[0m"; 
+	$color{'normal'}      = "\033[0m";
 	$color{'black'}       = "\033[0;30m";
 	$color{'darkgrey'}    = "\033[1;30m";
 	$color{'blue'}        = "\033[0;34m";
@@ -79,7 +79,7 @@ our $lockfile = "/tmp/pakfire_lock";
 
 sub message {
 	my $message = shift;
-		
+
 	logger("$message");
 	if ( $enable_colors == 1 ) {
 		if ("$message" =~ /ERROR/) {
@@ -99,7 +99,7 @@ sub message {
 		}
 	}
 	print "$message\n";
-	
+
 }
 
 sub logger {
@@ -131,16 +131,16 @@ sub fetchfile {
 	my $gethost = shift;
 	my (@server, $host, $proto, $file, $i);
 	my $allok = 0;
-	
+
 	use File::Basename;
 	$bfile = basename("$getfile");
-	
+
 	logger("DOWNLOAD STARTED: $getfile");
 
-	$i = 0;	
+	$i = 0;
 	while (($allok == 0) && $i < 5) {
 		$i++;
-		
+
 		if ("$gethost" eq "") {
 			@server = selectmirror();
 			$proto = $server[0];
@@ -150,15 +150,22 @@ sub fetchfile {
 			$host = $gethost;
 			$file = $getfile;
 		}
-		
+
 		$proto = "HTTPS" unless $proto;
-		
+
 		logger("DOWNLOAD INFO: Host: $host ($proto) - File: $file");
 
-		my $ua = LWP::UserAgent->new;
+		# Init LWP::UserAgent, request SSL hostname verification
+		# and specify CA file.
+		my $ua = LWP::UserAgent->new(
+			ssl_opts => {
+				SSL_ca_file     => '/etc/ssl/cert.pem',
+				verify_hostname => 1,
+			}
+		);
 		$ua->agent("Pakfire/$Conf::version");
 		$ua->timeout(20);
-		
+
 		my %proxysettings=();
 		&General::readhash("${General::swroot}/proxy/advanced/settings", \%proxysettings);
 
@@ -189,19 +196,19 @@ sub fetchfile {
 		my $remote_headers = $result->headers;
 		$total_size = $remote_headers->content_length;
 		logger("DOWNLOAD INFO: $file has size of $total_size bytes");
-		
+
 		my $response = $ua->get($url, ':content_cb' => \&callback );
 		message("");
-		
+
 		my $code = $response->code();
 		my $log = $response->status_line;
 		logger("DOWNLOAD INFO: HTTP-Status-Code: $code - $log");
-		
+
 		if ( $code eq "500" ) {
 			message("Giving up: There was no chance to get the file \"$getfile\" from any available server.\nThere was an error on the way. Please fix it.");
 			return 1;
 		}
-		
+
 		if ($response->is_success) {
 			if (open(FILE, ">$Conf::tmpdir/$bfile")) {
 				print FILE $final_data;
@@ -234,9 +241,9 @@ sub fetchfile {
 sub getmirrors {
 	my $force = shift;
 	my $age;
-	
+
 	use File::Copy;
-	
+
 	if ( -e "$Conf::dbdir/lists/server-list.db" ) {
 		my @stat = stat("$Conf::dbdir/lists/server-list.db");
 		my $time = time();
@@ -247,7 +254,7 @@ sub getmirrors {
 		# Force an update.
 		$force = "force";
 	}
-	
+
 	if ("$force" eq "force") {
 		fetchfile("$Conf::version/lists/server-list.db", "$Conf::mainserver");
 		move("$Conf::cachedir/server-list.db", "$Conf::dbdir/lists/server-list.db");
@@ -257,9 +264,9 @@ sub getmirrors {
 sub getcoredb {
 	my $force = shift;
 	my $age;
-	
+
 	use File::Copy;
-	
+
 	if ( -e "$Conf::dbdir/lists/core-list.db" ) {
 		my @stat = stat("$Conf::dbdir/lists/core-list.db");
 		my $time = time();
@@ -270,7 +277,7 @@ sub getcoredb {
 		# Force an update.
 		$force = "force";
 	}
-	
+
 	if ("$force" eq "force") {
 		fetchfile("lists/core-list.db", "");
 		move("$Conf::cachedir/core-list.db", "$Conf::dbdir/lists/core-list.db");
@@ -368,9 +375,9 @@ sub dbgetlist {
 	#   Usage is always with an argument.
 	my $force = shift;
 	my $age;
-	
+
 	use File::Copy;
-	
+
 	if ( -e "$Conf::dbdir/lists/packages_list.db" ) {
 		my @stat = stat("$Conf::dbdir/lists/packages_list.db");
 		my $time = time();
@@ -381,18 +388,17 @@ sub dbgetlist {
 		# Force an update.
 		$force = "force";
 	}
-	
+
 	if ("$force" eq "force") {
 		fetchfile("lists/packages_list.db", "");
 		move("$Conf::cachedir/packages_list.db", "$Conf::dbdir/lists/packages_list.db");
 	}
 
 	# Update the meta database if new packages was in the package list
-	my @meta;
 	my $file;
 	my $line;
 	my $prog;
-	my ($name, $version, $release);
+	my %metadata;
 	my @templine;
 
 	open(FILE, "<$Conf::dbdir/lists/packages_list.db");
@@ -407,28 +413,14 @@ sub dbgetlist {
 		next if ( $file eq ".." );
 		next if ( $file eq "meta-" );
 		next if ( $file =~ /^old/ );
-		open(FILE, "<$Conf::dbdir/meta/$file");
-		@meta = <FILE>;
-		close(FILE);
-		foreach $line (@meta) {
-			@templine = split(/\: /,$line);
-			if ("$templine[0]" eq "Name") {
-				$name = $templine[1];
-				chomp($name);
-			} elsif ("$templine[0]" eq "ProgVersion") {
-				$version = $templine[1];
-				chomp($version);
-			} elsif ("$templine[0]" eq "Release") {
-				$release = $templine[1];
-				chomp($release);
-			}
-		}
+		%metadata = parsemetafile("$Conf::dbdir/meta/$file");
+
 		foreach $prog (@db) {
 			@templine = split(/\;/,$prog);
-			if (("$name" eq "$templine[0]") && ("$release" ne "$templine[2]")) {
-				move("$Conf::dbdir/meta/meta-$name","$Conf::dbdir/meta/old_meta-$name");
-				fetchfile("meta/meta-$name", "");
-				move("$Conf::cachedir/meta-$name", "$Conf::dbdir/meta/meta-$name");
+			if (("$metadata{'Name'}" eq "$templine[0]") && ("$metadata{'Release'}" ne "$templine[2]")) {
+				move("$Conf::dbdir/meta/meta-$metadata{'Name'}","$Conf::dbdir/meta/old_meta-$metadata{'Name'}");
+				fetchfile("meta/meta-$metadata{'Name'}", "");
+				move("$Conf::cachedir/meta-$metadata{'Name'}", "$Conf::dbdir/meta/meta-$metadata{'Name'}");
 			}
 		}
 	}
@@ -436,20 +428,19 @@ sub dbgetlist {
 
 sub dblist {
 	### This subroutine lists the packages.
-	#   You may also pass a filter: &Pakfire::dblist(filter) 
+	#   You may also pass a filter: &Pakfire::dblist(filter)
 	#   Usage is always with two arguments.
 	#   filter may be: all, notinstalled, installed
 	my $filter = shift;
 	my $forweb = shift;
-	my @meta;
 	my @updatepaks;
 	my $file;
 	my $line;
 	my $prog;
-	my ($name, $version, $release);
+	my %metadata;
 	my @templine;
-	
-	### Make sure that the list is not outdated. 
+
+	### Make sure that the list is not outdated.
 	#dbgetlist("noforce");
 
 	open(FILE, "<$Conf::dbdir/lists/packages_list.db");
@@ -474,7 +465,7 @@ sub dblist {
 				}
 			}
 		}
-	
+
 		opendir(DIR,"$Conf::dbdir/installed");
 		my @files = readdir(DIR);
 		closedir(DIR);
@@ -482,30 +473,16 @@ sub dblist {
 			next if ( $file eq "." );
 			next if ( $file eq ".." );
 			next if ( $file =~ /^old/ );
-			open(FILE, "<$Conf::dbdir/installed/$file");
-			@meta = <FILE>;
-			close(FILE);
-			foreach $line (@meta) {
-				@templine = split(/\: /,$line);
-				if ("$templine[0]" eq "Name") {
-					$name = $templine[1];
-					chomp($name);
-				} elsif ("$templine[0]" eq "ProgVersion") {
-					$version = $templine[1];
-					chomp($version);
-				} elsif ("$templine[0]" eq "Release") {
-					$release = $templine[1];
-					chomp($release);
-				}
-			}
+			%metadata = parsemetafile("$Conf::dbdir/installed/$file");
+
 			foreach $prog (@db) {
 				@templine = split(/\;/,$prog);
-				if (("$name" eq "$templine[0]") && ("$release" < "$templine[2]" && "$forweb" ne "notice")) {
-					push(@updatepaks,$name);
+				if (("$metadata{'Name'}" eq "$templine[0]") && ("$metadata{'Release'}" < "$templine[2]" && "$forweb" ne "notice")) {
+					push(@updatepaks,$metadata{'Name'});
 					if ("$forweb" eq "forweb") {
-						print "<option value=\"$name\">Update: $name -- Version: $version -> $templine[1] -- Release: $release -> $templine[2]</option>\n";
+						print "<option value=\"$metadata{'Name'}\">Update: $metadata{'Name'} -- Version: $metadata{'ProgVersion'} -> $templine[1] -- Release: $metadata{'Release'} -> $templine[2]</option>\n";
 					} else {
-						my $command = "Update: $name\nVersion: $version -> $templine[1]\nRelease: $release -> $templine[2]\n";
+						my $command = "Update: $metadata{'Name'}\nVersion: $metadata{'ProgVersion'} -> $templine[1]\nRelease: $metadata{'Release'} -> $templine[2]\n";
 						if ("$Pakfire::enable_colors" eq "1") {
 							print "$color{'lila'}$command$color{'normal'}\n";
 						} else {
@@ -541,7 +518,7 @@ sub dblist {
 			} else {
 				if ("$Pakfire::enable_colors" eq "1") {
 					if (&isinstalled("$templine[0]")) {
-						$use_color = "$color{'red'}" 
+						$use_color = "$color{'red'}"
 					} else {
 						$use_color = "$color{'green'}"
 					}
@@ -555,23 +532,14 @@ sub dblist {
 
 sub resolvedeps_one {
 	my $pak = shift;
-	
+
 	getmetafile("$pak");
-	
+
 	message("PAKFIRE RESV: $pak: Resolving dependencies...");
-	
-	open(FILE, "<$Conf::dbdir/meta/meta-$pak");
-	my @file = <FILE>;
-	close(FILE);
-	
-	my $line;
-	my (@templine, @deps, @all);
-	foreach $line (@file) {
-		@templine = split(/\: /,$line);
-		if ("$templine[0]" eq "Dependencies") {
-			@deps = split(/ /, $templine[1]);
-		}
-	}
+
+	my %metadata = parsemetafile("$Conf::dbdir/meta/meta-$pak");
+	my @all;
+	my @deps = split(/ /, $metadata{'Dependencies'});
 	chomp (@deps);
 	foreach (@deps) {
 		if ($_) {
@@ -581,7 +549,7 @@ sub resolvedeps_one {
 		  } else {
 		  	message("PAKFIRE RESV: $pak: Need to install dependency: $_");
 				push(@all,$_);
-			} 
+			}
 		}
 	}
 
@@ -640,9 +608,9 @@ sub resolvedeps_recursive {
 sub cleanup {
 	my $dir = shift;
 	my $path;
-	
+
 	logger("CLEANUP: $dir");
-	
+
 	if ( "$dir" eq "meta" ) {
 		$path = "$Conf::dbdir/meta";
 	} elsif ( "$dir" eq "tmp" ) {
@@ -661,21 +629,21 @@ sub cleanup {
 
 sub getmetafile {
 	my $pak = shift;
-	
+
 	unless ( -e "$Conf::dbdir/meta/meta-$pak" ) {
 		fetchfile("meta/meta-$pak", "");
 		move("$Conf::cachedir/meta-$pak", "$Conf::dbdir/meta/meta-$pak");
 	}
-	
+
 	if ( -z "$Conf::dbdir/meta/meta-$pak" ) {
 		fetchfile("meta/meta-$pak", "");
 		move("$Conf::cachedir/meta-$pak", "$Conf::dbdir/meta/meta-$pak");
 	}
-	
+
 	open(FILE, "<$Conf::dbdir/meta/meta-$pak");
 	my @line = <FILE>;
 	close(FILE);
-	
+
 	open(FILE, ">$Conf::dbdir/meta/meta-$pak");
 	foreach (@line) {
 		my $string = $_;
@@ -688,32 +656,52 @@ sub getmetafile {
 
 sub getsize {
 	my $pak = shift;
-	
+
 	getmetafile("$pak");
-	
-	open(FILE, "<$Conf::dbdir/meta/meta-$pak");
-	my @file = <FILE>;
-	close(FILE);
-	
-	my $line;
-	my @templine;
-	foreach $line (@file) {
-		@templine = split(/\: /,$line);
-		if ("$templine[0]" eq "Size") {
-			chomp($templine[1]);
-			return $templine[1];
-		}
+
+	if (my %metadata = parsemetafile("$Conf::dbdir/meta/meta-$pak")) {
+		return $metadata{'Size'};
 	}
 	return 0;
 }
 
+sub parsemetafile {
+	### This subroutine returns a hash with the contents of a meta- file
+	#   Pass path to metafile as argument: Pakfire::parsemetafile("$Conf::dbdir/meta/meta-$pak")
+	#   Usage is always with an argument.
+	my $metafile = shift;
+
+	my %metadata = ();
+
+	my @templine;
+	my @file;
+
+	if (! -e $metafile ) {
+		return 0;
+	}
+
+	open(FILE, "<$metafile");
+	@file = <FILE>;
+	close(FILE);
+
+	foreach (@file) {
+		@templine = split(/\: /,$_);
+		if ($templine[1]) {
+			chomp($templine[1]);
+			$metadata{"$templine[0]"} = $templine[1];
+		}
+	}
+
+	return %metadata;
+}
+
 sub decryptpak {
 	my $pak = shift;
-	
+
 	cleanup("tmp");
-	
+
 	my $file = getpak("$pak", "noforce");
-	
+
 	logger("DECRYPT STARTED: $pak");
 	my $return = system("cd $Conf::tmpdir/ && gpg -d --batch --quiet --no-verbose --status-fd 2 --output - < $Conf::cachedir/$file 2>/dev/null | tar x");
 	$return %= 255;
@@ -726,43 +714,31 @@ sub getpak {
 	my $force = shift;
 
 	getmetafile("$pak");
-	
-	open(FILE, "<$Conf::dbdir/meta/meta-$pak");
-	my @file = <FILE>;
-	close(FILE);
-	
-	my $line;
-	my $file;
-	my @templine;
-	foreach $line (@file) {
-		@templine = split(/\: /,$line);
-		if ("$templine[0]" eq "File") {
-			chomp($templine[1]);
-			$file = $templine[1];
-		}
-	}
-	
+
+	my %metadata = parsemetafile("$Conf::dbdir/meta/meta-$pak");
+	my $file = $metadata{'File'};
+
 	unless ($file) {
 		message("No filename given in meta-file.");
 		exit 1;
 	}
-	
+
 	unless ( "$force" eq "force" ) {
 		if ( -e "$Conf::cachedir/$file" ) {
 			return $file;
 		}
 	}
-	
+
 	fetchfile("paks/$file", "");
 	return $file;
 }
 
 sub setuppak {
 	my $pak = shift;
-	
+
 	message("PAKFIRE INST: $pak: Decrypting...");
 	decryptpak("$pak");
-	
+
 	message("PAKFIRE INST: $pak: Copying files and running post-installation scripts...");
 	my $return = system("cd $Conf::tmpdir && NAME=$pak ./install.sh >> $Conf::logdir/install-$pak.log 2>&1");
 	$return %= 255;
@@ -790,7 +766,7 @@ sub upgradecore {
 		$Conf::core_mine-- if ($tree eq "testing" || $tree eq "unstable");
 
 		message("CORE UPGR: Upgrading from release $Conf::core_mine to $core_release");
-		
+
 		my @seq = `seq $Conf::core_mine $core_release`;
 		shift @seq;
 		my $release;
@@ -798,14 +774,14 @@ sub upgradecore {
 			chomp($release);
 			getpak("core-upgrade-$release");
 		}
-		
+
 		foreach $release (@seq) {
 			chomp($release);
 			upgradepak("core-upgrade-$release");
 		}
-		
+
 		system("echo $core_release > $Conf::coredir/mine");
-		
+
 	} else {
 		message("CORE ERROR: No new upgrades available. You are on release $Conf::core_mine.");
 	}
@@ -869,7 +845,7 @@ sub beautifysize {
 	my $size = shift;
 	#$size = $size / 1024;
 	my $unit;
-	
+
 	if ($size > 1023*1024) {
 	  $size = ($size / (1024*1024));
 	  $unit = "MB";
@@ -889,7 +865,7 @@ sub makeuuid {
 		open(FILE, "</proc/sys/kernel/random/uuid");
 		my @line = <FILE>;
 		close(FILE);
-		
+
 		open(FILE, ">$Conf::dbdir/uuid");
 		foreach (@line) {
 			print FILE $_;
@@ -913,7 +889,7 @@ sub progress_bar {
 			$show_bfile = substr($bfile,0,17)."...";
 		} else {
 			$show_bfile = $bfile;
-		}	
+		}
 		$progress = sprintf("%.2f%%", 100*$got/+$total);
     sprintf "$color{'lightgreen'}%-20s %7s |%-${width}s| %10s$color{'normal'}\r",$show_bfile, $progress, $char x (($width-1)*$got/$total). '>', beautifysize($got);
 }

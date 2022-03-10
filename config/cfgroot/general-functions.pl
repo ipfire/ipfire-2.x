@@ -1228,12 +1228,15 @@ sub firewall_reload() {
 # Function which will return the used interface for the red network zone (red0, ppp0, etc).
 # if you change this also check speed.cgi that include a local copy for systemload reasons
 sub get_red_interface() {
+	my $interface;
+	my $red_iface_file = "${General::swroot}/red/iface";
 
-	open(IFACE, "${General::swroot}/red/iface") or die "Could not open /var/ipfire/red/iface";
-
-	my $interface = <IFACE>;
-	close(IFACE);
-	chomp $interface;
+	if (-e $red_iface_file) {
+		open(IFACE, "$red_iface_file") or die "Could not open $red_iface_file";
+		$interface = <IFACE>;
+		close(IFACE);
+		chomp $interface;
+	}
 
 	return $interface;
 }

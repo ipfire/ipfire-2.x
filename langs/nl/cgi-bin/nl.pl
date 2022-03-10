@@ -1,4 +1,4 @@
-%tr = ( 
+%tr = (
 %tr,
 
 'Act as' => 'Fungeren als:',
@@ -2555,7 +2555,6 @@
 'wlan client edit entry' => 'Wijzig draadloze client configuratie',
 'wlan client encryption' => 'Encryptie',
 'wlan client encryption none' => 'Geen',
-'wlan client encryption wep' => 'WEP',
 'wlan client encryption wpa' => 'WPA',
 'wlan client encryption wpa2' => 'WPA2',
 'wlan client group cipher' => 'Group cipher',

@@ -1,4 +1,4 @@
-%tr = ( 
+%tr = (
 %tr,
 
 'Act as' => 'Lavora come:',
@@ -2607,7 +2607,6 @@
 'wlan client edit entry' => 'Edit wireless client configuration',
 'wlan client encryption' => 'Encryption',
 'wlan client encryption none' => 'None',
-'wlan client encryption wep' => 'WEP',
 'wlan client encryption wpa' => 'WPA',
 'wlan client encryption wpa2' => 'WPA2',
 'wlan client group cipher' => 'Group cipher',

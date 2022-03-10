@@ -202,7 +202,7 @@ my $Datei = "/var/ipfire/backup/".$_;
 my @Info = stat($Datei);
 my $Size = $Info[7] / 1024 / 1024;
 $Size = sprintf("%0.2f", $Size);
-print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size MB</td><td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='download' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' /></form></td>";
+print "<tr><td align='center'>$Lang::tr{'backup from'} <b>$_</b> $Lang::tr{'size'} $Size MB</td><td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='download' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' /></form></td>";
 print "<td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='delete' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' /></form></td></tr>";
 }
 foreach (@backupisos){
@@ -212,7 +212,7 @@ my $Datei = "/var/tmp/backupiso/".$_;
 my @Info = stat($Datei);
 my $Size = $Info[7] / 1024 / 1024;
 $Size = sprintf("%0.2f", $Size);
-print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size MB</td><td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='downloadiso' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' /></form></td>";
+print "<tr><td align='center'>$Lang::tr{'backup from'} <b>$_</b> $Lang::tr{'size'} $Size MB</td><td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='downloadiso' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'download'}' title='$Lang::tr{'download'}' src='/images/package-x-generic.png' /></form></td>";
 print "<td width='5'><form method='post' action='$ENV{'SCRIPT_NAME'}'><input type='hidden' name='ACTION' value='delete' /><input type='hidden' name='FILE' value='$_' /><input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/user-trash.png' /></form></td></tr>";
 }
 print <<END
@@ -246,10 +246,10 @@ my $Size = $Info[7] / 1024;
 if ( -e $Datei ){
 	if ($Size < 1) {
 			$Size = sprintf("%.2f", $Size);
-			print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB $Lang::tr{'date'} ".localtime($Info[9])."</td>";
+			print "<tr><td align='center'>$Lang::tr{'backup from'} <b>$_</b> $Lang::tr{'size'} $Size KB $Lang::tr{'date'} ".localtime($Info[9])."</td>";
 	} else {
 			$Size = sprintf("%2d", $Size);
-			print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB $Lang::tr{'date'} ".localtime($Info[9])."</td>";
+			print "<tr><td align='center'>$Lang::tr{'backup from'} <b>$_</b> $Lang::tr{'size'} $Size KB $Lang::tr{'date'} ".localtime($Info[9])."</td>";
 
 	}
 
@@ -272,7 +272,7 @@ END
 ;
 }
 else{
-  print "<tr><td align='center'>$Lang::tr{'backup from'} $_ </td><td width='5' align='right'></td><td width='5' align='right'></td>";
+  print "<tr><td align='center'>$Lang::tr{'backup from'} <b>$_</b> </td><td width='5' align='right'></td><td width='5' align='right'></td>";
 }
 print <<END
 	<td align='right' width='5'>
@@ -291,7 +291,7 @@ my $Datei = "/var/ipfire/backup/addons/backup/".$_.".ipf";
 my @Info = stat($Datei);
 my $Size = $Info[7] / 1024;
 $Size = sprintf("%2d", $Size);
-print "<tr><td align='center'>$Lang::tr{'backup from'} $_ $Lang::tr{'size'} $Size KB $Lang::tr{'date'} ".localtime($Info[9])."</td>";
+print "<tr><td align='center'>$Lang::tr{'backup from'} <b>$_</b> $Lang::tr{'size'} $Size KB $Lang::tr{'date'} ".localtime($Info[9])."</td>";
 print <<END
 	<td align='right' width='5'>
 		<form method='post' action='$ENV{'SCRIPT_NAME'}'>

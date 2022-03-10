@@ -145,7 +145,7 @@ if ($fwhostsettings{'ACTION'} eq 'updatenet' )
 			$fwhostsettings{'netremark'}	= $customnetwork{$key}[3];
 			$fwhostsettings{'count'} 		= $customnetwork{$key}[4];
 			delete $customnetwork{$key};
-			
+
 		}
 	}
 	&General::writehasharray("$confignet", \%customnetwork);
@@ -284,7 +284,7 @@ if ($fwhostsettings{'ACTION'} eq 'savenet' )
 		#convert ip if leading '0' exists
 		$fwhostsettings{'IP'} = &Network::ip_remove_zero($fwhostsettings{'IP'});
 
-		#check valid ip 
+		#check valid ip
 		if (!&General::validipandmask($fwhostsettings{'IP'}."/".$fwhostsettings{'SUBNET'}))
 		{
 			$errormessage=$errormessage.$Lang::tr{'fwhost err addr'};
@@ -448,7 +448,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 			}
 		}
 		#only check plausi when no error till now
-		if (!$errormessage){	
+		if (!$errormessage){
 			&plausicheck("edithost");
 		}
 		if($fwhostsettings{'actualize'} eq 'on' && $fwhostsettings{'newhost'} ne 'on' && $errormessage){
@@ -465,7 +465,7 @@ if ($fwhostsettings{'ACTION'} eq 'savehost')
 			$customhost{$key}[3] = $fwhostsettings{'orgremark'};
 			&General::writehasharray("$confighost", \%customhost);
 			undef %customhost;
-		} 
+		}
 		if (!$errormessage){
 			#get count if host was edited
 			if($fwhostsettings{'actualize'} eq 'on'){
@@ -560,7 +560,7 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 		#check standard networks
 		if ($fwhostsettings{'grp2'} eq 'std_net'){
 			@target=$fwhostsettings{'DEFAULT_SRC_ADR'};
-			$type='Standard Network';	
+			$type='Standard Network';
 		}
 		#check custom networks
 		if ($fwhostsettings{'grp2'} eq 'cust_net' && $fwhostsettings{'CUST_SRC_NET'} ne ''){
@@ -626,7 +626,7 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 			$fwhostsettings{'remark'}='';
 		}
 		#check if host/net exists in grp
-		
+
 		my $test="$grp,$fwhostsettings{'oldremark'},@target,$type";
 		foreach my $key (keys %customgrp) {
 			my $test1="$customgrp{$key}[0],$customgrp{$key}[1],$customgrp{$key}[2],$customgrp{$key}[3]";
@@ -636,7 +636,7 @@ if ($fwhostsettings{'ACTION'} eq 'savegrp')
 			}
 		}
 	}
-	
+
 	if (!$errormessage){
 		#on first save, we have an empty @target, so fill it with nothing
 		my $targetvalues=@target;
@@ -1168,7 +1168,7 @@ if ($fwhostsettings{'ACTION'} eq 'changegrpremark')
 				{
 					$customgrp{$key}[1]='';
 					$customgrp{$key}[1]=$fwhostsettings{'newrem'};
-				}	
+				}
 			}
 			&General::writehasharray("$configgrp", \%customgrp);
 			$fwhostsettings{'update'}='on';
@@ -1218,7 +1218,7 @@ if ($fwhostsettings{'ACTION'} eq 'changesrvgrpremark')
 				{
 					$customservicegrp{$key}[1]='';
 					$customservicegrp{$key}[1]=$fwhostsettings{'newsrvrem'};
-				}	
+				}
 			}
 			&General::writehasharray("$configsrvgrp", \%customservicegrp);
 			$fwhostsettings{'updatesrvgrp'}='on';
@@ -1323,7 +1323,7 @@ sub showmenu {
 	<tr><td colspan='6'></td></tr></table>
 END
 	&Header::closebox();
-	
+
 }
 # Add
 sub addnet
@@ -1367,11 +1367,11 @@ END
 
 	if ($fwhostsettings{'ACTION'} eq 'edithost' || $fwhostsettings{'error'} eq 'on')
 	{
-		
+
 		print "	<td colspan='4' align='right'><input type='submit' value='$Lang::tr{'update'}' style='min-width:100px;'/><input type='hidden' name='ACTION' value='updatehost'><input type='hidden' name='orgremark' value='$fwhostsettings{'orgremark'}' ><input type='hidden' name='orgname' value='$fwhostsettings{'orgname'}' ><input type='hidden' name='update' value='on'><input type='hidden' name='newhost' value='$fwhostsettings{'newhost'}'></form>";
 	}else{
 		print "	<td colspan='4' align='right'><input type='submit' name='savehost' value='$Lang::tr{'save'}' style='min-width:100px;' /><input type='hidden' name='ACTION' value='savehost' /><input type='hidden' name='newhost' value='on'>";
-	}	
+	}
 	print "	</form><form method='post' style='display:inline'><input type='submit' value='$Lang::tr{'fwhost back'}' style='min-width:100px;' ><input type='hidden' name='ACTION' value='resethost'></form></td></tr></table>";
 	&Header::closebox();
 }
@@ -1397,7 +1397,7 @@ sub addgrp
 	$fwhostsettings{'oldgrpname'}=$fwhostsettings{'grp_name'};
 	my $grp=$fwhostsettings{'grp_name'};
 	my $rem=$fwhostsettings{'remark'};
-		if ($fwhostsettings{'update'} eq ''){   
+		if ($fwhostsettings{'update'} eq ''){
 			print<<END;
 		<table width='100%' border='0'>
 			<tr>
@@ -1869,9 +1869,9 @@ sub viewtablenet
 		&General::readhasharray("$fwconfiginp", \%fwinp);
 		&General::readhasharray("$fwconfigout", \%fwout);
 
-		if (!keys %customnetwork) 
-		{ 
-			print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
+		if (!keys %customnetwork)
+		{
+			print "<center><b>$Lang::tr{'fwhost empty'}</b>";
 		}else{
 			print<<END;
 			<table width='100%' cellspacing='0' class='tbl'>
@@ -1885,7 +1885,7 @@ END
 				print" <tr>";
 				$col="bgcolor='${Header::colouryellow}'";
 			}elsif ($count % 2)
-			{ 
+			{
 				$col="bgcolor='$color{'color20'}'";
 				print" <tr>";
 			}else
@@ -1915,7 +1915,7 @@ END
 		}
 		print"</table>";
 		&Header::closebox();
-	}	
+	}
 
 }
 sub getcolor
@@ -2015,9 +2015,9 @@ sub viewtablehost
 		&General::readhasharray("$fwconfiginp", \%fwinp);
 		&General::readhasharray("$fwconfigout", \%fwout);
 		&General::readhasharray("$configgrp", \%customgrp);
-		if (!keys %customhost) 
-		{ 
-			print "<center><b>$Lang::tr{'fwhost empty'}</b>"; 
+		if (!keys %customhost)
+		{
+			print "<center><b>$Lang::tr{'fwhost empty'}</b>";
 		}else{
 		print<<END;
 		<table width='100%' cellspacing='0' class='tbl'>
@@ -2085,7 +2085,7 @@ sub viewtablegrp
 	my $delflag;
 	my @counter;
 	my %hash;
-	if (!keys %customgrp) 
+	if (!keys %customgrp)
 	{
 		print "<center><b>$Lang::tr{'fwhost err emptytable'}</b>";
 	}else{
@@ -2136,7 +2136,7 @@ sub viewtablegrp
 				print"<tr>";
 				$col="bgcolor='$color{'color22'}'";
 			}
-			my $ip=&getipforgroup($customgrp{$key}[2],$customgrp{$key}[3]);	
+			my $ip=&getipforgroup($customgrp{$key}[2],$customgrp{$key}[3]);
 			if ($ip eq ''){
 				print"<tr>";
 				$col="bgcolor='${Header::colouryellow}'";
@@ -2548,7 +2548,7 @@ sub checkname
 		}
 	}
 	return 1;
-	
+
 }
 sub checkgroup
 {
@@ -2574,7 +2574,7 @@ sub checkservice
 }
 sub checkip
 {
-	
+
 	my %hash=%{(shift)};
 	my $a=shift;
 	foreach my $key (keys %hash) {
@@ -2603,7 +2603,7 @@ sub checkservicegroup
 		foreach my $key (keys %customservicegrp) {
 			if( $customservicegrp{$key}[0] eq $fwhostsettings{'SRVGRP_NAME'} ){
 				$errormessage.=$Lang::tr{'fwhost err grpexist'}."<br>";
-			
+
 			}
 		}
 	}
@@ -2667,7 +2667,7 @@ sub get_name
 	foreach my $network (sort keys %defaultNetworks)
 	{
 		return "$network" if ($val eq $defaultNetworks{$network}{'NAME'});
-	}	
+	}
 }
 sub gethostcount
 {
@@ -2827,7 +2827,7 @@ sub deletefromgrp
 		}
 	}
 	&General::writehasharray("$config",\%hash);
-	
+
 }
 sub plausicheck
 {
@@ -2893,13 +2893,13 @@ sub plausicheck
 		$errormessage=$errormessage."<br>".$Lang::tr{'fwhost err netexist'};
 		$fwhostsettings{'HOSTNAME'} = $fwhostsettings{'orgname'};
 		if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}=$edit;}
-	}	
-	#check if network ip already exists		
+	}
+	#check if network ip already exists
 	if (!&checkip(\%customnetwork,1))
 	{
 		$errormessage=$errormessage."<br>".$Lang::tr{'fwhost err net'};
 		if ($fwhostsettings{'update'} eq 'on'){$fwhostsettings{'ACTION'}=$edit;}
-	}	
+	}
 	#check if host with this name already exists
 	&General::readhasharray("$confighost", \%customhost);
 	if (!&checkname(\%customhost))
@@ -2920,7 +2920,7 @@ sub getipforgroup
 	my $name=$_[0],
 	my $type=$_[1];
 	my $value;
-	
+
 	#get address from IPSEC NETWORK
 	if ($type eq 'IpSec Network'){
 		foreach my $key (keys %ipsecconf) {
@@ -2946,7 +2946,7 @@ sub getipforgroup
 		}
 		&deletefromgrp($name,$configgrp);
 	}
-	
+
 	#get address from IPSEC HOST
 	if ($type eq 'IpSec Host'){
 		foreach my $key (keys %ipsecconf) {
@@ -2956,7 +2956,7 @@ sub getipforgroup
 		}
 		&deletefromgrp($name,$configgrp);
 	}
-		
+
 	#get address from ovpn ccd Net-2-Net
 	if ($type eq 'OpenVPN N-2-N'){
 		foreach my $key (keys %ccdhost) {
@@ -2968,7 +2968,7 @@ sub getipforgroup
 		}
 		&deletefromgrp($name,$configgrp);
 	}
-	
+
 	#get address from ovpn ccd static host
 	if ($type eq 'OpenVPN static host'){
 		foreach my $key (keys %ccdhost) {
@@ -2980,7 +2980,7 @@ sub getipforgroup
 		}
 		&deletefromgrp($name,$configgrp);
 	}
-	
+
 	#get address from  ovpn ccd static net
 	if ($type eq 'OpenVPN static network'){
 		foreach my $key (keys %ccdnet) {
@@ -2991,7 +2991,7 @@ sub getipforgroup
 			}
 		}
 	}
-	
+
 	#check custom addresses
 	if ($type eq 'Custom Host'){
 		foreach my $key (keys %customhost) {
@@ -3001,7 +3001,7 @@ sub getipforgroup
 			}
 		}
 	}
-	
+
 	##check custom networks
 	if ($type eq 'Custom Network'){
 		foreach my $key (keys %customnetwork) {
@@ -3010,7 +3010,7 @@ sub getipforgroup
 			}
 		}
 	}
-	
+
 	#check standard networks
 	if ($type eq 'Standard Network'){
 		if ($name =~ /OpenVPN/i){
@@ -3060,7 +3060,7 @@ sub decrease
 				}
 			}
 		}
-		
+
 		if (($customgrp{$key}[0] eq $grp) && ($customgrp{$key}[3] eq 'Custom Host')){
 			foreach my $key2 (sort keys %customhost){
 				if ($customhost{$key2}[0] eq $customgrp{$key}[2]){
@@ -3068,7 +3068,7 @@ sub decrease
 					last;
 				}
 			}
-				
+
 		}
 	}
 	&General::writehasharray("$confignet", \%customnetwork);
@@ -3079,7 +3079,7 @@ sub decreaseservice
 	my $grp=$_[0];
 	&General::readhasharray("$configsrv", \%customservice);
 	&General::readhasharray("$configsrvgrp", \%customservicegrp);
-	
+
 	foreach my $key (sort keys %customservicegrp){
 		if ($customservicegrp{$key}[0] eq $grp ){
 			foreach my $key2 (sort keys %customservice){
@@ -3090,7 +3090,7 @@ sub decreaseservice
 		}
 	}
 	&General::writehasharray("$configsrv", \%customservice);
-	
+
 }
 sub changenameinfw
 {
@@ -3130,7 +3130,7 @@ sub changenameinfw
 }
 sub checkports
 {
-	
+
 	my %hash=%{(shift)};
 	#check empty fields
 	if ($fwhostsettings{'SRV_NAME'} eq '' ){
@@ -3145,7 +3145,7 @@ sub checkports
 	}
 	#change dashes with :
 	$fwhostsettings{'SRV_PORT'}=~ tr/-/:/;
-		
+
 	if ($fwhostsettings{'SRV_PORT'} eq "*") {
 		$fwhostsettings{'SRV_PORT'} = "1:65535";
 	}

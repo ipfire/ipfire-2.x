@@ -9,7 +9,6 @@ var/ipfire/dhcpc/dhcpcd-hooks
 #var/ipfire/dhcpc/dhcpcd-hooks/00-linux
 #var/ipfire/dhcpc/dhcpcd-hooks/01-test
 #var/ipfire/dhcpc/dhcpcd-hooks/02-dump
-#var/ipfire/dhcpc/dhcpcd-hooks/10-mtu
 #var/ipfire/dhcpc/dhcpcd-hooks/30-hostname
 #var/ipfire/dhcpc/dhcpcd-hooks/70-dhcpcd.exe
 var/ipfire/dhcpc/dhcpcd-run-hooks
