@@ -97,6 +97,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && ln -v -sf /usr/bin/smbspool /usr/lib/cups/backend/smb
 
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/cups \
+                         /var/ipfire/backup/addons/includes/cups
+
 	# install initscript
 	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 	cp -fv $(DIR_SRC)/config/cups/cupsd.conf /var/ipfire/cups/

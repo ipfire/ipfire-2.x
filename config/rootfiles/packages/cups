@@ -918,6 +918,7 @@ usr/share/locale/zh_CN/cups_zh_CN.po
 #usr/share/man/man8/lpmove.8
 var/cache/cups
 var/cache/cups/rss
+var/ipfire/backup/addons/includes/cups
 #var/ipfire/cups
 var/ipfire/cups/cups-files.conf
 var/ipfire/cups/cups-files.conf.default
