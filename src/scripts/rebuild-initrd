@@ -21,4 +21,4 @@
 
 KVER=`uname -r`
 
-dracut --force --early-microcode --xz /boot/initramfs-$KVER.img $KVER
+dracut --force /boot/initramfs-$KVER.img $KVER
