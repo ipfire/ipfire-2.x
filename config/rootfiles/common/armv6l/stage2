@@ -42,8 +42,8 @@ etc/profile.d/term256.sh
 etc/profile.d/umask.sh
 etc/resolv.conf
 etc/securetty
-etc/sysctl.conf
 etc/sysctl-armv6l.conf
+etc/sysctl.conf
 etc/syslog.conf
 etc/system-release
 #home
@@ -67,7 +67,6 @@ root/.bash_logout
 root/.bash_profile
 root/.bashrc
 root/ipfire
-run
 #sbin
 #srv
 #usr/bin
@@ -105,8 +104,8 @@ usr/local/bin/scanhd
 usr/local/bin/settime
 usr/local/bin/timecheck
 usr/local/bin/timezone-transition
-usr/local/bin/update-lang-cache
 usr/local/bin/update-ids-ruleset
+usr/local/bin/update-lang-cache
 usr/local/bin/update-location-database
 #usr/local/include
 #usr/local/lib
@@ -153,6 +152,8 @@ usr/share/doc/licenses/GPLv3
 #usr/share/zoneinfo
 #var
 #var/cache
+var/cache/ldconfig
+var/cache/ldconfig/aux-cache
 var/empty
 #var/lib
 #var/lib/misc
@@ -169,6 +170,7 @@ var/mail
 var/run
 #var/spool
 var/tmp
+run
 dev/console
 dev/null
 tmp
