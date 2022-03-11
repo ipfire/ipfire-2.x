@@ -1095,6 +1095,8 @@ buildbase() {
 	lfsmake2 libxcrypt
 	lfsmake2 file
 	lfsmake2 gcc
+	lfsmake2 attr
+	lfsmake2 acl
 	lfsmake2 sed
 	lfsmake2 berkeley
 	lfsmake2 coreutils
@@ -1110,8 +1112,6 @@ buildbase() {
 	lfsmake2 pcre
 	lfsmake2 pcre2
 	lfsmake2 gettext
-	lfsmake2 attr
-	lfsmake2 acl
 	lfsmake2 bash
 	lfsmake2 diffutils
 	lfsmake2 ed
