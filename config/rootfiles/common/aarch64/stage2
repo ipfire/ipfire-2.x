@@ -100,7 +100,6 @@ usr/local/bin/ipsec-interfaces
 usr/local/bin/makegraphs
 usr/local/bin/qosd
 usr/local/bin/readhash
-usr/local/bin/rebuild-initrd
 usr/local/bin/run-parts
 usr/local/bin/scanhd
 usr/local/bin/settime
