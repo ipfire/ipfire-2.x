@@ -319,6 +319,7 @@ usr/lib/python3.10/site-packages/samba/ms_schema.py
 usr/lib/python3.10/site-packages/samba/ms_schema_markdown.py
 usr/lib/python3.10/site-packages/samba/ndr.py
 usr/lib/python3.10/site-packages/samba/net.cpython-310-aarch64-linux-gnu.so
+usr/lib/python3.10/site-packages/samba/net_s3.cpython-310-aarch64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/netbios.cpython-310-aarch64-linux-gnu.so
 #usr/lib/python3.10/site-packages/samba/netcmd
 usr/lib/python3.10/site-packages/samba/netcmd/__init__.py
@@ -623,8 +624,8 @@ usr/lib/python3.10/site-packages/samba/vgp_motd_ext.py
 usr/lib/python3.10/site-packages/samba/vgp_openssh_ext.py
 usr/lib/python3.10/site-packages/samba/vgp_startup_scripts_ext.py
 usr/lib/python3.10/site-packages/samba/vgp_sudoers_ext.py
-usr/lib/python3.10/site-packages/samba/werror.cpython-310-aarch64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/vgp_symlink_ext.py
+usr/lib/python3.10/site-packages/samba/werror.cpython-310-aarch64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/xattr.py
 usr/lib/python3.10/site-packages/samba/xattr_native.cpython-310-aarch64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/xattr_tdb.cpython-310-aarch64-linux-gnu.so
