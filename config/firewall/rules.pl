@@ -701,15 +701,9 @@ sub drop_hostile_networks () {
 	# Call function to load the network list of hostile networks.
 	&ipset_restore($HOSTILE_CCODE);
 
-	# Setup rules to pass traffic which does not belong to a hostile network.
-	run("$IPTABLES -A HOSTILE -i $RED_DEV -m set ! --match-set $HOSTILE_CCODE src -j RETURN");
-	run("$IPTABLES -A HOSTILE -o $RED_DEV -m set ! --match-set $HOSTILE_CCODE dst -j RETURN");
-
-	# Setup logging.
-	run("$IPTABLES -A HOSTILE -m limit --limit 10/second -j LOG  --log-prefix \"DROP_HOSTILE \"");
-
-	# Drop traffic from/to hostile network.
-        run("$IPTABLES -A HOSTILE -j DROP -m comment --comment \"DROP_HOSTILE\"");
+	# Check traffic in incoming/outgoing direction and drop if it matches
+	run("$IPTABLES -A HOSTILE -i $RED_DEV -m set --match-set $HOSTILE_CCODE src -j HOSTILE_DROP");
+	run("$IPTABLES -A HOSTILE -o $RED_DEV -m set --match-set $HOSTILE_CCODE dst -j HOSTILE_DROP");
 }
 
 sub get_protocols {
