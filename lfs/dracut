@@ -74,7 +74,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install sbindir=/sbin sysconfdir=/etc
 
-	cp -vf $(DIR_SRC)/config/dracut/dracut.conf /etc/dracut.conf
+	cp -vf $(DIR_SRC)/config/dracut/ipfire.conf \
+		/usr/lib/dracut/dracut.conf.d/ipfire.conf
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

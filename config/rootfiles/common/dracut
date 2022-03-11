@@ -13,6 +13,7 @@ usr/lib/dracut/dracut-logger.sh
 usr/lib/dracut/dracut-util
 usr/lib/dracut/dracut-version.sh
 usr/lib/dracut/dracut.conf.d
+usr/lib/dracut/dracut.conf.d/ipfire.conf
 #usr/lib/dracut/modules.d
 usr/lib/dracut/modules.d/00bash
 usr/lib/dracut/modules.d/00bash/module-setup.sh
