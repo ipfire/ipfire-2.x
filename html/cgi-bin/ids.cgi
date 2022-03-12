@@ -1247,7 +1247,7 @@ print <<END;
 			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'ids provider'}</b></td>
 			<td class='base' bgcolor='$color{'color20'}'><b>$Lang::tr{'date'}</b></td>
 			<td class='base' bgcolor='$color{'color20'}' align='center'><b>$Lang::tr{'ids autoupdates'}</b></td>
-			<td class='base' bgcolor='$color{'color20'}'></td>
+			<td class='base' bgcolor='$color{'color20'}' align='center'><b>$Lang::tr{'action'}</b></td>
 			<td class='base' colspan='3' bgcolor='$color{'color20'}'></td>
 		</tr>
 END
