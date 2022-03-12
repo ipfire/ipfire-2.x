@@ -619,7 +619,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 			# Convert interface name into upper case.
 			my $zone_upper = uc($zone);
 
-			# Check if the IDS is enabled for this interaces.
+			# Check if the IDS is enabled for these interfaces.
 			if ($cgiparams{"ENABLE_IDS_$zone_upper"}) {
 				# Increase count.
 				$monitored_zones++;
