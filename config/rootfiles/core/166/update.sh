@@ -55,6 +55,10 @@ ldconfig
 # Regenerate all initrds
 dracut --regenerate-all --force
 
+# Rebuild IPS rules
+perl -e "require '/var/ipfire/ids-functions.pl'; &IDS::oinkmaster();"
+/etc/init.d/suricata reload
+
 # Start services
 /etc/init.d/sshd restart
 
