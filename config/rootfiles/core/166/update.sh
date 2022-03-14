@@ -32,6 +32,11 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Remove files
+rm -vf \
+	/etc/dracut.conf \
+	/usr/bin/mkinitrd \
+	/usr/lib/dracut \
+	/usr/local/bin/rebuild-initrd
 
 # Stop services
 
@@ -46,6 +51,9 @@ ldconfig
 
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
+
+# Regenerate all initrds
+dracut --regenerate-all --force
 
 # Start services
 /etc/init.d/sshd restart
