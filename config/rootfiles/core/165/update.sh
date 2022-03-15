@@ -130,6 +130,7 @@ telinit u
 /etc/rc.d/init.d/firewall restart
 
 # Rebuild IPS rules
+rm -vf /tmp/ids_page_locked
 perl -e "require '/var/ipfire/ids-functions.pl'; &IDS::oinkmaster();"
 /etc/init.d/suricata reload
 
