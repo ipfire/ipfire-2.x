@@ -547,6 +547,12 @@ sub extractruleset ($) {
 				# Skip rule files which are not located in the rules directory or archive root.
 				next unless(($packed_file =~ /^rules\//) || ($packed_file !~ /\//));
 
+				# Skip deleted.rules.
+				#
+				# Mostly they have been taken out for correctness or performance reasons and therfore
+				# it is not a great idea to enable any of them.
+				next if($file =~ m/deleted.rules$/);
+
 				my $rulesfilename;
 
 				# Splitt the filename into chunks.
