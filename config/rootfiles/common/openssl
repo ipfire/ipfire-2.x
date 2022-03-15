@@ -661,6 +661,7 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/BN_mod_mul_montgomery.html
 #usr/share/doc/openssl/html/man3/BN_mod_mul_reciprocal.html
 #usr/share/doc/openssl/html/man3/BN_mod_sqr.html
+#usr/share/doc/openssl/html/man3/BN_mod_sqrt.html
 #usr/share/doc/openssl/html/man3/BN_mod_sub.html
 #usr/share/doc/openssl/html/man3/BN_mod_word.html
 #usr/share/doc/openssl/html/man3/BN_mpi2bn.html
@@ -3481,6 +3482,7 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/X509_STORE_CTX_lookup_certs_fn.html
 #usr/share/doc/openssl/html/man3/X509_STORE_CTX_lookup_crls_fn.html
 #usr/share/doc/openssl/html/man3/X509_STORE_CTX_new.html
+#usr/share/doc/openssl/html/man3/X509_STORE_CTX_purpose_inherit.html
 #usr/share/doc/openssl/html/man3/X509_STORE_CTX_set0_crls.html
 #usr/share/doc/openssl/html/man3/X509_STORE_CTX_set0_param.html
 #usr/share/doc/openssl/html/man3/X509_STORE_CTX_set0_trusted_stack.html
@@ -3492,6 +3494,8 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/X509_STORE_CTX_set_error.html
 #usr/share/doc/openssl/html/man3/X509_STORE_CTX_set_error_depth.html
 #usr/share/doc/openssl/html/man3/X509_STORE_CTX_set_ex_data.html
+#usr/share/doc/openssl/html/man3/X509_STORE_CTX_set_purpose.html
+#usr/share/doc/openssl/html/man3/X509_STORE_CTX_set_trust.html
 #usr/share/doc/openssl/html/man3/X509_STORE_CTX_set_verify.html
 #usr/share/doc/openssl/html/man3/X509_STORE_CTX_set_verify_cb.html
 #usr/share/doc/openssl/html/man3/X509_STORE_CTX_verify_cb.html
@@ -4638,6 +4642,7 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/BN_mod_mul_montgomery.3
 #usr/share/man/man3/BN_mod_mul_reciprocal.3
 #usr/share/man/man3/BN_mod_sqr.3
+#usr/share/man/man3/BN_mod_sqrt.3
 #usr/share/man/man3/BN_mod_sub.3
 #usr/share/man/man3/BN_mod_word.3
 #usr/share/man/man3/BN_mpi2bn.3
@@ -7458,6 +7463,7 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/X509_STORE_CTX_lookup_certs_fn.3
 #usr/share/man/man3/X509_STORE_CTX_lookup_crls_fn.3
 #usr/share/man/man3/X509_STORE_CTX_new.3
+#usr/share/man/man3/X509_STORE_CTX_purpose_inherit.3
 #usr/share/man/man3/X509_STORE_CTX_set0_crls.3
 #usr/share/man/man3/X509_STORE_CTX_set0_param.3
 #usr/share/man/man3/X509_STORE_CTX_set0_trusted_stack.3
@@ -7469,6 +7475,8 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/X509_STORE_CTX_set_error.3
 #usr/share/man/man3/X509_STORE_CTX_set_error_depth.3
 #usr/share/man/man3/X509_STORE_CTX_set_ex_data.3
+#usr/share/man/man3/X509_STORE_CTX_set_purpose.3
+#usr/share/man/man3/X509_STORE_CTX_set_trust.3
 #usr/share/man/man3/X509_STORE_CTX_set_verify.3
 #usr/share/man/man3/X509_STORE_CTX_set_verify_cb.3
 #usr/share/man/man3/X509_STORE_CTX_verify_cb.3
