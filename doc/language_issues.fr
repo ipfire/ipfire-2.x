@@ -327,8 +327,6 @@ WARNING: translation string unused: external access rule removed
 WARNING: translation string unused: extrahd
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
-WARNING: translation string unused: false max bandwith
-WARNING: translation string unused: false min bandwith
 WARNING: translation string unused: filename
 WARNING: translation string unused: firmware
 WARNING: translation string unused: firmware upload
@@ -500,7 +498,6 @@ WARNING: translation string unused: manage printers
 WARNING: translation string unused: manual
 WARNING: translation string unused: manual control and status
 WARNING: translation string unused: marked
-WARNING: translation string unused: max bandwith
 WARNING: translation string unused: max incoming size
 WARNING: translation string unused: max outgoing size
 WARNING: translation string unused: max size
@@ -913,24 +910,6 @@ WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
-WARNING: untranslated string: cake profile bridged-llcsnap 32 = Bridged LLC SNAP (32 bytes)
-WARNING: untranslated string: cake profile bridged-ptm 19 = Bridged PTM (19 bytes)
-WARNING: untranslated string: cake profile bridged-vcmux 24 = Bridged VC-MUX (24 bytes)
-WARNING: untranslated string: cake profile conservative 48 = Conservative (should work on all connections, 48 bytes)
-WARNING: untranslated string: cake profile docsis 18 = DOCSIS (18 bytes)
-WARNING: untranslated string: cake profile ethernet 38 = Ethernet (38 bytes)
-WARNING: untranslated string: cake profile ethernet vlan 42 = Ethernet with VLAN (42 bytes)
-WARNING: untranslated string: cake profile ipoa-llcsnap 16 = IP over ATM LLC SNAP (16 bytes)
-WARNING: untranslated string: cake profile ipoa-vcmux 8 = IP over ATM VC-MUX (8 bytes)
-WARNING: untranslated string: cake profile pppoa-llc 14 = PPPoA LLC (14 bytes)
-WARNING: untranslated string: cake profile pppoa-vcmux 10 = PPPoA VC-MUX (10 bytes)
-WARNING: untranslated string: cake profile pppoe-llcsnap 40 = PPPoE LLC SNAP (40 bytes)
-WARNING: untranslated string: cake profile pppoe-ptm 27 = PPPoE PTM (27 bytes)
-WARNING: untranslated string: cake profile pppoe-vcmux 32 = PPPoE VC-MUX (32 bytes)
-WARNING: untranslated string: cake profile raw 0 = Raw (no overhead compensation)
-WARNING: untranslated string: eol architecture warning = You are running an architecture of IPFire which reached its end of life. You will not receive updates anymore. This is a security risk.
-WARNING: untranslated string: false max bandwidth = Maximum bandwidth is false.
-WARNING: untranslated string: false min bandwidth = Minimum bandwidth is false.
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guaranteed bandwidth = Guaranteed bandwidth
@@ -963,10 +942,6 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: invalid input for subscription code = Invalid input for subscription code
-WARNING: untranslated string: link-layer encapsulation = Link-Layer Encapsulation
-WARNING: untranslated string: log dropped conntrack invalids = Log dropped packets classified as INVALID by connection tracking
-WARNING: untranslated string: max bandwidth = Maximum bandwidth
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string

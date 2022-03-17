@@ -996,31 +996,9 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
-< cake profile bridged-llcsnap 32
-< cake profile bridged-ptm 19
-< cake profile bridged-vcmux 24
-< cake profile conservative 48
-< cake profile docsis 18
-< cake profile ethernet 38
-< cake profile ethernet vlan 42
-< cake profile ipoa-llcsnap 16
-< cake profile ipoa-vcmux 8
-< cake profile pppoa-llc 14
-< cake profile pppoa-vcmux 10
-< cake profile pppoe-llcsnap 40
-< cake profile pppoe-ptm 27
-< cake profile pppoe-vcmux 32
-< cake profile raw 0
-< eol architecture warning
-< false max bandwidth
-< false min bandwidth
 < g.dtm
 < g.lite
 < guaranteed bandwidth
-< invalid input for subscription code
-< link-layer encapsulation
-< log dropped conntrack invalids
-< max bandwidth
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
