@@ -25,19 +25,12 @@
 include Config
 
 VER        = 6.1
-SUMMARY    = Pico editor clone with enhancements
 
 THISAPP    = nano-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = nano
-PAK_VER    = 41
-
-DEPS       = ""
-
-SERVICES   =
 
 ###############################################################################
 # Top-level Rules
