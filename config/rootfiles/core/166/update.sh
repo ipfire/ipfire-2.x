@@ -60,6 +60,7 @@ perl -e "require '/var/ipfire/ids-functions.pl'; &IDS::oinkmaster();"
 /etc/init.d/suricata reload
 
 # Start services
+/etc/init.d/apache restart
 /etc/init.d/sshd restart
 
 # This update needs a reboot...
