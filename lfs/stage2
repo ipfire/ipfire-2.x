@@ -113,7 +113,6 @@ endif
 
 	# Move script to correct place.
 	mv -vf /usr/local/bin/openvpn-metrics /usr/sbin/
-	mv -vf /usr/local/bin/ovpn-ccd-convert /usr/sbin/
 	mv -vf /usr/local/bin/captive-cleanup /usr/bin/
 
 	# Install firewall scripts.
