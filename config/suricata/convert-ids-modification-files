@@ -1,0 +1,80 @@
+#!/usr/bin/perl
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2021 IPFire Development Team <info@ipfire.org>                #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+use strict;
+
+require '/var/ipfire/general-functions.pl';
+require '/var/ipfire/ids-functions.pl';
+
+# Exit if there is no main oinkmaster config file anymore.
+exit 0 unless (-f "$IDS::settingsdir/oinkmaster.conf");
+
+# Get all supported providers.
+my @providers = &IDS::get_ruleset_providers();
+
+# Loop through the array of providers.
+foreach my $provider (@providers) {
+	my %modifications = ();
+
+	# Generate old filename which hold the ruleset modifications.
+	my $old_modifications_file = "$IDS::settingsdir/oinkmaster\-$provider\-modified-sids.conf";
+
+	# Skip provider if there is no modifications file.
+	next unless (-f $old_modifications_file);
+
+	# Open modifications file.
+	open(FILE, "$old_modifications_file");
+
+	# Read-in file content.
+	my @file = <FILE>;
+
+	# Close file handle.
+	close(FILE);
+
+	# Loop through the file content.
+	foreach my $line (@file) {
+		chomp($line);
+
+		# Split line and assign to an temporary array.
+		my @tmp = split(/ /, $line);
+
+		# Assign nice human-readable variables.
+		my $action = $tmp[0];
+		my $sid = $tmp[1];
+
+		# Process stored rule action and assign to the modifications hash.
+		if ($action eq "enablesid") {
+			$modifications{$sid} = "enabled";
+
+		} elsif ($action eq "disablesid") {
+			$modifications{$sid} = "disabled";
+		}
+	}
+
+	# Get new filename which will hold the ruleset modifications for this provider.
+	my $new_modifications_file = &IDS::get_provider_ruleset_modifications_file($provider);
+
+	# Write new modifications file.
+	&General::writehash("$new_modifications_file", \%modifications);
+
+	# Set correct ownership for the new modifications file.
+	&IDS::set_ownership("$new_modifications_file");
+}
