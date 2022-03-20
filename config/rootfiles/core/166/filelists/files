@@ -1,4 +1,5 @@
 etc/rc.d/init.d/firewall
+srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 usr/lib/firewall/rules.pl
 var/ipfire/ids-functions.pl
