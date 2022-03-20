@@ -683,6 +683,124 @@ sub oinkmaster () {
 }
 
 #
+## Function to alter the ruleset.
+#
+sub process_ruleset(@) {
+	my (@providers) = @_;
+
+	# Hash to store the configured provider modes.
+	my %providers_mode = &get_providers_mode();
+
+	# Array to store the extracted rulefile from the temporary rules directory.
+	my @extracted_rulefiles;
+
+	# Get names of the extracted raw rulefiles.
+	opendir(DIR, $tmp_rules_directory) or die "Could not read from $tmp_rules_directory. $!\n";
+	while (my $file = readdir(DIR)) {
+		# Ignore single and double dotted files.
+		next if $file =~ /^\.\.?$/;
+
+		# Add file to the array of extracted files.
+		push(@extracted_rulefiles, $file);
+	}
+
+	# Close directory handle.
+	closedir(DIR);
+
+	# Loop through the array of providers.
+	foreach my $provider (@providers) {
+		# Hash to store the obtained SIDs and REV of each provider.
+		my %rules = ();
+
+		# Hash which holds modifications to apply to the rules.
+		my %modifications = ();
+
+		# Loop through the array of extraced rulefiles.
+		foreach my $file (@extracted_rulefiles) {
+			# Skip file if it does not belong to the current processed provider.
+			next unless ($file =~ m/^$provider/);
+
+			# Open the rulefile.
+			open(FILE, "$tmp_rules_directory/$file") or die "Could not read $tmp_rules_directory/$file. $!\n";
+
+			# Loop through the file content.
+			while (my $line = <FILE>) {
+				# Skip blank  lines.
+				next if ($line =~ /^\s*$/);
+
+				# Call function to get the sid and rev of the rule.
+				my ($sid, $rev) = &_get_sid_and_rev($line);
+
+				# Skip rule if a sid with a higher rev already has added to the rules hash.
+				next if ($rev le $rules{$sid});
+
+				# Add the new or rule with higher rev to the hash of rules.
+				$rules{$sid} = $rev;
+			}
+
+			# Close file handle.
+			close(FILE);
+		}
+
+		# Get filename which contains the ruleset modifications for this provider.
+		my $modification_file = &get_provider_ruleset_modifications_file($provider);
+
+		# Read file which holds the modifications of the ruleset for the current provider.
+		&General::readhash($modification_file, \%modifications) if (-f $modification_file);
+
+		# Loop again through the array of extracted rulesfiles.
+		foreach my $file (@extracted_rulefiles) {
+			# Skip the file if it does not belong to the current provider.
+			next unless ($file =~ m/^$provider/);
+
+			# Open the rulefile for writing.
+			open(RULEFILE, ">", "$rulespath/$file") or die "Could not write to file $rulespath/$file. $!\n";
+
+			# Open the rulefile for reading.
+			open(TMP_RULEFILE, "$tmp_rules_directory/$file") or die "Could not read $tmp_rules_directory/$file. $!\n";
+
+			# Loop through the raw temporary rulefile.
+			while (my $line = <TMP_RULEFILE>) {
+				# Get the sid and rev of the rule.
+				my ($sid, $rev) = &_get_sid_and_rev($line);
+
+				# Check if the current rule is obsoleted by a newer one.
+				#
+				# In this case the rev number in the rules hash is higher than the current one.
+				next if ($rev lt $rules{$sid});
+
+				# Check if the rule should be enabled or disabled.
+				if ($modifications{$sid} eq "on") {
+					# Drop the # at the start of the line.
+					$line =~ s/^\#//;
+				} elsif ($modifications{$sid} eq "off") {
+					# Add a # at the start of the line to disable the rule.
+					$line = "#$line" unless ($line =~ /^#/);
+				}
+
+				# Check if the Provider is set so IPS mode.
+				if ($providers_mode{$provider} eq "IPS") {
+					# Replacements for sourcefire rules.
+					$line =~ s/^#\s*(?:alert|drop)(.+policy balanced-ips alert)/alert${1}/;
+					$line =~ s/^#\s*(?:alert|drop)(.+policy balanced-ips drop)/drop${1}/;
+
+					# Replacements for generic rules.
+					$line =~ s/^(#?)\s*(?:alert|drop)/${1}drop/;
+					$line =~ s/^(#?)\s*drop(.+flowbits:noalert;)/${1}alert${2}/;
+				}
+
+				# Write line / rule to the target rule file.
+				print RULEFILE "$line";
+			}
+
+			# Close filehandles.
+			close(RULEFILE);
+			close(TMP_RULEFILE);
+		}
+	}
+}
+
+#
 ## Function to merge the classifications for a given amount of providers and write them
 ## to the classifications file.
 #
