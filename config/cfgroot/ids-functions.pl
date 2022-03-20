@@ -235,6 +235,42 @@ sub get_enabled_providers () {
 }
 
 #
+## Function to get a hash of provider handles and their configured modes (IDS/IPS).
+#
+sub get_providers_mode () {
+	my %used_providers = ();
+
+	# Hash to store the providers and their configured modes.
+	my %providers_mode = ();
+
+	# Read-in the providers config file.
+	&General::readhasharray("$providers_settings_file", \%used_providers);
+
+	# Loop through the hash of used_providers.
+	foreach my $id (keys %used_providers) {
+		# Skip disabled providers.
+		next unless ($used_providers{$id}[3] eq "enabled");
+
+		# Grab the provider handle.
+		my $provider = "$used_providers{$id}[0]";
+
+		# Grab the provider mode.
+		my $mode = "$used_providers{$id}[4]";
+
+		# Fall back to IDS if no mode could be obtained.
+		unless($mode) {
+			$mode = "IDS";
+		}
+
+		# Add details to provider_modes hash.
+		$providers_mode{$provider} = $mode;
+	}
+
+	# Return the hash.
+	return %providers_mode;
+}
+
+#
 ## Function for checking if at least 300MB of free disk space are available
 ## on the "/var" partition.
 #
