@@ -751,10 +751,10 @@ sub process_ruleset(@) {
 				next if ($rev lt $rules{$sid});
 
 				# Check if the rule should be enabled or disabled.
-				if ($modifications{$sid} eq "on") {
+				if ($modifications{$sid} eq "enabled") {
 					# Drop the # at the start of the line.
 					$line =~ s/^\#//;
-				} elsif ($modifications{$sid} eq "off") {
+				} elsif ($modifications{$sid} eq "disabled") {
 					# Add a # at the start of the line to disable the rule.
 					$line = "#$line" unless ($line =~ /^#/);
 				}
