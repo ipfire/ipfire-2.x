@@ -696,12 +696,20 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	my $provider = $cgiparams{'PROVIDER'};
 	my $subscription_code = $cgiparams{'SUBSCRIPTION_CODE'};
 	my $status_autoupdate;
+	my $mode;
 
 	# Handle autoupdate checkbox.
 	if ($cgiparams{'ENABLE_AUTOUPDATE'} eq "on") {
 		$status_autoupdate = "enabled";
 	} else {
 		$status_autoupdate = "disabled";
+	}
+
+	# Handle monitor traffic only checkbox.
+	if ($cgiparams{'MONITOR_TRAFFIC_ONLY'} eq "on") {
+		$mode = "IDS";
+	} else {
+		$mode = "IPS";
 	}
 
 	# Check if we are going to add a new provider.
@@ -766,7 +774,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		}
 
 		# Add/Modify the entry to/in the used providers hash..
-		$used_providers{$id} = ["$provider", "$subscription_code", "$status_autoupdate", "$status"];
+		$used_providers{$id} = ["$provider", "$subscription_code", "$status_autoupdate", "$status", "$mode"];
 
 		# Write the changed hash to the providers settings file.
 		&General::writehasharray($IDS::providers_settings_file, \%used_providers);
@@ -1029,9 +1037,6 @@ sub show_mainpage() {
 	$checked{'ENABLE_IDS'}{'off'} = '';
 	$checked{'ENABLE_IDS'}{'on'} = '';
 	$checked{'ENABLE_IDS'}{$idssettings{'ENABLE_IDS'}} = "checked='checked'";
-	$checked{'MONITOR_TRAFFIC_ONLY'}{'off'} = '';
-	$checked{'MONITOR_TRAFFIC_ONLY'}{'on'} = '';
-	$checked{'MONITOR_TRAFFIC_ONLY'}{$idssettings{'MONITOR_TRAFFIC_ONLY'}} = "checked='checked'";
 	$selected{'AUTOUPDATE_INTERVAL'}{'off'} = '';
 	$selected{'AUTOUPDATE_INTERVAL'}{'daily'} = '';
 	$selected{'AUTOUPDATE_INTERVAL'}{'weekly'} = '';
@@ -1102,8 +1107,6 @@ print <<END
 						<input type='checkbox' name='ENABLE_IDS' $checked{'ENABLE_IDS'}{'on'}>&nbsp;$Lang::tr{'ids enable'}
 					</td>
 
-					<td class='base' colspan='2'>
-						<input type='checkbox' name='MONITOR_TRAFFIC_ONLY' $checked{'MONITOR_TRAFFIC_ONLY'}{'on'}>&nbsp;$Lang::tr{'ids monitor traffic only'}
 				</td>
 				</tr>
 
@@ -1698,6 +1701,12 @@ END
 			$checked{'ENABLE_AUTOUPDATE'} = "checked='checked'";
 		}
 
+		# Check if the monitor traffic only mode is set for this provider.
+		if ($used_providers{$cgiparams{'ID'}}[4] eq "IDS") {
+			# Set the checkbox to be checked.
+			$checked{'MONITOR_TRAFFIC_ONLY'} = "checked='checked'";
+		}
+
 		# Display section to force an rules update and to reset the provider.
 		&show_additional_provider_actions();
 
@@ -1795,8 +1804,12 @@ print <<END
 			</tr>
 
 			<tr>
-				<td colspan='2'>
+				<td>
 					<input type='checkbox' name='ENABLE_AUTOUPDATE' $checked{'ENABLE_AUTOUPDATE'}>&nbsp;$Lang::tr{'ids enable automatic updates'}
+				</td>
+
+				<td>
+					<input type='checkbox' name='MONITOR_TRAFFIC_ONLY' $checked{'MONITOR_TRAFFIC_ONLY'}>&nbsp;$Lang::tr{'ids monitor traffic only'}
 				</td>
 			</tr>
 
