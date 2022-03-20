@@ -513,18 +513,15 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	# for this provider.
 	&IDS::write_used_provider_rulefiles_file($provider);
 
-	# Call function to get the path and name for the given providers
-	# oinkmaster modified sids file.
-	my $provider_modified_sids_file = &IDS::get_oinkmaster_provider_modified_sids_file($provider);
+	# Call function to get the path and name for file which holds the ruleset modifications
+	# for the given provider.
+	my $modifications_file = &IDS::get_provider_ruleset_modifications_file($provider);
 
 	# Check if the file exists.
-	if (-f $provider_modified_sids_file) {
+	if (-f $modifications_file) {
 		# Remove the file, as requested.
-		unlink("$provider_modified_sids_file");
+		unlink("$modifications_file");
 	}
-
-	# Alter the oinkmaster provider includes file and remove the provider.
-	&IDS::alter_oinkmaster_provider_includes_file("remove", $provider);
 
 	# Regenerate ruleset.
 	&IDS::oinkmaster();
@@ -880,10 +877,6 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		# Write the main providers include file.
 		&IDS::write_main_used_rulefiles_file(@enabled_providers);
 
-		# Call function to alter the oinkmasters provider includes file and
-		# add or remove the provider.
-		&IDS::alter_oinkmaster_provider_includes_file($provider_includes_action, $provider_handle);
-
 		# Check if oinkmaster has to be executed.
 		if ($oinkmaster eq "True") {
 			# Lock the webpage and print message.
@@ -945,17 +938,14 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	unlink("$provider_used_rulefile");
 
 	# Call function to get the path and name for the given providers
-	# oinkmaster modified sids file.
-	my $provider_modified_sids_file = &IDS::get_oinkmaster_provider_modified_sids_file($provider);
+	# ruleset modifications file..
+	my $modifications_file = &IDS::get_provider_ruleset_modifications_file($provider);
 
 	# Check if the file exists.
-	if (-f $provider_modified_sids_file) {
+	if (-f $modifications_file) {
 		# Remove the file, which is not longer needed.
-		unlink("$provider_modified_sids_file");
+		unlink("$modifications_file");
 	}
-
-	# Alter the oinkmaster provider includes file and remove the provider.
-	&IDS::alter_oinkmaster_provider_includes_file("remove", $provider);
 
 	# Regenerate ruleset.
 	&IDS::oinkmaster();
@@ -1846,12 +1836,12 @@ sub show_additional_provider_actions() {
 	# Assign variable for provider handle.
 	my $provider = "$used_providers{$cgiparams{'ID'}}[0]";
 
-	# Call function to get the path and name for the given providers
-	# oinkmaster modified sids file.
-	my $provider_modified_sids_file = &IDS::get_oinkmaster_provider_modified_sids_file($provider);
+	# Call function to get the path and name for the given provider
+	# ruleset modifications file.
+	my $modifications_file = &IDS::get_provider_ruleset_modifications_file($provider);
 
 	# Disable the reset provider button if no provider modified sids file exists.
-	unless (-f $provider_modified_sids_file) {
+	unless (-f $modifications_file) {
 		$disabled = "disabled";
 	}
 
