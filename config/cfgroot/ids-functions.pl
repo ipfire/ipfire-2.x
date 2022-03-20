@@ -1551,6 +1551,18 @@ sub get_used_provider_rulesfile_file ($) {
 }
 
 #
+## Tiny function to generate the full path and name for the file which stores the modifications of a ruleset.
+#
+sub get_provider_ruleset_modifications_file($) {
+	my ($provider) = @_;
+
+	my $filename = "$settingsdir/$provider\-modifications";
+
+	# Return the filename.
+	return $filename;
+}
+
+#
 ## Function to generate and write the file for modify the ruleset.
 #
 sub write_modify_sids_file() {
