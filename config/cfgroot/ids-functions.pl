@@ -650,27 +650,8 @@ sub oinkmaster () {
 		&extractruleset($provider);
 	}
 
-	# Establish the connection to the syslog service.
-	openlog('oinkmaster', 'cons,pid', 'user');
-
-	# Call oinkmaster to generate ruleset.
-	open(OINKMASTER, "/usr/local/bin/oinkmaster.pl -s -u dir://$tmp_rules_directory -C $settingsdir/oinkmaster.conf -o $rulespath 2>&1 |") or die "Could not execute oinkmaster $!\n";
-
-	# Log output of oinkmaster to syslog.
-	while(<OINKMASTER>) {
-		# The syslog function works best with an array based input,
-		# so generate one before passing the message details to syslog.
-		my @syslog = ("INFO", "$_");
-
-		# Send the log message.
-		syslog(@syslog);
-	}
-
-	# Close the pipe to oinkmaster process.
-	close(OINKMASTER);
-
-	# Close the log handle.
-	closelog();
+	# Call function to process the ruleset and do all modifications.
+	&process_ruleset(@enabled_providers);
 
 	# Call function to merge the classification files.
 	&merge_classifications(@enabled_providers);
