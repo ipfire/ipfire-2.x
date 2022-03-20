@@ -927,6 +927,27 @@ sub _get_dl_rulesfile($) {
 }
 
 #
+## Private function to obtain the sid and rev of a rule.
+#
+## Returns an array with the sid as first and the rev as second value.
+#
+sub _get_sid_and_rev ($) {
+	my ($line) = @_;
+
+	my @ret;
+
+	# Use regex to obtain the sid and rev.
+	if ($line =~ m/.*sid:\s*(.*?);.*rev:\s*(.*?);/) {
+		# Add the sid and rev to the array.
+		push(@ret, $1);
+		push(@ret, $2);
+	}
+
+	# Return the array.
+	return @ret;
+}
+
+#
 ## Tiny function to delete the stored ruleset file or tarball for a given provider.
 #
 sub drop_dl_rulesfile ($) {
