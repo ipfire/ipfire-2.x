@@ -46,7 +46,7 @@
 
 /* Trusted environment for executing commands */
 char * trusted_env[4] = {
-	"PATH=/usr/bin:/usr/sbin:/sbin:/bin",
+	"PATH=/usr/local/bin:/usr/local/sbin:/sbin:/usr/sbin:/bin:/usr/bin",
 	"SHELL=/bin/sh",
 	"TERM=dumb",
 	NULL
