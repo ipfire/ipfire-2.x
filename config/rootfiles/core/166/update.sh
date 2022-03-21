@@ -74,6 +74,14 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
        /etc/init.d/ipsec start
 fi
 
+# Nano is now part of the core system, remove Pakfire metadata for it
+if [ -e "/opt/pakfire/db/installed/meta-nano" ] && [ -e "/opt/pakfire/db/meta/meta-nano" ]; then
+	rm -vf \
+		/opt/pakfire/db/installed/meta-nano \
+		/opt/pakfire/db/meta/meta-nano \
+		/opt/pakfire/db/rootfiles/nano
+fi
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
