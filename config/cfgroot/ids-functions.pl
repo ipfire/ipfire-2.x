@@ -354,43 +354,6 @@ sub downloadruleset ($) {
 			return 1;
 		}
 
-		# Variable to store the filesize of the remote object.
-		my $remote_filesize;
-
-		# The sourcfire (snort rules) does not allow to send "HEAD" requests, so skip this check
-		# for this webserver.
-		#
-		# Check if the ruleset source contains "snort.org".
-		unless ($url =~ /\.snort\.org/) {
-			# Pass the requrested url to the downloader.
-			my $request = HTTP::Request->new(HEAD => $url);
-
-			# Accept the html header.
-			$request->header('Accept' => 'text/html');
-
-			# Perform the request and fetch the html header.
-			my $response = $downloader->request($request);
-
-			# Check if there was any error.
-			unless ($response->is_success) {
-				# Obtain error.
-				my $error = $response->status_line();
-
-				# Log error message.
-				&_log_to_syslog("Unable to download the ruleset. \($error\)");
-
-				# Return "1" - false.
-				return 1;
-			}
-
-			# Assign the fetched header object.
-			my $header = $response->headers();
-
-			# Grab the remote file size from the object and store it in the
-			# variable.
-			$remote_filesize = $header->content_length;
-		}
-
 		# Load perl module to deal with temporary files.
 		use File::Temp;
 
@@ -415,6 +378,12 @@ sub downloadruleset ($) {
 			# Return "1" - false.
 			return 1;
 		}
+
+		# Obtain the connection headers.
+		my $headers = $response->headers;
+
+		# Get the remote size of the downloaded file.
+		my $remote_filesize = $headers->content_length;
 
 		# Load perl stat module.
 		use File::stat;
