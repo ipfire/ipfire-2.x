@@ -36,6 +36,7 @@ rm -vf \
 	/etc/dracut.conf \
 	/usr/bin/mkinitrd \
 	/usr/lib/dracut \
+	/usr/local/bin/ovpn-ccd-convert \
 	/usr/local/bin/rebuild-initrd
 
 # Stop services
