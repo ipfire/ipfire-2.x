@@ -16,8 +16,6 @@ usr/bin/nping
 #usr/share/man/pl
 #usr/share/man/pl/man1
 #usr/share/man/pl/man1/nmap.1
-#usr/share/man/pt_BR
-#usr/share/man/pt_BR/man1
 #usr/share/man/pt_BR/man1/nmap.1
 #usr/share/man/pt_PT
 #usr/share/man/pt_PT/man1
@@ -25,8 +23,6 @@ usr/bin/nping
 #usr/share/man/ro
 #usr/share/man/ro/man1
 #usr/share/man/ro/man1/nmap.1
-#usr/share/man/ru
-#usr/share/man/ru/man1
 #usr/share/man/ru/man1/nmap.1
 #usr/share/man/sk
 #usr/share/man/sk/man1
@@ -619,6 +615,7 @@ usr/share/nmap/scripts/mysql-vuln-cve2012-2122.nse
 usr/share/nmap/scripts/nat-pmp-info.nse
 usr/share/nmap/scripts/nat-pmp-mapport.nse
 usr/share/nmap/scripts/nbd-info.nse
+usr/share/nmap/scripts/nbns-interfaces.nse
 usr/share/nmap/scripts/nbstat.nse
 usr/share/nmap/scripts/ncp-enum-users.nse
 usr/share/nmap/scripts/ncp-serverinfo.nse
@@ -644,6 +641,7 @@ usr/share/nmap/scripts/ntp-monlist.nse
 usr/share/nmap/scripts/omp2-brute.nse
 usr/share/nmap/scripts/omp2-enum-targets.nse
 usr/share/nmap/scripts/omron-info.nse
+usr/share/nmap/scripts/openflow-info.nse
 usr/share/nmap/scripts/openlookup-info.nse
 usr/share/nmap/scripts/openvas-otp-brute.nse
 usr/share/nmap/scripts/openwebnet-discovery.nse
@@ -662,6 +660,7 @@ usr/share/nmap/scripts/pjl-ready-message.nse
 usr/share/nmap/scripts/pop3-brute.nse
 usr/share/nmap/scripts/pop3-capabilities.nse
 usr/share/nmap/scripts/pop3-ntlm-info.nse
+usr/share/nmap/scripts/port-states.nse
 usr/share/nmap/scripts/pptp-version.nse
 usr/share/nmap/scripts/puppet-naivesigning.nse
 usr/share/nmap/scripts/qconn-exec.nse
