@@ -46,6 +46,7 @@ gpg --batch --yes --delete-keys 179740DC4D8C47DC63C099C74BDE364C64D96617
 unset GNUPGHOME
 
 # Stop services
+/etc/init.d/ipsec stop
 
 # Extract files
 extract_files
@@ -69,6 +70,9 @@ perl -e "require '/var/ipfire/ids-functions.pl'; &IDS::oinkmaster();"
 # Start services
 /etc/init.d/apache restart
 /etc/init.d/sshd restart
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+       /etc/init.d/ipsec start
+fi
 
 # This update needs a reboot...
 touch /var/run/need_reboot
