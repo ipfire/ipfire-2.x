@@ -6,7 +6,6 @@ opt/pakfire/db/rootfiles
 #opt/pakfire/etc
 #opt/pakfire/pakfire.conf
 opt/pakfire/etc/pakfire.conf
-opt/pakfire/pakfire-2007.key
 opt/pakfire/pakfire-2018.key
 #opt/pakfire/lib
 opt/pakfire/lib/functions.pl

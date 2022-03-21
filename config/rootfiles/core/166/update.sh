@@ -34,10 +34,16 @@ done
 # Remove files
 rm -vf \
 	/etc/dracut.conf \
+	/opt/pakfire/pakfire-2007.key \
 	/usr/bin/mkinitrd \
 	/usr/lib/dracut \
 	/usr/local/bin/ovpn-ccd-convert \
 	/usr/local/bin/rebuild-initrd
+
+# Delete old 2007 Pakfire key from GPG keyring
+export GNUPGHOME="/opt/pakfire/etc/.gnupg"
+gpg --batch --yes --delete-keys 179740DC4D8C47DC63C099C74BDE364C64D96617
+unset GNUPGHOME
 
 # Stop services
 
