@@ -293,6 +293,7 @@ rm -rvf \
 	/usr/lib/tdbcpostgres1.1.2 \
 	/usr/lib/thread2.8.6 \
 	/usr/libexec/xtables-addons \
+	/usr/local/bin/convert-ovpn \
 	/usr/local/bin/ovpn-ccd-convert \
 	/usr/local/bin/rebuild-initrd \
 	/usr/local/bin/xt_geoip_build \
