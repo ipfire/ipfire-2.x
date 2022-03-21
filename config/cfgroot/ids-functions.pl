@@ -256,6 +256,10 @@ sub downloadruleset ($) {
 	# If no provider is given default to "all".
 	$provider //= 'all';
 
+	# The amount of download attempts before giving up and
+	# logging an error.
+	my $max_dl_attempts = 3;
+
 	# Hash to store the providers and access id's, for which rules should be downloaded.
 	my %sheduled_providers = ();
 
@@ -364,19 +368,33 @@ sub downloadruleset ($) {
 		# Pass the requested url to the downloader.
 		my $request = HTTP::Request->new(GET => $url);
 
-		# Perform the request and save the output into the tmpfile.
-		my $response = $downloader->request($request, $tmpfile);
+		my $dl_attempt = 1;
+		my $response;
 
-		# Check if there was any error.
-		unless ($response->is_success) {
-			# Obtain error.
-			my $error = $response->content;
+		# Download and retry on failure.
+		while ($dl_attempt <= $max_dl_attempts) {
+			# Perform the request and save the output into the tmpfile.
+			$response = $downloader->request($request, $tmpfile);
 
-			# Log error message.
-			&_log_to_syslog("Unable to download the ruleset. \($error\)");
+			# Check if the download was successfull.
+			if($response->is_success) {
+				# Break loop.
+				last;
 
-			# Return "1" - false.
-			return 1;
+			# Check if we ran out of download re-tries.
+			} elsif ($dl_attempt eq $max_dl_attempts) {
+				# Obtain error.
+				my $error = $response->content;
+
+				# Log error message.
+				&_log_to_syslog("Unable to download the ruleset. \($error\)");
+
+				# Return "1" - false.
+				return 1;
+			}
+
+			# Increase download attempt counter.
+			$dl_attempt++;
 		}
 
 		# Obtain the connection headers.
