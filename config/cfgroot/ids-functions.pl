@@ -393,6 +393,9 @@ sub downloadruleset ($) {
 				return 1;
 			}
 
+			# Remove temporary file, if one exists.
+			unlink("$tmpfile") if (-e "$tmpfile");
+
 			# Increase download attempt counter.
 			$dl_attempt++;
 		}
