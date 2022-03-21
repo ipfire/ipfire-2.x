@@ -1,3 +1,4 @@
+etc/inittab.d
 etc/rc.d/init.d/firewall
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
