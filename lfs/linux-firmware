@@ -70,8 +70,8 @@ $(subst %,%_MD5,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	mkdir -p /lib/firmware
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/0001-Add-support-for-compressing-firmware-in-copy-firmwar.patch
+	cd $(DIR_APP) && make installcompress
 
 	# Remove any spaces in filenames
 	while read -r file; do \
