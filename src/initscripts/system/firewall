@@ -169,6 +169,17 @@ iptables_init() {
 	iptables -t nat -N CUSTOMPOSTROUTING
 	iptables -t nat -A POSTROUTING -j CUSTOMPOSTROUTING
 
+	# Chains for networks known as being hostile, posing a technical threat to our users
+	# (i. e. listed at Spamhaus DROP et al.)
+	iptables -N HOSTILE
+	iptables -A INPUT -j HOSTILE
+	iptables -A FORWARD -j HOSTILE
+	iptables -A OUTPUT -j HOSTILE
+
+	iptables -N HOSTILE_DROP
+	iptables -A HOSTILE_DROP -m limit --limit 10/second -j LOG --log-prefix "DROP_HOSTILE "
+	iptables -A HOSTILE_DROP -j DROP -m comment --comment "DROP_HOSTILE"
+
 	# IPS (Guardian) chains
 	iptables -N GUARDIAN
 	iptables -A INPUT -j GUARDIAN
@@ -258,17 +269,6 @@ iptables_init() {
 		iptables -A INPUT  -i "${BLUE_DEV}" -j DHCPBLUEINPUT
 		iptables -A OUTPUT -o "${BLUE_DEV}" -j DHCPBLUEOUTPUT
 	fi
-
-	# Chains for networks known as being hostile, posing a technical threat to our users
-	# (i. e. listed at Spamhaus DROP et al.)
-	iptables -N HOSTILE
-	iptables -A INPUT -j HOSTILE
-	iptables -A FORWARD -j HOSTILE
-	iptables -A OUTPUT -j HOSTILE
-
-	iptables -N HOSTILE_DROP
-	iptables -A HOSTILE_DROP -m limit --limit 10/second -j LOG --log-prefix "DROP_HOSTILE "
-	iptables -A HOSTILE_DROP -j DROP -m comment --comment "DROP_HOSTILE"
 
 	# Tor (inbound)
 	iptables -N TOR_INPUT
