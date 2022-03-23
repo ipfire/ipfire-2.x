@@ -411,8 +411,9 @@ sub buildrules {
 					if ($source =~ /mac/) {
 						push(@source_options, $source);
 					} elsif ($source =~ /-m set/) {
-						# Grab location code from hash.
-						my $loc_src = $$hash{$key}[4];
+						# Split given arguments into single chunks to
+						# obtain the set name.
+						my ($a, $b, $c, $loc_src, $e) = split(/ /, $source);
 
 						# Call function to load the networks list for this country.
 						&ipset_restore($loc_src);
@@ -425,8 +426,9 @@ sub buildrules {
 					# Prepare destination options.
 					my @destination_options = ();
 					if ($destination =~ /-m set/) {
-						# Grab location code from hash.
-						my $loc_dst = $$hash{$key}[6];
+						# Split given arguments into single chunks to
+						# obtain the set name.
+						my ($a, $b, $c, $loc_dst, $e) = split(/ /, $destination);
 
 						# Call function to load the networks list for this country.
 						&ipset_restore($loc_dst);
