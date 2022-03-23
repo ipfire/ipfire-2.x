@@ -47,9 +47,9 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 arm-trusted-firmware-$(ATF_VER).tar.gz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER).tar.gz
 arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz
 
-$(DL_FILE)_MD5 = 7afbe0ef070dc0e8e970c57a08e3f336
-arm-trusted-firmware-$(ATF_VER).tar.gz_MD5 = 2622f7077e30436b2310bea0232c7cec
-arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz_MD5 = b81fc982c982f06c439043385a5ba8ea
+$(DL_FILE)_BLAKE2 = 1a209a604e0f30264781a14ca855bbb777e8f1c031de60d28de397084fc9bfc4a3771ad00ec22f5cdcfa721f22707a533b9b59004ac0b107df927f23dc5ab0a6
+arm-trusted-firmware-$(ATF_VER).tar.gz_BLAKE2 = 1d0caff9ea6d97276d1377483e3f81901c935f9af784b7a735636c75b00106935a7e301c21ecec7b9fd9a97dcf873ac1b12169bf7211dae3d975b78d379eba74
+arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz_BLAKE2 = bc5245c1af911eb8ce8def743339102bb46d6aa854fbe916584775479dc97c9a9176c1d1615afc7ede496c7ca9da78db52d9c2eaf1290a4d06e53dbb1933e658
 
 install : $(TARGET)
 
@@ -57,10 +57,10 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -69,8 +69,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 dist:
 	@$(PAK)

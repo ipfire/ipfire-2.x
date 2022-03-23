@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 58c61232e1be991fd9a7ceecfc78836c
+$(DL_FILE)_BLAKE2 = e0f2d0300d2cc35599d8b080fa0102a532b52f3ca3cf96db020ecc54bdab04aff971184a411776d263ac06ae9333d1dca03b3437d65b7247eea9919ca25b6d43
 
 install: $(TARGET)
 
@@ -56,13 +56,13 @@ check: $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download: $(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5: $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:
 	$(PAK)
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -71,8 +71,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

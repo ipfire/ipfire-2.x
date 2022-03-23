@@ -1,26 +1,23 @@
 #!/bin/bash
-############################################################################
-#                                                                          #
-# This file is part of the IPFire Firewall.                                #
-#                                                                          #
-# IPFire is free software; you can redistribute it and/or modify           #
-# it under the terms of the GNU General Public License as published by     #
-# the Free Software Foundation; either version 2 of the License, or        #
-# (at your option) any later version.                                      #
-#                                                                          #
-# IPFire is distributed in the hope that it will be useful,                #
-# but WITHOUT ANY WARRANTY; without even the implied warranty of           #
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
-# GNU General Public License for more details.                             #
-#                                                                          #
-# You should have received a copy of the GNU General Public License        #
-# along with IPFire; if not, write to the Free Software                    #
-# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
-#                                                                          #
-# Copyright (C) 2007-2022 IPFire Team <info@ipfire.org>.                   #
-#                                                                          #
-############################################################################
-#
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
 
 NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
@@ -647,9 +644,9 @@ lfsmakecommoncheck() {
 	fi
 
 	cd $BASEDIR/lfs && make -s -f $* LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
-		MESSAGE="$1\t md5sum" md5  >> $LOGFILE 2>&1
+		MESSAGE="$1\t b2sum" b2  >> $LOGFILE 2>&1
 	if [ $? -ne 0 ]; then
-		exiterror "md5sum error in $1, check file in cache or signature"
+		exiterror "BLAKE2 checksum error in $1, check file in cache or signature"
 	fi
 
 	return 0	# pass all!
@@ -1404,7 +1401,7 @@ buildipfire() {
   lfsmake2 perl-Digest-SHA1
   lfsmake2 perl-Digest-HMAC
   lfsmake2 perl-libwww
-	lfsmake2 perl-LWP-Protocol-https
+  lfsmake2 perl-LWP-Protocol-https
   lfsmake2 perl-Net-HTTP
   lfsmake2 perl-Net-DNS
   lfsmake2 perl-Net-IPv4Addr
@@ -1784,7 +1781,7 @@ buildpackages() {
   [ "${BUILD_ARCH}" = "armv6l" ] && rm -rf *.iso
 
   for i in $(ls *.bz2 *.img.xz *.iso 2>/dev/null); do
-	md5sum $i > $i.md5
+	b2sum $i > $i.b2
   done
   cd $PWD
 
@@ -1847,11 +1844,11 @@ build)
 		else
 			PACKAGENAME=${PACKAGE%.tar.zst}
 			print_build_stage "Packaged toolchain compilation"
-			if [ `md5sum $PACKAGE | awk '{print $1}'` == `cat $PACKAGENAME.md5 | awk '{print $1}'` ]; then
+			if [ `b2sum $PACKAGE | awk '{print $1}'` == `cat $PACKAGENAME.b2 | awk '{print $1}'` ]; then
 				zstd -d < "${PACKAGE}" | tar x
 				prepareenv
 			else
-				exiterror "$PACKAGENAME md5 did not match, check downloaded package"
+				exiterror "$PACKAGENAME BLAKE2 checksum did not match, check downloaded package"
 			fi
 		fi
 	else
@@ -1956,22 +1953,22 @@ downloadsrc)
 			fi
 		done
 	done
-	echo -e "${BOLD}***Verifying md5sums${NORMAL}"
+	echo -e "${BOLD}***Verifying BLAKE2 checksum${NORMAL}"
 	ERROR=0
 	for i in *; do
 		if [ -f "$i" -a "$i" != "Config" ]; then
 			lfsmakecommoncheck ${i} > /dev/null || continue
 			make -s -f $i LFS_BASEDIR=$BASEDIR BUILD_ARCH="${BUILD_ARCH}" \
-				MESSAGE="$i\t " md5 >> $LOGFILE 2>&1
+				MESSAGE="$i\t " b2 >> $LOGFILE 2>&1
 			if [ $? -ne 0 ]; then
-				echo -ne "MD5 difference in lfs/$i"
+				echo -ne "BLAKE2 checksum difference in lfs/$i"
 				print_status FAIL
 				ERROR=1
 			fi
 		fi
 	done
 	if [ $ERROR -eq 0 ]; then
-		echo -ne "${BOLD}all files md5sum match${NORMAL}"
+		echo -ne "${BOLD}all files BLAKE2 checksum match${NORMAL}"
 		print_status DONE
 	else
 		echo -ne "${BOLD}not all files were correctly download${NORMAL}"
@@ -1990,8 +1987,8 @@ toolchain)
 	test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
 	cd $BASEDIR && tar -cf- --exclude='log/_build.*.log' build/${TOOLS_DIR} build/bin/sh log \
 		| zstd ${ZSTD_OPT} > cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst
-	md5sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst \
-		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.md5
+	b2sum cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst \
+		> cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.b2
 	stdumount
 	;;
 gettoolchain)
@@ -2002,14 +1999,14 @@ gettoolchain)
 		test -d $BASEDIR/cache/toolchains || mkdir -p $BASEDIR/cache/toolchains
 		echo "`date -u '+%b %e %T'`: Load toolchain image for ${BUILD_ARCH}" | tee -a $LOGFILE
 		cd $BASEDIR/cache/toolchains
-		wget -U "IPFireSourceGrabber/2.x" $URL_TOOLCHAIN/$PACKAGE.tar.zst $URL_TOOLCHAIN/$PACKAGE.md5 >& /dev/null
+		wget -U "IPFireSourceGrabber/2.x" $URL_TOOLCHAIN/$PACKAGE.tar.zst $URL_TOOLCHAIN/$PACKAGE.b2 >& /dev/null
 		if [ $? -ne 0 ]; then
 			echo "`date -u '+%b %e %T'`: error downloading $PACKAGE toolchain for ${BUILD_ARCH} machine" | tee -a $LOGFILE
 		else
-			if [ "`md5sum $PACKAGE.tar.zst | awk '{print $1}'`" = "`cat $PACKAGE.md5 | awk '{print $1}'`" ]; then
-				echo "`date -u '+%b %e %T'`: toolchain md5 ok" | tee -a $LOGFILE
+			if [ "`b2sum $PACKAGE.tar.zst | awk '{print $1}'`" = "`cat $PACKAGE.b2 | awk '{print $1}'`" ]; then
+				echo "`date -u '+%b %e %T'`: toolchain BLAKE2 checksum ok" | tee -a $LOGFILE
 			else
-				exiterror "$PACKAGE.md5 did not match, check downloaded package"
+				exiterror "$PACKAGE BLAKE2 checksum did not match, check downloaded package"
 			fi
 		fi
 	else

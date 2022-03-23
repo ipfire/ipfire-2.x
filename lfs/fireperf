@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)                    = https://source.ipfire.org/releases/fireperf/$(DL_FILE)
 
-$(DL_FILE)_MD5                = 25bb110c90f389d5b8e1fc4164a45693
+$(DL_FILE)_BLAKE2 = 0ff72d810e97d0f553f2fc43d4fb4b5af275e156599ac0b982651b584859cbe394a8168e2d0436329053ee0e406ef764d054d1433999cf3d5194d66a656d274e
 
 install : $(TARGET)
 
@@ -56,13 +56,13 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:
 	@$(PAK)
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -71,8 +71,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

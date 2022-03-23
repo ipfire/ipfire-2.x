@@ -43,8 +43,8 @@ objects = $(DL_FILE) ipxe-$(PXE_VER).tar.gz
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 ipxe-$(PXE_VER).tar.gz = $(URL_IPFIRE)/ipxe-$(PXE_VER).tar.gz
 
-$(DL_FILE)_MD5 = a1f78e4b92457ecefb97d557b1b7a48e
-ipxe-$(PXE_VER).tar.gz_MD5 = 300fe0e096e58bfb4318bc39b63f9a88
+$(DL_FILE)_BLAKE2 = 5f66932b7be228f5a246b92352e31c99d4f4e8666da9795a6f9762c979f480fb3c2620fc128af14d396065d0c9362e1cdc10eddce2bb58901567581c0d5e8cee
+ipxe-$(PXE_VER).tar.gz_BLAKE2 = 5a6b7c422856157ff1f6aeb7e835add5a2bdd6678d8cc960eae2d926709ce73803484bbe0a428022de2fbc5b018096526ba48f2172c2c25540e1dc12c7a1f8e1
 
 install : $(TARGET)
 
@@ -52,10 +52,10 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -64,8 +64,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

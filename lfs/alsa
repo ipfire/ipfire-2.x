@@ -55,9 +55,9 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 alsa-utils-$(UVER).tar.bz2 = $(DL_FROM)/alsa-utils-$(UVER).tar.bz2
 alsa-firmware-$(FVER).tar.bz2 = $(DL_FROM)/alsa-firmware-$(FVER).tar.bz2
 
-$(DL_FILE)_MD5 = c8335793e7828803311edc48fb71662e
-alsa-utils-$(UVER).tar.bz2_MD5 = 8f142bebff84ff05438b46a0e896f53a
-alsa-firmware-$(FVER).tar.bz2_MD5 = ee6c1d24a1a4ac1d86992b408ed710a2
+$(DL_FILE)_BLAKE2 = 5464cc7f263bdf7b10aa7e1f542ad6dbc55bf300156fd1bded00375c41a518d4b14f96e28eb1c60a6ce7cc6e27da4b2e8598cd867f15417f260fc23513f93e11
+alsa-utils-$(UVER).tar.bz2_BLAKE2 = 79f96fd3ba1d92e72dc634dc01439acd3ccd02555c39cc1714c52bbd1e4bc8b68ec7bf5d219a704533e4a61587c3528504ef9cd7c652924d74daafa90f74e42a
+alsa-firmware-$(FVER).tar.bz2_BLAKE2 = 0f844f6cc4859b72635f24d347b4c790469aee39aa60d9addb2c168dcf06b48e7e3cbba26ff21c7e1f5aa355641eec7ab934cb09bfac8ca116a6ac6a7db9d548
 
 install : $(TARGET)
 
@@ -65,13 +65,13 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:
 	@$(PAK)
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -80,8 +80,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

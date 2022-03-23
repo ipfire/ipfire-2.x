@@ -52,9 +52,9 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 ghostscript-fonts-std-8.11.tar.gz = $(URL_IPFIRE)/ghostscript-fonts-std-8.11.tar.gz
 gnu-gs-fonts-other-6.0.tar.gz = $(URL_IPFIRE)/gnu-gs-fonts-other-6.0.tar.gz
 
-$(DL_FILE)_MD5 = 92aa46e75c4f32eb11d9c975053d876c
-ghostscript-fonts-std-8.11.tar.gz_MD5 = 6865682b095f8c4500c54b285ff05ef6
-gnu-gs-fonts-other-6.0.tar.gz_MD5 = 33457d3f37de7ef03d2eea05a9e6aa4f
+$(DL_FILE)_BLAKE2 = 87827856aa60c2c4a4ed209bc4203a837107df0404af036a48e5baa23fccfc945a97fe328a80b15c7357fc71acb82721d4b96e5f726d8c9d836fee031916aef7
+ghostscript-fonts-std-8.11.tar.gz_BLAKE2 = 1d8ae8f7813623a36e160bdd0ca9ccf33c67b945dd96952eb0e37e9bb5bb4ba5daf7df4da5ba53c1d25d6598a0576990ba7e094b8c395778cb9cdfd32761454c
+gnu-gs-fonts-other-6.0.tar.gz_BLAKE2 = 001709983161519365bcef23fef3705071b67253ff3b557c45d2ec892987815444d8dd1d213e94bc02e361917c061c723043bf04c98b0a1e38c9cd1f265d1312
 
 install : $(TARGET)
 
@@ -62,13 +62,13 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:
 	$(PAK)
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -77,8 +77,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

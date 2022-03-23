@@ -41,8 +41,8 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 netfilter-layer7-v2.23.tar.gz = $(URL_IPFIRE)/netfilter-layer7-v2.23.tar.gz
 
-$(DL_FILE)_MD5 = 602ba7e937c72fbb7b1c2b71c3b0004b
-netfilter-layer7-v2.23.tar.gz_MD5 = 10910b6173d18e426cb56ae7e1300eeb
+$(DL_FILE)_BLAKE2 = fd4dcff142eaadde2a14ce3eb5e45d41c326752553b52900c77fd2e2a20c0685d0a04b95755995e914df47658834d52216d6465c2ae9cd6abc6eb122b95cc976
+netfilter-layer7-v2.23.tar.gz_BLAKE2 = 5c8ab722f6fbc126f2f65ecf401de5fc40560c20e3be52f783db34410446185dcb6781b3148e4a174e8b2d2c290bec0342dea95e8cefc35c39345617fa7a8fdc
 
 install : $(TARGET)
 
@@ -50,10 +50,10 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -62,8 +62,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

@@ -43,8 +43,8 @@ objects = $(DL_FILE) \
 $(DL_FILE)                    = https://source.ipfire.org/releases/libloc/$(DL_FILE)
 location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE).db.xz
 
-$(DL_FILE)_MD5                = 724ce9081a025307528021e6398c9335
-location-$(DB_DATE).db.xz_MD5 = c1ad9c544bab917035eb0cd13b66c453
+$(DL_FILE)_BLAKE2 = 46df0dc058235ede47c103c9be5882f50b688c80613c2bdf6f3bc40a2effff67e3ef77cd28142dc3b3fb832689a345e8840fe466738e7ae151698e98c17a68ed
+location-$(DB_DATE).db.xz_BLAKE2 = 9ba0ae5bbabef1a0f692cee11515796d754b2f83aa21c2a2730b4d04249606fe00df856dad08fbdfdad3fad6b06c902b36e3a7717181ce0fac4738b46737b5b4
 
 install : $(TARGET)
 
@@ -52,13 +52,13 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:
 	@$(PAK)
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -67,8 +67,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details
