@@ -269,42 +269,20 @@ sub checkdiskspace () {
 }
 
 #
-## This function is responsible for downloading the configured IDS rulesets or if no one is specified
-## all configured rulesets will be downloaded.
+## This function is responsible for downloading the ruleset for a given provider.
 ##
-## * At first it gathers all configured ruleset providers, initialize the downloader and sets an
-##   upstream proxy if configured.
-## * After that, the given ruleset or in case all rulesets should be downloaded, it will determine wether it
-##   is enabled or not.
+## * At first it initialize the downloader and sets an upstream proxy if configured.
 ## * The next step will be to generate the final download url, by obtaining the URL for the desired
-##   ruleset, add the settings for the upstream proxy.
-## * Finally the function will grab all the rules files or tarballs from the servers.
+##   ruleset and add the settings for the upstream proxy.
+## * Finally the function will grab the rule file or tarball from the server.
+##   It tries to reduce the amount of download by using the "If-Modified-Since" HTTP header.
 #
 sub downloadruleset ($) {
 	my ($provider) = @_;
 
-	# If no provider is given default to "all".
-	$provider //= 'all';
-
 	# The amount of download attempts before giving up and
 	# logging an error.
 	my $max_dl_attempts = 3;
-
-	# Hash to store the providers and access id's, for which rules should be downloaded.
-	my %sheduled_providers = ();
-
-	# Get used provider settings.
-	my %used_providers = ();
-	&General::readhasharray("$providers_settings_file", \%used_providers);
-
-	# Check if a ruleset has been configured.
-	unless(%used_providers) {
-		# Log that no ruleset has been configured and abort.
-		&_log_to_syslog("No ruleset provider has been configured.");
-
-		# Return "1".
-		return 1;
-	}
 
 	# Read proxysettings.
 	my %proxysettings=();
@@ -342,176 +320,155 @@ sub downloadruleset ($) {
 		$downloader->proxy(['http', 'https'], $proxy_url);
 	}
 
-	# Loop through the hash of configured providers.
-	foreach my $id ( keys %used_providers ) {
-		# Skip providers which are not enabled.
-		next if ($used_providers{$id}[3] ne "enabled");
+	# Log download/update of the ruleset.
+	&_log_to_syslog("Downloading ruleset for provider: $provider.");
 
-		# Obtain the provider handle.
-		my $provider_handle = $used_providers{$id}[0];
+	# Grab the download url for the provider.
+	my $url = $IDS::Ruleset::Providers{$provider}{'dl_url'};
 
-		# Handle update off all providers.
-		if (($provider eq "all") || ($provider_handle eq "$provider")) {
-			# Add provider handle and it's id to the hash of sheduled providers.
-			$sheduled_providers{$provider_handle} = $id;
-		}
+	# Check if the provider requires a subscription.
+	if ($IDS::Ruleset::Providers{$provider}{'requires_subscription'} eq "True") {
+		# Grab the subscription code.
+		my $subscription_code = &get_subscription_code($provider);
+
+		# Add the subscription code to the download url.
+		$url =~ s/\<subscription_code\>/$subscription_code/g;
+
 	}
 
-	# Loop through the hash of sheduled providers.
-	foreach my $provider ( keys %sheduled_providers) {
-		# Log download/update of the ruleset.
-		&_log_to_syslog("Downloading ruleset for provider: $provider.");
+	# Abort if no url could be determined for the provider.
+	unless ($url) {
+		# Log error and abort.
+		&_log_to_syslog("Unable to gather a download URL for the selected ruleset provider.");
+		return 1;
+	}
 
-		# Grab the download url for the provider.
-		my $url = $IDS::Ruleset::Providers{$provider}{'dl_url'};
+	# Pass the requested URL to the downloader.
+	my $request = HTTP::Request->new(GET => $url);
 
-		# Check if the provider requires a subscription.
-		if ($IDS::Ruleset::Providers{$provider}{'requires_subscription'} eq "True") {
-			# Grab the previously stored access id for the provider from hash.
-			my $id = $sheduled_providers{$provider};
+	# Generate temporary file name, located in "/var/tmp" and with a suffix of ".tmp".
+	# The downloaded file will be stored there until some sanity checks are performed.
+	my $tmp = File::Temp->new( SUFFIX => ".tmp", DIR => "/var/tmp/", UNLINK => 0 );
+	my $tmpfile = $tmp->filename();
 
-			# Grab the subscription code.
-			my $subscription_code = $used_providers{$id}[1];
+	# Call function to get the final path and filename for the downloaded file.
+	my $dl_rulesfile = &_get_dl_rulesfile($provider);
 
-			# Add the subscription code to the download url.
-			$url =~ s/\<subscription_code\>/$subscription_code/g;
+	# Check if the rulesfile already exits, because it has been downloaded in the past.
+	#
+	# In this case we are requesting the server if the remote file has been changed or not.
+	# This will be done by sending the modification time in a special HTTP header.
+	if (-f $dl_rulesfile) {
+		# Call stat on the file.
+		my $stat = stat($dl_rulesfile);
 
-		}
+		# Omit the mtime of the existing file.
+		my $mtime = $stat->mtime;
 
-		# Abort if no url could be determined for the provider.
-		unless ($url) {
-			# Log error and abort.
-			&_log_to_syslog("Unable to gather a download URL for the selected ruleset provider.");
-			return 1;
-		}
+		# Convert the timestamp into right format.
+		my $http_date = time2str($mtime);
 
-		# Pass the requested URL to the downloader.
-		my $request = HTTP::Request->new(GET => $url);
+		# Add the If-Modified-Since header to the request to ask the server if the
+		# file has been modified.
+		$request->header( 'If-Modified-Since' => "$http_date" );
+	}
 
-		# Generate temporary file name, located in "/var/tmp" and with a suffix of ".tmp".
-		# The downloaded file will be stored there until some sanity checks are performed.
-		my $tmp = File::Temp->new( SUFFIX => ".tmp", DIR => "/var/tmp/", UNLINK => 0 );
-		my $tmpfile = $tmp->filename();
+	my $dl_attempt = 1;
+	my $response;
 
-		# Call function to get the final path and filename for the downloaded file.
-		my $dl_rulesfile = &_get_dl_rulesfile($provider);
+	# Download and retry on failure.
+	while ($dl_attempt <= $max_dl_attempts) {
+		# Perform the request and save the output into the tmpfile.
+		$response = $downloader->request($request, $tmpfile);
 
-		# Check if the rulesfile already exits, because it has been downloaded in the past.
-		#
-		# In this case we are requesting the server if the remote file has been changed or not.
-		# This will be done by sending the modification time in a special HTTP header.
-		if (-f $dl_rulesfile) {
-			# Call stat on the file.
-			my $stat = stat($dl_rulesfile);
+		# Check if the download was successfull.
+		if($response->is_success) {
+			# Break loop.
+			last;
 
-			# Omit the mtime of the existing file.
-			my $mtime = $stat->mtime;
+		# Check if the server responds with 304 (Not Modified).
+		} elsif ($response->code == 304) {
+			# Log to syslog.
+			&_log_to_syslog("Ruleset is up-to-date, no update required.");
 
-			# Convert the timestamp into right format.
-			my $http_date = time2str($mtime);
+			# Nothing to do, the ruleset is up-to-date.
+			return;
 
-			# Add the If-Modified-Since header to the request to ask the server if the
-			# file has been modified.
-			$request->header( 'If-Modified-Since' => "$http_date" );
-		}
+		# Check if we ran out of download re-tries.
+		} elsif ($dl_attempt eq $max_dl_attempts) {
+			# Obtain error.
+			my $error = $response->content;
 
-		my $dl_attempt = 1;
-		my $response;
-
-		# Download and retry on failure.
-		while ($dl_attempt <= $max_dl_attempts) {
-			# Perform the request and save the output into the tmpfile.
-			$response = $downloader->request($request, $tmpfile);
-
-			# Check if the download was successfull.
-			if($response->is_success) {
-				# Break loop.
-				last;
-
-			# Check if the server responds with 304 (Not Modified).
-			} elsif ($response->code == 304) {
-				# Log to syslog.
-				&_log_to_syslog("Ruleset is up-to-date, no update required.");
-
-				# Nothing to do, the ruleset is up-to-date.
-				return;
-
-			# Check if we ran out of download re-tries.
-			} elsif ($dl_attempt eq $max_dl_attempts) {
-				# Obtain error.
-				my $error = $response->content;
-
-				# Log error message.
-				&_log_to_syslog("Unable to download the ruleset. \($error\)");
-
-				# Return "1" - false.
-				return 1;
-			}
-
-			# Remove temporary file, if one exists.
-			unlink("$tmpfile") if (-e "$tmpfile");
-
-			# Increase download attempt counter.
-			$dl_attempt++;
-		}
-
-		# Obtain the connection headers.
-		my $headers = $response->headers;
-
-		# Get the timestamp from header, when the file has been modified the
-		# last time.
-		my $last_modified = $headers->last_modified;
-
-		# Get the remote size of the downloaded file.
-		my $remote_filesize = $headers->content_length;
-
-		# Perform stat on the tmpfile.
-		my $stat = stat($tmpfile);
-
-		# Grab the local filesize of the downloaded tarball.
-		my $local_filesize = $stat->size;
-
-		# Check if both file sizes match.
-		if (($remote_filesize) && ($remote_filesize ne $local_filesize)) {
 			# Log error message.
-			&_log_to_syslog("Unable to completely download the ruleset. ");
-			&_log_to_syslog("Only got $local_filesize Bytes instead of $remote_filesize Bytes. ");
-
-			# Delete temporary file.
-			unlink("$tmpfile");
+			&_log_to_syslog("Unable to download the ruleset. \($error\)");
 
 			# Return "1" - false.
 			return 1;
 		}
 
-		# Check if a file name could be obtained.
-		unless ($dl_rulesfile) {
-			# Log error message.
-			&_log_to_syslog("Unable to store the downloaded rules file. ");
+		# Remove temporary file, if one exists.
+		unlink("$tmpfile") if (-e "$tmpfile");
 
-			# Delete downloaded temporary file.
-			unlink("$tmpfile");
+		# Increase download attempt counter.
+		$dl_attempt++;
+	}
 
-			# Return "1" - false.
-			return 1;
-		}
+	# Obtain the connection headers.
+	my $headers = $response->headers;
 
-		# Overwrite the may existing rulefile or tarball with the downloaded one.
-		move("$tmpfile", "$dl_rulesfile");
+	# Get the timestamp from header, when the file has been modified the
+	# last time.
+	my $last_modified = $headers->last_modified;
 
-		# Check if we got a last-modified value from the server.
-		if ($last_modified) {
-			# Assign the last-modified timestamp as mtime to the
-			# rules file.
-			utime(time(), "$last_modified", "$dl_rulesfile");
-		}
+	# Get the remote size of the downloaded file.
+	my $remote_filesize = $headers->content_length;
+
+	# Perform stat on the tmpfile.
+	my $stat = stat($tmpfile);
+
+	# Grab the local filesize of the downloaded tarball.
+	my $local_filesize = $stat->size;
+
+	# Check if both file sizes match.
+	if (($remote_filesize) && ($remote_filesize ne $local_filesize)) {
+		# Log error message.
+		&_log_to_syslog("Unable to completely download the ruleset. ");
+		&_log_to_syslog("Only got $local_filesize Bytes instead of $remote_filesize Bytes. ");
 
 		# Delete temporary file.
 		unlink("$tmpfile");
 
-		# Set correct ownership for the tarball.
-		set_ownership("$dl_rulesfile");
+		# Return "1" - false.
+		return 1;
 	}
+
+	# Check if a file name could be obtained.
+	unless ($dl_rulesfile) {
+		# Log error message.
+		&_log_to_syslog("Unable to store the downloaded rules file. ");
+
+		# Delete downloaded temporary file.
+		unlink("$tmpfile");
+
+		# Return "1" - false.
+		return 1;
+	}
+
+	# Overwrite the may existing rulefile or tarball with the downloaded one.
+	move("$tmpfile", "$dl_rulesfile");
+
+	# Check if we got a last-modified value from the server.
+	if ($last_modified) {
+		# Assign the last-modified timestamp as mtime to the
+		# rules file.
+		utime(time(), "$last_modified", "$dl_rulesfile");
+	}
+
+	# Delete temporary file.
+	unlink("$tmpfile");
+
+	# Set correct ownership for the tarball.
+	set_ownership("$dl_rulesfile");
 
 	# If we got here, everything worked fine. Return nothing.
 	return;
