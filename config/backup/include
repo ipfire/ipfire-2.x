@@ -23,6 +23,7 @@ etc/unbound
 root/.bash_history
 root/.gitconfig
 root/.ssh
+srv/web/ipfire/html/proxy.pac
 var/ipfire/auth/users
 var/ipfire/backup/addons/backup
 var/ipfire/backup/exclude.user
