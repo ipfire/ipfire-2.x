@@ -47,6 +47,9 @@ use File::stat;
 # Load module to deal with temporary files.
 use File::Temp;
 
+# Load module to deal with the date formats used by the HTTP protocol.
+use HTTP::Date;
+
 # Load the libwwwperl User Agent module.
 use LWP::UserAgent;
 
@@ -386,8 +389,31 @@ sub downloadruleset ($) {
 		my $request = HTTP::Request->new(GET => $url);
 
 		# Generate temporary file name, located in "/var/tmp" and with a suffix of ".tmp".
+		# The downloaded file will be stored there until some sanity checks are performed.
 		my $tmp = File::Temp->new( SUFFIX => ".tmp", DIR => "/var/tmp/", UNLINK => 0 );
 		my $tmpfile = $tmp->filename();
+
+		# Call function to get the final path and filename for the downloaded file.
+		my $dl_rulesfile = &_get_dl_rulesfile($provider);
+
+		# Check if the rulesfile already exits, because it has been downloaded in the past.
+		#
+		# In this case we are requesting the server if the remote file has been changed or not.
+		# This will be done by sending the modification time in a special HTTP header.
+		if (-f $dl_rulesfile) {
+			# Call stat on the file.
+			my $stat = stat($dl_rulesfile);
+
+			# Omit the mtime of the existing file.
+			my $mtime = $stat->mtime;
+
+			# Convert the timestamp into right format.
+			my $http_date = time2str($mtime);
+
+			# Add the If-Modified-Since header to the request to ask the server if the
+			# file has been modified.
+			$request->header( 'If-Modified-Since' => "$http_date" );
+		}
 
 		my $dl_attempt = 1;
 		my $response;
@@ -401,6 +427,14 @@ sub downloadruleset ($) {
 			if($response->is_success) {
 				# Break loop.
 				last;
+
+			# Check if the server responds with 304 (Not Modified).
+			} elsif ($response->code == 304) {
+				# Log to syslog.
+				&_log_to_syslog("Ruleset is up-to-date, no update required.");
+
+				# Nothing to do, the ruleset is up-to-date.
+				return;
 
 			# Check if we ran out of download re-tries.
 			} elsif ($dl_attempt eq $max_dl_attempts) {
@@ -424,6 +458,10 @@ sub downloadruleset ($) {
 		# Obtain the connection headers.
 		my $headers = $response->headers;
 
+		# Get the timestamp from header, when the file has been modified the
+		# last time.
+		my $last_modified = $headers->last_modified;
+
 		# Get the remote size of the downloaded file.
 		my $remote_filesize = $headers->content_length;
 
@@ -446,9 +484,6 @@ sub downloadruleset ($) {
 			return 1;
 		}
 
-		# Genarate and assign file name and path to store the downloaded rules file.
-		my $dl_rulesfile = &_get_dl_rulesfile($provider);
-
 		# Check if a file name could be obtained.
 		unless ($dl_rulesfile) {
 			# Log error message.
@@ -463,6 +498,13 @@ sub downloadruleset ($) {
 
 		# Overwrite the may existing rulefile or tarball with the downloaded one.
 		move("$tmpfile", "$dl_rulesfile");
+
+		# Check if we got a last-modified value from the server.
+		if ($last_modified) {
+			# Assign the last-modified timestamp as mtime to the
+			# rules file.
+			utime(time(), "$last_modified", "$dl_rulesfile");
+		}
 
 		# Delete temporary file.
 		unlink("$tmpfile");
