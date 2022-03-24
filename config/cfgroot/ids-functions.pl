@@ -1608,6 +1608,34 @@ END
 }
 
 #
+## Function to get the subscription code of a configured provider.
+#
+sub get_subscription_code($) {
+	my ($provider) = @_;
+
+	my %configured_providers = ();
+
+	# Read-in providers settings file.
+	&General::readhasharray($providers_settings_file, \%configured_providers);
+
+	# Loop through the hash of configured providers.
+	foreach my $id (keys %configured_providers) {
+		# Assign nice human-readable values to the data fields.
+		my $provider_handle = $configured_providers{$id}[0];
+		my $subscription_code = $configured_providers{$id}[1];
+
+		# Check if the current processed provider is the requested one.
+		if ($provider_handle eq $provider) {
+			# Return the obtained subscription code.
+			return $subscription_code;
+		}
+	}
+
+	# No subscription code found - return nothing.
+	return;
+}
+
+#
 ## Function to get the ruleset date for a given provider.
 ##
 ## The function simply return the creation date in a human read-able format
