@@ -382,12 +382,12 @@ sub downloadruleset ($) {
 			return 1;
 		}
 
+		# Pass the requested URL to the downloader.
+		my $request = HTTP::Request->new(GET => $url);
+
 		# Generate temporary file name, located in "/var/tmp" and with a suffix of ".tmp".
 		my $tmp = File::Temp->new( SUFFIX => ".tmp", DIR => "/var/tmp/", UNLINK => 0 );
 		my $tmpfile = $tmp->filename();
-
-		# Pass the requested url to the downloader.
-		my $request = HTTP::Request->new(GET => $url);
 
 		my $dl_attempt = 1;
 		my $response;
