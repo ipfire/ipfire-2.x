@@ -29,6 +29,33 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/network-functions.pl";
 require "${General::swroot}/suricata/ruleset-sources";
 
+# Load perl module to deal with Archives.
+use Archive::Tar;
+
+# Load perl module to deal with files and path.
+use File::Basename;
+
+# Load module to move files.
+use File::Copy;
+
+# Load module to recursely remove files and a folder.
+use File::Path qw(rmtree);
+
+# Load module to get file stats.
+use File::stat;
+
+# Load module to deal with temporary files.
+use File::Temp;
+
+# Load the libwwwperl User Agent module.
+use LWP::UserAgent;
+
+# Load function from posix module to format time strings.
+use POSIX qw (strftime);
+
+# Load module to talk to the kernel log daemon.
+use Sys::Syslog qw(:DEFAULT setlogsock);
+
 # Location where all config and settings files are stored.
 our $settingsdir = "${General::swroot}/suricata";
 
@@ -280,9 +307,6 @@ sub downloadruleset ($) {
 	my %proxysettings=();
 	&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
 
-	# Load required perl module to handle the download.
-	use LWP::UserAgent;
-
 	# Init the download module.
 	#
 	# Request SSL hostname verification and specify path
@@ -358,9 +382,6 @@ sub downloadruleset ($) {
 			return 1;
 		}
 
-		# Load perl module to deal with temporary files.
-		use File::Temp;
-
 		# Generate temporary file name, located in "/var/tmp" and with a suffix of ".tmp".
 		my $tmp = File::Temp->new( SUFFIX => ".tmp", DIR => "/var/tmp/", UNLINK => 0 );
 		my $tmpfile = $tmp->filename();
@@ -406,9 +427,6 @@ sub downloadruleset ($) {
 		# Get the remote size of the downloaded file.
 		my $remote_filesize = $headers->content_length;
 
-		# Load perl stat module.
-		use File::stat;
-
 		# Perform stat on the tmpfile.
 		my $stat = stat($tmpfile);
 
@@ -443,9 +461,6 @@ sub downloadruleset ($) {
 			return 1;
 		}
 
-		# Load file copy module, which contains the move() function.
-		use File::Copy;
-
 		# Overwrite the may existing rulefile or tarball with the downloaded one.
 		move("$tmpfile", "$dl_rulesfile");
 
@@ -469,17 +484,8 @@ sub downloadruleset ($) {
 sub extractruleset ($) {
 	my ($provider) = @_;
 
-	# Load perl module to deal with archives.
-	use Archive::Tar;
-
 	# Disable chown functionality when uncompressing files.
 	$Archive::Tar::CHOWN = "0";
-
-	# Load perl module to deal with files and path.
-	use File::Basename;
-
-	# Load perl module for file copying.
-	use File::Copy;
 
 	# Get full path and downloaded rulesfile for the given provider.
 	my $tarball = &_get_dl_rulesfile($provider);
@@ -586,9 +592,6 @@ sub extractruleset ($) {
 				# Extract the file to the temporary directory.
 				$tar->extract_file("$packed_file", "$destination");
 			} else {
-				# Load perl module to deal with temporary files.
-				use File::Temp;
-
 				# Generate temporary file name, located in the temporary rules directory and a suffix of ".tmp".
 				my $tmp = File::Temp->new( SUFFIX => ".tmp", DIR => "$tmp_rules_directory", UNLINK => 0 );
 				my $tmpfile = $tmp->filename();
@@ -636,9 +639,6 @@ sub oinkmaster () {
 		# Call the extractruleset function.
 		&extractruleset($provider);
 	}
-
-	# Load perl module to talk to the kernel syslog.
-	use Sys::Syslog qw(:DEFAULT setlogsock);
 
 	# Establish the connection to the syslog service.
 	openlog('oinkmaster', 'cons,pid', 'user');
@@ -811,9 +811,6 @@ sub merge_sid_msg (@) {
 ## the rules directory.
 #
 sub move_tmp_ruleset() {
-	# Load perl module.
-	use File::Copy;
-
 	# Do a directory listing of the temporary directory.
 	opendir  DH, $tmp_rules_directory;
 
@@ -831,8 +828,6 @@ sub move_tmp_ruleset() {
 ## Function to cleanup the temporary IDS directroy.
 #
 sub cleanup_tmp_directory () {
-	# Load rmtree() function from file path perl module.
-	use File::Path 'rmtree';
 
 	# Delete temporary directory and all containing files.
 	rmtree([ "$tmp_directory" ]);
@@ -859,9 +854,6 @@ sub log_error ($) {
 #
 sub _log_to_syslog ($) {
 	my ($message) = @_;
-
-	# Load perl module to talk to the kernel syslog.
-	use Sys::Syslog qw(:DEFAULT setlogsock);
 
 	# The syslog function works best with an array based input,
 	# so generate one before passing the message details to syslog.
@@ -1583,10 +1575,6 @@ sub get_ruleset_date($) {
 	my ($provider) = @_;
 	my $date;
 	my $mtime;
-
-	# Load neccessary perl modules for file stat and to format the timestamp.
-	use File::stat;
-	use POSIX qw( strftime );
 
 	# Get the stored rulesfile for this provider.
 	my $stored_rulesfile = &_get_dl_rulesfile($provider);
