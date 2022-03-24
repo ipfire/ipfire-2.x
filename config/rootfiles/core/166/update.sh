@@ -133,10 +133,12 @@ rm -rvf \
 	/usr/lib/libbfd-2.34.so \
 	/usr/lib/libbfd-2.35.1.so \
 	/usr/lib/libbind9-9.16.22.so \
+	/usr/lib/libbind9-9.16.26.so \
 	/usr/lib/libbind9.so.161 \
 	/usr/lib/libbind9.so.161.0.4 \
 	/usr/lib/libblkid.so \
 	/usr/lib/libdns-9.16.22.so \
+	/usr/lib/libdns-9.16.26.so \
 	/usr/lib/libdnssec.so.7 \
 	/usr/lib/libdnssec.so.7.0.0 \
 	/usr/lib/libdns.so.* \
@@ -181,10 +183,13 @@ rm -rvf \
 	/usr/lib/libidn.so.11.6.18 \
 	/usr/lib/libirs-9.16.22.so \
 	/usr/lib/libisc-9.16.22.so \
+	/usr/lib/libisc-9.16.26.so \
 	/usr/lib/libisccc-9.16.22.so \
+	/usr/lib/libisccc-9.16.26.so \
 	/usr/lib/libisccc.so.161 \
 	/usr/lib/libisccc.so.161.0.1 \
 	/usr/lib/libisccfg-9.16.22.so \
+	/usr/lib/libisccfg-9.16.26.so \
 	/usr/lib/libisccfg.so.163 \
 	/usr/lib/libisccfg.so.163.0.8 \
 	/usr/lib/libisc.so.1100 \
@@ -223,6 +228,7 @@ rm -rvf \
 	/usr/lib/libnettle.so.7 \
 	/usr/lib/libnettle.so.7.0 \
 	/usr/lib/libns-9.16.22.so \
+	/usr/lib/libns-9.16.26.so \
 	/usr/lib/libopcodes-2.32.so \
 	/usr/lib/libopcodes-2.34.so \
 	/usr/lib/libopcodes-2.35.1.so \
@@ -245,6 +251,7 @@ rm -rvf \
 	/usr/lib/libqpdf.so.17.0.0 \
 	/usr/lib/libreadline.so.6 \
 	/usr/lib/libreadline.so.6.3 \
+	/usr/lib/librrd.so.8.2.1 \
 	/usr/lib/libsensors.so.4 \
 	/usr/lib/libsensors.so.4.4.0 \
 	/usr/lib/libsqlite3.so \
