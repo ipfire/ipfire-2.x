@@ -277,6 +277,13 @@ sub checkdiskspace () {
 ## * Finally the function will grab the rule file or tarball from the server.
 ##   It tries to reduce the amount of download by using the "If-Modified-Since" HTTP header.
 #
+## Return codes:
+##
+## * "no url" - If no download URL could be gathered for the provider.
+## * "not modified" - In case the already stored rules file is up to date.
+## * "incomplete download" - When the remote file size differs from the downloaded file size.
+## * "$error" - The error message generated from the LWP::User Agent module.
+#
 sub downloadruleset ($) {
 	my ($provider) = @_;
 
@@ -340,7 +347,7 @@ sub downloadruleset ($) {
 	unless ($url) {
 		# Log error and abort.
 		&_log_to_syslog("Unable to gather a download URL for the selected ruleset provider.");
-		return 1;
+		return "no url";
 	}
 
 	# Pass the requested URL to the downloader.
@@ -391,8 +398,8 @@ sub downloadruleset ($) {
 			# Log to syslog.
 			&_log_to_syslog("Ruleset is up-to-date, no update required.");
 
-			# Nothing to do, the ruleset is up-to-date.
-			return;
+			# Return "not modified".
+			return "not modified";
 
 		# Check if we ran out of download re-tries.
 		} elsif ($dl_attempt eq $max_dl_attempts) {
@@ -402,8 +409,8 @@ sub downloadruleset ($) {
 			# Log error message.
 			&_log_to_syslog("Unable to download the ruleset. \($error\)");
 
-			# Return "1" - false.
-			return 1;
+			# Return the error message from response..
+			return "$error";
 		}
 
 		# Remove temporary file, if one exists.
@@ -439,7 +446,7 @@ sub downloadruleset ($) {
 		unlink("$tmpfile");
 
 		# Return "1" - false.
-		return 1;
+		return "incomplete download";
 	}
 
 	# Check if a file name could be obtained.
