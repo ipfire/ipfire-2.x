@@ -114,7 +114,7 @@ foreach my $id (keys %providers) {
 	# Check if we got a return code.
 	if ($return) {
 		# Handle different return codes.
-		if ($return eq "not_modified") {
+		if ($return eq "not modified") {
 			# Log notice to syslog.
 			&_log_to_syslog("<INFO> Skipping $provider - The ruleset is up-to-date");
 
