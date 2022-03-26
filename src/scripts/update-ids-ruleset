@@ -96,7 +96,11 @@ $locked = "1";
 foreach my $id (keys %providers) {
 	# Assign some nice variabled.
 	my $provider = $providers{$id}[0];
+	my $enabled_status = $providers{$id}[2];
 	my $autoupdate_status = $providers{$id}[3];
+
+	# Skip the provider if it is not enabled.
+	next unless($enabled_status eq "enabled");
 
 	# Skip the provider if autoupdate is not enabled.
 	next unless($autoupdate_status eq "enabled");
