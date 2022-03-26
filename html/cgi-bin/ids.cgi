@@ -805,6 +805,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 				# Perform a reload of the page.
 				&reload();
+			} else {
+				# Remove the configured provider again.
+				&remove_provider($id);
 			}
 		}
 
