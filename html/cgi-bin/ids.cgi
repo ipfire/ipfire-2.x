@@ -613,24 +613,6 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	# Generate file to store the HTTP ports.
 	&IDS::generate_http_ports_file();
 
-	# Write the modify sid's file and pass the taken ruleaction.
-	&IDS::write_modify_sids_file();
-
-	# Check if "MONITOR_TRAFFIC_ONLY" has been changed.
-	if($cgiparams{'MONITOR_TRAFFIC_ONLY'} ne $oldidssettings{'MONITOR_TRAFFIC_ONLY'}) {
-		# Check if at least one provider is enabled.
-		if (@enabled_providers) {
-			# Lock the webpage and print message.
-			&working_notice("$Lang::tr{'ids working'}");
-
-			# Call oinkmaster to alter the ruleset.
-			&IDS::oinkmaster();
-
-			# Set reload_page to "True".
-			$reload_page="True";
-		}
-	}
-
 	# Check if the IDS currently is running.
 	if(&IDS::ids_is_running()) {
 		# Check if ENABLE_IDS is set to on.
