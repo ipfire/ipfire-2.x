@@ -327,9 +327,6 @@ sub downloadruleset ($) {
 		$downloader->proxy(['http', 'https'], $proxy_url);
 	}
 
-	# Log download/update of the ruleset.
-	&_log_to_syslog("Downloading ruleset for provider: $provider.");
-
 	# Grab the download url for the provider.
 	my $url = $IDS::Ruleset::Providers{$provider}{'dl_url'};
 
@@ -343,12 +340,8 @@ sub downloadruleset ($) {
 
 	}
 
-	# Abort if no url could be determined for the provider.
-	unless ($url) {
-		# Log error and abort.
-		&_log_to_syslog("Unable to gather a download URL for the selected ruleset provider.");
-		return "no url";
-	}
+	# Abort and return "no url", if no url could be determined for the provider.
+	return "no url" unless ($url);
 
 	# Pass the requested URL to the downloader.
 	my $request = HTTP::Request->new(GET => $url);
@@ -395,9 +388,6 @@ sub downloadruleset ($) {
 
 		# Check if the server responds with 304 (Not Modified).
 		} elsif ($response->code == 304) {
-			# Log to syslog.
-			&_log_to_syslog("Ruleset is up-to-date, no update required.");
-
 			# Return "not modified".
 			return "not modified";
 
@@ -405,9 +395,6 @@ sub downloadruleset ($) {
 		} elsif ($dl_attempt eq $max_dl_attempts) {
 			# Obtain error.
 			my $error = $response->content;
-
-			# Log error message.
-			&_log_to_syslog("Unable to download the ruleset. \($error\)");
 
 			# Return the error message from response..
 			return "$error";
@@ -438,27 +425,11 @@ sub downloadruleset ($) {
 
 	# Check if both file sizes match.
 	if (($remote_filesize) && ($remote_filesize ne $local_filesize)) {
-		# Log error message.
-		&_log_to_syslog("Unable to completely download the ruleset. ");
-		&_log_to_syslog("Only got $local_filesize Bytes instead of $remote_filesize Bytes. ");
-
 		# Delete temporary file.
 		unlink("$tmpfile");
 
 		# Return "1" - false.
 		return "incomplete download";
-	}
-
-	# Check if a file name could be obtained.
-	unless ($dl_rulesfile) {
-		# Log error message.
-		&_log_to_syslog("Unable to store the downloaded rules file. ");
-
-		# Delete downloaded temporary file.
-		unlink("$tmpfile");
-
-		# Return "1" - false.
-		return 1;
 	}
 
 	# Overwrite the may existing rulefile or tarball with the downloaded one.
