@@ -255,11 +255,8 @@ sub checkdiskspace () {
 
 			# Check if the available disk space is more than 300MB.
 			if ($available < 300) {
-				# Log error to syslog.
-				&_log_to_syslog("Not enough free disk space on /var. Only $available MB from 300 MB available.");
-
-				# Exit function and return "1" - False.
-				return 1;
+				# Exit function and return the available disk space.
+				return $available;
 			}
 		}
 	}
