@@ -56,7 +56,7 @@ openlog('oinkmaster', 'cons,pid', 'user');
 # ruleset.
 if (-f "$IDS::ids_page_lock_file") {
 	# Store notice to the syslog.
-	&IDS::_log_to_syslog("Another process currently is altering the IDS ruleset.");
+	&_log_to_syslog("<INFO> Autoupdate skipped - Another process was altering the IDS ruleset.");
 
 	# Exit.
 	exit 0;
@@ -101,23 +101,37 @@ foreach my $id (keys %providers) {
 	# Skip the provider if autoupdate is not enabled.
 	next unless($autoupdate_status eq "enabled");
 
+	# Log notice about update.
+	&_log_to_syslog("<INFO> Performing update for $provider.");
+
 	# Call the download function and gather the new ruleset for the current processed provider.
-	if(&IDS::downloadruleset($provider)) {
-		# Store error message for displaying in the WUI.
-		&IDS::_store_error_message("$provider: $Lang::tr{'could not download latest updates'}");
+	my $return = &IDS::downloadruleset($provider);
 
-		# Unlock the IDS page.
-		&IDS::unlock_ids_page();
+	# Check if we got a return code.
+	if ($return) {
+		# Handle different return codes.
+		if ($return eq "not_modified") {
+			# Log notice to syslog.
+			&_log_to_syslog("<INFO> Skipping $provider - The ruleset is up-to-date");
 
-		# Exit.
-		exit 0;
+		} elsif ($return eq "no url") {
+			# Log error to the syslog.
+			&_log_to_syslog("<ERROR> Could not determine a download URL for $provider.");
+
+		} else {
+			# Log error to syslog.
+			&_log_to_syslog("<ERROR> $return");
+		}
+	} else {
+		# Log successfull update.
+		&_log_to_syslog("<INFO> Successfully updated ruleset for $provider.");
+
+		# Get path and name of the stored rules file or archive.
+		my $stored_file = &IDS::_get_dl_rulesfile($provider);
+
+		# Set correct ownership for the downloaded tarball.
+		&IDS::set_ownership("$stored_file");
 	}
-
-	# Get path and name of the stored rules file or archive.
-	my $stored_file = &IDS::_get_dl_rulesfile($provider);
-
-	# Set correct ownership for the downloaded tarball.
-	&IDS::set_ownership("$stored_file");
 }
 
 # Call oinkmaster to alter the ruleset.
