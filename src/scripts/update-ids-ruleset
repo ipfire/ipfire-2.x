@@ -26,6 +26,9 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/ids-functions.pl";
 require "${General::swroot}/lang.pl";
 
+# Load perl module to talk to the kernel syslog.
+use Sys::Syslog qw(:DEFAULT setlogsock);
+
 # Variable to store if the process has written a lockfile.
 my $locked;
 
@@ -44,6 +47,9 @@ if ( $> == 0 ) {
 	POSIX::setgid( $gid );
 	POSIX::setuid( $uid );
 }
+
+# Establish the connection to the syslog service.
+openlog('oinkmaster', 'cons,pid', 'user');
 
 # Check if the IDS lock file exists.
 # In this case the WUI or another instance currently is altering the
@@ -126,9 +132,24 @@ if(&IDS::ids_is_running()) {
 	&IDS::call_suricatactrl("reload");
 }
 
-# Custom END declaration to release a IDS page lock
-# when the script has created one.
+#
+# Tiny function to sent the error message to the syslog.
+#
+sub _log_to_syslog($) {
+	my ($message) = @_;
+
+	# The syslog function works best with an array based input,
+	# so generate one before passing the message details to syslog.
+	my @syslog = ("ERR", "$message");
+
+	# Send the log message.
+	syslog(@syslog);
+}
+
 END {
+	# Close connection to syslog.
+	closelog();
+
 	# Check if a lock has been requested.
 	if ($locked) {
 		# Unlock the IDS page.
