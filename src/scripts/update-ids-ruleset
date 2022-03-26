@@ -65,19 +65,19 @@ if (-f "$IDS::ids_page_lock_file") {
 # Check if the red device is active.
 unless (-e "${General::swroot}/red/active") {
 	# Store notice in the syslog.
-	&IDS::_log_to_syslog("The system is offline.");
-
-	# Store error message for displaying in the WUI.
-	&IDS::_store_error_message("$Lang::tr{'could not download latest updates'} - $Lang::tr{'system is offline'}");
+	&_log_to_syslog("<ERROR> Could not update any ruleset - The system is offline.");
 
 	# Exit.
 	exit 0;
 }
 
 # Check if enought free disk space is availabe.
-if(&IDS::checkdiskspace()) {
-	# Store the error message for displaying in the WUI.
-	&IDS::_store_error_message("$Lang::tr{'not enough disk space'}");
+my $return = &IDS::checkdiskspace();
+
+# Handle error.
+if ($return) {
+	# Store error in syslog.
+	&_log_to_syslog("<ERROR> Not enough free disk space, only $return of 300MB are available.");
 
 	# Exit.
 	exit 0;
