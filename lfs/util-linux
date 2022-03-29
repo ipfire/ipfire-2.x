@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.28.2
+VER        = 2.38
 
 THISAPP    = util-linux-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 46a232a37bce45371a86d19300edc47a
+$(DL_FILE)_MD5 = fffdc126809a6d4c1789a9efc1b96623
 
 install : $(TARGET)
 
@@ -75,13 +75,22 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure \
 		--docdir=/usr/share/doc/util-linux \
+		--disable-chfn-chsh \
 		--disable-static \
 		--disable-nls \
 		--disable-static \
+		--disable-login \
+		--disable-nologin \
+		--disable-su \
+		--disable-setpriv \
+		--disable-runuser \
+		--disable-pylibmount \
 		--enable-pg \
+		--enable-hardlink \
 		--without-python \
 		--without-systemd \
-		--without-systemdsystemunitdir
+		--without-systemdsystemunitdir \
+		runstatdir=/run
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
