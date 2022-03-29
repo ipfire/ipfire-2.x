@@ -19,6 +19,8 @@
 #                                                                             #
 ###############################################################################
 
+shopt -s nullglob
+
 NOW="$(date "+%Y-%m-%d-%H:%M")"
 
 list_addons() {
@@ -38,10 +40,8 @@ process_includes() {
 	for include in $@; do
 		local file
 		while read -r file; do
-			for file in ${file}; do
-				if [ -e "/${file}" ]; then
-					echo "${file}"
-				fi
+			for file in /${file}; do
+				echo "${file}"
 			done
 		done < "${include}"
 	done | sort -u
