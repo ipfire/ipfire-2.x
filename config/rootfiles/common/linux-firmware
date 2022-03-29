@@ -1560,10 +1560,10 @@ lib/firmware/mrvl/pcie8897_uapsta.bin.xz
 lib/firmware/mrvl/pcie8997_wlan_v4.bin.xz
 lib/firmware/mrvl/pcieuart8997_combo_v4.bin.xz
 lib/firmware/mrvl/pcieusb8997_combo_v4.bin.xz
-lib/firmware/mrvl/prestera
-lib/firmware/mrvl/prestera/mvsw_prestera_fw-v2.0.img.xz
-lib/firmware/mrvl/prestera/mvsw_prestera_fw-v3.0.img.xz
-lib/firmware/mrvl/prestera/mvsw_prestera_fw-v4.0.img.xz
+#lib/firmware/mrvl/prestera
+#lib/firmware/mrvl/prestera/mvsw_prestera_fw-v2.0.img.xz
+#lib/firmware/mrvl/prestera/mvsw_prestera_fw-v3.0.img.xz
+#lib/firmware/mrvl/prestera/mvsw_prestera_fw-v4.0.img.xz
 lib/firmware/mrvl/sd8688.bin.xz
 lib/firmware/mrvl/sd8688_helper.bin.xz
 lib/firmware/mrvl/sd8787_uapsta.bin.xz
