@@ -78,5 +78,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		mv "$${file}" "$${file// /_}" || exit 1; \
 	done < <(find /lib/firmware -name "* *")
 
+	# Hardlink any identical files
+	hardlink -c -vv /lib/firmware
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
