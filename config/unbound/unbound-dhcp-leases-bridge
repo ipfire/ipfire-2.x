@@ -22,6 +22,7 @@
 import argparse
 import datetime
 import daemon
+import functools
 import ipaddress
 import logging
 import logging.handlers
@@ -444,6 +445,7 @@ class Lease(object):
 		return "localdomain"
 
 	@staticmethod
+	@functools.cache
 	def read_settings(filename):
 		settings = {}
 
