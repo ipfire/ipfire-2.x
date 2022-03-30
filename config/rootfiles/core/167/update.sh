@@ -119,6 +119,7 @@ rm -rvf \
 	/usr/bin/perl5.30.0 \
 	/usr/bin/setlogcons \
 	/usr/bin/setvesablank \
+	/usr/bin/tailf \
 	/usr/bin/ulockmgr_server \
 	/usr/include/python2.7 \
 	/usr/lib/cairo \
@@ -294,6 +295,7 @@ rm -rvf \
 	/usr/local/bin/xt_geoip_update \
 	/usr/sbin/batctl \
 	/usr/sbin/fbset \
+	/usr/sbin/fdformat \
 	/usr/sbin/update-usbids.sh \
 	/usr/sbin/uuidd \
 	/usr/share/doc/fireinfo \
