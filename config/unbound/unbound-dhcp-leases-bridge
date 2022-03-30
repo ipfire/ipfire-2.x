@@ -32,6 +32,7 @@ import stat
 import subprocess
 import sys
 import tempfile
+import time
 
 import inotify.adapters
 
@@ -82,6 +83,12 @@ class UnboundDHCPLeasesBridge(object):
 		self.fix_leases_file = fix_leases_file
 		self.hosts_file = hosts_file
 
+		self.watches = {
+			self.leases_file     : inotify.constants.IN_MODIFY,
+			self.fix_leases_file : 0,
+			self.hosts_file      : 0,
+		}
+
 		self.unbound = UnboundConfigWriter(unbound_leases_file)
 		self.running = False
 
@@ -89,37 +96,54 @@ class UnboundDHCPLeasesBridge(object):
 		log.info("Unbound DHCP Leases Bridge started on %s" % self.leases_file)
 		self.running = True
 
-		# Initial setup
-		self.hosts = self.read_static_hosts()
-		self.update_dhcp_leases()
+		i = inotify.adapters.Inotify()
 
-		i = inotify.adapters.Inotify([
-			self.leases_file,
-			self.fix_leases_file,
-			self.hosts_file,
-		])
+		# Add watches for the directories of every relevant file
+		for f, mask in self.watches.items():
+			i.add_watch(
+				os.path.dirname(f),
+				mask | inotify.constants.IN_CLOSE_WRITE | inotify.constants.IN_MOVED_TO,
+			)
 
-		for event in i.event_gen():
-			# End if we are requested to terminate
-			if not self.running:
-				break
+		# Enabled so that we update hosts and leases on startup
+		update_hosts = update_leases = True
 
-			if event is None:
-				continue
+		while self.running:
+			log.debug("Wakeup of main loop")
 
-			header, type_names, watch_path, filename = event
+			# Process the entire inotify queue and identify what we need to do
+			for event in i.event_gen():
+				# Nothing to do
+				if event is None:
+					break
 
-			# Update leases after leases file has been modified
-			if "IN_MODIFY" in type_names:
-				# Reload hosts
-				if watch_path == self.hosts_file:
-					self.hosts = self.read_static_hosts()
+				# Decode the event
+				header, type_names, path, filename = event
 
+				file = os.path.join(path, filename)
+
+				log.debug("inotify event received for %s: %s", file, " ".join(type_names))
+
+				# Did the hosts file change?
+				if self.hosts_file == file:
+					update_hosts = True
+
+				# We will need to update the leases on any change
+				update_leases = True
+
+			# Update hosts (if needed)
+			if update_hosts:
+				self.hosts = self.read_static_hosts()
+
+			# Update leases (if needed)
+			if update_leases:
 				self.update_dhcp_leases()
 
-			# If the file is deleted, we re-add the watcher
-			if "IN_IGNORED" in type_names:
-				i.add_watch(watch_path)
+			# Reset
+			update_hosts = update_leases = False
+
+			# Wait a moment before we start the next iteration
+			time.sleep(5)
 
 		log.info("Unbound DHCP Leases Bridge terminated")
 
