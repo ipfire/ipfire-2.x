@@ -30,27 +30,37 @@ import re
 import signal
 import stat
 import subprocess
+import sys
 import tempfile
 
 import inotify.adapters
 
 LOCAL_TTL = 60
 
-def setup_logging(loglevel=logging.INFO):
-	log = logging.getLogger("dhcp")
+log = logging.getLogger("dhcp")
+log.setLevel(logging.DEBUG)
+
+def setup_logging(daemon=True, loglevel=logging.INFO):
 	log.setLevel(loglevel)
 
+	# Log to syslog by default
 	handler = logging.handlers.SysLogHandler(address="/dev/log", facility="daemon")
-	handler.setLevel(loglevel)
+	log.addHandler(handler)
 
+	# Format everything
 	formatter = logging.Formatter("%(name)s[%(process)d]: %(message)s")
 	handler.setFormatter(formatter)
 
-	log.addHandler(handler)
+	handler.setLevel(loglevel)
+
+	# If we are running in foreground, we should write everything to the console, too
+	if not daemon:
+		handler = logging.StreamHandler()
+		log.addHandler(handler)
+
+		handler.setLevel(loglevel)
 
 	return log
-
-log = logging.getLogger("dhcp")
 
 def ip_address_to_reverse_pointer(address):
 	parts = address.split(".")
@@ -579,12 +589,12 @@ if __name__ == "__main__":
 		elif args.verbose >= 2:
 			loglevel = logging.DEBUG
 
-	setup_logging(loglevel)
+	setup_logging(daemon=args.daemon, loglevel=loglevel)
 
 	bridge = UnboundDHCPLeasesBridge(args.dhcp_leases, args.fix_leases,
 		args.unbound_leases, args.hosts)
 
-	ctx = daemon.DaemonContext(detach_process=args.daemon)
+	ctx = daemon.DaemonContext(detach_process=args.daemon, stderr=sys.stderr)
 	ctx.signal_map = {
 		signal.SIGHUP  : bridge.update_dhcp_leases,
 		signal.SIGTERM : bridge.terminate,
