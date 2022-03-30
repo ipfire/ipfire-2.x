@@ -43,7 +43,9 @@ process_includes() {
 		local file
 		while read -r file; do
 			for file in /${file}; do
-				echo "${file}"
+				if [ -e "${file}" ]; then
+					echo "${file}"
+				fi
 			done
 		done < "${include}"
 	done | sort -u
