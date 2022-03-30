@@ -618,13 +618,14 @@ if __name__ == "__main__":
 	bridge = UnboundDHCPLeasesBridge(args.dhcp_leases, args.fix_leases,
 		args.unbound_leases, args.hosts)
 
-	ctx = daemon.DaemonContext(detach_process=args.daemon, stderr=sys.stderr)
-	ctx.signal_map = {
-		signal.SIGHUP  : bridge.update_dhcp_leases,
-		signal.SIGTERM : bridge.terminate,
-	}
-
-	with ctx:
+	with daemon.DaemonContext(
+		detach_process=args.daemon,
+		stderr=None if args.daemon else sys.stderr,
+		signal_map = {
+			signal.SIGHUP  : bridge.update_dhcp_leases,
+			signal.SIGTERM : bridge.terminate,
+		},
+	) as daemon:
 		setup_logging(daemon=args.daemon, loglevel=loglevel)
 
 		bridge.run()
