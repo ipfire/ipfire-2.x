@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
-core=166
+core=167
 
 # Remove old core updates from pakfire cache to save space...
 for (( i=1; i<=$core; i++ )); do
