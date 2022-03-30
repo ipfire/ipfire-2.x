@@ -615,8 +615,6 @@ if __name__ == "__main__":
 		elif args.verbose >= 2:
 			loglevel = logging.DEBUG
 
-	setup_logging(daemon=args.daemon, loglevel=loglevel)
-
 	bridge = UnboundDHCPLeasesBridge(args.dhcp_leases, args.fix_leases,
 		args.unbound_leases, args.hosts)
 
@@ -627,4 +625,6 @@ if __name__ == "__main__":
 	}
 
 	with ctx:
+		setup_logging(daemon=args.daemon, loglevel=loglevel)
+
 		bridge.run()
