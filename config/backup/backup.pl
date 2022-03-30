@@ -19,6 +19,8 @@
 #                                                                             #
 ###############################################################################
 
+shopt -s nullglob
+
 NOW="$(date "+%Y-%m-%d-%H:%M")"
 
 list_addons() {
@@ -34,12 +36,14 @@ list_addons() {
 
 process_includes() {
 	local include
-
 	for include in $@; do
+		# Skip any empty line (which will include /)
+		[ -n "${include}" ] || continue
+
 		local file
 		while read -r file; do
-			for file in ${file}; do
-				if [ -e "/${file}" ]; then
+			for file in /${file}; do
+				if [ -e "${file}" ]; then
 					echo "${file}"
 				fi
 			done

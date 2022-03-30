@@ -129,6 +129,14 @@ ldconfig
 telinit u
 /etc/rc.d/init.d/firewall restart
 
+# Fix ownership of classification file.
+chown nobody:nobody /usr/share/suricata/classification.config
+
+# Rebuild IPS rules
+rm -vf /tmp/ids_page_locked
+perl -e "require '/var/ipfire/ids-functions.pl'; &IDS::oinkmaster();"
+/etc/init.d/suricata reload
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
