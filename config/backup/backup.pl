@@ -37,11 +37,11 @@ list_addons() {
 process_includes() {
 	local include
 	for include in $@; do
-		# Skip any empty line (which will include /)
-		[ -n "${include}" ] || continue
-
 		local file
 		while read -r file; do
+			# Skip any empty line (which will include /)
+			[ -n "${file}" ] || continue
+
 			for file in /${file}; do
 				if [ -e "${file}" ]; then
 					echo "${file}"
