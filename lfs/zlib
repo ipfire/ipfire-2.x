@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.2.11
+VER        = 1.2.12
 
 THISAPP    = zlib-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 1c9f62f0778697a09d36121ead88e08e
+$(DL_FILE)_MD5 = 5fc414a9726be31427b440b434d05f78
 
 install : $(TARGET)
 
@@ -78,10 +78,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && CROSS_PREFIX=$(CROSS_PREFIX) ./configure --prefix=$(PREFIX) --shared
-
-	# https://www.openwall.com/lists/oss-security/2022/03/24/1
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/zlib-fix-a-bug-that-can-crash-deflate-on-some-input-when-using-Z_FIXED.patch
-
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
