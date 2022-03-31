@@ -330,6 +330,9 @@ GNUPGHOME="/opt/pakfire/etc/.gnupg" gpg --import /opt/pakfire/pakfire-2022.key
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Hardlink any identical files to save space
+hardlink -c -vv /lib/firmware
+
 # Regenerate all initrds
 dracut --regenerate-all --force
 
