@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tor
-PAK_VER    = 67
+PAK_VER    = 68
 
 DEPS       = libseccomp
 
@@ -88,6 +88,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--localstatedir=/var \
 			--with-tor-user=tor \
 			--with-tor-group=tor
+
+	# https://bugzilla.ipfire.org/show_bug.cgi?id=12807
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/Tor-Sandbox-permit-the-clone3-system-call.patch
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
