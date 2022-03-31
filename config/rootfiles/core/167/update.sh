@@ -70,8 +70,12 @@ rm -rvf \
 	/lib/firmware/isci/README \
 	/lib/firmware/LICENCE.* \
 	/lib/firmware/Makefile \
+	/lib/firmware/mellanox/ \
+	/lib/firmware/mrvl/prestera/ \
 	/lib/firmware/qca/NOTICE.txt \
 	/lib/firmware/qcom/NOTICE.txt \
+	/lib/firmware/qcom/sdm845/ \
+	/lib/firmware/qcom/sm8250 \
 	/lib/firmware/README \
 	/lib/firmware/WHENCE \
 	/lib/kbd/keymaps/i386/qwerty/fi-latin1.map.gz \
