@@ -1716,7 +1716,6 @@ buildipfire() {
   lfsmake2 firmware-update
   lfsmake2 tshark
   lfsmake2 speedtest-cli
-  lfsmake2 rfkill
   lfsmake2 amazon-ssm-agent
   lfsmake2 libloc
   lfsmake2 ncdu
