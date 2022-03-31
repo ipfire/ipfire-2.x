@@ -1,6 +1,7 @@
 etc/inittab.d
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/pakfire
+lib/udev/network-hotplug-bridges
 srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 usr/lib/firewall/rules.pl
