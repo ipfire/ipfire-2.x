@@ -24,7 +24,9 @@
 
 include Config
 
-VER        = 20220302
+VER        = 20220402
+
+# From https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt
 
 THISAPP    = ca-certificates
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
