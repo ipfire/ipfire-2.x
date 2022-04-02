@@ -1370,7 +1370,6 @@
 'outgoing firewall mode1' => 'Usando este modo, solamente las conexión basadas en las reglas definidas son permitidas.',
 'outgoing firewall mode2' => 'Usando este modo, todas las conexioens son permitidas sin importar las ya definidias.',
 'outgoing firewall outgoing firewall reserved groupname' => 'Por favor, utilice otro nombre de grupo, este nombre está reservado',
-'outgoing firewall p2p description' => 'Presiones el botón correspondiente para activar/desactivar el módulo de bloqueo P2P',
 'outgoing firewall reset' => 'Restablecer todo',
 'outgoing firewall warning' => 'No seleccionar ip origen o mac las ignora',
 'outgoing traffic in bytes per second' => 'Tráfico de salida',
