@@ -180,6 +180,14 @@ iptables_init() {
 	iptables -A HOSTILE_DROP -m limit --limit 10/second -j LOG --log-prefix "DROP_HOSTILE "
 	iptables -A HOSTILE_DROP -j DROP -m comment --comment "DROP_HOSTILE"
 
+	# IP Address Blocklist chains
+	iptables -N BLOCKLISTIN
+	iptables -N BLOCKLISTOUT
+	iptables -A INPUT ! -p icmp -j BLOCKLISTIN
+	iptables -A FORWARD ! -p icmp -j BLOCKLISTIN
+	iptables -A FORWARD ! -p icmp -j BLOCKLISTOUT
+	iptables -A OUTPUT ! -p icmp -j BLOCKLISTOUT
+
 	# IPS (Guardian) chains
 	iptables -N GUARDIAN
 	iptables -A INPUT -j GUARDIAN
