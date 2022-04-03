@@ -740,7 +740,7 @@ sub ipblocklist () {
 	# Loop through the array of blocklists.
 	foreach my $blocklist (@blocklists) {
 		# Skip disabled blocklists.
-		next unless($blocklistsettings{$blocklist} eq "on");
+		next unless($blocklistsettings{$blocklist}) && ($blocklistsettings{$blocklist} eq "on"));
 
 		# Call function to load the blocklist.
 		&ipset_restore($blocklist);
