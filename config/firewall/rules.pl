@@ -755,7 +755,7 @@ sub ipblocklist () {
 		}
 
 		# Create Drop rule.
-		run("$IPTABLES A ${blocklist}_DROP -j DROP");
+		run("$IPTABLES -A ${blocklist}_DROP -j DROP");
 
 		# Add the rules to check against the set
 		run("$IPTABLES -A BLOCKLISTIN -p ALL -i $RED_DEV -m set --match-set $blocklist src -j ${blocklist}_DROP");
