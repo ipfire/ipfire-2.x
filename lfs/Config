@@ -347,7 +347,7 @@ endef
 define LOAD
 	@echo -e "$(MESSAGE)Download: $($(notdir $@))"
 	wget -T 60 -t 1 -nv -U "IPFireSourceGrabber/2.x" $($(notdir $@)) -O $(DIR_TMP)/$(notdir $@)
-	[ "$($(notdir $@)_BLAKE2)" = "$(firstword $(shell b2sum $(DIR_TMP)/$(notdir $@))" ] # detect page not found answer
+	[ "$($(notdir $@)_BLAKE2)" = "$(firstword $(shell b2sum $(DIR_TMP)/$(notdir $@)))" ] # detect page not found answer
 	mv $(DIR_TMP)/$(notdir $@) $(DIR_DL)
 endef
 
