@@ -731,35 +731,43 @@ sub ipblocklist () {
 	run("$IPTABLES -F BLOCKLISTIN");
 	run("$IPTABLES -F BLOCKLISTOUT");
 
-	# If the blocklist feature is disabled we are finished here.
-	if($blocklistsettings{'ENABLE'} ne "on") {
-		# Bye.
-		return;
-	}
-
 	# Loop through the array of blocklists.
 	foreach my $blocklist (@blocklists) {
-		# Skip disabled blocklists.
-		next unless($blocklistsettings{$blocklist}) && ($blocklistsettings{$blocklist} eq "on"));
+		# Check if the blocklist feature and the current processed blocklist is enabled.
+		if(($blocklistsettings{'ENABLE'} eq "on") && ($blocklistsettings{$blocklist}) && ($blocklistsettings{$blocklist} eq "on")) {
+			# Call function to load the blocklist.
+			&ipset_restore($blocklist);
 
-		# Call function to load the blocklist.
-		&ipset_restore($blocklist);
+			# Call function to check if the corresponding iptables drop chain already has been created.
+			if(&firewall_chain_exists("${blocklist}_DROP")) {
+				# Create iptables chain.
+				run("$IPTABLES -N ${blocklist}_DROP");
 
-		# Create iptables chain.
-		run("$IPTABLES -N ${blocklist}_DROP");
+				# Check if logging is enabled.
+				if($blocklistsettings{'LOGGING'} eq "on") {
+					# Create logging rule.
+					run("$IPTABLES -A ${blocklist}_DROP -j LOG -m limit --limit 10/second --log-prefix \"BLKLST_$blocklist\" ");
+				}
 
-		# Check if logging is enables.
-		if($blocklistsettings{'LOGGING'} eq "on") {
-			# Create logging rule.
-			run("$IPTABLES -A ${blocklist}_DROP -j LOG -m limit --limit 10/second --log-prefix \"BLKLST_$blocklist\" ");
+				# Create Drop rule.
+				run("$IPTABLES -A ${blocklist}_DROP -j DROP");
+			}
+
+			# Add the rules to check against the set
+			run("$IPTABLES -A BLOCKLISTIN -p ALL -i $RED_DEV -m set --match-set $blocklist src -j ${blocklist}_DROP");
+			run("$IPTABLES -A BLOCKLISTOUT -p ALL -o $RED_DEV -m set --match-set $blocklist dst -j ${blocklist}_DROP");
+
+		# IP blocklist or the blocklist is disabled.
+		} else {
+			# Check if the blocklist related iptables drop chain exits.
+			unless(&firewall_chain_exists("${blocklist}_DROP")) {
+				# Flush the chain.
+				run("$IPTABLES -F ${blocklist}_DROP");
+
+				# Drop the chain.
+				run("$IPTABLES -X ${blocklist}_DROP");
+			}
 		}
-
-		# Create Drop rule.
-		run("$IPTABLES -A ${blocklist}_DROP -j DROP");
-
-		# Add the rules to check against the set
-		run("$IPTABLES -A BLOCKLISTIN -p ALL -i $RED_DEV -m set --match-set $blocklist src -j ${blocklist}_DROP");
-		run("$IPTABLES -A BLOCKLISTOUT -p ALL -o $RED_DEV -m set --match-set $blocklist dst -j ${blocklist}_DROP");
 	}
 }
 
