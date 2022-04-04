@@ -1697,6 +1697,7 @@ buildipfire() {
   lfsmake2 libqrencode
   lfsmake2 perl-File-Remove
   lfsmake2 perl-Module-Build
+  lfsmake2 perl-Module-ScanDeps
 }
 
 buildinstaller() {
