@@ -1693,6 +1693,7 @@ buildipfire() {
   lfsmake2 squid-asnbl
   lfsmake2 qemu-ga
   lfsmake2 gptfdisk
+  lfsmake2 oath-toolkit
 }
 
 buildinstaller() {
