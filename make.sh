@@ -1695,6 +1695,7 @@ buildipfire() {
   lfsmake2 gptfdisk
   lfsmake2 oath-toolkit
   lfsmake2 libqrencode
+  lfsmake2 perl-File-Remove
 }
 
 buildinstaller() {
