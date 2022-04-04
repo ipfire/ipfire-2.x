@@ -17,8 +17,6 @@ lib/firmware/cs46xx/cwcdma
 lib/firmware/cs46xx/cwcsnoop
 lib/firmware/ctefx-desktop.bin
 lib/firmware/ctefx-r3di.bin
-#lib/firmware/ctefx.bin
-#lib/firmware/ctspeq.bin
 lib/firmware/digiface_firmware.bin
 lib/firmware/digiface_firmware_rev11.bin
 #lib/firmware/ea
@@ -58,9 +56,6 @@ lib/firmware/emu/emu1010_notebook.fw
 lib/firmware/emu/emu1010b.fw
 lib/firmware/emu/hana.fw
 lib/firmware/emu/micro_dock.fw
-#lib/firmware/ess/maestro3_assp_kernel.fw
-#lib/firmware/ess/maestro3_assp_minisrc.fw
-#lib/firmware/korg/k1212.dsp
 #lib/firmware/mixart
 lib/firmware/mixart/miXart8.elf
 lib/firmware/mixart/miXart8.xlx
@@ -91,11 +86,6 @@ lib/firmware/pcxhr/xlxc882hr.dat
 lib/firmware/pcxhr/xlxc924.dat
 lib/firmware/pcxhr/xlxint.dat
 lib/firmware/rpm_firmware.bin
-#lib/firmware/sb16/alaw_main.csp
-#lib/firmware/sb16/ima_adpcm_capture.csp
-#lib/firmware/sb16/ima_adpcm_init.csp
-#lib/firmware/sb16/ima_adpcm_playback.csp
-#lib/firmware/sb16/mulaw_main.csp
 #lib/firmware/turtlebeach
 lib/firmware/turtlebeach/msndinit.bin
 lib/firmware/turtlebeach/msndperm.bin
@@ -115,10 +105,6 @@ lib/firmware/vx/x1_1_vp4.xlx
 lib/firmware/vx/x1_1_vx2.xlx
 lib/firmware/vx/x1_1_vxp.xlx
 lib/firmware/vx/x1_2_v22.xlx
-#lib/firmware/yamaha/ds1_ctrl.fw
-#lib/firmware/yamaha/ds1_dsp.fw
-#lib/firmware/yamaha/ds1e_ctrl.fw
-#lib/firmware/yamaha/yss225_registers.bin
 #lib/udev/rules.d/90-alsa-restore.rules
 usr/bin/aconnect
 usr/bin/alsabat
