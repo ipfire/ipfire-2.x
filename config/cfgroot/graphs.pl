@@ -693,7 +693,7 @@ sub updatefwhitsgraph {
 		"DEF:newnotsyn=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-NEWNOTSYN/ipt_bytes-DROP_NEWNOTSYN.rrd:value:AVERAGE",
 		"DEF:portscan=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-PSCAN/ipt_bytes-DROP_PScan.rrd:value:AVERAGE",
 		"DEF:spoofedmartian=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-SPOOFED_MARTIAN/ipt_bytes-DROP_SPOOFED_MARTIAN.rrd:value:AVERAGE",
-		"DEF:hostile=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-HOSTILE/ipt_bytes-DROP_HOSTILE.rrd:value:AVERAGE",
+		"DEF:hostile=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-HOSTILE_DROP/ipt_bytes-DROP_HOSTILE.rrd:value:AVERAGE",
 		"COMMENT:".sprintf("%-26s",$Lang::tr{'caption'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
