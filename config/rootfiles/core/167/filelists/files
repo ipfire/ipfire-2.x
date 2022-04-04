@@ -3,9 +3,11 @@ etc/rc.d/init.d/firewall
 etc/rc.d/init.d/pakfire
 lib/udev/network-hotplug-bridges
 srv/web/ipfire/cgi-bin/connections.cgi
+srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/location-block.cgi
 usr/lib/firewall/rules.pl
 usr/sbin/unbound-dhcp-leases-bridge
 var/ipfire/backup/include
+var/ipfire/dhcp/advoptions-list
 var/ipfire/ids-functions.pl
