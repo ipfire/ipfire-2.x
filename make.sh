@@ -1701,6 +1701,7 @@ buildipfire() {
   lfsmake2 perl-YAML-Tiny
   lfsmake2 perl-Module-Install
   lfsmake2 perl-Imager
+  lfsmake2 perl-Imager-QRCode
 }
 
 buildinstaller() {
