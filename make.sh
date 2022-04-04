@@ -1698,6 +1698,7 @@ buildipfire() {
   lfsmake2 perl-File-Remove
   lfsmake2 perl-Module-Build
   lfsmake2 perl-Module-ScanDeps
+  lfsmake2 perl-YAML-Tiny
 }
 
 buildinstaller() {
