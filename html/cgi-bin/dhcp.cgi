@@ -800,6 +800,7 @@ if ($dhcpsettings{'SUBMIT'} eq $Lang::tr{'dhcp advopt help'}) {
     print "<tr><td colspan='2'><hr /></td></tr>\n";
     print '<tr><td>string type</td><td>"quoted string" or 00:01:FF...</td></tr>';
     print '<tr><td>ip-address type </td><td>10.0.0.1 | www.dot.com</td></tr>';
+    print '<tr><td>domain-list type </td><td>"example.com", "eng.example.com", "sales.example.com"</td></tr>';
     print '<tr><td>int,uint types</td><td>numbers</td></tr>';
     print '<tr><td>flag type</td><td>on | off</td></tr>';
     print '</table>';
