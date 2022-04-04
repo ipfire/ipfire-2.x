@@ -474,11 +474,13 @@ imq0;200;1;$DOWN[20];$DOWN[1];;;8;VoIP;
 imq0;203;4;$DOWN[20];$DOWN[1];;;0;VPN;
 imq0;204;5;$DOWN[20];$DOWN[1];;;8;Webtraffic;
 imq0;210;6;1;$DOWN[1];;;0;Default;
+imq0;220;7;1;$DOWN[1];;;1;P2P;
 $qossettings{'RED_DEV'};101;1;$UP[10];$UP[1];;;8;ACKs;
 $qossettings{'RED_DEV'};102;2;$UP[10];$UP[1];;;8;VoIP;
 $qossettings{'RED_DEV'};103;4;$UP[10];$UP[1];;;2;VPN;
 $qossettings{'RED_DEV'};104;5;$UP[10];$UP[1];;;8;Webtraffic;
 $qossettings{'RED_DEV'};110;6;1;$UP[1];;;0;Default;
+$qossettings{'RED_DEV'};120;7;1;$UP[1];;;1;P2P;
 END
 ;
 		close FILE;
