@@ -976,6 +976,14 @@ sub firewall_is_in_subnet {
 	return 0;
 }
 
+sub firewall_chain_exists ($) {
+	my ($chain) = @_;
+
+	my $ret = &General::system("iptables", "--wait", "-n", "-L", "$chain");
+
+	return $ret;
+}
+
 sub ipset_get_sets () {
 	my @sets;
 
