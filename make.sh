@@ -1700,6 +1700,7 @@ buildipfire() {
   lfsmake2 perl-Module-ScanDeps
   lfsmake2 perl-YAML-Tiny
   lfsmake2 perl-Module-Install
+  lfsmake2 perl-Imager
 }
 
 buildinstaller() {
