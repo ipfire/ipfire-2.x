@@ -51,7 +51,7 @@ $(TARGET) :
 
 	# Create all directories
 	for i in addon-lang auth backup ca captive certs connscheduler crls ddns dhcp dhcpc dns dnsforward \
-			ethernet extrahd/bin fwlogs fwhosts firewall isdn key langs logging mac main \
+			ethernet extrahd/bin fwlogs fwhosts firewall ipblocklist isdn key langs logging mac main \
 			menu.d modem optionsfw \
 			ovpn patches pakfire portfw ppp private proxy/advanced/cre \
 			proxy/calamaris/bin qos/bin red remote sensors suricata time \
@@ -65,7 +65,7 @@ $(TARGET) :
 	    captive/settings captive/agb.txt captive/clients captive/voucher_out certs/index.txt certs/index.txt.attr ddns/config ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dns/settings dns/servers dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
 	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings firewall/settings firewall/config firewall/locationblock firewall/input firewall/outgoing \
-	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwhosts/customlocationgrp fwlogs/ipsettings fwlogs/portsettings \
+	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwhosts/customlocationgrp fwlogs/ipsettings fwlogs/portsettings ipblocklist/settings \
 	    isdn/settings mac/settings main/hosts main/routing main/security main/settings optionsfw/settings \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
 	    ppp/settings-5 ppp/settings proxy/settings proxy/squid.conf proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
