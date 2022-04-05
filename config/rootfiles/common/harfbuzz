@@ -30,6 +30,7 @@
 #usr/include/harfbuzz/hb-shape-plan.h
 #usr/include/harfbuzz/hb-shape.h
 #usr/include/harfbuzz/hb-style.h
+#usr/include/harfbuzz/hb-subset-repacker.h
 #usr/include/harfbuzz/hb-subset.h
 #usr/include/harfbuzz/hb-unicode.h
 #usr/include/harfbuzz/hb-version.h
@@ -39,11 +40,11 @@
 #usr/lib/libharfbuzz-subset.la
 #usr/lib/libharfbuzz-subset.so
 usr/lib/libharfbuzz-subset.so.0
-usr/lib/libharfbuzz-subset.so.0.30400.0
+usr/lib/libharfbuzz-subset.so.0.40200.0
 #usr/lib/libharfbuzz.la
 #usr/lib/libharfbuzz.so
 usr/lib/libharfbuzz.so.0
-usr/lib/libharfbuzz.so.0.30400.0
+usr/lib/libharfbuzz.so.0.40200.0
 #usr/lib/pkgconfig/harfbuzz-subset.pc
 #usr/lib/pkgconfig/harfbuzz.pc
 #usr/share/gtk-doc/html/harfbuzz
@@ -84,7 +85,6 @@ usr/lib/libharfbuzz.so.0.30400.0
 #usr/share/gtk-doc/html/harfbuzz/api-index-1-5-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-1-6-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-1-7-2.html
-#usr/share/gtk-doc/html/harfbuzz/api-index-1-7-5.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-1-7-7.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-1-8-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-1-8-1.html
@@ -109,6 +109,9 @@ usr/lib/libharfbuzz.so.0.30400.0
 #usr/share/gtk-doc/html/harfbuzz/api-index-3-1-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-3-3-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-3-4-0.html
+#usr/share/gtk-doc/html/harfbuzz/api-index-4-0-0.html
+#usr/share/gtk-doc/html/harfbuzz/api-index-4-1-0.html
+#usr/share/gtk-doc/html/harfbuzz/api-index-4-2-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-full.html
 #usr/share/gtk-doc/html/harfbuzz/apple-advanced-typography-api.html
 #usr/share/gtk-doc/html/harfbuzz/buffers-language-script-and-direction.html
@@ -131,6 +134,7 @@ usr/lib/libharfbuzz.so.0.30400.0
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-coretext.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-deprecated.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-directwrite.html
+#usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-draw.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-face.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-font.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-ft.html
