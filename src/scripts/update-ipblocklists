@@ -46,7 +46,7 @@ if ( $> == 0 ) {
 }
 
 # Establish the connection to the syslog service.
-openlog('ipblocklist', 'cons,pid', 'user');
+openlog('ipblocklist', 'cons', 'user');
 
 # Grab the configured providers.
 &General::readhash("${General::swroot}/ipblocklist/settings", \%settings);
