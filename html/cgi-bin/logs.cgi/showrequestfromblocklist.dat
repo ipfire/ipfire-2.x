@@ -156,13 +156,13 @@ if (!(open (FILE,($filestr =~ /.gz$/ ? "gzip -dc $filestr |" : $filestr)))) {
 }
 my $lines = 0;
 my @log=();
-my $blaoklist = $cgiparams{blocklist};
+my $blocklist = $cgiparams{blocklist};
 
 if (!$skip)
 {
 	while (<FILE>) {
 		if (/^${monthstr} ${daystr} ..:..:.. [\w\-]+ kernel:.*BLKLST_(\w+)\s?IN=.*/) {
-			if($1 eq $blacklist){
+			if($1 eq $blocklist){
 				$log[$lines] = $_;
 				$lines++;
 			}
@@ -187,7 +187,7 @@ if ($multifile) {
 	if (!$skip) {
 		while (<FILE>) {
 			if (/^${monthstr} ${daystr} ..:..:.. [\w\-]+ kernel:.*BLKLST_(\w+)\s?IN=.*/) {
-				if($1 eq $blacklist){
+				if($1 eq $blocklist){
 					$log[$lines] = $_;
 					$lines++;
 				}
@@ -309,7 +309,7 @@ foreach $_ (@slice) {
 	$a = $_;
 	# Check whether valid ipv4 or ipv6 address
 	if (($_ =~ /BLKLST_(\w+)\s?IN=/)) {
-		if($1 eq $blacklist) {
+		if($1 eq $blocklist) {
 			my $in = '-'; my $out = '-';
 			my $srcaddr = ''; my $dstaddr = '';
 			my $protostr = '';
