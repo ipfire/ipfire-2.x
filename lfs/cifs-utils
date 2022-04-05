@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Utilities for doing and managing mounts of the Linux CIFS filesystem
 
-VER        = 6.13
+VER        = 6.14
 
 THISAPP    = cifs-utils-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cifs-utils
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 5133ea39fc65acaf2a9791f8ac97dee681dd12f509e0abd095542ce663e7c62002b033dcf35f0a8eec214cb9940597fb568fd50d4cfe5271ca4e433afbe1a7bc
+$(DL_FILE)_BLAKE2 = d5ff2fe5de6800ffa1ffafb78c02ee02dc61c47243d89f6c634e1df9ed539e8a1d2d26f022f55b344849072f254fc6a3d1c217a6e23193189ff2cbb144a1a5f0
 
 install : $(TARGET)
 
