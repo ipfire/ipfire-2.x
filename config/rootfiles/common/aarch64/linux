@@ -6788,7 +6788,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_INITRD
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_INTEGRITY
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_INTEGRITY_T10
-#lib/modules/KVER-ipfire/build/include/config/BLK_DEV_IO_TRACE
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_LOOP
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_LOOP_MIN_COUNT
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_MD
@@ -8265,7 +8264,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/LAN743X
 #lib/modules/KVER-ipfire/build/include/config/LCD_CLASS_DEVICE
 #lib/modules/KVER-ipfire/build/include/config/LCD_PLATFORM
-#lib/modules/KVER-ipfire/build/include/config/LDISC_AUTOLOAD
 #lib/modules/KVER-ipfire/build/include/config/LDM_PARTITION
 #lib/modules/KVER-ipfire/build/include/config/LD_IS_BFD
 #lib/modules/KVER-ipfire/build/include/config/LD_ORPHAN_WARN
