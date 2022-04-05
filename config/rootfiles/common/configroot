@@ -81,6 +81,9 @@ var/ipfire/graphs.pl
 var/ipfire/header.pl
 var/ipfire/location-functions.pl
 var/ipfire/ids-functions.pl
+var/ipfire/ipblocklist-functions.pl
+var/ipfire/ipblocklist
+#var/ipfire/ipblocklist/settings
 var/ipfire/isdn
 #var/ipfire/isdn/settings
 var/ipfire/key
