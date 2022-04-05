@@ -140,6 +140,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Patch performance monitoring restrictions to allow further hardening
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15.17-security-perf-allow-further-restriction-of-perf_event_open.patch
 
+	# https://bugzilla.ipfire.org/show_bug.cgi?id=12760
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15-NFQUEUE-Hold-RCU-read-lock-while-calling-nf_reinject.patch
+
 ifeq "$(BUILD_ARCH)" "armv6l"
 	# Apply Arm-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).patch.xz | patch -Np1
