@@ -37,11 +37,10 @@ usr/bin/dbus-uuidgen
 #usr/lib/dbus-1.0/include
 #usr/lib/dbus-1.0/include/dbus
 #usr/lib/dbus-1.0/include/dbus/dbus-arch-deps.h
-#usr/lib/libdbus-1.a
 #usr/lib/libdbus-1.la
-usr/lib/libdbus-1.so
+#usr/lib/libdbus-1.so
 usr/lib/libdbus-1.so.3
-usr/lib/libdbus-1.so.3.19.13
+usr/lib/libdbus-1.so.3.32.0
 #usr/lib/pkgconfig/dbus-1.pc
 usr/libexec/dbus-daemon-launch-helper
 #usr/share/dbus-1
@@ -58,8 +57,10 @@ usr/share/dbus-1/system.d
 #usr/share/doc/dbus/examples/GetAllMatchRules.py
 #usr/share/doc/dbus/examples/example-session-disable-stats.conf
 #usr/share/doc/dbus/examples/example-system-enable-stats.conf
+#usr/share/doc/dbus/examples/example-system-hardening-without-traditional-activation.conf
 #usr/share/doc/dbus/system-activation.txt
 #usr/share/xml/dbus-1
 #usr/share/xml/dbus-1/busconfig.dtd
+#usr/share/xml/dbus-1/catalog.xml
 #usr/share/xml/dbus-1/introspect.dtd
 var/lib/dbus
