@@ -41,13 +41,13 @@ usr/bin/pango-view
 #usr/include/pango-1.0/pango/pangoft2.h
 #usr/lib/libpango-1.0.so
 usr/lib/libpango-1.0.so.0
-usr/lib/libpango-1.0.so.0.5000.4
+usr/lib/libpango-1.0.so.0.5000.6
 #usr/lib/libpangocairo-1.0.so
 usr/lib/libpangocairo-1.0.so.0
-usr/lib/libpangocairo-1.0.so.0.5000.4
+#usr/lib/libpangocairo-1.0.so.0.5000.6
 #usr/lib/libpangoft2-1.0.so
 usr/lib/libpangoft2-1.0.so.0
-usr/lib/libpangoft2-1.0.so.0.5000.4
+#usr/lib/libpangoft2-1.0.so.0.5000.6
 #usr/lib/pkgconfig/pango.pc
 #usr/lib/pkgconfig/pangocairo.pc
 #usr/lib/pkgconfig/pangofc.pc
