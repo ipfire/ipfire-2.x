@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -73,6 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Apply upstream patches.
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-014-freednsafraid-fix-typo.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ddns-system-Catch-exception-when-host-is-not-dual-stacked.patch
 
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure \

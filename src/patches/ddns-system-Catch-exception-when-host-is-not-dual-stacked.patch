@@ -1,0 +1,35 @@
+From de57b2caf44bf10de72e42a20abf690eca50d512 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Mon, 4 Apr 2022 10:33:46 +0100
+Subject: [PATCH] system: Catch exception when host is not dual-stacked
+
+This problem seems to have been introduced with an upgrade to Python
+3.10.
+
+Reported-by: Adrian Zaugg <ipfire.org@mailgurgler.com>
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/ddns/system.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/ddns/system.py b/src/ddns/system.py
+index 73a27a5..48c9a8f 100644
+--- a/src/ddns/system.py
++++ b/src/ddns/system.py
+@@ -226,8 +226,12 @@ class DDNSSystem(object):
+ 				if e.reason.errno == -2:
+ 					raise DDNSResolveError
+ 
++				# Cannot assign requested address
++				elif e.reason.errno == 99:
++					raise DDNSNetworkUnreachableError
++
+ 				# Network Unreachable (e.g. no IPv6 access)
+-				if e.reason.errno == 101:
++				elif e.reason.errno == 101:
+ 					raise DDNSNetworkUnreachableError
+ 
+ 				# Connection Refused
+-- 
+2.30.2
+
