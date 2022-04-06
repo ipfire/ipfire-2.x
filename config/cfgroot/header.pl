@@ -381,15 +381,15 @@ sub CheckSortOrder {
 
 sub PrintActualLeases
 {
-    &openbox('100%', 'left', $tr{'current dynamic leases'});
+    &openbox('100%', 'left', $Lang::tr{'current dynamic leases'});
     print <<END
 <table width='100%' class='tbl'>
 <tr>
-<th width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IPADDR'><b>$tr{'ip address'}</b></a></th>
-<th width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ETHER'><b>$tr{'mac address'}</b></a></th>
-<th width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?HOSTNAME'><b>$tr{'hostname'}</b></a></th>
-<th width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ENDTIME'><b>$tr{'lease expires'} (local time d/m/y)</b></a></th>
-<th width='5%' align='center'><b>Add to fix leases</b></th>
+<th width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?IPADDR'><b>$Lang::tr{'ip address'}</b></a></th>
+<th width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ETHER'><b>$Lang::tr{'mac address'}</b></a></th>
+<th width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?HOSTNAME'><b>$Lang::tr{'hostname'}</b></a></th>
+<th width='25%' align='center'><a href='$ENV{'SCRIPT_NAME'}?ENDTIME'><b>$Lang::tr{'lease expires'} (local time d/m/y)</b></a></th>
+<th width='5%' align='center'><b>$Lang::tr{'dhcp make fixed lease'}</b></th>
 </tr>
 END
 ;

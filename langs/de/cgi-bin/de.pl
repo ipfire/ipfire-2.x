@@ -793,6 +793,7 @@
 'dhcp dns update secret' => 'Schlüssel',
 'dhcp fixed lease err1' => 'Für eine feste Zuordnung müssen entweder die Hardware Adresse (MAC-Adresse) oder der Hostname oder beide eingetragen werden.',
 'dhcp fixed lease help1' => 'IP Adressen können als FQDN angegeben werden.',
+'dhcp make fixed lease' => 'Feste Zuordnung erzeugen',
 'dhcp mode' => 'DHCP',
 'dhcp server' => 'DHCP-Server',
 'dhcp server disabled' => 'DHCP-Server deaktiviert. Angehalten.',

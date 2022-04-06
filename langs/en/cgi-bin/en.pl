@@ -827,6 +827,7 @@
 'dhcp dns update secret' => 'Secret',
 'dhcp fixed lease err1' => 'For a fix lease you have to enter the MAC address or the hostname, or you enter both.',
 'dhcp fixed lease help1' => 'IP Addresses might be entered as FQDN',
+'dhcp make fixed lease' => 'Add to fix leases',
 'dhcp mode' => 'DHCP',
 'dhcp server' => 'DHCP Server',
 'dhcp server disabled' => 'DHCP server disabled.  Stopped.',
