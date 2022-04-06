@@ -12,4 +12,5 @@ usr/sbin/unbound-dhcp-leases-bridge
 var/ipfire/backup/include
 var/ipfire/dhcp/advoptions-list
 var/ipfire/graphs.pl
+var/ipfire/header.pl
 var/ipfire/ids-functions.pl
