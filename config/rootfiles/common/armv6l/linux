@@ -8690,6 +8690,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/LOCKDEP_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/LOCKD_V4
 #lib/modules/KVER-ipfire/build/include/config/LOCK_DEBUGGING_SUPPORT
+#lib/modules/KVER-ipfire/build/include/config/LOCK_DOWN_KERNEL_FORCE_INTEGRITY
 #lib/modules/KVER-ipfire/build/include/config/LOCK_SPIN_ON_OWNER
 #lib/modules/KVER-ipfire/build/include/config/LOGO
 #lib/modules/KVER-ipfire/build/include/config/LOGO_LINUX_CLUT224
@@ -10096,6 +10097,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SECURITY
 #lib/modules/KVER-ipfire/build/include/config/SECURITYFS
 #lib/modules/KVER-ipfire/build/include/config/SECURITY_DMESG_RESTRICT
+#lib/modules/KVER-ipfire/build/include/config/SECURITY_LOCKDOWN_LSM
+#lib/modules/KVER-ipfire/build/include/config/SECURITY_LOCKDOWN_LSM_EARLY
 #lib/modules/KVER-ipfire/build/include/config/SELECT_MEMORY_MODEL
 #lib/modules/KVER-ipfire/build/include/config/SENSORS_AD7414
 #lib/modules/KVER-ipfire/build/include/config/SENSORS_AD7418
