@@ -1602,7 +1602,6 @@ buildipfire() {
   lfsmake2 u-boot
   lfsmake2 u-boot-friendlyarm
   lfsmake2 wireless-regdb
-  lfsmake2 libsolv
   lfsmake2 ddns
   lfsmake2 python3-pycparser
   lfsmake2 python3-charset-normalizer
