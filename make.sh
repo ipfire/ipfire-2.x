@@ -1378,7 +1378,6 @@ buildipfire() {
   lfsmake2 perl-HTTP-Date
   lfsmake2 gnupg
   lfsmake2 hdparm
-  lfsmake2 sdparm
   lfsmake2 whatmask
   lfsmake2 libtirpc
   lfsmake2 conntrack-tools
