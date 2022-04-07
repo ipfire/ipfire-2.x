@@ -1438,7 +1438,6 @@ buildipfire() {
   lfsmake2 pango
   lfsmake2 rrdtool
   lfsmake2 setup
-  lfsmake2 libdnet
   lfsmake2 jansson
   lfsmake2 yaml
   lfsmake2 libhtp
