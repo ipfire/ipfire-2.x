@@ -33,7 +33,7 @@ check :
 
 download :
 
-md5 :
+b2 :
 
 dist:
 	@$(PAK)

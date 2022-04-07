@@ -42,10 +42,10 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(THISAPP)-x86_64-unknown-linux-gnu.tar.xz_MD5 =  42ae351e32e3d570c2c1612c9a9037ee
-$(THISAPP)-aarch64-unknown-linux-gnu.tar.xz_MD5 = 70504d2ad8ec793672d54c64e5c74593
-$(THISAPP)-arm-unknown-linux-gnueabi.tar.xz_MD5 = a6dfbd26b7057260ee07c15afa325b9f
-$(THISAPP)-riscv64gc-unknown-linux-gnu.tar.xz_MD5 = 24ca38f4b7c2ca2ba32195aa48912d07
+$(THISAPP)-x86_64-unknown-linux-gnu.tar.xz_BLAKE2 = 9d721887ed1a41ef06ce7e75197b8c7df03aa238818a15e93263c5c32580ae526baa3eb6fe17fa9344da17e2401f81a9b9109445629ed90c93d773bfa57da425
+$(THISAPP)-aarch64-unknown-linux-gnu.tar.xz_BLAKE2 = ebbd07ccc3d0c6a7f009d7eed161c1be528f8ced31ae1c3234e5c088fdb5d7de6e3638c44c26ccfaa81d1ba60c321fa82cf26f67e20dd3b97c75d2639d30dff2
+$(THISAPP)-arm-unknown-linux-gnueabi.tar.xz_BLAKE2 = 2b8f3c43fb3aa90cd9218282d0821ef40a787ba73d393302284b8cf3c8bbac9f37cda748462ffa3909c1ded999e1ce3f7e89761355c44176e7326218b7a06135
+$(THISAPP)-riscv64gc-unknown-linux-gnu.tar.xz_BLAKE2 = 52ccb010f9f557798bf8962225f002b73a16334daf6ff08c81064fdfe06f47fed3f57bdf8bc2ae7f5e157732619de8e1ed9852630e4621510c8d98bf9be415ab
 
 install : $(TARGET)
 
@@ -53,10 +53,10 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -65,8 +65,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

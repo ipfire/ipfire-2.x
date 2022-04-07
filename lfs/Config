@@ -13,7 +13,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -347,14 +347,13 @@ endef
 define LOAD
 	@echo -e "$(MESSAGE)Download: $($(notdir $@))"
 	wget -T 60 -t 1 -nv -U "IPFireSourceGrabber/2.x" $($(notdir $@)) -O $(DIR_TMP)/$(notdir $@)
-	[ "$($(notdir $@)_MD5)" = `md5sum $(DIR_TMP)/$(notdir $@) | awk '{ print $$1 }'` ] # detect page not found answer
+	[ "$($(notdir $@)_BLAKE2)" = "$$(b2sum $(DIR_TMP)/$(notdir $@) | awk '{ print $$1 }')" ] # detect page not found answer
 	mv $(DIR_TMP)/$(notdir $@) $(DIR_DL)
 endef
 
-define MD5
+define B2SUM
 	# error mean file signature don't match the one in lfs script
-	[ "$($@_MD5)" = `md5sum $(DIR_DL)/$@ | awk '{ print $$1 }'` ]
-	echo "$@ checksum OK"
+	[ "$($@_BLAKE2)" = "$$(b2sum $(DIR_DL)/$@ | awk '{ print $$1 }')" ] && echo "$@ checksum OK"
 endef
 
 define PAK

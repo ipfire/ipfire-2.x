@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tor
-PAK_VER    = 67
+PAK_VER    = 68
 
 DEPS       = libseccomp
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 1da676163e4c78efcc650210fa7c0530
+$(DL_FILE)_BLAKE2 = 4bdf8ab8ac992866ffc18711de0ad9e19b496398dfdace4d3902273822666dcfda3acd825ee22251cd8d671ff563702c6f24fe8670719a2c75d144cfe9219f68
 
 install : $(TARGET)
 
@@ -56,13 +56,13 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:
 	@$(PAK)
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -71,8 +71,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details
@@ -88,6 +88,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--localstatedir=/var \
 			--with-tor-user=tor \
 			--with-tor-group=tor
+
+	# https://bugzilla.ipfire.org/show_bug.cgi?id=12807
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/Tor-Sandbox-permit-the-clone3-system-call.patch
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

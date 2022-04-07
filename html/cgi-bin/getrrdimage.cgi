@@ -44,9 +44,9 @@ my @supported_origins = ("entropy.cgi", "hardwaregraphs.cgi", "media.cgi",
 my $uri = URI->new($ENV{'REQUEST_URI'});
 my %query = $uri->query_form;
 
-my $origin = lc $query{'origin'}; # lower case
-my $graph = $query{'graph'};
-my $range = lc $query{'range'}; # lower case
+my $origin = lc ($query{'origin'} // ''); # lower case
+my $graph = $query{'graph'} // '';
+my $range = lc ($query{'range'} // ''); # lower case
 
 # Check parameters
 unless(($origin =~ /^\w+?\.cgi$/) && ($graph =~ /^[\w\-.,; ]+?$/) && ($range ~~ @Graphs::time_ranges)) {

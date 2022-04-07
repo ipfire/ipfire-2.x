@@ -811,9 +811,6 @@ static int hw_format_filesystem(const char* path, int fs, const char* output) {
 	// Swap
 	if (fs == HW_FS_SWAP) {
 		snprintf(cmd, sizeof(cmd), "/sbin/mkswap -v1 %s &>/dev/null", path);
-	// ReiserFS
-	} else if (fs == HW_FS_REISERFS) {
-		snprintf(cmd, sizeof(cmd), "/sbin/mkreiserfs -f %s ", path);
 
 	// EXT4
 	} else if (fs == HW_FS_EXT4) {
@@ -878,10 +875,6 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 
 	const char* filesystem;
 	switch (dest->filesystem) {
-		case HW_FS_REISERFS:
-			filesystem = "reiserfs";
-			break;
-
 		case HW_FS_EXT4:
 		case HW_FS_EXT4_WO_JOURNAL:
 			filesystem = "ext4";

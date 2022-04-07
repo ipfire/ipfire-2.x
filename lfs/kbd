@@ -42,9 +42,9 @@ $(DL_FILE)                            = $(DL_FROM)/$(DL_FILE)
 kbd-latarcyrheb-16-fixed.tar.bz2      = $(DL_FROM)/kbd-latarcyrheb-16-fixed.tar.bz2
 kbd-latsun-fonts.tar.bz2              = $(DL_FROM)/kbd-latsun-fonts.tar.bz2
 
-$(DL_FILE)_MD5                        = d1d7ae0b5fb875dc082731e09cd0c8bc
-kbd-latarcyrheb-16-fixed.tar.bz2_MD5  = 884fdbb0b952b2e3e8389a0c40a3e301
-kbd-latsun-fonts.tar.bz2_MD5          = e22ee88353968df8d4a4b1bf1fa8fc31
+$(DL_FILE)_BLAKE2 = d4218f3a8f9212d16e8a14011f0e136f6aebd18f13f8d5da2bd63296e0aa857fc5e7fe927200345fca3b723bc879f87511b02c152824a73ae5743cc8175991e6
+kbd-latarcyrheb-16-fixed.tar.bz2_BLAKE2  = d5c701333b9eae7e0c467aebee5b2217c3225dee615622f77e501569f1464a8c32380b2d4a522730db74a909e1ea746e660ea6849bbf48195af22bda73858d1b
+kbd-latsun-fonts.tar.bz2_BLAKE2	         = c3def1192331a65f3edcf608ca164370d2db0c61444f71fc83bf35cb86d417ae92582180ace853a3cf93e569a83a42fca054fbadbf7f5986a1abd17e8bb6691f
 
 install : $(TARGET)
 
@@ -52,10 +52,10 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -64,8 +64,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

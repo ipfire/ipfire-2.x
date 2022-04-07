@@ -42,8 +42,8 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 installer-0.4.0.tar.gz = $(DL_FROM)/installer-0.4.0.tar.gz
 
-$(DL_FILE)_MD5 = 90741b41be4afb0ae3c1b5e9c4afeb67
-installer-0.4.0.tar.gz_MD5 = 0b24293a3a110160717b56509bcf7ec2
+$(DL_FILE)_BLAKE2 = 5cdf33a620e90a791ab618413090a8b74c2e6ca849590cf80cc6affa739be9fac06e27fdb804c15d9d5d3b9c6bdc5b27c36fdc20147ef2b18bb59dac02df2c20
+installer-0.4.0.tar.gz_BLAKE2 = 635854b3461995cda3b7afa507ca3fe35cae8210e79de0bbd46938c8f103d7840ceca8bb388c2c9533efc78150691f980c478485ee33bafe0bae6c08a6aef8c4
 
 install : $(TARGET)
 
@@ -51,13 +51,13 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist: 
 	@$(PAK)
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -66,8 +66,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

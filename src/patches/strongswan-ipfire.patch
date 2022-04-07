@@ -1,7 +1,16 @@
-diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_updown/_updown.in
---- strongswan-5.9.3.org/src/_updown/_updown.in	2020-12-09 19:01:30.000000000 +0100
-+++ strongswan-5.9.3/src/_updown/_updown.in	2021-10-25 17:30:15.669773781 +0200
-@@ -242,12 +242,9 @@
+commit 654e2b7688c5fbd4e1fc46648bc1864301fb6027
+Author: Michael Tremer <michael.tremer@ipfire.org>
+Date:   Mon Mar 21 19:49:02 2022 +0000
+
+    IPFire modifications to _updown script
+    
+    Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+
+diff --git a/src/_updown/_updown.in b/src/_updown/_updown.in
+index 34eaf68c7..514ecb578 100644
+--- a/src/_updown/_updown.in
++++ b/src/_updown/_updown.in
+@@ -242,10 +242,10 @@ up-host:iptables)
  	# connection to me, with (left/right)firewall=yes, coming up
  	# This is used only by the default updown script, not by your custom
  	# ones, so do not mess with it; see CAUTION comment up at top.
@@ -10,12 +19,11 @@ diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_upd
  	    -s $PLUTO_PEER_CLIENT $S_PEER_PORT \
  	    -d $PLUTO_ME $D_MY_PORT $IPSEC_POLICY_IN -j ACCEPT
 -	iptables -I OUTPUT 1 -o $PLUTO_INTERFACE -p $PLUTO_PEER_PROTOCOL \
--	    -s $PLUTO_ME $S_MY_PORT $IPSEC_POLICY_OUT \
--	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j ACCEPT
++	iptables --wait -I IPSECOUTPUT 1 -o $PLUTO_INTERFACE -p $PLUTO_PEER_PROTOCOL \
+ 	    -s $PLUTO_ME $S_MY_PORT $IPSEC_POLICY_OUT \
+ 	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j ACCEPT
  	#
- 	# allow IPIP traffic because of the implicit SA created by the kernel if
- 	# IPComp is used (for small inbound packets that are not compressed)
-@@ -263,10 +260,10 @@
+@@ -263,10 +263,10 @@ up-host:iptables)
  	  if [ "$PLUTO_PEER_CLIENT" = "$PLUTO_PEER/32" ]
  	  then
  	    logger -t $TAG -p $FAC_PRIO \
@@ -28,7 +36,7 @@ diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_upd
  	  fi
  	fi
  	;;
-@@ -274,12 +271,9 @@
+@@ -274,10 +274,10 @@ down-host:iptables)
  	# connection to me, with (left/right)firewall=yes, going down
  	# This is used only by the default updown script, not by your custom
  	# ones, so do not mess with it; see CAUTION comment up at top.
@@ -37,12 +45,11 @@ diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_upd
  	    -s $PLUTO_PEER_CLIENT $S_PEER_PORT \
  	    -d $PLUTO_ME $D_MY_PORT $IPSEC_POLICY_IN -j ACCEPT
 -	iptables -D OUTPUT -o $PLUTO_INTERFACE -p $PLUTO_PEER_PROTOCOL \
--	    -s $PLUTO_ME $S_MY_PORT $IPSEC_POLICY_OUT \
--	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j ACCEPT
++	iptables --wait -D IPSECOUTPUT -o $PLUTO_INTERFACE -p $PLUTO_PEER_PROTOCOL \
+ 	    -s $PLUTO_ME $S_MY_PORT $IPSEC_POLICY_OUT \
+ 	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j ACCEPT
  	#
- 	# IPIP exception teardown
- 	if [ -n "$PLUTO_IPCOMP" ]
-@@ -294,10 +288,10 @@
+@@ -294,10 +294,10 @@ down-host:iptables)
  	  if [ "$PLUTO_PEER_CLIENT" = "$PLUTO_PEER/32" ]
  	  then
  	    logger -t $TAG -p $FAC_PRIO -- \
@@ -55,7 +62,7 @@ diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_upd
  	  fi
  	fi
  	;;
-@@ -305,34 +299,16 @@
+@@ -305,34 +305,16 @@ up-client:iptables)
  	# connection to client subnet, with (left/right)firewall=yes, coming up
  	# This is used only by the default updown script, not by your custom
  	# ones, so do not mess with it; see CAUTION comment up at top.
@@ -91,7 +98,7 @@ diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_upd
  	      -s $PLUTO_PEER -d $PLUTO_ME $IPSEC_POLICY_IN -j ACCEPT
  	fi
  	#
-@@ -342,47 +318,42 @@
+@@ -342,10 +324,10 @@ up-client:iptables)
  	  if [ "$PLUTO_PEER_CLIENT" = "$PLUTO_PEER/32" ]
  	  then
  	    logger -t $TAG -p $FAC_PRIO \
@@ -103,25 +110,8 @@ diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_upd
 +	      "client+ $PLUTO_PEER_ID $PLUTO_PEER_CLIENT == $PLUTO_PEER -- $PLUTO_ME == $PLUTO_MY_CLIENT"
  	  fi
  	fi
-+
-+	#
-+	# Open Firewall for IPinIP + AH + ESP Traffic
-+	  iptables --wait -I IPSECINPUT 1 -i $PLUTO_INTERFACE -p IP \
-+	      -s $PLUTO_PEER $S_PEER_PORT \
-+	      -d $PLUTO_ME $D_MY_PORT -j ACCEPT
-+	  iptables --wait -I IPSECINPUT 1 -i $PLUTO_INTERFACE -p AH \
-+	      -s $PLUTO_PEER $S_PEER_PORT \
-+	      -d $PLUTO_ME $D_MY_PORT -j ACCEPT
-+	  iptables --wait -I IPSECINPUT 1 -i $PLUTO_INTERFACE -p ESP \
-+	      -s $PLUTO_PEER $S_PEER_PORT \
-+	      -d $PLUTO_ME $D_MY_PORT -j ACCEPT
-+	if [ $VPN_LOGGING ]
-+	then
-+	    logger -t $TAG -p $FAC_PRIO \
-+	      "tunnel+ $PLUTO_PEER -- $PLUTO_ME"
-+	fi
  	;;
- down-client:iptables)
+@@ -353,36 +335,14 @@ down-client:iptables)
  	# connection to client subnet, with (left/right)firewall=yes, going down
  	# This is used only by the default updown script, not by your custom
  	# ones, so do not mess with it; see CAUTION comment up at top.
@@ -159,7 +149,7 @@ diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_upd
  	      -s $PLUTO_PEER -d $PLUTO_ME $IPSEC_POLICY_IN -j ACCEPT
  	fi
  	#
-@@ -392,12 +363,29 @@
+@@ -392,10 +352,10 @@ down-client:iptables)
  	  if [ "$PLUTO_PEER_CLIENT" = "$PLUTO_PEER/32" ]
  	  then
  	    logger -t $TAG -p $FAC_PRIO -- \
@@ -171,27 +161,8 @@ diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_upd
 +	      "client- $PLUTO_PEER_ID $PLUTO_PEER_CLIENT == $PLUTO_PEER -- $PLUTO_ME == $PLUTO_MY_CLIENT"
  	  fi
  	fi
-+
-+	#
-+	# Close Firewall for IPinIP + AH + ESP Traffic
-+	  iptables --wait -D IPSECINPUT -i $PLUTO_INTERFACE -p IP \
-+	      -s $PLUTO_PEER $S_PEER_PORT \
-+	      -d $PLUTO_ME $D_MY_PORT -j ACCEPT
-+	  iptables --wait -D IPSECINPUT -i $PLUTO_INTERFACE -p AH \
-+	      -s $PLUTO_PEER $S_PEER_PORT \
-+	      -d $PLUTO_ME $D_MY_PORT -j ACCEPT
-+	  iptables --wait -D IPSECINPUT -i $PLUTO_INTERFACE -p ESP \
-+	      -s $PLUTO_PEER $S_PEER_PORT \
-+	      -d $PLUTO_ME $D_MY_PORT -j ACCEPT
-+	if [ $VPN_LOGGING ]
-+	then
-+	    logger -t $TAG -p $FAC_PRIO \
-+	      "tunnel- $PLUTO_PEER -- $PLUTO_ME"
-+	fi
  	;;
- #
- # IPv6
-@@ -422,10 +410,10 @@
+@@ -422,10 +382,10 @@ up-host-v6:iptables)
  	# connection to me, with (left/right)firewall=yes, coming up
  	# This is used only by the default updown script, not by your custom
  	# ones, so do not mess with it; see CAUTION comment up at top.
@@ -204,7 +175,7 @@ diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_upd
  	    -s $PLUTO_ME $S_MY_PORT $IPSEC_POLICY_OUT \
  	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j ACCEPT
  	#
-@@ -454,10 +442,10 @@
+@@ -454,10 +414,10 @@ down-host-v6:iptables)
  	# connection to me, with (left/right)firewall=yes, going down
  	# This is used only by the default updown script, not by your custom
  	# ones, so do not mess with it; see CAUTION comment up at top.
@@ -217,7 +188,7 @@ diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_upd
  	    -s $PLUTO_ME $S_MY_PORT $IPSEC_POLICY_OUT \
  	    -d $PLUTO_PEER_CLIENT $D_PEER_PORT -j ACCEPT
  	#
-@@ -487,10 +475,10 @@
+@@ -487,10 +447,10 @@ up-client-v6:iptables)
  	# ones, so do not mess with it; see CAUTION comment up at top.
  	if [ "$PLUTO_PEER_CLIENT" != "$PLUTO_MY_SOURCEIP/128" ]
  	then
@@ -230,7 +201,7 @@ diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_upd
  	      -s $PLUTO_PEER_CLIENT $S_PEER_PORT \
  	      -d $PLUTO_MY_CLIENT $D_MY_PORT $IPSEC_POLICY_IN -j ACCEPT
  	fi
-@@ -499,10 +487,10 @@
+@@ -499,10 +459,10 @@ up-client-v6:iptables)
  	# or sometimes host access via the internal IP is needed
  	if [ -n "$PLUTO_MY_SOURCEIP" -o -n "$PLUTO_HOST_ACCESS" ]
  	then
@@ -243,7 +214,7 @@ diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_upd
  	      -s $PLUTO_MY_CLIENT $S_MY_PORT \
  	      -d $PLUTO_PEER_CLIENT $D_PEER_PORT $IPSEC_POLICY_OUT -j ACCEPT
  	fi
-@@ -535,11 +523,11 @@
+@@ -535,11 +495,11 @@ down-client-v6:iptables)
  	# ones, so do not mess with it; see CAUTION comment up at top.
  	if [ "$PLUTO_PEER_CLIENT" != "$PLUTO_MY_SOURCEIP/128" ]
  	then
@@ -257,7 +228,7 @@ diff -Naur strongswan-5.9.3.org/src/_updown/_updown.in strongswan-5.9.3/src/_upd
  	      -s $PLUTO_PEER_CLIENT $S_PEER_PORT \
  	      -d $PLUTO_MY_CLIENT $D_MY_PORT \
  	         $IPSEC_POLICY_IN -j ACCEPT
-@@ -549,11 +537,11 @@
+@@ -549,11 +509,11 @@ down-client-v6:iptables)
  	# or sometimes host access via the internal IP is needed
  	if [ -n "$PLUTO_MY_SOURCEIP" -o -n "$PLUTO_HOST_ACCESS" ]
  	then

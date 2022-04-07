@@ -62,9 +62,9 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 foomatic-db-$(VER_DB).tar.gz = $(DL_FROM)/foomatic-db-$(VER_DB).tar.gz
 foomatic-db-engine-$(VER).tar.gz = $(DL_FROM)/foomatic-db-engine-$(VER).tar.gz
 
-$(DL_FILE)_MD5 = b05f5dcbfe359f198eef3df5b283d896
-foomatic-db-$(VER_DB).tar.gz_MD5 = ffe38b354cb06a1f3d5e3b01b7e58b0e
-foomatic-db-engine-$(VER).tar.gz_MD5 = 5b33c1adb21e7b6f3652e9a18d0e6f4e
+$(DL_FILE)_BLAKE2 = 2c8089dd0a07677885180efd6157576a1e84448aeda83bdb0e1c2692242cd711eaa0c32956a5434ea109706bc9733118ee886caf1cab085d53d480ac45fd80e7
+foomatic-db-$(VER_DB).tar.gz_BLAKE2 = 030f9753327c745dfbd6648ca624fe396eb83da2a94aafd0ada948377350dcc4432f3ceac3f544f2c03dba579561c272004ba9f29ddaeefcaae31b9ebd81cfac
+foomatic-db-engine-$(VER).tar.gz_BLAKE2 = e4835ce6f2f683852fef9f6b2cdd13a8a5c232b1cb0ef78d81944795fac115a8c68c0e0ff1d4dfa4926b72eaa5f6e6abc1e639a4c6be8e907e1ad3da271c9fe6
 
 install : $(TARGET)
 
@@ -72,13 +72,13 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:
 	$(PAK)
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -87,8 +87,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

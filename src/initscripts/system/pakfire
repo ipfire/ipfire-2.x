@@ -27,11 +27,8 @@ export GNUPGHOME="/opt/pakfire/etc/.gnupg"
 case "${1}" in
 	start)
 		boot_mesg "Setting up Pakfire Package Manager..."
-		gpg --import /opt/pakfire/pakfire-2018.key &>/dev/null
+		gpg --import /opt/pakfire/pakfire-2018.key /opt/pakfire/pakfire-2022.key &>/dev/null
 		evaluate_retval
-
-		# Try to import the old key, too
-		gpg --import /opt/pakfire/pakfire-2007.key &>/dev/null
 		;;
 
 	*)

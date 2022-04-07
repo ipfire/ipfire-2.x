@@ -78,7 +78,7 @@ our %Providers = (
 	},
 
 	# Etnetera Aggressive Blacklist.
-	etnetera_aggresive => {
+	etnetera_aggressive => {
 		summary => "Etnetera Aggressive Blacklist Rules",
 		website => "https://security.etnetera.cz/",
 		tr_string => "etnetera aggressive blacklist rules",

@@ -589,7 +589,7 @@ foreach my $line (@conntrack) {
 		}
 
 		$sport_extra = "<span style='color:#FFFFFF;'>&gt;</span> ";
-		$sport_extra .= "<a href='http://isc.sans.org/port_details.php?port=$sport_ret' target='top' title='$sserv_ret'>";
+		$sport_extra .= "<a href='https://isc.sans.edu/port.html?port=$sport_ret' target='top' title='$sserv_ret'>";
 		$sport_extra .= " <span style='color:#FFFFFF;'>$sport_ret</span>";
 		$sport_extra .= "</a>";
 	}
@@ -602,7 +602,7 @@ foreach my $line (@conntrack) {
 		}
 
 		$dport_extra = "<span style='color:#FFFFFF;'>&gt;</span> ";
-		$dport_extra .= "<a href='http://isc.sans.org/port_details.php?port=$dport_ret' target='top' title='$dserv_ret'>";
+		$dport_extra .= "<a href='https://isc.sans.edu/port.html?port=$dport_ret' target='top' title='$dserv_ret'>";
 		$dport_extra .= " <span style='color:#FFFFFF;'>$dport_ret</span>";
 		$dport_extra .= "</a>";
 	}
@@ -617,7 +617,7 @@ foreach my $line (@conntrack) {
 			$sip_extra
 		</td>
 		<td style='text-align:center; background-color:$sip_colour;'>
-			<a href='http://isc.sans.org/port_details.php?port=$sport' target='top' title='$sserv'>
+			<a href='https://isc.sans.edu/port.html?port=$sport' target='top' title='$sserv'>
 				<span style='color:#FFFFFF;'>$sport</span>
 			</a>
 			$sport_extra
@@ -632,7 +632,7 @@ foreach my $line (@conntrack) {
 			$dip_extra
 		</td>
 		<td style='text-align:center; background-color:$dip_colour;'>
-			<a href='http://isc.sans.org/port_details.php?port=$dport' target='top' title='$dserv'>
+			<a href='https://isc.sans.edu/port.html?port=$dport' target='top' title='$dserv'>
 				<span style='color:#FFFFFF;'>$dport</span>
 			</a>
 			$dport_extra

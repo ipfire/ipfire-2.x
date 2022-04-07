@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,9 @@ include Config
 
 SUMMARY    = The Reliable, High Performance TCP/HTTP Load Balancer
 
-VER        = 2.2.4
+VER        = 2.4.15
+
+# From: https://www.haproxy.org/download/2.4/src/haproxy-2.4.15.tar.gz
 
 THISAPP    = haproxy-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +36,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = haproxy
-PAK_VER    = 19
+PAK_VER    = 20
 
 DEPS       =
 
@@ -52,7 +54,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c2717fcff503ef8574cd6395e2ca4d24
+$(DL_FILE)_BLAKE2 = 425444a54e22cca8d15cb808283be3baefcd2ce56447d91bce3b4f4b7f6606e03d2eb8a242891c619cfd0fad9aba5bb84026c68d41f07cd55f083481df234899
 
 install : $(TARGET)
 
@@ -60,13 +62,13 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:
 	@$(PAK)
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -75,8 +77,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

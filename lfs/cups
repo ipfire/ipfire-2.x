@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = c2e5143d06f21e19ea2b73913185656f
+$(DL_FILE)_BLAKE2 = 690d9d92f9bc84c2bb360699191cd67e1489ffc3ab219376dfc1a8795379950c95bf58c2033a0dbd2918262c5d104e21e31c4585cb35d229b0fac6cf4967bfd7
 
 install : $(TARGET)
 
@@ -55,13 +55,13 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:
 	$(PAK)
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -70,8 +70,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details
@@ -96,6 +96,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 	cd $(DIR_APP) && ln -v -sf /usr/bin/smbspool /usr/lib/cups/backend/smb
+
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/cups \
+                         /var/ipfire/backup/addons/includes/cups
 
 	# install initscript
 	$(call INSTALL_INITSCRIPTS,$(SERVICES))

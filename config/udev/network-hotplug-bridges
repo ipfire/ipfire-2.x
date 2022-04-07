@@ -80,11 +80,17 @@ MODE="$(get_value "${ZONE}_MODE")"
 
 # The name of the virtual bridge
 BRIDGE="$(get_value "${ZONE}_DEV")"
+MTU="$(get_value "${ZONE}_MTU")"
 STP="$(get_value "${ZONE}_STP")"
 STP_PRIORITY="$(get_value "${ZONE}_STP_PRIORITY")"
 
 case "${MODE}" in
 	bridge)
+		# Set default MTU if nothing is set
+		if [ -z "${MTU}" ]; then
+			MTU=1500
+		fi
+
 		# We need to check if $STP_PRIORITY has a valid value if not set it
 		if [ -z "${STP_PRIORITY}" ]; then
 			STP_PRIORITY=16384
@@ -95,7 +101,7 @@ case "${MODE}" in
 
 		# We need to create the bridge if it doesn't exist, yet
 		if [ ! -d "/sys/class/net/${BRIDGE}" ]; then
-			ip link add "${BRIDGE}" address "${ADDRESS}" type bridge \
+			ip link add "${BRIDGE}" address "${ADDRESS}" mtu "${MTU}" type bridge \
 				$([ "${STP}" = "on" ] && echo "stp_state 1  priority ${STP_PRIORITY}" )
 			#ip link set "${BRIDGE}" up
 		fi
@@ -104,6 +110,9 @@ case "${MODE}" in
 		if [ -d "/sys/class/net/${INTERFACE}/phy80211" ]; then
 			iw dev "${INTERFACE}" set type __ap
 		fi
+
+		# Attempt to set the MTU
+		ip link set dev "${INTERFACE}" mtu "${MTU}"
 
 		# Attach the physical device
 		logger "Attach ${INTERFACE} to ${BRIDGE}"

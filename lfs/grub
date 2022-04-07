@@ -61,8 +61,8 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 unifont-7.0.03.pcf.gz = $(DL_FROM)/unifont-7.0.03.pcf.gz
 
-$(DL_FILE)_MD5 = cf0fd928b1e5479c8108ee52cb114363
-unifont-7.0.03.pcf.gz_MD5 = f6903ac8c1caeeb30c1e9a2975028401
+$(DL_FILE)_BLAKE2 = 2a40b9b03d7bb3b9e7b1309ab274d686f01b3c42e7035ebc6e5a0e59a59c3b7362ba518341664b314cb0dbc8222bb10ea05ce09f08ce9d58a293207cb909e417
+unifont-7.0.03.pcf.gz_BLAKE2 = fb96c1786fcc8c77796c90ce30a2b7d544013bd62cedbf7b027e1894fe75cdbd2044717796cb0e3150db1457fcb58076491d9c0b855621b652fb9a52c0793469
 
 install : $(TARGET)
 
@@ -70,10 +70,10 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -82,8 +82,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

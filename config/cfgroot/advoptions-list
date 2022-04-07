@@ -7,6 +7,7 @@ option cookie-servers ip-address [, ip-address... ];
 option default-ip-ttl uint8;
 option default-tcp-ttl uint8;
 option dhcp-client-identifier data-string;
+option domain-search domain-list;
 option finger-server ip-address [, ip-address... ];
 option font-servers ip-address [, ip-address... ];
 option host-name string;

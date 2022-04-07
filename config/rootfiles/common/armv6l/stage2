@@ -90,7 +90,6 @@ usr/local/bin/backupiso
 usr/local/bin/connscheduler
 usr/local/bin/consort.sh
 usr/local/bin/convert-dns-settings
-usr/local/bin/convert-ovpn
 usr/local/bin/convert-to-location
 usr/local/bin/filesystem-cleanup
 usr/local/bin/hddshutdown
@@ -98,7 +97,6 @@ usr/local/bin/ipsec-interfaces
 usr/local/bin/makegraphs
 usr/local/bin/qosd
 usr/local/bin/readhash
-usr/local/bin/rebuild-initrd
 usr/local/bin/run-parts
 usr/local/bin/scanhd
 usr/local/bin/settime
@@ -130,7 +128,6 @@ usr/local/bin/update-location-database
 #usr/local/src
 #usr/sbin
 usr/sbin/openvpn-metrics
-usr/sbin/ovpn-ccd-convert
 #usr/share
 #usr/share/doc
 #usr/share/doc/licenses

@@ -1,8 +1,8 @@
 bin/lowntfs-3g
 bin/ntfs-3g
 #lib/libntfs-3g.so
-lib/libntfs-3g.so.88
-lib/libntfs-3g.so.88.0.0
+lib/libntfs-3g.so.89
+lib/libntfs-3g.so.89.0.0
 sbin/mkfs.ntfs
 sbin/mount.lowntfs-3g
 sbin/mount.ntfs-3g
@@ -53,11 +53,11 @@ usr/bin/ntfsls
 #usr/include/ntfs-3g/unistr.h
 #usr/include/ntfs-3g/volume.h
 #usr/include/ntfs-3g/xattrs.h
-#usr/lib/libntfs-3g.a
 #usr/lib/libntfs-3g.la
 #usr/lib/libntfs-3g.so
 #usr/lib/ntfs-3g
 #usr/lib/pkgconfig/libntfs-3g.pc
+usr/sbin/mkfs.ntfs
 usr/sbin/mkntfs
 usr/sbin/ntfsclone
 usr/sbin/ntfscp

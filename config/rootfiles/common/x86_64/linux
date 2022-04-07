@@ -6408,6 +6408,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ALX
 #lib/modules/KVER-ipfire/build/include/config/AMD8111_ETH
 #lib/modules/KVER-ipfire/build/include/config/AMD_IOMMU
+#lib/modules/KVER-ipfire/build/include/config/AMD_IOMMU_V2
 #lib/modules/KVER-ipfire/build/include/config/AMD_NB
 #lib/modules/KVER-ipfire/build/include/config/AMD_PHY
 #lib/modules/KVER-ipfire/build/include/config/AMD_PMC
@@ -6680,7 +6681,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_INITRD
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_INTEGRITY
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_INTEGRITY_T10
-#lib/modules/KVER-ipfire/build/include/config/BLK_DEV_IO_TRACE
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_LOOP
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_LOOP_MIN_COUNT
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_MD
@@ -8070,6 +8070,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/INTEL_IOATDMA
 #lib/modules/KVER-ipfire/build/include/config/INTEL_IOMMU
 #lib/modules/KVER-ipfire/build/include/config/INTEL_IOMMU_FLOPPY_WA
+#lib/modules/KVER-ipfire/build/include/config/INTEL_IOMMU_SVM
 #lib/modules/KVER-ipfire/build/include/config/INTEL_IPS
 #lib/modules/KVER-ipfire/build/include/config/INTEL_ISH_HID
 #lib/modules/KVER-ipfire/build/include/config/INTEL_LDMA
@@ -8090,6 +8091,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/IOMMU_IOVA
 #lib/modules/KVER-ipfire/build/include/config/IOMMU_IO_PGTABLE
 #lib/modules/KVER-ipfire/build/include/config/IOMMU_SUPPORT
+#lib/modules/KVER-ipfire/build/include/config/IOMMU_SVA_LIB
 #lib/modules/KVER-ipfire/build/include/config/IONIC
 #lib/modules/KVER-ipfire/build/include/config/IOSCHED_BFQ
 #lib/modules/KVER-ipfire/build/include/config/IOSF_MBI
@@ -8345,7 +8347,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/LAN743X
 #lib/modules/KVER-ipfire/build/include/config/LCD_CLASS_DEVICE
 #lib/modules/KVER-ipfire/build/include/config/LCD_PLATFORM
-#lib/modules/KVER-ipfire/build/include/config/LDISC_AUTOLOAD
 #lib/modules/KVER-ipfire/build/include/config/LDM_PARTITION
 #lib/modules/KVER-ipfire/build/include/config/LD_IS_BFD
 #lib/modules/KVER-ipfire/build/include/config/LD_ORPHAN_WARN
@@ -8414,6 +8415,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/LOCKD_V4
 #lib/modules/KVER-ipfire/build/include/config/LOCKUP_DETECTOR
 #lib/modules/KVER-ipfire/build/include/config/LOCK_DEBUGGING_SUPPORT
+#lib/modules/KVER-ipfire/build/include/config/LOCK_DOWN_KERNEL_FORCE_INTEGRITY
 #lib/modules/KVER-ipfire/build/include/config/LOCK_EVENT_COUNTS
 #lib/modules/KVER-ipfire/build/include/config/LOCK_SPIN_ON_OWNER
 #lib/modules/KVER-ipfire/build/include/config/LOGO
@@ -9867,6 +9869,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SECURITY
 #lib/modules/KVER-ipfire/build/include/config/SECURITYFS
 #lib/modules/KVER-ipfire/build/include/config/SECURITY_DMESG_RESTRICT
+#lib/modules/KVER-ipfire/build/include/config/SECURITY_LOCKDOWN_LSM
+#lib/modules/KVER-ipfire/build/include/config/SECURITY_LOCKDOWN_LSM_EARLY
 #lib/modules/KVER-ipfire/build/include/config/SELECT_MEMORY_MODEL
 #lib/modules/KVER-ipfire/build/include/config/SENSORS_ABITUGURU
 #lib/modules/KVER-ipfire/build/include/config/SENSORS_ABITUGURU3

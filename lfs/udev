@@ -42,8 +42,8 @@ objects = $(DL_FILE) udev-lfs-$(RULES_VER).tar.bz2
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 udev-lfs-$(RULES_VER).tar.bz2 = $(DL_FROM)/udev-lfs-$(RULES_VER).tar.bz2
 
-$(DL_FILE)_MD5 = 902c4cdc9235838067cc69978a780e72
-udev-lfs-$(RULES_VER).tar.bz2_MD5 = d92afb0c6e8e616792068ee4737b0d24
+$(DL_FILE)_BLAKE2 = 7705c1526b043cbef1efcf29c1728639e063845a5ee91b0ad22d43335dce34bf2ebbe4257ca024680759020d4120a8293f62cf8e112fb1191c35f0ec2f96b681
+udev-lfs-$(RULES_VER).tar.bz2_BLAKE2 = b5fb8177a87719e28adc976b83953024dbcfb8739b0c2e61da186cbc4df5e75e62c888da987d15c64db164002bb0a1e66ce0ff206b143dc953d7571b66d5d5c0
 
 install : $(TARGET)
 
@@ -51,10 +51,10 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -63,8 +63,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

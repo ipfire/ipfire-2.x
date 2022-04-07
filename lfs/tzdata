@@ -45,8 +45,8 @@ objects = tzdata$(TZDATA_VER).tar.gz tzcode$(TZCODE_VER).tar.gz
 tzdata$(TZDATA_VER).tar.gz = $(DL_FROM)/tzdata$(TZDATA_VER).tar.gz
 tzcode$(TZCODE_VER).tar.gz = $(DL_FROM)/tzcode$(TZCODE_VER).tar.gz
 
-tzdata$(TZDATA_VER).tar.gz_MD5 = 20eae7d1da671c6eac56339c8df85bbd
-tzcode$(TZCODE_VER).tar.gz_MD5 = 41a624869eed4cc36b9d163764f972a3
+tzdata$(TZDATA_VER).tar.gz_BLAKE2 = b8d177e90e22bd8a3fd23c9a9c19896cb245efd8e768b59ab8c63e56ab141e67331f3231e3a7c802f844375049cfd902e14e912ce677b3aea38fc0d968905e87
+tzcode$(TZCODE_VER).tar.gz_BLAKE2 = 4072685f2344602ffcfe32a7bf92d3b0d93e38ffca842f1c07a60db5e26f1f18ab32fc7b5f155b0bdab49f8d0bfcd5b58f4a192b4d06d7d9639893e5cb596328
 
 install : $(TARGET)
 
@@ -54,10 +54,10 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 ###############################################################################
-# Downloading, checking, md5sum
+# Downloading, checking, b2sum
 ###############################################################################
 
 $(patsubst %,$(DIR_CHK)/%,$(objects)) :
@@ -66,8 +66,8 @@ $(patsubst %,$(DIR_CHK)/%,$(objects)) :
 $(patsubst %,$(DIR_DL)/%,$(objects)) :
 	@$(LOAD)
 
-$(subst %,%_MD5,$(objects)) :
-	@$(MD5)
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
 
 ###############################################################################
 # Installation Details

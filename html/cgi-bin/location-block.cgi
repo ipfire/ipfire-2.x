@@ -76,9 +76,8 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	# Mark the firewall config as changed.
 	&General::firewall_config_changed();
 
-	# Assign reload notice. We directly can use
-	# the notice from p2p block.
-	$notice = $Lang::tr{'p2p block save notice'};
+	# Assign reload notice.
+	$notice = $Lang::tr{'fw rules reload notice'};
 }
 
 &Header::openpage($Lang::tr{'locationblock configuration'}, 1, '');

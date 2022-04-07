@@ -42,7 +42,7 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:
 	@$(PAK)
@@ -58,7 +58,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	depmod -a $(KVER)-$(VERSUFIX)
 
 	# Create initramfs images
-	dracut --force --early-microcode --verbose --strip --xz /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
+	dracut --force --verbose --strip /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
 
 ifeq "$(BUILD_ARCH)" "armv6l"
 	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(KVER)-$(VERSUFIX)

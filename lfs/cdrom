@@ -133,7 +133,7 @@ check :
 
 download :
 
-md5 :
+b2 :
 
 ###############################################################################
 # Installation Details
@@ -181,7 +181,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 ifeq "$(HAS_KERNEL)" "1"
 	cp /boot/vmlinuz-$(KVER)-ipfire $(DIR_TMP)/cdrom/boot/isolinux/vmlinuz
-	dracut --force --early-microcode -a "installer" --strip --xz $(DIR_TMP)/cdrom/boot/isolinux/instroot $(KVER)-ipfire
+	dracut --force -a "installer" --strip $(DIR_TMP)/cdrom/boot/isolinux/instroot $(KVER)-ipfire
 endif
 
 ifeq "$(HAS_ISOLINUX)" "1"

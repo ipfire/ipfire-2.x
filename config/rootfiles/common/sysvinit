@@ -1,6 +1,6 @@
 bin/mountpoint
 bin/pidof
-#etc/inittab.d
+etc/inittab.d
 #sbin/bootlogd
 #sbin/fstab-decode
 sbin/halt
