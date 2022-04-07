@@ -1331,7 +1331,6 @@ buildipfire() {
   lfsmake2 libexif
   lfsmake2 libpng
   lfsmake2 libtiff
-  lfsmake2 libart
   lfsmake2 gd
   lfsmake2 slang
   lfsmake2 newt
