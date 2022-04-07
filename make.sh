@@ -1317,7 +1317,6 @@ buildipfire() {
   lfsmake2 ca-certificates
   lfsmake2 fireinfo
   lfsmake2 libnet
-  lfsmake2 libnl
   lfsmake2 libnl-3
   lfsmake2 libidn
   lfsmake2 nasm
