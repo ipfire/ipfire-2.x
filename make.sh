@@ -1673,7 +1673,6 @@ buildipfire() {
   lfsmake2 perl-IO-String
   lfsmake2 perl-PDF-API2
   lfsmake2 proxy-accounting
-  lfsmake2 pigz
   lfsmake2 tmux
   lfsmake2 perl-Text-CSV_XS
   lfsmake2 lua
