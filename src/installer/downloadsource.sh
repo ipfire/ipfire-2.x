@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -48,17 +48,17 @@ if ! download -O "${OUTPUT}" "${URL}"; then
 	exit 1
 fi
 
-# Download went well. Checking for MD5 sum
-if download -O "${OUTPUT}.md5" "${URL}.md5" &>/dev/null; then
+# Download went well. Checking for BLAKE2 sum
+if download -O "${OUTPUT}.b2" "${URL}.b2" &>/dev/null; then
 	# Read downloaded checksum
-	read -r md5sum rest < "${OUTPUT}.md5"
-	rm -f "${OUTPUT}.md5"
+	read -r b2sum rest < "${OUTPUT}.b2"
+	rm -f "${OUTPUT}.b2"
 
 	# Compute checkum of downloaded image file
-	read -r md5sum_image rest <<< "$(md5sum "${OUTPUT}")"
+	read -r b2sum_image rest <<< "$(b2sum "${OUTPUT}")"
 
-	if [ "${md5sum}" != "${md5sum_image}" ]; then
-		echo "MD5 sum mismatch: ${md5sum} != ${md5sum_image}" >&2
+	if [ "${b2sum}" != "${b2sum_image}" ]; then
+		echo "BLAKE2 checksum mismatch: ${b2sum} != ${b2sum_image}" >&2
 		exit 2
 	fi
 fi
