@@ -109,8 +109,8 @@ msgstr "Yükleme dosyası indiriliyor..."
 
 #: main.c:510
 #, c-format
-msgid "MD5 checksum mismatch"
-msgstr "MD5 checksum uyuşmuyor"
+msgid "BLAKE2 checksum mismatch"
+msgstr "BLAKE2 checksum uyuşmuyor"
 
 #: main.c:513
 #, c-format

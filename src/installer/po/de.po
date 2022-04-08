@@ -110,8 +110,8 @@ msgstr "Lade Installationsimage herunter..."
 
 #: main.c:510
 #, c-format
-msgid "MD5 checksum mismatch"
-msgstr "MD5-Prüfsummen stimmen nicht überein"
+msgid "BLAKE2 checksum mismatch"
+msgstr "BLAKE2-Prüfsummen stimmen nicht überein"
 
 #: main.c:513
 #, c-format

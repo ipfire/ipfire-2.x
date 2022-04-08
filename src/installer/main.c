@@ -539,7 +539,7 @@ int main(int argc, char *argv[]) {
 				} else {
 					char reason[STRING_SIZE] = "-";
 					if (rc == 2)
-						snprintf(reason, sizeof(STRING_SIZE), _("MD5 checksum mismatch"));
+						snprintf(reason, sizeof(STRING_SIZE), _("BLAKE2 checksum mismatch"));
 
 					snprintf(message, sizeof(message),
 						_("The installation image could not be downloaded.\n  Reason: %s\n\n%s"),

@@ -108,8 +108,8 @@ msgstr "Descargando la imagen de instalación..."
 
 #: main.c:510
 #, c-format
-msgid "MD5 checksum mismatch"
-msgstr "Discordancia suma de verificación MD5 "
+msgid "BLAKE2 checksum mismatch"
+msgstr "Discordancia suma de verificación BLAKE2"
 
 #: main.c:513
 #, c-format

@@ -117,8 +117,8 @@ msgstr "Téléchargement de l'image d'installation..."
 
 #: main.c:510
 #, c-format
-msgid "MD5 checksum mismatch"
-msgstr "Erreur de vérification contrôle MD5"
+msgid "BLAKE2 checksum mismatch"
+msgstr "Erreur de vérification contrôle BLAKE2"
 
 #: main.c:513
 #, c-format

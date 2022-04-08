@@ -107,7 +107,7 @@ msgstr ""
 
 #: main.c:510
 #, c-format
-msgid "MD5 checksum mismatch"
+msgid "BLAKE2 checksum mismatch"
 msgstr ""
 
 #: main.c:513

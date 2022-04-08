@@ -107,8 +107,8 @@ msgstr "Se descarca imaginea de instalare"
 
 #: main.c:510
 #, c-format
-msgid "MD5 checksum mismatch"
-msgstr "Nepotrivire verificare MD5"
+msgid "BLAKE2 checksum mismatch"
+msgstr "Nepotrivire verificare BLAKE2"
 
 #: main.c:513
 #, c-format
