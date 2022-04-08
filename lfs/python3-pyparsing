@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.0.6
+VER        = 3.0.7
 SUMMARY    = Grammar Parser Library for Python
 
 THISAPP    = pyparsing-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-pyparsing
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = bf79fdb20c6dbcec5a79956ed8c68e56edbadd4d71f44a35107dfb0652c1d2ecbc980c95e729f35f94dce5783ad8159848563dadc529d0f4b48a1ce61e12a3aa
+$(DL_FILE)_BLAKE2 = 1f098dd2ae6ffef6f98a44137769198ebad6af1642c1bc784284bedbcd28c617993fb51901d179962ca05f3f8699d24c04b0df5e5e5168a572c0deb506ad4e54
 
 install : $(TARGET)
 
