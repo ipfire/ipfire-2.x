@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.61
+VER        = 6.62
 
 THISAPP    = libwww-perl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 962e81682cad3c12d24d150db4559a133047379aea7f4835d10041591d95cfde2090f5f3fe22750d971524dbae8aaa3c185a5f37f75ad1ce66ba58038164b09c
+$(DL_FILE)_BLAKE2 = 8ffdb0572b161d0f8215978749ef620e83b1f54d404bbb9667e85d51cd81a73fc0904fe9af247602587681e8a9e6faca2cd8b868ea8a3376d2e82ae41b9a27ec
 
 install : $(TARGET)
 
