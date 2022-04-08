@@ -310,9 +310,6 @@ rm -rvf \
 	/usr/share/zoneinfo/US/Pacific-New \
 	/var/lib/GeoIP
 
-# Delete old 2007 Pakfire key from GPG keyring
-GNUPGHOME="/opt/pakfire/etc/.gnupg" gpg --batch --yes --delete-keys 179740DC4D8C47DC63C099C74BDE364C64D96617
-
 # Stop services
 /etc/init.d/ipsec stop
 
@@ -321,6 +318,9 @@ extract_files
 
 # update linker config
 ldconfig
+
+# Delete old 2007 Pakfire key from GPG keyring
+GNUPGHOME="/opt/pakfire/etc/.gnupg" gpg --batch --yes --delete-keys 179740DC4D8C47DC63C099C74BDE364C64D96617
 
 # Add new 2022 Pakfire key to GPG keyring
 GNUPGHOME="/opt/pakfire/etc/.gnupg" gpg --import /opt/pakfire/pakfire-2022.key
