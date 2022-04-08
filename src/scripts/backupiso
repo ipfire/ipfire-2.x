@@ -80,30 +80,30 @@ then
 	wget --quiet -c ${URL}${ISO}
 fi
 
-echo "Fetching ${URL}${ISO}.md5"
-wget --quiet -O ${ISO}.md5 ${URL}${ISO}.md5
+echo "Fetching ${URL}${ISO}.b2"
+wget --quiet -O ${ISO}.b2 ${URL}${ISO}.b2
 
-echo "Checking md5 of ${ISO}"
-md5sum --status -c ${ISO}.md5
+echo "Checking BLAKE2 checksum of ${ISO}"
+b2sum --status -c ${ISO}.b2
 if [ $? -eq 0 ] || [ $? -eq 24 ]
 then
-	echo "md5 is OK"
+	echo "BLAKE2 checksum is OK"
 else
-	echo "md5 mismatch"
+	echo "BLAKE2 checksum mismatch"
 	echo "Fetching again ${URL}${ISO}"
 	wget --quiet -O ${ISO} ${URL}${ISO}
-	echo "Checking again md5 of ${ISO}"
-	md5sum --status -c ${ISO}.md5
+	echo "Checking BLAKE2 checksum of ${ISO} again"
+	b2sum --status -c ${ISO}.b2
 	if [ $? -eq 0 ] || [ $? -eq 24 ]
 	then
-		echo "md5 is OK"
+		echo "BLAKE2 checksum is OK"
 	else
-		echo "md5 mismatch"
-		echo "aborting backup because md5 mismatch"
+		echo "BLAKE2 checksum mismatch"
+		echo "aborting backup because BLAKE2 checksum mismatch"
 		exit 1
 	fi
 fi
-rm ${ISO}.md5
+rm ${ISO}.b2
 
 echo "Remastering iso"
 mkdir -p backupiso.tmp.${TS}
