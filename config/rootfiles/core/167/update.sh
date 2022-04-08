@@ -344,6 +344,9 @@ perl -e "require '/var/ipfire/ids-functions.pl'; &IDS::oinkmaster();"
 # Apply sysctl changes
 /etc/init.d/sysctl start
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Start services
 /etc/init.d/apache restart
 /etc/init.d/sshd restart
