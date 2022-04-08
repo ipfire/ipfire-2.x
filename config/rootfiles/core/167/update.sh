@@ -341,6 +341,9 @@ dracut --regenerate-all --force
 perl -e "require '/var/ipfire/ids-functions.pl'; &IDS::oinkmaster();"
 /etc/init.d/suricata reload
 
+# Apply sysctl changes
+/etc/init.d/sysctl start
+
 # Start services
 /etc/init.d/apache restart
 /etc/init.d/sshd restart
