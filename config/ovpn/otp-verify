@@ -1,0 +1,106 @@
+#!/usr/bin/perl
+############################################################################
+#                                                                          #
+# This file is part of the IPFire Firewall.                                #
+#                                                                          #
+# IPFire is free software; you can redistribute it and/or modify           #
+# it under the terms of the GNU General Public License as published by     #
+# the Free Software Foundation; either version 2 of the License, or        #
+# (at your option) any later version.                                      #
+#                                                                          #
+# IPFire is distributed in the hope that it will be useful,                #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of           #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the            #
+# GNU General Public License for more details.                             #
+#                                                                          #
+# You should have received a copy of the GNU General Public License        #
+# along with IPFire; if not, write to the Free Software                    #
+# Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
+#                                                                          #
+# Copyright (C) 2022 IPFire Team <info@ipfire.org>.                        #
+#                                                                          #
+############################################################################
+
+use strict;
+use warnings;
+
+use MIME::Base64;
+
+require '/var/ipfire/general-functions.pl';
+
+my $cn;
+my $prefix;
+my $password;
+my $otp;
+my @valid_otps;
+
+#&General::log("otp-verify DEBUG: ENV:common_name: $ENV{'common_name'}");
+
+# line 1: <COMMON NAME>
+# line 2: <CREDENTIALS> e.g.: SCRV1:cGFzc3dvcmQ=:ODg2MTM2
+while(<>) {
+   #&General::log("otp-verify DEBUG: line: $_");
+   if ($_ =~ /^(?!SCRV[[:digit:]]).+/) {
+      chomp;
+      $cn = $_;
+      #$cn =~ s/\s*$//g;
+   }
+   if ($_ =~ /^SCRV[[:digit:]]:.+/) {
+      ($prefix, $password, $otp) = split /:/;
+      $password = decode_base64($password);
+      $otp = decode_base64($otp);
+   }
+}
+
+if ($cn == "") {
+   #&General::log("otp-verify DEBUG: no credentials provided by client, setting CN from ENV.");
+   $cn = $ENV{'common_name'};
+}
+
+#&General::log("otp-verify DEBUG: CN: \"$cn\"\n");
+#&General::log("otp-verify DEBUG: PW: \"$password\"\n");
+#&General::log("otp-verify DEBUG: OTP: \"$otp\"\n");
+#&General::log("otp-verify DEBUG: ----\n");
+
+my %confighash = ();
+if (-f "${General::swroot}/ovpn/ovpnconfig") {
+   &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+   foreach my $key (keys %confighash){
+      if ($cn eq $confighash{$key}[2]) {
+         # Exit successfully for non-roadwarrior connections.
+         exit 0 unless ($confighash{$key}[3] eq "host");
+
+         # Exit successfully for disabled otp connections.
+         exit 0 unless (defined $confighash{$key}[43] and $confighash{$key}[43] eq "on");
+
+         # Exit with failure if required otp config is missing.
+         exit 1 if (not defined $confighash{$key}[42]);
+         exit 1 if (not defined $confighash{$key}[44]);
+
+         #&General::log("otp-verify DEBUG: connection key: $key\n");
+         #&General::log("otp-verify DEBUG: connection type: $confighash{$key}[3]\n");
+         #&General::log("otp-verify DEBUG: CN: $confighash{$key}[2]\n");
+         #&General::log("otp-verify DEBUG: otp Type: $confighash{$key}[42]\n");
+         #&General::log("otp-verify DEBUG: otp State: $confighash{$key}[43]\n");
+         #&General::log("otp-verify DEBUG: otp Secret: $confighash{$key}[44]\n");
+
+         # Get valid OTPs.
+         my @valid_otps = &General::system_output("/usr/bin/oathtool", "--totp", "-w", "3", "$confighash{$key}[44]");
+         foreach (@valid_otps) {
+            # Exit successfully if OTP is correct.
+            exit 0 if ($otp == $_)
+         }
+
+         # Exit with failure if no matching OTP was found.
+         exit 1;
+      }
+   }
+} else {
+   # Return an error if ovpnconfig could not be found.
+   exit 1;
+}
+
+# Exit successfully if no auth-user-pass data received.
+exit 0;
+
+# vim: ts=3 sts=3 sw=3 et nu list

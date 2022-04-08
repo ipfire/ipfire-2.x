@@ -96,6 +96,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mv -v /var/ipfire/ovpn/verify /usr/lib/openvpn/verify
 	chown root:root /usr/lib/openvpn/verify
 	chmod 755 /usr/lib/openvpn/verify
+	mv -v /var/ipfire/ovpn/otp-verify /usr/lib/openvpn/otp-verify
+	chown root:root /usr/lib/openvpn/otp-verify
+	chmod 755 /usr/lib/openvpn/otp-verify
 	# Add crl updater
 	mv -v /var/ipfire/ovpn/openvpn-crl-updater /etc/fcron.daily
 	chown root:root /etc/fcron.daily/openvpn-crl-updater
