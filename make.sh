@@ -1702,6 +1702,7 @@ buildipfire() {
   lfsmake2 perl-Module-Install
   lfsmake2 perl-Imager
   lfsmake2 perl-Imager-QRCode
+  lfsmake2 perl-MIME-Base32
 }
 
 buildinstaller() {
