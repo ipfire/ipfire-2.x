@@ -84,7 +84,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 ifeq "$(ROOT)" ""
 	mv -v /bin/{gzexe,zcmp,zdiff,zegrep} /usr/bin
-	mv -v /bin/{zfgrep,zforce,zgrep,zless,zmore,znew} /usr/bin
+	mv -v /bin/{zfgrep,zforce,zgrep,zmore,znew} /usr/bin
+	ln -s /usr/bin/zmore /usr/bin/zless
 endif
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
