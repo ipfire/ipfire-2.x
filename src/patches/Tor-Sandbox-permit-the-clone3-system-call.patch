@@ -1,13 +1,14 @@
 diff -Naur tor-0.4.6.10.orig/src/lib/sandbox/sandbox.c tor-0.4.6.10/src/lib/sandbox/sandbox.c
---- tor-0.4.6.10.orig/src/lib/sandbox/sandbox.c	2022-03-31 07:17:55.966217291 +0000
-+++ tor-0.4.6.10/src/lib/sandbox/sandbox.c	2022-03-31 07:19:23.730134367 +0000
-@@ -151,6 +151,9 @@
+--- tor-0.4.6.10.orig/src/lib/sandbox/sandbox.c	2022-04-09 07:58:00.281189564 +0000
++++ tor-0.4.6.10/src/lib/sandbox/sandbox.c	2022-04-09 08:00:55.861698856 +0000
+@@ -151,6 +151,10 @@
      SCMP_SYS(clock_gettime),
      SCMP_SYS(close),
      SCMP_SYS(clone),
 +#ifdef __NR_clone3
 +    SCMP_SYS(clone3),
 +#endif
++    SCMP_SYS(rseq),
      SCMP_SYS(dup),
      SCMP_SYS(epoll_create),
      SCMP_SYS(epoll_wait),
