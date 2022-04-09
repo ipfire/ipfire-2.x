@@ -107,8 +107,8 @@ msgstr "Laddar ned installationsavbild..."
 
 #: main.c:510
 #, c-format
-msgid "MD5 checksum mismatch"
-msgstr "MD5 kontrollsumma stämmer ej"
+msgid "BLAKE2 checksum mismatch"
+msgstr "BLAKE2 kontrollsumma stämmer ej"
 
 #: main.c:513
 #, c-format

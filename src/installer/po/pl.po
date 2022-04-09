@@ -109,8 +109,8 @@ msgstr "Pobieranie pliku obrazu instalacji..."
 
 #: main.c:510
 #, c-format
-msgid "MD5 checksum mismatch"
-msgstr "Niezgodność sumy kontrolnej MD5"
+msgid "BLAKE2 checksum mismatch"
+msgstr "Niezgodność sumy kontrolnej BLAKE2"
 
 #: main.c:513
 #, c-format

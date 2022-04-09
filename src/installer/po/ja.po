@@ -107,8 +107,8 @@ msgstr "インストール・イメージをダウンロードしています・
 
 #: main.c:510
 #, c-format
-msgid "MD5 checksum mismatch"
-msgstr "MD5検査合計が不正です。"
+msgid "BLAKE2 checksum mismatch"
+msgstr "BLAKE2検査合計が不正です。"
 
 #: main.c:513
 #, c-format

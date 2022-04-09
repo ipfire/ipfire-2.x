@@ -107,8 +107,8 @@ msgstr "Скачивание образа установки..."
 
 #: main.c:510
 #, c-format
-msgid "MD5 checksum mismatch"
-msgstr "MD5 хеш не совпал"
+msgid "BLAKE2 checksum mismatch"
+msgstr "BLAKE2 хеш не совпал"
 
 #: main.c:513
 #, c-format

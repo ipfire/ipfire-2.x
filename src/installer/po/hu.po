@@ -107,8 +107,8 @@ msgstr "Telepítési kép letöltése..."
 
 #: main.c:510
 #, c-format
-msgid "MD5 checksum mismatch"
-msgstr "MD5 ellenőrzés sikertelen"
+msgid "BLAKE2 checksum mismatch"
+msgstr "BLAKE2 ellenőrzés sikertelen"
 
 #: main.c:513
 #, c-format

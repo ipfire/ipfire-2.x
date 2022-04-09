@@ -110,8 +110,8 @@ msgstr "Baixando imagem de instalação..."
 
 #: main.c:510
 #, c-format
-msgid "MD5 checksum mismatch"
-msgstr "Assinatura MD5 incompatível"
+msgid "BLAKE2 checksum mismatch"
+msgstr "Assinatura BLAKE2 incompatível"
 
 #: main.c:513
 #, c-format

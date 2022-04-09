@@ -107,8 +107,8 @@ msgstr "در حال دانلود ایمیج برای برپا سازی..."
 
 #: main.c:510
 #, c-format
-msgid "MD5 checksum mismatch"
-msgstr "ناهماهنگی در کنرل جمعی MD5"
+msgid "BLAKE2 checksum mismatch"
+msgstr "ناهماهنگی در کنرل جمعی BLAKE2"
 
 #: main.c:513
 #, c-format
