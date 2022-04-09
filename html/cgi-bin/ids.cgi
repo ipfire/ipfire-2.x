@@ -298,7 +298,7 @@ if ($cgiparams{'RULESET'}) {
 	# Loop through the array of used providers.
 	foreach my $provider (@enabled_providers) {
 		# Gather used rulefiles.
-		my @used_rulesfiles = &IDS::read_used_provider_rulesfiles($provider);
+		my @used_rulesfiles = &IDS::get_provider_used_rulesfiles($provider);
 
 		# Loop through the array of used rulesfiles.
 		foreach my $rulefile (@used_rulesfiles) {
@@ -315,30 +315,6 @@ if ($cgiparams{'RULESET'}) {
 
 # Save ruleset.
 if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
-	# Arrays to store which rulefiles have been enabled and will be used.
-	my @enabled_rulefiles;
-
-	# Store if a restart of suricata is required.
-	my $suricata_restart_required;
-
-	# Loop through the hash of idsrules.
-	foreach my $rulefile(keys %idsrules) {
-		# Check if the state of the rulefile has been changed.
-		unless ($cgiparams{$rulefile} eq $idsrules{$rulefile}{'Rulefile'}{'State'}) {
-			# A restart of suricata is required to apply the changes of the used rulefiles.
-			$suricata_restart_required = 1;
-		}
-
-		# Check if the rulefile is enabled.
-		if ($cgiparams{$rulefile} eq "on") {
-			# Add rulefile to the array of enabled rulefiles.
-			push(@enabled_rulefiles, $rulefile);
-
-			# Drop item from cgiparams hash.
-			delete $cgiparams{$rulefile};
-		}
-	}
-
 	# Get enabled providers.
 	my @enabled_providers = &IDS::get_enabled_providers();
 
@@ -347,8 +323,14 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		# Hash to store the used-enabled and disabled sids.
 		my %enabled_disabled_sids;
 
+		# Hash to store the enabled rulefiles for the current processed provider.
+		my %used_rulefiles;
+
 		# Get name of the file which holds the ruleset modification of the provider.
 		my $modifications_file = &IDS::get_provider_ruleset_modifications_file($provider);
+
+		# Get the name of the file which contains the used rulefiles for this provider.
+		my $used_rulefiles_file = &IDS::get_provider_used_rulesfiles_file($provider);
 
 		# Read-in modifications file, if exists.
 		&General::readhash("$modifications_file", \%enabled_disabled_sids) if (-f "$modifications_file");
@@ -363,6 +345,15 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 			# Skip the rulefile if the vendor is not our current processed provider.
 			next unless ($rulefile_vendor eq $provider);
+
+			# Check if the rulefile is enabled.
+			if ($cgiparams{$rulefile} eq "on") {
+				# Add the rulefile to the hash of enabled rulefiles of this provider.
+				$used_rulefiles{$rulefile} = "enabled";
+
+				# Drop item from cgiparams hash.
+				delete $cgiparams{$rulefile};
+			}
 
 			# Loop through the single rules of the rulefile.
 			foreach my $sid (keys %{$idsrules{$rulefile}}) {
@@ -403,37 +394,13 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 			# Write the modifications file.
 			&General::writehash("$modifications_file", \%enabled_disabled_sids);
 		}
-	}
 
-	# Handle enabled / disabled rulefiles.
-	#
-
-	# Loop through the array of enabled providers.
-	foreach my $provider(@enabled_providers) {
-		# Array to store the rulefiles which belong to the current processed provider.
-		my @provider_rulefiles = ();
-
-		# Loop through the array of enabled rulefiles.
-		foreach my $rulesfile (@enabled_rulefiles) {
-			# Split the rulefile name.
-			my @filename_parts = split(/-/, "$rulesfile");
-
-			# Assign vendor name for easy processings.
-			my $vendor = @filename_parts[0];
-
-			# Check if the rulesvendor is our current processed enabled provider.
-			if ("$vendor" eq "$provider") {
-				# Add the rulesfile to the array of provider rulesfiles.
-				push(@provider_rulefiles, $rulesfile);
-			}
-
-			# Call function and write the providers used rulesfile file.
-			&IDS::write_used_provider_rulefiles_file($provider, @provider_rulefiles);
-		}
+		# Write the used rulefiles file.
+		&General::writehash("$used_rulefiles_file", \%used_rulefiles);
 	}
 
 	# Call function to generate and write the used rulefiles file.
-	&IDS::write_main_used_rulefiles_file(@enabled_providers);
+	&IDS::write_used_rulefiles_file(@enabled_providers);
 
 	# Lock the webpage and print message.
 	&working_notice("$Lang::tr{'ids apply ruleset changes'}");
@@ -443,14 +410,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 	# Check if the IDS is running.
 	if(&IDS::ids_is_running()) {
-		# Check if a restart of suricata is required.
-		if ($suricata_restart_required) {
-			# Call suricatactrl to perform the restart.
-			&IDS::call_suricatactrl("restart");
-		} else {
-			# Call suricatactrl to perform a reload.
-			&IDS::call_suricatactrl("reload");
-		}
+		# Call suricatactrl to perform a reload.
+		&IDS::call_suricatactrl("reload");
 	}
 
 	# Reload page.
@@ -503,15 +464,20 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 # Reset a provider to it's defaults.
 } elsif ($cgiparams{'PROVIDERS'} eq "$Lang::tr{'ids reset provider'}") {
+	# Get enabled providers.
+	my @enabled_providers = &IDS::get_enabled_providers();
+
 	# Grab provider handle from cgihash.
 	my $provider = $cgiparams{'PROVIDER'};
 
 	# Lock the webpage and print message.
 	&working_notice("$Lang::tr{'ids apply ruleset changes'}");
 
-	# Create new empty file for used rulefiles
-	# for this provider.
-	&IDS::write_used_provider_rulefiles_file($provider);
+	# Get the name of the file which contains the used rulefiles for this provider.
+	my $used_rulefiles_file = &IDS::get_provider_used_rulesfiles_file($provider);
+
+	# Remove the file if it exists.
+	unlink("$used_rulefiles_file") if (-f "$used_rulefiles_file");
 
 	# Call function to get the path and name for file which holds the ruleset modifications
 	# for the given provider.
@@ -523,21 +489,21 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		unlink("$modifications_file");
 	}
 
+	# Write used rulesfiles file.
+	&IDS::write_used_rulefiles_file(@enabled_providers);
+
 	# Regenerate ruleset.
 	&IDS::oinkmaster();
 
 	# Check if the IDS is running.
 	if(&IDS::ids_is_running()) {
-		# Get enabled providers.
-		my @enabled_providers = &IDS::get_enabled_providers();
-
 		# Get amount of enabled providers.
 		my $amount = @enabled_providers;
 
 		# Check if at least one enabled provider remains.
 		if ($amount >= 1) {
 			# Call suricatactrl to perform a reload.
-			&IDS::call_suricatactrl("restart");
+			&IDS::call_suricatactrl("reload");
 
 		# Stop suricata if no enabled provider remains.
 		} else {
@@ -797,10 +763,6 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 					# Cleanup temporary directory.
 					&IDS::cleanup_tmp_directory();
-
-					# Create new empty file for used rulefiles
-					# for this provider.
-					&IDS::write_used_provider_rulefiles_file($provider);
 				}
 
 				# Perform a reload of the page.
@@ -868,7 +830,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		my @enabled_providers = &IDS::get_enabled_providers();
 
 		# Write the main providers include file.
-		&IDS::write_main_used_rulefiles_file(@enabled_providers);
+		&IDS::write_used_rulefiles_file(@enabled_providers);
 
 		# Check if oinkmaster has to be executed.
 		if ($oinkmaster eq "True") {
@@ -925,7 +887,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	&IDS::drop_dl_rulesfile($provider);
 
 	# Get the name of the provider rulessets include file.
-	my $provider_used_rulefile = &IDS::get_used_provider_rulesfile_file($provider);
+	my $provider_used_rulefile = &IDS::get_provider_used_rulesfiles_file($provider);
 
 	# Drop the file, it is not longer needed.
 	unlink("$provider_used_rulefile");
@@ -947,7 +909,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	my @enabled_providers = &IDS::get_enabled_providers();
 
 	# Regenerate main providers include file.
-	&IDS::write_main_used_rulefiles_file(@enabled_providers);
+	&IDS::write_used_rulefiles_file(@enabled_providers);
 
 	# Check if the IDS is running.
 	if(&IDS::ids_is_running()) {
