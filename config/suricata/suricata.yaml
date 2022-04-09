@@ -47,10 +47,7 @@ vars:
 default-rule-path: /var/lib/suricata
 rule-files:
     # Include enabled ruleset files from external file.
-    include: /var/ipfire/suricata/suricata-used-providers.yaml
-
-    # Include default rules.
-    include: /var/ipfire/suricata/suricata-default-rules.yaml
+    include: /var/ipfire/suricata/suricata-used-rulesfiles.yaml
 
 classification-file: /usr/share/suricata/classification.config
 reference-config-file: /usr/share/suricata/reference.config
