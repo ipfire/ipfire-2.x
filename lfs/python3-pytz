@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2021.3
+VER        = 2022.1
 
 THISAPP    = pytz-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-pytz
-PAK_VER    = 1
+PAK_VER    = 2
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a5f67650cc4eeaa8030fc7d5b7a66bcc397b95e41b492367981580678e1d535cdb425066d4821d9c5f94e4fd813c669987560030c046fc63ecffa2f46e0c3f89
+$(DL_FILE)_BLAKE2 = 9a745629a9e4547f8c8765353e58baa6d63e3e6b357e9ca88f69928fb9350cebb6bb3371eee419b4b92b29e6253f8c24af8c781f10d72211d78cb699043496fe
 
 install : $(TARGET)
 
