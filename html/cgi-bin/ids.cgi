@@ -403,10 +403,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	&IDS::write_used_rulefiles_file(@enabled_providers);
 
 	# Lock the webpage and print message.
-	&working_notice("$Lang::tr{'ids apply ruleset changes'}");
-
-	# Call oinkmaster to alter the ruleset.
-	&IDS::oinkmaster();
+	&oinkmaster_web();
 
 	# Check if the IDS is running.
 	if(&IDS::ids_is_running()) {
@@ -449,7 +446,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 			&reload();
 		} else {
 			# Call subfunction to launch oinkmaster.
-			&IDS::oinkmaster();
+			&oinkmaster_web();
 
 			# Check if the IDS is running.
 			if(&IDS::ids_is_running()) {
@@ -493,7 +490,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	&IDS::write_used_rulefiles_file(@enabled_providers);
 
 	# Regenerate ruleset.
-	&IDS::oinkmaster();
+	&oinkmaster_web();
 
 	# Check if the IDS is running.
 	if(&IDS::ids_is_running()) {
@@ -834,11 +831,8 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 		# Check if oinkmaster has to be executed.
 		if ($oinkmaster eq "True") {
-			# Lock the webpage and print message.
-			&working_notice("$Lang::tr{'ids apply ruleset changes'}");
-
 			# Launch oinkmaster.
-			&IDS::oinkmaster();
+			&oinkmaster_web();
 		}
 
 		# Check if the IDS is running.
@@ -903,7 +897,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	}
 
 	# Regenerate ruleset.
-	&IDS::oinkmaster();
+	&oinkmaster_web();
 
 	# Gather all enabled providers.
 	my @enabled_providers = &IDS::get_enabled_providers();
