@@ -1,10 +1,10 @@
 usr/bin/jp.py
 #usr/lib/python3.10/site-packages/jmespath
-#usr/lib/python3.10/site-packages/jmespath-0.10.0-py3.10.egg-info
-#usr/lib/python3.10/site-packages/jmespath-0.10.0-py3.10.egg-info/PKG-INFO
-#usr/lib/python3.10/site-packages/jmespath-0.10.0-py3.10.egg-info/SOURCES.txt
-#usr/lib/python3.10/site-packages/jmespath-0.10.0-py3.10.egg-info/dependency_links.txt
-#usr/lib/python3.10/site-packages/jmespath-0.10.0-py3.10.egg-info/top_level.txt
+#usr/lib/python3.10/site-packages/jmespath-1.0.0-py3.10.egg-info
+#usr/lib/python3.10/site-packages/jmespath-1.0.0-py3.10.egg-info/PKG-INFO
+#usr/lib/python3.10/site-packages/jmespath-1.0.0-py3.10.egg-info/SOURCES.txt
+#usr/lib/python3.10/site-packages/jmespath-1.0.0-py3.10.egg-info/dependency_links.txt
+#usr/lib/python3.10/site-packages/jmespath-1.0.0-py3.10.egg-info/top_level.txt
 usr/lib/python3.10/site-packages/jmespath/__init__.py
 usr/lib/python3.10/site-packages/jmespath/ast.py
 usr/lib/python3.10/site-packages/jmespath/compat.py
