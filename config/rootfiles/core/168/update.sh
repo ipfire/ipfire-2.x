@@ -47,6 +47,17 @@ rm -rvf \
 	/usr/lib/libsolvext.so* \
 	/usr/sbin/dnet
 
+# Remove netbpm add-on, if installed
+if [ -e "/opt/pakfire/db/installed/meta-netbpm" ]; then
+	for i in $(</opt/pakfire/db/rootfiles/netbpm); do
+		rm -rfv "/${i}"
+	done
+fi
+rm -vf \
+	/opt/pakfire/db/installed/meta-netbpm \
+	/opt/pakfire/db/meta/meta-netbpm \
+	/opt/pakfire/db/rootfiles/netbpm
+
 # Stop services
 
 # Extract files
