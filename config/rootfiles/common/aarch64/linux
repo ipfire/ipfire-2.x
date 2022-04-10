@@ -818,6 +818,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/arch/arm64/include/asm/vdso/gettimeofday.h
 #lib/modules/KVER-ipfire/build/arch/arm64/include/asm/vdso/processor.h
 #lib/modules/KVER-ipfire/build/arch/arm64/include/asm/vdso/vsyscall.h
+#lib/modules/KVER-ipfire/build/arch/arm64/include/asm/vectors.h
 #lib/modules/KVER-ipfire/build/arch/arm64/include/asm/vermagic.h
 #lib/modules/KVER-ipfire/build/arch/arm64/include/asm/virt.h
 #lib/modules/KVER-ipfire/build/arch/arm64/include/asm/vmalloc.h
@@ -6427,7 +6428,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_DMA_PREP_COHERENT
 #lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_ELF_RANDOMIZE
 #lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_FAST_MULTIPLIER
-#lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_FILTER_PGPROT
 #lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_FORTIFY_SOURCE
 #lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_GCOV_PROFILE_ALL
 #lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_GIGANTIC_PAGE
@@ -8504,6 +8504,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/MISC_RTSX
 #lib/modules/KVER-ipfire/build/include/config/MISC_RTSX_PCI
 #lib/modules/KVER-ipfire/build/include/config/MISC_RTSX_USB
+#lib/modules/KVER-ipfire/build/include/config/MITIGATE_SPECTRE_BRANCH_HISTORY
 #lib/modules/KVER-ipfire/build/include/config/MLX4_CORE
 #lib/modules/KVER-ipfire/build/include/config/MLX4_CORE_GEN2
 #lib/modules/KVER-ipfire/build/include/config/MLX4_DEBUG
@@ -9184,7 +9185,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/OF_IRQ
 #lib/modules/KVER-ipfire/build/include/config/OF_KOBJ
 #lib/modules/KVER-ipfire/build/include/config/OF_MDIO
-#lib/modules/KVER-ipfire/build/include/config/OF_NET
 #lib/modules/KVER-ipfire/build/include/config/OF_OVERLAY
 #lib/modules/KVER-ipfire/build/include/config/OF_RESERVED_MEM
 #lib/modules/KVER-ipfire/build/include/config/OF_RESOLVE
