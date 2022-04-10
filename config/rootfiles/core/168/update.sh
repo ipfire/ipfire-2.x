@@ -38,6 +38,9 @@ rm -rvf \
 	/usr/lib/libart_lgpl_2.so* \
 	/usr/lib/libdnet.la \
 	/usr/lib/libdnet.so* \
+	/usr/lib/libevent-1.4.so* \
+	/usr/lib/libevent_core-1.4.so* \
+	/usr/lib/libevent_extra-1.4.so* \
 	/usr/lib/libpri.so* \
 	/usr/lib/libsolv.so* \
 	/usr/lib/libsolvext.so* \
