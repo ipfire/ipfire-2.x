@@ -65,6 +65,9 @@ HOME=/
 # Perform a surciata rules update every 12 hours.
 @ 12h [ -f "/var/ipfire/red/active" ] && /usr/local/bin/update-ids-ruleset >/dev/null 2>&1
 
+# Update Lists for IP-based blocking.
+%hourly,random * [ -f "/var/ipfire/red/active" ] && /usr/local/bin/update-ipblocklists >/dev/null 2>&1
+
 # Retry sending spooled mails regularly
 %hourly * /usr/sbin/dma -q
 
