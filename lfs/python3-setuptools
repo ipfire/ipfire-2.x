@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 59.5.0
+VER        = 62.0.0
 SUMMARY    = Enhancements to distutils for building and distributing Python packages
 
 THISAPP    = setuptools-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-setuptools
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 51b3435a1d7962a06f7cf07c31487a1404274a54a1fae0567c3953686cbf3b3160327a56c599e80ce70fe8f56dc817fc76d0e4371d3622b5c6235b0fdc555980
+$(DL_FILE)_BLAKE2 = 688afed5a19e70a0fd7ab91a8d137e6641597d9f9acf31826216cd59e4632872a9661fe9ca18e45aec5cd40e52956147aa8d40ac2c376380ffa0f01dc2997e63
 
 install : $(TARGET)
 
