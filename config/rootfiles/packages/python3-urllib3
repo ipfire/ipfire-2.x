@@ -1,10 +1,10 @@
 usr/lib/python3.10/site-packages/urllib3
-#usr/lib/python3.10/site-packages/urllib3-1.26.7-py3.10.egg-info
-#usr/lib/python3.10/site-packages/urllib3-1.26.7-py3.10.egg-info/PKG-INFO
-#usr/lib/python3.10/site-packages/urllib3-1.26.7-py3.10.egg-info/SOURCES.txt
-#usr/lib/python3.10/site-packages/urllib3-1.26.7-py3.10.egg-info/dependency_links.txt
-#usr/lib/python3.10/site-packages/urllib3-1.26.7-py3.10.egg-info/requires.txt
-#usr/lib/python3.10/site-packages/urllib3-1.26.7-py3.10.egg-info/top_level.txt
+#usr/lib/python3.10/site-packages/urllib3-1.26.9-py3.10.egg-info
+#usr/lib/python3.10/site-packages/urllib3-1.26.9-py3.10.egg-info/PKG-INFO
+#usr/lib/python3.10/site-packages/urllib3-1.26.9-py3.10.egg-info/SOURCES.txt
+#usr/lib/python3.10/site-packages/urllib3-1.26.9-py3.10.egg-info/dependency_links.txt
+#usr/lib/python3.10/site-packages/urllib3-1.26.9-py3.10.egg-info/requires.txt
+#usr/lib/python3.10/site-packages/urllib3-1.26.9-py3.10.egg-info/top_level.txt
 #usr/lib/python3.10/site-packages/urllib3/__init__.py
 #usr/lib/python3.10/site-packages/urllib3/_collections.py
 #usr/lib/python3.10/site-packages/urllib3/_version.py
@@ -31,9 +31,6 @@ usr/lib/python3.10/site-packages/urllib3
 #usr/lib/python3.10/site-packages/urllib3/packages/backports/__init__.py
 #usr/lib/python3.10/site-packages/urllib3/packages/backports/makefile.py
 #usr/lib/python3.10/site-packages/urllib3/packages/six.py
-#usr/lib/python3.10/site-packages/urllib3/packages/ssl_match_hostname
-#usr/lib/python3.10/site-packages/urllib3/packages/ssl_match_hostname/__init__.py
-#usr/lib/python3.10/site-packages/urllib3/packages/ssl_match_hostname/_implementation.py
 #usr/lib/python3.10/site-packages/urllib3/poolmanager.py
 #usr/lib/python3.10/site-packages/urllib3/request.py
 #usr/lib/python3.10/site-packages/urllib3/response.py
@@ -46,6 +43,7 @@ usr/lib/python3.10/site-packages/urllib3
 #usr/lib/python3.10/site-packages/urllib3/util/response.py
 #usr/lib/python3.10/site-packages/urllib3/util/retry.py
 #usr/lib/python3.10/site-packages/urllib3/util/ssl_.py
+#usr/lib/python3.10/site-packages/urllib3/util/ssl_match_hostname.py
 #usr/lib/python3.10/site-packages/urllib3/util/ssltransport.py
 #usr/lib/python3.10/site-packages/urllib3/util/timeout.py
 #usr/lib/python3.10/site-packages/urllib3/util/url.py
