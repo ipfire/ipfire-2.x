@@ -1864,6 +1864,64 @@ sub _close_working_notice () {
 }
 
 #
+## Function which locks the webpage and basically does the same as the
+## oinkmaster function, but provides a lot of HTML formated status output.
+#
+sub oinkmaster_web () {
+	my @enabled_providers = &IDS::get_enabled_providers();
+
+	# Lock the webpage and print message.
+        &_open_working_notice("$Lang::tr{'ids apply ruleset changes'}");
+
+        # Check if the files in rulesdir have the correct permissions.
+        &IDS::_check_rulesdir_permissions();
+
+	print "<tr><td><br><br></td></tr>\n";
+
+        # Cleanup the rules directory before filling it with the new rulests.
+        &_add_to_notice("Remove old rule structures...");
+        &IDS::_cleanup_rulesdir();
+
+        # Loop through the array of enabled providers.
+        foreach my $provider (@enabled_providers) {
+                &_add_to_notice("Extracting ruleset for provider: $provider");
+                # Call the extractruleset function.
+                &IDS::extractruleset($provider);
+        }
+
+        # Call function to process the ruleset and do all modifications.
+        &_add_to_notice("Adjust rules and add user defined customizations...");
+        &IDS::process_ruleset(@enabled_providers);
+
+        # Call function to merge the classification files.
+        &_add_to_notice("Merging classifications ...");
+        &IDS::merge_classifications(@enabled_providers);
+
+        # Call function to merge the sid to message mapping files.
+        &_add_to_notice("Merging sid to message files ...");
+        &IDS::merge_sid_msg(@enabled_providers);
+
+        # Cleanup temporary directory.
+        &_add_to_notice("Cleanup temporary directory ...");
+        &IDS::cleanup_tmp_directory();
+
+	# Finished - print a notice.
+        &_add_to_notice("Finished...");
+
+	# Close the working notice.
+	&_close_working_notice();
+}
+
+#
+## Tiny private function to add a given message to a notice table.
+#
+sub _add_to_notice ($) {
+	my ($message) = @_;
+
+	print "<tr><td colspan='2'><li><b>$message</b></li></td></tr>\n";
+}
+
+#
 ## A tiny function to perform a reload of the webpage after one second.
 #
 sub reload () {
