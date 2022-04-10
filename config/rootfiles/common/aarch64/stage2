@@ -157,6 +157,7 @@ var/cache/ldconfig
 var/cache/ldconfig/aux-cache
 var/empty
 #var/lib
+var/lib/ipblocklist
 #var/lib/misc
 #var/local
 var/lock
