@@ -31,6 +31,18 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Remove files
+rm -rvf \
+	/usr/bin/dnet-config \
+	/usr/bin/sdparm \
+	/usr/lib/libart_lgpl_2.so* \
+	/usr/lib/libdnet.la \
+	/usr/lib/libdnet.so* \
+	/usr/lib/libpri.so* \
+	/usr/lib/libsolv.so* \
+	/usr/lib/libsolvext.so* \
+	/usr/sbin/dnet
+
 # Stop services
 
 # Extract files
