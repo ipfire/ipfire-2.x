@@ -626,7 +626,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		}
 
 		# Modify the status of the existing entry.
-		$used_providers{$id} = ["$used_providers{$id}[0]", "$used_providers{$id}[1]", "$status_autoupdate", "$used_providers{$id}[3]"];
+		$used_providers{$id} = ["$used_providers{$id}[0]", "$used_providers{$id}[1]", "$status_autoupdate", "$used_providers{$id}[3]", "$used_providers{$id}[4]"];
 
 		# Write the changed hash to the providers settings file.
 		&General::writehasharray($IDS::providers_settings_file, \%used_providers);
@@ -821,7 +821,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		}
 
 		# Modify the status of the existing entry.
-		$used_providers{$id} = ["$used_providers{$id}[0]", "$used_providers{$id}[1]", "$used_providers{$id}[2]", "$status"];
+		$used_providers{$id} = ["$used_providers{$id}[0]", "$used_providers{$id}[1]", "$used_providers{$id}[2]", "$status", "$used_providers{$id}[4]"];
 
 		# Write the changed hash to the providers settings file.
 		&General::writehasharray($IDS::providers_settings_file, \%used_providers);
