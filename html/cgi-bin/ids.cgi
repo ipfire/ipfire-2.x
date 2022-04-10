@@ -1830,6 +1830,16 @@ END
 sub working_notice ($) {
 	my ($message) = @_;
 
+	&_open_working_notice ($message);
+	&_close_working_notice();
+}
+
+#
+## Private function to lock the page and tell the user what is going on.
+#
+sub _open_working_notice ($) {
+	my ($message) = @_;
+
 	&Header::openpage($Lang::tr{'intrusion detection system'}, 1, '');
 	&Header::openbigbox('100%', 'left', '', $errormessage);
 	&Header::openbox( 'Waiting', 1,);
@@ -1839,8 +1849,15 @@ sub working_notice ($) {
 					<td><img src='/images/indicator.gif' alt='$Lang::tr{'aktiv'}' /></td>
 					<td>$message</td>
 				</tr>
-			</table>
 END
+}
+
+#
+## Private function to close a working notice.
+#
+sub _close_working_notice () {
+	print "</table>\n";
+
 	&Header::closebox();
 	&Header::closebigbox();
 	&Header::closepage();
