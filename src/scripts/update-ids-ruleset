@@ -32,6 +32,9 @@ use Sys::Syslog qw(:DEFAULT setlogsock);
 # Variable to store if the process has written a lockfile.
 my $locked;
 
+# Array to store the updated providers.
+my @updated_providers = ();
+
 # Hash to store the configured providers.
 my %providers = ();
 
@@ -135,19 +138,25 @@ foreach my $id (keys %providers) {
 
 		# Set correct ownership for the downloaded tarball.
 		&IDS::set_ownership("$stored_file");
+
+		# Add the provider handle to the array of updated providers.
+		push(@updated_providers, $provider);
 	}
 }
 
-# Call oinkmaster to alter the ruleset.
-&IDS::oinkmaster();
+# Check if at least one provider has been updated successfully.
+if (@updated_providers) {
+	# Call oinkmaster to alter the ruleset.
+	&IDS::oinkmaster();
 
-# Set correct ownership for the rulesdir and files.
-&IDS::set_ownership("$IDS::rulespath");
+	# Set correct ownership for the rulesdir and files.
+	&IDS::set_ownership("$IDS::rulespath");
 
-# Check if the IDS is running.
-if(&IDS::ids_is_running()) {
-	# Call suricatactrl to perform a reload.
-	&IDS::call_suricatactrl("reload");
+	# Check if the IDS is running.
+	if(&IDS::ids_is_running()) {
+		# Call suricatactrl to perform a reload.
+		&IDS::call_suricatactrl("reload");
+	}
 }
 
 #
