@@ -83,6 +83,10 @@ our $providers_settings_file = "$settingsdir/providers-settings";
 # File which stores the configured settings for whitelisted addresses.
 our $ignored_file = "$settingsdir/ignored";
 
+# File which stores HTTP Etags for providers which supports them
+# for cache management.
+our $etags_file = "$settingsdir/etags";
+
 # Location where the downloaded rulesets are stored.
 our $dl_rules_path = "/var/tmp";
 
@@ -394,6 +398,20 @@ sub downloadruleset ($) {
 		$request->header( 'If-Modified-Since' => "$http_date" );
 	}
 
+	# Read-in Etags file for known Etags if the file is present.
+	my %etags = ();
+	&General::readhash("$etags_file", \%etags) if (-f $etags_file);
+
+	# Check if an Etag for the current provider is stored.
+	if ($etags{$provider}) {
+		# Grab the stored tag.
+		my $etag = $etags{$provider};
+
+		# Add an "If-None-Match header to the request to ask the server if the
+		# file has been modified.
+		$request->header( 'If-None-Match' => $etag );
+	}
+
 	my $dl_attempt = 1;
 	my $response;
 
@@ -437,6 +455,15 @@ sub downloadruleset ($) {
 
 	# Get the remote size of the downloaded file.
 	my $remote_filesize = $headers->content_length;
+
+	# Grab the Etag from response it the server provides one.
+	if ($response->header('Etag')) {
+		# Add the Etag to the etags hash.
+		$etags{$provider} = $response->header('Etag');
+
+		# Write the etags file.
+		&General::writehash($etags_file, \%etags);
+	}
 
 	# Perform stat on the tmpfile.
 	my $stat = stat($tmpfile);
