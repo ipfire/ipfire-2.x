@@ -874,9 +874,6 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	# Undef the given ID.
 	undef($cgiparams{'ID'});
 
-	# Lock the webpage and print message.
-	&working_notice("$Lang::tr{'ids apply ruleset changes'}");
-
 	# Drop the stored ruleset file.
 	&IDS::drop_dl_rulesfile($provider);
 
