@@ -450,6 +450,7 @@ boot/dtb-KVER-ipfire
 #boot/dtb-KVER-ipfire/meson8b-mxq.dtb
 #boot/dtb-KVER-ipfire/meson8b-odroidc1.dtb
 #boot/dtb-KVER-ipfire/meson8m2-mxiii-plus.dtb
+#boot/dtb-KVER-ipfire/omap3-beagle-ab4.dtb
 #boot/dtb-KVER-ipfire/omap3-beagle-xm-ab.dtb
 #boot/dtb-KVER-ipfire/omap3-beagle-xm.dtb
 #boot/dtb-KVER-ipfire/omap3-beagle.dtb
@@ -946,6 +947,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/arch/arm/include/asm/smp_scu.h
 #lib/modules/KVER-ipfire/build/arch/arm/include/asm/smp_twd.h
 #lib/modules/KVER-ipfire/build/arch/arm/include/asm/sparsemem.h
+#lib/modules/KVER-ipfire/build/arch/arm/include/asm/spectre.h
 #lib/modules/KVER-ipfire/build/arch/arm/include/asm/spinlock.h
 #lib/modules/KVER-ipfire/build/arch/arm/include/asm/spinlock_types.h
 #lib/modules/KVER-ipfire/build/arch/arm/include/asm/stackprotector.h
@@ -8080,6 +8082,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/GENERIC_CLOCKEVENTS
 #lib/modules/KVER-ipfire/build/include/config/GENERIC_CLOCKEVENTS_BROADCAST
 #lib/modules/KVER-ipfire/build/include/config/GENERIC_CPU_AUTOPROBE
+#lib/modules/KVER-ipfire/build/include/config/GENERIC_CPU_VULNERABILITIES
 #lib/modules/KVER-ipfire/build/include/config/GENERIC_EARLY_IOREMAP
 #lib/modules/KVER-ipfire/build/include/config/GENERIC_GETTIMEOFDAY
 #lib/modules/KVER-ipfire/build/include/config/GENERIC_HWEIGHT
@@ -8142,6 +8145,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/HARDENED_USERCOPY
 #lib/modules/KVER-ipfire/build/include/config/HARDENED_USERCOPY_FALLBACK
 #lib/modules/KVER-ipfire/build/include/config/HARDENED_USERCOPY_PAGESPAN
+#lib/modules/KVER-ipfire/build/include/config/HARDEN_BRANCH_HISTORY
 #lib/modules/KVER-ipfire/build/include/config/HARDEN_BRANCH_PREDICTOR
 #lib/modules/KVER-ipfire/build/include/config/HARDIRQS_SW_RESEND
 #lib/modules/KVER-ipfire/build/include/config/HAS_DMA
@@ -9581,7 +9585,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/OF_IRQ
 #lib/modules/KVER-ipfire/build/include/config/OF_KOBJ
 #lib/modules/KVER-ipfire/build/include/config/OF_MDIO
-#lib/modules/KVER-ipfire/build/include/config/OF_NET
 #lib/modules/KVER-ipfire/build/include/config/OF_OVERLAY
 #lib/modules/KVER-ipfire/build/include/config/OF_RESERVED_MEM
 #lib/modules/KVER-ipfire/build/include/config/OF_RESOLVE
