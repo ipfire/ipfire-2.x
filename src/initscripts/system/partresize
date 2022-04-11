@@ -30,12 +30,6 @@ case "${1}" in
 			mount -o remount,rw / > /dev/null
 			evaluate_retval
 
-			boot_mesg "Create /etc/mtab..."
-			> /etc/mtab
-			mount -f / || failed=1
-			(exit ${failed})
-			evaluate_retval
-
 			# check if serial console enabled
 			scon="off";
 			if [ ! "$(grep "console=ttyS0" /proc/cmdline)" == "" ]; then

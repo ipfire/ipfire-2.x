@@ -1,7 +1,9 @@
 etc/collectd.conf
 etc/inittab.d
 etc/rc.d/init.d/firewall
+etc/rc.d/init.d/mountfs
 etc/rc.d/init.d/pakfire
+etc/rc.d/init.d/partresize
 etc/sysctl.conf
 lib/udev/network-hotplug-bridges
 srv/web/ipfire/cgi-bin/connections.cgi

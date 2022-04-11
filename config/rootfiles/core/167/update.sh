@@ -386,6 +386,10 @@ hardlink -c -vv /lib/firmware
 # Regenerate all initrds
 dracut --regenerate-all --force
 
+# Replace /etc/mtab by symlink as mount no longer writes it
+rm -vf /etc/mtab
+ln -vs /proc/self/mounts /etc/mtab
+
 # Export the location database again and reload the firewall engine
 /usr/local/bin/update-location-database
 
