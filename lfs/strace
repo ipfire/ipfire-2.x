@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A utility to trace the system calls of a program
 
-VER        = 5.14
+VER        = 5.17
 SUP_ARCHES = x86_64 armv6l aarch64
 
 THISAPP    = strace-$(VER)
@@ -35,7 +35,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = strace
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       = elfutils
 
@@ -49,7 +49,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 479ecf5e66e26e722d108c905130f482c411857db234ac013bf3568905c0f7b896f001ba6da2cabccd0a987c7802aebec9c6298decb691de125e8154c28e1c6f
+$(DL_FILE)_BLAKE2 = 27e7dc19302c58144b0a7d8de41f717760b8e3cde4ab56892045727597bbfc894bf8f137aee476548c2d16d1e9c8005f931f31a5d2f8bfc4ce5565c2aa01f1ec
 
 install : $(TARGET)
 
