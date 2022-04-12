@@ -1,12 +1,12 @@
-etc/rc.d/init.d/lcdproc
-etc/rc.d/rc0.d/K40lcdproc
-etc/rc.d/rc3.d/S60lcdproc
-etc/rc.d/rc6.d/K40lcdproc
 #etc/lcdproc
 etc/lcdproc/LCDd.conf
 etc/lcdproc/lcdexec.conf
 etc/lcdproc/lcdproc.conf
 etc/lcdproc/lcdvc.conf
+etc/rc.d/init.d/lcdproc
+etc/rc.d/rc0.d/K40lcdproc
+etc/rc.d/rc3.d/S60lcdproc
+etc/rc.d/rc6.d/K40lcdproc
 usr/bin/fortune.pl
 usr/bin/iosock.pl
 usr/bin/lcdexec
@@ -25,10 +25,12 @@ usr/lib/lcdproc
 #usr/lib/lcdproc/MD8800.so
 #usr/lib/lcdproc/MtxOrb.so
 #usr/lib/lcdproc/NoritakeVFD.so
+#usr/lib/lcdproc/Olimex_MOD_LCD1x9.so
 #usr/lib/lcdproc/SureElec.so
 #usr/lib/lcdproc/bayrad.so
 #usr/lib/lcdproc/curses.so
 #usr/lib/lcdproc/ea65.so
+#usr/lib/lcdproc/futaba.so
 #usr/lib/lcdproc/glcd.so
 #usr/lib/lcdproc/glk.so
 #usr/lib/lcdproc/hd44780.so
@@ -40,6 +42,7 @@ usr/lib/lcdproc
 #usr/lib/lcdproc/lb216.so
 #usr/lib/lcdproc/lcdm001.so
 #usr/lib/lcdproc/lcterm.so
+#usr/lib/lcdproc/linux_input.so
 #usr/lib/lcdproc/ms6931.so
 #usr/lib/lcdproc/mtc_s16209x.so
 #usr/lib/lcdproc/picolcd.so
@@ -57,6 +60,7 @@ usr/lib/lcdproc
 #usr/lib/lcdproc/text.so
 #usr/lib/lcdproc/tyan.so
 #usr/lib/lcdproc/vlsys_m428.so
+#usr/lib/lcdproc/yard2LCD.so
 usr/sbin/LCDd
 #usr/share/man/man1/lcdexec.1
 #usr/share/man/man1/lcdproc.1
