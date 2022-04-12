@@ -26,10 +26,60 @@
 
 core=167
 
+exit_with_error() {
+    # Set last succesfull installed core.
+    echo $(($core-1)) > /opt/pakfire/db/core/mine
+    # force fsck at next boot, this may fix free space on xfs
+    touch /forcefsck
+    # don't start pakfire again at error
+    killall -KILL pak_update
+    /usr/bin/logger -p syslog.emerg -t ipfire \
+	"core-update-${core}: $1"
+    exit $2
+}
+
 # Remove old core updates from pakfire cache to save space...
 for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
+
+
+KVER="xxxKVERxxx"
+
+# Backup uEnv.txt if exist
+if [ -e /boot/uEnv.txt ]; then
+    cp -vf /boot/uEnv.txt /boot/uEnv.txt.org
+fi
+
+# Do some sanity checks.
+case $(uname -r) in
+    *-ipfire*)
+	# Ok.
+	;;
+    *)
+	exit_with_error "ERROR cannot update. No IPFire Kernel." 1
+	;;
+esac
+
+# Check diskspace on root
+ROOTSPACE=`df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1`
+
+if [ $ROOTSPACE -lt 100000 ]; then
+    exit_with_error "ERROR cannot update because not enough free space on root." 2
+    exit 2
+fi
+
+# Remove the old kernel
+rm -rf /boot/System.map-*
+rm -rf /boot/config-*
+rm -rf /boot/ipfirerd-*
+rm -rf /boot/initramfs-*
+rm -rf /boot/vmlinuz-*
+rm -rf /boot/uImage-*
+rm -rf /boot/zImage-*
+rm -rf /boot/uInit-*
+rm -rf /boot/dtb-*
+rm -rf /lib/modules
 
 # Remove files
 rm -rvf \
@@ -360,6 +410,20 @@ if [ -e "/opt/pakfire/db/installed/meta-nano" ] && [ -e "/opt/pakfire/db/meta/me
 		/opt/pakfire/db/installed/meta-nano \
 		/opt/pakfire/db/meta/meta-nano \
 		/opt/pakfire/db/rootfiles/nano
+fi
+
+# remove lm_sensor config after collectd was started
+# to reserch sensors at next boot with updated kernel
+rm -f  /etc/sysconfig/lm_sensors
+
+# Upadate Kernel version uEnv.txt
+if [ -e /boot/uEnv.txt ]; then
+    sed -i -e "s/KVER=.*/KVER=${KVER}/g" /boot/uEnv.txt
+fi
+
+# call user update script (needed for some arm boards)
+if [ -e /boot/pakfire-kernel-update ]; then
+    /boot/pakfire-kernel-update ${KVER}
 fi
 
 # This update needs a reboot...
