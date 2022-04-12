@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A Utility for Administering the Linux Virtual Server
 
-VER        = 1.29
+VER        = 1.31
 
 THISAPP    = ipvsadm-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ipvsadm
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 29f8c353f5c7a6a461b17b0ef7fa4c7803fe52cae5f8f719b25370f502d8724e0847bb3b4e25312b95a49a4bfcd0b6562f61118506c477eafbd1a99fc7c3914c
+$(DL_FILE)_BLAKE2 = a42ceea834fb16e25ea34417227f6b632fe3b94c8a7ce5d3daff4375884fd47f14999551eab3bf7226d5eb02f25aef4c77a8287592b642946683bc5ddc6783da
 
 install : $(TARGET)
 
