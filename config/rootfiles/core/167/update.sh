@@ -272,7 +272,6 @@ rm -rvf \
 	/usr/lib/libxslt.so \
 	/usr/lib/pango \
 	/usr/lib/perl5/site_perl/5.30.0 \
-	/usr/lib/perl5/site_perl/5.32.1/Net/IP.pm \
 	/usr/lib/python3.8/ensurepip/_bundled/pip-19.2.3-py2.py3-none-any.whl \
 	/usr/lib/python3.8/idlelib/Icons/idle.icns \
 	/usr/lib/python3.8/lib2to3/Grammar3.8.1.final.0.pickle \
