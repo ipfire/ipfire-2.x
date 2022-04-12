@@ -18,11 +18,14 @@ etc/ipset
 #usr/include/libipset/transport.h
 #usr/include/libipset/types.h
 #usr/include/libipset/utils.h
+#usr/include/libipset/xlate.h
 #usr/lib/libipset.la
 #usr/lib/libipset.so
 usr/lib/libipset.so.13
-usr/lib/libipset.so.13.2.0
+usr/lib/libipset.so.13.3.0
 #usr/lib/pkgconfig/libipset.pc
 usr/sbin/ipset
+#usr/sbin/ipset-translate
 #usr/share/man/man3/libipset.3
+#usr/share/man/man8/ipset-translate.8
 #usr/share/man/man8/ipset.8
