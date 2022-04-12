@@ -386,6 +386,9 @@ hardlink -c -vv /lib/firmware
 # Regenerate all initrds
 dracut --regenerate-all --force
 
+# Export the location database again and reload the firewall engine
+/usr/local/bin/update-location-database
+
 # Rebuild IPS rules
 perl -e "require '/var/ipfire/ids-functions.pl'; &IDS::oinkmaster();"
 /etc/init.d/suricata reload
