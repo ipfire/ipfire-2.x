@@ -1,8 +1,6 @@
 #etc/keepalived
-etc/keepalived/keepalived.conf
+etc/keepalived/keepalived.conf.sample
 etc/keepalived/samples
-#etc/keepalived/samples/client.pem
-#etc/keepalived/samples/dh1024.pem
 #etc/keepalived/samples/keepalived.conf.HTTP_GET.port
 #etc/keepalived/samples/keepalived.conf.IPv6
 #etc/keepalived/samples/keepalived.conf.PING_CHECK
@@ -28,7 +26,6 @@ etc/keepalived/samples
 #etc/keepalived/samples/keepalived.conf.vrrp.scripts
 #etc/keepalived/samples/keepalived.conf.vrrp.static_ipaddress
 #etc/keepalived/samples/keepalived.conf.vrrp.sync
-#etc/keepalived/samples/root.pem
 #etc/keepalived/samples/sample.misccheck.smbcheck.sh
 #etc/keepalived/samples/sample_notify_fifo.sh
 etc/rc.d/init.d/keepalived
