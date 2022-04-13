@@ -1,5 +1,6 @@
 etc/collectd.conf
 etc/inittab.d
+etc/rc.d/init.d/collectd
 etc/rc.d/init.d/firewall
 etc/rc.d/init.d/mountfs
 etc/rc.d/init.d/pakfire

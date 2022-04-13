@@ -1,6 +1,7 @@
 usr/bin/location
 #usr/bin/location-importer
 #usr/include/libloc
+#usr/include/libloc/address.h
 #usr/include/libloc/as-list.h
 #usr/include/libloc/as.h
 #usr/include/libloc/compat.h
