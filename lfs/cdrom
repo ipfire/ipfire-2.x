@@ -149,7 +149,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Clear mtab (prevents .journal problems)
 	rm -vf /etc/mtab
-	echo > /etc/mtab
+	ln -s /proc/self/mounts /etc/mtab
 
 	# Create filelist for packaging.
 	BUILDTARGET="$(BUILDTARGET)" BUILD_ARCH="$(BUILD_ARCH)" KVER="$(KVER)" \
