@@ -128,9 +128,6 @@ my @devs_alt   = ('green','blue','orange','red');
 
 my %ifacecolor = ( GREEN => 'wio_run_green', BLUE => 'wio_run_blue', ORANGE => 'wio_run_orange');
 
-#if ( $netsettings{'RED_TYPE'} eq 'STATIC' || $netsettings{'RED_TYPE'} eq 'DHCP' ) {
-#	%ifacecolor = ( %ifacecolor, RED => 'wio_run_red' );
-#}
 
 &loadips();
 
