@@ -75,6 +75,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/xzgrep-ZDI-CAN-16587.patch
 	cd $(DIR_APP) && ./configure --prefix=$(PREFIX)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

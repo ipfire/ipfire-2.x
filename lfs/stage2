@@ -87,7 +87,8 @@ endif
 	cp -rvf $(DIR_SRC)/config/etc/* /etc;
 	[ ! -d "$(DIR_SRC)/config/etc-$(BUILD_ARCH)" ] || cp -rvf $(DIR_SRC)/config/etc-$(BUILD_ARCH)/* /etc
 	cp -rvf $(DIR_SRC)/config/lib/* /lib;
-	touch /etc/{fs,m}tab
+	touch /etc/fstab
+	ln -s /proc/self/mounts /etc/mtab
 	echo "$(NAME) v$(VERSION) - $(SLOGAN)" >  /etc/issue
 	echo "===============================" >> /etc/issue
 	echo "\n running on \s \r \m"          >> /etc/issue
