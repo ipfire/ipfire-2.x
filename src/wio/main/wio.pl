@@ -98,9 +98,6 @@ my ( $ping_i, $ping_t, $ping_ib, $ping_tb, $ping_iv, $ping_tv, $pingmode ) = '';
 my ( @tmp, @arptmp, @myarray, @status, @arpclients ) = '';
 my @ifaces = ('GREEN','BLUE','ORANGE');
 
-if ( $netsettings{'RED_TYPE'} eq 'STATIC' || $netsettings{'RED_TYPE'} eq 'DHCP' ) {
-	push (@ifaces, "RED");
-}
 
 if ( $mailsettings{'USEMAIL'} eq 'on' ) { $mailen = 'on'; }
 else { $mailen = 'off'; }
