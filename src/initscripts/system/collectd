@@ -27,7 +27,7 @@ eval $(/usr/local/bin/readhash /var/ipfire/main/settings)
 scan_for_sensors() {
 	touch /var/lock/sensors_search
 	# pre scan and try to load modules
-	"yes" | /usr/sbin/sensors-detect > /dev/null
+	"yes" | /usr/sbin/sensors-detect > /dev/null 2>&1
 	if [ -e /etc/sysconfig/lm_sensors ]; then
 
 		# Module load
@@ -38,7 +38,7 @@ scan_for_sensors() {
 	fi
 
 	# Final scan
-	"yes" | /usr/sbin/sensors-detect > /dev/null
+	"yes" | /usr/sbin/sensors-detect > /dev/null 2>&1
 
 	if [ ! -e /etc/sysconfig/lm_sensors ]; then
 		echo "#No Sensors detected " > /etc/sysconfig/lm_sensors
