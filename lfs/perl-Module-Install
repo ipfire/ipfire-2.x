@@ -24,8 +24,6 @@
 
 include Config
 
-SUMMARY    = Module::Install configuration system
-
 VER        = 1.19
 
 THISAPP    = Module-Install-$(VER)
@@ -33,11 +31,6 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PAK_VER    = 1
-
-DEPS       = perl-File-Remove perl-Module-Build perl-Module-ScanDeps perl-YAML-Tiny
-
-SERVICES   = ""
 
 ###############################################################################
 # Top-level Rules
@@ -47,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0d1b78cc13ebf9b9ad008c8928a5b2dd
+$(DL_FILE)_BLAKE2 = a6f4b93ba964ff6f4b16a8db7117bee8c125cd8a280c649b007622ece8c14b79e36f6747a1b792fb312d2c6c8153aee05e7479ca53a76a253a415374839e6b90
 
 install : $(TARGET)
 
@@ -55,7 +48,7 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:.
 	$(PAK)
