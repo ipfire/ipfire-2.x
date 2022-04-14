@@ -24,8 +24,6 @@
 
 include Config
 
-SUMMARY    = Generate QR Code with Imager using libqrencode
-
 VER        = 0.035
 
 THISAPP    = Imager-QRCode-$(VER)
@@ -33,11 +31,6 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PAK_VER    = 1
-
-DEPS       = perl-Module-Install perl-Imager
-
-SERVICES   = ""
 
 ###############################################################################
 # Top-level Rules
@@ -47,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = f1507d37169f128477cc1d69e0394221
+$(DL_FILE)_BLAKE2 = 740119e2d7fab7286f8eeb0c1d9690f94146d51b09b721eaa65a8f9849784c6f113f64344d0fb2550cd5981665369b3881fe8f034b00f925987bb69ccd537b59
 
 install : $(TARGET)
 
@@ -55,7 +48,7 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:.
 	$(PAK)
