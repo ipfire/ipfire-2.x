@@ -642,6 +642,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	my $subscription_code = $cgiparams{'SUBSCRIPTION_CODE'};
 	my $status_autoupdate;
 	my $mode;
+	my $regenerate_ruleset_required;
 
 	# Handle autoupdate checkbox.
 	if ($cgiparams{'ENABLE_AUTOUPDATE'} eq "on") {
@@ -696,6 +697,15 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 
 			# Undef the given ID.
 			undef($cgiparams{'ID'});
+
+			# Grab the configured mode.
+			my $stored_mode = $used_providers{$id}[4];
+
+			# Check if the ruleset action (mode) has been changed.
+			if ($stored_mode ne $mode) {
+				# It has been changed, so the ruleset needs to be regenerated.
+				$regenerate_ruleset_required = "1";
+			}
 
 			# Grab the configured status of the corresponding entry.
 			$status = $used_providers{$id}[3];
@@ -770,6 +780,14 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 			}
 		}
 
+		# Check if the ruleset has to be regenerated.
+		if ($regenerate_ruleset_required) {
+			# Call oinkmaster web function.
+			&oinkmaster_web();
+
+			# Perform a reload of the page.
+			&reload();
+		}
 	}
 
 	# Undefine providers flag.
