@@ -24,8 +24,6 @@
 
 include Config
 
-SUMMARY    = Base32 encoder and decoder
-
 VER        = 1.303
 
 THISAPP    = MIME-Base32-$(VER)
@@ -33,11 +31,6 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PAK_VER    = 1
-
-DEPS       = ""
-
-SERVICES   = ""
 
 ###############################################################################
 # Top-level Rules
@@ -47,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 0c7735fa09e74c7f2ec93d1890b8c6c0
+$(DL_FILE)_BLAKE2 = d9dad50d7474a42741f7a61fad4a7b30c4acb72eb80684e24c45d0478480cfe936d6b87ab37b735ff2065afeb0b5457cc50130187264fcb6addefa8e8cb8d934
 
 install : $(TARGET)
 
@@ -55,7 +48,7 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:.
 	$(PAK)
