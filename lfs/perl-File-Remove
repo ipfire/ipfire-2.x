@@ -24,8 +24,6 @@
 
 include Config
 
-SUMMARY    = Remove files and directories
-
 VER        = 1.60
 
 THISAPP    = File-Remove-$(VER)
@@ -33,11 +31,6 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PAK_VER    = 1
-
-DEPS       = ""
-
-SERVICES   = ""
 
 ###############################################################################
 # Top-level Rules
@@ -47,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_MD5 = 34f46f9a07b2ad6fc80061d266f387b5
+$(DL_FILE)_BLAKE2 = ffb98155d757bae6ec0d4f56dabdb78749fc968845e284797d0f0611fe9068722a007c7e0e890179720745d1451c926575949f36642dceef7071468a2863c7c6
 
 install : $(TARGET)
 
@@ -55,7 +48,7 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
-md5 : $(subst %,%_MD5,$(objects))
+b2 : $(subst %,%_BLAKE2,$(objects))
 
 dist:.
 	$(PAK)
