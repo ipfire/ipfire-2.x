@@ -1694,7 +1694,7 @@ buildipfire() {
   lfsmake2 qemu-ga
   lfsmake2 gptfdisk
   lfsmake2 oath-toolkit
-  lfsmake2 libqrencode
+  lfsmake2 qrencode
   lfsmake2 perl-File-Remove
   lfsmake2 perl-Module-Build
   lfsmake2 perl-Module-ScanDeps
