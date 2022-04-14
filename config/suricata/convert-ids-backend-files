@@ -30,6 +30,56 @@ exit 0 unless (-f "$IDS::settingsdir/oinkmaster.conf");
 # Get all supported providers.
 my @providers = &IDS::get_ruleset_providers();
 
+#
+## Step 1: Convert used rules files.
+#
+
+# Loop through the array of known providers.
+foreach my $provider (@providers) {
+	my %used_rulesfiles = ();
+
+	# Generate old filename which contained the used rulesfile.
+	my $old_used_rulesfiles_file = "$IDS::settingsdir/suricata-$provider\-used-rulefiles.yaml";
+
+	# Skip the provider if there is no used rulesfiles file available.
+	next unless (-f $old_used_rulesfiles_file);
+
+	# Open the used rulesfiles file.
+	open(FILE, "$old_used_rulesfiles_file");
+
+	# Read-in the file content.
+	my @file = <FILE>;
+
+	# Close file handle.
+	close(FILE);
+
+	# Loop through the file content.
+	foreach my $line(@file) {
+		chomp($line);
+
+		# Grab the used rulesfile name from the line.
+		if ($line =~ /^\s-\s(.*)/) {
+			my $rulesfile = $1;
+
+			# Add the used rulesfile to the has of used rulesfile for this provider.
+			$used_rulesfiles{$rulesfile} = "enabled";
+		}
+	}
+
+	# Get the filename for the new used rulesfiles file.
+	my $used_rulesfiles_file = &IDS::get_provider_used_rulesfiles_file($provider);
+
+	# Write the file.
+	&General::writehash("$used_rulesfiles_file", \%used_rulesfiles);
+
+	# Set the correct ownership for the new file.
+	&IDS::set_ownership("$used_rulesfiles_file");
+}
+
+#
+## Step 2: Convert ruleset modifictaion files.
+#
+
 # Loop through the array of providers.
 foreach my $provider (@providers) {
 	my %modifications = ();
