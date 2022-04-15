@@ -128,3 +128,20 @@ foreach my $provider (@providers) {
 	# Set correct ownership for the new modifications file.
 	&IDS::set_ownership("$new_modifications_file");
 }
+
+#
+## Step 3: Regenerate the ruleset.
+#
+
+# Call oinkmaster wrapper function.
+&IDS::oinkmaster();
+
+#
+## Step 4: Write new config file for suricata which contains the used rulesfiles.
+#
+
+# Get enabled providers.
+my @enabled_providers = &IDS::get_enabled_providers();
+
+# Write used rulesfiles file.
+&IDS::write_used_rulefiles_file(@enabled_providers);
