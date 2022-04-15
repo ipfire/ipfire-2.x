@@ -27,6 +27,22 @@ require '/var/ipfire/ids-functions.pl';
 # Exit if there is no main oinkmaster config file anymore.
 exit 0 unless (-f "$IDS::settingsdir/oinkmaster.conf");
 
+# Array of old files, which are safe to drop.
+my @files_to_drop = (
+	# Old settings files of oinkmaster.
+	"$IDS::settingsdir/oinkmaster.conf",
+	"$IDS::settingsdir/oinkmaster-disabled-sids.conf",
+	"$IDS::settingsdir/oinkmaster-enabled-sids.conf",
+	"$IDS::settingsdir/oinkmaster-modify-sids.conf",
+	"$IDS::settingddir/oinkmaster-provider-includes.conf",
+
+	# Old settingsfiles for suricata.
+	"$IDS::settingsdir/suricata-default-rules.yaml",
+	"$IDS::settingsdir/suricata-static-included-rulefiles.yaml",
+	"$IDS::settingsdir/suricata-used-providers.yaml",
+	"$IDS::settingsdir/suricata-used-rulefiles.yaml"
+);
+
 # Get all supported providers.
 my @providers = &IDS::get_ruleset_providers();
 
@@ -151,3 +167,13 @@ my @enabled_providers = &IDS::get_enabled_providers();
 
 # Write used rulesfiles file.
 &IDS::write_used_rulefiles_file(@enabled_providers);
+
+#
+## Step 5: Remove unneeded orphaned files.
+#
+
+# Loop through the array of files which are safe to drop.
+foreach my $file (@files_to_drop) {
+	# Remove the file if it exists.
+	unlink("$file") if (-f "$file");
+}
