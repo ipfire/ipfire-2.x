@@ -561,12 +561,6 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		&General::writehash("$IDS::ids_settings_file", \%cgiparams);
 	}
 
-	# Check if the the automatic rule update hass been touched.
-	if($cgiparams{'AUTOUPDATE_INTERVAL'} ne $oldidssettings{'AUTOUPDATE_INTERVAL'}) {
-		# Call suricatactrl to set the new interval.
-		&IDS::call_suricatactrl("cron", $cgiparams{'AUTOUPDATE_INTERVAL'});
-	}
-
 	# Generate file to store the home net.
 	&IDS::generate_home_net_file();
 
@@ -981,22 +975,12 @@ sub show_mainpage() {
 	&General::readhash("$IDS::ids_settings_file", \%idssettings);
 	&General::readhasharray("$IDS::providers_settings_file", \%used_providers);
 
-	# If no autoupdate intervall has been configured yet, set default value.
-	unless(exists($idssettings{'AUTOUPDATE_INTERVAL'})) {
-		# Set default to "weekly".
-		$idssettings{'AUTOUPDATE_INTERVAL'} = 'weekly';
-	}
-
 	# Read-in ignored hosts.
 	&General::readhasharray("$IDS::ignored_file", \%ignored) if (-e $IDS::ignored_file);
 
 	$checked{'ENABLE_IDS'}{'off'} = '';
 	$checked{'ENABLE_IDS'}{'on'} = '';
 	$checked{'ENABLE_IDS'}{$idssettings{'ENABLE_IDS'}} = "checked='checked'";
-	$selected{'AUTOUPDATE_INTERVAL'}{'off'} = '';
-	$selected{'AUTOUPDATE_INTERVAL'}{'daily'} = '';
-	$selected{'AUTOUPDATE_INTERVAL'}{'weekly'} = '';
-	$selected{'AUTOUPDATE_INTERVAL'}{$idssettings{'AUTOUPDATE_INTERVAL'}} = "selected='selected'";
 
 	# Draw current state of the IDS
 	&Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system'});
@@ -1120,16 +1104,6 @@ print <<END
 
 				<tr>
 					<td colspan='4'><b>$Lang::tr{'ids automatic rules update'}</b></td>
-				</tr>
-
-				<tr>
-					<td>
-						<select name='AUTOUPDATE_INTERVAL'>
-							<option value='off' $selected{'AUTOUPDATE_INTERVAL'}{'off'} >- $Lang::tr{'Disabled'} -</option>
-							<option value='daily' $selected{'AUTOUPDATE_INTERVAL'}{'daily'} >$Lang::tr{'Daily'}</option>
-							<option value='weekly' $selected{'AUTOUPDATE_INTERVAL'}{'weekly'} >$Lang::tr{'Weekly'}</option>
-						</select>
-					</td>
 				</tr>
 			</table>
 

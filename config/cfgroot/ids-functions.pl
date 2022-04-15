@@ -143,10 +143,7 @@ my $tmp_rules_directory = "$tmp_directory/rules";
 my $tmp_conf_directory = "$tmp_directory/conf";
 
 # Array with allowed commands of suricatactrl.
-my @suricatactrl_cmds = ( 'start', 'stop', 'restart', 'reload', 'fix-rules-dir', 'cron' );
-
-# Array with supported cron intervals.
-my @cron_intervals = ('off', 'daily', 'weekly' );
+my @suricatactrl_cmds = ( 'start', 'stop', 'restart', 'reload', 'fix-rules-dir' );
 
 # Array which contains the HTTP ports, which statically will be declared as HTTP_PORTS in the
 # http_ports_file.
@@ -1172,34 +1169,12 @@ sub call_suricatactrl ($) {
 		# Skip current command unless the given one has been found.
 		next unless($cmd eq $option);
 
-		# Check if the given command is "cron".
-		if ($option eq "cron") {
-			# Check if an interval has been given.
-			if ($interval) {
-				# Check if the given interval is valid.
-				foreach my $element (@cron_intervals) {
-					# Skip current element until the given one has been found.
-					next unless($element eq $interval);
+		# Call the suricatactrl binary and pass the requrested
+		# option to it.
+		&General::system("$suricatactrl", "$option");
 
-					# Call the suricatactrl binary and pass the "cron" command
-					# with the requrested interval.
-					&General::system("$suricatactrl", "$option", "$interval");
-
-					# Return "1" - True.
-					return 1;
-				}
-			}
-
-			# If we got here, the given interval is not supported or none has been given. - Return nothing.
-			return;
-		} else {
-			# Call the suricatactrl binary and pass the requrested
-			# option to it.
-			&General::system("$suricatactrl", "$option");
-
-			# Return "1" - True.
-			return 1;
-		}
+		# Return "1" - True.
+		return 1;
 	}
 
 	# Command not found - return nothing.
