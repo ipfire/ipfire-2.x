@@ -88,7 +88,7 @@ our $ignored_file = "$settingsdir/ignored";
 our $etags_file = "$settingsdir/etags";
 
 # Location where the downloaded rulesets are stored.
-our $dl_rules_path = "/var/tmp";
+our $dl_rules_path = "/var/cache/suricata";
 
 # File to store any errors, which also will be read and displayed by the wui.
 our $storederrorfile = "/tmp/ids_storederror";
