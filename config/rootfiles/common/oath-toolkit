@@ -13,7 +13,7 @@ usr/bin/oathtool
 #usr/include/pskc/version.h
 #usr/lib/liboath.a
 #usr/lib/liboath.la
-usr/lib/liboath.so
+#usr/lib/liboath.so
 usr/lib/liboath.so.0
 usr/lib/liboath.so.0.1.3
 #usr/lib/libpskc.a
@@ -23,6 +23,8 @@ usr/lib/liboath.so.0.1.3
 #usr/lib/libpskc.so.0.0.1
 #usr/lib/pkgconfig/liboath.pc
 #usr/lib/pkgconfig/libpskc.pc
+#usr/lib/security/pam_oath.la
+#usr/lib/security/pam_oath.so
 #usr/share/gtk-doc/html/liboath
 #usr/share/gtk-doc/html/liboath/api-index-1-10-0.html
 #usr/share/gtk-doc/html/liboath/api-index-1-12-0.html
