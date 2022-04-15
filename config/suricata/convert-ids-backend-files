@@ -74,6 +74,9 @@ foreach my $provider (@providers) {
 
 	# Set the correct ownership for the new file.
 	&IDS::set_ownership("$used_rulesfiles_file");
+
+	# Delete old used rulesfiles file.
+	unlink("$old_used_rulesfiles_file");
 }
 
 #
@@ -127,6 +130,9 @@ foreach my $provider (@providers) {
 
 	# Set correct ownership for the new modifications file.
 	&IDS::set_ownership("$new_modifications_file");
+
+	# Delete old modifications file.
+	unlink("$old_modifications_file");
 }
 
 #
