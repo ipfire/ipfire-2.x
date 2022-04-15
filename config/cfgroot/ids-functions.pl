@@ -130,6 +130,9 @@ my $suricatactrl = "/usr/local/bin/suricatactrl";
 # Prefix for each downloaded ruleset.
 my $dl_rulesfile_prefix = "idsrules";
 
+# Temporary directory to download the rules files.
+my $tmp_dl_directory = "/var/tmp";
+
 # Temporary directory where the rulesets will be extracted.
 my $tmp_directory = "/tmp/ids_tmp";
 
@@ -371,9 +374,9 @@ sub downloadruleset ($) {
 	# Pass the requested URL to the downloader.
 	my $request = HTTP::Request->new(GET => $url);
 
-	# Generate temporary file name, located in "/var/tmp" and with a suffix of ".tmp".
+	# Generate temporary file name, located in the tempoary download directory and with a suffix of ".tmp".
 	# The downloaded file will be stored there until some sanity checks are performed.
-	my $tmp = File::Temp->new( SUFFIX => ".tmp", DIR => "/var/tmp/", UNLINK => 0 );
+	my $tmp = File::Temp->new( SUFFIX => ".tmp", DIR => "$tmp_dl_directory/", UNLINK => 0 );
 	my $tmpfile = $tmp->filename();
 
 	# Call function to get the final path and filename for the downloaded file.
