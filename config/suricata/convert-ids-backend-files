@@ -21,6 +21,8 @@
 
 use strict;
 
+use File::Copy;
+
 require '/var/ipfire/general-functions.pl';
 require '/var/ipfire/ids-functions.pl';
 
@@ -43,11 +45,41 @@ my @files_to_drop = (
 	"$IDS::settingsdir/suricata-used-rulefiles.yaml"
 );
 
+#
+# Step 1: Move downloaded files to new location.
+#
+
+my $old_dl_rulesfiles_dir = "/var/tmp";
+
+# Open old rules directory and do a directory listsing.
+opendir(DIR, "$old_dl_rulesfiles_dir");
+
+# Loop through the files of the directory.
+while (my $file = readdir(DIR)) {
+	# Check if the file starts with an "idsrules-".
+	if ($file =~ /^idsrules-/) {
+		# Grab the mtime of the file.
+		my $mtime=(stat "$old_dl_rulesfiles_dir/$file")[9];
+
+		# Move the file to its new location.
+		move("$old_dl_rulesfiles_dir/$file", "$IDS::dl_rules_path/$file");
+
+		# Set correct ownership.
+		&IDS::set_ownership("$IDS::dl_rules_path/$file");
+
+		# Restore the mtime on the file.
+		utime(time(), "$mtime", "$IDS::dl_rules_path/$file");
+	}
+}
+
+# Close directory handle.
+closedir(DIR);
+
 # Get all supported providers.
 my @providers = &IDS::get_ruleset_providers();
 
 #
-## Step 1: Convert used rules files.
+## Step 2: Convert used rules files.
 #
 
 # Loop through the array of known providers.
@@ -96,7 +128,7 @@ foreach my $provider (@providers) {
 }
 
 #
-## Step 2: Convert ruleset modifictaion files.
+## Step 3: Convert ruleset modifictaion files.
 #
 
 # Loop through the array of providers.
@@ -152,14 +184,14 @@ foreach my $provider (@providers) {
 }
 
 #
-## Step 3: Regenerate the ruleset.
+## Step 4: Regenerate the ruleset.
 #
 
 # Call oinkmaster wrapper function.
 &IDS::oinkmaster();
 
 #
-## Step 4: Write new config file for suricata which contains the used rulesfiles.
+## Step 5: Write new config file for suricata which contains the used rulesfiles.
 #
 
 # Get enabled providers.
@@ -169,7 +201,7 @@ my @enabled_providers = &IDS::get_enabled_providers();
 &IDS::write_used_rulefiles_file(@enabled_providers);
 
 #
-## Step 5: Remove unneeded orphaned files.
+## Step 6: Remove unneeded orphaned files.
 #
 
 # Loop through the array of files which are safe to drop.
