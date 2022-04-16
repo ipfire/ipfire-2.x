@@ -755,8 +755,11 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 				&working_notice("$Lang::tr{'ids working'}");
 
 				# Download the ruleset.
-				if(&IDS::downloadruleset($provider)) {
-					$errormessage = "$Lang::tr{'ids could not add provider'} - $Lang::tr{'ids unable to download the ruleset'}";
+				my $return = &IDS::downloadruleset($provider);
+
+				# Check if the downloader returned a code.
+				if ($return) {
+					$errormessage = "$Lang::tr{'ids could not add provider'} - $Lang::tr{'ids unable to download the ruleset'}: $return";
 
 					# Call function to store the errormessage.
 					&IDS::_store_error_message($errormessage);
