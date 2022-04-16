@@ -112,6 +112,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# (File has to be writeable for the nobody user)
 	chown nobody:nobody /usr/share/suricata/classification.config
 
+	# Create empty threshold config file.
+	touch /usr/share/suricata/threshold.config
+
+	# Set correct ownership for the threshold.config file.
+	chown nobody:nobody /usr/share/suricata/threshold.config
+
 	# Set correct ownership for /var/lib/suricata and the
 	# contained files
 	chown -R nobody:nobody /var/lib/suricata
