@@ -128,6 +128,7 @@ usr/share/logwatch/default.conf/services/modprobe.conf
 #usr/share/logwatch/default.conf/services/named.conf
 #usr/share/logwatch/default.conf/services/netopia.conf
 #usr/share/logwatch/default.conf/services/netscreen.conf
+usr/share/logwatch/default.conf/services/nut.conf
 #usr/share/logwatch/default.conf/services/oidentd.conf
 #usr/share/logwatch/default.conf/services/omsa.conf
 usr/share/logwatch/default.conf/services/openvpn.conf
@@ -242,6 +243,7 @@ usr/share/logwatch/scripts/services/dialup
 #usr/share/logwatch/scripts/services/dpkg
 #usr/share/logwatch/scripts/services/emerge
 #usr/share/logwatch/scripts/services/evtapplication
+#usr/share/logwatch/scripts/services/evtmswindows
 #usr/share/logwatch/scripts/services/evtsecurity
 #usr/share/logwatch/scripts/services/evtsystem
 #usr/share/logwatch/scripts/services/exim
@@ -273,6 +275,7 @@ usr/share/logwatch/scripts/services/modprobe
 #usr/share/logwatch/scripts/services/named
 #usr/share/logwatch/scripts/services/netopia
 #usr/share/logwatch/scripts/services/netscreen
+usr/share/logwatch/scripts/services/nut
 #usr/share/logwatch/scripts/services/oidentd
 #usr/share/logwatch/scripts/services/omsa
 usr/share/logwatch/scripts/services/openvpn

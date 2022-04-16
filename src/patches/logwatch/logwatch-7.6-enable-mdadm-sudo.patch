@@ -1,6 +1,6 @@
-diff -Naur logwatch-7.5.5-orig/conf/services/mdadm.conf logwatch-7.5.5/conf/services/mdadm.conf
---- logwatch-7.5.5-orig/conf/services/mdadm.conf	2021-01-22 21:59:40.000000000 +0100
-+++ logwatch-7.5.5/conf/services/mdadm.conf	2021-10-04 13:52:30.850057355 +0200
+diff -U 3 a/conf/services/mdadm.conf b/conf/services/mdadm.conf
+--- a/conf/services/mdadm.conf	Sat Jan 22 01:00:00 2022
++++ b/conf/services/mdadm.conf	Sun Apr 10 10:48:21 2022
 @@ -13,7 +13,7 @@
  # Logwatch will try to find md devices in /etc/mdadm.conf or 
  # /etc/mdadm/mdadm.conf. If none of these files exist it can scan actively
@@ -10,19 +10,19 @@ diff -Naur logwatch-7.5.5-orig/conf/services/mdadm.conf logwatch-7.5.5/conf/serv
  
  # Logwatch will emit an error for md devices listed in /etc/mdadm.conf
  # that are not present.  If you do not want this (e.g. raid devices may come
-diff -Naur logwatch-7.5.5-orig/scripts/services/mdadm logwatch-7.5.5/scripts/services/mdadm
---- logwatch-7.5.5-orig/scripts/services/mdadm	2021-01-22 21:59:40.000000000 +0100
-+++ logwatch-7.5.5/scripts/services/mdadm	2021-10-06 11:41:14.800307603 +0200
-@@ -35,7 +35,7 @@
- } elsif ( -f "/etc/mdadm/mdadm.conf" ) {
-   open(MDADM,"< /etc/mdadm/mdadm.conf");
- } elsif ($enable_scan) {
--  open(MDADM,"mdadm --detail --scan 2>/dev/null|");
-+  open(MDADM,"sudo mdadm --detail --scan 2>/dev/null|");
- }
- while (<MDADM>) {
-   if (/^ARRAY/) {
-@@ -51,7 +51,7 @@
+diff -U 3 a/scripts/services/mdadm b/scripts/services/mdadm
+--- a/scripts/services/mdadm	Sat Jan 22 01:00:00 2022
++++ b/scripts/services/mdadm	Sun Apr 10 10:38:19 2022
+@@ -36,7 +36,7 @@
+ if (
+     open($mdadm, "<", "/etc/mdadm.conf") or
+     open($mdadm, "<", "/etc/mdadm/mdadm.conf") or
+-    open($mdadm, "<", "mdadm --detail --scan 2>/dev/null|")) {
++    open($mdadm, "<", "sudo mdadm --detail --scan 2>/dev/null|")) {
+    while (<$mdadm>) {
+        if (/^ARRAY/) {
+          push(@devices,(split())[1]);
+@@ -52,7 +52,7 @@
      next;
    }
  
@@ -31,7 +31,7 @@ diff -Naur logwatch-7.5.5-orig/scripts/services/mdadm logwatch-7.5.5/scripts/ser
    while (<MDADM>) {
      if ($_ =~ /cannot open .*: No such file or directory/) {
        print $_ unless $ignore_missing;
-@@ -74,7 +74,11 @@
+@@ -75,7 +75,11 @@
  
    if ($Detail <= 4) {
      if (lc($mdhash{'state'}) =~ /clean|active/) {

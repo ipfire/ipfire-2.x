@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.5.5
+VER        = 7.6
 
 THISAPP    = logwatch-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3e4183ea6dad4f415987870c555391d2a9496b4d4d894f1c06336876077b2a72e06b4e3f8d272aeb65aa5ea14f5f4d17a6f461ae54b2e50f073fef58a27a5241
+$(DL_FILE)_BLAKE2 = fd7f2a7c65151dbfbd924102b01ead00f92d74a59a417361b65be972368f7ed93810feefedf1ad9bba2de5ebbc74589c3fc0a8a484f19b5a9782c9799ffdf656
 
 install : $(TARGET)
 
@@ -73,8 +73,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && sed -e "s/^TEMPDIR=.*/TEMPDIR=\"\/tmp\"/g" -i install_logwatch.sh
 
 	cd $(DIR_APP)/lib && patch < $(DIR_SRC)/src/patches/logwatch/logwatch-7.3.6-date_manip6.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/logwatch/logwatch-7.5.4-disable_iptables.patch
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/logwatch/logwatch-7.5.5-enable-mdadm-sudo.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/logwatch/logwatch-7.6-disable_iptables.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/logwatch/logwatch-7.6-enable-mdadm-sudo.patch
 
 	@cd $(DIR_APP) && chmod 755 install_logwatch.sh
 	cd $(DIR_APP) && yes "" | ./install_logwatch.sh

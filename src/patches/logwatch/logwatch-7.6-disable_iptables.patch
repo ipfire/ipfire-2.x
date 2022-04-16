@@ -1,7 +1,7 @@
 diff -U 3 a/conf/logwatch.conf b/conf/logwatch.conf
---- a/conf/logwatch.conf	Thu Sep 19 01:58:55 2019
-+++ b/conf/logwatch.conf	Thu Nov 26 18:46:12 2020
-@@ -94,6 +94,10 @@
+--- a/conf/logwatch.conf	Sat Jan 22 01:00:00 2022
++++ b/conf/logwatch.conf	Sun Apr 10 10:33:20 2022
+@@ -96,6 +96,10 @@
                              # prints useful system configuration info.
  Service = "-eximstats"      # Prevents execution of eximstats service, which
                              # is a wrapper for the eximstats program.
