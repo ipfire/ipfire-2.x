@@ -101,6 +101,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Create emtpy rules directory.
 	-mkdir -p /var/lib/suricata
 
+	# Create empty cache directory.
+	-mkdir -p /var/cache/suricata
+
 	# Move config files for references, threshold and classification
 	# to the rules directory.
 	rm -rfv /etc/suricata/*.config
@@ -112,6 +115,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Set correct ownership for /var/lib/suricata and the
 	# contained files
 	chown -R nobody:nobody /var/lib/suricata
+
+	# Set correct ownership for the cache directory.
+	chown nobody:nobody /var/cache/suricata
 
 	# Create logging directory.
 	-mkdir -p /var/log/suricata
