@@ -1452,6 +1452,7 @@
 'ids reset provider' => 'Reset provider',
 'ids rules update' => 'Ruleset',
 'ids ruleset autoupdate in progress' => 'Ruleset update in progress. Please wait until all operations have completed successfully...',
+'ids ruleset is up to date' => 'No update required - The ruleset is up to date.',
 'ids ruleset settings' => 'Ruleset Settings',
 'ids show' => 'Show',
 'ids subscription code required' => 'The selected ruleset requires a subscription code',

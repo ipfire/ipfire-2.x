@@ -1407,6 +1407,7 @@
 'ids reset provider' => 'Providereinstellungen zurücksetzen',
 'ids rules update' => 'Regelsatz',
 'ids ruleset autoupdate in progress' => 'Der Regelsatz wird gerade aktualisiert. Bitte warten Sie, bis dieser Vorgang erfolgreich beendet wurde...',
+'ids ruleset is up to date' => 'Regelset ist aktuell - Keine Aktualisierung notwendig.',
 'ids ruleset settings' => 'Regelsatzeinstellungen',
 'ids show' => 'Anzeigen',
 'ids the choosen provider is already in use' => 'Der gewhählte Provider wird bereits verwendet.',

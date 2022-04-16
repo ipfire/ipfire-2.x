@@ -436,8 +436,16 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 		&working_notice("$Lang::tr{'ids download new ruleset'}");
 
 		# Call subfunction to download the ruleset.
-		if(&IDS::downloadruleset($provider)) {
-			$errormessage = "$provider - $Lang::tr{'could not download latest updates'}";
+		my $return = &IDS::downloadruleset($provider);
+
+		# Check if the download function gives a return code.
+		if ($return) {
+			# Handle different return codes.
+			if ($return eq "not modified") {
+				$errormessage = "$provider - $Lang::tr{'ids ruleset is up to date'}";
+			} else {
+				$errormessage = "$provider - $Lang::tr{'could not download latest updates'}: $return";
+			}
 
 			# Call function to store the errormessage.
 			&IDS::_store_error_message($errormessage);
