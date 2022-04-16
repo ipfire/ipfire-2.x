@@ -184,14 +184,48 @@ foreach my $provider (@providers) {
 }
 
 #
-## Step 4: Regenerate the ruleset.
+## Step 4: Convert MONTIOR_TRAFFIC_ONLY setting.
+#
+
+my %ids_settings = ();
+my %provider_settings = ();
+
+&General::readhash("$IDS::ids_settings_file", \%ids_settings);
+&General::readhasharray("$IDS::providers_settings_file", \%provider_settings);
+
+# Default to IPS mode.
+my $mode = "IPS";
+
+# Check if MONTOR_TRAFFIC_ONLY has been activated.
+if(($ids_settings{'MONITOR_TRAFFIC_ONLY'} && $ids_settings{'MONITOR_TRAFFIC_ONLY'} eq "on")) {
+	$mode = "IDS";
+}
+
+# Loop through the hash of providers.
+foreach my $key (keys %provider_settings) {
+	# Get and dereference settings array from hash.
+	my @settings = @{ $provider_settings{$key} };
+
+	# Add the mode as last element to the settings array.
+	push(@settings, $mode);
+
+	# Assign the new settings to the hash.
+	$provider_settings{$key} = [ @settings ];
+}
+
+# Write back providers settings.
+&General::writehasharray("$IDS::providers_settings_file", \%provider_settings);
+
+#
+## Step 5: Regenerate the ruleset.
+#
 #
 
 # Call oinkmaster wrapper function.
 &IDS::oinkmaster();
 
 #
-## Step 5: Write new config file for suricata which contains the used rulesfiles.
+## Step 6: Write new config file for suricata which contains the used rulesfiles.
 #
 
 # Get enabled providers.
@@ -201,7 +235,7 @@ my @enabled_providers = &IDS::get_enabled_providers();
 &IDS::write_used_rulefiles_file(@enabled_providers);
 
 #
-## Step 6: Remove unneeded orphaned files.
+## Step 7: Remove unneeded orphaned files.
 #
 
 # Loop through the array of files which are safe to drop.
