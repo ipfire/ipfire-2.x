@@ -1862,34 +1862,34 @@ sub oinkmaster_web () {
 	print "<tr><td><br><br></td></tr>\n";
 
         # Cleanup the rules directory before filling it with the new rulests.
-        &_add_to_notice("Remove old rule structures...");
+        &_add_to_notice("$Lang::tr{'ids remove rule structures'}");
         &IDS::_cleanup_rulesdir();
 
         # Loop through the array of enabled providers.
         foreach my $provider (@enabled_providers) {
-                &_add_to_notice("Extracting ruleset for provider: $provider");
+                &_add_to_notice("$Lang::tr{'ids extract ruleset'} $provider");
                 # Call the extractruleset function.
                 &IDS::extractruleset($provider);
         }
 
         # Call function to process the ruleset and do all modifications.
-        &_add_to_notice("Adjust rules and add user defined customizations...");
+        &_add_to_notice("$Lang::tr{'ids adjust ruleset'}");
         &IDS::process_ruleset(@enabled_providers);
 
         # Call function to merge the classification files.
-        &_add_to_notice("Merging classifications ...");
+        &_add_to_notice("$Lang::tr{'ids merge classifications'}");
         &IDS::merge_classifications(@enabled_providers);
 
         # Call function to merge the sid to message mapping files.
-        &_add_to_notice("Merging sid to message files ...");
+        &_add_to_notice("$Lang::tr{'ids merge sid files'}");
         &IDS::merge_sid_msg(@enabled_providers);
 
         # Cleanup temporary directory.
-        &_add_to_notice("Cleanup temporary directory ...");
+        &_add_to_notice("$Lang::tr{'ids cleanup tmp dir'}");
         &IDS::cleanup_tmp_directory();
 
 	# Finished - print a notice.
-        &_add_to_notice("Finished...");
+        &_add_to_notice("$Lang::tr{'ids finished'}");
 
 	# Close the working notice.
 	&_close_working_notice();
