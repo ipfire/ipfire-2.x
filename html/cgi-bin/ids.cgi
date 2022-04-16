@@ -1105,17 +1105,6 @@ END
 
 print <<END
 				</tr>
-
-				<tr>
-					<td><br><br></td>
-					<td><br><br></td>
-					<td><br><br></td>
-					<td><br><br></td>
-				</tr>
-
-				<tr>
-					<td colspan='4'><b>$Lang::tr{'ids automatic rules update'}</b></td>
-				</tr>
 			</table>
 
 			<br><br>
