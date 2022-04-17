@@ -26,6 +26,9 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/ids-functions.pl";
 require "${General::swroot}/lang.pl";
 
+# Import ruleset providers file.
+require "$IDS::rulesetsourcesfile";
+
 # Load perl module to talk to the kernel syslog.
 use Sys::Syslog qw(:DEFAULT setlogsock);
 
@@ -101,6 +104,9 @@ foreach my $id (keys %providers) {
 	my $provider = $providers{$id}[0];
 	my $enabled_status = $providers{$id}[2];
 	my $autoupdate_status = $providers{$id}[3];
+
+	# Skip unsupported providers.
+	next unless($IDS::Ruleset::Providers{$provider});
 
 	# Skip the provider if it is not enabled.
 	next unless($enabled_status eq "enabled");
