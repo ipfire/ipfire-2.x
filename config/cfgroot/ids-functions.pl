@@ -427,6 +427,9 @@ sub downloadruleset ($) {
 
 		# Check if the server responds with 304 (Not Modified).
 		} elsif ($response->code == 304) {
+			# Remove temporary file, if one exists.
+			unlink("$tmpfile") if (-e "$tmpfile");
+
 			# Return "not modified".
 			return "not modified";
 
@@ -434,6 +437,9 @@ sub downloadruleset ($) {
 		} elsif ($dl_attempt eq $max_dl_attempts) {
 			# Obtain error.
 			my $error = $response->content;
+
+			# Remove temporary file, if one exists.
+			unlink("$tmpfile") if (-e "$tmpfile");
 
 			# Return the error message from response..
 			return "$error";
