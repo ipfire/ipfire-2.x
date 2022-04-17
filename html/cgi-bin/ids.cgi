@@ -1780,7 +1780,8 @@ END
 ## Function to show the area where additional provider actions can be done.
 #
 sub show_additional_provider_actions() {
-	my $disabled;
+	my $disabled_reset;
+	my $disabled_update;
 	my %used_providers = ();
 
 	# Read-in providers settings file.
@@ -1795,7 +1796,12 @@ sub show_additional_provider_actions() {
 
 	# Disable the reset provider button if no provider modified sids file exists.
 	unless (-f $modifications_file) {
-		$disabled = "disabled";
+		$disabled_reset = "disabled";
+	}
+
+	# Disable the manual update button if the provider is not longer supported.
+	unless ($IDS::Ruleset::Providers{$provider}) {
+		$disabled_update = "disabled";
 	}
 
 	&Header::openbox('100%', 'center', "");
@@ -1805,8 +1811,8 @@ sub show_additional_provider_actions() {
 				<tr>
 					<td align='center'>
 						<input type='hidden' name='PROVIDER' value='$provider'>
-						<input type='submit' name='PROVIDERS' value='$Lang::tr{'ids reset provider'}' $disabled>
-						<input type='submit' name='PROVIDERS' value='$Lang::tr{'ids force ruleset update'}'>
+						<input type='submit' name='PROVIDERS' value='$Lang::tr{'ids reset provider'}' $disabled_reset>
+						<input type='submit' name='PROVIDERS' value='$Lang::tr{'ids force ruleset update'}' $disabled_update>
 					</td>
 				</tr>
 			</table>
