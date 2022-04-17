@@ -1161,6 +1161,16 @@ END
 					$col="bgcolor='$color{'color20'}'";
 				}
 
+				# Handle providers which are not longer supported.
+				unless ($provider_name) {
+					# Set the provider name to the provider handle
+					# to display something helpful.
+					$provider_name = $provider;
+
+					# Assign background color
+					$col="bgcolor='#FF4D4D'";
+				}
+
 				# Choose icons for the checkboxes.
 				my $status_gif;
 				my $status_gdesc;
@@ -2030,6 +2040,9 @@ sub get_provider_handle($) {
 sub get_provider_name($) {
 	my ($handle) = @_;
 	my $provider_name;
+
+	# Early exit if the given provider does not longer exist.
+	return unless ($IDS::Ruleset::Providers{$handle});
 
 	# Get the required translation string for the given provider handle.
 	my $tr_string = $IDS::Ruleset::Providers{$handle}{'tr_string'};
