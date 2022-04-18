@@ -59,6 +59,7 @@ rm -vf \
 	/opt/pakfire/db/rootfiles/netbpm
 
 # Stop services
+/etc/init.d/squid stop
 
 # Extract files
 extract_files
@@ -74,6 +75,7 @@ ldconfig
 
 # Start services
 /etc/init.d/vnstatd restart
+/etc/init.d/squid start
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
