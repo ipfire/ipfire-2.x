@@ -5,7 +5,7 @@
 
 # Set some basic hardening options for all connections
 Host *
-        # Disable Roaming as it is known to be vulnerable
+        # Disable undocumented roaming feature as it is known to be vulnerable
         UseRoaming no
 
         # Only use secure crypto algorithms
@@ -13,15 +13,19 @@ Host *
         Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
         MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com
 
-        # Always visualise server host keys (but helps to identify key based MITM attacks)
+        # Always visualise server host keys (helps to identify key based MITM attacks)
         VisualHostKey yes
 
         # Use SSHFP (might work on some up-to-date networks) to look up host keys
         VerifyHostKeyDNS yes
 
-        # send keep-alive messages to connected server to avoid broken connections
+        # Send SSH-based keep alive messages to connected server to avoid broken connections
         ServerAliveInterval 10
-        ServerAliveCountMax 6
+        ServerAliveCountMax 30
+
+	# Disable TCP keep alive messages since they can be spoofed and we have SSH-based
+	# keep alive messages enabled; there is no need to do things twice here
+	TCPKeepAlive no
 
         # Ensure only allowed authentication methods are used
         PreferredAuthentications publickey,keyboard-interactive,password

@@ -46,11 +46,13 @@ AllowTcpForwarding no
 AllowAgentForwarding no
 PermitOpen none
 
-# Detect broken sessions by sending keep-alive messages to clients via SSH connection
+# Send SSH-based keep alive messages to connected clients to avoid broken connections
 ClientAliveInterval 10
+ClientAliveCountMax 30
 
-# Close unresponsive SSH sessions which fail to answer keep-alive
-ClientAliveCountMax 6
+# Since TCP keep alive messages can be spoofed and we have the SSH-based already,
+# there is no need for this to be enabled as well
+TCPKeepAlive no
 
 # Add support for SFTP
 Subsystem	sftp	/usr/lib/openssh/sftp-server
