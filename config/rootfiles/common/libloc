@@ -1,6 +1,7 @@
 usr/bin/location
 #usr/bin/location-importer
 #usr/include/libloc
+#usr/include/libloc/address.h
 #usr/include/libloc/as-list.h
 #usr/include/libloc/as.h
 #usr/include/libloc/compat.h
@@ -18,7 +19,7 @@ usr/bin/location
 #usr/lib/libloc.la
 #usr/lib/libloc.so
 usr/lib/libloc.so.1
-usr/lib/libloc.so.1.0.1
+usr/lib/libloc.so.1.0.2
 usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/Location.pm
 #usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Location
 #usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Location/.packlist

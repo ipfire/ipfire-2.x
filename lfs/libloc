@@ -24,8 +24,8 @@
 
 include Config
 
-VER        = 0.9.11
-DB_DATE    = 2022-02-16
+VER        = 0.9.13
+DB_DATE    = 2022-04-12
 
 THISAPP    = libloc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,8 +43,8 @@ objects = $(DL_FILE) \
 $(DL_FILE)                    = https://source.ipfire.org/releases/libloc/$(DL_FILE)
 location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE).db.xz
 
-$(DL_FILE)_BLAKE2 = 46df0dc058235ede47c103c9be5882f50b688c80613c2bdf6f3bc40a2effff67e3ef77cd28142dc3b3fb832689a345e8840fe466738e7ae151698e98c17a68ed
-location-$(DB_DATE).db.xz_BLAKE2 = 9ba0ae5bbabef1a0f692cee11515796d754b2f83aa21c2a2730b4d04249606fe00df856dad08fbdfdad3fad6b06c902b36e3a7717181ce0fac4738b46737b5b4
+$(DL_FILE)_BLAKE2 = 5fccd6f0564899499939c63af8975f20b1f7d5267a8cf6c15e14ab377b9d5c008ae5e154c804ac6a1106471aaeebac97dc4ebe6b70fc1e59f416fe2cc02c52a7
+location-$(DB_DATE).db.xz_BLAKE2 = 8634405ddba8c38d4512ec586722faaeccb295b8bfe7778e52e7bb60dfe804c6a3ae201d04a43d200e1118cf5fed05ef3eada59e2dd6386fe37023274ccb6795
 
 install : $(TARGET)
 
