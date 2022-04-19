@@ -1396,6 +1396,8 @@
 'ids log hits' => 'Gesamtanzahl der Regeltreffer für',
 'ids log viewer' => 'Protokoll des Einbruchsverhinderungssystems',
 'ids logs' => 'IPS-Protokolldateien',
+'ids merge classifications' => 'Klassifizierungen zusammenführen...',
+'ids merge sid files' => 'Sid-to-message Dateien zusammenführen...',
 'ids monitor traffic only' => 'Netzwerkpakete nur überprüfen (nicht verwerfen)',
 'ids monitored interfaces' => 'Überwachte Netzwerkzonen',
 'ids no enabled ruleset provider' => 'Es ist kein aktivierter Provider verfügbar. Bitte aktivieren Sie einen oder fügen Sie einen Provider hinzu.',
