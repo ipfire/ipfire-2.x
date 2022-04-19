@@ -1,0 +1,30 @@
+--- linux-5.15.32.orig/arch/x86/kernel/ioport.c	2022-04-19 12:54:46.468477540 +0000
++++ linux-5.15.32/arch/x86/kernel/ioport.c	2022-04-19 12:56:21.423185714 +0000
+@@ -4,7 +4,6 @@
+  * by Linus. 32/64 bits code unification by Miguel Botón.
+  */
+ #include <linux/capability.h>
+-#include <linux/security.h>
+ #include <linux/syscalls.h>
+ #include <linux/bitmap.h>
+ #include <linux/ioport.h>
+@@ -70,8 +69,7 @@
+ 
+ 	if ((from + num <= from) || (from + num > IO_BITMAP_BITS))
+ 		return -EINVAL;
+-	if (turn_on && (!capable(CAP_SYS_RAWIO) ||
+-			security_locked_down(LOCKDOWN_IOPORT)))
++	if (turn_on && (!capable(CAP_SYS_RAWIO)))
+ 		return -EPERM;
+ 
+ 	/*
+@@ -186,8 +184,7 @@
+ 
+ 	/* Trying to gain more privileges? */
+ 	if (level > old) {
+-		if (!capable(CAP_SYS_RAWIO) ||
+-		    security_locked_down(LOCKDOWN_IOPORT))
++		if (!capable(CAP_SYS_RAWIO))
+ 			return -EPERM;
+ 	}
+ 
