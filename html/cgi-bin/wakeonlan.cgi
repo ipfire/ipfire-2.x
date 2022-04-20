@@ -173,10 +173,10 @@ if ( $cgiparams{'ACTION'} eq 'wakeup' )
 
   &General::system("/usr/sbin/etherwake", "-i", "$iface", "$mac");
 
-  # make a box with info, 'refresh' to normal screen after 5 seconds
+  # make a box with info, 'refresh' to normal screen after 3 seconds
   if ( $refresh eq 'yes' )
   {
-    &Header::openpage($Lang::tr{'WakeOnLan'}, 1, "<meta http-equiv='refresh' content='3;url=/cgi-bin/wakeonlan.cgi'");
+    &Header::openpage($Lang::tr{'WakeOnLan'}, 1, "<meta http-equiv='refresh' content='3; url=/cgi-bin/wakeonlan.cgi'>");
     &Header::openbigbox('100%', 'left');
   }
   &Header::openbox('100%', 'left', $Lang::tr{'WakeOnLan'});
