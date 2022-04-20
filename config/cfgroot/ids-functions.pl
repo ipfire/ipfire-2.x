@@ -1027,23 +1027,47 @@ sub _store_error_message ($) {
 sub _get_dl_rulesfile($) {
 	my ($provider) = @_;
 
-	# Gather the download type for the given provider.
-	my $dl_type = $IDS::Ruleset::Providers{$provider}{'dl_type'};
+	# Check if the requested provider is known.
+	if ($IDS::Ruleset::Providers{$provider}) {
+		# Gather the download type for the given provider.
+		my $dl_type = $IDS::Ruleset::Providers{$provider}{'dl_type'};
 
-	# Obtain the file suffix for the download file type.
-	my $suffix = $dl_type_to_suffix{$dl_type};
+		# Obtain the file suffix for the download file type.
+		my $suffix = $dl_type_to_suffix{$dl_type};
 
-	# Check if a suffix has been found.
-	unless ($suffix) {
-		# Abort return - nothing.
-		return;
+		# Check if a suffix has been found.
+		unless ($suffix) {
+			# Abort return - nothing.
+			return;
+		}
+
+		# Generate the full filename and path for the stored rules file.
+		my $rulesfile = "$dl_rules_path/$dl_rulesfile_prefix-$provider$suffix";
+
+		# Return the generated filename.
+		return $rulesfile;
+
+	} else {
+		# A downloaded ruleset for a provider which is not supported anymore is requested.
+		#
+		# Try to enumerate the downloaded ruleset file.
+		foreach my $dl_type (keys %dl_type_to_suffix) {
+			# Get the file suffix for the supported type.
+			my $suffix = $dl_type_to_suffix{$dl_type};
+
+			# Generate possible ruleset file name.
+			my $rulesfile = "$dl_rules_path/$dl_rulesfile_prefix-$provider$suffix";
+
+			# Check if such a file exists.
+			if (-f $rulesfile) {
+				# Downloaded rulesfile found - Return the filename.
+				return $rulesfile;
+			}
+		}
 	}
 
-	# Generate the full filename and path for the stored rules file.
-	my $rulesfile = "$dl_rules_path/$dl_rulesfile_prefix-$provider$suffix";
-
-	# Return the generated filename.
-	return $rulesfile;
+	# If we got here, no rulesfile could be determined - return nothing.
+	return;
 }
 
 #
