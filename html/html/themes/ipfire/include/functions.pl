@@ -31,8 +31,6 @@
 # IPFire default theme.                                                       #
 ###############################################################################
 
-require "${General::swroot}/lang.pl";
-
 ###############################################################################
 #
 # print menu html elements for submenu entries
@@ -101,19 +99,14 @@ sub openpage {
 	my $title = shift;
 	my $boh = shift;
 	my $extrahead = shift;
-	my $suppressMenu = shift;
+	my $suppressMenu = shift // 0;
 	my @tmp = split(/\./, basename($0));
 	my $scriptName = @tmp[0];
-
-	@URI=split ('\?',  $ENV{'REQUEST_URI'} );
-	&General::readhash("${swroot}/main/settings", \%settings);
-	&genmenu();
 
 	my $headline = "IPFire";
 	if (($settings{'WINDOWWITHHOSTNAME'} eq 'on') || ($settings{'WINDOWWITHHOSTNAME'} eq '')) {
 		$headline =  "$settings{'HOSTNAME'}.$settings{'DOMAINNAME'}";
 	}
-
 
 print <<END;
 <!DOCTYPE html>
@@ -165,7 +158,10 @@ print <<END
 END
 ;
 
-&showmenu() if ($suppressMenu != 1);
+unless($suppressMenu) {
+	&genmenu();
+	&showmenu();
+}
 
 print <<END
 	<div class="bigbox fixed">
@@ -270,5 +266,3 @@ sub openbox {
 sub closebox {
 	print "</div>";
 }
-
-1;
