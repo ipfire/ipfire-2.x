@@ -66,6 +66,7 @@ usr/libexec/git-core/git-for-each-repo
 usr/libexec/git-core/git-format-patch
 usr/libexec/git-core/git-fsck
 usr/libexec/git-core/git-fsck-objects
+usr/libexec/git-core/git-fsmonitor--daemon
 usr/libexec/git-core/git-gc
 usr/libexec/git-core/git-get-tar-commit-id
 usr/libexec/git-core/git-grep
@@ -73,6 +74,7 @@ usr/libexec/git-core/git-grep
 #usr/libexec/git-core/git-gui--askpass
 usr/libexec/git-core/git-hash-object
 usr/libexec/git-core/git-help
+usr/libexec/git-core/git-hook
 usr/libexec/git-core/git-http-backend
 usr/libexec/git-core/git-http-fetch
 usr/libexec/git-core/git-http-push
