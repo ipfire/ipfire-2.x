@@ -1417,6 +1417,7 @@ buildipfire() {
   lfsmake2 perl-XML-Parser
   lfsmake2 perl-Crypt-PasswdMD5
   lfsmake2 perl-Net-Telnet
+  lfsmake2 perl-JSON
   lfsmake2 python3-setuptools
   lfsmake2 python3-inotify
   lfsmake2 python3-docutils

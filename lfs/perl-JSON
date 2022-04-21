@@ -1,0 +1,88 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+
+###############################################################################
+# Definitions
+###############################################################################
+include Config
+
+SUMMARY    = JSON (JavaScript Object Notation) encoder/decoder
+
+VER        = 4.05
+
+THISAPP    = JSON-$(VER)
+DL_FILE    = ${THISAPP}.tar.gz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+PROG       = perl-JSON
+DEPS       =
+PAK_VER    = 1
+
+SERVICES   =
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_BLAKE2 = 0ecf27b15a780833fe6cb12bece6eaa5a75de92a02f901014105d1435857867d86ccad94e2666195fc66ed41f45f8f91061a06b1e5e05f3a332803b46bb4b53e
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+b2 : $(subst %,%_BLAKE2,$(objects))
+
+dist:
+	@$(PAK)
+
+###############################################################################
+# Downloading, checking, b2sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && perl Makefile.PL
+	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)
