@@ -143,9 +143,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# https://bugzilla.ipfire.org/show_bug.cgi?id=12760
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15-NFQUEUE-Hold-RCU-read-lock-while-calling-nf_reinject.patch
 
-	# Unfortunately, /dev/io access is needed for firmware flashing; patch out LSM part in ioport.c
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15.32-disable_lsm_for_ioport_access.patch
-
 ifeq "$(BUILD_ARCH)" "armv6l"
 	# Apply Arm-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).patch.xz | patch -Np1
