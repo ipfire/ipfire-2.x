@@ -1867,10 +1867,14 @@ sub _close_working_notice () {
 ## oinkmaster function, but provides a lot of HTML formated status output.
 #
 sub oinkmaster_web () {
+	my ($nolock) = @_;
+
 	my @enabled_providers = &IDS::get_enabled_providers();
 
 	# Lock the webpage and print message.
-        &_open_working_notice("$Lang::tr{'ids apply ruleset changes'}");
+	unless ($nolock) {
+		&_open_working_notice("$Lang::tr{'ids apply ruleset changes'}");
+	}
 
         # Check if the files in rulesdir have the correct permissions.
         &IDS::_check_rulesdir_permissions();
@@ -1908,7 +1912,9 @@ sub oinkmaster_web () {
         &_add_to_notice("$Lang::tr{'ids finished'}");
 
 	# Close the working notice.
-	&_close_working_notice();
+	unless ($nolock) {
+		&_close_working_notice();
+	}
 }
 
 #
