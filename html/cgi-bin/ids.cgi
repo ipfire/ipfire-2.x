@@ -433,7 +433,7 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	unless ($errormessage) {
 		# Lock the webpage and print notice about downloading
 		# a new ruleset.
-		&working_notice("$Lang::tr{'ids download new ruleset'}");
+		&_open_working_notice("$Lang::tr{'ids download new ruleset'}");
 
 		# Call subfunction to download the ruleset.
 		my $return = &IDS::downloadruleset($provider);
@@ -450,11 +450,17 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 			# Call function to store the errormessage.
 			&IDS::_store_error_message($errormessage);
 
+			# Close the working notice.
+			&_close_working_notice();
+
 			# Preform a reload of the page.
 			&reload();
 		} else {
 			# Call subfunction to launch oinkmaster.
-			&oinkmaster_web();
+			&oinkmaster_web("nolock");
+
+			# Close the working notice.
+			&_close_working_notice();
 
 			# Check if the IDS is running.
 			if(&IDS::ids_is_running()) {
