@@ -234,6 +234,9 @@ my @enabled_providers = &IDS::get_enabled_providers();
 # Write used rulesfiles file.
 &IDS::write_used_rulefiles_file(@enabled_providers);
 
+# Set the correct ownership for the new file.
+&IDS::set_ownership("$IDS::suricata_used_rulesfiles_file");
+
 #
 ## Step 7: Remove unneeded orphaned files.
 #
