@@ -1484,6 +1484,9 @@ sub write_used_rulefiles_file (@) {
 
 	# Loop through the array of enabled providers.
 	foreach my $provider (@providers) {
+		# Skip unsupported providers.
+		next unless ($IDS::Ruleset::Providers{$provider});
+
 		# Get the used rulefile for this provider.
 		my @used_rulesfiles = &get_provider_used_rulesfiles($provider);
 
