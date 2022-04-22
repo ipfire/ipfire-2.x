@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.8.2
+VER        = 0.8.3
 
 THISAPP    = libcap-ng-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 7e721d05b92fd3708b970527e76b1898daa91bde3ab6ed5d8f23b1435404fbe7d15731461c6d9d2c791738e5498d1f5eaba727413480d34b7edea13c8691c32b
+$(DL_FILE)_BLAKE2 = c54dd753e0ef6dd21bcf6af7b003f85ded9faf2fbf1ea834cda6b181b165ff4b11a0284c23c73d0e6f97a810b3e6a63fceeb57ff583a2b32f23924bdee597ef5
 
 install : $(TARGET)
 
