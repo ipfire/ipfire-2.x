@@ -97,16 +97,6 @@ our %Providers = (
 		dl_type => "plain",
 	},
 
-	# Positive Technologies Attack Detection Team rules.
-	attack_detection => {
-		summary => "PT Attack Detection Team Rules",
-		website => "https://github.com/ptresearch/AttackDetection",
-		tr_string => "attack detection team rules",
-		requires_subscription => "False",
-		dl_url => "https://raw.githubusercontent.com/ptresearch/AttackDetection/master/pt.rules.tar.gz",
-		dl_type => "archive",
-	},
-
 	# Secureworks Security rules.
 	secureworks_security => {
 		summary => "Secureworks Security Ruleset",
