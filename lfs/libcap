@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.63
+VER        = 2.64
 
 THISAPP    = libcap-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a49a628f5b9ddf5a3d077428544a53b9cdedf62053ff296a0aa7d61e12ca05f9ba7597f20ee16a3843736bee2417a3d1585ad6b336651fcb3e4ee29b108cfa0f
+$(DL_FILE)_BLAKE2 = 078ce2505a79c1bd4ca0a8eaf3444178bc19a566f0505d28c6959f86fbbac2fe2fc88c06fd0d988087a6e20e8ec66a2633146cea957f0f3fd92eaff4f81d7c66
 
 install : $(TARGET)
 
@@ -71,11 +71,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	# Prevent a static library from being installed
-	cd $(DIR_APP) && sed -i '/install.*STALIBNAME/d' libcap/Makefile
+	cd $(DIR_APP) && sed -i '/install -m.*STA/d' libcap/Makefile
 	cd $(DIR_APP) && make GOLANG=no
 	cd $(DIR_APP) && make install GOLANG=no
 	rm -vf /lib/libcap.so
-	ln -svf /lib/libcap.so.2.61 /usr/lib/libcap.so
+	ln -svf /lib/libcap.so.2.64 /usr/lib/libcap.so
 	chmod +x /lib/libcap.so.*
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

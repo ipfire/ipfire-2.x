@@ -1,10 +1,8 @@
-#lib/libcap.a
 lib/libcap.so.2
-lib/libcap.so.2.63
-#lib/libpsx.a
+lib/libcap.so.2.64
 #lib/libpsx.so
 #lib/libpsx.so.2
-#lib/libpsx.so.2.63
+lib/libpsx.so.2.64
 #lib/pkgconfig/libcap.pc
 #lib/pkgconfig/libpsx.pc
 lib/security/pam_cap.so
