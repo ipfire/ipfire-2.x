@@ -26,7 +26,7 @@ diff --git a/src/stream-tcp.c b/src/stream-tcp.c
 index 1cff19fa5..af681760b 100644
 --- a/src/stream-tcp.c
 +++ b/src/stream-tcp.c
-@@ -1643,6 +1643,23 @@ static int StreamTcpPacketStateSynSent(ThreadVars *tv, Packet *p,
+@@ -1641,6 +1641,23 @@ static int StreamTcpPacketStateSynSent(ThreadVars *tv, Packet *p,
                      "ssn->client.last_ack %"PRIu32"", ssn,
                      ssn->client.isn, ssn->client.next_seq,
                      ssn->client.last_ack);
