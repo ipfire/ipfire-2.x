@@ -46,7 +46,22 @@ my @files_to_drop = (
 );
 
 #
-# Step 1: Move downloaded files to new location.
+## Step 1: Stop suricata if it is running.
+#
+my $start_suricata;
+
+# Check if the IDS is running.
+if(&IDS::ids_is_running()) {
+	# Call suricatactrl to stop the IDS.
+	&IDS::call_suricatactrl("stop");
+
+	# Set start_suricata to true to start it
+	# at the end of the script again.
+	$start_suricata = "1";
+}
+
+#
+## Step 2: Move downloaded files to new location.
 #
 
 my $old_dl_rulesfiles_dir = "/var/tmp";
@@ -79,7 +94,7 @@ closedir(DIR);
 my @providers = &IDS::get_ruleset_providers();
 
 #
-## Step 2: Convert used rules files.
+## Step 3: Convert used rules files.
 #
 
 # Loop through the array of known providers.
@@ -128,7 +143,7 @@ foreach my $provider (@providers) {
 }
 
 #
-## Step 3: Convert ruleset modifictaion files.
+## Step 4: Convert ruleset modifictaion files.
 #
 
 # Loop through the array of providers.
@@ -184,7 +199,7 @@ foreach my $provider (@providers) {
 }
 
 #
-## Step 4: Convert MONTIOR_TRAFFIC_ONLY setting.
+## Step 5: Convert MONTIOR_TRAFFIC_ONLY setting.
 #
 
 my %ids_settings = ();
@@ -217,7 +232,7 @@ foreach my $key (keys %provider_settings) {
 &General::writehasharray("$IDS::providers_settings_file", \%provider_settings);
 
 #
-## Step 5: Regenerate the ruleset.
+## Step 6: Regenerate the ruleset.
 #
 #
 
@@ -225,7 +240,7 @@ foreach my $key (keys %provider_settings) {
 &IDS::oinkmaster();
 
 #
-## Step 6: Write new config file for suricata which contains the used rulesfiles.
+## Step 7: Write new config file for suricata which contains the used rulesfiles.
 #
 
 # Get enabled providers.
@@ -238,7 +253,7 @@ my @enabled_providers = &IDS::get_enabled_providers();
 &IDS::set_ownership("$IDS::suricata_used_rulesfiles_file");
 
 #
-## Step 7: Remove unneeded orphaned files.
+## Step 8: Remove unneeded orphaned files.
 #
 
 # Loop through the array of files which are safe to drop.
@@ -248,11 +263,11 @@ foreach my $file (@files_to_drop) {
 }
 
 #
-## Step 8: Restart the IDS if running.
+## Step 9: Start the IDS again, if it was running.
 #
 
 # Check if the IDS is running.
-if(&IDS::ids_is_running()) {
-	# Call suricatactrl to perform the restart.
-	&IDS::call_suricatactrl("restart");
+if($start_suricata) {
+	# Call suricatactrl to perform the start of the IDS.
+	&IDS::call_suricatactrl("start");
 }
