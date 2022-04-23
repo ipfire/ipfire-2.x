@@ -8327,7 +8327,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/LOCKDEP_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/LOCKD_V4
 #lib/modules/KVER-ipfire/build/include/config/LOCK_DEBUGGING_SUPPORT
-#lib/modules/KVER-ipfire/build/include/config/LOCK_DOWN_KERNEL_FORCE_INTEGRITY
+#lib/modules/KVER-ipfire/build/include/config/LOCK_DOWN_KERNEL_FORCE_NONE
 #lib/modules/KVER-ipfire/build/include/config/LOCK_SPIN_ON_OWNER
 #lib/modules/KVER-ipfire/build/include/config/LOGO
 #lib/modules/KVER-ipfire/build/include/config/LOGO_LINUX_CLUT224
@@ -13915,6 +13915,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/linux/soc/qcom/llcc-qcom.h
 #lib/modules/KVER-ipfire/build/include/linux/soc/qcom/mdt_loader.h
 #lib/modules/KVER-ipfire/build/include/linux/soc/qcom/pdr.h
+#lib/modules/KVER-ipfire/build/include/linux/soc/qcom/qcom_aoss.h
 #lib/modules/KVER-ipfire/build/include/linux/soc/qcom/qmi.h
 #lib/modules/KVER-ipfire/build/include/linux/soc/qcom/smd-rpm.h
 #lib/modules/KVER-ipfire/build/include/linux/soc/qcom/smem.h
