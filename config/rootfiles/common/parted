@@ -14,12 +14,12 @@
 #usr/lib/libparted-fs-resize.la
 #usr/lib/libparted-fs-resize.so
 usr/lib/libparted-fs-resize.so.0
-usr/lib/libparted-fs-resize.so.0.0.3
+usr/lib/libparted-fs-resize.so.0.0.4
 #usr/lib/libparted.a
 #usr/lib/libparted.la
 #usr/lib/libparted.so
 usr/lib/libparted.so.2
-usr/lib/libparted.so.2.0.3
+usr/lib/libparted.so.2.0.4
 #usr/lib/pkgconfig/libparted-fs-resize.pc
 #usr/lib/pkgconfig/libparted.pc
 usr/sbin/parted
