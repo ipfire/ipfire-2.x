@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 10.39
+VER        = 10.40
 
 THISAPP    = pcre2-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -54,7 +54,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 01df50fc4b791402156cfd2282e7ad82616d71dff12dbedc091b3a036f1fd1c933ebd870ccdd86a6da400732e5a63922c6f6731ea9759065a8de9485a7e842f7
+$(DL_FILE)_BLAKE2 = 627a204585b92238eda81b4befc88757a81d75b0d9fa26ea6d51afcdd93f7e2d102a2245bf3c8e1f5f9ddf69a316c419c948b741a64442bb567480015543e49b
 
 install : $(TARGET)
 
