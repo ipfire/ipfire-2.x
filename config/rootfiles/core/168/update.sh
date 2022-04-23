@@ -76,7 +76,11 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Start services
+/etc/init.d/sshd restart
 /etc/init.d/vnstatd restart
 /etc/init.d/squid start
 /usr/local/bin/openvpnctrl -s
