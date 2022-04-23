@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = v3.3.16
+VER        = v4.0.0
 
 THISAPP    = procps-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 44b5871deeba9d37a38a113937c8b632cc3e400d184fbdf9d64d53370c4f52d1339c1b5e15cc7d53141c4774f993de0cafc0b53aeff6d7fb658126c9b9ad88da
+$(DL_FILE)_BLAKE2 = 5b6c684aaaf4114ea6d53287f220fbc375556a9630a54d9ad8e0750d1d373ab73cf38e06df7cc663853d11fa69237ecd89dffaf3a84dc57df652357983f536cb
 
 install : $(TARGET)
 
@@ -73,7 +73,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \
 				--prefix=/usr \
-				--libdir=/lib
+				--libdir=/lib \
+				--disable-static
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	install -m 0644 $(DIR_SRC)/config/etc/sysctl.conf /etc
