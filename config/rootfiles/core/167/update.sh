@@ -118,7 +118,7 @@ rm -rvf \
 	/lib/firmware/GPL-2 \
 	/lib/firmware/GPL-3 \
 	/lib/firmware/isci/README \
-	/lib/firmware/LICENCE.* \
+	/lib/firmware/LICENSE.* \
 	/lib/firmware/Makefile \
 	/lib/firmware/mellanox/ \
 	/lib/firmware/mrvl/prestera/ \
