@@ -1,4 +1,5 @@
 usr/sbin/powertop
+#usr/share/bash-completion/completions/powertop
 #usr/share/locale/ca/LC_MESSAGES/powertop.mo
 #usr/share/locale/cs_CZ/LC_MESSAGES/powertop.mo
 #usr/share/locale/de_DE

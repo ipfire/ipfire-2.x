@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A Linux Tool to Find out What is Using Power on a Laptop
 
-VER        = v2.10
+VER        = 2.14
 
 THISAPP    = powertop-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = powertop
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 573f1f0ed40705d3463f6e6f76c67ae99127ab2541b851143dafa707ef1c2dab4127d27811b63ad27e6b002ea4efd39417297a0227996ad9b01141b6de733d41
+$(DL_FILE)_BLAKE2 = 5f53f81b01e83004f6436f497818d2a552b5e7ffda5007749aad415773adeab2a256aeffbacbf9e5fe803ff343a0c1954b5264aebdffa841bb70406b8b9611bc
 
 install : $(TARGET)
 
@@ -82,6 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
+	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
