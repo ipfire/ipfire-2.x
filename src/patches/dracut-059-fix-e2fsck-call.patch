@@ -1,0 +1,11 @@
+--- dracut-056.orig/modules.d/99fs-lib/fs-lib.sh	2022-04-23 09:50:21.617018447 +0000
++++ dracut-056/modules.d/99fs-lib/fs-lib.sh	2022-04-23 09:50:35.750018142 +0000
+@@ -107,7 +107,7 @@
+ 
+     info "issuing $_drv $_fop $_dev"
+     # we enforce non-interactive run, so $() is fine
+-    _out=$($_drv "$_fop" "$_dev")
++    _out=$($_drv $_fop "$_dev")
+     _ret=$?
+     fsck_tail
+ 
