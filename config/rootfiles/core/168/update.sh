@@ -62,6 +62,7 @@ rm -vf \
 /etc/init.d/squid stop
 /usr/local/bin/openvpnctrl -k
 /usr/local/bin/openvpnctrl -kn2n
+/etc/init.d/suricata stop
 
 # Extract files
 extract_files
@@ -80,6 +81,7 @@ ldconfig
 /etc/init.d/squid start
 /usr/local/bin/openvpnctrl -s
 /usr/local/bin/openvpnctrl -sn2n
+/etc/init.d/suricata start
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
