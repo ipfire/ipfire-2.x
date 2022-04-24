@@ -46,7 +46,7 @@ my $menu = \%menuhash;
 %settings = ();
 %ethsettings = ();
 %pppsettings = ();
-@URI = ();
+my @URI = split('\?', $ENV{'REQUEST_URI'});
 
 ### Make sure this is an SSL request
 if ($ENV{'SERVER_ADDR'} && $ENV{'HTTPS'} ne 'on') {
@@ -573,3 +573,5 @@ sub get_manualpage_url() {
 	# No manual page configured, return nothing
 	return;
 }
+
+1; # End of package "Header"

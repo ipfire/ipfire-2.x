@@ -103,9 +103,6 @@ case "${1}" in
 			fi
 		fi
 
-		## Create & Enable vnstat
-		/usr/bin/vnstat -u -i ${DEVICE} -r --enable --force > /dev/null 2>&1
-
 		if [ "${TYPE}" == "STATIC" ]; then
 			# Set the MTU
 			if [ -n "${MTU}" ]; then
@@ -175,9 +172,6 @@ case "${1}" in
 				# No wpa_supplicant is running. So it's save to start dhcpcd.
 				dhcpcd_start "${DEVICE}"
 			fi
-
-			## Create & Enable vnstat
-			/usr/bin/vnstat -u -i ${DEVICE} -r --enable --force > /dev/null 2>&1
 
 		elif [ "$TYPE" == "PPPOE" ]; then
 
@@ -459,8 +453,7 @@ case "${1}" in
 				evaluate_retval
 				# echo PPP: /usr/sbin/pppd pty "$PPPOE_CMD" $PPP_STD_OPTIONS $DEBUG $DEMAND $PPPD_SYNC
 			fi
-			## Create & Enable vnstat
-			/usr/bin/vnstat -u -i ppp0 -r --enable --force > /dev/null 2>&1
+
 			/etc/rc.d/init.d/connectd start
 			# Add a NaN value to ppp0 rrd to supress spikes at reconnect
 			rrdtool update $RRDLOG/collectd/localhost/interface/if_octets-ppp0.rrd \
@@ -485,8 +478,6 @@ case "${1}" in
 
 		elif [ "$TYPE" == "PPPOE" ]; then
 			boot_mesg "Bringing down the PPP interface ..."
-			## Disable vnstat collection
-			/usr/bin/vnstat -u -i ppp0 -r --disable > /dev/null 2>&1
 			rm -f /var/ipfire/red/keepconnected
 			killall -w -s TERM /usr/sbin/pppd 2>/dev/null
 			evaluate_retval
@@ -532,9 +523,6 @@ case "${1}" in
 		killall -w -s KILL /usr/sbin/pppd >/dev/null 2>&1
 		killall -w -s KILL pptp >/dev/null 2>&1
 		killall -w -s KILL br2684ctl >/dev/null 2>&1
-
-		## Disable vnstat collection
-		/usr/bin/vnstat -u -i ${DEVICE} -r --disable > /dev/null 2>&1
 
 		exit 0;
 		;;

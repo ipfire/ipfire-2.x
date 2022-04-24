@@ -2874,7 +2874,6 @@
 'vpn start action start' => 'Immer An',
 'vpn statistic n2n' => 'OpenVPN: Netz-zu-Netz-Statistik',
 'vpn statistic rw' => 'OpenVPN: Roadwarrior-Statistik',
-'vpn statistics n2n' => 'OpenVPN: Netz-zu-Netz-Statistiken',
 'vpn subjectaltname' => 'SubjectAlternativeName',
 'vpn subjectaltname missing' => 'SubjectAlternativeName darf nicht leer bleiben.',
 'vpn wait' => 'WARTE',

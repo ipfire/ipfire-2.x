@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = The BIRD Internet Routing Daemon
 
-VER        = 2.0.8
+VER        = 2.0.9
 
 THISAPP    = bird-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = bird
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       =
 
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 4b36688ac85967ad8c39d9c37dc717d77b1cb5c3ec44a0cf4e84ff38b8d1710d10653a1333b50cd2ede79fd7f012ec86de0baefc9ac18435693ec5b3e43b8a3a
+$(DL_FILE)_BLAKE2 = 5226058ba8989a28e8151906e194fd3065276034f1304e0e45772b17f3d8095eff6add211320a23418bfb57b2c16c96594fb85345355e3b870d7bfa2cfe119b9
 
 install : $(TARGET)
 

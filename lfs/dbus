@@ -26,15 +26,15 @@ include Config
 
 SUMMARY    = D-Bus Message Bus System
 
-VER        = 1.12.20
+VER        = 1.14.0
 
 THISAPP    = dbus-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = dbus
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b467526e7e0281db7b8c7c178469fe006dab29ccb1ea197c02495bd297e8de766230b68ed86c4a7e05dbe09ca30ce941a15e0bf8030fe0df66c04febf0534b3b
+$(DL_FILE)_BLAKE2 = ae0ebc2779e840e2d83f633029f81fba0e35969648dddce0280640dd9bee3f9508aa7fb6aef696d1c4c56d40f91b754941f847525afaee5cc3170ad23a7eddbf
 
 install : $(TARGET)
 
@@ -81,9 +81,12 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_SRC)/dbus*
-	cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc \
-				     --localstatedir=/var
+	cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./configure \
+	                    --prefix=/usr \
+	                    --sysconfdir=/etc \
+				        --localstatedir=/var \
+				        --disable-static
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

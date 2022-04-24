@@ -19,9 +19,8 @@ LoginGraceTime 30s
 # Limit maximum instanctes to prevent DoS
 MaxStartups 5
 
-# Only allow safe crypto algorithms (may break some _very_ outdated clients)
-# See also: https://stribika.github.io/2015/01/04/secure-secure-shell.html
-KexAlgorithms curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
+# Only allow safe crypto algorithms
+KexAlgorithms sntrup761x25519-sha512@openssh.com,curve25519-sha256,curve25519-sha256@libssh.org,diffie-hellman-group-exchange-sha256
 Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr
 MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,umac-128@openssh.com
 
@@ -47,11 +46,13 @@ AllowTcpForwarding no
 AllowAgentForwarding no
 PermitOpen none
 
-# Detect broken sessions by sending keep-alive messages to clients via SSH connection
+# Send SSH-based keep alive messages to connected clients to avoid broken connections
 ClientAliveInterval 10
+ClientAliveCountMax 30
 
-# Close unresponsive SSH sessions which fail to answer keep-alive
-ClientAliveCountMax 6
+# Since TCP keep alive messages can be spoofed and we have the SSH-based already,
+# there is no need for this to be enabled as well
+TCPKeepAlive no
 
 # Add support for SFTP
 Subsystem	sftp	/usr/lib/openssh/sftp-server

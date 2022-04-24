@@ -1204,7 +1204,6 @@ buildipfire() {
   lfsmake2 nettle
   lfsmake2 json-c
   lfsmake2 libconfig
-  lfsmake2 libevent
   lfsmake2 libevent2
   lfsmake2 expat
   lfsmake2 apr
@@ -1318,7 +1317,6 @@ buildipfire() {
   lfsmake2 ca-certificates
   lfsmake2 fireinfo
   lfsmake2 libnet
-  lfsmake2 libnl
   lfsmake2 libnl-3
   lfsmake2 libidn
   lfsmake2 nasm
@@ -1331,7 +1329,6 @@ buildipfire() {
   lfsmake2 libexif
   lfsmake2 libpng
   lfsmake2 libtiff
-  lfsmake2 libart
   lfsmake2 gd
   lfsmake2 slang
   lfsmake2 newt
@@ -1379,7 +1376,6 @@ buildipfire() {
   lfsmake2 perl-HTTP-Date
   lfsmake2 gnupg
   lfsmake2 hdparm
-  lfsmake2 sdparm
   lfsmake2 whatmask
   lfsmake2 libtirpc
   lfsmake2 conntrack-tools
@@ -1439,7 +1435,6 @@ buildipfire() {
   lfsmake2 pango
   lfsmake2 rrdtool
   lfsmake2 setup
-  lfsmake2 libdnet
   lfsmake2 jansson
   lfsmake2 yaml
   lfsmake2 libhtp
@@ -1537,7 +1532,6 @@ buildipfire() {
   lfsmake2 libusbredir
   lfsmake2 libseccomp
   lfsmake2 qemu
-  lfsmake2 netpbm
   lfsmake2 netsnmpd
   lfsmake2 nagios_nrpe
   lfsmake2 nagios-plugins
@@ -1592,7 +1586,6 @@ buildipfire() {
   lfsmake2 monit
   lfsmake2 nut
   lfsmake2 watchdog
-  lfsmake2 libpri
   lfsmake2 usb_modeswitch
   lfsmake2 usb_modeswitch_data
   lfsmake2 zerofree
@@ -1605,7 +1598,6 @@ buildipfire() {
   lfsmake2 u-boot
   lfsmake2 u-boot-friendlyarm
   lfsmake2 wireless-regdb
-  lfsmake2 libsolv
   lfsmake2 ddns
   lfsmake2 python3-pycparser
   lfsmake2 python3-charset-normalizer
@@ -1641,6 +1633,7 @@ buildipfire() {
   lfsmake2 python3-click
   lfsmake2 python3-arrow
   lfsmake2 python3-terminaltables
+  lfsmake2 python3-pkgconfig
   lfsmake2 aws-cli
   lfsmake2 oci-python-sdk
   lfsmake2 oci-cli
@@ -1677,7 +1670,6 @@ buildipfire() {
   lfsmake2 perl-IO-String
   lfsmake2 perl-PDF-API2
   lfsmake2 proxy-accounting
-  lfsmake2 pigz
   lfsmake2 tmux
   lfsmake2 perl-Text-CSV_XS
   lfsmake2 lua

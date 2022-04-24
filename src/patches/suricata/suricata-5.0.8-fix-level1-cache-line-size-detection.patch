@@ -2,7 +2,7 @@ diff --git a/configure.ac b/configure.ac
 index d56d3a550..81abf8f00 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -2313,7 +2313,7 @@ fi
+@@ -2318,7 +2318,7 @@ fi
      AC_PATH_PROG(HAVE_GETCONF_CMD, getconf, "no")
      if test "$HAVE_GETCONF_CMD" != "no"; then
          CLS=$(getconf LEVEL1_DCACHE_LINESIZE)

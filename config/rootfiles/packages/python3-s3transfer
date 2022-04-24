@@ -1,10 +1,10 @@
 #usr/lib/python3.10/site-packages/s3transfer
-#usr/lib/python3.10/site-packages/s3transfer-0.5.0-py3.10.egg-info
-#usr/lib/python3.10/site-packages/s3transfer-0.5.0-py3.10.egg-info/PKG-INFO
-#usr/lib/python3.10/site-packages/s3transfer-0.5.0-py3.10.egg-info/SOURCES.txt
-#usr/lib/python3.10/site-packages/s3transfer-0.5.0-py3.10.egg-info/dependency_links.txt
-#usr/lib/python3.10/site-packages/s3transfer-0.5.0-py3.10.egg-info/requires.txt
-#usr/lib/python3.10/site-packages/s3transfer-0.5.0-py3.10.egg-info/top_level.txt
+#usr/lib/python3.10/site-packages/s3transfer-0.5.2-py3.10.egg-info
+#usr/lib/python3.10/site-packages/s3transfer-0.5.2-py3.10.egg-info/PKG-INFO
+#usr/lib/python3.10/site-packages/s3transfer-0.5.2-py3.10.egg-info/SOURCES.txt
+#usr/lib/python3.10/site-packages/s3transfer-0.5.2-py3.10.egg-info/dependency_links.txt
+#usr/lib/python3.10/site-packages/s3transfer-0.5.2-py3.10.egg-info/requires.txt
+#usr/lib/python3.10/site-packages/s3transfer-0.5.2-py3.10.egg-info/top_level.txt
 usr/lib/python3.10/site-packages/s3transfer/__init__.py
 usr/lib/python3.10/site-packages/s3transfer/bandwidth.py
 usr/lib/python3.10/site-packages/s3transfer/compat.py

@@ -83,9 +83,6 @@ case "${1}" in
 			fi
 		fi
 
-		# Create & Enable vnstat data collection
-		/usr/bin/vnstat -u -i ${DEVICE} -r --enable --force > /dev/null 2>&1
-
 		if [ ! "${ADDRESS}" == "1.1.1.1" ]; then
 			boot_mesg "Adding IPv4 address ${ADDRESS} to the ${DEVICE} interface..."
 			ip addr add ${args} dev ${DEVICE}
@@ -100,8 +97,6 @@ case "${1}" in
 			evaluate_retval
 		fi
 
-		# Disable vnstat collection
-		/usr/bin/vnstat -u -i ${DEVICE}	-r --disable > /dev/null 2>&1
 		exit 0;
 		;;
 esac

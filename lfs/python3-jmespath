@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.10.0
+VER        = 1.0.0
 SUMMARY    = Python module for declarative JSON document element extraction
 
 THISAPP    = jmespath-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/jmespath-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-jmespath
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8d827e61363a8d9e974ab465efd05e50ba9ce7a35e2457b43bbdd33a740c5d40dd8c397767709c4a96e157ec31f2e9388ecaed25191ceb77b0574fb4372d5247
+$(DL_FILE)_BLAKE2 = 579a9b3273fb266ea4974aef7a266d084f00169ee645ec8cebbe9d8e838bd4d69c03e952e84a430d6a47de14ee7c7830fffc07dd049929a05945f23dff43f194
 
 install : $(TARGET)
 

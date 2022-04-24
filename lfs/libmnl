@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.4
+VER        = 1.0.5
 
 THISAPP    = libmnl-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = e24ae3e7a8bcfe35a04256c495bb3e9a5ec41b6bea9b7ffa0a8ebc82ce847921d4a44e5be3558239fee5008c10541a9ac3614d1a6b80d280b632a76da16be5e8
+$(DL_FILE)_BLAKE2 = 760ec6f7eaf3f2c6be6edf848551e4c7d16ae7cbe49f9cde297f5df06174fb7f9f490118942225558f0a89dabe9a4901c1b3b23fa1203132e36b86e6332564d6
 
 install : $(TARGET)
 

@@ -67,7 +67,7 @@
 				  'caption' => $Lang::tr{'aliases'},
 				  'uri' => '/cgi-bin/aliases.cgi',
 				  'title' => "$Lang::tr{'aliases'}",
-				  'enabled' => `grep "RED_TYPE=STATIC" /var/ipfire/ethernet/settings`,
+				  'enabled' => (`grep "RED_TYPE=STATIC" /var/ipfire/ethernet/settings` ? 1 : 0),
 				  };
     $subnetwork->{'80.macadressmenu'} = {
 				  'caption' => $Lang::tr{'mac address menu'},

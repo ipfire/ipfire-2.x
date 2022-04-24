@@ -1,6 +1,0 @@
-#usr/bin/sas_disk_blink
-#usr/bin/scsi_ch_swp
-usr/bin/sdparm
-#usr/share/man/man8/sas_disk_blink.8
-#usr/share/man/man8/scsi_ch_swp.8
-#usr/share/man/man8/sdparm.8

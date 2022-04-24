@@ -49,7 +49,7 @@
 	$substatus->{'54.networkovpnsrv'} = {
 				'caption' => "$Lang::tr{'vpn statistic n2n'}",
 				'uri' => '/cgi-bin/netovpnsrv.cgi',
-				'title' => "$Lang::tr{'vpn statistics n2n'}",
+				'title' => "$Lang::tr{'vpn statistic n2n'}",
 				'enabled' => 1,
 			  };
     $substatus->{'60.hardwaregraphs'} = {
@@ -90,7 +90,7 @@
     $substatus->{'75.atm-status'} = {'caption' => 'Atm-status',
 				  'uri' => '/cgi-bin/atm-status.cgi',
 				  'title' => 'Atm-status',
-				  'enabled' => `find /sys/class/atm/*/device 2>/dev/null`,
+				  'enabled' => (`find /sys/class/atm/*/device 2>/dev/null` ? 1 : 0),
 				  };
     $substatus->{'76.mdstat'} = {'caption' => 'Mdstat',
 				  'uri' => '/cgi-bin/mdstat.cgi',

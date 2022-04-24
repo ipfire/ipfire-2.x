@@ -24,23 +24,20 @@
 
 include Config
 
-SUMMARY    = A Graphics Conversion Package
+VER        = 1.5.5
+SUMMARY    = Python module to interface Python with pkg-config
 
-VER        = 10.73.31
-
-THISAPP    = netpbm-$(VER)
-DL_FILE    = $(THISAPP).tgz
+THISAPP    = pkgconfig-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = netpbm
-PAK_VER    = 3
+PROG       = python3-pkgconfig
+PAK_VER    = 1
 
 DEPS       =
 
 SERVICES   =
-
-CFLAGS    += -flax-vector-conversions
 
 ###############################################################################
 # Top-level Rules
@@ -50,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 6bac4048e60e1605edb8d65be51c153431b03f305057dd64e4da912633a539d987cc6bda71960799004cc70faf957fa3e504ed6f24b6c3bb8996b90d34529309
+$(DL_FILE)_BLAKE2 = 0eb3ff11b1fdcd3b1b4d3310d408d5f9a036a48c0f3176d77a13e566df35beea8ee6b3afe4c7643cc1808584e525f4d0fac9ab706b751c933f853ed1e9aecd0e
 
 install : $(TARGET)
 
@@ -83,17 +80,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	rm -rf /usr/netpbm
-	cp $(DIR_SRC)/config/netpbm/config.mk $(DIR_APP)
-	cd $(DIR_APP) && make CFLAGS="$(CFLAGS)" #The build of this version cannot be parallelized
-	cd $(DIR_APP) && make package PKGDIR=/usr/netpbm
-	mkdir -pv /usr/include/netpbm
-	mkdir -pv /usr/share/netpbm
-	mv -fv /usr/netpbm/include/netpbm/* /usr/include/netpbm
-	mv -fv /usr/netpbm/lib/* /usr/lib
-	mv -fv /usr/netpbm/bin/* /usr/bin
-	mv -fv /usr/netpbm/misc/* /usr/share/netpbm
-	rm -Rfv /usr/netpbm/
-	cd /usr/lib && ln -sfv libnetpbm.so.11.73 libnetpbm.so
+	cd $(DIR_APP) && python3 setup.py build
+	cd $(DIR_APP) && python3 setup.py install --root=/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

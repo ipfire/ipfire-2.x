@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.1.17
+VER        = 1.2.0
 SUMMARY    = Deduplicating backup program with compression and authenticated encryption
 
 THISAPP    = borgbackup-$(VER)
@@ -33,9 +33,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = borgbackup
-PAK_VER    = 10
+PAK_VER    = 11
 
-DEPS       =
+DEPS       = python3-pkgconfig
 
 SERVICES   =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3ceb51f3c2e4ee4e38495ca0bdef2d5c1b30225afe9a3c9987a82f4a1facd4aa203fb21512e655fbbab400bcbd412ff4aefa80242aa21a579e086d38bf3e1078
+$(DL_FILE)_BLAKE2 = 9e6cb8d85ca196cbdd6baba694bc7987d63f85d2ba0e25f3ac1e59400882fff71e29b04ca218ee78f23daeb52d13547062b0c80bd0d3f5b460b28b4f274d11ec
 
 install : $(TARGET)
 

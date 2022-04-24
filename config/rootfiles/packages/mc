@@ -158,6 +158,7 @@ usr/share/mc/syntax/debian-sources-list.syntax
 usr/share/mc/syntax/diff.syntax
 usr/share/mc/syntax/dlink.syntax
 usr/share/mc/syntax/dos.syntax
+usr/share/mc/syntax/dot.syntax
 usr/share/mc/syntax/ebuild.syntax
 usr/share/mc/syntax/eiffel.syntax
 usr/share/mc/syntax/erlang.syntax
@@ -173,9 +174,9 @@ usr/share/mc/syntax/idl.syntax
 usr/share/mc/syntax/ini.syntax
 usr/share/mc/syntax/j.syntax
 usr/share/mc/syntax/jal.syntax
-usr/share/mc/syntax/json.syntax
 usr/share/mc/syntax/java.syntax
 usr/share/mc/syntax/js.syntax
+usr/share/mc/syntax/json.syntax
 usr/share/mc/syntax/kotlin.syntax
 usr/share/mc/syntax/latex.syntax
 usr/share/mc/syntax/lisp.syntax
@@ -211,6 +212,7 @@ usr/share/mc/syntax/sh.syntax
 usr/share/mc/syntax/slang.syntax
 usr/share/mc/syntax/smalltalk.syntax
 usr/share/mc/syntax/spec.syntax
+usr/share/mc/syntax/spice.syntax
 usr/share/mc/syntax/sql.syntax
 usr/share/mc/syntax/strace.syntax
 usr/share/mc/syntax/swift.syntax

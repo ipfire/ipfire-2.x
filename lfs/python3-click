@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.0.3
+VER        = 8.1.2
 
 THISAPP    = click-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-click
-PAK_VER    = 1
+PAK_VER    = 2
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 9e42e167e26a03b4ddb238943ed5cb4d291231ceb0f56a6e74f9930c8f64f4ae44b0495a85c6abcb2167dc633bbc5e90d1a21da843a799e266e6560a7b3b909d
+$(DL_FILE)_BLAKE2 = e0ac04e4583dadba61ca42640f6d75ade30c62bd46b5fd0d15378e00f102f29160190c8ebb01de637c5446d9d06b687bddba4b78b3b3c80bb6e64ba46df866fa
 
 install : $(TARGET)
 

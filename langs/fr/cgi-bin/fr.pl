@@ -2949,7 +2949,6 @@
 'vpn start action start' => 'Toujours démarré',
 'vpn statistic n2n' => 'OpenVPN (site-à-site)',
 'vpn statistic rw' => 'OpenVPN (client nomade)',
-'vpn statistics n2n' => 'OpenVPN (site-à-site)',
 'vpn subjectaltname' => 'Nom de l\'objet',
 'vpn subjectaltname missing' => 'Le nom de l\'objet ne peut être vide.',
 'vpn wait' => 'ATTENTE',
