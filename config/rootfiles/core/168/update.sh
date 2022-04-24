@@ -33,6 +33,7 @@ done
 
 # Remove files
 rm -rvf \
+	/lib/libprocps.so* \
 	/usr/bin/dnet-config \
 	/usr/bin/sdparm \
 	/usr/lib/libart_lgpl_2.so* \
