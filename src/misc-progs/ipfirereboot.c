@@ -29,7 +29,7 @@
 
 /* define operations */
 #define OP_REBOOT    	  "boot"
-#define OP_REBOOT_FS 	  "bootfs" // add filesystem check option (not yet in GUI)
+#define OP_REBOOT_FS 	  "bootfs"
 #define OP_SHUTDOWN  	  "down"
 
 int main(int argc, char**argv)
