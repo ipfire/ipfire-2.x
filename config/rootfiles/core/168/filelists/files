@@ -1,6 +1,7 @@
 etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/red
 srv/web/ipfire/cgi-bin/media.cgi
+srv/web/ipfire/cgi-bin/wakeonlan.cgi
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 var/ipfire/header.pl
 var/ipfire/menu.d/20-status.menu
