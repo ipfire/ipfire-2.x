@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.54.0
+VER        = 2.64.0
 
 THISAPP    = oci-python-sdk-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = oci-python-sdk
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = python3-certifi python3-click python3-circuitbreaker \
 	python3-cryptography python3-dateutil python3-pytz python3-six
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 891b3217446fe76cc4e74fa7abafa9b6c8c4e60510f54b91cff8050422b93618620425db9591f5a1e7c07ea1befbc8097f2b42cb6a08f5bb6ae7f52048c35b05
+$(DL_FILE)_BLAKE2 = 1c7b2b1980354865a2d48fc542fc83dbae53c284251341dc10e45f4b9a42dfc1aafb530b4871af1432fb1aaa89fdb15bf4cb6007ea7454da02c1b9c6793d10c0
 
 install : $(TARGET)
 
