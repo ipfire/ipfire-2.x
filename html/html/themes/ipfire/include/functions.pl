@@ -100,8 +100,6 @@ sub openpage {
 	my $boh = shift;
 	my $extrahead = shift;
 	my $suppressMenu = shift // 0;
-	my @tmp = split(/\./, basename($0));
-	my $scriptName = @tmp[0];
 
 	my $headline = "IPFire";
 	if (($settings{'WINDOWWITHHOSTNAME'} eq 'on') || ($settings{'WINDOWWITHHOSTNAME'} eq '')) {
@@ -172,7 +170,7 @@ END
 ;
 
 # Print user manual link
-my $manual_url = &Header::get_manualpage_url($scriptName);
+my $manual_url = &Header::get_manualpage_url();
 if($manual_url) {
 	print <<END
 				<span><a href="$manual_url" title="$Lang::tr{'online help en'}" target="_blank"><img src="/images/help-browser.png" alt="$Lang::tr{'online help en'}"></a></span>

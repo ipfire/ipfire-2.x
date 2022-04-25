@@ -25,18 +25,19 @@ use strict;
 # Import make.sh environment
 my $basedir = $ENV{'BASEDIR'};
 
-# Load configuration file (General::readhash isn't available yet)
+# Load configuration file (Header::_read_manualpage_hash() isn't available yet)
 my $configfile = "${basedir}/config/cfgroot/manualpages";
 my %manualpages = ();
 
 open(my $file, "<", $configfile) or die "ERROR: Can't read from file '$configfile'!\n";
 while(my $line = <$file>) {
-	$line =~ s/\R//g;
-	next unless($line =~ /=/);
+	chomp($line);
+	next if(substr($line, 0, 1) eq '#'); # Skip comments
+	next if(index($line, '=', 1) == -1); # Skip incomplete lines
 
 	my($left, $value) = split(/=/, $line, 2);
-	if($left =~ /(^[A-Za-z0-9_-]+$)/) {
-		my $key = $1; # Got alphanumeric key
+	if($left =~ /^([[:alnum:]\/._-]+)$/) {
+		my $key = $1;
 		$manualpages{$key} = $value;
 	}
 }
@@ -55,11 +56,11 @@ if ($baseurl =~ /\/\s*$/) {
 
 # Loop trough configured manual pages
 foreach my $page (keys %manualpages) {
-	# Build absolute path and URL
-	my $cgifile = "${basedir}/html/cgi-bin/${page}.cgi";
+	# Build absolute path (inside cgi-bin) and URL
+	my $cgifile = "${basedir}/html/cgi-bin/${page}";
 	my $url = "${baseurl}/$manualpages{$page}";
 
-	print "${page}.cgi -> '$url'\n";
+	print "cgi-bin/${page} -> '$url'\n";
 
 	# Check CGI file exists
 	if(! -f $cgifile) {

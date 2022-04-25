@@ -93,7 +93,7 @@ if ( -d "/var/ipfire/langs/${language}/" ) {
 
 ### Initialize user manual
 my %manualpages = ();
-&General::readhash("${General::swroot}/main/manualpages", \%manualpages);
+&_read_manualpage_hash("${General::swroot}/main/manualpages");
 
 ### Load selected language and theme functions
 require "${swroot}/langs/en.pl";
@@ -558,20 +558,43 @@ sub colorize {
 	}
 }
 
-# Get user manual URL for the specified configuration page, returns empty if no entry is configured
+# Get user manual URL for a configuration page inside the "/cgi-bin/"
+# (reads current page from the environment variables unless defined)
+# Returns empty if no URL is available
 sub get_manualpage_url() {
-	my ($cgi_page) = @_;
+	my ($cgifile) = @_;
+	$cgifile //= substr($ENV{'SCRIPT_NAME'}, 9); # remove fixed "/cgi-bin/" path
 
 	# Ensure base url is configured
 	return unless($manualpages{'BASE_URL'});
 
 	# Return URL
-	if($cgi_page && defined($manualpages{$cgi_page})) {
-		return "$manualpages{'BASE_URL'}/$manualpages{$cgi_page}";
+	if($cgifile && defined($manualpages{$cgifile})) {
+		return "$manualpages{'BASE_URL'}/$manualpages{$cgifile}";
 	}
 
 	# No manual page configured, return nothing
 	return;
+}
+
+# Private function to load a hash of configured user manual pages from file
+# (run check_manualpages.pl to make sure the file is correct)
+sub _read_manualpage_hash() {
+	my ($filename) = @_;
+
+	open(my $file, "<", $filename) or return; # Fail silent
+	while(my $line = <$file>) {
+		chomp($line);
+		next if(substr($line, 0, 1) eq '#'); # Skip comments
+		next if(index($line, '=', 1) == -1); # Skip incomplete lines
+
+		my($left, $value) = split(/=/, $line, 2);
+		if($left =~ /^([[:alnum:]\/._-]+)$/) {
+			my $key = $1;
+			$manualpages{$key} = $value;
+		}
+	}
+	close($file);
 }
 
 1; # End of package "Header"
