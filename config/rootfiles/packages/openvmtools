@@ -14,14 +14,15 @@ etc/vmware-tools/statechange.subr
 etc/vmware-tools/suspend-vm-default
 etc/vmware-tools/tools.conf.example
 lib/udev/rules.d/99-vmware-scsi-udev.rules
-sbin/mount.vmhgfs
 usr/bin/vm-support
+usr/bin/vmhgfs-fuse
 usr/bin/vmtoolsd
 usr/bin/vmware-checkvm
 usr/bin/vmware-hgfsclient
 usr/bin/vmware-namespace-cmd
 usr/bin/vmware-rpctool
 usr/bin/vmware-toolbox-cmd
+usr/bin/vmware-vmblock-fuse
 usr/bin/vmware-xferlogs
 #usr/include/vmGuestLib
 #usr/include/vmGuestLib/includeCheck.h
@@ -57,6 +58,7 @@ usr/lib/open-vm-tools/plugins/common/libhgfsServer.so
 usr/lib/open-vm-tools/plugins/common/libvix.so
 usr/lib/open-vm-tools/plugins/vmsvc
 usr/lib/open-vm-tools/plugins/vmsvc/libappInfo.so
+usr/lib/open-vm-tools/plugins/vmsvc/libcomponentMgr.so
 usr/lib/open-vm-tools/plugins/vmsvc/libgdp.so
 usr/lib/open-vm-tools/plugins/vmsvc/libguestInfo.so
 usr/lib/open-vm-tools/plugins/vmsvc/libguestStore.so
@@ -65,7 +67,6 @@ usr/lib/open-vm-tools/plugins/vmsvc/libresolutionKMS.so
 usr/lib/open-vm-tools/plugins/vmsvc/libtimeSync.so
 usr/lib/open-vm-tools/plugins/vmsvc/libvmbackup.so
 #usr/lib/pkgconfig/vmguestlib.pc
-usr/sbin/mount.vmhgfs
 #usr/share/open-vm-tools
 #usr/share/open-vm-tools/messages
 #usr/share/open-vm-tools/messages/de
