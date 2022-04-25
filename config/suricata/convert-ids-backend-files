@@ -58,6 +58,9 @@ if(&IDS::ids_is_running()) {
 	# Set start_suricata to true to start it
 	# at the end of the script again.
 	$start_suricata = "1";
+
+	# Wait until suricata has stopped.
+	sleep 1 while (-f $IDS::idspidfile);
 }
 
 #
