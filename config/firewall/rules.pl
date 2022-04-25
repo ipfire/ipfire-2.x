@@ -122,7 +122,7 @@ undef (@dummy);
 
 sub main {
 	# Get currently used ipset sets.
-	&ipset_get_sets();
+	@ipset_used_sets = &ipset_get_sets();
 
 	# Flush all chains.
 	&flush();
@@ -922,6 +922,8 @@ sub firewall_is_in_subnet {
 }
 
 sub ipset_get_sets () {
+	my @sets;
+
 	# Get all currently used ipset lists and store them in an array.
 	my @output = `$IPSET -n list`;
 
@@ -931,14 +933,17 @@ sub ipset_get_sets () {
 		chomp($set);
 
 		# Add the set the array of used sets.
-		push(@ipset_used_sets, $set);
+		push(@sets, $set);
 	}
 
 	# Display used sets in debug mode.
 	if($DEBUG) {
 		print "Used ipset sets:\n";
-		print "@ipset_used_sets\n\n";
+		print "@sets\n\n";
 	}
+
+	# Return the array of sets.
+	return @sets;
 }
 
 sub ipset_restore ($) {
@@ -998,6 +1003,9 @@ sub ipset_call_restore ($) {
 }
 
 sub ipset_cleanup () {
+	# Reload the array of used sets.
+	@ipset_used_sets = &ipset_get_sets();
+
 	# Loop through the array of used sets.
 	foreach my $set (@ipset_used_sets) {
 		# Check if this set is still in use.
