@@ -1060,11 +1060,23 @@ sub ipset_restore ($) {
 
 	# Check if the given set name is a blocklist.
 	} elsif ($set ~~ @blocklists) {
+		# IPblocklist sets contains v4 as setname extension.
+		my $set_name = "$set" . "v4";
+
 		# Get the database file for the given blocklist.
 		my $db_file = &IPblocklist::get_ipset_db_file($set);
 
 		# Call function to restore/load the set.
 		&ipset_call_restore($db_file);
+
+		# Check if the set is already loaded (has been used before).
+		if ($set ~~ @ipset_used_sets) {
+			# Swap the sets.
+			run("$IPSET swap $set_name $set");
+		} else {
+			# Rename the set to proper use it.
+			run("$IPSET rename $set_name $set");
+		}
 	}
 
 	# Store the restored set to the hash to prevent from loading it again.

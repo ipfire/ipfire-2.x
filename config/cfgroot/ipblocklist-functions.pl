@@ -249,6 +249,9 @@ sub download_and_create_blocklist($) {
 	# Simply set the limit of list elements to the double of current list elements.
 	my $maxelem = $list_entries *2;
 
+	# Add "v4" suffix to the list name.
+	$list = "$list" . "v4";
+
 	# Write line to create the set.
 	#
 	# We safely can use hash:net as type because it supports single addresses and networks.

@@ -139,6 +139,15 @@ if (@updated_blocklists) {
 
 		# Call safe system function to reload/update the blocklist.
 		&General::system("ipset", "restore", "-f", "$ipset_db_file");
+
+		# The set name contains a "v4" as suffix.
+		my $set_name = "$updated_blocklist" . "v4";
+
+		# Swap the sets to use the new one.
+		&General::system("ipset", "swap", "$set_name", "$updated_blocklist");
+
+		# Destroy the old blocklist.
+		&General::system("ipset", "destroy", "$set_name");
 	}
 }
 
