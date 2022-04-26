@@ -906,6 +906,9 @@ if ($cgiparams{'RULESET'} eq $Lang::tr{'ids apply'}) {
 	# Drop the stored ruleset file.
 	&IDS::drop_dl_rulesfile($provider);
 
+	# Remove may stored etag data.
+	&IDS::remove_from_etags($provider);
+
 	# Get the name of the provider rulessets include file.
 	my $provider_used_rulefile = &IDS::get_provider_used_rulesfiles_file($provider);
 
