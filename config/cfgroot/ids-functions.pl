@@ -1885,6 +1885,30 @@ sub get_provider_used_rulesfiles($) {
 }
 
 #
+## Function to delete the stored etag data of a given provider.
+#
+sub remove_from_etags ($) {
+	my ($provider) = @_;
+
+	my %etags;
+
+	# Early exit function if the etags file does not exist.
+	return unless (-f $etags_file);
+
+	# Read-in etag file.
+	&General::readhash("$etags_file", \%etags);
+
+	# Check if the hash contains an entry for the given provider.
+	if ($etags{$provider}) {
+		# Drop the entry.
+		delete($etags{$provider});
+
+		# Write back the etags file.
+		&General::writehash("$etags_file", \%etags);
+	}
+}
+
+#
 ## Function to write the lock file for locking the WUI, while
 ## the autoupdate script runs.
 #
