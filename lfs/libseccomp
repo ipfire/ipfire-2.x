@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A Seccomp (mode 2) helper library
 
-VER        = 2.5.3
+VER        = 2.5.4
 
 THISAPP    = libseccomp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libseccomp
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = cedf04b3a926f9fe5202e6169ddac6b983e755009c14fc1d645157b9c0bcdf65d4085f8ea7abad90f3a0c13ae4d66b5d8306e725168490863aad15976de1eae7
+$(DL_FILE)_BLAKE2 = 38b134cb578f9355667546f92950ebcf8c53ccaf98db568db9aadfa9629c054136849e03d4bf9f09f73998fe66a5e8a9038573d19740b2bddf5518a8a0119229
 
 install : $(TARGET)
 
