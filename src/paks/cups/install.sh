@@ -23,6 +23,7 @@
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
+restore_backup "${NAME}"
 /etc/init.d/messagebus reload
 start_service --delay 300 --background ${NAME}
 ln -svf ../init.d/cups /etc/rc.d/rc0.d/K00cups
