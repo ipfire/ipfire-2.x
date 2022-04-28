@@ -27,7 +27,7 @@ include Config
 
 SUMMARY    = NCurses Disk Usage
 
-VER        = 1.16
+VER        = 1.17
 
 THISAPP    = ncdu-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -35,7 +35,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ncdu
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS	    =
 
@@ -49,7 +49,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 61d004581bdcf1885bec24d0a1de4fc890fe91bba511abbdbc507a48f31946caf5c7324979e8410e53cfca8ada1b20342b737dc4e8b1f034f2fca5aea84e4369
+$(DL_FILE)_BLAKE2 = 7d36a648b8fb0a26d3b6bcc533ed8f510e7f37b3084cb585a0c785d73fd82f537e0f2f9493c3b56173eae1324255e7acf7617a1cd1614c92a3b7bf0d53b7d77f
 
 install : $(TARGET)
 
