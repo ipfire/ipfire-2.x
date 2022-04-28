@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 386d288
+VER        = 0.8.9
 
 THISAPP    = multipath-tools-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b1cfde006416359f008c80f13f457a8eb79e4f5fd1c4dc222e8d5719f15e898e94527174c9ba28c736cb0b51870f5c4b690ed4b6ee1427673ac7d1746b79fadc
+$(DL_FILE)_BLAKE2 = b5ebf3c393f6b60e85678ac07378ae07056b6777409fc1bc4f4133cdd3f8c75a3d76f6e9342208df7fed8fe7812b089eba8f6b769e47e1dd6c8b7fd321bdbd30
 
 install : $(TARGET)
 
