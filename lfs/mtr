@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Ping and Traceroute Network Diagnostic Tool
 
-VER        = 0.94
+VER        = 0.95
 
 THISAPP    = mtr-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mtr
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 08f646774eaa323861863f08aa6f91995135923f1597d26790d3dce9d617700b41120686f71105054fb7f75b558c8753119dc5431c4584d88f8bef5629e0ebfa
+$(DL_FILE)_BLAKE2 = 3c972675b97945b96562802c5d0f10de963160682c93c0ea2991b72eca33d136d18948c5e746ca3dfb280ebc9c3ab154e7774f8409ed4e5f7470a8feb128e71b
 
 install : $(TARGET)
 
@@ -82,6 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
+	cd $(DIR_APP) && ./bootstrap.sh
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
