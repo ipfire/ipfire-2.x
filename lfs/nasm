@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.14.02
+VER        = 2.15.05
 
 THISAPP    = nasm-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = deb1f3c806ffbe48eefe4163271c68f02a782f75f21980331cb03e64de20da61c118621536c1c869c1629e558cab45ce98fed8443d29c1126fb4255cd6a36ce4
+$(DL_FILE)_BLAKE2 = a41434965c2125577b762d907a0a3c251c75d9f9beac230fba4099182c7f7beb08c6d2c05c2432b0dc8ba829f24077f44c3096faea9bd0a533250e6dbbfaef35
 
 install : $(TARGET)
 
