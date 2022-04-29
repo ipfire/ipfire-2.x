@@ -1549,6 +1549,7 @@ buildipfire() {
   lfsmake2 vdr_dvbapi
   lfsmake2 vdr_eepg
   lfsmake2 w_scan
+  lfsmake2 fmt
   lfsmake2 mpd
   lfsmake2 libmpdclient
   lfsmake2 mpc
