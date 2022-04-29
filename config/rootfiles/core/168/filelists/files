@@ -390,6 +390,7 @@ lib/firmware/rtw88/rtw8821c_fw.bin
 lib/firmware/rtw88/rtw8822c_fw.bin
 lib/firmware/rtw89/rtw8852a_fw.bin
 lib/firmware/wfx/wfm_wf200_C0.sec
+usr/lib/firewall/rules.pl
 srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/cgi-bin/wakeonlan.cgi
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
