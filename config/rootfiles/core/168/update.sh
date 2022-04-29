@@ -33,6 +33,11 @@ done
 
 # Remove files
 rm -rvf \
+	/lib/firmware/cxgb4/t4fw-1.26.4.0.bin \
+	/lib/firmware/cxgb4/t5fw-1.26.4.0.bin \
+	/lib/firmware/cxgb4/t6fw-1.26.4.0.bin \
+	/lib/firmware/intel/ice/ddp-comms/ice_comms-1.3.20.0.pkg \
+	/lib/firmware/silabs \
 	/lib/libprocps.so* \
 	/usr/bin/dnet-config \
 	/usr/bin/sdparm \
@@ -90,7 +95,7 @@ ldconfig
 /etc/init.d/suricata start
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
