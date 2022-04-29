@@ -42,6 +42,7 @@ rm -rvf \
 	/usr/lib/libevent-1.4.so* \
 	/usr/lib/libevent_core-1.4.so* \
 	/usr/lib/libevent_extra-1.4.so* \
+	/usr/lib/liblber-2.4.so* \
 	/usr/lib/libnl.so* \
 	/usr/lib/libpri.so* \
 	/usr/lib/libsolv.so* \
