@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.4.3
+VER        = 2.10.2
 
 THISAPP    = man-db-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 022f3c39296e47b5fca348e49cfde234af304dbb815ff8a2977c75b8fe1890f9922ecb12e1271be4eb161cea50f3153c396b37b240104e009dd163c5dc998131
+$(DL_FILE)_BLAKE2 = 8d1748503cdf66a613d7544a27b42df9436bdf4e07ccb130d2fa62343488d2c4ab791238c348236a253abddb564db9d1bb851249da9911737ff822d822819599
 
 install : $(TARGET)
 
@@ -69,21 +69,19 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 
-	cd $(DIR_APP) && mv man/de{_DE.88591,}
-	cd $(DIR_APP) && mv man/es{_ES.88591,}
-	cd $(DIR_APP) && mv man/it{_IT.88591,}
-	cd $(DIR_APP) && mv man/ja{_JP.eucJP,}
-	cd $(DIR_APP) && sed -i "s/-I-//g" {lib,src}/Makefile*
-	cd $(DIR_APP) && sed -i 's,\*_\*,??,' man/Makefile.in
-	cd $(DIR_APP) && sed -i '/\t\/usr\/man/d' src/man_db.conf.in
-	cd $(DIR_APP) && echo -e "#define WEB_BROWSER \"exec /usr/bin/lynx\"" >> include/manconfig.h.in
-	cd $(DIR_APP) && echo -e "#define COL \"/usr/bin/col\"" >> include/manconfig.h.in
-	cd $(DIR_APP) && echo -e "#define VGRIND \"/usr/bin/vgrind\"" >> include/manconfig.h.in
-	cd $(DIR_APP) && echo -e "#define GRAP \"/usr/bin/grap\"" >> include/manconfig.h.in
-	cd $(DIR_APP) && ./configure --prefix=/usr --enable-mb-groff --disable-setuid
+	cd $(DIR_APP) && ./configure \
+	                --prefix=/usr \
+	                --sysconfdir=/etc \
+	                --disable-setuid \
+	                --enable-cache-owner=bin \
+                    --with-browser=/usr/bin/lynx \
+                    --with-vgrind=/usr/bin/vgrind \
+                    --with-grap=/usr/bin/grap \
+                    --with-systemdtmpfilesdir= \
+                    --with-systemdsystemunitdir=
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
