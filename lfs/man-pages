@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 2.34
+VER        = 5.13
 
 THISAPP    = man-pages-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b839071b3b7327f95603bacb48e6b3baaa505811e1dda23c7d82e9cd9a5e78e56212162f5f39e995d77fbdbc57937779de25f6b93e09fa574ef9435dd0133fd0
+$(DL_FILE)_BLAKE2 = 7cca88b7f201d177b087893f60e6a87fd3ed8c78a183bd6ebcd0c28961f5f5d24aa2ba9d3a1d9cec4e0fc9cc0b26489c91e991a2d4420c28e1f61b850b882752
 
 install : $(TARGET)
 
@@ -69,7 +69,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
