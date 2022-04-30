@@ -58,5 +58,9 @@ $(TARGET) :
 		--with-config-root="$(CONFIG_ROOT)"
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
+
+	# Fix file permissions of /etc/sudoers.d/setup
+	chmod 640 /etc/sudoers.d/setup
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

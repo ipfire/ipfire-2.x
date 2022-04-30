@@ -106,8 +106,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -vsf /usr/share/logwatch/default.conf /etc/logwatch/conf
 
 	-mkdir -p /etc/sudoers.d
-	chmod -v 755 /etc/sudoers.d
-	install -v -m 644 $(DIR_SRC)/config/logwatch/sudoers/logwatch-mdadm \
+	chmod -v 750 /etc/sudoers.d
+	install -v -m 640 $(DIR_SRC)/config/logwatch/sudoers/logwatch-mdadm \
                 /etc/sudoers.d/logwatch-mdadm
 
 	@rm -rf $(DIR_APP)
