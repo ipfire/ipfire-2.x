@@ -4,6 +4,7 @@ usr/bin/curl
 #usr/include/curl/curl.h
 #usr/include/curl/curlver.h
 #usr/include/curl/easy.h
+#usr/include/curl/header.h
 #usr/include/curl/mprintf.h
 #usr/include/curl/multi.h
 #usr/include/curl/options.h
@@ -14,7 +15,7 @@ usr/bin/curl
 #usr/lib/libcurl.la
 #usr/lib/libcurl.so
 usr/lib/libcurl.so.4
-usr/lib/libcurl.so.4.7.0
+usr/lib/libcurl.so.4.8.0
 #usr/lib/pkgconfig/libcurl.pc
 #usr/share/aclocal/libcurl.m4
 #usr/share/man/man1/curl-config.1
@@ -407,7 +408,9 @@ usr/lib/libcurl.so.4.7.0
 #usr/share/man/man3/curl_easy_duphandle.3
 #usr/share/man/man3/curl_easy_escape.3
 #usr/share/man/man3/curl_easy_getinfo.3
+#usr/share/man/man3/curl_easy_header.3
 #usr/share/man/man3/curl_easy_init.3
+#usr/share/man/man3/curl_easy_nextheader.3
 #usr/share/man/man3/curl_easy_option_by_id.3
 #usr/share/man/man3/curl_easy_option_by_name.3
 #usr/share/man/man3/curl_easy_option_next.3
