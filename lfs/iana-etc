@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20220207
+VER        = 20220414
 
 THISAPP    = iana-etc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 928e4b188f22cac7cfa8881cc75265cd223b9b2fd2181353ace9aaa8ff9f961f7cc9e3b8ddcbfaf3c2a55f888ac79f1a1213f86b6333a9d4083f92da7ccf59ee
+$(DL_FILE)_BLAKE2 = f3f10401bcaaeeec08a0b8d82de265a237e8260a0240b2aaaa286dc593716cc64ec8d56985bbe0b4ea0a2fb93e786b6fe9fff8737245990a88808070ec11e260
 
 install : $(TARGET)
 
