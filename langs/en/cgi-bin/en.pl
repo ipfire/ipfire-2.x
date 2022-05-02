@@ -950,7 +950,7 @@
 'drop action1' => 'Default behaviour of (outgoing) firewall in mode "Blocked"',
 'drop action2' => 'Default behaviour of (input) firewall',
 'drop forward' => 'Log dropped forward packets',
-'drop hostile' => 'Drop packets from and to hostile networks (listed at Spamhaus DROP, etc.)',
+'drop hostile' => 'Drop packets from and to hostile networks (listed at <a href="https://www.spamhaus.org/drop/" target="_blank">Spamhaus DROP</a>, etc.)',
 'drop input' => 'Log dropped input packets',
 'drop newnotsyn' => 'Log dropped new not SYN packets',
 'drop outgoing' => 'Log dropped outgoing packets',

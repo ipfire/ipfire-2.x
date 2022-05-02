@@ -955,7 +955,7 @@
 'drop action1' => 'Comportement par défaut du pare-feu (sortant) en mode "Bloqué"',
 'drop action2' => 'Comportement par défaut du pare-feu (entrant)',
 'drop forward' => 'Abandon des paquets avancés par le journal',
-'drop hostile' => 'Abandonner les paquets depuis et vers des réseaux hostiles (répertoriés sur Spamhaus DROP, etc.)',
+'drop hostile' => 'Abandonner les paquets depuis et vers des réseaux hostiles (répertoriés sur <a href="https://www.spamhaus.org/drop/" target="_blank">Spamhaus DROP</a>, etc.)',
 'drop input' => 'Suppression des paquets entrants du journal',
 'drop newnotsyn' => 'Supprimer les anciens paquets de synchronisation du journal',
 'drop outgoing' => 'Abandon des paquets sortants par le journal',

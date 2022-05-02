@@ -910,7 +910,7 @@
 'drop action1' => 'Standardverhalten der (Outgoing) Firewall in Modus "Blocked"',
 'drop action2' => 'Standardverhalten der (Input) Firewall',
 'drop forward' => 'Verworfene, von der Firewall weitergeleitete Pakete protokollieren',
-'drop hostile' => 'Pakete von und zu bösartigen Netzen (Spamhaus DROP-Listing, etc.) verwerfen',
+'drop hostile' => 'Pakete von und zu bösartigen Netzen (<a href="https://www.spamhaus.org/drop/" target="_blank">Spamhaus DROP</a>-Listing, etc.) verwerfen',
 'drop input' => 'Verworfene eingehende Pakete protokollieren',
 'drop newnotsyn' => 'Verworfene neue Pakete ohne SYN-Markierung protokollieren (NewNotSYN)',
 'drop outgoing' => 'Verworfene, von der Firewall ausgehende Pakete protokollieren',
