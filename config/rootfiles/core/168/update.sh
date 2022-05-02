@@ -89,6 +89,10 @@ ldconfig
 # Apply sysctl changes
 /etc/init.d/sysctl start
 
+# Fix permissions of /etc/sudoers.d/
+chmod -v 750 /etc/sudoers.d
+chmod -v 640 /etc/sudoers.d/*
+
 # Start services
 /etc/init.d/sshd restart
 /etc/init.d/vnstatd restart
