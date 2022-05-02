@@ -742,16 +742,19 @@ sub ipblocklist () {
 			if(&firewall_chain_exists("${blocklist}_DROP")) {
 				# Create iptables chain.
 				run("$IPTABLES -N ${blocklist}_DROP");
-
-				# Check if logging is enabled.
-				if($blocklistsettings{'LOGGING'} eq "on") {
-					# Create logging rule.
-					run("$IPTABLES -A ${blocklist}_DROP -j LOG -m limit --limit 10/second --log-prefix \"BLKLST_$blocklist\" ");
-				}
-
-				# Create Drop rule.
-				run("$IPTABLES -A ${blocklist}_DROP -j DROP");
+			} else {
+				# Flush the chain.
+				run("$IPTABLES -F ${blocklist}_DROP");
 			}
+
+			# Check if logging is enabled.
+			if($blocklistsettings{'LOGGING'} eq "on") {
+				# Create logging rule.
+				run("$IPTABLES -A ${blocklist}_DROP -j LOG -m limit --limit 10/second --log-prefix \"BLKLST_$blocklist\" ");
+			}
+
+			# Create Drop rule.
+			run("$IPTABLES -A ${blocklist}_DROP -j DROP");
 
 			# Add the rules to check against the set
 			run("$IPTABLES -A BLOCKLISTIN -p ALL -i $RED_DEV -m set --match-set $blocklist src -j ${blocklist}_DROP");
