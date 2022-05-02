@@ -86,6 +86,9 @@ ldconfig
 # Apply local configuration to sshd_config
 /usr/local/bin/sshctrl
 
+# Apply sysctl changes
+/etc/init.d/sysctl start
+
 # Start services
 /etc/init.d/sshd restart
 /etc/init.d/vnstatd restart

@@ -1,5 +1,6 @@
 etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/red
+etc/sysctl.conf
 lib/firmware/amd/amd_sev_fam17h_model0xh.sbin
 lib/firmware/amd/amd_sev_fam17h_model3xh.sbin
 lib/firmware/amd/amd_sev_fam19h_model0xh.sbin
