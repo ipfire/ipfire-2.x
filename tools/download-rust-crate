@@ -50,8 +50,8 @@ main() {
 	fi
 
 	# Hash the downloaded file
-	local md5sum="$(md5sum "${download}" | awk '{ print $1 }')"
-	if [ -z "${md5sum}" ]; then
+	local b2sum="$(b2sum "${download}" | awk '{ print $1 }')"
+	if [ -z "${b2sum}" ]; then
 		echo "${0}: Could not hash download" >&2
 		unlink "${download}"
 		return 1
@@ -73,7 +73,7 @@ main() {
 	sed < "${RUST_TEMPLATE}" > "lfs/rust-${name}" \
 		-e "s/^VER.*/VER        = ${version}/" \
 		-e "s/^THISAPP.*/THISAPP    = ${name}-\$(VER)/" \
-		-e "s/^\$(DL_FILE)_MD5.*/\$(DL_FILE)_MD5 = ${md5sum}/"
+		-e "s/^\$(DL_FILE)_BLAKE2.*/\$(DL_FILE)_BLAKE2 = ${b2sum}/"
 
 	echo "Done"
 	return 0
