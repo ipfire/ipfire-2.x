@@ -38,8 +38,9 @@ require "${General::swroot}/countries.pl";
 require "${General::swroot}/location-functions.pl";
 
 # enable only the following on debugging purpose
-use warnings;
-use CGI::Carp 'fatalsToBrowser';
+#use warnings;
+#use CGI::Carp 'fatalsToBrowser';
+
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::colourgreen}, ${Header::colourblue} );
 undef (@dummy);
