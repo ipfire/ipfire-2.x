@@ -23,6 +23,9 @@
 ###
 use CGI;
 use CGI qw/:standard/;
+use Imager::QRCode;
+use MIME::Base32;
+use MIME::Base64;
 use Net::DNS;
 use Net::Ping;
 use Net::Telnet;
@@ -2638,9 +2641,6 @@ else
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'show otp qrcode'}) {
    &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-   use MIME::Base32;
-   use MIME::Base64;
-   use Imager::QRCode;
    my $qrcode = Imager::QRCode->new(
       size          => 6,
       margin        => 0,
