@@ -391,6 +391,11 @@ sub writeserverconf {
     print CONF "# Log clients connecting/disconnecting\n";
     print CONF "client-connect \"/usr/sbin/openvpn-metrics client-connect\"\n";
     print CONF "client-disconnect \"/usr/sbin/openvpn-metrics client-disconnect\"\n";
+    print CONF "\n";
+
+    print CONF "# Enable Management Socket\n";
+    print CONF "management /var/run/openvpn.sock unix\n";
+    print CONF "management-client-auth\n";
 
     # Print server.conf.local if entries exist to server.conf
     if ( !-z $local_serverconf  && $sovpnsettings{'ADDITIONAL_CONFIGS'} eq 'on') {
