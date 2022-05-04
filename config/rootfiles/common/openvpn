@@ -9,6 +9,7 @@ usr/lib/openvpn/plugins/openvpn-plugin-auth-pam.so
 usr/lib/openvpn/plugins/openvpn-plugin-down-root.so
 usr/lib/openvpn/verify
 usr/sbin/openvpn
+usr/sbin/openvpn-authenticator
 #usr/share/doc/openvpn
 #usr/share/doc/openvpn/COPYING
 #usr/share/doc/openvpn/COPYRIGHT.GPL

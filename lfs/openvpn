@@ -104,5 +104,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	chown root:root /etc/fcron.daily/openvpn-crl-updater
 	chmod 750 /etc/fcron.daily/openvpn-crl-updater
 
+	# Install authenticator
+	install -v -m 755 $(DIR_SRC)/config/ovpn/openvpn-authenticator \
+		/usr/sbin/openvpn-authenticator
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
