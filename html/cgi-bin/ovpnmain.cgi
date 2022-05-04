@@ -376,7 +376,6 @@ sub writeserverconf {
     }
     print CONF "tls-verify /usr/lib/openvpn/verify\n";
     print CONF "crl-verify /var/ipfire/ovpn/crls/cacrl.pem\n";
-    print CONF "auth-user-pass-verify \"/usr/lib/openvpn/otp-verify\" via-file\n";
     print CONF "auth-user-pass-optional\n";
     print CONF "reneg-sec 86400\n";
     print CONF "user nobody\n";
