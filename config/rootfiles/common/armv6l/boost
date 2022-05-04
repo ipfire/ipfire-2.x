@@ -16250,10 +16250,10 @@ usr/lib/libboost_nowide-mt-a32.so.1.76.0
 usr/lib/libboost_prg_exec_monitor-a32.so.1.76.0
 #usr/lib/libboost_prg_exec_monitor-mt-a32.so
 usr/lib/libboost_prg_exec_monitor-mt-a32.so.1.76.0
-#usr/lib/libboost_python38-a32.so
-usr/lib/libboost_python38-a32.so.1.76.0
-#usr/lib/libboost_python38-mt-a32.so
-usr/lib/libboost_python38-mt-a32.so.1.76.0
+#usr/lib/libboost_python310-a32.so
+usr/lib/libboost_python310-a32.so.1.76.0
+#usr/lib/libboost_python310-mt-a32.so
+usr/lib/libboost_python310-mt-a32.so.1.76.0
 #usr/lib/libboost_random-a32.so
 usr/lib/libboost_random-a32.so.1.76.0
 #usr/lib/libboost_random-mt-a32.so
