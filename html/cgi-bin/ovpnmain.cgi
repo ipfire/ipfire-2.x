@@ -2441,17 +2441,16 @@ else
     if ($vpnsettings{FRAGMENT} ne '' && $vpnsettings{DPROTOCOL} ne 'tcp' ) {
 	print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
     }
-   if ($confighash{$cgiparams{'KEY'}}[43] eq 'on') {
-      print CLIENTCONF "auth-nocache\r\n";
-      print CLIENTCONF "auth-user-pass credentials\r\n";
-      print CLIENTCONF "static-challenge \"One Time Password (OTP): \" 1\r\n";
 
-      open(CLIENTCREDS, ">$tempdir/credentials") or die "Unable to open tempfile: $!";
-      print CLIENTCREDS "user\r\n";
-      print CLIENTCREDS "password";
-      close(CLIENTCREDS);
-      $zip->addFile( "$tempdir/credentials", "credentials")  or die "Can't add file credentials\n";
-   }
+    # Disable storing any credentials in memory
+    print CLIENTCONF "auth-nocache\r\n";
+
+    # Set a fake user name for authentication
+    print CLIENTCONF "auth-token-user USER\r\n";
+    print CLIENTCONF "auth-token TOTP\r\n";
+
+    # If the server is asking for TOTP this needs to happen interactively
+    print CLIENTCONF "auth-retry interact\r\n";
 
     if ($include_certs) {
 	print CLIENTCONF "\r\n";
