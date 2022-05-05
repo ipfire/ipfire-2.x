@@ -53,6 +53,8 @@ rm -rvf \
 	/usr/lib/libpri.so* \
 	/usr/lib/libsolv.so* \
 	/usr/lib/libsolvext.so* \
+	/usr/lib/libusb.so \
+	/usr/lib/libusb-0.1.so* \
 	/usr/sbin/dnet
 
 # Remove netbpm add-on, if installed

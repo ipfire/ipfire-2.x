@@ -1156,7 +1156,6 @@ buildipfire() {
   lfsmake2 popt
   lfsmake2 libedit
   lfsmake2 libusb
-  lfsmake2 libusb-compat
   lfsmake2 libpcap
   lfsmake2 ppp
   lfsmake2 pptp

@@ -1,7 +1,0 @@
-#usr/bin/libusb-config
-#usr/include/usb.h
-usr/lib/libusb-0.1.so.4
-usr/lib/libusb-0.1.so.4.4.4
-#usr/lib/libusb.la
-usr/lib/libusb.so
-#usr/lib/pkgconfig/libusb.pc
