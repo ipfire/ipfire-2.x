@@ -391,10 +391,15 @@ lib/firmware/rtw88/rtw8821c_fw.bin
 lib/firmware/rtw88/rtw8822c_fw.bin
 lib/firmware/rtw89/rtw8852a_fw.bin
 lib/firmware/wfx/wfm_wf200_C0.sec
+usr/bin/fcrontab
 usr/lib/firewall/rules.pl
+usr/local/bin/update-ids-ruleset
+usr/sbin/convert-ids-backend-files
+srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/media.cgi
 srv/web/ipfire/cgi-bin/wakeonlan.cgi
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 var/ipfire/header.pl
+var/ipfire/ids-functions.pl
 var/ipfire/menu.d/20-status.menu
 var/ipfire/menu.d/30-network.menu

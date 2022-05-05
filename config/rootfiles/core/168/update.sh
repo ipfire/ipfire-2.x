@@ -78,11 +78,20 @@ extract_files
 # update linker config
 ldconfig
 
+# Run IDSv4 converter
+convert-ids-backend-files
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
+
+# Delete orphaned Oinkmaster and Suricata default ruleset
+rm -vf \
+	/usr/local/bin/oinkmaster.pl \
+	/var/ipfire/suricata/oinkmaster.conf \
+	/var/ipfire/suricata/suricata-default-rules.yaml
 
 # Apply local configuration to sshd_config
 /usr/local/bin/sshctrl
@@ -95,6 +104,7 @@ chmod -v 750 /etc/sudoers.d
 chmod -v 640 /etc/sudoers.d/*
 
 # Start services
+/etc/init.d/fcron restart
 /etc/init.d/sshd restart
 /etc/init.d/vnstatd restart
 /etc/init.d/squid start
