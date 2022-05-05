@@ -26,8 +26,17 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/ids-functions.pl";
 require "${General::swroot}/lang.pl";
 
+# Import ruleset providers file.
+require "$IDS::rulesetsourcesfile";
+
+# Load perl module to talk to the kernel syslog.
+use Sys::Syslog qw(:DEFAULT setlogsock);
+
 # Variable to store if the process has written a lockfile.
 my $locked;
+
+# Array to store the updated providers.
+my @updated_providers = ();
 
 # Hash to store the configured providers.
 my %providers = ();
@@ -45,12 +54,15 @@ if ( $> == 0 ) {
 	POSIX::setuid( $uid );
 }
 
+# Establish the connection to the syslog service.
+openlog('oinkmaster', 'cons,pid', 'user');
+
 # Check if the IDS lock file exists.
 # In this case the WUI or another instance currently is altering the
 # ruleset.
 if (-f "$IDS::ids_page_lock_file") {
 	# Store notice to the syslog.
-	&IDS::_log_to_syslog("Another process currently is altering the IDS ruleset.");
+	&_log_to_syslog("<INFO> Autoupdate skipped - Another process was altering the IDS ruleset.");
 
 	# Exit.
 	exit 0;
@@ -59,19 +71,19 @@ if (-f "$IDS::ids_page_lock_file") {
 # Check if the red device is active.
 unless (-e "${General::swroot}/red/active") {
 	# Store notice in the syslog.
-	&IDS::_log_to_syslog("The system is offline.");
-
-	# Store error message for displaying in the WUI.
-	&IDS::_store_error_message("$Lang::tr{'could not download latest updates'} - $Lang::tr{'system is offline'}");
+	&_log_to_syslog("<ERROR> Could not update any ruleset - The system is offline.");
 
 	# Exit.
 	exit 0;
 }
 
 # Check if enought free disk space is availabe.
-if(&IDS::checkdiskspace()) {
-	# Store the error message for displaying in the WUI.
-	&IDS::_store_error_message("$Lang::tr{'not enough disk space'}");
+my $return = &IDS::checkdiskspace();
+
+# Handle error.
+if ($return) {
+	# Store error in syslog.
+	&_log_to_syslog("<ERROR> Not enough free disk space, only $return of 300MB are available.");
 
 	# Exit.
 	exit 0;
@@ -90,45 +102,87 @@ $locked = "1";
 foreach my $id (keys %providers) {
 	# Assign some nice variabled.
 	my $provider = $providers{$id}[0];
+	my $enabled_status = $providers{$id}[2];
 	my $autoupdate_status = $providers{$id}[3];
+
+	# Skip unsupported providers.
+	next unless($IDS::Ruleset::Providers{$provider});
+
+	# Skip the provider if it is not enabled.
+	next unless($enabled_status eq "enabled");
 
 	# Skip the provider if autoupdate is not enabled.
 	next unless($autoupdate_status eq "enabled");
 
+	# Log notice about update.
+	&_log_to_syslog("<INFO> Performing update for $provider.");
+
 	# Call the download function and gather the new ruleset for the current processed provider.
-	if(&IDS::downloadruleset($provider)) {
-		# Store error message for displaying in the WUI.
-		&IDS::_store_error_message("$provider: $Lang::tr{'could not download latest updates'}");
+	my $return = &IDS::downloadruleset($provider);
 
-		# Unlock the IDS page.
-		&IDS::unlock_ids_page();
+	# Check if we got a return code.
+	if ($return) {
+		# Handle different return codes.
+		if ($return eq "not modified") {
+			# Log notice to syslog.
+			&_log_to_syslog("<INFO> Skipping $provider - The ruleset is up-to-date");
 
-		# Exit.
-		exit 0;
+		} elsif ($return eq "no url") {
+			# Log error to the syslog.
+			&_log_to_syslog("<ERROR> Could not determine a download URL for $provider.");
+
+		} else {
+			# Log error to syslog.
+			&_log_to_syslog("<ERROR> $return");
+		}
+	} else {
+		# Log successfull update.
+		&_log_to_syslog("<INFO> Successfully updated ruleset for $provider.");
+
+		# Get path and name of the stored rules file or archive.
+		my $stored_file = &IDS::_get_dl_rulesfile($provider);
+
+		# Set correct ownership for the downloaded tarball.
+		&IDS::set_ownership("$stored_file");
+
+		# Add the provider handle to the array of updated providers.
+		push(@updated_providers, $provider);
 	}
-
-	# Get path and name of the stored rules file or archive.
-	my $stored_file = &IDS::_get_dl_rulesfile($provider);
-
-	# Set correct ownership for the downloaded tarball.
-	&IDS::set_ownership("$stored_file");
 }
 
-# Call oinkmaster to alter the ruleset.
-&IDS::oinkmaster();
+# Check if at least one provider has been updated successfully.
+if (@updated_providers) {
+	# Call oinkmaster to alter the ruleset.
+	&IDS::oinkmaster();
 
-# Set correct ownership for the rulesdir and files.
-&IDS::set_ownership("$IDS::rulespath");
+	# Set correct ownership for the rulesdir and files.
+	&IDS::set_ownership("$IDS::rulespath");
 
-# Check if the IDS is running.
-if(&IDS::ids_is_running()) {
-	# Call suricatactrl to perform a reload.
-	&IDS::call_suricatactrl("reload");
+	# Check if the IDS is running.
+	if(&IDS::ids_is_running()) {
+		# Call suricatactrl to perform a reload.
+		&IDS::call_suricatactrl("reload");
+	}
 }
 
-# Custom END declaration to release a IDS page lock
-# when the script has created one.
+#
+# Tiny function to sent the error message to the syslog.
+#
+sub _log_to_syslog($) {
+	my ($message) = @_;
+
+	# The syslog function works best with an array based input,
+	# so generate one before passing the message details to syslog.
+	my @syslog = ("ERR", "$message");
+
+	# Send the log message.
+	syslog(@syslog);
+}
+
 END {
+	# Close connection to syslog.
+	closelog();
+
 	# Check if a lock has been requested.
 	if ($locked) {
 		# Unlock the IDS page.

@@ -62,6 +62,9 @@ HOME=/
 # Update location database
 %hourly,random * [ -f "/var/ipfire/red/active" ] && /usr/local/bin/update-location-database >/dev/null 2>&1
 
+# Update surciata rules.
+%daily,random * [ -f "/var/ipfire/red/active" ] && /usr/local/bin/update-ids-ruleset >/dev/null 2>&1
+
 # Retry sending spooled mails regularly
 %hourly * /usr/sbin/dma -q
 

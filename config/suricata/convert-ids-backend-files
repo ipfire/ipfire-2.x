@@ -1,0 +1,276 @@
+#!/usr/bin/perl
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2021 IPFire Development Team <info@ipfire.org>                #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+use strict;
+
+use File::Copy;
+
+require '/var/ipfire/general-functions.pl';
+require '/var/ipfire/ids-functions.pl';
+
+# Exit if there is no main oinkmaster config file anymore.
+exit 0 unless (-f "$IDS::settingsdir/oinkmaster.conf");
+
+# Array of old files, which are safe to drop.
+my @files_to_drop = (
+	# Old settings files of oinkmaster.
+	"$IDS::settingsdir/oinkmaster.conf",
+	"$IDS::settingsdir/oinkmaster-disabled-sids.conf",
+	"$IDS::settingsdir/oinkmaster-enabled-sids.conf",
+	"$IDS::settingsdir/oinkmaster-modify-sids.conf",
+	"$IDS::settingddir/oinkmaster-provider-includes.conf",
+
+	# Old settingsfiles for suricata.
+	"$IDS::settingsdir/suricata-default-rules.yaml",
+	"$IDS::settingsdir/suricata-static-included-rulefiles.yaml",
+	"$IDS::settingsdir/suricata-used-providers.yaml",
+	"$IDS::settingsdir/suricata-used-rulefiles.yaml"
+);
+
+#
+## Step 1: Stop suricata if it is running.
+#
+my $start_suricata;
+
+# Check if the IDS is running.
+if(&IDS::ids_is_running()) {
+	# Call suricatactrl to stop the IDS.
+	&IDS::call_suricatactrl("stop");
+
+	# Set start_suricata to true to start it
+	# at the end of the script again.
+	$start_suricata = "1";
+
+	# Wait until suricata has stopped.
+	sleep 1 while (-f $IDS::idspidfile);
+}
+
+#
+## Step 2: Move downloaded files to new location.
+#
+
+my $old_dl_rulesfiles_dir = "/var/tmp";
+
+# Open old rules directory and do a directory listsing.
+opendir(DIR, "$old_dl_rulesfiles_dir");
+
+# Loop through the files of the directory.
+while (my $file = readdir(DIR)) {
+	# Check if the file starts with an "idsrules-".
+	if ($file =~ /^idsrules-/) {
+		# Grab the mtime of the file.
+		my $mtime=(stat "$old_dl_rulesfiles_dir/$file")[9];
+
+		# Move the file to its new location.
+		move("$old_dl_rulesfiles_dir/$file", "$IDS::dl_rules_path/$file");
+
+		# Set correct ownership.
+		&IDS::set_ownership("$IDS::dl_rules_path/$file");
+
+		# Restore the mtime on the file.
+		utime(time(), "$mtime", "$IDS::dl_rules_path/$file");
+	}
+}
+
+# Close directory handle.
+closedir(DIR);
+
+# Get all supported providers.
+my @providers = &IDS::get_ruleset_providers();
+
+#
+## Step 3: Convert used rules files.
+#
+
+# Loop through the array of known providers.
+foreach my $provider (@providers) {
+	my %used_rulesfiles = ();
+
+	# Generate old filename which contained the used rulesfile.
+	my $old_used_rulesfiles_file = "$IDS::settingsdir/suricata-$provider\-used-rulefiles.yaml";
+
+	# Skip the provider if there is no used rulesfiles file available.
+	next unless (-f $old_used_rulesfiles_file);
+
+	# Open the used rulesfiles file.
+	open(FILE, "$old_used_rulesfiles_file");
+
+	# Read-in the file content.
+	my @file = <FILE>;
+
+	# Close file handle.
+	close(FILE);
+
+	# Loop through the file content.
+	foreach my $line(@file) {
+		chomp($line);
+
+		# Grab the used rulesfile name from the line.
+		if ($line =~ /^\s-\s(.*)/) {
+			my $rulesfile = $1;
+
+			# Add the used rulesfile to the has of used rulesfile for this provider.
+			$used_rulesfiles{$rulesfile} = "enabled";
+		}
+	}
+
+	# Get the filename for the new used rulesfiles file.
+	my $used_rulesfiles_file = &IDS::get_provider_used_rulesfiles_file($provider);
+
+	# Write the file.
+	&General::writehash("$used_rulesfiles_file", \%used_rulesfiles);
+
+	# Set the correct ownership for the new file.
+	&IDS::set_ownership("$used_rulesfiles_file");
+
+	# Delete old used rulesfiles file.
+	unlink("$old_used_rulesfiles_file");
+}
+
+#
+## Step 4: Convert ruleset modifictaion files.
+#
+
+# Loop through the array of providers.
+foreach my $provider (@providers) {
+	my %modifications = ();
+
+	# Generate old filename which hold the ruleset modifications.
+	my $old_modifications_file = "$IDS::settingsdir/oinkmaster\-$provider\-modified-sids.conf";
+
+	# Skip provider if there is no modifications file.
+	next unless (-f $old_modifications_file);
+
+	# Open modifications file.
+	open(FILE, "$old_modifications_file");
+
+	# Read-in file content.
+	my @file = <FILE>;
+
+	# Close file handle.
+	close(FILE);
+
+	# Loop through the file content.
+	foreach my $line (@file) {
+		chomp($line);
+
+		# Split line and assign to an temporary array.
+		my @tmp = split(/ /, $line);
+
+		# Assign nice human-readable variables.
+		my $action = $tmp[0];
+		my $sid = $tmp[1];
+
+		# Process stored rule action and assign to the modifications hash.
+		if ($action eq "enablesid") {
+			$modifications{$sid} = "enabled";
+
+		} elsif ($action eq "disablesid") {
+			$modifications{$sid} = "disabled";
+		}
+	}
+
+	# Get new filename which will hold the ruleset modifications for this provider.
+	my $new_modifications_file = &IDS::get_provider_ruleset_modifications_file($provider);
+
+	# Write new modifications file.
+	&General::writehash("$new_modifications_file", \%modifications);
+
+	# Set correct ownership for the new modifications file.
+	&IDS::set_ownership("$new_modifications_file");
+
+	# Delete old modifications file.
+	unlink("$old_modifications_file");
+}
+
+#
+## Step 5: Convert MONTIOR_TRAFFIC_ONLY setting.
+#
+
+my %ids_settings = ();
+my %provider_settings = ();
+
+&General::readhash("$IDS::ids_settings_file", \%ids_settings);
+&General::readhasharray("$IDS::providers_settings_file", \%provider_settings);
+
+# Default to IPS mode.
+my $mode = "IPS";
+
+# Check if MONTOR_TRAFFIC_ONLY has been activated.
+if(($ids_settings{'MONITOR_TRAFFIC_ONLY'} && $ids_settings{'MONITOR_TRAFFIC_ONLY'} eq "on")) {
+	$mode = "IDS";
+}
+
+# Loop through the hash of providers.
+foreach my $key (keys %provider_settings) {
+	# Get and dereference settings array from hash.
+	my @settings = @{ $provider_settings{$key} };
+
+	# Add the mode as last element to the settings array.
+	push(@settings, $mode);
+
+	# Assign the new settings to the hash.
+	$provider_settings{$key} = [ @settings ];
+}
+
+# Write back providers settings.
+&General::writehasharray("$IDS::providers_settings_file", \%provider_settings);
+
+#
+## Step 6: Regenerate the ruleset.
+#
+#
+
+# Call oinkmaster wrapper function.
+&IDS::oinkmaster();
+
+#
+## Step 7: Write new config file for suricata which contains the used rulesfiles.
+#
+
+# Get enabled providers.
+my @enabled_providers = &IDS::get_enabled_providers();
+
+# Write used rulesfiles file.
+&IDS::write_used_rulefiles_file(@enabled_providers);
+
+# Set the correct ownership for the new file.
+&IDS::set_ownership("$IDS::suricata_used_rulesfiles_file");
+
+#
+## Step 8: Remove unneeded orphaned files.
+#
+
+# Loop through the array of files which are safe to drop.
+foreach my $file (@files_to_drop) {
+	# Remove the file if it exists.
+	unlink("$file") if (-f "$file");
+}
+
+#
+## Step 9: Start the IDS again, if it was running.
+#
+
+# Check if the IDS is running.
+if($start_suricata) {
+	# Call suricatactrl to perform the start of the IDS.
+	&IDS::call_suricatactrl("start");
+}

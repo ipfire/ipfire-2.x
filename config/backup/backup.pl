@@ -175,6 +175,12 @@ restore_backup() {
 		convert-ids-multiple-providers
 	fi
 
+	# IDS backend converter.
+	if [ -e "/var/ipfire/suricata/oinkmaster.conf" ]; then
+		# Run the converter
+		convert-ids-backend-files
+	fi
+
 	# Convert DNS settings
 	convert-dns-settings
 

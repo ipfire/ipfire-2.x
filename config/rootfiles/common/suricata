@@ -20,6 +20,7 @@ usr/bin/suricata
 usr/share/suricata
 #usr/share/suricata/classification.config
 #usr/share/suricata/reference.config
+#usr/share/suricata/threshold.config
 #usr/share/suricata/rules
 #usr/share/suricata/rules/app-layer-events.rules
 #usr/share/suricata/rules/decoder-events.rules
@@ -37,7 +38,7 @@ usr/share/suricata
 #usr/share/suricata/rules/smtp-events.rules
 #usr/share/suricata/rules/stream-events.rules
 #usr/share/suricata/rules/tls-events.rules
-var/ipfire/suricata/suricata-default-rules.yaml
+var/cache/suricata
 var/lib/suricata
 var/log/suricata
 #var/log/suricata/certs

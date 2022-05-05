@@ -24,6 +24,7 @@ root/.bash_history
 root/.gitconfig
 root/.ssh
 srv/web/ipfire/html/proxy.pac
+var/cache/suricata
 var/ipfire/auth/users
 var/ipfire/backup/addons/backup
 var/ipfire/backup/exclude.user
@@ -48,9 +49,7 @@ var/ipfire/ppp
 var/ipfire/proxy
 var/ipfire/qos/*
 var/ipfire/qos/bin/qos.sh
-var/ipfire/suricata/*.conf
-var/ipfire/suricata/*.yaml
-var/ipfire/suricata/providers-settings
+var/ipfire/suricata
 var/ipfire/*/settings
 var/ipfire/time/
 var/ipfire/urlfilter
@@ -60,5 +59,3 @@ var/log/ip-acct/*
 var/log/rrd/*
 var/log/rrd/collectd
 var/log/vnstat
-var/tmp/idsrules-*.tar.gz
-var/tmp/idsrules-*.rules
