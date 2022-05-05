@@ -42,7 +42,6 @@ rm -rvf \
 	/usr/bin/dnet-config \
 	/usr/bin/sdparm \
 	/usr/lib/libart_lgpl_2.so* \
-	/usr/lib/libboost_python38* \
 	/usr/lib/libdnet.la \
 	/usr/lib/libdnet.so* \
 	/usr/lib/libevent-1.4.so* \
