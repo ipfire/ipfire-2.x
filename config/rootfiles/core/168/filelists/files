@@ -397,6 +397,7 @@ usr/local/bin/update-ids-ruleset
 usr/sbin/convert-ids-backend-files
 srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/media.cgi
+srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/wakeonlan.cgi
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 var/ipfire/header.pl
