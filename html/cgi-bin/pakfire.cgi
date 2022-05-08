@@ -75,7 +75,7 @@ if($cgiparams{'ACTION'} eq 'json-getstatus') {
 
 	# Read /var/log/messages backwards until a "Pakfire started" header is found,
 	# to capture all messages of the last (i.e. current) Pakfire run
-	my @messages = `tac /var/log/messages | sed -n '/pakfire:/{p;/Pakfire.*started/q}'`;
+	my @messages = `tac /var/log/messages 2>/dev/null | sed -n '/pakfire:/{p;/Pakfire.*started/q}'`;
 
 	# Test if the log contains an error message (fastest implementation, stops at first match)
 	my $failure = any{ index($_, 'ERROR') != -1 } @messages;
