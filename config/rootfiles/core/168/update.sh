@@ -104,6 +104,20 @@ rm -vf \
 chmod -v 750 /etc/sudoers.d
 chmod -v 640 /etc/sudoers.d/*
 
+# Rebuild initial ramdisk to apply microcode updates
+dracut --regenerate-all --force
+case "$(uname -m)" in
+        armv*)
+                mkimage -A arm -T ramdisk -C lzma -d /boot/initramfs-${KVER}-ipfire.img /boot/uInit-${KVER}-ipfire
+                rm /boot/initramfs-${KVER}-ipfire.img
+                ;;
+        aarch64)
+                mkimage -A arm64 -T ramdisk -C lzma -d /boot/initramfs-${KVER}-ipfire.img /boot/uInit-${KVER}-ipfire
+                # dont remove initramfs because grub need this to boot.
+                ;;
+esac
+
+
 # Start services
 /etc/init.d/fcron restart
 /etc/init.d/sshd restart
