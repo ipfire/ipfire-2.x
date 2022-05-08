@@ -21,6 +21,7 @@
 
 use strict;
 use List::Util qw(any);
+use URI;
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -37,12 +38,17 @@ my %color = ();
 my %pakfiresettings = ();
 my %mainsettings = ();
 
+# The page mode is used to explictly switch between user interface functions:
+my $PM_DEFAULT = 'default'; # Default user interface with command processing
+my $PM_LOGREAD = 'logread'; # Log messages viewer (ignores all commands)
+my $pagemode = $PM_DEFAULT;
+
 # Load general settings
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("${General::swroot}/pakfire/settings", \%pakfiresettings);
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
-# Get CGI request data
+# Get CGI POST request data
 $cgiparams{'ACTION'} = '';
 $cgiparams{'FORCE'} = '';
 
@@ -50,6 +56,17 @@ $cgiparams{'INSPAKS'} = '';
 $cgiparams{'DELPAKS'} = '';
 
 &Header::getcgihash(\%cgiparams);
+
+# Get CGI GET request data (if available)
+if($ENV{'QUERY_STRING'}) {
+	my $uri = URI->new($ENV{'REQUEST_URI'});
+	my %query = $uri->query_form;
+
+	my $mode = lc($query{'mode'} // '');
+	if(($mode eq $PM_DEFAULT) || ($mode eq $PM_LOGREAD)) {
+		$pagemode = $mode; # Limit to existing modes
+	}
+}
 
 ### Process AJAX/JSON request ###
 if($cgiparams{'ACTION'} eq 'json-getstatus') {
@@ -96,19 +113,24 @@ if($cgiparams{'ACTION'} eq 'json-getstatus') {
 }
 
 ### Process Pakfire install/update commands ###
-if($cgiparams{'ACTION'} ne '') {
+if(($cgiparams{'ACTION'} ne '') && ($pagemode eq $PM_DEFAULT)) {
 	if(&_is_pakfire_busy()) {
 		$errormessage = $Lang::tr{'pakfire already busy'};
+		$pagemode = $PM_LOGREAD; # Running Pakfire instance found, switch to log viewer mode
 	} elsif(($cgiparams{'ACTION'} eq 'install') && ($cgiparams{'FORCE'} eq 'on')) {
 		my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
 		&General::system_background("/usr/local/bin/pakfire", "install", "--non-interactive", "--no-colors", @pkgs);
+		&_http_pagemode_redirect($PM_LOGREAD, 1);
 	} elsif(($cgiparams{'ACTION'} eq 'remove') && ($cgiparams{'FORCE'} eq 'on')) {
 		my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
 		&General::system_background("/usr/local/bin/pakfire", "remove", "--non-interactive", "--no-colors", @pkgs);
+		&_http_pagemode_redirect($PM_LOGREAD, 1);
 	} elsif($cgiparams{'ACTION'} eq 'update') {
 		&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
+		&_http_pagemode_redirect($PM_LOGREAD, 1);
 	} elsif($cgiparams{'ACTION'} eq 'upgrade') {
 		&General::system_background("/usr/local/bin/pakfire", "upgrade", "-y", "--no-colors");
+		&_http_pagemode_redirect($PM_LOGREAD, 1);
 	} elsif($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 		$pakfiresettings{"TREE"} = $cgiparams{"TREE"};
 
@@ -122,6 +144,7 @@ if($cgiparams{'ACTION'} ne '') {
 
 			# Update lists
 			&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
+			&_http_pagemode_redirect($PM_LOGREAD, 1);
 		}
 	}
 }
@@ -221,8 +244,8 @@ if ($errormessage) {
 	&Header::closebox();
 }
 
-# Show log output while Pakfire is running
-if(&_is_pakfire_busy()) {
+# Show only log output while Pakfire is running and stop afterwards
+if(($pagemode eq $PM_LOGREAD) || (&_is_pakfire_busy())) {
 	&Header::openbox("100%", "center", "Pakfire");
 
 	print <<END
@@ -253,7 +276,8 @@ END
 }
 
 # Show Pakfire install/remove dependencies and confirm form
-if (($cgiparams{'ACTION'} eq 'install') && (! &_is_pakfire_busy())) {
+# (_is_pakfire_busy status was checked before and can be omitted)
+if (($cgiparams{'ACTION'} eq 'install') && ($pagemode eq $PM_DEFAULT)) {
 	&Header::openbox("100%", "center", $Lang::tr{'request'});
 
 	my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
@@ -291,7 +315,7 @@ END
 	&Header::closepage();
 	exit;
 
-} elsif (($cgiparams{'ACTION'} eq 'remove') && (! &_is_pakfire_busy())) {
+} elsif (($cgiparams{'ACTION'} eq 'remove') && ($pagemode eq $PM_DEFAULT)) {
 	&Header::openbox("100%", "center", $Lang::tr{'request'});
 
 	my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
@@ -475,4 +499,24 @@ sub _start_json_output {
 	print "Cache-Control: no-cache, no-store\n";
 	print "Content-Type: application/json\n";
 	print "\n"; # End of HTTP headers
+}
+
+# Send HTTP 303 redirect headers to change page mode
+# GET is always used to display the redirected page, which will remove already processed POST form data.
+# Note: Custom headers must be sent before the HTML output is started by &Header::showhttpheaders().
+# If switch_mode is set to true, the global page mode variable ("$pagemode") is also updated immediately.
+sub _http_pagemode_redirect {
+	my ($mode, $switch_mode) = @_;
+	$mode //= $PM_DEFAULT;
+	$switch_mode //= 0;
+
+	# Send HTTP redirect with GET parameter
+	my $location = "https://$ENV{'SERVER_NAME'}:$ENV{'SERVER_PORT'}$ENV{'SCRIPT_NAME'}?mode=${mode}";
+	print "Status: 303 See Other\n";
+	print "Location: $location\n";
+
+	# Change global page mode
+	if($switch_mode) {
+		$pagemode = $mode;
+	}
 }
