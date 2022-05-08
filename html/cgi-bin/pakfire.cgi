@@ -214,79 +214,80 @@ END
 
 # Process Pakfire commands
 if (($cgiparams{'ACTION'} eq 'install') && (! &_is_pakfire_busy())) {
+	&Header::openbox("100%", "center", $Lang::tr{'request'});
+
 	my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
-		&Header::openbox("100%", "center", $Lang::tr{'request'});
-		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
-		print <<END;
-		<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'} @pkgs $Lang::tr{'pakfire possible dependency'}
+	my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
+	print <<END;
+	<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'} @pkgs $Lang::tr{'pakfire possible dependency'}
 		<pre>
 END
-		foreach (@output) {
-		  $_ =~ s/\\[[0-1]\;[0-9]+m//g;
-			print "$_\n";
-		}
-		print <<END;
+	foreach (@output) {
+		$_ =~ s/\\[[0-1]\;[0-9]+m//g;
+		print "$_\n";
+	}
+	print <<END;
 		</pre></td></tr>
 		<tr><td colspan='2'>$Lang::tr{'pakfire accept all'}</td></tr>
 		<tr><td colspan='2'>&nbsp;</td></tr>
 		<tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='INSPAKS' value='$cgiparams{'INSPAKS'}' />
-							<input type='hidden' name='FORCE' value='on' />
-							<input type='hidden' name='ACTION' value='install' />
-							<input type='image' alt='$Lang::tr{'install'}' title='$Lang::tr{'install'}' src='/images/go-next.png' />
-						</form>
-				</td>
-				<td align='left'>
-						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='ACTION' value='' />
-							<input type='image' alt='$Lang::tr{'abort'}' title='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
-						</form>
-				</td>
-			</tr>
-		</table>
+					<input type='hidden' name='INSPAKS' value='$cgiparams{'INSPAKS'}' />
+					<input type='hidden' name='FORCE' value='on' />
+					<input type='hidden' name='ACTION' value='install' />
+					<input type='image' alt='$Lang::tr{'install'}' title='$Lang::tr{'install'}' src='/images/go-next.png' />
+				</form>
+			</td>
+			<td align='left'>
+				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+					<input type='hidden' name='ACTION' value='' />
+					<input type='image' alt='$Lang::tr{'abort'}' title='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
+				</form>
+			</td>
+		</tr>
+	</table>
 END
-		&Header::closebox();
-		&Header::closebigbox();
-		&Header::closepage();
-		exit;
+	&Header::closebox();
+	&Header::closebigbox();
+	&Header::closepage();
+	exit;
 
 } elsif (($cgiparams{'ACTION'} eq 'remove') && (! &_is_pakfire_busy())) {
+	&Header::openbox("100%", "center", $Lang::tr{'request'});
+
 	my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
-		&Header::openbox("100%", "center", $Lang::tr{'request'});
-		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
-		print <<END;
-		<table><tr><td colspan='2'>$Lang::tr{'pakfire uninstall package'} @pkgs $Lang::tr{'pakfire possible dependency'}
+	my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
+	print <<END;
+	<table><tr><td colspan='2'>$Lang::tr{'pakfire uninstall package'} @pkgs $Lang::tr{'pakfire possible dependency'}
 		<pre>
 END
-		foreach (@output) {
-		  $_ =~ s/\\[[0-1]\;[0-9]+m//g;
-			print "$_\n";
-		}
-		print <<END;
+	foreach (@output) {
+		$_ =~ s/\\[[0-1]\;[0-9]+m//g;
+		print "$_\n";
+	}
+	print <<END;
 		</pre></td></tr>
 		<tr><td colspan='2'>$Lang::tr{'pakfire uninstall all'}</td></tr>
 		<tr><td colspan='2'>&nbsp;</td></tr>
 		<tr><td align='right'><form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='DELPAKS' value='$cgiparams{'DELPAKS'}' />
-							<input type='hidden' name='FORCE' value='on' />
-							<input type='hidden' name='ACTION' value='remove' />
-							<input type='image' alt='$Lang::tr{'uninstall'}' title='$Lang::tr{'uninstall'}' src='/images/go-next.png' />
-						</form>
-				</td>
-				<td align='left'>
-						<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-							<input type='hidden' name='ACTION' value='' />
-							<input type='image' alt='$Lang::tr{'abort'}' title='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
-						</form>
-				</td>
-			</tr>
-		</table>
+					<input type='hidden' name='DELPAKS' value='$cgiparams{'DELPAKS'}' />
+					<input type='hidden' name='FORCE' value='on' />
+					<input type='hidden' name='ACTION' value='remove' />
+					<input type='image' alt='$Lang::tr{'uninstall'}' title='$Lang::tr{'uninstall'}' src='/images/go-next.png' />
+				</form>
+			</td>
+			<td align='left'>
+				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+					<input type='hidden' name='ACTION' value='' />
+					<input type='image' alt='$Lang::tr{'abort'}' title='$Lang::tr{'abort'}' src='/images/dialog-error.png' />
+				</form>
+			</td>
+		</tr>
+	</table>
 END
-		&Header::closebox();
-		&Header::closebigbox();
-		&Header::closepage();
-		exit;
-
+	&Header::closebox();
+	&Header::closebigbox();
+	&Header::closepage();
+	exit;
 }
 
 my %selected=();
