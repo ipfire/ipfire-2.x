@@ -1,6 +1,7 @@
 etc/suricata
 etc/suricata/suricata.yaml
 usr/bin/suricata
+usr/sbin/convert-ids-backend-files
 #usr/share/doc/suricata
 #usr/share/doc/suricata/AUTHORS
 #usr/share/doc/suricata/Basic_Setup.txt
@@ -20,7 +21,6 @@ usr/bin/suricata
 usr/share/suricata
 #usr/share/suricata/classification.config
 #usr/share/suricata/reference.config
-#usr/share/suricata/threshold.config
 #usr/share/suricata/rules
 #usr/share/suricata/rules/app-layer-events.rules
 #usr/share/suricata/rules/decoder-events.rules
@@ -38,6 +38,7 @@ usr/share/suricata
 #usr/share/suricata/rules/smtp-events.rules
 #usr/share/suricata/rules/stream-events.rules
 #usr/share/suricata/rules/tls-events.rules
+#usr/share/suricata/threshold.config
 var/cache/suricata
 var/lib/suricata
 var/log/suricata
