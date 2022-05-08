@@ -131,5 +131,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Set correct ownership for /var/log/suricata.
 	chown suricata:suricata /var/log/suricata
 
+	# Install converter script needed for Core Update 167
+	install -m 0755 $(DIR_SRC)/config/suricata/convert-ids-backend-files /usr/sbin/convert-ids-backend-files
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
