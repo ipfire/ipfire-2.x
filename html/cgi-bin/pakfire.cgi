@@ -212,7 +212,45 @@ END
 &Header::openpage($Lang::tr{'pakfire configuration'}, 1, $extraHead);
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
-# Process Pakfire commands
+# Show error message
+if ($errormessage) {
+	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
+	print "<font class='base'>$errormessage&nbsp;</font>\n";
+	&Header::closebox();
+}
+
+# Show log output while Pakfire is running
+if(&_is_pakfire_busy()) {
+	&Header::openbox("100%", "center", "Pakfire");
+
+	print <<END
+<section id="pflog-header">
+	<div><img src="/images/indicator.gif" alt="$Lang::tr{'active'}" title="$Lang::tr{'pagerefresh'}"></div>
+	<div>
+		<span id="pflog-status">$Lang::tr{'pakfire working'}</span><br>
+		<span id="pflog-time"></span><br>
+		<span id="pflog-action"></span>
+	</div>
+	<div><a href="$ENV{'SCRIPT_NAME'}"><img src="/images/view-refresh.png" alt="$Lang::tr{'refresh'}" title="$Lang::tr{'refresh'}"></a></div>
+</section>
+
+<!-- Pakfire log messages -->
+<pre id="pflog-messages"></pre>
+<script>
+	// Start automatic log refresh
+	pakfire.running = true;
+</script>
+
+END
+;
+
+	&Header::closebox();
+	&Header::closebigbox();
+	&Header::closepage();
+	exit;
+}
+
+# Show Pakfire install/remove dependencies and confirm form
 if (($cgiparams{'ACTION'} eq 'install') && (! &_is_pakfire_busy())) {
 	&Header::openbox("100%", "center", $Lang::tr{'request'});
 
@@ -290,6 +328,7 @@ END
 	exit;
 }
 
+# Show Pakfire main page
 my %selected=();
 my %checked=();
 
@@ -298,44 +337,6 @@ $selected{"TREE"}{"stable"} = "";
 $selected{"TREE"}{"testing"} = "";
 $selected{"TREE"}{"unstable"} = "";
 $selected{"TREE"}{$pakfiresettings{"TREE"}} = "selected";
-
-# DPC move error message to top so it is seen!
-if ($errormessage) {
-	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
-	print "<font class='base'>$errormessage&nbsp;</font>\n";
-	&Header::closebox();
-}
-
-# Show log output while Pakfire is running
-if(&_is_pakfire_busy()) {
-	&Header::openbox("100%", "center", "Pakfire");
-
-	print <<END
-<section id="pflog-header">
-	<div><img src="/images/indicator.gif" alt="$Lang::tr{'active'}" title="$Lang::tr{'pagerefresh'}"></div>
-	<div>
-		<span id="pflog-status">$Lang::tr{'pakfire working'}</span><br>
-		<span id="pflog-time"></span><br>
-		<span id="pflog-action"></span>
-	</div>
-	<div><a href="$ENV{'SCRIPT_NAME'}"><img src="/images/view-refresh.png" alt="$Lang::tr{'refresh'}" title="$Lang::tr{'refresh'}"></a></div>
-</section>
-
-<!-- Pakfire log messages -->
-<pre id="pflog-messages"></pre>
-<script>
-	// Start automatic log refresh
-	pakfire.running = true;
-</script>
-
-END
-;
-
-	&Header::closebox();
-	&Header::closebigbox();
-	&Header::closepage();
-	exit;
-}
 
 my $core_release = `cat /opt/pakfire/db/core/mine 2>/dev/null`;
 chomp($core_release);
