@@ -2055,7 +2055,7 @@
 'pakfire last package update' => 'Dernière mise à jour de la liste des paquets : ',
 'pakfire last serverlist update' => 'Dernière mise à jour de la liste des serveurs : ',
 'pakfire last update' => 'Dernière mise à jour : ',
-'pakfire possible dependency' => '<br><br>Il y a peut-être des dépendances, voici la liste des paquets qu\'il faut (dés)installer.<br>',
+'pakfire possible dependency' => 'Il y a peut-être des dépendances, voici la liste des paquets qu\'il faut (dés)installer.',
 'pakfire register' => 'S\'inscrire au serveur pakfire :',
 'pakfire return' => 'Retour à Pakfire',
 'pakfire system state' => 'Statut système PakFire ',

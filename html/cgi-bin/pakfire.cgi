@@ -283,7 +283,8 @@ if (($cgiparams{'ACTION'} eq 'install') && ($pagemode eq $PM_DEFAULT)) {
 	my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
 	my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
 	print <<END;
-	<table><tr><td colspan='2'>$Lang::tr{'pakfire install package'} @pkgs $Lang::tr{'pakfire possible dependency'}
+	<table style="width: 100%"><tr><td colspan='2'><p>$Lang::tr{'pakfire install package'} <strong>@{pkgs}</strong><br>
+		$Lang::tr{'pakfire possible dependency'}</p>
 		<pre>
 END
 	foreach (@output) {
@@ -321,7 +322,8 @@ END
 	my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
 	my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
 	print <<END;
-	<table><tr><td colspan='2'>$Lang::tr{'pakfire uninstall package'} @pkgs $Lang::tr{'pakfire possible dependency'}
+	<table style="width: 100%"><tr><td colspan='2'><p>$Lang::tr{'pakfire uninstall package'} <strong>@{pkgs}</strong><br>
+		$Lang::tr{'pakfire possible dependency'}</p>
 		<pre>
 END
 	foreach (@output) {
