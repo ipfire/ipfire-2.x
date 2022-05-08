@@ -31,6 +31,12 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Stop services
+/etc/init.d/squid stop
+/usr/local/bin/openvpnctrl -k
+/usr/local/bin/openvpnctrl -kn2n
+/etc/init.d/suricata stop
+
 # Remove files
 rm -rvf \
 	/lib/firmware/cxgb4/t4fw-1.26.4.0.bin \
@@ -66,12 +72,6 @@ rm -vf \
 	/opt/pakfire/db/installed/meta-netbpm \
 	/opt/pakfire/db/meta/meta-netbpm \
 	/opt/pakfire/db/rootfiles/netbpm
-
-# Stop services
-/etc/init.d/squid stop
-/usr/local/bin/openvpnctrl -k
-/usr/local/bin/openvpnctrl -kn2n
-/etc/init.d/suricata stop
 
 # Extract files
 extract_files
