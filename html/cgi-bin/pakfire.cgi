@@ -39,11 +39,12 @@ my %mainsettings = ();
 
 # Load general settings
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
+&General::readhash("${General::swroot}/pakfire/settings", \%pakfiresettings);
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
 # Get CGI request data
 $cgiparams{'ACTION'} = '';
-$cgiparams{'VALID'} = '';
+$cgiparams{'FORCE'} = '';
 
 $cgiparams{'INSPAKS'} = '';
 $cgiparams{'DELPAKS'} = '';
@@ -92,6 +93,35 @@ if($cgiparams{'ACTION'} eq 'json-getstatus') {
 	# Finalize JSON file & stop
 	print "}";
 	exit;
+}
+
+### Process Pakfire install/update commands ###
+if(($cgiparams{'ACTION'} ne '') && (! &_is_pakfire_busy())) {
+	if(($cgiparams{'ACTION'} eq 'install') && ($cgiparams{'FORCE'} eq 'on')) {
+		my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
+		&General::system_background("/usr/local/bin/pakfire", "install", "--non-interactive", "--no-colors", @pkgs);
+	} elsif(($cgiparams{'ACTION'} eq 'remove') && ($cgiparams{'FORCE'} eq 'on')) {
+		my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
+		&General::system_background("/usr/local/bin/pakfire", "remove", "--non-interactive", "--no-colors", @pkgs);
+	} elsif($cgiparams{'ACTION'} eq 'update') {
+		&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
+	} elsif($cgiparams{'ACTION'} eq 'upgrade') {
+		&General::system_background("/usr/local/bin/pakfire", "upgrade", "-y", "--no-colors");
+	} elsif($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
+		$pakfiresettings{"TREE"} = $cgiparams{"TREE"};
+
+		# Check for valid input
+		if ($pakfiresettings{"TREE"} !~ m/^(stable|testing|unstable)$/) {
+			$errormessage .= $Lang::tr{'pakfire invalid tree'};
+		}
+
+		unless ($errormessage) {
+			&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
+
+			# Update lists
+			&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
+		}
+	}
 }
 
 ### Start pakfire page ###
@@ -185,9 +215,6 @@ END
 # Process Pakfire commands
 if (($cgiparams{'ACTION'} eq 'install') && (! &_is_pakfire_busy())) {
 	my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
-	if ("$cgiparams{'FORCE'}" eq "on") {
-		&General::system_background("/usr/local/bin/pakfire", "install", "--non-interactive", "--no-colors", @pkgs);
-	} else {
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
 		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
 		print <<END;
@@ -222,12 +249,9 @@ END
 		&Header::closebigbox();
 		&Header::closepage();
 		exit;
-	}
+
 } elsif (($cgiparams{'ACTION'} eq 'remove') && (! &_is_pakfire_busy())) {
 	my @pkgs = split(/\|/, $cgiparams{'DELPAKS'});
-	if ("$cgiparams{'FORCE'}" eq "on") {
-		&General::system_background("/usr/local/bin/pakfire", "remove", "--non-interactive", "--no-colors", @pkgs);
-	} else {
 		&Header::openbox("100%", "center", $Lang::tr{'request'});
 		my @output = &General::system_output("/usr/local/bin/pakfire", "resolvedeps", "--no-colors", @pkgs);
 		print <<END;
@@ -262,29 +286,8 @@ END
 		&Header::closebigbox();
 		&Header::closepage();
 		exit;
-	}
 
-} elsif (($cgiparams{'ACTION'} eq 'update') && (! &_is_pakfire_busy())) {
-	&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
-} elsif (($cgiparams{'ACTION'} eq 'upgrade') && (! &_is_pakfire_busy())) {
-	&General::system_background("/usr/local/bin/pakfire", "upgrade", "-y", "--no-colors");
-} elsif ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
-	$pakfiresettings{"TREE"} = $cgiparams{"TREE"};
-
-	# Check for valid input
-	if ($pakfiresettings{"TREE"} !~ m/^(stable|testing|unstable)$/) {
-		$errormessage .= $Lang::tr{'pakfire invalid tree'};
-	}
-
-	unless ($errormessage) {
-		&General::writehash("${General::swroot}/pakfire/settings", \%pakfiresettings);
-
-		# Update lists
-		&General::system_background("/usr/local/bin/pakfire", "update", "--force", "--no-colors");
-	}
 }
-
-&General::readhash("${General::swroot}/pakfire/settings", \%pakfiresettings);
 
 my %selected=();
 my %checked=();
