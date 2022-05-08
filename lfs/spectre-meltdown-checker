@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Spectre & Meltdown Vulnerability Checker
 
-VER        = 0.44
+VER        = 0.45
 
 THISAPP    = spectre-meltdown-checker-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = spectre-meltdown-checker
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 120c7a6fd9e4df27daf605f8c9d62fb999f164578c02499651d19e48ca9af88fbc09338f85b6e05a2b139ac7d83193768f337651e276af7099fdee22bf1c5354
+$(DL_FILE)_BLAKE2 = 14d49f40458167ab9af04cc31c9a0b9f8cb5f1e9417f5ac0bab0290be01cf14a737c716d8d28873fee1870535c0b36a56dac2d39f2cc7a000d27f0643a94cff7
 
 install : $(TARGET)
 
