@@ -731,6 +731,16 @@ sub ipblocklist () {
 	run("$IPTABLES -F BLOCKLISTIN");
 	run("$IPTABLES -F BLOCKLISTOUT");
 
+	# Check if the blocklist feature is enabled.
+	if($blocklistsettings{'ENABLE'} eq "on") {
+		# Loop through the array of private networks.
+		foreach my $private_network (@PRIVATE_NETWORKS) {
+			# Create firewall rules to never block private networks.
+			run("$IPTABLES -A BLOCKLISTIN -p ALL -i $RED_DEV -s $private_network -j RETURN");
+			run("$IPTABLES -A BLOCKLISTOUT -p ALL -o $RED_DEV -d $private_network -j RETURN");
+		}
+	}
+
 	# Loop through the array of blocklists.
 	foreach my $blocklist (@blocklists) {
 		# Check if the blocklist feature and the current processed blocklist is enabled.
