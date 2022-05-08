@@ -39,6 +39,8 @@ done
 
 # Remove files
 rm -rvf \
+	/etc/fcron.daily/suricata \
+	/etc/fcron.weekly/suricata \
 	/lib/firmware/cxgb4/t4fw-1.26.4.0.bin \
 	/lib/firmware/cxgb4/t5fw-1.26.4.0.bin \
 	/lib/firmware/cxgb4/t6fw-1.26.4.0.bin \
