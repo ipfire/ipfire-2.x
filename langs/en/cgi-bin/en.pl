@@ -2041,6 +2041,7 @@
 'pagerefresh' => 'Page is beeing refreshed, please wait.',
 'pakfire accept all' => 'Do you want to install all packages?',
 'pakfire ago' => 'ago.',
+'pakfire already busy' => 'Pakfire is already performing a task. Please try again later.',
 'pakfire available addons' => 'Available Addons:',
 'pakfire configuration' => 'Pakfire Configuration',
 'pakfire core update auto' => 'Install core and addon updates automatically:',

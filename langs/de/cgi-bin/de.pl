@@ -1990,6 +1990,7 @@
 'pagerefresh' => 'Seite wird aktualisiert. Bitte warten.',
 'pakfire accept all' => 'Möchten Sie der Installation aller Pakete zustimmen?',
 'pakfire ago' => 'her.',
+'pakfire already busy' => 'Pakfire führt bereits eine Aufgabe aus. Bitte versuchen Sie es später erneut.',
 'pakfire available addons' => 'Verfügbare Addons:',
 'pakfire configuration' => 'Pakfire Konfiguration',
 'pakfire core update auto' => 'Core- und Addon-Updates automatisch installieren:',

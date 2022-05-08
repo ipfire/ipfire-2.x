@@ -96,8 +96,10 @@ if($cgiparams{'ACTION'} eq 'json-getstatus') {
 }
 
 ### Process Pakfire install/update commands ###
-if(($cgiparams{'ACTION'} ne '') && (! &_is_pakfire_busy())) {
-	if(($cgiparams{'ACTION'} eq 'install') && ($cgiparams{'FORCE'} eq 'on')) {
+if($cgiparams{'ACTION'} ne '') {
+	if(&_is_pakfire_busy()) {
+		$errormessage = $Lang::tr{'pakfire already busy'};
+	} elsif(($cgiparams{'ACTION'} eq 'install') && ($cgiparams{'FORCE'} eq 'on')) {
 		my @pkgs = split(/\|/, $cgiparams{'INSPAKS'});
 		&General::system_background("/usr/local/bin/pakfire", "install", "--non-interactive", "--no-colors", @pkgs);
 	} elsif(($cgiparams{'ACTION'} eq 'remove') && ($cgiparams{'FORCE'} eq 'on')) {
