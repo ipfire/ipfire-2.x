@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 1.1.34
+VER        = 1.1.35
 
 THISAPP    = libxslt-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = f043a0357e0705ab68041adf4031a6b3e0b5c3d396691c988a34963a0ee0ebe3bede2d1d7a0c5f0c42c046183653c94f4b51e10e35980a039c8cad446e84ad86
+$(DL_FILE)_BLAKE2 = 9667a93e61f50098a512c1351bce2ee937fc5d29488d010b525122d28ffedc73e0930402f3df2d378161a031dc016a15f0f03bdc343f0c4aa5d0b5c454f8002d
 
 install : $(TARGET)
 
@@ -69,7 +69,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure 		\
 			--prefix=/usr		\
