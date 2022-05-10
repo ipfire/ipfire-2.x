@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.7
+VER        = 2.0.194
 
 THISAPP    = libyang-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a3ad7dc0bcff14ea5fec0221f11efb2ef61efa8b4b3c8ebd6d58f3184cc1f1979c026985c1782d2f2177227a8aae815c6c4fa7063fb19156af78f65740623318
+$(DL_FILE)_BLAKE2 = aa323b39752ac426f35e1ef17ca4a61d726c48916b740511ed03b06b8132747207dd4620842f9730ff1d05f216086310bc1634f393163067c119f5eec0aa91b1
 
 install : $(TARGET)
 
