@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.0
+VER        = 1.0.1
 
 THISAPP    = libnetfilter_cthelper-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 622a4e27629d97a0ab2b5032e972914f2ab8764ab60ab7090b173ceabfe9648e09452e931dacb822090c5f816b553b8e73b8f8a4ee431db9f6dd092d9d4283ee
+$(DL_FILE)_BLAKE2 = cc5ae85dca896c0b8b1b704e0c5cc201677f48c2765520dc992a1b218d1334e04c592ba48cf06efe32a5089c7ad70fa44cbb2b40f2e8400d7ef9d2976a6425ee
 
 install : $(TARGET)
 
