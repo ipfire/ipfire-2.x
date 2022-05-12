@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/ipsec stop
 /etc/init.d/squid stop
 /usr/local/bin/openvpnctrl -k
 /usr/local/bin/openvpnctrl -kn2n
@@ -128,6 +129,9 @@ esac
 /usr/local/bin/openvpnctrl -s
 /usr/local/bin/openvpnctrl -sn2n
 /etc/init.d/suricata start
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+       /etc/init.d/ipsec start
+fi
 
 # This update needs a reboot...
 touch /var/run/need_reboot
