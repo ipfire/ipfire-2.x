@@ -10,7 +10,7 @@
 #usr/lib/libexpat.la
 #usr/lib/libexpat.so
 usr/lib/libexpat.so.1
-#usr/lib/libexpat.so.1.8.8
+usr/lib/libexpat.so.1.8.8
 #usr/lib/pkgconfig/expat.pc
 #usr/share/doc/expat
 #usr/share/doc/expat-2.4.8
