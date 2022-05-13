@@ -1,8 +1,8 @@
 #usr/include/INIReader.h
 #usr/include/ini.h
 #usr/lib/libINIReader.so
-#usr/lib/libINIReader.so.0
+usr/lib/libINIReader.so.0
 #usr/lib/libinih.so
-#usr/lib/libinih.so.0
+usr/lib/libinih.so.0
 #usr/lib/pkgconfig/INIReader.pc
 #usr/lib/pkgconfig/inih.pc
