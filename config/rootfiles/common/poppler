@@ -174,7 +174,7 @@ usr/lib/libpoppler-glib.so.8
 usr/lib/libpoppler-glib.so.8.23.0
 #usr/lib/libpoppler.so
 usr/lib/libpoppler.so.120
-#usr/lib/libpoppler.so.120.0.0
+usr/lib/libpoppler.so.120.0.0
 #usr/lib/pkgconfig/poppler-cpp.pc
 #usr/lib/pkgconfig/poppler-glib.pc
 #usr/lib/pkgconfig/poppler.pc
