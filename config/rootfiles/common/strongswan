@@ -40,6 +40,7 @@ etc/strongswan.d/charon/gcm.conf
 etc/strongswan.d/charon/gcrypt.conf
 etc/strongswan.d/charon/gmp.conf
 etc/strongswan.d/charon/hmac.conf
+etc/strongswan.d/charon/kdf.conf
 etc/strongswan.d/charon/kernel-netlink.conf
 etc/strongswan.d/charon/md5.conf
 etc/strongswan.d/charon/mgf1.conf
@@ -137,6 +138,7 @@ usr/lib/ipsec/plugins/libstrongswan-gcm.so
 usr/lib/ipsec/plugins/libstrongswan-gcrypt.so
 usr/lib/ipsec/plugins/libstrongswan-gmp.so
 usr/lib/ipsec/plugins/libstrongswan-hmac.so
+usr/lib/ipsec/plugins/libstrongswan-kdf.so
 usr/lib/ipsec/plugins/libstrongswan-kernel-netlink.so
 usr/lib/ipsec/plugins/libstrongswan-md5.so
 usr/lib/ipsec/plugins/libstrongswan-mgf1.so
@@ -225,6 +227,7 @@ usr/sbin/swanctl
 #usr/share/strongswan/templates/config/plugins/gcrypt.conf
 #usr/share/strongswan/templates/config/plugins/gmp.conf
 #usr/share/strongswan/templates/config/plugins/hmac.conf
+#usr/share/strongswan/templates/config/plugins/kdf.conf
 #usr/share/strongswan/templates/config/plugins/kernel-netlink.conf
 #usr/share/strongswan/templates/config/plugins/md5.conf
 #usr/share/strongswan/templates/config/plugins/mgf1.conf
