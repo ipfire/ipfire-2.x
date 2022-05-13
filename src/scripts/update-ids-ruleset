@@ -95,8 +95,8 @@ if ($return) {
 # The script has requested a lock, so set locket to "1".
 $locked = "1";
 
-# Grab the configured providers.
-&General::readhasharray("$IDS::providers_settings_file", \%providers);
+# Grab the configured providers, if the providers settings file exists.
+&General::readhasharray("$IDS::providers_settings_file", \%providers) if (-f "$IDS::providers_settings_file");
 
 # Loop through the array of available providers.
 foreach my $id (keys %providers) {
