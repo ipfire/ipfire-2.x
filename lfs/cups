@@ -33,9 +33,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/cups-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
-PAK_VER    = 26
+PAK_VER    = 27
 
-DEPS       = avahi cups-filters dbus ghostscript libtiff
+DEPS       = avahi cups-filters dbus ghostscript
 
 SERVICES   = cups
 
