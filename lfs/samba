@@ -35,7 +35,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
 PAK_VER    = 85
 
-DEPS       = avahi cups libtirpc krb5 perl-Parse-Yapp perl-JSON
+DEPS       = avahi cups libtirpc perl-Parse-Yapp perl-JSON
 
 SERVICES   = samba
 

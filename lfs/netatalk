@@ -36,7 +36,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = netatalk
 PAK_VER    = 3
 
-DEPS       = avahi dbus krb5
+DEPS       = avahi dbus
 
 SERVICES   = netatalk
 
