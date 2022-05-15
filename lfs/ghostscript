@@ -34,9 +34,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ghostscript
-PAK_VER    = 10
+PAK_VER    = 11
 
-DEPS       = cups dbus libtiff
+DEPS       = cups dbus
 
 SERVICES   =
 
