@@ -133,6 +133,22 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
        /etc/init.d/ipsec start
 fi
 
+# krb5 is now part of the core system, remove Pakfire metadata for it
+if [ -e "/opt/pakfire/db/installed/meta-krb5" ] && [ -e "/opt/pakfire/db/meta/meta-krb5" ]; then
+	rm -vf \
+		/opt/pakfire/db/installed/meta-krb5 \
+		/opt/pakfire/db/meta/meta-krb5 \
+		/opt/pakfire/db/rootfiles/krb5
+fi
+
+# libtiff is now part of the core system, remove Pakfire metadata for it
+if [ -e "/opt/pakfire/db/installed/meta-libtiff" ] && [ -e "/opt/pakfire/db/meta/meta-libtiff" ]; then
+	rm -vf \
+		/opt/pakfire/db/installed/meta-libtiff \
+		/opt/pakfire/db/meta/meta-libtiff \
+		/opt/pakfire/db/rootfiles/libtiff
+fi
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
