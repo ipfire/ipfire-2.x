@@ -118,25 +118,6 @@ import_gcp_configuration() {
 		fi
 	done <<<"$(get instance/attributes/ssh-keys)"
 
-	# Download the user-data script only on the first boot
-	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
-		# Download a startup script
-		local script="$(get instance/attributes/startup-script)"
-
-		# Execute the script
-		if [ "${script:0:2}" = "#!" ]; then
-			echo "${script}" > /tmp/gcp-startup.script
-			chmod 700 /tmp/gcp-startup.script
-
-			# Run the script
-			local now="$(date -u +"%s")"
-			/tmp/gcp-startup.script &>/var/log/startup-script.log.${now}
-
-			# Delete the script right away
-			rm /tmp/gcp-startup.script
-		fi
-	fi
-
 	# Import network configuration
 	# After this, no network connectivity will be available from this script due to the
 	# renaming of the network interfaces for which they have to be shut down
@@ -248,6 +229,22 @@ import_gcp_configuration() {
 			echo "1,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,cust_srv,SSH,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
 			echo "2,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,TGT_PORT,444,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
 		) >> /var/ipfire/firewall/input
+
+		# Download a startup script
+		local script="$(get instance/attributes/startup-script)"
+
+		# Execute the script
+		if [ "${script:0:2}" = "#!" ]; then
+			echo "${script}" > /tmp/gcp-startup.script
+			chmod 700 /tmp/gcp-startup.script
+
+			# Run the script
+			local now="$(date -u +"%s")"
+			/tmp/gcp-startup.script &>/var/log/startup-script.log.${now}
+
+			# Delete the script right away
+			rm /tmp/gcp-startup.script
+		fi
 
 		# This script has now completed the first steps of setup
 		touch /var/ipfire/main/firstsetup_ok

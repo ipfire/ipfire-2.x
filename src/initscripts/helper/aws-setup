@@ -118,25 +118,6 @@ import_aws_configuration() {
 		fi
 	done
 
-	# Download the user-data script only on the first boot
-	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
-		# Download user-data
-		local user_data="$(get user-data)"
-
-		# Save user-data script to be executed later
-		if [ "${user_data:0:2}" = "#!" ]; then
-			echo "${user_data}" > /tmp/aws-user-data.script
-			chmod 700 /tmp/aws-user-data.script
-
-			# Run the user-data script
-			local now="$(date -u +"%s")"
-			/tmp/aws-user-data.script &>/var/log/user-data.log.${now}
-
-			# Delete the script right away
-			rm /tmp/aws-user-data.script
-		fi
-	fi
-
 	# Import network configuration
 	# After this, no network connectivity will be available from this script due to the
 	# renaming of the network interfaces for which they have to be shut down
@@ -258,6 +239,22 @@ import_aws_configuration() {
 			echo "1,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,cust_srv,SSH,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
 			echo "2,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,TGT_PORT,444,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
 		) >> /var/ipfire/firewall/input
+
+		# Download user-data
+		local user_data="$(get user-data)"
+
+		# Save user-data script to be executed later
+		if [ "${user_data:0:2}" = "#!" ]; then
+			echo "${user_data}" > /tmp/aws-user-data.script
+			chmod 700 /tmp/aws-user-data.script
+
+			# Run the user-data script
+			local now="$(date -u +"%s")"
+			/tmp/aws-user-data.script &>/var/log/user-data.log.${now}
+
+			# Delete the script right away
+			rm /tmp/aws-user-data.script
+		fi
 
 		# This script has now completed the first steps of setup
 		touch /var/ipfire/main/firstsetup_ok

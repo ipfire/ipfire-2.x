@@ -147,28 +147,6 @@ import_oci_configuration() {
 		fi
 	done <<<"$(get instance/metadata/ssh_authorized_keys)"
 
-	# Download the user-data script only on the first boot
-	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
-		# Download a startup script
-		local script="$(get instance/metadata/user_data)"
-
-		# Try to decode this
-		script="$(try_base64_decode "${script}")"
-
-		# Execute the script
-		if [ "${script:0:2}" = "#!" ]; then
-			echo "${script}" > /tmp/user-data.script
-			chmod 700 /tmp/user-data.script
-
-			# Run the script
-			local now="$(date -u +"%s")"
-			/tmp/user-data.script &>/var/log/user-data.log.${now}
-
-			# Delete the script right away
-			rm /tmp/user-data.script
-		fi
-	fi
-
 	# Import network configuration
 	# After this, no network connectivity will be available from this script due to the
 	# renaming of the network interfaces for which they have to be shut down
@@ -284,6 +262,25 @@ import_oci_configuration() {
 			echo "1,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,cust_srv,SSH,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
 			echo "2,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,TGT_PORT,444,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
 		) >> /var/ipfire/firewall/input
+
+		# Download a startup script
+		local script="$(get instance/metadata/user_data)"
+
+		# Try to decode this
+		script="$(try_base64_decode "${script}")"
+
+		# Execute the script
+		if [ "${script:0:2}" = "#!" ]; then
+			echo "${script}" > /tmp/user-data.script
+			chmod 700 /tmp/user-data.script
+
+			# Run the script
+			local now="$(date -u +"%s")"
+			/tmp/user-data.script &>/var/log/user-data.log.${now}
+
+			# Delete the script right away
+			rm /tmp/user-data.script
+		fi
 
 		# This script has now completed the first steps of setup
 		touch /var/ipfire/main/firstsetup_ok

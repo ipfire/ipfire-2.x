@@ -83,25 +83,6 @@ import_exoscale_configuration() {
 		chown setup.nobody "/home/setup/.ssh/authorized_keys"
 	fi
 
-	# Download the user-data script only on the first boot
-	if [ ! -e "/var/ipfire/main/firstsetup_ok" ]; then
-		# Download user-data
-		local user_data="$(get user-data)"
-
-		# Save user-data script to be executed later
-		if [ "${user_data:0:2}" = "#!" ]; then
-			echo "${user_data}" > /tmp/user-data.script
-			chmod 700 /tmp/user-data.script
-
-			# Run the user-data script
-			local now="$(date -u +"%s")"
-			/tmp/user-data.script &>/var/log/user-data.log.${now}
-
-			# Delete the script right away
-			rm /tmp/user-data.script
-		fi
-	fi
-
 	# Import any previous settings for the local interfaces
 	 eval $(/usr/local/bin/readhash <(grep -E "^(GREEN|ORANGE)_.*=" /var/ipfire/ethernet/settings 2>/dev/null))
 
@@ -207,6 +188,22 @@ import_exoscale_configuration() {
 			echo "1,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,cust_srv,SSH,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
 			echo "2,ACCEPT,INPUTFW,ON,std_net_src,ALL,ipfire,RED1,,TCP,,,ON,,,TGT_PORT,444,,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second"
 		) >> /var/ipfire/firewall/input
+
+		# Download user-data
+		local user_data="$(get user-data)"
+
+		# Save user-data script to be executed later
+		if [ "${user_data:0:2}" = "#!" ]; then
+			echo "${user_data}" > /tmp/user-data.script
+			chmod 700 /tmp/user-data.script
+
+			# Run the user-data script
+			local now="$(date -u +"%s")"
+			/tmp/user-data.script &>/var/log/user-data.log.${now}
+
+			# Delete the script right away
+			rm /tmp/user-data.script
+		fi
 
 		# This script has now completed the first steps of setup
 		touch /var/ipfire/main/firstsetup_ok
