@@ -120,6 +120,10 @@ case "$(uname -m)" in
                 ;;
 esac
 
+# Add rd.auto to kernel command line
+if ! grep -q rd.auto /etc/default/grub; then
+	sed -e "s/panic=10/& rd.auto/" -i /etc/default/grub
+fi
 
 # Start services
 /etc/init.d/fcron restart
