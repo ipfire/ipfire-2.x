@@ -125,6 +125,9 @@ if ! grep -q rd.auto /etc/default/grub; then
 	sed -e "s/panic=10/& rd.auto/" -i /etc/default/grub
 fi
 
+# Repair any broken MDRAID arrays
+/usr/local/bin/repair-mdraid
+
 # Start services
 /etc/init.d/fcron restart
 /etc/init.d/sshd restart
