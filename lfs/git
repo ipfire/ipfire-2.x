@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.36.0
+VER        = 2.36.1
 SUMMARY    = Fast, scalable, distributed revision control system
 
 THISAPP    = git-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = git
-PAK_VER    = 23
+PAK_VER    = 24
 
 DEPS       = perl-Authen-SASL perl-MIME-Base64 perl-Net-SMTP-SSL
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 72bb148fc5fded2976554788eaf599d20fe9f200ac1dd1ddd4ed89f7f5c8d6c1025907080620bab477b4efadf41d883e890dff73c80d0ff5f0becd83f13ebd88
+$(DL_FILE)_BLAKE2 = 99f54efb4ea1d8db0e3afd3dc9780cb37fc853e4757f4b37d68a6badd90eeed3e2943c97393eaed6adf61c82b97b5d01ca8d015784f5425072b1db14d39144ce
 
 install : $(TARGET)
 
