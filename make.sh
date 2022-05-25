@@ -35,7 +35,7 @@ GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"			# Git Branch
 GIT_TAG="$(git tag | tail -1)"					# Git Tag
 GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
-TOOLCHAINVER=20220203
+TOOLCHAINVER=20220508
 
 # use multicore and max compression
 ZSTD_OPT="-T0 --ultra -22"
@@ -984,29 +984,6 @@ if [ "${ENABLE_RAMDISK}" = "auto" ]; then
 fi
 
 buildtoolchain() {
-	local error=false
-	case "${BUILD_ARCH}:${HOST_ARCH}" in
-		# x86_64
-		x86_64:x86_64)
-			 # This is working.
-			 ;;
-
-		# ARM
-		arvm7hl:armv7hl|armv7hl:armv7l)
-			# These are working.
-			;;
-
-		armv6l:armv6l|armv6l:armv7l|armv6l:aarch64)
-			# These are working.
-			;;
-		armv6l:*)
-			error=true
-			;;
-	esac
-
-	${error} && \
-		exiterror "Cannot build ${BUILD_ARCH} toolchain on $(uname -m). Please use the download if any."
-
 	local gcc=$(type -p gcc)
 	if [ -z "${gcc}" ]; then
 		exiterror "Could not find GCC. You will need a working build enviroment in order to build the toolchain."
