@@ -34,6 +34,13 @@ done
 # Stop services
 
 # Remove files
+rm -rvf \
+	/lib/libxtables.so.12.4.0 \
+	/lib/xtables/libip6t_DNAT.so \
+	/lib/xtables/libip6t_REDIRECT.so \
+	/lib/xtables/libipt_DNAT.so \
+	/lib/xtables/libipt_REDIRECT.so \
+	/usr/lib/libfuse3.so.3.10.4
 
 # Extract files
 extract_files
