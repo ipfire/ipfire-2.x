@@ -1,0 +1,5 @@
+etc/rc.d/helper/oci-setup
+etc/rc.d/helper/azure-setup
+etc/rc.d/helper/aws-setup
+etc/rc.d/helper/exoscale-setup
+etc/rc.d/helper/gcp-setup
