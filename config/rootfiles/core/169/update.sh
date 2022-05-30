@@ -40,7 +40,8 @@ rm -rvf \
 	/lib/xtables/libip6t_REDIRECT.so \
 	/lib/xtables/libipt_DNAT.so \
 	/lib/xtables/libipt_REDIRECT.so \
-	/usr/lib/libfuse3.so.3.10.4
+	/usr/lib/libfuse3.so.3.10.4 \
+	/usr/lib/libyang.so.2.1.4
 
 # Extract files
 extract_files
