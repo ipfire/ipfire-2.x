@@ -1692,7 +1692,7 @@ buildipfire() {
   lfsmake2 pmacct
   lfsmake2 squid-asnbl
   lfsmake2 qemu-ga
-	lfsmake2 gptfdisk
+  lfsmake2 gptfdisk
 }
 
 buildinstaller() {
@@ -1800,9 +1800,6 @@ done
 case "$1" in
 build)
 	START_TIME="${SECONDS}"
-
-	# Clear screen
-	${INTERACTIVE} && clear
 
 	PACKAGE="$BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst"
 	#only restore on a clean disk
@@ -1947,9 +1944,6 @@ downloadsrc)
 	cd - >/dev/null 2>&1
 	;;
 toolchain)
-	# Clear screen
-	${INTERACTIVE} && clear
-
 	prepareenv
 	print_build_stage "Toolchain compilation (${BUILD_ARCH})"
 	buildtoolchain
@@ -2051,7 +2045,7 @@ check-manualpages)
 	fi
 	;;
 *)
-	echo "Usage: $0 [OPTIONS] {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain|update-contributors|find-dependencies|check-manualpages}"
+	echo "Usage: $0 [OPTIONS] {build|check-manualpages|clean|docker|downloadsrc|find-dependencies|gettoolchain|lang|shell|toolchain|update-contributors|uploadsrc}"
 	cat doc/make.sh-usage
 	;;
 esac

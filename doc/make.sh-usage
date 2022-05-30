@@ -1,23 +1,26 @@
-Standard use commands in the order you may need them.
-  downloadsrc : preload all necessary files in cache before compilation
-        build : compile the distribution
-        clean : erase build and log to recompile everything from scratch
+make.sh - Build and maintain programs and libraries for IPFire source code
 
-Optional
- gettoolchain : optionally load from ipfire.org a precompilated toolchain
-		package. This solve some compilation issues on old or very
-		recent distributions and save 20% of next full building time.
-		If you want to use it, do it before build step
+Standard commands:
+  downloadsrc		Preload all necessary files in cache before compilation
+  gettoolchain		Optionally load a precompilated toolchain (20% less build time)
+  build			Compile distribution
+  clean			Erase build and log directories to recompile all from scratch
 
-Maintainer / advanced commands
-    toolchain : Create our own toolchain package to save 20% of build time.
-        shell : Enter a shell inside the chroot, used to tune lfs script
-		  and / or during kernel upgrade to rebuild a new .config
+Maintainer and advanced commands:
+  check-manualpages	Check the manual pages for broken links
+  docker		Build a docker image
+  find-dependencies	Confirm needed libraries are included in build
+  lang			Check translations for missing or obsolete strings
+  shell			Enter a shell inside the chroot. Used to tune lfs script
+  			  and/or during kernel upgrade to rebuild new .config file
+  toolchain		Create toolchain package (if not downloaded via `make gettoolchain`)
+  update-contributors	Update list of contributors
+  uploadsrc		For core developers only to upload source code
 
+OPTIONS:
+    --target=[aarch64|armv6l|armv7hl|riscv64|x86_64]
+			Cross-compile for this target architecture.  Uses the QEMU 
+			  emulator if needed to virtualise the desired target 
+			  architecture.  Can be permanently set with 
+			  TARGET_ARCH= in .config file.
 
-Options:
-    --target=[aarch64|armv5tel|i586] : Cross-compile for this target architecture.
-                                       Uses the QEMU emulator if needed to virtualise
-                                       the desired target architecture.
-                                       Can be permanently set with TARGET_ARCH= in
-                                       .config.
