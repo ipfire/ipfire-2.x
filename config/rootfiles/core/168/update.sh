@@ -128,6 +128,9 @@ fi
 # Repair any broken MDRAID arrays
 /usr/local/bin/repair-mdraid
 
+# Rebuild fcrontab from scratch
+/usr/bin/fcrontab -z
+
 # Start services
 /etc/init.d/fcron restart
 /etc/init.d/sshd restart
