@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/unbound stop
 
 # Remove files
 rm -rvf \
@@ -41,6 +42,7 @@ rm -rvf \
 	/lib/xtables/libipt_DNAT.so \
 	/lib/xtables/libipt_REDIRECT.so \
 	/usr/lib/libfuse3.so.3.10.4 \
+	/usr/lib/libunbound.so.8.1.14
 	/usr/lib/libxml2.so.2.9.12 \
 	/usr/lib/libxslt.so.1.1.34 \
 	/usr/lib/libyang.so.2.1.4
@@ -59,6 +61,7 @@ ldconfig
 
 # Start services
 /etc/init.d/firewall restart
+/etc/init.d/unbound start
 
 # This update needs a reboot...
 touch /var/run/need_reboot
