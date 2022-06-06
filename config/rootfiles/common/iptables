@@ -13,15 +13,13 @@ lib/libipq.so.0.0.0
 #lib/libxtables.la
 lib/libxtables.so
 lib/libxtables.so.12
-lib/libxtables.so.12.4.0
+lib/libxtables.so.12.6.0
 #lib/xtables
-lib/xtables/libip6t_DNAT.so
 lib/xtables/libip6t_DNPT.so
 lib/xtables/libip6t_HL.so
 lib/xtables/libip6t_LOG.so
 lib/xtables/libip6t_MASQUERADE.so
 lib/xtables/libip6t_NETMAP.so
-lib/xtables/libip6t_REDIRECT.so
 lib/xtables/libip6t_REJECT.so
 lib/xtables/libip6t_SNAT.so
 lib/xtables/libip6t_SNPT.so
@@ -37,12 +35,10 @@ lib/xtables/libip6t_mh.so
 lib/xtables/libip6t_rt.so
 lib/xtables/libip6t_srh.so
 lib/xtables/libipt_CLUSTERIP.so
-lib/xtables/libipt_DNAT.so
 lib/xtables/libipt_ECN.so
 lib/xtables/libipt_LOG.so
 lib/xtables/libipt_MASQUERADE.so
 lib/xtables/libipt_NETMAP.so
-lib/xtables/libipt_REDIRECT.so
 lib/xtables/libipt_REJECT.so
 lib/xtables/libipt_SNAT.so
 lib/xtables/libipt_TTL.so
@@ -57,6 +53,7 @@ lib/xtables/libxt_CLASSIFY.so
 lib/xtables/libxt_CONNMARK.so
 lib/xtables/libxt_CONNSECMARK.so
 lib/xtables/libxt_CT.so
+lib/xtables/libxt_DNAT.so
 lib/xtables/libxt_DSCP.so
 lib/xtables/libxt_HMARK.so
 lib/xtables/libxt_IDLETIMER.so
@@ -66,6 +63,7 @@ lib/xtables/libxt_NFLOG.so
 lib/xtables/libxt_NFQUEUE.so
 lib/xtables/libxt_NOTRACK.so
 lib/xtables/libxt_RATEEST.so
+lib/xtables/libxt_REDIRECT.so
 lib/xtables/libxt_SECMARK.so
 lib/xtables/libxt_SET.so
 lib/xtables/libxt_SYNPROXY.so

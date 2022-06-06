@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.10.4
+VER        = 3.11.0
 
 THISAPP    = fuse-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 174b51bf55544bbc08e04089a4d8685b371d3f584e337ed0d8d82c62e10c14b6ef14a964d6627e8a121036db1ab4c6c1ccd413c08f8685d3d91893874427e46f
+$(DL_FILE)_BLAKE2 = 30d2dfee25a34b5f84f0a6b13523a6183fde7989b3ac908b68b8b9e4c327da51678453918c3009712ff1f3aaa79c4b0a29f22bcb712ee550563b23fd9ac64a09
 
 install : $(TARGET)
 

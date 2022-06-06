@@ -1,0 +1,8 @@
+etc/rc.d/helper/oci-setup
+etc/rc.d/helper/azure-setup
+etc/rc.d/helper/aws-setup
+etc/rc.d/helper/exoscale-setup
+etc/rc.d/helper/gcp-setup
+srv/web/ipfire/html/themes/ipfire/include/functions.pl
+var/ipfire/header.pl
+var/ipfire/main/manualpages

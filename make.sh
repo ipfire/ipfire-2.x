@@ -23,7 +23,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.27"							# Version number
-CORE="168"							# Core Level (Filename)
+CORE="169"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
@@ -35,7 +35,7 @@ GIT_BRANCH="$(git rev-parse --abbrev-ref HEAD)"			# Git Branch
 GIT_TAG="$(git tag | tail -1)"					# Git Tag
 GIT_LASTCOMMIT="$(git rev-parse --verify HEAD)"			# Last commit
 
-TOOLCHAINVER=20220203
+TOOLCHAINVER=20220508
 
 # use multicore and max compression
 ZSTD_OPT="-T0 --ultra -22"
@@ -984,29 +984,6 @@ if [ "${ENABLE_RAMDISK}" = "auto" ]; then
 fi
 
 buildtoolchain() {
-	local error=false
-	case "${BUILD_ARCH}:${HOST_ARCH}" in
-		# x86_64
-		x86_64:x86_64)
-			 # This is working.
-			 ;;
-
-		# ARM
-		arvm7hl:armv7hl|armv7hl:armv7l)
-			# These are working.
-			;;
-
-		armv6l:armv6l|armv6l:armv7l|armv6l:aarch64)
-			# These are working.
-			;;
-		armv6l:*)
-			error=true
-			;;
-	esac
-
-	${error} && \
-		exiterror "Cannot build ${BUILD_ARCH} toolchain on $(uname -m). Please use the download if any."
-
 	local gcc=$(type -p gcc)
 	if [ -z "${gcc}" ]; then
 		exiterror "Could not find GCC. You will need a working build enviroment in order to build the toolchain."
@@ -1715,7 +1692,7 @@ buildipfire() {
   lfsmake2 pmacct
   lfsmake2 squid-asnbl
   lfsmake2 qemu-ga
-	lfsmake2 gptfdisk
+  lfsmake2 gptfdisk
 }
 
 buildinstaller() {
@@ -1823,9 +1800,6 @@ done
 case "$1" in
 build)
 	START_TIME="${SECONDS}"
-
-	# Clear screen
-	${INTERACTIVE} && clear
 
 	PACKAGE="$BASEDIR/cache/toolchains/$SNAME-$VERSION-toolchain-$TOOLCHAINVER-${BUILD_ARCH}.tar.zst"
 	#only restore on a clean disk
@@ -1970,9 +1944,6 @@ downloadsrc)
 	cd - >/dev/null 2>&1
 	;;
 toolchain)
-	# Clear screen
-	${INTERACTIVE} && clear
-
 	prepareenv
 	print_build_stage "Toolchain compilation (${BUILD_ARCH})"
 	buildtoolchain
@@ -2074,7 +2045,7 @@ check-manualpages)
 	fi
 	;;
 *)
-	echo "Usage: $0 [OPTIONS] {build|changelog|clean|gettoolchain|downloadsrc|shell|sync|toolchain|update-contributors|find-dependencies|check-manualpages}"
+	echo "Usage: $0 [OPTIONS] {build|check-manualpages|clean|docker|downloadsrc|find-dependencies|gettoolchain|lang|shell|toolchain|update-contributors|uploadsrc}"
 	cat doc/make.sh-usage
 	;;
 esac

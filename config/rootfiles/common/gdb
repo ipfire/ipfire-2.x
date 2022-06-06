@@ -4,9 +4,6 @@
 #usr/bin/gdbserver
 #usr/include/gdb
 #usr/include/gdb/jit-reader.h
-#usr/include/sim
-#usr/include/sim/callback.h
-#usr/include/sim/sim.h
 #usr/lib/libinproctrace.so
 #usr/share/gdb
 #usr/share/gdb/python
@@ -34,6 +31,7 @@
 #usr/share/gdb/python/gdb/printer/bound_registers.py
 #usr/share/gdb/python/gdb/printing.py
 #usr/share/gdb/python/gdb/prompt.py
+#usr/share/gdb/python/gdb/styling.py
 #usr/share/gdb/python/gdb/types.py
 #usr/share/gdb/python/gdb/unwinder.py
 #usr/share/gdb/python/gdb/xmethod.py
@@ -58,6 +56,7 @@
 #usr/share/gdb/system-gdbinit/elinos.py
 #usr/share/gdb/system-gdbinit/wrs-linux.py
 #usr/share/info/annotate.info
+#usr/share/info/ctf-spec.info
 #usr/share/info/gdb.info
 #usr/share/info/gdb.info-1
 #usr/share/info/gdb.info-2

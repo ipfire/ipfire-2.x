@@ -54,6 +54,8 @@ usr/sbin/clamd
 #usr/share/doc/ClamAV/html/ayu-highlight.css
 #usr/share/doc/ClamAV/html/book.js
 #usr/share/doc/ClamAV/html/clipboard.min.js
+#usr/share/doc/ClamAV/html/community_resources
+#usr/share/doc/ClamAV/html/community_resources/CommunityResources.html
 #usr/share/doc/ClamAV/html/css
 #usr/share/doc/ClamAV/html/css/chrome.css
 #usr/share/doc/ClamAV/html/css/general.css
@@ -69,6 +71,7 @@ usr/sbin/clamd
 #usr/share/doc/ClamAV/html/faq/faq-misc.html
 #usr/share/doc/ClamAV/html/faq/faq-ml.html
 #usr/share/doc/ClamAV/html/faq/faq-pua.html
+#usr/share/doc/ClamAV/html/faq/faq-rust.html
 #usr/share/doc/ClamAV/html/faq/faq-safebrowsing.html
 #usr/share/doc/ClamAV/html/faq/faq-scan-alerts.html
 #usr/share/doc/ClamAV/html/faq/faq-troubleshoot.html
@@ -147,6 +150,7 @@ usr/sbin/clamd
 #usr/share/doc/ClamAV/html/manual/Signatures/HashSignatures.html
 #usr/share/doc/ClamAV/html/manual/Signatures/LogicalSignatures.html
 #usr/share/doc/ClamAV/html/manual/Signatures/PhishSigs.html
+#usr/share/doc/ClamAV/html/manual/Signatures/SignatureNames.html
 #usr/share/doc/ClamAV/html/manual/Signatures/YaraRules.html
 #usr/share/doc/ClamAV/html/manual/Usage
 #usr/share/doc/ClamAV/html/manual/Usage.html

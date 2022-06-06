@@ -120,6 +120,16 @@ case "$(uname -m)" in
                 ;;
 esac
 
+# Add rd.auto to kernel command line
+if ! grep -q rd.auto /etc/default/grub; then
+	sed -e "s/panic=10/& rd.auto/" -i /etc/default/grub
+fi
+
+# Repair any broken MDRAID arrays
+/usr/local/bin/repair-mdraid
+
+# Rebuild fcrontab from scratch
+/usr/bin/fcrontab -z
 
 # Start services
 /etc/init.d/fcron restart

@@ -1,10 +1,10 @@
 #usr/lib/python3.10/site-packages/botocore
-#usr/lib/python3.10/site-packages/botocore-1.24.37-py3.10.egg-info
-#usr/lib/python3.10/site-packages/botocore-1.24.37-py3.10.egg-info/PKG-INFO
-#usr/lib/python3.10/site-packages/botocore-1.24.37-py3.10.egg-info/SOURCES.txt
-#usr/lib/python3.10/site-packages/botocore-1.24.37-py3.10.egg-info/dependency_links.txt
-#usr/lib/python3.10/site-packages/botocore-1.24.37-py3.10.egg-info/requires.txt
-#usr/lib/python3.10/site-packages/botocore-1.24.37-py3.10.egg-info/top_level.txt
+#usr/lib/python3.10/site-packages/botocore-1.25.12-py3.10.egg-info
+#usr/lib/python3.10/site-packages/botocore-1.25.12-py3.10.egg-info/PKG-INFO
+#usr/lib/python3.10/site-packages/botocore-1.25.12-py3.10.egg-info/SOURCES.txt
+#usr/lib/python3.10/site-packages/botocore-1.25.12-py3.10.egg-info/dependency_links.txt
+#usr/lib/python3.10/site-packages/botocore-1.25.12-py3.10.egg-info/requires.txt
+#usr/lib/python3.10/site-packages/botocore-1.25.12-py3.10.egg-info/top_level.txt
 usr/lib/python3.10/site-packages/botocore/__init__.py
 usr/lib/python3.10/site-packages/botocore/args.py
 usr/lib/python3.10/site-packages/botocore/auth.py
@@ -183,6 +183,10 @@ usr/lib/python3.10/site-packages/botocore/crt/auth.py
 #usr/lib/python3.10/site-packages/botocore/data/chime-sdk-identity/2021-04-20
 #usr/lib/python3.10/site-packages/botocore/data/chime-sdk-identity/2021-04-20/paginators-1.json
 #usr/lib/python3.10/site-packages/botocore/data/chime-sdk-identity/2021-04-20/service-2.json
+#usr/lib/python3.10/site-packages/botocore/data/chime-sdk-media-pipelines
+#usr/lib/python3.10/site-packages/botocore/data/chime-sdk-media-pipelines/2021-07-15
+#usr/lib/python3.10/site-packages/botocore/data/chime-sdk-media-pipelines/2021-07-15/paginators-1.json
+#usr/lib/python3.10/site-packages/botocore/data/chime-sdk-media-pipelines/2021-07-15/service-2.json
 #usr/lib/python3.10/site-packages/botocore/data/chime-sdk-meetings
 #usr/lib/python3.10/site-packages/botocore/data/chime-sdk-meetings/2021-07-15
 #usr/lib/python3.10/site-packages/botocore/data/chime-sdk-meetings/2021-07-15/paginators-1.json
@@ -202,6 +206,7 @@ usr/lib/python3.10/site-packages/botocore/crt/auth.py
 #usr/lib/python3.10/site-packages/botocore/data/cloudcontrol
 #usr/lib/python3.10/site-packages/botocore/data/cloudcontrol/2021-09-30
 #usr/lib/python3.10/site-packages/botocore/data/cloudcontrol/2021-09-30/paginators-1.json
+#usr/lib/python3.10/site-packages/botocore/data/cloudcontrol/2021-09-30/paginators-1.sdk-extras.json
 #usr/lib/python3.10/site-packages/botocore/data/cloudcontrol/2021-09-30/service-2.json
 #usr/lib/python3.10/site-packages/botocore/data/cloudcontrol/2021-09-30/waiters-2.json
 #usr/lib/python3.10/site-packages/botocore/data/clouddirectory
@@ -848,6 +853,10 @@ usr/lib/python3.10/site-packages/botocore/crt/auth.py
 #usr/lib/python3.10/site-packages/botocore/data/ivs/2020-07-14
 #usr/lib/python3.10/site-packages/botocore/data/ivs/2020-07-14/paginators-1.json
 #usr/lib/python3.10/site-packages/botocore/data/ivs/2020-07-14/service-2.json
+#usr/lib/python3.10/site-packages/botocore/data/ivschat
+#usr/lib/python3.10/site-packages/botocore/data/ivschat/2020-07-14
+#usr/lib/python3.10/site-packages/botocore/data/ivschat/2020-07-14/paginators-1.json
+#usr/lib/python3.10/site-packages/botocore/data/ivschat/2020-07-14/service-2.json
 #usr/lib/python3.10/site-packages/botocore/data/kafka
 #usr/lib/python3.10/site-packages/botocore/data/kafka/2018-11-14
 #usr/lib/python3.10/site-packages/botocore/data/kafka/2018-11-14/paginators-1.json
