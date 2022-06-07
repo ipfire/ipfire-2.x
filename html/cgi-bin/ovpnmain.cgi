@@ -4485,10 +4485,10 @@ if ($cgiparams{'TYPE'} eq 'net') {
 
    $confighash{$key}[42] = 'HOTP/T30/6';
 	$confighash{$key}[43] = $cgiparams{'OTP_STATE'};
-	if (($confighash{$key}[43] == 'on') && ($confighash{$key}[44] == '')) {
+	if (($confighash{$key}[43] eq 'on') && ($confighash{$key}[44] eq '')) {
 		my @otp_secret = &General::system_output("/usr/bin/openssl", "rand", "-hex", "20");
 		$confighash{$key}[44] = $otp_secret[0];
-	} elsif ($confighash{$key}[43] == '') {
+	} elsif ($confighash{$key}[43] eq '') {
 		$confighash{$key}[44] = '';
 	}
 
