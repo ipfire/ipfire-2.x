@@ -3,6 +3,8 @@ etc/rc.d/helper/azure-setup
 etc/rc.d/helper/aws-setup
 etc/rc.d/helper/exoscale-setup
 etc/rc.d/helper/gcp-setup
+opt/pakfire/etc/pakfire.conf
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
+usr/sbin/setup
 var/ipfire/header.pl
 var/ipfire/main/manualpages
