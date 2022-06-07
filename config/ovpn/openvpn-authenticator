@@ -286,15 +286,19 @@ class OpenVPNAuthenticator(object):
 					continue
 
 				# Return match!
-				return {
-					"name"          : row[2],
-					"common_name"   : row[3],
-
+				conn = {}
+				if len(row) < 45:
+					# General connection data
+					conn['name'] = row[2]
+					conn['common_name'] = row[3]
+				elif len(row) >= 45:
 					# TOTP options
-					"totp_protocol" : row[43],
-					"totp_status"   : row[44],
-					"totp_secret"   : row[45],
-				}
+					conn['totp_protocol'] = row[43]
+					conn['totp_status'] = row[44]
+					conn['totp_secret'] = row[45]
+
+				return conn
+
 
 	def _check_totp_token(self, token, secret):
 		p = subprocess.run(
