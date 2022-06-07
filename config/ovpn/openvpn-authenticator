@@ -298,7 +298,7 @@ class OpenVPNAuthenticator(object):
 
 	def _check_totp_token(self, token, secret):
 		p = subprocess.run(
-			["oathtool", "-w", "3", "%s" % secret],
+			["oathtool", "--totp", "-w", "3", "%s" % secret],
 			capture_output=True,
 		)
 
