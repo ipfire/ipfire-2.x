@@ -16096,8 +16096,8 @@
 #usr/lib/cmake/boost_python-1.76.0
 #usr/lib/cmake/boost_python-1.76.0/boost_python-config-version.cmake
 #usr/lib/cmake/boost_python-1.76.0/boost_python-config.cmake
-#usr/lib/cmake/boost_python-1.76.0/libboost_python-variant-mt-a64-shared-py3.8.cmake
-#usr/lib/cmake/boost_python-1.76.0/libboost_python-variant-a64-shared-py3.8.cmake
+#usr/lib/cmake/boost_python-1.76.0/libboost_python-variant-mt-a64-shared-py3.10.cmake
+#usr/lib/cmake/boost_python-1.76.0/libboost_python-variant-a64-shared-py3.10.cmake
 #usr/lib/cmake/boost_random-1.76.0
 #usr/lib/cmake/boost_random-1.76.0/boost_random-config-version.cmake
 #usr/lib/cmake/boost_random-1.76.0/boost_random-config.cmake
@@ -16250,10 +16250,10 @@ usr/lib/libboost_nowide-a64.so.1.76.0
 usr/lib/libboost_prg_exec_monitor-mt-a64.so.1.76.0
 #usr/lib/libboost_prg_exec_monitor-a64.so
 usr/lib/libboost_prg_exec_monitor-a64.so.1.76.0
-#usr/lib/libboost_python38-mt-a64.so
-usr/lib/libboost_python38-mt-a64.so.1.76.0
-#usr/lib/libboost_python38-a64.so
-usr/lib/libboost_python38-a64.so.1.76.0
+#usr/lib/libboost_python310-mt-a64.so
+usr/lib/libboost_python310-mt-a64.so.1.76.0
+#usr/lib/libboost_python310-a64.so
+usr/lib/libboost_python310-a64.so.1.76.0
 #usr/lib/libboost_random-mt-a64.so
 usr/lib/libboost_random-mt-a64.so.1.76.0
 #usr/lib/libboost_random-a64.so
