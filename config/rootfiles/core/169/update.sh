@@ -33,6 +33,7 @@ done
 
 # Stop services
 /etc/init.d/unbound stop
+/etc/init.d/squid stop
 
 # Remove files
 rm -rvf \
@@ -62,6 +63,7 @@ ldconfig
 # Start services
 /etc/init.d/firewall restart
 /etc/init.d/unbound start
+/etc/init.d/squid start
 
 # This update needs a reboot...
 touch /var/run/need_reboot
