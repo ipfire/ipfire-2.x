@@ -2655,7 +2655,7 @@ else
       darkcolor     => Imager::Color->new(0, 0, 0),
    );
    my $cn = $confighash{$cgiparams{'KEY'}}[2];
-   my $secret = encode_base32($confighash{$cgiparams{'KEY'}}[44]);
+   my $secret = encode_base32(pack('H*', $confighash{$cgiparams{'KEY'}}[44]));
    my $issuer = "$mainsettings{'HOSTNAME'}.$mainsettings{'DOMAINNAME'}";
    my $qrcodeimg = $qrcode->plot("otpauth://totp/$cn?secret=$secret&issuer=$issuer");
    my $qrcodeimgdata;
