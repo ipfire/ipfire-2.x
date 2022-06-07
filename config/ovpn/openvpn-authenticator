@@ -209,7 +209,7 @@ class OpenVPNAuthenticator(object):
 			if username == common_name:
 				# Check if TOTP token matches
 				if self._check_totp_token(token, conn.get("totp_secret")):
-					return self._client_auth_successful(self, cid, kid)
+					return self._client_auth_successful(cid, kid)
 
 			# Restart authentication
 			self._client_auth_challenge(cid, kid,
