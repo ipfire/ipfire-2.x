@@ -138,6 +138,21 @@ class OpenVPNAuthenticator(object):
 
 		environ = {}
 
+		if event == "CONNECT":
+			environ = self._read_env(environ)
+			self._client_connect(*arguments, environ=environ)
+		elif event == "DISCONNECT":
+			environ = self._read_env(environ)
+			self._client_disconnect(*arguments, environ=environ)
+		elif event == "REAUTH":
+			environ = self._read_env(environ)
+			self._client_reauth(*arguments, environ=environ)
+		elif event == "ESTABLISHED":
+			environ = self._read_env(environ)
+		else:
+			log.debug("Unhandled event: %s" % event)
+
+	def _read_env(self, environ):
 		# Read environment
 		while True:
 			line = self._read_line()
@@ -156,14 +171,7 @@ class OpenVPNAuthenticator(object):
 			key, delim, value = line.partition("=")
 			environ[key] = value
 
-		if event == "CONNECT":
-			self._client_connect(*arguments, environ=environ)
-		elif event == "DISCONNECT":
-			self._client_disconnect(*arguments, environ=environ)
-		elif event == "REAUTH":
-			self._client_reauth(*arguments, environ=environ)
-		else:
-			log.debug("Unhandled event: %s" % event)
+		return environ
 
 	def _client_connect(self, cid, kid, environ={}):
 		log.debug("Received client connect (cid=%s, kid=%s)" % (cid, kid))
