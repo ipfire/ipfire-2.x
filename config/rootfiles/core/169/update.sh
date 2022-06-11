@@ -88,6 +88,39 @@ rm -rvf \
 
 # Remove files
 rm -rvf \
+	/lib/firmware/ath10k/QCA99X0/hw2.0/board.bin \
+	/lib/firmware/intel/ice/ddp/ice-1.3.26.0.pkg \
+	/lib/firmware/iwlwifi-3160-10.ucode \
+	/lib/firmware/iwlwifi-3160-12.ucode \
+	/lib/firmware/iwlwifi-3160-13.ucode \
+	/lib/firmware/iwlwifi-3160-16.ucode \
+	/lib/firmware/iwlwifi-3160-7.ucode \
+	/lib/firmware/iwlwifi-3160-8.ucode \
+	/lib/firmware/iwlwifi-3160-9.ucode \
+	/lib/firmware/iwlwifi-3168-21.ucode \
+	/lib/firmware/iwlwifi-7260-10.ucode \
+	/lib/firmware/iwlwifi-7260-12.ucode \
+	/lib/firmware/iwlwifi-7260-13.ucode \
+	/lib/firmware/iwlwifi-7260-16.ucode \
+	/lib/firmware/iwlwifi-7260-7.ucode \
+	/lib/firmware/iwlwifi-7260-8.ucode \
+	/lib/firmware/iwlwifi-7260-9.ucode \
+	/lib/firmware/iwlwifi-7265-10.ucode \
+	/lib/firmware/iwlwifi-7265-12.ucode \
+	/lib/firmware/iwlwifi-7265-13.ucode \
+	/lib/firmware/iwlwifi-7265-16.ucode \
+	/lib/firmware/iwlwifi-7265-8.ucode \
+	/lib/firmware/iwlwifi-7265-9.ucode \
+	/lib/firmware/iwlwifi-7265D-10.ucode \
+	/lib/firmware/iwlwifi-7265D-12.ucode \
+	/lib/firmware/iwlwifi-7265D-13.ucode \
+	/lib/firmware/iwlwifi-7265D-16.ucode \
+	/lib/firmware/iwlwifi-7265D-17.ucode \
+	/lib/firmware/iwlwifi-7265D-21.ucode \
+	/lib/firmware/iwlwifi-8000C-13.ucode \
+	/lib/firmware/iwlwifi-8000C-16.ucode \
+	/lib/firmware/iwlwifi-8000C-21.ucode \
+	/lib/firmware/iwlwifi-8265-21.ucode \
 	/lib/libxtables.so.12.4.0 \
 	/lib/xtables/libip6t_DNAT.so \
 	/lib/xtables/libip6t_REDIRECT.so \
