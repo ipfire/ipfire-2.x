@@ -4,6 +4,7 @@ etc/rc.d/helper/aws-setup
 etc/rc.d/helper/exoscale-setup
 etc/rc.d/helper/gcp-setup
 opt/pakfire/etc/pakfire.conf
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 usr/sbin/setup
 var/ipfire/header.pl
