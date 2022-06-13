@@ -111,6 +111,9 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Apply sysctl changes
+/etc/init.d/sysctl start
+
 # Start services
 telinit u
 /etc/init.d/firewall restart
