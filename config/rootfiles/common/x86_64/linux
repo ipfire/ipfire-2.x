@@ -9872,6 +9872,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SECURITY_DMESG_RESTRICT
 #lib/modules/KVER-ipfire/build/include/config/SECURITY_LOCKDOWN_LSM
 #lib/modules/KVER-ipfire/build/include/config/SECURITY_LOCKDOWN_LSM_EARLY
+#lib/modules/KVER-ipfire/build/include/config/SECURITY_YAMA
 #lib/modules/KVER-ipfire/build/include/config/SELECT_MEMORY_MODEL
 #lib/modules/KVER-ipfire/build/include/config/SENSORS_ABITUGURU
 #lib/modules/KVER-ipfire/build/include/config/SENSORS_ABITUGURU3
@@ -10131,6 +10132,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SLAB_MERGE_DEFAULT
 #lib/modules/KVER-ipfire/build/include/config/SLHC
 #lib/modules/KVER-ipfire/build/include/config/SLICOSS
+#lib/modules/KVER-ipfire/build/include/config/SLS
 #lib/modules/KVER-ipfire/build/include/config/SLUB
 #lib/modules/KVER-ipfire/build/include/config/SLUB_CPU_PARTIAL
 #lib/modules/KVER-ipfire/build/include/config/SMBFS_COMMON

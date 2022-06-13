@@ -10102,6 +10102,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SECURITY_DMESG_RESTRICT
 #lib/modules/KVER-ipfire/build/include/config/SECURITY_LOCKDOWN_LSM
 #lib/modules/KVER-ipfire/build/include/config/SECURITY_LOCKDOWN_LSM_EARLY
+#lib/modules/KVER-ipfire/build/include/config/SECURITY_YAMA
 #lib/modules/KVER-ipfire/build/include/config/SELECT_MEMORY_MODEL
 #lib/modules/KVER-ipfire/build/include/config/SENSORS_AD7414
 #lib/modules/KVER-ipfire/build/include/config/SENSORS_AD7418
