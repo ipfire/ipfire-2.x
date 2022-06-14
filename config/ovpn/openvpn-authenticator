@@ -277,8 +277,8 @@ class OpenVPNAuthenticator(object):
 	def _find_connection(self, common_name):
 		with open(OPENVPN_CONFIG, "r") as f:
 			for row in csv.reader(f, dialect="unix"):
-				# Skip empty rows
-				if not row:
+				# Skip empty rows or rows that are too short
+				if not row or len(row) < 5:
 					continue
 
 				# Skip disabled connections
