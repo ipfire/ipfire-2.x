@@ -4487,6 +4487,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$confighash{$key}[43] = $cgiparams{'OTP_STATE'};
 	if (($confighash{$key}[43] eq 'on') && ($confighash{$key}[44] eq '')) {
 		my @otp_secret = &General::system_output("/usr/bin/openssl", "rand", "-hex", "20");
+      chomp($otp_secret[0]);
 		$confighash{$key}[44] = $otp_secret[0];
 	} elsif ($confighash{$key}[43] eq '') {
 		$confighash{$key}[44] = '';
