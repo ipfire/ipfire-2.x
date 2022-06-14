@@ -294,16 +294,20 @@ class OpenVPNAuthenticator(object):
 					continue
 
 				# Return match!
-				conn = {}
-				if len(row) < 45:
-					# General connection data
-					conn['name'] = row[2]
-					conn['common_name'] = row[3]
-				elif len(row) >= 45:
-					# TOTP options
-					conn['totp_protocol'] = row[43]
-					conn['totp_status'] = row[44]
-					conn['totp_secret'] = row[45]
+				conn = {
+					"name"        : row[2],
+					"common_name" : row[3],
+				}
+
+				# TOTP options
+				try:
+					conn |= {
+						"totp_protocol" : row[43],
+						"totp_status"   : row[44],
+						"totp_secret"   : row[45],
+					}
+				except IndexError:
+					pass
 
 				return conn
 
