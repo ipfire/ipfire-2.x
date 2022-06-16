@@ -26,6 +26,7 @@ use CGI qw/:standard/;
 use Imager::QRCode;
 use MIME::Base32;
 use MIME::Base64;
+use URI::Encode qw(uri_encode uri_decode);;
 use Net::DNS;
 use Net::Ping;
 use Net::Telnet;
@@ -2654,9 +2655,9 @@ else
       lightcolor    => Imager::Color->new(255, 255, 255),
       darkcolor     => Imager::Color->new(0, 0, 0),
    );
-   my $cn = $confighash{$cgiparams{'KEY'}}[2];
+   my $cn = uri_encode($confighash{$cgiparams{'KEY'}}[2]);
    my $secret = encode_base32(pack('H*', $confighash{$cgiparams{'KEY'}}[44]));
-   my $issuer = "$mainsettings{'HOSTNAME'}.$mainsettings{'DOMAINNAME'}";
+   my $issuer = uri_encode("$mainsettings{'HOSTNAME'}.$mainsettings{'DOMAINNAME'}");
    my $qrcodeimg = $qrcode->plot("otpauth://totp/$cn?secret=$secret&issuer=$issuer");
    my $qrcodeimgdata;
    $qrcodeimg->write(data => \$qrcodeimgdata, type=> 'png')
