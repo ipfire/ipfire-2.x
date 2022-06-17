@@ -211,7 +211,6 @@ lib/firmware/rtl_bt/rtl8852cu_fw.bin
 lib/firmware/rtw89/rtw8852c_fw.bin
 opt/pakfire/etc/pakfire.conf
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
-srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/html/images/qr-code.png
 srv/web/ipfire/html/images/qr-code.svg
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
