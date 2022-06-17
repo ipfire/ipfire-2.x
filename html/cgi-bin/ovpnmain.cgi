@@ -23,6 +23,10 @@
 ###
 use CGI;
 use CGI qw/:standard/;
+use Imager::QRCode;
+use MIME::Base32;
+use MIME::Base64;
+use URI::Encode qw(uri_encode uri_decode);;
 use Net::DNS;
 use Net::Ping;
 use Net::Telnet;
@@ -40,6 +44,7 @@ require "${General::swroot}/location-functions.pl";
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
+
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::colourgreen}, ${Header::colourblue} );
 undef (@dummy);
@@ -372,6 +377,8 @@ sub writeserverconf {
     }
     print CONF "tls-verify /usr/lib/openvpn/verify\n";
     print CONF "crl-verify /var/ipfire/ovpn/crls/cacrl.pem\n";
+    print CONF "auth-user-pass-optional\n";
+    print CONF "reneg-sec 86400\n";
     print CONF "user nobody\n";
     print CONF "group nobody\n";
     print CONF "persist-key\n";
@@ -385,6 +392,11 @@ sub writeserverconf {
     print CONF "# Log clients connecting/disconnecting\n";
     print CONF "client-connect \"/usr/sbin/openvpn-metrics client-connect\"\n";
     print CONF "client-disconnect \"/usr/sbin/openvpn-metrics client-disconnect\"\n";
+    print CONF "\n";
+
+    print CONF "# Enable Management Socket\n";
+    print CONF "management /var/run/openvpn.sock unix\n";
+    print CONF "management-client-auth\n";
 
     # Print server.conf.local if entries exist to server.conf
     if ( !-z $local_serverconf  && $sovpnsettings{'ADDITIONAL_CONFIGS'} eq 'on') {
@@ -2431,6 +2443,16 @@ else
 	print CLIENTCONF "fragment $vpnsettings{'FRAGMENT'}\r\n";
     }
 
+    # Disable storing any credentials in memory
+    print CLIENTCONF "auth-nocache\r\n";
+
+    # Set a fake user name for authentication
+    print CLIENTCONF "auth-token-user USER\r\n";
+    print CLIENTCONF "auth-token TOTP\r\n";
+
+    # If the server is asking for TOTP this needs to happen interactively
+    print CLIENTCONF "auth-retry interact\r\n";
+
     if ($include_certs) {
 	print CLIENTCONF "\r\n";
 
@@ -2616,6 +2638,45 @@ else
 	&Header::closepage();
 	exit(0);
     }
+
+###
+### Display OTP QRCode
+###
+} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'show otp qrcode'}) {
+   &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
+
+   my $qrcode = Imager::QRCode->new(
+      size          => 6,
+      margin        => 0,
+      version       => 0,
+      level         => 'M',
+      mode          => '8-bit',
+      casesensitive => 1,
+      lightcolor    => Imager::Color->new(255, 255, 255),
+      darkcolor     => Imager::Color->new(0, 0, 0),
+   );
+   my $cn = uri_encode($confighash{$cgiparams{'KEY'}}[2]);
+   my $secret = encode_base32(pack('H*', $confighash{$cgiparams{'KEY'}}[44]));
+   my $issuer = uri_encode("$mainsettings{'HOSTNAME'}.$mainsettings{'DOMAINNAME'}");
+   my $qrcodeimg = $qrcode->plot("otpauth://totp/$cn?secret=$secret&issuer=$issuer");
+   my $qrcodeimgdata;
+   $qrcodeimg->write(data => \$qrcodeimgdata, type=> 'png')
+      or die $qrcodeimg->errstr;
+   $qrcodeimgdata = encode_base64($qrcodeimgdata, '');
+
+   &Header::showhttpheaders();
+   &Header::openpage($Lang::tr{'ovpn'}, 1, '');
+   &Header::openbigbox('100%', 'LEFT', '', '');
+   &Header::openbox('100%', 'LEFT', "$Lang::tr{'otp qrcode'}:");
+   print <<END;
+$Lang::tr{'secret'}:&nbsp;$secret</br></br>
+<img alt="$Lang::tr{'otp qrcode'}" src="data:image/png;base64,$qrcodeimgdata">
+END
+   &Header::closebox();
+   print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
+   &Header::closebigbox();
+   &Header::closepage();
+   exit(0);
 
 ###
 ### Display Diffie-Hellman key
@@ -3660,6 +3721,7 @@ if ($confighash{$cgiparams{'KEY'}}) {
 		$cgiparams{'DAUTH'}		= $confighash{$cgiparams{'KEY'}}[39];
 		$cgiparams{'DCIPHER'}		= $confighash{$cgiparams{'KEY'}}[40];
 		$cgiparams{'TLSAUTH'}		= $confighash{$cgiparams{'KEY'}}[41];
+		$cgiparams{'OTP_STATE'}		= $confighash{$cgiparams{'KEY'}}[43];
 	} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 
@@ -4422,6 +4484,16 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		$confighash{$key}[41] = "no-pass";
 	}
 
+   $confighash{$key}[42] = 'HOTP/T30/6';
+	$confighash{$key}[43] = $cgiparams{'OTP_STATE'};
+	if (($confighash{$key}[43] eq 'on') && ($confighash{$key}[44] eq '')) {
+		my @otp_secret = &General::system_output("/usr/bin/openssl", "rand", "-hex", "20");
+      chomp($otp_secret[0]);
+		$confighash{$key}[44] = $otp_secret[0];
+	} elsif ($confighash{$key}[43] eq '') {
+		$confighash{$key}[44] = '';
+	}
+
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
 	if ($cgiparams{'CHECK1'} ){
@@ -4835,6 +4907,7 @@ if ($cgiparams{'TYPE'} eq 'host') {
 	    print"</td></tr></table><br><br>";
 		my $name=$cgiparams{'CHECK1'};
 		$checked{'RG'}{$cgiparams{'RG'}} = 'CHECKED';
+		$checked{'OTP_STATE'}{$cgiparams{'OTP_STATE'}} = 'CHECKED';
 
 	if (! -z "${General::swroot}/ovpn/ccd.conf"){
 		print"<table border='0' width='100%' cellspacing='1' cellpadding='0'><tr><td width='1%'></td><td width='30%' class='boldbase' align='center'><b>$Lang::tr{'ccd name'}</td><td width='15%' class='boldbase' align='center'><b>$Lang::tr{'network'}</td><td class='boldbase' align='center' width='18%'><b>$Lang::tr{'ccd clientip'}</td></tr>";
@@ -4970,6 +5043,7 @@ if ($cgiparams{'TYPE'} eq 'host') {
 
 	print <<END;
 	<table border='0' width='100%'>
+	<tr><td width='20%'>$Lang::tr{'enable otp'}:</td><td colspan='3'><input type='checkbox' name='OTP_STATE' $checked{'OTP_STATE'}{'on'} /></td></tr>
 	<tr><td width='20%'>Redirect Gateway:</td><td colspan='3'><input type='checkbox' name='RG' $checked{'RG'}{'on'} /></td></tr>
 	<tr><td colspan='4'><b><br>$Lang::tr{'ccd routes'}</b></td></tr>
 	<tr><td colspan='4'>&nbsp</td></tr>
@@ -5413,7 +5487,7 @@ END
 	<th width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></th>
 	<th width='20%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
 	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
-	<th width='5%' class='boldbase' colspan='7' align='center'><b>$Lang::tr{'action'}</b></th>
+	<th width='5%' class='boldbase' colspan='8' align='center'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
 		}
@@ -5427,7 +5501,7 @@ END
 	<th width='15%' class='boldbase' align='center'><b>$Lang::tr{'type'}</b></th>
 	<th width='20%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b></th>
 	<th width='10%' class='boldbase' align='center'><b>$Lang::tr{'status'}</b></th>
-	<th width='5%' class='boldbase' colspan='7' align='center'><b>$Lang::tr{'action'}</b></th>
+	<th width='5%' class='boldbase' colspan='8' align='center'><b>$Lang::tr{'action'}</b></th>
 </tr>
 END
 		}
@@ -5560,6 +5634,19 @@ END
 	; } else {
 	    print "<td>&nbsp;</td>";
 	}
+
+   if ($confighash{$key}[43] eq 'on') {
+      print <<END;
+<form method='post' name='frm${key}o'><td align='center' $col>
+<input type='image' name='$Lang::tr{'show otp qrcode'}' src='/images/qr-code.png' alt='$Lang::tr{'show otp qrcode'}' title='$Lang::tr{'show otp qrcode'}' border='0' />
+<input type='hidden' name='ACTION' value='$Lang::tr{'show otp qrcode'}' />
+<input type='hidden' name='KEY' value='$key' />
+</td></form>
+END
+; } else {
+      print "<td $col>&nbsp;</td>";
+   }
+
 	if ($confighash{$key}[4] eq 'cert' && -f "${General::swroot}/ovpn/certs/$confighash{$key}[1].p12") {
 	    print <<END;
 	    <form method='post' name='frm${key}c'><td align='center' $col>
@@ -5628,6 +5715,8 @@ END
 		<td class='base'>$Lang::tr{'download certificate'}</td>
 		<td>&nbsp; &nbsp; <img src='/images/openvpn.png' alt='?RELOAD'/></td>
 		<td class='base'>$Lang::tr{'dl client arch'}</td>
+		<td>&nbsp; &nbsp; <img src='/images/qr-code.png' alt='$Lang::tr{'show otp qrcode'}'/></td>
+		<td class='base'>$Lang::tr{'show otp qrcode'}</td>
 		</tr>
     </table><br>
 END
