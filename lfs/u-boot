@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2021.07
+VER        = 2022.04
 
 THISAPP    = u-boot-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -35,7 +35,7 @@ SUP_ARCH   = armv6l aarch64
 
 CFLAGS    := $(patsubst -fstack-protector-strong,,$(CFLAGS))
 
-ATF_VER    = 2.6
+ATF_VER    = 2.7
 
 ###############################################################################
 # Top-level Rules
@@ -47,8 +47,8 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 arm-trusted-firmware-$(ATF_VER).tar.gz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER).tar.gz
 arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz
 
-$(DL_FILE)_BLAKE2 = 1a209a604e0f30264781a14ca855bbb777e8f1c031de60d28de397084fc9bfc4a3771ad00ec22f5cdcfa721f22707a533b9b59004ac0b107df927f23dc5ab0a6
-arm-trusted-firmware-$(ATF_VER).tar.gz_BLAKE2 = 1d0caff9ea6d97276d1377483e3f81901c935f9af784b7a735636c75b00106935a7e301c21ecec7b9fd9a97dcf873ac1b12169bf7211dae3d975b78d379eba74
+$(DL_FILE)_BLAKE2 = 5d2035130c0631f8f1b7f7963bedf71578a66994e3950eb103a404a08e85686cd971ba51e8172093ccb75d975101024bf2a94d4064763ad57ad8950c11092319
+arm-trusted-firmware-$(ATF_VER).tar.gz_BLAKE2 = 4fc4d5646e272200d40081902e17f0be32956f451622f011a0d568c8cf26e15ab165fe16a69cf222241f7ba1d443add562d6d382277eb4fb2b49c3918cabdbad
 arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz_BLAKE2 = bc5245c1af911eb8ce8def743339102bb46d6aa854fbe916584775479dc97c9a9176c1d1615afc7ede496c7ca9da78db52d9c2eaf1290a4d06e53dbb1933e658
 
 install : $(TARGET)
