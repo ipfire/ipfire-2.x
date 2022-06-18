@@ -45,11 +45,14 @@ objects = $(DL_FILE) arm-trusted-firmware-$(ATF_VER).tar.gz arm-trusted-firmware
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 arm-trusted-firmware-$(ATF_VER).tar.gz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER).tar.gz
-arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz
+arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.gz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.gz
 
+# Downloaded from https://ftp.denx.de/pub/u-boot/
 $(DL_FILE)_BLAKE2 = 5d2035130c0631f8f1b7f7963bedf71578a66994e3950eb103a404a08e85686cd971ba51e8172093ccb75d975101024bf2a94d4064763ad57ad8950c11092319
+# Downloaded from https://github.com/ARM-software/arm-trusted-firmware/tags
 arm-trusted-firmware-$(ATF_VER).tar.gz_BLAKE2 = 4fc4d5646e272200d40081902e17f0be32956f451622f011a0d568c8cf26e15ab165fe16a69cf222241f7ba1d443add562d6d382277eb4fb2b49c3918cabdbad
-arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz_BLAKE2 = bc5245c1af911eb8ce8def743339102bb46d6aa854fbe916584775479dc97c9a9176c1d1615afc7ede496c7ca9da78db52d9c2eaf1290a4d06e53dbb1933e658
+# Downloaded from https://github.com/skiffos/rk3399-firmware-blobs/tags
+arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.gz_BLAKE2 = d6441f38f5795b1c7d4e15fe9b2fec3632490283d1e8f0a0ce53b7456413e9f455c78f4071f73f664c16813dba97897941d40ef3037a9f60302de158b7f3cd41
 
 install : $(TARGET)
 
