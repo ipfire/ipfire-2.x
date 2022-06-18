@@ -223,7 +223,7 @@ else
 
 	# Nanopi R4S
 	# arm trusted firmware for rk3399 cannot build without cortex m0 gcc crosscompiler
-	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz
+	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.gz
 	-mkdir -pv /usr/share/u-boot/nanopi_r4s
 	cd $(DIR_APP) && make CROSS_COMPILE="" nanopi-r4s-rk3399_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi R4S - IPFire.org"!' .config
