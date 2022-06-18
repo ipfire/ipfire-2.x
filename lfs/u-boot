@@ -41,7 +41,7 @@ ATF_VER    = 2.7
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) arm-trusted-firmware-$(ATF_VER).tar.gz arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz
+objects = $(DL_FILE) arm-trusted-firmware-$(ATF_VER).tar.gz arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.gz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 arm-trusted-firmware-$(ATF_VER).tar.gz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER).tar.gz
