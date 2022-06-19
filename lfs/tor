@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Anonymizing overlay network for TCP (The onion router)
 
-VER        = 0.4.7.7
+VER        = 0.4.7.8
 
 THISAPP    = tor-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tor
-PAK_VER    = 69
+PAK_VER    = 70
 
 DEPS       = libseccomp
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 18acfbe017b2ad456184f6031881149717f6fecad0d3e6daf90241a5a8ef296c32a36ace266d38b703f34b66d71e282c803f03f2059502c6ff6f4fdfb6641a97
+$(DL_FILE)_BLAKE2 = 40f6eab453d95a09e4531ce7cdb59715a21b84e1d0b1045d107add6a443fb7563a5747734b23e0e1dfda6490a5a7659f912e38c11cdb5fa635535dcff6169eeb
 
 install : $(TARGET)
 
@@ -88,9 +88,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--localstatedir=/var \
 			--with-tor-user=tor \
 			--with-tor-group=tor
-
-	# https://bugzilla.ipfire.org/show_bug.cgi?id=12807
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/Tor-Sandbox-permit-the-clone3-system-call.patch
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
