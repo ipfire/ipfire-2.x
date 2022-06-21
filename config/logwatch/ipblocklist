@@ -1,0 +1,91 @@
+###########################################################################
+# ipblocklist script for Logwatch
+# Analyzes the IPFire IP Blocklist log
+#
+#########################################################################
+
+########################################################
+## Copyright (c) 2008 Lars SkjÃ¦rlund
+## Covered under the included MIT/X-Consortium License:
+##    http://www.opensource.org/licenses/mit-license.php
+## All modifications and contributions by other persons to
+## this script are assumed to have been donated to the
+## Logwatch project and thus assume the above copyright
+## and licensing terms.  If you want to make contributions
+## under your own copyright or a different license this
+## must be explicitly stated in the contribution and the
+## Logwatch project reserves the right to not accept such
+## contributions.  If you have made significant
+## contributions to this script and want to claim
+## copyright please contact logwatch-devel@lists.sourceforge.net.
+#########################################################
+
+#########################################################################
+# Files - all shown with default paths:
+#
+# /usr/share/logwatch/default.conf/logfiles/messages.conf
+# /usr/share/logwatch/dist.conf/services/blocklist.conf
+# /usr/share/logwatch/scripts/services/ipblocklist (this file)
+#
+# ... and of course
+#
+# /var/log/messages
+#########################################################################
+
+use Logwatch ':dates';
+
+my $Detail = $ENV{'LOGWATCH_DETAIL_LEVEL'};
+
+my $SearchDate;
+
+my %Updates;
+my %Errors;
+
+$SearchDate = TimeFilter("%b %e");
+
+while (defined(my $ThisLine = <STDIN>))
+{
+  next unless ($ThisLine =~ m/^\s*\w+\s+\w+\s+(..:..:..) .* ipblocklist: (.*)/);
+
+  my $text = $2;
+
+  if ($text =~ m/Successfully updated (\w+) blocklist/)
+  {
+    $Updates{$1}{updates}++;
+  }
+  elsif ($text !~ m/Skipping (\w+) blocklist - Too frequent update attempts!/   and
+         $text !~ m/Skipping (\w+) blocklist - It has not been modified!/ )
+  {
+    $Errors{$text}++;
+  }
+}
+
+#####################################################################
+
+if (keys %Updates)
+{
+   print "\nThe following block lists were updated:\n";
+   foreach my $Lists (sort keys %Updates)
+   {
+     print "   $Lists: $Updates{$Lists}{updates} Time(s)\n";
+   }
+}
+
+if (keys %Errors)
+{
+  print "\nThe following errors were detected:\n";
+
+  foreach my $Text (keys %Errors)
+  {
+    print "   $Text: $Errors{$Text} Time(s)\n";
+  }
+}
+
+exit(0);
+
+# vi: shiftwidth=3 tabstop=3 syntax=perl et
+# Local Variables:
+# mode: perl
+# perl-indent-level: 3
+# indent-tabs-mode: nil
+# End:
