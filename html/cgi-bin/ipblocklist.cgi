@@ -47,6 +47,7 @@ my %cgiparams     = ('ACTION' => '');
 ###############################################################################
 
 my $errormessage  = '';
+my $headline = "$Lang::tr{'error message'}";
 my $updating      = 0;
 my %mainsettings;
 my %color;
@@ -122,6 +123,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
 		&General::firewall_config_changed();
 
 		# Display notice about a required reload of the firewall.
+		$headline = "$Lang::tr{'notice'}";
 		$errormessage = "$Lang::tr{'fw rules reload notice'}";
 	}
 }
@@ -251,7 +253,7 @@ END
 #------------------------------------------------------------------------------
 
 sub error {
-	&Header::openbox('100%', 'left', $Lang::tr{'error messages'});
+	&Header::openbox('100%', 'left', $headline);
 		print "<class name='base'>$errormessage\n";
 		print "&nbsp;</class>\n";
 	&Header::closebox();
