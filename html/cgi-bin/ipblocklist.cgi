@@ -122,7 +122,7 @@ if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
 		&General::firewall_config_changed();
 
 		# Display notice about a required reload of the firewall.
-		$errormessage = "$Lang::tr{'p2p block save notice'}";
+		$errormessage = "$Lang::tr{'fw rules reload notice'}";
 	}
 }
 
