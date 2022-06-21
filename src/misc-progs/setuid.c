@@ -61,10 +61,8 @@ static int system_core(char* command, char** args, uid_t uid, gid_t gid, char *e
 	if(!command)
 		return 1;
 
-#if 0
 	// Add command as first element to argv
 	argv[argc++] = command;
-#endif
 
 	// Add all other arguments
 	if (args) {
@@ -138,7 +136,7 @@ int safe_system(char* command) {
 		NULL,
 	};
 
-	return system_core(argv[0], argv, 0, 0, "safe_system");
+	return system_core(argv[0], argv + 1, 0, 0, "safe_system");
 }
 
 /* Much like safe_system but lets you specify a non-root uid and gid to run
@@ -151,7 +149,7 @@ int unpriv_system(char* command, uid_t uid, gid_t gid) {
 		NULL,
 	};
 
-	return system_core(argv[0], argv, uid, gid, "unpriv_system");
+	return system_core(argv[0], argv + 1, uid, gid, "unpriv_system");
 }
 
 /* General routine to initialise a setuid root program, and put the

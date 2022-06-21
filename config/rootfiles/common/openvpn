@@ -9,6 +9,7 @@ usr/lib/openvpn/plugins/openvpn-plugin-auth-pam.so
 usr/lib/openvpn/plugins/openvpn-plugin-down-root.so
 usr/lib/openvpn/verify
 usr/sbin/openvpn
+usr/sbin/openvpn-authenticator
 #usr/share/doc/openvpn
 #usr/share/doc/openvpn/COPYING
 #usr/share/doc/openvpn/COPYRIGHT.GPL
@@ -35,6 +36,7 @@ var/ipfire/ovpn/crls
 var/ipfire/ovpn/n2nconf
 #var/ipfire/ovpn/openssl
 var/ipfire/ovpn/openssl/ovpn.cnf
+var/ipfire/ovpn/openvpn-authenticator
 var/ipfire/ovpn/ovpn-leases.db
 var/ipfire/ovpn/ovpnconfig
 var/ipfire/ovpn/scripts

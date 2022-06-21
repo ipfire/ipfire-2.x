@@ -236,6 +236,8 @@ srv/web/ipfire/html/images/printer-error.png
 srv/web/ipfire/html/images/printer.png
 srv/web/ipfire/html/images/process-stop.png
 srv/web/ipfire/html/images/process-working.png
+srv/web/ipfire/html/images/qr-code.png
+srv/web/ipfire/html/images/qr-code.svg
 srv/web/ipfire/html/images/reload.gif
 srv/web/ipfire/html/images/start-here.png
 srv/web/ipfire/html/images/stock_down-16.png

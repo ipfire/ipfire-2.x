@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.9.24
+VER        = 0.9.29
 
 THISAPP    = lmdb-LMDB_$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = f075ec5f4dfb77685188229e20f12c4febe8295c7d35ed15c3db492b68af68cc7f76741078e9bb524d2c38587839f542e964af1e5d6d984bb28bd602caabbb8d
+$(DL_FILE)_BLAKE2 = 3f2a48785dd62921af79e0f10b86438085d86f8013f667dcf2f6177535baee26bba74c6a8023e47c6179c8a6be8fd63cf575b30e216b5669de2d58e69757bd1f
 
 install : $(TARGET)
 

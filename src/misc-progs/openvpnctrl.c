@@ -457,6 +457,15 @@ void setFirewallRules(void) {
 	}
 }
 
+static void stopAuthenticator() {
+	const char* argv[] = {
+		"/usr/sbin/openvpn-authenticator",
+		NULL,
+	};
+
+	run("/sbin/killall", argv);
+}
+
 void stopDaemon(void) {
 	char command[STRING_SIZE];
 
@@ -470,6 +479,15 @@ void stopDaemon(void) {
 
 	snprintf(command, STRING_SIZE - 1, "/bin/rm -f /var/run/openvpn.pid");
 	executeCommand(command);
+
+	// Stop OpenVPN authenticator
+	stopAuthenticator();
+}
+
+static int startAuthenticator(void) {
+	const char* argv[] = { "-d", NULL };
+
+	return run("/usr/sbin/openvpn-authenticator", argv);
 }
 
 void startDaemon(void) {
@@ -487,6 +505,9 @@ void startDaemon(void) {
 		executeCommand(command);
 		snprintf(command, STRING_SIZE-1, "/bin/chmod 644 /var/run/ovpnserver.log");
 		executeCommand(command);
+
+		// Start OpenVPN Authenticator
+		startAuthenticator();
 	}
 }
 

@@ -7317,6 +7317,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CC_CAN_LINK
 #lib/modules/KVER-ipfire/build/include/config/CC_CAN_LINK_STATIC
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_ASM_GOTO
+#lib/modules/KVER-ipfire/build/include/config/CC_HAS_ASM_GOTO_TIED_OUTPUT
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_ASM_GOTO_OUTPUT
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_ASM_INLINE
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_KASAN_GENERIC
@@ -7569,7 +7570,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_KPP2
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_LIB_AES
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_LIB_ARC4
-#lib/modules/KVER-ipfire/build/include/config/CRYPTO_LIB_BLAKE2S
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_LIB_CHACHA
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_LIB_CHACHA20POLY1305
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_LIB_CHACHA_GENERIC
@@ -10102,6 +10102,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SECURITY_DMESG_RESTRICT
 #lib/modules/KVER-ipfire/build/include/config/SECURITY_LOCKDOWN_LSM
 #lib/modules/KVER-ipfire/build/include/config/SECURITY_LOCKDOWN_LSM_EARLY
+#lib/modules/KVER-ipfire/build/include/config/SECURITY_YAMA
 #lib/modules/KVER-ipfire/build/include/config/SELECT_MEMORY_MODEL
 #lib/modules/KVER-ipfire/build/include/config/SENSORS_AD7414
 #lib/modules/KVER-ipfire/build/include/config/SENSORS_AD7418
@@ -15743,7 +15744,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/trace/events/qdisc.h
 #lib/modules/KVER-ipfire/build/include/trace/events/qla.h
 #lib/modules/KVER-ipfire/build/include/trace/events/qrtr.h
-#lib/modules/KVER-ipfire/build/include/trace/events/random.h
 #lib/modules/KVER-ipfire/build/include/trace/events/rcu.h
 #lib/modules/KVER-ipfire/build/include/trace/events/rdma.h
 #lib/modules/KVER-ipfire/build/include/trace/events/rdma_core.h
@@ -20739,7 +20739,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/lib/crc8.ko.xz
 #lib/modules/KVER-ipfire/kernel/lib/crypto
 #lib/modules/KVER-ipfire/kernel/lib/crypto/libarc4.ko.xz
-#lib/modules/KVER-ipfire/kernel/lib/crypto/libblake2s.ko.xz
 #lib/modules/KVER-ipfire/kernel/lib/crypto/libchacha.ko.xz
 #lib/modules/KVER-ipfire/kernel/lib/crypto/libchacha20poly1305.ko.xz
 #lib/modules/KVER-ipfire/kernel/lib/crypto/libcurve25519-generic.ko.xz

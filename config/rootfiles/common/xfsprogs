@@ -105,7 +105,7 @@ usr/sbin/xfs_spaceman
 #usr/share/man/man8/xfs_spaceman.8
 #usr/share/xfsprogs
 #usr/share/xfsprogs/mkfs
-#usr/share/xfsprogs/mkfs/dax_xxxMACHINExxx.conf
+#usr/share/xfsprogs/mkfs/dax_x86_64.conf
 #usr/share/xfsprogs/mkfs/lts_4.19.conf
 #usr/share/xfsprogs/mkfs/lts_5.10.conf
 #usr/share/xfsprogs/mkfs/lts_5.15.conf

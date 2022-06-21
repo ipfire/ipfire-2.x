@@ -1693,6 +1693,17 @@ buildipfire() {
   lfsmake2 squid-asnbl
   lfsmake2 qemu-ga
   lfsmake2 gptfdisk
+  lfsmake2 oath-toolkit
+  lfsmake2 qrencode
+  lfsmake2 perl-File-Remove
+  lfsmake2 perl-Module-Build
+  lfsmake2 perl-Module-ScanDeps
+  lfsmake2 perl-YAML-Tiny
+  lfsmake2 perl-Module-Install
+  lfsmake2 perl-Imager
+  lfsmake2 perl-Imager-QRCode
+  lfsmake2 perl-MIME-Base32
+  lfsmake2 perl-URI-Encode
 }
 
 buildinstaller() {

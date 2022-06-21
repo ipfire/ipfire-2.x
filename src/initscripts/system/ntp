@@ -52,6 +52,8 @@ case "$1" in
 			fi
 		fi
 
+		echo -e "server	${NTP_ADDR_1} prefer\nserver	${NTP_ADDR_2}" > /etc/ntp/ntpInclude.conf
+
 		boot_mesg "Starting ntpd..."
 		loadproc /usr/bin/ntpd -Ap /var/run/ntpd.pid
 		;;
