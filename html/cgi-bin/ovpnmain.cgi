@@ -1564,7 +1564,7 @@ END
 	print "Content-Disposition: filename=$cahash{$cgiparams{'KEY'}}[0]cert.pem\r\n\r\n";
 
 	my @tmp =  &General::system_output("/usr/bin/openssl", "x509", "-in", "${General::swroot}/ovpn/ca/$cahash{$cgiparams{'KEY'}}[0]cert.pem");
-	print "@tmp";
+	print @tmp;
 
 	exit(0);
     } else {
@@ -1679,7 +1679,7 @@ END
 	print "Content-Disposition: filename=cacert.pem\r\n\r\n";
 
 	my @tmp = &General::system_output("/usr/bin/openssl", "x509", "-in", "${General::swroot}/ovpn/ca/cacert.pem");
-	print "@tmp";
+	print @tmp;
 
 	exit(0);
     }
@@ -1693,7 +1693,7 @@ END
 	print "Content-Disposition: filename=servercert.pem\r\n\r\n";
 
 	my @tmp = &General::system_output("/usr/bin/openssl", "x509", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
-	print "@tmp";
+	print @tmp;
 
 	exit(0);
     }
@@ -1710,7 +1710,7 @@ END
 	my @tmp = <FILE>;
 	close(FILE);
 
-	print "@tmp";
+	print @tmp;
 
 	exit(0);
     }
@@ -2615,7 +2615,7 @@ else
     my @tmp = <FILE>;
     close(FILE);
 
-    print "@tmp";
+    print @tmp;
     exit (0);
 
 ###
@@ -3234,7 +3234,7 @@ END
 	my @tmp = <FILE>;
 	close(FILE);
 
-	print "@tmp";
+	print @tmp;
 	exit (0);
     }
 
