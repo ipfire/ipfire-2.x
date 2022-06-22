@@ -28,17 +28,17 @@ case "${1}" in
 
 		if ! mountpoint /proc &> /dev/null; then
 			boot_mesg -n " /proc" ${NORMAL}
-			mount -n -t proc /proc /proc || failed=1
+			mount -n -t proc -o nosuid,nodev,noexec /proc /proc || failed=1
 		fi
 
 		if ! mountpoint /sys &> /dev/null; then
 			boot_mesg -n " /sys" ${NORMAL}
-			mount -n -t sysfs /sys /sys || failed=1
+			mount -n -t sysfs -o nosuid,nodev,noexec /sys /sys || failed=1
 		fi
 
 		if ! mountpoint /run &> /dev/null; then
 			boot_mesg -n " /run" ${NORMAL}
-			mount -n -t tmpfs -o nosuid,nodev,mode=755,size=8M /run /run || failed=1
+			mount -n -t tmpfs -o nosuid,nodev,noexec,mode=755,size=8M /run /run || failed=1
 		fi
 
 		if ! mountpoint /sys/fs/cgroup &> /dev/null; then
