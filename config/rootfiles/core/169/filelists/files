@@ -7,7 +7,9 @@ etc/rc.d/helper/exoscale-setup
 etc/rc.d/helper/gcp-setup
 etc/rc.d/helper/oci-setup
 etc/rc.d/init.d/localnet
+etc/rc.d/init.d/mountkernfs
 etc/rc.d/init.d/ntp
+etc/rc.d/init.d/udev
 etc/sysctl.conf
 lib/firmware/amdgpu/aldebaran_mec2.bin
 lib/firmware/amdgpu/aldebaran_mec.bin
