@@ -8685,6 +8685,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/LIBERTAS_USB
 #lib/modules/KVER-ipfire/build/include/config/LIBFDT
 #lib/modules/KVER-ipfire/build/include/config/LIBIPW
+#lib/modules/KVER-ipfire/build/include/config/LIB_MEMNEQ
 #lib/modules/KVER-ipfire/build/include/config/LINEAR_RANGES
 #lib/modules/KVER-ipfire/build/include/config/LITEX_LITEETH
 #lib/modules/KVER-ipfire/build/include/config/LLC

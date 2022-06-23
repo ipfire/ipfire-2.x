@@ -8406,6 +8406,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/LIBFCOE
 #lib/modules/KVER-ipfire/build/include/config/LIBIPW
 #lib/modules/KVER-ipfire/build/include/config/LIBNVDIMM
+#lib/modules/KVER-ipfire/build/include/config/LIB_MEMNEQ
 #lib/modules/KVER-ipfire/build/include/config/LIQUIDIO
 #lib/modules/KVER-ipfire/build/include/config/LIQUIDIO_VF
 #lib/modules/KVER-ipfire/build/include/config/LLC
