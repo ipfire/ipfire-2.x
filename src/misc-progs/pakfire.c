@@ -11,5 +11,5 @@ int main(int argc, char** argv) {
 	if (!initsetuid())
 		exit(1);
 
-	return run("/opt/pakfire/pakfire", argv);
+	return run("/opt/pakfire/pakfire", argv + 1);
 }

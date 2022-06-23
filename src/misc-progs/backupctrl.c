@@ -11,5 +11,5 @@ int main(int argc, char** argv) {
 	if (!initsetuid())
 		exit(1);
 
-	return run("/var/ipfire/backup/bin/backup.pl", argv);
+	return run("/var/ipfire/backup/bin/backup.pl", argv + 1);
 }
