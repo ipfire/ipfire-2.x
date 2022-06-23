@@ -150,6 +150,7 @@ ldconfig
 # Start services
 telinit u
 /etc/init.d/firewall restart
+/etc/init.d/ntp restart
 /etc/init.d/apache start
 /etc/init.d/unbound start
 /etc/init.d/squid start
