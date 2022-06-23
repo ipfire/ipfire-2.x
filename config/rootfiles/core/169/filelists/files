@@ -222,3 +222,4 @@ srv/web/ipfire/html/themes/ipfire/include/functions.pl
 usr/sbin/setup
 var/ipfire/header.pl
 var/ipfire/main/manualpages
+var/ipfire/suricata/ruleset-sources
