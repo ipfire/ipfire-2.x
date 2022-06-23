@@ -50,12 +50,12 @@ case "${1}" in
 
 		if ! grep -q '[[:space:]]/dev/shm' /proc/mounts; then
 			mkdir -p /dev/shm
-			mount -t tmpfs tmpfs /dev/shm
+			mount -t tmpfs tmpfs -o nosuid,nodev,noexec /dev/shm
 		fi
 
 		if ! grep -q '[[:space:]]/dev/pts' /proc/mounts; then
 			mkdir -p /dev/pts
-			mount -t devpts devpts -o gid=5,mode=620 /dev/pts
+			mount -t devpts devpts -o nosuid,noexec,gid=5,mode=620 /dev/pts
 		fi
 
 		# Start the udev daemon to continually watch for, and act on,
@@ -70,7 +70,6 @@ case "${1}" in
 		# Now wait for udevd to process the uevents we triggered
 		/bin/udevadm settle
 		evaluate_retval
-
 		;;
 
 	restart)

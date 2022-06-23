@@ -1727,6 +1727,7 @@
 'missing dat' => 'Verschlüsseltes Archiv wurde nicht gefunden',
 'missing gz' => 'Nichtverschlüsseltes Archiv wurde nicht gefunden',
 'mitigated' => 'Entschärft',
+'mmio stale data' => 'MMIO Stale Data',
 'mode' => 'Modus',
 'model' => 'Modell',
 'modem' => 'Modem',

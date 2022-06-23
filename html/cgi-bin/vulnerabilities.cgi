@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,6 +34,7 @@ my %VULNERABILITIES = (
 	"l1tf" => "$Lang::tr{'foreshadow'} (CVE-2018-3620)",
 	"mds" => "$Lang::tr{'fallout zombieload ridl'} (CVE-2018-12126, CVE-2018-12130, CVE-2018-12127, CVE-2019-11091)",
 	"meltdown" => "$Lang::tr{'meltdown'} (CVE-2017-5754)",
+	"mmio_stale_data" => "$Lang::tr{'mmio stale data'} (CVE-2022-21123, CVE-2022-21125, CVE-2022-21127, CVE-2022-21166)",
 	"spec_store_bypass" => "$Lang::tr{'spectre variant 4'} (CVE-2018-3639)",
 	"spectre_v1" => "$Lang::tr{'spectre variant 1'} (CVE-2017-5753)",
 	"spectre_v2" => "$Lang::tr{'spectre variant 2'} (CVE-2017-5715)",

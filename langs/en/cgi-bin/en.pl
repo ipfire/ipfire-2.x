@@ -1775,6 +1775,7 @@
 'missing dat' => 'Encrypted archive not found',
 'missing gz' => 'Unencrypted archive not found',
 'mitigated' => 'Mitigated',
+'mmio stale data' => 'MMIO Stale Data',
 'mode' => 'Mode',
 'model' => 'Model',
 'modem' => 'Modem',
