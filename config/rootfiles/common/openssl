@@ -2642,9 +2642,11 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/SSL_CTX_free.html
 #usr/share/doc/openssl/html/man3/SSL_CTX_generate_session_ticket_fn.html
 #usr/share/doc/openssl/html/man3/SSL_CTX_get0_CA_list.html
+#usr/share/doc/openssl/html/man3/SSL_CTX_get0_chain_cert_store.html
 #usr/share/doc/openssl/html/man3/SSL_CTX_get0_chain_certs.html
 #usr/share/doc/openssl/html/man3/SSL_CTX_get0_param.html
 #usr/share/doc/openssl/html/man3/SSL_CTX_get0_security_ex_data.html
+#usr/share/doc/openssl/html/man3/SSL_CTX_get0_verify_cert_store.html
 #usr/share/doc/openssl/html/man3/SSL_CTX_get_cert_store.html
 #usr/share/doc/openssl/html/man3/SSL_CTX_get_ciphers.html
 #usr/share/doc/openssl/html/man3/SSL_CTX_get_client_CA_list.html
@@ -2900,6 +2902,7 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/SSL_free_buffers.html
 #usr/share/doc/openssl/html/man3/SSL_get0_CA_list.html
 #usr/share/doc/openssl/html/man3/SSL_get0_alpn_selected.html
+#usr/share/doc/openssl/html/man3/SSL_get0_chain_cert_store.html
 #usr/share/doc/openssl/html/man3/SSL_get0_chain_certs.html
 #usr/share/doc/openssl/html/man3/SSL_get0_dane_authority.html
 #usr/share/doc/openssl/html/man3/SSL_get0_dane_tlsa.html
@@ -2911,6 +2914,7 @@ usr/lib/libssl.so.1.1
 #usr/share/doc/openssl/html/man3/SSL_get0_security_ex_data.html
 #usr/share/doc/openssl/html/man3/SSL_get0_session.html
 #usr/share/doc/openssl/html/man3/SSL_get0_verified_chain.html
+#usr/share/doc/openssl/html/man3/SSL_get0_verify_cert_store.html
 #usr/share/doc/openssl/html/man3/SSL_get1_curves.html
 #usr/share/doc/openssl/html/man3/SSL_get1_groups.html
 #usr/share/doc/openssl/html/man3/SSL_get1_session.html
@@ -6623,9 +6627,11 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/SSL_CTX_free.3
 #usr/share/man/man3/SSL_CTX_generate_session_ticket_fn.3
 #usr/share/man/man3/SSL_CTX_get0_CA_list.3
+#usr/share/man/man3/SSL_CTX_get0_chain_cert_store.3
 #usr/share/man/man3/SSL_CTX_get0_chain_certs.3
 #usr/share/man/man3/SSL_CTX_get0_param.3
 #usr/share/man/man3/SSL_CTX_get0_security_ex_data.3
+#usr/share/man/man3/SSL_CTX_get0_verify_cert_store.3
 #usr/share/man/man3/SSL_CTX_get_cert_store.3
 #usr/share/man/man3/SSL_CTX_get_ciphers.3
 #usr/share/man/man3/SSL_CTX_get_client_CA_list.3
@@ -6881,6 +6887,7 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/SSL_free_buffers.3
 #usr/share/man/man3/SSL_get0_CA_list.3
 #usr/share/man/man3/SSL_get0_alpn_selected.3
+#usr/share/man/man3/SSL_get0_chain_cert_store.3
 #usr/share/man/man3/SSL_get0_chain_certs.3
 #usr/share/man/man3/SSL_get0_dane_authority.3
 #usr/share/man/man3/SSL_get0_dane_tlsa.3
@@ -6892,6 +6899,7 @@ usr/lib/libssl.so.1.1
 #usr/share/man/man3/SSL_get0_security_ex_data.3
 #usr/share/man/man3/SSL_get0_session.3
 #usr/share/man/man3/SSL_get0_verified_chain.3
+#usr/share/man/man3/SSL_get0_verify_cert_store.3
 #usr/share/man/man3/SSL_get1_curves.3
 #usr/share/man/man3/SSL_get1_groups.3
 #usr/share/man/man3/SSL_get1_session.3
