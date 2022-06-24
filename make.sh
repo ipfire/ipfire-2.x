@@ -1612,6 +1612,7 @@ buildipfire() {
   lfsmake2 python3-arrow
   lfsmake2 python3-terminaltables
   lfsmake2 python3-pkgconfig
+  lfsmake2 python3-msgpack
   lfsmake2 aws-cli
   lfsmake2 oci-python-sdk
   lfsmake2 oci-cli
