@@ -473,7 +473,7 @@ sub addccdnet
 		return
 	}
 
-	if(!&General::validhostname($ccdname))
+	if(!&General::validccdname($ccdname))
 	{
 		$errormessage=$Lang::tr{'ccd err invalidname'};
 		return;
