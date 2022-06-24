@@ -721,6 +721,21 @@ sub validhostname
 	return 1;
 }
 
+sub validccdname
+{
+	# Checks a ccdname for letters, numbers and spaces
+        my $ccdname = $_[0];
+
+	# ccdname should be at least one character in length
+	# but no more than 63 characters
+	if (length ($ccdname) < 1 || length ($ccdname) > 63) {
+		return 0;}
+	# Only valid characters are a-z, A-Z, 0-9, space and -
+	if ($ccdname !~ /^[a-zA-Z0-9 -]*$/) {
+		return 0;}
+	return 1;
+}
+
 sub validdomainname
 {
 	my $part;
