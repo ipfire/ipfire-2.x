@@ -54,6 +54,7 @@
 < error the to date has to be later than the from date
 < g.dtm
 < g.lite
+< ids automatic rules update
 < ids subscription code required
 < insert removable device
 < invalid input for subscription code
@@ -67,6 +68,7 @@
 < okay
 < optional
 < quick control
+< random number generator daemon
 < required
 < samba server role member
 < samba server role standalone
@@ -221,6 +223,7 @@
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< dhcp make fixed lease
 < dhcp valid range required when deny known clients checked
 < dh key move failed
 < dh key warn
@@ -302,6 +305,7 @@
 < emerging pro rules
 < emerging rules
 < enable
+< enable otp
 < enable smt
 < encryption
 < entropy
@@ -401,7 +405,6 @@
 < fwdfw natport used
 < fwdfw newrule
 < fwdfw numcon
-< fwdfw p2p txt
 < fwdfw pol allow
 < fwdfw pol block
 < fwdfw pol text
@@ -534,6 +537,7 @@
 < fwhost welcome
 < fwhost wo subnet
 < fw red
+< fw rules reload notice
 < fw settings
 < fw settings color
 < fw settings dropdown
@@ -544,31 +548,38 @@
 < generate ptr
 < grouptype
 < guardian
-< hardware support
 < hardware vulnerabilities
 < hostile networks
 < ids add provider
+< ids adjust ruleset
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
 < ids autoupdates
+< ids cleanup tmp dir
 < ids could not add provider
 < ids customize ruleset
 < ids download new ruleset
 < ids enable
 < ids enable automatic updates
+< ids extract ruleset
+< ids finished
 < ids force ruleset update
 < ids hide
 < ids ignored hosts
 < ids log hits
+< ids merge classifications
+< ids merge sid files
 < ids monitored interfaces
 < ids monitor traffic only
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
 < ids provider settings
+< ids remove rule structures
 < ids reset provider
 < ids ruleset autoupdate in progress
+< ids ruleset is up to date
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -581,6 +592,7 @@
 < incoming compression in bytes per second
 < incoming firewall access
 < incoming overhead in bytes per second
+< inodes
 < integrity
 < interface mode
 < intrusion prevention system
@@ -636,6 +648,7 @@
 < minimum
 < minute
 < mitigated
+< mmio stale data
 < model
 < modem hardware details
 < modem information
@@ -683,6 +696,7 @@
 < openvpn subnet is used
 < optional
 < other
+< otp qrcode
 < our donors
 < outgoing compression in bytes per second
 < outgoing firewall access
@@ -694,11 +708,6 @@
 < outgoing firewall groups
 < outgoing firewall ip groups
 < outgoing firewall mac groups
-< outgoing firewall p2p allow
-< outgoing firewall p2p deny
-< outgoing firewall p2p description 1
-< outgoing firewall p2p description 2
-< outgoing firewall p2p description 3
 < outgoing firewall view group
 < outgoing overhead in bytes per second
 < ovpn add conf
@@ -731,8 +740,7 @@
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
-< p2p block
-< p2p block save notice
+< pakfire already busy
 < pakfire finished
 < pakfire finished error
 < pakfire invalid tree
@@ -767,10 +775,12 @@
 < samba server role member
 < samba server role standalone
 < search
+< secret
 < sent
 < server restart
 < Set time on boot
 < show dh
+< show otp qrcode
 < show tls-auth key
 < smb daemon
 < smt disabled
@@ -796,8 +806,6 @@
 < subnet mask
 < subscription code
 < support donation
-< system has hwrng
-< system has rdrand
 < system information
 < system is offline
 < taa zombieload2
@@ -996,9 +1004,15 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< enable otp
 < g.dtm
 < g.lite
 < guaranteed bandwidth
+< mmio stale data
+< otp qrcode
+< random number generator daemon
+< secret
+< show otp qrcode
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -1116,6 +1130,7 @@
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< dhcp make fixed lease
 < dhcp valid range required when deny known clients checked
 < disable
 < Disabled
@@ -1169,6 +1184,7 @@
 < email usemail
 < emerging pro rules
 < enable
+< enable otp
 < enable smt
 < eol architecture warning
 < error
@@ -1204,27 +1220,35 @@
 < hardware vulnerabilities
 < hostile networks
 < ids add provider
+< ids adjust ruleset
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
 < ids autoupdates
+< ids cleanup tmp dir
 < ids could not add provider
 < ids customize ruleset
 < ids download new ruleset
 < ids enable
 < ids enable automatic updates
+< ids extract ruleset
+< ids finished
 < ids force ruleset update
 < ids hide
 < ids ignored hosts
 < ids log hits
+< ids merge classifications
+< ids merge sid files
 < ids monitored interfaces
 < ids monitor traffic only
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
 < ids provider settings
+< ids remove rule structures
 < ids reset provider
 < ids ruleset autoupdate in progress
+< ids ruleset is up to date
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -1234,6 +1258,7 @@
 < ids working
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
+< inodes
 < interface mode
 < intrusion prevention system
 < invalid input for inactivity timeout
@@ -1284,6 +1309,7 @@
 < meltdown
 < messages
 < mitigated
+< mmio stale data
 < mtu
 < MTU settings
 < netbios nameserver daemon
@@ -1299,6 +1325,7 @@
 < one year
 < open connections
 < optional
+< otp qrcode
 < outgoing compression in bytes per second
 < outgoing overhead in bytes per second
 < ovpn add conf
@@ -1308,6 +1335,7 @@
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
+< pakfire already busy
 < pakfire finished
 < pakfire finished error
 < pakfire invalid tree
@@ -1322,6 +1350,7 @@
 < pptp route
 < processor vulnerability mitigations
 < ptr
+< random number generator daemon
 < rdns
 < reboot fsck
 < rebooting ipfire fsck
@@ -1334,7 +1363,9 @@
 < samba server role member
 < samba server role standalone
 < search
+< secret
 < sent
+< show otp qrcode
 < smb daemon
 < smt disabled
 < smt enabled
@@ -1566,6 +1597,7 @@
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< dhcp make fixed lease
 < dh key move failed
 < dh key warn
 < dh key warn1
@@ -1630,6 +1662,7 @@
 < email usemail
 < emerging pro rules
 < enable
+< enable otp
 < enable smt
 < eol architecture warning
 < error
@@ -1667,27 +1700,35 @@
 < hardware vulnerabilities
 < hostile networks
 < ids add provider
+< ids adjust ruleset
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
 < ids autoupdates
+< ids cleanup tmp dir
 < ids could not add provider
 < ids customize ruleset
 < ids download new ruleset
 < ids enable
 < ids enable automatic updates
+< ids extract ruleset
+< ids finished
 < ids force ruleset update
 < ids hide
 < ids ignored hosts
 < ids log hits
+< ids merge classifications
+< ids merge sid files
 < ids monitored interfaces
 < ids monitor traffic only
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
 < ids provider settings
+< ids remove rule structures
 < ids reset provider
 < ids ruleset autoupdate in progress
+< ids ruleset is up to date
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -1699,6 +1740,7 @@
 < imsi
 < incoming compression in bytes per second
 < incoming overhead in bytes per second
+< inodes
 < interface mode
 < intrusion prevention system
 < invalid input for inactivity timeout
@@ -1749,6 +1791,7 @@
 < meltdown
 < messages
 < mitigated
+< mmio stale data
 < model
 < modem hardware details
 < modem information
@@ -1781,6 +1824,7 @@
 < one year
 < open connections
 < optional
+< otp qrcode
 < outgoing compression in bytes per second
 < outgoing overhead in bytes per second
 < ovpn add conf
@@ -1799,6 +1843,7 @@
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
+< pakfire already busy
 < pakfire finished
 < pakfire finished error
 < pakfire invalid tree
@@ -1826,8 +1871,10 @@
 < samba server role member
 < samba server role standalone
 < search
+< secret
 < sent
 < show dh
+< show otp qrcode
 < show tls-auth key
 < smb daemon
 < smt disabled
@@ -2131,6 +2178,7 @@
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< dhcp make fixed lease
 < dhcp valid range required when deny known clients checked
 < dh key move failed
 < dh key warn
@@ -2211,6 +2259,7 @@
 < emerging pro rules
 < emerging rules
 < enable
+< enable otp
 < enable smt
 < encryption
 < entropy
@@ -2302,7 +2351,6 @@
 < fwdfw natport used
 < fwdfw newrule
 < fwdfw numcon
-< fwdfw p2p txt
 < fwdfw pol allow
 < fwdfw pol block
 < fwdfw pol text
@@ -2435,6 +2483,7 @@
 < fwhost welcome
 < fwhost wo subnet
 < fw red
+< fw rules reload notice
 < fw settings
 < fw settings color
 < fw settings dropdown
@@ -2445,31 +2494,38 @@
 < generate ptr
 < grouptype
 < guardian
-< hardware support
 < hardware vulnerabilities
 < hostile networks
 < ids add provider
+< ids adjust ruleset
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
 < ids autoupdates
+< ids cleanup tmp dir
 < ids could not add provider
 < ids customize ruleset
 < ids download new ruleset
 < ids enable
 < ids enable automatic updates
+< ids extract ruleset
+< ids finished
 < ids force ruleset update
 < ids hide
 < ids ignored hosts
 < ids log hits
+< ids merge classifications
+< ids merge sid files
 < ids monitored interfaces
 < ids monitor traffic only
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
 < ids provider settings
+< ids remove rule structures
 < ids reset provider
 < ids ruleset autoupdate in progress
+< ids ruleset is up to date
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -2482,6 +2538,7 @@
 < incoming compression in bytes per second
 < incoming firewall access
 < incoming overhead in bytes per second
+< inodes
 < integrity
 < interface mode
 < intrusion prevention system
@@ -2547,6 +2604,7 @@
 < minimum
 < minute
 < mitigated
+< mmio stale data
 < model
 < modem hardware details
 < modem information
@@ -2594,6 +2652,7 @@
 < openvpn subnet is used
 < optional
 < other
+< otp qrcode
 < our donors
 < outgoing compression in bytes per second
 < outgoing firewall access
@@ -2628,8 +2687,7 @@
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
-< p2p block
-< p2p block save notice
+< pakfire already busy
 < pakfire finished
 < pakfire finished error
 < pakfire invalid tree
@@ -2664,9 +2722,11 @@
 < samba server role member
 < samba server role standalone
 < search
+< secret
 < sent
 < server restart
 < show dh
+< show otp qrcode
 < show tls-auth key
 < smb daemon
 < smt disabled
@@ -2692,8 +2752,6 @@
 < subnet mask
 < subscription code
 < support donation
-< system has hwrng
-< system has rdrand
 < system is offline
 < taa zombieload2
 < ta key
@@ -3073,6 +3131,7 @@
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< dhcp make fixed lease
 < dhcp valid range required when deny known clients checked
 < dh key move failed
 < dh key warn
@@ -3155,6 +3214,7 @@
 < emerging pro rules
 < emerging rules
 < enable
+< enable otp
 < enable smt
 < encryption
 < entropy
@@ -3247,7 +3307,6 @@
 < fwdfw natport used
 < fwdfw newrule
 < fwdfw numcon
-< fwdfw p2p txt
 < fwdfw pol allow
 < fwdfw pol block
 < fwdfw pol text
@@ -3380,6 +3439,7 @@
 < fwhost welcome
 < fwhost wo subnet
 < fw red
+< fw rules reload notice
 < fw settings
 < fw settings color
 < fw settings dropdown
@@ -3390,32 +3450,39 @@
 < generate ptr
 < grouptype
 < guardian
-< hardware support
 < hardware vulnerabilities
 < hostile networks
 < hour-graph
 < ids add provider
+< ids adjust ruleset
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
 < ids autoupdates
+< ids cleanup tmp dir
 < ids could not add provider
 < ids customize ruleset
 < ids download new ruleset
 < ids enable
 < ids enable automatic updates
+< ids extract ruleset
+< ids finished
 < ids force ruleset update
 < ids hide
 < ids ignored hosts
 < ids log hits
+< ids merge classifications
+< ids merge sid files
 < ids monitored interfaces
 < ids monitor traffic only
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
 < ids provider settings
+< ids remove rule structures
 < ids reset provider
 < ids ruleset autoupdate in progress
+< ids ruleset is up to date
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -3429,6 +3496,7 @@
 < incoming firewall access
 < incoming overhead in bytes per second
 < incoming traffic in bytes per second
+< inodes
 < integrity
 < interface mode
 < intrusion prevention system
@@ -3494,6 +3562,7 @@
 < minimum
 < minute
 < mitigated
+< mmio stale data
 < model
 < modem hardware details
 < modem information
@@ -3542,6 +3611,7 @@
 < openvpn subnet is used
 < optional
 < other
+< otp qrcode
 < our donors
 < outgoing compression in bytes per second
 < outgoing firewall access
@@ -3573,8 +3643,7 @@
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
-< p2p block
-< p2p block save notice
+< pakfire already busy
 < pakfire finished
 < pakfire finished error
 < pakfire invalid tree
@@ -3609,9 +3678,11 @@
 < samba server role member
 < samba server role standalone
 < search
+< secret
 < sent
 < server restart
 < show dh
+< show otp qrcode
 < show tls-auth key
 < smb daemon
 < smt disabled
@@ -3637,8 +3708,6 @@
 < subnet mask
 < subscription code
 < support donation
-< system has hwrng
-< system has rdrand
 < system is offline
 < taa zombieload2
 < ta key
@@ -3880,6 +3949,7 @@
 < default IP address
 < desired
 < dhcp deny known clients:
+< dhcp make fixed lease
 < dhcp valid range required when deny known clients checked
 < disable
 < Disabled
@@ -3910,6 +3980,7 @@
 < email tls implicit
 < emerging pro rules
 < enable
+< enable otp
 < enable smt
 < eol architecture warning
 < error
@@ -3923,27 +3994,35 @@
 < hardware vulnerabilities
 < hostile networks
 < ids add provider
+< ids adjust ruleset
 < ids apply
 < ids apply ruleset changes
 < ids automatic rules update
 < ids autoupdates
+< ids cleanup tmp dir
 < ids could not add provider
 < ids customize ruleset
 < ids download new ruleset
 < ids enable
 < ids enable automatic updates
+< ids extract ruleset
+< ids finished
 < ids force ruleset update
 < ids hide
 < ids ignored hosts
 < ids log hits
+< ids merge classifications
+< ids merge sid files
 < ids monitored interfaces
 < ids monitor traffic only
 < ids no enabled ruleset provider
 < ids no network zone
 < ids provider
 < ids provider settings
+< ids remove rule structures
 < ids reset provider
 < ids ruleset autoupdate in progress
+< ids ruleset is up to date
 < ids ruleset settings
 < ids show
 < ids subscription code required
@@ -3951,6 +4030,7 @@
 < ids unable to download the ruleset
 < ids visit provider website
 < ids working
+< inodes
 < interface mode
 < intrusion prevention system
 < invalid input for interface address
@@ -3980,6 +4060,7 @@
 < log dropped conntrack invalids
 < meltdown
 < mitigated
+< mmio stale data
 < mtu
 < netbios nameserver daemon
 < no entries
@@ -3988,12 +4069,14 @@
 < okay
 < open connections
 < optional
+< otp qrcode
 < ovpn connection name
 < ovpn error dh
 < ovpn error md5
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
+< pakfire already busy
 < pakfire finished
 < pakfire finished error
 < pakfire invalid tree
@@ -4005,6 +4088,7 @@
 < please reboot to apply your changes
 < processor vulnerability mitigations
 < ptr
+< random number generator daemon
 < reboot fsck
 < rebooting ipfire fsck
 < received
@@ -4012,7 +4096,9 @@
 < runmode
 < samba server role member
 < samba server role standalone
+< secret
 < sent
+< show otp qrcode
 < smb daemon
 < smt disabled
 < smt enabled

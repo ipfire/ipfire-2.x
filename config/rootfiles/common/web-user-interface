@@ -15,7 +15,6 @@ srv/web/ipfire/cgi-bin/ddns.cgi
 srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/dns.cgi
 srv/web/ipfire/cgi-bin/dnsforward.cgi
-srv/web/ipfire/cgi-bin/entropy.cgi
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/fireinfo.cgi
 srv/web/ipfire/cgi-bin/firewall.cgi

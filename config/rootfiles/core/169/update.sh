@@ -128,6 +128,7 @@ rm -rvf \
 	/lib/xtables/libip6t_REDIRECT.so \
 	/lib/xtables/libipt_DNAT.so \
 	/lib/xtables/libipt_REDIRECT.so \
+	/srv/web/ipfire/cgi-bin/entropy.cgi \
 	/usr/lib/libfuse3.so.3.10.4 \
 	/usr/lib/libunbound.so.8.1.14
 	/usr/lib/libxml2.so.2.9.12 \

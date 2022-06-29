@@ -161,7 +161,6 @@ WARNING: translation string unused: could not open update information file
 WARNING: translation string unused: create
 WARNING: translation string unused: create mask
 WARNING: translation string unused: create new backup
-WARNING: translation string unused: current dynamic leases
 WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
 WARNING: translation string unused: current profile
@@ -492,11 +491,6 @@ WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
 WARNING: translation string unused: outgoing firewall outgoing firewall reserved groupname
-WARNING: translation string unused: outgoing firewall p2p allow
-WARNING: translation string unused: outgoing firewall p2p deny
-WARNING: translation string unused: outgoing firewall p2p description 1
-WARNING: translation string unused: outgoing firewall p2p description 2
-WARNING: translation string unused: outgoing firewall p2p description 3
 WARNING: translation string unused: outgoing firewall reset
 WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
@@ -812,14 +806,11 @@ WARNING: untranslated string: ConnSched dial = Connect
 WARNING: untranslated string: ConnSched hangup = Disconnect
 WARNING: untranslated string: ConnSched reboot = Reboot
 WARNING: untranslated string: ConnSched shutdown = Shutdown
-WARNING: untranslated string: Daily = Daily
-WARNING: untranslated string: Disabled = Disabled
 WARNING: untranslated string: MB read = MB read
 WARNING: untranslated string: MB written = MB written
 WARNING: untranslated string: MTU settings = MTU settings:
 WARNING: untranslated string: Number of Countries for the pie chart = Number of Countries for the pie chart
 WARNING: untranslated string: Scan for Songs = unknown string
-WARNING: untranslated string: Weekly = Weekly
 WARNING: untranslated string: acpitemp = ACPI - Temperatures
 WARNING: untranslated string: addons = Addons
 WARNING: untranslated string: administrator password = Administrator password
@@ -936,6 +927,7 @@ WARNING: untranslated string: dhcp dns key name = Key Name
 WARNING: untranslated string: dhcp dns update = DNS Update
 WARNING: untranslated string: dhcp dns update algo = Algorithm
 WARNING: untranslated string: dhcp dns update secret = Secret
+WARNING: untranslated string: dhcp make fixed lease = Add to fix leases
 WARNING: untranslated string: dhcp valid range required when deny known clients checked = Valid range required when "Deny known clients:" is checked
 WARNING: untranslated string: disable = Disable
 WARNING: untranslated string: disconnected = Disconnected
@@ -976,7 +968,7 @@ WARNING: untranslated string: drop action = Default behaviour of (forward) firew
 WARNING: untranslated string: drop action1 = Default behaviour of (outgoing) firewall in mode "Blocked"
 WARNING: untranslated string: drop action2 = Default behaviour of (input) firewall
 WARNING: untranslated string: drop forward = Log dropped forward packets
-WARNING: untranslated string: drop hostile = Drop packets from and to hostile networks (listed at Spamhaus DROP, etc.)
+WARNING: untranslated string: drop hostile = Drop packets from and to hostile networks (listed at <a href="https://www.spamhaus.org/drop/" target="_blank">Spamhaus DROP</a>, etc.)
 WARNING: untranslated string: drop outgoing = Log dropped outgoing packets
 WARNING: untranslated string: drop spoofed martians = Log dropped spoofed packets and marsians
 WARNING: untranslated string: duration = Duration
@@ -1000,6 +992,7 @@ WARNING: untranslated string: email tls explicit = explicit (STARTTLS)
 WARNING: untranslated string: email tls implicit = implicit (TLS)
 WARNING: untranslated string: email usemail = Activate Mail Service
 WARNING: untranslated string: enable = Enable
+WARNING: untranslated string: enable otp = Enable OTP
 WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
 WARNING: untranslated string: encryption = Encryption:
 WARNING: untranslated string: entropy = Entropy
@@ -1032,6 +1025,7 @@ WARNING: untranslated string: foreshadow = Foreshadow
 WARNING: untranslated string: four hours = 4 Hours
 WARNING: untranslated string: fw default drop = Firewall policy
 WARNING: untranslated string: fw red = Firewall options for RED interface
+WARNING: untranslated string: fw rules reload notice = Please reload the firewall ruleset in order to apply your changes.
 WARNING: untranslated string: fw settings = Firewall settings
 WARNING: untranslated string: fw settings color = Show colors in ruletable
 WARNING: untranslated string: fw settings dropdown = Show all networks on rulecreation site
@@ -1219,31 +1213,37 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: hardware support = Hardware Support
 WARNING: untranslated string: hardware vulnerabilities = Hardware Vulnerabilities
 WARNING: untranslated string: hostile networks = Hostile networks
 WARNING: untranslated string: ids add provider = Add provider
+WARNING: untranslated string: ids adjust ruleset = Adjust rules and add user defined customizations...
 WARNING: untranslated string: ids apply = Apply
 WARNING: untranslated string: ids apply ruleset changes = The ruleset changes are being applied. Please wait until all operations have completed successfully...
-WARNING: untranslated string: ids automatic rules update = Automatic Rule Update
 WARNING: untranslated string: ids autoupdates = Automatic updates
+WARNING: untranslated string: ids cleanup tmp dir = Cleanup temporary directory...
 WARNING: untranslated string: ids could not add provider = Could not add provider
 WARNING: untranslated string: ids customize ruleset = Customize ruleset
 WARNING: untranslated string: ids download new ruleset = Downloading and unpacking new ruleset. Please wait until all operations have completed successfully...
 WARNING: untranslated string: ids enable = Enable Intrusion Prevention System
 WARNING: untranslated string: ids enable automatic updates = Enable automatic updates
+WARNING: untranslated string: ids extract ruleset = Extracting ruleset for provider:
+WARNING: untranslated string: ids finished = Finished...
 WARNING: untranslated string: ids force ruleset update = Force ruleset update
 WARNING: untranslated string: ids hide = Hide
 WARNING: untranslated string: ids ignored hosts = Whitelisted Hosts
 WARNING: untranslated string: ids log hits = Total of number of activated rules for
+WARNING: untranslated string: ids merge classifications = Merging classifications...
+WARNING: untranslated string: ids merge sid files = Merging sid to message files...
 WARNING: untranslated string: ids monitor traffic only = Monitor traffic only
 WARNING: untranslated string: ids monitored interfaces = Monitored Interfaces
 WARNING: untranslated string: ids no enabled ruleset provider = No enabled ruleset is available. Please activate or add one first.
 WARNING: untranslated string: ids no network zone = Please select at least one network zone to be monitored
 WARNING: untranslated string: ids provider = Provider
 WARNING: untranslated string: ids provider settings = Provider settings
+WARNING: untranslated string: ids remove rule structures = Remove old rule structures...
 WARNING: untranslated string: ids reset provider = Reset provider
 WARNING: untranslated string: ids ruleset autoupdate in progress = Ruleset update in progress. Please wait until all operations have completed successfully...
+WARNING: untranslated string: ids ruleset is up to date = No update required - The ruleset is up to date.
 WARNING: untranslated string: ids ruleset settings = Ruleset Settings
 WARNING: untranslated string: ids show = Show
 WARNING: untranslated string: ids subscription code required = The selected ruleset requires a subscription code
@@ -1257,6 +1257,7 @@ WARNING: untranslated string: incoming compression in bytes per second = Incomin
 WARNING: untranslated string: incoming firewall access = Incoming Firewall Access
 WARNING: untranslated string: incoming overhead in bytes per second = Incoming Overhead
 WARNING: untranslated string: info messages = unknown string
+WARNING: untranslated string: inodes = Index-Nodes
 WARNING: untranslated string: integrity = Integrity:
 WARNING: untranslated string: interface mode = Interface
 WARNING: untranslated string: invalid input for dpd delay = Invalid input for DPD delay
@@ -1314,6 +1315,7 @@ WARNING: untranslated string: messages = Messages
 WARNING: untranslated string: minimum = Minimum
 WARNING: untranslated string: minute = Minute
 WARNING: untranslated string: mitigated = Mitigated
+WARNING: untranslated string: mmio stale data = MMIO Stale Data
 WARNING: untranslated string: model = Model
 WARNING: untranslated string: modem hardware details = Modem Hardware
 WARNING: untranslated string: modem information = Modem Information
@@ -1354,6 +1356,7 @@ WARNING: untranslated string: openvpn prefix openvpn subnet = Using the prefix n
 WARNING: untranslated string: openvpn prefix remote subnet = Using the prefix notation is not supported for the remote subnet. Please enter a subnet mask like 255.255.255.0.
 WARNING: untranslated string: openvpn subnet is used = The given subnet is used by another OpenVPN server.
 WARNING: untranslated string: optional = Optional
+WARNING: untranslated string: otp qrcode = OTP QRCode
 WARNING: untranslated string: outgoing compression in bytes per second = Outgoing compression
 WARNING: untranslated string: outgoing firewall access = Outgoing Firewall Access
 WARNING: untranslated string: outgoing overhead in bytes per second = Outgoing Overhead
@@ -1378,7 +1381,7 @@ WARNING: untranslated string: ovpn routes push options = Route push options
 WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
-WARNING: untranslated string: p2p block save notice = Please reload the firewall ruleset in order to apply your changes.
+WARNING: untranslated string: pakfire already busy = Pakfire is already performing a task. Please try again later.
 WARNING: untranslated string: pakfire finished = Pakfire has finished! Returning...
 WARNING: untranslated string: pakfire finished error = Pakfire has finished! Errors occurred, please check the log output before proceeding.
 WARNING: untranslated string: pakfire invalid tree = Invalid repository selected
@@ -1399,7 +1402,6 @@ WARNING: untranslated string: proxy reports today = Today
 WARNING: untranslated string: proxy reports weekly = Weekly reports
 WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: qos enter bandwidths = You will need to enter your downstream and upstream bandwidth!
-WARNING: untranslated string: random number generator daemon = Random Number Generator Daemon
 WARNING: untranslated string: rdns = rDNS
 WARNING: untranslated string: reboot fsck = Reboot & check filesystem
 WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check
@@ -1416,9 +1418,11 @@ WARNING: untranslated string: samba join domain = Join domain
 WARNING: untranslated string: samba server role member = Domain Member
 WARNING: untranslated string: samba server role standalone = Standalone
 WARNING: untranslated string: search = Search
+WARNING: untranslated string: secret = Secret
 WARNING: untranslated string: sent = Sent
 WARNING: untranslated string: server restart = You are not able to save any changes while the OpenVPN server is running.
 WARNING: untranslated string: show dh = Show Diffie-Hellman parameters
+WARNING: untranslated string: show otp qrcode = Show OTP QRCode
 WARNING: untranslated string: show tls-auth key = Show tls-auth key
 WARNING: untranslated string: smb daemon = SMB Daemon
 WARNING: untranslated string: smt disabled = Simultaneous Multi-Threading (SMT) is disabled
@@ -1444,7 +1448,6 @@ WARNING: untranslated string: strict = Strict
 WARNING: untranslated string: subnet mask = Subnet Mask
 WARNING: untranslated string: subscription code = Subscription code
 WARNING: untranslated string: support donation = Support the IPFire project with your donation
-WARNING: untranslated string: system has rdrand = This system has support for Intel(R) RDRAND.
 WARNING: untranslated string: system is offline = The system is offline.
 WARNING: untranslated string: ta key = TLS-Authentification-Key
 WARNING: untranslated string: taa zombieload2 = TSX Async Abort / ZombieLoad v2
@@ -1534,7 +1537,6 @@ WARNING: untranslated string: vpn start action route = On Demand
 WARNING: untranslated string: vpn start action start = Always On
 WARNING: untranslated string: vpn statistic n2n = OpenVPN: Net-to-Net Statistics
 WARNING: untranslated string: vpn statistic rw = OpenVPN: Roadwarrior Statistics
-WARNING: untranslated string: vpn statistics n2n = unknown string
 WARNING: untranslated string: vpn subjectaltname missing = SubjectAlternativeName cannot be emtpy.
 WARNING: untranslated string: vpn wait = WAITING
 WARNING: untranslated string: vpn weak = Weak

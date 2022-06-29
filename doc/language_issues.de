@@ -22,6 +22,8 @@ WARNING: translation string unused: Captive voucher
 WARNING: translation string unused: Captive vout
 WARNING: translation string unused: ConnSched scheduler
 WARNING: translation string unused: ConnSched select profile
+WARNING: translation string unused: Daily
+WARNING: translation string unused: Disabled
 WARNING: translation string unused: HDD temperature
 WARNING: translation string unused: Level7 rule
 WARNING: translation string unused: Local VPN IP
@@ -33,6 +35,7 @@ WARNING: translation string unused: Resolv
 WARNING: translation string unused: Subclass
 WARNING: translation string unused: TOS Bits
 WARNING: translation string unused: Verbose
+WARNING: translation string unused: Weekly
 WARNING: translation string unused: access allowed
 WARNING: translation string unused: access refused with this oinkcode
 WARNING: translation string unused: accounting
@@ -171,7 +174,6 @@ WARNING: translation string unused: could not open update information file
 WARNING: translation string unused: create
 WARNING: translation string unused: create mask
 WARNING: translation string unused: create new backup
-WARNING: translation string unused: current dynamic leases
 WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
 WARNING: translation string unused: current profile
@@ -328,7 +330,6 @@ WARNING: translation string unused: fwdfw ipsec network
 WARNING: translation string unused: fwdfw man port
 WARNING: translation string unused: fwdfw menu
 WARNING: translation string unused: fwdfw natport used
-WARNING: translation string unused: fwdfw p2p txt
 WARNING: translation string unused: fwdfw rule action
 WARNING: translation string unused: fwdfw rules
 WARNING: translation string unused: fwdfw std network
@@ -557,11 +558,6 @@ WARNING: translation string unused: outgoing firewall mode0
 WARNING: translation string unused: outgoing firewall mode1
 WARNING: translation string unused: outgoing firewall mode2
 WARNING: translation string unused: outgoing firewall outgoing firewall reserved groupname
-WARNING: translation string unused: outgoing firewall p2p allow
-WARNING: translation string unused: outgoing firewall p2p deny
-WARNING: translation string unused: outgoing firewall p2p description 1
-WARNING: translation string unused: outgoing firewall p2p description 2
-WARNING: translation string unused: outgoing firewall p2p description 3
 WARNING: translation string unused: outgoing firewall reset
 WARNING: translation string unused: outgoing firewall view group
 WARNING: translation string unused: outgoing firewall warning
@@ -595,7 +591,6 @@ WARNING: translation string unused: ovpn_processprioVD
 WARNING: translation string unused: ovpn_processprioVH
 WARNING: translation string unused: ovpnstatus log
 WARNING: translation string unused: ovpnsys log
-WARNING: translation string unused: p2p block
 WARNING: translation string unused: package failed to install
 WARNING: translation string unused: pakfire core update auto
 WARNING: translation string unused: pakfire health check
@@ -726,7 +721,6 @@ WARNING: translation string unused: subnet is invalid
 WARNING: translation string unused: subscripted user rules
 WARNING: translation string unused: successfully refreshed updates list
 WARNING: translation string unused: system graphs
-WARNING: translation string unused: system has hwrng
 WARNING: translation string unused: system log viewer
 WARNING: translation string unused: system status information
 WARNING: translation string unused: test
