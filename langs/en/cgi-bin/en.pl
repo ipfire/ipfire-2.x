@@ -422,6 +422,7 @@
 'alcatelusb upload' => 'Upload Speedtouch USB firmware',
 'alias ip' => 'Alias IP',
 'aliases' => 'Aliases',
+'aliases default interface' => '- Default Interface -',
 'aliases not active' => 'Aliases will not be active unless your RED interface is STATIC',
 'all' => 'All',
 'all interfaces' => 'All Interfaces',
