@@ -188,11 +188,6 @@ int main(void)
 			aliasip, red_netmask, intf, SCOPE);
 		safe_system(command);
 
-		// Send an ARP broadcast
-		snprintf(command, STRING_SIZE-1,
-				"/usr/sbin/arping -q -c 1 -w 1 -i %s -S %s %s",
-				intf, aliasip, default_gateway);
-		safe_system(command);
 		alias++;
 	}
 	return 0;
