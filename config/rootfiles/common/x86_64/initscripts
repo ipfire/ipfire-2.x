@@ -71,7 +71,6 @@ etc/rc.d/init.d/networking/wpa_supplicant.exe
 etc/rc.d/init.d/ntp
 etc/rc.d/init.d/pakfire
 etc/rc.d/init.d/partresize
-etc/rc.d/init.d/random
 etc/rc.d/init.d/rc
 etc/rc.d/init.d/reboot
 etc/rc.d/init.d/rngd
@@ -186,7 +185,6 @@ etc/rc.d/rcsysinit.d/S45udev_retry
 etc/rc.d/rcsysinit.d/S50cleanfs
 etc/rc.d/rcsysinit.d/S60setclock
 etc/rc.d/rcsysinit.d/S65rngd
-etc/rc.d/rcsysinit.d/S66random
 etc/rc.d/rcsysinit.d/S70console
 etc/rc.d/rcsysinit.d/S71pakfire
 etc/rc.d/rcsysinit.d/S74cloud-init

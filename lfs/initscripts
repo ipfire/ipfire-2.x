@@ -171,7 +171,6 @@ $(TARGET) :
 	ln -sf ../init.d/setclock    /etc/rc.d/rc0.d/K47setclock
 	ln -sf ../init.d/setclock    /etc/rc.d/rc6.d/K47setclock
 	ln -sf ../init.d/rngd        /etc/rc.d/rcsysinit.d/S65rngd
-	ln -sf ../init.d/random      /etc/rc.d/rcsysinit.d/S66random
 	ln -sf ../init.d/console     /etc/rc.d/rcsysinit.d/S70console
 	ln -sf ../init.d/pakfire     /etc/rc.d/rcsysinit.d/S71pakfire
 	ln -sf ../init.d/cloud-init  /etc/rc.d/rcsysinit.d/S74cloud-init
