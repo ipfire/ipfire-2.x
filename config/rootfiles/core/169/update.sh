@@ -88,6 +88,8 @@ rm -rvf \
 
 # Remove files
 rm -rvf \
+	/etc/rc.d/init.d/random \
+	/etc/rc.d/rcsysinit.d/S66random \
 	/lib/firmware/ath10k/QCA99X0/hw2.0/board.bin \
 	/lib/firmware/intel/ice/ddp/ice-1.3.26.0.pkg \
 	/lib/firmware/iwlwifi-3160-10.ucode \
