@@ -43,4 +43,38 @@ ln -sf ../init.d/zabbix_agentd /etc/rc.d/rc6.d/K02zabbix_agentd
 [ -d /usr/lib/zabbix ] || ( mkdir -pv /usr/lib/zabbix && chown zabbix.zabbix /usr/lib/zabbix )
 
 restore_backup ${NAME}
+
+# Check if old IPFire specifc userparameters exist and move out of the way
+if [ -f /etc/zabbix_agentd/zabbix_agentd.d/userparameter_pakfire.conf ]; then
+	mv /etc/zabbix_agentd/zabbix_agentd.d/userparameter_pakfire.conf \
+	   /etc/zabbix_agentd/zabbix_agentd.d/userparameter_pakfire.conf.save
+fi
+
+# Check if new IPFire specific config is included in restored config
+# and add if required.
+grep -q "Include=/var/ipfire/zabbix_agentd/userparameters/\*.conf" /etc/zabbix_agentd/zabbix_agentd.conf
+if [ $? -eq 1 ]; then
+	echo "" >> /etc/zabbix_agentd/zabbix_agentd.conf
+	echo "# This line activates IPFire specific userparameters. " >> /etc/zabbix_agentd/zabbix_agentd.conf
+	echo "# See IPFire wiki for details." >> /etc/zabbix_agentd/zabbix_agentd.conf
+	echo "# To deactivate them: Comment this line out." >> /etc/zabbix_agentd/zabbix_agentd.conf
+	echo "# (DO NOT REMOVE OR ALTER IT as then it will be re-added on next upgrade)" >> /etc/zabbix_agentd/zabbix_agentd.conf
+	echo "Include=/var/ipfire/zabbix_agentd/userparameters/*.conf" >> /etc/zabbix_agentd/zabbix_agentd.conf
+fi
+
+grep -q "Include=/var/ipfire/zabbix_agentd/zabbix_agentd_ipfire_mandatory.conf" /etc/zabbix_agentd/zabbix_agentd.conf
+if [ $? -eq 1 ]; then
+	# Remove settings that are now in our own config
+	sed -i -e "\|^PidFile=.*$|d" /etc/zabbix_agentd/zabbix_agentd.conf
+	sed -i -e "\|^LogFile=.*$|d" /etc/zabbix_agentd/zabbix_agentd.conf
+	sed -i -e "\|^LogFileSize=.*$|d" /etc/zabbix_agentd/zabbix_agentd.conf
+	sed -i -e "\|^LoadModulePath=.*$|d" /etc/zabbix_agentd/zabbix_agentd.conf
+	sed -i -e "\|^Include=/etc/zabbix_agentd/zabbix_agentd\.d/\*\.conf$|d" /etc/zabbix_agentd/zabbix_agentd.conf
+	# Include our own config in main config
+	echo "" >> /etc/zabbix_agentd/zabbix_agentd.conf
+	echo "# Mandatory Zabbix Agent configuration to start and run on IPFire correctly" >> /etc/zabbix_agentd/zabbix_agentd.conf
+	echo "# DO NOT REMOVE OR MODIFY THIS LINE:" >> /etc/zabbix_agentd/zabbix_agentd.conf
+	echo "Include=/var/ipfire/zabbix_agentd/zabbix_agentd_ipfire_mandatory.conf" >> /etc/zabbix_agentd/zabbix_agentd.conf
+fi
+
 start_service --background ${NAME}

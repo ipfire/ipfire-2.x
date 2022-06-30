@@ -4,8 +4,8 @@ etc/sudoers.d/zabbix
 etc/zabbix_agentd
 etc/zabbix_agentd/scripts
 etc/zabbix_agentd/zabbix_agentd.conf
+etc/zabbix_agentd/zabbix_agentd.conf.example
 etc/zabbix_agentd/zabbix_agentd.d
-etc/zabbix_agentd/zabbix_agentd.d/userparameter_pakfire.conf
 usr/bin/zabbix_get
 usr/bin/zabbix_sender
 #usr/lib/modules
@@ -15,4 +15,8 @@ usr/sbin/zabbix_agentd
 #usr/share/man/man1/zabbix_sender.1
 #usr/share/man/man8/zabbix_agentd.8
 var/ipfire/backup/addons/includes/zabbix_agentd
+var/ipfire/zabbix_agentd
+var/ipfire/zabbix_agentd/zabbix_agentd_ipfire_mandatory.conf
+var/ipfire/zabbix_agentd/userparameters
+var/ipfire/zabbix_agentd/userparameters/userparameter_pakfire.conf
 #var/log/zabbix

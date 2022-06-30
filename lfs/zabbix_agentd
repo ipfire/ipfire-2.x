@@ -94,10 +94,19 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-rmdir /etc/zabbix_agentd/zabbix_agentd.conf.d
 	-mkdir -pv /etc/zabbix_agentd/zabbix_agentd.d
 	-mkdir -pv /etc/zabbix_agentd/scripts
+	# Move upstream supplied config out of the way for reference
+	# and install our own version of the config.
+	-mv /etc/zabbix_agentd/zabbix_agentd.conf \
+		/etc/zabbix_agentd/zabbix_agentd.conf.example
 	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/zabbix_agentd.conf \
 		/etc/zabbix_agentd/zabbix_agentd.conf
+
+	# Install IPFire-specific Zabbix Agent config
+	-mkdir -pv /var/ipfire/zabbix_agentd/userparameters
+	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/zabbix_agentd_ipfire_mandatory.conf \
+		/var/ipfire/zabbix_agentd/zabbix_agentd_ipfire_mandatory.conf
 	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_pakfire.conf \
-		/etc/zabbix_agentd/zabbix_agentd.d/userparameter_pakfire.conf
+		/var/ipfire/zabbix_agentd/userparameters/userparameter_pakfire.conf
 
 	# Create directory for additional agent modules
 	-mkdir -pv /usr/lib/zabbix
