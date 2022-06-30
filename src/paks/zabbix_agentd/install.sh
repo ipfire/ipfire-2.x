@@ -39,8 +39,8 @@ ln -sf ../init.d/zabbix_agentd /etc/rc.d/rc0.d/K02zabbix_agentd
 ln -sf ../init.d/zabbix_agentd /etc/rc.d/rc6.d/K02zabbix_agentd
 
 # Create additonal directories and set permissions
-mkdir -pv /var/log/zabbix
-chown zabbix.zabbix /var/log/zabbix
+[ -d /var/log/zabbix ] || ( mkdir -pv /var/log/zabbix && chown zabbix.zabbix /var/log/zabbix )
+[ -d /usr/lib/zabbix ] || ( mkdir -pv /usr/lib/zabbix && chown zabbix.zabbix /usr/lib/zabbix )
 
 restore_backup ${NAME}
 start_service --background ${NAME}

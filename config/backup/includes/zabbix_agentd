@@ -1,2 +1,3 @@
 /etc/sudoers.d/zabbix
-/etc/zabbix_agentd/*
+/etc/zabbix_agentd/
+/usr/lib/zabbix/

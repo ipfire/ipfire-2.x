@@ -8,7 +8,7 @@ etc/zabbix_agentd/zabbix_agentd.d
 etc/zabbix_agentd/zabbix_agentd.d/userparameter_pakfire.conf
 usr/bin/zabbix_get
 usr/bin/zabbix_sender
-usr/lib/modules
+#usr/lib/modules
 usr/lib/zabbix
 usr/sbin/zabbix_agentd
 #usr/share/man/man1/zabbix_get.1
