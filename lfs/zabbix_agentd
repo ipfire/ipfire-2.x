@@ -124,7 +124,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install sudoers include file
 	install -v -m 640 $(DIR_SRC)/config/zabbix_agentd/sudoers \
-		/etc/sudoers.d/zabbix
+		/etc/sudoers.d/zabbix_agentd
+	install -v -m 640 $(DIR_SRC)/config/zabbix_agentd/sudoers_user \
+		/etc/sudoers.d/zabbix_agentd_user
 
 	# Install include file for backup
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/zabbix_agentd \

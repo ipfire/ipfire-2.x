@@ -1,4 +1,4 @@
-/etc/sudoers.d/zabbix
+/etc/sudoers.d/zabbix_agentd_user
 /etc/zabbix_agentd/zabbix_agentd.conf
 /etc/zabbix_agentd/scripts/
 /etc/zabbix_agentd/zabbix_agentd.d/
