@@ -77,4 +77,14 @@ if [ $? -eq 1 ]; then
 	echo "Include=/var/ipfire/zabbix_agentd/zabbix_agentd_ipfire_mandatory.conf" >> /etc/zabbix_agentd/zabbix_agentd.conf
 fi
 
+# By default, only listen on GREEN
+( 
+	eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+	if [ -n "${GREEN_ADDRESS}" ]; then
+		sed -i -e "s|ListenIP=GREEN_ADDRESS|ListenIP=${GREEN_ADDRESS}|g" /etc/zabbix_agentd/zabbix_agentd.conf
+	else
+		sed -i -e "\|ListenIP=GREEN_ADDRESS|d" /etc/zabbix_agentd/zabbix_agentd.conf
+	fi
+) || :
+
 start_service --background ${NAME}
