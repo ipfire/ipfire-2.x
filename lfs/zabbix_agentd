@@ -35,7 +35,8 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = zabbix_agentd
 PAK_VER    = 5
-DEPS       =
+
+DEPS       = fping
 
 SERVICES   = zabbix_agentd
 
@@ -107,6 +108,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/var/ipfire/zabbix_agentd/zabbix_agentd_ipfire_mandatory.conf
 	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_pakfire.conf \
 		/var/ipfire/zabbix_agentd/userparameters/userparameter_pakfire.conf
+	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_ipfire.conf \
+		/var/ipfire/zabbix_agentd/userparameters/userparameter_ipfire.conf
 
 	# Create directory for additional agent modules
 	-mkdir -pv /usr/lib/zabbix

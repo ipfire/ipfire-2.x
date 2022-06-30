@@ -8,4 +8,4 @@
 # To add more sudo rights to zabbix agent, you should modify the sudoers file zabbix_agentd_user
 #
 Defaults:zabbix !requiretty
-zabbix ALL=(ALL) NOPASSWD: /opt/pakfire/pakfire status
+zabbix ALL=(ALL) NOPASSWD: /opt/pakfire/pakfire status, /usr/sbin/fping, /usr/local/bin/getipstat
