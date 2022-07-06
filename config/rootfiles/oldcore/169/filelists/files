@@ -223,4 +223,5 @@ usr/sbin/setup
 var/ipfire/general-functions.pl
 var/ipfire/header.pl
 var/ipfire/main/manualpages
+var/ipfire/menu.d/20-status.menu
 var/ipfire/suricata/ruleset-sources
