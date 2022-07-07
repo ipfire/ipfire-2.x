@@ -150,13 +150,6 @@ ldconfig
 # Apply sysctl changes
 /etc/init.d/sysctl start
 
-# Delete unused initrd on 32-bit ARM to save space in /boot
-case "$(uname -m)" in
-	armv*)
-		rm /boot/initramfs-${KVER}-ipfire.img
-		;;
-esac
-
 # Start services
 telinit u
 /etc/init.d/firewall restart
