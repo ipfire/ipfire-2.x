@@ -220,5 +220,8 @@ srv/web/ipfire/html/images/qr-code.png
 srv/web/ipfire/html/images/qr-code.svg
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 usr/sbin/setup
+var/ipfire/general-functions.pl
 var/ipfire/header.pl
 var/ipfire/main/manualpages
+var/ipfire/menu.d/20-status.menu
+var/ipfire/suricata/ruleset-sources

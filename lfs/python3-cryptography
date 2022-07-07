@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.4.7
+VER        = 36.0.2
 
 THISAPP    = cryptography-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-cryptography
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = python3-cffi
 
@@ -46,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 49bc1e098ed1ba0181059b645f6668cda6332d196eaca55270ebce6e07e5bb6ab6724c5050fde20e89b7025773960d74ec782bb875badbbd5dc9a04db0a536f1
+$(DL_FILE)_BLAKE2 = b34b994e44b1ccd099a56fba4a167d563a29652f86ab0f0000ef78b4093a15cbfb82a9cebecdcaf6bca782a5fdd20f6c7d2206d68a219626a9fe8ae13e9aec5e
 
 install : $(TARGET)
 

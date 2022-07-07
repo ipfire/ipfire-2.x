@@ -34,6 +34,7 @@ require '/var/ipfire/general-functions.pl';	# replace /var/ipcop with /var/ipcop
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/ids-functions.pl";
+require "${General::swroot}/network-functions.pl";
 
 my $configfwdfw		= "${General::swroot}/firewall/config";
 my $configinput		= "${General::swroot}/firewall/input";
@@ -52,6 +53,11 @@ undef (@dummy);
 my $setting = "${General::swroot}/ethernet/settings";
 our $datafile = "${General::swroot}/ethernet/aliases";
 
+# Fetch the name of the main RED interface
+my $RED_INTERFACE = &General::get_red_interface();
+
+# Fetch all RED interfaces
+my @RED_INTERFACES = &Network::get_red_interfaces();
 
 our %settings=();
 #Settings1
@@ -61,7 +67,8 @@ our %settings=();
 $settings{'IP'} = '';
 $settings{'ENABLED'} = 'off';		# Every check box must be set to off
 $settings{'NAME'} = '';
-my @nosaved=('IP','ENABLED','NAME');	# List here ALL setting2 fields. Mandatory
+$settings{'INTERFACE'} = '';
+my @nosaved=('IP','ENABLED','NAME','INTERFACE');	# List here ALL setting2 fields. Mandatory
 
 $settings{'ACTION'} = '';		# add/edit/remove
 $settings{'KEY1'} = '';			# point record for ACTION
@@ -215,10 +222,10 @@ if ($settings{'ACTION'} eq $Lang::tr{'add'}) {
 	}
     unless ($errormessage) {
 	if ($settings{'KEY1'} eq '') { #add or edit ?
-	    unshift (@current, "$settings{'IP'},$settings{'ENABLED'},$settings{'NAME'}\n");
+	    unshift (@current, "$settings{'IP'},$settings{'ENABLED'},$settings{'NAME'},$settings{'INTERFACE'}\n");
 	    &General::log($Lang::tr{'ip alias added'});
 	} else {
-	    @current[$settings{'KEY1'}] = "$settings{'IP'},$settings{'ENABLED'},$settings{'NAME'}\n";
+	    @current[$settings{'KEY1'}] = "$settings{'IP'},$settings{'ENABLED'},$settings{'NAME'},$settings{'INTERFACE'}\n";
 	    $settings{'KEY1'} = '';       # End edit mode
 	    &General::log($Lang::tr{'ip alias changed'});
 	}
@@ -250,6 +257,7 @@ if ($settings{'ACTION'} eq $Lang::tr{'edit'}) {
     $settings{'IP'}=$temp[0];			# Prepare the screen for editing
     $settings{'ENABLED'}=$temp[1];
     $settings{'NAME'}=$temp[2];
+    $settings{'INTERFACE'}=$temp[3];
 }
 
 if ($settings{'ACTION'} eq $Lang::tr{'remove'}) {
@@ -295,6 +303,7 @@ if ($settings{'ACTION'} eq '' ) { # First launch from GUI
 &Header::openpage($Lang::tr{'external aliases configuration'}, 1, '');
 &Header::openbigbox('100%', 'left', '', $errormessage);
 my %checked =();     # Checkbox manipulations
+my %selected = ();
 
 if ($errormessage) {
     &Header::openbox('100%', 'left', $Lang::tr{'error messages'});
@@ -320,6 +329,11 @@ END
 #
 $checked{'ENABLED'}{'on'} = ($settings{'ENABLED'} eq 'on') ? "checked='checked'" : '' ;
 
+$selected{'INTERFACE'} = ();
+foreach my $intf (@RED_INTERFACES) {
+	$selected{'INTERFACE'}{$intf} = ($settings{'INTERFACE'} eq $intf) ? "selected" : "";
+}
+
 my $buttontext = $Lang::tr{'add'};
 if ($settings{'KEY1'} ne '') {
     $buttontext = $Lang::tr{'update'};
@@ -329,7 +343,7 @@ if ($settings{'KEY1'} ne '') {
 }
 
 #Edited line number (KEY1) passed until cleared by 'save' or 'remove' or 'new sort order'
-print <<END
+print <<END;
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
 <input type='hidden' name='KEY1' value='$settings{'KEY1'}' />
 <input type='hidden' name='OLDNAME' value='$settings{'NAME'}' />
@@ -340,6 +354,33 @@ print <<END
 <td><input type='text' name='NAME' value='$settings{'NAME'}' size='32' /></td>
 <td class='base' style='text-align:right; color:${Header::colourred};'>$Lang::tr{'alias ip'}:&nbsp;</td>
 <td><input type='text' name='IP' value='$settings{'IP'}' size='16' /></td>
+END
+
+if (scalar @RED_INTERFACES >= 2) {
+	print <<END;
+		<td class='base' style='color:${Header::colourred};'>$Lang::tr{'interface'}:</td>
+		<td>
+			<select name="INTERFACE">
+				<option value="">$Lang::tr{'aliases default interface'}</option>
+END
+
+	# Print an option for each RED interface
+	foreach my $intf (@RED_INTERFACES) {
+		# Skip the default one
+		next if ($RED_INTERFACE eq $intf);
+
+		print <<END;
+				<option value="$intf" $selected{'INTERFACE'}{$intf}>$intf</option>
+END
+	}
+
+	print <<END;
+			</select>
+		</td>
+END
+}
+
+print <<END;
 <td class='base' style='text-align:right;'>$Lang::tr{'enabled'}&nbsp;</td>
 <td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
 </tr>
@@ -353,7 +394,7 @@ print <<END
 </table>
 </form>
 END
-;
+
 &Header::closebox();
 
 # Add visual indicators to column headings to show sort order - EO
@@ -419,9 +460,15 @@ foreach my $line (@current) {
     }
     print "<tr style='$col'>";
 
+	my $address = $temp[0];
+
+	if ($temp[3] ne "") {
+		$address .= " @ $temp[3]";
+	}
+
     print <<END
 <td style='text-align:center; $col'>$temp[2]</td>
-<td style='text-align:center; $col'>$temp[0]</td>
+<td style='text-align:center; $col'>$address</td>
 
 <td style='text-align:center; $col'>
 <form method='post' action='$ENV{'SCRIPT_NAME'}'>
@@ -542,7 +589,7 @@ sub SortDataFile
 	# The KEY,key record permits doublons. If removed, then F1 becomes the key without doublon permitted.
 
 
-	my @record = ('KEY',$key++,'IP',$temp[0],'ENABLED',$temp[1],'NAME',$temp[2]);
+	my @record = ('KEY',$key++,'IP',$temp[0],'ENABLED',$temp[1],'NAME',$temp[2],'INTERFACE',$temp[3]);
 	my $record = {};                        	# create a reference to empty hash
 	%{$record} = @record;                		# populate that hash with @record
 	$entries{$record->{KEY}} = $record; 		# add this to a hash of hashes
@@ -552,7 +599,7 @@ sub SortDataFile
 
     # Each field value is printed , with the newline ! Don't forget separator and order of them.
     foreach my $entry (sort fixedleasesort keys %entries) {
-	print FILE "$entries{$entry}->{IP},$entries{$entry}->{ENABLED},$entries{$entry}->{NAME}\n";
+	print FILE "$entries{$entry}->{IP},$entries{$entry}->{ENABLED},$entries{$entry}->{NAME},$entries{$entry}->{INTERFACE}\n";
     }
 
     close(FILE);

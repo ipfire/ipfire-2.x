@@ -19,7 +19,7 @@ usr/lib/python3.10/site-packages/botocore/credentials.py
 #usr/lib/python3.10/site-packages/botocore/crt
 usr/lib/python3.10/site-packages/botocore/crt/__init__.py
 usr/lib/python3.10/site-packages/botocore/crt/auth.py
-#usr/lib/python3.10/site-packages/botocore/data
+usr/lib/python3.10/site-packages/botocore/data
 #usr/lib/python3.10/site-packages/botocore/data/_retry.json
 #usr/lib/python3.10/site-packages/botocore/data/accessanalyzer
 #usr/lib/python3.10/site-packages/botocore/data/accessanalyzer/2019-11-01
@@ -1593,7 +1593,7 @@ usr/lib/python3.10/site-packages/botocore/exceptions.py
 usr/lib/python3.10/site-packages/botocore/handlers.py
 usr/lib/python3.10/site-packages/botocore/history.py
 usr/lib/python3.10/site-packages/botocore/hooks.py
-#usr/lib/python3.10/site-packages/botocore/httpchecksum.py
+usr/lib/python3.10/site-packages/botocore/httpchecksum.py
 usr/lib/python3.10/site-packages/botocore/httpsession.py
 usr/lib/python3.10/site-packages/botocore/loaders.py
 usr/lib/python3.10/site-packages/botocore/model.py

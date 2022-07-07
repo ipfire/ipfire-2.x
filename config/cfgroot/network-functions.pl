@@ -332,6 +332,26 @@ sub setup_upstream_proxy() {
 	}
 }
 
+sub get_red_interfaces() {
+	my $default = &General::get_red_interface();
+
+	my @intfs = (
+		$default,
+	);
+
+	opendir(INTERFACES, "/sys/class/net");
+
+	while (my $intf = readdir(INTERFACES)) {
+		if ($intf =~ m/^red[0-9]+$/) {
+			push(@intfs, $intf);
+		}
+	}
+
+	closedir(INTERFACES);
+
+	return &General::uniq(@intfs);
+}
+
 sub list_wireless_interfaces() {
 	my %interfaces = ();
 

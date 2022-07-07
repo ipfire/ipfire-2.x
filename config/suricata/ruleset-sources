@@ -23,7 +23,7 @@ our %Providers = (
 		website => "https://www.snort.org",
 		tr_string => "registered user rules",
 		requires_subscription => "True",
-		dl_url => "https://www.snort.org/rules/snortrules-snapshot-29190.tar.gz?oinkcode=<subscription_code>",
+		dl_url => "https://www.snort.org/rules/snortrules-snapshot-29200.tar.gz?oinkcode=<subscription_code>",
 		dl_type => "archive",
 	},
 
@@ -33,7 +33,7 @@ our %Providers = (
 		website => "https://www.snort.org",
 		tr_string => "subscripted user rules",
 		requires_subscription => "True",
-		dl_url => "https://www.snort.org/rules/snortrules-snapshot-29190.tar.gz?oinkcode=<subscription_code>",
+		dl_url => "https://www.snort.org/rules/snortrules-snapshot-29200.tar.gz?oinkcode=<subscription_code>",
 		dl_type => "archive",
 	},
 

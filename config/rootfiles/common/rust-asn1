@@ -1,0 +1,17 @@
+#usr/share/cargo/registry/asn1-0.8.7
+#usr/share/cargo/registry/asn1-0.8.7/.cargo-checksum.json
+#usr/share/cargo/registry/asn1-0.8.7/Cargo.toml
+#usr/share/cargo/registry/asn1-0.8.7/Cargo.toml.deps
+#usr/share/cargo/registry/asn1-0.8.7/LICENSE
+#usr/share/cargo/registry/asn1-0.8.7/README.md
+#usr/share/cargo/registry/asn1-0.8.7/examples
+#usr/share/cargo/registry/asn1-0.8.7/examples/no_std.rs
+#usr/share/cargo/registry/asn1-0.8.7/src
+#usr/share/cargo/registry/asn1-0.8.7/src/bit_string.rs
+#usr/share/cargo/registry/asn1-0.8.7/src/lib.rs
+#usr/share/cargo/registry/asn1-0.8.7/src/object_identifier.rs
+#usr/share/cargo/registry/asn1-0.8.7/src/parser.rs
+#usr/share/cargo/registry/asn1-0.8.7/src/types.rs
+#usr/share/cargo/registry/asn1-0.8.7/src/writer.rs
+#usr/share/cargo/registry/asn1-0.8.7/tests
+#usr/share/cargo/registry/asn1-0.8.7/tests/derive_test.rs

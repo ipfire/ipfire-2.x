@@ -27,7 +27,6 @@ netovpnrw.cgi=configuration/status/network_ovpnrw
 #netovpnsrv.cgi=
 wio.cgi=addons/wio
 hardwaregraphs.cgi=configuration/status/hardware_diagrams
-entropy.cgi=configuration/status/entropy
 connections.cgi=configuration/status/connections
 traffic.cgi=configuration/status/nettraffic
 #mdstat.cgi=

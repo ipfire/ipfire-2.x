@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021   IPFire Team   <info@ipfire.org>                   #
+# Copyright (C) 2007-2022   IPFire Team   <info@ipfire.org>                   #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -206,7 +206,7 @@ sub fetchfile {
 
 		if ( $code eq "500" ) {
 			message("Giving up: There was no chance to get the file \"$getfile\" from any available server.\nThere was an error on the way. Please fix it.");
-			return 1;
+			return 0;
 		}
 
 		if ($response->is_success) {
@@ -226,7 +226,7 @@ sub fetchfile {
 				}
 				logger("DOWNLOAD FINISHED: $file");
 				$allok = 1;
-				return 0;
+				return 1;
 			} else {
 				logger("DOWNLOAD ERROR: Could not open $Conf::tmpdir/$bfile for writing.");
 			}
@@ -235,7 +235,7 @@ sub fetchfile {
 		}
 	}
 	message("DOWNLOAD ERROR: There was no chance to get the file \"$getfile\" from any available server.\nMay be you should run \"pakfire update\" to get some new servers.");
-	return 1;
+	return 0;
 }
 
 sub getmirrors {
@@ -256,9 +256,14 @@ sub getmirrors {
 	}
 
 	if ("$force" eq "force") {
-		fetchfile("$Conf::version/lists/server-list.db", "$Conf::mainserver");
-		move("$Conf::cachedir/server-list.db", "$Conf::dbdir/lists/server-list.db");
+		if (fetchfile("$Conf::version/lists/server-list.db", "$Conf::mainserver")) {
+			move("$Conf::cachedir/server-list.db", "$Conf::dbdir/lists/server-list.db");
+		} elsif (! -e "$Conf::dbdir/lists/server-list.db" ) {
+			# if we end up with no server-list at all, return failure
+			return 0;
+		}
 	}
+	return 1;
 }
 
 sub getcoredb {
@@ -279,8 +284,9 @@ sub getcoredb {
 	}
 
 	if ("$force" eq "force") {
-		fetchfile("lists/core-list.db", "");
-		move("$Conf::cachedir/core-list.db", "$Conf::dbdir/lists/core-list.db");
+		if (fetchfile("lists/core-list.db", "")) {
+			move("$Conf::cachedir/core-list.db", "$Conf::dbdir/lists/core-list.db");
+		}
 	}
 }
 
@@ -318,15 +324,13 @@ sub selectmirror {
 
 	### Check if there is a current server list and read it.
 	#   If there is no list try to get one.
-	my $count = 0;
-	while (!(open(FILE, "<$Conf::dbdir/lists/server-list.db")) && ($count lt 5)) {
-		$count++;
-		getmirrors("noforce");
+	unless (open(FILE, "<$Conf::dbdir/lists/server-list.db")) {
+		unless (getmirrors("noforce")) {
+			message("MIRROR ERROR: Could not find or download a server list");
+			exit 1;
+		}
 	}
-	if ($count == 5) {
-		message("MIRROR ERROR: Could not find or download a server list");
-		exit 1;
-	}
+
 	my @lines = <FILE>;
 	close(FILE);
 
@@ -390,8 +394,13 @@ sub dbgetlist {
 	}
 
 	if ("$force" eq "force") {
-		fetchfile("lists/packages_list.db", "");
-		move("$Conf::cachedir/packages_list.db", "$Conf::dbdir/lists/packages_list.db");
+		if (fetchfile("lists/packages_list.db", "")) {
+			move("$Conf::cachedir/packages_list.db", "$Conf::dbdir/lists/packages_list.db");
+		} elsif ( -e "$Conf::dbdir/lists/packages_list.db" ) {
+			# If we end up with no db file after download error there
+			# is nothing more we can do here.
+			return 0;
+		}
 	}
 
 	# Update the meta database if new packages was in the package list
@@ -419,8 +428,7 @@ sub dbgetlist {
 			@templine = split(/\;/,$prog);
 			if (("$metadata{'Name'}" eq "$templine[0]") && ("$metadata{'Release'}" ne "$templine[2]")) {
 				move("$Conf::dbdir/meta/meta-$metadata{'Name'}","$Conf::dbdir/meta/old_meta-$metadata{'Name'}");
-				fetchfile("meta/meta-$metadata{'Name'}", "");
-				move("$Conf::cachedir/meta-$metadata{'Name'}", "$Conf::dbdir/meta/meta-$metadata{'Name'}");
+				getmetafile($metadata{'Name'});
 			}
 		}
 	}
@@ -532,11 +540,14 @@ sub dblist {
 
 sub resolvedeps_one {
 	my $pak = shift;
-
-	getmetafile("$pak");
-
+	
 	message("PAKFIRE RESV: $pak: Resolving dependencies...");
 
+	unless (getmetafile("$pak")) {
+		message("PAKFIRE ERROR: Error retrieving dependency information on $pak. Unable to resolve dependencies.");
+		exit 1;
+	};
+	
 	my %metadata = parsemetafile("$Conf::dbdir/meta/meta-$pak");
 	my @all;
 	my @deps = split(/ /, $metadata{'Dependencies'});
@@ -629,14 +640,10 @@ sub cleanup {
 
 sub getmetafile {
 	my $pak = shift;
-
-	unless ( -e "$Conf::dbdir/meta/meta-$pak" ) {
-		fetchfile("meta/meta-$pak", "");
-		move("$Conf::cachedir/meta-$pak", "$Conf::dbdir/meta/meta-$pak");
-	}
-
-	if ( -z "$Conf::dbdir/meta/meta-$pak" ) {
-		fetchfile("meta/meta-$pak", "");
+	
+	# Try to download meta-file if we don't have one yet, or it is empty for some reason
+	if ((! -e "$Conf::dbdir/meta/meta-$pak" ) || ( -z "$Conf::dbdir/meta/meta-$pak" )) {
+		return 0 unless (fetchfile("meta/meta-$pak", ""));
 		move("$Conf::cachedir/meta-$pak", "$Conf::dbdir/meta/meta-$pak");
 	}
 
@@ -651,6 +658,7 @@ sub getmetafile {
 		print FILE $string;
 	}
 	close(FILE);
+
 	return 1;
 }
 
@@ -713,8 +721,11 @@ sub getpak {
 	my $pak = shift;
 	my $force = shift;
 
-	getmetafile("$pak");
-
+	unless (getmetafile("$pak")) {
+		message("PAKFIRE ERROR: Unable to retrieve $pak metadata.");
+		exit 1;
+	}
+	
 	my %metadata = parsemetafile("$Conf::dbdir/meta/meta-$pak");
 	my $file = $metadata{'File'};
 
@@ -728,8 +739,11 @@ sub getpak {
 			return $file;
 		}
 	}
-
-	fetchfile("paks/$file", "");
+	
+	unless (fetchfile("paks/$file", "")) {
+		message("PAKFIRE ERROR: Unable to download $pak.");
+		exit 1;
+	}
 	return $file;
 }
 

@@ -80,6 +80,7 @@ usr/sbin/visudo
 #usr/share/locale/it/LC_MESSAGES/sudoers.mo
 #usr/share/locale/ja/LC_MESSAGES/sudo.mo
 #usr/share/locale/ja/LC_MESSAGES/sudoers.mo
+#usr/share/locale/ka/LC_MESSAGES/sudo.mo
 #usr/share/locale/ko/LC_MESSAGES/sudo.mo
 #usr/share/locale/ko/LC_MESSAGES/sudoers.mo
 #usr/share/locale/lt/LC_MESSAGES/sudoers.mo
@@ -120,11 +121,11 @@ usr/sbin/visudo
 #usr/share/man/man5/sudo.conf.5
 #usr/share/man/man5/sudo_logsrv.proto.5
 #usr/share/man/man5/sudo_logsrvd.conf.5
+#usr/share/man/man5/sudo_plugin.5
 #usr/share/man/man5/sudoers.5
 #usr/share/man/man5/sudoers_timestamp.5
 #usr/share/man/man8/sudo.8
 #usr/share/man/man8/sudo_logsrvd.8
-#usr/share/man/man8/sudo_plugin.8
 #usr/share/man/man8/sudo_sendlog.8
 #usr/share/man/man8/sudoedit.8
 #usr/share/man/man8/sudoreplay.8

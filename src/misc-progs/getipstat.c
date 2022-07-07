@@ -27,7 +27,7 @@ int main(int argc, char** argv)
 	// but /sbin/iptables is actually a symlink to /sbin/xtables-legacy-multi hence that program is executed
 	// however without the notion that it was called as "iptables". So we have to pass "iptables" as first
 	// argument.
-	char *args[10] = {"iptables", "--list", "--verbose", "--numeric", "--wait", "5", NULL, NULL, NULL, NULL};
+	char *args[] = {"--list", "--verbose", "--numeric", "--wait", "5", NULL, NULL, NULL, NULL};
 	char *usage = "getipstat [-x][-f|-n|-m]";
 	unsigned int pcount = 6;
 	unsigned int table_set = 0;

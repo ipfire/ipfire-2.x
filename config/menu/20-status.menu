@@ -58,12 +58,6 @@
 				'title' => "$Lang::tr{'hardware graphs'}",
 				'enabled' => 1,
 			  };
-    $substatus->{'61.entropy'} = {
-				'caption' => "$Lang::tr{'entropy'}",
-				'uri' => '/cgi-bin/entropy.cgi',
-				'title' => "$Lang::tr{'entropy graphs'}",
-				'enabled' => 1,
-			  };
     $substatus->{'71.connections'} = {
 				'caption' => $Lang::tr{'connections'},
 				'uri' => '/cgi-bin/connections.cgi',

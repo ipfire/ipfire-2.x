@@ -88,6 +88,8 @@ rm -rvf \
 
 # Remove files
 rm -rvf \
+	/etc/rc.d/init.d/random \
+	/etc/rc.d/rcsysinit.d/S66random \
 	/lib/firmware/ath10k/QCA99X0/hw2.0/board.bin \
 	/lib/firmware/intel/ice/ddp/ice-1.3.26.0.pkg \
 	/lib/firmware/iwlwifi-3160-10.ucode \
@@ -126,6 +128,7 @@ rm -rvf \
 	/lib/xtables/libip6t_REDIRECT.so \
 	/lib/xtables/libipt_DNAT.so \
 	/lib/xtables/libipt_REDIRECT.so \
+	/srv/web/ipfire/cgi-bin/entropy.cgi \
 	/usr/lib/libfuse3.so.3.10.4 \
 	/usr/lib/libunbound.so.8.1.14
 	/usr/lib/libxml2.so.2.9.12 \
@@ -150,6 +153,7 @@ ldconfig
 # Start services
 telinit u
 /etc/init.d/firewall restart
+/etc/init.d/ntp restart
 /etc/init.d/apache start
 /etc/init.d/unbound start
 /etc/init.d/squid start

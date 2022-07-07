@@ -28,6 +28,8 @@
 struct keyvalue *kv = NULL;
 FILE *file = NULL;
 
+#define SCOPE 128
+
 void exithandler(void)
 {
 	if (kv) freekeyvalues(kv);
@@ -45,6 +47,7 @@ int main(void)
 	char *enabled;
 	char *sptr;
 	char *comment;
+	char* intf = NULL;
 	int alias;
 	int count;
 
@@ -118,13 +121,12 @@ int main(void)
 		exit(1);
 	}
 
-	/* down the aliases in turn until ifconfig complains */
-	alias=0;
-	do
-	{
-		memset(command, 0, STRING_SIZE);
-		snprintf(command, STRING_SIZE-1, "/sbin/ifconfig %s:%d down 2>/dev/null", red_dev, alias++);
-	} while (safe_system(command)==0);
+	// Flush all previous aliases
+	alias = 0;
+	do {
+		snprintf(command, STRING_SIZE - 1,
+			"ip addr flush dev red%d scope %d 2>/dev/null", alias++, SCOPE);
+	} while (safe_system(command) == 0);
 
 	/* Now set up the new aliases from the config file */
         if (!(file = fopen(CONFIG_ROOT "/ethernet/aliases", "r")))
@@ -144,15 +146,18 @@ int main(void)
                 aliasip = NULL;
                 enabled = NULL;
                 comment = NULL;
+                intf = NULL;
                 sptr = strtok(s, ",");
                 while (sptr)
                 {
                         if (count == 0)
                                 aliasip = sptr;
-                        if (count == 1)
+                        else if (count == 1)
                                 enabled = sptr;
-                        else
+                        else if (count == 2)
                                 comment = sptr;
+                        else if (count == 3)
+                                intf = sptr;
                         count++;
 			sptr = strtok(NULL, ",");
 		}
@@ -175,16 +180,14 @@ int main(void)
                         exit(1);
                 }
 
-		memset(command, 0, STRING_SIZE);
-		snprintf(command, STRING_SIZE-1,
-				"/sbin/ifconfig %s:%d %s netmask %s up",
-			     red_dev, alias, aliasip, red_netmask);
+		// Default to RED_DEV if intf isn't set
+		if (!intf)
+			intf = red_dev;
+
+		snprintf(command, STRING_SIZE - 1, "ip addr add %s/%s dev %s scope %d",
+			aliasip, red_netmask, intf, SCOPE);
 		safe_system(command);
-		memset(command, 0, STRING_SIZE);
-		snprintf(command, STRING_SIZE-1,
-				"/usr/sbin/arping -q -c 1 -w 1 -i %s -S %s %s",
-				red_dev, aliasip, default_gateway);
-		safe_system(command);
+
 		alias++;
 	}
 	return 0;

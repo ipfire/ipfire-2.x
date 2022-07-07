@@ -1,0 +1,23 @@
+--- chrono-0.4.19/Cargo.toml.original	2020-09-30 17:06:24.000000000 +0200
++++ chrono-0.4.19/Cargo.toml	2022-06-16 17:27:21.440234723 +0200
+@@ -93,7 +93,7 @@
+ __doctest = []
+ __internal_bench = []
+ alloc = []
+-clock = ["libc", "std", "winapi"]
++clock = ["libc", "std"]
+ default = ["clock", "std", "oldtime"]
+ oldtime = ["time"]
+ std = []
+@@ -108,10 +108,7 @@
+ optional = true
+ [target."cfg(all(target_arch = \"wasm32\", not(any(target_os = \"emscripten\", target_os = \"wasi\"))))".dev-dependencies.wasm-bindgen-test]
+ version = "0.3"
+-[target."cfg(windows)".dependencies.winapi]
+-version = "0.3.0"
+-features = ["std", "minwinbase", "minwindef", "timezoneapi"]
+-optional = true
++
+ [badges.appveyor]
+ repository = "chronotope/chrono"
+ 

@@ -1270,6 +1270,7 @@ buildipfire() {
   lfsmake2 rust-proc-macro-hack
   lfsmake2 rust-indoc-impl
   lfsmake2 rust-indoc
+  lfsmake2 rust-indoc-0.3.6
   lfsmake2 rust-instant
   lfsmake2 rust-lock_api
   lfsmake2 rust-smallvec
@@ -1277,6 +1278,7 @@ buildipfire() {
   lfsmake2 rust-parking_lot
   lfsmake2 rust-paste-impl
   lfsmake2 rust-paste
+  lfsmake2 rust-paste-0.1.18
   lfsmake2 rust-ctor
   lfsmake2 rust-ghost
   lfsmake2 rust-inventory-impl
@@ -1285,6 +1287,22 @@ buildipfire() {
   lfsmake2 rust-pyo3-macros-backend
   lfsmake2 rust-pyo3-macros
   lfsmake2 rust-pyo3
+  lfsmake2 rust-num-traits
+  lfsmake2 rust-num-integer
+  lfsmake2 rust-num_threads
+  lfsmake2 rust-time
+  lfsmake2 rust-chrono
+  lfsmake2 rust-asn1_derive
+  lfsmake2 rust-asn1
+  lfsmake2 rust-proc-macro-error-attr
+  lfsmake2 rust-proc-macro-error
+  lfsmake2 rust-Inflector
+  lfsmake2 rust-ouroboros_macro
+  lfsmake2 rust-aliasable
+  lfsmake2 rust-stable_deref_trait
+  lfsmake2 rust-ouroboros
+  lfsmake2 rust-base64
+  lfsmake2 rust-pem
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
@@ -1612,6 +1630,7 @@ buildipfire() {
   lfsmake2 python3-arrow
   lfsmake2 python3-terminaltables
   lfsmake2 python3-pkgconfig
+  lfsmake2 python3-msgpack
   lfsmake2 aws-cli
   lfsmake2 oci-python-sdk
   lfsmake2 oci-cli

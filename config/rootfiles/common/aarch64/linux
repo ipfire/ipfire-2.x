@@ -7212,6 +7212,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/DEVPORT
 #lib/modules/KVER-ipfire/build/include/config/DEVTMPFS
 #lib/modules/KVER-ipfire/build/include/config/DEVTMPFS_MOUNT
+#lib/modules/KVER-ipfire/build/include/config/DEVTMPFS_SAFE
 #lib/modules/KVER-ipfire/build/include/config/DEV_COREDUMP
 #lib/modules/KVER-ipfire/build/include/config/DIMLIB
 #lib/modules/KVER-ipfire/build/include/config/DL2K
@@ -8318,6 +8319,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/LIBERTAS_USB
 #lib/modules/KVER-ipfire/build/include/config/LIBFDT
 #lib/modules/KVER-ipfire/build/include/config/LIBIPW
+#lib/modules/KVER-ipfire/build/include/config/LIB_MEMNEQ
 #lib/modules/KVER-ipfire/build/include/config/LINEAR_RANGES
 #lib/modules/KVER-ipfire/build/include/config/LITEX_LITEETH
 #lib/modules/KVER-ipfire/build/include/config/LLC
