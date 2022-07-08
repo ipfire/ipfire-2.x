@@ -26,15 +26,15 @@ include Config
 
 SUMMARY    = Printer drivers for CUPS from the Gutenprint project
 
-VER        = 5.2.9
+VER        = 5.3.4
 
 THISAPP    = gutenprint-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = gutenprint
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = cups
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 70d8e447e0db9b34d57d65a42c99b1a702be6f51735acf44d833ae9bbd1d28ba119aeb2068811a266dbb1cf30e4c0514d98e84f2d11759a4969bc3ead67f03cb
+$(DL_FILE)_BLAKE2 = 134e59c7dbf9c0ba95b91c717f1e6841f35520b55105feb1ba40b82785c825b8e2a2429990e78186a1455e5c6de9880f911438d514c53c56d05575dd4e2d68a4
 
 install : $(TARGET)
 
@@ -80,7 +80,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc
 	cd $(DIR_APP) && make $(MAKETUNING)
