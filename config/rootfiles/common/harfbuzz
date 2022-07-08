@@ -8,6 +8,7 @@
 #usr/include/harfbuzz/hb-blob.h
 #usr/include/harfbuzz/hb-buffer.h
 #usr/include/harfbuzz/hb-common.h
+#usr/include/harfbuzz/hb-cplusplus.hh
 #usr/include/harfbuzz/hb-deprecated.h
 #usr/include/harfbuzz/hb-draw.h
 #usr/include/harfbuzz/hb-face.h
@@ -40,11 +41,11 @@
 #usr/lib/libharfbuzz-subset.la
 #usr/lib/libharfbuzz-subset.so
 usr/lib/libharfbuzz-subset.so.0
-usr/lib/libharfbuzz-subset.so.0.40200.0
+usr/lib/libharfbuzz-subset.so.0.40401.0
 #usr/lib/libharfbuzz.la
 #usr/lib/libharfbuzz.so
 usr/lib/libharfbuzz.so.0
-usr/lib/libharfbuzz.so.0.40200.0
+usr/lib/libharfbuzz.so.0.40401.0
 #usr/lib/pkgconfig/harfbuzz-subset.pc
 #usr/lib/pkgconfig/harfbuzz.pc
 #usr/share/gtk-doc/html/harfbuzz
@@ -112,12 +113,13 @@ usr/lib/libharfbuzz.so.0.40200.0
 #usr/share/gtk-doc/html/harfbuzz/api-index-4-0-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-4-1-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-4-2-0.html
+#usr/share/gtk-doc/html/harfbuzz/api-index-4-3-0.html
+#usr/share/gtk-doc/html/harfbuzz/api-index-4-4-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-full.html
 #usr/share/gtk-doc/html/harfbuzz/apple-advanced-typography-api.html
 #usr/share/gtk-doc/html/harfbuzz/buffers-language-script-and-direction.html
 #usr/share/gtk-doc/html/harfbuzz/building.html
 #usr/share/gtk-doc/html/harfbuzz/clusters.html
-#usr/share/gtk-doc/html/harfbuzz/complex-scripts.html
 #usr/share/gtk-doc/html/harfbuzz/core-api.html
 #usr/share/gtk-doc/html/harfbuzz/customizing-unicode-functions.html
 #usr/share/gtk-doc/html/harfbuzz/deprecated-api-index.html
@@ -185,6 +187,7 @@ usr/lib/libharfbuzz.so.0.40200.0
 #usr/share/gtk-doc/html/harfbuzz/reordering-in-levels-0-and-1.html
 #usr/share/gtk-doc/html/harfbuzz/right-insensitive.png
 #usr/share/gtk-doc/html/harfbuzz/right.png
+#usr/share/gtk-doc/html/harfbuzz/script-specific-shaping.html
 #usr/share/gtk-doc/html/harfbuzz/setting-buffer-properties.html
 #usr/share/gtk-doc/html/harfbuzz/shaping-and-shape-plans.html
 #usr/share/gtk-doc/html/harfbuzz/shaping-concepts.html
@@ -210,3 +213,4 @@ usr/lib/libharfbuzz.so.0.40200.0
 #usr/share/gtk-doc/html/harfbuzz/why-do-i-need-a-shaping-engine.html
 #usr/share/gtk-doc/html/harfbuzz/why-is-it-called-harfbuzz.html
 #usr/share/gtk-doc/html/harfbuzz/working-with-harfbuzz-clusters.html
+
