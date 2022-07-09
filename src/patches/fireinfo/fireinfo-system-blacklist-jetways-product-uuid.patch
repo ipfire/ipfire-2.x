@@ -1,0 +1,28 @@
+From 33be9aa38d65dace9a61247f41ac3627a6750cce Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Fri, 8 Jul 2022 08:30:55 +0000
+Subject: [PATCH] system: Blacklist Jetway's product UUID
+
+Fixes: #12896
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/fireinfo/system.py | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/src/fireinfo/system.py b/src/fireinfo/system.py
+index 4c0b0a3..c9c81b1 100644
+--- a/src/fireinfo/system.py
++++ b/src/fireinfo/system.py
+@@ -51,6 +51,9 @@ INVALID_ID_STRINGS = (
+ 	"03000200-0400-0500-0006-000700080009",
+ 	"11111111-1111-1111-1111-111111111111",
+ 	"0000000", "00000000",
++
++	# Jetway gives all systems the same product UUID
++	"3b903780-4f79-1018-816e-aeb2724778a7",
+ )
+ 
+ INVALID_ID_STRINGS_EXACT_MATCH = (
+-- 
+2.30.2
+

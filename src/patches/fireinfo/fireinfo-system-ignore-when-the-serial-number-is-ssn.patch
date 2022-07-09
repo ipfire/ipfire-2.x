@@ -1,0 +1,37 @@
+From 4d74466456c0824663e10881f9deabcd1f4d32c3 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Fri, 8 Jul 2022 08:31:25 +0000
+Subject: [PATCH] system: Ignore when the serial number is "SSN"
+
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/fireinfo/system.py | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/fireinfo/system.py b/src/fireinfo/system.py
+index c9c81b1..9edc345 100644
+--- a/src/fireinfo/system.py
++++ b/src/fireinfo/system.py
+@@ -44,7 +44,7 @@ INVALID_ID_STRINGS = (
+ 	"EVAL",
+ 	"Not Applicable",
+ 	"None", "empty",
+-	"Serial", "System Serial Number",
++	"Serial", "System Serial Number", "SSN",
+ 	"XXXXX",
+ 	"01010101-0101-0101-0101-010101010101",
+ 	"00020003-0004-0005-0006-000700080009",
+@@ -272,7 +272,9 @@ class System(object, metaclass=Singleton):
+ 		if not ids:
+ 			root_disk_serial = self.root_disk_serial
+ 			if root_disk_serial and not root_disk_serial.startswith("QM000"):
+-				ids.append(root_disk_serial)
++				# Skip any invalid IDs
++				if not root_disk_serial in INVALID_ID_STRINGS:
++					ids.append(root_disk_serial)
+ 
+ 		# As last resort, we use the UUID from pakfire.
+ 		if not ids:
+-- 
+2.30.2
+
