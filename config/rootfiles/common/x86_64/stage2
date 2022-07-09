@@ -126,7 +126,6 @@ usr/local/bin/update-location-database
 #usr/local/share/man/man8
 #usr/local/share/misc
 #usr/local/share/terminfo
-#usr/local/share/xt_geoip
 #usr/local/share/zoneinfo
 #usr/local/src
 #usr/sbin
@@ -148,7 +147,6 @@ usr/share/doc/licenses/GPLv3
 #usr/share/man/man8
 #usr/share/misc
 #usr/share/terminfo
-#usr/share/xt_geoip
 #usr/share/zoneinfo
 #var
 #var/cache

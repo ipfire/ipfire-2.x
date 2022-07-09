@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -55,7 +55,7 @@ $(TARGET) :
 	-install -dv -m 1777 /tmp /var/tmp
 	-mkdir -pv /usr/{,local/}{bin,include,lib,sbin,src}
 	-mkdir -pv /usr/{,local/}share/{doc,info,locale,man}
-	-mkdir -v  /usr/{,local/}share/{misc,terminfo,xt_geoip,zoneinfo}
+	-mkdir -v  /usr/{,local/}share/{misc,terminfo,zoneinfo}
 	-mkdir -pv /usr/{,local/}share/man/man{1..8}
 	#-for dir in /usr /usr/local; do \
 	#  ln -sv share/{man,doc,info} $$dir; \
