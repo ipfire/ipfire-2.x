@@ -1,5 +1,6 @@
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/aliases.cgi
 usr/local/bin/setaliases
+var/ipfire/backup/bin/backup.pl
 var/ipfire/network-functions.pl
 var/ipfire/urlfilter/autoupdate/autoupdate.urls
