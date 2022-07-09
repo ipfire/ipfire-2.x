@@ -58,6 +58,7 @@ rm -rvf \
 	/sbin/routef \
 	/sbin/rtpr \
 	/usr/bin/screen-4.* \
+	/usr/bin/x86_64 \
 	/usr/lib/libbfd-2.36.* \
 	/usr/lib/libbind9-9.16.2* \
 	/usr/lib/libdnet* \
