@@ -157,9 +157,6 @@ restore_backup() {
 	# Reload firewall
 	firewallctrl
 
-	# Convert old OpenVPN CCD files (CN change, Core Update 75)
-	convert-ovpn
-
 	# Snort to suricata converter.
 	if [ -d "/var/ipfire/snort" ]; then
 		# Run converter
