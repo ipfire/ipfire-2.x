@@ -34,6 +34,56 @@ done
 # Stop services
 
 # Remove files
+rm -rvf \
+	/lib/ld-2.* \
+	/lib/libanl-2.* \
+	/lib/libc-2.* \
+	/lib/libdl-2.* \
+	/lib/libm-2.* \
+	/lib/libmvec-2.* \
+	/lib/libnsl-2.* \
+	/lib/libnss_compat-2.* \
+	/lib/libnss_db-2.* \
+	/lib/libnss_dns-2.* \
+	/lib/libnss_files-2.* \
+	/lib/libnss_hesiod-2.* \
+	/lib/libntfs-3g.so.88* \
+	/lib/libpsx.so.2 \
+	/lib/libpthread-2.* \
+	/lib/libresolv-2.* \
+	/lib/librt-2.* \
+	/lib/libthread_db-1.0.so \
+	/lib/libutil-2.* \
+	/sbin/ifcfg \
+	/sbin/routef \
+	/sbin/rtpr \
+	/usr/lib/libbfd-2.36.* \
+	/usr/lib/libbind9-9.16.2* \
+	/usr/lib/libdnet* \
+	/usr/lib/libirs-9.16.2* \
+	/usr/lib/libisc-9.16.2* \
+	/usr/lib/libisccc-9.16.2* \
+	/usr/lib/libisccfg-9.16.2* \
+	/usr/lib/libldap-* \
+	/usr/lib/libldap_r-* \
+	/usr/lib/libns-9.16.2* \
+	/usr/lib/libopenjp2.so.2.3.* \
+	/usr/lib/libpoppler.so.11* \
+	/usr/lib/perl5/site_perl/5.32.1/Bundle/LWP.pm \
+	/usr/lib/perl5/site_perl/5.32.1/File/Listing.pm \
+	/usr/lib/perl5/site_perl/5.32.1/HTML/Form.pm \
+	/usr/lib/perl5/site_perl/5.32.1/HTTP/Cookies \
+	/usr/lib/perl5/site_perl/5.32.1/HTTP/Negotiate.pm \
+	/usr/lib/perl5/site_perl/5.32.1/*-linux-thread-multi/auto/Unix/Syslog/autosplit.ix \
+	/usr/lib/perl5/site_perl/5.32.1/*-linux-thread-multi/qd.pl \
+	/usr/lib/perl5/site_perl/5.32.1/LWP/media.types \
+	/usr/lib/perl5/site_perl/5.32.1/LWP/MediaTypes.pm \
+	/usr/lib/perl5/site_perl/5.32.1/LWP/Protocol/GHTTP.pm \
+	/usr/lib/perl5/site_perl/5.32.1/LWP/Protocol/http10.pm \
+	/usr/lib/perl5/site_perl/5.32.1/LWP/Protocol/https10.pm \
+	/usr/lib/perl5/site_perl/5.32.1/WWW \
+	/usr/sbin/ovpn-ccd-convert \
+	/usr/share/xt_geoip
 
 # Extract files
 extract_files
