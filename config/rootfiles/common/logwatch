@@ -195,6 +195,7 @@ usr/share/logwatch/default.conf/services/zz-sys.conf
 usr/share/logwatch/dist.conf/logfiles
 usr/share/logwatch/dist.conf/services
 usr/share/logwatch/dist.conf/services/dialup.conf
+usr/share/logwatch/dist.conf/services/ipblocklist.conf
 #usr/share/logwatch/lib
 usr/share/logwatch/lib/Logwatch.pm
 #usr/share/logwatch/scripts
@@ -260,6 +261,7 @@ usr/share/logwatch/scripts/services/http
 usr/share/logwatch/scripts/services/imapd
 #usr/share/logwatch/scripts/services/in.qpopper
 usr/share/logwatch/scripts/services/init
+usr/share/logwatch/scripts/services/ipblocklist
 usr/share/logwatch/scripts/services/ipop3d
 usr/share/logwatch/scripts/services/iptables
 usr/share/logwatch/scripts/services/kernel

@@ -104,6 +104,7 @@ usr/local/bin/settime
 usr/local/bin/timecheck
 usr/local/bin/timezone-transition
 usr/local/bin/update-ids-ruleset
+usr/local/bin/update-ipblocklists
 usr/local/bin/update-lang-cache
 usr/local/bin/update-location-database
 #usr/local/include
@@ -152,6 +153,7 @@ var/cache/ldconfig
 var/cache/ldconfig/aux-cache
 var/empty
 #var/lib
+var/lib/ipblocklist
 #var/lib/misc
 #var/local
 var/lock

@@ -165,4 +165,8 @@ endif
 	-mkdir -pv /opt/pakfire/db/core
 	echo "$(CORE)" > /opt/pakfire/db/core/mine
 
+	# IPblocklist.
+	-mkdir -pv /var/lib/ipblocklist
+	chown nobody:nobody /var/lib/ipblocklist
+
 	@$(POSTBUILD)

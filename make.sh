@@ -1439,6 +1439,7 @@ buildipfire() {
   lfsmake2 hyperscan
   lfsmake2 suricata
   lfsmake2 ids-ruleset-sources
+  lfsmake2 ipblocklist-sources
   lfsmake2 squid
   lfsmake2 squidguard
   lfsmake2 calamaris
