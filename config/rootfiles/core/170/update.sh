@@ -99,10 +99,17 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Create directory for IPBlocklist feature
+mkdir -pv /var/lib/ipblocklist
+chown nobody:nobody /var/lib/ipblocklist
+
+# Rebuild fcrontab from scratch
+/usr/bin/fcrontab -z
+
 # Start services
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
