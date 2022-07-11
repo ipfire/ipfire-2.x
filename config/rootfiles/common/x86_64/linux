@@ -8075,6 +8075,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/INTEL_INT0002_VGPIO
 #lib/modules/KVER-ipfire/build/include/config/INTEL_IOATDMA
 #lib/modules/KVER-ipfire/build/include/config/INTEL_IOMMU
+#lib/modules/KVER-ipfire/build/include/config/INTEL_IOMMU_DEFAULT_ON
 #lib/modules/KVER-ipfire/build/include/config/INTEL_IOMMU_FLOPPY_WA
 #lib/modules/KVER-ipfire/build/include/config/INTEL_IOMMU_SVM
 #lib/modules/KVER-ipfire/build/include/config/INTEL_IPS
