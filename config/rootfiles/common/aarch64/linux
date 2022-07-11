@@ -9427,6 +9427,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/RAID6_PQ
 #lib/modules/KVER-ipfire/build/include/config/RAID6_PQ_BENCHMARK
 #lib/modules/KVER-ipfire/build/include/config/RAID_ATTRS
+#lib/modules/KVER-ipfire/build/include/config/RANDOMIZE_BASE
 #lib/modules/KVER-ipfire/build/include/config/RANDOMIZE_KSTACK_OFFSET_DEFAULT
 #lib/modules/KVER-ipfire/build/include/config/RAS
 #lib/modules/KVER-ipfire/build/include/config/RASPBERRYPI_FIRMWARE
