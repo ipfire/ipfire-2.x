@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/rc.d/unbound stop
 
 # Remove files
 rm -rvf \
@@ -107,6 +108,7 @@ chown nobody:nobody /var/lib/ipblocklist
 /usr/bin/fcrontab -z
 
 # Start services
+/etc/init.d/rc.d/unbound start
 
 # This update needs a reboot...
 touch /var/run/need_reboot
