@@ -123,6 +123,9 @@ sed -i /etc/collectd.conf \
 /etc/init.d/rc.d/unbound start
 /etc/init.d/rc.d/suricata restart
 
+# Harden mount options of /boot
+sed -e -i "s@[[:space:]]*\/boot[[:space:]]*auto[[:space:]]*defaults[[:space:]]*@ \/boot    auto defaults,nodev,noexec,nosuid   @g" /etc/fstab
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
