@@ -114,6 +114,7 @@ sed -i /etc/collectd.conf \
 
 # Start services
 /etc/init.d/rc.d/unbound start
+/etc/init.d/rc.d/suricata restart
 
 # This update needs a reboot...
 touch /var/run/need_reboot
