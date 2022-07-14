@@ -107,6 +107,11 @@ chown nobody:nobody /var/lib/ipblocklist
 # Rebuild fcrontab from scratch
 /usr/bin/fcrontab -z
 
+# Update collectd.conf
+sed -i /etc/collectd.conf \
+	-e "/LoadPlugin entropy/d"
+/etc/init.d/collectd restart
+
 # Start services
 /etc/init.d/rc.d/unbound start
 
