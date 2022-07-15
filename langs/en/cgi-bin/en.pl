@@ -1599,7 +1599,6 @@
 'ipblocklist download error' => 'A download error occured.',
 'ipblocklist empty blocklist received' => 'An empty blocklist has been received.',
 'ipblocklist enable' => 'Enable',
-'ipblocklist entries' => 'Entries',
 'ipblocklist hits' => 'Total number of blocklist hits for',
 'ipblocklist id' => 'Blocklist',
 'ipblocklist input' => 'Packets dropped (IN)',
