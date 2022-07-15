@@ -1600,7 +1600,7 @@
 'ipblocklist disable post' => '',
 'ipblocklist disable pre' => 'Disabling',
 'ipblocklist download error' => 'A download error occurs.',
-'ipblocklist empyt blocklist received' => 'An empty blocklist has been received.',
+'ipblocklist empty blocklist received' => 'An empty blocklist has been received.',
 'ipblocklist enable' => 'Enable',
 'ipblocklist entries' => 'Entries',
 'ipblocklist hits' => 'Total number of blocklist hits for',
