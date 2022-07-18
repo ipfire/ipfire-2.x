@@ -797,7 +797,7 @@ sub upgradecore {
 		system("echo $core_release > $Conf::coredir/mine");
 
 	} else {
-		message("CORE ERROR: No new upgrades available. You are on release $Conf::core_mine.");
+		message("CORE INFO: No new upgrades available. You are on release $Conf::core_mine.");
 	}
 }
 
