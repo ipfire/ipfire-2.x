@@ -2,6 +2,7 @@
 # Checking cgi-bin translations for language: de                           #
 ############################################################################
 < advproxy update information
+< aliases default interface
 < ansi t1.483
 < backup archive
 < backup clear archive
@@ -130,6 +131,7 @@
 < age shour
 < age sminute
 < age ssecond
+< aliases default interface
 < asn lookup failed
 < Async logging enabled
 < atm device
@@ -609,6 +611,29 @@
 < invalid ip or hostname
 < invalid logserver protocol
 < ip basic info
+< ipblocklist
+< ipblocklist blocklist settings
+< ipblocklist category
+< ipblocklist category application
+< ipblocklist category attacker
+< ipblocklist category c and c
+< ipblocklist category composite
+< ipblocklist category invalid
+< ipblocklist category reputation
+< ipblocklist category scanner
+< ipblocklist could not download blocklist
+< ipblocklist download error
+< ipblocklist empty blocklist received
+< ipblocklist enable
+< ipblocklist hits
+< ipblocklist id
+< ipblocklist input
+< ipblocklist log
+< ipblocklist log list
+< ipblocklist logs
+< ipblocklist name
+< ipblocklist output
+< ipblocklist use ipblocklists
 < ip info for
 < ipsec
 < ipsec connection
@@ -1001,6 +1026,7 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< aliases default interface
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
@@ -1008,6 +1034,29 @@
 < g.dtm
 < g.lite
 < guaranteed bandwidth
+< ipblocklist
+< ipblocklist blocklist settings
+< ipblocklist category
+< ipblocklist category application
+< ipblocklist category attacker
+< ipblocklist category c and c
+< ipblocklist category composite
+< ipblocklist category invalid
+< ipblocklist category reputation
+< ipblocklist category scanner
+< ipblocklist could not download blocklist
+< ipblocklist download error
+< ipblocklist empty blocklist received
+< ipblocklist enable
+< ipblocklist hits
+< ipblocklist id
+< ipblocklist input
+< ipblocklist log
+< ipblocklist log list
+< ipblocklist logs
+< ipblocklist name
+< ipblocklist output
+< ipblocklist use ipblocklists
 < mmio stale data
 < otp qrcode
 < random number generator daemon
@@ -1041,6 +1090,7 @@
 < advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
+< aliases default interface
 < asn lookup failed
 < autonomous system
 < available
@@ -1272,6 +1322,29 @@
 < invalid ip or hostname
 < invalid logserver protocol
 < ip basic info
+< ipblocklist
+< ipblocklist blocklist settings
+< ipblocklist category
+< ipblocklist category application
+< ipblocklist category attacker
+< ipblocklist category c and c
+< ipblocklist category composite
+< ipblocklist category invalid
+< ipblocklist category reputation
+< ipblocklist category scanner
+< ipblocklist could not download blocklist
+< ipblocklist download error
+< ipblocklist empty blocklist received
+< ipblocklist enable
+< ipblocklist hits
+< ipblocklist id
+< ipblocklist input
+< ipblocklist log
+< ipblocklist log list
+< ipblocklist logs
+< ipblocklist name
+< ipblocklist output
+< ipblocklist use ipblocklists
 < ip info for
 < ipsec connection
 < ipsec dns server address is invalid
@@ -1504,6 +1577,7 @@
 < advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
+< aliases default interface
 < asn lookup failed
 < atm device
 < autonomous system
@@ -1754,6 +1828,29 @@
 < invalid ip or hostname
 < invalid logserver protocol
 < ip basic info
+< ipblocklist
+< ipblocklist blocklist settings
+< ipblocklist category
+< ipblocklist category application
+< ipblocklist category attacker
+< ipblocklist category c and c
+< ipblocklist category composite
+< ipblocklist category invalid
+< ipblocklist category reputation
+< ipblocklist category scanner
+< ipblocklist could not download blocklist
+< ipblocklist download error
+< ipblocklist empty blocklist received
+< ipblocklist enable
+< ipblocklist hits
+< ipblocklist id
+< ipblocklist input
+< ipblocklist log
+< ipblocklist log list
+< ipblocklist logs
+< ipblocklist name
+< ipblocklist output
+< ipblocklist use ipblocklists
 < ip info for
 < ipsec connection
 < ipsec dns server address is invalid
@@ -2031,6 +2128,7 @@
 < age shour
 < age sminute
 < age ssecond
+< aliases default interface
 < asn lookup failed
 < atm device
 < attention
@@ -2555,6 +2653,29 @@
 < invalid ip or hostname
 < invalid logserver protocol
 < ip basic info
+< ipblocklist
+< ipblocklist blocklist settings
+< ipblocklist category
+< ipblocklist category application
+< ipblocklist category attacker
+< ipblocklist category c and c
+< ipblocklist category composite
+< ipblocklist category invalid
+< ipblocklist category reputation
+< ipblocklist category scanner
+< ipblocklist could not download blocklist
+< ipblocklist download error
+< ipblocklist empty blocklist received
+< ipblocklist enable
+< ipblocklist hits
+< ipblocklist id
+< ipblocklist input
+< ipblocklist log
+< ipblocklist log list
+< ipblocklist logs
+< ipblocklist name
+< ipblocklist output
+< ipblocklist use ipblocklists
 < ip info for
 < ipsec
 < ipsec connection
@@ -2983,6 +3104,7 @@
 < age shour
 < age sminute
 < age ssecond
+< aliases default interface
 < asn lookup failed
 < atm device
 < attention
@@ -3513,6 +3635,29 @@
 < invalid ip or hostname
 < invalid logserver protocol
 < ip basic info
+< ipblocklist
+< ipblocklist blocklist settings
+< ipblocklist category
+< ipblocklist category application
+< ipblocklist category attacker
+< ipblocklist category c and c
+< ipblocklist category composite
+< ipblocklist category invalid
+< ipblocklist category reputation
+< ipblocklist category scanner
+< ipblocklist could not download blocklist
+< ipblocklist download error
+< ipblocklist empty blocklist received
+< ipblocklist enable
+< ipblocklist hits
+< ipblocklist id
+< ipblocklist input
+< ipblocklist log
+< ipblocklist log list
+< ipblocklist logs
+< ipblocklist name
+< ipblocklist output
+< ipblocklist use ipblocklists
 < ip info for
 < ipsec
 < ipsec connection
@@ -3920,6 +4065,7 @@
 < advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
+< aliases default interface
 < asn lookup failed
 < autonomous system
 < available
@@ -4041,6 +4187,29 @@
 < invalid input for subscription code
 < invalid ip or hostname
 < ip basic info
+< ipblocklist
+< ipblocklist blocklist settings
+< ipblocklist category
+< ipblocklist category application
+< ipblocklist category attacker
+< ipblocklist category c and c
+< ipblocklist category composite
+< ipblocklist category invalid
+< ipblocklist category reputation
+< ipblocklist category scanner
+< ipblocklist could not download blocklist
+< ipblocklist download error
+< ipblocklist empty blocklist received
+< ipblocklist enable
+< ipblocklist hits
+< ipblocklist id
+< ipblocklist input
+< ipblocklist log
+< ipblocklist log list
+< ipblocklist logs
+< ipblocklist name
+< ipblocklist output
+< ipblocklist use ipblocklists
 < ip info for
 < ipsec connection
 < ipsec dns server address is invalid

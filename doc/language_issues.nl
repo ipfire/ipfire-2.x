@@ -265,6 +265,7 @@ WARNING: translation string unused: enable wildcards
 WARNING: translation string unused: enabledtitle
 WARNING: translation string unused: encrypted
 WARNING: translation string unused: enter ack class
+WARNING: translation string unused: entropy graphs
 WARNING: translation string unused: err bk 1
 WARNING: translation string unused: err bk 10 password
 WARNING: translation string unused: err bk 2 key
@@ -911,6 +912,7 @@ WARNING: untranslated string: advproxy wpad label dst_noproxy_url = Excluded URL
 WARNING: untranslated string: advproxy wpad notice = Notice: For WPAD/PAC to work properly, furtcher changes need to be made. Please see the <a href="https://wiki.ipfire.org/configuration/network/proxy/extend/wpad" target="_blank">Wiki</a>.
 WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Protocol (WPAD) / Proxy Auto-Config (PAC)
 WARNING: untranslated string: advproxy wpad view pac = Open PAC File
+WARNING: untranslated string: aliases default interface = - Default Interface -
 WARNING: untranslated string: asn lookup failed = AS lookup failed
 WARNING: untranslated string: atm device = Device:
 WARNING: untranslated string: autonomous system = Autonomous System
@@ -1007,6 +1009,7 @@ WARNING: untranslated string: enable otp = Enable OTP
 WARNING: untranslated string: enable smt = Enable Simultaneous Multi-Threading (SMT)
 WARNING: untranslated string: eol architecture warning = You are running an architecture of IPFire which reached its end of life. You will not receive updates anymore. This is a security risk.
 WARNING: untranslated string: error = Error
+WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
 WARNING: untranslated string: fallout zombieload ridl = Fallout/ZombieLoad/RIDL
 WARNING: untranslated string: fifteen minutes = 15 Minutes
@@ -1125,6 +1128,22 @@ WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hos
 WARNING: untranslated string: invalid logserver protocol = Invalid syslogd server protocol
 WARNING: untranslated string: ip basic info = Basic IP information
 WARNING: untranslated string: ip info for = IP information for
+WARNING: untranslated string: ipblocklist = IP Address Blocklists
+WARNING: untranslated string: ipblocklist blocklist settings = Blocklist settings
+WARNING: untranslated string: ipblocklist category = Category
+WARNING: untranslated string: ipblocklist could not download blocklist = Could not download blocklist
+WARNING: untranslated string: ipblocklist download error = A download error occured.
+WARNING: untranslated string: ipblocklist empty blocklist received = An empty blocklist has been received.
+WARNING: untranslated string: ipblocklist enable = Enable
+WARNING: untranslated string: ipblocklist hits = Total number of blocklist hits for
+WARNING: untranslated string: ipblocklist id = Blocklist
+WARNING: untranslated string: ipblocklist input = Packets dropped (IN)
+WARNING: untranslated string: ipblocklist log = Log dropped packets
+WARNING: untranslated string: ipblocklist log list = Firewall log (blocklist)
+WARNING: untranslated string: ipblocklist logs = IP Address Blocklist Logs
+WARNING: untranslated string: ipblocklist name = Name
+WARNING: untranslated string: ipblocklist output = Packets dropped (OUT)
+WARNING: untranslated string: ipblocklist use ipblocklists = Enable IP Blocklists
 WARNING: untranslated string: ipsec connection = IPsec Connection
 WARNING: untranslated string: ipsec dns server address is invalid = Invalid DNS server IP address(es)
 WARNING: untranslated string: ipsec interface mode gre = GRE

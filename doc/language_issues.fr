@@ -301,6 +301,7 @@ WARNING: translation string unused: enable wildcards
 WARNING: translation string unused: enabledtitle
 WARNING: translation string unused: encrypted
 WARNING: translation string unused: enter ack class
+WARNING: translation string unused: entropy graphs
 WARNING: translation string unused: err bk 1
 WARNING: translation string unused: err bk 10 password
 WARNING: translation string unused: err bk 2 key
@@ -905,7 +906,9 @@ WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: aliases default interface = - Default Interface -
 WARNING: untranslated string: enable otp = Enable OTP
+WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guaranteed bandwidth = Guaranteed bandwidth
@@ -938,6 +941,22 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
+WARNING: untranslated string: ipblocklist = IP Address Blocklists
+WARNING: untranslated string: ipblocklist blocklist settings = Blocklist settings
+WARNING: untranslated string: ipblocklist category = Category
+WARNING: untranslated string: ipblocklist could not download blocklist = Could not download blocklist
+WARNING: untranslated string: ipblocklist download error = A download error occured.
+WARNING: untranslated string: ipblocklist empty blocklist received = An empty blocklist has been received.
+WARNING: untranslated string: ipblocklist enable = Enable
+WARNING: untranslated string: ipblocklist hits = Total number of blocklist hits for
+WARNING: untranslated string: ipblocklist id = Blocklist
+WARNING: untranslated string: ipblocklist input = Packets dropped (IN)
+WARNING: untranslated string: ipblocklist log = Log dropped packets
+WARNING: untranslated string: ipblocklist log list = Firewall log (blocklist)
+WARNING: untranslated string: ipblocklist logs = IP Address Blocklist Logs
+WARNING: untranslated string: ipblocklist name = Name
+WARNING: untranslated string: ipblocklist output = Packets dropped (OUT)
+WARNING: untranslated string: ipblocklist use ipblocklists = Enable IP Blocklists
 WARNING: untranslated string: mmio stale data = MMIO Stale Data
 WARNING: untranslated string: otp qrcode = OTP QRCode
 WARNING: untranslated string: pakfire ago = ago.

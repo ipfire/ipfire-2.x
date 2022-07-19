@@ -273,6 +273,7 @@ WARNING: translation string unused: enable wildcards
 WARNING: translation string unused: enabledtitle
 WARNING: translation string unused: encrypted
 WARNING: translation string unused: enter ack class
+WARNING: translation string unused: entropy graphs
 WARNING: translation string unused: err bk 1
 WARNING: translation string unused: err bk 10 password
 WARNING: translation string unused: err bk 2 key
@@ -417,6 +418,13 @@ WARNING: translation string unused: invalid upstream proxy username or password 
 WARNING: translation string unused: invalid users
 WARNING: translation string unused: invert
 WARNING: translation string unused: ip address in use
+WARNING: translation string unused: ipblocklist category application
+WARNING: translation string unused: ipblocklist category attacker
+WARNING: translation string unused: ipblocklist category c and c
+WARNING: translation string unused: ipblocklist category composite
+WARNING: translation string unused: ipblocklist category invalid
+WARNING: translation string unused: ipblocklist category reputation
+WARNING: translation string unused: ipblocklist category scanner
 WARNING: translation string unused: ipfire side
 WARNING: translation string unused: ipsec no connections
 WARNING: translation string unused: iptable rules
@@ -863,6 +871,7 @@ WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: aliases default interface = - Default Interface -
 WARNING: untranslated string: cake profile bridged-llcsnap 32 = Bridged LLC SNAP (32 bytes)
 WARNING: untranslated string: cake profile bridged-ptm 19 = Bridged PTM (19 bytes)
 WARNING: untranslated string: cake profile bridged-vcmux 24 = Bridged VC-MUX (24 bytes)
@@ -882,6 +891,7 @@ WARNING: untranslated string: desired = Desired
 WARNING: untranslated string: disable = Disable
 WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
 WARNING: untranslated string: enable = Enable
+WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
