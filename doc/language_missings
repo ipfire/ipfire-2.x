@@ -1026,42 +1026,12 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
-< aliases default interface
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
-< enable otp
 < g.dtm
 < g.lite
 < guaranteed bandwidth
-< ipblocklist
-< ipblocklist blocklist settings
-< ipblocklist category
-< ipblocklist category application
-< ipblocklist category attacker
-< ipblocklist category c and c
-< ipblocklist category composite
-< ipblocklist category invalid
-< ipblocklist category reputation
-< ipblocklist category scanner
-< ipblocklist could not download blocklist
-< ipblocklist download error
-< ipblocklist empty blocklist received
-< ipblocklist enable
-< ipblocklist hits
-< ipblocklist id
-< ipblocklist input
-< ipblocklist log
-< ipblocklist log list
-< ipblocklist logs
-< ipblocklist name
-< ipblocklist output
-< ipblocklist use ipblocklists
-< mmio stale data
-< otp qrcode
-< random number generator daemon
-< secret
-< show otp qrcode
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
