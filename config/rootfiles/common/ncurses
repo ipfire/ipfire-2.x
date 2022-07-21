@@ -3056,9 +3056,9 @@ usr/share/terminfo/t/teraterm2.3
 #usr/share/terminfo/t/ti931
 #usr/share/terminfo/t/ti_ansi
 #usr/share/terminfo/t/tkterm
-#usr/share/terminfo/t/tmux
-#usr/share/terminfo/t/tmux-256color
-#usr/share/terminfo/t/tmux-direct
+usr/share/terminfo/t/tmux
+usr/share/terminfo/t/tmux-256color
+usr/share/terminfo/t/tmux-direct
 #usr/share/terminfo/t/tn1200
 #usr/share/terminfo/t/tn300
 #usr/share/terminfo/t/trs16

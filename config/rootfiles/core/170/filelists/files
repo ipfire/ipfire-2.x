@@ -8,6 +8,9 @@ srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromblocklist.dat
 usr/lib/firewall/rules.pl
 usr/local/bin/setaliases
 usr/local/bin/update-ipblocklists
+usr/share/terminfo/t/tmux
+usr/share/terminfo/t/tmux-256color
+usr/share/terminfo/t/tmux-direct
 var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/include
 var/ipfire/ipblocklist-functions.pl
