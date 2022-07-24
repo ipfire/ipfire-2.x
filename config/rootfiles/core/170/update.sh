@@ -62,14 +62,21 @@ rm -rvf \
 	/usr/bin/x86_64 \
 	/usr/lib/libbfd-2.36.* \
 	/usr/lib/libbind9-9.16.2* \
+	/usr/lib/libbind9-9.16.30.so \
 	/usr/lib/libdnet* \
+	/usr/lib/libdns-9.16.30.so \
 	/usr/lib/libirs-9.16.2* \
+	/usr/lib/libirs-9.16.30.so \
 	/usr/lib/libisc-9.16.2* \
+	/usr/lib/libisc-9.16.30.so \
 	/usr/lib/libisccc-9.16.2* \
+	/usr/lib/libisccc-9.16.30.so \
 	/usr/lib/libisccfg-9.16.2* \
+	/usr/lib/libisccfg-9.16.30.so \
 	/usr/lib/libldap-* \
 	/usr/lib/libldap_r-* \
 	/usr/lib/libns-9.16.2* \
+	/usr/lib/libns-9.16.30.so \
 	/usr/lib/libopenjp2.so.2.3.* \
 	/usr/lib/libpoppler.so.11* \
 	/usr/lib/perl5/site_perl/5.32.1/Bundle/LWP.pm \
