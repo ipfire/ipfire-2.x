@@ -1,3 +1,4 @@
+etc/cups
 etc/dbus-1/system.d/cups.conf
 etc/pam.d/cups
 etc/rc.d/init.d/cups

@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/cups-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
-PAK_VER    = 27
+PAK_VER    = 28
 
 DEPS       = avahi cups-filters dbus ghostscript
 
@@ -103,6 +103,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# install initscript
 	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 	cp -fv $(DIR_SRC)/config/cups/cupsd.conf /var/ipfire/cups/
+
+	# Install convenience link
+	ln -svf /var/ipfire/cups /etc/cups
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
