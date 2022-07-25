@@ -1465,6 +1465,7 @@ buildipfire() {
   lfsmake2 poppler-data
   lfsmake2 cups-filters
   lfsmake2 epson-inkjet-printer-escpr
+  lfsmake2 cups-pdf
   lfsmake2 foomatic
   lfsmake2 hplip
   lfsmake2 cifs-utils
