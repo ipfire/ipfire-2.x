@@ -64,7 +64,7 @@ my %link =(
 	$Lang::tr{'dhcp server'} => "<a href=\'dhcp.cgi\'>$Lang::tr{'dhcp server'}</a>",
 	$Lang::tr{'web server'} => $Lang::tr{'web server'},
 	$Lang::tr{'cron server'} => $Lang::tr{'cron server'},
-	$Lang::tr{'dns proxy server'} => $Lang::tr{'dns proxy server'},
+	$Lang::tr{'dns proxy server'} => "<a href=\'dns.cgi\'>$Lang::tr{'dns proxy server'}</a>",
 	$Lang::tr{'logging server'} => $Lang::tr{'logging server'},
 	$Lang::tr{'kernel logging server'} => $Lang::tr{'kernel logging server'},
 	$Lang::tr{'ntp server'} => "<a href=\'time.cgi\'>$Lang::tr{'ntp server'}</a>",
