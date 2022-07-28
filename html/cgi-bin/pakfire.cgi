@@ -43,6 +43,9 @@ my $PM_DEFAULT = 'default'; # Default user interface with command processing
 my $PM_LOGREAD = 'logread'; # Log messages viewer (ignores all commands)
 my $pagemode = $PM_DEFAULT;
 
+# Get Pakfire status
+my %pakfire_status = &Pakfire::status();
+
 # Load general settings
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 &General::readhash("${General::swroot}/pakfire/settings", \%pakfiresettings);
@@ -84,7 +87,7 @@ if($cgiparams{'ACTION'} eq 'json-getstatus') {
 	my %status = (
 		'running' => &_is_pakfire_busy() || "0",
 		'running_since' => &General::age("$Pakfire::lockfile") || "0s",
-		'reboot' => (-e "/var/run/need_reboot") || "0",
+		'reboot' => ("$pakfire_status{'RebootRequired'}" eq "yes") || "0",
 		'failure' => $failure || "0"
 	);
 
@@ -366,32 +369,26 @@ $selected{"TREE"}{"testing"} = "";
 $selected{"TREE"}{"unstable"} = "";
 $selected{"TREE"}{$pakfiresettings{"TREE"}} = "selected";
 
-my $core_release = `cat /opt/pakfire/db/core/mine 2>/dev/null`;
-chomp($core_release);
-my $core_update_age = &General::age("/opt/pakfire/db/core/mine");
-my $corelist_update_age = &General::age("/opt/pakfire/db/lists/core-list.db");
-my $server_update_age = &General::age("/opt/pakfire/db/lists/server-list.db");
-my $packages_update_age = &General::age("/opt/pakfire/db/lists/packages_list.db");
-
 &Header::openbox("100%", "center", "Pakfire");
 
 print <<END;
 	<table id="pfmain">
 END
-if ( -e "/var/run/need_reboot") {
+if ("$pakfire_status{'RebootRequired'}" eq "yes") {
 	print "\t\t<tr><td colspan='2'><a href='/cgi-bin/shutdown.cgi'>$Lang::tr{'needreboot'}!</a></td></tr>\n";
 }
+
 print <<END;
 		<tr><td class="heading">$Lang::tr{'pakfire system state'}:</td>
 			<td class="heading">$Lang::tr{'available updates'}:</td></tr>
 
-		<tr><td><strong>$Lang::tr{'pakfire core update level'}: $core_release</strong>
+		<tr><td><strong>$Lang::tr{'pakfire core update level'}: $pakfire_status{'Release'}</strong>
 				<hr>
 				<div class="pflist">
-					$Lang::tr{'pakfire last update'} $core_update_age $Lang::tr{'pakfire ago'}<br>
-					$Lang::tr{'pakfire last serverlist update'} $server_update_age $Lang::tr{'pakfire ago'}<br>
-					$Lang::tr{'pakfire last core list update'} $corelist_update_age $Lang::tr{'pakfire ago'}<br>
-					$Lang::tr{'pakfire last package update'} $packages_update_age $Lang::tr{'pakfire ago'}
+					$Lang::tr{'pakfire last update'} $pakfire_status{'LastUpdate'} $Lang::tr{'pakfire ago'}<br>
+					$Lang::tr{'pakfire last serverlist update'} $pakfire_status{'LastServerListUpdate'} $Lang::tr{'pakfire ago'}<br>
+					$Lang::tr{'pakfire last core list update'} $pakfire_status{'LastCoreListUpdate'} $Lang::tr{'pakfire ago'}<br>
+					$Lang::tr{'pakfire last package update'} $pakfire_status{'LastPakListUpdate'} $Lang::tr{'pakfire ago'}
 				</div>
 				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
 					<input type='hidden' name='ACTION' value='update' />
@@ -403,14 +400,15 @@ print <<END;
 					<select name="UPDPAKS" class="pflist" size="5" disabled>
 END
 
-	my %coredb = &Pakfire::coredbinfo();
-	if (defined $coredb{'AvailableRelease'}) {
-		print "<option value=\"core\">$Lang::tr{'core update'} -- $coredb{'CoreVersion'} -- $Lang::tr{'release'}: $coredb{'Release'} -> $coredb{'AvailableRelease'}</option>\n";
+	if ("$pakfire_status{'CoreUpdateAvailable'}" eq "yes") {
+		print "<option value=\"core\">$Lang::tr{'core update'} -- $pakfire_status{'CoreVersion'} -- $Lang::tr{'release'}: $pakfire_status{'Release'} -> $pakfire_status{'AvailableRelease'}</option>\n";
 	}
 
-	my %upgradelist = &Pakfire::dblist("upgrade");
-	foreach my $pak (sort keys %upgradelist) {
-		print "<option value=\"$pak\">$Lang::tr{'pak update'}: $pak -- $Lang::tr{'version'}: $upgradelist{$pak}{'ProgVersion'} -> $upgradelist{$pak}{'AvailableProgVersion'} -- $Lang::tr{'release'}: $upgradelist{$pak}{'Release'} -> $upgradelist{$pak}{'AvailableRelease'}</option>\n";
+	if ($pakfire_status{'PakUpdatesAvailable'} > 0) {
+		my %upgradelist = &Pakfire::dblist("upgrade");
+		foreach my $pak (sort keys %upgradelist) {
+			print "<option value=\"$pak\">$Lang::tr{'pak update'}: $pak -- $Lang::tr{'version'}: $upgradelist{$pak}{'ProgVersion'} -> $upgradelist{$pak}{'AvailableProgVersion'} -- $Lang::tr{'release'}: $upgradelist{$pak}{'Release'} -> $upgradelist{$pak}{'AvailableRelease'}</option>\n";
+		}
 	}
 
 	print <<END;
