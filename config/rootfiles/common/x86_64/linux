@@ -6785,6 +6785,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_INT128
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_KASAN_GENERIC
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_NO_PROFILE_FN_ATTR
+#lib/modules/KVER-ipfire/build/include/config/CC_HAS_RETURN_THUNK
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_SANCOV_TRACE_PC
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_SANE_STACKPROTECTOR
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_SLS
@@ -6877,6 +6878,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CPU_FREQ_GOV_SCHEDUTIL
 #lib/modules/KVER-ipfire/build/include/config/CPU_FREQ_GOV_USERSPACE
 #lib/modules/KVER-ipfire/build/include/config/CPU_FREQ_STAT
+#lib/modules/KVER-ipfire/build/include/config/CPU_IBPB_ENTRY
+#lib/modules/KVER-ipfire/build/include/config/CPU_IBRS_ENTRY
 #lib/modules/KVER-ipfire/build/include/config/CPU_IDLE
 #lib/modules/KVER-ipfire/build/include/config/CPU_IDLE_GOV_HALTPOLL
 #lib/modules/KVER-ipfire/build/include/config/CPU_IDLE_GOV_LADDER
@@ -6889,6 +6892,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CPU_SUP_HYGON
 #lib/modules/KVER-ipfire/build/include/config/CPU_SUP_INTEL
 #lib/modules/KVER-ipfire/build/include/config/CPU_SUP_ZHAOXIN
+#lib/modules/KVER-ipfire/build/include/config/CPU_UNRET_ENTRY
 #lib/modules/KVER-ipfire/build/include/config/CRASH_DUMP
 #lib/modules/KVER-ipfire/build/include/config/CRC16
 #lib/modules/KVER-ipfire/build/include/config/CRC32
@@ -9088,7 +9092,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/NFSD_V4_SECURITY_LABEL
 #lib/modules/KVER-ipfire/build/include/config/NFS_ACL_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/NFS_COMMON
-#lib/modules/KVER-ipfire/build/include/config/NFS_DEBUG
 #lib/modules/KVER-ipfire/build/include/config/NFS_DISABLE_UDP_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/NFS_FS
 #lib/modules/KVER-ipfire/build/include/config/NFS_FSCACHE
@@ -9586,6 +9589,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/RELOCATABLE
 #lib/modules/KVER-ipfire/build/include/config/RENESAS_PHY
 #lib/modules/KVER-ipfire/build/include/config/RESET_CONTROLLER
+#lib/modules/KVER-ipfire/build/include/config/RETHUNK
 #lib/modules/KVER-ipfire/build/include/config/RETPOLINE
 #lib/modules/KVER-ipfire/build/include/config/RETU_WATCHDOG
 #lib/modules/KVER-ipfire/build/include/config/RFKILL
@@ -10333,6 +10337,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SPARSEMEM_VMEMMAP
 #lib/modules/KVER-ipfire/build/include/config/SPARSEMEM_VMEMMAP_ENABLE
 #lib/modules/KVER-ipfire/build/include/config/SPARSE_IRQ
+#lib/modules/KVER-ipfire/build/include/config/SPECULATION_MITIGATIONS
 #lib/modules/KVER-ipfire/build/include/config/SPLIT_PTLOCK_CPUS
 #lib/modules/KVER-ipfire/build/include/config/SPMI
 #lib/modules/KVER-ipfire/build/include/config/SRCU
@@ -10374,7 +10379,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SUNGEM_PHY
 #lib/modules/KVER-ipfire/build/include/config/SUNRPC
 #lib/modules/KVER-ipfire/build/include/config/SUNRPC_BACKCHANNEL
-#lib/modules/KVER-ipfire/build/include/config/SUNRPC_DEBUG
 #lib/modules/KVER-ipfire/build/include/config/SUNRPC_GSS
 #lib/modules/KVER-ipfire/build/include/config/SURFACE_HOTPLUG
 #lib/modules/KVER-ipfire/build/include/config/SURFACE_PLATFORMS
@@ -13460,6 +13464,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/linux/mmu_context.h
 #lib/modules/KVER-ipfire/build/include/linux/mmu_notifier.h
 #lib/modules/KVER-ipfire/build/include/linux/mmzone.h
+#lib/modules/KVER-ipfire/build/include/linux/mnt_idmapping.h
 #lib/modules/KVER-ipfire/build/include/linux/mnt_namespace.h
 #lib/modules/KVER-ipfire/build/include/linux/mod_devicetable.h
 #lib/modules/KVER-ipfire/build/include/linux/mod_devicetable.h.orig
