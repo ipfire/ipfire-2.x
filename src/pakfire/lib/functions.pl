@@ -115,6 +115,7 @@ sub usage {
   &Pakfire::message("               <update> - Contacts the servers for new lists of paks.");
   &Pakfire::message("               <upgrade> - Installs the latest version of all paks.");
   &Pakfire::message("               <list> [installed/notinstalled/upgrade] - Outputs a list with all, installed, available or upgradeable paks.");
+  &Pakfire::message("               <info> <pak> [<pak> ...] - Output pak metadata.");
   &Pakfire::message("               <status> - Outputs a summary about available core upgrades, updates and a required reboot");
   &Pakfire::message("");
   &Pakfire::message("       Global options:");
@@ -701,6 +702,60 @@ sub parsemetafile {
 			chomp($templine[1]);
 			$metadata{"$templine[0]"} = $templine[1];
 		}
+	}
+
+	return %metadata;
+}
+
+sub getmetadata {
+	### This subroutine returns a hash of available info for a package
+	#   Pass package name and type of info as argument: Pakfire::getmetadata(package, type_of_info) 
+	#	Type_of_info can be "latest" or "installed"
+	#   Usage is always with two argument.
+	my ($pak, $type) = @_;
+
+	my %metadata = (
+		Name => $pak, 
+		Installed => "no",
+		Available => "no");
+	my %installed_metadata = ();
+
+	my @templine;
+	my @file;
+
+	### Get available version information
+	if ("$type" eq "latest") {
+		### Check if package is in packages_list and get latest available version
+		my %db = Pakfire::dblist("all");
+		
+		if (defined $db{$pak}) {
+			### Get and parse latest available metadata
+			if (getmetafile("$pak")) {
+				%metadata = parsemetafile("$Conf::dbdir/meta/meta-$pak");
+
+				$metadata{'Available'} = "yes";
+				### Rename version info fields
+				$metadata{'AvailableProgVersion'} = delete $metadata{'ProgVersion'};
+				$metadata{'AvailableRelease'} = delete $metadata{'Release'};
+			}
+		}
+	}
+	
+	### Parse installed pak metadata
+	if (&isinstalled($pak) == 0) {
+	    %installed_metadata = parsemetafile("$Conf::dbdir/installed/meta-$pak");
+
+		if ("$type" eq "latest" && exists($metadata{'AvailableProgVersion'})) {
+			### Add installed version info to latest metadata
+			$metadata{'ProgVersion'} = $installed_metadata{'ProgVersion'};
+			$metadata{'Release'} = $installed_metadata{'Release'};
+		} else {
+			### Use metadata of installed pak
+			%metadata = %installed_metadata;
+		}
+		$metadata{'Installed'} = 'yes';
+	} else {
+		$metadata{'Installed'} = 'no';
 	}
 
 	return %metadata;

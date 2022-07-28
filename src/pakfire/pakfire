@@ -393,6 +393,64 @@
 				exit 1;
 			}
 		}
+	} elsif ("$ARGV[0]" eq "info") {
+		shift;
+
+		my @paks;
+		my $pak;
+		foreach $pak (@ARGV) {
+			unless ("$pak" =~ "^-") {
+				push(@paks,$pak);
+			}
+		}
+
+		unless ("@paks") {
+			Pakfire::message("PAKFIRE ERROR: missing package name");
+			Pakfire::usage;
+			exit 1;
+		}
+
+		foreach $pak (@paks) {
+			my %metadata = Pakfire::getmetadata($pak, "latest");
+
+			### Check if pakfile was actually found
+			if ($metadata{'Installed'} eq "no" && $metadata{'Available'} eq "no") {
+				Pakfire::message("PAKFIRE WARN: Pak '$pak' not found.");
+				last;
+			}
+
+			unless (defined $metadata{'Available'}) {
+				Pakfire::message("PAKFIRE WARN: Unable to retrieve latest metadata for $pak. Information may be outdated.")
+			}
+
+			### Printout metadata in a user friendly format
+			print "Name: $metadata{'Name'}\n";
+			print "Summary: $metadata{'Summary'}\n";
+			if ($metadata{'Available'} eq "yes") {
+				print "Version: $metadata{'AvailableProgVersion'}-$metadata{'AvailableRelease'}\n";
+			} else {
+				print "Version: $metadata{'ProgVersion'}-$metadata{'Release'}\n";
+			}
+			print "Size: " . Pakfire::beautifysize("$metadata{'Size'}") . "\n";
+			print "Dependencies: $metadata{'Dependencies'}\n";
+			print "Pakfile: $metadata{'File'}\n";
+			print "Service InitScripts: $metadata{'Services'}\n";
+			print "Installed: $metadata{'Installed'}\n";
+			### Generate a pak status message
+			if (! defined $metadata{'Available'}) {
+				print "Status: unknown (an error occured retrieving latest pak metadata)";
+			} elsif ($metadata{'Available'} eq "no") {
+				print "Status: obsolete (version $metadata{'ProgVersion'}-$metadata{'Release'} is installed)\n";
+			} elsif ($metadata{'Installed'} eq "yes" && "$metadata{'Release'}" < "$metadata{'AvailableRelease'}") {
+				print "Status: outdated (version $metadata{'ProgVersion'}-$metadata{'Release'} is installed)\n";
+			} elsif ($metadata{'Installed'} eq "yes") {
+				print "Status: up-to-date\n";
+			} else {
+				print "Status: not installed\n";
+			}
+			print "\n";
+		}
+
 	} elsif ("$ARGV[0]" eq "resolvedeps") {
 		foreach (@ARGV) {
 			next if ("$_" eq "resolvedeps");
