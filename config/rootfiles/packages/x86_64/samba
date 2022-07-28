@@ -186,6 +186,7 @@ usr/lib/libsmbclient.so.0
 usr/lib/libsmbclient.so.0.7.0
 usr/lib/libsmbconf.so
 usr/lib/libsmbconf.so.0
+usr/lib/libsmbconf.so.0.0.1
 usr/lib/libsmbldap.so
 usr/lib/libsmbldap.so.2
 usr/lib/libsmbldap.so.2.1.0
@@ -495,6 +496,7 @@ usr/lib/python3.10/site-packages/samba/tdb_util.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/kdc_base_test.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/kdc_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/kdc_tgs_tests.py
+#usr/lib/python3.10/site-packages/samba/tests/krb5/kpasswd_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/ms_kile_client_principal_lookup_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/pac_align_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/raw_testcase.py
