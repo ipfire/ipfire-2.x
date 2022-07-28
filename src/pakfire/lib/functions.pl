@@ -114,7 +114,7 @@ sub usage {
   &Pakfire::message("Usage: pakfire <install|remove> [options] <pak(s)>");
   &Pakfire::message("               <update> - Contacts the servers for new lists of paks.");
   &Pakfire::message("               <upgrade> - Installs the latest version of all paks.");
-  &Pakfire::message("               <list> - Outputs a short list with all available paks.");
+  &Pakfire::message("               <list> [installed/notinstalled/upgrade] - Outputs a list with all, installed, available or upgradeable paks.");
   &Pakfire::message("               <status> - Outputs a summary about available core upgrades, updates and a required reboot");
   &Pakfire::message("");
   &Pakfire::message("       Global options:");

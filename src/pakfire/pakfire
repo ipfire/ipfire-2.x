@@ -329,14 +329,18 @@
 
 	} elsif ("$ARGV[0]" eq "list") {
 		my $count;
+		my $coreupdate = 0;
 		my $use_color = "";
 		my $reset_color = "";
 		my $filter = "all";
 
-		if ("$ARGV[1]" =~ /installed|notinstalled/) {
+		shift if ("$ARGV[1]" =~ "^-"); 
+
+		if ("$ARGV[1]" =~ /installed|notinstalled|upgrade/) {
 			$filter = "$ARGV[1]";
-		} else {
-			&Pakfire::message("PAKFIRE WARN: Not a known option $ARGV[1]") if ($ARGV[1]); 
+		} elsif ($ARGV[1]) {
+			&Pakfire::message("PAKFIRE ERROR: Not a known option $ARGV[1]"); 
+			exit 1;
 		}
 
 		my $pak;
@@ -345,6 +349,17 @@
 		if ("$Pakfire::enable_colors" eq "1") {
 			$reset_color = "$Pakfire::color{'normal'}";
 			$use_color = "$Pakfire::color{'lightgreen'}";
+		}
+
+  		# Check for available core upgrade first if list of upgrades is requested
+		if ("$filter" eq "upgrade") {
+			my %coredb = &Pakfire::coredbinfo();
+
+			if (defined $coredb{'AvailableRelease'}) {
+				print "${use_color}Core-Update $coredb{'CoreVersion'}\n";
+				print "Release: $coredb{'Release'} -> $coredb{'AvailableRelease'}${reset_color}\n\n";
+				$coreupdate = 1;
+			}
 		}
 
 		foreach $pak (sort keys %paklist) {
@@ -373,7 +388,10 @@
 		if ($count > 0) {
 			print "$count packages total.\n";
 		} else {
-			&Pakfire::message("PAKFIRE WARN: No packages where found using filter $filter.");
+			if (! $coreupdate) {
+				&Pakfire::message("PAKFIRE WARN: No packages where found using filter $filter.");
+				exit 1;
+			}
 		}
 	} elsif ("$ARGV[0]" eq "resolvedeps") {
 		foreach (@ARGV) {
@@ -399,9 +417,9 @@
 		&Pakfire::usage;
 	}
 
-	&Pakfire::logger("PAKFIRE INFO: Pakfire has finished. Closing.");
-
 	END {
+		&Pakfire::logger("PAKFIRE INFO: Pakfire has finished. Closing.");
+
 		# Check if pakfire has been locked in this session.
 		if ($locked) {
 			# Remove lockfile.
