@@ -44,7 +44,7 @@ my @VALID_KEY_FINGERPRINTS = (
 );
 
 # A small color-hash :D
-my %color;
+our %color;
 	$color{'normal'}      = "\033[0m";
 	$color{'black'}       = "\033[0;30m";
 	$color{'darkgrey'}    = "\033[1;30m";
@@ -434,108 +434,113 @@ sub dbgetlist {
 	}
 }
 
+sub coredbinfo {
+	### This subroutine returns core db version information in a hash.
+	# Usage is without arguments
+
+	eval(`grep "core_" $Conf::dbdir/lists/core-list.db`);
+
+	my %coredb = (
+		CoreVersion => $Conf::version,
+		Release => $Conf::core_mine,
+	);
+
+	$coredb{'AvailableRelease'} = $core_release if ("$Conf::core_mine" < "$core_release");
+
+	return %coredb;
+}
+
 sub dblist {
-	### This subroutine lists the packages.
-	#   You may also pass a filter: &Pakfire::dblist(filter)
-	#   Usage is always with two arguments.
-	#   filter may be: all, notinstalled, installed
+	### This subroutine returns the packages from the packages_list db in a hash.
+	#   It uses the currently cached version of packages_list. To ensure latest 
+	#   data, run Pakfire::dbgetlist first.
+	#   You may also pass a filter: &Pakfire::dblist(filter) 
+	#   Usage is always with one argument.
+	#   filter may be: 
+	#		- "all": list all known paks,
+	#		- "notinstalled": list only not installed paks,
+	#		- "installed": list only installed paks
+	#		- "upgrade": list only upgradable paks
+	#
+	#   Returned hash format:
+    #   ( "<pak name>" => (
+	#       "Installed" => "Yes" or "No" wether the pak is installed,
+	#       "ProgVersion" => Installed program version when "Installed" => "Yes" or
+    #                        Available version when "Installed" => No,
+	#       "Release" => Installed pak release number when "Installed" => "Yes" or
+    #                    Available pak release number when "Installed" => No,
+	#       "AvailableProgVersion" => Available program version. 
+	#                                 Only defined if an upgrade to a higher version is available,
+	#       "AvailableRelease" => Available pak release version. 
+	#                             Only defined if an upgrade to a higher version is available
+	#	  ),
+	#	  ...	
+	#   )
+	
 	my $filter = shift;
-	my $forweb = shift;
-	my @updatepaks;
+	my %paklist = ();
 	my $file;
 	my $line;
-	my $prog;
 	my %metadata;
 	my @templine;
-
-	### Make sure that the list is not outdated.
-	#dbgetlist("noforce");
-
+	
 	open(FILE, "<$Conf::dbdir/lists/packages_list.db");
 	my @db = <FILE>;
 	close(FILE);
 
-	if ("$filter" eq "upgrade") {
-		if ("$forweb" ne "forweb" && "$forweb" ne "notice" ) {getcoredb("noforce");}
-		eval(`grep "core_" $Conf::dbdir/lists/core-list.db`);
-		if ("$core_release" > "$Conf::core_mine") {
-			if ("$forweb" eq "forweb") {
-				print "<option value=\"core\">Core-Update -- $Conf::version -- Release: $Conf::core_mine -> $core_release</option>\n";
-			}
-			elsif ("$forweb" eq "notice") {
-				print "<br /><br /><br /><a href='pakfire.cgi'>$Lang::tr{'core notice 1'} $Conf::core_mine $Lang::tr{'core notice 2'} $core_release $Lang::tr{'core notice 3'}</a>";
-			} else {
-				my $command = "Core-Update $Conf::version\nRelease: $Conf::core_mine -> $core_release\n";
-				if ("$Pakfire::enable_colors" eq "1") {
-					print "$color{'lila'}$command$color{'normal'}\n";
-				} else {
-					print "$command\n";
-				}
-			}
-		}
-
+	if ("$filter" ne "notinstalled") {
 		opendir(DIR,"$Conf::dbdir/installed");
 		my @files = readdir(DIR);
 		closedir(DIR);
+
 		foreach $file (@files) {
 			next if ( $file eq "." );
 			next if ( $file eq ".." );
 			next if ( $file =~ /^old/ );
 			%metadata = parsemetafile("$Conf::dbdir/installed/$file");
 
-			foreach $prog (@db) {
-				@templine = split(/\;/,$prog);
-				if (("$metadata{'Name'}" eq "$templine[0]") && ("$metadata{'Release'}" < "$templine[2]" && "$forweb" ne "notice")) {
-					push(@updatepaks,$metadata{'Name'});
-					if ("$forweb" eq "forweb") {
-						print "<option value=\"$metadata{'Name'}\">Update: $metadata{'Name'} -- Version: $metadata{'ProgVersion'} -> $templine[1] -- Release: $metadata{'Release'} -> $templine[2]</option>\n";
-					} else {
-						my $command = "Update: $metadata{'Name'}\nVersion: $metadata{'ProgVersion'} -> $templine[1]\nRelease: $metadata{'Release'} -> $templine[2]\n";
-						if ("$Pakfire::enable_colors" eq "1") {
-							print "$color{'lila'}$command$color{'normal'}\n";
-						} else {
-							print "$command\n";
-						}
-					}
+			foreach $line (@db) {
+				next unless ($line =~ /.*;.*;.*;/ );
+				@templine = split(/\;/,$line);
+				if (("$metadata{'Name'}" eq "$templine[0]") && ("$metadata{'Release'}" < "$templine[2]")) {
+					# Add all upgradable paks to list
+					$paklist{"$metadata{'Name'}"} = {
+						ProgVersion => $metadata{'ProgVersion'},
+						Release => $metadata{'Release'},
+						AvailableProgVersion => $templine[1],
+						AvailableRelease => $templine[2],
+						Installed => "yes"
+					};
+					last;
+				} elsif (("$metadata{'Name'}" eq "$templine[0]") && ("$filter" ne "upgrade")) {
+					# Add installed paks without an upgrade available to list
+					$paklist{"$metadata{'Name'}"} = {
+						ProgVersion => $metadata{'ProgVersion'},
+						Release => $metadata{'Release'},
+						Installed => "yes"
+					};
+					last;
 				}
 			}
 		}
-		return @updatepaks;
-	} else {
-		my $line;
-		my $use_color;
-		my @templine;
-		my $count;
-		foreach $line (sort @db) {
-			next unless ($line =~ /.*;.*;.*;/ );
-			$use_color = "";
-			@templine = split(/\;/,$line);
-			if ("$filter" eq "notinstalled") {
-				next if ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
-			} elsif ("$filter" eq "installed") {
-				next unless ( -e "$Conf::dbdir/installed/meta-$templine[0]" );
-			}
-			$count++;
-			if ("$forweb" eq "forweb")
-			 {
-				if ("$filter" eq "notinstalled") {
-					print "<option value=\"$templine[0]\">$templine[0]-$templine[1]-$templine[2]</option>\n";
-				} else {
-					print "<option value=\"$templine[0]\">$templine[0]</option>\n";
-				}
-			} else {
-				if ("$Pakfire::enable_colors" eq "1") {
-					if (&isinstalled("$templine[0]")) {
-						$use_color = "$color{'red'}"
-					} else {
-						$use_color = "$color{'green'}"
-					}
-				}
-				print "${use_color}Name: $templine[0]\nProgVersion: $templine[1]\nRelease: $templine[2]$color{'normal'}\n\n";
-			}
-		}
-		print "$count packages total.\n" unless ("$forweb" eq "forweb");
 	}
+
+	# Add all not installed paks to list
+	if (("$filter" ne "upgrade") && ("$filter" ne "installed")) {
+		foreach $line (@db) {
+			next unless ($line =~ /.*;.*;.*;/ );
+			@templine = split(/\;/,$line);
+			next if ((defined $paklist{"$templine[0]"}) || (&isinstalled($templine[0]) == 0));
+
+			$paklist{"$templine[0]"} = {
+				ProgVersion => "$templine[1]",
+				Release => "$templine[2]",
+				Installed => "no"
+			};
+		}
+	}
+
+	return %paklist;
 }
 
 sub resolvedeps_one {
@@ -910,10 +915,10 @@ sub progress_bar {
 
 sub updates_available {
 	# Get packets with updates available
-	my @upgradepaks = &Pakfire::dblist("upgrade", "noweb");
+	my %upgradepaks = &Pakfire::dblist("upgrade");
 
-	# Get the length of the returned array
-	my $updatecount = scalar @upgradepaks;
+	# Get the length of the returned hash
+	my $updatecount = keys %upgradepaks;
 
 	return "$updatecount";
 }

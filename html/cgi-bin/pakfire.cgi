@@ -403,7 +403,16 @@ print <<END;
 					<select name="UPDPAKS" class="pflist" size="5" disabled>
 END
 
-	&Pakfire::dblist("upgrade", "forweb");
+	my %coredb = &Pakfire::coredbinfo();
+	if (defined $coredb{'AvailableRelease'}) {
+		print "<option value=\"core\">$Lang::tr{'core update'} -- $coredb{'CoreVersion'} -- $Lang::tr{'release'}: $coredb{'Release'} -> $coredb{'AvailableRelease'}</option>\n";
+	}
+
+	my %upgradelist = &Pakfire::dblist("upgrade");
+	foreach my $pak (sort keys %upgradelist) {
+		print "<option value=\"$pak\">$Lang::tr{'pak update'}: $pak -- $Lang::tr{'version'}: $upgradelist{$pak}{'ProgVersion'} -> $upgradelist{$pak}{'AvailableProgVersion'} -- $Lang::tr{'release'}: $upgradelist{$pak}{'Release'} -> $upgradelist{$pak}{'AvailableRelease'}</option>\n";
+	}
+
 	print <<END;
 					</select>
 					<input type='hidden' name='ACTION' value='upgrade' />
@@ -419,7 +428,11 @@ END
 					<select name="INSPAKS" class="pflist" size="10" multiple>
 END
 
-	&Pakfire::dblist("notinstalled", "forweb");
+	my %notinstalledlist = &Pakfire::dblist("notinstalled");
+	foreach my $pak (sort keys %notinstalledlist) {
+		print "<option value=\"$pak\">$pak-$notinstalledlist{$pak}{'ProgVersion'}-$notinstalledlist{$pak}{'Release'}</option>\n";
+	}
+
 	print <<END;
 					</select>
 					<input type='hidden' name='ACTION' value='install' />
@@ -431,7 +444,11 @@ END
 					<select name="DELPAKS" class="pflist" size="10" multiple>
 END
 
-	&Pakfire::dblist("installed", "forweb");
+	my %installedlist = &Pakfire::dblist("installed");
+	foreach my $pak (sort keys %installedlist) {
+		print "<option value=\"$pak\">$pak-$installedlist{$pak}{'ProgVersion'}-$installedlist{$pak}{'Release'}</option>\n";
+	}
+
 	print <<END;
 					</select>
 					<input type='hidden' name='ACTION' value='remove' />

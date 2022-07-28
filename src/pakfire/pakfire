@@ -270,14 +270,25 @@
 		&Pakfire::getcoredb("$force");
 
 	} elsif ("$ARGV[0]" eq "upgrade") {
+		my $use_color = "";
+		my $reset_color = "";
+
+		if ("$Pakfire::enable_colors" eq "1") {
+			$reset_color = "$Pakfire::color{'normal'}";
+			$use_color = "$Pakfire::color{'lightpurple'}";
+		}
+
 		&Pakfire::upgradecore();
-		my @upgradepaks = &Pakfire::dblist("upgrade", "noweb");
+		
 		my @deps = ();
-
-		if (@upgradepaks) {
+		if (my %upgradepaks = &Pakfire::dblist("upgrade")) {
 			# Resolve the dependencies of the to be upgraded packages
-			@deps = &Pakfire::resolvedeps_recursive(@upgradepaks);
+			@deps = &Pakfire::resolvedeps_recursive(keys %upgradepaks);
 
+			foreach $pak (sort keys %upgradepaks) {
+				print "${use_color}Update: $pak\nVersion: $upgradepaks{$pak}{'ProgVersion'} -> $upgradepaks{$pak}{'AvailableProgVersion'}\n";
+				print "Release: $upgradepaks{$pak}{'Release'} -> $upgradepaks{$pak}{'AvailableRelease'}${reset_color}\n";
+			}
 			&Pakfire::message("");
 			&Pakfire::message("PAKFIRE UPGR: We are going to install all packages listed above.");
 			if ($interactive) {
@@ -290,36 +301,78 @@
 				  exit 1;
 				}
 			}
-		}
+		
+			# Download packages
+			foreach $pak (sort keys %upgradepaks) {
+				&Pakfire::getpak("$pak", "");
+			}
 
-		# Download packages
-		foreach $pak (@upgradepaks) {
-			&Pakfire::getpak("$pak", "");
-		}
+			# Download dependencies
+			foreach $pak (@deps) {
+				&Pakfire::getpak("$pak", "");
+			}
 
-		# Download dependencies
-		foreach $pak (@deps) {
-			&Pakfire::getpak("$pak", "");
-		}
+			# Install dependencies first
+			foreach $pak (@deps) {
+				&Pakfire::setuppak("$pak");
+			}
 
-		# Install dependencies first
-		foreach $pak (@deps) {
-			&Pakfire::setuppak("$pak");
-		}
-
-		# Install all upgrades
-		foreach $pak (@upgradepaks) {
-			&Pakfire::upgradepak("$pak");
+			# Install all upgrades
+			foreach $pak (sort keys %upgradepaks) {
+				&Pakfire::upgradepak("$pak");
+			}
+		} else {
+			&Pakfire::message("PAKFIRE WARN: No new package upgrades available.");
 		}
 
 	} elsif ("$ARGV[0]" eq "list") {
+		my $count;
+		my $use_color = "";
+		my $reset_color = "";
+		my $filter = "all";
+
 		if ("$ARGV[1]" =~ /installed|notinstalled/) {
-			&Pakfire::dblist("$ARGV[1]", "noweb");
+			$filter = "$ARGV[1]";
 		} else {
-			&Pakfire::message("PAKFIRE WARN: Not a known option $ARGV[1]") if ($ARGV[1]);
-			&Pakfire::dblist("all", "noweb");
+			&Pakfire::message("PAKFIRE WARN: Not a known option $ARGV[1]") if ($ARGV[1]); 
 		}
 
+		my $pak;
+		my %paklist = &Pakfire::dblist($filter);
+
+		if ("$Pakfire::enable_colors" eq "1") {
+			$reset_color = "$Pakfire::color{'normal'}";
+			$use_color = "$Pakfire::color{'lightgreen'}";
+		}
+
+		foreach $pak (sort keys %paklist) {
+			if ("$Pakfire::enable_colors" eq "1") {
+				if ("$paklist{$pak}{'Installed'}" eq "yes") {
+					if (defined $paklist{$pak}{'AvailableProgVersion'}) {
+						$use_color = "$Pakfire::color{'lightgreen'}";
+					} else {
+						$use_color = "$Pakfire::color{'green'}";
+					}
+				} else {
+					$use_color = "$Pakfire::color{'red'}"; 
+				}
+			}
+
+			print "${use_color}Name: $pak\nProgVersion: $paklist{$pak}{'ProgVersion'}\n";
+			print "Release: $paklist{$pak}{'Release'}\nInstalled: $paklist{$pak}{'Installed'}\n";
+			if (defined $paklist{$pak}{'AvailableProgVersion'}) {
+				print "Update available:\n Version: $paklist{$pak}{'ProgVersion'} -> $paklist{$pak}{'AvailableProgVersion'}\n Release: $paklist{$pak}{'Release'} -> $paklist{$pak}{'AvailableRelease'}\n";
+			}
+			print "${reset_color}\n";
+			
+		}
+
+		$count = keys %paklist;
+		if ($count > 0) {
+			print "$count packages total.\n";
+		} else {
+			&Pakfire::message("PAKFIRE WARN: No packages where found using filter $filter.");
+		}
 	} elsif ("$ARGV[0]" eq "resolvedeps") {
 		foreach (@ARGV) {
 			next if ("$_" eq "resolvedeps");
