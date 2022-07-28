@@ -914,16 +914,6 @@ sub updates_available {
 	return "$updatecount";
 }
 
-sub coreupdate_available {
-	eval(`grep "core_" $Conf::dbdir/lists/core-list.db`);
-	if ("$core_release" > "$Conf::core_mine") {
-		return "yes ($core_release)";
-	}
-	else {
-		return "no";
-	}
-}
-
 sub reboot_required {
 	if ( -e "/var/run/need_reboot" ) {
 		return "yes";
@@ -934,26 +924,26 @@ sub reboot_required {
 }
 
 sub status {
-	# General info
-	my $return = "Core-Version: $Conf::version\n";
-	$return .= "Core-Update-Level: $Conf::core_mine\n";
-	$return .= "Last update: " . &General::age("/opt/pakfire/db/core/mine") . " ago\n";
-	$return .= "Last core-list update: " . &General::age("/opt/pakfire/db/lists/core-list.db") . " ago\n";
-	$return .= "Last server-list update: " . &General::age("/opt/pakfire/db/lists/server-list.db") . " ago\n";
-	$return .= "Last packages-list update: " . &General::age("/opt/pakfire/db/lists/packages_list.db") . " ago\n";
+	### This subroutine returns pakfire status information in a hash.
+	# Usage is without arguments
 
-	# Get availability of core updates
-	$return .= "Core-Update available: " . &Pakfire::coreupdate_available() . "\n";
+	# Add core version info
+	my %status = &Pakfire::coredbinfo();
 
-	# Get availability of package updates
-	$return .= "Package-Updates available: " . &Pakfire::updates_available() . "\n";
+	# Add last update info
+	$status{'LastUpdate'} = &General::age("/opt/pakfire/db/core/mine");
+	$status{'LastCoreListUpdate'} = &General::age("/opt/pakfire/db/lists/core-list.db");
+	$status{'LastServerListUpdate'} = &General::age("/opt/pakfire/db/lists/server-list.db");
+	$status{'LastPakListUpdate'} = &General::age("/opt/pakfire/db/lists/packages_list.db");
 
-	# Test if reboot is required
-	$return .= "Reboot required: " . &Pakfire::reboot_required() . "\n";
+	# Add number of available package updates
+	$status{'CoreUpdateAvailable'} = (defined $status{'AvailableRelease'}) ? "yes" : "no";
+	$status{'PakUpdatesAvailable'} = &Pakfire::updates_available();
 
-	# Return status text
-	print "$return";
-	exit 1;
+	# Add if reboot is required
+	$status{'RebootRequired'} = &Pakfire::reboot_required();
+
+	return %status;
 }
 
 sub get_arch() {

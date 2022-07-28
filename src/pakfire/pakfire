@@ -412,7 +412,24 @@
 			system("rm -f /etc/fcron.daily/pakfire-upgrade");
 		}
 	} elsif ("$ARGV[0]" eq "status") {
-		&Pakfire::status;
+		my $exitcode = 0;
+		my %status = &Pakfire::status;
+
+		print "Core-Version: $status{'CoreVersion'}\n";
+		print "Core-Update-Level: $status{'Release'}\n";
+		print "Last update: $status{'LastUpdate'} ago\n";
+		print "Last core-list update: $status{'LastCoreListUpdate'} ago\n";
+		print "Last server-list update: $status{'LastServerListUpdate'} ago\n";
+		print "Last packages-list update: $status{'LastPakListUpdate'} ago\n";
+		print "Core-Update available: $status{'CoreUpdateAvailable'}";
+		print " ($status{'AvailableRelease'})" if ("$status{'CoreUpdateAvailable'}" eq "yes");
+		print "\nPackage-Updates available: $status{'PakUpdatesAvailable'}\n";
+		print "Reboot required: $status{'RebootRequired'}\n";
+
+		$exitcode += 2 if ($status{'CoreUpdateAvailable'} eq "yes");
+		$exitcode += 3 if ($status{'PakUpdatesAvailable'} eq "yes");
+		$exitcode += 4 if ($status{'RebootRequired'} eq "yes");
+		exit $exitcode;
 	} else {
 		&Pakfire::usage;
 	}
