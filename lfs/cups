@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.4.1
+VER        = 2.4.2
 SUMMARY    = The Common UNIX Printing System
 
 THISAPP    = cups-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/cups-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
-PAK_VER    = 28
+PAK_VER    = 29
 
 DEPS       = avahi cups-filters dbus ghostscript
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 690d9d92f9bc84c2bb360699191cd67e1489ffc3ab219376dfc1a8795379950c95bf58c2033a0dbd2918262c5d104e21e31c4585cb35d229b0fac6cf4967bfd7
+$(DL_FILE)_BLAKE2 = 97053feb502d4fdc28810b806000b6c84a6795d5adcec0789e73e5477d5802d46a99381366d16219f627166df088f6decde5c144bd0c38b5745815dc1e426bc5
 
 install : $(TARGET)
 
