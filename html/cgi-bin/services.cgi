@@ -29,6 +29,7 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/graphs.pl";
+require "/opt/pakfire/lib/functions.pl";
 
 my %color = ();
 my %mainsettings = ();
@@ -160,49 +161,42 @@ END
 
 	my $lines=0; # Used to count the outputlines to make different bgcolor
 
-	# Generate list of installed addon pak's
-	opendir (DIR, "/opt/pakfire/db/installed") || die "Cannot opendir /opt/pakfire/db/installed/: $!";
-	my @pak = sort readdir DIR;
-	closedir(DIR);
+	my @paks;
+	my @addon_services;
 
-	foreach (@pak){
-		chomp($_);
-		next unless (m/^meta-/);
-		s/^meta-//;
+	# Generate list of installed addon pak services
+	my %paklist = &Pakfire::dblist("installed");
 
-		# Check which of the paks are services
-		if (-e "/etc/init.d/$_") {
-			# blacklist some packages
-			#
-			# alsa has trouble with the volume saving and was not really stopped
-			# mdadm should not stopped with webif because this could crash the system
-			#
-			if ( $_ eq 'squid' ) {
-				next;
-			}
-			if ( ($_ ne "alsa") && ($_ ne "mdadm") ) {
-				$lines++;
-				if ($lines % 2){
-					print "<tr>";
-					$col="bgcolor='$color{'color22'}'";
-				}else{
-					print "<tr>";
-					$col="bgcolor='$color{'color20'}'";
-				}
-
-				print "<td align='left' $col width='31%'>$_</td> ";
-				my $status = isautorun($_,$col);
-				print "$status ";
-				print "<td align='center' $col width='8%'><a href='services.cgi?$_!start'><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></a></td>";
-				print "<td align='center' $col width='8%'><a href='services.cgi?$_!stop'><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></a></td> ";
-				my $status = &isrunningaddon($_,$col);
-		 		$status =~ s/\\[[0-1]\;[0-9]+m//g;
-
-				chomp($status);
-				print "$status";
-				print "</tr>";
+	foreach my $pak (keys %paklist) {
+		my %metadata = &Pakfire::getmetadata($pak, "installed");
+			
+		if ("$metadata{'Services'}") {
+			foreach my $service (split(/ /, "$metadata{'Services'}")) {
+				push(@addon_services, $service);
 			}
 		}
+	}
+
+	foreach (@addon_services) {
+		$lines++;
+		if ($lines % 2){
+			print "<tr>";
+			$col="bgcolor='$color{'color22'}'";
+		}else{
+			print "<tr>";
+			$col="bgcolor='$color{'color20'}'";
+		}
+		print "<td align='left' $col width='31%'>$_</td> ";
+		my $status = isautorun($_,$col);
+		print "$status ";
+		print "<td align='center' $col width='8%'><a href='services.cgi?$_!start'><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></a></td>";
+		print "<td align='center' $col width='8%'><a href='services.cgi?$_!stop'><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></a></td> ";
+		my $status = isrunningaddon($_,$col);
+		$status =~ s/\\[[0-1]\;[0-9]+m//g;
+
+		chomp($status);
+		print "$status";
+		print "</tr>";
 	}
 
 	print "</table></div>\n";
