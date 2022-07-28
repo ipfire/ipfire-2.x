@@ -410,9 +410,7 @@ sub dbgetlist {
 	my %metadata;
 	my @templine;
 
-	open(FILE, "<$Conf::dbdir/lists/packages_list.db");
-	my @db = <FILE>;
-	close(FILE);
+    my %paklist = &Pakfire::dblist("all");
 
 	opendir(DIR,"$Conf::dbdir/meta");
 	my @files = readdir(DIR);
@@ -424,12 +422,12 @@ sub dbgetlist {
 		next if ( $file =~ /^old/ );
 		%metadata = parsemetafile("$Conf::dbdir/meta/$file");
 
-		foreach $prog (@db) {
-			@templine = split(/\;/,$prog);
-			if (("$metadata{'Name'}" eq "$templine[0]") && ("$metadata{'Release'}" ne "$templine[2]")) {
-				move("$Conf::dbdir/meta/meta-$metadata{'Name'}","$Conf::dbdir/meta/old_meta-$metadata{'Name'}");
-				getmetafile($metadata{'Name'});
-			}
+		if ((defined $paklist{"$metadata{'Name'}"}) && (
+			("$paklist{\"$metadata{'Name'}\"}{'Release'}" ne "$metadata{'Release'}") ||
+			(defined $paklist{"$metadata{'Name'}"}{'AvailableRelease'}))
+		   ) {
+			move("$Conf::dbdir/meta/meta-$metadata{'Name'}","$Conf::dbdir/meta/old_meta-$metadata{'Name'}");
+			getmetafile($metadata{'Name'});
 		}
 	}
 }
