@@ -266,7 +266,21 @@
 			$use_color = "$Pakfire::color{'lightpurple'}";
 		}
 
-		&Pakfire::upgradecore();
+		&Pakfire::message("CORE INFO: Checking for Core-Updates...");
+
+		### Make sure that the core db is not outdated. 
+		&Pakfire::getcoredb("noforce");
+		my %coredb = &Pakfire::coredbinfo();
+
+		if (defined $coredb{'AvailableRelease'}) {
+			&Pakfire::upgradecore();
+		} else {
+			&Pakfire::message("CORE INFO: No new Core-Updates available. You are on release ".$coredb{'Release'});
+		}
+
+		&Pakfire::message("PAKFIRE INFO: Checking for package updates...");
+		### Make sure that the package list is not outdated. 
+		&Pakfire::dbgetlist("noforce");
 		
 		my @deps = ();
 		if (my %upgradepaks = &Pakfire::dblist("upgrade")) {
