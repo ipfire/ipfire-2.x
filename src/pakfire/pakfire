@@ -107,42 +107,30 @@
 		### Make sure that the list is not outdated.
 		&Pakfire::dbgetlist("noforce");
 
-		open(FILE, "<$Conf::dbdir/lists/packages_list.db");
-		my @db = <FILE>;
-		close(FILE);
+		my %paklist = &Pakfire::dblist("all");
 
 		my $dep;
 		my @deps;
 		my $pak;
 		my @paks;
 		my @temp;
-		my @templine;
-		my $found = 0;
 		my $return;
 		my @all;
 		foreach $pak (@ARGV) {
 			unless ("$pak" =~ "^-") {
-				$return = &Pakfire::isinstalled($pak);
-				if ($return eq 0) {
-					&Pakfire::message("PAKFIRE INFO: $pak is already installed");
-					next;
-				}
-				$found = 0;
-				foreach (@db) {
-					@templine = split(/;/,$_);
-					if ("$templine[0]" eq "$pak" ) {
-						push(@paks,$pak);
-						push(@all,$pak);
-						@temp = &Pakfire::resolvedeps("$pak");
-						foreach $dep (@temp) {
-							push(@deps,$dep) if $dep;
-							push(@all,$dep) if $dep;
-						}
-						$found = 1;
-						break;
+				if (defined $paklist{$pak}) {
+					if ("$paklist{$pak}{'Installed'}" eq "yes") {
+						&Pakfire::message("PAKFIRE INFO: $pak is already installed");
+						next;
 					}
-				}
-				if ($found == 0) {
+					push(@paks,$pak);
+					push(@all,$pak);
+					@temp = &Pakfire::resolvedeps("$pak");
+					foreach $dep (@temp) {
+						push(@deps,$dep) if $dep;
+						push(@all,$dep) if $dep;
+					}
+				} else {
 					&Pakfire::message("");
 					&Pakfire::message("PAKFIRE WARN: The pak \"$pak\" is not known. Please try running \"pakfire update\".");
 				}
