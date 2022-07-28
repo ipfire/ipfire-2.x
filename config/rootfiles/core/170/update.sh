@@ -45,6 +45,7 @@ done
 
 # Stop services
 /etc/init.d/rc.d/unbound stop
+/etc/init.d/rc.d/suricata stop
 
 KVER="xxxKVERxxx"
 
@@ -171,7 +172,7 @@ sed -i /etc/collectd.conf \
 
 # Start services
 /etc/init.d/rc.d/unbound start
-/etc/init.d/rc.d/suricata restart
+/etc/init.d/rc.d/suricata start
 
 # Harden mount options of /boot
 sed -e -i "s@[[:space:]]*\/boot[[:space:]]*auto[[:space:]]*defaults[[:space:]]*@ \/boot    auto defaults,nodev,noexec,nosuid   @g" /etc/fstab
