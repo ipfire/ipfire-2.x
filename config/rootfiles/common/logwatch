@@ -97,6 +97,7 @@ usr/share/logwatch/default.conf/services/dhcpd.conf
 #usr/share/logwatch/default.conf/services/dpkg.conf
 #usr/share/logwatch/default.conf/services/emerge.conf
 #usr/share/logwatch/default.conf/services/evtapplication.conf
+#usr/share/logwatch/default.conf/services/evtmswindows.conf
 #usr/share/logwatch/default.conf/services/evtsecurity.conf
 #usr/share/logwatch/default.conf/services/evtsystem.conf
 #usr/share/logwatch/default.conf/services/exim.conf
