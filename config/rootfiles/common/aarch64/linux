@@ -13021,6 +13021,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/linux/mmu_context.h
 #lib/modules/KVER-ipfire/build/include/linux/mmu_notifier.h
 #lib/modules/KVER-ipfire/build/include/linux/mmzone.h
+#lib/modules/KVER-ipfire/build/include/linux/mnt_idmapping.h
 #lib/modules/KVER-ipfire/build/include/linux/mnt_namespace.h
 #lib/modules/KVER-ipfire/build/include/linux/mod_devicetable.h
 #lib/modules/KVER-ipfire/build/include/linux/mod_devicetable.h.orig
