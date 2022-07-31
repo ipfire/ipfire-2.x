@@ -169,7 +169,22 @@ chown nobody:nobody /var/lib/ipblocklist
 # Update collectd.conf
 sed -i /etc/collectd.conf \
 	-e "/LoadPlugin entropy/d"
-/etc/init.d/collectd restart
+#/etc/init.d/collectd restart
+
+# Stop collectd Sevice
+/etc/init.d/collectd stop
+
+# Cleanup old collectd statistics...
+rm -rvf /var/log/rrd/collectd/localhost/processes-mysqld \
+	/var/log/rrd/collectd/localhost/processes-snort \
+	/var/log/rrd/collectd/localhost/processes-rtorrent \
+	/var/log/rrd/collectd/localhost/processes-asterisk \
+	/var/log/rrd/collectd/localhost/processes-java \
+	/var/log/rrd/collectd/localhost/processes-spamd \
+	/var/log/rrd/collectd/localhost/entropy
+
+# Start collectd
+/etc/init.d/collectd start
 
 # Start services
 /etc/rc.d/init.d/unbound start
