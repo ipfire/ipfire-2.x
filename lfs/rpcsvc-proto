@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.4.2
+VER        = 1.4.3
 
 THISAPP    = rpcsvc-proto-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d9dc3102aa36b7ec07efd9c3702ebad176ca88ff8c39c02342591bef727f32ab2096749b8763e6fc4e9678b7320c4a98e44afe24851ffc42bed7eec2a9df986f
+$(DL_FILE)_BLAKE2 = dc15392fd68b76ffa92c08039076aed293834b047ebea4a418dc767ea13e3a04b19e5108ebda808dfa4356ca426db610847758d69b23cc66981eb4ea844eb218
 
 install : $(TARGET)
 
