@@ -9401,7 +9401,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/NFSD_V4_SECURITY_LABEL
 #lib/modules/KVER-ipfire/build/include/config/NFS_ACL_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/NFS_COMMON
-#lib/modules/KVER-ipfire/build/include/config/NFS_DEBUG
 #lib/modules/KVER-ipfire/build/include/config/NFS_DISABLE_UDP_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/NFS_FS
 #lib/modules/KVER-ipfire/build/include/config/NFS_FSCACHE
@@ -10561,7 +10560,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SUNGEM_PHY
 #lib/modules/KVER-ipfire/build/include/config/SUNRPC
 #lib/modules/KVER-ipfire/build/include/config/SUNRPC_BACKCHANNEL
-#lib/modules/KVER-ipfire/build/include/config/SUNRPC_DEBUG
 #lib/modules/KVER-ipfire/build/include/config/SUNRPC_GSS
 #lib/modules/KVER-ipfire/build/include/config/SUNXI_CCU
 #lib/modules/KVER-ipfire/build/include/config/SUNXI_MBUS
