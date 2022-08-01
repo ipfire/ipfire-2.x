@@ -6,6 +6,7 @@ srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ipblocklist.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
 srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/ids.dat
 srv/web/ipfire/cgi-bin/logs.cgi/ipblocklists.dat
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
