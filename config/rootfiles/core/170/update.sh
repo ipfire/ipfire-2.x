@@ -44,8 +44,8 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
-/etc/init.d/rc.d/unbound stop
-/etc/init.d/rc.d/suricata stop
+/etc/rc.d/init.d/unbound stop
+/etc/rc.d/init.d/suricata stop
 
 KVER="xxxKVERxxx"
 
@@ -171,8 +171,8 @@ sed -i /etc/collectd.conf \
 /etc/init.d/collectd restart
 
 # Start services
-/etc/init.d/rc.d/unbound start
-/etc/init.d/rc.d/suricata start
+/etc/rc.d/init.d/unbound start
+/etc/rc.d/init.d/suricata start
 
 # Harden mount options of /boot
 sed -e -i "s@[[:space:]]*\/boot[[:space:]]*auto[[:space:]]*defaults[[:space:]]*@ \/boot    auto defaults,nodev,noexec,nosuid   @g" /etc/fstab
