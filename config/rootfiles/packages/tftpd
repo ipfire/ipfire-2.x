@@ -4,3 +4,4 @@ usr/sbin/tftpd
 #usr/share/man/man1/tftp.1
 #usr/share/man/man8/in.tftpd.8
 #usr/share/man/man8/tftpd.8
+var/tftpboot
