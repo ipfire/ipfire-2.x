@@ -2250,6 +2250,7 @@
 'restore defaults' => 'Restore defaults',
 'restore hardware settings' => 'Restore hardware settings',
 'restore settings' => 'Reset Settings',
+'retbleed' => 'Retbleed',
 'reverse sort' => 'Sort in reverse chronological order',
 'root' => 'Root',
 'root certificate' => 'Root Certificate',

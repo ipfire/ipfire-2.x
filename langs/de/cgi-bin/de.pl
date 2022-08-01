@@ -2195,6 +2195,7 @@
 'restore defaults' => 'Voreinstellungen wiederherstellen',
 'restore hardware settings' => 'Hardwareeinstellungen wiederherstellen',
 'restore settings' => 'Einstellungen wiederherstellen',
+'retbleed' => 'Retbleed',
 'reverse sort' => 'In umgekehrter chronologischer Reihenfolge sortieren',
 'root' => 'Root',
 'root certificate' => 'Root-Zertifikat',
