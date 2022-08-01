@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,15 +26,15 @@ include Config
 
 SUMMARY    = Nagios Remote Plug-In Executor
 
-VER        = 4.0.3
+VER        = 4.1.0
 
 THISAPP    = nrpe-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/$(THISAPP)
+DIR_APP    = $(DIR_SRC)/nrpe-$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nagios_nrpe
-PAK_VER    = 9
+PAK_VER    = 10
 
 DEPS       = nagios-plugins
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d2c99cadf718e7049c911388b105fb4f5248307c733d94a73fd02ac69c49be230dad58be0a182af9c8d7e0d1f34e8dba6b8fc46a7c01eb15d845f2b3a54499ed
+$(DL_FILE)_BLAKE2 = abce679c9387c5c4624349eb66465910aaff49074e6b60c6b515ef803d9d79b2603db8629b35ce5da61c02734ba4d48b49600f17bdf93482bd53013e3d121429
 
 install : $(TARGET)
 
