@@ -169,7 +169,6 @@ chown nobody:nobody /var/lib/ipblocklist
 # Update collectd.conf
 sed -i /etc/collectd.conf \
 	-e "/LoadPlugin entropy/d"
-#/etc/init.d/collectd restart
 
 # Stop collectd Sevice
 /etc/init.d/collectd stop
