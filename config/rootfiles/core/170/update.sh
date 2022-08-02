@@ -176,7 +176,7 @@ sed -i /etc/collectd.conf \
 /etc/rc.d/init.d/suricata start
 
 # Harden mount options of /boot
-sed -e -i "s@[[:space:]]*\/boot[[:space:]]*auto[[:space:]]*defaults[[:space:]]*@ \/boot    auto defaults,nodev,noexec,nosuid   @g" /etc/fstab
+sed -e "s@[[:space:]]*\/boot[[:space:]]*auto[[:space:]]*defaults[[:space:]]*@ \/boot    auto defaults,nodev,noexec,nosuid   @g" /etc/fstab
 
 # Regenerate all initrds
 dracut --regenerate-all --force
