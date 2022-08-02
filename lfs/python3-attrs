@@ -1,0 +1,86 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+VER        = 21.4.0
+SUMMARY    = Classes Without Boilerplate
+
+THISAPP    = attrs-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = python3-attrs
+PAK_VER    = 1
+
+DEPS       = 
+
+SERVICES   =
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_BLAKE2 = f8e9ca1385efe6f5b9bf468f622f0bf5390830c5f3c3526821446113146a61460b17e8750ea763f6da50221a8aa65f5f1ff98a6ddf69b1a87344508ca6495560
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+b2 : $(subst %,%_BLAKE2,$(objects))
+
+dist:
+	@$(PAK)
+
+###############################################################################
+# Downloading, checking, b2sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && python3 setup.py build
+	cd $(DIR_APP) && python3 setup.py install --root=/
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)
