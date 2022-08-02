@@ -130,6 +130,7 @@ rm -rvf \
 	/usr/lib/libns-9.16.30.so \
 	/usr/lib/libopenjp2.so.2.3.* \
 	/usr/lib/libpoppler.so.11* \
+	/usr/lib/libunbound.so.8.1.17 \
 	/usr/lib/perl5/site_perl/5.32.1/Bundle/LWP.pm \
 	/usr/lib/perl5/site_perl/5.32.1/File/Listing.pm \
 	/usr/lib/perl5/site_perl/5.32.1/HTML/Form.pm \
