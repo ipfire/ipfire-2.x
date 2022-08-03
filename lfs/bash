@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.1.8
+VER        = 5.1.16
 
 THISAPP    = bash-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -53,7 +53,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)             = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = c61f70cef51b6576254a8cbdfbc69904c9e9ebefb061f03c719e35ac2aa3b497e654f78514ffd6e6c74cd546de917a6cfae1e643bf7b8aec88f154b2c97b9090
+$(DL_FILE)_BLAKE2 = 0bc53b24d9b95cd85e45196510104acf6ac6c980f68aedcc83c8409ce6a4682e92736a9cbe089ed92d74590e28918d0bee0e67c8e0f994bd37e45fad83f5b48e
 
 install : $(TARGET)
 
@@ -86,10 +86,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	sed -e "s/filename, RTLD_LAZY/filename, RTLD_NOW/" \
 		-i $(DIR_APP)/builtins/enable.def
-
-	for i in $$(seq 9 16); do \
-		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash/bash51-$$(printf "%03d" "$${i}") || exit 1; \
-	done
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash/bash-4.0-paths-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash/bash-4.0-profile-1.patch
