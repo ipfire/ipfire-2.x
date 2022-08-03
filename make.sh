@@ -1172,6 +1172,7 @@ buildipfire() {
   lfsmake2 rtl8189fs		KCFG=""
   lfsmake2 rtl8812au		KCFG=""
   lfsmake2 rtl8822bu		KCFG=""
+  lfsmake2 rtl8821cu		KCFG=""
   lfsmake2 xradio		KCFG=""
   lfsmake2 linux-initrd		KCFG=""
 
