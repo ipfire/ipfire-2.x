@@ -116,6 +116,7 @@ rm -rvf \
 	/usr/lib/libbind9-9.16.30.so \
 	/usr/lib/libdnet* \
 	/usr/lib/libdns-9.16.30.so \
+	/usr/lib/libgnutls.so.30.33.1 \
 	/usr/lib/libirs-9.16.2* \
 	/usr/lib/libirs-9.16.30.so \
 	/usr/lib/libisc-9.16.2* \
