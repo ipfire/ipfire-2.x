@@ -8434,6 +8434,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/INPUT_YEALINK
 #lib/modules/KVER-ipfire/build/include/config/INTEGRITY
 #lib/modules/KVER-ipfire/build/include/config/INTEL_XWAY_PHY
+#lib/modules/KVER-ipfire/build/include/config/IOMMU_API
+#lib/modules/KVER-ipfire/build/include/config/IOMMU_DEFAULT_DMA_STRICT
 #lib/modules/KVER-ipfire/build/include/config/IOMMU_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/IOSCHED_BFQ
 #lib/modules/KVER-ipfire/build/include/config/IO_STRICT_DEVMEM
@@ -8576,6 +8578,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/IP_VS_WLC
 #lib/modules/KVER-ipfire/build/include/config/IP_VS_WRR
 #lib/modules/KVER-ipfire/build/include/config/IRQCHIP
+#lib/modules/KVER-ipfire/build/include/config/IRQ_BYPASS_MANAGER
 #lib/modules/KVER-ipfire/build/include/config/IRQ_CROSSBAR
 #lib/modules/KVER-ipfire/build/include/config/IRQ_DOMAIN
 #lib/modules/KVER-ipfire/build/include/config/IRQ_DOMAIN_HIERARCHY
@@ -9585,6 +9588,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/OF_EARLY_FLATTREE
 #lib/modules/KVER-ipfire/build/include/config/OF_FLATTREE
 #lib/modules/KVER-ipfire/build/include/config/OF_GPIO
+#lib/modules/KVER-ipfire/build/include/config/OF_IOMMU
 #lib/modules/KVER-ipfire/build/include/config/OF_IRQ
 #lib/modules/KVER-ipfire/build/include/config/OF_KOBJ
 #lib/modules/KVER-ipfire/build/include/config/OF_MDIO
@@ -10977,6 +10981,13 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/VETH
 #lib/modules/KVER-ipfire/build/include/config/VEXPRESS_CONFIG
 #lib/modules/KVER-ipfire/build/include/config/VFAT_FS
+#lib/modules/KVER-ipfire/build/include/config/VFIO
+#lib/modules/KVER-ipfire/build/include/config/VFIO_IOMMU_TYPE1
+#lib/modules/KVER-ipfire/build/include/config/VFIO_PCI
+#lib/modules/KVER-ipfire/build/include/config/VFIO_PCI_CORE
+#lib/modules/KVER-ipfire/build/include/config/VFIO_PCI_INTX
+#lib/modules/KVER-ipfire/build/include/config/VFIO_PCI_MMAP
+#lib/modules/KVER-ipfire/build/include/config/VFIO_VIRQFD
 #lib/modules/KVER-ipfire/build/include/config/VFP
 #lib/modules/KVER-ipfire/build/include/config/VFPv3
 #lib/modules/KVER-ipfire/build/include/config/VGA_ARB
@@ -20573,6 +20584,13 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/usb/usbip/usbip-core.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/usb/usbip/usbip-host.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/usb/usbip/vhci-hcd.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/pci
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/pci/vfio-pci-core.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/pci/vfio-pci.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/vfio.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/vfio_iommu_type1.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/vfio_virqfd.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/video
 #lib/modules/KVER-ipfire/kernel/drivers/video/backlight
 #lib/modules/KVER-ipfire/kernel/drivers/video/backlight/lcd.ko.xz
@@ -21399,6 +21417,9 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/sound/usb/misc/snd-ua101.ko.xz
 #lib/modules/KVER-ipfire/kernel/sound/usb/snd-usb-audio.ko.xz
 #lib/modules/KVER-ipfire/kernel/sound/usb/snd-usbmidi-lib.ko.xz
+#lib/modules/KVER-ipfire/kernel/virt
+#lib/modules/KVER-ipfire/kernel/virt/lib
+#lib/modules/KVER-ipfire/kernel/virt/lib/irqbypass.ko.xz
 lib/modules/KVER-ipfire/modules.alias
 lib/modules/KVER-ipfire/modules.alias.bin
 lib/modules/KVER-ipfire/modules.builtin

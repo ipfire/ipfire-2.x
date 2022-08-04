@@ -10500,6 +10500,13 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/VETH
 #lib/modules/KVER-ipfire/build/include/config/VEXPRESS_CONFIG
 #lib/modules/KVER-ipfire/build/include/config/VFAT_FS
+#lib/modules/KVER-ipfire/build/include/config/VFIO
+#lib/modules/KVER-ipfire/build/include/config/VFIO_IOMMU_TYPE1
+#lib/modules/KVER-ipfire/build/include/config/VFIO_PCI
+#lib/modules/KVER-ipfire/build/include/config/VFIO_PCI_CORE
+#lib/modules/KVER-ipfire/build/include/config/VFIO_PCI_INTX
+#lib/modules/KVER-ipfire/build/include/config/VFIO_PCI_MMAP
+#lib/modules/KVER-ipfire/build/include/config/VFIO_VIRQFD
 #lib/modules/KVER-ipfire/build/include/config/VGA_ARB
 #lib/modules/KVER-ipfire/build/include/config/VGA_ARB_MAX_GPUS
 #lib/modules/KVER-ipfire/build/include/config/VHOST_MENU
@@ -20360,6 +20367,13 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/usb/usbip/usbip-core.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/usb/usbip/usbip-host.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/usb/usbip/vhci-hcd.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/pci
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/pci/vfio-pci-core.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/pci/vfio-pci.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/vfio.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/vfio_iommu_type1.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/vfio_virqfd.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/video
 #lib/modules/KVER-ipfire/kernel/drivers/video/backlight
 #lib/modules/KVER-ipfire/kernel/drivers/video/backlight/lcd.ko.xz
