@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.2.0
+VER        = 2.5.1
 
 THISAPP    = kbd-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -42,7 +42,7 @@ $(DL_FILE)                            = $(DL_FROM)/$(DL_FILE)
 kbd-latarcyrheb-16-fixed.tar.bz2      = $(DL_FROM)/kbd-latarcyrheb-16-fixed.tar.bz2
 kbd-latsun-fonts.tar.bz2              = $(DL_FROM)/kbd-latsun-fonts.tar.bz2
 
-$(DL_FILE)_BLAKE2 = d4218f3a8f9212d16e8a14011f0e136f6aebd18f13f8d5da2bd63296e0aa857fc5e7fe927200345fca3b723bc879f87511b02c152824a73ae5743cc8175991e6
+$(DL_FILE)_BLAKE2 = aab4c3d78c28709bf562b54fe94c0533d5c33185e183bf3eb944f89147b250d9df9b30b64a06eb4742feafe8c05a6aa491a7f007b4d6d9077bc19a4628ba05ae
 kbd-latarcyrheb-16-fixed.tar.bz2_BLAKE2  = d5c701333b9eae7e0c467aebee5b2217c3225dee615622f77e501569f1464a8c32380b2d4a522730db74a909e1ea746e660ea6849bbf48195af22bda73858d1b
 kbd-latsun-fonts.tar.bz2_BLAKE2	         = c3def1192331a65f3edcf608ca164370d2db0c61444f71fc83bf35cb86d417ae92582180ace853a3cf93e569a83a42fca054fbadbf7f5986a1abd17e8bb6691f
 
@@ -74,7 +74,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/$(THISAPP)-backspace-1.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/kbd-2.2.0-backspace-1.patch
 
 	# Extract our own fonts
 	cd $(DIR_APP) && tar xvfa $(DIR_DL)/kbd-latarcyrheb-16-fixed.tar.bz2
