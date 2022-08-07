@@ -492,7 +492,7 @@ static unsigned long long hw_swap_size(struct hw_destination* dest) {
 }
 
 static unsigned long long hw_boot_size(struct hw_destination* dest) {
-	return MB2BYTES(128);
+	return MB2BYTES(256);
 }
 
 static int hw_device_has_p_suffix(const struct hw_destination* dest) {
