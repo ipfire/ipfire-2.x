@@ -7624,8 +7624,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/GARP
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGINS
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_LATENT_ENTROPY
-#lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_RANDSTRUCT
-#lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_STRUCTLEAK
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
 #lib/modules/KVER-ipfire/build/include/config/GCC_VERSION
@@ -12139,7 +12137,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/generated/autoconf.h
 #lib/modules/KVER-ipfire/build/include/generated/bounds.h
 #lib/modules/KVER-ipfire/build/include/generated/compile.h
-#lib/modules/KVER-ipfire/build/include/generated/randomize_layout_hash.h
 #lib/modules/KVER-ipfire/build/include/generated/timeconst.h
 #lib/modules/KVER-ipfire/build/include/generated/uapi
 #lib/modules/KVER-ipfire/build/include/generated/uapi/linux
@@ -17579,8 +17576,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/latent_entropy_plugin.c
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/latent_entropy_plugin.so
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/randomize_layout_plugin.c
-#lib/modules/KVER-ipfire/build/scripts/gcc-plugins/randomize_layout_plugin.so
-#lib/modules/KVER-ipfire/build/scripts/gcc-plugins/randomize_layout_seed.h
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/sancov_plugin.c
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/stackleak_plugin.c
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/structleak_plugin.c
