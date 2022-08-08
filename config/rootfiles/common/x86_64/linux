@@ -1360,7 +1360,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/arch/x86/include/asm/espfix.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/asm/exec.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/asm/extable.h
-#lib/modules/KVER-ipfire/build/arch/x86/include/asm/extable_fixup_types.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/asm/fb.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/asm/fixmap.h
 #lib/modules/KVER-ipfire/build/arch/x86/include/asm/floppy.h
@@ -7214,6 +7213,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/DRM_I915_USERFAULT_AUTOSUSPEND
 #lib/modules/KVER-ipfire/build/include/config/DRM_I915_USERPTR
 #lib/modules/KVER-ipfire/build/include/config/DRM_KMS_HELPER
+#lib/modules/KVER-ipfire/build/include/config/DRM_LEGACY
 #lib/modules/KVER-ipfire/build/include/config/DRM_MGAG200
 #lib/modules/KVER-ipfire/build/include/config/DRM_MIPI_DSI
 #lib/modules/KVER-ipfire/build/include/config/DRM_NOUVEAU
@@ -9245,6 +9245,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/NORTEL_HERMES
 #lib/modules/KVER-ipfire/build/include/config/NOUVEAU_DEBUG
 #lib/modules/KVER-ipfire/build/include/config/NOUVEAU_DEBUG_DEFAULT
+#lib/modules/KVER-ipfire/build/include/config/NOUVEAU_LEGACY_CTX_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/NOZOMI
 #lib/modules/KVER-ipfire/build/include/config/NO_HZ
 #lib/modules/KVER-ipfire/build/include/config/NO_HZ_COMMON
