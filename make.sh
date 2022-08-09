@@ -1180,6 +1180,7 @@ buildipfire() {
   lfsmake2 libgcrypt
   lfsmake2 libassuan
   lfsmake2 nettle
+  lfsmake2 libsodium
   lfsmake2 json-c
   lfsmake2 libconfig
   lfsmake2 libevent2
