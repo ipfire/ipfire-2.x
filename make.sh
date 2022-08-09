@@ -1706,6 +1706,7 @@ buildipfire() {
   lfsmake2 nss-myhostname
   lfsmake2 dehydrated
   lfsmake2 libplist
+  lfsmake2 nqptp
   lfsmake2 shairport-sync
   lfsmake2 borgbackup
   lfsmake2 lmdb

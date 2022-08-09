@@ -24,21 +24,19 @@
 
 include Config
 
-SUMMARY    = An AirPlay audio player
+SUMMARY    = nqptp is a daemon that monitors timing data from any PTP clocks
 
-VER        = 3cc1ec6
+VER        = d900567
 
-THISAPP    = shairport-sync-$(VER)
+THISAPP    = nqptp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = shairport-sync
-PAK_VER    = 7
+PROG       = nqptp
+PAK_VER    = 1
 
-DEPS       = alac alsa avahi ffmpeg libdaemon libplist nqptp soxr
-
-SERVICES   = shairport-sync
+SERVICES   = nqptp
 
 ###############################################################################
 # Top-level Rules
@@ -48,7 +46,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 746bd603bded210608f934952a7d1100214960781f8bacf7c95905fbd1ceab91378bc532b007bdec1f170c4aa905fcc0f41f16287116026fbad111ba8177fb8f
+$(DL_FILE)_BLAKE2 = 83db62518577bda0198e989a1274c46b0f0c658cf281fd282b4b1e51544339c00a3e6da43a472e8de50bcd3926c113ca7cd29e8e562de8b1260763d64baa069b
 
 install : $(TARGET)
 
@@ -85,19 +83,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
-		--with-airplay-2 \
-		--with-alsa \
-		--with-apple-alac \
-		--with-avahi \
-		--with-libdaemon \
-		--with-ssl=openssl \
-		--with-soxr
+		--without-systemd-startup
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
-
-	# Backup
-	install -v -m 644 $(DIR_SRC)/config/backup/includes/shairport-sync \
-		/var/ipfire/backup/addons/includes/shairport-sync
 
 	# Initscript
 	$(call INSTALL_INITSCRIPTS,$(SERVICES))
