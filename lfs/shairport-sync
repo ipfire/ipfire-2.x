@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = An AirPlay audio player
 
-VER        = 3.3.8
+VER        = 3cc1ec6
 
 THISAPP    = shairport-sync-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,9 +34,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = shairport-sync
-PAK_VER    = 6
+PAK_VER    = 7
 
-DEPS       = alac alsa avahi libdaemon soxr
+DEPS       = alac alsa avahi ffmpeg libdaemon libplist soxr
 
 SERVICES   = shairport-sync
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = adaaef3a65d3ffccda2ba3ed324312fe5e95db00f2ae2c67afd49a43e6e5c8517d7eeb751f0b663a1e75a470f1cfcd9547e26bd11fa095565ba048d98465dcd8
+$(DL_FILE)_BLAKE2 = 746bd603bded210608f934952a7d1100214960781f8bacf7c95905fbd1ceab91378bc532b007bdec1f170c4aa905fcc0f41f16287116026fbad111ba8177fb8f
 
 install : $(TARGET)
 
@@ -85,6 +85,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
+		--with-airplay-2 \
 		--with-alsa \
 		--with-apple-alac \
 		--with-avahi \
