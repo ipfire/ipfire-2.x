@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Open-source formatting library for C++
+
 VER        = 9.0.0
 
 THISAPP    = fmt-$(VER)
@@ -31,6 +33,11 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = fmt
+PAK_VER    = 1
+SUP_ARCH   = aarch64 armv6l x86_64
+
+DEPS       =
 
 ###############################################################################
 # Top-level Rules

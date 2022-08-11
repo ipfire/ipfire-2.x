@@ -18,6 +18,6 @@
 #usr/lib/cmake/fmt/fmt-targets-release.cmake
 #usr/lib/cmake/fmt/fmt-targets.cmake
 #usr/lib/libfmt.so
-#usr/lib/libfmt.so.9
-#usr/lib/libfmt.so.9.0.0
+usr/lib/libfmt.so.9
+usr/lib/libfmt.so.9.0.0
 #usr/lib/pkgconfig/fmt.pc
