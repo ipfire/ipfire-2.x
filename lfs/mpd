@@ -34,10 +34,10 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/${THISAPP}
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpd
-PAK_VER    = 25
+PAK_VER    = 26
 SUP_ARCH   = aarch64 armv6l x86_64
 
-DEPS       = alsa avahi faad2 ffmpeg flac lame libmad libshout libogg libid3tag libvorbis opus soxr
+DEPS       = alsa avahi faad2 ffmpeg flac lame libmad libshout libogg libid3tag libvorbis opus soxr fmt
 
 SERVICES   = mpd
 
