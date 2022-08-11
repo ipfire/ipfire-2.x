@@ -191,7 +191,7 @@ rm -rvf /var/log/rrd/collectd/localhost/processes-mysqld \
 /etc/rc.d/init.d/suricata start
 
 # Harden mount options of /boot
-sed -i "s@[[:space:]]*\/boot[[:space:]]*auto[[:space:]]*defaults[[:space:]]*@ \/boot    auto defaults,nodev,noexec,nosuid   @g" /etc/fstab
+sed -E -i "s/\s+\/boot\s+auto\s+defaults\s+/ \/boot    auto defaults,nodev,noexec,nosuid   /g" /etc/fstab
 
 # Regenerate all initrds
 dracut --regenerate-all --force
