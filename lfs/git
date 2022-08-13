@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.36.1
+VER        = 2.37.1
 SUMMARY    = Fast, scalable, distributed revision control system
 
 THISAPP    = git-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = git
-PAK_VER    = 24
+PAK_VER    = 25
 
 DEPS       = perl-Authen-SASL perl-MIME-Base64 perl-Net-SMTP-SSL
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 99f54efb4ea1d8db0e3afd3dc9780cb37fc853e4757f4b37d68a6badd90eeed3e2943c97393eaed6adf61c82b97b5d01ca8d015784f5425072b1db14d39144ce
+$(DL_FILE)_BLAKE2 = b5423e4628f8c727aa74b3f7c7da12d46814eb45adfe84bf57e87a33e85a0a793ff690f4c1f7d2da4824bc8dd7d1df1c06cbe96adae857177d3fb204941b53ef
 
 install : $(TARGET)
 

@@ -103,7 +103,7 @@ usr/bin/uclampset
 usr/bin/uuidgen
 usr/bin/uuidparse
 #usr/bin/whereis
-usr/bin/x86_64
+#usr/bin/x86_64
 #usr/include/blkid
 #usr/include/blkid/blkid.h
 #usr/include/libfdisk

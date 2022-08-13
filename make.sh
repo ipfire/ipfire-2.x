@@ -23,7 +23,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.27"							# Version number
-CORE="169"							# Core Level (Filename)
+CORE="170"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
@@ -1172,6 +1172,7 @@ buildipfire() {
   lfsmake2 rtl8189fs		KCFG=""
   lfsmake2 rtl8812au		KCFG=""
   lfsmake2 rtl8822bu		KCFG=""
+  lfsmake2 rtl8821cu		KCFG=""
   lfsmake2 xradio		KCFG=""
   lfsmake2 linux-initrd		KCFG=""
 
@@ -1179,6 +1180,7 @@ buildipfire() {
   lfsmake2 libgcrypt
   lfsmake2 libassuan
   lfsmake2 nettle
+  lfsmake2 libsodium
   lfsmake2 json-c
   lfsmake2 libconfig
   lfsmake2 libevent2
@@ -1270,6 +1272,7 @@ buildipfire() {
   lfsmake2 rust-proc-macro-hack
   lfsmake2 rust-indoc-impl
   lfsmake2 rust-indoc
+  lfsmake2 rust-indoc-0.3.6
   lfsmake2 rust-instant
   lfsmake2 rust-lock_api
   lfsmake2 rust-smallvec
@@ -1277,6 +1280,7 @@ buildipfire() {
   lfsmake2 rust-parking_lot
   lfsmake2 rust-paste-impl
   lfsmake2 rust-paste
+  lfsmake2 rust-paste-0.1.18
   lfsmake2 rust-ctor
   lfsmake2 rust-ghost
   lfsmake2 rust-inventory-impl
@@ -1285,6 +1289,22 @@ buildipfire() {
   lfsmake2 rust-pyo3-macros-backend
   lfsmake2 rust-pyo3-macros
   lfsmake2 rust-pyo3
+  lfsmake2 rust-num-traits
+  lfsmake2 rust-num-integer
+  lfsmake2 rust-num_threads
+  lfsmake2 rust-time
+  lfsmake2 rust-chrono
+  lfsmake2 rust-asn1_derive
+  lfsmake2 rust-asn1
+  lfsmake2 rust-proc-macro-error-attr
+  lfsmake2 rust-proc-macro-error
+  lfsmake2 rust-Inflector
+  lfsmake2 rust-ouroboros_macro
+  lfsmake2 rust-aliasable
+  lfsmake2 rust-stable_deref_trait
+  lfsmake2 rust-ouroboros
+  lfsmake2 rust-base64
+  lfsmake2 rust-pem
   lfsmake2 gdb
   lfsmake2 grub
   lfsmake2 efivar
@@ -1421,6 +1441,7 @@ buildipfire() {
   lfsmake2 hyperscan
   lfsmake2 suricata
   lfsmake2 ids-ruleset-sources
+  lfsmake2 ipblocklist-sources
   lfsmake2 squid
   lfsmake2 squidguard
   lfsmake2 calamaris
@@ -1446,6 +1467,7 @@ buildipfire() {
   lfsmake2 poppler-data
   lfsmake2 cups-filters
   lfsmake2 epson-inkjet-printer-escpr
+  lfsmake2 cups-pdf
   lfsmake2 foomatic
   lfsmake2 hplip
   lfsmake2 cifs-utils
@@ -1613,6 +1635,15 @@ buildipfire() {
   lfsmake2 python3-terminaltables
   lfsmake2 python3-pkgconfig
   lfsmake2 python3-msgpack
+  lfsmake2 python3-attr
+  lfsmake2 python3-attrs
+  lfsmake2 python3-sniffio
+  lfsmake2 python3-sortedcontainers
+  lfsmake2 python3-outcome
+  lfsmake2 python3-async_generator
+  lfsmake2 python3-Cython
+  lfsmake2 python3-trio
+  lfsmake2 python3-pyfuse3
   lfsmake2 aws-cli
   lfsmake2 oci-python-sdk
   lfsmake2 oci-cli
@@ -1674,6 +1705,8 @@ buildipfire() {
   lfsmake2 i2c-tools
   lfsmake2 nss-myhostname
   lfsmake2 dehydrated
+  lfsmake2 libplist
+  lfsmake2 nqptp
   lfsmake2 shairport-sync
   lfsmake2 borgbackup
   lfsmake2 lmdb

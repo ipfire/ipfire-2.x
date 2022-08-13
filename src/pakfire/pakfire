@@ -107,42 +107,30 @@
 		### Make sure that the list is not outdated.
 		&Pakfire::dbgetlist("noforce");
 
-		open(FILE, "<$Conf::dbdir/lists/packages_list.db");
-		my @db = <FILE>;
-		close(FILE);
+		my %paklist = &Pakfire::dblist("all");
 
 		my $dep;
 		my @deps;
 		my $pak;
 		my @paks;
 		my @temp;
-		my @templine;
-		my $found = 0;
 		my $return;
 		my @all;
 		foreach $pak (@ARGV) {
 			unless ("$pak" =~ "^-") {
-				$return = &Pakfire::isinstalled($pak);
-				if ($return eq 0) {
-					&Pakfire::message("PAKFIRE INFO: $pak is already installed");
-					next;
-				}
-				$found = 0;
-				foreach (@db) {
-					@templine = split(/;/,$_);
-					if ("$templine[0]" eq "$pak" ) {
-						push(@paks,$pak);
-						push(@all,$pak);
-						@temp = &Pakfire::resolvedeps("$pak");
-						foreach $dep (@temp) {
-							push(@deps,$dep) if $dep;
-							push(@all,$dep) if $dep;
-						}
-						$found = 1;
-						break;
+				if (defined $paklist{$pak}) {
+					if ("$paklist{$pak}{'Installed'}" eq "yes") {
+						&Pakfire::message("PAKFIRE INFO: $pak is already installed");
+						next;
 					}
-				}
-				if ($found == 0) {
+					push(@paks,$pak);
+					push(@all,$pak);
+					@temp = &Pakfire::resolvedeps("$pak");
+					foreach $dep (@temp) {
+						push(@deps,$dep) if $dep;
+						push(@all,$dep) if $dep;
+					}
+				} else {
 					&Pakfire::message("");
 					&Pakfire::message("PAKFIRE WARN: The pak \"$pak\" is not known. Please try running \"pakfire update\".");
 				}
@@ -270,14 +258,39 @@
 		&Pakfire::getcoredb("$force");
 
 	} elsif ("$ARGV[0]" eq "upgrade") {
-		&Pakfire::upgradecore();
-		my @upgradepaks = &Pakfire::dblist("upgrade", "noweb");
+		my $use_color = "";
+		my $reset_color = "";
+
+		if ("$Pakfire::enable_colors" eq "1") {
+			$reset_color = "$Pakfire::color{'normal'}";
+			$use_color = "$Pakfire::color{'lightpurple'}";
+		}
+
+		&Pakfire::message("CORE INFO: Checking for Core-Updates...");
+
+		### Make sure that the core db is not outdated. 
+		&Pakfire::getcoredb("noforce");
+		my %coredb = &Pakfire::coredbinfo();
+
+		if (defined $coredb{'AvailableRelease'}) {
+			&Pakfire::upgradecore();
+		} else {
+			&Pakfire::message("CORE INFO: No new Core-Updates available. You are on release ".$coredb{'Release'});
+		}
+
+		&Pakfire::message("PAKFIRE INFO: Checking for package updates...");
+		### Make sure that the package list is not outdated. 
+		&Pakfire::dbgetlist("noforce");
+		
 		my @deps = ();
-
-		if (@upgradepaks) {
+		if (my %upgradepaks = &Pakfire::dblist("upgrade")) {
 			# Resolve the dependencies of the to be upgraded packages
-			@deps = &Pakfire::resolvedeps_recursive(@upgradepaks);
+			@deps = &Pakfire::resolvedeps_recursive(keys %upgradepaks);
 
+			foreach $pak (sort keys %upgradepaks) {
+				print "${use_color}Update: $pak\nVersion: $upgradepaks{$pak}{'ProgVersion'} -> $upgradepaks{$pak}{'AvailableProgVersion'}\n";
+				print "Release: $upgradepaks{$pak}{'Release'} -> $upgradepaks{$pak}{'AvailableRelease'}${reset_color}\n";
+			}
 			&Pakfire::message("");
 			&Pakfire::message("PAKFIRE UPGR: We are going to install all packages listed above.");
 			if ($interactive) {
@@ -290,34 +303,152 @@
 				  exit 1;
 				}
 			}
-		}
+		
+			# Download packages
+			foreach $pak (sort keys %upgradepaks) {
+				&Pakfire::getpak("$pak", "");
+			}
 
-		# Download packages
-		foreach $pak (@upgradepaks) {
-			&Pakfire::getpak("$pak", "");
-		}
+			# Download dependencies
+			foreach $pak (@deps) {
+				&Pakfire::getpak("$pak", "");
+			}
 
-		# Download dependencies
-		foreach $pak (@deps) {
-			&Pakfire::getpak("$pak", "");
-		}
+			# Install dependencies first
+			foreach $pak (@deps) {
+				&Pakfire::setuppak("$pak");
+			}
 
-		# Install dependencies first
-		foreach $pak (@deps) {
-			&Pakfire::setuppak("$pak");
-		}
-
-		# Install all upgrades
-		foreach $pak (@upgradepaks) {
-			&Pakfire::upgradepak("$pak");
+			# Install all upgrades
+			foreach $pak (sort keys %upgradepaks) {
+				&Pakfire::upgradepak("$pak");
+			}
+		} else {
+			&Pakfire::message("PAKFIRE WARN: No new package upgrades available.");
 		}
 
 	} elsif ("$ARGV[0]" eq "list") {
-		if ("$ARGV[1]" =~ /installed|notinstalled/) {
-			&Pakfire::dblist("$ARGV[1]", "noweb");
+		my $count;
+		my $coreupdate = 0;
+		my $use_color = "";
+		my $reset_color = "";
+		my $filter = "all";
+
+		shift if ("$ARGV[1]" =~ "^-"); 
+
+		if ("$ARGV[1]" =~ /installed|notinstalled|upgrade/) {
+			$filter = "$ARGV[1]";
+		} elsif ($ARGV[1]) {
+			&Pakfire::message("PAKFIRE ERROR: Not a known option $ARGV[1]"); 
+			exit 1;
+		}
+
+		my $pak;
+		my %paklist = &Pakfire::dblist($filter);
+
+		if ("$Pakfire::enable_colors" eq "1") {
+			$reset_color = "$Pakfire::color{'normal'}";
+			$use_color = "$Pakfire::color{'lightgreen'}";
+		}
+
+  		# Check for available core upgrade first if list of upgrades is requested
+		if ("$filter" eq "upgrade") {
+			my %coredb = &Pakfire::coredbinfo();
+
+			if (defined $coredb{'AvailableRelease'}) {
+				print "${use_color}Core-Update $coredb{'CoreVersion'}\n";
+				print "Release: $coredb{'Release'} -> $coredb{'AvailableRelease'}${reset_color}\n\n";
+				$coreupdate = 1;
+			}
+		}
+
+		foreach $pak (sort keys %paklist) {
+			if ("$Pakfire::enable_colors" eq "1") {
+				if ("$paklist{$pak}{'Installed'}" eq "yes") {
+					if (defined $paklist{$pak}{'AvailableProgVersion'}) {
+						$use_color = "$Pakfire::color{'lightgreen'}";
+					} else {
+						$use_color = "$Pakfire::color{'green'}";
+					}
+				} else {
+					$use_color = "$Pakfire::color{'red'}"; 
+				}
+			}
+
+			print "${use_color}Name: $pak\nProgVersion: $paklist{$pak}{'ProgVersion'}\n";
+			print "Release: $paklist{$pak}{'Release'}\nInstalled: $paklist{$pak}{'Installed'}\n";
+			if (defined $paklist{$pak}{'AvailableProgVersion'}) {
+				print "Update available:\n Version: $paklist{$pak}{'ProgVersion'} -> $paklist{$pak}{'AvailableProgVersion'}\n Release: $paklist{$pak}{'Release'} -> $paklist{$pak}{'AvailableRelease'}\n";
+			}
+			print "${reset_color}\n";
+			
+		}
+
+		$count = keys %paklist;
+		if ($count > 0) {
+			print "$count packages total.\n";
 		} else {
-			&Pakfire::message("PAKFIRE WARN: Not a known option $ARGV[1]") if ($ARGV[1]);
-			&Pakfire::dblist("all", "noweb");
+			if (! $coreupdate) {
+				&Pakfire::message("PAKFIRE WARN: No packages where found using filter $filter.");
+				exit 1;
+			}
+		}
+	} elsif ("$ARGV[0]" eq "info") {
+		shift;
+
+		my @paks;
+		my $pak;
+		foreach $pak (@ARGV) {
+			unless ("$pak" =~ "^-") {
+				push(@paks,$pak);
+			}
+		}
+
+		unless ("@paks") {
+			Pakfire::message("PAKFIRE ERROR: missing package name");
+			Pakfire::usage;
+			exit 1;
+		}
+
+		foreach $pak (@paks) {
+			my %metadata = Pakfire::getmetadata($pak, "latest");
+
+			### Check if pakfile was actually found
+			if ($metadata{'Installed'} eq "no" && $metadata{'Available'} eq "no") {
+				Pakfire::message("PAKFIRE WARN: Pak '$pak' not found.");
+				last;
+			}
+
+			unless (defined $metadata{'Available'}) {
+				Pakfire::message("PAKFIRE WARN: Unable to retrieve latest metadata for $pak. Information may be outdated.")
+			}
+
+			### Printout metadata in a user friendly format
+			print "Name: $metadata{'Name'}\n";
+			print "Summary: $metadata{'Summary'}\n";
+			if ($metadata{'Available'} eq "yes") {
+				print "Version: $metadata{'AvailableProgVersion'}-$metadata{'AvailableRelease'}\n";
+			} else {
+				print "Version: $metadata{'ProgVersion'}-$metadata{'Release'}\n";
+			}
+			print "Size: " . Pakfire::beautifysize("$metadata{'Size'}") . "\n";
+			print "Dependencies: $metadata{'Dependencies'}\n";
+			print "Pakfile: $metadata{'File'}\n";
+			print "Service InitScripts: $metadata{'Services'}\n";
+			print "Installed: $metadata{'Installed'}\n";
+			### Generate a pak status message
+			if (! defined $metadata{'Available'}) {
+				print "Status: unknown (an error occured retrieving latest pak metadata)";
+			} elsif ($metadata{'Available'} eq "no") {
+				print "Status: obsolete (version $metadata{'ProgVersion'}-$metadata{'Release'} is installed)\n";
+			} elsif ($metadata{'Installed'} eq "yes" && "$metadata{'Release'}" < "$metadata{'AvailableRelease'}") {
+				print "Status: outdated (version $metadata{'ProgVersion'}-$metadata{'Release'} is installed)\n";
+			} elsif ($metadata{'Installed'} eq "yes") {
+				print "Status: up-to-date\n";
+			} else {
+				print "Status: not installed\n";
+			}
+			print "\n";
 		}
 
 	} elsif ("$ARGV[0]" eq "resolvedeps") {
@@ -339,14 +470,31 @@
 			system("rm -f /etc/fcron.daily/pakfire-upgrade");
 		}
 	} elsif ("$ARGV[0]" eq "status") {
-		&Pakfire::status;
+		my $exitcode = 0;
+		my %status = &Pakfire::status;
+
+		print "Core-Version: $status{'CoreVersion'}\n";
+		print "Core-Update-Level: $status{'Release'}\n";
+		print "Last update: $status{'LastUpdate'} ago\n";
+		print "Last core-list update: $status{'LastCoreListUpdate'} ago\n";
+		print "Last server-list update: $status{'LastServerListUpdate'} ago\n";
+		print "Last packages-list update: $status{'LastPakListUpdate'} ago\n";
+		print "Core-Update available: $status{'CoreUpdateAvailable'}";
+		print " ($status{'AvailableRelease'})" if ("$status{'CoreUpdateAvailable'}" eq "yes");
+		print "\nPackage-Updates available: $status{'PakUpdatesAvailable'}\n";
+		print "Reboot required: $status{'RebootRequired'}\n";
+
+		$exitcode += 2 if ($status{'CoreUpdateAvailable'} eq "yes");
+		$exitcode += 3 if ($status{'PakUpdatesAvailable'} eq "yes");
+		$exitcode += 4 if ($status{'RebootRequired'} eq "yes");
+		exit $exitcode;
 	} else {
 		&Pakfire::usage;
 	}
 
-	&Pakfire::logger("PAKFIRE INFO: Pakfire has finished. Closing.");
-
 	END {
+		&Pakfire::logger("PAKFIRE INFO: Pakfire has finished. Closing.");
+
 		# Check if pakfire has been locked in this session.
 		if ($locked) {
 			# Remove lockfile.

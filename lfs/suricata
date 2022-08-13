@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.0.9
+VER        = 5.0.10
 
 THISAPP    = suricata-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 02ab99585233a47b1577e55060ba1141c339718e5bd39b6f4d38bb9384fd459aae353f313083048128507f9023a8bcfea3e5a5bcc9ea0c75cfc9c288ca9db6b6
+$(DL_FILE)_BLAKE2 = b5c83b9882e89894c3dedb7f536d584a20bbeab24236752e528171db6589a6308422c8b0be4f433fc63b8cfc227aa0b67935a4aece943b10f4577398ea9ed467
 
 install : $(TARGET)
 
@@ -70,7 +70,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/suricata/suricata-5.0-stream-tcp-Handle-retransmitted-SYN-with-TSval.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/suricata/suricata-disable-sid-2210059.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/suricata/suricata-5.0.8-fix-level1-cache-line-size-detection.patch
 	cd $(DIR_APP) && LDFLAGS="$(LDFLAGS)" ./configure \

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Music Player Daemon
 
-VER        = 0.23.6
+VER        = 0.23.8
 
 THISAPP    = mpd-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,10 +34,10 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/${THISAPP}
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpd
-PAK_VER    = 25
+PAK_VER    = 26
 SUP_ARCH   = aarch64 armv6l x86_64
 
-DEPS       = alsa avahi faad2 ffmpeg flac lame libmad libshout libogg libid3tag libvorbis opus soxr
+DEPS       = alsa avahi faad2 ffmpeg flac lame libmad libshout libogg libid3tag libvorbis opus soxr fmt
 
 SERVICES   = mpd
 
@@ -49,7 +49,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 5ccb4a7c06c4317e3285846a261438bdcc10db5eaf71fcba969bcae8321ca50bb26fe9317e23e38eca1c4a8785015596064d5bfc692bf66f8007d0d2a1b71cbb
+$(DL_FILE)_BLAKE2 = fd2dd32bc935cb78d9204bccea6ed52f5131ae4645efca91323db930373a5fa14115a767daa11d670aaf46e218c52578d155b9a463ed5aae007e1f55d0208d3a
 
 install : $(TARGET)
 

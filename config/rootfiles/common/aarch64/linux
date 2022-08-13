@@ -7646,6 +7646,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/GARP
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGINS
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_LATENT_ENTROPY
+#lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_RANDSTRUCT
+#lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_STRUCTLEAK
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
 #lib/modules/KVER-ipfire/build/include/config/GCC_VERSION
@@ -9003,7 +9005,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/NFSD_V4_SECURITY_LABEL
 #lib/modules/KVER-ipfire/build/include/config/NFS_ACL_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/NFS_COMMON
-#lib/modules/KVER-ipfire/build/include/config/NFS_DEBUG
 #lib/modules/KVER-ipfire/build/include/config/NFS_DISABLE_UDP_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/NFS_FS
 #lib/modules/KVER-ipfire/build/include/config/NFS_FSCACHE
@@ -9427,7 +9428,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/RAID6_PQ
 #lib/modules/KVER-ipfire/build/include/config/RAID6_PQ_BENCHMARK
 #lib/modules/KVER-ipfire/build/include/config/RAID_ATTRS
+#lib/modules/KVER-ipfire/build/include/config/RANDOMIZE_BASE
 #lib/modules/KVER-ipfire/build/include/config/RANDOMIZE_KSTACK_OFFSET_DEFAULT
+#lib/modules/KVER-ipfire/build/include/config/RANDOMIZE_MODULE_REGION_FULL
 #lib/modules/KVER-ipfire/build/include/config/RAS
 #lib/modules/KVER-ipfire/build/include/config/RASPBERRYPI_FIRMWARE
 #lib/modules/KVER-ipfire/build/include/config/RASPBERRYPI_POWER
@@ -10099,7 +10102,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SUNGEM_PHY
 #lib/modules/KVER-ipfire/build/include/config/SUNRPC
 #lib/modules/KVER-ipfire/build/include/config/SUNRPC_BACKCHANNEL
-#lib/modules/KVER-ipfire/build/include/config/SUNRPC_DEBUG
 #lib/modules/KVER-ipfire/build/include/config/SUNRPC_GSS
 #lib/modules/KVER-ipfire/build/include/config/SUNXI_CCU
 #lib/modules/KVER-ipfire/build/include/config/SUNXI_MBUS
@@ -10498,6 +10500,13 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/VETH
 #lib/modules/KVER-ipfire/build/include/config/VEXPRESS_CONFIG
 #lib/modules/KVER-ipfire/build/include/config/VFAT_FS
+#lib/modules/KVER-ipfire/build/include/config/VFIO
+#lib/modules/KVER-ipfire/build/include/config/VFIO_IOMMU_TYPE1
+#lib/modules/KVER-ipfire/build/include/config/VFIO_PCI
+#lib/modules/KVER-ipfire/build/include/config/VFIO_PCI_CORE
+#lib/modules/KVER-ipfire/build/include/config/VFIO_PCI_INTX
+#lib/modules/KVER-ipfire/build/include/config/VFIO_PCI_MMAP
+#lib/modules/KVER-ipfire/build/include/config/VFIO_VIRQFD
 #lib/modules/KVER-ipfire/build/include/config/VGA_ARB
 #lib/modules/KVER-ipfire/build/include/config/VGA_ARB_MAX_GPUS
 #lib/modules/KVER-ipfire/build/include/config/VHOST_MENU
@@ -11683,6 +11692,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/generated/autoconf.h
 #lib/modules/KVER-ipfire/build/include/generated/bounds.h
 #lib/modules/KVER-ipfire/build/include/generated/compile.h
+#lib/modules/KVER-ipfire/build/include/generated/randomize_layout_hash.h
 #lib/modules/KVER-ipfire/build/include/generated/timeconst.h
 #lib/modules/KVER-ipfire/build/include/generated/uapi
 #lib/modules/KVER-ipfire/build/include/generated/uapi/linux
@@ -13021,6 +13031,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/linux/mmu_context.h
 #lib/modules/KVER-ipfire/build/include/linux/mmu_notifier.h
 #lib/modules/KVER-ipfire/build/include/linux/mmzone.h
+#lib/modules/KVER-ipfire/build/include/linux/mnt_idmapping.h
 #lib/modules/KVER-ipfire/build/include/linux/mnt_namespace.h
 #lib/modules/KVER-ipfire/build/include/linux/mod_devicetable.h
 #lib/modules/KVER-ipfire/build/include/linux/mod_devicetable.h.orig
@@ -17127,6 +17138,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/latent_entropy_plugin.c
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/latent_entropy_plugin.so
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/randomize_layout_plugin.c
+#lib/modules/KVER-ipfire/build/scripts/gcc-plugins/randomize_layout_plugin.so
+#lib/modules/KVER-ipfire/build/scripts/gcc-plugins/randomize_layout_seed.h
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/sancov_plugin.c
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/stackleak_plugin.c
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/structleak_plugin.c
@@ -20354,6 +20367,13 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/usb/usbip/usbip-core.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/usb/usbip/usbip-host.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/usb/usbip/vhci-hcd.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/pci
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/pci/vfio-pci-core.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/pci/vfio-pci.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/vfio.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/vfio_iommu_type1.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/vfio/vfio_virqfd.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/video
 #lib/modules/KVER-ipfire/kernel/drivers/video/backlight
 #lib/modules/KVER-ipfire/kernel/drivers/video/backlight/lcd.ko.xz

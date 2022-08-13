@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -157,9 +157,6 @@ restore_backup() {
 	# Reload firewall
 	firewallctrl
 
-	# Convert old OpenVPN CCD files (CN change, Core Update 75)
-	convert-ovpn
-
 	# Snort to suricata converter.
 	if [ -d "/var/ipfire/snort" ]; then
 		# Run converter
@@ -191,7 +188,7 @@ restore_backup() {
 }
 
 find_logfiles() {
-	local filelist=( /var/log/messages* /var/log/*.log /var/log/**/*.log )
+	local filelist=( /var/log/logwatch/* /var/log/messages* /var/log/*.log /var/log/**/*.log )
 
 	echo "${filelist[@]}"
 }

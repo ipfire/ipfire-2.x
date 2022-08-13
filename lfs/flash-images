@@ -36,7 +36,7 @@ ifeq "$(EFI)" "1"
 endif
 PART_ROOT  = /dev/mapper/$(patsubst /dev/%,%,$(DEVICE))p3
 
-IMAGE_FILE = /install/images/$(SNAME)-$(VERSION).2gb-ext4.$(BUILD_ARCH)-full-core$(CORE).img.xz
+IMAGE_FILE = /install/images/$(SNAME)-$(VERSION)-core$(CORE)-$(BUILD_ARCH).img.xz
 
 FSTAB_FMT = UUID=%s %-8s %-4s %-10s %d %d\n
 
@@ -77,9 +77,9 @@ else
  PART_TYPE = L
 endif
 
-# /boot:  128MB - OFFSET
+# /boot:  256 MB - OFFSET
 # /    : 1800 MB
-S_BOOT := $(shell echo $$(( 262144 - $(S_OFFSET) )))
+S_BOOT := $(shell echo $$(( 524288 - $(S_OFFSET) )))
 S_ROOT := 3773292
 
 ifeq "$(EFI)" "1"

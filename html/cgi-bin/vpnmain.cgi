@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -2360,11 +2360,11 @@ END
 	#use default advanced value
 	$cgiparams{'IKE_ENCRYPTION'}	= 'chacha20poly1305|aes256gcm128|aes256gcm96|aes256gcm64|aes256|aes192gcm128|aes192gcm96|aes192gcm64|aes192|aes128gcm128|aes128gcm96|aes128gcm64|aes128'; #[18];
 	$cgiparams{'IKE_INTEGRITY'}		= 'sha2_512|sha2_256'; #[19];
-	$cgiparams{'IKE_GROUPTYPE'}             = 'curve448|curve25519|4096|3072|2048'; #[20];
+	$cgiparams{'IKE_GROUPTYPE'}             = 'curve448|curve25519|e521|e384|4096|3072'; #[20];
 	$cgiparams{'IKE_LIFETIME'}		= '3'; #[16];
 	$cgiparams{'ESP_ENCRYPTION'}	= 'chacha20poly1305|aes256gcm128|aes256gcm96|aes256gcm64|aes256|aes192gcm128|aes192gcm96|aes192gcm64|aes192|aes128gcm128|aes128gcm96|aes128gcm64|aes128'; #[21];
 	$cgiparams{'ESP_INTEGRITY'}		= 'sha2_512|sha2_256'; #[22];
-	$cgiparams{'ESP_GROUPTYPE'}             = 'curve448|curve25519|4096|3072|2048'; #[23];
+	$cgiparams{'ESP_GROUPTYPE'}             = 'curve448|curve25519|e521|e384|4096|3072'; #[23];
 	$cgiparams{'ESP_KEYLIFE'}		= '1'; #[17];
 	$cgiparams{'COMPRESSION'}		= 'off'; #[13];
 	$cgiparams{'ONLY_PROPOSED'}		= 'on'; #[24];
@@ -3146,8 +3146,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='6144' $checked{'IKE_GROUPTYPE'}{'6144'}>MODP-6144</option>
 					<option value='4096' $checked{'IKE_GROUPTYPE'}{'4096'}>MODP-4096</option>
 					<option value='3072' $checked{'IKE_GROUPTYPE'}{'3072'}>MODP-3072</option>
-					<option value='2048' $checked{'IKE_GROUPTYPE'}{'2048'}>MODP-2048</option>
-					<option value='1536' $checked{'IKE_GROUPTYPE'}{'1536'}>MODP-1536</option>
+					<option value='2048' $checked{'IKE_GROUPTYPE'}{'2048'}>MODP-2048 ($Lang::tr{'vpn weak'})</option>
+					<option value='1536' $checked{'IKE_GROUPTYPE'}{'1536'}>MODP-1536 ($Lang::tr{'vpn broken'})</option>
 					<option value='1024' $checked{'IKE_GROUPTYPE'}{'1024'}>MODP-1024 ($Lang::tr{'vpn broken'})</option>
 					<option value='768' $checked{'IKE_GROUPTYPE'}{'768'}>MODP-768 ($Lang::tr{'vpn broken'})</option>
 				</select>
@@ -3169,8 +3169,8 @@ if(($cgiparams{'ACTION'} eq $Lang::tr{'advanced'}) ||
 					<option value='6144' $checked{'ESP_GROUPTYPE'}{'6144'}>MODP-6144</option>
 					<option value='4096' $checked{'ESP_GROUPTYPE'}{'4096'}>MODP-4096</option>
 					<option value='3072' $checked{'ESP_GROUPTYPE'}{'3072'}>MODP-3072</option>
-					<option value='2048' $checked{'ESP_GROUPTYPE'}{'2048'}>MODP-2048</option>
-					<option value='1536' $checked{'ESP_GROUPTYPE'}{'1536'}>MODP-1536</option>
+					<option value='2048' $checked{'ESP_GROUPTYPE'}{'2048'}>MODP-2048 ($Lang::tr{'vpn weak'})</option>
+					<option value='1536' $checked{'ESP_GROUPTYPE'}{'1536'}>MODP-1536 ($Lang::tr{'vpn broken'})</option>
 					<option value='1024' $checked{'ESP_GROUPTYPE'}{'1024'}>MODP-1024 ($Lang::tr{'vpn broken'})</option>
 					<option value='768' $checked{'ESP_GROUPTYPE'}{'768'}>MODP-768 ($Lang::tr{'vpn broken'})</option>
 					<option value='none' $checked{'ESP_GROUPTYPE'}{'none'}>- $Lang::tr{'none'} -</option>

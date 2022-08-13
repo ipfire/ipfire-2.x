@@ -414,7 +414,7 @@ sub processevent
 				}
 				($title,$classification,$priority,$date,$time,$srcip,$srcport,$destip,$destport,$sid) = ("n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a","n/a", "n/a");
 				@refs = ();
-				$_ =~ m/:([0-9]{1,5})\] (.*) \[\*\*\]/;
+				$_ =~ m/:([0-9]{1,10})\] (.*) \[\*\*\]/;
 				$title = &Header::cleanhtml($2,"y");
 			}
 			if ($_ =~ m/Classification: (.*)\] \[Priority: (\d)\]/) {

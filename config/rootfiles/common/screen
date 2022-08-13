@@ -1,6 +1,6 @@
 etc/screenrc
 usr/bin/screen
-usr/bin/screen-4.8.0
+usr/bin/screen-4.9.0
 #usr/share/info/screen.info
 #usr/share/man/man1/screen.1
 #usr/share/screen

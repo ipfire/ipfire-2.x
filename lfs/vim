@@ -24,12 +24,12 @@
 
 include Config
 
-VER        = 8.2
+VER        = 9.0
 
 THISAPP    = vim-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/vim82
+DIR_APP    = $(DIR_SRC)/vim90
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 9a4591f1745a6883ac0d30d674bf4910b054aea6ab6743bc61ea47f505f15f6f6411f4b3464f2aa342bf8acce5b975ba7da7f3d94ab671a5157d66d74d1b56f4
+$(DL_FILE)_BLAKE2 = 824208c9dd9c2c64ab16112146cfff70e7722c34aacb119129ca6c46afe6306a7e989519a2a7a0e78cb84e6617149233e7148cc805ccd9c9dc048ad2b76add10
 
 install : $(TARGET)
 
@@ -70,8 +70,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/vim/vim-8.2_fix_gcc10_detection.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/vim/vim-8.2_fix_hardening_crash.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/vim/vim-9.0_fix_hardening_crash.patch
 	cd $(DIR_APP) && echo '#define SYS_VIMRC_FILE "/etc/vimrc"' >> src/feature.h
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \

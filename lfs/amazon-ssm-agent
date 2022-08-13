@@ -27,7 +27,7 @@ include Config
 SUMMARY    = Amazon Remote System Config Management
 
 VER        = 3.0.356.0
-SUP_ARCH   = x86_64
+SUP_ARCH   = aarch64 x86_64
 
 THISAPP    = amazon-ssm-agent-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -96,8 +96,15 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_BUILD) && sed -e "/localpackages/d" \
 		-i agent/plugins/inventory/gatherers/application/dataProvider.go
 
+	# Cleanup anything shipped
+	cd $(DIR_BUILD) && make clean
+
 	# Build
+ifeq "$(BUILD_ARCH)" "aarch64"
+	cd $(DIR_BUILD) && make build-arm64
+else
 	cd $(DIR_BUILD) && make build-linux
+endif
 
 	# Remove some temporary files (no idea why those are being created)
 	rm -rfv /usr/lib/go/pkg/linux_$(GOARCH)_shared
@@ -105,12 +112,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Install
 	mkdir -pv /etc/amazon/ssm /usr/bin /var/lib/amazon/ssm
 	cd $(DIR_BUILD) && install -v -m 755 \
-		bin/linux_amd64/amazon-ssm-agent \
-		bin/linux_amd64/ssm-agent-worker \
-		bin/linux_amd64/ssm-cli \
-		bin/linux_amd64/ssm-document-worker \
-		bin/linux_amd64/ssm-session-worker \
-		bin/linux_amd64/ssm-session-logger \
+		bin/linux_$(GOARCH)/amazon-ssm-agent \
+		bin/linux_$(GOARCH)/ssm-agent-worker \
+		bin/linux_$(GOARCH)/ssm-cli \
+		bin/linux_$(GOARCH)/ssm-document-worker \
+		bin/linux_$(GOARCH)/ssm-session-worker \
+		bin/linux_$(GOARCH)/ssm-session-logger \
 		/usr/bin
 	cd $(DIR_BUILD) && install -v -m 644 \
 		seelog_unix.xml /etc/amazon/ssm/seelog.xml

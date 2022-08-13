@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = rsync
-PAK_VER    = 14
+PAK_VER    = 15
 
 DEPS       =
 
@@ -84,6 +84,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Replace shebang in rsync-ssl
 	cd $(DIR_APP) && sed -i -e "s@^#!.*@#!/bin/bash@" rsync-ssl
+
+	# Fix for CVE-2022-29154
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rsync-CVE-2022-29154.patch
 
 	cd $(DIR_APP) && ./configure \
 	--prefix=/usr \

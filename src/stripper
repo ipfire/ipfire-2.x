@@ -38,6 +38,10 @@ function _strip() {
 			args+=( "--strip-all" )
 			;;
 
+		*Type:*"DYN (Position-Independent Executable file)"*)
+			args+=( "--strip-all" )
+			;;
+
 		# Binaries
 		*Type:*"EXEC (Executable file)"*)
 			args+=( "--strip-all" )

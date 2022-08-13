@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.8.0
+VER        = 4.9.0
 
 THISAPP    = screen-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 97ef6f18bf2c63c477260b742ac0b3501f112d380c41ccecc5cf2853db853cc62d4fd6d37edeca35fb41a43b76d98a5cfe160749c992d284f9764b0a0fdcc778
+$(DL_FILE)_BLAKE2 = 0f64a14ce9a719bd4a6d045c55069769045a09ee2086c44c2e3d9da6d1e5ada2f094e00e16029767e1155ce35d4f360d0e2879995eefa052f3214ced71b7617c
 
 install : $(TARGET)
 
@@ -70,6 +70,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure --prefix=/usr --with-socket-dir=/var/run/screen --with-sys-screenrc=/etc/screenrc
 	cd $(DIR_APP) && sed -i -e "s%/usr/local/etc/screenrc%/etc/screenrc%" {etc,doc}/*
 	cd $(DIR_APP) && make $(MAKETUNING)

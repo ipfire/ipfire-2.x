@@ -56,6 +56,7 @@ usr/sbin/clamd
 #usr/share/doc/ClamAV/html/clipboard.min.js
 #usr/share/doc/ClamAV/html/community_resources
 #usr/share/doc/ClamAV/html/community_resources/CommunityResources.html
+#usr/share/doc/ClamAV/html/community_resources/CompileClamAV_AmazonLinux2.txt
 #usr/share/doc/ClamAV/html/css
 #usr/share/doc/ClamAV/html/css/chrome.css
 #usr/share/doc/ClamAV/html/css/general.css

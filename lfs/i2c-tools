@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.1.2
+VER        = 4.3
 
 THISAPP    = i2c-tools-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 7c1a4ac9034a33bffed989b7c960bfadafc537007561a5c4ced231ae999691a0a76f5f1a2df41bddae1537bf7b627e2b09788dc056af16b58da4af3d647a4b21
+$(DL_FILE)_BLAKE2 = c7300224c8d32785cd067b632bf0e9591f05264b1572f44aebda5f30a95164732d606710c13739ccb7899476219ceb3033beaf95b718ed7e18122f9181dc13fc
 
 install : $(TARGET)
 
@@ -74,6 +74,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install prefix=/usr
+	cd $(DIR_APP) && make install PREFIX=/usr \
+	                      BUILD_DYNAMIC_LIB=1 \
+	                      BUILD_STATIC_LIB=0
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

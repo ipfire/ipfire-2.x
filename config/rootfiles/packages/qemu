@@ -120,14 +120,13 @@ usr/share/qemu/kvmvapic.bin
 usr/share/qemu/linuxboot.bin
 usr/share/qemu/linuxboot_dma.bin
 usr/share/qemu/multiboot.bin
+usr/share/qemu/multiboot_dma.bin
 usr/share/qemu/npcm7xx_bootrom.bin
 #usr/share/qemu/openbios-ppc
 #usr/share/qemu/openbios-sparc32
 #usr/share/qemu/openbios-sparc64
 #usr/share/qemu/opensbi-riscv32-generic-fw_dynamic.bin
-#usr/share/qemu/opensbi-riscv32-generic-fw_dynamic.elf
 usr/share/qemu/opensbi-riscv64-generic-fw_dynamic.bin
-usr/share/qemu/opensbi-riscv64-generic-fw_dynamic.elf
 #usr/share/qemu/palcode-clipper
 #usr/share/qemu/petalogix-ml605.dtb
 #usr/share/qemu/petalogix-s3adsp1800.dtb
@@ -160,3 +159,5 @@ usr/share/qemu/vgabios-vmware.bin
 usr/share/qemu/vgabios.bin
 usr/share/qemu/vhost-user
 usr/share/qemu/vhost-user/50-qemu-virtiofsd.json
+usr/share/qemu/vof-nvram.bin
+usr/share/qemu/vof.bin

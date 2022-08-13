@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 1.0.8
+VER        = 1.0.9
 
 THISAPP    = gptfdisk-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	    = gptfdisk
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS	    =
 
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 03c74c43fead13e90ff6cd42405e15db726f527801a9e3f1d5f6a83d3fa58f0f8e58b35edc1b12b0b2e6c7849b657ce4493ac67204d25309e6f63fe7f57f766b
+$(DL_FILE)_BLAKE2 = 1939ffd75972a4d7f92af2bfab90c7b0223825b5478b6b808dd35af943c687d38ba81663cd7ba5e0f9400656db4dac019c13a9f75d90b7bd716568c676c24dd2
 
 install : $(TARGET)
 

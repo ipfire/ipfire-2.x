@@ -31,7 +31,7 @@ DL_FILE    = go$(VER).$(GOOS)-$(GOARCH).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/go
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = x86_64
+SUP_ARCH   = aarch64 x86_64
 
 ###############################################################################
 # Top-level Rules
@@ -41,7 +41,8 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d200046147e31fac1a754fc34ac4a5043414a1d6e90aa3387c933c395acede0b8d5b797affaa85c2188af4d15566b4fcd08108350fe73ed90b1c305600c655c9
+go$(VER).$(GOOS)-arm64.tar.gz_BLAKE2 = ef1708965bcd415fdad498e27729d0259f83e16a542f37dae1fb70f71127dfa0cb8570e4896474e6a94bb461e16ff8000e8072bc731c637fce5f384227359e14
+go$(VER).$(GOOS)-amd64.tar.gz_BLAKE2 = d200046147e31fac1a754fc34ac4a5043414a1d6e90aa3387c933c395acede0b8d5b797affaa85c2188af4d15566b4fcd08108350fe73ed90b1c305600c655c9
 
 install : $(TARGET)
 

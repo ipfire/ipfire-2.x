@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = An Interactive text-mode Process Viewer for Linux
 
-VER        = 3.1.2
+VER        = 3.2.1
 
 THISAPP    = htop-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = htop
-PAK_VER    = 18
+PAK_VER    = 19
 
 DEPS       =
 
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 2b05c90df830c94cee08a16fa5a351b30f396b1f352a37d2eada108b972b6a406f667fadd82a227d149a93a2cd6301b7d9477dd8ca369ff3d317b0fd9146d7c2
+$(DL_FILE)_BLAKE2 = 7addefca7de8f0867220e6415f4585f7e6ecf655d6245e4a8e120552ac738544fde1c2d8e24ce1139209caad23994316e8be9611f6ed0253d60547158d17ff24
 
 install : $(TARGET)
 

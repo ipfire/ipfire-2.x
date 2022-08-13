@@ -1,7 +1,7 @@
 /*#############################################################################
 #                                                                             #
 # IPFire - An Open Source Firewall Distribution                               #
-# Copyright (C) 2014 IPFire development team                                  #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -492,7 +492,7 @@ static unsigned long long hw_swap_size(struct hw_destination* dest) {
 }
 
 static unsigned long long hw_boot_size(struct hw_destination* dest) {
-	return MB2BYTES(128);
+	return MB2BYTES(256);
 }
 
 static int hw_device_has_p_suffix(const struct hw_destination* dest) {
@@ -1134,7 +1134,7 @@ int hw_write_fstab(struct hw_destination* dest) {
 		uuid = hw_get_uuid(dest->part_boot);
 
 		if (uuid) {
-			fprintf(f, FSTAB_FMT, uuid, "/boot", "auto", "defaults", 1, 2);
+			fprintf(f, FSTAB_FMT, uuid, "/boot", "auto", "defaults,nodev,noexec,nosuid", 1, 2);
 			free(uuid);
 		}
 	}

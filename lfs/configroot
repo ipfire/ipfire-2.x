@@ -51,7 +51,7 @@ $(TARGET) :
 
 	# Create all directories
 	for i in addon-lang auth backup ca captive certs connscheduler crls ddns dhcp dhcpc dns dnsforward \
-			ethernet extrahd/bin fwlogs fwhosts firewall isdn key langs logging mac main \
+			ethernet extrahd/bin fwlogs fwhosts firewall ipblocklist isdn key langs logging mac main \
 			menu.d modem optionsfw \
 			ovpn patches pakfire portfw ppp private proxy/advanced/cre \
 			proxy/calamaris/bin qos/bin red remote sensors suricata time \
@@ -65,7 +65,7 @@ $(TARGET) :
 	    captive/settings captive/agb.txt captive/clients captive/voucher_out certs/index.txt certs/index.txt.attr ddns/config ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dns/settings dns/servers dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
 	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings firewall/settings firewall/config firewall/locationblock firewall/input firewall/outgoing \
-	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwhosts/customlocationgrp fwlogs/ipsettings fwlogs/portsettings \
+	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwhosts/customlocationgrp fwlogs/ipsettings fwlogs/portsettings ipblocklist/settings \
 	    isdn/settings mac/settings main/hosts main/routing main/security main/settings optionsfw/settings \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
 	    ppp/settings-5 ppp/settings proxy/settings proxy/squid.conf proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
@@ -78,7 +78,8 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/header.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/general-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/network-functions.pl	$(CONFIG_ROOT)/
-	cp $(DIR_SRC)/config/cfgroot/location-functions.pl		$(CONFIG_ROOT)/
+	cp $(DIR_SRC)/config/cfgroot/location-functions.pl	$(CONFIG_ROOT)/
+	cp $(DIR_SRC)/config/cfgroot/ipblocklist-functions.pl	$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/ids-functions.pl		$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/lang.pl			$(CONFIG_ROOT)/
 	cp $(DIR_SRC)/config/cfgroot/countries.pl		$(CONFIG_ROOT)/
@@ -93,19 +94,19 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/modem-defaults		$(CONFIG_ROOT)/modem/defaults
 	cp $(DIR_SRC)/config/cfgroot/modem-settings		$(CONFIG_ROOT)/modem/settings
 	cp $(DIR_SRC)/config/cfgroot/proxy-acl			$(CONFIG_ROOT)/proxy/acl-1.4
-	cp $(DIR_SRC)/config/qos/*						$(CONFIG_ROOT)/qos/bin/
+	cp $(DIR_SRC)/config/qos/*				$(CONFIG_ROOT)/qos/bin/
 	cp $(DIR_SRC)/config/cfgroot/main-settings		$(CONFIG_ROOT)/main/settings
 	cp $(DIR_SRC)/config/cfgroot/manualpages		$(CONFIG_ROOT)/main/
 	cp $(DIR_SRC)/config/cfgroot/ssh-settings		$(CONFIG_ROOT)/remote/settings
 	cp $(DIR_SRC)/config/cfgroot/time-settings		$(CONFIG_ROOT)/time/settings
-	cp $(DIR_SRC)/config/cfgroot/logging-settings	$(CONFIG_ROOT)/logging/settings
+	cp $(DIR_SRC)/config/cfgroot/logging-settings		$(CONFIG_ROOT)/logging/settings
 	cp $(DIR_SRC)/config/cfgroot/ethernet-vlans		$(CONFIG_ROOT)/ethernet/vlans
-	cp $(DIR_SRC)/langs/list						$(CONFIG_ROOT)/langs/
-	cp $(DIR_SRC)/config/firewall/convert-xtaccess	/usr/sbin/convert-xtaccess
+	cp $(DIR_SRC)/langs/list				$(CONFIG_ROOT)/langs/
+	cp $(DIR_SRC)/config/firewall/convert-xtaccess		/usr/sbin/convert-xtaccess
 	cp $(DIR_SRC)/config/firewall/convert-outgoingfw	/usr/sbin/convert-outgoingfw
-	cp $(DIR_SRC)/config/firewall/convert-dmz	/usr/sbin/convert-dmz
-	cp $(DIR_SRC)/config/firewall/convert-portfw	/usr/sbin/convert-portfw
-	cp $(DIR_SRC)/config/firewall/firewall-policy	/usr/sbin/firewall-policy
+	cp $(DIR_SRC)/config/firewall/convert-dmz		/usr/sbin/convert-dmz
+	cp $(DIR_SRC)/config/firewall/convert-portfw		/usr/sbin/convert-portfw
+	cp $(DIR_SRC)/config/firewall/firewall-policy		/usr/sbin/firewall-policy
 	cp $(DIR_SRC)/config/fwhosts/icmp-types			$(CONFIG_ROOT)/fwhosts/icmp-types
 	cp $(DIR_SRC)/config/fwhosts/customservices		$(CONFIG_ROOT)/fwhosts/customservices
 	cp $(DIR_SRC)/config/fwhosts/customservices             $(CONFIG_ROOT)/fwhosts/customservices.default

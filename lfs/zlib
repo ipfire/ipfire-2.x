@@ -77,6 +77,11 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+
+	# Apply fix for CVE-2022-37434 (and a fix for the fix)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/zlib-CVE-2022-37434.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/zlib-CVE-2022-37434-fix.patch
+
 	cd $(DIR_APP) && CROSS_PREFIX=$(CROSS_PREFIX) ./configure --prefix=$(PREFIX) --shared
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install

@@ -67,9 +67,9 @@ sub showmenu() {
 	if ($settings{'SPEED'} ne 'off') {
 		print <<EOF;
 			<div id='traffic'>
-				<strong>Traffic:</strong>
-				In  <span id='rx_kbs'>--.-- bit/s</span> &nbsp;
-				Out <span id='tx_kbs'>--.-- bit/s</span>
+				<strong>$Lang::tr{'traffic stat title'}:</strong>
+				$Lang::tr{'traffic stat in'} <span id='rx_kbs'>--.-- bit/s</span> &nbsp;
+				$Lang::tr{'traffic stat out'} <span id='tx_kbs'>--.-- bit/s</span>
 			</div>
 EOF
 	}
@@ -202,7 +202,7 @@ sub openpagewithoutmenu {
 sub closepage () {
 	open(FILE, "</etc/system-release");
 	my $system_release = <FILE>;
-	$system_release =~ s/core/Core Update /;
+	$system_release =~ s/core/$Lang::tr{'core update'} /;
 	close(FILE);
 
 print <<END;

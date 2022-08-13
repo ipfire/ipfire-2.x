@@ -26,6 +26,7 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "/usr/lib/firewall/firewall-lib.pl";
 require "${General::swroot}/location-functions.pl";
+require "${General::swroot}/ipblocklist-functions.pl";
 
 # Set to one to enable debugging mode.
 my $DEBUG = 0;
@@ -73,6 +74,10 @@ my %confignatfw=();
 my %locationsettings = (
 	"LOCATIONBLOCK_ENABLED" => "off"
 );
+my %blocklistsettings= (
+	"ENABLE" => "off",
+);
+
 my %ipset_loaded_sets = ();
 my @ipset_used_sets = ();
 
@@ -82,6 +87,7 @@ my $configoutgoing  = "${General::swroot}/firewall/outgoing";
 my $locationfile		= "${General::swroot}/firewall/locationblock";
 my $configgrp		= "${General::swroot}/fwhosts/customgroups";
 my $netsettings		= "${General::swroot}/ethernet/settings";
+my $blocklistfile   = "${General::swroot}/ipblocklist/settings";
 
 &General::readhash("${General::swroot}/firewall/settings", \%fwdfwsettings);
 &General::readhash("${General::swroot}/optionsfw/settings", \%fwoptions);
@@ -97,8 +103,17 @@ if (-e "$locationfile") {
 	&General::readhash("$locationfile", \%locationsettings);
 }
 
+# Check if the ipblocklist settings file exits.
+if (-e "$blocklistfile") {
+	# Read-in settings file.
+	&General::readhash("$blocklistfile", \%blocklistsettings);
+}
+
 # Get all available locations.
 my @locations = &Location::Functions::get_locations();
+
+# Get all supported blocklists.
+my @blocklists = &IPblocklist::get_blocklists();
 
 # Name or the RED interface.
 my $RED_DEV = &General::get_red_interface();
@@ -143,6 +158,9 @@ sub main {
 
 	# Load rules to block hostile networks.
 	&drop_hostile_networks();
+
+	# Handle ipblocklist.
+	&ipblocklist();
 
 	# Reload firewall policy.
 	run("/usr/sbin/firewall-policy");
@@ -708,6 +726,64 @@ sub drop_hostile_networks () {
 	run("$IPTABLES -A HOSTILE -o $RED_DEV -m set --match-set $HOSTILE_CCODE dst -j HOSTILE_DROP");
 }
 
+sub ipblocklist () {
+	# Flush the ipblocklist chains.
+	run("$IPTABLES -F BLOCKLISTIN");
+	run("$IPTABLES -F BLOCKLISTOUT");
+
+	# Check if the blocklist feature is enabled.
+	if($blocklistsettings{'ENABLE'} eq "on") {
+		# Loop through the array of private networks.
+		foreach my $private_network (@PRIVATE_NETWORKS) {
+			# Create firewall rules to never block private networks.
+			run("$IPTABLES -A BLOCKLISTIN -p ALL -i $RED_DEV -s $private_network -j RETURN");
+			run("$IPTABLES -A BLOCKLISTOUT -p ALL -o $RED_DEV -d $private_network -j RETURN");
+		}
+	}
+
+	# Loop through the array of blocklists.
+	foreach my $blocklist (@blocklists) {
+		# Check if the blocklist feature and the current processed blocklist is enabled.
+		if(($blocklistsettings{'ENABLE'} eq "on") && ($blocklistsettings{$blocklist}) && ($blocklistsettings{$blocklist} eq "on")) {
+			# Call function to load the blocklist.
+			&ipset_restore($blocklist);
+
+			# Call function to check if the corresponding iptables drop chain already has been created.
+			if(&firewall_chain_exists("${blocklist}_DROP")) {
+				# Create iptables chain.
+				run("$IPTABLES -N ${blocklist}_DROP");
+			} else {
+				# Flush the chain.
+				run("$IPTABLES -F ${blocklist}_DROP");
+			}
+
+			# Check if logging is enabled.
+			if($blocklistsettings{'LOGGING'} eq "on") {
+				# Create logging rule.
+				run("$IPTABLES -A ${blocklist}_DROP -j LOG -m limit --limit 10/second --log-prefix \"BLKLST_$blocklist\" ");
+			}
+
+			# Create Drop rule.
+			run("$IPTABLES -A ${blocklist}_DROP -j DROP");
+
+			# Add the rules to check against the set
+			run("$IPTABLES -A BLOCKLISTIN -p ALL -i $RED_DEV -m set --match-set $blocklist src -j ${blocklist}_DROP");
+			run("$IPTABLES -A BLOCKLISTOUT -p ALL -o $RED_DEV -m set --match-set $blocklist dst -j ${blocklist}_DROP");
+
+		# IP blocklist or the blocklist is disabled.
+		} else {
+			# Check if the blocklist related iptables drop chain exits.
+			unless(&firewall_chain_exists("${blocklist}_DROP")) {
+				# Flush the chain.
+				run("$IPTABLES -F ${blocklist}_DROP");
+
+				# Drop the chain.
+				run("$IPTABLES -X ${blocklist}_DROP");
+			}
+		}
+	}
+}
+
 sub get_protocols {
 	my $hash = shift;
 	my $key = shift;
@@ -921,6 +997,14 @@ sub firewall_is_in_subnet {
 	return 0;
 }
 
+sub firewall_chain_exists ($) {
+	my ($chain) = @_;
+
+	my $ret = &General::system("iptables", "--wait", "-n", "-L", "$chain");
+
+	return $ret;
+}
+
 sub ipset_get_sets () {
 	my @sets;
 
@@ -985,6 +1069,26 @@ sub ipset_restore ($) {
 		} else {
 			# If the set is not loaded, we have to rename it to proper use it.
 			run("$IPSET rename $loc_set $set");
+		}
+
+	# Check if the given set name is a blocklist.
+	} elsif ($set ~~ @blocklists) {
+		# IPblocklist sets contains v4 as setname extension.
+		my $set_name = "$set" . "v4";
+
+		# Get the database file for the given blocklist.
+		my $db_file = &IPblocklist::get_ipset_db_file($set);
+
+		# Call function to restore/load the set.
+		&ipset_call_restore($db_file);
+
+		# Check if the set is already loaded (has been used before).
+		if ($set ~~ @ipset_used_sets) {
+			# Swap the sets.
+			run("$IPSET swap $set_name $set");
+		} else {
+			# Rename the set to proper use it.
+			run("$IPSET rename $set_name $set");
 		}
 	}
 

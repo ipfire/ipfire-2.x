@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.6
+VER        = 7.7
 
 THISAPP    = logwatch-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = fd7f2a7c65151dbfbd924102b01ead00f92d74a59a417361b65be972368f7ed93810feefedf1ad9bba2de5ebbc74589c3fc0a8a484f19b5a9782c9799ffdf656
+$(DL_FILE)_BLAKE2 = 8978930fe844bde372f68038f295cc62ca61f1c2b10d18f545ddcc713cb72cd01520ff0ea0869f2dff96846431a6dd9a04da1bc79817ccb590b0235f96e934da
 
 install : $(TARGET)
 
@@ -97,6 +97,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	#  done
 	cp -f $(DIR_SRC)/config/logwatch/dialup /usr/share/logwatch/scripts/services/dialup
 	cp -f $(DIR_SRC)/config/logwatch/dialup.conf /usr/share/logwatch/dist.conf/services/dialup.conf
+
+	cp -f $(DIR_SRC)/config/logwatch/ipblocklist /usr/share/logwatch/scripts/services/ipblocklist
+	cp -f $(DIR_SRC)/config/logwatch/ipblocklist.conf /usr/share/logwatch/dist.conf/services/ipblocklist.conf
 
 	-mkdir -p /var/cache/logwatch
 	chmod -v 777 /var/cache/logwatch

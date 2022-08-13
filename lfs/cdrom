@@ -123,6 +123,8 @@ GRUB_EFI_MODULES = \
 	true \
 	usb_keyboard
 
+ISO_FILE = /install/images/$(SNAME)-$(VERSION)-core$(CORE)-$(BUILD_ARCH).iso
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
@@ -246,9 +248,8 @@ endif
 						xargs md5sum > md5sum.txt
 
 	mkdir -p /install/images
-	cd $(DIR_TMP)/cdrom && mkisofs $(ISO_ARGS) \
-		-o /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso .
+	cd $(DIR_TMP)/cdrom && mkisofs $(ISO_ARGS) -o $(ISO_FILE) .
 
 ifeq "$(HAS_ISOLINUX)" "1"
-	isohybrid $(ISOHYBRID_ARGS) /install/images/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
+	isohybrid $(ISOHYBRID_ARGS) $(ISO_FILE)
 endif

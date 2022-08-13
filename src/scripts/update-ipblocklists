@@ -1,0 +1,173 @@
+#!/usr/bin/perl
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+use strict;
+use POSIX;
+
+# Load perl module to talk to the kernel syslog.
+use Sys::Syslog qw(:DEFAULT setlogsock);
+
+require '/var/ipfire/general-functions.pl';
+require "${General::swroot}/ipblocklist-functions.pl";
+require "${General::swroot}/lang.pl";
+
+# Hash to store the settings.
+my %settings = ();
+
+# The user and group name as which this script should be run.
+my $run_as = 'nobody';
+
+# Get user and group id of the user.
+my ( $uid, $gid ) = ( getpwnam $run_as )[ 2, 3 ];
+
+# Check if the script currently runs as root.
+if ( $> == 0 ) {
+	# Drop privileges and switch to the specified user and group.
+	POSIX::setgid( $gid );
+	POSIX::setuid( $uid );
+}
+
+# Establish the connection to the syslog service.
+openlog('ipblocklist', 'cons', 'user');
+
+# Grab the configured providers.
+&General::readhash("${General::swroot}/ipblocklist/settings", \%settings);
+
+# Check if the blocklist feature is enabled.
+unless ($settings{'ENABLE'} eq "on") {
+	# Exit.
+	exit 0;
+}
+
+# Check if the red device is active.
+unless (-e "${General::swroot}/red/active") {
+	# Log to syslog.
+	&_log_to_syslog("<ERROR> Could not update any blocklist - The system is offline!");
+
+	# Exit.
+	exit 1;
+}
+
+# Get all available blocklists.
+my @blocklists = &IPblocklist::get_blocklists();
+
+# Array to store successfully update blocklists.
+# They need to be reloaded.
+my @updated_blocklists = ();
+
+# Gather the details, when a list got modified last time.
+my %modified = ();
+
+# Read-in data if the file exists.
+&General::readhash($IPblocklist::modified_file, \%modified ) if (-e $IPblocklist::modified_file);
+
+# Loop through the array of blocklists.
+foreach my $blocklist (@blocklists) {
+	# Skip if the blocklist is not enabled.
+	next if($settings{$blocklist} ne "on");
+
+	# Get current time.
+	my $time = time();
+
+	# Get time, when the blocklist has been downloaded last.
+	my $last_download_time = $modified{$blocklist};
+
+	# Get the holdoff rate in seconds for the current processed blocklist.
+	my $rate_time = &IPblocklist::get_holdoff_rate($blocklist);
+
+	# Calculate holdoff time.
+	my $holdoff_time = $last_download_time + $rate_time;
+
+	# Check if enough time has passed since the last download of the list.
+	if ($time <= $holdoff_time) {
+		# To frequent updates, log to syslog.
+		&_log_to_syslog("<INFO> Skipping $blocklist blocklist - Too frequent update attempts!");
+
+		# Skip this provider.
+		next;
+	}
+	
+	# Try to download and update the blocklist.
+	my $return = &IPblocklist::download_and_create_blocklist($blocklist);
+
+	# Check if we got a return code.
+	if ($return) {
+		# Handle different return codes.
+		if ($return eq "not_modified") {
+			# Log notice to syslog.
+			&_log_to_syslog("<INFO> Skipping $blocklist blocklist - It has not been modified!");
+		} elsif ($return eq "dl_error") {
+			# Log error to the syslog.
+			&_log_to_syslog("<ERROR> Could not update $blocklist blocklist - Download error\!");
+		} else {
+			# Log error to syslog.
+			&_log_to_syslog("<ERROR> Could not update $blocklist blocklist - Unexpected error\!");
+		}
+	} else {
+		# Log successfull update.
+		&_log_to_syslog("<INFO> Successfully updated $blocklist blocklist.");
+
+		# Add the list to the array of updated blocklists.
+		push(@updated_blocklists, $blocklist);
+	}
+}
+
+# Check if a blocklist has been updated and therefore needs to be reloaded.
+if (@updated_blocklists) {
+	# Loop through the array.
+	foreach my $updated_blocklist (@updated_blocklists) {
+		# Get the blocklist file.
+		my $ipset_db_file = &IPblocklist::get_ipset_db_file($updated_blocklist);
+
+		# Call safe system function to reload/update the blocklist.
+		&General::system("ipset", "restore", "-f", "$ipset_db_file");
+
+		# The set name contains a "v4" as suffix.
+		my $set_name = "$updated_blocklist" . "v4";
+
+		# Swap the sets to use the new one.
+		&General::system("ipset", "swap", "$set_name", "$updated_blocklist");
+
+		# Destroy the old blocklist.
+		&General::system("ipset", "destroy", "$set_name");
+	}
+}
+
+END {
+	# Close connection to syslog.
+	closelog();
+}
+
+#
+# Tiny function to sent the error message to the syslog.
+#
+sub _log_to_syslog($) {
+	my ($message) = @_;
+
+	# The syslog function works best with an array based input,
+	# so generate one before passing the message details to syslog.
+	my @syslog = ("ERR", "$message");
+
+	# Send the log message.
+	syslog(@syslog);
+}
+
+1;

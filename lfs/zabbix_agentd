@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Zabbix Agent
 
-VER        = 4.2.6
+VER        = 6.0.6
 
 THISAPP    = zabbix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,8 +34,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = zabbix_agentd
-PAK_VER    = 4
-DEPS       =
+PAK_VER    = 5
+
+DEPS       = fping
 
 SERVICES   = zabbix_agentd
 
@@ -47,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 644bb9fd3afaa26c572f97018039d564a7ce156d0bf8d2449a1d3d04fdfaca05087d71e6a5ddcf3ed13a5719256865780f180dd3488bab470816dac7af70ff09
+$(DL_FILE)_BLAKE2 = f9d07ca8938ae4e5e47048c32872644caeda0ecdef17513c63c63d1ce2aaa4ac0c92e6c70932bc598ff908419dae05bab32924f5973a5528b5668f7c7c2c5a17
 
 install : $(TARGET)
 
@@ -84,7 +85,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--prefix=/usr \
 		--enable-agent \
 		--sysconfdir=/etc/zabbix_agentd \
-		--with-openssl
+		--with-openssl \
+		--with-libcurl
 
 	cd $(DIR_APP) && make
 	cd $(DIR_APP) && make install
@@ -93,10 +95,21 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	-rmdir /etc/zabbix_agentd/zabbix_agentd.conf.d
 	-mkdir -pv /etc/zabbix_agentd/zabbix_agentd.d
 	-mkdir -pv /etc/zabbix_agentd/scripts
+	# Move upstream supplied config out of the way for reference
+	# and install our own version of the config.
+	-mv /etc/zabbix_agentd/zabbix_agentd.conf \
+		/etc/zabbix_agentd/zabbix_agentd.conf.example
 	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/zabbix_agentd.conf \
 		/etc/zabbix_agentd/zabbix_agentd.conf
+
+	# Install IPFire-specific Zabbix Agent config
+	-mkdir -pv /var/ipfire/zabbix_agentd/userparameters
+	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/zabbix_agentd_ipfire_mandatory.conf \
+		/var/ipfire/zabbix_agentd/zabbix_agentd_ipfire_mandatory.conf
 	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_pakfire.conf \
-		/etc/zabbix_agentd/zabbix_agentd.d/userparameter_pakfire.conf
+		/var/ipfire/zabbix_agentd/userparameters/userparameter_pakfire.conf
+	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_ipfire.conf \
+		/var/ipfire/zabbix_agentd/userparameters/userparameter_ipfire.conf
 
 	# Create directory for additional agent modules
 	-mkdir -pv /usr/lib/zabbix
@@ -114,7 +127,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Install sudoers include file
 	install -v -m 640 $(DIR_SRC)/config/zabbix_agentd/sudoers \
-		/etc/sudoers.d/zabbix
+		/etc/sudoers.d/zabbix_agentd
+	install -v -m 640 $(DIR_SRC)/config/zabbix_agentd/sudoers_user \
+		/etc/sudoers.d/zabbix_agentd_user
 
 	# Install include file for backup
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/zabbix_agentd \

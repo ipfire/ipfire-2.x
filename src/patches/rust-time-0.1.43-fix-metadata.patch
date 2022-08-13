@@ -1,0 +1,13 @@
+--- time-0.1.43/Cargo.toml.original	2020-04-20 00:31:10.000000000 +0200
++++ time-0.1.43/Cargo.toml	2022-06-16 15:21:19.210090045 +0200
+@@ -29,10 +29,3 @@
+ optional = true
+ [dev-dependencies.log]
+ version = "0.4"
+-
+-[dev-dependencies.winapi]
+-version = "0.3.0"
+-features = ["std", "processthreadsapi", "winbase"]
+-[target."cfg(windows)".dependencies.winapi]
+-version = "0.3.0"
+-features = ["std", "minwinbase", "minwindef", "ntdef", "profileapi", "sysinfoapi", "timezoneapi"]
