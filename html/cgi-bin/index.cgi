@@ -543,7 +543,7 @@ if ( ! -e "/var/ipfire/main/send_profile") {
 
 # EOL architecture
 my ($sysname, $nodename, $release, $version, $machine) = &POSIX::uname();
-if ($machine =~ m/^i.86$/) {
+if ($machine =~ m/^arm/) {
 	$warnmessage .= "<li><a href='https://wiki.ipfire.org/hardware/requirements' style='color:white;'>$Lang::tr{'eol architecture warning'}</a></li>";
 }
 
