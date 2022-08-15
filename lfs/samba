@@ -80,6 +80,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba-4.16.4-glibc-headers.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--libdir=/usr/lib/ \
