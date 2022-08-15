@@ -40,8 +40,6 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 
-#include <linux/fs.h>
-
 #include <libsmooth.h>
 
 #include "hw.h"
