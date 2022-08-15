@@ -83,6 +83,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar Jxf $(DIR_DL)/$(DL_FILE)
 
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/libvirt/0001-Change-default-behavior-of-libvirt-guests.sh-for-IPF.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libvirt-7.10.0-fix-glibc-headers.patch
 
 	cd $(DIR_APP) && meson \
 		--prefix=/usr \
