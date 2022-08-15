@@ -1,0 +1,10 @@
+--- collectd-4.10.9/src/utils_mount.c~	2022-08-10 13:45:39.424289940 +0000
++++ collectd-4.10.9/src/utils_mount.c	2022-08-10 13:45:58.224239495 +0000
+@@ -31,6 +31,7 @@
+ #include "plugin.h"
+ #include "utils_mount.h"
+ 
++#undef HAVE_XFS_XQM_H
+ #if HAVE_XFS_XQM_H
+ # include <xfs/xqm.h>
+ #define XFS_SUPER_MAGIC_STR "XFSB"
