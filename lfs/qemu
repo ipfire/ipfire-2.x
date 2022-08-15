@@ -35,9 +35,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = qemu
-PAK_VER    = 33
+PAK_VER    = 34
 
-DEPS       = libusbredir spice libseccomp
+DEPS       = alsa libusbredir spice libseccomp
 
 SERVICES   =
 
