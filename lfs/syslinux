@@ -79,6 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/syslinux-6.03-sysmacros.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/syslinux-6.04_replace-builtin-strlen-that-appears-to-get-optimized.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/syslinux-6.04_pre1-fcommon.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/syslinux-6.04-libinstaller-Fix-build-with-glibc-2.36.patch
 
 	# Build
 	cd $(DIR_APP) && make bios $(MAKETUNING)
