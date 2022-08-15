@@ -34,6 +34,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)-$(MKIMAGE)
 SUP_ARCH   = armv6l aarch64
 
 CFLAGS    := $(patsubst -fstack-protector-strong,,$(CFLAGS))
+LDFLAGS   += --no-warn-rwx-segments
 
 ATF_VER    = 2.6
 
@@ -189,7 +190,7 @@ else
 	# OrangePi Zero Plus
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
-	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=sun50i_a64 DEBUG=0 bl31
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=sun50i_a64 DEBUG=0 bl31 LDFLAGS="$(LDFLAGS)"
 	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/sun50i_a64/release/bl31.bin bl31.bin
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	-mkdir -pv /usr/share/u-boot/orangepi_zero_plus
@@ -204,7 +205,7 @@ else
 	# Nanopi R2S
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
-	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 DEBUG=0 bl31
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 DEBUG=0 bl31 LDFLAGS="$(LDFLAGS)"
 	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/rk3328/release/bl31/bl31.elf bl31.elf
 	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
 	-mkdir -pv /usr/share/u-boot/nanopi_r2s
