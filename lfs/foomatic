@@ -37,7 +37,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/foomatic-filters-$(VER_FILTERS)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = foomatic
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       = cups ghostscript hplip
 
