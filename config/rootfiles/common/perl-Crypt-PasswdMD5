@@ -1,6 +1,6 @@
-#usr/lib/perl5/site_perl/5.32.1/Crypt
-usr/lib/perl5/site_perl/5.32.1/Crypt/PasswdMD5.pm
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Crypt
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Crypt/PasswdMD5
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Crypt/PasswdMD5/.packlist
+#usr/lib/perl5/site_perl/5.36.0/Crypt
+usr/lib/perl5/site_perl/5.36.0/Crypt/PasswdMD5.pm
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Crypt
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Crypt/PasswdMD5
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Crypt/PasswdMD5/.packlist
 #usr/share/man/man3/Crypt::PasswdMD5.3
