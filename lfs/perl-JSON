@@ -36,7 +36,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = perl-JSON
 DEPS       =
-PAK_VER    = 1
+PAK_VER    = 2
 
 SERVICES   =
 
