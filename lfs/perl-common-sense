@@ -36,7 +36,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = perl-common-sense
 DEPS       =
-PAK_VER    = 3
+PAK_VER    = 4
 
 SERVICES   =
 
