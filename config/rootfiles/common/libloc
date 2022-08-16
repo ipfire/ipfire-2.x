@@ -20,10 +20,10 @@ usr/bin/location
 #usr/lib/libloc.so
 usr/lib/libloc.so.1
 usr/lib/libloc.so.1.0.2
-usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/Location.pm
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Location
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Location/.packlist
-usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Location/Location.so
+usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Location.pm
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Location
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Location/.packlist
+usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Location/Location.so
 #usr/lib/pkgconfig/libloc.pc
 #usr/lib/python3.10/site-packages/_location.la
 usr/lib/python3.10/site-packages/_location.so
