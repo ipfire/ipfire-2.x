@@ -36,7 +36,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-Carp-Clan
 DEPS       =
-PAK_VER    = 6
+PAK_VER    = 7
 
 SERVICES   =
 
