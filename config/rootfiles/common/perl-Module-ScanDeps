@@ -1,8 +1,8 @@
 #usr/bin/scandeps.pl
-#usr/lib/perl5/site_perl/5.32.1/Module/ScanDeps
-#usr/lib/perl5/site_perl/5.32.1/Module/ScanDeps.pm
-#usr/lib/perl5/site_perl/5.32.1/Module/ScanDeps/Cache.pm
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Module/ScanDeps
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Module/ScanDeps/.packlist
+#usr/lib/perl5/site_perl/5.36.0/Module/ScanDeps
+#usr/lib/perl5/site_perl/5.36.0/Module/ScanDeps.pm
+#usr/lib/perl5/site_perl/5.36.0/Module/ScanDeps/Cache.pm
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Module/ScanDeps
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Module/ScanDeps/.packlist
 #usr/share/man/man1/scandeps.pl.1
 #usr/share/man/man3/Module::ScanDeps.3
