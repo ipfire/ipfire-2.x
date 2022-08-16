@@ -1,9 +1,9 @@
-#usr/lib/perl5/site_perl/5.32.1/GD/Text
-usr/lib/perl5/site_perl/5.32.1/GD/Text.pm
-usr/lib/perl5/site_perl/5.32.1/GD/Text/Align.pm
-usr/lib/perl5/site_perl/5.32.1/GD/Text/Wrap.pm
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/GD/Text
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/GD/Text/.packlist
+#usr/lib/perl5/site_perl/5.36.0/GD/Text
+usr/lib/perl5/site_perl/5.36.0/GD/Text.pm
+usr/lib/perl5/site_perl/5.36.0/GD/Text/Align.pm
+usr/lib/perl5/site_perl/5.36.0/GD/Text/Wrap.pm
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/GD/Text
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/GD/Text/.packlist
 #usr/share/man/man3/GD::Text.3
 #usr/share/man/man3/GD::Text::Align.3
 #usr/share/man/man3/GD::Text::Wrap.3
