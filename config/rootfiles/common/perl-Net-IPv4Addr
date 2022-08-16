@@ -1,10 +1,10 @@
 #usr/bin/ipv4calc
-usr/lib/perl5/site_perl/5.32.1/Net/IPv4Addr.pm
-#usr/lib/perl5/site_perl/5.32.1/auto
-#usr/lib/perl5/site_perl/5.32.1/auto/Net
-#usr/lib/perl5/site_perl/5.32.1/auto/Net/IPv4Addr
-usr/lib/perl5/site_perl/5.32.1/auto/Net/IPv4Addr/autosplit.ix
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Net/IPv4Addr
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Net/IPv4Addr/.packlist
+usr/lib/perl5/site_perl/5.36.0/Net/IPv4Addr.pm
+#usr/lib/perl5/site_perl/5.36.0/auto
+#usr/lib/perl5/site_perl/5.36.0/auto/Net
+#usr/lib/perl5/site_perl/5.36.0/auto/Net/IPv4Addr
+usr/lib/perl5/site_perl/5.36.0/auto/Net/IPv4Addr/autosplit.ix
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Net/IPv4Addr
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Net/IPv4Addr/.packlist
 #usr/share/man/man1/ipv4calc.1
 #usr/share/man/man3/Net::IPv4Addr.3
