@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.32.1
+VER        = 5.36.0
 
 THISAPP    = perl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)                  = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ba449a9d5d9042eedccdafc5af10eb634a38935560df1e0c0c4871ab95cd20d465a8c7d1a99f7c1fb8a59332476807610349ce249be123918327156b2ea40cbc
+$(DL_FILE)_BLAKE2 = 2fe17d3e85986fa3aecc5567b6ae9f0bb11de49dc57b8636f46980931d06558606c4474ce3fe849f67e41f3cfaee0a712eb5aaa92e116d27aaec22cd669b5a2c
 
 install : $(TARGET)
 
