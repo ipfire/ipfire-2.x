@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-Date-Manip
 DEPS       =
-PAK_VER    = 8
+PAK_VER    = 9
 
 SERVICES   =
 
