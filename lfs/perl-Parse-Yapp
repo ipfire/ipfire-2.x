@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-Parse-Yapp
 DEPS       =
-PAK_VER    = 2
+PAK_VER    = 3
 
 SERVICES   =
 
