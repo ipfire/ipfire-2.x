@@ -1,7 +1,7 @@
-usr/lib/perl5/site_perl/5.32.1/HTML/Template
-usr/lib/perl5/site_perl/5.32.1/HTML/Template.pm
-usr/lib/perl5/site_perl/5.32.1/HTML/Template/FAQ.pm
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/HTML/Template
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/HTML/Template/.packlist
+usr/lib/perl5/site_perl/5.36.0/HTML/Template
+usr/lib/perl5/site_perl/5.36.0/HTML/Template.pm
+usr/lib/perl5/site_perl/5.36.0/HTML/Template/FAQ.pm
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/HTML/Template
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/HTML/Template/.packlist
 #usr/share/man/man3/HTML::Template.3
 #usr/share/man/man3/HTML::Template::FAQ.3
