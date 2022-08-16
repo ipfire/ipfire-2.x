@@ -36,7 +36,7 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = perl-Net-IP
 DEPS       =
-PAK_VER    = 3
+PAK_VER    = 4
 
 SERVICES   =
 
