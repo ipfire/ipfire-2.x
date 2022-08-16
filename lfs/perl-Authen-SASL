@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-Authen-SASL
 DEPS       =
-PAK_VER    = 3
+PAK_VER    = 4
 
 SERVICES   =
 
