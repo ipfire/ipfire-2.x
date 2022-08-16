@@ -1,9 +1,9 @@
-#usr/lib/perl5/site_perl/5.32.1/Digest
-usr/lib/perl5/site_perl/5.32.1/Digest/HMAC.pm
-usr/lib/perl5/site_perl/5.32.1/Digest/HMAC_MD5.pm
-usr/lib/perl5/site_perl/5.32.1/Digest/HMAC_SHA1.pm
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Digest/HMAC
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Digest/HMAC/.packlist
+#usr/lib/perl5/site_perl/5.36.0/Digest
+usr/lib/perl5/site_perl/5.36.0/Digest/HMAC.pm
+usr/lib/perl5/site_perl/5.36.0/Digest/HMAC_MD5.pm
+usr/lib/perl5/site_perl/5.36.0/Digest/HMAC_SHA1.pm
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Digest/HMAC
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Digest/HMAC/.packlist
 #usr/share/man/man3/Digest::HMAC.3
 #usr/share/man/man3/Digest::HMAC_MD5.3
 #usr/share/man/man3/Digest::HMAC_SHA1.3
