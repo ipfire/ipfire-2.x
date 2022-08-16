@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = perl-MIME-Base64
 DEPS       =
-PAK_VER    = 4
+PAK_VER    = 5
 
 SERVICES   =
 
