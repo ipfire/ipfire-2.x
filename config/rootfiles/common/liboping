@@ -5,11 +5,11 @@ usr/bin/oping
 usr/lib/liboping.so
 usr/lib/liboping.so.0
 usr/lib/liboping.so.0.2.3
-usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/Net/Oping.pm
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Net/Oping
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Net/Oping/.packlist
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Net/Oping/Oping.bs
-usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Net/Oping/Oping.so
+usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/Net/Oping.pm
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Net/Oping
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Net/Oping/.packlist
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Net/Oping/Oping.bs
+usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Net/Oping/Oping.so
 #usr/share/man/man3/Net::Oping.3
 #usr/share/man/man3/liboping.3
 #usr/share/man/man3/ping_construct.3
