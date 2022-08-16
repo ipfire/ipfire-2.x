@@ -1,8 +1,8 @@
-#usr/lib/perl5/site_perl/5.32.1/Email
-#usr/lib/perl5/site_perl/5.32.1/Email/Date
-usr/lib/perl5/site_perl/5.32.1/Email/Date/Format.pm
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Email
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Email/Date
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Email/Date/Format
-#usr/lib/perl5/site_perl/5.32.1/xxxMACHINExxx-linux-thread-multi/auto/Email/Date/Format/.packlist
+#usr/lib/perl5/site_perl/5.36.0/Email
+#usr/lib/perl5/site_perl/5.36.0/Email/Date
+usr/lib/perl5/site_perl/5.36.0/Email/Date/Format.pm
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Email
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Email/Date
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Email/Date/Format
+#usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Email/Date/Format/.packlist
 #usr/share/man/man3/Email::Date::Format.3
