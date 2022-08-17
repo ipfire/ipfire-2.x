@@ -14,6 +14,7 @@ srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/logs.cgi/showrequestfromblocklist.dat
 srv/web/ipfire/html/themes/ipfire/include/functions.pl
 usr/lib/firewall/rules.pl
+usr/local/bin/getipstat
 usr/local/bin/setaliases
 usr/local/bin/update-ipblocklists
 usr/share/terminfo/t/tmux
