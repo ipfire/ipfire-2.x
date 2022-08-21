@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Higher-level library to access ELF files
 
-VER        = 0.186
+VER        = 0.187
 
 THISAPP    = elfutils-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = elfutils
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 49573d0a1f3519eab81d1ba3e94354cbc0935a36a94a3fdb22fe223a47b78cca8fd6e322870b0e335a809529fa6f54180b13c67936dec0242123c54ba20c9fc9
+$(DL_FILE)_BLAKE2 = 00ba3efa689d137808f5f53ecda93fd006be0c18d690ce76616ed1dba442281098579fa4b9a9e91b8ba865a3de15968f0ae06703a7b50b15c48a4beb5c970a46
 
 install : $(TARGET)
 
