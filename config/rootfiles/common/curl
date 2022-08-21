@@ -23,6 +23,8 @@ usr/lib/libcurl.so.4.8.0
 #usr/share/man/man3/CURLINFO_ACTIVESOCKET.3
 #usr/share/man/man3/CURLINFO_APPCONNECT_TIME.3
 #usr/share/man/man3/CURLINFO_APPCONNECT_TIME_T.3
+#usr/share/man/man3/CURLINFO_CAINFO.3
+#usr/share/man/man3/CURLINFO_CAPATH.3
 #usr/share/man/man3/CURLINFO_CERTINFO.3
 #usr/share/man/man3/CURLINFO_CONDITION_UNMET.3
 #usr/share/man/man3/CURLINFO_CONNECT_TIME.3
