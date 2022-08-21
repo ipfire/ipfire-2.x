@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.6
+VER        = 3.2.11
 RULES_VER  = 20171102
 
 THISAPP    = eudev-$(VER)
@@ -42,7 +42,7 @@ objects = $(DL_FILE) udev-lfs-$(RULES_VER).tar.bz2
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 udev-lfs-$(RULES_VER).tar.bz2 = $(DL_FROM)/udev-lfs-$(RULES_VER).tar.bz2
 
-$(DL_FILE)_BLAKE2 = 7705c1526b043cbef1efcf29c1728639e063845a5ee91b0ad22d43335dce34bf2ebbe4257ca024680759020d4120a8293f62cf8e112fb1191c35f0ec2f96b681
+$(DL_FILE)_BLAKE2 = e1985a4fd0d497b739543d027b5b40033932819e3e5402a51f73fab666144f97f768dff325b5f0e0beb43420efa9afdefb76a9da6b88fa065ad25c76fe1fbc6a
 udev-lfs-$(RULES_VER).tar.bz2_BLAKE2 = b5fb8177a87719e28adc976b83953024dbcfb8739b0c2e61da186cbc4df5e75e62c888da987d15c64db164002bb0a1e66ce0ff206b143dc953d7571b66d5d5c0
 
 install : $(TARGET)
