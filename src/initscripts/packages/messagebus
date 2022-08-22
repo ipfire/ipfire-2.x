@@ -50,7 +50,7 @@ case "$1" in
 		;;
 
 	status)
-                statusproc -p $pidfile /usr/bin/dbus-daemon
+                statusproc /usr/bin/dbus-daemon
                 ;;
 
         *)
