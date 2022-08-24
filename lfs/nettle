@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.7.3
+VER        = 3.8.1
 
 THISAPP    = nettle-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8d8efbbff98fc1f3eff3296681d3d72346e78392f356aebfe80138ae6ae1ebf3695bd7f74b906beef0cf3625ba6d84bdb43c0f6707f54f4d98870d50c90ac9a3
+$(DL_FILE)_BLAKE2 = 22b4ec81645b579504356597ba87b637e46285682020c90e03ecaea386ac9b48eaf91ee76ae3b86b6060be355de20c320ab3b74958074ad23fc08ad9ab6a4cbb
 
 install : $(TARGET)
 
