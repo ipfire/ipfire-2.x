@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 37
+VER        = 38
 
 THISAPP    = efivar-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 813d477d31562b773f6e19f20e9e237b94beed437ce221771770e7d46ff0e657530285f035dc942cc20609185be92dc50319bfe8e10dee642c8bd88403ef6ffe
+$(DL_FILE)_BLAKE2 = 0b96f3d71ddc2246e6a11a5cd32af3d007823c4a283186a428c3f145cd74425a31bd22c4671ad1ab252a3c572991bb1698381cb8bdf51efcbebd62befdc6c070
 
 install : $(TARGET)
 
@@ -72,12 +72,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/efivar-37-compile-fixes-1.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/efivar-37-compile-fixes-2.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/efivar-37-compile-fixes-3.patch
 
-	# -Werror, not even once
-	cd $(DIR_APP) && sed -e "s/-Werror//g" -i gcc.specs
+	# fix an issue in Makefile causing the package to be rebuilt during installation
+	# obtained from https://linuxfromscratch.org/blfs/view/11.1/postlfs/efivar.html
+	cd $(DIR_APP) && sed '/prep :/a\\ttouch prep' -i src/Makefile
 
 	cd $(DIR_APP) && make CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" $(MAKETUNING)
 	cd $(DIR_APP) && make install
