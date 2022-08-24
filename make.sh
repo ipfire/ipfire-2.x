@@ -1307,6 +1307,7 @@ buildipfire() {
   lfsmake2 rust-pem
   lfsmake2 gdb
   lfsmake2 grub
+  lfsmake2 mandoc
   lfsmake2 efivar
   lfsmake2 efibootmgr
   lfsmake2 libtasn1
