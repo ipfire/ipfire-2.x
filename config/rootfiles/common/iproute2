@@ -83,6 +83,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/ip-route.8
 #usr/share/man/man8/ip-rule.8
 #usr/share/man/man8/ip-sr.8
+#usr/share/man/man8/ip-stats.8
 #usr/share/man/man8/ip-tcp_metrics.8
 #usr/share/man/man8/ip-token.8
 #usr/share/man/man8/ip-tunnel.8
