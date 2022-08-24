@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 17
+VER        = 18
 
 THISAPP    = efibootmgr-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a1995a5df74766f762d2eb971fd6095edea8d0a498c9dd1100515866b40c38ae2f299aae51f12767850ec23fbe4709c2c7428dd48755fbec499669b69f6432c9
+$(DL_FILE)_BLAKE2 = dcea927a36f32e20da1a033c81ca21e83110bc2a82fdd17ec8d75a7fcfd7a946c155380ae634ab22ca8a8bae7f517967b09235d2587719e46b63c82e23d4a0f4
 
 install : $(TARGET)
 
@@ -71,9 +71,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-
-	# Compile fix
-	cd $(DIR_APP) && sed -e '/extern int efi_set_verbose/d' -i src/efibootmgr.c
 
 	cd $(DIR_APP) && make CFLAGS="$(CFLAGS)" LDFLAGS="$(LDFLAGS)" \
 		EFIDIR=$(SNAME) $(MAKETUNING)
