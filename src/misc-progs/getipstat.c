@@ -29,7 +29,7 @@ int main(int argc, char** argv)
 	// argument.
 	char *args[] = {"--list", "--verbose", "--numeric", "--wait", "5", NULL, NULL, NULL, NULL};
 	char *usage = "getipstat [-x][-f|-n|-m]";
-	unsigned int pcount = 6;
+	unsigned int pcount = 5;
 	unsigned int table_set = 0;
 
 	int opt;

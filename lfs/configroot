@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -65,8 +65,8 @@ $(TARGET) :
 	    captive/settings captive/agb.txt captive/clients captive/voucher_out certs/index.txt certs/index.txt.attr ddns/config ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dns/settings dns/servers dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
 	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings firewall/settings firewall/config firewall/locationblock firewall/input firewall/outgoing \
-	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwhosts/customlocationgrp fwlogs/ipsettings fwlogs/portsettings ipblocklist/settings \
-	    isdn/settings mac/settings main/hosts main/routing main/security main/settings optionsfw/settings \
+	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwhosts/customlocationgrp fwlogs/ipsettings fwlogs/portsettings ipblocklist/modified \
+	    ipblocklist/settings isdn/settings mac/settings main/hosts main/routing main/security main/settings optionsfw/settings \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
 	    ppp/settings-5 ppp/settings proxy/settings proxy/squid.conf proxy/advanced/settings proxy/advanced/cre/enable remote/settings qos/settings qos/classes qos/subclasses qos/level7config qos/portconfig \
 	    qos/tosconfig suricata/settings vpn/config vpn/settings vpn/ipsec.conf \
