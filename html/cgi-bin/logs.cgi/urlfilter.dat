@@ -178,7 +178,7 @@ if ($day < 10) {
 if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 {
 	print "Content-type: text/plain\n\n";
-	print "IPCop URL filter log\r\n";
+	print "IPFire URL filter log\r\n";
 	print "Section: $cgiparams{'LOGTYPE'}\r\n";
 	print "Date: $daystr $longmonthstr\r\n";
 	print "\r\n";
