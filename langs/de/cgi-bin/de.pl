@@ -301,6 +301,7 @@
 'advproxy errmsg invalid proxy port' => 'Ungültiger Proxyport',
 'advproxy errmsg invalid upstream proxy' => 'Ungültige IP/Hostname für vorgelagerten Proxy',
 'advproxy errmsg invalid upstream proxy username or password setting' => 'Ungültiger Benutzername oder ungültiges Kennwort für vorgelagerten Proxy',
+'advproxy errmsg invalid url' => 'Ungültige URL',
 'advproxy errmsg invalid user' => 'Benutzername existiert nicht',
 'advproxy errmsg ldap base dn' => 'LDAP Base DN erforderlich',
 'advproxy errmsg ldap bind dn' => 'LDAP Bind DN Benutzername und Passwort erforderlich',
