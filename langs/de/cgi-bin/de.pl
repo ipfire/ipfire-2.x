@@ -963,6 +963,7 @@
 'email mailrcpt' => 'E-Mail-Empfänger',
 'email mailsender' => 'E-Mail-Absender',
 'email mailuser' => 'Benutzername',
+'email recipient invalid' => 'Ungültiger Emailempfänger',
 'email server can not be empty' => 'E-Mail-Server darf nicht leer sein',
 'email settings' => 'Mailversand',
 'email subject' => 'IPFire Test-E-Mail',

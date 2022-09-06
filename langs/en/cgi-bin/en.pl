@@ -1004,6 +1004,7 @@
 'email mailrcpt' => 'Mail Recipient',
 'email mailsender' => 'Mail Sender',
 'email mailuser' => 'Username',
+'email recipient invalid' => 'Invalid email recipient',
 'email server can not be empty' => 'E-mail server can not be empty',
 'email settings' => 'Mail Service',
 'email subject' => 'IPFire Test Mail',
