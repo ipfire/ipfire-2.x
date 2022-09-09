@@ -28,8 +28,6 @@
 struct keyvalue *kv = NULL;
 FILE *file = NULL;
 
-#define SCOPE 128
-
 void exithandler(void)
 {
 	if (kv) freekeyvalues(kv);
@@ -125,7 +123,7 @@ int main(void)
 	alias = 0;
 	do {
 		snprintf(command, STRING_SIZE - 1,
-			"ip addr flush dev red%d scope %d 2>/dev/null", alias++, SCOPE);
+			"ip addr flush secondary dev red%d 2>/dev/null", alias++);
 	} while (safe_system(command) == 0);
 
 	/* Now set up the new aliases from the config file */
@@ -184,8 +182,8 @@ int main(void)
 		if (!intf)
 			intf = red_dev;
 
-		snprintf(command, STRING_SIZE - 1, "ip addr add %s/%s dev %s scope %d",
-			aliasip, red_netmask, intf, SCOPE);
+		snprintf(command, STRING_SIZE - 1, "ip addr add %s/%s secondary dev %s 2>/dev/null",
+			aliasip, red_netmask, intf);
 		safe_system(command);
 
 		alias++;
