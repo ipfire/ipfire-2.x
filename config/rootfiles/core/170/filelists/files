@@ -4,7 +4,9 @@ opt/pakfire/pakfire
 srv/web/ipfire/cgi-bin/aliases.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ipblocklist.cgi
+srv/web/ipfire/cgi-bin/mail.cgi
 srv/web/ipfire/cgi-bin/pakfire.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
@@ -22,6 +24,7 @@ usr/share/terminfo/t/tmux-256color
 usr/share/terminfo/t/tmux-direct
 var/ipfire/backup/bin/backup.pl
 var/ipfire/backup/include
+var/ipfire/general-functions.pl
 var/ipfire/ipblocklist-functions.pl
 var/ipfire/menu.d/50-firewall.menu
 var/ipfire/menu.d/70-log.menu
