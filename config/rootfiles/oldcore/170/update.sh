@@ -164,6 +164,10 @@ ldconfig
 mkdir -pv /var/lib/ipblocklist
 chown nobody:nobody /var/lib/ipblocklist
 
+# Create necessary files for IPBlocklist and set their ownership accordingly (#12917)
+touch /var/ipfire/ipblocklist/{settings,modified}
+chown nobody:nobody /var/ipfire/ipblocklist/{settings,modified}
+
 # Rebuild fcrontab from scratch
 /usr/bin/fcrontab -z
 
