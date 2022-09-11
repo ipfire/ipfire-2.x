@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/rc.d/init.d/squid stop
 
 # Remove files
 rm -rvf \
@@ -52,6 +53,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/squid start
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
