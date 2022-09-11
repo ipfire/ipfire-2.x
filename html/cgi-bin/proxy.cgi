@@ -2506,6 +2506,7 @@ sub check_acls
 		if ($_)
 		{
 			if (/^\./) { $_ = '*'.$_; }
+			unless (&General::validwildcarddomainname($_)) { $errormessage = $Lang::tr{'advproxy errmsg invalid url'} . ": " . &Header::escape($_); }
 			$proxysettings{'DST_NOCACHE'} .= $_."\n";
 		}
 	}
@@ -2604,6 +2605,7 @@ sub check_acls
 			if ($_)
 			{
 					if (/^\./) { $_ = '*'.$_; }
+					unless (&General::validwildcarddomainname($_)) { $errormessage = $Lang::tr{'advproxy errmsg invalid url'} . ": " . &Header::escape($_); }
 					$proxysettings{'DST_NOPROXY_URL'} .= $_."\n";
 			}
 	}

@@ -283,6 +283,10 @@ sub checkmailsettings {
 			$errormessage .= "$Lang::tr{'email invalid'} $Lang::tr{'email mailsender'}<br>";
 		}
 	}
+	# Check for a valid recipient
+	if (!&General::validemail($cgiparams{'txt_recipient'})) {
+		$errormessage .= $Lang::tr{'email recipient invalid'} . "<br>";
+	}
 	return $errormessage;
 }
 

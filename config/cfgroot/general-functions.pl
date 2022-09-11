@@ -756,6 +756,17 @@ sub validdomainname
 	return 1;
 }
 
+sub validwildcarddomainname($) {
+	my $domainname = shift;
+
+	# Ignore any leading dots
+	if ($domainname =~ m/^\*\.(.*)/) {
+		$domainname = $1;
+	}
+
+	return &validdomainname($domainname);
+}
+
 sub validfqdn
 {
 	# Checks a fully qualified domain name against RFC1035 and RFC2181
