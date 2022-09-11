@@ -37,6 +37,8 @@ done
 # Remove files
 rm -rvf \
 	/usr/bin/perl5.32* \
+	/usr/lib/libbfd-2.37.so \
+	/usr/lib/libopcodes-2.37.so \
 	/usr/lib/perl5/5.32* \
 	/usr/lib/perl5/site_perl/5.32*
 
