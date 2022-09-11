@@ -34,6 +34,10 @@ done
 # Stop services
 
 # Remove files
+rm -rvf \
+	/usr/bin/perl5.32* \
+	/usr/lib/perl5/5.32* \
+	/usr/lib/perl5/site_perl/5.32*
 
 # Extract files
 extract_files
