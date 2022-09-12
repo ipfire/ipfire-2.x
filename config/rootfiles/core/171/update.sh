@@ -33,6 +33,7 @@ done
 
 # Stop services
 /etc/rc.d/init.d/squid stop
+/etc/rc.d/init.d/openvpn stop
 
 # Remove files
 rm -rvf \
@@ -63,6 +64,7 @@ ldconfig
 
 # Start services
 /etc/init.d/squid start
+/etc/init.d/openvpn start
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
