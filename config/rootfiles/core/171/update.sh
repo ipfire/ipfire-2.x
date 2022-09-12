@@ -38,6 +38,13 @@ done
 rm -rvf \
 	/usr/bin/perl5.32* \
 	/usr/lib/libbfd-2.37.so \
+	/usr/lib/libbind9-9.16.31.so \
+	/usr/lib/libdns-9.16.31.so \
+	/usr/lib/libirs-9.16.31.so \
+	/usr/lib/libisc-9.16.31.so \
+	/usr/lib/libisccc-9.16.31.so \
+	/usr/lib/libisccfg-9.16.31.so \
+	/usr/lib/libns-9.16.31.so \
 	/usr/lib/libopcodes-2.37.so \
 	/usr/lib/perl5/5.32* \
 	/usr/lib/perl5/site_perl/5.32*
