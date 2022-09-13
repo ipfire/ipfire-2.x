@@ -108,6 +108,7 @@
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< advproxy errmsg invalid url
 < advproxy errmsg proxy ports equal
 < advproxy errmsg wpad invalid ip or mask
 < advproxy fastflux detection
@@ -201,6 +202,7 @@
 < ConnSched hangup
 < ConnSched reboot
 < ConnSched shutdown
+< core update
 < count
 < countries
 < countrycode
@@ -295,6 +297,7 @@
 < email mailrcpt
 < email mailsender
 < email mailuser
+< email recipient invalid
 < email settings
 < email subject
 < email success
@@ -774,6 +777,7 @@
 < pakfire tree stable
 < pakfire tree testing
 < pakfire tree unstable
+< pak update
 < please reboot to apply your changes
 < pptp netconfig
 < pptp peer
@@ -792,8 +796,10 @@
 < rebooting ipfire fsck
 < received
 < red1
+< release
 < required
 < required field
+< retbleed
 < runmode
 < samba join a domain
 < samba join domain
@@ -900,6 +906,9 @@
 < tor traffic read written
 < tor use exit nodes
 < tor use guard nodes
+< traffic stat in
+< traffic stat out
+< traffic stat title
 < transfers
 < transport mode does not support vti
 < twelve hours
@@ -922,6 +931,7 @@
 < urlfilter redirect template
 < user management
 < vendor
+< version
 < visit us at
 < vpn broken
 < vpn connecting
@@ -1026,12 +1036,15 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< advproxy errmsg invalid url
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< email recipient invalid
 < g.dtm
 < g.lite
 < guaranteed bandwidth
+< retbleed
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -1044,6 +1057,7 @@
 < advproxy asbased anomaly detection
 < advproxy AUTH method ntlm auth
 < advproxy basic authentication
+< advproxy errmsg invalid url
 < advproxy errmsg wpad invalid ip or mask
 < advproxy fastflux detection
 < advproxy fastflux detection threshold
@@ -1136,6 +1150,7 @@
 < Captive WiFi coupon
 < Captive wrong ext
 < check all
+< core update
 < cpu frequency
 < crypto error
 < cryptographic settings
@@ -1193,6 +1208,7 @@
 < email mailrcpt
 < email mailsender
 < email mailuser
+< email recipient invalid
 < email settings
 < email subject
 < email success
@@ -1387,6 +1403,7 @@
 < pakfire tree stable
 < pakfire tree testing
 < pakfire tree unstable
+< pak update
 < please reboot to apply your changes
 < pptp netconfig
 < pptp peer
@@ -1398,8 +1415,10 @@
 < reboot fsck
 < rebooting ipfire fsck
 < received
+< release
 < required
 < required field
+< retbleed
 < runmode
 < samba join a domain
 < samba join domain
@@ -1438,6 +1457,9 @@
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< traffic stat in
+< traffic stat out
+< traffic stat title
 < transfers
 < transport mode does not support vti
 < twelve hours
@@ -1451,6 +1473,7 @@
 < updxlrtr passive mode
 < uplink bit rate
 < user management
+< version
 < vpn broken
 < vpn connecting
 < vpn force mobike
@@ -1531,6 +1554,7 @@
 < advproxy AUTH method ntlm
 < advproxy AUTH method ntlm auth
 < advproxy basic authentication
+< advproxy errmsg invalid url
 < advproxy errmsg wpad invalid ip or mask
 < advproxy fastflux detection
 < advproxy fastflux detection threshold
@@ -1695,6 +1719,7 @@
 < email mailrcpt
 < email mailsender
 < email mailuser
+< email recipient invalid
 < email settings
 < email subject
 < email success
@@ -1932,6 +1957,7 @@
 < received
 < required
 < required field
+< retbleed
 < runmode
 < samba join a domain
 < samba join domain
@@ -2075,6 +2101,7 @@
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< advproxy errmsg invalid url
 < advproxy errmsg proxy ports equal
 < advproxy errmsg wpad invalid ip or mask
 < advproxy fastflux detection
@@ -2222,6 +2249,7 @@
 < ConnSched hangup
 < ConnSched reboot
 < ConnSched shutdown
+< core update
 < count
 < countries
 < countrycode
@@ -2315,6 +2343,7 @@
 < email mailrcpt
 < email mailsender
 < email mailuser
+< email recipient invalid
 < email settings
 < email subject
 < email success
@@ -2787,6 +2816,7 @@
 < pakfire tree stable
 < pakfire tree testing
 < pakfire tree unstable
+< pak update
 < please reboot to apply your changes
 < pptp netconfig
 < pptp peer
@@ -2805,8 +2835,10 @@
 < rebooting ipfire fsck
 < received
 < red1
+< release
 < required
 < required field
+< retbleed
 < runmode
 < samba join a domain
 < samba join domain
@@ -2911,6 +2943,9 @@
 < tor traffic read written
 < tor use exit nodes
 < tor use guard nodes
+< traffic stat in
+< traffic stat out
+< traffic stat title
 < transfers
 < transport mode does not support vti
 < twelve hours
@@ -2933,6 +2968,7 @@
 < urlfilter redirect template
 < user management
 < vendor
+< version
 < visit us at
 < vpn broken
 < vpn connecting
@@ -3051,6 +3087,7 @@
 < advproxy cache-digest
 < advproxy errmsg cache
 < advproxy errmsg invalid upstream proxy
+< advproxy errmsg invalid url
 < advproxy errmsg proxy ports equal
 < advproxy errmsg wpad invalid ip or mask
 < advproxy fastflux detection
@@ -3198,6 +3235,7 @@
 < ConnSched hangup
 < ConnSched reboot
 < ConnSched shutdown
+< core update
 < count
 < countries
 < countrycode
@@ -3294,6 +3332,7 @@
 < email mailrcpt
 < email mailsender
 < email mailuser
+< email recipient invalid
 < email settings
 < email subject
 < email success
@@ -3767,6 +3806,7 @@
 < pakfire tree stable
 < pakfire tree testing
 < pakfire tree unstable
+< pak update
 < please reboot to apply your changes
 < pptp netconfig
 < pptp peer
@@ -3785,8 +3825,10 @@
 < rebooting ipfire fsck
 < received
 < red1
+< release
 < required
 < required field
+< retbleed
 < runmode
 < samba join a domain
 < samba join domain
@@ -3891,6 +3933,9 @@
 < tor traffic read written
 < tor use exit nodes
 < tor use guard nodes
+< traffic stat in
+< traffic stat out
+< traffic stat title
 < transfers
 < transport mode does not support vti
 < twelve hours
@@ -3913,6 +3958,7 @@
 < urlfilter redirect template
 < user management
 < vendor
+< version
 < visit us at
 < vpn broken
 < vpn connecting
@@ -4021,6 +4067,7 @@
 ############################################################################
 < acpitemp
 < advproxy asbased anomaly detection
+< advproxy errmsg invalid url
 < advproxy errmsg wpad invalid ip or mask
 < advproxy fastflux detection
 < advproxy fastflux detection threshold
@@ -4056,6 +4103,7 @@
 < cake profile pppoe-vcmux 32
 < cake profile raw 0
 < Captive delete logo
+< core update
 < cpu frequency
 < crypto error
 < cryptographic settings
@@ -4092,6 +4140,7 @@
 < drop hostile
 < drop spoofed martians
 < duration
+< email recipient invalid
 < email tls explicit
 < email tls implicit
 < emerging pro rules
@@ -4224,6 +4273,7 @@
 < pakfire tree stable
 < pakfire tree testing
 < pakfire tree unstable
+< pak update
 < please reboot to apply your changes
 < processor vulnerability mitigations
 < ptr
@@ -4231,7 +4281,9 @@
 < reboot fsck
 < rebooting ipfire fsck
 < received
+< release
 < required
+< retbleed
 < runmode
 < samba server role member
 < samba server role standalone
@@ -4264,11 +4316,15 @@
 < tor guard country any
 < tor guard nodes
 < tor use guard nodes
+< traffic stat in
+< traffic stat out
+< traffic stat title
 < transfers
 < transport mode does not support vti
 < update ruleset
 < updxlrtr passive mode
 < user management
+< version
 < vpn start action add
 < vpn subjectaltname missing
 < vpn wait

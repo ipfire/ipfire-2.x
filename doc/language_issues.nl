@@ -153,9 +153,6 @@ WARNING: translation string unused: community rules
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
 WARNING: translation string unused: connect the modem
-WARNING: translation string unused: core notice 1
-WARNING: translation string unused: core notice 2
-WARNING: translation string unused: core notice 3
 WARNING: translation string unused: could not connect to
 WARNING: translation string unused: could not connect to www ipcop org
 WARNING: translation string unused: could not connect to www ipfire org
@@ -896,6 +893,7 @@ WARNING: untranslated string: administrator username = Administrator username
 WARNING: untranslated string: advproxy AUTH method ntlm auth = Windows Active Directory
 WARNING: untranslated string: advproxy asbased anomaly detection = Anomaly detections based on Autonomous Systems information
 WARNING: untranslated string: advproxy basic authentication = Allow HTTP Basic authentication
+WARNING: untranslated string: advproxy errmsg invalid url = Invalid URL
 WARNING: untranslated string: advproxy errmsg wpad invalid ip or mask = WPAD: Invalid IP or subnet for excluded IP subnet
 WARNING: untranslated string: advproxy fastflux detection = Deny access to destinations hosted on fast flux setups
 WARNING: untranslated string: advproxy fastflux detection threshold = Threshold
@@ -998,6 +996,7 @@ WARNING: untranslated string: email mailport = Mail Server Port
 WARNING: untranslated string: email mailrcpt = Mail Recipient
 WARNING: untranslated string: email mailsender = Mail Sender
 WARNING: untranslated string: email mailuser = Username
+WARNING: untranslated string: email recipient invalid = Invalid email recipient
 WARNING: untranslated string: email settings = Mail Service
 WARNING: untranslated string: email testmail = Send test mail
 WARNING: untranslated string: email tls = TLS mode
@@ -1244,6 +1243,7 @@ WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing 
 WARNING: untranslated string: received = Received
 WARNING: untranslated string: required = Required
 WARNING: untranslated string: required field = Required field
+WARNING: untranslated string: retbleed = Retbleed
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
