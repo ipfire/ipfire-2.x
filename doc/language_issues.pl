@@ -146,9 +146,6 @@ WARNING: translation string unused: comment
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
 WARNING: translation string unused: connect the modem
-WARNING: translation string unused: core notice 1
-WARNING: translation string unused: core notice 2
-WARNING: translation string unused: core notice 3
 WARNING: translation string unused: could not connect to
 WARNING: translation string unused: could not connect to www ipcop org
 WARNING: translation string unused: could not connect to www ipfire org
@@ -821,6 +818,7 @@ WARNING: untranslated string: advproxy basic authentication = Allow HTTP Basic a
 WARNING: untranslated string: advproxy cache-digest = Enable Cache-Digest Generation
 WARNING: untranslated string: advproxy errmsg cache = The RAM cache size is greater than the harddisk cache size:
 WARNING: untranslated string: advproxy errmsg invalid upstream proxy = Invalid upstream proxy IP/hostname
+WARNING: untranslated string: advproxy errmsg invalid url = Invalid URL
 WARNING: untranslated string: advproxy errmsg proxy ports equal = The proxy port and the transparent port cannot be equal.
 WARNING: untranslated string: advproxy errmsg wpad invalid ip or mask = WPAD: Invalid IP or subnet for excluded IP subnet
 WARNING: untranslated string: advproxy fastflux detection = Deny access to destinations hosted on fast flux setups
@@ -904,6 +902,7 @@ WARNING: untranslated string: ccd routes = Routing:
 WARNING: untranslated string: ccd subnet = Subnet
 WARNING: untranslated string: ccd used = Used addresses
 WARNING: untranslated string: check all = Check all
+WARNING: untranslated string: core update = Core-Update
 WARNING: untranslated string: count = Count
 WARNING: untranslated string: countries = Countries
 WARNING: untranslated string: country codes and flags = Country Codes and Flags:
@@ -986,6 +985,7 @@ WARNING: untranslated string: email mailport = Mail Server Port
 WARNING: untranslated string: email mailrcpt = Mail Recipient
 WARNING: untranslated string: email mailsender = Mail Sender
 WARNING: untranslated string: email mailuser = Username
+WARNING: untranslated string: email recipient invalid = Invalid email recipient
 WARNING: untranslated string: email settings = Mail Service
 WARNING: untranslated string: email testmail = Send test mail
 WARNING: untranslated string: email tls = TLS mode
@@ -1398,6 +1398,7 @@ WARNING: untranslated string: ovpn routes push options = Route push options
 WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: pak update = Update
 WARNING: untranslated string: pakfire already busy = Pakfire is already performing a task. Please try again later.
 WARNING: untranslated string: pakfire finished = Pakfire has finished! Returning...
 WARNING: untranslated string: pakfire finished error = Pakfire has finished! Errors occurred, please check the log output before proceeding.
@@ -1424,8 +1425,10 @@ WARNING: untranslated string: reboot fsck = Reboot & check filesystem
 WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check
 WARNING: untranslated string: received = Received
 WARNING: untranslated string: red1 = RED
+WARNING: untranslated string: release = Release
 WARNING: untranslated string: required = Required
 WARNING: untranslated string: required field = Required field
+WARNING: untranslated string: retbleed = Retbleed
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
@@ -1524,6 +1527,9 @@ WARNING: untranslated string: tor traffic limit soft = Traffic limit almost reac
 WARNING: untranslated string: tor traffic read written = Total traffic (read/written)
 WARNING: untranslated string: tor use exit nodes = Use only these exit nodes (one fingerprint per line)
 WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
+WARNING: untranslated string: traffic stat in = In
+WARNING: untranslated string: traffic stat out = Out
+WARNING: untranslated string: traffic stat title = RED Traffic
 WARNING: untranslated string: transfers = Transfers
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: twelve hours = 12 Hours
@@ -1541,6 +1547,7 @@ WARNING: untranslated string: uptime load average = Load average
 WARNING: untranslated string: urlfilter redirect template = Redirect page template
 WARNING: untranslated string: user management = User Management
 WARNING: untranslated string: vendor = Vendor
+WARNING: untranslated string: version = Version
 WARNING: untranslated string: visit us at = Visit us at
 WARNING: untranslated string: vpn broken = Broken
 WARNING: untranslated string: vpn connecting = CONNECTING

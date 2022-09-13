@@ -181,9 +181,6 @@ WARNING: translation string unused: community rules
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
 WARNING: translation string unused: connect the modem
-WARNING: translation string unused: core notice 1
-WARNING: translation string unused: core notice 2
-WARNING: translation string unused: core notice 3
 WARNING: translation string unused: could not connect to
 WARNING: translation string unused: could not connect to www ipcop org
 WARNING: translation string unused: could not connect to www ipfire org
@@ -914,6 +911,9 @@ WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: advproxy errmsg invalid url = Invalid URL
+WARNING: untranslated string: core notice 3 = available.
+WARNING: untranslated string: email recipient invalid = Invalid email recipient
 WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
@@ -948,6 +948,7 @@ WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: pakfire ago = ago.
+WARNING: untranslated string: retbleed = Retbleed
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string

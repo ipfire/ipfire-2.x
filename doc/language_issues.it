@@ -154,9 +154,6 @@ WARNING: translation string unused: community rules
 WARNING: translation string unused: compression
 WARNING: translation string unused: connect
 WARNING: translation string unused: connect the modem
-WARNING: translation string unused: core notice 1
-WARNING: translation string unused: core notice 2
-WARNING: translation string unused: core notice 3
 WARNING: translation string unused: could not connect to
 WARNING: translation string unused: could not connect to www ipcop org
 WARNING: translation string unused: could not connect to www ipfire org
@@ -898,6 +895,7 @@ WARNING: untranslated string: administrator username = Administrator username
 WARNING: untranslated string: advproxy AUTH method ntlm auth = Windows Active Directory
 WARNING: untranslated string: advproxy asbased anomaly detection = Anomaly detections based on Autonomous Systems information
 WARNING: untranslated string: advproxy basic authentication = Allow HTTP Basic authentication
+WARNING: untranslated string: advproxy errmsg invalid url = Invalid URL
 WARNING: untranslated string: advproxy errmsg wpad invalid ip or mask = WPAD: Invalid IP or subnet for excluded IP subnet
 WARNING: untranslated string: advproxy fastflux detection = Deny access to destinations hosted on fast flux setups
 WARNING: untranslated string: advproxy fastflux detection threshold = Threshold
@@ -937,6 +935,7 @@ WARNING: untranslated string: cake profile pppoe-ptm 27 = PPPoE PTM (27 bytes)
 WARNING: untranslated string: cake profile pppoe-vcmux 32 = PPPoE VC-MUX (32 bytes)
 WARNING: untranslated string: cake profile raw 0 = Raw (no overhead compensation)
 WARNING: untranslated string: check all = Check all
+WARNING: untranslated string: core update = Core-Update
 WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: crypto error = Cryptographic error
 WARNING: untranslated string: crypto warning = Cryptographic warning
@@ -988,6 +987,7 @@ WARNING: untranslated string: email mailport = Mail Server Port
 WARNING: untranslated string: email mailrcpt = Mail Recipient
 WARNING: untranslated string: email mailsender = Mail Sender
 WARNING: untranslated string: email mailuser = Username
+WARNING: untranslated string: email recipient invalid = Invalid email recipient
 WARNING: untranslated string: email settings = Mail Service
 WARNING: untranslated string: email testmail = Send test mail
 WARNING: untranslated string: email tls = TLS mode
@@ -1186,6 +1186,7 @@ WARNING: untranslated string: ovpn error md5 = You host certificate uses MD5 for
 WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
+WARNING: untranslated string: pak update = Update
 WARNING: untranslated string: pakfire already busy = Pakfire is already performing a task. Please try again later.
 WARNING: untranslated string: pakfire finished = Pakfire has finished! Returning...
 WARNING: untranslated string: pakfire finished error = Pakfire has finished! Errors occurred, please check the log output before proceeding.
@@ -1205,8 +1206,10 @@ WARNING: untranslated string: rdns = rDNS
 WARNING: untranslated string: reboot fsck = Reboot & check filesystem
 WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check
 WARNING: untranslated string: received = Received
+WARNING: untranslated string: release = Release
 WARNING: untranslated string: required = Required
 WARNING: untranslated string: required field = Required field
+WARNING: untranslated string: retbleed = Retbleed
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
@@ -1247,6 +1250,9 @@ WARNING: untranslated string: token not set = No Token has been given.
 WARNING: untranslated string: tor guard country any = Any country
 WARNING: untranslated string: tor guard nodes = Guard Nodes
 WARNING: untranslated string: tor use guard nodes = Use only these guard nodes (one fingerprint per line)
+WARNING: untranslated string: traffic stat in = In
+WARNING: untranslated string: traffic stat out = Out
+WARNING: untranslated string: traffic stat title = RED Traffic
 WARNING: untranslated string: transfers = Transfers
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: twelve hours = 12 Hours
@@ -1259,6 +1265,7 @@ WARNING: untranslated string: unlimited = Unlimited
 WARNING: untranslated string: updxlrtr passive mode = Delivery only/no download mode
 WARNING: untranslated string: uplink bit rate = Uplink Bit Rate
 WARNING: untranslated string: user management = User Management
+WARNING: untranslated string: version = Version
 WARNING: untranslated string: vpn broken = Broken
 WARNING: untranslated string: vpn connecting = CONNECTING
 WARNING: untranslated string: vpn force mobike = Force using MOBIKE (only IKEv2)
