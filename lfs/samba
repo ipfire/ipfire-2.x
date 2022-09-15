@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 86
+PAK_VER    = 87
 
 DEPS       = avahi cups libtirpc perl-Parse-Yapp perl-JSON
 
