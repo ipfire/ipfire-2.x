@@ -21,7 +21,6 @@ usr/lib/lcdproc
 #usr/lib/lcdproc/CFontzPacket.so
 #usr/lib/lcdproc/CwLnx.so
 #usr/lib/lcdproc/EyeboxOne.so
-#usr/lib/lcdproc/IOWarrior.so
 #usr/lib/lcdproc/MD8800.so
 #usr/lib/lcdproc/MtxOrb.so
 #usr/lib/lcdproc/NoritakeVFD.so
@@ -39,6 +38,7 @@ usr/lib/lcdproc
 #usr/lib/lcdproc/imonlcd.so
 #usr/lib/lcdproc/irtrans.so
 #usr/lib/lcdproc/joy.so
+#usr/lib/lcdproc/jw002.so
 #usr/lib/lcdproc/lb216.so
 #usr/lib/lcdproc/lcdm001.so
 #usr/lib/lcdproc/lcterm.so
@@ -53,7 +53,6 @@ usr/lib/lcdproc
 #usr/lib/lcdproc/sed1520.so
 #usr/lib/lcdproc/serialPOS.so
 #usr/lib/lcdproc/serialVFD.so
-#usr/lib/lcdproc/shuttleVFD.so
 #usr/lib/lcdproc/sli.so
 #usr/lib/lcdproc/stv5730.so
 #usr/lib/lcdproc/t6963.so

@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Daemon capable of showing info on LCD displays
 
-VER        = 0.5.9
+VER        = 0e2ce9b
 
 THISAPP    = lcdproc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 10b26fc803cf14bf301177336bd14497131440f129d16fa75cbb4782da839eb3a3835091d7c211cfc75d35f07823a1c301cf7ebfae25f2a344d0dfcaf894ca17
+$(DL_FILE)_BLAKE2 = e35471d3f77eeeaa90a87881a85163e8f551de1f198ce8d3821da15bdc3489149b0a6a5d40c7ad4412d50204d5009c7863613d80851f67bb28933c5bdb603fe4
 
 install : $(TARGET)
 
@@ -84,18 +84,18 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
+	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && \
 		./configure \
 			--prefix=/usr \
 			--sysconfdir=/etc/lcdproc \
 			--enable-libusb \
+			--enable-libusb-1-0 \
 			--enable-drivers=all \
-			--enable-permissive-menu-goto \
 			--enable-lcdproc-menus \
 			--enable-stat-nfs \
 			--enable-stat-smbfs \
-			--with-lcdport=13666 \
-			--enable-seamless-hbars
+			--with-lcdport=13666
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	-mkdir -pv /etc/lcdproc
