@@ -35,7 +35,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdradmin
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       = perl-gettext vdr vdr_epgsearch
 

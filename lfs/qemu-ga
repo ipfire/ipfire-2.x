@@ -30,7 +30,7 @@ VER        = 7.0.0
 THISAPP    = qemu-ga-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = qemu-ga
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       =
 

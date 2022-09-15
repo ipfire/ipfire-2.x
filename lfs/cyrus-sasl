@@ -33,7 +33,7 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = cyrus-sasl
-PAK_VER    = 1
+PAK_VER    = 2
 
 ifeq "$(PASS)" ""
 	TARGET     = $(DIR_INFO)/$(THISAPP)
