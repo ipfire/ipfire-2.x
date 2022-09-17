@@ -112,7 +112,10 @@ rm -rvf \
 	/lib/firmware/ctfw-3.2.1.1.bin \
 	/lib/firmware/ctfw-3.2.3.0.bin \
 	/lib/firmware/intel/ice/ddp/ice-1.3.28.0.pkg \
+	/lib/firmware/intel/ibt-* \
 	/lib/firmware/intelliport2.bin \
+	/lib/firmware/mediatek/BT_RAM_CODE_MT7922_1_1_hdr.bin \
+	/lib/firmware/mediatek/BT_RAM_CODE_MT7961_1_2_hdr.bin \
 	/lib/firmware/tr_smctr.bin \
 	/usr/bin/perl5.32* \
 	/usr/lib/libbfd-2.37.so \
