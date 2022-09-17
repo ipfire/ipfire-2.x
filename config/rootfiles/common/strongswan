@@ -168,7 +168,6 @@ usr/lib/ipsec/plugins/libstrongswan-xauth-generic.so
 usr/lib/ipsec/plugins/libstrongswan-xauth-noauth.so
 usr/lib/ipsec/plugins/libstrongswan-xcbc.so
 #usr/libexec/ipsec
-usr/libexec/ipsec/_copyright
 usr/libexec/ipsec/_updown
 usr/libexec/ipsec/charon
 usr/libexec/ipsec/scepclient
