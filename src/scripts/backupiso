@@ -35,7 +35,7 @@ case "${arch}" in
 esac
 
 URL="https://downloads.ipfire.org/releases/ipfire-2.x/$IPFVER-core$COREVER/"
-ISO="ipfire-$IPFVER.$arch-full-core$COREVER.iso"
+ISO="ipfire-$IPFVER-core$COREVER-$arch.iso"
 
 makeiso() {
 	local dir="${1}"
