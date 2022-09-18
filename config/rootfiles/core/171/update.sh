@@ -34,7 +34,8 @@ done
 # Stop services
 /etc/rc.d/init.d/apache stop
 /etc/rc.d/init.d/squid stop
-/etc/rc.d/init.d/openvpn stop
+/usr/local/bin/openvpnctrl -k
+/usr/local/bin/openvpnctrl -kn2n
 /etc/rc.d/init.d/ipsec stop
 
 # Remove files
@@ -151,12 +152,13 @@ ldconfig
 # Start services
 /etc/rc.d/init.d/apache start
 if grep -q "ENABLED=on" /var/ipfire/ovpn/settings; then
-	/etc/init.d/openvpn start
+	/usr/local/bin/openvpnctrl -s
+	/usr/local/bin/openvpnctrl -sn2n
 fi
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec start
 fi
-if -f /var/ipfire/proxy/enable; then
+if [ -f /var/ipfire/proxy/enable ]; then
 	/etc/init.d/squid start
 fi
 
