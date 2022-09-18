@@ -148,10 +148,16 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
-/etc/init.d/squid start
-/etc/init.d/openvpn start
+if grep -q "ENABLED=on" /var/ipfire/ovpn/settings; then
+	/etc/init.d/openvpn start
+fi
+
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec start
+fi
+
+if -f /var/ipfire/proxy/enable; then
+	/etc/init.d/squid start
 fi
 
 # This update needs a reboot...
