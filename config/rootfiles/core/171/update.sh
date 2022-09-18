@@ -37,6 +37,7 @@ done
 /usr/local/bin/openvpnctrl -k
 /usr/local/bin/openvpnctrl -kn2n
 /etc/rc.d/init.d/ipsec stop
+/etc/rc.d/init.d/collectd stop
 
 # Remove files
 rm -rvf \
@@ -150,6 +151,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/rc.d/init.d/collectd start
 /etc/rc.d/init.d/apache start
 if grep -q "ENABLED=on" /var/ipfire/ovpn/settings; then
 	/usr/local/bin/openvpnctrl -s
