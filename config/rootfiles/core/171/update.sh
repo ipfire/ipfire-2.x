@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/rc.d/init.d/apache stop
 /etc/rc.d/init.d/squid stop
 /etc/rc.d/init.d/openvpn stop
 /etc/rc.d/init.d/ipsec stop
@@ -148,14 +149,13 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/rc.d/init.d/apache start
 if grep -q "ENABLED=on" /var/ipfire/ovpn/settings; then
 	/etc/init.d/openvpn start
 fi
-
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec start
 fi
-
 if -f /var/ipfire/proxy/enable; then
 	/etc/init.d/squid start
 fi
