@@ -34,6 +34,7 @@ done
 # Stop services
 /etc/rc.d/init.d/squid stop
 /etc/rc.d/init.d/openvpn stop
+/etc/rc.d/init.d/ipsec stop
 
 # Remove files
 rm -rvf \
@@ -149,6 +150,9 @@ ldconfig
 # Start services
 /etc/init.d/squid start
 /etc/init.d/openvpn start
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/init.d/ipsec start
+fi
 
 # This update needs a reboot...
 touch /var/run/need_reboot
