@@ -10135,7 +10135,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SKY2
 #lib/modules/KVER-ipfire/build/include/config/SLAB_FREELIST_HARDENED
 #lib/modules/KVER-ipfire/build/include/config/SLAB_FREELIST_RANDOM
-#lib/modules/KVER-ipfire/build/include/config/SLAB_MERGE_DEFAULT
 #lib/modules/KVER-ipfire/build/include/config/SLHC
 #lib/modules/KVER-ipfire/build/include/config/SLICOSS
 #lib/modules/KVER-ipfire/build/include/config/SLS
@@ -17543,6 +17542,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/scripts/dtc/version_gen.h
 #lib/modules/KVER-ipfire/build/scripts/dtc/yamltree.c
 #lib/modules/KVER-ipfire/build/scripts/dummy-tools
+#lib/modules/KVER-ipfire/build/scripts/dummy-tools/dummy-plugin-dir
+#lib/modules/KVER-ipfire/build/scripts/dummy-tools/dummy-plugin-dir/include
+#lib/modules/KVER-ipfire/build/scripts/dummy-tools/dummy-plugin-dir/include/plugin-version.h
 #lib/modules/KVER-ipfire/build/scripts/dummy-tools/gcc
 #lib/modules/KVER-ipfire/build/scripts/dummy-tools/ld
 #lib/modules/KVER-ipfire/build/scripts/dummy-tools/nm
@@ -17781,6 +17783,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/scripts/package/mkdebian
 #lib/modules/KVER-ipfire/build/scripts/package/mkspec
 #lib/modules/KVER-ipfire/build/scripts/package/snapcraft.template
+#lib/modules/KVER-ipfire/build/scripts/pahole-flags.sh
 #lib/modules/KVER-ipfire/build/scripts/parse-maintainers.pl
 #lib/modules/KVER-ipfire/build/scripts/patch-kernel
 #lib/modules/KVER-ipfire/build/scripts/profile2linkerlist.pl
@@ -18724,7 +18727,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/arch
 #lib/modules/KVER-ipfire/kernel/arch/x86
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto
-#lib/modules/KVER-ipfire/kernel/arch/x86/crypto/blake2s-x86_64.ko.xz
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/blowfish-x86_64.ko.xz
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/camellia-aesni-avx-x86_64.ko.xz
 #lib/modules/KVER-ipfire/kernel/arch/x86/crypto/camellia-aesni-avx2.ko.xz
