@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.4.8
+VER        = 2.4.9
 
 THISAPP    = expat-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a829bd94d2cc9b305874ae2539dd4388ea99eaed21d2da17bbd99a1e7735b0f7cb910d096f72c71b128dcb8ffdff9021109e7ff5e562d8cefad228fd8d66f897
+$(DL_FILE)_BLAKE2 = d60183f96f3359acc069af638cc8d16ba19f51fbd8a61eddd80c2babddde357dcf0561e87af901f53617bfd9452e146c9dd9f317729cd3648b65832a38388640
 
 install : $(TARGET)
 
