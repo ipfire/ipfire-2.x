@@ -6531,7 +6531,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ARM64_AMU_EXTN
 #lib/modules/KVER-ipfire/build/include/config/ARM64_AS_HAS_MTE
 #lib/modules/KVER-ipfire/build/include/config/ARM64_BTI
-#lib/modules/KVER-ipfire/build/include/config/ARM64_BTI_KERNEL
 #lib/modules/KVER-ipfire/build/include/config/ARM64_CNP
 #lib/modules/KVER-ipfire/build/include/config/ARM64_CONT_PMD_SHIFT
 #lib/modules/KVER-ipfire/build/include/config/ARM64_CONT_PTE_SHIFT
@@ -6547,6 +6546,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_1508412
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_1530923
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_1542419
+#lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_2441009
+#lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_2457168
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_819472
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_824069
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_826319
@@ -6776,8 +6777,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/BITREVERSE
 #lib/modules/KVER-ipfire/build/include/config/BLK_CGROUP
 #lib/modules/KVER-ipfire/build/include/config/BLK_CGROUP_RWSTAT
-#lib/modules/KVER-ipfire/build/include/config/BLK_DEBUG_FS
-#lib/modules/KVER-ipfire/build/include/config/BLK_DEBUG_FS_ZONED
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_BSG
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_BSGLIB
@@ -6878,8 +6877,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CC_CAN_LINK
 #lib/modules/KVER-ipfire/build/include/config/CC_CAN_LINK_STATIC
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_ASM_GOTO
-#lib/modules/KVER-ipfire/build/include/config/CC_HAS_ASM_GOTO_TIED_OUTPUT
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_ASM_GOTO_OUTPUT
+#lib/modules/KVER-ipfire/build/include/config/CC_HAS_ASM_GOTO_TIED_OUTPUT
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_ASM_INLINE
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_BRANCH_PROT_PAC_RET
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_BRANCH_PROT_PAC_RET_BTI
@@ -7184,8 +7183,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/DE2104X
 #lib/modules/KVER-ipfire/build/include/config/DE2104X_DSL
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_BUGVERBOSE
-#lib/modules/KVER-ipfire/build/include/config/DEBUG_FS
-#lib/modules/KVER-ipfire/build/include/config/DEBUG_FS_ALLOW_ALL
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_KERNEL
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_MISC
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_SHIRQ
@@ -7270,6 +7267,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/DRM_ANALOGIX_ANX78XX
 #lib/modules/KVER-ipfire/build/include/config/DRM_ANALOGIX_DP
 #lib/modules/KVER-ipfire/build/include/config/DRM_BRIDGE
+#lib/modules/KVER-ipfire/build/include/config/DRM_DISPLAY_CONNECTOR
 #lib/modules/KVER-ipfire/build/include/config/DRM_DP_AUX_BUS
 #lib/modules/KVER-ipfire/build/include/config/DRM_DW_HDMI
 #lib/modules/KVER-ipfire/build/include/config/DRM_DW_HDMI_AHB_AUDIO
@@ -7646,8 +7644,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/GARP
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGINS
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_LATENT_ENTROPY
-#lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_RANDSTRUCT
-#lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_RANDSTRUCT_PERFORMANCE
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_STRUCTLEAK
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
 #lib/modules/KVER-ipfire/build/include/config/GCC_VERSION
@@ -7744,7 +7740,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/HAVE_ARCH_KGDB
 #lib/modules/KVER-ipfire/build/include/config/HAVE_ARCH_MMAP_RND_BITS
 #lib/modules/KVER-ipfire/build/include/config/HAVE_ARCH_MMAP_RND_COMPAT_BITS
-#lib/modules/KVER-ipfire/build/include/config/HAVE_ARCH_PFN_VALID
 #lib/modules/KVER-ipfire/build/include/config/HAVE_ARCH_PREL32_RELOCATIONS
 #lib/modules/KVER-ipfire/build/include/config/HAVE_ARCH_RANDOMIZE_KSTACK_OFFSET
 #lib/modules/KVER-ipfire/build/include/config/HAVE_ARCH_SECCOMP
@@ -7888,7 +7883,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/HW_RANDOM_ARM_SMCCC_TRNG
 #lib/modules/KVER-ipfire/build/include/config/HW_RANDOM_BA431
 #lib/modules/KVER-ipfire/build/include/config/HW_RANDOM_BCM2835
-#lib/modules/KVER-ipfire/build/include/config/HW_RANDOM_CAVIUM
 #lib/modules/KVER-ipfire/build/include/config/HW_RANDOM_CCTRNG
 #lib/modules/KVER-ipfire/build/include/config/HW_RANDOM_IPROC_RNG200
 #lib/modules/KVER-ipfire/build/include/config/HW_RANDOM_MESON
@@ -9850,7 +9844,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SKY2
 #lib/modules/KVER-ipfire/build/include/config/SLAB_FREELIST_HARDENED
 #lib/modules/KVER-ipfire/build/include/config/SLAB_FREELIST_RANDOM
-#lib/modules/KVER-ipfire/build/include/config/SLAB_MERGE_DEFAULT
 #lib/modules/KVER-ipfire/build/include/config/SLHC
 #lib/modules/KVER-ipfire/build/include/config/SLICOSS
 #lib/modules/KVER-ipfire/build/include/config/SLUB
@@ -10203,6 +10196,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/TRACER_MAX_TRACE
 #lib/modules/KVER-ipfire/build/include/config/TRACER_SNAPSHOT
 #lib/modules/KVER-ipfire/build/include/config/TRACE_CLOCK
+#lib/modules/KVER-ipfire/build/include/config/TRACE_IRQFLAGS_NMI_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/TRACE_IRQFLAGS_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/TRACING
 #lib/modules/KVER-ipfire/build/include/config/TRACING_SUPPORT
@@ -11692,7 +11686,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/generated/autoconf.h
 #lib/modules/KVER-ipfire/build/include/generated/bounds.h
 #lib/modules/KVER-ipfire/build/include/generated/compile.h
-#lib/modules/KVER-ipfire/build/include/generated/randomize_layout_hash.h
 #lib/modules/KVER-ipfire/build/include/generated/timeconst.h
 #lib/modules/KVER-ipfire/build/include/generated/uapi
 #lib/modules/KVER-ipfire/build/include/generated/uapi/linux
@@ -17106,6 +17099,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/scripts/dtc/version_gen.h
 #lib/modules/KVER-ipfire/build/scripts/dtc/yamltree.c
 #lib/modules/KVER-ipfire/build/scripts/dummy-tools
+#lib/modules/KVER-ipfire/build/scripts/dummy-tools/dummy-plugin-dir
+#lib/modules/KVER-ipfire/build/scripts/dummy-tools/dummy-plugin-dir/include
+#lib/modules/KVER-ipfire/build/scripts/dummy-tools/dummy-plugin-dir/include/plugin-version.h
 #lib/modules/KVER-ipfire/build/scripts/dummy-tools/gcc
 #lib/modules/KVER-ipfire/build/scripts/dummy-tools/ld
 #lib/modules/KVER-ipfire/build/scripts/dummy-tools/nm
@@ -17138,8 +17134,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/latent_entropy_plugin.c
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/latent_entropy_plugin.so
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/randomize_layout_plugin.c
-#lib/modules/KVER-ipfire/build/scripts/gcc-plugins/randomize_layout_plugin.so
-#lib/modules/KVER-ipfire/build/scripts/gcc-plugins/randomize_layout_seed.h
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/sancov_plugin.c
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/stackleak_plugin.c
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/structleak_plugin.c
@@ -17346,6 +17340,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/scripts/package/mkdebian
 #lib/modules/KVER-ipfire/build/scripts/package/mkspec
 #lib/modules/KVER-ipfire/build/scripts/package/snapcraft.template
+#lib/modules/KVER-ipfire/build/scripts/pahole-flags.sh
 #lib/modules/KVER-ipfire/build/scripts/parse-maintainers.pl
 #lib/modules/KVER-ipfire/build/scripts/patch-kernel
 #lib/modules/KVER-ipfire/build/scripts/profile2linkerlist.pl
@@ -18483,6 +18478,7 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/bridge/analogix/analogix-anx78xx.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/bridge/analogix/analogix_dp.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/bridge/analogix/anx7625.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/bridge/display-connector.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/bridge/megachips-stdpxxxx-ge-b850v3-fw.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/bridge/nxp-ptn3460.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/gpu/drm/bridge/parade-ps8622.ko.xz
