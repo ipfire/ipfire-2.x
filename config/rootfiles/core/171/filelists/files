@@ -133,3 +133,4 @@ srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/logs.cgi/urlfilter.dat
 usr/local/bin/backupiso
+var/spool/cron/root.orig

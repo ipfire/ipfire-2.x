@@ -202,6 +202,9 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Rebuild fcrontab from scratch
+/usr/bin/fcrontab -z
+
 # Start services
 /etc/rc.d/init.d/collectd start
 /etc/rc.d/init.d/unbound start
