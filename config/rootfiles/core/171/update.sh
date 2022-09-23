@@ -45,6 +45,7 @@ done
 
 # Stop services
 /etc/rc.d/init.d/apache stop
+/etc/rc.d/init.d/unbound stop
 /etc/rc.d/init.d/squid stop
 /usr/local/bin/openvpnctrl -k
 /usr/local/bin/openvpnctrl -kn2n
@@ -185,6 +186,7 @@ rm -rvf \
 	/usr/lib/libnettle.so.8.4 \
 	/usr/lib/libns-9.16.31.so \
 	/usr/lib/libopcodes-2.37.so \
+	/usr/lib/libunbound.so.8.1.18 \
 	/usr/lib/perl5/5.32* \
 	/usr/lib/perl5/site_perl/5.32*
 
@@ -202,6 +204,7 @@ ldconfig
 
 # Start services
 /etc/rc.d/init.d/collectd start
+/etc/rc.d/init.d/unbound start
 /etc/rc.d/init.d/apache start
 if grep -q "ENABLED=on" /var/ipfire/ovpn/settings; then
 	/usr/local/bin/openvpnctrl -s
