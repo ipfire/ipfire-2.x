@@ -175,16 +175,23 @@ rm -rvf \
 	/usr/bin/perl5.32* \
 	/usr/lib/libbfd-2.37.so \
 	/usr/lib/libbind9-9.16.31.so \
+	/usr/lib/libbind9-9.16.32.so \
 	/usr/lib/libdns-9.16.31.so \
+	/usr/lib/libdns-9.16.32.so \
 	/usr/lib/libefiboot.so.1.37 \
 	/usr/lib/libefivar.so.1.37 \
 	/usr/lib/libhogweed.so.6.4 \
 	/usr/lib/libirs-9.16.31.so \
+	/usr/lib/libirs-9.16.32.so \
 	/usr/lib/libisc-9.16.31.so \
+	/usr/lib/libisc-9.16.32.so \
 	/usr/lib/libisccc-9.16.31.so \
+	/usr/lib/libisccc-9.16.32.so \
 	/usr/lib/libisccfg-9.16.31.so \
+	/usr/lib/libisccfg-9.16.32.so \
 	/usr/lib/libnettle.so.8.4 \
 	/usr/lib/libns-9.16.31.so \
+	/usr/lib/libns-9.16.32.so \
 	/usr/lib/libopcodes-2.37.so \
 	/usr/lib/libunbound.so.8.1.18 \
 	/usr/lib/perl5/5.32* \
