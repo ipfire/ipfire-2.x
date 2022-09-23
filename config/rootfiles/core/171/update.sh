@@ -180,6 +180,7 @@ rm -rvf \
 	/usr/lib/libdns-9.16.32.so \
 	/usr/lib/libefiboot.so.1.37 \
 	/usr/lib/libefivar.so.1.37 \
+	/usr/lib/libexpat.so.1.8.8 \
 	/usr/lib/libhogweed.so.6.4 \
 	/usr/lib/libirs-9.16.31.so \
 	/usr/lib/libirs-9.16.32.so \
