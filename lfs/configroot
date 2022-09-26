@@ -169,7 +169,7 @@ $(TARGET) :
 	# Configroot permissions
 	chown -R nobody:nobody $(CONFIG_ROOT)
 	chown      root:root   $(CONFIG_ROOT)
-	for i in backup/ *.pl addon-lang/ langs/ ; do \
+	for i in backup/exclude.user backup/include.user *.pl addon-lang/ langs/ ; do \
             chown -R root:root $(CONFIG_ROOT)/$$i; \
 	done
 	chown -Rv root:root $(CONFIG_ROOT)/*/bin

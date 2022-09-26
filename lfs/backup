@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -61,10 +61,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	-mkdir -p /var/ipfire/backup/bin
 	install -v -m 755 -o root $(DIR_SRC)/config/backup/backup.pl /var/ipfire/backup/bin
-	install -v -m 644 $(DIR_SRC)/config/backup/include /var/ipfire/backup/
-	install -v -m 644 $(DIR_SRC)/config/backup/exclude /var/ipfire/backup/
 	chown nobody:nobody -R /var/ipfire/backup/
 	chown root:root -R /var/ipfire/backup/bin/
+	install -v -m 644 $(DIR_SRC)/config/backup/include /var/ipfire/backup/
+	install -v -m 644 $(DIR_SRC)/config/backup/exclude /var/ipfire/backup/
 	-mkdir -p /var/ipfire/backup/addons
 	-mkdir -p /var/ipfire/backup/addons/includes
 	-mkdir -p /var/ipfire/backup/addons/backup
