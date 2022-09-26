@@ -169,6 +169,7 @@ rm -rvf \
 	/lib/firmware/intel/ice/ddp/ice-1.3.28.0.pkg \
 	/lib/firmware/intel/ibt-* \
 	/lib/firmware/intelliport2.bin \
+	/lib/firmware/LICENCE* \
 	/lib/firmware/mediatek/BT_RAM_CODE_MT7922_1_1_hdr.bin \
 	/lib/firmware/mediatek/BT_RAM_CODE_MT7961_1_2_hdr.bin \
 	/lib/firmware/tr_smctr.bin \
@@ -176,6 +177,7 @@ rm -rvf \
 	/usr/lib/libbfd-2.37.so \
 	/usr/lib/libbind9-9.16.31.so \
 	/usr/lib/libbind9-9.16.32.so \
+	/usr/lib/libdns-9.16.2* \
 	/usr/lib/libdns-9.16.31.so \
 	/usr/lib/libdns-9.16.32.so \
 	/usr/lib/libefiboot.so.1.37 \
@@ -193,10 +195,16 @@ rm -rvf \
 	/usr/lib/libnettle.so.8.4 \
 	/usr/lib/libns-9.16.31.so \
 	/usr/lib/libns-9.16.32.so \
+	/usr/lib/libopcodes-2.36* \
 	/usr/lib/libopcodes-2.37.so \
 	/usr/lib/libunbound.so.8.1.18 \
 	/usr/lib/perl5/5.32* \
-	/usr/lib/perl5/site_perl/5.32*
+	/usr/lib/perl5/site_perl/5.32* \
+	/usr/share/usb_modeswitch/1004:61aa \
+	/usr/share/usb_modeswitch/12d1:\#android \
+	/usr/share/usb_modeswitch/12d1:\#linux \
+	/usr/share/usb_modeswitch/19d2:\#linux \
+	/srv/web/ipfire/html/themes/ipfire/include/css/style-rounded.css
 
 # Extract files
 extract_files
