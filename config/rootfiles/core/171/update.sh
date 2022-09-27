@@ -221,6 +221,9 @@ ldconfig
 # Rebuild fcrontab from scratch
 /usr/bin/fcrontab -z
 
+# Fix backup file permissions
+chown -v root:root /var/ipfire/backup/{in,ex}clude*
+
 # Start services
 /etc/rc.d/init.d/collectd start
 /etc/rc.d/init.d/unbound start
