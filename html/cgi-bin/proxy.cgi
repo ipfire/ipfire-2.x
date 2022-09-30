@@ -3525,9 +3525,19 @@ END
 			$_ =~ s/__PROXY_PORT__/$proxysettings{'PROXY_PORT'}/;
 			print FILE $_;
 		}
-		print FILE "\n#End of custom includes\n";
+		print FILE "\n#End of custom includes\n\n";
 		close (ACL);
 	}
+
+		print FILE <<END
+# Prevent ipv6 requests to avoid crash in squid > 5.x
+acl to_ipv6 dst ipv6
+acl from_ipv6 src ipv6
+http_access deny to_ipv6
+http_access deny from_ipv6
+END
+	;
+
 	if ((!-z $extgrp) && ($proxysettings{'AUTH_METHOD'} eq 'ncsa') && ($proxysettings{'NCSA_BYPASS_REDIR'} eq 'on')) { print FILE "\nredirector_access deny for_extended_users\n"; }
 
 	# Check if squidclamav is enabled.
