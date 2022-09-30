@@ -167,10 +167,10 @@ $(TARGET) :
 	cp $(DIR_SRC)/langs/*/cgi-bin/*.pl $(CONFIG_ROOT)/langs/
 
 	# Configroot permissions
-	chown -R nobody:nobody $(CONFIG_ROOT)
-	chown      root:root   $(CONFIG_ROOT)
+	chown -Rv	nobody:nobody	$(CONFIG_ROOT)
+	chown		root:root	$(CONFIG_ROOT)
 	for i in backup/exclude.user backup/include.user *.pl addon-lang/ langs/ ; do \
-            chown -R root:root $(CONFIG_ROOT)/$$i; \
+            chown -Rv root:root $(CONFIG_ROOT)/$$i; \
 	done
 	chown -Rv root:root $(CONFIG_ROOT)/*/bin
 	chown root:nobody $(CONFIG_ROOT)/dhcpc
