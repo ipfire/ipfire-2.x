@@ -317,7 +317,7 @@
 'advproxy errmsg ntlm pdc' => 'Hostname des primären Domain Controllers erforderlich',
 'advproxy errmsg password incorrect' => 'Falsches Passwort',
 'advproxy errmsg password length' => 'Ungültiger Wert für Passwortlänge',
-'advproxy errmsg password length 1' => 'Passwort muss mindestens',
+'advproxy errmsg password length 1' => 'Passwort muss mindestens ',
 'advproxy errmsg password length 2' => ' Zeichen enthalten',
 'advproxy errmsg passwords different' => 'Passwörter stimmen nicht überein',
 'advproxy errmsg proxy ports equal' => 'Der Proxyport darf nicht identisch mit dem transparenten Port sein.',
