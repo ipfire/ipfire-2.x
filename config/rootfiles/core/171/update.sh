@@ -50,7 +50,7 @@ done
 /usr/local/bin/openvpnctrl -k
 /usr/local/bin/openvpnctrl -kn2n
 /etc/rc.d/init.d/ipsec stop
-/etc/init.d/rc.d/suricata stop
+/etc/rc.d/init.d/suricata stop
 /etc/rc.d/init.d/collectd stop
 
 KVER="xxxKVERxxx"
@@ -228,7 +228,7 @@ chown -v root:root /var/ipfire/backup/{in,ex}clude*
 
 # Start services
 /etc/rc.d/init.d/collectd start
-if grep -q "ENABLED=on" /var/ipfire/suricata/settings; then
+if grep -q "ENABLE_IDS=on" /var/ipfire/suricata/settings; then
 	/etc/rc.d/init.d/suricata start
 fi
 /etc/rc.d/init.d/unbound start
