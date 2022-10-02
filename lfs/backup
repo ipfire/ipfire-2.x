@@ -61,8 +61,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	-mkdir -p /var/ipfire/backup/bin
 	install -v -m 755 -o root $(DIR_SRC)/config/backup/backup.pl /var/ipfire/backup/bin
-	chown nobody:nobody -R /var/ipfire/backup/
-	chown root:root -R /var/ipfire/backup/bin/
+	chown nobody:nobody -Rv /var/ipfire/backup/
+	chown root:root -Rv /var/ipfire/backup/bin/
 	install -v -m 644 $(DIR_SRC)/config/backup/include /var/ipfire/backup/
 	install -v -m 644 $(DIR_SRC)/config/backup/exclude /var/ipfire/backup/
 	-mkdir -p /var/ipfire/backup/addons
