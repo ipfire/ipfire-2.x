@@ -201,6 +201,7 @@ rm -rvf \
 	/usr/lib/libunbound.so.8.1.18 \
 	/usr/lib/perl5/5.32* \
 	/usr/lib/perl5/site_perl/5.32* \
+	/usr/share/man/* \
 	/usr/share/usb_modeswitch/1004:61aa \
 	/usr/share/usb_modeswitch/12d1:\#android \
 	/usr/share/usb_modeswitch/12d1:\#linux \

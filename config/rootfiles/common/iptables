@@ -166,11 +166,11 @@ sbin/xtables-legacy-multi
 #usr/share/man/man3/ipq_set_mode.3
 #usr/share/man/man3/ipq_set_verdict.3
 #usr/share/man/man3/libipq.3
-usr/share/man/man8/ip6tables-apply.8
+#usr/share/man/man8/ip6tables-apply.8
 #usr/share/man/man8/ip6tables-restore.8
 #usr/share/man/man8/ip6tables-save.8
 #usr/share/man/man8/ip6tables.8
-usr/share/man/man8/iptables-apply.8
+#usr/share/man/man8/iptables-apply.8
 #usr/share/man/man8/iptables-extensions.8
 #usr/share/man/man8/iptables-restore.8
 #usr/share/man/man8/iptables-save.8

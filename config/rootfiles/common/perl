@@ -2549,7 +2549,7 @@ usr/lib/perl5/5.36.0/xxxMACHINExxx-linux-thread-multi/threads/shared.pm
 #usr/share/man/man3/Pod::Simple::DumpAsXML.3
 #usr/share/man/man3/Pod::Simple::HTML.3
 #usr/share/man/man3/Pod::Simple::HTMLBatch.3
-usr/share/man/man3/Pod::Simple::JustPod.3
+#usr/share/man/man3/Pod::Simple::JustPod.3
 #usr/share/man/man3/Pod::Simple::LinkSection.3
 #usr/share/man/man3/Pod::Simple::Methody.3
 #usr/share/man/man3/Pod::Simple::PullParser.3
