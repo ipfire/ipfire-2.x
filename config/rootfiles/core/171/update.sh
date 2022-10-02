@@ -206,6 +206,7 @@ rm -rvf \
 	/usr/share/usb_modeswitch/12d1:\#android \
 	/usr/share/usb_modeswitch/12d1:\#linux \
 	/usr/share/usb_modeswitch/19d2:\#linux \
+	/sbin/tipc \
 	/srv/web/ipfire/html/themes/ipfire/include/css/style-rounded.css
 
 # Extract files

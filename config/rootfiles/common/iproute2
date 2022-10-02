@@ -24,7 +24,7 @@ sbin/rtmon
 sbin/rtstat
 sbin/ss
 sbin/tc
-sbin/tipc
+#sbin/tipc
 sbin/vdpa
 #usr/include/iproute2
 #usr/include/iproute2/bpf_elf.h
