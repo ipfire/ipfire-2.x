@@ -132,6 +132,7 @@ lib/firmware/wfx/brd8023a.pds
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/logs.cgi/urlfilter.dat
+srv/web/ipfire/cgi-bin/proxy.cgi
 usr/local/bin/backupiso
 var/ipfire/ipblocklist/sources
 var/ipfire/main/manualpages
