@@ -93,6 +93,7 @@ rm -rvf \
 
 # Remove files
 rm -rvf \
+	/etc/modprobe.d/cfg80211.conf \
 	/lib/firmware/3com/3C359.bin \
 	/lib/firmware/TDA7706_OM_v2.5.1_boot.txt \
 	/lib/firmware/TDA7706_OM_v3.0.2_boot.txt \

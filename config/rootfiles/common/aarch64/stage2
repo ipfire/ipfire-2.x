@@ -21,7 +21,6 @@ etc/logrotate.conf
 etc/mime.types
 etc/modprobe.d
 etc/modprobe.d/btmrvl_sdio.conf
-etc/modprobe.d/cfg80211.conf
 etc/modprobe.d/nf_conntrack.conf
 etc/modprobe.d/pcspeaker.conf
 etc/modules.conf
