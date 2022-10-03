@@ -29,6 +29,14 @@ case ${1} in
 
 		boot_mesg "Setting system clock..."
 
+		FDT_COMPAT_FILE="/sys/firmware/devicetree/base/compatible"
+		# RTC may not be automatically loaded on some
+		# non-x86 machines
+		if [ -f "${FDT_COMPAT_FILE}" ] && \
+			( grep -q "traverse,ten64" "${FDT_COMPAT_FILE}" ); then
+			modprobe rtc-rx8025
+		fi
+
 		# udev not create the rtc symlink if rtc is in the kernel
 		if [ ! -e /dev/rtc ]; then
 			if [ -e /dev/rtc0 ]; then
