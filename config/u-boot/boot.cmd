@@ -1,3 +1,12 @@
+# Traverse Ten64 board can boot EFI directly
+# Redirect it to the EFI process already in the
+# bootloader
+# (Remove on release of the 1.x Ten64 firmwire package)
+if test "${board}" = "ten64"; then
+	load ${devtype} ${devnum}:2 ${kernel_addr_r} efi/boot/bootaa64.efi
+	bootefi ${kernel_addr_r} ${fdt_addr_r}
+fi;
+
 if test ${boot_dev} = ""; then
 	setenv boot_dev mmc;
 	setenv root_dev /dev/mmcblk0p3;
