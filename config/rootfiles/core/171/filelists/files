@@ -1,3 +1,4 @@
+etc/rc.d/init.d/setclock
 lib/firmware/amdgpu/aldebaran_mec2.bin
 lib/firmware/amdgpu/aldebaran_mec.bin
 lib/firmware/amdgpu/beige_goby_ce.bin
