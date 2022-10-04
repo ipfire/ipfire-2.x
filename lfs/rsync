@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Versatile tool for fast incremental file transfer
 
-VER        = 3.2.4
+VER        = 3.2.6
 
 THISAPP    = rsync-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = rsync
-PAK_VER    = 15
+PAK_VER    = 16
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a67fcb9619874f1c5346a876138e59f4bf508a90736f830fb2b4eaf180ab11f15a0a7db9b3b28c3b990b77c2b0973d8e668bf509e4134f464159ed3172f53d80
+$(DL_FILE)_BLAKE2 = fa0c4aa9cdffbc9ffd4f81e8c3cdc1fda7080f80c1923084c6d705e6872caaba31c13de4603c9462f312dbbdae76520c27d3f4f40b327f1e66c7127b1d05ea73
 
 install : $(TARGET)
 
@@ -84,9 +84,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Replace shebang in rsync-ssl
 	cd $(DIR_APP) && sed -i -e "s@^#!.*@#!/bin/bash@" rsync-ssl
-
-	# Fix for CVE-2022-29154
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rsync-CVE-2022-29154.patch
 
 	cd $(DIR_APP) && ./configure \
 	--prefix=/usr \
