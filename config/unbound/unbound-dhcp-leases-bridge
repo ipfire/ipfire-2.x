@@ -441,8 +441,11 @@ class Lease(object):
 			if address in subnet:
 				return subnets[subnet]
 
-		# Fall back to localdomain if no match could be found
-		return "localdomain"
+		# Load main settings
+		settings = self.read_settings("/var/ipfire/main/settings")
+
+		# Fall back to the host domain if no match could be found
+		return settings.get("DOMAINNAME", "localdomain")
 
 	@staticmethod
 	@functools.cache
