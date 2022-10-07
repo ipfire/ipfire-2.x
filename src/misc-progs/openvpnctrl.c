@@ -497,6 +497,8 @@ void startDaemon(void) {
 		fprintf(stderr, "OpenVPN is not enabled on any interface\n");
 		exit(1);
 	} else {
+		snprintf(command, STRING_SIZE-1, "/etc/fcron.daily/openvpn-crl-updater");
+		executeCommand(command);
 		snprintf(command, STRING_SIZE-1, "/sbin/modprobe tun");
 		executeCommand(command);
 		snprintf(command, STRING_SIZE-1, "/usr/sbin/openvpn --config /var/ipfire/ovpn/server.conf");
