@@ -112,6 +112,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@mkdir $(DIR_SRC)/glibc-build
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-localedef-no-archive.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.36-syslog-large-messages.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.36-syslog-whitespace-fix.patch
 
 ifneq "$(TOOLCHAIN)" "1"
  ifeq "$(BUILD_ARCH)" "x86_64"
