@@ -184,6 +184,9 @@ restore_backup() {
 	# move nobeeps if exist
 	[ -e "/var/ipfire/ppp/nobeeps" ] && mv /var/ipfire/ppp/nobeeps /var/ipfire/red/nobeeps
 
+	# Update OpenVPN CRL
+	/etc/fcron.daily/openvpn-crl-updater
+
 	return 0
 }
 
