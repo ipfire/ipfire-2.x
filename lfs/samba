@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.16.4
+VER        = 4.17.0
 SUMMARY    = A SMB/CIFS File, Print, and Authentication Server
 
 THISAPP    = samba-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 87
+PAK_VER    = 88
 
 DEPS       = avahi cups libtirpc perl-Parse-Yapp perl-JSON
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = e685511a76770272cabd1292f36d2b005e2d21212e4782cdf4fd05039f7667b35501873cffa9a53547d523805b2a91ffeba0881aaee905304968c42efef22dfa
+$(DL_FILE)_BLAKE2 = d05b17748092bc151b0b627156b1da4a8b30b603569adcef376640745425321617a755add41315af0b38876344323a20185063e131c342c9b6fdcb9542be73f1
 
 install : $(TARGET)
 
@@ -80,7 +80,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/samba-4.16.4-glibc-headers.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--libdir=/usr/lib/ \
