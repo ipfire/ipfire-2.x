@@ -245,6 +245,7 @@ fi
 if [ -f /var/ipfire/proxy/enable ]; then
 	/etc/init.d/squid start
 fi
+/etc/init.d/dhcp restart
 
 # Regenerate all initrds
 dracut --regenerate-all --force
