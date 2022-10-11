@@ -192,6 +192,10 @@ END
 
 				# Add addon name to displayname of service if servicename differs from addon
 				my $displayname = ($pak ne $service) ? "$service ($pak)" : $service;
+				if ( -e "/srv/web/ipfire/cgi-bin/$pak.cgi" ) {
+					$displayname = ($pak ne $service) ? "$service (<a href=\'$pak.cgi\'>$pak</a>)" : "<a href=\'$pak.cgi\'>$service</a>";
+				} 
+
 				print "<td align='left' $col width='31%'>$displayname</td> ";
 
 				my $status = isautorun($pak,$service,$col);
