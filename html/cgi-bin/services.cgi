@@ -20,7 +20,7 @@
 ###############################################################################
 
 use strict;
-
+use feature "switch";
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
@@ -141,15 +141,22 @@ END
 	&Header::openbox('100%', 'left', "Addon - $Lang::tr{services}");
 	my $paramstr=$ENV{QUERY_STRING};
 	my @param=split(/!/, $paramstr);
-	if ($param[1] ne ''){
-		&General::system("/usr/local/bin/addonctrl", "$param[0]", "$param[1]");
+	# Make sure action parameter is actually one of the allowed service actions
+	given ($param[1]) {
+		when ( ['start', 'stop', 'enable', 'disable'] ) {
+			# Make sure pak-name and service name don't contain any illegal character
+			if ( $param[0] !~ /[^a-zA-Z_0-9\-]/ &&
+			     $param[2] !~ /[^a-zA-Z_0-9\-]/ ) {
+				&General::system("/usr/local/bin/addonctrl", "$param[0]", "$param[1]", "$param[2]");
+			}
+		}
 	}
 
 	print <<END
 <div align='center'>
 <table width='80%' cellspacing='1' class='tbl'>
 <tr>
-	<th align='center'><b>Addon</b></th>
+	<th align='left'><b>Addon $Lang::tr{service}</b></th>
 	<th align='center'><b>Boot</b></th>
 	<th align='center' colspan=2><b>$Lang::tr{'action'}</b></th>
 	<th align='center'><b>$Lang::tr{'status'}</b></th>
@@ -170,33 +177,35 @@ END
 	foreach my $pak (keys %paklist) {
 		my %metadata = &Pakfire::getmetadata($pak, "installed");
 			
+		my $service;
+
 		if ("$metadata{'Services'}") {
-			foreach my $service (split(/ /, "$metadata{'Services'}")) {
-				push(@addon_services, $service);
+			foreach $service (split(/ /, "$metadata{'Services'}")) {
+				$lines++;
+				if ($lines % 2) {
+					print "<tr>";
+					$col="bgcolor='$color{'color22'}'";
+				} else {
+					print "<tr>";
+					$col="bgcolor='$color{'color20'}'";
+				}
+
+				# Add addon name to displayname of service if servicename differs from addon
+				my $displayname = ($pak ne $service) ? "$service ($pak)" : $service;
+				print "<td align='left' $col width='31%'>$displayname</td> ";
+
+				my $status = isautorun($pak,$service,$col);
+				print "$status ";
+				print "<td align='center' $col width='8%'><a href='services.cgi?$pak!start!$service'><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></a></td>";
+				print "<td align='center' $col width='8%'><a href='services.cgi?$pak!stop!$service'><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></a></td> ";
+				my $status = isrunningaddon($pak,$service,$col);
+				$status =~ s/\\[[0-1]\;[0-9]+m//g;
+
+				chomp($status);
+				print "$status";
+				print "</tr>";
 			}
 		}
-	}
-
-	foreach (@addon_services) {
-		$lines++;
-		if ($lines % 2){
-			print "<tr>";
-			$col="bgcolor='$color{'color22'}'";
-		}else{
-			print "<tr>";
-			$col="bgcolor='$color{'color20'}'";
-		}
-		print "<td align='left' $col width='31%'>$_</td> ";
-		my $status = isautorun($_,$col);
-		print "$status ";
-		print "<td align='center' $col width='8%'><a href='services.cgi?$_!start'><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></a></td>";
-		print "<td align='center' $col width='8%'><a href='services.cgi?$_!stop'><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></a></td> ";
-		my $status = isrunningaddon($_,$col);
-		$status =~ s/\\[[0-1]\;[0-9]+m//g;
-
-		chomp($status);
-		print "$status";
-		print "</tr>";
 	}
 
 	print "</table></div>\n";
@@ -215,49 +224,22 @@ END
 }
 
 sub isautorun (@) {
-	my ($cmd, $col) = @_;
+	my ($pak, $service, $col) = @_;
+	my @testcmd = &General::system_output("/usr/local/bin/addonctrl", "$pak", "boot-status", "$service");
+	my $testcmd = @testcmd[0];
+	my $status = "<td align='center' $col><img alt='$Lang::tr{'service boot setting unavailable'}' title='$Lang::tr{'service boot setting unavailable'}' src='/images/dialog-warning.png' border='0' width='16' height='16' /></td>";
 
-	# Init directory.
-	my $initdir = "/etc/rc.d/rc3.d/";
-
-	my $status = "<td align='center' $col></td>";
-
-	# Check if autorun for the given cmd is enabled.
-	if ( &find_init("$cmd", "$initdir") ) {
+	# Check if autorun for the given service is enabled.
+	if ( $testcmd =~ /enabled\ on\ boot/ ) {
 		# Adjust status.
-		$status = "<td align='center' $col><a href='services.cgi?$_!disable'><img alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' border='0' width='16' height='16' /></a></td>";
-	} else {
+		$status = "<td align='center' $col><a href='services.cgi?$pak!disable!$service'><img alt='$Lang::tr{'deactivate'}' title='$Lang::tr{'deactivate'}' src='/images/on.gif' border='0' width='16' height='16' /></a></td>";
+	} elsif ( $testcmd =~ /disabled\ on\ boot/ ) {
 		# Adjust status.
-		$status = "<td align='center' $col><a href='services.cgi?$_!enable'><img alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' border='0' width='16' height='16' /></a></td>";
+		$status = "<td align='center' $col><a href='services.cgi?$pak!enable!$service'><img alt='$Lang::tr{'activate'}' title='$Lang::tr{'activate'}' src='/images/off.gif' border='0' width='16' height='16' /></a></td>";
 	}
 
 	# Return the status.
 	return $status;
-}
-
-sub find_init (@) {
-	my ($cmd, $dir) = @_;
-
-	# Open given init directory.
-	opendir (INITDIR, "$dir") || die "Cannot opendir $dir: $!";
-
-	# Read-in init files from directory.
-	my @inits = readdir(INITDIR);
-
-	# Close directory handle.
-	closedir(INITDIR);
-
-	# Loop through the directory.
-	foreach my $init (@inits) {
-		# Check if the current processed file belongs to the given command.
-		if ($init =~ /S\d+\d+$cmd\z/) {
-			# Found, return "1" - True.
-			return "1";
-		}
-        }
-
-	# Nothing found, return nothing.
-	return;
 }
 
 sub isrunning (@) {
@@ -313,7 +295,7 @@ sub isrunning (@) {
 }
 
 sub isrunningaddon (@) {
-	my ($cmd, $col) = @_;
+	my ($pak, $service, $col) = @_;
 
 	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2' $col></td>";
 	my $pid = '';
@@ -321,7 +303,7 @@ sub isrunningaddon (@) {
 	my $exename;
 	my @memory;
 
-	my @testcmd = &General::system_output("/usr/local/bin/addonctrl", "$cmd", "status");
+	my @testcmd = &General::system_output("/usr/local/bin/addonctrl", "$pak", "status", "$service");
 	my $testcmd = @testcmd[0];
 
 	if ( $testcmd =~ /is\ running/ && $testcmd !~ /is\ not\ running/){

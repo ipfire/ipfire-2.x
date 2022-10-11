@@ -2306,6 +2306,7 @@
 'server string' => 'Server String',
 'service' => 'Service',
 'service added' => 'Custom network service added',
+'service boot setting unavailable' => 'No valid runlevel symlink was found for the initscript of this service.',
 'service name' => 'Service name:',
 'service removed' => 'Custom network service removed',
 'service updated' => 'Custom network service updated',

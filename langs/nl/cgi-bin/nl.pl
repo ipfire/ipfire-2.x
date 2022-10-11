@@ -1899,6 +1899,7 @@
 'server string' => 'Server String',
 'service' => 'Dienst',
 'service added' => 'Aangepaste netwerkdienst toegevoegd',
+'service boot setting unavailable' => 'Er werd voor het initscript van deze service geen geldige runlevel symlink gevonden.',
 'service name' => 'Dienstennaam:',
 'service removed' => 'Aangepaste netwerkdienst verwijderd',
 'service updated' => 'Aangepaste netwerkdienst bijgewerkt',

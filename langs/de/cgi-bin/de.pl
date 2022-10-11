@@ -2251,6 +2251,7 @@
 'server string' => 'Server String',
 'service' => 'Dienst',
 'service added' => 'Benutzerdefinierter Netzwerkdienst wurde hinzugefügt',
+'service boot setting unavailable' => 'Für das Initscript dieses Dienstes wurde kein gültiger Runlevel-Symlink gefunden.',
 'service name' => 'Name des Dienstes:',
 'service removed' => 'Benutzerdefinierter Netzwerkdienst wurde entfernt',
 'service updated' => 'Benutzerdefinierter Netzwerkdienst wurde aktualisiert',
