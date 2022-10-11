@@ -105,7 +105,7 @@ if ( $querry[0] =~ "processescpu"){
 <div align='center'>
 <table width='80%' cellspacing='1' class='tbl'>
 <tr>
-	<th align='left'><b>$Lang::tr{'services'}</b></th>
+	<th align='left'><b>$Lang::tr{'service'}</b></th>
 	<th align='center' ><b>$Lang::tr{'status'}</b></th>
 	<th align='center'><b>PID</b></th>
 	<th align='center'><b>$Lang::tr{'memory'}</b></th>
@@ -174,7 +174,7 @@ END
 	# Generate list of installed addon pak services
 	my %paklist = &Pakfire::dblist("installed");
 
-	foreach my $pak (keys %paklist) {
+	foreach my $pak (sort keys %paklist) {
 		my %metadata = &Pakfire::getmetadata($pak, "installed");
 			
 		my $service;
