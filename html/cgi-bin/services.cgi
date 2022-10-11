@@ -143,7 +143,7 @@ END
 	my @param=split(/!/, $paramstr);
 	# Make sure action parameter is actually one of the allowed service actions
 	given ($param[1]) {
-		when ( ['start', 'stop', 'enable', 'disable'] ) {
+		when ( ['start', 'stop', 'restart', 'enable', 'disable'] ) {
 			# Make sure pak-name and service name don't contain any illegal character
 			if ( $param[0] !~ /[^a-zA-Z_0-9\-]/ &&
 			     $param[2] !~ /[^a-zA-Z_0-9\-]/ ) {
@@ -196,8 +196,6 @@ END
 
 				my $status = isautorun($pak,$service,$col);
 				print "$status ";
-				print "<td align='center' $col width='8%'><a href='services.cgi?$pak!start!$service'><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></a></td>";
-				print "<td align='center' $col width='8%'><a href='services.cgi?$pak!stop!$service'><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></a></td> ";
 				my $status = isrunningaddon($pak,$service,$col);
 				$status =~ s/\\[[0-1]\;[0-9]+m//g;
 
@@ -307,7 +305,9 @@ sub isrunningaddon (@) {
 	my $testcmd = @testcmd[0];
 
 	if ( $testcmd =~ /is\ running/ && $testcmd !~ /is\ not\ running/){
-		$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
+		$status = "<td align='center' $col width='8%'><a href='services.cgi?$pak!stop!$service'><img alt='$Lang::tr{'stop'}' title='$Lang::tr{'stop'}' src='/images/go-down.png' border='0' /></a></td> ";
+		$status .= "<td align='center' $col width='8%'><a href='services.cgi?$pak!restart!$service'><img alt='$Lang::tr{'restart'}' title='$Lang::tr{'restart'}' src='/images/reload.gif' border='0' /></a></td> ";
+		$status .= "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td>";
 		$testcmd =~ s/.* //gi;
 		$testcmd =~ s/[a-z_]//gi;
 		$testcmd =~ s/\[[0-1]\;[0-9]+//gi;
@@ -330,7 +330,8 @@ sub isrunningaddon (@) {
 		}
 		$status .="<td align='center' $col>$memory KB</td>";
 	}else{
-		$status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2' $col></td>";
+		$status = "<td align='center' $col width='16%' colspan=2><a href='services.cgi?$pak!start!$service'><img alt='$Lang::tr{'start'}' title='$Lang::tr{'start'}' src='/images/go-up.png' border='0' /></a></td>";
+		$status .= "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2' $col></td>";
 	}
 	return $status;
 }
