@@ -1,0 +1,22 @@
+commit bed4777fc99494854335a90c5a6e7fc2e30edf4d
+Author: Michael Tremer <michael.tremer@ipfire.org>
+Date:   Sat Oct 1 11:56:31 2022 +0000
+
+    Makefile: Reset Python path
+    
+    Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+
+diff --git a/Makefile.am b/Makefile.am
+index 81bd992..ec737d0 100644
+--- a/Makefile.am
++++ b/Makefile.am
+@@ -56,8 +56,7 @@ databasedir = $(localstatedir)/lib/location
+ pkgconfigdir = $(libdir)/pkgconfig
+ 
+ # Overwrite Python path
+-#pkgpythondir = $(pythondir)/location
+-pkgpythondir = /usr/lib/python3/dist-packages/location
++pkgpythondir = $(pythondir)/location
+ 
+ %: %.in Makefile
+ 	$(SED_PROCESS)

@@ -24,8 +24,8 @@
 
 include Config
 
-VER        = 0.9.13
-DB_DATE    = 2022-08-04
+VER        = 0.9.15
+DB_DATE    = 2022-10-15
 
 THISAPP    = libloc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,8 +43,8 @@ objects = $(DL_FILE) \
 $(DL_FILE)                    = https://source.ipfire.org/releases/libloc/$(DL_FILE)
 location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE).db.xz
 
-$(DL_FILE)_BLAKE2 = 5fccd6f0564899499939c63af8975f20b1f7d5267a8cf6c15e14ab377b9d5c008ae5e154c804ac6a1106471aaeebac97dc4ebe6b70fc1e59f416fe2cc02c52a7
-location-$(DB_DATE).db.xz_BLAKE2 = 11b6e9735c911f3dd548fc1759f72ae983eacbe6262f211a4a0080b5b13e3d9704d5080dc9ed0cee289b9ca2643d2adbf266d8a8a25f39129318c3e370a7c9a9
+$(DL_FILE)_BLAKE2 = f3db0fc75ac930805f0df2892b00ffb8f31123a5f28a8cade78f8f1614c0cd806ea365810c5192720d067531b199c342a2c6039f3cd5370c4c9efeded4e31857
+location-$(DB_DATE).db.xz_BLAKE2 = b34b554923a8291ea60ec34c98609da1d71aab66bc1aa2f973ea2e6fd14b6f750559d1e9365df4dd3f707a8dce373aba5f79381c61a4953f272b3557be88af2c
 
 install : $(TARGET)
 
@@ -77,12 +77,20 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvf $(DIR_DL)/$(DL_FILE)
+
+	# https://lists.ipfire.org/pipermail/location/2022-October/000596.html
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libloc-0.9.15-Makefile-reset-Python-path.patch
+
+	# https://bugzilla.ipfire.org/show_bug.cgi?id=12944
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libloc-0.9.15-export-Fix-generating-file-names-for-ipset-output.patch
+
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
 		--localstatedir=/var \
-		--disable-man-pages
+		--disable-man-pages \
+		--with-database-path=/var/lib/location/database.db
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 

@@ -1,0 +1,36 @@
+commit cd214f295797e5cc8dbc296753924863b33ab8bd
+Author: Michael Tremer <michael.tremer@ipfire.org>
+Date:   Tue Oct 4 08:47:03 2022 +0000
+
+    export: Fix generating file names for ipset output
+    
+    The tag that is being used in the filename was set after creating the
+    filename. The order has now been fixed and the export works fine for me.
+    
+    Fixes: #12944
+    Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+
+diff --git a/src/python/location/export.py b/src/python/location/export.py
+index f5ed37f..3f58498 100644
+--- a/src/python/location/export.py
++++ b/src/python/location/export.py
+@@ -48,6 +48,9 @@ class OutputWriter(object):
+ 		self.family = family
+ 		self.directory = directory
+ 
++		# Tag
++		self.tag = self._make_tag()
++
+ 		# Open output file
+ 		if f:
+ 			self.f = f
+@@ -58,9 +61,6 @@ class OutputWriter(object):
+ 		else:
+ 			self.f = io.StringIO()
+ 
+-		# Tag
+-		self.tag = self._make_tag()
+-
+ 		# Call any custom initialization
+ 		self.init()
+ 
