@@ -70,7 +70,6 @@ etc/strongswan.d/charon/xauth-generic.conf
 etc/strongswan.d/charon/xauth-noauth.conf
 etc/strongswan.d/charon/xcbc.conf
 etc/strongswan.d/pki.conf
-etc/strongswan.d/scepclient.conf
 etc/strongswan.d/starter.conf
 etc/strongswan.d/swanctl.conf
 #etc/swanctl
@@ -170,7 +169,6 @@ usr/lib/ipsec/plugins/libstrongswan-xcbc.so
 #usr/libexec/ipsec
 usr/libexec/ipsec/_updown
 usr/libexec/ipsec/charon
-usr/libexec/ipsec/scepclient
 usr/libexec/ipsec/starter
 usr/libexec/ipsec/stroke
 usr/libexec/ipsec/xfrmi
@@ -178,6 +176,8 @@ usr/sbin/ipsec
 usr/sbin/swanctl
 #usr/share/man/man1/pki---acert.1
 #usr/share/man/man1/pki---dn.1
+#usr/share/man/man1/pki---est.1
+#usr/share/man/man1/pki---estca.1
 #usr/share/man/man1/pki---gen.1
 #usr/share/man/man1/pki---issue.1
 #usr/share/man/man1/pki---keyid.1
@@ -185,6 +185,8 @@ usr/sbin/swanctl
 #usr/share/man/man1/pki---print.1
 #usr/share/man/man1/pki---pub.1
 #usr/share/man/man1/pki---req.1
+#usr/share/man/man1/pki---scep.1
+#usr/share/man/man1/pki---scepca.1
 #usr/share/man/man1/pki---self.1
 #usr/share/man/man1/pki---signcrl.1
 #usr/share/man/man1/pki---verify.1
@@ -194,7 +196,6 @@ usr/sbin/swanctl
 #usr/share/man/man5/strongswan.conf.5
 #usr/share/man/man5/swanctl.conf.5
 #usr/share/man/man8/ipsec.8
-#usr/share/man/man8/scepclient.8
 #usr/share/man/man8/swanctl.8
 #usr/share/strongswan
 #usr/share/strongswan/templates
@@ -260,6 +261,5 @@ usr/sbin/swanctl
 #usr/share/strongswan/templates/config/strongswan.d/charon-logging.conf
 #usr/share/strongswan/templates/config/strongswan.d/charon.conf
 #usr/share/strongswan/templates/config/strongswan.d/pki.conf
-#usr/share/strongswan/templates/config/strongswan.d/scepclient.conf
 #usr/share/strongswan/templates/config/strongswan.d/starter.conf
 #usr/share/strongswan/templates/config/strongswan.d/swanctl.conf
