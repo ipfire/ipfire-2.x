@@ -465,6 +465,7 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/Europe/Kaliningrad
 #usr/share/zoneinfo/Europe/Kiev
 #usr/share/zoneinfo/Europe/Kirov
+#usr/share/zoneinfo/Europe/Kyiv
 #usr/share/zoneinfo/Europe/Lisbon
 #usr/share/zoneinfo/Europe/Ljubljana
 #usr/share/zoneinfo/Europe/London
@@ -1082,6 +1083,7 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/posix/Europe/Kaliningrad
 #usr/share/zoneinfo/posix/Europe/Kiev
 #usr/share/zoneinfo/posix/Europe/Kirov
+#usr/share/zoneinfo/posix/Europe/Kyiv
 #usr/share/zoneinfo/posix/Europe/Lisbon
 #usr/share/zoneinfo/posix/Europe/Ljubljana
 #usr/share/zoneinfo/posix/Europe/London
@@ -1699,6 +1701,7 @@ usr/share/zoneinfo
 #usr/share/zoneinfo/right/Europe/Kaliningrad
 #usr/share/zoneinfo/right/Europe/Kiev
 #usr/share/zoneinfo/right/Europe/Kirov
+#usr/share/zoneinfo/right/Europe/Kyiv
 #usr/share/zoneinfo/right/Europe/Lisbon
 #usr/share/zoneinfo/right/Europe/Ljubljana
 #usr/share/zoneinfo/right/Europe/London
