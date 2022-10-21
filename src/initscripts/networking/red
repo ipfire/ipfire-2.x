@@ -226,6 +226,9 @@ case "${1}" in
 				# Set up the interface
 				ip link set "${RED_DEV}" up &>/dev/null
 
+				# Write red device name to the corresponding file.
+				echo -n "${RED_DEV}" > /var/ipfire/red/iface
+
 				# Start the DHCP client
 				dhcpcd_start "${RED_DEV}" --dhcp
 
