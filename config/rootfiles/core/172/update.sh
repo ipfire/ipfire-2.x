@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/rc.d/init.d/ipsec stop
 
 # Remove files
 
@@ -48,6 +49,9 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/init.d/ipsec start
+fi
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
