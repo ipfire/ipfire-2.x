@@ -1,3 +1,5 @@
+#etc/cron.daily
+#etc/cron.daily/location-update
 usr/bin/location
 #usr/bin/location-importer
 #usr/include/libloc
