@@ -38,7 +38,9 @@ done
 
 # Remove files
 rm -rvf \
-	/usr/lib/libunbound.so.8.1.1*
+	/etc/strongswan.d/scepclient.conf \
+	/usr/lib/libunbound.so.8.1.1* \
+	/usr/libexec/ipsec/scepclient
 
 # Extract files
 extract_files
