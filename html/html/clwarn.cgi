@@ -20,6 +20,7 @@
 ###############################################################################
 
 use CGI qw(param);
+use HTML::Entities();
 
 # enable only the following on debugging purpose
 use warnings;
@@ -30,11 +31,11 @@ $swroot="/var/ipfire";
 
 my $TITLE_VIRUS = "SquidClamAv Virus detection";
 
-my $url = param('url') || '';
-my $virus = param('virus') || '';
-my $source = param('source') || '';
+my $url = &HTML::Entities::encode_entities(param('url') || '');
+my $virus = &HTML::Entities::encode_entities(param('virus') || '');
+my $source = &HTML::Entities::encode_entities(param('source') || '');
 $source =~ s/\/-//;
-my $user = param('user') || '';
+my $user = &HTML::Entities::encode_entities(param('user') || '');
 
 
 # Remove clamd infos
