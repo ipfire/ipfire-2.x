@@ -34,8 +34,11 @@ done
 # Stop services
 /etc/rc.d/init.d/ipsec stop
 /etc/rc.d/init.d/sshd stop
+/etc/rc.d/init.d/unbound stop
 
 # Remove files
+rm -rvf \
+	/usr/lib/libunbound.so.8.1.1*
 
 # Extract files
 extract_files
@@ -53,6 +56,7 @@ ldconfig
 /usr/local/bin/sshctrl
 
 # Start services
+/etc/init.d/unbound start
 if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
 	/etc/init.d/sshd start
 fi
