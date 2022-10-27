@@ -24,9 +24,9 @@
 
 include Config
 
-VER        = 5.01
+VER        = 6.00
 
-THISAPP    = memtest86+-$(VER)
+THISAPP    = memtest86plus-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -41,7 +41,8 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ef63eaabaf6d3d27b85c73618c692dd61cce52f3670a57958d181623888bdc3aa538855da9a82ec2ab70b180938e3df99f0b06f606b2d6f64e8aabbe781b3050
+$(DL_FILE)_BLAKE2 = bba26dab7165239fe95dc7f174e5f876f47421008ca6201bc57549598f512df56a6a0ca71f8c2c26c01188d243b58ab6ddd525cf01f0dece0cdb61a6acf38685
+
 
 install : $(TARGET)
 
@@ -71,11 +72,8 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP)/build64 && make memtest.efi
 	-mkdir -p /usr/lib/memtest86+
-
-	# 64bit only systems cannot link mentest without 32bit gcc libs
-	# so we use the precompiled binary from memtest author
-	cd $(DIR_APP) && cp -f precomp.bin /usr/lib/memtest86+/memtest.bin
-
+	cd $(DIR_APP)/build64 && cp -f memtest.efi /usr/lib/memtest86+/memtest.efi
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

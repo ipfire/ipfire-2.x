@@ -199,7 +199,7 @@ endif
 
 ifeq "$(HAS_MEMTEST)" "1"
 	# Install memtest
-	cp /usr/lib/memtest86+/memtest.bin $(DIR_TMP)/cdrom/boot/isolinux/memtest
+	cp /usr/lib/memtest86+/memtest.efi $(DIR_TMP)/cdrom/boot/isolinux/memtest
 endif
 
 ifeq "$(HAS_IPXE)" "1"
