@@ -1,3 +1,4 @@
+usr/lib/firewall/rules.pl
 usr/local/bin/addonctrl
 usr/local/bin/openvpnctrl
 srv/web/ipfire/cgi-bin/services.cgi
