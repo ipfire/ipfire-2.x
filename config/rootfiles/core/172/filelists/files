@@ -1,2 +1,4 @@
+usr/local/bin/addonctrl
 usr/local/bin/openvpnctrl
+srv/web/ipfire/cgi-bin/services.cgi
 var/ipfire/backup/bin/backup.pl
