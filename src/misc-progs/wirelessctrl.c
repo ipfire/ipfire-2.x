@@ -168,13 +168,13 @@ int main(void) {
 
 	/* with this rule you can disable the logging of the dropped wireless input packets*/
 	if (findkey(kv, "DROPWIRELESSINPUT", buffer) && strcmp(buffer, "on") == 0) {
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -i %s -j LOG --log-prefix 'DROP_Wirelessinput'", blue_dev);
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSINPUT -i %s -j LOG --log-prefix 'DROP_Wirelessinput '", blue_dev);
 		safe_system(command);
 	}
 
 	/* with this rule you can disable the logging of the dropped wireless forward packets*/
 	if (findkey(kv, "DROPWIRELESSFORWARD", buffer) && strcmp(buffer, "on") == 0) {
-		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSFORWARD -i %s -j LOG --log-prefix 'DROP_Wirelessforward'", blue_dev);
+		snprintf(command, STRING_SIZE-1, "/sbin/iptables --wait -A WIRELESSFORWARD -i %s -j LOG --log-prefix 'DROP_Wirelessforward '", blue_dev);
 		safe_system(command);
 	}
 
