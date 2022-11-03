@@ -1093,7 +1093,7 @@ END
 			&General::log("ipsec", "Creating host cert...");
 			if (open(STDIN, "-|")) {
 				my $opt = " req -sha256 -nodes";
-				$opt .= " -newkey rsa:2048";
+				$opt .= " -newkey rsa:4096";
 				$opt .= " -keyout ${General::swroot}/certs/hostkey.pem";
 				$opt .= " -out ${General::swroot}/certs/hostreq.pem";
 				$errormessage = &callssl ($opt);
@@ -2139,7 +2139,7 @@ END
 
 		if (open(STDIN, "-|")) {
 			my $opt = " req -nodes -rand /proc/interrupts:/proc/net/rt_cache";
-			$opt .= " -newkey rsa:2048";
+			$opt .= " -newkey rsa:4096";
 			$opt .= " -keyout ${General::swroot}/certs/$cgiparams{'NAME'}key.pem";
 			$opt .= " -out ${General::swroot}/certs/$cgiparams{'NAME'}req.pem";
 

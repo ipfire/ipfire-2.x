@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -18,9 +18,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
 #                                                                             #
 ###############################################################################
-###
-# Based on IPFireCore 77
-###
+
 use CGI;
 use CGI qw/:standard/;
 use Imager::QRCode;
@@ -1970,7 +1968,7 @@ END
 	    }
 	} else {	# child
 	    unless (exec ('/usr/bin/openssl', 'req', '-nodes',
-			'-newkey', 'rsa:2048',
+			'-newkey', 'rsa:4096',
 			'-keyout', "${General::swroot}/ovpn/certs/serverkey.pem",
 			'-out', "${General::swroot}/ovpn/certs/serverreq.pem",
 			'-extensions', 'server',
@@ -4363,7 +4361,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		}
 	    } else {	# child
 		unless (exec ('/usr/bin/openssl', 'req', '-nodes',
-			'-newkey', 'rsa:2048',
+			'-newkey', 'rsa:4096',
 			'-keyout', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}key.pem",
 			'-out', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}req.pem",
 			'-config',"${General::swroot}/ovpn/openssl/ovpn.cnf")) {
