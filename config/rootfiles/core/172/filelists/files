@@ -2,5 +2,7 @@ usr/lib/firewall/rules.pl
 usr/local/bin/addonctrl
 usr/local/bin/openvpnctrl
 usr/local/bin/wirelessctrl
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/services.cgi
+srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/backup/bin/backup.pl
