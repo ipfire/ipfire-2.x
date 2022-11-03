@@ -1,5 +1,6 @@
 usr/lib/firewall/rules.pl
 usr/local/bin/addonctrl
 usr/local/bin/openvpnctrl
+usr/local/bin/wirelessctrl
 srv/web/ipfire/cgi-bin/services.cgi
 var/ipfire/backup/bin/backup.pl
