@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 1.2.12
+VER        = 1.2.13
 
 THISAPP    = zlib-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 76e7b26f8dc761b0eae6276cc32bc36fa74a88197699c95d158c1548f97b80db5e39d21144ecd6ee3eb90c42730aa5f387f9952d9a3f0930b56e9dfcd12f1e67
+$(DL_FILE)_BLAKE2 = cefcd25989ce27e7d339af2a88455fcf64f6f5e647bedb0f05a45e4370a885fe45a60c023aa63e79b8ecf20ed3254d0052245f33f5769aca2838b42242be14a8
 
 install : $(TARGET)
 
@@ -77,10 +77,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-
-	# Apply fix for CVE-2022-37434 (and a fix for the fix)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/zlib-CVE-2022-37434.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/zlib-CVE-2022-37434-fix.patch
 
 	cd $(DIR_APP) && CROSS_PREFIX=$(CROSS_PREFIX) ./configure --prefix=$(PREFIX) --shared
 	cd $(DIR_APP) && make $(MAKETUNING)
