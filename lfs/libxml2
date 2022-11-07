@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.9.14
+VER        = 2.10.3
 
 THISAPP    = libxml2-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ab584503d5209e4aaf41ae6f44aed5e94c0ae29e28cfba39a9012568aa97515af861b47891b84d2a352a07357626ba50ddb1e344e911fa14ff2ce93c5beff1f1
+$(DL_FILE)_BLAKE2 = aef2cc87e4632ddc478ff719155fdcb17601a8af37ecc1145ca05e01340935b57f07722e016ca2b27e4b269d47bd2fe97db09119a47849e8745e077e42b8bb66
 
 install : $(TARGET)
 
