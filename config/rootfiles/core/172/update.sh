@@ -39,6 +39,7 @@ done
 # Remove files
 rm -rvf \
 	/etc/strongswan.d/scepclient.conf \
+	/lib/libz.so.1.2.12 \
 	/usr/lib/libunbound.so.8.1.1* \
 	/usr/libexec/ipsec/scepclient
 
