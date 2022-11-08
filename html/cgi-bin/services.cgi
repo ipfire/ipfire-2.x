@@ -138,7 +138,7 @@ END
 	print "</table></div>\n";
 	&Header::closebox();
 
-	&Header::openbox('100%', 'left', "Addon - $Lang::tr{services}");
+	&Header::openbox('100%', 'left', "$Lang::tr{addon} - $Lang::tr{services}");
 	my $paramstr=$ENV{QUERY_STRING};
 	my @param=split(/!/, $paramstr);
 	# Make sure action parameter is actually one of the allowed service actions
@@ -156,7 +156,7 @@ END
 <div align='center'>
 <table width='80%' cellspacing='1' class='tbl'>
 <tr>
-	<th align='left'><b>Addon $Lang::tr{service}</b></th>
+	<th align='left'><b>$Lang::tr{addon} $Lang::tr{service}</b></th>
 	<th align='center'><b>Boot</b></th>
 	<th align='center' colspan=2><b>$Lang::tr{'action'}</b></th>
 	<th align='center'><b>$Lang::tr{'status'}</b></th>
