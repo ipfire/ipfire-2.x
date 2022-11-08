@@ -42,6 +42,7 @@ rm -rvf \
 	/lib/libz.so.1.2.12 \
 	/usr/lib/libexpat.so.1.8.9 \
 	/usr/lib/libunbound.so.8.1.1* \
+	/usr/lib/libxml2.so.2.9.* \
 	/usr/libexec/ipsec/scepclient
 
 # Extract files
