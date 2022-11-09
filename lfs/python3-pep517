@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.12.0
+VER        = 0.13.0
 
 THISAPP    = pep517-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 41d9ed4d0c7012d6d9cbea68251d33ad418bf083fc17400071bd0eb0650b585979d3e2b2ea531b123913063e788c230c5994657edd4e44f63aa568ed2e313117
+$(DL_FILE)_BLAKE2 = a61fb94645b2eeaab228b47dbb5b249454eafe5f0db3eac46af059aa9c6ffc323dd8dd9104bb0a97e07ec7e13c03a7968e0aa8faf85dd0773bfb55e392f8d825
 
 install : $(TARGET)
 
@@ -73,7 +73,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && python3 setup.py build
-	cd $(DIR_APP) && python3 setup.py install --root=/
+	cd $(DIR_APP) && python3 -m pyproject2setuppy.main build
+	cd $(DIR_APP) && python3 -m pyproject2setuppy.main install --root=/
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
