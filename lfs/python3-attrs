@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 21.4.0
+VER        = 22.1.0
 SUMMARY    = Classes Without Boilerplate
 
 THISAPP    = attrs-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-attrs
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = 
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = f8e9ca1385efe6f5b9bf468f622f0bf5390830c5f3c3526821446113146a61460b17e8750ea763f6da50221a8aa65f5f1ff98a6ddf69b1a87344508ca6495560
+$(DL_FILE)_BLAKE2 = 5da48b3cbcd99cdcc531a0859be264a4d209778caa53bd95480a103549b816c8a805079e1555fce38eb33f8bd3d5b7bfa6f814ef2b60dc405bda6686c7746f0b
 
 install : $(TARGET)
 
