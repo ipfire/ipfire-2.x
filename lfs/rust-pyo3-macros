@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.15.1
+VER        = 0.15.2
 
 THISAPP    = pyo3-macros-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = c7d87c150678efbb5dd6ef98da9997676ef3e7f8628a79f01a3ecbf94cc8b2d0752573d894fd769fb8791f30bcfd03a5c9f76cce73c00be90c1488faed63198d
+$(DL_FILE)_BLAKE2 = f8ab6ba53354705617ad88a2db693e38596d563f14e5481141b913595f367cf43fdb438c077c89b22a60fb0cccba7d67e79f9528af25c626ec7d8ba2c2ae3825
 
 install : $(TARGET)
 
