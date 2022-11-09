@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.1
+VER        = 3.2.2
 SUMMARY    = Python3 bindings for libfuse3
 
 THISAPP    = pyfuse3-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-pyfuse3
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = python3-trio
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 16ada8aec47d8049907ef2710e9bfdf7991a8127560e7264e4eb58f7062efde478d2914597333991be4a6ef67a2a83c470560456287c1298b2008454ac831fb0
+$(DL_FILE)_BLAKE2 = a6f11083a3ddec031fdfe5cb810be526cba26d7bc9599a64d28e9a45281aeb04fca8728ff3788e44f1736475c89e64c3c1fd7cb964ff81fc30ce441a5dda7fae
 
 install : $(TARGET)
 
@@ -80,7 +80,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && python3 setup.py build_cython
 	cd $(DIR_APP) && python3 setup.py build
 	cd $(DIR_APP) && python3 setup.py install --root=/
 	@rm -rf $(DIR_APP)
