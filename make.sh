@@ -1293,6 +1293,7 @@ buildipfire() {
   lfsmake2 rust-num-integer
   lfsmake2 rust-num_threads
   lfsmake2 rust-time
+  lfsmake2 rust-iana-time-zone
   lfsmake2 rust-chrono
   lfsmake2 rust-asn1_derive
   lfsmake2 rust-asn1
@@ -1525,6 +1526,8 @@ buildipfire() {
   lfsmake2 elinks
   lfsmake2 igmpproxy
   lfsmake2 opus
+  lfsmake2 python3-toml
+  lfsmake2 python3-pyproject2setuppy
   lfsmake2 python3-pyparsing
   lfsmake2 spice-protocol
   lfsmake2 spice
@@ -1604,8 +1607,6 @@ buildipfire() {
   lfsmake2 python3-certifi
   lfsmake2 python3-idna
   lfsmake2 python3-requests
-  lfsmake2 python3-toml
-  lfsmake2 python3-pyproject2setuppy
   lfsmake2 python3-tomli
   lfsmake2 python3-pep517
   lfsmake2 python3-build
@@ -1641,7 +1642,6 @@ buildipfire() {
   lfsmake2 python3-sortedcontainers
   lfsmake2 python3-outcome
   lfsmake2 python3-async_generator
-  lfsmake2 python3-Cython
   lfsmake2 python3-trio
   lfsmake2 python3-pyfuse3
   lfsmake2 aws-cli
