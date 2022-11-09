@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.3.0
+VER        = 2.3.1
 
 THISAPP    = python-daemon-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 6e7fa082a513827283f46044347dfd445633db0d1781a33aa1bc5b14c340da784310ae6bd07d6cf3673cd05cb14a9d090ab51857d26cca52d09bc8c3b195360f
+$(DL_FILE)_BLAKE2 = d1ede5fde50f179b0bf3e3ed89bd988469bae1f57667ab601d44452706a84264f55fc9beb89226e5fb1bb6d92f88fc2a5c2497628de16990407a0e01cfbacd84
 
 install : $(TARGET)
 
