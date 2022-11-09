@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.3
+VER        = 3.4
 
 THISAPP    = idna-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-idna
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b804759b23157ff3d81fcd37f04baf83d7e522e98e8d842e3f228a242bbd9b1f9302ca28b8989a4221512bbbe92839cd593641830a0c6b2e12061b3501b1bd45
+$(DL_FILE)_BLAKE2 = dd6c94104e17b441a7a63aec4e28f1969278996964c402865da8ad1040878539f798956e26532281cc44934544fd6fa33407949caf4a34fa2b48d7aafbb8fb5e
 
 install : $(TARGET)
 
