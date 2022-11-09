@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.13.0
+VER        = 0.15.5
 
 THISAPP    = ouroboros-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ff54f4ed318f7a1875612a4ed5762c60de516f43825f0ecf23e5343958e5c8af68ae4aecc1daf913e58d21183ac037af047be015ef1e5c227ab4750e763ed4ab
+$(DL_FILE)_BLAKE2 = 0a692641892669294642faca8b8aeef91a156627712f375ef31648c505fcf82b9a17da916761f186db12440547eeb5bc568c75236d042856d0d99c0f3c2142a8
 
 install : $(TARGET)
 
