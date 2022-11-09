@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.0.2
+VER        = 1.1.0
 
 THISAPP    = pem-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 17c3457a90807bdcc75795161e244a7c531449d0679212394a76601c2bc1b353d8c18d34c5cccae3a728387c834a23011b17a8a1bace15a1aae26de30adb1c8a
+$(DL_FILE)_BLAKE2 = 3f7d9e22e7ac100ad7d17bc3abfd9822f485499fc1b9bc2a676572b1ed81eaf257d51e6b5b5b4d8fa04379497d57cf50360914a198ca9b2aacf63b8859bac8fe
 
 install : $(TARGET)
 
