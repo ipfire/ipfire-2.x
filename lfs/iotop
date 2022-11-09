@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = iotop
-PAK_VER    = 3
+PAK_VER    = 4
 DEPS       =
 
 SERVICES   =
@@ -83,5 +83,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/iotop-0.6-replace-itervalues-with-values-in-setup.py.patch
 	cd $(DIR_APP) && python3 setup.py install
+	
+	# iotop with python-3.10.8 is placing iotop in /usr/bin
+	# move iotop from /usr/bin to /usr/sbin
+	cd $(DIR_APP) && mv -v /usr/bin/iotop /usr/sbin
+	
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
