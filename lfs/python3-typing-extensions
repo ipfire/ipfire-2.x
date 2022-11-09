@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.1.1
+VER        = 4.4.0
 
 THISAPP    = typing_extensions-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-typing-extensions
-PAK_VER    = 2
+PAK_VER    = 3
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 18953565f4181d648faf780db8594963813d0b26d479e5235cd75d262490b479e957f55734bb6d6d22c31fe2ccec1ac5490e7a64a469528d386e5de2751c6b1a
+$(DL_FILE)_BLAKE2 = cec5c11109c0216ed13be6ef38a2f234c85de1f448c19615e561506480387ff3600db405b82f486549d6b46caa452b363606d1bf51154913a86422a378561967
 
 install : $(TARGET)
 
