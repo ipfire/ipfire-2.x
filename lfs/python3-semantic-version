@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.9.0
+VER        = 2.10.0
 
 THISAPP    = semantic_version-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-semantic-version
-PAK_VER    = 2
+PAK_VER    = 3
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = c487c49ad17e7ca224ca4b6602abb42d1406dad8d70a3f5d0c536160e5b2d706ff0e1497961e3b9e0391c6d773ab7d0e9699f171f5781cec1d36025450cb7019
+$(DL_FILE)_BLAKE2 = bb26ac31e71974376b40893cf000fe0d85e1e3e4c7c93372f2bfca841a5d760a99ca49d67f80c6e8707e60e313162b786300109f6f8cd1cfaa0001c343bc4702
 
 install : $(TARGET)
 
