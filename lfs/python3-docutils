@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.18.1
+VER        = 0.19
 SUMMARY    = Python Documentation Utilities
 
 THISAPP    = docutils-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-docutils
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3959199236baade9601d61c3f6d7b6f840fbefdd46d9ea05869fde2cd2c800356a01faba891f51e220c85e66f3029f49f616f2046b85041b674c64825a4242ec
+$(DL_FILE)_BLAKE2 = 9983a905642de4e81ca118578671b503ddfda4bef1afcc0524de40543e1f9617fd8d768ef467da49d2f01076683400bad6a0fe15f6b5a3a1e202c42b2e34ab1b
 
 install : $(TARGET)
 
