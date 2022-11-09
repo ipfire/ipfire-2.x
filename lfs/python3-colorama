@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.4.4
+VER        = 0.4.5
 SUMMARY    = Cross-platform colored terminal text
 
 THISAPP    = colorama-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-colorama
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 12506a360adaa4d5df6c32a75333d3fa26ab8b9bfe83c292d60e53301ce8d07f9aafac2da33ec5fbfe70221808b281cadc856d008f409670316827133bc89e10
+$(DL_FILE)_BLAKE2 = 373e080e45092a106e1c9c58961a1742ceb3a409f8f40c9ea313cb6be1a36878c1000c0b7b6d7a3eb67a842f558d395f343938de2a98bb3fab3fc16c62fa80f6
 
 install : $(TARGET)
 
