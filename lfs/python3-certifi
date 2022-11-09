@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2021.10.8
+VER        = 2022.9.24
 
 THISAPP    = certifi-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-certifi
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = dc44c9f971a47589a2b758d750910787d2688a780eb95598839533fc335d6815a0777d81bf7529106c0b44e6af4d029baabf80ad65c74656cc541f5fb8df31ff
+$(DL_FILE)_BLAKE2 = 89b93aefe6e36a979fde84d194bbe9c29e9f2b2e3eb51979e8efb15fe19f1c98ebc72cf882f9845543b5fcd921d6a71ea2c75d82e645f7ac7d853bf7ee63cca8
 
 install : $(TARGET)
 
