@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.2.2
+VER        = 1.2.3
 
 THISAPP    = arrow-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-arrow
-PAK_VER    = 1
+PAK_VER    = 2
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b8b8d83ede0c61840ffcc75272a0275b6120cc142197c5f95f0fdb7d53981879b431f074db9606caa8d9817761cc4847a525bbc6449c05155410808960a1541e
+$(DL_FILE)_BLAKE2 = 35f5b694d819d80913b5938e4af71f413fd3944636c1e89a79e868c03cb423f75692c1f0e8d85dba21e640591f8cd0404cdc6d77dd59956490d268fb4c9fdc7b
 
 install : $(TARGET)
 
