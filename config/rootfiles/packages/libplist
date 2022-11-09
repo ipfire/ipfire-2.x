@@ -12,8 +12,6 @@
 #usr/include/plist/String.h
 #usr/include/plist/Structure.h
 #usr/include/plist/Uid.h
-#usr/include/plist/cython
-#usr/include/plist/cython/plist.pxd
 #usr/include/plist/plist++.h
 #usr/include/plist/plist.h
 #usr/lib/libplist++-2.0.la
@@ -26,6 +24,4 @@ usr/lib/libplist-2.0.so.3
 usr/lib/libplist-2.0.so.3.3.0
 #usr/lib/pkgconfig/libplist++-2.0.pc
 #usr/lib/pkgconfig/libplist-2.0.pc
-#usr/lib/python3.10/site-packages/plist.la
-usr/lib/python3.10/site-packages/plist.so
 #usr/share/man/man1/plistutil.1
