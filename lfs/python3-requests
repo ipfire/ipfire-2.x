@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.27.1
+VER        = 2.28.1
 
 THISAPP    = requests-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-requests
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       = python3-certifi python3-charset-normalizer python3-idna
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a7fed53998fa61b3d03abd254a0cee76450c5b60d76f80aa6b91f32dca1dae5d2c51987b3d3f2138d72c50790e35c36cb03eb5974554ac4eb1a902eff79b5bdd
+$(DL_FILE)_BLAKE2 = 2106be5f9e1d9f1a22de5522b5d72084f91c2849e60e33b89b2411b76cae9b1f7faac34947f69c49480d001e9b77e4dce723ee939d51591882854d510db49b59
 
 install : $(TARGET)
 
