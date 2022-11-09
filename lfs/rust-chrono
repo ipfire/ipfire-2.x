@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.4.19
+VER        = 0.4.22
 
 THISAPP    = chrono-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = c92c273fb6475bbb2546dfb75eaa23321bc8f9a5fa8a7c652f527649b96ff8718fa932f52b500b02a4acae7837df5bdb14f69cb821d4962be2790dbd1d023a54
+$(DL_FILE)_BLAKE2 = 10dfae2fe871a9910bf885b78aaf3e9ed1bcb87a40962d781c8ea407a945b837c665c2bb4e3d0562ac63d9e7bd5012804434642ee6f5c80e22bc816d4331f1b0
 
 install : $(TARGET)
 
@@ -73,7 +73,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rust-chrono-0.4.19-fix-metadata.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rust-chrono-0.4.22-fix-metadata.patch
 	cd $(DIR_APP) && $(CARGO_PREPARE)
 	cd $(DIR_APP) && $(CARGO_BUILD)
 	cd $(DIR_APP) && $(CARGO_INSTALL)

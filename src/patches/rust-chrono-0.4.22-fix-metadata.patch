@@ -1,0 +1,49 @@
+--- chrono-0.4.22/Cargo.toml.original	1970-01-01 01:00:01.000000000 +0100
++++ chrono-0.4.22/Cargo.toml	2022-10-13 23:41:34.829910648 +0200
+@@ -115,14 +115,12 @@
+ alloc = []
+ clock = [
+     "std",
+-    "winapi",
+     "iana-time-zone",
+ ]
+ default = [
+     "clock",
+     "std",
+     "oldtime",
+-    "wasmbind",
+ ]
+ libc = []
+ oldtime = ["time"]
+@@ -131,31 +129,7 @@
+     "pure-rust-locales",
+     "alloc",
+ ]
+-wasmbind = [
+-    "wasm-bindgen",
+-    "js-sys",
+-]
+-
+-[target."cfg(all(target_arch = \"wasm32\", not(any(target_os = \"emscripten\", target_os = \"wasi\"))))".dependencies.js-sys]
+-version = "0.3"
+-optional = true
+-
+-[target."cfg(all(target_arch = \"wasm32\", not(any(target_os = \"emscripten\", target_os = \"wasi\"))))".dependencies.wasm-bindgen]
+-version = "0.2"
+-optional = true
+ 
+-[target."cfg(all(target_arch = \"wasm32\", not(any(target_os = \"emscripten\", target_os = \"wasi\"))))".dev-dependencies.wasm-bindgen-test]
+-version = "0.3"
+-
+-[target."cfg(windows)".dependencies.winapi]
+-version = "0.3.0"
+-features = [
+-    "std",
+-    "minwinbase",
+-    "minwindef",
+-    "timezoneapi",
+-]
+-optional = true
+ 
+ [badges.appveyor]
+ repository = "chronotope/chrono"
