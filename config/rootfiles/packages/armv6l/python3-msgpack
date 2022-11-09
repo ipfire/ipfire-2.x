@@ -1,9 +1,9 @@
 usr/lib/python3.10/site-packages/msgpack
-#usr/lib/python3.10/site-packages/msgpack-1.0.3-py3.10.egg-info
-#usr/lib/python3.10/site-packages/msgpack-1.0.3-py3.10.egg-info/PKG-INFO
-#usr/lib/python3.10/site-packages/msgpack-1.0.3-py3.10.egg-info/SOURCES.txt
-#usr/lib/python3.10/site-packages/msgpack-1.0.3-py3.10.egg-info/dependency_links.txt
-#usr/lib/python3.10/site-packages/msgpack-1.0.3-py3.10.egg-info/top_level.txt
+#usr/lib/python3.10/site-packages/msgpack-1.0.4-py3.10.egg-info
+#usr/lib/python3.10/site-packages/msgpack-1.0.4-py3.10.egg-info/PKG-INFO
+#usr/lib/python3.10/site-packages/msgpack-1.0.4-py3.10.egg-info/SOURCES.txt
+#usr/lib/python3.10/site-packages/msgpack-1.0.4-py3.10.egg-info/dependency_links.txt
+#usr/lib/python3.10/site-packages/msgpack-1.0.4-py3.10.egg-info/top_level.txt
 usr/lib/python3.10/site-packages/msgpack/__init__.py
 usr/lib/python3.10/site-packages/msgpack/_cmsgpack.cpython-310-arm-linux-gnueabi.so
 usr/lib/python3.10/site-packages/msgpack/_version.py
