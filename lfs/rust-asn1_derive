@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.8.7
+VER        = 0.12.2
 
 THISAPP    = asn1_derive-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = cc1fe4a8c27730e65164daaed5d2d346364f08a47439e012f670db82190dba50cfbdf720cb253d7a057cb4b560b8ce73c557c639e90856e27d632995643dc45f
+$(DL_FILE)_BLAKE2 = 42df556593a730cda26d6b7e46b91e80366de9689b13cd137e1c5d9537b24baa8020b4b6d2d55540a98953e50924d9b60eaacfa8eabc1d1c36f5ca3dcfc2abf5
 
 install : $(TARGET)
 
