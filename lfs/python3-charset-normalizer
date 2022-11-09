@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.12
+VER        = 2.1.1
 
 THISAPP    = charset-normalizer-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-charset-normalizer
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       =
 
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 01a7bbc89df0236ea2383589acd76880065c28137eb201cce7795a7ca4b7c2d471f0b16e68c2022b943e1b4cde530e726cffc36112b0b3626ee32904805b76f3
+$(DL_FILE)_BLAKE2 = 7594e690129ff6e7146341eb62d8c0fd0abd36fb0afdc766b6ffcaffbbdbe4a19777064f993c0b59b0676c8a9ef3bf06cbc9b6ac6bc850c56e9842dd9ed1ec9c
 
 install : $(TARGET)
 
