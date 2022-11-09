@@ -1,11 +1,11 @@
 usr/lib/python3.10/site-packages/cryptography
-#usr/lib/python3.10/site-packages/cryptography-36.0.2-py3.10.egg-info
-#usr/lib/python3.10/site-packages/cryptography-36.0.2-py3.10.egg-info/PKG-INFO
-#usr/lib/python3.10/site-packages/cryptography-36.0.2-py3.10.egg-info/SOURCES.txt
-#usr/lib/python3.10/site-packages/cryptography-36.0.2-py3.10.egg-info/dependency_links.txt
-#usr/lib/python3.10/site-packages/cryptography-36.0.2-py3.10.egg-info/not-zip-safe
-#usr/lib/python3.10/site-packages/cryptography-36.0.2-py3.10.egg-info/requires.txt
-#usr/lib/python3.10/site-packages/cryptography-36.0.2-py3.10.egg-info/top_level.txt
+#usr/lib/python3.10/site-packages/cryptography-38.0.1-py3.10.egg-info
+#usr/lib/python3.10/site-packages/cryptography-38.0.1-py3.10.egg-info/PKG-INFO
+#usr/lib/python3.10/site-packages/cryptography-38.0.1-py3.10.egg-info/SOURCES.txt
+#usr/lib/python3.10/site-packages/cryptography-38.0.1-py3.10.egg-info/dependency_links.txt
+#usr/lib/python3.10/site-packages/cryptography-38.0.1-py3.10.egg-info/not-zip-safe
+#usr/lib/python3.10/site-packages/cryptography-38.0.1-py3.10.egg-info/requires.txt
+#usr/lib/python3.10/site-packages/cryptography-38.0.1-py3.10.egg-info/top_level.txt
 usr/lib/python3.10/site-packages/cryptography/__about__.py
 usr/lib/python3.10/site-packages/cryptography/__init__.py
 usr/lib/python3.10/site-packages/cryptography/exceptions.py
@@ -15,7 +15,6 @@ usr/lib/python3.10/site-packages/cryptography/hazmat/__init__.py
 usr/lib/python3.10/site-packages/cryptography/hazmat/_oid.py
 usr/lib/python3.10/site-packages/cryptography/hazmat/backends
 usr/lib/python3.10/site-packages/cryptography/hazmat/backends/__init__.py
-usr/lib/python3.10/site-packages/cryptography/hazmat/backends/interfaces.py
 usr/lib/python3.10/site-packages/cryptography/hazmat/backends/openssl
 usr/lib/python3.10/site-packages/cryptography/hazmat/backends/openssl/__init__.py
 usr/lib/python3.10/site-packages/cryptography/hazmat/backends/openssl/aead.py
@@ -28,7 +27,6 @@ usr/lib/python3.10/site-packages/cryptography/hazmat/backends/openssl/dsa.py
 usr/lib/python3.10/site-packages/cryptography/hazmat/backends/openssl/ec.py
 usr/lib/python3.10/site-packages/cryptography/hazmat/backends/openssl/ed25519.py
 usr/lib/python3.10/site-packages/cryptography/hazmat/backends/openssl/ed448.py
-usr/lib/python3.10/site-packages/cryptography/hazmat/backends/openssl/encode_asn1.py
 usr/lib/python3.10/site-packages/cryptography/hazmat/backends/openssl/hashes.py
 usr/lib/python3.10/site-packages/cryptography/hazmat/backends/openssl/hmac.py
 usr/lib/python3.10/site-packages/cryptography/hazmat/backends/openssl/poly1305.py
@@ -40,6 +38,7 @@ usr/lib/python3.10/site-packages/cryptography/hazmat/backends/openssl/x509.py
 usr/lib/python3.10/site-packages/cryptography/hazmat/bindings
 usr/lib/python3.10/site-packages/cryptography/hazmat/bindings/__init__.py
 usr/lib/python3.10/site-packages/cryptography/hazmat/bindings/_openssl.abi3.so
+usr/lib/python3.10/site-packages/cryptography/hazmat/bindings/_openssl.pyi
 usr/lib/python3.10/site-packages/cryptography/hazmat/bindings/_rust
 usr/lib/python3.10/site-packages/cryptography/hazmat/bindings/_rust.abi3.so
 usr/lib/python3.10/site-packages/cryptography/hazmat/bindings/_rust/__init__.pyi
