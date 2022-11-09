@@ -1,10 +1,10 @@
 usr/lib/python3.10/site-packages/pytz
-#usr/lib/python3.10/site-packages/pytz-2022.1-py3.10.egg-info
-#usr/lib/python3.10/site-packages/pytz-2022.1-py3.10.egg-info/PKG-INFO
-#usr/lib/python3.10/site-packages/pytz-2022.1-py3.10.egg-info/SOURCES.txt
-#usr/lib/python3.10/site-packages/pytz-2022.1-py3.10.egg-info/dependency_links.txt
-#usr/lib/python3.10/site-packages/pytz-2022.1-py3.10.egg-info/top_level.txt
-#usr/lib/python3.10/site-packages/pytz-2022.1-py3.10.egg-info/zip-safe
+#usr/lib/python3.10/site-packages/pytz-2022.4-py3.10.egg-info
+#usr/lib/python3.10/site-packages/pytz-2022.4-py3.10.egg-info/PKG-INFO
+#usr/lib/python3.10/site-packages/pytz-2022.4-py3.10.egg-info/SOURCES.txt
+#usr/lib/python3.10/site-packages/pytz-2022.4-py3.10.egg-info/dependency_links.txt
+#usr/lib/python3.10/site-packages/pytz-2022.4-py3.10.egg-info/top_level.txt
+#usr/lib/python3.10/site-packages/pytz-2022.4-py3.10.egg-info/zip-safe
 usr/lib/python3.10/site-packages/pytz/__init__.py
 usr/lib/python3.10/site-packages/pytz/exceptions.py
 usr/lib/python3.10/site-packages/pytz/lazy.py
@@ -477,6 +477,7 @@ usr/lib/python3.10/site-packages/pytz/zoneinfo/Europe/Jersey
 usr/lib/python3.10/site-packages/pytz/zoneinfo/Europe/Kaliningrad
 usr/lib/python3.10/site-packages/pytz/zoneinfo/Europe/Kiev
 usr/lib/python3.10/site-packages/pytz/zoneinfo/Europe/Kirov
+usr/lib/python3.10/site-packages/pytz/zoneinfo/Europe/Kyiv
 usr/lib/python3.10/site-packages/pytz/zoneinfo/Europe/Lisbon
 usr/lib/python3.10/site-packages/pytz/zoneinfo/Europe/Ljubljana
 usr/lib/python3.10/site-packages/pytz/zoneinfo/Europe/London
