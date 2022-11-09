@@ -24,6 +24,8 @@
 
 include Config
 
+SUMMARY    = Simple way to put Python packages and modules on PyPI
+
 VER        = 3.7.1
 
 THISAPP    = flit-$(VER)
@@ -31,8 +33,12 @@ DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+
 PROG       = python3-flit
-PAK_VER    = 2
+PAK_VER    = 3
+DEPS       =
+
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -79,5 +85,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && PYTHONPATH=flit_core python3 -m flit build --format wheel
 	cd $(DIR_APP)/flit_core && PIP_CONFIG_FILE=/dev/null pip3 install --isolated \
 		--root="/" --ignore-installed --no-deps dist/*.whl
+		
+	# remove temp build files in /root/.cache from rootfile
+	cd $(DIR_APP) && rm -R /root/.cache/
+	
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
