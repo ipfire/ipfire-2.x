@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.8
+VER        = 4.9
 SUMMARY    = Pure-Python RSA Implementation
 
 THISAPP    = rsa-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-rsa
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = c76bc2ad30ae56555ec81b314c5fae3882652b55d02834431a117b19bfefde1f3628355fb9581096d82e462e2519299fdf5b2cf814d9a0a98fb6a88377dd7a4f
+$(DL_FILE)_BLAKE2 = 85d9c6e546cca5bde5f40c46f86eb6a462f0ab59697c4a5fc48541ca2a658fe5ba25f8a36322bf900aedf4a5ae77e5bef74cbd3533a22c3695b2c8c93b1f57c6
 
 install : $(TARGET)
 
