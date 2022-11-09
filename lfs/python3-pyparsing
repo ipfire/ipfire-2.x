@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.0.7
+VER        = 3.0.9
 SUMMARY    = Grammar Parser Library for Python
 
 THISAPP    = pyparsing-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-pyparsing
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 1f098dd2ae6ffef6f98a44137769198ebad6af1642c1bc784284bedbcd28c617993fb51901d179962ca05f3f8699d24c04b0df5e5e5168a572c0deb506ad4e54
+$(DL_FILE)_BLAKE2 = db2745b484e0cd7ff98e4b1dab129f8d96c8c3e9b83910f7ae7513c0e635530da90908dbe4792e4c5161cae4a5de7d8c3e58b2412e2b5038b131cc8388d9cace
 
 install : $(TARGET)
 
@@ -80,6 +80,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && python3 setup.py install
+	cd $(DIR_APP) && python3 -m pyproject2setuppy.main install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
