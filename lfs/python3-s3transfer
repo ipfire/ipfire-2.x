@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.5.2
+VER        = 0.6.0
 SUMMARY    = Python S3 transfer manager
 
 THISAPP    = s3transfer-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-s3transfer
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 55adab89ca04a9ed1f0195237cab55f97769a8f865e645437df6d95effcf1a27a734f1577daa981261123b681044b540ebbb876e1a8a3b4cf1cf4e5018f2c213
+$(DL_FILE)_BLAKE2 = 7ab84f22dc20751dd461857f93d7f1aad1490432ed25e7506c5abe61f79d1f3cafd8ddb190a0942a2c5a9947c5068fcf397dce34f255a246381f4cf1f0d09e7a
 
 install : $(TARGET)
 
