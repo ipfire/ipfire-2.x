@@ -16,4 +16,3 @@ usr/lib/python3.10/site-packages/setuptools_rust/extension.py
 usr/lib/python3.10/site-packages/setuptools_rust/rustc_info.py
 usr/lib/python3.10/site-packages/setuptools_rust/setuptools_ext.py
 usr/lib/python3.10/site-packages/setuptools_rust/version.py
-
