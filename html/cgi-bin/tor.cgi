@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -796,7 +796,9 @@ sub BuildConfiguration() {
 		if ($strict_nodes > 0) {
 			print FILE "StrictNodes 1\n";
 		}
-	}
+	 } else {
+		print FILE "SocksPort 0\n";
+	 }
 
 	if ($settings{'TOR_RELAY_ENABLED'} eq 'on') {
 		# Reject access to private networks.
