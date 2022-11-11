@@ -1,3 +1,4 @@
+etc/ssl/ffdhe4096.pem
 usr/lib/firewall/rules.pl
 usr/local/bin/addonctrl
 usr/local/bin/openvpnctrl

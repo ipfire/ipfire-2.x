@@ -33,6 +33,8 @@ done
 
 # Stop services
 /etc/rc.d/init.d/ipsec stop
+/usr/local/bin/openvpnctrl -k
+/usr/local/bin/openvpnctrl -kn2n
 /etc/rc.d/init.d/sshd stop
 /etc/rc.d/init.d/unbound stop
 
@@ -70,7 +72,8 @@ rm -rvf \
 	/usr/lib/python3.10/site-packages/setuptools/_vendor/pyparsing.py \
 	/usr/lib/python3.10/site-packages/setuptools/config.py \
 	/usr/lib/python3.10/site-packages/setuptools_rust/utils.py \
-	/usr/libexec/ipsec/scepclient
+	/usr/libexec/ipsec/scepclient \
+	/var/ipfire/ca/dh1024.pem
 
 # Remove powertop add-on, if installed
 if [ -e "/opt/pakfire/db/installed/meta-powertop" ]; then
@@ -101,10 +104,23 @@ ldconfig
 # Correct permissions of some library files
 chown -Rv root:root /var/ipfire/connscheduler/lib.pl /var/ipfire/updatexlrator/updxlrator-lib.pl /var/ipfire/menu.d/*
 
+# Replace existing OpenVPN Diffie-Hellman parameter by ffdhe4096, as specified in RFC 7919
+if [ -f /var/ipfire/ovpn/server.conf ]; then
+	sed -i 's|/var/ipfire/ovpn/ca/dh1024.pem|/etc/ssl/ffdhe4096.pem|' /var/ipfire/ovpn/server.conf
+fi
+
+if [ -f "/var/ipfire/ovpn/n2nconf/*/*.conf" ]; then
+	sed -i 's|/var/ipfire/ovpn/ca/dh1024.pem|/etc/ssl/ffdhe4096.pem|' /var/ipfire/ovpn/n2nconf/*/*.conf
+fi
+
 # Start services
 /etc/init.d/unbound start
 if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
 	/etc/init.d/sshd start
+fi
+if grep -q "ENABLED=on" /var/ipfire/ovpn/settings; then
+	/usr/local/bin/openvpnctrl -s
+	/usr/local/bin/openvpnctrl -sn2n
 fi
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec start
