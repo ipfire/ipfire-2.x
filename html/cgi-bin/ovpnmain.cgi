@@ -78,6 +78,7 @@ my $name;
 my $col="";
 my $local_serverconf = "${General::swroot}/ovpn/scripts/server.conf.local";
 my $local_clientconf = "${General::swroot}/ovpn/scripts/client.conf.local";
+my $dhparameter = "/etc/ssl/ffdhe4096.pem";
 
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 $cgiparams{'ENABLED'} = 'off';
@@ -89,8 +90,6 @@ $cgiparams{'COMPRESSION'} = 'off';
 $cgiparams{'ONLY_PROPOSED'} = 'off';
 $cgiparams{'ACTION'} = '';
 $cgiparams{'CA_NAME'} = '';
-$cgiparams{'DH_NAME'} = 'dh1024.pem';
-$cgiparams{'DHLENGHT'} = '';
 $cgiparams{'DHCP_DOMAIN'} = '';
 $cgiparams{'DHCP_DNS'} = '';
 $cgiparams{'DHCP_WINS'} = '';
@@ -221,28 +220,6 @@ sub deletebackupcert
 
 sub pkiconfigcheck
 {
-	# Warning if DH parameter is 1024 bit
-	if (-f "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}") {
-		my @dhparameter = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}");
-		my $dhbit;
-
-		# Loop through the output and search for the DH bit lenght.
-		foreach my $line (@dhparameter) {
-			if ($line =~ (/(\d+)/)) {
-				# Assign match to dhbit value.
-				$dhbit = $1;
-
-				last;
-			}
-		}
-
-		# Check if the used key lenght is at least 2048 bit.
-		if ($dhbit < 2048) {
-			$cryptoerror = "$Lang::tr{'ovpn error dh'}";
-			goto CRYPTO_ERROR;
-		}
-	}
-
 	# Warning if md5 is in usage
 	if (-f "${General::swroot}/ovpn/certs/servercert.pem") {
 		my @signature = &General::system_output("/usr/bin/openssl", "x509", "-noout", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
@@ -290,7 +267,7 @@ sub writeserverconf {
     print CONF "ca ${General::swroot}/ovpn/ca/cacert.pem\n";
     print CONF "cert ${General::swroot}/ovpn/certs/servercert.pem\n";
     print CONF "key ${General::swroot}/ovpn/certs/serverkey.pem\n";
-    print CONF "dh ${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}\n";
+    print CONF "dh $dhparameter\n";
     my @tempovpnsubnet = split("\/",$sovpnsettings{'DOVPN_SUBNET'});
     print CONF "server $tempovpnsubnet[0] $tempovpnsubnet[1]\n";
     #print CONF "push \"route $netsettings{'GREEN_NETADDRESS'} $netsettings{'GREEN_NETMASK'}\"\n";
@@ -1358,102 +1335,6 @@ END
     exit (0);
 
 ###
-### Generate DH key step 2
-###
-} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'generate dh key'} && $cgiparams{'AREUSURE'} eq 'yes') {
-    # Delete if old key exists
-    if (-f "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}") {
-        unlink "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}";
-	}
-	# Create Diffie Hellmann Parameter
-	# The system call is safe, because all arguments are passed as an array.
-	system("/usr/bin/openssl", "dhparam", "-out", "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
-	if ($?) {
-		$errormessage = "$Lang::tr{'openssl produced an error'}: $?";
-		unlink ("${General::swroot}/ovpn/ca/dh1024.pem");
-	}
-
-###
-### Generate DH key step 1
-###
-} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'generate dh key'}) {
-	&Header::showhttpheaders();
-	&Header::openpage($Lang::tr{'ovpn'}, 1, '');
-	&Header::openbigbox('100%', 'LEFT', '', '');
-	&Header::openbox('100%', 'LEFT', "$Lang::tr{'gen dh'}:");
-	print <<END;
-	<table width='100%'>
-	<tr>
-		<td width='20%'> </td> <td width='15%'></td> <td width='65%'></td>
-	</tr>
-	<tr>
-		<td class='base'>$Lang::tr{'ovpn dh'}:</td>
-		<td align='center'>
-		<form method='post'><input type='hidden' name='AREUSURE' value='yes' />
-		<input type='hidden' name='KEY' value='$cgiparams{'KEY'}' />
-			<select name='DHLENGHT'>
-				<option value='2048' $selected{'DHLENGHT'}{'2048'}>2048 $Lang::tr{'bit'}</option>
-				<option value='3072' $selected{'DHLENGHT'}{'3072'}>3072 $Lang::tr{'bit'}</option>
-				<option value='4096' $selected{'DHLENGHT'}{'4096'}>4096 $Lang::tr{'bit'}</option>
-			</select>
-		</td>
-	</tr>
-	<tr><td colspan='4'><br></td></tr>
-	</table>
-	<table width='100%'>
-	<tr>
-		<b><font color='${Header::colourred}'>$Lang::tr{'capswarning'}: </font></b>$Lang::tr{'dh key warn'}
-	</tr>
-	<tr>
-		<td class='base'>$Lang::tr{'dh key warn1'}</td>
-	</tr>
-	<tr><td colspan='2'><br></td></tr>
-	<tr>
-		<td align='center'><input type='submit' name='ACTION' value='$Lang::tr{'generate dh key'}' /></td>
-		</form>
-	</tr>
-	</table>
-
-END
-	;
-	&Header::closebox();
-	print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
-	&Header::closebigbox();
-	&Header::closepage();
-	exit (0);
-
-###
-### Upload DH key
-###
-} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'upload dh key'}) {
-    unless (ref ($cgiparams{'FH'})) {
-         $errormessage = $Lang::tr{'there was no file upload'};
-         goto UPLOADCA_ERROR;
-    }
-    # Move uploaded dh key to a temporary file
-    (my $fh, my $filename) = tempfile( );
-    if (copy ($cgiparams{'FH'}, $fh) != 1) {
-        $errormessage = $!;
-	goto UPLOADCA_ERROR;
-    }
-    my @temp = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "$filename");
-    if ( ! grep(/DH Parameters: \((2048|3072|4096) bit\)/, @temp)) {
-        $errormessage = $Lang::tr{'not a valid dh key'};
-        unlink ($filename);
-        goto UPLOADCA_ERROR;
-    } else {
-	# Delete if old key exists
-	if (-f "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}") {
-		unlink "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}";
-	}
-
- 	unless(move($filename, "${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}")) {
-		$errormessage = "$Lang::tr{'dh key move failed'}: $!";
-		unlink ($filename);
-		goto UPLOADCA_ERROR;
-    	}
-    }
-###
 ### Upload CA Certificate
 ###
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'upload ca certificate'}) {
@@ -2028,21 +1909,6 @@ END
 	    &cleanssldatabase();
 	    goto ROOTCERT_ERROR;
 	}
-	# Create Diffie Hellmann Parameter
-	# The system call is safe, because all arguments are passed as an array.
-	system('/usr/bin/openssl', 'dhparam', '-out', "${General::swroot}/ovpn/ca/dh1024.pem", "$cgiparams{'DHLENGHT'}");
-	if ($?) {
-	    $errormessage = "$Lang::tr{'openssl produced an error'}: $?";
-	    unlink ("${General::swroot}/ovpn/certs/serverkey.pem");
-	    unlink ("${General::swroot}/ovpn/certs/servercert.pem");
-	    unlink ("${General::swroot}/ovpn/ca/cacert.pem");
-	    unlink ("${General::swroot}/ovpn/crls/cacrl.pem");
-	    unlink ("${General::swroot}/ovpn/ca/dh1024.pem");
-	    &cleanssldatabase();
-	    goto ROOTCERT_ERROR;
-#	} else {
-#	    &cleanssldatabase();
-	}
 	goto ROOTCERT_SUCCESS;
     }
     ROOTCERT_ERROR:
@@ -2092,14 +1958,6 @@ END
 	}
 	print <<END;
 	    </select></td>
-	<tr><td class='base'>$Lang::tr{'ovpn dh'}:</td>
-		<td class='base'><select name='DHLENGHT'>
-				<option value='2048' $selected{'DHLENGHT'}{'2048'}>2048 $Lang::tr{'bit'}</option>
-				<option value='3072' $selected{'DHLENGHT'}{'3072'}>3072 $Lang::tr{'bit'}</option>
-				<option value='4096' $selected{'DHLENGHT'}{'4096'}>4096 $Lang::tr{'bit'}</option>
-			</select>
-		</td>
-	</tr>
 
 	<tr><td>&nbsp;</td>
 	    <td><input type='submit' name='ACTION' value='$Lang::tr{'generate root/host certificates'}' /></td>
@@ -2107,16 +1965,6 @@ END
 	<tr><td class='base' colspan='4' align='left'>
 	    <img src='/blob.gif' valign='top' alt='*' />&nbsp;$Lang::tr{'required field'}</td></tr>
 	<tr><td colspan='2'><br></td></tr>
-	<table width='100%'>
-	<tr>
-		<b><font color='${Header::colourred}'>$Lang::tr{'capswarning'}: </font></b>$Lang::tr{'ovpn generating the root and host certificates'}
-		<td class='base'>$Lang::tr{'dh key warn'}</td>
-	</tr>
-	<tr>
-		<td class='base'>$Lang::tr{'dh key warn1'}</td>
-	</tr>
-	<tr><td colspan='2'><br></td></tr>
-	<tr>
 	</table>
 
 	<table width='100%'>
@@ -2681,14 +2529,14 @@ END
 ###
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'show dh'}) {
 
-    if (! -e "${General::swroot}/ovpn/ca/dh1024.pem") {
+    if (! -e "$dhparameter") {
 	$errormessage = $Lang::tr{'not present'};
 	} else {
 		&Header::showhttpheaders();
 		&Header::openpage($Lang::tr{'ovpn'}, 1, '');
 		&Header::openbigbox('100%', 'LEFT', '', '');
 		&Header::openbox('100%', 'LEFT', "$Lang::tr{'dh'}:");
-		my @output = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "${General::swroot}/ovpn/ca/dh1024.pem");
+		my @output = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "$dhparameter");
 		my $output = &Header::cleanhtml(join("", @output) ,"y");
 		print "<pre>$output</pre>\n";
 		&Header::closebox();
@@ -5447,7 +5295,7 @@ END
 	print "<input type='submit' name='ACTION' value='$Lang::tr{'ccd net'}' />";
 	print "<input type='submit' name='ACTION' value='$Lang::tr{'advanced server'}' />";
 	if (( -e "${General::swroot}/ovpn/ca/cacert.pem" &&
-	     -e "${General::swroot}/ovpn/ca/dh1024.pem" &&
+	     -e "$dhparameter" &&
 	     -e "${General::swroot}/ovpn/certs/servercert.pem" &&
 	     -e "${General::swroot}/ovpn/certs/serverkey.pem") &&
 	    (( $cgiparams{'ENABLED'} eq 'on') ||
@@ -5838,8 +5686,8 @@ END
     }
 
     # Adding DH parameter to chart
-    if (-f "${General::swroot}/ovpn/ca/dh1024.pem") {
-		my @dhsubject = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "${General::swroot}/ovpn/ca/dh1024.pem");
+    if (-f "$dhparameter") {
+		my @dhsubject = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "$dhparameter");
 		my $dhsubject;
 
 		foreach my $line (@dhsubject) {
@@ -5994,25 +5842,6 @@ END
 			<tr>
 				<td colspan='3'>&nbsp;</td>
 				<td align='right'><input type='submit' name='ACTION' value='$Lang::tr{'show crl'}' /></td>
-			</tr>
-		</table>
-
-		<br>
-
-		<table border='0' width='100%'>
-			<tr>
-				<td colspan='4'><b>$Lang::tr{'ovpn dh parameters'}</b></td>
-			</tr>
-
-			<tr>
-				<td width='40%'>$Lang::tr{'ovpn dh upload'}:</td>
-				<td width='30%'><input type='file' name='FH' size='25'>
-				<td width='30%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'upload dh key'}'></td>
-			</tr>
-
-			<tr>
-				<td width='40%'>$Lang::tr{'ovpn dh new key'}:</td>
-				<td colspan='2' width='60%' align='right'><input type='submit' name='ACTION' value='$Lang::tr{'generate dh key'}' /></td>
 			</tr>
 		</table>
 	</form>

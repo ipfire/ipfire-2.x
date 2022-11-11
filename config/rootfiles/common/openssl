@@ -2,6 +2,7 @@
 #etc/ssl/certs
 #etc/ssl/ct_log_list.cnf
 #etc/ssl/ct_log_list.cnf.dist
+etc/ssl/ffdhe4096.pem
 #etc/ssl/misc
 #etc/ssl/misc/CA.pl
 #etc/ssl/misc/tsget

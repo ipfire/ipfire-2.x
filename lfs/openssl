@@ -123,5 +123,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	install -m 0644 $(DIR_SRC)/config/ssl/openssl.cnf /etc/ssl
 
+	# Install RFC 7919 defined standard group ffdhe4096
+	install -m 0644 $(DIR_SRC)/config/ssl/ffdhe4096.pem /etc/ssl
+
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
