@@ -6,3 +6,5 @@ srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/services.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/backup/bin/backup.pl
+var/ipfire/connscheduler/lib.pl
+var/ipfire/updatexlrator/updxlrator-lib.pl

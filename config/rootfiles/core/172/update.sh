@@ -98,6 +98,9 @@ ldconfig
 # Apply local configuration to sshd_config
 /usr/local/bin/sshctrl
 
+# Correct permissions of some library files
+chown -v root:root /var/ipfire/connscheduler/lib.pl /var/ipfire/updatexlrator/updxlrator-lib.pl
+
 # Start services
 /etc/init.d/unbound start
 if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
