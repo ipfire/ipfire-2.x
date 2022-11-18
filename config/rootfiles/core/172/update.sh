@@ -99,7 +99,7 @@ ldconfig
 /usr/local/bin/sshctrl
 
 # Correct permissions of some library files
-chown -v root:root /var/ipfire/connscheduler/lib.pl /var/ipfire/updatexlrator/updxlrator-lib.pl
+chown -Rv root:root /var/ipfire/connscheduler/lib.pl /var/ipfire/updatexlrator/updxlrator-lib.pl /var/ipfire/menu.d/*
 
 # Start services
 /etc/init.d/unbound start
