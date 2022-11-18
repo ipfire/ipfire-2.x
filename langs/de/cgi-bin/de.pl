@@ -2144,7 +2144,7 @@
 'real address' => 'Reale Addresse',
 'reboot' => 'Neustart',
 'reboot ask' => 'Neustart?',
-'reboot fsck' => 'Neustart & Dateisystem-Test',
+'reboot fsck' => 'Neustart & &lsquo;fsck&rsquo; ausführen',
 'reboot question' => 'Extra Abfrage bei neustart und herunterfahren einschalten',
 'reboot schedule' => 'Zeitsteuerung für IPFire Neustarts',
 'reboot sure' => 'Sind Sie sicher, dass Sie neustarten wollen?',

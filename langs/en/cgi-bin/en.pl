@@ -2198,7 +2198,7 @@
 'real address' => 'Real Address',
 'reboot' => 'Reboot',
 'reboot ask' => 'Reboot?',
-'reboot fsck' => 'Reboot & check filesystem',
+'reboot fsck' => 'Reboot & run &lsquo;fsck&rsquo;',
 'reboot question' => 'Extra query for restart and shutdown',
 'reboot schedule' => 'Schedule IPFire reboots',
 'reboot sure' => 'Are you sure that you want to reboot?',

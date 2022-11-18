@@ -2206,7 +2206,7 @@
 'real address' => 'Adresse réelle',
 'reboot' => 'Redémarrer',
 'reboot ask' => 'Redémarrage ?',
-'reboot fsck' => 'Redémarrer et vérifier le système de fichier',
+'reboot fsck' => 'Redémarrer et exécuter &lsquo;fsck&rsquo;',
 'reboot question' => 'Requête supplémentaire pour le redémarrage et l\'arrêt',
 'reboot schedule' => 'Redémarrages planifiées d\'IPFire',
 'reboot sure' => 'Etes-vous sûr de vouloir redémarrer ?',
