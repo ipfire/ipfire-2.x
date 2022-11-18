@@ -15,6 +15,14 @@
 #lib/libfdt.so.1
 #lib/python3.10
 #lib/python3.10/site-packages
-#lib/python3.10/site-packages/_libfdt.cpython-310-aarch64-linux-gnu.so
-#lib/python3.10/site-packages/libfdt-1.6.1-py3.10.egg-info
-#lib/python3.10/site-packages/libfdt.py
+#lib/python3.10/site-packages/libfdt-1.6.1-py3.10-linux-aarch64.egg
+#lib/python3.10/site-packages/libfdt-1.6.1-py3.10-linux-aarch64.egg/EGG-INFO
+#lib/python3.10/site-packages/libfdt-1.6.1-py3.10-linux-aarch64.egg/EGG-INFO/PKG-INFO
+#lib/python3.10/site-packages/libfdt-1.6.1-py3.10-linux-aarch64.egg/EGG-INFO/SOURCES.txt
+#lib/python3.10/site-packages/libfdt-1.6.1-py3.10-linux-aarch64.egg/EGG-INFO/dependency_links.txt
+#lib/python3.10/site-packages/libfdt-1.6.1-py3.10-linux-aarch64.egg/EGG-INFO/native_libs.txt
+#lib/python3.10/site-packages/libfdt-1.6.1-py3.10-linux-aarch64.egg/EGG-INFO/not-zip-safe
+#lib/python3.10/site-packages/libfdt-1.6.1-py3.10-linux-aarch64.egg/EGG-INFO/top_level.txt
+#lib/python3.10/site-packages/libfdt-1.6.1-py3.10-linux-aarch64.egg/_libfdt.cpython-310-aarch64-linux-gnu.so
+#lib/python3.10/site-packages/libfdt-1.6.1-py3.10-linux-aarch64.egg/_libfdt.py
+#lib/python3.10/site-packages/libfdt-1.6.1-py3.10-linux-aarch64.egg/libfdt.py
