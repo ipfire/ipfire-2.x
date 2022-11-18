@@ -12,5 +12,5 @@
 #usr/lib/libnetfilter_conntrack.la
 #usr/lib/libnetfilter_conntrack.so
 usr/lib/libnetfilter_conntrack.so.3
-usr/lib/libnetfilter_conntrack.so.3.7.0
+usr/lib/libnetfilter_conntrack.so.3.8.0
 #usr/lib/pkgconfig/libnetfilter_conntrack.pc
