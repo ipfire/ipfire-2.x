@@ -170,6 +170,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	chown -R nobody:nobody /var/ipfire/updatexlrator
 	chown -R root:root /var/ipfire/updatexlrator/bin
+	chown root:root /var/ipfire/updatexlrator/updxlrator-lib.pl
 	chown nobody.squid /var/updatecache
 	chown nobody.squid /var/updatecache/download
 	chown nobody.squid /var/updatecache/metadata
