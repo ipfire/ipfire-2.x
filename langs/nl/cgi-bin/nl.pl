@@ -1804,6 +1804,7 @@
 'read list' => 'lijst met readonly hosts',
 'real address' => 'Echte adressen',
 'reboot' => 'Herstarten',
+'reboot fsck' => 'Herstart & start &lsquo;fsck&rsquo;',
 'reboot ask' => 'Herstarten?',
 'reboot question' => 'Extra vraag voor herstart en afsluiten',
 'reboot schedule' => 'Inplannen IPFire herstarts',
