@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.2.5
+VER        = 5.2.8
 
 THISAPP    = xz-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 9b9b58e33722ecfe799bb50f3ffe4e86386f734ab4468eb54ff92771ddf899302d1ffa4d88bdb0de351fc3eab8a6ea103f00d7e79f33db879fe22b2e1a7e62db
+$(DL_FILE)_BLAKE2 = 44d1ddd783b2527f3b17481fc277b671808eb5639c10d31bfaca9fd29ac4413628654ecb9e207955a9477c83eb30f61cf5607cd9a49dd71732707731e4444ace
 
 install : $(TARGET)
 
@@ -75,7 +75,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -p1 -i $(DIR_SRC)/src/patches/xzgrep-ZDI-CAN-16587.patch
 	cd $(DIR_APP) && ./configure --prefix=$(PREFIX)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
