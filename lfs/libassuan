@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = IPC library used by GnuPG version 2
 
-VER        = 2.5.4
+VER        = 2.5.5
 
 THISAPP    = libassuan-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libassuan
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 2eec42c47840741a4726fc35c3ed04300e5fbcd37f808b121534aeaa04d0d0f609a30ad48cfbe33a81ee4b2ebbb822b9a48a5c602268f1b802bf5d7d19d72e9c
+$(DL_FILE)_BLAKE2 = 24952e97c757b97c387ab4c2c4bf7b040f2874e9326c129805c7f5326fa14d80e083b0842e336a635531a2c8d4a66d428c816bae6b175f1c4518add1ffa3554d
 
 install : $(TARGET)
 
