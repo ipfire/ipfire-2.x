@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.1.16
+VER        = 5.2
 
 THISAPP    = bash-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -53,7 +53,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)             = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0bc53b24d9b95cd85e45196510104acf6ac6c980f68aedcc83c8409ce6a4682e92736a9cbe089ed92d74590e28918d0bee0e67c8e0f994bd37e45fad83f5b48e
+$(DL_FILE)_BLAKE2 = 51b196e710794ebad8eac28c31c93eb99ac1a7db30919a13271e39e1cb66a0672f242df75fc7d71627ea873dfbce53ec35c0c56a71c5167143070a7811343fd9
 
 install : $(TARGET)
 
@@ -90,6 +90,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash/bash-4.0-paths-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash/bash-4.0-profile-1.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/bash/bash-3.2-ssh_source_bash.patch
+	
+	for i in $$(seq 1 9); do \
+	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/bash/bash52-$$(printf "%03d" "$${i}") || exit 1; \
+	done
+
 
 	cd $(DIR_APP) && ./configure --prefix=$(PREFIX) $(CONFIGURE_OPTIONS)
 	cd $(DIR_APP) && make $(MAKETUNING)

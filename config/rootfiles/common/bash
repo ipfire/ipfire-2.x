@@ -21,6 +21,7 @@
 #usr/include/bash/conftypes.h
 #usr/include/bash/dispose_cmd.h
 #usr/include/bash/error.h
+#usr/include/bash/execute_cmd.h
 #usr/include/bash/externs.h
 #usr/include/bash/general.h
 #usr/include/bash/hashlib.h
@@ -62,13 +63,16 @@
 #usr/include/bash/y.tab.h
 #usr/lib/bash
 usr/lib/bash/Makefile.inc
+usr/lib/bash/Makefile.sample
 usr/lib/bash/accept
 usr/lib/bash/basename
 usr/lib/bash/csv
 usr/lib/bash/cut
 usr/lib/bash/dirname
+usr/lib/bash/dsv
 usr/lib/bash/fdflags
 usr/lib/bash/finfo
+usr/lib/bash/getconf
 usr/lib/bash/head
 usr/lib/bash/id
 usr/lib/bash/ln
@@ -88,6 +92,7 @@ usr/lib/bash/rmdir
 usr/lib/bash/seq
 usr/lib/bash/setpgid
 usr/lib/bash/sleep
+usr/lib/bash/stat
 usr/lib/bash/strftime
 usr/lib/bash/sync
 usr/lib/bash/tee
