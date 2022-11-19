@@ -57,6 +57,7 @@ rm -rvf \
 	/lib/firmware/qcom/vpu-1.0/venus.b* \
 	/lib/firmware/qcom/vpu-2.0/venus.b* \
 	/lib/firmware/qcom/vpu-2.0/venus.mdt \
+	/lib/firmware/rtl_bt \
 	/lib/libz.so.1.2.12 \
 	/usr/lib/libbind9-9.16.33.so \
 	/usr/lib/libdns-9.16.33.so \

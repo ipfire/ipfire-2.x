@@ -79,10 +79,6 @@ lib/firmware/qcom/venus-1.8/venus.mbn
 lib/firmware/qcom/venus-4.2/venus.mbn
 lib/firmware/qcom/venus-5.4/venus.mbn
 lib/firmware/qcom/vpu-2.0/venus.mbn
-lib/firmware/rtl_bt/rtl8822cs_fw.bin
-lib/firmware/rtl_bt/rtl8822cu_fw.bin
-lib/firmware/rtl_bt/rtl8852au_fw.bin
-lib/firmware/rtl_bt/rtl8852cu_fw.bin
 lib/firmware/rtlwifi/rtl8188fufw.bin
 lib/firmware/rtlwifi/rtl8192eu_nic.bin
 lib/firmware/rtlwifi/rtl8192eu_wowlan.bin
