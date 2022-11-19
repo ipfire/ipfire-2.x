@@ -2,7 +2,7 @@
 #usr/lib/libpipeline.la
 #usr/lib/libpipeline.so
 #usr/lib/libpipeline.so.1
-#usr/lib/libpipeline.so.1.5.6
+#usr/lib/libpipeline.so.1.5.7
 #usr/lib/pkgconfig/libpipeline.pc
 #usr/share/man/man3/libpipeline.3
 #usr/share/man/man3/pipecmd_arg.3

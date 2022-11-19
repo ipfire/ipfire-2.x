@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.5.6
+VER        = 1.5.7
 
 THISAPP    = libpipeline-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 813009e37ddb9a63da57e11ce71040646449b10140f5dd42cca02d280a3adb2173207af857ebca24777fdc8d30e426c41ad51f356f285decfe007b5829d9730f
+$(DL_FILE)_BLAKE2 = b8f9ff6886f8df12e3fefbfaa0cbcb1e07d7baaa8a1dfcf4bc01c17c6632b8c6a40e55395f1e4870ca391eefb1535ebbc3931fcdee51cf5f4293741e437a2f25
 
 install : $(TARGET)
 
