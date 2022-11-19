@@ -41,6 +41,22 @@ done
 # Remove files
 rm -rvf \
 	/etc/strongswan.d/scepclient.conf \
+	/lib/firmware/cnm/wave521c_j721s2_codec_fw.bin \
+	/lib/firmware/cxgb4/t4fw-1.26.6.0.bin \
+	/lib/firmware/cxgb4/t5fw-1.26.6.0.bin \
+	/lib/firmware/cxgb4/t6fw-1.26.6.0.bin \
+	/lib/firmware/mediatek/sof/sof-mt8186-mt6366-da7219-max98357.tplg \
+	/lib/firmware/mediatek/sof/sof-mt8186-mt6366-rt1019-rt5682s.tplg \
+	/lib/firmware/qcom/a530_zap.b00 \
+	/lib/firmware/qcom/a530_zap.b01 \
+	/lib/firmware/qcom/a530_zap.b02 \
+	/lib/firmware/qcom/venus-1.8/venus.b* \
+	/lib/firmware/qcom/venus-4.2/venus.b* \
+	/lib/firmware/qcom/venus-5.2/venus.b* \
+	/lib/firmware/qcom/venus-5.4/venus.b* \
+	/lib/firmware/qcom/vpu-1.0/venus.b* \
+	/lib/firmware/qcom/vpu-2.0/venus.b* \
+	/lib/firmware/qcom/vpu-2.0/venus.mdt \
 	/lib/libz.so.1.2.12 \
 	/usr/lib/libbind9-9.16.33.so \
 	/usr/lib/libdns-9.16.33.so \
