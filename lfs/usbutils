@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 014
+VER        = 015
 
 THISAPP    = usbutils-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8defadf7aa05dedb5af52a08ee8b5c152529c35e32514360326c9bc45860c8a1d10b5688cc40ddc2218824b7a776ed8590182cee2c54504d4fbd94512ce80259
+$(DL_FILE)_BLAKE2 = 6056947e3df829e988b9429827c69234a90b7ad1be666d54566211bc6c8e09e74372543059827a39cab2badd1df71deff1147503bef3850a38bffefe3b2ae0e2
 
 install : $(TARGET)
 
