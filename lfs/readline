@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.1
+VER        = 8.2
 
 THISAPP    = readline-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = f0feca1ea3517b2b613adacac8c997cce0e86aa2f410c82a40ce1a2e128067112b4c68dbf25b808291c28c47583345abac994ce10b8d117958afcb96ee5e7c69
+$(DL_FILE)_BLAKE2 = 7974322b9c092a756a79e537df08e8532f8e0fcb598f77732e28287c33ebec9e9837ed88b43334c310892d56a871b423903f0f564def2fbe700a1004f2ae7b18
 
 install : $(TARGET)
 
@@ -71,9 +71,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
-#	for i in $$(seq 1 1); do \
-#		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/readline/readline81-$$(printf "%03d" "$${i}") || exit 1; \
-#	done
+	for i in $$(seq 1 1); do \
+		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/readline/readline82-$$(printf "%03d" "$${i}") || exit 1; \
+	done
 
 	cd $(DIR_APP) && ./configure --prefix=/usr --disable-static
 	cd $(DIR_APP) && make $(MAKETUNING) SHLIB_LIBS=-lncurses
