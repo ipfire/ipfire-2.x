@@ -25,9 +25,9 @@
 
 include Config
 
-VER        = 1.42.0
+VER        = 1.44.2
 
-THISAPP    = libuv-v$(VER)
+THISAPP    = libuv-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 4b282aeb234aa0dbf44b45ef160fcd773b62f3e5090699bff0e1edf208be79831dff382b495fde670370673b13c8e0c3a053f8c8afcf1430db37c30970e337c7
+$(DL_FILE)_BLAKE2 = 883a1fbffcd8f55bf28ea5a79ed18aa3e2f2fac126285e8aca2ef9370eafc62f69f95ddb8bf27d4159e038bfb0a01abafdf0dadbc4309e5d31f0e77057ee84ac
 
 install : $(TARGET)
 
