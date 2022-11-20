@@ -240,6 +240,9 @@ endif
 
 	# config (uEnv.txt and boot.*)
 	cp -vf $(DIR_SRC)/config/u-boot/* /boot/
+	# create signed binary boot script (boot.scr)
+	mkimage -C none -A arm -T script -d /boot/boot.cmd /boot/boot.scr
+
 	# patch real Kernel version to uEnv.txt
 	sed -e "s/xxxKVERxxx/$(KVER)/g" -i /boot/uEnv.txt
 
