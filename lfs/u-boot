@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2021.07
+VER        = 2022.10
 
 THISAPP    = u-boot-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -36,7 +36,7 @@ SUP_ARCH   = armv6l aarch64
 CFLAGS    := $(patsubst -fstack-protector-strong,,$(CFLAGS))
 LDFLAGS   += --no-warn-rwx-segments
 
-ATF_VER    = 2.6
+ATF_VER    = 2.7
 
 ###############################################################################
 # Top-level Rules
@@ -48,9 +48,9 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 arm-trusted-firmware-$(ATF_VER).tar.gz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER).tar.gz
 arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz = $(DL_FROM)/arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz
 
-$(DL_FILE)_BLAKE2 = 1a209a604e0f30264781a14ca855bbb777e8f1c031de60d28de397084fc9bfc4a3771ad00ec22f5cdcfa721f22707a533b9b59004ac0b107df927f23dc5ab0a6
-arm-trusted-firmware-$(ATF_VER).tar.gz_BLAKE2 = 1d0caff9ea6d97276d1377483e3f81901c935f9af784b7a735636c75b00106935a7e301c21ecec7b9fd9a97dcf873ac1b12169bf7211dae3d975b78d379eba74
-arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz_BLAKE2 = bc5245c1af911eb8ce8def743339102bb46d6aa854fbe916584775479dc97c9a9176c1d1615afc7ede496c7ca9da78db52d9c2eaf1290a4d06e53dbb1933e658
+$(DL_FILE)_BLAKE2 = 42aa7a6f131735888939982e579de4342e3909e064ab896b0df6f1ff56c20ed6cb11d25286da7c052a5f67dcef6fa7a746944d8df6dd504586f5a71502d157e1
+arm-trusted-firmware-$(ATF_VER).tar.gz_BLAKE2 = 4fc4d5646e272200d40081902e17f0be32956f451622f011a0d568c8cf26e15ab165fe16a69cf222241f7ba1d443add562d6d382277eb4fb2b49c3918cabdbad
+arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz_BLAKE2 = 04424a7dcda0771f469c8e918a24aed75017c1a28c1b8c2c794e3ce31afbc01e7906ccab6faf1459d69a5ec1ef4fdde2bab1011b883980efeae7372013f2570e
 
 install : $(TARGET)
 
@@ -213,7 +213,7 @@ else
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi R2S - IPFire.org"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
-	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_MISC_INIT_R.*!# CONFIG_MISC_INIT_R is not set!' .config
+	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
 		/usr/share/u-boot/nanopi_r2s/u-boot-rockchip.bin
@@ -221,12 +221,14 @@ else
 
 	# Nanopi R4S
 	# arm trusted firmware for rk3399 cannot build without cortex m0 gcc crosscompiler
+	# it is build on ubuntu with make PLAT=rk3399 ARCH=aarch64 DEBUG=0 bl31
 	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER)-rk3399-binary.tar.xz
 	-mkdir -pv /usr/share/u-boot/nanopi_r4s
 	cd $(DIR_APP) && make CROSS_COMPILE="" nanopi-r4s-rk3399_config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi R4S - IPFire.org"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
 	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
+	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
 	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
 		/usr/share/u-boot/nanopi_r4s/u-boot-rockchip.bin
