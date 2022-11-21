@@ -38,6 +38,13 @@ done
 /etc/rc.d/init.d/sshd stop
 /etc/rc.d/init.d/unbound stop
 
+KVER="xxxKVERxxx"
+
+# Backup uEnv.txt if exist
+if [ -e /boot/uEnv.txt ]; then
+    cp -vf /boot/uEnv.txt /boot/uEnv.txt.org
+fi
+
 # Remove files
 rm -rvf \
 	/etc/strongswan.d/scepclient.conf \
@@ -152,6 +159,24 @@ if grep -q "ENABLED=on" /var/ipfire/ovpn/settings; then
 fi
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/init.d/ipsec start
+fi
+
+# Regenerate all initrds
+dracut --regenerate-all --force
+case "$(uname -m)" in
+	armv*)
+		mkimage -A arm -T ramdisk -C lzma -d /boot/initramfs-${KVER}-ipfire.img /boot/uInit-${KVER}-ipfire
+		rm /boot/initramfs-${KVER}-ipfire.img
+		;;
+	aarch64)
+		mkimage -A arm64 -T ramdisk -C lzma -d /boot/initramfs-${KVER}-ipfire.img /boot/uInit-${KVER}-ipfire
+		# dont remove initramfs because grub need this to boot.
+		;;
+esac
+
+# Call user update script (needed for some ARM boards)
+if [ -e /boot/pakfire-kernel-update ]; then
+    /boot/pakfire-kernel-update ${KVER}
 fi
 
 # This update needs a reboot...
