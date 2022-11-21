@@ -62,12 +62,14 @@ rm -rvf \
 	/usr/lib/libbind9-9.16.33.so \
 	/usr/lib/libdns-9.16.33.so \
 	/usr/lib/libexpat.so.1.8.9 \
+	/usr/lib/libhistory.so.8.1 \
 	/usr/lib/libirs-9.16.33.so \
 	/usr/lib/libisc-9.16.33.so \
 	/usr/lib/libisccc-9.16.33.so \
 	/usr/lib/libisccfg-9.16.33.so \
 	/usr/lib/libnetfilter_conntrack.so.3.7.0 \
 	/usr/lib/libns-9.16.33.so \
+	/usr/lib/libreadline.so.8.1 \
 	/usr/lib/libunbound.so.8.1.1* \
 	/usr/lib/libxml2.so.2.9.* \
 	/usr/lib/python3.10/ensurepip/_bundled/pip-21* \
