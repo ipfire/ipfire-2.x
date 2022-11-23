@@ -1,9 +1,0 @@
-#etc/pcmcia
-etc/pcmcia/config.opts
-etc/udev/rules.d/60-pcmcia.rules
-sbin/lspcmcia
-sbin/pccardctl
-sbin/pcmcia-check-broken-cis
-sbin/pcmcia-socket-startup
-#usr/share/man/man8/lspcmcia.8
-#usr/share/man/man8/pccardctl.8

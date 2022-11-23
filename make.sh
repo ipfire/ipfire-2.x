@@ -1518,7 +1518,6 @@ buildipfire() {
   lfsmake2 rng-tools
   lfsmake2 lsof
   lfsmake2 br2684ctl
-  lfsmake2 pcmciautils
   lfsmake2 lm_sensors
   lfsmake2 libstatgrab
   lfsmake2 liboping
