@@ -46,7 +46,6 @@
 < desired
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
-< dh name is invalid
 < disable
 < dns could not add server
 < done
@@ -95,944 +94,15 @@
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
-< 24 hours
-< acpitemp
-< addons
-< administrator password
-< administrator username
-< adsl settings
-< advproxy asbased anomaly detection
-< advproxy AUTH method ntlm
-< advproxy AUTH method ntlm auth
-< advproxy basic authentication
-< advproxy cache-digest
-< advproxy errmsg cache
-< advproxy errmsg invalid upstream proxy
-< advproxy errmsg invalid url
-< advproxy errmsg proxy ports equal
-< advproxy errmsg wpad invalid ip or mask
-< advproxy fastflux detection
-< advproxy fastflux detection threshold
-< advproxy fastflux no threshold given
-< advproxy fastflux threshold invalid
-< advproxy fastflux threshold out of bounds
-< advproxy group access control
-< advproxy group required
-< advproxy proxy port transparent
-< advproxy selectively announcements detection
-< advproxy wpad example dst_noproxy_ip
-< advproxy wpad example dst_noproxy_url
-< advproxy wpad label dst_noproxy_ip
-< advproxy wpad label dst_noproxy_url
-< advproxy wpad notice
-< advproxy wpad title
-< advproxy wpad view pac
-< age second
-< age seconds
-< age shour
-< age sminute
-< age ssecond
-< aliases default interface
-< asn lookup failed
-< Async logging enabled
-< atm device
-< attention
-< autonomous system
-< available
-< bit
-< block
-< broken
-< cake profile bridged-llcsnap 32
-< cake profile bridged-ptm 19
-< cake profile bridged-vcmux 24
-< cake profile conservative 48
-< cake profile docsis 18
-< cake profile ethernet 38
-< cake profile ethernet vlan 42
-< cake profile ipoa-llcsnap 16
-< cake profile ipoa-vcmux 8
-< cake profile pppoa-llc 14
-< cake profile pppoa-vcmux 10
-< cake profile pppoe-llcsnap 40
-< cake profile pppoe-ptm 27
-< cake profile pppoe-vcmux 32
-< cake profile raw 0
-< capabilities
-< ccd add
-< ccd choose net
-< ccd clientip
-< ccd client options
-< ccd dynrange
-< ccd err blue
-< ccd err green
-< ccd err hostinnet
-< ccd err inuse
-< ccd err invalidname
-< ccd err invalidnet
-< ccd err iroute
-< ccd err irouteexist
-< ccd err isipsecnet
-< ccd err isipsecrw
-< ccd err isovpnn2n
-< ccd err isovpnnet
-< ccd err issubnet
-< ccd err name
-< ccd err nameexist
-< ccd err netadr
-< ccd err netadrexist
-< ccd err orange
-< ccd err red
-< ccd err routeovpn
-< ccd err routeovpn2
-< ccd hint
-< ccd invalid
-< ccd iroute
-< ccd iroute2
-< ccd iroutehint
-< ccd modify
-< ccd name
-< ccd net
-< ccd noaddnet
-< ccd none
-< ccd routes
-< ccd subnet
-< ccd used
-< check all
-< ConnSched dial
-< ConnSched hangup
-< ConnSched reboot
-< ConnSched shutdown
-< core update
-< count
-< countries
-< countrycode
-< country codes and flags
+< addon
 < cpu frequency
-< crypto error
-< cryptographic settings
-< crypto warning
-< Daily
-< dangerous
-< dead peer detection
-< default
-< default ip
-< default IP address
-< deprecated fs warn
-< desired
-< details
-< dh
-< dhcp deny known clients:
-< dhcp dns enable update
-< dhcp dns key name
-< dhcp dns update
-< dhcp dns update algo
-< dhcp dns update secret
-< dhcp make fixed lease
-< dhcp valid range required when deny known clients checked
-< dh key move failed
-< dh key warn
-< dh key warn1
-< dh name is invalid
-< dh parameter
-< disable
-< Disabled
-< disconnected
-< dl client arch insecure
-< dnat address
-< dns check servers
-< dns configuration
-< dns could not add server
-< dns enable safe-search
-< dns enable safe-search youtube
-< dnsforward
-< dnsforward add a new entry
-< dnsforward configuration
-< dns forward disable dnssec
-< dnsforward dnssec disabled
-< dnsforward edit an entry
-< dnsforward entries
-< dnsforward forward_servers
-< dns forwarding dnssec disabled notice
-< dnsforward zone
-< dns isp assigned nameserver
-< dns isp nameservers and tls not allowed
-< dns mode for qname minimisation
-< dns no address given
-< dns no tls hostname given
-< dns recursor mode
-< dnssec aware
-< dnssec disabled warning
-< dnssec information
-< dnssec not supported
-< dnssec validating
 < dns servers
-< dns tls hostname
-< dns use isp assigned nameservers
-< dns use protocol for dns queries
-< downlink
-< download apple profile
-< download dh parameter
-< download tls-auth key
-< dpd delay
-< dpd timeout
-< drop action
-< drop action1
-< drop action2
-< drop forward
-< drop hostile
-< drop outgoing
-< drop spoofed martians
-< duration
-< eight hours
-< email config
-< email empty field
-< email error
-< email invalid
-< email invalid mailfqdn
-< email invalid mailip
-< email invalid mailport
-< email mailaddr
-< email mailpass
-< email mailport
-< email mailrcpt
-< email mailsender
-< email mailuser
-< email recipient invalid
-< email settings
-< email subject
-< email success
-< email testmail
-< email text
-< email tls
-< email tls explicit
-< email tls implicit
-< email usemail
-< emerging pro rules
-< emerging rules
-< enable
-< enable otp
-< enable smt
-< encryption
-< entropy
-< entropy graphs
-< eol architecture warning
-< error
-< error the to date has to be later than the from date
-< fallout zombieload ridl
-< fifteen minutes
-< fireinfo ipfire version
-< fireinfo is disabled
-< fireinfo is enabled
-< fireinfo is submitted
-< fireinfo is submitted button
-< fireinfo kernel version
-< fireinfo not submitted
-< fireinfo not submitted button
-< fireinfo pakfire version
-< fireinfo please enable
-< fireinfo settings
-< fireinfo system version
-< fireinfo why descr1
-< fireinfo why descr2
-< fireinfo why enable
-< fireinfo why read more
-< fireinfo your profile id
-< firewall graph country
-< firewall graph ip
-< firewall graph port
-< firewall log country
-< firewall log ip
-< firewall log port
-< firewall logs country
-< firewall rules
-< first
-< five minutes
-< flag
-< force enable
-< foreshadow
-< forward firewall
-< four hours
-< fw default drop
-< fwdfw ACCEPT
-< fwdfw action
-< fwdfw additional
-< fwdfw addrule
-< fwdfw all icmp
-< fwdfw all subnets
-< fwdfw change
-< fwdfw copy
-< fwdfw delete
-< fwdfw dnat
-< fwdfw dnat error
-< fwdfw dnat extport
-< fwdfw dnat nochoice
-< fwdfw dnat porterr
-< fwdfw dnat porterr2
-< fwdfw DROP
-< fwdfw edit
-< fwdfw err concon
-< fwdfw err nosrc
-< fwdfw err nosrcip
-< fwdfw err notgt
-< fwdfw err notgtip
-< fwdfw err prot_port
-< fwdfw err prot_port1
-< fwdfw err ratecon
-< fwdfw err remark
-< fwdfw err ruleexists
-< fwdfw err same
-< fwdfw err samesub
-< fwdfw err src_addr
-< fwdfw err tgt_addr
-< fwdfw err tgt_grp
-< fwdfw err tgt_mac
-< fwdfw err tgt_port
-< fwdfw err time
-< fwdfw external port nat
-< fwdfw final_rule
-< fwdfw from
-< fwdfw hint ip1
-< fwdfw hint ip2
-< fwdfw hint mac
-< fwdfw iface
-< fwdfw ipsec network
-< fwdfw limitconcon
-< fwdfw log
-< fwdfw log rule
-< fwdfw man port
-< fwdfw many
-< fwdfw maxconcon
-< fwdfw menu
-< fwdfw MODE1
-< fwdfw MODE2
-< fwdfw movedown
-< fwdfw moveup
-< fwdfw natport used
-< fwdfw newrule
-< fwdfw numcon
-< fwdfw pol allow
-< fwdfw pol block
-< fwdfw pol text
-< fwdfw pol text1
-< fwdfw pol title
-< fwdfw prot41
-< fwdfw prot41 short
-< fwdfw ratelimit
-< fwdfw red
-< fwdfw REJECT
-< fwdfw reread
-< fwdfw rule action
-< fwdfw rule activate
-< fwdfw rulepos
-< fwdfw rules
-< fwdfw snat
-< fwdfw source
-< fwdfw sourceip
-< fwdfw std network
-< fwdfw target
-< fwdfw targetip
-< fwdfw till
-< fwdfw time
-< fwdfw timeframe
-< fwdfw toggle
-< fwdfw togglelog
-< fwdfw useless rule
-< fwdfw use nat
-< fwdfw use srcport
-< fwdfw use srv
-< fwdfw warn1
-< fwdfw wd_fri
-< fwdfw wd_mon
-< fwdfw wd_sat
-< fwdfw wd_sun
-< fwdfw wd_thu
-< fwdfw wd_tue
-< fwdfw wd_wed
-< fwdfw xt access
-< fwhost addgrp
-< fwhost addgrpname
-< fwhost addhost
-< fwhost addlocationgrp
-< fwhost addnet
-< fwhost addservice
-< fwhost addservicegrp
-< fwhost any
-< fwhost attention
-< fwhost back
-< fwhost blue
-< fwhost ccdhost
-< fwhost ccdnet
-< fwhost change
-< fwhost changeremark
-< fwhost cust addr
-< fwhost cust grp
-< fwhost cust location
-< fwhost cust locationgroup
-< fwhost cust locationlocation
-< fwhost cust net
-< fwhost Custom Host
-< fwhost Custom Network
-< fwhost cust service
-< fwhost cust srvgrp
-< fwhost deleted
-< fwhost empty
-< fwhost err addr
-< fwhost err addrgrp
-< fwhost err empty
-< fwhost err emptytable
-< fwhost err groupempty
-< fwhost err grpexist
-< fwhost err hostexist
-< fwhost err hostorip
-< fwhost err ip
-< fwhost err ipcheck
-< fwhost err ipmac
-< fwhost err ipwithsub
-< fwhost err isccdhost
-< fwhost err isccdiphost
-< fwhost err isccdipnet
-< fwhost err isccdnet
-< fwhost err isingrp
-< fwhost err mac
-< fwhost err maxservicetcp
-< fwhost err maxserviceudp
-< fwhost err name
-< fwhost err name1
-< fwhost err net
-< fwhost err netexist
-< fwhost err partofnet
-< fwhost err port
-< fwhost err remark
-< fwhost err srvexist
-< fwhost err srv exists
-< fwhost err sub32
-< fwhost green
-< fwhost hint
-< fwhost hosts
-< fwhost icmptype
-< fwhost ipadr
-< fwhost ip_mac
-< fwhost ipsec host
-< fwhost IpSec Host
-< fwhost ipsec net
-< fwhost IpSec Network
-< fwhost menu
-< fwhost netaddress
-< fwhost newgrp
-< fwhost newhost
-< fwhost newlocationgrp
-< fwhost newnet
-< fwhost newservice
-< fwhost newservicegrp
-< fwhost OpenVPN N-2-N
-< fwhost OpenVPN static host
-< fwhost OpenVPN static network
-< fwhost orange
-< fwhost ovpn_n2n
-< fwhost port
-< fwhost prot
-< fwhost reread
-< fwhost reset
-< fwhost services
-< fwhost srv_name
-< fwhost Standard Network
-< fwhost stdnet
-< fwhost type
-< fwhost used
-< fwhost welcome
-< fwhost wo subnet
-< fw red
-< fw rules reload notice
-< fw settings
-< fw settings color
-< fw settings dropdown
-< fw settings remark
-< fw settings ruletable
-< gen dh
-< generate dh key
-< generate ptr
-< grouptype
-< guardian
 < hardware vulnerabilities
-< hostile networks
-< ids add provider
-< ids adjust ruleset
-< ids apply
-< ids apply ruleset changes
-< ids automatic rules update
-< ids autoupdates
-< ids cleanup tmp dir
-< ids could not add provider
-< ids customize ruleset
-< ids download new ruleset
-< ids enable
-< ids enable automatic updates
-< ids extract ruleset
-< ids finished
-< ids force ruleset update
-< ids hide
-< ids ignored hosts
-< ids log hits
-< ids merge classifications
-< ids merge sid files
-< ids monitored interfaces
-< ids monitor traffic only
-< ids no enabled ruleset provider
-< ids no network zone
-< ids provider
-< ids provider settings
-< ids remove rule structures
-< ids reset provider
-< ids ruleset autoupdate in progress
-< ids ruleset is up to date
-< ids ruleset settings
-< ids show
-< ids subscription code required
-< ids the choosen provider is already in use
-< ids unable to download the ruleset
-< ids visit provider website
-< ids working
-< imei
-< imsi
-< incoming compression in bytes per second
-< incoming firewall access
-< incoming overhead in bytes per second
-< inodes
-< integrity
-< interface mode
-< intrusion prevention system
-< invalid input for dpd delay
-< invalid input for dpd timeout
-< invalid input for inactivity timeout
-< invalid input for interface address
-< invalid input for interface mode
-< invalid input for interface mtu
-< invalid input for local ip address
-< invalid input for mode
-< invalid input for subscription code
-< invalid input for valid till days
 < invalid ip or hostname
-< invalid logserver protocol
-< ip basic info
-< ipblocklist
-< ipblocklist blocklist settings
-< ipblocklist category
-< ipblocklist category application
-< ipblocklist category attacker
-< ipblocklist category c and c
-< ipblocklist category composite
-< ipblocklist category invalid
-< ipblocklist category reputation
-< ipblocklist category scanner
-< ipblocklist could not download blocklist
-< ipblocklist download error
-< ipblocklist empty blocklist received
-< ipblocklist enable
-< ipblocklist hits
-< ipblocklist id
-< ipblocklist input
-< ipblocklist log
-< ipblocklist log list
-< ipblocklist logs
-< ipblocklist name
-< ipblocklist output
-< ipblocklist use ipblocklists
-< ip info for
-< ipsec
-< ipsec connection
-< ipsec dns server address is invalid
-< ipsec interface mode gre
-< ipsec interface mode none
-< ipsec interface mode vti
-< ipsec invalid ip address or fqdn for rw endpoint
-< ipsec mode transport
-< ipsec mode tunnel
-< ipsec network
-< ipsec no connections
-< ipsec roadwarrior endpoint
-< ipsec routing table entries
-< ipsec settings
-< itlb multihit
-< last
-< least preferred
-< legacy architecture warning
-< lifetime
-< link-layer encapsulation
-< local ip address
-< log dropped conntrack invalids
-< log server protocol
-< mac filter
-< masquerade blue
-< masquerade green
-< masquerade orange
-< masquerading
-< masquerading disabled
-< masquerading enabled
-< maximum
-< MB read
-< MB written
-< meltdown
-< messages
-< minimum
-< minute
-< mitigated
-< mmio stale data
-< model
-< modem hardware details
-< modem information
-< modem network bit error rate
-< modem network information
-< modem network mode
-< modem network operator
-< modem network registration
-< modem network signal quality
-< modem no connection
-< modem no connection message
-< modem sim information
-< modem status
-< monitor interface
-< most preferred
-< mtu
-< MTU settings
-< nameserver
-< netbios nameserver daemon
-< never
-< no entries
-< no hardware random number generator
-< none
-< not affected
-< not a valid dh key
-< notice
-< not validating
-< Number of Countries for the pie chart
-< okay
-< one hour
-< one month
-< one week
-< one year
-< open connections
-< openvpn default
-< openvpn destination port used
-< openvpn disabled
-< openvpn enabled
-< openvpn fragment allowed with udp
-< openvpn mssfix allowed with udp
-< openvpn network
-< openvpn prefix local subnet
-< openvpn prefix openvpn subnet
-< openvpn prefix remote subnet
-< openvpn subnet is used
-< optional
-< other
-< otp qrcode
-< our donors
-< outgoing compression in bytes per second
-< outgoing firewall access
-< outgoing firewall add ip group
-< outgoing firewall add mac group
-< outgoing firewall edit ip group
-< outgoing firewall edit mac group
-< outgoing firewall group error
-< outgoing firewall groups
-< outgoing firewall ip groups
-< outgoing firewall mac groups
-< outgoing firewall view group
-< outgoing overhead in bytes per second
-< ovpn add conf
-< ovpn connection name
-< ovpn crypt options
-< ovpn dh
-< ovpn dh new key
-< ovpn dh parameters
-< ovpn dh upload
-< ovpn engines
-< ovpn errmsg green already pushed
-< ovpn errmsg invalid ip or mask
-< ovpn error dh
-< ovpn error md5
-< ovpn generating the root and host certificates
-< ovpn ha
-< ovpn mgmt in root range
-< ovpn mtu-disc
-< ovpn mtu-disc and mtu not 1500
-< ovpn mtu-disc maybe
-< ovpn mtu-disc no
-< ovpn mtu-disc off
-< ovpn mtu-disc with mssfix or fragment
-< ovpn mtu-disc yes
-< ovpn no connections
-< ovpn port in root range
-< ovpn reneg sec
-< ovpn routes push
-< ovpn routes push options
-< ovpn rw connection log
-< ovpn tls auth
-< ovpn warning rfc3280
-< pakfire already busy
-< pakfire finished
-< pakfire finished error
-< pakfire invalid tree
-< pakfire return
-< pakfire tree
-< pakfire tree stable
-< pakfire tree testing
-< pakfire tree unstable
-< pak update
-< please reboot to apply your changes
-< pptp netconfig
-< pptp peer
-< pptp route
-< processor vulnerability mitigations
-< proxy reports
-< proxy reports daily
-< proxy reports monthly
-< proxy reports today
-< proxy reports weekly
-< ptr
-< qos enter bandwidths
-< random number generator daemon
-< rdns
-< reboot fsck
-< rebooting ipfire fsck
-< received
-< red1
-< release
-< required
-< required field
-< retbleed
-< runmode
-< samba join a domain
-< samba join domain
-< samba server role member
-< samba server role standalone
-< search
-< secret
-< sent
-< server restart
-< Set time on boot
-< show dh
-< show otp qrcode
-< show tls-auth key
-< smb daemon
-< smt disabled
-< smt enabled
-< smt not supported
-< snat new source ip address
-< software version
-< source ip country
-< spectre variant 1
-< spectre variant 2
-< spectre variant 4
-< spoofed or martians
-< srbds
-< ssh
-< ssh active sessions
-< ssh agent forwarding
-< ssh login time
-< ssh no active logins
-< ssh username
-< standard
-< static routes
-< strict
-< subnet mask
-< subscription code
-< support donation
-< system information
-< system is offline
-< taa zombieload2
-< ta key
-< tcp more reliable
-< ten minutes
-< teovpn_fragment
-< thirty minutes
-< token
-< token not set
-< tor
-< tor 0 = disabled
-< tor accounting
-< tor accounting bytes
-< tor accounting bytes left
-< tor accounting interval
-< tor accounting limit
-< tor accounting period
-< tor accounting period daily
-< tor accounting period monthly
-< tor accounting period weekly
-< tor acls
-< tor allowed subnets
-< tor bandwidth burst
-< tor bandwidth rate
-< tor bandwidth settings
-< tor bandwidth unlimited
-< tor bridge enabled
-< tor common settings
-< tor configuration
-< tor connected relays
-< tor contact info
-< tor daemon
-< tor directory port
-< tor enabled
-< tor errmsg invalid accounting limit
-< tor errmsg invalid directory port
-< tor errmsg invalid ip or mask
-< tor errmsg invalid node id
-< tor errmsg invalid relay address
-< tor errmsg invalid relay name
-< tor errmsg invalid relay port
-< tor errmsg invalid socks port
-< tor exit country
-< tor exit country any
-< tor exit nodes
-< tor guard country
-< tor guard country any
-< tor guard nodes
-< tor relay address
-< tor relay configuration
-< tor relay enabled
-< tor relay external address
-< tor relay fingerprint
-< tor relay mode
-< tor relay mode bridge
-< tor relay mode exit
-< tor relay mode private bridge
-< tor relay mode relay
-< tor relay nickname
-< tor relay port
-< tor service
-< tor socks port
-< tor stats
-< tor traffic limit hard
-< tor traffic limit soft
-< tor traffic read written
-< tor use exit nodes
-< tor use guard nodes
-< traffic stat in
-< traffic stat out
-< traffic stat title
-< transfers
+< service boot setting unavailable
 < transport mode does not support vti
-< twelve hours
-< two weeks
-< udp less overhead
-< unblock
-< unblock all
-< uncheck all
-< unlimited
-< update ruleset
-< updxlrtr passive mode
-< updxlrtr sources
-< updxlrtr standard view
-< updxlrtr used by
-< uplink
-< uplink bit rate
-< upload dh key
-< uptime
-< uptime load average
-< urlfilter redirect template
-< user management
-< vendor
-< version
-< visit us at
-< vpn broken
-< vpn connecting
-< vpn force mobike
-< vpn inactivity timeout
-< vpn keyexchange
-< vpn on-demand
-< vpn start action
-< vpn start action add
-< vpn start action route
-< vpn start action start
-< vpn statistic n2n
-< vpn statistic rw
-< vpn subjectaltname missing
-< vpn wait
-< vpn weak
-< vulnerability
-< vulnerable
-< Weekly
-< whois results from
-< winbind daemon
-< wireless network
 < wlanap
-< wlanap 802.11w disabled
-< wlanap 802.11w enforced
-< wlanap 802.11w optional
-< wlanap auto
-< wlanap broadcast ssid
-< wlanap client isolation
-< wlanap configuration
-< wlanap country
-< wlanap management frame protection
-< wlanap neighbor scan
-< wlanap neighbor scan warning
-< wlanap ssid
-< wlan client
-< wlan client advanced settings
-< wlan client and
-< wlan client anonymous identity
-< wlan client auth auto
-< wlan client authentication settings
-< wlan client auth peap
-< wlan client auth ttls
-< wlan client bssid
-< wlan client ccmp
 < wlan client configuration
-< wlan client disconnected
-< wlan client duplicate ssid
-< wlan client eap authentication method
-< wlan client eap phase2 method
-< wlan client eap state
-< wlan client edit entry
-< wlan client encryption
-< wlan client encryption eap
-< wlan client encryption none
-< wlan client encryption wpa
-< wlan client encryption wpa2
-< wlan client encryption wpa3
-< wlan client group cipher
-< wlan client group key algorithm
-< wlan client identity
-< wlan client invalid key length
-< wlan client management frame protection
-< wlan client method
-< wlan client new entry
-< wlan client new network
-< wlan client pairwise cipher
-< wlan client pairwise key algorithm
-< wlan client pairwise key group key
-< wlan client password
-< wlan client psk
-< wlan clients
-< wlan client ssid
-< wlan client tkip
-< wlan client tls cipher
-< wlan client tls version
-< wlan client wpa mode
-< wlan client wpa mode all
-< wlan client wpa mode ccmp ccmp
-< wlan client wpa mode ccmp tkip
-< wlan client wpa mode tkip tkip
-< working
-< zoneconf access native
-< zoneconf access none
-< zoneconf access vlan
-< zoneconf nic assignment
-< zoneconf nicmode bridge
-< zoneconf nicmode default
-< zoneconf nicmode macvtap
-< zoneconf notice reboot
-< zoneconf stp enable
-< zoneconf stp priority
-< zoneconf title
-< zoneconf val native assignment error
-< zoneconf val ppp assignment error
-< zoneconf val stp priority range error
-< zoneconf val stp zone mode error
-< zoneconf val vlan amount assignment error
-< zoneconf val vlan tag assignment error
-< zoneconf val vlan tag range error
-< zoneconf val zoneslave amount error
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
@@ -1045,12 +115,14 @@
 < g.lite
 < guaranteed bandwidth
 < retbleed
+< service boot setting unavailable
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
 < 24 hours
 < acpitemp
+< addon
 < administrator password
 < administrator username
 < adsl settings
@@ -1389,7 +461,6 @@
 < outgoing overhead in bytes per second
 < ovpn add conf
 < ovpn connection name
-< ovpn error dh
 < ovpn error md5
 < ovpn rw connection log
 < ovpn tls auth
@@ -1427,6 +498,7 @@
 < search
 < secret
 < sent
+< service boot setting unavailable
 < show otp qrcode
 < smb daemon
 < smt disabled
@@ -1659,18 +731,12 @@
 < default
 < default IP address
 < desired
-< dh
 < dhcp dns enable update
 < dhcp dns key name
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
 < dhcp make fixed lease
-< dh key move failed
-< dh key warn
-< dh key warn1
-< dh name is invalid
-< dh parameter
 < disable
 < Disabled
 < disconnected
@@ -1699,7 +765,6 @@
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
 < download apple profile
-< download dh parameter
 < download tls-auth key
 < drop hostile
 < drop outgoing
@@ -1762,8 +827,6 @@
 < fwhost cust locationlocation
 < fwhost newlocationgrp
 < fw red
-< gen dh
-< generate dh key
 < generate ptr
 < guardian
 < hardware vulnerabilities
@@ -1906,7 +969,6 @@
 < no entries
 < none
 < not affected
-< not a valid dh key
 < not validating
 < Number of Countries for the pie chart
 < okay
@@ -1922,12 +984,7 @@
 < ovpn add conf
 < ovpn connection name
 < ovpn crypt options
-< ovpn dh
-< ovpn dh new key
-< ovpn dh parameters
-< ovpn dh upload
 < ovpn engines
-< ovpn error dh
 < ovpn error md5
 < ovpn generating the root and host certificates
 < ovpn ha
@@ -1952,7 +1009,6 @@
 < ptr
 < random number generator daemon
 < rdns
-< reboot fsck
 < rebooting ipfire fsck
 < received
 < required
@@ -1966,7 +1022,6 @@
 < search
 < secret
 < sent
-< show dh
 < show otp qrcode
 < show tls-auth key
 < smb daemon
@@ -2014,7 +1069,6 @@
 < update ruleset
 < updxlrtr passive mode
 < uplink bit rate
-< upload dh key
 < user management
 < vendor
 < vpn broken
@@ -2090,6 +1144,7 @@
 ############################################################################
 < 24 hours
 < acpitemp
+< addon
 < addons
 < administrator password
 < administrator username
@@ -2267,7 +1322,6 @@
 < deprecated fs warn
 < desired
 < details
-< dh
 < dhcp deny known clients:
 < dhcp dns enable update
 < dhcp dns key name
@@ -2276,11 +1330,6 @@
 < dhcp dns update secret
 < dhcp make fixed lease
 < dhcp valid range required when deny known clients checked
-< dh key move failed
-< dh key warn
-< dh key warn1
-< dh name is invalid
-< dh parameter
 < disable
 < Disabled
 < disconnected
@@ -2317,7 +1366,6 @@
 < dns use protocol for dns queries
 < downlink
 < download apple profile
-< download dh parameter
 < download tls-auth key
 < dpd delay
 < dpd timeout
@@ -2586,8 +1634,6 @@
 < fw settings dropdown
 < fw settings remark
 < fw settings ruletable
-< gen dh
-< generate dh key
 < generate ptr
 < grouptype
 < guardian
@@ -2749,7 +1795,6 @@
 < no hardware random number generator
 < none
 < not affected
-< not a valid dh key
 < notice
 < not validating
 < Number of Countries for the pie chart
@@ -2780,14 +1825,9 @@
 < ovpn add conf
 < ovpn connection name
 < ovpn crypt options
-< ovpn dh
-< ovpn dh new key
-< ovpn dh parameters
-< ovpn dh upload
 < ovpn engines
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
-< ovpn error dh
 < ovpn error md5
 < ovpn generating the root and host certificates
 < ovpn ha
@@ -2848,7 +1888,7 @@
 < secret
 < sent
 < server restart
-< show dh
+< service boot setting unavailable
 < show otp qrcode
 < show tls-auth key
 < smb daemon
@@ -2962,7 +2002,6 @@
 < updxlrtr used by
 < uplink
 < uplink bit rate
-< upload dh key
 < uptime
 < uptime load average
 < urlfilter redirect template
@@ -3076,6 +2115,7 @@
 < 24 hours
 < acpitemp
 < Add a route
+< addon
 < addons
 < administrator password
 < administrator username
@@ -3254,7 +2294,6 @@
 < deprecated fs warn
 < desired
 < details
-< dh
 < dhcp deny known clients:
 < dhcp dns enable update
 < dhcp dns key name
@@ -3263,11 +2302,6 @@
 < dhcp dns update secret
 < dhcp make fixed lease
 < dhcp valid range required when deny known clients checked
-< dh key move failed
-< dh key warn
-< dh key warn1
-< dh name is invalid
-< dh parameter
 < disable
 < Disabled
 < disconnected
@@ -3305,7 +2339,6 @@
 < dns use protocol for dns queries
 < downlink
 < download apple profile
-< download dh parameter
 < download tls-auth key
 < dpd delay
 < dpd timeout
@@ -3576,8 +2609,6 @@
 < fw settings dropdown
 < fw settings remark
 < fw settings ruletable
-< gen dh
-< generate dh key
 < generate ptr
 < grouptype
 < guardian
@@ -3742,7 +2773,6 @@
 < no hardware random number generator
 < none
 < not affected
-< not a valid dh key
 < notice
 < not validating
 < Number of Countries for the pie chart
@@ -3774,12 +2804,7 @@
 < ovpn add conf
 < ovpn connection name
 < ovpn crypt options
-< ovpn dh
-< ovpn dh new key
-< ovpn dh parameters
-< ovpn dh upload
 < ovpn engines
-< ovpn error dh
 < ovpn error md5
 < ovpn generating the root and host certificates
 < ovpn ha
@@ -3838,7 +2863,7 @@
 < secret
 < sent
 < server restart
-< show dh
+< service boot setting unavailable
 < show otp qrcode
 < show tls-auth key
 < smb daemon
@@ -3952,7 +2977,6 @@
 < updxlrtr used by
 < uplink
 < uplink bit rate
-< upload dh key
 < uptime
 < uptime load average
 < urlfilter redirect template
@@ -4066,6 +3090,7 @@
 # Checking cgi-bin translations for language: tr                           #
 ############################################################################
 < acpitemp
+< addon
 < advproxy asbased anomaly detection
 < advproxy errmsg invalid url
 < advproxy errmsg wpad invalid ip or mask
@@ -4259,7 +3284,6 @@
 < optional
 < otp qrcode
 < ovpn connection name
-< ovpn error dh
 < ovpn error md5
 < ovpn rw connection log
 < ovpn tls auth
@@ -4289,6 +3313,7 @@
 < samba server role standalone
 < secret
 < sent
+< service boot setting unavailable
 < show otp qrcode
 < smb daemon
 < smt disabled

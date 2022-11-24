@@ -225,7 +225,6 @@ WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
 WARNING: translation string unused: destination net
 WARNING: translation string unused: destination port overlaps
-WARNING: translation string unused: dh name is invalid
 WARNING: translation string unused: dhcp base ip fixed lease
 WARNING: translation string unused: dhcp create fixed leases
 WARNING: translation string unused: dhcp fixed lease err1
@@ -271,7 +270,6 @@ WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
 WARNING: translation string unused: dos charset
-WARNING: translation string unused: download dh parameter
 WARNING: translation string unused: download new ruleset
 WARNING: translation string unused: driver
 WARNING: translation string unused: dstprt range overlaps
@@ -604,6 +602,7 @@ WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
+WARNING: translation string unused: ovpn generating the root and host certificates
 WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn mtu-disc
 WARNING: translation string unused: ovpn mtu-disc and mtu not 1500
@@ -913,6 +912,8 @@ WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: advproxy errmsg invalid url = Invalid URL
 WARNING: untranslated string: core notice 3 = available.
+WARNING: untranslated string: dh = unknown string
+WARNING: untranslated string: dh parameter = unknown string
 WARNING: untranslated string: email recipient invalid = Invalid email recipient
 WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
@@ -952,3 +953,5 @@ WARNING: untranslated string: retbleed = Retbleed
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
+WARNING: untranslated string: service boot setting unavailable = No valid runlevel symlink was found for the initscript of this service.
+WARNING: untranslated string: show dh = unknown string

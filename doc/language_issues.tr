@@ -219,7 +219,6 @@ WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
 WARNING: translation string unused: destination net
 WARNING: translation string unused: destination port overlaps
-WARNING: translation string unused: dh name is invalid
 WARNING: translation string unused: dhcp base ip fixed lease
 WARNING: translation string unused: dhcp create fixed leases
 WARNING: translation string unused: dhcp fixed lease err1
@@ -265,7 +264,6 @@ WARNING: translation string unused: domain not set
 WARNING: translation string unused: donation-link
 WARNING: translation string unused: done
 WARNING: translation string unused: dos charset
-WARNING: translation string unused: download dh parameter
 WARNING: translation string unused: download new ruleset
 WARNING: translation string unused: driver
 WARNING: translation string unused: dstprt range overlaps
@@ -591,6 +589,7 @@ WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
+WARNING: translation string unused: ovpn generating the root and host certificates
 WARNING: translation string unused: ovpn hmac
 WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn mtu-disc
@@ -928,6 +927,8 @@ WARNING: untranslated string: crypto warning = Cryptographic warning
 WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: default IP address = Default IP Address
 WARNING: untranslated string: desired = Desired
+WARNING: untranslated string: dh = unknown string
+WARNING: untranslated string: dh parameter = unknown string
 WARNING: untranslated string: dhcp deny known clients: = Deny known clients:
 WARNING: untranslated string: dhcp make fixed lease = Add to fix leases
 WARNING: untranslated string: dhcp valid range required when deny known clients checked = Valid range required when "Deny known clients:" is checked
@@ -1095,7 +1096,6 @@ WARNING: untranslated string: open connections = Open Connections
 WARNING: untranslated string: optional = Optional
 WARNING: untranslated string: otp qrcode = OTP QRCode
 WARNING: untranslated string: ovpn connection name = Connection Name
-WARNING: untranslated string: ovpn error dh = The Diffie-Hellman parameter needs to be in minimum 2048 bit! <br>Please generate or upload a new Diffie-Hellman parameter, this can be made below in the section "Diffie-Hellman parameters options".</br>
 WARNING: untranslated string: ovpn error md5 = You host certificate uses MD5 for the signature which is not accepted anymore. <br>Please update to the latest IPFire version and generate a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
 WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
@@ -1113,7 +1113,7 @@ WARNING: untranslated string: pakfire tree unstable = Unstable
 WARNING: untranslated string: please reboot to apply your changes = Please reboot to apply your changes
 WARNING: untranslated string: processor vulnerability mitigations = Processor Vulnerability Mitigations
 WARNING: untranslated string: ptr = PTR
-WARNING: untranslated string: reboot fsck = Reboot & check filesystem
+WARNING: untranslated string: reboot fsck = Reboot & run &lsquo;fsck&rsquo;
 WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check
 WARNING: untranslated string: received = Received
 WARNING: untranslated string: release = Release
@@ -1127,6 +1127,8 @@ WARNING: untranslated string: samba server role member = Domain Member
 WARNING: untranslated string: samba server role standalone = Standalone
 WARNING: untranslated string: secret = Secret
 WARNING: untranslated string: sent = Sent
+WARNING: untranslated string: service boot setting unavailable = No valid runlevel symlink was found for the initscript of this service.
+WARNING: untranslated string: show dh = unknown string
 WARNING: untranslated string: show otp qrcode = Show OTP QRCode
 WARNING: untranslated string: smb daemon = SMB Daemon
 WARNING: untranslated string: smt disabled = Simultaneous Multi-Threading (SMT) is disabled

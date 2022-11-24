@@ -28,6 +28,7 @@ WARNING: translation string unused: add service
 WARNING: translation string unused: add subclass
 WARNING: translation string unused: add xtaccess
 WARNING: translation string unused: add-route
+WARNING: translation string unused: addon
 WARNING: translation string unused: admin user password has been changed
 WARNING: translation string unused: admin users
 WARNING: translation string unused: administrator user password
@@ -943,11 +944,8 @@ WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: default = Default
 WARNING: untranslated string: default IP address = Default IP Address
 WARNING: untranslated string: desired = Desired
-WARNING: untranslated string: dh = Diffie-Hellman parameters
-WARNING: untranslated string: dh key move failed = Diffie-Hellman parameters move failed.
-WARNING: untranslated string: dh key warn = Creating DH-parameters with a length of 2048 bits takes up to several minutes. Lengths of 3072 or 4096 bits might needs several hours. Please be patient.
-WARNING: untranslated string: dh key warn1 = For weak systems or systems with little entropy, it is recommended to upload long Diffie-Hellman parameters by usage of the upload function.
-WARNING: untranslated string: dh parameter = Diffie-Hellman parameters
+WARNING: untranslated string: dh = unknown string
+WARNING: untranslated string: dh parameter = unknown string
 WARNING: untranslated string: dhcp dns enable update = Enable DNS Update (RFC2136):
 WARNING: untranslated string: dhcp dns key name = Key Name
 WARNING: untranslated string: dhcp dns update = DNS Update
@@ -1037,8 +1035,6 @@ WARNING: untranslated string: fwhost cust locationgroup = Location Groups
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: fwhost newlocationgrp = Location Groups
-WARNING: untranslated string: gen dh = Generate new Diffie-Hellman parameters
-WARNING: untranslated string: generate dh key = Generate Diffie-Hellman parameters
 WARNING: untranslated string: generate ptr = Generate PTR
 WARNING: untranslated string: guardian = Guardian
 WARNING: untranslated string: guardian block a host = unknown string
@@ -1196,7 +1192,6 @@ WARNING: untranslated string: netbios nameserver daemon = NetBIOS Nameserver Dae
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: none = none
-WARNING: untranslated string: not a valid dh key = Not a valid Diffie-Hellman parameters file. Please use a length of 2048, 3072 or 4096 bits and the PKCS#3 format.
 WARNING: untranslated string: not affected = Not Affected
 WARNING: untranslated string: not validating = Not validating
 WARNING: untranslated string: one hour = One Hour
@@ -1211,13 +1206,7 @@ WARNING: untranslated string: outgoing overhead in bytes per second = Outgoing O
 WARNING: untranslated string: ovpn add conf = Additional configuration
 WARNING: untranslated string: ovpn connection name = Connection Name
 WARNING: untranslated string: ovpn crypt options = Cryptographic options
-WARNING: untranslated string: ovpn dh = Diffie-Hellman parameters length
-WARNING: untranslated string: ovpn dh new key = Generate new Diffie-Hellman parameters
-WARNING: untranslated string: ovpn dh parameters = Diffie-Hellman parameters options
-WARNING: untranslated string: ovpn dh upload = Upload new Diffie-Hellman parameters
-WARNING: untranslated string: ovpn error dh = The Diffie-Hellman parameter needs to be in minimum 2048 bit! <br>Please generate or upload a new Diffie-Hellman parameter, this can be made below in the section "Diffie-Hellman parameters options".</br>
 WARNING: untranslated string: ovpn error md5 = You host certificate uses MD5 for the signature which is not accepted anymore. <br>Please update to the latest IPFire version and generate a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
-WARNING: untranslated string: ovpn generating the root and host certificates = Generating the root and host certificate can take a long time.
 WARNING: untranslated string: ovpn ha = Hash algorithm
 WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
@@ -1238,7 +1227,6 @@ WARNING: untranslated string: pptp route = PPTP Route
 WARNING: untranslated string: processor vulnerability mitigations = Processor Vulnerability Mitigations
 WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: rdns = rDNS
-WARNING: untranslated string: reboot fsck = Reboot & check filesystem
 WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check
 WARNING: untranslated string: received = Received
 WARNING: untranslated string: required = Required
@@ -1255,7 +1243,7 @@ WARNING: untranslated string: samba server role standalone = Standalone
 WARNING: untranslated string: search = Search
 WARNING: untranslated string: secret = Secret
 WARNING: untranslated string: sent = Sent
-WARNING: untranslated string: show dh = Show Diffie-Hellman parameters
+WARNING: untranslated string: show dh = unknown string
 WARNING: untranslated string: show otp qrcode = Show OTP QRCode
 WARNING: untranslated string: show tls-auth key = Show tls-auth key
 WARNING: untranslated string: smb daemon = SMB Daemon
@@ -1300,7 +1288,6 @@ WARNING: untranslated string: uncheck all = Uncheck all
 WARNING: untranslated string: unlimited = Unlimited
 WARNING: untranslated string: updxlrtr passive mode = Delivery only/no download mode
 WARNING: untranslated string: uplink bit rate = Uplink Bit Rate
-WARNING: untranslated string: upload dh key = Upload Diffie-Hellman parameters
 WARNING: untranslated string: user management = User Management
 WARNING: untranslated string: vendor = Vendor
 WARNING: untranslated string: vpn broken = Broken
