@@ -12,6 +12,7 @@ usr/bin/curl
 #usr/include/curl/system.h
 #usr/include/curl/typecheck-gcc.h
 #usr/include/curl/urlapi.h
+#usr/include/curl/websockets.h
 #usr/lib/libcurl.la
 #usr/lib/libcurl.so
 usr/lib/libcurl.so.4
@@ -173,7 +174,6 @@ usr/lib/libcurl.so.4.8.0
 #usr/share/man/man3/CURLOPT_FTP_ALTERNATIVE_TO_USER.3
 #usr/share/man/man3/CURLOPT_FTP_CREATE_MISSING_DIRS.3
 #usr/share/man/man3/CURLOPT_FTP_FILEMETHOD.3
-#usr/share/man/man3/CURLOPT_FTP_RESPONSE_TIMEOUT.3
 #usr/share/man/man3/CURLOPT_FTP_SKIP_PASV_IP.3
 #usr/share/man/man3/CURLOPT_FTP_SSL_CCC.3
 #usr/share/man/man3/CURLOPT_FTP_USE_EPRT.3
@@ -264,6 +264,7 @@ usr/lib/libcurl.so.4.8.0
 #usr/share/man/man3/CURLOPT_PROGRESSDATA.3
 #usr/share/man/man3/CURLOPT_PROGRESSFUNCTION.3
 #usr/share/man/man3/CURLOPT_PROTOCOLS.3
+#usr/share/man/man3/CURLOPT_PROTOCOLS_STR.3
 #usr/share/man/man3/CURLOPT_PROXY.3
 #usr/share/man/man3/CURLOPT_PROXYAUTH.3
 #usr/share/man/man3/CURLOPT_PROXYHEADER.3
@@ -304,6 +305,7 @@ usr/lib/libcurl.so.4.8.0
 #usr/share/man/man3/CURLOPT_READDATA.3
 #usr/share/man/man3/CURLOPT_READFUNCTION.3
 #usr/share/man/man3/CURLOPT_REDIR_PROTOCOLS.3
+#usr/share/man/man3/CURLOPT_REDIR_PROTOCOLS_STR.3
 #usr/share/man/man3/CURLOPT_REFERER.3
 #usr/share/man/man3/CURLOPT_REQUEST_TARGET.3
 #usr/share/man/man3/CURLOPT_RESOLVE.3
@@ -321,6 +323,7 @@ usr/lib/libcurl.so.4.8.0
 #usr/share/man/man3/CURLOPT_SASL_IR.3
 #usr/share/man/man3/CURLOPT_SEEKDATA.3
 #usr/share/man/man3/CURLOPT_SEEKFUNCTION.3
+#usr/share/man/man3/CURLOPT_SERVER_RESPONSE_TIMEOUT.3
 #usr/share/man/man3/CURLOPT_SERVICE_NAME.3
 #usr/share/man/man3/CURLOPT_SHARE.3
 #usr/share/man/man3/CURLOPT_SOCKOPTDATA.3
@@ -398,6 +401,7 @@ usr/lib/libcurl.so.4.8.0
 #usr/share/man/man3/CURLOPT_WILDCARDMATCH.3
 #usr/share/man/man3/CURLOPT_WRITEDATA.3
 #usr/share/man/man3/CURLOPT_WRITEFUNCTION.3
+#usr/share/man/man3/CURLOPT_WS_OPTIONS.3
 #usr/share/man/man3/CURLOPT_XFERINFODATA.3
 #usr/share/man/man3/CURLOPT_XFERINFOFUNCTION.3
 #usr/share/man/man3/CURLOPT_XOAUTH2_BEARER.3
@@ -483,6 +487,9 @@ usr/lib/libcurl.so.4.8.0
 #usr/share/man/man3/curl_url_strerror.3
 #usr/share/man/man3/curl_version.3
 #usr/share/man/man3/curl_version_info.3
+#usr/share/man/man3/curl_ws_meta.3
+#usr/share/man/man3/curl_ws_recv.3
+#usr/share/man/man3/curl_ws_send.3
 #usr/share/man/man3/libcurl-easy.3
 #usr/share/man/man3/libcurl-env.3
 #usr/share/man/man3/libcurl-errors.3

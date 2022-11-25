@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.84.0
+VER        = 7.86.0
 
 THISAPP    = curl-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 811a63285f39a598bc4fd73ae4b8e23e5146b93dcf3eea805345792b7dddd85bbd54240d9871a0dc9f058d58fd7ea7f4efbcb82727218e8afaaae3600bad55e1
+$(DL_FILE)_BLAKE2 = a1de7feb229de42bf1deeb5017f97df3b1c10c75fac99bcd0cd21a5dc69b6d8b62520744106d6a113c7a86bd6731dba536a263aabfa22be50d520c43e894acce
 
 install : $(TARGET)
 
@@ -70,10 +70,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xf $(DIR_DL)/$(DL_FILE)
-
-	# Incorporate upstream patch to fix build on armv6l
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/curl-7.84.0-easy_lock_h_include_sched_h_if_available_to_fix_build.patch
-
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--disable-ipv6 \
