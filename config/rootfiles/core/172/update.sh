@@ -84,6 +84,7 @@ rm -rvf \
 	/usr/lib/liblzma.so.5.2.5 \
 	/usr/lib/libnetfilter_conntrack.so.3.7.0 \
 	/usr/lib/libns-9.16.33.so \
+	/usr/lib/libpng16.so.16.37.0 \
 	/usr/lib/libreadline.so.8.1 \
 	/usr/lib/libunbound.so.8.1.1* \
 	/usr/lib/libxml2.so.2.9.* \
