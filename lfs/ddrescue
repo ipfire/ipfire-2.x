@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Data Copying in the Presence of I/O Errors
 
-VER        = 1.25
+VER        = 1.26
 
 THISAPP    = ddrescue-$(VER)
 DL_FILE    = $(THISAPP).tar.lz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ddrescue
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 45054ecb6ca12f8fe27d6b783f7e339fc11a9a3425160012e0682e39644fd3c91362ecd568a2a0b93f9f0af87fae2415b33a7c3fcd8fff2262898e8474818a00
+$(DL_FILE)_BLAKE2 = c545499e380587729eb3fcc90a7baf66288348dc88027dfc14401ec72254cc786d8ab7be076a346964327668ff719048dada916c9f1514a765a255f02c5666c7
 
 install : $(TARGET)
 
