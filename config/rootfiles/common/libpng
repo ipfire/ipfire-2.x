@@ -16,7 +16,7 @@ usr/lib/libpng.so
 #usr/lib/libpng16.la
 usr/lib/libpng16.so
 usr/lib/libpng16.so.16
-usr/lib/libpng16.so.16.37.0
+usr/lib/libpng16.so.16.39.0
 #usr/lib/pkgconfig/libpng.pc
 #usr/lib/pkgconfig/libpng16.pc
 #usr/share/man/man3/libpng.3
