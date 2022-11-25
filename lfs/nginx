@@ -25,7 +25,7 @@
 include Config
 
 SUMMARY    = A HTTP server and IMAP/POP3 proxy server
-VER        = 1.21.6
+VER        = 1.22.1
 
 THISAPP    = nginx-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG	   = nginx
-PAK_VER	   = 13
+PAK_VER	   = 14
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 815d035df33bd947eec41a2f5c993d1f179aa0bd4d069280916aa089a2f96fd3bada7a7192b4a0ef7b8f43036f3a2def0e93d8c8f720dd7145a5d55ea058652f
+$(DL_FILE)_BLAKE2 = 253cd4c53ed0e6d3da8ca0f0ab3b2c46f6c7222c4f6fedd05302dd05efee31869d25a33947cca3ca526899cbdfcea96754be34e15643ebd77da24175319edb46
 
 install : $(TARGET)
 
