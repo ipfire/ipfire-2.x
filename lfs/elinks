@@ -26,19 +26,13 @@ include Config
 
 SUMMARY    = An advanced and well-established feature-rich text mode web browser
 
-VER        = 0.12pre6
+VER        = 0.15.1
 
 THISAPP    = elinks-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = elinks
-PAK_VER    = 2
-
-DEPS       =
-
-SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -48,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3d91c2a4b03cf77a2a86131cfb5339a40c6e89c8aaab7293d5b7f6861f0b7647b1951f2bc15814e342c926a154707162a7814981cdc729329dfb04627133f3bf
+$(DL_FILE)_BLAKE2 = dcec7054d417842e709f26bab53ddb1bf43556de4c69d116ad1e049664bc7c5a5513f02cee500d591252b439a66f354079e2e3eff5692202102cb900e06340c2
 
 install : $(TARGET)
 
@@ -71,18 +65,13 @@ $(patsubst %,$(DIR_DL)/%,$(objects)) :
 $(subst %,%_BLAKE2,$(objects)) :
 	@$(B2SUM)
 
-dist:
-	@$(PAK)
-
 ###############################################################################
 # Installation Details
 ###############################################################################
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/elinks-0.12pre6-openssl11.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/elinks-0.11.0-ssl-noegd.patch
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
