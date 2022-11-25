@@ -115,6 +115,7 @@ rm -rvf \
 	/usr/lib/python3.10/site-packages/setuptools/_vendor/pyparsing.py \
 	/usr/lib/python3.10/site-packages/setuptools/config.py \
 	/usr/lib/python3.10/site-packages/setuptools_rust/utils.py \
+	/usr/lib/sudo/sample_approval.so \
 	/usr/libexec/ipsec/scepclient \
 	/var/ipfire/ca/dh1024.pem
 
