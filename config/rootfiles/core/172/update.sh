@@ -47,7 +47,9 @@ fi
 
 # Remove files
 rm -rvf \
+	/etc/pcmcia \
 	/etc/strongswan.d/scepclient.conf \
+	/etc/udev/rules.d/60-pcmcia.rules \
 	/lib/firmware/cnm/wave521c_j721s2_codec_fw.bin \
 	/lib/firmware/cxgb4/t4fw-1.26.6.0.bin \
 	/lib/firmware/cxgb4/t5fw-1.26.6.0.bin \
@@ -66,6 +68,10 @@ rm -rvf \
 	/lib/firmware/qcom/vpu-2.0/venus.mdt \
 	/lib/firmware/rtl_bt \
 	/lib/libz.so.1.2.12 \
+	/sbin/lspcmcia \
+	/sbin/pccardctl \
+	/sbin/pcmcia-check-broken-cis \
+	/sbin/pcmcia-socket-startup \
 	/usr/lib/libbind9-9.16.33.so \
 	/usr/lib/libdns-9.16.33.so \
 	/usr/lib/libexpat.so.1.8.9 \
