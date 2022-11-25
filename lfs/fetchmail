@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Full-Featured POP and IMAP Mail Retrieval Daemon
 
-VER        = 6.4.32
+VER        = 6.4.34
 
 THISAPP    = fetchmail-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fetchmail
-PAK_VER    = 12
+PAK_VER    = 13
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 5d6311c46053abc2e5b040273f04d9df5e737dcd938d1370bcd84415e422ec6a05126ecb59efcad9254e37338671cf7bfa224ea1015b83e8e93483cbeb033b7a
+$(DL_FILE)_BLAKE2 = 796972391a0ac2c71382aaaad3d75fd5c10ddcc58807f6c7ef9940907779e0ec0a8403e077b24afd50e1a7df0646e852cba02ba314e99ea423904e9f8288df01
 
 install : $(TARGET)
 
