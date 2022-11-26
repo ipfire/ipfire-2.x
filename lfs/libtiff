@@ -26,10 +26,10 @@ include Config
 
 SUMMARY    = The Tiff Library (with JPEG and compression support)
 
-VER        = 4.3.0
+VER        = 4.4.0
 
 THISAPP    = tiff-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 433a087249541f6142dd25b6dc807018639908175b0d73b4af3aa301af2dee3d76184e4689e7b2f1f9b73567ac78d50456ee94fffe00bad6da05375cf2d94d92
+$(DL_FILE)_BLAKE2 = d05a2fb293557d1e7cdec116c65c8338d7714af7b6abd8dd3bb2b476d62e044adc7d6c298843649d63c6bc09f6ce4660ee23638f9beb716937ccf236c2829dcf
 
 install : $(TARGET)
 
@@ -76,7 +76,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
