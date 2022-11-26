@@ -5,6 +5,7 @@ usr/bin/git-shell
 usr/bin/git-upload-archive
 usr/bin/git-upload-pack
 #usr/bin/gitk
+#usr/bin/scalar
 #usr/libexec/git-core
 #usr/libexec/git-core/git
 usr/libexec/git-core/git-add
@@ -48,6 +49,7 @@ usr/libexec/git-core/git-cvsimport
 usr/libexec/git-core/git-cvsserver
 usr/libexec/git-core/git-daemon
 usr/libexec/git-core/git-describe
+usr/libexec/git-core/git-diagnose
 usr/libexec/git-core/git-diff
 usr/libexec/git-core/git-diff-files
 usr/libexec/git-core/git-diff-index
@@ -175,6 +177,7 @@ usr/libexec/git-core/git-var
 usr/libexec/git-core/git-verify-commit
 usr/libexec/git-core/git-verify-pack
 usr/libexec/git-core/git-verify-tag
+usr/libexec/git-core/git-version
 usr/libexec/git-core/git-web--browse
 usr/libexec/git-core/git-whatchanged
 usr/libexec/git-core/git-worktree
@@ -203,6 +206,7 @@ usr/libexec/git-core/mergetools/tortoisemerge
 usr/libexec/git-core/mergetools/vimdiff
 usr/libexec/git-core/mergetools/winmerge
 usr/libexec/git-core/mergetools/xxdiff
+usr/libexec/git-core/scalar
 #usr/share/git-core
 #usr/share/git-core/templates
 usr/share/git-core/templates/branches
