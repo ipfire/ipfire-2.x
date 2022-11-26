@@ -134,6 +134,7 @@ usr/lib/liburcu.so.8.0.0
 #usr/lib/pkgconfig/liburcu-bp.pc
 #usr/lib/pkgconfig/liburcu-cds.pc
 #usr/lib/pkgconfig/liburcu-mb.pc
+#usr/lib/pkgconfig/liburcu-memb.pc
 #usr/lib/pkgconfig/liburcu-qsbr.pc
 #usr/lib/pkgconfig/liburcu-signal.pc
 #usr/lib/pkgconfig/liburcu.pc
