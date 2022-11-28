@@ -1508,7 +1508,6 @@ buildipfire() {
   lfsmake2 rpcbind
   lfsmake2 keyutils
   lfsmake2 nfs
-  lfsmake2 gnu-netcat
   lfsmake2 ncat
   lfsmake2 nmap
   lfsmake2 etherwake
