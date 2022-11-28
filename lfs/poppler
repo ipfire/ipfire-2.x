@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 22.04.0
+VER        = 22.11.0
 
 THISAPP    = poppler-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ea38e4d6bd4bbbbb2024fdceb35c4868e9c70ea597b231d221f4f61635b9d92ffbaca4bb196f06b4b04a3d787a7251f36760f4a6dd466c1c055e13034affb55e
+$(DL_FILE)_BLAKE2 = 958eb5e99725e46f3fd79138f4e1197ede9df5be19b6e5b0899b6a8c8b071734b3b41af7681bd857662e7d9c36fde09117418c1db347c5dad9a2fbd07cb1eec9
 
 install : $(TARGET)
 
