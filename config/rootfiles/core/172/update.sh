@@ -86,6 +86,7 @@ rm -rvf \
 	/usr/lib/libns-9.16.33.so \
 	/usr/lib/libpng16.so.16.37.0 \
 	/usr/lib/libreadline.so.8.1 \
+	/usr/lib/libtasn1.so.6.6.2 \
 	/usr/lib/libunbound.so.8.1.1* \
 	/usr/lib/libxml2.so.2.9.* \
 	/usr/lib/python3.10/ensurepip/_bundled/pip-21* \
