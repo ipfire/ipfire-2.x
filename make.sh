@@ -910,7 +910,7 @@ qemu_find_build_helper_name() {
 file_is_static() {
 	local file="${1}"
 
-	file -L "${file}" 2>/dev/null | grep -q "statically linked"
+	file -L "${file}" 2>/dev/null | grep -q -e "statically linked" -e "static-pie linked"
 }
 
 update_language_list() {
