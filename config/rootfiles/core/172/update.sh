@@ -37,6 +37,7 @@ done
 /usr/local/bin/openvpnctrl -kn2n
 /etc/rc.d/init.d/sshd stop
 /etc/rc.d/init.d/unbound stop
+/etc/rc.d/init.d/suricata stop
 
 KVER="xxxKVERxxx"
 
@@ -166,6 +167,9 @@ if [ -f "/var/ipfire/ovpn/n2nconf/*/*.conf" ]; then
 fi
 
 # Start services
+if grep -q "ENABLE_IDS=on" /var/ipfire/suricata/settings; then
+	/etc/rc.d/init.d/suricata start
+fi
 /etc/init.d/unbound start
 if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
 	/etc/init.d/sshd start
