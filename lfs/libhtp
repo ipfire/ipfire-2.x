@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.5.41
+VER        = 0.5.42
 
 THISAPP    = libhtp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = e6e790f76b8d08b89ffc483a218dd1b3a6f910ff1fe8e44d48bfaae2189d9df567c0199e9f20fde05dc4059f75a1e3c34f4f76f2c8818dc7ca4111538095e16d
+$(DL_FILE)_BLAKE2 = 8e1446992c40c2c2e9e7dd096803752245eebf3b5e48e0215430dbfe225ae029b2e01fadca61bdd994b534a0ed140b0a0149aa9a0dde64409ebf0afdd2bf6fd7
 
 install : $(TARGET)
 
