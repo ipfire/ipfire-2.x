@@ -85,6 +85,9 @@ rm -rvf \
 	/usr/lib/libnetfilter_conntrack.so.3.7.0 \
 	/usr/lib/libns-9.16.33.so \
 	/usr/lib/libpng16.so.16.37.0 \
+	/usr/lib/libpoppler-cpp.so.0.9* \
+	/usr/lib/libpoppler-glib.so.8.23.0 \
+	/usr/lib/libpoppler.so.120* \
 	/usr/lib/libreadline.so.8.1 \
 	/usr/lib/libtasn1.so.6.6.2 \
 	/usr/lib/libtiff.so.5.7* \
