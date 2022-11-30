@@ -2088,7 +2088,7 @@
 'vpi number' => 'Numer VPI:',
 'vpn' => 'VPN',
 'vpn aggrmode' => 'Zezwól na agresywny tryb IKE. Unikać jeśli możliwe (klucz współdzielony przesyłany otwartym tekstem)!',
-'vpn altname syntax' => 'SubjectAltName is a comma separated list of e-mail, dns, uri, rid and ip objects.<br />email:an email address. Syntax email:copy takes the email field from the cert to be used.<br />DNS:a valid domain name.<br />URI:any valid uri.<br />RID:registered object identifier.<br />IP:an IP address.<br />Note:charset is limited and case is significant.<br />Example:<br /><b>e-mail:</b>ipfire@foo.org<b>,email:</b>copy<b>,DNS:</b>www.ipfire.org<b>,IP:</b>127.0.0.1<b>,URI:</b>http://url/to/something',
+'vpn altname syntax' => 'SubjectAltName is a comma separated list of email, dns, uri, rid and ip objects.<br />email:an email address. Syntax email:copy takes the email field from the cert to be used.<br />DNS:a valid domain name.<br />URI:any valid uri.<br />RID:registered object identifier.<br />IP:an IP address.<br />Note:charset is limited and case is significant.<br />Example:<br /><b>email:</b>ipfire@foo.org<b>,email:</b>copy<b>,DNS:</b>www.ipfire.org<b>,IP:</b>127.0.0.1<b>,URI:</b>http://url/to/something',
 'vpn auth-dn' => 'Klien jest identyfikowany przez jeden z ciągów: IPV4_ADDR, FQDN, USER_FQDN or DER_ASN1_DN w zdalnym polu ID',
 'vpn configuration main' => 'Konfiguracja VPN ',
 'vpn delayed start' => 'Opóźnienie przed uruchomieniem VPN (w sekundach)',

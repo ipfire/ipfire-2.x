@@ -2528,7 +2528,7 @@
 'vpi number' => 'VPI number:',
 'vpn' => 'VPN',
 'vpn aggrmode' => 'IKE aggressive mode allowed. Avoid if possible (preshared key is transmitted in clear text)!',
-'vpn altname syntax' => 'SubjectAltName is a comma separated list of e-mail, dns, uri, rid and ip objects.<br />email:an email address. Syntax email:copy takes the email field from the cert to be used.<br />DNS:a valid domain name.<br />URI:any valid uri.<br />RID:registered object identifier.<br />IP:an IP address.<br />Note:charset is limited and case is significant.<br />Example:<br /><b>e-mail:</b>ipfire@foo.org<b>,email:</b>copy<b>,DNS:</b>www.ipfire.org<b>,IP:</b>127.0.0.1<b>,URI:</b>http://url/to/something',
+'vpn altname syntax' => 'SubjectAltName is a comma separated list of email, dns, uri, rid and ip objects.<br />email:an email address. Syntax email:copy takes the email field from the cert to be used.<br />DNS:a valid domain name.<br />URI:any valid uri.<br />RID:registered object identifier.<br />IP:an IP address.<br />Note:charset is limited and case is significant.<br />Example:<br /><b>email:</b>ipfire@foo.org<b>,email:</b>copy<b>,DNS:</b>www.ipfire.org<b>,IP:</b>127.0.0.1<b>,URI:</b>http://url/to/something',
 'vpn auth-dn' => 'Peer is identified by either IPV4_ADDR, FQDN, USER_FQDN or DER_ASN1_DN string in remote ID field',
 'vpn configuration main' => 'VPN Configuration',
 'vpn delayed start' => 'Ritardo prima di avviare la VPN (secondi)',
