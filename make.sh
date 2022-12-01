@@ -1211,7 +1211,6 @@ buildipfire() {
   lfsmake2 libqmi
   lfsmake2 pam
   lfsmake2 c-ares
-  lfsmake2 rust
   lfsmake2 rust-dissimilar
   lfsmake2 rust-cfg-if
   lfsmake2 rust-libc
@@ -1219,6 +1218,7 @@ buildipfire() {
   lfsmake2 rust-typenum
   lfsmake2 rust-version-check
   lfsmake2 rust-generic-array
+  lfsmake2 rust-crypto-common
   lfsmake2 rust-cipher
   lfsmake2 rust-hex
   lfsmake2 rust-unicode-xid
@@ -1245,7 +1245,6 @@ buildipfire() {
   lfsmake2 rust-serde_json
   lfsmake2 rust-synstructure
   lfsmake2 rust-block-buffer
-  lfsmake2 rust-crypto-common
   lfsmake2 rust-digest
   lfsmake2 rust-ppv-lite86
   lfsmake2 rust-rand_core
