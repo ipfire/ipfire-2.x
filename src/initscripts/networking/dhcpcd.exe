@@ -60,6 +60,18 @@ dhcpcd_up()
 		mv /tmp/hosts /etc/hosts
 	fi
 
+	# Try to set the default route if there is none
+	# This can happen when we are using the 3RD party configuration
+	# This should not be necessary, since dhcpcd says it will configure
+	# a default route, but that does not seem to happen:
+	# https://github.com/NetworkConfiguration/dhcpcd/issues/129
+	if ! ip route 2>/dev/null | grep ^default && [ -s "/var/ipfire/red/remote-ipaddress" ]; then
+		gateway=$(</var/ipfire/red/remote-ipaddress)
+
+		# XXX This is ignoring any MTU configuration
+		ip route add default via "${gateway}"
+	fi
+
 	if [ $update ]; then
 		# Consider RED being active
 		touch /var/ipfire/red/active
