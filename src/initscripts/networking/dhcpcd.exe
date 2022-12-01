@@ -111,6 +111,8 @@ setup_qmi() {
 	local netmask
 	local gateway
 	local mtu=1500
+	local dns1
+	local dns2
 
 	local line
 	while read -r line; do
@@ -126,6 +128,12 @@ setup_qmi() {
 				;;
 			*IPv4\ gateway\ address:*)
 				gateway="${value}"
+				;;
+			*IPv4\ primary\ DNS:*)
+				dns1="${value}"
+				;;
+			*IPv4\ secondary\ DNS:*)
+				dns2="${value}"
 				;;
 			*MTU:*)
 				mtu="${value}"
@@ -152,6 +160,14 @@ setup_qmi() {
 
 		# Configure the default route
 		ip route add default via "${gateway}" mtu "${mtu}"
+	fi
+
+	# Store and DNS servers
+	if [ -n "${dns1}" ]; then
+		echo -n "${dns1}" > /var/ipfire/red/dns1
+	fi
+	if [ -n "${dns2}" ]; then
+		echo n "${dns2}"  > /var/ipfire/red/dns2
 	fi
 
 	return 0
