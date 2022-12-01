@@ -1176,6 +1176,8 @@ buildipfire() {
   lfsmake2 xradio		KCFG=""
   lfsmake2 linux-initrd		KCFG=""
 
+  lfsmake2 glib
+  lfsmake2 libgudev
   lfsmake2 libgpg-error
   lfsmake2 libgcrypt
   lfsmake2 libassuan
@@ -1421,7 +1423,6 @@ buildipfire() {
   lfsmake2 python3-inotify
   lfsmake2 python3-docutils
   lfsmake2 python3-daemon
-  lfsmake2 glib
   lfsmake2 ntp
   lfsmake2 openssh
   lfsmake2 fontconfig
