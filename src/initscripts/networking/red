@@ -227,7 +227,7 @@ case "${1}" in
 				ip link set "${RED_DEV}" up &>/dev/null
 
 				# Start the DHCP client
-				dhcpcd_start "${RED_DEV}"
+				dhcpcd_start "${RED_DEV}" --nolink
 
 				# Done
 				exit 0
