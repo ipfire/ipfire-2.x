@@ -90,4 +90,7 @@ dhcpcd_down()
 case "$reason" in
 BOUND|INFORM|REBIND|REBOOT|RENEW|TIMEOUT|STATIC)	dhcpcd_up;;
 PREINIT|EXPIRE|FAIL|IPV4LL|NAK|RELEASE|STOP)		dhcpcd_down;;
+*)
+	logger -p "local0.info" -t "dhcpcd.exe[$$]" "Unhandled DHCP event: ${reason}"
+	;;
 esac
