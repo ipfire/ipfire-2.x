@@ -1176,6 +1176,10 @@ buildipfire() {
   lfsmake2 xradio		KCFG=""
   lfsmake2 linux-initrd		KCFG=""
 
+  lfsmake2 python3-setuptools
+  lfsmake2 libffi
+  lfsmake2 ninja
+  lfsmake2 meson
   lfsmake2 glib
   lfsmake2 libgudev
   lfsmake2 libgpg-error
@@ -1204,7 +1208,6 @@ buildipfire() {
   lfsmake2 curl
   lfsmake2 tcl
   lfsmake2 sqlite
-  lfsmake2 libffi
   lfsmake2 python3
   lfsmake2 rust
   lfsmake2 rust-dissimilar
@@ -1324,8 +1327,6 @@ buildipfire() {
   lfsmake2 nasm
   lfsmake2 libarchive
   lfsmake2 cmake
-  lfsmake2 ninja
-  lfsmake2 meson
   lfsmake2 libjpeg
   lfsmake2 openjpeg
   lfsmake2 libexif
@@ -1420,7 +1421,6 @@ buildipfire() {
   lfsmake2 perl-Crypt-PasswdMD5
   lfsmake2 perl-Net-Telnet
   lfsmake2 perl-JSON
-  lfsmake2 python3-setuptools
   lfsmake2 python3-inotify
   lfsmake2 python3-docutils
   lfsmake2 python3-daemon
