@@ -24,11 +24,6 @@
 
 eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 
-if [ "$TYPE" = "isdn" ]; then
-	DNS1="${MS_DNS1}"
-	DNS2="${MS_DNS2}"
-fi
-
 # Write DNS servers to configuration
 echo "${DNS1}" > /var/run/dns1
 echo "${DNS2}" > /var/run/dns2

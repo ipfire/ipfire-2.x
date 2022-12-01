@@ -415,7 +415,6 @@ WARNING: translation string unused: host deny
 WARNING: translation string unused: hostname and domain already in use
 WARNING: translation string unused: hour-graph
 WARNING: translation string unused: hours2
-WARNING: translation string unused: ibod for dual isdn only
 WARNING: translation string unused: icmp selected but no type
 WARNING: translation string unused: icmp type
 WARNING: translation string unused: id

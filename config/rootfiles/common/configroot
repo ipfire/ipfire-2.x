@@ -85,8 +85,6 @@ var/ipfire/ipblocklist-functions.pl
 var/ipfire/ipblocklist
 #var/ipfire/ipblocklist/modified
 #var/ipfire/ipblocklist/settings
-var/ipfire/isdn
-#var/ipfire/isdn/settings
 var/ipfire/key
 var/ipfire/lang.pl
 var/ipfire/langs

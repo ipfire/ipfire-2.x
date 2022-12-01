@@ -1420,7 +1420,6 @@
 'hour-graph' => 'Hora',
 'hours' => 'horas',
 'hours2' => 'Horas',
-'ibod for dual isdn only' => 'iBPD sólo puede usarse con ISDN dual',
 'icmp selected but no type' => 'ICMP seleccionado como protocolo, pero no se ha seleccionado tipo de ICMP.',
 'icmp type' => 'Tipo de  ICMP',
 'id' => 'ID',
