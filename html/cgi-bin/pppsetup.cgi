@@ -87,6 +87,16 @@ elsif ($pppsettings{'ACTION'} eq $Lang::tr{'save'})
                 $errormessage = $Lang::tr{'invalid input'};
                 goto ERROR;
         }
+	if ($pppsettings{'TYPE'} eq "qmi") {
+		# APN cannot be empty
+		if ($pppsettings{'APN'} eq "") {
+			$errormessage = $Lang::tr{'access point name is required'};
+			goto ERROR;
+		} elsif (!&General::validdomainname($pppsettings{'APN'})) {
+			$errormessage = $Lang::tr{'access point name is invalid'};
+			goto ERROR;
+		}
+	}
 
         if ($pppsettings{'PROFILENAME'} eq '') {
                 $errormessage = $Lang::tr{'profile name not given'};
@@ -523,6 +533,7 @@ print <<END
 	<option value='pppoe' $selected{'TYPE'}{'pppoe'}>PPPoE</option>
 	<option value='pptp' $selected{'TYPE'}{'pptp'}>PPTP</option>
 	<option value='vdsl' $selected{'TYPE'}{'vdsl'}>VDSL</option>
+	<option value='qmi' $selected{'TYPE'}{'qmi'}>QMI</option>
 END
 ;
 
@@ -719,7 +730,8 @@ END
 ;
 }
 
-print <<END
+if ($pppsettings{'TYPE'} ne "qmi") {
+	print <<END
 <tr>
         <td colspan='3' width='75%'>$Lang::tr{'idle timeout'}&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td width='25%'><input type='text' name='TIMEOUT' value='$pppsettings{'TIMEOUT'}' /></td>
@@ -738,7 +750,7 @@ print <<END
  </tr>
 END
 ;
-print <<END
+	print <<END
  <tr>
         <td colspan='4' width='100%'><input type='radio' name='RECONNECTION' value='persistent' $checked{'RECONNECTION'}{'persistent'}>$Lang::tr{'persistent'}</td>
  </tr>
@@ -767,6 +779,7 @@ END
 </tr>
 END
 ;
+}
 
 if ($pppsettings{'TYPE'} eq 'pptp')
 {
@@ -908,6 +921,26 @@ print <<END
 <tr>
         <td bgcolor='$color{'color20'}' colspan='4' width='100%'><b>$Lang::tr{'authentication'}</b></td>
 </tr>
+END
+;
+
+# Ask for the APN for QMI
+if ($pppsettings{'TYPE'} eq 'qmi') {
+	print <<END;
+		<tr>
+			<td width="25%">
+				$Lang::tr{'access point name'}
+				&nbsp;
+				<img src='/blob.gif' alt='*'/>
+			</td>
+			<td colspan="3" width="75%">
+				<input type="text" name="APN" value="$pppsettings{'APN'}" />
+			</td>
+		</tr>
+END
+}
+
+print <<END
 <tr>
         <td width='25%'>$Lang::tr{'username'}&nbsp;<img src='/blob.gif' alt='*' /></td>
         <td width='25%'><input type='text' name='USERNAME' value='$pppsettings{'USERNAME'}' /></td>
