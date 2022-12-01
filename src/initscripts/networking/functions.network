@@ -256,14 +256,14 @@ qmi_configure_apn() {
 
 	qmicli --device="${device}" --device-open-proxy \
 		--wds-start-network="${_args}" \
-		--client-no-release-cid
+		--client-no-release-cid &>/dev/null
 }
 
 qmi_reset() {
 	local device="${1}"
 
 	qmicli --device="${device}" --device-open-proxy \
-		--wds-reset
+		--wds-reset &>/dev/null
 }
 
 # Assigns a "static" MAC address
