@@ -169,3 +169,93 @@ dhcpcd_stop() {
 		echo_failure
 	fi
 }
+
+# QMI stuff
+
+qmi_find_device() {
+	local intf="${1}"
+	local _intf
+
+	local path
+	for path in /dev/cdc-*; do
+		if [ -c "${path}" ]; then
+			_intf="$(qmicli --device="${path}" --device-open-proxy --get-wwan-iface)"
+
+			# Check if the interface matches
+			if [ "${intf}" = "${_intf}" ]; then
+				echo "${path}"
+				return 0
+			fi
+		fi
+	done
+
+	# Nothing found
+	return 1
+}
+
+qmi_enable_rawip_mode() {
+	local intf="${1}"
+
+	# Shut down the device first
+	ip link set "${intf}" down &>/dev/null
+
+	echo "Y" > "/sys/class/net/${intf}/qmi/raw_ip"
+}
+
+qmi_configure_apn() {
+	local device="${1}"
+
+	# APN settings
+	local apn="${2}"
+	local auth="${3}"
+	local username="${4}"
+	local password="${5}"
+
+	local args=(
+		# We only support IPv4 right now
+		"ip-type=4"
+	)
+
+	# Set APN
+	if [ -n "${apn}" ]; then
+		args+=( "apn=${apn}" )
+	fi
+
+	# Set auth
+	case "${auth}" in
+		PAP|CHAP)
+			args+=( "auth=${auth}" )
+			;;
+	esac
+
+	# Set username
+	if [ -n "${username}" ]; then
+		args+=( "username=${username}" )
+	fi
+
+	# Set password
+	if [ -n "${password}" ]; then
+		args+=( "password=${password}" )
+	fi
+
+	local _args
+
+	local arg
+	for arg in ${args[@]}; do
+		if [ -n "${_args}" ]; then
+			_args="${_args},"
+		fi
+		_args="${_args}${arg}"
+	done
+
+	qmicli --device="${device}" --device-open-proxy \
+		--wds-start-network="${_args}" \
+		--client-no-release-cid
+}
+
+qmi_reset() {
+	local device="${1}"
+
+	qmicli --device="${device}" --device-open-proxy \
+		--wds-reset
+}

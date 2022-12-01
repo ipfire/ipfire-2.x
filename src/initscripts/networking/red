@@ -210,6 +210,27 @@ case "${1}" in
 				if [ "$TYPE" == "pptpatm" ]; then
 					TYPE="pptp"
 				fi
+
+			# QMI
+			elif [ "$TYPE" = "qmi" ]; then
+				DEVICE="$(qmi_find_device "${RED_DEV}")"
+
+				boot_mesg "Bringing up QMI on ${RED_DEV} (${DEVICE})..."
+
+				# Enable RAW-IP mode
+				qmi_enable_rawip_mode "${RED_DEV}"
+
+				# Configure APN
+				qmi_configure_apn "${DEVICE}" "${APN}" "${AUTH}" "${USERNAME}" "${PASSWORD}"
+
+				# Set up the interface
+				ip link set "${RED_DEV}" up &>/dev/null
+
+				# Start the DHCP client
+				dhcpcd_start "${RED_DEV}" --debug
+
+				# Done
+				exit 0
 			fi
 
 			if [ "$TYPE" == "vdsl" ]; then
@@ -477,6 +498,21 @@ case "${1}" in
 			run_subdir ${rc_base}/init.d/networking/red.down/
 
 		elif [ "$TYPE" == "PPPOE" ]; then
+			eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
+
+			if [ "${TYPE}" = "qmi" ]; then
+				boot_mesg "Bringing down the QMI interface ${RED_DEV}..."
+				DEVICE="$(qmi_find_device "${RED_DEV}")"
+
+				# Stop the DHCP client on RED
+				dhcpcd_stop "${RED_DEV}"
+
+				# Reset any QMI settings
+				qmi_reset "${DEVICE}"
+
+				exit 0
+			fi
+
 			boot_mesg "Bringing down the PPP interface ..."
 			rm -f /var/ipfire/red/keepconnected
 			killall -w -s TERM /usr/sbin/pppd 2>/dev/null
