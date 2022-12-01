@@ -59,8 +59,9 @@ dhcpcd_is_running() {
 
 dhcpcd_start() {
 	# This function will start a dhcpcd on a speciefied device.
-
 	local device="$1"
+	shift
+
 	local dhcp_start=()
 
 	boot_mesg -n "Starting dhcpcd on the ${device} interface..."
@@ -83,6 +84,9 @@ dhcpcd_start() {
 	if [ -n "${RED_DHCP_FORCE_MTU}" ]; then
 		dhcp_start+=( "--static" "mtu=${RED_DHCP_FORCE_MTU}" )
 	fi
+
+	# Append any further command line options
+	dhcp_start+=( $@ )
 
 	# Start dhcpcd.
 	/sbin/dhcpcd "${dhcp_start[@]}" ${device} >/dev/null 2>&1
