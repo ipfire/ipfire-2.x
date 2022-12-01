@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,14 +24,14 @@
 
 include Config
 
-VER        = 2022-01-27
+VER        = 1.65.0
 
-# From https://static.rust-lang.org/dist/2022-01-27/
+# From https://forge.rust-lang.org/infra/other-installation-methods.html#standalone-installers
 
-THISAPP    = rust-nightly-$(VER)
-DL_FILE    = $(THISAPP)-$(RUST_PLATFORM).tar.xz
+THISAPP    = rust-$(VER)
+DL_FILE    = $(THISAPP)-$(RUST_PLATFORM).tar.gz
 DL_FROM    = $(URL_IPFIRE)
-DIR_APP    = $(DIR_SRC)/rust-nightly-$(RUST_PLATFORM)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)-$(RUST_PLATFORM)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 ###############################################################################
@@ -42,10 +42,10 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(THISAPP)-x86_64-unknown-linux-gnu.tar.xz_BLAKE2 = 9d721887ed1a41ef06ce7e75197b8c7df03aa238818a15e93263c5c32580ae526baa3eb6fe17fa9344da17e2401f81a9b9109445629ed90c93d773bfa57da425
-$(THISAPP)-aarch64-unknown-linux-gnu.tar.xz_BLAKE2 = ebbd07ccc3d0c6a7f009d7eed161c1be528f8ced31ae1c3234e5c088fdb5d7de6e3638c44c26ccfaa81d1ba60c321fa82cf26f67e20dd3b97c75d2639d30dff2
-$(THISAPP)-arm-unknown-linux-gnueabi.tar.xz_BLAKE2 = 2b8f3c43fb3aa90cd9218282d0821ef40a787ba73d393302284b8cf3c8bbac9f37cda748462ffa3909c1ded999e1ce3f7e89761355c44176e7326218b7a06135
-$(THISAPP)-riscv64gc-unknown-linux-gnu.tar.xz_BLAKE2 = 52ccb010f9f557798bf8962225f002b73a16334daf6ff08c81064fdfe06f47fed3f57bdf8bc2ae7f5e157732619de8e1ed9852630e4621510c8d98bf9be415ab
+$(THISAPP)-x86_64-unknown-linux-gnu.tar.gz_BLAKE2 = db2dd8518571c5d054502820a0f49483a6cf743ac74747cdb6bb2f3d681b2132de0ed2eb2a5228eaaf7fe737e415cb477764d04d29f565e2bf6cecf6109a468b
+$(THISAPP)-aarch64-unknown-linux-gnu.tar.gz_BLAKE2 = 73c0c4d995cf6e81b584b078528035d1fedb12e3c0d0435025945e2ba396850676f7f581ad1e627769122bbba5424591fac734520186b704bff7f7a8ca241385
+$(THISAPP)-arm-unknown-linux-gnueabi.tar.gz_BLAKE2 = 9038b158b2590a8a0a25f72f17ff38d88aff1cb210818a150f24d34dbdff9195f156f21ddccaadf9a3ecd3901161e183b5cb0e15e012f4a26be937a9782e0c6c
+$(THISAPP)-riscv64gc-unknown-linux-gnu.tar.gz_BLAKE2 = 76874cfd1e8235eb6d99f75bd9affafa50d1b824664b2edd35c1a5276f51eabaf3f5d5c408070580bbfbdab862e6fe4186f552427e72ac3afa245b2c41c275ae
 
 install : $(TARGET)
 
@@ -74,7 +74,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
 	cd $(DIR_APP) && ./install.sh \
 		--components=cargo,rustc,rust-std-$(RUST_PLATFORM) \
