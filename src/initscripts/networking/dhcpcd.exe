@@ -144,7 +144,7 @@ setup_qmi() {
 	ip addr add "${address}/${netmask}" dev "${interface}"
 
 	# Configure the default route
-	ip route add default via "${gateway}" #mtu "${mtu}"
+	ip route add default via "${gateway}" mtu "${mtu}"
 
 	return 0
 }
