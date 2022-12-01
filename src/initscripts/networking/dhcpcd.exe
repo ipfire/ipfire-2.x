@@ -34,7 +34,6 @@ dhcpcd_up()
 		exit 0;
 	fi
 
-	# Only if RED_TYPE=DHCP update /var/ipfire/red
 	# Check if we have to restart the services at update
 	[ ! -e "/var/ipfire/red/active" ] && update=1;
 	if [ "$old_domain_name_service" != "$new_domain_name_service" ]; then
@@ -82,13 +81,12 @@ dhcpcd_down()
 	# Remove DNS servers
 	rm -f /var/run/dns1 /var/run/dns2
 
-	# Only if RED_TYPE=DHCP update /var/ipfire/red
-	if [ "$RED_TYPE" == "DHCP" ]; then
-		rm -f /var/ipfire/red/active
-		if [ ! $reason == "PREINIT" ]; then
-			logger -p local0.info -t dhcpcd.exe[$$] "${interface} has been brought down ($reason)"
-			run_subdir ${rc_base}/init.d/networking/red.down/
-		fi
+	# Consider RED to be no longer active
+	rm -f /var/ipfire/red/active
+
+	if [ ! $reason == "PREINIT" ]; then
+		logger -p local0.info -t dhcpcd.exe[$$] "${interface} has been brought down ($reason)"
+		run_subdir ${rc_base}/init.d/networking/red.down/
 	fi
 
 	# Remove any configured IP address from the device
