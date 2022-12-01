@@ -4,7 +4,7 @@
 #usr/lib/libmpfr.la
 #usr/lib/libmpfr.so
 usr/lib/libmpfr.so.6
-usr/lib/libmpfr.so.6.1.0
+usr/lib/libmpfr.so.6.1.1
 #usr/lib/pkgconfig/mpfr.pc
 #usr/share/doc/mpfr
 #usr/share/doc/mpfr/AUTHORS
