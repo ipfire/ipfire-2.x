@@ -54,10 +54,12 @@ dhcpcd_up()
 	#Get IP Address
 	echo -n "$new_ip_address"  > /var/ipfire/red/local-ipaddress
 
-	#Get default gateway
-	grep -v -E "\<gateway\>" /etc/hosts > /tmp/hosts
-	echo "$new_routers	gateway"  >> /tmp/hosts
-	mv /tmp/hosts /etc/hosts
+	# Get default gateway
+	if [ -n "${new_routers}" ]; then
+		grep -v -E "\<gateway\>" /etc/hosts > /tmp/hosts
+		echo "$new_routers	gateway"  >> /tmp/hosts
+		mv /tmp/hosts /etc/hosts
+	fi
 
 	if [ $update ]; then
 		[ -e "/var/ipfire/red/active" ] || touch /var/ipfire/red/active
