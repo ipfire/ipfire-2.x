@@ -1197,6 +1197,7 @@ buildipfire() {
   lfsmake2 dhcpcd
   lfsmake2 boost
   lfsmake2 linux-atm
+  lfsmake2 libqmi
   lfsmake2 gdbm
   lfsmake2 pam
   lfsmake2 c-ares
