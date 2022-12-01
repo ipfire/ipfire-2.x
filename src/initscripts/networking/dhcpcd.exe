@@ -146,7 +146,13 @@ setup_qmi() {
 	ip addr add "${address}/${netmask}" dev "${interface}"
 
 	# Configure the default route
-	ip route add default via "${gateway}" mtu "${mtu}"
+	if [ -n "${gateway}" ]; then
+		# Store the default gateway
+		echo -n "${gateway}" > /var/ipfire/red/remote-ipaddress
+
+		# Configure the default route
+		ip route add default via "${gateway}" mtu "${mtu}"
+	fi
 
 	return 0
 }
