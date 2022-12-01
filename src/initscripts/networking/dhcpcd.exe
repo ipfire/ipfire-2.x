@@ -175,13 +175,17 @@ setup_qmi() {
 	return 0
 }
 
-case "$reason" in
-BOUND|INFORM|REBIND|REBOOT|RENEW|TIMEOUT|STATIC)	dhcpcd_up;;
-PREINIT|EXPIRE|FAIL|IPV4LL|NAK|RELEASE|STOP)		dhcpcd_down;;
-3RDPARTY)
-	dhcpcd_3rdparty
-	;;
-*)
-	logger -p "local0.info" -t "dhcpcd.exe[$$]" "Unhandled DHCP event: ${reason}"
-	;;
+case "${reason}" in
+	BOUND|INFORM|REBIND|REBOOT|RENEW|TIMEOUT|STATIC)
+		dhcpcd_up
+		;;
+	PREINIT|EXPIRE|FAIL|IPV4LL|NAK|RELEASE|STOP)
+		dhcpcd_down
+		;;
+	3RDPARTY)
+		dhcpcd_3rdparty
+		;;
+	*)
+		logger -p "local0.info" -t "dhcpcd.exe[$$]" "Unhandled DHCP event: ${reason}"
+		;;
 esac
