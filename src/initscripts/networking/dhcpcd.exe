@@ -60,18 +60,6 @@ dhcpcd_up()
 		mv /tmp/hosts /etc/hosts
 	fi
 
-	# Try to set the default route if there is none
-	# This can happen when we are using the 3RD party configuration
-	# This should not be necessary, since dhcpcd says it will configure
-	# a default route, but that does not seem to happen:
-	# https://github.com/NetworkConfiguration/dhcpcd/issues/129
-	if ! ip route 2>/dev/null | grep ^default && [ -s "/var/ipfire/red/remote-ipaddress" ]; then
-		gateway=$(</var/ipfire/red/remote-ipaddress)
-
-		# XXX This is ignoring any MTU configuration
-		ip route add default via "${gateway}"
-	fi
-
 	if [ $update ]; then
 		# Consider RED being active
 		touch /var/ipfire/red/active
@@ -107,95 +95,12 @@ dhcpcd_down()
 	return 0
 }
 
-# Called when dhcpcd relies on a third party to configure an IP address
-dhcpcd_3rdparty() {
-	local qmi_device="$(qmi_find_device "${interface}")"
-
-	if [ -n "${qmi_device}" ]; then
-		setup_qmi "${qmi_device}" || return $?
-	fi
-
-	return 0
-}
-
-setup_qmi() {
-	local device="${1}"
-
-	local address
-	local netmask
-	local gateway
-	local mtu=1500
-	local dns1
-	local dns2
-
-	local line
-	while read -r line; do
-		# Extract the value
-		value="${line#*: }"
-
-		case "${line}" in
-			*IPv4\ address:*)
-				address="${value}"
-				;;
-			*IPv4\ subnet\ mask:*)
-				netmask="${value}"
-				;;
-			*IPv4\ gateway\ address:*)
-				gateway="${value}"
-				;;
-			*IPv4\ primary\ DNS:*)
-				dns1="${value}"
-				;;
-			*IPv4\ secondary\ DNS:*)
-				dns2="${value}"
-				;;
-			*MTU:*)
-				mtu="${value}"
-				;;
-		esac
-	done <<< "$(qmicli --device="${device}" --wds-get-current-settings)"
-
-	if [ -z "${address}" ] || [ -z "${netmask}" ] || [ -z "${gateway}" ]; then
-		logger -p "local0.info" -t "dhcpcd.exe[$$]" \
-			"Could not retrieve all information from the QMI interface"
-		return 1
-	fi
-
-	# Flush any previous configuration
-	ip addr flush dev "${interface}"
-
-	# Configure the IP address
-	ip addr add "${address}/${netmask}" dev "${interface}"
-
-	# Configure the default route
-	if [ -n "${gateway}" ]; then
-		# Store the default gateway
-		echo -n "${gateway}" > /var/ipfire/red/remote-ipaddress
-
-		# Configure the default route
-		ip route add default via "${gateway}" mtu "${mtu}"
-	fi
-
-	# Store and DNS servers
-	if [ -n "${dns1}" ]; then
-		echo -n "${dns1}" > /var/ipfire/red/dns1
-	fi
-	if [ -n "${dns2}" ]; then
-		echo -n "${dns2}" > /var/ipfire/red/dns2
-	fi
-
-	return 0
-}
-
 case "${reason}" in
 	BOUND|INFORM|REBIND|REBOOT|RENEW|TIMEOUT|STATIC)
 		dhcpcd_up
 		;;
 	PREINIT|EXPIRE|FAIL|IPV4LL|NAK|RELEASE|STOP)
 		dhcpcd_down
-		;;
-	3RDPARTY)
-		dhcpcd_3rdparty
 		;;
 	# Ignored events where we do not need to do anything
 	STOPPED|CARRIER|NOCARRIER)
