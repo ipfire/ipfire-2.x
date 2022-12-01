@@ -169,7 +169,7 @@ setup_qmi() {
 		echo -n "${dns1}" > /var/ipfire/red/dns1
 	fi
 	if [ -n "${dns2}" ]; then
-		echo n "${dns2}"  > /var/ipfire/red/dns2
+		echo -n "${dns2}" > /var/ipfire/red/dns2
 	fi
 
 	return 0
