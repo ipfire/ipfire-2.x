@@ -63,7 +63,11 @@ dhcpcd_up()
 
 	if [ $update ]; then
 		[ -e "/var/ipfire/red/active" ] || touch /var/ipfire/red/active
-		echo -n "$new_routers" > /var/ipfire/red/remote-ipaddress
+
+		if [ -n "${new_routers}" ]; then
+			echo -n "${new_routers}" > /var/ipfire/red/remote-ipaddress
+		fi
+
 		logger -p local0.info -t dhcpcd.exe[$$] "$interface has been (re)configured with IP=$new_ip_address"
 		run_subdir ${rc_base}/init.d/networking/red.up/
 		touch /var/ipfire/red/active
