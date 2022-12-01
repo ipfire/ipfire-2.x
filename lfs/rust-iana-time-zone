@@ -74,6 +74,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rust-iana-time-zone-0.1.51-fix-metadata.patch
+
+	cd $(DIR_APP) && if [ -f Cargo.toml.orig ]; then \
+		rm -f Cargo.toml.orig; \
+	fi; \
+
 	cd $(DIR_APP) && $(CARGO_PREPARE)
 	cd $(DIR_APP) && $(CARGO_BUILD)
 	cd $(DIR_APP) && $(CARGO_INSTALL)
