@@ -899,30 +899,12 @@ END
 ;
 }
 
-print <<END
-<tr><td colspan='4' width='100%'><br></br></td></tr>
-<tr>
-        <td bgcolor='$color{'color20'}' colspan='4' width='100%'><b>MTU/MRU</b></td>
-</tr>
-<tr>
-<tr>
-        <td width='25%'>MTU:</td>
-        <td width='25%'><input type='text' name='MTU' value='$pppsettings{'MTU'}' /></td>
-</tr>
-<tr>
-        <td width='25%'>MRU:</td>
-        <td width='25%'><input type='text' name='MRU' value='$pppsettings{'MRU'}' /></td>
-</tr>
-END
-;
-
-print <<END
+print <<END;
 <tr><td colspan='4' width='100%'><br></br></td></tr>
 <tr>
         <td bgcolor='$color{'color20'}' colspan='4' width='100%'><b>$Lang::tr{'authentication'}</b></td>
 </tr>
 END
-;
 
 # Ask for the APN for QMI
 if ($pppsettings{'TYPE'} eq 'qmi') {
@@ -967,6 +949,19 @@ print <<END
         </select></td>
         <td width='25%'>$Lang::tr{'script name'}</td>
         <td width='25%'><input type='text' name='LOGINSCRIPT' value='$pppsettings{'LOGINSCRIPT'}' /></td>
+</tr>
+<tr><td colspan='4' width='100%'><br></br></td></tr>
+<tr>
+        <td bgcolor='$color{'color20'}' colspan='4' width='100%'><b>MTU/MRU</b></td>
+</tr>
+<tr>
+<tr>
+        <td width='25%'>MTU:</td>
+        <td width='25%'><input type='text' name='MTU' value='$pppsettings{'MTU'}' /></td>
+</tr>
+<tr>
+        <td width='25%'>MRU:</td>
+        <td width='25%'><input type='text' name='MRU' value='$pppsettings{'MRU'}' /></td>
 </tr>
 <tr><td colspan='4' width='100%'><br></br><hr></hr><br></br></td></tr>
 <tr>
