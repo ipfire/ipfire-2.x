@@ -34,32 +34,30 @@ dhcpcd_up()
 	fi
 
 	# Only if RED_TYPE=DHCP update /var/ipfire/red
-	if [ "$RED_TYPE" == "DHCP" ]; then
-		# Check if we have to restart the services at update
-		[ ! -e "/var/ipfire/red/active" ] && update=1;
-		if [ "$old_domain_name_service" != "$new_domain_name_service" ]; then
-			update=1;
-		fi
-		if [ "$old_ip_address" != "$new_ip_address" ]; then
-			update=1;
-		fi
-		if [ "$old_routers" != "$new_routers" ]; then
-			update=1;
-		fi
-
-		# Get DNS from dhcp
-		/etc/rc.d/helper/getdnsfromdhcpc.pl 1 > /var/run/dns1
-		/etc/rc.d/helper/getdnsfromdhcpc.pl 2 > /var/run/dns2
-
-		#Get IP Address
-		echo -n "$new_ip_address"  > /var/ipfire/red/local-ipaddress
-
-		#Get default gateway
-		grep -v -E "\<gateway\>" /etc/hosts > /tmp/hosts
-		echo "$new_routers	gateway"  >> /tmp/hosts
-		mv /tmp/hosts /etc/hosts
-
+	# Check if we have to restart the services at update
+	[ ! -e "/var/ipfire/red/active" ] && update=1;
+	if [ "$old_domain_name_service" != "$new_domain_name_service" ]; then
+		update=1;
 	fi
+	if [ "$old_ip_address" != "$new_ip_address" ]; then
+		update=1;
+	fi
+	if [ "$old_routers" != "$new_routers" ]; then
+		update=1;
+	fi
+
+	# Get DNS from dhcp
+	/etc/rc.d/helper/getdnsfromdhcpc.pl 1 > /var/run/dns1
+	/etc/rc.d/helper/getdnsfromdhcpc.pl 2 > /var/run/dns2
+
+	#Get IP Address
+	echo -n "$new_ip_address"  > /var/ipfire/red/local-ipaddress
+
+	#Get default gateway
+	grep -v -E "\<gateway\>" /etc/hosts > /tmp/hosts
+	echo "$new_routers	gateway"  >> /tmp/hosts
+	mv /tmp/hosts /etc/hosts
+
 	if [ $update ]; then
 		[ -e "/var/ipfire/red/active" ] || touch /var/ipfire/red/active
 		echo -n "$new_routers" > /var/ipfire/red/remote-ipaddress
