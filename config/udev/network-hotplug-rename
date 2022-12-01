@@ -19,6 +19,8 @@
 #                                                                             #
 ###############################################################################
 
+. /etc/rc.d/init.d/networking/functions.network
+
 # Check if all appropriate variables are set
 [ -n "${INTERFACE}" ] || exit 2
 
@@ -42,6 +44,13 @@ esac
 # we cannot go on.
 if [ ! -r "/var/ipfire/ethernet/settings" ]; then
 	exit 1
+fi
+
+# Change MAC addresses of QMI interface
+if [ -d "/sys/class/net/${INTERFACE}/qmi" ]; then
+	if ! qmi_assign_address "${INTERFACE}"; then
+		exit 1
+	fi
 fi
 
 # Read network settings

@@ -179,7 +179,7 @@ qmi_find_device() {
 	local path
 	for path in /dev/cdc-*; do
 		if [ -c "${path}" ]; then
-			_intf="$(qmicli --device="${path}" --device-open-proxy --get-wwan-iface)"
+			_intf="$(qmi_find_interface "${path}")"
 
 			# Check if the interface matches
 			if [ "${intf}" = "${_intf}" ]; then
@@ -191,6 +191,12 @@ qmi_find_device() {
 
 	# Nothing found
 	return 1
+}
+
+qmi_find_interface() {
+	local device="${1}"
+
+	qmicli --device="${device}" --device-open-proxy --get-wwan-iface
 }
 
 qmi_enable_rawip_mode() {
@@ -258,4 +264,20 @@ qmi_reset() {
 
 	qmicli --device="${device}" --device-open-proxy \
 		--wds-reset
+}
+
+# Assigns a "static" MAC address
+qmi_assign_address() {
+	local intf="${1}"
+
+	# Find the device
+	local device="$(qmi_find_device "${intf}")"
+
+	local address
+
+	# Generate a "random" MAC address using the device number
+	printf -v address "02:ff:ff:ff:ff:%02x" "${device:12}"
+
+	# Change the MAC address
+	ip link set "${intf}" address "${address}"
 }
