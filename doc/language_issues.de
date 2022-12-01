@@ -863,6 +863,9 @@ WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: access point name = Access Point Name
+WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
+WARNING: untranslated string: access point name is required = Access Point Name is required
 WARNING: untranslated string: aliases default interface = - Default Interface -
 WARNING: untranslated string: cake profile bridged-llcsnap 32 = Bridged LLC SNAP (32 bytes)
 WARNING: untranslated string: cake profile bridged-ptm 19 = Bridged PTM (19 bytes)

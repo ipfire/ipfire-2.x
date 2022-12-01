@@ -1,6 +1,9 @@
 ############################################################################
 # Checking cgi-bin translations for language: de                           #
 ############################################################################
+< access point name
+< access point name is invalid
+< access point name is required
 < advproxy update information
 < aliases default interface
 < ansi t1.483
@@ -94,6 +97,9 @@
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
+< access point name
+< access point name is invalid
+< access point name is required
 < addon
 < cpu frequency
 < dns servers
@@ -106,6 +112,9 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< access point name
+< access point name is invalid
+< access point name is required
 < advproxy errmsg invalid url
 < ansi t1.483
 < bewan adsl pci st
@@ -123,6 +132,9 @@
 # Checking cgi-bin translations for language: it                           #
 ############################################################################
 < 24 hours
+< access point name
+< access point name is invalid
+< access point name is required
 < acpitemp
 < addon
 < administrator password
@@ -622,6 +634,9 @@
 # Checking cgi-bin translations for language: nl                           #
 ############################################################################
 < 24 hours
+< access point name
+< access point name is invalid
+< access point name is required
 < acpitemp
 < administrator password
 < administrator username
@@ -1149,6 +1164,9 @@
 # Checking cgi-bin translations for language: pl                           #
 ############################################################################
 < 24 hours
+< access point name
+< access point name is invalid
+< access point name is required
 < acpitemp
 < addon
 < addons
@@ -2121,6 +2139,9 @@
 # Checking cgi-bin translations for language: ru                           #
 ############################################################################
 < 24 hours
+< access point name
+< access point name is invalid
+< access point name is required
 < acpitemp
 < Add a route
 < addon
@@ -3099,6 +3120,9 @@
 ############################################################################
 # Checking cgi-bin translations for language: tr                           #
 ############################################################################
+< access point name
+< access point name is invalid
+< access point name is required
 < acpitemp
 < addon
 < advproxy asbased anomaly detection
