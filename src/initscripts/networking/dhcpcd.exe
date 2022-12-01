@@ -84,6 +84,11 @@ dhcpcd_down()
 			run_subdir ${rc_base}/init.d/networking/red.down/
 		fi
 	fi
+
+	# Remove any configured IP address from the device
+	ip addr flush dev "${interface}" &>/dev/null
+
+	return 0
 }
 
 # Called when dhcpcd relies on a third party to configure an IP address
