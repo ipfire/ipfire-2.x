@@ -185,6 +185,9 @@ case "${reason}" in
 	3RDPARTY)
 		dhcpcd_3rdparty
 		;;
+	# Ignored events where we do not need to do anything
+	STOPPED|CARRIER|NOCARRIER)
+		;;
 	*)
 		logger -p "local0.info" -t "dhcpcd.exe[$$]" "Unhandled DHCP event: ${reason}"
 		;;
