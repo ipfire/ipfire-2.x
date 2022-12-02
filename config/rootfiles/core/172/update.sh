@@ -89,7 +89,6 @@ rm -rvf \
 	/usr/lib/libpoppler-cpp.so.0.9* \
 	/usr/lib/libpoppler-glib.so.8.23.0 \
 	/usr/lib/libpoppler.so.120* \
-	/usr/lib/libreadline.so.8.1 \
 	/usr/lib/libtasn1.so.6.6.2 \
 	/usr/lib/libtiff.so.5.7* \
 	/usr/lib/libtiffxx.so.5.7* \
