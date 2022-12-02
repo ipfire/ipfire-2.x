@@ -77,7 +77,6 @@ rm -rvf \
 	/usr/lib/libdns-9.16.33.so \
 	/usr/lib/libedit.so.0.0.6* \
 	/usr/lib/libexpat.so.1.8.9 \
-	/usr/lib/libhistory.so.8.1 \
 	/usr/lib/libirs-9.16.33.so \
 	/usr/lib/libisc-9.16.33.so \
 	/usr/lib/libisccc-9.16.33.so \
