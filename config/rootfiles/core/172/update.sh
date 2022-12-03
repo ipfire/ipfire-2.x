@@ -46,6 +46,12 @@ if [ -e /boot/uEnv.txt ]; then
     cp -vf /boot/uEnv.txt /boot/uEnv.txt.org
 fi
 
+# Extract files
+extract_files
+
+# update linker config
+ldconfig
+
 # Remove files
 rm -rvf \
 	/etc/pcmcia \
@@ -135,12 +141,6 @@ for addon in gnu-netcat powertop; do
 		/opt/pakfire/db/meta/meta-${addon} \
 		/opt/pakfire/db/rootfiles/${addon}
 done
-
-# Extract files
-extract_files
-
-# update linker config
-ldconfig
 
 # Update Language cache
 /usr/local/bin/update-lang-cache
