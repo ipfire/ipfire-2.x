@@ -81,7 +81,6 @@ rm -rvf \
 	/usr/lib/libisc-9.16.33.so \
 	/usr/lib/libisccc-9.16.33.so \
 	/usr/lib/libisccfg-9.16.33.so \
-	/usr/lib/liblzma.so.5.2.5 \
 	/usr/lib/libnetfilter_conntrack.so.3.7.0 \
 	/usr/lib/libns-9.16.33.so \
 	/usr/lib/libpng16.so.16.37.0 \
