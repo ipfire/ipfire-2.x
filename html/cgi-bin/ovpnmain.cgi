@@ -977,7 +977,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print SERVERCONF "ca ${General::swroot}/ovpn/ca/cacert.pem\n";
   print SERVERCONF "cert ${General::swroot}/ovpn/certs/servercert.pem\n";
   print SERVERCONF "key ${General::swroot}/ovpn/certs/serverkey.pem\n";
-  print SERVERCONF "dh ${General::swroot}/ovpn/ca/$cgiparams{'DH_NAME'}\n";
+  print SERVERCONF "dh $dhparameter\n";
   print SERVERCONF "# Cipher\n";
   print SERVERCONF "cipher $cgiparams{'DCIPHER'}\n";
 
@@ -5700,7 +5700,7 @@ END
 
 	print <<END;
 		<tr>
-			<td class='base' $col3>$Lang::tr{'dh parameter'}</td>
+			<td class='base' $col3>$Lang::tr{'dh'}</td>
 			<td class='base' $col3>$dhsubject</td>
 			<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
 			<input type='hidden' name='ACTION' value='$Lang::tr{'show dh'}' />
