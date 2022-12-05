@@ -912,7 +912,7 @@ WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: advproxy errmsg invalid url = Invalid URL
 WARNING: untranslated string: core notice 3 = available.
-WARNING: untranslated string: dh = unknown string
+WARNING: untranslated string: dh = Diffie-Hellman-Parameter
 WARNING: untranslated string: dh parameter = unknown string
 WARNING: untranslated string: email recipient invalid = Invalid email recipient
 WARNING: untranslated string: error message = unknown string
@@ -954,4 +954,4 @@ WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: service boot setting unavailable = No valid runlevel symlink was found for the initscript of this service.
-WARNING: untranslated string: show dh = unknown string
+WARNING: untranslated string: show dh = Show Diffie-Hellman parameters

@@ -110,12 +110,14 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< dh
 < email recipient invalid
 < g.dtm
 < g.lite
 < guaranteed bandwidth
 < retbleed
 < service boot setting unavailable
+< show dh
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -231,6 +233,7 @@
 < dangerous
 < default IP address
 < desired
+< dh
 < dhcp deny known clients:
 < dhcp dns enable update
 < dhcp dns key name
@@ -499,6 +502,7 @@
 < secret
 < sent
 < service boot setting unavailable
+< show dh
 < show otp qrcode
 < smb daemon
 < smt disabled
@@ -731,6 +735,7 @@
 < default
 < default IP address
 < desired
+< dh
 < dhcp dns enable update
 < dhcp dns key name
 < dhcp dns update
@@ -1022,6 +1027,7 @@
 < search
 < secret
 < sent
+< show dh
 < show otp qrcode
 < show tls-auth key
 < smb daemon
@@ -1322,6 +1328,7 @@
 < deprecated fs warn
 < desired
 < details
+< dh
 < dhcp deny known clients:
 < dhcp dns enable update
 < dhcp dns key name
@@ -1889,6 +1896,7 @@
 < sent
 < server restart
 < service boot setting unavailable
+< show dh
 < show otp qrcode
 < show tls-auth key
 < smb daemon
@@ -2294,6 +2302,7 @@
 < deprecated fs warn
 < desired
 < details
+< dh
 < dhcp deny known clients:
 < dhcp dns enable update
 < dhcp dns key name
@@ -2864,6 +2873,7 @@
 < sent
 < server restart
 < service boot setting unavailable
+< show dh
 < show otp qrcode
 < show tls-auth key
 < smb daemon
@@ -3137,6 +3147,7 @@
 < dangerous
 < default IP address
 < desired
+< dh
 < dhcp deny known clients:
 < dhcp make fixed lease
 < dhcp valid range required when deny known clients checked
@@ -3314,6 +3325,7 @@
 < secret
 < sent
 < service boot setting unavailable
+< show dh
 < show otp qrcode
 < smb daemon
 < smt disabled
