@@ -129,8 +129,8 @@ rm -rvf \
 	/usr/libexec/ipsec/scepclient \
 	/var/ipfire/ca/dh1024.pem
 
-# Remove gnu-netcat and powertop add-on, if installed
-for addon in gnu-netcat powertop; do
+# Remove gnu-netcat add-on, if installed
+for addon in gnu-netcat; do
 	if [ -e "/opt/pakfire/db/installed/meta-${addon}" ]; then
 		for i in $(</opt/pakfire/db/rootfiles/${addon}); do
 			rm -rfv "/${i}"
