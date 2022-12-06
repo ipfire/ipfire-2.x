@@ -97,18 +97,6 @@ class OpenVPNAuthenticator(object):
 		# Send the command
 		self._write_line(command)
 
-		return # XXX Code below doesn't work
-
-		# Read response
-		response = self._read_line()
-
-		# Handle response
-		if not response.startswith("SUCCESS:"):
-			log.error("Command '%s' returned an error:" % command)
-			log.error("  %s" % response)
-
-			return response
-
 	def run(self):
 		# Connect to socket
 		self.sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
