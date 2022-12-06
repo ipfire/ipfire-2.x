@@ -116,11 +116,16 @@ class OpenVPNAuthenticator(object):
 
 		log.info("OpenVPN Authenticator started")
 
-		while True:
-			line = self._read_line()
+		try:
+			while True:
+				line = self._read_line()
 
-			if line.startswith(">CLIENT"):
-				self._client_event(line)
+				if line.startswith(">CLIENT"):
+					self._client_event(line)
+
+		# Terminate the daemon when it loses its connection to the OpenVPN daemon
+		except ConnectionResetError as e:
+			log.error("Connection to OpenVPN has been lost: %s" % e)
 
 		log.info("OpenVPN Authenticator terminated")
 
@@ -269,7 +274,7 @@ class OpenVPNAuthenticator(object):
 	@staticmethod
 	def _b64decode(s):
 		return base64.b64decode(s.encode()).decode()
-		
+
 	@staticmethod
 	def _escape(s):
 		return s.replace(" ", "\ ")
