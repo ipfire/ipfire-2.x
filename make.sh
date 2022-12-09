@@ -1061,6 +1061,7 @@ buildbase() {
 	lfsmake2 zstd
 	lfsmake2 autoconf
 	lfsmake2 automake
+	lfsmake2 help2man
 	lfsmake2 libtool
 	lfsmake2 binutils
 	lfsmake2 gmp
