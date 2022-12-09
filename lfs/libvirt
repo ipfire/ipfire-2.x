@@ -26,7 +26,7 @@ include Config
 
 SUMMARY	   = Server side daemon and supporting files for libvirt
 
-VER        = 8.9.0
+VER        = 8.10.0
 
 THISAPP    = libvirt-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 SUP_ARCH   = x86_64 aarch64
 PROG       = libvirt
-PAK_VER    = 30
+PAK_VER    = 31
 
 DEPS       = ebtables libpciaccess libtirpc libyajl ncat qemu
 
@@ -49,7 +49,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 537b6badb6171110e99561613fb1318144991107139401296248afb747ae6f9cfafcd17b2292b8d8dcc9188ff4206035ea814efa6c129bae50c0518f61be9b81
+$(DL_FILE)_BLAKE2 = 6c99428dd74ae1e535d0918bb48da0a851b03e9dfc38f96fca060a33b6be6c23c8b4a789695e8cf930536c156c8a893e18753a58c8a827f464b83a61b47c4846
 
 install : $(TARGET)
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))

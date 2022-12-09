@@ -60,6 +60,7 @@ usr/bin/virt-pki-query-dn
 usr/bin/virt-pki-validate
 usr/bin/virt-qemu-qmp-proxy
 usr/bin/virt-qemu-run
+usr/bin/virt-qemu-sev-validate
 usr/bin/virt-ssh-helper
 usr/bin/virt-xml-validate
 #usr/include/libvirt
@@ -84,16 +85,16 @@ usr/bin/virt-xml-validate
 #usr/lib/libvirt
 #usr/lib/libvirt-admin.so
 usr/lib/libvirt-admin.so.0
-usr/lib/libvirt-admin.so.0.8009.0
+usr/lib/libvirt-admin.so.0.8010.0
 #usr/lib/libvirt-lxc.so
 usr/lib/libvirt-lxc.so.0
-usr/lib/libvirt-lxc.so.0.8009.0
+usr/lib/libvirt-lxc.so.0.8010.0
 #usr/lib/libvirt-qemu.so
 usr/lib/libvirt-qemu.so.0
-usr/lib/libvirt-qemu.so.0.8009.0
+usr/lib/libvirt-qemu.so.0.8010.0
 #usr/lib/libvirt.so
 usr/lib/libvirt.so.0
-usr/lib/libvirt.so.0.8009.0
+usr/lib/libvirt.so.0.8010.0
 #usr/lib/libvirt/connection-driver
 usr/lib/libvirt/connection-driver/libvirt_driver_ch.so
 usr/lib/libvirt/connection-driver/libvirt_driver_interface.so
@@ -317,6 +318,7 @@ usr/share/libvirt/schemas/nodedev.rng
 usr/share/libvirt/schemas/nwfilter.rng
 usr/share/libvirt/schemas/nwfilter_params.rng
 usr/share/libvirt/schemas/nwfilterbinding.rng
+usr/share/libvirt/schemas/privatedata.rng
 usr/share/libvirt/schemas/secret.rng
 usr/share/libvirt/schemas/storagecommon.rng
 usr/share/libvirt/schemas/storagepool.rng
