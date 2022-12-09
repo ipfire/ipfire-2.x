@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,15 +26,15 @@ include Config
 
 SUMMARY    = USB Network Redirection protocol
 
-VER        = 0.8.0
+VER        = 0.13.0
 
 THISAPP    = usbredir-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libusbredir
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0190b4ab35cd554c13b65d30756b7b018e7ce82c72e7dddbaf05b8a704bd8a25724c4ac4759e1b86dfadb64ad7ade75c05365ab9ae3152f8fa60e909bc5e183b
+$(DL_FILE)_BLAKE2 = 20a1e28be290d59d3ef25f432d6bbd4b50b40f5df434efb9013a39df77ce1aa563e7dec1cdf6abbfa703bb9c4b32dd05258011b5ce8e79812e89203f51f41f8f
 
 install : $(TARGET)
 
@@ -80,9 +80,9 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
-	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
-	cd $(DIR_APP) && make install
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && meson --prefix=/usr builddir/
+	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING)
+	cd $(DIR_APP) && ninja -C builddir/ install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
