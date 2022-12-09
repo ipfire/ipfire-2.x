@@ -1,0 +1,8 @@
+--- libtool-2.4.7/libtoolize.in.orig	2022-03-17 03:43:39.000000000 +0100
++++ libtool-2.4.7/libtoolize.in	2022-12-08 18:12:36.134198672 +0100
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env sh
++#! /bin/sh
+ 
+ # Prepare a package to use libtool.
+ # Written by Gary V. Vaughan <gary@gnu.org>, 2003
