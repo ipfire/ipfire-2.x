@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Samba talloc Library
 
-VER        = 2.3.1
+VER        = 2.3.4
 
 THISAPP    = talloc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = libtalloc
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3d014a47639434c65f5dda2c51da3c6c28d5d60dbc9afdaca27b8ec903cde3433a8fa4ca33305750ff60911f7e43171d0d932d98c2d30ea38494aa532d6d9626
+$(DL_FILE)_BLAKE2 = 1fac0a45a4ba16c7741e6d810e1a1e56352c04f266b99de62770177c1218a8c8253be2d5d1793aae67ce61e6a1159cbcd4888a49702822e6817b86eb7a1fea31
 
 install : $(TARGET)
 
