@@ -28,6 +28,7 @@ getent group avahi >/dev/null || groupadd -r avahi
 getent passwd avahi >/dev/null || \
       useradd -r -g avahi -d /var/run/avahi-daemon -s /sbin/nologin \
       -c "Avahi mDNS daemon" avahi
+getent group netdev > /dev/null || groupadd -r netdev
 
 extract_files
 ln -svf  ../init.d/avahi /etc/rc.d/rc3.d/S65avahi
