@@ -1,3 +1,4 @@
+#usr/bin/shout
 #usr/include/shout
 #usr/include/shout/shout.h
 #usr/lib/ckport
@@ -16,3 +17,4 @@ usr/lib/libshout.so.3.2.0
 #usr/share/doc/libshout/README
 #usr/share/doc/libshout/example.c
 #usr/share/doc/libshout/nonblocking.c
+#usr/share/man/man1/shout.1
