@@ -68,12 +68,6 @@ class OpenVPNAuthenticator(object):
 
 		while True:
 			char = self.sock.recv(1)
-
-			# Break if we could not read from the socket
-			if not char:
-				raise EOFError("Could not read from socket")
-
-			# Append to buffer
 			buf.append(char)
 
 			# Reached end of line
@@ -118,7 +112,7 @@ class OpenVPNAuthenticator(object):
 					self._client_event(line)
 
 		# Terminate the daemon when it loses its connection to the OpenVPN daemon
-		except (ConnectionResetError, EOFError) as e:
+		except ConnectionResetError as e:
 			log.error("Connection to OpenVPN has been lost: %s" % e)
 
 		log.info("OpenVPN Authenticator terminated")
