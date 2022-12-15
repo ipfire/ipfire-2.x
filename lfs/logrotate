@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.20.1
+VER        = 3.21.0
 
 THISAPP    = logrotate-$(VER)
 DL_FILE    = logrotate-$(VER).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 52f1b1991f6e17d04dee3b795bd6621be707b9386cb966f1434b00f4e6d9e8242c17a88642f98db720f8eeda6c1e38d25f050eb9e9be48a8323f84c9e408cf71
+$(DL_FILE)_BLAKE2 = bd801aa8daed19213720ef36af8070277c3b36df2b866ab921bc5ff85afe97871638f4a690061ba752f16b2df53acc76373097bf95b6a7fd2821c20574a444d8
 
 install : $(TARGET)
 
