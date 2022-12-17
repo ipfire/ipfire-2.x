@@ -155,13 +155,7 @@ done
 chown -Rv root:root /var/ipfire/connscheduler/lib.pl /var/ipfire/updatexlrator/updxlrator-lib.pl /var/ipfire/menu.d/*
 
 # Replace existing OpenVPN Diffie-Hellman parameter by ffdhe4096, as specified in RFC 7919
-if [ -f /var/ipfire/ovpn/server.conf ]; then
-	sed -i 's|/var/ipfire/ovpn/ca/dh1024.pem|/etc/ssl/ffdhe4096.pem|' /var/ipfire/ovpn/server.conf
-fi
-
-if [ -f "/var/ipfire/ovpn/n2nconf/*/*.conf" ]; then
-	sed -i 's|/var/ipfire/ovpn/ca/dh1024.pem|/etc/ssl/ffdhe4096.pem|' /var/ipfire/ovpn/n2nconf/*/*.conf
-fi
+sed -i 's|/var/ipfire/ovpn/ca/dh1024.pem|/etc/ssl/ffdhe4096.pem|' /var/ipfire/ovpn/server.conf /var/ipfire/ovpn/n2nconf/*/*.conf
 
 # Start services
 if grep -q "ENABLE_IDS=on" /var/ipfire/suricata/settings; then
