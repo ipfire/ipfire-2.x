@@ -1,0 +1,7 @@
+etc/ppp/ip-up
+etc/rc.d/init.d/networking/dhcpcd.exe
+etc/rc.d/init.d/networking/functions.network
+etc/rc.d/init.d/networking/red
+lib/udev/network-hotplug-rename
+srv/web/ipfire/cgi-bin/pppsetup.cgi
+var/ipfire/dhcpc/dhcpcd.conf

@@ -50,7 +50,7 @@ ldconfig
 # Start services
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
