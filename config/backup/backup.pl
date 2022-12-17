@@ -184,6 +184,9 @@ restore_backup() {
 	# move nobeeps if exist
 	[ -e "/var/ipfire/ppp/nobeeps" ] && mv /var/ipfire/ppp/nobeeps /var/ipfire/red/nobeeps
 
+	# Replace previously used OpenVPN Diffie-Hellman parameter by ffdhe4096
+	sed -i 's|/var/ipfire/ovpn/ca/dh1024.pem|/etc/ssl/ffdhe4096.pem|' /var/ipfire/ovpn/server.conf /var/ipfire/ovpn/n2nconf/*/*.conf
+
 	# Update OpenVPN CRL
 	/etc/fcron.daily/openvpn-crl-updater
 
