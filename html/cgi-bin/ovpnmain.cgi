@@ -5716,7 +5716,7 @@ END
 		# Nothing
 		print <<END;
 		<tr>
-			<td width='25%' class='base' $col3>$Lang::tr{'dh parameter'}:</td>
+			<td width='25%' class='base' $col3>$Lang::tr{'dh'}:</td>
 			<td class='base' $col3>$Lang::tr{'not present'}</td>
 			</td><td colspan='3' $col3>&nbsp;</td>
 		</tr>
