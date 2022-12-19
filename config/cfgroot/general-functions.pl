@@ -760,7 +760,7 @@ sub validwildcarddomainname($) {
 	my $domainname = shift;
 
 	# Ignore any leading dots
-	if ($domainname =~ m/^\*\.(.*)/) {
+	if ($domainname =~ m/^\*\.([^\*]*)\*?/) {
 		$domainname = $1;
 	}
 
