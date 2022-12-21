@@ -1176,8 +1176,13 @@ buildipfire() {
   lfsmake2 xradio		KCFG=""
   lfsmake2 linux-initrd		KCFG=""
 
-  lfsmake2 python3-setuptools
+  lfsmake2 expat
+  lfsmake2 libconfig
+  lfsmake2 json-c
+  lfsmake2 tcl
   lfsmake2 libffi
+  lfsmake2 python3
+  lfsmake2 python3-setuptools
   lfsmake2 ninja
   lfsmake2 meson
   lfsmake2 glib
@@ -1187,10 +1192,7 @@ buildipfire() {
   lfsmake2 libassuan
   lfsmake2 nettle
   lfsmake2 libsodium
-  lfsmake2 json-c
-  lfsmake2 libconfig
   lfsmake2 libevent2
-  lfsmake2 expat
   lfsmake2 apr
   lfsmake2 aprutil
   lfsmake2 unbound
@@ -1206,9 +1208,7 @@ buildipfire() {
   lfsmake2 pam
   lfsmake2 c-ares
   lfsmake2 curl
-  lfsmake2 tcl
   lfsmake2 sqlite
-  lfsmake2 python3
   lfsmake2 rust
   lfsmake2 rust-dissimilar
   lfsmake2 rust-cfg-if
