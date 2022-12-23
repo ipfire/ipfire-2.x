@@ -1181,6 +1181,8 @@ buildipfire() {
   lfsmake2 json-c
   lfsmake2 tcl
   lfsmake2 libffi
+  lfsmake2 gdbm
+  lfsmake2 sqlite
   lfsmake2 python3
   lfsmake2 python3-setuptools
   lfsmake2 ninja
@@ -1204,11 +1206,9 @@ buildipfire() {
   lfsmake2 boost
   lfsmake2 linux-atm
   lfsmake2 libqmi
-  lfsmake2 gdbm
   lfsmake2 pam
   lfsmake2 c-ares
   lfsmake2 curl
-  lfsmake2 sqlite
   lfsmake2 rust
   lfsmake2 rust-dissimilar
   lfsmake2 rust-cfg-if
