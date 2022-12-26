@@ -6525,6 +6525,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ASYNC_TX_DMA
 #lib/modules/KVER-ipfire/build/include/config/ASYNC_XOR
 #lib/modules/KVER-ipfire/build/include/config/AS_AVX512
+#lib/modules/KVER-ipfire/build/include/config/AS_HAS_NON_CONST_LEB128
 #lib/modules/KVER-ipfire/build/include/config/AS_IS_GNU
 #lib/modules/KVER-ipfire/build/include/config/AS_SHA1_NI
 #lib/modules/KVER-ipfire/build/include/config/AS_SHA256_NI
@@ -6668,8 +6669,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/BITREVERSE
 #lib/modules/KVER-ipfire/build/include/config/BLK_CGROUP
 #lib/modules/KVER-ipfire/build/include/config/BLK_CGROUP_RWSTAT
-#lib/modules/KVER-ipfire/build/include/config/BLK_DEBUG_FS
-#lib/modules/KVER-ipfire/build/include/config/BLK_DEBUG_FS_ZONED
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_3W_XXXX_RAID
 #lib/modules/KVER-ipfire/build/include/config/BLK_DEV_BSG
@@ -7089,8 +7088,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/DE2104X_DSL
 #lib/modules/KVER-ipfire/build/include/config/DE4X5
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_BUGVERBOSE
-#lib/modules/KVER-ipfire/build/include/config/DEBUG_FS
-#lib/modules/KVER-ipfire/build/include/config/DEBUG_FS_ALLOW_ALL
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_KERNEL
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_MISC
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_WX
@@ -7422,7 +7419,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/DW_XDATA_PCIE
 #lib/modules/KVER-ipfire/build/include/config/DYNAMIC_DEBUG
 #lib/modules/KVER-ipfire/build/include/config/DYNAMIC_DEBUG_CORE
-#lib/modules/KVER-ipfire/build/include/config/DYNAMIC_EVENTS
 #lib/modules/KVER-ipfire/build/include/config/DYNAMIC_FTRACE
 #lib/modules/KVER-ipfire/build/include/config/DYNAMIC_FTRACE_WITH_ARGS
 #lib/modules/KVER-ipfire/build/include/config/DYNAMIC_FTRACE_WITH_DIRECT_CALLS
@@ -8024,6 +8020,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/INET_IPCOMP
 #lib/modules/KVER-ipfire/build/include/config/INET_RAW_DIAG
 #lib/modules/KVER-ipfire/build/include/config/INET_SCTP_DIAG
+#lib/modules/KVER-ipfire/build/include/config/INET_TABLE_PERTURB_ORDER
 #lib/modules/KVER-ipfire/build/include/config/INET_TCP_DIAG
 #lib/modules/KVER-ipfire/build/include/config/INET_TUNNEL
 #lib/modules/KVER-ipfire/build/include/config/INET_UDP_DIAG
@@ -8424,7 +8421,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/LOCKUP_DETECTOR
 #lib/modules/KVER-ipfire/build/include/config/LOCK_DEBUGGING_SUPPORT
 #lib/modules/KVER-ipfire/build/include/config/LOCK_DOWN_KERNEL_FORCE_NONE
-#lib/modules/KVER-ipfire/build/include/config/LOCK_EVENT_COUNTS
 #lib/modules/KVER-ipfire/build/include/config/LOCK_SPIN_ON_OWNER
 #lib/modules/KVER-ipfire/build/include/config/LOGO
 #lib/modules/KVER-ipfire/build/include/config/LOGO_LINUX_CLUT224
@@ -9490,7 +9486,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/PRINTER
 #lib/modules/KVER-ipfire/build/include/config/PRINTK
 #lib/modules/KVER-ipfire/build/include/config/PRINTK_SAFE_LOG_BUF_SHIFT
-#lib/modules/KVER-ipfire/build/include/config/PROBE_EVENTS
 #lib/modules/KVER-ipfire/build/include/config/PROC_EVENTS
 #lib/modules/KVER-ipfire/build/include/config/PROC_FS
 #lib/modules/KVER-ipfire/build/include/config/PROC_PAGE_MONITOR
@@ -9848,7 +9843,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SCSI_SCAN_ASYNC
 #lib/modules/KVER-ipfire/build/include/config/SCSI_SMARTPQI
 #lib/modules/KVER-ipfire/build/include/config/SCSI_SNIC
-#lib/modules/KVER-ipfire/build/include/config/SCSI_SNIC_DEBUG_FS
 #lib/modules/KVER-ipfire/build/include/config/SCSI_SPI_ATTRS
 #lib/modules/KVER-ipfire/build/include/config/SCSI_SRP_ATTRS
 #lib/modules/KVER-ipfire/build/include/config/SCSI_STEX
@@ -10385,7 +10379,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SWIOTLB
 #lib/modules/KVER-ipfire/build/include/config/SWIOTLB_XEN
 #lib/modules/KVER-ipfire/build/include/config/SWPHY
-#lib/modules/KVER-ipfire/build/include/config/SW_SYNC
 #lib/modules/KVER-ipfire/build/include/config/SXGBE_ETH
 #lib/modules/KVER-ipfire/build/include/config/SYMBOLIC_ERRNAME
 #lib/modules/KVER-ipfire/build/include/config/SYNCLINK_GT
@@ -10533,8 +10526,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/UNIX_DIAG
 #lib/modules/KVER-ipfire/build/include/config/UNIX_SCM
 #lib/modules/KVER-ipfire/build/include/config/UNWINDER_ORC
-#lib/modules/KVER-ipfire/build/include/config/UPROBES
-#lib/modules/KVER-ipfire/build/include/config/UPROBE_EVENTS
 #lib/modules/KVER-ipfire/build/include/config/USB
 #lib/modules/KVER-ipfire/build/include/config/USBIP_CORE
 #lib/modules/KVER-ipfire/build/include/config/USBIP_HOST
@@ -11105,7 +11096,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/XEN_BLKDEV_BACKEND
 #lib/modules/KVER-ipfire/build/include/config/XEN_BLKDEV_FRONTEND
 #lib/modules/KVER-ipfire/build/include/config/XEN_COMPAT_XENFS
-#lib/modules/KVER-ipfire/build/include/config/XEN_DEBUG_FS
 #lib/modules/KVER-ipfire/build/include/config/XEN_DEV_EVTCHN
 #lib/modules/KVER-ipfire/build/include/config/XEN_DOM0
 #lib/modules/KVER-ipfire/build/include/config/XEN_EFI
@@ -16866,6 +16856,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/init
 #lib/modules/KVER-ipfire/build/init/Kconfig
 #lib/modules/KVER-ipfire/build/init/Makefile
+#lib/modules/KVER-ipfire/build/io_uring
+#lib/modules/KVER-ipfire/build/io_uring/Makefile
 #lib/modules/KVER-ipfire/build/ipc
 #lib/modules/KVER-ipfire/build/ipc/Makefile
 #lib/modules/KVER-ipfire/build/kernel

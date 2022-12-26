@@ -24,7 +24,7 @@
 
 include Config
 
-VER         = 5.15.71
+VER         = 5.15.85
 ARM_PATCHES = 5.15-ipfire5
 
 THISAPP    = linux-$(VER)
@@ -78,7 +78,7 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_BLAKE2 = 77da2393a31b6c6fed7cdfef61a112ae49fcdfce96968daf8c7a690a6e65025c7238c1fe084d0bfda403dc56db877b6db99def12803e840cacf318da40327d7b
+$(DL_FILE)_BLAKE2 = 481cea334dee4146d72704ecb88f654bd38ca62a5a28540f365a57f5cd522551c4b7f854c09380ec614098a9efa5dff4cef70c9cafe6277a410d3d2099eca1cc
 arm-multi-patches-$(ARM_PATCHES).patch.xz_BLAKE2 = 58a70e757a9121a0aac83604a37aa787ec7ac0ee4970c5a3ac3bcb2dbaca32b00089cae6c0da5cf2fe0a2e156427b5165c6a86e0371a3e896f4c7cdd699c34a0
 
 install : $(TARGET)
@@ -145,11 +145,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# https://bugzilla.ipfire.org/show_bug.cgi?id=12889
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/devtmpfs-mount-with-noexec-and-nosuid.patch
-
-	# https://lists.ipfire.org/pipermail/development/2022-October/014562.html
-	for i in $$(seq 1 14); do \
-		cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15-wifi-security-patches-$$i.patch || exit 1; \
-	done
 
 ifeq "$(BUILD_ARCH)" "armv6l"
 	# Apply Arm-multiarch kernel patches.
