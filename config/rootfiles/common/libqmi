@@ -63,6 +63,8 @@ usr/lib/libqmi-glib.so.5.8.0
 #usr/lib/pkgconfig/qmi-glib.pc
 usr/libexec/qmi-proxy
 #usr/share/bash-completion/completions/qmicli
+#usr/share/gtk-doc
+#usr/share/gtk-doc/html
 #usr/share/gtk-doc/html/libqmi-glib
 #usr/share/gtk-doc/html/libqmi-glib/QmiClient.html
 #usr/share/gtk-doc/html/libqmi-glib/QmiClientDms.html
