@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.0.4
+VER        = 2.1.4
 
 THISAPP    = libjpeg-turbo-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 9be870a5bafaae279646941b848b69fdf7c95ec08a686b01674f473ef33fe5923a04ba8a2d57df84384530308ca46fc3880a404c0eff769129417a553faed3bb
+$(DL_FILE)_BLAKE2 = 80ffd77d58a37eae0bdc1868d994f34ea52c13e2624c720b1d0b6ec4d6d14b16911163ccd4009c8d6eda214f31e1fff78bb7eb4739ae6589d0fd8c7008c0e972
 
 install : $(TARGET)
 
