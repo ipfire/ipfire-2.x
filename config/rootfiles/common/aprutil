@@ -34,11 +34,16 @@ usr/bin/apu-1-config
 #usr/include/apr-1/apu_errno.h
 #usr/include/apr-1/apu_version.h
 #usr/include/apr-1/apu_want.h
-#usr/include/apr-1/expat.h
 #usr/lib/apr-util-1
 usr/lib/apr-util-1/apr_crypto_openssl-1.so
 #usr/lib/apr-util-1/apr_crypto_openssl.la
 usr/lib/apr-util-1/apr_crypto_openssl.so
+usr/lib/apr-util-1/apr_dbd_sqlite3-1.so
+#usr/lib/apr-util-1/apr_dbd_sqlite3.la
+usr/lib/apr-util-1/apr_dbd_sqlite3.so
+usr/lib/apr-util-1/apr_dbm_gdbm-1.so
+#usr/lib/apr-util-1/apr_dbm_gdbm.la
+usr/lib/apr-util-1/apr_dbm_gdbm.so
 #usr/lib/aprutil.exp
 #usr/lib/libaprutil-1.la
 #usr/lib/libaprutil-1.so
