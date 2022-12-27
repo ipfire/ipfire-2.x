@@ -2,6 +2,7 @@
 #usr/include/expat.h
 #usr/include/expat_config.h
 #usr/include/expat_external.h
+#usr/lib/cmake
 #usr/lib/cmake/expat-2.5.0
 #usr/lib/cmake/expat-2.5.0/expat-config-version.cmake
 #usr/lib/cmake/expat-2.5.0/expat-config.cmake
