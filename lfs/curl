@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.86.0
+VER        = 7.87.0
 
 THISAPP    = curl-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a1de7feb229de42bf1deeb5017f97df3b1c10c75fac99bcd0cd21a5dc69b6d8b62520744106d6a113c7a86bd6731dba536a263aabfa22be50d520c43e894acce
+$(DL_FILE)_BLAKE2 = b272ec928c5ef1728434630d8910f58834327a30570913df9d47921a2810d002bd88b81371005197db857d3a53386420c1e28b1e463e6241d46c1e50fbce0c13
 
 install : $(TARGET)
 
@@ -70,6 +70,8 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xf $(DIR_DL)/$(DL_FILE)
+	# Add upstream patche.
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/curl-7.87.0_typecheck_accept_expressions_for_option_info_parameters.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--disable-ipv6 \

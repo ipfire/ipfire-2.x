@@ -119,6 +119,7 @@ usr/lib/libcurl.so.4.8.0
 #usr/share/man/man3/CURLOPT_CAINFO.3
 #usr/share/man/man3/CURLOPT_CAINFO_BLOB.3
 #usr/share/man/man3/CURLOPT_CAPATH.3
+#usr/share/man/man3/CURLOPT_CA_CACHE_TIMEOUT.3
 #usr/share/man/man3/CURLOPT_CERTINFO.3
 #usr/share/man/man3/CURLOPT_CHUNK_BGN_FUNCTION.3
 #usr/share/man/man3/CURLOPT_CHUNK_DATA.3
