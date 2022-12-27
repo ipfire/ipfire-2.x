@@ -1,2 +1,2 @@
 usr/sbin/iotop
-usr/lib/python3.10/site-packages/iotop-0.6-py3.10.egg
+#usr/share/man/man8/iotop.8
