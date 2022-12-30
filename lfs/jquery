@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.6.0
+VER        = 3.6.3
 
 THISAPP    = jquery-$(VER)
 DL_FILE    = $(THISAPP).min.js
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 2ae88855ddf4957e944a5ca313d8854d7afff1e796694437b07fae15a67f75d46f357450b0e2a6f140c1d116512016f1d276e0e12fe3eb700e3c93e3492d6a9e
+$(DL_FILE)_BLAKE2 = ff1c58cc4d8efb7f3c134d4da0d0b6960c83d09edeffc9cff96230733c9c35c259282cb335aa2ceea75ca9d6548721aedbe3dbac6b68fa0a91e405c06f72f1d6
 
 install : $(TARGET)
 
