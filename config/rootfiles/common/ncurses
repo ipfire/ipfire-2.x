@@ -34,24 +34,29 @@ usr/bin/tset
 #usr/lib/libform.so
 #usr/lib/libformw.so
 usr/lib/libformw.so.6
-usr/lib/libformw.so.6.3
+usr/lib/libformw.so.6.4
 #usr/lib/libmenu.so
 #usr/lib/libmenuw.so
 usr/lib/libmenuw.so.6
-usr/lib/libmenuw.so.6.3
+usr/lib/libmenuw.so.6.4
 #usr/lib/libncurses++w.a
 #usr/lib/libncurses.so
 #usr/lib/libncursesw.so
 usr/lib/libncursesw.so.6
-usr/lib/libncursesw.so.6.3
+usr/lib/libncursesw.so.6.4
 #usr/lib/libpanel.so
 #usr/lib/libpanelw.so
 usr/lib/libpanelw.so.6
-usr/lib/libpanelw.so.6.3
+usr/lib/libpanelw.so.6.4
 #usr/lib/pkgconfig/form.pc
+#usr/lib/pkgconfig/formw.pc
 #usr/lib/pkgconfig/menu.pc
+#usr/lib/pkgconfig/menuw.pc
+#usr/lib/pkgconfig/ncurses++w.pc
 #usr/lib/pkgconfig/ncurses.pc
+#usr/lib/pkgconfig/ncursesw.pc
 #usr/lib/pkgconfig/panel.pc
+#usr/lib/pkgconfig/panelw.pc
 #usr/lib/terminfo
 #usr/share/man/man1/captoinfo.1m
 #usr/share/man/man1/clear.1
@@ -1121,6 +1126,7 @@ usr/share/terminfo/E/Eterm-color
 #usr/share/terminfo/a/adm5
 #usr/share/terminfo/a/aepro
 #usr/share/terminfo/a/aixterm
+#usr/share/terminfo/a/aixterm+sl
 #usr/share/terminfo/a/aixterm-16color
 #usr/share/terminfo/a/aixterm-m
 #usr/share/terminfo/a/aixterm-m-old
@@ -1173,6 +1179,7 @@ usr/share/terminfo/E/Eterm-color
 #usr/share/terminfo/a/annarbor4080
 usr/share/terminfo/a/ansi
 #usr/share/terminfo/a/ansi+arrows
+#usr/share/terminfo/a/ansi+cpr
 #usr/share/terminfo/a/ansi+csr
 #usr/share/terminfo/a/ansi+cup
 #usr/share/terminfo/a/ansi+enq
@@ -1230,6 +1237,7 @@ usr/share/terminfo/a/ansi
 #usr/share/terminfo/a/ap-vm80
 #usr/share/terminfo/a/apl
 #usr/share/terminfo/a/apollo
+#usr/share/terminfo/a/apollo+vt132
 #usr/share/terminfo/a/apollo_15P
 #usr/share/terminfo/a/apollo_19L
 #usr/share/terminfo/a/apollo_color
@@ -1292,6 +1300,7 @@ usr/share/terminfo/a/aterm
 #usr/share/terminfo/a/att4426
 #usr/share/terminfo/a/att500
 #usr/share/terminfo/a/att505
+#usr/share/terminfo/a/att505-22
 #usr/share/terminfo/a/att505-24
 #usr/share/terminfo/a/att510a
 #usr/share/terminfo/a/att510d
@@ -1415,6 +1424,7 @@ usr/share/terminfo/a/aterm
 #usr/share/terminfo/b/bq300-w
 #usr/share/terminfo/b/bq300-w-8rv
 #usr/share/terminfo/b/bq300-w-rv
+#usr/share/terminfo/b/bracketed+paste
 #usr/share/terminfo/b/bsdos-pc
 #usr/share/terminfo/b/bsdos-pc-m
 #usr/share/terminfo/b/bsdos-pc-mono
@@ -1747,6 +1757,7 @@ usr/share/terminfo/c/cygwin
 #usr/share/terminfo/d/dec-vt340
 #usr/share/terminfo/d/dec-vt400
 #usr/share/terminfo/d/decansi
+#usr/share/terminfo/d/decid+cpr
 #usr/share/terminfo/d/decpro
 #usr/share/terminfo/d/decwriter
 #usr/share/terminfo/d/delta
@@ -2209,6 +2220,7 @@ usr/share/terminfo/j/jfbterm
 #usr/share/terminfo/k/kermit-am
 #usr/share/terminfo/k/kitty
 #usr/share/terminfo/k/kitty+common
+#usr/share/terminfo/k/kitty+setal
 #usr/share/terminfo/k/kitty-direct
 #usr/share/terminfo/k/klone+acs
 #usr/share/terminfo/k/klone+color
@@ -2348,6 +2360,8 @@ usr/share/terminfo/m/mlterm
 #usr/share/terminfo/m/modgraph48
 #usr/share/terminfo/m/mono-emx
 #usr/share/terminfo/m/morphos
+#usr/share/terminfo/m/mosh
+#usr/share/terminfo/m/mosh-256color
 #usr/share/terminfo/m/mouse-sun
 usr/share/terminfo/m/mrxvt
 #usr/share/terminfo/m/mrxvt-256color
@@ -2396,8 +2410,10 @@ usr/share/terminfo/m/mrxvt
 #usr/share/terminfo/n/ncr260intpp
 #usr/share/terminfo/n/ncr260intwan
 #usr/share/terminfo/n/ncr260intwpp
+#usr/share/terminfo/n/ncr260vp+sl
 #usr/share/terminfo/n/ncr260vppp
 #usr/share/terminfo/n/ncr260vpwpp
+#usr/share/terminfo/n/ncr260vt+sl
 #usr/share/terminfo/n/ncr260vt100an
 #usr/share/terminfo/n/ncr260vt100pp
 #usr/share/terminfo/n/ncr260vt100wan
@@ -2477,6 +2493,7 @@ usr/share/terminfo/m/mrxvt
 #usr/share/terminfo/n/newscbm33
 #usr/share/terminfo/n/next
 #usr/share/terminfo/n/nextshell
+#usr/share/terminfo/n/no+brackets
 #usr/share/terminfo/n/northstar
 usr/share/terminfo/n/nsterm
 #usr/share/terminfo/n/nsterm+7
@@ -2505,6 +2522,7 @@ usr/share/terminfo/n/nsterm
 #usr/share/terminfo/n/nsterm-build343
 #usr/share/terminfo/n/nsterm-build361
 #usr/share/terminfo/n/nsterm-build400
+#usr/share/terminfo/n/nsterm-build440
 #usr/share/terminfo/n/nsterm-c
 #usr/share/terminfo/n/nsterm-c-7
 #usr/share/terminfo/n/nsterm-c-acs
@@ -2852,6 +2870,7 @@ usr/share/terminfo/s/screen-256color
 #usr/share/terminfo/s/screen-256color-bce
 #usr/share/terminfo/s/screen-256color-bce-s
 #usr/share/terminfo/s/screen-256color-s
+#usr/share/terminfo/s/screen-base
 usr/share/terminfo/s/screen-bce
 #usr/share/terminfo/s/screen-bce.Eterm
 #usr/share/terminfo/s/screen-bce.gnome
@@ -3013,6 +3032,13 @@ usr/share/terminfo/s/sun
 #usr/share/terminfo/t/tek4207-s
 #usr/share/terminfo/t/tek4404
 #usr/share/terminfo/t/teken
+#usr/share/terminfo/t/teken-16color
+#usr/share/terminfo/t/teken-2018
+#usr/share/terminfo/t/teken-2022
+#usr/share/terminfo/t/teken-sc
+#usr/share/terminfo/t/teken-sc+fkeys
+#usr/share/terminfo/t/teken-vt
+#usr/share/terminfo/t/teken-vt+fkeys
 #usr/share/terminfo/t/teleray
 #usr/share/terminfo/t/teletec
 usr/share/terminfo/t/teraterm
@@ -3073,7 +3099,6 @@ usr/share/terminfo/t/tmux-direct
 #usr/share/terminfo/t/ts100-sp
 #usr/share/terminfo/t/ts1p
 #usr/share/terminfo/t/tt
-#usr/share/terminfo/t/tt505-22
 #usr/share/terminfo/t/tt52
 #usr/share/terminfo/t/tty33
 #usr/share/terminfo/t/tty35
@@ -3524,6 +3549,7 @@ usr/share/terminfo/v/vwmterm
 #usr/share/terminfo/w/wy99gt-w
 #usr/share/terminfo/w/wy99gt-w-vb
 #usr/share/terminfo/w/wy99gt-wvb
+#usr/share/terminfo/w/wyse+sl
 #usr/share/terminfo/w/wyse-325
 #usr/share/terminfo/w/wyse-75ap
 #usr/share/terminfo/w/wyse-vp
@@ -3627,6 +3653,7 @@ usr/share/terminfo/v/vwmterm
 #usr/share/terminfo/w/wyse99gt-wvb
 #usr/share/terminfo/x
 #usr/share/terminfo/x/x10term
+#usr/share/terminfo/x/x10term+sl
 #usr/share/terminfo/x/x1700
 #usr/share/terminfo/x/x1700-lm
 #usr/share/terminfo/x/x1720
@@ -3641,6 +3668,7 @@ usr/share/terminfo/v/vwmterm
 #usr/share/terminfo/x/xerox1720
 #usr/share/terminfo/x/xerox820
 usr/share/terminfo/x/xfce
+#usr/share/terminfo/x/xgterm
 #usr/share/terminfo/x/xiterm
 #usr/share/terminfo/x/xl83
 #usr/share/terminfo/x/xnuppc
@@ -3699,14 +3727,17 @@ usr/share/terminfo/x/xterm
 #usr/share/terminfo/x/xterm+256setaf
 #usr/share/terminfo/x/xterm+88color
 #usr/share/terminfo/x/xterm+88color2
+#usr/share/terminfo/x/xterm+acs
 #usr/share/terminfo/x/xterm+alt+title
 #usr/share/terminfo/x/xterm+alt1049
+#usr/share/terminfo/x/xterm+alt47
 #usr/share/terminfo/x/xterm+app
 #usr/share/terminfo/x/xterm+direct
 #usr/share/terminfo/x/xterm+direct16
 #usr/share/terminfo/x/xterm+direct2
 #usr/share/terminfo/x/xterm+direct256
 #usr/share/terminfo/x/xterm+edit
+#usr/share/terminfo/x/xterm+focus
 #usr/share/terminfo/x/xterm+indirect
 #usr/share/terminfo/x/xterm+kbs
 #usr/share/terminfo/x/xterm+keypad
@@ -3727,6 +3758,7 @@ usr/share/terminfo/x/xterm
 #usr/share/terminfo/x/xterm+pcfkeys
 #usr/share/terminfo/x/xterm+r6f2
 #usr/share/terminfo/x/xterm+sl
+#usr/share/terminfo/x/xterm+sl-alt
 #usr/share/terminfo/x/xterm+sl-twm
 #usr/share/terminfo/x/xterm+sm+1002
 #usr/share/terminfo/x/xterm+sm+1003
@@ -3761,6 +3793,8 @@ usr/share/terminfo/x/xterm-new
 usr/share/terminfo/x/xterm-nic
 usr/share/terminfo/x/xterm-noapp
 usr/share/terminfo/x/xterm-old
+#usr/share/terminfo/x/xterm-p370
+#usr/share/terminfo/x/xterm-p371
 usr/share/terminfo/x/xterm-pcolor
 usr/share/terminfo/x/xterm-r5
 usr/share/terminfo/x/xterm-r6
