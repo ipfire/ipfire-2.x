@@ -1,9 +1,11 @@
 bin/keyctl
+etc/keyutils
 etc/request-key.conf
 etc/request-key.d
 #lib/libkeyutils.so
 lib/libkeyutils.so.1
-lib/libkeyutils.so.1.7
+lib/libkeyutils.so.1.10
+#lib/pkgconfig/libkeyutils.pc
 sbin/key.dns_resolver
 sbin/request-key
 #usr/include/keyutils.h
@@ -13,6 +15,7 @@ sbin/request-key
 #usr/share/man/man3/find_key_by_type_and_name.3
 #usr/share/man/man3/keyctl.3
 #usr/share/man/man3/keyctl_assume_authority.3
+#usr/share/man/man3/keyctl_capabilities.3
 #usr/share/man/man3/keyctl_chown.3
 #usr/share/man/man3/keyctl_clear.3
 #usr/share/man/man3/keyctl_describe.3
@@ -29,7 +32,13 @@ sbin/request-key
 #usr/share/man/man3/keyctl_invalidate.3
 #usr/share/man/man3/keyctl_join_session_keyring.3
 #usr/share/man/man3/keyctl_link.3
+#usr/share/man/man3/keyctl_move.3
 #usr/share/man/man3/keyctl_negate.3
+#usr/share/man/man3/keyctl_pkey_decrypt.3
+#usr/share/man/man3/keyctl_pkey_encrypt.3
+#usr/share/man/man3/keyctl_pkey_query.3
+#usr/share/man/man3/keyctl_pkey_sign.3
+#usr/share/man/man3/keyctl_pkey_verify.3
 #usr/share/man/man3/keyctl_read.3
 #usr/share/man/man3/keyctl_read_alloc.3
 #usr/share/man/man3/keyctl_reject.3
@@ -42,9 +51,12 @@ sbin/request-key
 #usr/share/man/man3/keyctl_setperm.3
 #usr/share/man/man3/keyctl_unlink.3
 #usr/share/man/man3/keyctl_update.3
+#usr/share/man/man3/keyctl_watch_key.3
 #usr/share/man/man3/recursive_key_scan.3
 #usr/share/man/man3/recursive_session_key_scan.3
+#usr/share/man/man5/key.dns_resolver.conf.5
 #usr/share/man/man5/request-key.conf.5
+#usr/share/man/man7/asymmetric-key.7
 #usr/share/man/man7/keyutils.7
 #usr/share/man/man8/key.dns_resolver.8
 #usr/share/man/man8/request-key.8
