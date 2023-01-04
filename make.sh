@@ -1178,6 +1178,9 @@ buildipfire() {
 
   lfsmake2 expat
   lfsmake2 libconfig
+  lfsmake2 curl
+  lfsmake2 libarchive
+  lfsmake2 cmake
   lfsmake2 json-c
   lfsmake2 tcl
   lfsmake2 libffi
@@ -1208,7 +1211,6 @@ buildipfire() {
   lfsmake2 libqmi
   lfsmake2 pam
   lfsmake2 c-ares
-  lfsmake2 curl
   lfsmake2 rust
   lfsmake2 rust-dissimilar
   lfsmake2 rust-cfg-if
@@ -1325,8 +1327,6 @@ buildipfire() {
   lfsmake2 libnl-3
   lfsmake2 libidn
   lfsmake2 nasm
-  lfsmake2 libarchive
-  lfsmake2 cmake
   lfsmake2 libjpeg
   lfsmake2 openjpeg
   lfsmake2 libexif
