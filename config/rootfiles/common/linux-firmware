@@ -35,6 +35,8 @@ lib/firmware/amdgpu/aldebaran_mec.bin
 lib/firmware/amdgpu/aldebaran_mec2.bin
 lib/firmware/amdgpu/aldebaran_rlc.bin
 lib/firmware/amdgpu/aldebaran_sdma.bin
+lib/firmware/amdgpu/aldebaran_sjt_mec.bin
+lib/firmware/amdgpu/aldebaran_sjt_mec2.bin
 lib/firmware/amdgpu/aldebaran_smc.bin
 lib/firmware/amdgpu/aldebaran_sos.bin
 lib/firmware/amdgpu/aldebaran_ta.bin
@@ -94,6 +96,7 @@ lib/firmware/amdgpu/cyan_skillfish2_sdma.bin
 lib/firmware/amdgpu/cyan_skillfish2_sdma1.bin
 lib/firmware/amdgpu/dcn_3_1_5_dmcub.bin
 lib/firmware/amdgpu/dcn_3_1_6_dmcub.bin
+lib/firmware/amdgpu/dcn_3_2_0_dmcub.bin
 lib/firmware/amdgpu/dimgrey_cavefish_ce.bin
 lib/firmware/amdgpu/dimgrey_cavefish_dmcub.bin
 lib/firmware/amdgpu/dimgrey_cavefish_me.bin
@@ -130,6 +133,13 @@ lib/firmware/amdgpu/gc_10_3_7_mec.bin
 lib/firmware/amdgpu/gc_10_3_7_mec2.bin
 lib/firmware/amdgpu/gc_10_3_7_pfp.bin
 lib/firmware/amdgpu/gc_10_3_7_rlc.bin
+lib/firmware/amdgpu/gc_11_0_0_imu.bin
+lib/firmware/amdgpu/gc_11_0_0_me.bin
+lib/firmware/amdgpu/gc_11_0_0_mec.bin
+lib/firmware/amdgpu/gc_11_0_0_mes.bin
+lib/firmware/amdgpu/gc_11_0_0_mes1.bin
+lib/firmware/amdgpu/gc_11_0_0_pfp.bin
+lib/firmware/amdgpu/gc_11_0_0_rlc.bin
 lib/firmware/amdgpu/green_sardine_asd.bin
 lib/firmware/amdgpu/green_sardine_ce.bin
 lib/firmware/amdgpu/green_sardine_dmcub.bin
@@ -338,6 +348,8 @@ lib/firmware/amdgpu/polaris12_sdma1.bin
 lib/firmware/amdgpu/polaris12_smc.bin
 lib/firmware/amdgpu/polaris12_uvd.bin
 lib/firmware/amdgpu/polaris12_vce.bin
+lib/firmware/amdgpu/psp_13_0_0_sos.bin
+lib/firmware/amdgpu/psp_13_0_0_ta.bin
 lib/firmware/amdgpu/psp_13_0_5_asd.bin
 lib/firmware/amdgpu/psp_13_0_5_ta.bin
 lib/firmware/amdgpu/psp_13_0_5_toc.bin
@@ -382,6 +394,7 @@ lib/firmware/amdgpu/renoir_ta.bin
 lib/firmware/amdgpu/renoir_vcn.bin
 lib/firmware/amdgpu/sdma_5_2_6.bin
 lib/firmware/amdgpu/sdma_5_2_7.bin
+lib/firmware/amdgpu/sdma_6_0_0.bin
 lib/firmware/amdgpu/si58_mc.bin
 lib/firmware/amdgpu/sienna_cichlid_ce.bin
 lib/firmware/amdgpu/sienna_cichlid_dmcub.bin
@@ -395,6 +408,7 @@ lib/firmware/amdgpu/sienna_cichlid_smc.bin
 lib/firmware/amdgpu/sienna_cichlid_sos.bin
 lib/firmware/amdgpu/sienna_cichlid_ta.bin
 lib/firmware/amdgpu/sienna_cichlid_vcn.bin
+lib/firmware/amdgpu/smu_13_0_0.bin
 lib/firmware/amdgpu/stoney_ce.bin
 lib/firmware/amdgpu/stoney_me.bin
 lib/firmware/amdgpu/stoney_mec.bin
@@ -447,6 +461,7 @@ lib/firmware/amdgpu/vangogh_sdma.bin
 lib/firmware/amdgpu/vangogh_toc.bin
 lib/firmware/amdgpu/vangogh_vcn.bin
 lib/firmware/amdgpu/vcn_3_1_2.bin
+lib/firmware/amdgpu/vcn_4_0_0.bin
 lib/firmware/amdgpu/vega10_acg_smc.bin
 lib/firmware/amdgpu/vega10_asd.bin
 lib/firmware/amdgpu/vega10_ce.bin
@@ -1257,6 +1272,7 @@ lib/firmware/i915/dg1_huc_7.7.1.bin
 lib/firmware/i915/dg1_huc_7.9.3.bin
 lib/firmware/i915/dg2_dmc_ver2_06.bin
 lib/firmware/i915/dg2_dmc_ver2_07.bin
+lib/firmware/i915/dg2_dmc_ver2_08.bin
 lib/firmware/i915/dg2_guc_70.1.2.bin
 lib/firmware/i915/dg2_guc_70.4.1.bin
 lib/firmware/i915/dg2_guc_70.bin
@@ -1299,6 +1315,7 @@ lib/firmware/i915/kbl_guc_ver9_14.bin
 lib/firmware/i915/kbl_guc_ver9_39.bin
 lib/firmware/i915/kbl_huc_4.0.0.bin
 lib/firmware/i915/kbl_huc_ver02_00_1810.bin
+lib/firmware/i915/mtl_dmc_ver2_10.bin
 lib/firmware/i915/rkl_dmc_ver2_02.bin
 lib/firmware/i915/rkl_dmc_ver2_03.bin
 lib/firmware/i915/skl_dmc_ver1.bin
@@ -1752,6 +1769,8 @@ lib/firmware/mediatek/mt7986_rom_patch_mt7975.bin
 lib/firmware/mediatek/mt7986_wa.bin
 lib/firmware/mediatek/mt7986_wm.bin
 lib/firmware/mediatek/mt7986_wm_mt7975.bin
+lib/firmware/mediatek/mt7986_wo_0.bin
+lib/firmware/mediatek/mt7986_wo_1.bin
 #lib/firmware/mediatek/mt8173
 lib/firmware/mediatek/mt8173/vpu_d.bin
 lib/firmware/mediatek/mt8173/vpu_p.bin
@@ -2556,6 +2575,8 @@ lib/firmware/nvidia/tu117/nvdec/scrubber.bin
 lib/firmware/nvidia/tu117/sec2/desc.bin
 lib/firmware/nvidia/tu117/sec2/image.bin
 lib/firmware/nvidia/tu117/sec2/sig.bin
+#lib/firmware/nxp
+#lib/firmware/nxp/sr150_fw.bin
 #lib/firmware/ositech
 lib/firmware/ositech/Xilinx7OD.bin
 lib/firmware/phanfw.bin
@@ -2603,6 +2624,7 @@ lib/firmware/qca/nvm_usb_00130201_gf.bin
 lib/firmware/qca/nvm_usb_00130201_gf_010a.bin
 lib/firmware/qca/nvm_usb_00130201_gf_010b.bin
 lib/firmware/qca/nvm_usb_00130201_gf_0303.bin
+lib/firmware/qca/nvm_usb_00190200.bin
 lib/firmware/qca/rampatch_00130300.bin
 lib/firmware/qca/rampatch_00130302.bin
 lib/firmware/qca/rampatch_00230302.bin
@@ -2613,6 +2635,7 @@ lib/firmware/qca/rampatch_usb_00000300.bin
 lib/firmware/qca/rampatch_usb_00000302.bin
 lib/firmware/qca/rampatch_usb_00130200.bin
 lib/firmware/qca/rampatch_usb_00130201.bin
+lib/firmware/qca/rampatch_usb_00190200.bin
 #lib/firmware/qcom
 #lib/firmware/qcom/LENOVO
 #lib/firmware/qcom/LENOVO/21BX
