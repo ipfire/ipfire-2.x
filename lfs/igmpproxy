@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Multicast router utilizing IGMP forwarding
 
-VER        = 0.3
+VER        = 0.4
 
 THISAPP    = igmpproxy-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = igmpproxy
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 4dd07936074fbd9b3c869851f5b592f1eec33109be78ee5a05b3658c26afb67c30379f7cc66dfa20af276aae0a1c21dbf5c9fd337c853d623b08126324b06561
+$(DL_FILE)_BLAKE2 = 233af2fe35a0d661211d205fec89cce0a7dc91fe1530e940703e6d56eeb69f4490ca16d18787dbbaf7c0087dc2ebcb61d212778993af6fbb8acc7ba33429f7e0
 
 install : $(TARGET)
 
