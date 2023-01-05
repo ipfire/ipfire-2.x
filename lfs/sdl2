@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.26.0
+VER        = 2.26.2
 SUMMARY    = Simple DirectMedia Layer Library
 
 THISAPP    = SDL2-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = sdl2
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       = alsa
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 4971cef0d34706dd02eff5277fd58b35523ee3b1d860999b37ddf4dbc463f493859a43325c4faa9bd048c519d49788adb3dd7f38e6b29eb635c0e0e405c944e9
+$(DL_FILE)_BLAKE2 = 84a972c634a084350173fcc5da69cc9b402f83b969e6611aa47cc81dc01520508ba813e5910299702c7139a0426462e607e97524510f61afe91d46a7cc9da8dc
 
 install : $(TARGET)
 
