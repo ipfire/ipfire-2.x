@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20221107
+VER        = 20221226
 
 THISAPP    = iana-etc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 070ce9d87a75d23d4b9331137b8e92b6c082699d98e2725db6345b9c3bc5e160fc754ade914b0ee35d845a35ecceaaa5b9104ad1f0934fc4d8d7d937d220368d
+$(DL_FILE)_BLAKE2 = 6977d6f11389ababf89bdc64e70713995c0f368c0b290c01fd72c62b0d887968b3eb7e18c872509c69f00c77b5ff4bf8f9011c4b35a2f46f22898c78c8143a0c
 
 install : $(TARGET)
 
