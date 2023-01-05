@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,9 +26,9 @@ include Config
 
 SUMMARY    = The Reliable, High Performance TCP/HTTP Load Balancer
 
-VER        = 2.6.0
+VER        = 2.7.1
 
-# From: https://www.haproxy.org/download/2.4/src/haproxy-2.4.15.tar.gz
+# From: https://www.haproxy.org/download/2.7/src/haproxy-2.7.1.tar.gz
 
 THISAPP    = haproxy-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -36,7 +36,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = haproxy
-PAK_VER    = 23
+PAK_VER    = 24
 
 DEPS       =
 
@@ -54,7 +54,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 70124b3aef55a5a7c827450e57f6d46a17c1c508e5278a8101f06494097534cb1f30e0f33c3dc38072ae56268d10cc50df3b8d481b5edc6f3a2279986cf09cdd
+$(DL_FILE)_BLAKE2 = aa9e6273468e07b91efb8ecedcf06f2bdcb0ba7949ba710bf94d23a59987031be0f94d78a3efa707fbaba711773db76516f76e1cdc2a92b1eaeac0786e1b8663
 
 install : $(TARGET)
 
