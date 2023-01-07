@@ -44,6 +44,8 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/usr/local/bin/openvpnctrl -k
+/usr/local/bin/openvpnctrl -kn2n
 
 KVER="xxxKVERxxx"
 
@@ -98,6 +100,10 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+if grep -q "ENABLED=on" /var/ipfire/ovpn/settings; then
+	/usr/local/bin/openvpnctrl -s
+	/usr/local/bin/openvpnctrl -sn2n
+fi
 
 # Regenerate all initrds
 dracut --regenerate-all --force

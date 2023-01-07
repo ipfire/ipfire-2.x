@@ -151,4 +151,5 @@ lib/firmware/qca/rampatch_usb_00190200.bin
 lib/udev/network-hotplug-rename
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
+usr/sbin/openvpn-authenticator
 var/ipfire/dhcpc/dhcpcd.conf
