@@ -1,0 +1,63 @@
+From:   Yupeng Li <liyupeng@zbhlos.com>
+To:     Shyam-sundar.S-k@amd.com, hdegoede@redhat.com, markgross@kernel.org
+Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
+        caizp2008@163.com, Yupeng Li <liyupeng@zbhlos.com>
+Subject: [PATCH 1/1] platform/x86/amd: Fix pmc compile dependency errors.
+Date:   Wed, 26 Oct 2022 15:25:31 +0800
+
+When disabled CONFIG_SUSPEND and CONFIG_DEBUG_FS, get_metrics_table
+and amd_pmc_idlemask_read is defined under two conditions of this,
+pmc build with implicit declaration of function error.Some build error
+messages are as follows:
+
+ CC [M]  drivers/platform/x86/amd/pmc.o
+drivers/platform/x86/amd/pmc.c: In function ‘smu_fw_info_show’:
+drivers/platform/x86/amd/pmc.c:436:6: error: implicit declaration of function ‘get_metrics_table’ [-Werror=implicit-function-declaration]
+  436 |  if (get_metrics_table(dev, &table))
+      |      ^~~~~~~~~~~~~~~~~
+drivers/platform/x86/amd/pmc.c: In function ‘amd_pmc_idlemask_show’:
+drivers/platform/x86/amd/pmc.c:508:8: error: implicit declaration of function ‘amd_pmc_idlemask_read’; did you mean ‘amd_pmc_idlemask_show’? [-Werror=implicit-function-declaration]
+  508 |   rc = amd_pmc_idlemask_read(dev, NULL, s);
+      |        ^~~~~~~~~~~~~~~~~~~~~
+      |        amd_pmc_idlemask_show
+cc1: some warnings being treated as errors
+
+Signed-off-by: Yupeng Li <liyupeng@zbhlos.com>
+Reviewed-by: Caicai <caizp2008@163.com>
+---
+ drivers/platform/x86/amd/pmc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/platform/x86/amd/pmc.c b/drivers/platform/x86/amd/pmc.c
+index ce859b300712..2b08039921b8 100644
+--- a/drivers/platform/x86/amd/pmc.c
++++ b/drivers/platform/x86/amd/pmc.c
+@@ -433,8 +433,10 @@ static int smu_fw_info_show(struct seq_file *s, void *unused)
+ 	struct smu_metrics table;
+ 	int idx;
+ 
++#if defined(CONFIG_SUSPEND) || defined(CONFIG_DEBUG_FS)
+ 	if (get_metrics_table(dev, &table))
+ 		return -EINVAL;
++#endif
+ 
+ 	seq_puts(s, "\n=== SMU Statistics ===\n");
+ 	seq_printf(s, "Table Version: %d\n", table.table_version);
+@@ -503,11 +505,12 @@ static int amd_pmc_idlemask_show(struct seq_file *s, void *unused)
+ 		if (rc)
+ 			return rc;
+ 	}
+-
+ 	if (dev->major > 56 || (dev->major >= 55 && dev->minor >= 37)) {
++#if defined(CONFIG_SUSPEND) || defined(CONFIG_DEBUG_FS)
+ 		rc = amd_pmc_idlemask_read(dev, NULL, s);
+ 		if (rc)
+ 			return rc;
++#endif
+ 	} else {
+ 		seq_puts(s, "Unsupported SMU version for Idlemask\n");
+ 	}
+-- 
+2.34.1
+
+

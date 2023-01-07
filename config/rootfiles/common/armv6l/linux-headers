@@ -31,6 +31,7 @@
 #usr/include/asm-generic/stat.h
 #usr/include/asm-generic/statfs.h
 #usr/include/asm-generic/swab.h
+#usr/include/asm-generic/termbits-common.h
 #usr/include/asm-generic/termbits.h
 #usr/include/asm-generic/termios.h
 #usr/include/asm-generic/types.h
@@ -101,6 +102,7 @@
 #usr/include/drm/via_drm.h
 #usr/include/drm/virtgpu_drm.h
 #usr/include/drm/vmwgfx_drm.h
+#usr/include/headers_check.pl
 #usr/include/linux
 #usr/include/linux/acct.h
 #usr/include/linux/acrn.h
@@ -110,6 +112,7 @@
 #usr/include/linux/agpgart.h
 #usr/include/linux/aio_abi.h
 #usr/include/linux/am437x-vpfe.h
+#usr/include/linux/amt.h
 #usr/include/linux/android
 #usr/include/linux/android/binder.h
 #usr/include/linux/android/binderfs.h
@@ -146,7 +149,6 @@
 #usr/include/linux/batadv_packet.h
 #usr/include/linux/batman_adv.h
 #usr/include/linux/baycom.h
-#usr/include/linux/bcache.h
 #usr/include/linux/bcm933xx_hcs.h
 #usr/include/linux/bfs_fs.h
 #usr/include/linux/binfmts.h
@@ -166,6 +168,7 @@
 #usr/include/linux/byteorder
 #usr/include/linux/byteorder/big_endian.h
 #usr/include/linux/byteorder/little_endian.h
+#usr/include/linux/cachefiles.h
 #usr/include/linux/caif
 #usr/include/linux/caif/caif_socket.h
 #usr/include/linux/caif/if_caif.h
@@ -198,9 +201,11 @@
 #usr/include/linux/cn_proc.h
 #usr/include/linux/coda.h
 #usr/include/linux/coff.h
+#usr/include/linux/comedi.h
 #usr/include/linux/connector.h
 #usr/include/linux/const.h
 #usr/include/linux/coresight-stm.h
+#usr/include/linux/counter.h
 #usr/include/linux/cramfs_fs.h
 #usr/include/linux/cryptouser.h
 #usr/include/linux/cuda.h
@@ -219,7 +224,6 @@
 #usr/include/linux/dm-log-userspace.h
 #usr/include/linux/dma-buf.h
 #usr/include/linux/dma-heap.h
-#usr/include/linux/dn.h
 #usr/include/linux/dns_resolver.h
 #usr/include/linux/dqblk_xfs.h
 #usr/include/linux/dvb
@@ -231,6 +235,7 @@
 #usr/include/linux/dvb/osd.h
 #usr/include/linux/dvb/version.h
 #usr/include/linux/dvb/video.h
+#usr/include/linux/dw100.h
 #usr/include/linux/edd.h
 #usr/include/linux/efs_fs_sb.h
 #usr/include/linux/elf-em.h
@@ -381,6 +386,7 @@
 #usr/include/linux/keyboard.h
 #usr/include/linux/keyctl.h
 #usr/include/linux/kfd_ioctl.h
+#usr/include/linux/kfd_sysfs.h
 #usr/include/linux/kvm_para.h
 #usr/include/linux/l2tp.h
 #usr/include/linux/landlock.h
@@ -388,11 +394,13 @@
 #usr/include/linux/limits.h
 #usr/include/linux/lirc.h
 #usr/include/linux/llc.h
+#usr/include/linux/loadpin.h
 #usr/include/linux/loop.h
 #usr/include/linux/lp.h
 #usr/include/linux/lwtunnel.h
 #usr/include/linux/magic.h
 #usr/include/linux/major.h
+#usr/include/linux/map_to_14segment.h
 #usr/include/linux/map_to_7segment.h
 #usr/include/linux/matroxfb.h
 #usr/include/linux/max2175.h
@@ -557,7 +565,6 @@
 #usr/include/linux/netfilter_bridge/ebt_stp.h
 #usr/include/linux/netfilter_bridge/ebt_vlan.h
 #usr/include/linux/netfilter_bridge/ebtables.h
-#usr/include/linux/netfilter_decnet.h
 #usr/include/linux/netfilter_ipv4
 #usr/include/linux/netfilter_ipv4.h
 #usr/include/linux/netfilter_ipv4/ip_tables.h
@@ -602,7 +609,6 @@
 #usr/include/linux/nfsd/cld.h
 #usr/include/linux/nfsd/debug.h
 #usr/include/linux/nfsd/export.h
-#usr/include/linux/nfsd/nfsfh.h
 #usr/include/linux/nfsd/stats.h
 #usr/include/linux/nilfs2_api.h
 #usr/include/linux/nilfs2_ondisk.h
@@ -628,6 +634,7 @@
 #usr/include/linux/perf_event.h
 #usr/include/linux/personality.h
 #usr/include/linux/pfkeyv2.h
+#usr/include/linux/pfrut.h
 #usr/include/linux/pg.h
 #usr/include/linux/phantom.h
 #usr/include/linux/phonet.h
@@ -704,6 +711,7 @@
 #usr/include/linux/serial_core.h
 #usr/include/linux/serial_reg.h
 #usr/include/linux/serio.h
+#usr/include/linux/sev-guest.h
 #usr/include/linux/shm.h
 #usr/include/linux/signal.h
 #usr/include/linux/signalfd.h
@@ -785,6 +793,7 @@
 #usr/include/linux/tty.h
 #usr/include/linux/tty_flags.h
 #usr/include/linux/types.h
+#usr/include/linux/ublk_cmd.h
 #usr/include/linux/udf_fs_i.h
 #usr/include/linux/udmabuf.h
 #usr/include/linux/udp.h
@@ -905,6 +914,7 @@
 #usr/include/rdma/bnxt_re-abi.h
 #usr/include/rdma/cxgb4-abi.h
 #usr/include/rdma/efa-abi.h
+#usr/include/rdma/erdma-abi.h
 #usr/include/rdma/hfi
 #usr/include/rdma/hfi/hfi1_ioctl.h
 #usr/include/rdma/hfi/hfi1_user.h
@@ -938,6 +948,7 @@
 #usr/include/scsi/fc/fc_gs.h
 #usr/include/scsi/fc/fc_ns.h
 #usr/include/scsi/scsi_bsg_fc.h
+#usr/include/scsi/scsi_bsg_mpi3mr.h
 #usr/include/scsi/scsi_bsg_ufs.h
 #usr/include/scsi/scsi_netlink.h
 #usr/include/scsi/scsi_netlink_fc.h
@@ -952,9 +963,13 @@
 #usr/include/sound/firewire.h
 #usr/include/sound/hdsp.h
 #usr/include/sound/hdspm.h
+#usr/include/sound/intel
+#usr/include/sound/intel/avs
+#usr/include/sound/intel/avs/tokens.h
 #usr/include/sound/sb16_csp.h
 #usr/include/sound/sfnt_info.h
 #usr/include/sound/skl-tplg-interface.h
+#usr/include/sound/snd_ar_tokens.h
 #usr/include/sound/snd_sst_tokens.h
 #usr/include/sound/sof
 #usr/include/sound/sof/abi.h
