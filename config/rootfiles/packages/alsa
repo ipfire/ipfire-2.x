@@ -175,6 +175,9 @@ usr/include/alsa/sound/hdspm.h
 #usr/include/alsa/version.h
 #usr/include/asoundlib.h
 #usr/include/sys/asoundlib.h
+#usr/lib/alsa-topology
+#usr/lib/alsa-topology/libalsatplg_module_nhlt.la
+usr/lib/alsa-topology/libalsatplg_module_nhlt.so
 #usr/lib/libasound.la
 #usr/lib/libasound.so
 usr/lib/libasound.so.2
@@ -355,8 +358,6 @@ usr/share/alsa
 #usr/share/alsa/pcm/surround50.conf
 #usr/share/alsa/pcm/surround51.conf
 #usr/share/alsa/pcm/surround71.conf
-#usr/share/alsa/speaker-test
-#usr/share/alsa/speaker-test/sample_map.csv
 #usr/share/locale/de/LC_MESSAGES/alsa-utils.mo
 #usr/share/locale/eu/LC_MESSAGES/alsa-utils.mo
 #usr/share/locale/fr/LC_MESSAGES/alsa-utils.mo

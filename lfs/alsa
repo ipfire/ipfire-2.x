@@ -26,8 +26,8 @@ include Config
 
 SUMMARY    = Advanced Linux Sound Architecture
 
-VER        = 1.2.5.1
-UVER       = 1.2.5.1
+VER        = 1.2.8
+UVER       = 1.2.8
 FVER       = 1.2.4
 
 VERSUFIX   = ipfire$(KCFG)
@@ -55,8 +55,8 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 alsa-utils-$(UVER).tar.bz2 = $(DL_FROM)/alsa-utils-$(UVER).tar.bz2
 alsa-firmware-$(FVER).tar.bz2 = $(DL_FROM)/alsa-firmware-$(FVER).tar.bz2
 
-$(DL_FILE)_BLAKE2 = 5464cc7f263bdf7b10aa7e1f542ad6dbc55bf300156fd1bded00375c41a518d4b14f96e28eb1c60a6ce7cc6e27da4b2e8598cd867f15417f260fc23513f93e11
-alsa-utils-$(UVER).tar.bz2_BLAKE2 = 79f96fd3ba1d92e72dc634dc01439acd3ccd02555c39cc1714c52bbd1e4bc8b68ec7bf5d219a704533e4a61587c3528504ef9cd7c652924d74daafa90f74e42a
+$(DL_FILE)_BLAKE2 = e6171ac557db6265e3f02df7bd269eca62d09afaf2c04dc913d3bb217df23a8e66e808ad453fea5ed90d4d9226feb05065ad5d9b3575241b76675ccd27b9b4d4
+alsa-utils-$(UVER).tar.bz2_BLAKE2 = 4b9676957e775be51076b4798dfd384db4eea440c682899024034d3dd593ba24f1d42b8d742c312e041a37f0dbbc12b16635d79f6e6633a3459cc21f80739b5e
 alsa-firmware-$(FVER).tar.bz2_BLAKE2 = 0f844f6cc4859b72635f24d347b4c790469aee39aa60d9addb2c168dcf06b48e7e3cbba26ff21c7e1f5aa355641eec7ab934cb09bfac8ca116a6ac6a7db9d548
 
 install : $(TARGET)
