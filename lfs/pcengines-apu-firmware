@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,14 +26,14 @@ include Config
 
 SUMMARY    = Firmware files for PC Engines apu system boards
 
-VER        = 4.17.0.2
+VER        = 4.17.0.3
 
 THISAPP    = pcengines-apu-firmware-$(VER)
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = pcengines-apu-firmware
-PAK_VER    = 13
+PAK_VER    = 14
 SUP_ARCH   = x86_64
 
 DEPS       = firmware-update
@@ -61,13 +61,13 @@ apu5_v$(VER).rom = $(DL_FROM)/apu5_v$(VER).rom
 apu6_v$(VER).rom = $(DL_FROM)/apu6_v$(VER).rom
 apu7_v$(VER).rom = $(DL_FROM)/apu7_v$(VER).rom
 
-apu1_v$(VER).rom_BLAKE2 = 90156d57e5d3c5907d99719668dc6b2b03b201d02d716722ea2c6bd201409dbeed83766a53a75fba89583f9a58e370c5951293c91405e9815466b91449af829d
-apu2_v$(VER).rom_BLAKE2 = f074f78a3ce7cb5df813a6f3f198d06585f1f9b932a31e07d6ce94a5a48e6e4211166beba5f04b1b176b914d3d7448606f9c9fb1b60130b5609ce97c298a09ba
-apu3_v$(VER).rom_BLAKE2 = 6f7f200f882bf188100f13c8a0d078e2bf94e40773cfba2d2d908d31c2a6d05567fc1cb81b2bedf4af6cdd7f9a4c8f6b67f168844298fcce99060aa13806790d
-apu4_v$(VER).rom_BLAKE2 = 75f927deddbab1a4413392ac40e434a59ce3e16034bf439dc7ca93be0c84f3279c8fadd8f199134b586cbf1c102c3b28a78d4ca50f556122473055f77e031416
-apu5_v$(VER).rom_BLAKE2 = 030deaef4b784b527c699bf394bfbec3108e8ed41a8ce89d93e9a7cea208805a1a37cae686cb724fc6e4b26da48885c3f7fd745cabe8150066f4a52167ee7066
-apu6_v$(VER).rom_BLAKE2 = 19dedf8c79c3835b53252f5f4019bafbc47bd753247fd9d5bf974944a4587e8c2ec136805bb11576b11fe6ce3a5b83ccf99b2bd92341a20bf87730491548368e
-apu7_v$(VER).rom_BLAKE2 = e99c0993baeffb0026e33d04be20a1bacdd2aa44c6cccf89bbd92313c361f62014080c47b8255a4381c12dd5519bc294595b917054f2289665852db174c2e22e
+apu1_v$(VER).rom_BLAKE2 = e64c56f6105a206b6af2da4d54bd36d9caa53154b17d5fc32966ee3ed74b0b25749fd10c6936b5b9e526b779c2ef9f1d566915297244e1570c5000b555561aea
+apu2_v$(VER).rom_BLAKE2 = 082e89bc8867383e673a6ba2791558b17bb7ab807257f546fa549393b25891287bdb13ae59e2525fc5951a8bab0ffead33c2a2d6b6616bea5c6f5daba573bd8c
+apu3_v$(VER).rom_BLAKE2 = 06aef3cc85aa8a6082399961b75598c8632c6214079a2f670f2567c21b8b46c39736ef6514af14559048d118986d6fc56d1373e3c39309b73c2b56bfd6477611
+apu4_v$(VER).rom_BLAKE2 = ea07e2742ea98eae959928c3c5ba8038f24dbbac38087dc21a61039b92ed87fad8079414a92b81291de9d30f701574c4bf9c4c9c66e70938c2efcfa46f7c578d
+apu5_v$(VER).rom_BLAKE2 = 0f4bf5fedc5948578c8c76aa9a622874c1c8df1774df6bda70baccd7453fd882c5ecccd1c249612c5415ed2408a86ed7cba6c05f1fe57a9df9138589e86b630c
+apu6_v$(VER).rom_BLAKE2 = 90faa16c2ee863876b1bbdb862dd99213f2bcb30727db7553e4fc736ddc3fb354d3c8d58d6dd27f71586e5296ceb68a6f6dd43a15a4dbe4ee27f455486b6e43c
+apu7_v$(VER).rom_BLAKE2 = 251e0e3183bce159351397aa7a2146e22d1c840e818c3118c2c02d21d3adfd574b3061d91d227cd51d64c6bc31d27f159b296ffdbb5ce5fdbced727b97f508ad
 
 install : $(TARGET)
 
