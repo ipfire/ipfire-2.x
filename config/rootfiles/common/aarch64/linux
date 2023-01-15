@@ -7249,6 +7249,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CC_HAVE_STACKPROTECTOR_SYSREG
 #lib/modules/KVER-ipfire/build/include/config/CC_IMPLICIT_FALLTHROUGH
 #lib/modules/KVER-ipfire/build/include/config/CC_IS_GCC
+#lib/modules/KVER-ipfire/build/include/config/CC_NO_ARRAY_BOUNDS
 #lib/modules/KVER-ipfire/build/include/config/CC_OPTIMIZE_FOR_PERFORMANCE
 #lib/modules/KVER-ipfire/build/include/config/CC_VERSION_TEXT
 #lib/modules/KVER-ipfire/build/include/config/CDROM
@@ -8081,6 +8082,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/FW_LOADER_USER_HELPER
 #lib/modules/KVER-ipfire/build/include/config/GACT_PROB
 #lib/modules/KVER-ipfire/build/include/config/GARP
+#lib/modules/KVER-ipfire/build/include/config/GCC11_NO_ARRAY_BOUNDS
 #lib/modules/KVER-ipfire/build/include/config/GCC12_NO_ARRAY_BOUNDS
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGINS
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_LATENT_ENTROPY
