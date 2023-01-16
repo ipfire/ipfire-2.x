@@ -21,6 +21,7 @@
 
 use strict;
 use feature "switch";
+no warnings 'experimental';
 # enable only the following on debugging purpose
 #use warnings;
 #use CGI::Carp 'fatalsToBrowser';
