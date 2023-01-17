@@ -2710,7 +2710,7 @@ print <<END;
 <hr size='1'>
 <table width='100%'>
 	<tr>
-		<td class'base'><b>$Lang::tr{'misc-options'}</b></td>
+		<td class='base'><b>$Lang::tr{'misc-options'}</b></td>
 	</tr>
 
 	<tr>
@@ -2765,7 +2765,7 @@ print <<END;
 <hr size='1'>
 <table width='100%'>
     <tr>
-	<td class'base'><b>$Lang::tr{'log-options'}</b></td>
+	<td class='base'><b>$Lang::tr{'log-options'}</b></td>
     </tr>
     <tr>
 	<td width='20%'></td> <td width='30%'> </td><td width='25%'> </td><td width='25%'></td>
@@ -4648,7 +4648,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	<tr><td colspan=4><hr /></td></tr><tr>
 
 	<tr>
-		<td class'base'><b>$Lang::tr{'MTU settings'}</b></td>
+		<td class='base'><b>$Lang::tr{'MTU settings'}</b></td>
 	</tr>
 
         <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'MTU'}</td>
@@ -4672,7 +4672,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 
 <tr><td colspan=4><hr /></td></tr><tr>
 	<tr>
-		<td class'base'><b>$Lang::tr{'ovpn crypt options'}:</b></td>
+		<td class='base'><b>$Lang::tr{'ovpn crypt options'}:</b></td>
 	</tr>
 
 	<tr><td class='boldbase'>$Lang::tr{'cipher'}</td>
@@ -5222,7 +5222,7 @@ END
 
 	<tr><td colspan='4'><br></td></tr>
 	<tr>
-		<td class'base'><b>$Lang::tr{'net config'}:</b></td>
+		<td class='base'><b>$Lang::tr{'net config'}:</b></td>
 	</tr>
     <tr><td colspan='1'><br></td></tr>
 
@@ -5239,7 +5239,7 @@ END
 
 	<tr><td colspan='4'><br></td></tr>
 	<tr>
-		<td class'base'><b>$Lang::tr{'ovpn crypt options'}:</b></td>
+		<td class='base'><b>$Lang::tr{'ovpn crypt options'}:</b></td>
 	</tr>
 	<tr><td colspan='1'><br></td></tr>
 
