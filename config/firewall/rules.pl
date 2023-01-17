@@ -401,6 +401,9 @@ sub buildrules {
 					$source = "";
 				}
 
+				# Make sure that $source is properly defined
+				next unless (defined $source);
+
 				my $source_intf = @$src[1];
 
 				foreach my $dst (@destinations) {
