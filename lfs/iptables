@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 1.8.8
+VER        = 1.8.9
 
 THISAPP    = iptables-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -41,7 +41,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 netfilter-layer7-v2.23.tar.gz = $(URL_IPFIRE)/netfilter-layer7-v2.23.tar.gz
 
-$(DL_FILE)_BLAKE2 = 0da021cc7313b86af331768904956dab3eee3de245a7b03965129f3d7f13097fc03fbb1390167dcd971eff216eabad9e59b261a9c0f54bfc48a77453aa40d164
+$(DL_FILE)_BLAKE2 = 37ba80be0ee7049c4d3ee5689b273b4d2cc6e6fb9ebb297e86976b5750f987f2ae4536013fe1749ae79b6989c241eaece3202019fafd47d842c7a4fe3e5093b1
 netfilter-layer7-v2.23.tar.gz_BLAKE2 = 5c8ab722f6fbc126f2f65ecf401de5fc40560c20e3be52f783db34410446185dcb6781b3148e4a174e8b2d2c290bec0342dea95e8cefc35c39345617fa7a8fdc
 
 install : $(TARGET)
@@ -72,7 +72,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/netfilter-layer7*
-	@cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	@cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	# Layer7
 	cd $(DIR_SRC) && tar zxf $(DIR_DL)/netfilter-layer7-v2.23.tar.gz
