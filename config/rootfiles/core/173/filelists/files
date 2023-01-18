@@ -154,3 +154,4 @@ srv/web/ipfire/cgi-bin/pppsetup.cgi
 usr/lib/firewall/rules.pl
 usr/sbin/openvpn-authenticator
 var/ipfire/dhcpc/dhcpcd.conf
+var/ipfire/general-functions.pl
