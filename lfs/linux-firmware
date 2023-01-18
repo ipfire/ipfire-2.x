@@ -73,11 +73,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	mkdir -p /lib/firmware
 	cd $(DIR_APP) && make install
 
-	# Remove any spaces in filenames
-	while read -r file; do \
-		mv "$${file}" "$${file// /_}" || exit 1; \
-	done < <(find /lib/firmware -name "* *")
-
 	# Hardlink any identical files
 	hardlink -c -vv /lib/firmware
 

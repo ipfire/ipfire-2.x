@@ -824,7 +824,7 @@ lib/firmware/brcm/brcmfmac43143-sdio.bin
 lib/firmware/brcm/brcmfmac43143.bin
 lib/firmware/brcm/brcmfmac43236b.bin
 lib/firmware/brcm/brcmfmac43241b0-sdio.bin
-lib/firmware/brcm/brcmfmac43241b4-sdio.Intel_Corp.-VALLEYVIEW_C0_PLATFORM.txt
+lib/firmware/brcm/brcmfmac43241b4-sdio.Intel Corp.-VALLEYVIEW C0 PLATFORM.txt
 lib/firmware/brcm/brcmfmac43241b4-sdio.bin
 lib/firmware/brcm/brcmfmac43241b5-sdio.bin
 lib/firmware/brcm/brcmfmac43242a.bin
@@ -832,7 +832,7 @@ lib/firmware/brcm/brcmfmac4329-sdio.bin
 lib/firmware/brcm/brcmfmac4330-sdio.Prowise-PT301.txt
 lib/firmware/brcm/brcmfmac4330-sdio.bin
 lib/firmware/brcm/brcmfmac4334-sdio.bin
-lib/firmware/brcm/brcmfmac43340-sdio.ASUSTeK_COMPUTER_INC.-TF103CE.txt
+lib/firmware/brcm/brcmfmac43340-sdio.ASUSTeK COMPUTER INC.-TF103CE.txt
 lib/firmware/brcm/brcmfmac43340-sdio.bin
 lib/firmware/brcm/brcmfmac43340-sdio.meegopad-t08.txt
 lib/firmware/brcm/brcmfmac43340-sdio.pov-tab-p1006w-data.txt
@@ -858,14 +858,14 @@ lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m2-ultra.txt
 lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m2-zero.txt
 lib/firmware/brcm/brcmfmac43430-sdio.sinovoip,bpi-m3.txt
 lib/firmware/brcm/brcmfmac43430-sdio.starfive,visionfive-v1.txt
-lib/firmware/brcm/brcmfmac43430a0-sdio.ONDA-V80_PLUS.txt
+lib/firmware/brcm/brcmfmac43430a0-sdio.ONDA-V80 PLUS.txt
 lib/firmware/brcm/brcmfmac43430a0-sdio.bin
 lib/firmware/brcm/brcmfmac43430a0-sdio.ilife-S806.txt
 lib/firmware/brcm/brcmfmac43430a0-sdio.jumper-ezpad-mini3.txt
 lib/firmware/brcm/brcmfmac43455-sdio.AW-CM256SM.txt
-lib/firmware/brcm/brcmfmac43455-sdio.MINIX-NEO_Z83-4.txt
-lib/firmware/brcm/brcmfmac43455-sdio.Raspberry_Pi_Foundation-Raspberry_Pi_4_Model_B.txt
-lib/firmware/brcm/brcmfmac43455-sdio.Raspberry_Pi_Foundation-Raspberry_Pi_Compute_Module_4.txt
+lib/firmware/brcm/brcmfmac43455-sdio.MINIX-NEO Z83-4.txt
+lib/firmware/brcm/brcmfmac43455-sdio.Raspberry Pi Foundation-Raspberry Pi 4 Model B.txt
+lib/firmware/brcm/brcmfmac43455-sdio.Raspberry Pi Foundation-Raspberry Pi Compute Module 4.txt
 lib/firmware/brcm/brcmfmac43455-sdio.acepc-t8.txt
 lib/firmware/brcm/brcmfmac43455-sdio.beagle,am5729-beagleboneai.txt
 lib/firmware/brcm/brcmfmac43455-sdio.bin
@@ -880,7 +880,7 @@ lib/firmware/brcm/brcmfmac4350-pcie.bin
 lib/firmware/brcm/brcmfmac4350c2-pcie.bin
 lib/firmware/brcm/brcmfmac4354-sdio.bin
 lib/firmware/brcm/brcmfmac4354-sdio.clm_blob
-lib/firmware/brcm/brcmfmac4356-pcie.Xiaomi_Inc-Mipad2.txt
+lib/firmware/brcm/brcmfmac4356-pcie.Xiaomi Inc-Mipad2.txt
 lib/firmware/brcm/brcmfmac4356-pcie.bin
 lib/firmware/brcm/brcmfmac4356-pcie.clm_blob
 lib/firmware/brcm/brcmfmac4356-pcie.gpd-win-pocket.txt
