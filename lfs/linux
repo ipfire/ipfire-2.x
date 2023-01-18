@@ -24,8 +24,8 @@
 
 include Config
 
-VER         = 5.15.86
-ARM_PATCHES = 5.15-ipfire5
+VER         = 6.1.7
+ARM_PATCHES = 6.1.y-ipfire0
 
 THISAPP    = linux-$(VER)
 DL_FILE    = linux-$(VER).tar.xz
@@ -78,8 +78,8 @@ objects =$(DL_FILE) \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_BLAKE2 = 6d088a5abcc1a8c56c2fdf05932f757ad5bbca48f5e60f5a302b2513186b7519af44daeebcb2ac96bd30967c58967426a3b33f492b22b5db7d75d3bd81411eb4
-arm-multi-patches-$(ARM_PATCHES).patch.xz_BLAKE2 = 58a70e757a9121a0aac83604a37aa787ec7ac0ee4970c5a3ac3bcb2dbaca32b00089cae6c0da5cf2fe0a2e156427b5165c6a86e0371a3e896f4c7cdd699c34a0
+$(DL_FILE)_BLAKE2 = 13c970a5780fd4ed97a0ff5d7c13e2f5cfebf608199ae94973f3a8a109bb961f1effb45bd61a687f5faaf784a84b4c88b5a4bb75b7a1a943f44cab9b6ad37ce1
+arm-multi-patches-$(ARM_PATCHES).patch.xz_BLAKE2 = 3ef9a778c5c41ee8bf2942a48f63b21228a632a2910d2123f01155bbf571592898cffffa61c387a5a6c817b62e458947b4c406c6591b23b5401faa47b020337f
 
 install : $(TARGET)
 
@@ -116,7 +116,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15.59-layer7.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.1-layer7.patch
 
 	# DVB Patches
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
@@ -143,8 +143,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# https://bugzilla.ipfire.org/show_bug.cgi?id=12760
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15-NFQUEUE-Hold-RCU-read-lock-while-calling-nf_reinject.patch
 
-	# https://bugzilla.ipfire.org/show_bug.cgi?id=12889
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/devtmpfs-mount-with-noexec-and-nosuid.patch
+	# Fix external module compile
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.0-fix_external_module_build.patch
+
+	# Fix pmc compile dependency errors
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.0.7-platform-x86-amd-Fix-pmc-compile-dependency-errors.patch
 
 ifeq "$(BUILD_ARCH)" "armv6l"
 	# Apply Arm-multiarch kernel patches.
@@ -153,9 +156,6 @@ endif
 ifeq "$(BUILD_ARCH)" "aarch64"
 	# Apply Arm-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).patch.xz | patch -Np1
-	# Apply NXP DPAA2 specific patches
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5.15-arm64-dpaa2-fix-lock-issue.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-5-15-arm64-dpaa2-add-support-for-10g-modes.patch
 endif
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-3.14.79-amba-fix.patch
 

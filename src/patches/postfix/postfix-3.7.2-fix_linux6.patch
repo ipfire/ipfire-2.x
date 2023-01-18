@@ -1,0 +1,24 @@
+diff -Naur postfix-3.7.2.org/makedefs postfix-3.7.2/makedefs
+--- postfix-3.7.2.org/makedefs	2022-01-23 21:53:41.000000000 +0100
++++ postfix-3.7.2/makedefs	2022-10-18 16:11:50.259575443 +0200
+@@ -627,7 +627,7 @@
+ 		: ${SHLIB_ENV="LD_LIBRARY_PATH=`pwd`/lib"}
+ 		: ${PLUGIN_LD="${CC-gcc} -shared"}
+ 		;;
+- Linux.[345].*)	SYSTYPE=LINUX$RELEASE_MAJOR
++ Linux.[3-6].*)	SYSTYPE=LINUX$RELEASE_MAJOR
+ 		case "$CCARGS" in
+ 		 *-DNO_DB*) ;;
+ 		 *-DHAS_DB*) ;;
+diff -Naur postfix-3.7.2.org/src/util/sys_defs.h postfix-3.7.2/src/util/sys_defs.h
+--- postfix-3.7.2.org/src/util/sys_defs.h	2021-12-05 19:59:27.000000000 +0100
++++ postfix-3.7.2/src/util/sys_defs.h	2022-10-18 16:09:29.682371415 +0200
+@@ -751,7 +751,7 @@
+  /*
+   * LINUX.
+   */
+-#if defined(LINUX2) || defined(LINUX3) || defined(LINUX4) || defined(LINUX5)
++#if defined(LINUX2) || defined(LINUX3) || defined(LINUX4) || defined(LINUX5) || defined(LINUX6)
+ #define SUPPORTED
+ #define UINT32_TYPE	unsigned int
+ #define UINT16_TYPE	unsigned short

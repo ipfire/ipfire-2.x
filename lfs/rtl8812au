@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team <info@ipfire.org>                      #
+# Copyright (C) 2007-2023  IPFire Team <info@ipfire.org>                      #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -27,10 +27,10 @@ include Config
 VERSUFIX = ipfire$(KCFG)
 MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/extra/wlan
 
-VER        = 307d694076b056588c652c2bdaa543a89eb255d9
+VER        = 20210629-07ac856293e247347b891c5dbd13f3ab8321132d
 
-THISAPP    = rtl8812au-$(VER)
-DL_FILE    = $(THISAPP).tar.xz
+THISAPP    = 8812au-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-kmod-$(KVER)-$(VERSUFIX)
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 4939d940dbfee8cd069a096e51e039f7b43bf043f493b97bf61c70d59a0d3060d19a6bb19281b990c4ac1c23d6f7b727bc41ed8edacc6c8f82d53865c81dd3e6
+$(DL_FILE)_BLAKE2 = 0d5fdcef6f52f396cac436ce17f6c52db3fcb43cdeb6fdcb1b0baa76fdfc2cfc8d94fcc925eed0c7cd4dfda00ac45dfbdcd661b69146cc45dfbb598f53471246
 
 install : $(TARGET)
 
@@ -77,7 +77,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rtl8812au/enable_usbmodeswitch.patch
-	cd $(DIR_APP) && CONFIG_88XXAU=m make $(MAKETUNING) \
+	cd $(DIR_APP) && CONFIG_RTL8812AU=m make $(MAKETUNING) \
 		-C /lib/modules/$(KVER)-$(VERSUFIX)/build/ M=$(DIR_APP)/ modules
 
 	# Install the built kernel modules.
