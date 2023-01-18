@@ -93,6 +93,19 @@ ldconfig
 
 # Remove files
 
+# Remove spandsp add-on, if installed
+for addon in spandsp; do
+	if [ -e "/opt/pakfire/db/installed/meta-${addon}" ]; then
+		for i in $(</opt/pakfire/db/rootfiles/${addon}); do
+			rm -rfv "/${i}"
+		done
+	fi
+	rm -vf \
+		/opt/pakfire/db/installed/meta-${addon} \
+		/opt/pakfire/db/meta/meta-${addon} \
+		/opt/pakfire/db/rootfiles/${addon}
+done
+
 # Update Language cache
 /usr/local/bin/update-lang-cache
 
