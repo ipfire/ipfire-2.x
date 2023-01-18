@@ -219,8 +219,7 @@ usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/command
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/command/install_egg_info.py
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/command/install_lib.py
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/command/install_scripts.py
-#usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/command/launcher
-#manifest.xml
+usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/command/launcher manifest.xml
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/command/py36compat.py
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/command/register.py
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/command/rotate.py
@@ -265,12 +264,11 @@ usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/namespa
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/package_index.py
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/py34compat.py
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/sandbox.py
-#usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/script
-#(dev).tmpl
+usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/script (dev).tmpl
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/script.tmpl
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/unicode_utils.py
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/version.py
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/wheel.py
 usr/lib/python3.10/site-packages/setuptools-65.4.1-py3.10.egg/setuptools/windows_support.py
 #usr/lib/python3.10/site-packages/setuptools.pth
-
+-

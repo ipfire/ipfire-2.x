@@ -755,10 +755,8 @@ usr/share/wireshark/enterprises.tsv
 #usr/share/wireshark/profiles/Bluetooth/preferences
 #usr/share/wireshark/profiles/Classic
 #usr/share/wireshark/profiles/Classic/colorfilters
-#usr/share/wireshark/profiles/No
-#Reassembly
-#usr/share/wireshark/profiles/No
-#Reassembly/preferences
+#usr/share/wireshark/profiles/No Reassembly
+#usr/share/wireshark/profiles/No Reassembly/preferences
 #usr/share/wireshark/radius
 #usr/share/wireshark/radius/README.radius_dictionary
 usr/share/wireshark/radius/custom.includes
