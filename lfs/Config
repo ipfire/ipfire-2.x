@@ -294,9 +294,8 @@ define POSTBUILD
 	@rm -rf $(GOPATH) /root/.cargo
 	@$(FIND_FILES) > $(DIR_SRC)/lsalrnew
 	@diff $(DIR_SRC)/lsalr $(DIR_SRC)/lsalrnew | grep '^> ' | sed 's/^> //' > $(TARGET)_diff
-	@cp -f $(DIR_SRC)/lsalrnew $(DIR_SRC)/lsalr
-	@rm -f $(DIR_SRC)/lsalrnew
-	sed -i -e 's+.\/++' $(TARGET)_diff
+	@mv -f $(DIR_SRC)/lsalrnew $(DIR_SRC)/lsalr
+	@sed -i -e 's+.\/++' $(TARGET)_diff
 	# compare roofile ( same name as lfs script) with the list of installed files
 	# special cases
 	# - if the corresponding rootfile is not found, touch $(TARGET)_missing_rootfile
@@ -305,7 +304,7 @@ define POSTBUILD
 	# ROOTFILE : reference of include/exclude files
 	# $(TARGET)_rootfile : ROOTFILE with KVER replacement
 	# $(TARGET) : log result with {commented|include|added} files
-	if [ -s "$(TARGET)_diff" ]; then \
+	@if [ -s "$(TARGET)_diff" ]; then \
 		LFS_SCRIPT=$(firstword $(MAKEFILE_LIST))$(KCFG); \
 		echo $(LFS_SCRIPT); \
 		ROOTFILE=$$(find -L $(DIR_SRC)/config/rootfiles/{common,packages}/{$(BUILD_ARCH),} -maxdepth 1 -type f -name $$LFS_SCRIPT 2>/dev/null | head -1); \
@@ -315,13 +314,13 @@ define POSTBUILD
 			echo "error $$LFS_SCRIPT not found in config/rootfiles"; \
 		fi; \
 		sed -e "s/BUILDTARGET/$(BUILDTARGET)/g" -e "s/KVER/$(KVER)/g" -e "s/xxxMACHINExxx/$(BUILD_ARCH)/g" $$ROOTFILE > $(TARGET)_rootfile; \
-		for line in `cat $(TARGET)_diff`; do \
+		while read -r line; do \
 			if grep -qG "^#$$line$$" $(TARGET)_rootfile; then echo "#$$line" >> $(TARGET); \
 			elif grep -qG "^$$line$$" $(TARGET)_rootfile ; then echo "$$line" >> $(TARGET); \
 			else echo "+$$line" >> $(TARGET); \
 			fi; \
-		done; \
-		for line in `grep -v "^#" $(TARGET)_rootfile`; do \
+		done < $(TARGET)_diff; \
+		grep -v "^#" $(TARGET)_rootfile | while read -r line; do \
 			if ! grep -qG "^$$line$$" $(TARGET)_diff ; then echo "-$$line" >> $(TARGET); \
 			fi; \
 		done; \
