@@ -1454,7 +1454,6 @@ buildipfire() {
   lfsmake2 vlan
   lfsmake2 wireless
   lfsmake2 pakfire
-  lfsmake2 spandsp
   lfsmake2 lz4
   lfsmake2 lzo
   lfsmake2 openvpn
