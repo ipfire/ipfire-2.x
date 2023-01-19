@@ -3,7 +3,7 @@ etc/mc/edit.indent.rc
 etc/mc/filehighlight.ini
 etc/mc/mc.default.keymap
 etc/mc/mc.emacs.keymap
-etc/mc/mc.ext
+etc/mc/mc.ext.ini
 etc/mc/mc.keymap
 etc/mc/mc.menu
 etc/mc/mcedit.menu
@@ -200,6 +200,7 @@ usr/share/mc/syntax/perl.syntax
 usr/share/mc/syntax/php.syntax
 usr/share/mc/syntax/po.syntax
 usr/share/mc/syntax/povray.syntax
+usr/share/mc/syntax/privoxy.syntax
 usr/share/mc/syntax/procmail.syntax
 usr/share/mc/syntax/properties.syntax
 usr/share/mc/syntax/protobuf.syntax
@@ -220,6 +221,7 @@ usr/share/mc/syntax/swig.syntax
 usr/share/mc/syntax/syntax.syntax
 usr/share/mc/syntax/tcl.syntax
 usr/share/mc/syntax/texinfo.syntax
+usr/share/mc/syntax/toml.syntax
 usr/share/mc/syntax/ts.syntax
 usr/share/mc/syntax/tt.syntax
 usr/share/mc/syntax/unknown.syntax
