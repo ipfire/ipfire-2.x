@@ -26,7 +26,8 @@ include Config
 
 SUMMARY    = nqptp is a daemon that monitors timing data from any PTP clocks
 
-VER        = d900567
+# https://github.com/mikebrady/nqptp/archive/$(VER).tar.gz
+VER        = ad384f9ed3b2cc31e97012ab6bfe5a214ffc65a2
 
 THISAPP    = nqptp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +35,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nqptp
-PAK_VER    = 2
+PAK_VER    = 3
 
 SERVICES   = nqptp
 
@@ -46,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 83db62518577bda0198e989a1274c46b0f0c658cf281fd282b4b1e51544339c00a3e6da43a472e8de50bcd3926c113ca7cd29e8e562de8b1260763d64baa069b
+$(DL_FILE)_BLAKE2 = c294012959d8daa54c2a4fc1803cad620c664fc1d0e5f3a865217059b2b9b656fd1c17cfe1c260ca09dc505c7337a77cd6d09fe642c04d3936e274c192e2aaeb
 
 install : $(TARGET)
 
