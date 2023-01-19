@@ -675,8 +675,6 @@ usr/lib/wireshark/extcap/udpdump
 #usr/lib/wireshark/plugins/3.6
 #usr/lib/wireshark/plugins/3.6/codecs
 usr/lib/wireshark/plugins/3.6/codecs/g711.so
-usr/lib/wireshark/plugins/3.6/codecs/g722.so
-usr/lib/wireshark/plugins/3.6/codecs/g726.so
 usr/lib/wireshark/plugins/3.6/codecs/l16mono.so
 usr/lib/wireshark/plugins/3.6/codecs/opus_dec.so
 #usr/lib/wireshark/plugins/3.6/epan
