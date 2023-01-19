@@ -9,8 +9,8 @@
 #	The latest version can be obtained from
 #		http://www.linux-usb.org/usb.ids
 #
-# Version: 2022.12.09
-# Date:    2022-12-09 20:34:10
+# Version: 2023.01.16
+# Date:    2023-01-16 20:34:10
 #
 
 # Vendors, devices and interfaces. Please keep sorted.
@@ -17631,7 +17631,7 @@
 	3940  external DVD burner ECD819-SU3
 	3960  INIC-3639
 	3e40  ZALMAN ZM-VE350
-13fe  Kingston Technology Company Inc.
+13fe  Phison Electronics Corp.
 	1a00  512MB/1GB Flash Drive
 	1a23  512MB Flash Drive
 	1d00  DataTraveler 2.0 1GB/4GB Flash Drive / Patriot Xporter 4GB Flash Drive
@@ -23201,10 +23201,11 @@
 	0832  UT2000/UT3000 Digital Storage Oscilloscope
 595a  IRTOUCHSYSTEMS Co. Ltd.
 	0001  Touchscreen
-5986  Acer, Inc
-	0100  Orbicam
+5986  Bison Electronics Inc.
+	0100  Acer Orbicam
 	0101  USB2.0 Camera
-	0102  Crystal Eye Webcam
+	0102  Acer Crystal Eye Webcam
+	0105  Acer Crystal Eye Webcam
 	0137  HP Webcam
 	0141  BisonCam, NB Pro
 	0149  HP Webcam-101
@@ -23212,7 +23213,7 @@
 	01a6  Lenovo Integrated Webcam
 	01a7  Lenovo Integrated Webcam
 	01a9  Lenovo Integrated Webcam
-	0200  OrbiCam
+	0200  Acer OrbiCam
 	0202  Fujitsu Webcam
 	0203  BisonCam NB Pro 1300
 	0205  Lenovo EasyCamera
