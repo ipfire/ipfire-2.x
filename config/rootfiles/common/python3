@@ -1853,8 +1853,7 @@ usr/lib/python3.10/site-packages/setuptools/command/install.py
 usr/lib/python3.10/site-packages/setuptools/command/install_egg_info.py
 usr/lib/python3.10/site-packages/setuptools/command/install_lib.py
 usr/lib/python3.10/site-packages/setuptools/command/install_scripts.py
-#usr/lib/python3.10/site-packages/setuptools/command/launcher
-#manifest.xml
+usr/lib/python3.10/site-packages/setuptools/command/launcher manifest.xml
 usr/lib/python3.10/site-packages/setuptools/command/py36compat.py
 usr/lib/python3.10/site-packages/setuptools/command/register.py
 usr/lib/python3.10/site-packages/setuptools/command/rotate.py
@@ -1899,8 +1898,7 @@ usr/lib/python3.10/site-packages/setuptools/namespaces.py
 usr/lib/python3.10/site-packages/setuptools/package_index.py
 usr/lib/python3.10/site-packages/setuptools/py34compat.py
 usr/lib/python3.10/site-packages/setuptools/sandbox.py
-#usr/lib/python3.10/site-packages/setuptools/script
-#(dev).tmpl
+usr/lib/python3.10/site-packages/setuptools/script (dev).tmpl
 usr/lib/python3.10/site-packages/setuptools/script.tmpl
 usr/lib/python3.10/site-packages/setuptools/unicode_utils.py
 usr/lib/python3.10/site-packages/setuptools/version.py
@@ -2074,4 +2072,3 @@ usr/lib/python3.10/zoneinfo/_tzpath.py
 usr/lib/python3.10/zoneinfo/_zoneinfo.py
 #usr/share/man/man1/python3.1
 #usr/share/man/man1/python3.10.1
-
