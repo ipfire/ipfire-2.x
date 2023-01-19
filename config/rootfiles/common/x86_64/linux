@@ -7172,6 +7172,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_CRYPTD
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_CTR
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_CTS
+#lib/modules/KVER-ipfire/build/include/config/CRYPTO_CURVE25519
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_CURVE25519_X86
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DEFLATE
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DES
@@ -7197,6 +7198,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DEV_SP_PSP
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DEV_VIRTIO
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DH
+#lib/modules/KVER-ipfire/build/include/config/CRYPTO_DH_RFC7919_GROUPS
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DRBG
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DRBG_HMAC
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DRBG_MENU
@@ -19514,6 +19516,7 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/crypto/crypto_engine.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/crypto_user.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/cts.ko.xz
+#lib/modules/KVER-ipfire/kernel/crypto/curve25519-generic.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/des_generic.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/dh_generic.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/ecdh_generic.ko.xz
@@ -19532,7 +19535,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/crypto/md4.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/michael_mic.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/pcbc.ko.xz
-#lib/modules/KVER-ipfire/kernel/crypto/pcrypt.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/poly1305_generic.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/polyval-generic.ko.xz
 #lib/modules/KVER-ipfire/kernel/crypto/rmd160.ko.xz
