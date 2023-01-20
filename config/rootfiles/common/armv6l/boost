@@ -12774,8 +12774,7 @@
 #usr/include/boost/serialization/boost_array.hpp
 #usr/include/boost/serialization/boost_unordered_map.hpp
 #usr/include/boost/serialization/boost_unordered_set.hpp
-#usr/include/boost/serialization/collection_size_type
-#copy.hpp
+#usr/include/boost/serialization/collection_size_type copy.hpp
 #usr/include/boost/serialization/collection_size_type.hpp
 #usr/include/boost/serialization/collection_traits.hpp
 #usr/include/boost/serialization/collections_load_imp.hpp
