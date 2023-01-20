@@ -1527,6 +1527,7 @@ usr/bin/htpasswd
 #usr/include/apache/mod_core.h
 #usr/include/apache/mod_dav.h
 #usr/include/apache/mod_dbd.h
+#usr/include/apache/mod_http2.h
 #usr/include/apache/mod_include.h
 #usr/include/apache/mod_log_config.h
 #usr/include/apache/mod_proxy.h
