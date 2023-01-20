@@ -7846,6 +7846,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DEV_SUN8I_SS_HASH
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DEV_SUN8I_SS_PRNG
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DH
+#lib/modules/KVER-ipfire/build/include/config/CRYPTO_DH_RFC7919_GROUPS
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DRBG
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DRBG_HMAC
 #lib/modules/KVER-ipfire/build/include/config/CRYPTO_DRBG_MENU
