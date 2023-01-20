@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.00
+VER        = 6.01
 
 THISAPP    = memtest86plus-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -41,8 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = bba26dab7165239fe95dc7f174e5f876f47421008ca6201bc57549598f512df56a6a0ca71f8c2c26c01188d243b58ab6ddd525cf01f0dece0cdb61a6acf38685
-
+$(DL_FILE)_BLAKE2 = 429df2d71cb0d84bec9aa3a25023f2a9db2e8c01b32b0af1f42b689a4a7da192d5ddb77a5cb126a162aba0c1e704a2da8f5dee88caae0d9f78545e9e9c14eee9
 
 install : $(TARGET)
 
