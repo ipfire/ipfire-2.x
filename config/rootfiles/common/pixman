@@ -1,9 +1,8 @@
 #usr/include/pixman-1
 #usr/include/pixman-1/pixman-version.h
 #usr/include/pixman-1/pixman.h
-#usr/lib/libpixman-1.a
 #usr/lib/libpixman-1.la
-usr/lib/libpixman-1.so
+#usr/lib/libpixman-1.so
 usr/lib/libpixman-1.so.0
-usr/lib/libpixman-1.so.0.40.0
+usr/lib/libpixman-1.so.0.42.2
 #usr/lib/pkgconfig/pixman-1.pc
