@@ -1,7 +1,7 @@
-diff -au lz4-1.9.3/lib/Makefile.orig lz4-1.9.3/lib/Makefile
---- lz4-1.9.3/lib/Makefile.orig	2020-11-16 05:59:35.000000000 +0100
-+++ lz4-1.9.3/lib/Makefile	2021-02-08 13:05:10.478443593 +0100
-@@ -144,7 +144,7 @@
+diff -Naur lz4-1.9.4.orig/lib/Makefile lz4-1.9.4/lib/Makefile
+--- lz4-1.9.4.orig/lib/Makefile	2022-08-16 00:45:31.000000000 +0200
++++ lz4-1.9.4/lib/Makefile	2023-01-25 14:31:42.117296250 +0100
+@@ -151,7 +151,7 @@
  # directory variables : GNU conventions prefer lowercase
  # see https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html
  # support both lower and uppercase (BSD), use lower in script
@@ -10,10 +10,10 @@ diff -au lz4-1.9.3/lib/Makefile.orig lz4-1.9.3/lib/Makefile
  prefix      ?= $(PREFIX)
  EXEC_PREFIX ?= $(prefix)
  exec_prefix ?= $(EXEC_PREFIX)
-diff -au lz4-1.9.3/programs/Makefile.orig lz4-1.9.3/programs/Makefile
---- lz4-1.9.3/programs/Makefile.orig	2020-11-16 05:59:35.000000000 +0100
-+++ lz4-1.9.3/programs/Makefile	2021-02-08 13:05:55.475676260 +0100
-@@ -146,7 +146,7 @@
+diff -Naur lz4-1.9.4.orig/programs/Makefile lz4-1.9.4/programs/Makefile
+--- lz4-1.9.4.orig/programs/Makefile	2022-08-16 00:45:31.000000000 +0200
++++ lz4-1.9.4/programs/Makefile	2023-01-25 14:31:56.923590369 +0100
+@@ -157,7 +157,7 @@
  # directory variables : GNU conventions prefer lowercase
  # see https://www.gnu.org/prep/standards/html_node/Makefile-Conventions.html
  # support both lower and uppercase (BSD), use lowercase in script
