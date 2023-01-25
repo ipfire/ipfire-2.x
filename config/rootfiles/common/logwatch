@@ -95,6 +95,7 @@ usr/share/logwatch/default.conf/services/dhcpd.conf
 #usr/share/logwatch/default.conf/services/dnssec.conf
 #usr/share/logwatch/default.conf/services/dovecot.conf
 #usr/share/logwatch/default.conf/services/dpkg.conf
+#usr/share/logwatch/default.conf/services/dropbear.conf
 #usr/share/logwatch/default.conf/services/emerge.conf
 #usr/share/logwatch/default.conf/services/evtapplication.conf
 #usr/share/logwatch/default.conf/services/evtmswindows.conf
@@ -243,6 +244,7 @@ usr/share/logwatch/scripts/services/dialup
 #usr/share/logwatch/scripts/services/dnssec
 #usr/share/logwatch/scripts/services/dovecot
 #usr/share/logwatch/scripts/services/dpkg
+#usr/share/logwatch/scripts/services/dropbear
 #usr/share/logwatch/scripts/services/emerge
 #usr/share/logwatch/scripts/services/evtapplication
 #usr/share/logwatch/scripts/services/evtmswindows
