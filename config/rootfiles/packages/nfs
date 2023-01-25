@@ -24,7 +24,11 @@ usr/lib/libnfsidmap/static.so
 #usr/lib/libnfsidmap/umich_ldap.a
 #usr/lib/libnfsidmap/umich_ldap.la
 usr/lib/libnfsidmap/umich_ldap.so
+#usr/lib/modprobe.d
+#usr/lib/modprobe.d/50-nfs.conf
 #usr/lib/pkgconfig/libnfsidmap.pc
+#usr/lib/udev/rules.d/99-nfs.rules
+#usr/libexec/nfsrahead
 #usr/sbin/blkmapd
 usr/sbin/exportfs
 usr/sbin/mountstats
@@ -39,6 +43,7 @@ usr/sbin/rpc.idmapd
 usr/sbin/rpc.mountd
 usr/sbin/rpc.nfsd
 usr/sbin/rpc.statd
+usr/sbin/rpcctl
 usr/sbin/rpcdebug
 usr/sbin/showmount
 usr/sbin/sm-notify
@@ -49,6 +54,7 @@ usr/sbin/start-statd
 #usr/share/man/man5/nfs.5
 #usr/share/man/man5/nfs.conf.5
 #usr/share/man/man5/nfsmount.conf.5
+#usr/share/man/man5/nfsrahead.5
 #usr/share/man/man7/nfs.systemd.7
 #usr/share/man/man7/nfsd.7
 #usr/share/man/man8/blkmapd.8
@@ -71,6 +77,7 @@ usr/sbin/start-statd
 #usr/share/man/man8/rpc.nfsd.8
 #usr/share/man/man8/rpc.sm-notify.8
 #usr/share/man/man8/rpc.statd.8
+#usr/share/man/man8/rpcctl.8
 #usr/share/man/man8/rpcdebug.8
 #usr/share/man/man8/showmount.8
 #usr/share/man/man8/sm-notify.8
