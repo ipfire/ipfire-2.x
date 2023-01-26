@@ -101,7 +101,14 @@ rm -rvf \
 	/lib/xtables/libipt_LOG.so \
 	/lib/xtables/libipt_MASQUERADE.so \
 	/lib/xtables/libipt_SNAT.so \
-	/usr/lib/libltdl.so
+	/usr/lib/libbind9-9.16.35.so \
+	/usr/lib/libdns-9.16.35.so \
+	/usr/lib/libirs-9.16.35.so \
+	/usr/lib/libisc-9.16.35.so \
+	/usr/lib/libisccc-9.16.35.so \
+	/usr/lib/libisccfg-9.16.35.so \
+	/usr/lib/libltdl.so \
+	/usr/lib/libns-9.16.35.so
 
 # Remove spandsp add-on, if installed
 for addon in spandsp; do
