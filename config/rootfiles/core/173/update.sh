@@ -108,7 +108,8 @@ rm -rvf \
 	/usr/lib/libisccc-9.16.35.so \
 	/usr/lib/libisccfg-9.16.35.so \
 	/usr/lib/libltdl.so \
-	/usr/lib/libns-9.16.35.so
+	/usr/lib/libns-9.16.35.so \
+	/usr/lib/libpixman-1.so
 
 # Remove spandsp add-on, if installed
 for addon in spandsp; do
