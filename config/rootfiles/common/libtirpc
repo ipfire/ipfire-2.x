@@ -34,7 +34,6 @@ etc/netconfig
 #usr/include/tirpc/rpcsvc
 #usr/include/tirpc/rpcsvc/crypt.h
 #usr/include/tirpc/rpcsvc/crypt.x
-#usr/lib/libtirpc.a
 #usr/lib/libtirpc.la
 #usr/lib/libtirpc.so
 usr/lib/libtirpc.so.3

@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -33,12 +33,6 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = libtirpc
-PAK_VER    = 3
-
-DEPS       =
-
-SERVICES   =
 
 CFLAGS    += -fcommon
 
@@ -59,9 +53,6 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 b2 : $(subst %,%_BLAKE2,$(objects))
-
-dist:
-	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, b2sum
@@ -84,7 +75,12 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --sysconfdir=/etc --disable-gssapi --disable-ipv6
+	cd $(DIR_APP) && ./configure \
+	      --prefix=/usr \
+	      --sysconfdir=/etc \
+	      --disable-gssapi \
+	      --disable-ipv6 \
+	      --disable-static
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
