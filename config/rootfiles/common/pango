@@ -53,3 +53,4 @@ usr/lib/libpangoft2-1.0.so.0.5000.6
 #usr/lib/pkgconfig/pangofc.pc
 #usr/lib/pkgconfig/pangoft2.pc
 #usr/lib/pkgconfig/pangoot.pc
+#usr/share/man/man1/pango-view.1
