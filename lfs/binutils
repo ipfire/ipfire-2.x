@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.39
+VER        = 2.40
 
 THISAPP    = binutils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -93,7 +93,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ac6a5296c6586d53eaadcbffc5c399a6d79edf72450b9bb8b3525ce525129cef3d2eb90c85ef3bb3270b5a03b0e1ffb8f0b705f028158726f9777ebb8685066f
+$(DL_FILE)_BLAKE2 = 8d799f7c595f878b9af5b17a490021dd8b8300ac2fe0ed8574c012929d22d2d0493e003a3e631a9436e8e712da801779b777c566167fe42b0bde119ffa5ad1c2
 
 install : $(TARGET)
 
