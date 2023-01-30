@@ -24,16 +24,13 @@
 
 include Config
 
-VER        = 1_76_0
+VER        = 1_81_0
 
 THISAPP    = boost_$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-
-CFLAGS    += -O3 -fno-strict-aliasing
-CXXFLAGS  += -O3 -fno-strict-aliasing
 
 # The compiler uses a lot of memory to compile boost, hence we reduce
 # the total number of processes a little bit to be able to build on
@@ -68,7 +65,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 30290f808e2d45daa8ac3bd31f96c78286cab72b16f5de79c5270b79eb3d1cce0baf8468e16d9ea254b7f8ff8f72f45b06b375f9f6f4953923c4400c0ec24b0f
+$(DL_FILE)_BLAKE2 = 7b0edd195c2c0d29d5e0e0e5b81bf1c7f69413e7cb4b96ad87496e94d2d0add47f5e7f5838a94ca825ec9b7ba4d8f151085eb141b2e9e38f98d0edc206c303e4
 
 install : $(TARGET)
 
