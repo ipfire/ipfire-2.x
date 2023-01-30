@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.65.0
+VER        = 1.67.0
 
 # From https://forge.rust-lang.org/infra/other-installation-methods.html#standalone-installers
 
@@ -42,10 +42,10 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(THISAPP)-x86_64-unknown-linux-gnu.tar.gz_BLAKE2 = db2dd8518571c5d054502820a0f49483a6cf743ac74747cdb6bb2f3d681b2132de0ed2eb2a5228eaaf7fe737e415cb477764d04d29f565e2bf6cecf6109a468b
-$(THISAPP)-aarch64-unknown-linux-gnu.tar.gz_BLAKE2 = 73c0c4d995cf6e81b584b078528035d1fedb12e3c0d0435025945e2ba396850676f7f581ad1e627769122bbba5424591fac734520186b704bff7f7a8ca241385
-$(THISAPP)-arm-unknown-linux-gnueabi.tar.gz_BLAKE2 = 9038b158b2590a8a0a25f72f17ff38d88aff1cb210818a150f24d34dbdff9195f156f21ddccaadf9a3ecd3901161e183b5cb0e15e012f4a26be937a9782e0c6c
-$(THISAPP)-riscv64gc-unknown-linux-gnu.tar.gz_BLAKE2 = 76874cfd1e8235eb6d99f75bd9affafa50d1b824664b2edd35c1a5276f51eabaf3f5d5c408070580bbfbdab862e6fe4186f552427e72ac3afa245b2c41c275ae
+$(THISAPP)-x86_64-unknown-linux-gnu.tar.gz_BLAKE2 = 3409ed876f430ff22eff792fe9f4a4ca8457f26411def368b8d7fa5b854719c4c1feac5e054d7bccbcc3568bd3601a0e579df8b3bcf5b20c660bb7af4dbbb8f8
+$(THISAPP)-aarch64-unknown-linux-gnu.tar.gz_BLAKE2 = 82c17813fbb4a48451a207dbc7879bd7239e947e249ad24e6e098bd2e250cd8aae79ab37bbc2549cb9ffc3e24ef6e072380bbcaf8a620b02457db24f328d92ea
+$(THISAPP)-arm-unknown-linux-gnueabi.tar.gz_BLAKE2 = d099645796f46769e15520b15771bb1886ee040bbee9de00f4983e8fe56c945a9afe1bded33f80c9196354d720ef09588d24468a751a8e2512688fef47a33496
+$(THISAPP)-riscv64gc-unknown-linux-gnu.tar.gz_BLAKE2 = e5b0efa7114840535d5a0934a22510e850b05eb339eab42e561717281da993817df2e0a57082d73ed7898001885e4dbabcce1ebfaec611cf125e51acd5d75e8a
 
 install : $(TARGET)
 
