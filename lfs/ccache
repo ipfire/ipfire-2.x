@@ -73,7 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && mkdir -pv build
 	cd $(DIR_APP)/build && cmake \
 		-DCMAKE_INSTALL_PREFIX=$(TOOLS_DIR) \
-		-DCMAKE_CXX_IMPLICIT_INCLUDE_DIRECTORIES=$(TOOLS_DIR)/include \
+		-DCMAKE_INCLUDE_PATH=$(TOOLS_DIR)/include \
 		..
 	cd $(DIR_APP)/build && make $(MAKETUNING) VERBOSE=1
 	cd $(DIR_APP)/build && make install
