@@ -48,6 +48,7 @@ done
 /etc/rc.d/init.d/ipsec stop
 /usr/local/bin/openvpnctrl -k
 /usr/local/bin/openvpnctrl -kn2n
+/etc/rc.d/init.d/sshd stop
 
 KVER="xxxKVERxxx"
 
@@ -130,8 +131,14 @@ done
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Start services
 /etc/rc.d/init.d/apache start
+if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
+	/etc/init.d/sshd start
+fi
 if grep -q "ENABLED=on" /var/ipfire/ovpn/settings; then
 	/usr/local/bin/openvpnctrl -s
 	/usr/local/bin/openvpnctrl -sn2n
