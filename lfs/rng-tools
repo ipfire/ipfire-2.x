@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,12 +25,19 @@
 include Config
 
 VER        = 6.14
+SUMMARY    = This is a random number generator daemon
 
 THISAPP    = rng-tools-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
+PROG       = rng-tools
+PAK_VER    = 1
+
+DEPS       =
+
+SERVICES   = rngd
 
 ###############################################################################
 # Top-level Rules
@@ -49,6 +56,9 @@ check : $(patsubst %,$(DIR_CHK)/%,$(objects))
 download :$(patsubst %,$(DIR_DL)/%,$(objects))
 
 b2 : $(subst %,%_BLAKE2,$(objects))
+
+dist:
+	@$(PAK)
 
 ###############################################################################
 # Downloading, checking, b2sum
@@ -77,5 +87,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	                --without-rtlsdr
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make $(EXTRA_INSTALL) install
+	#install initscript
+	$(call INSTALL_INITSCRIPTS,$(SERVICES))	
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
