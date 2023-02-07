@@ -35,16 +35,11 @@ SHELL=/bin/bash -o pipefail
 HAS_MEMTEST = 0
 HAS_IPXE = 0
 HAS_ISOLINUX = 0
-HAS_KERNEL = 1
 
 ifeq "$(BUILD_PLATFORM)" "x86"
 	HAS_MEMTEST = 1
 	HAS_IPXE = 1
 	HAS_ISOLINUX = 1
-endif
-
-ifeq "$(BUILD_ARCH)" "armv6l"
-	HAS_KERNEL = 0
 endif
 
 ISO_ARGS = -J -r -v \
@@ -181,10 +176,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	mkdir -p $(DIR_TMP)/cdrom/boot/isolinux
 
-ifeq "$(HAS_KERNEL)" "1"
 	cp /boot/vmlinuz-$(KVER)-ipfire $(DIR_TMP)/cdrom/boot/isolinux/vmlinuz
 	dracut --force -a "installer" --strip $(DIR_TMP)/cdrom/boot/isolinux/instroot $(KVER)-ipfire
-endif
 
 ifeq "$(HAS_ISOLINUX)" "1"
 	dd if=/dev/zero  bs=1k count=2            > $(DIR_TMP)/cdrom/boot/isolinux/boot.catalog

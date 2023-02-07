@@ -46,15 +46,6 @@ if [ "${?}" == "0" ]; then
 	echo "Replace by xxxMACHINExxx !"
 fi
 
-grep -r '/armv6l' ./config/rootfiles/ --exclude gcc --exclude rust-libc \
-    --exclude-dir oldcore --exclude-dir armv5tel >/dev/null 2>&1
-if [ "${?}" == "0" ]; then
-	echo "Error! '/armv6l' in rootfiles files found!"
-	grep -r '/armv6l' ./config/rootfiles/ --exclude gcc \
-    --exclude-dir oldcore --exclude-dir armv5tel
-	echo "Replace by xxxMACHINExxx !"
-fi
-
 grep -r '/aarch64' ./config/rootfiles/ --exclude gcc --exclude rust-libc --exclude gdb --exclude liburcu --exclude gdb --exclude-dir oldcore --exclude-dir aarch64 >/dev/null 2>&1
 if [ "${?}" == "0" ]; then
 	echo "Error! '/aarch64' in rootfiles files found!"

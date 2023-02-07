@@ -145,35 +145,21 @@ configure_build() {
 			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-m64 -mtune=generic -fstack-clash-protection -fcf-protection"
+			CFLAGS_ARCH="-m64 -mtune=generic -fcf-protection"
 			;;
 
 		aarch64)
 			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="arm"
-			CFLAGS_ARCH="-fstack-clash-protection"
-			;;
-
-		armv7hl)
-			BUILDTARGET="${build_arch}-pc-linux-gnueabi"
-			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
-			BUILD_PLATFORM="arm"
-			CFLAGS_ARCH="-march=armv7-a -mfpu=vfpv3-d16 -mfloat-abi=hard"
-			;;
-
-		armv6l)
-			BUILDTARGET="${build_arch}-pc-linux-gnueabi"
-			CROSSTARGET="${build_arch}-cross-linux-gnueabi"
-			BUILD_PLATFORM="arm"
-			CFLAGS_ARCH="-march=armv6zk+fp -mfpu=vfp -mfloat-abi=softfp -fomit-frame-pointer"
+			CFLAGS_ARCH=""
 			;;
 
 		riscv64)
 			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="riscv"
-			CFLAGS_ARCH="-fstack-clash-protection"
+			CFLAGS_ARCH=""
 			;;
 
 		*)
@@ -196,7 +182,7 @@ configure_build() {
 	TOOLS_DIR="/tools_${BUILD_ARCH}"
 
 	# Enables hardening
-	HARDENING_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong"
+	HARDENING_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -fstack-clash-protection"
 
 	CFLAGS="-O2 -pipe -Wall -fexceptions -fPIC ${CFLAGS_ARCH}"
 	CXXFLAGS="${CFLAGS}"
@@ -236,15 +222,6 @@ configure_build() {
 	# We allow XZ to use up to 70% of all system memory.
 	local xz_memory=$(( SYSTEM_MEMORY * 7 / 10 ))
 
-	# XZ memory cannot be larger than 2GB on 32 bit systems
-	case "${build_arch}" in
-		armv*)
-			if [ ${xz_memory} -gt 2048 ]; then
-				xz_memory=2048
-			fi
-			;;
-	esac
-
 	XZ_OPT="${XZ_OPT} --memory=${xz_memory}MiB"
 }
 
@@ -256,10 +233,6 @@ configure_build_guess() {
 
 		aarch64)
 			echo "aarch64"
-			;;
-
-		armv7*|armv6*)
-			echo "armv6l"
 			;;
 
 		riscv64)
@@ -1599,7 +1572,6 @@ buildipfire() {
   lfsmake2 swig
   lfsmake2 dtc
   lfsmake2 u-boot
-  lfsmake2 u-boot-friendlyarm
   lfsmake2 wireless-regdb
   lfsmake2 ddns
   lfsmake2 python3-pycparser
@@ -1791,9 +1763,6 @@ buildpackages() {
   ipfirepackages
 
   cd $BASEDIR
-
-  # remove not useable iso on armv6l (needed to build flash images)
-  [ "${BUILD_ARCH}" = "armv6l" ] && rm -rf *.iso
 
   for i in $(ls *.bz2 *.img.xz *.iso 2>/dev/null); do
 	b2sum $i > $i.b2

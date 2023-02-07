@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)-$(MKIMAGE)
-SUP_ARCH   = armv6l aarch64
+SUP_ARCH   = aarch64
 
 CFLAGS    := $(patsubst -fstack-protector-strong,,$(CFLAGS))
 LDFLAGS   += --no-warn-rwx-segments
@@ -85,88 +85,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 ifneq "$(MKIMAGE)" "1"
-ifeq "${BUILD_ARCH}" "armv6l"
-	# Pandaboard
-	-mkdir -pv /usr/share/u-boot/pandaboard
-	cd $(DIR_APP) && make CROSS_COMPILE="" omap4_panda_config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Pandaboard - IPFire.org"!' .config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
-	cd $(DIR_APP) && install -v -m 644 MLO u-boot.img \
-		/usr/share/u-boot/pandaboard
-	# Install pandaboard uboot as default
-	cd $(DIR_APP) && install MLO /boot/
-	cd $(DIR_APP) && install u-boot.img /boot/
-	cd $(DIR_APP) && make distclean
-
-	# Wandboard
-	-mkdir -pv /usr/share/u-boot/wandboard
-	cd $(DIR_APP) && make CROSS_COMPILE="" wandboard_config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Wandboard - IPFire.org"!' .config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)" u-boot.imx
-	cd $(DIR_APP) && install -v -m 644 u-boot.imx \
-		/usr/share/u-boot/wandboard
-	cd $(DIR_APP) && make distclean
-
-	# Raspberry Pi
-	-mkdir -pv /usr/share/u-boot/rpi
-	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" RPi1 - IPFire.org"!' .config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
-	cd $(DIR_APP) && install -v -m 644 u-boot.bin \
-		/usr/share/u-boot/rpi/u-boot-rpi1.bin
-	cd $(DIR_APP) && install u-boot.bin /boot/u-boot-rpi1.bin
-	cd $(DIR_APP) && make distclean
-
-	# Raspberry Pi 2
-	-mkdir -pv /usr/share/u-boot/rpi
-	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_2_config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" RPi2 - IPFire.org"!' .config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
-	cd $(DIR_APP) && install -v -m 644 u-boot.bin \
-		/usr/share/u-boot/rpi/u-boot-rpi2.bin
-	cd $(DIR_APP) && install u-boot.bin /boot/u-boot-rpi2.bin
-	cd $(DIR_APP) && make distclean
-
-	# Raspberry Pi 3 32bit
-	-mkdir -pv /usr/share/u-boot/rpi
-	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_3_32b_config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" RPi3 32bit - IPFire.org"!' .config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
-	cd $(DIR_APP) && install -v -m 644 u-boot.bin \
-		/usr/share/u-boot/rpi/u-boot-rpi3.bin
-	cd $(DIR_APP) && install u-boot.bin /boot/u-boot-rpi3.bin
-	cd $(DIR_APP) && make distclean
-
-	# Orange Pi Zero
-	-mkdir -pv /usr/share/u-boot/orangepi_zero
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/sunxi/orangepi-zero-add-macs.diff
-	cd $(DIR_APP) && make CROSS_COMPILE="" orangepi_zero_config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" OrangePi Zero - IPFire.org"!' .config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
-	cd $(DIR_APP) && install -v -m 644 u-boot-sunxi-with-spl.bin \
-		/usr/share/u-boot/orangepi_zero
-	cd $(DIR_APP) && make distclean
-
-	# Orange Pi PC
-	-mkdir -pv /usr/share/u-boot/orangepi_pc
-	cd $(DIR_APP) && make CROSS_COMPILE="" orangepi_pc_config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" OrangePi PC - IPFire.org"!' .config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
-	cd $(DIR_APP) && install -v -m 644 u-boot-sunxi-with-spl.bin \
-		/usr/share/u-boot/orangepi_pc
-	cd $(DIR_APP) && make distclean
-
-	# LeMaker Banana Pi
-	-mkdir -pv /usr/share/u-boot/banana_pi
-	cd $(DIR_APP) && make CROSS_COMPILE="" Bananapi_config
-	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" BananaPi - IPFire.org"!' .config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
-	cd $(DIR_APP) && install -v -m 644 u-boot-sunxi-with-spl.bin \
-		/usr/share/u-boot/banana_pi
-	cd $(DIR_APP) && make distclean
-
-else
 	# Raspberry Pi 3
 	-mkdir -pv /usr/share/u-boot/rpi
 	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_3_config
@@ -234,7 +152,6 @@ else
 		/usr/share/u-boot/nanopi_r4s/u-boot-rockchip.bin
 	cd $(DIR_APP) && make distclean
 
-endif
 	# create an empty 128 KB File for the u-boot env
 	dd if=/dev/zero of=/boot/uboot.env bs=1K count=128
 
@@ -248,11 +165,7 @@ endif
 
 else
 	# mkimage
-ifeq "${BUILD_ARCH}" "armv6l"
-	cd $(DIR_APP) && make CROSS_COMPILE="" omap4_panda_config
-else
 	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_3_config
-endif
 	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)" tools
 	cd $(DIR_APP) && install -v -m 755 tools/mkimage /usr/bin
 endif

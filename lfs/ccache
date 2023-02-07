@@ -1,4 +1,4 @@
-###############################################################################
+##############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
 # Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
@@ -70,7 +70,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ccache/ccache-4.3-fix_armv6_bus_error.patch
 	cd $(DIR_APP) && mkdir -pv build
 	cd $(DIR_APP)/build && cmake \
 		-DCMAKE_INSTALL_PREFIX=$(TOOLS_DIR) \

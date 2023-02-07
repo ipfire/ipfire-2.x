@@ -18,7 +18,7 @@ Maintainer and advanced commands:
   uploadsrc		For core developers only to upload source code
 
 OPTIONS:
-    --target=[aarch64|armv6l|armv7hl|riscv64|x86_64]
+    --target=[aarch64|riscv64|x86_64]
 			Cross-compile for this target architecture.  Uses the QEMU 
 			  emulator if needed to virtualise the desired target 
 			  architecture.  Can be permanently set with 

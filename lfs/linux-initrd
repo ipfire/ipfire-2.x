@@ -60,11 +60,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Create initramfs images
 	dracut --force --verbose --strip /boot/initramfs-$(KVER)-$(VERSUFIX).img $(KVER)-$(VERSUFIX)
 
-ifeq "$(BUILD_ARCH)" "armv6l"
-	cd /boot && mkimage -A arm -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(KVER)-$(VERSUFIX)
-	cd /boot && rm initramfs-$(KVER)-$(VERSUFIX).img
-endif
-
 ifeq "$(BUILD_ARCH)" "aarch64"
 	cd /boot && mkimage -A arm64 -T ramdisk -C lzma -d initramfs-$(KVER)-$(VERSUFIX).img uInit-$(KVER)-$(VERSUFIX)
 	# dont remove initramfs because grub need this to boot.

@@ -50,14 +50,6 @@ endif
 
 CXXFLAGS  := $(CFLAGS)
 
-ifeq "$(BUILD_ARCH)" "armv7hl"
-	FULL_BOOTSTRAP = 1
-endif
-
-ifeq "$(BUILD_ARCH)" "armv6l"
-	FULL_BOOTSTRAP = 1
-endif
-
 # Normal build or $(TOOLS_DIR) build.
 #
 ifeq "$(ROOT)" ""
@@ -121,18 +113,13 @@ ifeq "$(PASS)" "2"
 	--prefix=$(TOOLS_DIR) \
 	--with-local-prefix=$(TOOLS_DIR) \
 	--with-native-system-header-dir=$(TOOLS_DIR)/include \
+	--disable-bootstrap \
 	--enable-languages=c,c++ \
 	--disable-libstdcxx-pch \
 	--disable-multilib \
 	--disable-libgomp
   EXTRA_MAKE =
   EXTRA_INSTALL =
-
-  ifeq "$(FULL_BOOTSTRAP)" "1"
-	EXTRA_CONFIG += --enable-bootstrap
-  else
-	EXTRA_CONFIG += --disable-bootstrap
-  endif
 else
   # PASS=L # libstdc++-v3
   TARGET = $(DIR_INFO)/$(THISAPP)-libstdc++
@@ -158,18 +145,6 @@ endif
 ifeq "$(BUILD_ARCH)" "aarch64"
 	EXTRA_CONFIG += \
 		--enable-standard-branch-protection
-endif
-
-ifeq "$(BUILD_ARCH)" "armv7hl"
-	EXTRA_CONFIG += \
-		--with-float=hard
-endif
-
-ifeq "$(BUILD_ARCH)" "armv6l"
-	EXTRA_CONFIG += \
-		--with-arch=armv6zk+fp \
-		--with-float=softfp
-#		--disable-sjlj-exceptions
 endif
 
 ifeq "$(BUILD_ARCH)" "riscv64"

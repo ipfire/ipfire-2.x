@@ -64,10 +64,8 @@ $(TARGET) :
 	# Symlink /var/run -> /run.
 	ln -svf ../run /var/run
 
-ifeq "$(IS_64BIT)" "1"
 	ln -svf lib /lib64
 	ln -svf lib /usr/lib64
-endif
 
 ifeq "$(BUILD_ARCH)" "riscv64"
 	ln -svf . /lib/lp64d

@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fmt
 PAK_VER    = 2
-SUP_ARCH   = aarch64 armv6l x86_64
+SUP_ARCH   = aarch64 x86_64
 
 DEPS       =
 

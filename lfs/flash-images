@@ -142,15 +142,6 @@ ifeq "$(EFI)" "1"
 	mount $(PART_EFI) $(MNThdd)/boot/efi
 endif
 
-	# Install Pandaboard MLO and uboot first
-ifeq "$(BUILD_ARCH)" "armv6l"
-	cp -v /boot/MLO $(MNThdd)/boot/
-	cp -v /boot/u-boot.img $(MNThdd)/boot/
-	sync
-	umount $(MNThdd)/boot
-	mount $(PART_BOOT) $(MNThdd)/boot
-endif
-
 	# Install IPFire
 ifneq "$(BUILD_PLATFORM)" "arm"
 	tar $(TAR_OPTIONS) -x --zstd -C $(MNThdd)/ -f $(DIR_TMP)/cdrom/distro.img
@@ -257,10 +248,6 @@ endif
 	# not copied to a block device)
 	dd if=/dev/zero bs=1M count=$(PADDING) >> $(IMG)
 
-ifeq "$(BUILD_ARCH)" "armv6l"
-	# Install u-boot for Orangepi Zero/Nanopi DUO into image 8KB
-	dd if=/usr/share/u-boot/orangepi_zero/u-boot-sunxi-with-spl.bin of=$(IMG) bs=1K seek=8 conv=notrunc
-endif
 ifeq "$(BUILD_ARCH)" "aarch64"
 	# Install u-boot for NanoPi R2S into image 8KB
 	dd if=/usr/share/u-boot/nanopi_r2s/u-boot-rockchip.bin of=$(IMG) bs=1K seek=32 conv=notrunc

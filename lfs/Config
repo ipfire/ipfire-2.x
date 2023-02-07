@@ -58,35 +58,10 @@ PARALLELISM = $(shell echo $$( \
 
 MAKETUNING = -j$(PARALLELISM)
 
-ifeq "$(BUILD_ARCH)" "aarch64"
-	IS_64BIT = 1
-endif
-
-ifeq "$(BUILD_ARCH)" "armv7hl"
-	IS_32BIT = 1
-endif
-
-ifeq "$(BUILD_ARCH)" "armv6l"
-	IS_32BIT = 1
-endif
-
-ifeq "$(BUILD_ARCH)" "x86_64"
-	IS_64BIT = 1
-endif
-
-ifeq "$(BUILD_ARCH)" "riscv64"
-	IS_64BIT = 1
-endif
-
 ifeq "$(TOOLCHAIN)" "1"
 	PREFIX = $(TOOLS_DIR)
 else
 	PREFIX = /usr
-endif
-
-# Permit building with 32 bit time_t on 32 bit architectures
-ifeq "$(IS_32BIT)" "1"
-	export TIME_T_32_BIT_OK = yes
 endif
 
 TAR_OPTIONS = \
@@ -163,11 +138,7 @@ else
 	RUST_ARCH = $(BUILD_ARCH)
 endif
 
-ifeq "$(BUILD_ARCH)" "armv6l"
-	RUST_PLATFORM = arm-unknown-linux-gnueabi
-else
-	RUST_PLATFORM = $(RUST_ARCH)-unknown-linux-gnu
-endif
+RUST_PLATFORM = $(RUST_ARCH)-unknown-linux-gnu
 
 CARGO_PATH     = $(DIR_APP)/.cargo
 CARGO_REGISTRY = /usr/share/cargo/registry

@@ -81,12 +81,6 @@ else
 endif
 endif
 
-ifeq "$(BUILD_ARCH)" "armv6l"
-	EXTRA_CONFIG += \
-		--with-abi=aapcs-linux \
-		--with-float=softfp
-endif
-
 EXTRA_CONFIG += \
 	--disable-werror \
 	--enable-64-bit-bfd

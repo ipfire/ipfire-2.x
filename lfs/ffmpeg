@@ -40,10 +40,6 @@ DEPS       = sdl2 lame libvorbis xvid
 
 SERVICES   =
 
-ifeq "$(BUILD_ARCH)" "armv6l"
-	LDFLAGS += -latomic
-endif
-
 ifeq "$(BUILD_ARCH)" "riscv64"
 	LDFLAGS += -latomic
 endif

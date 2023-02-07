@@ -52,11 +52,7 @@ CONFIGURE_OPTIONS = \
 	no-aria \
 	$(OPENSSL_ARCH)
 
-ifeq "$(IS_64BIT)" "1"
-	OPENSSL_ARCH = linux-generic64
-else
-	OPENSSL_ARCH = linux-generic32
-endif
+OPENSSL_ARCH = linux-generic64
 
 ifeq "$(BUILD_ARCH)" "aarch64"
 	OPENSSL_ARCH = linux-aarch64

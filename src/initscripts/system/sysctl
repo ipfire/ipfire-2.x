@@ -29,12 +29,7 @@ case "${1}" in
 			sysctl -q -p
 			evaluate_retval
 		fi
-		arch=`uname -m`
-		case "${arch}" in
-			armv*)
-				arch="armv6l":
-				;;
-		esac
+		arch="$(uname -m)"
 		if [ -f "/etc/sysctl-${arch}.conf" ]; then
 			boot_mesg "Setting ${arch}-kernel runtime parameters..."
 			sysctl -q -p /etc/sysctl-${arch}.conf

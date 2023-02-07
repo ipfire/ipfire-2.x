@@ -27,7 +27,7 @@ include Config
 SUMMARY    = Library and system call tracer for programs
 
 VER        = 0.7.3
-SUP_ARCHES = x86_64 armv6l
+SUP_ARCHES = x86_64
 
 THISAPP    = ltrace-$(VER)
 DL_FILE    = ltrace_$(VER).orig.tar.bz2

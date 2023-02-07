@@ -1005,11 +1005,6 @@ sub get_arch() {
 	# Append architecture
 	my ($sysname, $nodename, $release, $version, $machine) = POSIX::uname();
 
-	# We only support armv6l for 32 bit arm
-	if ($machine =~ m/armv[67]/) {
-		return "armv6l";
-	}
-
 	return $machine;
 }
 
