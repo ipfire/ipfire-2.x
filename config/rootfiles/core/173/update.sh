@@ -49,6 +49,7 @@ done
 /usr/local/bin/openvpnctrl -k
 /usr/local/bin/openvpnctrl -kn2n
 /etc/rc.d/init.d/sshd stop
+/etc/rc.d/init.d/suricata stop
 
 KVER="xxxKVERxxx"
 
@@ -135,6 +136,9 @@ done
 /usr/local/bin/sshctrl
 
 # Start services
+if grep -q "ENABLE_IDS=on" /var/ipfire/suricata/settings; then
+	/etc/rc.d/init.d/suricata start
+fi
 /etc/rc.d/init.d/apache start
 if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
 	/etc/init.d/sshd start
