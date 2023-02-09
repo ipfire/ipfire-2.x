@@ -152,6 +152,7 @@ lib/udev/network-hotplug-rename
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
+srv/web/ipfire/cgi-bin/services.cgi
 usr/lib/firewall/rules.pl
 var/ipfire/dhcpc/dhcpcd.conf
 var/ipfire/general-functions.pl
