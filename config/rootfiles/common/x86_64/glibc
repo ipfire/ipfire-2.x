@@ -277,6 +277,7 @@ usr/bin/locale
 #usr/include/bits/waitstatus.h
 #usr/include/bits/wchar-ldbl.h
 #usr/include/bits/wchar.h
+#usr/include/bits/wchar2-decl.h
 #usr/include/bits/wchar2.h
 #usr/include/bits/wctype-wchar.h
 #usr/include/bits/wordsize.h
@@ -812,7 +813,7 @@ usr/lib/gconv
 #usr/lib/libc_nonshared.a
 #usr/lib/libdl.a
 #usr/lib/libg.a
-#usr/lib/libm-2.36.a
+#usr/lib/libm-2.37.a
 #usr/lib/libm.a
 #usr/lib/libm.so
 #usr/lib/libmcheck.a
@@ -8378,6 +8379,9 @@ usr/lib/locale
 #usr/share/locale/ja
 #usr/share/locale/ja/LC_MESSAGES
 #usr/share/locale/ja/LC_MESSAGES/libc.mo
+#usr/share/locale/ka
+#usr/share/locale/ka/LC_MESSAGES
+#usr/share/locale/ka/LC_MESSAGES/libc.mo
 #usr/share/locale/ko
 #usr/share/locale/ko/LC_MESSAGES
 #usr/share/locale/ko/LC_MESSAGES/libc.mo

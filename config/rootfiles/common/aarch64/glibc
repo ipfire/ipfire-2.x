@@ -274,6 +274,7 @@ usr/bin/locale
 #usr/include/bits/waitstatus.h
 #usr/include/bits/wchar-ldbl.h
 #usr/include/bits/wchar.h
+#usr/include/bits/wchar2-decl.h
 #usr/include/bits/wchar2.h
 #usr/include/bits/wctype-wchar.h
 #usr/include/bits/wordsize.h
@@ -8366,6 +8367,9 @@ usr/lib/locale
 #usr/share/locale/ja
 #usr/share/locale/ja/LC_MESSAGES
 #usr/share/locale/ja/LC_MESSAGES/libc.mo
+#usr/share/locale/ka
+#usr/share/locale/ka/LC_MESSAGES
+#usr/share/locale/ka/LC_MESSAGES/libc.mo
 #usr/share/locale/ko
 #usr/share/locale/ko/LC_MESSAGES
 #usr/share/locale/ko/LC_MESSAGES/libc.mo
