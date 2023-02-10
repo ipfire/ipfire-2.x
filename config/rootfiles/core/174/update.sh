@@ -36,10 +36,12 @@ done
 # Extract files
 extract_files
 
+# Remove files
+rm -rfv \
+	/usr/lib/libboost*.so.1.76.0
+
 # update linker config
 ldconfig
-
-# Remove files
 
 # Update Language cache
 /usr/local/bin/update-lang-cache
@@ -48,8 +50,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
-
-# Regenerate all initrds
+telinit u
 
 # This update needs a reboot...
 touch /var/run/need_reboot
