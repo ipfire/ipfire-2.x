@@ -1421,9 +1421,6 @@ print <<END
 <tr>
 	<td colspan="4">&nbsp;</td>
 </tr>
-<tr>
-	<td colspan="4">$Lang::tr{'advproxy wpad notice'}</td>
-</tr>
 </table>
 
 <hr size='1'>
