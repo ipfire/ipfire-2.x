@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = An advanced and well-established feature-rich text mode web browser
 
-VER        = 0.15.1
+VER        = 0.16.0
 
 THISAPP    = elinks-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = dcec7054d417842e709f26bab53ddb1bf43556de4c69d116ad1e049664bc7c5a5513f02cee500d591252b439a66f354079e2e3eff5692202102cb900e06340c2
+$(DL_FILE)_BLAKE2 = b81dfeb303d2e33c88f063925f61dbf50a1cf8462cf3d000b70e01b210855682352303646c7d4dc2c5bdd0de41c3ce33d222c636be4d8292cbe8379b4b043ef8
 
 install : $(TARGET)
 
@@ -72,10 +72,13 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure
-	cd $(DIR_APP) && make $(EXTRA_MAKE)
-	cd $(DIR_APP) && make install
+	cd $(DIR_APP) && meson \
+		      --prefix=/usr/local \
+		      -D tre=false \
+		      -D gpm=false \
+		      builddir/
+	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING) $(EXTRA_MAKE)
+	cd $(DIR_APP) && ninja -C builddir/ install
 
 	mkdir -p /usr/local/etc/elinks
 	cp -vf $(DIR_SRC)/config/elinks/elinks.conf /usr/local/etc/elinks/elinks.conf

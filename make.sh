@@ -1494,6 +1494,7 @@ buildipfire() {
   lfsmake2 libstatgrab
   lfsmake2 liboping
   lfsmake2 collectd
+  lfsmake2 git
   lfsmake2 elinks
   lfsmake2 igmpproxy
   lfsmake2 opus
@@ -1531,7 +1532,6 @@ buildipfire() {
   lfsmake2 perl-Authen-SASL
   lfsmake2 perl-MIME-Lite
   lfsmake2 perl-Email-Date-Format
-  lfsmake2 git
   lfsmake2 squidclamav
   lfsmake2 vnstat
   lfsmake2 iw

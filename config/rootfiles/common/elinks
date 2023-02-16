@@ -25,7 +25,7 @@ usr/local/etc/elinks/elinks.conf
 #usr/local/share/locale/da/LC_MESSAGES/elinks.mo
 #usr/local/share/locale/de
 #usr/local/share/locale/de/LC_MESSAGES
-usr/local/share/locale/de/LC_MESSAGES/elinks.mo
+#usr/local/share/locale/de/LC_MESSAGES/elinks.mo
 #usr/local/share/locale/el
 #usr/local/share/locale/el/LC_MESSAGES
 #usr/local/share/locale/el/LC_MESSAGES/elinks.mo
@@ -62,7 +62,6 @@ usr/local/share/locale/de/LC_MESSAGES/elinks.mo
 #usr/local/share/locale/ja
 #usr/local/share/locale/ja/LC_MESSAGES
 #usr/local/share/locale/ja/LC_MESSAGES/elinks.mo
-#usr/local/share/locale/locale.alias
 #usr/local/share/locale/lt
 #usr/local/share/locale/lt/LC_MESSAGES
 #usr/local/share/locale/lt/LC_MESSAGES/elinks.mo
@@ -102,6 +101,3 @@ usr/local/share/locale/de/LC_MESSAGES/elinks.mo
 #usr/local/share/locale/uk
 #usr/local/share/locale/uk/LC_MESSAGES
 #usr/local/share/locale/uk/LC_MESSAGES/elinks.mo
-#usr/local/share/man/man1/elinks.1
-#usr/local/share/man/man5/elinks.conf.5
-#usr/local/share/man/man5/elinkskeys.5
