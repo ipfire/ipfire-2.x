@@ -40,7 +40,7 @@ usr/bin/dbus-uuidgen
 #usr/lib/libdbus-1.la
 #usr/lib/libdbus-1.so
 usr/lib/libdbus-1.so.3
-usr/lib/libdbus-1.so.3.32.1
+usr/lib/libdbus-1.so.3.32.2
 #usr/lib/pkgconfig/dbus-1.pc
 usr/libexec/dbus-daemon-launch-helper
 #usr/share/dbus-1
