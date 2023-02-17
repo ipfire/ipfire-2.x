@@ -75,7 +75,7 @@ my %sections = (
         'suricata' => '(suricata: )',
         'squid' => '(squid\[.*\]: |squid: )',
         'ssh' => '(sshd(?:\(.*\))?\[.*\]: )',
-        'unbound' => '(unbound: \[.*:.*\])(.*:.*$)',
+        'unbound' => '(unbound: \[.*?\])(.*:.*$)',
         'urlfilter bl' => '(installpackage\[urlfilter\]: )',
         'wireless' => '(hostapd:|kernel: ath.*:|kernel: wifi[0-9]:)'
 	 );
