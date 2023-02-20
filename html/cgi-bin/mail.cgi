@@ -297,7 +297,7 @@ sub testmail {
 		To		=> $mail{'RECIPIENT'},
 		#Cc		=> 'some@other.com, some@more.com',
 		Subject	=> 'IPFire Testmail',
-		Type	=> 'multipart/mixed'
+		Type	=> 'multipart/alternative'
 	);
 
 	### Add parts (each "attach" has same arguments as "new"):
@@ -305,15 +305,6 @@ sub testmail {
 		Type	=> 'TEXT',
 		Data	=> "This is the IPFire test mail."
 	);
-
-	### Add attachment for testing
-	#$msg->attach(
-	#	Type     => 'application/txt',
-	#	Encoding => 'base64',
-	#	Path     => '/var/ipfire/dma/dma.conf',
-	#	Filename => 'dma.conf',
-	#	Disposition => 'attachment'
-	#);
 
 	$msg->send_by_sendmail;
 }
