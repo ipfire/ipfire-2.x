@@ -157,7 +157,7 @@ sub mailsender {
 		From	=> $mailsettings{'SENDER'},
 		To		=> $mailsettings{'RECIPIENT'},
 		Subject	=> $_[0],
-		Type	=> 'multipart/mixed'
+		Type	=> 'multipart/alternative'
 	);
 
 	$msg->attach(
