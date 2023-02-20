@@ -148,6 +148,7 @@ lib/firmware/mediatek/WIFI_MT7961_patch_mcu_1_2_hdr.bin
 lib/firmware/mediatek/WIFI_RAM_CODE_MT7961_1.bin
 lib/firmware/qca/nvm_usb_00190200.bin
 lib/firmware/qca/rampatch_usb_00190200.bin
+lib/udev/network-aqm
 lib/udev/network-hotplug-rename
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/pppsetup.cgi
