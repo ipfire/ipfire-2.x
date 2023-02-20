@@ -1031,6 +1031,7 @@ buildbase() {
 	lfsmake2 tzdata
 	lfsmake2 cleanup-toolchain
 	lfsmake2 zlib
+	[ "${BUILD_ARCH}" = "riscv64" ] && lfsmake2 gcc PASS=A
 	lfsmake2 zstd
 	lfsmake2 autoconf
 	lfsmake2 automake

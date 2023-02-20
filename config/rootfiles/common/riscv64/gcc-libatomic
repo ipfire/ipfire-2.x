@@ -1,0 +1,7 @@
+#lib/cpp
+#usr/bin/cc
+#usr/lib/libatomic.a
+#usr/lib/libatomic.la
+#usr/lib/libatomic.so
+usr/lib/libatomic.so.1
+usr/lib/libatomic.so.1.2.0
