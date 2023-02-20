@@ -273,6 +273,10 @@ qmi_assign_address() {
 	# Find the device
 	local device="$(qmi_find_device "${intf}")"
 
+	# Switch off the raw_ip mode to be able to proper
+	# assign the generated MAC address.
+	echo "N" > "/sys/class/net/${intf}/qmi/raw_ip"
+
 	local address
 
 	# Generate a "random" MAC address using the device number
