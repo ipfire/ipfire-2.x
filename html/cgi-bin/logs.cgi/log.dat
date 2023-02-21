@@ -49,6 +49,7 @@ $cgiparams{'ACTION'} = '';
 $cgiparams{'SECTION'} = 'ipfire';
 
 my %sections = (
+        'apcupsd' => '(apcupsd\[.*?\]: )',
         'auth' => '(\w+\(pam_unix\)\[.*\]: )',
         'wio' => '(wio:|wio\[.*\])',
         'captive' => '(Captive:)',
@@ -81,6 +82,7 @@ my %sections = (
 
 # Translations for the %sections array.
 my %trsections = (
+        'apcupsd' => 'APCUPS',
         'auth' => "$Lang::tr{'loginlogout'}",
         'wio' => 'Who Is Online?',
         'captive' => $Lang::tr{'Captive'},
