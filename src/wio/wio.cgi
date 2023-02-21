@@ -1761,12 +1761,12 @@ print"
 	<td colspan='4'>&nbsp;</td>
 </tr>
 <tr>
-	<td height='30'>$Lang::tr{'wio ipadress'}:</td>
-	<td align='left'><input type='text' name='IPADR' value='$wiosettings{'IPADR'}' size='25' /></td>
-	<td>$Lang::tr{'wio name'}:</td>
-	<td align='left'><input type='text' name='HOST' value='$wiosettings{'HOST'}' size='25' /></td>
-	<td>$Lang::tr{'remark'}:</td>
-	<td align='left'><input type='text' name='REMARK' value='$wiosettings{'REMARK'}' size='30'></td>
+	<td class='base'>$Lang::tr{'wio ipadress'}:</td>
+	<td><input type='text' name='IPADR' value='$wiosettings{'IPADR'}' size='18' /></td>
+	<td class='base'>$Lang::tr{'wio name'}:</td>
+	<td><input type='text' name='HOST' value='$wiosettings{'HOST'}' size='18' /></td>
+	<td class='base'>$Lang::tr{'remark'}:</td>
+	<td><input type='text' name='REMARK' value='$wiosettings{'REMARK'}' size='18' /></td>
 </tr>
 <tr>
 	<td height='30'>$Lang::tr{'wio_ping_send'}:</td>
