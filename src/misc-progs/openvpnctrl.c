@@ -463,7 +463,7 @@ static void stopAuthenticator() {
 		NULL,
 	};
 
-	run("/sbin/killall", argv);
+	run("/bin/killall", argv);
 }
 
 void stopDaemon(void) {
