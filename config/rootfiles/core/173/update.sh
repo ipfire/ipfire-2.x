@@ -51,6 +51,9 @@ done
 /etc/rc.d/init.d/sshd stop
 /etc/rc.d/init.d/suricata stop
 
+# Make sure the OpenVPN authenticator is actually dead
+killall -9 openvpn-authenticator
+
 KVER="xxxKVERxxx"
 
 # Backup uEnv.txt if exist
