@@ -469,6 +469,9 @@ static void stopAuthenticator() {
 void stopDaemon(void) {
 	char command[STRING_SIZE];
 
+	// Stop OpenVPN authenticator
+	stopAuthenticator();
+
 	int pid = readPidFile("/var/run/openvpn.pid");
 	if (!pid > 0) {
 		exit(1);
@@ -479,9 +482,6 @@ void stopDaemon(void) {
 
 	snprintf(command, STRING_SIZE - 1, "/bin/rm -f /var/run/openvpn.pid");
 	executeCommand(command);
-
-	// Stop OpenVPN authenticator
-	stopAuthenticator();
 }
 
 static int startAuthenticator(void) {
