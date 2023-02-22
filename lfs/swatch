@@ -34,9 +34,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = swatch
-PAK_VER    = 6
+PAK_VER    = 7
 
-DEPS       = perl-File-Tail perl-Date-Calc perl-TimeDate perl-Date-Manip
+DEPS       = perl-File-Tail perl-Date-Calc perl-Date-Manip
 
 SERVICES   =
 
