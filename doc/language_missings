@@ -107,6 +107,8 @@
 < dns servers
 < hardware vulnerabilities
 < invalid ip or hostname
+< openvpn cert expires soon
+< openvpn cert has expired
 < service boot setting unavailable
 < transport mode does not support vti
 < wlanap
@@ -123,6 +125,12 @@
 < dhcp fixed ip address in dynamic range
 < g.dtm
 < g.lite
+< guaranteed bandwidth
+< retbleed
+< service boot setting unavailable
+< show dh
+< openvpn cert expires soon
+< openvpn cert has expired
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -467,6 +475,8 @@
 < one week
 < one year
 < open connections
+< openvpn cert expires soon
+< openvpn cert has expired
 < optional
 < otp qrcode
 < outgoing compression in bytes per second
@@ -995,6 +1005,8 @@
 < one week
 < one year
 < open connections
+< openvpn cert expires soon
+< openvpn cert has expired
 < optional
 < otp qrcode
 < outgoing compression in bytes per second
@@ -1828,6 +1840,8 @@
 < one week
 < one year
 < open connections
+< openvpn cert expires soon
+< openvpn cert has expired
 < openvpn default
 < openvpn destination port used
 < openvpn disabled
@@ -2812,6 +2826,8 @@
 < one week
 < one year
 < open connections
+< openvpn cert expires soon
+< openvpn cert has expired
 < openvpn default
 < openvpn destination port used
 < openvpn disabled
@@ -3317,6 +3333,8 @@
 < not validating
 < okay
 < open connections
+< openvpn cert expires soon
+< openvpn cert has expired
 < optional
 < otp qrcode
 < ovpn connection name

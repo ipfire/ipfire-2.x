@@ -1941,6 +1941,8 @@
 'open connections' => 'Open Connections',
 'open to all' => 'Override external access to ALL',
 'openssl produced an error' => 'OpenSSL produced an error',
+'openvpn cert expires soon' => 'Expires Soon',
+'openvpn cert has expired' => 'Expired',
 'openvpn client' => 'OpenVPN client',
 'openvpn default' => 'Default',
 'openvpn destination port used' => 'The destination port is already used by another OpenVPN server.',

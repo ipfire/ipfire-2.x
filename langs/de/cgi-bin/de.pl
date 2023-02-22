@@ -1884,6 +1884,8 @@
 'open connections' => 'Offene Verbindungen',
 'open to all' => 'Überschreibe externen Zugang zu ALL',
 'openssl produced an error' => 'OpenSSL hat einen Fehler verursacht',
+'openvpn cert expires soon' => 'Läuft bald ab',
+'openvpn cert has expired' => 'Abgelaufen',
 'openvpn client' => 'OpenVPN-Client',
 'openvpn default' => 'Vorgabe',
 'openvpn destination port used' => 'Der Zielport wird bereits von einer anderen OpenVPN-Server-Instanz genutzt.',

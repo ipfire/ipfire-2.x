@@ -33,6 +33,7 @@ use File::Temp qw/ tempfile tempdir /;
 use strict;
 use Archive::Zip qw(:ERROR_CODES :CONSTANTS);
 use Sort::Naturally;
+use Date::Parse;
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
@@ -5352,31 +5353,45 @@ END
 END
 		}
 	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
-	if ($id % 2) {
-		print "<tr>";
-		$col="bgcolor='$color{'color20'}'";
-	} else {
-		print "<tr>";
-		$col="bgcolor='$color{'color22'}'";
-	}
-	print "<td align='center' nowrap='nowrap' $col>$confighash{$key}[1]</td>";
-	print "<td align='center' nowrap='nowrap' $col>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
-	#if ($confighash{$key}[4] eq 'cert') {
-	    #print "<td align='left' nowrap='nowrap'>$confighash{$key}[2]</td>";
-	#} else {
-	    #print "<td align='left'>&nbsp;</td>";
-	#}
-	my @cavalid = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem");
-	my $cavalid;
 
+	# Fetch information about the certificate
+	my @cavalid = &General::system_output("/usr/bin/openssl", "x509", "-text",
+		"-in", "${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem");
+
+	my $expiryDate = 0;
+
+	# Parse the certificate information
 	foreach my $line (@cavalid) {
 		if ($line =~ /Not After : (.*)[\n]/) {
-			$cavalid    = $1;
-
+			$expiryDate = &Date::Parse::str2time($1);
 			last;
 		}
 	}
 
+	# Calculate the remaining time
+	my $remainingTime = $expiryDate - time();
+
+	# Create some simple booleans to check the status
+	my $hasExpired = ($remainingTime <= 0);
+	my $expiresSoon = ($remainingTime <= 30 * 24 * 3600);
+
+	print "<tr>";
+
+	if ($hasExpired || $expiresSoon) {
+		$col="bgcolor='$color{'color14'}'";
+	} elsif ($id % 2) {
+		$col="bgcolor='$color{'color20'}'";
+	} else {
+		$col="bgcolor='$color{'color22'}'";
+	}
+	print "<td align='center' nowrap='nowrap' $col>$confighash{$key}[1]";
+	if ($hasExpired) {
+		print " ($Lang::tr{'openvpn cert has expired'})";
+	} elsif ($expiresSoon) {
+		print " ($Lang::tr{'openvpn cert expires soon'})";
+	}
+	print "</td>";
+	print "<td align='center' nowrap='nowrap' $col>" . $Lang::tr{"$confighash{$key}[3]"} . " (" . $Lang::tr{"$confighash{$key}[4]"} . ")</td>";
 	print "<td align='center' $col>$confighash{$key}[25]</td>";
 	$col1="bgcolor='${Header::colourred}'";
 	my $active = "<b><font color='#FFFFFF'>$Lang::tr{'capsclosed'}</font></b>";
