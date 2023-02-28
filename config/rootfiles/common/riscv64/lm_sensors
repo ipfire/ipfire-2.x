@@ -20,7 +20,5 @@ usr/lib/libsensors.so.5.0.0
 #usr/man/man8/sensors-conf-convert.8
 #usr/man/man8/sensors-detect.8
 usr/sbin/fancontrol
-usr/sbin/isadump
-usr/sbin/isaset
 usr/sbin/pwmconfig
 usr/sbin/sensors-detect

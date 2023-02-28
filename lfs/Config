@@ -13,7 +13,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -105,10 +105,16 @@ DIR_TMP_PAK = $(DIR_TMP)/package-$(PROG)
 # Add the compiler location and version and specs to the ccache hash
 CCACHE_COMPILERCHECK += $(shell gcc -dumpspecs 2>/dev/null | md5sum | cut -d ' ' -f1)
 
-# We support EFI on x86_64 and aarch64
+# We support EFI on x86_64 riscv64 and aarch64
 ifeq "$(BUILD_ARCH)" "x86_64"
 	EFI = 1
 	EFI_ARCH = x64
+	GRUB_ARCH = $(BUILD_ARCH)
+endif
+
+ifeq "$(BUILD_ARCH)" "riscv64"
+	EFI = 1
+	EFI_ARCH = $(BUILD_ARCH)
 	GRUB_ARCH = $(BUILD_ARCH)
 endif
 

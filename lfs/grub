@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2021  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -31,7 +31,7 @@ DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-SUP_ARCH   = aarch64 x86_64
+#SUP_ARCH   = aarch64 x86_64
 
 ifeq "$(BUILD_ARCH)" "x86_64"
 	BUILD_PC = 1
@@ -95,6 +95,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-2.06-remove_os_prober_disabled_warning.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-2.02_disable_vga_fallback.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-Use-zifencei-on-riscv.patch
 	cd $(DIR_APP) && autoreconf -vfi
 
 	# Install unifont
