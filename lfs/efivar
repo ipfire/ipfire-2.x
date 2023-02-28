@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -72,6 +72,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/efivar-37-compile-fixes-3.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/efivar-38_remove_march=native.patch
 
 	# fix an issue in Makefile causing the package to be rebuilt during installation
 	# obtained from https://linuxfromscratch.org/blfs/view/11.1/postlfs/efivar.html

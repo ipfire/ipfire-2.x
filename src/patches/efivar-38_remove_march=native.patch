@@ -1,0 +1,18 @@
+diff -Naur efivar-38.org/src/include/defaults.mk efivar-38/src/include/defaults.mk
+--- efivar-38.org/src/include/defaults.mk	2022-01-14 20:29:35.000000000 +0100
++++ efivar-38/src/include/defaults.mk	2023-02-23 19:38:12.493736490 +0100
+@@ -71,12 +71,8 @@
+ 		   -Wl,--version-script=$(MAP) \
+ 		   $(call family,SOFLAGS)
+ 
+-HOST_ARCH=$(shell uname -m)
+-ifneq ($(HOST_ARCH),ia64)
+-	HOST_MARCH=-march=native
+-else
+-	HOST_MARCH=
+-endif
++HOST_MARCH=
++
+ HOST_CPPFLAGS ?= $(CPPFLAGS)
+ override _HOST_CPPFLAGS := $(HOST_CPPFLAGS)
+ override HOST_CPPFLAGS = $(_HOST_CPPFLAGS) \
