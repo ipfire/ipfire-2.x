@@ -1,3 +1,4 @@
+#usr/bin/hb-info
 #usr/bin/hb-ot-shape-closure
 #usr/bin/hb-shape
 #usr/bin/hb-subset
@@ -7,6 +8,7 @@
 #usr/include/harfbuzz/hb-aat.h
 #usr/include/harfbuzz/hb-blob.h
 #usr/include/harfbuzz/hb-buffer.h
+#usr/include/harfbuzz/hb-cairo.h
 #usr/include/harfbuzz/hb-common.h
 #usr/include/harfbuzz/hb-cplusplus.hh
 #usr/include/harfbuzz/hb-deprecated.h
@@ -27,6 +29,7 @@
 #usr/include/harfbuzz/hb-ot-shape.h
 #usr/include/harfbuzz/hb-ot-var.h
 #usr/include/harfbuzz/hb-ot.h
+#usr/include/harfbuzz/hb-paint.h
 #usr/include/harfbuzz/hb-set.h
 #usr/include/harfbuzz/hb-shape-plan.h
 #usr/include/harfbuzz/hb-shape.h
@@ -38,14 +41,19 @@
 #usr/include/harfbuzz/hb.h
 #usr/lib/cmake/harfbuzz
 #usr/lib/cmake/harfbuzz/harfbuzz-config.cmake
+#usr/lib/libharfbuzz-cairo.la
+#usr/lib/libharfbuzz-cairo.so
+usr/lib/libharfbuzz-cairo.so.0
+usr/lib/libharfbuzz-cairo.so.0.60701.0
 #usr/lib/libharfbuzz-subset.la
 #usr/lib/libharfbuzz-subset.so
 usr/lib/libharfbuzz-subset.so.0
-usr/lib/libharfbuzz-subset.so.0.60000.0
+usr/lib/libharfbuzz-subset.so.0.60701.0
 #usr/lib/libharfbuzz.la
 #usr/lib/libharfbuzz.so
 usr/lib/libharfbuzz.so.0
-usr/lib/libharfbuzz.so.0.60000.0
+usr/lib/libharfbuzz.so.0.60701.0
+#usr/lib/pkgconfig/harfbuzz-cairo.pc
 #usr/lib/pkgconfig/harfbuzz-subset.pc
 #usr/lib/pkgconfig/harfbuzz.pc
 #usr/share/gtk-doc/html/harfbuzz
@@ -118,6 +126,7 @@ usr/lib/libharfbuzz.so.0.60000.0
 #usr/share/gtk-doc/html/harfbuzz/api-index-5-0-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-5-3-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-6-0-0.html
+#usr/share/gtk-doc/html/harfbuzz/api-index-7-0-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-full.html
 #usr/share/gtk-doc/html/harfbuzz/apple-advanced-typography-api.html
 #usr/share/gtk-doc/html/harfbuzz/buffers-language-script-and-direction.html
@@ -131,16 +140,19 @@ usr/lib/libharfbuzz.so.0.60000.0
 #usr/share/gtk-doc/html/harfbuzz/fonts-and-faces-variable.html
 #usr/share/gtk-doc/html/harfbuzz/fonts-and-faces.html
 #usr/share/gtk-doc/html/harfbuzz/getting-started.html
+#usr/share/gtk-doc/html/harfbuzz/glyphs-and-rendering.html
 #usr/share/gtk-doc/html/harfbuzz/graphite-shaping.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-aat-layout.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-blob.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-buffer.html
+#usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-cairo.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-common.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-coretext.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-deprecated.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-directwrite.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-draw.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-face.html
+#usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-features.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-font.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-ft.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-gdi.html
@@ -157,6 +169,7 @@ usr/lib/libharfbuzz.so.0.60000.0
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-ot-name.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-ot-shape.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-ot-var.html
+#usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-paint.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-set.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-shape-plan.html
 #usr/share/gtk-doc/html/harfbuzz/harfbuzz-hb-shape.html
@@ -170,6 +183,7 @@ usr/lib/libharfbuzz.so.0.60000.0
 #usr/share/gtk-doc/html/harfbuzz/index.html
 #usr/share/gtk-doc/html/harfbuzz/install-harfbuzz.html
 #usr/share/gtk-doc/html/harfbuzz/integration-api.html
+#usr/share/gtk-doc/html/harfbuzz/integration-cairo.html
 #usr/share/gtk-doc/html/harfbuzz/integration-coretext.html
 #usr/share/gtk-doc/html/harfbuzz/integration-freetype.html
 #usr/share/gtk-doc/html/harfbuzz/integration-icu.html
