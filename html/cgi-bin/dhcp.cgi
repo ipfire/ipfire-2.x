@@ -547,7 +547,8 @@ if ($dhcpsettings{'ACTION'} eq '' ) { # First launch from GUI
     $dhcpsettings{'ADVOPT_ENABLED'} = 'on';
     }
 
-&Header::openpage($Lang::tr{'dhcp configuration'}, 1, '');
+### START PAGE ###
+&Header::openpage($Lang::tr{'dhcp configuration'}, 1, $Header::extraHead);
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
 if ($errormessage) {
@@ -843,11 +844,11 @@ foreach my $line (@current1) {
     }
 
     if ($dhcpsettings{'KEY1'} eq $key) {
-	print "<tr bgcolor='${Header::colouryellow}'>";
+	print "<tr class='row-colouryellow'>";
     } elsif ($key % 2) {
-	print "<tr bgcolor='$color{'color22'}'>";
+	print "<tr class='row-color22'>";
     } else {
-	print "<tr bgcolor='$color{'color20'}'>";
+	print "<tr class='row-color20'>";
     }
 
     print <<END
@@ -1069,13 +1070,13 @@ foreach my $line (@current2) {
 
     if ($dhcpsettings{'KEY2'} eq $key) {
 	print "<tr>";
-	$col="bgcolor='${Header::colouryellow}'";
+	$col="class='row-colouryellow'";
     } elsif ($key % 2) {
 	print "<tr>";
-	$col="bgcolor='$color{'color20'}'";
+	$col="class='row-color20'";
     } else {
 	print "<tr>";
-	$col="bgcolor='$color{'color22'}'";
+	$col="class='row-color22'";
     }
     my $TAG0 = '';
     my $TAG1 = '';
@@ -1091,12 +1092,12 @@ foreach my $line (@current2) {
 	$TAG3 = '</b>';
     }
     if ($ipoutside{$temp[1]} > 0) {
-	$TAG4 = "bgcolor='orange'" if ($dhcpsettings{'KEY2'} ne $key);
+	$TAG4 = "class='cell-orange'" if ($dhcpsettings{'KEY2'} ne $key);
     }
 
     print <<END
 <td align='center' $col>$TAG2$temp[0]$TAG3</td>
-<td align='center' $col $TAG4>$TAG0$temp[1]$TAG1</td>
+<td align='center' $TAG4 $col>$TAG0$temp[1]$TAG1</td>
 <td align='center' $col>$temp[6]&nbsp;</td>
 <td align='center' $col>$temp[3]&nbsp;</td>
 <td align='center' $col>$temp[4]&nbsp;</td>
@@ -1153,8 +1154,8 @@ print <<END
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td bgcolor='orange'>&nbsp;</td>
-	<td class='base'>$Lang::tr{'ip address outside subnets'}</td>
+	<td>&nbsp;</td>
+	<td class='base cell-orange'>$Lang::tr{'ip address outside subnets'}</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	$dup

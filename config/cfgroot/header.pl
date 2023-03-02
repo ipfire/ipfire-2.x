@@ -41,6 +41,23 @@ $Header::colourvpn = '#990099';
 $Header::colourerr = '#FF0000';
 $Header::viewsize = 150;
 $Header::errormessage = '';
+$Header::extraHead = <<END
+<style>
+	.row-color20 {
+		background-color: $color{'color20'};
+	}
+	.row-color22 {
+		background-color: $color{'color22'};
+	}
+	.row-colouryellow {
+		background-color: $Header::colouryellow;
+	}
+	.cell-orange {
+		background-color: orange;
+	}			
+</style>
+END
+;
 my %menuhash = ();
 my $menu = \%menuhash;
 %settings = ();
