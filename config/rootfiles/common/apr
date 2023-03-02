@@ -45,13 +45,11 @@ usr/bin/apr-1-config
 #usr/lib/libapr-1.la
 #usr/lib/libapr-1.so
 usr/lib/libapr-1.so.0
-usr/lib/libapr-1.so.0.7.0
+usr/lib/libapr-1.so.0.7.2
 #usr/lib/pkgconfig/apr-1.pc
 #usr/share/apr-1
 #usr/share/apr-1/build
-#usr/share/apr-1/build/apr_common.m4
 #usr/share/apr-1/build/apr_rules.mk
-#usr/share/apr-1/build/find_apr.m4
 #usr/share/apr-1/build/libtool
 #usr/share/apr-1/build/make_exports.awk
 #usr/share/apr-1/build/make_var_export.awk
