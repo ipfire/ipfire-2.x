@@ -26,14 +26,14 @@ include Config
 
 SUMMARY    = GNU make
 
-VER        = 4.4
+VER        = 4.4.1
 
 THISAPP    = make-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = make
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       =
 
@@ -59,7 +59,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 5b8a2fcd7610c33347c2e552fdc4f2698c9a4c468de588c9687cd11d15f120a37768bcd521231adf32359e3b48b27ab7b142746fd18b1a8d15578d34344f487e
+$(DL_FILE)_BLAKE2 = 09a4ad8060259e36854b525ab610fd317a86f4926e44e3ab8adba75dccc8d4b445df9dd25ccfb4c25a54bc0e98238a9127e36401d74cbc3503a329eadcdf4995
 
 install : $(TARGET)
 
