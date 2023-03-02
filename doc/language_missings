@@ -47,6 +47,7 @@
 < could not connect to www ipfire org
 < cryptographic settings
 < desired
+< dhcp fixed ip address in dynamic range
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
 < disable
@@ -102,6 +103,7 @@
 < access point name is required
 < addon
 < cpu frequency
+< dhcp fixed ip address in dynamic range
 < dns servers
 < hardware vulnerabilities
 < invalid ip or hostname
@@ -115,18 +117,12 @@
 < access point name
 < access point name is invalid
 < access point name is required
-< advproxy errmsg invalid url
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
-< dh
-< email recipient invalid
+< dhcp fixed ip address in dynamic range
 < g.dtm
 < g.lite
-< guaranteed bandwidth
-< retbleed
-< service boot setting unavailable
-< show dh
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -252,6 +248,7 @@
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< dhcp fixed ip address in dynamic range
 < dhcp make fixed lease
 < dhcp valid range required when deny known clients checked
 < disable
@@ -756,6 +753,7 @@
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< dhcp fixed ip address in dynamic range
 < dhcp make fixed lease
 < disable
 < Disabled
@@ -1353,6 +1351,7 @@
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< dhcp fixed ip address in dynamic range
 < dhcp make fixed lease
 < dhcp valid range required when deny known clients checked
 < disable
@@ -2330,6 +2329,7 @@
 < dhcp dns update
 < dhcp dns update algo
 < dhcp dns update secret
+< dhcp fixed ip address in dynamic range
 < dhcp make fixed lease
 < dhcp valid range required when deny known clients checked
 < disable
@@ -3173,6 +3173,7 @@
 < desired
 < dh
 < dhcp deny known clients:
+< dhcp fixed ip address in dynamic range
 < dhcp make fixed lease
 < dhcp valid range required when deny known clients checked
 < disable

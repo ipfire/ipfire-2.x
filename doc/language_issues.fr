@@ -392,7 +392,6 @@ WARNING: translation string unused: generatepolicy
 WARNING: translation string unused: generatereport
 WARNING: translation string unused: genkey
 WARNING: translation string unused: green interface
-WARNING: translation string unused: guaranteed bandwith
 WARNING: translation string unused: guest ok
 WARNING: translation string unused: gz with key
 WARNING: translation string unused: harddisk temperature graphs
@@ -404,6 +403,7 @@ WARNING: translation string unused: host deny
 WARNING: translation string unused: hostname and domain already in use
 WARNING: translation string unused: hour-graph
 WARNING: translation string unused: hours2
+WARNING: translation string unused: ibod for dual isdn only
 WARNING: translation string unused: icmp selected but no type
 WARNING: translation string unused: icmp type
 WARNING: translation string unused: id
@@ -453,6 +453,10 @@ WARNING: translation string unused: ipblocklist category scanner
 WARNING: translation string unused: ipfire side
 WARNING: translation string unused: ipsec no connections
 WARNING: translation string unused: iptable rules
+WARNING: translation string unused: isdn
+WARNING: translation string unused: isdn settings
+WARNING: translation string unused: isdn1
+WARNING: translation string unused: isdn2
 WARNING: translation string unused: javascript menu error1
 WARNING: translation string unused: javascript menu error2
 WARNING: translation string unused: kernel version
@@ -908,15 +912,11 @@ WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: access point name = Access Point Name
 WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
 WARNING: untranslated string: access point name is required = Access Point Name is required
-WARNING: untranslated string: advproxy errmsg invalid url = Invalid URL
 WARNING: untranslated string: core notice 3 = available.
-WARNING: untranslated string: dh = Diffie-Hellman-Parameter
-WARNING: untranslated string: dh parameter = unknown string
-WARNING: untranslated string: email recipient invalid = Invalid email recipient
+WARNING: untranslated string: dhcp fixed ip address in dynamic range = Fixed IP Address in dynamic range
 WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
-WARNING: untranslated string: guaranteed bandwidth = Guaranteed bandwidth
 WARNING: untranslated string: guardian block a host = unknown string
 WARNING: untranslated string: guardian block httpd brute-force = unknown string
 WARNING: untranslated string: guardian block ssh brute-force = unknown string
@@ -947,9 +947,6 @@ WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: pakfire ago = ago.
-WARNING: untranslated string: retbleed = Retbleed
 WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
-WARNING: untranslated string: service boot setting unavailable = No valid runlevel symlink was found for the initscript of this service.
-WARNING: untranslated string: show dh = Show Diffie-Hellman parameters

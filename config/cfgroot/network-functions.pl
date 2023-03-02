@@ -307,6 +307,24 @@ sub ip_address_in_network($$) {
 	return (($address_bin >= $network_bin) && ($address_bin <= $broadcast_bin));
 }
 
+# Returns True if $ipaddress is within $ipstart and $ipend range.
+sub ip_address_in_range($$) {
+	my $ipaddress = shift;
+	my $ipstart = shift;
+	my $ipend = shift;
+
+	my $ipaddress_bin = &ip2bin($ipaddress);
+	return undef unless (defined $ipaddress_bin);
+
+	my $ipstart_bin = &ip2bin($ipstart);
+	return undef unless (defined $ipstart_bin);
+
+	my $ipend_bin = &ip2bin($ipend);
+	return undef unless (defined $ipend_bin);
+
+	return (($ipaddress_bin >= $ipstart_bin) && ($ipaddress_bin <= $ipend_bin));
+}
+
 sub setup_upstream_proxy() {
 	my %proxysettings = ();
 	&General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
@@ -665,6 +683,12 @@ sub testsuite() {
 
 	$result = &ip_address_in_network("192.168.30.11", "0.0.0.0/8");
 	assert('ip_address_in_network("192.168.30.11", "0.0.0.0/8")', !$result);
+
+	$result = &ip_address_in_range("192.168.30.11", "192.168.30.10", "192.168.30.20");
+	assert('ip_address_in_range("192.168.30.11", "192.168.30.10", "192.168.30.20")', $result);
+
+	$result = &ip_address_in_range("192.168.30.21", "192.168.30.10", "192.168.30.20");
+	assert('ip_address_in_range("192.168.30.21", "192.168.30.10", "192.168.30.20")', !$result);
 
 	print "Testsuite completed successfully!\n";
 

@@ -228,6 +228,7 @@ WARNING: translation string unused: dh key move failed
 WARNING: translation string unused: dh key warn
 WARNING: translation string unused: dh key warn1
 WARNING: translation string unused: dh name is invalid
+WARNING: translation string unused: dh parameter
 WARNING: translation string unused: dhcp base ip fixed lease
 WARNING: translation string unused: dhcp create fixed leases
 WARNING: translation string unused: dhcp fixed lease err1
@@ -943,6 +944,7 @@ WARNING: untranslated string: access point name is invalid = Access Point Name i
 WARNING: untranslated string: access point name is required = Access Point Name is required
 WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: cpu frequency = CPU frequency
+WARNING: untranslated string: dhcp fixed ip address in dynamic range = Fixed IP Address in dynamic range
 WARNING: untranslated string: dns servers = DNS Servers
 WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: fwhost cust locationgrp = unknown string

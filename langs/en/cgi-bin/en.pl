@@ -827,6 +827,7 @@
 'dhcp dns update' => 'DNS Update',
 'dhcp dns update algo' => 'Algorithm',
 'dhcp dns update secret' => 'Secret',
+'dhcp fixed ip address in dynamic range' => 'Fixed IP Address in dynamic range',
 'dhcp fixed lease err1' => 'For a fix lease you have to enter the MAC address or the hostname, or you enter both.',
 'dhcp fixed lease help1' => 'IP Addresses might be entered as FQDN',
 'dhcp make fixed lease' => 'Add to fix leases',

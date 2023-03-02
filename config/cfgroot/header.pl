@@ -54,6 +54,9 @@ $Header::extraHead = <<END
 	}
 	.cell-orange {
 		background-color: orange;
+	}	
+	.cell-red {
+		background-color: red;
 	}			
 </style>
 END

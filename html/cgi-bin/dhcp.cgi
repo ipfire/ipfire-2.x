@@ -1021,8 +1021,9 @@ my $ipdup = 0;
 my %ipinuse = ();
 my %macdupl = (); # Duplicate MACs have to be on different subnets
 my %ipoutside = ();
+my %ipinrange = ();
 
-# mark duplicate ip or duplicate MAC
+# mark duplicate IP, duplicate MAC or IP in dynamic range
 foreach my $line (@current2) {
     my @temp = split(/\,/,$line);
     $macdupl{$temp[0]} += 1;
@@ -1033,14 +1034,21 @@ foreach my $line (@current2) {
     if ($ipinuse{$temp[1]} > 1) {
 	$ipdup = 1; 	# Flag up duplicates for use later
     }
-    # Mark IP addresses outwith known subnets
     $ipoutside{$temp[1]} = 1;
+    $ipinrange{$temp[1]} = 0;
     foreach my $itf (@ITFs) {
-        if ( &General::IpInSubnet($temp[1],
-                $netsettings{"${itf}_NETADDRESS"},
-                $netsettings{"${itf}_NETMASK"})) {
-            $ipoutside{$temp[1]} = 0;
-        }
+    # Mark IP addresses outwith known subnets
+            	if ( &General::IpInSubnet($temp[1],
+                	$netsettings{"${itf}_NETADDRESS"},
+                	$netsettings{"${itf}_NETMASK"})) {
+            	   $ipoutside{$temp[1]} = 0;
+        	}
+    # Mark IP addresses that overlap with dynamic range
+	    	if (&Network::ip_address_in_range($temp[1],
+		        $dhcpsettings{"START_ADDR_${itf}"},
+		        $dhcpsettings{"END_ADDR_${itf}"})) {
+            	   $ipinrange{$temp[1]} = 1;
+        	}        
     }
 }
 
@@ -1093,6 +1101,9 @@ foreach my $line (@current2) {
     }
     if ($ipoutside{$temp[1]} > 0) {
 	$TAG4 = "class='cell-orange'" if ($dhcpsettings{'KEY2'} ne $key);
+    }
+    if ($ipinrange{$temp[1]} > 0) { 
+	$TAG4 = "class='cell-red'" if ($dhcpsettings{'KEY2'} ne $key);
     }
 
     print <<END
@@ -1156,6 +1167,8 @@ print <<END
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	<td class='base cell-orange'>$Lang::tr{'ip address outside subnets'}</td>
+        <td>&nbsp;&nbsp</td>
+        <td class='base cell-red'>$Lang::tr{'dhcp fixed ip address in dynamic range'}</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	$dup
