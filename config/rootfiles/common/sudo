@@ -79,6 +79,7 @@ usr/sbin/visudo
 #usr/share/locale/ja/LC_MESSAGES/sudo.mo
 #usr/share/locale/ja/LC_MESSAGES/sudoers.mo
 #usr/share/locale/ka/LC_MESSAGES/sudo.mo
+#usr/share/locale/ka/LC_MESSAGES/sudoers.mo
 #usr/share/locale/ko/LC_MESSAGES/sudo.mo
 #usr/share/locale/ko/LC_MESSAGES/sudoers.mo
 #usr/share/locale/lt/LC_MESSAGES/sudoers.mo
@@ -101,6 +102,7 @@ usr/sbin/visudo
 #usr/share/locale/sk/LC_MESSAGES/sudoers.mo
 #usr/share/locale/sl/LC_MESSAGES/sudo.mo
 #usr/share/locale/sl/LC_MESSAGES/sudoers.mo
+#usr/share/locale/sq/LC_MESSAGES/sudo.mo
 #usr/share/locale/sr/LC_MESSAGES/sudo.mo
 #usr/share/locale/sr/LC_MESSAGES/sudoers.mo
 #usr/share/locale/sv/LC_MESSAGES/sudo.mo
