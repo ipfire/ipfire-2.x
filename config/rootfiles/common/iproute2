@@ -44,6 +44,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/bridge.8
 #usr/share/man/man8/ctstat.8
 #usr/share/man/man8/dcb-app.8
+#usr/share/man/man8/dcb-apptrust.8
 #usr/share/man/man8/dcb-buffer.8
 #usr/share/man/man8/dcb-dcbx.8
 #usr/share/man/man8/dcb-ets.8
