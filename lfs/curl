@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.87.0
+VER        = 7.88.1
 
 THISAPP    = curl-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b272ec928c5ef1728434630d8910f58834327a30570913df9d47921a2810d002bd88b81371005197db857d3a53386420c1e28b1e463e6241d46c1e50fbce0c13
+$(DL_FILE)_BLAKE2 = ed7e7aa29efb02fd89a53d5c8d0ec79b4d17612ea07d2a6b5a951f0ca651b4cf7264704344b1a0c2d82196f4cb5c08525e06b4cdd432bc3278ff23c7a6580839
 
 install : $(TARGET)
 
@@ -71,7 +71,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xf $(DIR_DL)/$(DL_FILE)
 	# Add upstream patche.
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/curl-7.87.0_typecheck_accept_expressions_for_option_info_parameters.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--disable-ipv6 \
