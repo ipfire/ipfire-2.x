@@ -5,7 +5,6 @@ usr/bin/gnutls-cli-debug
 usr/bin/gnutls-serv
 usr/bin/ocsptool
 usr/bin/psktool
-usr/bin/srptool
 #usr/include/gnutls
 #usr/include/gnutls/abstract.h
 #usr/include/gnutls/compat.h
@@ -33,7 +32,7 @@ usr/lib/libgnutls-dane.so.0.4.1
 #usr/lib/libgnutls.la
 #usr/lib/libgnutls.so
 usr/lib/libgnutls.so.30
-usr/lib/libgnutls.so.30.34.1
+usr/lib/libgnutls.so.30.35.0
 #usr/lib/libgnutlsxx.la
 #usr/lib/libgnutlsxx.so
 usr/lib/libgnutlsxx.so.30
@@ -53,7 +52,6 @@ usr/lib/libgnutlsxx.so.30.0.0
 #usr/share/doc/gnutls/pkcs11-vision.png
 #usr/share/info/gnutls-client-server-use-case.png
 #usr/share/info/gnutls-crypto-layers.png
-#usr/share/info/gnutls-guile.info
 #usr/share/info/gnutls-handshake-sequence.png
 #usr/share/info/gnutls-handshake-state.png
 #usr/share/info/gnutls-internals.png
@@ -77,10 +75,12 @@ usr/lib/libgnutlsxx.so.30.0.0
 #usr/share/locale/fi/LC_MESSAGES/gnutls.mo
 #usr/share/locale/fr/LC_MESSAGES/gnutls.mo
 #usr/share/locale/it/LC_MESSAGES/gnutls.mo
+#usr/share/locale/ka/LC_MESSAGES/gnutls.mo
 #usr/share/locale/ms/LC_MESSAGES/gnutls.mo
 #usr/share/locale/nl/LC_MESSAGES/gnutls.mo
 #usr/share/locale/pl/LC_MESSAGES/gnutls.mo
 #usr/share/locale/pt_BR/LC_MESSAGES/gnutls.mo
+#usr/share/locale/ro/LC_MESSAGES/gnutls.mo
 #usr/share/locale/sr/LC_MESSAGES/gnutls.mo
 #usr/share/locale/sv/LC_MESSAGES/gnutls.mo
 #usr/share/locale/uk/LC_MESSAGES/gnutls.mo
@@ -94,7 +94,6 @@ usr/lib/libgnutlsxx.so.30.0.0
 #usr/share/man/man1/ocsptool.1
 #usr/share/man/man1/p11tool.1
 #usr/share/man/man1/psktool.1
-#usr/share/man/man1/srptool.1
 #usr/share/man/man1/tpmtool.1
 #usr/share/man/man3/dane_cert_type_name.3
 #usr/share/man/man3/dane_cert_usage_name.3
@@ -1280,4 +1279,3 @@ usr/lib/libgnutlsxx.so.30.0.0
 #usr/share/man/man3/gnutls_x509_trust_list_verify_crt.3
 #usr/share/man/man3/gnutls_x509_trust_list_verify_crt2.3
 #usr/share/man/man3/gnutls_x509_trust_list_verify_named_crt.3
-
