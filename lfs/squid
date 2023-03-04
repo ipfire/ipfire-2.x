@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,8 @@
 
 include Config
 
-VER        = 5.7
+VER        = 5.8
+LANGPACK   = 20230225
 
 THISAPP    = squid-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -42,11 +43,14 @@ endif
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
+objects = $(DL_FILE) \
+	squid-langpack-$(LANGPACK).tar.gz
 
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+$(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
+squid-langpack-$(LANGPACK).tar.gz	= $(URL_IPFIRE)/squid-langpack-$(LANGPACK).tar.gz
 
-$(DL_FILE)_BLAKE2 = 4a403ca4f94034356922ea1a4feffd5f5289e2aadbe1585bd04e83ee89712227ce04c53f7e05c10f7c8ac6be67a265a32b47032e7b56e929a172772fa41d5299
+$(DL_FILE)_BLAKE2 = c9d1ae9464e68beabdf7ae1641a70d6c614bc4d4f4bae3fc5946c2bf61510634992cbd5abe63f071104edb2fa487a6c5c7fb8fbf8f06ac723a6522ec9ade8b68
+squid-langpack-$(LANGPACK).tar.gz_BLAKE2 = 169a05d16770f56e515fd633658e8bcd9464fb01ccba76256b119932c833af7bc22e3e8d3a7d5fde37638546f15822a4d1548a78af13be9f4e3b8989758250b6
 
 install : $(TARGET)
 
@@ -76,6 +80,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xaf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP)/errors && tar zxf $(DIR_DL)/squid-langpack-$(LANGPACK).tar.gz
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/squid/01_squid-gcc11.patch
 
