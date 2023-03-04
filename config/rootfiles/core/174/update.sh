@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2022 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2023 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/rc.d/init.d/squid stop
 
 # Extract files
 extract_files
@@ -51,6 +52,9 @@ ldconfig
 
 # Start services
 telinit u
+if [ -f /var/ipfire/proxy/enable ]; then
+	/etc/init.d/squid start
+fi
 
 # This update needs a reboot...
 touch /var/run/need_reboot
