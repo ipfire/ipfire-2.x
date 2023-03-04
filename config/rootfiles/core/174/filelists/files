@@ -1,3 +1,4 @@
 srv/web/ipfire/cgi-bin/dhcp.cgi
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 var/ipfire/header.pl
 var/ipfire/network-functions.pl
