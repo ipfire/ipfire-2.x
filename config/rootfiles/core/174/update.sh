@@ -39,7 +39,8 @@ extract_files
 
 # Remove files
 rm -rfv \
-	/usr/lib/libboost*.so.1.76.0
+	/usr/lib/libboost*.so.1.76.0 \
+	/usr/local/share/locale/de/LC_MESSAGES/elinks.mo
 
 # update linker config
 ldconfig
