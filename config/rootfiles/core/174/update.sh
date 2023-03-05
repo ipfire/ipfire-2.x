@@ -39,7 +39,14 @@ extract_files
 
 # Remove files
 rm -rfv \
+	/usr/lib/libbind9-9.16.37.so \
 	/usr/lib/libboost*.so.1.76.0 \
+	/usr/lib/libdns-9.16.37.so \
+	/usr/lib/libirs-9.16.37.so \
+	/usr/lib/libisc-9.16.37.so \
+	/usr/lib/libisccc-9.16.37.so \
+	/usr/lib/libisccfg-9.16.37.so \
+	/usr/lib/libns-9.16.37.so \
 	/usr/local/share/locale/de/LC_MESSAGES/elinks.mo
 
 # update linker config
