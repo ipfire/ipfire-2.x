@@ -6997,6 +6997,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_ASM_GOTO_OUTPUT
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_ASM_GOTO_TIED_OUTPUT
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_ASM_INLINE
+#lib/modules/KVER-ipfire/build/include/config/CC_HAS_AUTO_VAR_INIT_PATTERN
+#lib/modules/KVER-ipfire/build/include/config/CC_HAS_AUTO_VAR_INIT_ZERO
+#lib/modules/KVER-ipfire/build/include/config/CC_HAS_AUTO_VAR_INIT_ZERO_BARE
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_IBT
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_INT128
 #lib/modules/KVER-ipfire/build/include/config/CC_HAS_KASAN_GENERIC
@@ -7857,8 +7860,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/GCC11_NO_ARRAY_BOUNDS
 #lib/modules/KVER-ipfire/build/include/config/GCC12_NO_ARRAY_BOUNDS
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGINS
-#lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_STRUCTLEAK
-#lib/modules/KVER-ipfire/build/include/config/GCC_PLUGIN_STRUCTLEAK_BYREF_ALL
 #lib/modules/KVER-ipfire/build/include/config/GCC_VERSION
 #lib/modules/KVER-ipfire/build/include/config/GENERIC_ALLOCATOR
 #lib/modules/KVER-ipfire/build/include/config/GENERIC_BUG
@@ -8280,6 +8281,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/INITRAMFS_SOURCE
 #lib/modules/KVER-ipfire/build/include/config/INIT_ENV_ARG_LIMIT
 #lib/modules/KVER-ipfire/build/include/config/INIT_ON_ALLOC_DEFAULT_ON
+#lib/modules/KVER-ipfire/build/include/config/INIT_STACK_ALL_ZERO
 #lib/modules/KVER-ipfire/build/include/config/INOTIFY_USER
 #lib/modules/KVER-ipfire/build/include/config/INPUT
 #lib/modules/KVER-ipfire/build/include/config/INPUT_APANEL
@@ -18190,7 +18192,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/sancov_plugin.c
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/stackleak_plugin.c
 #lib/modules/KVER-ipfire/build/scripts/gcc-plugins/structleak_plugin.c
-#lib/modules/KVER-ipfire/build/scripts/gcc-plugins/structleak_plugin.so
 #lib/modules/KVER-ipfire/build/scripts/gcc-x86_32-has-stack-protector.sh
 #lib/modules/KVER-ipfire/build/scripts/gcc-x86_64-has-stack-protector.sh
 #lib/modules/KVER-ipfire/build/scripts/gdb
