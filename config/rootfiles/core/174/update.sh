@@ -65,6 +65,14 @@ case "$(uname -m)" in
                 ;;
 esac
 
+# perl-TimeDate is now part of the core system, remove Pakfire metadata for it
+if [ -e "/opt/pakfire/db/installed/meta-perl-TimeDate" ] && [ -e "/opt/pakfire/db/meta/meta-perl-TimeDate" ]; then
+	rm -vf \
+		/opt/pakfire/db/installed/meta-perl-TimeDate \
+		/opt/pakfire/db/meta/meta-perl-TimeDate \
+		/opt/pakfire/db/rootfiles/perl-TimeDate
+fi
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
