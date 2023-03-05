@@ -39,6 +39,7 @@ extract_files
 
 # Remove files
 rm -rfv \
+	/usr/bin/srptool \
 	/usr/lib/libbind9-9.16.37.so \
 	/usr/lib/libboost*.so.1.76.0 \
 	/usr/lib/libdns-9.16.37.so \
