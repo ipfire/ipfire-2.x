@@ -1,5 +1,6 @@
 srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/mail.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
 var/ipfire/header.pl
 var/ipfire/network-functions.pl
