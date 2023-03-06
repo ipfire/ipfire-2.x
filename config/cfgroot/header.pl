@@ -43,19 +43,19 @@ $Header::viewsize = 150;
 $Header::errormessage = '';
 $Header::extraHead = <<END
 <style>
-	.row-color20 {
+	.color20 {
 		background-color: $color{'color20'};
 	}
-	.row-color22 {
+	.color22 {
 		background-color: $color{'color22'};
 	}
-	.row-colouryellow {
+	.colouryellow {
 		background-color: $Header::colouryellow;
 	}
-	.cell-orange {
+	.orange {
 		background-color: orange;
 	}	
-	.cell-red {
+	.red {
 		background-color: red;
 	}			
 </style>

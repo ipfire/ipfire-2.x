@@ -844,11 +844,11 @@ foreach my $line (@current1) {
     }
 
     if ($dhcpsettings{'KEY1'} eq $key) {
-	print "<tr class='row-colouryellow'>";
+	print "<tr class='colouryellow'>";
     } elsif ($key % 2) {
-	print "<tr class='row-color22'>";
+	print "<tr class='color22'>";
     } else {
-	print "<tr class='row-color20'>";
+	print "<tr class='color20'>";
     }
 
     print <<END
@@ -1078,13 +1078,13 @@ foreach my $line (@current2) {
 
     if ($dhcpsettings{'KEY2'} eq $key) {
 	print "<tr>";
-	$col="class='row-colouryellow'";
+	$col="class='colouryellow'";
     } elsif ($key % 2) {
 	print "<tr>";
-	$col="class='row-color20'";
+	$col="class='color20'";
     } else {
 	print "<tr>";
-	$col="class='row-color22'";
+	$col="class='color22'";
     }
     my $TAG0 = '';
     my $TAG1 = '';
@@ -1100,10 +1100,10 @@ foreach my $line (@current2) {
 	$TAG3 = '</b>';
     }
     if ($ipoutside{$temp[1]} > 0) {
-	$TAG4 = "class='cell-orange'" if ($dhcpsettings{'KEY2'} ne $key);
+	$TAG4 = "class='orange'" if ($dhcpsettings{'KEY2'} ne $key);
     }
     if ($ipinrange{$temp[1]} > 0) { 
-	$TAG4 = "class='cell-red'" if ($dhcpsettings{'KEY2'} ne $key);
+	$TAG4 = "class='red'" if ($dhcpsettings{'KEY2'} ne $key);
     }
 
     print <<END
@@ -1166,9 +1166,9 @@ print <<END
 <tr>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
-	<td class='base cell-orange'>$Lang::tr{'ip address outside subnets'}</td>
+	<td class='base orange'>$Lang::tr{'ip address outside subnets'}</td>
         <td>&nbsp;&nbsp</td>
-        <td class='base cell-red'>$Lang::tr{'dhcp fixed ip address in dynamic range'}</td>
+        <td class='base red'>$Lang::tr{'dhcp fixed ip address in dynamic range'}</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	$dup
