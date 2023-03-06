@@ -33,6 +33,7 @@ done
 
 # Stop services
 /etc/rc.d/init.d/squid stop
+/etc/rc.d/init.d/ipsec stop
 
 # Extract files
 extract_files
@@ -63,6 +64,9 @@ ldconfig
 telinit u
 if [ -f /var/ipfire/proxy/enable ]; then
 	/etc/init.d/squid start
+fi
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/rc.d/init.d/ipsec start
 fi
 
 # Rebuild initial ramdisk to apply microcode updates
