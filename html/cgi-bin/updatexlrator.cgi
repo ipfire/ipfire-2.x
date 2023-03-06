@@ -105,46 +105,6 @@ my @metadata=();
 &General::readhash("${General::swroot}/proxy/settings", \%proxysettings);
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
-###--- HTML HEAD ---###
-my $extraHead = <<END
-<style>
-	.row-color20 {
-		background-color: $color{'color20'};
-	}
-	.row-color22 {
-		background-color: $color{'color22'};
-	}
-	.row-table1colour {
-		background-color: $Header::table1colour;
-	}
-	.row-table2colour {
-		background-color: $Header::table2colour;
-	}
-	.percent-box {
-		border-style: solid;
-		border-width: 1px;
-		border-color: #a0a0a0;
-		width: 100px;
-		height: 10px;
-	}
-	.percent-bar {
-		background-color: #a0a0a0;
-		border-style: solid;
-		border-width: 1px;
-		border-color: #e2e2e2;
-	}
-	.percent-space {
-		background-color: #e2e2e2;
-		border-style: solid;
-		border-width: 1px;
-		border-color: #e2e2e2;
-	}
-</style>
-END
-;
-###--- END HTML HEAD ---###
-
-
 $xlratorsettings{'ACTION'} = '';
 $xlratorsettings{'ENABLE_LOG'} = 'off';
 $xlratorsettings{'PASSIVE_MODE'} = 'off';
@@ -409,7 +369,7 @@ $selected{'NOT_ACCESSED_LAST'}{$xlratorsettings{'NOT_ACCESSED_LAST'}} = "selecte
 
 &Header::showhttpheaders();
 
-&Header::openpage($Lang::tr{'updxlrtr configuration'}, 1, $extraHead);
+&Header::openpage($Lang::tr{'updxlrtr configuration'}, 1, $Header::extraHead);
 
 &Header::openbigbox('100%', 'left', '', $errormessage);
 
@@ -572,9 +532,9 @@ END
 
 			$id++;
 			if ($id % 2) {
-				print "<tr class='row-table1colour'>\n"; }
+				print "<tr class='table1colour'>\n"; }
 			else {
-				print "<tr class='row-table2colour'>\n"; }
+				print "<tr class='table2colour'>\n"; }
 
 			$filesize = $size_updatefile;
 			1 while $filesize =~ s/^(-?\d+)(\d{3})/$1.$2/;
@@ -863,9 +823,9 @@ foreach (@vendors)
 
 	$id++;
 	if ($id % 2) {
-		print "<tr class='row-color20'>\n"; }
+		print "<tr class='color20'>\n"; }
 	else {
-		print "<tr class='row-color22'>\n"; }
+		print "<tr class='color22'>\n"; }
 
 	print "<td class='base' align='center'><nobr>&nbsp;";
 
@@ -1202,9 +1162,9 @@ END
 
 		$id++;
 		if ($id % 2) {
-			print "<tr class='row-table1colour'>\n"; }
+			print "<tr class='table1colour'>\n"; }
 		else {
-			print "<tr class='row-table2colour'>\n"; }
+			print "<tr class='table2colour'>\n"; }
 
 		$filesize = $size_updatefile;
 		1 while $filesize =~ s/^(-?\d+)(\d{3})/$1.$2/;
