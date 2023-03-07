@@ -55,12 +55,12 @@ display_vnstat($netsettings{'GREEN_DEV'});
 
 # Display external network / check if it is PPP or ETH
 # and dont display if RED_DEV=GREEN_DEV (green only mode)
-if ($netsettings{'RED_TYPE'} ne 'PPPOE') {
-    if ($netsettings{'RED_DEV'} ne $netsettings{'GREEN_DEV'}) {
-	display_vnstat($netsettings{'RED_DEV'});
-    }
-} else {
-    display_vnstat("ppp0");
+if ($netsettings{'RED_DEV'} ne $netsettings{'GREEN_DEV'}) {
+	# Omit the red interface name.
+	my $red_iface = &General::get_red_interface();
+
+	# Display the red stats if a device could be grabbed.
+	display_vnstat($red_iface) if ($red_iface);
 }
 
 # Check config and display aditional Networks (BLUE and ORANGE)
