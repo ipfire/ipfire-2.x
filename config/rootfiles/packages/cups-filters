@@ -74,12 +74,10 @@ usr/lib/cups/filter/vectortopdf
 usr/lib/cups/filter/vectortoubrl
 usr/lib/cups/filter/wmftopdf
 usr/lib/cups/filter/xfigtopdf
-#usr/lib/libcupsfilters.a
 #usr/lib/libcupsfilters.la
 #usr/lib/libcupsfilters.so
 usr/lib/libcupsfilters.so.1
 usr/lib/libcupsfilters.so.1.0.0
-#usr/lib/libfontembed.a
 #usr/lib/libfontembed.la
 #usr/lib/libfontembed.so
 usr/lib/libfontembed.so.1
