@@ -572,7 +572,7 @@ sub extractruleset ($) {
 			# Handle rules files.
 			} elsif ($file =~ m/\.rules$/) {
 				# Skip rule files which are not located in the rules directory or archive root.
-				next unless(($packed_file =~ /^rules\//) || ($packed_file !~ /\//));
+				next unless(($packed_file =~ /^rules\//) || ($packed_file =~ /^$provider-rules\//) || ($packed_file !~ /\//));
 
 				# Skip deleted.rules.
 				#
