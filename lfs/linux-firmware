@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20221214
+VER        = 20230210
 
 THISAPP    = linux-firmware-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8e0b1ba65ef4b1e54f4d035e5d4e2b48d62516d65d8d8e8c8ab2e3e1c93fcf3f1a6eb8bb5cdabaae9fecae981e6d10417e11c87b9cb734f760472b7b83c8cb04
+$(DL_FILE)_BLAKE2 = 7b45c0101900a5b106c089aec24119e0d2c0b06f460d590a3505a4c49730b40e207ebb821d4c3a477d622bcc09193dc315f105f65b9dc68b51d9d68b58bb887b
 
 install : $(TARGET)
 
