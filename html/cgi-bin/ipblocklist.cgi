@@ -72,6 +72,10 @@ my @blocklists = &IPblocklist::get_blocklists();
 
 # Process actions
 if ($cgiparams{'ACTION'} eq "$Lang::tr{'save'}") {
+	# Assign checkbox values, in case they are not checked.
+	$cgiparams{'ENABLE'} = "off" unless($cgiparams{'ENABLE'});
+	$cgiparams{'LOGGING'} = "off" unless($cgiparams{'LOGGING'});
+
 	# Array to store if blocklists are missing on the system
 	# and needs to be downloaded first.
 	my @missing_blocklists = ();
