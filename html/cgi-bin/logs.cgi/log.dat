@@ -231,7 +231,7 @@ while ($gzindex >=0 && $loop) {
 	    #&General::log("reading $filestr");
 	    READ:while (<FILE>) {
 		my $line = $_;
-	 	if ($line =~ /^${monthstr} ${daystr} ..:..:.. [\w\-]+ ${section}(.*)/) {
+	 	if ($line =~ /^${monthstr} ${daystr} ..:..:.. [\w\-\.]+ ${section}(.*)/) {
 		    # when standard viewing, just keep in memory the correct slice
 		    # it starts a '$start' and size is $viewport
 		    # If export, then keep all lines...
@@ -276,7 +276,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 
 	foreach $_ (@log)
 	{
-		/^... (..) (..:..:..) [\w\-]+ ${section}(.*)$/;
+		/^... (..) (..:..:..) [\w\-\.]+ ${section}(.*)$/;
 		my $day =  $1;
 		$day =~ tr / /0/;
 		my $time = $cgiparams{'DAY'} ? "$2" : "$day/$2" ;
@@ -399,7 +399,7 @@ $lines = 0;
 #print '<tt>';
 foreach $_ (@log)
 {
-	/^... (..) (..:..:..) [\w\-]+ ${section}(.*)$/;
+	/^... (..) (..:..:..) [\w\-\.]+ ${section}(.*)$/;
 	my $day =  $1;
 	$day =~ tr / /0/;
 	my $time = $cgiparams{'DAY'} ? "$2" : "$day/$2" ;
