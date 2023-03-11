@@ -78,16 +78,6 @@ lib/firmware/mediatek/WIFI_MT7922_patch_mcu_1_1_hdr.bin
 lib/firmware/mediatek/WIFI_MT7961_patch_mcu_1_2_hdr.bin
 lib/firmware/mediatek/WIFI_RAM_CODE_MT7922_1.bin
 lib/firmware/mediatek/WIFI_RAM_CODE_MT7961_1.bin
-lib/firmware/qca/hpbtfw21.tlv
-lib/firmware/qca/hpnv21.301
-lib/firmware/qca/hpnv21.302
-lib/firmware/qca/hpnv21.bin
-lib/firmware/qca/hpnv21g.301
-lib/firmware/qca/hpnv21g.302
-lib/firmware/qca/hpnv21g.bin
-lib/firmware/qca/msbtfw11.mbn
-lib/firmware/qca/msbtfw11.tlv
-lib/firmware/qca/msnv11.bin
 lib/firmware/qcom/yamato_pfp.fw
 lib/firmware/qcom/yamato_pm4.fw
 lib/firmware/rtw88/rtw8822c_fw.bin

@@ -136,6 +136,7 @@ rm -rfv \
 	/lib/firmware/iwlwifi-ty-a0-gf-a0-67.ucode \
 	/lib/firmware/iwlwifi-ty-a0-gf-a0-68.ucode \
 	/lib/firmware/iwlwifi-ty-a0-gf-a0-71.ucode \
+	/lib/firmware/qca \
 	/usr/bin/srptool \
 	/usr/lib/libbind9-9.16.37.so \
 	/usr/lib/libboost*.so.1.76.0 \
