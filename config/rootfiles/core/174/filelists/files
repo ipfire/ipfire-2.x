@@ -4,6 +4,7 @@ srv/web/ipfire/cgi-bin/ipblocklist.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/mail.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/traffic.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 var/ipfire/header.pl
 var/ipfire/ids-functions.pl
