@@ -4,4 +4,5 @@ srv/web/ipfire/cgi-bin/mail.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 var/ipfire/header.pl
+var/ipfire/ids-functions.pl
 var/ipfire/network-functions.pl
