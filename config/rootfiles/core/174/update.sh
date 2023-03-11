@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/rc.d/init.d/apache stop
 /etc/rc.d/init.d/squid stop
 /etc/rc.d/init.d/ipsec stop
 
@@ -62,6 +63,7 @@ ldconfig
 
 # Start services
 telinit u
+/etc/rc.d/init.d/apache start
 if [ -f /var/ipfire/proxy/enable ]; then
 	/etc/init.d/squid start
 fi
