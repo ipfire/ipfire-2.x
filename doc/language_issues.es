@@ -105,6 +105,7 @@ WARNING: translation string unused: advproxy throttle mmedia
 WARNING: translation string unused: advproxy update information
 WARNING: translation string unused: advproxy update notification
 WARNING: translation string unused: advproxy web browser
+WARNING: translation string unused: advproxy wpad notice
 WARNING: translation string unused: again
 WARNING: translation string unused: age seconds
 WARNING: translation string unused: age shour

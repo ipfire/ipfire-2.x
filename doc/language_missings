@@ -125,10 +125,6 @@
 < dhcp fixed ip address in dynamic range
 < g.dtm
 < g.lite
-< guaranteed bandwidth
-< retbleed
-< service boot setting unavailable
-< show dh
 < openvpn cert expires soon
 < openvpn cert has expired
 < upload fcdsl.o

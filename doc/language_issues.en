@@ -305,7 +305,6 @@ WARNING: untranslated string: advproxy wpad example dst_noproxy_ip = e.g. 192.16
 WARNING: untranslated string: advproxy wpad example dst_noproxy_url = e.g. *.ipfire.org*
 WARNING: untranslated string: advproxy wpad label dst_noproxy_ip = Excluded IP Subnets (one per line)
 WARNING: untranslated string: advproxy wpad label dst_noproxy_url = Excluded URL s (one per line)
-WARNING: untranslated string: advproxy wpad notice = Notice: For WPAD/PAC to work properly, furtcher changes need to be made. Please see the <a href="https://wiki.ipfire.org/configuration/network/proxy/extend/wpad" target="_blank">Wiki</a>.
 WARNING: untranslated string: advproxy wpad title = Web Proxy Auto-Discovery Protocol (WPAD) / Proxy Auto-Config (PAC)
 WARNING: untranslated string: advproxy wpad view pac = Open PAC File
 WARNING: untranslated string: age second = second
