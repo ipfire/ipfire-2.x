@@ -412,7 +412,6 @@
 'advproxy wpad example dst_noproxy_url' => 'e.g. *.ipfire.org*',
 'advproxy wpad label dst_noproxy_ip' => 'Excluded IP Subnets (one per line)',
 'advproxy wpad label dst_noproxy_url' => 'Excluded URL s (one per line)',
-'advproxy wpad notice' => 'Notice: For WPAD/PAC to work properly, furtcher changes need to be made. Please see the <a href="https://wiki.ipfire.org/configuration/network/proxy/extend/wpad" target="_blank">Wiki</a>.',
 'advproxy wpad title' => 'Web Proxy Auto-Discovery Protocol (WPAD) / Proxy Auto-Config (PAC)',
 'advproxy wpad view pac' => 'Open PAC File',
 'again' => 'Again:',

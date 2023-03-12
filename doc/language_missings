@@ -157,7 +157,6 @@
 < advproxy wpad example dst_noproxy_url
 < advproxy wpad label dst_noproxy_ip
 < advproxy wpad label dst_noproxy_url
-< advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
 < aliases default interface
@@ -662,7 +661,6 @@
 < advproxy wpad example dst_noproxy_url
 < advproxy wpad label dst_noproxy_ip
 < advproxy wpad label dst_noproxy_url
-< advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
 < aliases default interface
@@ -1202,7 +1200,6 @@
 < advproxy wpad example dst_noproxy_url
 < advproxy wpad label dst_noproxy_ip
 < advproxy wpad label dst_noproxy_url
-< advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
 < age second
@@ -2181,7 +2178,6 @@
 < advproxy wpad example dst_noproxy_url
 < advproxy wpad label dst_noproxy_ip
 < advproxy wpad label dst_noproxy_url
-< advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
 < age second
@@ -3150,7 +3146,6 @@
 < advproxy wpad example dst_noproxy_url
 < advproxy wpad label dst_noproxy_ip
 < advproxy wpad label dst_noproxy_url
-< advproxy wpad notice
 < advproxy wpad title
 < advproxy wpad view pac
 < aliases default interface
