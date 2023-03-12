@@ -761,7 +761,7 @@ sub ipblocklist () {
 			}
 
 			# Check if logging is enabled.
-			if($blocklistsettings{'LOGGING'}) && ($blocklistsettings{'LOGGING'} eq "on")) {
+			if(($blocklistsettings{'LOGGING'}) && ($blocklistsettings{'LOGGING'} eq "on")) {
 				# Create logging rule.
 				run("$IPTABLES -A ${blocklist}_DROP -j LOG -m limit --limit 10/second --log-prefix \"BLKLST_$blocklist \"");
 			}
