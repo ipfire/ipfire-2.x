@@ -30,8 +30,11 @@ require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
-# Graph image size in pixel
-our %image_size = ('width' => 910, 'height' => 300);
+# Approximate size of the final graph image including canvas and labeling (in pixels, mainly used for placeholders)
+our %image_size = ('width' => 900, 'height' => 300);
+
+# Size of the actual data area within the image, without labeling (in pixels)
+our %canvas_size = ('width' => 800, 'height' => 190);
 
 # List of all available time ranges
 our @time_ranges = ("hour", "day", "week", "month", "year");
@@ -48,15 +51,12 @@ my @GRAPH_ARGS = (
 	# For a more 'organic' look
 	"--slope-mode",
 
-	# HxW define the size of the output image
-	"--full-size-mode",
-
 	# Watermark
 	"-W www.ipfire.org",
 
-	# Default size
-	"-w $image_size{'width'}",
-	"-h $image_size{'height'}",
+	# Canvas width/height
+	"-w $canvas_size{'width'}",
+	"-h $canvas_size{'height'}",
 
 	# Use alternative grid
 	"--alt-y-grid",
@@ -1090,18 +1090,19 @@ sub updatecpufreqgraph {
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
-		"COMMENT:".sprintf("%-10s",$Lang::tr{'caption'}),
+		"COMMENT:".sprintf("%-15s",$Lang::tr{'caption'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'minimal'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'current'})."\\j"
 	);
 
+	my $j = 11;
 	for(my $i = 0; $i < $cpucount; $i++) {
-		my $j=$i+1;
+		$j++; $j = 1 if $j > 20;
 		push(@command,"DEF:cpu".$i."_=".$mainsettings{'RRDLOG'}."/collectd/localhost/cpufreq/cpufreq-".$i.".rrd:value:AVERAGE"
 				,"CDEF:cpu".$i."=cpu".$i."_,1000000,/"
-				,"LINE1:cpu".$i.$color{"color1$j"}."A0:cpu ".$i." "
+				,"LINE1:cpu".$i.$color{"color$j"}."A0:cpu ".$i." "
 				,"GPRINT:cpu".$i.":MAX:%3.0lf Mhz"
 				,"GPRINT:cpu".$i.":AVERAGE:%3.0lf Mhz"
 				,"GPRINT:cpu".$i.":MIN:%3.0lf Mhz"
