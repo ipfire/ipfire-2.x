@@ -35,7 +35,7 @@ require "${General::swroot}/graphs.pl";
 
 # List of graph origins that getrrdimage.cgi can process directly
 # (unknown origins are forwarded to ensure compatibility)
-my @supported_origins = ("entropy.cgi", "hardwaregraphs.cgi", "media.cgi",
+my @supported_origins = ("hardwaregraphs.cgi", "media.cgi",
 	"memory.cgi", "netexternal.cgi", "netinternal.cgi", "netother.cgi",
 	"netovpnrw.cgi", "netovpnsrv.cgi", "qos.cgi", "services.cgi", "system.cgi");
 
@@ -80,11 +80,7 @@ _start_svg_output();
 # Graphs are first grouped by their origin.
 # This is because some graph categories require special parameter handling.
 my $graphstatus = '';
-if($origin eq "entropy.cgi") {				## entropy.cgi
-	$graphstatus = Graphs::updateentropygraph($range);
-# ------
-
-} elsif($origin eq "hardwaregraphs.cgi") {	## hardwaregraphs.cgi
+if($origin eq "hardwaregraphs.cgi") {		## hardwaregraphs.cgi
 	if($graph eq "hwtemp") {
 		$graphstatus = Graphs::updatehwtempgraph($range);
 	} elsif($graph eq "hwfan") {

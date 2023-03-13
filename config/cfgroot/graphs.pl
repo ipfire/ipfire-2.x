@@ -1169,34 +1169,6 @@ sub getprocesses {
 	return @processesgraph;
 }
 
-sub updateentropygraph {
-	my $period    = $_[0];
-	my @command = (
-		@GRAPH_ARGS,
-		"-",
-		"--start",
-		"-1".$period,
-		"-r",
-		"--lower-limit","0",
-		"-t ".$Lang::tr{'entropy'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
-		"-v $Lang::tr{'bit'}",
-		"DEF:entropy=$mainsettings{'RRDLOG'}/collectd/localhost/entropy/entropy.rrd:entropy:AVERAGE",
-		"LINE3:entropy#ff0000:" . sprintf("%-15s", $Lang::tr{'entropy'}),
-		"VDEF:entrmin=entropy,MINIMUM",
-		"VDEF:entrmax=entropy,MAXIMUM",
-		"VDEF:entravg=entropy,AVERAGE",
-		"GPRINT:entrmax:" . sprintf("%12s\\: %%5.0lf", $Lang::tr{'maximum'}),
-		"GPRINT:entrmin:" . sprintf("%12s\\: %%5.0lf", $Lang::tr{'minimum'}),
-		"GPRINT:entravg:" . sprintf("%12s\\: %%5.0lf", $Lang::tr{'average'}) . "\\n",
-		"--color=BACK".$color{"color21"},
-	);
-
-	RRDs::graph (@command);
-	$ERROR = RRDs::error;
-
-	return "Error in RRD::graph for entropy: ".$ERROR."\n" if $ERROR;
-}
-
 sub updateconntrackgraph {
 	my $period = $_[0];
 	my @command = (
