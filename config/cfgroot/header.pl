@@ -17,6 +17,9 @@ use HTML::Entities();
 use Socket;
 use Time::Local;
 
+our %color = ();
+&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
+
 $|=1; # line buffering
 
 $Header::revision = 'final';
