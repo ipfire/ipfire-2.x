@@ -1,0 +1,100 @@
+--- squid-asnbl-0.2.4/asnbl-helper_orig.py
++++ squid-asnbl-0.2.4/asnbl-helper.py
+@@ -172,17 +172,19 @@
+     return parsedasns
+ 
+ 
+-def resolve_asn(ipaddr: str, asndb):
+-    """ Function call: resolve_asn(IP address to be resolved,
+-                                   ASN database instance object)
+-    This function looks up the Autonomous System for the given IP address. It expects
+-    an IPFire location database object to be passed as a second parameter, hence relying
+-    on another function to set that up. """
++def resolve_asn(ipaddr: str):
++    """ Function call: resolve_asn(IP address to be resolved)
++    This function looks up the Autonomous System for the given IP address. """
++
++    # Fix for #13023
++    # Initialize the result variable before it's first use, otherwise python3
++    # will sometimes detect a 'mismatch' using global and local variables
++    lookup_result = None
+ 
+     # libloc cannot handle ipaddress objects here, so casting into a string is necessary
+     # for good measure, to avoid exceptions here...
+     try:
+-        result = asndb.lookup(str(ipaddr))
++        lookup_result = ASNDB.lookup(str(ipaddr))
+     except BlockingIOError:
+         # XXX: Prevent likely libloc bug from causing this helper to crash
+         # (see upstream bug https://bugzilla.ipfire.org/show_bug.cgi?id=13023)
+@@ -190,21 +192,25 @@
+ 
+     # In case nothing was returned above, satisfy result expectation to this function...
+     try:
+-        if not result.asn:
++        if not lookup_result.asn:
+             return 0
+     except AttributeError:
+         return 0
+ 
+-    return result.asn
+-
+-
+-def asndb_response_tests(testdata: str, asndb):
+-    """ Function call: asndb_response_tests(response rest data,
+-                                            ASN database instance object)
++    return lookup_result.asn
++
++
++def asndb_response_tests(testdata: str):
++    """ Function call: asndb_response_tests(response rest data)
+ 
+     This function asserts the given ASN database to return expected ASNs for
+     given IP addresses in order to be considered operational. It returns
+     True if this test succeeds, and False otherwise. """
++
++    # Fix for #13023
++    # Initialize the result variable before it's first use, otherwise python3
++    # will sometimes detect a 'mismatch' using global and local variables
++    lookup_result_test = None
+ 
+     tresult = True
+ 
+@@ -216,13 +222,13 @@
+ 
+     for stestdata in ptdata:
+         LOGIT.debug("Running response test for '%s' against ASNDB '%s' ...",
+-                    stestdata, asndb)
+-
+-        returndata = resolve_asn(stestdata[0], asndb)
+-
+-        if returndata != int(stestdata[1]):
++                    stestdata, ASNDB)
++
++        lookup_result_test = resolve_asn(stestdata[0])
++
++        if lookup_result_test != int(stestdata[1]):
+             LOGIT.error("Response test failed for ASNDB '%s' (tuple: %s), aborting",
+-                        asndb, stestdata)
++                        ASNDB, stestdata)
+             tresult = False
+             break
+ 
+@@ -428,7 +434,7 @@
+ ASNDB = set_up_location_database(config["GENERAL"]["ASNDB_PATH"])
+ 
+ LOGIT.debug("Running ASN database response tests...")
+-if asndb_response_tests(config["GENERAL"]["TESTDATA"], ASNDB):
++if asndb_response_tests(config["GENERAL"]["TESTDATA"]):
+     LOGIT.debug("ASN database operational - excellent. Waiting for input...")
+ else:
+     LOGIT.error("ASN database response tests failed, aborting")
+@@ -490,7 +496,7 @@
+     ASNS = []
+     for singleip in IPS:
+         # Enumerate ASN for this IP address...
+-        resolvedasn = resolve_asn(singleip, ASNDB)
++        resolvedasn = resolve_asn(singleip)
+ 
+         # In case protection against destinations without public AS announcements for their
+         # IP addresses is desired, the query will be denied in case ASN = 0 appears in an

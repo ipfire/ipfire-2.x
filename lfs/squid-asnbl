@@ -75,6 +75,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zvxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squid/squid-asnbl-0.2.4_initialise_global_variables_to_make_compatible_with_python_3.patch
 
 	# Install ASNBL helper script
 	cd $(DIR_APP) && install -o root -g root -m 0755 asnbl-helper.py /usr/bin/asnbl-helper.py
