@@ -2986,6 +2986,7 @@ END
 			foreach my $network (@networks) {
 				my ($vpnip, $vpnsub) = split("/", $network);
 				$vpnsub = &Network::convert_prefix2netmask($vpnsub) || $vpnsub;
+				next if ($vpnip eq "0.0.0.0" || $vpnsub eq "0.0.0.0");
 				print FILE "     (isInNet(host, \"$vpnip\", \"$vpnsub\")) ||\n";
 			}
 		}
@@ -2996,6 +2997,8 @@ END
 			my @networks = split(/\|/, $ovpnconfig{$key}[11]);
 			foreach my $network (@networks) {
 				my ($vpnip, $vpnsub) = split("/", $network);
+				$vpnsub = &Network::convert_prefix2netmask($vpnsub) || $vpnsub;
+				next if ($vpnip eq "0.0.0.0" || $vpnsub eq "0.0.0.0");
 				print FILE "     (isInNet(host, \"$vpnip\", \"$vpnsub\")) ||\n";
 			}
 		}
