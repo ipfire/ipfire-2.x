@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3400100
+VER        = 3410200
 
 THISAPP    = sqlite-autoconf-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 495ffa185598b11e8258d2bfed88516753c0a13b3a67850f3464a112f225a13db3b75e4f977ed549305e05a995074a8c5ef12d65c2b353306e58c098c89b36b6
+$(DL_FILE)_BLAKE2 = 928134ec28c349bf984705b6296fc01f31028aee17035d38b2c0dbb020ab1a8c431fe29092f3742ac68bdd0d3146a42b72404da9a7744209f4ea1f20312cf8c3
 
 install : $(TARGET)
 
