@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 9.2p1
+VER        = 9.3p1
 
 THISAPP    = openssh-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8d0b5e43cb42cba105a1fe303c447a2b85151cb33ec7ed47747d75c5a61d0f07f0ee4b1020b79c13eb8de4b451c5a844a8afc7ebbbea7ffeceafc3bf59cb8d21
+$(DL_FILE)_BLAKE2 = 45578edf98bba3d23c7cefe60d8a7d3079e7c6676459f7422ace7a2461ab96943fbcadb478633a80f40bc098f2435722850b563714adb78b14922be53cb5753d
 
 install : $(TARGET)
 
@@ -71,7 +71,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && sed -i "s/lkrb5 -ldes/lkrb5/" configure
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/OpenSSH-8.2p1_glibc-2.31_clock_nanosleep_time64.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc/ssh \
