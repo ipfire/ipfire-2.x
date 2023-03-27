@@ -1,8 +1,8 @@
 lib/libcap.so.2
-lib/libcap.so.2.66
+lib/libcap.so.2.67
 #lib/libpsx.so
 #lib/libpsx.so.2
-lib/libpsx.so.2.66
+lib/libpsx.so.2.67
 #lib/pkgconfig/libcap.pc
 #lib/pkgconfig/libpsx.pc
 lib/security/pam_cap.so
@@ -32,6 +32,7 @@ usr/lib/libcap.so
 #usr/share/man/man3/cap_get_file.3
 #usr/share/man/man3/cap_get_flag.3
 #usr/share/man/man3/cap_get_mode.3
+#usr/share/man/man3/cap_get_nsowner.3
 #usr/share/man/man3/cap_get_pid.3
 #usr/share/man/man3/cap_get_proc.3
 #usr/share/man/man3/cap_get_secbits.3
@@ -59,10 +60,14 @@ usr/lib/libcap.so
 #usr/share/man/man3/cap_mode.3
 #usr/share/man/man3/cap_mode_name.3
 #usr/share/man/man3/cap_new_launcher.3
+#usr/share/man/man3/cap_prctl.3
+#usr/share/man/man3/cap_prctlw.3
+#usr/share/man/man3/cap_proc_root.3
 #usr/share/man/man3/cap_set_fd.3
 #usr/share/man/man3/cap_set_file.3
 #usr/share/man/man3/cap_set_flag.3
 #usr/share/man/man3/cap_set_mode.3
+#usr/share/man/man3/cap_set_nsowner.3
 #usr/share/man/man3/cap_set_proc.3
 #usr/share/man/man3/cap_set_secbits.3
 #usr/share/man/man3/cap_setgroups.3
