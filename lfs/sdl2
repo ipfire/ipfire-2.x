@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.26.2
+VER        = 2.26.4
 SUMMARY    = Simple DirectMedia Layer Library
 
 THISAPP    = SDL2-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = sdl2
-PAK_VER    = 9
+PAK_VER    = 10
 
 DEPS       = alsa
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 84a972c634a084350173fcc5da69cc9b402f83b969e6611aa47cc81dc01520508ba813e5910299702c7139a0426462e607e97524510f61afe91d46a7cc9da8dc
+$(DL_FILE)_BLAKE2 = 9843df277d1cd5f4e7ebb89cde6d069e8b635b6d8f10c2104badcc2089fcdd3ca4e620c322a687c1a0346817c17978a7c99729b55a48dc57937bb9df6435b4ff
 
 install : $(TARGET)
 
