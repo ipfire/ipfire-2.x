@@ -383,4 +383,31 @@ sub get_holdoff_rate($) {
 	return $value;
 }
 
+#
+## sub set_ownership(file)
+##
+## Function to set the correct ownership (nobody:nobody) to a given file.
+##
+#
+sub set_ownership($) {
+	my ($file) = @_;
+
+	# User and group of the WUI.
+	my $uname = "nobody";
+	my $grname = "nobody";
+
+	# The chown function implemented in perl requies the user and group as nummeric id's.
+	my $uid = getpwnam($uname);
+	my $gid = getgrnam($grname);
+
+	# Check if the given file exists.
+	unless ($file) {
+		# Stop the script and print error message.
+		die "The given $file does not exist. Cannot change the ownership!\n";
+	}
+
+	# Change ownership of the file.
+	chown($uid, $gid, "$file");
+}
+
 1;

@@ -32,19 +32,6 @@ require "${General::swroot}/lang.pl";
 # Hash to store the settings.
 my %settings = ();
 
-# The user and group name as which this script should be run.
-my $run_as = 'nobody';
-
-# Get user and group id of the user.
-my ( $uid, $gid ) = ( getpwnam $run_as )[ 2, 3 ];
-
-# Check if the script currently runs as root.
-if ( $> == 0 ) {
-	# Drop privileges and switch to the specified user and group.
-	POSIX::setgid( $gid );
-	POSIX::setuid( $uid );
-}
-
 # Establish the connection to the syslog service.
 openlog('ipblocklist', 'cons', 'user');
 
@@ -122,6 +109,12 @@ foreach my $blocklist (@blocklists) {
 			&_log_to_syslog("<ERROR> Could not update $blocklist blocklist - Unexpected error\!");
 		}
 	} else {
+		# Get the filename of the blocklist.
+		my $ipset_db_file = &IPblocklist::get_ipset_db_file($blocklist);
+
+		# Set the correct ownership.
+		&IPblocklist::set_ownership($ipset_db_file);
+
 		# Log successfull update.
 		&_log_to_syslog("<INFO> Successfully updated $blocklist blocklist.");
 
@@ -132,22 +125,25 @@ foreach my $blocklist (@blocklists) {
 
 # Check if a blocklist has been updated and therefore needs to be reloaded.
 if (@updated_blocklists) {
+	# Set correct ownership to the modified file.
+	&IPblocklist::set_ownership($IPblocklist::modified_file);
+
 	# Loop through the array.
 	foreach my $updated_blocklist (@updated_blocklists) {
 		# Get the blocklist file.
 		my $ipset_db_file = &IPblocklist::get_ipset_db_file($updated_blocklist);
 
 		# Call safe system function to reload/update the blocklist.
-		&General::system("ipset", "restore", "-f", "$ipset_db_file");
+		&General::safe_system("ipset", "restore", "-f", "$ipset_db_file");
 
 		# The set name contains a "v4" as suffix.
 		my $set_name = "$updated_blocklist" . "v4";
 
 		# Swap the sets to use the new one.
-		&General::system("ipset", "swap", "$set_name", "$updated_blocklist");
+		&General::safe_system("ipset", "swap", "$set_name", "$updated_blocklist");
 
 		# Destroy the old blocklist.
-		&General::system("ipset", "destroy", "$set_name");
+		&General::safe_system("ipset", "destroy", "$set_name");
 	}
 }
 
