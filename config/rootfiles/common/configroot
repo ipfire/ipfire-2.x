@@ -117,10 +117,7 @@ var/ipfire/menu.d/40-services.menu
 var/ipfire/menu.d/50-firewall.menu
 var/ipfire/menu.d/60-ipfire.menu
 var/ipfire/menu.d/70-log.menu
-#var/ipfire/menu.d/EX-addonsvc.menu
 #var/ipfire/menu.d/EX-apcupsd.menu
-#var/ipfire/menu.d/EX-asterisk.menu
-#var/ipfire/menu.d/EX-bluetooth.menu
 #var/ipfire/menu.d/EX-guardian.menu
 #var/ipfire/menu.d/EX-mpfire.menu
 #var/ipfire/menu.d/EX-samba.menu
