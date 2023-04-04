@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -5354,26 +5354,37 @@ END
 		}
 	if ($confighash{$key}[0] eq 'on') { $gif = 'on.gif'; } else { $gif = 'off.gif'; }
 
-	# Fetch information about the certificate
-	my @cavalid = &General::system_output("/usr/bin/openssl", "x509", "-text",
-		"-in", "${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem");
-
-	my $expiryDate = 0;
-
-	# Parse the certificate information
-	foreach my $line (@cavalid) {
-		if ($line =~ /Not After : (.*)[\n]/) {
-			$expiryDate = &Date::Parse::str2time($1);
-			last;
-		}
-	}
-
-	# Calculate the remaining time
-	my $remainingTime = $expiryDate - time();
-
 	# Create some simple booleans to check the status
-	my $hasExpired = ($remainingTime <= 0);
-	my $expiresSoon = ($remainingTime <= 30 * 24 * 3600);
+	my $hasExpired;
+	my $expiresSoon;
+
+	# Fetch information about the certificate for non-N2N connections only
+	if ($confighash{$key}[3] ne 'net') {
+		my @cavalid = &General::system_output("/usr/bin/openssl", "x509", "-text",
+			"-in", "${General::swroot}/ovpn/certs/$confighash{$key}[1]cert.pem");
+
+		my $expiryDate = 0;
+
+		# Parse the certificate information
+		foreach my $line (@cavalid) {
+			if ($line =~ /Not After : (.*)[\n]/) {
+				$expiryDate = &Date::Parse::str2time($1);
+				last;
+			}
+		}
+
+		# Calculate the remaining time
+		my $remainingTime = $expiryDate - time();
+
+		# Determine whether the certificate has already expired, or will so soon
+		$hasExpired = ($remainingTime <= 0);
+		$expiresSoon = ($remainingTime <= 30 * 24 * 3600);
+
+	} else {
+		# Populate booleans with dummy values for N2N connections (#13066)
+		$hasExpired = 0;
+		$expiresSoon = 0;
+	}
 
 	print "<tr>";
 
