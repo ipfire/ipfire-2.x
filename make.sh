@@ -1566,7 +1566,6 @@ buildipfire() {
   lfsmake2 zerofree
   lfsmake2 minicom
   lfsmake2 ddrescue
-  lfsmake2 powertop
   lfsmake2 parted
   lfsmake2 swig
   lfsmake2 dtc
