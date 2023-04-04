@@ -92,7 +92,9 @@ srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 usr/lib/firewall/rules.pl
+usr/local/bin/update-ipblocklists
 var/ipfire/graphs.pl
 var/ipfire/header.pl
 var/ipfire/ids-functions.pl
+var/ipfire/ipblocklist-functions.pl
 var/ipfire/network-functions.pl

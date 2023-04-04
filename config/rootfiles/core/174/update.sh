@@ -184,6 +184,9 @@ if [ -e "/opt/pakfire/db/installed/meta-perl-TimeDate" ] && [ -e "/opt/pakfire/d
 		/opt/pakfire/db/rootfiles/perl-TimeDate
 fi
 
+# Update IP blocklists to resolve fallout of #13072 as quickly as possible
+/usr/local/bin/update-location-database
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
