@@ -32,7 +32,7 @@ THISAPP    = wio-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = wio
-PAK_VER    = 16
+PAK_VER    = 17
 
 DEPS       =
 
@@ -59,31 +59,28 @@ dist:
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && mkdir $(DIR_APP) && cp -R $(DIR_SRC)/src/wio/ $(DIR_APP)
-	cd $(DIR_APP)
+	@rm -rf $(DIR_APP)
 	mkdir -p /usr/lib/wio
 	mkdir -p /var/log/wio
 	mkdir -p /var/log/rrd/wio
-	mkdir -p /srv/web/ipfire/html/images/wio
 	mkdir -p /var/ipfire/wio
+	chmod 755 /srv/web/ipfire/html/images/wio
 
-	install -v -m 755 $(DIR_APP)/wio/wio.cgi /srv/web/ipfire/cgi-bin/
-	install -v -m 755 $(DIR_APP)/wio/wiographs.cgi /srv/web/ipfire/cgi-bin/
-	install -v -m 755 $(DIR_APP)/wio/wio /etc/fcron.minutely/
-	install -v -m 644 $(DIR_APP)/wio/main/wio.conf /var/ipfire/wio/
-	install -v -m 754 $(DIR_APP)/wio/main/wio.pl /var/ipfire/wio/
-	install -v -m 754 $(DIR_APP)/wio/main/wiovpn.pl /var/ipfire/wio/
-	install -v -m 644 $(DIR_APP)/wio/wio-lib.pl /usr/lib/wio/
-	install -v -m 644 $(DIR_APP)/wio/wio-graphs.pl /usr/lib/wio/
-	install -v -m 644 $(DIR_APP)/wio/wioips /var/log/wio/
-	install -v -m 644 $(DIR_APP)/wio/images/* /srv/web/ipfire/html/images/wio/
-	install -v -m 644 $(DIR_APP)/wio/lang/wio.de.pl /var/ipfire/addon-lang/
-	install -v -m 644 $(DIR_APP)/wio/lang/wio.en.pl /var/ipfire/addon-lang/
-	install -v -m 644 $(DIR_APP)/wio/lang/wio.es.pl /var/ipfire/addon-lang/
-	install -v -m 644 $(DIR_APP)/wio/lang/wio.fr.pl /var/ipfire/addon-lang/
-	install -v -m 644 $(DIR_APP)/wio/lang/wio.tr.pl /var/ipfire/addon-lang/
-	install -v -m 644 $(DIR_APP)/wio/EX-wio.menu /var/ipfire/menu.d/
-	install -v -m 644 $(DIR_APP)/wio/config/backup/includes/wio /var/ipfire/backup/addons/includes/wio
+	install -v -m 755 $(DIR_SRC)/config/wio/wio /etc/fcron.minutely/
+	install -v -m 644 $(DIR_SRC)/config/wio/wio.conf /var/ipfire/wio/
+	install -v -m 754 $(DIR_SRC)/config/wio/wio.pl /var/ipfire/wio/
+	install -v -m 754 $(DIR_SRC)/config/wio/wiovpn.pl /var/ipfire/wio/
+	install -v -m 644 $(DIR_SRC)/config/wio/wio-lib.pl /usr/lib/wio/
+	install -v -m 644 $(DIR_SRC)/config/wio/wio-graphs.pl /usr/lib/wio/
+	install -v -m 644 $(DIR_SRC)/config/wio/wioips /var/log/wio/
+	
+	# Install addon-specific language-files.
+	install -v -m 004 $(DIR_SRC)/config/wio/wio.*.pl \
+		/var/ipfire/addon-lang/	
+		
+	# install backup include file
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/wio \
+			/var/ipfire/backup/addons/includes/wio
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
