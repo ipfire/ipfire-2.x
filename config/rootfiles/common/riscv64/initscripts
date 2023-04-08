@@ -10,10 +10,10 @@ etc/rc.d/helper/oci-setup
 #etc/rc.d/init.d
 etc/rc.d/init.d/acpid
 etc/rc.d/init.d/apache
-etc/rc.d/init.d/cloud-init
 etc/rc.d/init.d/beep
 etc/rc.d/init.d/checkfs
 etc/rc.d/init.d/cleanfs
+etc/rc.d/init.d/cloud-init
 etc/rc.d/init.d/collectd
 etc/rc.d/init.d/connectd
 etc/rc.d/init.d/conntrackd
@@ -30,6 +30,7 @@ etc/rc.d/init.d/halt
 etc/rc.d/init.d/ipsec
 etc/rc.d/init.d/leds
 etc/rc.d/init.d/localnet
+etc/rc.d/init.d/lvmetad
 etc/rc.d/init.d/modules
 etc/rc.d/init.d/mountfs
 etc/rc.d/init.d/mountkernfs
@@ -119,6 +120,7 @@ etc/rc.d/rc0.d/S99halt
 #etc/rc.d/rc3.d
 etc/rc.d/rc3.d/S01vnstat
 etc/rc.d/rc3.d/S10sysklogd
+etc/rc.d/rc3.d/S11unbound
 etc/rc.d/rc3.d/S12acpid
 etc/rc.d/rc3.d/S15fireinfo
 #etc/rc.d/rc3.d/S15messagebus
@@ -126,7 +128,6 @@ etc/rc.d/rc3.d/S15fireinfo
 etc/rc.d/rc3.d/S19smartenabler
 etc/rc.d/rc3.d/S19wlanclient
 etc/rc.d/rc3.d/S20network
-etc/rc.d/rc3.d/S11unbound
 etc/rc.d/rc3.d/S21leds
 etc/rc.d/rc3.d/S22conntrackd
 etc/rc.d/rc3.d/S24cyrus-sasl
