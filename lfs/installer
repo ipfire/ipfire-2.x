@@ -31,7 +31,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 SLOGAN     = An Open Source Firewall Solution
-DOWNLOAD_URL = https://downloads.ipfire.org/releases/ipfire-2.x/$(VERSION)-core$(CORE)/$(SNAME)-$(VERSION).$(BUILD_ARCH)-full-core$(CORE).iso
+DOWNLOAD_URL = https://downloads.ipfire.org/releases/ipfire-2.x/$(VERSION)-core$(CORE)/$(SNAME)-$(VERSION)-core$(CORE)-$(BUILD_ARCH).iso
 
 ###############################################################################
 # Top-level Rules
