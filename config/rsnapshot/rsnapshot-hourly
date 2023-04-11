@@ -1,0 +1,8 @@
+#!/bin/bash
+set -e
+
+CONFIG=/etc/rsnapshot.conf
+
+/usr/bin/rsnapshot -c $CONFIG sync && /usr/bin/rsnapshot -c $CONFIG hourly
+
+exit

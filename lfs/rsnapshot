@@ -1,0 +1,114 @@
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2023  IPFire Team  <info@ipfire.org>                          #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+###############################################################################
+# Definitions
+###############################################################################
+
+include Config
+
+SUMMARY    = filesystem backup & snapshot utility
+
+VER        = 1.4.5
+
+THISAPP    = rsnapshot-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
+DL_FROM    = $(URL_IPFIRE)
+DIR_APP    = $(DIR_SRC)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
+
+PROG       = rsnapshot
+PAK_VER    = 1
+
+DEPS       = rsync
+
+SERVICES   = 
+
+###############################################################################
+# Top-level Rules
+###############################################################################
+
+objects = $(DL_FILE)
+
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
+
+$(DL_FILE)_BLAKE2 = 2a668aa16991b2b4e611c6204cdcd0e8c9593e5f0af5ea89e787a578e73b6f5987514cd7d0252bb78aea1b157ef85aea947686111ca9e3befdb2a8cef0aa9ecd
+
+install : $(TARGET)
+
+check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+
+download :$(patsubst %,$(DIR_DL)/%,$(objects))
+
+b2 : $(subst %,%_BLAKE2,$(objects))
+
+dist: 
+	@$(PAK)
+
+###############################################################################
+# Downloading, checking, b2sum
+###############################################################################
+
+$(patsubst %,$(DIR_CHK)/%,$(objects)) :
+	@$(CHECK)
+
+$(patsubst %,$(DIR_DL)/%,$(objects)) :
+	@$(LOAD)
+
+$(subst %,%_BLAKE2,$(objects)) :
+	@$(B2SUM)
+
+###############################################################################
+# Installation Details
+###############################################################################
+
+$(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
+	@$(PREBUILD)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+
+	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
+	cd $(DIR_APP) && ./configure \
+		--prefix=/usr		\
+		--sysconfdir=/etc	
+	
+	cd $(DIR_APP) && make $(MAKETUNING) 
+	cd $(DIR_APP) && make install
+
+	# Add conf file to /etc directory
+	cp -vf $(DIR_CONF)/rsnapshot/rsnapshot.conf /etc
+
+	#	install fcron scripts and backup sqlite script
+	install -v -m 755 $(DIR_CONF)/rsnapshot/{rsnapshot-hourly,rsnapshot-daily}	\
+		$(DIR_CONF)/rsnapshot/{rsnapshot-weekly,rsnapshot-monthly}				\
+		$(DIR_CONF)/rsnapshot/{rsnapshot-yearly,backup_sqlite.sh}				\
+			-t /var/ipfire/backup/bin
+
+	#	link rsnapshot interval scripts to various fcron folders
+	ln -svf /var/ipfire/backup/bin/rsnapshot-hourly /etc/fcron.hourly
+	ln -svf /var/ipfire/backup/bin/rsnapshot-daily /etc/fcron.daily
+	ln -svf /var/ipfire/backup/bin/rsnapshot-weekly /etc/fcron.weekly
+	ln -svf /var/ipfire/backup/bin/rsnapshot-monthly /etc/fcron.monthly
+	#ln -svf /var/ipfire/backup/bin/rsnapshot-yearly /etc/fcron.???
+
+	# Install backup definition
+	cp -vf $(DIR_CONF)/backup/includes/rsnapshot /var/ipfire/backup/addons/includes/rsnapshot
+
+	@rm -rf $(DIR_APP)
+	@$(POSTBUILD)

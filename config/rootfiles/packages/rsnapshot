@@ -1,0 +1,17 @@
+etc/fcron.daily/rsnapshot-daily
+etc/fcron.hourly/rsnapshot-hourly
+etc/fcron.monthly/rsnapshot-monthly
+etc/fcron.weekly/rsnapshot-weekly
+etc/rsnapshot.conf
+etc/rsnapshot.conf.default
+usr/bin/rsnapshot
+usr/bin/rsnapshot-diff
+#usr/share/man/man1/rsnapshot-diff.1
+#usr/share/man/man1/rsnapshot.1
+var/ipfire/backup/addons/includes/rsnapshot
+var/ipfire/backup/bin/backup_sqlite.sh
+var/ipfire/backup/bin/rsnapshot-daily
+var/ipfire/backup/bin/rsnapshot-hourly
+var/ipfire/backup/bin/rsnapshot-monthly
+var/ipfire/backup/bin/rsnapshot-weekly
+var/ipfire/backup/bin/rsnapshot-yearly
