@@ -1,3 +1,4 @@
+#etc/dnsdist.conf-dist
 etc/rc.d/init.d/dnsdist
 usr/bin/dnsdist
 #usr/share/man/man1/dnsdist.1
