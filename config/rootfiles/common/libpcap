@@ -2,7 +2,6 @@
 #usr/include/pcap
 #usr/include/pcap-bpf.h
 #usr/include/pcap-namedb.h
-#usr/include/pcap-util.h
 #usr/include/pcap.h
 #usr/include/pcap/bluetooth.h
 #usr/include/pcap/bpf.h
@@ -22,7 +21,7 @@
 #usr/lib/libpcap.a
 usr/lib/libpcap.so
 usr/lib/libpcap.so.1
-usr/lib/libpcap.so.1.10.3
+usr/lib/libpcap.so.1.10.4
 #usr/lib/pkgconfig/libpcap.pc
 #usr/share/man/man1/pcap-config.1
 #usr/share/man/man3/pcap.3pcap

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.10.3
+VER        = 1.10.4
 
 THISAPP    = libpcap-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3614042f7d8cd5a25221f52d2ed09f9f44643cdc0901ff21041ddb7ba85193c667036f7d989c8b59e6e205d630e062da46533110914dd287013a9ff80b31e97f
+$(DL_FILE)_BLAKE2 = 05a7eafc1e1817f7844008db89d8fb10cd2525c22f7ee6c9e3d582b14229412f38ccced5e9d80a96dd459ef9eab12eccb5c1dd4978ddc9f66267469212005e4c
 
 install : $(TARGET)
 
