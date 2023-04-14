@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A Packet Sniffer
 
-VER        = 4.99.3
+VER        = 4.99.4
 
 THISAPP    = tcpdump-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = tcpdump
-PAK_VER    = 15
+PAK_VER    = 16
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8e8adda6df40f3a79cbeb80bd01d43834e0b3ec44c8227bda2260b43ea0852f76beb02199120cca16adae0d793841cf684e7e276e520f49479a1b04ab1dc4821
+$(DL_FILE)_BLAKE2 = f100e10774574ef04a770bc30d4e2d06fd0f1f16a7b2c88848be6e8290cc4838666ff378d9f78fdc418f4ffab9716a11214edc3588c292cb5ff39636cd7cfd2d
 
 install : $(TARGET)
 
