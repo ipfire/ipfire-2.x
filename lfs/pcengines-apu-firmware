@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = pcengines-apu-firmware
-PAK_VER    = 15
+PAK_VER    = 16
 SUP_ARCH   = x86_64
 
 DEPS       = firmware-update
@@ -45,6 +45,7 @@ SERVICES   =
 ###############################################################################
 
 objects = \
+	apu1_v4.17.0.3.rom \
 	apu2_v$(VER).rom \
 	apu3_v$(VER).rom \
 	apu4_v$(VER).rom \
@@ -52,6 +53,7 @@ objects = \
 	apu6_v$(VER).rom \
 	apu7_v$(VER).rom
 
+apu1_v4.17.0.3.rom = $(DL_FROM)/apu1_v4.17.0.3.rom
 apu2_v$(VER).rom = $(DL_FROM)/apu2_v$(VER).rom
 apu3_v$(VER).rom = $(DL_FROM)/apu3_v$(VER).rom
 apu4_v$(VER).rom = $(DL_FROM)/apu4_v$(VER).rom
@@ -59,6 +61,7 @@ apu5_v$(VER).rom = $(DL_FROM)/apu5_v$(VER).rom
 apu6_v$(VER).rom = $(DL_FROM)/apu6_v$(VER).rom
 apu7_v$(VER).rom = $(DL_FROM)/apu7_v$(VER).rom
 
+apu1_v4.17.0.3.rom_BLAKE2 = e64c56f6105a206b6af2da4d54bd36d9caa53154b17d5fc32966ee3ed74b0b25749fd10c6936b5b9e526b779c2ef9f1d566915297244e1570c5000b555561aea
 apu2_v$(VER).rom_BLAKE2 = e079af4e8f6898a83a0ad2ba2c5af5e89416b58562fd47fb22ba5d9332f88c822efd354e21d486b0002b41769f26fe02cc2b78a3d6b52fc8e95b48ea68c2fb4c
 apu3_v$(VER).rom_BLAKE2 = edfff21da4d6391ac89d911ee205445ac714e7813e92b5721e05b2d81701e5891eaf073ebcc282648b09645d88b897a8d2201029888a9cdf09ed7b9503f840da
 apu4_v$(VER).rom_BLAKE2 = 5b92cbfe6ac0c75e4a01a18b9c8c0e8abd924b335063edc60944c65bec4edb439d3e1320129cd363e55497590cae7d16a205fdbb33621ff5e9be99e63723eaa1
