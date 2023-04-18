@@ -46,7 +46,10 @@ rm -rvf \
 	/usr/lib/libisc-9.16.38.so \
 	/usr/lib/libisccc-9.16.38.so \
 	/usr/lib/libisccfg-9.16.38.so \
-	/usr/lib/libns-9.16.38.so
+	/usr/lib/libns-9.16.38.so \
+	/var/ipfire/menu.d/EX-addonsvc.menu \
+	/var/ipfire/menu.d/EX-asterisk.menu \
+	/var/ipfire/menu.d/EX-bluetooth.menu
 
 # update linker config
 ldconfig
