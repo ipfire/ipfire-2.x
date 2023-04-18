@@ -7460,7 +7460,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/DRM_TTM
 #lib/modules/KVER-ipfire/build/include/config/DRM_TTM_HELPER
 #lib/modules/KVER-ipfire/build/include/config/DRM_UDL
-#lib/modules/KVER-ipfire/build/include/config/DRM_USE_DYNAMIC_DEBUG
 #lib/modules/KVER-ipfire/build/include/config/DRM_VBOXVIDEO
 #lib/modules/KVER-ipfire/build/include/config/DRM_VIRTIO_GPU
 #lib/modules/KVER-ipfire/build/include/config/DRM_VMWGFX
@@ -9133,7 +9132,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/NET_CLS_ROUTE4
 #lib/modules/KVER-ipfire/build/include/config/NET_CLS_RSVP
 #lib/modules/KVER-ipfire/build/include/config/NET_CLS_RSVP6
-#lib/modules/KVER-ipfire/build/include/config/NET_CLS_TCINDEX
 #lib/modules/KVER-ipfire/build/include/config/NET_CLS_U32
 #lib/modules/KVER-ipfire/build/include/config/NET_CORE
 #lib/modules/KVER-ipfire/build/include/config/NET_DEVLINK
@@ -10358,7 +10356,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SERIAL_EARLYCON
 #lib/modules/KVER-ipfire/build/include/config/SERIAL_FSL_LINFLEXUART
 #lib/modules/KVER-ipfire/build/include/config/SERIAL_FSL_LPUART
-#lib/modules/KVER-ipfire/build/include/config/SERIAL_FSL_LPUART_CONSOLE
 #lib/modules/KVER-ipfire/build/include/config/SERIAL_JSM
 #lib/modules/KVER-ipfire/build/include/config/SERIAL_LANTIQ
 #lib/modules/KVER-ipfire/build/include/config/SERIAL_MCTRL_GPIO
@@ -22762,7 +22759,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/net/sched/cls_route.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/cls_rsvp.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/cls_rsvp6.ko.xz
-#lib/modules/KVER-ipfire/kernel/net/sched/cls_tcindex.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/cls_u32.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/em_cmp.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/em_ipset.ko.xz
