@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/rc.d/init.d/sshd stop
 
 # Extract files
 extract_files
@@ -55,7 +56,13 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Start services
+if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
+	/etc/init.d/sshd start
+fi
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
