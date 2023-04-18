@@ -39,7 +39,6 @@ ln -sf ../init.d/zabbix_agentd /etc/rc.d/rc0.d/K02zabbix_agentd
 ln -sf ../init.d/zabbix_agentd /etc/rc.d/rc6.d/K02zabbix_agentd
 
 # Create additonal directories and set permissions
-[ -d /var/log/zabbix ] || ( mkdir -pv /var/log/zabbix && chown zabbix.zabbix /var/log/zabbix )
 [ -d /usr/lib/zabbix ] || ( mkdir -pv /usr/lib/zabbix && chown zabbix.zabbix /usr/lib/zabbix )
 
 restore_backup ${NAME}
@@ -66,8 +65,7 @@ grep -q "Include=/var/ipfire/zabbix_agentd/zabbix_agentd_ipfire_mandatory.conf" 
 if [ $? -eq 1 ]; then
 	# Remove settings that are now in our own config
 	sed -i -e "\|^PidFile=.*$|d" /etc/zabbix_agentd/zabbix_agentd.conf
-	sed -i -e "\|^LogFile=.*$|d" /etc/zabbix_agentd/zabbix_agentd.conf
-	sed -i -e "\|^LogFileSize=.*$|d" /etc/zabbix_agentd/zabbix_agentd.conf
+	sed -i -e "\|^LogType=.*$|d" /etc/zabbix_agentd/zabbix_agentd.conf
 	sed -i -e "\|^LoadModulePath=.*$|d" /etc/zabbix_agentd/zabbix_agentd.conf
 	sed -i -e "\|^Include=/etc/zabbix_agentd/zabbix_agentd\.d/\*\.conf$|d" /etc/zabbix_agentd/zabbix_agentd.conf
 	# Include our own config in main config

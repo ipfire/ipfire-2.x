@@ -114,10 +114,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Create directory for additional agent modules
 	-mkdir -pv /usr/lib/zabbix
 
-	# Create directory for logging
-	-mkdir -pv /var/log/zabbix
-	chown zabbix.zabbix /var/log/zabbix
-
 	# Create directory for pid.
 	-mkdir -pv /var/run/zabbix
 	chown zabbix.zabbix /var/run/zabbix
@@ -134,11 +130,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Install include file for backup
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/zabbix_agentd \
 		/var/ipfire/backup/addons/includes/zabbix_agentd
-
-	# Install include file for Logrotate
-	-mkdir -pv /etc/logrotate.d
-	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/logrotate \
-		/etc/logrotate.d/zabbix_agentd
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

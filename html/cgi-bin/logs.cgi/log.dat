@@ -78,7 +78,8 @@ my %sections = (
         'ssh' => '(sshd(?:\(.*\))?\[.*\]: )',
         'unbound' => '(unbound: \[.*?\])(.*:.*$)',
         'urlfilter bl' => '(installpackage\[urlfilter\]: )',
-        'wireless' => '(hostapd:|kernel: ath.*:|kernel: wifi[0-9]:)'
+        'wireless' => '(hostapd:|kernel: ath.*:|kernel: wifi[0-9]:)',
+		'zabbix_agentd' => '(zabbix_agentd\[.*?\]: )'
 	 );
 
 # Translations for the %sections array.
@@ -112,7 +113,8 @@ my %trsections = (
         'ssh' => 'SSH',
         'unbound' => 'DNS: Unbound',
         'urlfilter bl' => 'URLFilter Blacklist',
-        'wireless' => 'Wireless'
+        'wireless' => 'Wireless',
+		'zabbix_agentd' => 'Zabbix Agent'
 	);
 
 

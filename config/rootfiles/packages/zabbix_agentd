@@ -1,4 +1,3 @@
-etc/logrotate.d/zabbix_agentd
 etc/rc.d/init.d/zabbix_agentd
 etc/sudoers.d/zabbix_agentd
 etc/sudoers.d/zabbix_agentd_user
@@ -21,4 +20,3 @@ var/ipfire/zabbix_agentd/zabbix_agentd_ipfire_mandatory.conf
 var/ipfire/zabbix_agentd/userparameters
 var/ipfire/zabbix_agentd/userparameters/userparameter_pakfire.conf
 var/ipfire/zabbix_agentd/userparameters/userparameter_ipfire.conf
-#var/log/zabbix
