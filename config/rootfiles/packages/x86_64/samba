@@ -62,6 +62,7 @@ usr/bin/wbinfo
 #usr/include/samba-4.0/gen_ndr
 #usr/include/samba-4.0/gen_ndr/atsvc.h
 #usr/include/samba-4.0/gen_ndr/auth.h
+#usr/include/samba-4.0/gen_ndr/claims.h
 #usr/include/samba-4.0/gen_ndr/dcerpc.h
 #usr/include/samba-4.0/gen_ndr/drsblobs.h
 #usr/include/samba-4.0/gen_ndr/drsuapi.h
@@ -196,7 +197,7 @@ usr/lib/libtevent-util.so.0
 usr/lib/libtevent-util.so.0.0.1
 usr/lib/libwbclient.so
 usr/lib/libwbclient.so.0
-usr/lib/libwbclient.so.0.15
+usr/lib/libwbclient.so.0.16
 #usr/lib/pkgconfig/dcerpc.pc
 #usr/lib/pkgconfig/dcerpc_samr.pc
 #usr/lib/pkgconfig/ndr.pc
@@ -223,6 +224,7 @@ usr/lib/python3.10/site-packages/samba/auth.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/auth_util.py
 usr/lib/python3.10/site-packages/samba/colour.py
 usr/lib/python3.10/site-packages/samba/common.py
+usr/lib/python3.10/site-packages/samba/compression.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/credentials.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/crypto.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/dbchecker.py
@@ -231,6 +233,7 @@ usr/lib/python3.10/site-packages/samba/dcerpc/__init__.py
 usr/lib/python3.10/site-packages/samba/dcerpc/atsvc.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/dcerpc/auth.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/dcerpc/base.cpython-310-x86_64-linux-gnu.so
+usr/lib/python3.10/site-packages/samba/dcerpc/claims.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/dcerpc/dcerpc.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/dcerpc/dfs.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/dcerpc/dns.cpython-310-x86_64-linux-gnu.so
@@ -382,6 +385,8 @@ usr/lib/python3.10/site-packages/samba/provision/kerberos_implementation.py
 usr/lib/python3.10/site-packages/samba/provision/sambadns.py
 usr/lib/python3.10/site-packages/samba/registry.cpython-310-x86_64-linux-gnu.so
 usr/lib/python3.10/site-packages/samba/remove_dc.py
+usr/lib/python3.10/site-packages/samba/reparse_symlink.cpython-310-x86_64-linux-gnu.so
+usr/lib/python3.10/site-packages/samba/safe_tarfile.py
 #usr/lib/python3.10/site-packages/samba/samba3
 usr/lib/python3.10/site-packages/samba/samba3/__init__.py
 usr/lib/python3.10/site-packages/samba/samba3/libsmb_samba_cwrapper.cpython-310-x86_64-linux-gnu.so
@@ -437,6 +442,7 @@ usr/lib/python3.10/site-packages/samba/tdb_util.py
 #usr/lib/python3.10/site-packages/samba/tests/blackbox/traffic_summary.py
 #usr/lib/python3.10/site-packages/samba/tests/common.py
 #usr/lib/python3.10/site-packages/samba/tests/complex_expressions.py
+#usr/lib/python3.10/site-packages/samba/tests/compression.py
 #usr/lib/python3.10/site-packages/samba/tests/core.py
 #usr/lib/python3.10/site-packages/samba/tests/cred_opt.py
 #usr/lib/python3.10/site-packages/samba/tests/credentials.py
@@ -507,9 +513,11 @@ usr/lib/python3.10/site-packages/samba/tdb_util.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/alias_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/as_canonicalization_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/as_req_tests.py
+#usr/lib/python3.10/site-packages/samba/tests/krb5/claims_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/compatability_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/etype_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/fast_tests.py
+#usr/lib/python3.10/site-packages/samba/tests/krb5/group_tests.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/kcrypto.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/kdc_base_test.py
 #usr/lib/python3.10/site-packages/samba/tests/krb5/kdc_tests.py
@@ -540,6 +548,7 @@ usr/lib/python3.10/site-packages/samba/tdb_util.py
 #usr/lib/python3.10/site-packages/samba/tests/ldap_referrals.py
 #usr/lib/python3.10/site-packages/samba/tests/ldap_spn.py
 #usr/lib/python3.10/site-packages/samba/tests/ldap_upn_sam_account.py
+#usr/lib/python3.10/site-packages/samba/tests/libsmb-basic.py
 #usr/lib/python3.10/site-packages/samba/tests/libsmb.py
 #usr/lib/python3.10/site-packages/samba/tests/loadparm.py
 #usr/lib/python3.10/site-packages/samba/tests/logfiles.py
@@ -577,12 +586,14 @@ usr/lib/python3.10/site-packages/samba/tdb_util.py
 #usr/lib/python3.10/site-packages/samba/tests/pso.py
 #usr/lib/python3.10/site-packages/samba/tests/py_credentials.py
 #usr/lib/python3.10/site-packages/samba/tests/registry.py
+#usr/lib/python3.10/site-packages/samba/tests/reparsepoints.py
 #usr/lib/python3.10/site-packages/samba/tests/s3_net_join.py
 #usr/lib/python3.10/site-packages/samba/tests/s3idmapdb.py
 #usr/lib/python3.10/site-packages/samba/tests/s3param.py
 #usr/lib/python3.10/site-packages/samba/tests/s3passdb.py
 #usr/lib/python3.10/site-packages/samba/tests/s3registry.py
 #usr/lib/python3.10/site-packages/samba/tests/s3windb.py
+#usr/lib/python3.10/site-packages/samba/tests/safe_tarfile.py
 #usr/lib/python3.10/site-packages/samba/tests/samba3sam.py
 #usr/lib/python3.10/site-packages/samba/tests/samba_tool
 #usr/lib/python3.10/site-packages/samba/tests/samba_tool/__init__.py
@@ -632,6 +643,9 @@ usr/lib/python3.10/site-packages/samba/tdb_util.py
 #usr/lib/python3.10/site-packages/samba/tests/sid_strings.py
 #usr/lib/python3.10/site-packages/samba/tests/smb-notify.py
 #usr/lib/python3.10/site-packages/samba/tests/smb.py
+#usr/lib/python3.10/site-packages/samba/tests/smb1posix.py
+#usr/lib/python3.10/site-packages/samba/tests/smb2symlink.py
+#usr/lib/python3.10/site-packages/samba/tests/smb3unix.py
 #usr/lib/python3.10/site-packages/samba/tests/smbconf.py
 #usr/lib/python3.10/site-packages/samba/tests/smbd_base.py
 #usr/lib/python3.10/site-packages/samba/tests/smbd_fuzztest.py
@@ -783,6 +797,7 @@ usr/lib/samba/libsmbd-shim-samba4.so
 usr/lib/samba/libsmbldaphelper-samba4.so
 usr/lib/samba/libsmbpasswdparser-samba4.so
 usr/lib/samba/libsocket-blocking-samba4.so
+usr/lib/samba/libstable-sort-samba4.so
 usr/lib/samba/libsys-rw-samba4.so
 usr/lib/samba/libtalloc-report-printf-samba4.so
 usr/lib/samba/libtalloc-report-samba4.so
