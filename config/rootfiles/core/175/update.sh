@@ -90,6 +90,7 @@ extract_files
 
 # Remove files
 rm -rvf \
+	/lib/firmware/liquidio/lio_23xx_vsw.bin \
 	/usr/lib/libbind9-9.16.38.so \
 	/usr/lib/libdns-9.16.38.so \
 	/usr/lib/libirs-9.16.38.so \
