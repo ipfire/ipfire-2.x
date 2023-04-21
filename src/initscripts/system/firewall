@@ -424,19 +424,6 @@ iptables_red_up() {
 		fi
 	fi
 
-	# PPPoE / PPTP Device
-	if [ "$IFACE" != "" ]; then
-		# PPPoE / PPTP
-		if [ "$DEVICE" != "" ]; then
-			iptables -A REDINPUT -i $DEVICE -j ACCEPT
-		fi
-		if [ "$RED_TYPE" == "PPTP" -o "$RED_TYPE" == "PPPOE" ]; then
-			if [ "$RED_DEV" != "" ]; then
-				iptables -A REDINPUT -i $RED_DEV -j ACCEPT
-			fi
-		fi
-	fi
-
 	# PPTP over DHCP
 	if [ "$DEVICE" != "" -a "$TYPE" == "PPTP" -a "$METHOD" == "DHCP" ]; then
 		iptables -A REDINPUT -p tcp --source-port 67 --destination-port 68 -i $DEVICE -j ACCEPT
