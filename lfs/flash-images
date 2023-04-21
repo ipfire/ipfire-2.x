@@ -77,9 +77,9 @@ else
  PART_TYPE = L
 endif
 
-# /boot:  256 MB - OFFSET
+# /boot:  512 MB - OFFSET
 # /    : 1800 MB
-S_BOOT := $(shell echo $$(( 524288 - $(S_OFFSET) )))
+S_BOOT := $(shell echo $$(( 1048576 - $(S_OFFSET) )))
 S_ROOT := 3773292
 
 ifeq "$(EFI)" "1"
