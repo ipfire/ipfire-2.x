@@ -137,6 +137,26 @@ ifneq "$(MKIMAGE)" "1"
 		/usr/share/u-boot/nanopi_r2s/u-boot-rockchip.bin
 	cd $(DIR_APP) && make distclean
 
+	# Nanopi R2C
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/u-boot/rockchip/add_nanopi-r2c.patch
+	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
+	cd $(DIR_APP) && tar axf $(DIR_DL)/arm-trusted-firmware-$(ATF_VER).tar.gz
+	cd $(DIR_APP)/arm-trusted-firmware-$(ATF_VER) && make PLAT=rk3328 ARCH=aarch64 DEBUG=0 bl31 LDFLAGS="$(LDFLAGS)"
+	cd $(DIR_APP) && cp arm-trusted-firmware-$(ATF_VER)/build/rk3328/release/bl31/bl31.elf bl31.elf
+	cd $(DIR_APP) && rm -rf arm-trusted-firmware-$(ATF_VER)
+	-mkdir -pv /usr/share/u-boot/nanopi_r2c
+
+	cd $(DIR_APP) && make CROSS_COMPILE="" nanopi-r2c-rk3328_config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_IDENT_STRING=.*!CONFIG_IDENT_STRING=" Nanopi R2C - IPFire.org"!' .config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BOOTCOMMAND=.*!CONFIG_BOOTCOMMAND="console=ttyS2,115200n8;run distro_bootcmd"!' .config
+	cd $(DIR_APP) && sed -i -e 's!^CONFIG_BAUDRATE=.*!CONFIG_BAUDRATE=115200!' .config
+	cd $(DIR_APP) && sed -i -e 's!.*CONFIG_ENV_OVERWRITE.*!CONFIG_ENV_OVERWRITE=y!' .config
+	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)"
+	cd $(DIR_APP) && install -v -m 644 u-boot-rockchip.bin \
+		/usr/share/u-boot/nanopi_r2c/u-boot-rockchip.bin
+	cd $(DIR_APP) && make distclean
+
+
 	# Nanopi R4S
 	# arm trusted firmware for rk3399 cannot build without cortex m0 gcc crosscompiler
 	# it is build on ubuntu with make PLAT=rk3399 ARCH=aarch64 DEBUG=0 bl31
