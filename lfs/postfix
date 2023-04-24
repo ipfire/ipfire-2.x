@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A fast, secure, and flexible mailer
 
-VER        = 3.7.3
+VER        = 3.8.0
 
 THISAPP    = postfix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = postfix
-PAK_VER    = 39
+PAK_VER    = 40
 
 DEPS       =
 
@@ -70,7 +70,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 005abf49b27e59bd3e3251e345df4da0c830314c4d4478aee11057163166afa1a0159017c46bead6572d29d9738a18e1a42a0b72fe260facd3ad77f8ed309271
+$(DL_FILE)_BLAKE2 = 3ef0c0c83eed3263c890143ae962674dfbfa01f589f1b503a01d57497e4732171aa58468357276f29a9454c577573e8442095c2db25005324754dbd305875297
 
 install : $(TARGET)
 
@@ -103,8 +103,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/postfix/postfix-3.7.2-fix_linux6.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/postfix-3.6.2-glibc-234-build-fix.patch
+
 	cd $(DIR_APP) && make -f Makefile.init makefiles \
 		DEBUG="" OPT="$(CFLAGS) -fno-strict-aliasing" CCARGS="$(CCARGS)" AUXLIBS="$(AUXLIBS)"
 	cd $(DIR_APP) && make $(MAKETUNING)
