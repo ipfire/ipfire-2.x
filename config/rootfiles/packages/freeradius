@@ -20,7 +20,7 @@ etc/raddb
 #etc/raddb/mods-available/always
 #etc/raddb/mods-available/attr_filter
 #etc/raddb/mods-available/cache
-#etc/raddb/mods-available/cache_eap
+#etc/raddb/mods-available/cache_auth
 #etc/raddb/mods-available/chap
 #etc/raddb/mods-available/counter
 #etc/raddb/mods-available/cui
@@ -47,6 +47,7 @@ etc/raddb
 #etc/raddb/mods-available/ippool
 #etc/raddb/mods-available/krb5
 #etc/raddb/mods-available/ldap
+#etc/raddb/mods-available/ldap_google
 #etc/raddb/mods-available/linelog
 #etc/raddb/mods-available/logintime
 #etc/raddb/mods-available/mac2ip
@@ -110,16 +111,19 @@ etc/raddb
 #etc/raddb/mods-config/sql/counter/mysql/expire_on_login.conf
 #etc/raddb/mods-config/sql/counter/mysql/monthlycounter.conf
 #etc/raddb/mods-config/sql/counter/mysql/noresetcounter.conf
+#etc/raddb/mods-config/sql/counter/mysql/weeklycounter.conf
 #etc/raddb/mods-config/sql/counter/postgresql
 #etc/raddb/mods-config/sql/counter/postgresql/dailycounter.conf
 #etc/raddb/mods-config/sql/counter/postgresql/expire_on_login.conf
 #etc/raddb/mods-config/sql/counter/postgresql/monthlycounter.conf
 #etc/raddb/mods-config/sql/counter/postgresql/noresetcounter.conf
+#etc/raddb/mods-config/sql/counter/postgresql/weeklycounter.conf
 #etc/raddb/mods-config/sql/counter/sqlite
 #etc/raddb/mods-config/sql/counter/sqlite/dailycounter.conf
 #etc/raddb/mods-config/sql/counter/sqlite/expire_on_login.conf
 #etc/raddb/mods-config/sql/counter/sqlite/monthlycounter.conf
 #etc/raddb/mods-config/sql/counter/sqlite/noresetcounter.conf
+#etc/raddb/mods-config/sql/counter/sqlite/weeklycounter.conf
 #etc/raddb/mods-config/sql/cui
 #etc/raddb/mods-config/sql/cui/mysql
 #etc/raddb/mods-config/sql/cui/mysql/queries.conf
@@ -227,7 +231,6 @@ etc/raddb
 #etc/raddb/mods-enabled
 #etc/raddb/mods-enabled/always
 #etc/raddb/mods-enabled/attr_filter
-#etc/raddb/mods-enabled/cache_eap
 #etc/raddb/mods-enabled/chap
 #etc/raddb/mods-enabled/date
 #etc/raddb/mods-enabled/detail
@@ -287,6 +290,7 @@ etc/raddb
 #etc/raddb/sites-available/dhcp.relay
 #etc/raddb/sites-available/dynamic-clients
 #etc/raddb/sites-available/example
+#etc/raddb/sites-available/google-ldap-auth
 #etc/raddb/sites-available/inner-tunnel
 #etc/raddb/sites-available/originate-coa
 #etc/raddb/sites-available/proxy-inner-tunnel
@@ -843,6 +847,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.acme
 #usr/share/freeradius/dictionary.actelis
 #usr/share/freeradius/dictionary.adtran
+#usr/share/freeradius/dictionary.adva
 #usr/share/freeradius/dictionary.aerohive
 #usr/share/freeradius/dictionary.airespace
 #usr/share/freeradius/dictionary.alcatel
@@ -877,10 +882,12 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.bt
 #usr/share/freeradius/dictionary.cablelabs
 #usr/share/freeradius/dictionary.cabletron
+#usr/share/freeradius/dictionary.cambium
 #usr/share/freeradius/dictionary.camiant
 #usr/share/freeradius/dictionary.centec
 #usr/share/freeradius/dictionary.checkpoint
 #usr/share/freeradius/dictionary.chillispot
+#usr/share/freeradius/dictionary.ciena
 #usr/share/freeradius/dictionary.cisco
 #usr/share/freeradius/dictionary.cisco.asa
 #usr/share/freeradius/dictionary.cisco.bbsm
@@ -894,6 +901,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.compat
 #usr/share/freeradius/dictionary.compatible
 #usr/share/freeradius/dictionary.cosine
+#usr/share/freeradius/dictionary.covaro
 #usr/share/freeradius/dictionary.dante
 #usr/share/freeradius/dictionary.dellemc
 #usr/share/freeradius/dictionary.dhcp
@@ -916,6 +924,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.foundry
 #usr/share/freeradius/dictionary.freedhcp
 #usr/share/freeradius/dictionary.freeradius
+#usr/share/freeradius/dictionary.freeradius.evs5
 #usr/share/freeradius/dictionary.freeradius.internal
 #usr/share/freeradius/dictionary.freeswitch
 #usr/share/freeradius/dictionary.gandalf
@@ -943,6 +952,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.lucent
 #usr/share/freeradius/dictionary.manzara
 #usr/share/freeradius/dictionary.meinberg
+#usr/share/freeradius/dictionary.mellanox
 #usr/share/freeradius/dictionary.meraki
 #usr/share/freeradius/dictionary.merit
 #usr/share/freeradius/dictionary.meru
@@ -955,9 +965,11 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.motorola.wimax
 #usr/share/freeradius/dictionary.navini
 #usr/share/freeradius/dictionary.net
+#usr/share/freeradius/dictionary.netelastic
 #usr/share/freeradius/dictionary.netscreen
 #usr/share/freeradius/dictionary.networkphysics
 #usr/share/freeradius/dictionary.nexans
+#usr/share/freeradius/dictionary.nile
 #usr/share/freeradius/dictionary.nokia
 #usr/share/freeradius/dictionary.nokia.conflict
 #usr/share/freeradius/dictionary.nomadix
