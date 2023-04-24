@@ -124,6 +124,9 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Fix permissions of /var/log/pakfire.log
+chmod -v 644 /var/log/pakfire.log
+
 # Apply local configuration to sshd_config
 /usr/local/bin/sshctrl
 
