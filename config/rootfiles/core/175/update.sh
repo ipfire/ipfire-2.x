@@ -85,6 +85,17 @@ rm -rvf \
 	/boot/dtb-* \
 	/lib/modules
 
+# Remove powertop add-on, if installed
+if [ -e "/opt/pakfire/db/installed/meta-powertop" ]; then
+	for i in $(</opt/pakfire/db/rootfiles/powertop); do
+		rm -rfv "/${i}"
+	done
+fi
+rm -vf \
+	/opt/pakfire/db/installed/meta-powertop \
+	/opt/pakfire/db/meta/meta-powertop \
+	/opt/pakfire/db/rootfiles/powertop
+
 # Extract files
 extract_files
 
