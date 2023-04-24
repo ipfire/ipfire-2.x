@@ -45,7 +45,9 @@ done
 
 # Stop services
 /etc/rc.d/init.d/apache stop
+/etc/rc.d/init.d/ntp stop
 /etc/rc.d/init.d/sshd stop
+/etc/rc.d/init.d/unbound stop
 
 KVER="xxxKVERxxx"
 
@@ -126,7 +128,9 @@ ldconfig
 /usr/local/bin/sshctrl
 
 # Start services
+/etc/rc.d/init.d/unbound start
 /etc/rc.d/init.d/apache start
+/etc/rc.d/init.d/ntp start
 if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
 	/etc/init.d/sshd start
 fi
