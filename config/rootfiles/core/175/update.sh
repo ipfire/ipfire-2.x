@@ -127,6 +127,9 @@ ldconfig
 # Apply local configuration to sshd_config
 /usr/local/bin/sshctrl
 
+# Restart firewall to fix #13088 as fast as possible
+/etc/rc.d/init.d/firewall restart
+
 # Start services
 /etc/rc.d/init.d/unbound start
 /etc/rc.d/init.d/apache start

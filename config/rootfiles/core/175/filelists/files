@@ -1,3 +1,4 @@
+etc/rc.d/init.d/firewall
 lib/firmware/amdgpu/dcn_3_1_4_dmcub.bin
 lib/firmware/amdgpu/gc_11_0_1_imu.bin
 lib/firmware/amdgpu/gc_11_0_1_me.bin
