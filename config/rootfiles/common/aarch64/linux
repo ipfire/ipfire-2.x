@@ -22446,7 +22446,7 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/sound/soc/sunxi/sun8i-adda-pr-regmap.ko.xz
 #lib/modules/KVER-ipfire/kernel/sound/soc/sunxi/sun8i-codec-analog.ko.xz
 #lib/modules/KVER-ipfire/kernel/sound/soundcore.ko.xz
-#lib/modules/KVER[5~-ipfire/kernel/sound/usb
+#lib/modules/KVER-ipfire/kernel/sound/usb
 #lib/modules/KVER-ipfire/kernel/sound/usb/6fire
 #lib/modules/KVER-ipfire/kernel/sound/usb/6fire/snd-usb-6fire.ko.xz
 #lib/modules/KVER-ipfire/kernel/sound/usb/bcd2000
