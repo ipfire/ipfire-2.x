@@ -17,13 +17,13 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2007-2023 IPFire-Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
 extract_files
-useradd messagebus
+id -u messagebus &>/dev/null || useradd -r -d /var/empty -s /bin/false messagebus
 
 # Create start links
 ln -svf  ../init.d/messagebus /etc/rc.d/rc3.d/S15messagebus
