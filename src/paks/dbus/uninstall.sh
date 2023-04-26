@@ -22,7 +22,7 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-stop_service ${NAME}
+stop_service messagebus
 
 # Remove start files
 rm -rf /etc/rc.d/rc*.d/*messagebus
