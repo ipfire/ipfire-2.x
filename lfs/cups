@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/cups-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
-PAK_VER    = 33
+PAK_VER    = 34
 
 DEPS       = avahi cups-filters dbus ghostscript
 
@@ -80,6 +80,8 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cups-2.4.2_Fix_default_cupsd_keychain_with_OpenSSL.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cups-2.4.2_Fix_TLS_certificate_generation_bugs_with_openssl.patch
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && \
 		./configure \
@@ -87,9 +89,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--sysconfdir=/var/ipfire \
 			--localstatedir=/var \
 			--enable-debug \
-			--enable-avahi \
+			--with-dnssd=avahi \
 			--enable-dbus \
-			--enable-gnutls \
+			--with-tls=openssl \
 			--enable-libusb
 
 	cd $(DIR_APP) && make $(MAKETUNING)
