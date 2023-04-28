@@ -297,10 +297,10 @@ boot/dtb-KVER-ipfire
 #boot/dtb-KVER-ipfire/rockchip/rk3328-nanopi-r2c.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-nanopi-r2s-oc.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-nanopi-r2s.dtb
-#boot/dtb-KVER-ipfire/rockchip/rk3328-orangepi-r1-plus-oc.dtb
-#boot/dtb-KVER-ipfire/rockchip/rk3328-orangepi-r1-plus.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-orangepi-r1-plus-lts-oc.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-orangepi-r1-plus-lts.dtb
+#boot/dtb-KVER-ipfire/rockchip/rk3328-orangepi-r1-plus-oc.dtb
+#boot/dtb-KVER-ipfire/rockchip/rk3328-orangepi-r1-plus.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-roc-cc.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-roc-pc.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-rock-pi-e.dtb
@@ -6861,7 +6861,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ARCH_WANT_DEFAULT_BPF_JIT
 #lib/modules/KVER-ipfire/build/include/config/ARCH_WANT_DEFAULT_TOPDOWN_MMAP_LAYOUT
 #lib/modules/KVER-ipfire/build/include/config/ARCH_WANT_FRAME_POINTERS
-#lib/modules/KVER-ipfire/build/include/config/ARCH_WANT_HUGETLB_PAGE_OPTIMIZE_VMEMMAP
 #lib/modules/KVER-ipfire/build/include/config/ARCH_WANT_HUGE_PMD_SHARE
 #lib/modules/KVER-ipfire/build/include/config/ARCH_WANT_LD_ORPHAN_WARN
 #lib/modules/KVER-ipfire/build/include/config/ARC_EMAC_CORE
@@ -7767,7 +7766,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/DRM_TTM
 #lib/modules/KVER-ipfire/build/include/config/DRM_TTM_HELPER
 #lib/modules/KVER-ipfire/build/include/config/DRM_UDL
-#lib/modules/KVER-ipfire/build/include/config/DRM_USE_DYNAMIC_DEBUG
 #lib/modules/KVER-ipfire/build/include/config/DRM_V3D
 #lib/modules/KVER-ipfire/build/include/config/DRM_VC4
 #lib/modules/KVER-ipfire/build/include/config/DRM_VC4_HDMI_CEC
@@ -9279,7 +9277,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/NET_CLS_ROUTE4
 #lib/modules/KVER-ipfire/build/include/config/NET_CLS_RSVP
 #lib/modules/KVER-ipfire/build/include/config/NET_CLS_RSVP6
-#lib/modules/KVER-ipfire/build/include/config/NET_CLS_TCINDEX
 #lib/modules/KVER-ipfire/build/include/config/NET_CLS_U32
 #lib/modules/KVER-ipfire/build/include/config/NET_CORE
 #lib/modules/KVER-ipfire/build/include/config/NET_DEVLINK
@@ -10090,6 +10087,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/RTC_CLASS
 #lib/modules/KVER-ipfire/build/include/config/RTC_DRV_88PM80X
 #lib/modules/KVER-ipfire/build/include/config/RTC_DRV_88PM860X
+#lib/modules/KVER-ipfire/build/include/config/RTC_DRV_ARMADA38X
 #lib/modules/KVER-ipfire/build/include/config/RTC_DRV_BQ32K
 #lib/modules/KVER-ipfire/build/include/config/RTC_DRV_BQ4802
 #lib/modules/KVER-ipfire/build/include/config/RTC_DRV_DS1286
@@ -10373,7 +10371,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SERIAL_FSL_LINFLEXUART
 #lib/modules/KVER-ipfire/build/include/config/SERIAL_FSL_LINFLEXUART_CONSOLE
 #lib/modules/KVER-ipfire/build/include/config/SERIAL_FSL_LPUART
-#lib/modules/KVER-ipfire/build/include/config/SERIAL_FSL_LPUART_CONSOLE
 #lib/modules/KVER-ipfire/build/include/config/SERIAL_IMX
 #lib/modules/KVER-ipfire/build/include/config/SERIAL_IMX_CONSOLE
 #lib/modules/KVER-ipfire/build/include/config/SERIAL_IMX_EARLYCON
@@ -21393,6 +21390,7 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/rtc
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-88pm80x.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-88pm860x.ko.xz
+#lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-armada38x.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-bq32k.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-bq4802.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/rtc/rtc-ds1286.ko.xz
@@ -22185,7 +22183,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/net/sched/cls_route.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/cls_rsvp.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/cls_rsvp6.ko.xz
-#lib/modules/KVER-ipfire/kernel/net/sched/cls_tcindex.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/cls_u32.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/em_cmp.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/em_ipset.ko.xz
