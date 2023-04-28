@@ -297,6 +297,10 @@ boot/dtb-KVER-ipfire
 #boot/dtb-KVER-ipfire/rockchip/rk3328-nanopi-r2c.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-nanopi-r2s-oc.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-nanopi-r2s.dtb
+#boot/dtb-KVER-ipfire/rockchip/rk3328-orangepi-r1-plus-oc.dtb
+#boot/dtb-KVER-ipfire/rockchip/rk3328-orangepi-r1-plus.dtb
+#boot/dtb-KVER-ipfire/rockchip/rk3328-orangepi-r1-plus-lts-oc.dtb
+#boot/dtb-KVER-ipfire/rockchip/rk3328-orangepi-r1-plus-lts.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-roc-cc.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-roc-pc.dtb
 #boot/dtb-KVER-ipfire/rockchip/rk3328-rock-pi-e.dtb
