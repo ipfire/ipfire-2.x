@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -67,6 +67,14 @@ case "${1}" in
 				;;
 				FriendlyElec\ NanoPi?R4* )
 					# Generate MAC address at first boot
+					SWMAC=`printf "%1x2:%02x:%02x:%02x:%02x" $[RANDOM%16] $[RANDOM%256] $[RANDOM%256] $[RANDOM%256] $[RANDOM%256]`
+					echo ethaddr=$SWMAC:00 >> /boot/uEnv.txt
+					echo eth1addr=$SWMAC:01 >> /boot/uEnv.txt
+				;;
+				Xunlong\ Orange\ Pi\ R1\ Plus* )
+					# Generate MAC address at first boot
+					# This board should have mac addresses in rom but uboot
+					# doesnt set it for fist nic
 					SWMAC=`printf "%1x2:%02x:%02x:%02x:%02x" $[RANDOM%16] $[RANDOM%256] $[RANDOM%256] $[RANDOM%256] $[RANDOM%256]`
 					echo ethaddr=$SWMAC:00 >> /boot/uEnv.txt
 					echo eth1addr=$SWMAC:01 >> /boot/uEnv.txt

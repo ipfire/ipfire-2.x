@@ -144,6 +144,11 @@ case "${1}" in
 		setup_netdev_trigger nanopi-r4s:green:wan ${RED_DEV} tx rx
 		setup_netdev_trigger nanopi-r4s:green:lan ${GREEN_DEV} tx rx
 
+		# OrangePi R1 Plus
+		setup_heartbeat_trigger red:status
+		setup_netdev_trigger green:wan ${RED_DEV} tx rx
+		setup_netdev_trigger green:lan ${GREEN_DEV} tx rx
+
 		exit 0
 	;;
 
@@ -189,6 +194,12 @@ case "${1}" in
 		enable_led nanopi-r4s:green:sys
 		disable_led_trigger nanopi-r4s:green:wan
 		disable_led_trigger nanopi-r4s:green:lan
+
+		# OrangePi R1 Plus stop
+		disable_led_trigger red:status
+		enable_led red:status
+		disable_led_trigger green:wan
+		disable_led_trigger green:lan
 
 		exit 0
 	;;
