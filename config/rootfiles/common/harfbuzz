@@ -44,15 +44,15 @@
 #usr/lib/libharfbuzz-cairo.la
 #usr/lib/libharfbuzz-cairo.so
 usr/lib/libharfbuzz-cairo.so.0
-usr/lib/libharfbuzz-cairo.so.0.60701.0
+usr/lib/libharfbuzz-cairo.so.0.60720.0
 #usr/lib/libharfbuzz-subset.la
 #usr/lib/libharfbuzz-subset.so
 usr/lib/libharfbuzz-subset.so.0
-usr/lib/libharfbuzz-subset.so.0.60701.0
+usr/lib/libharfbuzz-subset.so.0.60720.0
 #usr/lib/libharfbuzz.la
 #usr/lib/libharfbuzz.so
 usr/lib/libharfbuzz.so.0
-usr/lib/libharfbuzz.so.0.60701.0
+usr/lib/libharfbuzz.so.0.60720.0
 #usr/lib/pkgconfig/harfbuzz-cairo.pc
 #usr/lib/pkgconfig/harfbuzz-subset.pc
 #usr/lib/pkgconfig/harfbuzz.pc
@@ -127,6 +127,7 @@ usr/lib/libharfbuzz.so.0.60701.0
 #usr/share/gtk-doc/html/harfbuzz/api-index-5-3-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-6-0-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-7-0-0.html
+#usr/share/gtk-doc/html/harfbuzz/api-index-7-1-0.html
 #usr/share/gtk-doc/html/harfbuzz/api-index-full.html
 #usr/share/gtk-doc/html/harfbuzz/apple-advanced-typography-api.html
 #usr/share/gtk-doc/html/harfbuzz/buffers-language-script-and-direction.html
