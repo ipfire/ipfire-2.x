@@ -1,8 +1,8 @@
 diff --git a/include/linux/skbuff.h b/include/linux/skbuff.h
-index 7be5bb4c94b6..9a86f7bdbfce 100644
+index 20ca1613f2e3..8024f760bbe1 100644
 --- a/include/linux/skbuff.h
 +++ b/include/linux/skbuff.h
-@@ -891,6 +891,9 @@ struct sk_buff {
+@@ -892,6 +892,9 @@ struct sk_buff {
  
  #if defined(CONFIG_NF_CONNTRACK) || defined(CONFIG_NF_CONNTRACK_MODULE)
  	unsigned long		 _nfct;
@@ -103,7 +103,7 @@ index 0f060d100880..28a7d4f8be40 100644
  obj-$(CONFIG_NETFILTER_XT_MATCH_STRING) += xt_string.o
  obj-$(CONFIG_NETFILTER_XT_MATCH_TCPMSS) += xt_tcpmss.o
 diff --git a/net/netfilter/nf_conntrack_core.c b/net/netfilter/nf_conntrack_core.c
-index 23b3fedd619a..5fa552543967 100644
+index 30ed45b1b57d..2f4640fcb6bd 100644
 --- a/net/netfilter/nf_conntrack_core.c
 +++ b/net/netfilter/nf_conntrack_core.c
 @@ -604,6 +604,11 @@ void nf_ct_destroy(struct nf_conntrack *nfct)
@@ -119,7 +119,7 @@ index 23b3fedd619a..5fa552543967 100644
  		nf_ct_put(ct->master);
  
 diff --git a/net/netfilter/nf_conntrack_standalone.c b/net/netfilter/nf_conntrack_standalone.c
-index bca839ab1ae8..69fb7b8296a2 100644
+index 460294bd4b60..b1e4b9c6d2a4 100644
 --- a/net/netfilter/nf_conntrack_standalone.c
 +++ b/net/netfilter/nf_conntrack_standalone.c
 @@ -373,6 +373,11 @@ static int ct_seq_show(struct seq_file *s, void *v)
