@@ -24,13 +24,12 @@ usr/lib/libnfsidmap/static.so
 #usr/lib/libnfsidmap/umich_ldap.a
 #usr/lib/libnfsidmap/umich_ldap.la
 usr/lib/libnfsidmap/umich_ldap.so
-#usr/lib/modprobe.d
-#usr/lib/modprobe.d/50-nfs.conf
 #usr/lib/pkgconfig/libnfsidmap.pc
 #usr/lib/udev/rules.d/99-nfs.rules
 #usr/libexec/nfsrahead
 #usr/sbin/blkmapd
 usr/sbin/exportfs
+usr/sbin/fsidd
 usr/sbin/mountstats
 usr/sbin/nfsconf
 usr/sbin/nfsdcld
