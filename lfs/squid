@@ -24,8 +24,7 @@
 
 include Config
 
-VER        = 5.8
-LANGPACK   = 20230225
+VER        = 5.9
 
 THISAPP    = squid-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -43,14 +42,11 @@ endif
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) \
-	squid-langpack-$(LANGPACK).tar.gz
+objects = $(DL_FILE)
 
-$(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
-squid-langpack-$(LANGPACK).tar.gz	= $(URL_IPFIRE)/squid-langpack-$(LANGPACK).tar.gz
+$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = c9d1ae9464e68beabdf7ae1641a70d6c614bc4d4f4bae3fc5946c2bf61510634992cbd5abe63f071104edb2fa487a6c5c7fb8fbf8f06ac723a6522ec9ade8b68
-squid-langpack-$(LANGPACK).tar.gz_BLAKE2 = 169a05d16770f56e515fd633658e8bcd9464fb01ccba76256b119932c833af7bc22e3e8d3a7d5fde37638546f15822a4d1548a78af13be9f4e3b8989758250b6
+$(DL_FILE)_BLAKE2 = 898a34357f8019291379ea37c66fa312e1a6437e8f643987dd4e54d7d52728248e16129b00195c5f6e0378c0f32c9f9ade3f98ca0ec4bb952f9f443357face82
 
 install : $(TARGET)
 
@@ -80,7 +76,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xaf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP)/errors && tar zxf $(DIR_DL)/squid-langpack-$(LANGPACK).tar.gz
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/squid/01_squid-gcc11.patch
 
