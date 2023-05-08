@@ -24,7 +24,13 @@
 . /opt/pakfire/lib/functions.sh
 extract_files
 groupadd audio 2>/dev/null
-touch /etc/asound.state
+touch /var/lib/alsa/asound.state
+if [ -f /etc/asound.state ]; then
+	rm /etc/asound.state
+fi
+restore_backup ${NAME}
 ln -svf  ../init.d/alsa /etc/rc.d/rc3.d/S65alsa
 ln -svf  ../init.d/alsa /etc/rc.d/rc0.d/K35alsa
 ln -svf  ../init.d/alsa /etc/rc.d/rc6.d/K35alsa
+start_service ${NAME}
+exit 0

@@ -22,5 +22,11 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
+stop_service ${NAME}
+make_backup ${NAME}
+# unload alsa related modules
+modprobe -r snd_pcm_oss >/dev/null 2>&1 || failed=1
+modprobe -r snd_timer >/dev/null 2>&1 || failed=1
 remove_files
 rm -rf /etc/rc.d/rc*.d/*alsa
+exit 0
