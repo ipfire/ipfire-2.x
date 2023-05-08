@@ -37,11 +37,11 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = alsa
-PAK_VER    = 15
+PAK_VER    = 16
 
 DEPS       =
 
-SERVICES   = alsa
+SERVICES   =
 
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
@@ -104,6 +104,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP)/alsa-firmware-$(FVER) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP)/alsa-firmware-$(FVER) && make install
 	# install initscript
-	$(call INSTALL_INITSCRIPTS,$(SERVICES))
+	$(call INSTALL_INITSCRIPTS,alsa)
+	# install backup include file
+	install -v -m 644 ${DIR_SRC}/config/backup/includes/alsa \
+			/var/ipfire/backup/addons/includes/alsa
 	@rm -rf $(DIR_SRC)/alsa*
 	@$(POSTBUILD)
