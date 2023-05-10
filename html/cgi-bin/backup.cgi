@@ -366,6 +366,13 @@ sub deliver_file() {
 
 	# Deliver content
 	open(FILE, "<$file") or die "Unable to open $file: $!";
-	print <FILE>;
+
+	# Read the file line by line and send it
+	# to the client.
+	while (<FILE>) {
+		print $_;
+	}
+
+	# Close file handle.
 	close(FILE);
 }
