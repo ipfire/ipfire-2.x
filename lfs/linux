@@ -147,6 +147,9 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	# Fix pmc compile dependency errors
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.0.7-platform-x86-amd-Fix-pmc-compile-dependency-errors.patch
 
+	# Patch netfilter CVE-2023-32233
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.3-netfilter_nftables_deactivate_anonymus_set.patch
+
 ifeq "$(BUILD_ARCH)" "aarch64"
 	# Apply Arm-multiarch kernel patches.
 	cd $(DIR_APP) && xzcat $(DIR_DL)/arm-multi-patches-$(ARM_PATCHES).patch.xz | patch -Np1
