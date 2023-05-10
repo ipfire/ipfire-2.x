@@ -72,10 +72,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	# Prevent a static library from being installed
 	cd $(DIR_APP) && sed -i '/install -m.*STA/d' libcap/Makefile
-	cd $(DIR_APP) && make GOLANG=no
-	cd $(DIR_APP) && make install GOLANG=no
-	rm -vf /lib/libcap.so
-	ln -svf /lib/libcap.so.2.67 /usr/lib/libcap.so
-	chmod +x /lib/libcap.so.*
+	cd $(DIR_APP) && make GOLANG=no \
+				  prefix=/usr \
+				  exec_prefix= \
+				  lib_prefix=/usr
+	cd $(DIR_APP) && make install GOLANG=no \
+				  prefix=/usr \
+				  exec_prefix= \
+				  lib_prefix=/usr
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

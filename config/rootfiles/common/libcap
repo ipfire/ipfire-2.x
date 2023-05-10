@@ -1,11 +1,3 @@
-lib/libcap.so.2
-lib/libcap.so.2.67
-#lib/libpsx.so
-#lib/libpsx.so.2
-lib/libpsx.so.2.67
-#lib/pkgconfig/libcap.pc
-#lib/pkgconfig/libpsx.pc
-lib/security/pam_cap.so
 sbin/capsh
 sbin/getcap
 sbin/getpcaps
@@ -13,6 +5,15 @@ sbin/setcap
 #usr/include/sys/capability.h
 #usr/include/sys/psx_syscall.h
 usr/lib/libcap.so
+usr/lib/libcap.so.2
+usr/lib/libcap.so.2.67
+#usr/lib/libpsx.so
+#usr/lib/libpsx.so.2
+usr/lib/libpsx.so.2.67
+#usr/lib/pkgconfig/libcap.pc
+#usr/lib/pkgconfig/libpsx.pc
+#usr/lib/security
+usr/lib/security/pam_cap.so
 #usr/share/man/man1/capsh.1
 #usr/share/man/man3/cap_clear.3
 #usr/share/man/man3/cap_clear_flag.3
