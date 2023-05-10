@@ -29,7 +29,6 @@ etc/rc.d/init.d/functions
 etc/rc.d/init.d/halt
 etc/rc.d/init.d/ipsec
 etc/rc.d/init.d/leds
-etc/rc.d/init.d/lvmetad
 etc/rc.d/init.d/localnet
 etc/rc.d/init.d/modules
 etc/rc.d/init.d/mountfs
@@ -170,7 +169,6 @@ etc/rc.d/rc6.d/S99reboot
 etc/rc.d/rcsysinit.d/S00mountkernfs
 etc/rc.d/rcsysinit.d/S01sysctl
 etc/rc.d/rcsysinit.d/S05modules
-etc/rc.d/rcsysinit.d/S09lvmetad
 etc/rc.d/rcsysinit.d/S10udev
 etc/rc.d/rcsysinit.d/S19waitdrives
 etc/rc.d/rcsysinit.d/S25partresize

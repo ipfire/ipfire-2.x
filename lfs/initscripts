@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -155,7 +155,6 @@ $(TARGET) :
 	ln -sf ../init.d/mountkernfs /etc/rc.d/rcsysinit.d/S00mountkernfs
 	ln -sf ../init.d/sysctl      /etc/rc.d/rcsysinit.d/S01sysctl
 	ln -sf ../init.d/modules     /etc/rc.d/rcsysinit.d/S05modules
-	ln -sf ../init.d/lvmetad     /etc/rc.d/rcsysinit.d/S09lvmetad
 	ln -sf ../init.d/udev        /etc/rc.d/rcsysinit.d/S10udev
 	ln -sf ../init.d/waitdrives  /etc/rc.d/rcsysinit.d/S19waitdrives
 	ln -sf ../init.d/partresize  /etc/rc.d/rcsysinit.d/S25partresize
