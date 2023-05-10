@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -33,9 +33,9 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-trio
-PAK_VER    = 2
+PAK_VER    = 3
 
-DEPS       = python3-attr python3-async_generator python3-attrs python3-sniffio python3-sortedcontainers python3-outcome python3-idna
+DEPS       = python3-async_generator python3-attrs python3-sniffio python3-sortedcontainers python3-outcome python3-idna python3-exceptiongroup
 
 SERVICES   =
 
