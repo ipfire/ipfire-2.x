@@ -48,6 +48,7 @@ done
 /etc/rc.d/init.d/ntp stop
 /etc/rc.d/init.d/sshd stop
 /etc/rc.d/init.d/unbound stop
+/etc/rc.d/init.d/suricata stop
 
 KVER="xxxKVERxxx"
 
@@ -134,6 +135,9 @@ chmod -v 644 /var/log/pakfire.log
 /etc/rc.d/init.d/firewall restart
 
 # Start services
+if grep -q "ENABLE_IDS=on" /var/ipfire/suricata/settings; then
+	/etc/rc.d/init.d/suricata start
+fi
 /etc/rc.d/init.d/unbound start
 /etc/rc.d/init.d/apache start
 /etc/rc.d/init.d/ntp start
