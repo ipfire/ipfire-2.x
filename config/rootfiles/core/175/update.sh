@@ -105,6 +105,8 @@ extract_files
 
 # Remove files
 rm -rvf \
+	/etc/rc.d/init.d/lvmetad \
+	/etc/rc.d/rcsysinit.d/S09lvmetad \
 	/lib/firmware/liquidio/lio_23xx_vsw.bin \
 	/usr/lib/libbind9-9.16.38.so \
 	/usr/lib/libdns-9.16.38.so \
