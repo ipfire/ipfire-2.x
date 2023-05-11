@@ -82,4 +82,5 @@ lib/firmware/rtlwifi/rtl8710bufw_SMIC.bin
 lib/firmware/rtlwifi/rtl8710bufw_UMC.bin
 lib/firmware/rtw88/rtw8822c_fw.bin
 lib/firmware/rtw89/rtw8852b_fw-1.bin
+srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 usr/lib/firewall/rules.pl
