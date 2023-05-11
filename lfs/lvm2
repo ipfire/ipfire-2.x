@@ -81,7 +81,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			--enable-pkgconfig \
 			--with-udevdir=/lib/udev/rules.d \
 			--with-default-locking-dir=/run/lvm \
-			--enable-lvmetad \
 			--enable-udev_rules \
 			--enable-udev_sync
 	cd $(DIR_APP) && make $(MAKETUNING)
