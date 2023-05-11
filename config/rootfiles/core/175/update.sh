@@ -47,6 +47,7 @@ done
 /etc/rc.d/init.d/apache stop
 /etc/rc.d/init.d/ntp stop
 /etc/rc.d/init.d/sshd stop
+/etc/rc.d/init.d/squid stop
 /etc/rc.d/init.d/unbound stop
 /etc/rc.d/init.d/suricata stop
 
@@ -143,6 +144,9 @@ fi
 /etc/rc.d/init.d/ntp start
 if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
 	/etc/init.d/sshd start
+fi
+if [ -f /var/ipfire/proxy/enable ]; then
+	/etc/init.d/squid start
 fi
 
 # Regenerate all initrds
