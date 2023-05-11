@@ -115,6 +115,7 @@ rm -rvf \
 	/usr/lib/libisccc-9.16.38.so \
 	/usr/lib/libisccfg-9.16.38.so \
 	/usr/lib/libns-9.16.38.so \
+	/usr/lib/libqpdf.so.28* \
 	/var/ipfire/menu.d/EX-addonsvc.menu \
 	/var/ipfire/menu.d/EX-asterisk.menu \
 	/var/ipfire/menu.d/EX-bluetooth.menu
