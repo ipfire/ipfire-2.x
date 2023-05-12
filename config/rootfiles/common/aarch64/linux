@@ -8106,7 +8106,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/GACT_PROB
 #lib/modules/KVER-ipfire/build/include/config/GARP
 #lib/modules/KVER-ipfire/build/include/config/GCC11_NO_ARRAY_BOUNDS
-#lib/modules/KVER-ipfire/build/include/config/GCC12_NO_ARRAY_BOUNDS
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGINS
 #lib/modules/KVER-ipfire/build/include/config/GCC_SUPPORTS_DYNAMIC_FTRACE_WITH_REGS
 #lib/modules/KVER-ipfire/build/include/config/GCC_VERSION

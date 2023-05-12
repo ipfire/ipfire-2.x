@@ -7857,7 +7857,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/GACT_PROB
 #lib/modules/KVER-ipfire/build/include/config/GARP
 #lib/modules/KVER-ipfire/build/include/config/GCC11_NO_ARRAY_BOUNDS
-#lib/modules/KVER-ipfire/build/include/config/GCC12_NO_ARRAY_BOUNDS
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGINS
 #lib/modules/KVER-ipfire/build/include/config/GCC_VERSION
 #lib/modules/KVER-ipfire/build/include/config/GENERIC_ALLOCATOR
@@ -10949,6 +10948,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/USB_PRINTER
 #lib/modules/KVER-ipfire/build/include/config/USB_PWC
 #lib/modules/KVER-ipfire/build/include/config/USB_PWC_INPUT_EVDEV
+#lib/modules/KVER-ipfire/build/include/config/USB_ROLES_INTEL_XHCI
 #lib/modules/KVER-ipfire/build/include/config/USB_ROLE_SWITCH
 #lib/modules/KVER-ipfire/build/include/config/USB_RTL8150
 #lib/modules/KVER-ipfire/build/include/config/USB_RTL8152
@@ -22038,6 +22038,7 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/usb/mon
 #lib/modules/KVER-ipfire/kernel/drivers/usb/mon/usbmon.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/usb/roles
+#lib/modules/KVER-ipfire/kernel/drivers/usb/roles/intel-xhci-usb-role-switch.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/usb/roles/roles.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/usb/serial
 #lib/modules/KVER-ipfire/kernel/drivers/usb/serial/aircable.ko.xz
