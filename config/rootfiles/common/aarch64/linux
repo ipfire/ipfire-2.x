@@ -15914,7 +15914,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/sound/ac97/regs.h
 #lib/modules/KVER-ipfire/build/include/sound/ac97_codec.h
 #lib/modules/KVER-ipfire/build/include/sound/aci.h
-#lib/modules/KVER-ipfire/build/include/sound/acp62_chip_offset_byte.h
+#lib/modules/KVER-ipfire/build/include/sound/acp63_chip_offset_byte.h
 #lib/modules/KVER-ipfire/build/include/sound/ad1816a.h
 #lib/modules/KVER-ipfire/build/include/sound/ad1843.h
 #lib/modules/KVER-ipfire/build/include/sound/adau1373.h
