@@ -84,4 +84,5 @@ lib/firmware/rtw88/rtw8822c_fw.bin
 lib/firmware/rtw89/rtw8852b_fw-1.bin
 srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
+usr/lib/dracut/dracut.conf.d/ipfire.conf
 usr/lib/firewall/rules.pl
