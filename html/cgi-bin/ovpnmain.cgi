@@ -4327,8 +4327,14 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	$confighash{$key}[39]		= $cgiparams{'DAUTH'};
 	$confighash{$key}[40]		= $cgiparams{'DCIPHER'};
 
-	if (($cgiparams{'TYPE'} eq 'host') && ($cgiparams{'CERT_PASS1'} eq "")) {
-		$confighash{$key}[41] = "no-pass";
+       if ($confighash{$key}[41] eq "") {
+               if (($cgiparams{'TYPE'} eq 'host') && ($cgiparams{'CERT_PASS1'} eq "")) {
+                       $confighash{$key}[41] = "no-pass";
+               } elsif (($cgiparams{'TYPE'} eq 'host') && ($cgiparams{'CERT_PASS1'} ne "")) {
+                       $confighash{$key}[41] = "pass";
+               } elsif ($cgiparams{'TYPE'} eq 'net') {
+                       $confighash{$key}[41] = "no-pass";
+               }
 	}
 
    $confighash{$key}[42] = 'HOTP/T30/6';
@@ -5470,20 +5476,24 @@ END
 }
 
 
-    print <<END;
-	<td align='center' $col1>$active</td>
+       if ($confighash{$key}[41] eq "pass") {
+               print <<END;
+                       <td align='center' $col1>$active</td>
 
-	<form method='post' name='frm${key}a'><td align='center' $col>
-	    <input type='image'  name='$Lang::tr{'dl client arch'}' src='/images/openvpn.png' alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' border='0' />
-	    <input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
-	    <input type='hidden' name='KEY' value='$key' />
-	</td></form>
+                       <form method='post' name='frm${key}a'><td align='center' $col>
+                           <input type='image'  name='$Lang::tr{'dl client arch'}' src='/images/openvpn_encrypted.png'
+                                       alt='$Lang::tr{'dl client arch'}' title='$Lang::tr{'dl client arch'}' border='0' />
+                           <input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
+                           <input type='hidden' name='MODE' value='secure' />
+                           <input type='hidden' name='KEY' value='$key' />
+                       </td></form>
 END
-	;
 
-	if ($confighash{$key}[41] eq "no-pass") {
+       ; } elsif ($confighash{$key}[41] eq "no-pass") {
 		print <<END;
-			<form method='post' name='frm${key}g'><td align='center' $col>
+                       <td align='center' $col1>$active</td>
+
+                       <form method='post' name='frm${key}a'><td align='center' $col>
 				<input type='image'  name='$Lang::tr{'dl client arch insecure'}' src='/images/openvpn.png'
 					alt='$Lang::tr{'dl client arch insecure'}' title='$Lang::tr{'dl client arch insecure'}' border='0' />
 				<input type='hidden' name='ACTION' value='$Lang::tr{'dl client arch'}' />
@@ -5491,7 +5501,7 @@ END
 				<input type='hidden' name='KEY' value='$key' />
 			</td></form>
 END
-	} else {
+	; } else {
 		print "<td $col>&nbsp;</td>";
 	}
 
@@ -5567,30 +5577,32 @@ END
     # If the config file contains entries, print Key to action icons
     if ( $id ) {
     print <<END;
-    <table border='0'>
-    <tr>
+       <table width='85%' border='0'>
+       <tr>
 		<td class='boldbase'>&nbsp; <b>$Lang::tr{'legend'}:</b></td>
-		<td>&nbsp; <img src='/images/on.gif' alt='$Lang::tr{'click to disable'}' /></td>
-		<td class='base'>$Lang::tr{'click to disable'}</td>
+              <td>&nbsp; &nbsp; <img src='/images/openvpn.png' alt='?RELOAD'/></td>
+              <td class='base'>$Lang::tr{'dl client arch insecure'}</td>
+              <td>&nbsp; &nbsp; <img src='/images/openvpn_encrypted.png' alt='?RELOAD'/></td>
+              <td class='base'>$Lang::tr{'dl client arch'}</td>
 		<td>&nbsp; &nbsp; <img src='/images/info.gif' alt='$Lang::tr{'show certificate'}' /></td>
 		<td class='base'>$Lang::tr{'show certificate'}</td>
+              <td>&nbsp; &nbsp; <img src='/images/qr-code.png' alt='$Lang::tr{'show otp qrcode'}'/></td>
+              <td class='base'>$Lang::tr{'show otp qrcode'}</td>
+       </tr>
+       <tr>
+              <td>&nbsp; </td>
+              <td>&nbsp; &nbsp; <img src='/images/media-floppy.png' alt='?FLOPPY' /></td>
+              <td class='base'>$Lang::tr{'download certificate'}</td>
+              <td>&nbsp; <img src='/images/off.gif' alt='?OFF' /></td>
+              <td class='base'>$Lang::tr{'click to enable'}</td>
+              <td>&nbsp; <img src='/images/on.gif' alt='$Lang::tr{'click to disable'}' /></td>
+              <td class='base'>$Lang::tr{'click to disable'}</td>
 		<td>&nbsp; &nbsp; <img src='/images/edit.gif' alt='$Lang::tr{'edit'}' /></td>
 		<td class='base'>$Lang::tr{'edit'}</td>
 		<td>&nbsp; &nbsp; <img src='/images/delete.gif' alt='$Lang::tr{'remove'}' /></td>
 		<td class='base'>$Lang::tr{'remove'}</td>
-    </tr>
-    <tr>
-		<td>&nbsp; </td>
-		<td>&nbsp; <img src='/images/off.gif' alt='?OFF' /></td>
-		<td class='base'>$Lang::tr{'click to enable'}</td>
-		<td>&nbsp; &nbsp; <img src='/images/media-floppy.png' alt='?FLOPPY' /></td>
-		<td class='base'>$Lang::tr{'download certificate'}</td>
-		<td>&nbsp; &nbsp; <img src='/images/openvpn.png' alt='?RELOAD'/></td>
-		<td class='base'>$Lang::tr{'dl client arch'}</td>
-		<td>&nbsp; &nbsp; <img src='/images/qr-code.png' alt='$Lang::tr{'show otp qrcode'}'/></td>
-		<td class='base'>$Lang::tr{'show otp qrcode'}</td>
-		</tr>
-    </table><br>
+       </tr>
+       </table><br>
 END
     ;
     }
