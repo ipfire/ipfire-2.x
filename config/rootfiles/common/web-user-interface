@@ -235,6 +235,7 @@ srv/web/ipfire/html/images/off.gif
 srv/web/ipfire/html/images/on.gif
 srv/web/ipfire/html/images/openvpn.gif
 srv/web/ipfire/html/images/openvpn.png
+srv/web/ipfire/html/images/openvpn_encrypted.png
 srv/web/ipfire/html/images/package-x-generic.png
 srv/web/ipfire/html/images/printer-error.png
 srv/web/ipfire/html/images/printer.png
