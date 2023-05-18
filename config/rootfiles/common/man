@@ -8,10 +8,10 @@
 #usr/bin/manpath
 #usr/bin/whatis
 #usr/lib/man-db
-#usr/lib/man-db/libman-2.10.2.so
+#usr/lib/man-db/libman-2.11.2.so
 #usr/lib/man-db/libman.la
 #usr/lib/man-db/libman.so
-#usr/lib/man-db/libmandb-2.10.2.so
+#usr/lib/man-db/libmandb-2.11.2.so
 #usr/lib/man-db/libmandb.la
 #usr/lib/man-db/libmandb.so
 #usr/libexec/man-db
@@ -53,7 +53,9 @@
 #usr/share/locale/it/LC_MESSAGES/man-db.mo
 #usr/share/locale/ja/LC_MESSAGES/man-db-gnulib.mo
 #usr/share/locale/ja/LC_MESSAGES/man-db.mo
+#usr/share/locale/ka/LC_MESSAGES/man-db-gnulib.mo
 #usr/share/locale/ko/LC_MESSAGES/man-db-gnulib.mo
+#usr/share/locale/ko/LC_MESSAGES/man-db.mo
 #usr/share/locale/ms/LC_MESSAGES/man-db-gnulib.mo
 #usr/share/locale/nb/LC_MESSAGES/man-db-gnulib.mo
 #usr/share/locale/nl/LC_MESSAGES/man-db-gnulib.mo
