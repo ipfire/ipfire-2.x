@@ -89,16 +89,18 @@ rm -rvf \
 	/boot/dtb-* \
 	/lib/modules
 
-# Remove powertop add-on, if installed
-if [ -e "/opt/pakfire/db/installed/meta-powertop" ]; then
-	for i in $(</opt/pakfire/db/rootfiles/powertop); do
-		rm -rfv "/${i}"
-	done
-fi
-rm -vf \
-	/opt/pakfire/db/installed/meta-powertop \
-	/opt/pakfire/db/meta/meta-powertop \
-	/opt/pakfire/db/rootfiles/powertop
+# Remove any dropped add-ons, if installed
+for package in powertop python3-attr python3-pkgconfig; do
+        if [ -e "/opt/pakfire/db/installed/meta-${package}" ]; then
+		stop_service "${package}"
+		for i in $(</opt/pakfire/db/rootfiles/${package}); do
+			rm -rfv "/${i}"
+		done
+        fi
+        rm -f "/opt/pakfire/db/installed/meta-${package}"
+        rm -f "/opt/pakfire/db/meta/meta-${package}"
+        rm -f "/opt/pakfire/db/rootfiles/${package}"
+done
 
 # Extract files
 extract_files
