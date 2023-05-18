@@ -30,7 +30,6 @@ etc/rc.d/init.d/halt
 etc/rc.d/init.d/ipsec
 etc/rc.d/init.d/leds
 etc/rc.d/init.d/localnet
-etc/rc.d/init.d/lvmetad
 etc/rc.d/init.d/modules
 etc/rc.d/init.d/mountfs
 etc/rc.d/init.d/mountkernfs
