@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.15.4
+VER        = 1.20.4
 
 THISAPP    = go-$(VER)
 DL_FILE    = go$(VER).$(GOOS)-$(GOARCH).tar.gz
@@ -41,8 +41,8 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-go$(VER).$(GOOS)-arm64.tar.gz_BLAKE2 = ef1708965bcd415fdad498e27729d0259f83e16a542f37dae1fb70f71127dfa0cb8570e4896474e6a94bb461e16ff8000e8072bc731c637fce5f384227359e14
-go$(VER).$(GOOS)-amd64.tar.gz_BLAKE2 = d200046147e31fac1a754fc34ac4a5043414a1d6e90aa3387c933c395acede0b8d5b797affaa85c2188af4d15566b4fcd08108350fe73ed90b1c305600c655c9
+go$(VER).$(GOOS)-arm64.tar.gz_BLAKE2 = 330336e36ebc7cb8666159256ff6dce965465195db84e29467fe0ffa79b1fa1b698d8751df73bec1cd7d04b528d9d6a9cad259f6ad5036eb89212ebc3e91b686
+go$(VER).$(GOOS)-amd64.tar.gz_BLAKE2 = 38cca2ef6d5b9f2ef8c3cef6726930be790bde5ee8693a22f15cad2d96212967c52de9361c996f0a7a91f3b28de83e40a9eca3618167bb1340978daf5e104cdf
 
 install : $(TARGET)
 
