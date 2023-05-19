@@ -10,6 +10,7 @@ etc/security
 #etc/security/namespace.d
 #etc/security/namespace.init
 #etc/security/pam_env.conf
+#etc/security/pwhistory.conf
 #etc/security/time.conf
 #lib/security
 #lib/security/faillock
@@ -42,8 +43,6 @@ lib/security/pam_group.so
 lib/security/pam_issue.so
 #lib/security/pam_keyinit.la
 lib/security/pam_keyinit.so
-#lib/security/pam_lastlog.la
-#lib/security/pam_lastlog.so
 #lib/security/pam_limits.la
 lib/security/pam_limits.so
 #lib/security/pam_listfile.la
@@ -187,6 +186,7 @@ usr/lib/libpamc.so.0.82.1
 #usr/share/man/man5/pam.conf.5
 #usr/share/man/man5/pam.d.5
 #usr/share/man/man5/pam_env.conf.5
+#usr/share/man/man5/pwhistory.conf.5
 #usr/share/man/man5/time.conf.5
 #usr/share/man/man8/PAM.8
 #usr/share/man/man8/faillock.8
@@ -205,7 +205,6 @@ usr/lib/libpamc.so.0.82.1
 #usr/share/man/man8/pam_group.8
 #usr/share/man/man8/pam_issue.8
 #usr/share/man/man8/pam_keyinit.8
-#usr/share/man/man8/pam_lastlog.8
 #usr/share/man/man8/pam_limits.8
 #usr/share/man/man8/pam_listfile.8
 #usr/share/man/man8/pam_localuser.8
