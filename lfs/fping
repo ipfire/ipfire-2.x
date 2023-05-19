@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A program to ping multiple hosts
 
-VER        = 5.0
+VER        = 5.1
 
 THISAPP    = fping-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = fping
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       = ""
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 6dbb6708ecb55c1f1281bcd9e298475a1ad3a21aa81d8488b61cb39ad07d1d7285247a3c39883cbaae0b1a0e4403b6340ea7ec43411b81546f0e8eeefb02ef88
+$(DL_FILE)_BLAKE2 = 2fb344e650b5a359fb8780f2c599455d39405ae823edf695ee4385aa2661dc5811e088bafa1b9f53846ee90c0afa959a92832381a03346d1fda048eb4e7ee098
 
 install : $(TARGET)
 
