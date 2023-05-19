@@ -1,6 +1,21 @@
 ###############################################################################
-# IPFire.org    - An Open Source Firewall Solution                            #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
 ###############################################################################
 
 ###############################################################################
@@ -11,15 +26,15 @@ include Config
 
 SUMMARY    = Tool to load and stress a computer
 
-VER        = 1.0.5
+VER        = 1.0.7
 
 THISAPP    = stress-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = stress
-PAK_VER    = 2
+PAK_VER    = 3
 
 DEPS       =
 
@@ -33,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 7bc4a1d7739828ccd4b58c814e8ded42cddbd0b226bb29e916fe220835bcfa9dcdb86191bb321247aa98bd0e58791556713770bdeda5dad399aa61f2703a766c
+$(DL_FILE)_BLAKE2 = c425134be47715ea5d50c56eea20f211f79feecccc73823f38c3a0f3fc1ee612ee6b6fcd07045f888ce6f1cb762a7ae42fe9003b91fe43451eabae17d918bdfc
 
 install : $(TARGET)
 
@@ -65,7 +80,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure --prefix=/usr
 	cd $(DIR_APP) && make $(MAKETUNING)
