@@ -2,9 +2,5 @@ usr/bin/wavemon
 #usr/share/man/man1/wavemon.1
 #usr/share/man/man5/wavemonrc.5
 #usr/share/wavemon
-#usr/share/wavemon/AUTHORS
-#usr/share/wavemon/COPYING
-#usr/share/wavemon/ChangeLog
-#usr/share/wavemon/NEWS
-#usr/share/wavemon/README
-#usr/share/wavemon/THANKS
+#usr/share/wavemon/LICENSE
+#usr/share/wavemon/README.md

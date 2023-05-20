@@ -1,0 +1,11 @@
+--- wavemon-0.9.4/Makefile.in.orig	2021-09-18 02:25:37.000000000 +0200
++++ wavemon-0.9.4/Makefile.in	2023-05-19 23:45:50.170559365 +0200
+@@ -9,7 +9,7 @@
+ install-suid-root: exec_perms = 4755
+ 
+ CC	 ?= @CC@
+-CFLAGS	 ?= @CFLAGS@ @LIBNL3_CLI_CFLAGS@
++CFLAGS	 = @CFLAGS@ @LIBNL3_CLI_CFLAGS@
+ CPPFLAGS ?= @CPPFLAGS@
+ LDFLAGS  ?= @LDFLAGS@
+ DEFS	 ?= @DEFS@
