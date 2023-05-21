@@ -160,7 +160,7 @@ usr/lib/libcrypto.so.3
 usr/lib/libssl.so
 usr/lib/libssl.so.3
 #usr/lib/ossl-modules
-#usr/lib/ossl-modules/legacy.so
+usr/lib/ossl-modules/legacy.so
 #usr/lib/pkgconfig/libcrypto.pc
 #usr/lib/pkgconfig/libssl.pc
 #usr/lib/pkgconfig/openssl.pc
