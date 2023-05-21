@@ -2227,7 +2227,7 @@ else
 
 		# Extract the certificate
 		# This system call is safe, because all arguments are passed as an array.
-		system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
+		system('/usr/bin/openssl', 'pkcs12', '-legacy', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
 			'-clcerts', '-nokeys', '-nodes', '-out', "$file_crt" , '-passin', 'pass:');
 		if ($?) {
 			die "openssl error: $?";
@@ -2238,7 +2238,7 @@ else
 
 		# Extract the key
 		# This system call is safe, because all arguments are passed as an array.
-		system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
+		system('/usr/bin/openssl', 'pkcs12', '-legacy', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
 			'-nocerts', '-nodes', '-out', "$file_key", '-passin', 'pass:');
 		if ($?) {
 			die "openssl error: $?";
