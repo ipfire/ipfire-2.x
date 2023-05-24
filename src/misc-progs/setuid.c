@@ -104,16 +104,20 @@ static int system_core(char* command, char** args, uid_t uid, gid_t gid, char *e
 		}
 
 		default: /* parent */
-			do {
-				if (waitpid(pid, &status, 0) == -1) {
-					if (errno != EINTR)
-						return -1;
-					} else {
-						return status;
-					}
-			} while (1);
-	}
+			// Wait until the child process has finished
+			waitpid(pid, &status, 0);
 
+			// The child was terminated by a signal
+			if (WIFSIGNALED(status))
+				 return 128 + WTERMSIG(status);
+
+			// Return the exit code if available
+			if (WIFEXITED(status))
+				return WEXITSTATUS(status);
+
+			// Something unexpected happened, exiting with error
+			return EXIT_FAILURE;
+	}
 }
 
 int run(char* command, char** argv) {
