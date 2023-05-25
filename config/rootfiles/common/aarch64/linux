@@ -5284,6 +5284,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/drivers/platform/x86/dell/Makefile
 #lib/modules/KVER-ipfire/build/drivers/platform/x86/dell/dell-wmi-sysman
 #lib/modules/KVER-ipfire/build/drivers/platform/x86/dell/dell-wmi-sysman/Makefile
+#lib/modules/KVER-ipfire/build/drivers/platform/x86/hp
+#lib/modules/KVER-ipfire/build/drivers/platform/x86/hp/Kconfig
+#lib/modules/KVER-ipfire/build/drivers/platform/x86/hp/Makefile
 #lib/modules/KVER-ipfire/build/drivers/platform/x86/intel
 #lib/modules/KVER-ipfire/build/drivers/platform/x86/intel/Kconfig
 #lib/modules/KVER-ipfire/build/drivers/platform/x86/intel/Makefile

@@ -24,7 +24,7 @@
 
 include Config
 
-VER         = 6.1.29
+VER         = 6.1.30
 
 ARM_PATCHES = 6.1.y-ipfire2
 
@@ -76,7 +76,7 @@ objects = \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_BLAKE2 = b6cf62bc9f1a9120f04857911e2a8fcf3fc5416f55b7d7bc61ded730941220f6f3202d1a86e14dc9f38f6dd40ef7614d52126d9089ccd0cc1eda144df6b102ba
+$(DL_FILE)_BLAKE2 = d3c4cda0bbd978ad7e39a44e03789f38b7a48a92405312f90fd944a670ca438e1dd212af2b075820896b25405027be92071dbd24455331de742aa5c9f2ac3407
 arm-multi-patches-$(ARM_PATCHES).patch.xz_BLAKE2 = 7afc460562fb24bcd75784fc79de768f9b60780aedd88d1a847927169e31920bbb475b1ac1466c4a224a7876d16bd8d465b96202de12b74f6e2ccbfcec731ad3
 
 install : $(TARGET)

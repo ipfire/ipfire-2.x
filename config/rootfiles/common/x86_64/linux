@@ -5119,6 +5119,9 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/drivers/platform/x86/dell/Makefile
 #lib/modules/KVER-ipfire/build/drivers/platform/x86/dell/dell-wmi-sysman
 #lib/modules/KVER-ipfire/build/drivers/platform/x86/dell/dell-wmi-sysman/Makefile
+#lib/modules/KVER-ipfire/build/drivers/platform/x86/hp
+#lib/modules/KVER-ipfire/build/drivers/platform/x86/hp/Kconfig
+#lib/modules/KVER-ipfire/build/drivers/platform/x86/hp/Makefile
 #lib/modules/KVER-ipfire/build/drivers/platform/x86/intel
 #lib/modules/KVER-ipfire/build/drivers/platform/x86/intel/Kconfig
 #lib/modules/KVER-ipfire/build/drivers/platform/x86/intel/Makefile
@@ -8141,7 +8144,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/HPWDT_NMI_DECODING
 #lib/modules/KVER-ipfire/build/include/config/HP_ILO
 #lib/modules/KVER-ipfire/build/include/config/HP_WATCHDOG
-#lib/modules/KVER-ipfire/build/include/config/HP_WMI
 #lib/modules/KVER-ipfire/build/include/config/HSI
 #lib/modules/KVER-ipfire/build/include/config/HSI_BOARDINFO
 #lib/modules/KVER-ipfire/build/include/config/HSI_CHAR
@@ -21711,7 +21713,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/platform/x86/fujitsu-laptop.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/platform/x86/gigabyte-wmi.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/platform/x86/hdaps.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/platform/x86/hp-wmi.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/platform/x86/ideapad-laptop.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/platform/x86/intel
 #lib/modules/KVER-ipfire/kernel/drivers/platform/x86/intel/intel-rst.ko.xz
