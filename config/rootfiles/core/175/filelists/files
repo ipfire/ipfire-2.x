@@ -85,6 +85,5 @@ lib/firmware/rtw89/rtw8852b_fw-1.bin
 srv/web/ipfire/cgi-bin/backup.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
-srv/web/ipfire/html/images/openvpn_encrypted.png
 usr/lib/dracut/dracut.conf.d/ipfire.conf
 usr/lib/firewall/rules.pl
