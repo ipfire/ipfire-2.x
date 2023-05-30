@@ -3617,6 +3617,7 @@ usr/lib/ossl-modules/legacy.so
 #usr/share/man/man3/OSSL_CMP_MSG_http_perform.3ossl
 #usr/share/man/man3/OSSL_CMP_MSG_it.3ossl
 #usr/share/man/man3/OSSL_CMP_MSG_read.3ossl
+#usr/share/man/man3/OSSL_CMP_MSG_update_recipNonce.3ossl
 #usr/share/man/man3/OSSL_CMP_MSG_update_transactionID.3ossl
 #usr/share/man/man3/OSSL_CMP_MSG_write.3ossl
 #usr/share/man/man3/OSSL_CMP_P10CR.3ossl

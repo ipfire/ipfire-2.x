@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.1.0
+VER        = 3.1.1
 
 THISAPP    = openssl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -70,7 +70,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 9212a7fb13f6dee7746721ee406af56ae1b48ec58974c002465d2b0205839eb5ee0483383aa9924fc3e4168ebd34e1a5819480cf10aa318994d7171e54c07108
+$(DL_FILE)_BLAKE2 = 094f7e28f16de6528016fcd21df1d7382b0dbdcd80ec469d37add9c37f638c059dda3ffb4415eba890a33d146ddc9016bcc7192df101c73be5e70faf6e3b1097
 
 install : $(TARGET)
 
