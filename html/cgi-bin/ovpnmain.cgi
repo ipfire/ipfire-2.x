@@ -505,7 +505,7 @@ sub modccdnet
 	my %ccdhash=();
 
 	# Check if the new name is valid.
-	if(!&General::validhostname($newname)) {
+	if(!&General::validccdname($newname)) {
 		$errormessage=$Lang::tr{'ccd err invalidname'};
 		return;
 	}
