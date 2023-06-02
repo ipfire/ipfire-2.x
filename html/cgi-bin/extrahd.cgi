@@ -103,7 +103,7 @@ END
 }
 elsif ($extrahdsettings{'ACTION'} eq $Lang::tr{'delete'})
 {
-	if ( &General::system("/usr/local/bin/extrahdctrl", "umount", "$extrahdsettings{'PATH'}")) {
+	if ( ! &General::system("/usr/local/bin/extrahdctrl", "umount", "$extrahdsettings{'PATH'}")) {
 		open( FILE, "< $devicefile" ) or die "Unable to read $devicefile";
 		@tmp = <FILE>;
 		close FILE;
