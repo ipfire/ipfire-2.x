@@ -1115,6 +1115,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print CLIENTCONF "# Activate Management Interface and Port\n";
   if ($cgiparams{'OVPN_MGMT'} eq '') {print CLIENTCONF "management localhost $cgiparams{'DEST_PORT'}\n"}
   else {print CLIENTCONF "management localhost $cgiparams{'OVPN_MGMT'}\n"};
+  print CLIENTCONF "providers legacy default\n";
   close(CLIENTCONF);
 
 }
@@ -1648,7 +1649,7 @@ END
 		goto ROOTCERT_ERROR;
 	    }
 	} else {	# child
-	    unless (exec ('/usr/bin/openssl', 'pkcs12', '-cacerts', '-nokeys',
+	    unless (exec ('/usr/bin/openssl', 'pkcs12', '-legacy', '-cacerts', '-nokeys',
 		    '-in', $filename,
 		    '-out', "$tempdir/cacert.pem")) {
 		$errormessage = "$Lang::tr{'cant start openssl'}: $!";
@@ -1671,7 +1672,7 @@ END
 		goto ROOTCERT_ERROR;
 	    }
 	} else {	# child
-	    unless (exec ('/usr/bin/openssl', 'pkcs12', '-clcerts', '-nokeys',
+	    unless (exec ('/usr/bin/openssl', 'pkcs12', '-legacy', '-clcerts', '-nokeys',
 		    '-in', $filename,
 		    '-out', "$tempdir/hostcert.pem")) {
 		$errormessage = "$Lang::tr{'cant start openssl'}: $!";
@@ -1694,7 +1695,7 @@ END
 		goto ROOTCERT_ERROR;
 	    }
 	} else {	# child
-	    unless (exec ('/usr/bin/openssl', 'pkcs12', '-nocerts',
+	    unless (exec ('/usr/bin/openssl', 'pkcs12', '-legacy', '-nocerts',
 		    '-nodes',
 		    '-in', $filename,
 		    '-out', "$tempdir/serverkey.pem")) {
@@ -2156,6 +2157,7 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    if ($confighash{$cgiparams{'KEY'}}[22] eq '') {print CLIENTCONF "management localhost $confighash{$cgiparams{'KEY'}}[29]\n"}
     else {print CLIENTCONF "management localhost $confighash{$cgiparams{'KEY'}}[22]\n"};
    print CLIENTCONF "# remsub $confighash{$cgiparams{'KEY'}}[11]\n";
+   print CLIENTCONF "providers legacy default\n";
 
 
     close(CLIENTCONF);
@@ -3296,6 +3298,7 @@ END
 	print FILE "# Logfile\n";
 	print FILE "status-version 1\n";
 	print FILE "status /var/run/openvpn/$n2nname[0]-n2n 10\n";
+	print FILE "providers legacy default\n";
 	close FILE;
 
 	unless(move("$tempdir/$uplconffilename", "${General::swroot}/ovpn/n2nconf/$n2nname[0]/$uplconffilename2")) {
@@ -4242,7 +4245,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 
 	    # Create the pkcs12 file
 	    # The system call is safe, because all arguments are passed as an array.
-	    system('/usr/bin/openssl', 'pkcs12', '-export',
+	    system('/usr/bin/openssl', 'pkcs12', '-legacy', '-export',
 		'-inkey', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}key.pem",
 		'-in', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem",
 		'-name', $cgiparams{'NAME'},
