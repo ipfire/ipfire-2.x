@@ -177,6 +177,20 @@ if [ -e /boot/pakfire-kernel-update ]; then
     /boot/pakfire-kernel-update ${KVER}
 fi
 
+## Add providers legacy default line to n2n client config files
+# Check if ovpnconfig exists and is not empty
+if [ -s /var/ipfire/ovpn/ovpnconfig ]; then
+       # Identify all n2n connections
+       for y in $(awk -F',' '/net/ { print $3 }' /var/ipfire/ovpn/ovpnconfig); do
+           # Add the legacy option to all N2N client conf files
+		if [ $(grep -c "Open VPN Client Config" /var/ipfire/ovpn/n2nconf/${y}/${y}.conf) -eq 1 ] ; then
+			if [ $(grep -c "providers legacy default" /var/ipfire/ovpn/n2nconf/${y}/${y}.conf) -eq 0 ] ; then
+				echo "providers legacy default" >> /var/ipfire/ovpn/n2nconf/${y}/${y}.conf
+			fi
+		fi
+       done
+fi
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
