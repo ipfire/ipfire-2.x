@@ -112,11 +112,6 @@ case "${1}" in
 					boot_mesg "Growing root partition to maximum size..."
 					echo -e ',+' | sfdisk --no-reread -f -N${part_num} "${root_dev}" 2>/dev/null
 
-					# Update c,h,s values of the boot partition...
-					if [ ${part_num} -ne 1 -a -b "${root_dev}1" ]; then
-						echo -e ',' | sfdisk --no-reread -f -N1 ${DRV} &> /dev/null
-					fi
-
 					# The filesystem should be resized after
 					# this operation
 					touch /.resizefs
