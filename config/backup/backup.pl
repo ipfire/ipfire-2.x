@@ -189,6 +189,21 @@ restore_backup() {
 
 	# Update OpenVPN CRL
 	/etc/fcron.daily/openvpn-crl-updater
+	
+	# Update OpenVPN N2N Client Configs
+	## Add providers legacy default line to n2n client config files
+	# Check if ovpnconfig exists and is not empty
+	if [ -s /var/ipfire/ovpn/ovpnconfig ]; then
+	       # Identify all n2n connections
+	       for y in $(awk -F',' '/net/ { print $3 }' /var/ipfire/ovpn/ovpnconfig); do
+	           # Add the legacy option to all N2N client conf files if it does not already exist
+			if [ $(grep -c "Open VPN Client Config" /var/ipfire/ovpn/n2nconf/${y}/${y}.conf) -eq 1 ] ; then
+				if [ $(grep -c "providers legacy default" /var/ipfire/ovpn/n2nconf/${y}/${y}.conf) -eq 0 ] ; then
+					echo "providers legacy default" >> /var/ipfire/ovpn/n2nconf/${y}/${y}.conf
+				fi
+			fi
+	       done
+	fi
 
 	return 0
 }
