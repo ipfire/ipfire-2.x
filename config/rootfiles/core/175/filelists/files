@@ -87,3 +87,4 @@ srv/web/ipfire/cgi-bin/logs.cgi/log.dat
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 usr/lib/dracut/dracut.conf.d/ipfire.conf
 usr/lib/firewall/rules.pl
+var/ipfire/backup/bin/backup.pl
