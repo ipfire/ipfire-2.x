@@ -191,6 +191,9 @@ if [ -s /var/ipfire/ovpn/ovpnconfig ]; then
        done
 fi
 
+## Add unique_subject = yes to vpn index.txt.attr file
+echo "unique_subject = yes" > /var/ipfire/certs/index.txt.attr
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
