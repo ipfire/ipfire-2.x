@@ -138,6 +138,17 @@ unless (-e "$local_clientconf") {
 ###
 ### Useful functions
 ###
+sub iscertlegacy
+{
+	my $file=$_[0];
+	my @certinfo = &General::system_output("/usr/bin/openssl", "pkcs12", "-info", "-nodes", 
+	"-in", "$file.p12", "-noout", "-passin", "pass:''");
+	if (index ($certinfo[0], "MAC: sha1") != -1) {
+		return 0;
+	}
+	return 1;
+}
+
 sub haveOrangeNet
 {
 	if ($netsettings{'CONFIG_TYPE'} == 2) {return 1;}
@@ -1115,7 +1126,9 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print CLIENTCONF "# Activate Management Interface and Port\n";
   if ($cgiparams{'OVPN_MGMT'} eq '') {print CLIENTCONF "management localhost $cgiparams{'DEST_PORT'}\n"}
   else {print CLIENTCONF "management localhost $cgiparams{'OVPN_MGMT'}\n"};
-  print CLIENTCONF "providers legacy default\n";
+  if (&iscertlegacy("${General::swroot}/ovpn/certs/$cgiparams{'NAME'}")) {
+    	print CLIENTCONF "providers legacy default\n";
+  }
   close(CLIENTCONF);
 
 }
@@ -1649,7 +1662,7 @@ END
 		goto ROOTCERT_ERROR;
 	    }
 	} else {	# child
-	    unless (exec ('/usr/bin/openssl', 'pkcs12', '-legacy', '-cacerts', '-nokeys',
+	    unless (exec ('/usr/bin/openssl', 'pkcs12', '-cacerts', '-nokeys',
 		    '-in', $filename,
 		    '-out', "$tempdir/cacert.pem")) {
 		$errormessage = "$Lang::tr{'cant start openssl'}: $!";
@@ -1672,7 +1685,7 @@ END
 		goto ROOTCERT_ERROR;
 	    }
 	} else {	# child
-	    unless (exec ('/usr/bin/openssl', 'pkcs12', '-legacy', '-clcerts', '-nokeys',
+	    unless (exec ('/usr/bin/openssl', 'pkcs12', '-clcerts', '-nokeys',
 		    '-in', $filename,
 		    '-out', "$tempdir/hostcert.pem")) {
 		$errormessage = "$Lang::tr{'cant start openssl'}: $!";
@@ -1695,7 +1708,7 @@ END
 		goto ROOTCERT_ERROR;
 	    }
 	} else {	# child
-	    unless (exec ('/usr/bin/openssl', 'pkcs12', '-legacy', '-nocerts',
+	    unless (exec ('/usr/bin/openssl', 'pkcs12', '-nocerts',
 		    '-nodes',
 		    '-in', $filename,
 		    '-out', "$tempdir/serverkey.pem")) {
@@ -2157,7 +2170,10 @@ if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
    if ($confighash{$cgiparams{'KEY'}}[22] eq '') {print CLIENTCONF "management localhost $confighash{$cgiparams{'KEY'}}[29]\n"}
     else {print CLIENTCONF "management localhost $confighash{$cgiparams{'KEY'}}[22]\n"};
    print CLIENTCONF "# remsub $confighash{$cgiparams{'KEY'}}[11]\n";
-   print CLIENTCONF "providers legacy default\n";
+  if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
+    	print CLIENTCONF "providers legacy default\n";
+  }
+
 
 
     close(CLIENTCONF);
@@ -2229,10 +2245,18 @@ else
 
 		# Extract the certificate
 		# This system call is safe, because all arguments are passed as an array.
-		system('/usr/bin/openssl', 'pkcs12', '-legacy', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
-			'-clcerts', '-nokeys', '-nodes', '-out', "$file_crt" , '-passin', 'pass:');
-		if ($?) {
-			die "openssl error: $?";
+		if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
+			system('/usr/bin/openssl', 'pkcs12', '-legacy', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
+				'-clcerts', '-nokeys', '-nodes', '-out', "$file_crt" , '-passin', 'pass:');
+			if ($?) {
+				die "openssl error: $?";
+			}
+		} else {
+			system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
+				'-clcerts', '-nokeys', '-nodes', '-out', "$file_crt" , '-passin', 'pass:');
+			if ($?) {
+				die "openssl error: $?";
+			}
 		}
 
 		$zip->addFile("$file_crt", "$confighash{$cgiparams{'KEY'}}[1].pem") or die;
@@ -2240,10 +2264,18 @@ else
 
 		# Extract the key
 		# This system call is safe, because all arguments are passed as an array.
-		system('/usr/bin/openssl', 'pkcs12', '-legacy', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
-			'-nocerts', '-nodes', '-out', "$file_key", '-passin', 'pass:');
-		if ($?) {
-			die "openssl error: $?";
+		if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
+			system('/usr/bin/openssl', 'pkcs12', '-legacy', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
+				'-nocerts', '-nodes', '-out', "$file_key", '-passin', 'pass:');
+			if ($?) {
+				die "openssl error: $?";
+			}
+		} else {
+			system('/usr/bin/openssl', 'pkcs12', '-in', "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12",
+				'-nocerts', '-nodes', '-out', "$file_key", '-passin', 'pass:');
+			if ($?) {
+				die "openssl error: $?";
+			}
 		}
 
 		$zip->addFile("$file_key", "$confighash{$cgiparams{'KEY'}}[1].key") or die;
@@ -2301,6 +2333,11 @@ else
 
     # If the server is asking for TOTP this needs to happen interactively
     print CLIENTCONF "auth-retry interact\r\n";
+
+    # Add provider line if certificate is legacy type
+    if (&iscertlegacy("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]")) {
+	print CLIENTCONF "providers legacy default\r\n";
+    }
 
     if ($include_certs) {
 	print CLIENTCONF "\r\n";
@@ -3298,7 +3335,10 @@ END
 	print FILE "# Logfile\n";
 	print FILE "status-version 1\n";
 	print FILE "status /var/run/openvpn/$n2nname[0]-n2n 10\n";
-	print FILE "providers legacy default\n";
+	if (&iscertlegacy("${General::swroot}/ovpn/certs/$cgiparams{'n2nname'}")) {
+	    	print CLIENTCONF "providers legacy default\n";
+	}
+
 	close FILE;
 
 	unless(move("$tempdir/$uplconffilename", "${General::swroot}/ovpn/n2nconf/$n2nname[0]/$uplconffilename2")) {
@@ -4245,7 +4285,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 
 	    # Create the pkcs12 file
 	    # The system call is safe, because all arguments are passed as an array.
-	    system('/usr/bin/openssl', 'pkcs12', '-legacy', '-export',
+	    system('/usr/bin/openssl', 'pkcs12', '-export',
 		'-inkey', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}key.pem",
 		'-in', "${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem",
 		'-name', $cgiparams{'NAME'},
