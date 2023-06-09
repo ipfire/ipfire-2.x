@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A BitTorrent client with multiple UIs
 
-VER        = 3.00
+VER        = 4.0.3
 
 THISAPP    = transmission-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,13 +34,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = transmission
-PAK_VER    = 18
+PAK_VER    = 19
 
 DEPS       =
 
 SERVICES   = transmission
-
-CXXFLAGS  += -fno-exceptions
 
 ###############################################################################
 # Top-level Rules
@@ -50,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 108c9acb8e8cb9c037ea96ca25f32c8421a6981b613399c73e2cd597dd1b529409329fa3c327630c164db05d8b3da81e634941bca08c7e258bb2d283782b9906
+$(DL_FILE)_BLAKE2 = 3d58f002d57458869e143e4a3617c8992e51a01f15f0e17031bc2913f404a455cde3397bde404f84a2234d12411e99b2902e4213ca6811b95288bb68f9b98553
 
 install : $(TARGET)
 
@@ -83,7 +81,10 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-static
+	cd $(DIR_APP) && cmake . \
+			-DCMAKE_INSTALL_PREFIX=/usr \
+			-DCMAKE_BUILD_TYPE=Release \
+			-DINSTALL_DOC=OFF
 	cd $(DIR_APP) && make $(MAKETUNING) $(EXTRA_MAKE)
 	cd $(DIR_APP) && make install
 
