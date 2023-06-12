@@ -144,9 +144,9 @@ sub iscertlegacy
 	my @certinfo = &General::system_output("/usr/bin/openssl", "pkcs12", "-info", "-nodes", 
 	"-in", "$file.p12", "-noout", "-passin", "pass:''");
 	if (index ($certinfo[0], "MAC: sha1") != -1) {
-		return 0;
+		return 1;
 	}
-	return 1;
+	return 0;
 }
 
 sub haveOrangeNet
