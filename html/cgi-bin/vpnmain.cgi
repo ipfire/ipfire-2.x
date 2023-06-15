@@ -870,6 +870,8 @@ END
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'generate root/host certificates'} ||
 	$cgiparams{'ACTION'} eq $Lang::tr{'upload p12 file'}) {
 
+	&newcleanssldatabase();
+
 	if (-f "${General::swroot}/ca/cacert.pem") {
 		$errormessage = $Lang::tr{'valid root certificate already exists'};
 		goto ROOTCERT_SKIP;
