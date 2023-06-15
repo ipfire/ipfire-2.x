@@ -36,6 +36,10 @@ done
 # Extract files
 extract_files
 
+# Remove files
+rm -vf \
+	/usr/bin/gawk-5.1.1
+
 # update linker config
 ldconfig
 
