@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.9.0
+VER        = 3.10.0
 
 THISAPP    = pciutils-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 59d2a151b114691980b8f0a0bfdf8e48b9e1a0a9976df6dbc94962c251d8bfc61e7bd3b0f3c47a4295f52b5df67ad0e44ed6f2e6a87728e213e4ef0b8a55c028
+$(DL_FILE)_BLAKE2 = 2e1255eb5508c9d1339f5bc772c2592a03cae4d8d097e8939748c9bb5d5d949be53d705d1b7d903f7ea88b2abeea91e39de16e39d2f46f0a1f62f8a9e32c6faa
 
 install : $(TARGET)
 
