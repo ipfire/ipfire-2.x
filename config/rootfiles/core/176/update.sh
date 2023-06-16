@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/suricata stop
 
 # Extract files
 extract_files
@@ -50,6 +51,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/suricata start
 
 # Rebuild initial ramdisk to apply microcode updates
 dracut --regenerate-all --force
