@@ -40,6 +40,7 @@ extract_files
 # Remove files
 rm -vf \
 	/usr/bin/gawk-5.1.1
+	/lib/udev/rules.d/69-dm-lvm-metad.rules
 
 # update linker config
 ldconfig
