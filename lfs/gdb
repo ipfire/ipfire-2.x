@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 12.1
+VER        = 13.2
 
 THISAPP    = gdb-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 7f6f853d1640908cf2c79932cdc1ba02549a07721c005d9c7ce2946a715761719cc164a4e68235a18664ec8a029afe3a2a0cfb57e1635f280076d6bed91317fd
+$(DL_FILE)_BLAKE2 = bf5216ba2286448a46f9e0a405367c5a678e6d7540204722d355b618018b7b75a2ebc5b51353304c5ded02a3979223a81781d305f5afa5be82516cdc2863d49f
 
 install : $(TARGET)
 
@@ -70,7 +70,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/gdb-readline8.2.patch
 	cd $(DIR_APP) && mkdir -pv build
 	cd $(DIR_APP)/build && \
 		../configure \

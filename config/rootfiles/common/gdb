@@ -2,10 +2,14 @@
 #usr/bin/gdb
 #usr/bin/gdb-add-index
 #usr/bin/gdbserver
+#usr/bin/run
 #usr/include/gdb
 #usr/include/gdb/jit-reader.h
+#usr/include/sim
+#usr/include/sim/callback.h
+#usr/include/sim/sim.h
 #usr/lib/libinproctrace.so
-#usr/share/gdb
+#usr/lib/libsim.a
 #usr/share/gdb/python
 #usr/share/gdb/python/gdb
 #usr/share/gdb/python/gdb/FrameDecorator.py
@@ -20,6 +24,7 @@
 #usr/share/gdb/python/gdb/command/type_printers.py
 #usr/share/gdb/python/gdb/command/unwinders.py
 #usr/share/gdb/python/gdb/command/xmethods.py
+#usr/share/gdb/python/gdb/disassembler.py
 #usr/share/gdb/python/gdb/frames.py
 #usr/share/gdb/python/gdb/function
 #usr/share/gdb/python/gdb/function/__init__.py
@@ -56,7 +61,6 @@
 #usr/share/gdb/system-gdbinit/elinos.py
 #usr/share/gdb/system-gdbinit/wrs-linux.py
 #usr/share/info/annotate.info
-#usr/share/info/ctf-spec.info
 #usr/share/info/gdb.info
 #usr/share/info/gdb.info-1
 #usr/share/info/gdb.info-2
