@@ -46,24 +46,24 @@ class htb 1:10 parent 1:1 prio 0 rate 80Kbit ceil 320Kbit burst 1701b cburst 200
  lended: 230876 borrowed: 17112 giants: 0
  tokens: 127200 ctokens: 37940
 
-class htb 1:20 parent 1:1 leaf 4220prio 1 rate 100Kbit ceil 200Kbit burst 1727b cburst 1855b 
+class htb 1:20 parent 1:1 leaf 4220: prio 1 rate 100Kbit ceil 200Kbit burst 1727b cburst 1855b 
  Sent 2495181573 bytes 44034303 pkts (dropped 5837, overlimits 0) 
  lended: 43825585 borrowed: 208718 giants: 0
  tokens: 103424 ctokens: 55808
 
-class htb 1:30 parent 1:1 leaf 4230prio 3 rate 80Kbit ceil 400Kbit burst 1701b cburst 2111b 
+class htb 1:30 parent 1:1 leaf 4230: prio 3 rate 80Kbit ceil 400Kbit burst 1701b cburst 2111b 
  Sent 2060213567 bytes 5465574 pkts (dropped 121, overlimits 0) 
  rate 16851bps 35pps 
  lended: 4556992 borrowed: 908582 giants: 0
  tokens: -25364 ctokens: 32897
 
-class htb 1:50 parent 1:1 leaf 4250prio 5 rate 40Kbit ceil 120Kbit burst 1650b cburst 1752b 
+class htb 1:50 parent 1:1 leaf 4250: prio 5 rate 40Kbit ceil 120Kbit burst 1650b cburst 1752b 
  Sent 6071486687 bytes 24448436 pkts (dropped 8086739, overlimits 0) 
  rate 15801bps 85pps backlog 126p 
  lended: 8324530 borrowed: 16123780 giants: 0
  tokens: -202717 ctokens: -172499
 
-class htb 1:666 parent 1:1 leaf 666prio 7 rate 4Kbit ceil 40Kbit burst 1604b cburst 1650b 
+class htb 1:666 parent 1:1 leaf 666: prio 7 rate 4Kbit ceil 40Kbit burst 1604b cburst 1650b 
  Sent 2148626078 bytes 6771069 pkts (dropped 2078536, overlimits 0) 
  rate 5221bps 17pps backlog 125p 
  lended: 675330 borrowed: 6095613 giants: 0
@@ -94,7 +94,7 @@ sub parse_class($) {
 	my $line=$tc_output[$i];
 	# Parsing HTB:
 	# ------------
-	if ( $line =~ m/class htb (\d+):(\d+)( root| parent )?(\d+:\d+)?( leaf )?(\d+)?(prio )?(\d+)? rate (.*) ceil (.*) burst (.*) cburst (.*)/ ) {
+	if ( $line =~ m/class htb (\d+):(\d+)( root| parent )?(\d+:\d+)?( leaf )?(\d+)?:?( prio )?(\d+)? rate (.*) ceil (.*) burst (.*) cburst (.*)/ ) {
 	    my $type  = "htb";
 	    my $major = $1;
 	    my $minor = $2;
