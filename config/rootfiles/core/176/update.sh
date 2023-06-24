@@ -51,6 +51,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+telinit u
 /etc/init.d/suricata start
 
 # Rebuild initial ramdisk to apply microcode updates
