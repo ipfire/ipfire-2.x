@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.4.2
+VER        = 2.4.6
 SUMMARY    = The Common UNIX Printing System
 
 THISAPP    = cups-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/cups-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cups
-PAK_VER    = 35
+PAK_VER    = 36
 
 DEPS       = avahi cups-filters dbus ghostscript libexif
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 97053feb502d4fdc28810b806000b6c84a6795d5adcec0789e73e5477d5802d46a99381366d16219f627166df088f6decde5c144bd0c38b5745815dc1e426bc5
+$(DL_FILE)_BLAKE2 = 4e61112ddaa46f20b1cfcb8f523dd07ba7d82604b9857754b288a2a9c5bc50ce242cfa119867347e4696818dc2eb505cf7fff1f9a0634e314edb2500395b83e4
 
 install : $(TARGET)
 
@@ -80,8 +80,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cups-2.4.2_Fix_default_cupsd_keychain_with_OpenSSL.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cups-2.4.2_Fix_TLS_certificate_generation_bugs_with_openssl.patch
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && \
 		./configure \
