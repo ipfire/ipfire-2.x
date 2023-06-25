@@ -1,4 +1,5 @@
 etc/rc.d/init.d/partresize
+lib/udev/rules.d/69-dm-lvm.rules
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 var/ipfire/qos/bin/parse-func.pl
