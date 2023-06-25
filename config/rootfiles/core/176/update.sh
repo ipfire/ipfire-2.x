@@ -33,6 +33,7 @@ done
 
 # Stop services
 /etc/init.d/suricata stop
+/etc/rc.d/init.d/ipsec stop
 
 # Extract files
 extract_files
@@ -58,6 +59,9 @@ ldconfig
 # Start services
 telinit u
 /etc/init.d/suricata start
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/rc.d/init.d/ipsec start
+fi
 
 # Rebuild initial ramdisk to apply microcode updates
 dracut --regenerate-all --force
