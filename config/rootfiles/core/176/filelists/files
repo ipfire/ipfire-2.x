@@ -4,4 +4,7 @@ srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
+usr/lib/python3.10/lib-dynload/_hashlib.cpython-310-xxxMACHINExxx-linux-gnu.so
+usr/lib/python3.10/lib-dynload/_ssl.cpython-310-xxxMACHINExxx-linux-gnu.so
+usr/lib/perl5/site_perl/5.36.0/xxxMACHINExxx-linux-thread-multi/auto/Net/SSLeay/SSLeay.so
 var/ipfire/qos/bin/parse-func.pl
