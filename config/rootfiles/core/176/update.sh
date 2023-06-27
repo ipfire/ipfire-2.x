@@ -41,10 +41,7 @@ extract_files
 # Remove files
 rm -vf \
 	/usr/bin/gawk-5.1.1 \
-	/usr/lib/engines-1* \
-	/usr/lib/libcrypto.so.1* \
 	/usr/lib/libfreetype.so.6.1* \
-	/usr/lib/libssl.so.1* \
 	/lib/udev/rules.d/69-dm-lvm-metad.rules
 
 # update linker config
