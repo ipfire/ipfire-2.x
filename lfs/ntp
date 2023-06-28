@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.2.8p15
+VER        = 4.2.8p17
 
 THISAPP    = ntp-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 5697d6623d79686f9ca9ad907172bf942383067d1e9817117d20db042e9f7410644f236f1a0d77ab6bf6ec468476e12ea65b494a28f0dd8674bf08fc8875cfef
+$(DL_FILE)_BLAKE2 = 5c0e90a234cdeab76e7443b42dfd5a0c3c78693a11bdb0fa21c8def91adbdf9b9871498df9d211509632812a9107501da3470104122e9621577541ffd6cd1ab6
 
 install : $(TARGET)
 
@@ -70,7 +70,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ntp-4.2.8p15-build-fix-for-glibc-2.34.patch
 	$(UPDATE_AUTOMAKE)
 	cd $(DIR_APP) && \
 		./configure \
