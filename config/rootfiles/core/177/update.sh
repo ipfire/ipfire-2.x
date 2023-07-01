@@ -49,6 +49,9 @@ ldconfig
 
 # Start services
 /etc/init.d/ntp restart
+if [ -f /var/ipfire/proxy/enable ]; then
+	/etc/init.d/squid restart
+fi
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
