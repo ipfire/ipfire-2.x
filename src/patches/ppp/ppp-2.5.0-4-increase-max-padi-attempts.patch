@@ -1,0 +1,12 @@
+diff -Naur pppd.orig/plugins/pppoe/pppoe.h pppd/plugins/pppoe/pppoe.h
+--- pppd.orig/plugins/pppoe/pppoe.h	2022-12-30 02:12:39.000000000 +0100
++++ pppd/plugins/pppoe/pppoe.h	2023-06-30 13:37:07.189078090 +0200
+@@ -143,7 +143,7 @@
+ #define STATE_TERMINATED    4
+ 
+ /* How many PADI/PADS attempts? */
+-#define MAX_PADI_ATTEMPTS 3
++#define MAX_PADI_ATTEMPTS 4
+ 
+ /* Initial timeout for PADO/PADS */
+ #define PADI_TIMEOUT 5

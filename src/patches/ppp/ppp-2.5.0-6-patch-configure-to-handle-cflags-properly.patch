@@ -1,0 +1,18 @@
+diff -Naur ppp-2.5.0.orig/configure ppp-2.5.0/configure
+--- ppp-2.5.0.orig/configure	2023-03-25 05:38:36.000000000 +0100
++++ ppp-2.5.0/configure	2023-06-30 14:05:14.773950477 +0200
+@@ -17774,10 +17774,10 @@
+         rm -f $2
+         if [ -f $1 ]; then
+             echo "  $2 <= $1"
+-            sed -e "s,@DESTDIR@,$prefix,g" \
+-                -e "s,@SYSCONF@,$sysconfdir,g" \
+-                -e "s,@CC@,$CC,g" \
+-                -e "s|@CFLAGS@|$CFLAGS|g" $1 > $2
++            sed -e "s#@DESTDIR@#$prefix#g" \
++                -e "s#@SYSCONF@#$sysconfdir#g" \
++                -e "s#@CC@#$CC#g" \
++                -e "s#@CFLAGS@#$CFLAGS#g" $1 > $2
+         fi
+     }
+ 
