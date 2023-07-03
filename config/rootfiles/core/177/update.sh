@@ -37,6 +37,12 @@ done
 extract_files
 
 # Remove files
+rm -rvf \
+	/lib/firmware/cxgb4/t4fw-1.27.1* \
+	/lib/firmware/cxgb4/t5fw-1.27.1* \
+	/lib/firmware/cxgb4/t6fw-1.27.1* \
+	/lib/firmware/intel/ice/ddp-comms/ice_comms-1.3.3* \
+	/lib/firmware/intel/ice/ddp-wireless_edge/ice_wireless_edge-1.3.7*
 
 # update linker config
 ldconfig
@@ -54,7 +60,7 @@ if [ -f /var/ipfire/proxy/enable ]; then
 fi
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
