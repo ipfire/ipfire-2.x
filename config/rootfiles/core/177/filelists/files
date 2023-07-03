@@ -139,7 +139,6 @@ lib/firmware/amdgpu/yellow_carp_pfp.bin
 lib/firmware/amdgpu/yellow_carp_ta.bin
 lib/firmware/amdgpu/yellow_carp_vcn.bin
 lib/firmware/amd-ucode/microcode_amd_fam17h.bin
-lib/firmware/amd-ucode/microcode_amd_fam17h.bin.asc
 lib/firmware/ath10k/QCA4019/hw1.0/board-2.bin
 lib/firmware/ath10k/QCA6174/hw3.0/board-2.bin
 lib/firmware/ath10k/QCA9888/hw2.0/board-2.bin
