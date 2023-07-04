@@ -1532,7 +1532,6 @@ buildipfire() {
   lfsmake2 perl-Authen-SASL
   lfsmake2 perl-MIME-Lite
   lfsmake2 perl-Email-Date-Format
-  lfsmake2 squidclamav
   lfsmake2 vnstat
   lfsmake2 iw
   lfsmake2 wpa_supplicant
