@@ -365,7 +365,7 @@ case "${1}" in
 			#
 			if [ "$TYPE" == "pppoe" ]; then
 				[ "${METHOD}" == "PPPOE_PLUGIN" ] && \
-					PLUGOPTS="plugin rp-pppoe.so"
+					PLUGOPTS="plugin pppoe.so"
 			fi
 
 			### Synchronous Mode
