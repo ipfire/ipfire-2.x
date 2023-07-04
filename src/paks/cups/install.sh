@@ -25,7 +25,7 @@
 extract_files
 restore_backup "${NAME}"
 /etc/init.d/messagebus reload
-start_service --delay 300 --background ${NAME}
+start_service --background ${NAME}
 ln -svf ../init.d/cups /etc/rc.d/rc0.d/K00cups
 ln -svf ../init.d/cups /etc/rc.d/rc3.d/S25cups
 ln -svf ../init.d/cups /etc/rc.d/rc6.d/K00cups
