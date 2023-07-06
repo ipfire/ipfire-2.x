@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2007-2023 IPFire-Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
@@ -26,11 +26,19 @@
 extract_files
 restore_backup ${NAME}
 
+#	update needed for a change in config file
+#		temporary update added for CU 177
+CONFIG="/etc/pmacct/pmacct.conf"
+if grep -q "^interface" "${CONFIG}" ; then
+	if sed -i.bak 's|^interface|pcap_interface|g' "${CONFIG}" ; then
+		logger -t pmacct "updated ${CONFIG} and changed \"interface\" to \"pcap_interface\""
+	fi
+fi
+
 # Add symlinks for runlevels
 ln -s ../init.d/${NAME} /etc/rc.d/rc0.d/K85${NAME}
 ln -s ../init.d/${NAME} /etc/rc.d/rc3.d/S50${NAME}
 ln -s ../init.d/${NAME} /etc/rc.d/rc6.d/K85${NAME}
 start_service ${NAME}
-
 
 # EOF
