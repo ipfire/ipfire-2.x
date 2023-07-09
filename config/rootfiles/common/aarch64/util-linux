@@ -320,7 +320,7 @@ usr/sbin/rtcwake
 #usr/share/man/man8/agetty.8
 #usr/share/man/man8/blkdiscard.8
 #usr/share/man/man8/blkid.8
-+usr/share/man/man8/blkpr.8
+#usr/share/man/man8/blkpr.8
 #usr/share/man/man8/blkzone.8
 #usr/share/man/man8/blockdev.8
 #usr/share/man/man8/cfdisk.8
