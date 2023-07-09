@@ -84,6 +84,18 @@ rm -rvf \
 	/boot/dtb-* \
 	/lib/modules
 
+# Remove dropped squidclamav add-on, if installed
+if [ -e "/opt/pakfire/db/installed/meta-squidclamav" ]; then
+	stop_service "squidclamav"
+	for i in $(</opt/pakfire/db/rootfiles/squidclamav); do
+		rm -rfv "/${i}"
+	done
+fi
+rm -f \
+	/opt/pakfire/db/installed/meta-squidclamav \
+	/opt/pakfire/db/meta/meta-squidclamav \
+	/opt/pakfire/db/rootfiles/squidclamav
+
 # Extract files
 extract_files
 
