@@ -45,6 +45,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/rc.d/init.d/squid stop
 
 KVER="xxxKVERxxx"
 
@@ -119,7 +120,7 @@ ldconfig
 # Start services
 /etc/init.d/ntp restart
 if [ -f /var/ipfire/proxy/enable ]; then
-	/etc/init.d/squid restart
+	/etc/init.d/squid start
 fi
 
 # Rebuild initial ramdisks
