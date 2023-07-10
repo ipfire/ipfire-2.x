@@ -1,3 +1,3 @@
 #!/bin/bash
 
-exec /usr/bin/dehydrated --cron
+exec /usr/bin/dehydrated --cron --keep-going
