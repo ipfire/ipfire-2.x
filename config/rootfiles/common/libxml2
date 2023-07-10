@@ -54,7 +54,7 @@
 #usr/lib/libxml2.la
 #usr/lib/libxml2.so
 usr/lib/libxml2.so.2
-usr/lib/libxml2.so.2.11.1
+usr/lib/libxml2.so.2.11.4
 #usr/lib/pkgconfig/libxml-2.0.pc
 #usr/share/aclocal/libxml.m4
 #usr/share/doc/libxml2
@@ -188,3 +188,4 @@ usr/lib/libxml2.so.2.11.1
 #usr/share/man/man1/xml2-config.1
 #usr/share/man/man1/xmlcatalog.1
 #usr/share/man/man1/xmllint.1
+
