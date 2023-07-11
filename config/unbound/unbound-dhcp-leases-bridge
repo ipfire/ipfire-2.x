@@ -514,56 +514,19 @@ class UnboundConfigWriter(object):
 	def __init__(self, path):
 		self.path = path
 
-		self._cached_leases = []
-
 	def update_dhcp_leases(self, leases):
-		# Find any leases that have expired or do not exist any more
-		# but are still in the unbound local data
-		removed_leases = [l for l in self._cached_leases if not l in leases]
-
-		# Find any leases that have been added
-		new_leases = [l for l in leases if l not in self._cached_leases]
-
-		# End here if nothing has changed
-		if not new_leases and not removed_leases:
-			return
-
 		# Write out all leases
 		self.write_dhcp_leases(leases)
 
-		# Update unbound about changes
-		for l in removed_leases:
-			try:
-				for name, ttl, type, content in l.rrset:
-					log.debug("Removing records for %s" % name)
-					self._control("local_data_remove", name)
+		log.debug("Reloading Unbound...")
 
-			# If the lease cannot be removed we will try the next one
-			except:
-				continue
-
-			# If the removal was successful, we will remove it from the cache
-			else:
-				self._cached_leases.remove(l)
-
-		for l in new_leases:
-			try:
-				for rr in l.rrset:
-					log.debug("Adding new record %s" % " ".join(rr))
-					self._control("local_data", *rr)
-
-			# If the lease cannot be added we will try the next one
-			except:
-				continue
-
-			# Add lease to cache when successfully added
-			else:
-				self._cached_leases.append(l)
+		# Reload the configuration without dropping the cache
+		self._control("reload_keep_cache")
 
 	def write_dhcp_leases(self, leases):
-		with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
-			filename = f.name
+		log.debug("Writing DHCP leases...")
 
+		with tempfile.NamedTemporaryFile(mode="w", delete=False) as f:
 			for l in leases:
 				for rr in l.rrset:
 					f.write("local-data: \"%s\"\n" % " ".join(rr))
@@ -571,7 +534,8 @@ class UnboundConfigWriter(object):
 			# Make file readable for everyone
 			os.fchmod(f.fileno(), stat.S_IRUSR|stat.S_IWUSR|stat.S_IRGRP|stat.S_IROTH)
 
-		os.rename(filename, self.path)
+			# Move the file to its destination
+			os.rename(f.name, self.path)
 
 	def _control(self, *args):
 		command = ["unbound-control"]
@@ -585,7 +549,7 @@ class UnboundConfigWriter(object):
 			log.critical("Could not run %s, error code: %s: %s" % (
 				" ".join(command), e.returncode, e.output))
 
-			raise
+			raise e
 
 
 if __name__ == "__main__":
