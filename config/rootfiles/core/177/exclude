@@ -27,6 +27,7 @@ var/ipfire/urlfilter/blacklist
 var/ipfire/urlfilter/settings
 var/lib/alternatives
 var/lib/location/database.db
+var/lib/location/ipset
 var/log/cache
 var/log/dhcpcd.log
 var/log/messages
