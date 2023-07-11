@@ -152,7 +152,7 @@ configure_build() {
 			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="arm"
-			CFLAGS_ARCH=""
+			CFLAGS_ARCH="-mbranch-protection=standard"
 			;;
 
 		riscv64)
