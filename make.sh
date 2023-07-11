@@ -145,7 +145,7 @@ configure_build() {
 			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-m64 -mtune=generic -fcf-protection"
+			CFLAGS_ARCH="-m64 -mtune=generic -fcf-protection=full"
 			;;
 
 		aarch64)
