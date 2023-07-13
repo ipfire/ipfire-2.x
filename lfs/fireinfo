@@ -75,6 +75,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo/fireinfo-2.2.0-python-3.8.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo/fireinfo-system-blacklist-jetways-product-uuid.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo/fireinfo-system-ignore-when-the-serial-number-is-ssn.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/fireinfo-virt-fix-off-by-one-error-when-detecting-hypervisor.patch
 
 	cd $(DIR_APP) && [ -x "configure" ] || sh ./autogen.sh
 	cd $(DIR_APP) && ./configure --prefix=/usr

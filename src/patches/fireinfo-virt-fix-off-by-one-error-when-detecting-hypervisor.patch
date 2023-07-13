@@ -1,0 +1,38 @@
+From e3e68b9baa9723916b1999394432e9ad260cfaa2 Mon Sep 17 00:00:00 2001
+From: Michael Tremer <michael.tremer@ipfire.org>
+Date: Sat, 1 Jul 2023 09:08:48 +0000
+Subject: [PATCH] virt: Fix off-by-one error when detecting hypervisor
+
+Reported-by: Mauro Condarelli <mc5686@mclink.it>
+Fixes: #13155 - _fireinfo.detect_hypervisor() rises Segmentation fault
+Signed-off-by: Michael Tremer <michael.tremer@ipfire.org>
+---
+ src/_fireinfo/fireinfo.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/_fireinfo/fireinfo.c b/src/_fireinfo/fireinfo.c
+index 1d3f424..18edf34 100644
+--- a/src/_fireinfo/fireinfo.c
++++ b/src/_fireinfo/fireinfo.c
+@@ -32,8 +32,8 @@ enum hypervisors {
+ 	HYPER_KVM,
+ 	HYPER_MSHV,
+ 	HYPER_VMWARE,
++	// Must always be last
+ 	HYPER_OTHER,
+-	HYPER_LAST /* for loop - must be last*/
+ };
+ 
+ const char *hypervisor_ids[] = {
+@@ -157,7 +157,7 @@ int detect_hypervisor(int *hypervisor) {
+ 		*hypervisor = HYPER_OTHER;
+ 
+ 		if (*sig.text) {
+-			for (int id = HYPER_NONE + 1; id < HYPER_LAST; id++) {
++			for (int id = HYPER_NONE + 1; id < HYPER_OTHER; id++) {
+ 				if (strcmp(hypervisor_ids[id], sig.text) == 0) {
+ 					*hypervisor = id;
+ 					break;
+-- 
+2.39.2
+
