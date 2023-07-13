@@ -121,6 +121,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/unbound reload
 /etc/init.d/ntp restart
 if [ -f /var/ipfire/proxy/enable ]; then
 	/etc/init.d/squid start
