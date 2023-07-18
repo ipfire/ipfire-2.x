@@ -1,11 +1,11 @@
 #usr/bin/meson
-#usr/lib/python3.10/site-packages/meson-0.64.1-py3.10.egg-info
-#usr/lib/python3.10/site-packages/meson-0.64.1-py3.10.egg-info/PKG-INFO
-#usr/lib/python3.10/site-packages/meson-0.64.1-py3.10.egg-info/SOURCES.txt
-#usr/lib/python3.10/site-packages/meson-0.64.1-py3.10.egg-info/dependency_links.txt
-#usr/lib/python3.10/site-packages/meson-0.64.1-py3.10.egg-info/entry_points.txt
-#usr/lib/python3.10/site-packages/meson-0.64.1-py3.10.egg-info/requires.txt
-#usr/lib/python3.10/site-packages/meson-0.64.1-py3.10.egg-info/top_level.txt
+#usr/lib/python3.10/site-packages/meson-1.2.0-py3.10.egg-info
+#usr/lib/python3.10/site-packages/meson-1.2.0-py3.10.egg-info/PKG-INFO
+#usr/lib/python3.10/site-packages/meson-1.2.0-py3.10.egg-info/SOURCES.txt
+#usr/lib/python3.10/site-packages/meson-1.2.0-py3.10.egg-info/dependency_links.txt
+#usr/lib/python3.10/site-packages/meson-1.2.0-py3.10.egg-info/entry_points.txt
+#usr/lib/python3.10/site-packages/meson-1.2.0-py3.10.egg-info/requires.txt
+#usr/lib/python3.10/site-packages/meson-1.2.0-py3.10.egg-info/top_level.txt
 #usr/lib/python3.10/site-packages/mesonbuild
 #usr/lib/python3.10/site-packages/mesonbuild/__init__.py
 #usr/lib/python3.10/site-packages/mesonbuild/_pathlib.py
@@ -22,6 +22,7 @@
 #usr/lib/python3.10/site-packages/mesonbuild/backend/__init__.py
 #usr/lib/python3.10/site-packages/mesonbuild/backend/backends.py
 #usr/lib/python3.10/site-packages/mesonbuild/backend/ninjabackend.py
+#usr/lib/python3.10/site-packages/mesonbuild/backend/nonebackend.py
 #usr/lib/python3.10/site-packages/mesonbuild/backend/vs2010backend.py
 #usr/lib/python3.10/site-packages/mesonbuild/backend/vs2012backend.py
 #usr/lib/python3.10/site-packages/mesonbuild/backend/vs2013backend.py
@@ -31,6 +32,13 @@
 #usr/lib/python3.10/site-packages/mesonbuild/backend/vs2022backend.py
 #usr/lib/python3.10/site-packages/mesonbuild/backend/xcodebackend.py
 #usr/lib/python3.10/site-packages/mesonbuild/build.py
+#usr/lib/python3.10/site-packages/mesonbuild/cargo
+#usr/lib/python3.10/site-packages/mesonbuild/cargo/__init__.py
+#usr/lib/python3.10/site-packages/mesonbuild/cargo/builder.py
+#usr/lib/python3.10/site-packages/mesonbuild/cargo/cfg.py
+#usr/lib/python3.10/site-packages/mesonbuild/cargo/interpreter.py
+#usr/lib/python3.10/site-packages/mesonbuild/cargo/manifest.py
+#usr/lib/python3.10/site-packages/mesonbuild/cargo/version.py
 #usr/lib/python3.10/site-packages/mesonbuild/cmake
 #usr/lib/python3.10/site-packages/mesonbuild/cmake/__init__.py
 #usr/lib/python3.10/site-packages/mesonbuild/cmake/common.py
@@ -70,6 +78,7 @@
 #usr/lib/python3.10/site-packages/mesonbuild/compilers/mixins/gnu.py
 #usr/lib/python3.10/site-packages/mesonbuild/compilers/mixins/intel.py
 #usr/lib/python3.10/site-packages/mesonbuild/compilers/mixins/islinker.py
+#usr/lib/python3.10/site-packages/mesonbuild/compilers/mixins/metrowerks.py
 #usr/lib/python3.10/site-packages/mesonbuild/compilers/mixins/pgi.py
 #usr/lib/python3.10/site-packages/mesonbuild/compilers/mixins/ti.py
 #usr/lib/python3.10/site-packages/mesonbuild/compilers/mixins/visualstudio.py
@@ -103,6 +112,7 @@
 #usr/lib/python3.10/site-packages/mesonbuild/dependencies/mpi.py
 #usr/lib/python3.10/site-packages/mesonbuild/dependencies/pkgconfig.py
 #usr/lib/python3.10/site-packages/mesonbuild/dependencies/platform.py
+#usr/lib/python3.10/site-packages/mesonbuild/dependencies/python.py
 #usr/lib/python3.10/site-packages/mesonbuild/dependencies/qt.py
 #usr/lib/python3.10/site-packages/mesonbuild/dependencies/scalapack.py
 #usr/lib/python3.10/site-packages/mesonbuild/dependencies/ui.py
@@ -138,6 +148,7 @@
 #usr/lib/python3.10/site-packages/mesonbuild/interpreterbase/operator.py
 #usr/lib/python3.10/site-packages/mesonbuild/linkers
 #usr/lib/python3.10/site-packages/mesonbuild/linkers/__init__.py
+#usr/lib/python3.10/site-packages/mesonbuild/linkers/base.py
 #usr/lib/python3.10/site-packages/mesonbuild/linkers/detect.py
 #usr/lib/python3.10/site-packages/mesonbuild/linkers/linkers.py
 #usr/lib/python3.10/site-packages/mesonbuild/mcompile.py
@@ -206,6 +217,8 @@
 #usr/lib/python3.10/site-packages/mesonbuild/scripts/itstool.py
 #usr/lib/python3.10/site-packages/mesonbuild/scripts/meson_exe.py
 #usr/lib/python3.10/site-packages/mesonbuild/scripts/msgfmthelper.py
+#usr/lib/python3.10/site-packages/mesonbuild/scripts/pycompile.py
+#usr/lib/python3.10/site-packages/mesonbuild/scripts/python_info.py
 #usr/lib/python3.10/site-packages/mesonbuild/scripts/regen_checker.py
 #usr/lib/python3.10/site-packages/mesonbuild/scripts/run_tool.py
 #usr/lib/python3.10/site-packages/mesonbuild/scripts/scanbuild.py
