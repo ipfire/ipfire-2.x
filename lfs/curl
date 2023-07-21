@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.1.0
+VER        = 8.2.0
 
 THISAPP    = curl-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 768a824b8f5f6ddaa073599c4106f07a8134bcbe0e0d666390be1bce16ba25386d85930853bb47bc90b2c8a499a0b2abb9c685042563801e0fe58b9c315ac6cc
+$(DL_FILE)_BLAKE2 = 1387869f9ab2e1984217e57a5a8aa3551b4015875fc6a0b4159fa1cbac01b8ec865aa1db03478ce61508592d1bd5f8e9ee51d411cd704805d8f907b56b382923
 
 install : $(TARGET)
 
