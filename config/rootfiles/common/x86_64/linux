@@ -6985,6 +6985,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/BTRFS_FS_POSIX_ACL
 #lib/modules/KVER-ipfire/build/include/config/BTT
 #lib/modules/KVER-ipfire/build/include/config/BUG
+#lib/modules/KVER-ipfire/build/include/config/BUG_ON_DATA_CORRUPTION
 #lib/modules/KVER-ipfire/build/include/config/BUILDTIME_MCOUNT_SORT
 #lib/modules/KVER-ipfire/build/include/config/BUILDTIME_TABLE_SORT
 #lib/modules/KVER-ipfire/build/include/config/BUILD_SALT
@@ -7328,6 +7329,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_BUGVERBOSE
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_INFO_NONE
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_KERNEL
+#lib/modules/KVER-ipfire/build/include/config/DEBUG_LIST
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_MISC
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_PREEMPT
 #lib/modules/KVER-ipfire/build/include/config/DEBUG_WX
