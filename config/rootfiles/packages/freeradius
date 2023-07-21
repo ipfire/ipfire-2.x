@@ -45,6 +45,7 @@ etc/raddb
 #etc/raddb/mods-available/idn
 #etc/raddb/mods-available/inner-eap
 #etc/raddb/mods-available/ippool
+#etc/raddb/mods-available/json
 #etc/raddb/mods-available/krb5
 #etc/raddb/mods-available/ldap
 #etc/raddb/mods-available/ldap_google
@@ -56,7 +57,6 @@ etc/raddb
 #etc/raddb/mods-available/mschap
 #etc/raddb/mods-available/ntlm_auth
 #etc/raddb/mods-available/opendirectory
-#etc/raddb/mods-available/otp
 #etc/raddb/mods-available/pam
 #etc/raddb/mods-available/pap
 #etc/raddb/mods-available/passwd
@@ -104,6 +104,11 @@ etc/raddb
 #etc/raddb/mods-config/preprocess
 #etc/raddb/mods-config/preprocess/hints
 #etc/raddb/mods-config/preprocess/huntgroups
+#etc/raddb/mods-config/python3
+#etc/raddb/mods-config/python3/example.py
+#etc/raddb/mods-config/python3/radiusd.py
+#etc/raddb/mods-config/realm
+#etc/raddb/mods-config/realm/freeradius-naptr-to-home-server.sh
 #etc/raddb/mods-config/sql
 #etc/raddb/mods-config/sql/counter
 #etc/raddb/mods-config/sql/counter/mysql
@@ -213,7 +218,8 @@ etc/raddb
 #etc/raddb/mods-config/sql/main/postgresql/schema.sql
 #etc/raddb/mods-config/sql/main/postgresql/setup.sql
 #etc/raddb/mods-config/sql/main/sqlite
-#etc/raddb/mods-config/sql/main/sqlite/process-radacct-refresh.sh
+#etc/raddb/mods-config/sql/main/sqlite/process-radacct-close-after-reload.pl
+#etc/raddb/mods-config/sql/main/sqlite/process-radacct-new-data-usage-period.sh
 #etc/raddb/mods-config/sql/main/sqlite/process-radacct-schema.sql
 #etc/raddb/mods-config/sql/main/sqlite/queries.conf
 #etc/raddb/mods-config/sql/main/sqlite/schema.sql
@@ -276,6 +282,7 @@ etc/raddb
 #etc/raddb/radiusd.conf
 #etc/raddb/sites-available
 #etc/raddb/sites-available/README
+#etc/raddb/sites-available/aws-nlb
 #etc/raddb/sites-available/buffered-sql
 #etc/raddb/sites-available/challenge
 #etc/raddb/sites-available/channel_bindings
@@ -299,6 +306,7 @@ etc/raddb
 #etc/raddb/sites-available/soh
 #etc/raddb/sites-available/status
 #etc/raddb/sites-available/tls
+#etc/raddb/sites-available/tls-cache
 #etc/raddb/sites-available/totp
 #etc/raddb/sites-available/virtual.example.com
 #etc/raddb/sites-available/vmps
@@ -433,9 +441,6 @@ usr/lib/freeradius/rlm_chap.so
 #usr/lib/freeradius/rlm_counter.a
 #usr/lib/freeradius/rlm_counter.la
 usr/lib/freeradius/rlm_counter.so
-#usr/lib/freeradius/rlm_cram.a
-#usr/lib/freeradius/rlm_cram.la
-usr/lib/freeradius/rlm_cram.so
 #usr/lib/freeradius/rlm_date.a
 #usr/lib/freeradius/rlm_date.la
 usr/lib/freeradius/rlm_date.so
@@ -496,6 +501,9 @@ usr/lib/freeradius/rlm_files.so
 #usr/lib/freeradius/rlm_ippool.a
 #usr/lib/freeradius/rlm_ippool.la
 usr/lib/freeradius/rlm_ippool.so
+#usr/lib/freeradius/rlm_json.a
+#usr/lib/freeradius/rlm_json.la
+usr/lib/freeradius/rlm_json.so
 #usr/lib/freeradius/rlm_krb5.a
 #usr/lib/freeradius/rlm_krb5.la
 usr/lib/freeradius/rlm_krb5.so
@@ -511,9 +519,6 @@ usr/lib/freeradius/rlm_logintime.so
 #usr/lib/freeradius/rlm_mschap.a
 #usr/lib/freeradius/rlm_mschap.la
 usr/lib/freeradius/rlm_mschap.so
-#usr/lib/freeradius/rlm_otp.a
-#usr/lib/freeradius/rlm_otp.la
-usr/lib/freeradius/rlm_otp.so
 #usr/lib/freeradius/rlm_pam.a
 #usr/lib/freeradius/rlm_pam.la
 usr/lib/freeradius/rlm_pam.so
@@ -529,6 +534,9 @@ usr/lib/freeradius/rlm_perl.so
 #usr/lib/freeradius/rlm_preprocess.a
 #usr/lib/freeradius/rlm_preprocess.la
 usr/lib/freeradius/rlm_preprocess.so
+#usr/lib/freeradius/rlm_python3.a
+#usr/lib/freeradius/rlm_python3.la
+usr/lib/freeradius/rlm_python3.so
 #usr/lib/freeradius/rlm_radutmp.a
 #usr/lib/freeradius/rlm_radutmp.la
 usr/lib/freeradius/rlm_radutmp.so
@@ -567,6 +575,9 @@ usr/lib/freeradius/rlm_sqlippool.so
 #usr/lib/freeradius/rlm_totp.a
 #usr/lib/freeradius/rlm_totp.la
 usr/lib/freeradius/rlm_totp.so
+#usr/lib/freeradius/rlm_unbound.a
+#usr/lib/freeradius/rlm_unbound.la
+usr/lib/freeradius/rlm_unbound.so
 #usr/lib/freeradius/rlm_unix.a
 #usr/lib/freeradius/rlm_unix.la
 usr/lib/freeradius/rlm_unix.so
@@ -620,6 +631,13 @@ usr/sbin/radmin
 #usr/share/doc/freeradius/antora/modules/howto/pages/protocols/dhcp/policy_subnet_options.adoc
 #usr/share/doc/freeradius/antora/modules/howto/pages/protocols/dhcp/prepare.adoc
 #usr/share/doc/freeradius/antora/modules/howto/pages/protocols/dhcp/test.adoc
+#usr/share/doc/freeradius/antora/modules/howto/pages/protocols/proxy
+#usr/share/doc/freeradius/antora/modules/howto/pages/protocols/proxy/enable_proxy_protocol.adoc
+#usr/share/doc/freeradius/antora/modules/howto/pages/protocols/proxy/enable_radsec.adoc
+#usr/share/doc/freeradius/antora/modules/howto/pages/protocols/proxy/index.adoc
+#usr/share/doc/freeradius/antora/modules/howto/pages/protocols/proxy/radsec_client.adoc
+#usr/share/doc/freeradius/antora/modules/howto/pages/protocols/proxy/radsec_with_haproxy.adoc
+#usr/share/doc/freeradius/antora/modules/howto/pages/protocols/proxy/radsec_with_traefik.adoc
 #usr/share/doc/freeradius/antora/modules/installation
 #usr/share/doc/freeradius/antora/modules/installation/nav.adoc
 #usr/share/doc/freeradius/antora/modules/installation/pages
@@ -708,6 +726,7 @@ usr/sbin/radmin
 #usr/share/doc/freeradius/deployment/supervise-radiusd.rst
 #usr/share/doc/freeradius/deployment/tuning_guide
 #usr/share/doc/freeradius/developer
+#usr/share/doc/freeradius/developer/autotools.md
 #usr/share/doc/freeradius/developer/coding-methods.rst
 #usr/share/doc/freeradius/developer/contributing.rst
 #usr/share/doc/freeradius/developer/module_interface.rst
@@ -882,6 +901,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.bt
 #usr/share/freeradius/dictionary.cablelabs
 #usr/share/freeradius/dictionary.cabletron
+#usr/share/freeradius/dictionary.calix
 #usr/share/freeradius/dictionary.cambium
 #usr/share/freeradius/dictionary.camiant
 #usr/share/freeradius/dictionary.centec
@@ -909,6 +929,7 @@ usr/share/freeradius
 #usr/share/freeradius/dictionary.dlink
 #usr/share/freeradius/dictionary.dragonwave
 #usr/share/freeradius/dictionary.efficientip
+#usr/share/freeradius/dictionary.eleven
 #usr/share/freeradius/dictionary.eltex
 #usr/share/freeradius/dictionary.epygi
 #usr/share/freeradius/dictionary.equallogic
@@ -1104,6 +1125,7 @@ usr/share/freeradius
 #usr/share/man/man5/rlm_passwd.5
 #usr/share/man/man5/rlm_realm.5
 #usr/share/man/man5/rlm_sql.5
+#usr/share/man/man5/rlm_unbound.5
 #usr/share/man/man5/rlm_unix.5
 #usr/share/man/man5/unlang.5
 #usr/share/man/man5/users.5
