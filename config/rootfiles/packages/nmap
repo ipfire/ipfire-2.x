@@ -5,8 +5,6 @@ usr/bin/nping
 #usr/share/man/es/man1
 #usr/share/man/es/man1/nmap.1
 #usr/share/man/fr/man1/nmap.1
-#usr/share/man/hr
-#usr/share/man/hr/man1
 #usr/share/man/hr/man1/nmap.1
 #usr/share/man/hu
 #usr/share/man/hu/man1
@@ -24,8 +22,6 @@ usr/bin/nping
 #usr/share/man/pt_PT
 #usr/share/man/pt_PT/man1
 #usr/share/man/pt_PT/man1/nmap.1
-#usr/share/man/ro
-#usr/share/man/ro/man1
 #usr/share/man/ro/man1/nmap.1
 #usr/share/man/ru/man1/nmap.1
 #usr/share/man/sk
@@ -37,7 +33,6 @@ usr/bin/nping
 #usr/share/nmap
 usr/share/nmap/nmap-mac-prefixes
 usr/share/nmap/nmap-os-db
-usr/share/nmap/nmap-payloads
 usr/share/nmap/nmap-protocols
 usr/share/nmap/nmap-rpc
 usr/share/nmap/nmap-service-probes
@@ -108,6 +103,7 @@ usr/share/nmap/nselib/data/rtsp-urls.txt
 usr/share/nmap/nselib/data/snmpcommunities.lst
 usr/share/nmap/nselib/data/ssl-fingerprints
 usr/share/nmap/nselib/data/targets-ipv6-wordlist
+usr/share/nmap/nselib/data/tftp-fingerprints.lua
 usr/share/nmap/nselib/data/tftplist.txt
 usr/share/nmap/nselib/data/usernames.lst
 usr/share/nmap/nselib/data/vhosts-default.lst
@@ -805,6 +801,7 @@ usr/share/nmap/scripts/telnet-brute.nse
 usr/share/nmap/scripts/telnet-encryption.nse
 usr/share/nmap/scripts/telnet-ntlm-info.nse
 usr/share/nmap/scripts/tftp-enum.nse
+usr/share/nmap/scripts/tftp-version.nse
 usr/share/nmap/scripts/tls-alpn.nse
 usr/share/nmap/scripts/tls-nextprotoneg.nse
 usr/share/nmap/scripts/tls-ticketbleed.nse

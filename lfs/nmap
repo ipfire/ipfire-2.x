@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Network exploration tool and security scanner
 
-VER        = 7.92
+VER        = 7.94
 
 THISAPP    = nmap-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nmap
-PAK_VER    = 15
+PAK_VER    = 16
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0f3022e797ffca7d1d3497990c86bb60ac9a80bb93cb4ec7fcfa4f51782cb8d79d4f0aca0fa6119bfd604cfe7b89af3d4223ce13ad3e6c948c021909aebd956b
+$(DL_FILE)_BLAKE2 = 5819b458b50e33f6a507ad3c32a731c13e730c40d31a61731c3cfcd41fad8e3fdfcbb721ef46b05a80e406d0a646d0966d4b645551711144822551ef374a443a
 
 install : $(TARGET)
 
