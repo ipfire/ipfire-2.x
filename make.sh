@@ -1113,6 +1113,7 @@ buildipfire() {
   lfsmake2 pptp
   lfsmake2 unzip
   lfsmake2 which
+  lfsmake2 git
   lfsmake2 linux-firmware
   lfsmake2 dvb-firmwares
   lfsmake2 zd1211-firmware
@@ -1494,7 +1495,6 @@ buildipfire() {
   lfsmake2 libstatgrab
   lfsmake2 liboping
   lfsmake2 collectd
-  lfsmake2 git
   lfsmake2 elinks
   lfsmake2 igmpproxy
   lfsmake2 opus
