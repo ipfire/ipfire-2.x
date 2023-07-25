@@ -70,6 +70,9 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && git apply -p1 < $(DIR_SRC)/src/patches/linux-firmware-amd-family-19h.patch
+	cd $(DIR_APP) && git apply -p1 < $(DIR_SRC)/src/patches/linux-firmware-amd-family-17h.patch
+
 	mkdir -p /lib/firmware
 	cd $(DIR_APP) && make install
 
