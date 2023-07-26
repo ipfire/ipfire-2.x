@@ -1113,13 +1113,6 @@ buildipfire() {
   lfsmake2 pptp
   lfsmake2 unzip
   lfsmake2 which
-  lfsmake2 git
-  lfsmake2 linux-firmware
-  lfsmake2 dvb-firmwares
-  lfsmake2 zd1211-firmware
-  lfsmake2 rpi-firmware
-  lfsmake2 intel-microcode
-  lfsmake2 pcengines-apu-firmware
   lfsmake2 bc
   lfsmake2 u-boot MKIMAGE=1
   lfsmake2 cpio
@@ -1495,6 +1488,13 @@ buildipfire() {
   lfsmake2 libstatgrab
   lfsmake2 liboping
   lfsmake2 collectd
+  lfsmake2 git
+  lfsmake2 linux-firmware
+  lfsmake2 dvb-firmwares
+  lfsmake2 zd1211-firmware
+  lfsmake2 rpi-firmware
+  lfsmake2 intel-microcode
+  lfsmake2 pcengines-apu-firmware
   lfsmake2 elinks
   lfsmake2 igmpproxy
   lfsmake2 opus
