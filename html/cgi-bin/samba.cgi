@@ -810,6 +810,9 @@ vfs objects = catia fruit streams_xattr recycle
 # Enable following symlinks
 wide links = yes
 
+# Disable smb1 unix extensions
+smb1 unix extensions = no
+
 END
 
 # Server Role
