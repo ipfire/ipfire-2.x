@@ -116,17 +116,11 @@
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
-< access point name
-< access point name is invalid
-< access point name is required
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
-< dhcp fixed ip address in dynamic range
 < g.dtm
 < g.lite
-< openvpn cert expires soon
-< openvpn cert has expired
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
