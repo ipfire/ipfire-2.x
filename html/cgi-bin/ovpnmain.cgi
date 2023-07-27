@@ -5502,7 +5502,6 @@ END
 				if ($match[1] ne "Common Name") {
 					$cn = $match[1];
 				}
-				$cn =~ s/[_]/ /g;
 				if ($cn eq "$confighash{$key}[2]") {
 					$col1="bgcolor='${Header::colourgreen}'";
 					$active = "<b><font color='#FFFFFF'>$Lang::tr{'capsopen'}</font></b>";
