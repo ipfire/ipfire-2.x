@@ -97,6 +97,15 @@ rm -f \
 	/opt/pakfire/db/meta/meta-squidclamav \
 	/opt/pakfire/db/rootfiles/squidclamav
 
+# remove old rngd if the addon is not installed
+if [ ! -e "/opt/pakfire/db/installed/meta-rng-tools" ]; then
+	rm -rf	/usr/bin/randstat \
+		/usr/bin/rngtest \
+		/usr/sbin/rngd \
+		/etc/rc.d/init.d/rngd \
+		/etc/rc.d/rc?.d/*rmgd
+fi
+
 # Extract files
 extract_files
 
@@ -168,3 +177,4 @@ sync
 
 # Don't report the exitcode last command
 exit 0
+
