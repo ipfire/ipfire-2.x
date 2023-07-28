@@ -1,3 +1,5 @@
+etc/rc.d/init.d/halt
+etc/rc.d/init.d/reboot
 lib/firmware/amd-ucode/microcode_amd_fam17h.bin
 lib/firmware/amd-ucode/microcode_amd_fam19h.bin
 lib/firmware/amdgpu/aldebaran_mec2.bin

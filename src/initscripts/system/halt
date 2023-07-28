@@ -24,11 +24,6 @@
 
 case "${1}" in
 	stop)
-		sync && sync
-		boot_mesg "Remount root readonly..."
-		mount -f -o remount,ro / > /dev/null 2>&1
-		evaluate_retval
-
 		boot_mesg "Prepare for halt..."
 		sleep 2
 
