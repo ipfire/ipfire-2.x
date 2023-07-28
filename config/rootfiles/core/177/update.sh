@@ -99,11 +99,11 @@ rm -f \
 
 # remove old rngd if the addon is not installed
 if [ ! -e "/opt/pakfire/db/installed/meta-rng-tools" ]; then
-	rm -rf	/usr/bin/randstat \
+	rm -fv /usr/bin/randstat \
 		/usr/bin/rngtest \
 		/usr/sbin/rngd \
 		/etc/rc.d/init.d/rngd \
-		/etc/rc.d/rc?.d/*rmgd
+		/etc/rc.d/rc?.d/*rngd
 fi
 
 # Extract files
@@ -177,4 +177,3 @@ sync
 
 # Don't report the exitcode last command
 exit 0
-
