@@ -103,7 +103,7 @@ if [ ! -e "/opt/pakfire/db/installed/meta-rng-tools" ]; then
 		/usr/bin/rngtest \
 		/usr/sbin/rngd \
 		/etc/rc.d/init.d/rngd \
-		/etc/rc.d/rc?.d/*rngd
+		/etc/rc.d/rc*.d/*rngd
 fi
 
 # Extract files
