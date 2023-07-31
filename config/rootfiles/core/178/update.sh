@@ -38,6 +38,18 @@ extract_files
 
 # Remove files
 
+# Remove dropped sox addon
+rm -vf \
+	/opt/pakfire/db/installed/meta-sox \
+	/opt/pakfire/db/meta/meta-sox \
+	/opt/pakfire/db/rootfiles/sox \
+	/usr/bin/play \
+	/usr/bin/rec \
+	/usr/bin/sox \
+	/usr/bin/soxi \
+	/usr/lib/libsox.so.3 \
+	/usr/lib/libsox.so.3.0.0
+
 # update linker config
 ldconfig
 
