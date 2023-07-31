@@ -884,7 +884,6 @@ WARNING: untranslated string: cake profile pppoe-ptm 27 = PPPoE PTM (27 bytes)
 WARNING: untranslated string: cake profile pppoe-vcmux 32 = PPPoE VC-MUX (32 bytes)
 WARNING: untranslated string: cake profile raw 0 = Raw (no overhead compensation)
 WARNING: untranslated string: desired = Desired
-WARNING: untranslated string: dhcp fixed ip address in dynamic range = Fixed IP Address in dynamic range
 WARNING: untranslated string: disable = Disable
 WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
 WARNING: untranslated string: enable = Enable

@@ -788,6 +788,7 @@
 'dhcp dns update' => 'DNS-Update',
 'dhcp dns update algo' => 'Algorithmus',
 'dhcp dns update secret' => 'Schlüssel',
+'dhcp fixed ip address in dynamic range' => 'Die feste Zuordnung befindet sich im dynamischen Bereich',
 'dhcp fixed lease err1' => 'Für eine feste Zuordnung müssen entweder die Hardware Adresse (MAC-Adresse) oder der Hostname oder beide eingetragen werden.',
 'dhcp fixed lease help1' => 'IP Adressen können als FQDN angegeben werden.',
 'dhcp make fixed lease' => 'Feste Zuordnung erzeugen',

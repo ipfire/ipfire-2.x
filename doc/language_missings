@@ -47,7 +47,6 @@
 < could not connect to www ipfire org
 < cryptographic settings
 < desired
-< dhcp fixed ip address in dynamic range
 < dhcp server disabled on blue interface
 < dhcp server enabled on blue interface
 < disable
