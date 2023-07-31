@@ -103,7 +103,7 @@ if [ ! -e "/opt/pakfire/db/installed/meta-rng-tools" ]; then
 		/usr/bin/rngtest \
 		/usr/sbin/rngd \
 		/etc/rc.d/init.d/rngd \
-		/etc/rc.d/rc?.d/*rngd
+		/etc/rc.d/rc*.d/*rngd
 fi
 
 # Extract files
@@ -128,6 +128,9 @@ ldconfig
 
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
+
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
 
 # Start services
 /etc/init.d/sshd restart
