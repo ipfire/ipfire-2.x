@@ -105,6 +105,7 @@ if [ ! -e "/opt/pakfire/db/installed/meta-rng-tools" ]; then
 		/etc/rc.d/init.d/rngd \
 		/etc/rc.d/rc*.d/*rngd
 fi
+rm -vf /lib/udev/rules.d/90-hwrng.rules
 
 # Extract files
 extract_files

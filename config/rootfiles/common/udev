@@ -72,7 +72,6 @@ lib/udev/rules.d/75-net-description.rules
 lib/udev/rules.d/75-probe_mtd.rules
 lib/udev/rules.d/78-sound-card.rules
 lib/udev/rules.d/80-drivers.rules
-lib/udev/rules.d/90-hwrng.rules
 lib/udev/rules.d/99-aqm.rules
 lib/udev/rules.d/99-offloading.rules
 lib/udev/scsi_id
