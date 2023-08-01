@@ -29,32 +29,50 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 my %extrahdsettings = ();
-my $message = "";
 my $errormessage = "";
-my $size = "";
-my $ok = "true";
-my @tmp = ();
-my @tmpline = ();
-my $tmpentry = "";
-my @devices = ();
-my @deviceline = ();
-my $deviceentry = "";
-my @scans = ();
-my @scanline = ();
-my $scanentry = "";
-my @partitions = ();
-my @partitionline = ();
-my $partitionentry = "";
+
+# SYSFS directory which contains all block device data.
+my $sysfs_block_dir = "/sys/class/block";
+
+# Array which contains the valid mount directories.
+# Only mounting to subdirectories inside them is allowed.
+my @valid_mount_dirs = (
+	"/data",
+	"/media",
+	"/mnt",
+);
+
+# Array which contains the supported file systems.
+my @supported_filesystems = (
+	"auto",
+	"ext3",
+	"ext4",
+	"xfs",
+	"vfat",
+	"ntfs-3g"
+);
+
+# Grab all available block devices.
+my @devices = &get_block_devices();
+
+# Grab all known UUID's.
+my %uuids = &get_uuids();
+
+# Grab all mountpoints.
+my %mountpoints = &get_mountpoints();
+
+# Omit the file system types of the mounted devices.
+my %filesystems = &get_mountedfs();
+
+# Gather all used swap devices.
+my @swaps = &get_swaps();
+
+# The config file which contains the configured devices.
 my $devicefile = "/var/ipfire/extrahd/devices";
-my $scanfile = "/var/ipfire/extrahd/scan";
-my $partitionsfile = "/var/ipfire/extrahd/partitions";
 
 #workaround to suppress a warning when a variable is used only once
 my @dummy = ( ${Header::colourgreen}, ${Header::colourred} );
 undef (@dummy);
-
-&General::system("/usr/local/bin/extrahdctrl", "scanhd", "ide");
-&General::system("/usr/local/bin/extrahdctrl", "scanhd", "partitions");
 
 &Header::showhttpheaders();
 
@@ -65,7 +83,6 @@ $extrahdsettings{'DEVICE'} = '';
 $extrahdsettings{'ACTION'} = '';
 $extrahdsettings{'UUID'} = '';
 
-&General::readhash("${General::swroot}/extrahd/settings", \%extrahdsettings);
 &Header::getcgihash(\%extrahdsettings);
 
 &Header::openpage('ExtraHD', 1, '');
@@ -74,52 +91,88 @@ $extrahdsettings{'UUID'} = '';
 ############################################################################################################################
 ############################################################################################################################
 
-if ($extrahdsettings{'ACTION'} eq $Lang::tr{'add'})
-{
+#
+## Add a new device.
+#
+if ($extrahdsettings{'ACTION'} eq $Lang::tr{'add'}) {
+	# Open device file for reading.
 	open( FILE, "< $devicefile" ) or die "Unable to read $devicefile";
-	@devices = <FILE>;
+	my @devices = <FILE>;
 	close FILE;
-	foreach $deviceentry (sort @devices)
-	{
-		@deviceline = split( /\;/, $deviceentry );
-		if ( "$extrahdsettings{'PATH'}" eq "$deviceline[2]" ) {
-			$ok = "false";
+
+	# Loop through the entries line-by-line.
+	foreach my $entry (sort @devices) {
+		# Split the line into pieces and assign nice variables.
+		my ($uuid, $fs, $path) = split( /\;/, $entry );
+
+		# Check if the path is allready used.
+		if ( "$extrahdsettings{'PATH'}" eq "$path" ) {
 			$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to'} $extrahdsettings{'PATH'}$Lang::tr{'extrahd because there is already a device mounted'}.";
 		}
-		if ( "$extrahdsettings{'PATH'}" eq "/" ) {
-			$ok = "false";
-			$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to root'}.";
+
+		# Check if the uuid is allready used.
+		if ("$extrahdsettings{'DEVICE'} eq $uuid") {
+			$errormessage = "$extrahdsettings{'DEVICE'} is allready mounted.";
 		}
 	}
 
-	if ( "$ok" eq "true" ) {
+	# Check if a valid mount path has been choosen. 
+	unless(&is_valid_dir("$extrahdsettings{'PATH'}")) {
+		$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to root'}.";
+	}
+
+	# Check if the given path allready is mounted somewhere.
+	if(&is_mounted("$extrahdsettings{'PATH'}")) {
+		$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to'} $extrahdsettings{'PATH'}$Lang::tr{'extrahd because there is already a device mounted'}.";
+	}
+
+	# Check if there was an error message.
+	unless($errormessage) {
+		# Re-open the device file for writing.
 		open(FILE, ">> $devicefile" ) or die "Unable to write $devicefile";
-		print FILE <<END
-UUID=$extrahdsettings{'UUID'};$extrahdsettings{'FS'};$extrahdsettings{'PATH'};
-END
-;
-	&General::system("/usr/local/bin/extrahdctrl", "mount", "$extrahdsettings{'PATH'}");
+
+		# Write the config line.
+		print FILE "UUID=$extrahdsettings{'UUID'};$extrahdsettings{'FS'};$extrahdsettings{'PATH'};\n";
+
+		# Close file handle.
+		close(FILE);
+
+		# Call helper binary to mount the device.
+		&General::system("/usr/local/bin/extrahdctrl", "mount", "$extrahdsettings{'PATH'}");
 	}
-}
-elsif ($extrahdsettings{'ACTION'} eq $Lang::tr{'delete'})
-{
-	if ( ! &General::system("/usr/local/bin/extrahdctrl", "umount", "$extrahdsettings{'PATH'}")) {
-		open( FILE, "< $devicefile" ) or die "Unable to read $devicefile";
-		@tmp = <FILE>;
-		close FILE;
-		open( FILE, "> $devicefile" ) or die "Unable to write $devicefile";
-		foreach $deviceentry (sort @tmp)
-		{
-			@tmpline = split( /\;/, $deviceentry );
-			if ( $tmpline[2] ne $extrahdsettings{'PATH'} )
-			{
-				print FILE $deviceentry;
-			}
+	
+#
+# Remove an existing one.
+#
+} elsif ($extrahdsettings{'ACTION'} eq $Lang::tr{'delete'})  {
+	# Call helper binary to unmount the device.
+	&General::system("/usr/local/bin/extrahdctrl", "umount", "$extrahdsettings{'PATH'}");
+
+	# Open the device file for reading.
+	open(FILE, "< $devicefile" ) or die "Unable to read $devicefile";
+
+	# Read the file content into a temporary array.
+	my @tmp = <FILE>;
+
+	# Close file handle.
+	close(FILE);
+
+	# Re-open device file for writing.
+	open(FILE, "> $devicefile" ) or die "Unable to write $devicefile";
+
+	# Loop through the previous read file content.
+	foreach my $line (sort @tmp) {
+		# Split line content and assign nice variables.
+		my ($uuid, $fs, $path) = split( /\;/, $line );
+
+		# Write the line in case it does not contain our element to delete.
+		if ($path ne $extrahdsettings{'PATH'}) {
+			print FILE "$line";
 		}
-		close FILE;
-	} else {
-		$errormessage = "$Lang::tr{'extrahd cant umount'} $extrahdsettings{'PATH'}$Lang::tr{'extrahd maybe the device is in use'}?";
 	}
+
+	# Close file handle.
+	close(FILE);
 }
 
 if ($errormessage) {
@@ -132,34 +185,38 @@ if ($errormessage) {
 ############################################################################################################################
 ############################################################################################################################
 
-	open( FILE, "< $devicefile" ) or die "Unable to read $devicefile";
-	@devices = <FILE>;
-	close FILE;
 	print <<END
 		<table border='0' width='600' cellspacing="0">
 END
 ;
-	foreach $deviceentry (sort @devices)
-	{
-		@deviceline = split( /\;/, $deviceentry );
+	# Re-read mountpoints.
+	%mountpoints = &get_mountpoints();
+
+	# Read-in the device config file.
+	open( FILE, "< $devicefile" ) or die "Unable to read $devicefile";
+	my @configfile = <FILE>;
+	close FILE;
+
+	# Loop through the file content.
+	foreach my $entry (sort @configfile) {
+		my ($uuid, $fs, $path) = split( /\;/, $entry );
 		my $color="$Header::colourred";
 
-		# Use safe system_output to get mountpoint details.
-		my @mountpoint = &General::system_output("/bin/mountpoint", "$deviceline[2]");
-
-		if ( ! grep(/not/, @mountpoint)) {
+		# Check if the device is currently mounted.
+		if (&is_mounted($path)) {
 			$color=$Header::colourgreen;
 		}
+
 		print <<END
 			<tr><td colspan="4">&nbsp;</td></tr>
-			<tr><td align='left'><font color=$color><b>$deviceline[0]</b></font></td>
-				<td align='left'>$deviceline[1]</td>
-				<td align='left'>$deviceline[2]</td>
+			<tr><td align='left'><font color=$color><b>$uuid</b></font></td>
+				<td align='left'>$fs</td>
+				<td align='left'>$path</td>
 				<td align='center'>
 					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='DEVICE' value='$deviceline[0]' />
-						<input type='hidden' name='FS' value='$deviceline[1]' />
-						<input type='hidden' name='PATH' value='$deviceline[2]' />
+						<input type='hidden' name='DEVICE' value='$uuid' />
+						<input type='hidden' name='FS' value='$fs' />
+						<input type='hidden' name='PATH' value='$path' />
 						<input type='hidden' name='ACTION' value='$Lang::tr{'delete'}' />
 						<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/delete.gif' />
 					</form></td></tr>
@@ -170,78 +227,101 @@ END
 		</table>
 END
 ;
+
 &Header::openbox('100%', 'center', $Lang::tr{'extrahd detected drives'});
 	print <<END
 		<table border='0' width='600' cellspacing="0">
 END
 ;
-	open( FILE, "< $scanfile" ) or die "Unable to read $scanfile";
-	@scans = <FILE>;
-	close FILE;
-	open( FILE, "< $partitionsfile" ) or die "Unable to read $partitionsfile";
-	@partitions = <FILE>;
-	close FILE;
-	foreach $scanentry (sort @scans)
-	{
-		@scanline = split( /\;/, $scanentry );
-		# remove wrong entries like usb controller name
-		if ($scanline[1] ne "\n")
-		{
-			print <<END
-				<tr><td colspan="5">&nbsp;</td></tr>
-				<tr><td align='left' colspan="2"><b>/dev/$scanline[0]</b></td>
-				<td align='center' colspan="2">$scanline[1]</td>
+	foreach my $device (sort @devices) {
+		# Grab the device details.
+		my $vendor = &get_device_vendor($device);
+		my $model = &get_device_model($device);
+		my $bsize = &get_device_size($device);
+
+		# Convert size into human-readable format.
+		my $size = &General::formatBytes($bsize);
+
+		print <<END
+			<tr><td colspan="5">&nbsp;</td></tr>
+			<tr><td align='left' colspan="2"><b>/dev/$device</b></td>
+			<td align='center' colspan="2">$vendor $model</td>
+
+			<td align='center'>$Lang::tr{'size'} $size</td>
+			<td>&nbsp;</td></tr>
+			<tr><td colspan="5">&nbsp;</td></tr>
 END
 ;
 
-		}
-		foreach $partitionentry (sort @partitions)
-		{
-			@partitionline = split( /\;/, $partitionentry );
-			if ( "$partitionline[0]" eq "$scanline[0]" ) {
-				$size = int($partitionline[1] / 1024);
-				print <<END
-				<td align='center'>$Lang::tr{'size'} $size MB</td>
-				<td>&nbsp;</td></tr>
-				<tr><td colspan="5">&nbsp;</td></tr>
-END
-;
+		# Grab the known partitions of the current block device.
+		my @partitions = &get_device_partitions($device);
+
+		foreach my $partition (@partitions) {
+			my $disabled;
+
+			# Omit the partition size.
+			my $bsize = &get_device_size($partition);
+
+			# Convert into human-readable format.
+			my $size = &General::formatBytes($bsize);
+
+			# Get the mountpoint.
+			my $mountpoint = $mountpoints{$partition};
+
+			if ($mountpoint eq "/" or $mountpoint =~ "^/boot") {
+				$disabled = "disabled";
+			} elsif(&is_mounted($mountpoint)) {
+				$disabled = "disabled";
 			}
-		}
 
-		foreach $partitionentry (sort @partitions)
-		{
-			@partitionline = split( /\;/, $partitionentry );
-			if (( "$partitionline[0]" =~ /^$scanline[0]/ ) && !( "$partitionline[2]" eq "" )) {
-				$size = int($partitionline[1] / 1024);
-				print <<END
-				<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<tr><td align="left" colspan=5><strong>UUID=$partitionline[2]</strong></td></tr>
-				<tr>
-				<td align="list">/dev/$partitionline[0]</td>
-				<td align="center">$Lang::tr{'size'} $size MB</td>
-				<td align="center"><select name="FS">
-										<option value="auto">auto</option>
-										<option value="ext3">ext3</option>
-										<option value="ext4">ext4</option>
-										<option value="reiserfs">reiserfs</option>
-										<option value="vfat">fat</option>
-										<option value="ntfs-3g">ntfs (experimental)</option>
-									   </select></td>
-				<td align="center"><input type='text' name='PATH' value=/mnt/harddisk /></td>
+			# Omit the used filesystem.
+			my $fs = $filesystems{$partition};
+
+			# Check if the device is used as swap.
+			if (&is_swap($partition)) {
+				$disabled = "disabled";
+				$mountpoint = "swap";
+			}
+
+			print <<END
+
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<tr><td align="left" colspan=5><strong>UUID=$uuids{$partition}</strong></td></tr>
+			<tr>
+			<td align="list">/dev/$partition</td>
+				<td align="center">$Lang::tr{'size'} $size</td>
+				<td align="center"><select name="FS" $disabled>
+END
+;
+				# Loop through the array of supported filesystems.
+				foreach my $filesystem (@supported_filesystems) {
+					my $selected;
+
+					# Mark the used filesystem as selected.
+					if ($filesystem eq $fs) {
+						$selected = "selected";
+					}
+
+					print "<option value='$filesystem' $selected>$filesystem</option>\n";
+				}
+
+			print <<END
+					</select></td>
+				<td align="center"><input type='text' name='PATH' value=$mountpoint $disabled></td>
 				<td align="center">
-					<input type='hidden' name='DEVICE' value='$partitionline[0]' />
-					<input type='hidden' name='UUID' value='$partitionline[2]' />
+					<input type='hidden' name='DEVICE' value='/dev/$partition' />
+					<input type='hidden' name='UUID' value='$uuids{$partition}' />
 					<input type='hidden' name='ACTION' value='$Lang::tr{'add'}' />
-					<input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/add.gif' />
+END
+;					unless($disabled) {
+						print"<input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/add.gif' />\n";
+					}
+
+				print <<END
 				</form></td></tr>
 END
-;
+;		}
 
-END
-;
-			}
-		}
 	}
 
 	print <<END
