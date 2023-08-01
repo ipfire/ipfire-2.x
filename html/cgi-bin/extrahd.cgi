@@ -45,16 +45,6 @@ my @valid_mount_dirs = (
 	"/mnt",
 );
 
-# Array which contains the supported file systems.
-my @supported_filesystems = (
-	"auto",
-	"ext3",
-	"ext4",
-	"xfs",
-	"vfat",
-	"ntfs-3g"
-);
-
 # Grab all available block devices.
 my @devices = &get_block_devices();
 
@@ -252,6 +242,9 @@ END
 			# Convert into human-readable format.
 			my $size = &General::formatBytes($bsize);
 
+			# Try to omit the used filesystem.
+			my $fs = $filesystems{$partition};
+
 			# Get the mountpoint.
 			my $mountpoint = $mountpoints{$partition};
 
@@ -279,10 +272,8 @@ END
 			} elsif (&is_swap($partition)) {
 				$disabled = "disabled";
 				$mountpoint = "swap";
+				$fs = "swap";
 			}
-
-			# Omit the used filesystem.
-			my $fs = $filesystems{$partition};
 
 			print <<END
 
@@ -291,23 +282,7 @@ END
 			<tr>
 			<td align="list">/dev/$partition</td>
 				<td align="center">$Lang::tr{'size'} $size</td>
-				<td align="center"><select name="FS" $disabled>
-END
-;
-				# Loop through the array of supported filesystems.
-				foreach my $filesystem (@supported_filesystems) {
-					my $selected;
-
-					# Mark the used filesystem as selected.
-					if ($filesystem eq $fs) {
-						$selected = "selected";
-					}
-
-					print "<option value='$filesystem' $selected>$filesystem</option>\n";
-				}
-
-			print <<END
-					</select></td>
+				<td align="center">$fs</td>
 				<td align="center"><input type='text' name='PATH' value='$mountpoint' $disabled></td>
 				<td align="center">
 					<input type='hidden' name='DEVICE' value='/dev/$partition' />
