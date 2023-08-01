@@ -31,6 +31,9 @@ require "${General::swroot}/header.pl";
 my %extrahdsettings = ();
 my $errormessage = "";
 
+# Hash to store the configured drives.
+my %configured_drives;
+
 # SYSFS directory which contains all block device data.
 my $sysfs_block_dir = "/sys/class/block";
 
@@ -187,50 +190,26 @@ if ($errormessage) {
 ############################################################################################################################
 ############################################################################################################################
 
-	print <<END
-		<table border='0' width='600' cellspacing="0">
-END
-;
+&Header::openbox('100%', 'center', $Lang::tr{'extrahd detected drives'});
+
 	# Re-read mountpoints.
 	%mountpoints = &get_mountpoints();
 
 	# Read-in the device config file.
 	open( FILE, "< $devicefile" ) or die "Unable to read $devicefile";
-	my @configfile = <FILE>;
-	close FILE;
 
 	# Loop through the file content.
-	foreach my $entry (sort @configfile) {
-		my ($uuid, $fs, $path) = split( /\;/, $entry );
-		my $color="$Header::colourred";
+	while (<FILE>) {
+		# Cut the line into pieces.
+		my ($uuid, $fs, $path) = split( /\;/, $_ );
 
-		# Check if the device is currently mounted.
-		if (&is_mounted($path)) {
-			$color=$Header::colourgreen;
-		}
-
-		print <<END
-			<tr><td colspan="4">&nbsp;</td></tr>
-			<tr><td align='left'><font color=$color><b>$uuid</b></font></td>
-				<td align='left'>$fs</td>
-				<td align='left'>$path</td>
-				<td align='center'>
-					<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-						<input type='hidden' name='DEVICE' value='$uuid' />
-						<input type='hidden' name='FS' value='$fs' />
-						<input type='hidden' name='PATH' value='$path' />
-						<input type='hidden' name='ACTION' value='$Lang::tr{'delete'}' />
-						<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/delete.gif' />
-					</form></td></tr>
-END
-;
+		# Add the found entry to the hash of configured drives.
+		$configured_drives{$uuid} = $path;
 	}
-	print <<END
-		</table>
-END
-;
 
-&Header::openbox('100%', 'center', $Lang::tr{'extrahd detected drives'});
+	# Close the file handle.
+	close(FILE);
+
 	print <<END
 		<table border='0' width='600' cellspacing="0">
 END
@@ -270,20 +249,34 @@ END
 			# Get the mountpoint.
 			my $mountpoint = $mountpoints{$partition};
 
+			# If no mountpoint could be determined try to grab from
+			# configured drives.
+			unless($mountpoint) {
+				my $uuid = $uuids{$partition};
+
+				# Build uuid string.
+				$uuid = "UUID=" . $uuid;
+
+				# Try to obtain a possible moutpoint from configured drives.
+				$mountpoint = $configured_drives{$uuid} if ($configured_drives{$uuid});
+			}
+
+			# Check if the mountpoint is used as root or boot device.
 			if ($mountpoint eq "/" or $mountpoint =~ "^/boot") {
 				$disabled = "disabled";
+
+			# Check if it is mounted.
 			} elsif(&is_mounted($mountpoint)) {
 				$disabled = "disabled";
+
+			# Check if the device is used as swap.
+			} elsif (&is_swap($partition)) {
+				$disabled = "disabled";
+				$mountpoint = "swap";
 			}
 
 			# Omit the used filesystem.
 			my $fs = $filesystems{$partition};
-
-			# Check if the device is used as swap.
-			if (&is_swap($partition)) {
-				$disabled = "disabled";
-				$mountpoint = "swap";
-			}
 
 			print <<END
 
