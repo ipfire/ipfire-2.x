@@ -146,33 +146,35 @@ if ($extrahdsettings{'ACTION'} eq $Lang::tr{'add'}) {
 #
 } elsif ($extrahdsettings{'ACTION'} eq $Lang::tr{'delete'})  {
 	# Call helper binary to unmount the device.
-	&General::system("/usr/local/bin/extrahdctrl", "umount", "$extrahdsettings{'PATH'}");
+	unless(&General::system("/usr/local/bin/extrahdctrl", "umount", "$extrahdsettings{'PATH'}")) {
+		# Open the device file for reading.
+		open(FILE, "< $devicefile" ) or die "Unable to read $devicefile";
 
-	# Open the device file for reading.
-	open(FILE, "< $devicefile" ) or die "Unable to read $devicefile";
+		# Read the file content into a temporary array.
+		my @tmp = <FILE>;
 
-	# Read the file content into a temporary array.
-	my @tmp = <FILE>;
+		# Close file handle.
+		close(FILE);
 
-	# Close file handle.
-	close(FILE);
+		# Re-open device file for writing.
+		open(FILE, "> $devicefile" ) or die "Unable to write $devicefile";
 
-	# Re-open device file for writing.
-	open(FILE, "> $devicefile" ) or die "Unable to write $devicefile";
+		# Loop through the previous read file content.
+		foreach my $line (sort @tmp) {
+			# Split line content and assign nice variables.
+			my ($uuid, $fs, $path) = split( /\;/, $line );
 
-	# Loop through the previous read file content.
-	foreach my $line (sort @tmp) {
-		# Split line content and assign nice variables.
-		my ($uuid, $fs, $path) = split( /\;/, $line );
-
-		# Write the line in case it does not contain our element to delete.
-		if ($path ne $extrahdsettings{'PATH'}) {
-			print FILE "$line";
+			# Write the line in case it does not contain our element to delete.
+			if ($path ne $extrahdsettings{'PATH'}) {
+				print FILE "$line";
+			}
 		}
-	}
 
-	# Close file handle.
-	close(FILE);
+		# Close file handle.
+		close(FILE);
+	} else {
+		$errormessage = "$Lang::tr{'extrahd cant umount'} $extrahdsettings{'PATH'}$Lang::tr{'extrahd maybe the device is in use'}?";
+	}
 }
 
 if ($errormessage) {
