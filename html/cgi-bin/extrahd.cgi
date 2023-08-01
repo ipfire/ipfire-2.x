@@ -305,6 +305,7 @@ END
 					} else {
 						unless($disabled) {
 							print "<input type='hidden' name='ACTION' value='$Lang::tr{'add'}'>\n";
+							print "<input type='hidden' name='FS' value='auto'>\n";
 							print "<img src='/images/updbooster/updxl-led-gray.gif' alt='$Lang::tr{'extrahd not configured'}' title='$Lang::tr{'extrahd not configured'}'>&nbsp;\n";
 							print "<input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/add.gif'>\n";
 						}
