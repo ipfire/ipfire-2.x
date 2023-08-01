@@ -667,6 +667,10 @@ sub is_mounted ($) {
 sub is_valid_dir ($) {
 	my ($mpoint) = @_;
 
+	# Do not allow "/mnt" or "/media" as mount points.
+	return if($mpoint eq "/mnt");
+	return if($mpoint eq "/media");
+
 	# Split the given mountpoint into pieces and store them
 	# in a temporay array.
 	my @tmp = split("/", $mpoint);
