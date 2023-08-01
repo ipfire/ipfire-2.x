@@ -690,3 +690,15 @@ sub is_swap ($) {
 
 	return 1 if(grep /$device/, @swaps);
 }
+
+#
+## Returns "True" if a drive is a configured one.
+#
+sub is_configured ($) {
+	my ($path) = @_;
+
+	# Loop through the hash of configured drives.
+	foreach my $uuid (keys %configured_drives) {
+	       return 1 if($configured_drives{$uuid} eq "$path");
+	}
+}
