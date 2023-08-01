@@ -98,14 +98,17 @@ $extrahdsettings{'UUID'} = '';
 ## Add a new device.
 #
 if ($extrahdsettings{'ACTION'} eq $Lang::tr{'add'}) {
+	# Check if a mount path has been given.
+	if (not $extrahdsettings{'PATH'}) {
+		$errormessage = "$Lang::tr{'extrahd no mount point given'}.";
+	
 	# Check if a valid mount path has been choosen.
-	unless(&is_valid_dir("$extrahdsettings{'PATH'}")) {
-		$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to root'}.";
-	}
+	} elsif(not &is_valid_dir("$extrahdsettings{'PATH'}")) {
+		$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to'} $extrahdsettings{'PATH'} $Lang::tr{'extrahd because it is outside the allowed mount path'}.";
 
 	# Check if the given path allready is mounted somewhere.
-	if(&is_mounted("$extrahdsettings{'PATH'}")) {
-		$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to'} $extrahdsettings{'PATH'}$Lang::tr{'extrahd because there is already a device mounted'}.";
+	} elsif(&is_mounted("$extrahdsettings{'PATH'}")) {
+		$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to'} $extrahdsettings{'PATH'} $Lang::tr{'extrahd because there is already a device mounted'}.";
 	}
 
 	# Check against may previously configured drives.
@@ -122,7 +125,7 @@ if ($extrahdsettings{'ACTION'} eq $Lang::tr{'add'}) {
 
 			# Check if the path is allready used.
 			if ( "$extrahdsettings{'PATH'}" eq "$path" ) {
-				$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to'} $extrahdsettings{'PATH'}$Lang::tr{'extrahd because there is already a device mounted'}.";
+				$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to'} $extrahdsettings{'PATH'} $Lang::tr{'extrahd because there is already a device mounted'}.";
 			}
 
 			# Check if the uuid is allready used.
@@ -318,16 +321,16 @@ END
 
 						# Check if the device is mounted properly.
 						if(&is_mounted($mountpoint)) {
-							print "<img src='/images/updbooster/updxl-led-green.gif' alt='MOUNTED' title='MOUNTED'>&nbsp;\n";
+							print "<img src='/images/updbooster/updxl-led-green.gif' alt='$Lang::tr{'extrahd mounted'}' title='$Lang::tr{'extrahd mounted'}'>&nbsp;\n";
 						} else {
-							print "<img src='/images/updbooster/updxl-led-red.gif' alt='NOT MOUNTED' title='NOT MOUNTED'>&nbsp;\n";
+							print "<img src='/images/updbooster/updxl-led-red.gif' alt='$Lang::tr{'extrahd not mounted'}' title='$Lang::tr{'extrahd not mounted'}'>&nbsp;\n";
 						}
 
 						print "<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/delete.gif'>\n";
 					} else {
 						unless($disabled) {
 							print "<input type='hidden' name='ACTION' value='$Lang::tr{'add'}'>\n";
-							print "<img src='/images/updbooster/updxl-led-gray.gif' alt='UNCONFIGURED' title='UNCONFIGURED'>&nbsp;\n";
+							print "<img src='/images/updbooster/updxl-led-gray.gif' alt='$Lang::tr{'extrahd not configured'}' title='$Lang::tr{'extrahd not configured'}'>&nbsp;\n";
 							print "<input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/add.gif'>\n";
 						}
 					}
