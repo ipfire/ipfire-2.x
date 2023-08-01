@@ -255,3 +255,363 @@ END
 
 &Header::closebigbox();
 &Header::closepage();
+
+#
+## Function which return an array with all available block devices.
+#
+sub get_block_devices () {
+	my @devices;
+
+	# Open directory from kernel sysfs.
+	opendir(DEVICES, "/sys/block");
+
+	# Loop through the directory.
+	while(readdir(DEVICES)) {
+		# Skip . and ..
+		next if($_ =~ /^\.$/);
+		next if($_ =~ /^\..$/);
+
+		# Skip any loopback and ram devices.
+		next if($_ =~ "^loop");
+		next if($_ =~ "^ram");
+
+		# Add the device to the array of found devices.
+		push(@devices, $_);
+	}
+
+	# Close directory handle.
+	closedir(DEVICES);
+
+	# Return the devices array.
+	return @devices;
+}
+
+#
+## Function which return all partitions of a given block device.
+#
+sub get_device_partitions ($) {
+	my ($device) = @_;
+
+	# Array to store the known partitions for the given
+	# device.
+	my @partitions;
+
+	# Assign device directory.
+	my $device_dir = "$sysfs_block_dir/$device";
+
+	# Abort and return nothing if the device dir does not exist.
+	return unless(-d "$device_dir");
+
+	opendir(DEVICE, "$sysfs_block_dir/$device");
+	while(readdir(DEVICE)) {
+		next unless($_ =~ "^$device");
+
+		push(@partitions, $_);
+	}
+
+	closedir(DEVICE);
+
+	@partitions = sort(@partitions);
+
+	return @partitions;
+}
+
+#
+## Returns the vendor of a given block device.
+#
+sub get_device_vendor ($) {
+	my ($device) = @_;
+
+	# Assign device directory.
+	my $device_dir = "$sysfs_block_dir/$device";
+
+	# Abort and return nothing if the device dir does not exist
+	# or no vendor file exists.
+	return unless(-d "$device_dir");
+	return unless(-f "$device_dir/device/vendor");
+
+	# Open and read-in the device vendor.
+	open(VENDOR, "$device_dir/device/vendor");
+	my $vendor = <VENDOR>;
+	close(VENDOR);
+
+	# Abort and return nothing if no vendor could be read.
+	return unless($vendor);
+
+	# Remove any newlines from the vendor string.
+	chomp($vendor);
+
+	# Return the omited vendor.
+	return $vendor;
+}
+
+#
+## Returns the model name (string) of a given block device.
+#
+sub get_device_model ($) {
+	my ($device) = @_;
+
+	# Assign device directory.
+	my $device_dir = "$sysfs_block_dir/$device";
+
+	# Abort and return nothing if the device dir does not exist
+	# or no model file exists.
+	return unless(-d "$device_dir");
+	return unless(-f "$device_dir/device/model");
+
+	# Open and read-in the device model.
+	open(MODEL, "$device_dir/device/model");
+	my $model = <MODEL>;
+	close(MODEL);
+
+	# Abort and return nothing if no model could be read.
+	return unless($model);
+
+	# Remove any newlines from the model string.
+	chomp($model);
+
+	# Return the model string.
+	return $model;
+}
+
+#
+## Returns the size of a given device in bytes.
+#
+sub get_device_size ($) {
+	my ($device) = @_;
+
+	# Assign device directory.
+	my $device_dir = "$sysfs_block_dir/$device";
+
+	# Abort and return nothing if the device dir does not exist
+	# or no size file exists.
+	return unless(-d "$device_dir");
+	return unless(-f "$device_dir/size");
+
+	# Open and read-in the device size.
+	open(SIZE, "$device_dir/size");
+	my $size = <SIZE>;
+	close(SIZE);
+
+	# Abort and return nothing if the size could not be read.
+	return unless($size);
+
+	# Remove any newlines for the size string.
+	chomp($size);
+
+	# The omited size only contains the amount of blocks from the
+	# given device. To convert this into bytes we have to multiply this
+	# value with 512 bytes for each block. This is a static value used by
+	# the linux kernel.
+	$size = $size * 512;
+
+	# Return the size in bytes.
+	return $size;
+}
+
+#
+## Function which returns all currently mounted devices as a hash.
+## example: "sda1" -> "/boot"
+#
+sub get_mountpoints () {
+	my %mounts;
+
+	# Open and read-in the current mounts from the
+	# kernel file system.
+	open(MOUNT, "/proc/mounts");
+
+	# Loop through the known mounts.
+	while(<MOUNT>) {
+		# Skip mounts which does not belong to a device.
+		next unless ($_ =~ "^/dev");
+
+		# Cut the line into pieces and assign nice variables.
+		my ($dev, $mpoint, $fs, $options, $a, $b) = split(/ /, $_);
+
+		# Split the device name.
+		my @tmp = split("/", $dev);
+
+		# Assign the plain device name to a new variable.
+		# It is the last element of the array.
+		my $device = $tmp[-1];
+
+		# Add the mountpoint to the hash of mountpoints.
+		$mounts{"$device"} = $mpoint;
+	}
+
+	# Close file handle.
+	close(MOUNT);
+
+	# Return the hash of known mountpoints.
+	return %mounts;
+}
+
+sub get_swaps () {
+	my @swaps;
+
+	# Open and read the swaps file.
+	open(SWAP, "/proc/swaps");
+
+	# Loop though the file content.
+	while(<SWAP>) {
+		# Skip lines which does not belong to a device.
+		next unless ($_ =~ "^/dev");
+
+		# Split the line and assign nice variables.
+		my ($dev, $type, $size, $used, $prio) = split(/ /, $_);
+
+		# Cut the device line into pieces.
+		my @tmp = split("/", $dev);
+
+		my $device = @tmp[-1];
+
+		# Add the found swap to the array of swaps.
+		push(@swaps, $device);
+	}
+
+	# Close file handle.
+	close(SWAP);
+
+	# Sort the array.
+	@swaps = sort(@swaps);
+
+	# Return the array.
+	return @swaps;
+}
+
+#
+## Function with returns the mounted devices and the used filesystems as a hash.
+## Example: "sda1" -> "ext4"
+#
+sub get_mountedfs () {
+	my %mountedfs;
+
+	# Open and read the current mounts from the kernel
+	# file system.
+	open(MOUNT, "/proc/mounts");
+
+	# Loop through the known mounts.
+	while(<MOUNT>) {
+		# Skip mounts which does not belong to a device.
+		next unless ($_ =~ "^/dev");
+
+		# Split line and assign nice variables.
+		my ($dev, $mpoint, $fs, $options, $a, $b) = split(/ /, $_);
+
+		# Cut the device line into pieces.
+		my @tmp = split("/", $dev);
+
+		# Assign the plain device name to a variable
+		# It is the last element of the temporary array.
+		my $device = $tmp[-1];
+
+		# Convert the filesystem into lower case format.
+		$fs = lc($fs);
+
+		# Add the mounted file system.
+		$mountedfs{$device} = $fs;
+	}
+
+	# Close file handle.
+	close(MOUNT);
+
+	# Return the hash with the mounted filesystems.
+	return %mountedfs;
+}
+
+#
+## Function which returns all known UUID's as a hash.
+## Example: "sda1" -> "1234-5678-abcd"
+#
+sub get_uuids () {
+	my %uuids;
+
+	# Directory where the uuid mappings can be found.
+	my $uuid_dir = "/dev/disk/by-uuid";
+
+	# Open uuid directory and read-in the current known uuids.
+	opendir(UUIDS, "$uuid_dir");
+
+	# Loop through the uuids.
+	foreach my $uuid (readdir(UUIDS)) {
+		# Skip . and ..
+		next if($uuid eq "." or $uuid eq "..");
+
+		# Skip everything which is not a symbolic link.
+		next unless(-l "$uuid_dir/$uuid");
+
+		# Resolve the target of the symbolic link.
+		my $target = readlink("$uuid_dir/$uuid");
+
+		# Split the link target into pieces.
+		my @tmp = split("/", $target);
+
+		# Assign the last element of the array to the dev variable.
+		my $dev = "$tmp[-1]";
+
+		# Add the device and uuid to the hash of uuids.
+		$uuids{$dev} = $uuid;
+	}
+
+	# Close directory handle.
+	closedir(UUIDS);
+
+	# Return the hash of uuids.
+	return %uuids;
+}
+
+#
+## Returns the device name of a given uuid.
+#
+sub device_by_uuid ($) {
+	my ($uuid) = @_;
+
+	# Reverse the main uuids hash.
+	my %uuids = reverse %uuids;
+
+	# Lookup and return the device name.
+	return $uuids{$uuid};
+}
+
+#
+## Returns "True" in case a given path is a known mountpoint.
+#
+sub is_mounted ($) {
+	my ($mpoint) = @_;
+
+	my %mountpoints = reverse %mountpoints;
+
+	# Return "True" if the requested mountpoint is known and
+	# therefore mounted.
+	return 1 if($mountpoints{$mpoint});
+}
+
+#
+## Returns "True" if a given mountpoint is a subdirectory of one
+## of the directories specified by the valid_mount_dirs array abouve.
+#
+sub is_valid_dir ($) {
+	my ($mpoint) = @_;
+
+	# Split the given mountpoint into pieces and store them
+	# in a temporay array.
+	my @tmp = split("/", $mpoint);
+
+	# Exit and return nothing if the temporary array is empty.
+	return unless(@tmp);
+
+	# Build the root path based on the given mount point.
+	my $root_path = "/" . @tmp[1];
+
+	# Check if the root path is valid.
+	return 1 if(grep /$root_path/, @valid_mount_dirs);
+}
+
+#
+# Returns "True" if a device is used as swap.
+#
+sub is_swap ($) {
+	my ($device) = @_;
+
+	return 1 if(grep /$device/, @swaps);
+}
