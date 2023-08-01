@@ -302,14 +302,31 @@ END
 
 			print <<END
 					</select></td>
-				<td align="center"><input type='text' name='PATH' value=$mountpoint $disabled></td>
+				<td align="center"><input type='text' name='PATH' value='$mountpoint' $disabled></td>
 				<td align="center">
 					<input type='hidden' name='DEVICE' value='/dev/$partition' />
 					<input type='hidden' name='UUID' value='$uuids{$partition}' />
-					<input type='hidden' name='ACTION' value='$Lang::tr{'add'}' />
 END
-;					unless($disabled) {
-						print"<input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/add.gif' />\n";
+;
+					# Check if the mountpoint refers to a known configured drive.
+					if(&is_configured($mountpoint)) {
+						print "<input type='hidden' name='ACTION' value='$Lang::tr{'delete'}'>\n";
+						print "<input type='hidden' name='PATH' value='$mountpoint'>\n";
+
+						# Check if the device is mounted properly.
+						if(&is_mounted($mountpoint)) {
+							print "<img src='/images/updbooster/updxl-led-green.gif' alt='MOUNTED' title='MOUNTED'>&nbsp;\n";
+						} else {
+							print "<img src='/images/updbooster/updxl-led-red.gif' alt='NOT MOUNTED' title='NOT MOUNTED'>&nbsp;\n";
+						}
+
+						print "<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/delete.gif'>\n";
+					} else {
+						unless($disabled) {
+							print "<input type='hidden' name='ACTION' value='$Lang::tr{'add'}'>\n";
+							print "<img src='/images/updbooster/updxl-led-gray.gif' alt='UNCONFIGURED' title='UNCONFIGURED'>&nbsp;\n";
+							print "<input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/add.gif'>\n";
+						}
 					}
 
 				print <<END
