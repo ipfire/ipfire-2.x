@@ -98,28 +98,7 @@ $extrahdsettings{'UUID'} = '';
 ## Add a new device.
 #
 if ($extrahdsettings{'ACTION'} eq $Lang::tr{'add'}) {
-	# Open device file for reading.
-	open( FILE, "< $devicefile" ) or die "Unable to read $devicefile";
-	my @devices = <FILE>;
-	close FILE;
-
-	# Loop through the entries line-by-line.
-	foreach my $entry (sort @devices) {
-		# Split the line into pieces and assign nice variables.
-		my ($uuid, $fs, $path) = split( /\;/, $entry );
-
-		# Check if the path is allready used.
-		if ( "$extrahdsettings{'PATH'}" eq "$path" ) {
-			$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to'} $extrahdsettings{'PATH'}$Lang::tr{'extrahd because there is already a device mounted'}.";
-		}
-
-		# Check if the uuid is allready used.
-		if ("$extrahdsettings{'DEVICE'} eq $uuid") {
-			$errormessage = "$extrahdsettings{'DEVICE'} is allready mounted.";
-		}
-	}
-
-	# Check if a valid mount path has been choosen. 
+	# Check if a valid mount path has been choosen.
 	unless(&is_valid_dir("$extrahdsettings{'PATH'}")) {
 		$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to root'}.";
 	}
@@ -129,7 +108,31 @@ if ($extrahdsettings{'ACTION'} eq $Lang::tr{'add'}) {
 		$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to'} $extrahdsettings{'PATH'}$Lang::tr{'extrahd because there is already a device mounted'}.";
 	}
 
-	# Check if there was an error message.
+	# Check against may previously configured drives.
+	unless ($errormessage) {
+		# Open device file for reading.
+		open( FILE, "< $devicefile" ) or die "Unable to read $devicefile";
+		my @devices = <FILE>;
+		close FILE;
+
+		# Loop through the entries line-by-line.
+		foreach my $entry (sort @devices) {
+			# Split the line into pieces and assign nice variables.
+			my ($uuid, $fs, $path) = split( /\;/, $entry );
+
+			# Check if the path is allready used.
+			if ( "$extrahdsettings{'PATH'}" eq "$path" ) {
+				$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to'} $extrahdsettings{'PATH'}$Lang::tr{'extrahd because there is already a device mounted'}.";
+			}
+
+			# Check if the uuid is allready used.
+			if ("$extrahdsettings{'DEVICE'} eq $uuid") {
+				$errormessage = "$extrahdsettings{'DEVICE'} is allready mounted.";
+			}
+		}
+	}
+
+	# Go further if there was no error message.
 	unless($errormessage) {
 		# Re-open the device file for writing.
 		open(FILE, ">> $devicefile" ) or die "Unable to write $devicefile";
