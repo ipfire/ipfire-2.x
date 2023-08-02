@@ -80,6 +80,11 @@ extrahd_umount() {
 			continue
 		fi
 
+		# Do not try to umount if nothing is mounted
+		if ! mountpoint "${mountpoint}" &>/dev/null; then
+			continue
+		fi
+
 		# Umount and try lazy umount if failed
 		if umount --quiet --recursive "${mountpoint}" || \
 				umount --quiet --recursive --lazy "${mountpoint}"; then
