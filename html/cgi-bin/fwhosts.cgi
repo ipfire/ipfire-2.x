@@ -693,6 +693,9 @@ if ($fwhostsettings{'ACTION'} eq 'savelocationgrp')
 	&General::readhasharray("$fwconfiginp", \%fwinp);
 	&General::readhasharray("$fwconfigout", \%fwout);
 
+	# Check name
+	if (!&validhostname($grp)){$errormessage.=$Lang::tr{'fwhost err name'};}
+
 	# Check for existing group name.
 	if (!&checkgroup($grp) && $fwhostsettings{'update'} ne 'on'){
 		$errormessage = $Lang::tr{'fwhost err grpexist'};
