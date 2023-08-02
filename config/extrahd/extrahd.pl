@@ -40,6 +40,12 @@ extrahd_mount() {
 			continue
 		fi
 
+		# Check that the mountpoint starts with a slash
+		if [ "${mountpoint:0:1}" != "/" ]; then
+			log "Skipping invalid mountpoint: ${mountpoint}"
+			continue
+		fi
+
 		# Skip mounting if something is already mounted at the mountpoint
 		if mountpoint "${mountpoint}" &>/dev/null; then
 			continue
