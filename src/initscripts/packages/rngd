@@ -24,18 +24,8 @@
 
 case "${1}" in
 	start)
-		if pidofproc -s /usr/sbin/rngd; then
-			boot_mesg "Random Number Generator Daemon is already running..."
-			echo_ok;
-			exit 0
-		fi
-		if [ -e /dev/hwrngtty ]; then
-			HWRNG=/dev/hwrngtty
-		else
-			HWRNG=/dev/hwrng
-		fi
 		boot_mesg "Starting Random Number Generator Daemon..."
-		loadproc /usr/sbin/rngd -r $HWRNG --quiet
+		loadproc /usr/sbin/rngd --quiet
 		;;
 
 	stop)
@@ -51,10 +41,6 @@ case "${1}" in
 
 	status)
 		statusproc /usr/sbin/rngd
-		;;
-
-	udev-event)
-		$0 restart &>/dev/null
 		;;
 
 	*)

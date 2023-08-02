@@ -43,7 +43,7 @@ our %Providers = (
 		website => "https://www.snort.org",
 		tr_string => "community rules",
 		requires_subscription => "False",
-		dl_url => "https://www.snort.org/rules/community",
+		dl_url => "https://www.snort.org/downloads/community/community-rules.tar.gz",
 		dl_type => "archive",
 	},
 

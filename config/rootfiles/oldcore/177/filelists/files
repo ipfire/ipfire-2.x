@@ -238,3 +238,4 @@ lib/firmware/rtw89/rtw8851b_fw.bin
 lib/firmware/rtw89/rtw8852b_fw-1.bin
 lib/firmware/rtw89/rtw8852c_fw.bin
 usr/sbin/unbound-dhcp-leases-bridge
+var/ipfire/suricata/ruleset-sources
