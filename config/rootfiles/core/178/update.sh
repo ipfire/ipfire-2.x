@@ -37,6 +37,8 @@ done
 extract_files
 
 # Remove files
+rm -rvf \
+	/usr/lib/pppd/2.4.9
 
 # Remove dropped sox addon
 rm -vf \
