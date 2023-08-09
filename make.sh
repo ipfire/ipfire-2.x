@@ -767,8 +767,8 @@ qemu_environ() {
 			;;
 		riscv64)
 			QEMU_CPU="${QEMU_CPU:-sifive-u54}"
-
-			env="${env} QEMU_CPU=${QEMU_CPU}"
+			G_SLICE="always-malloc"
+			env="${env} QEMU_CPU=${QEMU_CPU} G_SLICE=${G_SLICE}"
 			;;
 	esac
 
