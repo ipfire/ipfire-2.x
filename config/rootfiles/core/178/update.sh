@@ -63,6 +63,7 @@ ldconfig
 
 # Start services
 /etc/init.d/udev restart
+/etc/init.d/squid restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
