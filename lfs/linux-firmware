@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20230625
+VER        = 20230804
 
 THISAPP    = linux-firmware-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ffddd7e1252b1916b667ed153b6a81d843589c36d53ca48d5a491183f549b380ba7b242e4dc18998fc7e8d3fa4522c4ab0ed55ac37e771f13254f7c0e3b69ccf
+$(DL_FILE)_BLAKE2 = 9ecedb8bc155fbd192d8cd42d06c9b37d6c7a52c013ec997331865c06f12251c3f223eb9d2e6d0830e29276bd588a352e8ff8bae276e63157df5d6a433c3e20d
 
 install : $(TARGET)
 
@@ -71,7 +71,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && git apply -p1 < $(DIR_SRC)/src/patches/linux-firmware-amd-family-19h.patch
-	cd $(DIR_APP) && git apply -p1 < $(DIR_SRC)/src/patches/linux-firmware-amd-family-17h.patch
 
 	mkdir -p /lib/firmware
 	cd $(DIR_APP) && make install
