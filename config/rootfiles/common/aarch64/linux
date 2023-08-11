@@ -6587,7 +6587,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/asm-generic/bitops/sched.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/bitsperlong.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/bug.h
-#lib/modules/KVER-ipfire/build/include/asm-generic/bugs.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/cache.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/cacheflush.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/checksum.h
@@ -6767,6 +6766,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/AMD8111_ETH
 #lib/modules/KVER-ipfire/build/include/config/AMD_PHY
 #lib/modules/KVER-ipfire/build/include/config/AMLOGIC_THERMAL
+#lib/modules/KVER-ipfire/build/include/config/AMPERE_ERRATUM_AC03_CPU_38
 #lib/modules/KVER-ipfire/build/include/config/APERTURE_HELPERS
 #lib/modules/KVER-ipfire/build/include/config/AQTION
 #lib/modules/KVER-ipfire/build/include/config/AQUANTIA_PHY

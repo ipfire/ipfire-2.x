@@ -6422,7 +6422,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/asm-generic/bitops/sched.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/bitsperlong.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/bug.h
-#lib/modules/KVER-ipfire/build/include/asm-generic/bugs.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/cache.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/cacheflush.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/checksum.h
@@ -6659,6 +6658,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_ADD_PAGES
 #lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_CACHE_LINE_SIZE
 #lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_COPY_MC
+#lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_CPU_FINALIZE_INIT
 #lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_CPU_RELAX
 #lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_CURRENT_STACK_POINTER
 #lib/modules/KVER-ipfire/build/include/config/ARCH_HAS_DEBUG_VIRTUAL
@@ -7113,6 +7113,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/CPU_IDLE_GOV_TEO
 #lib/modules/KVER-ipfire/build/include/config/CPU_ISOLATION
 #lib/modules/KVER-ipfire/build/include/config/CPU_RMAP
+#lib/modules/KVER-ipfire/build/include/config/CPU_SRSO
 #lib/modules/KVER-ipfire/build/include/config/CPU_SUP_AMD
 #lib/modules/KVER-ipfire/build/include/config/CPU_SUP_CENTAUR
 #lib/modules/KVER-ipfire/build/include/config/CPU_SUP_HYGON
