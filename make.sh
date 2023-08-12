@@ -1132,17 +1132,6 @@ buildipfire() {
   lfsmake2 iproute2
   lfsmake2 screen
   lfsmake2 elfutils
-
-  # Kernelbuild ... current we have no platform that need
-  # multi kernel builds so KCFG is empty
-  lfsmake2 linux		KCFG=""
-  lfsmake2 rtl8189es		KCFG=""
-  lfsmake2 rtl8189fs		KCFG=""
-  lfsmake2 rtl8812au		KCFG=""
-  lfsmake2 rtl8822bu		KCFG=""
-  lfsmake2 rtl8821cu		KCFG=""
-  lfsmake2 linux-initrd		KCFG=""
-
   lfsmake2 expat
   lfsmake2 libconfig
   lfsmake2 curl
@@ -1708,6 +1697,16 @@ buildipfire() {
   lfsmake2 perl-MIME-Base32
   lfsmake2 perl-URI-Encode
   lfsmake2 rsnapshot
+
+  # Kernelbuild ... current we have no platform that need
+  # multi kernel builds so KCFG is empty
+  lfsmake2 linux		KCFG=""
+  lfsmake2 rtl8189es		KCFG=""
+  lfsmake2 rtl8189fs		KCFG=""
+  lfsmake2 rtl8812au		KCFG=""
+  lfsmake2 rtl8822bu		KCFG=""
+  lfsmake2 rtl8821cu		KCFG=""
+  lfsmake2 linux-initrd		KCFG=""
 }
 
 buildinstaller() {

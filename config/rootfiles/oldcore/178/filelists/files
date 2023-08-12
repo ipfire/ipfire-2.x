@@ -1,0 +1,2 @@
+etc/rc.d/init.d/smt
+srv/web/ipfire/cgi-bin/vulnerabilities.cgi
