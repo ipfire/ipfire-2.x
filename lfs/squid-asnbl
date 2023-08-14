@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 0.2.4
+VER        = 0.2.5
 
 THISAPP    = squid-asnbl-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 98bdf0ecff1fc4d4ac0e0eb43d37682acf76900df783bf31b172134ebe31a857594e0a98ee06347da40d97b86a6ac0ce9a63ea7a80a1d73948e338f72d1c3af2
+$(DL_FILE)_BLAKE2 = 7206b9fe6c4a0509c9ce0301a5d3553274d005daae2050f23e26056d356c328719821d58d94ed2eac7942a6cafb0ca8de2cb619ce28a0f514b6eef413350e249
 
 install : $(TARGET)
 
@@ -75,7 +75,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zvxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/squid/squid-asnbl-0.2.4_initialise_global_variables_to_make_compatible_with_python_3.patch
 
 	# Install ASNBL helper script
 	cd $(DIR_APP) && install -o root -g root -m 0755 asnbl-helper.py /usr/bin/asnbl-helper.py
