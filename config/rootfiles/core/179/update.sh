@@ -24,6 +24,24 @@
 . /opt/pakfire/lib/functions.sh
 /usr/local/bin/backupctrl exclude >/dev/null 2>&1
 
+migrate_extrahd() {
+	local dev
+	local fs
+	local mp
+	local rest
+
+	while IFS=';' read -r dev fs mp rest; do
+		# Make sure mountpoint it set (so that we won't delete
+		# everything in /etc/fstab if there was an empty line).
+		if [ -z "${mp}" ]; then
+			continue
+		fi
+
+		# Remove the mountpoint from /etc/fstab
+		sed "/[[:blank:]]${mp//\//\\\/}[[:blank:]]/d" -i /etc/fstab
+	done < /var/ipfire/extrahd/devices
+}
+
 core=179
 
 # Remove old core updates from pakfire cache to save space...
@@ -60,6 +78,9 @@ ldconfig
 
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
+
+# Migrate ExtraHD
+migrate_extrahd
 
 # Start services
 /etc/init.d/udev restart
