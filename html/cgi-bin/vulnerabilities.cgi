@@ -183,7 +183,7 @@ print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
 my $smt_status = &smt_status();
 
 print <<END;
-	<table class="tbl" width="66%">
+	<table class="tbl" width="100%">
 		<tbody>
 			<tr>
 				<th colspan="2" align="center">
