@@ -2,4 +2,5 @@ etc/rc.d/init.d/networking/red
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
+srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 var/ipfire/extrahd/bin/extrahd.pl
