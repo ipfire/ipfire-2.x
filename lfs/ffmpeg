@@ -85,7 +85,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/ffmpeg-6.0-mathpops-clip-constants-used-with-shift.patch
 	cd $(DIR_APP) && \
 		CFLAGS="$(CFLAGS)" \
 		LDFLAGS="$(LDFLAGS)" \
