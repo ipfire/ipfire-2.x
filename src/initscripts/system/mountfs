@@ -45,9 +45,7 @@ case "${1}" in
 
 	stop)
 		boot_mesg "Syncing discs..."
-		sync && sync
-		sleep 2
-		sync && sync
+		sync
 		evaluate_retval
 
 		# ExtraHD
