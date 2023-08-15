@@ -89,6 +89,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 
 	mkdir -p /var/lib/monit
+	mkdir -p /etc/monit.d
 
 	# Install backup include file
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/monit \
