@@ -36,6 +36,11 @@ case "${1}" in
 		boot_mesg "Mounting remaining file systems..."
 		mount -a -O no_netdev &>/dev/null
 		evaluate_retval
+
+		# ExtraHD
+		boot_mesg "Mounting custom file systems..."
+		/var/ipfire/extrahd/bin/extrahd.pl mount
+		evaluate_retval
 		;;
 
 	stop)
@@ -43,6 +48,11 @@ case "${1}" in
 		sync && sync
 		sleep 2
 		sync && sync
+		evaluate_retval
+
+		# ExtraHD
+		boot_mesg "Unmounting custom file systems..."
+		/var/ipfire/extrahd/bin/extrahd.pl umount
 		evaluate_retval
 
 		boot_mesg "Unmounting all other currently mounted file systems..."
