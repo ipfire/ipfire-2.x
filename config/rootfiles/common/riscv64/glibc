@@ -140,6 +140,7 @@ usr/bin/locale
 #usr/include/bits/resource.h
 #usr/include/bits/rseq.h
 #usr/include/bits/sched.h
+#usr/include/bits/select-decl.h
 #usr/include/bits/select.h
 #usr/include/bits/select2.h
 #usr/include/bits/sem.h
@@ -191,6 +192,7 @@ usr/bin/locale
 #usr/include/bits/struct_stat.h
 #usr/include/bits/struct_stat_time64_helper.h
 #usr/include/bits/syscall.h
+#usr/include/bits/syslog-decl.h
 #usr/include/bits/syslog-ldbl.h
 #usr/include/bits/syslog-path.h
 #usr/include/bits/syslog.h
@@ -265,6 +267,7 @@ usr/bin/locale
 #usr/include/bits/uintn-identity.h
 #usr/include/bits/uio-ext.h
 #usr/include/bits/uio_lim.h
+#usr/include/bits/unistd-decl.h
 #usr/include/bits/unistd.h
 #usr/include/bits/unistd_ext.h
 #usr/include/bits/utmp.h
@@ -7691,7 +7694,6 @@ usr/lib/locale
 #usr/lib/locale/zu_ZA/LC_TELEPHONE
 #usr/lib/locale/zu_ZA/LC_TIME
 #usr/sbin/iconvconfig
-#usr/sbin/nscd
 #usr/sbin/zic
 #usr/share/i18n
 #usr/share/i18n/charmaps
@@ -8390,6 +8392,9 @@ usr/lib/locale
 #usr/share/locale/pt_BR
 #usr/share/locale/pt_BR/LC_MESSAGES
 #usr/share/locale/pt_BR/LC_MESSAGES/libc.mo
+#usr/share/locale/ro
+#usr/share/locale/ro/LC_MESSAGES
+#usr/share/locale/ro/LC_MESSAGES/libc.mo
 #usr/share/locale/ru
 #usr/share/locale/ru/LC_MESSAGES
 #usr/share/locale/ru/LC_MESSAGES/libc.mo

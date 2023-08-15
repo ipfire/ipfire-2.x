@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.37
+VER        = 2.38
 
 THISAPP    = glibc-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -56,12 +56,15 @@ endif
 # Add some general configuration flags
 EXTRA_CONFIG += \
 	--disable-profile \
-	--enable-kernel=4.14.0 \
+	--enable-kernel=5.4.0 \
 	--enable-add-ons \
 	--without-selinux \
 	--enable-experimental-malloc \
 	--enable-bind-now \
-	--disable-crypt
+	--enable-fortify-source \
+	--disable-crypt \
+	--disable-build-nscd \
+	--disable-nscd
 
 ifeq "$(BUILD_ARCH)" "x86_64"
 	EXTRA_CONFIG += --enable-cet
@@ -79,7 +82,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 8139cd977b2ed3bfdbde5ffb1cda8f759763dbb83071167272fef798cfbdc0d17cfd1ec893d126c52c91511b7961f3ad12eed34534b99412dfa04a1cdd5b4ea3
+$(DL_FILE)_BLAKE2 = f9b039f0ef98a7dd8e1cba228ed10286b9e4fbe4dd89af4d26fa5c4e4cf266f19c2746b44d797ce54739d86499e74cf334aaf311bcf6e30120fd7748453e653f
 
 install : $(TARGET)
 
