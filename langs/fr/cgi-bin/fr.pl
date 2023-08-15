@@ -2460,7 +2460,7 @@
 'system logs' => 'Rapports système',
 'system status information' => 'Informations sur le statut du système',
 'ta key' => 'Clé d\'authentification TLS',
-'taa zombieload2' => 'TSX Async Abort / ZombieLoad v2',
+'taa zombieload2' => 'TSX Async Abort/ZombieLoad v2',
 'tcp more reliable' => 'TCP (plus fiable)',
 'telephone not set' => 'Numéro de téléphone non défini.',
 'template' => 'Préétabli',
