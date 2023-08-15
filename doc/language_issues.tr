@@ -317,6 +317,7 @@ WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: external access rule removed
 WARNING: translation string unused: extrahd
+WARNING: translation string unused: extrahd to root
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
@@ -949,6 +950,7 @@ WARNING: untranslated string: dns use isp assigned nameservers = Use ISP-assigne
 WARNING: untranslated string: dns use protocol for dns queries = Protocol for DNS queries
 WARNING: untranslated string: dnsforward dnssec disabled = DNSSEC Validation is disabled
 WARNING: untranslated string: dnsforward forward_servers = Nameservers
+WARNING: untranslated string: downfall gather data sampling = Downfall/Gather Data Sampling
 WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
 WARNING: untranslated string: drop hostile = Drop packets from and to hostile networks (listed at <a href="https://www.spamhaus.org/drop/" target="_blank">Spamhaus DROP</a>, etc.)
 WARNING: untranslated string: drop spoofed martians = Log dropped spoofed packets and marsians
@@ -965,6 +967,11 @@ WARNING: untranslated string: eol architecture warning = You are running an arch
 WARNING: untranslated string: error = Error
 WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
+WARNING: untranslated string: extrahd because it is outside the allowed mount path = unknown string
+WARNING: untranslated string: extrahd mounted = Mounted
+WARNING: untranslated string: extrahd no mount point given = No mount point given
+WARNING: untranslated string: extrahd not configured = Not configured
+WARNING: untranslated string: extrahd not mounted = Not mounted
 WARNING: untranslated string: fallout zombieload ridl = Fallout/ZombieLoad/RIDL
 WARNING: untranslated string: force enable = Forced
 WARNING: untranslated string: foreshadow = Foreshadow
@@ -1136,6 +1143,7 @@ WARNING: untranslated string: smb daemon = SMB Daemon
 WARNING: untranslated string: smt disabled = Simultaneous Multi-Threading (SMT) is disabled
 WARNING: untranslated string: smt enabled = Simultaneous Multi-Threading (SMT) is enabled
 WARNING: untranslated string: smt not supported = Simultaneous Multi-Threading (SMT) is not supported
+WARNING: untranslated string: spec rstack overflow = Speculative Return Stack Overflow
 WARNING: untranslated string: spectre variant 1 = Spectre Variant 1
 WARNING: untranslated string: spectre variant 2 = Spectre Variant 2
 WARNING: untranslated string: spectre variant 4 = Spectre Variant 4
@@ -1151,7 +1159,7 @@ WARNING: untranslated string: strict = Strict
 WARNING: untranslated string: subnet mask = Subnet Mask
 WARNING: untranslated string: subscription code = Subscription code
 WARNING: untranslated string: system is offline = The system is offline.
-WARNING: untranslated string: taa zombieload2 = TSX Async Abort / ZombieLoad v2
+WARNING: untranslated string: taa zombieload2 = TSX Async Abort/ZombieLoad v2
 WARNING: untranslated string: token = Token:
 WARNING: untranslated string: token not set = No Token has been given.
 WARNING: untranslated string: tor guard country any = Any country

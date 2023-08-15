@@ -55,6 +55,7 @@
 < download apple profile
 < enable
 < error the to date has to be later than the from date
+< extrahd because it it outside the allowed mount path
 < g.dtm
 < g.lite
 < ids automatic rules update
@@ -104,11 +105,18 @@
 < cpu frequency
 < dhcp fixed ip address in dynamic range
 < dns servers
+< downfall gather data sampling
+< extrahd because it it outside the allowed mount path
+< extrahd mounted
+< extrahd no mount point given
+< extrahd not configured
+< extrahd not mounted
 < hardware vulnerabilities
 < invalid ip or hostname
 < openvpn cert expires soon
 < openvpn cert has expired
 < service boot setting unavailable
+< spec rstack overflow
 < transport mode does not support vti
 < wlanap
 < wlan client configuration
@@ -118,8 +126,15 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
+< downfall gather data sampling
+< extrahd because it it outside the allowed mount path
+< extrahd mounted
+< extrahd no mount point given
+< extrahd not configured
+< extrahd not mounted
 < g.dtm
 < g.lite
+< spec rstack overflow
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -270,6 +285,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< downfall gather data sampling
 < download apple profile
 < drop hostile
 < drop spoofed martians
@@ -305,6 +321,11 @@
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
+< extrahd because it it outside the allowed mount path
+< extrahd mounted
+< extrahd no mount point given
+< extrahd not configured
+< extrahd not mounted
 < fallout zombieload ridl
 < fifteen minutes
 < firewall graph country
@@ -515,6 +536,7 @@
 < smt disabled
 < smt enabled
 < smt not supported
+< spec rstack overflow
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
@@ -779,6 +801,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< downfall gather data sampling
 < download apple profile
 < download tls-auth key
 < drop hostile
@@ -816,6 +839,11 @@
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
+< extrahd because it it outside the allowed mount path
+< extrahd mounted
+< extrahd no mount point given
+< extrahd not configured
+< extrahd not mounted
 < fallout zombieload ridl
 < fifteen minutes
 < firewall graph country
@@ -1048,6 +1076,7 @@
 < smt not supported
 < software version
 < source ip country
+< spec rstack overflow
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
@@ -1386,6 +1415,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< downfall gather data sampling
 < downlink
 < download apple profile
 < download tls-auth key
@@ -1434,10 +1464,15 @@
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
+< extrahd because it it outside the allowed mount path
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
 < extrahd maybe the device is in use
+< extrahd mounted
+< extrahd no mount point given
+< extrahd not configured
+< extrahd not mounted
 < extrahd to
 < extrahd to root
 < extrahd unable to read
@@ -1923,6 +1958,7 @@
 < snat new source ip address
 < software version
 < source ip country
+< spec rstack overflow
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
@@ -2366,6 +2402,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< downfall gather data sampling
 < downlink
 < download apple profile
 < download tls-auth key
@@ -2415,10 +2452,15 @@
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
+< extrahd because it it outside the allowed mount path
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
 < extrahd maybe the device is in use
+< extrahd mounted
+< extrahd no mount point given
+< extrahd not configured
+< extrahd not mounted
 < extrahd to
 < extrahd to root
 < extrahd unable to read
@@ -2905,6 +2947,7 @@
 < snat new source ip address
 < software version
 < source ip country
+< spec rstack overflow
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
@@ -3197,6 +3240,7 @@
 < dns tls hostname
 < dns use isp assigned nameservers
 < dns use protocol for dns queries
+< downfall gather data sampling
 < download apple profile
 < drop hostile
 < drop spoofed martians
@@ -3211,6 +3255,11 @@
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
+< extrahd because it it outside the allowed mount path
+< extrahd mounted
+< extrahd no mount point given
+< extrahd not configured
+< extrahd not mounted
 < fallout zombieload ridl
 < force enable
 < foreshadow
@@ -3358,6 +3407,7 @@
 < smt disabled
 < smt enabled
 < smt not supported
+< spec rstack overflow
 < spectre variant 1
 < spectre variant 2
 < spectre variant 4
