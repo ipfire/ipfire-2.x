@@ -75,7 +75,8 @@ else
 	--prefix=$(TOOLS_DIR) \
 	--with-lib-path=$(TOOLS_DIR)/lib \
 	--with-sysroot \
-	--disable-nls
+	--disable-nls \
+	--disable-gprofng
   EXTRA_MAKE =
   EXTRA_INSTALL =
 endif
