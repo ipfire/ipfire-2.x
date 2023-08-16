@@ -50,6 +50,8 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/usr/local/bin/openvpnctrl -k
+/usr/local/bin/openvpnctrl -kn2n
 
 # Extract files
 extract_files
@@ -85,6 +87,8 @@ migrate_extrahd
 # Start services
 /etc/init.d/udev restart
 /etc/init.d/squid restart
+/usr/local/bin/openvpnctrl -s
+/usr/local/bin/openvpnctrl -sn2n
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
