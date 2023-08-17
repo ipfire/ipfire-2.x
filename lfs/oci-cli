@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.7.3
+VER        = 3.29.4
 
 THISAPP    = oci-cli-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = oci-cli
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = oci-python-sdk python3-arrow python3-jmespath python3-six \
 	python3-terminaltables
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 18982b6633e1df16dfd381df0f6aa78bab33b0e4ad733ca518410704d5f10b5fc3e511fa7c7440455ceb648c70c7138034fcabe043e124b9065743174275409d
+$(DL_FILE)_BLAKE2 = ae53d68e8a305a4392568f4311189106eeda6a782bb50e42a320b035ae1d00a1a5a088575cb0789ae8216b2adaae646b2243fbbd68fbce12bd175d0eca46e64b
 
 install : $(TARGET)
 

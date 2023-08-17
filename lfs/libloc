@@ -24,8 +24,8 @@
 
 include Config
 
-VER        = 0.9.16
-DB_DATE    = 2023-06-25
+VER        = 0.9.17
+DB_DATE    = 2023-08-09
 
 THISAPP    = libloc-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,8 +43,8 @@ objects = $(DL_FILE) \
 $(DL_FILE)                    = https://source.ipfire.org/releases/libloc/$(DL_FILE)
 location-$(DB_DATE).db.xz     = https://location.ipfire.org/databases/1/archive/location-$(DB_DATE).db.xz
 
-$(DL_FILE)_BLAKE2 = dc9e5ce8e1084e6a385149521f5f5ea156f33502343b254b9f70c5c6e28f699466981ae704483681a80449c2acfd202301bcbcfc2b81d773c308575910db79e9
-location-$(DB_DATE).db.xz_BLAKE2 = 916644d348e16e7c84859862ed9137dfadce1e1c4cba6e7bdad373050d0afa632f97c208477150588fed4c2df9c8c9b0678e6048b71759d1eddf80a5df71ad35
+$(DL_FILE)_BLAKE2 = b0bf860ebaccd3cb49c58c066c430f7a1f936a2029957db9b88e22c04240af0268a8f6388e8ca512102f14033037a2ab8bbb93fe83e525b9859c790c5c382df4
+location-$(DB_DATE).db.xz_BLAKE2 = 24ad4dc2496d3c0a7fe645374a02c8d4bf4724796ccf4ed00d2de9adfaa08f31cb70314afa5d8f7b7acebd4ccbd4d1f8a15b8da09a27b0092d74412cf30aa721
 
 install : $(TARGET)
 
@@ -79,7 +79,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xvf $(DIR_DL)/$(DL_FILE)
 
 	# https://lists.ipfire.org/pipermail/development/2022-November/014763.html
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libloc-0.9.16-Revert-Install-Perl-files-to-Perl-vendor-directory.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/libloc-0.9.17-Revert-Install-Perl-files-to-Perl-vendor-directory.patch
 
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \

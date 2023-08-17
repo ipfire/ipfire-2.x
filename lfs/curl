@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 8.1.0
+VER        = 8.2.1
 
 THISAPP    = curl-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 768a824b8f5f6ddaa073599c4106f07a8134bcbe0e0d666390be1bce16ba25386d85930853bb47bc90b2c8a499a0b2abb9c685042563801e0fe58b9c315ac6cc
+$(DL_FILE)_BLAKE2 = 77c0b067935397afb3961378f2fe349fa988c6379c1ab7437c5d5f967710b2e9ba7aec91df8fe58a8b26c00c0164d4db9bd095ca27d1bf52b768c8d83cc0ecaf
 
 install : $(TARGET)
 
@@ -70,7 +70,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar xf $(DIR_DL)/$(DL_FILE)
-	# Add upstream patche.
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--disable-ipv6 \

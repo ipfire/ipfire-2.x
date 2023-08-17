@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.11
+VER        = 3.2.12
 RULES_VER  = 20171102
 
 THISAPP    = eudev-$(VER)
@@ -42,7 +42,7 @@ objects = $(DL_FILE) udev-lfs-$(RULES_VER).tar.bz2
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 udev-lfs-$(RULES_VER).tar.bz2 = $(DL_FROM)/udev-lfs-$(RULES_VER).tar.bz2
 
-$(DL_FILE)_BLAKE2 = e1985a4fd0d497b739543d027b5b40033932819e3e5402a51f73fab666144f97f768dff325b5f0e0beb43420efa9afdefb76a9da6b88fa065ad25c76fe1fbc6a
+$(DL_FILE)_BLAKE2 = 1d2dcc158432f722904f645749420cb44ff98f68b8b8fc11917e83750c95280d0dc2c4d9a322909a4acdb9455c6ec373eade77aacb1039096daa8e642076d3d1
 udev-lfs-$(RULES_VER).tar.bz2_BLAKE2 = b5fb8177a87719e28adc976b83953024dbcfb8739b0c2e61da186cbc4df5e75e62c888da987d15c64db164002bb0a1e66ce0ff206b143dc953d7571b66d5d5c0
 
 install : $(TARGET)

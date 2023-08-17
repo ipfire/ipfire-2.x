@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20230305
+VER        = 20230814
 
 # From https://hg.mozilla.org/mozilla-central/raw-file/tip/security/nss/lib/ckfw/builtins/certdata.txt
 

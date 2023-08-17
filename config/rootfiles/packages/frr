@@ -4,6 +4,7 @@ usr/bin/vtysh
 #usr/include/frr/agg_table.h
 #usr/include/frr/assert.h
 #usr/include/frr/atomlist.h
+#usr/include/frr/base64.h
 #usr/include/frr/bfd.h
 #usr/include/frr/bfdd
 #usr/include/frr/bfdd/bfddp_packet.h
@@ -14,6 +15,7 @@ usr/bin/vtysh
 #usr/include/frr/command_graph.h
 #usr/include/frr/command_match.h
 #usr/include/frr/compiler.h
+#usr/include/frr/cspf.h
 #usr/include/frr/csv.h
 #usr/include/frr/db.h
 #usr/include/frr/debug.h
@@ -94,6 +96,7 @@ usr/bin/vtysh
 #usr/include/frr/queue.h
 #usr/include/frr/resolver.h
 #usr/include/frr/ringbuf.h
+#usr/include/frr/route_opaque.h
 #usr/include/frr/route_types.h
 #usr/include/frr/routemap.h
 #usr/include/frr/routing_nb.h
@@ -112,6 +115,7 @@ usr/bin/vtysh
 #usr/include/frr/stream.h
 #usr/include/frr/systemd.h
 #usr/include/frr/table.h
+#usr/include/frr/tc.h
 #usr/include/frr/termtable.h
 #usr/include/frr/thread.h
 #usr/include/frr/trace.h
@@ -133,6 +137,8 @@ usr/bin/vtysh
 #usr/include/frr/zclient.h
 #usr/include/frr/zebra.h
 #usr/include/frr/zlog.h
+#usr/include/frr/zlog_5424.h
+#usr/include/frr/zlog_live.h
 #usr/include/frr/zlog_targets.h
 #usr/lib/frr
 #usr/lib/frr/modules
@@ -157,18 +163,19 @@ usr/sbin/fabricd
 usr/sbin/frr
 usr/sbin/frr-reload
 usr/sbin/frr-reload.py
+usr/sbin/frr_babeltrace.py
 usr/sbin/frrcommon.sh
 usr/sbin/frrinit.sh
 usr/sbin/generate_support_bundle.py
 usr/sbin/ospfd
 usr/sbin/pathd
+usr/sbin/pim6d
 usr/sbin/ssd
 usr/sbin/staticd
 usr/sbin/vrrpd
 usr/sbin/watchfrr
 usr/sbin/watchfrr.sh
 usr/sbin/zebra
-#usr/share/yang
 #usr/share/yang/frr-bgp-bmp.yang
 #usr/share/yang/frr-bgp-common-multiprotocol.yang
 #usr/share/yang/frr-bgp-common-structure.yang
@@ -187,6 +194,7 @@ usr/sbin/zebra
 #usr/share/yang/frr-nexthop.yang
 #usr/share/yang/frr-ospf-route-map.yang
 #usr/share/yang/frr-ospf6-route-map.yang
+#usr/share/yang/frr-ospfd.yang
 #usr/share/yang/frr-pathd.yang
 #usr/share/yang/frr-route-map.yang
 #usr/share/yang/frr-route-types.yang

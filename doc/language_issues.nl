@@ -291,6 +291,7 @@ WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: external access rule removed
 WARNING: translation string unused: extrahd
+WARNING: translation string unused: extrahd to root
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
@@ -973,6 +974,7 @@ WARNING: untranslated string: dnsforward forward_servers = Nameservers
 WARNING: untranslated string: dnssec aware = DNSSEC Aware
 WARNING: untranslated string: dnssec not supported = DNSSEC Not supported
 WARNING: untranslated string: dnssec validating = DNSSEC Validating
+WARNING: untranslated string: downfall gather data sampling = Downfall/Gather Data Sampling
 WARNING: untranslated string: download apple profile = Download Apple Configuration Profile
 WARNING: untranslated string: download tls-auth key = Download tls-auth key
 WARNING: untranslated string: drop hostile = Drop packets from and to hostile networks (listed at <a href="https://www.spamhaus.org/drop/" target="_blank">Spamhaus DROP</a>, etc.)
@@ -1008,6 +1010,11 @@ WARNING: untranslated string: eol architecture warning = You are running an arch
 WARNING: untranslated string: error = Error
 WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: error the to date has to be later than the from date = The to date has to be later than the from date!
+WARNING: untranslated string: extrahd because it is outside the allowed mount path = unknown string
+WARNING: untranslated string: extrahd mounted = Mounted
+WARNING: untranslated string: extrahd no mount point given = No mount point given
+WARNING: untranslated string: extrahd not configured = Not configured
+WARNING: untranslated string: extrahd not mounted = Not mounted
 WARNING: untranslated string: fallout zombieload ridl = Fallout/ZombieLoad/RIDL
 WARNING: untranslated string: fifteen minutes = 15 Minutes
 WARNING: untranslated string: firewall graph country = Firewall-Diagram (Country)
@@ -1254,6 +1261,7 @@ WARNING: untranslated string: smt enabled = Simultaneous Multi-Threading (SMT) i
 WARNING: untranslated string: smt not supported = Simultaneous Multi-Threading (SMT) is not supported
 WARNING: untranslated string: software version = Software Version
 WARNING: untranslated string: source ip country = Source IP Country
+WARNING: untranslated string: spec rstack overflow = Speculative Return Stack Overflow
 WARNING: untranslated string: spectre variant 1 = Spectre Variant 1
 WARNING: untranslated string: spectre variant 2 = Spectre Variant 2
 WARNING: untranslated string: spectre variant 4 = Spectre Variant 4
@@ -1270,7 +1278,7 @@ WARNING: untranslated string: subnet mask = Subnet Mask
 WARNING: untranslated string: subscription code = Subscription code
 WARNING: untranslated string: system is offline = The system is offline.
 WARNING: untranslated string: ta key = TLS-Authentification-Key
-WARNING: untranslated string: taa zombieload2 = TSX Async Abort / ZombieLoad v2
+WARNING: untranslated string: taa zombieload2 = TSX Async Abort/ZombieLoad v2
 WARNING: untranslated string: tcp more reliable = TCP (more reliable)
 WARNING: untranslated string: ten minutes = 10 Minutes
 WARNING: untranslated string: thirty minutes = 30 Minutes

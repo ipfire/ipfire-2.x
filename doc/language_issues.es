@@ -331,6 +331,7 @@ WARNING: translation string unused: external access rule added
 WARNING: translation string unused: external access rule changed
 WARNING: translation string unused: external access rule removed
 WARNING: translation string unused: extrahd
+WARNING: translation string unused: extrahd to root
 WARNING: translation string unused: extrahd unable to read
 WARNING: translation string unused: extrahd unable to write
 WARNING: translation string unused: filename
@@ -947,9 +948,15 @@ WARNING: untranslated string: bytes = unknown string
 WARNING: untranslated string: cpu frequency = CPU frequency
 WARNING: untranslated string: dhcp fixed ip address in dynamic range = Fixed IP Address in dynamic range
 WARNING: untranslated string: dns servers = DNS Servers
+WARNING: untranslated string: downfall gather data sampling = Downfall/Gather Data Sampling
 WARNING: untranslated string: enable disable client = unknown string
 WARNING: untranslated string: enable disable dyndns = unknown string
 WARNING: untranslated string: error message = unknown string
+WARNING: untranslated string: extrahd because it is outside the allowed mount path = unknown string
+WARNING: untranslated string: extrahd mounted = Mounted
+WARNING: untranslated string: extrahd no mount point given = No mount point given
+WARNING: untranslated string: extrahd not configured = Not configured
+WARNING: untranslated string: extrahd not mounted = Not mounted
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
@@ -993,6 +1000,7 @@ WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
 WARNING: untranslated string: service boot setting unavailable = No valid runlevel symlink was found for the initscript of this service.
+WARNING: untranslated string: spec rstack overflow = Speculative Return Stack Overflow
 WARNING: untranslated string: transport mode does not support vti = VTI is not support in transport mode
 WARNING: untranslated string: wio = unknown string
 WARNING: untranslated string: wio checked = unknown string

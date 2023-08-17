@@ -2,8 +2,8 @@ diff --git a/src/acl/ConnMark.cc b/src/acl/ConnMark.cc
 index 1fdae0c..213cf39 100644
 --- a/src/acl/ConnMark.cc
 +++ b/src/acl/ConnMark.cc
-@@ -15,6 +15,7 @@
- #include "Debug.h"
+@@ -16,6 +16,7 @@
+ #include "debug/Stream.h"
  #include "http/Stream.h"
  #include "sbuf/Stream.h"
 +#include <limits>

@@ -1,0 +1,12 @@
+diff -Naur pppd.orig/plugins/pppoe/plugin.c pppd/plugins/pppoe/plugin.c
+--- pppd.orig/plugins/pppoe/plugin.c	2023-06-30 13:25:58.798782323 +0200
++++ pppd/plugins/pppoe/plugin.c	2023-06-30 13:50:23.150026201 +0200
+@@ -46,6 +46,8 @@
+ #include <signal.h>
+ #include <net/if_arp.h>
+ #include <linux/ppp_defs.h>
++#define _LINUX_IN_H
++#define _LINUX_IN6_H
+ #include <linux/if_pppox.h>
+ 
+ #include <pppd/pppd.h>

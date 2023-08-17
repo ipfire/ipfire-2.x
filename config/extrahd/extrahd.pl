@@ -1,8 +1,8 @@
-#!/usr/bin/perl
+#!/bin/bash
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2010  IPFire Team  <info@ipfire.org>                          #
+# Copyright (C) 2023 IPFire Team  <info@ipfire.org>                           #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -19,75 +19,115 @@
 #                                                                             #
 ###############################################################################
 
-use strict;
-# enable only the following on debugging purpose
-# use warnings;
+log() {
+	local message="${@}"
 
-require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/lang.pl";
-require "${General::swroot}/header.pl";
-
-my %extrahdsettings = ();
-my $ok = "true";
-my @devices = ();
-my @deviceline = ();
-my $deviceentry = "";
-my $devicefile = "/var/ipfire/extrahd/devices";
-my $fstab = "/var/ipfire/extrahd/fstab";
-
-### Values that have to be initialized
-$extrahdsettings{'PATH'} = '';
-$extrahdsettings{'FS'} = '';
-$extrahdsettings{'DEVICE'} = '';
-$extrahdsettings{'ACTION'} = '';
-
-open( FILE, "< $devicefile" ) or die "Unable to read $devicefile";
-@devices = <FILE>;
-close FILE;
-
-############################################################################################################################
-############################################################################################################################
-
-if ( "$ARGV[0]" eq "mount" ) {
-	system("/bin/cp -f /etc/fstab $fstab");
-
-	foreach $deviceentry (sort @devices)
-	{
-		@deviceline = split( /\;/, $deviceentry );
-		if ( "$ARGV[1]" eq "$deviceline[2]" ) {
-			print "Insert $deviceline[0] ($deviceline[1]) --> $deviceline[2] into /etc/fstab!\n";
-			unless ( -d $deviceline[2] ) { system("/bin/mkdir -p $deviceline[2] && chmod 0777 $deviceline[2]"); }
-			open(FILE, ">>$fstab");
-			print FILE "$deviceline[0]\t$deviceline[2]\t$deviceline[1]\tdefaults\t0\t0\n";
-			close(FILE);
-		}
-	}
-
-	system("/bin/cp -f $fstab /etc/fstab");
-	if ( `/bin/mount -a` ) {
-		exit(0);
-	} else {
-		exit(1);
-	}
-
-} elsif ( "$ARGV[0]" eq "umount" ) {
-	system("/bin/umount $ARGV[1]");
-	if ( ! `/bin/mount | /bin/fgrep $ARGV[1]` ) {
-		system("/bin/cp -f /etc/fstab $fstab");
-		system("/bin/fgrep -v $ARGV[1] <$fstab >/etc/fstab");
-		print "Successfully umounted $ARGV[1].\n";
-		exit(0);
-	} else {
-		print "Can't umount $ARGV[1].\n";
-		exit(1);
-	}
-
-} elsif ( "$ARGV[0]" eq "scanhd") {
-	system("/usr/local/bin/scanhd $ARGV[1]");
-
-} else {
-	print "Usage: $0 (mount|umount|scanhd) mountpoint\n";
+	logger -t "extrahd" "${message}"
 }
 
-############################################################################################################################
-############################################################################################################################
+extrahd_mount() {
+	local _mountpoint="${1}"
+
+	local device
+	local filesystem
+	local mountpoint
+	local rest
+	local failed=0
+
+	while IFS=';' read -r device filesystem mountpoint rest; do
+		# Filter by mountpoint if set
+		if [ -n "${_mountpoint}" ] && [ "${mountpoint}" != "${_mountpoint}" ]; then
+			continue
+		fi
+
+		# Check that the mountpoint starts with a slash
+		if [ "${mountpoint:0:1}" != "/" ]; then
+			log "Skipping invalid mountpoint: ${mountpoint}"
+			continue
+		fi
+
+		# Skip mounting if something is already mounted at the mountpoint
+		if mountpoint "${mountpoint}" &>/dev/null; then
+			continue
+		fi
+
+		# Ensure the mountpoint exists
+		mkdir --parents --mode=777 "${mountpoint}" &>/dev/null
+
+		if mount --types "${filesystem}" "${device}" "${mountpoint}"; then
+			log "Successfully mounted ${device} to ${mountpoint}"
+		else
+			log "Could not mount ${device} to ${mountpoint}: $?"
+			failed=1
+		fi
+	done < /var/ipfire/extrahd/devices
+
+	return ${failed}
+}
+
+extrahd_umount() {
+	local _mountpoint="${1}"
+
+	local device
+	local filesystem
+	local mountpoint
+	local rest
+	local failed=0
+
+	while IFS=';' read -r device filesystem mountpoint rest; do
+		# Filter by mountpoint if set
+		if [ -n "${_mountpoint}" ] && [ "${mountpoint}" != "${_mountpoint}" ]; then
+			continue
+		fi
+
+		# Do not try to umount if nothing is mounted
+		if ! mountpoint "${mountpoint}" &>/dev/null; then
+			continue
+		fi
+
+		# Umount and try lazy umount if failed
+		if umount --quiet --recursive "${mountpoint}" || \
+				umount --quiet --recursive --lazy "${mountpoint}"; then
+			log "Successfully umounted ${device} from ${mountpoint}"
+		else
+			log "Could not umount ${device} from ${mountpoint}: $?"
+			failed=1
+		fi
+	done < /var/ipfire/extrahd/devices
+}
+
+main() {
+	local command="${1}"
+	shift
+
+	local rc=0
+
+	case "${command}" in
+		mount)
+			extrahd_mount "${@}" || rc="${?}"
+			;;
+		umount)
+			extrahd_umount "${@}" || rc="${rc}"
+			;;
+		scanhd)
+			exec /usr/local/bin/scanhd "${@}"
+			;;
+
+		# No command
+		"")
+			echo "${0}: No command given" >&2
+			rc=2
+			;;
+
+		# Unknown command
+		*)
+			echo "${0}: Unsupported command: ${command}" >&2
+			rc=2
+			;;
+	esac
+
+	return ${rc}
+}
+
+# Call main()
+main "${@}" || exit ${?}

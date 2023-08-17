@@ -9,14 +9,12 @@ usr/bin/git-upload-pack
 #usr/libexec/git-core
 #usr/libexec/git-core/git
 usr/libexec/git-core/git-add
-usr/libexec/git-core/git-add--interactive
 usr/libexec/git-core/git-am
 usr/libexec/git-core/git-annotate
 usr/libexec/git-core/git-apply
 usr/libexec/git-core/git-archimport
 usr/libexec/git-core/git-archive
 usr/libexec/git-core/git-bisect
-usr/libexec/git-core/git-bisect--helper
 usr/libexec/git-core/git-blame
 usr/libexec/git-core/git-branch
 usr/libexec/git-core/git-bugreport
@@ -56,7 +54,6 @@ usr/libexec/git-core/git-diff-index
 usr/libexec/git-core/git-diff-tree
 usr/libexec/git-core/git-difftool
 usr/libexec/git-core/git-difftool--helper
-usr/libexec/git-core/git-env--helper
 usr/libexec/git-core/git-fast-export
 usr/libexec/git-core/git-fast-import
 usr/libexec/git-core/git-fetch
@@ -224,6 +221,7 @@ usr/share/git-core/templates/hooks/pre-rebase.sample
 usr/share/git-core/templates/hooks/pre-receive.sample
 usr/share/git-core/templates/hooks/prepare-commit-msg.sample
 usr/share/git-core/templates/hooks/push-to-checkout.sample
+usr/share/git-core/templates/hooks/sendemail-validate.sample
 usr/share/git-core/templates/hooks/update.sample
 #usr/share/git-core/templates/info
 usr/share/git-core/templates/info/exclude
@@ -326,6 +324,7 @@ usr/share/git-core/templates/info/exclude
 #usr/share/locale/ru/LC_MESSAGES/git.mo
 #usr/share/locale/sv/LC_MESSAGES/git.mo
 #usr/share/locale/tr/LC_MESSAGES/git.mo
+#usr/share/locale/uk/LC_MESSAGES/git.mo
 #usr/share/locale/vi/LC_MESSAGES/git.mo
 #usr/share/locale/zh_CN/LC_MESSAGES/git.mo
 #usr/share/locale/zh_TW/LC_MESSAGES/git.mo

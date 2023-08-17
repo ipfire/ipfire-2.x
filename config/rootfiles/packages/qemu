@@ -20,13 +20,8 @@ usr/bin/qemu-system-x86_64
 usr/bin/qemu-x86_64
 usr/include/qemu-plugin.h
 usr/libexec/qemu-bridge-helper
-usr/libexec/virtiofsd
 #usr/share/applications/qemu.desktop
-#usr/share/icons/hicolor/128x128
-#usr/share/icons/hicolor/128x128/apps
 #usr/share/icons/hicolor/128x128/apps/qemu.png
-#usr/share/icons/hicolor/16x16
-#usr/share/icons/hicolor/16x16/apps
 #usr/share/icons/hicolor/16x16/apps/qemu.png
 #usr/share/icons/hicolor/24x24
 #usr/share/icons/hicolor/24x24/apps
@@ -34,8 +29,6 @@ usr/libexec/virtiofsd
 #usr/share/icons/hicolor/256x256
 #usr/share/icons/hicolor/256x256/apps
 #usr/share/icons/hicolor/256x256/apps/qemu.png
-#usr/share/icons/hicolor/32x32
-#usr/share/icons/hicolor/32x32/apps
 #usr/share/icons/hicolor/32x32/apps/qemu.bmp
 #usr/share/icons/hicolor/32x32/apps/qemu.png
 #usr/share/icons/hicolor/48x48
@@ -44,8 +37,6 @@ usr/libexec/virtiofsd
 #usr/share/icons/hicolor/512x512
 #usr/share/icons/hicolor/512x512/apps
 #usr/share/icons/hicolor/512x512/apps/qemu.png
-#usr/share/icons/hicolor/64x64
-#usr/share/icons/hicolor/64x64/apps
 #usr/share/icons/hicolor/64x64/apps/qemu.png
 #usr/share/icons/hicolor/scalable/apps/qemu.svg
 #usr/share/qemu
@@ -142,7 +133,6 @@ usr/share/qemu/qemu-nsis.bmp
 usr/share/qemu/qemu_vga.ndrv
 #usr/share/qemu/s390-ccw.img
 #usr/share/qemu/s390-netboot.img
-usr/share/qemu/sgabios.bin
 #usr/share/qemu/skiboot.lid
 #usr/share/qemu/slof.bin
 usr/share/qemu/trace-events-all
@@ -157,7 +147,5 @@ usr/share/qemu/vgabios-stdvga.bin
 usr/share/qemu/vgabios-virtio.bin
 usr/share/qemu/vgabios-vmware.bin
 usr/share/qemu/vgabios.bin
-usr/share/qemu/vhost-user
-usr/share/qemu/vhost-user/50-qemu-virtiofsd.json
 usr/share/qemu/vof-nvram.bin
 usr/share/qemu/vof.bin

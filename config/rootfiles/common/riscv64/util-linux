@@ -4,6 +4,7 @@ bin/lsblk
 bin/lsfd
 bin/more
 bin/mount
+bin/pipesz
 bin/umount
 bin/wdctl
 #etc/fcron.daily
@@ -21,6 +22,7 @@ lib/libuuid.so.1.3.0
 sbin/agetty
 sbin/blkdiscard
 sbin/blkid
+sbin/blkpr
 sbin/blkzone
 sbin/blockdev
 sbin/cfdisk
@@ -57,13 +59,13 @@ usr/bin/choom
 #usr/bin/colrm
 #usr/bin/column
 usr/bin/eject
+usr/bin/fadvise
 usr/bin/fallocate
 usr/bin/fincore
 usr/bin/flock
 usr/bin/getopt
 usr/bin/hardlink
 usr/bin/hexdump
-#usr/bin/i386
 usr/bin/ionice
 #usr/bin/ipcmk
 #usr/bin/ipcrm
@@ -102,8 +104,8 @@ usr/bin/uclampset
 #usr/bin/unshare
 usr/bin/uuidgen
 usr/bin/uuidparse
+usr/bin/waitpid
 #usr/bin/whereis
-#usr/bin/x86_64
 #usr/include/blkid
 #usr/include/blkid/blkid.h
 #usr/include/libfdisk
@@ -158,6 +160,7 @@ usr/sbin/rtcwake
 #usr/share/bash-completion/completions/delpart
 #usr/share/bash-completion/completions/dmesg
 #usr/share/bash-completion/completions/eject
+#usr/share/bash-completion/completions/fadvise
 #usr/share/bash-completion/completions/fallocate
 #usr/share/bash-completion/completions/fdisk
 #usr/share/bash-completion/completions/fincore
@@ -207,6 +210,7 @@ usr/sbin/rtcwake
 #usr/share/bash-completion/completions/nsenter
 #usr/share/bash-completion/completions/partx
 #usr/share/bash-completion/completions/pg
+#usr/share/bash-completion/completions/pipesz
 #usr/share/bash-completion/completions/pivot_root
 #usr/share/bash-completion/completions/prlimit
 #usr/share/bash-completion/completions/readprofile
@@ -235,6 +239,7 @@ usr/sbin/rtcwake
 #usr/share/bash-completion/completions/uuidd
 #usr/share/bash-completion/completions/uuidgen
 #usr/share/bash-completion/completions/uuidparse
+#usr/share/bash-completion/completions/waitpid
 #usr/share/bash-completion/completions/wall
 #usr/share/bash-completion/completions/wdctl
 #usr/share/bash-completion/completions/whereis
@@ -252,6 +257,7 @@ usr/sbin/rtcwake
 #usr/share/man/man1/column.1
 #usr/share/man/man1/dmesg.1
 #usr/share/man/man1/eject.1
+#usr/share/man/man1/fadvise.1
 #usr/share/man/man1/fallocate.1
 #usr/share/man/man1/fincore.1
 #usr/share/man/man1/flock.1
@@ -276,6 +282,7 @@ usr/sbin/rtcwake
 #usr/share/man/man1/namei.1
 #usr/share/man/man1/nsenter.1
 #usr/share/man/man1/pg.1
+#usr/share/man/man1/pipesz.1
 #usr/share/man/man1/prlimit.1
 #usr/share/man/man1/rename.1
 #usr/share/man/man1/renice.1
@@ -291,6 +298,7 @@ usr/sbin/rtcwake
 #usr/share/man/man1/unshare.1
 #usr/share/man/man1/uuidgen.1
 #usr/share/man/man1/uuidparse.1
+#usr/share/man/man1/waitpid.1
 #usr/share/man/man1/whereis.1
 #usr/share/man/man3/libblkid.3
 #usr/share/man/man3/uuid.3
@@ -312,6 +320,7 @@ usr/sbin/rtcwake
 #usr/share/man/man8/agetty.8
 #usr/share/man/man8/blkdiscard.8
 #usr/share/man/man8/blkid.8
+#usr/share/man/man8/blkpr.8
 #usr/share/man/man8/blkzone.8
 #usr/share/man/man8/blockdev.8
 #usr/share/man/man8/cfdisk.8

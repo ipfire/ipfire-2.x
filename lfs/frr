@@ -26,15 +26,15 @@ include Config
 
 SUMMARY    = FRRouting Routing daemon
 
-VER        = 8.0.1
+VER        = 8.5.2
 
-THISAPP    = frr-$(VER)
-DL_FILE    = $(THISAPP).tar.xz
+THISAPP    = frr-frr-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = frr
-PAK_VER    = 5
+PAK_VER    = 6
 
 DEPS       = elfutils
 
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 1473ce1282f572522fe88397bbe078dd8224e6a35d87f09c89a0231620e8a740d223a2ed94809ed23545dd77c330429311d99c172a1bd75d9f08888ca9a401ad
+$(DL_FILE)_BLAKE2 = 2e2aca4e42757f66c9ca4725826c6cc1d611930490eed2a175ca5b56910f2c09a9d842b2a9370a64a9fdac6a6314bd4573be609d14dbf956049d9fbf49310404
 
 install : $(TARGET)
 
@@ -84,6 +84,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
+	cd $(DIR_APP) && ./bootstrap.sh
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc/frr \

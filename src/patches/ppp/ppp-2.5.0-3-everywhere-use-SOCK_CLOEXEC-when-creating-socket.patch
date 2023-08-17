@@ -1,0 +1,135 @@
+diff -Naur pppd.orig/plugins/pppoatm/pppoatm.c pppd/plugins/pppoatm/pppoatm.c
+--- pppd.orig/plugins/pppoatm/pppoatm.c	2023-03-25 05:38:30.000000000 +0100
++++ pppd/plugins/pppoatm/pppoatm.c	2023-06-30 13:21:33.397378347 +0200
+@@ -146,7 +146,7 @@
+ 
+ 	if (!device_got_set)
+ 		no_device_given_pppoatm();
+-	fd = socket(AF_ATMPVC, SOCK_DGRAM, 0);
++	fd = socket(AF_ATMPVC, SOCK_DGRAM | SOCK_CLOEXEC, 0);
+ 	if (fd < 0)
+ 		fatal("failed to create socket: %m");
+ 	memset(&qos, 0, sizeof qos);
+diff -Naur pppd.orig/plugins/pppoe/if.c pppd/plugins/pppoe/if.c
+--- pppd.orig/plugins/pppoe/if.c	2022-12-30 02:12:39.000000000 +0100
++++ pppd/plugins/pppoe/if.c	2023-06-30 13:24:11.372183452 +0200
+@@ -116,7 +116,7 @@
+     stype = SOCK_PACKET;
+ #endif
+ 
+-    if ((fd = socket(domain, stype, htons(type))) < 0) {
++    if ((fd = socket(domain, stype | SOCK_CLOEXEC, htons(type))) < 0) {
+ 	/* Give a more helpful message for the common error case */
+ 	if (errno == EPERM) {
+ 	    fatal("Cannot create raw socket -- pppoe must be run as root.");
+diff -Naur pppd.orig/plugins/pppoe/plugin.c pppd/plugins/pppoe/plugin.c
+--- pppd.orig/plugins/pppoe/plugin.c	2023-03-25 05:38:30.000000000 +0100
++++ pppd/plugins/pppoe/plugin.c	2023-06-30 13:25:58.798782323 +0200
+@@ -155,7 +155,7 @@
+     /* server equipment).                                                  */
+     /* Opening this socket just before waitForPADS in the discovery()      */
+     /* function would be more appropriate, but it would mess-up the code   */
+-    conn->sessionSocket = socket(AF_PPPOX, SOCK_STREAM, PX_PROTO_OE);
++    conn->sessionSocket = socket(AF_PPPOX, SOCK_STREAM | SOCK_CLOEXEC, PX_PROTO_OE);
+     if (conn->sessionSocket < 0) {
+ 	error("Failed to create PPPoE socket: %m");
+ 	return -1;
+@@ -166,7 +166,7 @@
+     lcp_wantoptions[0].mru = conn->mru = conn->storedmru;
+ 
+     /* Update maximum MRU */
+-    s = socket(AF_INET, SOCK_DGRAM, 0);
++    s = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, 0);
+     if (s < 0) {
+ 	error("Can't get MTU for %s: %m", conn->ifName);
+ 	goto errout;
+@@ -364,7 +364,7 @@
+     }
+ 
+     /* Open a socket */
+-    if ((fd = socket(PF_PACKET, SOCK_RAW, 0)) < 0) {
++    if ((fd = socket(PF_PACKET, SOCK_RAW | SOCK_CLOEXEC, 0)) < 0) {
+ 	r = 0;
+     }
+ 
+diff -Naur pppd.orig/plugins/pppol2tp/openl2tp.c pppd/plugins/pppol2tp/openl2tp.c
+--- pppd.orig/plugins/pppol2tp/openl2tp.c	2023-03-10 02:50:41.000000000 +0100
++++ pppd/plugins/pppol2tp/openl2tp.c	2023-06-30 13:22:30.055768865 +0200
+@@ -93,7 +93,7 @@
+ 	int result;
+ 
+ 	if (openl2tp_fd < 0) {
+-		openl2tp_fd = socket(PF_UNIX, SOCK_DGRAM, 0);
++		openl2tp_fd = socket(PF_UNIX, SOCK_DGRAM | SOCK_CLOEXEC, 0);
+ 		if (openl2tp_fd < 0) {
+ 			error("openl2tp connection create: %m");
+ 			return -ENOTCONN;
+diff -Naur pppd.orig/plugins/pppol2tp/pppol2tp.c pppd/plugins/pppol2tp/pppol2tp.c
+--- pppd.orig/plugins/pppol2tp/pppol2tp.c	2022-12-30 02:12:39.000000000 +0100
++++ pppd/plugins/pppol2tp/pppol2tp.c	2023-06-30 13:23:13.493756755 +0200
+@@ -220,7 +220,7 @@
+ 		struct ifreq ifr;
+ 		int fd;
+ 
+-		fd = socket(AF_INET, SOCK_DGRAM, 0);
++		fd = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, 0);
+ 		if (fd >= 0) {
+ 			memset (&ifr, '\0', sizeof (ifr));
+ 			ppp_get_ifname(ifr.ifr_name, sizeof(ifr.ifr_name));
+diff -Naur pppd.orig/sys-linux.c pppd/sys-linux.c
+--- pppd.orig/sys-linux.c	2023-06-30 13:11:25.715511251 +0200
++++ pppd/sys-linux.c	2023-06-30 13:32:50.021272249 +0200
+@@ -499,12 +499,12 @@
+ void sys_init(void)
+ {
+     /* Get an internet socket for doing socket ioctls. */
+-    sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
++    sock_fd = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, 0);
+     if (sock_fd < 0)
+ 	fatal("Couldn't create IP socket: %m(%d)", errno);
+ 
+ #ifdef PPP_WITH_IPV6CP
+-    sock6_fd = socket(AF_INET6, SOCK_DGRAM, 0);
++    sock6_fd = socket(AF_INET6, SOCK_DGRAM | SOCK_CLOEXEC, 0);
+     if (sock6_fd < 0)
+ 	sock6_fd = -errno;	/* save errno for later */
+ #endif
+@@ -2675,7 +2675,7 @@
+ 	struct ifreq ifreq;
+ 	int ret, sock_fd;
+ 
+-	sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
++	sock_fd = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, 0);
+ 	if (sock_fd < 0)
+ 		return -1;
+ 	memset(&ifreq.ifr_hwaddr, 0, sizeof(struct sockaddr));
+@@ -2698,7 +2698,7 @@
+ 	struct ifreq ifreq;
+ 	int ret, sock_fd;
+ 
+-	sock_fd = socket(AF_INET, SOCK_DGRAM, 0);
++	sock_fd = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, 0);
+ 	if (sock_fd < 0)
+ 		return -1;
+ 
+@@ -2915,7 +2915,7 @@
+ /*
+  * Open a socket for doing the ioctl operations.
+  */
+-    s = socket(AF_INET, SOCK_DGRAM, 0);
++    s = socket(AF_INET, SOCK_DGRAM | SOCK_CLOEXEC, 0);
+     if (s < 0)
+ 	return 0;
+ 
+diff -Naur pppd.orig/tty.c pppd/tty.c
+--- pppd.orig/tty.c	2023-06-30 13:14:06.450418113 +0200
++++ pppd/tty.c	2023-06-30 13:33:31.285858278 +0200
+@@ -942,7 +942,7 @@
+     *sep = ':';
+ 
+     /* get a socket and connect it to the other end */
+-    sock = socket(PF_INET, SOCK_STREAM, 0);
++    sock = socket(PF_INET, SOCK_STREAM | SOCK_CLOEXEC, 0);
+     if (sock < 0) {
+ 	error("Can't create socket: %m");
+ 	return -1;

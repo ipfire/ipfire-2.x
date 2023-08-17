@@ -23,7 +23,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.27"							# Version number
-CORE="178"							# Core Level (Filename)
+CORE="179"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
@@ -145,14 +145,14 @@ configure_build() {
 			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="x86"
-			CFLAGS_ARCH="-m64 -mtune=generic -fcf-protection"
+			CFLAGS_ARCH="-m64 -mtune=generic -fcf-protection=full"
 			;;
 
 		aarch64)
 			BUILDTARGET="${build_arch}-pc-linux-gnu"
 			CROSSTARGET="${build_arch}-cross-linux-gnu"
 			BUILD_PLATFORM="arm"
-			CFLAGS_ARCH=""
+			CFLAGS_ARCH="-mbranch-protection=standard"
 			;;
 
 		riscv64)
@@ -767,8 +767,8 @@ qemu_environ() {
 			;;
 		riscv64)
 			QEMU_CPU="${QEMU_CPU:-sifive-u54}"
-
-			env="${env} QEMU_CPU=${QEMU_CPU}"
+			G_SLICE="always-malloc"
+			env="${env} QEMU_CPU=${QEMU_CPU} G_SLICE=${G_SLICE}"
 			;;
 	esac
 
@@ -1454,7 +1454,6 @@ buildipfire() {
   lfsmake2 libvorbis
   lfsmake2 flac
   lfsmake2 lame
-  lfsmake2 sox
   lfsmake2 soxr
   lfsmake2 libshout
   lfsmake2 xvid

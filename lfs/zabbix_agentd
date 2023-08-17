@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Zabbix Agent
 
-VER        = 6.0.16
+VER        = 6.0.19
 
 THISAPP    = zabbix-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = zabbix_agentd
-PAK_VER    = 8
+PAK_VER    = 9
 
 DEPS       = fping
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 87f7c043f30ef9902b3673e2d444e37b32ef998d178fa5718ed9aa098f841f23237d79e54985ba3a415a86433a685387af33810f53a78837be6a1aa2870ed65a
+$(DL_FILE)_BLAKE2 = b454a3622d3fdeda886ce4722e24116c44c74768bc5dcfe1cd6aa7c90a245121532d24842cfd47538349d08ca5b6577b6f0e75eec165f304a050512eafe608ba
 
 install : $(TARGET)
 
