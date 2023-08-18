@@ -71,4 +71,3 @@ usr/sbin/pppstats
 #usr/share/man/man8/pppoe-discovery.8
 #usr/share/man/man8/pppstats.8
 var/log/connect-errors
-

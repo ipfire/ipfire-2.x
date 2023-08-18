@@ -82,6 +82,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 					--prefix=/usr \
 					--sysconfdir=/etc \
 					--with-logfile-dir=/var/log \
+					--localstatedir=/var \
 					cc="gcc" \
 					cflags="$(CFLAGS)"
 	cd $(DIR_APP) && make $(MAKETUNING)
