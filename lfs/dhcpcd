@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 10.0.1
+VER        = 10.0.2
 
 THISAPP    = dhcpcd-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = f1e93285d040b98bede86bb2e87e372afc0d1d124e7a6580c23d8d228a34ee17001fc3c2d9091b16fb082fe2f2ad7ba50c0dd7b0db2b2237ab1cff9ca152100a
+$(DL_FILE)_BLAKE2 = 999033b4c0bc46943332b0b7ed3f1869ad54e2c37346523a15fbd3d9f29db1e01c1ddd0a300826021d3e20493ea06358ef47ac6a02c50331ca0d90e31a123b85
 
 install : $(TARGET)
 
@@ -70,7 +70,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcpcd-10.0.1-Allow-free-selection-of-MTU-by-the-user.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcpcd-10.0.2-Allow-free-selection-of-MTU-by-the-user.patch
 	cd $(DIR_APP) && ./configure \
 			--prefix="" \
 			--sysconfdir=/var/ipfire/dhcpc \
