@@ -32,9 +32,9 @@ THISAPP    = avahi-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
-TARGET = $(DIR_INFO)/$(THISAPP)
+TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = avahi
-PAK_VER    = 12
+PAK_VER    = 13
 
 DEPS       = dbus libdaemon
 
@@ -101,8 +101,11 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 
+	# Add conf file to /etc/avahi directory
+	cp -vf $(DIR_CONF)/avahi/avahi-daemon.conf /etc/avahi
+
 	# Install configuration for samba
-	cp -avf $(DIR_SRC)/config/avahi/smb.service /etc/avahi/services/smb.service
+	cp -avf $(DIR_CONF)/avahi/smb.service /etc/avahi/services/smb.service
 
 	# Install initscript
 	$(call INSTALL_INITSCRIPTS,$(SERVICES))
