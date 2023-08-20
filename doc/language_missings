@@ -73,6 +73,8 @@
 < optional
 < quick control
 < random number generator daemon
+< reiserfs warning1
+< reiserfs warning2
 < required
 < samba server role member
 < samba server role standalone
@@ -115,6 +117,8 @@
 < invalid ip or hostname
 < openvpn cert expires soon
 < openvpn cert has expired
+< reiserfs warning1
+< reiserfs warning2
 < service boot setting unavailable
 < spec rstack overflow
 < transport mode does not support vti
@@ -134,6 +138,8 @@
 < extrahd not mounted
 < g.dtm
 < g.lite
+< reiserfs warning1
+< reiserfs warning2
 < spec rstack overflow
 < upload fcdsl.o
 ############################################################################
@@ -517,6 +523,8 @@
 < reboot fsck
 < rebooting ipfire fsck
 < received
+< reiserfs warning1
+< reiserfs warning2
 < release
 < required
 < required field
@@ -1056,6 +1064,8 @@
 < rdns
 < rebooting ipfire fsck
 < received
+< reiserfs warning1
+< reiserfs warning2
 < required
 < required field
 < retbleed
@@ -1934,6 +1944,8 @@
 < rebooting ipfire fsck
 < received
 < red1
+< reiserfs warning1
+< reiserfs warning2
 < release
 < required
 < required field
@@ -2923,6 +2935,8 @@
 < rebooting ipfire fsck
 < received
 < red1
+< reiserfs warning1
+< reiserfs warning2
 < release
 < required
 < required field
@@ -3392,6 +3406,8 @@
 < reboot fsck
 < rebooting ipfire fsck
 < received
+< reiserfs warning1
+< reiserfs warning2
 < release
 < required
 < retbleed

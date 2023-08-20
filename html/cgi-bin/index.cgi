@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2014  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -613,6 +613,13 @@ if ( -e "/var/run/need_reboot" ) {
 	print "<div style='text-align:center; color:red;'>";
 	print "<br/><br/>$Lang::tr{'needreboot'}!";
 	print "</div>";
+}
+
+if ( `/bin/grep -c "reiserfs" /proc/self/mounts`  > 0 ) {
+        print "<div style='text-align:center; color:blue;'>";
+        print "<br/><br/>$Lang::tr{'reiserfs warning1'}";
+        print "<br/>$Lang::tr{'reiserfs warning2'}";
+        print "</div>";
 }
 
 &Header::closebigbox();
