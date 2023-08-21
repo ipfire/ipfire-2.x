@@ -33,7 +33,7 @@ mdstat.cgi=configuration/status/mdstat
 
 #	Network menu
 zoneconf.cgi=configuration/network/zoneconf
-dns.cgi=dns
+dns.cgi=configuration/network/dns-server
 proxy.cgi=configuration/network/proxy
 urlfilter.cgi=configuration/network/proxy/url-filter
 updatexlrator.cgi=configuration/network/proxy/update_accelerator
