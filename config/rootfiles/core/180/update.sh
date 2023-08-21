@@ -49,6 +49,7 @@ ldconfig
 
 # Start services
 telinit u
+/etc/rc.d/init.d/vnstat restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
