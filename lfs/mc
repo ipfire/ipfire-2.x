@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Midnight Commander
 
-VER        = 4.8.29
+VER        = 4.8.30
 
 THISAPP    = mc-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mc
-PAK_VER    = 24
+PAK_VER    = 25
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 52dcb069033615518e11fbf693817138a2ff0813fb097488ece292b625dbbcbed940ad7504e485f3e526444a7fb471748377d6d03d2a6c8c44f687f8a8fc4611
+$(DL_FILE)_BLAKE2 = 2bf759314abae39db7596426cba22f6eaac0efc58e7025f1a7ef1863496ea7a3c00d298d101123b9defb109e76e31fe988227fb5c1112e06051b3c7a5b3dc1b6
 
 
 install : $(TARGET)

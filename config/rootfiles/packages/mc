@@ -140,6 +140,7 @@ usr/share/mc/syntax/as.syntax
 usr/share/mc/syntax/aspx.syntax
 usr/share/mc/syntax/assembler.syntax
 usr/share/mc/syntax/awk.syntax
+usr/share/mc/syntax/b.syntax
 usr/share/mc/syntax/c.syntax
 usr/share/mc/syntax/cabal.syntax
 usr/share/mc/syntax/changelog.syntax
