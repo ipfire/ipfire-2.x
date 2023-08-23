@@ -86,9 +86,13 @@ migrate_extrahd
 
 # Start services
 /etc/init.d/udev restart
-/etc/init.d/squid restart
-/usr/local/bin/openvpnctrl -s
-/usr/local/bin/openvpnctrl -sn2n
+if [ -f /var/ipfire/proxy/enable ]; then
+	/etc/init.d/squid restart
+fi
+if grep -q "ENABLED=on" /var/ipfire/ovpn/settings; then
+	/usr/local/bin/openvpnctrl -s
+	/usr/local/bin/openvpnctrl -sn2n
+fi
 
 # This update needs a reboot...
 touch /var/run/need_reboot
