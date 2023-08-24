@@ -78,6 +78,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/ppp/ppp-2.5.0-4-increase-max-padi-attempts.patch
 	cd $(DIR_APP) && patch -Np0 -i $(DIR_SRC)/src/patches/ppp/ppp-2.5.0-5-headers_4.9.patch
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/ppp-2.5.0-6-patch-configure-to-handle-cflags-properly.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/ppp/ppp-2.5.0-7-add-configure-check-to-see-if-we-have-struct-sockaddr_ll.patch
 	cd $(DIR_APP) && ./configure \
 					--prefix=/usr \
 					--sysconfdir=/etc \
