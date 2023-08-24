@@ -91,8 +91,8 @@ if [ -f /var/ipfire/proxy/enable ]; then
 fi
 if grep -q "ENABLED=on" /var/ipfire/ovpn/settings; then
 	/usr/local/bin/openvpnctrl -s
-	/usr/local/bin/openvpnctrl -sn2n
 fi
+/usr/local/bin/openvpnctrl -sn2n
 
 # This update needs a reboot...
 touch /var/run/need_reboot
