@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.2.0
+VER        = 4.2.1
 
 THISAPP    = mpfr-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = dd88ae3a6a910ad8faeb791b49c3b1085de5d0d4c49c637c124bf4d9bc79fb621d0d1d69e07d0642b9b678f6d355a5830d083dfd189e1e91d0e04c970c10bd64
+$(DL_FILE)_BLAKE2 = ad69f53bc910294647523e7613b18a683f1d0f3dd994168ab2a46b66d0371ffa9b8e7cb59495f898470aea69d343e83fc722f11babe4af7b3a12665a1e65860c
 
 install : $(TARGET)
 
@@ -70,7 +70,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mpfr-4.2.0-cumulative-patches-1-to-12.patch
+#	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/mpfr-4.2.1-cumulative-patches-1-to-x.patch
 	cd $(DIR_APP) && $(CONFIGURE_ARGS) ./configure \
 					--prefix=/usr \
 					--enable-thread-safe
