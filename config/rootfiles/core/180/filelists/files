@@ -1,2 +1,3 @@
+opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/index.cgi
 var/ipfire/main/manualpages

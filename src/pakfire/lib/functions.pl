@@ -205,11 +205,6 @@ sub fetchfile {
 		my $log = $response->status_line;
 		logger("DOWNLOAD INFO: HTTP-Status-Code: $code - $log");
 
-		if ( $code eq "500" ) {
-			message("Giving up: There was no chance to get the file \"$getfile\" from any available server.\nThere was an error on the way. Please fix it.");
-			return 0;
-		}
-
 		if ($response->is_success) {
 			if (open(FILE, ">$Conf::tmpdir/$bfile")) {
 				print FILE $final_data;
