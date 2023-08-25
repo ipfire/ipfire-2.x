@@ -71,6 +71,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcpcd-10.0.2-Allow-free-selection-of-MTU-by-the-user.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcpcd-10.0.2-fix-off-by-one-overflow-when-read.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/dhcpcd-10.0.2-privsep-fix-strlcpy-overflow-in-psp-ifname.patch
 	cd $(DIR_APP) && ./configure \
 			--prefix="" \
 			--sysconfdir=/var/ipfire/dhcpc \
