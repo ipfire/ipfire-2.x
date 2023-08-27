@@ -137,6 +137,7 @@ usr/lib/libverto.so.0.0
 #usr/share/locale/en_US
 #usr/share/locale/en_US/LC_MESSAGES
 #usr/share/locale/en_US/LC_MESSAGES/mit-krb5.mo
+#usr/share/locale/ka/LC_MESSAGES/mit-krb5.mo
 #usr/share/man/cat1
 #usr/share/man/cat5
 #usr/share/man/cat7

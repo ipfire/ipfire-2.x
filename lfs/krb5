@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Kerberos
 
-VER        = 1.20.1
+VER        = 1.21.2
 
 THISAPP    = krb5-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = ead16f8b1aec8bba3776628b74257c9aec891770c1fa6d5c5e66275db5f078ca59c9944cd2b017453b777ce080f8e5a322f735fab77691479cfad7b881b92830
+$(DL_FILE)_BLAKE2 = 2afb3ff962a343bc07182fdab0c0ffb221632ff38baab74278cfc721ae72deacc260221470de36e420584f00b780e13221d2e511d4831bca8e1270b7f3d9e824
 
 install : $(TARGET)
 
