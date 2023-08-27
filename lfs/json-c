@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.16
+VER        = 0.17
 
 THISAPP    = json-c-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 11457fa39330338c85bfdfb0dd38fc703ad6942e730ba090c9fe017dfb81ef905d7b1bb1c768b9b51f6445a8cf3cf4007d7740be3a9878f8062edc62ba554c66
+$(DL_FILE)_BLAKE2 = 26be25141447f2b652fa09d7096141a8bf7992469bcc53b275c1bc0108fc36a8898a8185c381218d3146d00fa03bdd0b837be073410fc93af943b5f083dbaa69
 
 install : $(TARGET)
 
