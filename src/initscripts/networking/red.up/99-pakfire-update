@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 nice -n 10 /opt/pakfire/pakfire update >/dev/null 2>&1 &
 
