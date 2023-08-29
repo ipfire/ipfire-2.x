@@ -49,6 +49,7 @@ ldconfig
 
 # Start services
 telinit u
+/etc/rc.d/init.d/sshd restart
 /etc/rc.d/init.d/vnstat restart
 
 # This update needs a reboot...
