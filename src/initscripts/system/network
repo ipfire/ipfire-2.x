@@ -65,7 +65,7 @@ case "${DO}" in
 		if [ "$red" == "1" ]; then
 			# Remove possible leftover files
 			rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
-			[ "$AUTOCONNECT" == "off" ] || /etc/rc.d/init.d/networking/red start
+			/etc/rc.d/init.d/networking/red start
 		fi
 
 		# Create IPsec interfaces
