@@ -62,11 +62,7 @@ case "${DO}" in
 			/etc/rc.d/init.d/networking/orange start
 
 		# RED
-		if [ "$red" == "1" ]; then
-			# Remove possible leftover files
-			rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
-			/etc/rc.d/init.d/networking/red start
-		fi
+		[ "$red" == "1" ] && /etc/rc.d/init.d/networking/red start
 
 		# Create IPsec interfaces
 		/usr/local/bin/ipsec-interfaces

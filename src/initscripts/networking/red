@@ -80,6 +80,9 @@ fi
 
 case "${1}" in
 	start)
+		# Remove possible leftover files
+		rm -f /var/ipfire/red/{active,device,dial-on-demand,dns1,dns2,local-ipaddress,remote-ipaddress,resolv.conf}
+
 		if [ "${DEVICE}" != "${GREEN_DEV}" ] && [ "${DEVICE}" != "" ]; then
 			boot_mesg "Bringing up the ${DEVICE} interface..."
 			boot_mesg_flush
