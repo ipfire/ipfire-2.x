@@ -98,7 +98,6 @@ $(TARGET) :
 	ln -sf ../init.d/fcron			/etc/rc.d/rc0.d/K08fcron
 	ln -sf ../init.d/apache			/etc/rc.d/rc0.d/K28apache
 	ln -sf ../init.d/sshd			/etc/rc.d/rc0.d/K30sshd
-	ln -sf ../init.d/client175		/etc/rc.d/rc0.d/K34client175
 	ln -sf ../init.d/setclock		/etc/rc.d/rc0.d/K47setclock
 	ln -sf  ../init.d/cyrus-sasl		/etc/rc.d/rc0.d/K49cyrus-sasl
 	ln -sf ../init.d/vnstat			/etc/rc.d/rc0.d/K51vnstat
@@ -131,7 +130,6 @@ $(TARGET) :
 	ln -sf ../init.d/sshd			/etc/rc.d/rc3.d/S30sshd
 	ln -sf ../init.d/apache			/etc/rc.d/rc3.d/S32apache
 	ln -sf ../init.d/fcron			/etc/rc.d/rc3.d/S40fcron
-	ln -sf ../init.d/client175		/etc/rc.d/rc3.d/S66client175
 	ln -sf ../../sysconfig/rc.local		/etc/rc.d/rc3.d/S98rc.local
 	ln -sf ../init.d/sslh			/etc/rc.d/rc3.d/S98sslh
 	ln -sf ../init.d/imspetor		/etc/rc.d/rc3.d/S99imspetor
@@ -145,7 +143,6 @@ $(TARGET) :
 	ln -sf ../init.d/fcron			/etc/rc.d/rc6.d/K08fcron
 	ln -sf ../init.d/apache			/etc/rc.d/rc6.d/K28apache
 	ln -sf ../init.d/sshd			/etc/rc.d/rc6.d/K30sshd
-	ln -sf ../init.d/client175		/etc/rc.d/rc6.d/K34client175
 	ln -sf ../init.d/setclock		/etc/rc.d/rc6.d/K47setclock
 	ln -sf  ../init.d/cyrus-sasl		/etc/rc.d/rc6.d/K49cyrus-sasl
 	ln -sf ../init.d/vnstat			/etc/rc.d/rc6.d/K51vnstat
