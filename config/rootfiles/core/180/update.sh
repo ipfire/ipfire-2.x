@@ -56,6 +56,7 @@ ldconfig
 telinit u
 /etc/rc.d/init.d/sshd restart
 /etc/rc.d/init.d/vnstat restart
+/etc/rc.d/init.d/unbound restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
