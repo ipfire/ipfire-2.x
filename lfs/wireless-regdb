@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2023-02-13
+VER        = 2023-05-03
 
 THISAPP    = wireless-regdb-master-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = fe32cbb5b4072f77387e93ba1da9e6b829f3614fb5e035088855b564164047a7cf53e78a2474400d7cb9e56e287773e689c080adf28e1eeabe41ff4b94acf013
+$(DL_FILE)_BLAKE2 = 84eaf93a22cc1de0da4b9f13acbbff84572469683f5e4f2ed2bfc2cb2ccf2a3e0c3e556562954b003ebb82d340ee562ba205e24be79bf38640ea64ad36d20a4f
 
 install : $(TARGET)
 
