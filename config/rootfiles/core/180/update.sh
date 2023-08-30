@@ -31,6 +31,11 @@ for (( i=1; i<=$core; i++ )); do
 	rm -f /var/cache/pakfire/core-upgrade-*-$i.ipfire
 done
 
+# Create missing '/etc/monit.d'-directory (Bug #13246)
+if [ -f /usr/bin/monit ]; then
+	mkdir -p /etc/monit.d
+fi
+
 # Stop services
 
 # Extract files
