@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A BitTorrent client with multiple UIs
 
-VER        = 4.0.3
+VER        = 4.0.4
 
 THISAPP    = transmission-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = transmission
-PAK_VER    = 19
+PAK_VER    = 20
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3d58f002d57458869e143e4a3617c8992e51a01f15f0e17031bc2913f404a455cde3397bde404f84a2234d12411e99b2902e4213ca6811b95288bb68f9b98553
+$(DL_FILE)_BLAKE2 = 0cdf6075dffba941cbb47924879e8849938620068f3389fe6d5a03b100d11d66a0d33692738001092b8ac3ea181d9cfb554ba1bb2553dc7f06fd83b04f7e0ca9
 
 install : $(TARGET)
 
