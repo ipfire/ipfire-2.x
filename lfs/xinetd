@@ -26,15 +26,15 @@ include Config
 
 SUMMARY    = An 'inetd' with Expanded Functionality
 
-VER        = 2.3.15
+VER        = 2.3.15.4
 
 THISAPP    = xinetd-$(VER)
-DL_FILE    = $(THISAPP).tar.gz
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = xinetd
-PAK_VER    = 4
+PAK_VER    = 5
 
 DEPS       =
 
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b5c933a2aa7a2ef4a2d58b53890f04569fe592005c646f39a00d4716325c8ac9b9aa3b8b4b2f2b861430c8415167ab1d394de3d3b4bd761239c5223b1d2b0419
+$(DL_FILE)_BLAKE2 = e6981d7143c5e39d45a6274d003467f372b1e97637112c66a3fd3a1cb47fe948228d72c914cca5b2db1d65a626b83ff36f10768d343579aa48353d20e2541f4d
 
 install : $(TARGET)
 
@@ -83,9 +83,12 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
+	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	$(UPDATE_AUTOMAKE)
-	cd $(DIR_APP) && ./configure --prefix=/usr
+	cd $(DIR_APP) && ./configure \
+				--prefix=/usr \
+				--sysconfdir=/etc \
+				--bindir=/usr/sbin
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	-mkdir -pv /etc/xinetd.d
