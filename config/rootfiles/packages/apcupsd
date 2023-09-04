@@ -21,6 +21,7 @@ srv/web/ipfire/cgi-bin/multimon.cgi
 srv/web/ipfire/cgi-bin/upsfstats.cgi
 srv/web/ipfire/cgi-bin/upsimage.cgi
 srv/web/ipfire/cgi-bin/upsstats.cgi
+srv/web/ipfire/cgi-bin/apcupsd.cgi
 #usr/share/hal
 #usr/share/hal/fdi
 #usr/share/hal/fdi/policy

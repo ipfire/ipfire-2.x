@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = apcupsd
-PAK_VER    = 10
+PAK_VER    = 11
 
 DEPS       =
 
@@ -95,5 +95,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -sf ../init.d/apcupsd /etc/rc.d/rc6.d/K35apcupsd
 	install -v -m 644 ${DIR_SRC}/config/backup/includes/apcupsd \
 			/var/ipfire/backup/addons/includes/apcupsd
+	cp /srv/web/ipfire/cgi-bin/upsstats.cgi /srv/web/ipfire/cgi-bin/apcupsd.cgi
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

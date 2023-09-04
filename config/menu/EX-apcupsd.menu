@@ -1,5 +1,5 @@
     $subipfire->{'35.apcupsd'} = {'caption' => $Lang::tr{'apcupsd'},
-				  'uri' => '/cgi-bin/upsstats.cgi',
+				  'uri' => '/cgi-bin/apcupsd.cgi',
 				  'title' => $Lang::tr{'apcupsd'},
 				  'enabled' => 1,
 				  };
