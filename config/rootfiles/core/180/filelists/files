@@ -1,3 +1,8 @@
+etc/rc.d/init.d/network
+etc/rc.d/init.d/networking/any
+etc/rc.d/init.d/networking/functions.network
+etc/rc.d/init.d/networking/red
+etc/rc.d/init.d/networking/red.up/99-pakfire-update
 opt/pakfire/lib/functions.pl
 srv/web/ipfire/cgi-bin/index.cgi
 var/ipfire/main/manualpages
