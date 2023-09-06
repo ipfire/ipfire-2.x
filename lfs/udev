@@ -74,7 +74,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/udev-lfs-$(RULES_VER).tar.bz2
-
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/eudev-3.2.12_Bump_udev_version_to_251.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/eudev-3.2.12_Export_dummies_for_current_tags.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--bindir=/bin \

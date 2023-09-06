@@ -1,0 +1,11 @@
+--- eudev-3.2.12/configure.orig	2023-05-16 16:20:07.000000000 +0200
++++ eudev-3.2.12/configure	2023-09-05 14:50:58.167510924 +0200
+@@ -3408,7 +3408,7 @@
+ ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ 
+ 
+-UDEV_VERSION=243
++UDEV_VERSION=251
+ 
+ 
+ 
