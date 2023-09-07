@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = v4.0.3
+VER        = v4.0.4
 
 THISAPP    = procps-$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 9836bda7bf8c9dab83d2c6064af3c52f070737ad2fb399e4ca015f33c1d45db378097eb9e77763107975412a19b4dacfbe110655074704270d679ccd94e6f9c0
+$(DL_FILE)_BLAKE2 = 0ce3c6291e17ae6dcfb15a144689b9be481d3d9728372822a8f2119446ad844100f98e15e559266c2472aa128e381d1cf495348f5adb90ac393f4de4b7185a5b
 
 install : $(TARGET)
 
@@ -70,7 +70,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/procps-v4.0.3_address_build_failures_with_gettext_0.22.patch
 	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \
 				--prefix=/usr \

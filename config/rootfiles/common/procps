@@ -3,7 +3,7 @@ bin/ps
 #lib/libproc2.la
 #lib/libproc2.so
 lib/libproc2.so.0
-lib/libproc2.so.0.0.1
+lib/libproc2.so.0.0.2
 #lib/pkgconfig
 #lib/pkgconfig/libproc2.pc
 sbin/sysctl
