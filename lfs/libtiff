@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = The Tiff Library (with JPEG and compression support)
 
-VER        = 4.5.0
+VER        = 4.5.1
 
 THISAPP    = tiff-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -44,7 +44,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = c69801ba9d55b1ed27a92d31d8cd16937fe69299fbf5450efb4a6caa60245b72ddade110daae78f2198613640383623f76ec2265ba785375d0a85c7909b73fe9
+$(DL_FILE)_BLAKE2 = 793c03593c46d6f804f622f5ff7e799751ee79e87ec1575801d2238fbcd2e89ed657a5081d3651e337f1bb14603ff94a15aad878e7fdf2cf75ada38eed64d9d2
 
 install : $(TARGET)
 
