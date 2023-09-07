@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.18.5
+VER        = 4.19.0
 SUMMARY    = A SMB/CIFS File, Print, and Authentication Server
 
 THISAPP    = samba-$(VER)
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 24c625372c6e4f7f4393777991221f7a7ad25513717436491ea3238c8d588e738eb1a64791606f691b3608362b3f3741f390f08975b2b0578c497984a4d44392
+$(DL_FILE)_BLAKE2 = 4e0db41d7d06e195cee994c5ec02a37892c1a7dd99ea9defb845fe2fbf96446846c469007218b6b0d6077c0886f0d08b2a4376acba1ed455b641daacd9018f12
 
 install : $(TARGET)
 
