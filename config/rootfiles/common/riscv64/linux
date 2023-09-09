@@ -6147,7 +6147,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/asm-generic/bitops/sched.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/bitsperlong.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/bug.h
-#lib/modules/KVER-ipfire/build/include/asm-generic/bugs.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/cache.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/cacheflush.h
 #lib/modules/KVER-ipfire/build/include/asm-generic/checksum.h
@@ -6370,6 +6369,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ASYNC_TX_DMA
 #lib/modules/KVER-ipfire/build/include/config/ASYNC_XOR
 #lib/modules/KVER-ipfire/build/include/config/AS_HAS_INSN
+#lib/modules/KVER-ipfire/build/include/config/AS_HAS_NON_CONST_LEB128
 #lib/modules/KVER-ipfire/build/include/config/AS_IS_GNU
 #lib/modules/KVER-ipfire/build/include/config/AS_VERSION
 #lib/modules/KVER-ipfire/build/include/config/AT76C50X_USB
@@ -16723,6 +16723,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/net/dccp/Makefile
 #lib/modules/KVER-ipfire/build/net/dccp/ccids
 #lib/modules/KVER-ipfire/build/net/dccp/ccids/Kconfig
+#lib/modules/KVER-ipfire/build/net/devlink
+#lib/modules/KVER-ipfire/build/net/devlink/Makefile
 #lib/modules/KVER-ipfire/build/net/dns_resolver
 #lib/modules/KVER-ipfire/build/net/dns_resolver/Kconfig
 #lib/modules/KVER-ipfire/build/net/dns_resolver/Makefile
@@ -18295,8 +18297,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/tools/testing/selftests/net/Makefile
 #lib/modules/KVER-ipfire/build/tools/testing/selftests/net/af_unix
 #lib/modules/KVER-ipfire/build/tools/testing/selftests/net/af_unix/Makefile
-#lib/modules/KVER-ipfire/build/tools/testing/selftests/net/bpf
-#lib/modules/KVER-ipfire/build/tools/testing/selftests/net/bpf/Makefile
 #lib/modules/KVER-ipfire/build/tools/testing/selftests/net/forwarding
 #lib/modules/KVER-ipfire/build/tools/testing/selftests/net/forwarding/Makefile
 #lib/modules/KVER-ipfire/build/tools/testing/selftests/net/mptcp

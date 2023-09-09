@@ -17587,6 +17587,8 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/net/dccp/Makefile
 #lib/modules/KVER-ipfire/build/net/dccp/ccids
 #lib/modules/KVER-ipfire/build/net/dccp/ccids/Kconfig
+#lib/modules/KVER-ipfire/build/net/devlink
+#lib/modules/KVER-ipfire/build/net/devlink/Makefile
 #lib/modules/KVER-ipfire/build/net/dns_resolver
 #lib/modules/KVER-ipfire/build/net/dns_resolver/Kconfig
 #lib/modules/KVER-ipfire/build/net/dns_resolver/Makefile
@@ -19159,8 +19161,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/tools/testing/selftests/net/Makefile
 #lib/modules/KVER-ipfire/build/tools/testing/selftests/net/af_unix
 #lib/modules/KVER-ipfire/build/tools/testing/selftests/net/af_unix/Makefile
-#lib/modules/KVER-ipfire/build/tools/testing/selftests/net/bpf
-#lib/modules/KVER-ipfire/build/tools/testing/selftests/net/bpf/Makefile
 #lib/modules/KVER-ipfire/build/tools/testing/selftests/net/forwarding
 #lib/modules/KVER-ipfire/build/tools/testing/selftests/net/forwarding/Makefile
 #lib/modules/KVER-ipfire/build/tools/testing/selftests/net/mptcp
