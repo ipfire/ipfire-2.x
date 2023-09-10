@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -84,7 +84,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 
-ifneq "$(MKIMAGE)" "1"
 	# Raspberry Pi 3
 	-mkdir -pv /usr/share/u-boot/rpi
 	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_3_config
@@ -93,6 +92,7 @@ ifneq "$(MKIMAGE)" "1"
 	cd $(DIR_APP) && install -v -m 644 u-boot.bin \
 		/usr/share/u-boot/rpi/u-boot-rpi3.bin
 	cd $(DIR_APP) && install u-boot.bin /boot/u-boot-rpi3.bin
+	cd $(DIR_APP) && install -v -m 755 tools/mkimage /usr/bin
 	cd $(DIR_APP) && make distclean
 
 	# Raspberry Pi 4
@@ -199,13 +199,6 @@ ifneq "$(MKIMAGE)" "1"
 
 	# patch real Kernel version to uEnv.txt
 	sed -e "s/xxxKVERxxx/$(KVER)/g" -i /boot/uEnv.txt
-
-else
-	# mkimage
-	cd $(DIR_APP) && make CROSS_COMPILE="" rpi_3_config
-	cd $(DIR_APP) && make CROSS_COMPILE="" HOSTCC="gcc $(CFLAGS)" tools
-	cd $(DIR_APP) && install -v -m 755 tools/mkimage /usr/bin
-endif
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

@@ -1114,7 +1114,6 @@ buildipfire() {
   lfsmake2 unzip
   lfsmake2 which
   lfsmake2 bc
-  lfsmake2 u-boot MKIMAGE=1
   lfsmake2 cpio
   lfsmake2 libaio
   lfsmake2 freetype
