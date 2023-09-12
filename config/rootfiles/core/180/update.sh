@@ -60,6 +60,7 @@ telinit u
 if [ -f /var/ipfire/proxy/enable ]; then
 	/etc/init.d/squid restart
 fi
+/etc/rc.d/init.d/udev restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
