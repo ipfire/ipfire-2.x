@@ -42,6 +42,8 @@ fi
 extract_files
 
 # Remove files
+rm -rfv \
+	/usr/lib/libboost*.so.1.81.0
 
 # update linker config
 ldconfig
