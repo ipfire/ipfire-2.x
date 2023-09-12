@@ -113,13 +113,16 @@ if ($extrahdsettings{'ACTION'} eq $Lang::tr{'add'}) {
 			# Split the line into pieces and assign nice variables.
 			my ($uuid, $fs, $path) = split( /\;/, $entry );
 
+			# Remove tailing UUID= from uuid string.
+			$uuid =~ s{^UUID=}{};
+
 			# Check if the path is allready used.
 			if ( "$extrahdsettings{'PATH'}" eq "$path" ) {
 				$errormessage = "$Lang::tr{'extrahd you cant mount'} $extrahdsettings{'DEVICE'} $Lang::tr{'extrahd to'} $extrahdsettings{'PATH'} $Lang::tr{'extrahd because there is already a device mounted'}.";
 			}
 
 			# Check if the uuid is allready used.
-			if ("$extrahdsettings{'DEVICE'} eq $uuid") {
+			if ("$extrahdsettings{'UUID'}" eq "$uuid") {
 				$errormessage = "$extrahdsettings{'DEVICE'} is allready mounted.";
 			}
 		}
