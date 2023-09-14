@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -732,6 +732,7 @@ sub BuildConfiguration() {
 	# Global settings.
 	print FILE "Sandbox 1\n";
 	print FILE "HardwareAccel 1\n";
+	print FILE "ClientUseIPv6 0\n";
 	print FILE "ControlPort $TOR_CONTROL_PORT\n";
 
 	if ($settings{'TOR_ENABLED'} eq 'on') {
