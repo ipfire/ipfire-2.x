@@ -1,3 +1,4 @@
+etc/logrotate.conf
 etc/rc.d/init.d/network
 etc/rc.d/init.d/networking/any
 etc/rc.d/init.d/networking/functions.network
