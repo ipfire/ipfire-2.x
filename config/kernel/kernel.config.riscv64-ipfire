@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/riscv 6.1.52-ipfire Kernel Configuration
+# Linux/riscv 6.1.53-ipfire Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 13.2.0"
 CONFIG_CC_IS_GCC=y
@@ -4332,75 +4332,9 @@ CONFIG_MEDIA_ATTACH=y
 #
 CONFIG_VIDEO_IR_I2C=m
 
-#
-# Camera sensor devices
-#
-# CONFIG_VIDEO_AR0521 is not set
-# CONFIG_VIDEO_HI556 is not set
-# CONFIG_VIDEO_HI846 is not set
-# CONFIG_VIDEO_HI847 is not set
-# CONFIG_VIDEO_IMX208 is not set
-# CONFIG_VIDEO_IMX214 is not set
-# CONFIG_VIDEO_IMX219 is not set
-# CONFIG_VIDEO_IMX258 is not set
-# CONFIG_VIDEO_IMX274 is not set
-# CONFIG_VIDEO_IMX290 is not set
-# CONFIG_VIDEO_IMX319 is not set
-# CONFIG_VIDEO_IMX334 is not set
-# CONFIG_VIDEO_IMX335 is not set
-# CONFIG_VIDEO_IMX355 is not set
-# CONFIG_VIDEO_IMX412 is not set
-# CONFIG_VIDEO_MT9M001 is not set
-# CONFIG_VIDEO_MT9M032 is not set
-CONFIG_VIDEO_MT9M111=m
-# CONFIG_VIDEO_MT9P031 is not set
-# CONFIG_VIDEO_MT9T001 is not set
-# CONFIG_VIDEO_MT9T112 is not set
+# CONFIG_VIDEO_CAMERA_SENSOR is not set
 CONFIG_VIDEO_MT9V011=m
-# CONFIG_VIDEO_MT9V032 is not set
-# CONFIG_VIDEO_MT9V111 is not set
-# CONFIG_VIDEO_NOON010PC30 is not set
-# CONFIG_VIDEO_OG01A1B is not set
-# CONFIG_VIDEO_OV02A10 is not set
-# CONFIG_VIDEO_OV08D10 is not set
-# CONFIG_VIDEO_OV13858 is not set
-# CONFIG_VIDEO_OV13B10 is not set
 CONFIG_VIDEO_OV2640=m
-# CONFIG_VIDEO_OV2659 is not set
-# CONFIG_VIDEO_OV2680 is not set
-# CONFIG_VIDEO_OV2685 is not set
-# CONFIG_VIDEO_OV5640 is not set
-# CONFIG_VIDEO_OV5645 is not set
-# CONFIG_VIDEO_OV5647 is not set
-# CONFIG_VIDEO_OV5648 is not set
-# CONFIG_VIDEO_OV5670 is not set
-# CONFIG_VIDEO_OV5675 is not set
-# CONFIG_VIDEO_OV5693 is not set
-# CONFIG_VIDEO_OV5695 is not set
-# CONFIG_VIDEO_OV6650 is not set
-# CONFIG_VIDEO_OV7251 is not set
-CONFIG_VIDEO_OV7640=m
-CONFIG_VIDEO_OV7670=m
-# CONFIG_VIDEO_OV772X is not set
-# CONFIG_VIDEO_OV7740 is not set
-# CONFIG_VIDEO_OV8856 is not set
-# CONFIG_VIDEO_OV8865 is not set
-# CONFIG_VIDEO_OV9282 is not set
-# CONFIG_VIDEO_OV9640 is not set
-# CONFIG_VIDEO_OV9650 is not set
-# CONFIG_VIDEO_RDACM20 is not set
-# CONFIG_VIDEO_RDACM21 is not set
-# CONFIG_VIDEO_RJ54N1 is not set
-# CONFIG_VIDEO_S5K4ECGX is not set
-# CONFIG_VIDEO_S5K5BAF is not set
-# CONFIG_VIDEO_S5K6A3 is not set
-# CONFIG_VIDEO_S5K6AA is not set
-# CONFIG_VIDEO_SR030PC30 is not set
-# CONFIG_VIDEO_VS6624 is not set
-# CONFIG_VIDEO_CCS is not set
-# CONFIG_VIDEO_ET8EK8 is not set
-# CONFIG_VIDEO_M5MOLS is not set
-# end of Camera sensor devices
 
 #
 # Lens drivers
