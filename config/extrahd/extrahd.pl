@@ -35,10 +35,20 @@ extrahd_mount() {
 	local failed=0
 
 	while IFS=';' read -r device filesystem mountpoint rest; do
-		# Filter by mountpoint if set
-		if [ -n "${_mountpoint}" ] && [ "${mountpoint}" != "${_mountpoint}" ]; then
-			continue
-		fi
+		# Filter by UUID or mountpoint
+		case "${_mountpoint}" in
+			UUID=*)
+				if [ "${device}" != "${_mountpoint}" ]; then
+					continue
+				fi
+				;;
+
+			/*)
+				if [ -n "${_mountpoint}" ] && [ "${mountpoint}" != "${_mountpoint}" ]; then
+					continue
+				fi
+				;;
+		esac
 
 		# Check that the mountpoint starts with a slash
 		if [ "${mountpoint:0:1}" != "/" ]; then
@@ -75,10 +85,20 @@ extrahd_umount() {
 	local failed=0
 
 	while IFS=';' read -r device filesystem mountpoint rest; do
-		# Filter by mountpoint if set
-		if [ -n "${_mountpoint}" ] && [ "${mountpoint}" != "${_mountpoint}" ]; then
-			continue
-		fi
+		# Filter by UUID or mountpoint
+		case "${_mountpoint}" in
+			UUID=*)
+				if [ "${device}" != "${_mountpoint}" ]; then
+					continue
+				fi
+				;;
+
+			/*)
+				if [ -n "${_mountpoint}" ] && [ "${mountpoint}" != "${_mountpoint}" ]; then
+					continue
+				fi
+				;;
+		esac
 
 		# Do not try to umount if nothing is mounted
 		if ! mountpoint "${mountpoint}" &>/dev/null; then

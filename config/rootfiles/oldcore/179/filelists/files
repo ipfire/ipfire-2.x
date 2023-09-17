@@ -1,4 +1,5 @@
 etc/rc.d/init.d/networking/red
+lib/udev/rules.d/61-extrahd.rules
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/fwhosts.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi

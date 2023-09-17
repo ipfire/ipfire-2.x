@@ -70,6 +70,7 @@ lib/udev/rules.d/60-persistent-storage.rules
 lib/udev/rules.d/60-persistent-v4l.rules
 lib/udev/rules.d/60-sensor.rules
 lib/udev/rules.d/60-serial.rules
+lib/udev/rules.d/61-extrahd.rules
 lib/udev/rules.d/64-btrfs.rules
 lib/udev/rules.d/70-camera.rules
 lib/udev/rules.d/70-joystick.rules
