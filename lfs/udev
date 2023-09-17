@@ -122,6 +122,10 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	install -v -m 644 $(DIR_SRC)/config/udev/60-net.rules \
 		/lib/udev/rules.d
 
+	# Install ExtraHD rules
+	install -v -m 644 $(DIR_SRC)/config/udev/61-extrahd.rules \
+		/lib/udev/rules.d
+
 	# Install AQM rules
 	install -v -m 644 $(DIR_SRC)/config/udev/99-aqm.rules \
 		/lib/udev/rules.d

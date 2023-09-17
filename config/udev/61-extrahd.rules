@@ -1,0 +1,1 @@
+ACTION=="add", SUBSYSTEM=="block", RUN+="/var/ipfire/extrahd/bin/extrahd.pl udev-event"
