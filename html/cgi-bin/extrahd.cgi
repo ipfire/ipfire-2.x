@@ -51,6 +51,12 @@ my @devices = &get_block_devices();
 # Grab all known UUID's.
 my %uuids = &get_uuids();
 
+# Detect device mapper devices.
+my %device_mapper = &get_device_mapper();
+
+# Grab members of group devices (RAID, LVM)
+my %grouped_devices = &collect_grouped_devices();
+
 # Grab all mountpoints.
 my %mountpoints = &get_mountpoints();
 
@@ -236,102 +242,144 @@ END
 		# Grab the known partitions of the current block device.
 		my @partitions = &get_device_partitions($device);
 
-		foreach my $partition (@partitions) {
-			my $disabled;
-
-			# Omit the partition size.
-			my $bsize = &get_device_size($partition);
-
-			# Convert into human-readable format.
-			my $size = &General::formatBytes($bsize);
-
-			# Try to omit the used filesystem.
-			my $fs = $filesystems{$partition};
-
-			# Get the mountpoint.
-			my $mountpoint = $mountpoints{$partition};
-
-			# If no mountpoint could be determined try to grab from
-			# configured drives.
-			unless($mountpoint) {
-				my $uuid = $uuids{$partition};
-
-				# Build uuid string.
-				$uuid = "UUID=" . $uuid;
-
-				# Try to obtain a possible moutpoint from configured drives.
-				$mountpoint = $configured_drives{$uuid} if ($configured_drives{$uuid});
+		# Check if the block device has any partitions for display.
+		if (@partitions) {
+			# Loop through the partitions.
+			foreach my $partition (@partitions) {
+				# Call function to display the row in the WUI.
+				&print_row($partition);
 			}
+		}
 
-			# Check if the mountpoint is used as root or boot device.
-			if ($mountpoint eq "/" or $mountpoint =~ "^/boot") {
-				$disabled = "disabled";
-
-			# Check if it is mounted.
-			} elsif(&is_mounted($mountpoint)) {
-				$disabled = "disabled";
-
-			# Check if the device is used as swap.
-			} elsif (&is_swap($partition)) {
-				$disabled = "disabled";
-				$mountpoint = "swap";
-				$fs = "swap";
-			}
-
-			print <<END
-
-			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-			<tr><td align="left" colspan=5><strong>UUID=$uuids{$partition}</strong></td></tr>
-			<tr>
-			<td align="list">/dev/$partition</td>
-				<td align="center">$Lang::tr{'size'} $size</td>
-				<td align="center">$fs</td>
-				<td align="center"><input type='text' name='PATH' value='$mountpoint' $disabled></td>
-				<td align="center">
-					<input type='hidden' name='DEVICE' value='/dev/$partition' />
-					<input type='hidden' name='UUID' value='$uuids{$partition}' />
-END
-;
-					# Check if the mountpoint refers to a known configured drive.
-					if(&is_configured($mountpoint)) {
-						print "<input type='hidden' name='ACTION' value='$Lang::tr{'delete'}'>\n";
-						print "<input type='hidden' name='PATH' value='$mountpoint'>\n";
-
-						# Check if the device is mounted properly.
-						if(&is_mounted($mountpoint)) {
-							print "<img src='/images/updbooster/updxl-led-green.gif' alt='$Lang::tr{'extrahd mounted'}' title='$Lang::tr{'extrahd mounted'}'>&nbsp;\n";
-						} else {
-							print "<img src='/images/updbooster/updxl-led-red.gif' alt='$Lang::tr{'extrahd not mounted'}' title='$Lang::tr{'extrahd not mounted'}'>&nbsp;\n";
-						}
-
-						print "<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/delete.gif'>\n";
-					} else {
-						unless($disabled) {
-							print "<input type='hidden' name='ACTION' value='$Lang::tr{'add'}'>\n";
-							print "<input type='hidden' name='FS' value='auto'>\n";
-							print "<img src='/images/updbooster/updxl-led-gray.gif' alt='$Lang::tr{'extrahd not configured'}' title='$Lang::tr{'extrahd not configured'}'>&nbsp;\n";
-							print "<input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/add.gif'>\n";
-						}
-					}
-
-				print <<END
-				</form></td></tr>
-END
-;		}
-
+		# Also print rows for devices with an UUID.
+		&print_row($device) if($uuids{$device});
 	}
 
-	print <<END
-	<tr><td align="center" colspan="5">&nbsp;</td></tr>
-	<tr><td align="center" colspan="5">&nbsp;</td></tr>
-	<tr><td align="center" colspan="5">$Lang::tr{'extrahd install or load driver'}</td></tr>
-	</table>
+        print <<END
+        <tr><td align="center" colspan="5">&nbsp;</td></tr>
+        <tr><td align="center" colspan="5">&nbsp;</td></tr>
+        <tr><td align="center" colspan="5">$Lang::tr{'extrahd install or load driver'}</td></tr>
+        </table>
 END
 ;
+
 &Header::closebox();
 
 &Header::closebigbox();
 &Header::closepage();
+
+
+#
+# Function to print a table row with device data on the WUI.
+#
+sub print_row ($) {
+	my ($partition) = @_;
+
+	my $disabled;
+
+	# Omit the partition size.
+	my $bsize = &get_device_size($partition);
+
+	# Convert into human-readable format.
+	my $size = &General::formatBytes($bsize);
+
+	# Try to omit the used filesystem.
+	my $fs = $filesystems{$partition};
+
+	# Get the mountpoint.
+	my $mountpoint = $mountpoints{$partition};
+
+	# Generate partition string.
+	my $partition_string = "/dev/$partition";
+
+	# Check if the given partition is managed by device mapper.
+	if (exists($device_mapper{$partition})) {
+		# Alter the partition string to used one by the device mapper.
+		$partition_string = "$device_mapper{$partition}";
+	}
+
+	# Check if the device is part of a group.
+	my $grouped_device = &is_grouped_member($partition);
+
+	# If no mountpoint could be determined try to grab from
+	# configured drives.
+	unless($mountpoint) {
+		my $uuid = $uuids{$partition};
+
+		# Build uuid string.
+		$uuid = "UUID=" . $uuid;
+
+		# Try to obtain a possible moutpoint from configured drives.
+		$mountpoint = $configured_drives{$uuid} if ($configured_drives{$uuid});
+	}
+
+	# Check if the mountpoint is used as root or boot device.
+	if ($mountpoint eq "/" or $mountpoint =~ "^/boot") {
+		$disabled = "disabled";
+
+	# Check if it is mounted.
+	} elsif(&is_mounted($mountpoint)) {
+		$disabled = "disabled";
+
+	# Check if the device is used as swap.
+	} elsif (&is_swap($partition)) {
+		$disabled = "disabled";
+		$mountpoint = "swap";
+		$fs = "swap";
+
+	# Check if the device is part of a group.
+	} elsif ($grouped_device) {
+		$disabled = "disabled";
+		$mountpoint = "/dev/$grouped_device";
+		$mountpoint = $device_mapper{$grouped_device} if (exists($device_mapper{$grouped_device}));
+	}
+
+	print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
+
+	# Only display UUID details if an UUID could be obtained.
+	if ( $uuids{$partition} ) {
+		print "<tr><td align='left' colspan=5><strong>UUID=$uuids{$partition}</strong></td></tr>\n";
+	}
+
+	print <<END
+
+	<tr>
+	<td align="list">$partition_string</td>
+		<td align="center">$Lang::tr{'size'} $size</td>
+		<td align="center">$fs</td>
+		<td align="center"><input type='text' name='PATH' value='$mountpoint' $disabled></td>
+		<td align="center">
+			<input type='hidden' name='DEVICE' value='$partition_string' />
+			<input type='hidden' name='UUID' value='$uuids{$partition}' />
+END
+;
+		# Check if the mountpoint refers to a known configured drive.
+		if(&is_configured($mountpoint)) {
+			print "<input type='hidden' name='ACTION' value='$Lang::tr{'delete'}'>\n";
+			print "<input type='hidden' name='PATH' value='$mountpoint'>\n";
+
+			# Check if the device is mounted properly.
+			if(&is_mounted($mountpoint)) {
+				print "<img src='/images/updbooster/updxl-led-green.gif' alt='$Lang::tr{'extrahd mounted'}' title='$Lang::tr{'extrahd mounted'}'>&nbsp;\n";
+			} else {
+				print "<img src='/images/updbooster/updxl-led-red.gif' alt='$Lang::tr{'extrahd not mounted'}' title='$Lang::tr{'extrahd not mounted'}'>&nbsp;\n";
+			}
+
+				print "<input type='image' alt='$Lang::tr{'delete'}' title='$Lang::tr{'delete'}' src='/images/delete.gif'>\n";
+		} else {
+			unless($disabled) {
+				print "<input type='hidden' name='ACTION' value='$Lang::tr{'add'}'>\n";
+				print "<input type='hidden' name='FS' value='auto'>\n";
+				print "<img src='/images/updbooster/updxl-led-gray.gif' alt='$Lang::tr{'extrahd not configured'}' title='$Lang::tr{'extrahd not configured'}'>&nbsp;\n";
+				print "<input type='image' alt='$Lang::tr{'add'}' title='$Lang::tr{'add'}' src='/images/add.gif'>\n";
+			}
+		}
+
+	print <<END
+	</form></td></tr>
+END
+;
+}
 
 #
 ## Function which return an array with all available block devices.
@@ -484,6 +532,86 @@ sub get_device_size ($) {
 
 	# Return the size in bytes.
 	return $size;
+}
+
+#
+## Function which tries to detect if a block device is a device mapper device and returns the alias a
+## a hash. Example: "dm-0" -> "/dev/mapper/GROUP-DEVICE"
+#
+sub get_device_mapper () {
+	my %mapper_devices = ();
+
+	# Loop through all known block devices.
+	foreach my $block_device (@devices) {
+		# Generate  device directory.
+		my $device_dir = "$sysfs_block_dir/$block_device";
+
+		# Skip the device if it is not managed by device mapper
+		# In this case the "bd" is not present.
+		next unless (-e "$device_dir/dm");
+
+		# Grab the group and volume name.
+		open(NAME, "$device_dir/dm/name") if (-e "$device_dir/dm/name");
+		my $name = <NAME>;
+		close(NAME);
+
+		# Skip device if no name could be determined.
+		next unless($name);
+
+		# Remove any newlines from the name string.
+		chomp($name);
+
+		# Generate path to the dev node in devfs.
+		my $dev_path = "/dev/mapper/$name";
+
+		# Store the device and the omited mapper name in the hash.
+		$mapper_devices{$block_device} = $dev_path;
+	}
+
+	# Return the hash of omited device mapper devices.
+	return %mapper_devices;
+}
+
+#
+## Function which will collect grouped devices and their members as array in a hash and returns them.
+## For example: "sda1" -> "dm-0" in case /dev/sda1 is assigned to a device mapper group.
+#
+sub collect_grouped_devices () {
+	my %grouped_devices = ();
+
+	# Loop through the array of known block devices.
+	foreach my $device (@devices) {
+		# Generate device directory.
+		my $device_dir = "$sysfs_block_dir/$device";
+
+		# Skip device if it has no members.
+		# In this case the "slaves" directory does not exist.
+		next unless (-e "$device_dir/slaves");
+
+		# Tempoarary array to store the members of a group.
+		my @members = ();
+
+		# Grab all members.
+		opendir(MEMBERS, "$device_dir/slaves");
+		while(readdir(MEMBERS)) {
+			next if($_ eq ".");
+			next if($_ eq "..");
+
+			# Add the found member to the array of members.
+			push(@members, $_);
+		}
+
+		closedir(MEMBERS);
+
+		# Skip the device if no members could be grabbed.
+		next unless (@members);
+
+		# Add the array of found members as value to the hash of grouped devices.
+		$grouped_devices{$device} = [ @members ];
+	}
+
+	# Return the hash of found grouped devices and their members.
+	return %grouped_devices;
 }
 
 #
@@ -706,5 +834,24 @@ sub is_configured ($) {
 	# Loop through the hash of configured drives.
 	foreach my $uuid (keys %configured_drives) {
 	       return 1 if($configured_drives{$uuid} eq "$path");
+	}
+}
+
+#
+## Retruns the device name of the grouped device,if a given device is a group member.
+#
+sub is_grouped_member ($) {
+	my ($device) = @_;
+
+	# Loop through the hash of found grouped devices.
+	foreach my $grouped_device(keys %grouped_devices) {
+		# The found members are stored as arrays.
+		my @members = @{ $grouped_devices{$grouped_device} };
+
+		# Loop through array of members and check if the given
+		# device is part of it.
+		foreach my $member (@members) {
+			return $grouped_device if ($member eq $device);
+		}
 	}
 }
