@@ -125,6 +125,33 @@ if [ -e /boot/pakfire-kernel-update ]; then
     /boot/pakfire-kernel-update ${KVER}
 fi
 
+## Modify ovpnconfig according to bug 11048 for pass, no-pass modification in ovpnconfig index
+# Check if ovpnconfig exists and is not empty
+if [ -s /var/ipfire/ovpn/ovpnconfig ]; then
+       # Add blank line at top of ovpnconfig otherwise the first roadwarrior entry is treated like a blank line and missed out from update
+       awk 'NR==1{print ""}1' /var/ipfire/ovpn/ovpnconfig > /var/ipfire/ovpn/tmp_file && mv /var/ipfire/ovpn/tmp_file /var/ipfire/ovpn/ovpnconfig
+
+       # Make all N2N connections 'no-pass' since they do not use encryption
+       awk '{FS=OFS=","} {if($5=="net") {$43="no-pass"; print $0}}' /var/ipfire/ovpn/ovpnconfig >> /var/ipfire/ovpn/ovpnconfig.new
+
+       # Evaluate roadwarrior connection names for *.p12 files
+       for y in $(awk -F',' '/host/ { print $3 }' /var/ipfire/ovpn/ovpnconfig); do
+           # Sort all unencrypted roadwarriors out and set 'no-pass' in [43] index
+               if [[ -n $(openssl pkcs12 -info -in /var/ipfire/ovpn/certs/${y}.p12 -noout -password pass:'' 2>&1 | grep 'Encrypted data') ]]; then
+                       awk -v var="$y" '{FS=OFS=","} {if($3==var) {$43="no-pass"; print $0}}' /var/ipfire/ovpn/ovpnconfig >> /var/ipfire/ovpn/ovpnconfig.new
+               fi
+           # Sort all encrypted roadwarriors out and set 'pass' in [43] index
+               if [[ -n $(openssl pkcs12 -info -in /var/ipfire/ovpn/certs/${y}.p12 -noout -password pass:'' 2>&1 | grep 'verify error')  ]]; then
+                       awk -v var="$y" '{FS=OFS=","} {if($3==var) {$43="pass"; print $0}}' /var/ipfire/ovpn/ovpnconfig >> /var/ipfire/ovpn/ovpnconfig.new
+               fi
+       done
+fi
+
+# Replace existing ovpnconfig with updated index
+mv /var/ipfire/ovpn/ovpnconfig.new /var/ipfire/ovpn/ovpnconfig
+# Set correct ownership
+chown nobody:nobody /var/ipfire/ovpn/ovpnconfig
+
 # This update needs a reboot...
 touch /var/run/need_reboot
 
