@@ -24,6 +24,8 @@ int main(int argc, char *argv[]){
 			safe_system("ln -s /var/ipfire/urlfilter/bin/autoupdate.pl /etc/fcron.weekly/urlfilter");
 		} else if (strcmp(argv[2], "monthly") == 0){
 			safe_system("ln -s /var/ipfire/urlfilter/bin/autoupdate.pl /etc/fcron.monthly/urlfilter");
+		} else if (strcmp(argv[2], "remove") == 0){
+			// Don't add urlfilter into any fcron directory
 		}else{
 			printf("invalid parameter(s)\n");
 		return(1);
