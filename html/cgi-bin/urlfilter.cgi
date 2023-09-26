@@ -982,6 +982,11 @@ if ($filtersettings{'ACTION'} eq $Lang::tr{'urlfilter save schedule'})
 		{
 			&General::system('/usr/local/bin/urlfilterctrl', 'cron', 'monthly');
 		}
+		
+		if ($filtersettings{'ENABLE_AUTOUPDATE'} eq 'off')
+		{
+			&General::system('/usr/local/bin/urlfilterctrl', 'cron', 'remove');
+		}
 	}
 }
 
