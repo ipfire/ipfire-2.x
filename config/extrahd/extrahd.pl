@@ -116,7 +116,21 @@ extrahd_umount() {
 	done < /var/ipfire/extrahd/devices
 }
 
+handle_udev_event() {
+	case "${ACTION}" in
+		add)
+			if [ -n "${ID_FS_UUID}" ]; then
+				extrahd_mount "UUID=${ID_FS_UUID}" || return $?
+			fi
+			;;
+	esac
+
+	return 0
+}
+
 main() {
+	( echo "$@"; set ) > /tmp/extrahd.$$
+
 	local command="${1}"
 	shift
 
@@ -128,6 +142,9 @@ main() {
 			;;
 		umount)
 			extrahd_umount "${@}" || rc="${rc}"
+			;;
+		udev-event)
+			handle_udev_event "${@}" || rc="${rc}"
 			;;
 		scanhd)
 			exec /usr/local/bin/scanhd "${@}"
