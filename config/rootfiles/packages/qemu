@@ -18,7 +18,12 @@ usr/bin/qemu-system-i386
 usr/bin/qemu-system-riscv64
 usr/bin/qemu-system-x86_64
 usr/bin/qemu-x86_64
+#usr/include/fdt.h
+#usr/include/libfdt.h
+#usr/include/libfdt_env.h
 usr/include/qemu-plugin.h
+#usr/lib/libfdt.a
+#usr/lib/pkgconfig/libfdt.pc
 usr/libexec/qemu-bridge-helper
 #usr/share/applications/qemu.desktop
 #usr/share/icons/hicolor/128x128/apps/qemu.png
