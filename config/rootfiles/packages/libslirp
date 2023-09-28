@@ -1,0 +1,7 @@
+#usr/include/slirp
+#usr/include/slirp/libslirp-version.h
+#usr/include/slirp/libslirp.h
+#usr/lib/libslirp.so
+usr/lib/libslirp.so.0
+usr/lib/libslirp.so.0.4.0
+#usr/lib/pkgconfig/slirp.pc

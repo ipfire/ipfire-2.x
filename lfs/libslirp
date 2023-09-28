@@ -24,34 +24,23 @@
 
 include Config
 
-SUMMARY    = Machine emulator and virtualizer
+SUMMARY    = A general purpose TCP-IP emulator used by virtual machine hypervisors to provide virtual networking services.
 
-# If you update the version also qemu-ga !!!
-VER        = 8.1.1
 
-THISAPP    = qemu-$(VER)
+VER        = 4.7.0
+
+THISAPP    = libslirp-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
-PROG       = qemu
-PAK_VER    = 40
+PROG       = libslirp
+PAK_VER    = 1
 
-DEPS       = alsa elfutils libusbredir spice libseccomp libslirp
+DEPS       =
 
 SERVICES   =
 
-TARGETS    = \
-	i386-linux-user \
-	x86_64-linux-user \
-	arm-linux-user \
-	aarch64-linux-user \
-	riscv64-linux-user \
-	i386-softmmu \
-	x86_64-softmmu \
-	arm-softmmu \
-	aarch64-softmmu \
-	riscv64-softmmu
 
 ###############################################################################
 # Top-level Rules
@@ -61,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 71220fad7c9f74bed6211879f01566ac1e52835feb3d45eaa1b2fe1d5f95d9fa5db53b7aec72b4ef098c03d0c4070076c907fb3e6b839002de6f56ee5ab44340
+$(DL_FILE)_BLAKE2 = ccea2413c1dc6148e80851496955d5a991f37e359dc30946fd901627ce5d100b4ea065189b87dd79f574f15cac0e7468063d347efac9251f7180d3d291b1b2e5
 
 install : $(TARGET)
 
@@ -94,29 +83,10 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--sysconfdir=/etc \
-		--localstatedir=/var \
-		--enable-kvm \
-		--disable-attr \
-		--target-list="$(TARGETS)" \
-		--extra-cflags="$(CFLAGS)" \
-		--enable-spice \
-		--enable-usb-redir \
-		--enable-seccomp \
-		--disable-docs \
-		--disable-sdl \
-		--enable-slirp
-
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
-
-	# install wrapper for old kvm parameter handling
-	install -m 755 $(DIR_SRC)/config/qemu/qemu /usr/bin/qemu
-
-	# install an udev script to set the permissions of /dev/kvm
-	cp -avf $(DIR_SRC)/config/qemu/65-kvm.rules /lib/udev/rules.d/65-kvm.rules
+	cd $(DIR_APP) && meson		--prefix=/usr \
+					builddir/
+	cd $(DIR_APP) && ninja -C builddir/ $(MAKETUNING)
+	cd $(DIR_APP) && ninja -C builddir/ install
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
