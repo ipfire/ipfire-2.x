@@ -1,3 +1,4 @@
+srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
 srv/web/ipfire/html/images/openvpn_encrypted.png
