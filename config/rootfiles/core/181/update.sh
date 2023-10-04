@@ -100,6 +100,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+telinit u
 
 # Rebuild initial ramdisks
 dracut --regenerate-all --force
