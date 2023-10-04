@@ -54,6 +54,9 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Start services
 telinit u
 /etc/rc.d/init.d/sshd restart
