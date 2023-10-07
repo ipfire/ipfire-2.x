@@ -24,7 +24,7 @@
 
 include Config
 
-VER         = 6.1.53
+VER         = 6.1.56
 ARM_PATCHES = 6.1.y-ipfire2
 
 THISAPP    = linux-$(VER)
@@ -75,7 +75,7 @@ objects = \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_BLAKE2 = c5c082fa08e331ae968e27f6a0aed41f7793ea38c3a32311e4f9b7dda3cf1ce74dfd7f3e4c783f0dd4269b543eddd53e086e523d324da5e7a996aa4d8e6701ea
+$(DL_FILE)_BLAKE2 = c70da3ecb8f849890fe2b5bf2874a2dd4f468508b508aaf1e7e6773c63845e782e2cf5285e0e7e62ce25e7a4485e1cf033122c4d6fbff0e83b92e172423e7a5c
 arm-multi-patches-$(ARM_PATCHES).patch.xz_BLAKE2 = 7afc460562fb24bcd75784fc79de768f9b60780aedd88d1a847927169e31920bbb475b1ac1466c4a224a7876d16bd8d465b96202de12b74f6e2ccbfcec731ad3
 
 install : $(TARGET)
@@ -113,7 +113,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	ln -svf linux-$(VER) $(DIR_SRC)/linux
 
 	# Layer7-patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.1.27-layer7.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/linux/linux-6.1.56-layer7.patch
 
 	# DVB Patches
 	cd $(DIR_APP) && patch -Np2 < $(DIR_SRC)/src/patches/v4l-dvb_fix_tua6034_pll.patch
@@ -183,7 +183,7 @@ else
 	cd $(DIR_APP) && cp -v .config /boot/config-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP) && make $(MAKETUNING) modules_install
 
-ifeq "$(BUILD_PLATFORM)" "arm"
+ifneq "$(BUILD_PLATFORM)" "x86"
 	cd $(DIR_APP) && make $(MAKETUNING) dtbs
 	mkdir -p /boot/dtb-$(VER)-$(VERSUFIX)
 	cd $(DIR_APP)/arch/$(KERNEL_ARCH)/boot/dts && for f in $$(find -name "*.dtb"); do \

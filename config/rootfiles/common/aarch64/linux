@@ -192,6 +192,7 @@ boot/dtb-KVER-ipfire
 #boot/dtb-KVER-ipfire/freescale/imx8mm-mx8menlo.dtb
 #boot/dtb-KVER-ipfire/freescale/imx8mm-nitrogen-r2.dtb
 #boot/dtb-KVER-ipfire/freescale/imx8mm-phyboard-polis-rdk.dtb
+#boot/dtb-KVER-ipfire/freescale/imx8mm-prt8mm.dtb
 #boot/dtb-KVER-ipfire/freescale/imx8mm-tqma8mqml-mba8mx.dtb
 #boot/dtb-KVER-ipfire/freescale/imx8mm-var-som-symphony.dtb
 #boot/dtb-KVER-ipfire/freescale/imx8mm-venice-gw71xx-0x.dtb
@@ -9283,8 +9284,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/NET_CLS_FW
 #lib/modules/KVER-ipfire/build/include/config/NET_CLS_MATCHALL
 #lib/modules/KVER-ipfire/build/include/config/NET_CLS_ROUTE4
-#lib/modules/KVER-ipfire/build/include/config/NET_CLS_RSVP
-#lib/modules/KVER-ipfire/build/include/config/NET_CLS_RSVP6
 #lib/modules/KVER-ipfire/build/include/config/NET_CLS_U32
 #lib/modules/KVER-ipfire/build/include/config/NET_CORE
 #lib/modules/KVER-ipfire/build/include/config/NET_DEVLINK
@@ -11180,9 +11179,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/VIDEO_MEM2MEM_DEINTERLACE
 #lib/modules/KVER-ipfire/build/include/config/VIDEO_MESON_GE2D
 #lib/modules/KVER-ipfire/build/include/config/VIDEO_MSP3400
-#lib/modules/KVER-ipfire/build/include/config/VIDEO_MT9M111
-#lib/modules/KVER-ipfire/build/include/config/VIDEO_MT9V011
-#lib/modules/KVER-ipfire/build/include/config/VIDEO_OV2640
 #lib/modules/KVER-ipfire/build/include/config/VIDEO_PVRUSB2
 #lib/modules/KVER-ipfire/build/include/config/VIDEO_PVRUSB2_DVB
 #lib/modules/KVER-ipfire/build/include/config/VIDEO_PVRUSB2_SYSFS
@@ -20134,9 +20130,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/media/i2c/ir-kbd-i2c.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/i2c/m52790.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/i2c/msp3400.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/media/i2c/mt9m111.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/media/i2c/mt9v011.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/media/i2c/ov2640.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/i2c/saa6588.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/i2c/saa6752hs.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/media/i2c/saa7115.ko.xz
@@ -22190,8 +22183,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/net/sched/cls_fw.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/cls_matchall.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/cls_route.ko.xz
-#lib/modules/KVER-ipfire/kernel/net/sched/cls_rsvp.ko.xz
-#lib/modules/KVER-ipfire/kernel/net/sched/cls_rsvp6.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/cls_u32.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/em_cmp.ko.xz
 #lib/modules/KVER-ipfire/kernel/net/sched/em_ipset.ko.xz
