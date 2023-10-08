@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 3.2.12
+VER        = 3.2.14
 RULES_VER  = 20171102
 
 THISAPP    = eudev-$(VER)
@@ -42,7 +42,7 @@ objects = $(DL_FILE) udev-lfs-$(RULES_VER).tar.bz2
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 udev-lfs-$(RULES_VER).tar.bz2 = $(DL_FROM)/udev-lfs-$(RULES_VER).tar.bz2
 
-$(DL_FILE)_BLAKE2 = 1d2dcc158432f722904f645749420cb44ff98f68b8b8fc11917e83750c95280d0dc2c4d9a322909a4acdb9455c6ec373eade77aacb1039096daa8e642076d3d1
+$(DL_FILE)_BLAKE2 = 7d68e77012288ecfac43be31f724224d371cb1084238fe045df248927eff854dbb391ad501e2a36d9b5ea4eb0a8cba3f9f21ea668908584a24c2a65df93ffdf8
 udev-lfs-$(RULES_VER).tar.bz2_BLAKE2 = b5fb8177a87719e28adc976b83953024dbcfb8739b0c2e61da186cbc4df5e75e62c888da987d15c64db164002bb0a1e66ce0ff206b143dc953d7571b66d5d5c0
 
 install : $(TARGET)
@@ -74,8 +74,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && tar axf $(DIR_DL)/udev-lfs-$(RULES_VER).tar.bz2
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/eudev-3.2.12_Bump_udev_version_to_251.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/eudev-3.2.12_Export_dummies_for_current_tags.patch
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--bindir=/bin \
