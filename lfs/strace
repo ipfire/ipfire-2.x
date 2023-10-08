@@ -27,7 +27,7 @@ include Config
 SUMMARY    = A utility to trace the system calls of a program
 
 VER        = 6.3
-SUP_ARCHES = x86_64 aarch64
+# SUP_ARCHES = x86_64 aarch64
 
 THISAPP    = strace-$(VER)
 DL_FILE    = $(THISAPP).tar.xz

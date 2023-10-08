@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/${THISAPP}
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpd
 PAK_VER    = 32
-SUP_ARCH   = aarch64 x86_64
+# SUP_ARCH   = aarch64 x86_64
 
 DEPS       = alsa avahi faad2 ffmpeg flac lame libmad libshout libogg libid3tag libvorbis opus soxr fmt
 
