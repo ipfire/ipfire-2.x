@@ -96,6 +96,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-2.06-remove_os_prober_disabled_warning.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-2.02_disable_vga_fallback.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-Use-zifencei-on-riscv.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-Handle-R_RISCV_CALL_PLT-reloc.patch
 	cd $(DIR_APP) && autoreconf -vfi
 
 	# Install unifont

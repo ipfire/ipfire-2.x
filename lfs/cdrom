@@ -220,7 +220,7 @@ ifeq "$(EFI)" "1"
 		< $(DIR_SRC)/config/cdrom/grub.cfg > $(DIR_TMP)/cdrom/EFI/BOOT/grub.cfg
 
 	# Create the EFI Eltorito image
-	dd if=/dev/zero of=$(DIR_TMP)/cdrom/boot/isolinux/efiboot.img bs=1k count=1440
+	dd if=/dev/zero of=$(DIR_TMP)/cdrom/boot/isolinux/efiboot.img bs=1k count=2880
 	mkdosfs -F 12 -n "IPFIRE_EFI" $(DIR_TMP)/cdrom/boot/isolinux/efiboot.img
 
 	# Mount the EFI image
