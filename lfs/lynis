@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Security and System auditing tool
 
-VER        = 3.0.8
+VER        = 3.0.9
 
 THISAPP    = lynis-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -35,7 +35,7 @@ DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
 PROG       = lynis
-PAK_VER    = 12
+PAK_VER    = 13
 
 DEPS       =
 
@@ -49,7 +49,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 490bd6799619a4247c3fa68cc96f2f1fead651b23db0ffb512394960f8ca0360ab7f25d2bb8d9e742641558972e1fdd4b1e18d7de0d13007988276eed3a97b1f
+$(DL_FILE)_BLAKE2 = dc7912c7d1782c3ffdf369cc7f0f004267bd2a2c408982909e654db14ecfa83ebdbd2f731c3d3ee8864e7de21945b1faa2f9d2845dedf3e742a4c79c62373eda
 
 install : $(TARGET)
 
