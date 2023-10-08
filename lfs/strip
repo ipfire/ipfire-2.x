@@ -64,6 +64,11 @@ else
 		--exclude=/usr/lib/go \
 		--exclude=/usr/lib/vdr \
 		--exclude=/usr/sbin/vdr \
+		--exclude=/usr/bin/cargo \
+		--exclude=/usr/bin/rustdoc \
+		--exclude=/usr/bin/rustc \
+		--exclude=/usr/libexec/rust-analyzer-proc-macro-srv \
+		--exclude=/usr/libexec/cargo-credential-1password \
 		--exclude=/usr/src \
 		--exclude=/var/tmp
 endif
