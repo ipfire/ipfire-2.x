@@ -6899,6 +6899,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_2441009
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_2457168
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_2658417
+#lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_2966298
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_819472
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_824069
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_826319
