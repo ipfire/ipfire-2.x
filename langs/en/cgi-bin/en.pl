@@ -1073,7 +1073,7 @@
 'external access rule removed' => ' External access rule removed; restarting access controller',
 'external aliases configuration' => 'External aliases configuration',
 'extrahd' => 'ExtraHD',
-'extrahd because it it outside the allowed mount path' => ', because it is outside the allowed mount path',
+'extrahd because it is outside the allowed mount path' => ', because it is outside the allowed mount path',
 'extrahd because there is already a device mounted' => ', because there is already a device mounted',
 'extrahd cant umount' => 'Can\'t umount',
 'extrahd detected drives' => 'detected drives',
