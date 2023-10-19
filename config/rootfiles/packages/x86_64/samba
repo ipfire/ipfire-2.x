@@ -923,7 +923,6 @@ usr/libexec/samba/rpcd_epmapper
 usr/libexec/samba/rpcd_fsrvp
 usr/libexec/samba/rpcd_lsad
 usr/libexec/samba/rpcd_mdssvc
-usr/libexec/samba/rpcd_rpcecho
 usr/libexec/samba/rpcd_spoolss
 usr/libexec/samba/rpcd_winreg
 usr/libexec/samba/samba-bgqd
