@@ -102,6 +102,7 @@ ldconfig
 # Start services
 telinit u
 /etc/init.d/udev restart
+/etc/init.d/apache restart
 
 # Rebuild initial ramdisks
 dracut --regenerate-all --force
