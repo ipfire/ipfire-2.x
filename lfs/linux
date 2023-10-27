@@ -24,7 +24,7 @@
 
 include Config
 
-VER         = 6.1.59
+VER         = 6.1.60
 ARM_PATCHES = 6.1.y-ipfire2
 
 THISAPP    = linux-$(VER)
@@ -75,7 +75,7 @@ objects = \
 $(DL_FILE)					= $(URL_IPFIRE)/$(DL_FILE)
 arm-multi-patches-$(ARM_PATCHES).patch.xz	= $(URL_IPFIRE)/arm-multi-patches-$(ARM_PATCHES).patch.xz
 
-$(DL_FILE)_BLAKE2 = 8b805f75f745e6fff9d7628fb1702475ad4c94010f764d733e1c1b4d860f6e593a79ccb8aa3a8c6c0de2ffdc2c192aaa661966549a7383ceb026a59e0d949e49
+$(DL_FILE)_BLAKE2 = 6d6723dd839b9003ea2a46be849e36516a97497ba3743860c8081795b372c70536465c46defd6ab4f97e81127b1bf40d78270b1a3a721a7331a935d1ef8417c4
 arm-multi-patches-$(ARM_PATCHES).patch.xz_BLAKE2 = 7afc460562fb24bcd75784fc79de768f9b60780aedd88d1a847927169e31920bbb475b1ac1466c4a224a7876d16bd8d465b96202de12b74f6e2ccbfcec731ad3
 
 install : $(TARGET)
