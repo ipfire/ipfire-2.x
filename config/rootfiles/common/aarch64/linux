@@ -8505,7 +8505,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/INTEL_XWAY_PHY
 #lib/modules/KVER-ipfire/build/include/config/INTERVAL_TREE
 #lib/modules/KVER-ipfire/build/include/config/IOMMU_API
-#lib/modules/KVER-ipfire/build/include/config/IOMMU_DEFAULT_PASSTHROUGH
+#lib/modules/KVER-ipfire/build/include/config/IOMMU_DEFAULT_DMA_STRICT
 #lib/modules/KVER-ipfire/build/include/config/IOMMU_DMA
 #lib/modules/KVER-ipfire/build/include/config/IOMMU_IOVA
 #lib/modules/KVER-ipfire/build/include/config/IOMMU_IO_PGTABLE
@@ -8514,8 +8514,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/IONIC
 #lib/modules/KVER-ipfire/build/include/config/IOSCHED_BFQ
 #lib/modules/KVER-ipfire/build/include/config/IO_STRICT_DEVMEM
-#lib/modules/KVER-ipfire/build/include/config/IO_URING
-#lib/modules/KVER-ipfire/build/include/config/IO_WQ
 #lib/modules/KVER-ipfire/build/include/config/IP6_NF_FILTER
 #lib/modules/KVER-ipfire/build/include/config/IP6_NF_IPTABLES
 #lib/modules/KVER-ipfire/build/include/config/IP6_NF_MANGLE
