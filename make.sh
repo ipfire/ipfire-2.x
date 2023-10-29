@@ -1144,6 +1144,7 @@ buildipfire() {
   lfsmake2 sqlite
   lfsmake2 python3
   lfsmake2 python3-setuptools
+  lfsmake2 python3-MarkupSafe
   lfsmake2 ninja
   lfsmake2 meson
   lfsmake2 glib
