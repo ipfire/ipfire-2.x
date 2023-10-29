@@ -24,10 +24,10 @@
 
 include Config
 
-VER        = 3.2.14
-RULES_VER  = 20171102
+VER        = 254
+RULES_VER  = 20230818
 
-THISAPP    = eudev-$(VER)
+THISAPP    = systemd-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
@@ -37,13 +37,13 @@ TARGET     = $(DIR_INFO)/$(THISAPP)
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE) udev-lfs-$(RULES_VER).tar.bz2
+objects = $(DL_FILE) udev-lfs-$(RULES_VER).tar.xz
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-udev-lfs-$(RULES_VER).tar.bz2 = $(DL_FROM)/udev-lfs-$(RULES_VER).tar.bz2
+udev-lfs-$(RULES_VER).tar.xz = $(DL_FROM)/udev-lfs-$(RULES_VER).tar.xz
 
-$(DL_FILE)_BLAKE2 = 7d68e77012288ecfac43be31f724224d371cb1084238fe045df248927eff854dbb391ad501e2a36d9b5ea4eb0a8cba3f9f21ea668908584a24c2a65df93ffdf8
-udev-lfs-$(RULES_VER).tar.bz2_BLAKE2 = b5fb8177a87719e28adc976b83953024dbcfb8739b0c2e61da186cbc4df5e75e62c888da987d15c64db164002bb0a1e66ce0ff206b143dc953d7571b66d5d5c0
+$(DL_FILE)_BLAKE2 = 4703ac102dd0003a2ef59dfd9b6fc6345b57cf1ff6397ebc71b3e9abb35ad5b891d114038a91eddba25b4ec81b8208a36691bc5490173b223ba35842cd1776d4
+udev-lfs-$(RULES_VER).tar.xz_BLAKE2 = e8c20bdddb5191381bad11bf46b0d605ce952afb697e8bf3e80b216c64eacbb327d0d961c5a1f49291576c82452e8472bb62f31f8bacc81eb832aa746a5234d4
 
 install : $(TARGET)
 
@@ -73,24 +73,52 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && tar axf $(DIR_DL)/udev-lfs-$(RULES_VER).tar.bz2
-	cd $(DIR_APP) && ./configure \
-		--prefix=/usr \
-		--bindir=/bin \
-		--sbindir=/sbin \
-		--sysconfdir=/etc \
-		--libdir=/usr/lib \
-		--libexecdir=/lib \
-		--with-rootprefix= \
-		--with-rootlibdir=/lib \
-		--enable-manpages \
-		--disable-static
+	cd $(DIR_APP) && tar axf $(DIR_DL)/udev-lfs-$(RULES_VER).tar.xz
 
-	cd $(DIR_APP) && make $(MAKETUNING)
-	cd $(DIR_APP) && make install
+	# Remove two unneeded groups (render and sgx) from the default udev rules
+	cd $(DIR_APP) && sed -i -e 's/GROUP="render"/GROUP="video"/' \
+		-e 's/GROUP="sgx", //' rules.d/50-udev-default.rules.in
+
+	# Remve udev rule which requires a full systemd installation
+	cd $(DIR_APP) && sed '/systemd-sysctl/s/^/#/' -i rules.d/99-systemd.rules.in
+
+	# Prepare udev for build.
+	cd $(DIR_APP) && mkdir -pv build
+	cd $(DIR_APP)/build &&	meson setup \
+		--prefix=/usr \
+		--buildtype=release \
+		-Dmode=release \
+		-Ddev-kvm-mode=0660 \
+		-Dlink-udev-shared=false \
+		..
+
+	# Only build udev and required components
+	cd $(DIR_APP)/build && ninja udevadm systemd-hwdb \
+		$$(grep -o -E "^build (src/libudev|src/udev|rules.d|hwdb.d)[^:]*" \
+		build.ninja | awk '{ print $$2 }') \
+		$$(realpath libudev.so --relative-to .)
+
+	# Drop udev rules which requires a full systemd installation
+	cd $(DIR_APP)/build && rm -vf rules.d/90-vconsole.rules
+
+	# Install udev
+	cd $(DIR_APP)/build && install -vm755 -d {/lib,/etc}/udev/{hwdb,rules}.d
+	cd $(DIR_APP)/build && install -vm755 -d /usr/{lib,share}/pkgconfig
+	cd $(DIR_APP)/build && install -vm755 udevadm                     /bin/
+	cd $(DIR_APP)/build && install -vm755 systemd-hwdb                /usr/bin/udev-hwdb
+	cd $(DIR_APP)/build && ln      -svfn  ../bin/udevadm              /sbin/udevd
+	cd $(DIR_APP)/build && ln      -svfn  ../bin/udevadm              /sbin/udevadm
+	cd $(DIR_APP)/build && cp      -av    libudev.so{,*[0-9]}         /lib/
+	cd $(DIR_APP)/build && install -vm644 ../src/libudev/libudev.h    /usr/include/
+	cd $(DIR_APP)/build && install -vm644 src/libudev/*.pc            /usr/lib/pkgconfig/
+	cd $(DIR_APP)/build && install -vm644 src/udev/*.pc               /usr/share/pkgconfig/
+	cd $(DIR_APP)/build && install -vm644 ../src/udev/udev.conf       /etc/udev/
+	cd $(DIR_APP)/build && install -vm644 rules.d/* ../rules.d/{*.rules,README} /lib/udev/rules.d/
+	cd $(DIR_APP)/build && install -vm644 hwdb.d/*  ../hwdb.d/{*.hwdb,README}   /etc/udev/hwdb.d/
+	cd $(DIR_APP)/build && install -vm755 $$(find src/udev -type f | grep -F -v ".") /lib/udev
 
 	# Generate hardware database
-	udevadm hwdb --update
+	udev-hwdb update
 
 	# Install rules
 	cd $(DIR_APP) && make -f udev-lfs-$(RULES_VER)/Makefile.lfs install
