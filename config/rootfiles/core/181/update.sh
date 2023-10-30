@@ -88,7 +88,15 @@ rm -rvf \
 extract_files
 
 # Remove files
-#rm -rvf \
+rm -rvf \
+	/etc/udev/rules.d/81-cdrom.rules \
+	/etc/udev/rules.d/83-cdrom-symlinks.rules \
+	/lib/libudev.so.1.6.3 \
+	/lib/udev/collect \
+	/lib/udev/init-net-rules.sh \
+	/lib/udev/rule_generator.functions \
+	/lib/udev/write_cd_rules \
+	/lib/udev/write_net_rules
 
 # update linker config
 ldconfig
