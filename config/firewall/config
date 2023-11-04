@@ -1,0 +1,1 @@
+1,REJECT,FORWARDFW,ON,std_net_src,ALL,std_net_tgt,RED,,TCP,,,ON,,,cust_srv,SMTP,Block port 25 (TCP) for outgoing connections to the internet,,,,,,,,,,00:00,00:00,,AUTO,,dnat,,,,,second
