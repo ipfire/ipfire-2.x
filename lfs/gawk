@@ -25,7 +25,7 @@
 
 include Config
 
-VER        = 5.2.2
+VER        = 5.3.0
 
 THISAPP    = gawk-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -49,7 +49,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 49dd69d3e2414867d60fe42b74b39bc6858114aeeb9305ade7bfd64f1933b3c93d59d127362b614cb4b73e29279ed3b4ea9fa0da94fce98ca9925980d17b5d0c
+$(DL_FILE)_BLAKE2 = 1bab754626a51679e4d6fe4552bc965f402a51d176eab30686bf19c74085fd15507b51514c3c46d38f68d3e98da4326c138411abe12e4d8793cec617b2533f3c
 
 install : $(TARGET)
 
