@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Antivirus Toolkit
 
-VER        = 1.2.0
+VER        = 1.2.1
 
 THISAPP    = clamav-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = clamav
-PAK_VER    = 69
+PAK_VER    = 70
 
 DEPS       =
 
@@ -50,7 +50,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 83df24d253f71e2c200c13c318aa6a52d34830e5e464a90f2a84e5c1b75a64f366b73aa1da9f5780b70d6f3ab97496910484ab5d52441cc1909d5ab4685330c2
+$(DL_FILE)_BLAKE2 = 1373c6882b165e769dcc3c3631dfe7183231b2fe4830608b57d919af1a8e9a5a73aa3cc4767981a27bb9845390165b5241750904d50e1a90b7237200b97f7ef3
 
 
 install : $(TARGET)
