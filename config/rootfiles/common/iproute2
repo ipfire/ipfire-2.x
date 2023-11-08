@@ -50,6 +50,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/dcb-ets.8
 #usr/share/man/man8/dcb-maxrate.8
 #usr/share/man/man8/dcb-pfc.8
+#usr/share/man/man8/dcb-rewr.8
 #usr/share/man/man8/dcb.8
 #usr/share/man/man8/devlink-dev.8
 #usr/share/man/man8/devlink-dpipe.8
@@ -110,8 +111,6 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/tc-bfifo.8
 #usr/share/man/man8/tc-bpf.8
 #usr/share/man/man8/tc-cake.8
-#usr/share/man/man8/tc-cbq-details.8
-#usr/share/man/man8/tc-cbq.8
 #usr/share/man/man8/tc-cbs.8
 #usr/share/man/man8/tc-cgroup.8
 #usr/share/man/man8/tc-choke.8
@@ -158,7 +157,6 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/tc-stab.8
 #usr/share/man/man8/tc-taprio.8
 #usr/share/man/man8/tc-tbf.8
-#usr/share/man/man8/tc-tcindex.8
 #usr/share/man/man8/tc-tunnel_key.8
 #usr/share/man/man8/tc-u32.8
 #usr/share/man/man8/tc-vlan.8
