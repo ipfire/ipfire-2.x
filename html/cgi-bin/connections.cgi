@@ -352,7 +352,7 @@ if ($SORT_FIELD and $SORT_ORDER) {
 		$Lang::tr{'destination port'},
 		$Lang::tr{'protocol'},
 		$Lang::tr{'connection'}.' '.$Lang::tr{'status'},
-		$Lang::tr{'expires'}.' ('.$Lang::tr{'seconds'}.')',
+		$Lang::tr{'expires'}.' ('.$Lang::tr{'hours:minutes:seconds'}.')',
 		$Lang::tr{'download'},
 		$Lang::tr{'upload'}
 	);
@@ -435,7 +435,7 @@ print <<END;
 				$Lang::tr{'connection'}<br>$Lang::tr{'status'}
 			</th>
 			<th style='text-align:center'>
-				$Lang::tr{'expires'}<br>($Lang::tr{'seconds'})
+				$Lang::tr{'expires'}<br>($Lang::tr{'hours:minutes:seconds'})
 			</th>
 		</tr>
 END
