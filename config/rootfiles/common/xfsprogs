@@ -1,5 +1,6 @@
 lib/libhandle.so.1
 lib/libhandle.so.1.0.3
+lib/udev/rules.d/64-xfs.rules
 sbin/fsck.xfs
 sbin/mkfs.xfs
 sbin/xfs_repair
@@ -111,3 +112,4 @@ usr/sbin/xfs_spaceman
 #usr/share/xfsprogs/mkfs/lts_5.15.conf
 #usr/share/xfsprogs/mkfs/lts_5.4.conf
 #usr/share/xfsprogs/mkfs/lts_6.1.conf
+#usr/share/xfsprogs/mkfs/lts_6.6.conf
