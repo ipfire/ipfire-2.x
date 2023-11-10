@@ -26,11 +26,11 @@ include Config
 
 SUMMARY    = Guest agent for QEMU
 
-VER        = 8.1.1
+VER        = 8.1.2
 THISAPP    = qemu-ga-$(VER)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = qemu-ga
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       =
 
