@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 7.0.3
+VER        = 7.1
 
 THISAPP    = texinfo-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 38710faba2f717f7990228d58924901ea7d7378cc02e2059a437b5127f9e2dc67f732584e3f45fc34e8ef6d7671a546fe66871dadbd29e772f3417768622a650
+$(DL_FILE)_BLAKE2 = 4385ca6250daeaa4f6bfedd9ab41f25993613031bcb8da55360365701213f4f3cf786d958749c59dc1c9dda328eca42f028aa051a7062313142aa92f55a96ecd
 
 install : $(TARGET)
 
