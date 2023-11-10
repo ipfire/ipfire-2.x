@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ffmpeg
-PAK_VER    = 15
+PAK_VER    = 16
 
 DEPS       = sdl2 lame libvorbis xvid
 
@@ -95,7 +95,8 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		--disable-static \
 		--enable-gpl \
 		--enable-version3 \
-		--enable-avfilter
+		--enable-avfilter \
+		--disable-doc
 
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
