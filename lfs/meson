@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.2.0
+VER        = 1.2.3
 
 THISAPP    = meson-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a8239c41ab5d20c26c057293dc85e5577eb9e6eef7a39acc67a0b5b1e82b1afae341936431d96571ff83e96b7648a80a16cfd8eb581ff29b2ca88615657d5ca3
+$(DL_FILE)_BLAKE2 = 7d76c54bddba249ab97ebd5dd0afc448177ff9fa70812a8ca0cc9fe308c9b145b3fbc3ee068acae0fdc73edff42134b7a0b618cd80a05347a424aca7bc8bbef8
 
 install : $(TARGET)
 
