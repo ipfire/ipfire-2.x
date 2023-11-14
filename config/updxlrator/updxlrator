@@ -5,17 +5,20 @@
 # (c) 2006-2009 marco.s - http://update-accelerator.advproxy.net
 #
 # Portions (c) 2008 by dotzball - http://www.blockouttraffic.de
+# Little corrections (c) 2016 by sosyco http://www.sosyco.de
 #
 # $Id: updxlrator,v 2.1 2009/01/10 00:00:00 marco.s Exp $
 #
 # ChangeLog:
 #
+# 2016-02-16: nightshift - correction of caracter-proplems in url
 # 2012-10-26: nightshift - move curly bracket to capture AVG download source.
 #			 - Adding BIG HINT for new update source#
 #
 
 use strict;
 use HTTP::Date;
+use URI::Escape;
 
 $|=1;
 
@@ -114,7 +117,7 @@ while (<>) {
 		($source_url =~ m@^[h|f]t?tp://[^?]+/distfiles/[^?]+\.(tar\.gz|tar\.bz2|tar\.xz|tgz|zip|patch\.bz2|gz|docx|patch|pdf|exe)$@i)
 	)
 	{
-		$xlrator_url = &check_cache($source_url,$hostaddr,$username,"Linux",$mirror);
+		$xlrator_url = &check_cache(uri_unescape($source_url),$hostaddr,$username,"Linux",$mirror);
 	}
 
 	# -----------------------------------------------------------
