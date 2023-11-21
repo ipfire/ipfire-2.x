@@ -40,6 +40,7 @@ extract_files
 
 # Remove files
 rm -rvf \
+	/usr/bin/gawk-5.2* \
 	/usr/lib/libqpdf.so.29.5*
 
 # update linker config
