@@ -181,6 +181,7 @@ usr/sbin/swanctl
 #usr/share/man/man1/pki---gen.1
 #usr/share/man/man1/pki---issue.1
 #usr/share/man/man1/pki---keyid.1
+#usr/share/man/man1/pki---ocsp.1
 #usr/share/man/man1/pki---pkcs7.1
 #usr/share/man/man1/pki---print.1
 #usr/share/man/man1/pki---pub.1
