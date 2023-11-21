@@ -33,6 +33,7 @@ done
 
 # Stop services
 /etc/rc.d/init.d/squid stop
+/etc/rc.d/init.d/unbound stop
 
 # Extract files
 extract_files
@@ -51,6 +52,7 @@ ldconfig
 /usr/local/bin/filesystem-cleanup
 
 # Start services
+/etc/init.d/unbound start
 if [ -f /var/ipfire/proxy/enable ]; then
 	/etc/init.d/squid start
 fi
