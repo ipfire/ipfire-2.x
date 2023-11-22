@@ -56,7 +56,8 @@ rm -rvf \
 	/lib/firmware/yamaha \
 	/usr/bin/gawk-5.2* \
 	/usr/lib/liblzma.so.5.4* \
-	/usr/lib/libqpdf.so.29.5*
+	/usr/lib/libqpdf.so.29.5* \
+	/usr/lib/libsodium.so.23*
 
 # update linker config
 ldconfig
