@@ -47,7 +47,10 @@ rm -rvf \
 	/lib/firmware/ctefx.bin \
 	/lib/firmware/ctspeq.bin \
 	/lib/firmware/ess \
+	/lib/firmware/intel/ibt-* \
 	/lib/firmware/korg \
+	/lib/firmware/mediatek/BT_RAM_CODE_* \
+	/lib/firmware/nxp \
 	/lib/firmware/sb16 \
 	/lib/firmware/yamaha \
 	/usr/bin/gawk-5.2* \
