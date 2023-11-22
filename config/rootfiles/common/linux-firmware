@@ -589,9 +589,9 @@ lib/firmware/amdgpu/yellow_carp_vcn.bin
 #lib/firmware/amdtee
 lib/firmware/amdtee/773bd96f-b83f-4d52-b12dc529b13d8543.bin
 lib/firmware/amdtee/amd_pmf_v3.bin
-lib/firmware/amlogic
-lib/firmware/amlogic/bluetooth
-lib/firmware/amlogic/bluetooth/w2_bt_fw_uart.bin
+#lib/firmware/amlogic
+#lib/firmware/amlogic/bluetooth
+#lib/firmware/amlogic/bluetooth/w2_bt_fw_uart.bin
 #lib/firmware/amphion
 #lib/firmware/amphion/vpu
 lib/firmware/amphion/vpu/vpu_fw_imx8_dec.bin
@@ -3175,7 +3175,7 @@ lib/firmware/qcom/qcm2290/modem.mbn
 lib/firmware/qcom/qcm2290/modemr.jsn
 lib/firmware/qcom/qcm2290/modemuw.jsn
 lib/firmware/qcom/qcm2290/wlanmdsp.mbn
-lib/firmware/qcom/qrb4210
+#lib/firmware/qcom/qrb4210
 lib/firmware/qcom/qrb4210/a610_zap.mbn
 lib/firmware/qcom/qrb4210/adsp.mbn
 lib/firmware/qcom/qrb4210/adspr.jsn
