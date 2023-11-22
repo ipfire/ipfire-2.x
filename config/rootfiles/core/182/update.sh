@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/rc.d/init.d/ipsec stop
 /etc/rc.d/init.d/squid stop
 /etc/rc.d/init.d/unbound stop
 
@@ -57,6 +58,9 @@ ldconfig
 /etc/init.d/unbound start
 if [ -f /var/ipfire/proxy/enable ]; then
 	/etc/init.d/squid start
+fi
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/rc.d/init.d/ipsec start
 fi
 
 # This update needs a reboot...
