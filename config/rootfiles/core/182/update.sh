@@ -41,6 +41,15 @@ extract_files
 
 # Remove files
 rm -rvf \
+	/lib/firmware/cxgb4/t4fw-1.27.3* \
+	/lib/firmware/cxgb4/t5fw-1.27.3* \
+	/lib/firmware/cxgb4/t6fw-1.27.3* \
+	/lib/firmware/ctefx.bin \
+	/lib/firmware/ctspeq.bin \
+	/lib/firmware/ess \
+	/lib/firmware/korg \
+	/lib/firmware/sb16 \
+	/lib/firmware/yamaha \
 	/usr/bin/gawk-5.2* \
 	/usr/lib/liblzma.so.5.4* \
 	/usr/lib/libqpdf.so.29.5*
