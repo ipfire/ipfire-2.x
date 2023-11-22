@@ -37,6 +37,13 @@ done
 /etc/rc.d/init.d/unbound stop
 /etc/rc.d/init.d/sshd stop
 
+KVER="xxxKVERxxx"
+
+# Backup uEnv.txt if exist
+if [ -e /boot/uEnv.txt ]; then
+    cp -vf /boot/uEnv.txt /boot/uEnv.txt.org
+fi
+
 # Extract files
 extract_files
 
@@ -81,6 +88,21 @@ if [ -f /var/ipfire/proxy/enable ]; then
 fi
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/rc.d/init.d/ipsec start
+fi
+
+# Rebuild initial ramdisks
+dracut --regenerate-all --force
+KVER="xxxKVERxxx"
+case "$(uname -m)" in
+	aarch64)
+		mkimage -A arm64 -T ramdisk -C lzma -d /boot/initramfs-${KVER}-ipfire.img /boot/uInit-${KVER}-ipfire
+		# dont remove initramfs because grub need this to boot.
+		;;
+esac
+
+# Call user update script (needed for some ARM boards)
+if [ -e /boot/pakfire-kernel-update ]; then
+    /boot/pakfire-kernel-update ${KVER}
 fi
 
 # This update needs a reboot...
