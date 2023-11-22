@@ -35,6 +35,7 @@ done
 /etc/rc.d/init.d/ipsec stop
 /etc/rc.d/init.d/squid stop
 /etc/rc.d/init.d/unbound stop
+/etc/rc.d/init.d/sshd stop
 
 # Extract files
 extract_files
@@ -66,8 +67,14 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Apply local configuration to sshd_config
+/usr/local/bin/sshctrl
+
 # Start services
 /etc/init.d/unbound start
+if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
+	/etc/init.d/sshd start
+fi
 if [ -f /var/ipfire/proxy/enable ]; then
 	/etc/init.d/squid start
 fi
