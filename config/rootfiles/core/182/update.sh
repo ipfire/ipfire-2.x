@@ -37,8 +37,6 @@ done
 /etc/rc.d/init.d/unbound stop
 /etc/rc.d/init.d/sshd stop
 
-KVER="xxxKVERxxx"
-
 # Backup uEnv.txt if exist
 if [ -e /boot/uEnv.txt ]; then
     cp -vf /boot/uEnv.txt /boot/uEnv.txt.org
