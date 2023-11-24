@@ -62,6 +62,7 @@ rm -rvf \
 	/lib/firmware/sb16 \
 	/lib/firmware/yamaha \
 	/usr/bin/gawk-5.2* \
+	/usr/lib/grub/{arm64-efi,i386-pc,riscv64-efi,x86_64-efi}/gmodule.pl \
 	/usr/lib/liblzma.so.5.4* \
 	/usr/lib/libqpdf.so.29.5* \
 	/usr/lib/libsodium.so.23*
@@ -112,9 +113,9 @@ touch /var/run/need_reboot
 /etc/init.d/fireinfo start
 sendprofile
 
-# Update grub config to display new core version
+# Grub version was updated, reinstall it
 if [ -e /boot/grub/grub.cfg ]; then
-	grub-mkconfig -o /boot/grub/grub.cfg
+	/usr/bin/install-bootloader
 fi
 
 sync
