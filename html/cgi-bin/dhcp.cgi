@@ -21,7 +21,6 @@
 
 use strict;
 use experimental 'smartmatch';
-use IO::Socket;
 
 # enable only the following on debugging purpose
 #use warnings;
@@ -1008,9 +1007,8 @@ END
 print <<END
 <table width='100%' class='tbl'>
 <tr>
-    <th width='15%' align='center'><a href='$ENV{'SCRIPT_NAME'}?FETHER'><b>$Lang::tr{'mac address'}</b></a></th>
-    <th width='10%' align='center'><a href='$ENV{'SCRIPT_NAME'}?FIPADDR'><b>$Lang::tr{'ip address'}</b></a></th>
-    <th width='15%' align='center'><b>$Lang::tr{'hostname'}</b></th>
+    <th width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?FETHER'><b>$Lang::tr{'mac address'}</b></a></th>
+    <th width='20%' align='center'><a href='$ENV{'SCRIPT_NAME'}?FIPADDR'><b>$Lang::tr{'ip address'}</b></a></th>
     <th width='15%' align='center'><b>$Lang::tr{'remark'}</b></th>
     <th width='15%' class='boldbase' align='center'><b>next-server</b></th>
     <th width='15%' class='boldbase' align='center'><b>filename</b></th>
@@ -1108,14 +1106,9 @@ foreach my $line (@current2) {
 	$TAG4 = "class='red'" if ($dhcpsettings{'KEY2'} ne $key);
     }
 
-	# resolved name (if exists)
-	my $iaddr = inet_aton($temp[1]);
-	my $rname = gethostbyaddr($iaddr, AF_INET);
-	if (!$rname || $rname eq "") { $rname = $Lang::tr{'ptr lookup failed'}; }
     print <<END
 <td align='center' $col>$TAG2$temp[0]$TAG3</td>
 <td align='center' $TAG4 $col>$TAG0$temp[1]$TAG1</td>
-<td align='center' $col>$rname&nbsp;</td>
 <td align='center' $col>$temp[6]&nbsp;</td>
 <td align='center' $col>$temp[3]&nbsp;</td>
 <td align='center' $col>$temp[4]&nbsp;</td>
