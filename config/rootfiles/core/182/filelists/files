@@ -248,3 +248,4 @@ lib/firmware/rtl_nic/rtl8156b-2.fw
 lib/firmware/rtw89/rtw8851b_fw.bin
 lib/firmware/rtw89/rtw8852b_fw-1.bin
 srv/web/ipfire/cgi-bin/connections.cgi
+srv/web/ipfire/cgi-bin/dhcp.cgi
