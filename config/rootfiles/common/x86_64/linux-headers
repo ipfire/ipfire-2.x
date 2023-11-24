@@ -110,24 +110,21 @@
 #usr/include/drm/drm_sarea.h
 #usr/include/drm/etnaviv_drm.h
 #usr/include/drm/exynos_drm.h
-#usr/include/drm/i810_drm.h
+#usr/include/drm/habanalabs_accel.h
 #usr/include/drm/i915_drm.h
+#usr/include/drm/ivpu_accel.h
 #usr/include/drm/lima_drm.h
-#usr/include/drm/mga_drm.h
 #usr/include/drm/msm_drm.h
 #usr/include/drm/nouveau_drm.h
 #usr/include/drm/omap_drm.h
 #usr/include/drm/panfrost_drm.h
+#usr/include/drm/qaic_accel.h
 #usr/include/drm/qxl_drm.h
-#usr/include/drm/r128_drm.h
 #usr/include/drm/radeon_drm.h
-#usr/include/drm/savage_drm.h
-#usr/include/drm/sis_drm.h
 #usr/include/drm/tegra_drm.h
 #usr/include/drm/v3d_drm.h
 #usr/include/drm/vc4_drm.h
 #usr/include/drm/vgem_drm.h
-#usr/include/drm/via_drm.h
 #usr/include/drm/virtgpu_drm.h
 #usr/include/drm/vmwgfx_drm.h
 #usr/include/headers_check.pl
@@ -150,6 +147,7 @@
 #usr/include/linux/arm_sdei.h
 #usr/include/linux/aspeed-lpc-ctrl.h
 #usr/include/linux/aspeed-p2a-ctrl.h
+#usr/include/linux/aspeed-video.h
 #usr/include/linux/atalk.h
 #usr/include/linux/atm.h
 #usr/include/linux/atm_eni.h
@@ -226,7 +224,6 @@
 #usr/include/linux/cifs/cifs_mount.h
 #usr/include/linux/cifs/cifs_netlink.h
 #usr/include/linux/close_range.h
-#usr/include/linux/cm4000_cs.h
 #usr/include/linux/cn_proc.h
 #usr/include/linux/coda.h
 #usr/include/linux/coff.h
@@ -246,7 +243,6 @@
 #usr/include/linux/devlink.h
 #usr/include/linux/dlm.h
 #usr/include/linux/dlm_device.h
-#usr/include/linux/dlm_netlink.h
 #usr/include/linux/dlm_plock.h
 #usr/include/linux/dlmconstants.h
 #usr/include/linux/dm-ioctl.h
@@ -275,7 +271,9 @@
 #usr/include/linux/erspan.h
 #usr/include/linux/ethtool.h
 #usr/include/linux/ethtool_netlink.h
+#usr/include/linux/eventfd.h
 #usr/include/linux/eventpoll.h
+#usr/include/linux/ext4.h
 #usr/include/linux/f2fs.h
 #usr/include/linux/fadvise.h
 #usr/include/linux/falloc.h
@@ -309,6 +307,7 @@
 #usr/include/linux/gpio.h
 #usr/include/linux/gsmmux.h
 #usr/include/linux/gtp.h
+#usr/include/linux/handshake.h
 #usr/include/linux/hash_info.h
 #usr/include/linux/hdlc
 #usr/include/linux/hdlc.h
@@ -383,6 +382,7 @@
 #usr/include/linux/ioam6_iptunnel.h
 #usr/include/linux/ioctl.h
 #usr/include/linux/iommu.h
+#usr/include/linux/iommufd.h
 #usr/include/linux/ioprio.h
 #usr/include/linux/ip.h
 #usr/include/linux/ip6_tunnel.h
@@ -391,6 +391,7 @@
 #usr/include/linux/ipmi.h
 #usr/include/linux/ipmi_bmc.h
 #usr/include/linux/ipmi_msgdefs.h
+#usr/include/linux/ipmi_ssif_bmc.h
 #usr/include/linux/ipsec.h
 #usr/include/linux/ipv6.h
 #usr/include/linux/ipv6_route.h
@@ -439,10 +440,10 @@
 #usr/include/linux/media-bus-format.h
 #usr/include/linux/media.h
 #usr/include/linux/mei.h
+#usr/include/linux/mei_uuid.h
 #usr/include/linux/membarrier.h
 #usr/include/linux/memfd.h
 #usr/include/linux/mempolicy.h
-#usr/include/linux/meye.h
 #usr/include/linux/mii.h
 #usr/include/linux/minix_fs.h
 #usr/include/linux/misc
@@ -473,6 +474,7 @@
 #usr/include/linux/net_namespace.h
 #usr/include/linux/net_tstamp.h
 #usr/include/linux/netconf.h
+#usr/include/linux/netdev.h
 #usr/include/linux/netdevice.h
 #usr/include/linux/netfilter
 #usr/include/linux/netfilter.h
@@ -686,6 +688,7 @@
 #usr/include/linux/prctl.h
 #usr/include/linux/psample.h
 #usr/include/linux/psci.h
+#usr/include/linux/psp-dbc.h
 #usr/include/linux/psp-sev.h
 #usr/include/linux/ptp_clock.h
 #usr/include/linux/ptrace.h
@@ -805,6 +808,7 @@
 #usr/include/linux/tc_ematch/tc_em_text.h
 #usr/include/linux/tcp.h
 #usr/include/linux/tcp_metrics.h
+#usr/include/linux/tdx-guest.h
 #usr/include/linux/tee.h
 #usr/include/linux/termios.h
 #usr/include/linux/thermal.h
@@ -820,6 +824,7 @@
 #usr/include/linux/tipc_sockets_diag.h
 #usr/include/linux/tls.h
 #usr/include/linux/toshiba.h
+#usr/include/linux/tps6594_pfsm.h
 #usr/include/linux/tty.h
 #usr/include/linux/tty_flags.h
 #usr/include/linux/types.h
@@ -853,6 +858,7 @@
 #usr/include/linux/usb/video.h
 #usr/include/linux/usbdevice_fs.h
 #usr/include/linux/usbip.h
+#usr/include/linux/user_events.h
 #usr/include/linux/userfaultfd.h
 #usr/include/linux/userio.h
 #usr/include/linux/utime.h
@@ -927,7 +933,6 @@
 #usr/include/misc
 #usr/include/misc/cxl.h
 #usr/include/misc/fastrpc.h
-#usr/include/misc/habanalabs.h
 #usr/include/misc/ocxl.h
 #usr/include/misc/pvpanic.h
 #usr/include/misc/uacce
@@ -955,6 +960,7 @@
 #usr/include/rdma/ib_user_sa.h
 #usr/include/rdma/ib_user_verbs.h
 #usr/include/rdma/irdma-abi.h
+#usr/include/rdma/mana-abi.h
 #usr/include/rdma/mlx4-abi.h
 #usr/include/rdma/mlx5-abi.h
 #usr/include/rdma/mlx5_user_ioctl_cmds.h

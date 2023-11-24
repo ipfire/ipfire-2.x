@@ -1,0 +1,39 @@
+From 828dc7d5beca4c10db50330d1858cd70588bff5d Mon Sep 17 00:00:00 2001
+From: Arne Fitzenreiter <arne_f@ipfire.org>
+Date: Sat, 5 Feb 2022 15:35:57 +0000
+Subject: [PATCH 6/8] pcie-rockchip-host: try again if training fail.
+
+on NanoPi R4S the training of the pcie often fails at first try
+so this try again some times.
+
+Signed-off-by: Arne Fitzenreiter <arne_f@ipfire.org>
+---
+ drivers/pci/controller/pcie-rockchip-host.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/pci/controller/pcie-rockchip-host.c b/drivers/pci/controller/pcie-rockchip-host.c
+index afbbdccd195d..5d75189e64e5 100644
+--- a/drivers/pci/controller/pcie-rockchip-host.c
++++ b/drivers/pci/controller/pcie-rockchip-host.c
+@@ -959,8 +959,16 @@ static int rockchip_pcie_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	err = rockchip_pcie_host_init_port(rockchip);
+-	if (err)
+-		goto err_vpcie;
++	if (err) {
++		dev_err(dev, "failed to init port, try again...\n");
++		err = rockchip_pcie_host_init_port(rockchip);
++		if (err) {
++			dev_err(dev, "failed to init port, last try in 500ms.\n");
++			mdelay(500);
++			err = rockchip_pcie_host_init_port(rockchip);
++			if (err) goto err_vpcie;
++		}
++	}
+ 
+ 	err = rockchip_pcie_init_irq_domain(rockchip);
+ 	if (err < 0)
+-- 
+2.34.1
+

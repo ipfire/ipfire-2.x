@@ -1,0 +1,51 @@
+From 38b042cba08034365a6b152202e943883ee12c95 Mon Sep 17 00:00:00 2001
+From: Arne Fitzenreiter <arne_f@ipfire.org>
+Date: Tue, 25 Jan 2022 18:04:28 +0100
+Subject: [PATCH 3/8] rockchip: dt: nanopi-r4s: fix led names and button
+
+Signed-off-by: Arne Fitzenreiter <arne_f@ipfire.org>
+---
+ arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
+index fe5b52610010..9125f013438d 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
+@@ -28,18 +28,19 @@ gpio-leds {
+ 
+ 		lan_led: led-lan {
+ 			gpios = <&gpio1 RK_PA1 GPIO_ACTIVE_HIGH>;
+-			label = "green:lan";
++			label = "nanopi-r4s:green:lan";
+ 		};
+ 
+ 		sys_led: led-sys {
+ 			gpios = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
+-			label = "red:power";
++			label = "nanopi-r4s:green:sys";
+ 			default-state = "on";
++			linux,default-trigger = "heartbeat";
+ 		};
+ 
+ 		wan_led: led-wan {
+ 			gpios = <&gpio1 RK_PA0 GPIO_ACTIVE_HIGH>;
+-			label = "green:wan";
++			label = "nanopi-r4s:green:wan";
+ 		};
+ 	};
+ 
+@@ -51,8 +52,8 @@ gpio-keys {
+ 		key-reset {
+ 			debounce-interval = <50>;
+ 			gpios = <&gpio1 RK_PC6 GPIO_ACTIVE_LOW>;
+-			label = "reset";
+-			linux,code = <KEY_RESTART>;
++			label = "power";
++			linux,code = <KEY_POWER>;
+ 		};
+ 	};
+ 
+-- 
+2.34.1
+

@@ -1,0 +1,201 @@
+From 5d1a97bca7efef833d4a9577c8a4951933f01303 Mon Sep 17 00:00:00 2001
+From: Arne Fitzenreiter <arne_f@ipfire.org>
+Date: Sun, 19 Nov 2023 13:27:36 +0000
+Subject: [PATCH 8/8] rockchip: dt: add some overclocked rk3328 boards
+
+nanopi-r2c, nanopi-r2c-plus-oc, nanopi-r2s-oc,
+orangepi-r1-plus-lts-oc, orangepi-r1-plus-oc
+
+Signed-off-by: Arne Fitzenreiter <arne_f@ipfire.org>
+---
+ arch/arm64/boot/dts/rockchip/Makefile         |  5 ++++
+ .../dts/rockchip/rk3328-nanopi-r2c-oc.dts     | 25 +++++++++++++++++++
+ .../rockchip/rk3328-nanopi-r2c-plus-oc.dts    | 25 +++++++++++++++++++
+ .../dts/rockchip/rk3328-nanopi-r2s-oc.dts     | 25 +++++++++++++++++++
+ .../rk3328-orangepi-r1-plus-lts-oc.dts        | 25 +++++++++++++++++++
+ .../rockchip/rk3328-orangepi-r1-plus-oc.dts   | 25 +++++++++++++++++++
+ 6 files changed, 130 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c-oc.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c-plus-oc.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-oc.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-lts-oc.dts
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-oc.dts
+
+diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
+index f32fe64a84ed..4d1cb2b32572 100644
+--- a/arch/arm64/boot/dts/rockchip/Makefile
++++ b/arch/arm64/boot/dts/rockchip/Makefile
+@@ -15,10 +15,15 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3326-odroid-go3.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-a1.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-evb.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2c.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2c-oc.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2c-plus.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2c-plus-oc.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2s.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-nanopi-r2s-oc.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-orangepi-r1-plus.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-orangepi-r1-plus-oc.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-orangepi-r1-plus-lts.dtb
++dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-orangepi-r1-plus-lts-oc.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-rock64.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-rock-pi-e.dtb
+ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3328-roc-cc.dtb
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c-oc.dts b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c-oc.dts
+new file mode 100644
+index 000000000000..617bcefb2122
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c-oc.dts
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * overclock Nanopi R2C to 1.5 Ghz
++ */
++
++/dts-v1/;
++
++#include "rk3328-nanopi-r2c.dts"
++
++/ {
++	model = "FriendlyElec NanoPi R2C OC";
++
++	cpu0_opp_table: opp-table-0 {
++		opp-1392000000 {
++			opp-hz = /bits/ 64 <1392000000>;
++			opp-microvolt = <1350000>;
++			clock-latency-ns = <40000>;
++		};
++		opp-1512000000 {
++			opp-hz = /bits/ 64 <1512000000>;
++			opp-microvolt = <1400000>;
++			clock-latency-ns = <40000>;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c-plus-oc.dts b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c-plus-oc.dts
+new file mode 100644
+index 000000000000..5324afec9271
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2c-plus-oc.dts
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * overclock Nanopi R2C to 1.5 Ghz
++ */
++
++/dts-v1/;
++
++#include "rk3328-nanopi-r2c-plus.dts"
++
++/ {
++	model = "FriendlyElec NanoPi R2C Plus OC";
++
++	cpu0_opp_table: opp-table-0 {
++		opp-1392000000 {
++			opp-hz = /bits/ 64 <1392000000>;
++			opp-microvolt = <1350000>;
++			clock-latency-ns = <40000>;
++		};
++		opp-1512000000 {
++			opp-hz = /bits/ 64 <1512000000>;
++			opp-microvolt = <1400000>;
++			clock-latency-ns = <40000>;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-oc.dts b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-oc.dts
+new file mode 100644
+index 000000000000..b94dc24d44e5
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3328-nanopi-r2s-oc.dts
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * overclock Nanopi R2S to 1.5 Ghz
++ */
++
++/dts-v1/;
++
++#include "rk3328-nanopi-r2s.dts"
++
++/ {
++	model = "FriendlyElec NanoPi R2S OC";
++
++	cpu0_opp_table: opp-table-0 {
++		opp-1392000000 {
++			opp-hz = /bits/ 64 <1392000000>;
++			opp-microvolt = <1350000>;
++			clock-latency-ns = <40000>;
++		};
++		opp-1512000000 {
++			opp-hz = /bits/ 64 <1512000000>;
++			opp-microvolt = <1400000>;
++			clock-latency-ns = <40000>;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-lts-oc.dts b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-lts-oc.dts
+new file mode 100644
+index 000000000000..1cc615a5d8e0
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-lts-oc.dts
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * overclock OrangePi R1 Plus LTS to 1.5 Ghz
++ */
++
++/dts-v1/;
++
++#include "rk3328-orangepi-r1-plus-lts.dts"
++
++/ {
++	model = "Xunlong Orange Pi R1 Plus LTS OC";
++
++	cpu0_opp_table: opp-table-0 {
++		opp-1392000000 {
++			opp-hz = /bits/ 64 <1392000000>;
++			opp-microvolt = <1350000>;
++			clock-latency-ns = <40000>;
++		};
++		opp-1512000000 {
++			opp-hz = /bits/ 64 <1512000000>;
++			opp-microvolt = <1400000>;
++			clock-latency-ns = <40000>;
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-oc.dts b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-oc.dts
+new file mode 100644
+index 000000000000..1a420d214f12
+--- /dev/null
++++ b/arch/arm64/boot/dts/rockchip/rk3328-orangepi-r1-plus-oc.dts
+@@ -0,0 +1,25 @@
++// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
++/*
++ * overclock OrangePi R1 Plus to 1.5 Ghz
++ */
++
++/dts-v1/;
++
++#include "rk3328-nanopi-r2s.dts"
++
++/ {
++	model = "Xunlong Orange Pi R1 Plus OC";
++
++	cpu0_opp_table: opp-table-0 {
++		opp-1392000000 {
++			opp-hz = /bits/ 64 <1392000000>;
++			opp-microvolt = <1350000>;
++			clock-latency-ns = <40000>;
++		};
++		opp-1512000000 {
++			opp-hz = /bits/ 64 <1512000000>;
++			opp-microvolt = <1400000>;
++			clock-latency-ns = <40000>;
++		};
++	};
++};
+-- 
+2.34.1
+

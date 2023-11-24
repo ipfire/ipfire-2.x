@@ -1,0 +1,46 @@
+From 6039099142af6cba233ab72b49f70605b611d1c6 Mon Sep 17 00:00:00 2001
+From: Arne Fitzenreiter <arne_f@ipfire.org>
+Date: Fri, 28 Jan 2022 17:20:56 +0100
+Subject: [PATCH 4/8] rockchip: dt: nanopi-r4s: add realtek pci devicenode
+
+this is needed to set the mac address via u-boot
+---
+ .../arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
+index 9125f013438d..5a60460bd974 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3399-nanopi-r4s.dts
+@@ -19,6 +19,10 @@ / {
+ 	model = "FriendlyElec NanoPi R4S";
+ 	compatible = "friendlyarm,nanopi-r4s", "rockchip,rk3399";
+ 
++	aliases {
++		ethernet1 = &r8169;
++	};
++
+ 	/delete-node/ display-subsystem;
+ 
+ 	gpio-leds {
+@@ -77,6 +81,17 @@ &pcie0 {
+ 	max-link-speed = <1>;
+ 	num-lanes = <1>;
+ 	vpcie3v3-supply = <&vcc3v3_sys>;
++
++	pcie@0 {
++		reg = <0x00000000 0 0 0 0>;
++		#address-cells = <3>;
++		#size-cells = <2>;
++
++		r8169: pcie@0,0 {
++			reg = <0x000000 0 0 0 0>;
++			local-mac-address = [ 00 00 00 00 00 00 ];
++		};
++	};
+ };
+ 
+ &pinctrl {
+-- 
+2.34.1
+
