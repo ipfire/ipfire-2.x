@@ -27,7 +27,7 @@ include Config
 VERSUFIX = ipfire$(KCFG)
 MODPATH = /lib/modules/$(KVER)-$(VERSUFIX)/extra/wlan
 
-VER        = 20210629-07ac856293e247347b891c5dbd13f3ab8321132d
+VER        = 20210629-e6a0d1704ccd31145800ff5eb09ec2435a02f995
 
 THISAPP    = 8812au-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -43,7 +43,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 0d5fdcef6f52f396cac436ce17f6c52db3fcb43cdeb6fdcb1b0baa76fdfc2cfc8d94fcc925eed0c7cd4dfda00ac45dfbdcd661b69146cc45dfbb598f53471246
+$(DL_FILE)_BLAKE2 = d70ec16ade6dc17da22dcd6ff5de2cf09d4d079f42881b7d0ab78c19797241ff65516432b5655f5a30b158f034bccc354d89bcd1923d4cdb8256c670b15ea848
 
 install : $(TARGET)
 
@@ -77,7 +77,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rtl8812au/enable_usbmodeswitch.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/rtl8812au/remove_regulatory_ignore_stale_kickoff.patch
 	cd $(DIR_APP) && CONFIG_RTL8812AU=m make $(MAKETUNING) \
 		-C /lib/modules/$(KVER)-$(VERSUFIX)/build/ M=$(DIR_APP)/ modules
 
@@ -94,4 +93,3 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
-
