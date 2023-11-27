@@ -86,14 +86,13 @@ case "$1" in
 
 	stop)
 		boot_mesg "Stopping Apache daemon..."
-		killproc /usr/sbin/httpd
+		/usr/sbin/apachectl -k stop
 		evaluate_retval
 		;;
 
 	restart)
-		boot_mesg "Restarting Apache daemon..."
-		/usr/sbin/apachectl -k restart
-		evaluate_retval
+		$0 stop
+		$0 start
 		;;
 
 	reload)
