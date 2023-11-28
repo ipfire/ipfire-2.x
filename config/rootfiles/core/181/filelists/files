@@ -1,3 +1,4 @@
+etc/rc.d/init.d/apache
 srv/web/ipfire/cgi-bin/extrahd.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
