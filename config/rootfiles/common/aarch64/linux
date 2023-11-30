@@ -510,7 +510,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/arch/arm/boot/compressed/Makefile
 #lib/modules/KVER-ipfire/build/arch/arm/boot/dts
 #lib/modules/KVER-ipfire/build/arch/arm/boot/dts/Makefile
-+lib/modules/KVER-ipfire/build/arch/arm/boot/dts/actions
+#lib/modules/KVER-ipfire/build/arch/arm/boot/dts/actions
 #lib/modules/KVER-ipfire/build/arch/arm/boot/dts/actions/Makefile
 #lib/modules/KVER-ipfire/build/arch/arm/boot/dts/airoha
 #lib/modules/KVER-ipfire/build/arch/arm/boot/dts/airoha/Makefile

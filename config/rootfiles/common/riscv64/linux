@@ -6,7 +6,7 @@ boot/dtb-KVER-ipfire
 #boot/dtb-KVER-ipfire/microchip/mpfs-m100pfsevp.dtb
 #boot/dtb-KVER-ipfire/microchip/mpfs-polarberry.dtb
 #boot/dtb-KVER-ipfire/microchip/mpfs-sev-kit.dtb
-+boot/dtb-KVER-ipfire/microchip/mpfs-tysom-m.dtb
+#boot/dtb-KVER-ipfire/microchip/mpfs-tysom-m.dtb
 #boot/dtb-KVER-ipfire/sifive
 #boot/dtb-KVER-ipfire/sifive/hifive-unleashed-a00.dtb
 #boot/dtb-KVER-ipfire/sifive/hifive-unmatched-a00.dtb
