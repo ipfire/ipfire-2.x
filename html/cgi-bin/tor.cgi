@@ -790,7 +790,7 @@ sub BuildConfiguration() {
 
 			my @nodes = split(",", $settings{'TOR_USE_EXIT_NODES'});
 			foreach (@nodes) {
-				print FILE "ExitNode $_\n";
+				print FILE "ExitNodes $_\n";
 			}
 		}
 
