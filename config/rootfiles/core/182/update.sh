@@ -92,6 +92,14 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/rc.d/init.d/ipsec start
 fi
 
+# Change deprecated option in tor configuration file if in usage
+if pgrep tor >/dev/null; then
+	sed -i 's/ExitNode /ExitNodes /g' /var/ipfire/tor/torrc
+	/usr/local/bin/torctrl restart >/dev/null
+else
+	sed -i 's/ExitNode /ExitNodes /g' /var/ipfire/tor/torrc
+fi
+
 # Rebuild initial ramdisks
 dracut --regenerate-all --force
 KVER="xxxKVERxxx"
