@@ -61,6 +61,7 @@ rm -rvf \
 	/lib/firmware/nxp \
 	/lib/firmware/sb16 \
 	/lib/firmware/yamaha \
+	/lib/udev/rules.d/64-xfs.rules \
 	/usr/bin/gawk-5.2* \
 	/usr/lib/grub/{arm64-efi,i386-pc,riscv64-efi,x86_64-efi}/gmodule.pl \
 	/usr/lib/liblzma.so.5.4* \
