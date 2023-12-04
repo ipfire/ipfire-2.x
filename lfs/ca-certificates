@@ -52,10 +52,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cp -av $(DIR_CONF)/$(THISAPP) $(DIR_APP)
 
-	# Remove TrustCor Systems root CAs (see mailing list thread:
-	# https://lists.ipfire.org/pipermail/development/2022-November/014681.html)
-	cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/ca-certificates-Remove-TrustCor-Systems-root-CAs.patch
-
 	cd $(DIR_APP) && sh ./build.sh
 
 	-mkdir -pv /etc/ssl/certs
