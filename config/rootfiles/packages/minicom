@@ -11,6 +11,8 @@ usr/bin/xminicom
 #usr/share/locale/hu/LC_MESSAGES/minicom.mo
 #usr/share/locale/id/LC_MESSAGES/minicom.mo
 #usr/share/locale/ja/LC_MESSAGES/minicom.mo
+#usr/share/locale/ka/LC_MESSAGES/minicom.mo
+#usr/share/locale/ko/LC_MESSAGES/minicom.mo
 #usr/share/locale/nb/LC_MESSAGES/minicom.mo
 #usr/share/locale/pl/LC_MESSAGES/minicom.mo
 #usr/share/locale/pt_BR/LC_MESSAGES/minicom.mo

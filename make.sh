@@ -23,7 +23,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.27"							# Version number
-CORE="181"							# Core Level (Filename)
+CORE="182"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
@@ -1114,7 +1114,6 @@ buildipfire() {
   lfsmake2 unzip
   lfsmake2 which
   lfsmake2 bc
-  lfsmake2 u-boot MKIMAGE=1
   lfsmake2 cpio
   lfsmake2 libaio
   lfsmake2 freetype

@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 20230808
+VER        = 20231114
 
 THISAPP    = Intel-Linux-Processor-Microcode-Data-Files-microcode-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 400ba9b91a7048c780377d49ff6cb00458c60a9d53c2e5cef1eb99170ca8f0cad66336841d14869bd42d182f7d8df27a2fa9cb982b0df0c5fc9f62325b6acb69
+$(DL_FILE)_BLAKE2 = e6084c92e9c3cc627af25a7f2f7fb26230b6ed117ddc197d19991df2816334132af92925f23af829bad005c32d0bd3afc362055ef223a599799d846216cf7612
 
 install : $(TARGET)
 

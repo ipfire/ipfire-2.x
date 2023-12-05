@@ -55,6 +55,7 @@
 < download apple profile
 < enable
 < error the to date has to be later than the from date
+< extrahd because it it outside the allowed mount path
 < g.dtm
 < g.lite
 < ids automatic rules update
@@ -107,7 +108,7 @@
 < dhcp fixed ip address in dynamic range
 < dns servers
 < downfall gather data sampling
-< extrahd because it is outside the allowed mount path
+< extrahd because it it outside the allowed mount path
 < extrahd mounted
 < extrahd no mount point given
 < extrahd not configured
@@ -130,7 +131,7 @@
 < bewan adsl pci st
 < bewan adsl usb
 < downfall gather data sampling
-< extrahd because it is outside the allowed mount path
+< extrahd because it it outside the allowed mount path
 < extrahd mounted
 < extrahd no mount point given
 < extrahd not configured
@@ -326,7 +327,7 @@
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
-< extrahd because it is outside the allowed mount path
+< extrahd because it it outside the allowed mount path
 < extrahd mounted
 < extrahd no mount point given
 < extrahd not configured
@@ -845,7 +846,7 @@
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
-< extrahd because it is outside the allowed mount path
+< extrahd because it it outside the allowed mount path
 < extrahd mounted
 < extrahd no mount point given
 < extrahd not configured
@@ -1472,7 +1473,7 @@
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
-< extrahd because it is outside the allowed mount path
+< extrahd because it it outside the allowed mount path
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -2462,7 +2463,7 @@
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
-< extrahd because it is outside the allowed mount path
+< extrahd because it it outside the allowed mount path
 < extrahd because there is already a device mounted
 < extrahd cant umount
 < extrahd install or load driver
@@ -3267,7 +3268,7 @@
 < eol architecture warning
 < error
 < error the to date has to be later than the from date
-< extrahd because it is outside the allowed mount path
+< extrahd because it it outside the allowed mount path
 < extrahd mounted
 < extrahd no mount point given
 < extrahd not configured

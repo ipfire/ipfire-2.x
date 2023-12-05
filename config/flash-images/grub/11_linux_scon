@@ -18,10 +18,10 @@ set -e
 # along with GRUB.  If not, see <http://www.gnu.org/licenses/>.
 
 prefix="/usr"
-exec_prefix="${prefix}"
-datarootdir="${prefix}/share"
+exec_prefix="/usr"
+datarootdir="/usr/share"
 
-. "${datarootdir}/grub/grub-mkconfig_lib"
+. "$pkgdatadir/grub-mkconfig_lib"
 
 export TEXTDOMAIN=grub
 export TEXTDOMAINDIR="${datarootdir}/locale"
@@ -32,7 +32,7 @@ if [ "x${GRUB_DISTRIBUTOR}" = "x" ] ; then
   OS=GNU/Linux
 else
   OS="${GRUB_DISTRIBUTOR} GNU/Linux"
-  CLASS="--class $(echo ${GRUB_DISTRIBUTOR} | tr 'A-Z' 'a-z' | cut -d' ' -f1) ${CLASS}"
+  CLASS="--class $(echo ${GRUB_DISTRIBUTOR} | tr 'A-Z' 'a-z' | cut -d' ' -f1|LC_ALL=C sed 's,[^[:alnum:]_],_,g') ${CLASS}"
 fi
 
 # loop-AES arranges things so that /dev/loop/X can be our root device, but
@@ -43,21 +43,29 @@ case ${GRUB_DEVICE} in
   ;;
 esac
 
-if [ "x${GRUB_DEVICE_UUID}" = "x" ] || [ "x${GRUB_DISABLE_LINUX_UUID}" = "xtrue" ] \
-    || ! test -e "/dev/disk/by-uuid/${GRUB_DEVICE_UUID}" \
-    || uses_abstraction "${GRUB_DEVICE}" lvm; then
+: ${GRUB_CMDLINE_LINUX_RECOVERY:=single}
+
+# Default to disabling partition uuid support to maintian compatibility with
+# older kernels.
+: ${GRUB_DISABLE_LINUX_PARTUUID=true}
+
+# btrfs may reside on multiple devices. We cannot pass them as value of root= parameter
+# and mounting btrfs requires user space scanning, so force UUID in this case.
+if ( [ "x${GRUB_DEVICE_UUID}" = "x" ] && [ "x${GRUB_DEVICE_PARTUUID}" = "x" ] ) \
+    || ( [ "x${GRUB_DISABLE_LINUX_UUID}" = "xtrue" ] \
+	&& [ "x${GRUB_DISABLE_LINUX_PARTUUID}" = "xtrue" ] ) \
+    || ( ! test -e "/dev/disk/by-uuid/${GRUB_DEVICE_UUID}" \
+	&& ! test -e "/dev/disk/by-partuuid/${GRUB_DEVICE_PARTUUID}" ) \
+    || ( test -e "${GRUB_DEVICE}" && uses_abstraction "${GRUB_DEVICE}" lvm ); then
   LINUX_ROOT_DEVICE=${GRUB_DEVICE}
+elif [ "x${GRUB_DEVICE_UUID}" = "x" ] \
+    || [ "x${GRUB_DISABLE_LINUX_UUID}" = "xtrue" ]; then
+  LINUX_ROOT_DEVICE=PARTUUID=${GRUB_DEVICE_PARTUUID}
 else
   LINUX_ROOT_DEVICE=UUID=${GRUB_DEVICE_UUID}
 fi
 
-GRUBFS="`${grub_probe} --device ${GRUB_DEVICE} --target=fs 2>/dev/null || true`"
-
-if [ x"$GRUBFS" = x ]; then
-    GRUBFS="$(stat -f --printf=%T / || true)"
-fi
-
-case x"$GRUBFS" in
+case x"$GRUB_FS" in
     xbtrfs)
 	rootsubvol="`make_system_path_relative_to_its_root /`"
 	rootsubvol="${rootsubvol#/}"
@@ -67,7 +75,7 @@ case x"$GRUBFS" in
     xzfs)
 	rpool=`${grub_probe} --device ${GRUB_DEVICE} --target=fs_label 2>/dev/null || true`
 	bootfs="`make_system_path_relative_to_its_root / | sed -e "s,@$,,"`"
-	LINUX_ROOT_DEVICE="ZFS=${rpool}${bootfs}"
+	LINUX_ROOT_DEVICE="ZFS=${rpool}${bootfs%/}"
 	;;
 esac
 
@@ -101,7 +109,7 @@ linux_entry ()
       echo "menuentry '$(echo "$os" | grub_quote)' ${CLASS} \$menuentry_id_option 'gnulinux-simple-$boot_device_id' {" | sed "s/^/$submenu_indentation/"
   fi      
   if [ x$type != xrecovery ] ; then
-      save_default_entry | sed -e "s/^/\t/"
+      save_default_entry | grub_add_tab
   fi
 
   # Use ELILO's generic "efifb" when it's known to be available.
@@ -123,26 +131,30 @@ linux_entry ()
 
   if [ x$dirname = x/ ]; then
     if [ -z "${prepare_root_cache}" ]; then
-      prepare_root_cache="$(prepare_grub_to_access_device ${GRUB_DEVICE} | sed -e "s/^/\t/")"
+      prepare_root_cache="$(prepare_grub_to_access_device ${GRUB_DEVICE} | grub_add_tab)"
     fi
     printf '%s\n' "${prepare_root_cache}" | sed "s/^/$submenu_indentation/"
   else
     if [ -z "${prepare_boot_cache}" ]; then
-      prepare_boot_cache="$(prepare_grub_to_access_device ${GRUB_DEVICE_BOOT} | sed -e "s/^/\t/")"
+      prepare_boot_cache="$(prepare_grub_to_access_device ${GRUB_DEVICE_BOOT} | grub_add_tab)"
     fi
     printf '%s\n' "${prepare_boot_cache}" | sed "s/^/$submenu_indentation/"
   fi
   message="$(gettext_printf "Loading Linux %s ..." ${version})"
   sed "s/^/$submenu_indentation/" << EOF
-	echo	'$message'
+	echo	'$(echo "$message" | grub_quote)'
 	linux	${rel_dirname}/${basename} root=${linux_root_device_thisversion} ro ${args}
 EOF
   if test -n "${initrd}" ; then
     # TRANSLATORS: ramdisk isn't identifier. Should be translated.
     message="$(gettext_printf "Loading initial ramdisk ...")"
+    initrd_path=
+    for i in ${initrd}; do
+      initrd_path="${initrd_path} ${rel_dirname}/${i}"
+    done
     sed "s/^/$submenu_indentation/" << EOF
-	echo	'$message'
-	initrd	${rel_dirname}/${initrd}
+	echo	'$(echo "$message" | grub_quote)'
+	initrd	$(echo $initrd_path)
 EOF
   fi
   sed "s/^/$submenu_indentation/" << EOF
@@ -153,13 +165,15 @@ EOF
 machine=`uname -m`
 case "x$machine" in
     xi?86 | xx86_64)
-	list=`for i in /boot/vmlinuz-* /vmlinuz-* /boot/kernel-* ; do
-                  if grub_file_is_not_garbage "$i" ; then echo -n "$i " ; fi
-              done` ;;
+	list=
+	for i in /boot/vmlinuz-* /vmlinuz-* /boot/kernel-* ; do
+	    if grub_file_is_not_garbage "$i" ; then list="$list $i" ; fi
+	done ;;
     *) 
-	list=`for i in /boot/vmlinuz-* /boot/vmlinux-* /vmlinuz-* /vmlinux-* /boot/kernel-* ; do
-                  if grub_file_is_not_garbage "$i" ; then echo -n "$i " ; fi
-	     done` ;;
+	list=
+	for i in /boot/vmlinuz-* /boot/vmlinux-* /vmlinuz-* /vmlinux-* /boot/kernel-* ; do
+                  if grub_file_is_not_garbage "$i" ; then list="$list $i" ; fi
+	done ;;
 esac
 
 case "$machine" in
@@ -179,9 +193,19 @@ title_correction_code=
 # yet, so it's empty. In a submenu it will be equal to '\t' (one tab).
 submenu_indentation=""
 
-is_first_entry=true
-while [ "x$list" != "x" ] ; do
-  linux=`version_find_latest $list`
+# Perform a reverse version sort on the entire list.
+# Temporarily replace the '.old' suffix by ' 1' and append ' 2' for all
+# other files to order the '.old' files after their non-old counterpart
+# in reverse-sorted order.
+
+reverse_sorted_list=$(echo $list | tr ' ' '\n' | sed -e 's/\.old$/ 1/; / 1$/! s/$/ 2/' | version_sort -r | sed -e 's/ 1$/.old/; s/ 2$//')
+
+if [ "x$GRUB_TOP_LEVEL" != x ]; then
+  reverse_sorted_list=$(grub_move_to_front "$GRUB_TOP_LEVEL" ${reverse_sorted_list})
+fi
+
+is_top_level=true
+for linux in ${reverse_sorted_list}; do
   gettext_printf "Found linux image: %s\n" "$linux" >&2
   basename=`basename $linux`
   dirname=`dirname $linux`
@@ -190,9 +214,19 @@ while [ "x$list" != "x" ] ; do
   alt_version=`echo $version | sed -e "s,\.old$,,g"`
   linux_root_device_thisversion="${LINUX_ROOT_DEVICE}"
 
-  initrd=
-  for i in "initrd.img-${version}" "initrd-${version}.img" "initrd-${version}.gz" \
-	   "initrd-${version}" "initramfs-${version}.img" \
+  initrd_early=
+  for i in ${GRUB_EARLY_INITRD_LINUX_STOCK} \
+	   ${GRUB_EARLY_INITRD_LINUX_CUSTOM}; do
+    if test -e "${dirname}/${i}" ; then
+      initrd_early="${initrd_early} ${i}"
+    fi
+  done
+
+  initrd_real=
+  for i in "initrd.img-${version}" "initrd-${version}.img" \
+	   "initrd-${alt_version}.img.old" "initrd-${version}.gz" \
+	   "initrd-${alt_version}.gz.old" "initrd-${version}" \
+	   "initramfs-${version}.img" "initramfs-${alt_version}.img.old" \
 	   "initrd.img-${alt_version}" "initrd-${alt_version}.img" \
 	   "initrd-${alt_version}" "initramfs-${alt_version}.img" \
 	   "initramfs-genkernel-${version}" \
@@ -200,10 +234,21 @@ while [ "x$list" != "x" ] ; do
 	   "initramfs-genkernel-${GENKERNEL_ARCH}-${version}" \
 	   "initramfs-genkernel-${GENKERNEL_ARCH}-${alt_version}"; do
     if test -e "${dirname}/${i}" ; then
-      initrd="$i"
+      initrd_real="${i}"
       break
     fi
   done
+
+  initrd=
+  if test -n "${initrd_early}" || test -n "${initrd_real}"; then
+    initrd="${initrd_early} ${initrd_real}"
+
+    initrd_display=
+    for i in ${initrd}; do
+      initrd_display="${initrd_display} ${dirname}/${i}"
+    done
+    gettext_printf "Found initrd image: %s\n" "$(echo $initrd_display)" >&2
+  fi
 
   config=
   for i in "${dirname}/config-${version}" "${dirname}/config-${alt_version}" "/etc/kernels/kernel-config-${version}" ; do
@@ -218,26 +263,36 @@ while [ "x$list" != "x" ] ; do
       initramfs=`grep CONFIG_INITRAMFS_SOURCE= "${config}" | cut -f2 -d= | tr -d \"`
   fi
 
-  if test -n "${initrd}" ; then
-    gettext_printf "Found initrd image: %s\n" "${dirname}/${initrd}" >&2
-  elif test -z "${initramfs}" ; then
+  if test -z "${initramfs}" && test -z "${initrd_real}" ; then
     # "UUID=" and "ZFS=" magic is parsed by initrd or initramfs.  Since there's
     # no initrd or builtin initramfs, it can't work here.
-    linux_root_device_thisversion=${GRUB_DEVICE}
+    if [ "x${GRUB_DEVICE_PARTUUID}" = "x" ] \
+	|| [ "x${GRUB_DISABLE_LINUX_PARTUUID}" = "xtrue" ]; then
+
+	linux_root_device_thisversion=${GRUB_DEVICE}
+    else
+	linux_root_device_thisversion=PARTUUID=${GRUB_DEVICE_PARTUUID}
+    fi
   fi
 
-  if [ "x$is_first_entry" = xtrue ]; then
+  # The GRUB_DISABLE_SUBMENU option used to be different than others since it was
+  # mentioned in the documentation that has to be set to 'y' instead of 'true' to
+  # enable it. This caused a lot of confusion to users that set the option to 'y',
+  # 'yes' or 'true'. This was fixed but all of these values must be supported now.
+  if [ "x${GRUB_DISABLE_SUBMENU}" = xyes ] || [ "x${GRUB_DISABLE_SUBMENU}" = xy ]; then
+    GRUB_DISABLE_SUBMENU="true"
+  fi
+
+  if [ "x$is_top_level" = xtrue ] && [ "x${GRUB_DISABLE_SUBMENU}" != xtrue ]; then
     linux_entry "Serial Console: ${OS}" "${version}" serial \
     "${GRUB_CMDLINE_LINUX} ${GRUB_CMDLINE_LINUX_DEFAULT} console=ttyS0,115200n8"
 
-    submenu_indentation="\t"
+    submenu_indentation="$grub_tab"
     
     if [ -z "$boot_device_id" ]; then
 	boot_device_id="$(grub_get_device_id "${GRUB_DEVICE}")"
     fi
   fi
-
-  list=`echo $list | tr ' ' '\n' | grep -vx $linux | tr '\n' ' '`
 done
 
 echo "$title_correction_code"

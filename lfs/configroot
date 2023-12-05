@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -64,7 +64,7 @@ $(TARGET) :
 	for i in auth/users backup/include.user backup/exclude.user \
 	    captive/settings captive/agb.txt captive/clients captive/voucher_out certs/index.txt certs/index.txt.attr ddns/config ddns/settings ddns/ipcache dhcp/settings \
 	    dhcp/fixleases dhcp/advoptions dhcp/dhcpd.conf.local dns/settings dns/servers dnsforward/config ethernet/aliases ethernet/settings ethernet/known_nics ethernet/scanned_nics \
-	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings firewall/settings firewall/config firewall/locationblock firewall/input firewall/outgoing \
+	    ethernet/wireless extrahd/scan extrahd/devices extrahd/partitions extrahd/settings firewall/settings firewall/locationblock firewall/input firewall/outgoing \
 	    fwhosts/customnetworks fwhosts/customhosts fwhosts/customgroups fwhosts/customservicegrp fwhosts/customlocationgrp fwlogs/ipsettings fwlogs/portsettings ipblocklist/modified \
 	    ipblocklist/settings mac/settings main/hosts main/routing main/security main/settings optionsfw/settings \
 	    ovpn/ccd.conf ovpn/ccdroute ovpn/ccdroute2 pakfire/settings portfw/config ppp/settings-1 ppp/settings-2 ppp/settings-3 ppp/settings-4 \
@@ -102,6 +102,7 @@ $(TARGET) :
 	cp $(DIR_SRC)/config/cfgroot/logging-settings		$(CONFIG_ROOT)/logging/settings
 	cp $(DIR_SRC)/config/cfgroot/ethernet-vlans		$(CONFIG_ROOT)/ethernet/vlans
 	cp $(DIR_SRC)/langs/list				$(CONFIG_ROOT)/langs/
+	cp $(DIR_SRC)/config/firewall/config			$(CONFIG_ROOT)/firewall/config
 	cp $(DIR_SRC)/config/firewall/convert-xtaccess		/usr/sbin/convert-xtaccess
 	cp $(DIR_SRC)/config/firewall/convert-outgoingfw	/usr/sbin/convert-outgoingfw
 	cp $(DIR_SRC)/config/firewall/convert-dmz		/usr/sbin/convert-dmz

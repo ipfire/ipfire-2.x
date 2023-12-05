@@ -74,6 +74,7 @@ usr/sbin/visudo
 #usr/share/locale/hr/LC_MESSAGES/sudoers.mo
 #usr/share/locale/hu/LC_MESSAGES/sudo.mo
 #usr/share/locale/hu/LC_MESSAGES/sudoers.mo
+#usr/share/locale/id/LC_MESSAGES/sudo.mo
 #usr/share/locale/it/LC_MESSAGES/sudo.mo
 #usr/share/locale/it/LC_MESSAGES/sudoers.mo
 #usr/share/locale/ja/LC_MESSAGES/sudo.mo

@@ -6,9 +6,10 @@ usr/bin/jq
 #usr/lib/libjq.so
 usr/lib/libjq.so.1
 usr/lib/libjq.so.1.0.4
+#usr/lib/pkgconfig/libjq.pc
 #usr/share/doc/jq
 #usr/share/doc/jq/AUTHORS
 #usr/share/doc/jq/COPYING
-#usr/share/doc/jq/README
+#usr/share/doc/jq/NEWS.md
 #usr/share/doc/jq/README.md
 #usr/share/man/man1/jq.1

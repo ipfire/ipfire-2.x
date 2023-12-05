@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.11.2
+VER        = 2.12.0
 
 THISAPP    = man-db-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 80ac565cdb69736c0f922b9cbfddcae753d176329781deaf9434d87d7718f9b6ce0b6d4642a03f22a04c7f042dda7f8986b5bce0038f0748461ca55d66964ccc
+$(DL_FILE)_BLAKE2 = a6258c1fc9cd81be5d288298660f5b9bda22d726ef98dd5c0a1998809a32391f7244be6897ee8e03483e705a426d6a59d442de3dc2e84f45500daa825ac639db
 
 install : $(TARGET)
 

@@ -141,6 +141,7 @@ usr/bin/aseqnet
 usr/bin/aserver
 usr/bin/axfer
 usr/bin/iecset
+usr/bin/nhlt-dmic-info
 usr/bin/speaker-test
 #usr/include/alsa
 #usr/include/alsa/asoundef.h
@@ -189,6 +190,8 @@ usr/bin/speaker-test
 #usr/include/alsa/sound/uapi/tlv.h
 #usr/include/alsa/timer.h
 #usr/include/alsa/topology.h
+#usr/include/alsa/ump.h
+#usr/include/alsa/ump_msg.h
 #usr/include/alsa/use-case.h
 #usr/include/alsa/version.h
 #usr/include/asoundlib.h
@@ -572,6 +575,9 @@ usr/share/alsa/ucm2/Rockchip/max98090/max98090.conf
 #usr/share/alsa/ucm2/Rockchip/rk3399-gru-sound
 usr/share/alsa/ucm2/Rockchip/rk3399-gru-sound/HiFi.conf
 usr/share/alsa/ucm2/Rockchip/rk3399-gru-sound/rk3399-gru-sound.conf
+#usr/share/alsa/ucm2/Rockchip/rk3588-es8316
+usr/share/alsa/ucm2/Rockchip/rk3588-es8316/HiFi.conf
+usr/share/alsa/ucm2/Rockchip/rk3588-es8316/rk3588-es8316.conf
 #usr/share/alsa/ucm2/Rockchip/rk817-sound
 usr/share/alsa/ucm2/Rockchip/rk817-sound/HiFi.conf
 usr/share/alsa/ucm2/Rockchip/rk817-sound/rk817-sound.conf
@@ -584,9 +590,16 @@ usr/share/alsa/ucm2/Samsung/snow/snow.conf
 usr/share/alsa/ucm2/Tegra/alc5632/HiFi.conf
 usr/share/alsa/ucm2/Tegra/alc5632/Record.conf
 usr/share/alsa/ucm2/Tegra/alc5632/alc5632.conf
+#usr/share/alsa/ucm2/Tegra/max98089
+usr/share/alsa/ucm2/Tegra/max98089/lge-x3-HiFi.conf
+usr/share/alsa/ucm2/Tegra/max98089/lge-x3-VoiceCall.conf
+usr/share/alsa/ucm2/Tegra/max98089/lge-x3.conf
 #usr/share/alsa/ucm2/Tegra/max98090
 usr/share/alsa/ucm2/Tegra/max98090/HiFi.conf
 usr/share/alsa/ucm2/Tegra/max98090/max98090.conf
+#usr/share/alsa/ucm2/Tegra/rt5631
+usr/share/alsa/ucm2/Tegra/rt5631/Asus-Transformer-HiFi.conf
+usr/share/alsa/ucm2/Tegra/rt5631/Asus-Transformer.conf
 #usr/share/alsa/ucm2/Tegra/rt5640
 usr/share/alsa/ucm2/Tegra/rt5640/Google-Nexus-7-HiFi.conf
 usr/share/alsa/ucm2/Tegra/rt5640/Google-Nexus-7.conf
@@ -596,6 +609,8 @@ usr/share/alsa/ucm2/Tegra/tegra-hda/tegra-hda.conf
 #usr/share/alsa/ucm2/Tegra/wm8903
 usr/share/alsa/ucm2/Tegra/wm8903/Acer-A500-HiFi.conf
 usr/share/alsa/ucm2/Tegra/wm8903/Acer-A500.conf
+usr/share/alsa/ucm2/Tegra/wm8903/Asus-Transformer-HiFi.conf
+usr/share/alsa/ucm2/Tegra/wm8903/Asus-Transformer.conf
 #usr/share/alsa/ucm2/USB-Audio
 #usr/share/alsa/ucm2/USB-Audio/Arturia
 usr/share/alsa/ucm2/USB-Audio/Arturia/Minifuse-12-HiFi.conf
@@ -667,6 +682,9 @@ usr/share/alsa/ucm2/USB-Audio/Steinberg/UR24C.conf
 usr/share/alsa/ucm2/USB-Audio/Steinberg/UR44-HiFi.conf
 usr/share/alsa/ucm2/USB-Audio/Steinberg/UR44.conf
 usr/share/alsa/ucm2/USB-Audio/USB-Audio.conf
+#usr/share/alsa/ucm2/USB-Audio/UniversalAudio
+usr/share/alsa/ucm2/USB-Audio/UniversalAudio/Volt2-HiFi.conf
+usr/share/alsa/ucm2/USB-Audio/UniversalAudio/Volt2.conf
 #usr/share/alsa/ucm2/codecs
 #usr/share/alsa/ucm2/codecs/cx2072x
 usr/share/alsa/ucm2/codecs/cx2072x/DisableSeq.conf
@@ -836,6 +854,10 @@ usr/share/alsa/ucm2/conf.d/acp/acp.conf
 usr/share/alsa/ucm2/conf.d/acp3xalc5682m98/acp3xalc5682m98.conf
 #usr/share/alsa/ucm2/conf.d/acp5x
 usr/share/alsa/ucm2/conf.d/acp5x/Valve-Jupiter-1.conf
+#usr/share/alsa/ucm2/conf.d/acp62
+usr/share/alsa/ucm2/conf.d/acp62/acp62.conf
+#usr/share/alsa/ucm2/conf.d/acp63
+usr/share/alsa/ucm2/conf.d/acp63/acp63.conf
 #usr/share/alsa/ucm2/conf.d/acp6x
 usr/share/alsa/ucm2/conf.d/acp6x/acp6x.conf
 #usr/share/alsa/ucm2/conf.d/bdw-rt5677
@@ -878,6 +900,8 @@ usr/share/alsa/ucm2/conf.d/mt8365-evk/mt8365-evk.conf
 usr/share/alsa/ucm2/conf.d/mtk-rt5650/mtk-rt5650.conf
 #usr/share/alsa/ucm2/conf.d/rk3399-gru-soun
 usr/share/alsa/ucm2/conf.d/rk3399-gru-soun/rk3399-gru-soun.conf
+#usr/share/alsa/ucm2/conf.d/rk3588-es8316
+usr/share/alsa/ucm2/conf.d/rk3588-es8316/rk3588-es8316.conf
 #usr/share/alsa/ucm2/conf.d/rockchip_es8316
 usr/share/alsa/ucm2/conf.d/rockchip_es8316/rockchip_es8316.conf
 #usr/share/alsa/ucm2/conf.d/sc8280xp
@@ -915,9 +939,18 @@ usr/share/alsa/ucm2/conf.d/sof-soundwire/sof-soundwire.conf
 usr/share/alsa/ucm2/conf.d/tegra-hda/tegra-hda.conf
 usr/share/alsa/ucm2/conf.d/tegra/ASUS Google Nexus 7 ALC5642.conf
 usr/share/alsa/ucm2/conf.d/tegra/Acer Iconia Tab A500 WM8903.conf
+usr/share/alsa/ucm2/conf.d/tegra/Asus EeePad Slider WM8903.conf
+usr/share/alsa/ucm2/conf.d/tegra/Asus EeePad Transformer WM8903.conf
+usr/share/alsa/ucm2/conf.d/tegra/Asus Transformer Infinity TF700T RT5631.conf
+usr/share/alsa/ucm2/conf.d/tegra/Asus Transformer Pad TF300T WM8903.conf
+usr/share/alsa/ucm2/conf.d/tegra/Asus Transformer Pad TF300TG RT5631.conf
+usr/share/alsa/ucm2/conf.d/tegra/Asus Transformer Pad TF300TL RT5631.conf
+usr/share/alsa/ucm2/conf.d/tegra/Asus Transformer Prime TF201 RT5631.conf
 usr/share/alsa/ucm2/conf.d/tegra/Compal PAZ00.conf
 usr/share/alsa/ucm2/conf.d/tegra/GoogleNyanBig.conf
 usr/share/alsa/ucm2/conf.d/tegra/GoogleNyanBlaze.conf
+usr/share/alsa/ucm2/conf.d/tegra/LG Optimus 4X HD MAX98089.conf
+usr/share/alsa/ucm2/conf.d/tegra/LG Optimus Vu MAX98089.conf
 #usr/share/alsa/ucm2/conf.virt.d
 usr/share/alsa/ucm2/conf.virt.d/.gitignore
 #usr/share/alsa/ucm2/lib
@@ -963,6 +996,7 @@ usr/share/alsa/ucm2/ucm.conf
 #usr/share/locale/ja/LC_MESSAGES/alsaconf.mo
 #usr/share/locale/ka/LC_MESSAGES/alsa-utils.mo
 #usr/share/locale/ka/LC_MESSAGES/alsaconf.mo
+#usr/share/locale/ko/LC_MESSAGES/alsa-utils.mo
 #usr/share/locale/ru/LC_MESSAGES/alsaconf.mo
 #usr/share/locale/sk/LC_MESSAGES/alsa-utils.mo
 #usr/share/man/fr/man8/alsaconf.8
@@ -984,6 +1018,7 @@ usr/share/alsa/ucm2/ucm.conf
 #usr/share/man/man1/axfer-transfer.1
 #usr/share/man/man1/axfer.1
 #usr/share/man/man1/iecset.1
+#usr/share/man/man1/nhlt-dmic-info.1
 #usr/share/man/man1/speaker-test.1
 #usr/share/man/man8/alsaconf.8
 #usr/share/sounds

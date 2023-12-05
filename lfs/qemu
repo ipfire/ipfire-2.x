@@ -27,7 +27,7 @@ include Config
 SUMMARY    = Machine emulator and virtualizer
 
 # If you update the version also qemu-ga !!!
-VER        = 8.1.1
+VER        = 8.1.2
 
 THISAPP    = qemu-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -35,7 +35,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = qemu
-PAK_VER    = 40
+PAK_VER    = 41
 
 DEPS       = alsa elfutils libusbredir spice libseccomp libslirp
 
@@ -61,7 +61,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 71220fad7c9f74bed6211879f01566ac1e52835feb3d45eaa1b2fe1d5f95d9fa5db53b7aec72b4ef098c03d0c4070076c907fb3e6b839002de6f56ee5ab44340
+$(DL_FILE)_BLAKE2 = 8f48638cd1f0285356aae2d14862f56cc79da09bb9ff9f09e90221fdca851e9c3f8a3d940039f578d24d0b4435baf19cb52a3e927e97bf978ea674d148ecd746
 
 install : $(TARGET)
 

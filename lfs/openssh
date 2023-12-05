@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 9.4p1
+VER        = 9.5p1
 
 THISAPP    = openssh-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = d13d758129cce947d3f12edb6e88406aad10de6887b19ffa3ebd8e382b742a05f2a692a8824aec99939f6c7e13fbccc3bb14e5ee112f9a9255d4882eb87dcf53
+$(DL_FILE)_BLAKE2 = 55dbb0a2792b0046c943a19ca0966660e6e378e77856e94823a1bbbafaa0da94357403765c4c028aebf6543049a0f9bbe0019629be3f92cdadfac1be56def796
 
 install : $(TARGET)
 
@@ -70,7 +70,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/openssh-9.4p1_Fix_zlib_version_check_for_1.3_and_future_version.patch
 	cd $(DIR_APP) && autoconf
 	cd $(DIR_APP) && sed -i "s/lkrb5 -ldes/lkrb5/" configure
 	cd $(DIR_APP) && ./configure \

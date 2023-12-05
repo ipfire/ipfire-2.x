@@ -1,0 +1,9 @@
+diff -Naur grub-2.12-rc1.org/util/grub.d/25_bli.in grub-2.12-rc1/util/grub.d/25_bli.in
+--- grub-2.12-rc1.org/util/grub.d/25_bli.in	2023-07-10 17:43:48.000000000 +0200
++++ grub-2.12-rc1/util/grub.d/25_bli.in	2023-11-17 07:07:30.743519612 +0100
+@@ -1,4 +1,4 @@
+-#!/usr/bin/sh
++#!/bin/sh
+ set -e
+ 
+ # grub-mkconfig helper script.

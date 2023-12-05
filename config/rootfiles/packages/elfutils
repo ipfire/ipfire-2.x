@@ -11,6 +11,7 @@ usr/bin/eu-objdump
 usr/bin/eu-ranlib
 usr/bin/eu-readelf
 usr/bin/eu-size
+usr/bin/eu-srcfiles
 usr/bin/eu-stack
 usr/bin/eu-strings
 usr/bin/eu-strip
@@ -27,15 +28,15 @@ usr/bin/eu-unstrip
 #usr/include/gelf.h
 #usr/include/libelf.h
 #usr/include/nlist.h
-usr/lib/libasm-0.189.so
+usr/lib/libasm-0.190.so
 #usr/lib/libasm.a
 #usr/lib/libasm.so
 usr/lib/libasm.so.1
-usr/lib/libdw-0.189.so
+usr/lib/libdw-0.190.so
 #usr/lib/libdw.a
 #usr/lib/libdw.so
 usr/lib/libdw.so.1
-usr/lib/libelf-0.189.so
+usr/lib/libelf-0.190.so
 #usr/lib/libelf.a
 #usr/lib/libelf.so
 usr/lib/libelf.so.1
@@ -50,6 +51,7 @@ usr/lib/libelf.so.1
 #usr/share/locale/uk/LC_MESSAGES/elfutils.mo
 #usr/share/man/man1/eu-elfclassify.1
 #usr/share/man/man1/eu-readelf.1
+#usr/share/man/man1/eu-srcfiles.1
 #usr/share/man/man3/elf_begin.3
 #usr/share/man/man3/elf_clone.3
 #usr/share/man/man3/elf_getdata.3
