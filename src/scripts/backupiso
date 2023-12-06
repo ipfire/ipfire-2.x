@@ -20,7 +20,7 @@
 ###############################################################################
 
 # FIXME: edit this lines before release
-IPFVER=2.27
+IPFVER=2.29
 COREVER=$(cat /opt/pakfire/db/core/mine)
 
 arch=$(uname -m)
