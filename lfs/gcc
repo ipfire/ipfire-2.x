@@ -43,6 +43,7 @@ CFLAGS    := $(patsubst -mfloat-abi=%,,$(CFLAGS))
 CFLAGS    := $(filter-out -fexceptions,$(CFLAGS))
 
 CFLAGS    := $(patsubst -mindirect-branch=%,,$(CFLAGS))
+CFLAGS    := $(patsubst -mbranch-protection=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -mfunction-return=%,,$(CFLAGS))
 CFLAGS    := $(patsubst -fstack-clash-protection,,$(CFLAGS))
 CFLAGS    := $(patsubst -fcf-protection,,$(CFLAGS))
