@@ -85,7 +85,7 @@ lib/kbd/consolefonts/LatArCyrHeb-16.psfu.gz
 #lib/kbd/consolefonts/drdos8x16.psfu.gz
 #lib/kbd/consolefonts/drdos8x6.psfu.gz
 #lib/kbd/consolefonts/drdos8x8.psfu.gz
-#lib/kbd/consolefonts/eurlatgr.psfu.gz
+lib/kbd/consolefonts/eurlatgr.psfu.gz
 #lib/kbd/consolefonts/gr737a-8x8.psfu.gz
 #lib/kbd/consolefonts/gr737a-9x14.psfu.gz
 #lib/kbd/consolefonts/gr737a-9x16.psfu.gz
