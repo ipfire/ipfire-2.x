@@ -62,12 +62,14 @@ case $(uname -r) in
 	;;
 esac
 
-# Check diskspace on root
+# Check diskspace on root and size of boot
 ROOTSPACE=$( df / -Pk | sed "s| * | |g" | cut -d" " -f4 | tail -n 1 )
-
-if [ $ROOTSPACE -lt 100000 ]; then
+if [ $ROOTSPACE -lt 200000 ]; then
     exit_with_error "ERROR cannot update because not enough free space on root." 2
-    exit 2
+fi
+BOOTSIZE=$( df /boot -Pk | sed "s| * | |g" | cut -d" " -f2 | tail -n 1 )
+if [ $BOOTSIZE -lt 100000 ]; then
+    exit_with_error "ERROR cannot update. BOOT partition is to small." 3
 fi
 
 # Remove the old kernel
