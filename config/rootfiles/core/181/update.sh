@@ -84,6 +84,10 @@ rm -rvf \
 	/boot/dtb-* \
 	/lib/modules
 
+# Stop services
+/etc/init.d/udev stop
+/etc/init.d/apache stop
+
 # Extract files
 extract_files
 
@@ -109,8 +113,8 @@ ldconfig
 
 # Start services
 telinit u
-/etc/init.d/udev restart
-/etc/init.d/apache restart
+/etc/init.d/udev start
+/etc/init.d/apache start
 
 # Rebuild initial ramdisks
 dracut --regenerate-all --force
