@@ -74,7 +74,7 @@ my %mainsettings = ();
 
 my $connstate = &Header::connectionstatus();
 
-if ( -e "/var/ipfire/main/gpl-accepted" ) {
+if ( -e "/var/ipfire/main/gpl_accepted" ) {
 	if ($connstate =~ /$Lang::tr{'connecting'}/ || /$Lang::tr{'connection closed'}/ ){
 		$refresh = "<meta http-equiv='refresh' content='5;'>";
 	}elsif ($connstate =~ /$Lang::tr{'dod waiting'}/ || -e "${General::swroot}/main/refreshindex") {
