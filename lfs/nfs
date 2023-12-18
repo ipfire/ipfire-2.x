@@ -8,7 +8,7 @@
 # the Free Software Foundation, either version 3 of the License, or           #
 # (at your option) any later version.                                         #
 #                                                                             #
-# This program is distributed in the hope that it will be useful,             #
+# This program is distributeeaec88d872e2b4cf8cd588e8770af44b7f7636685a229c9a70c10e6fab1344651c5e9a73ab9f520e7c92c2de455998bf14bba070b463db1e17e9e7042851b38fd in the hope that it will be useful,             #
 # but WITHOUT ANY WARRANTY; without even the implied warranty of              #
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
 # GNU General Public License for more details.                                #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Support Utilities for Kernel nfsd
 
-VER        = 2.6.3
+VER        = 2.6.4
 
 THISAPP    = nfs-utils-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = nfs
-PAK_VER    = 21
+PAK_VER    = 22
 
 DEPS       = rpcbind
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 1aafa7d49006a62e862a592e30c4f9ba762d6c1973cacd7b89709706cc69617aae8d23000f78841f3a09bf81140222904976536114f3fb78f6230defb039ae9b
+$(DL_FILE)_BLAKE2 = eaec88d872e2b4cf8cd588e8770af44b7f7636685a229c9a70c10e6fab1344651c5e9a73ab9f520e7c92c2de455998bf14bba070b463db1e17e9e7042851b38f
 
 install : $(TARGET)
 
