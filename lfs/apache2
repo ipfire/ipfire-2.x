@@ -75,6 +75,7 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/apache-2.4.58_mod_xml2enc_remove_dependency_on_xmlstring_header.patch
 	### Add IPFire's layout, too
 	echo "# IPFire layout" >> $(DIR_APP)/config.layout
 	echo "<Layout IPFire>" >> $(DIR_APP)/config.layout
