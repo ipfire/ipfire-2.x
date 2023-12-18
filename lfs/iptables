@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.8.9
+VER        = 1.8.10
 
 THISAPP    = iptables-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -41,7 +41,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 netfilter-layer7-v2.23.tar.gz = $(URL_IPFIRE)/netfilter-layer7-v2.23.tar.gz
 
-$(DL_FILE)_BLAKE2 = 37ba80be0ee7049c4d3ee5689b273b4d2cc6e6fb9ebb297e86976b5750f987f2ae4536013fe1749ae79b6989c241eaece3202019fafd47d842c7a4fe3e5093b1
+$(DL_FILE)_BLAKE2 = 417b33fcfc7edeba169caef26ed0322798f6b82500840509f6c10b97b4ef3f11932c0393fc8dcc5946264442bf8ee959a594b6fbd5dc92012cfad30edf130520
 netfilter-layer7-v2.23.tar.gz_BLAKE2 = 5c8ab722f6fbc126f2f65ecf401de5fc40560c20e3be52f783db34410446185dcb6781b3148e4a174e8b2d2c290bec0342dea95e8cefc35c39345617fa7a8fdc
 
 install : $(TARGET)
