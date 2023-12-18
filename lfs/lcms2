@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.14
+VER        = 2.16
 
 THISAPP    = lcms2-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 777b0bf65829121a3d32bca1ab936ac022f9af739bccdd02d5f86688c3386b974f526a012bdec4d36649566eea0aa659db317dd383eede6488236d601156a0f9
+$(DL_FILE)_BLAKE2 = cf4d10908e6b8e6cf15ec8a99f0a299a9bcb7082f0df5ab1c9d84fcb739132855edf717c2ab746040fc09bace7afaaa8a39538e7ceabd0e68cdb3b4fb5627c6d
 
 install : $(TARGET)
 
