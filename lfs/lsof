@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.98.0
+VER        = 4.99.3
 
 THISAPP    = lsof-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 7ce5576653035bced042b07a946a09cb3c23da57a4f77a9f7bc8b8f86d531d73f0375a03fb0dc9e03f6ac18caa68bbb45144d6da13cee7ba94dfbb913fae9d03
+$(DL_FILE)_BLAKE2 = 71049bd2c3b6788260d9970e8c6828128999b5040fb23cee0e288ee7e353e5e0510b8b1e5a5275158f1ff37f18066a36766a80b56d24ff57be1f3243910482e7
 
 install : $(TARGET)
 
