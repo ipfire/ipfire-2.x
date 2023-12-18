@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.9.30
+VER        = 0.9.31
 
 THISAPP    = openldap-LMDB_$(VER)
 DL_FILE    = $(THISAPP).tar.bz2
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 849d40187dc3aaddcd118cf6db28a9807854d4b5b34a365f6e076ccccd556470f117933e3d29cf2678368db2f0c9d264e033a27de310f036e1a65f04ed643fa9
+$(DL_FILE)_BLAKE2 = c1f8ebc7fdaa0b337e093cc6e20cdb824b2154eb09b070e93a802e2115c8b865a4960558ffcf1681714fe049b264b2fcdf23b592a4f91e9735634309d98012c2
 
 install : $(TARGET)
 
