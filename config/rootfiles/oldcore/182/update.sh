@@ -54,19 +54,12 @@ rm -rvf \
 	/lib/firmware/cxgb4/t6fw-1.27.3* \
 	/lib/firmware/ctefx.bin \
 	/lib/firmware/ctspeq.bin \
-	/lib/firmware/ess \
 	/lib/firmware/intel/ibt-* \
-	/lib/firmware/korg \
 	/lib/firmware/mediatek/BT_RAM_CODE_* \
 	/lib/firmware/nxp \
-	/lib/firmware/sb16 \
-	/lib/firmware/yamaha \
 	/lib/udev/rules.d/64-xfs.rules \
 	/usr/bin/gawk-5.2* \
-	/usr/lib/grub/{arm64-efi,i386-pc,riscv64-efi,x86_64-efi}/gmodule.pl \
-	/usr/lib/liblzma.so.5.4* \
-	/usr/lib/libqpdf.so.29.5* \
-	/usr/lib/libsodium.so.23*
+	/usr/lib/grub/{arm64-efi,i386-pc,riscv64-efi,x86_64-efi}/gmodule.pl
 
 # update linker config
 ldconfig

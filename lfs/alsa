@@ -38,7 +38,7 @@ DL_FILE    = $(THISAPP).tar.bz2
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 PROG       = alsa
-PAK_VER    = 18
+PAK_VER    = 20
 
 DEPS       =
 
