@@ -24,12 +24,12 @@
 
 case "$1" in
 	start)
+		modprobe snd_pcm_oss >/dev/null 2>&1
+		modprobe snd_mixer_oss >/dev/null 2>&1
 		boot_mesg "Starting ALSA...   Restoring volumes..."
-		modprobe snd_pcm_oss >/dev/null 2>&1 || failed=1
-		modprobe snd_mixer_oss >/dev/null 2>&1 || failed=1
-		(exit ${failed})
-		evaluate_retval
 		loadproc /usr/sbin/alsactl restore
+		evaluate_retval
+		exit 0
 		;;
 	stop)
 		boot_mesg "Stopping ALSA...    Saving volumes..."
