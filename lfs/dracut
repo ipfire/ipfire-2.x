@@ -73,6 +73,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# https://bugzilla.ipfire.org/show_bug.cgi?id=12842
 	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dracut-059-fix-e2fsck-call.patch
+	cd $(DIR_APP) && patch -Np1 -i $(DIR_SRC)/src/patches/dracut/dracut-056-fix_early_microcode_for_kernel_6.6.patch
 
 	cd $(DIR_APP) && ./configure --prefix=/usr --sbindir=/sbin --sysconfdir=/etc
 	cd $(DIR_APP) && make $(MAKETUNING)
