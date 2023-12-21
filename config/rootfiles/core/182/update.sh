@@ -57,7 +57,18 @@ rm -rvf \
 	/lib/firmware/intel/ibt-* \
 	/lib/firmware/mediatek/BT_RAM_CODE_* \
 	/lib/firmware/nxp \
+	/lib/udev/accelerometer \
+	/lib/udev/devices \
+	/lib/udev/kpartx_id \
+	/lib/udev/udevd \
+	/lib/udev/rules.d/42-usb-hid-pm.rules \
+	/lib/udev/rules.d/50-firmware.rules \
+	/lib/udev/rules.d/60-keyboard.rules \
+	/lib/udev/rules.d/60-persistent-serial.rules \
+	/lib/udev/rules.d/61-accelerometer.rules \
 	/lib/udev/rules.d/64-xfs.rules \
+	/lib/udev/rules.d/75-tty-description.rules \
+	/lib/udev/rules.d/95-udev-late.rules \
 	/usr/bin/gawk-5.2* \
 	/usr/lib/grub/{arm64-efi,i386-pc,riscv64-efi,x86_64-efi}/gmodule.pl
 
