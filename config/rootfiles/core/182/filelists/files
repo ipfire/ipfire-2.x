@@ -1,3 +1,7 @@
+bin/cat
+bin/echo
+bin/pwd
+bin/stty
 lib/firmware/amd/amd_sev_fam19h_model0xh.sbin
 lib/firmware/amd/amd_sev_fam19h_model1xh.sbin
 lib/firmware/amdgpu/aldebaran_mec2.bin
@@ -251,3 +255,4 @@ srv/web/ipfire/cgi-bin/connections.cgi
 srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/tor.cgi
 usr/lib/libgcc_s.so.1
+usr/lib/libstdc++.so.6
