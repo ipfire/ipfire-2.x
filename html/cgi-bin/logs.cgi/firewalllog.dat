@@ -211,11 +211,12 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'export'})
 
 	foreach $_ (@log)
 	{
-		/^... (..) (..:..:..) [\w\-]+ kernel:.*(IN=.*)$/;
+		/^... (..) (..:..:..) [\w\-]+ kernel:(.*)(IN=.*)$/;
 		my $day =  $1;
 		$day =~ tr / /0/;
 		my $time = $cgiparams{'DAY'} ? "$2" : "$day/$2" ;
-		print "$time $3\r\n";
+		my $chain = $3;
+		print "$time $chain $4\r\n";
 
 	}
 	exit 0;
