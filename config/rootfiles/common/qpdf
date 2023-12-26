@@ -77,7 +77,7 @@ usr/bin/qpdf
 #usr/lib/cmake/qpdf/qpdfConfigVersion.cmake
 #usr/lib/libqpdf.so
 usr/lib/libqpdf.so.29
-usr/lib/libqpdf.so.29.6.1
+usr/lib/libqpdf.so.29.7.0
 #usr/lib/pkgconfig/libqpdf.pc
 #usr/share/doc/qpdf
 #usr/share/doc/qpdf/README-doc.txt
