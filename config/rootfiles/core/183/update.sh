@@ -90,6 +90,14 @@ rm -rvf \
 extract_files
 
 # Remove files
+rm -rvf \
+	/usr/lib/libbind9-9.16.44.so \
+	/usr/lib/libdns-9.16.44.so \
+	/usr/lib/libirs-9.16.44.so \
+	/usr/lib/libisc-9.16.44.so \
+	/usr/lib/libisccc-9.16.44.so \
+	/usr/lib/libisccfg-9.16.44.so \
+	/usr/lib/libns-9.16.44.so
 
 # update linker config
 ldconfig
