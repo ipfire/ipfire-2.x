@@ -44,6 +44,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/rc.d/init.d/sshd stop
 
 KVER="xxxKVERxxx"
 
@@ -103,6 +104,9 @@ ldconfig
 /usr/local/bin/sshctrl
 
 # Start services
+if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
+	/etc/init.d/sshd start
+fi
 
 # Rebuild initial ramdisks
 dracut --regenerate-all --force
