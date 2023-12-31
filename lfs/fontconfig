@@ -24,11 +24,11 @@
 
 include Config
 
-VER        = 2.14.1
+VER        = 2.15.0
 SUMMARY    = Library for configuring and customizing font access
 
 THISAPP    = fontconfig-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
+DL_FILE    = $(THISAPP).tar.xz
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 870f7936b0ffb7afce37b1c6909cacfaff3a0613a4d0dabddb1e0ec5672018fb80e1aca9d22e3f31579edd304e3cc55a45dd392e199646bbc86a11d4a99e0f35
+$(DL_FILE)_BLAKE2 = 17c85fddc4ab84111c4f50afb89ecd8792c3aeaa2690b38fd39fca6f6cece69e9ce0cd3af8a2e54968c79ad1f9bee1e444699a13c068d9dfd3dfe1212ff37533
 
 install : $(TARGET)
 
@@ -71,8 +71,6 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && rm -vf src/fcobjshash.h
-	cd $(DIR_APP) && ./autogen.sh
 	cd $(DIR_APP) && ./configure \
 		--prefix=/usr \
 		--sysconfdir=/etc \
