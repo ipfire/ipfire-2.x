@@ -16,12 +16,12 @@
 #usr/include/plist/plist.h
 #usr/lib/libplist++-2.0.la
 #usr/lib/libplist++-2.0.so
-usr/lib/libplist++-2.0.so.3
-usr/lib/libplist++-2.0.so.3.3.0
+usr/lib/libplist++-2.0.so.4
+usr/lib/libplist++-2.0.so.4.3.0
 #usr/lib/libplist-2.0.la
 #usr/lib/libplist-2.0.so
-usr/lib/libplist-2.0.so.3
-usr/lib/libplist-2.0.so.3.3.0
+usr/lib/libplist-2.0.so.4
+usr/lib/libplist-2.0.so.4.3.0
 #usr/lib/pkgconfig/libplist++-2.0.pc
 #usr/lib/pkgconfig/libplist-2.0.pc
 #usr/share/man/man1/plistutil.1
