@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = A tool to measure network performance
 
-VER        = 3.12
+VER        = 3.16
 
 THISAPP    = iperf-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = iperf3
-PAK_VER    = 6
+PAK_VER    = 7
 
 DEPS       =
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 95753e4fd2b7ca640b17501f6b21b0e63ea0a3df2ba920c672ffcccd991502cacf4bf3641be1ffbbb993c86e6915ceada5745cffe1796bb86b6a6a1dff8811ae
+$(DL_FILE)_BLAKE2 = 4ca930b58c54d5ae5b0c8b14aca2556224ff2c7b943d32e65486dc2a7e1abd2d26b229e9f759358c326be8754e88a203e11a3ab0f029daa982375a880c3f1cbd
 
 install : $(TARGET)
 check : $(patsubst %,$(DIR_CHK)/%,$(objects))
