@@ -1153,7 +1153,6 @@ print <<END
 	<td class='boldbase'>&nbsp;<b>$Lang::tr{'legend'}:&nbsp;</b></td>
 	<td><img src='/images/on.gif' alt='$Lang::tr{'click to disable'}' /></td>
 	<td class='base'>$Lang::tr{'click to disable'}</td>
-	<td>&nbsp;&nbsp;</td>
 	<td><img src='/images/off.gif' alt='$Lang::tr{'click to enable'}' /></td>
 	<td class='base'>$Lang::tr{'click to enable'}</td>
 	<td>&nbsp;&nbsp;</td>
