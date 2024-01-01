@@ -1164,10 +1164,10 @@ print <<END
 </tr>
 <tr>
 	<td>&nbsp;</td>
-	<td>&nbsp;</td>
-	<td class='base orange'>$Lang::tr{'ip address outside subnets'}</td>
-        <td>&nbsp;&nbsp</td>
-        <td class='base red'>$Lang::tr{'dhcp fixed ip address in dynamic range'}</td>
+	<td class='base orange'>&nbsp;</td>
+	<td class='base'>&nbsp;$Lang::tr{'ip address outside subnets'}&emsp;</td>
+       <td class='base red'>&nbsp;</td>
+       <td class='base'>&nbsp;$Lang::tr{'dhcp fixed ip address in dynamic range'}</td>
 	<td>&nbsp;</td>
 	<td>&nbsp;</td>
 	$dup
