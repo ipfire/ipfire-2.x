@@ -44,6 +44,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/rc.d/init.d/apache stop
 /etc/rc.d/init.d/sshd stop
 
 KVER="xxxKVERxxx"
@@ -97,7 +98,8 @@ rm -rvf \
 	/usr/lib/libisc-9.16.44.so \
 	/usr/lib/libisccc-9.16.44.so \
 	/usr/lib/libisccfg-9.16.44.so \
-	/usr/lib/libns-9.16.44.so
+	/usr/lib/libns-9.16.44.so \
+	/usr/lib/libxml2.so.2.11*
 
 # update linker config
 ldconfig
@@ -112,6 +114,7 @@ ldconfig
 /usr/local/bin/sshctrl
 
 # Start services
+/etc/rc.d/init.d/apache start
 if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
 	/etc/init.d/sshd start
 fi
