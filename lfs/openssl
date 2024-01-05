@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -52,10 +52,12 @@ CONFIGURE_OPTIONS = \
 	no-aria \
 	$(OPENSSL_ARCH)
 
-OPENSSL_ARCH = linux-generic64
-
 ifeq "$(BUILD_ARCH)" "aarch64"
 	OPENSSL_ARCH = linux-aarch64
+endif
+
+ifeq "$(BUILD_ARCH)" "riscv64"
+	OPENSSL_ARCH = linux64-riscv64
 endif
 
 ifeq "$(BUILD_ARCH)" "x86_64"
