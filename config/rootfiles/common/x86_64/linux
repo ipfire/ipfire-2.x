@@ -5188,9 +5188,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/drivers/phy/ralink
 #lib/modules/KVER-ipfire/build/drivers/phy/ralink/Kconfig
 #lib/modules/KVER-ipfire/build/drivers/phy/ralink/Makefile
-#lib/modules/KVER-ipfire/build/drivers/phy/realtek
-#lib/modules/KVER-ipfire/build/drivers/phy/realtek/Kconfig
-#lib/modules/KVER-ipfire/build/drivers/phy/realtek/Makefile
 #lib/modules/KVER-ipfire/build/drivers/phy/renesas
 #lib/modules/KVER-ipfire/build/drivers/phy/renesas/Kconfig
 #lib/modules/KVER-ipfire/build/drivers/phy/renesas/Makefile
@@ -6998,6 +6995,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_KEXEC_BZIMAGE_VERIFY_SIG
 #lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_KEXEC_FILE
 #lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_KEXEC_JUMP
+#lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_KEXEC_PURGATORY
 #lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_KEXEC_SIG
 #lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_KEXEC_SIG_FORCE
 #lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_KMAP_LOCAL_FORCE_MAP
@@ -7969,7 +7967,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/DWC_XLGMAC_PCI
 #lib/modules/KVER-ipfire/build/include/config/DWMAC_GENERIC
 #lib/modules/KVER-ipfire/build/include/config/DWMAC_INTEL
-#lib/modules/KVER-ipfire/build/include/config/DWMAC_LOONGSON
 #lib/modules/KVER-ipfire/build/include/config/DW_DMAC
 #lib/modules/KVER-ipfire/build/include/config/DW_DMAC_CORE
 #lib/modules/KVER-ipfire/build/include/config/DW_DMAC_PCI
@@ -21859,7 +21856,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-intel.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/stmmac-pci.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/stmmac-platform.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/stmmac.ko.xz

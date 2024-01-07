@@ -4944,9 +4944,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/drivers/phy/ralink
 #lib/modules/KVER-ipfire/build/drivers/phy/ralink/Kconfig
 #lib/modules/KVER-ipfire/build/drivers/phy/ralink/Makefile
-#lib/modules/KVER-ipfire/build/drivers/phy/realtek
-#lib/modules/KVER-ipfire/build/drivers/phy/realtek/Kconfig
-#lib/modules/KVER-ipfire/build/drivers/phy/realtek/Makefile
 #lib/modules/KVER-ipfire/build/drivers/phy/renesas
 #lib/modules/KVER-ipfire/build/drivers/phy/renesas/Kconfig
 #lib/modules/KVER-ipfire/build/drivers/phy/renesas/Makefile
@@ -6682,6 +6679,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_INT128
 #lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_KEXEC
 #lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_KEXEC_FILE
+#lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_KEXEC_PURGATORY
 #lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_PAGE_TABLE_CHECK
 #lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_PER_VMA_LOCK
 #lib/modules/KVER-ipfire/build/include/config/ARCH_SUPPORTS_UPROBES
@@ -6697,6 +6695,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ARCH_WANT_LD_ORPHAN_WARN
 #lib/modules/KVER-ipfire/build/include/config/ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP
 #lib/modules/KVER-ipfire/build/include/config/ARCH_WANT_PMD_MKWRITE
+#lib/modules/KVER-ipfire/build/include/config/ARM_AMBA
 #lib/modules/KVER-ipfire/build/include/config/ASM_MODVERSIONS
 #lib/modules/KVER-ipfire/build/include/config/ASN1
 #lib/modules/KVER-ipfire/build/include/config/ASSOCIATIVE_ARRAY
@@ -7532,7 +7531,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/DWC_XLGMAC
 #lib/modules/KVER-ipfire/build/include/config/DWC_XLGMAC_PCI
 #lib/modules/KVER-ipfire/build/include/config/DWMAC_GENERIC
-#lib/modules/KVER-ipfire/build/include/config/DWMAC_LOONGSON
 #lib/modules/KVER-ipfire/build/include/config/DWMAC_STARFIVE
 #lib/modules/KVER-ipfire/build/include/config/DW_DMAC
 #lib/modules/KVER-ipfire/build/include/config/DW_DMAC_CORE
@@ -20810,7 +20808,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-starfive.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/stmmac-pci.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/stmmac-platform.ko.xz
