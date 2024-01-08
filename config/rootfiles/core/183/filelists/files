@@ -1,3 +1,4 @@
 srv/web/ipfire/cgi-bin/dhcp.cgi
+srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
 usr/local/bin/backupiso
