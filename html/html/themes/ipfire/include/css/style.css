@@ -121,7 +121,6 @@ iframe {
 /* Header */
 
 #header {
-	height: 70px;
 	margin: 0 auto;
 }
 
@@ -133,11 +132,14 @@ iframe {
 }
 
 #logo h1 {
-	color: #fff;
-	font-size: 3.6em;
+	color: #ffffff;
+	font-size: 3.5em;
 	font-weight: bold;
-	padding-top: 0.2em;
-	padding-left: 1.7em;
+}
+
+#logo h1 a {
+	color: inherit;
+	text-decoration: none;
 }
 
 /* Main */

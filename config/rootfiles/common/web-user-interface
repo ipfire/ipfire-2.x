@@ -344,7 +344,6 @@ srv/web/ipfire/html/redirect-templates/legacy/template.html
 srv/web/ipfire/html/redirect.cgi
 srv/web/ipfire/html/themes
 srv/web/ipfire/html/themes/ipfire
-srv/web/ipfire/html/themes/ipfire/images/tux2.png
 srv/web/ipfire/html/themes/ipfire/include
 srv/web/ipfire/html/themes/ipfire/include/colors.txt
 srv/web/ipfire/html/themes/ipfire/include/css
