@@ -1,0 +1,63 @@
+#!/bin/sh
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+# Create chroot directory for wsdd
+mkdir -p /var/run/wsdd
+
+INTERFACES="-i ${GREEN_DEV}"
+	if [ -n "${BLUE_DEV}" ]; then
+	        INTERFACES="${INTERFACES} -i ${BLUE_DEV}"
+	fi
+WSDD_WORKGROUP="-w $(/usr/bin/testparm -s --parameter-name workgroup 2>/dev/null)"
+WSDD_USER="-u wsdd:wsdd"
+WSDD_CHROOT="-c /var/run/wsdd"
+
+case "$1" in
+        start)
+                boot_mesg "Starting wsdd daemon..."
+                loadproc -b /usr/bin/wsdd -4 ${WSDD_USER} ${INTERFACES} ${WSDD_WORKGROUP} ${WSDD_CHROOT}
+                sleep 1
+                echo $(ps aux | grep "/usr/bin/wsdd" | grep -v grep | awk '{print $2}') > /var/run/wsdd/pid
+                ;;
+        stop)
+                boot_mesg "Stopping wsdd daemon..."
+                killproc -p /var/run/wsdd/pid /usr/bin/wsdd
+                ;;
+        status)
+                WSDD_PID=$(ps aux | grep "/usr/bin/wsdd" | grep -v grep | awk '{print $2}')
+                if [ -n "${WSDD_PID}" ]; then
+                	echo -e "\\033[1;36m /usr/bin/wsdd is running with Process"\
+				"ID(s) $WSDD_PID.\\033[0;39m"
+                else
+                	echo -e "\\033[1;36m /usr/bin/wsdd is not running.\\033[0;39m"
+                fi
+                ;;
+        *)
+                echo "Usage: $0 (start|stop|status)"
+                exit 1
+                ;;
+esac
+
