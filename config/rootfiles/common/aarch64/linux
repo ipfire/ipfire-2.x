@@ -5428,9 +5428,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/drivers/phy/ralink
 #lib/modules/KVER-ipfire/build/drivers/phy/ralink/Kconfig
 #lib/modules/KVER-ipfire/build/drivers/phy/ralink/Makefile
-#lib/modules/KVER-ipfire/build/drivers/phy/realtek
-#lib/modules/KVER-ipfire/build/drivers/phy/realtek/Kconfig
-#lib/modules/KVER-ipfire/build/drivers/phy/realtek/Makefile
 #lib/modules/KVER-ipfire/build/drivers/phy/renesas
 #lib/modules/KVER-ipfire/build/drivers/phy/renesas/Kconfig
 #lib/modules/KVER-ipfire/build/drivers/phy/renesas/Makefile
@@ -8334,7 +8331,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/DWMAC_GENERIC
 #lib/modules/KVER-ipfire/build/include/config/DWMAC_IMX8
 #lib/modules/KVER-ipfire/build/include/config/DWMAC_INTEL_PLAT
-#lib/modules/KVER-ipfire/build/include/config/DWMAC_LOONGSON
 #lib/modules/KVER-ipfire/build/include/config/DWMAC_MESON
 #lib/modules/KVER-ipfire/build/include/config/DWMAC_ROCKCHIP
 #lib/modules/KVER-ipfire/build/include/config/DWMAC_SUN8I
@@ -10880,6 +10876,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/SGETMASK_SYSCALL
 #lib/modules/KVER-ipfire/build/include/config/SGL_ALLOC
 #lib/modules/KVER-ipfire/build/include/config/SG_POOL
+#lib/modules/KVER-ipfire/build/include/config/SHADOW_CALL_STACK
 #lib/modules/KVER-ipfire/build/include/config/SHMEM
 #lib/modules/KVER-ipfire/build/include/config/SHUFFLE_PAGE_ALLOCATOR
 #lib/modules/KVER-ipfire/build/include/config/SIGNALFD
@@ -21608,7 +21605,6 @@ lib/modules/KVER-ipfire/kernel
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-generic.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-imx.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-intel-plat.ko.xz
-#lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-loongson.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-meson.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-meson8b.ko.xz
 #lib/modules/KVER-ipfire/kernel/drivers/net/ethernet/stmicro/stmmac/dwmac-rk.ko.xz
