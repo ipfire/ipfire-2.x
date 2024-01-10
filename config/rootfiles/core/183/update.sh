@@ -149,7 +149,7 @@ sendprofile
 
 # Update grub config to display new core version
 if [ -e /boot/grub/grub.cfg ]; then
-<------>/usr/bin/install-bootloader
+	/usr/bin/install-bootloader
 fi
 
 sync
