@@ -69,8 +69,7 @@ rm -rvf \
 	/lib/udev/rules.d/64-xfs.rules \
 	/lib/udev/rules.d/75-tty-description.rules \
 	/lib/udev/rules.d/95-udev-late.rules \
-	/usr/bin/gawk-5.2* \
-	/usr/lib/grub/{arm64-efi,i386-pc,riscv64-efi,x86_64-efi}/gmodule.pl
+	/usr/bin/gawk-5.2*
 
 # update linker config
 ldconfig
@@ -126,9 +125,9 @@ touch /var/run/need_reboot
 /etc/init.d/fireinfo start
 sendprofile
 
-# Grub version was updated, reinstall it
+# Update grub config to display new core version
 if [ -e /boot/grub/grub.cfg ]; then
-	/usr/bin/install-bootloader
+	grub-mkconfig -o /boot/grub/grub.cfg
 fi
 
 sync
