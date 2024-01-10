@@ -17,7 +17,7 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2023 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2024 IPFire-Team <info@ipfire.org>.                        #
 #                                                                          #
 ############################################################################
 #
@@ -149,7 +149,7 @@ sendprofile
 
 # Update grub config to display new core version
 if [ -e /boot/grub/grub.cfg ]; then
-	grub-mkconfig -o /boot/grub/grub.cfg
+<------>/usr/bin/install-bootloader
 fi
 
 sync
