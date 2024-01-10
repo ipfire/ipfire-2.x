@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.12-rc1
+VER        = 2.06
 
 THISAPP    = grub-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -61,7 +61,7 @@ objects = $(DL_FILE) \
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 unifont-7.0.03.pcf.gz = $(DL_FROM)/unifont-7.0.03.pcf.gz
 
-$(DL_FILE)_BLAKE2 = 3ada3d51b8cbae260b8ddeb249d8529f273ca578e5361a24988e6e1bf5ef405e507831862dfcefd35ee1c26068cbdc38eda7a04fe1cec378e945e08c5b00d891
+$(DL_FILE)_BLAKE2 = 2a40b9b03d7bb3b9e7b1309ab274d686f01b3c42e7035ebc6e5a0e59a59c3b7362ba518341664b314cb0dbc8222bb10ea05ce09f08ce9d58a293207cb909e417
 unifont-7.0.03.pcf.gz_BLAKE2 = fb96c1786fcc8c77796c90ce30a2b7d544013bd62cedbf7b027e1894fe75cdbd2044717796cb0e3150db1457fcb58076491d9c0b855621b652fb9a52c0793469
 
 install : $(TARGET)
@@ -92,9 +92,11 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_APP_EFI) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-2.06-remove_os_prober_disabled_warning.patch
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-2.02_disable_vga_fallback.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-2.12-rc1-fix_bli_bin_sh_path.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-Use-zifencei-on-riscv.patch
+	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/grub/grub-Handle-R_RISCV_CALL_PLT-reloc.patch
 	cd $(DIR_APP) && autoreconf -vfi
 
 	# Install unifont
