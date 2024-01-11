@@ -29,18 +29,27 @@ mkdir -p /var/run/wsdd
 
 PIDFILE="/var/run/wsdd.pid"
 
+ARGS=(
+	# Launch as non-privileged user
+	"--user" "wsdd:wsdd"
+
+	# Launch in chroot
+	"--chroot" "/var/run/wsdd"
+
+	# Only use IPv4
+	"--ipv4only"
+)
+
 INTERFACES="--interface ${GREEN_DEV}"
 if [ -n "${BLUE_DEV}" ]; then
         INTERFACES="${INTERFACES} --interface ${BLUE_DEV}"
 fi
 WSDD_WORKGROUP="--workgroup $(/usr/bin/testparm -s --parameter-name workgroup 2>/dev/null)"
-WSDD_USER="--user wsdd:wsdd"
-WSDD_CHROOT="--chroot /var/run/wsdd"
 
 case "$1" in
 	start)
 		boot_mesg "Starting wsdd daemon..."
-		loadproc -b -p "${PIDFILE}" /usr/bin/wsdd --ipv4only ${WSDD_USER} ${INTERFACES} ${WSDD_WORKGROUP} ${WSDD_CHROOT}
+		loadproc -b -p "${PIDFILE}" /usr/bin/wsdd "${ARGS[@]}" ${INTERFACES} ${WSDD_WORKGROUP}
 		;;
 
 	stop)
