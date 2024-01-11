@@ -27,6 +27,8 @@ eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 # Create chroot directory for wsdd
 mkdir -p /var/run/wsdd
 
+PIDFILE="/var/run/wsdd.pid"
+
 INTERFACES="-i ${GREEN_DEV}"
 	if [ -n "${BLUE_DEV}" ]; then
 	        INTERFACES="${INTERFACES} -i ${BLUE_DEV}"
@@ -38,22 +40,14 @@ WSDD_CHROOT="-c /var/run/wsdd"
 case "$1" in
         start)
                 boot_mesg "Starting wsdd daemon..."
-                loadproc -b /usr/bin/wsdd -4 ${WSDD_USER} ${INTERFACES} ${WSDD_WORKGROUP} ${WSDD_CHROOT}
-                sleep 1
-                echo $(ps aux | grep "/usr/bin/wsdd" | grep -v grep | awk '{print $2}') > /var/run/wsdd/pid
+                loadproc -b -p "${PIDFILE}" /usr/bin/wsdd -4 ${WSDD_USER} ${INTERFACES} ${WSDD_WORKGROUP} ${WSDD_CHROOT}
                 ;;
         stop)
                 boot_mesg "Stopping wsdd daemon..."
-                killproc -p /var/run/wsdd/pid /usr/bin/wsdd
+                killproc -p "${PIDFILE}" /usr/bin/wsdd
                 ;;
         status)
-                WSDD_PID=$(ps aux | grep "/usr/bin/wsdd" | grep -v grep | awk '{print $2}')
-                if [ -n "${WSDD_PID}" ]; then
-                	echo -e "\\033[1;36m /usr/bin/wsdd is running with Process"\
-				"ID(s) $WSDD_PID.\\033[0;39m"
-                else
-                	echo -e "\\033[1;36m /usr/bin/wsdd is not running.\\033[0;39m"
-                fi
+		statusproc /usr/bin/wsdd
                 ;;
         *)
                 echo "Usage: $0 (start|stop|status)"
