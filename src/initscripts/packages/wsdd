@@ -24,9 +24,6 @@
 
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 
-# Create chroot directory for wsdd
-mkdir -p /var/run/wsdd
-
 PIDFILE="/var/run/wsdd.pid"
 
 case "$1" in
@@ -51,6 +48,9 @@ case "$1" in
 				ARGS+=( "--interface" "${!intf}" )
 			fi
 		done
+
+		# Create chroot directory for wsdd
+		mkdir -p /var/run/wsdd
 
 		boot_mesg "Starting wsdd daemon..."
 		loadproc -b -p "${PIDFILE}" /usr/bin/wsdd "${ARGS[@]}"
