@@ -407,7 +407,7 @@ pidofproc()
 # This will ensure compatibility with previous LFS Bootscripts
 getpids()
 {
-	if [ -z "${PIDFILE}" ]; then
+	if [ -n "${PIDFILE}" ]; then
 		pidofproc -s -p "${PIDFILE}" $@
 	else
 		pidofproc -s $@
