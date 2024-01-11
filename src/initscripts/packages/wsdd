@@ -43,15 +43,17 @@ ARGS=(
 	"--workgroup" "$(testparm -s --parameter-name workgroup 2>/dev/null)"
 )
 
-INTERFACES="--interface ${GREEN_DEV}"
-if [ -n "${BLUE_DEV}" ]; then
-        INTERFACES="${INTERFACES} --interface ${BLUE_DEV}"
-fi
+# Conditionally add the GREEN/BLUE interface
+for intf in GREEN_DEV BLUE_DEV; do
+	if [ -n "${!intf}" ]; then
+		ARGS+=( "--interface" "${!intf}" )
+	fi
+done
 
 case "$1" in
 	start)
 		boot_mesg "Starting wsdd daemon..."
-		loadproc -b -p "${PIDFILE}" /usr/bin/wsdd "${ARGS[@]}" ${INTERFACES}
+		loadproc -b -p "${PIDFILE}" /usr/bin/wsdd "${ARGS[@]}"
 		;;
 
 	stop)
