@@ -65,8 +65,13 @@ case "$1" in
 		statusproc /usr/bin/wsdd
 		;;
 
+	restart)
+		$0 stop
+		$0 start
+		;;
+
 	*)
-		echo "Usage: $0 (start|stop|status)"
+		echo "Usage: $0 (start|stop|status|restart)"
 		exit 1
 		;;
 esac
