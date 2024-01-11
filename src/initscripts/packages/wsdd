@@ -29,29 +29,29 @@ mkdir -p /var/run/wsdd
 
 PIDFILE="/var/run/wsdd.pid"
 
-ARGS=(
-	# Launch as non-privileged user
-	"--user" "wsdd:wsdd"
-
-	# Launch in chroot
-	"--chroot" "/var/run/wsdd"
-
-	# Only use IPv4
-	"--ipv4only"
-
-	# Configure the workgroup
-	"--workgroup" "$(testparm -s --parameter-name workgroup 2>/dev/null)"
-)
-
-# Conditionally add the GREEN/BLUE interface
-for intf in GREEN_DEV BLUE_DEV; do
-	if [ -n "${!intf}" ]; then
-		ARGS+=( "--interface" "${!intf}" )
-	fi
-done
-
 case "$1" in
 	start)
+		ARGS=(
+			# Launch as non-privileged user
+			"--user" "wsdd:wsdd"
+
+			# Launch in chroot
+			"--chroot" "/var/run/wsdd"
+
+			# Only use IPv4
+			"--ipv4only"
+
+			# Configure the workgroup
+			"--workgroup" "$(testparm -s --parameter-name workgroup 2>/dev/null)"
+		)
+
+		# Conditionally add the GREEN/BLUE interface
+		for intf in GREEN_DEV BLUE_DEV; do
+			if [ -n "${!intf}" ]; then
+				ARGS+=( "--interface" "${!intf}" )
+			fi
+		done
+
 		boot_mesg "Starting wsdd daemon..."
 		loadproc -b -p "${PIDFILE}" /usr/bin/wsdd "${ARGS[@]}"
 		;;
