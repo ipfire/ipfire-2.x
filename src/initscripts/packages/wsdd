@@ -52,12 +52,12 @@ case "$1" in
 		# Create chroot directory for wsdd
 		mkdir -p /var/run/wsdd
 
-		boot_mesg "Starting wsdd daemon..."
+		boot_mesg "Starting Web Service Discovery Host Daemon..."
 		loadproc -b -p "${PIDFILE}" /usr/bin/wsdd "${ARGS[@]}"
 		;;
 
 	stop)
-		boot_mesg "Stopping wsdd daemon..."
+		boot_mesg "Stopping Web Service Discovery Host Daemon..."
 		killproc -p "${PIDFILE}" /usr/bin/wsdd
 		;;
 
