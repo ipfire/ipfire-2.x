@@ -30,28 +30,31 @@ mkdir -p /var/run/wsdd
 PIDFILE="/var/run/wsdd.pid"
 
 INTERFACES="-i ${GREEN_DEV}"
-	if [ -n "${BLUE_DEV}" ]; then
-	        INTERFACES="${INTERFACES} -i ${BLUE_DEV}"
-	fi
+if [ -n "${BLUE_DEV}" ]; then
+        INTERFACES="${INTERFACES} -i ${BLUE_DEV}"
+fi
 WSDD_WORKGROUP="-w $(/usr/bin/testparm -s --parameter-name workgroup 2>/dev/null)"
 WSDD_USER="-u wsdd:wsdd"
 WSDD_CHROOT="-c /var/run/wsdd"
 
 case "$1" in
-        start)
-                boot_mesg "Starting wsdd daemon..."
-                loadproc -b -p "${PIDFILE}" /usr/bin/wsdd -4 ${WSDD_USER} ${INTERFACES} ${WSDD_WORKGROUP} ${WSDD_CHROOT}
-                ;;
-        stop)
-                boot_mesg "Stopping wsdd daemon..."
-                killproc -p "${PIDFILE}" /usr/bin/wsdd
-                ;;
-        status)
+	start)
+		boot_mesg "Starting wsdd daemon..."
+		loadproc -b -p "${PIDFILE}" /usr/bin/wsdd -4 ${WSDD_USER} ${INTERFACES} ${WSDD_WORKGROUP} ${WSDD_CHROOT}
+		;;
+
+	stop)
+		boot_mesg "Stopping wsdd daemon..."
+		killproc -p "${PIDFILE}" /usr/bin/wsdd
+		;;
+
+	status)
 		statusproc /usr/bin/wsdd
-                ;;
-        *)
-                echo "Usage: $0 (start|stop|status)"
-                exit 1
-                ;;
+		;;
+
+	*)
+		echo "Usage: $0 (start|stop|status)"
+		exit 1
+		;;
 esac
 
