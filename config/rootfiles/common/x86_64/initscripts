@@ -62,6 +62,7 @@ etc/rc.d/init.d/networking/red.up/30-ddns
 #etc/rc.d/init.d/networking/red.up/35-guardian
 etc/rc.d/init.d/networking/red.up/50-ipsec
 etc/rc.d/init.d/networking/red.up/50-ovpn
+etc/rc.d/init.d/networking/red.up/60-collectd
 etc/rc.d/init.d/networking/red.up/98-leds
 etc/rc.d/init.d/networking/red.up/99-beep
 etc/rc.d/init.d/networking/red.up/99-fireinfo

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+# Restart collectd because the ping plugin does not re-resolve "gateway"
+exec /etc/init.d/collectd restart
+
+exit 1
