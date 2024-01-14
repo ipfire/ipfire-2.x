@@ -9185,7 +9185,6 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/LEDS_TRIGGER_TTY
 #lib/modules/KVER-ipfire/build/include/config/LED_TRIGGER_PHY
 #lib/modules/KVER-ipfire/build/include/config/LEGACY_DIRECT_IO
-#lib/modules/KVER-ipfire/build/include/config/LEGACY_TIOCSTI
 #lib/modules/KVER-ipfire/build/include/config/LIB80211
 #lib/modules/KVER-ipfire/build/include/config/LIB80211_CRYPT_CCMP
 #lib/modules/KVER-ipfire/build/include/config/LIB80211_CRYPT_TKIP
