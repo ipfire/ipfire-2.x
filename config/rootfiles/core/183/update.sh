@@ -115,6 +115,10 @@ ldconfig
 # Apply local configuration to sshd_config
 /usr/local/bin/sshctrl
 
+# Fix permissions of /etc/sudoers.d/
+chmod -v 750 /etc/sudoers.d
+chmod -v 640 /etc/sudoers.d/*
+
 # Start services
 /etc/rc.d/init.d/apache start
 if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
