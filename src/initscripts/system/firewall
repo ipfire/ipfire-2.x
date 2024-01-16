@@ -25,6 +25,9 @@
 eval $(/usr/local/bin/readhash /var/ipfire/ppp/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/optionsfw/settings)
+if [ -r "/var/ipfire/tor/settings"  ]; then
+	eval $(/usr/local/bin/readhash /var/ipfire/tor/settings)
+fi
 IFACE=`/bin/cat /var/ipfire/red/iface 2> /dev/null | /usr/bin/tr -d '\012'`
 if [ -z $IFACE ]; then
 	IFACE="red0"
@@ -386,6 +389,11 @@ iptables_init() {
 
 	# run captivectrl
 	/usr/local/bin/captivectrl
+
+	# If a Tor relay is enabled apply firewall rules
+	if [ "${TOR_RELAY_ENABLED}" = "on" -a -n "${TOR_RELAY_PORT}" ]; then
+		/usr/local/bin/torctrl restart 1> /dev/null
+	fi
 
 	# POLICY CHAIN
 	iptables -N POLICYIN
