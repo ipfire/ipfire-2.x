@@ -1,4 +1,6 @@
 usr/sbin/lshw
+#usr/share/locale/ca/LC_MESSAGES/lshw.mo
+#usr/share/locale/es/LC_MESSAGES/lshw.mo
 #usr/share/locale/fr/LC_MESSAGES/lshw.mo
 #usr/share/lshw
 #usr/share/lshw/manuf.txt
