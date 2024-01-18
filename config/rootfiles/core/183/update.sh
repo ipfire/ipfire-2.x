@@ -128,6 +128,21 @@ if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/rc.d/init.d/ipsec start
 fi
 
+# Check apache rsa key and replace if it is too small
+KEYSIZE=$(openssl rsa -in /etc/httpd/server.key -text -noout | sed -n 's/Private-Key:\ (\(.*\)\ bit.*/\1/p')
+if [ $KEYSIZE \< 2048 ]; then
+	echo "Generating new HTTPS RSA server key (this will take a moment)..."
+	openssl genrsa -out /etc/httpd/server.key 4096 &>/dev/null
+	chmod 600 /etc/httpd/server.key
+	sed "s/HOSTNAME/`hostname -f`/" < /etc/certparams | \
+		openssl req -new -key /etc/httpd/server.key \
+			-out /etc/httpd/server.csr &>/dev/null
+	openssl x509 -req -days 999999 -sha256 \
+		-in /etc/httpd/server.csr \
+		-signkey /etc/httpd/server.key \
+		-out /etc/httpd/server.crt &>/dev/null
+fi
+
 # Rebuild initial ramdisks
 dracut --regenerate-all --force
 KVER="xxxKVERxxx"
