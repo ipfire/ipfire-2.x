@@ -1,6 +1,8 @@
 #!/bin/bash
 
 # Restart collectd because the ping plugin does not re-resolve "gateway"
-exec /etc/init.d/collectd restart
+if pgrep collectd &>/dev/null; then
+	exec /etc/init.d/collectd restart &>/dev/null
+fi
 
-exit 1
+exit 0
