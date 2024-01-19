@@ -5,3 +5,4 @@ srv/web/ipfire/cgi-bin/proxy.cgi
 srv/web/ipfire/cgi-bin/logs.cgi/firewalllog.dat
 usr/local/bin/backupiso
 var/ipfire/backup/bin/backup.pl
+var/ipfire/header.pl

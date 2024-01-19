@@ -94,6 +94,7 @@ extract_files
 # Remove files
 rm -rvf \
 	/etc/fonts/conf.d/10-sub-pixel-rgb.conf \
+	/srv/web/ipfire/html/themes/ipfire/images \
 	/usr/lib/libbind9-9.16.44.so \
 	/usr/lib/libdns-9.16.44.so \
 	/usr/lib/libirs-9.16.44.so \
