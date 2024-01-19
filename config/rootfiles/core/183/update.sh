@@ -119,15 +119,6 @@ ldconfig
 chmod -v 750 /etc/sudoers.d
 chmod -v 640 /etc/sudoers.d/*
 
-# Start services
-/etc/rc.d/init.d/apache start
-if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
-	/etc/init.d/sshd start
-fi
-if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
-	/etc/rc.d/init.d/ipsec start
-fi
-
 # Check apache rsa key and replace if it is too small
 KEYSIZE=$(openssl rsa -in /etc/httpd/server.key -text -noout | sed -n 's/Private-Key:\ (\(.*\)\ bit.*/\1/p')
 if [ $KEYSIZE \< 2048 ]; then
@@ -142,6 +133,16 @@ if [ $KEYSIZE \< 2048 ]; then
 		-signkey /etc/httpd/server.key \
 		-out /etc/httpd/server.crt &>/dev/null
 fi
+
+# Start services
+/etc/rc.d/init.d/apache start
+if grep -q "ENABLE_SSH=on" /var/ipfire/remote/settings; then
+	/etc/init.d/sshd start
+fi
+if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
+	/etc/rc.d/init.d/ipsec start
+fi
+
 
 # Rebuild initial ramdisks
 dracut --regenerate-all --force
