@@ -173,9 +173,9 @@ print <<END;
 <!-- Table of networks -->
 <table class='tbl' style='width:80%;'>
   <tr>
-        <th style='background-color:$color{'color20'};'>$Lang::tr{'network'}</th>
-        <th style='background-color:$color{'color20'};'>$Lang::tr{'ip address'}</th>
-        <th style='background-color:$color{'color20'};'>$Lang::tr{'status'}</th>
+        <th>$Lang::tr{'network'}</th>
+        <th>$Lang::tr{'ip address'}</th>
+        <th>$Lang::tr{'status'}</th>
   </tr>
   <tr>
         <td style='width:25%; text-align:center; background-color:$Header::colourred;'><a href='/cgi-bin/pppsetup.cgi' style='color:white;'><b>$Lang::tr{'internet'}</b></a><br/></td>
