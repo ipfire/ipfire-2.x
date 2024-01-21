@@ -84,10 +84,10 @@ srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 srv/web/ipfire/cgi-bin/wakeonlan.cgi
 srv/web/ipfire/cgi-bin/webaccess.cgi
-srv/web/ipfire/cgi-bin/wireless.cgi
-srv/web/ipfire/cgi-bin/wirelessclient.cgi
 #srv/web/ipfire/cgi-bin/wio.cgi
 #srv/web/ipfire/cgi-bin/wiographs.cgi
+srv/web/ipfire/cgi-bin/wireless.cgi
+srv/web/ipfire/cgi-bin/wirelessclient.cgi
 srv/web/ipfire/cgi-bin/wlanap.cgi
 srv/web/ipfire/cgi-bin/zoneconf.cgi
 #srv/web/ipfire/html
@@ -324,13 +324,13 @@ srv/web/ipfire/html/images/wio/mailredon.png
 srv/web/ipfire/html/images/wio/no_graph.png
 srv/web/ipfire/html/images/wio/none.png
 srv/web/ipfire/html/images/wio/orange.png
-srv/web/ipfire/html/images/wio/ovpnn2n.png
 srv/web/ipfire/html/images/wio/ovpn.png
+srv/web/ipfire/html/images/wio/ovpnn2n.png
 srv/web/ipfire/html/images/wio/ovpnrw.png
 srv/web/ipfire/html/images/wio/red.png
 srv/web/ipfire/html/images/wio/refresh.png
-srv/web/ipfire/html/images/wio/vpnn2n.png
 srv/web/ipfire/html/images/wio/vpn.png
+srv/web/ipfire/html/images/wio/vpnn2n.png
 srv/web/ipfire/html/images/wio/vpnrw.png
 srv/web/ipfire/html/images/wio/white.png
 srv/web/ipfire/html/include
@@ -348,6 +348,7 @@ srv/web/ipfire/html/themes/ipfire/include
 srv/web/ipfire/html/themes/ipfire/include/colors.txt
 srv/web/ipfire/html/themes/ipfire/include/css
 srv/web/ipfire/html/themes/ipfire/include/css/style.css
+#srv/web/ipfire/html/themes/ipfire/include/fonts
 srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Bold.ttf
 srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Medium.ttf
 srv/web/ipfire/html/themes/ipfire/include/fonts/Prompt-Regular.ttf
