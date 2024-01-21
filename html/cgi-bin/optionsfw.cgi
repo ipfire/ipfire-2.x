@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -226,6 +226,29 @@ END
 
 <table width='95%' cellspacing='0'>
 	<tr bgcolor='$color{'color20'}'>
+		<td colspan='2' align='left'><b>$Lang::tr{'fw red'}</b></td>
+	</tr>
+	<tr>
+		<td align='left' width='60%'>$Lang::tr{'drop hostile'}</td>
+		<td align='left'>
+			$Lang::tr{'on'} <input type='radio' name='DROPHOSTILE' value='on' $checked{'DROPHOSTILE'}{'on'} />/
+			<input type='radio' name='DROPHOSTILE' value='off' $checked{'DROPHOSTILE'}{'off'} /> $Lang::tr{'off'}
+		</td>
+	</tr>
+</table>
+<br>
+
+<table width='95%' cellspacing='0'>
+<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw blue'}</b></td></tr>
+<tr><td align='left' width='60%'>$Lang::tr{'drop proxy'}</td><td align='left'>$Lang::tr{'on'} <input type='radio' name='DROPPROXY' value='on' $checked{'DROPPROXY'}{'on'} />/
+																						<input type='radio' name='DROPPROXY' value='off' $checked{'DROPPROXY'}{'off'} /> $Lang::tr{'off'}</td></tr>
+<tr><td align='left' width='60%'>$Lang::tr{'drop samba'}</td><td align='left'>$Lang::tr{'on'} <input type='radio' name='DROPSAMBA' value='on' $checked{'DROPSAMBA'}{'on'} />/
+																						<input type='radio' name='DROPSAMBA' value='off' $checked{'DROPSAMBA'}{'off'} /> $Lang::tr{'off'}</td></tr>
+</table>
+<br>
+
+<table width='95%' cellspacing='0'>
+	<tr bgcolor='$color{'color20'}'>
 		<td colspan='2' align='left'><b>$Lang::tr{'fw logging'}</b></td>
 	</tr>
 	<tr>
@@ -308,28 +331,6 @@ END
 </table>
 <br/>
 
-<table width='95%' cellspacing='0'>
-	<tr bgcolor='$color{'color20'}'>
-		<td colspan='2' align='left'><b>$Lang::tr{'fw red'}</b></td>
-	</tr>
-	<tr>
-		<td align='left' width='60%'>$Lang::tr{'drop hostile'}</td>
-		<td align='left'>
-			$Lang::tr{'on'} <input type='radio' name='DROPHOSTILE' value='on' $checked{'DROPHOSTILE'}{'on'} />/
-			<input type='radio' name='DROPHOSTILE' value='off' $checked{'DROPHOSTILE'}{'off'} /> $Lang::tr{'off'}
-		</td>
-	</tr>
-</table>
-<br>
-
-<table width='95%' cellspacing='0'>
-<tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw blue'}</b></td></tr>
-<tr><td align='left' width='60%'>$Lang::tr{'drop proxy'}</td><td align='left'>$Lang::tr{'on'} <input type='radio' name='DROPPROXY' value='on' $checked{'DROPPROXY'}{'on'} />/
-																						<input type='radio' name='DROPPROXY' value='off' $checked{'DROPPROXY'}{'off'} /> $Lang::tr{'off'}</td></tr>
-<tr><td align='left' width='60%'>$Lang::tr{'drop samba'}</td><td align='left'>$Lang::tr{'on'} <input type='radio' name='DROPSAMBA' value='on' $checked{'DROPSAMBA'}{'on'} />/
-																						<input type='radio' name='DROPSAMBA' value='off' $checked{'DROPSAMBA'}{'off'} /> $Lang::tr{'off'}</td></tr>
-</table>
-<br>
 <table width='95%' cellspacing='0'>
 <tr bgcolor='$color{'color20'}'><td colspan='2' align='left'><b>$Lang::tr{'fw settings'}</b></td></tr>
 <tr><td align='left' width='60%'>$Lang::tr{'fw settings color'}</td><td align='left'>$Lang::tr{'on'} <input type='radio' name='SHOWCOLORS' value='on' $checked{'SHOWCOLORS'}{'on'} />/
