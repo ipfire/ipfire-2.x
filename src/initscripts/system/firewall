@@ -179,9 +179,18 @@ iptables_init() {
 	iptables -A FORWARD -j HOSTILE
 	iptables -A OUTPUT -j HOSTILE
 
-	iptables -N HOSTILE_DROP
-	iptables -A HOSTILE_DROP -m limit --limit 10/second -j LOG --log-prefix "DROP_HOSTILE "
-	iptables -A HOSTILE_DROP -j DROP -m comment --comment "DROP_HOSTILE"
+	iptables -N HOSTILE_DROP_IN
+	if [ "$LOGDROPHOSTILEIN" == "on" ]; then
+		iptables -A HOSTILE_DROP_IN -m limit --limit 10/second -j LOG --log-prefix "DROP_HOSTILE "
+	fi
+	iptables -A HOSTILE_DROP_IN -j DROP -m comment --comment "DROP_HOSTILE"
+
+	iptables -N HOSTILE_DROP_OUT
+	if [ "$LOGDROPHOSTILEOUT" == "on" ]; then
+		iptables -A HOSTILE_DROP_OUT -m limit --limit 10/second -j LOG --log-prefix "DROP_HOSTILE "
+	fi
+	iptables -A HOSTILE_DROP_OUT -j DROP -m comment --comment "DROP_HOSTILE"
+
 
 	# IP Address Blocklist chains
 	iptables -N BLOCKLISTIN
