@@ -415,6 +415,7 @@ WARNING: translation string unused: host
 WARNING: translation string unused: host allow
 WARNING: translation string unused: host configuration
 WARNING: translation string unused: host deny
+WARNING: translation string unused: hostile networks
 WARNING: translation string unused: hostname and domain already in use
 WARNING: translation string unused: hour-graph
 WARNING: translation string unused: hours2
@@ -989,8 +990,12 @@ WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: hardware vulnerabilities = Hardware Vulnerabilities
+WARNING: untranslated string: hostile networks in = Hostile networks in
+WARNING: untranslated string: hostile networks out = Hostile networks out
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
+WARNING: untranslated string: log drop hostile in = Log dropped packets FROM hostile networks
+WARNING: untranslated string: log drop hostile out = Log dropped packets TO hostile networks
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: openvpn cert expires soon = Expires Soon
 WARNING: untranslated string: openvpn cert has expired = Expired

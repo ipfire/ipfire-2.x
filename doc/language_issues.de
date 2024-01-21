@@ -375,6 +375,7 @@ WARNING: translation string unused: host
 WARNING: translation string unused: host allow
 WARNING: translation string unused: host configuration
 WARNING: translation string unused: host deny
+WARNING: translation string unused: hostile networks
 WARNING: translation string unused: hostname and domain already in use
 WARNING: translation string unused: hour-graph
 WARNING: translation string unused: hours2
@@ -923,12 +924,16 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
+WARNING: untranslated string: hostile networks in = Hostile networks in
+WARNING: untranslated string: hostile networks out = Hostile networks out
 WARNING: untranslated string: ids subscription code required = The selected ruleset requires a subscription code
 WARNING: untranslated string: invalid input for subscription code = Invalid input for subscription code
 WARNING: untranslated string: ipsec dns server address is invalid = Invalid DNS server IP address(es)
 WARNING: untranslated string: ipsec invalid ip address or fqdn for rw endpoint = Invalid IP address or FQDN for Host-to-Net Endpoint
 WARNING: untranslated string: ipsec roadwarrior endpoint = Host-to-Net Endpoint
 WARNING: untranslated string: link-layer encapsulation = Link-Layer Encapsulation
+WARNING: untranslated string: log drop hostile in = Log dropped packets FROM hostile networks
+WARNING: untranslated string: log drop hostile out = Log dropped packets TO hostile networks
 WARNING: untranslated string: netbios nameserver daemon = NetBIOS Nameserver Daemon
 WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: optional = Optional

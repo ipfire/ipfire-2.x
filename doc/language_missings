@@ -58,6 +58,8 @@
 < extrahd because it it outside the allowed mount path
 < g.dtm
 < g.lite
+< hostile networks in
+< hostile networks out
 < ids automatic rules update
 < ids subscription code required
 < insert removable device
@@ -66,6 +68,8 @@
 < ipsec invalid ip address or fqdn for rw endpoint
 < ipsec roadwarrior endpoint
 < link-layer encapsulation
+< log drop hostile in
+< log drop hostile out
 < netbios nameserver daemon
 < no entries
 < notes
@@ -114,7 +118,11 @@
 < extrahd not configured
 < extrahd not mounted
 < hardware vulnerabilities
+< hostile networks in
+< hostile networks out
 < invalid ip or hostname
+< log drop hostile in
+< log drop hostile out
 < openvpn cert expires soon
 < openvpn cert has expired
 < reiserfs warning1
@@ -138,6 +146,10 @@
 < extrahd not mounted
 < g.dtm
 < g.lite
+< hostile networks in
+< hostile networks out
+< log drop hostile in
+< log drop hostile out
 < reiserfs warning1
 < reiserfs warning2
 < spec rstack overflow
@@ -361,7 +373,8 @@
 < guaranteed bandwidth
 < guardian
 < hardware vulnerabilities
-< hostile networks
+< hostile networks in
+< hostile networks out
 < ids add provider
 < ids adjust ruleset
 < ids apply
@@ -464,6 +477,8 @@
 < locationblock country name
 < locationblock enable feature
 < locationblock flag
+< log drop hostile in
+< log drop hostile out
 < log dropped conntrack invalids
 < log server protocol
 < masquerade blue
@@ -880,7 +895,8 @@
 < generate ptr
 < guardian
 < hardware vulnerabilities
-< hostile networks
+< hostile networks in
+< hostile networks out
 < ids add provider
 < ids adjust ruleset
 < ids apply
@@ -985,6 +1001,8 @@
 < locationblock country name
 < locationblock enable feature
 < locationblock flag
+< log drop hostile in
+< log drop hostile out
 < log dropped conntrack invalids
 < log server protocol
 < masquerade blue
@@ -1704,7 +1722,8 @@
 < grouptype
 < guardian
 < hardware vulnerabilities
-< hostile networks
+< hostile networks in
+< hostile networks out
 < ids add provider
 < ids adjust ruleset
 < ids apply
@@ -1819,6 +1838,8 @@
 < locationblock country name
 < locationblock enable feature
 < locationblock flag
+< log drop hostile in
+< log drop hostile out
 < log dropped conntrack invalids
 < log server protocol
 < mac filter
@@ -2695,7 +2716,8 @@
 < grouptype
 < guardian
 < hardware vulnerabilities
-< hostile networks
+< hostile networks in
+< hostile networks out
 < hour-graph
 < ids add provider
 < ids adjust ruleset
@@ -2812,6 +2834,8 @@
 < locationblock country name
 < locationblock enable feature
 < locationblock flag
+< log drop hostile in
+< log drop hostile out
 < log dropped conntrack invalids
 < log server protocol
 < mac filter
@@ -3280,7 +3304,8 @@
 < fw red
 < generate ptr
 < hardware vulnerabilities
-< hostile networks
+< hostile networks in
+< hostile networks out
 < ids add provider
 < ids adjust ruleset
 < ids apply
@@ -3368,6 +3393,8 @@
 < legacy architecture warning
 < link-layer encapsulation
 < local ip address
+< log drop hostile in
+< log drop hostile out
 < log dropped conntrack invalids
 < meltdown
 < mitigated

@@ -402,6 +402,7 @@ WARNING: translation string unused: host
 WARNING: translation string unused: host allow
 WARNING: translation string unused: host configuration
 WARNING: translation string unused: host deny
+WARNING: translation string unused: hostile networks
 WARNING: translation string unused: hostname and domain already in use
 WARNING: translation string unused: hour-graph
 WARNING: translation string unused: hours2
@@ -947,6 +948,10 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
+WARNING: untranslated string: hostile networks in = Hostile networks in
+WARNING: untranslated string: hostile networks out = Hostile networks out
+WARNING: untranslated string: log drop hostile in = Log dropped packets FROM hostile networks
+WARNING: untranslated string: log drop hostile out = Log dropped packets TO hostile networks
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: reiserfs warning1 = Reiserfs is deprecated and scheduled to be removed from the kernel in 2025.
 WARNING: untranslated string: reiserfs warning2 = Ensure a fresh installation is made using either ext4 or xfs filesystems before that date.
