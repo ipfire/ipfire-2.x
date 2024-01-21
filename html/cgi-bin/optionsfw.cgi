@@ -94,6 +94,12 @@ if (!$settings{'DROPSPOOFEDMARTIAN'}) {
 if (!$settings{'DROPHOSTILE'}) {
 	$settings{'DROPHOSTILE'} = 'off';
 }
+if (!$settings{'LOGDROPHOSTILEIN'}) {
+	$settings{'LOGDROPHOSTILEIN'} = 'on';
+}
+if (!$settings{'LOGDROPHOSTILEOUT'}) {
+	$settings{'LOGDROPHOSTILEOUT'} = 'on';
+}
 if (!$settings{'LOGDROPCTINVALID'}) {
 	$settings{'LOGDROPCTINVALID'} = 'on';
 }
@@ -125,6 +131,12 @@ $checked{'DROPSPOOFEDMARTIAN'}{$settings{'DROPSPOOFEDMARTIAN'}} = "checked='chec
 $checked{'DROPHOSTILE'}{'off'} = '';
 $checked{'DROPHOSTILE'}{'on'} = '';
 $checked{'DROPHOSTILE'}{$settings{'DROPHOSTILE'}} = "checked='checked'";
+$checked{'LOGDROPHOSTILEIN'}{'off'} = '';
+$checked{'LOGDROPHOSTILEIN'}{'on'} = '';
+$checked{'LOGDROPHOSTILEIN'}{$settings{'LOGDROPHOSTILEIN'}} = "checked='checked'";
+$checked{'LOGDROPHOSTILEOUT'}{'off'} = '';
+$checked{'LOGDROPHOSTILEOUT'}{'on'} = '';
+$checked{'LOGDROPHOSTILEOUT'}{$settings{'LOGDROPHOSTILEOUT'}} = "checked='checked'";
 $checked{'LOGDROPCTINVALID'}{'off'} = '';
 $checked{'LOGDROPCTINVALID'}{'on'} = '';
 $checked{'LOGDROPCTINVALID'}{$settings{'LOGDROPCTINVALID'}} = "checked='checked'";
@@ -277,6 +289,20 @@ END
 		<td align='left'>
 			$Lang::tr{'on'} <input type='radio' name='DROPSPOOFEDMARTIAN' value='on' $checked{'DROPSPOOFEDMARTIAN'}{'on'} />/
 			<input type='radio' name='DROPSPOOFEDMARTIAN' value='off' $checked{'DROPSPOOFEDMARTIAN'}{'off'} /> $Lang::tr{'off'}
+		</td>
+	</tr>
+	<tr>
+		<td align='left' width='60%'>$Lang::tr{'log drop hostile in'}</td>
+		<td align='left'>
+			$Lang::tr{'on'} <input type='radio' name='LOGDROPHOSTILEIN' value='on' $checked{'LOGDROPHOSTILEIN'}{'on'} />/
+			<input type='radio' name='LOGDROPHOSTILEIN' value='off' $checked{'LOGDROPHOSTILEIN'}{'off'} /> $Lang::tr{'off'}
+		</td>
+	</tr>
+	<tr>
+		<td align='left' width='60%'>$Lang::tr{'log drop hostile out'}</td>
+		<td align='left'>
+			$Lang::tr{'on'} <input type='radio' name='LOGDROPHOSTILEOUT' value='on' $checked{'LOGDROPHOSTILEOUT'}{'on'} />/
+			<input type='radio' name='LOGDROPHOSTILEOUT' value='off' $checked{'LOGDROPHOSTILEOUT'}{'off'} /> $Lang::tr{'off'}
 		</td>
 	</tr>
 </table>
