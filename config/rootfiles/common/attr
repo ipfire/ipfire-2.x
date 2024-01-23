@@ -1,7 +1,6 @@
 usr/bin/attr
 usr/bin/getfattr
 usr/bin/setfattr
-#usr/etc
 #usr/etc/xattr.conf
 #usr/include/attr
 #usr/include/attr/attributes.h
@@ -11,13 +10,12 @@ usr/bin/setfattr
 #usr/lib/libattr.la
 #usr/lib/libattr.so
 usr/lib/libattr.so.1
-usr/lib/libattr.so.1.1.2501
+usr/lib/libattr.so.1.1.2502
 #usr/lib/pkgconfig/libattr.pc
 #usr/share/doc/attr
 #usr/share/doc/attr/CHANGES
 #usr/share/doc/attr/COPYING
 #usr/share/doc/attr/COPYING.LGPL
-#usr/share/doc/attr/PORTING
 #usr/share/locale/cs/LC_MESSAGES/attr.mo
 #usr/share/locale/de/LC_MESSAGES/attr.mo
 #usr/share/locale/en@boldquot
@@ -29,6 +27,7 @@ usr/lib/libattr.so.1.1.2501
 #usr/share/locale/es/LC_MESSAGES/attr.mo
 #usr/share/locale/fr/LC_MESSAGES/attr.mo
 #usr/share/locale/gl/LC_MESSAGES/attr.mo
+#usr/share/locale/ka/LC_MESSAGES/attr.mo
 #usr/share/locale/nl/LC_MESSAGES/attr.mo
 #usr/share/locale/pl/LC_MESSAGES/attr.mo
 #usr/share/locale/sv/LC_MESSAGES/attr.mo
