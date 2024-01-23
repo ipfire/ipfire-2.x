@@ -1,0 +1,11 @@
+--- Linux-PAM-1.6.0/libpam/pam_handlers.c.orig	2024-01-17 11:29:36.000000000 +0100
++++ Linux-PAM-1.6.0/libpam/pam_handlers.c	2024-01-22 16:02:45.546376172 +0100
+@@ -500,7 +500,7 @@
+ 
+ 		if (pamh->confdir == NULL
+ 		    && (f = fopen(PAM_CONFIG,"r")) != NULL) {
+-		    retval = _pam_parse_conf_file(pamh, f, NULL, PAM_T_ANY, 0, 1);
++		    retval = _pam_parse_conf_file(pamh, f, NULL, PAM_T_ANY, 0, 0, 1);
+ 		    fclose(f);
+ 		} else
+ #endif /* PAM_READ_BOTH_CONFS */
