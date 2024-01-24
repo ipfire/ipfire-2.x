@@ -1648,6 +1648,7 @@ buildipfire() {
   lfsmake2 dnsdist
   lfsmake2 bird
   lfsmake2 libyang
+  lfsmake2 abseil-cpp
   lfsmake2 protobuf
   lfsmake2 protobuf-c
   lfsmake2 frr
