@@ -1,7 +1,10 @@
 etc/rc.d/init.d/frr
 usr/bin/vtysh
 #usr/include/frr
+#usr/include/frr/admin_group.h
+#usr/include/frr/affinitymap.h
 #usr/include/frr/agg_table.h
+#usr/include/frr/asn.h
 #usr/include/frr/assert.h
 #usr/include/frr/atomlist.h
 #usr/include/frr/base64.h
@@ -17,6 +20,7 @@ usr/bin/vtysh
 #usr/include/frr/compiler.h
 #usr/include/frr/cspf.h
 #usr/include/frr/csv.h
+#usr/include/frr/darr.h
 #usr/include/frr/db.h
 #usr/include/frr/debug.h
 #usr/include/frr/defaults.h
@@ -27,14 +31,15 @@ usr/bin/vtysh
 #usr/include/frr/eigrpd/eigrpd.h
 #usr/include/frr/ferr.h
 #usr/include/frr/filter.h
+#usr/include/frr/flex_algo.h
 #usr/include/frr/freebsd-queue.h
 #usr/include/frr/frr_pthread.h
 #usr/include/frr/frratomic.h
 #usr/include/frr/frrcu.h
+#usr/include/frr/frrevent.h
 #usr/include/frr/frrlua.h
 #usr/include/frr/frrscript.h
 #usr/include/frr/frrstr.h
-#usr/include/frr/getopt.h
 #usr/include/frr/graph.h
 #usr/include/frr/hash.h
 #usr/include/frr/hook.h
@@ -44,6 +49,7 @@ usr/bin/vtysh
 #usr/include/frr/if_rmap.h
 #usr/include/frr/imsg.h
 #usr/include/frr/ipaddr.h
+#usr/include/frr/iso.h
 #usr/include/frr/jhash.h
 #usr/include/frr/json.h
 #usr/include/frr/keychain.h
@@ -59,6 +65,13 @@ usr/bin/vtysh
 #usr/include/frr/log_vty.h
 #usr/include/frr/md5.h
 #usr/include/frr/memory.h
+#usr/include/frr/mgmt.pb-c.h
+#usr/include/frr/mgmt_be_client.h
+#usr/include/frr/mgmt_fe_client.h
+#usr/include/frr/mgmt_msg.h
+#usr/include/frr/mgmt_pb.h
+#usr/include/frr/mgmtd
+#usr/include/frr/mgmtd/mgmt_defines.h
 #usr/include/frr/mlag.h
 #usr/include/frr/module.h
 #usr/include/frr/monotime.h
@@ -101,6 +114,7 @@ usr/bin/vtysh
 #usr/include/frr/routemap.h
 #usr/include/frr/routing_nb.h
 #usr/include/frr/sbuf.h
+#usr/include/frr/segment_routing.h
 #usr/include/frr/seqlock.h
 #usr/include/frr/sha256.h
 #usr/include/frr/sigevent.h
@@ -117,7 +131,6 @@ usr/bin/vtysh
 #usr/include/frr/table.h
 #usr/include/frr/tc.h
 #usr/include/frr/termtable.h
-#usr/include/frr/thread.h
 #usr/include/frr/trace.h
 #usr/include/frr/typerb.h
 #usr/include/frr/typesafe.h
@@ -154,10 +167,18 @@ usr/bin/vtysh
 #usr/lib/libfrr.so
 usr/lib/libfrr.so.0
 usr/lib/libfrr.so.0.0.0
+#usr/lib/libfrr_pb.la
+#usr/lib/libfrr_pb.so
+usr/lib/libfrr_pb.so.0
+usr/lib/libfrr_pb.so.0.0.0
 #usr/lib/libfrrcares.la
 #usr/lib/libfrrcares.so
 usr/lib/libfrrcares.so.0
 usr/lib/libfrrcares.so.0.0.0
+#usr/lib/libmgmt_be_nb.la
+#usr/lib/libmgmt_be_nb.so
+usr/lib/libmgmt_be_nb.so.0
+usr/lib/libmgmt_be_nb.so.0.0.0
 usr/sbin/bgpd
 usr/sbin/fabricd
 usr/sbin/frr
@@ -167,6 +188,7 @@ usr/sbin/frr_babeltrace.py
 usr/sbin/frrcommon.sh
 usr/sbin/frrinit.sh
 usr/sbin/generate_support_bundle.py
+usr/sbin/mgmtd
 usr/sbin/ospfd
 usr/sbin/pathd
 usr/sbin/pim6d
@@ -176,6 +198,7 @@ usr/sbin/vrrpd
 usr/sbin/watchfrr
 usr/sbin/watchfrr.sh
 usr/sbin/zebra
+#usr/share/yang/frr-affinity-map.yang
 #usr/share/yang/frr-bgp-bmp.yang
 #usr/share/yang/frr-bgp-common-multiprotocol.yang
 #usr/share/yang/frr-bgp-common-structure.yang
@@ -189,6 +212,7 @@ usr/sbin/zebra
 #usr/share/yang/frr-bgp.yang
 #usr/share/yang/frr-deviations-bgp-datacenter.yang
 #usr/share/yang/frr-filter.yang
+#usr/share/yang/frr-if-rmap.yang
 #usr/share/yang/frr-interface.yang
 #usr/share/yang/frr-module-translator.yang
 #usr/share/yang/frr-nexthop.yang
