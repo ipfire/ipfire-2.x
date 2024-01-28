@@ -32,7 +32,7 @@ THISAPP    = mpfire-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpfire
-PAK_VER    = 15
+PAK_VER    = 16
 
 DEPS       = mpd mpc
 
