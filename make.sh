@@ -1597,6 +1597,7 @@ buildipfire() {
   lfsmake2 python3-msgpack
   lfsmake2 python3-hatchling
   lfsmake2 python3-hatch-vcs
+  lfsmake2 python3-hatch-fancy-pypi-readme
   lfsmake2 python3-attrs
   lfsmake2 python3-sniffio
   lfsmake2 python3-sortedcontainers
