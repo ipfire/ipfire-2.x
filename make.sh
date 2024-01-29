@@ -1595,6 +1595,7 @@ buildipfire() {
   lfsmake2 python3-terminaltables
   lfsmake2 python3-pkgconfig
   lfsmake2 python3-msgpack
+  lfsmake2 python3-editables
   lfsmake2 python3-hatchling
   lfsmake2 python3-hatch-vcs
   lfsmake2 python3-hatch-fancy-pypi-readme
@@ -1651,9 +1652,6 @@ buildipfire() {
   lfsmake2 dnsdist
   lfsmake2 bird
   lfsmake2 libyang
-  lfsmake2 abseil-cpp
-  lfsmake2 protobuf
-  lfsmake2 protobuf-c
   lfsmake2 frr
   lfsmake2 dmidecode
   lfsmake2 mcelog
