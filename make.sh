@@ -1598,6 +1598,7 @@ buildipfire() {
   lfsmake2 python3-editables
   lfsmake2 python3-pathspec
   lfsmake2 python3-pluggy
+  lfsmake2 python3-calver
   lfsmake2 python3-trove-classifiers
   lfsmake2 python3-hatchling
   lfsmake2 python3-hatch-vcs
