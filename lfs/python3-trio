@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.22.0
+VER        = 0.23.1
 SUMMARY    = async/await-native I/O library for Python
 
 THISAPP    = trio-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-trio
-PAK_VER    = 3
+PAK_VER    = 4
 
 DEPS       = python3-async_generator python3-attrs python3-sniffio python3-sortedcontainers python3-outcome python3-idna python3-exceptiongroup
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = b76f49c45788d41cbeded573e54d88e525cb2ad80b05da4c61f6c5100bdc85271f26a0c3aee07ca858214092106d217a2176d60744892c768bbc8ecad9383190
+$(DL_FILE)_BLAKE2 = e7c1aa2ec7ef7fa8c5940e66d6322df1abf3def9b1026509dcd1783f968cdb42332c293905887f2892619efed5abbc353c7d552d0ba34153e3a4715fbe4e403c
 
 install : $(TARGET)
 
