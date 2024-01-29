@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.1.1
+VER        = 1.2.0
 SUMMARY    = This is a backport of the BaseExceptionGroup and ExceptionGroup classes from Python 3.11.
 
 THISAPP    = exceptiongroup-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-exceptiongroup
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       =
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = c396d1e1ab15265e06d76d11e6cbbff5c4e52284f890d727aab65d0ab40fcd17e3db8827ba4bba6b34d13f66606ca34ac8bcc361dd4aecf9afe624d5001de327
+$(DL_FILE)_BLAKE2 = 4f3b5505c9c6e229eae52fda1e2dc957ada9e44eb8da8f2a8c62315ee93a1e2129005d0b4a1a7f3bbc2a1448e89929fdaf6ee59a40c8aefb44104c5e330d5ac9
 
 install : $(TARGET)
 
