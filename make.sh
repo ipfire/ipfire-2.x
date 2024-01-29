@@ -1595,6 +1595,7 @@ buildipfire() {
   lfsmake2 python3-terminaltables
   lfsmake2 python3-pkgconfig
   lfsmake2 python3-msgpack
+  lfsmake2 python3-hatchling
   lfsmake2 python3-attrs
   lfsmake2 python3-sniffio
   lfsmake2 python3-sortedcontainers
