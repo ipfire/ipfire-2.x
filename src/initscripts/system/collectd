@@ -146,9 +146,6 @@ case "$1" in
 			sed -i -e "s|^#LoadPlugin swap|LoadPlugin swap|g" /etc/collectd.conf
 		fi
 
-		# sync after config update...
-		sync
-
 		if [ $(date +%Y) -gt 2011 ]; then
 			boot_mesg "Starting Collection daemon..."
 			/usr/sbin/collectd -C /etc/collectd.conf
