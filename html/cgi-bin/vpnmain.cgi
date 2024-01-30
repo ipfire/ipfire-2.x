@@ -229,13 +229,14 @@ sub callssl ($) {
 	my $opt = shift;
 	my $retssl = `/usr/bin/openssl $opt 2>&1`; #redirect stderr
 	my $ret = '';
-	foreach my $line (split (/\n/, $retssl)) {
-		&General::log("ipsec", "$line") if (0); # 1 for verbose logging
-		$ret .= '<br>'.$line if ( $line =~ /error|unknown/ );
+
+	if ($?) {
+		foreach my $line (split (/\n/, $retssl)) {
+			&General::log("ipsec", "$line") if (0); # 1 for verbose logging
+			$ret .= '<br>' . &Header::escape($line);
+		}
 	}
-	if ($ret) {
-		$ret= &Header::cleanhtml($ret);
-	}
+
 	return $ret ? "$Lang::tr{'openssl produced an error'}: $ret" : '' ;
 }
 ###
