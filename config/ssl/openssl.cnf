@@ -23,6 +23,7 @@ default_md	= sha256
 preserve	= no
 policy		= policy_match
 email_in_dn	= no
+copy_extensions = copyall
 
 [ policy_match ]
 countryName		= optional

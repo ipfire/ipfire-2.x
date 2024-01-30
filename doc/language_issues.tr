@@ -1129,6 +1129,7 @@ WARNING: untranslated string: ptr = PTR
 WARNING: untranslated string: reboot fsck = Reboot & run &lsquo;fsck&rsquo;
 WARNING: untranslated string: rebooting ipfire fsck = Rebooting IPFire, forcing filesystem check
 WARNING: untranslated string: received = Received
+WARNING: untranslated string: regenerate host certificate = Renew Host Certificate
 WARNING: untranslated string: reiserfs warning1 = Reiserfs is deprecated and scheduled to be removed from the kernel in 2025.
 WARNING: untranslated string: reiserfs warning2 = Ensure a fresh installation is made using either ext4 or xfs filesystems before that date.
 WARNING: untranslated string: release = Release

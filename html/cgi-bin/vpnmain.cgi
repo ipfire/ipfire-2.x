@@ -866,6 +866,12 @@ END
 		exit(0);
 	}
 ###
+### Regenerate the host certificate
+###
+} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'regenerate host certificate'}) {
+	$errormessage = &regenerate_host_certificate();
+
+###
 ### Form for generating/importing the caroot+host certificate
 ###
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'generate root/host certificates'} ||
@@ -3612,7 +3618,12 @@ END
 			<input type='hidden' name='ACTION' value="$Lang::tr{'download host certificate'}" />
 			</form>
 		</td>
-		<td width='4%' $col2>&nbsp;</td></tr>
+		<td width='4%' align='center' $col2>
+			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+				<input type='image' name='$Lang::tr{'regenerate host certificate'}' src='/images/reload.gif' alt='$Lang::tr{'regenerate host certificate'}' title='$Lang::tr{'regenerate host certificate'}' />
+				<input type='hidden' name='ACTION' value='$Lang::tr{'regenerate host certificate'}' />
+			</form>
+		</td></tr>
 END
 ;
 	} else {
@@ -3781,4 +3792,45 @@ sub make_subnets($$) {
 	}
 
 	return join(",", @cidr_nets);
+}
+
+sub regenerate_host_certificate() {
+	my $errormessage = "";
+
+	&General::log("ipsec", "Regenerating host certificate...");
+
+	# Create a CSR based on the existing certificate
+	my $opt = " x509 -x509toreq -copy_extensions copyall";
+	$opt .= " -signkey ${General::swroot}/certs/hostkey.pem";
+	$opt .= " -in ${General::swroot}/certs/hostcert.pem";
+	$opt .= " -out ${General::swroot}/certs/hostreq.pem";
+	$errormessage = &callssl($opt);
+
+	# Revoke the old certificate
+	if (!$errormessage) {
+		&General::log("ipsec", "Revoking the old host cert...");
+
+		my $opt = " ca -revoke ${General::swroot}/certs/hostcert.pem";
+		$errormessage = &callssl($opt);
+	}
+
+	# Sign the host certificate request
+	if (!$errormessage) {
+		&General::log("ipsec", "Self signing host cert...");
+
+		my $opt = " ca -md sha256 -days 825";
+		$opt .= " -batch -notext";
+		$opt .= " -in ${General::swroot}/certs/hostreq.pem";
+		$opt .= " -out ${General::swroot}/certs/hostcert.pem";
+		$errormessage = &callssl ($opt);
+
+		unlink ("${General::swroot}/certs/hostreq.pem"); #no more needed
+	}
+
+	# Reload the new certificate
+	if (!$errormessage) {
+		&General::system('/usr/local/bin/ipsecctrl', 'R');
+	}
+
+	return $errormessage;
 }
