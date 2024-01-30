@@ -2141,7 +2141,7 @@ END
 		&General::log("ipsec", "Creating a cert...");
 
 		if (open(STDIN, "-|")) {
-			my $opt = " req -nodes -rand /proc/interrupts:/proc/net/rt_cache";
+			my $opt = " req -nodes";
 			$opt .= " -newkey rsa:4096";
 			$opt .= " -keyout ${General::swroot}/certs/$cgiparams{'NAME'}key.pem";
 			$opt .= " -out ${General::swroot}/certs/$cgiparams{'NAME'}req.pem";
