@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/vnstat stop
 
 # Extract files
 extract_files
@@ -51,6 +52,7 @@ ldconfig
 /usr/local/bin/sshctrl
 
 # Start services
+/etc/init.d/vnstat start
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
