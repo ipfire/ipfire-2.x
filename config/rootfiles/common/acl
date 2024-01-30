@@ -7,13 +7,12 @@ usr/bin/setfacl
 #usr/lib/libacl.la
 usr/lib/libacl.so
 usr/lib/libacl.so.1
-usr/lib/libacl.so.1.1.2301
+usr/lib/libacl.so.1.1.2302
 #usr/lib/pkgconfig/libacl.pc
 #usr/share/doc/acl
 #usr/share/doc/acl/CHANGES
 #usr/share/doc/acl/COPYING
 #usr/share/doc/acl/COPYING.LGPL
-#usr/share/doc/acl/PORTING
 #usr/share/doc/acl/extensions.txt
 #usr/share/doc/acl/libacl.txt
 #usr/share/locale/de/LC_MESSAGES/acl.mo
@@ -22,6 +21,7 @@ usr/lib/libacl.so.1.1.2301
 #usr/share/locale/es/LC_MESSAGES/acl.mo
 #usr/share/locale/fr/LC_MESSAGES/acl.mo
 #usr/share/locale/gl/LC_MESSAGES/acl.mo
+#usr/share/locale/ka/LC_MESSAGES/acl.mo
 #usr/share/locale/pl/LC_MESSAGES/acl.mo
 #usr/share/locale/sv/LC_MESSAGES/acl.mo
 #usr/share/man/man1/chacl.1
