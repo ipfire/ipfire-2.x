@@ -113,6 +113,9 @@ ldconfig
 # Filesytem cleanup
 /usr/local/bin/filesystem-cleanup
 
+# Relaunch init
+telinit u
+
 # Apply local configuration to sshd_config
 /usr/local/bin/sshctrl
 
