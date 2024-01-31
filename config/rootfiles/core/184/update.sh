@@ -52,10 +52,11 @@ ldconfig
 /usr/local/bin/sshctrl
 
 # Start services
+telinit u
 /etc/init.d/vnstat start
 
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
