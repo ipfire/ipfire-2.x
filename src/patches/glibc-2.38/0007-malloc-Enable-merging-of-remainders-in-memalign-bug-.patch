@@ -1,7 +1,7 @@
 From 98c293c61f770b6b7a22f89a6ea81b711ecb1952 Mon Sep 17 00:00:00 2001
 From: Florian Weimer <fweimer@redhat.com>
 Date: Fri, 11 Aug 2023 11:18:17 +0200
-Subject: [PATCH 07/27] malloc: Enable merging of remainders in memalign (bug
+Subject: [PATCH 07/44] malloc: Enable merging of remainders in memalign (bug
  30723)
 
 Previously, calling _int_free from _int_memalign could put remainders

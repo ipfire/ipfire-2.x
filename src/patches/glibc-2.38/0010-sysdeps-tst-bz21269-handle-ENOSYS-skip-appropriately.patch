@@ -1,7 +1,7 @@
 From ad9b8399537670a990572c4b0c4da5411e3b68cf Mon Sep 17 00:00:00 2001
 From: Sam James <sam@gentoo.org>
 Date: Sat, 5 Aug 2023 00:04:33 +0100
-Subject: [PATCH 10/27] sysdeps: tst-bz21269: handle ENOSYS & skip
+Subject: [PATCH 10/44] sysdeps: tst-bz21269: handle ENOSYS & skip
  appropriately
 
 SYS_modify_ldt requires CONFIG_MODIFY_LDT_SYSCALL to be set in the kernel, which

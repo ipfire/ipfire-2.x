@@ -1,7 +1,7 @@
 From d97cca1e5df812be0e4de1e38091f02bb1e7ec4e Mon Sep 17 00:00:00 2001
 From: Florian Weimer <fweimer@redhat.com>
 Date: Tue, 1 Aug 2023 10:27:15 +0200
-Subject: [PATCH 01/27] stdlib: Improve tst-realpath compatibility with source
+Subject: [PATCH 01/44] stdlib: Improve tst-realpath compatibility with source
  fortification
 
 On GCC before 11, IPA can make the fortified realpath aware that the

@@ -1,7 +1,7 @@
 From c8ecda6251dd4a0dfe074e0a6011211cadeef742 Mon Sep 17 00:00:00 2001
 From: Sam James <sam@gentoo.org>
 Date: Fri, 4 Aug 2023 23:58:27 +0100
-Subject: [PATCH 09/27] sysdeps: tst-bz21269: fix test parameter
+Subject: [PATCH 09/44] sysdeps: tst-bz21269: fix test parameter
 
 All callers pass 1 or 0x11 anyway (same meaning according to man page),
 but still.

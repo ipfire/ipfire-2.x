@@ -1,7 +1,7 @@
 From 5ea70cc02626d9b85f1570153873d8648a47bf95 Mon Sep 17 00:00:00 2001
 From: Noah Goldstein <goldstein.w.n@gmail.com>
 Date: Thu, 10 Aug 2023 19:28:24 -0500
-Subject: [PATCH 04/27] x86: Fix incorrect scope of setting `shared_per_thread`
+Subject: [PATCH 04/44] x86: Fix incorrect scope of setting `shared_per_thread`
  [BZ# 30745]
 
 The:

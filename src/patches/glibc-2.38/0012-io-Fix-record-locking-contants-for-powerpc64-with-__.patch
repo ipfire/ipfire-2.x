@@ -1,7 +1,7 @@
 From 5bdef6f27c91f45505ed5444147be4ed0e9bc3c7 Mon Sep 17 00:00:00 2001
 From: Aurelien Jarno <aurelien@aurel32.net>
 Date: Mon, 28 Aug 2023 23:30:37 +0200
-Subject: [PATCH 12/27] io: Fix record locking contants for powerpc64 with
+Subject: [PATCH 12/44] io: Fix record locking contants for powerpc64 with
  __USE_FILE_OFFSET64
 
 Commit 5f828ff824e3b7cd1 ("io: Fix F_GETLK, F_SETLK, and F_SETLKW for
