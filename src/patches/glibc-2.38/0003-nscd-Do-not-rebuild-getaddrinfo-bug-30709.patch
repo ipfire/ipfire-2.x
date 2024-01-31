@@ -1,7 +1,7 @@
 From 6b99458d197ab779ebb6ff632c168e2cbfa4f543 Mon Sep 17 00:00:00 2001
 From: Florian Weimer <fweimer@redhat.com>
 Date: Fri, 11 Aug 2023 10:10:16 +0200
-Subject: [PATCH 03/27] nscd: Do not rebuild getaddrinfo (bug 30709)
+Subject: [PATCH 03/44] nscd: Do not rebuild getaddrinfo (bug 30709)
 
 The nscd daemon caches hosts data from NSS modules verbatim, without
 filtering protocol families or sorting them (otherwise separate caches

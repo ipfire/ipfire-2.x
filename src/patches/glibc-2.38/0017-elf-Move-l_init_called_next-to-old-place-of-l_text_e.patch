@@ -1,7 +1,7 @@
 From d3ba6c1333b10680ce5900a628108507d9d4b844 Mon Sep 17 00:00:00 2001
 From: Florian Weimer <fweimer@redhat.com>
 Date: Mon, 11 Sep 2023 09:17:52 +0200
-Subject: [PATCH 17/27] elf: Move l_init_called_next to old place of l_text_end
+Subject: [PATCH 17/44] elf: Move l_init_called_next to old place of l_text_end
  in link map
 
 This preserves all member offsets and the GLIBC_PRIVATE ABI

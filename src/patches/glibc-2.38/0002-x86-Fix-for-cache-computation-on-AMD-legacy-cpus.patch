@@ -1,7 +1,7 @@
 From ced101ed9d3b7cfd12d97ef24940cb00b8658c81 Mon Sep 17 00:00:00 2001
 From: Sajan Karumanchi <sajan.karumanchi@amd.com>
 Date: Tue, 1 Aug 2023 15:20:55 +0000
-Subject: [PATCH 02/27] x86: Fix for cache computation on AMD legacy cpus.
+Subject: [PATCH 02/44] x86: Fix for cache computation on AMD legacy cpus.
 
 Some legacy AMD CPUs and hypervisors have the _cpuid_ '0x8000_001D'
 set to Zero, thus resulting in zeroed-out computed cache values.

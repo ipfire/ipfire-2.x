@@ -1,7 +1,7 @@
 From 1aed90c9c8f8be9f68b58e96b6e4cd0fc08eb2b1 Mon Sep 17 00:00:00 2001
 From: Sam James <sam@gentoo.org>
 Date: Thu, 17 Aug 2023 09:30:29 +0100
-Subject: [PATCH 11/27] sysdeps: tst-bz21269: fix -Wreturn-type
+Subject: [PATCH 11/44] sysdeps: tst-bz21269: fix -Wreturn-type
 
 Thanks to Andreas Schwab for reporting.
 

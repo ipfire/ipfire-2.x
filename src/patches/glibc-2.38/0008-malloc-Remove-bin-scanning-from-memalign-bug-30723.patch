@@ -1,7 +1,7 @@
 From 2af141bda3cd407abd4bedf615f9e45fe79518e2 Mon Sep 17 00:00:00 2001
 From: Florian Weimer <fweimer@redhat.com>
 Date: Thu, 10 Aug 2023 19:36:56 +0200
-Subject: [PATCH 08/27] malloc: Remove bin scanning from memalign (bug 30723)
+Subject: [PATCH 08/44] malloc: Remove bin scanning from memalign (bug 30723)
 
 On the test workload (mpv --cache=yes with VP9 video decoding), the
 bin scanning has a very poor success rate (less than 2%).  The tcache

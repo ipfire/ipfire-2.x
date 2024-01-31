@@ -1,7 +1,7 @@
 From a3189f66a5f2fe86568286fa025fa153be04c6c0 Mon Sep 17 00:00:00 2001
 From: Florian Weimer <fweimer@redhat.com>
 Date: Fri, 8 Sep 2023 12:32:14 +0200
-Subject: [PATCH 15/27] elf: Always call destructors in reverse constructor
+Subject: [PATCH 15/44] elf: Always call destructors in reverse constructor
  order (bug 30785)
 
 The current implementation of dlclose (and process exit) re-sorts the

@@ -1,7 +1,7 @@
 From 92201f16cbcfd9eafe314ef6654be2ea7ba25675 Mon Sep 17 00:00:00 2001
 From: Adam Jackson <ajax@redhat.com>
 Date: Fri, 8 Sep 2023 15:55:19 -0400
-Subject: [PATCH 13/27] libio: Fix oversized __io_vtables
+Subject: [PATCH 13/44] libio: Fix oversized __io_vtables
 
 IO_VTABLES_LEN is the size of the struct array in bytes, not the number
 of __IO_jump_t's in the array. Drops just under 384kb from .rodata on

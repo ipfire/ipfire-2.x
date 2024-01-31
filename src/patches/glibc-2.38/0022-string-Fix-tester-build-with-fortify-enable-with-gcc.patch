@@ -1,7 +1,7 @@
 From d94461bb86ba176b9390c0015bb612a528e22d95 Mon Sep 17 00:00:00 2001
 From: Mahesh Bodapati <bmahi496@linux.ibm.com>
 Date: Fri, 11 Aug 2023 10:38:25 -0500
-Subject: [PATCH 22/27] string: Fix tester build with fortify enable with gcc <
+Subject: [PATCH 22/44] string: Fix tester build with fortify enable with gcc <
  12
 
 When building with fortify enabled, GCC < 12 issues a warning on the

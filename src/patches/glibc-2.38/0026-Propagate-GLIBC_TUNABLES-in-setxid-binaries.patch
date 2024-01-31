@@ -1,7 +1,7 @@
 From 73e3fcd1a552783e66ff1f65c5f322e2f17a81d1 Mon Sep 17 00:00:00 2001
 From: Siddhesh Poyarekar <siddhesh@sourceware.org>
 Date: Tue, 19 Sep 2023 13:25:40 -0400
-Subject: [PATCH 26/27] Propagate GLIBC_TUNABLES in setxid binaries
+Subject: [PATCH 26/44] Propagate GLIBC_TUNABLES in setxid binaries
 
 GLIBC_TUNABLES scrubbing happens earlier than envvar scrubbing and some
 tunables are required to propagate past setxid boundary, like their

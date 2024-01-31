@@ -1,7 +1,7 @@
 From 0e1ef6779a90bc0f8a05bc367796df2793deecaa Mon Sep 17 00:00:00 2001
 From: Mark Wielaard <mark@klomp.org>
 Date: Thu, 24 Aug 2023 21:36:34 +0200
-Subject: [PATCH 23/27] manual/jobs.texi: Add missing @item EPERM for getpgid
+Subject: [PATCH 23/44] manual/jobs.texi: Add missing @item EPERM for getpgid
 
 The missing @item makes it look like errno will be set to ESRCH
 if a cross-session getpgid is not permitted.
