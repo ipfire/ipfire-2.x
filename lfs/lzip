@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.23
+VER        = 1.24
 
 THISAPP    = lzip-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 934a35e31b0db76c4dcbe2fe903f04b60471485118aa5d4001599a3c23a7db74f05f703cf430bb299795be7025f71efb225afddff85c8245e962bdadcf82aef7
+$(DL_FILE)_BLAKE2 = ef6b7b51e7369b7b07ca2d5bbdd57a287f3a96866f50b327237a35ce9a4d19b2e3f7586a099ff4191c3c793de2dfe59120a42b8d744e220c4f7652d049df87f5
 
 install : $(TARGET)
 
@@ -75,7 +75,8 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && ./configure --prefix=$(PREFIX)
+	cd $(DIR_APP) && ./configure \
+				--prefix=$(PREFIX)
 	cd $(DIR_APP) && make $(MAKETUNING)
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
