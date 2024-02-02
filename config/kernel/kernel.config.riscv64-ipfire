@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/riscv 6.6.13-ipfire Kernel Configuration
+# Linux/riscv 6.6.15-ipfire Kernel Configuration
 #
 CONFIG_CC_VERSION_TEXT="gcc (GCC) 13.2.0"
 CONFIG_CC_IS_GCC=y
@@ -5820,8 +5820,6 @@ CONFIG_MMC_CQHCI=m
 # CONFIG_MMC_TOSHIBA_PCI is not set
 # CONFIG_MMC_MTK is not set
 CONFIG_MMC_SDHCI_XENON=m
-# CONFIG_MMC_SDHCI_OMAP is not set
-# CONFIG_MMC_SDHCI_AM654 is not set
 CONFIG_SCSI_UFSHCD=m
 CONFIG_SCSI_UFS_BSG=y
 CONFIG_SCSI_UFS_CRYPTO=y
