@@ -7263,6 +7263,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_2645198
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_2658417
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_2966298
+#lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_3117295
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_819472
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_824069
 #lib/modules/KVER-ipfire/build/include/config/ARM64_ERRATUM_826319
@@ -7294,6 +7295,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/ARM64_WORKAROUND_CLEAN_CACHE
 #lib/modules/KVER-ipfire/build/include/config/ARM64_WORKAROUND_REPEAT_TLBI
 #lib/modules/KVER-ipfire/build/include/config/ARM64_WORKAROUND_SPECULATIVE_AT
+#lib/modules/KVER-ipfire/build/include/config/ARM64_WORKAROUND_SPECULATIVE_UNPRIV_LOAD
 #lib/modules/KVER-ipfire/build/include/config/ARM64_WORKAROUND_TSB_FLUSH_FAILURE
 #lib/modules/KVER-ipfire/build/include/config/ARMADA_37XX_CLK
 #lib/modules/KVER-ipfire/build/include/config/ARMADA_37XX_WATCHDOG
