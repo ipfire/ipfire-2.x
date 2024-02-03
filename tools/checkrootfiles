@@ -33,31 +33,35 @@ if [ "${?}" == "0" ]; then
 	echo "Comment this and create it at initskript if needed !"
 fi
 
-grep -r '/x86_64' ./config/rootfiles/ --exclude gcc --exclude rust-libc \
+grep -r 'x86_64' ./config/rootfiles/ --exclude gcc --exclude rust-libc \
     --exclude rust-ppv-lite86 --exclude rust-memchr --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64 \
-    --exclude update.sh \
+    --exclude update.sh --exclude qemu --exclude cmake --exclude xfsprogs \
     --exclude-dir oldcore --exclude-dir x86_64 >/dev/null 2>&1
 if [ "${?}" == "0" ]; then
 	echo "Error! '/x86_64' in rootfiles files found!"
-	grep -r '/x86_64' ./config/rootfiles/ --exclude gcc --exclude rust-libc \
+	grep -r 'x86_64' ./config/rootfiles/ --exclude gcc --exclude rust-libc \
     --exclude rust-ppv-lite86 --exclude rust-memchr --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64  \
-    --exclude update.sh \
+    --exclude update.sh  --exclude qemu --exclude cmake --exclude xfsprogs \
     --exclude-dir oldcore --exclude-dir x86_64
 	echo "Replace by xxxMACHINExxx !"
 fi
 
-grep -r '/aarch64' ./config/rootfiles/ --exclude gcc --exclude rust-libc --exclude gdb --exclude liburcu --exclude gdb --exclude-dir oldcore --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64  >/dev/null 2>&1
+grep -r 'aarch64' ./config/rootfiles/ --exclude gcc --exclude rust-libc --exclude gdb --exclude liburcu --exclude gdb \
+     --exclude qemu --exclude liburcu --exclude abseil-cpp \
+     --exclude-dir oldcore --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64 >/dev/null 2>&1
 if [ "${?}" == "0" ]; then
-	echo "Error! '/aarch64' in rootfiles files found!"
-	grep -r '/aarch64' ./config/rootfiles/ --exclude gcc --exclude rust-libc \
+	echo "Error! 'aarch64' in rootfiles files found!"
+	grep -r 'aarch64' ./config/rootfiles/ --exclude gcc --exclude rust-libc --exclude gdb \
+    --exclude qemu --exclude liburcu --exclude abseil-cpp \
     --exclude-dir oldcore --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64
 	echo "Replace by xxxMACHINExxx !"
 fi
 
-grep -r '/riscv64' ./config/rootfiles/ --exclude gcc --exclude rust-libc --exclude gdb --exclude liburcu --exclude go --exclude-dir oldcore --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64  >/dev/null 2>&1
+grep -r 'riscv64' ./config/rootfiles/ --exclude gcc --exclude rust-libc --exclude gdb --exclude liburcu --exclude go --exclude qemu \
+     --exclude-dir oldcore --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64  >/dev/null 2>&1
 if [ "${?}" == "0" ]; then
-	echo "Error! '/riscv64' in rootfiles files found!"
-	grep -r '/riscv64' ./config/rootfiles/ --exclude gcc --exclude rust-libc --exclude go \
+	echo "Error! 'riscv64' in rootfiles files found!"
+	grep -r 'riscv64' ./config/rootfiles/ --exclude gcc --exclude rust-libc --exclude go --exclude qemu \
     --exclude-dir oldcore --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64
 	echo "Replace by xxxMACHINExxx !"
 fi
