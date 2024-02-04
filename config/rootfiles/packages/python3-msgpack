@@ -6,7 +6,7 @@ usr/lib/python3.10/site-packages/msgpack
 #usr/lib/python3.10/site-packages/msgpack-1.0.7-py3.10.egg-info/top_level.txt
 usr/lib/python3.10/site-packages/msgpack/__init__.py
 usr/lib/python3.10/site-packages/msgpack/_cmsgpack.cpp
-usr/lib/python3.10/site-packages/msgpack/_cmsgpack.cpython-310-x86_64-linux-gnu.so
+usr/lib/python3.10/site-packages/msgpack/_cmsgpack.cpython-310-xxxMACHINExxx-linux-gnu.so
 usr/lib/python3.10/site-packages/msgpack/_cmsgpack.pyx
 usr/lib/python3.10/site-packages/msgpack/_packer.pyx
 usr/lib/python3.10/site-packages/msgpack/_unpacker.pyx
