@@ -6,5 +6,5 @@ usr/lib/python3.10/site-packages/_pyfuse3.py
 #usr/lib/python3.10/site-packages/pyfuse3-3.3.0-py3.10.egg-info/requires.txt
 #usr/lib/python3.10/site-packages/pyfuse3-3.3.0-py3.10.egg-info/top_level.txt
 #usr/lib/python3.10/site-packages/pyfuse3-3.3.0-py3.10.egg-info/zip-safe
-usr/lib/python3.10/site-packages/pyfuse3.cpython-310-x86_64-linux-gnu.so
+usr/lib/python3.10/site-packages/pyfuse3.cpython-310-xxxMACHINExxx-linux-gnu.so
 usr/lib/python3.10/site-packages/pyfuse3_asyncio.py
