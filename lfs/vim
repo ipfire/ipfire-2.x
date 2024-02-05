@@ -32,6 +32,10 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/vim90
 TARGET     = $(DIR_INFO)/$(THISAPP)
 
+# vim tries to build itself with FORTIFY_SOURCE=1 and is not very good at
+# filtering out any CFLAGS that might change that. So we do this ourselves.
+CFLAGS    := $(filter-out -Wp$(COMMA)-U_FORTIFY_SOURCE,$(CFLAGS))
+
 ###############################################################################
 # Top-level Rules
 ###############################################################################
