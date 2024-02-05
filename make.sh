@@ -182,7 +182,7 @@ configure_build() {
 	TOOLS_DIR="/tools_${BUILD_ARCH}"
 
 	# Enables hardening
-	HARDENING_CFLAGS="-Wp,-D_FORTIFY_SOURCE=2 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -fstack-clash-protection"
+	HARDENING_CFLAGS="-Wp,-U_FORTIFY_SOURCE -Wp,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -fstack-clash-protection"
 
 	CFLAGS="-O2 -pipe -Wall -fexceptions -fPIC ${CFLAGS_ARCH}"
 	CXXFLAGS="${CFLAGS}"
