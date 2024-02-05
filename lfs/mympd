@@ -82,6 +82,10 @@ $(subst %,%_BLAKE2,$(objects)) :
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
+
+	# Do not try to re-define _FORTIFY_SOURCE
+	cd $(DIR_APP) && sed -e "/D_FORTIFY_SOURCE/d" -i CMakeLists.txt
+
 	cd $(DIR_APP) && mkdir -p build
 	cd $(DIR_APP)/build && cmake -Wno-dev \
 		-DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release ..
