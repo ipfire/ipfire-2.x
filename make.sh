@@ -184,7 +184,7 @@ configure_build() {
 	# Enables hardening
 	HARDENING_CFLAGS="-Wp,-U_FORTIFY_SOURCE -Wp,-D_FORTIFY_SOURCE=3 -Wp,-D_GLIBCXX_ASSERTIONS -fstack-protector-strong -fstack-clash-protection"
 
-	CFLAGS="-O2 -pipe -Wall -fexceptions -fPIC ${CFLAGS_ARCH}"
+	CFLAGS="-O2 -g0 -pipe -Wall -fexceptions -fPIC ${CFLAGS_ARCH}"
 	CXXFLAGS="${CFLAGS}"
 
 	RUSTFLAGS="-Copt-level=3 -Clink-arg=-Wl,-z,relro,-z,now -Ccodegen-units=1 --cap-lints=warn ${RUSTFLAGS_ARCH}"
