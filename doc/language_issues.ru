@@ -1212,6 +1212,7 @@ WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: hardware vulnerabilities = Hardware Vulnerabilities
 WARNING: untranslated string: hostile networks in = Hostile networks in
 WARNING: untranslated string: hostile networks out = Hostile networks out
+WARNING: untranslated string: hostile networks total = Hostile networks total
 WARNING: untranslated string: ids add provider = Add provider
 WARNING: untranslated string: ids adjust ruleset = Adjust rules and add user defined customizations...
 WARNING: untranslated string: ids apply = Apply

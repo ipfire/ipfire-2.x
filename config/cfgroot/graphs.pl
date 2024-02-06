@@ -695,6 +695,14 @@ sub updatefwhitsgraph {
 		"DEF:spoofedmartian=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-SPOOFED_MARTIAN/ipt_bytes-DROP_SPOOFED_MARTIAN.rrd:value:AVERAGE",
 		"DEF:hostilein=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-HOSTILE_DROP_IN/ipt_bytes-DROP_HOSTILE.rrd:value:AVERAGE",
 		"DEF:hostileout=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-HOSTILE_DROP_OUT/ipt_bytes-DROP_HOSTILE.rrd:value:AVERAGE",
+		"DEF:hostilelegacy=".$mainsettings{'RRDLOG'}."/collectd/localhost/iptables-filter-HOSTILE_DROP/ipt_bytes-DROP_HOSTILE.rrd:value:AVERAGE",
+
+		# This creates a new combined hostile segment.
+		# Previously we did not split into incoming/outgoing, but we cannot go back in time. This CDEF will take the values
+		# from the old RRD database unless those are UNKNOWN (i.e. we started collected IN/OUT). If the values are unknown,
+		# we replace them with them sum of IN + OUT.
+		"CDEF:hostile=hostilelegacy,UN,hostilein,hostileout,+,hostilelegacy,IF",
+
 		"COMMENT:".sprintf("%-26s",$Lang::tr{'caption'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'maximal'}),
 		"COMMENT:".sprintf("%15s",$Lang::tr{'average'}),
@@ -740,6 +748,11 @@ sub updatefwhitsgraph {
 		"GPRINT:hostileout:AVERAGE:%8.1lf %sBps",
 		"GPRINT:hostileout:MIN:%8.1lf %sBps",
 		"GPRINT:hostileout:LAST:%8.1lf %sBps\\j",
+		"LINE:hostile#000000A0:".sprintf("%-25s",$Lang::tr{'hostile networks total'}),
+		"GPRINT:hostile:MAX:%8.1lf %sBps",
+		"GPRINT:hostile:AVERAGE:%8.1lf %sBps",
+		"GPRINT:hostile:MIN:%8.1lf %sBps",
+		"GPRINT:hostile:LAST:%8.1lf %sBps\\j",
 		);
 		$ERROR = RRDs::error;
 		return "Error in RRD::graph for firewallhits: ".$ERROR."\n" if $ERROR;

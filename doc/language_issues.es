@@ -992,6 +992,7 @@ WARNING: untranslated string: guardian service = unknown string
 WARNING: untranslated string: hardware vulnerabilities = Hardware Vulnerabilities
 WARNING: untranslated string: hostile networks in = Hostile networks in
 WARNING: untranslated string: hostile networks out = Hostile networks out
+WARNING: untranslated string: hostile networks total = Hostile networks total
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: log drop hostile in = Log dropped packets FROM hostile networks

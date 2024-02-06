@@ -1411,6 +1411,7 @@
 'host to net vpn' => 'Host-to-Net Virtual Private Network (RoadWarrior)',
 'hostile networks in' => 'Hostile networks in',
 'hostile networks out' => 'Hostile networks out',
+'hostile networks total' => 'Hostile networks total',
 'hostname' => 'Hostname',
 'hostname and domain already in use' => 'Hostname and domain already in use.',
 'hostname cant be empty' => 'Hostname cannot be empty.',

@@ -60,6 +60,7 @@
 < g.lite
 < hostile networks in
 < hostile networks out
+< hostile networks total
 < ids automatic rules update
 < ids subscription code required
 < insert removable device
@@ -120,6 +121,7 @@
 < hardware vulnerabilities
 < hostile networks in
 < hostile networks out
+< hostile networks total
 < invalid ip or hostname
 < log drop hostile in
 < log drop hostile out
@@ -148,6 +150,7 @@
 < g.lite
 < hostile networks in
 < hostile networks out
+< hostile networks total
 < log drop hostile in
 < log drop hostile out
 < reiserfs warning1
@@ -375,6 +378,7 @@
 < hardware vulnerabilities
 < hostile networks in
 < hostile networks out
+< hostile networks total
 < ids add provider
 < ids adjust ruleset
 < ids apply
@@ -897,6 +901,7 @@
 < hardware vulnerabilities
 < hostile networks in
 < hostile networks out
+< hostile networks total
 < ids add provider
 < ids adjust ruleset
 < ids apply
@@ -1724,6 +1729,7 @@
 < hardware vulnerabilities
 < hostile networks in
 < hostile networks out
+< hostile networks total
 < ids add provider
 < ids adjust ruleset
 < ids apply
@@ -2718,6 +2724,7 @@
 < hardware vulnerabilities
 < hostile networks in
 < hostile networks out
+< hostile networks total
 < hour-graph
 < ids add provider
 < ids adjust ruleset
@@ -3306,6 +3313,7 @@
 < hardware vulnerabilities
 < hostile networks in
 < hostile networks out
+< hostile networks total
 < ids add provider
 < ids adjust ruleset
 < ids apply

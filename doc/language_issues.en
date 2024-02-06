@@ -1041,6 +1041,7 @@ WARNING: untranslated string: host ip = Host IP address
 WARNING: untranslated string: host to net vpn = Host-to-Net Virtual Private Network (RoadWarrior)
 WARNING: untranslated string: hostile networks in = Hostile networks in
 WARNING: untranslated string: hostile networks out = Hostile networks out
+WARNING: untranslated string: hostile networks total = Hostile networks total
 WARNING: untranslated string: hostname = Hostname
 WARNING: untranslated string: hostname cant be empty = Hostname cannot be empty.
 WARNING: untranslated string: hostname not set = Hostname not set.
