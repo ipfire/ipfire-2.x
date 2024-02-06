@@ -25,7 +25,7 @@
 include Config
 
 VER        = v2.0
-PXE_VER    = 1b67a05
+PXE_VER    = 0cc0f47
 
 THISAPP    = ipfire-netboot-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -44,7 +44,7 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 ipxe-$(PXE_VER).tar.gz = $(URL_IPFIRE)/ipxe-$(PXE_VER).tar.gz
 
 $(DL_FILE)_BLAKE2 = 5f66932b7be228f5a246b92352e31c99d4f4e8666da9795a6f9762c979f480fb3c2620fc128af14d396065d0c9362e1cdc10eddce2bb58901567581c0d5e8cee
-ipxe-$(PXE_VER).tar.gz_BLAKE2 = 5a6b7c422856157ff1f6aeb7e835add5a2bdd6678d8cc960eae2d926709ce73803484bbe0a428022de2fbc5b018096526ba48f2172c2c25540e1dc12c7a1f8e1
+ipxe-$(PXE_VER).tar.gz_BLAKE2 = f678abfe4cb1bf4ff85667719417c694365aece144c05fff8f8df82008100a6172bd27799498f27eddf8c38f43b3d553e704191037ef94dfbcaf19428c07028c
 
 install : $(TARGET)
 
@@ -77,10 +77,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	# Extract iPXE source
 	cd $(DIR_APP) && tar axf $(DIR_DL)/ipxe-$(PXE_VER).tar.gz
-	cd $(DIR_APP)/ipxe-$(PXE_VER) && patch -Np1 < $(DIR_SRC)/src/patches/ipxe-fix-stringop-truncation-warning-with-gcc-8-x.patch
-	cd $(DIR_APP)/ipxe-$(PXE_VER) && patch -Np1 < $(DIR_SRC)/src/patches/ipxe-handle-R_X86_64_PLT32.patch
-	cd $(DIR_APP)/ipxe-$(PXE_VER) && patch -Np1 < $(DIR_SRC)/src/patches/ipxe-1b67a05-be-explicit-about-fcommon-compiler-directive.patch
-	cd $(DIR_APP)/ipxe-$(PXE_VER) && patch -Np1 < $(DIR_SRC)/src/patches/ipxe-use-the-right-sized-register-for-push.patch
 	cd $(DIR_APP) && rm -rfv ipxe && ln -s ipxe-$(PXE_VER) ipxe
 	cd $(DIR_APP) && make $(MAKETUNING) bin/ipxe.lkrn
 ifeq "$(BUILD_ARCH)" "x86_64"
