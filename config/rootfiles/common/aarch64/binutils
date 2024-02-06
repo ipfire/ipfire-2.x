@@ -312,7 +312,8 @@ usr/lib/bfd-plugins/libdep.so
 #usr/lib/ldscripts/armelfb_linux_eabi.xu
 #usr/lib/ldscripts/armelfb_linux_eabi.xw
 #usr/lib/ldscripts/armelfb_linux_eabi.xwe
-usr/lib/libbfd-2.41.so
+#usr/lib/ldscripts/stamp
+usr/lib/libbfd-2.42.so
 #usr/lib/libbfd.a
 #usr/lib/libbfd.la
 #usr/lib/libbfd.so
@@ -331,7 +332,7 @@ usr/lib/libctf.so.0.0.0
 #usr/lib/libgprofng.so
 usr/lib/libgprofng.so.0
 usr/lib/libgprofng.so.0.0.0
-usr/lib/libopcodes-2.41.so
+usr/lib/libopcodes-2.42.so
 #usr/lib/libopcodes.a
 #usr/lib/libopcodes.la
 #usr/lib/libopcodes.so
@@ -405,6 +406,7 @@ usr/lib/libsframe.so.1.0.0
 #usr/share/locale/ja/LC_MESSAGES/ld.mo
 #usr/share/locale/ka/LC_MESSAGES/bfd.mo
 #usr/share/locale/ka/LC_MESSAGES/gprof.mo
+#usr/share/locale/ka/LC_MESSAGES/ld.mo
 #usr/share/locale/ms
 #usr/share/locale/ms/LC_MESSAGES
 #usr/share/locale/ms/LC_MESSAGES/gprof.mo
@@ -418,6 +420,7 @@ usr/lib/libsframe.so.1.0.0
 #usr/share/locale/ro/LC_MESSAGES/bfd.mo
 #usr/share/locale/ro/LC_MESSAGES/binutils.mo
 #usr/share/locale/ro/LC_MESSAGES/gprof.mo
+#usr/share/locale/ro/LC_MESSAGES/ld.mo
 #usr/share/locale/ro/LC_MESSAGES/opcodes.mo
 #usr/share/locale/ru/LC_MESSAGES/bfd.mo
 #usr/share/locale/ru/LC_MESSAGES/binutils.mo

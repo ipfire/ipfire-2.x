@@ -293,7 +293,8 @@ usr/bin/strings
 #usr/lib/ldscripts/elf64lriscv_lp64f.xu
 #usr/lib/ldscripts/elf64lriscv_lp64f.xw
 #usr/lib/ldscripts/elf64lriscv_lp64f.xwe
-usr/lib/libbfd-2.41.so
+#usr/lib/ldscripts/stamp
+usr/lib/libbfd-2.42.so
 #usr/lib/libbfd.a
 #usr/lib/libbfd.la
 #usr/lib/libbfd.so
@@ -307,7 +308,7 @@ usr/lib/libctf-nobfd.so.0.0.0
 #usr/lib/libctf.so
 usr/lib/libctf.so.0
 usr/lib/libctf.so.0.0.0
-usr/lib/libopcodes-2.41.so
+usr/lib/libopcodes-2.42.so
 #usr/lib/libopcodes.a
 #usr/lib/libopcodes.la
 #usr/lib/libopcodes.so
@@ -380,6 +381,7 @@ usr/lib/libsframe.so.1.0.0
 #usr/share/locale/ja/LC_MESSAGES/ld.mo
 #usr/share/locale/ka/LC_MESSAGES/bfd.mo
 #usr/share/locale/ka/LC_MESSAGES/gprof.mo
+#usr/share/locale/ka/LC_MESSAGES/ld.mo
 #usr/share/locale/ms
 #usr/share/locale/ms/LC_MESSAGES
 #usr/share/locale/ms/LC_MESSAGES/gprof.mo
@@ -393,6 +395,7 @@ usr/lib/libsframe.so.1.0.0
 #usr/share/locale/ro/LC_MESSAGES/bfd.mo
 #usr/share/locale/ro/LC_MESSAGES/binutils.mo
 #usr/share/locale/ro/LC_MESSAGES/gprof.mo
+#usr/share/locale/ro/LC_MESSAGES/ld.mo
 #usr/share/locale/ro/LC_MESSAGES/opcodes.mo
 #usr/share/locale/ru/LC_MESSAGES/bfd.mo
 #usr/share/locale/ru/LC_MESSAGES/binutils.mo
