@@ -1,7 +1,6 @@
 etc/suricata
 etc/suricata/suricata.yaml
 usr/bin/suricata
-#usr/include/suricata-plugin.h
 usr/sbin/convert-ids-backend-files
 #usr/share/doc/suricata
 #usr/share/doc/suricata/AUTHORS
@@ -27,6 +26,7 @@ usr/share/suricata
 #usr/share/suricata/rules/dnp3-events.rules
 #usr/share/suricata/rules/dns-events.rules
 #usr/share/suricata/rules/files.rules
+#usr/share/suricata/rules/ftp-events.rules
 #usr/share/suricata/rules/http-events.rules
 #usr/share/suricata/rules/http2-events.rules
 #usr/share/suricata/rules/ipsec-events.rules
@@ -35,6 +35,7 @@ usr/share/suricata
 #usr/share/suricata/rules/mqtt-events.rules
 #usr/share/suricata/rules/nfs-events.rules
 #usr/share/suricata/rules/ntp-events.rules
+#usr/share/suricata/rules/quic-events.rules
 #usr/share/suricata/rules/rfb-events.rules
 #usr/share/suricata/rules/smb-events.rules
 #usr/share/suricata/rules/smtp-events.rules
