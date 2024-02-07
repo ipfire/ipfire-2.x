@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 2.38
+VER        = 2.39
 
 THISAPP    = glibc-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -82,7 +82,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = f9b039f0ef98a7dd8e1cba228ed10286b9e4fbe4dd89af4d26fa5c4e4cf266f19c2746b44d797ce54739d86499e74cf334aaf311bcf6e30120fd7748453e653f
+$(DL_FILE)_BLAKE2 = 9d98459a2d58401e07c081e0d841935b23998da75a7eb5a7ebd23a1f9ebab99dee623fe166397c1b6c926960c570f62dbca5cb3b5ce84a918adff6b7a15e16bb
 
 install : $(TARGET)
 
@@ -113,52 +113,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) $(DIR_SRC)/glibc-build && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	@mkdir $(DIR_SRC)/glibc-build
-
-	# Patches from upstream
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0001-stdlib-Improve-tst-realpath-compatibility-with-sourc.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0002-x86-Fix-for-cache-computation-on-AMD-legacy-cpus.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0003-nscd-Do-not-rebuild-getaddrinfo-bug-30709.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0004-x86-Fix-incorrect-scope-of-setting-shared_per_thread.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0005-x86_64-Fix-build-with-disable-multiarch-BZ-30721.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0006-i686-Fix-build-with-disable-multiarch.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0007-malloc-Enable-merging-of-remainders-in-memalign-bug-.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0008-malloc-Remove-bin-scanning-from-memalign-bug-30723.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0009-sysdeps-tst-bz21269-fix-test-parameter.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0010-sysdeps-tst-bz21269-handle-ENOSYS-skip-appropriately.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0011-sysdeps-tst-bz21269-fix-Wreturn-type.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0012-io-Fix-record-locking-contants-for-powerpc64-with-__.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0013-libio-Fix-oversized-__io_vtables.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0014-elf-Do-not-run-constructors-for-proxy-objects.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0015-elf-Always-call-destructors-in-reverse-constructor-o.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0016-elf-Remove-unused-l_text_end-field-from-struct-link_.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0017-elf-Move-l_init_called_next-to-old-place-of-l_text_e.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0018-NEWS-Add-the-2.38.1-bug-list.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0019-CVE-2023-4527-Stack-read-overflow-with-large-TCP-res.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0020-getaddrinfo-Fix-use-after-free-in-getcanonname-CVE-2.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0021-iconv-restore-verbosity-with-unrecognized-encoding-n.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0022-string-Fix-tester-build-with-fortify-enable-with-gcc.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0023-manual-jobs.texi-Add-missing-item-EPERM-for-getpgid.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0024-Fix-leak-in-getaddrinfo-introduced-by-the-fix-for-CV.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0025-Document-CVE-2023-4806-and-CVE-2023-5156-in-NEWS.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0026-Propagate-GLIBC_TUNABLES-in-setxid-binaries.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0027-tunables-Terminate-if-end-of-input-is-reached-CVE-20.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0028-Revert-elf-Remove-unused-l_text_end-field-from-struc.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0029-Revert-elf-Always-call-destructors-in-reverse-constr.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0030-Revert-elf-Move-l_init_called_next-to-old-place-of-l.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0031-sysdeps-sem_open-Clear-O_CREAT-when-semaphore-file-i.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0032-elf-Fix-wrong-break-removal-from-8ee878592c.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0033-LoongArch-Delete-excessively-allocated-memory.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0034-elf-Fix-TLS-modid-reuse-generation-assignment-BZ-290.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0035-elf-Add-TLS-modid-reuse-test-for-bug-29039.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0036-x86-64-Fix-the-dtv-field-load-for-x32-BZ-31184.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0037-x86-64-Fix-the-tcb-field-load-for-x32-BZ-31185.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0038-NEWS-Mention-bug-fixes-for-29039-30694-30709-30721.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0039-NEWS-Mention-bug-fixes-for-30745-30843.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0040-getaddrinfo-translate-ENOMEM-to-EAI_MEMORY-bug-31163.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0041-libio-Check-remaining-buffer-size-in-_IO_wdo_write-b.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0042-syslog-Fix-heap-buffer-overflow-in-__vsyslog_interna.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0043-syslog-Fix-heap-buffer-overflow-in-__vsyslog_interna.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-2.38/0044-syslog-Fix-integer-overflow-in-__vsyslog_internal-CV.patch
 
 	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/glibc-localedef-no-archive.patch
 
