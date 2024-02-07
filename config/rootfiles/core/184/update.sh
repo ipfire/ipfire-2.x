@@ -37,6 +37,12 @@ done
 # Extract files
 extract_files
 
+# Remove dropped elfutils addon
+rm -vf \
+	/opt/pakfire/db/installed/meta-elfutils \
+	/opt/pakfire/db/meta/meta-elfutils \
+	/opt/pakfire/db/rootfiles/elfutils
+
 # Remove files
 
 # update linker config
