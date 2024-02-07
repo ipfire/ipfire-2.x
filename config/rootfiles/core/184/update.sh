@@ -41,7 +41,25 @@ extract_files
 rm -vf \
 	/opt/pakfire/db/installed/meta-elfutils \
 	/opt/pakfire/db/meta/meta-elfutils \
-	/opt/pakfire/db/rootfiles/elfutils
+	/opt/pakfire/db/rootfiles/elfutils \
+	/usr/bin/eu-addr2line \
+	/usr/bin/eu-ar \
+	/usr/bin/eu-elfclassify \
+	/usr/bin/eu-elfcmp \
+	/usr/bin/eu-elfcompress \
+	/usr/bin/eu-elflint \
+	/usr/bin/eu-findtextrel \
+	/usr/bin/eu-make-debug-archive \
+	/usr/bin/eu-nm \
+	/usr/bin/eu-objdump \
+	/usr/bin/eu-ranlib \
+	/usr/bin/eu-readelf \
+	/usr/bin/eu-size \
+	/usr/bin/eu-srcfiles \
+	/usr/bin/eu-stack \
+	/usr/bin/eu-strings \
+	/usr/bin/eu-strip \
+	/usr/bin/eu-unstrip
 
 # Remove files
 
