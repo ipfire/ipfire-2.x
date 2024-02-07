@@ -1,1 +1,5 @@
 etc/rc.d/init.d/collectd
+etc/rc.d/init.d/firewall
+srv/web/ipfire/cgi-bin/optionsfw.cgi
+usr/lib/firewall/rules.pl
+var/ipfire/graphs.pl

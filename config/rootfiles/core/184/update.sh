@@ -78,6 +78,7 @@ ldconfig
 # Start services
 telinit u
 /etc/init.d/vnstat start
+/etc/init.d/collectd restart
 
 # This update needs a reboot...
 touch /var/run/need_reboot
