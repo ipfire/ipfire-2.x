@@ -32,6 +32,7 @@ for (( i=1; i<=$core; i++ )); do
 done
 
 # Stop services
+/etc/init.d/squid stop
 /etc/init.d/vnstat stop
 
 # Extract files
@@ -79,6 +80,10 @@ ldconfig
 telinit u
 /etc/init.d/vnstat start
 /etc/init.d/collectd restart
+
+if [ -f /var/ipfire/proxy/enable ]; then
+	/etc/init.d/squid start
+fi
 
 # This update needs a reboot...
 touch /var/run/need_reboot
