@@ -14,16 +14,17 @@ usr/bin/sigtool
 #usr/include/libfreshclam.h
 usr/lib/libclamav.so
 usr/lib/libclamav.so.12
-usr/lib/libclamav.so.12.0.1
+usr/lib/libclamav.so.12.0.2
+#usr/lib/libclamav_rust.a
 usr/lib/libclammspack.so
 usr/lib/libclammspack.so.0
 usr/lib/libclammspack.so.0.8.0
 usr/lib/libclamunrar.so
 usr/lib/libclamunrar.so.12
-usr/lib/libclamunrar.so.12.0.1
+usr/lib/libclamunrar.so.12.0.2
 usr/lib/libclamunrar_iface.so
 usr/lib/libclamunrar_iface.so.12
-usr/lib/libclamunrar_iface.so.12.0.1
+usr/lib/libclamunrar_iface.so.12.0.2
 usr/lib/libfreshclam.so
 usr/lib/libfreshclam.so.3
 usr/lib/libfreshclam.so.3.0.1
@@ -98,6 +99,7 @@ usr/sbin/clamd
 #usr/share/doc/ClamAV/html/fonts/open-sans-v17-all-charsets-italic.woff2
 #usr/share/doc/ClamAV/html/fonts/open-sans-v17-all-charsets-regular.woff2
 #usr/share/doc/ClamAV/html/fonts/source-code-pro-v11-all-charsets-500.woff2
+#usr/share/doc/ClamAV/html/googled62299e9391332c4.html
 #usr/share/doc/ClamAV/html/highlight.css
 #usr/share/doc/ClamAV/html/highlight.js
 #usr/share/doc/ClamAV/html/images
@@ -167,6 +169,7 @@ usr/sbin/clamd
 #usr/share/doc/ClamAV/html/searcher.js
 #usr/share/doc/ClamAV/html/searchindex.js
 #usr/share/doc/ClamAV/html/searchindex.json
+#usr/share/doc/ClamAV/html/sitemap.xml
 #usr/share/doc/ClamAV/html/theme-dawn.js
 #usr/share/doc/ClamAV/html/theme-tomorrow_night.js
 #usr/share/doc/ClamAV/html/tomorrow-night.css
