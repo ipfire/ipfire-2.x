@@ -146,7 +146,7 @@ fi
 if grep -q "ENABLED=on" /var/ipfire/vpn/settings; then
 	/etc/rc.d/init.d/ipsec start
 fi
-
+/etc/init.d/suricata restart
 
 # Rebuild initial ramdisks
 dracut --regenerate-all --force
