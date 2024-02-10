@@ -80,6 +80,7 @@ srv/web/ipfire/cgi-bin/time.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
+#srv/web/ipfire/cgi-bin/vdr.cgi
 srv/web/ipfire/cgi-bin/vpnmain.cgi
 srv/web/ipfire/cgi-bin/vulnerabilities.cgi
 srv/web/ipfire/cgi-bin/wakeonlan.cgi

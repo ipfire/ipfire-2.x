@@ -122,6 +122,7 @@ var/ipfire/menu.d/70-log.menu
 #var/ipfire/menu.d/EX-mpfire.menu
 #var/ipfire/menu.d/EX-samba.menu
 #var/ipfire/menu.d/EX-tor.menu
+#var/ipfire/menu.d/EX-vdr.menu
 #var/ipfire/menu.d/EX-wio.menu
 #var/ipfire/menu.d/EX-wlanap.menu
 var/ipfire/modem

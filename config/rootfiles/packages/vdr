@@ -87,3 +87,5 @@ usr/share/vdr
 var/cache/vdr
 var/ipfire/backup/addons/includes/vdr
 #var/video
+srv/web/ipfire/cgi-bin/vdr.cgi
+var/ipfire/menu.d/EX-vdr.menu

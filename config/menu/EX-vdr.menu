@@ -1,0 +1,5 @@
+    $subipfire->{'60.vdr'} = {'caption' => VDR,
+				  'uri' => '/cgi-bin/vdr.cgi',
+				  'title' => VDR,
+				  'enabled' => 1,
+				  };
