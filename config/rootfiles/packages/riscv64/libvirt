@@ -84,16 +84,16 @@ usr/bin/virt-xml-validate
 #usr/lib/libvirt
 #usr/lib/libvirt-admin.so
 usr/lib/libvirt-admin.so.0
-usr/lib/libvirt-admin.so.0.8010.0
+usr/lib/libvirt-admin.so.0.10000.0
 #usr/lib/libvirt-lxc.so
 usr/lib/libvirt-lxc.so.0
-usr/lib/libvirt-lxc.so.0.8010.0
+usr/lib/libvirt-lxc.so.0.10000.0
 #usr/lib/libvirt-qemu.so
 usr/lib/libvirt-qemu.so.0
-usr/lib/libvirt-qemu.so.0.8010.0
+usr/lib/libvirt-qemu.so.0.10000.0
 #usr/lib/libvirt.so
 usr/lib/libvirt.so.0
-usr/lib/libvirt.so.0.8010.0
+usr/lib/libvirt.so.0.10000.0
 #usr/lib/libvirt/connection-driver
 usr/lib/libvirt/connection-driver/libvirt_driver_interface.so
 usr/lib/libvirt/connection-driver/libvirt_driver_nodedev.so
@@ -181,6 +181,7 @@ usr/sbin/virtstoraged
 #usr/share/doc/libvirt/examples/sh
 #usr/share/doc/libvirt/examples/sh/virt-lxc-convert
 #usr/share/doc/libvirt/examples/systemtap
+#usr/share/doc/libvirt/examples/systemtap/amd-sev-es-vmsa.stp
 #usr/share/doc/libvirt/examples/systemtap/events.stp
 #usr/share/doc/libvirt/examples/systemtap/lock-debug.stp
 #usr/share/doc/libvirt/examples/systemtap/qemu-monitor.stp
@@ -242,6 +243,7 @@ usr/share/libvirt/cpu_map/x86_Cascadelake-Server.xml
 usr/share/libvirt/cpu_map/x86_Conroe.xml
 usr/share/libvirt/cpu_map/x86_Cooperlake.xml
 usr/share/libvirt/cpu_map/x86_Dhyana.xml
+usr/share/libvirt/cpu_map/x86_EPYC-Genoa.xml
 usr/share/libvirt/cpu_map/x86_EPYC-IBPB.xml
 usr/share/libvirt/cpu_map/x86_EPYC-Milan.xml
 usr/share/libvirt/cpu_map/x86_EPYC-Rome.xml
@@ -266,6 +268,7 @@ usr/share/libvirt/cpu_map/x86_Opteron_G5.xml
 usr/share/libvirt/cpu_map/x86_Penryn.xml
 usr/share/libvirt/cpu_map/x86_SandyBridge-IBRS.xml
 usr/share/libvirt/cpu_map/x86_SandyBridge.xml
+usr/share/libvirt/cpu_map/x86_SapphireRapids.xml
 usr/share/libvirt/cpu_map/x86_Skylake-Client-IBRS.xml
 usr/share/libvirt/cpu_map/x86_Skylake-Client-noTSX-IBRS.xml
 usr/share/libvirt/cpu_map/x86_Skylake-Client.xml
@@ -354,6 +357,7 @@ usr/share/libvirt/schemas/storagevol.rng
 #usr/share/locale/pl/LC_MESSAGES/libvirt.mo
 #usr/share/locale/pt/LC_MESSAGES/libvirt.mo
 #usr/share/locale/pt_BR/LC_MESSAGES/libvirt.mo
+#usr/share/locale/ro/LC_MESSAGES/libvirt.mo
 #usr/share/locale/ru/LC_MESSAGES/libvirt.mo
 #usr/share/locale/si/LC_MESSAGES/libvirt.mo
 #usr/share/locale/sr/LC_MESSAGES/libvirt.mo

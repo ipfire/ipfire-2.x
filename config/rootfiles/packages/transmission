@@ -13,6 +13,7 @@ usr/share/transmission
 #usr/share/transmission/public_html/images/favicon.png
 #usr/share/transmission/public_html/images/webclip-icon.png
 #usr/share/transmission/public_html/index.html
+#usr/share/transmission/public_html/transmission-app.css
 #usr/share/transmission/public_html/transmission-app.js
-#usr/share/transmission/public_html/transmission-app.js.LICENSE.txt
+#usr/share/transmission/public_html/transmission-app.js.LEGAL.txt
 var/ipfire/backup/addons/includes/transmission

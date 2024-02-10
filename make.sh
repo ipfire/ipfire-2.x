@@ -23,7 +23,7 @@ NAME="IPFire"							# Software name
 SNAME="ipfire"							# Short name
 # If you update the version don't forget to update backupiso and add it to core update
 VERSION="2.29"							# Version number
-CORE="183"							# Core Level (Filename)
+CORE="184"							# Core Level (Filename)
 SLOGAN="www.ipfire.org"						# Software slogan
 CONFIG_ROOT=/var/ipfire						# Configuration rootdir
 MAX_RETRIES=1							# prefetch/check loop
@@ -1595,6 +1595,14 @@ buildipfire() {
   lfsmake2 python3-terminaltables
   lfsmake2 python3-pkgconfig
   lfsmake2 python3-msgpack
+  lfsmake2 python3-editables
+  lfsmake2 python3-pathspec
+  lfsmake2 python3-pluggy
+  lfsmake2 python3-calver
+  lfsmake2 python3-trove-classifiers
+  lfsmake2 python3-hatchling
+  lfsmake2 python3-hatch-vcs
+  lfsmake2 python3-hatch-fancy-pypi-readme
   lfsmake2 python3-attrs
   lfsmake2 python3-sniffio
   lfsmake2 python3-sortedcontainers
@@ -1648,6 +1656,9 @@ buildipfire() {
   lfsmake2 dnsdist
   lfsmake2 bird
   lfsmake2 libyang
+  lfsmake2 abseil-cpp
+  lfsmake2 protobuf
+  lfsmake2 protobuf-c
   lfsmake2 frr
   lfsmake2 dmidecode
   lfsmake2 mcelog

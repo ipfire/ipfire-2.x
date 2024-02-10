@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,6 +25,7 @@
 include Config
 
 VER        = 8.2
+#		https://ftp.gnu.org/gnu/readline/
 
 THISAPP    = readline-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -71,11 +72,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar zxf $(DIR_DL)/$(DL_FILE)
 
-	for i in $$(seq 1 1); do \
+	for i in $$(seq 1 10); do \
 		cd $(DIR_APP) && patch -Np0 < $(DIR_SRC)/src/patches/readline/readline82-$$(printf "%03d" "$${i}") || exit 1; \
 	done
 
-	cd $(DIR_APP) && ./configure --prefix=/usr --disable-static
+	cd $(DIR_APP) && ./configure \
+				--prefix=/usr \
+				--disable-static
 	cd $(DIR_APP) && make $(MAKETUNING) SHLIB_LIBS=-lncurses
 	cd $(DIR_APP) && make install
 

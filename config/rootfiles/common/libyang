@@ -4,6 +4,7 @@
 #usr/include/libyang/config.h
 #usr/include/libyang/context.h
 #usr/include/libyang/dict.h
+#usr/include/libyang/hash_table.h
 #usr/include/libyang/in.h
 #usr/include/libyang/libyang.h
 #usr/include/libyang/log.h
@@ -24,7 +25,7 @@
 #usr/include/libyang/version.h
 #usr/lib/libyang.so
 usr/lib/libyang.so.2
-usr/lib/libyang.so.2.25.4
+usr/lib/libyang.so.2.46.3
 #usr/lib/pkgconfig/libyang.pc
 #usr/share/man/man1/yanglint.1
 #usr/share/man/man1/yangre.1

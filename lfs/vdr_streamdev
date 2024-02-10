@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,23 +26,22 @@ include Config
 
 SUMMARY    = VDR implementation of the VTP (Video Transfer Protocol)
 
-VER        = 0.6.1
-GIT_VER    = e2a9b979d3fb92967c7a6a8221e674eb7e55c813
+VER        = 0.6.3
 
-THISAPP    = vdr-plugin-streamdev-$(GIT_VER)
-DL_FILE    = $(THISAPP).tar.bz2
+THISAPP    = vdr-plugin-streamdev-$(VER)
+DL_FILE    = $(THISAPP).tar.gz
 
 DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = vdr_streamdev
-PAK_VER    = 7
+PAK_VER    = 8
 
 DEPS       =
 
 SERVICES   =
 
-VDRPLUGVER = 2.4.7
+VDRPLUGVER = 2.6.6
 
 EXTRA_FLAGS= -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -D_LARGEFILE64_SOURCE
 CFLAGS    += $(EXTRA_FLAGS)
@@ -56,7 +55,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)  = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 4cacadc091ab8d28ccd4318eaf18aaef8f45e6caab86ef461d1b1047039ec921984ebad091d29420779982b5b37606defe5aa6c6828e8f28788886ba9839efea
+$(DL_FILE)_BLAKE2 = 300c24aac6f0c59fc438eafa9a300e0b68dbfb43064cf887ab9d1fbdc1b22a8ec5349a38fa5c2188ef78dbc1ac7f238e88abe0ed9d1cbcd01e4a1afde7b890cf
 
 install : $(TARGET)
 

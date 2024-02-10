@@ -1,0 +1,11 @@
+--- wavemon-0.9.5/Makefile.in.orig	2023-10-31 00:50:28.000000000 +0100
++++ wavemon-0.9.5/Makefile.in	2024-01-16 12:15:40.601709570 +0100
+@@ -15,7 +15,7 @@
+ else
+ CC	 ?= $(CC_DEFAULT)
+ endif
+-CFLAGS	 ?= @CFLAGS@ @LIBNL3_CLI_CFLAGS@
++CFLAGS	 = @CFLAGS@ @LIBNL3_CLI_CFLAGS@
+ CPPFLAGS ?= @CPPFLAGS@
+ LDFLAGS  ?= @LDFLAGS@
+ DEFS	 ?= @DEFS@

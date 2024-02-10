@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2020  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -726,8 +726,8 @@ sub drop_hostile_networks () {
 	&ipset_restore($HOSTILE_CCODE);
 
 	# Check traffic in incoming/outgoing direction and drop if it matches
-	run("$IPTABLES -A HOSTILE -i $RED_DEV -m set --match-set $HOSTILE_CCODE src -j HOSTILE_DROP");
-	run("$IPTABLES -A HOSTILE -o $RED_DEV -m set --match-set $HOSTILE_CCODE dst -j HOSTILE_DROP");
+	run("$IPTABLES -A HOSTILE -i $RED_DEV -m set --match-set $HOSTILE_CCODE src -j HOSTILE_DROP_IN");
+	run("$IPTABLES -A HOSTILE -o $RED_DEV -m set --match-set $HOSTILE_CCODE dst -j HOSTILE_DROP_OUT");
 }
 
 sub ipblocklist () {

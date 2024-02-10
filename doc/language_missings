@@ -58,6 +58,9 @@
 < extrahd because it it outside the allowed mount path
 < g.dtm
 < g.lite
+< hostile networks in
+< hostile networks out
+< hostile networks total
 < ids automatic rules update
 < ids subscription code required
 < insert removable device
@@ -66,6 +69,8 @@
 < ipsec invalid ip address or fqdn for rw endpoint
 < ipsec roadwarrior endpoint
 < link-layer encapsulation
+< log drop hostile in
+< log drop hostile out
 < netbios nameserver daemon
 < no entries
 < notes
@@ -73,6 +78,7 @@
 < optional
 < quick control
 < random number generator daemon
+< regenerate host certificate
 < reiserfs warning1
 < reiserfs warning2
 < required
@@ -114,9 +120,15 @@
 < extrahd not configured
 < extrahd not mounted
 < hardware vulnerabilities
+< hostile networks in
+< hostile networks out
+< hostile networks total
 < invalid ip or hostname
+< log drop hostile in
+< log drop hostile out
 < openvpn cert expires soon
 < openvpn cert has expired
+< regenerate host certificate
 < reiserfs warning1
 < reiserfs warning2
 < service boot setting unavailable
@@ -138,6 +150,12 @@
 < extrahd not mounted
 < g.dtm
 < g.lite
+< hostile networks in
+< hostile networks out
+< hostile networks total
+< log drop hostile in
+< log drop hostile out
+< regenerate host certificate
 < reiserfs warning1
 < reiserfs warning2
 < spec rstack overflow
@@ -361,7 +379,9 @@
 < guaranteed bandwidth
 < guardian
 < hardware vulnerabilities
-< hostile networks
+< hostile networks in
+< hostile networks out
+< hostile networks total
 < ids add provider
 < ids adjust ruleset
 < ids apply
@@ -464,6 +484,8 @@
 < locationblock country name
 < locationblock enable feature
 < locationblock flag
+< log drop hostile in
+< log drop hostile out
 < log dropped conntrack invalids
 < log server protocol
 < masquerade blue
@@ -523,6 +545,7 @@
 < reboot fsck
 < rebooting ipfire fsck
 < received
+< regenerate host certificate
 < reiserfs warning1
 < reiserfs warning2
 < release
@@ -880,7 +903,9 @@
 < generate ptr
 < guardian
 < hardware vulnerabilities
-< hostile networks
+< hostile networks in
+< hostile networks out
+< hostile networks total
 < ids add provider
 < ids adjust ruleset
 < ids apply
@@ -985,6 +1010,8 @@
 < locationblock country name
 < locationblock enable feature
 < locationblock flag
+< log drop hostile in
+< log drop hostile out
 < log dropped conntrack invalids
 < log server protocol
 < masquerade blue
@@ -1063,6 +1090,7 @@
 < rdns
 < rebooting ipfire fsck
 < received
+< regenerate host certificate
 < reiserfs warning1
 < reiserfs warning2
 < required
@@ -1704,7 +1732,9 @@
 < grouptype
 < guardian
 < hardware vulnerabilities
-< hostile networks
+< hostile networks in
+< hostile networks out
+< hostile networks total
 < ids add provider
 < ids adjust ruleset
 < ids apply
@@ -1819,6 +1849,8 @@
 < locationblock country name
 < locationblock enable feature
 < locationblock flag
+< log drop hostile in
+< log drop hostile out
 < log dropped conntrack invalids
 < log server protocol
 < mac filter
@@ -1943,6 +1975,7 @@
 < rebooting ipfire fsck
 < received
 < red1
+< regenerate host certificate
 < reiserfs warning1
 < reiserfs warning2
 < release
@@ -2695,7 +2728,9 @@
 < grouptype
 < guardian
 < hardware vulnerabilities
-< hostile networks
+< hostile networks in
+< hostile networks out
+< hostile networks total
 < hour-graph
 < ids add provider
 < ids adjust ruleset
@@ -2812,6 +2847,8 @@
 < locationblock country name
 < locationblock enable feature
 < locationblock flag
+< log drop hostile in
+< log drop hostile out
 < log dropped conntrack invalids
 < log server protocol
 < mac filter
@@ -2934,6 +2971,7 @@
 < rebooting ipfire fsck
 < received
 < red1
+< regenerate host certificate
 < reiserfs warning1
 < reiserfs warning2
 < release
@@ -3280,7 +3318,9 @@
 < fw red
 < generate ptr
 < hardware vulnerabilities
-< hostile networks
+< hostile networks in
+< hostile networks out
+< hostile networks total
 < ids add provider
 < ids adjust ruleset
 < ids apply
@@ -3368,6 +3408,8 @@
 < legacy architecture warning
 < link-layer encapsulation
 < local ip address
+< log drop hostile in
+< log drop hostile out
 < log dropped conntrack invalids
 < meltdown
 < mitigated
@@ -3405,6 +3447,7 @@
 < reboot fsck
 < rebooting ipfire fsck
 < received
+< regenerate host certificate
 < reiserfs warning1
 < reiserfs warning2
 < release

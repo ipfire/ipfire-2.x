@@ -17,6 +17,8 @@ etc/security
 #lib/security/mkhomedir_helper
 #lib/security/pam_access.la
 lib/security/pam_access.so
+#lib/security/pam_canonicalize_user.la
+#lib/security/pam_canonicalize_user.so
 #lib/security/pam_debug.la
 #lib/security/pam_debug.so
 #lib/security/pam_deny.la
@@ -193,6 +195,7 @@ usr/lib/libpamc.so.0.82.1
 #usr/share/man/man8/mkhomedir_helper.8
 #usr/share/man/man8/pam.8
 #usr/share/man/man8/pam_access.8
+#usr/share/man/man8/pam_canonicalize_user.8
 #usr/share/man/man8/pam_debug.8
 #usr/share/man/man8/pam_deny.8
 #usr/share/man/man8/pam_echo.8

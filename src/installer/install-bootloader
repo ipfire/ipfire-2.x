@@ -172,12 +172,12 @@ function main() {
 	if device_is_mdraid "${device}"; then
 		local slave
 		for slave in $(mdraid_get_slaves "${device}"); do
-			grub_install "${slave}"
+			grub_install "${slave}" || return $?
 		done
 
 	# Handle normal block devices
 	else
-		grub_install "${device}"
+		grub_install "${device}" || return $?
 	fi
 
 	return 0

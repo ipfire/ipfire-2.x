@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 23.0
+VER        = 23.2
 
 THISAPP    = packaging-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -32,7 +32,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = python3-packaging
-PAK_VER    = 3
+PAK_VER    = 4
 
 ###############################################################################
 # Top-level Rules
@@ -42,7 +42,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 601806498c414aaf3a68206a008e4032b0925bb1a06b170a6da64786d15456b5a3082cfde7620cd39f3f0ec204f42337df4b6c663c76697b6dc9577d38cc45c3
+$(DL_FILE)_BLAKE2 = cf7986a07312fd82a2a0ee738088993b9570d95cd0b573afa7a1f911bf335de7084e3d40d961adea7f5a8369738688f9d0a4265ef26a393f2d30769bc13f752a
 
 install : $(TARGET)
 

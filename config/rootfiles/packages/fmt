@@ -19,5 +19,5 @@
 #usr/lib/cmake/fmt/fmt-targets.cmake
 #usr/lib/libfmt.so
 usr/lib/libfmt.so.10
-usr/lib/libfmt.so.10.0.0
+usr/lib/libfmt.so.10.2.1
 #usr/lib/pkgconfig/fmt.pc
