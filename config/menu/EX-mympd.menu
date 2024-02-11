@@ -1,0 +1,5 @@
+    $subipfire->{'41.mympd'} = {'caption' => myMPD,
+				  'uri' => '/cgi-bin/mympd.cgi',
+				  'title' => myMPD,
+				  'enabled' => 1,
+				  };

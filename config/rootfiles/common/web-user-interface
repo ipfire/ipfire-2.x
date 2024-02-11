@@ -57,6 +57,7 @@ srv/web/ipfire/cgi-bin/memory.cgi
 srv/web/ipfire/cgi-bin/modem-status.cgi
 srv/web/ipfire/cgi-bin/modem.cgi
 #srv/web/ipfire/cgi-bin/mpfire.cgi
+#srv/web/ipfire/cgi-bin/mympd.cgi
 srv/web/ipfire/cgi-bin/netexternal.cgi
 srv/web/ipfire/cgi-bin/netinternal.cgi
 srv/web/ipfire/cgi-bin/netother.cgi
