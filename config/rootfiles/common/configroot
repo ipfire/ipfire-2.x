@@ -123,6 +123,7 @@ var/ipfire/menu.d/70-log.menu
 #var/ipfire/menu.d/EX-mympd.menu
 #var/ipfire/menu.d/EX-samba.menu
 #var/ipfire/menu.d/EX-tor.menu
+#var/ipfire/menu.d/EX-transmission.menu
 #var/ipfire/menu.d/EX-vdr.menu
 #var/ipfire/menu.d/EX-wio.menu
 #var/ipfire/menu.d/EX-wlanap.menu

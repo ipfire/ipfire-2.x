@@ -1,0 +1,5 @@
+    $subipfire->{'42.transmission'} = {'caption' => TransmissionBT,
+				  'uri' => '/cgi-bin/transmission.cgi',
+				  'title' => TransmissionBT,
+				  'enabled' => 1,
+				  };
