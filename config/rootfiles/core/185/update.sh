@@ -53,6 +53,7 @@ ldconfig
 # Start services
 telinit u
 /etc/init.d/suricata restart
+/etc/init.d/unbound restart
 
 # This update needs a reboot...
 #touch /var/run/need_reboot
