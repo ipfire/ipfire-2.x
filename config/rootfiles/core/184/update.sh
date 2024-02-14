@@ -81,6 +81,7 @@ telinit u
 /etc/init.d/vnstat start
 /etc/init.d/collectd restart
 /etc/init.d/suricata restart
+/etc/init.d/unbound restart
 if [ -f /var/ipfire/proxy/enable ]; then
 	/etc/init.d/squid start
 fi
