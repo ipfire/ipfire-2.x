@@ -48,7 +48,7 @@ case "${reason}" in
 		make_resolvconf
 
 		# Set time
-		ntpdate "ntp.ipfire.org"
+		ntpdate "time.ipfire.org"
 		;;
 
 	EXPIRE|FAIL|IPV4LL|NAK|NOCARRIER|RELEASE|STOP)

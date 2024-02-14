@@ -288,7 +288,7 @@ fix_time_if_dns_fails() {
 	fi
 
 	# Try to sync time with a known time server
-	boot_mesg "DNS not functioning... Trying to sync time with ntp.ipfire.org (81.3.27.46)..."
+	boot_mesg "DNS not functioning... Trying to sync time with time.ipfire.org (81.3.27.46)..."
 	loadproc /usr/local/bin/settime 81.3.27.46
 }
 
