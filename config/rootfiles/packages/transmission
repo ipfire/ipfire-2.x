@@ -17,3 +17,5 @@ usr/share/transmission
 #usr/share/transmission/public_html/transmission-app.js
 #usr/share/transmission/public_html/transmission-app.js.LEGAL.txt
 var/ipfire/backup/addons/includes/transmission
+srv/web/ipfire/cgi-bin/transmission.cgi
+var/ipfire/menu.d/EX-transmission.menu

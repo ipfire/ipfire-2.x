@@ -57,6 +57,7 @@ srv/web/ipfire/cgi-bin/memory.cgi
 srv/web/ipfire/cgi-bin/modem-status.cgi
 srv/web/ipfire/cgi-bin/modem.cgi
 #srv/web/ipfire/cgi-bin/mpfire.cgi
+#srv/web/ipfire/cgi-bin/mympd.cgi
 srv/web/ipfire/cgi-bin/netexternal.cgi
 srv/web/ipfire/cgi-bin/netinternal.cgi
 srv/web/ipfire/cgi-bin/netother.cgi
@@ -78,6 +79,7 @@ srv/web/ipfire/cgi-bin/system.cgi
 srv/web/ipfire/cgi-bin/time.cgi
 #srv/web/ipfire/cgi-bin/tor.cgi
 srv/web/ipfire/cgi-bin/traffic.cgi
+#srv/web/ipfire/cgi-bin/transmission.cgi
 srv/web/ipfire/cgi-bin/updatexlrator.cgi
 srv/web/ipfire/cgi-bin/urlfilter.cgi
 #srv/web/ipfire/cgi-bin/vdr.cgi
