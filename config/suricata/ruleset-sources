@@ -97,44 +97,14 @@ our %Providers = (
 		dl_type => "plain",
 	},
 
-	# Positive Technologies Attack Detection Team rules.
-	attack_detection => {
-		summary => "PT Attack Detection Team Rules",
-		website => "https://github.com/ptresearch/AttackDetection",
-		tr_string => "attack detection team rules",
+	# ThreatFox
+	threatfox => {
+		summary => "ThreatFox Indicators Of Compromise Rules",
+		website => "https://threatfox.abuse.ch/",
+		tr_string => "threatfox rules",
 		requires_subscription => "False",
-		dl_url => "https://raw.githubusercontent.com/ptresearch/AttackDetection/master/pt.rules.tar.gz",
-		dl_type => "archive",
-	},
-
-	# Secureworks Security rules.
-	secureworks_security => {
-		summary => "Secureworks Security Ruleset",
-		website => "https://www.secureworks.com",
-		tr_string => "secureworks security ruleset",
-		requires_subscription => "True",
-		dl_url => "https://ws.secureworks.com/ti/ruleset/<subscription_code>/Suricata_suricata-security_latest.tgz",
-		dl_type => "archive",
-	},
-
-	# Secureworks Malware rules.
-	secureworks_malware => {
-		summary => "Secureworks Malware Ruleset",
-		website => "https://www.secureworks.com",
-		tr_string => "secureworks malware ruleset",
-		requires_subscription => "True",
-		dl_url => "https://ws.secureworks.com/ti/ruleset/<subscription_code>/Suricata_suricata-malware_latest.tgz",
-		dl_type => "archive",
-	},
-
-	# Secureworks Enhanced rules.
-	secureworks_enhanced => {
-		summary => "Secureworks Enhanced Ruleset",
-		website => "https://www.secureworks.com",
-		tr_string => "secureworks enhanced ruleset",
-		requires_subscription => "True",
-		dl_url => "https://ws.secureworks.com/ti/ruleset/<subscription_code>/Suricata_suricata-enhanced_latest.tgz",
-		dl_type => "archive",
+		dl_url => "https://threatfox.abuse.ch/downloads/threatfox_suricata.rules",
+		dl_type => "plain",
 	},
 
 	# Travis B. Green hunting rules.
