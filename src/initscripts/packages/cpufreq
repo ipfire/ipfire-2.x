@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -22,13 +22,15 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
+GOV="ondemand"
+
 case "${1}" in
 	start)
 		boot_mesg -n "Starting cpufreq... "
 
 		# try cpufreq hardware depend modules
 		for i in $(find /lib/modules/$(uname -r)/kernel/drivers/cpufreq \
-		           ! -name speedstep-lib.ko.xz ! -name p4-clockmod.ko.xz ! -name "cpufreq_*" ! -name mperf.ko.xz | sort -d -r); do
+		           ! -name speedstep-lib.ko.xz ! -name p4-clockmod.ko.xz ! -name amd-pstate* ! -name "cpufreq_*" ! -name mperf.ko.xz | sort -d -r); do
 			module=$(basename $i | cut -d. -f1);
 			modprobe $module > /dev/null 2>&1;
 			if [ ${?} = 0 ]; then
@@ -46,28 +48,27 @@ case "${1}" in
 		driver=`cat /sys/devices/system/cpu/cpu0/cpufreq/scaling_driver 2>/dev/null`
 
 		case "$driver" in
-		    intel_pstate)
-			# pstate use internal gov so skip this setting
+		    *pstate*)
+			# pstate not support ondemand so use powersave
+			GOV="powersave"
 			echo_ok;
 			;;
-		    *)
-			CPUCOUNT=`ls /sys/devices/system/cpu/cpu*/cpufreq/affected_cpus 2> /dev/null | wc -l `;
-			let CPUCOUNT-=1
-			# Set the governor to ondemand to test if it works 
-			cpufreq-set -g ondemand
-			if [ ${?} = 0 ]; then
-				# Set the governor to ondemand for all cpus 
-				for i in `seq 0 $CPUCOUNT`;
-				do
-					cpufreq-set -c $i -g ondemand
-				done
-				echo_ok;
-			else
-				echo_failure;
-			fi
-			;;
-		    esac
-		exit 0;
+		esac
+		CPUCOUNT=`ls /sys/devices/system/cpu/cpu*/cpufreq/affected_cpus 2> /dev/null | wc -l `;
+		let CPUCOUNT-=1
+		# Set the governor to test if it works
+		cpufreq-set -g $GOV
+		if [ ${?} = 0 ]; then
+			# Set the governor to ondemand for all cpus
+			for i in `seq 0 $CPUCOUNT`;
+			do
+				cpufreq-set -c $i -g $GOV
+			done
+			echo_ok;
+		else
+			echo_failure;
+		fi
+		exit 0
 		;;
 	*)
 		echo "Usage: ${0} {start}"
