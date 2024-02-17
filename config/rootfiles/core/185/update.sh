@@ -39,6 +39,7 @@ extract_files
 
 # Remove files
 rm -rvf \
+	/etc/pango \
 	/lib/firmware/ath10k/WCN3990/hw1.0/notice.txt_wlanmdsp \
 	/lib/firmware/ath11k/IPQ6018/hw1.0/Notice.txt \
 	/lib/firmware/ath11k/IPQ8074/hw2.0/Notice.txt \
@@ -46,7 +47,24 @@ rm -rvf \
 	/lib/firmware/ath11k/QCN9074/hw1.0/Notice.txt \
 	/lib/firmware/ath11k/WCN6855/hw2.0/Notice.txt \
 	/lib/firmware/intel-ucode/06-86-04 \
-	/lib/firmware/intel-ucode/06-86-05
+	/lib/firmware/intel-ucode/06-86-05 \
+	/sbin/xtables-multi \
+	/srv/web/ipfire/html/themes/ipfire-rounded \
+	/usr/lib/crda/pubkeys/linville.key.pub.pem \
+	/usr/lib/grub/i386-pc/efiemu{32,64}.o \
+	/usr/lib/grub/i386-pc/verifiers.* \
+	/usr/lib/grub/i386-pc/verify.* \
+	/usr/lib/grub/x86_64-efi/shim_lock.* \
+	/usr/lib/grub/x86_64-efi/verifiers.* \
+	/usr/lib/grub/x86_64-efi/verify.* \
+	/usr/lib/snort_dynamic* \
+	/usr/local/bin/snortctrl \
+	/usr/share/usb_modeswitch/1033:0035 \
+	/usr/share/vim/vim7* \
+	/var/ipfire/geoip-functions.pl \
+	/var/ipfire/dhcpc/dhcpcd-hooks/00-linux \
+	/var/ipfire/dhcpc/dhcpcd-hooks/02-dump \
+	/var/lib/location/tmp*
 
 # update linker config
 ldconfig
