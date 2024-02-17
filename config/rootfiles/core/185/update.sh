@@ -38,6 +38,15 @@ done
 extract_files
 
 # Remove files
+rm -rvf \
+	/lib/firmware/ath10k/WCN3990/hw1.0/notice.txt_wlanmdsp \
+	/lib/firmware/ath11k/IPQ6018/hw1.0/Notice.txt \
+	/lib/firmware/ath11k/IPQ8074/hw2.0/Notice.txt \
+	/lib/firmware/ath11k/QCA6390/hw2.0/Notice.txt \
+	/lib/firmware/ath11k/QCN9074/hw1.0/Notice.txt \
+	/lib/firmware/ath11k/WCN6855/hw2.0/Notice.txt \
+	/lib/firmware/intel-ucode/06-86-04 \
+	/lib/firmware/intel-ucode/06-86-05
 
 # update linker config
 ldconfig
