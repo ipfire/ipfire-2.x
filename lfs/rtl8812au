@@ -87,7 +87,7 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 			/lib/modules/$$(uname -r)$(KCFG)/build/certs/signing_key.pem \
 			/lib/modules/$$(uname -r)$(KCFG)/build/certs/signing_key.x509 \
 			$$f; \
-		xz $$f; \
+		xz --check=crc32 --lzma2=dict=512KiB $$f; \
 		install -m 644 $$f.xz $(MODPATH); \
 	done
 
