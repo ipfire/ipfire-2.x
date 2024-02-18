@@ -62,7 +62,7 @@ case "${1}" in
 			# Set the governor to ondemand for all cpus
 			for i in `seq 0 $CPUCOUNT`;
 			do
-				cpufreq-set -c $i -g $GOV
+				cpufreq-set -c $i -g $GOV > /dev/null
 			done
 			echo_ok;
 		else
