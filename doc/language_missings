@@ -142,23 +142,10 @@
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
-< downfall gather data sampling
 < extrahd because it it outside the allowed mount path
-< extrahd mounted
-< extrahd no mount point given
-< extrahd not configured
-< extrahd not mounted
 < g.dtm
 < g.lite
-< hostile networks in
-< hostile networks out
 < hostile networks total
-< log drop hostile in
-< log drop hostile out
-< regenerate host certificate
-< reiserfs warning1
-< reiserfs warning2
-< spec rstack overflow
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #

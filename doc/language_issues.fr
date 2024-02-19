@@ -908,15 +908,10 @@ WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
 WARNING: untranslated string: core notice 3 = available.
-WARNING: untranslated string: downfall gather data sampling = Downfall/Gather Data Sampling
 WARNING: untranslated string: enable disable client = unknown string
 WARNING: untranslated string: enable disable dyndns = unknown string
 WARNING: untranslated string: error message = unknown string
 WARNING: untranslated string: extrahd because it is outside the allowed mount path = unknown string
-WARNING: untranslated string: extrahd mounted = Mounted
-WARNING: untranslated string: extrahd no mount point given = No mount point given
-WARNING: untranslated string: extrahd not configured = Not configured
-WARNING: untranslated string: extrahd not mounted = Not mounted
 WARNING: untranslated string: fwhost cust locationgrp = unknown string
 WARNING: untranslated string: fwhost err hostip = unknown string
 WARNING: untranslated string: guardian block a host = unknown string
@@ -948,19 +943,10 @@ WARNING: untranslated string: guardian logtarget_file = unknown string
 WARNING: untranslated string: guardian logtarget_syslog = unknown string
 WARNING: untranslated string: guardian no entries = unknown string
 WARNING: untranslated string: guardian service = unknown string
-WARNING: untranslated string: hostile networks in = From Hostile Networks
-WARNING: untranslated string: hostile networks out = To Hostile Networks
 WARNING: untranslated string: hostile networks total = Total Hostile Networks
-WARNING: untranslated string: log drop hostile in = Log dropped packets FROM hostile networks
-WARNING: untranslated string: log drop hostile out = Log dropped packets TO hostile networks
 WARNING: untranslated string: pakfire ago = ago.
-WARNING: untranslated string: regenerate host certificate = Renew Host Certificate
-WARNING: untranslated string: reiserfs warning1 = Reiserfs is deprecated and scheduled to be removed from the kernel in 2025.
-WARNING: untranslated string: reiserfs warning2 = Ensure a fresh installation is made using either ext4 or xfs filesystems before that date.
-WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
-WARNING: untranslated string: spec rstack overflow = Speculative Return Stack Overflow
 WARNING: untranslated string: wio = unknown string
 WARNING: untranslated string: wio checked = unknown string
 WARNING: untranslated string: wio cron = unknown string
