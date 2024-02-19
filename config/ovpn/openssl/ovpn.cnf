@@ -79,13 +79,10 @@ extendedKeyUsage               = clientAuth
 keyUsage                       = digitalSignature
 
 [ server ]
-
 # JY ADDED -- Make a cert with nsCertType set to "server"
 basicConstraints		= CA:FALSE
 nsCertType			= server
 nsComment			= "OpenSSL Generated Server Certificate"
-subjectKeyIdentifier		= hash
-authorityKeyIdentifier		= keyid,issuer:always 
 extendedKeyUsage               = serverAuth
 keyUsage                       = digitalSignature, keyEncipherment
 
