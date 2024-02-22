@@ -3472,7 +3472,7 @@ foreach my $dkey (keys %confighash) {
 	$confighash{$key}[31] = $n2ntunmtu[1];
 	$confighash{$key}[39] = $n2nauth[1];
 	$confighash{$key}[40] = $n2ncipher[1];
-	$confighash{$key}[41] = 'disabled';
+	$confighash{$key}[41] = 'no-pass';
 
   &General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
