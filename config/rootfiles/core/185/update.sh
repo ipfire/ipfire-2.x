@@ -88,6 +88,27 @@ telinit u
 /etc/init.d/unbound restart
 /etc/init.d/ntp start
 
+## Modify ovpnconfig according to bug 13548 for no-pass entry for N2N client connections
+# Check if ovpnconfig exists and is not empty
+if [ -s /var/ipfire/ovpn/ovpnconfig ]; then
+       # Add blank line at top of ovpnconfig otherwise the first roadwarrior entry is treated like a blank line and missed out from update
+       awk 'NR==1{print ""}1' /var/ipfire/ovpn/ovpnconfig > /var/ipfire/ovpn/tmp_file && mv /var/ipfire/ovpn/tmp_file /var/ipfire/ovpn/ovpnconfig
+
+       # Make all N2N connections 'no-pass' since they do not use encryption
+       awk '{FS=OFS=","} {if($5=="net") {$43="no-pass"; print $0}}' /var/ipfire/ovpn/ovpnconfig >> /var/ipfire/ovpn/ovpnconfig.new
+
+       # Copy all RW connections unchanged to the new ovpnconfig file
+       for y in $(awk -F',' '/host/ { print $3 }' /var/ipfire/ovpn/ovpnconfig); do
+           awk -v var="$y" '{FS=OFS=","} {if($3==var) {print $0}}' /var/ipfire/ovpn/ovpnconfig >> /var/ipfire/ovpn/ovpnconfig.new
+
+       done
+fi
+
+# Replace existing ovpnconfig with updated index
+mv /var/ipfire/ovpn/ovpnconfig.new /var/ipfire/ovpn/ovpnconfig
+# Set correct ownership
+chown nobody:nobody /var/ipfire/ovpn/ovpnconfig
+
 # This update needs a reboot...
 #touch /var/run/need_reboot
 
