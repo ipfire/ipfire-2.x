@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -48,7 +48,7 @@ my @nosaved=();
 my %color = ();
 
 #Basic syntax allowed for new Option definition. Not implemented: RECORDS & array of RECORDS
-our $OptionTypes = 'boolean|((un)?signed )?integer (8|16|32)|ip-address|text|string|encapsulate \w+|array of ip-address';
+our $OptionTypes = 'boolean|((un)?signed )?integer (8|16|32)|ip-address|text|string|encapsulate \w+|array of (ip-address|integer (8|16|32))';
 
 &Header::showhttpheaders();
 our @ITFs=('GREEN');
