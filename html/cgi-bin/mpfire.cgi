@@ -214,11 +214,11 @@ if ( $mpfiresettings{'ACTION'} eq "scan" ){
 	delete $mpfiresettings{'PAGE'}; delete $mpfiresettings{'FRAME'};
 	&General::writehash("${General::swroot}/mpfire/settings", \%mpfiresettings);
 
-	open(DATEI, "<${General::swroot}/mpfire/mpd.conf") || die "Datei nicht gefunden";
+	open(DATEI, "<${General::swroot}/mpd/mpd.conf") || die "Datei nicht gefunden";
 	my @Zeilen = <DATEI>;
 	close(DATEI);
 
-	open(DATEI, ">${General::swroot}/mpfire/mpd.conf") || die "Datei nicht gefunden";
+	open(DATEI, ">${General::swroot}/mpd/mpd.conf") || die "Datei nicht gefunden";
 	foreach (@Zeilen){
 		if ( $_ =~ /music_directory/){
 			print DATEI "music_directory \"".$mpfiresettings{'MUSICDIR'}."\"\n";

@@ -387,4 +387,5 @@ usr/share/gnump3d
 var/cache/gnump3d
 var/cache/gnump3d/serving
 var/log/gnump3d
+#var/mp3
 var/mp3/info

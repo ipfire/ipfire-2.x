@@ -27,15 +27,9 @@ var/ipfire/menu.d/EX-mpfire.menu
 var/ipfire/mpfire
 var/ipfire/mpfire/bin
 var/ipfire/mpfire/bin/mpfire.pl
-#var/ipfire/mpfire/db
-var/ipfire/mpfire/db/info
-var/ipfire/mpfire/mpd.conf
-var/ipfire/mpfire/playlist.m3u
 var/ipfire/mpfire/settings
 var/ipfire/mpfire/webradio
-var/mp3/info
 usr/local/bin/mpfirectrl
 srv/web/ipfire/cgi-bin/mpfire.cgi
 srv/web/ipfire/html/images/mpfire
 var/ipfire/menu.d/EX-mpfire.menu
-#var/mp3

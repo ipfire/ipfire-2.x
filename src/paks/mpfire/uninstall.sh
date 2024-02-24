@@ -17,12 +17,10 @@
 # along with IPFire; if not, write to the Free Software                    #
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA #
 #                                                                          #
-# Copyright (C) 2007 IPFire-Team <info@ipfire.org>.                        #
+# Copyright (C) 2007-2024 IPFire-Team <info@ipfire.org>.                   #
 #                                                                          #
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-/etc/init.d/mpd stop
 make_backup ${NAME}
 remove_files
-rm -f /etc/rc.d/rc*.d/???mpd /var/log/mpd.error.log /var/log/mpd.log /etc/mpd.conf

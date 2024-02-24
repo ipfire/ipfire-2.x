@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/${THISAPP}
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpd
-PAK_VER    = 33
+PAK_VER    = 35
 # SUP_ARCH   = aarch64 x86_64
 
 DEPS       = alsa avahi faad2 ffmpeg flac lame libmad libshout libogg libid3tag libvorbis opus soxr fmt
@@ -104,6 +104,16 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 
 	#install initscripts
 	$(call INSTALL_INITSCRIPTS,$(SERVICES))
+
+	-mkdir -p /var/ipfire/mpd/db
+	touch /var/ipfire/mpd/playlist.m3u
+	install -v -m 664 $(DIR_SRC)/config/mpd/mpd.conf /var/ipfire/mpd/
+	echo "Folder for mpd database" > /var/ipfire/mpd/db/info
+	-mkdir -p /var/mp3
+	echo "Folder for music files" > /var/mp3/info
+	chown root.nobody /var/ipfire/mpd/{mpd.conf,playlist.m3u}
+	chmod 664 /var/ipfire/mpd/playlist.m3u
+	install -v -m 644 $(DIR_SRC)/config/backup/includes/mpd /var/ipfire/backup/addons/includes/mpd
 
 	@rm -rf $(DIR_APP)
 	touch /var/log/mpd.error.log

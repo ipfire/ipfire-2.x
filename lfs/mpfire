@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2019  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -32,7 +32,7 @@ THISAPP    = mpfire-$(VER)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpfire
-PAK_VER    = 16
+PAK_VER    = 17
 
 DEPS       = mpd mpc
 
@@ -61,17 +61,11 @@ dist:
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	-mkdir -p /var/ipfire/mpfire/{bin,db}
-	touch /var/ipfire/mpfire/{settings,playlist.m3u}
+	-mkdir -p /var/ipfire/mpfire/bin
+	touch /var/ipfire/mpfire/settings
 	install -v -m 755 $(DIR_SRC)/config/mpfire/mpfire.pl /var/ipfire/mpfire/bin
-	install -v -m 664 $(DIR_SRC)/config/mpfire/mpd.conf /var/ipfire/mpfire/
 	install -v -m 644 $(DIR_SRC)/config/mpfire/webradio /var/ipfire/mpfire/
-	echo "Folder for mpd database" > /var/ipfire/mpfire/db/info
-	-mkdir -p /var/mp3
-	echo "Folder for music files" > /var/mp3/info
-	chown root.nobody /var/ipfire/mpfire/{mpd.conf,playlist.m3u}
 	chown nobody.nobody /var/ipfire/mpfire/{settings,webradio}
-	chmod 664 /var/ipfire/mpfire/playlist.m3u
 	chmod 755 /srv/web/ipfire/html/images/mpfire
 	install -v -m 644 $(DIR_SRC)/config/backup/includes/mpfire /var/ipfire/backup/addons/includes/mpfire
 	-mkdir -p /usr/lib/perl5/site_perl/5.36.0/Audio/

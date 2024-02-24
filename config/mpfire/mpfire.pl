@@ -87,7 +87,7 @@ sub shuffle(){
   }
 
 sub checkplaylist(){
- my $Datei = "/var/ipfire/mpfire/playlist.m3u";
+ my $Datei = "/var/ipfire/mpd/playlist.m3u";
  my @Info = stat($Datei);
  if ( $Info[7] eq '' || $Info[7] eq '0' ){print "There is no playlist";exit(1);}
 }

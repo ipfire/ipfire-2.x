@@ -8,3 +8,10 @@ usr/bin/mpd
 #usr/share/icons/hicolor/scalable/apps/mpd.svg
 var/log/mpd.error.log
 var/log/mpd.log
+var/ipfire/backup/addons/includes/mpd
+#var/ipfire/mpd
+#var/ipfire/mpd/db
+var/ipfire/mpd/db/info
+var/ipfire/mpd/mpd.conf
+var/ipfire/mpd/playlist.m3u
+var/mp3/info

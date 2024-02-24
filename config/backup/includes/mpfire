@@ -1,6 +1,2 @@
-/etc/asound.state
-/var/ipfire/mpfire/db/
-/var/ipfire/mpfire/mpd.conf
-/var/ipfire/mpfire/mpd_state
 /var/ipfire/mpfire/settings
 /var/ipfire/mpfire/webradio

@@ -22,6 +22,7 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-extract_backup_includes
-./uninstall.sh
-./install.sh
+/etc/init.d/mpd stop
+make_backup ${NAME}
+remove_files
+rm -f /etc/rc.d/rc*.d/???mpd /var/log/mpd.error.log /var/log/mpd.log /etc/mpd.conf

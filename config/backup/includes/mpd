@@ -1,0 +1,4 @@
+/etc/asound.state
+/var/ipfire/mpd/db/
+/var/ipfire/mpd/mpd.conf
+/var/ipfire/mpd/mpd_state
