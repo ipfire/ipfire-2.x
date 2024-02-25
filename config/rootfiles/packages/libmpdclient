@@ -1,6 +1,8 @@
 #usr/include/mpd
+#usr/include/mpd/albumart.h
 #usr/include/mpd/async.h
 #usr/include/mpd/audio_format.h
+#usr/include/mpd/binary.h
 #usr/include/mpd/capabilities.h
 #usr/include/mpd/client.h
 #usr/include/mpd/compiler.h
@@ -23,8 +25,10 @@
 #usr/include/mpd/password.h
 #usr/include/mpd/player.h
 #usr/include/mpd/playlist.h
+#usr/include/mpd/position.h
 #usr/include/mpd/protocol.h
 #usr/include/mpd/queue.h
+#usr/include/mpd/readpicture.h
 #usr/include/mpd/recv.h
 #usr/include/mpd/replay_gain.h
 #usr/include/mpd/response.h
@@ -40,13 +44,11 @@
 #usr/include/mpd/version.h
 usr/lib/libmpdclient.so
 usr/lib/libmpdclient.so.2
-usr/lib/libmpdclient.so.2.19
+usr/lib/libmpdclient.so.2.22
 #usr/lib/pkgconfig/libmpdclient.pc
 #usr/share/doc/libmpdclient
 #usr/share/doc/libmpdclient/AUTHORS
-#usr/share/doc/libmpdclient/COPYING
+#usr/share/doc/libmpdclient/BSD-2-Clause.txt
+#usr/share/doc/libmpdclient/BSD-3-Clause.txt
 #usr/share/doc/libmpdclient/NEWS
 #usr/share/doc/libmpdclient/README.rst
-#usr/share/vala
-#usr/share/vala/vapi
-#usr/share/vala/vapi/libmpdclient.vapi
