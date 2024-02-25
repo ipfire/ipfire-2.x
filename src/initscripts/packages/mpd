@@ -2,7 +2,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -25,7 +25,7 @@
 case "$1" in
 	start)
 		boot_mesg "Starting MPD..."
-		chown -R root.nobody /var/ipfire/mpfire/db
+		chown -R root.nobody /var/ipfire/mpd/db
 		/bin/nice --5 /usr/bin/mpd
     evaluate_retval
 		;;
