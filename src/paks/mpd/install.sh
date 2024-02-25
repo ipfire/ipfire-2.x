@@ -29,4 +29,4 @@ ln -svf  /etc/init.d/mpd /etc/rc.d/rc6.d/K35mpd
 ln -svf  /var/ipfire/mpd/mpd.conf /etc/mpd.conf
 touch /var/log/mpd.log
 restore_backup ${NAME}
-/etc/init.d/mpd start
+/etc/init.d/mpd restart

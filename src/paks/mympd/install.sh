@@ -29,5 +29,6 @@ ln -svf  /etc/init.d/mympd /etc/rc.d/rc6.d/K34mympd
 restore_backup ${NAME}
 # create/check config
 /usr/bin/mympd -u nobody -c
-# start service
+# start services
+/etc/init.d/mpd restart
 /etc/init.d/mympd start
