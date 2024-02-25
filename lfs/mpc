@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2018  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = Client for the Music Player Daemon
 
-VER        = 0.34
+VER        = 0.35
 
 THISAPP    = mpc-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = mpc
-PAK_VER    = 9
+PAK_VER    = 10
 
 DEPS       = mpd libmpdclient
 
@@ -48,7 +48,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 709f54ceebd66f703e5b1bf6ff8deb890e484fdc29c0b2198922763e347caac89d6eec5f74101f9fa860436e7493e2b02cc6b1b26e800e783546fe5a0c6e0d8f
+$(DL_FILE)_BLAKE2 = 7e47d78b762b7334f5fec13897bdf11859310932371a55c189c4554b347f097852e5fa17be3df03d047fabcc60699a3b310d0aa395aadd96a5ebff009a2ddba0
 
 install : $(TARGET)
 
