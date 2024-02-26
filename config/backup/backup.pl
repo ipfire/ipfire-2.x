@@ -75,6 +75,10 @@ make_backup() {
 restore_backup() {
 	local filename="${1}"
 
+	# remove all openvpn certs to prevent old unusable
+	# certificates being left in directory after a restore
+	rm -f /var/ipfire/ovpn/certs/*
+
 	# Extract backup
 	if ! tar xvzpf "${filename}" -C / \
 			--exclude-from="/var/ipfire/backup/exclude" \
