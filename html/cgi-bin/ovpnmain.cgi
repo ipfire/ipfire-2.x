@@ -4216,15 +4216,25 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		}
 	    }
 
-		# Check for RW if client name is already set
-		if ($cgiparams{'TYPE'} eq 'host') {
-			foreach my $key (keys %confighash) {
-				if ($confighash{$key}[1] eq $cgiparams{'NAME'}) {
-					$errormessage = $Lang::tr{'a connection with this name already exists'};
-					goto VPNCONF_ERROR;
-				}
-			}
-		}
+	    # Check for RW if client name is already set
+	    if ($cgiparams{'TYPE'} eq 'host') {
+		    foreach my $key (keys %confighash) {
+			    if ($confighash{$key}[1] eq $cgiparams{'NAME'}) {
+				    $errormessage = $Lang::tr{'a connection with this name already exists'};
+				    goto VPNCONF_ERROR;
+		    }
+		    }
+	    }
+
+	    # Check if there is no other entry with this common name
+	    if ((! $cgiparams{'KEY'}) && ($cgiparams{'AUTH'} ne 'psk')) {
+	        foreach my $key (keys %confighash) {
+		    if ($confighash{$key}[2] eq $cgiparams{'CERT_NAME'}) {
+		        $errormessage = $Lang::tr{'a connection with this common name already exists'};
+		        goto VPNCONF_ERROR;
+		    }
+	        }
+	    }
 
 	    # Replace empty strings with a .
 	    (my $ou = $cgiparams{'CERT_OU'}) =~ s/^\s*$/\./;
@@ -4307,16 +4317,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	} else {
 	    $errormessage = $Lang::tr{'invalid input for authentication method'};
 	    goto VPNCONF_ERROR;
-	}
-
-	# Check if there is no other entry with this common name
-	if ((! $cgiparams{'KEY'}) && ($cgiparams{'AUTH'} ne 'psk')) {
-	    foreach my $key (keys %confighash) {
-		if ($confighash{$key}[2] eq $cgiparams{'CERT_NAME'}) {
-		    $errormessage = $Lang::tr{'a connection with this common name already exists'};
-		    goto VPNCONF_ERROR;
-		}
-	    }
 	}
 
     # Save the config
