@@ -20,3 +20,6 @@ var/ipfire/zabbix_agentd/zabbix_agentd_ipfire_mandatory.conf
 var/ipfire/zabbix_agentd/userparameters
 var/ipfire/zabbix_agentd/userparameters/userparameter_pakfire.conf
 var/ipfire/zabbix_agentd/userparameters/userparameter_ipfire.conf
+var/ipfire/zabbix_agentd/userparameters/userparameter_ovpn.conf
+var/ipfire/zabbix_agentd/scripts
+var/ipfire/zabbix_agentd/scripts/ipfire_certificate_detail.sh

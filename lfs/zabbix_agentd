@@ -110,6 +110,13 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 		/var/ipfire/zabbix_agentd/userparameters/userparameter_pakfire.conf
 	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_ipfire.conf \
 		/var/ipfire/zabbix_agentd/userparameters/userparameter_ipfire.conf
+	install -v -m 644 $(DIR_SRC)/config/zabbix_agentd/userparameter_ovpn.conf \
+		/var/ipfire/zabbix_agentd/userparameters/userparameter_ovpn.conf
+
+	# Install IPFire-specific Zabbix Agent scripts
+	-mkdir -pv /var/ipfire/zabbix_agentd/scripts
+	install -v -m 755 $(DIR_SRC)/config/zabbix_agentd/ipfire_certificate_detail.sh \
+		/var/ipfire/zabbix_agentd/scripts/ipfire_certificate_detail.sh
 
 	# Create directory for additional agent modules
 	-mkdir -pv /usr/lib/zabbix
