@@ -4,10 +4,11 @@
 #usr/lib/libffi.la
 #usr/lib/libffi.so
 usr/lib/libffi.so.8
-usr/lib/libffi.so.8.1.2
+usr/lib/libffi.so.8.1.4
 #usr/lib/pkgconfig/libffi.pc
 #usr/share/info/libffi.info
 #usr/share/man/man3/ffi.3
 #usr/share/man/man3/ffi_call.3
 #usr/share/man/man3/ffi_prep_cif.3
 #usr/share/man/man3/ffi_prep_cif_var.3
+
