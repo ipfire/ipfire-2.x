@@ -1,0 +1,78 @@
+#!/bin/sh
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+. /etc/sysconfig/rc
+. $rc_functions
+
+eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
+
+PIDFILE="/var/run/wsdd.pid"
+
+case "$1" in
+	start)
+		ARGS=(
+			# Launch as non-privileged user
+			"--user" "wsdd:wsdd"
+
+			# Launch in chroot
+			"--chroot" "/var/run/wsdd"
+
+			# Only use IPv4
+			"--ipv4only"
+
+			# Configure the workgroup
+			"--workgroup" "$(testparm -s --parameter-name workgroup 2>/dev/null)"
+		)
+
+		# Conditionally add the GREEN/BLUE interface
+		for intf in GREEN_DEV BLUE_DEV; do
+			if [ -n "${!intf}" ]; then
+				ARGS+=( "--interface" "${!intf}" )
+			fi
+		done
+
+		# Create chroot directory for wsdd
+		mkdir -p /var/run/wsdd
+
+		boot_mesg "Starting Web Service Discovery Host Daemon..."
+		loadproc -b -p "${PIDFILE}" /usr/bin/wsdd "${ARGS[@]}"
+		;;
+
+	stop)
+		boot_mesg "Stopping Web Service Discovery Host Daemon..."
+		killproc -p "${PIDFILE}" /usr/bin/wsdd
+		;;
+
+	status)
+		statusproc /usr/bin/wsdd
+		;;
+
+	restart)
+		$0 stop
+		$0 start
+		;;
+
+	*)
+		echo "Usage: $0 (start|stop|status|restart)"
+		exit 1
+		;;
+esac
+
