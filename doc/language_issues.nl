@@ -978,7 +978,7 @@ WARNING: untranslated string: download apple profile = Download Apple Configurat
 WARNING: untranslated string: download tls-auth key = Download tls-auth key
 WARNING: untranslated string: drop hostile = Drop packets from and to hostile networks (listed at <a href="https://www.spamhaus.org/drop/" target="_blank">Spamhaus DROP</a>, etc.)
 WARNING: untranslated string: drop outgoing = Log dropped outgoing packets
-WARNING: untranslated string: drop spoofed martians = Log dropped spoofed packets and marsians
+WARNING: untranslated string: drop spoofed martians = Log dropped spoofed packets and martians
 WARNING: untranslated string: duration = Duration
 WARNING: untranslated string: eight hours = 8 Hours
 WARNING: untranslated string: email config = Configuration

@@ -959,7 +959,7 @@
 'drop portscan' => 'Log dropped portscan packets',
 'drop proxy' => 'Drop all packets not addressed to proxy',
 'drop samba' => 'Drop all Microsoft ports 135,137,138,139,445,1025',
-'drop spoofed martians' => 'Log dropped spoofed packets and marsians',
+'drop spoofed martians' => 'Log dropped spoofed packets and martians',
 'drop wirelessforward' => 'Log dropped wireless forward packets',
 'drop wirelessinput' => 'Log dropped wireless input packets',
 'dst port' => 'Dst Port',
