@@ -133,6 +133,7 @@ usr/libexec/git-core/git-remote-http
 usr/libexec/git-core/git-remote-https
 usr/libexec/git-core/git-repack
 usr/libexec/git-core/git-replace
+usr/libexec/git-core/git-replay
 usr/libexec/git-core/git-request-pull
 usr/libexec/git-core/git-rerere
 usr/libexec/git-core/git-reset
@@ -355,3 +356,4 @@ usr/share/perl5/Git/SVN
 #usr/share/perl5/Git/SVN/Prompt.pm
 #usr/share/perl5/Git/SVN/Ra.pm
 #usr/share/perl5/Git/SVN/Utils.pm
+
