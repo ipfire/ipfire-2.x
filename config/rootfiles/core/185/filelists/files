@@ -43,4 +43,5 @@ lib/firmware/netronome/flower/nic_AMDA0078-0012_8x10.nffw
 lib/firmware/nvidia/tegra124/vic.bin
 lib/firmware/nvidia/tegra186/vic.bin
 lib/firmware/nvidia/tegra210/vic.bin
+srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/dns.cgi
