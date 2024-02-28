@@ -141,8 +141,6 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 
 	# Go further if there was no error.
 	if ( ! $errormessage) {
-		# Check if a remark has been entered.
-		$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 
 		my %dns_servers = ();
 		my $id;
