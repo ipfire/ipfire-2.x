@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 4.19.3
+VER        = 4.19.5
 SUMMARY    = A SMB/CIFS File, Print, and Authentication Server
 
 THISAPP    = samba-$(VER)
@@ -33,7 +33,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = samba
-PAK_VER    = 98
+PAK_VER    = 99
 
 DEPS       = avahi cups perl-Parse-Yapp perl-JSON
 
@@ -47,7 +47,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = f83af3b50d795bdc4a250fe96040721150acc3b8effddd473e3cfa3ef6eeec99928b1307a18a472be45049e1d0b74650b9f6dd4bf5c434277c94ab88cb493b3b
+$(DL_FILE)_BLAKE2 = 0f0081380ad459cca914e5e4cf505a4783ce97f0fb8c0471a6e558c747c16b0b327e545358265f365599c3807540985bcddb68aa67d14136cee4dbcb5158090c
 
 install : $(TARGET)
 
