@@ -45,3 +45,5 @@ lib/firmware/nvidia/tegra186/vic.bin
 lib/firmware/nvidia/tegra210/vic.bin
 srv/web/ipfire/cgi-bin/dhcp.cgi
 srv/web/ipfire/cgi-bin/dns.cgi
+srv/web/ipfire/cgi-bin/ovpnmain.cgi
+var/ipfire/backup/bin/backup.pl
