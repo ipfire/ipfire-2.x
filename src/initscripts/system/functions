@@ -407,7 +407,7 @@ pidofproc()
 # This will ensure compatibility with previous LFS Bootscripts
 getpids()
 {
-	if [ -z "${PIDFILE}" ]; then
+	if [ -n "${PIDFILE}" ]; then
 		pidofproc -s -p "${PIDFILE}" $@
 	else
 		pidofproc -s $@
@@ -446,6 +446,7 @@ loadproc()
 	local pidfile=""
 	local forcestart=""
 	local nicelevel=""
+	local pid
 
 # This will ensure compatibility with previous LFS Bootscripts
 	if [ -n "${PIDFILE}" ];	then
@@ -521,10 +522,17 @@ loadproc()
 		(
 			${cmd} &>/dev/null
 		) &
+		pid="$!"
 		evaluate_retval
 	else
 		${cmd}
+		pid="$!"
 		evaluate_retval # This is "Probably" not LSB compliant, but required to be compatible with older bootscripts
+	fi
+
+	# Write the pidfile
+	if [ -n "${pid}" -a -n "${pidfile}" ]; then
+		echo "${pid}" > "${pidfile}"
 	fi
 
 	return 0
