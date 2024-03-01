@@ -1,3 +1,4 @@
+etc/rc.d/init.d/functions
 etc/sudoers.d/logwatch-mdadm
 lib/firmware/brcm/BCM-0a5c-6410.hcd
 lib/firmware/brcm/brcmfmac43012-sdio.bin
