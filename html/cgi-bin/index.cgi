@@ -564,6 +564,7 @@ my $temp2=();
 my @df = `/bin/df -B M -P -x rootfs`;
 foreach my $line (@df) {
 	next if $line =~ m/^Filesystem/;
+	next if $line =~ m/^efivarfs/;
 	if ($line =~ m/root/ ) {
 		$line =~ m/^.* (\d+)M.*$/;
 		@temp = split(/ +/,$line);
