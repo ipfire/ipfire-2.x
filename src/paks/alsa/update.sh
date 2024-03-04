@@ -22,8 +22,19 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-mv /etc/asound.state /tmp
+
+# Backup /etc/asound.state
+if [ -e "/etc/asound.state" ]; then
+	mv /etc/asound.state /tmp/asound.state
+fi
+
 extract_backup_includes
 ./uninstall.sh
 ./install.sh
-mv /tmp/asound.state /etc
+
+# Restore asound.state
+if [ -e "/tmp/asound.state" ]; then
+	mv /tmp/asound.state /etc/asound.state
+fi
+
+exit 0
