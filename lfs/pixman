@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 0.43.0
+VER        = 0.43.4
 
 THISAPP    = pixman-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 1a807d4d5598a5fe6077d6bbc7786cba41a698a1f03801cc5367ade8707500ee215a0faf65afe85f9e040b0380f1074c2fdfd31c0805dc41a4e5e34e36416764
+$(DL_FILE)_BLAKE2 = c31e5700bfadcd72f522af50509a4a6cd7bbf90c918c75b108e50246f1c76e858125138902a222040ada192710ec788deb43eb65085416f3eff88e3ed970933e
 
 install : $(TARGET)
 
