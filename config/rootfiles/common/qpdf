@@ -66,6 +66,7 @@ usr/bin/qpdf
 #usr/include/qpdf/auto_job_c_enc.hh
 #usr/include/qpdf/auto_job_c_main.hh
 #usr/include/qpdf/auto_job_c_pages.hh
+usr/include/qpdf/auto_job_c_set_page_labels.hh
 #usr/include/qpdf/auto_job_c_uo.hh
 #usr/include/qpdf/qpdf-c.h
 #usr/include/qpdf/qpdfjob-c.h
@@ -77,10 +78,11 @@ usr/bin/qpdf
 #usr/lib/cmake/qpdf/qpdfConfigVersion.cmake
 #usr/lib/libqpdf.so
 usr/lib/libqpdf.so.29
-usr/lib/libqpdf.so.29.7.0
+usr/lib/libqpdf.so.29.9.0
 #usr/lib/pkgconfig/libqpdf.pc
 #usr/share/doc/qpdf
 #usr/share/doc/qpdf/README-doc.txt
 #usr/share/man/man1/fix-qdf.1
 #usr/share/man/man1/qpdf.1
 #usr/share/man/man1/zlib-flate.1
+
