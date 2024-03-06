@@ -66,7 +66,7 @@ usr/bin/qpdf
 #usr/include/qpdf/auto_job_c_enc.hh
 #usr/include/qpdf/auto_job_c_main.hh
 #usr/include/qpdf/auto_job_c_pages.hh
-usr/include/qpdf/auto_job_c_set_page_labels.hh
+#usr/include/qpdf/auto_job_c_set_page_labels.hh
 #usr/include/qpdf/auto_job_c_uo.hh
 #usr/include/qpdf/qpdf-c.h
 #usr/include/qpdf/qpdfjob-c.h
