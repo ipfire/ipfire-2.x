@@ -33,6 +33,7 @@ done
 
 # Stop services
 /etc/init.d/ntp stop
+/etc/init.d/squid stop
 
 # Extract files
 extract_files
@@ -87,7 +88,9 @@ telinit u
 /etc/init.d/suricata restart
 /etc/init.d/unbound restart
 /etc/init.d/ntp start
-
+if [ -f /var/ipfire/proxy/enable ]; then
+	/etc/init.d/squid start
+f
 ## Modify ovpnconfig according to bug 13548 for no-pass entry for N2N client connections
 # Check if ovpnconfig exists and is not empty
 if [ -s /var/ipfire/ovpn/ovpnconfig ]; then
