@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 1.19.1
+VER        = 1.19.2
 
 THISAPP    = unbound-$(VER)
 DL_FILE    = $(THISAPP).tar.gz
@@ -40,7 +40,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = a48c5b9493eb0a9aa2171956e08677e1cfb7c49b53731c1b05f9192434c4d815eba972aab110ba0ee25fee1e7a57192c8b48e59bb21fb76ad7fd1c7d2d260012
+$(DL_FILE)_BLAKE2 = f8dcee649e5e1dfaab9285964419b4d957f0035e484021e3131784512fed842ee46c25d7b47304aca4f03a0480877b939968bca22e80620434d1d2cb7013c9b6
 
 install : $(TARGET)
 
