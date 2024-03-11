@@ -142,6 +142,13 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 	# Go further if there was no error.
 	if ( ! $errormessage) {
 		# Check if a remark has been entered.
+
+		# decode the UTF-8 text so that characters with diacritical marks such as
+		# umlauts are treated correctly by the following cleanhtml command
+		$cgiparams{'REMARK'} = decode("UTF-8", $cgiparams{'REMARK'});
+
+		# run the REMARK text through cleanhtml to ensure all unsafe html characters
+		# are correctly encoded to their html entities
 		$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 
 		my %dns_servers = ();
