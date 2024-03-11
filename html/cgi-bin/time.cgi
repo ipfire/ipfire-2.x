@@ -287,6 +287,10 @@ print <<END
 </table>
 END
 ;
+
+my $now = strftime($Lang::tr{'timeformat'}, localtime);
+print "<hr>$Lang::tr{'system time'}: $now";
+
 &Header::closebox();
 &Header::openbox('100%',1,$Lang::tr{'ntp sync'});
 print <<END
