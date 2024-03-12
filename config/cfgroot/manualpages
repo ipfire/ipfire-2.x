@@ -2,7 +2,7 @@
 # The CGI files are referenced relative to the "/cgi-bin/" path
 
 # Fixed base URL (without trailing slash)
-BASE_URL=https://wiki.ipfire.org
+BASE_URL=https://www.ipfire.org/docs
 
 #	System menu
 index.cgi=configuration/system/startpage
