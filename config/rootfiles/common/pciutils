@@ -10,4 +10,3 @@ sbin/update-pciids
 #usr/include/pci/types.h
 #usr/lib/libpci.so
 #usr/lib/pkgconfig/libpci.pc
-

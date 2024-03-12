@@ -22,4 +22,3 @@ usr/sbin/i2ctransfer
 #usr/share/man/man8/i2cget.8
 #usr/share/man/man8/i2cset.8
 #usr/share/man/man8/i2ctransfer.8
-

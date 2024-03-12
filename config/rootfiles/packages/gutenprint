@@ -450,4 +450,3 @@ usr/share/gutenprint/samples/testpattern.sample
 #usr/share/man/man8/cups-genppd.8
 #usr/share/man/man8/cups-genppdupdate.8
 var/ipfire/cups/command.types
-

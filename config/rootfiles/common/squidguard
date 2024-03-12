@@ -80,4 +80,3 @@ var/lib/squidguard
 #var/log/squidGuard
 var/log/squidGuard/squidGuard.log
 var/urlrepo
-
