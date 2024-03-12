@@ -3,7 +3,7 @@ usr/bin/whiptail
 #usr/lib/libnewt.a
 #usr/lib/libnewt.so
 usr/lib/libnewt.so.0.52
-usr/lib/libnewt.so.0.52.23
+usr/lib/libnewt.so.0.52.24
 #usr/lib/pkgconfig/libnewt.pc
 #usr/lib/python3.10/site-packages/_snack.so
 #usr/lib/python3.10/site-packages/snack.py
@@ -88,3 +88,4 @@ usr/lib/libnewt.so.0.52.23
 #usr/share/locale/zh_CN/LC_MESSAGES/newt.mo
 #usr/share/locale/zh_TW/LC_MESSAGES/newt.mo
 #usr/share/man/man1/whiptail.1
+
