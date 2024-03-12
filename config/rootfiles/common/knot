@@ -9,7 +9,8 @@ usr/lib/libdnssec.so.9.0.0
 #usr/lib/libknot.la
 #usr/lib/libknot.lai
 #usr/lib/libknot.so
-usr/lib/libknot.so.13
-usr/lib/libknot.so.13.0.0
+usr/lib/libknot.so.14
+usr/lib/libknot.so.14.0.0
 #usr/lib/libknotus.a
 #usr/lib/libknotus.la
+
