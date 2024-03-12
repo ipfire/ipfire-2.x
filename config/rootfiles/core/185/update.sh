@@ -85,6 +85,7 @@ chmod -v 640 /etc/sudoers.d/*
 
 # Start services
 telinit u
+/etc/init.d/sshd restart
 /etc/init.d/suricata restart
 /etc/init.d/unbound restart
 /etc/init.d/ntp start
