@@ -1,7 +1,7 @@
 ###############################################################################
 #                                                                             #
 # IPFire.org - A linux based firewall                                         #
-# Copyright (C) 2007-2023  IPFire Team  <info@ipfire.org>                     #
+# Copyright (C) 2007-2024  IPFire Team  <info@ipfire.org>                     #
 #                                                                             #
 # This program is free software: you can redistribute it and/or modify        #
 # it under the terms of the GNU General Public License as published by        #
@@ -26,7 +26,7 @@ include Config
 
 SUMMARY    = The Ghostscript interpreter for PostScript and PDF
 
-VER        = 10.02.1
+VER        = 10.03.0
 
 THISAPP    = ghostscript-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -34,7 +34,7 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = ghostscript
-PAK_VER    = 16
+PAK_VER    = 17
 
 DEPS       = cups dbus
 
@@ -52,7 +52,7 @@ $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 ghostscript-fonts-std-8.11.tar.gz = $(URL_IPFIRE)/ghostscript-fonts-std-8.11.tar.gz
 gnu-gs-fonts-other-6.0.tar.gz = $(URL_IPFIRE)/gnu-gs-fonts-other-6.0.tar.gz
 
-$(DL_FILE)_BLAKE2 = b491473f0b3d50121e4373e21af3d8cdf55d9ca4390b240c4cb88d0d44e707e32570a7f1f05cb656d1b65443fcd7e37f5eab404d72a20f83d8fd87370a585467
+$(DL_FILE)_BLAKE2 = c64e0fc9dd290b81e61793671e8645f16b04070685f6ab9d35a60cb910d7504e1e686525af8b74121ae31a5b344e2332efd8bdf99f2a4c5586bff747b8df78d7
 ghostscript-fonts-std-8.11.tar.gz_BLAKE2 = 1d8ae8f7813623a36e160bdd0ca9ccf33c67b945dd96952eb0e37e9bb5bb4ba5daf7df4da5ba53c1d25d6598a0576990ba7e094b8c395778cb9cdfd32761454c
 gnu-gs-fonts-other-6.0.tar.gz_BLAKE2 = 001709983161519365bcef23fef3705071b67253ff3b557c45d2ec892987815444d8dd1d213e94bc02e361917c061c723043bf04c98b0a1e38c9cd1f265d1312
 
