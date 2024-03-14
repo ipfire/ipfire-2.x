@@ -49,6 +49,7 @@ rm -rvf \
 	/lib/firmware/ath11k/WCN6855/hw2.0/Notice.txt \
 	/lib/firmware/intel-ucode/06-86-04 \
 	/lib/firmware/intel-ucode/06-86-05 \
+	/lib/firmware/intel-ucode/06-8f-04 \
 	/sbin/xtables-multi \
 	/srv/web/ipfire/html/themes/ipfire-rounded \
 	/usr/lib/crda/pubkeys/linville.key.pub.pem \
@@ -113,8 +114,18 @@ mv /var/ipfire/ovpn/ovpnconfig.new /var/ipfire/ovpn/ovpnconfig
 # Set correct ownership
 chown nobody:nobody /var/ipfire/ovpn/ovpnconfig
 
+# Rebuild initial ramdisks
+dracut --regenerate-all --force
+KVER="xxxKVERxxx"
+case "$(uname -m)" in
+	aarch64)
+		mkimage -A arm64 -T ramdisk -C lzma -d /boot/initramfs-${KVER}-ipfire.img /boot/uInit-${KVER}-ipfire
+		# dont remove initramfs because grub need this to boot.
+		;;
+esac
+
 # This update needs a reboot...
-#touch /var/run/need_reboot
+touch /var/run/need_reboot
 
 # Finish
 /etc/init.d/fireinfo start
