@@ -49,4 +49,5 @@ srv/web/ipfire/cgi-bin/dns.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 var/ipfire/backup/bin/backup.pl
+var/ipfire/main/manualpages
 var/ipfire/ovpn/openssl/ovpn.cnf
