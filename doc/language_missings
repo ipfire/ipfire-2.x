@@ -133,6 +133,8 @@
 < reiserfs warning2
 < service boot setting unavailable
 < spec rstack overflow
+< system time
+< timeformat
 < transport mode does not support vti
 < wlanap
 < wlan client configuration
@@ -146,6 +148,8 @@
 < g.dtm
 < g.lite
 < hostile networks total
+< system time
+< timeformat
 < upload fcdsl.o
 ############################################################################
 # Checking cgi-bin translations for language: it                           #
@@ -570,10 +574,12 @@
 < subnet mask
 < subscription code
 < system is offline
+< system time
 < taa zombieload2
 < tcp more reliable
 < ten minutes
 < thirty minutes
+< timeformat
 < token
 < token not set
 < tor guard country
@@ -1116,12 +1122,14 @@
 < subnet mask
 < subscription code
 < system is offline
+< system time
 < taa zombieload2
 < ta key
 < tcp more reliable
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< timeformat
 < token
 < token not set
 < tor guard country
@@ -2008,12 +2016,14 @@
 < subscription code
 < support donation
 < system is offline
+< system time
 < taa zombieload2
 < ta key
 < tcp more reliable
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< timeformat
 < token
 < token not set
 < tor
@@ -3004,12 +3014,14 @@
 < subscription code
 < support donation
 < system is offline
+< system time
 < taa zombieload2
 < ta key
 < tcp more reliable
 < ten minutes
 < teovpn_fragment
 < thirty minutes
+< timeformat
 < token
 < token not set
 < tor
@@ -3468,7 +3480,9 @@
 < subnet mask
 < subscription code
 < system is offline
+< system time
 < taa zombieload2
+< timeformat
 < token
 < token not set
 < tor guard country

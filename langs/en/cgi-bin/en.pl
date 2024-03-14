@@ -2462,7 +2462,7 @@
 'system log viewer' => 'System Log Viewer',
 'system logs' => 'System Logs',
 'system status information' => 'System Status Information',
-'system time' => 'System time (as of last page load)',
+'system time' => 'System Time (as of last page load)',
 'ta key' => 'TLS-Authentification-Key',
 'taa zombieload2' => 'TSX Async Abort/ZombieLoad v2',
 'tcp more reliable' => 'TCP (more reliable)',
