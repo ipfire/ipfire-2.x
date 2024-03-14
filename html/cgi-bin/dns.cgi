@@ -154,7 +154,7 @@ if (($cgiparams{'SERVERS'} eq $Lang::tr{'save'}) || ($cgiparams{'SERVERS'} eq $L
 
 		# encode the text back to UTF-8 after running the cleanhtml command
 		$cgiparams{'REMARK'} = encode("UTF-8", $cgiparams{'REMARK'});
-		
+
 		my %dns_servers = ();
 		my $id;
 		my $status;
