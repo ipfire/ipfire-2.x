@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 6.7.0
+VER        = 6.8.0
 #		https://mirrors.edge.kernel.org/pub/linux/utils/net/iproute2/
 
 THISAPP    = iproute2-$(VER)
@@ -41,7 +41,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE)             = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = df55dffc54ed196d43a86ce40e887dca6390b91289a492266568ff31aa8b2827fbd91c18676e14706df844fbfe3a5c50bf927ed4401e098e385d401ec3d5c116
+$(DL_FILE)_BLAKE2 = d30cdff8522627c27c9165f068f42adbec38f15548a8f2cd31276f283880dc402e10c5989e7227e80cdc891bcc4a574b330d634ae550e689758b849c0506c31f
 
 install : $(TARGET)
 

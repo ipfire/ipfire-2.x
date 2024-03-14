@@ -30,8 +30,6 @@ sbin/vdpa
 #usr/include/iproute2/bpf_elf.h
 #usr/lib/tc
 #usr/lib/tc/experimental.dist
-usr/lib/tc/m_ipt.so
-usr/lib/tc/m_xt.so
 #usr/lib/tc/normal.dist
 #usr/lib/tc/pareto.dist
 #usr/lib/tc/paretonormal.dist
@@ -129,6 +127,7 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/tc-fq_codel.8
 #usr/share/man/man8/tc-fq_pie.8
 #usr/share/man/man8/tc-fw.8
+#usr/share/man/man8/tc-gact.8
 #usr/share/man/man8/tc-gate.8
 #usr/share/man/man8/tc-hfsc.8
 #usr/share/man/man8/tc-htb.8
@@ -160,7 +159,6 @@ usr/share/bash-completion/completions/tc
 #usr/share/man/man8/tc-tunnel_key.8
 #usr/share/man/man8/tc-u32.8
 #usr/share/man/man8/tc-vlan.8
-#usr/share/man/man8/tc-xt.8
 #usr/share/man/man8/tc.8
 #usr/share/man/man8/tipc-bearer.8
 #usr/share/man/man8/tipc-link.8
