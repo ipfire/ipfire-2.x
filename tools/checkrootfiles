@@ -19,49 +19,96 @@
 #                                                                             #
 ###############################################################################
 
-grep -r "^etc/init.d//*" ./config/rootfiles/ >/dev/null 2>&1
-if [ "${?}" == "0" ]; then
-	echo "Error! 'etc/init.d/...' in rootfiles files found!"
-	grep -r "^etc/init.d//*" ./config/rootfiles/
-	echo "Change this to 'etc/rc.d/init.d/...' !"
-fi
+# All supported architectures
+ARCHES=(
+	aarch64
+	riscv64
+	x86_64
+)
 
-grep -r "^var/run//*" ./config/rootfiles/ >/dev/null 2>&1
-if [ "${?}" == "0" ]; then
-	echo "Error! 'var/run/...' in rootfiles files found!"
-	grep -r "^var/run//*" ./config/rootfiles/
-	echo "Comment this and create it at initskript if needed !"
-fi
+# A list of files that are not scanned
+# because they probably cause some false positives.
+EXCLUDED_FILES=(
+	qemu
+)
 
-grep -r 'x86_64' ./config/rootfiles/ --exclude gcc --exclude rust-libc \
-    --exclude rust-ppv-lite86 --exclude rust-memchr --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64 \
-    --exclude update.sh --exclude qemu --exclude cmake --exclude xfsprogs \
-    --exclude-dir oldcore --exclude-dir x86_64 >/dev/null 2>&1
-if [ "${?}" == "0" ]; then
-	echo "Error! '/x86_64' in rootfiles files found!"
-	grep -r 'x86_64' ./config/rootfiles/ --exclude gcc --exclude rust-libc \
-    --exclude rust-ppv-lite86 --exclude rust-memchr --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64  \
-    --exclude update.sh  --exclude qemu --exclude cmake --exclude xfsprogs \
-    --exclude-dir oldcore --exclude-dir x86_64
-	echo "Replace by xxxMACHINExxx !"
-fi
+ARGS=(
+	# Search path
+	"config/rootfiles"
 
-grep -r 'aarch64' ./config/rootfiles/ --exclude gcc --exclude rust-libc --exclude gdb --exclude liburcu --exclude gdb \
-     --exclude qemu --exclude liburcu --exclude abseil-cpp \
-     --exclude-dir oldcore --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64 >/dev/null 2>&1
-if [ "${?}" == "0" ]; then
-	echo "Error! 'aarch64' in rootfiles files found!"
-	grep -r 'aarch64' ./config/rootfiles/ --exclude gcc --exclude rust-libc --exclude gdb \
-    --exclude qemu --exclude liburcu --exclude abseil-cpp \
-    --exclude-dir oldcore --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64
-	echo "Replace by xxxMACHINExxx !"
-fi
+	# Exclude old core updates
+	"--exclude-dir" "oldcore"
 
-grep -r 'riscv64' ./config/rootfiles/ --exclude gcc --exclude rust-libc --exclude gdb --exclude liburcu --exclude go --exclude qemu \
-     --exclude-dir oldcore --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64  >/dev/null 2>&1
-if [ "${?}" == "0" ]; then
-	echo "Error! 'riscv64' in rootfiles files found!"
-	grep -r 'riscv64' ./config/rootfiles/ --exclude gcc --exclude rust-libc --exclude go --exclude qemu \
-    --exclude-dir oldcore --exclude-dir aarch64 --exclude-dir riscv64 --exclude-dir x86_64
-	echo "Replace by xxxMACHINExxx !"
-fi
+	# Ignore the update scripts
+	"--exclude" "update.sh"
+)
+
+check_for_arch() {
+	local arch="${1}"
+
+	local args=(
+		"${ARGS[@]}"
+	)
+
+	# Exclude any architecture-specific directories
+	local a
+	for a in ${ARCHES[@]}; do
+		args+=( "--exclude-dir" "${a}" )
+	done
+
+	# Exclude all excluded files
+	local x
+	for x in ${EXCLUDED_FILES[@]}; do
+		args+=( "--exclude" "${x}" )
+	done
+
+	# Search for all lines that contain the architecture, but exclude commented lines
+	grep -r "^[^#].*${arch}" "${args[@]}"
+}
+
+check_for_pattern() {
+	local pattern="${1}"
+	local message="${2}"
+
+	local args=(
+		"${ARGS[@]}"
+	)
+
+	if grep -r "${pattern}" "${args[@]}"; then
+		if [ -n "${message}" ]; then
+			echo "ERROR: ${message}"
+		else
+			echo "ERROR: Files matching '${pattern}' have been found in the rootfiles"
+		fi
+		return 1
+	fi
+
+	return 0
+}
+
+main() {
+	local failed=0
+
+	# Check for /etc/init.d
+	if ! check_for_pattern "^etc/init\.d/" \
+			"/etc/init.d/* has been found. Please replace by /etc/rc.d/init.d"; then
+		failed=1
+	fi
+
+	# Check for /var/run
+	if ! check_for_pattern "^var/run/.*" \
+			"You cannot ship files in /var/run as it is a ramdisk"; then
+		failed=1
+	fi
+
+	# Check architectures
+	local arch
+	for arch in ${ARCHES[@]}; do
+		check_for_arch "${arch}" || failed=$?
+	done
+
+	# Return the error
+	return ${failed}
+}
+
+main "$@" || exit $?
