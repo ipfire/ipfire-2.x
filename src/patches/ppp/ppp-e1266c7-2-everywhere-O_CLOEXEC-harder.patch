@@ -1,6 +1,6 @@
-diff -Naur pppd.orig/eap.c pppd/eap.c
---- pppd.orig/eap.c	2023-03-25 05:38:30.000000000 +0100
-+++ pppd/eap.c	2023-06-30 12:58:07.984676045 +0200
+diff -Naur ppp-e1266c7-orig/pppd/eap.c ppp-e1266c7/pppd/eap.c
+--- ppp-e1266c7-orig/pppd/eap.c	2024-02-13 10:40:56.000000000 +0100
++++ ppp-e1266c7/pppd/eap.c	2024-03-15 10:40:53.637190252 +0100
 @@ -1542,7 +1542,7 @@
  
  	if ((path = name_of_pn_file()) == NULL)
@@ -10,10 +10,10 @@ diff -Naur pppd.orig/eap.c pppd/eap.c
  	err = errno;
  	free(path);
  	errno = err;
-diff -Naur pppd.orig/main.c pppd/main.c
---- pppd.orig/main.c	2023-03-25 05:38:30.000000000 +0100
-+++ pppd/main.c	2023-06-30 13:00:15.155195676 +0200
-@@ -479,7 +479,7 @@
+diff -Naur ppp-e1266c7-orig/pppd/main.c ppp-e1266c7/pppd/main.c
+--- ppp-e1266c7-orig/pppd/main.c	2024-02-13 10:40:56.000000000 +0100
++++ ppp-e1266c7/pppd/main.c	2024-03-15 10:41:43.842037617 +0100
+@@ -480,7 +480,7 @@
  	die(0);
  
      /* Make sure fds 0, 1, 2 are open to somewhere. */
@@ -22,10 +22,10 @@ diff -Naur pppd.orig/main.c pppd/main.c
      if (fd_devnull < 0)
  	fatal("Couldn't open %s: %m", PPP_DEVNULL);
      while (fd_devnull <= 2) {
-diff -Naur pppd.orig/options.c pppd/options.c
---- pppd.orig/options.c	2023-06-30 12:42:19.262593140 +0200
-+++ pppd/options.c	2023-06-30 13:01:58.388323345 +0200
-@@ -1718,9 +1718,9 @@
+diff -Naur ppp-e1266c7-orig/pppd/options.c ppp-e1266c7/pppd/options.c
+--- ppp-e1266c7-orig/pppd/options.c	2024-02-13 10:40:56.000000000 +0100
++++ ppp-e1266c7/pppd/options.c	2024-03-15 10:43:02.867753370 +0100
+@@ -1719,9 +1719,9 @@
  	ppp_option_error("unable to drop permissions to open %s: %m", *argv);
  	return 0;
      }
@@ -37,10 +37,10 @@ diff -Naur pppd.orig/options.c pppd/options.c
      err = errno;
      if (!privileged_option && seteuid(euid) == -1)
  	fatal("unable to regain privileges: %m");
-diff -Naur pppd.orig/sys-linux.c pppd/sys-linux.c
---- pppd.orig/sys-linux.c	2023-06-30 12:43:20.634453475 +0200
-+++ pppd/sys-linux.c	2023-06-30 13:11:25.715511251 +0200
-@@ -666,7 +666,7 @@
+diff -Naur ppp-e1266c7-orig/pppd/sys-linux.c ppp-e1266c7/pppd/sys-linux.c
+--- ppp-e1266c7-orig/pppd/sys-linux.c	2024-02-13 10:40:56.000000000 +0100
++++ ppp-e1266c7/pppd/sys-linux.c	2024-03-15 10:49:59.310297165 +0100
+@@ -656,7 +656,7 @@
  	    goto err;
  	}
  	dbglog("using channel %d", chindex);
@@ -49,7 +49,7 @@ diff -Naur pppd.orig/sys-linux.c pppd/sys-linux.c
  	if (fd < 0) {
  	    error("Couldn't reopen /dev/ppp: %m");
  	    goto err;
-@@ -904,7 +904,7 @@
+@@ -894,7 +894,7 @@
  		dbglog("in make_ppp_unit, already had /dev/ppp open?");
  		close(ppp_dev_fd);
  	}
@@ -58,7 +58,7 @@ diff -Naur pppd.orig/sys-linux.c pppd/sys-linux.c
  	if (ppp_dev_fd < 0)
  		fatal("Couldn't open /dev/ppp: %m");
  	flags = fcntl(ppp_dev_fd, F_GETFL);
-@@ -1025,7 +1025,7 @@
+@@ -1015,7 +1015,7 @@
  	if (!new_style_driver)
  		return -1;
  
@@ -67,7 +67,7 @@ diff -Naur pppd.orig/sys-linux.c pppd/sys-linux.c
  	if (master_fd < 0)
  		fatal("Couldn't open /dev/ppp: %m");
  	if (ioctl(master_fd, PPPIOCATTACH, &ifnum) < 0) {
-@@ -2533,7 +2533,7 @@
+@@ -2541,7 +2541,7 @@
  	if (tune_kernel) {
  	    forw_path = path_to_procfs("/sys/net/ipv4/ip_forward");
  	    if (forw_path != 0) {
@@ -76,7 +76,7 @@ diff -Naur pppd.orig/sys-linux.c pppd/sys-linux.c
  		if (fd >= 0) {
  		    if (write(fd, "1", 1) != 1)
  			error("Couldn't enable IP forwarding: %m");
-@@ -2878,7 +2878,7 @@
+@@ -2886,7 +2886,7 @@
      sscanf(utsname.release, "%d.%d.%d", &osmaj, &osmin, &ospatch);
      kernel_version = KVERSION(osmaj, osmin, ospatch);
  
@@ -85,7 +85,7 @@ diff -Naur pppd.orig/sys-linux.c pppd/sys-linux.c
      if (fd >= 0) {
  	new_style_driver = 1;
  
-@@ -3056,7 +3056,7 @@
+@@ -3064,7 +3064,7 @@
  #if __GLIBC__ >= 2
      updwtmp(_PATH_WTMP, &ut);
  #else
@@ -94,7 +94,7 @@ diff -Naur pppd.orig/sys-linux.c pppd/sys-linux.c
      if (wtmp >= 0) {
  	flock(wtmp, LOCK_EX);
  
-@@ -3280,7 +3280,7 @@
+@@ -3288,7 +3288,7 @@
  	int fd;
  
  	path = path_to_procfs("/sys/net/ipv4/ip_dynaddr");
@@ -103,7 +103,7 @@ diff -Naur pppd.orig/sys-linux.c pppd/sys-linux.c
  	    if (write(fd, "1", 1) != 1)
  		error("Couldn't enable dynamic IP addressing: %m");
  	    close(fd);
-@@ -3534,7 +3534,7 @@
+@@ -3542,7 +3542,7 @@
      /*
       * Try the unix98 way first.
       */
@@ -112,7 +112,7 @@ diff -Naur pppd.orig/sys-linux.c pppd/sys-linux.c
      if (mfd >= 0) {
  	int ptn;
  	if (ioctl(mfd, TIOCGPTN, &ptn) >= 0) {
-@@ -3545,7 +3545,8 @@
+@@ -3553,7 +3553,8 @@
  	    if (ioctl(mfd, TIOCSPTLCK, &ptn) < 0)
  		warn("Couldn't unlock pty slave %s: %m", pty_name);
  #endif
@@ -122,7 +122,7 @@ diff -Naur pppd.orig/sys-linux.c pppd/sys-linux.c
  	    {
  		warn("Couldn't open pty slave %s: %m", pty_name);
  		close(mfd);
-@@ -3559,10 +3560,10 @@
+@@ -3567,10 +3568,10 @@
  	for (i = 0; i < 64; ++i) {
  	    slprintf(pty_name, sizeof(pty_name), "/dev/pty%c%x",
  		     'p' + i / 16, i % 16);
@@ -135,19 +135,19 @@ diff -Naur pppd.orig/sys-linux.c pppd/sys-linux.c
  		if (sfd >= 0) {
  		    ret = fchown(sfd, uid, -1);
  		    if (ret != 0) {
-diff -Naur pppd.orig/tdb.c pppd/tdb.c
---- pppd.orig/tdb.c	2021-07-23 06:41:07.000000000 +0200
-+++ pppd/tdb.c	2023-06-30 13:12:55.034900600 +0200
-@@ -1728,7 +1728,7 @@
- 		goto internal;
+diff -Naur ppp-e1266c7-orig/pppd/tdb.c ppp-e1266c7/pppd/tdb.c
+--- ppp-e1266c7-orig/pppd/tdb.c	2024-02-13 10:40:56.000000000 +0100
++++ ppp-e1266c7/pppd/tdb.c	2024-03-15 10:51:25.182882191 +0100
+@@ -1732,7 +1732,7 @@
  	}
  
+ again:
 -	if ((tdb->fd = open(name, open_flags, mode)) == -1) {
 +	if ((tdb->fd = open(name, open_flags | O_CLOEXEC, mode)) == -1) {
- 		TDB_LOG((tdb, 5, "tdb_open_ex: could not open file %s: %s\n",
- 			 name, strerror(errno)));
- 		goto fail;	/* errno set by open(2) */
-@@ -1971,7 +1971,7 @@
+ 		if ((open_flags & O_CREAT) && errno == ENOENT &&
+ 			mkdir_recursive(PPP_PATH_VARRUN) == 0)
+ 			goto again;
+@@ -1979,7 +1979,7 @@
  	}
  	if (close(tdb->fd) != 0)
  		TDB_LOG((tdb, 0, "tdb_reopen: WARNING closing tdb->fd failed!\n"));
@@ -156,9 +156,9 @@ diff -Naur pppd.orig/tdb.c pppd/tdb.c
  	if (tdb->fd == -1) {
  		TDB_LOG((tdb, 0, "tdb_reopen: open failed (%s)\n", strerror(errno)));
  		goto fail;
-diff -Naur pppd.orig/tty.c pppd/tty.c
---- pppd.orig/tty.c	2023-03-25 05:38:30.000000000 +0100
-+++ pppd/tty.c	2023-06-30 13:14:06.450418113 +0200
+diff -Naur ppp-e1266c7-orig/pppd/tty.c ppp-e1266c7/pppd/tty.c
+--- ppp-e1266c7-orig/pppd/tty.c	2024-02-13 10:40:56.000000000 +0100
++++ ppp-e1266c7/pppd/tty.c	2024-03-15 10:52:35.828341901 +0100
 @@ -621,7 +621,7 @@
  				ppp_set_status(EXIT_OPEN_FAILED);
  				goto errret;
@@ -177,10 +177,10 @@ diff -Naur pppd.orig/tty.c pppd/tty.c
  				break;
  			if (errno != EINTR) {
  				error("Failed to reopen %s: %m", devnam);
-diff -Naur pppd.orig/utils.c pppd/utils.c
---- pppd.orig/utils.c	2022-12-30 02:12:39.000000000 +0100
-+++ pppd/utils.c	2023-06-30 13:15:47.860182369 +0200
-@@ -843,14 +843,14 @@
+diff -Naur ppp-e1266c7-orig/pppd/utils.c ppp-e1266c7/pppd/utils.c
+--- ppp-e1266c7-orig/pppd/utils.c	2024-02-13 10:40:56.000000000 +0100
++++ ppp-e1266c7/pppd/utils.c	2024-03-15 10:55:27.176832115 +0100
+@@ -926,14 +926,14 @@
      slprintf(lock_file, sizeof(lock_file), "%s/LCK..%s", PPP_PATH_LOCKDIR, dev);
  #endif
  
@@ -197,7 +197,7 @@ diff -Naur pppd.orig/utils.c pppd/utils.c
  	if (fd < 0) {
  	    if (errno == ENOENT) /* This is just a timing problem. */
  		continue;
-@@ -933,7 +933,7 @@
+@@ -1016,7 +1016,7 @@
  
      if (lock_file[0] == 0)
  	return -1;
