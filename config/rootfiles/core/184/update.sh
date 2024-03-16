@@ -80,6 +80,12 @@ xz --check=crc32 --lzma2=dict=512KiB /lib/modules/6.6.15-ipfire/extra/wlan/8812a
 # Apply local configuration to sshd_config
 /usr/local/bin/sshctrl
 
+# Add the drop hostile in and out logging options
+# into the optionsfw settings file and apply to firewall
+sed -i '$ a\LOGDROPHOSTILEIN=on' /var/ipfire/optionsfw/settings
+sed -i '$ a\LOGDROPHOSTILEOUT=on' /var/ipfire/optionsfw/settings
+/usr/local/bin/firewallctrl
+
 # Start services
 telinit u
 /etc/init.d/vnstat start
