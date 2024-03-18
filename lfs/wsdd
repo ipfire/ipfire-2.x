@@ -33,11 +33,11 @@ DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = wsdd
-PAK_VER    = 1
+PAK_VER    = 2
 
 DEPS       =
 
-SERVICES   = wsdd
+SERVICES   =
 
 ###############################################################################
 # Top-level Rules
@@ -81,9 +81,6 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
 	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar axf $(DIR_DL)/$(DL_FILE)
 	cd $(DIR_APP) && cp src/wsdd.py /usr/bin/wsdd
-
-	#install initscripts
-	$(call INSTALL_INITSCRIPTS,$(SERVICES))
 
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
