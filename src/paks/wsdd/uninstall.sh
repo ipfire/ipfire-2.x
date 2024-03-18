@@ -22,9 +22,6 @@
 ############################################################################
 #
 . /opt/pakfire/lib/functions.sh
-stop_service ${NAME}
 make_backup ${NAME}
 remove_files
-# Remove all start links.
-rm -rf /etc/rc.d/rc*.d/*wsdd
 exit 0

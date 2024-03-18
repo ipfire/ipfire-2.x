@@ -24,7 +24,7 @@
 . /opt/pakfire/lib/functions.sh
 
 # If the wsdd user does not exist yet, then create it and add to wsdd group.
-if ! getent user wsdd >/dev/null; then
+if ! getent passwd wsdd >/dev/null; then
 	useradd -r -U -d / -s /bin/false -c "wsdd user" wsdd
 	usermod -a -G wsdd wsdd
 fi
@@ -32,9 +32,4 @@ fi
 extract_files
 restore_backup ${NAME}
 
-# Create startlinks
-ln -sf ../init.d/wsdd /etc/rc.d/rc0.d/K35wsdd
-ln -sf ../init.d/wsdd /etc/rc.d/rc3.d/S65wsdd
-ln -sf ../init.d/wsdd /etc/rc.d/rc6.d/K35wsdd
-start_service ${NAME}
 exit 0
