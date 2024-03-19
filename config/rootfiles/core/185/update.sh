@@ -59,6 +59,7 @@ rm -rvf \
 	/usr/lib/grub/x86_64-efi/shim_lock.* \
 	/usr/lib/grub/x86_64-efi/verifiers.* \
 	/usr/lib/grub/x86_64-efi/verify.* \
+	/usr/lib/pppd/2.5.0 \
 	/usr/lib/snort_dynamic* \
 	/usr/local/bin/snortctrl \
 	/usr/share/usb_modeswitch/1033:0035 \
