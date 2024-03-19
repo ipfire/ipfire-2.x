@@ -2475,10 +2475,6 @@ END
     &General::readhash("${General::swroot}/ovpn/settings", \%cgiparams);
     read_routepushfile;
 
-
-#    if ($cgiparams{'CLIENT2CLIENT'} eq '') {
-#	$cgiparams{'CLIENT2CLIENT'} =  'on';
-#    }
 ADV_ERROR:
 	if ($cgiparams{'DAUTH'} eq '') {
 		$cgiparams{'DAUTH'} = 'SHA512';
