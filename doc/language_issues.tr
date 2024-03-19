@@ -27,6 +27,7 @@ WARNING: translation string unused: Existing Files
 WARNING: translation string unused: HDD temperature
 WARNING: translation string unused: Level7 rule
 WARNING: translation string unused: Local VPN IP
+WARNING: translation string unused: OVPN
 WARNING: translation string unused: Pages
 WARNING: translation string unused: Ping
 WARNING: translation string unused: Queuelenght
@@ -691,6 +692,7 @@ WARNING: translation string unused: reset shares
 WARNING: translation string unused: resetglobals
 WARNING: translation string unused: resetpolicy
 WARNING: translation string unused: resetshares
+WARNING: translation string unused: restart ovpn server
 WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: restore settings
 WARNING: translation string unused: root
@@ -968,8 +970,6 @@ WARNING: untranslated string: cake profile raw 0 = Raw (no overhead compensation
 WARNING: untranslated string: configuration file = Configuration File
 WARNING: untranslated string: core update = Core-Update
 WARNING: untranslated string: cpu frequency = CPU frequency
-WARNING: untranslated string: crypto error = Cryptographic error
-WARNING: untranslated string: crypto warning = Cryptographic warning
 WARNING: untranslated string: dangerous = Dangerous
 WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: default IP address = Default IP Address
@@ -1181,11 +1181,9 @@ WARNING: untranslated string: openvpn cert has expired = Expired
 WARNING: untranslated string: optional = Optional
 WARNING: untranslated string: otp qrcode = OTP QRCode
 WARNING: untranslated string: ovpn connection name = Connection Name
-WARNING: untranslated string: ovpn error md5 = You host certificate uses MD5 for the signature which is not accepted anymore. <br>Please update to the latest IPFire version and generate a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
 WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
-WARNING: untranslated string: ovpn warning rfc3280 = Your host certificate is not RFC3280 compliant. <br>Please update to the latest IPFire version and generate as soon as possible a new root and host certificate.</br><br>All OpenVPN clients needs then to be renewed!</br>
 WARNING: untranslated string: pak update = Update
 WARNING: untranslated string: pakfire already busy = Pakfire is already performing a task. Please try again later.
 WARNING: untranslated string: pakfire finished = Pakfire has finished! Returning...

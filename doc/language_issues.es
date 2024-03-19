@@ -29,6 +29,7 @@ WARNING: translation string unused: Existing Files
 WARNING: translation string unused: HDD temperature
 WARNING: translation string unused: Level7 rule
 WARNING: translation string unused: Local VPN IP
+WARNING: translation string unused: OVPN
 WARNING: translation string unused: Pages
 WARNING: translation string unused: Ping
 WARNING: translation string unused: Queuelenght
@@ -204,6 +205,8 @@ WARNING: translation string unused: cpu frequency per
 WARNING: translation string unused: cpu usage per
 WARNING: translation string unused: create mask
 WARNING: translation string unused: create new backup
+WARNING: translation string unused: crypto error
+WARNING: translation string unused: crypto warning
 WARNING: translation string unused: cryptographic settings
 WARNING: translation string unused: current media
 WARNING: translation string unused: current ovpn
@@ -629,6 +632,7 @@ WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn engines
+WARNING: translation string unused: ovpn error md5
 WARNING: translation string unused: ovpn generating the root and host certificates
 WARNING: translation string unused: ovpn log
 WARNING: translation string unused: ovpn mtu-disc
@@ -639,6 +643,7 @@ WARNING: translation string unused: ovpn mtu-disc off
 WARNING: translation string unused: ovpn mtu-disc with mssfix or fragment
 WARNING: translation string unused: ovpn mtu-disc yes
 WARNING: translation string unused: ovpn reneg sec
+WARNING: translation string unused: ovpn warning rfc3280
 WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_mssfix
 WARNING: translation string unused: ovpn_mtudisc
@@ -718,6 +723,7 @@ WARNING: translation string unused: reset shares
 WARNING: translation string unused: resetglobals
 WARNING: translation string unused: resetpolicy
 WARNING: translation string unused: resetshares
+WARNING: translation string unused: restart ovpn server
 WARNING: translation string unused: restore hardware settings
 WARNING: translation string unused: restore settings
 WARNING: translation string unused: root
