@@ -703,23 +703,6 @@ sub writecollectdconf {
 	&General::system("/usr/local/bin/collectdctrl", "restart");
 }
 
-#hier die refresh page
-if ( -e "${General::swroot}/ovpn/gencanow") {
-    my $refresh = '';
-    $refresh = "<meta http-equiv='refresh' content='15;' />";
-    &Header::showhttpheaders();
-    &Header::openpage($Lang::tr{'OVPN'}, 1, $refresh);
-    &Header::openbigbox('100%', 'center');
-    &Header::openbox('100%', 'left', "$Lang::tr{'generate root/host certificates'}:");
-    print "<tr>\n<td align='center'><img src='/images/clock.gif' alt='' /></td>\n";
-    print "<td colspan='2'><font color='red'>Please be patient this realy can take some time on older hardware...</font></td></tr>\n";
-    &Header::closebox();
-    &Header::closebigbox();
-    &Header::closepage();
-    exit (0);
-}
-##hier die refresh page
-
 ###
 ### OpenVPN Server Control
 ###
@@ -1752,9 +1735,6 @@ END
 	(my $ou = $cgiparams{'ROOTCERT_OU'}) =~ s/^\s*$/\./;
 	(my $city = $cgiparams{'ROOTCERT_CITY'}) =~ s/^\s*$/\./;
 	(my $state = $cgiparams{'ROOTCERT_STATE'}) =~ s/^\s*$/\./;
-
-	# refresh
-	#system ('/bin/touch', "${General::swroot}/ovpn/gencanow");
 
 	# Create the CA certificate
 	my $pid = open(OPENSSL, "|-");
