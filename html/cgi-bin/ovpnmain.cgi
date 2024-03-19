@@ -314,15 +314,6 @@ sub writeserverconf {
     close(CONF);
 }
 
-sub emptyserverlog{
-    if (open(FILE, ">/var/run/ovpnserver.log")) {
-	flock FILE, 2;
-	print FILE "";
-	close FILE;
-    }
-
-}
-
 sub delccdnet
 {
 	my %ccdconfhash = ();
@@ -662,12 +653,10 @@ sub writecollectdconf {
 ###
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'}) {
-	&emptyserverlog();
 	&General::system("/usr/local/bin/openvpnctrl", "-s");
 
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'stop ovpn server'}) {
 	&General::system("/usr/local/bin/openvpnctrl", "-k");
-	&emptyserverlog();
 }
 
 ###
