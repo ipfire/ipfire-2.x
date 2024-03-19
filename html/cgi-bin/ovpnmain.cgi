@@ -44,10 +44,8 @@ require "${General::swroot}/location-functions.pl";
 use warnings;
 use CGI::Carp 'fatalsToBrowser';
 
-my %color = ();
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
-&General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
 ###
 ### Initialize variables
@@ -2851,8 +2849,8 @@ END
 		@ccdconf=($ccdconfhash{$key}[0],$ccdconfhash{$key}[1]);
 		$count++;
 		my $ccdhosts = &hostsinnet($ccdconf[0]);
-		if ($count % 2){ print" <tr bgcolor='$color{'color22'}'>";}
-		else{            print" <tr bgcolor='$color{'color20'}'>";}
+		if ($count % 2){ print" <tr bgcolor='$Header::color{'color22'}'>";}
+		else{            print" <tr bgcolor='$Header::color{'color20'}'>";}
 		print"<td>$ccdconf[0]</td><td align='center'>$ccdconf[1]</td><td align='center'>$ccdhosts/".(&ccdmaxclients($ccdconf[1])+1)."</td><td>";
         print <<END;
 		<form method='post' />
@@ -2959,10 +2957,10 @@ END
 		for (my $idx = 1; $idx <= $user2; $idx++){
 						if ($idx % 2) {
 							print "<tr>";
-							$col="bgcolor='$color{'color22'}'";
+							$col="bgcolor='$Header::color{'color22'}'";
 						} else {
 							print "<tr>";
-							$col="bgcolor='$color{'color20'}'";
+							$col="bgcolor='$Header::color{'color20'}'";
 						}
 						print "<td align='left' $col>$users[$idx-1]{'CommonName'}</td>";
 						print "<td align='left' $col>$users[$idx-1]{'RealAddress'}</td>";
@@ -4696,7 +4694,7 @@ if ($cgiparams{'TYPE'} eq 'host') {
 		foreach my $key (sort { uc($ccdconfhash{$a}[0]) cmp uc($ccdconfhash{$b}[0]) } keys %ccdconfhash) {
 			$count++;
 			@ccdconf=($ccdconfhash{$key}[0],$ccdconfhash{$key}[1]);
-			if ($count % 2){print"<tr bgcolor='$color{'color22'}'>";}else{print"<tr bgcolor='$color{'color20'}'>";}
+			if ($count % 2){print"<tr bgcolor='$Header::color{'color22'}'>";}else{print"<tr bgcolor='$Header::color{'color20'}'>";}
 			print"<td align='center' width='1%'><input type='radio' name='CHECK1' value='$ccdconf[0]' $checked{'check1'}{$ccdconf[0]}/></td><td>$ccdconf[0]</td><td width='40%' align='center'>$ccdconf[1]</td><td align='left' width='10%'>";
 			&fillselectbox($ccdconf[1],$ccdconf[0],$cgiparams{$name});
 			print"</td></tr>";
@@ -5329,11 +5327,11 @@ END
 	print "<tr>";
 
 	if ($hasExpired || $expiresSoon) {
-		$col="bgcolor='$color{'color14'}'";
+		$col="bgcolor='$Header::color{'color14'}'";
 	} elsif ($id % 2) {
-		$col="bgcolor='$color{'color20'}'";
+		$col="bgcolor='$Header::color{'color20'}'";
 	} else {
-		$col="bgcolor='$color{'color22'}'";
+		$col="bgcolor='$Header::color{'color22'}'";
 	}
 	print "<td align='center' nowrap='nowrap' $col>$confighash{$key}[1]";
 	if ($hasExpired) {
@@ -5566,12 +5564,12 @@ END
     </tr>
 END
     ;
-    my $col1="bgcolor='$color{'color22'}'";
-    my $col2="bgcolor='$color{'color20'}'";
+    my $col1="bgcolor='$Header::color{'color22'}'";
+    my $col2="bgcolor='$Header::color{'color20'}'";
     # DH parameter line
-    my $col3="bgcolor='$color{'color22'}'";
+    my $col3="bgcolor='$Header::color{'color22'}'";
     # ta.key line
-    my $col4="bgcolor='$color{'color20'}'";
+    my $col4="bgcolor='$Header::color{'color20'}'";
 
     if (-f "${General::swroot}/ovpn/ca/cacert.pem") {
 		my @casubject = &General::system_output("/usr/bin/openssl", "x509", "-text", "-in", "${General::swroot}/ovpn/ca/cacert.pem");
@@ -5749,9 +5747,9 @@ END
     if (keys %cahash > 0) {
 		foreach my $key (keys %cahash) {
 			if (($key + 1) % 2) {
-				print "<tr bgcolor='$color{'color20'}'>\n";
+				print "<tr bgcolor='$Header::color{'color20'}'>\n";
 			} else {
-				print "<tr bgcolor='$color{'color22'}'>\n";
+				print "<tr bgcolor='$Header::color{'color22'}'>\n";
 			}
 			print "<td class='base'>$cahash{$key}[0]</td>\n";
 			print "<td class='base'>$cahash{$key}[1]</td>\n";
