@@ -715,9 +715,9 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'TLSAUTH'} = $cgiparams{'TLSAUTH'};
     my @temp=();
 
-	# If NCP is disabled, we need the fallback cipher
-	if ($cgiparams{'DATACIPHERS'} eq '' && $cgiparams{'DCIPHER'} eq '') {
-		$errormessage = $Lang::tr{'ovpn if ncp is disabled we must have cipher'};
+	# We must have at least one cipher selected
+	if ($cgiparams{'DATACIPHERS'} eq '') {
+		$errormessage = $Lang::tr{'ovpn no cipher selected'};
 		goto ADV_ERROR;
 	}
 
@@ -2178,18 +2178,9 @@ else
 	$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem", "$confighash{$cgiparams{'KEY'}}[1]cert.pem") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1]cert.pem\n";
     }
 
-	# Cryptography
-
-	# If no data ciphers have been selected, we try to use the fallback cipher
-	if ($vpnsettings{'DATACIPHERS'} eq '') {
-		print CLIENTCONF "ncp-disable\r\n";
-
-		if ($vpnsettings{'DCIPHER'} ne '') {
-		    print CLIENTCONF "cipher $vpnsettings{'DCIPHER'}\r\n";
-		}
-	} else {
-		# Otherwise we don't write anything because the server and client will negotiate
-	}
+	# We no longer send any cryptographic configuration since 2.6.
+	# That way, we will be able to push this from the server.
+	# Therefore we always mandate NCP for new clients.
 
 	print CLIENTCONF "auth $vpnsettings{'DAUTH'}\r\n";
 
@@ -2649,7 +2640,7 @@ ADV_ERROR:
 					</td>
 
 					<td>
-						<select name='DATACIPHERS' multiple>
+						<select name='DATACIPHERS' multiple required>
 END
 
 	foreach my $cipher (@SUPPORTED_CIPHERS) {

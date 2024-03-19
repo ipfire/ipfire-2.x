@@ -91,7 +91,7 @@
 < ovpn ciphers
 < ovpn fallback cipher
 < ovpn fallback cipher help
-< ovpn if ncp is disabled we must have cipher
+< ovpn no cipher selected
 < ovpn roadwarrior server
 < ovpn unsupported cipher selected
 < quality of service
@@ -150,7 +150,7 @@
 < ovpn ciphers
 < ovpn fallback cipher
 < ovpn fallback cipher help
-< ovpn if ncp is disabled we must have cipher
+< ovpn no cipher selected
 < ovpn unsupported cipher selected
 < quality of service
 ############################################################################
@@ -203,7 +203,7 @@
 < ovpn ciphers
 < ovpn fallback cipher
 < ovpn fallback cipher help
-< ovpn if ncp is disabled we must have cipher
+< ovpn no cipher selected
 < ovpn roadwarrior server
 < ovpn unsupported cipher selected
 < password has quotation mark
@@ -671,7 +671,7 @@
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
-< ovpn if ncp is disabled we must have cipher
+< ovpn no cipher selected
 < ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
@@ -1322,7 +1322,7 @@
 < ovpn fallback cipher help
 < ovpn generating the root and host certificates
 < ovpn ha
-< ovpn if ncp is disabled we must have cipher
+< ovpn no cipher selected
 < ovpn reneg sec
 < ovpn roadwarrior server
 < ovpn rw connection log
@@ -2290,7 +2290,6 @@
 < ovpn fallback cipher help
 < ovpn generating the root and host certificates
 < ovpn ha
-< ovpn if ncp is disabled we must have cipher
 < ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
@@ -2299,6 +2298,7 @@
 < ovpn mtu-disc off
 < ovpn mtu-disc with mssfix or fragment
 < ovpn mtu-disc yes
+< ovpn no cipher selected
 < ovpn no connections
 < ovpn port in root range
 < ovpn reneg sec
@@ -3393,7 +3393,6 @@
 < ovpn fallback cipher help
 < ovpn generating the root and host certificates
 < ovpn ha
-< ovpn if ncp is disabled we must have cipher
 < ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
@@ -3402,6 +3401,7 @@
 < ovpn mtu-disc off
 < ovpn mtu-disc with mssfix or fragment
 < ovpn mtu-disc yes
+< ovpn no cipher selected
 < ovpn no connections
 < ovpn port in root range
 < ovpn reneg sec
@@ -3996,7 +3996,7 @@
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
-< ovpn if ncp is disabled we must have cipher
+< ovpn no cipher selected
 < ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
