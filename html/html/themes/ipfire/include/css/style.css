@@ -106,6 +106,10 @@ h6 {
 	font-size: 1em;
 }
 
+select, textarea {
+	width: 100%;
+}
+
 br.clear {
 	clear: both;
 }
