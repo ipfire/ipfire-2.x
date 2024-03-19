@@ -2481,16 +2481,7 @@ END
 #    }
 ADV_ERROR:
 	if ($cgiparams{'DAUTH'} eq '') {
-		if (-z "${General::swroot}/ovpn/ovpnconfig") {
-			$cgiparams{'DAUTH'} = 'SHA512';
-		}
-		foreach my $key (keys %confighash) {
-			if ($confighash{$key}[3] ne 'host') {
-				$cgiparams{'DAUTH'} = 'SHA512';
-			} else {
-				$cgiparams{'DAUTH'} = 'SHA1';
-			}
-		}
+		$cgiparams{'DAUTH'} = 'SHA512';
 	}
     if ($cgiparams{'MAX_CLIENTS'} eq '') {
 		$cgiparams{'MAX_CLIENTS'} =  '100';
