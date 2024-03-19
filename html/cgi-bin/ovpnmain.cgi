@@ -62,8 +62,6 @@ my %cahash=();
 my %selected=();
 my $warnmessage = '';
 my $errormessage = '';
-my $cryptoerror = '';
-my $cryptowarning = '';
 my %settings=();
 my $routes_push_file = "${General::swroot}/ovpn/routes_push";
 my $confighost="${General::swroot}/fwhosts/customhosts";
@@ -4979,20 +4977,6 @@ END
 
 	# Show any errors and warnings
 	&Header::errorbox($errormessage);
-
-	if ($cryptoerror) {
-		&Header::openbox('100%', 'LEFT', $Lang::tr{'crypto error'});
-		print "<class name='base'>$cryptoerror";
-		print "&nbsp;</class>";
-		&Header::closebox();
-	}
-
-	if ($cryptowarning) {
-		&Header::openbox('100%', 'LEFT', $Lang::tr{'crypto warning'});
-		print "<class name='base'>$cryptowarning";
-		print "&nbsp;</class>";
-		&Header::closebox();
-	}
 
 	if ($warnmessage) {
 		&Header::openbox('100%', 'LEFT', $Lang::tr{'warning messages'});
