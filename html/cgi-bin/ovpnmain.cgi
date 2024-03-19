@@ -147,42 +147,26 @@ sub iscertlegacy
 	return 0;
 }
 
-sub cleanssldatabase
-{
-    if (open(FILE, ">${General::swroot}/ovpn/certs/serial")) {
-	print FILE "01";
-	close FILE;
-    }
-    if (open(FILE, ">${General::swroot}/ovpn/certs/index.txt")) {
-	print FILE "";
-	close FILE;
-    }
-    if (open(FILE, ">${General::swroot}/ovpn/certs/index.txt.attr")) {
-      print FILE "";
-      close FILE;
-    }
-    unlink ("${General::swroot}/ovpn/certs/index.txt.old");
-    unlink ("${General::swroot}/ovpn/certs/index.txt.attr.old");
-    unlink ("${General::swroot}/ovpn/certs/serial.old");
-    unlink ("${General::swroot}/ovpn/certs/01.pem");
-}
+sub cleanssldatabase() {
+	if (open(FILE, ">${General::swroot}/ovpn/certs/serial")) {
+		print FILE "01";
+		close FILE;
+	}
 
-sub newcleanssldatabase
-{
-    if (! -s "${General::swroot}/ovpn/certs/serial" )  {
-        open(FILE, ">${General::swroot}(ovpn/certs/serial");
-	print FILE "01";
-	close FILE;
-    }
-    if (! -s ">${General::swroot}/ovpn/certs/index.txt") {
-	&General::system("touch", "${General::swroot}/ovpn/certs/index.txt");
-    }
-    if (! -s ">${General::swroot}/ovpn/certs/index.txt.attr") {
-	&General::system("touch", "${General::swroot}/ovpn/certs/index.txt.attr");
-    }
-    unlink ("${General::swroot}/ovpn/certs/index.txt.old");
-    unlink ("${General::swroot}/ovpn/certs/index.txt.attr.old");
-    unlink ("${General::swroot}/ovpn/certs/serial.old");
+	if (open(FILE, ">${General::swroot}/ovpn/certs/index.txt")) {
+		print FILE "";
+		close FILE;
+	}
+
+	if (open(FILE, ">${General::swroot}/ovpn/certs/index.txt.attr")) {
+		print FILE "";
+		close FILE;
+	}
+
+	unlink("${General::swroot}/ovpn/certs/index.txt.old");
+	unlink("${General::swroot}/ovpn/certs/index.txt.attr.old");
+	unlink("${General::swroot}/ovpn/certs/serial.old");
+	unlink("${General::swroot}/ovpn/certs/01.pem");
 }
 
 sub deletebackupcert
@@ -1801,7 +1785,7 @@ END
 	    unlink ("${General::swroot}/ovpn/serverkey.pem");
 	    unlink ("${General::swroot}/ovpn/certs/serverreq.pem");
 	    unlink ("${General::swroot}/ovpn/certs/servercert.pem");
-	    &newcleanssldatabase();
+	    &cleanssldatabase();
 	    goto ROOTCERT_ERROR;
 	} else {
 	    unlink ("${General::swroot}/ovpn/certs/serverreq.pem");
@@ -3964,7 +3948,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		$errormessage = "$Lang::tr{'openssl produced an error'}: $?";
 		unlink ($filename);
 		unlink ("${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem");
-		&newcleanssldatabase();
+		&cleanssldatabase();
 		goto VPNCONF_ERROR;
 	    } else {
 		unlink ($filename);
@@ -4192,7 +4176,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		unlink ("${General::swroot}/ovpn/certs/$cgiparams{'NAME'}key.pem");
 		unlink ("${General::swroot}/ovpn/certs/$cgiparams{'NAME'}req.pem");
 		unlink ("${General::swroot}/ovpn/certs/$cgiparams{'NAME'}cert.pem");
-		&newcleanssldatabase();
+		&cleanssldatabase();
 		goto VPNCONF_ERROR;
 	    } else {
 		unlink ("${General::swroot}/ovpn/certs/$cgiparams{'NAME'}req.pem");
