@@ -102,8 +102,6 @@ $cgiparams{'DCIPHER'} = '';
 $cgiparams{'DAUTH'} = '';
 $cgiparams{'TLSAUTH'} = '';
 $routes_push_file = "${General::swroot}/ovpn/routes_push";
-# Perform crypto and configration test
-&pkiconfigcheck;
 
 # Add CCD files if not already presant
 unless (-e $routes_push_file) {
@@ -224,35 +222,6 @@ sub deletebackupcert
 		close FILE;
 		unlink ("${General::swroot}/ovpn/certs/$hexvalue.pem");
 	}
-}
-
-###
-### Check for PKI and configure problems
-###
-
-sub pkiconfigcheck
-{
-	# Warning if md5 is in usage
-	if (-f "${General::swroot}/ovpn/certs/servercert.pem") {
-		my @signature = &General::system_output("/usr/bin/openssl", "x509", "-noout", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
-		if (grep(/md5WithRSAEncryption/, @signature) ) {
-			$cryptoerror = "$Lang::tr{'ovpn error md5'}";
-			goto CRYPTO_ERROR;
-		}
-	}
-
-	CRYPTO_ERROR:
-
-	# Warning if certificate is not compliant to RFC3280 TLS rules
-	if (-f "${General::swroot}/ovpn/certs/servercert.pem") {
-		my @extendkeyusage = &General::system_output("/usr/bin/openssl", "x509", "-noout", "-text", "-in", "${General::swroot}/ovpn/certs/servercert.pem");
-		if ( ! grep(/TLS Web Server Authentication/, @extendkeyusage)) {
-			$cryptowarning = "$Lang::tr{'ovpn warning rfc3280'}";
-			goto CRYPTO_WARNING;
-		}
-	}
-
-	CRYPTO_WARNING:
 }
 
 sub writeserverconf {
