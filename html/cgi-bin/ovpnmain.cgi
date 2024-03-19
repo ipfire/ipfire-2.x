@@ -278,9 +278,12 @@ sub writeserverconf {
     if ($sovpnsettings{'TLSAUTH'} eq 'on') {
 	print CONF "tls-auth ${General::swroot}/ovpn/certs/ta.key\n";
     }
-    if ($sovpnsettings{DCOMPLZO} eq 'on') {
-        print CONF "comp-lzo\n";
-    }
+
+	# Compression
+	# Use migration to support clients that have compression enabled, but disable
+	# compression for everybody else.
+	print CONF "compress migrate\n";
+
     if ($sovpnsettings{REDIRECT_GW_DEF1} eq 'on') {
         print CONF "push \"redirect-gateway def1\"\n";
     }
@@ -701,7 +704,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'MAX_CLIENTS'} = $cgiparams{'MAX_CLIENTS'};
     $vpnsettings{'REDIRECT_GW_DEF1'} = $cgiparams{'REDIRECT_GW_DEF1'};
     $vpnsettings{'CLIENT2CLIENT'} = $cgiparams{'CLIENT2CLIENT'};
-    $vpnsettings{'DCOMPLZO'} = $cgiparams{'DCOMPLZO'};
     $vpnsettings{'ADDITIONAL_CONFIGS'} = $cgiparams{'ADDITIONAL_CONFIGS'};
     $vpnsettings{'DHCP_DOMAIN'} = $cgiparams{'DHCP_DOMAIN'};
     $vpnsettings{'DHCP_DNS'} = $cgiparams{'DHCP_DNS'};
@@ -2198,9 +2200,6 @@ else
 	print CLIENTCONF "tls-auth ta.key\r\n";
 	$zip->addFile( "${General::swroot}/ovpn/certs/ta.key", "ta.key")  or die "Can't add file ta.key\n";
     }
-    if ($vpnsettings{DCOMPLZO} eq 'on') {
-        print CLIENTCONF "comp-lzo\r\n";
-    }
     print CLIENTCONF "verb 3\r\n";
 	# Check host certificate if X509 is RFC3280 compliant.
 	# If not, old --ns-cert-type directive will be used.
@@ -2568,9 +2567,6 @@ ADV_ERROR:
     $checked{'REDIRECT_GW_DEF1'}{'off'} = '';
     $checked{'REDIRECT_GW_DEF1'}{'on'} = '';
     $checked{'REDIRECT_GW_DEF1'}{$cgiparams{'REDIRECT_GW_DEF1'}} = 'CHECKED';
-    $checked{'DCOMPLZO'}{'off'} = '';
-    $checked{'DCOMPLZO'}{'on'} = '';
-    $checked{'DCOMPLZO'}{$cgiparams{'DCOMPLZO'}} = 'CHECKED';
     $checked{'ADDITIONAL_CONFIGS'}{'off'} = '';
     $checked{'ADDITIONAL_CONFIGS'}{'on'} = '';
     $checked{'ADDITIONAL_CONFIGS'}{$cgiparams{'ADDITIONAL_CONFIGS'}} = 'CHECKED';
@@ -2782,11 +2778,6 @@ END
 		<td class='base'>Redirect-Gateway def1</td>
 		<td><input type='checkbox' name='REDIRECT_GW_DEF1' $checked{'REDIRECT_GW_DEF1'}{'on'} /></td>
 	</tr>
-
-    <tr><td class='boldbase' nowrap='nowrap'>$Lang::tr{'comp-lzo'}</td>
-        <td><input type='checkbox' name='DCOMPLZO' $checked{'DCOMPLZO'}{'on'} /></td>
-        <td>$Lang::tr{'openvpn default'}: off <font color='red'>($Lang::tr{'attention'} exploitable via Voracle)</font></td>
-    </tr>
 
 	<tr>
 		<td class='base'>$Lang::tr{'ovpn add conf'}</td>
