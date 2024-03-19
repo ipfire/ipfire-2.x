@@ -97,28 +97,18 @@ $cgiparams{'DAUTH'} = '';
 $cgiparams{'TLSAUTH'} = '';
 $routes_push_file = "${General::swroot}/ovpn/routes_push";
 
-# Add CCD files if not already presant
+# Add CCD files if not already present
 unless (-e $routes_push_file) {
 	open(RPF, ">$routes_push_file");
 	close(RPF);
 }
-unless (-e "${General::swroot}/ovpn/ccd.conf") {
-	open(CCDC, ">${General::swroot}/ovpn/ccd.conf");
-	close (CCDC);
-}
-unless (-e "${General::swroot}/ovpn/ccdroute") {
-	open(CCDR, ">${General::swroot}/ovpn/ccdroute");
-	close (CCDR);
-}
-unless (-e "${General::swroot}/ovpn/ccdroute2") {
-	open(CCDRT, ">${General::swroot}/ovpn/ccdroute2");
-	close (CCDRT);
-}
-# Add additional configs if not already presant
+
+# Create additional files it not already existing
 unless (-e "$local_serverconf") {
 	open(LSC, ">$local_serverconf");
        close (LSC);
 }
+
 unless (-e "$local_clientconf") {
        open(LCC, ">$local_clientconf");
        close (LCC);
