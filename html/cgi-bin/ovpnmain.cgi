@@ -2619,6 +2619,7 @@ ADV_ERROR:
 
 					<td>
 						<select name='DCIPHER'>
+							<option value='' $selected{'DCIPHER'}{''}>- $Lang::tr{'Disabled'} -</option>
 							<option value='AES-256-GCM' $selected{'DCIPHER'}{'AES-256-GCM'}>AES-GCM (256 $Lang::tr{'bit'})</option>
 							<option value='AES-192-GCM' $selected{'DCIPHER'}{'AES-192-GCM'}>AES-GCM (192 $Lang::tr{'bit'})</option>
 							<option value='AES-128-GCM' $selected{'DCIPHER'}{'AES-128-GCM'}>AES-GCM (128 $Lang::tr{'bit'})</option>

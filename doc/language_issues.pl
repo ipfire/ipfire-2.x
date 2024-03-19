@@ -845,6 +845,7 @@ WARNING: untranslated string: ConnSched dial = Connect
 WARNING: untranslated string: ConnSched hangup = Disconnect
 WARNING: untranslated string: ConnSched reboot = Reboot
 WARNING: untranslated string: ConnSched shutdown = Shutdown
+WARNING: untranslated string: Disabled = Disabled
 WARNING: untranslated string: MB read = MB read
 WARNING: untranslated string: MB written = MB written
 WARNING: untranslated string: MTU settings = MTU settings:

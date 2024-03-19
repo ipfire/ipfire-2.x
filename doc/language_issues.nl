@@ -931,6 +931,7 @@ WARNING: untranslated string: Captive upload logo recommendations = (PNG or JPEG
 WARNING: untranslated string: Captive valid for = Valid for
 WARNING: untranslated string: Captive vouchervalid = Allowed time for this coupon
 WARNING: untranslated string: Captive wrong type = Uploaded file has wrong filetype
+WARNING: untranslated string: Disabled = Disabled
 WARNING: untranslated string: MTU settings = MTU settings:
 WARNING: untranslated string: Number of Countries for the pie chart = Number of Countries for the pie chart
 WARNING: untranslated string: access point name = Access Point Name

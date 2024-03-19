@@ -839,6 +839,7 @@ WARNING: untranslated string: ConnSched dial = Connect
 WARNING: untranslated string: ConnSched hangup = Disconnect
 WARNING: untranslated string: ConnSched reboot = Reboot
 WARNING: untranslated string: ConnSched shutdown = Shutdown
+WARNING: untranslated string: Disabled = Disabled
 WARNING: untranslated string: Edit an existing route = Edit an existing route
 WARNING: untranslated string: MB read = MB read
 WARNING: untranslated string: MB written = MB written

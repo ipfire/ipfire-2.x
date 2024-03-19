@@ -57,6 +57,7 @@ WARNING: untranslated string: ConnSched shutdown = Shutdown
 WARNING: untranslated string: ConnSched time = Time:
 WARNING: untranslated string: ConnSched up = Up
 WARNING: untranslated string: ConnSched weekdays = Days of the week:
+WARNING: untranslated string: Disabled = Disabled
 WARNING: untranslated string: Edit an existing route = Edit an existing route
 WARNING: untranslated string: Enter TOS = Activate or deactivate TOS-bits <br /> and then press <i>Save</i>.
 WARNING: untranslated string: Level7 Protocol = Level7-Protocol
