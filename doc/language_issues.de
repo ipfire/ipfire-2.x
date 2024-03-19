@@ -926,6 +926,11 @@ WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: AES-128-CBC = AES - CBC Mode - 128 Bit
+WARNING: untranslated string: AES-128-GCM = AES - GCM Mode - 128 Bit
+WARNING: untranslated string: AES-256-CBC = AES - CBC Mode - 256 Bit
+WARNING: untranslated string: AES-256-GCM = AES - GCM Mode - 256 Bit
+WARNING: untranslated string: CHACHA20-POLY1305 = ChaCha20-Poly1305
 WARNING: untranslated string: access point name = Access Point Name
 WARNING: untranslated string: access point name is invalid = Access Point Name is invalid
 WARNING: untranslated string: access point name is required = Access Point Name is required
@@ -1005,9 +1010,12 @@ WARNING: untranslated string: netbios nameserver daemon = NetBIOS Nameserver Dae
 WARNING: untranslated string: no entries = No entries at the moment.
 WARNING: untranslated string: oops something went wrong = Oops, something went wrong...
 WARNING: untranslated string: optional = Optional
+WARNING: untranslated string: ovpn ciphers = Ciphers
 WARNING: untranslated string: ovpn fallback cipher = Fallback Cipher
 WARNING: untranslated string: ovpn fallback cipher help = This cipher is being used by clients that do not support cipher negotiation.
+WARNING: untranslated string: ovpn if ncp is disabled we must have cipher = If you want to disable cipher negotiation, you will have to select a fallback cipher.
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
+WARNING: untranslated string: ovpn unsupported cipher selected = Unknown cipher selected
 WARNING: untranslated string: pakfire invalid tree = Invalid repository selected
 WARNING: untranslated string: quality of service = Quality of Service
 WARNING: untranslated string: reg_file_data_sampling = Register File Data Sampling (RFDS)

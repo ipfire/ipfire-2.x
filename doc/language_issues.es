@@ -982,6 +982,11 @@ WARNING: translation string unused: zoneconf val vlan amount assignment error
 WARNING: translation string unused: zoneconf val vlan tag assignment error
 WARNING: translation string unused: zoneconf val vlan tag range error
 WARNING: translation string unused: zoneconf val zoneslave amount error
+WARNING: untranslated string: AES-128-CBC = AES - CBC Mode - 128 Bit
+WARNING: untranslated string: AES-128-GCM = AES - GCM Mode - 128 Bit
+WARNING: untranslated string: AES-256-CBC = AES - CBC Mode - 256 Bit
+WARNING: untranslated string: AES-256-GCM = AES - GCM Mode - 256 Bit
+WARNING: untranslated string: CHACHA20-POLY1305 = ChaCha20-Poly1305
 WARNING: untranslated string: Captive ACTIVATE = unknown string
 WARNING: untranslated string: Captive clients = unknown string
 WARNING: untranslated string: ca name must only contain characters and spaces = unknown string
@@ -1026,8 +1031,11 @@ WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: mdstat = Mdstat
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: online = Online
+WARNING: untranslated string: ovpn ciphers = Ciphers
 WARNING: untranslated string: ovpn fallback cipher = Fallback Cipher
 WARNING: untranslated string: ovpn fallback cipher help = This cipher is being used by clients that do not support cipher negotiation.
+WARNING: untranslated string: ovpn if ncp is disabled we must have cipher = If you want to disable cipher negotiation, you will have to select a fallback cipher.
+WARNING: untranslated string: ovpn unsupported cipher selected = Unknown cipher selected
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: quality of service = Quality of Service
 WARNING: untranslated string: route config changed = unknown string

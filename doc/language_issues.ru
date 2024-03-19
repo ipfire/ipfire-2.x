@@ -800,7 +800,12 @@ WARNING: translation string unused: xtaccess all error
 WARNING: translation string unused: xtaccess bad transfert
 WARNING: translation string unused: yearly firewallhits
 WARNING: untranslated string: 24 hours = 24 Hours
+WARNING: untranslated string: AES-128-CBC = AES - CBC Mode - 128 Bit
+WARNING: untranslated string: AES-128-GCM = AES - GCM Mode - 128 Bit
+WARNING: untranslated string: AES-256-CBC = AES - CBC Mode - 256 Bit
+WARNING: untranslated string: AES-256-GCM = AES - GCM Mode - 256 Bit
 WARNING: untranslated string: Add a route = Add a route
+WARNING: untranslated string: CHACHA20-POLY1305 = ChaCha20-Poly1305
 WARNING: untranslated string: Captive = Captive Portal
 WARNING: untranslated string: Captive ACTIVATE = unknown string
 WARNING: untranslated string: Captive GAIN ACCESS = GAIN ACCESS
@@ -1450,17 +1455,20 @@ WARNING: untranslated string: outgoing firewall access = Outgoing Firewall Acces
 WARNING: untranslated string: outgoing overhead in bytes per second = Outgoing Overhead
 WARNING: untranslated string: outgoing traffic in bytes per second = Outgoing Traffic
 WARNING: untranslated string: ovpn add conf = Additional configuration
+WARNING: untranslated string: ovpn ciphers = Ciphers
 WARNING: untranslated string: ovpn connection name = Connection Name
 WARNING: untranslated string: ovpn crypt options = Cryptographic options
 WARNING: untranslated string: ovpn fallback cipher = Fallback Cipher
 WARNING: untranslated string: ovpn fallback cipher help = This cipher is being used by clients that do not support cipher negotiation.
 WARNING: untranslated string: ovpn ha = Hash algorithm
+WARNING: untranslated string: ovpn if ncp is disabled we must have cipher = If you want to disable cipher negotiation, you will have to select a fallback cipher.
 WARNING: untranslated string: ovpn mgmt in root range = A port number of 1024 or higher is required.
 WARNING: untranslated string: ovpn no connections = No active OpenVPN connections
 WARNING: untranslated string: ovpn port in root range = A port number of 1024 or higher is required.
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
 WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
+WARNING: untranslated string: ovpn unsupported cipher selected = Unknown cipher selected
 WARNING: untranslated string: pak update = Update
 WARNING: untranslated string: pakfire already busy = Pakfire is already performing a task. Please try again later.
 WARNING: untranslated string: pakfire finished = Pakfire has finished! Returning...

@@ -47,6 +47,29 @@ use CGI::Carp 'fatalsToBrowser';
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
 
+# Supported ciphers for NCP
+my @SUPPORTED_CIPHERS = (
+	"AES-256-GCM",
+	"AES-128-GCM",
+	"AES-256-CBC",
+	"AES-128-CBC",
+	"CHACHA20-POLY1305",
+);
+
+my $DEFAULT_CIPHERS = "AES-256-GCM|AES-128-GCM|CHACHA20-POLY1305";
+
+# Translations for the cipher selection
+my %CIPHERS = (
+	# AES
+	"AES-256-GCM" => $Lang::tr{'AES-256-GCM'},
+	"AES-128-GCM" => $Lang::tr{'AES-128-GCM'},
+	"AES-256-CBC" => $Lang::tr{'AES-256-CBC'},
+	"AES-128-CBC" => $Lang::tr{'AES-128-CBC'},
+
+	# ChaCha20-Poly1305
+	"CHACHA20-POLY1305" => $Lang::tr{'CHACHA20-POLY1305'},
+);
+
 ###
 ### Initialize variables
 ###
@@ -235,8 +258,19 @@ sub writeserverconf {
     }
     print CONF "status-version 1\n";
     print CONF "status /var/run/ovpnserver.log 30\n";
-    print CONF "ncp-disable\n";
-    print CONF "cipher $sovpnsettings{DCIPHER}\n";
+
+	# Cryptography
+	if ($sovpnsettings{'DATACIPHERS'} eq '') {
+		print CONF "ncp-disable\n";
+	} else {
+		print CONF "data-ciphers " . $sovpnsettings{'DATACIPHERS'} =~ s/\|/:/gr . "\n";
+	}
+
+	# Enable fallback cipher?
+	if ($sovpnsettings{'DCIPHER'} ne '') {
+	    print CONF "data-ciphers-fallback $sovpnsettings{'DCIPHER'}\n";
+	}
+
 	print CONF "auth $sovpnsettings{'DAUTH'}\n";
     # Set TLSv2 as minimum
     print CONF "tls-version-min 1.2\n";
@@ -673,10 +707,28 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'DHCP_DNS'} = $cgiparams{'DHCP_DNS'};
     $vpnsettings{'DHCP_WINS'} = $cgiparams{'DHCP_WINS'};
     $vpnsettings{'ROUTES_PUSH'} = $cgiparams{'ROUTES_PUSH'};
+    $vpnsettings{'DATACIPHERS'} = $cgiparams{'DATACIPHERS'};
     $vpnsettings{'DCIPHER'} = $cgiparams{'DCIPHER'};
     $vpnsettings{'DAUTH'} = $cgiparams{'DAUTH'};
     $vpnsettings{'TLSAUTH'} = $cgiparams{'TLSAUTH'};
     my @temp=();
+
+	# If NCP is disabled, we need the fallback cipher
+	if ($cgiparams{'DATACIPHERS'} eq '' && $cgiparams{'DCIPHER'} eq '') {
+		$errormessage = $Lang::tr{'ovpn if ncp is disabled we must have cipher'};
+		goto ADV_ERROR;
+	}
+
+	# Split data ciphers
+	my @dataciphers = split(/\|/, $cgiparams{'DATACIPHERS'});
+
+	# Check if all ciphers are supported
+	foreach my $cipher (@dataciphers) {
+		if (!grep(/^$cipher$/, @SUPPORTED_CIPHERS)) {
+			$errormessage = $Lang::tr{'ovpn unsupported cipher selected'};
+			goto ADV_ERROR;
+		}
+	}
 
     if ($cgiparams{'FRAGMENT'} eq '') {
     	delete $vpnsettings{'FRAGMENT'};
@@ -2123,7 +2175,20 @@ else
 	$zip->addFile( "${General::swroot}/ovpn/ca/cacert.pem", "cacert.pem")  or die "Can't add file cacert.pem\n";
 	$zip->addFile( "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem", "$confighash{$cgiparams{'KEY'}}[1]cert.pem") or die "Can't add file $confighash{$cgiparams{'KEY'}}[1]cert.pem\n";
     }
-    print CLIENTCONF "cipher $vpnsettings{DCIPHER}\r\n";
+
+	# Cryptography
+
+	# If no data ciphers have been selected, we try to use the fallback cipher
+	if ($vpnsettings{'DATACIPHERS'} eq '') {
+		print CLIENTCONF "ncp-disable\r\n";
+
+		if ($vpnsettings{'DCIPHER'} ne '') {
+		    print CLIENTCONF "cipher $vpnsettings{'DCIPHER'}\r\n";
+		}
+	} else {
+		# Otherwise we don't write anything because the server and client will negotiate
+	}
+
 	print CLIENTCONF "auth $vpnsettings{'DAUTH'}\r\n";
 
     if ($vpnsettings{'TLSAUTH'} eq 'on') {
@@ -2476,6 +2541,9 @@ END
     read_routepushfile;
 
 ADV_ERROR:
+	if ($cgiparams{'DATACIPHERS'} eq '') {
+		$cgiparams{'DATACIPHERS'} = $DEFAULT_CIPHERS;
+	}
 	if ($cgiparams{'DAUTH'} eq '') {
 		$cgiparams{'DAUTH'} = 'SHA512';
 	}
@@ -2522,6 +2590,15 @@ ADV_ERROR:
     $selected{'LOG_VERB'}{'10'} = '';
     $selected{'LOG_VERB'}{'11'} = '';
     $selected{'LOG_VERB'}{$cgiparams{'LOG_VERB'}} = 'SELECTED';
+
+	# Split data ciphers
+	my @data_ciphers = split(/\|/, $cgiparams{'DATACIPHERS'});
+
+	# Select the correct ones
+	$selected{'DATACIPHERS'} = ();
+	foreach my $cipher (@SUPPORTED_CIPHERS) {
+		$selected{'DATACIPHERS'}{$cipher} = grep(/^$cipher$/, @data_ciphers) ? "selected" : "";
+	}
 
     $selected{'DCIPHER'}{'AES-256-GCM'} = '';
     $selected{'DCIPHER'}{'AES-192-GCM'} = '';
@@ -2571,6 +2648,30 @@ ADV_ERROR:
 				</tr>
 
 				<tr>
+					<td width="25%">
+						$Lang::tr{'ovpn ciphers'}
+					</td>
+
+					<td>
+						<select name='DATACIPHERS' multiple>
+END
+
+	foreach my $cipher (@SUPPORTED_CIPHERS) {
+		my $name = $CIPHERS{$cipher} // $cipher;
+
+		print <<END;
+							<option value='$cipher' $selected{'DATACIPHERS'}{$cipher}>
+								$name
+							</option>
+END
+	}
+
+	print <<END;
+						</select>
+					</td>
+				</tr>
+
+				<tr>
 					<td>
 						$Lang::tr{'ovpn ha'}
 					</td>
@@ -2597,7 +2698,7 @@ ADV_ERROR:
 				</tr>
 
 				<tr>
-					<td width="25%">
+					<td>
 						$Lang::tr{'ovpn fallback cipher'}
 					</td>
 

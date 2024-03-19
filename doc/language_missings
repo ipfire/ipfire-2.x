@@ -5,6 +5,10 @@
 < access point name is invalid
 < access point name is required
 < advproxy update information
+< AES-128-CBC
+< AES-128-GCM
+< AES-256-CBC
+< AES-256-GCM
 < aliases default interface
 < allowed subnets
 < ansi t1.483
@@ -45,6 +49,7 @@
 < Captive heading voucher
 < Captive invalid coupon
 < Captive please enter a coupon code
+< CHACHA20-POLY1305
 < choose media
 < could not connect to www ipfire org
 < cryptographic settings
@@ -83,9 +88,12 @@
 < okay
 < oops something went wrong
 < optional
+< ovpn ciphers
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn if ncp is disabled we must have cipher
 < ovpn roadwarrior server
+< ovpn unsupported cipher selected
 < quality of service
 < quick control
 < random number generator daemon
@@ -129,23 +137,36 @@
 ############################################################################
 # Checking cgi-bin translations for language: es                           #
 ############################################################################
+< AES-128-CBC
+< AES-128-GCM
+< AES-256-CBC
+< AES-256-GCM
+< CHACHA20-POLY1305
 < dns servers
 < ids provider eol
 < indirect target selection
 < mdstat
 < online
+< ovpn ciphers
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn if ncp is disabled we must have cipher
+< ovpn unsupported cipher selected
 < quality of service
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
+< AES-128-CBC
+< AES-128-GCM
+< AES-256-CBC
+< AES-256-GCM
 < allowed subnets
 < ansi t1.483
 < bewan adsl pci st
 < bewan adsl usb
 < bypassed
 < ca name must only contain characters or spaces
+< CHACHA20-POLY1305
 < configuration file
 < data transfer
 < done
@@ -179,9 +200,12 @@
 < mdstat
 < online
 < oops something went wrong
+< ovpn ciphers
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn if ncp is disabled we must have cipher
 < ovpn roadwarrior server
+< ovpn unsupported cipher selected
 < password has quotation mark
 < processors
 < public key
@@ -277,6 +301,10 @@
 < advproxy wpad label dst_noproxy_url
 < advproxy wpad title
 < advproxy wpad view pac
+< AES-128-CBC
+< AES-128-GCM
+< AES-256-CBC
+< AES-256-GCM
 < aliases default interface
 < allowed subnets
 < asn lookup failed
@@ -355,6 +383,7 @@
 < Captive vout
 < Captive WiFi coupon
 < Captive wrong type
+< CHACHA20-POLY1305
 < check all
 < configuration file
 < core update
@@ -637,13 +666,16 @@
 < outgoing compression in bytes per second
 < outgoing overhead in bytes per second
 < ovpn add conf
+< ovpn ciphers
 < ovpn connection name
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn if ncp is disabled we must have cipher
 < ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
+< ovpn unsupported cipher selected
 < ovpn warning rfc3280
 < pakfire already busy
 < pakfire finished
@@ -892,6 +924,10 @@
 < advproxy wpad label dst_noproxy_url
 < advproxy wpad title
 < advproxy wpad view pac
+< AES-128-CBC
+< AES-128-GCM
+< AES-256-CBC
+< AES-256-GCM
 < aliases default interface
 < allowed subnets
 < asn lookup failed
@@ -972,6 +1008,7 @@
 < Captive vout
 < Captive WiFi coupon
 < Captive wrong type
+< CHACHA20-POLY1305
 < check all
 < configuration file
 < cpu frequency
@@ -1276,6 +1313,7 @@
 < outgoing compression in bytes per second
 < outgoing overhead in bytes per second
 < ovpn add conf
+< ovpn ciphers
 < ovpn connection name
 < ovpn crypt options
 < ovpn engines
@@ -1284,10 +1322,12 @@
 < ovpn fallback cipher help
 < ovpn generating the root and host certificates
 < ovpn ha
+< ovpn if ncp is disabled we must have cipher
 < ovpn reneg sec
 < ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
+< ovpn unsupported cipher selected
 < ovpn warning rfc3280
 < pakfire already busy
 < pakfire finished
@@ -1540,6 +1580,10 @@
 < advproxy wpad label dst_noproxy_url
 < advproxy wpad title
 < advproxy wpad view pac
+< AES-128-CBC
+< AES-128-GCM
+< AES-256-CBC
+< AES-256-GCM
 < age second
 < age seconds
 < age shour
@@ -1666,6 +1710,7 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< CHACHA20-POLY1305
 < check all
 < community rules
 < configuration file
@@ -2234,6 +2279,7 @@
 < outgoing firewall access
 < outgoing overhead in bytes per second
 < ovpn add conf
+< ovpn ciphers
 < ovpn connection name
 < ovpn crypt options
 < ovpn engines
@@ -2244,6 +2290,7 @@
 < ovpn fallback cipher help
 < ovpn generating the root and host certificates
 < ovpn ha
+< ovpn if ncp is disabled we must have cipher
 < ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
@@ -2260,6 +2307,7 @@
 < ovpn routes push options
 < ovpn rw connection log
 < ovpn tls auth
+< ovpn unsupported cipher selected
 < ovpn warning rfc3280
 < pakfire already busy
 < pakfire finished
@@ -2629,6 +2677,10 @@
 < advproxy wpad label dst_noproxy_url
 < advproxy wpad title
 < advproxy wpad view pac
+< AES-128-CBC
+< AES-128-GCM
+< AES-256-CBC
+< AES-256-GCM
 < age second
 < age seconds
 < age shour
@@ -2755,6 +2807,7 @@
 < ccd routes
 < ccd subnet
 < ccd used
+< CHACHA20-POLY1305
 < check all
 < community rules
 < configuration file
@@ -3331,6 +3384,7 @@
 < outgoing overhead in bytes per second
 < outgoing traffic in bytes per second
 < ovpn add conf
+< ovpn ciphers
 < ovpn connection name
 < ovpn crypt options
 < ovpn engines
@@ -3339,6 +3393,7 @@
 < ovpn fallback cipher help
 < ovpn generating the root and host certificates
 < ovpn ha
+< ovpn if ncp is disabled we must have cipher
 < ovpn mgmt in root range
 < ovpn mtu-disc
 < ovpn mtu-disc and mtu not 1500
@@ -3353,6 +3408,7 @@
 < ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
+< ovpn unsupported cipher selected
 < ovpn warning rfc3280
 < pakfire already busy
 < pakfire finished
@@ -3708,6 +3764,10 @@
 < advproxy wpad label dst_noproxy_url
 < advproxy wpad title
 < advproxy wpad view pac
+< AES-128-CBC
+< AES-128-GCM
+< AES-256-CBC
+< AES-256-GCM
 < aliases default interface
 < allowed subnets
 < asn lookup failed
@@ -3732,6 +3792,7 @@
 < cake profile raw 0
 < ca name must only contain characters or spaces
 < Captive delete logo
+< CHACHA20-POLY1305
 < configuration file
 < core update
 < cpu frequency
@@ -3930,13 +3991,16 @@
 < openvpn cert has expired
 < optional
 < otp qrcode
+< ovpn ciphers
 < ovpn connection name
 < ovpn error md5
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn if ncp is disabled we must have cipher
 < ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
+< ovpn unsupported cipher selected
 < ovpn warning rfc3280
 < pakfire already busy
 < pakfire finished
@@ -4111,15 +4175,23 @@
 # Checking cgi-bin translations for language: tw                           #
 ############################################################################
 < advproxy errmsg invalid user/password
+< AES-128-CBC
+< AES-128-GCM
+< AES-256-CBC
+< AES-256-GCM
 < aliases default interface
 < Captive wrong type
+< CHACHA20-POLY1305
 < dns servers
 < guaranteed bandwidth
 < indirect target selection
 < max bandwidth
 < online
+< ovpn ciphers
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn if ncp is disabled we must have cipher
+< ovpn unsupported cipher selected
 < pakfire confirm upgrades
 < pakfire deps
 < pakfire errors
@@ -4136,15 +4208,23 @@
 # Checking cgi-bin translations for language: zh                           #
 ############################################################################
 < advproxy errmsg invalid user/password
+< AES-128-CBC
+< AES-128-GCM
+< AES-256-CBC
+< AES-256-GCM
 < aliases default interface
 < Captive wrong type
+< CHACHA20-POLY1305
 < dns servers
 < guaranteed bandwidth
 < indirect target selection
 < max bandwidth
 < online
+< ovpn ciphers
 < ovpn fallback cipher
 < ovpn fallback cipher help
+< ovpn if ncp is disabled we must have cipher
+< ovpn unsupported cipher selected
 < pakfire confirm upgrades
 < pakfire deps
 < pakfire errors
