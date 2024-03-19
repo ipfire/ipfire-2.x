@@ -2581,15 +2581,17 @@ ADV_ERROR:
 	    <form method='post' enctype='multipart/form-data'>
 			<table width='100%' border=0>
 				<tr>
-					<td colspan='4'><b>$Lang::tr{'ovpn crypt options'}:</b></td>
+					<td colspan='2'>
+						<b>$Lang::tr{'ovpn crypt options'}</b>
+					</td>
 				</tr>
 
 				<tr>
-					<td>
+					<td width="25%">
 						$Lang::tr{'cipher'}
 					</td>
 
-					<td colspan="3">
+					<td>
 						<select name='DCIPHER'>
 							<option value='AES-256-GCM' $selected{'DCIPHER'}{'AES-256-GCM'}>AES-GCM (256 $Lang::tr{'bit'})</option>
 							<option value='AES-192-GCM' $selected{'DCIPHER'}{'AES-192-GCM'}>AES-GCM (192 $Lang::tr{'bit'})</option>
@@ -2615,7 +2617,7 @@ ADV_ERROR:
 						$Lang::tr{'ovpn ha'}
 					</td>
 
-					<td colspan="3">
+					<td>
 						<select name='DAUTH'>
 							<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'})</option>
 							<option value='SHA512'			$selected{'DAUTH'}{'SHA512'}>SHA2 (512 $Lang::tr{'bit'})</option>
@@ -2627,7 +2629,7 @@ ADV_ERROR:
 				</tr>
 
 				<tr>
-					<td class='base'>
+					<td>
 						$Lang::tr{'ovpn tls auth'}
 					</td>
 
@@ -2637,43 +2639,39 @@ ADV_ERROR:
 				</tr>
 
 				<tr>
-					<td colspan='4'><b>$Lang::tr{'dhcp-options'}</b></td>
+					<td colspan='2'><b>$Lang::tr{'dhcp-options'}</b></td>
 				</tr>
 				<tr>
-					<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
+					<td>Domain</td>
+					<td>
+						<input type='TEXT' name='DHCP_DOMAIN' value='$cgiparams{'DHCP_DOMAIN'}' size='30' />
+					</td>
 				</tr>
 				<tr>
-					<td class='base'>Domain</td>
-					<td><input type='TEXT' name='DHCP_DOMAIN' value='$cgiparams{'DHCP_DOMAIN'}' size='30'  /></td>
+					<td>DNS</td>
+					<td>
+						<input type='TEXT' name='DHCP_DNS' value='$cgiparams{'DHCP_DNS'}' size='30' />
+					</td>
 				</tr>
 				<tr>
-					<td class='base'>DNS</td>
-					<td><input type='TEXT' name='DHCP_DNS' value='$cgiparams{'DHCP_DNS'}' size='30' /></td>
+					<td>WINS</td>
+					<td>
+						<input type='TEXT' name='DHCP_WINS' value='$cgiparams{'DHCP_WINS'}' size='30' />
+					</td>
 				</tr>
 				<tr>
-					<td class='base'>WINS</td>
-					<td><input type='TEXT' name='DHCP_WINS' value='$cgiparams{'DHCP_WINS'}' size='30' /></td>
+					<td colspan='2'><b>$Lang::tr{'ovpn routes push options'}</b></td>
 				</tr>
 				<tr>
-					<td colspan='4'><b>$Lang::tr{'ovpn routes push options'}</b></td>
+					<td>$Lang::tr{'ovpn routes push'}</td>
+					<td>
+						<textarea name='ROUTES_PUSH' cols='26' rows='6' wrap='off'>$cgiparams{'ROUTES_PUSH'}</textarea>
+					</td>
 				</tr>
-				<tr>
-					<td class='base'>$Lang::tr{'ovpn routes push'}</td>
-					<td colspan='2'>
-					<textarea name='ROUTES_PUSH' cols='26' rows='6' wrap='off'>
-END
+			</table>
 
-if ($cgiparams{'ROUTES_PUSH'} ne '')
-{
-	print $cgiparams{'ROUTES_PUSH'};
-}
-
-print <<END;
-</textarea></td>
-</tr>
-    </tr>
-</table>
 <hr size='1'>
+
 <table width='100%'>
 	<tr>
 		<td class='base'><b>$Lang::tr{'misc-options'}</b></td>
