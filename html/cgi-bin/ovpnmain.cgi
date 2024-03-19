@@ -673,6 +673,9 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     $vpnsettings{'DHCP_DNS'} = $cgiparams{'DHCP_DNS'};
     $vpnsettings{'DHCP_WINS'} = $cgiparams{'DHCP_WINS'};
     $vpnsettings{'ROUTES_PUSH'} = $cgiparams{'ROUTES_PUSH'};
+    $vpnsettings{'DCIPHER'} = $cgiparams{'DCIPHER'};
+    $vpnsettings{'DAUTH'} = $cgiparams{'DAUTH'};
+    $vpnsettings{'TLSAUTH'} = $cgiparams{'TLSAUTH'};
     my @temp=();
 
     if ($cgiparams{'FRAGMENT'} eq '') {
@@ -1079,9 +1082,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'DPROTOCOL'} = $cgiparams{'DPROTOCOL'};
     $vpnsettings{'DDEST_PORT'} = $cgiparams{'DDEST_PORT'};
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
-    $vpnsettings{'DCIPHER'} = $cgiparams{'DCIPHER'};
-    $vpnsettings{'DAUTH'} = $cgiparams{'DAUTH'};
-    $vpnsettings{'TLSAUTH'} = $cgiparams{'TLSAUTH'};
 
   if ( $vpnsettings{'ENABLED_BLUE'} eq 'on' ) {
 	  &General::system("touch", "${General::swroot}/ovpn/enable_blue");
@@ -2480,6 +2480,21 @@ END
 #	$cgiparams{'CLIENT2CLIENT'} =  'on';
 #    }
 ADV_ERROR:
+    if ($cgiparams{'DCIPHER'} eq '') {
+		$cgiparams{'DCIPHER'} =  'AES-256-CBC';
+    }
+	if ($cgiparams{'DAUTH'} eq '') {
+		if (-z "${General::swroot}/ovpn/ovpnconfig") {
+			$cgiparams{'DAUTH'} = 'SHA512';
+		}
+		foreach my $key (keys %confighash) {
+			if ($confighash{$key}[3] ne 'host') {
+				$cgiparams{'DAUTH'} = 'SHA512';
+			} else {
+				$cgiparams{'DAUTH'} = 'SHA1';
+			}
+		}
+	}
     if ($cgiparams{'MAX_CLIENTS'} eq '') {
 		$cgiparams{'MAX_CLIENTS'} =  '100';
     }
@@ -2524,6 +2539,35 @@ ADV_ERROR:
     $selected{'LOG_VERB'}{'11'} = '';
     $selected{'LOG_VERB'}{$cgiparams{'LOG_VERB'}} = 'SELECTED';
 
+    $selected{'DCIPHER'}{'AES-256-GCM'} = '';
+    $selected{'DCIPHER'}{'AES-192-GCM'} = '';
+    $selected{'DCIPHER'}{'AES-128-GCM'} = '';
+    $selected{'DCIPHER'}{'CAMELLIA-256-CBC'} = '';
+    $selected{'DCIPHER'}{'CAMELLIA-192-CBC'} = '';
+    $selected{'DCIPHER'}{'CAMELLIA-128-CBC'} = '';
+    $selected{'DCIPHER'}{'AES-256-CBC'} = '';
+    $selected{'DCIPHER'}{'AES-192-CBC'} = '';
+    $selected{'DCIPHER'}{'AES-128-CBC'} = '';
+    $selected{'DCIPHER'}{'DES-EDE3-CBC'} = '';
+    $selected{'DCIPHER'}{'DESX-CBC'} = '';
+    $selected{'DCIPHER'}{'SEED-CBC'} = '';
+    $selected{'DCIPHER'}{'DES-EDE-CBC'} = '';
+    $selected{'DCIPHER'}{'CAST5-CBC'} = '';
+    $selected{'DCIPHER'}{'BF-CBC'} = '';
+    $selected{'DCIPHER'}{'DES-CBC'} = '';
+    $selected{'DCIPHER'}{$cgiparams{'DCIPHER'}} = 'SELECTED';
+
+    $selected{'DAUTH'}{'whirlpool'} = '';
+    $selected{'DAUTH'}{'SHA512'} = '';
+    $selected{'DAUTH'}{'SHA384'} = '';
+    $selected{'DAUTH'}{'SHA256'} = '';
+    $selected{'DAUTH'}{'SHA1'} = '';
+    $selected{'DAUTH'}{$cgiparams{'DAUTH'}} = 'SELECTED';
+
+    $checked{'TLSAUTH'}{'off'} = '';
+    $checked{'TLSAUTH'}{'on'} = '';
+    $checked{'TLSAUTH'}{$cgiparams{'TLSAUTH'}} = 'CHECKED';
+
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
     &Header::openbigbox('100%', 'LEFT', '', $errormessage);
@@ -2534,35 +2578,90 @@ ADV_ERROR:
     &Header::opensection();
 
     print <<END;
-    <form method='post' enctype='multipart/form-data'>
-<table width='100%' border=0>
-	<tr>
-		<td colspan='4'><b>$Lang::tr{'dhcp-options'}</b></td>
-    </tr>
-    <tr>
-		<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
-    </tr>
-    <tr>
-		<td class='base'>Domain</td>
-        <td><input type='TEXT' name='DHCP_DOMAIN' value='$cgiparams{'DHCP_DOMAIN'}' size='30'  /></td>
-    </tr>
-    <tr>
-		<td class='base'>DNS</td>
-		<td><input type='TEXT' name='DHCP_DNS' value='$cgiparams{'DHCP_DNS'}' size='30' /></td>
-    </tr>
-    <tr>
-		<td class='base'>WINS</td>
-		<td><input type='TEXT' name='DHCP_WINS' value='$cgiparams{'DHCP_WINS'}' size='30' /></td>
-	</tr>
-    <tr>
-		<td colspan='4'><b>$Lang::tr{'ovpn routes push options'}</b></td>
-    </tr>
-    <tr>
-		<td class='base'>$Lang::tr{'ovpn routes push'}</td>
-		<td colspan='2'>
-		<textarea name='ROUTES_PUSH' cols='26' rows='6' wrap='off'>
+	    <form method='post' enctype='multipart/form-data'>
+			<table width='100%' border=0>
+				<tr>
+					<td colspan='4'><b>$Lang::tr{'ovpn crypt options'}:</b></td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'cipher'}
+					</td>
+
+					<td colspan="3">
+						<select name='DCIPHER'>
+							<option value='AES-256-GCM' $selected{'DCIPHER'}{'AES-256-GCM'}>AES-GCM (256 $Lang::tr{'bit'})</option>
+							<option value='AES-192-GCM' $selected{'DCIPHER'}{'AES-192-GCM'}>AES-GCM (192 $Lang::tr{'bit'})</option>
+							<option value='AES-128-GCM' $selected{'DCIPHER'}{'AES-128-GCM'}>AES-GCM (128 $Lang::tr{'bit'})</option>
+							<option value='CAMELLIA-256-CBC' $selected{'DCIPHER'}{'CAMELLIA-256-CBC'}>CAMELLIA-CBC (256 $Lang::tr{'bit'})</option>
+							<option value='CAMELLIA-192-CBC' $selected{'DCIPHER'}{'CAMELLIA-192-CBC'}>CAMELLIA-CBC (192 $Lang::tr{'bit'})</option>
+							<option value='CAMELLIA-128-CBC' $selected{'DCIPHER'}{'CAMELLIA-128-CBC'}>CAMELLIA-CBC (128 $Lang::tr{'bit'})</option>
+							<option value='AES-256-CBC' $selected{'DCIPHER'}{'AES-256-CBC'}>AES-CBC (256 $Lang::tr{'bit'})</option>
+							<option value='AES-192-CBC' $selected{'DCIPHER'}{'AES-192-CBC'}>AES-CBC (192 $Lang::tr{'bit'})</option>
+							<option value='AES-128-CBC' $selected{'DCIPHER'}{'AES-128-CBC'}>AES-CBC (128 $Lang::tr{'bit'})</option>
+							<option value='SEED-CBC' $selected{'DCIPHER'}{'SEED-CBC'}>SEED-CBC (128 $Lang::tr{'bit'})</option>
+							<option value='DES-EDE3-CBC' $selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+							<option value='DESX-CBC' $selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+							<option value='DES-EDE-CBC' $selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+							<option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+							<option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+						</select>
+					</td>
+				</tr>
+
+				<tr>
+					<td>
+						$Lang::tr{'ovpn ha'}
+					</td>
+
+					<td colspan="3">
+						<select name='DAUTH'>
+							<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'})</option>
+							<option value='SHA512'			$selected{'DAUTH'}{'SHA512'}>SHA2 (512 $Lang::tr{'bit'})</option>
+							<option value='SHA384'			$selected{'DAUTH'}{'SHA384'}>SHA2 (384 $Lang::tr{'bit'})</option>
+							<option value='SHA256'			$selected{'DAUTH'}{'SHA256'}>SHA2 (256 $Lang::tr{'bit'})</option>
+							<option value='SHA1'			$selected{'DAUTH'}{'SHA1'}>SHA1 (160 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
+						</select>
+					</td>
+				</tr>
+
+				<tr>
+					<td class='base'>
+						$Lang::tr{'ovpn tls auth'}
+					</td>
+
+					<td>
+						<input type='checkbox' name='TLSAUTH' $checked{'TLSAUTH'}{'on'} />
+					</td>
+				</tr>
+
+				<tr>
+					<td colspan='4'><b>$Lang::tr{'dhcp-options'}</b></td>
+				</tr>
+				<tr>
+					<td width='25%'></td> <td width='20%'> </td><td width='25%'> </td><td width='30%'></td>
+				</tr>
+				<tr>
+					<td class='base'>Domain</td>
+					<td><input type='TEXT' name='DHCP_DOMAIN' value='$cgiparams{'DHCP_DOMAIN'}' size='30'  /></td>
+				</tr>
+				<tr>
+					<td class='base'>DNS</td>
+					<td><input type='TEXT' name='DHCP_DNS' value='$cgiparams{'DHCP_DNS'}' size='30' /></td>
+				</tr>
+				<tr>
+					<td class='base'>WINS</td>
+					<td><input type='TEXT' name='DHCP_WINS' value='$cgiparams{'DHCP_WINS'}' size='30' /></td>
+				</tr>
+				<tr>
+					<td colspan='4'><b>$Lang::tr{'ovpn routes push options'}</b></td>
+				</tr>
+				<tr>
+					<td class='base'>$Lang::tr{'ovpn routes push'}</td>
+					<td colspan='2'>
+					<textarea name='ROUTES_PUSH' cols='26' rows='6' wrap='off'>
 END
-;
 
 if ($cgiparams{'ROUTES_PUSH'} ne '')
 {
@@ -4886,9 +4985,6 @@ END
     }
 
 #default setzen
-    if ($cgiparams{'DCIPHER'} eq '') {
-		$cgiparams{'DCIPHER'} =  'AES-256-CBC';
-    }
     if ($cgiparams{'DDEST_PORT'} eq '') {
 		$cgiparams{'DDEST_PORT'} =  '1194';
     }
@@ -4898,21 +4994,7 @@ END
     if ($cgiparams{'MSSFIX'} eq '') {
 		$cgiparams{'MSSFIX'} = 'off';
     }
-	if ($cgiparams{'DAUTH'} eq '') {
-		if (-z "${General::swroot}/ovpn/ovpnconfig") {
-			$cgiparams{'DAUTH'} = 'SHA512';
-		}
-		foreach my $key (keys %confighash) {
-			if ($confighash{$key}[3] ne 'host') {
-				$cgiparams{'DAUTH'} = 'SHA512';
-			} else {
-				$cgiparams{'DAUTH'} = 'SHA1';
-			}
-		}
-	}
-	if ($cgiparams{'TLSAUTH'} eq '') {
-		$cgiparams{'TLSAUTH'} = 'off';
-	}
+
     if ($cgiparams{'DOVPN_SUBNET'} eq '') {
 		$cgiparams{'DOVPN_SUBNET'} = '10.' . int(rand(256)) . '.' . int(rand(256)) . '.0/255.255.255.0';
     }
@@ -4930,35 +5012,7 @@ END
     $selected{'DPROTOCOL'}{'tcp'} = '';
     $selected{'DPROTOCOL'}{$cgiparams{'DPROTOCOL'}} = 'SELECTED';
 
-    $selected{'DCIPHER'}{'AES-256-GCM'} = '';
-    $selected{'DCIPHER'}{'AES-192-GCM'} = '';
-    $selected{'DCIPHER'}{'AES-128-GCM'} = '';
-    $selected{'DCIPHER'}{'CAMELLIA-256-CBC'} = '';
-    $selected{'DCIPHER'}{'CAMELLIA-192-CBC'} = '';
-    $selected{'DCIPHER'}{'CAMELLIA-128-CBC'} = '';
-    $selected{'DCIPHER'}{'AES-256-CBC'} = '';
-    $selected{'DCIPHER'}{'AES-192-CBC'} = '';
-    $selected{'DCIPHER'}{'AES-128-CBC'} = '';
-    $selected{'DCIPHER'}{'DES-EDE3-CBC'} = '';
-    $selected{'DCIPHER'}{'DESX-CBC'} = '';
-    $selected{'DCIPHER'}{'SEED-CBC'} = '';
-    $selected{'DCIPHER'}{'DES-EDE-CBC'} = '';
-    $selected{'DCIPHER'}{'CAST5-CBC'} = '';
-    $selected{'DCIPHER'}{'BF-CBC'} = '';
-    $selected{'DCIPHER'}{'DES-CBC'} = '';
-    $selected{'DCIPHER'}{$cgiparams{'DCIPHER'}} = 'SELECTED';
-
-    $selected{'DAUTH'}{'whirlpool'} = '';
-    $selected{'DAUTH'}{'SHA512'} = '';
-    $selected{'DAUTH'}{'SHA384'} = '';
-    $selected{'DAUTH'}{'SHA256'} = '';
-    $selected{'DAUTH'}{'SHA1'} = '';
-    $selected{'DAUTH'}{$cgiparams{'DAUTH'}} = 'SELECTED';
-
-    $checked{'TLSAUTH'}{'off'} = '';
-    $checked{'TLSAUTH'}{'on'} = '';
-    $checked{'TLSAUTH'}{$cgiparams{'TLSAUTH'}} = 'CHECKED';
-
+	# TODO the next two blocks have to go
     $checked{'DCOMPLZO'}{'off'} = '';
     $checked{'DCOMPLZO'}{'on'} = '';
     $checked{'DCOMPLZO'}{$cgiparams{'DCOMPLZO'}} = 'CHECKED';
@@ -5045,50 +5099,6 @@ END
     </tr>
 
 	<tr><td colspan='4'><br></td></tr>
-	<tr>
-		<td class='base'><b>$Lang::tr{'ovpn crypt options'}:</b></td>
-	</tr>
-	<tr><td colspan='1'><br></td></tr>
-
-	<tr>
-		<td class='base'>$Lang::tr{'ovpn ha'}</td>
-		<td><select name='DAUTH'>
-				<option value='whirlpool'		$selected{'DAUTH'}{'whirlpool'}>Whirlpool (512 $Lang::tr{'bit'})</option>
-				<option value='SHA512'			$selected{'DAUTH'}{'SHA512'}>SHA2 (512 $Lang::tr{'bit'})</option>
-				<option value='SHA384'			$selected{'DAUTH'}{'SHA384'}>SHA2 (384 $Lang::tr{'bit'})</option>
-				<option value='SHA256'			$selected{'DAUTH'}{'SHA256'}>SHA2 (256 $Lang::tr{'bit'})</option>
-				<option value='SHA1'			$selected{'DAUTH'}{'SHA1'}>SHA1 (160 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-			</select>
-		</td>
-
-		<td class='boldbase' nowrap='nowrap'>$Lang::tr{'cipher'}</td>
-		<td><select name='DCIPHER'>
-				<option value='AES-256-GCM' $selected{'DCIPHER'}{'AES-256-GCM'}>AES-GCM (256 $Lang::tr{'bit'})</option>
-				<option value='AES-192-GCM' $selected{'DCIPHER'}{'AES-192-GCM'}>AES-GCM (192 $Lang::tr{'bit'})</option>
-				<option value='AES-128-GCM' $selected{'DCIPHER'}{'AES-128-GCM'}>AES-GCM (128 $Lang::tr{'bit'})</option>
-				<option value='CAMELLIA-256-CBC' $selected{'DCIPHER'}{'CAMELLIA-256-CBC'}>CAMELLIA-CBC (256 $Lang::tr{'bit'})</option>
-				<option value='CAMELLIA-192-CBC' $selected{'DCIPHER'}{'CAMELLIA-192-CBC'}>CAMELLIA-CBC (192 $Lang::tr{'bit'})</option>
-				<option value='CAMELLIA-128-CBC' $selected{'DCIPHER'}{'CAMELLIA-128-CBC'}>CAMELLIA-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='AES-256-CBC' $selected{'DCIPHER'}{'AES-256-CBC'}>AES-CBC (256 $Lang::tr{'bit'})</option>
-				<option value='AES-192-CBC' $selected{'DCIPHER'}{'AES-192-CBC'}>AES-CBC (192 $Lang::tr{'bit'})</option>
-				<option value='AES-128-CBC' $selected{'DCIPHER'}{'AES-128-CBC'}>AES-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='SEED-CBC' $selected{'DCIPHER'}{'SEED-CBC'}>SEED-CBC (128 $Lang::tr{'bit'})</option>
-				<option value='DES-EDE3-CBC' $selected{'DCIPHER'}{'DES-EDE3-CBC'}>DES-EDE3-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-				<option value='DESX-CBC' $selected{'DCIPHER'}{'DESX-CBC'}>DESX-CBC (192 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-				<option value='DES-EDE-CBC' $selected{'DCIPHER'}{'DES-EDE-CBC'}>DES-EDE-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-				<option value='BF-CBC' $selected{'DCIPHER'}{'BF-CBC'}>BF-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-				<option value='CAST5-CBC' $selected{'DCIPHER'}{'CAST5-CBC'}>CAST5-CBC (128 $Lang::tr{'bit'}, $Lang::tr{'vpn weak'})</option>
-			</select>
-		</td>
-	</tr>
-
-    <tr><td colspan='4'><br></td></tr>
-	<tr>
-		<td class='base'>$Lang::tr{'ovpn tls auth'}</td>
-		<td><input type='checkbox' name='TLSAUTH' $checked{'TLSAUTH'}{'on'} /></td>
-	</tr>
-
-    <tr><td colspan='4'><br><br></td></tr>
 END
 ;
 
