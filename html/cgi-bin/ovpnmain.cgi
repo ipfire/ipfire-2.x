@@ -19,21 +19,22 @@
 #                                                                             #
 ###############################################################################
 
+use strict;
+use Archive::Zip qw(:ERROR_CODES :CONSTANTS);
 use CGI;
 use CGI qw/:standard/;
+use Date::Parse;
+use File::Copy;
+use File::Temp qw/ tempfile tempdir /;
 use Imager::QRCode;
 use MIME::Base32;
 use MIME::Base64;
-use URI::Encode qw(uri_encode uri_decode);;
 use Net::DNS;
 use Net::Ping;
 use Net::Telnet;
-use File::Copy;
-use File::Temp qw/ tempfile tempdir /;
-use strict;
-use Archive::Zip qw(:ERROR_CODES :CONSTANTS);
 use Sort::Naturally;
-use Date::Parse;
+use URI::Encode qw(uri_encode uri_decode);;
+
 require '/var/ipfire/general-functions.pl';
 require "${General::swroot}/header.pl";
 require "${General::swroot}/countries.pl";
