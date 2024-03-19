@@ -44,10 +44,6 @@ require "${General::swroot}/location-functions.pl";
 use warnings;
 use CGI::Carp 'fatalsToBrowser';
 
-#workaround to suppress a warning when a variable is used only once
-my @dummy = ( ${Header::colourgreen}, ${Header::colourblue} );
-undef (@dummy);
-
 my %color = ();
 my %mainsettings = ();
 &General::readhash("${General::swroot}/main/settings", \%mainsettings);
