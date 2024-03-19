@@ -2480,9 +2480,6 @@ END
 #	$cgiparams{'CLIENT2CLIENT'} =  'on';
 #    }
 ADV_ERROR:
-    if ($cgiparams{'DCIPHER'} eq '') {
-		$cgiparams{'DCIPHER'} =  'AES-256-CBC';
-    }
 	if ($cgiparams{'DAUTH'} eq '') {
 		if (-z "${General::swroot}/ovpn/ovpnconfig") {
 			$cgiparams{'DAUTH'} = 'SHA512';
