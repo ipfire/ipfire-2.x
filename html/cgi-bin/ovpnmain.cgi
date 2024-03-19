@@ -147,20 +147,6 @@ sub iscertlegacy
 	return 0;
 }
 
-sub haveOrangeNet
-{
-	if ($netsettings{'CONFIG_TYPE'} == 2) {return 1;}
-	if ($netsettings{'CONFIG_TYPE'} == 4) {return 1;}
-	return 0;
-}
-
-sub haveBlueNet
-{
-	if ($netsettings{'CONFIG_TYPE'} == 3) {return 1;}
-	if ($netsettings{'CONFIG_TYPE'} == 4) {return 1;}
-	return 0;
-}
-
 sub sizeformat{
     my $bytesize = shift;
     my $i = 0;
@@ -2180,21 +2166,21 @@ else
 
     if ( $vpnsettings{'ENABLED'} eq 'on'){
     	print CLIENTCONF "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\r\n";
-	if ( $vpnsettings{'ENABLED_BLUE'} eq 'on' && (&haveBlueNet())){
+	if ( $vpnsettings{'ENABLED_BLUE'} eq 'on' && (&Header::blue_used())){
 	    print CLIENTCONF "#comment the above line and uncomment the next line, if you want to connect on the Blue interface\r\n";
 	    print CLIENTCONF ";remote $netsettings{'BLUE_ADDRESS'} $vpnsettings{'DDEST_PORT'}\r\n";
 	}
-	if ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' && (&haveOrangeNet())){
+	if ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' && (&Header::orange_used())){
 	    print CLIENTCONF "#comment the above line and uncomment the next line, if you want to connect on the Orange interface\r\n";
 	    print CLIENTCONF ";remote $netsettings{'ORANGE_ADDRESS'} $vpnsettings{'DDEST_PORT'}\r\n";
 	}
-    } elsif ( $vpnsettings{'ENABLED_BLUE'} eq 'on' && (&haveBlueNet())){
+    } elsif ( $vpnsettings{'ENABLED_BLUE'} eq 'on' && (&Header::blue_used())){
 	print CLIENTCONF "remote $netsettings{'BLUE_ADDRESS'} $vpnsettings{'DDEST_PORT'}\r\n";
-	if ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' && (&haveOrangeNet())){
+	if ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' && (&Header::orange_used())){
 	    print CLIENTCONF "#comment the above line and uncomment the next line, if you want to connect on the Orange interface\r\n";
 	    print CLIENTCONF ";remote $netsettings{'ORANGE_ADDRESS'} $vpnsettings{'DDEST_PORT'}\r\n";
 	}
-    } elsif ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' && (&haveOrangeNet())){
+    } elsif ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' && (&Header::orange_used())){
 	print CLIENTCONF "remote $netsettings{'ORANGE_ADDRESS'} $vpnsettings{'DDEST_PORT'}\r\n";
     }
 
@@ -5020,12 +5006,12 @@ END
 				if ($ccdroute2hash{$key}[$i] eq $netsettings{'GREEN_NETADDRESS'}."/".&General::iporsubtodec($netsettings{'GREEN_NETMASK'})){
 					$selgreen=1;
 				}
-				if (&haveBlueNet()){
+				if (&Header::blue_used()){
 					if( $ccdroute2hash{$key}[$i] eq $netsettings{'BLUE_NETADDRESS'}."/".&General::iporsubtodec($netsettings{'BLUE_NETMASK'})) {
 						$selblue=1;
 					}
 				}
-				if (&haveOrangeNet()){
+				if (&Header::orange_used()){
 					if( $ccdroute2hash{$key}[$i] eq $netsettings{'ORANGE_NETADDRESS'}."/".&General::iporsubtodec($netsettings{'ORANGE_NETMASK'}) ) {
 						$selorange=1;
 					}
@@ -5033,8 +5019,8 @@ END
 			}
 		}
 	}
-	if (&haveBlueNet() && $selblue == '1'){ print"<option selected>$Lang::tr{'blue'}</option>";$selblue=0;}elsif(&haveBlueNet() && $selblue == '0'){print"<option>$Lang::tr{'blue'}</option>";}
-	if (&haveOrangeNet() && $selorange == '1'){ print"<option selected>$Lang::tr{'orange'}</option>";$selorange=0;}elsif(&haveOrangeNet() && $selorange == '0'){print"<option>$Lang::tr{'orange'}</option>";}
+	if (&Header::blue_used() && $selblue == '1'){ print"<option selected>$Lang::tr{'blue'}</option>";$selblue=0;}elsif(&Header::blue_used() && $selblue == '0'){print"<option>$Lang::tr{'blue'}</option>";}
+	if (&Header::orange_used() && $selorange == '1'){ print"<option selected>$Lang::tr{'orange'}</option>";$selorange=0;}elsif(&Header::orange_used() && $selorange == '0'){print"<option>$Lang::tr{'orange'}</option>";}
 	if ($selgreen == '1' || $other == '0'){ print"<option selected>$Lang::tr{'green'}</option>";$set=0;}else{print"<option>$Lang::tr{'green'}</option>";};
 
 	print<<END;
@@ -5231,11 +5217,11 @@ END
     <td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
 END
 ;
-    if (&haveBlueNet()) {
+    if (&Header::blue_used()) {
 	print "<tr><td class='boldbase'>$Lang::tr{'ovpn on blue'}</td>";
 	print "<td><input type='checkbox' name='ENABLED_BLUE' $checked{'ENABLED_BLUE'}{'on'} /></td>";
     }
-    if (&haveOrangeNet()) {
+    if (&Header::orange_used()) {
 	print "<tr><td class='boldbase'>$Lang::tr{'ovpn on orange'}</td>";
 	print "<td><input type='checkbox' name='ENABLED_ORANGE' $checked{'ENABLED_ORANGE'}{'on'} /></td>";
     }
