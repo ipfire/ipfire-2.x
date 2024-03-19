@@ -720,29 +720,17 @@ if ( -e "${General::swroot}/ovpn/gencanow") {
 }
 ##hier die refresh page
 
-
 ###
 ### OpenVPN Server Control
 ###
-if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'} ||
-    $cgiparams{'ACTION'} eq $Lang::tr{'stop ovpn server'} ||
-    $cgiparams{'ACTION'} eq $Lang::tr{'restart ovpn server'}) {
-    #start openvpn server
-    if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'}){
-    	&emptyserverlog();
+
+if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'}) {
+	&emptyserverlog();
 	&General::system("/usr/local/bin/openvpnctrl", "-s");
-    }
-    #stop openvpn server
-    if ($cgiparams{'ACTION'} eq $Lang::tr{'stop ovpn server'}){
+
+} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'stop ovpn server'}) {
 	&General::system("/usr/local/bin/openvpnctrl", "-k");
 	&emptyserverlog();
-    }
-#    #restart openvpn server
-#    if ($cgiparams{'ACTION'} eq $Lang::tr{'restart ovpn server'}){
-#workarund, till SIGHUP also works when running as nobody
-#   	system('/usr/local/bin/openvpnctrl', '-r');
-#	&emptyserverlog();
-#    }
 }
 
 ###
