@@ -83,6 +83,8 @@
 < okay
 < oops something went wrong
 < optional
+< ovpn fallback cipher
+< ovpn fallback cipher help
 < ovpn roadwarrior server
 < quality of service
 < quick control
@@ -132,6 +134,8 @@
 < indirect target selection
 < mdstat
 < online
+< ovpn fallback cipher
+< ovpn fallback cipher help
 < quality of service
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
@@ -175,6 +179,8 @@
 < mdstat
 < online
 < oops something went wrong
+< ovpn fallback cipher
+< ovpn fallback cipher help
 < ovpn roadwarrior server
 < password has quotation mark
 < processors
@@ -633,6 +639,8 @@
 < ovpn add conf
 < ovpn connection name
 < ovpn error md5
+< ovpn fallback cipher
+< ovpn fallback cipher help
 < ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
@@ -1272,6 +1280,8 @@
 < ovpn crypt options
 < ovpn engines
 < ovpn error md5
+< ovpn fallback cipher
+< ovpn fallback cipher help
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn reneg sec
@@ -2230,6 +2240,8 @@
 < ovpn errmsg green already pushed
 < ovpn errmsg invalid ip or mask
 < ovpn error md5
+< ovpn fallback cipher
+< ovpn fallback cipher help
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn mgmt in root range
@@ -3323,6 +3335,8 @@
 < ovpn crypt options
 < ovpn engines
 < ovpn error md5
+< ovpn fallback cipher
+< ovpn fallback cipher help
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn mgmt in root range
@@ -3918,6 +3932,8 @@
 < otp qrcode
 < ovpn connection name
 < ovpn error md5
+< ovpn fallback cipher
+< ovpn fallback cipher help
 < ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
@@ -4102,6 +4118,8 @@
 < indirect target selection
 < max bandwidth
 < online
+< ovpn fallback cipher
+< ovpn fallback cipher help
 < pakfire confirm upgrades
 < pakfire deps
 < pakfire errors
@@ -4125,6 +4143,8 @@
 < indirect target selection
 < max bandwidth
 < online
+< ovpn fallback cipher
+< ovpn fallback cipher help
 < pakfire confirm upgrades
 < pakfire deps
 < pakfire errors
