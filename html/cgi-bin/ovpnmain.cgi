@@ -147,21 +147,6 @@ sub iscertlegacy
 	return 0;
 }
 
-sub sizeformat{
-    my $bytesize = shift;
-    my $i = 0;
-
-    while(abs($bytesize) >= 1024){
-	$bytesize=$bytesize/1024;
-	$i++;
-	last if($i==6);
-    }
-
-    my @units = ("Bytes","KB","MB","GB","TB","PB","EB");
-    my $newsize=(int($bytesize*100 +0.5))/100;
-    return("$newsize $units[$i]");
-}
-
 sub cleanssldatabase
 {
     if (open(FILE, ">${General::swroot}/ovpn/certs/serial")) {
@@ -2966,8 +2951,8 @@ END
 		    $userlookup{$match[2]} = $uid;
 		    $users[$uid]{'CommonName'} = $match[1];
 		    $users[$uid]{'RealAddress'} = $match[2];
-		    $users[$uid]{'BytesReceived'} = &sizeformat($match[3]);
-		    $users[$uid]{'BytesSent'} = &sizeformat($match[4]);
+		    $users[$uid]{'BytesReceived'} = &General::formatBytes($match[3]);
+		    $users[$uid]{'BytesSent'} = &General::formatBytes($match[4]);
 		    $users[$uid]{'Since'} = $match[5];
 		    $users[$uid]{'Proto'} = $proto;
 
