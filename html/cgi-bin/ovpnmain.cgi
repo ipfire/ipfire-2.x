@@ -35,7 +35,6 @@ use Archive::Zip qw(:ERROR_CODES :CONSTANTS);
 use Sort::Naturally;
 use Date::Parse;
 require '/var/ipfire/general-functions.pl';
-require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 require "${General::swroot}/countries.pl";
 require "${General::swroot}/location-functions.pl";
