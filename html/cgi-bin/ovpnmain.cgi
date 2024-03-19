@@ -5001,15 +5001,6 @@ END
     $selected{'DPROTOCOL'}{'tcp'} = '';
     $selected{'DPROTOCOL'}{$cgiparams{'DPROTOCOL'}} = 'SELECTED';
 
-	# TODO the next two blocks have to go
-    $checked{'DCOMPLZO'}{'off'} = '';
-    $checked{'DCOMPLZO'}{'on'} = '';
-    $checked{'DCOMPLZO'}{$cgiparams{'DCOMPLZO'}} = 'CHECKED';
-
-    $checked{'MSSFIX'}{'off'} = '';
-    $checked{'MSSFIX'}{'on'} = '';
-    $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
-
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
     &Header::openbigbox('100%', 'LEFT', '', $errormessage);
