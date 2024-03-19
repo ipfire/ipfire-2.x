@@ -90,7 +90,6 @@ $cgiparams{'DHCP_DOMAIN'} = '';
 $cgiparams{'DHCP_DNS'} = '';
 $cgiparams{'DHCP_WINS'} = '';
 $cgiparams{'ROUTES_PUSH'} = '';
-$cgiparams{'DCOMPLZO'} = 'off';
 $cgiparams{'MSSFIX'} = '';
 $cgiparams{'number'} = '';
 $cgiparams{'DCIPHER'} = '';
@@ -1076,16 +1075,13 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'ENABLED_ORANGE'} =$cgiparams{'ENABLED_ORANGE'};
     $vpnsettings{'ENABLED'} = $cgiparams{'ENABLED'};
     $vpnsettings{'VPN_IP'} = $cgiparams{'VPN_IP'};
-#new settings for daemon
     $vpnsettings{'DOVPN_SUBNET'} = $cgiparams{'DOVPN_SUBNET'};
     $vpnsettings{'DPROTOCOL'} = $cgiparams{'DPROTOCOL'};
     $vpnsettings{'DDEST_PORT'} = $cgiparams{'DDEST_PORT'};
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
-    $vpnsettings{'DCOMPLZO'} = $cgiparams{'DCOMPLZO'};
     $vpnsettings{'DCIPHER'} = $cgiparams{'DCIPHER'};
     $vpnsettings{'DAUTH'} = $cgiparams{'DAUTH'};
     $vpnsettings{'TLSAUTH'} = $cgiparams{'TLSAUTH'};
-#wrtie enable
 
   if ( $vpnsettings{'ENABLED_BLUE'} eq 'on' ) {
 	  &General::system("touch", "${General::swroot}/ovpn/enable_blue");
