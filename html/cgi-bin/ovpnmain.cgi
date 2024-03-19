@@ -65,7 +65,7 @@ my $errormessage = '';
 my $cryptoerror = '';
 my $cryptowarning = '';
 my %settings=();
-my $routes_push_file = '';
+my $routes_push_file = "${General::swroot}/ovpn/routes_push";
 my $confighost="${General::swroot}/fwhosts/customhosts";
 my $configgrp="${General::swroot}/fwhosts/customgroups";
 my $customnet="${General::swroot}/fwhosts/customnetworks";
@@ -75,7 +75,10 @@ my $local_serverconf = "${General::swroot}/ovpn/scripts/server.conf.local";
 my $local_clientconf = "${General::swroot}/ovpn/scripts/client.conf.local";
 my $dhparameter = "/etc/ssl/ffdhe4096.pem";
 
+# Read Ethernet configuration
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
+
+# Set default CGI parameters
 $cgiparams{'ENABLED'} = 'off';
 $cgiparams{'ENABLED_BLUE'} = 'off';
 $cgiparams{'ENABLED_ORANGE'} = 'off';
@@ -95,7 +98,9 @@ $cgiparams{'number'} = '';
 $cgiparams{'DCIPHER'} = '';
 $cgiparams{'DAUTH'} = '';
 $cgiparams{'TLSAUTH'} = '';
-$routes_push_file = "${General::swroot}/ovpn/routes_push";
+
+# Load CGI parameters
+&Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
 
 # Add CCD files if not already present
 unless (-e $routes_push_file) {
@@ -114,9 +119,6 @@ unless (-e "$local_clientconf") {
        close (LCC);
 }
 
-&Header::getcgihash(\%cgiparams, {'wantfile' => 1, 'filevar' => 'FH'});
-
-# prepare openvpn config file
 ###
 ### Useful functions
 ###
@@ -202,7 +204,7 @@ sub writeserverconf {
 			print CONF "push \"route " . $tempovpnsubnet[0]. " " .  $tempovpnsubnet[1] . "\"\n";
 		}
 	}
-# a.marx ccd
+
 	my %ccdconfhash=();
 	&General::readhasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
 	foreach my $key (keys %ccdconfhash) {
@@ -218,7 +220,6 @@ sub writeserverconf {
 			print CONF "route $a $b\n";
 		}
 	}
-# ccd end
 
 	if ($sovpnsettings{CLIENT2CLIENT} eq 'on') {
 	print CONF "client-to-client\n";
