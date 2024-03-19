@@ -586,10 +586,6 @@ sub check_ccdconf
 	return 1;
 }
 
-###
-# m.a.d net2net
-###
-
 sub validdotmask
 {
 	my $ipdotmask = $_[0];
@@ -738,7 +734,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
 				$errormessage = $Lang::tr{'ovpn errmsg green already pushed'};
 				goto ADV_ERROR;
 			}
-# a.marx ccd
+
 			my %ccdroutehash=();
 			&General::readhasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
 			foreach my $key (keys %ccdroutehash) {
@@ -754,8 +750,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
 					}
 				}
 			}
-
-# ccd end
 
 			$vpnsettings{'ROUTES_PUSH'} .= $tmpip."\n";
 		}
@@ -790,10 +784,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
     &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
     &writeserverconf();#hier ok
 }
-
-###
-# m.a.d net2net
-###
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq 'net' && $cgiparams{'SIDE'} eq 'server')
 {
@@ -893,10 +883,6 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   close(SERVERCONF);
 
 }
-
-###
-# m.a.d net2net
-###
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq 'net' && $cgiparams{'SIDE'} eq 'client')
 {
@@ -1881,10 +1867,6 @@ END
 ### Enable/Disable connection
 ###
 
-###
-# m.a.d net2net
-###
-
 }elsif ($cgiparams{'ACTION'} eq $Lang::tr{'toggle enable disable'}) {
 
     &General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
@@ -1932,10 +1914,6 @@ END
     my @fileholder;
     my $tempdir = tempdir( CLEANUP => 1 );
     my $zippath = "$tempdir/";
-
-###
-# m.a.d net2net
-###
 
 if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
 
@@ -2057,10 +2035,6 @@ else
         my $zipname = "$confighash{$cgiparams{'KEY'}}[1]-TO-IPFire.zip";
         my $zippathname = "$zippath$zipname";
         $clientovpn = "$confighash{$cgiparams{'KEY'}}[1]-TO-IPFire.ovpn";
-
-###
-# m.a.d net2net
-###
 
     open(CLIENTCONF, ">$tempdir/$clientovpn") or die "Unable to open tempfile: $!";
     flock CLIENTCONF, 2;
@@ -2294,10 +2268,6 @@ else
 		&General::system("/usr/bin/openssl", "ca", "-revoke", "${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem", "-config", "/usr/share/openvpn/ovpn.cnf");
 		&General::system("/usr/bin/openssl", "ca", "-gencrl", "-out", "${General::swroot}/ovpn/crls/cacrl.pem", "-config", "/usr/share/openvpn/ovpn.cnf");
 
-###
-# m.a.d net2net
-###
-
 		if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 			# Stop the N2N connection before it is removed
 			&General::system("/usr/local/bin/openvpnctrl", "-kn2n", "$confighash{$cgiparams{'KEY'}}[1]");
@@ -2315,7 +2285,7 @@ else
 		unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1]cert.pem");
 		unlink ("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
 
-# A.Marx CCD delete ccd files and routes
+		# Delete CCD files and routes
 
 		if (-f "${General::swroot}/ovpn/ccd/$confighash{$cgiparams{'KEY'}}[2]")
 		{
@@ -2339,7 +2309,6 @@ else
 		&General::writehasharray("${General::swroot}/ovpn/ccdroute2", \%ccdroute2hash);
 		&writeserverconf;
 
-# CCD end
 		# Update collectd configuration and delete all RRD files of the removed connection
 		&writecollectdconf();
 		&General::system("/usr/local/bin/openvpnctrl", "-drrd", "$confighash{$cgiparams{'KEY'}}[1]");
@@ -2735,7 +2704,7 @@ END
     exit(0);
 
 
-# A.Marx CCD   Add,delete or edit CCD net
+# Add, delete or edit CCD net
 
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'ccd net'} ||
 		$cgiparams{'ACTION'} eq $Lang::tr{'ccd add'} ||
@@ -3035,10 +3004,6 @@ END
 	$errormessage = $Lang::tr{'invalid key'};
     }
 
-###
-# m.a.d net2net
-###
-
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'add'} && $cgiparams{'TYPE'} eq '') {
 	&General::readhash("${General::swroot}/ovpn/settings", \%vpnsettings);
 	&Header::showhttpheaders();
@@ -3084,10 +3049,6 @@ END
 	&Header::closebigbox();
 	&Header::closepage();
 	exit (0);
-
-###
-# m.a.d net2net
-###
 
 }  elsif (($cgiparams{'ACTION'} eq $Lang::tr{'add'}) && ($cgiparams{'TYPE'} eq 'net2net')){
 
@@ -3159,10 +3120,6 @@ END
 		$errormessage = "Filecount does not match only 2 files are allowed\n";
 		goto N2N_ERROR;
 	}
-
-###
-# m.a.d net2net
-###
 
  if ($cgiparams{'n2nname'} ne ''){
 
@@ -3262,10 +3219,6 @@ $n2ncipher[1] =~ s/\n|\r//g;
 $n2nauth[1] =~ s/\n|\r//g;
 chomp ($complzoactive);
 chomp ($mssfixactive);
-
-###
-# m.a.d net2net
-###
 
 ###
 # Check if there is no other entry with this name
@@ -3424,12 +3377,6 @@ if ($confighash{$cgiparams{'KEY'}}) {
 		$errormessage = $Lang::tr{'invalid key'};
    }
 
-
-###
-# m.a.d net2net
-###
-
-
 ###
 ### Adding a new connection
 ###
@@ -3479,7 +3426,7 @@ if ($confighash{$cgiparams{'KEY'}}) {
 	} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'save'}) {
 	$cgiparams{'REMARK'} = &Header::cleanhtml($cgiparams{'REMARK'});
 
-#A.Marx CCD check iroute field and convert it to decimal
+# CCD check iroute field and convert it to decimal
 if ($cgiparams{'TYPE'} eq 'host') {
 	my @temp=();
 	my %ccdroutehash=();
@@ -3645,9 +3592,6 @@ if ($cgiparams{'TYPE'} eq 'host') {
 	}
 }
 
-#CCD End
-
-
 	if ($cgiparams{'TYPE'} !~ /^(host|net)$/) {
 		$errormessage = $Lang::tr{'connection type is invalid'};
 		if ($cgiparams{'TYPE'} eq 'net') {
@@ -3685,10 +3629,6 @@ if ($cgiparams{'TYPE'} eq 'host') {
 		}
 		goto VPNCONF_ERROR;
 	}
-
-###
-# m.a.d net2net
-###
 
 if ($cgiparams{'TYPE'} eq 'net') {
 	if ($cgiparams{'DEST_PORT'} eq  $vpnsettings{'DDEST_PORT'}) {
@@ -4324,10 +4264,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 			close CCDRWCONF;
 	}
 
-###
-# m.a.d n2n begin
-###
-
 	if ($cgiparams{'TYPE'} eq 'net') {
 
 		if (-e "/var/run/$confighash{$key}[1]n2n.pid") {
@@ -4349,10 +4285,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 		}
 	}
 
-###
-# m.a.d n2n end
-###
-
 	if ($cgiparams{'EDIT_ADVANCED'} eq 'on') {
 	    $cgiparams{'KEY'} = $key;
 	    $cgiparams{'ACTION'} = $Lang::tr{'advanced'};
@@ -4360,15 +4292,9 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	goto VPNCONF_END;
     } else {
         $cgiparams{'ENABLED'} = 'on';
-###
-# m.a.d n2n begin
-###
         $cgiparams{'MSSFIX'} = 'on';
         $cgiparams{'FRAGMENT'} = '1300';
-	$cgiparams{'DAUTH'} = 'SHA512';
-###
-# m.a.d n2n end
-###
+        $cgiparams{'DAUTH'} = 'SHA512';
         $cgiparams{'SIDE'} = 'left';
 	if ( ! -f "${General::swroot}/ovpn/ca/cakey.pem" ) {
 	    $cgiparams{'AUTH'} = 'psk';
@@ -4640,7 +4566,6 @@ print<<END;
 	</script>
 END
 
-#jumper
 	print "<tr><td class='boldbase'>$Lang::tr{'remark title'}</td>";
 	print "<td colspan='3'><input type='text' name='REMARK' value='$cgiparams{'REMARK'}' size='55' maxlength='50' /></td></tr></table>";
 
@@ -4649,7 +4574,7 @@ END
     }
 
 		print"</tr></table><br><br>";
-#A.Marx CCD new client
+
 if ($cgiparams{'TYPE'} eq 'host') {
 	    print "<table border='0' width='100%' cellspacing='1' cellpadding='0'><tr><td colspan='3'><hr><br><b>$Lang::tr{'ccd choose net'}</td></tr><tr><td height='20' colspan='3'></td></tr>";
 	    my %vpnnet=();
@@ -4682,7 +4607,7 @@ if ($cgiparams{'TYPE'} eq 'host') {
 		print "</table><br><br><hr><br><br>";
 	}
 }
-# ccd end
+
 	&Header::closebox();
 	if ($cgiparams{'KEY'} && $cgiparams{'AUTH'} eq 'psk') {
 
@@ -4719,10 +4644,6 @@ if ($cgiparams{'TYPE'} eq 'host') {
 END
 ;
 
-###
-# m.a.d net2net
-###
-
 } else {
 
 	print <<END;
@@ -4743,10 +4664,6 @@ END
 
 }
 
-###
-# m.a.d net2net
-###
-
 	    foreach my $country (sort keys %{Countries::countries}) {
 		print "<option value='$Countries::countries{$country}'";
 		if ( $Countries::countries{$country} eq $cgiparams{'CERT_COUNTRY'} ) {
@@ -4754,9 +4671,6 @@ END
 		}
 		print ">$country</option>";
 	    }
-###
-# m.a.d net2net
-###
 
 if ($cgiparams{'TYPE'} eq 'host') {
 	print <<END;
@@ -4787,15 +4701,10 @@ END
 END
 }
 
-###
-# m.a.d net2net
-###
-	    ;
 	    &Header::closebox();
 
 	}
 
-#A.Marx CCD new client
 if ($cgiparams{'TYPE'} eq 'host') {
 	    print"<br><br>";
 	    &Header::openbox('100%', 'LEFT', "$Lang::tr{'ccd client options'}:");
@@ -5060,11 +4969,10 @@ END
     $checked{'DCOMPLZO'}{'on'} = '';
     $checked{'DCOMPLZO'}{$cgiparams{'DCOMPLZO'}} = 'CHECKED';
 
-# m.a.d
     $checked{'MSSFIX'}{'off'} = '';
     $checked{'MSSFIX'}{'on'} = '';
     $checked{'MSSFIX'}{$cgiparams{'MSSFIX'}} = 'CHECKED';
-#new settings
+
     &Header::showhttpheaders();
     &Header::openpage($Lang::tr{'status ovpn'}, 1, '');
     &Header::openbigbox('100%', 'LEFT', '', $errormessage);
@@ -5230,7 +5138,6 @@ END
 
     if ( -f "${General::swroot}/ovpn/ca/cacert.pem" ) {
 ###
-# m.a.d net2net
 #<td width='25%' class='boldbase' align='center'><b>$Lang::tr{'remark'}</b><br /><img src='/images/null.gif' width='125' height='1' border='0' alt='L2089' /></td>
 ###
 
@@ -5329,11 +5236,6 @@ END
 		$col1="class='status is-disabled'";
 		$active = "$Lang::tr{'capsclosed'}";
 	} else {
-
-###
-# m.a.d net2net
-###
-
        if ($confighash{$key}[3] eq 'net') {
 
         if (-e "/var/run/$confighash{$key}[1]n2n.pid") {
