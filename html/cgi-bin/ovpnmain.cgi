@@ -141,7 +141,7 @@ unless (-e "$local_clientconf") {
 sub iscertlegacy
 {
 	my $file=$_[0];
-	my @certinfo = &General::system_output("/usr/bin/openssl", "pkcs12", "-info", "-nodes", 
+	my @certinfo = &General::system_output("/usr/bin/openssl", "pkcs12", "-info", "-nodes",
 	"-in", "$file.p12", "-noout", "-passin", "pass:''");
 	if (index ($certinfo[0], "MAC: sha1") != -1) {
 		return 1;
@@ -5641,7 +5641,7 @@ END
               <td>&nbsp; <img src='/images/off.gif' alt='?OFF' /></td>
               <td class='base'>$Lang::tr{'click to enable'}</td>
               <td>&nbsp; <img src='/images/on.gif' alt='$Lang::tr{'click to disable'}' /></td>
-              <td class='base'>$Lang::tr{'click to disable'}</td>		
+              <td class='base'>$Lang::tr{'click to disable'}</td>
 
 		<td>&nbsp; &nbsp; <img src='/images/edit.gif' alt='$Lang::tr{'edit'}' /></td>
 		<td class='base'>$Lang::tr{'edit'}</td>
