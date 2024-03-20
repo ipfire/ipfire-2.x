@@ -291,6 +291,33 @@ sub get_broadcast($) {
 	return &bin2ip($network_bin ^ ~$netmask_bin);
 }
 
+sub get_prefix($) {
+	my $network = shift;
+
+	# Convert to binary
+	my ($network_bin, $netmask_bin) = &network2bin($network);
+
+	if (defined $netmask_bin) {
+		my $prefix = 0;
+
+		while (1) {
+			# End the loop if we have consumed all ones
+			last if ($netmask_bin == 0);
+
+			# Increment prefix
+			$prefix++;
+
+			# Remove the most-significant one
+			$netmask_bin <<= 1;
+			$netmask_bin &= 0xffffffff;
+		}
+
+		return $prefix;
+	}
+
+	return undef;
+}
+
 # Returns True if $address is in $network.
 sub ip_address_in_network($$) {
 	my $address = shift;
@@ -689,6 +716,13 @@ sub testsuite() {
 
 	$result = &ip_address_in_range("192.168.30.21", "192.168.30.10", "192.168.30.20");
 	assert('ip_address_in_range("192.168.30.21", "192.168.30.10", "192.168.30.20")', !$result);
+
+	# Check &get_prefix()
+	$result = &get_prefix("192.168.0.0/24");
+	assert('get_prefix("192.168.0.0/24")', $result != 24);
+
+	$result = &get_prefix("192.168.0.0/255.255.0.0");
+	assert('get_prefix("192.168.0.0/255.255.0.0")', $result != 16);
 
 	print "Testsuite completed successfully!\n";
 
