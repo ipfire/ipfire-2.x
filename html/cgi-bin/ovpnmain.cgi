@@ -348,6 +348,9 @@ sub writeserverconf {
     print CONF "\n";
 
     close(CONF);
+
+	# Rewrite all CCD configurations
+	&write_ccd_configs();
 }
 
 ##
@@ -502,6 +505,136 @@ sub modccdnet($$) {
 	# Write back the configuration
 	&General::writehasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%conns);
+}
+
+# This function rewrites all CCD configuration files upon change
+sub write_ccd_configs() {
+	my %conns = ();
+
+	my %client_routes = ();
+	my %server_routes = ();
+
+	# Load all configurations
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%conns);
+
+	# Load all client routes
+	&General::readhasharray("${General::swroot}/ovpn/ccdroute", \%client_routes);
+
+	# Load all server routes
+	&General::readhasharray("${General::swroot}/ovpn/ccdroute2", \%server_routes);
+
+	foreach my $key (keys %conns) {
+		my $name = $conns{$key}[1];
+		my $type = $conns{$key}[3];
+
+		# Skip anything that isn't a host connection
+		next unless ($type eq "host");
+
+		my $filename = "${General::swroot}/ovpn/ccd/$conns{$key}[2]";
+
+		# Open the configuration file
+		open(CONF, ">${filename}") or die "Unable to open ${filename} for writing: $!";
+
+		# Write a header
+		print CONF "# OpenVPN Client Configuration File\n\n";
+
+		# Fetch the allocated IP address (if any)
+		my $pool    = $conns{$key}[32];
+		my $address = $conns{$key}[33];
+
+		# If the client has a dynamically allocated IP address, there is nothing to do
+		if ($pool eq "dynamic") {
+			print CONF "# This client uses the dynamic pool\n\n";
+
+		# Otherwise we need to push the selected IP address
+		} else {
+			my $netaddress = &Network::get_netaddress($address);
+
+			print CONF "# Allocated IP address from $pool\n";
+			print CONF "ifconfig-push " . &Network::find_next_ip_address($netaddress, 2);
+			print CONF " " . &Network::find_next_ip_address($netaddress, 1) . "\n\n";
+		}
+
+		# Redirect Gateway?
+		my $redirect = $conns{$key}[34];
+
+		if ($redirect eq "on") {
+			print CONF "# Redirect all traffic to us\n";
+			print CONF "push redirect-gateway\n\n";
+		}
+
+		# DHCP Options
+		my %options = (
+			"DNS" => (
+				$conns{$key}[35],
+				$conns{$key}[36],
+			),
+
+			"WINS" => (
+				$conns{$key}[37],
+			),
+		);
+
+		print CONF "# DHCP Options";
+
+		foreach my $option (keys %options) {
+			foreach (@options{$option}) {
+				# Skip empty options
+				next if ($_ eq "");
+
+				print CONF "push \"dhcp-option $option $_\"\n";
+			}
+		}
+
+		# Newline
+		print CONF "\n";
+
+		# Networks routed to client
+		print CONF "# Networks routed to the client\n";
+
+		foreach my $route (keys %client_routes) {
+			if ($client_routes{$route}[0] eq $name) {
+				my $network = $client_routes{$route}[1];
+
+				my $netaddress = &Network::get_netaddress($network);
+				my $netmask    = &Network::get_netmask($network);
+
+				if (!defined $netaddress || !defined $netmask) {
+					next;
+				}
+
+				print CONF "iroute $netaddress $netmask\n";
+			}
+		}
+
+		# Newline
+		print CONF "\n";
+
+		# Networks routed to server
+		print CONF "# Networks routed to the server\n";
+
+		foreach my $route (keys %server_routes) {
+			if ($server_routes{$route}[0] eq $name) {
+				my $i = 1;
+
+				while (my $network = $server_routes{$route}[$i++]) {
+					my $netaddress = &Network::get_netaddress($network);
+					my $netmask    = &Network::get_netmask($network);
+
+					if (!defined $netaddress || !defined $netmask) {
+						next;
+					}
+
+					print CONF "push \"route $netaddress $netmask\"\n";
+				}
+			}
+		}
+
+		# Newline
+		print CONF "\n";
+
+		close CONF;
+	}
 }
 
 sub ccdmaxclients($) {
@@ -4359,73 +4492,8 @@ if ($cgiparams{'TYPE'} eq 'net') {
 
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-	if ($cgiparams{'CHECK1'} ){
-
-		my ($ccdip,$ccdsub)=split "/",$cgiparams{$name};
-		my ($a,$b,$c,$d) = split (/\./,$ccdip);
-			if ( -e "${General::swroot}/ovpn/ccd/$confighash{$key}[2]"){
-				unlink "${General::swroot}/ovpn/ccd/$cgiparams{'CERT_NAME'}";
-			}
-			open ( CCDRWCONF,'>',"${General::swroot}/ovpn/ccd/$confighash{$key}[2]") or die "Unable to create clientconfigfile $!";
-			print CCDRWCONF "# OpenVPN clientconfig from ccd extension by Copymaster#\n\n";
-			if($cgiparams{'CHECK1'} eq 'dynamic'){
-				print CCDRWCONF "#This client uses the dynamic pool\n";
-			}else{
-				print CCDRWCONF "#Ip address client and server\n";
-				print CCDRWCONF "ifconfig-push $ccdip ". &Network::bin2ip(&Network::ip2bin($ccdip) - 1) ."\n";
-			}
-			if ($confighash{$key}[34] eq 'on'){
-				print CCDRWCONF "\n#Redirect Gateway: \n#All IP traffic is redirected through the vpn \n";
-				print CCDRWCONF "push redirect-gateway\n";
-			}
-			&General::readhasharray("${General::swroot}/ovpn/ccdroute", \%ccdroutehash);
-			if ($cgiparams{'IR'} ne ''){
-				print CCDRWCONF "\n#Client routes these networks (behind Client)\n";
-				foreach my $key (keys %ccdroutehash){
-					if ($ccdroutehash{$key}[0] eq $cgiparams{'NAME'}){
-						foreach my $i ( 1 .. $#{$ccdroutehash{$key}}){
-							my ($a,$b)=split (/\//,$ccdroutehash{$key}[$i]);
-							print CCDRWCONF "iroute $a $b\n";
-						}
-					}
-				}
-			}
-			if ($cgiparams{'IFROUTE'} eq $Lang::tr{'ccd none'} ){$cgiparams{'IFROUTE'}='';}
-			if ($cgiparams{'IFROUTE'} ne ''){
-				print CCDRWCONF "\n#Client gets routes to these networks (behind IPFire)\n";
-				foreach my $key (keys %ccdroute2hash){
-					if ($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}){
-						foreach my $i ( 1 .. $#{$ccdroute2hash{$key}}){
-							if($ccdroute2hash{$key}[$i] eq $Lang::tr{'blue'}){
-								my %blue=();
-								&General::readhash("${General::swroot}/ethernet/settings", \%blue);
-								print CCDRWCONF "push \"route $blue{BLUE_ADDRESS} $blue{BLUE_NETMASK}\n";
-							}elsif($ccdroute2hash{$key}[$i] eq $Lang::tr{'orange'}){
-								my %orange=();
-								&General::readhash("${General::swroot}/ethernet/settings", \%orange);
-								print CCDRWCONF "push \"route $orange{ORANGE_ADDRESS}  $orange{ORANGE_NETMASK}\n";
-							}else{
-								my ($a,$b)=split (/\//,$ccdroute2hash{$key}[$i]);
-								print CCDRWCONF "push \"route $a $b\"\n";
-							}
-						}
-					}
-				}
-			}
-			if(($cgiparams{'CCD_DNS1'} eq '') && ($cgiparams{'CCD_DNS1'} ne '')){ $cgiparams{'CCD_DNS1'} = $cgiparams{'CCD_DNS2'};$cgiparams{'CCD_DNS2'}='';}
-			if($cgiparams{'CCD_DNS1'} ne ''){
-				print CCDRWCONF "\n#Client gets these nameservers\n";
-				print CCDRWCONF "push \"dhcp-option DNS $cgiparams{'CCD_DNS1'}\" \n";
-			}
-			if($cgiparams{'CCD_DNS2'} ne ''){
-				print CCDRWCONF "push \"dhcp-option DNS $cgiparams{'CCD_DNS2'}\" \n";
-			}
-			if($cgiparams{'CCD_WINS'} ne ''){
-				print CCDRWCONF "\n#Client gets this WINS server\n";
-				print CCDRWCONF "push \"dhcp-option WINS $cgiparams{'CCD_WINS'}\" \n";
-			}
-			close CCDRWCONF;
-	}
+	# Rewrite the server configuration
+	&writeserverconf();
 
 	if ($cgiparams{'TYPE'} eq 'net') {
 
