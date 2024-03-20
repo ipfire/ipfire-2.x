@@ -4967,7 +4967,7 @@ END
 	}
 
 	print <<END;
-</textarea></td><td valign='top' colspan='2'>$Lang::tr{'ccd iroutehint'}</td></tr>
+</textarea></td><td valign='top' colspan='2'></td></tr>
 	<tr><td colspan='4'><br></td></tr>
 	<tr><td valign='top' rowspan='3'>$Lang::tr{'ccd iroute2'}</td><td align='left' valign='top' rowspan='3'><select name='IFROUTE' style="width: 205px"; size='6' multiple>
 END
