@@ -24,17 +24,17 @@
 
 include Config
 
-SUMMARY    = Tools to Determine and Set CPUfreq Settings
+SUMMARY    = compatiblity initscript to set ondemand/powersave gov via cpupower
 
-VER        = 008
+VER        = ipfire
 
 THISAPP    = cpufrequtils-$(VER)
-DL_FILE    = $(THISAPP).tar.bz2
-DL_FROM    = $(URL_IPFIRE)
+#DL_FILE    = $(THISAPP).tar.bz2
+#DL_FROM    = $(URL_IPFIRE)
 DIR_APP    = $(DIR_SRC)/$(THISAPP)
 TARGET     = $(DIR_INFO)/$(THISAPP)
 PROG       = cpufrequtils
-PAK_VER    = 14
+PAK_VER    = 15
 
 DEPS       =
 
@@ -44,35 +44,17 @@ SERVICES   =
 # Top-level Rules
 ###############################################################################
 
-objects = $(DL_FILE)
-
-$(DL_FILE) = $(DL_FROM)/$(DL_FILE)
-
-$(DL_FILE)_BLAKE2 = 4543e0aa7fa5db8ce47db63d1770614c46ac4b2519162c2c0122d2156518d2741dc31888b89f1fce4b530c04497c9fa5bf4ac073f078828383a4cc433cc8301c
 
 install : $(TARGET)
 
-check : $(patsubst %,$(DIR_CHK)/%,$(objects))
+check :
 
-download :$(patsubst %,$(DIR_DL)/%,$(objects))
+download :
 
-b2 : $(subst %,%_BLAKE2,$(objects))
+b2 :
 
 dist:
 	@$(PAK)
-
-###############################################################################
-# Downloading, checking, b2sum
-###############################################################################
-
-$(patsubst %,$(DIR_CHK)/%,$(objects)) :
-	@$(CHECK)
-
-$(patsubst %,$(DIR_DL)/%,$(objects)) :
-	@$(LOAD)
-
-$(subst %,%_BLAKE2,$(objects)) :
-	@$(B2SUM)
 
 ###############################################################################
 # Installation Details
@@ -80,18 +62,8 @@ $(subst %,%_BLAKE2,$(objects)) :
 
 $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	@$(PREBUILD)
-	@rm -rf $(DIR_APP) && cd $(DIR_SRC) && tar jxf $(DIR_DL)/$(DL_FILE)
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cpufrequtils/0001-Only-x86-has-cpuid-instruction.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cpufrequtils/0003-cpufrequtils-aperf-Fix-MSR-read-on-32-bit.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cpufrequtils/0005-cpufrequtils-sysfs-increase-MAX_LINE_LEN.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cpufrequtils/0006-aperf-fix-compilation-on-x86-32-with-fPIC.patch
-	cd $(DIR_APP) && patch -Np1 < $(DIR_SRC)/src/patches/cpufrequtils/0007-po-add-missing-word-in-DE.patch
-
-	cd $(DIR_APP) && make
-	cd $(DIR_APP) && make install
 
 	#install initscripts
 	$(call INSTALL_INITSCRIPTS,cpufreq)
 
-	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)

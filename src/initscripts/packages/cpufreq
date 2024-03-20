@@ -54,16 +54,9 @@ case "${1}" in
 			echo_ok;
 			;;
 		esac
-		CPUCOUNT=`ls /sys/devices/system/cpu/cpu*/cpufreq/affected_cpus 2> /dev/null | wc -l `;
-		let CPUCOUNT-=1
-		# Set the governor to test if it works
-		cpufreq-set -g $GOV
+		# Set the governor
+		cpupower frequency-set -g $GOV >/dev/null
 		if [ ${?} = 0 ]; then
-			# Set the governor to ondemand for all cpus
-			for i in `seq 0 $CPUCOUNT`;
-			do
-				cpufreq-set -c $i -g $GOV > /dev/null
-			done
 			echo_ok;
 		else
 			echo_failure;
