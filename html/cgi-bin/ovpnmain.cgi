@@ -507,21 +507,52 @@ sub modccdnet($$) {
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%conns);
 }
 
-# This function rewrites all CCD configuration files upon change
-sub write_ccd_configs() {
-	my %conns = ();
+sub get_ccd_client_routes($) {
+	my $name = shift;
 
 	my %client_routes = ();
-	my %server_routes = ();
-
-	# Load all configurations
-	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%conns);
+	my @routes = ();
 
 	# Load all client routes
 	&General::readhasharray("${General::swroot}/ovpn/ccdroute", \%client_routes);
 
+	foreach my $key (keys %client_routes) {
+		if ($client_routes{$key}[0] eq $name) {
+			push(@routes, $client_routes{$key}[1]);
+		}
+	}
+
+	return @routes;
+}
+
+sub get_ccd_server_routes($) {
+	my $name = shift;
+
+	my %server_routes = ();
+	my @routes = ();
+
 	# Load all server routes
 	&General::readhasharray("${General::swroot}/ovpn/ccdroute2", \%server_routes);
+
+	foreach my $key (keys %server_routes) {
+		if ($server_routes{$key}[0] eq $name) {
+			my $i = 1;
+
+			while (my $route = $server_routes{$key}[$i++]) {
+				push(@routes, $route);
+			}
+		}
+	}
+
+	return @routes;
+}
+
+# This function rewrites all CCD configuration files upon change
+sub write_ccd_configs() {
+	my %conns = ();
+
+	# Load all configurations
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%conns);
 
 	foreach my $key (keys %conns) {
 		my $name = $conns{$key}[1];
@@ -590,14 +621,14 @@ sub write_ccd_configs() {
 		print CONF "\n";
 
 		# Networks routed to client
-		print CONF "# Networks routed to the client\n";
+		my @client_routes = &get_ccd_client_routes($name);
 
-		foreach my $route (keys %client_routes) {
-			if ($client_routes{$route}[0] eq $name) {
-				my $network = $client_routes{$route}[1];
+		if (scalar @client_routes) {
+			print CONF "# Networks routed to the client\n";
 
-				my $netaddress = &Network::get_netaddress($network);
-				my $netmask    = &Network::get_netmask($network);
+			foreach my $route (@client_routes) {
+				my $netaddress = &Network::get_netaddress($route);
+				my $netmask    = &Network::get_netmask($route);
 
 				if (!defined $netaddress || !defined $netmask) {
 					next;
@@ -605,33 +636,31 @@ sub write_ccd_configs() {
 
 				print CONF "iroute $netaddress $netmask\n";
 			}
-		}
 
-		# Newline
-		print CONF "\n";
+			# Newline
+			print CONF "\n";
+		}
 
 		# Networks routed to server
-		print CONF "# Networks routed to the server\n";
+		my @server_routes = &get_ccd_server_routes($name);
 
-		foreach my $route (keys %server_routes) {
-			if ($server_routes{$route}[0] eq $name) {
-				my $i = 1;
+		if (scalar @server_routes) {
+			print CONF "# Networks routed to the server\n";
 
-				while (my $network = $server_routes{$route}[$i++]) {
-					my $netaddress = &Network::get_netaddress($network);
-					my $netmask    = &Network::get_netmask($network);
+			foreach my $route (@server_routes) {
+				my $netaddress = &Network::get_netaddress($route);
+				my $netmask    = &Network::get_netmask($route);
 
-					if (!defined $netaddress || !defined $netmask) {
-						next;
-					}
-
-					print CONF "push \"route $netaddress $netmask\"\n";
+				if (!defined $netaddress || !defined $netmask) {
+					next;
 				}
-			}
-		}
 
-		# Newline
-		print CONF "\n";
+				print CONF "push \"route $netaddress $netmask\"\n";
+			}
+
+			# Newline
+			print CONF "\n";
+		}
 
 		close CONF;
 	}
