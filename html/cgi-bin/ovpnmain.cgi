@@ -1139,24 +1139,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     $vpnsettings{'DDEST_PORT'} = $cgiparams{'DDEST_PORT'};
     $vpnsettings{'DMTU'} = $cgiparams{'DMTU'};
 
-  if ( $vpnsettings{'ENABLED_BLUE'} eq 'on' ) {
-	  &General::system("touch", "${General::swroot}/ovpn/enable_blue");
-  } else {
-	  unlink("${General::swroot}/ovpn/enable_blue");
-  }
-
-  if ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' ) {
-	  &General::system("touch", "${General::swroot}/ovpn/enable_orange");
-  } else {
-	  unlink("${General::swroot}/ovpn/enable_orange");
-  }
-
-  if ( $vpnsettings{'ENABLED'} eq 'on' ) {
-	  &General::system("touch", "${General::swroot}/ovpn/enable");
-  } else {
-	  unlink("${General::swroot}/ovpn/enable");
-  }
-
 #new settings for daemon
     &General::writehash("${General::swroot}/ovpn/settings", \%vpnsettings);
     &writeserverconf();#hier ok
