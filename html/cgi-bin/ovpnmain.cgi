@@ -3893,11 +3893,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	}
 }
 
-#	if (($cgiparams{'TYPE'} eq 'net') && ($cgiparams{'SIDE'} !~ /^(left|right)$/)) {
-#	    $errormessage = $Lang::tr{'ipfire side is invalid'};
-#	    goto VPNCONF_ERROR;
-#	}
-
 	# Check if there is no other entry with this name
 	if (! $cgiparams{'KEY'}) {
 	    foreach my $key (keys %confighash) {
@@ -3988,17 +3983,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    goto VPNCONF_ERROR;
 	}
 
-#fixplausi
-	if ($cgiparams{'AUTH'} eq 'psk')  {
-#	    if (! length($cgiparams{'PSK'}) ) {
-#		$errormessage = $Lang::tr{'pre-shared key is too short'};
-#		goto VPNCONF_ERROR;
-#	    }
-#	    if ($cgiparams{'PSK'} =~ /['",&]/) {
-#		$errormessage = $Lang::tr{'invalid characters found in pre-shared key'};
-#		goto VPNCONF_ERROR;
-#	    }
-	} elsif ($cgiparams{'AUTH'} eq 'certreq') {
+	if ($cgiparams{'AUTH'} eq 'certreq') {
 	    if ($cgiparams{'KEY'}) {
 		$errormessage = $Lang::tr{'cant change certificates'};
 		goto VPNCONF_ERROR;
