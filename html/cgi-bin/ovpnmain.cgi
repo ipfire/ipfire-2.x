@@ -615,18 +615,6 @@ NEXT:
 	print "</select>";
 }
 
-sub hostsinnet
-{
-	my $name=$_[0];
-	my %ccdhash=();
-	my $i=0;
-	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%ccdhash);
-	foreach my $key (keys %ccdhash) {
-		if ($ccdhash{$key}[32] eq $name){ $i++;}
-	}
-	return $i;
-}
-
 sub check_routes_push
 {
 			my $val=$_[0];
@@ -2997,7 +2985,7 @@ END
 	foreach my $key (sort { uc($ccdconfhash{$a}[0]) cmp uc($ccdconfhash{$b}[0]) } keys %ccdconfhash) {
 		@ccdconf=($ccdconfhash{$key}[0],$ccdconfhash{$key}[1]);
 		$count++;
-		my $ccdhosts = &hostsinnet($ccdconf[0]);
+		my $ccdhosts = scalar &get_addresses_in_use($ccdconf[1]);
 		if ($count % 2){ print" <tr bgcolor='$Header::color{'color22'}'>";}
 		else{            print" <tr bgcolor='$Header::color{'color20'}'>";}
 		print"<td>$ccdconf[0]</td><td align='center'>$ccdconf[1]</td><td align='center'>$ccdhosts/".(&ccdmaxclients($ccdconf[1])+1)."</td><td>";
