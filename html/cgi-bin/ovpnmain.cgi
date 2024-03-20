@@ -212,10 +212,13 @@ sub writeserverconf {
     print CONF "cert ${General::swroot}/ovpn/certs/servercert.pem\n";
     print CONF "key ${General::swroot}/ovpn/certs/serverkey.pem\n";
     print CONF "dh $DHPARAM\n";
+
+	# Enable subnet topology
+	print CONF "# Topology\n";
+	print CONF "topology subnet\n\n";
+
     my @tempovpnsubnet = split("\/",$sovpnsettings{'DOVPN_SUBNET'});
     print CONF "server $tempovpnsubnet[0] $tempovpnsubnet[1]\n";
-    #print CONF "push \"route $netsettings{'GREEN_NETADDRESS'} $netsettings{'GREEN_NETMASK'}\"\n";
-
     print CONF "tun-mtu $sovpnsettings{'DMTU'}\n";
 
     if ($vpnsettings{'ROUTES_PUSH'} ne '') {
@@ -411,6 +414,24 @@ sub delccdnet($) {
 	return 0;
 }
 
+# Returns the network with the matching name
+sub get_cdd_network($) {
+	my $name = shift;
+	my %subnets = ();
+
+	# Load all subnets
+	&General::readhasharray("${General::swroot}/ovpn/ccd.conf", \%subnets);
+
+	# Find the matching subnet
+	foreach my $key (keys %subnets) {
+		if ($subnets{$key}[0] eq $name) {
+			return $subnets{$key}[1];
+		}
+	}
+
+	return undef;
+}
+
 sub addccdnet($$) {
 	my $name = shift;
 	my $network = shift;
@@ -579,11 +600,16 @@ sub write_ccd_configs() {
 
 		# Otherwise we need to push the selected IP address
 		} else {
-			my $netaddress = &Network::get_netaddress($address);
+			$address = &convert_top30_ccd_allocation($address);
 
-			print CONF "# Allocated IP address from $pool\n";
-			print CONF "ifconfig-push " . &Network::find_next_ip_address($netaddress, 2);
-			print CONF " " . &Network::find_next_ip_address($netaddress, 1) . "\n\n";
+			# Fetch the network of the pool
+			my $network = &get_cdd_network($pool);
+			my $netmask = &Network::get_netmask($network);
+
+			if (defined $address && defined $network && defined $netmask) {
+				print CONF "# Allocated IP address from $pool\n";
+				print CONF "ifconfig-push ${address} ${netmask}\n\n";
+			}
 		}
 
 		# Redirect Gateway?
@@ -677,9 +703,8 @@ sub ccdmaxclients($) {
 		return undef;
 	}
 
-	# We need four IP addresses for each client
-	# (and for some reason we are taking one away)
-	return (1 << (32 - $prefix)) / 4 - 1;
+	# We take three addresses away: the network base address, the gateway, and broadcast
+	return (1 << (32 - $prefix)) - 3;
 }
 
 # Lists all selectable CCD addresses for the given network
@@ -701,15 +726,30 @@ sub getccdadresses($) {
 		return undef;
 	}
 
-	while ($start < $broadcast) {
-		my $address = &Network::bin2ip($start + 2);
+	# Skip the base address and gateway
+	$start += 2;
 
-		# Each client needs four addresses
-		push(@addresses, "$address/30");
-		$start += 4;
+	while ($start < $broadcast) {
+		push(@addresses, &Network::bin2ip($start++));
 	}
 
 	return @addresses;
+}
+
+sub convert_top30_ccd_allocation($) {
+	my $address = shift;
+
+	# Do nothing if the address does not end on /30
+	return $address unless ($address =~ m/\/30$/);
+
+	# Fetch the network base address
+	my $netaddress = &Network::get_netaddress($address);
+
+	# Break on invalid input
+	return undef if (!defined $netaddress);
+
+	# The client IP address was the second address of the subnet
+	return &Network::find_next_ip_address($netaddress, 2);
 }
 
 sub get_addresses_in_use($) {
@@ -724,14 +764,14 @@ sub get_addresses_in_use($) {
 
 	# Check if the address is in use
 	foreach my $key (keys %conns) {
-		my $address = &Network::get_netaddress($conns{$key}[33]);
+		my $address = &convert_top30_ccd_allocation($conns{$key}[33]);
 
 		# Skip on invalid inputs
 		next if (!defined $address);
 
 		# If the first address is part of the network, we have a match
 		if (&Network::ip_address_in_network($address, $network)) {
-			push(@addresses, $conns{$key}[33]);
+			push(@addresses, $address);
 		}
 	}
 
@@ -4861,7 +4901,7 @@ if ($cgiparams{'TYPE'} eq 'host') {
 			@ccdconf=($ccdconfhash{$key}[0],$ccdconfhash{$key}[1]);
 			if ($count % 2){print"<tr bgcolor='$Header::color{'color22'}'>";}else{print"<tr bgcolor='$Header::color{'color20'}'>";}
 			print"<td align='center' width='1%'><input type='radio' name='CHECK1' value='$ccdconf[0]' $checked{'check1'}{$ccdconf[0]}/></td><td>$ccdconf[0]</td><td width='40%' align='center'>$ccdconf[1]</td><td align='left' width='10%'>";
-			&fillselectbox($ccdconf[0], $ccdconf[1], $cgiparams{$name});
+			&fillselectbox($ccdconf[0], $ccdconf[1], &convert_top30_ccd_allocation($cgiparams{$name}));
 			print"</td></tr>";
 		}
 		print "</table><br><br><hr><br><br>";
