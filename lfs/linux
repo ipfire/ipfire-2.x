@@ -247,6 +247,11 @@ ifeq "$(LASTKERNEL)" "1"
 
 	# Disable ipv6 at runtime
 	echo "options ipv6 disable_ipv6=1" > /etc/modprobe.d/ipv6.conf
+
+	# build cpupower utility
+	cd $(DIR_APP)/tools/power/cpupower && make $(MAKETUNING)
+	cd $(DIR_APP)/tools/power/cpupower && make install
+
 endif
 endif
 
