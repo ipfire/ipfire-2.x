@@ -350,29 +350,39 @@ sub writeserverconf {
     close(CONF);
 }
 
-sub delccdnet
-{
-	my %ccdconfhash = ();
-	my %ccdhash = ();
-	my $ccdnetname=$_[0];
-	if (-f "${General::swroot}/ovpn/ovpnconfig"){
-		&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%ccdhash);
-		foreach my $key (keys %ccdhash) {
-			if ($ccdhash{$key}[32] eq $ccdnetname) {
-				$errormessage=$Lang::tr{'ccd err hostinnet'};
-				return;
-			}
+sub delccdnet($) {
+	my $name = shift;
+
+	my %conns = ();
+	my %subnets = ();
+
+	# Load all connections
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%conns);
+
+	# Check if the subnet is in use
+	foreach my $key (keys %conns) {
+		if ($conns{$key}[32] eq $name) {
+			$errormessage = $Lang::tr{'ccd err hostinnet'};
+			return 1;
 		}
 	}
-	&General::readhasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
-	foreach my $key (keys %ccdconfhash) {
-			if ($ccdconfhash{$key}[0] eq $ccdnetname){
-				delete $ccdconfhash{$key};
+
+	# Load all subnets
+	&General::readhasharray("${General::swroot}/ovpn/ccd.conf", \%subnets);
+
+	# Remove the subnet
+	foreach my $key (keys %subnets) {
+			if ($subnets{$key}[0] eq $name){
+				delete $subnets{$key};
 			}
 	}
-	&General::writehasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
 
-	&writeserverconf;
+	# Write the subnets back
+	&General::writehasharray("${General::swroot}/ovpn/ccd.conf", \%subnets);
+
+	# Update the server configuration to remove routes
+	&writeserverconf();
+
 	return 0;
 }
 
