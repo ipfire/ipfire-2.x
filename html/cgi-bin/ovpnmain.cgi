@@ -520,56 +520,98 @@ sub ccdmaxclients($) {
 	return (1 << (32 - $prefix)) / 4 - 1;
 }
 
-sub getccdadresses
-{
-	my $ipin=$_[0];
-	my ($ip1,$ip2,$ip3,$ip4)=split  /\./, $ipin;
-	my $cidr=$_[1];
-	chomp($cidr);
-	my $count=$_[2];
-	my $hasip=$_[3];
-	chomp($hasip);
-	my @iprange=();
-	my %ccdhash=();
-	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%ccdhash);
-	$iprange[0]=$ip1.".".$ip2.".".$ip3.".".($ip4+2);
-	for (my $i=1;$i<=$count;$i++) {
-		my $tmpip=$iprange[$i-1];
-		my $stepper=$i*4;
-		$iprange[$i]= &Network::bin2ip(&Network::ip2bin($tmpip) + 4);
+# Lists all selectable CCD addresses for the given network
+sub getccdadresses($) {
+	my $network = shift;
+
+	# Collect all available addresses
+	my @addresses = ();
+
+	# Convert the network into binary
+	my ($start, $netmask) = &Network::network2bin($network);
+
+	# Fetch the broadcast address
+	my $broadcast = &Network::get_broadcast($network);
+	$broadcast = &Network::ip2bin($broadcast);
+
+	# Fail if we could not parse the network
+	if (!defined $start || !defined $netmask || !defined $broadcast) {
+		return undef;
 	}
-	my $r=0;
-	foreach my $key (keys %ccdhash) {
-		$r=0;
-		foreach  my $tmp (@iprange){
-			my ($net,$sub) = split (/\//,$ccdhash{$key}[33]);
-			if ($net eq $tmp) {
-				if ( $hasip ne  $ccdhash{$key}[33] ){
-					splice (@iprange,$r,1);
-				}
-			}
-			$r++;
-		}
+
+	while ($start < $broadcast) {
+		my $address = &Network::bin2ip($start + 2);
+
+		# Each client needs four addresses
+		push(@addresses, "$address/30");
+		$start += 4;
 	}
-	return @iprange;
+
+	return @addresses;
 }
 
-sub fillselectbox
-{
-	my $boxname=$_[1];
-	my ($ccdip,$subcidr) = split("/",$_[0]);
-	my $tz=$_[2];
-	my @allccdips=&getccdadresses($ccdip,$subcidr,&ccdmaxclients($ccdip."/".$subcidr),$tz);
-	print"<select name='$boxname' STYLE='font-family : arial; font-size : 9pt; width:130px;' >";
-	foreach (@allccdips) {
-		my $ip=$_."/30";
-		chomp($ip);
-		print "<option value='$ip' ";
-		if ( $ip eq $cgiparams{$boxname} ){
-			print"selected";
+sub get_addresses_in_use($) {
+	my $network = shift;
+
+	my %conns = ();
+
+	# Load all connections
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%conns);
+
+	my @addresses = ();
+
+	# Check if the address is in use
+	foreach my $key (keys %conns) {
+		my $address = &Network::get_netaddress($conns{$key}[33]);
+
+		# Skip on invalid inputs
+		next if (!defined $address);
+
+		# If the first address is part of the network, we have a match
+		if (&Network::ip_address_in_network($address, $network)) {
+			push(@addresses, $conns{$key}[33]);
 		}
-		print ">$ip</option>";
 	}
+
+	return @addresses;
+}
+
+sub fillselectbox($$) {
+	my $boxname = shift;
+	my $network = shift;
+	my @selected = shift;
+
+	# Fetch all available addresses for this network
+	my @addresses = &getccdadresses($network);
+
+	# Fetch all addresses in use
+	my @addresses_in_use = &get_addresses_in_use($network);
+
+	print "<select name='$boxname'>";
+
+	foreach my $address (@addresses) {
+		print "<option value='$address'";
+
+		# Select any requested addresses
+		foreach (@selected) {
+			if ($address eq $_) {
+				print " selected";
+				goto NEXT;
+			}
+		}
+
+		# Disable any addresses that are not free
+		foreach (@addresses_in_use) {
+			if ($address eq $_) {
+				print " disabled";
+				goto NEXT;
+			}
+		}
+
+NEXT:
+		print ">$address</option>";
+	}
+
 	print "</select>";
 }
 
@@ -4744,7 +4786,7 @@ if ($cgiparams{'TYPE'} eq 'host') {
 			@ccdconf=($ccdconfhash{$key}[0],$ccdconfhash{$key}[1]);
 			if ($count % 2){print"<tr bgcolor='$Header::color{'color22'}'>";}else{print"<tr bgcolor='$Header::color{'color20'}'>";}
 			print"<td align='center' width='1%'><input type='radio' name='CHECK1' value='$ccdconf[0]' $checked{'check1'}{$ccdconf[0]}/></td><td>$ccdconf[0]</td><td width='40%' align='center'>$ccdconf[1]</td><td align='left' width='10%'>";
-			&fillselectbox($ccdconf[1],$ccdconf[0],$cgiparams{$name});
+			&fillselectbox($ccdconf[0], $ccdconf[1], $cgiparams{$name});
 			print"</td></tr>";
 		}
 		print "</table><br><br><hr><br><br>";
