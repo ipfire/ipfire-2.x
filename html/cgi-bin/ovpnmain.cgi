@@ -5109,9 +5109,6 @@ END
 	print <<END;
     <table width='100%' border='0'>
     <form method='post'>
-    <td width='25%'>&nbsp;</td>
-    <td width='25%'>&nbsp;</td>
-    <td width='25%'>&nbsp;</td></tr>
     <tr><td class='boldbase'>$Lang::tr{'ovpn server status'}</td>
     <td align='left'>$sactive</td>
     <tr><td class='boldbase'>$Lang::tr{'ovpn on red'}</td>
