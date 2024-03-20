@@ -79,7 +79,7 @@ ZSTD_OPTIONS = \
 #
 URL_IPFIRE  = https://source.ipfire.org/source-2.x
 URL_TOOLCHAIN = https://source.ipfire.org/toolchains
-URL_SOURCE = git.ipfire.org:/pub/sources/source-2.x
+URL_SOURCE = people.ipfire.org:/pub/sources/source-2.x
 
 # Don't change this; it will be overridden by other makefiles where necessary.
 #
