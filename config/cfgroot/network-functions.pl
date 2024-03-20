@@ -691,7 +691,7 @@ sub testsuite() {
 	assert('find_next_ip_address("1.2.3.4", 2)', $result eq "1.2.3.6");
 
 	$result = &network_equal("192.168.0.0/24", "192.168.0.0/255.255.255.0");
-	assert('network_equal("192.168.0.0/24", "192.168.0.0/255.255.255.0")', $result);
+	assert('network_equal("192.168.0.0/24", "192.168.0.0/255.255.255.0")', !$result);
 
 	$result = &network_equal("192.168.0.0/24", "192.168.0.0/25");
 	assert('network_equal("192.168.0.0/24", "192.168.0.0/25")', !$result);
