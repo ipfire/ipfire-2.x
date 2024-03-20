@@ -452,47 +452,58 @@ sub addccdnet($$) {
 	&writeserverconf();
 }
 
-sub modccdnet
-{
+sub modccdnet($$) {
+	my $newname = shift;
+	my $oldname = shift;
 
-	my $newname=$_[0];
-	my $oldname=$_[1];
 	my %ccdconfhash=();
-	my %ccdhash=();
+	my %conns=();
 
-	# Check if the new name is valid.
-	if(!&validccdname($newname)) {
-		$errormessage=$Lang::tr{'ccd err invalidname'};
+	# Do nothing if nothing has changed
+	if ($newname eq $oldname) {
 		return;
 	}
 
+	# Check if the new name is valid
+	unless (&validccdname($newname)) {
+		$errormessage = $Lang::tr{'ccd err invalidname'};
+		return;
+	}
+
+	# Load all subnets
 	&General::readhasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
+
+	# Check if the name already exists
 	foreach my $key (keys %ccdconfhash) {
-		if ($ccdconfhash{$key}[0] eq $oldname) {
-			foreach my $key1 (keys %ccdconfhash) {
-				if ($ccdconfhash{$key1}[0] eq $newname){
-					$errormessage=$errormessage.$Lang::tr{'ccd err netadrexist'};
-					return;
-				}else{
-					$ccdconfhash{$key}[0]= $newname;
-					&General::writehasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
-					last;
-				}
-			}
+		if ($ccdconfhash{$key}[0] eq $newname) {
+			$errormessage = $Lang::tr{'ccd err netadrexist'};
+			return;
 		}
 	}
 
-	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%ccdhash);
-		foreach my $key (keys %ccdhash) {
-			if ($ccdhash{$key}[32] eq $oldname) {
-				$ccdhash{$key}[32]=$newname;
-				&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%ccdhash);
-				last;
-			}
+	# Update!
+	foreach my $key (keys %ccdconfhash) {
+		if ($ccdconfhash{$key}[0] eq $oldname) {
+			$ccdconfhash{$key}[0] = $newname;
+			last;
 		}
+	}
 
-	return 0;
+	# Load all configurations
+	&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%conns);
+
+	# Update all matching connections
+	foreach my $key (keys %conns) {
+		if ($conns{$key}[32] eq $oldname) {
+			$conns{$key}[32] = $newname;
+		}
+	}
+
+	# Write back the configuration
+	&General::writehasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
+	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%conns);
 }
+
 sub ccdmaxclients
 {
 	my $ccdnetwork=$_[0];
