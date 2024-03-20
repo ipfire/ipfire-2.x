@@ -350,6 +350,28 @@ sub writeserverconf {
     close(CONF);
 }
 
+##
+## CCD Name
+##
+
+# Checks a ccdname for letters, numbers and spaces
+sub validccdname($) {
+	my $name = shift;
+
+	# name should be at least one character in length
+	# but no more than 63 characters
+	if (length ($name) < 1 || length ($name) > 63) {
+		return 0;
+	}
+
+	# Only valid characters are a-z, A-Z, 0-9, space and -
+	if ($name !~ /^[a-zA-Z0-9 -]*$/) {
+		return 0;
+	}
+
+	return 1;
+}
+
 sub delccdnet($) {
 	my $name = shift;
 
@@ -406,7 +428,7 @@ sub addccdnet
 		return
 	}
 
-	if(!&General::validccdname($ccdname))
+	if(!&validccdname($ccdname))
 	{
 		$errormessage=$Lang::tr{'ccd err invalidname'};
 		return;
@@ -451,7 +473,7 @@ sub modccdnet
 	my %ccdhash=();
 
 	# Check if the new name is valid.
-	if(!&General::validccdname($newname)) {
+	if(!&validccdname($newname)) {
 		$errormessage=$Lang::tr{'ccd err invalidname'};
 		return;
 	}
