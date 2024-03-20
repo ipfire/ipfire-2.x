@@ -504,20 +504,20 @@ sub modccdnet($$) {
 	&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%conns);
 }
 
-sub ccdmaxclients
-{
-	my $ccdnetwork=$_[0];
-	my @octets=();
-	my @subnet=();
-	@octets=split("\/",$ccdnetwork);
-	@subnet= split /\./, &General::cidrtosub($octets[1]);
-	my ($a,$b,$c,$d,$e);
-	$a=256-$subnet[0];
-	$b=256-$subnet[1];
-	$c=256-$subnet[2];
-	$d=256-$subnet[3];
-	$e=($a*$b*$c*$d)/4;
-	return $e-1;
+sub ccdmaxclients($) {
+	my $network = shift;
+
+	# Fetch the prefix
+	my $prefix = &Network::get_prefix($network);
+
+	# Return undef on invalid input
+	if (!defined $prefix) {
+		return undef;
+	}
+
+	# We need four IP addresses for each client
+	# (and for some reason we are taking one away)
+	return (1 << (32 - $prefix)) / 4 - 1;
 }
 
 sub getccdadresses
