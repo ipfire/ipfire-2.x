@@ -408,60 +408,48 @@ sub delccdnet($) {
 	return 0;
 }
 
-sub addccdnet
-{
-	my %ccdconfhash=();
-	my @ccdconf=();
-	my $ccdname=$_[0];
-	my $ccdnet=$_[1];
-	my $subcidr;
-	my @ip2=();
-	my $checkup;
-	my $ccdip;
-	my $baseaddress;
+sub addccdnet($$) {
+	my $name = shift;
+	my $network = shift;
 
+	my %ccdconfhash = ();
 
-	#check name
-	if ($ccdname eq '')
-	{
-		$errormessage=$errormessage.$Lang::tr{'ccd err name'}."<br>";
-		return
-	}
-
-	if(!&validccdname($ccdname))
-	{
-		$errormessage=$Lang::tr{'ccd err invalidname'};
+	# Check if the name is valid
+	unless (&validccdname($name)) {
+		$errormessage = $Lang::tr{'ccd err invalidname'};
 		return;
 	}
 
-	($ccdip,$subcidr) = split (/\//,$ccdnet);
-	$subcidr=&General::iporsubtocidr($subcidr);
-	#check subnet
-	if ($subcidr > 30)
-	{
-		$errormessage=$Lang::tr{'ccd err invalidnet'};
+	# Fetch the network address & prefix
+	my $address = &Network::get_netaddress($network);
+	my $prefix  = &Network::get_prefix($network);
+
+	# If we could not decode the subnet, it must be invalid
+	if (!defined $address || !defined $prefix) {
+		$errormessage = $Lang::tr{'ccd err invalidnet'};
 		return;
-	}
-	#check ip
-	if (!&General::validipandmask($ccdnet)){
-		$errormessage=$Lang::tr{'ccd err invalidnet'};
+
+	# If the network is smaller than /30, there is no point in using it
+	} elsif ($prefix > 30) {
+		$errormessage = $Lang::tr{'ccd err invalidnet'};
 		return;
 	}
 
-	if (!$errormessage) {
-		my %ccdconfhash=();
-		$baseaddress=&General::getnetworkip($ccdip,$subcidr);
-		&General::readhasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
-		my $key = &General::findhasharraykey (\%ccdconfhash);
-		foreach my $i (0 .. 1) { $ccdconfhash{$key}[$i] = "";}
-		$ccdconfhash{$key}[0] = $ccdname;
-		$ccdconfhash{$key}[1] = $baseaddress."/".$subcidr;
-		&General::writehasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
-		&writeserverconf;
-		$cgiparams{'ccdname'}='';
-		$cgiparams{'ccdsubnet'}='';
-		return 1;
-	}
+	# Read the configuration
+	&General::readhasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
+
+	# Create a new entry
+	my $key = &General::findhasharraykey(\%ccdconfhash);
+
+	# Store name
+	$ccdconfhash{$key}[0] = $name;
+	$ccdconfhash{$key}[1] = "$address/$prefix";
+
+	# Write the hash back
+	&General::writehasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
+
+	# Update the server configuration to add routes
+	&writeserverconf();
 }
 
 sub modccdnet
