@@ -70,6 +70,9 @@ my %CIPHERS = (
 	"CHACHA20-POLY1305" => $Lang::tr{'CHACHA20-POLY1305'},
 );
 
+# Use the precomputed DH paramter from RFC7919
+my $DHPARAM = "/etc/ssl/ffdhe4096.pem";
+
 ###
 ### Initialize variables
 ###
@@ -94,7 +97,6 @@ my $name;
 my $col="";
 my $local_serverconf = "${General::swroot}/ovpn/scripts/server.conf.local";
 my $local_clientconf = "${General::swroot}/ovpn/scripts/client.conf.local";
-my $dhparameter = "/etc/ssl/ffdhe4096.pem";
 
 # Read Ethernet configuration
 &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
@@ -209,7 +211,7 @@ sub writeserverconf {
     print CONF "ca ${General::swroot}/ovpn/ca/cacert.pem\n";
     print CONF "cert ${General::swroot}/ovpn/certs/servercert.pem\n";
     print CONF "key ${General::swroot}/ovpn/certs/serverkey.pem\n";
-    print CONF "dh $dhparameter\n";
+    print CONF "dh $DHPARAM\n";
     my @tempovpnsubnet = split("\/",$sovpnsettings{'DOVPN_SUBNET'});
     print CONF "server $tempovpnsubnet[0] $tempovpnsubnet[1]\n";
     #print CONF "push \"route $netsettings{'GREEN_NETADDRESS'} $netsettings{'GREEN_NETMASK'}\"\n";
@@ -902,7 +904,7 @@ unless(-d "${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}"){mkdir "${General
   print SERVERCONF "ca ${General::swroot}/ovpn/ca/cacert.pem\n";
   print SERVERCONF "cert ${General::swroot}/ovpn/certs/servercert.pem\n";
   print SERVERCONF "key ${General::swroot}/ovpn/certs/serverkey.pem\n";
-  print SERVERCONF "dh $dhparameter\n";
+  print SERVERCONF "dh $DHPARAM\n";
   print SERVERCONF "# Cipher\n";
   print SERVERCONF "cipher $cgiparams{'DCIPHER'}\n";
 
@@ -2446,28 +2448,6 @@ END
    &Header::closebigbox();
    &Header::closepage();
    exit(0);
-
-###
-### Display Diffie-Hellman key
-###
-} elsif ($cgiparams{'ACTION'} eq $Lang::tr{'show dh'}) {
-
-    if (! -e "$dhparameter") {
-	$errormessage = $Lang::tr{'not present'};
-	} else {
-		&Header::showhttpheaders();
-		&Header::openpage($Lang::tr{'ovpn'}, 1, '');
-		&Header::openbigbox('100%', 'LEFT', '', '');
-		&Header::openbox('100%', 'LEFT', "$Lang::tr{'dh'}:");
-		my @output = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "$dhparameter");
-		my $output = &Header::cleanhtml(join("", @output) ,"y");
-		print "<pre>$output</pre>\n";
-		&Header::closebox();
-		print "<div align='center'><a href='/cgi-bin/ovpnmain.cgi'>$Lang::tr{'back'}</a></div>";
-		&Header::closebigbox();
-		&Header::closepage();
-		exit(0);
-    }
 
 ###
 ### Display tls-auth key
@@ -5157,7 +5137,6 @@ END
 	print "<input type='submit' name='ACTION' value='$Lang::tr{'ccd net'}' />";
 	print "<input type='submit' name='ACTION' value='$Lang::tr{'advanced server'}' />";
 	if (( -e "${General::swroot}/ovpn/ca/cacert.pem" &&
-	     -e "$dhparameter" &&
 	     -e "${General::swroot}/ovpn/certs/servercert.pem" &&
 	     -e "${General::swroot}/ovpn/certs/serverkey.pem") &&
 	    (( $cgiparams{'ENABLED'} eq 'on') ||
@@ -5567,45 +5546,6 @@ END
 			<td width='25%' class='base' $col2>$Lang::tr{'host certificate'}:</td>
 			<td class='base' $col2>$Lang::tr{'not present'}</td>
 			</td><td colspan='3' $col2>&nbsp;</td>
-		</tr>
-END
-		;
-    }
-
-    # Adding DH parameter to chart
-    if (-f "$dhparameter") {
-		my @dhsubject = &General::system_output("/usr/bin/openssl", "dhparam", "-text", "-in", "$dhparameter");
-		my $dhsubject;
-
-		foreach my $line (@dhsubject) {
-			if ($line =~ /    (.*)[\n]/) {
-				$dhsubject = $1;
-
-				last;
-			}
-		}
-
-	print <<END;
-		<tr>
-			<td class='base' $col3>$Lang::tr{'dh'}</td>
-			<td class='base' $col3>$dhsubject</td>
-			<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
-			<input type='hidden' name='ACTION' value='$Lang::tr{'show dh'}' />
-			<input type='image' name='$Lang::tr{'show dh'}' src='/images/info.gif' alt='$Lang::tr{'show dh'}' title='$Lang::tr{'show dh'}' width='20' height='20' border='0' />
-			</form>
-			<form method='post' name='frmdhparam'><td width='3%' align='center' $col3>
-			</form>
-			<td width='4%' $col3>&nbsp;</td>
-		</tr>
-END
-		;
-    } else {
-		# Nothing
-		print <<END;
-		<tr>
-			<td width='25%' class='base' $col3>$Lang::tr{'dh'}:</td>
-			<td class='base' $col3>$Lang::tr{'not present'}</td>
-			</td><td colspan='3' $col3>&nbsp;</td>
 		</tr>
 END
 		;
