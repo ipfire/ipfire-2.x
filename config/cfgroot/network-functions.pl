@@ -318,6 +318,16 @@ sub get_prefix($) {
 	return undef;
 }
 
+sub get_netmask($) {
+	my $network = shift;
+
+	# Fetch the prefix
+	my $prefix = &get_prefix($network);
+
+	# Convert to netmask
+	return &convert_prefix2netmask($prefix);
+}
+
 # Returns True if $address is in $network.
 sub ip_address_in_network($$) {
 	my $address = shift;
