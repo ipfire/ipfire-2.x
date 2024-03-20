@@ -615,10 +615,10 @@ sub get_available_network_zones () {
 #
 sub is_zone_available() {
 	my $zone = lc shift;
-	
+
 	# Make sure the zone is valid
 	die("Unknown network zone '$zone'") unless ($zone ~~ @known_network_zones);
-	
+
 	# Get available zones and return result
 	my @available_zones = get_available_network_zones();
 	return ($zone ~~ @available_zones);
