@@ -683,16 +683,6 @@ sub check_ccdconf
 	return 1;
 }
 
-sub validdotmask
-{
-	my $ipdotmask = $_[0];
-	if (&General::validip($ipdotmask)) { return 0; }
-	if (!($ipdotmask =~ /^(.*?)\/(.*?)$/)) {  }
-	my $mask = $2;
-	if (($mask =~ /\./ )) { return 0; }
-  return 1;
-}
-
 # -------------------------------------------------------------------
 
 sub write_routepushfile
@@ -3870,21 +3860,21 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	    goto VPNCONF_ERROR;
     }
 
-    if ( &validdotmask ($cgiparams{'LOCAL_SUBNET'}))  {
+    if (!&Network::check_subnet($cgiparams{'LOCAL_SUBNET'}))  {
 		  $errormessage = $Lang::tr{'openvpn prefix local subnet'};
 		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 		  goto VPNCONF_ERROR;
 		}
 
-    if ( &validdotmask ($cgiparams{'OVPN_SUBNET'}))  {
+    if (!&Network::check_subnet($cgiparams{'OVPN_SUBNET'}))  {
 		  $errormessage = $Lang::tr{'openvpn prefix openvpn subnet'};
 		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
 		  goto VPNCONF_ERROR;
 		}
 
-    if ( &validdotmask ($cgiparams{'REMOTE_SUBNET'}))  {
+    if (!&Network::check_subnet($cgiparams{'REMOTE_SUBNET'}))  {
 		  $errormessage = $Lang::tr{'openvpn prefix remote subnet'};
 		  unlink ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}/$cgiparams{'NAME'}.conf") or die "Removing Configfile fail: $!";
 	    rmdir ("${General::swroot}/ovpn/n2nconf/$cgiparams{'NAME'}") || die "Removing Directory fail: $!";
