@@ -8508,6 +8508,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/GACT_PROB
 #lib/modules/KVER-ipfire/build/include/config/GARP
 #lib/modules/KVER-ipfire/build/include/config/GCC11_NO_ARRAY_BOUNDS
+#lib/modules/KVER-ipfire/build/include/config/GCC_ASM_GOTO_OUTPUT_WORKAROUND
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGINS
 #lib/modules/KVER-ipfire/build/include/config/GCC_SUPPORTS_DYNAMIC_FTRACE_WITH_ARGS
 #lib/modules/KVER-ipfire/build/include/config/GCC_VERSION
@@ -12464,6 +12465,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/dt-bindings/dma/at91.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/dma/axi-dmac.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/dma/dw-dmac.h
+#lib/modules/KVER-ipfire/build/include/dt-bindings/dma/fsl-edma.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/dma/jz4775-dma.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/dma/jz4780-dma.h
 #lib/modules/KVER-ipfire/build/include/dt-bindings/dma/nbpfaxi.h
