@@ -106,7 +106,7 @@ foreach my $id (keys %providers) {
 	my $autoupdate_status = $providers{$id}[3];
 
 	# Skip unsupported providers.
-	next unless($IDS::Ruleset::Providers{$provider});
+	next unless($IDS::Ruleset::Providers{$provider}{'dl_url'});
 
 	# Skip the provider if it is not enabled.
 	next unless($enabled_status eq "enabled");
