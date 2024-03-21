@@ -1162,6 +1162,7 @@ END
 				my $subscription_code = $used_providers{$id}[1];
 				my $autoupdate_status = $used_providers{$id}[2];
 				my $status  = $used_providers{$id}[3];
+				my $unsupported;
 
 				# Check if the item number is even or not.
 				if ($line % 2) {
@@ -1172,8 +1173,8 @@ END
 
 				# Handle providers which are not longer supported.
 				unless ($IDS::Ruleset::Providers{$provider}{'dl_url'}) {
-					# Assign background color
-					$col="bgcolor='#FF4D4D'";
+					# Mark this provider as unsupported.
+					$unsupported = "<img src='/blob.gif' alt='*'>";
 				}
 
 				# Choose icons for the checkboxes.
@@ -1202,7 +1203,7 @@ END
 
 print <<END;
 				<tr>
-					<td width='33%' class='base' $col>$provider_name</td>
+					<td width='33%' class='base' $col>$provider_name$unsupported</td>
 					<td width='30%' class='base' $col>$rulesetdate</td>
 
 					<td align='center' $col>
@@ -1258,10 +1259,15 @@ print <<END;
 	<hr>
 	<br>
 
-	<div align='right'>
-		<table width='100%'>
-			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<tr>
+	<table width='100%'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<tr>
+				<td>
+END
+					print "<img src='/blob.gif' alt='*'> $Lang::tr{'ids unsupported provider'}\n";
+print <<END;
+				</td>
+				<td><div align='right'>
 END
 
 					# Only show this button if a ruleset provider is configured.
@@ -1270,10 +1276,10 @@ END
 					}
 print <<END;
 					<input type='submit' name='PROVIDERS' value='$Lang::tr{'ids add provider'}'>
-				</tr>
-			</form>
-		</table>
-	</div>
+					</div></td>
+			</tr>
+		</form>
+	</table>
 END
 
 	&Header::closebox();

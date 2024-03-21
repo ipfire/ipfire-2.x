@@ -1416,6 +1416,7 @@
 'ids show' => 'Anzeigen',
 'ids the choosen provider is already in use' => 'Der gewhählte Provider wird bereits verwendet.',
 'ids unable to download the ruleset' => 'Das Regelset konnte nicht heruntergeladen werden.',
+'ids unsupported provider' => 'Provider wird nicht mehr unterstützt',
 'ids visit provider website' => 'Anbieter-Webseite besuchen',
 'ids working' => 'Änderungen werden übernommen. Bitte warten Sie, bis dieser Vorgang erfolgreich beendet wurde.',
 'iface' => 'Iface',
