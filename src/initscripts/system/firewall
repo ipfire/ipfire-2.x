@@ -332,9 +332,13 @@ iptables_init() {
 	iptables -N WGINPUT
 	iptables -A INPUT -j WGINPUT
 
-	# OpenVPN
-	iptables -N OVPNINPUT
-	iptables -A INPUT -j OVPNINPUT
+	# OpenVPN Roadwarrior
+	iptables -N OVPNINPUTRW
+	iptables -A INPUT -j OVPNINPUTRW
+
+	# OpenVPN N2N
+	iptables -N OVPNINPUTN2N
+	iptables -A INPUT -j OVPNINPUTN2N
 
 	# Tor (outbound)
 	iptables -N TOR_OUTPUT
