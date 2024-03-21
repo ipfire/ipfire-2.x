@@ -36,6 +36,7 @@ my %VULNERABILITIES = (
 	"mds" => "$Lang::tr{'fallout zombieload ridl'} (CVE-2018-12126, CVE-2018-12130, CVE-2018-12127, CVE-2019-11091)",
 	"meltdown" => "$Lang::tr{'meltdown'} (CVE-2017-5754)",
 	"mmio_stale_data" => "$Lang::tr{'mmio stale data'} (CVE-2022-21123, CVE-2022-21125, CVE-2022-21127, CVE-2022-21166)",
+	"reg_file_data_sampling" => "$Lang::tr{'reg_file_data_sampling'} (CVE-2023-28746)",
 	"retbleed" => "$Lang::tr{'retbleed'} (CVE-2022-29900, CVE-2022-29901)",
 	"spec_rstack_overflow" => "$Lang::tr{'spec rstack overflow'} (CVE-2023-20569)",
 	"spec_store_bypass" => "$Lang::tr{'spectre variant 4'} (CVE-2018-3639)",
