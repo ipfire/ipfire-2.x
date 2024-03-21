@@ -95,6 +95,7 @@ $(TARGET) :
 	ln -sf ../init.d/vdradmin		/etc/rc.d/rc0.d/K01vdradmin
 	ln -sf ../init.d/fcron			/etc/rc.d/rc0.d/K08fcron
 	ln -sf ../init.d/apache			/etc/rc.d/rc0.d/K28apache
+	ln -sf ../init.d/openvpn-rw		/etc/rc.d/rc0.d/K10openvpn-rw
 	ln -sf ../init.d/sshd			/etc/rc.d/rc0.d/K30sshd
 	ln -sf ../init.d/setclock		/etc/rc.d/rc0.d/K47setclock
 	ln -sf  ../init.d/cyrus-sasl		/etc/rc.d/rc0.d/K49cyrus-sasl
@@ -129,6 +130,7 @@ $(TARGET) :
 	ln -sf ../init.d/sshd			/etc/rc.d/rc3.d/S30sshd
 	ln -sf ../init.d/apache			/etc/rc.d/rc3.d/S32apache
 	ln -sf ../init.d/fcron			/etc/rc.d/rc3.d/S40fcron
+	ln -sf ../init.d/openvpn-rw		/etc/rc.d/rc3.d/S50openvpn-rw
 	ln -sf ../init.d/wireguard		/etc/rc.d/rc3.d/S50wireguard
 	ln -sf ../../sysconfig/rc.local		/etc/rc.d/rc3.d/S98rc.local
 	ln -sf ../init.d/grub-btrfsd		/etc/rc.d/rc3.d/S99grub-btrfsd
@@ -137,6 +139,7 @@ $(TARGET) :
 	ln -sf ../init.d/grub-btrfsd		/etc/rc.d/rc6.d/K01grub-btrfsd
 	ln -sf ../init.d/vdradmin		/etc/rc.d/rc6.d/K01vdradmin
 	ln -sf ../init.d/fcron			/etc/rc.d/rc6.d/K08fcron
+	ln -sf ../init.d/openvpn-rw		/etc/rc.d/rc6.d/K10openvpn-rw
 	ln -sf ../init.d/apache			/etc/rc.d/rc6.d/K28apache
 	ln -sf ../init.d/sshd			/etc/rc.d/rc6.d/K30sshd
 	ln -sf ../init.d/setclock		/etc/rc.d/rc6.d/K47setclock
