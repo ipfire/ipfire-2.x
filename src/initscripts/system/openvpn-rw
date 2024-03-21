@@ -44,9 +44,15 @@ case "${1}" in
 		boot_mesg "Starting OpenVPN Roadwarrior Server..."
 		loadproc /usr/sbin/openvpn \
 			--config /var/ipfire/ovpn/server.conf
+
+		boot_mesg "Starting OpenVPN Authenticator..."
+		PIDFILE= loadproc /usr/sbin/openvpn-authenticator --daemon
 		;;
 
 	stop)
+		boot_mesg "Stopping OpenVPN Authenticator..."
+		PIDFILE= killproc /usr/sbin/openvon-authenticator
+
 		boot_mesg "Stopping OpenVPN Roadwarrior Server..."
 		killproc /usr/sbin/openvpn
 
