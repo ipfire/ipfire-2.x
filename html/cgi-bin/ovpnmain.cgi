@@ -103,8 +103,6 @@ my $local_clientconf = "${General::swroot}/ovpn/scripts/client.conf.local";
 
 # Set default CGI parameters
 $cgiparams{'ENABLED'} = 'off';
-$cgiparams{'ENABLED_BLUE'} = 'off';
-$cgiparams{'ENABLED_ORANGE'} = 'off';
 $cgiparams{'EDIT_ADVANCED'} = 'off';
 $cgiparams{'NAT'} = 'off';
 $cgiparams{'COMPRESSION'} = 'off';
@@ -1383,8 +1381,6 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
 		}
 	}
 
-    $vpnsettings{'ENABLED_BLUE'} = $cgiparams{'ENABLED_BLUE'};
-    $vpnsettings{'ENABLED_ORANGE'} =$cgiparams{'ENABLED_ORANGE'};
     $vpnsettings{'ENABLED'} = $cgiparams{'ENABLED'};
     $vpnsettings{'VPN_IP'} = $cgiparams{'VPN_IP'};
     $vpnsettings{'DOVPN_SUBNET'} = $cgiparams{'DOVPN_SUBNET'};
@@ -2334,25 +2330,7 @@ else
     print CLIENTCONF "proto $vpnsettings{'DPROTOCOL'}\r\n";
     print CLIENTCONF "tun-mtu $vpnsettings{'DMTU'}\r\n";
 
-    if ( $vpnsettings{'ENABLED'} eq 'on'){
-    	print CLIENTCONF "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\r\n";
-	if ( $vpnsettings{'ENABLED_BLUE'} eq 'on' && (&Header::blue_used())){
-	    print CLIENTCONF "#comment the above line and uncomment the next line, if you want to connect on the Blue interface\r\n";
-	    print CLIENTCONF ";remote $netsettings{'BLUE_ADDRESS'} $vpnsettings{'DDEST_PORT'}\r\n";
-	}
-	if ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' && (&Header::orange_used())){
-	    print CLIENTCONF "#comment the above line and uncomment the next line, if you want to connect on the Orange interface\r\n";
-	    print CLIENTCONF ";remote $netsettings{'ORANGE_ADDRESS'} $vpnsettings{'DDEST_PORT'}\r\n";
-	}
-    } elsif ( $vpnsettings{'ENABLED_BLUE'} eq 'on' && (&Header::blue_used())){
-	print CLIENTCONF "remote $netsettings{'BLUE_ADDRESS'} $vpnsettings{'DDEST_PORT'}\r\n";
-	if ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' && (&Header::orange_used())){
-	    print CLIENTCONF "#comment the above line and uncomment the next line, if you want to connect on the Orange interface\r\n";
-	    print CLIENTCONF ";remote $netsettings{'ORANGE_ADDRESS'} $vpnsettings{'DDEST_PORT'}\r\n";
-	}
-    } elsif ( $vpnsettings{'ENABLED_ORANGE'} eq 'on' && (&Header::orange_used())){
-	print CLIENTCONF "remote $netsettings{'ORANGE_ADDRESS'} $vpnsettings{'DDEST_PORT'}\r\n";
-    }
+	print CLIENTCONF "remote $vpnsettings{'VPN_IP'} $vpnsettings{'DDEST_PORT'}\r\n";
 
     my $file_crt = new File::Temp( UNLINK => 1 );
     my $file_key = new File::Temp( UNLINK => 1 );
@@ -4615,13 +4593,6 @@ if ($cgiparams{'TYPE'} eq 'net') {
     $checked{'ENABLED'}{'off'} = '';
     $checked{'ENABLED'}{'on'} = '';
     $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
-    $checked{'ENABLED_BLUE'}{'off'} = '';
-    $checked{'ENABLED_BLUE'}{'on'} = '';
-    $checked{'ENABLED_BLUE'}{$cgiparams{'ENABLED_BLUE'}} = 'CHECKED';
-    $checked{'ENABLED_ORANGE'}{'off'} = '';
-    $checked{'ENABLED_ORANGE'}{'on'} = '';
-    $checked{'ENABLED_ORANGE'}{$cgiparams{'ENABLED_ORANGE'}} = 'CHECKED';
-
 
     $checked{'EDIT_ADVANCED'}{'off'} = '';
     $checked{'EDIT_ADVANCED'}{'on'} = '';
@@ -5208,12 +5179,6 @@ END
     $checked{'ENABLED'}{'off'} = '';
     $checked{'ENABLED'}{'on'} = '';
     $checked{'ENABLED'}{$cgiparams{'ENABLED'}} = 'CHECKED';
-    $checked{'ENABLED_BLUE'}{'off'} = '';
-    $checked{'ENABLED_BLUE'}{'on'} = '';
-    $checked{'ENABLED_BLUE'}{$cgiparams{'ENABLED_BLUE'}} = 'CHECKED';
-    $checked{'ENABLED_ORANGE'}{'off'} = '';
-    $checked{'ENABLED_ORANGE'}{'on'} = '';
-    $checked{'ENABLED_ORANGE'}{$cgiparams{'ENABLED_ORANGE'}} = 'CHECKED';
 
     $selected{'DPROTOCOL'}{'udp'} = '';
     $selected{'DPROTOCOL'}{'tcp'} = '';
@@ -5261,20 +5226,8 @@ END
     <form method='post'>
     <tr><td class='boldbase'>$Lang::tr{'ovpn server status'}</td>
     <td align='left'>$sactive</td>
-    <tr><td class='boldbase'>$Lang::tr{'ovpn on red'}</td>
+    <tr><td class='boldbase'>$Lang::tr{'enabled'}</td>
     <td><input type='checkbox' name='ENABLED' $checked{'ENABLED'}{'on'} /></td>
-END
-;
-    if (&Header::blue_used()) {
-	print "<tr><td class='boldbase'>$Lang::tr{'ovpn on blue'}</td>";
-	print "<td><input type='checkbox' name='ENABLED_BLUE' $checked{'ENABLED_BLUE'}{'on'} /></td>";
-    }
-    if (&Header::orange_used()) {
-	print "<tr><td class='boldbase'>$Lang::tr{'ovpn on orange'}</td>";
-	print "<td><input type='checkbox' name='ENABLED_ORANGE' $checked{'ENABLED_ORANGE'}{'on'} /></td>";
-    }
-
-	print <<END;
 
 	<tr><td colspan='4'><br></td></tr>
 	<tr>
@@ -5309,9 +5262,7 @@ END
 	if (( -e "${General::swroot}/ovpn/ca/cacert.pem" &&
 	     -e "${General::swroot}/ovpn/certs/servercert.pem" &&
 	     -e "${General::swroot}/ovpn/certs/serverkey.pem") &&
-	    (( $cgiparams{'ENABLED'} eq 'on') ||
-	    ( $cgiparams{'ENABLED_BLUE'} eq 'on') ||
-	    ( $cgiparams{'ENABLED_ORANGE'} eq 'on'))){
+	    ($cgiparams{'ENABLED'} eq 'on')) {
 	    print "<input type='submit' name='ACTION' value='$Lang::tr{'start ovpn server'}' /></td></tr>";
 	} else {
 	    print "<input type='submit' name='ACTION' value='$Lang::tr{'start ovpn server'}' disabled='disabled' /></td></tr>";
