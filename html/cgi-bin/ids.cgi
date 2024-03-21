@@ -1171,11 +1171,7 @@ END
 				}
 
 				# Handle providers which are not longer supported.
-				unless ($provider_name) {
-					# Set the provider name to the provider handle
-					# to display something helpful.
-					$provider_name = $provider;
-
+				unless ($IDS::Ruleset::Providers{$provider}{'dl_url'}) {
 					# Assign background color
 					$col="bgcolor='#FF4D4D'";
 				}
@@ -1809,7 +1805,7 @@ sub show_additional_provider_actions() {
 	}
 
 	# Disable the manual update button if the provider is not longer supported.
-	unless ($IDS::Ruleset::Providers{$provider}) {
+	unless ($IDS::Ruleset::Providers{$provider}{"dl_url"}) {
 		$disabled_update = "disabled";
 	}
 
