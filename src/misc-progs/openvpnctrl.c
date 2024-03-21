@@ -18,14 +18,6 @@
 
 // global vars
 	struct keyvalue *kv = NULL;
-	FILE *ifacefile = NULL;
-
-char redif[STRING_SIZE];
-char blueif[STRING_SIZE];
-char orangeif[STRING_SIZE];
-char enablered[STRING_SIZE] = "off";
-char enableblue[STRING_SIZE] = "off";
-char enableorange[STRING_SIZE] = "off";
 
 // consts
 char OVPNINPUT[STRING_SIZE] = "OVPNINPUT";
@@ -212,61 +204,17 @@ ERROR:
 void ovpnInit(void) {
 	// Read OpenVPN configuration
 	kv = initkeyvalues();
+
 	if (!readkeyvalues(kv, CONFIG_ROOT "/ovpn/settings")) {
 		fprintf(stderr, "Cannot read ovpn settings\n");
 		exit(1);
 	}
 
-	if (!findkey(kv, "ENABLED", enablered)) {
+	if (!findkey(kv, "ENABLED", enabled)) {
+		fprintf(stderr, "Could not read ENABLED key\n");
 		exit(1);
 	}
 
-	if (!findkey(kv, "ENABLED_BLUE", enableblue)){
-		exit(1);
-	}
-
-	if (!findkey(kv, "ENABLED_ORANGE", enableorange)){
-		exit(1);
-	}
-	freekeyvalues(kv);
-
-	// read interface settings
-
-	// details for the red int
-	memset(redif, 0, STRING_SIZE);
-	if ((ifacefile = fopen(CONFIG_ROOT "/red/iface", "r")))
-	{
-		if (fgets(redif, STRING_SIZE, ifacefile))
-		{
-			if (redif[strlen(redif) - 1] == '\n')
-				redif[strlen(redif) - 1] = '\0';
-		}
-		fclose (ifacefile);
-		ifacefile = NULL;
-
-		if (!VALID_DEVICE(redif))
-		{
-			memset(redif, 0, STRING_SIZE);
-		}
-	}
-
-	kv=initkeyvalues();
-	if (!readkeyvalues(kv, CONFIG_ROOT "/ethernet/settings")) {
-		fprintf(stderr, "Cannot read ethernet settings\n");
-		exit(1);
-	}
-
-	if (strcmp(enableblue, "on") == 0) {
-		if (!findkey(kv, "BLUE_DEV", blueif)) {
-			exit(1);
-		}
-	}
-
-	if (strcmp(enableorange, "on") == 0) {
-		if (!findkey(kv, "ORANGE_DEV", orangeif)) {
-			exit(1);
-		}
-	}
 	freekeyvalues(kv);
 }
 
@@ -277,11 +225,11 @@ void executeCommand(char *command) {
 	safe_system(strncat(command, " >/dev/null 2>&1", 17));
 }
 
-void addRule(const char *chain, const char *interface, const char *protocol, const char *port) {
+void addRule(const char *chain, const char *protocol, const char *port) {
 	char command[STRING_SIZE];
 
-	snprintf(command, STRING_SIZE - 1, "/sbin/iptables -A %s -i %s -p %s --dport %s -j ACCEPT",
-		chain, interface, protocol, port);
+	snprintf(command, STRING_SIZE - 1,
+		"/sbin/iptables -A %s -p %s --dport %s -j ACCEPT", chain, protocol, port);
 	executeCommand(command);
 }
 
@@ -417,12 +365,8 @@ void setFirewallRules(void) {
 	flushChainNAT(OVPNNAT);
 
 	// set firewall rules
-	if (!strcmp(enablered, "on") && strlen(redif))
-		addRule(OVPNINPUT, redif, protocol, dport);
-	if (!strcmp(enableblue, "on") && strlen(blueif))
-		addRule(OVPNINPUT, blueif, protocol, dport);
-	if (!strcmp(enableorange, "on") && strlen(orangeif))
-		addRule(OVPNINPUT, orangeif, protocol, dport);
+	if (strcmp(enabled, "on") == 0)
+		addRule(OVPNINPUT, protocol, dport);
 
 	/* Allow ICMP error messages to pass. */
 	snprintf(command, STRING_SIZE - 1, "/sbin/iptables -A %s -p icmp"
@@ -437,7 +381,7 @@ void setFirewallRules(void) {
 	char *transfer_subnet_address = NULL;
 	while (conn != NULL) {
 		if (strcmp(conn->type, "net") == 0) {
-			addRule(OVPNINPUT, redif, conn->proto, conn->port);
+			addRule(OVPNINPUT, conn->proto, conn->port);
 
 			/* Block all communication from the transfer nets. */
 			snprintf(command, STRING_SIZE - 1, "/sbin/iptables -A %s -s %s -j DROP",
@@ -455,62 +399,6 @@ void setFirewallRules(void) {
 		}
 
 		conn = conn->next;
-	}
-}
-
-static void stopAuthenticator() {
-	char* argv[] = {
-		"/usr/sbin/openvpn-authenticator",
-		NULL,
-	};
-
-	run("/bin/killall", argv);
-}
-
-void stopDaemon(void) {
-	char command[STRING_SIZE];
-
-	// Stop OpenVPN authenticator
-	stopAuthenticator();
-
-	int pid = readPidFile("/var/run/openvpn.pid");
-	if (pid <= 0) {
-		exit(1);
-	}
-
-	fprintf(stderr, "Killing PID %d.\n", pid);
-	kill(pid, SIGTERM);
-
-	snprintf(command, STRING_SIZE - 1, "/bin/rm -f /var/run/openvpn.pid");
-	executeCommand(command);
-}
-
-static int startAuthenticator(void) {
-	char* argv[] = { "-d", NULL };
-
-	return run("/usr/sbin/openvpn-authenticator", argv);
-}
-
-void startDaemon(void) {
-	char command[STRING_SIZE];
-
-	if (!((strcmp(enablered, "on") == 0) || (strcmp(enableblue, "on") == 0) || (strcmp(enableorange, "on") == 0))) {
-		fprintf(stderr, "OpenVPN is not enabled on any interface\n");
-		exit(1);
-	} else {
-		snprintf(command, STRING_SIZE-1, "/etc/fcron.daily/openvpn-crl-updater");
-		executeCommand(command);
-		snprintf(command, STRING_SIZE-1, "/sbin/modprobe tun");
-		executeCommand(command);
-		snprintf(command, STRING_SIZE-1, "/usr/sbin/openvpn --config /var/ipfire/ovpn/server.conf");
-		executeCommand(command);
-		snprintf(command, STRING_SIZE-1, "/bin/chown root:nobody /var/run/ovpnserver.log");
-		executeCommand(command);
-		snprintf(command, STRING_SIZE-1, "/bin/chmod 644 /var/run/ovpnserver.log");
-		executeCommand(command);
-
-		// Start OpenVPN Authenticator
-		startAuthenticator();
 	}
 }
 
@@ -726,10 +614,6 @@ int main(int argc, char *argv[]) {
 		}
 	}
 	else if(argc == 2) {
-		if( (strcmp(argv[1], "-k") == 0) || (strcmp(argv[1], "--kill") == 0) ) {
-			stopDaemon();
-			return 0;
-		}
 		else if( (strcmp(argv[1], "-d") == 0) || (strcmp(argv[1], "--display") == 0) ) {
 			displayopenvpn();
 			return 0;
@@ -737,27 +621,12 @@ int main(int argc, char *argv[]) {
 		else {
 			ovpnInit();
 
-			if( (strcmp(argv[1], "-s") == 0) || (strcmp(argv[1], "--start") == 0) ) {
-				setFirewallRules();
-				startDaemon();
-				return 0;
-			}
-			else if( (strcmp(argv[1], "-sn2n") == 0) || (strcmp(argv[1], "--start-net-2-net") == 0) ) {
+			if( (strcmp(argv[1], "-sn2n") == 0) || (strcmp(argv[1], "--start-net-2-net") == 0) ) {
 				startAllNet2Net();
 				return 0;
 			}
 			else if( (strcmp(argv[1], "-kn2n") == 0) || (strcmp(argv[1], "--kill-net-2-net") == 0) ) {
 				killAllNet2Net();
-				return 0;
-			}
-			else if( (strcmp(argv[1], "-sdo") == 0) || (strcmp(argv[1], "--start-daemon-only") == 0) ) {
-				startDaemon();
-				return 0;
-			}
-			else if( (strcmp(argv[1], "-r") == 0) || (strcmp(argv[1], "--restart") == 0) ) {
-				stopDaemon();
-				setFirewallRules();
-				startDaemon();
 				return 0;
 			}
 			else if( (strcmp(argv[1], "-fwr") == 0) || (strcmp(argv[1], "--firewall-rules") == 0) ) {
