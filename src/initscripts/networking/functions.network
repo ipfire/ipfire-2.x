@@ -19,9 +19,6 @@
 #                                                                             #
 ###############################################################################
 
-. /etc/sysconfig/rc
-. $rc_functions
-
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
 
