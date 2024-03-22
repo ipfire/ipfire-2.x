@@ -23220,6 +23220,7 @@ lib/modules/KVER-ipfire/modules.symbols.bin
 sbin/gen_init_cpio
 #usr/bin/cpufreq-bench_plot.sh
 usr/bin/cpupower
+#usr/include/cpufreq.h
 #usr/include/cpuidle.h
 #usr/include/powercap.h
 #usr/lib/libcpupower.so
