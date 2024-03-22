@@ -1711,6 +1711,12 @@ END
 							# Grab the provider handle.
 							my $provider = $tmphash{$provider_name};
 
+							# Check if we are not in edit mode.
+							if ($cgiparams{'PROVIDERS'} ne "$Lang::tr{'edit'}") {
+								# Skip unsupported ruleset provider.
+								next unless(exists($IDS::Ruleset::Providers{$provider}{"dl_url"}));
+							}
+
 							# Pre-select the provider if one is given.
 							if (($used_providers{$cgiparams{'ID'}}[0] eq "$provider") || ($cgiparams{'PROVIDER'} eq "$provider")) {
 								$selected{$provider} = "selected='selected'";
