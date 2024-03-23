@@ -810,6 +810,7 @@ int hw_create_partitions(struct hw_destination* dest, const char* output) {
 
 static int hw_format_filesystem(const char* path, int fs, const char* output) {
 	char cmd[STRING_SIZE] = "\0";
+	int r;
 
 	// Swap
 	if (fs == HW_FS_SWAP) {
@@ -829,7 +830,9 @@ static int hw_format_filesystem(const char* path, int fs, const char* output) {
 
 	// BTRFS
 	} else if (fs == HW_FS_BTRFS) {
-		snprintf(cmd, sizeof(cmd), "/usr/bin/mkfs.btrfs -f %s", path);
+		r = hw_create_btrfs_layout(path, output);
+
+		return r;
 
 	// FAT32
 	} else if (fs == HW_FS_FAT32) {
@@ -838,7 +841,7 @@ static int hw_format_filesystem(const char* path, int fs, const char* output) {
 
 	assert(*cmd);
 
-	int r = mysystem(output, cmd);
+	r = mysystem(output, cmd);
 
 	return r;
 }
@@ -871,6 +874,59 @@ int hw_create_filesystems(struct hw_destination* dest, const char* output) {
 	r = hw_format_filesystem(dest->part_root, dest->filesystem, output);
 	if (r)
 		return r;
+
+	return 0;
+}
+
+int hw_create_btrfs_layout(const char* path, const char* output) {
+	const struct btrfs_subvolumes* subvolume = NULL;
+	char cmd[STRING_SIZE];
+	char volume[STRING_SIZE];
+	int r;
+
+	r = snprintf(cmd, sizeof(cmd), "/usr/bin/mkfs.btrfs -f %s", path);
+	if (r < 0) {
+		return r;
+	}
+
+	// Create the main BTRFS file system.
+	r = mysystem(output, cmd);
+
+	if (r) {
+		return r;
+	}
+
+
+	// We need to mount the FS in order to create any subvolumes.
+	r = hw_mount(path, DESTINATION_MOUNT_PATH, "btrfs", 0);
+
+	if (r) {
+		return r;
+	}
+
+	// Loop through the list of subvolumes to create.
+	for ( subvolume = btrfs_subvolumes; subvolume->name; subvolume++ ) {
+		r = snprintf(volume, sizeof(volume), "%s", subvolume->name);
+
+		// Abort if snprintf fails.
+		if (r < 0) {
+			return r;
+		}
+
+		// Call function to create the subvolume
+		r = hw_create_btrfs_subvolume(output, volume);
+
+		if (r) {
+			return r;
+		}
+	}
+
+	// Umount the main BTRFS after subvolume creation.
+	r = hw_umount(DESTINATION_MOUNT_PATH, 0);
+
+	if (r) {
+		return r;
+	}
 
 	return 0;
 }
@@ -1221,6 +1277,26 @@ int hw_restore_backup(const char* output, const char* backup_path, const char* d
 
 	if (rc)
 		return -1;
+
+	return 0;
+}
+
+int hw_create_btrfs_subvolume(const char* output, const char* subvolume) {
+	char command [STRING_SIZE];
+	int r;
+
+	// Abort if the command could not be assigned.
+	r = snprintf(command, sizeof(command), "/usr/bin/btrfs subvolume create  %s/%s", DESTINATION_MOUNT_PATH, subvolume);
+	if (r < 0) {
+		return r;
+	}
+
+	// Create the subvolume
+	r = mysystem(output, command);
+
+	if (r) {
+		return r;
+	}
 
 	return 0;
 }

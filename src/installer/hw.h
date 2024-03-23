@@ -104,6 +104,26 @@ struct hw_destination {
 	unsigned long long size_root;
 };
 
+// Struct to define the BTRFS subvolumes layout
+static const struct btrfs_subvolumes {
+	const char* name;
+	const char* mount_path;
+} btrfs_subvolumes[] = {
+	{ "@",          "/" },
+	{ "@snapshots", "/.snapshots" },
+	{ "@home",      "/home" },
+	{ "@root",      "/root" },
+	{ "@cache",     "/var/cache" },
+	{ "@backups",   "/var/ipfire/backup" },
+	{ "@lib",       "/var/lib" },
+	{ "@logs",      "/var/log" },
+	{ "@mails",     "/var/mail" },
+	{ "@tmp",       "/var/tmp" },
+
+	// Sentinel
+	{ NULL },
+};
+
 struct hw* hw_init();
 void hw_free(struct hw* hw);
 
