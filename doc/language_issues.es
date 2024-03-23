@@ -1043,6 +1043,7 @@ WARNING: untranslated string: ovpn ciphers = Ciphers
 WARNING: untranslated string: ovpn fallback cipher = Fallback Cipher
 WARNING: untranslated string: ovpn fallback cipher help = This cipher is being used by clients that do not support cipher negotiation.
 WARNING: untranslated string: ovpn no cipher selected = No cipher selected
+WARNING: untranslated string: ovpn roadwarrior settings = Roadwarrior Settings
 WARNING: untranslated string: ovpn unsupported cipher selected = Unknown cipher selected
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: quality of service = Quality of Service

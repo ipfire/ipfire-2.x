@@ -93,6 +93,7 @@
 < ovpn fallback cipher help
 < ovpn no cipher selected
 < ovpn roadwarrior server
+< ovpn roadwarrior settings
 < ovpn unsupported cipher selected
 < quality of service
 < quick control
@@ -151,6 +152,7 @@
 < ovpn fallback cipher
 < ovpn fallback cipher help
 < ovpn no cipher selected
+< ovpn roadwarrior settings
 < ovpn unsupported cipher selected
 < quality of service
 ############################################################################
@@ -205,6 +207,7 @@
 < ovpn fallback cipher help
 < ovpn no cipher selected
 < ovpn roadwarrior server
+< ovpn roadwarrior settings
 < ovpn unsupported cipher selected
 < password has quotation mark
 < processors
@@ -673,6 +676,7 @@
 < ovpn fallback cipher help
 < ovpn no cipher selected
 < ovpn roadwarrior server
+< ovpn roadwarrior settings
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn unsupported cipher selected
@@ -1325,6 +1329,7 @@
 < ovpn no cipher selected
 < ovpn reneg sec
 < ovpn roadwarrior server
+< ovpn roadwarrior settings
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn unsupported cipher selected
@@ -2303,6 +2308,7 @@
 < ovpn port in root range
 < ovpn reneg sec
 < ovpn roadwarrior server
+< ovpn roadwarrior settings
 < ovpn routes push
 < ovpn routes push options
 < ovpn rw connection log
@@ -3406,6 +3412,7 @@
 < ovpn port in root range
 < ovpn reneg sec
 < ovpn roadwarrior server
+< ovpn roadwarrior settings
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn unsupported cipher selected
@@ -3998,6 +4005,7 @@
 < ovpn fallback cipher help
 < ovpn no cipher selected
 < ovpn roadwarrior server
+< ovpn roadwarrior settings
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn unsupported cipher selected

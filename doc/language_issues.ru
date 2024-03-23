@@ -1467,6 +1467,7 @@ WARNING: untranslated string: ovpn no cipher selected = No cipher selected
 WARNING: untranslated string: ovpn no connections = No active OpenVPN connections
 WARNING: untranslated string: ovpn port in root range = A port number of 1024 or higher is required.
 WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
+WARNING: untranslated string: ovpn roadwarrior settings = Roadwarrior Settings
 WARNING: untranslated string: ovpn rw connection log = OpenVPN Roadwarrior Connections Log
 WARNING: untranslated string: ovpn tls auth = TLS Channel Protection:
 WARNING: untranslated string: ovpn unsupported cipher selected = Unknown cipher selected

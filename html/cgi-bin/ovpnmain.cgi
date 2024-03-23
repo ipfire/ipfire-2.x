@@ -5211,7 +5211,7 @@ END
     } else {
 	$activeonrun = "disabled='disabled'";
     }
-    &Header::openbox('100%', 'LEFT', $Lang::tr{'global settings'});
+
 
 	# Show the service status
 	&Header::ServiceStatus({
@@ -5220,6 +5220,8 @@ END
 			"pidfile" => "/var/run/openvpn.pid",
 		}
 	});
+
+    &Header::openbox('100%', 'LEFT', $Lang::tr{'ovpn roadwarrior settings'});
 
 	print <<END;
     <table width='100%' border='0'>
