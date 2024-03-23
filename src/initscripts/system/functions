@@ -512,7 +512,7 @@ loadproc()
 		esac
 	fi
 
-	local cmd="${@}"
+	local cmd=( "${@}" )
 
 	if [ -n "${nicelevel}" ]; then
 		cmd="nice -n "${nicelevel}" ${cmd}"
@@ -520,12 +520,12 @@ loadproc()
 
 	if [ -n "${background}" ]; then
 		(
-			${cmd} &>/dev/null
+			${cmd[@]} &>/dev/null
 		) &
 		pid="$!"
 		evaluate_retval
 	else
-		${cmd}
+		${cmd[@]}
 		pid="$!"
 		evaluate_retval # This is "Probably" not LSB compliant, but required to be compatible with older bootscripts
 	fi
