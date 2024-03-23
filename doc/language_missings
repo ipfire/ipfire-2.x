@@ -105,6 +105,8 @@
 < remarks
 < required
 < routing
+< rss
+< rss long
 < samba server role member
 < samba server role standalone
 < shaping add options
@@ -155,6 +157,8 @@
 < ovpn roadwarrior settings
 < ovpn unsupported cipher selected
 < quality of service
+< rss
+< rss long
 ############################################################################
 # Checking cgi-bin translations for language: fr                           #
 ############################################################################
@@ -218,6 +222,8 @@
 < remarks
 < remote subnets
 < routing
+< rss
+< rss long
 < scanned
 < system time
 < timeformat
@@ -718,6 +724,8 @@
 < required field
 < retbleed
 < routing
+< rss
+< rss long
 < runmode
 < samba join a domain
 < samba join domain
@@ -1367,6 +1375,8 @@
 < required field
 < retbleed
 < routing
+< rss
+< rss long
 < runmode
 < samba join a domain
 < samba join domain
@@ -2359,6 +2369,8 @@
 < required field
 < retbleed
 < routing
+< rss
+< rss long
 < runmode
 < samba join a domain
 < samba join domain
@@ -3461,6 +3473,8 @@
 < required field
 < retbleed
 < routing
+< rss
+< rss long
 < runmode
 < samba join a domain
 < samba join domain
@@ -4042,6 +4056,8 @@
 < required
 < retbleed
 < routing
+< rss
+< rss long
 < runmode
 < samba server role member
 < samba server role standalone
@@ -4198,7 +4214,8 @@
 < ovpn ciphers
 < ovpn fallback cipher
 < ovpn fallback cipher help
-< ovpn if ncp is disabled we must have cipher
+< ovpn no cipher selected
+< ovpn roadwarrior settings
 < ovpn unsupported cipher selected
 < pakfire confirm upgrades
 < pakfire deps
@@ -4212,6 +4229,8 @@
 < pakfire remove package
 < pakfire updating
 < password has quotation mark
+< rss
+< rss long
 ############################################################################
 # Checking cgi-bin translations for language: zh                           #
 ############################################################################
@@ -4231,7 +4250,8 @@
 < ovpn ciphers
 < ovpn fallback cipher
 < ovpn fallback cipher help
-< ovpn if ncp is disabled we must have cipher
+< ovpn no cipher selected
+< ovpn roadwarrior settings
 < ovpn unsupported cipher selected
 < pakfire confirm upgrades
 < pakfire deps
@@ -4245,3 +4265,5 @@
 < pakfire remove package
 < pakfire updating
 < password has quotation mark
+< rss
+< rss long

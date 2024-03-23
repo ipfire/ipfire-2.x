@@ -841,6 +841,7 @@ WARNING: translation string unused: tor accounting period daily
 WARNING: translation string unused: tor accounting period monthly
 WARNING: translation string unused: tor accounting period weekly
 WARNING: translation string unused: tor bridge enabled
+WARNING: translation string unused: tor daemon
 WARNING: translation string unused: tor errmsg invalid node id
 WARNING: translation string unused: tor exit country
 WARNING: translation string unused: tor guard country
@@ -1051,6 +1052,8 @@ WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
+WARNING: untranslated string: rss = RSS
+WARNING: untranslated string: rss long = Resident Set Size
 WARNING: untranslated string: wio = unknown string
 WARNING: untranslated string: wio checked = unknown string
 WARNING: untranslated string: wio cron = unknown string

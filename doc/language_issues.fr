@@ -832,6 +832,7 @@ WARNING: translation string unused: tor accounting period daily
 WARNING: translation string unused: tor accounting period monthly
 WARNING: translation string unused: tor accounting period weekly
 WARNING: translation string unused: tor bridge enabled
+WARNING: translation string unused: tor daemon
 WARNING: translation string unused: tor errmsg invalid node id
 WARNING: translation string unused: tor exit country
 WARNING: translation string unused: tor guard country
@@ -1062,6 +1063,8 @@ WARNING: untranslated string: remote subnets = Remote Subnets
 WARNING: untranslated string: routing = Routing
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
+WARNING: untranslated string: rss = RSS
+WARNING: untranslated string: rss long = Resident Set Size
 WARNING: untranslated string: scanned = Scanned
 WARNING: untranslated string: system time = System Time (as of last page load)
 WARNING: untranslated string: timeformat = %Y-%m-%d at %H:%M:%S %Z

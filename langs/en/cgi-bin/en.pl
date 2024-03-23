@@ -2311,6 +2311,8 @@
 'router ip' => 'Router IP address:',
 'routing' => 'Routing',
 'routing table entries' => 'Routing Table Entries',
+'rss' => 'RSS',
+'rss long' => 'Resident Set Size',
 'rsvd dst port overlap' => 'Destination Port Range overlaps a port reserved for IPFire:',
 'rsvd src port overlap' => 'Source Port Range overlaps a port reserved for IPFire:',
 'rules already up to date' => 'Rules already up to date',

@@ -781,6 +781,7 @@ WARNING: translation string unused: tor accounting period daily
 WARNING: translation string unused: tor accounting period monthly
 WARNING: translation string unused: tor accounting period weekly
 WARNING: translation string unused: tor bridge enabled
+WARNING: translation string unused: tor daemon
 WARNING: translation string unused: tor errmsg invalid node id
 WARNING: translation string unused: tor exit country
 WARNING: translation string unused: traffic back
@@ -1328,6 +1329,8 @@ WARNING: untranslated string: routing = Routing
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
 WARNING: untranslated string: routing table = unknown string
+WARNING: untranslated string: rss = RSS
+WARNING: untranslated string: rss long = Resident Set Size
 WARNING: untranslated string: samba join a domain = Join a domain
 WARNING: untranslated string: samba join domain = Join domain
 WARNING: untranslated string: samba server role member = Domain Member

@@ -796,6 +796,7 @@ WARNING: translation string unused: tor 0 = disabled
 WARNING: translation string unused: tor accounting period daily
 WARNING: translation string unused: tor accounting period monthly
 WARNING: translation string unused: tor accounting period weekly
+WARNING: translation string unused: tor daemon
 WARNING: translation string unused: tor exit country
 WARNING: translation string unused: tor guard country
 WARNING: translation string unused: traffic back
@@ -1037,6 +1038,8 @@ WARNING: untranslated string: route config changed = unknown string
 WARNING: untranslated string: routing = Routing
 WARNING: untranslated string: routing config added = unknown string
 WARNING: untranslated string: routing config changed = unknown string
+WARNING: untranslated string: rss = RSS
+WARNING: untranslated string: rss long = Resident Set Size
 WARNING: untranslated string: samba server role member = Domain Member
 WARNING: untranslated string: samba server role standalone = Standalone
 WARNING: untranslated string: show tls-auth key = Show tls-auth key
