@@ -822,6 +822,10 @@ static int hw_format_filesystem(const char* path, int fs, const char* output) {
 	} else if (fs == HW_FS_XFS) {
 		snprintf(cmd, sizeof(cmd), "/sbin/mkfs.xfs -f %s", path);
 
+	// BTRFS
+	} else if (fs == HW_FS_BTRFS) {
+		snprintf(cmd, sizeof(cmd), "/usr/bin/mkfs.btrfs -f %s", path);
+
 	// FAT32
 	} else if (fs == HW_FS_FAT32) {
 		snprintf(cmd, sizeof(cmd), "/sbin/mkfs.vfat %s", path);
@@ -880,6 +884,10 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 
 		case HW_FS_XFS:
 			filesystem = "xfs";
+			break;
+
+		case HW_FS_BTRFS:
+			filesystem = "btrfs";
 			break;
 
 		case HW_FS_FAT32:
