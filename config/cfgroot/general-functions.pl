@@ -19,7 +19,6 @@ use Socket;
 use IO::Socket;
 use Net::SSLeay;
 use Net::IPv4Addr qw(:all);
-$|=1; # line buffering
 
 $General::version = 'VERSION';
 $General::swroot = 'CONFIG_ROOT';
