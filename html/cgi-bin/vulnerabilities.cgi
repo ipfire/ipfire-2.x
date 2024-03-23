@@ -98,71 +98,56 @@ if ($notice) {
 &Header::openbox('100%', 'center', $Lang::tr{'processor vulnerability mitigations'});
 
 print <<END;
-	<table class="tbl" width='100%'>
+	<table class="tbl">
 		<thead>
 			<tr>
-				<th align="center">
-					<strong>$Lang::tr{'vulnerability'}</strong>
+				<th class="text-center">
+					$Lang::tr{'vulnerability'}
 				</th>
-				<th align="center">
-					<strong>$Lang::tr{'status'}</strong>
+
+				<th class="text-center">
+					$Lang::tr{'status'}
 				</th>
 			</tr>
 		</thead>
+
 		<tbody>
 END
 
-my $id = 0;
 for my $vuln (sort keys %VULNERABILITIES) {
 	my ($status, $message) = &check_status($vuln);
 	next if (!$status);
 
-	my $colour = "";
-	my $bgcolour = "";
-	my $status_message = "";
+	my $status_message = $status;
 
 	# Not affected
-	if ($status eq "Not affected") {
+	if ($status eq "not-affected") {
 		$status_message = $Lang::tr{'not affected'};
-		$colour = "white";
-		$bgcolour = ${Header::colourgreen};
 
 	# Vulnerable
-	} elsif ($status eq "Vulnerable") {
+	} elsif ($status eq "vulnerable") {
 		$status_message = $Lang::tr{'vulnerable'};
-		$colour = "white";
-		$bgcolour = ${Header::colourred};
 
 	# Mitigated
-	} elsif ($status eq "Mitigation") {
+	} elsif ($status eq "mitigation") {
 		$status_message = $Lang::tr{'mitigated'};
-		$colour = "white";
-		$bgcolour = ${Header::colourblue};
-
-	# Unknown report from kernel
-	} else {
-		$status_message = $status;
-		$colour = "black";
-		$bgcolour = ${Header::colouryellow};
 	}
 
 	print <<END;
 		<tr>
-			<td align="left">
-				<strong>$VULNERABILITIES{$vuln}</strong>
-			</td>
+			<th scope="row">
+				$VULNERABILITIES{$vuln}
+			</th>
 
-			<td bgcolor="$bgcolour" align="center">
-				<font color="$colour">
+			<td class="status is-$status">
 END
 	if ($message) {
-		print "<strong>$status_message</strong> - $message";
+		print "$status_message - $message";
 	} else {
-		print "<strong>$status_message</strong>";
+		print "$status_message";
 	}
 
 	print <<END;
-				</font>
 			</td>
 		</tr>
 END
@@ -237,11 +222,13 @@ sub check_status($) {
 
 	# Fix status when something has been mitigated, but not fully, yet
 	if ($status =~ /^(Mitigation): (.*vulnerable.*)$/) {
-		return ("Vulnerable", $status);
-	}
+		return ("vulnerable", $status);
 
-	if ($status =~ /^(Vulnerable|Mitigation): (.*)$/) {
-		return ($1, $2);
+	} elsif ($status eq "Not affected") {
+		return "not-affected";
+
+	} elsif ($status =~ /^(Vulnerable|Mitigation): (.*)$/) {
+		return (lc $1, $2);
 	}
 
 	return $status;

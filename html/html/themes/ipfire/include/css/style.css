@@ -3,6 +3,8 @@
 	--color-green-invert : #ffffff;
 	--color-red          : #993333;
 	--color-red-invert   : #ffffff;
+	--color-blue         : #333399;
+	--color-blue-invert  : #ffffff;
 	--color-grey         : #d6d6d6;
 	--color-light-grey   : #f0f0f0;
 }
@@ -354,6 +356,38 @@ table {
 
 .tbl tr:last-child td {
 	border-bottom: 1px solid #363636;
+}
+
+.tbl .status {
+	text-align: center;
+	font-weight: bold;
+}
+
+.tbl .status.is-running {
+	background-color: var(--color-green);
+	color: var(--color-green-invert);
+}
+
+.tbl .status.is-stopped {
+	background-color: var(--color-red);
+	color: var(--color-red-invert);
+
+	width: 33%;
+}
+
+.tbl .status.is-vulnerable {
+	background-color: var(--color-red);
+	color: var(--color-red-invert);
+}
+
+.tbl .status.is-mitigation {
+	background-color: var(--color-blue);
+	color: var(--color-blue-invert);
+}
+
+.tbl .status.is-not-affected {
+	background-color: var(--color-green);
+	color: var(--color-green-invert);
 }
 
 table.fw-nat tbody tr td {
