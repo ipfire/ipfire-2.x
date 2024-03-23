@@ -623,10 +623,8 @@ sub connectionstatus
 			$timestr = &General::age("${General::swroot}/red/active");
 			$connstate = "<span>$Lang::tr{'connected'} - (<span>$timestr</span>) $profileused</span>";
 		} else {
-		  if ((open(KEEPCONNECTED, "</var/ipfire/red/keepconnected") == false) && ($Network::ppp{'RECONNECTION'} eq "persistent")) {
+		  if (open(KEEPCONNECTED, "</var/ipfire/red/keepconnected") == false) {
 				$connstate = "<span>$Lang::tr{'connection closed'} $profileused</span>";
-      } elsif (($Network::ppp{'RECONNECTION'} eq "dialondemand") && ( -e "${General::swroot}/red/dial-on-demand")) {
-				$connstate = "<span>$Lang::tr{'dod waiting'} $profileused</span>";
 			} else {
 				$connstate = "<span>$Lang::tr{'connecting'} $profileused</span>" if (system("ps -ef | grep -q '[p]ppd'"));
 			}
