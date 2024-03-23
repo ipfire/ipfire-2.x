@@ -133,6 +133,22 @@ iframe {
 	float: right !important;
 }
 
+/*
+	Text Alignment
+*/
+
+.text-left {
+	text-align: left;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.text-right {
+	text-align: right;
+}
+
 /* Header */
 
 #header {
@@ -294,6 +310,10 @@ section .title {
 table {
 	*border-collapse: collapse; /* IE7 and lower */
 	border-spacing: 0;
+}
+
+.tbl {
+	width: 100%;
 }
 
 .tbl th {

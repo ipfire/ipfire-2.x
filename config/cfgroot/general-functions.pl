@@ -97,6 +97,82 @@ sub system($) {
 	return $rc;
 }
 
+sub read_pids($) {
+	my $pidfile = shift;
+
+	# Open the PID file
+	open(PIDFILE, "<${pidfile}");
+
+	# Store all PIDs here
+	my @pids = ();
+
+	# Read all PIDs
+	while (<PIDFILE>) {
+		chomp $_;
+
+		if (-d "/proc/$_") {
+			push(@pids, $_);
+		}
+	}
+
+	# Close the PID file
+	close(PIDFILE);
+
+	return @pids;
+}
+
+sub find_pids($) {
+	my $process = shift;
+
+	# Store all PIDs here
+	my @pids = ();
+
+	foreach my $status (</proc/*/status>) {
+		# Open the status file
+		open(STATUS, "<${status}");
+
+		# Read the status file
+		while (<STATUS>) {
+			# If the name does not match, we break the loop immediately
+			if ($_ =~ m/^Name:\s+(.*)$/) {
+				last if ($process ne $1);
+
+			# Push the PID onto the list
+			} elsif ($_ =~ m/^Pid:\s+(\d+)$/) {
+				push(@pids, $1);
+
+				# Once we got here, we are done
+				last;
+			}
+		}
+
+		# Close the status file
+		close(STATUS);
+	}
+
+	return @pids;
+}
+
+sub get_memory_consumption() {
+	my $memory = 0;
+
+	foreach my $pid (@_) {
+		# Open the status file or skip on error
+		open(STATUS, "/proc/${pid}/status") or next;
+
+		while (<STATUS>) {
+			if ($_ =~ m/^VmRSS:\s+(\d+) kB/) {
+				$memory += $1 * 1024;
+				last;
+			}
+		}
+
+		close(STATUS);
+	}
+
+	return $memory;
+}
+
 # Function to remove duplicates from an array
 sub uniq { my %seen; grep !$seen{$_}++, @_ }
 

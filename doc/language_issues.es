@@ -460,7 +460,6 @@ WARNING: translation string unused: installed updates
 WARNING: translation string unused: interfaces
 WARNING: translation string unused: intrusion detection system log viewer
 WARNING: translation string unused: intrusion detection system2
-WARNING: translation string unused: intrusion prevention system
 WARNING: translation string unused: invalid cache size
 WARNING: translation string unused: invalid date entered
 WARNING: translation string unused: invalid downlink speed
@@ -1022,6 +1021,7 @@ WARNING: untranslated string: log drop hostile out = Log dropped packets TO host
 WARNING: untranslated string: no data = unknown string
 WARNING: untranslated string: openvpn cert expires soon = Expires Soon
 WARNING: untranslated string: openvpn cert has expired = Expired
+WARNING: untranslated string: ovpn roadwarrior server = OpenVPN Roadwarrior Server
 WARNING: untranslated string: pakfire ago = ago.
 WARNING: untranslated string: processors = Processors
 WARNING: untranslated string: reg_file_data_sampling = Register File Data Sampling (RFDS)

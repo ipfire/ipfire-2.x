@@ -896,4 +896,92 @@ sub _read_manualpage_hash() {
 	close($file);
 }
 
+sub ServiceStatus() {
+	my $services = shift;
+	my %services = %{ $services };
+
+	# Write the table header
+	print <<EOF;
+		<table class="tbl">
+			<!-- <thead>
+				<tr>
+					<th>
+						$Lang::tr{'service'}
+					</th>
+
+					<th>
+						$Lang::tr{'status'}
+					</th>
+
+					<th>
+						$Lang::tr{'memory'}
+					</th>
+				</tr>
+			</thead> -->
+
+			<tbody>
+EOF
+
+	foreach my $service (sort keys %services) {
+		my %config = %{ $services{$service} };
+
+		my $pidfile = $config{"pidfile"};
+		my $process = $config{"process"};
+
+		# Collect all pids
+		my @pids = ();
+
+		# Read the PID file or go search...
+		if (defined $pidfile) {
+			@pids = &General::read_pids("${pidfile}");
+		} else {
+			@pids = &General::find_pids("${process}");
+		}
+
+		# Get memory consumption
+		my $mem = &General::get_memory_consumption(@pids);
+
+		print <<EOF;
+				<tr>
+					<th scope="row">
+						$service
+					</th>
+EOF
+
+		# Running?
+		if (scalar @pids) {
+			# Format memory
+			$mem = &General::formatBytes($mem);
+
+			print <<EOF;
+					<td class="status is-running">
+						$Lang::tr{'running'}
+					</td>
+
+					<td class="text-right">
+						${mem}
+					</td>
+EOF
+
+		# Not Running
+		} else {
+			print <<EOF;
+					<td class="status is-stopped" colspan="2">
+						$Lang::tr{'stopped'}
+					</td>
+EOF
+		}
+
+		print <<EOF;
+				</tr>
+EOF
+
+	}
+
+	print <<EOF;
+		</tbody>
+		</table>
+EOF
+}
+
 1; # End of package "Header"

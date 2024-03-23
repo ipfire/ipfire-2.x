@@ -2044,6 +2044,7 @@
 'ovpn on red' => 'OpenVPN on RED:',
 'ovpn port in root range' => 'A port number of 1024 or higher is required.',
 'ovpn reneg sec' => 'Session key lifetime:',
+'ovpn roadwarrior server' => 'OpenVPN Roadwarrior Server',
 'ovpn routes push' => 'Routes (one per line) e.g. 192.168.10.0/255.255.255.0 192.168.20.0/24',
 'ovpn routes push options' => 'Route push options',
 'ovpn rw connection log' => 'OpenVPN Roadwarrior Connections Log',

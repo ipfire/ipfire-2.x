@@ -78,6 +78,7 @@
 < notes
 < okay
 < optional
+< ovpn roadwarrior server
 < quick control
 < random number generator daemon
 < regenerate host certificate
@@ -135,6 +136,7 @@
 < log drop hostile out
 < openvpn cert expires soon
 < openvpn cert has expired
+< ovpn roadwarrior server
 < processors
 < regenerate host certificate
 < reg_file_data_sampling
@@ -161,6 +163,7 @@
 < ids provider eol
 < ids unsupported provider
 < load average
+< ovpn roadwarrior server
 < processors
 < reg_file_data_sampling
 < system time
@@ -531,6 +534,7 @@
 < ovpn add conf
 < ovpn connection name
 < ovpn error md5
+< ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
@@ -1086,6 +1090,7 @@
 < ovpn generating the root and host certificates
 < ovpn ha
 < ovpn reneg sec
+< ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
@@ -1968,6 +1973,7 @@
 < ovpn no connections
 < ovpn port in root range
 < ovpn reneg sec
+< ovpn roadwarrior server
 < ovpn routes push
 < ovpn routes push options
 < ovpn rw connection log
@@ -2974,6 +2980,7 @@
 < ovpn no connections
 < ovpn port in root range
 < ovpn reneg sec
+< ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
@@ -3469,6 +3476,7 @@
 < otp qrcode
 < ovpn connection name
 < ovpn error md5
+< ovpn roadwarrior server
 < ovpn rw connection log
 < ovpn tls auth
 < ovpn warning rfc3280
