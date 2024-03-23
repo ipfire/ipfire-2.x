@@ -28,10 +28,12 @@ require "/var/ipfire/general-functions.pl";
 use experimental 'smartmatch';
 use Socket;
 
-# System ethernet configuration
 our %ethernet = ();
+our %ppp = ();
 
+# Read configuration files
 &General::readhash("${General::swroot}/ethernet/settings", \%ethernet);
+&General::readhash("${General::swroot}/ppp/settings", \%ppp);
 
 # List of all possible network zones that can be configured
 our @known_network_zones = ("red", "green", "orange", "blue");

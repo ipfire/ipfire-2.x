@@ -88,7 +88,6 @@ END
 my %menuhash = ();
 my $menu = \%menuhash;
 %settings = ();
-%pppsettings = ();
 my @URI = split('\?', $ENV{'REQUEST_URI'});
 
 ### Make sure this is an SSL request
@@ -100,7 +99,6 @@ if ($ENV{'SERVER_ADDR'} && $ENV{'HTTPS'} ne 'on') {
 
 ### Initialize environment
 &General::readhash("${swroot}/main/settings", \%settings);
-&General::readhash("${swroot}/ppp/settings", \%pppsettings);
 $hostname = $settings{'HOSTNAME'};
 $hostnameintitle = 0;
 
@@ -438,7 +436,7 @@ sub genmenu {
         $menu->{'01.system'}{'subMenu'}->{'21.wlan'}{'enabled'} = 1;
     }
 
-    if ( $Network::ethernet{'RED_TYPE'} eq "PPPOE" && $pppsettings{'MONPORT'} ne "" ) {
+    if ( $Network::ethernet{'RED_TYPE'} eq "PPPOE" && $Network::ppp{'MONPORT'} ne "" ) {
         $menu->{'02.status'}{'subMenu'}->{'74.modem-status'}{'enabled'} = 1;
     }
 
@@ -610,15 +608,11 @@ sub cleanhtml {
 
 sub connectionstatus
 {
-    my %pppsettings = ();
     my $iface='';
-
-    $pppsettings{'PROFILENAME'} = 'None';
-    &General::readhash("${General::swroot}/ppp/settings", \%pppsettings);
 
     my $profileused='';
     unless ($Network::ethernet{'RED_TYPE'} =~ /^(DHCP|STATIC)$/) {
-    	$profileused="- $pppsettings{'PROFILENAME'}";
+		$profileused="- $Network::ppp{'PROFILENAME'}";
     }
 
     my ($timestr, $connstate);
@@ -629,9 +623,9 @@ sub connectionstatus
 			$timestr = &General::age("${General::swroot}/red/active");
 			$connstate = "<span>$Lang::tr{'connected'} - (<span>$timestr</span>) $profileused</span>";
 		} else {
-		  if ((open(KEEPCONNECTED, "</var/ipfire/red/keepconnected") == false) && ($pppsettings{'RECONNECTION'} eq "persistent")) {
+		  if ((open(KEEPCONNECTED, "</var/ipfire/red/keepconnected") == false) && ($Network::ppp{'RECONNECTION'} eq "persistent")) {
 				$connstate = "<span>$Lang::tr{'connection closed'} $profileused</span>";
-      } elsif (($pppsettings{'RECONNECTION'} eq "dialondemand") && ( -e "${General::swroot}/red/dial-on-demand")) {
+      } elsif (($Network::ppp{'RECONNECTION'} eq "dialondemand") && ( -e "${General::swroot}/red/dial-on-demand")) {
 				$connstate = "<span>$Lang::tr{'dod waiting'} $profileused</span>";
 			} else {
 				$connstate = "<span>$Lang::tr{'connecting'} $profileused</span>" if (system("ps -ef | grep -q '[p]ppd'"));
