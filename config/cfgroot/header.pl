@@ -53,10 +53,10 @@ $Header::extraHead = <<END
 	}
 	.orange {
 		background-color: orange;
-	}	
+	}
 	.red {
 		background-color: red;
-	}			
+	}
 	.table1colour {
 		background-color: $Header::table1colour;
 	}
@@ -414,7 +414,7 @@ sub connectionstatus
 				$connstate = "<span>$Lang::tr{'connecting'} $profileused</span>" if (system("ps -ef | grep -q '[p]ppd'"));
 			}
 		}
-		
+
     return $connstate;
 }
 
@@ -504,7 +504,7 @@ END
 		if($hostname_print eq "") { #print blank space if no hostname is found
 			$hostname_print = "&nbsp;&nbsp;&nbsp;";
 		}
-		
+
 		# separate active and expired leases with a horizontal line
 		if(($entries{$key}->{expired}) && ($divider_printed == 0)) {
 			$divider_printed = 1;
@@ -515,14 +515,14 @@ END
 			}
 			$id++;
 		}
-		
+
 		print "<form method='post' action='/cgi-bin/dhcp.cgi'><tr>\n";
 		if ($id % 2) {
 			$col="bgcolor='$table1colour'";
 		} else {
 			$col="bgcolor='$table2colour'";
 		}
-		
+
 		if($entries{$key}->{expired}) {
 			print <<END
 <td align='center' $col><input type='hidden' name='FIX_ADDR' value='$entries{$key}->{IPADDR}' /><strike><i>$entries{$key}->{IPADDR}</i></strike></td>
