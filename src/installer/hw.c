@@ -904,10 +904,16 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 		return r;
 
 	// boot
-	if (*dest->part_boot) {
-		snprintf(target, sizeof(target), "%s%s", prefix, HW_PATH_BOOT);
-		mkdir(target, S_IRWXU|S_IRWXG|S_IRWXO);
+	snprintf(target, sizeof(target), "%s%s", prefix, HW_PATH_BOOT);
+	r = mkdir(target, S_IRWXU|S_IRWXG|S_IRWXO);
 
+	if (r) {
+		hw_umount_filesystems(dest, prefix);
+
+		return r;
+	}
+
+	if (*dest->part_boot) {
 		r = hw_mount(dest->part_boot, target, filesystem, 0);
 		if (r) {
 			hw_umount_filesystems(dest, prefix);
