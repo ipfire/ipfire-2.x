@@ -1005,53 +1005,11 @@ sub show_mainpage() {
 	# Draw current state of the IDS
 	&Header::openbox('100%', 'left', $Lang::tr{'intrusion detection system'});
 
-	# Check if the IDS is running and obtain the process-id.
-	my $pid = &IDS::ids_is_running();
-
-	# Display some useful information, if suricata daemon is running.
-	if ($pid) {
-		# Gather used memory.
-		my $memory = &get_memory_usage($pid);
-
-		print <<END;
-			<table width='95%' cellspacing='0' class='tbl'>
-				<tr>
-					<th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'intrusion detection'}</strong></th>
-				</tr>
-
-				<tr>
-					<td class='base'>$Lang::tr{'guardian daemon'}</td>
-					<td align='center' colspan='2' width='75%' bgcolor='${Header::colourgreen}'><font color='white'><strong>$Lang::tr{'running'}</strong></font></td>
-				</tr>
-
-				<tr>
-					<td class='base'></td>
-					<td bgcolor='$color{'color20'}' align='center'><strong>PID</strong></td>
-					<td bgcolor='$color{'color20'}' align='center'><strong>$Lang::tr{'memory'}</strong></td>
-				</tr>
-
-				<tr>
-					<td class='base'></td>
-					<td bgcolor='$color{'color22'}' align='center'>$pid</td>
-					<td bgcolor='$color{'color22'}' align='center'>$memory KB</td>
-				</tr>
-			</table>
-END
-	} else {
-		# Otherwise display a hint that the service is not launched.
-		print <<END;
-			<table width='95%' cellspacing='0' class='tbl'>
-				<tr>
-					<th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'intrusion detection'}</strong></th>
-				</tr>
-
-				<tr>
-					<td class='base'>$Lang::tr{'guardian daemon'}</td>
-					<td align='center' width='75%' bgcolor='${Header::colourred}'><font color='white'><strong>$Lang::tr{'stopped'}</strong></font></td>
-				</tr>
-			</table>
-END
-	}
+	&Header::ServiceStatus({
+		$Lang::tr{'intrusion prevention system'} => {
+			"process" => "suricata",
+		},
+	});
 
 	# Only show this area, if at least one ruleset provider is configured.
 	if (%used_providers) {
@@ -1996,45 +1954,6 @@ sub readrulesfile ($) {
 			}
 		}
 	}
-}
-
-#
-## Function to get the used memory of a given process-id.
-#
-sub get_memory_usage($) {
-	my ($pid) = @_;
-
-	my $memory = 0;
-
-	# Try to open the status file for the given process-id on the pseudo
-	# file system proc.
-	if (open(FILE, "/proc/$pid/status")) {
-		# Loop through the entire file.
-		while (<FILE>) {
-			# Splitt current line content and store them into variables.
-			my ($key, $value) = split(":", $_, 2);
-
-			# Check if the current key is the one which contains the memory usage.
-			# The wanted one is VmRSS which contains the Real-memory (resident set)
-			# of the entire process.
-			if ($key eq "VmRSS") {
-				# Found the memory usage add it to the memory variable.
-				$memory += $value;
-
-				# Break the loop.
-				last;
-			}
-		}
-
-		# Close file handle.
-		close(FILE);
-
-		# Return memory usage.
-		return $memory;
-	}
-
-	# If the file could not be open, return nothing.
-	return;
 }
 
 #
