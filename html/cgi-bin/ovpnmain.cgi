@@ -936,10 +936,10 @@ sub writecollectdconf {
 ###
 
 if ($cgiparams{'ACTION'} eq $Lang::tr{'start ovpn server'}) {
-	&General::system("/usr/local/bin/openvpnctrl", "-s");
+	&General::system("/usr/local/bin/openvpnctrl", "rw", "start");
 
 } elsif ($cgiparams{'ACTION'} eq $Lang::tr{'stop ovpn server'}) {
-	&General::system("/usr/local/bin/openvpnctrl", "-k");
+	&General::system("/usr/local/bin/openvpnctrl", "rw", "stop");
 }
 
 ###
@@ -1399,8 +1399,8 @@ SETTINGS_ERROR:
     my $file = '';
     &General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-    # Kill all N2N connections
-    &General::system("/usr/local/bin/openvpnctrl", "-kn2n");
+    # Stop all N2N connections
+    &General::system("/usr/local/bin/openvpnctrl", "n2n", "stop");
 
     foreach my $key (keys %confighash) {
 	my $name = $confighash{$cgiparams{'$key'}}[1];
@@ -1409,7 +1409,7 @@ SETTINGS_ERROR:
 	    delete $confighash{$cgiparams{'$key'}};
 	}
 
-	&General::system("/usr/local/bin/openvpnctrl", "-drrd", "$name");
+	&General::system("/usr/local/bin/openvpnctrl", "n2n", "delete", "$name");
     }
     while ($file = glob("${General::swroot}/ovpn/ca/*")) {
 	unlink $file;
@@ -2165,7 +2165,7 @@ END
 			&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
 			if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
-				&General::system("/usr/local/bin/openvpnctrl", "-sn2n", "$confighash{$cgiparams{'KEY'}}[1]");
+				&General::system("/usr/local/bin/openvpnctrl", "n2n", "start", "$confighash{$cgiparams{'KEY'}}[1]");
 				&writecollectdconf();
 			}
 		} else {
@@ -2175,7 +2175,7 @@ END
 
 			if ($confighash{$cgiparams{'KEY'}}[3] eq 'net'){
 				if ($n2nactive ne '') {
-					&General::system("/usr/local/bin/openvpnctrl", "-kn2n", "$confighash{$cgiparams{'KEY'}}[1]");
+					&General::system("/usr/local/bin/openvpnctrl", "n2n", "stop", "$confighash{$cgiparams{'KEY'}}[1]");
 					&writecollectdconf();
 				}
 			}
@@ -2534,7 +2534,7 @@ else
 
 		if ($confighash{$cgiparams{'KEY'}}[3] eq 'net') {
 			# Stop the N2N connection before it is removed
-			&General::system("/usr/local/bin/openvpnctrl", "-kn2n", "$confighash{$cgiparams{'KEY'}}[1]");
+			&General::system("/usr/local/bin/openvpnctrl", "n2n", "stop", "$confighash{$cgiparams{'KEY'}}[1]");
 
 			my $conffile = glob("${General::swroot}/ovpn/n2nconf/$confighash{$cgiparams{'KEY'}}[1]/$confighash{$cgiparams{'KEY'}}[1].conf");
 			my $certfile = glob("${General::swroot}/ovpn/certs/$confighash{$cgiparams{'KEY'}}[1].p12");
@@ -2575,7 +2575,7 @@ else
 
 		# Update collectd configuration and delete all RRD files of the removed connection
 		&writecollectdconf();
-		&General::system("/usr/local/bin/openvpnctrl", "-drrd", "$confighash{$cgiparams{'KEY'}}[1]");
+		&General::system("/usr/local/bin/openvpnctrl", "n2n", "delete", "$confighash{$cgiparams{'KEY'}}[1]");
 
 		delete $confighash{$cgiparams{'KEY'}};
 		&General::system("/usr/bin/openssl", "ca", "-gencrl", "-out", "${General::swroot}/ovpn/crls/cacrl.pem", "-config", "/usr/share/openvpn/ovpn.cnf");
@@ -4545,7 +4545,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	if ($cgiparams{'TYPE'} eq 'net') {
 
 		if (-e "/var/run/$confighash{$key}[1]n2n.pid") {
-			&General::system("/usr/local/bin/openvpnctrl", "-kn2n", "$confighash{$cgiparams{'KEY'}}[1]");
+			&General::system("/usr/local/bin/openvpnctrl", "n2n", "stop", "$confighash{$cgiparams{'KEY'}}[1]");
 
 			&General::readhasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 			my $key = $cgiparams{'KEY'};
@@ -4559,7 +4559,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 			$confighash{$key}[0] = 'on';
 			&General::writehasharray("${General::swroot}/ovpn/ovpnconfig", \%confighash);
 
-			&General::system("/usr/local/bin/openvpnctrl", "-sn2n", "$confighash{$cgiparams{'KEY'}}[1]");
+			&General::system("/usr/local/bin/openvpnctrl", "n2n", "start", "$confighash{$cgiparams{'KEY'}}[1]");
 		}
 	}
 
