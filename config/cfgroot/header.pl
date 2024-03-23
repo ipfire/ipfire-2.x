@@ -166,13 +166,6 @@ sub blue_used () {
     return 0;
 }
 
-sub is_modem {
-    if ($ethsettings{'CONFIG_TYPE'} =~ /^[0]$/) {
-	return 1;
-    }
-    return 0;
-}
-
 ### Initialize menu
 sub genmenu {
 
