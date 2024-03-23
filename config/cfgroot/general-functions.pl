@@ -272,42 +272,6 @@ sub writehash
 	close FILE;
 }
 
-sub writehashpart
-{
-	# This function replaces the given hash in the original hash by keeping the old
-	# content and just replacing the new content
-
-	my $filename = $_[0];
-	my $newhash = $_[1];
-	my %oldhash;
-	my ($var, $val);
-
-	readhash("${filename}", \%oldhash);
-
-	foreach $var (keys %$newhash){
-		$oldhash{$var}=$newhash->{$var};
-	}
-
-	# write cgi vars to the file.
-	open(FILE, ">${filename}") or die "Unable to write file $filename";
-	flock FILE, 2;
-	foreach $var (keys %oldhash)
-	{
-		if ( $var eq "__CGI__"){next;}
-		$val = $oldhash{$var};
-		# Darren Critchley Jan 17, 2003 added the following because when submitting with a graphic, the x and y
-		# location of the mouse are submitted as well, this was being written to the settings file causing
-		# some serious grief! This skips the variable.x and variable.y
-		if (!($var =~ /(.x|.y)$/)) {
-			if ($val =~ / /) {
-				$val = "\'$val\'"; }
-			if (!($var =~ /^ACTION/)) {
-				print FILE "${var}=${val}\n"; }
-		}
-	}
-	close FILE;
-}
-
 sub age {
 	my ($dev, $ino, $mode, $nlink, $uid, $gid, $rdev, $size,
 		$atime, $mtime, $ctime, $blksize, $blocks) = stat $_[0];
