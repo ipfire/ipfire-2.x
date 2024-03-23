@@ -96,7 +96,7 @@ if ($notice) {
 	&Header::closebox();
 }
 
-&Header::openbox('100%', 'center', $Lang::tr{'processor vulnerability mitigations'});
+&Header::opensection();
 
 print <<END;
 	<table class="tbl">
@@ -159,7 +159,7 @@ print <<END;
 	</table>
 END
 
-&Header::closebox();
+&Header::closesection();
 
 print "<form method='post' action='$ENV{'SCRIPT_NAME'}'>\n";
 
