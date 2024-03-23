@@ -290,6 +290,34 @@ status() {
 	fi
 }
 
+delete() {
+	local name="${1}"
+
+	local id
+	local enabled
+	local _name
+	local x3
+	local type
+	local rest
+
+	local IFS=,
+
+	# Read the connection
+	while read -r id enabled _name x3 type rest; do
+		if [ "${name}" = "${_name}" ]; then
+			case "${type}" in
+				host)
+					rm -rf "/var/log/rrd/collectd/localhost/openvpn-${name}/"
+					;;
+
+				net)
+					rm -rf "/var/log/rrd/collectd/localhost/openvpn-${name}-n2n/"
+					;;
+			esac
+		fi
+	done < /var/ipfire/ovpn/ovpnconfig
+}
+
 case "${1}" in
 	start)
 		# Update all firewall rules
@@ -324,6 +352,10 @@ case "${1}" in
 	status)
 		# Show the status of all connections
 		all_connections status "${@:2}"
+		;;
+
+	delete)
+		delete "${2}"
 		;;
 
 	*)
