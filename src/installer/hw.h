@@ -54,6 +54,8 @@
 
 #define SERIAL_BAUDRATE               115200
 
+#define BTRFS_MOUNT_OPTIONS           "compress=zstd:1"
+
 #define BYTES2MB(x) ((x) / 1024 / 1024)
 #define MB2BYTES(x) ((unsigned long long)(x) * 1024 * 1024)
 

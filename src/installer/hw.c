@@ -1053,7 +1053,7 @@ int hw_mount_btrfs_subvolumes(const char* source) {
 		}
 
 		// Assign subvolume name.
-		r = snprintf(options, sizeof(options), "subvol=%s,", subvolume->name);
+		r = snprintf(options, sizeof(options), "subvol=%s,%s", subvolume->name, BTRFS_MOUNT_OPTIONS);
 		if (r < 0) {
 			return r;
 		}
