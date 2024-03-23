@@ -17,6 +17,8 @@ use HTML::Entities();
 use Socket;
 use Time::Local;
 
+require "${General::swroot}/graphs.pl";
+
 our %color = ();
 &General::readhash("/srv/web/ipfire/html/themes/ipfire/include/colors.txt", \%color);
 
@@ -377,6 +379,18 @@ sub openbox {
 # print box closing html layout
 sub closebox {
 	print "</section>";
+}
+
+sub graph($) {
+	my $title = shift;
+
+	# Open a new section with a title
+	&opensection($title);
+
+	&Graphs::makegraphbox(@_);
+
+	# Close the section
+	&closesection();
 }
 
 sub green_used() {

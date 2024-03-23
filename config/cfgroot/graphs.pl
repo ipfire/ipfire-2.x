@@ -31,10 +31,10 @@ require "${General::swroot}/lang.pl";
 require "${General::swroot}/header.pl";
 
 # Approximate size of the final graph image including canvas and labeling (in pixels, mainly used for placeholders)
-our %image_size = ('width' => 900, 'height' => 300);
+our %image_size = ('width' => 900, 'height' => 400);
 
 # Size of the actual data area within the image, without labeling (in pixels)
-our %canvas_size = ('width' => 800, 'height' => 190);
+our %canvas_size = ('width' => 800, 'height' => 290);
 
 # List of all available time ranges
 our @time_ranges = ("hour", "day", "week", "month", "year");
@@ -111,21 +111,26 @@ sub makegraphbox {
 	$default_range = "day" unless ($default_range ~~ @time_ranges);
 
 	print <<END;
-<div class="rrdimage" id="rrdimg-$name" data-origin="$origin" data-graph="$name" data-default-range="$default_range">
-	<ul>
+		<div class="graph" id="rrdimg-$name" data-origin="$origin" data-graph="$name" data-default-range="$default_range">
+			<img src="/cgi-bin/getrrdimage.cgi?origin=${origin}&graph=${name}&range=${default_range}" alt="$Lang::tr{'graph'} ($name)">
+
+			<ul>
 END
 
 	# Print range select buttons
 	foreach my $range (@time_ranges) {
 		print <<END;
-		<li><button data-range="$range" onclick="rrdimage_selectRange(this)">$Lang::tr{$range}</button></li>
+				<li>
+					<button data-range="$range" onclick="rrdimage_selectRange(this)">
+						$Lang::tr{$range}
+					</button>
+				</li>
 END
 	}
 
 	print <<END;
-	</ul>
-	<img src="/cgi-bin/getrrdimage.cgi?origin=${origin}&graph=${name}&range=${default_range}" alt="$Lang::tr{'graph'} ($name)">
-</div>
+			</ul>
+		</div>
 END
 }
 
@@ -143,7 +148,6 @@ sub updatecpugraph {
 		"-l 0",
 		"-u 100",
 		"-r",
-		"-t ".$Lang::tr{'cpu usage per'}." ".$Lang::tr{$period."-graph"},
 		"-v ".$Lang::tr{'percentage'},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -270,7 +274,6 @@ sub updateloadgraph {
 		"-1".$period,
 		"-l 0",
 		"-r",
-		"-t ".$Lang::tr{'uptime load average'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v ".$Lang::tr{'processes'},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -303,7 +306,6 @@ sub updatememorygraph {
 		"-l 0",
 		"-u 100",
 		"-r",
-		"-t ".$Lang::tr{'memory usage per'}." ".$Lang::tr{$period."-graph"},
 		"-v ".$Lang::tr{'percentage'},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -359,7 +361,6 @@ sub updateswapgraph {
 		"-l 0",
 		"-u 100",
 		"-r",
-		"-t ".$Lang::tr{'swap usage per'}." ".$Lang::tr{$period."-graph"},
 		"-v ".$Lang::tr{'percentage'},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -410,7 +411,6 @@ sub updateprocessescpugraph {
 		"-1".$period,
 		"-l 0",
 		"-r",
-		"-t ".$Lang::tr{'processes'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"}
@@ -457,7 +457,6 @@ sub updateprocessesmemorygraph {
 		"-1".$period,
 		"-l 0",
 		"-r",
-		"-t ".$Lang::tr{'processes'}." ".$Lang::tr{'memory'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v ".$Lang::tr{'bytes'},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -500,7 +499,6 @@ sub updatediskgraph {
 		"--start",
 		"-1".$period,
 		"-r",
-		"-t ".$disk." ".$Lang::tr{'disk access'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v ".$Lang::tr{'bytes per second'},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -544,7 +542,6 @@ sub updateifgraph {
 		"--start",
 		"-1".$period,
 		"-r",
-		"-t ".$Lang::tr{'traffic on'}." ".$interface." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v ".$Lang::tr{'bytes per second'},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -581,7 +578,6 @@ sub updatevpngraph {
 		"--start",
 		"-1".$period,
 		"-r",
-		"-t ".$Lang::tr{'traffic on'}." ".$interface." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v ".$Lang::tr{'bytes per second'},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -618,7 +614,6 @@ sub updatevpnn2ngraph {
 		"--start",
 		"-1".$period,
 		"-r",
-		"-t ".$Lang::tr{'traffic on'}." ".$interface." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v ".$Lang::tr{'bytes per second'},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -683,7 +678,6 @@ sub updatefwhitsgraph {
 			"--start",
 			"-1".$period,
 			"-r",
-			"-t ".$Lang::tr{'firewall hits per'}." ".$Lang::tr{$period."-graph"},
 			"-v ".$Lang::tr{'bytes per second'},
 			"--color=SHADEA".$color{"color19"},
 			"--color=SHADEB".$color{"color19"},
@@ -762,7 +756,6 @@ sub updatefwhitsgraph {
 			"--start",
 			"-1".$period,
 			"-r",
-			"-t ".$Lang::tr{'firewall hits per'}." ".$Lang::tr{$period."-graph"},
 			"-v ".$Lang::tr{'bytes per second'},
 			"--color=SHADEA".$color{"color19"},
 			"--color=SHADEB".$color{"color19"},
@@ -849,7 +842,6 @@ sub updatepinggraph {
 		"-1".$period,
 		"-l 0",
 		"-r",
-		"-t ".$Lang::tr{'linkq'}." ".$host." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v ms",
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -887,7 +879,6 @@ sub updatewirelessgraph {
 		"-",
 		"--start",
 		"-1".$period,
-		"-t Wireless ".$interface." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v dBm",
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -925,7 +916,6 @@ sub updatehddgraph {
 		"--start",
 		"-1".$period,
 		"-r",
-		"-t ".$disk." ".$Lang::tr{'harddisk temperature'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v Celsius",
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -959,7 +949,6 @@ sub updatehwtempgraph {
 		"--start",
 		"-1".$period,
 		"-r",
-		"-t ".$Lang::tr{'mbmon temp'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v Celsius",
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -1007,7 +996,6 @@ sub updatehwfangraph {
 		"--start",
 		"-1".$period,
 		"-r",
-		"-t ".$Lang::tr{'mbmon fan'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
@@ -1054,7 +1042,6 @@ sub updatehwvoltgraph {
 		"--start",
 		"-1".$period,
 		"-r",
-		"-t ".$Lang::tr{'mbmon volt'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
 		"--color=BACK".$color{"color21"},
@@ -1121,7 +1108,6 @@ sub updateqosgraph {
 		"--start",
 		"-1".$period,
 		"-r",
-		"-t ".$Lang::tr{'Utilization on'}." (".$qossettings{'DEV'}.") ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v ".$Lang::tr{'bytes per second'},
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -1183,7 +1169,6 @@ sub updatecpufreqgraph {
 		"--start",
 		"-1".$period,
 		"-r",
-		"-t ".$Lang::tr{'cpu frequency per'}." ".$Lang::tr{$period."-graph"},
 		"-v MHz",
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -1223,7 +1208,6 @@ sub updatethermaltempgraph {
 		"--start",
 		"-1".$period,
 		"-r",
-		"-t ".$Lang::tr{'acpitemp'}." ".$Lang::tr{'graph per'}." ".$Lang::tr{$period."-graph"},
 		"-v Celsius",
 		"--color=SHADEA".$color{"color19"},
 		"--color=SHADEB".$color{"color19"},
@@ -1277,7 +1261,6 @@ sub updateconntrackgraph {
 		"-1" . $period,
 		"-r",
 		"--lower-limit","0",
-		"-t $Lang::tr{'connection tracking'}",
 		"-v $Lang::tr{'open connections'}",
 		"DEF:conntrack=$mainsettings{'RRDLOG'}/collectd/localhost/conntrack/conntrack.rrd:entropy:AVERAGE",
 		"LINE3:conntrack#ff0000:" . sprintf("%-15s", $Lang::tr{'open connections'}),

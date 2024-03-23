@@ -1,12 +1,16 @@
 :root {
-	--color-green        : #339933;
-	--color-green-invert : #ffffff;
-	--color-red          : #993333;
-	--color-red-invert   : #ffffff;
-	--color-blue         : #333399;
-	--color-blue-invert  : #ffffff;
-	--color-grey         : #d6d6d6;
-	--color-light-grey   : #f0f0f0;
+	--color-green          : #339933;
+	--color-green-invert   : #ffffff;
+	--color-red            : #993333;
+	--color-red-invert     : #ffffff;
+	--color-blue           : #333399;
+	--color-blue-invert    : #ffffff;
+	--color-grey           : #d6d6d6;
+	--color-light-grey     : #f0f0f0;
+
+	--color-primary        : #ff2e52;
+	--color-primary-invert : #ffffff;
+	--color-text           : #363636;
 }
 
 /* This controls the width of the fixed width layouts */
@@ -395,6 +399,51 @@ table {
 
 table.fw-nat tbody tr td {
 	height: 2.25em;
+}
+
+/*
+	Graphs
+*/
+
+.graph {
+	padding: 0.125rem;
+}
+
+.graph img {
+	width: 100%;
+	min-height: 360px;
+
+	margin-bottom: 0.5rem;
+	padding: 0;
+
+	border: 1px solid var(--color-grey);
+}
+
+.graph ul {
+	list-style-type: none;
+
+	display: flex;
+	justify-content: center;
+}
+
+.graph ul li {
+	margin: 0 0.125rem;
+}
+
+.graph ul li button {
+	background: none;
+	border: none;
+	cursor: pointer;
+
+	background-color: var(--color-grey);
+	color: var(--color-text);
+
+	padding: 0.5rem 1rem;
+}
+
+.graph ul li button.selected {
+	background-color: var(--color-primary);
+	color: var(--color-primary-invert);
 }
 
 /* RRD graph images */
