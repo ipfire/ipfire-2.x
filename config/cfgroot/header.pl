@@ -333,6 +333,24 @@ sub openbigbox {
 sub closebigbox {
 }
 
+# Sections
+
+sub opensection($) {
+	my $title = shift;
+
+	# Open the section
+	print "<section class=\"section\">";
+
+	# Show the title if set
+	if ($title) {
+		print "	<h2 class=\"title\">${title}</h2>\n";
+	}
+}
+
+sub closesection() {
+	print "</section>";
+}
+
 ###############################################################################
 #
 # print box opening html layout
@@ -346,7 +364,7 @@ sub openbox {
 
 	my $title = shift;
 
-	print "<div class=\"box\">\n";
+	print "<section class=\"section is-box\">\n";
 
 	# Show the title
 	if ($title) {
@@ -358,7 +376,7 @@ sub openbox {
 #
 # print box closing html layout
 sub closebox {
-	print "</div>";
+	print "</section>";
 }
 
 sub green_used() {
