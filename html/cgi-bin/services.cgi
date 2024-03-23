@@ -45,22 +45,6 @@ undef (@dummy);
 
 
 my %cgiparams=();
-# Maps a nice printable name to the changing part of the pid file, which
-# is also the name of the program
-my %servicenames =(
-	$Lang::tr{'dhcp server'} => 'dhcpd',
-	$Lang::tr{'web server'} => 'httpd',
-	$Lang::tr{'cron server'} => 'fcron',
-	$Lang::tr{'dns proxy server'} => 'unbound',
-	$Lang::tr{'logging server'} => 'syslogd',
-	$Lang::tr{'kernel logging server'} => 'klogd',
-	$Lang::tr{'ntp server'} => 'ntpd',
-	$Lang::tr{'secure shell server'} => 'sshd',
-	$Lang::tr{'vpn'} => 'charon',
-	$Lang::tr{'web proxy'} => 'squid',
-	$Lang::tr{'intrusion detection system'} => 'suricata',
-	'OpenVPN' => 'openvpn'
-);
 
 my %link =(
 	$Lang::tr{'dhcp server'} => "<a href=\'dhcp.cgi\'>$Lang::tr{'dhcp server'}</a>",
@@ -102,41 +86,70 @@ if ( $querry[0] =~ "processescpu"){
 	&Header::openbigbox('100%', 'left');
 
 	&Header::openbox('100%', 'left', $Lang::tr{'services'});
-	print <<END
-<div align='center'>
-<table width='80%' cellspacing='1' class='tbl'>
-<tr>
-	<th align='left'><b>$Lang::tr{'service'}</b></th>
-	<th align='center' ><b>$Lang::tr{'status'}</b></th>
-	<th align='center'><b>PID</b></th>
-	<th align='center'><b>$Lang::tr{'memory'}</b></th>
-</tr>
-END
-;
-	my $key = '';
-	my $col="";
-	foreach $key (sort keys %servicenames){
-		$lines++;
-		if ($lines % 2){
-			$col="bgcolor='$color{'color22'}'";
-			print "<tr><td align='left' $col>";
-			print $link{$key};
-			print "</td>";
-		}else{
-			$col="bgcolor='$color{'color20'}'";
-			print "<tr><td align='left' $col>";
-			print $link{$key};
-			print "</td>";
+
+	&Header::ServiceStatus({
+		# DHCP Server
+		$Lang::tr{'dhcp server'} => {
+			"process" => "dhcpd",
+		},
+
+		# Web Server
+		$Lang::tr{'web server'} => {
+			"process" => "httpd",
+		},
+
+		# Cron Server
+		$Lang::tr{'cron server'} => {
+			"process" => "fcron",
+		},
+
+		# DNS Proxy
+		$Lang::tr{'dns proxy server'} => {
+			"process" => "unbound",
+		},
+
+		# Syslog
+		$Lang::tr{'logging server'} => {
+			"process" => "syslogd",
+		},
+
+		# Kernel Logger
+		$Lang::tr{'kernel logging server'} => {
+			"process" => "klogd",
+		},
+
+		# Time Server
+		$Lang::tr{'ntp server'} => {
+			"process" => "ntpd",
+		},
+
+		# SSH Server
+		$Lang::tr{'secure shell server'} => {
+			"process" => "sshd",
+		},
+
+		# IPsec
+		$Lang::tr{'vpn'} => {
+			"process" => "charon",
+		},
+
+		# Web Proxy
+		$Lang::tr{'web proxy'} => {
+			"process" => "squid",
+		},
+
+		# IPS
+		$Lang::tr{'intrusion prevention system'} => {
+			"process" => "suricata",
+		},
+
+		# OpenVPN Roadwarrior
+		$Lang::tr{'ovpn roadwarrior server'} => {
+			"process" => "openvpn",
+			"pidfile" => "/var/run/openvpn.pid",
 		}
+	});
 
-		my $shortname = $servicenames{$key};
-		my $status = &isrunning($shortname,$col);
-
-	 	print "$status\n";
-		print "</tr>\n";
-	}
-
-	print "</table></div>\n";
 	&Header::closebox();
 
 	&Header::openbox('100%', 'left', "$Lang::tr{addon} - $Lang::tr{services}");
@@ -168,6 +181,7 @@ END
 ;
 
 	my $lines=0; # Used to count the outputlines to make different bgcolor
+	my $col;
 
 	my @paks;
 	my @addon_services;
@@ -177,7 +191,7 @@ END
 
 	foreach my $pak (sort keys %paklist) {
 		my %metadata = &Pakfire::getmetadata($pak, "installed");
-			
+
 		my $service;
 
 		if ("$metadata{'Services'}") {
@@ -195,7 +209,7 @@ END
 				my $displayname = ($pak ne $service) ? "$service ($pak)" : $service;
 				if ( -e "/srv/web/ipfire/cgi-bin/$pak.cgi" ) {
 					$displayname = ($pak ne $service) ? "$service (<a href=\'$pak.cgi\'>$pak</a>)" : "<a href=\'$pak.cgi\'>$service</a>";
-				} 
+				}
 
 				print "<td align='left' $col width='31%'>$displayname</td> ";
 
@@ -242,58 +256,6 @@ sub isautorun (@) {
 	}
 
 	# Return the status.
-	return $status;
-}
-
-sub isrunning (@) {
-	my ($cmd, $col) = @_;
-	my $status = "<td align='center' bgcolor='${Header::colourred}'><font color='white'><b>$Lang::tr{'stopped'}</b></font></td><td colspan='2' $col></td>";
-	my $pid = '';
-	my $testcmd = '';
-	my $exename;
-	my $memory;
-
-	$cmd =~ /(^[a-z]+)/;
-
-	# Check if the exename needs to be overwritten.
-	# This happens if the expected process name string
-	# differs from the real one. This may happened if
-	# a service uses multiple processes or threads.
-	if (exists($overwrite_exename_hash{$1})) {
-		# Grab the string which will be reported by
-		# the process from the corresponding hash.
-		$exename = $overwrite_exename_hash{$1};
-	} else {
-		# Directly expect the launched command as
-		# process name.
-		$exename = $1;
-	}
-
-	if (open(FILE, "/var/run/${cmd}.pid")){
-		$pid = <FILE>; chomp $pid;
-		close FILE;
-		if (open(FILE, "/proc/${pid}/status")){
-			while (<FILE>){
-				if (/^Name:\W+(.*)/) {
-					$testcmd = $1;
-				}
-			}
-			close FILE;
-		}
-		if (open(FILE, "/proc/${pid}/status")) {
-			while (<FILE>) {
-				my ($key, $val) = split(":", $_, 2);
-				if ($key eq 'VmRSS') {
-					$memory = $val;
-					last;
-				}
-			}
-			close(FILE);
-		}
-		if ($testcmd =~ /$exename/){
-			$status = "<td align='center' bgcolor='${Header::colourgreen}'><font color='white'><b>$Lang::tr{'running'}</b></font></td><td align='center' $col>$pid</td><td align='center' $col>$memory</td>";
-		}
-	}
 	return $status;
 }
 
