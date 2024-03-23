@@ -43,30 +43,7 @@ my %netsettings=();
 my @dummy = ( ${Header::colourred} );
 undef (@dummy);
 
-
 my %cgiparams=();
-
-my %link =(
-	$Lang::tr{'dhcp server'} => "<a href=\'dhcp.cgi\'>$Lang::tr{'dhcp server'}</a>",
-	$Lang::tr{'web server'} => $Lang::tr{'web server'},
-	$Lang::tr{'cron server'} => $Lang::tr{'cron server'},
-	$Lang::tr{'dns proxy server'} => "<a href=\'dns.cgi\'>$Lang::tr{'dns proxy server'}</a>",
-	$Lang::tr{'logging server'} => $Lang::tr{'logging server'},
-	$Lang::tr{'kernel logging server'} => $Lang::tr{'kernel logging server'},
-	$Lang::tr{'ntp server'} => "<a href=\'time.cgi\'>$Lang::tr{'ntp server'}</a>",
-	$Lang::tr{'secure shell server'} => "<a href=\'remote.cgi\'>$Lang::tr{'secure shell server'}</a>",
-	$Lang::tr{'vpn'} => "<a href=\'vpnmain.cgi\'>$Lang::tr{'vpn'}</a>",
-	$Lang::tr{'web proxy'} => "<a href=\'proxy.cgi\'>$Lang::tr{'web proxy'}</a>",
-	'OpenVPN' => "<a href=\'ovpnmain.cgi\'>OpenVPN</a>",
-	"$Lang::tr{'intrusion detection system'}" => "<a href=\'ids.cgi\'>$Lang::tr{'intrusion detection system'}</a>",
-);
-
-# Hash to overwrite the process name of a process if it differs fromt the launch command.
-my %overwrite_exename_hash = (
-	"suricata" => "Suricata-Main"
-);
-
-my $lines=0; # Used to count the outputlines to make different bgcolor
 
 my @querry = split(/\?/,$ENV{'QUERY_STRING'});
 $querry[0] = '' unless defined $querry[0];
