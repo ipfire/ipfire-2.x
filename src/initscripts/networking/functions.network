@@ -22,6 +22,150 @@
 eval $(/usr/local/bin/readhash /var/ipfire/ethernet/settings)
 eval $(/usr/local/bin/readhash /var/ipfire/dns/settings)
 
+ip2bin() {
+	local address="${1}"
+
+	local IFS='.'
+	local octet
+
+	local n=0
+
+	for octet in ${address}; do
+		# Shift n
+		(( n <<= 8 ))
+
+		# Apply the octet
+		(( n |= octet ))
+	done
+
+	echo "${n}"
+}
+
+bin2ip() {
+	local n="${1}"
+
+	local IFS='.'
+	local address=()
+
+	for i in {3..0}; do
+		address+=( $(( n >> (8 * i) & 0xff )) )
+	done
+
+	echo "${address[*]}"
+}
+
+network_get_address() {
+	local network="${1}"
+
+	# Return everything before the slash
+	echo "${network%%/*}"
+}
+
+network_get_prefix() {
+	local network="${1}"
+
+	# Consider everything after the / the prefix
+	local prefix="${network##*/}"
+
+	# If the prefix is valid, return it
+	if network_prefix_is_valid "${prefix}"; then
+		echo "${prefix}"
+
+	# Otherwise it might be a subnet mask
+	else
+		network_netmask_to_prefix "${prefix}"
+	fi
+}
+
+network_get_netmask() {
+	local network="${1}"
+
+	# Consider everything after the / the netmask
+	local netmask="${network##*/}"
+
+	# If we have a prefix, we need to convert
+	if network_prefix_is_valid "${netmask}"; then
+		network_prefix_to_netmask "${netmask}"
+
+	# Otherwise return what we got
+	else
+		echo "${netmask}"
+	fi
+}
+
+network_prefix_is_valid() {
+	local prefix="${1}"
+
+	# The prefix must be numbers only
+	if ! [[ "${prefix}" =~ ^[0-9]+$ ]]; then
+		return 1
+	fi
+
+	# Must be a number between 0 and 32 (inclusive)
+	[ "${prefix}" -ge 0 -a "${prefix}" -le 32 ]
+}
+
+network_prefix_to_netmask() {
+	local prefix="${1}"
+
+	# Set n with all bits set
+	local n=0xffffffff
+
+	# Shift
+	(( n <<= (32 - prefix) ))
+
+	# Convert back
+	bin2ip "${n}"
+}
+
+network_netmask_to_prefix() {
+	local netmask="${1}"
+
+	local prefix=0
+
+	# Convert to binary
+	local n="$(ip2bin "${netmask}")"
+
+	while [ "${n}" -gt 0 ]; do
+		# If the highest bit is not set, we are done
+		[ "$(( n & (1 << 31) ))" -eq 0 ] && break
+
+		# Increment prefix & shift n
+		(( prefix++ ))
+		(( n <<= 1 ))
+	done
+
+	echo "${prefix}"
+}
+
+network_address_in_network() {
+	local address="${1}"
+	local network="${2}"
+
+	# Split the network into its address & mask
+	local netaddr="$(network_get_address "${network}")"
+	local netmask="$(network_get_netmask "${network}")"
+
+	# Abort if we could not parse the network
+	if [ -z "${netaddr}" -o -z "${netmask}" ]; then
+		return 1
+	fi
+
+	# Convert everything to binary
+	address="$(ip2bin "${address}")"
+	netaddr="$(ip2bin "${netaddr}")"
+	netmask="$(ip2bin "${netmask}")"
+
+	# Ensure the network address is the first address
+	(( netaddr &= netmask ))
+
+	# Compute broadcast
+	local broadcast=$(( netaddr | (~netmask & 0xffffffff) ))
+
+	# Return true if address is in the network
+	[ "${address}" -ge "${netaddr}" -a "${address}" -le "${broadcast}" ]
+}
+
 dhcpcd_get_pid() {
 		# This function returns the pid of a dhcpcd by a given
 		# network device, if a pidfile exists.
