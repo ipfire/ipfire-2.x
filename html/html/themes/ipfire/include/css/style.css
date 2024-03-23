@@ -163,6 +163,17 @@ iframe {
 	border-radius: 3px 3px 3px 3px;
 }
 
+.box {
+	border: 1px solid var(--color-grey);
+	padding: 0.75rem 1rem;
+	margin-bottom: 2rem;
+}
+
+.box .title {
+	margin-bottom: 1rem;
+	border-bottom: 1px solid var(--color-grey);
+}
+
 #main_inner {
 	padding-bottom: 1.5em;
 }
@@ -178,19 +189,6 @@ iframe {
 
 #main_inner h1 {
 	font-size: 1.8em;
-	margin-bottom: 1em;
-}
-
-#main_inner .post {
-	border: 1px solid silver;
-	padding: 1em 2em 1em 2em;
-	margin-bottom: 1em;
-	clear: both;
-}
-
-#main_inner .post h2 {
-	border-bottom: dotted 1px #e1e1e1;
-	font-size: 1.6em;
 	margin-bottom: 1em;
 }
 

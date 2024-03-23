@@ -340,19 +340,17 @@ sub closebigbox {
 # @param page align
 # @param page caption
 sub openbox {
-	$width = $_[0];
-	$align = $_[1];
-	$caption = $_[2];
+	# The width parameter is ignored and should always be '100%'
+	my $width = shift;
+	my $align = shift;
 
-	if($align eq 'center') {
-		print "<div class='post' align='center'>\n"
-	}
-	else {
-		print "<div class='post'>\n";
-	}
+	my $title = shift;
 
-	if ($caption) {
-		print "<h2>$caption</h2>\n";
+	print "<div class=\"box\">\n";
+
+	# Show the title
+	if ($title) {
+		print "	<h2 class=\"title\">${title}</h2>\n";
 	}
 }
 
