@@ -1319,11 +1319,13 @@ static char* hw_get_uuid(const char* dev) {
 #define FSTAB_FMT "UUID=%s %-8s %-4s %-10s %d %d\n"
 
 int hw_write_fstab(struct hw_destination* dest) {
+	const struct btrfs_subvolumes* subvolume = NULL;
 	FILE* f = fopen(DESTINATION_MOUNT_PATH "/etc/fstab", "w");
 	if (!f)
 		return -1;
 
 	char* uuid = NULL;
+	char mount_options[STRING_SIZE];
 
 	// boot
 	if (*dest->part_boot) {
@@ -1359,7 +1361,22 @@ int hw_write_fstab(struct hw_destination* dest) {
 	// root
 	uuid = hw_get_uuid(dest->part_root);
 	if (uuid) {
-		fprintf(f, FSTAB_FMT, uuid, "/", "auto", "defaults", 1, 1);
+		if(dest->filesystem == HW_FS_BTRFS) {
+			// Loop through the list of subvolumes
+			for (subvolume = btrfs_subvolumes; subvolume->name; subvolume++) {
+				// Abort if the mount options could not be assigned
+				int r = snprintf(mount_options, sizeof(mount_options), "defaults,%s,subvol=%s", BTRFS_MOUNT_OPTIONS, subvolume->name);
+				if (r < 0) {
+					return r;
+				}
+
+				// Write the entry to the file
+				fprintf(f, FSTAB_FMT, uuid, subvolume->mount_path, "btrfs", mount_options, 1, 1);
+			}
+		} else {
+			fprintf(f, FSTAB_FMT, uuid, "/", "auto", "defaults", 1, 1);
+		}
+
 		free(uuid);
 	}
 
