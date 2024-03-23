@@ -146,10 +146,8 @@ for my $vuln (sort keys %VULNERABILITIES) {
 		$bgcolour = ${Header::colouryellow};
 	}
 
-	my $table_colour = ($id++ % 2) ? $color{'color22'} : $color{'color20'};
-
 	print <<END;
-		<tr bgcolor="$table_colour">
+		<tr>
 			<td align="left">
 				<strong>$VULNERABILITIES{$vuln}</strong>
 			</td>
