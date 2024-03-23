@@ -85,7 +85,7 @@ if ( $querry[0] =~ "processescpu"){
 	&Header::openpage($Lang::tr{'status information'}, 1, '');
 	&Header::openbigbox('100%', 'left');
 
-	&Header::openbox('100%', 'left', $Lang::tr{'services'});
+	&Header::opensection();
 
 	&Header::ServiceStatus({
 		# DHCP Server
@@ -150,7 +150,7 @@ if ( $querry[0] =~ "processescpu"){
 		}
 	});
 
-	&Header::closebox();
+	&Header::closesection();
 
 	&Header::openbox('100%', 'left', "$Lang::tr{addon} - $Lang::tr{services}");
 	my $paramstr=$ENV{QUERY_STRING};
