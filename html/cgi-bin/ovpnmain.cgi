@@ -79,7 +79,6 @@ my $DHPARAM = "/etc/ssl/ffdhe4096.pem";
 my %ccdconfhash=();
 my %ccdroutehash=();
 my %ccdroute2hash=();
-my %netsettings=();
 my %cgiparams=();
 my %vpnsettings=();
 my %checked=();
@@ -97,9 +96,6 @@ my $name;
 my $col="";
 my $local_serverconf = "${General::swroot}/ovpn/scripts/server.conf.local";
 my $local_clientconf = "${General::swroot}/ovpn/scripts/client.conf.local";
-
-# Read Ethernet configuration
-&General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
 # Set default CGI parameters
 $cgiparams{'ENABLED'} = 'off';
@@ -1037,7 +1033,7 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save-adv-options'}) {
 			}
 			my ($ip, $cidr) = split("\/",&General::ipcidr2msk($tmpip));
 
-			if ($ip eq $netsettings{'GREEN_NETADDRESS'} && $cidr eq $netsettings{'GREEN_NETMASK'}) {
+			if ($ip eq $Network::ethernet{'GREEN_NETADDRESS'} && $cidr eq $Network::ethernet{'GREEN_NETMASK'}) {
 				$errormessage = $Lang::tr{'ovpn errmsg green already pushed'};
 				goto ADV_ERROR;
 			}
@@ -1316,27 +1312,27 @@ if ($cgiparams{'ACTION'} eq $Lang::tr{'save'} && $cgiparams{'TYPE'} eq '' && $cg
     }
     my @tmpovpnsubnet = split("\/",$cgiparams{'DOVPN_SUBNET'});
 
-    if (&General::IpInSubnet ( $netsettings{'RED_ADDRESS'},
+    if (&General::IpInSubnet ( $Network::ethernet{'RED_ADDRESS'},
 	$tmpovpnsubnet[0], $tmpovpnsubnet[1])) {
-	$errormessage = "$Lang::tr{'ovpn subnet overlap'} IPFire RED Network $netsettings{'RED_ADDRESS'}";
+	$errormessage = "$Lang::tr{'ovpn subnet overlap'} IPFire RED Network $Network::ethernet{'RED_ADDRESS'}";
 	goto SETTINGS_ERROR;
     }
 
-    if (&General::IpInSubnet ( $netsettings{'GREEN_ADDRESS'},
+    if (&General::IpInSubnet ( $Network::ethernet{'GREEN_ADDRESS'},
 	$tmpovpnsubnet[0], $tmpovpnsubnet[1])) {
-        $errormessage = "$Lang::tr{'ovpn subnet overlap'} IPFire Green Network $netsettings{'GREEN_ADDRESS'}";
+        $errormessage = "$Lang::tr{'ovpn subnet overlap'} IPFire Green Network $Network::ethernet{'GREEN_ADDRESS'}";
         goto SETTINGS_ERROR;
     }
 
-    if (&General::IpInSubnet ( $netsettings{'BLUE_ADDRESS'},
+    if (&General::IpInSubnet ( $Network::ethernet{'BLUE_ADDRESS'},
 	$tmpovpnsubnet[0], $tmpovpnsubnet[1])) {
-	$errormessage = "$Lang::tr{'ovpn subnet overlap'} IPFire Blue Network $netsettings{'BLUE_ADDRESS'}";
+	$errormessage = "$Lang::tr{'ovpn subnet overlap'} IPFire Blue Network $Network::ethernet{'BLUE_ADDRESS'}";
 	goto SETTINGS_ERROR;
     }
 
-    if (&General::IpInSubnet ( $netsettings{'ORANGE_ADDRESS'},
+    if (&General::IpInSubnet ( $Network::ethernet{'ORANGE_ADDRESS'},
 	$tmpovpnsubnet[0], $tmpovpnsubnet[1])) {
-	$errormessage = "$Lang::tr{'ovpn subnet overlap'} IPFire Orange Network $netsettings{'ORANGE_ADDRESS'}";
+	$errormessage = "$Lang::tr{'ovpn subnet overlap'} IPFire Orange Network $Network::ethernet{'ORANGE_ADDRESS'}";
 	goto SETTINGS_ERROR;
     }
     open(ALIASES, "${General::swroot}/ethernet/aliases") or die 'Unable to open aliases file.';
@@ -3838,19 +3834,19 @@ if ($cgiparams{'TYPE'} eq 'host') {
 			}
 
 			#check for existing network IP's
-			if (&General::IpInSubnet ($ip,$netsettings{GREEN_NETADDRESS},$netsettings{GREEN_NETMASK}) && $netsettings{GREEN_NETADDRESS} ne '0.0.0.0')
+			if (&General::IpInSubnet ($ip,$Network::ethernet{GREEN_NETADDRESS},$Network::ethernet{GREEN_NETMASK}) && $Network::ethernet{GREEN_NETADDRESS} ne '0.0.0.0')
 			{
 				$errormessage=$Lang::tr{'ccd err green'};
 				goto VPNCONF_ERROR;
-			}elsif(&General::IpInSubnet ($ip,$netsettings{RED_NETADDRESS},$netsettings{RED_NETMASK}) && $netsettings{RED_NETADDRESS} ne '0.0.0.0')
+			}elsif(&General::IpInSubnet ($ip,$Network::ethernet{RED_NETADDRESS},$Network::ethernet{RED_NETMASK}) && $Network::ethernet{RED_NETADDRESS} ne '0.0.0.0')
 			{
 				$errormessage=$Lang::tr{'ccd err red'};
 				goto VPNCONF_ERROR;
-			}elsif(&General::IpInSubnet ($ip,$netsettings{BLUE_NETADDRESS},$netsettings{BLUE_NETMASK}) && $netsettings{BLUE_NETADDRESS} ne '0.0.0.0' && $netsettings{BLUE_NETADDRESS} gt '')
+			}elsif(&General::IpInSubnet ($ip,$Network::ethernet{BLUE_NETADDRESS},$Network::ethernet{BLUE_NETMASK}) && $Network::ethernet{BLUE_NETADDRESS} ne '0.0.0.0' && $Network::ethernet{BLUE_NETADDRESS} gt '')
 			{
 				$errormessage=$Lang::tr{'ccd err blue'};
 				goto VPNCONF_ERROR;
-			}elsif(&General::IpInSubnet ($ip,$netsettings{ORANGE_NETADDRESS},$netsettings{ORANGE_NETMASK}) && $netsettings{ORANGE_NETADDRESS} ne '0.0.0.0' && $netsettings{ORANGE_NETADDRESS} gt '' )
+			}elsif(&General::IpInSubnet ($ip,$Network::ethernet{ORANGE_NETADDRESS},$Network::ethernet{ORANGE_NETMASK}) && $Network::ethernet{ORANGE_NETADDRESS} ne '0.0.0.0' && $Network::ethernet{ORANGE_NETADDRESS} gt '' )
 			{
 				$errormessage=$Lang::tr{'ccd err orange'};
 				goto VPNCONF_ERROR;
@@ -3895,22 +3891,20 @@ if ($cgiparams{'TYPE'} eq 'host') {
 	$ccdroute2hash{$keypoint}[0]=$cgiparams{'NAME'};
 	if ($cgiparams{'IFROUTE'} eq ''){$cgiparams{'IFROUTE'} = $Lang::tr{'ccd none'};}
 	@temp = split(/\|/,$cgiparams{'IFROUTE'});
-	my %ownnet=();
-	&General::readhash("${General::swroot}/ethernet/settings", \%ownnet);
 	foreach $val (@temp){
 		chomp($val);
 		$val=~s/\s*$//g;
 		if ($val eq $Lang::tr{'green'})
 		{
-			$val=$ownnet{GREEN_NETADDRESS}."/".$ownnet{GREEN_NETMASK};
+			$val=$Network::ethernet{GREEN_NETADDRESS}."/".$Network::ethernet{GREEN_NETMASK};
 		}
 		if ($val eq $Lang::tr{'blue'})
 		{
-			$val=$ownnet{BLUE_NETADDRESS}."/".$ownnet{BLUE_NETMASK};
+			$val=$Network::ethernet{BLUE_NETADDRESS}."/".$Network::ethernet{BLUE_NETMASK};
 		}
 		if ($val eq $Lang::tr{'orange'})
 		{
-			$val=$ownnet{ORANGE_NETADDRESS}."/".$ownnet{ORANGE_NETMASK};
+			$val=$Network::ethernet{ORANGE_NETADDRESS}."/".$Network::ethernet{ORANGE_NETMASK};
 		}
 		my ($ip,$cidr) = split (/\//, $val);
 
@@ -4581,7 +4575,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 	} else {
             $cgiparams{'AUTH'} = 'certgen';
 	}
-	$cgiparams{'LOCAL_SUBNET'}      ="$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}";
+	$cgiparams{'LOCAL_SUBNET'}      ="$Network::ethernet{'GREEN_NETADDRESS'}/$Network::ethernet{'GREEN_NETMASK'}";
 	$cgiparams{'CERT_ORGANIZATION'} = $vpnsettings{'ROOTCERT_ORGANIZATION'};
 	$cgiparams{'CERT_CITY'}         = $vpnsettings{'ROOTCERT_CITY'};
 	$cgiparams{'CERT_STATE'}        = $vpnsettings{'ROOTCERT_STATE'};
@@ -4695,7 +4689,7 @@ if ($cgiparams{'TYPE'} eq 'net') {
 #	    print "<tr><td>$Lang::tr{'interface'}</td>";
 #	    print "<td><select name='INTERFACE'>";
 #	    print "<option value='RED' $selected{'INTERFACE'}{'RED'}>RED</option>";
-#		if ($netsettings{'BLUE_DEV'} ne '') {
+#		if ($Network::ethernet{'BLUE_DEV'} ne '') {
 #			print "<option value='BLUE' $selected{'INTERFACE'}{'BLUE'}>BLUE</option>";
 #		}
 #		print "<option value='GREEN' $selected{'INTERFACE'}{'GREEN'}>GREEN</option>";
@@ -5094,16 +5088,16 @@ END
 		if($ccdroute2hash{$key}[0] eq $cgiparams{'NAME'}){
 			$other=1;
 			foreach my $i (1 .. $#{$ccdroute2hash{$key}}) {
-				if ($ccdroute2hash{$key}[$i] eq $netsettings{'GREEN_NETADDRESS'}."/".&General::iporsubtodec($netsettings{'GREEN_NETMASK'})){
+				if ($ccdroute2hash{$key}[$i] eq $Network::ethernet{'GREEN_NETADDRESS'}."/".&General::iporsubtodec($Network::ethernet{'GREEN_NETMASK'})){
 					$selgreen=1;
 				}
 				if (&Header::blue_used()){
-					if( $ccdroute2hash{$key}[$i] eq $netsettings{'BLUE_NETADDRESS'}."/".&General::iporsubtodec($netsettings{'BLUE_NETMASK'})) {
+					if( $ccdroute2hash{$key}[$i] eq $Network::ethernet{'BLUE_NETADDRESS'}."/".&General::iporsubtodec($Network::ethernet{'BLUE_NETMASK'})) {
 						$selblue=1;
 					}
 				}
 				if (&Header::orange_used()){
-					if( $ccdroute2hash{$key}[$i] eq $netsettings{'ORANGE_NETADDRESS'}."/".&General::iporsubtodec($netsettings{'ORANGE_NETMASK'}) ) {
+					if( $ccdroute2hash{$key}[$i] eq $Network::ethernet{'ORANGE_NETADDRESS'}."/".&General::iporsubtodec($Network::ethernet{'ORANGE_NETMASK'}) ) {
 						$selorange=1;
 					}
 				}
