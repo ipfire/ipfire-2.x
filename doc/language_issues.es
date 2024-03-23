@@ -176,7 +176,9 @@ WARNING: translation string unused: cannot enable both nat traversal and compres
 WARNING: translation string unused: cant enable xtaccess
 WARNING: translation string unused: capsinactive
 WARNING: translation string unused: ccd err iroute
+WARNING: translation string unused: ccd err name
 WARNING: translation string unused: ccd err netadr
+WARNING: translation string unused: ccd iroutehint
 WARNING: translation string unused: cfg restart
 WARNING: translation string unused: change share
 WARNING: translation string unused: check for net traffic update
@@ -239,6 +241,7 @@ WARNING: translation string unused: destination ip bad
 WARNING: translation string unused: destination ip or net
 WARNING: translation string unused: destination net
 WARNING: translation string unused: destination port overlaps
+WARNING: translation string unused: dh
 WARNING: translation string unused: dhcp base ip fixed lease
 WARNING: translation string unused: dhcp create fixed leases
 WARNING: translation string unused: dhcp fixed lease err1
@@ -479,6 +482,7 @@ WARNING: translation string unused: ipblocklist category invalid
 WARNING: translation string unused: ipblocklist category reputation
 WARNING: translation string unused: ipblocklist category scanner
 WARNING: translation string unused: ipfire side
+WARNING: translation string unused: ipfire side is invalid
 WARNING: translation string unused: ipsec no connections
 WARNING: translation string unused: iptable rules
 WARNING: translation string unused: javascript menu error1
@@ -641,6 +645,9 @@ WARNING: translation string unused: ovpn mtu-disc no
 WARNING: translation string unused: ovpn mtu-disc off
 WARNING: translation string unused: ovpn mtu-disc with mssfix or fragment
 WARNING: translation string unused: ovpn mtu-disc yes
+WARNING: translation string unused: ovpn on blue
+WARNING: translation string unused: ovpn on orange
+WARNING: translation string unused: ovpn on red
 WARNING: translation string unused: ovpn reneg sec
 WARNING: translation string unused: ovpn warning rfc3280
 WARNING: translation string unused: ovpn_fastio
@@ -756,6 +763,7 @@ WARNING: translation string unused: set
 WARNING: translation string unused: shaping add options
 WARNING: translation string unused: shaping list options
 WARNING: translation string unused: show areas
+WARNING: translation string unused: show dh
 WARNING: translation string unused: show last x lines
 WARNING: translation string unused: show lines
 WARNING: translation string unused: show share options

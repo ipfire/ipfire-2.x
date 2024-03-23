@@ -148,7 +148,9 @@ WARNING: translation string unused: cannot enable both nat traversal and compres
 WARNING: translation string unused: cant enable xtaccess
 WARNING: translation string unused: capsinactive
 WARNING: translation string unused: ccd err iroute
+WARNING: translation string unused: ccd err name
 WARNING: translation string unused: ccd err netadr
+WARNING: translation string unused: ccd iroutehint
 WARNING: translation string unused: cfg restart
 WARNING: translation string unused: change share
 WARNING: translation string unused: check for net traffic update
@@ -437,6 +439,7 @@ WARNING: translation string unused: invalid users
 WARNING: translation string unused: invert
 WARNING: translation string unused: ip address in use
 WARNING: translation string unused: ipfire side
+WARNING: translation string unused: ipfire side is invalid
 WARNING: translation string unused: ipsec no connections
 WARNING: translation string unused: iptable rules
 WARNING: translation string unused: javascript menu error1
@@ -591,6 +594,9 @@ WARNING: translation string unused: ovpn mtu-disc no
 WARNING: translation string unused: ovpn mtu-disc off
 WARNING: translation string unused: ovpn mtu-disc with mssfix or fragment
 WARNING: translation string unused: ovpn mtu-disc yes
+WARNING: translation string unused: ovpn on blue
+WARNING: translation string unused: ovpn on orange
+WARNING: translation string unused: ovpn on red
 WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_fragment
 WARNING: translation string unused: ovpn_mssfix
@@ -998,7 +1004,6 @@ WARNING: untranslated string: data transfer = Data Transfer
 WARNING: untranslated string: default = Default
 WARNING: untranslated string: default IP address = Default IP Address
 WARNING: untranslated string: desired = Desired
-WARNING: untranslated string: dh = Diffie-Hellman-Parameter
 WARNING: untranslated string: dhcp dns enable update = Enable DNS Update (RFC2136):
 WARNING: untranslated string: dhcp dns key name = Key Name
 WARNING: untranslated string: dhcp dns update = DNS Update
@@ -1351,7 +1356,6 @@ WARNING: untranslated string: scanned = Scanned
 WARNING: untranslated string: search = Search
 WARNING: untranslated string: secret = Secret
 WARNING: untranslated string: sent = Sent
-WARNING: untranslated string: show dh = Show Diffie-Hellman parameters
 WARNING: untranslated string: show otp qrcode = Show OTP QRCode
 WARNING: untranslated string: show tls-auth key = Show tls-auth key
 WARNING: untranslated string: smb daemon = SMB Daemon

@@ -376,6 +376,7 @@ WARNING: translation string unused: invalid users
 WARNING: translation string unused: invert
 WARNING: translation string unused: ip address in use
 WARNING: translation string unused: ipfire side
+WARNING: translation string unused: ipfire side is invalid
 WARNING: translation string unused: iptable rules
 WARNING: translation string unused: javascript menu error1
 WARNING: translation string unused: javascript menu error2
@@ -516,6 +517,9 @@ WARNING: translation string unused: ovpn config
 WARNING: translation string unused: ovpn device
 WARNING: translation string unused: ovpn dl
 WARNING: translation string unused: ovpn log
+WARNING: translation string unused: ovpn on blue
+WARNING: translation string unused: ovpn on orange
+WARNING: translation string unused: ovpn on red
 WARNING: translation string unused: ovpn_fastio
 WARNING: translation string unused: ovpn_fragment
 WARNING: translation string unused: ovpn_mssfix
@@ -931,7 +935,6 @@ WARNING: untranslated string: ccd err isipsecrw = The given subnet address is al
 WARNING: untranslated string: ccd err isovpnn2n = The subnet address is already in use for an OpenVPN net-to-net connection.
 WARNING: untranslated string: ccd err isovpnnet = The subnet address is already in use for the OpenVPN server.
 WARNING: untranslated string: ccd err issubnet = Subnet address already in use.
-WARNING: untranslated string: ccd err name = Please choose a name.
 WARNING: untranslated string: ccd err nameexist = Name already exists.
 WARNING: untranslated string: ccd err netadrexist = Network already exists.
 WARNING: untranslated string: ccd err orange = This is the ORANGE subnet.
@@ -942,7 +945,6 @@ WARNING: untranslated string: ccd hint = On this page you are able to define sta
 WARNING: untranslated string: ccd invalid = Invalid.
 WARNING: untranslated string: ccd iroute = IPFire has access to these networks on the client's site
 WARNING: untranslated string: ccd iroute2 = Client has access to these networks on IPFire's site
-WARNING: untranslated string: ccd iroutehint = Attention! If you change these settings, you have to restart the OpenVPN server that the changes take effect!
 WARNING: untranslated string: ccd modify = Change network
 WARNING: untranslated string: ccd name = Name
 WARNING: untranslated string: ccd net = Static IP address pools
@@ -966,7 +968,6 @@ WARNING: untranslated string: default = Default
 WARNING: untranslated string: default IP address = Default IP Address
 WARNING: untranslated string: desired = Desired
 WARNING: untranslated string: details = Details
-WARNING: untranslated string: dh = Diffie-Hellman-Parameter
 WARNING: untranslated string: dhcp deny known clients: = Deny known clients:
 WARNING: untranslated string: dhcp dns enable update = Enable DNS Update (RFC2136):
 WARNING: untranslated string: dhcp dns key name = Key Name
@@ -1533,7 +1534,6 @@ WARNING: untranslated string: secret = Secret
 WARNING: untranslated string: sent = Sent
 WARNING: untranslated string: server restart = You are not able to save any changes while the OpenVPN server is running.
 WARNING: untranslated string: service boot setting unavailable = No valid runlevel symlink was found for the initscript of this service.
-WARNING: untranslated string: show dh = Show Diffie-Hellman parameters
 WARNING: untranslated string: show otp qrcode = Show OTP QRCode
 WARNING: untranslated string: show tls-auth key = Show tls-auth key
 WARNING: untranslated string: smb daemon = SMB Daemon
