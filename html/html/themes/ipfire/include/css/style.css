@@ -1,4 +1,5 @@
 :root {
+<<<<<<< HEAD
 	--color-green          : #339933;
 	--color-green-invert   : #ffffff;
 	--color-red            : #993333;
@@ -17,6 +18,14 @@
 	--color-primary        : #ff2e52;
 	--color-primary-invert : #ffffff;
 	--color-text           : #363636;
+=======
+	--color-green        : #339933;
+	--color-green-invert : #ffffff;
+	--color-red          : #993333;
+	--color-red-invert   : #ffffff;
+	--color-grey         : #d6d6d6;
+	--color-light-grey   : #f0f0f0;
+>>>>>>> 17ed2e345 (CSS: Automatically stripe all tables)
 }
 
 /* This controls the width of the fixed width layouts */
@@ -417,7 +426,6 @@ table.form tr.action td form {
 	text-align: left;
 }
 
-<<<<<<< HEAD
 .tbl tr:nth-child(odd) td {
 	background-color: var(--color-grey);
 }
@@ -443,6 +451,8 @@ table.form tr.action td form {
 
 =======
 >>>>>>> 7b19c1312 (web: Create a function to show the service status)
+=======
+>>>>>>> 17ed2e345 (CSS: Automatically stripe all tables)
 .tbl th:first-child {
 	border-left: 1px solid #363636;
 	border-top: 1px solid #363636;
