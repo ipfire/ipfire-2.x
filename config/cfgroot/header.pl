@@ -88,7 +88,6 @@ END
 my %menuhash = ();
 my $menu = \%menuhash;
 %settings = ();
-%ethsettings = ();
 %pppsettings = ();
 my @URI = split('\?', $ENV{'REQUEST_URI'});
 
@@ -101,7 +100,6 @@ if ($ENV{'SERVER_ADDR'} && $ENV{'HTTPS'} ne 'on') {
 
 ### Initialize environment
 &General::readhash("${swroot}/main/settings", \%settings);
-&General::readhash("${swroot}/ethernet/settings", \%ethsettings);
 &General::readhash("${swroot}/ppp/settings", \%pppsettings);
 $hostname = $settings{'HOSTNAME'};
 $hostnameintitle = 0;
@@ -379,7 +377,7 @@ sub closebox {
 }
 
 sub green_used() {
-    if ($ethsettings{'GREEN_DEV'} && $ethsettings{'GREEN_DEV'} ne "") {
+    if ($Network::ethernet{'GREEN_DEV'} && $Network::ethernet{'GREEN_DEV'} ne "") {
         return 1;
     }
 
@@ -387,14 +385,14 @@ sub green_used() {
 }
 
 sub orange_used () {
-    if ($ethsettings{'CONFIG_TYPE'} =~ /^[24]$/) {
+    if ($Network::ethernet{'CONFIG_TYPE'} =~ /^[24]$/) {
 	return 1;
     }
     return 0;
 }
 
 sub blue_used () {
-    if ($ethsettings{'CONFIG_TYPE'} =~ /^[34]$/) {
+    if ($Network::ethernet{'CONFIG_TYPE'} =~ /^[34]$/) {
 	return 1;
     }
     return 0;
@@ -432,7 +430,7 @@ sub genmenu {
     if (! blue_used()) {
 	$menu->{'05.firewall'}{'subMenu'}->{'60.wireless'}{'enabled'} = 0;
     }
-    if ( $ethsettings{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $ethsettings{'RED_TYPE'} eq 'STATIC' ) {
+    if ( $Network::ethernet{'CONFIG_TYPE'} =~ /^(1|2|3|4)$/ && $Network::ethernet{'RED_TYPE'} eq 'STATIC' ) {
 	$menu->{'03.network'}{'subMenu'}->{'70.aliases'}{'enabled'} = 1;
     }
 
@@ -440,7 +438,7 @@ sub genmenu {
         $menu->{'01.system'}{'subMenu'}->{'21.wlan'}{'enabled'} = 1;
     }
 
-    if ( $ethsettings{'RED_TYPE'} eq "PPPOE" && $pppsettings{'MONPORT'} ne "" ) {
+    if ( $Network::ethernet{'RED_TYPE'} eq "PPPOE" && $pppsettings{'MONPORT'} ne "" ) {
         $menu->{'02.status'}{'subMenu'}->{'74.modem-status'}{'enabled'} = 1;
     }
 
@@ -613,15 +611,13 @@ sub cleanhtml {
 sub connectionstatus
 {
     my %pppsettings = ();
-    my %netsettings = ();
     my $iface='';
 
     $pppsettings{'PROFILENAME'} = 'None';
     &General::readhash("${General::swroot}/ppp/settings", \%pppsettings);
-    &General::readhash("${General::swroot}/ethernet/settings", \%netsettings);
 
     my $profileused='';
-    unless ( $netsettings{'RED_TYPE'} =~ /^(DHCP|STATIC)$/ ) {
+    unless ($Network::ethernet{'RED_TYPE'} =~ /^(DHCP|STATIC)$/) {
     	$profileused="- $pppsettings{'PROFILENAME'}";
     }
 
@@ -830,13 +826,13 @@ sub colorize {
 		return "<font color='".${Header::colourovpn}."'>".$string."</font>";
 	} elsif ( $string =~ "lo" or $string =~ "127.0.0.0" ){
 		return "<font color='".${Header::colourfw}."'>".$string."</font>";
-	} elsif ( $string =~ $ethsettings{'GREEN_DEV'} or &General::IpInSubnet($string2,$ethsettings{'GREEN_NETADDRESS'},$ethsettings{'GREEN_NETMASK'}) ){
+	} elsif ( $string =~ $Network::ethernet{'GREEN_DEV'} or &General::IpInSubnet($string2,$Network::ethernet{'GREEN_NETADDRESS'},$Network::ethernet{'GREEN_NETMASK'}) ){
 		return "<font color='".${Header::colourgreen}."'>".$string."</font>";
-	} elsif (  $string =~ "ppp0" or $string =~ $ethsettings{'RED_DEV'} or $string =~ "0.0.0.0" or $string =~ $ethsettings{'RED_ADDRESS'} ){
+	} elsif (  $string =~ "ppp0" or $string =~ $Network::ethernet{'RED_DEV'} or $string =~ "0.0.0.0" or $string =~ $Network::ethernet{'RED_ADDRESS'} ){
 		return "<font color='".${Header::colourred}."'>".$string."</font>";
-	} elsif ( $ethsettings{'CONFIG_TYPE'}>1 and ( $string =~ $ethsettings{'BLUE_DEV'} or &General::IpInSubnet($string2,$ethsettings{'BLUE_NETADDRESS'},$ethsettings{'BLUE_NETMASK'}) )){
+	} elsif ( $Network::ethernet{'CONFIG_TYPE'}>1 and ( $string =~ $Network::ethernet{'BLUE_DEV'} or &General::IpInSubnet($string2,$Network::ethernet{'BLUE_NETADDRESS'},$Network::ethernet{'BLUE_NETMASK'}) )){
 		return "<font color='".${Header::colourblue}."'>".$string."</font>";
-	} elsif ( $ethsettings{'CONFIG_TYPE'}>2 and ( $string =~ $ethsettings{'ORANGE_DEV'} or &General::IpInSubnet($string2,$ethsettings{'ORANGE_NETADDRESS'},$ethsettings{'ORANGE_NETMASK'}) )){
+	} elsif ( $Network::ethernet{'CONFIG_TYPE'}>2 and ( $string =~ $Network::ethernet{'ORANGE_DEV'} or &General::IpInSubnet($string2,$Network::ethernet{'ORANGE_NETADDRESS'},$Network::ethernet{'ORANGE_NETMASK'}) )){
 		return "<font color='".${Header::colourorange}."'>".$string."</font>";
 	} else {
 		return $string;

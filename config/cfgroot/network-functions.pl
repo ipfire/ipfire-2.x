@@ -29,8 +29,9 @@ use experimental 'smartmatch';
 use Socket;
 
 # System ethernet configuration
-our %ethernet_settings = ();
-&General::readhash("${General::swroot}/ethernet/settings", \%ethernet_settings);
+our %ethernet = ();
+
+&General::readhash("${General::swroot}/ethernet/settings", \%ethernet);
 
 # List of all possible network zones that can be configured
 our @known_network_zones = ("red", "green", "orange", "blue");
@@ -593,7 +594,7 @@ sub get_intf_by_address($) {
 #
 sub get_available_network_zones () {
 	# Obtain the configuration type from the netsettings hash.
-	my $config_type = $ethernet_settings{'CONFIG_TYPE'};
+	my $config_type = $ethernet{'CONFIG_TYPE'};
 
 	# Hash which contains the conversation from the config mode
 	# to the existing network interface names. They are stored like
@@ -639,8 +640,8 @@ sub is_zone_available() {
 #
 sub is_red_mode_ip() {
 	# Obtain the settings from the netsettings hash
-	my $config_type = $ethernet_settings{'CONFIG_TYPE'};
-	my $red_type = $ethernet_settings{'RED_TYPE'};
+	my $config_type = $ethernet{'CONFIG_TYPE'};
+	my $red_type = $ethernet{'RED_TYPE'};
 
 	# RED must be a network device (configuration 1-4) with dynamic or static IP
 	return (($config_type ~~ [1..4]) && ($red_type ~~ ["DHCP", "STATIC"]));

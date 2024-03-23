@@ -115,10 +115,8 @@ sub log
 }
 sub setup_default_networks
 {
-	my %netsettings=();
+	my %netsettings = %Network::ethernet;
 	my $defaultNetworks = shift;
-
-	&readhash("/var/ipfire/ethernet/settings", \%netsettings);
 
 	# Get current defined networks (Red, Green, Blue, Orange)
 	$defaultNetworks->{$Lang::tr{'fwhost any'}}{'IPT'} = "0.0.0.0/0.0.0.0";
@@ -579,11 +577,10 @@ sub checksubnets
 sub check_net_internal_range{
 	my $network=shift;
 	my ($ip,$cidr)=split(/\//,$network);
-	my %ownnet=();
+	my %ownnet = %Network::ethernet;
 	my $errormessage;
 	$cidr=&iporsubtocidr($cidr);
 	#check if we use one of ipfire's networks (green,orange,blue)
-	&readhash("${General::swroot}/ethernet/settings", \%ownnet);
 	if (($ownnet{'GREEN_NETADDRESS'}  	ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'GREEN_NETADDRESS'},&iporsubtodec($ownnet{'GREEN_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err green'};return $errormessage;}
 	if (($ownnet{'ORANGE_NETADDRESS'}	ne '' && $ownnet{'ORANGE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'ORANGE_NETADDRESS'},&iporsubtodec($ownnet{'ORANGE_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err orange'};return $errormessage;}
 	if (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && &IpInSubnet($ip,$ownnet{'BLUE_NETADDRESS'},&iporsubtodec($ownnet{'BLUE_NETMASK'}))){ $errormessage=$Lang::tr{'ccd err blue'};return $errormessage;}
@@ -593,11 +590,10 @@ sub check_net_internal_range{
 sub check_net_internal_exact{
 	my $network=shift;
 	my ($ip,$cidr)=split(/\//,$network);
-	my %ownnet=();
+	my %ownnet = %Network::ethernet;
 	my $errormessage;
 	$cidr=&iporsubtocidr($cidr);
 	#check if we use one of ipfire's networks (green,orange,blue)
-	&readhash("${General::swroot}/ethernet/settings", \%ownnet);
 	if (($ownnet{'GREEN_NETADDRESS'}  	ne '' && $ownnet{'GREEN_NETADDRESS'} 	ne '0.0.0.0') && &Network::network_equal("$ownnet{'GREEN_NETADDRESS'}/$ownnet{'GREEN_NETMASK'}", $network)){ $errormessage=$Lang::tr{'ccd err green'};return $errormessage;}
 	if (($ownnet{'ORANGE_NETADDRESS'}	ne '' && $ownnet{'ORANGE_NETADDRESS'} 	ne '0.0.0.0') && &Network::network_equal("$ownnet{'ORANGE_NETADDRESS'}/$ownnet{'ORANGE_NETMASK'}", $network)){ $errormessage=$Lang::tr{'ccd err orange'};return $errormessage;}
 	if (($ownnet{'BLUE_NETADDRESS'} 	ne '' && $ownnet{'BLUE_NETADDRESS'} 	ne '0.0.0.0') && &Network::network_equal("$ownnet{'BLUE_NETADDRESS'}/$ownnet{'BLUE_NETMASK'}", $network)){ $errormessage=$Lang::tr{'ccd err blue'};return $errormessage;}
@@ -1039,11 +1035,8 @@ sub MakeUserAgent() {
 sub RedIsWireless() {
 	# This function checks if a network device is a wireless device.
 
-	my %settings = ();
-	&readhash("${General::swroot}/ethernet/settings", \%settings);
-
 	# Find the name of the network device.
-	my $device = $settings{'RED_DEV'};
+	my $device = $Network::ethernet{'RED_DEV'};
 
 	# Exit, if no device is configured.
 	return 0 if ($device eq "");
