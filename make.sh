@@ -1712,6 +1712,7 @@ buildipfire() {
   lfsmake2 rsnapshot
   lfsmake2 mympd
   lfsmake2 wsdd
+  lfsmake2 btrfs-progs
 
   # Kernelbuild ... current we have no platform that need
   # multi kernel builds so KCFG is empty
