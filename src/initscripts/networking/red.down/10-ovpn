@@ -1,6 +1,0 @@
-#!/bin/bash
-
-/usr/local/bin/openvpnctrl -k &
-/usr/local/bin/openvpnctrl -kn2n &
-
-exit 0

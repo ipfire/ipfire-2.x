@@ -46,7 +46,6 @@ etc/rc.d/init.d/networking/orange
 etc/rc.d/init.d/networking/red
 #etc/rc.d/init.d/networking/red.down
 etc/rc.d/init.d/networking/red.down/10-ipsec
-etc/rc.d/init.d/networking/red.down/10-ovpn
 etc/rc.d/init.d/networking/red.down/10-static-routes
 etc/rc.d/init.d/networking/red.down/20-firewall
 etc/rc.d/init.d/networking/red.down/99-beep
@@ -62,7 +61,6 @@ etc/rc.d/init.d/networking/red.up/27-RS-squid
 etc/rc.d/init.d/networking/red.up/30-ddns
 #etc/rc.d/init.d/networking/red.up/35-guardian
 etc/rc.d/init.d/networking/red.up/50-ipsec
-etc/rc.d/init.d/networking/red.up/50-ovpn
 etc/rc.d/init.d/networking/red.up/60-collectd
 etc/rc.d/init.d/networking/red.up/98-leds
 etc/rc.d/init.d/networking/red.up/99-beep
