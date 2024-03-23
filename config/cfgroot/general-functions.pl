@@ -172,12 +172,12 @@ sub setup_default_networks
 		&readhash("${General::swroot}/vpn/settings", \%ipsecsettings);
 		if($ipsecsettings{'RW_NET'} ne '')
 		{
-			my ($ip,$sub) = split(/\//,$ipsecsettings{'RW_NET'});
-			$sub=&General::iporsubtocidr($sub);
-			my @tempipsecsubnet = split("\/", $ipsecsettings{'RW_NET'});
-			$defaultNetworks->{'IPsec RW (' .$ip."/".$sub.")"}{'ADR'} = $tempipsecsubnet[0];
-			$defaultNetworks->{'IPsec RW (' .$ip."/".$sub.")"}{'NAME'} = "IPsec RW";
-			$defaultNetworks->{'IPsec RW (' .$ip."/".$sub.")"}{'NET'} = &getnextip($ip);
+			my $netaddress = &Network::get_netaddress($ipsecsettings{'RW_NET'});
+			my $prefix     = &Network::get_prefix($ipsecsettings{'RW_NET'});
+
+			$defaultNetworks->{"IPsec RW (${netaddress}/${prefix})"}{'ADR'}  = $netaddress;
+			$defaultNetworks->{"IPsec RW (${netaddress}/${prefix})"}{'NAME'} = "IPsec RW";
+			$defaultNetworks->{"IPsec RW (${netaddress}/${prefix})"}{'NET'}  = $netaddress;
 		}
 	}
 }
@@ -446,14 +446,6 @@ sub ip2dec  {
 
 sub dec2ip  {
 	return &Network::bin2ip(shift);
-}
-
-sub getnextip {
-	return &Network::find_next_ip_address(shift, 4);
-}
-
-sub getlastip {
-	return &Network::find_next_ip_address(shift, -1);
 }
 
 sub validipandmask
