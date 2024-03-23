@@ -241,26 +241,11 @@ sub showMainBox() {
 
 	&Header::openbox('100%', 'center', $Lang::tr{'tor'});
 
-
-if ( ($memory != 0) && (@pid[0] ne "///") ){
-		print "<table width='95%' cellspacing='0' class='tbl'>";
-		print "<tr><th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'tor service'}</strong></th></tr>";
-		print "<tr><td class='base'>$Lang::tr{'tor daemon'}</td>";
-		print "<td align='center' colspan='2' width='75%' bgcolor='${Header::colourgreen}'><font color='white'><strong>$Lang::tr{'running'}</strong></font></td></tr>";
-		print "<tr><td class='base'></td>";
-		print "<td bgcolor='$color{'color20'}' align='center'><strong>PID</strong></td>";
-		print "<td bgcolor='$color{'color20'}' align='center'><strong>$Lang::tr{'memory'}</strong></td></tr>";
-		print "<tr><td class='base'></td>";
-		print "<td bgcolor='$color{'color22'}' align='center'>@pid[0]</td>";
-		print "<td bgcolor='$color{'color22'}' align='center'>$memory KB</td></tr>";
-		print "</table>";
-	} else {
-		print "<table width='95%' cellspacing='0' class='tbl'>";
-		print "<tr><th bgcolor='$color{'color20'}' colspan='3' align='left'><strong>$Lang::tr{'tor service'}</strong></th></tr>";
-		print "<tr><td class='base'>$Lang::tr{'tor daemon'}</td>";
-		print "<td align='center' width='75%' bgcolor='${Header::colourred}'><font color='white'><strong>$Lang::tr{'stopped'}</strong></font></td></tr>";
-		print "</table>";
-	}
+	&Header::ServiceStatus({
+		$Lang::tr{'tor service'} => {
+			"process" => "tor",
+		}
+	});
 
 	&Header::closebox();
 
