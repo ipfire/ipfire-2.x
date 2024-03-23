@@ -1,0 +1,333 @@
+#!/bin/sh
+###############################################################################
+#                                                                             #
+# IPFire.org - A linux based firewall                                         #
+# Copyright (C) 2007-2022  IPFire Team  <info@ipfire.org>                     #
+#                                                                             #
+# This program is free software: you can redistribute it and/or modify        #
+# it under the terms of the GNU General Public License as published by        #
+# the Free Software Foundation, either version 3 of the License, or           #
+# (at your option) any later version.                                         #
+#                                                                             #
+# This program is distributed in the hope that it will be useful,             #
+# but WITHOUT ANY WARRANTY; without even the implied warranty of              #
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the               #
+# GNU General Public License for more details.                                #
+#                                                                             #
+# You should have received a copy of the GNU General Public License           #
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.       #
+#                                                                             #
+###############################################################################
+
+. /etc/sysconfig/rc
+. ${rc_functions}
+
+# Include network functions
+. /etc/init.d/networking/functions.network
+
+update_firewall_rules() {
+	local id
+	local enabled
+	local name
+	local x3
+	local type
+	local x5
+	local x6
+	local role
+	local x8
+	local local_subnet
+	local x10
+	local x11
+	local x12
+	local x13
+	local x14
+	local x15
+	local x16
+	local x17
+	local x18
+	local x19
+	local x20
+	local x21
+	local x22
+	local x23
+	local x24
+	local x25
+	local x26
+	local x27
+	local transfer_subnet
+	local proto
+	local port
+	local rest
+
+	local transfer_address
+	local local_address
+
+	# Flush the block chain
+	iptables -F OVPNBLOCK
+
+	# Flush the NAT chain
+	iptables -t nat -F OVPNNAT
+
+	local IFS=','
+
+	# Read all connections
+	while read -r id enabled name x3 type x5 x6 role x8 local_subnet x10 \
+			x11 x12 x13 x14 x15 x16 x17 x18 x19 x20 x21 x22 x23 x24 x25 \
+			x26 x27 transfer_subnet proto port rest; do
+		# Skip all disabled connections
+		if [ "${enabled}" != "on" ]; then
+			continue
+		fi
+
+		# Skip all connections that are not of type 'net'
+		if [ "${type}" != "net" ]; then
+			continue
+		fi
+
+		# Open port
+		iptables -A OVPNINPUTN2N -p "${proto}" --dport "${port}" -j ACCEPT
+
+		# Block all communication from transfer networks
+		iptables -A OVPNBLOCK -s "${transfer_subnet}" -j DROP
+
+		# Calculate NAT addresses
+		transfer_address="$(calculate_transfer_address "${transfer_subnet}" "${role}")"
+		local_address="$(calculate_local_address "${local_subnet}")"
+
+		# NAT all outgoing connections away from the transfer net
+		if [ -n "${transfer_address}" -a -n "${local_address}" ]; then
+			iptables -t nat -A OVPNNAT -s "${transfer_address}" \
+				-j SNAT --to-source "${local_address}"
+		fi
+	done < /var/ipfire/ovpn/ovpnconfig
+}
+
+calculate_transfer_address() {
+	local network="${1}"
+	local role="${2}"
+
+	local address="$(network_get_address "${network}")"
+	local netmask="$(network_get_netmask "${network}")"
+
+	# Convert everything to binary
+	address="$(ip2bin "${address}")"
+	netmask="$(ip2bin "${netmask}")"
+
+	# Make sure the address is the first address of the network
+	(( address &= netmask ))
+
+	case "${role}" in
+		server)
+			(( address += 1 ))
+			;;
+
+		client)
+			(( address += 2 ))
+			;;
+
+		# Exit on any invalid role
+		*)
+			return 1
+			;;
+	esac
+
+	# Return the address
+	bin2ip "${address}"
+}
+
+calculate_local_address() {
+	local network="${1}"
+
+	local addresses=(
+		# GREEN
+		"${GREEN_ADDRESS}"
+
+		# BLUE
+		"${BLUE_ADDRESS}"
+
+		# ORANGE
+		"${ORANGE_ADDRESS}"
+	)
+
+	local address
+	for address in "${addresses[@]}"; do
+		if network_address_in_network "${address}" "${network}"; then
+			echo "${address}"
+			return 0
+		fi
+	done
+
+	return 1
+}
+
+all_connections() {
+	local command="${1}"
+	shift
+
+	local id
+	local enabled
+	local name
+	local x3
+	local type
+	local rest
+
+	local IFS=,
+
+	# Read all connections
+	while read -r id enabled name x3 type rest; do
+		# Filter for all connections that of type 'net'
+		case "${type}" in
+			net)
+				# Check if the connection is in the filter list
+				if [ $# -gt 0 ]; then
+					local found=0
+
+					local n
+					for n in $@; do
+						if [ "${name}" = "${n}" ]; then
+							found=1
+							break
+						fi
+					done
+
+					# Skip this connection if not found
+					if [ "${found}" -eq 0 ]; then
+						continue
+					fi
+				fi
+
+				# Run the command
+				"${command}" "${name}"
+				;;
+		esac
+	done < /var/ipfire/ovpn/ovpnconfig
+}
+
+start_connections() {
+	local connection
+	local failed=0
+
+	for connection in $@; do
+		start "${connection}" || failed=1
+	done
+
+	return "${failed}"
+}
+
+start() {
+	local name="${1}"
+
+	local id
+	local enabled
+	local _name
+	local rest
+
+	local IFS=,
+
+	# Read the connection
+	while read -r id enabled _name rest; do
+		if [ "${name}" = "${_name}" ]; then
+			if [ "${enabled}" = "on" ]; then
+				break
+
+			# Log an error if the connection is not enabled
+			else
+				boot_mesg "OpenVPN N2N connection '${name}' is not enabled" "${WARNING}"
+				echo_warning
+
+				return 0
+			fi
+		fi
+	done < /var/ipfire/ovpn/ovpnconfig
+
+	# Create path to the configuration file
+	local config="/var/ipfire/ovpn/n2nconf/${name}/${name}.conf"
+
+	# Check if the connection exists
+	if [ ! -r "${config}" ]; then
+		boot_mesg "OpenVPN N2N connection '${name}' does not exist" "${FAILURE}"
+		echo_failure
+
+		return 1
+	fi
+
+	boot_mesg "Starting OpenVPN N2N connection '${name}'..."
+
+	PIDFILE="/var/run/${name}n2n.pid" \
+		loadproc /usr/sbin/openvpn --config "${config}"
+}
+
+stop() {
+	local name="${1}"
+
+	boot_mesg "Stopping OpenVPN N2N connection '${name}'..."
+
+	PIDFILE="/var/run/${name}n2n.pid" \
+		killproc /usr/sbin/openvpn
+}
+
+reload() {
+	local name="${1}"
+
+	boot_mesg "Reloading OpenVPN N2N connection '${name}'..."
+
+	PIDFILE="/var/run/${name}n2n.pid" \
+		reloadproc /usr/sbin/openvpn
+}
+
+status() {
+	local name="${1}"
+
+	local pidlist
+
+	PIDFILE="/var/run/${name}n2n.pid" getpids "/usr/bin/openvpn"
+
+	if [ -n "${pidlist}" ]; then
+		echo -e "${INFO}Connection '${name}' is running with Process ID(s) ${pidlist}.${NORMAL}"
+	else
+		echo -e "${INFO}Connection '${name}' is not running.${NORMAL}"
+		return 1
+	fi
+}
+
+case "${1}" in
+	start)
+		# Update all firewall rules
+		update_firewall_rules
+
+		# Start all connections
+		all_connections start "${@:2}"
+		;;
+
+	stop)
+		# Update all firewall rules
+		update_firewall_rules
+
+		# Stop all connections
+		all_connections stop "${@:2}"
+		;;
+
+	reload)
+		# Update all firewall rules
+		update_firewall_rules
+
+		# Reload all connections
+		all_connections reload "${@:2}"
+		;;
+
+	restart)
+		${0} stop
+		sleep 1
+		${0} start
+		;;
+
+	status)
+		# Show the status of all connections
+		all_connections status "${@:2}"
+		;;
+
+	*)
+		echo "Usage: ${0} {start|stop|reload|restart|status}"
+		exit 1
+		;;
+esac
