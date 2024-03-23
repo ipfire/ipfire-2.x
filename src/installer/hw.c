@@ -44,6 +44,8 @@
 
 #include "hw.h"
 
+extern FILE* flog;
+
 static int system_chroot(const char* output, const char* path, const char* cmd) {
 	char chroot_cmd[STRING_SIZE];
 

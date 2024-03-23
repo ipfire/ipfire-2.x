@@ -29,6 +29,8 @@
 
 extern char url[STRING_SIZE];
 
+FILE* flog = NULL;
+
 static int newtChecklist(const char* title, const char* message,
 		unsigned int width, unsigned int height, unsigned int num_entries,
 		const char** entries, int* states) {
@@ -377,7 +379,6 @@ int main(int argc, char *argv[]) {
 	sethostname(DISTRO_SNAME, 10);
 
 	/* Log file/terminal stuff. */
-	FILE* flog = NULL;
 	if (argc >= 2) {
 		logfile = argv[1];
 
