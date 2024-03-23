@@ -354,6 +354,10 @@ case "${1}" in
 		all_connections status "${@:2}"
 		;;
 
+	firewall-rules)
+		update_firewall_rules
+		;;
+
 	delete)
 		delete "${2}"
 		;;

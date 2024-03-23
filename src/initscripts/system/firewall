@@ -423,8 +423,8 @@ iptables_init() {
 	# Populate IPsec chains
 	/usr/lib/firewall/ipsec-policy
 
-	# Apply OpenVPN firewall rules
-	/usr/local/bin/openvpnctrl --firewall-rules
+	# Apply OpenVPN N2N firewall rules
+	/etc/rc.d/init.d/openvpn-n2n firewall-rules
 
 	# run wirelessctrl
 	/usr/local/bin/wirelessctrl
