@@ -563,7 +563,12 @@ static int hw_calculate_partition_table(struct hw* hw, struct hw_destination* de
 		dest->size_bootldr = 0;
 	}
 
-	dest->size_boot = hw_boot_size(dest);
+	// Disable seperate boot partition for BTRFS installations.
+	if(dest->filesystem == HW_FS_BTRFS) {
+		dest->size_boot = 0;
+	} else {
+		dest->size_boot = hw_boot_size(dest);
+	}
 
 	// Create an EFI partition when running in EFI mode
 	if (hw->efi)
