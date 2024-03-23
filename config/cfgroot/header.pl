@@ -295,17 +295,6 @@ END
 
 ###############################################################################
 #
-# print page opening html layout without menu
-# @param page title
-# @param boh
-# @param extra html code for html head section
-sub openpagewithoutmenu {
-	openpage(shift,shift,shift,1);
-	return;
-}
-
-###############################################################################
-#
 # print page closing html layout
 
 sub closepage () {
