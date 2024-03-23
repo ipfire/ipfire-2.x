@@ -440,18 +440,6 @@ sub getnetworkip {
 	return &Network::get_netaddress($arg);
 }
 
-sub getccdbc
-{
-	#Gets: IP in Form ("192.168.0.0/24")
-	#Gives: Broadcastaddress of network
-	my $ccdnet=$_;
-	my ($ccdip,$ccdsubnet) = split "/",$ccdnet;
-	my $ip_address_binary = inet_aton( $ccdip );
-	my $netmask_binary    = ~pack("N", (2**(32-$ccdsubnet))-1);
-	my $broadcast_address  = inet_ntoa( $ip_address_binary | ~$netmask_binary );
-	return $broadcast_address;
-}
-
 sub ip2dec  {
 	return &Network::ip2bin(shift);
 }
