@@ -522,11 +522,10 @@ loadproc()
 		(
 			${cmd[@]} &>/dev/null
 		) &
-		pid="$$"
+		pid="$!"
 		evaluate_retval
 	else
 		${cmd[@]}
-		pid="$$"
 		evaluate_retval # This is "Probably" not LSB compliant, but required to be compatible with older bootscripts
 	fi
 
