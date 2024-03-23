@@ -1123,11 +1123,81 @@ int hw_umount_filesystems(struct hw_destination* dest, const char* prefix) {
 		return -1;
 
 	// root
-	r = hw_umount(prefix, NULL);
+	if(dest->filesystem == HW_FS_BTRFS) {
+		r = hw_umount_btrfs_layout();
+	} else {
+		r = hw_umount(prefix, NULL);
+	}
+
 	if (r)
 		return -1;
 
 	return 0;
+}
+
+int hw_umount_btrfs_layout() {
+	const struct btrfs_subvolumes* subvolume = NULL;
+	char path[STRING_SIZE];
+	int counter = 0;
+	int retry = 1;
+	int r;
+
+	do {
+		// Reset the retry marker
+		retry = 0;
+
+		// Loop through the list of subvolumes
+		for (subvolume = btrfs_subvolumes; subvolume->name; subvolume++) {
+			// Abort if the subvolume path could not be assigned.
+			r = snprintf(path, sizeof(path), "%s%s", DESTINATION_MOUNT_PATH, subvolume->mount_path);
+
+			if (r < 0) {
+				return r;
+			}
+
+			// Try to umount the subvolume.
+			r = umount2(path, 0);
+
+			// Handle return codes.
+			if (r) {
+				switch(errno) {
+					case EBUSY:
+						// Set marker to retry the umount.
+						retry = 1;
+
+						// Ignore if the subvolume could not be unmounted yet,
+						// because it is still used.
+						continue;
+
+					case EINVAL:
+						// Ignore if the subvolume already has been unmounted
+						continue;
+					case ENOENT:
+						// Ignore if the directory does not longer exist.
+						continue;
+					default:
+						fprintf(flog, "Could not umount %s from %s - Error: %d\n", subvolume->name, path, r);
+						return r;
+				}
+			}
+
+			// Print log message
+			fprintf(flog, "Umounted %s from %s\n", subvolume->name, path);
+		}
+
+		// Abort loop if all mountpoins got umounted
+		if (retry == 0) {
+			return 0;
+		}
+
+		// Abort after five failed umount attempts
+		if (counter == 5) {
+			return -1;
+		}
+
+		// Increment counter.
+		counter++;
+	} while (1);
 }
 
 int hw_destroy_raid_superblocks(const struct hw_destination* dest, const char* output) {
