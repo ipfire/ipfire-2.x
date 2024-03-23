@@ -118,13 +118,13 @@ sub setup_default_networks
 {
 	my %netsettings=();
 	my $defaultNetworks = shift;
-	
+
 	&readhash("/var/ipfire/ethernet/settings", \%netsettings);
-	
+
 	# Get current defined networks (Red, Green, Blue, Orange)
 	$defaultNetworks->{$Lang::tr{'fwhost any'}}{'IPT'} = "0.0.0.0/0.0.0.0";
 	$defaultNetworks->{$Lang::tr{'fwhost any'}}{'NAME'} = "ALL";
-		
+
 	$defaultNetworks->{$Lang::tr{'green'}}{'IPT'} = "$netsettings{'GREEN_NETADDRESS'}/$netsettings{'GREEN_NETMASK'}";
 	$defaultNetworks->{$Lang::tr{'green'}}{'NET'} = "$netsettings{'GREEN_ADDRESS'}";
 	$defaultNetworks->{$Lang::tr{'green'}}{'NAME'} = "GREEN";
@@ -145,7 +145,7 @@ sub setup_default_networks
 		$defaultNetworks->{$Lang::tr{'blue'}}{'NET'} = "$netsettings{'BLUE_ADDRESS'}";
 		$defaultNetworks->{$Lang::tr{'blue'}}{'NAME'} = "BLUE";
 	}
-	
+
 	#IPFire himself
 	$defaultNetworks->{'IPFire'}{'NAME'} = "IPFire";
 
@@ -183,7 +183,7 @@ sub setup_default_networks
 }
 sub get_aliases
 {
-	
+
 	my $defaultNetworks = shift;
 	open(FILE, "${General::swroot}/ethernet/aliases") or die 'Unable to open aliases file.';
 	my @current = <FILE>;
@@ -199,7 +199,7 @@ sub get_aliases
 			}
 			$defaultNetworks->{$temp[2]}{'IPT'} = "$temp[0]";
 			$defaultNetworks->{$temp[2]}{'NET'} = "$temp[0]";
-			
+
 			$ctr++;
 		}
 	}
@@ -210,14 +210,14 @@ sub readhash
 	my $filename = $_[0];
 	my $hash = $_[1];
 	my ($var, $val);
-	
-	
+
+
 	# Some ipcop code expects that readhash 'complete' the hash if new entries
 	# are presents. Not clear it !!!
 	#%$hash = ();
 
 	open(FILE, $filename) or die "Unable to read file $filename";
-	
+
 	while (<FILE>)
 	{
 		chop;
@@ -251,11 +251,11 @@ sub writehash
 	my $filename = $_[0];
 	my $hash = $_[1];
 	my ($var, $val);
-	
+
 	# write cgi vars to the file.
 	open(FILE, ">${filename}") or die "Unable to write file $filename";
 	flock FILE, 2;
-	foreach $var (keys %$hash) 
+	foreach $var (keys %$hash)
 	{
 		if ( $var eq "__CGI__"){next;}
 		$val = $hash->{$var};
@@ -291,7 +291,7 @@ sub writehashpart
 	# write cgi vars to the file.
 	open(FILE, ">${filename}") or die "Unable to write file $filename";
 	flock FILE, 2;
-	foreach $var (keys %oldhash) 
+	foreach $var (keys %oldhash)
 	{
 		if ( $var eq "__CGI__"){next;}
 		$val = $oldhash{$var};
@@ -352,7 +352,7 @@ sub validip
 
 	if (!($ip =~ /^(\d+)\.(\d+)\.(\d+)\.(\d+)$/)) {
 		return 0; }
-	else 
+	else
 	{
 		my @octets = ($1, $2, $3, $4);
 		foreach $_ (@octets)
@@ -397,7 +397,7 @@ sub subtocidr {
 sub cidrtosub {
 	return &Network::convert_prefix2netmask(shift);
 }
-  
+
 sub iporsubtodec
 {
 	#Gets: Ip address or subnetmask in decimal oder CIDR
@@ -421,7 +421,7 @@ sub iporsubtodec
 							 return $net."/".$mask;
 				}
 			}
-		}	
+		}
 	}
 	#Subnet in binary format?
 	if ($mask=~/^(\d{1,2})$/ && (($1<=32 && $1>=0))){
@@ -433,8 +433,8 @@ sub iporsubtodec
 	}
 	return 3;
 }
-  
-  
+
+
 sub iporsubtocidr
 {
 	#gets: Ip Address  or subnetmask in decimal oder CIDR
@@ -457,7 +457,7 @@ sub iporsubtocidr
 							 return $net."/".&General::subtocidr($mask);
 				}
 			}
-		}	
+		}
 	}
 	#Subnet already in binary format?
 	if ($mask=~/^(\d{1,2})$/ && (($1<=32 && $1>=0))){
@@ -507,10 +507,10 @@ sub getlastip {
 sub validipandmask
 {
 	#Gets: Ip address in 192.168.0.0/24 or 192.168.0.0/255.255.255.0 and checks if subnet valid
-	#Gives: True bzw 0 if success or false 
+	#Gives: True bzw 0 if success or false
 	my $ccdnet=$_[0];
 	my $subcidr;
-	
+
 	if (!($ccdnet =~ /^(.*?)\/(.*?)$/)) {
 		return 0;
 	}
@@ -530,7 +530,7 @@ sub validipandmask
 		}else{
 			return 0;
 		}
-		
+
 	}
 	return 0;
 }
@@ -581,13 +581,13 @@ sub checksubnets
 	&readhasharray("${General::swroot}/ovpn/ccd.conf", \%ccdconfhash);
 	foreach my $key (keys %ccdconfhash) {
 		@ccdconf=split(/\//,$ccdconfhash{$key}[1]);
-		if ($ccdname eq $ccdconfhash{$key}[0]) 
+		if ($ccdname eq $ccdconfhash{$key}[0])
 		{
 			$errormessage=$errormessage.$Lang::tr{'ccd err nameexist'}."<br>";
 			return $errormessage;
 		}
 		my ($newip,$newsub) = split(/\//,$ccdnet);
-		if (&IpInSubnet($newip,$ccdconf[0],&iporsubtodec($ccdconf[1]))) 
+		if (&IpInSubnet($newip,$ccdconf[0],&iporsubtodec($ccdconf[1])))
 		{
 			$errormessage=$errormessage.$Lang::tr{'ccd err issubnet'}." $ccdconfhash{$key}[0]<br>";
 			return $errormessage;
@@ -623,7 +623,7 @@ sub checksubnets
 			return $errormessage;
 		}
 	}
-	
+
 	#call check_net_internal
 	if ($checktype eq "exact")
 	{
@@ -781,7 +781,7 @@ sub validfqdn
 		# but no more than 63 characters
 		if (length ($parts[$index]) < 1 || length ($parts[$index]) > 63) {
 			return 0;}
-		if ($index eq 0) {		
+		if ($index eq 0) {
 			# This is the hostname part
 			# Only valid characters are a-z, A-Z, 0-9 and -
 			if ($parts[$index] !~ /^[a-zA-Z0-9-]*$/) {
@@ -792,7 +792,7 @@ sub validfqdn
 			# Last character can only be a letter or a digit
 			if (substr ($parts[$index], -1, 1) !~ /^[a-zA-Z0-9]*$/) {
 				return 0;}
-		} else{				
+		} else{
 			# This is the domain part
 			# Only valid characters are a-z, A-Z, 0-9, _ and -
 			if ($parts[$index] !~ /^[a-zA-Z0-9_-]*$/) {
@@ -802,23 +802,23 @@ sub validfqdn
 	return 1;
 }
 
-sub validportrange # used to check a port range 
+sub validportrange # used to check a port range
 {
 	my $port = $_[0]; # port values
 	$port =~ tr/-/:/; # replace all - with colons just in case someone used -
 	my $srcdst = $_[1]; # is it a source or destination port
 
 	if (!($port =~ /^(\d+)\:(\d+)$/)) {
-	
-		if (!(&validport($port))) {	 
+
+		if (!(&validport($port))) {
 			if ($srcdst eq 'src'){
 				return $Lang::tr{'source port numbers'};
 			} else 	{
 				return $Lang::tr{'destination port numbers'};
-			} 
+			}
 		}
 	}
-	else 
+	else
 	{
 		my @ports = ($1, $2);
 		if ($1 >= $2){
@@ -826,16 +826,16 @@ sub validportrange # used to check a port range
 				return $Lang::tr{'bad source range'};
 			} else 	{
 				return $Lang::tr{'bad destination range'};
-			} 
+			}
 		}
 		foreach $_ (@ports)
 		{
 			if (!(&validport($_))) {
 				if ($srcdst eq 'src'){
-					return $Lang::tr{'source port numbers'}; 
+					return $Lang::tr{'source port numbers'};
 				} else 	{
 					return $Lang::tr{'destination port numbers'};
-				} 
+				}
 			}
 		}
 		return;
@@ -948,7 +948,7 @@ sub findhasharraykey {
     }
 }
 
-sub srtarray 
+sub srtarray
 # Darren Critchley - darrenc@telus.net - (c) 2003
 # &srtarray(SortOrder, AlphaNumeric, SortDirection, ArrayToBeSorted)
 # This subroutine will take the following parameters:
@@ -960,7 +960,7 @@ sub srtarray
 #   Returns an array that is sorted to your specs
 #
 #   If SortOrder is greater than the elements in array, then it defaults to the first element
-# 
+#
 {
 	my ($colno, $alpnum, $srtdir, @tobesorted) = @_;
 	my @tmparray;
@@ -1056,12 +1056,12 @@ sub FetchPublicIp {
 #	IP
 #	hostname
 #	domain
-# Output 
+# Output
 #	1 IP matches host.domain
 #	0 not in sync
 #
 sub DyndnsServiceSync ($;$;$) {
- 
+
     my ($ip,$hostName,$domain) = @_;
     my @addresses;
 
@@ -1078,7 +1078,7 @@ sub DyndnsServiceSync ($;$;$) {
     }
 
     if ($addresses[0] ne '') { 		   	# got something ?
-	#&General::log("name:$addresses[0], alias:$addresses[1]");			    
+	#&General::log("name:$addresses[0], alias:$addresses[1]");
 	# Build clear text list of IP
 	@addresses = map ( &Socket::inet_ntoa($_), @addresses[4..$#addresses]);
 	if (grep (/$ip/, @addresses)) {
@@ -1225,11 +1225,11 @@ sub read_file_utf8 ($) {
 sub write_file_utf8 ($) {
 	my ($file, $content) = @_;
 
-	open my $out, '>:encoding(UTF-8)', $file or die "Could not open '$file' for writing $!";;           
+	open my $out, '>:encoding(UTF-8)', $file or die "Could not open '$file' for writing $!";;
 	print $out $content;
 	close $out;
 
-	return; 
+	return;
 }
 
 my $FIREWALL_RELOAD_INDICATOR = "${General::swroot}/firewall/reread";
@@ -1357,7 +1357,7 @@ sub get_nameservers () {
 }
 
 # Function to format a string containing the amount of bytes to
-# something human-readable. 
+# something human-readable.
 sub formatBytes {
 	# Private array which contains the units.
 	my @units = qw(B KB MB GB TB PB);
