@@ -794,19 +794,6 @@ sub IpInSubnet {
 	return &Network::ip_address_in_network($addr, "$network/$netmask");
 }
 
-#
-# Return the following IP (IP+1) in dotted notation.
-# Call: NextIP ('1.1.1.1');
-# Return: '1.1.1.2'
-#
-sub NextIP {
-	return &Network::find_next_ip_address(shift, 1);
-}
-
-sub NextIP2 {
-	return &Network::find_next_ip_address(shift, 4);
-}
-
 sub ipcidr {
 	my ($ip,$cidr) = &Net::IPv4Addr::ipv4_parse(shift);
 	return "$ip\/$cidr";
