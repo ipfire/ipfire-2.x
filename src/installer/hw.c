@@ -935,6 +935,7 @@ int hw_create_btrfs_layout(const char* path, const char* output) {
 
 int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 	char target[STRING_SIZE];
+	int r;
 
 	assert(*prefix == '/');
 
@@ -962,9 +963,17 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 	}
 
 	// root
-	int r = hw_mount(dest->part_root, prefix, filesystem, 0);
-	if (r)
-		return r;
+	if (dest->filesystem == HW_FS_BTRFS) {
+		r = hw_mount_btrfs_subvolumes(dest->part_root);
+
+		if (r)
+			return r;
+	} else {
+		r = hw_mount(dest->part_root, prefix, filesystem, 0);
+
+		if (r)
+			return r;
+	}
 
 	// boot
 	snprintf(target, sizeof(target), "%s%s", prefix, HW_PATH_BOOT);
@@ -1025,6 +1034,48 @@ int hw_mount_filesystems(struct hw_destination* dest, const char* prefix) {
 	if (r && errno != ENOENT)
 		return r;
 
+	return 0;
+}
+
+int hw_mount_btrfs_subvolumes(const char* source) {
+	const struct btrfs_subvolumes* subvolume = NULL;
+	char path[STRING_SIZE];
+	char options[STRING_SIZE];
+	int r;
+
+	// Loop through the list of known subvolumes.
+	for ( subvolume = btrfs_subvolumes; subvolume->name; subvolume++ ) {
+		// Assign subvolume path.
+		r = snprintf(path, sizeof(path), "%s%s", DESTINATION_MOUNT_PATH, subvolume->mount_path);
+
+		if (r < 0) {
+			return r;
+		}
+
+		// Assign subvolume name.
+		r = snprintf(options, sizeof(options), "subvol=%s,", subvolume->name);
+		if (r < 0) {
+			return r;
+		}
+
+		// Create the directory.
+		r = hw_mkdir(path, S_IRWXU|S_IRWXG|S_IRWXO);
+
+		// Abort if the directory could not be created.
+		if(r != 0 && errno != EEXIST)
+			return r;
+
+		// Print log message
+		fprintf(flog, "Mounting subvolume %s to %s\n", subvolume->name, subvolume->mount_path);
+
+		// Try to mount the subvolume.
+		r = mount(source, path, "btrfs", NULL, options);
+
+		if (r) {
+			return r;
+		}
+	}
+	
 	return 0;
 }
 
