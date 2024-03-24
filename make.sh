@@ -1714,6 +1714,7 @@ buildipfire() {
   lfsmake2 wsdd
   lfsmake2 btrfs-progs
   lfsmake2 inotify-tools
+  lfsmake2 grub-btrfs
 
   # Kernelbuild ... current we have no platform that need
   # multi kernel builds so KCFG is empty

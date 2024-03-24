@@ -91,6 +91,7 @@ $(TARGET) :
 		install -v -m 755 $$i /etc/rc.d/helper/; \
 	done
 
+	ln -sf ../init.d/grub-btrfsd		/etc/rc.d/rc0.d/K01grub-btrfsd
 	ln -sf ../init.d/imspetor		/etc/rc.d/rc0.d/K01imspetor
 	ln -sf ../init.d/motion			/etc/rc.d/rc0.d/K01motion
 	ln -sf ../init.d/vdradmin		/etc/rc.d/rc0.d/K01vdradmin
@@ -132,10 +133,12 @@ $(TARGET) :
 	ln -sf ../init.d/fcron			/etc/rc.d/rc3.d/S40fcron
 	ln -sf ../../sysconfig/rc.local		/etc/rc.d/rc3.d/S98rc.local
 	ln -sf ../init.d/sslh			/etc/rc.d/rc3.d/S98sslh
+	ln -sf ../init.d/grub-btrfsd		/etc/rc.d/rc3.d/S99grub-btrfsd
 	ln -sf ../init.d/imspetor		/etc/rc.d/rc3.d/S99imspetor
 	ln -sf ../init.d/motion			/etc/rc.d/rc3.d/S99motion
 	ln -sf ../init.d/vdradmin		/etc/rc.d/rc3.d/S99vdradmin
 
+	ln -sf ../init.d/grub-btrfsd		/etc/rc.d/rc6.d/K01grub-btrfsd
 	ln -sf ../init.d/imspetor		/etc/rc.d/rc6.d/K01imspetor
 	ln -sf ../init.d/motion			/etc/rc.d/rc6.d/K01motion
 	ln -sf ../init.d/vdradmin		/etc/rc.d/rc6.d/K01vdradmin
