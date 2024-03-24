@@ -631,8 +631,12 @@ static int hw_calculate_partition_table(struct hw* hw, struct hw_destination* de
 	return 0;
 }
 
-struct hw_destination* hw_make_destination(struct hw* hw, int part_type, struct hw_disk** disks, int disable_swap) {
+struct hw_destination* hw_make_destination(struct hw* hw, int part_type, struct hw_disk** disks,
+		int disable_swap, int filesystem) {
 	struct hw_destination* dest = malloc(sizeof(*dest));
+
+	// Assign filesystem
+	dest->filesystem = filesystem;
 
 	if (part_type == HW_PART_TYPE_NORMAL) {
 		dest->disk1 = *disks;
@@ -654,9 +658,6 @@ struct hw_destination* hw_make_destination(struct hw* hw, int part_type, struct 
 	int r = hw_calculate_partition_table(hw, dest, disable_swap);
 	if (r)
 		return NULL;
-
-	// Set default filesystem
-	dest->filesystem = HW_FS_DEFAULT;
 
 	return dest;
 }

@@ -685,34 +685,9 @@ int main(int argc, char *argv[]) {
 
 	hw_free_disks(disks);
 
-	struct hw_destination* destination = hw_make_destination(hw, part_type,
-		selected_disks, config.disable_swap);
-
-	if (!destination) {
-		errorbox(_("Your harddisk is too small."));
-		goto EXIT;
-	}
-
-	fprintf(flog, "Destination drive: %s\n", destination->path);
-	fprintf(flog, "  bootldr: %s (%lluMB)\n", destination->part_bootldr, BYTES2MB(destination->size_bootldr));
-	fprintf(flog, "  boot   : %s (%lluMB)\n", destination->part_boot, BYTES2MB(destination->size_boot));
-	fprintf(flog, "  ESP    : %s (%lluMB)\n", destination->part_boot_efi, BYTES2MB(destination->size_boot_efi));
-	fprintf(flog, "  swap   : %s (%lluMB)\n", destination->part_swap, BYTES2MB(destination->size_swap));
-	fprintf(flog, "  root   : %s (%lluMB)\n", destination->part_root, BYTES2MB(destination->size_root));
-	fprintf(flog, "Memory   : %lluMB\n", BYTES2MB(hw_memory()));
-
-	// Warn the user if there is not enough space to create a swap partition
-	if (!config.unattended) {
-		if (!config.disable_swap && !*destination->part_swap) {
-			rc = newtWinChoice(title, _("OK"), _("Cancel"),
-				_("Your harddisk is very small, but you can continue without a swap partition."));
-
-			if (rc != 1)
-				goto EXIT;
-		}
-	}
-
 	// Filesystem selection
+	int filesystem = HW_FS_DEFAULT;
+
 	if (!config.unattended) {
 		struct filesystems {
 			int fstype;
@@ -741,7 +716,34 @@ int main(int argc, char *argv[]) {
 		if (rc == 2)
 			goto EXIT;
 
-		destination->filesystem = filesystems[fs_choice].fstype;
+		filesystem = filesystems[fs_choice].fstype;
+	}
+
+	struct hw_destination* destination = hw_make_destination(hw, part_type,
+		selected_disks, config.disable_swap, filesystem);
+
+	if (!destination) {
+		errorbox(_("Your harddisk is too small."));
+		goto EXIT;
+	}
+
+	fprintf(flog, "Destination drive: %s\n", destination->path);
+	fprintf(flog, "  bootldr: %s (%lluMB)\n", destination->part_bootldr, BYTES2MB(destination->size_bootldr));
+	fprintf(flog, "  boot   : %s (%lluMB)\n", destination->part_boot, BYTES2MB(destination->size_boot));
+	fprintf(flog, "  ESP    : %s (%lluMB)\n", destination->part_boot_efi, BYTES2MB(destination->size_boot_efi));
+	fprintf(flog, "  swap   : %s (%lluMB)\n", destination->part_swap, BYTES2MB(destination->size_swap));
+	fprintf(flog, "  root   : %s (%lluMB)\n", destination->part_root, BYTES2MB(destination->size_root));
+	fprintf(flog, "Memory   : %lluMB\n", BYTES2MB(hw_memory()));
+
+	// Warn the user if there is not enough space to create a swap partition
+	if (!config.unattended) {
+		if (!config.disable_swap && !*destination->part_swap) {
+			rc = newtWinChoice(title, _("OK"), _("Cancel"),
+				_("Your harddisk is very small, but you can continue without a swap partition."));
+
+			if (rc != 1)
+				goto EXIT;
+		}
 	}
 
 	// Setting up RAID if needed.
