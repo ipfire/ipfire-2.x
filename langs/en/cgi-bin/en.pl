@@ -1467,6 +1467,7 @@
 'ids subscription code required' => 'The selected ruleset requires a subscription code',
 'ids the choosen provider is already in use' => 'The choosen provider is already in use.',
 'ids unable to download the ruleset' => 'Unable to download the ruleset',
+'ids unsupported provider' => 'Provider is not supported anymore',
 'ids visit provider website' => 'Visit provider website',
 'ids working' => 'Changes are being applied. Please wait until all operations have completed successfully...',
 'iface' => 'Iface',

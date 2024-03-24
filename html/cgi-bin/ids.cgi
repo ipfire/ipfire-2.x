@@ -1162,6 +1162,7 @@ END
 				my $subscription_code = $used_providers{$id}[1];
 				my $autoupdate_status = $used_providers{$id}[2];
 				my $status  = $used_providers{$id}[3];
+				my $unsupported;
 
 				# Check if the item number is even or not.
 				if ($line % 2) {
@@ -1171,13 +1172,9 @@ END
 				}
 
 				# Handle providers which are not longer supported.
-				unless ($provider_name) {
-					# Set the provider name to the provider handle
-					# to display something helpful.
-					$provider_name = $provider;
-
-					# Assign background color
-					$col="bgcolor='#FF4D4D'";
+				unless ($IDS::Ruleset::Providers{$provider}{'dl_url'}) {
+					# Mark this provider as unsupported.
+					$unsupported = "<img src='/blob.gif' alt='*'>";
 				}
 
 				# Choose icons for the checkboxes.
@@ -1206,7 +1203,7 @@ END
 
 print <<END;
 				<tr>
-					<td width='33%' class='base' $col>$provider_name</td>
+					<td width='33%' class='base' $col>$provider_name$unsupported</td>
 					<td width='30%' class='base' $col>$rulesetdate</td>
 
 					<td align='center' $col>
@@ -1262,10 +1259,15 @@ print <<END;
 	<hr>
 	<br>
 
-	<div align='right'>
-		<table width='100%'>
-			<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-				<tr>
+	<table width='100%'>
+		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+			<tr>
+				<td>
+END
+					print "<img src='/blob.gif' alt='*'> $Lang::tr{'ids unsupported provider'}\n";
+print <<END;
+				</td>
+				<td><div align='right'>
 END
 
 					# Only show this button if a ruleset provider is configured.
@@ -1274,10 +1276,10 @@ END
 					}
 print <<END;
 					<input type='submit' name='PROVIDERS' value='$Lang::tr{'ids add provider'}'>
-				</tr>
-			</form>
-		</table>
-	</div>
+					</div></td>
+			</tr>
+		</form>
+	</table>
 END
 
 	&Header::closebox();
@@ -1709,6 +1711,12 @@ END
 							# Grab the provider handle.
 							my $provider = $tmphash{$provider_name};
 
+							# Check if we are not in edit mode.
+							if ($cgiparams{'PROVIDERS'} ne "$Lang::tr{'edit'}") {
+								# Skip unsupported ruleset provider.
+								next unless(exists($IDS::Ruleset::Providers{$provider}{"dl_url"}));
+							}
+
 							# Pre-select the provider if one is given.
 							if (($used_providers{$cgiparams{'ID'}}[0] eq "$provider") || ($cgiparams{'PROVIDER'} eq "$provider")) {
 								$selected{$provider} = "selected='selected'";
@@ -1809,7 +1817,7 @@ sub show_additional_provider_actions() {
 	}
 
 	# Disable the manual update button if the provider is not longer supported.
-	unless ($IDS::Ruleset::Providers{$provider}) {
+	unless ($IDS::Ruleset::Providers{$provider}{"dl_url"}) {
 		$disabled_update = "disabled";
 	}
 

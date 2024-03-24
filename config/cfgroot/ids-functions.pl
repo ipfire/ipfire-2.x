@@ -1027,11 +1027,14 @@ sub _store_error_message ($) {
 sub _get_dl_rulesfile($) {
 	my ($provider) = @_;
 
-	# Check if the requested provider is known.
-	if ($IDS::Ruleset::Providers{$provider}) {
-		# Gather the download type for the given provider.
-		my $dl_type = $IDS::Ruleset::Providers{$provider}{'dl_type'};
+	# Abort if the requested provider is not known.
+	return unless($IDS::Ruleset::Providers{$provider});
 
+	# Try to gather the download type for the given provider.
+	my $dl_type = $IDS::Ruleset::Providers{$provider}{'dl_type'};
+
+	# Check if a download type could be grabbed.
+	if ($dl_type) {
 		# Obtain the file suffix for the download file type.
 		my $suffix = $dl_type_to_suffix{$dl_type};
 

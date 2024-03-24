@@ -97,6 +97,34 @@ our %Providers = (
 		dl_type => "plain",
 	},
 
+	# Positive Technologies Attack Detection Team rules.
+	attack_detection => {
+		summary => "PT Attack Detection Team Rules",
+		website => "https://github.com/ptresearch/AttackDetection",
+		tr_string => "attack detection team rules",
+	},
+
+	# Secureworks Security rules.
+	secureworks_security => {
+		summary => "Secureworks Security Ruleset",
+		website => "https://www.secureworks.com",
+		tr_string => "secureworks security ruleset",
+	},
+
+	# Secureworks Malware rules.
+	secureworks_malware => {
+		summary => "Secureworks Malware Ruleset",
+		website => "https://www.secureworks.com",
+		tr_string => "secureworks malware ruleset",
+	},
+
+	# Secureworks Enhanced rules.
+	secureworks_enhanced => {
+		summary => "Secureworks Enhanced Ruleset",
+		website => "https://www.secureworks.com",
+		tr_string => "secureworks enhanced ruleset",
+	},
+
 	# ThreatFox
 	threatfox => {
 		summary => "ThreatFox Indicators Of Compromise Rules",
