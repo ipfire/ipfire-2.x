@@ -117,11 +117,17 @@ chown nobody:nobody /var/ipfire/ovpn/ovpnconfig
 
 # Check if the drop hostile in and out logging options need to be added
 # into the optionsfw settings file and apply to firewall
-if ! [ $(grep "LOGDROPHOSTILEIN=on" /var/ipfire/optionsfw/settings) ] && \
-   ! [ $(grep "LOGDROPHOSTILEOUT=on" /var/ipfire/optionsfw/settings) ]; then
-        sed -i '$ a\LOGDROPHOSTILEIN=on' /var/ipfire/optionsfw/settings
-        sed -i '$ a\LOGDROPHOSTILEOUT=on' /var/ipfire/optionsfw/settings
-        /usr/local/bin/firewallctrl
+optionsfw=""
+if ! [ $(grep "^LOGDROPHOSTILEIN=" /var/ipfire/optionsfw/settings) ]; then
+    sed -i '$ a\LOGDROPHOSTILEIN=on' /var/ipfire/optionsfw/settings
+    optionsfw="updated"
+fi
+if ! [ $(grep "^LOGDROPHOSTILEOUT=" /var/ipfire/optionsfw/settings) ]; then
+    sed -i '$ a\LOGDROPHOSTILEOUT=on' /var/ipfire/optionsfw/settings
+    optionsfw="updated"
+fi
+if ! [ -z "$optionsfw" ]; then
+    /usr/local/bin/firewallctrl
 fi
 
 # Rebuild initial ramdisks
