@@ -1456,6 +1456,7 @@
 'ids no enabled ruleset provider' => 'No enabled ruleset is available. Please activate or add one first.',
 'ids no network zone' => 'Please select at least one network zone to be monitored',
 'ids provider' => 'Provider',
+'ids provider eol' => '(EOL)',
 'ids provider settings' => 'Provider settings',
 'ids remove rule structures' => 'Remove old rule structures...',
 'ids reset provider' => 'Reset provider',
