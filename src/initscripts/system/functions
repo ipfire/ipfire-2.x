@@ -883,3 +883,11 @@ running_on_oci() {
 	# We are not running on OCI
 	return 1
 }
+
+volume_fs_type() {
+	if [ ! -d "${1}" ]; then
+		return
+	fi
+
+	stat -f --format="%T" ${1}
+}
