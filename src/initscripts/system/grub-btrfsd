@@ -25,21 +25,18 @@
 SNAPSHOTDIR="/.snapshots"
 PIDFILE="/run/grub-btrfsd.pid"
 
-root_is_btrfs() {
-    [ "$(stat -f --format="%T" /)" == "btrfs" ] || return 1
-
-    return 0
-}
-
 case "$1" in
         start)
-		root_is_btrfs || exit 0
+		root_fs_type=$(volume_fs_type "/")
 
-		boot_mesg "Starting Grub/Btrfs snapshot manager..."
-		loadproc -b -p "$PIDFILE" /usr/bin/grub-btrfsd --syslog "$SNAPSHOTDIR"
+		case "$root_fs_type" in
+			btrfs)
 
-		# Store the gained PID to the defined pidfile
-		echo "$!" > "$PIDFILE"
+				boot_mesg "Starting Grub/Btrfs snapshot manager..."
+				loadproc -b -p "$PIDFILE" /usr/bin/grub-btrfsd --syslog "$SNAPSHOTDIR"
+				echo "$!" > "$PIDFILE"
+			;;
+		esac
 	;;
 
 	stop)
