@@ -32,7 +32,7 @@ case "$1" in
 		case "$root_fs_type" in
 			btrfs)
 
-				boot_mesg "Starting Grub/Btrfs snapshot manager..."
+				boot_mesg "Starting GRUB/Btrfs Daemon..."
 				loadproc -b -p "$PIDFILE" /usr/bin/grub-btrfsd --syslog "$SNAPSHOTDIR"
 				echo "$!" > "$PIDFILE"
 			;;
