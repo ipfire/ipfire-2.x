@@ -33,16 +33,14 @@ case "$1" in
 			btrfs)
 
 				boot_mesg "Starting GRUB/Btrfs Daemon..."
-				loadproc -b -p "$PIDFILE" /usr/bin/grub-btrfsd --syslog "$SNAPSHOTDIR"
-				echo "$!" > "$PIDFILE"
+				loadproc -b /usr/bin/grub-btrfsd --syslog "$SNAPSHOTDIR"
 			;;
 		esac
 	;;
 
 	stop)
 		boot_mesg "Stopping grub-btrfsd..."
-		killproc -p "$PIDFILE" /usr/bin/grub-btrfsd
-		sleep 1;
+		killproc /usr/bin/grub-btrfsd
 	;;
 
 	restart)
