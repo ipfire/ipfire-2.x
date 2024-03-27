@@ -1240,6 +1240,7 @@ WARNING: untranslated string: ids monitored interfaces = Monitored Interfaces
 WARNING: untranslated string: ids no enabled ruleset provider = No enabled ruleset is available. Please activate or add one first.
 WARNING: untranslated string: ids no network zone = Please select at least one network zone to be monitored
 WARNING: untranslated string: ids provider = Provider
+WARNING: untranslated string: ids provider eol = (EOL)
 WARNING: untranslated string: ids provider settings = Provider settings
 WARNING: untranslated string: ids remove rule structures = Remove old rule structures...
 WARNING: untranslated string: ids reset provider = Reset provider

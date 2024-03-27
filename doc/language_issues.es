@@ -993,6 +993,7 @@ WARNING: untranslated string: hardware vulnerabilities = Hardware Vulnerabilitie
 WARNING: untranslated string: hostile networks in = From Hostile Networks
 WARNING: untranslated string: hostile networks out = To Hostile Networks
 WARNING: untranslated string: hostile networks total = Total Hostile Networks
+WARNING: untranslated string: ids provider eol = (EOL)
 WARNING: untranslated string: info messages = unknown string
 WARNING: untranslated string: invalid ip or hostname = Invalid IP Address or Hostname
 WARNING: untranslated string: log drop hostile in = Log dropped packets FROM hostile networks

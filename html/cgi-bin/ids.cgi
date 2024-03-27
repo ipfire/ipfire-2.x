@@ -1173,8 +1173,8 @@ END
 
 				# Handle providers which are not longer supported.
 				unless ($IDS::Ruleset::Providers{$provider}{'dl_url'}) {
-					# Mark this provider as unsupported.
-					$unsupported = "<img src='/blob.gif' alt='*'>";
+					$col = "bgcolor='$Header::colouryellow'";
+					$unsupported = $Lang::tr{'ids provider eol'};
 				}
 
 				# Choose icons for the checkboxes.
@@ -1203,7 +1203,7 @@ END
 
 print <<END;
 				<tr>
-					<td width='33%' class='base' $col>$provider_name$unsupported</td>
+					<td width='33%' class='base' $col>$provider_name $unsupported</td>
 					<td width='30%' class='base' $col>$rulesetdate</td>
 
 					<td align='center' $col>
@@ -1254,32 +1254,24 @@ END
 	print "</table>\n";
 
 	# Section to add new elements or edit existing ones.
-print <<END;
+	print <<END;
 	<br>
 	<hr>
 	<br>
 
-	<table width='100%'>
-		<form method='post' action='$ENV{'SCRIPT_NAME'}'>
-			<tr>
-				<td>
-END
-					print "<img src='/blob.gif' alt='*'> $Lang::tr{'ids unsupported provider'}\n";
-print <<END;
-				</td>
-				<td><div align='right'>
+	<form method='post' action='$ENV{'SCRIPT_NAME'}'>
+		<div align='right'>
 END
 
-					# Only show this button if a ruleset provider is configured.
-					if (%used_providers) {
-						print "<input type='submit' name='RULESET' value='$Lang::tr{'ids customize ruleset'}'>\n";
-					}
+	# Only show this button if a ruleset provider is configured.
+	if (%used_providers) {
+		print "<input type='submit' name='RULESET' value='$Lang::tr{'ids customize ruleset'}'>\n";
+	}
+
 print <<END;
-					<input type='submit' name='PROVIDERS' value='$Lang::tr{'ids add provider'}'>
-					</div></td>
-			</tr>
-		</form>
-	</table>
+			<input type='submit' name='PROVIDERS' value='$Lang::tr{'ids add provider'}'>
+		</div>
+	</form>
 END
 
 	&Header::closebox();
