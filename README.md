@@ -17,7 +17,7 @@ Just head over to https://www.ipfire.org/download
 # How do I use this software?
 
 We have a long and detailed documentation located [here](https://ipfire.org/docs) which
-should answers most of your questions.
+should answer most of your questions.
 
 # But I have some questions left. Where can I get support?
 
