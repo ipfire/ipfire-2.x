@@ -22,7 +22,7 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-DAEMONS="zebra bgpd ospfd staticd"
+DAEMONS="mgmtd zebra bgpd ospfd staticd"
 
 case "${1}" in
 	start)
