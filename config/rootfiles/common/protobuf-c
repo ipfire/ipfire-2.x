@@ -8,6 +8,6 @@
 #usr/lib/libprotobuf-c.a
 #usr/lib/libprotobuf-c.la
 #usr/lib/libprotobuf-c.so
-#usr/lib/libprotobuf-c.so.1
-#usr/lib/libprotobuf-c.so.1.0.0
+usr/lib/libprotobuf-c.so.1
+usr/lib/libprotobuf-c.so.1.0.0
 #usr/lib/pkgconfig/libprotobuf-c.pc
