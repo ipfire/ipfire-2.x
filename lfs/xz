@@ -24,7 +24,7 @@
 
 include Config
 
-VER        = 5.6.1
+VER        = 5.4.5
 
 THISAPP    = xz-$(VER)
 DL_FILE    = $(THISAPP).tar.xz
@@ -45,7 +45,7 @@ objects = $(DL_FILE)
 
 $(DL_FILE) = $(DL_FROM)/$(DL_FILE)
 
-$(DL_FILE)_BLAKE2 = 3a1cf93d7223eb57e78eabe828a3d623acac5824ada299470e3126692ef89d1648293aef32468d70a5289611969d5299180c1b373dfbda002a49f3afc729d925
+$(DL_FILE)_BLAKE2 = 08d9afebd927ea5d155515a4c9eedda4d1a249f2b1ab6ada11f50e5b7a3c90b389b32378ab1c0872c7f4627de8dff37149d85e49f7f4d30614add37320ec4f3e
 
 install : $(TARGET)
 
@@ -80,3 +80,5 @@ $(TARGET) : $(patsubst %,$(DIR_DL)/%,$(objects))
 	cd $(DIR_APP) && make install
 	@rm -rf $(DIR_APP)
 	@$(POSTBUILD)
+
+
