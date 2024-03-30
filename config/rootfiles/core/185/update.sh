@@ -88,12 +88,15 @@ chmod -v 640 /etc/sudoers.d/*
 # Start services
 telinit u
 /etc/init.d/sshd restart
+/etc/init.d/apache restart
 /etc/init.d/suricata restart
 /etc/init.d/unbound restart
 /etc/init.d/ntp start
 if [ -f /var/ipfire/proxy/enable ]; then
 	/etc/init.d/squid start
 fi
+/etc/init.d/collectd restart
+
 ## Modify ovpnconfig according to bug 13548 for no-pass entry for N2N client connections
 # Check if ovpnconfig exists and is not empty
 if [ -s /var/ipfire/ovpn/ovpnconfig ]; then

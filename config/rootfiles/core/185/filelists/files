@@ -50,6 +50,7 @@ srv/web/ipfire/cgi-bin/ids.cgi
 srv/web/ipfire/cgi-bin/index.cgi
 srv/web/ipfire/cgi-bin/ovpnmain.cgi
 srv/web/ipfire/cgi-bin/time.cgi
+usr/lib/python3.10/lib-dynload/_lzma.cpython-310-xxxMACHINExxx-linux-gnu.so
 usr/local/bin/update-ids-ruleset
 var/ipfire/backup/bin/backup.pl
 var/ipfire/ids-functions.pl
