@@ -22,7 +22,7 @@
 . /etc/sysconfig/rc
 . ${rc_functions}
 
-DAEMONS="zebra bgpd ospfd staticd"
+DAEMONS="mgmtd zebra bgpd ospfd staticd"
 
 case "${1}" in
 	start)
@@ -51,8 +51,11 @@ case "${1}" in
 		;;
 
 	reload)
-		boot_mesg "Reloading FRRouting..."
-		reloadproc /usr/sbin/frr-reload
+		# Reload all daemons
+		for daemon in ${DAEMONS}; do
+			boot_mesg "Reloading FRRouting ${daemon}..."
+			reloadproc "/usr/sbin/${daemon}"
+		done
 		;;
 
 	restart)
