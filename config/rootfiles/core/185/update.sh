@@ -67,7 +67,8 @@ rm -rvf \
 	/var/ipfire/geoip-functions.pl \
 	/var/ipfire/dhcpc/dhcpcd-hooks/00-linux \
 	/var/ipfire/dhcpc/dhcpcd-hooks/02-dump \
-	/var/lib/location/tmp*
+	/var/lib/location/tmp* \
+	/usr/lib/liblzma.so.5.6.*
 
 # update linker config
 ldconfig
