@@ -3,13 +3,13 @@
 You can help in numerous ways. This document should give you an overview of what
 is possible and how you can get involved. It will **not** give you all information
 you need to successfully contribute to avoid content duplication between this
-document and our [wiki](https://wiki.ipfire.org/). Instead, it should guide you
+document and our [documentation](https://ipfire.org/docs). Instead, it should guide you
 to the right places to look for further information.
 
 ## Development
 
-All information is available in the [development section](https://wiki.ipfire.org/devel)
-of our wiki. The following is a very short overview of the most important topics.
+All information is available in the [development section](https://www.ipfire.org/docs/devel)
+of our documentation. The following is a very short overview of the most important topics.
 
 ### Contact
 
@@ -25,13 +25,13 @@ to the internet community.
 ### How to build the distribution?
 
 In order to contribute, you certainly need to build the distribution at some point.
-See [here](https://wiki.ipfire.org/devel/ipfire-2-x/build-howto) for a long guide
+See [here](https://www.ipfire.org/docs/devel/ipfire-2-x/build-howto) for a long guide
 how to do that.
 
 ### Reporting bugs
 
-We have a bug tracker located [here](https://wiki.ipfire.org/devel/bugzilla). Further
-information can be found in our [wiki](https://wiki.ipfire.org/devel/bugzilla). We do
+We have a bug tracker located [here](https://bugzilla.ipfire.org/). Further
+information can be found in our [documentation](https://www.ipfire.org/docs/devel/bugzilla). We do
 **not** use GitHub for tracking bugs.
 
 ### Contribute changes to the source code
@@ -39,7 +39,7 @@ information can be found in our [wiki](https://wiki.ipfire.org/devel/bugzilla). 
 Unfortunately, we do not accept GitHub pull requests. Instead, we are working with patches
 which are sent to our mailing list `<development@lists.ipfire.org>`. This process might
 be a bit tricky in the beginning. That's why you can find more information how to do
-this [here](https://wiki.ipfire.org/devel/submit-patches).
+this [here](https://www.ipfire.org/docs/devel/submit-patches).
 
 
 
