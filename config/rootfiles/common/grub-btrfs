@@ -1,4 +1,3 @@
-#boot/grub/grubenv
 etc/default/grub-btrfs
 etc/default/grub-btrfs/config
 etc/grub.d/41_snapshots-btrfs
