@@ -351,7 +351,7 @@ nfq:
    bypass-mask: 1073741824
 #  route-queue: 2
 #  batchcount: 20
-   fail-open: yes
+   fail-open: no
 
 ##
 ## Step 5: App Layer Protocol Configuration
