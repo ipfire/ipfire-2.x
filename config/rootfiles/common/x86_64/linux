@@ -8191,7 +8191,7 @@ etc/modprobe.d/ipv6.conf
 #lib/modules/KVER-ipfire/build/include/config/FW_LOADER_USER_HELPER
 #lib/modules/KVER-ipfire/build/include/config/GACT_PROB
 #lib/modules/KVER-ipfire/build/include/config/GARP
-#lib/modules/KVER-ipfire/build/include/config/GCC11_NO_ARRAY_BOUNDS
+#lib/modules/KVER-ipfire/build/include/config/GCC10_NO_ARRAY_BOUNDS
 #lib/modules/KVER-ipfire/build/include/config/GCC_ASM_GOTO_OUTPUT_WORKAROUND
 #lib/modules/KVER-ipfire/build/include/config/GCC_PLUGINS
 #lib/modules/KVER-ipfire/build/include/config/GCC_VERSION
