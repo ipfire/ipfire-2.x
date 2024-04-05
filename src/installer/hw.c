@@ -132,11 +132,12 @@ static int strstartswith(const char* a, const char* b) {
 }
 
 static int setup_loop_device(const char* source, const char* device) {
+	int device_fd = -1;
+
 	int file_fd = open(source, O_RDWR);
 	if (file_fd < 0)
 		goto ERROR;
 
-	int device_fd = -1;
 	if ((device_fd = open(device, O_RDWR)) < 0)
 		goto ERROR;
 
