@@ -595,7 +595,7 @@ int main(int argc, char *argv[]) {
 
 	// Check how many disks have been found and what
 	// we can do with them.
-	unsigned int num_disks = hw_count_disks((const struct hw_disk**)disks);
+	unsigned int num_disks = hw_count_disks(disks);
 
 	while (1) {
 		// no harddisks found
@@ -647,7 +647,7 @@ int main(int argc, char *argv[]) {
 		if (config.unattended)
 			break;
 
-		num_selected_disks = hw_count_disks((const struct hw_disk**)selected_disks);
+		num_selected_disks = hw_count_disks(selected_disks);
 
 		if (num_selected_disks == 1) {
 			snprintf(message, sizeof(message),
